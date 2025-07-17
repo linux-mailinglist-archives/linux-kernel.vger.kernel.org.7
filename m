@@ -1,206 +1,107 @@
-Return-Path: <linux-kernel+bounces-734417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2519B08154
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:13:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3688DB0816C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:37:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46E341C266C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:14:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63927567B5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:37:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AACCCA52;
-	Thu, 17 Jul 2025 00:13:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 710734D8CE;
+	Thu, 17 Jul 2025 00:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="a66QHb6Z"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="hMqwDcci"
+Received: from sonic309-21.consmr.mail.sg3.yahoo.com (sonic309-21.consmr.mail.sg3.yahoo.com [106.10.244.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D9479C0
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 00:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 235C91B960
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 00:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.244.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752711220; cv=none; b=gmBBqgJiw3qiPvuZ08O2KcA+/ovGsKy/qYd4flVpr/6Y8GyceuswuHPRza9XxLi+J5dIVXktOfLu8gUGTp9jOm8FP51/YRoym70YfGsOZKtytcakRbCpPqLLDy26n0JT64kkojzdQYEKpyoJw7E7pYI4LcNYG+f8JVKLCcMxDOU=
+	t=1752712656; cv=none; b=hOsf2zZKgUZpwWPbDfu39s0PMpLy164Hw2fg4ZeylmRYE/sqPyJIBr2bnNzDsWZaWPpurXeqcnURPmwE9kLX5qwbB5k+FGolX8nnQX3J+XDk5o3lLlUMBC/szME/jxi2ABEHRcBV/0NI43gHxq9AmpqmxxR2IcMLnVJpSSyymI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752711220; c=relaxed/simple;
-	bh=7aZhtZfX0RsQUD9sVp1DVDvTSMi4jS6IZUpzUCsZyeA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u4sWxlQDLQAnA0VGcUbrjkxi3a4O15idzuE9iITAld+EJ/a/cUmkYiWRt44WAb6TXChGgQK1tjbukz8gYz+H9hY6N5B7ppbejRhoq3t58mMs7ZR3KLFFvla4N6MiLw2eAgsXpe9sgopH0Kc6zgg4+zkhvudUU5G+JIi8Cjin7cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=a66QHb6Z; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-235e389599fso52335ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 17:13:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752711216; x=1753316016; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YxwcBRFZJ/IWYAmgYMBlaC5GLM/oN1cP6KDw+nUVd+c=;
-        b=a66QHb6ZX2Cn4S2VMXMK3zO2EzBiaokXyrfvRXS36EaK9E0+JZhMX0iq2NYzauW+27
-         xzRmACiz+Th8CCAgcWhbCB3+hZHOHYHtVFIcwuDUR8Y8uM2kQ19lCdxL5iuc5tPTDqIY
-         IQJYG6Z+fqnfqnUD8mENBL8TQia+O2RnrpaMnhL29+Jy9IxogdBtgewho/71IMEhXsC6
-         I0YjvgE07TQkcZl/cnhk1subQWtEKrlPSC7+L3s6R2tC1JXKrbIONBx1dR+8MUSWK2Xg
-         /QO2Wrp/Z971BQo0d+gmQfdWThfA1WxL1Jsu/RH64i6Wn+Yam/7CVoyS0kQFnUP3b51n
-         QD9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752711216; x=1753316016;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YxwcBRFZJ/IWYAmgYMBlaC5GLM/oN1cP6KDw+nUVd+c=;
-        b=wgK2uTqO1b+P+vkOjvvdHWqqRS59uxlARKnzifiaqtmqvOLCE4BNEMgLghwzpO1Nir
-         VHV6ufywYU7+RWKWZsFHALg0nR3OYxYy+ow0o56k4C1pPzTKwkgIjbVxYBtswU9EuYGb
-         jGMpCrTC4vL5VWJDGHDxxfXWVX644ExY09EVwjBaXw5Hdr6MgzGvYf4xxA8YbFuX8Gcp
-         bdtaDeA7SxjpwzR7r92PiQMNL6Zckxs368RkMaiIGxWTwbALW/mwk2u29a2B9c7aEc1v
-         IfkDA41Aqg+aobQ5MNOKQXmBQ0BmwkGbb8E5ckNvtBR2cOOsDV4Usul+l6ZCFvmED+nU
-         l4Uw==
-X-Forwarded-Encrypted: i=1; AJvYcCXnj7BALcyaBwb4fagELMtnKCWgaK1StG/yRgnPSA9wSSBeQa4bMMHfzp3Zm7/BR1+o/hOx12XugB0LEyA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYTkXk+NLQlOUSD3GzgC32DBdzxIVlyweMQ8LuCedNmOdy+hKb
-	7p1vIoG+oWCPCc9ev+QVpW0IbX/OY3+XKU2de5LdncEegBzDIatcQSsEF8vH+cH+JzcjK7FndRg
-	2U7XSw5xiJ95EyY+/dSu5xYDdqpAUpb2jALTeVA7B
-X-Gm-Gg: ASbGncuTGsMZifPEsHcEuRnpFG99cYAtmCRdUCUNgtUSnVJNAeOz7htEAC/dfGuJ/zl
-	rfBIG5SN04vf2BoW1sTQQD5FktK7eS4prfpfQ5nQ/I+69kVZj2Wh1SzoJtIpc79DtwrEsh62igc
-	JnBnpZJgcQipUoWeJKOjAyQuEkNTxkh6FMV4xfmiDVGeYbA9e44OL92/KvA34KHQ2M54z7CnsF9
-	NFI+A==
-X-Google-Smtp-Source: AGHT+IExZ6YQpVxQMTJs5x1bFUTqRcgLAU1GhDN/RUviVrMpTxpuEVJRR17jv0s7D2xBNTbduIancHz0YHYlnDWvA9k=
-X-Received: by 2002:a17:902:f548:b0:231:d0ef:e8ff with SMTP id
- d9443c01a7336-23e2fda6d9fmr1332865ad.8.1752711215586; Wed, 16 Jul 2025
- 17:13:35 -0700 (PDT)
+	s=arc-20240116; t=1752712656; c=relaxed/simple;
+	bh=pAQ/IIhDfswg2fJKemCk+fJim9r6NrRhB5fn1uiOCGE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=l+3Y1tzk/q5yRK9UOoX4Itq+3c4/fOK0recjH5HYWCFQBPWVcaTyQfPt78cK/xfm0VwQiJFaTuVVn0rktTDJ4s2frZSpF2+YXTuqNrHNyRomCMKBbCm0uoP9krJgBC4Y+Am1BFKTGZuzWZH2+ZevJPQcVrDH7PVQu3jqojKZ5Mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=hMqwDcci; arc=none smtp.client-ip=106.10.244.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1752712653; bh=pAQ/IIhDfswg2fJKemCk+fJim9r6NrRhB5fn1uiOCGE=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=hMqwDcciBmEVrC82lxgw00tdHaL+LlIhYTiKEaLeBDzvLVu5FDOBy39cmb/o/RXpPZBYw4HT+TSa+naCHUaP7CwQ2pfpZUrlRZvdRzmUnNrEOhuD0FRnh9PBGEOk8/1gm3tg2klecz7Kbts4tOd2BbnjmXituC+FsnOPhmpWYdltDM6bUt1UG41lJEsMvndstMU28kRIM7QWn8yvy7pfOKHyfD2kd3+QsLjG9SXSiU72mIaOmkRQ8RUJ/91NEEIEYL8F3kzTLP4oAu1itHXtPnNqZRA9i0VU0xpaxq9O9xbwkpPqAd3yU9r3xqWMr8mVm/BTkvdwT/5tz2ILyKkrDA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1752712653; bh=uZIFVWn2KS0RT1/sP0IQn2WwyLFRORH3xyLJ2/UZG91=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=MqfZZ3CnoP8YQW1H00T9yl0O8IRPpJjeYsU7jan3v72ttSuGfZwGXTN46qXS1FrHCxzjRbggSPc8kbCA/6MRh5GxGsFMNxuvsbO6YolnTghNEl+uG7LEOVMD+y0g5FHDiYGTUOC2rfrZZseuw7O5V52LasTTeyb4Rdrz27BdFQhSwSr129lUrz1xiyFUkI4pLLjEweTrFvCnEQ6Tt4Va/dOGmhu1JeAug2KAntH4fzFfc+Q8hfuK43Gi6JFsYMD+9elBwlqpxiaugQsyW2aV+I5bjFUnyO1ZTdBJSf+B3krlM/q2o1Og29Sv2tMfIya/BJpmo9V/vpqXp/NEs6WkhA==
+X-YMail-OSG: Hhip8G4VM1mQsubJ37_3YVw0rKEcYtxZetwEoQnmEZrkRwQrHi04wINY_9zSVMO
+ 3cQJnAhlZe3TH8T5nsldrxA_.Achq7TNF2XvY5Ou8DJj0xoIVxv68wJDD8lIjjJ2nP60S8kruydH
+ x7_jAh9JOXj1mjIbAVKULiFj8zkFnSJvE94s9vlNf5eubDLPwwsbgKvZLC.wBMXm.eX1QA_nShJJ
+ K4_Ds83UgkKwPLyq5wcO7TXS_.TkBRdoF3h8Ouv9p3QFOzmZAkfvYkkblpPCtfqKVFieEaRD8yLq
+ Il21zvxmQUGcjRWxFXQoGaGi4uvyuKdUJWUDTJ1z.BZ6Ebd0LP4_PoiY0EMbdmXBWrQtKuJmR7iM
+ MRElajNZac6.tOmH7E2N5WipJU0z.X46pDc_8BHqhUWoPARyugr_iSaEsq9GtMfPyD3XGMrolCDR
+ nT3fBKf4x1aCggjALxEFovfmuyo.Cm2lp4ZRYUdXGcL.R5HZzkro4rPdLNWvNmlO1yMuUUON3khr
+ yc6EJ_bDfrOKUWTn2QJKl59eniyGBID2fSdjjg0Ut7lslpD1Gla8kGY3HW6TXllUABcYXmwyo2xG
+ 1ue13_toy8LWzzpgRLMN71hfMmzB17bHgddjjDDMWiO8zr2Ax9j1p_NWnJrB1JmT1Ep4zNz5Gmyv
+ LFag5wISytnU9lU8yHIFtdQl8.rS6sjz4LRZ3njAGYQKfAk2ZwHR0EiqDGGRFcuYdV0ntIJnf8HY
+ 6Ene973eocCEBeduYlSD6bXh4lkZDb_GB_lnw0OjeB62M6EBa0zxUMLx16PC_eMMt7voTAXlsRzp
+ eLxytKqYqPRUDEMrO7N.kjFecXify5Q9BSQRfZYGfZWJvdVPVTJiB5a5CAsoC24pUtG1uz7hVEA9
+ y2oQtc2TAY5i2ScTXQxLiSVl_s8Iy6.eM9Tg03u9.UeoiVBJCRVfKEUUZWqGJcRHbYeFTYtFv2d0
+ dv3xp4dQjPj6zuR0Qa2U11bf4p1GRclEV5L3KXZlRIylod44PmBwxzonU0iZG.Agc3ec73_YDUtQ
+ xq2mQqLUce4jpK85..TsensMifSTG.j78IaDvHyzY5PSIAKvtmKJbuEFO6tjei7LXT.BOikIfs5A
+ EFnUmLO.PytuoqYe1AbHYAeTF22JERtXoqoIhywra3zUZuuFgNvaqcr3DaermpmGhzlP4lAw9Al.
+ 3.yxUz4TMwEMeXG1iaTGcX7Fcm5fG2gZtxs.tPsbSmWXr3Vf1IO0WlQXynsFIsf16UCJ0vQlXRkl
+ C04MyAqCw2IBjdh6IZQhC6y6ugXH0QDScozWjtrJkk_N1nTK1Kds2_PPbSQUjXr91ua34IkpKgp9
+ zyIgC6Twz87LGVambezX5fIO1_ptPbqSNQwaBYHWWR4Mv1uiTAPuH.TOW.qAH6XQTsoesFKDE0xq
+ oveCFuDeov0PHGroKEzDZiTeF.nApaxgf.QdxqtUWDqC8dxh6NR_VNPIa9NGARq_L6fsklCIoAJz
+ wQ9Su696kTPaB6yHfsKho4I2hv1wLOdMb7kUXOUO8e2scS24sbLqEe9gVeZ59P3EgVc0ZoopcbCE
+ UKe9mjNZnAm0_ZnMC3LfosVYE6nb98QSzTorKBr.5q4AQgC9_GZxZIjrugPWRW4eYGc.4Jf1zc9Z
+ KcuJQ8qS2as.yJjqenT78orYh7VMFXiHvGzFxyNYkzqjq_v_OPIfHaL8d77DgTk89NzY4ZFO05c4
+ H0uMCcDBwAvggIPNcxftr8PMoTr8UnSOn1GlM9g0DIZ2k2b_7HLs3eyWhXLnEjlDKfE1kUzv0b0k
+ 1J7.9kmV.ylvcfNk1gHCz6AO3PZhbPFO9XmW14dNu8k6sKLSDf0PRRiZ.qHAWYaHJMrTvIdOqTMx
+ J5g5t11C3icnvLnZ1RWdbu_.RaE4Tl.GB.q8dnkX0Phv4quIAhtm2sbwsN_.5tPg8OzCOlNgC2lq
+ VsylC3Mv.Vbx.NLgR__DJB.w_KDL5Oxh4Qs9sS5SM5TZLq3r4Q870Lue12On0pWvWr8AMMJ202fd
+ ZMUxcaulWffQYdzkkgI60J9obBl9MxMhbnjUiDdg.nUOwXgk_fzrxQqY.cqWlIuLqbVoGkfMsun9
+ fUoGH9gh2mxyMSKC0T4_UyjcavmgUqTWDNqPa2dXU.2qf.7HenedJL8LHpBmyfmDq2qTr9n4pbQG
+ n0MvQbMiplDb3U.IIKhJraBMXvD0m1ReG7v5MsbDqn8j7_XyrWCbMAr5kfRBGT8jt8DhP8OarIPO
+ C9Tw3AKSiAzxwN3BMu_BU_GS58v.KxAqVCnky3tgfX_CuLZ5wINezT1NTZ6FkV33ZhMC_a6qRyEC
+ XRFW3W_XkBA--
+X-Sonic-MF: <sumanth.gavini@yahoo.com>
+X-Sonic-ID: c5be0f29-6388-4676-a4a7-9050df7cf1fd
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.sg3.yahoo.com with HTTP; Thu, 17 Jul 2025 00:37:33 +0000
+Received: by hermes--production-ne1-9495dc4d7-clxb5 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 0212c9e6b7505a9b54117a53d36bc6a7;
+          Thu, 17 Jul 2025 00:17:10 +0000 (UTC)
+From: Sumanth Gavini <sumanth.gavini@yahoo.com>
+To: sumanth.gavini@yahoo.com
+Cc: Chris.Wulff@biamp.com,
+	gregkh@linuxfoundation.org,
+	jkeeping@inmusicbrands.com,
+	kgroeneveld@lenbrook.com,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	quic_prashk@quicinc.com
+Subject: [PATCH] usb: gadget: f_uac2: replace scnprintf() with sysfs_emit()
+Date: Wed, 16 Jul 2025 19:17:07 -0500
+Message-ID: <20250717001707.186867-1-sumanth.gavini@yahoo.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250704003425.467299-1-sumanth.gavini@yahoo.com>
+References: <20250704003425.467299-1-sumanth.gavini@yahoo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250716161753.231145-1-bgeffon@google.com> <CADnq5_P+a2g_YzKW7S4YSF5kQgXe+PNrMKEOAHuf9yhFg98pSQ@mail.gmail.com>
- <CADyq12zB7+opz0vUgyAQSdbHcYMwbZrZp+qxKdYcqaeCeRVbCw@mail.gmail.com> <CADnq5_OeTJqzg0DgV06b-u_AmgaqXL5XWdQ6h40zcgGj1mCE_A@mail.gmail.com>
-In-Reply-To: <CADnq5_OeTJqzg0DgV06b-u_AmgaqXL5XWdQ6h40zcgGj1mCE_A@mail.gmail.com>
-From: Brian Geffon <bgeffon@google.com>
-Date: Wed, 16 Jul 2025 20:12:59 -0400
-X-Gm-Features: Ac12FXw4FWxTyOpiBAh39vdC9AS1nFe7p6dT3CD8-f9rngBIdz8mZXayZeabz6s
-Message-ID: <CADyq12ysC9C2tsQ3GrQJB3x6aZPzM1o8pyTW8z4bxjGPsfEZvw@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdgpu: Raven: don't allow mixing GTT and VRAM
-To: Alex Deucher <alexdeucher@gmail.com>
-Cc: "Wentland, Harry" <Harry.Wentland@amd.com>, "Leo (Sunpeng) Li" <Sunpeng.Li@amd.com>, 
-	Alex Deucher <alexander.deucher@amd.com>, christian.koenig@amd.com, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, Yunxiang Li <Yunxiang.Li@amd.com>, 
-	Lijo Lazar <lijo.lazar@amd.com>, Prike Liang <Prike.Liang@amd.com>, 
-	Pratap Nirujogi <pratap.nirujogi@amd.com>, Luben Tuikov <luben.tuikov@amd.com>, 
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, Garrick Evans <garrick@google.com>, 
-	Thadeu Lima de Souza Cascardo <cascardo@igalia.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 16, 2025 at 5:03=E2=80=AFPM Alex Deucher <alexdeucher@gmail.com=
-> wrote:
->
-> On Wed, Jul 16, 2025 at 12:40=E2=80=AFPM Brian Geffon <bgeffon@google.com=
-> wrote:
-> >
-> > On Wed, Jul 16, 2025 at 12:33=E2=80=AFPM Alex Deucher <alexdeucher@gmai=
-l.com> wrote:
-> > >
-> > > On Wed, Jul 16, 2025 at 12:18=E2=80=AFPM Brian Geffon <bgeffon@google=
-.com> wrote:
-> > > >
-> > > > Commit 81d0bcf99009 ("drm/amdgpu: make display pinning more flexibl=
-e (v2)")
-> > > > allowed for newer ASICs to mix GTT and VRAM, this change also noted=
- that
-> > > > some older boards, such as Stoney and Carrizo do not support this.
-> > > > It appears that at least one additional ASIC does not support this =
-which
-> > > > is Raven.
-> > > >
-> > > > We observed this issue when migrating a device from a 5.4 to 6.6 ke=
-rnel
-> > > > and have confirmed that Raven also needs to be excluded from mixing=
- GTT
-> > > > and VRAM.
-> > >
-> > > Can you elaborate a bit on what the problem is?  For carrizo and
-> > > stoney this is a hardware limitation (all display buffers need to be
-> > > in GTT or VRAM, but not both).  Raven and newer don't have this
-> > > limitation and we tested raven pretty extensively at the time.
-> >
-> > Thanks for taking the time to look. We have automated testing and a
-> > few igt gpu tools tests failed and after debugging we found that
-> > commit 81d0bcf99009 is what introduced the failures on this hardware
-> > on 6.1+ kernels. The specific tests that fail are kms_async_flips and
-> > kms_plane_alpha_blend, excluding Raven from this sharing of GTT and
-> > VRAM buffers resolves the issue.
->
-> + Harry and Leo
->
-> This sounds like the memory placement issue we discussed last week.
-> In that case, the issue is related to where the buffer ends up when we
-> try to do an async flip.  In that case, we can't do an async flip
-> without a full modeset if the buffers locations are different than the
-> last modeset because we need to update more than just the buffer base
-> addresses.  This change works around that limitation by always forcing
-> display buffers into VRAM or GTT.  Adding raven to this case may fix
-> those tests but will make the overall experience worse because we'll
-> end up effectively not being able to not fully utilize both gtt and
-> vram for display which would reintroduce all of the problems fixed by
-> 81d0bcf99009 ("drm/amdgpu: make display pinning more flexible (v2)").
+Hi All,
 
-Thanks Alex, the thing is, we only observe this on Raven boards, why
-would Raven only be impacted by this? It would seem that all devices
-would have this issue, no? Also, I'm not familiar with how
-kms_plane_alpha_blend works, but does this also support that test
-failing as the cause?
+Just following up on my patch submitted with subject "[PATCH] usb: gadget: f_uac2: replace scnprintf() with sysfs_emit()".
 
-Thanks again,
-Brian
+Original message: https://lore.kernel.org/all/20250704003425.467299-1-sumanth.gavini@yahoo.com/
 
->
-> Alex
->
-> >
-> > Brian
-> >
-> > >
-> > >
-> > > Alex
-> > >
-> > > >
-> > > > Fixes: 81d0bcf99009 ("drm/amdgpu: make display pinning more flexibl=
-e (v2)")
-> > > > Cc: Luben Tuikov <luben.tuikov@amd.com>
-> > > > Cc: Christian K=C3=B6nig <christian.koenig@amd.com>
-> > > > Cc: Alex Deucher <alexander.deucher@amd.com>
-> > > > Cc: stable@vger.kernel.org # 6.1+
-> > > > Tested-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-> > > > Signed-off-by: Brian Geffon <bgeffon@google.com>
-> > > > ---
-> > > >  drivers/gpu/drm/amd/amdgpu/amdgpu_object.c | 3 ++-
-> > > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c b/drivers/g=
-pu/drm/amd/amdgpu/amdgpu_object.c
-> > > > index 73403744331a..5d7f13e25b7c 100644
-> > > > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
-> > > > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
-> > > > @@ -1545,7 +1545,8 @@ uint32_t amdgpu_bo_get_preferred_domain(struc=
-t amdgpu_device *adev,
-> > > >                                             uint32_t domain)
-> > > >  {
-> > > >         if ((domain =3D=3D (AMDGPU_GEM_DOMAIN_VRAM | AMDGPU_GEM_DOM=
-AIN_GTT)) &&
-> > > > -           ((adev->asic_type =3D=3D CHIP_CARRIZO) || (adev->asic_t=
-ype =3D=3D CHIP_STONEY))) {
-> > > > +           ((adev->asic_type =3D=3D CHIP_CARRIZO) || (adev->asic_t=
-ype =3D=3D CHIP_STONEY) ||
-> > > > +            (adev->asic_type =3D=3D CHIP_RAVEN))) {
-> > > >                 domain =3D AMDGPU_GEM_DOMAIN_VRAM;
-> > > >                 if (adev->gmc.real_vram_size <=3D AMDGPU_SG_THRESHO=
-LD)
-> > > >                         domain =3D AMDGPU_GEM_DOMAIN_GTT;
-> > > > --
-> > > > 2.50.0.727.gbf7dc18ff4-goog
-> > > >
+Would you have any feedback on this change? I'd be happy to address any comments or concerns.
+
+Thank you for your time and consideration.
+
+Regards,
+Sumanth Gavini
 
