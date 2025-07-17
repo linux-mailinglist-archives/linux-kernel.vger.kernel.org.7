@@ -1,111 +1,174 @@
-Return-Path: <linux-kernel+bounces-734588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1DD6B08378
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 05:34:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0C62B0837A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 05:35:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 413277A68EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 03:33:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04FD3168E40
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 03:35:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8491E98E3;
-	Thu, 17 Jul 2025 03:34:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9DA11F4CBC;
+	Thu, 17 Jul 2025 03:35:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rYxxtGvP"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LQr444RW"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B7C191F6A
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 03:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB03191F6A;
+	Thu, 17 Jul 2025 03:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752723287; cv=none; b=Ws1Bbmeamvr7IVy0nLaFMyk+K0n40VvkwgjXWylTmETQLrjg2jTJAhwS0qLSLSEAFxQTySdn83eXhtYBQZMmqvIC5aDzCmNO0mXHUTkMzRwOA7VQ3g9qo0OyR0gAQNj8/oBIjw8wFVm0t+7GviD4uzI3bVWA6b/W5ceZWBcT+t4=
+	t=1752723341; cv=none; b=tnTB7q6mu9DK4TldENYBecyhkZT9xFWIxTUhA9V5nsvgi9oAK0FB/vbPmd6e3xYj0wtoDZUrCdrKR1HyQoOExt0ZJ0LuterJUGRbHGBSBwqey3Gv1bqdTip9XFkqjX1xbHf10X5R/SWzB1DC52fU+sNqGcz1WwtOr/SQjMFheiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752723287; c=relaxed/simple;
-	bh=xKe2b2AWM0uJcuKoyka5AkqwvwRKwneLKMPTasEVc8Q=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=tnVPbnduqPO33iRU0hh3w9UTWohEZMKmKclacdv2g9A9Qks9qJsH3dlrV99xXCfntGfn5bCUzYcWFiqx134GfCdXTvRbY7k5UmZE3/snV2f2RfOtYFvDTubSz2aOknjZeNr9cerWPdG1D7UC0RdaqoWtwSKjC/y6nGf7YuEicRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=rYxxtGvP; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250717033438epoutp02a4a23a282dea126d68f50acb2bcd823f~S7IkcNYpZ1315413154epoutp02l
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 03:34:38 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250717033438epoutp02a4a23a282dea126d68f50acb2bcd823f~S7IkcNYpZ1315413154epoutp02l
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1752723278;
-	bh=sDmYy/hmdzV5QjF0o/JqsoId7qEw6SvTssQ6hQyMMiE=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=rYxxtGvPZEl0CQMKM/SXFMGSFKg0mOi858UKxI3SAp4mS24zpEJdTsgi8svZphPz/
-	 oJnirVBIcO20Tcme6Ljs3z7XRb2NDQzosSIHORYSNI9zAIa3qi+yvzbuamhYRV3mnp
-	 JLtHakpu6L8wfRUNng6QK7mTSc6yJCmJs32ONmGU=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250717033437epcas5p1ea0faed5971a620ae04c5d69cb017870~S7IjxDTts2317323173epcas5p1P;
-	Thu, 17 Jul 2025 03:34:37 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.92]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4bjJSr6Mb1z6B9m7; Thu, 17 Jul
-	2025 03:34:36 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250717033436epcas5p29b5631667254501490cc3587918555b0~S7IiVaBtw0270202702epcas5p2P;
-	Thu, 17 Jul 2025 03:34:36 +0000 (GMT)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250717033435epsmtip221398bdf18ea9bf92c5bdcaec1cf9028~S7IhER6UI0245302453epsmtip26;
-	Thu, 17 Jul 2025 03:34:34 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Sowon Na'" <sowon.na@samsung.com>, <robh@kernel.org>,
-	<krzk@kernel.org>, <conor+dt@kernel.org>, <vkoul@kernel.org>,
-	<kishon@kernel.org>
-Cc: <krzk+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>
-In-Reply-To: <20250702013316.2837427-3-sowon.na@samsung.com>
-Subject: RE: [PATCH 2/5] dt-bindings: ufs: exynos: add ExynosAutov920
- compatible string
-Date: Thu, 17 Jul 2025 09:04:33 +0530
-Message-ID: <1e9101dbf6cb$b7e2f520$27a8df60$@samsung.com>
+	s=arc-20240116; t=1752723341; c=relaxed/simple;
+	bh=mzhA7EbSRIBbNCg+6GeIlKr98W0p9lx2o+bn9shylpA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fgxlI0fzLFwGoDFhd5Nx3CCChMlWJHyxa+vm1O2+0EWOVC0bFgNJbAzKAJFk+xZ8hrm48c5TrNtc3wMoRVUjDQcywX1iKqiyfZ3ZpJ+BSbEXQyaywLJbb3rWIlcZx6hcT7d/nx6zHP8PMNiT58sUF0A3dTIS1YVze2O+usIlHsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LQr444RW; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b31c84b8052so500849a12.1;
+        Wed, 16 Jul 2025 20:35:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752723339; x=1753328139; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=dDjDASshMt30PUyM8j2g2T++HJNHOblp1J6mLnbcWk8=;
+        b=LQr444RW81rfpz/IiRf0IeigfiFdYdNRjSW/IRzAGMTOK81/OrLxwBRNUriaZrbiEx
+         Mkkx8zudWSeXQcB9416a4Vl8XNnwATTlVWqq6foql3qzN+asZ5mbAWSIhrrmIoF3sV+o
+         qsZP6txFCZtYioXgDRmxELHsZujM7vEQ3e/vVIrXBUSpieFHthz0dPMQ5pRA9cuhsCno
+         9U0PFyhPqFZ98s5pAO+DrXyXvUM0YkiBhtCZ8nsv/lPyOI8ujJr0rhXSJ6VuGL2J6TEx
+         ZbswkjNz4NOvwv5qbZy0j5TdaYLDnX3ynq9n6HCkCoWqeawQZpGdOFVGby3QOpirfKPp
+         Jk8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752723339; x=1753328139;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dDjDASshMt30PUyM8j2g2T++HJNHOblp1J6mLnbcWk8=;
+        b=hnLbjH/iDqPUWMstFzo9GdAfsaEmKE2fySiTnaGGBc4dzq80vOYvO1vhttC4rJ/PUy
+         QGct5T98tF4poX7f+Z9dv2bibNJaF84Zq7rBlw4iYOWL68CesQ4kxjrovKVnU8I34yXH
+         yYy3cY43yHWlVeglV3bnRrkBiwmHTtnBlsjkK5mTWwiloDs9hjl+B9ZvQT03DCHBUhXG
+         cGeHowxt2C2Fb2qG04QOrTBzx96ArYoasXxNMi/YVUHq6nYWzrIDZ37e4SxVS7LV1Xgc
+         5RDfjG28fLkJirZ9UUpHpg1TwG2HTfkp4MRGUp+oYCAJwipEDabLM3IZkRzVBru4pxp7
+         +btA==
+X-Forwarded-Encrypted: i=1; AJvYcCUOhCF/ass/C2RRyoxz15bdTGKFZnLLg0ntC22yE7L7rQcCnERjHJ2aEOCTH3+854r5RiM2e1mp3R54nEWcC58=@vger.kernel.org, AJvYcCVhOKHnCxfkcihpadV0xdHvVqPogQmCBS9Luyqls88/WRZDmMebg1PIot65GFDW+a03dTPq9wu59yumZzwR@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhmzLNiw6vXB8rnbuUOxBCgB9PUfPuc9wvcam7Rkk47UXSIt4b
+	D9kXfQzc//dSIPalV0qdn5qsobirr0hCxYTH5C5s6tWgdzQkll9JaNN7
+X-Gm-Gg: ASbGncvbZQQhHPMJhB5C1Vyf7kpusYCq80c93amCH/SEOVNOIhnN7bCuXfFELpSCH5W
+	XMIrXw9tNYlc7ysO9uut3+5ucSZ4u8Xq+6ftbmR04wxHXq3hAMZL7MXbLpPvoTxpuiCzqOCvHO8
+	cSlJcTBokdwpe+uvKz7M3ClH1H3R5GhrjSKvixHjOD4Y40DXvdUxo7Vt9A4TvqrX4VCm20s+hi+
+	JLpaspJKNtsbHcKndeF1PprFMCTrXQyBGxcPBX/xxust3jub6PbBCtpZdFJ0gQGJiFaaOPSvYkw
+	EjXF8ppGPzOh21EGoyAK/NtSNwd3usytZdFWXozedTAISZJGBch4uFp8iUrJznLHSvcEPEcHp6c
+	CGqoMiQn7GWaHJGGuvyVQ3Ko4wSY3KFh3glXuKF2oNT0O/Luv
+X-Google-Smtp-Source: AGHT+IGWUL1VrwgZB2BNVbQzRsynv2opMkJ09dqcEG956Ez51zeCFmBxvcxcYGE1p2sv1TL4Hj8txQ==
+X-Received: by 2002:a05:6a21:7116:b0:224:96:bf63 with SMTP id adf61e73a8af0-2390da512a6mr2164040637.7.1752723338830;
+        Wed, 16 Jul 2025 20:35:38 -0700 (PDT)
+Received: from ipravd-Nitro-AN515-55 ([2601:646:a000:5fc0:9da2:46a5:b508:3b9b])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3bbe727fdasm14552159a12.70.2025.07.16.20.35.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 20:35:38 -0700 (PDT)
+Date: Wed, 16 Jul 2025 23:35:36 -0400
+From: Ivan Pravdin <ipravdin.official@gmail.com>
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+Cc: marcel@holtmann.org, johan.hedberg@gmail.com, luiz.dentz@gmail.com, 
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzbot+ac3c79181f6aecc5120c@syzkaller.appspotmail.com
+Subject: Re: [PATCH v2] Bluetooth: coredump: Use tmp buffer with dev_coredumpv
+Message-ID: <r44coidqefd66owzl7fwgbtpjkfgwbayd7irzpbgcvifklwrjf@rimfqjmffdae>
+References: <20250716003726.124975-2-ipravdin.official@gmail.com>
+ <d8a85b98-4c70-4fcf-9d7b-bd1de2d780c3@molgen.mpg.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: en-us
-Thread-Index: AQKcRDJWwAug8EBOlN5S0ESXxoAVsAI4Dt0PAYv0MEyylu5yAA==
-X-CMS-MailID: 20250717033436epcas5p29b5631667254501490cc3587918555b0
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250702013332epcas2p4fe456c285c96c143d96f98b31d9b5255
-References: <20250702013316.2837427-1-sowon.na@samsung.com>
-	<CGME20250702013332epcas2p4fe456c285c96c143d96f98b31d9b5255@epcas2p4.samsung.com>
-	<20250702013316.2837427-3-sowon.na@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d8a85b98-4c70-4fcf-9d7b-bd1de2d780c3@molgen.mpg.de>
 
-
-
-> -----Original Message-----
-> From: Sowon Na <sowon.na@samsung.com>
-> Sent: Wednesday, July 2, 2025 7:03 AM
-> To: robh@kernel.org; krzk@kernel.org; conor+dt@kernel.org;
-> vkoul@kernel.org; alim.akhtar@samsung.com; kishon@kernel.org
-> Cc: krzk+dt@kernel.org; linux-kernel@vger.kernel.org;
-> devicetree@vger.kernel.org; linux-samsung-soc@vger.kernel.org;
-> sowon.na@samsung.com
-> Subject: [PATCH 2/5] dt-bindings: ufs: exynos: add ExynosAutov920
-> compatible string
+On Wed, Jul 16, 2025 at 05:06:38AM GMT, Paul Menzel wrote:
+> Dear Ivan,
 > 
-> Add samsung,exynosautov920-ufs compatible for ExynosAutov920 SoC.
 > 
-> Signed-off-by: Sowon Na <sowon.na@samsung.com>
-> ---
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+> Thank you for your patch and fixing the report.
+> 
+> Am 16.07.25 um 02:37 schrieb Ivan Pravdin:
+> 
+> Personally, I’d start with the problem description.
 
+I will add more details in v3.
 
+> 
+> > Create and use new vmalloc'ed buffer with dev_coredumpv. From
+> > dev_coredumpv documentation:
+> > 
+> > `This function takes ownership of the vmalloc'ed data and will free
+> > it when it is no longer used.`
+> 
+> You could use email/Markdown style citation by prepending the lines with `> `.
+
+I will fix it in v3.
+
+> 
+> > As hdev->dump is used after dev_coredumpv, create temporary buffer to
+> > hold hdev->dump data.
+> > 
+> > Reported-by: syzbot+ac3c79181f6aecc5120c@syzkaller.appspotmail.com
+> > Closes: https://lore.kernel.org/all/67eaa688.050a0220.1547ec.014a.GAE@google.com
+> 
+> Add a trace excerpt to the commit message?
+
+I will add it in v3.
+
+> 
+> > Fixes: b257e02ecc46 ("HCI: coredump: Log devcd dumps into the monitor")
+> > Signed-off-by: Ivan Pravdin <ipravdin.official@gmail.com>
+> > ---
+> > v1 -> v2: Changed subject prefix to Bluetooth:
+> > 
+> >   net/bluetooth/coredump.c | 7 ++++++-
+> >   1 file changed, 6 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/net/bluetooth/coredump.c b/net/bluetooth/coredump.c
+> > index 819eacb38762..1232c9a94f95 100644
+> > --- a/net/bluetooth/coredump.c
+> > +++ b/net/bluetooth/coredump.c
+> > @@ -243,6 +243,7 @@ static void hci_devcd_handle_pkt_pattern(struct hci_dev *hdev,
+> >   static void hci_devcd_dump(struct hci_dev *hdev)
+> >   {
+> >   	struct sk_buff *skb;
+> > +	char *coredump;
+> >   	u32 size;
+> >   	bt_dev_dbg(hdev, "state %d", hdev->dump.state);
+> > @@ -250,7 +251,11 @@ static void hci_devcd_dump(struct hci_dev *hdev)
+> >   	size = hdev->dump.tail - hdev->dump.head;
+> >   	/* Emit a devcoredump with the available data */
+> > -	dev_coredumpv(&hdev->dev, hdev->dump.head, size, GFP_KERNEL);
+> > +	coredump = vmalloc(size);
+> > +	if (coredump) {
+> > +		memcpy(coredump, hdev->dump.head, size);
+> > +		dev_coredumpv(&hdev->dev, coredump, size, GFP_KERNEL);
+> > +	}
+> 
+> Should it be logged, if allocation fails?
+
+Right, I will add it in v3.
+
+> 
+> >   	/* Send a copy to monitor as a diagnostic packet */
+> >   	skb = bt_skb_alloc(size, GFP_ATOMIC);
+> 
+> 
+> Kind regards,
+> 
+> Paul
+
+	Ivan Pravdin
 
