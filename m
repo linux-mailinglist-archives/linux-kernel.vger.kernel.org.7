@@ -1,190 +1,203 @@
-Return-Path: <linux-kernel+bounces-735504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 767C6B0903B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:10:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7232B09048
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:12:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DD9E5A140D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:10:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B084D3B9377
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:11:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A11BB2F8C21;
-	Thu, 17 Jul 2025 15:10:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F252F85FE;
+	Thu, 17 Jul 2025 15:11:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="HbD6O5/G"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sco8B/X0"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628322F85E9
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 15:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A60218FC86;
+	Thu, 17 Jul 2025 15:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752765008; cv=none; b=UZiXyh2yg6kzJeH+3reI2EBWyTH4V3X8UAJxLwcHFUiCBl4Lu3ElR4xOU4oJTjyc2SA98w6iBcTUWOd7iZ9TrsMgwHZ+j6+lQsulbjoaidtz9JPgn5ev2Tlsy1hSdWqB/m8Y5vehgfCwB5VxCZcn3B9eiwouYieH7tGoFoBROu8=
+	t=1752765110; cv=none; b=rWIEEobnwhahV1OyUsfJqQhoqAGlQtitWr0TT49wE3N1+YgYKuBWOHxyYiY9BOnh6BASskEsWoHGz/B3ygr3hxVKsAmdsu9xgKZOqTbgkLMyxhKYOPuK9p2fu8QfK9fHVbZLZWeVNSZFUyzP4DbwoCdeEWz+RwQvLdz4sccU6RY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752765008; c=relaxed/simple;
-	bh=2ygljk2Uqk1He0z4HYejFMdZFckkiVsTIKFbHka5iA8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lxbINvQKLw4Wjdg+fgoIVjwEQL53mOy+LRcDAwItKA7b/RNOp1YJnn02LngrelG8w0A6G/1SWCnYFtNE3n7jGfIyICdIQRrEZ25RQ+SlAL0ZFmUy+WyzQ+qSREDJyliouiXI1aa8wSNvVOgv8kFZUx6sWcBNlaKNbTAiqYM+cNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=HbD6O5/G; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6fafdd322d3so11402236d6.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 08:10:06 -0700 (PDT)
+	s=arc-20240116; t=1752765110; c=relaxed/simple;
+	bh=RfvJAbGcoePDrvUo8SG41VwGoiTa7Wy/weJXB8JvzmA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qb1iFuo0a4FV78GX056jP0WpkksmxvaaSv9KmiZ/OZajRekUBgKZJrIOcTY4I4R/qSRJ1kWJktfN9zLszjdQ69JdFAKHh1CeNdZbbMEIlxc2LxOQGi6tlyUWY8uXgMXtLtwF9J+wO0+9xdDjfjLlSw2bPEKE4cDQjXWl3BT5LMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sco8B/X0; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-311c95ddfb5so919573a91.2;
+        Thu, 17 Jul 2025 08:11:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1752765005; x=1753369805; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PMkrTXBzfaq3rWiLym1Qv+vgbExX2qt7dFfmHvP61uQ=;
-        b=HbD6O5/GK/yQdKNScNVGT8VSfW2UvgRXN/9tFJa4WflPMhUbIZyQE5RNQzJy5gLRVi
-         7SgR/9HJCpM3a7ZtO2TTba2A+yohyndwRvm6yRrpiuMms2GDSgwRQcFQXZdjbfBj9Jt2
-         mBXMb+O5E1CwT4eW0sLarThbER95kEDSUGgC9GX0LvQigLepC9VpnFEyBBGbUuv4n3+G
-         U2MjNIj/2iqp7F8Vl2nS9jOeLk97Gk/rBDmP9BO0x6+BcwPmf+2STvB8F3+I1yZ9ClBp
-         VNEWYFSLR+iWo/LHFr0nryOFCSiKFs9Q10o+uq0iGG1prK0mnwyNF+p+nZQy8Ij1r9Oh
-         JtuA==
+        d=gmail.com; s=20230601; t=1752765109; x=1753369909; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+mhv/Dq8Lxx9kqyTK+rpaOCeKirx9sGRLXSClbZRCh0=;
+        b=Sco8B/X0BeXiojSGlo69ASwf+4dk971X9YT9Ue3F+u7M3D9KAh7+qkG2h+8B0ZxNZO
+         CUs6eKM0hwuYGexasuPtrMQA+l2BR49iNPO+gXbTXiZFjywsKILOYRC9LctROSwMMANC
+         yf1LvxQ3rK/2pYdYRhDy87T7jSZhSxTD2qA9KNUBALVBsWc8/vWWKoE56B4ucLvSHrhY
+         0F1evgErrLIOvn74UrJlL6JsuRAb834VMXqZUYk0rriTcsw/V2QgBcOBwokpgn8ghOsY
+         rFZGPthR0eNTrKV7ZUGNMuz9/xuFqdXvG8rS8NQdr/GGOdfr8CGCDiLLKopq07LZHoyd
+         5wEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752765005; x=1753369805;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PMkrTXBzfaq3rWiLym1Qv+vgbExX2qt7dFfmHvP61uQ=;
-        b=maWBbIvJsI1y4EhjOOBYjQtP3oc4ZZVJ7iAVPnqEjJX2Wx1r6qMZnOC+kbkPm20g4f
-         bfPfPWjL5OXNOTIjLBc+kPE5ZbTj4oRi8R3nxGf8TxLWTSRwJHMCbBr1ZXEzQl3iLxaD
-         h8sQ8wqcIxTnacqXQEA+wrxpWUfXi9NuOrZF96dARAQ8QsxFkzfLi+qD/DxRDRs2Ru5Z
-         +RGpYe8M/quN+14vM+kPOapXkpYlXyZ3//S5G5vpw8EM2gWdm5BnOeG5dkl4rN2gltMa
-         eojpkjpd5enK5q8L+nsCyPHrapxpSG22KLyl7DMxJzbrzBmWf+6Nl3gOjeonY7rH/bmA
-         xf1w==
-X-Forwarded-Encrypted: i=1; AJvYcCXvSQrgHrnTccdjYfYV796ynfIpgHBp3/vZo52MBe+06I4dNU+Xj1xYZ7go0LFYnbMsWX/F0GJmD2iiPCM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy43gFysRbmVDCesh4SDnoNSd+H/L55ljhoPYXuUib4j0e4BLKl
-	m9ITlUMomnXgDGJzqovyXDd2hJBSXh+cGf+U5OyCSaK1K3DxHHZhIJl9XtjIXrydJA==
-X-Gm-Gg: ASbGncuIonUzrDx40RuddIAgAgNA6wqerJ8ptqjBeJzVrRrqUsIwBZ7PECTuKAI8PYg
-	rRXCoHqyR840nPkhgLFrMKxK4RMnXmJwaKbwhCvY/UXQ8QWnBKhW2+IlXi9iFFIJJJwFsPMEsYu
-	R/wWMdu913KlJCbfn2AKsvoX1fm/abprH1Q2VDRhyZbBinX76ReqQn2Uxvzx/lhvd3oJpDjigET
-	531KdrOBNS76Y/NrZwPXj9RfCIyPFc2xnIoKw45WoXjQz2Tozn0QpAkWHcZy41ch6M92xLkuR1P
-	8RUFBxuFUXNKIE6FRLfMF7hqeK4iSXyuJ5CXfpOcObRh6ux3BMZ+ZFOtOmVCFWntbxC+ivQepAi
-	19AeeCJQQWyg+0MHti8aZITFJ+czRXFmzTSXcEmyG
-X-Google-Smtp-Source: AGHT+IFHw7EDM0Ve8emqO8zAANy76pLvuQMaMZ2gTShPCrmHYOtitdMLZSMCt19Kay54OFuds4ESoA==
-X-Received: by 2002:a05:6214:3bc2:b0:6ff:16da:af20 with SMTP id 6a1803df08f44-704f6a57203mr93992966d6.14.1752765004966;
-        Thu, 17 Jul 2025 08:10:04 -0700 (PDT)
-Received: from rowland.harvard.edu ([140.247.181.15])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-704979e45d2sm85876696d6.52.2025.07.17.08.10.04
+        d=1e100.net; s=20230601; t=1752765109; x=1753369909;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+mhv/Dq8Lxx9kqyTK+rpaOCeKirx9sGRLXSClbZRCh0=;
+        b=K+6IpQyTotF++KTLzS4ARxlqnml4PIDkWSAFeD+wcOFvdIKgYkOfzxiZgBaxzn0fMQ
+         9Z9IqMITvJy7/oJPSi1S0hpvey6Api+UITuv7T57IplgM+IaFY+yvtyD9b6RDyKdYRQs
+         IgrFvEQQ9uIIc5FnW/uuG/2AmXFAsmfQXNZpLqna2bKFC+VxMZOMo44/LU34b4ThlajX
+         3EVt7MCZ+zPtif2q/o1JhHc5ZO22hJmzds3/xRYDcMykVxJb0cucoSPYbyztszhsVsWF
+         xK8paE8qg5QmujQtwXNGGL5VFx/2Pn/vKqyDhMfT+UaEJ3KQb76HWuBeU1wS6/P0vPpD
+         vpxw==
+X-Forwarded-Encrypted: i=1; AJvYcCUA0gmS5joInRYEHBZaBdD6R1Q5R7UBZd74AAbbt3F2yvyOmVgjUB63PC995OmpVIN2lY5gacZwez6ttjSZ@vger.kernel.org, AJvYcCXSU69UjIKeQoSaizpXj3KOppNu2w4UWBbQsGSRQ7l9G90lmjABRuHI9i8uauBXjA51skah5uR/GET+Um6TKng=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIBz991fsdsv8C5+aY+dikPjtaHH8Y94X9pytnAABmMuoli3l1
+	0xXPTrnkSPTabaa7TZTHSEsTWIb/UeFirvCgdAHwYoXFd0/EuH4bH4Qz52mpLCXh
+X-Gm-Gg: ASbGncuhLrDJ+nvKW3Z0MCLq6oJ2lQ3qRFXID86hE1F7K/vjViuriaz00DjI6JqMO3f
+	SUX1qLdaJL2A+dTm7+eUzmPcC6wmLnLOV4VrO0nbSLNJ8YlhO4jlU/7bSO2MbPdPIjp/loNFjHR
+	6WxSIsKIlImaqh4TO2tUTk8USiuSwocaUSsUamjy1fcHjYrxsGwpFiscTyMxDPsFaN6I9ZoNlwF
+	tFfRE0+5MYGVzZ2WUeoze0DKgvQdkCcFamk6Gd0lV6p5Yo6H1sl2od9yuXZvDNrTFDe0MqZHIuC
+	oeRuLx95GWPhv/94XAbJNEFUJiE9ba6cJQxR2j3XzhISAUNpyGkA8ZoUxdA5i7vEmI9ux2Cvpk3
+	dXJiEbO2AAHL8m/CyqK8zSiuKw0xg229swHqllF4eu3Lpcd/Km+gwaxEf3XZtPRauQwjLyBnX5q
+	Q=
+X-Google-Smtp-Source: AGHT+IGEtiT/Xk6voUrN+8xLP8T2v3jP5vak5oA9+oMU3uzh4q0axPU3LGQNJYEetePB95PTQpuyMg==
+X-Received: by 2002:a17:90b:28c4:b0:311:e8cc:425e with SMTP id 98e67ed59e1d1-31c9e78b707mr9701248a91.31.1752765108294;
+        Thu, 17 Jul 2025 08:11:48 -0700 (PDT)
+Received: from ipravd-Nitro-AN515-55.hsd1.ca.comcast.net ([2601:646:a000:5fc0:cedd:b9ca:8b99:e839])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31cb5cb3f98sm1245049a91.43.2025.07.17.08.11.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 08:10:04 -0700 (PDT)
-Date: Thu, 17 Jul 2025 11:10:01 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Benjamin Tissoires <bentiss@kernel.org>
-Cc: syzbot <syzbot+b63d677d63bcac06cf90@syzkaller.appspotmail.com>,
-	jikos@kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [input?] [usb?] UBSAN: shift-out-of-bounds in s32ton (2)
-Message-ID: <15723551-960b-4257-bfbd-073e136deaa2@rowland.harvard.edu>
-References: <8bec1698-5008-428f-8e71-ec002def0c54@rowland.harvard.edu>
- <6876b0ec.a70a0220.693ce.0019.GAE@google.com>
- <78c3fb66-c30f-4c64-a499-61c1665186a8@rowland.harvard.edu>
- <d21dcce3-88ba-416c-9d18-ea47855c48fc@rowland.harvard.edu>
- <zakga5qqql6zyat6wbnntm6tvcmhlhmjt5ecz6nm5hpc7z2iw7@mcpmrg7r4qlt>
+        Thu, 17 Jul 2025 08:11:47 -0700 (PDT)
+From: Ivan Pravdin <ipravdin.official@gmail.com>
+To: marcel@holtmann.org,
+	johan.hedberg@gmail.com,
+	luiz.dentz@gmail.com,
+	linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ivan Pravdin <ipravdin.official@gmail.com>,
+	syzbot+ac3c79181f6aecc5120c@syzkaller.appspotmail.com
+Subject: [PATCH] Bluetooth: hci_devcd_dump: fix out-of-bounds via dev_coredumpv
+Date: Thu, 17 Jul 2025 11:10:52 -0400
+Message-ID: <20250717151051.195106-2-ipravdin.official@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <zakga5qqql6zyat6wbnntm6tvcmhlhmjt5ecz6nm5hpc7z2iw7@mcpmrg7r4qlt>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 17, 2025 at 01:48:41PM +0200, Benjamin Tissoires wrote:
-> Hi Alan,
-> 
-> On Jul 16 2025, Alan Stern wrote:
-> > > Benjamin:
-> > > 
-> > > Clearly there's going to be trouble when you try to convert a signed 
-> > > 32-bit value to a 0-bit number!
-> > > 
-> > > My impression is that hid_parser_global() should reject Report Size or 
-> > > Report Count items with a value of 0.  Such fields would be meaningless 
-> > > in any case.  The routine checks for values that are too large, but not 
-> > > for values that are too small.
-> > > 
-> > > Does this look like the right approach?
+Currently both dev_coredumpv and skb_put_data in hci_devcd_dump use
+hdev->dump.head. However, dev_coredumpv can free the buffer. From
+dev_coredumpm_timeout documentation, which is used by dev_coredumpv:
 
-...
+    > Creates a new device coredump for the given device. If a previous one hasn't
+    > been read yet, the new coredump is discarded. The data lifetime is determined
+    > by the device coredump framework and when it is no longer needed the @free
+    > function will be called to free the data.
 
-> > This patch didn't work; the error message never showed up in the kernel 
-> > log.  Nevertheless, hidinput_change_resolution_multipliers() tried to 
-> > create an output report with a field having size 0.
-> > 
-> > How can this to happen without hid_scan_report() or hid_open_report() 
-> > running?  It shouldn't be possible to use a report before it has been 
-> > checked for validity.
-> 
-> It's just that the provided report descriptor was never setting a report
-> size or a report count. This way, we are stuck with the default value
-> from kzalloc: 0.
-> 
-> Basically, if your report descriptor is as simple as:
-> Usage Page (Generic Desktop)
-> Usage (X)
-> Usage (Y)
-> Report Count (2)
-> Input (Data,Var,Rel)
-> 
-> Then we would trigger this bug: "report Size" is never set and is thus 0.
-> 
-> Your patch is good though, as it is probably a good thing to prevent a
-> report size/count to be 0. But it's not addressing the issue here
-> because the only time we can check for those values is when we receive
-> an Input/Feature/Output value (or ranges), so in hid_add_field().
+If the data has not been read by the userspace yet, dev_coredumpv will
+discard new buffer, freeing hdev->dump.head. This leads to
+vmalloc-out-of-bounds error when skb_put_data tries to access
+hdev->dump.head.
 
-Of course!  Thanks for the pointer.  Let's try it out.
+A crash report from syzbot illustrates this:
 
-Alan Stern
+    ==================================================================
+    BUG: KASAN: vmalloc-out-of-bounds in skb_put_data
+    include/linux/skbuff.h:2752 [inline]
+    BUG: KASAN: vmalloc-out-of-bounds in hci_devcd_dump+0x142/0x240
+    net/bluetooth/coredump.c:258
+    Read of size 140 at addr ffffc90004ed5000 by task kworker/u9:2/5844
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git c2ca42f190b6
+    CPU: 1 UID: 0 PID: 5844 Comm: kworker/u9:2 Not tainted
+    6.14.0-syzkaller-10892-g4e82c87058f4 #0 PREEMPT(full)
+    Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+    Google 02/12/2025
+    Workqueue: hci0 hci_devcd_timeout
+    Call Trace:
+     <TASK>
+     __dump_stack lib/dump_stack.c:94 [inline]
+     dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+     print_address_description mm/kasan/report.c:408 [inline]
+     print_report+0xc3/0x670 mm/kasan/report.c:521
+     kasan_report+0xe0/0x110 mm/kasan/report.c:634
+     check_region_inline mm/kasan/generic.c:183 [inline]
+     kasan_check_range+0xef/0x1a0 mm/kasan/generic.c:189
+     __asan_memcpy+0x23/0x60 mm/kasan/shadow.c:105
+     skb_put_data include/linux/skbuff.h:2752 [inline]
+     hci_devcd_dump+0x142/0x240 net/bluetooth/coredump.c:258
+     hci_devcd_timeout+0xb5/0x2e0 net/bluetooth/coredump.c:413
+     process_one_work+0x9cc/0x1b70 kernel/workqueue.c:3238
+     process_scheduled_works kernel/workqueue.c:3319 [inline]
+     worker_thread+0x6c8/0xf10 kernel/workqueue.c:3400
+     kthread+0x3c2/0x780 kernel/kthread.c:464
+     ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:153
+     ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+     </TASK>
 
-Index: usb-devel/drivers/hid/hid-core.c
-===================================================================
---- usb-devel.orig/drivers/hid/hid-core.c
-+++ usb-devel/drivers/hid/hid-core.c
-@@ -313,7 +313,14 @@ static int hid_add_field(struct hid_pars
+    The buggy address ffffc90004ed5000 belongs to a vmalloc virtual mapping
+    Memory state around the buggy address:
+     ffffc90004ed4f00: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
+     ffffc90004ed4f80: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
+    >ffffc90004ed5000: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
+                       ^
+     ffffc90004ed5080: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
+     ffffc90004ed5100: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
+    ==================================================================
+
+To avoid this issue, reorder dev_coredumpv to be called after
+skb_put_data that does not free the data.
+
+Reported-by: syzbot+ac3c79181f6aecc5120c@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=ac3c79181f6aecc5120c
+Fixes: b257e02ecc46 ("HCI: coredump: Log devcd dumps into the monitor")
+Tested-by: syzbot+ac3c79181f6aecc5120c@syzkaller.appspotmail.com
+Signed-off-by: Ivan Pravdin <ipravdin.official@gmail.com>
+---
+
+Changes since v2:
+ * Updated subject line
+ * Updated comment to include more details about the issue
+ * Moved dev_coredumpv instead of using temporary buffer
+
+Changes since v1:
+ * Changed subject prefix to Bluetooth:
+
+[v2] https://lore.kernel.org/linux-bluetooth/20250716003726.124975-2-ipravdin.official@gmail.com/
+[v1] https://lore.kernel.org/linux-bluetooth/20250614041910.219584-1-ipravdin.official@gmail.com/
+
+ net/bluetooth/coredump.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/net/bluetooth/coredump.c b/net/bluetooth/coredump.c
+index 819eacb38762..720cb79adf96 100644
+--- a/net/bluetooth/coredump.c
++++ b/net/bluetooth/coredump.c
+@@ -249,15 +249,15 @@ static void hci_devcd_dump(struct hci_dev *hdev)
+ 
+ 	size = hdev->dump.tail - hdev->dump.head;
+ 
+-	/* Emit a devcoredump with the available data */
+-	dev_coredumpv(&hdev->dev, hdev->dump.head, size, GFP_KERNEL);
+-
+ 	/* Send a copy to monitor as a diagnostic packet */
+ 	skb = bt_skb_alloc(size, GFP_ATOMIC);
+ 	if (skb) {
+ 		skb_put_data(skb, hdev->dump.head, size);
+ 		hci_recv_diag(hdev, skb);
  	}
++
++	/* Emit a devcoredump with the available data */
++	dev_coredumpv(&hdev->dev, hdev->dump.head, size, GFP_KERNEL);
+ }
  
- 	offset = report->size;
--	report->size += parser->global.report_size * parser->global.report_count;
-+	i = parser->global.report_size * parser->global.report_count;
-+	if (i == 0) {
-+		dbg_hid("invalid field size/count 0x%x 0x%x\n",
-+			parser->global.report_size,
-+			parser->global.report_count);
-+		return -1;
-+	}
-+	report->size += i;
- 
- 	if (parser->device->ll_driver->max_buffer_size)
- 		max_buffer_size = parser->device->ll_driver->max_buffer_size;
-@@ -464,7 +471,8 @@ static int hid_parser_global(struct hid_
- 
- 	case HID_GLOBAL_ITEM_TAG_REPORT_SIZE:
- 		parser->global.report_size = item_udata(item);
--		if (parser->global.report_size > 256) {
-+		if (parser->global.report_size > 256 ||
-+				parser->global.report_size == 0) {
- 			hid_err(parser->device, "invalid report_size %d\n",
- 					parser->global.report_size);
- 			return -1;
-@@ -473,7 +481,8 @@ static int hid_parser_global(struct hid_
- 
- 	case HID_GLOBAL_ITEM_TAG_REPORT_COUNT:
- 		parser->global.report_count = item_udata(item);
--		if (parser->global.report_count > HID_MAX_USAGES) {
-+		if (parser->global.report_count > HID_MAX_USAGES ||
-+				parser->global.report_count == 0) {
- 			hid_err(parser->device, "invalid report_count %d\n",
- 					parser->global.report_count);
- 			return -1;
-
+ static void hci_devcd_handle_pkt_complete(struct hci_dev *hdev,
+-- 
+2.45.2
 
 
