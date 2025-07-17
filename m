@@ -1,166 +1,280 @@
-Return-Path: <linux-kernel+bounces-735607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CED3BB09180
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:14:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C3BFB09182
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:14:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FC66188803D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:14:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD30A17062A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 210BE2FA62F;
-	Thu, 17 Jul 2025 16:14:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584FB2F94A1;
+	Thu, 17 Jul 2025 16:14:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aHRei6ps"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YFzuQ4w2"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E68288C12;
-	Thu, 17 Jul 2025 16:14:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1865288C12
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 16:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752768861; cv=none; b=Y8B5r8faTZDkc7LnsqCnEHeynm2V/jsnvjec/7fYOwerB5e3d0lMNsYs2Q9xr7n6sDtTRN76eoAlVOFGYNsRUabp+gUlqGoxkXWpqMzwEW/9dXHHX3+jw7SkYHXr2GvDsBSxB/UMXSrjpXiXh0TnePvnEXNtziUh86iLYUQxUYM=
+	t=1752768890; cv=none; b=il2nAE+3LdBlWS9scgTJ5QDv+V+XBE1u6Z5SMAYZes+RFRsk13y6GusuH7cnm9Zk8Bm5UPEcz5AFnqjUSBItSYH9e7P3lq8Xhz/hurZZ5V1LHFCAPgO+7CLhgNh6GI57aCvlUplNP2oMzbEni8NCSIwL4Qvmc9QR+NB1pCqkIZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752768861; c=relaxed/simple;
-	bh=/P/sV+sQCJwwTH0lx/U38MZ3P+zHFO7z6yDbHcy0kNg=;
+	s=arc-20240116; t=1752768890; c=relaxed/simple;
+	bh=vnrfW7MDEtPXiQ+PeefY1maBKqzCBMejc315uPOTQ/g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e/xkWyH17fstiOnjlhhEmvCDUnLKUbOR7gJWpFhs2W5abKdx5GdnuaofgOhCWk8sVFpIIq3LhlGSVdDxXb17WNt//LAmUnacNjOAXbYGr/jvIIgGFemJVWbDlac8m+hU3sAs/ZCumGclmttRStt5bOAVrb3Z0KSR78DCj3sS1n8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aHRei6ps; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6facc3b9559so15369916d6.0;
-        Thu, 17 Jul 2025 09:14:19 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=akhaNErIOzj9l6vzFY4VRQlVGG96gSukpb7FtqCD3aEt3ciX+jFObym6003tKIOhVFbjPYxOLpf+HWv+VczJ+xlOjh3p9vFHitQGJtGR2z3cvUw68u6JF5PDMQgEHjvACHCo5MojtEgaxwAT/PcoMA2JEIGJruQgBugqjoyrhs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YFzuQ4w2; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-456108bf94bso7899145e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 09:14:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752768859; x=1753373659; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L+yz+W/V56qlFCu6Ortl7e+6CnAcr0ty8ni1aHJ/G24=;
-        b=aHRei6psRIS6wK/YPANELOJz8d9aWwSfHDqZqPi2V9W7IqBrWXekZxera6oogrOxCP
-         5U25mfgLd0Q5LY+NbaXJQGBueQ4/dkC6Ht9QbKTEf5sf17PJjPuShd6nlkwOSKKjAwqW
-         rDZuYt1SKPfATkCqha+vZ7mB4V3+0rkhwRCVUhlMYZDC+vPmcZx9dj0bgjuL7zckyNdf
-         BqwRnoSuCuHEBzKIwqL4hQ0+1LMGx3jSheQnrmoinhoXgOEZX0EwB1vOqOaSGs95NoCX
-         XP/YSqGXS0EcSuDDbtMO7nWNnZ2ooyYITxB+92sp//DBO7LjZVTLkUhZ27XEzapr2VoE
-         YYYA==
+        d=linaro.org; s=google; t=1752768887; x=1753373687; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=XLAwLeBG8xp4dc08BrzRdbHpWuQPpe2nJ16RFlGB0IQ=;
+        b=YFzuQ4w2OoglQFYkCU/YjBjgUrsfkIHHBeozkhDB0IoMkr9vvMauERIWtb5tJrPKNl
+         Gri/Z4WkGbJf/CfVEwd+6JsFxL/+uOhqxuwcErzq2UqAP5RJMH+UB39rZ2RMLvF8xz+F
+         1TZvEuH6FcpeHuIgqRN+AhtALm07OrvQ2NAnrUCZ6wzUeyfPztI7O5S0fgnqSvxWRPy9
+         kgIW4qjPZ5mWCw9YQCkYtE2UF1yEySAX+fSNVJ6uH0fRjtoN8vobU2Qzi8kkl7SxrBOk
+         UekQqdzYxjJM5wZd2YMDAX8fAsOXch49yGh7qzAUUtJAy6byaeLEl8xQxcpD3qtzFN/A
+         YqOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752768859; x=1753373659;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=L+yz+W/V56qlFCu6Ortl7e+6CnAcr0ty8ni1aHJ/G24=;
-        b=aMbJm8e+ojhIiKE1aZCgt9O2b0rwb5kBbp/TfVkoAmP4vnEeDitpL/J/2FcgMOaEyS
-         GnRTJ3d8NAT7dnMm4yemAFjK1dOh+pdacT9tChbAdyjlBKLHfe8ZpCnKnZveJyoHsQb2
-         FAOxkJ/kGWzvYBpkqGMRMOvbmjspqCn9yxHEO3RdrGjanbLB+uwDVx0WchQx2vcYC/49
-         Wii9SQmuDfFvU9sS1QO8ElGsVHHn4hZkzmOx+fzicqsvaEAPBBIZK0svliWwz0/7W3Hx
-         7bScmyDOxSyXtft//C1ZuoVLZbG5J+nd1APD+sVokFC8yieg8vPYrvaUaLFLcZYlo5H6
-         25VA==
-X-Forwarded-Encrypted: i=1; AJvYcCWreoY41/R5Q5y1WcyrhBe4KM908xDYCzbrjZ/racnB1137Pt7IsCj5w38P8cSd+Tw47nnqUGSXFqyoVbI=@vger.kernel.org, AJvYcCXrgmMhwx8BCXpRG1Lf9RP0K2X+RN4RuNsx97EkpPjoUxPCms3wrgwyHTEDiYVVjAj5zbCbIiGTa6QIOD54Fl8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpHWU7lI+wFfy2EzBieQwdsYxOsvv6Lcqmkpvgu37aIL2qv5wl
-	IagNKdp2z3a+LyCMbfs3Smr+i+opCdoRc8khyZX8iEsextaEU6nH3LdX
-X-Gm-Gg: ASbGncsVoeHQXbrwac354GQTDxLoOluzyrhvjenEaXhf+aGuVpiw8YWtbS83c3DQ3Mw
-	WQOol55vPF1xo8zTJLh7oMs71FxhVAj1MhgjrijmrzG8HJkumQQUDpWGti4oPn2DVAtVRiQ2wrP
-	gWOfvxha8ANNebKhW6ALBbO2JOqrVhQAO1gY2mEowoKxDK/R6MyMP/6v6hSgs2cr4FrZEpkCPjT
-	ymJyyQRcHIh4jRpzo2zgQDlN2dX+1YwgrdUcpX1aG3kgZk0caf7jCKUqhCSrjmNWHHz/21KjTDb
-	KtxGPQRy/H2x/63OtjYwGAohsg20yDEjIKy3tLnLjnu1bHESK0mhga9bZKBSxlQtQQIMOErXSNS
-	r3TSVpNHZ8MeQA5nknHBhMuFWjaELXokGITGXEALz3CEjgg8shZK/qsD5G7FotFEt68amy9+8KA
-	jyODkMnc5XbWqG
-X-Google-Smtp-Source: AGHT+IGPXNss7QM/3gt8EaNhAyoHgBwLz/cvFQg+KILkOzEQ9CC5cn74rJSv6rbv4jcqqkFdPVow4g==
-X-Received: by 2002:ad4:4ee1:0:b0:702:d0e6:6e6b with SMTP id 6a1803df08f44-704f6bfd432mr111820616d6.45.1752768858643;
-        Thu, 17 Jul 2025 09:14:18 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70497d39d14sm86256086d6.76.2025.07.17.09.14.17
+        d=1e100.net; s=20230601; t=1752768887; x=1753373687;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XLAwLeBG8xp4dc08BrzRdbHpWuQPpe2nJ16RFlGB0IQ=;
+        b=EpftMOA1cDZlPGZEiDTClQHlZaG8Qey9ZEuC1EQe5RzE/pCbrEV+oqPK4uYzH71oXv
+         BqihmWRiEO20yDhlFfxhH7dCXBdWwgxWc3LczWkiSlireh4G7QZV3/RVOny2nOD2C7K9
+         6mYQDVvrHNSZwOpKbG2CzSu5VOfhsPeock+h8sm1cjNZJ4SBqP4EZiCRYxY4zjMHnQMc
+         0KCu3CteZO3f3B+FwUMGSkMgFSz1jVS7E684GXzyFvR7UhZfitiUoDpuWLdqGRpJ3MzP
+         JcNwMEtHbobm6khsOwwdDjzLuEwvxOU+rxTw7hmgfDJJ76inad54uY/g0BkBBSbE3cFe
+         Av+w==
+X-Forwarded-Encrypted: i=1; AJvYcCVYY44qErLomeJLgpx8vcV9uVrMb7MaIzKCz4PcoWottLOPOzYdC6zhsKbU3PUojPnrkIRYwrZo7NMP5gA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPN3v/yPt0n7YUYfiRUR//3YFg2Grf/vQCTraLtSAaYuVAqyhn
+	Cu8VblPjZJ0d0mvY4cvbCwWnfKxcnqgZXQ41C1+uGaIZuthXkHqFAOTkwt2wij/O/DyBVUgvdgv
+	w2A1e
+X-Gm-Gg: ASbGnctF0Wl6zFeDaLrx8eJ6kpgUAsps68iHxMfpusDNUqk1Q0TQUCdnVXcAnoFqHqa
+	5Je3/E2NndrSMB2lC44B8yyvl+oInXzpdJG/Fx4Vg3R0L6qWyOplrO2iZ+OGg446yKiRzI9dKlq
+	T4svb9mmWKyV/gs5A/VreSNY2CO4LQh23PapysfQRS89dskcfT9Gvw36o3K7POHYPVS9BkLifCb
+	K7pf/N8yE2P2YiWKevonWb5NuE24inGAmm+kC/wBLu/LN+eIXcHq9SeR25/7vlel2xFwM20mNeZ
+	IEf7hDaOIz/6lG57yujQ4ZMwetUG1uwdjnRlu0Y49IVS+Rygw8m05mO50hxbiDeoZhx216IxIuV
+	Z09nlh68Y7B+7/nKoqFIDSe2aMz0hUlO7jw==
+X-Google-Smtp-Source: AGHT+IG8X08yDtcJjXlqFt3MzTuc0Qxi/sS6hoizIgQ85eHNFJWG4UtueCANjketu6w7VGqk5gFBWw==
+X-Received: by 2002:a05:600c:314f:b0:450:d3b9:4ba4 with SMTP id 5b1f17b1804b1-4562e34ad97mr80610545e9.2.1752768886828;
+        Thu, 17 Jul 2025 09:14:46 -0700 (PDT)
+Received: from linaro.org ([2a02:2454:ff21:ef30:79a0:386f:8c5a:9506])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45634f4c546sm27013375e9.7.2025.07.17.09.14.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 09:14:18 -0700 (PDT)
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 50D6CF40068;
-	Thu, 17 Jul 2025 12:14:17 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-10.internal (MEProxy); Thu, 17 Jul 2025 12:14:17 -0400
-X-ME-Sender: <xms:WSF5aBq0IeXzv2Yh02VaaWVgfcxo6yej423YJ7xjyZo4iAjVdUhgDg>
-    <xme:WSF5aHnK1wY0eaadXUvWS-EEn3eOMQoO049h5pLab7DXztVWHZOM_YEu39sIXU-Pz
-    mH9HgtH_kuI2rm9rg>
-X-ME-Received: <xmr:WSF5aCyiTGOTpDGgCzV20ONDcDVASJ7hh8CnFMjLjc5sEWVCnTQ6iYHgYw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeiuddtfecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
-    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
-    hrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveeiudffiedv
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqh
-    hunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddu
-    jeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvg
-    drnhgrmhgvpdhnsggprhgtphhtthhopeduledpmhhouggvpehsmhhtphhouhhtpdhrtghp
-    thhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehhuhhirdiihhhuse
-    hlihhnuhigrdguvghvpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhr
-    tghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphhtthhope
-    hgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhnfegpghhhsehp
-    rhhothhonhhmrghilhdrtghomhdprhgtphhtthhopehlohhsshhinheskhgvrhhnvghlrd
-    horhhgpdhrtghpthhtoheprgdrhhhinhgusghorhhgsehkvghrnhgvlhdrohhrghdprhgt
-    phhtthhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtghomh
-X-ME-Proxy: <xmx:WSF5aE2eit8GwdcxDzZsIkWPPFN4DKRNHoYnoO-mSWt9xU9axqthLA>
-    <xmx:WSF5aGDyHYJAW1kNxzJ6djBb2o2vI8DssiugjZPNAS9R8vXk9teT8g>
-    <xmx:WSF5aB_F8bBhYIC1qj4u4LV7aKfWRaKNyJwNRixVg_kr9qNPZWd4EQ>
-    <xmx:WSF5aE8AVU2Ck9YQAes6FLYPb1OgFNeQLDfWiaVUqGV-43FeI7maOw>
-    <xmx:WSF5aB0QqzAN9sDKSpgx3UWsOdl1XT7UyqDmQwn4j4NgJe_UlAQ3rsh->
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 17 Jul 2025 12:14:16 -0400 (EDT)
-Date: Thu, 17 Jul 2025 09:14:15 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Hui Zhu <hui.zhu@linux.dev>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	bjorn3_gh@protonmail.com, Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	Hui Zhu <zhuhui@kylinos.cn>, Geliang Tang <geliang@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Uladzislau Rezki <urezki@gmail.com>
-Subject: Re: [PATCH v2] rust: add a sample alloc usage
-Message-ID: <aHkhVwD7WKm1dSsa@Mac.home>
-References: <20250717095053.49239-1-hui.zhu@linux.dev>
- <DBEAFCFHFU35.1IZI3ZSJSIRAY@kernel.org>
+        Thu, 17 Jul 2025 09:14:46 -0700 (PDT)
+Date: Thu, 17 Jul 2025 18:14:41 +0200
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: Yijie Yang <yijie.yang@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] arm64: dts: qcom: Add HAMOA-IOT-SOM platform
+Message-ID: <aHkhcUVBnrwadKfa@linaro.org>
+References: <20250716-hamoa_initial-v1-0-f6f5d0f9a163@oss.qualcomm.com>
+ <20250716-hamoa_initial-v1-3-f6f5d0f9a163@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <DBEAFCFHFU35.1IZI3ZSJSIRAY@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250716-hamoa_initial-v1-3-f6f5d0f9a163@oss.qualcomm.com>
 
-On Thu, Jul 17, 2025 at 01:19:05PM +0200, Danilo Krummrich wrote:
-> (Cc: Lorenzo, Vlastimil, Liam, Uladzislau)
+On Wed, Jul 16, 2025 at 05:08:41PM +0800, Yijie Yang wrote:
+> The HAMOA-IOT-SOM is a compact computing module that integrates a System
+> on Chip (SoC) — specifically the x1e80100 — along with essential
+> components optimized for IoT applications. It is designed to be mounted on
+> carrier boards, enabling the development of complete embedded systems.
 > 
-> On Thu Jul 17, 2025 at 11:50 AM CEST, Hui Zhu wrote:
-> > diff --git a/samples/rust/Makefile b/samples/rust/Makefile
-> > index bd2faad63b4f..7c3e68d9ada5 100644
-> > --- a/samples/rust/Makefile
-> > +++ b/samples/rust/Makefile
-> > @@ -10,6 +10,7 @@ obj-$(CONFIG_SAMPLE_RUST_DRIVER_PLATFORM)	+= rust_driver_platform.o
-> >  obj-$(CONFIG_SAMPLE_RUST_DRIVER_FAUX)		+= rust_driver_faux.o
-> >  obj-$(CONFIG_SAMPLE_RUST_DRIVER_AUXILIARY)	+= rust_driver_auxiliary.o
-> >  obj-$(CONFIG_SAMPLE_RUST_CONFIGFS)		+= rust_configfs.o
-> > +obj-$(CONFIG_SAMPLE_RUST_ALLOC)		+= rust_alloc.o
-> 
-> I think adding an example for large alignment is fine, but let's do this in a
-> doc-test on VBox in rust/kernel/alloc/kbox.rs. I think adding a separate module
+> This change enables and overlays the following components:
+> - Regulators on the SOM
+> - Reserved memory regions
+> - PCIe6a and its PHY
+> - PCIe4 and its PHY
+> - USB0 through USB6 and their PHYs
+> - ADSP, CDSP
+> - WLAN, Bluetooth (M.2 interface)
 
-I would suggest using #[kunit_tests(..)], which is similar to how
-doc-test run, for it if we only use it for test purposes.
+There is no WLAN in here, it's part of PATCH 4/4 as far as I can tell.
+Move it to changelog of PATCH 4/4?
 
-Regards,
-Boqun
+> 
+> Written with contributions from Yingying Tang (added PCIe4 and its PHY to
+> enable WLAN).
+> 
+> Signed-off-by: Yijie Yang <yijie.yang@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/hamoa-iot-som.dtsi | 607 ++++++++++++++++++++++++++++
+>  1 file changed, 607 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/hamoa-iot-som.dtsi b/arch/arm64/boot/dts/qcom/hamoa-iot-som.dtsi
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..dad24a6a49ad370aee48a9fd8f4a46f64c2b6348
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/hamoa-iot-som.dtsi
+> @@ -0,0 +1,607 @@
+> [...]
+> +&remoteproc_adsp {
+> +	firmware-name = "qcom/hamoa-iot/adsp.mbn",
+> +			"qcom/hamoa-iot/adsp_dtb.mbn";
+> +
+> +	status = "okay";
+> +};
+> +
+> +&remoteproc_cdsp {
+> +	firmware-name = "qcom/hamoa-iot/cdsp.mbn",
+> +			"qcom/hamoa-iot/cdsp_dtb.mbn";
 
-> for this is overkill.
+You say this SoM can be used to build "complete embedded systems", are
+you sure they will all use the same firwmare signatures?
+
+If not, this should be in the device-specific DT (i.e. the carrier board
+in your case).
+
+> [...]
+> +&usb_1_ss0 {
+> +	status = "okay";
+> +};
+> +
+> +&usb_1_ss0_dwc3 {
+> +	dr_mode = "otg";
+> +	usb-role-switch;
+> +};
+> +
+> +&usb_1_ss0_hsphy {
+> +	vdd-supply = <&vreg_l3j_0p8>;
+> +	vdda12-supply = <&vreg_l2j_1p2>;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&usb_1_ss0_qmpphy {
+> +	vdda-phy-supply = <&vreg_l2j_1p2>;
+> +	vdda-pll-supply = <&vreg_l1j_0p8>;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&usb_1_ss1 {
+> +	status = "okay";
+> +};
+> +
+> +&usb_1_ss1_dwc3 {
+> +	dr_mode = "otg";
+> +	usb-role-switch;
+> +};
+> +
+> +&usb_1_ss1_hsphy {
+> +	vdd-supply = <&vreg_l3j_0p8>;
+> +	vdda12-supply = <&vreg_l2j_1p2>;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&usb_1_ss1_qmpphy {
+> +	vdda-phy-supply = <&vreg_l2j_1p2>;
+> +	vdda-pll-supply = <&vreg_l2d_0p9>;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&usb_1_ss2 {
+> +	status = "okay";
+> +};
+> +
+> +&usb_1_ss2_dwc3 {
+> +	dr_mode = "otg";
+> +	usb-role-switch;
+> +};
+> +
+> +&usb_1_ss2_hsphy {
+> +	vdd-supply = <&vreg_l3j_0p8>;
+> +	vdda12-supply = <&vreg_l2j_1p2>;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&usb_1_ss2_qmpphy {
+> +	vdda-phy-supply = <&vreg_l2j_1p2>;
+> +	vdda-pll-supply = <&vreg_l2d_0p9>;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&usb_2 {
+> +	status = "okay";
+> +};
+> +
+> +&usb_2_dwc3 {
+> +	dr_mode = "host";
+> +};
+> +
+> +&usb_2_hsphy {
+> +	vdd-supply = <&vreg_l2e_0p8>;
+> +	vdda12-supply = <&vreg_l3e_1p2>;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&usb_mp {
+> +	status = "okay";
+> +};
+> +
+> +&usb_mp_hsphy0 {
+> +	vdd-supply = <&vreg_l2e_0p8>;
+> +	vdda12-supply = <&vreg_l3e_1p2>;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&usb_mp_hsphy1 {
+> +	vdd-supply = <&vreg_l2e_0p8>;
+> +	vdda12-supply = <&vreg_l3e_1p2>;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&usb_mp_qmpphy0 {
+> +	vdda-phy-supply = <&vreg_l3e_1p2>;
+> +	vdda-pll-supply = <&vreg_l3c_0p8>;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&usb_mp_qmpphy1 {
+> +	vdda-phy-supply = <&vreg_l3e_1p2>;
+> +	vdda-pll-supply = <&vreg_l3c_0p8>;
+> +
+> +	status = "okay";
+> +};
 > 
-> Note that doc-tests are executed on boot if CONFIG_RUST_KERNEL_DOCTESTS=y.
-> 
-[...]
+
+Assuming the USB ports are located on the carrier board and not the
+SoM(?):
+
+Are carrier boards required to make use of all these USB
+ports/interfaces? In my experience it's not unusual that embedded
+carrier boards use only the functionality that they need. Maybe this
+should just set the common properties and enabling individual ports for
+PCIe and USB should be up to the carrier boards.
+
+Thanks,
+Stephan
 
