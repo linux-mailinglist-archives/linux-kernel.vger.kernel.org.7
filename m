@@ -1,117 +1,89 @@
-Return-Path: <linux-kernel+bounces-735918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82BF3B0953C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:54:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 058ADB0953E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:54:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAA86A6197E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:53:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 430E31AA1E56
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE5621CA0E;
-	Thu, 17 Jul 2025 19:54:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE4221D3C9;
+	Thu, 17 Jul 2025 19:54:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EIEutlp7"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="Kg9sYn/z"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C391799F;
-	Thu, 17 Jul 2025 19:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BAC221ADB9;
+	Thu, 17 Jul 2025 19:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752782043; cv=none; b=WK38rEuzb1JwpWdxpSjs8bDTn6ZvSOP72T32jhD3NeOwM2800pfbTCyRQrlx+dUxd39jrdZYAaL7UEtAvA7LBJS7HaUQQHddVRP9+6xIp/OlRaqnoTIIWhyNmLezShGAFtXkuqzYOoHHx6BVYXXttqYGFdHe7VzQm9Z9HD3m+1A=
+	t=1752782044; cv=none; b=U5BLmDTIz2lwjJiNFHA0lFuKV40vM5m6Qbm5yCG9dz8RQ+Nd3sUl5zOZkIRPRxPxmwekEXs7S4qjGZjYF2/+3hvglscmCFiYUKHfiv1rwrKLfGBewLcpi0lhnEiAIfO6gh0w9X/qC1uRKMRudVZS3Y0BhxDTdLeAai3ESvooy2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752782043; c=relaxed/simple;
-	bh=eLhEjhdcSa4FuviVC2h+NoqxxGi3U1iHTnj9BL2JeZk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qsnbJ+GQ/cDfylzmJScGXLUoDNz0ZwZC3CcrDJ3DMobxbn/6N+PwVHCX0ZCGOJ+vAa6QkjrJjmWJdd4fJgH/ntIVnnvvo8o4LaSBWlWyV+njUBLvEWNNbZSRGdwF6aGwgvd5j12rfGmR9JaWZK9Lr5wxsP4SGT1OttE00cqFKvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EIEutlp7; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e8d713e64c5so925573276.0;
-        Thu, 17 Jul 2025 12:54:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752782041; x=1753386841; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eLhEjhdcSa4FuviVC2h+NoqxxGi3U1iHTnj9BL2JeZk=;
-        b=EIEutlp7MKD822fpMLQuWemcW50BwvBPEct46773ZVuX4PB+gEsPuBqlf5JwXMxcH8
-         HtWjra14CDQOzIjIdjIUPEA5Ovzofifg7or2WZPvrGaHGbYx6BfAuex0lkbQ/feoaKDV
-         sHC19NmckjX9woFAPzixOBBOvnsZBexUlgsmONaQjOzlUjuw0mIyBfG1qTehPJ7QlrQi
-         zMrd+l73GZ62GcbT7ed61WZ6MbyI5dt+Qit7XF0Xtql9xuUiodqTjW6Ab9kAZPWFriV/
-         nIc56+4eZJ0pfE8DTyYmZgO8ueIYDi990Vl77Rl9ZXSRHL4DnfBJzlMh1LOiopnqrYMg
-         yERw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752782041; x=1753386841;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eLhEjhdcSa4FuviVC2h+NoqxxGi3U1iHTnj9BL2JeZk=;
-        b=LHyDxhJlBYN91ZzCl4iVDwogkdab9fOS3Icll1jo53yixXtcE0eYEBTFWrFT5SWfbn
-         q54C7U/M9ZxyNueTBp/vwcoRBvNg0Xe6pukmGTcf4oHDU+AuFJRvIkPdFDLxbkVkccEj
-         nIysMaTFjYGiiwFkOl7rhEgoFYA760v7qm9kXssd+r9xMeaNnFdpkd1UE0o6XMZGZrDW
-         XvSgo8BsNX0OtXs5ffdDo3QTXDtknD76uRWRx9CpBIuxgBXqWZlOPxYEGR4tzVS5DsCI
-         qpWTVzOcNMLkg4HMISdkrulc4E0xy6HaudBtr/zADbgOGMI2glsVdmLJF8ns6EMegKQr
-         zVhg==
-X-Forwarded-Encrypted: i=1; AJvYcCUrJBELqy0PWKAqGL/XFSD1D5VbY89iGqck9u/fpvxSXUjuU9j3s47a6KbIsfgmSmJBNcR+JfqixIhi@vger.kernel.org, AJvYcCUuwDOU5vyuHqZXjFSA853qZ4+OCxKCq7DSN3re7BoDyHY/eZ57tib+EtCI3Kg4B0aVc7HI6VsXp+QuQa0o@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywcl3fedsTLyp/VkApa9ZTDfFT/ZzCRLw7sObVAwGe9rTrc70RT
-	cuYESZj69iyl8B1A1cJOJS5L7C9RLpB+t+gilaBbOH3OuFqaO/v6grmR0zloYy1zXqb7O8Rm1ld
-	IJSnou+Ea6OqHA65Jj6LqkLTwEEKfl5Y=
-X-Gm-Gg: ASbGncvDnNObhHrDscZnV4N4EiLoY6poIs1Q/MaoBEWvioMl3mKg77V53MGwJu0KO43
-	jxrGlGL1gf6xvoC29zKD1EKCVwOBGBKCwwiSf+gDtIlWPBytOiSNT1l1U6UBZFUeHqslE4MF4bw
-	lT8eYmf9wJ+S3pJQ6LeISbfQQUP21RcfHmJPCA/UTqeozW2Y5JI/jkmqZP9EqWH0rcJ1ZxkRHCt
-	gnNPaILiMkMjayWbIBLdMwaXDLUcPdN5cE79/2ms2ApfTXv4gE=
-X-Google-Smtp-Source: AGHT+IEMptaiU9saHMli+tWmWTvzkXlcE9XiJNrtQ2eFdgPK8YWZPvkdjCTfnG161XyIkWmHqCDjyy+2BgHa6UJVCo8=
-X-Received: by 2002:a05:6902:2843:b0:e8b:76d8:6fd6 with SMTP id
- 3f1490d57ef6-e8d7a58d22bmr252202276.34.1752782040543; Thu, 17 Jul 2025
- 12:54:00 -0700 (PDT)
+	s=arc-20240116; t=1752782044; c=relaxed/simple;
+	bh=mxag0EA9QVtoEFbB3/fb5eEsLO9x+lg+p4NHcMB5xlo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Vx6mya9MG5uH6OsvGurzOlq4c/DaPDPnlzqsxuDp0cxZRw+0kpTv3Vp/erSJWeSb6gG14xNCJrz0aIQVON+TXschTNVDwV8DF91NYK9SYZzktJNr20OSIBsksGlNN/9GfUjdW16OM7//zs+wBS5FZec4YMCA4/5dyaVsx1DUsj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=Kg9sYn/z; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 84C29403E1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1752782042; bh=rmLGjZUOzw2uabknsvY65okDR53aN9pw+FFFf45vLT4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Kg9sYn/z9kma55rXvG4dV5KkaUuOGiGrEFf8uh6IDeBI+lO6kHnM7RvzFuNFBrm+d
+	 wWEgNDuoR7KeA3h30ZcCtAaTnO2soVgOyPwFoOX1TdKcZI9zODHIwcscSgTqVDFbHF
+	 a5PZjpNkrdVXaEsy5o7BbhXtsWXUrU+MGPWiZxyJIRBSNMHMHskkHokxQ3ZNeS65e9
+	 4rJrBcX+/TEfOHGWR5WXCp4ADpF0mHs0eiIDkuv5+nS7HNmDp5juPuLIjNtgb1o4ES
+	 smhBqXTgmpcpf2aeReWhWjMOoPxdM4a6WsIPzRCjfPzaGt71KuZv7MRRpUUAvrexo6
+	 xfDgksPSbvrfQ==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 84C29403E1;
+	Thu, 17 Jul 2025 19:54:02 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Nikolay Borisov <nik.borisov@suse.com>, Nicolas Frattaroli
+ <nicolas.frattaroli@collabora.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>, kernel@collabora.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] docs: document linked lists
+In-Reply-To: <0b85f378-221b-408e-865b-b4eab675a351@suse.com>
+References: <20250714-linked-list-docs-v3-1-56c461580866@collabora.com>
+ <0b85f378-221b-408e-865b-b4eab675a351@suse.com>
+Date: Thu, 17 Jul 2025 13:54:01 -0600
+Message-ID: <87seiua90m.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAF3JpA7a0ExYEJ8_c7v7evKsV83s+_p7qUoH9uiYZLPxT_Md6g@mail.gmail.com>
- <20250717145911.GB112967@mit.edu> <CAF3JpA6RwyzQMdG4y3P_8jkaS8qUFPerE5MJ8Xecs+VkbPEmpg@mail.gmail.com>
-In-Reply-To: <CAF3JpA6RwyzQMdG4y3P_8jkaS8qUFPerE5MJ8Xecs+VkbPEmpg@mail.gmail.com>
-From: Moon Hee Lee <moonhee.lee.ca@gmail.com>
-Date: Thu, 17 Jul 2025 12:53:49 -0700
-X-Gm-Features: Ac12FXxeXecFpphJU2I1tr9wMiUpO3PxFBJMA_oJH7oytKiF9y0XFH0qv8sqA68
-Message-ID: <CAF3JpA5wakELyyOZVYC2MmAoQa9P_nj3AqesZ-PAHN31Omp8Rw@mail.gmail.com>
-Subject: Re: [PATCH] ext4: do not BUG when INLINE_DATA_FL lacks system.data xattr
-To: "Theodore Ts'o" <tytso@mit.edu>
-Cc: syzbot+544248a761451c0df72f@syzkaller.appspotmail.com, 
-	adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Thu, Jul 17, 2025 at 9:59=E2=80=AFAM Moon Hee Lee <moonhee.lee.ca@gmail.=
-com> wrote:
+Nikolay Borisov <nik.borisov@suse.com> writes:
 
-Just a quick follow-up to close the loop:
+> Nit: I think it's unnecessary to repeat the initilization in code since 
+> you've already explicitly mentioned you continue form State 2 of the 
+> previous example, so the only salient information is the additional 
+> list_bulk_move_tail call.
 
->
-> The current patch addresses ext4_update_inline_data() directly, but the
-> same condition also leads to a BUG_ON in ext4_create_inline_data() [2],
-> which the earlier approach intended to prevent as well.
+[...]
 
-I missed that ext4_create_inline_data expects the xattr to be absent at
-that point, since it's about to create it. The BUG_ON(!is.s.not_found)
-enforces that expectation.
+I have a nit of my own: now that the kerneldoc for the hlist functions
+is here (it naturally moved with the rest), it would be nice to have
+some sort of mention, even if just a paragraph saying why hlists exist
+and when one might want to use them.
 
-The patch I sent earlier didn=E2=80=99t account for this correctly. Returni=
-ng an
-error when the xattr was not found would have broken valid behavior in
-the create path.
+That said, I have gone ahead and applied this; we've put Nicolas through
+enough rounds, and I'd like to get this in for the 6.17 merge window.
+The nits can be addressed at leisure with follow-on patches.
 
-Thanks again for resolving this with a simple and correct fix. Per-site
-handling makes sense here, as each path has different expectations about
-the xattr state.
+Thanks,
 
-Best regards,
-Moonhee
+jon
 
