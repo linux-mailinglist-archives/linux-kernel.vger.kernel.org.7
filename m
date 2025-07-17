@@ -1,143 +1,192 @@
-Return-Path: <linux-kernel+bounces-735527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 267A0B09087
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:27:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 263F2B0908F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:28:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7311758317E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:27:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2A22166EFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:28:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632852F85E7;
-	Thu, 17 Jul 2025 15:27:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B4752F8C34;
+	Thu, 17 Jul 2025 15:28:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VjiNpk4f"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b="NbBSvXAI"
+Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F9B1E520F;
-	Thu, 17 Jul 2025 15:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 278342E49B1
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 15:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752766034; cv=none; b=EuL448qs4JX4+SwLNyoDAA/OR0ZT1PyrG537VD/zg7MSxR8MD9L30vDzVd93zUgjyAvN4lgpOyOs248pXdPiOhSxw3l5jM1p3zuGQhGPcS4lrfhAEC3F77/qWbvlfKrdESfn9i35J82wYgWJF1nV9H0FhPYN77VErZf7EEF+N/M=
+	t=1752766094; cv=none; b=hPbapo7VQLZV0ddjB5lnJYrLd9PlRgZPKjVRCpzcmutg51B2cLvinKAcFYfFPS46yepaWJ6WuAHNDBuRyvKYsFdaSuZMLyVf4q3PNR00YY3KjYAD2c1czD8QchzXPREeEIWbNhsCD2kzIbABGJuYYyQmbLbgQwmB3T6AIq+DLoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752766034; c=relaxed/simple;
-	bh=NQE218xM/uYai0NdPYpenB3Q0L2BAgSxW5TXcN9SoN8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ylnbkq8PYKrFq1z5PpiQGGgb+sgDHIq1j+9NhfJ+9m7Q7AGkT0/2eL01k0/l14fm8Z5FkVFloV56QGJCHSziDrrbYPOXZYG0EuEZzfYKvIosMGvXeMCNp8uaN+qb38Dc/u4HIvKMxTJRukYVTfijeZsyHjJSpYWZJIPTn6EwIKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VjiNpk4f; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7118B43A0F;
-	Thu, 17 Jul 2025 15:27:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1752766024;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5NL0HDq/x0YbzoK0LOLm6d5hufR8+z/CcXms1AjNRP8=;
-	b=VjiNpk4fCmf82cJR2ZqX18tjYRN8oYbiIp2qIbRs/6CyL00Q3YyZwo605HMRj0aG5oRidi
-	PE99lhEO15h+58R0QkkxYSQvb138NQ689SkBEG1EgYDi1++GEu5dUshi9cd5Ls7O3rrOfg
-	zlPlYXDAdZowalqXxP0whOEfRxr1An36aVGQGZYn5gYaa9bCM7FkUOqDSDi0yvp+Yt7vaf
-	Gv5WuO8mxSiIIt8wzrNko9w19wi/lkHXzZNCoAgnk6qAfR/SOToS2rSs/2XGsG1l3psjVz
-	xBXjpvjg46BwEND9hMlMU/n4K2iU61Pc+8WyTPrmwGLvz3WnXLU4m5e/jIhwUg==
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH 1/2] misc: ti-fpc202: remove unneeded direction check
-Date: Thu, 17 Jul 2025 17:26:57 +0200
-Message-ID: <14379725.uLZWGnKmhe@fw-rgant>
-In-Reply-To: <20250717130357.53491-1-brgl@bgdev.pl>
-References: <20250717130357.53491-1-brgl@bgdev.pl>
+	s=arc-20240116; t=1752766094; c=relaxed/simple;
+	bh=yFZgLXJvIbeULoKkdmIakSizxFoRhpNxchjM/FKvA04=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i2o6vioP49xfKUI82i5Hnp1uEG1mrTLysu6b4FzKvRTDGUYVVEg/xxd5nbgWa3L7Cp5/6B21Qr8fZthOkRwRSBX33MW7omH6gtCWbaX9Y/zgAo8xy4szDayNeth/Q3q4Lccf4V/AJCQ3zFTRy7oQt37CM7MWn1ssRSXiz/SwiUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b=NbBSvXAI; arc=none smtp.client-ip=185.136.65.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 202507171528028a8f0cfa7e57c6c028
+        for <linux-kernel@vger.kernel.org>;
+        Thu, 17 Jul 2025 17:28:02 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=alexander.sverdlin@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=qiwCF1Q0/dfbmH/h12rPJd3E/SUaGv51sALD25KqqZk=;
+ b=NbBSvXAIUK+yejZE4f901rnzUou0mq+g7t2Qh6rawOr5d+iUhl/Nl3NTUb9yvGzWM3EQzY
+ vox1EBk7tVrEZm0Dj6Ios/JxrLPDDIPRUjIjNj4MdfLZ8huMDvFLI3YaH7+pU6ljTR1RsiJK
+ T/FX0w+BWBxgQdeaHajv2YC65VJfPkPrI8AQa4ebpwTRMVtxZ4i41ys5ePMdl/2CeqT4fqG4
+ +A8A2CjWa8pzbp/abeUJJYs9s+N7yI+DH6bwFtYxov6WdKOR+xXwFDq+fcYM2/dfhO2Fagbf
+ g1vNrPNfHSCr9LrzQ91Uz08rbbFKLJ94QFFUdmKtcsKUlWoi47Jc3BuQ==;
+From: "A. Sverdlin" <alexander.sverdlin@siemens.com>
+To: linux-omap@vger.kernel.org
+Cc: Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Roger Quadros <rogerq@kernel.org>,
+	Tony Lindgren <tony@atomide.com>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Matthias Michel <matthias.michel@siemens.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] ARM: AM33xx: Implement TI advisory 1.0.36 (EMU0/EMU1 pins state on reset)
+Date: Thu, 17 Jul 2025 17:27:03 +0200
+Message-ID: <20250717152708.487891-1-alexander.sverdlin@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart3574599.e9J7NaK4W3";
- micalg="pgp-sha512"; protocol="application/pgp-signature"
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeitdelgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfgggtsehgtderredttdejnecuhfhrohhmpeftohhmrghinhcuifgrnhhtohhishcuoehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepieekkeffvdeugfekjeegfefhvdetuefhtdelieduheeileduledvteelgefgffffnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehffidqrhhgrghnthdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhomhgrihhnrdhgrghnthhoihhssegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeejpdhrtghpthhtoheprghrnhgusegrrhhnuggsrdguvgdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopegsrhhglhessghguggvvhdrphhlpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhor
- hhgpdhrtghpthhtoheplhhinhhugidqghhpihhosehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsggrrhhtohhsiidrghholhgrshiivgifshhkiheslhhinhgrrhhordhorhhg
-X-GND-Sasl: romain.gantois@bootlin.com
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-456497:519-21489:flowmailer
 
---nextPart3574599.e9J7NaK4W3
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Romain Gantois <romain.gantois@bootlin.com>
-Date: Thu, 17 Jul 2025 17:26:57 +0200
-Message-ID: <14379725.uLZWGnKmhe@fw-rgant>
-In-Reply-To: <20250717130357.53491-1-brgl@bgdev.pl>
-References: <20250717130357.53491-1-brgl@bgdev.pl>
-MIME-Version: 1.0
+From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 
-Hi Bartosz,
+There is an issue possible where TI AM33xx SoCs do not boot properly after
+a reset if EMU0/EMU1 pins were used as GPIO and have been driving low level
+actively prior to reset [1].
 
-On Thursday, 17 July 2025 15:03:55 CEST Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> As of commit 92ac7de3175e3 ("gpiolib: don't allow setting values on input
-> lines"), the GPIO core makes sure values cannot be set on input lines.
-> Remove the unnecessary check.
-> 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->  drivers/misc/ti_fpc202.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/drivers/misc/ti_fpc202.c b/drivers/misc/ti_fpc202.c
-> index f7cde245ac95..ca415ef45cbe 100644
-> --- a/drivers/misc/ti_fpc202.c
-> +++ b/drivers/misc/ti_fpc202.c
-> @@ -125,9 +125,6 @@ static void fpc202_gpio_set(struct gpio_chip *chip,
-> unsigned int offset, int ret;
->  	u8 val;
-> 
-> -	if (fpc202_gpio_get_dir(offset) == GPIO_LINE_DIRECTION_IN)
-> -		return;
-> -
->  	ret = fpc202_read(priv, FPC202_REG_OUT_A_OUT_B_VAL);
->  	if (ret < 0) {
->  		dev_err(&priv->client->dev, "Failed to set GPIO %d value! err 
-%d\n",
-> offset, ret);
+"Advisory 1.0.36 EMU0 and EMU1: Terminals Must be Pulled High Before
+ICEPick Samples
 
-LGTM
+The state of the EMU[1:0] terminals are latched during reset to determine
+ICEPick boot mode. For normal device operation, these terminals must be
+pulled up to a valid high logic level ( > VIH min) before ICEPick samples
+the state of these terminals, which occurs
+[five CLK_M_OSC clock cycles - 10 ns] after the falling edge of WARMRSTn.
 
-Reviewed-by: Romain Gantois <romain.gantois@bootlin.com>
+Many applications may not require the secondary GPIO function of the
+EMU[1:0] terminals. In this case, they would only be connected to pull-up
+resistors, which ensures they are always high when ICEPick samples.
+However, some applications may need to use these terminals as GPIO where
+they could be driven low before reset is asserted. This usage of the
+EMU[1:0] terminals may require special attention to ensure the terminals
+are allowed to return to a valid high-logic level before ICEPick samples
+the state of these terminals.
 
+When any device reset is asserted, the pin mux mode of EMU[1:0] terminals
+configured to operate as GPIO (mode 7) will change back to EMU input
+(mode 0) on the falling edge of WARMRSTn. This only provides a short period
+of time for the terminals to return high if driven low before reset is
+asserted...
 
---nextPart3574599.e9J7NaK4W3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
+If the EMU[1:0] terminals are configured to operate as GPIO, the product
+should be designed such these terminals can be pulled to a valid high-logic
+level within 190 ns after the falling edge of WARMRSTn."
 
------BEGIN PGP SIGNATURE-----
+We've noticed this problem with custom am335x hardware in combination with
+recently implemented cold reset method
+(commit 6521f6a195c70 ("ARM: AM33xx: PRM: Implement REBOOT_COLD")).
+It looks like the problem can affect other HW, for instance AM335x
+Chiliboard, because the latter has LEDs on GPIO3_7/GPIO3_8 as well.
 
-iQIzBAABCgAdFiEETFOGm0tqZfYwVxBymGofZEoxB4MFAmh5FkEACgkQmGofZEox
-B4Pudw//WmOIYd5K4bpyhceplO0TUalfRdIGrupHCJxlFk7zh4Ox2rAaisvAGNQK
-E92g9JBQ1G2Ph/G7odM60nfwAjxPIP8RPGHDBuZ5r1GcU99UBidsnlrFZr2n5+O4
-8EyMUfHhORnWAMGIuYjGGsUxsh2f9RZZkX+T5Nt4aJ95ORlAuBOaPeZtzaqQwnvi
-X+I/f47RrHX7Krv8lSootjQvJar5lQJJa620jx6ym8nDj5hYUNIj3SvxUBFM8os1
-t2wsRQ0ULP2CWriBEAfXOI7jttdm4zFjAb2tjNm55FFyv59WLZyfcUyEhPH1FIav
-NBRL4L741QuKQ+UAEW9ss/QUFDsqp8XM5ze511D0MEGhAUIBVn+KEK8+3RGhHncQ
-oI3rIpKo/r8urENkOyKwZLbve2U9BjehVbf+7owLIGEHzVW02UbzxXi0G3D9+2nc
-QW+4/A2aFKrwd6P/QG3kB+Zmqy3mIL035QaACRW5A6566+hS+npBi7Sjzqfv6Aqu
-dMOsRd1TCoAcLDyVgNzYmbCVA1Sugu611GrIKoP64TmMB3oUs7lelRAcHYtTeIWQ
-oWGGInNwAr6Xf2qzu0LTq32hAliNht+z90Wk8yj8+nXoCS4MUhTpwWZDyKT+3Fuv
-OlO8J2XPBD8JU7TQtnNHRan4V8VbZtrKm1UwJ/KpHjlq0fqtjaU=
-=KXp/
------END PGP SIGNATURE-----
+One option would be to check if the pins are in GPIO mode and either switch
+to output active high, or switch to input and poll until the external
+pull-ups have brought the pins to the desired high state. But fighting
+with GPIO driver for these pins is probably not the most straight forward
+approch in a reboot handler.
 
---nextPart3574599.e9J7NaK4W3--
+Fortunately we can easily control pinmuxing here and rely on the external
+pull-ups. TI recommends 4k7 external pull up resistors [2] and even with
+quite conservative estimation for pin capacity (1 uF should never happen)
+the required delay shall not exceed 5ms.
 
+[1] Link: https://www.ti.com/lit/pdf/sprz360
+[2] Link: https://e2e.ti.com/support/processors-group/processors/f/processors-forum/866346/am3352-emu-1-0-questions
+Cc: stable@vger.kernel.org
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+---
+ arch/arm/mach-omap2/am33xx-restart.c | 36 ++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
+diff --git a/arch/arm/mach-omap2/am33xx-restart.c b/arch/arm/mach-omap2/am33xx-restart.c
+index fcf3d557aa786..3cdf223addcc2 100644
+--- a/arch/arm/mach-omap2/am33xx-restart.c
++++ b/arch/arm/mach-omap2/am33xx-restart.c
+@@ -2,12 +2,46 @@
+ /*
+  * am33xx-restart.c - Code common to all AM33xx machines.
+  */
++#include <dt-bindings/pinctrl/am33xx.h>
++#include <linux/delay.h>
+ #include <linux/kernel.h>
+ #include <linux/reboot.h>
+ 
+ #include "common.h"
++#include "control.h"
+ #include "prm.h"
+ 
++/*
++ * Advisory 1.0.36 EMU0 and EMU1: Terminals Must be Pulled High Before
++ * ICEPick Samples
++ *
++ * If EMU0/EMU1 pins have been used as GPIO outputs and actively driving low
++ * level, the device might not reboot in normal mode. We are in a bad position
++ * to override GPIO state here, so just switch the pins into EMU input mode
++ * (that's what reset will do anyway) and wait a bit, because the state will be
++ * latched 190 ns after reset.
++ */
++static void am33xx_advisory_1_0_36(void)
++{
++	u32 emu0 = omap_ctrl_readl(AM335X_PIN_EMU0);
++	u32 emu1 = omap_ctrl_readl(AM335X_PIN_EMU1);
++
++	/* If both pins are in EMU mode, nothing to do */
++	if (!(emu0 & 7) && !(emu1 & 7))
++		return;
++
++	/* Switch GPIO3_7/GPIO3_8 into EMU0/EMU1 modes respectively */
++	omap_ctrl_writel(emu0 & ~7, AM335X_PIN_EMU0);
++	omap_ctrl_writel(emu1 & ~7, AM335X_PIN_EMU1);
++
++	/*
++	 * Give pull-ups time to load the pin/PCB trace capacity.
++	 * 5 ms shall be enough to load 1 uF (would be huge capacity for these
++	 * pins) with TI-recommended 4k7 external pull-ups.
++	 */
++	mdelay(5);
++}
++
+ /**
+  * am33xx_restart - trigger a software restart of the SoC
+  * @mode: the "reboot mode", see arch/arm/kernel/{setup,process}.c
+@@ -18,6 +52,8 @@
+  */
+ void am33xx_restart(enum reboot_mode mode, const char *cmd)
+ {
++	am33xx_advisory_1_0_36();
++
+ 	/* TODO: Handle cmd if necessary */
+ 	prm_reboot_mode = mode;
+ 
+-- 
+2.50.1
 
 
