@@ -1,289 +1,450 @@
-Return-Path: <linux-kernel+bounces-735378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 338B5B08E78
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:46:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 905B4B08E05
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:22:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 655A5585C75
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:46:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED28A7ADD3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:20:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29C2A2EE5ED;
-	Thu, 17 Jul 2025 13:46:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F3A2E49BF;
+	Thu, 17 Jul 2025 13:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="mLWn4O/N";
-	dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b="c88gch7f"
-Received: from e3i105.smtp2go.com (e3i105.smtp2go.com [158.120.84.105])
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="ezoELVBS"
+Received: from mail-4325.protonmail.ch (mail-4325.protonmail.ch [185.70.43.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AD2C2ED85F
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 13:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.120.84.105
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABFBD28983A;
+	Thu, 17 Jul 2025 13:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752760009; cv=none; b=VMBSWp2XyIYWyEWKgysJwo+hmPD90ehmIkCuhreB8QzpaTTSXM8xIOIPdAVRrspc27ddKGVJMM/r1DbEAT3hszatrM1g25wSdtAIjoYvCo5RNpyVG6l5QPMiWt4cHqcDCMoZhhvfWgR48tk0SbwL2l4dPcs6IpxEjh/0NtYJsyM=
+	t=1752758513; cv=none; b=W5ZmeCV+t8gypFD+AFt1l7BajbSSQ11JEcWih7XgELdNB0FAIKPBsPqlcsYSdsUh/glkUPNPLkHk5LzzK7i1ChMNIUyS2MJHnBT0+uTAkPrJh4+Iya11atx6tI0xLthiglBTw3fGfjY0V6X3le1WpNSWfZTgWdVYei7w98Nkj34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752760009; c=relaxed/simple;
-	bh=2AFVLZpaDJuvTy/9IR0EjWZDdFrNKje4FwspU0zrMDo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LwUsYrPBZ/CBbbi/nZKwunCVq6OTYUq6bBr85q7f1DJP+EahwIYjKqzgYqpwmG1XRSjpGZ2ySHXe/n3/Rq39AodiXlGo9zb3oqebsf04EwT6uZDhH1xMonpWImdmfeAhki8GkXjxZ2nL8xoSXnWGPI4F5gKDN0y+qu8BaZTSQC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt; spf=pass smtp.mailfrom=em510616.triplefau.lt; dkim=pass (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=mLWn4O/N; dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b=c88gch7f; arc=none smtp.client-ip=158.120.84.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em510616.triplefau.lt
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smtpservice.net;
- i=@smtpservice.net; q=dns/txt; s=a1-4; t=1752759096; h=feedback-id :
- x-smtpcorp-track : date : message-id : to : subject : from : reply-to
- : sender : list-unsubscribe : list-unsubscribe-post;
- bh=U+rA0WL2vtAgdbnb0RO7hJmpVlrm4hMeQOrhAQBOlvs=;
- b=mLWn4O/NZgnKLynU/D/eLOJMOSNn04dcgKdMLuvd6axS+38iZVZ+Ey36b5VDSoIJ+WLUo
- bvh51SOmXv8VKoAcjqxUV9pQCwEX5eQ4+Inqrz1+2PU81sTxpr/RQ4BQjKuoTTFuP1XXKas
- UM0oNjhQQZy8YEuoeOEV73LhlPshOOtMkcLNQi+weeQz1zF8TDzPunXhmgdABVwgiMm7rvE
- x/7JNXMhzD2YcwRdJbM7FkB+l8J5GW9HoRuxl+JizfrTVgmosz5Ihi0hdj+73xUVpLZJ0gg
- TAelEP47njFZdqZhKAXGFmShIw1xmkzVjFJaOrNYJ0oVRtzJXCqcZ/kkNEXQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=triplefau.lt;
- i=@triplefau.lt; q=dns/txt; s=s510616; t=1752759096; h=from : subject
- : to : message-id : date;
- bh=U+rA0WL2vtAgdbnb0RO7hJmpVlrm4hMeQOrhAQBOlvs=;
- b=c88gch7fIrCZPBwxNYX8w5PrI3riseC1LYfk51DAE5ZR/3/+fy5O+X8tvRZ/7DdqWChGi
- shHXpp+JH6ZMT+Ou3Z6rmyAzd3w+qYY6KylVe9XvzbkA34/eh7U7KwWSFWETCMnLbfELNbd
- RkTo/9+qN3FTvwoUEB8ErXcAU0x1b2OJoP+Jc+JGpzRX/xKsidRHOa9wwmYSR+HQSeQBhIx
- l76VQRqyYpQfQjVZj1aQro5Y1IICo//03SENSs4ht/Xqs/SHp06hGIVEQzQLT5GomPnJcLa
- s8PtcKxoOIqLaPusaaFWkK5+hHgTXANZvzZK5yv+GUpfj3jBKGl2I6BmqyXw==
-Received: from [10.12.239.196] (helo=localhost)
-	by smtpcorp.com with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.1-S2G)
-	(envelope-from <repk@triplefau.lt>)
-	id 1ucOhx-4o5NDgrvtl6-ppbp;
-	Thu, 17 Jul 2025 13:31:33 +0000
-Date: Thu, 17 Jul 2025 15:21:17 +0200
-From: Remi Pommarel <repk@triplefau.lt>
-To: Bert Karwatzki <spasswolf@web.de>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	johannes@sipsolutions.net, linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH wireless v2 1/2] wifi: mac80211: Update skb's control
- block key in ieee80211_tx_dequeue()
-Message-ID: <aHj4zS_3uhDRhzDn@pilgrim>
-References: <06aa507b853ca385ceded81c18b0a6dd0f081bc8.1742833382.git.repk@triplefau.lt>
- <20250410215527.3001-1-spasswolf@web.de>
- <Z_jpq26P99qzPP1c@pilgrim>
- <1df3a3df19b77e3b8d1f71a3a93c61221ff46a6b.camel@web.de>
+	s=arc-20240116; t=1752758513; c=relaxed/simple;
+	bh=qMwKtxO0rqPxrVVHeWz2itNACEBHXUU45X4KaWgadMc=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eE9cNXclXfBLFV98DldarYaKgorIs2VTuQzSCtfoVkaOvvAJoDVxisVG+GgfLvXndMRHWtHV8dGJVxqUz1RdzIvQX17MVYtOVIvw6tJe2GmD2x/CJrXBh/BSvOCJNLu+fCf29EquaP/kBlrIXBO7nYfOMTU3kqlV4Lyvf9N/1Vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=ezoELVBS; arc=none smtp.client-ip=185.70.43.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1752758502; x=1753017702;
+	bh=qMwKtxO0rqPxrVVHeWz2itNACEBHXUU45X4KaWgadMc=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=ezoELVBSdahHvjickA/z4Nfu3LWhp+5nPUdKFU2vzZGEf2NwjlR4DetymmGbeB4Bt
+	 cz610LY/fqi+p1HuA/mMeCSKEmo2kIY6dLYBZLg5YNB6KnbxVGpzkFoxUBd9sim3rD
+	 6oECI65gIz1zoshkyPB0zG7p+6hWP4SXuWYkiGUF6Pt95K4mfaZzybKF6KYxLwfGSn
+	 N2eoBSPBIS/2zdjO+5iuf7uJ55M15BUwtbACOX2A8EgS6LfckK9PT6AQHXvnos2RDu
+	 O/W5U8Lzm30reW7E8oH3GishRBLVYfusX1lEEUdUG2Qjff7k5ckzZVr+yQGLmPlBoh
+	 c+1e0d2ohkUeA==
+Date: Thu, 17 Jul 2025 13:21:35 +0000
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+From: Yassine Oudjana <y.oudjana@protonmail.com>
+Cc: Manivannan Sadhasivam <mani@kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, =?utf-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Luca Weiss <luca@lucaweiss.eu>, linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] net: qrtr: Turn QRTR into a bus
+Message-ID: <FDNgvJ7ZZjLaxvtcVqsbv9grSzkKe_xTylp1JWzltRetWlLycNFXOfTLz87WwRGC342HKQlohGRjy9WL3eBD3jB8F6Iuswabuq-eYkV18x4=@protonmail.com>
+In-Reply-To: <CAHp75Ved4cnpmiUzidoJqRbdnz=L-0F_KdyWifOOrZHUUf2KQA@mail.gmail.com>
+References: <20250710-qcom-smgr-v2-0-f6e198b7aa8e@protonmail.com> <20250710-qcom-smgr-v2-2-f6e198b7aa8e@protonmail.com> <CAHp75Ved4cnpmiUzidoJqRbdnz=L-0F_KdyWifOOrZHUUf2KQA@mail.gmail.com>
+Feedback-ID: 6882736:user:proton
+X-Pm-Message-ID: 71fdc870d65401170c48900605ea0a9b15ff1bf8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1df3a3df19b77e3b8d1f71a3a93c61221ff46a6b.camel@web.de>
-X-Report-Abuse: Please forward a copy of this message, including all headers, to <abuse-report@smtp2go.com>
-Feedback-ID: 510616m:510616apGKSTK:510616sBGiWowcYh
-X-smtpcorp-track: _RuWfU-E8FJp.uXplsHHfmtYI.9GTaBQhkBmz
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello Bert, Johannes
+On Thursday, July 10th, 2025 at 9:53 AM, Andy Shevchenko <andy.shevchenko@g=
+mail.com> wrote:
 
-On Fri, Apr 11, 2025 at 01:10:02PM +0200, Bert Karwatzki wrote:
-> Am Freitag, dem 11.04.2025 um 12:06 +0200 schrieb Remi Pommarel:
-> > Hi Bert,
-> >
-> > On Thu, Apr 10, 2025 at 11:55:26PM +0200, Bert Karwatzki wrote:
-> > > This commit breaks the mediatek mt7921 wireless driver. In linux-next-20250410
-> > > my mt7921e Wi-Fi controller is no longer able to connect to a network.
-> > > I bisected this to commit a104042e2bf6 ("wifi: mac80211: Update skb's control
-> > > block key in ieee80211_tx_dequeue()").
-> > >
-> > > Hardware:
-> > > 04:00.0 Network controller: MEDIATEK Corp. MT7921K (RZ608) Wi-Fi 6E 80MHz
-> > >
-> > > This debugging patch reveals that the change causes key to be NULL in
-> > > mt7921_tx_prepare_skb().
-> > >
-> > > diff --git a/drivers/net/wireless/mediatek/mt76/mt7921/pci_mac.c b/drivers/net/wireless/mediatek/mt76/mt7921/pci_mac.c
-> > > index 881812ba03ff..3b8552a1055c 100644
-> > > --- a/drivers/net/wireless/mediatek/mt76/mt7921/pci_mac.c
-> > > +++ b/drivers/net/wireless/mediatek/mt76/mt7921/pci_mac.c
-> > > @@ -13,6 +13,7 @@ int mt7921e_tx_prepare_skb(struct mt76_dev *mdev, void *txwi_ptr,
-> > >         struct mt792x_dev *dev = container_of(mdev, struct mt792x_dev, mt76);
-> > >         struct ieee80211_tx_info *info = IEEE80211_SKB_CB(tx_info->skb);
-> > >         struct ieee80211_key_conf *key = info->control.hw_key;
-> > > +       dev_info(mdev->dev, "%s: key = %px\n", __func__, key);
-> > >         struct mt76_connac_hw_txp *txp;
-> > >         struct mt76_txwi_cache *t;
-> > >         int id, pid;
-> > >
-> > >
-> > > So why is info->control.hw_key not updated by ieee80211_tx_h_select_key()?
-> > >
-> > > diff --git a/net/mac80211/tx.c b/net/mac80211/tx.c
-> > > index 34f229a6eab0..2510e3533d13 100644
-> > > --- a/net/mac80211/tx.c
-> > > +++ b/net/mac80211/tx.c
-> > > @@ -631,8 +631,10 @@ ieee80211_tx_h_select_key(struct ieee80211_tx_data *tx)
-> > >  		case WLAN_CIPHER_SUITE_WEP40:
-> > >  		case WLAN_CIPHER_SUITE_WEP104:
-> > >  		case WLAN_CIPHER_SUITE_TKIP:
-> > > -			if (!ieee80211_is_data_present(hdr->frame_control))
-> > > +			if (!ieee80211_is_data_present(hdr->frame_control)) {
-> > > +				printk(KERN_INFO "%s %d: setting tx->key = NULL\n", __func__, __LINE__);
-> > >  				tx->key = NULL;
-> > > +			}
-> > >  			break;
-> > >  		case WLAN_CIPHER_SUITE_CCMP:
-> > >  		case WLAN_CIPHER_SUITE_CCMP_256:
-> > > @@ -641,19 +643,23 @@ ieee80211_tx_h_select_key(struct ieee80211_tx_data *tx)
-> > >  			if (!ieee80211_is_data_present(hdr->frame_control) &&
-> > >  			    !ieee80211_use_mfp(hdr->frame_control, tx->sta,
-> > >  					       tx->skb) &&
-> > > -			    !ieee80211_is_group_privacy_action(tx->skb))
-> > > +			    !ieee80211_is_group_privacy_action(tx->skb)) {
-> > > +				printk(KERN_INFO "%s %d: setting tx->key = NULL\n", __func__, __LINE__);
-> > >  				tx->key = NULL;
-> > > -			else
-> > > +			} else {
-> > >  				skip_hw = (tx->key->conf.flags &
-> > >  					   IEEE80211_KEY_FLAG_SW_MGMT_TX) &&
-> > >  					ieee80211_is_mgmt(hdr->frame_control);
-> > > +			}
-> > >  			break;
-> > >  		case WLAN_CIPHER_SUITE_AES_CMAC:
-> > >  		case WLAN_CIPHER_SUITE_BIP_CMAC_256:
-> > >  		case WLAN_CIPHER_SUITE_BIP_GMAC_128:
-> > >  		case WLAN_CIPHER_SUITE_BIP_GMAC_256:
-> > > -			if (!ieee80211_is_mgmt(hdr->frame_control))
-> > > +			if (!ieee80211_is_mgmt(hdr->frame_control)) {
-> > > +				printk(KERN_INFO "%s %d: setting tx->key = NULL\n", __func__, __LINE__);
-> > >  				tx->key = NULL;
-> > > +			}
-> > >  			break;
-> > >  		}
-> > >
-> > > @@ -662,9 +668,13 @@ ieee80211_tx_h_select_key(struct ieee80211_tx_data *tx)
-> > >  			     tx->skb->protocol != tx->sdata->control_port_protocol)
-> > >  			return TX_DROP;
-> > >
-> > > +		printk(KERN_INFO "%s: skip_hw=%d tx->key=%px\n",
-> > > +				__func__, skip_hw, tx->key);
-> > >  		if (!skip_hw && tx->key &&
-> > > -		    tx->key->flags & KEY_FLAG_UPLOADED_TO_HARDWARE)
-> > > +		    tx->key->flags & KEY_FLAG_UPLOADED_TO_HARDWARE) {
-> > >  			info->control.hw_key = &tx->key->conf;
-> > > +			printk(KERN_INFO "%s: info->control.hw_key = %px\n", __func__, info->control.hw_key);
-> > > +		}
-> > >  	} else if (ieee80211_is_data_present(hdr->frame_control) && tx->sta &&
-> > >  		   test_sta_flag(tx->sta, WLAN_STA_USES_ENCRYPTION)) {
-> > >  		return TX_DROP;
-> > > @@ -3894,6 +3904,8 @@ struct sk_buff *ieee80211_tx_dequeue(struct ieee80211_hw *hw,
-> > >  	 * The key can be removed while the packet was queued, so need to call
-> > >  	 * this here to get the current key.
-> > >  	 */
-> > > +	printk(KERN_INFO "%s: info->control.hw_key = %px, setting to NULL\n",
-> > > +			__func__, info->control.hw_key);
-> > >  	info->control.hw_key = NULL;
-> > >  	r = ieee80211_tx_h_select_key(&tx);
-> > >  	if (r != TX_CONTINUE) {
-> > >
-> > > This patch reveals that tx->key is set to NULL (in the @@ -641,19 +643,23 @@ chunk)
-> > > and so the updating of info->contro.hw_key is skipped:
-> > >
-> > > [   17.411298] [   T1232] ieee80211_tx_h_select_key 647: setting tx->key = NULL
-> >
-> > That means that we are trying to send non management frames using
-> > AES_CMAC, or BIP_* cipher, aren't those ciphers used only for group
-> > management frames ?
-> >
-> > > [   17.411300] [   T1232] ieee80211_tx_h_select_key: skip_hw=0 tx->key=0000000000000000
-> > > [   17.411307] [   T1232] mt7921e 0000:04:00.0: mt7921e_tx_prepare_skb: key = 0000000000000000
-> > >
-> > > If I revert commit a104042e2bf6 while keeping the debug patches it shows that
-> > > the for mt7921e the key is never updated in ieee80211_tx_h_select_key(), mt7921e
-> > > relies on the key your patch is setting to NULL.
-> > >
-> > > Is this a problem with your patch or with the mt7921e driver that just got
-> > > revealed by your patch?
-> >
-> > Not sure yet, do you happen to know which kind of frame mt7921e is
-> > trying to be sent using this NULL key ?
-> >
-> > Thanks,
-> 
-> I modified my debugging patch to print mgmt->frame_control, if needed I could
-> also insert a nore complicated function printing out frame types using the
-> ieee80211_is_*() functions:
-> 
-> diff --git a/drivers/net/wireless/mediatek/mt76/mt7921/pci_mac.c
-> b/drivers/net/wireless/mediatek/mt76/mt7921/pci_mac.c
-> index 881812ba03ff..cfbe7e1e4713 100644
-> --- a/drivers/net/wireless/mediatek/mt76/mt7921/pci_mac.c
-> +++ b/drivers/net/wireless/mediatek/mt76/mt7921/pci_mac.c
-> @@ -13,6 +13,9 @@ int mt7921e_tx_prepare_skb(struct mt76_dev *mdev, void
-> *txwi_ptr,
->         struct mt792x_dev *dev = container_of(mdev, struct mt792x_dev, mt76);
->         struct ieee80211_tx_info *info = IEEE80211_SKB_CB(tx_info->skb);
->         struct ieee80211_key_conf *key = info->control.hw_key;
-> +       struct ieee80211_mgmt *mgmt = (void *)tx_info->skb->data;
-> +       __le16 fc = mgmt->frame_control;
-> +       dev_info(mdev->dev, "%s: key = %px fc = 0x%hx\n", __func__, key, fc);
->         struct mt76_connac_hw_txp *txp;
->         struct mt76_txwi_cache *t;
->         int id, pid;
-> 
-> and get this, while unsuccesfully trying to connect (also note that one time
-> getting a key worked):
-> 
-> $ dmesg | grep prepare_skb
-> [   11.775642] [   T1227] mt7921e 0000:04:00.0: mt7921e_tx_prepare_skb: key =
-> 0000000000000000 fc = 0xb0
-> [   11.800047] [   T1227] mt7921e 0000:04:00.0: mt7921e_tx_prepare_skb: key =
-> 0000000000000000 fc = 0x0
-> [   13.365330] [   T1227] mt7921e 0000:04:00.0: mt7921e_tx_prepare_skb: key =
-> 0000000000000000 fc = 0xb0
-> [   13.370257] [   T1227] mt7921e 0000:04:00.0: mt7921e_tx_prepare_skb: key =
-> 0000000000000000 fc = 0x0
-> [   16.468481] [   T1227] mt7921e 0000:04:00.0: mt7921e_tx_prepare_skb: key =
-> 0000000000000000 fc = 0xb0
-> [   16.472407] [   T1227] mt7921e 0000:04:00.0: mt7921e_tx_prepare_skb: key =
-> 0000000000000000 fc = 0x0
-> [   16.542017] [   T1227] mt7921e 0000:04:00.0: mt7921e_tx_prepare_skb: key =
-> 0000000000000000 fc = 0x188
-> [   16.549581] [   T1227] mt7921e 0000:04:00.0: mt7921e_tx_prepare_skb: key =
-> 0000000000000000 fc = 0x188
-> [   16.597120] [   T1227] mt7921e 0000:04:00.0: mt7921e_tx_prepare_skb: key =
-> 0000000000000000 fc = 0xffff
-> [   16.612263] [   T1227] mt7921e 0000:04:00.0: mt7921e_tx_prepare_skb: key =
-> 0000000000000000 fc = 0xd0
-> 
-> Here we actually go a key:
-> [   16.614478] [   T1227] mt7921e 0000:04:00.0: mt7921e_tx_prepare_skb: key =
-> ffff89c275297230 fc = 0x4188
-> 
-> [   16.654273] [   T1227] mt7921e 0000:04:00.0: mt7921e_tx_prepare_skb: key =
-> 0000000000000000 fc = 0x3333
-> [   16.698286] [   T1227] mt7921e 0000:04:00.0: mt7921e_tx_prepare_skb: key =
-> 0000000000000000 fc = 0x3333
-> [   17.735855] [   T1227] mt7921e 0000:04:00.0: mt7921e_tx_prepare_skb: key =
-> 0000000000000000 fc = 0x3333
-> [   17.837355] [   T1227] mt7921e 0000:04:00.0: mt7921e_tx_prepare_skb: key =
+> On Thu, Jul 10, 2025 at 11:06=E2=80=AFAM Yassine Oudjana via B4 Relay
+> devnull+y.oudjana.protonmail.com@kernel.org wrote:
+>=20
+> > Implement a QRTR bus to allow for creating drivers for individual QRTR
+> > services. With this in place, devices are dynamically registered for QR=
+TR
+> > services as they become available, and drivers for these devices are
+> > matched using service and instance IDs.
+>=20
+>=20
+> ...
+>=20
+> > +struct qrtr_device_id {
+> > + __u16 service;
+> > + __u16 instance;
+> > + kernel_ulong_t driver_data; /* Data private to the driver */
+>=20
+>=20
+> Can we not repeat mistakes from the past and use const void * from day 1 =
+please?
 
-[....]
+I just looked at what most other *_device_id structs had and did the same. =
+I guess
+they were left like that for legacy reasons? Might be good to add a comment=
+ next to
+the kernel_ulong_t definition on why not to use it for future contributors.
 
-I have ordered a mt7921 card so I could reproduce this and finally took
-time to debug that. The issue comes to the fact that mt7921 uses 802.11
-encapsulation offloading and as such we are calling
-ieee80211_tx_h_select_key() on a 802.3 frame.
+>=20
+> > +};
+> > +
+> > /* dmi */
+>=20
+>=20
+> Wouldn't it be better to keep sections ordered alphabetically so 'q'
+> will go at least after 'd'?
 
-This function casts the skb data as a 802.11 header regardless the skb
-is 802.11 or not in order to decide if the info->control.hw_key needs to
-be set. So the hw_key is likely to remain NULL in ieee80211_tx_dequeue()
-and because mt7921 driver needs this key to be valid data frames are
-dropped.
+It didn't look ordered so I didn't pay much attention to ordering but
+sure, will reorder.
 
-Will send a patch so that ieee80211_tx_h_select_key() does not try to
-get info from a ieee80211_hdr mapped on 802.3 packet data (i.e. when
-IEEE80211_TX_CTL_HW_80211_ENCAP is set).
+>=20
+> ...
+>=20
+> > +/* SPDX-License-Identifier: GPL-2.0-only */
+> > +
+> > +#ifndef QCOM_QRTR_H
+> > +#define QCOM_QRTR_H
+> > +
+> > +#include <linux/mod_devicetable.h>
+>=20
+>=20
+> Not enough. Please, follow IWYU principle and include / forward
+> declare all this header uses.
 
-Thanks
+So you're saying forward declare struct qrtr_device_id instead of including
+mod_devicetable.h?
 
--- 
-Remi
+>=20
+> > +struct qrtr_device {
+> > + struct device dev;
+> > + unsigned int node;
+> > + unsigned int port;
+> > + u16 service;
+> > + u16 instance;
+> > +};
+> > +
+> > +#define to_qrtr_device(d) container_of(d, struct qrtr_device, dev)
+> > +
+> > +struct qrtr_driver {
+> > + int (*probe)(struct qrtr_device *qdev);
+> > + void (*remove)(struct qrtr_device *qdev);
+> > + const struct qrtr_device_id *id_table;
+> > + struct device_driver driver;
+> > +};
+> > +
+> > +#define to_qrtr_driver(d) container_of(d, struct qrtr_driver, driver)
+> > +
+> > +#define qrtr_driver_register(drv) __qrtr_driver_register(drv, THIS_MOD=
+ULE)
+> > +
+> > +int __qrtr_driver_register(struct qrtr_driver *drv, struct module *own=
+er);
+> > +void qrtr_driver_unregister(struct qrtr_driver drv);
+> > +
+> > +#define module_qrtr_driver(__qrtr_driver) \
+> > + module_driver(__qrtr_driver, qrtr_driver_register, \
+> > + qrtr_driver_unregister)
+> > +
+> > +#endif / QCOM_QRTR_H */
+>=20
+>=20
+> ...
+>=20
+> > + int ret =3D 0;
+>=20
+>=20
+> What is this assignment for? (The below is left for the context)
+
+Yup looks unnecessary, will remove.
+
+>=20
+> > if (cb->type =3D=3D QRTR_TYPE_NEW_SERVER) {
+> > /* Remote node endpoint can bridge other distant nodes /
+> > qrtr_node_assign(node, le32_to_cpu(pkt->server.node));
+> > +
+> > + / Create a QRTR device /
+> > + ret =3D ep->add_device(ep, le32_to_cpu(pkt->server.node),
+> > + le32_to_cpu(pkt->server.port),
+> > + le32_to_cpu(pkt->server.service),
+> > + le32_to_cpu(pkt->server.instance));
+> > + if (ret)
+> > + goto err;
+> > + } else if (cb->type =3D=3D QRTR_TYPE_DEL_SERVER) {
+> > + / Remove QRTR device corresponding to service */
+> > + ret =3D ep->del_device(ep, le32_to_cpu(pkt->server.port));
+> > + if (ret)
+> > + goto err;
+> > }
+>=20
+>=20
+> ...
+>=20
+> > + return ret ? ret : -EINVAL;
+>=20
+>=20
+> It's also possible
+>=20
+> return ret ?: -EINVAL;
+
+Ack
+
+>=20
+> > }
+>=20
+>=20
+> ...
+>=20
+> > +++ b/net/qrtr/smd.c
+> > @@ -7,6 +7,7 @@
+> > #include <linux/module.h>
+> > #include <linux/skbuff.h>
+> > #include <linux/rpmsg.h>
+> > +#include <linux/soc/qcom/qrtr.h>
+>=20
+>=20
+> Can we keep this more ordered?
+>=20
+> Also include export.h when the code uses one of the EXPORT_*() macros.
+
+Sure thing
+
+>=20
+> ...
+>=20
+> > +static int qcom_smd_qrtr_device_match(struct device *dev, const struct=
+ device_driver *drv)
+> > +{
+> > + struct qrtr_device *qdev =3D to_qrtr_device(dev);
+> > + struct qrtr_driver *qdrv =3D to_qrtr_driver(drv);
+> > + const struct qrtr_device_id *id =3D qdrv->id_table;
+> > +
+> > + if (!id)
+> > + return 0;
+> > +
+> > + while (id->service !=3D 0) {
+>=20
+>=20
+> ' !=3D 0' is redundant
+
+Ack
+
+>=20
+> > + if (id->service =3D=3D qdev->service && id->instance =3D=3D qdev->ins=
+tance)
+> > + return 1;
+> > + id++;
+> > + }
+> > +
+> > + return 0;
+> > +}
+>=20
+>=20
+> ...
+>=20
+> > +static int qcom_smd_qrtr_match_device_by_port(struct device *dev, cons=
+t void *data)
+> > +{
+> > + struct qrtr_device *qdev =3D to_qrtr_device(dev);
+> > + unsigned const int *port =3D data;
+>=20
+>=20
+> Why not
+>=20
+> unsigned int port =3D *((const unsigned int *)data);
+
+What does this achieve? Isn't it fine to implicitly cast void *?
+
+>=20
+> > + return qdev->port =3D=3D *port;
+> > +}
+>=20
+>=20
+> ...
+>=20
+> > +static void qcom_smd_qrtr_add_device_worker(struct work_struct *work)
+> > +{
+> > + struct qrtr_new_server *new_server =3D container_of(work, struct qrtr=
+_new_server, work);
+> > + struct qrtr_smd_dev *qsdev =3D new_server->parent;
+> > + struct qrtr_device *qdev;
+> > + int ret;
+> > +
+> > + qdev =3D kzalloc(sizeof(*qdev), GFP_KERNEL);
+> > + if (!qdev)
+> > + return;
+> > +
+> > + *qdev =3D (struct qrtr_device) {
+> > + .node =3D new_server->node,
+> > + .port =3D new_server->port,
+> > + .service =3D new_server->service,
+> > + .instance =3D new_server->instance
+>=20
+>=20
+> Leave trailing comma.
+
+Ok
+
+>=20
+> > + };
+>=20
+> > + devm_kfree(qsdev->dev, new_server);
+>=20
+>=20
+> ?!?! No, just no. Please, fix the object lifetimes and use proper
+> allocators (not managed).
+
+Missed this redundant managed kfree. See below about use of managed API
+
+>=20
+> > + dev_set_name(&qdev->dev, "%d-%d", qdev->node, qdev->port);
+>=20
+>=20
+> No error check?
+
+Oops. Will add.
+
+>=20
+> > + qdev->dev.bus =3D &qrtr_bus;
+> > + qdev->dev.parent =3D qsdev->dev;
+> > + qdev->dev.release =3D qcom_smd_qrtr_dev_release;
+> > +
+> > + ret =3D device_register(&qdev->dev);
+> > + if (ret) {
+> > + dev_err(qsdev->dev, "Failed to register QRTR device: %pe\n", ERR_PTR(=
+ret));
+> > + put_device(&qdev->dev);
+> > + }
+> > +}
+>=20
+>=20
+> ...
+>=20
+> > +static int qcom_smd_qrtr_add_device(struct qrtr_endpoint *parent, unsi=
+gned int node,
+> > + unsigned int port, u16 service, u16 instance)
+> > +{
+> > + struct qrtr_smd_dev *qsdev =3D container_of(parent, struct qrtr_smd_d=
+ev, ep);
+> > + struct qrtr_new_server *new_server;
+> > +
+> > + new_server =3D devm_kzalloc(qsdev->dev, sizeof(*new_server), GFP_KERN=
+EL);
+>=20
+>=20
+> Why is the managed API in use?!
+
+When should I use or not use the managed API? I thought I was supposed to
+use it whenever possible.
+
+>=20
+> > + if (!new_server)
+> > + return -ENOMEM;
+> > +
+> > + *new_server =3D (struct qrtr_new_server) {
+> > + .parent =3D qsdev,
+> > + .node =3D node,
+> > + .port =3D port,
+> > + .service =3D service,
+> > + .instance =3D instance
+>=20
+>=20
+> Leave trailing comma.
+
+Sure
+
+>=20
+> > + };
+> > +
+> > + INIT_WORK(&new_server->work, qcom_smd_qrtr_add_device_worker);
+> > + schedule_work(&new_server->work);
+> > +
+> > + return 0;
+> > +}
+> > +
+> > +static int qcom_smd_qrtr_del_device(struct qrtr_endpoint *parent, unsi=
+gned int port)
+> > +{
+> > + struct qrtr_smd_dev *qsdev =3D container_of(parent, struct qrtr_smd_d=
+ev, ep);
+> > + struct qrtr_del_server *del_server;
+> > +
+> > + del_server =3D devm_kzalloc(qsdev->dev, sizeof(*del_server), GFP_KERN=
+EL);
+>=20
+>=20
+> Ditto.
+>=20
+> > + if (!del_server)
+> > + return -ENOMEM;
+> > +
+> > + del_server->parent =3D qsdev;
+> > + del_server->port =3D port;
+> > +
+> > + INIT_WORK(&del_server->work, qcom_smd_qrtr_del_device_worker);
+> > + schedule_work(&del_server->work);
+> > +
+> > + return 0;
+> > +}
+>=20
+>=20
+> ...
+>=20
+> > +static int qcom_smd_qrtr_device_unregister(struct device *dev, void *d=
+ata)
+> > +{
+> > + device_unregister(dev);
+> > +
+> > + return 0;
+>=20
+>=20
+> Why? Can't this function be void?
+
+Did it this way after seeing device_iter_t having int return type.
+
+>=20
+> > +}
+>=20
+>=20
+> ...
+>=20
+> > {
+> > struct qrtr_smd_dev *qsdev =3D dev_get_drvdata(&rpdev->dev);
+> >=20
+> > + device_for_each_child(qsdev->dev, NULL, qcom_smd_qrtr_device_unregist=
+er);
+>=20
+>=20
+> Perhaps _reversed() ?
+
+What difference does the order make?
+
+>=20
+> > qrtr_endpoint_unregister(&qsdev->ep);
+> >=20
+> > dev_set_drvdata(&rpdev->dev, NULL);
+>=20
+> > };
+>=20
+>=20
+>=20
+> > +static void __exit qcom_smd_qrtr_exit(void)
+> > +{
+> > + unregister_rpmsg_driver(&qcom_smd_qrtr_driver);
+> > + bus_unregister(&qrtr_bus);
+> > +}
+> > +
+> > +subsys_initcall(qcom_smd_qrtr_init);
+> > +module_exit(qcom_smd_qrtr_exit);
+>=20
+>=20
+> Move these two closer to the mentioned callbacks.
+
+Ack
+
 
