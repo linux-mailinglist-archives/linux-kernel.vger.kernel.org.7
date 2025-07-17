@@ -1,359 +1,542 @@
-Return-Path: <linux-kernel+bounces-735021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F0C6B0898F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:44:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14FB7B08993
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:44:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFAEB1AA595B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:44:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1F65583749
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:44:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A98E828B417;
-	Thu, 17 Jul 2025 09:43:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uAf0gpVz"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E04CA28C01A;
+	Thu, 17 Jul 2025 09:44:01 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74A133086
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 09:43:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E8E328BA84;
+	Thu, 17 Jul 2025 09:43:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752745433; cv=none; b=h2KcaxIE/ImZB1lMNpZ1naPRU1ngqOci24jImMtyPAv3rHQeLv49KS2DYvUA9ekwMQUVTy1vj28dN63vawTRT2TCVti0B4RzHLeykhyMcj51U2yUVIDdNe2n9fqziGsIHXmpFwQLtGhPPiFwB+HLSV9PqP4rxgDJNXsJXqzW44A=
+	t=1752745441; cv=none; b=BQ5IBzwFMKDwop41n4atgy4KwHQZ0wh6fG1q+DGrL/dQ6MlIqheiSHGbtgYFfPxhGdMX/BN2T4rjRvSjrmrrAd8ViEkY6+O8ro2E5bFrCkRBYaFaCuWDRq/FcI6/plelic2g+hEQ/sLwmn6hkx/R0tWnZ0tWRWBmvFqEb0oIwys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752745433; c=relaxed/simple;
-	bh=eRJZpSbYvKgupe+T1SU+IZZyns2Revzb8XX/zXaFhlM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hBamunEgKYXah8CL+5eI3sCljAJ+o9JTmVkBWZxm3i6N/0KrxQm+G6t82WepPCYZhAOCkhGnWag9DGuVFPwtp4YkDIK6MxB1jE1GJ5xDebxi7B1a6sR3OoLd1kU4RnlBeId4x0G9Vy92JlrY2SJUl7gYycOFN8t84/mUXW7N1Fs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uAf0gpVz; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4561607166aso5519655e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 02:43:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752745430; x=1753350230; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5NGgb3DcA15w098paJT2GnEVS25q5aKdVuuE1uihlhU=;
-        b=uAf0gpVzBpZap4Y9G+UWnOqDpyzIkHOjJiV1u1rRs39oxi2Mv2CiPqVKFp2quh1Ivy
-         DPZsCxUbx6fGTBs8+n0IV5hpXON1LFPSP+9YXsg9qwGvlby5J8QXucIJwp/YiomL5ku+
-         0N5hPH1AW+QT1MgREvB5myw36RK2jNoKW80lSO3QHSdUI8XIg85KrayfB+4xGowzPe/o
-         8hIxcb7QXCQEUzNcxE92EVS+SjL7pkHi0PYtCcNm39bKEdeno7Prn/SBSmB2yhhZ7T5C
-         4/TjAR2pMvvfVqo7CAh9UDS2sMOmdeDNTEfvn5dJFs0XSbEI95xffhUUznV9ZFu5+i/A
-         dSAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752745430; x=1753350230;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5NGgb3DcA15w098paJT2GnEVS25q5aKdVuuE1uihlhU=;
-        b=tyRUHLSyo6qNSW2b4aoO/UkCODKvbCV7B1Scn7ScBcoTPXqHzz1tUlBEv5aVwsycQl
-         fD4t4sRLxe01ffBysOtkryq8XjzLGUyAlm0OKTp0RXyme7P03rsrq+c9UCQxCwLYxVpg
-         ArLmfTDJSMFC0YrWBZkKeK8zihJpt9e/b4PVDnF7i3CZEgH6flhquYsnfaglaGXOhulV
-         jBW3kDssvNnf4zHL1tokx4r5bq7/Ji/fF5nixSD49JoyT00aW58jKSupO32t4aXcdFSG
-         rGmLDXWW08pLU2l0A1+9ckEEY3HmcMjUhWapmPBm9/vUco9sb67Pz7eVhlfMWBoYSDCj
-         mmvw==
-X-Forwarded-Encrypted: i=1; AJvYcCUCD6LLq9gsidWkxsdne7OuKdphkStaWsgcMTrT2TkESLQnXmv9X3zVOpauqHFGBtFKXX5ad606rwAgEKw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUyuYFFIQDDj+Kzc0jnZgWxtXtQX4od/QzXtF0j0Eeg7G5dn6f
-	SHD/RZp7QpESf/RBaKJ+DBiy6k68po7VsuaNTY3lfWGWRGQyK+1T2Fr04CNTfJHjLzw=
-X-Gm-Gg: ASbGncvpd7v7P0uMQN5ayIA3L9PprXgUd9Y4BiCgaZNsBGeN6jfA/Wtj21eUf6aTRNL
-	wmSjhIdgj0kagQ1MzhIvmwVLkHh/FCri9p/7eBF97t2LEfZSzCGpcKsNMVi3pJpv2ltW/iD6HlG
-	dqvwodLh3dMg9DhsjqnXHFShQnGTTuFa1N8b6Yqf429/oZDMqwbsRvMGYMFqF7e3Zmh4QnOFTR6
-	hd5gJEHoUolfnk9hOET6ZSUEes29E2ocLhqZ2hwk9mSNi1SIz5ou/SwTbSu7CkUZnrsUVBfngI2
-	40kI3ALw3fcdeezXVV5dGHbeweszXS1SyRzIaaX1B+ZjsL/ddK+aCwMuTBXUu3K3YdGtMHu7QqE
-	7WoNoTveug/+0YlqVW4rc+ufe9HVc+mWpPVQ1enx3rBD73nDlBjuSgyTBb9MUmWc=
-X-Google-Smtp-Source: AGHT+IGoO3nrN5aiR8KKGhctKRP1P15C3fJWOm2uSdmC5FXGBrIhMKTBv1htTrvHdpEgWyxlqT2x4A==
-X-Received: by 2002:a05:600c:1c82:b0:456:2ac6:ccc3 with SMTP id 5b1f17b1804b1-4562e28367emr47165115e9.25.1752745429897;
-        Thu, 17 Jul 2025 02:43:49 -0700 (PDT)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e8860cdsm46325905e9.20.2025.07.17.02.43.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Jul 2025 02:43:49 -0700 (PDT)
-Message-ID: <b8b80bfd-0927-4c4f-96fd-6ad1e94d3666@linaro.org>
-Date: Thu, 17 Jul 2025 10:43:48 +0100
+	s=arc-20240116; t=1752745441; c=relaxed/simple;
+	bh=uh8TcQNgbZbRlKCsstlHygju/8v942inCywjGs7o8dk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iakgtiEXJ9yw/AXmv7qEuttEUHn4mh7cmE57zYYqCSL0GyDsOzvZc4JfsAfCAvRCJXBEse/Kv04vjC+ab5PtPjOYubBP3XcqlbURx0mpKf9eUVS2n0/QIsri761TfUNA9eV28Xiq5pAEDAYGBd/2NEkytca6KBoRDUyZWLU18Jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 8c25268662f211f0b29709d653e92f7d-20250717
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:05f8d111-f810-48a0-82b0-afc740906c77,IP:0,U
+	RL:0,TC:0,Content:7,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:7
+X-CID-META: VersionHash:6493067,CLOUDID:503207e8ce5b0700ffa267c2de431fdd,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:4|50,EDM:
+	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 8c25268662f211f0b29709d653e92f7d-20250717
+X-User: duanchenghao@kylinos.cn
+Received: from localhost [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <duanchenghao@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 1182854698; Thu, 17 Jul 2025 17:43:52 +0800
+Date: Thu, 17 Jul 2025 17:43:48 +0800
+From: Chenghao Duan <duanchenghao@kylinos.cn>
+To: Hengqi Chen <hengqi.chen@gmail.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+	yangtiezhu@loongson.cn, chenhuacai@kernel.org, martin.lau@linux.dev,
+	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
+	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
+	haoluo@google.com, jolsa@kernel.org, kernel@xen0n.name,
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+	bpf@vger.kernel.org, guodongtai@kylinos.cn, youling.tang@linux.dev,
+	jianghaoran@kylinos.cn
+Subject: Re: [PATCH v3 5/5] LoongArch: BPF: Add bpf trampoline support for
+ Loongarch
+Message-ID: <20250717094348.GB993901@chenghao-pc>
+References: <20250709055029.723243-1-duanchenghao@kylinos.cn>
+ <20250709055029.723243-6-duanchenghao@kylinos.cn>
+ <CAEyhmHQOo4ZC8tS549zChU3ozvsh0WAJ9SnQOeG=9mX8g2Gt5w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 4/7] media: venus: hfi_plat_v4: Add capabilities for
- the 4XX lite core
-To: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>,
- quic_vgarodia@quicinc.com, quic_dikshita@quicinc.com, krzk+dt@kernel.org,
- konradybcio@kernel.org, mchehab@kernel.org, andersson@kernel.org,
- conor+dt@kernel.org, amit.kucheria@oss.qualcomm.com
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250715204749.2189875-1-jorge.ramirez@oss.qualcomm.com>
- <20250715204749.2189875-5-jorge.ramirez@oss.qualcomm.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <20250715204749.2189875-5-jorge.ramirez@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEyhmHQOo4ZC8tS549zChU3ozvsh0WAJ9SnQOeG=9mX8g2Gt5w@mail.gmail.com>
 
-On 15/07/2025 21:47, Jorge Ramirez-Ortiz wrote:
-> Populate the HFI v4 lite capability set used by the AR50_LITE video
-> core.
+On Wed, Jul 16, 2025 at 08:32:54PM +0800, Hengqi Chen wrote:
+> On Wed, Jul 9, 2025 at 1:51 PM Chenghao Duan <duanchenghao@kylinos.cn> wrote:
+> >
+> > BPF trampoline is the critical infrastructure of the BPF subsystem, acting
+> > as a mediator between kernel functions and BPF programs. Numerous important
+> > features, such as using BPF program for zero overhead kernel introspection,
+> > rely on this key component.
+> >
+> > The related tests have passed, Including the following technical points:
+> > 1. fentry
+> > 2. fmod_ret
+> > 3. fexit
+> >
+> > Co-developed-by: George Guo <guodongtai@kylinos.cn>
+> > Signed-off-by: George Guo <guodongtai@kylinos.cn>
+> > Signed-off-by: Chenghao Duan <duanchenghao@kylinos.cn>
+> > ---
+> >  arch/loongarch/net/bpf_jit.c | 391 +++++++++++++++++++++++++++++++++++
+> >  arch/loongarch/net/bpf_jit.h |   6 +
+> >  2 files changed, 397 insertions(+)
+> >
+> > diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bpf_jit.c
+> > index 9cb01f0b0..6820558af 100644
+> > --- a/arch/loongarch/net/bpf_jit.c
+> > +++ b/arch/loongarch/net/bpf_jit.c
+> > @@ -7,6 +7,10 @@
+> >  #include <linux/memory.h>
+> >  #include "bpf_jit.h"
+> >
+> > +#define LOONGARCH_MAX_REG_ARGS 8
+> > +#define LOONGARCH_FENTRY_NINSNS 2
+> > +#define LOONGARCH_FENTRY_NBYTES (LOONGARCH_FENTRY_NINSNS * 4)
+> > +
+> >  #define REG_TCC                LOONGARCH_GPR_A6
+> >  #define TCC_SAVED      LOONGARCH_GPR_S5
+> >
+> > @@ -1400,6 +1404,16 @@ static int gen_jump_or_nops(void *target, void *ip, u32 *insns, bool is_call)
+> >                                   (unsigned long)ip, (unsigned long)target);
+> >  }
+> >
+> > +static int emit_call(struct jit_ctx *ctx, u64 addr)
+> > +{
+> > +       u64 ip;
+> > +
+> > +       if (addr && ctx->image && ctx->ro_image)
+> > +               ip = (u64)(ctx->image + ctx->idx);
+> > +
+> > +       return emit_jump_and_link(ctx, LOONGARCH_GPR_RA, ip, addr);
+> > +}
+> > +
+> >  int bpf_arch_text_poke(void *ip, enum bpf_text_poke_type poke_type,
+> >                        void *old_addr, void *new_addr)
+> >  {
+> > @@ -1457,3 +1471,380 @@ void *bpf_arch_text_copy(void *dst, void *src, size_t len)
+> >
+> >         return dst;
+> >  }
+> > +
+> > +static void store_args(struct jit_ctx *ctx, int nargs, int args_off)
+> > +{
+> > +       int i;
+> > +
+> > +       for (i = 0; i < nargs; i++) {
+> > +               emit_insn(ctx, std, LOONGARCH_GPR_A0 + i, LOONGARCH_GPR_FP, -args_off);
+> > +               args_off -= 8;
+> > +       }
+> > +}
+> > +
+> > +static void restore_args(struct jit_ctx *ctx, int nargs, int args_off)
+> > +{
+> > +       int i;
+> > +
+> > +       for (i = 0; i < nargs; i++) {
+> > +               emit_insn(ctx, ldd, LOONGARCH_GPR_A0 + i, LOONGARCH_GPR_FP, -args_off);
+> > +               args_off -= 8;
+> > +       }
+> > +}
+> > +
+> > +static int invoke_bpf_prog(struct jit_ctx *ctx, struct bpf_tramp_link *l,
+> > +                          int args_off, int retval_off,
+> > +                          int run_ctx_off, bool save_ret)
+> > +{
+> > +       int ret;
+> > +       u32 *branch;
+> > +       struct bpf_prog *p = l->link.prog;
+> > +       int cookie_off = offsetof(struct bpf_tramp_run_ctx, bpf_cookie);
+> > +
+> > +       if (l->cookie) {
+> > +               move_imm(ctx, LOONGARCH_GPR_T1, l->cookie, false);
+> > +               emit_insn(ctx, std, LOONGARCH_GPR_T1, LOONGARCH_GPR_FP, -run_ctx_off + cookie_off);
+> > +       } else {
+> > +               emit_insn(ctx, std, LOONGARCH_GPR_ZERO, LOONGARCH_GPR_FP,
+> > +                         -run_ctx_off + cookie_off);
+> > +       }
+> > +
+> > +       /* arg1: prog */
+> > +       move_imm(ctx, LOONGARCH_GPR_A0, (const s64)p, false);
+> > +       /* arg2: &run_ctx */
+> > +       emit_insn(ctx, addid, LOONGARCH_GPR_A1, LOONGARCH_GPR_FP, -run_ctx_off);
+> > +       ret = emit_call(ctx, (const u64)bpf_trampoline_enter(p));
+> > +       if (ret)
+> > +               return ret;
+> > +
+> > +       /* store prog start time */
+> > +       move_reg(ctx, LOONGARCH_GPR_S1, LOONGARCH_GPR_A0);
+> > +
+> > +       /* if (__bpf_prog_enter(prog) == 0)
+> > +        *      goto skip_exec_of_prog;
+> > +        *
+> > +        */
+> > +       branch = (u32 *)ctx->image + ctx->idx;
+> > +       /* nop reserved for conditional jump */
+> > +       emit_insn(ctx, nop);
+> > +
+> > +       /* arg1: &args_off */
+> > +       emit_insn(ctx, addid, LOONGARCH_GPR_A0, LOONGARCH_GPR_FP, -args_off);
+> > +       if (!p->jited)
+> > +               move_imm(ctx, LOONGARCH_GPR_A1, (const s64)p->insnsi, false);
+> > +       ret = emit_call(ctx, (const u64)p->bpf_func);
+> > +       if (ret)
+> > +               return ret;
+> > +
+> > +       if (save_ret) {
+> > +               emit_insn(ctx, std, LOONGARCH_GPR_A0, LOONGARCH_GPR_FP, -retval_off);
+> > +               emit_insn(ctx, std, regmap[BPF_REG_0], LOONGARCH_GPR_FP, -(retval_off - 8));
+> > +       }
+> > +
+> > +       /* update branch with beqz */
+> > +       if (ctx->image) {
+> > +               int offset = (void *)(&ctx->image[ctx->idx]) - (void *)branch;
+> > +               *branch = larch_insn_gen_beq(LOONGARCH_GPR_A0, LOONGARCH_GPR_ZERO, offset);
+> > +       }
+> > +
+> > +       /* arg1: prog */
+> > +       move_imm(ctx, LOONGARCH_GPR_A0, (const s64)p, false);
+> > +       /* arg2: prog start time */
+> > +       move_reg(ctx, LOONGARCH_GPR_A1, LOONGARCH_GPR_S1);
+> > +       /* arg3: &run_ctx */
+> > +       emit_insn(ctx, addid, LOONGARCH_GPR_A2, LOONGARCH_GPR_FP, -run_ctx_off);
+> > +       ret = emit_call(ctx, (const u64)bpf_trampoline_exit(p));
+> > +
+> > +       return ret;
+> > +}
+> > +
+> > +static void invoke_bpf_mod_ret(struct jit_ctx *ctx, struct bpf_tramp_links *tl,
+> > +                              int args_off, int retval_off, int run_ctx_off, u32 **branches)
+> > +{
+> > +       int i;
+> > +
+> > +       emit_insn(ctx, std, LOONGARCH_GPR_ZERO, LOONGARCH_GPR_FP, -retval_off);
+> > +       for (i = 0; i < tl->nr_links; i++) {
+> > +               invoke_bpf_prog(ctx, tl->links[i], args_off, retval_off,
+> > +                               run_ctx_off, true);
+> > +               emit_insn(ctx, ldd, LOONGARCH_GPR_T1, LOONGARCH_GPR_FP, -retval_off);
+> > +               branches[i] = (u32 *)ctx->image + ctx->idx;
+> > +               emit_insn(ctx, nop);
+> > +       }
+> > +}
+> > +
+> > +u64 bpf_jit_alloc_exec_limit(void)
+> > +{
+> > +       return VMALLOC_END - VMALLOC_START;
+> > +}
+> > +
+> > +void *arch_alloc_bpf_trampoline(unsigned int size)
+> > +{
+> > +       return bpf_prog_pack_alloc(size, jit_fill_hole);
+> > +}
+> > +
+> > +void arch_free_bpf_trampoline(void *image, unsigned int size)
+> > +{
+> > +       bpf_prog_pack_free(image, size);
+> > +}
+> > +
+> > +static int __arch_prepare_bpf_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
+> > +                                        const struct btf_func_model *m,
+> > +                                        struct bpf_tramp_links *tlinks,
+> > +                                        void *func_addr, u32 flags)
+> > +{
+> > +       int i;
+> > +       int stack_size = 0, nargs = 0;
+> > +       int retval_off, args_off, nargs_off, ip_off, run_ctx_off, sreg_off;
+> > +       struct bpf_tramp_links *fentry = &tlinks[BPF_TRAMP_FENTRY];
+> > +       struct bpf_tramp_links *fexit = &tlinks[BPF_TRAMP_FEXIT];
+> > +       struct bpf_tramp_links *fmod_ret = &tlinks[BPF_TRAMP_MODIFY_RETURN];
+> > +       int ret, save_ret;
+> > +       void *orig_call = func_addr;
+> > +       u32 **branches = NULL;
+> > +
+> > +       if (flags & (BPF_TRAMP_F_ORIG_STACK | BPF_TRAMP_F_SHARE_IPMODIFY))
+> > +               return -ENOTSUPP;
+> > +
+> > +       /*
+> > +        * FP + 8       [ RA to parent func ] return address to parent
+> > +        *                    function
+> > +        * FP + 0       [ FP of parent func ] frame pointer of parent
+> > +        *                    function
+> > +        * FP - 8       [ T0 to traced func ] return address of traced
+> > +        *                    function
+> > +        * FP - 16      [ FP of traced func ] frame pointer of traced
+> > +        *                    function
+> > +        *
+> > +        * FP - retval_off  [ return value      ] BPF_TRAMP_F_CALL_ORIG or
+> > +        *                    BPF_TRAMP_F_RET_FENTRY_RET
+> > +        *                  [ argN              ]
+> > +        *                  [ ...               ]
+> > +        * FP - args_off    [ arg1              ]
+> > +        *
+> > +        * FP - nargs_off   [ regs count        ]
+> > +        *
+> > +        * FP - ip_off      [ traced func   ] BPF_TRAMP_F_IP_ARG
+> > +        *
+> > +        * FP - run_ctx_off [ bpf_tramp_run_ctx ]
+> > +        *
+> > +        * FP - sreg_off    [ callee saved reg  ]
+> > +        *
+> > +        */
+> > +
+> > +       if (m->nr_args > LOONGARCH_MAX_REG_ARGS)
+> > +               return -ENOTSUPP;
+> > +
+> > +       if (flags & (BPF_TRAMP_F_ORIG_STACK | BPF_TRAMP_F_SHARE_IPMODIFY))
+> > +               return -ENOTSUPP;
+> > +
+> > +       stack_size = 0;
+> > +
+> > +       /* room of trampoline frame to store return address and frame pointer */
+> > +       stack_size += 16;
+> > +
+> > +       save_ret = flags & (BPF_TRAMP_F_CALL_ORIG | BPF_TRAMP_F_RET_FENTRY_RET);
+> > +       if (save_ret) {
+> > +               /* Save BPF R0 and A0 */
+> > +               stack_size += 16;
+> > +               retval_off = stack_size;
+> > +       }
+> > +
+> > +       /* room of trampoline frame to store args */
+> > +       nargs = m->nr_args;
+> > +       stack_size += nargs * 8;
+> > +       args_off = stack_size;
+> > +
+> > +       /* room of trampoline frame to store args number */
+> > +       stack_size += 8;
+> > +       nargs_off = stack_size;
+> > +
+> > +       /* room of trampoline frame to store ip address */
+> > +       if (flags & BPF_TRAMP_F_IP_ARG) {
+> > +               stack_size += 8;
+> > +               ip_off = stack_size;
+> > +       }
+> > +
+> > +       /* room of trampoline frame to store struct bpf_tramp_run_ctx */
+> > +       stack_size += round_up(sizeof(struct bpf_tramp_run_ctx), 8);
+> > +       run_ctx_off = stack_size;
+> > +
+> > +       stack_size += 8;
+> > +       sreg_off = stack_size;
+> > +
+> > +       stack_size = round_up(stack_size, 16);
+> > +
+> > +       /* For the trampoline called from function entry */
+> > +       /* RA and FP for parent function*/
+> > +       emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, -16);
+> > +       emit_insn(ctx, std, LOONGARCH_GPR_RA, LOONGARCH_GPR_SP, 8);
+> > +       emit_insn(ctx, std, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, 0);
+> > +       emit_insn(ctx, addid, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, 16);
+> > +
+> > +       /* RA and FP for traced function*/
+> > +       emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, -stack_size);
+> > +       emit_insn(ctx, std, LOONGARCH_GPR_T0, LOONGARCH_GPR_SP, stack_size - 8);
+> > +       emit_insn(ctx, std, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, stack_size - 16);
+> > +       emit_insn(ctx, addid, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, stack_size);
+> > +
+> > +       /* callee saved register S1 to pass start time */
+> > +       emit_insn(ctx, std, LOONGARCH_GPR_S1, LOONGARCH_GPR_FP, -sreg_off);
+> > +
+> > +       /* store ip address of the traced function */
+> > +       if (flags & BPF_TRAMP_F_IP_ARG) {
+> > +               move_imm(ctx, LOONGARCH_GPR_T1, (const s64)func_addr, false);
+> > +               emit_insn(ctx, std, LOONGARCH_GPR_T1, LOONGARCH_GPR_FP, -ip_off);
+> > +       }
+> > +
+> > +       /* store nargs number*/
+> > +       move_imm(ctx, LOONGARCH_GPR_T1, nargs, false);
+> > +       emit_insn(ctx, std, LOONGARCH_GPR_T1, LOONGARCH_GPR_FP, -nargs_off);
+> > +
+> > +       store_args(ctx, nargs, args_off);
+> > +
+> > +       /* To traced function */
+> > +       orig_call += LOONGARCH_FENTRY_NBYTES;
+> > +       if (flags & BPF_TRAMP_F_CALL_ORIG) {
+> > +               move_imm(ctx, LOONGARCH_GPR_A0, (const s64)im, false);
+> > +               ret = emit_call(ctx, (const u64)__bpf_tramp_enter);
+> > +               if (ret)
+> > +                       return ret;
+> > +       }
+> > +
+> > +       for (i = 0; i < fentry->nr_links; i++) {
+> > +               ret = invoke_bpf_prog(ctx, fentry->links[i], args_off, retval_off,
+> > +                                     run_ctx_off, flags & BPF_TRAMP_F_RET_FENTRY_RET);
+> > +               if (ret)
+> > +                       return ret;
+> > +       }
+> > +       if (fmod_ret->nr_links) {
+> > +               branches  = kcalloc(fmod_ret->nr_links, sizeof(u32 *), GFP_KERNEL);
+> > +               if (!branches)
+> > +                       return -ENOMEM;
+> > +
+> > +               invoke_bpf_mod_ret(ctx, fmod_ret, args_off, retval_off,
+> > +                                  run_ctx_off, branches);
+> > +       }
+> > +
+> > +       if (flags & BPF_TRAMP_F_CALL_ORIG) {
+> > +               restore_args(ctx, m->nr_args, args_off);
+> > +               ret = emit_call(ctx, (const u64)orig_call);
+> > +               if (ret)
+> > +                       goto out;
+> > +               emit_insn(ctx, std, LOONGARCH_GPR_A0, LOONGARCH_GPR_FP, -retval_off);
+> > +               emit_insn(ctx, std, regmap[BPF_REG_0], LOONGARCH_GPR_FP, -(retval_off - 8));
+> > +               im->ip_after_call = ctx->ro_image + ctx->idx;
+> > +               /* Reserve space for the move_imm + jirl instruction */
+> > +               emit_insn(ctx, nop);
+> > +               emit_insn(ctx, nop);
+> > +               emit_insn(ctx, nop);
+> > +               emit_insn(ctx, nop);
+> > +               emit_insn(ctx, nop);
+> > +       }
+> > +
+> > +       for (i = 0; ctx->image && i < fmod_ret->nr_links; i++) {
+> > +               int offset = (void *)(&ctx->image[ctx->idx]) - (void *)branches[i];
+> > +               *branches[i] = larch_insn_gen_bne(LOONGARCH_GPR_T1, LOONGARCH_GPR_ZERO, offset);
+> > +       }
+> > +
+> > +       for (i = 0; i < fexit->nr_links; i++) {
+> > +               ret = invoke_bpf_prog(ctx, fexit->links[i], args_off, retval_off,
+> > +                                     run_ctx_off, false);
+> > +               if (ret)
+> > +                       goto out;
+> > +       }
+> > +
+> > +       if (flags & BPF_TRAMP_F_CALL_ORIG) {
+> > +               im->ip_epilogue = ctx->ro_image + ctx->idx;
+> > +               move_imm(ctx, LOONGARCH_GPR_A0, (const s64)im, false);
+> > +               ret = emit_call(ctx, (const u64)__bpf_tramp_exit);
+> > +               if (ret)
+> > +                       goto out;
+> > +       }
+> > +
+> > +       if (flags & BPF_TRAMP_F_RESTORE_REGS)
+> > +               restore_args(ctx, m->nr_args, args_off);
+> > +
+> > +       if (save_ret) {
+> > +               emit_insn(ctx, ldd, LOONGARCH_GPR_A0, LOONGARCH_GPR_FP, -retval_off);
+> > +               emit_insn(ctx, ldd, regmap[BPF_REG_0], LOONGARCH_GPR_FP, -(retval_off - 8));
+> > +       }
+> > +
+> > +       emit_insn(ctx, ldd, LOONGARCH_GPR_S1, LOONGARCH_GPR_FP, -sreg_off);
+> > +
+> > +       /* trampoline called from function entry */
+> > +       emit_insn(ctx, ldd, LOONGARCH_GPR_T0, LOONGARCH_GPR_SP, stack_size - 8);
+> > +       emit_insn(ctx, ldd, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, stack_size - 16);
+> > +       emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, stack_size);
+> > +
+> > +       emit_insn(ctx, ldd, LOONGARCH_GPR_RA, LOONGARCH_GPR_SP, 8);
+> > +       emit_insn(ctx, ldd, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, 0);
+> > +       emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, 16);
+> > +
+> > +       if (flags & BPF_TRAMP_F_SKIP_FRAME)
+> > +               /* return to parent function */
+> > +               emit_insn(ctx, jirl, LOONGARCH_GPR_ZERO, LOONGARCH_GPR_RA, 0);
+> > +       else
+> > +               /* return to traced function */
+> > +               emit_insn(ctx, jirl, LOONGARCH_GPR_ZERO, LOONGARCH_GPR_T0, 0);
+> > +
+> > +       ret = ctx->idx;
+> > +out:
+> > +       kfree(branches);
+> > +
+> > +       return ret;
+> > +}
+> > +
+> > +int arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *ro_image,
+> > +                               void *ro_image_end, const struct btf_func_model *m,
+> > +                               u32 flags, struct bpf_tramp_links *tlinks,
+> > +                               void *func_addr)
+> > +{
+> > +       int ret;
+> > +       void *image, *tmp;
+> > +       u32 size = ro_image_end - ro_image;
+> > +
+> > +       image = kvmalloc(size, GFP_KERNEL);
+> > +       if (!image)
+> > +               return -ENOMEM;
+> > +
+> > +       struct jit_ctx ctx = {
+> > +               .image = (union loongarch_instruction *)image,
+> > +               .ro_image = (union loongarch_instruction *)ro_image,
+> > +               .idx = 0,
+> > +       };
+> > +
 > 
-> These capabilities define the supported codec formats and operational
-> limits specific to this streamlined VPU variant.
+> Declare ctx at function entry ?
+
+Yes, since the image is allocated first, it appears as it does now.
+Do you think there's anything wrong with doing it this way?
+
 > 
-> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
-> ---
->   .../platform/qcom/venus/hfi_platform_v4.c     | 164 +++++++++++++++---
->   1 file changed, 143 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/hfi_platform_v4.c b/drivers/media/platform/qcom/venus/hfi_platform_v4.c
-> index 4ae7ed476c48..23ed5e689f5a 100644
-> --- a/drivers/media/platform/qcom/venus/hfi_platform_v4.c
-> +++ b/drivers/media/platform/qcom/venus/hfi_platform_v4.c
-> @@ -245,25 +245,145 @@ static const struct hfi_plat_caps caps[] = {
->   	.num_fmts = 4,
->   } };
->   
-> +static const struct hfi_plat_caps caps_lite[] = {
-> +{
-> +	.codec = HFI_VIDEO_CODEC_H264,
-> +	.domain = VIDC_SESSION_TYPE_DEC,
-> +	.caps[0] = {HFI_CAPABILITY_FRAME_WIDTH, 128, 1920, 1},
-> +	.caps[1] = {HFI_CAPABILITY_FRAME_HEIGHT, 128, 1920, 1},
-> +	.caps[2] = {HFI_CAPABILITY_MBS_PER_FRAME, 64, 8160, 1},
-> +	.caps[3] = {HFI_CAPABILITY_BITRATE, 1, 60000000, 1 },
-> +	.caps[4] = {HFI_CAPABILITY_MBS_PER_SECOND, 64, 244800, 1},
-> +	.caps[5] = {HFI_CAPABILITY_FRAMERATE, 1, 120, 1},
-> +	.caps[6] = {HFI_CAPABILITY_MAX_VIDEOCORES, 0, 1, 1},
-> +	.num_caps = 7,
-> +	.pl[0] = { HFI_H264_PROFILE_BASELINE, HFI_H264_LEVEL_5},
-> +	.pl[1] = {HFI_H264_PROFILE_MAIN, HFI_H264_LEVEL_5},
-> +	.pl[2] = {HFI_H264_PROFILE_HIGH, HFI_H264_LEVEL_5},
-> +	.pl[3] = {HFI_H264_PROFILE_CONSTRAINED_BASE, HFI_H264_LEVEL_5},
-> +	.pl[4] = {HFI_H264_PROFILE_CONSTRAINED_HIGH, HFI_H264_LEVEL_5},
-> +	.num_pl = 5,
-> +	.fmts[0] = {HFI_BUFFER_OUTPUT, HFI_COLOR_FORMAT_NV12_UBWC},
-> +	.fmts[1] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV12_UBWC},
-> +	.fmts[2] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV12},
-> +	.fmts[3] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV21},
-> +	.num_fmts = 4,
-> +}, {
-> +	.codec = HFI_VIDEO_CODEC_HEVC,
-> +	.domain = VIDC_SESSION_TYPE_DEC,
-> +	.caps[0] = {HFI_CAPABILITY_FRAME_WIDTH, 128, 1920, 1},
-> +	.caps[1] = {HFI_CAPABILITY_FRAME_HEIGHT, 128, 1920, 1},
-> +	.caps[2] = {HFI_CAPABILITY_MBS_PER_FRAME, 64, 8160, 1},
-> +	.caps[3] = {HFI_CAPABILITY_BITRATE, 1, 60000000, 1 },
-> +	.caps[4] = {HFI_CAPABILITY_MBS_PER_SECOND, 64, 244800, 1},
-> +	.caps[5] = {HFI_CAPABILITY_FRAMERATE, 1, 120, 1},
-> +	.caps[6] = {HFI_CAPABILITY_MAX_VIDEOCORES, 0, 1, 1},
-> +	.num_caps = 7,
-> +	.pl[0] = {HFI_HEVC_PROFILE_MAIN, HFI_HEVC_LEVEL_5 | HFI_HEVC_TIER_HIGH0 << 28 },
-> +	.pl[1] = {HFI_HEVC_PROFILE_MAIN10, HFI_HEVC_LEVEL_5 | HFI_HEVC_TIER_HIGH0 << 28 },
-> +	.num_pl = 2,
-> +	.fmts[0] = {HFI_BUFFER_OUTPUT, HFI_COLOR_FORMAT_NV12_UBWC},
-> +	.fmts[1] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV12_UBWC},
-> +	.fmts[2] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV12},
-> +	.fmts[3] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV21},
-> +	.num_fmts = 4,
-> +}, {
-> +	.codec = HFI_VIDEO_CODEC_VP9,
-> +	.domain = VIDC_SESSION_TYPE_DEC,
-> +	.caps[0] = {HFI_CAPABILITY_FRAME_WIDTH, 128, 1920, 1},
-> +	.caps[1] = {HFI_CAPABILITY_FRAME_HEIGHT, 128, 1920, 1},
-> +	.caps[2] = {HFI_CAPABILITY_MBS_PER_FRAME, 64, 8160, 1},
-> +	.caps[3] = {HFI_CAPABILITY_BITRATE, 1, 60000000, 1 },
-> +	.caps[4] = {HFI_CAPABILITY_MBS_PER_SECOND, 64, 244800, 1},
-> +	.caps[5] = {HFI_CAPABILITY_FRAMERATE, 1, 120, 1},
-> +	.caps[6] = {HFI_CAPABILITY_MAX_VIDEOCORES, 0, 1, 1},
-> +	.num_caps = 7,
-> +	.pl[0] = {HFI_VP9_PROFILE_P0, 200},
-> +	.pl[1] = {HFI_VP9_PROFILE_P2_10B, 200},
-> +	.num_pl = 2,
-> +	.fmts[0] = {HFI_BUFFER_OUTPUT, HFI_COLOR_FORMAT_NV12_UBWC},
-> +	.fmts[1] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV12_UBWC},
-> +	.fmts[2] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV12},
-> +	.fmts[3] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV21},
-> +	.num_fmts = 4,
-> +}, {
-> +	.codec = HFI_VIDEO_CODEC_H264,
-> +	.domain = VIDC_SESSION_TYPE_ENC,
-> +	.caps[0] = {HFI_CAPABILITY_FRAME_WIDTH, 128, 1920, 1},
-> +	.caps[1] = {HFI_CAPABILITY_FRAME_HEIGHT, 128, 1920, 1},
-> +	.caps[2] = {HFI_CAPABILITY_MBS_PER_FRAME, 64, 8160, 1},
-> +	.caps[3] = {HFI_CAPABILITY_BITRATE, 1, 60000000, 1 },
-> +	.caps[4] = {HFI_CAPABILITY_MBS_PER_SECOND, 64, 244800, 1},
-> +	.caps[5] = {HFI_CAPABILITY_FRAMERATE, 1, 120, 1},
-> +	.caps[6] = {HFI_CAPABILITY_MAX_VIDEOCORES, 0, 1, 1},
-> +	.caps[7] = {HFI_CAPABILITY_HIER_P_NUM_ENH_LAYERS, 0, 6, 1},
-> +	.caps[8] = {HFI_CAPABILITY_ENC_LTR_COUNT, 0, 4, 1},
-> +	.caps[9] = {HFI_CAPABILITY_MBS_PER_SECOND_POWERSAVE, 0, 244800, 1},
-> +	.caps[10] = {HFI_CAPABILITY_I_FRAME_QP, 0, 51, 1},
-> +	.caps[11] = {HFI_CAPABILITY_P_FRAME_QP, 0, 51, 1},
-> +	.caps[12] = {HFI_CAPABILITY_B_FRAME_QP, 0, 51, 1},
-> +	.caps[13] = {HFI_CAPABILITY_SLICE_BYTE, 1, 10, 1},
-> +	.caps[14] = {HFI_CAPABILITY_SLICE_MB, 1, 10, 1},
-> +	.num_caps = 15,
-> +	.pl[0] = {HFI_H264_PROFILE_BASELINE, HFI_H264_LEVEL_5},
-> +	.pl[1] = {HFI_H264_PROFILE_MAIN, HFI_H264_LEVEL_5},
-> +	.pl[2] = {HFI_H264_PROFILE_HIGH, HFI_H264_LEVEL_5},
-> +	.pl[3] = {HFI_H264_PROFILE_CONSTRAINED_BASE, HFI_H264_LEVEL_5},
-> +	.pl[4] = {HFI_H264_PROFILE_CONSTRAINED_HIGH, HFI_H264_LEVEL_5},
-> +	.num_pl = 5,
-> +	.fmts[0] = {HFI_BUFFER_INPUT, HFI_COLOR_FORMAT_NV12},
-> +	.fmts[1] = {HFI_BUFFER_INPUT, HFI_COLOR_FORMAT_NV12_UBWC},
-> +	.num_fmts = 2,
-> +}, {
-> +	.codec = HFI_VIDEO_CODEC_HEVC,
-> +	.domain = VIDC_SESSION_TYPE_ENC,
-> +	.caps[0] = {HFI_CAPABILITY_FRAME_WIDTH, 128, 1920, 1},
-> +	.caps[1] = {HFI_CAPABILITY_FRAME_HEIGHT, 128, 1920, 1},
-> +	.caps[2] = {HFI_CAPABILITY_MBS_PER_FRAME, 64, 8160, 1},
-> +	.caps[3] = {HFI_CAPABILITY_BITRATE, 1, 60000000, 1 },
-> +	.caps[4] = {HFI_CAPABILITY_MBS_PER_SECOND, 64, 244800, 1},
-> +	.caps[5] = {HFI_CAPABILITY_FRAMERATE, 1, 120, 1},
-> +	.caps[6] = {HFI_CAPABILITY_MAX_VIDEOCORES, 0, 1, 1},
-> +	.caps[7] = {HFI_CAPABILITY_HIER_P_NUM_ENH_LAYERS, 0, 6, 1},
-> +	.caps[8] = {HFI_CAPABILITY_ENC_LTR_COUNT, 0, 4, 1},
-> +	.caps[9] = {HFI_CAPABILITY_MBS_PER_SECOND_POWERSAVE, 0, 244800, 1},
-> +	.caps[10] = {HFI_CAPABILITY_I_FRAME_QP, 0, 51, 1},
-> +	.caps[11] = {HFI_CAPABILITY_P_FRAME_QP, 0, 51, 1},
-> +	.caps[12] = {HFI_CAPABILITY_B_FRAME_QP, 0, 51, 1},
-> +	.caps[13] = {HFI_CAPABILITY_SLICE_BYTE, 1, 10, 1},
-> +	.caps[14] = {HFI_CAPABILITY_SLICE_MB, 1, 10, 1},
-> +	.num_caps = 15,
-> +	.pl[0] = {HFI_HEVC_PROFILE_MAIN, HFI_HEVC_LEVEL_5 | HFI_HEVC_TIER_HIGH0},
-> +	.pl[1] = {HFI_HEVC_PROFILE_MAIN10, HFI_HEVC_LEVEL_5 | HFI_HEVC_TIER_HIGH0},
-> +	.num_pl = 2,
-> +	.fmts[0] = {HFI_BUFFER_INPUT, HFI_COLOR_FORMAT_NV12},
-> +	.fmts[1] = {HFI_BUFFER_INPUT, HFI_COLOR_FORMAT_NV12_UBWC},
-> +	.num_fmts = 2,
-> +} };
-> +
->   static const struct hfi_plat_caps *get_capabilities(unsigned int *entries,
->   						    bool lite)
->   {
-> -	WARN_ON(lite);
-> +	*entries = lite ? ARRAY_SIZE(caps_lite) : ARRAY_SIZE(caps);
->   
-> -	*entries = ARRAY_SIZE(caps);
-> -	return caps;
-> +	return lite ? caps_lite : caps;
->   }
->   
->   static void get_codecs(u32 *enc_codecs, u32 *dec_codecs, u32 *count, bool lite)
->   {
-> -	WARN_ON(lite);
-> -
-> -	*enc_codecs = HFI_VIDEO_CODEC_H264 | HFI_VIDEO_CODEC_HEVC |
-> -		      HFI_VIDEO_CODEC_VP8;
-> -	*dec_codecs = HFI_VIDEO_CODEC_H264 | HFI_VIDEO_CODEC_HEVC |
-> -		      HFI_VIDEO_CODEC_VP8 | HFI_VIDEO_CODEC_VP9 |
-> -		      HFI_VIDEO_CODEC_MPEG2;
-> -	*count = 8;
-> +	if (lite) {
-
-Ok, now the WARN_ON() makes more sense, its a progressive.
-
-> +		*enc_codecs = HFI_VIDEO_CODEC_H264 | HFI_VIDEO_CODEC_HEVC;
-> +		*dec_codecs = HFI_VIDEO_CODEC_H264 | HFI_VIDEO_CODEC_HEVC |
-> +			      HFI_VIDEO_CODEC_VP9;
-> +		*count = 5;
-> +	} else {
-> +		*enc_codecs = HFI_VIDEO_CODEC_H264 | HFI_VIDEO_CODEC_HEVC |
-> +			      HFI_VIDEO_CODEC_VP8;
-> +		*dec_codecs = HFI_VIDEO_CODEC_H264 | HFI_VIDEO_CODEC_HEVC |
-> +			      HFI_VIDEO_CODEC_VP8 | HFI_VIDEO_CODEC_VP9 |
-> +			      HFI_VIDEO_CODEC_MPEG2;
-> +		*count = 8;
-> +	}
-
-I don't much like setting hard-coded values in functions.
-
-It must be possible to pass these as parameters. We have all of these 
-enumeration structures - it seems a shame to move some specific 
-enumerations to hard-coding.
-
-Please consider if there is a way to bury this into one of the 
-enumeration params.
-
->   }
->   
->   static const struct hfi_platform_codec_freq_data codec_freq_data[] =  {
-> @@ -277,15 +397,23 @@ static const struct hfi_platform_codec_freq_data codec_freq_data[] =  {
->   	{ V4L2_PIX_FMT_VP9, VIDC_SESSION_TYPE_DEC, 200, 10, 200 },
->   };
->   
-> +static const struct hfi_platform_codec_freq_data codec_freq_data_lite[] = {
-> +	{ V4L2_PIX_FMT_H264, VIDC_SESSION_TYPE_DEC, 440, 0, 440 },
-> +	{ V4L2_PIX_FMT_HEVC, VIDC_SESSION_TYPE_DEC, 440, 0, 440 },
-> +	{ V4L2_PIX_FMT_VP9, VIDC_SESSION_TYPE_DEC, 440, 0, 440 },
-> +	{ V4L2_PIX_FMT_H264, VIDC_SESSION_TYPE_ENC, 675, 0, 675 },
-> +	{ V4L2_PIX_FMT_HEVC, VIDC_SESSION_TYPE_ENC, 675, 0, 675 },
-> +};
-> +
->   static const struct hfi_platform_codec_freq_data *
->   get_codec_freq_data(u32 session_type, u32 pixfmt, bool lite)
->   {
-> -	const struct hfi_platform_codec_freq_data *data = codec_freq_data;
-> -	unsigned int i, data_size = ARRAY_SIZE(codec_freq_data);
-> +	const struct hfi_platform_codec_freq_data *data = lite ?
-> +					codec_freq_data_lite : codec_freq_data;
-> +	unsigned int i, data_size = lite ? ARRAY_SIZE(codec_freq_data_lite) :
-> +				    ARRAY_SIZE(codec_freq_data);
-
-I'm not a big fan anymore of ternary nor of declaring multiple things on 
-one line.
-
-And I'll preempt Konrad, reverse Christmas tree in the declaration where 
-possible for preference.
-
->   	const struct hfi_platform_codec_freq_data *found = NULL;
->   
-> -	WARN_ON(lite);
-> -
->   	for (i = 0; i < data_size; i++) {
->   		if (data[i].pixfmt == pixfmt && data[i].session_type == session_type) {
->   			found = &data[i];
-> @@ -300,8 +428,6 @@ static unsigned long codec_vpp_freq(u32 session_type, u32 codec, bool lite)
->   {
->   	const struct hfi_platform_codec_freq_data *data;
->   
-> -	WARN_ON(lite);
-> -
->   	data = get_codec_freq_data(session_type, codec, lite);
->   	if (data)
->   		return data->vpp_freq;
-> @@ -313,8 +439,6 @@ static unsigned long codec_vsp_freq(u32 session_type, u32 codec, bool lite)
->   {
->   	const struct hfi_platform_codec_freq_data *data;
->   
-> -	WARN_ON(lite);
-> -
->   	data = get_codec_freq_data(session_type, codec, lite);
->   	if (data)
->   		return data->vsp_freq;
-> @@ -326,8 +450,6 @@ static unsigned long codec_lp_freq(u32 session_type, u32 codec, bool lite)
->   {
->   	const struct hfi_platform_codec_freq_data *data;
->   
-> -	WARN_ON(lite);
-> -
->   	data = get_codec_freq_data(session_type, codec, lite);
->   	if (data)
->   		return data->low_power_freq;
-
-I suppose the hard-coded *val = 5 || *val = 8; isn't important but it 
-would be _nice_ to not hard-code, up to you how much you want to 
-implement for the next version.
-
-This code all looks reasonably correct/consistent with antecedents.
-
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-
----
-bod
+> > +       jit_fill_hole(image, (unsigned int)(ro_image_end - ro_image));
+> > +       ret = __arch_prepare_bpf_trampoline(&ctx, im, m, tlinks, func_addr, flags);
+> > +       if (ret > 0 && validate_code(&ctx) < 0) {
+> > +               ret = -EINVAL;
+> > +               goto out;
+> > +       }
+> > +
+> > +       tmp = bpf_arch_text_copy(ro_image, image, size);
+> > +       if (IS_ERR(tmp)) {
+> > +               ret = PTR_ERR(tmp);
+> > +               goto out;
+> > +       }
+> > +
+> > +       bpf_flush_icache(ro_image, ro_image_end);
+> > +out:
+> > +       kvfree(image);
+> > +       return ret < 0 ? ret : size;
+> > +}
+> > +
+> > +int arch_bpf_trampoline_size(const struct btf_func_model *m, u32 flags,
+> > +                            struct bpf_tramp_links *tlinks, void *func_addr)
+> > +{
+> > +       struct bpf_tramp_image im;
+> > +       struct jit_ctx ctx;
+> > +       int ret;
+> > +
+> > +       ctx.image = NULL;
+> > +       ctx.idx = 0;
+> > +
+> > +       ret = __arch_prepare_bpf_trampoline(&ctx, &im, m, tlinks, func_addr, flags);
+> > +
+> > +       /* Page align */
+> > +       return ret < 0 ? ret : round_up(ret * LOONGARCH_INSN_SIZE, PAGE_SIZE);
+> > +}
+> > diff --git a/arch/loongarch/net/bpf_jit.h b/arch/loongarch/net/bpf_jit.h
+> > index f9c569f53..5697158fd 100644
+> > --- a/arch/loongarch/net/bpf_jit.h
+> > +++ b/arch/loongarch/net/bpf_jit.h
+> > @@ -18,6 +18,7 @@ struct jit_ctx {
+> >         u32 *offset;
+> >         int num_exentries;
+> >         union loongarch_instruction *image;
+> > +       union loongarch_instruction *ro_image;
+> >         u32 stack_size;
+> >  };
+> >
+> > @@ -308,3 +309,8 @@ static inline int emit_tailcall_jmp(struct jit_ctx *ctx, u8 cond, enum loongarch
+> >
+> >         return -EINVAL;
+> >  }
+> > +
+> > +static inline void bpf_flush_icache(void *start, void *end)
+> > +{
+> > +       flush_icache_range((unsigned long)start, (unsigned long)end);
+> > +}
+> > --
+> > 2.43.0
+> >
 
