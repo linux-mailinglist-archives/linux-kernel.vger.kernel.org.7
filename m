@@ -1,138 +1,151 @@
-Return-Path: <linux-kernel+bounces-735635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6E8EB091EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:33:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2E0CB091EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:33:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54ECE1C44C75
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:33:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9E8F1893991
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:33:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 453A22FCE0D;
-	Thu, 17 Jul 2025 16:32:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C0B42F85C9;
+	Thu, 17 Jul 2025 16:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YE3Duy1D"
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="j+tSECtT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1B32FCFE4
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 16:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A641DA62E;
+	Thu, 17 Jul 2025 16:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752769958; cv=none; b=Hs7S2srZ2fqnVlaSHVqSq/UcwEk80KDfYqCZfvELPHnp0rnY0aizOK7SYqdkhrdGw+CLWseVoTHjmX2GcuVwxdkRjE+TtabUSXc1kYmE8fV66+PN7fR7umf4HCNNVEYLYpqXgmn7W8gKjxT17FqALfsPkQilOOdklkNG8p4bMpM=
+	t=1752769988; cv=none; b=TtfxhfX02pRdyRhEA/B+yUTnjSwsHw4SY5FCWzZvNEaz/tK1Jy06Ljm+IlhAppduWPHN4+CEMJ+Cl2HcjzPsYhd3Ej/zx/PVVfNMT05AsYd6OjHdhTxJFyEbt44Xn8Dl4K11zwXGFd7ObjdvoxMx03Ks5Agu2vFLZUPHFSYuppQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752769958; c=relaxed/simple;
-	bh=YwcxOCo6YE3diM78IuQgp6r0Rfk40N3dw4L9cGXNWnA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YpG6lJvTNHzAYbAyHej5imuHJeeI/j2uF9sUlwJ+WUNHKPS7k2KlTC189nKkp6WI3Hi6ApOm42FqRi2q+x9ELL2QHTZoA8WRXiQJ0aGZmsneLdiDE43/kxOu4IplFREZtytDyNQuOKjsPMUBFFpbQzaiiT5/b69VjGFV6j9h1dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YE3Duy1D; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3df303e45d3so3916145ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 09:32:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1752769956; x=1753374756; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3ByiPDi/G0NIi8kD/E4Qwgbmk/3DTxuAzNeguTYZA24=;
-        b=YE3Duy1DbWAhOJbOxSIiTl5iCkkNHHWsLD+d1WNIP4VCrcO4XHOL7OBcJvwOOxYGSN
-         olyNokk036B0mhrvzIcTJAG7X+TjQ+3jUj3qCy/Bl6XFkq1+FyjRC7gG4VZYTOPyHuFM
-         su4iOhv5z9vETGxo5LY2gCEoufmkgrSwrEvfU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752769956; x=1753374756;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3ByiPDi/G0NIi8kD/E4Qwgbmk/3DTxuAzNeguTYZA24=;
-        b=OsmhnJvB7LV/QfeFWwwtD+9JXawrYGOqKWacEzd0Yy35Yx3IJUKIbUEczm/zgJv3yO
-         ITAtN/pTpCXKAhJZUkXEbi+JxuMST+r50JBWnXh8AZKK41/otdvbTBiXkngb8+Bw3o4n
-         snWzmjHwKTbw8mCp1lVLG0mAyAOkLZevKdKuMXcNSpmFlnCdE5ehcL8w5R2IEoh7L2tI
-         rdH4Ku4Fe0400AjBmnFiimJU/3LnTyM4ii0IQ8+4QdguV6pSoPAtRfHoEqnpMEwrBONZ
-         rqbBKSgfF8cS7rhSqWX+hsE39hC1nP7c10GSDU0hVieRf0auPSUFnCu0obmY9uMc94kv
-         chwA==
-X-Forwarded-Encrypted: i=1; AJvYcCXPaxX76FiQk5xFGUhxNpn/e7RoawCBeKFwoPSK9n6OgV2gM1yEiHFB320loUOkaK7iW0qz599IzoO/oSg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDOr78oIaWiA/tz5noSpEHYY0VLMehxvcLSUtKJYBs2ggS89d8
-	MBGVmsrw9o/QEGNC+UiQoBBD9qNkfeQ9e1OEUamBKXaLnuNhri+goRkcypyVJRIsIeEAKa76ZCj
-	lj5oq
-X-Gm-Gg: ASbGncufYNHFincx5uGvyAib/gXwZTSEEfJuJd55vROAc+d8mj05djq9bNIUOipaZXk
-	Dw4BqRN2fJyqdUrNt3eoMThZBia99WsAKhnY5AEZh+UJkzpoCkLoSPEu4PNp2y8Z9QEamKoDvfM
-	8BnWOvX8ANzedC2JNdfMAAw0iUmxjfIa2ixYFArTgDQbAv+NJTKqTp5EdsTKlI6kdfHd4vYRRvx
-	x4DFzcVPEINBSJp5mUWRvMAUvQex5NJqzKbZ9E6cCIgofeLVuiF2Bg0Xr0TPMwzPlh2rklXvj/w
-	0JT9hzB90IaNat/9YSiMOTqUryEVm5ZWVuf8ha09IOFxG32lNILpYqfQvxXcgEeFWrWKIHGfFQP
-	lFDVFYesbPr4N0HXvqXcsV5vznwsvS4Phjg==
-X-Google-Smtp-Source: AGHT+IFdEpa/4272demo+JHHwVf9NMi6k6hcUm7ADZo9/5EQH6F4oSZm3b2YUzHc9cuti9PH5gADIQ==
-X-Received: by 2002:a92:cd8f:0:b0:3dd:f1bb:da0b with SMTP id e9e14a558f8ab-3e28d3b8924mr35218295ab.7.1752769955454;
-        Thu, 17 Jul 2025 09:32:35 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e26b208436sm31349615ab.5.2025.07.17.09.32.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Jul 2025 09:32:34 -0700 (PDT)
-Message-ID: <878ca180-c54b-44cf-aa14-cf6028723167@linuxfoundation.org>
-Date: Thu, 17 Jul 2025 10:32:34 -0600
+	s=arc-20240116; t=1752769988; c=relaxed/simple;
+	bh=eQMhoaVeh9uL/LQThbKAyyzQTwwiWXQJw5qztLmSJSk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eAVJkhJiPG2prbPaWEfwmFVwGpyfd659gJqraJ1590ObUHd0JjwV/gOPK08XVlJ7y/4mgSN2jj+yRvXNs7CJ/rD3kiDSbzOD7mtULwIfwNOEirKtCSVtfp2f8NK8JpyVw6a5oykqhCx5y56gzzQnGNE/qF/oacJXdnhmBVe3hZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=j+tSECtT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9222FC4CEE3;
+	Thu, 17 Jul 2025 16:33:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752769988;
+	bh=eQMhoaVeh9uL/LQThbKAyyzQTwwiWXQJw5qztLmSJSk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=j+tSECtTPZKlPChTcyEBIOo36vO4qPc2DiJVglGxnRk+nMGfCKdY746T73G0/E5Zc
+	 COlnqXsuowmFMOkB/Z1ReHIzifEwHWWUgxeRqHk78klRgaYkkOK5SxEezL6eZd9S5s
+	 45tN0uR7TCmpHUjwIsAijMprDxVCRfXt8liZsHbY=
+Date: Thu, 17 Jul 2025 18:33:05 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, Dave Ertman <david.m.ertman@intel.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Leon Romanovsky <leon@kernel.org>, linux-kernel@vger.kernel.org,
+	Michal Simek <michal.simek@amd.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Ira Weiny <ira.weiny@intel.com>
+Subject: Re: [PATCH net v2 1/4] auxiliary: Support hexadecimal ids
+Message-ID: <2025071726-ramp-friend-a3e5@gregkh>
+References: <20250716000110.2267189-1-sean.anderson@linux.dev>
+ <20250716000110.2267189-2-sean.anderson@linux.dev>
+ <2025071637-doubling-subject-25de@gregkh>
+ <719ff2ee-67e3-4df1-9cec-2d9587c681be@linux.dev>
+ <2025071747-icing-issuing-b62a@gregkh>
+ <5d8205e1-b384-446b-822a-b5737ea7bd6c@linux.dev>
+ <2025071736-viscous-entertain-ff6c@gregkh>
+ <03e04d98-e5eb-41c0-8407-23cccd578dbe@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Code of Conduct violation complaint
-To: Pavel Machek <pavel@ucw.cz>, kernel list <linux-kernel@vger.kernel.org>
-Cc: "conduct@kernel.org" <conduct@kernel.org>
-References: <13a6b8e3-a35a-425d-bafc-006e0a52599f@linuxfoundation.org>
- <aHanGu9nOGOegUg2@duo.ucw.cz>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <aHanGu9nOGOegUg2@duo.ucw.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <03e04d98-e5eb-41c0-8407-23cccd578dbe@linux.dev>
 
-On 7/15/25 13:08, Pavel Machek wrote:
-> Hi!
+On Thu, Jul 17, 2025 at 12:27:44PM -0400, Sean Anderson wrote:
+> On 7/17/25 12:21, Greg Kroah-Hartman wrote:
+> > On Thu, Jul 17, 2025 at 12:04:15PM -0400, Sean Anderson wrote:
+> >> On 7/17/25 11:59, Greg Kroah-Hartman wrote:
+> >> > On Thu, Jul 17, 2025 at 11:49:37AM -0400, Sean Anderson wrote:
+> >> >> On 7/16/25 01:09, Greg Kroah-Hartman wrote:
+> >> >> > On Tue, Jul 15, 2025 at 08:01:07PM -0400, Sean Anderson wrote:
+> >> >> >> Support creating auxiliary devices with the id included as part of the
+> >> >> >> name. This allows for hexadecimal ids, which may be more appropriate for
+> >> >> >> auxiliary devices created as children of memory-mapped devices. If an
+> >> >> >> auxiliary device's id is set to AUXILIARY_DEVID_NONE, the name must
+> >> >> >> be of the form "name.id".
+> >> >> >> 
+> >> >> >> With this patch, dmesg logs from an auxiliary device might look something
+> >> >> >> like
+> >> >> >> 
+> >> >> >> [    4.781268] xilinx_axienet 80200000.ethernet: autodetected 64-bit DMA range
+> >> >> >> [   21.889563] xilinx_emac.mac xilinx_emac.mac.80200000 net4: renamed from eth0
+> >> >> >> [   32.296965] xilinx_emac.mac xilinx_emac.mac.80200000 net4: PHY [axienet-80200000:05] driver [RTL8211F Gigabit Ethernet] (irq=70)
+> >> >> >> [   32.313456] xilinx_emac.mac xilinx_emac.mac.80200000 net4: configuring for inband/sgmii link mode
+> >> >> >> [   65.095419] xilinx_emac.mac xilinx_emac.mac.80200000 net4: Link is Up - 1Gbps/Full - flow control rx/tx
+> >> >> >> 
+> >> >> >> this is especially useful when compared to what might happen if there is
+> >> >> >> an error before userspace has the chance to assign a name to the netdev:
+> >> >> >> 
+> >> >> >> [    4.947215] xilinx_emac.mac xilinx_emac.mac.1 (unnamed net_device) (uninitialized): incorrect link mode  for in-band status
+> >> >> >> 
+> >> >> >> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+> >> >> >> ---
+> >> >> >> 
+> >> >> >> Changes in v2:
+> >> >> >> - Add example log output to commit message
+> >> >> > 
+> >> >> > I rejected v1, why is this being sent again?
+> >> >> 
+> >> >> You asked for explanation, I provided it. I specifically pointed out why
+> >> >> I wanted to do things this way. But I got no response. So here in v2.
+> >> > 
+> >> > Again, I said, "do not do that, this is not how ids work in the driver
+> >> > model", and you tried to show lots of reasons why you wanted to do it
+> >> > this way despite me saying so.
+> >> > 
+> >> > So again, no, sorry, this isn't ok.  Don't attempt to encode information
+> >> > in a device id like you are trying to do here, that's not what a device
+> >> > id is for at all.  I need to go dig up my old patch that made all device
+> >> > ids random numbers just to see what foolish assumptions busses and
+> >> > userspace tools are making....
+> >> 
+> >> But it *is* how ids work in platform devices.
+> > 
+> > No one should ever use platform devices/bus as an excuse to do anything,
+> > it's "wrong" in so many ways, but needs to be because of special
+> > reasons.  No other bus should work like that, sorry.
+> > 
+> >> And because my auxiliary
+> >> devices are created by a platform device, it is guaranteed that the
+> >> platform device id is unique and that it will also be unique for
+> >> auxiliary devices. So there is no assumption here about the uniqueness
+> >> of any given id.
+> > 
+> > Then perhaps use the faux device api instead?
 > 
-> I publicly apologize.
-> 								Pavel
+> There's *another* pseudo bus? OK the reason why is that faux was added
+> four months ago and there is nothing under Documentation for it. So I
+> had no idea it existed. I will have a look, but perhaps you should write
+> up some documentation about why someone might want to use a "faux" bus
+> over the auxiliary bus or MFD.
 
-Hi Pavel,
+"faux" is for when platform devices were being abused because someone
+just wanted a device in the device tree, and did not use any of the
+platform device resources.
 
-The Code of Conduct Committee holds these conversation privately
-with the people involved. Looks like you cc'ed the mailing list.
-Respecting your choice, we can continue this conversation publicly.
-
-Chose one or all of these threads to apologize to the developer
-directly.
-
-https://lore.kernel.org/all/aG2B6UDvk2WB7RWx@duo.ucw.cz/
-https://lore.kernel.org/all/aG2ClcspT5ESNPGk@duo.ucw.cz/
-https://lore.kernel.org/all/aG2BjYoCUYUaLGsJ@duo.ucw.cz/
+Yes, more documentation is always a good idea, someday...
 
 thanks,
--- Shuah (On behalf of the Code of Conduct Committee)
 
-  
-> 
-> On Tue 2025-07-15 09:28:19, Shuah Khan wrote:
->> Hi Pavel,
->>
->> The Code of Conduct Committee has received a complaint about your
->> interactions on the mailing list which are in violation of the
->> Linux kernel code of conduct.
->>
->> We urge you to apologize publicly to make amends within the next
->> week.
->>
->> Refer to these documents in the kernel repo for information on
->> the Code of Conduct and actions taken when violations such as
->> these happen.
->>
->> https://docs.kernel.org/process/code-of-conduct.html
->> https://docs.kernel.org/process/code-of-conduct-interpretation.html#code-of-conduct-interpretation
->>
->> thanks,
->> -- Shuah (On behalf of the Code of Conduct Committee)
-> 
-
+greg k-h
 
