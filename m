@@ -1,841 +1,215 @@
-Return-Path: <linux-kernel+bounces-734445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95EE3B081E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:53:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A47EFB081F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:54:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AED3616ABA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:53:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAC5017285D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:54:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342B0192580;
-	Thu, 17 Jul 2025 00:51:08 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E69381BA;
-	Thu, 17 Jul 2025 00:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050C61A23AC;
+	Thu, 17 Jul 2025 00:54:41 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F067E9;
+	Thu, 17 Jul 2025 00:54:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752713467; cv=none; b=ZRKVZu4bNsHleIYjwPnpl9h27bWcb/rP4RLBnHAVC5JC/YeCRpN/OeIYgPjxO4po+M7q5UF6jac46ZcE+nxywMWY2Y7GMTh59Q7ycXv406Idck91uqjTc+7GV7WlMBcTOmTSze4KHvftKE8u+zGcg/BaaODEH5rPV/LPcNTGzDY=
+	t=1752713680; cv=none; b=gFGMpzOh4gHDG1UvFRBV4Zk4BhRw/K6nsvn8D9SaJMPsemwNPKulRLt7eVOYavrpATcUTDoIp4PtqsUuCSorbqhB46LKHvCeejmgYz0JkxaG+WCFEN4vblXEJlIQ1HI9gAk9Z/K6/Idcv9peeCIJrLLxm3nSpvLHNgOe3M5CseE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752713467; c=relaxed/simple;
-	bh=isBKSMYVlR4fXx7yEE5MZFRH75BsGSxNL+9w29T3yFE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DutBMN73FVDzH+pZBVCbbQg2ZjRkbRSBAe7fqthupKH7M7SK64vqDKA07UzNxmitd1dQ6qqK0X6NrjjR8Fg7QusAdM5nvnK7aE0yQE1217Hxh37YzoMGkqiGrV+TNUPPXqIS24NS0Vm5UJboDb3vjrdx8YGUDvFyq4f1QtrQnzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf12.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay10.hostedemail.com (Postfix) with ESMTP id E87C2C05AD;
-	Thu, 17 Jul 2025 00:51:00 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf12.hostedemail.com (Postfix) with ESMTPA id 53DE418;
-	Thu, 17 Jul 2025 00:50:56 +0000 (UTC)
-Date: Wed, 16 Jul 2025 20:51:16 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Steven Rostedt <rostedt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri Olsa
- <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner
- <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat
- <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, Beau
- Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton
- <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, Florian Weimer
- <fweimer@redhat.com>, Sam James <sam@gentoo.org>
-Subject: Re: [PATCH v14 00/12] unwind_user: x86: Deferred unwinding
- infrastructure
-Message-ID: <20250716205116.30940bb4@gandalf.local.home>
-In-Reply-To: <20250717004910.297898999@kernel.org>
-References: <20250717004910.297898999@kernel.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752713680; c=relaxed/simple;
+	bh=A2DD8Kp5SJAvz1LO0Hqg/Tb8UDBjXzfSy1t6d20YrE0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PrJqr4sxl/5RUhVvPEfIPGt0uz5yngLcvJLbH0k+E9owW5aavihhm+XqaBvsMwSG84/kxUKzPYd5oucamVaFiXQbf0kODP5e5dtCxiuaZ8VOLXpfEOEuK4Gs7WhR65Gi9njufb4Z1x74S6QuHY51ozGYUWKSB5ghlK0ZMrrzCO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-681ff7000002311f-47-687849c8d648
+Date: Thu, 17 Jul 2025 09:54:27 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Mina Almasry <almasrymina@google.com>
+Cc: "Lobakin, Aleksander" <aleksander.lobakin@intel.com>,
+	willy@infradead.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	kernel_team@skhynix.com, ilias.apalodimas@linaro.org,
+	harry.yoo@oracle.com, akpm@linux-foundation.org,
+	andrew+netdev@lunn.ch, asml.silence@gmail.com, toke@redhat.com,
+	david@redhat.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+	rppt@kernel.org, surenb@google.com, mhocko@suse.com,
+	linux-rdma@vger.kernel.org, bpf@vger.kernel.org,
+	vishal.moola@gmail.com, hannes@cmpxchg.org, ziy@nvidia.com,
+	jackmanb@google.com, wei.fang@nxp.com, shenwei.wang@nxp.com,
+	xiaoning.wang@nxp.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, anthony.l.nguyen@intel.com,
+	przemyslaw.kitszel@intel.com, sgoutham@marvell.com,
+	gakula@marvell.com, sbhatta@marvell.com, hkelam@marvell.com,
+	bbhushan2@marvell.com, tariqt@nvidia.com, ast@kernel.org,
+	daniel@iogearbox.net, hawk@kernel.org, john.fastabend@gmail.com,
+	sdf@fomichev.me, saeedm@nvidia.com, leon@kernel.org,
+	mbloch@nvidia.com, danishanwar@ti.com, rogerq@kernel.org,
+	nbd@nbd.name, lorenzo@kernel.org, ryder.lee@mediatek.com,
+	shayne.chen@mediatek.com, sean.wang@mediatek.com,
+	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+	horms@kernel.org, m-malladi@ti.com, krzysztof.kozlowski@linaro.org,
+	matthias.schiffer@ew.tq-group.com, robh@kernel.org,
+	imx@lists.linux.dev, intel-wired-lan@lists.osuosl.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-wireless@vger.kernel.org, linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH net-next v10 02/12] netmem: use netmem_desc instead of
+ page to access ->pp in __netmem_get_pp()
+Message-ID: <20250717005427.GA58539@system.software.com>
+References: <20250714120047.35901-1-byungchul@sk.com>
+ <20250714120047.35901-3-byungchul@sk.com>
+ <CAHS8izO393X_BDJxnX2d-auhTwrUZK5wYdoAh_tJc0GBf0AqcQ@mail.gmail.com>
+ <CAHS8izNh7aCJOb1WKTx7CXNDPv_UBqFyq2XEHHhqHH=5JPmJCQ@mail.gmail.com>
+ <20250715013626.GA49874@system.software.com>
+ <CAHS8izNgfrN-MimH1uv349AqNudvQJoeOsyHpoBT_QokF3Zv=w@mail.gmail.com>
+ <20250716045124.GB12760@system.software.com>
+ <CAHS8izMK2JA4rGNMRMqQbZtJVEP8b_QPLXzoKNeVgQFzAmdv3g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: xwuqifgsoy5wf6q7qbbbrjtjqxtcyjwr
-X-Rspamd-Server: rspamout08
-X-Rspamd-Queue-Id: 53DE418
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19sU7UTAywRohb0O2BkRN0Np6JDbvP3cCs=
-X-HE-Tag: 1752713456-572028
-X-HE-Meta: U2FsdGVkX1+BIQXkVtfJFGHV+u7TVq3Abumz7uqCd68FrGQ8tNe4g8aixY4t9Kruh0WNk8B/wyKxGTUzWHZ53HYIUHxFk7HsEg0XyLpZ3Jnnv8HT7wm5cG6xod26eD2pltaWMsXfkT5cF3C5O0AztfIBYMlmXJ+AKi3EDvcY8nze8uY2EFt5yL7MCQdazPc75/Z0MF3Kw8aBE7thy92VfJVhrHY41cr1ee1+fQUxPt1Ay6hTn94vyQJ3o0AsI3k9wN3fxgJy//qzlRpAyhnP8mwFtdWYz9Lj9OcgnsNbSE9+joBe13d5pj+tYCy5XoMtBjIYYLSFurBp8i1crBBiLigP6FZzCOOd
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHS8izMK2JA4rGNMRMqQbZtJVEP8b_QPLXzoKNeVgQFzAmdv3g@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUyTZxSG87zfbWj20jH2iCFbuphlJrK5ke0kk+lIFt4l27KFmOzjhzbj
+	je2ASgoUMC4yQBcQqwM3pFZXtfI9qYVCxcpGIVjn5rAgqYKtwEpg1I8pNNQWWAsx49+V59y5
+	r3OShyPll5gkTq0pELUaZY6CkVLS+3Fnt1z7sFj1RqCfBmN7GwM3n5yhoXWxGBrv2WlwN2O4
+	PLRIgLGlC8F8aIwFa+U4CU8GrjJw7kyQhJDlCAXGvyooWGh/SoJ/cJIFl3OJglbrx+BrmKbA
+	8X03Cf0Lm2DyqIuBIxVhEuq9BxlYuROm4UroAQtl9iYCrszZWBjq0tNw/Ol5ErpL70VdU6M0
+	DPcYGRguv4nA27ZCw7QzKgw0jbOgbzUgcP7azEBZxVsQsM2z8OjHARJ8+h2wfEIHg6ZECF4P
+	IBg7f4uAFYedhRveCzQMtHcTMDIRIiFYfYqBqvtHEdyq7yHgj1MWGszXR4joHpkwuhIhoNZt
+	YmCqwofA3T9Jwcnv9Ajaez00/OuInhxeNDI70oX+wENSsN81I6Gz+TYhzBxbJgRP7++EcMlw
+	lxVM1kKho2mzcM4xSwhVHjcpWFsqGcH6uIYVxkcdjOA6EaaEDvMBYaajHn2a/KV0W5aYo9aJ
+	2tff2y1VLfSVo7xDycW+BitRinyJVUjCYT4Vl/5ioZ/x7epaNsYUvwlfbPSTMWb4V7HHE1rl
+	BP41bO79IZqXciR/IQ5PzN1BscHzfCE+O+GhYizjAXsv1qFYSM6PkfinSBWzNojH1+r/Xg2R
+	0dbIaXe0lYvyRty4zK09v4TLbSdXZRL+M+wdsa3yC/wr+Leuq0SsE/NBCe4z+Zm1rTfgviYP
+	dQzFG9YpDOsUhv8VhnUKE6JakFyt0eUq1TmpKaoSjbo45eu9uVYU/dAN30a+sqPHQ5lOxHNI
+	ESfbbSlSyWmlLr8k14kwRyoSZLVunUouy1KW7BO1e3dpC3PEfCfayFGKF2VvBouy5PweZYGY
+	LYp5ovbZlOAkSaVo+9ZKTXg53nwjbf+05DnC1eZOm03fWZZ0eFb2cN6X7M9Y+jzy0csZ2ZGU
+	vLe3JRUFtg8SB1WXC2rcu4ZPv//N4Xcs2s5U058G10CC0OLc0Fwu1vVkdNq+qBbSJh8M1c3s
+	kT2aSwRSL/1gekt25tL+fVPH0w/VVM+/e2DiZ/8/EP5EQeWrlFs3k9p85X9lTB/3zAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0xbZRjH95733OioOZa6nWy6zZpFJRFGxPgkc4bNLBxMXLb4wXiZo5GT
+	tRs3W6hgXGRt1awBBuJwdFSZY1BgQikWKlamLdk652UrjHS0a7kIwQ3dlEsoVFjLYuTb73n+
+	T37/98PLYlktvYlV5xeJmnxlroKWkJJ9Ow3PeLNKVDs8/q1Q33GBhuszZyloWyiB5hEnBb4W
+	Hr67tkBAfWs3gtlIgAH7iSCGmf7LNJw7O48hYqsgof43IwlzHYsYJi6NMeB1/0tCm/0VCDdN
+	kuD6pAeDZ247jJ300lBhXMJQF/qIhpXhJQq+j/zFgN5pJcBjuRIb7zgYuNZdScFni+cx9JSN
+	xArHhygY6K2nYcBwHUHowgoFk+5Y67Q1yEBlmxmB+2ILDXrjszDtmGXg3ql+DOHKDFg+rYNL
+	DRtg/uo0gsD5GwSsuJwM/Bpqp6C/o4eAwdEIhvlyCw2mP08iuFHXS8DPFhsFjVcHidg7XoWh
+	lSgBNb4GGsaNYQQ+zxgJZ45XIujo81Pwt8tIZrwkeKbvYsF5qxEJ37TcJISpqmVC8Pf9RAjf
+	mm8xQoO9WOiyJgvnXH8Qgsnvw4K99QQt2P/5lBGCQy5a8J5eIoWuxg+Fqa46tH/LG5IXcsRc
+	tU7UpL6YLVHN/WhAhR8/VhJushNlKLzBhBJYnkvnb5bXMHEmue18Z/MEjjPNPcn7/ZFVlnNP
+	84191ZQJSVjMtSfyo3eGUTxI4or5r0b9ZJylHPChzs9R/EjGBTBfGzXRD4KH+St1v68e4Zg1
+	+oUvZmVjvJlvXmYfrLfyBseZ1bIE7gAfGnSs8iPcE/wP3ZeJKvSQeY3JvMZk/t9kXmNqQGQr
+	kqvzdXlKde5zKdqjqtJ8dUnKOwV5dhT7rU3HotVONDuQ6UYcixSJ0mzbeyoZpdRpS/PciGex
+	Qi6t8elUMmmOsvR9UVNwSFOcK2rdaDNLKjZKX35NzJZxh5VF4lFRLBQ1/6UEm7CpDFVFA7qN
+	u2y/FO78MqPz0GLwrZHJpFP9T70pV08Eds8Yvt4mLV83mpWJXqdqLYb9qDrgPWLPsZK+g0VT
+	VfqDexL08t3r0psOUPf2Zr29Pn1qvXMy0Zb2aFJqT+ptZdqOtt6gLOvw8HjKwgfstmprRN9u
+	uRjQVxQcf/eIo+/5x5MzlxSkVqVMS8YarfI+rd0rxKkDAAA=
+X-CFilter-Loop: Reflected
 
-On Wed, 16 Jul 2025 20:49:10 -0400
-Steven Rostedt <rostedt@kernel.org> wrote:
-
-> The code for this series is located here:
+On Wed, Jul 16, 2025 at 12:41:04PM -0700, Mina Almasry wrote:
+> On Tue, Jul 15, 2025 at 9:51 PM Byungchul Park <byungchul@sk.com> wrote:
+> >
+> > On Tue, Jul 15, 2025 at 12:09:34PM -0700, Mina Almasry wrote:
+> > > On Mon, Jul 14, 2025 at 6:36 PM Byungchul Park <byungchul@sk.com> wrote:
+> > > >
+> > > > On Mon, Jul 14, 2025 at 12:58:15PM -0700, Mina Almasry wrote:
+> > > > > On Mon, Jul 14, 2025 at 12:37 PM Mina Almasry <almasrymina@google.com> wrote:
+> > > >    2) Introduce the unsafe version, __netmem_to_nmdesc(), and use it in
+> > > >       __netmem_get_pp().
+> > > >
+> > >
+> > > No need following Pavel's feedback. We can just delete
+> > > __netmem_get_pp. If we do find a need in the future to extract the
+> > > netmem_desc from a netmem_ref, I would rather we do a straight cast
+> > > from netmem_ref to netmem_desc rather than netmem_ref -> pages/net_iov
+> > > -> netmem_desc.
+> > >
+> > > But that seems unnecessary for this series.
+> >
+> > No.  The series should remove accessing ->pp through page.
+> >
+> > I will kill __netmem_get_pp() as you and I prefer.  However,
+> > __netmem_get_pp() users e.i. libeth_xdp_return_va() and
+> > libeth_xdp_tx_fill_buf() should be altered.  I will modify the code like:
+> >
+> > as is: __netmem_get_pp(netmem)
+> > to be: __netmem_nmdesc(netmem)->pp
+> >
+> > Is it okay with you?
+> >
 > 
->   git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-> unwind/core
+> When Pavel and I were saying 'remove __netmem_get_pp', I think we
+> meant to remove the entire concept of unsafe netmem -> page
+> conversions. I think we both don't like them. From this perspective,
+> __netmem_nmdesc(netmem)->pp is just as bad as __netmem_get_pp(netmem).
 > 
-> Head SHA1: f14e91fa8019acefb146869eb465966a88ef6f3b
+> I think since the unsafe netmem-to-page casts are already in mainline,
+> lets assume they should stay there until someone feels strongly enough
+> to remove them. The logic in Olek's patch is sound:
 > 
-> Changes since v13: https://lore.kernel.org/linux-trace-kernel/20250708012239.268642741@kernel.org/
+> https://lore.kernel.org/all/20241203173733.3181246-8-aleksander.lobakin@intel.com/
+> 
+> Header buffer page pools do always use pages and will likely remain so
+> for a long time, so I guess lets continue to support them rather than
+> try to remove them in this series. A followup series could try to
+> remove them.
 
-Here's a diff between v13 and v14:
+At the beginning of this work, I was unconfortable to see the network
+code keeps the unsafe version maybe for optimization(?).  I decided to
+accept it, thinking there must be some reason.
 
-diff --git a/arch/Kconfig b/arch/Kconfig
-index 2c41d3072910..8e3fd723bd74 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -442,10 +442,6 @@ config HAVE_UNWIND_USER_FP
- 	bool
- 	select UNWIND_USER
- 
--config HAVE_UNWIND_USER_COMPAT_FP
--	bool
--	depends on HAVE_UNWIND_USER_FP
--
- config HAVE_PERF_REGS
- 	bool
- 	help
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 17d4094c821b..5862433c81e1 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -302,7 +302,6 @@ config X86
- 	select HAVE_SYSCALL_TRACEPOINTS
- 	select HAVE_UACCESS_VALIDATION		if HAVE_OBJTOOL
- 	select HAVE_UNSTABLE_SCHED_CLOCK
--	select HAVE_UNWIND_USER_COMPAT_FP	if IA32_EMULATION
- 	select HAVE_UNWIND_USER_FP		if X86_64
- 	select HAVE_USER_RETURN_NOTIFIER
- 	select HAVE_GENERIC_VDSO
-diff --git a/arch/x86/include/asm/unwind_user.h b/arch/x86/include/asm/unwind_user.h
-index 19634a73612d..220fd0a6e175 100644
---- a/arch/x86/include/asm/unwind_user.h
-+++ b/arch/x86/include/asm/unwind_user.h
-@@ -2,41 +2,21 @@
- #ifndef _ASM_X86_UNWIND_USER_H
- #define _ASM_X86_UNWIND_USER_H
- 
--#include <linux/unwind_user_types.h>
--
--#define ARCH_INIT_USER_FP_FRAME							\
--	.cfa_off	= (s32)sizeof(long) *  2,				\
--	.ra_off		= (s32)sizeof(long) * -1,				\
--	.fp_off		= (s32)sizeof(long) * -2,				\
--	.use_fp		= true,
--
- #ifdef CONFIG_IA32_EMULATION
--
--#define ARCH_INIT_USER_COMPAT_FP_FRAME						\
--	.cfa_off	= (s32)sizeof(u32)  *  2,				\
--	.ra_off		= (s32)sizeof(u32)  * -1,				\
--	.fp_off		= (s32)sizeof(u32)  * -2,				\
--	.use_fp		= true,
--
--#define in_compat_mode(regs) !user_64bit_mode(regs)
--
--void arch_unwind_user_init(struct unwind_user_state *state,
--			   struct pt_regs *regs);
--
--static inline void arch_unwind_user_next(struct unwind_user_state *state)
-+/* Currently compat mode is not supported for deferred stack trace */
-+static inline bool arch_unwind_can_defer(void)
- {
--	if (state->type != UNWIND_USER_TYPE_COMPAT_FP)
--		return;
-+	struct pt_regs *regs = task_pt_regs(current);
- 
--	state->ip += state->arch.cs_base;
--	state->fp += state->arch.ss_base;
-+	return user_64bit_mode(regs);
- }
--
--#define arch_unwind_user_init arch_unwind_user_init
--#define arch_unwind_user_next arch_unwind_user_next
--
-+# define arch_unwind_can_defer	arch_unwind_can_defer
- #endif /* CONFIG_IA32_EMULATION */
- 
--#include <asm-generic/unwind_user.h>
-+#define ARCH_INIT_USER_FP_FRAME							\
-+	.cfa_off	= (s32)sizeof(long) *  2,				\
-+	.ra_off		= (s32)sizeof(long) * -1,				\
-+	.fp_off		= (s32)sizeof(long) * -2,				\
-+	.use_fp		= true,
- 
- #endif /* _ASM_X86_UNWIND_USER_H */
-diff --git a/arch/x86/include/asm/unwind_user_types.h b/arch/x86/include/asm/unwind_user_types.h
-deleted file mode 100644
-index f93d535f900e..000000000000
---- a/arch/x86/include/asm/unwind_user_types.h
-+++ /dev/null
-@@ -1,17 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#ifndef _ASM_X86_UNWIND_USER_TYPES_H
--#define _ASM_X86_UNWIND_USER_TYPES_H
--
--#ifdef CONFIG_IA32_EMULATION
--
--struct arch_unwind_user_state {
--	unsigned long ss_base;
--	unsigned long cs_base;
--};
--#define arch_unwind_user_state arch_unwind_user_state
--
--#endif /* CONFIG_IA32_EMULATION */
--
--#include <asm-generic/unwind_user_types.h>
--
--#endif /* _ASM_UNWIND_USER_TYPES_H */
-diff --git a/arch/x86/kernel/stacktrace.c b/arch/x86/kernel/stacktrace.c
-index 8ef9d8c71df9..ee117fcf46ed 100644
---- a/arch/x86/kernel/stacktrace.c
-+++ b/arch/x86/kernel/stacktrace.c
-@@ -9,10 +9,7 @@
- #include <linux/stacktrace.h>
- #include <linux/export.h>
- #include <linux/uaccess.h>
--#include <asm/unwind_user.h>
- #include <asm/stacktrace.h>
--#include <asm/insn.h>
--#include <asm/insn-eval.h>
- #include <asm/unwind.h>
- 
- void arch_stack_walk(stack_trace_consume_fn consume_entry, void *cookie,
-@@ -131,28 +128,3 @@ void arch_stack_walk_user(stack_trace_consume_fn consume_entry, void *cookie,
- 	}
- }
- 
--#ifdef CONFIG_IA32_EMULATION
--void arch_unwind_user_init(struct unwind_user_state *state,
--			   struct pt_regs *regs)
--{
--	unsigned long cs_base, ss_base;
--
--	if (state->type != UNWIND_USER_TYPE_COMPAT_FP)
--		return;
--
--	cs_base = insn_get_seg_base(regs, INAT_SEG_REG_CS);
--	ss_base = insn_get_seg_base(regs, INAT_SEG_REG_SS);
--
--	if (cs_base == -1)
--		cs_base = 0;
--	if (ss_base == -1)
--		ss_base = 0;
--
--	state->arch.cs_base = cs_base;
--	state->arch.ss_base = ss_base;
--
--	state->ip += cs_base;
--	state->sp += ss_base;
--	state->fp += ss_base;
--}
--#endif /* CONFIG_IA32_EMULATION */
-diff --git a/include/asm-generic/Kbuild b/include/asm-generic/Kbuild
-index b797a2434396..295c94a3ccc1 100644
---- a/include/asm-generic/Kbuild
-+++ b/include/asm-generic/Kbuild
-@@ -60,7 +60,6 @@ mandatory-y += topology.h
- mandatory-y += trace_clock.h
- mandatory-y += uaccess.h
- mandatory-y += unwind_user.h
--mandatory-y += unwind_user_types.h
- mandatory-y += vermagic.h
- mandatory-y += vga.h
- mandatory-y += video.h
-diff --git a/include/asm-generic/unwind_user_types.h b/include/asm-generic/unwind_user_types.h
-deleted file mode 100644
-index f568b82e52cd..000000000000
---- a/include/asm-generic/unwind_user_types.h
-+++ /dev/null
-@@ -1,5 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#ifndef _ASM_GENERIC_UNWIND_USER_TYPES_H
--#define _ASM_GENERIC_UNWIND_USER_TYPES_H
--
--#endif /* _ASM_GENERIC_UNWIND_USER_TYPES_H */
-diff --git a/include/linux/srcu.h b/include/linux/srcu.h
-index 900b0d5c05f5..879054b8bf87 100644
---- a/include/linux/srcu.h
-+++ b/include/linux/srcu.h
-@@ -524,4 +524,8 @@ DEFINE_LOCK_GUARD_1(srcu, struct srcu_struct,
- 		    srcu_read_unlock(_T->lock, _T->idx),
- 		    int idx)
- 
-+DEFINE_LOCK_GUARD_1(srcu_lite, struct srcu_struct,
-+		    _T->idx = srcu_read_lock_lite(_T->lock),
-+		    srcu_read_unlock_lite(_T->lock, _T->idx),
-+		    int idx)
- #endif
-diff --git a/include/linux/unwind_deferred.h b/include/linux/unwind_deferred.h
-index a9d5b100d6b2..0124865aaab4 100644
---- a/include/linux/unwind_deferred.h
-+++ b/include/linux/unwind_deferred.h
-@@ -16,18 +16,23 @@ struct unwind_work {
- 	int				bit;
- };
- 
--#ifdef CONFIG_UNWIND_USER
-+/* Architectures can add a test to not defer unwinding */
-+#ifndef arch_unwind_can_defer
-+# define arch_unwind_can_defer()	(true)
-+#endif
- 
--#define UNWIND_PENDING_BIT	(BITS_PER_LONG - 1)
--#define UNWIND_PENDING		BIT(UNWIND_PENDING_BIT)
-+#ifdef CONFIG_UNWIND_USER
- 
--/* Set if the unwinding was used (directly or deferred) */
--#define UNWIND_USED_BIT		(UNWIND_PENDING_BIT - 1)
--#define UNWIND_USED		BIT(UNWIND_USED_BIT)
-+enum {
-+	UNWIND_PENDING_BIT = 0,
-+	UNWIND_USED_BIT,
-+};
- 
- enum {
--	UNWIND_ALREADY_PENDING	= 1,
--	UNWIND_ALREADY_EXECUTED	= 2,
-+	UNWIND_PENDING		= BIT(UNWIND_PENDING_BIT),
-+
-+	/* Set if the unwinding was used (directly or deferred) */
-+	UNWIND_USED		= BIT(UNWIND_USED_BIT)
- };
- 
- void unwind_task_init(struct task_struct *task);
-@@ -56,8 +61,10 @@ static __always_inline void unwind_reset_info(void)
- 		} while (!try_cmpxchg(&info->unwind_mask, &bits, 0UL));
- 		current->unwind_info.id.id = 0;
- 
--		if (unlikely(info->cache))
-+		if (unlikely(info->cache)) {
- 			info->cache->nr_entries = 0;
-+			info->cache->unwind_completed = 0;
-+		}
- 	}
- }
- 
-diff --git a/include/linux/unwind_deferred_types.h b/include/linux/unwind_deferred_types.h
-index db6c65daf185..33b62ac25c86 100644
---- a/include/linux/unwind_deferred_types.h
-+++ b/include/linux/unwind_deferred_types.h
-@@ -3,11 +3,24 @@
- #define _LINUX_UNWIND_USER_DEFERRED_TYPES_H
- 
- struct unwind_cache {
-+	unsigned long		unwind_completed;
- 	unsigned int		nr_entries;
- 	unsigned long		entries[];
- };
- 
--
-+/*
-+ * The unwind_task_id is a unique identifier that maps to a user space
-+ * stacktrace. It is generated the first time a deferred user space
-+ * stacktrace is requested after a task has entered the kerenl and
-+ * is cleared to zero when it exits. The mapped id will be a non-zero
-+ * number.
-+ *
-+ * To simplify the generation of the 64 bit number, 32 bits will be
-+ * the CPU it was generated on, and the other 32 bits will be a per
-+ * cpu counter that gets incremented by two every time a new identifier
-+ * is generated. The LSB will always be set to keep the value
-+ * from being zero.
-+ */
- union unwind_task_id {
- 	struct {
- 		u32		cpu;
-@@ -17,9 +30,9 @@ union unwind_task_id {
- };
- 
- struct unwind_task_info {
-+	unsigned long		unwind_mask;
- 	struct unwind_cache	*cache;
- 	struct callback_head	work;
--	unsigned long		unwind_mask;
- 	union unwind_task_id	id;
- };
- 
-diff --git a/include/linux/unwind_user.h b/include/linux/unwind_user.h
-index 8a4af0214ecb..7f7282516bf5 100644
---- a/include/linux/unwind_user.h
-+++ b/include/linux/unwind_user.h
-@@ -9,31 +9,6 @@
-  #define ARCH_INIT_USER_FP_FRAME
- #endif
- 
--#ifndef ARCH_INIT_USER_COMPAT_FP_FRAME
-- #define ARCH_INIT_USER_COMPAT_FP_FRAME
-- #define in_compat_mode(regs) false
--#endif
--
--/*
-- * If an architecture needs to initialize the state for a specific
-- * reason, for example, it may need to do something different
-- * in compat mode, it can define a macro named arch_unwind_user_init
-- * with the name of the function that will perform this initialization.
-- */
--#ifndef arch_unwind_user_init
--static inline void arch_unwind_user_init(struct unwind_user_state *state, struct pt_regs *reg) {}
--#endif
--
--/*
-- * If an architecture requires some more updates to the state between
-- * stack frames, it can define a macro named arch_unwind_user_next
-- * with the name of the function that will update the state between
-- * reading stack frames during the user space stack walk.
-- */
--#ifndef arch_unwind_user_next
--static inline void arch_unwind_user_next(struct unwind_user_state *state) {}
--#endif
--
- int unwind_user(struct unwind_stacktrace *trace, unsigned int max_entries);
- 
- #endif /* _LINUX_UNWIND_USER_H */
-diff --git a/include/linux/unwind_user_types.h b/include/linux/unwind_user_types.h
-index 0b6563951ca4..a449f15be890 100644
---- a/include/linux/unwind_user_types.h
-+++ b/include/linux/unwind_user_types.h
-@@ -3,16 +3,21 @@
- #define _LINUX_UNWIND_USER_TYPES_H
- 
- #include <linux/types.h>
--#include <asm/unwind_user_types.h>
- 
--#ifndef arch_unwind_user_state
--struct arch_unwind_user_state {};
--#endif
-+/*
-+ * Unwind types, listed in priority order: lower numbers are attempted first if
-+ * available.
-+ */
-+enum unwind_user_type_bits {
-+	UNWIND_USER_TYPE_FP_BIT =		0,
-+
-+	NR_UNWIND_USER_TYPE_BITS,
-+};
- 
- enum unwind_user_type {
--	UNWIND_USER_TYPE_NONE,
--	UNWIND_USER_TYPE_FP,
--	UNWIND_USER_TYPE_COMPAT_FP,
-+	/* Type "none" for the start of stack walk iteration. */
-+	UNWIND_USER_TYPE_NONE =			0,
-+	UNWIND_USER_TYPE_FP =			BIT(UNWIND_USER_TYPE_FP_BIT),
- };
- 
- struct unwind_stacktrace {
-@@ -28,12 +33,12 @@ struct unwind_user_frame {
- };
- 
- struct unwind_user_state {
--	unsigned long ip;
--	unsigned long sp;
--	unsigned long fp;
--	struct arch_unwind_user_state arch;
--	enum unwind_user_type type;
--	bool done;
-+	unsigned long				ip;
-+	unsigned long				sp;
-+	unsigned long				fp;
-+	enum unwind_user_type			current_type;
-+	unsigned int				available_types;
-+	bool					done;
- };
- 
- #endif /* _LINUX_UNWIND_USER_TYPES_H */
-diff --git a/kernel/unwind/deferred.c b/kernel/unwind/deferred.c
-index 039e12700d49..9972096e93e8 100644
---- a/kernel/unwind/deferred.c
-+++ b/kernel/unwind/deferred.c
-@@ -44,7 +44,11 @@ static inline bool try_assign_cnt(struct unwind_task_info *info, u32 cnt)
- /* Guards adding to or removing from the list of callbacks */
- static DEFINE_MUTEX(callback_mutex);
- static LIST_HEAD(callbacks);
--static unsigned long unwind_mask;
-+
-+#define RESERVED_BITS	(UNWIND_PENDING | UNWIND_USED)
-+
-+/* Zero'd bits are available for assigning callback users */
-+static unsigned long unwind_mask = RESERVED_BITS;
- DEFINE_STATIC_SRCU(unwind_srcu);
- 
- static inline bool unwind_pending(struct unwind_task_info *info)
-@@ -73,19 +77,16 @@ static DEFINE_PER_CPU(u32, unwind_ctx_ctr);
-  */
- static u64 get_cookie(struct unwind_task_info *info)
- {
--	u32 cpu_cnt;
--	u32 cnt;
-+	u32 cnt = 1;
- 
- 	if (info->id.cpu)
- 		return info->id.id;
- 
--	cpu_cnt = __this_cpu_read(unwind_ctx_ctr);
--	cpu_cnt += 2;
--	cnt = cpu_cnt | 1; /* Always make non zero */
--
-+	/* LSB is always set to ensure 0 is an invalid value */
-+	cnt |= __this_cpu_read(unwind_ctx_ctr) + 2;
- 	if (try_assign_cnt(info, cnt)) {
- 		/* Update the per cpu counter */
--		__this_cpu_write(unwind_ctx_ctr, cpu_cnt);
-+		__this_cpu_write(unwind_ctx_ctr, cnt);
- 	}
- 	/* Interrupts are disabled, the CPU will always be same */
- 	info->id.cpu = smp_processor_id() + 1; /* Must be non zero */
-@@ -153,16 +154,13 @@ static void process_unwind_deferred(struct task_struct *task)
- 	struct unwind_work *work;
- 	unsigned long bits;
- 	u64 cookie;
--	int idx;
- 
- 	if (WARN_ON_ONCE(!unwind_pending(info)))
- 		return;
- 
- 	/* Clear pending bit but make sure to have the current bits */
--	bits = READ_ONCE(info->unwind_mask);
--	while (!try_cmpxchg(&info->unwind_mask, &bits, bits & ~UNWIND_PENDING))
--		;
--
-+	bits = atomic_long_fetch_andnot(UNWIND_PENDING,
-+				  (atomic_long_t *)&info->unwind_mask);
- 	/*
- 	 * From here on out, the callback must always be called, even if it's
- 	 * just an empty trace.
-@@ -172,15 +170,20 @@ static void process_unwind_deferred(struct task_struct *task)
- 
- 	unwind_user_faultable(&trace);
- 
-+	if (info->cache)
-+		bits &= ~(info->cache->unwind_completed);
-+
- 	cookie = info->id.id;
- 
--	idx = srcu_read_lock(&unwind_srcu);
-+	guard(srcu_lite)(&unwind_srcu);
- 	list_for_each_entry_srcu(work, &callbacks, list,
- 				 srcu_read_lock_held(&unwind_srcu)) {
--		if (test_bit(work->bit, &bits))
-+		if (test_bit(work->bit, &bits)) {
- 			work->func(work, &trace, cookie);
-+			if (info->cache)
-+				info->cache->unwind_completed |= BIT(work->bit);
-+		}
- 	}
--	srcu_read_unlock(&unwind_srcu, idx);
- }
- 
- static void unwind_deferred_task_work(struct callback_head *head)
-@@ -201,7 +204,7 @@ void unwind_deferred_task_exit(struct task_struct *task)
- }
- 
- /**
-- * unwind_deferred_request - Request a user stacktrace on task exit
-+ * unwind_deferred_request - Request a user stacktrace on task kernel exit
-  * @work: Unwind descriptor requesting the trace
-  * @cookie: The cookie of the first request made for this task
-  *
-@@ -221,9 +224,7 @@ void unwind_deferred_task_exit(struct task_struct *task)
-  * it will be called again with the same stack trace and cookie.
-  *
-  * Return: 0 if the callback successfully was queued.
-- *         UNWIND_ALREADY_PENDING if the the callback was already queued.
-- *         UNWIND_ALREADY_EXECUTED if the callback was already called
-- *                (and will not be called again)
-+ *         1 if the callback is pending or was already executed.
-  *         Negative if there's an error.
-  *         @cookie holds the cookie of the first request by any user
-  */
-@@ -231,17 +232,24 @@ int unwind_deferred_request(struct unwind_work *work, u64 *cookie)
- {
- 	struct unwind_task_info *info = &current->unwind_info;
- 	unsigned long old, bits;
--	int bit;
-+	unsigned long bit;
- 	int ret;
- 
- 	*cookie = 0;
- 
-+	if (!arch_unwind_can_defer())
-+		return -EINVAL;
-+
- 	if ((current->flags & (PF_KTHREAD | PF_EXITING)) ||
- 	    !user_mode(task_pt_regs(current)))
- 		return -EINVAL;
- 
--	/* NMI requires having safe cmpxchg operations */
--	if (!CAN_USE_IN_NMI && in_nmi())
-+	/*
-+	 * NMI requires having safe cmpxchg operations.
-+	 * Trigger a warning to make it obvious that an architecture
-+	 * is using this in NMI when it should not be.
-+	 */
-+	if (WARN_ON_ONCE(!CAN_USE_IN_NMI && in_nmi()))
- 		return -EINVAL;
- 
- 	/* Do not allow cancelled works to request again */
-@@ -249,44 +257,34 @@ int unwind_deferred_request(struct unwind_work *work, u64 *cookie)
- 	if (WARN_ON_ONCE(bit < 0))
- 		return -EINVAL;
- 
-+	/* Only need the mask now */
-+	bit = BIT(bit);
-+
- 	guard(irqsave)();
- 
- 	*cookie = get_cookie(info);
- 
- 	old = READ_ONCE(info->unwind_mask);
- 
--	/* Is this already queued */
--	if (test_bit(bit, &old)) {
--		/*
--		 * If pending is not set, it means this work's callback
--		 * was already called.
--		 */
--		return old & UNWIND_PENDING ? UNWIND_ALREADY_PENDING :
--			UNWIND_ALREADY_EXECUTED;
--	}
--
--	if (unwind_pending(info))
--		goto out;
--
--	/*
--	 * This is the first to enable another task_work for this task since
--	 * the task entered the kernel, or had already called the callbacks.
--	 * Set only the bit for this work and clear all others as they have
--	 * already had their callbacks called, and do not need to call them
--	 * again because of this work.
--	 */
--	bits = UNWIND_PENDING | BIT(bit);
-+	/* Is this already queued or executed */
-+	if (old & bit)
-+		return 1;
- 
- 	/*
--	 * If the cmpxchg() fails, it means that an NMI came in and set
--	 * the pending bit as well as cleared the other bits. Just
--	 * jump to setting the bit for this work.
-+	 * This work's bit hasn't been set yet. Now set it with the PENDING
-+	 * bit and fetch the current value of unwind_mask. If ether the
-+	 * work's bit or PENDING was already set, then this is already queued
-+	 * to have a callback.
- 	 */
--	if (CAN_USE_IN_NMI) {
--		if (!try_cmpxchg(&info->unwind_mask, &old, bits))
--			goto out;
--	} else {
--		info->unwind_mask = bits;
-+	bits = UNWIND_PENDING | bit;
-+	old = atomic_long_fetch_or(bits, (atomic_long_t *)&info->unwind_mask);
-+	if (old & bits) {
-+		/*
-+		 * If the work's bit was set, whatever set it had better
-+		 * have also set pending and queued a callback.
-+		 */
-+		WARN_ON_ONCE(!(old & UNWIND_PENDING));
-+		return old & bit;
- 	}
- 
- 	/* The work has been claimed, now schedule it. */
-@@ -296,9 +294,6 @@ int unwind_deferred_request(struct unwind_work *work, u64 *cookie)
- 		WRITE_ONCE(info->unwind_mask, 0);
- 
- 	return ret;
-- out:
--	return test_and_set_bit(bit, &info->unwind_mask) ?
--		UNWIND_ALREADY_PENDING : 0;
- }
- 
- void unwind_deferred_cancel(struct unwind_work *work)
-@@ -309,9 +304,14 @@ void unwind_deferred_cancel(struct unwind_work *work)
- 	if (!work)
- 		return;
- 
-+	bit = work->bit;
-+
-+	/* No work should be using a reserved bit */
-+	if (WARN_ON_ONCE(BIT(bit) & RESERVED_BITS))
-+		return;
-+
- 	guard(mutex)(&callback_mutex);
- 	list_del_rcu(&work->list);
--	bit = work->bit;
- 
- 	/* Do not allow any more requests and prevent callbacks */
- 	work->bit = -1;
-@@ -324,6 +324,8 @@ void unwind_deferred_cancel(struct unwind_work *work)
- 	/* Clear this bit from all threads */
- 	for_each_process_thread(g, t) {
- 		clear_bit(bit, &t->unwind_info.unwind_mask);
-+		if (t->unwind_info.cache)
-+			clear_bit(bit, &t->unwind_info.cache->unwind_completed);
- 	}
- }
- 
-@@ -334,7 +336,7 @@ int unwind_deferred_init(struct unwind_work *work, unwind_callback_t func)
- 	guard(mutex)(&callback_mutex);
- 
- 	/* See if there's a bit in the mask available */
--	if (unwind_mask == ~(UNWIND_PENDING|UNWIND_USED))
-+	if (unwind_mask == ~0UL)
- 		return -EBUSY;
- 
- 	work->bit = ffz(unwind_mask);
-diff --git a/kernel/unwind/user.c b/kernel/unwind/user.c
-index 249d9e32fad7..85b8c764d2f7 100644
---- a/kernel/unwind/user.c
-+++ b/kernel/unwind/user.c
-@@ -12,54 +12,18 @@ static struct unwind_user_frame fp_frame = {
- 	ARCH_INIT_USER_FP_FRAME
- };
- 
--static struct unwind_user_frame compat_fp_frame = {
--	ARCH_INIT_USER_COMPAT_FP_FRAME
--};
--
--static inline bool fp_state(struct unwind_user_state *state)
--{
--	return IS_ENABLED(CONFIG_HAVE_UNWIND_USER_FP) &&
--	       state->type == UNWIND_USER_TYPE_FP;
--}
--
- #define for_each_user_frame(state) \
- 	for (unwind_user_start(state); !(state)->done; unwind_user_next(state))
- 
--static inline bool compat_fp_state(struct unwind_user_state *state)
-+static int unwind_user_next_fp(struct unwind_user_state *state)
- {
--	return IS_ENABLED(CONFIG_HAVE_UNWIND_USER_COMPAT_FP) &&
--	       state->type == UNWIND_USER_TYPE_COMPAT_FP;
--}
--
--#define unwind_get_user_long(to, from, state)				\
--({									\
--	int __ret;							\
--	if (compat_fp_state(state))					\
--		__ret = get_user(to, (u32 __user *)(from));		\
--	else								\
--		__ret = get_user(to, (unsigned long __user *)(from));	\
--	__ret;								\
--})
--
--static int unwind_user_next(struct unwind_user_state *state)
--{
--	struct unwind_user_frame *frame;
--	unsigned long cfa = 0, fp, ra = 0;
-+	struct unwind_user_frame *frame = &fp_frame;
-+	unsigned long cfa, fp, ra = 0;
- 	unsigned int shift;
- 
--	if (state->done)
--		return -EINVAL;
--
--	if (compat_fp_state(state))
--		frame = &compat_fp_frame;
--	else if (fp_state(state))
--		frame = &fp_frame;
--	else
--		goto done;
--
- 	if (frame->use_fp) {
- 		if (state->fp < state->sp)
--			goto done;
-+			return -EINVAL;
- 		cfa = state->fp;
- 	} else {
- 		cfa = state->sp;
-@@ -70,30 +34,53 @@ static int unwind_user_next(struct unwind_user_state *state)
- 
- 	/* stack going in wrong direction? */
- 	if (cfa <= state->sp)
--		goto done;
-+		return -EINVAL;
- 
- 	/* Make sure that the address is word aligned */
--	shift = sizeof(long) == 4 || compat_fp_state(state) ? 2 : 3;
--	if ((cfa + frame->ra_off) & ((1 << shift) - 1))
--		goto done;
-+	shift = sizeof(long) == 4 ? 2 : 3;
-+	if (cfa & ((1 << shift) - 1))
-+		return -EINVAL;
- 
- 	/* Find the Return Address (RA) */
--	if (unwind_get_user_long(ra, cfa + frame->ra_off, state))
--		goto done;
-+	if (get_user(ra, (unsigned long *)(cfa + frame->ra_off)))
-+		return -EINVAL;
- 
--	if (frame->fp_off && unwind_get_user_long(fp, cfa + frame->fp_off, state))
--		goto done;
-+	if (frame->fp_off && get_user(fp, (unsigned long __user *)(cfa + frame->fp_off)))
-+		return -EINVAL;
- 
- 	state->ip = ra;
- 	state->sp = cfa;
- 	if (frame->fp_off)
- 		state->fp = fp;
-+	return 0;
-+}
-+
-+static int unwind_user_next(struct unwind_user_state *state)
-+{
-+	unsigned long iter_mask = state->available_types;
-+	unsigned int bit;
- 
--	arch_unwind_user_next(state);
-+	if (state->done)
-+		return -EINVAL;
- 
--	return 0;
-+	for_each_set_bit(bit, &iter_mask, NR_UNWIND_USER_TYPE_BITS) {
-+		enum unwind_user_type type = BIT(bit);
-+
-+		state->current_type = type;
-+		switch (type) {
-+		case UNWIND_USER_TYPE_FP:
-+			if (!unwind_user_next_fp(state))
-+				return 0;
-+			continue;
-+		default:
-+			WARN_ONCE(1, "Undefined unwind bit %d", bit);
-+			break;
-+		}
-+		break;
-+	}
- 
--done:
-+	/* No successful unwind method. */
-+	state->current_type = UNWIND_USER_TYPE_NONE;
- 	state->done = true;
- 	return -EINVAL;
- }
-@@ -109,19 +96,13 @@ static int unwind_user_start(struct unwind_user_state *state)
- 		return -EINVAL;
- 	}
- 
--	if (IS_ENABLED(CONFIG_HAVE_UNWIND_USER_COMPAT_FP) && in_compat_mode(regs))
--		state->type = UNWIND_USER_TYPE_COMPAT_FP;
--	else if (IS_ENABLED(CONFIG_HAVE_UNWIND_USER_FP))
--		state->type = UNWIND_USER_TYPE_FP;
--	else
--		state->type = UNWIND_USER_TYPE_NONE;
-+	if (IS_ENABLED(CONFIG_HAVE_UNWIND_USER_FP))
-+		state->available_types |= UNWIND_USER_TYPE_FP;
- 
- 	state->ip = instruction_pointer(regs);
- 	state->sp = user_stack_pointer(regs);
- 	state->fp = frame_pointer(regs);
- 
--	arch_unwind_user_init(state, regs);
--
- 	return 0;
- }
- 
--- Steve
+However, it'd be good that a followup series would try to remove them as
+you said.
+
+> > > >    3) Rename __netmem_clear_lsb() to netmem_to_nmdesc(), and return
+> > > >       netmem_desc, and use it in all users of __netmem_clear_lsb().
+> > > >
+> > >
+> > > Following Pavel's comment, this I think also is not necessary for this
+> > > series. Cleaning up the return value of __netmem_clear_lsb is good
+> > > work I think, but we're already on v10 of this and I think it would
+> > > unnecessary to ask for added cleanups. We can do the cleanup on top.
+> >
+> > However, I still need to include 'introduce __netmem_nmdesc() helper'
+> 
+> Yes.
+> 
+> > in this series since it should be used to remove __netmem_get_pp() as I
+> 
+> lets keep __netmem_get_pp, which does a `return
+
+Okay.  I will.
+
+	Byungchul
+
+> __netmem_nmdesc(netmem)->pp;` In general we avoid allowing the driver
+> to do any netmem casts in the driver code, and we do any casting in
+> core.
+> 
+> > described above.  I think I'd better add netmem_nmdesc() too while at it.
+> >
+> 
+> Yes. netmem_nmdesc should replace __netmem_clear_lsb.
+> 
+> > I assume __netmem_nmdesc() is an unsafe version not clearing lsb.  The
+> 
+> Yes.
+> 
+> > safe version, netmem_nmdesc() needs an additional operation clearing lsb.
+> 
+> Yes.
+> 
+> 
+> --
+> Thanks,
+> Mina
 
