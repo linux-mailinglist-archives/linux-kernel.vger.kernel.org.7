@@ -1,256 +1,111 @@
-Return-Path: <linux-kernel+bounces-735661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6ADBB0923E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:52:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B45A7B09241
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:54:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D869C5A1397
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:52:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 373581AA5698
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE1B2FCE30;
-	Thu, 17 Jul 2025 16:51:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CD9C2FCFE1;
+	Thu, 17 Jul 2025 16:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gd3+WcQn"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fqG5RH84"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CDF22F6FAD
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 16:51:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93DB52F6FAD;
+	Thu, 17 Jul 2025 16:54:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752771114; cv=none; b=ZlY+lxlMyRP3SKQ9jLgpQjugX23TliJq/N5nNIX+ynQU2NV5WInydx/87PehBfWMacTPhb/BplOENpd4jI9+8vlBw5Mhfs9YILGARp3o/fNCfxtPoD5rA/5TTckdoVFqo8qCXHgU8PFYlxtsaQPqc+rtEJkyDSsCUDTlP+yMHBA=
+	t=1752771277; cv=none; b=CKWaE9LFuB4HXoWt2x12y1UcdqhhqXuhQYdFmWFOe5SMrVvQZPvYA/nTSC9wjaelPvfGpXNvUuh/l9j/vAKCrH38Py53WMxUSupIw3HUeihkJdOwAWixUGbTFvStRYU3Qf3Mid33AI2AaIpH9zkulGcb9rA4qsrMzPbY9j9b3YI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752771114; c=relaxed/simple;
-	bh=pdyBXBMiMUEiDiEad+NOBRBs5c1GLfXqAPLM6bZSSlM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j6Y3fF9HubnAYK9MqiHomy3SmWjKq//TC+lrULhhrDppolaXL1Ql1xVROzb0khJBA2TexQ96xxKEZvIZGJDYp1vCenoIZ7NcgxmpTvPRaoQ68WacFwT5kl2GSOyCg97Uduhw5FUTrVIdxKsUkY0FsgBLamdJMQveQ4+NOBJ1ChI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gd3+WcQn; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-3134c67a173so1174816a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 09:51:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752771112; x=1753375912; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o6G290XDUkNk/Jux66myc1/yoqaFjAzP1D+BTC8pjZM=;
-        b=gd3+WcQnnTJuqIV6y7yUs9b5LIc5tLzhjmomCSG3DzONbsaxAJpawjRcxRF68EzrNk
-         64oH8pQZWptHuWDgnDaq+oGiRL3DER7uj++ZlV89snYSAsm1p4R0fSKR5/LInA2073Nf
-         KesIQ+zzbZLMjoQTxOnX5psWgtK523j+4jWIPiICR+VoUFEkCWXK2oWJxbK8hvQLGjFB
-         UM1bgDykd9lNuf+HNmbj3eir9zO0mKMnMjIkGwlSXhEbfy+vbahl5tkX7HmYlbdVmgqe
-         r5X5r3wKO7b1/beVWikcvFvLhaOggpeu+B29Bak5fYDq0XYLwOGPEzBxQbwGq7r+P3Wc
-         R7uA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752771112; x=1753375912;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o6G290XDUkNk/Jux66myc1/yoqaFjAzP1D+BTC8pjZM=;
-        b=W+N6HshTTYdw2lTjsHpx4PCVSNsqBlIKjztwDPnFy+93oMUG+2SznhdcYEGvFkPXII
-         yyO37TStdCJYB041DCNbvQ6NZdtL68fMA1dA14uKDlNx9iTAywcnhqtbXNvhwlREpLe1
-         DXoxU2dsGNR8L7FnBechB4zq0mKxEOSfUY6+KCyRgyc6CE7Xo9C7t4lZbFhfB5yAhacT
-         oHVmCBJ1pgnr7JZYEqLUJwb+rPOKb31w2mGT91z6LBCCsOTgETh9qaqUkD/itxTC2kF8
-         AuxiiF6MGF3MxRVEUn9uvolKiJcj/DnkFQxNsYC/GmrOW43gwAllsUKs3RGLW9OOsOES
-         Qh4A==
-X-Forwarded-Encrypted: i=1; AJvYcCUNercwNXPz6meC0GhHmwkGp0ny9rraTo5d7MhyVjxULBx67L/w0cxXMyjFtVkUzU9PnucGBd9ceOMRWfM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybKEEnTR8rf5h9gilhFrtccQyFYmWLPA/n5/lzN1WMrCV1/ff7
-	niquDA9IsyMzwaFmegYAxTSqKbqoxgYn7/fEc/seN6vdX8mSH9KuE4K1d2XsAiSO5Zd7DfDJha8
-	Dp6bnxC/MIliuNsHJdFdlxnI4go/5I9USzhtFDw7U
-X-Gm-Gg: ASbGncudJwKJd+uh//cHlIiqewJsvuKCN+/tdrdcUNuFnG6drW5vdLmqcs01J4zihuV
-	/kzASN63ffkSH/1IGLGFF9q8TTYfjzWzChqVFrHlM4mcH4CCTGhCN26NwrC1fWVoo8HgFBP3Bqy
-	4DDHiJu9AwNhWICCvbUDapJYyi3kKnbEOCHjaQfVbDhqjB4GoNMYTkZc5yAbT7q6g05QkYv6Fzg
-	/6iY3ipJ2/ehXDPzBN+Jw1iNSlrWJAyqrX8/A==
-X-Google-Smtp-Source: AGHT+IFyz6yR0nS3sH8qQsAvcaEM466C4kperDwmL6IahuwqW8e2AlpYA/IyM/pS/RGSHIr0qg9qPSoxRAQDsUfO20g=
-X-Received: by 2002:a17:90b:1848:b0:31c:bfac:9e25 with SMTP id
- 98e67ed59e1d1-31cbfac9ebdmr1141164a91.14.1752771112395; Thu, 17 Jul 2025
- 09:51:52 -0700 (PDT)
+	s=arc-20240116; t=1752771277; c=relaxed/simple;
+	bh=wltZfUVemhVqBJv2X+OS136Vc8QdzWWBDDT2yFGTmVQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HAgfBZAT1OQI3YWDJ6c+JYRZRd0lrvdJxzcq4uPE1U9cfwqo80dOI5+ovGjzdRI+iixKrBTZB177Uzilpa+aR888TcA2gdNGB4aBxB5ZQYa9KV9+xTFsiJlqWkgoH4bqL9odbv0Xpl0XVp8N9+mBaUdClboVQ5i+ap+HQqPsyto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fqG5RH84; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06DB8C4CEE3;
+	Thu, 17 Jul 2025 16:54:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752771277;
+	bh=wltZfUVemhVqBJv2X+OS136Vc8QdzWWBDDT2yFGTmVQ=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=fqG5RH84Fm+Gibjk6PACO1WmcIkOKhWjUH2BIZIpdSJFAtmhrpeJV6cPKkTFBG20/
+	 6/7ejXdvkZmuyWGZrm6jsC4kLZmxcHEdZ8WMmyoNE2ZLByeUofdtG3p/HuNvCkKyCF
+	 AFEsm4pLGhE6RkUBU09eJc/EuH92coBUgUUi8VBp0zpWPio/txAIrqq9jVOYwRjSNu
+	 Qgp+Ie/hjqgFZIxmHxXpT1peSbCngph7IpTslaARBZZtC9M6IRtHC4on0yUnMDiekf
+	 6WrSVUf1kL+VBD7wZU0O3TM7jStjE7mUTDHsB+1OEdYNk+92bqHKSiqPlDQ2MbtSsI
+	 Xw+j6vTCg/+6w==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 9E8D8CE0B77; Thu, 17 Jul 2025 09:54:36 -0700 (PDT)
+Date: Thu, 17 Jul 2025 09:54:36 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Indu Bhagat <indu.bhagat@oracle.com>,
+	"Jose E. Marchesi" <jemarch@gnu.org>,
+	Beau Belgrave <beaub@linux.microsoft.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
+	Sam James <sam@gentoo.org>
+Subject: Re: [PATCH v14 09/12] unwind deferred: Use SRCU
+ unwind_deferred_task_work()
+Message-ID: <3eec6c5d-2e4c-41c0-ac43-6df51faeb670@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250717004910.297898999@kernel.org>
+ <20250717004957.918908732@kernel.org>
+ <47c3b0df-9f11-4e14-97e2-0f3ba3b09855@paulmck-laptop>
+ <20250717082526.7173106a@gandalf.local.home>
+ <41c204c0-eabc-4f4f-93f4-2568e2f962a9@paulmck-laptop>
+ <20250717121010.4246366a@batman.local.home>
+ <a9bdf195-e9b2-4cd0-88ba-b6f68b3b72b3@paulmck-laptop>
+ <20250717123835.21c8aa89@batman.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250507135431.53907-1-jose.exposito89@gmail.com> <57e425ff-2731-47d7-b5ce-c34f5baf71b4@bootlin.com>
-In-Reply-To: <57e425ff-2731-47d7-b5ce-c34f5baf71b4@bootlin.com>
-From: Mark Yacoub <markyacoub@google.com>
-Date: Thu, 17 Jul 2025 12:51:39 -0400
-X-Gm-Features: Ac12FXw9Naiqo1SXwbcsWzZsrtdE-lVZ-TVzRwHv65lGAu-rCKSRjEti2UrIOI8
-Message-ID: <CAC0gqY6_6F+PFkgHm2-iMbCSxKc++DipObVK709eJrJcV7SQNQ@mail.gmail.com>
-Subject: Re: [PATCH v5 00/16] drm/vkms: Add configfs support
-To: Louis Chauvet <louis.chauvet@bootlin.com>
-Cc: =?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>, 
-	tzimmermann@suse.de, mripard@kernel.org, simona@ffwll.ch, 
-	sebastian.wick@redhat.com, victoria@system76.com, xaver.hugl@kde.org, 
-	hamohammed.sa@gmail.com, melissa.srw@gmail.com, 
-	maarten.lankhorst@linux.intel.com, airlied@gmail.com, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250717123835.21c8aa89@batman.local.home>
 
-Merged into Android tree:
-https://android-review.git.corp.google.com/c/kernel/common-modules/virtual-=
-device/+/3661920
-I'm able to use configfs as expected.
+On Thu, Jul 17, 2025 at 12:38:35PM -0400, Steven Rostedt wrote:
+> On Thu, 17 Jul 2025 09:27:34 -0700
+> "Paul E. McKenney" <paulmck@kernel.org> wrote:
+> 
+> > > Two, I'm still grasping at the concept of srcu_fast (and srcu_lite for
+> > > that matter), where I rather be slow and safe than optimize and be
+> > > unsafe. The code where this is used may be faulting in user space
+> > > memory, so it doesn't need the micro-optimizations now.  
+> > 
+> > Straight-up SRCU and guard(srcu), then?  Both are already in mainline.
+> > 
+> > Or are those read-side smp_mb() calls a no-go for this code?
+> 
+> As I stated, the read-side is likely going to be faulting in user space
+> memory. I don't think one or two smp_mb() will really make much of a
+> difference ;-)
+> 
+> It's not urgent. If it can be switched to srcu_fast, we can do it later.
 
-Tested-by: Mark Yacoub <markyacoub@google.com>
+Very good, we will continue with our removal of SRCU-lite, and I might
+as well add guard(srcu_fast) in my current series.
 
-
-On Thu, Jul 17, 2025 at 12:37=E2=80=AFPM Louis Chauvet
-<louis.chauvet@bootlin.com> wrote:
->
-> +CC: Mark (Google), Sebastian (Mutter), Xaver (KWin), Victoria (Cosmic)
->
-> Hi everyone,
->
-> Last week, I presented this work at the Display Next Hackfest, and the
-> feedback from compositors was very positive. At least KWin, Mutter, and
-> Cosmic are interested in integrating it into their tests, so it would be
-> great if someone could review it.
->
-> Sebastian quickly tested this work (using [2] for full features) with
-> their existing VKMS tests [1], and it worked. From what I understand,
-> the tests are quite basic =E2=80=94just sanity checks=E2=80=94 but we wer=
-e able to
-> reproduce the default vkms device using ConfigFS.
->
-> If another compositor wants to test the ConfigFS interface (I will try
-> to keep [2] updated), that would be amazing. Feel free to send feedback!
->
-> A small note: This series has a minor conflict since the conversion to
-> the faux device, but it can be applied using `b4 am -3 ... && git am -3
-> ...`.
-> @jos=C3=A9, if you send a new iteration, can you add markyacoub@google.co=
-m in
-> copy, and maybe Sebastian, Xaver, Victoria if they want to follow the
-> upstreaming?
->
-> Thank you,
-> Louis Chauvet
->
-> [1]:https://gitlab.gnome.org/swick/mutter/-/commit/88a7354942d9728dae06fb=
-83cc4f2d2c7b08b694
-> [2]:https://github.com/Fomys/linux/tree/configfs-everything
->
->
->
-> Le 07/05/2025 =C3=A0 15:54, Jos=C3=A9 Exp=C3=B3sito a =C3=A9crit :
-> > Hi everyone,
-> >
-> > This series allow to configure one or more VKMS instances without havin=
-g
-> > to reload the driver using configfs.
-> >
-> > The series is structured in 3 blocks:
-> >
-> >    - Patches 1..11: Basic device configuration. For simplicity, I kept =
-the
-> >      available options as minimal as possible.
-> >
-> >    - Patches 12 and 13: New option to skip the default device creation =
-and to-do
-> >      cleanup.
-> >
-> >    - Patches 14, 15 and 16: Allow to hot-plug and unplug connectors. Th=
-is is not
-> >      part of the minimal set of options, but I included in this series =
-so it can
-> >      be used as a template/example of how new configurations can be add=
-ed.
-> >
-> > The process of configuring a VKMS device is documented in "vkms.rst".
-> >
-> > Finally, the code is thoroughly tested by a collection of IGT tests [1]=
-.
-> >
-> > Best wishes,
-> > Jos=C3=A9 Exp=C3=B3sito
-> >
-> > [1] https://lists.freedesktop.org/archives/igt-dev/2025-February/086071=
-.html
-> >
-> > Changes in v5:
-> >
-> >    - Added Reviewed-by tags, thanks Louis!
-> >    - Rebased on top of drm-misc-next
-> >    - Link to v4: https://lore.kernel.org/dri-devel/20250407081425.6420-=
-1-jose.exposito89@gmail.com/
-> >
-> > Changes in v4:
-> >
-> >    - Since Louis and I worked on this together, set him as the author o=
-f some of
-> >      the patches and me as co-developed-by to reflect this joint effort=
-.
-> >    - Rebased on top of drm-misc-next
-> >    - Link to v3: https://lore.kernel.org/all/20250307163353.5896-1-jose=
-.exposito89@gmail.com/
-> >
-> > Changes in v3:
-> >
-> >    - Applied review comments by Louis Chauvet: (thanks!!)
-> >      - Use scoped_guard() instead of guard(mutex)(...)
-> >      - Fix a use-after-free error in the connector hot-plug code
-> >    - Rebased on top of drm-misc-next
-> >    - Link to v2: https://lore.kernel.org/all/20250225175936.7223-1-jose=
-.exposito89@gmail.com/
-> >
-> > Changes in v2:
-> >
-> >    - Applied review comments by Louis Chauvet:
-> >      - Use guard(mutex)(...) instead of lock/unlock
-> >      - Return -EBUSY when trying to modify a enabled device
-> >      - Move the connector hot-plug related patches to the end
-> >    - Rebased on top of drm-misc-next
-> >    - Link to v1: https://lore.kernel.org/dri-devel/20250218170808.9507-=
-1-jose.exposito89@gmail.com/T/
-> >
-> > Jos=C3=A9 Exp=C3=B3sito (6):
-> >    drm/vkms: Expose device creation and destruction
-> >    drm/vkms: Allow to configure the default device creation
-> >    drm/vkms: Remove completed task from the TODO list
-> >    drm/vkms: Allow to configure connector status
-> >    drm/vkms: Allow to update the connector status
-> >    drm/vkms: Allow to configure connector status via configfs
-> >
-> > Louis Chauvet (10):
-> >    drm/vkms: Add and remove VKMS instances via configfs
-> >    drm/vkms: Allow to configure multiple planes via configfs
-> >    drm/vkms: Allow to configure the plane type via configfs
-> >    drm/vkms: Allow to configure multiple CRTCs via configfs
-> >    drm/vkms: Allow to configure CRTC writeback support via configfs
-> >    drm/vkms: Allow to attach planes and CRTCs via configfs
-> >    drm/vkms: Allow to configure multiple encoders via configfs
-> >    drm/vkms: Allow to attach encoders and CRTCs via configfs
-> >    drm/vkms: Allow to configure multiple connectors via configfs
-> >    drm/vkms: Allow to attach connectors and encoders via configfs
-> >
-> >   Documentation/gpu/vkms.rst                    | 100 ++-
-> >   drivers/gpu/drm/vkms/Kconfig                  |   1 +
-> >   drivers/gpu/drm/vkms/Makefile                 |   3 +-
-> >   drivers/gpu/drm/vkms/tests/vkms_config_test.c |  24 +
-> >   drivers/gpu/drm/vkms/vkms_config.c            |   8 +-
-> >   drivers/gpu/drm/vkms/vkms_config.h            |  26 +
-> >   drivers/gpu/drm/vkms/vkms_configfs.c          | 833 +++++++++++++++++=
-+
-> >   drivers/gpu/drm/vkms/vkms_configfs.h          |   8 +
-> >   drivers/gpu/drm/vkms/vkms_connector.c         |  35 +
-> >   drivers/gpu/drm/vkms/vkms_connector.h         |   9 +
-> >   drivers/gpu/drm/vkms/vkms_drv.c               |  18 +-
-> >   drivers/gpu/drm/vkms/vkms_drv.h               |  20 +
-> >   12 files changed, 1072 insertions(+), 13 deletions(-)
-> >   create mode 100644 drivers/gpu/drm/vkms/vkms_configfs.c
-> >   create mode 100644 drivers/gpu/drm/vkms/vkms_configfs.h
-> >
-> >
-> > base-commit: a6c0a91ccb257eaec2aee080df06863ce7601315
->
-> --
-> Louis Chauvet, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
->
+							Thanx, Paul
 
