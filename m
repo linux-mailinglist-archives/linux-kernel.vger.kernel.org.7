@@ -1,288 +1,189 @@
-Return-Path: <linux-kernel+bounces-734697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57AE1B084EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:31:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B360BB084ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:32:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A763F1AA3472
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:32:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 675307A932B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:30:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51BB21639B;
-	Thu, 17 Jul 2025 06:31:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C1C21767D;
+	Thu, 17 Jul 2025 06:31:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="2cZdd/cq"
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sbHWwg4h"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3601E3DDB
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 06:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A138D217707
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 06:31:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752733888; cv=none; b=YfA0XBY7AFE3qh8kEeNzt82n4yLylaCWfxXAuk2wf8iZC0SsXH6IZrqUfXofg3s5uWSuAiLW2rPKlXtBYkp56JqXRpBFG7/Qxv8VjjMFITApYZzIKabBGEkDBRo1qgPENp6Y/43MpIlZEB20S6U6jM1xtZZy8/tNL+vZ99AEjRM=
+	t=1752733895; cv=none; b=IBO9m7FpIOU8b4TFVxG1nMt/wPO6AOUFyxgPIGj3IJQ8Pwe4JSmpzZbbEj2t+jbGgxZISMUvAban5y5iDqK4eQHWu8NvW/aBv/D/rrkImWcV45C0J57tiPuYGo6hMPtblvALONI2sK/ja2SVk/Wpb6Y2rnxl0b8HXFcpgceVUSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752733888; c=relaxed/simple;
-	bh=u+7xn3si52BNm7HgKrdKpdJEHwTIZ0Ej7n1XYoKlzIU=;
+	s=arc-20240116; t=1752733895; c=relaxed/simple;
+	bh=Z3nMzBNMQJhkw+Db8SYzD3+6WKD4XlRLevv7kMhG7M4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kwj4MKs9f52C7cpyFmJYJqXs662r/IfMupUViWAmXHWEJivb/xk4Q1Ob1+BwrCmqgbXfUPMOnSV/g/1ujYwxi/cRxUJ/pplH5RkjPykdTM5kcEV4kn4zieT8mZ8KrcBA5xSt9PjwrSLZiWoiybsgaY2eKtE/xVMYJnC3igd86H8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=2cZdd/cq; arc=none smtp.client-ip=209.85.166.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3de18fde9cfso2743745ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 23:31:25 -0700 (PDT)
+	 To:Cc:Content-Type; b=jLGPTKITeUIoX5njQZKMCNnFNk6Yk4/i7KJ3a/XNyrZQPGdKOBPlilS/3w5Gvc15dkpc6+d38IgDMTeaxIdOYIIk0d0stjPlfO2vpUvhP7T8NSH24Zhb4pixLR04ERydYeT3PHKNh0lI2CP+O+u1LgptlAyMvNfifhqvYyjE2jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sbHWwg4h; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4ab8e2c85d7so9097841cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 23:31:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1752733885; x=1753338685; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1752733892; x=1753338692; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cShu34IsKP+rMuJDtZGgY5sl29QdNRHSmVJoKkGJ+Hg=;
-        b=2cZdd/cqWA0lZFjeGfGmvOmdTbdkHemRa20h4Dt9a5MyF1dB0DyRGpQAmwPFXjlx4o
-         5iDTR9C+57NhSEMhLkaRoP3/90u6IJ1tdoc9TtxqIzDpab6QxfTLU7AJGuB3ij3votwm
-         pyZ6IbLfu3wrl40A0kKc8E3sBB78uOmxoSKlTLm9Q+B2feGR+2fR+1lZkYzh8Re0/Hdy
-         34OmaEZUZnpL0GmKA5cINmTf6RuVVGmqS10Gm6nhHPQi6yEB6oHFjHOynAPGSNJ8nVV3
-         7bOHHEXDEtAUoRCugzOavRVj37u6aZ4kyG8g71OcEBVublDeV4ib6jlu/6KzXTdsHxcy
-         iryg==
+        bh=TFKIsQ6iNNtZZF3Du2FdB9bGbfigbMp5SNRZxQs4rkE=;
+        b=sbHWwg4hnQYLXIx57wPHwWwtup444Gmbx6T3nwk0qJCXqPGKQttgnr0cp5RCsO06BT
+         bnZxC/cKNj2/7mp7QRQBUDOBrPQQhdih5g8DBwpNFD+U/aFYt7Bxo7K875f8KP4z8PPg
+         oooQADER1fpqTupTs2tQUMqLIMWmh9i4VRlIru6JRIM36eY/Nwi29po6QRSjRfx3BASr
+         iOGNx7D/7ejiqSRWJViWoEnwuTYYs0/DRoJVeDX1jkvwcK320x9THEAzIMmRh0AgeQ45
+         hYFJheRLQGsIenWlhZNhkXJBWo4kIt8vtbqF5RccCM4mrNgHV528gKODvqi4qfgTD5Oo
+         ht/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752733885; x=1753338685;
+        d=1e100.net; s=20230601; t=1752733892; x=1753338692;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cShu34IsKP+rMuJDtZGgY5sl29QdNRHSmVJoKkGJ+Hg=;
-        b=Jp19KmDciseFMt59syxQPOF+QUaiD3LBAGzZl3p21uox2NRS65z2PQjPGlfGcSnWbh
-         JQq+RiVrPbBXd7IyM6Pt1PjJfHSWMU5mf+KHu3lznFxaaO/c6BFFOdGjk8IpTC4CU+Z/
-         sEVz5FVRyEoDAr9wAKv7Zzj1sFizyM8snACbhybsMZeNgGyol0FvUZVx18QYgHYBJYCJ
-         hDmR+ZS/2F3PkZnCP6Iq41phCUL59Lp8ZCbCpRExU8GCaaP5J+EMKz2l1SeYqxJkTGfX
-         hRdsAXzyQMdApZw+yxIz5/Rofgm0tMMhIQXqjqIydcrtYROfSawTRc3WGKPQ9oXpkjkg
-         Si/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVYHC/RdaC4Z0Jxyh5exb76MWwOJcgdhKrTxFVWh188OxPqxl144TvVxBj0n4ACb0b3EpAHbM+Eq+dKYsU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgF1bmBv7U2C5yVOtEOW73ye8q/z7WpTgN/slh4EQLDL1nLaoP
-	OQJezZUYtiitvb381DQL9UDS1MKboHZz6dcyQWaHD5/BwagN8kXQihnXoYBtfQ4RLM1nPOky+H4
-	wzjeQwFj1MIcSGHMnAMQDVghE/wCcxFJNpiuA4vCcCw==
-X-Gm-Gg: ASbGnctC+Mpk8FL4+1KlRlWiVBIzAJT7mzhTKkVThIssuwMqgAKw3f8t84UdXTxX2oA
-	FuHauXAWS/KSM+uxBcXPaYpkbG+pnz/5RHTGw7FJOXjAf3gqpNVvdWQ0yFfFtglr/r6EiVH+W4q
-	Lx4M8hEc1spCcGgoqFecOEvjU4SWgSPF8RgAxSfT4o7XZ92ncZrMPYGDRDDhF7dO4zpRFaKzq/9
-	kng0Q==
-X-Google-Smtp-Source: AGHT+IE/sfncb34OAJCvsNtZ+vhPtab+pneDsmqOE/XaS/elV01OiQl/WRzo4PEBg2bqbd4kAnguheLatIGEICEhU4U=
-X-Received: by 2002:a05:6e02:97:b0:3de:287b:c445 with SMTP id
- e9e14a558f8ab-3e282c4f886mr53813265ab.0.1752733884509; Wed, 16 Jul 2025
- 23:31:24 -0700 (PDT)
+        bh=TFKIsQ6iNNtZZF3Du2FdB9bGbfigbMp5SNRZxQs4rkE=;
+        b=CPTpWCVRTamGIKna3bA2GiRbqDvTHZAknQIpTlsxKOOJa0/BrzEgruuKfjFzlme/Y4
+         4TC6FoQq8EKvDjfQ70R8bF/D9UDRYlKGRHu98z8EgOUteXuGcJZ6dAdZ5QTlDyAxbw+/
+         ZA+AEoyCLCHVfU1jwdT4oVaAbJgpbtMHBpMeCFTp7uyjWnCk76Wh//EKkpdZMwRz0Dsa
+         HGFu37Me4gM0ug1aF47Bm82swglZKsbOixRfKwbaqfGOAZVjoEHPsKdc104O+/ucSSa9
+         bFRaT65qqOdfUHPpq4IWy9rdX+eOzZXyJKrC35ecUnhEOTHMbl8CvUQyFTcbsgCYwgYJ
+         f9oQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXdNrbVKm8q8grCA3QaJQHjnnZdCzNnl9HTWxq/Wo4z8aZGpzKlX79wFOEeIzefgLSEKQilXooJmCKZehg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxyi5D4vOmP+1BJh3YCfhrot85X72RQ6vWPeaHGK81h/0Gya9Ng
+	/KSnUAjLeGIbXknfnTT+rCo8xcaPqLEXIIeWqI6ZSaWSECDfX6Rjf1w3QTEAG7ZosIJmZM1EeRW
+	lOyLiSQENSKAazMi1JtC59IJbh9VQq8hM4vX5MLZh
+X-Gm-Gg: ASbGncuSoO5rGFhj8j8PMl0ufcQOQmDdGYk1L/JDHp4noXLiiW7i6lJl7zmxlxILeUZ
+	e02ycfA8BkOe8QfeUm0No0qX8E5bQTdIIZNLhYYwaQuivsUq8yP+3VyhLuJ0kEU19L4THUOFFk4
+	Xje6jpQqGhkj9R3WbB6yMDTbWsZq+LaTyqXcQpRCbfgpwktIA5qcDAm7P7wDcWKHvOH5L6uIb3B
+	dEW0drZCwM5UCWpICIx6mxrkD3b2LuQit9kVExAotmHanM4
+X-Google-Smtp-Source: AGHT+IGEbJhY4DfxEpZKIPYIBJ/rhqZtUITOnzqog6b/XfJIxSxeQoR8JLRFE0dNcb52FJM82weIgPKIldnKGNR1STE=
+X-Received: by 2002:a05:622a:41:b0:4ab:8d13:7151 with SMTP id
+ d75a77b69052e-4ab93c43046mr90041101cf.7.1752733892205; Wed, 16 Jul 2025
+ 23:31:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <9693132df4d0f857b8be3a75750c36b40213fcc0.1726211632.git.zhouquan@iscas.ac.cn>
-In-Reply-To: <9693132df4d0f857b8be3a75750c36b40213fcc0.1726211632.git.zhouquan@iscas.ac.cn>
-From: Anup Patel <anup@brainfault.org>
-Date: Thu, 17 Jul 2025 12:01:10 +0530
-X-Gm-Features: Ac12FXyZI5bndF4oUBeF-5txAoMIgPzgIwwbYF2456Qc2MeDpR2sZuF-78qU4Ss
-Message-ID: <CAAhSdy2CLZxuXU9z6=44NECMFgEBYbSeyyuL9TV2LaBEnQLcRQ@mail.gmail.com>
-Subject: Re: [PATCH] RISC-V: perf/kvm: Add reporting of interrupt events
-To: zhouquan@iscas.ac.cn
-Cc: ajones@ventanamicro.com, atishp@atishpatra.org, paul.walmsley@sifive.com, 
-	palmer@dabbelt.com, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org, linux-perf-users@vger.kernel.org
+References: <20250714033649.4024311-1-suleiman@google.com> <20250714033649.4024311-2-suleiman@google.com>
+ <aHXnO6KapsNLjocd@google.com>
+In-Reply-To: <aHXnO6KapsNLjocd@google.com>
+From: Suleiman Souhlal <suleiman@google.com>
+Date: Thu, 17 Jul 2025 15:31:19 +0900
+X-Gm-Features: Ac12FXyfLxSbuS-HTvNNG4tE_g4D4Q8xxWx82Vy566yxYvgG8eAtPQDkbsFxaIc
+Message-ID: <CABCjUKB07exDN9nkjoio7LFct51GRaT=ZGXUq3iwoqfLog-trA@mail.gmail.com>
+Subject: Re: [PATCH v7 1/3] KVM: x86: Advance guest TSC after deep suspend.
+To: Tzung-Bi Shih <tzungbi@kernel.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Chao Gao <chao.gao@intel.com>, 
+	David Woodhouse <dwmw2@infradead.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, John Stultz <jstultz@google.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ssouhlal@freebsd.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 13, 2025 at 1:32=E2=80=AFPM <zhouquan@iscas.ac.cn> wrote:
+On Tue, Jul 15, 2025 at 2:29=E2=80=AFPM Tzung-Bi Shih <tzungbi@kernel.org> =
+wrote:
 >
-> From: Quan Zhou <zhouquan@iscas.ac.cn>
+> On Mon, Jul 14, 2025 at 12:36:47PM +0900, Suleiman Souhlal wrote:
+> > Try to advance guest TSC to current time after suspend when the host
+> > TSCs went backwards.
+> >
+> > This makes the behavior consistent between suspends where host TSC
+> > resets and suspends where it doesn't, such as suspend-to-idle, where
+> > in the former case if the host TSC resets, the guests' would
+> > previously be "frozen" due to KVM's backwards TSC prevention, while
+> > in the latter case they would advance.
+> >
+> > Suggested-by: Sean Christopherson <seanjc@google.com>
+> > Signed-off-by: Suleiman Souhlal <suleiman@google.com>
 >
-> For `perf kvm stat` on the RISC-V, in order to avoid the
-> occurrence of `UNKNOWN` event names, interrupts should be
-> reported in addition to exceptions.
+> Tested again with comparing `date` before and after suspend-to-RAM:
+>   echo deep >/sys/power/mem_sleep
+>   echo $(date '+%s' -d '+3 minutes') >/sys/class/rtc/rtc0/wakealarm
+>   echo mem >/sys/power/state
 >
-> testing without patch:
-> ---
-> Event name                    Samples  Sample%       Time(ns)
-> ---------------------------  --------  --------  ------------
-> STORE_GUEST_PAGE_FAULT            1496461   53.00%    889612544
-> UNKNOWN                        887514   31.00%    272857968
-> LOAD_GUEST_PAGE_FAULT          305164   10.00%    189186331
-> VIRTUAL_INST_FAULT              70625    2.00%    134114260
-> SUPERVISOR_SYSCALL              32014    1.00%     58577110
-> INST_GUEST_PAGE_FAULT               1    0.00%         2545
+> Without the patch, the guest's `date` is slower (~3 mins) than the host's
+> after resuming.
 >
-> testing with patch:
-> ---
-> Event name                    Samples  Sample%       Time(ns)
-> ---------------------------  --------  --------  ------------
-> IRQ_S_TIMER                   211271    58.00%  738298680600
-> EXC_STORE_GUEST_PAGE_FAULT    111279    30.00%  130725914800
-> EXC_LOAD_GUEST_PAGE_FAULT      22039     6.00%   25441480600
-> EXC_VIRTUAL_INST_FAULT          8913     2.00%   21015381600
-> IRQ_VS_EXT                      4748     1.00%   10155464300
-> IRQ_S_EXT                       2802     0.00%   13288775800
-> IRQ_S_SOFT                      1998     0.00%    4254129300
->
-> Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
+> Tested-by: Tzung-Bi Shih <tzungbi@kernel.org>
 
-Queued this patch for Linux-6.17
+Thanks for testing!
+
+>
+> > @@ -5035,7 +5035,36 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, i=
+nt cpu)
+> >
+> >       /* Apply any externally detected TSC adjustments (due to suspend)=
+ */
+> >       if (unlikely(vcpu->arch.tsc_offset_adjustment)) {
+> > +#ifdef CONFIG_X86_64
+> > +             unsigned long flags;
+> > +             struct kvm *kvm;
+> > +             bool advance;
+> > +             u64 kernel_ns, l1_tsc, offset, tsc_now;
+> > +
+> > +             kvm =3D vcpu->kvm;
+> > +             advance =3D kvm_get_time_and_clockread(&kernel_ns, &tsc_n=
+ow);
+> > +             raw_spin_lock_irqsave(&kvm->arch.tsc_write_lock, flags);
+> > +             /*
+> > +              * Advance the guest's TSC to current time instead of onl=
+y
+> > +              * preventing it from going backwards, while making sure
+> > +              * all the vCPUs use the same offset.
+> > +              */
+> > +             if (kvm->arch.host_was_suspended && advance) {
+> > +                     l1_tsc =3D nsec_to_cycles(vcpu,
+> > +                                             kvm->arch.kvmclock_offset=
+ + kernel_ns);
+> > +                     offset =3D kvm_compute_l1_tsc_offset(vcpu, l1_tsc=
+);
+> > +                     kvm->arch.cur_tsc_offset =3D offset;
+> > +                     kvm_vcpu_write_tsc_offset(vcpu, offset);
+> > +             } else if (advance) {
+> > +                     kvm_vcpu_write_tsc_offset(vcpu, kvm->arch.cur_tsc=
+_offset);
+> > +             } else {
+> > +                     adjust_tsc_offset_host(vcpu, vcpu->arch.tsc_offse=
+t_adjustment);
+> > +             }
+> > +             kvm->arch.host_was_suspended =3D false;
+> > +             raw_spin_unlock_irqrestore(&kvm->arch.tsc_write_lock, fla=
+gs);
+> > +#else
+> >               adjust_tsc_offset_host(vcpu, vcpu->arch.tsc_offset_adjust=
+ment);
+> > +#endif /* CONFIG_X86_64 */
+>
+> Wondering if it needs to acquire the `tsc_write_lock`, given that:
+> - The original code adjust_tsc_offset_host() doesn't acquire.  Note:
+>   adjust_tsc_offset_host() eventually calls kvm_vcpu_write_tsc_offset() t=
+oo.
+> - Documentation/virt/kvm/locking.rst [1].
+>
+> [1] https://elixir.bootlin.com/linux/v6.15/source/Documentation/virt/kvm/=
+locking.rst#L264
+
+This is an excellent question.
+I used a lock here to make sure that only one VCPU computes the offset
+and that all the others reuse it.
+It might be doable with atomic operations, but using a lock seemed
+simpler to me.
+I don't think it has to be tsc_write_lock specifically, but reusing it
+for this purpose seemed appropriate to me.
 
 Thanks,
-Anup
-
-> ---
->  tools/perf/arch/riscv/util/kvm-stat.c         |  6 +-
->  .../arch/riscv/util/riscv_exception_types.h   | 35 ------------
->  tools/perf/arch/riscv/util/riscv_trap_types.h | 57 +++++++++++++++++++
->  3 files changed, 60 insertions(+), 38 deletions(-)
->  delete mode 100644 tools/perf/arch/riscv/util/riscv_exception_types.h
->  create mode 100644 tools/perf/arch/riscv/util/riscv_trap_types.h
->
-> diff --git a/tools/perf/arch/riscv/util/kvm-stat.c b/tools/perf/arch/risc=
-v/util/kvm-stat.c
-> index 491aef449d1a..3ea7acb5e159 100644
-> --- a/tools/perf/arch/riscv/util/kvm-stat.c
-> +++ b/tools/perf/arch/riscv/util/kvm-stat.c
-> @@ -9,10 +9,10 @@
->  #include <memory.h>
->  #include "../../../util/evsel.h"
->  #include "../../../util/kvm-stat.h"
-> -#include "riscv_exception_types.h"
-> +#include "riscv_trap_types.h"
->  #include "debug.h"
->
-> -define_exit_reasons_table(riscv_exit_reasons, kvm_riscv_exception_class)=
-;
-> +define_exit_reasons_table(riscv_exit_reasons, kvm_riscv_trap_class);
->
->  const char *vcpu_id_str =3D "id";
->  const char *kvm_exit_reason =3D "scause";
-> @@ -30,7 +30,7 @@ static void event_get_key(struct evsel *evsel,
->                           struct event_key *key)
->  {
->         key->info =3D 0;
-> -       key->key =3D evsel__intval(evsel, sample, kvm_exit_reason);
-> +       key->key =3D evsel__intval(evsel, sample, kvm_exit_reason) & ~CAU=
-SE_IRQ_FLAG;
->         key->exit_reasons =3D riscv_exit_reasons;
->  }
->
-> diff --git a/tools/perf/arch/riscv/util/riscv_exception_types.h b/tools/p=
-erf/arch/riscv/util/riscv_exception_types.h
-> deleted file mode 100644
-> index c49b8fa5e847..000000000000
-> --- a/tools/perf/arch/riscv/util/riscv_exception_types.h
-> +++ /dev/null
-> @@ -1,35 +0,0 @@
-> -// SPDX-License-Identifier: GPL-2.0
-> -#ifndef ARCH_PERF_RISCV_EXCEPTION_TYPES_H
-> -#define ARCH_PERF_RISCV_EXCEPTION_TYPES_H
-> -
-> -#define EXC_INST_MISALIGNED 0
-> -#define EXC_INST_ACCESS 1
-> -#define EXC_INST_ILLEGAL 2
-> -#define EXC_BREAKPOINT 3
-> -#define EXC_LOAD_MISALIGNED 4
-> -#define EXC_LOAD_ACCESS 5
-> -#define EXC_STORE_MISALIGNED 6
-> -#define EXC_STORE_ACCESS 7
-> -#define EXC_SYSCALL 8
-> -#define EXC_HYPERVISOR_SYSCALL 9
-> -#define EXC_SUPERVISOR_SYSCALL 10
-> -#define EXC_INST_PAGE_FAULT 12
-> -#define EXC_LOAD_PAGE_FAULT 13
-> -#define EXC_STORE_PAGE_FAULT 15
-> -#define EXC_INST_GUEST_PAGE_FAULT 20
-> -#define EXC_LOAD_GUEST_PAGE_FAULT 21
-> -#define EXC_VIRTUAL_INST_FAULT 22
-> -#define EXC_STORE_GUEST_PAGE_FAULT 23
-> -
-> -#define EXC(x) {EXC_##x, #x }
-> -
-> -#define kvm_riscv_exception_class                                       =
-  \
-> -       EXC(INST_MISALIGNED), EXC(INST_ACCESS), EXC(INST_ILLEGAL),       =
-  \
-> -       EXC(BREAKPOINT), EXC(LOAD_MISALIGNED), EXC(LOAD_ACCESS),         =
-  \
-> -       EXC(STORE_MISALIGNED), EXC(STORE_ACCESS), EXC(SYSCALL),          =
-  \
-> -       EXC(HYPERVISOR_SYSCALL), EXC(SUPERVISOR_SYSCALL),                =
-  \
-> -       EXC(INST_PAGE_FAULT), EXC(LOAD_PAGE_FAULT), EXC(STORE_PAGE_FAULT)=
-, \
-> -       EXC(INST_GUEST_PAGE_FAULT), EXC(LOAD_GUEST_PAGE_FAULT),          =
-  \
-> -       EXC(VIRTUAL_INST_FAULT), EXC(STORE_GUEST_PAGE_FAULT)
-> -
-> -#endif /* ARCH_PERF_RISCV_EXCEPTION_TYPES_H */
-> diff --git a/tools/perf/arch/riscv/util/riscv_trap_types.h b/tools/perf/a=
-rch/riscv/util/riscv_trap_types.h
-> new file mode 100644
-> index 000000000000..854e9d95524d
-> --- /dev/null
-> +++ b/tools/perf/arch/riscv/util/riscv_trap_types.h
-> @@ -0,0 +1,57 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +#ifndef ARCH_PERF_RISCV_TRAP_TYPES_H
-> +#define ARCH_PERF_RISCV_TRAP_TYPES_H
-> +
-> +/* Exception cause high bit - is an interrupt if set */
-> +#define CAUSE_IRQ_FLAG         (_AC(1, UL) << (__riscv_xlen - 1))
-> +
-> +/* Interrupt causes (minus the high bit) */
-> +#define IRQ_S_SOFT 1
-> +#define IRQ_VS_SOFT 2
-> +#define IRQ_M_SOFT 3
-> +#define IRQ_S_TIMER 5
-> +#define IRQ_VS_TIMER 6
-> +#define IRQ_M_TIMER 7
-> +#define IRQ_S_EXT 9
-> +#define IRQ_VS_EXT 10
-> +#define IRQ_M_EXT 11
-> +#define IRQ_S_GEXT 12
-> +#define IRQ_PMU_OVF 13
-> +
-> +/* Exception causes */
-> +#define EXC_INST_MISALIGNED 0
-> +#define EXC_INST_ACCESS 1
-> +#define EXC_INST_ILLEGAL 2
-> +#define EXC_BREAKPOINT 3
-> +#define EXC_LOAD_MISALIGNED 4
-> +#define EXC_LOAD_ACCESS 5
-> +#define EXC_STORE_MISALIGNED 6
-> +#define EXC_STORE_ACCESS 7
-> +#define EXC_SYSCALL 8
-> +#define EXC_HYPERVISOR_SYSCALL 9
-> +#define EXC_SUPERVISOR_SYSCALL 10
-> +#define EXC_INST_PAGE_FAULT 12
-> +#define EXC_LOAD_PAGE_FAULT 13
-> +#define EXC_STORE_PAGE_FAULT 15
-> +#define EXC_INST_GUEST_PAGE_FAULT 20
-> +#define EXC_LOAD_GUEST_PAGE_FAULT 21
-> +#define EXC_VIRTUAL_INST_FAULT 22
-> +#define EXC_STORE_GUEST_PAGE_FAULT 23
-> +
-> +#define TRAP(x) { x, #x }
-> +
-> +#define kvm_riscv_trap_class \
-> +       TRAP(IRQ_S_SOFT), TRAP(IRQ_VS_SOFT), TRAP(IRQ_M_SOFT), \
-> +       TRAP(IRQ_S_TIMER), TRAP(IRQ_VS_TIMER), TRAP(IRQ_M_TIMER), \
-> +       TRAP(IRQ_S_EXT), TRAP(IRQ_VS_EXT), TRAP(IRQ_M_EXT), \
-> +       TRAP(IRQ_S_GEXT), TRAP(IRQ_PMU_OVF), \
-> +       TRAP(EXC_INST_MISALIGNED), TRAP(EXC_INST_ACCESS), TRAP(EXC_INST_I=
-LLEGAL), \
-> +       TRAP(EXC_BREAKPOINT), TRAP(EXC_LOAD_MISALIGNED), TRAP(EXC_LOAD_AC=
-CESS), \
-> +       TRAP(EXC_STORE_MISALIGNED), TRAP(EXC_STORE_ACCESS), TRAP(EXC_SYSC=
-ALL), \
-> +       TRAP(EXC_HYPERVISOR_SYSCALL), TRAP(EXC_SUPERVISOR_SYSCALL), \
-> +       TRAP(EXC_INST_PAGE_FAULT), TRAP(EXC_LOAD_PAGE_FAULT), \
-> +       TRAP(EXC_STORE_PAGE_FAULT), TRAP(EXC_INST_GUEST_PAGE_FAULT), \
-> +       TRAP(EXC_LOAD_GUEST_PAGE_FAULT), TRAP(EXC_VIRTUAL_INST_FAULT), \
-> +       TRAP(EXC_STORE_GUEST_PAGE_FAULT)
-> +
-> +#endif /* ARCH_PERF_RISCV_TRAP_TYPES_H */
->
-> base-commit: da3ea35007d0af457a0afc87e84fddaebc4e0b63
-> --
-> 2.34.1
->
+-- Suleiman
 
