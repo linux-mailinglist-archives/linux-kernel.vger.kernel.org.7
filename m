@@ -1,282 +1,396 @@
-Return-Path: <linux-kernel+bounces-735690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F8F0B0929C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:04:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99AC7B092A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:05:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D186C5A1C06
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:04:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 703835A2D7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:05:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E7A2FD894;
-	Thu, 17 Jul 2025 17:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301C52FE327;
+	Thu, 17 Jul 2025 17:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DC3k79id"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="rfeBvgGN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6165EA93D;
-	Thu, 17 Jul 2025 17:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752771838; cv=fail; b=qDYngYkdxZbTBm988+pM4zevQF45ltS8EAaKubuTEBhsBRDLo9+r75liU0rMm6rEpFoqRQZyt3VbqZ+fGsPmbX7LXUSA31qvIKOdxeet5SsEiIJ4MVxo98d4kl32BXcjfzaHa/aydwwYPacysUCBPmYxVCjsLY+8ydqjQQC6PWM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752771838; c=relaxed/simple;
-	bh=tdYwAnQu5Xr916YINYMfsr+OHPJapFdQVNrrg9kqgiQ=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=n7v4EKpREowdy1Jx4KMh3+HWDyCmLWLhQSf3fU9TMtVq79//Rcor80TzqanpGT4q/08w3/T6Y8yZT558OarRDTzBLfD4odvFZMsbq9tWE/1VCMZml7mrEGKxWapcbNPaty9a2nXNA2YZSpb8nTLETD0E61xtuvkQoHhgxDJnyEw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DC3k79id; arc=fail smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752771836; x=1784307836;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:mime-version;
-  bh=tdYwAnQu5Xr916YINYMfsr+OHPJapFdQVNrrg9kqgiQ=;
-  b=DC3k79idNgD/S7pVl/mQtzniu/m7M8zZbXeDmRZ0hGmdw3nrto24EGKr
-   K1bYhFnay0PeY8IpBMQLF4y6nRg6KzmdLAW7OS/Ator5m9FyQxduiFF0F
-   Is7QW0/kGAdROS0fqUUFAQQtRjQMOEi1hD2wPHSjRIBAJbJPS5CVR0gha
-   xnFGb0N01TlK/Hy29lWboSp7/57Jo5xAjI7/AnefujOKT+Vvu9NFhdTLZ
-   01tLZ4SUMyX2MEPyJnYB61IlMgrDrlmhI8FMk24is4iFAKhzq/hYUc93B
-   uvhayslW0CFfPbqribhCJDumbvtWpBPCyxb6ljYk/QA4LapDuglxGQpoa
-   w==;
-X-CSE-ConnectionGUID: Nk09zjcWTWSKS6We61/8Jg==
-X-CSE-MsgGUID: zXdzUJlPSbuJncaRt9+F5Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11495"; a="58726870"
-X-IronPort-AV: E=Sophos;i="6.16,319,1744095600"; 
-   d="asc'?scan'208";a="58726870"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 10:03:54 -0700
-X-CSE-ConnectionGUID: wo7XIiGuTAOpreDpX+I+7A==
-X-CSE-MsgGUID: /5E7/cYhS5OIzfx4QH5Czg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,319,1744095600"; 
-   d="asc'?scan'208";a="163486939"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 10:03:55 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Thu, 17 Jul 2025 10:03:53 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Thu, 17 Jul 2025 10:03:53 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (40.107.244.84)
- by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 17 Jul 2025 10:03:53 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZAbxbR0kTpqCr/exp0FuWsZ7tgrFfUQDHii3nvTLIfcUUanv1zJQopGTnfS/QWToWO5Sbhah0cBNeJNAYoE5SfHGqWWcqzzoHC7dMnLrQJk7cWNyB59C9wSlwIb3u1rzazV6EtLLyAyBh1++x+VizAhiOWf8ISFgXVmJpQhAS9Z3GxXF+ArTO+OY1FzHiRpZct7Qd4qjJXW3j8zYiYQPFBb/tzbZWGztzIrEVUmIhOBssFnLksFO+u6Lcf2RvD2GKmLG4gULGp4uUU6G5wAuMT3nb7rYM2SIjK0tqvnY10/JAy3kg3DLA7VAOKzEY+nlZcGBEp8c2kl0KauC8xmnsg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tdYwAnQu5Xr916YINYMfsr+OHPJapFdQVNrrg9kqgiQ=;
- b=Z+5RnB7irFRcB0vUuaytZdls7wWzTi4pSI4EiM1xOWYuLxJJ0d0IimYhamL7Vh2OR0ZDFUrPiJllVUmP82KMxIfg0kON6RGdvjUQ6Lm0RgN45zYE4ygegbzq+BqpMX1JHMONZjqAbHs08M7wOeKsducF94PEWyKrNxuE+huaVinFVOeocXrBPc/SZEurT8x1VgOTBI+TzA1k7AaU+QLsmPUQi8M3it5IaWndjJm1VEVZ7FUrRxW6X4g5neNAlrRKu4L+hLyVBXxbEl1oHuc32f+U8KgQvBXFEJDvKH/CNXezjfDt6z6Abhu8Px4U/62yaH4KYzSgWWsi9cYjGMBi1g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH0PR11MB5095.namprd11.prod.outlook.com (2603:10b6:510:3b::14)
- by LV3PR11MB8531.namprd11.prod.outlook.com (2603:10b6:408:1b6::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.39; Thu, 17 Jul
- 2025 17:03:52 +0000
-Received: from PH0PR11MB5095.namprd11.prod.outlook.com
- ([fe80::215b:e85e:1973:8189]) by PH0PR11MB5095.namprd11.prod.outlook.com
- ([fe80::215b:e85e:1973:8189%5]) with mapi id 15.20.8922.037; Thu, 17 Jul 2025
- 17:03:52 +0000
-Message-ID: <489c52d1-cad2-473d-86ab-cdae51b043c7@intel.com>
-Date: Thu, 17 Jul 2025 10:03:49 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: We found a bug in i40e_debugfs.c for the latest linux
-To: Wang Haoran <haoranwangsec@gmail.com>, Simon Horman <horms@kernel.org>
-CC: <anthony.l.nguyen@intel.com>, <przemyslaw.kitszel@intel.com>,
-	<andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <CANZ3JQRRiOdtfQJoP9QM=6LS1Jto8PGBGw6y7-TL=BcnzHQn1Q@mail.gmail.com>
- <20250714181032.GS721198@horms.kernel.org>
- <db65ea9a-7e23-48b9-a05a-cdd98c084598@intel.com>
- <20250716083731.GI721198@horms.kernel.org>
- <CANZ3JQRwO=4u24Y17cP3byP8mS9VOP5g=sy_Ch_g0xKSDJLhKA@mail.gmail.com>
-Content-Language: en-US
-From: Jacob Keller <jacob.e.keller@intel.com>
-Autocrypt: addr=jacob.e.keller@intel.com; keydata=
- xjMEaFx9ShYJKwYBBAHaRw8BAQdAE+TQsi9s60VNWijGeBIKU6hsXLwMt/JY9ni1wnsVd7nN
- J0phY29iIEtlbGxlciA8amFjb2IuZS5rZWxsZXJAaW50ZWwuY29tPsKTBBMWCgA7FiEEIEBU
- qdczkFYq7EMeapZdPm8PKOgFAmhcfUoCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AA
- CgkQapZdPm8PKOiZAAEA4UV0uM2PhFAw+tlK81gP+fgRqBVYlhmMyroXadv0lH4BAIf4jLxI
- UPEL4+zzp4ekaw8IyFz+mRMUBaS2l+cpoBUBzjgEaFx9ShIKKwYBBAGXVQEFAQEHQF386lYe
- MPZBiQHGXwjbBWS5OMBems5rgajcBMKc4W4aAwEIB8J4BBgWCgAgFiEEIEBUqdczkFYq7EMe
- apZdPm8PKOgFAmhcfUoCGwwACgkQapZdPm8PKOjbUQD+MsPBANqBUiNt+7w0dC73R6UcQzbg
- cFx4Yvms6cJjeD4BAKf193xbq7W3T7r9BdfTw6HRFYDiHXgkyoc/2Q4/T+8H
-In-Reply-To: <CANZ3JQRwO=4u24Y17cP3byP8mS9VOP5g=sy_Ch_g0xKSDJLhKA@mail.gmail.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="------------vfeSAzf3ts5NFeXSaJVrImb5"
-X-ClientProxiedBy: MW4P221CA0022.NAMP221.PROD.OUTLOOK.COM
- (2603:10b6:303:8b::27) To PH0PR11MB5095.namprd11.prod.outlook.com
- (2603:10b6:510:3b::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 320D72FE38C;
+	Thu, 17 Jul 2025 17:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752771847; cv=none; b=HKfFFQLM7goSwm3QDdSxL5etRK4sig/NczrgIe7tlGbztmc8ex/aXP2WEew6j0IueaNIQclCCpG6xXzaAhx6fOdy8u0JqcMxrL40HvoUfU90FGEhzaoZc4Mprdcw7MYCLqSxhCpwh0V0YRHpCS7wsF4NTJREu53E0ApWBy3Pn0A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752771847; c=relaxed/simple;
+	bh=bS8iRO9kFs74jZO8lNwodoWbIFAuylnReXi54x+5uRs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aS9HOa2SJV3HEz6M7p0BzTEL7QHOF+Wxy7JfL/bMmMQcvA1BGjupNnRelxX3LRJYEA7PlV9Vfw8n9mc2kQYAXotie/ZMDclrSToQOs+wPJlBBUgiw3Q6Q5RsY0T/IcxYPWAW2WahbUqqnRsPKfukYTz4gOj6R7d05MQ46CDnl6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=rfeBvgGN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E0D8C4CEF4;
+	Thu, 17 Jul 2025 17:04:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752771846;
+	bh=bS8iRO9kFs74jZO8lNwodoWbIFAuylnReXi54x+5uRs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rfeBvgGNXbGbDj/W2kHX75G/MbkeJzleWUSuAsCs2cMkyFYYwJT4AyAff9EK34+rm
+	 fK93MBewVP9LEiwOF4IOH9noAGRGRDYhqJvZGCF+D07X6tJsRmobiaKwg537Sv9R4D
+	 oSqPcXaL5kce0dkkFm7QL7KgI12UByF715fsj99g=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	torvalds@linux-foundation.org,
+	stable@vger.kernel.org
+Cc: lwn@lwn.net,
+	jslaby@suse.cz,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Linux 6.1.146
+Date: Thu, 17 Jul 2025 19:03:54 +0200
+Message-ID: <2025071755-dispute-neutron-dff5@gregkh>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR11MB5095:EE_|LV3PR11MB8531:EE_
-X-MS-Office365-Filtering-Correlation-Id: 224ea281-1e38-4911-c928-08ddc553e782
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?aHdxQ1Y3elBwWjI1dnpLNTRKM29RaFBFNmwwUkhCRWVpb1AzWmVrZWxOeEEx?=
- =?utf-8?B?VnVCNVZHVkpCdHhEdm1DMmlDM0F1c0JVSkhKN0hHZjhRclMrK3ZsTGpyWUFv?=
- =?utf-8?B?azRya01DS1R3dzVDTGo1NTFmbTc3SmZBQjZCazZUV0RiZUFIYi80NnN0RFU0?=
- =?utf-8?B?NFNiUkZ6UExWWURNejlyQ1pjb2p3ajBYenpmWG9XMnJJbmh5Kzhxc00zRXdJ?=
- =?utf-8?B?M1E2cGVoTHhBT0dPdC8zNlpScTNKV3pMQ2lMQWlOQjh5eUM0eUR2SjRDTXFy?=
- =?utf-8?B?T3QxMlhlZzhkZzRzVGFIL2FqTkRRYko3eDErMVhTK0dKdmxHeUV6YVRVcFhW?=
- =?utf-8?B?UEJ5czNEelhtMlorTG1KcisrTkRVSjZQM2FEOHF2cVJzOVFEWjBraDRKZTdu?=
- =?utf-8?B?d0NrbUE0bTNuTnZsZndidVBWNVFnZGNEemZ1K2tPOWc0VmtzUFlRQ0RRMS9V?=
- =?utf-8?B?UDAxMDV3L0JpZ1RUTmxQZkc4T2t0S3dvTGpZNnpvZWhhdlIvdmRuQlF6aXZX?=
- =?utf-8?B?Q0p0dEpBRlVVUjBkZE5GV1NLUVFsREc1aWw2OTlqY01TNDdXam04NHY3OWZo?=
- =?utf-8?B?K1FRc3dEdUNSL1dLNTRTUC9sNjZNWXQvRHRrTHZYZ3A2UFpkMmJuQU1pSXZ3?=
- =?utf-8?B?UURIU3dybzl6cEtFMjdZVWhLSmdKdFhVc1ZDWlk1UmJ2SXRyTE5Ibmc4M1py?=
- =?utf-8?B?bWhNM3QxU1E3Y05SWSthZ0RWYlNDcmdvSWlkR2llUkxTVVh6NHpvZEtxTFBN?=
- =?utf-8?B?SC9jY1JKSDVGaGl6d2tTNWtycUJiUVZTYnlFNDEra2ZGaUs2clZKbVpBblBE?=
- =?utf-8?B?U2xLczFiaGg0NVdSVmZuQTZDY2VuSHh0VVpUdjBDUXIvTHhVSWlVN0lJY1FT?=
- =?utf-8?B?Z3NLVE1SNEcyMzNCa3pCNWd4WGEyYWtTcE1FSFN5ZmFhdytjM2U3aDAvclEy?=
- =?utf-8?B?ekUyV0tSNGwwV2NDVVl6Zk95bk80TllQTGZOdno5RzJqZndFdmpOaVFCak1P?=
- =?utf-8?B?Ky9DT29mc3dHaEVXQURvL1lCdVpiYjMxUGo5ZW1majR2VW16T1ArM0RLMFBX?=
- =?utf-8?B?WEpKWDFieE0rbWgrNkxFWDRuaS9DU1g5UWJPeVVNT0w4SUVQYURWZmZQTFAy?=
- =?utf-8?B?cTB1U1p3dy9Jb1BydXVKYUpnUGMxR1V6Wk8vRDBzZVo5UTZFdFpPUHp6L2JY?=
- =?utf-8?B?VU1xNTZSYnBkeUYrVlpFaFJUN2poTzRqdUVjc2ZxcGwrTTZIbzhneDUzS2tM?=
- =?utf-8?B?OHVaazZCeUltazZkT2Q4YWxwTCtuNGpHNkxJSzdVMWhRRG1CSkVSMlNwTTAv?=
- =?utf-8?B?MndETlpwcmk5UjVrV1I0MUsvaFpuS3lBTE1yTUd6QzE5UWZpbTNyOFJDd2RM?=
- =?utf-8?B?cDNuZndKNFl2L0dJUmZCZldHOTFENTFzQ0NyVzFwOGpJa2N4YmprazV3MlBI?=
- =?utf-8?B?Q0tIWloxQ2F1VFRFaUhCNzNMRUxxTGIrR2RTWWJLSmM5UWtzMlpqWUhWQ0JV?=
- =?utf-8?B?MkNIL2FVNGErdFRRa3ZqamZpSlFvOXE5UWtPcDlIRW50VkZoOGxMOE91aklo?=
- =?utf-8?B?TE1DcWtVRElrVVR5M3NHSGE2eEtFVzFBODJpa09UcXFUTnRZZzE0NGRmRlpl?=
- =?utf-8?B?YjRQWStaVnN4NHRoczJNWUtJdEF6YUZoajIxc01iTDhPK2UxZVRhQi9qVVFN?=
- =?utf-8?B?RXNpcFd6ZUZXS1dSZnpaMEtkNWJXSlB4UUJTdzhKMjBrQ3N2NEc4MjlsajF6?=
- =?utf-8?B?OVE1QUNmQnoyVFNUVXVuZ2FwTWtaL3lkZlVvT1FQeDJoemxRRk9DWks3RHJn?=
- =?utf-8?B?Sjk0ejR3SDdtNzUyMG0ybVFvSVI1K0ZoUkJaRlRnT2FraXc2VHlTaWdHcWNV?=
- =?utf-8?B?WkdMTGRUWDJubXBxL01vMmp3LzE4SWxDZ2ZVRTg5aE9SQXc9PQ==?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR11MB5095.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UlNqT3ZKYXJxWXZtSUo2TDhCOHNDS2xqc3hSK3F6MUYvaW5vNVJnejJCN1lt?=
- =?utf-8?B?QzhPL3BjdExBL3hMN2xUS1REaEdaL2lCb0VVblZZQndydHZEMi9BclJXOUZI?=
- =?utf-8?B?a0VJSXY2T1l2VkNmcGRoQndsL1A4NmgwUUxhSC82bUxNVDZ1bEUyN3Y5TGF5?=
- =?utf-8?B?Z3JWeUVuMG1XUEoyempCcHV2UmJQalhLOC9PcXhkSHY5QlhQdCt4dEFDaWox?=
- =?utf-8?B?V25MQXZRbFBqRFNIRHBwd09NQ01PeGJHanlQdVhMUU9aMFkwTHVSVEhENkRB?=
- =?utf-8?B?ZXR2VWFNZUQ3K2IzSG95UEhtNEVsZkcvb2hhbVFmYkZiRXJLNXBYKzcxYzVn?=
- =?utf-8?B?eDdHTnpIQm8rM1BBMEdaN2tjUjJPaTZ0eHJSdUppaWF3em1pY0xYUkE1SThi?=
- =?utf-8?B?c1dBcUdYTHRWTWRSVm1WRUNCU1BSNE5LMy9yOGRMKzg0d3QwY1p2dENNSzFr?=
- =?utf-8?B?cytjOXJlVEpYUjVla1QyVFpJd1hlcG1XTGFod1VRZFIvTWJxTlJ5TWxWOExO?=
- =?utf-8?B?Qzh1MEt0YzZybjRRUVlZc3JuaDZpTXpJSm9OYjF4cCtJL2hMRGF2T0ZmdFBw?=
- =?utf-8?B?ZUNpRm9GNHcyZ3VGTWlJUmlTZDZvZkZWMVhkQ2NpRTFsVDkvV011ak9HVG5y?=
- =?utf-8?B?WUk3dEtHd093b1J0TUw0RW5OcldpUVB2Mk9TTTlXWlNCMjlIK1FaOWRuOVhh?=
- =?utf-8?B?Z2tFdFpGZFlwVHNFQ3pGNVRUM2xhaW5USUtCdW9VMC9aRjQxUlJEajh2dFp5?=
- =?utf-8?B?eVZCVmdjM2VKOXJVMnoyRE1FK1NlMDNrb2QwRllDTkw4b0d6L2pOS0IwWENk?=
- =?utf-8?B?NXJEa3NhVXVHUnlnYWdLM1lLcUhaTUs4UU9Fci8wTnhGUlNpZFVoZis1czNx?=
- =?utf-8?B?NVFDUnlHeFdScGJNTHBUOXRHQUtwSllNcVU5WnBTdjlUVmpXY0x6TE9MV2tp?=
- =?utf-8?B?RDFQeUhUTXJaYytwZDBkREhPeU9sRlhtbW9NUE1TYUZpRjhpYk4xOWdzMGwr?=
- =?utf-8?B?eTRLR1VnejRDeTJQZS9FdkNRYTkxNyt0T0RuUG85TmRhMkNrLzk1LzBGSmFL?=
- =?utf-8?B?bXRUWkRsZ2M5T1RNQmJSZmlEZGY1NUlveGpsT2twcXlhb2dZNnE0VjJqTTFN?=
- =?utf-8?B?WGhvYTI2ZjV6aVlTSm5nRkZyMU04ZjFONXZCa1NUZU1NK3RRMzVLVXE2N0d3?=
- =?utf-8?B?VVphTFdvUSt0MUJoaU80VFhqcldCT3Q4TVY0NlNhTGdsL011RTZyeHkzUVdu?=
- =?utf-8?B?OVFaalFjbXZIb0NlZnlmOWwzSzBYUjZYczlocW5GS0Jud1Y3M2JtWUZNRnJv?=
- =?utf-8?B?NzlrcGJrdUNtRVN4c0pFNFFUZGNscS84MTVjS05adFNnZGJJR2ZKb3JYWTk4?=
- =?utf-8?B?cU1kYmludktCcU1FMlpUdzQ5aktQY2x4RDJ0Zk1iL3cxUVI3UUhIYUhZbE5H?=
- =?utf-8?B?bWJEQ2pDVFlCVHVYNGxIOERibys4K1Y0WTNzTUdSakRnVHovSGVCR08zQ1Zt?=
- =?utf-8?B?R3ZnVXRkR1VGL3lQc3dRODZyY0pDaktPMG44dU80dFg5a05LS1l4NkhmaFg5?=
- =?utf-8?B?ZE9NUk15MkdPc1pnaDdXZUdZL1FvcEZTYWh4RDlnN0FkQVZ2enhXM1Y3dzBn?=
- =?utf-8?B?VXFpdjVFbnBlWWFJS2tnbDFXQWFvQnBSeEJ3RUkxL2N6amJVLy9ONjlWakRs?=
- =?utf-8?B?VlBSKzNVeEhaTmRjdHEyRFR4c2VoRTFYbkJTTnpBbWt0d0ZVd1hROXJianI2?=
- =?utf-8?B?RFRlL0hxak1xYnBTZTJvMzZaVUExN2svTzFULzlqUmxoeXRVUnQwVWhDeGNy?=
- =?utf-8?B?QmpWeE9LeDQzc253V0Qya2V2YW1GRHJ1S0djVy9qcHJZbUp4YitlVjVKQTBN?=
- =?utf-8?B?OVpJRnNMRnlRL3liSHpxU0VJRFNtRTBkek04Z1RPRDFSeWpnZnkrUE9kcWVx?=
- =?utf-8?B?ay9GYTE3OTdrVjVBdld3WUpYSGR4cmxIbE9PbXlCZlhBSjh6dS94VkM1NFJn?=
- =?utf-8?B?Vm56U3kzYWNTWjF1T1V5U0dLaThZSDZ2ZElJSjdGclMycXhNY2JLMnFKRDZM?=
- =?utf-8?B?L0FjZHpzdnBpNlNQa3pIeWpZc2hKTVA3em0rWjNEN2ZKcVJ0RWNRajcvaFNu?=
- =?utf-8?B?WWJjd3ZqQVJPMHd6R09KMTdJMWlrejZjWkh3bjFkSFhRdGQ0eUo5TS9GczBZ?=
- =?utf-8?B?M1E9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 224ea281-1e38-4911-c928-08ddc553e782
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR11MB5095.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2025 17:03:52.1241
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 29b9SSMAwl/N9aYjstpGkFMTm++M7KKYTek2U9V3EnLUeGS87CKq36PGcVrcASvPHcwJ6NS9r9KYxo5EyCX9sc9m9kT8FUhaA8sDV4h72Xk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR11MB8531
-X-OriginatorOrg: intel.com
-
---------------vfeSAzf3ts5NFeXSaJVrImb5
-Content-Type: multipart/mixed; boundary="------------HDXzVHx3L4v3frZprpXx48TI";
- protected-headers="v1"
-From: Jacob Keller <jacob.e.keller@intel.com>
-To: Wang Haoran <haoranwangsec@gmail.com>, Simon Horman <horms@kernel.org>
-Cc: anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Message-ID: <489c52d1-cad2-473d-86ab-cdae51b043c7@intel.com>
-Subject: Re: We found a bug in i40e_debugfs.c for the latest linux
-References: <CANZ3JQRRiOdtfQJoP9QM=6LS1Jto8PGBGw6y7-TL=BcnzHQn1Q@mail.gmail.com>
- <20250714181032.GS721198@horms.kernel.org>
- <db65ea9a-7e23-48b9-a05a-cdd98c084598@intel.com>
- <20250716083731.GI721198@horms.kernel.org>
- <CANZ3JQRwO=4u24Y17cP3byP8mS9VOP5g=sy_Ch_g0xKSDJLhKA@mail.gmail.com>
-In-Reply-To: <CANZ3JQRwO=4u24Y17cP3byP8mS9VOP5g=sy_Ch_g0xKSDJLhKA@mail.gmail.com>
-
---------------HDXzVHx3L4v3frZprpXx48TI
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
+I'm announcing the release of the 6.1.146 kernel.
 
+All users of the 6.1 kernel series must upgrade.
 
-On 7/16/2025 5:52 AM, Wang Haoran wrote:
-> Thanks for the clarification regarding i40e_dbg_command_buf.
->=20
-> Please let me know if you'd like me to submit a patch to
-> remove this interface, or to replace snprintf() with scnprintf().
->=20
->=20
-Since this is a debugfs interface, I think we're safe to drop the read
-accesses entirely, without fear of backwards compatibility violations. I
-think I can handle making a patch for that, but I'm happy to accept a
-patch from you if you want.
+The updated 6.1.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux-6.1.y
+and can be browsed at the normal kernel.org git web browser:
+	https://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=summary
 
-It looks like there is some complication as the
-i40e_dbg_netdev_ops_write() does appear to use this buffer for scratch
-space. I think that would need cleanup to align with how the
-i40e_dbg_command_write() function works with an allocated buffer rather
-than using this static space in the driver.
+thanks,
 
-Thanks,
-Jake
+greg k-h
 
+------------
 
---------------HDXzVHx3L4v3frZprpXx48TI--
+ Makefile                                      |    2 
+ arch/um/drivers/vector_kern.c                 |   42 ---
+ arch/x86/Kconfig                              |    2 
+ arch/x86/Makefile                             |    2 
+ arch/x86/include/asm/cpufeatures.h            |    2 
+ arch/x86/kernel/cpu/mce/amd.c                 |   15 -
+ arch/x86/kernel/cpu/mce/core.c                |    8 
+ arch/x86/kernel/cpu/mce/intel.c               |    1 
+ arch/x86/kvm/svm/sev.c                        |    4 
+ arch/x86/kvm/xen.c                            |   15 -
+ drivers/acpi/battery.c                        |   19 -
+ drivers/atm/idt77252.c                        |    5 
+ drivers/block/nbd.c                           |    6 
+ drivers/char/ipmi/ipmi_msghandler.c           |    3 
+ drivers/gpu/drm/drm_gem.c                     |   10 
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c    |    4 
+ drivers/gpu/drm/tegra/nvdec.c                 |    6 
+ drivers/gpu/drm/ttm/ttm_bo_util.c             |   13 
+ drivers/hid/hid-ids.h                         |    6 
+ drivers/hid/hid-lenovo.c                      |    8 
+ drivers/hid/hid-multitouch.c                  |    8 
+ drivers/hid/hid-quirks.c                      |    3 
+ drivers/input/joystick/xpad.c                 |    2 
+ drivers/input/keyboard/atkbd.c                |    3 
+ drivers/md/md-bitmap.c                        |    3 
+ drivers/md/raid1.c                            |    1 
+ drivers/md/raid10.c                           |   10 
+ drivers/net/can/m_can/m_can.c                 |    2 
+ drivers/net/ethernet/broadcom/bnxt/bnxt_dcb.c |    2 
+ drivers/net/ethernet/broadcom/bnxt/bnxt_xdp.c |    2 
+ drivers/net/ethernet/ibm/ibmvnic.h            |    8 
+ drivers/net/ethernet/xilinx/ll_temac_main.c   |    2 
+ drivers/net/phy/microchip.c                   |    2 
+ drivers/net/phy/smsc.c                        |   28 +-
+ drivers/net/usb/qmi_wwan.c                    |    1 
+ drivers/net/wireless/zydas/zd1211rw/zd_mac.c  |    6 
+ drivers/pinctrl/qcom/pinctrl-msm.c            |   20 +
+ drivers/platform/x86/ideapad-laptop.c         |   19 +
+ drivers/pwm/pwm-mediatek.c                    |   13 
+ drivers/tty/vt/vt.c                           |    1 
+ drivers/usb/cdns3/cdnsp-debug.h               |  358 ++++++++++++--------------
+ drivers/usb/cdns3/cdnsp-ep0.c                 |   18 +
+ drivers/usb/cdns3/cdnsp-gadget.c              |    6 
+ drivers/usb/cdns3/cdnsp-gadget.h              |   11 
+ drivers/usb/cdns3/cdnsp-ring.c                |   27 -
+ drivers/usb/dwc3/core.c                       |    9 
+ drivers/usb/dwc3/gadget.c                     |   22 -
+ drivers/usb/gadget/function/u_serial.c        |    6 
+ drivers/usb/host/xhci-mem.c                   |    4 
+ drivers/usb/host/xhci-pci.c                   |   30 ++
+ drivers/usb/host/xhci.h                       |    1 
+ drivers/vhost/scsi.c                          |    7 
+ fs/anon_inodes.c                              |   23 +
+ fs/btrfs/free-space-tree.c                    |   16 -
+ fs/btrfs/inode.c                              |   28 +-
+ fs/erofs/data.c                               |    2 
+ fs/erofs/zdata.c                              |  126 +++------
+ fs/proc/inode.c                               |    2 
+ fs/proc/proc_sysctl.c                         |   18 -
+ fs/smb/server/smb2pdu.c                       |   29 --
+ fs/smb/server/transport_rdma.c                |    5 
+ fs/smb/server/vfs.c                           |    1 
+ include/drm/drm_file.h                        |    3 
+ include/drm/spsc_queue.h                      |    4 
+ include/linux/fs.h                            |    2 
+ include/net/netfilter/nf_flow_table.h         |    2 
+ include/trace/events/erofs.h                  |   16 -
+ kernel/events/core.c                          |    2 
+ kernel/rseq.c                                 |   60 +++-
+ lib/maple_tree.c                              |    7 
+ mm/kasan/report.c                             |   13 
+ mm/secretmem.c                                |   11 
+ net/appletalk/ddp.c                           |    1 
+ net/atm/clip.c                                |   64 +++-
+ net/bluetooth/hci_sync.c                      |    2 
+ net/ipv6/addrconf.c                           |    9 
+ net/netlink/af_netlink.c                      |   82 +++--
+ net/rxrpc/call_accept.c                       |    3 
+ net/sched/sch_api.c                           |   23 +
+ net/tipc/topsrv.c                             |    2 
+ net/vmw_vsock/af_vsock.c                      |   57 +++-
+ net/wireless/util.c                           |   52 +++
+ sound/pci/hda/patch_realtek.c                 |    1 
+ sound/soc/amd/yc/acp6x-mach.c                 |    7 
+ sound/soc/fsl/fsl_asrc.c                      |    3 
+ tools/include/linux/kallsyms.h                |    4 
+ 86 files changed, 900 insertions(+), 588 deletions(-)
 
---------------vfeSAzf3ts5NFeXSaJVrImb5
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+Achill Gilgenast (1):
+      kallsyms: fix build without execinfo
 
------BEGIN PGP SIGNATURE-----
+Akira Inoue (1):
+      HID: lenovo: Add support for ThinkPad X1 Tablet Thin Keyboard Gen2
 
-wnsEABYIACMWIQQgQFSp1zOQVirsQx5qll0+bw8o6AUCaHks9QUDAAAAAAAKCRBqll0+bw8o6LXC
-AQCa4prXVkLzCzHmTXa123H8F15VhhOOK9PlWGRPqcjnRAD/bJGJbNy4Ai0X4LJWhpm96W6I69Ct
-4lxxA4UPkHpofwQ=
-=yp+3
------END PGP SIGNATURE-----
+Al Viro (2):
+      fix proc_sys_compare() handling of in-lookup dentries
+      ksmbd: fix a mount write count leak in ksmbd_vfs_kern_path_locked()
 
---------------vfeSAzf3ts5NFeXSaJVrImb5--
+Alexey Dobriyan (1):
+      x86/boot: Compile boot code with -std=gnu11 too
+
+Alok Tiwari (1):
+      net: ll_temac: Fix missing tx_pending check in ethtools_set_ringparam()
+
+Bartosz Golaszewski (1):
+      pinctrl: qcom: msm: mark certain pins as invalid for interrupts
+
+Basavaraj Natikar (1):
+      xhci: Allow RPM on the USB controller (1022:43f7) by default
+
+Chao Yu (1):
+      erofs: fix to add missing tracepoint in erofs_read_folio()
+
+Chia-Lin Kao (AceLan) (1):
+      HID: quirks: Add quirk for 2 Chicony Electronics HP 5MP Cameras
+
+Christian König (1):
+      drm/ttm: fix error handling in ttm_buffer_object_transfer
+
+Dan Carpenter (1):
+      ipmi:msghandler: Fix potential memory corruption in ipmi_create_user()
+
+Daniil Dulov (1):
+      wifi: zd1211rw: Fix potential NULL pointer dereference in zd_mac_tx_to_dev()
+
+David Howells (1):
+      rxrpc: Fix oops due to non-existence of prealloc backlog struct
+
+David Woodhouse (1):
+      KVM: x86/xen: Allow 'out of range' event channel ports in IRQ routing table.
+
+Dongli Zhang (1):
+      vhost-scsi: protect vq->log_used with vq->mutex
+
+Eric Dumazet (1):
+      netfilter: flowtable: account for Ethernet header in nf_flow_pppoe_proto()
+
+Filipe Manana (2):
+      btrfs: propagate last_unlink_trans earlier when doing a rmdir
+      btrfs: fix assertion when building free space tree
+
+Gao Xiang (3):
+      erofs: allocate extra bvec pages directly instead of retrying
+      erofs: avoid on-stack pagepool directly passed by arguments
+      erofs: adapt folios for z_erofs_read_folio()
+
+Greg Kroah-Hartman (1):
+      Linux 6.1.146
+
+Guillaume Nault (1):
+      gre: Fix IPv6 multicast route creation.
+
+Hans de Goede (1):
+      Input: atkbd - do not skip atkbd_deactivate() when skipping ATKBD_CMD_GETID
+
+Håkon Bugge (1):
+      md/md-bitmap: fix GPF in bitmap_get_stats()
+
+JP Kobryn (1):
+      x86/mce: Make sure CMCI banks are cleared during shutdown on Intel
+
+Jack Wang (1):
+      x86: Fix X86_FEATURE_VERW_CLEAR definition
+
+Jakub Kicinski (1):
+      netlink: make sure we allow at least one dump skb
+
+Jann Horn (1):
+      x86/mm: Disable hugetlb page table sharing on 32-bit
+
+Kaustabh Chakraborty (1):
+      drm/exynos: exynos7_drm_decon: add vblank check in IRQ handling
+
+Kito Xu (1):
+      net: appletalk: Fix device refcount leak in atrtr_create()
+
+Kuen-Han Tsai (2):
+      usb: gadget: u_serial: Fix race condition in TTY wakeup
+      usb: dwc3: Abort suspend on soft disconnect failure
+
+Kuniyuki Iwashima (6):
+      netlink: Fix wraparounds of sk->sk_rmem_alloc.
+      tipc: Fix use-after-free in tipc_conn_close().
+      atm: clip: Fix potential null-ptr-deref in to_atmarpd().
+      atm: clip: Fix memory leak of struct clip_vcc.
+      atm: clip: Fix infinite recursive call of clip_push().
+      netlink: Fix rmem check in netlink_broadcast_deliver().
+
+Lee Jones (1):
+      usb: cdnsp: Replace snprintf() with the safer scnprintf() variant
+
+Liam R. Howlett (1):
+      maple_tree: fix MA_STATE_PREALLOC flag in mas_preallocate()
+
+Luiz Augusto von Dentz (1):
+      Bluetooth: hci_sync: Fix not disabling advertising instance
+
+Mathy Vanhoef (1):
+      wifi: prevent A-MSDU attacks in mesh networks
+
+Matthew Brost (1):
+      drm/sched: Increment job count before swapping tail spsc queue
+
+Michael Jeanson (1):
+      rseq: Fix segfault on registration when rseq_cs is non-zero
+
+Michal Luczaj (3):
+      vsock: Fix transport_{g2h,h2g} TOCTOU
+      vsock: Fix transport_* TOCTOU
+      vsock: Fix IOCTL_VM_SOCKETS_GET_LOCAL_CID to check also `transport_local`
+
+Mikko Perttunen (1):
+      drm/tegra: nvdec: Fix dma_alloc_coherent error check
+
+Mingming Cao (1):
+      ibmvnic: Fix hardcoded NUM_RX_STATS/NUM_TX_STATS with dynamic sizeof
+
+Namjae Jeon (1):
+      ksmbd: fix potential use-after-free in oplock/lease break ack
+
+Nicolas Pitre (1):
+      vt: add missing notification when switching back to text mode
+
+Nigel Croxon (1):
+      raid10: cleanup memleak at raid10_make_request
+
+Nilton Perim Neto (1):
+      Input: xpad - support Acer NGR 200 Controller
+
+Oleksij Rempel (3):
+      net: phy: smsc: Fix Auto-MDIX configuration when disabled by strap
+      net: phy: smsc: Fix link failure in forced mode with Auto-MDIX
+      net: phy: microchip: limit 100M workaround to link-down events on LAN88xx
+
+Pawel Laszczak (2):
+      usb:cdnsp: remove TRB_FLUSH_ENDPOINT command
+      usb: cdnsp: Fix issue with CV Bad Descriptor test
+
+Peter Zijlstra (1):
+      perf: Revert to requiring CAP_SYS_ADMIN for uprobes
+
+Rafael J. Wysocki (1):
+      Revert "ACPI: battery: negate current when discharging"
+
+Raju Rangoju (1):
+      usb: xhci: quirk for data loss in ISOC transfers
+
+Rong Zhang (1):
+      platform/x86: ideapad-laptop: use usleep_range() for EC polling
+
+Sean Christopherson (1):
+      KVM: SVM: Reject SEV{-ES} intra host migration if vCPU creation is in-flight
+
+Sean Nyekjaer (1):
+      can: m_can: m_can_handle_lost_msg(): downgrade msg lost in rx message to debug level
+
+Shengjiu Wang (1):
+      ASoC: fsl_asrc: use internal measured ratio for non-ideal ratio mode
+
+Shivank Garg (1):
+      fs: export anon_inode_make_secure_inode() and fix secretmem LSM bypass
+
+Shravya KN (1):
+      bnxt_en: Fix DCB ETS validation
+
+Simona Vetter (1):
+      drm/gem: Fix race in drm_gem_handle_create_tail()
+
+Somnath Kotur (1):
+      bnxt_en: Set DMA unmap len correctly for XDP_REDIRECT
+
+Stefan Metzmacher (1):
+      smb: server: make use of rdma_destroy_qp()
+
+Thomas Fourier (1):
+      atm: idt77252: Add missing `dma_map_error()`
+
+Tiwei Bie (1):
+      um: vector: Reduce stack usage in vector_eth_configure()
+
+Uwe Kleine-König (1):
+      pwm: mediatek: Ensure to disable clocks in error path
+
+Victor Nogueira (1):
+      net/sched: Abort __tc_modify_qdisc if parent class does not exist
+
+Wang Jinchao (1):
+      md/raid1: Fix stack memory use after return in raid1_reshape
+
+Wei Yang (1):
+      maple_tree: fix mt_destroy_walk() on root leaf node
+
+Xiaowei Li (1):
+      net: usb: qmi_wwan: add SIMCom 8230C composition
+
+Yasmin Fitzgerald (1):
+      ALSA: hda/realtek - Enable mute LED on HP Pavilion Laptop 15-eg100
+
+Yazen Ghannam (2):
+      x86/mce/amd: Fix threshold limit reset
+      x86/mce: Don't remove sysfs if thresholding sysfs init fails
+
+Yeoreum Yun (1):
+      kasan: remove kasan_find_vm_area() to prevent possible deadlock
+
+Yue Haibing (1):
+      atm: clip: Fix NULL pointer dereference in vcc_sendmsg()
+
+Yue Hu (2):
+      erofs: remove the member readahead from struct z_erofs_decompress_frontend
+      erofs: clean up z_erofs_pcluster_readmore()
+
+Yuzuru10 (1):
+      ASoC: amd: yc: add quirk for Acer Nitro ANV15-41 internal mic
+
+Zhang Heng (1):
+      HID: Add IGNORE quirk for SMARTLINKTECHNOLOGY
+
+Zheng Qixing (1):
+      nbd: fix uaf in nbd_genl_connect() error path
+
 
