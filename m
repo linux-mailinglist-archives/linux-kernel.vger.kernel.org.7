@@ -1,105 +1,111 @@
-Return-Path: <linux-kernel+bounces-735252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E20DB08CCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:25:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58C99B08CD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:26:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D2CD16A1E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:25:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41D467A8999
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:24:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28FF22BD59E;
-	Thu, 17 Jul 2025 12:25:17 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881E82BD5B6;
+	Thu, 17 Jul 2025 12:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sLlwHrkw"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42AD02264B1;
-	Thu, 17 Jul 2025 12:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9784D2BD587
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 12:25:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752755116; cv=none; b=XUID6ZhI0EzsMoXcpk9T1ZXGb36oPHb3jKDo43eZUwu6ghBMRDTMXyEvnFLejwvWY8y+qgEvWiVAAPGK/14Qu2ydk+O1m6EIoAZiOm1Ht6cijXH5xgOY0h0MioBh1iv4LgUB0sEseIWiqTvx6GBgJ2rlieIyAZ84rqDBbT24efQ=
+	t=1752755158; cv=none; b=JW8f5rRqUmMnzdmnwtJTwI1nwX52BinQ6NNrPGd/aPysk0Qhmqa7gncRflmwBYgwZcJAnUG64BD33vansGaOx0iH9FOKKSRFokjW1TNEfpKL34oAja90NyB38CLwecxOmKqdFma72U6cO5WXz4onrKWcxGGkVOgq7BpYnH1H8n0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752755116; c=relaxed/simple;
-	bh=WpyHnG6Is/7L443QOHma13daWhpEaOHSVCQ53KQfHUk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FKJSjSM2960vgrq7z0LSs9pxFJ1wq3UUEw7WjayaFEsWnoJDnM/jG4uyC8n6YmwfktQyFZmiOeg1vgO41FUyP8ZaLWPIGxjzXLQWBau0KyF+gLjP1l7VCfd1ARTnSzR5Udrz+4uNS3M+P2qa4FqorHRzm+lBV5OdeV05Rr3wLD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf04.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay02.hostedemail.com (Postfix) with ESMTP id 469D712E298;
-	Thu, 17 Jul 2025 12:25:11 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf04.hostedemail.com (Postfix) with ESMTPA id 0C3812002B;
-	Thu, 17 Jul 2025 12:25:05 +0000 (UTC)
-Date: Thu, 17 Jul 2025 08:25:26 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
- Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri
- Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Thomas
- Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, Indu
- Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, Beau
- Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton
- <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, Florian Weimer
- <fweimer@redhat.com>, Sam James <sam@gentoo.org>
-Subject: Re: [PATCH v14 09/12] unwind deferred: Use SRCU
- unwind_deferred_task_work()
-Message-ID: <20250717082526.7173106a@gandalf.local.home>
-In-Reply-To: <47c3b0df-9f11-4e14-97e2-0f3ba3b09855@paulmck-laptop>
-References: <20250717004910.297898999@kernel.org>
-	<20250717004957.918908732@kernel.org>
-	<47c3b0df-9f11-4e14-97e2-0f3ba3b09855@paulmck-laptop>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752755158; c=relaxed/simple;
+	bh=vFY0nUunvlGqLxXg8e41Kh2n8Hq2zaTpVxr1ylslpZo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I4++Mz7EvEUcbVR+3x5NItOGsBukkhbPUcXpTXThtawjUORTrYhaeItnT3n59XKtPxVl/WatilMbGw9eCJoM3qUSrKi2LnqtyETuwjyDWjUdNOGVBN8S2Plsw4UjdKzt4n34jtR36FCEfmt70ylywoEIKgvdkfhtrXBgUD/4kmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sLlwHrkw; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-23dd9ae5aacso128215ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 05:25:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752755156; x=1753359956; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ChafKmeRDq7BBol4Pt9Xq7FfoEfLdZ8lQh7RZ12ztC0=;
+        b=sLlwHrkwQvno3HHxMr20MYNp9zCM5Zu1rXPUz4Mnfc0XFt3sGfJwxeT/mmGJCL5hNk
+         baCh/A536znQkEeKNSm1LGdwx+UCUCJype2xgSGQydUZ/7FMGI3YLOhcuxdHHsnoNzOr
+         Bt3ywyLTrZzTYLN1e99nRt8Owqd3NARrLcQdSbycQDc7OnTlpoVzN75NLzmPqagEY6hH
+         S8Pu9TSlokXqA4uprO4I3dxIZXToK2J3QvINupxZfJCWYMTC+5/6DpW1BetGKnSClv84
+         EFBZoNbMcBZA654Ck5c5i3BSuvqgqPjm4awQHxwbEj1zFj/smVK7AYe6WgY9AlxijzC7
+         1ksQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752755156; x=1753359956;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ChafKmeRDq7BBol4Pt9Xq7FfoEfLdZ8lQh7RZ12ztC0=;
+        b=rfJEIMvqKGImGo8w51immiikyYE5EMgrWipWvuBZAhSKeOZczlxMTWP0YToJ59YatZ
+         2NO4/lus6YxPZyxPecSVGk+OtPEKatvdQ7Qfsj5MLk3ZRj8LRcBaSrCaYVZp4YRkyfqm
+         GPBgULHUXpGJq5XeKYMhRSKRZ+QUyluQdWZG3cOB3eXSq6wfCr5d3j04c10P5bAdgGRQ
+         x9xZ7at5Vcx6PvrsbqyyxqfWVIUlSrArwLhC2S5ztP/F/VMNKwM1BWnMTEl2d1k0Po9h
+         ufhqEf6+6LBxgYVjXCFG7JmqO7pSJGTuQFRHz26OOYX8xU8VEdO5oLXClNKZeEdoIGuD
+         qsIA==
+X-Forwarded-Encrypted: i=1; AJvYcCVIYi9d0g70IcsksdPRHj7dMYkiD3yySpsqJnfwXv3cifBMkmZHJDvMMS3xVe4/00dvCpuxWdU5+qEs/sk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNIHJc7vdWYCz6YATbfTFYKZLYxtsyJweIcHX0r15kfaVzUkHi
+	1wHl5gQsnxQw5mGvmNnakwX0w0eGeSWX89QlBzzojjQYO01bRkayQtkrG155cncZuTvTfltshu9
+	UccW6ZED4HbEZqUinZMLQbx5h3kvp0NtTFsEK2d6u
+X-Gm-Gg: ASbGnctSzz7OmWDvd49rAQPiXagE+ZloiEFi9H5xnJC4KtuFlSmyzMUUr6dSZ05Dvr8
+	3djEOe7n0f8BzcmTXwtY1coXKez6jtfF1zQh4a19k8u7nSF+fYoRj/f0mIaEVI5t+tuMhIa+mGM
+	hw4aB4vvgEZputdtij7cicBJXAHmxa7e5nA123hzLoQRGM6yorE063ek3z8yHiNTEK//rTsOOD7
+	d7COv/lgPtcIJ/T+VxyQPR5EmwZFf0fZHwARibF
+X-Google-Smtp-Source: AGHT+IEuSUvLGjJ9LnJSu0ASEm9Hu6l9HxUyAYK0uxHFZ7HyWOgUNlbykOmydDQTYxgeeX0nRB1YUMf/QZK64flQTCE=
+X-Received: by 2002:a17:903:22cd:b0:215:42a3:e844 with SMTP id
+ d9443c01a7336-23e31497285mr2701935ad.17.1752755155331; Thu, 17 Jul 2025
+ 05:25:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 0C3812002B
-X-Stat-Signature: fpu363ytmhcu87h3oi58wmhojsfids9k
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18x0W+hhfZDN7/zGSuRaCHdrM2V6QvI8V8=
-X-HE-Tag: 1752755105-153269
-X-HE-Meta: U2FsdGVkX18c9dT0TTHtHGOmlLFUP9JpCqw8h8R+dg3gugOYz3e8kaSqnpjSD6TQPcf+iSOKCQGMxIbc4U5EePysxFQ9bagxiSP1HBg/Hh5tfADEnvyGcMo7s1KkESFZtB8XG9IW/91UzU5IVLHXlWJxiuqGclnshulQcfiUNd4k/GvhPCv/OmIlByIYQAB9TTKdlsp3zUY/Z40EE0y4nefrwy2MMMWoo2Qdw3R1Hfmr9qmzbQC+01mz5huLxTGry3iO/0XU5LDbNCK8mnArGKq3k3o/tPWH6R+BrHw10YQD+8T8qIDIo/QREgg3AKZSJqFc1yuLSaqaG1AN+uz3wAsFA/iQXuvu
+References: <20250717022010.677645-1-xiaoyao.li@intel.com>
+In-Reply-To: <20250717022010.677645-1-xiaoyao.li@intel.com>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Thu, 17 Jul 2025 05:25:42 -0700
+X-Gm-Features: Ac12FXzEyO5jZX8xOPwmf85jko29MZEzFgWRNZrg89OfQOg-N2XQCdwntWcuzLI
+Message-ID: <CAGtprH_fNofCjJH1hWKoPwd-wT7QmyXvS7d9xpRNYxBznNUY+w@mail.gmail.com>
+Subject: Re: [PATCH] KVM: TDX: Don't report base TDVMCALLs
+To: Xiaoyao Li <xiaoyao.li@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 16 Jul 2025 21:43:47 -0700
-"Paul E. McKenney" <paulmck@kernel.org> wrote:
+On Wed, Jul 16, 2025 at 7:28=E2=80=AFPM Xiaoyao Li <xiaoyao.li@intel.com> w=
+rote:
+> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> index f31ccdeb905b..ea1261ca805f 100644
+> --- a/arch/x86/kvm/vmx/tdx.c
+> +++ b/arch/x86/kvm/vmx/tdx.c
+> @@ -173,7 +173,6 @@ static void td_init_cpuid_entry2(struct kvm_cpuid_ent=
+ry2 *entry, unsigned char i
+>         tdx_clear_unsupported_cpuid(entry);
+>  }
+>
+> -#define TDVMCALLINFO_GET_QUOTE                         BIT(0)
+>  #define TDVMCALLINFO_SETUP_EVENT_NOTIFY_INTERRUPT      BIT(1)
 
-> > +DEFINE_LOCK_GUARD_1(srcu_lite, struct srcu_struct,  
-> 
-> You need srcu_fast because srcu_lite is being removed.  They are quite
-> similar, but srcu_fast is faster and is NMI-safe.  (This last might or
-> might not matter here.)
-> 
-> See https://lore.kernel.org/all/20250716225418.3014815-3-paulmck@kernel.org/
-> for a srcu_fast_notrace, so something like this:
+I am struggling to find the patch that adds support for
+TDVMCALLINFO_SETUP_EVENT_NOTIFY_INTERRUPT. Can you help point out the
+series that adds this support?
 
-Yeah, I already saw that patch.
-
-> 
-> DEFINE_LOCK_GUARD_1(srcu_fast, struct srcu_struct,
-> 		    _T->scp = srcu_read_lock_fast(_T->lock),
-> 		    srcu_read_unlock_fast(_T->lock, _T->scp),
-> 		    struct srcu_ctr __percpu *scp)
-> 
-> Other than that, it looks plausible.
-
-Using srcu_lite or srcu_fast is an optimization here. And since I saw you
-adding the guard for srcu_fast in that other thread, I'll just use normal
-SRCU here for this series, and in the future we could convert it over to
-srcu_fast.
-
-Thanks!
-
--- Steve
+Thanks,
+Vishal
 
