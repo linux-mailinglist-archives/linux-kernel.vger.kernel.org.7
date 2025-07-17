@@ -1,257 +1,296 @@
-Return-Path: <linux-kernel+bounces-734513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB32FB0829E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 03:51:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1459EB082A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 03:53:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BCD71A66162
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 01:52:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4307417BC45
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 01:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63E921953BB;
-	Thu, 17 Jul 2025 01:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773841B4247;
+	Thu, 17 Jul 2025 01:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YxDPMz+r"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fn8CWE9+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F612FBF0
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 01:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A5B1411EB;
+	Thu, 17 Jul 2025 01:53:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752717104; cv=none; b=cDNjQEM9CVkRsLMDud6jIOBbUwfi36Yu2Dgij1KclJYwmztcm4xfoGiCkgts7+rfhNfXQe7v2gfUZMwLxfHsv9+UWHCUeE/5s834+Jue1cSOwTZegkh8Deg1pyOYCCLKC5xp6kjkyUkYvvMZlrXf1j6LpFY8RKBbhsw/naUuUBw=
+	t=1752717200; cv=none; b=NntoENLSp4baQDjwF2ilYJjRHpcsu4TxvoDeVcReww4903omcr7LKXQwVZRZjZwc+erkGd7fEq5qdgWtov2CBZdOhBBCnTlyp2Lg0xLdz7uceY8OKk7pgc7ekIR33aEUipUdZshsqUa+ibbPqCa0Nhufhs2W10sYrPx+TejlOC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752717104; c=relaxed/simple;
-	bh=mL5QYa/Zwca7EIKSBoPMk1K2ct8ZAgPdWd6K5y0r3NE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sODf7MkwZlHWYuXefdriGE01VCMo9Puam+9AP38ZHaZxHwraxWeSFytAm7egBcx46wNe7KtQW8WAZ5USj2kMCk/Fw3RuHWM1llvny5RbWLFAbZRuDs7KKVJogF6DnzxG43FitMPINpJw0yF1b7KJ5kfHCaEoMm5uT4yLwmzDZWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YxDPMz+r; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752717099;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j+3XIBTSikWJUjf3DkvkgErhbLhZhPJxy2CY5lFvy6E=;
-	b=YxDPMz+rSqvU/fztXNzoBwMFFJ9rj4I2fV4C0hEGaIIJl7cDmQSPyhHiUBR02DaUo0i9l/
-	JPoFFDCsk5RQKYvU8p/JK0YJzEdNeEzkyJAHzNS8jZeZiIR3vGwHVOCoJ0NEX9fk+VmiBy
-	G+9U8gnlcMHLPegS2rmDvc8rgAy3VFc=
-From: Menglong Dong <menglong.dong@linux.dev>
-To: Jiri Olsa <jolsa@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
- Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Menglong Dong <menglong8.dong@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>, bpf <bpf@vger.kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>,
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- LKML <linux-kernel@vger.kernel.org>,
- Network Development <netdev@vger.kernel.org>
-Subject:
- Re: multi-fentry proposal. Was: [PATCH bpf-next v2 02/18] x86,bpf: add
- bpf_global_caller for global trampoline
-Date: Thu, 17 Jul 2025 09:50:36 +0800
-Message-ID: <3364591.aeNJFYEL58@7940hx>
-In-Reply-To:
- <CAADnVQJ47PJXxjqES8BvtWkPq3fj9D0oTF6qqeNNpG66-_MGCg@mail.gmail.com>
-References:
- <20250703121521.1874196-1-dongml2@chinatelecom.cn>
- <4737114.cEBGB3zze1@7940hx>
- <CAADnVQJ47PJXxjqES8BvtWkPq3fj9D0oTF6qqeNNpG66-_MGCg@mail.gmail.com>
+	s=arc-20240116; t=1752717200; c=relaxed/simple;
+	bh=dPMq9bNNykCOZqw+3eFc6K7dlyvolMOrecRyk0d7DBw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vBoavVb9W7c/1Nmb4J2Eb4BsyrwVZLi+DOPl5nMdKoImUhXmJfwKSpkG2enTqgn88V1N1rFp95QDoUhUGB8BHatBSj76nSJB4px4yp9NaCyEfzDUQwArmdriVLvgNnGsx+GJrluPQJ5BqRQxQ66xbgMz230/+oiLsUPzaJV617M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fn8CWE9+; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752717199; x=1784253199;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=dPMq9bNNykCOZqw+3eFc6K7dlyvolMOrecRyk0d7DBw=;
+  b=fn8CWE9+fBOqkzP2IxOoMiUkGyiPY6+x/Tnk3jV624CHebPXseIBpGtA
+   V4BHvCHE9zGigtYpneo7mVkwkgoVlp9h5y292xv50R4yP7fIKr2oNSDDz
+   GNY+eSuNin9RgifZBrECyUdjVBzItoTVIDSWbdiAWzINqufUAj7nDNqeo
+   GNJ/2yNWcDVQYv4lyGWQCbf/yB91/HxdUz0Wfe9oXxCzXykBG+5Vy8VTs
+   yRh7x8JCs//R/pMroWCnG0vTGg0yuVfXPPTm6Nll/zWnJcl84VokaYUo3
+   AGz3cPR8PCFlAQntNDt1u8kqzgZJ9okJdrb3LiG0Lp2STbb4V0biPuXEL
+   Q==;
+X-CSE-ConnectionGUID: 1HMkUVBSTIe+E85HkhjQ9g==
+X-CSE-MsgGUID: xTZhoEWVRbqvriarw9nsqg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="58749312"
+X-IronPort-AV: E=Sophos;i="6.16,317,1744095600"; 
+   d="scan'208";a="58749312"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 18:53:18 -0700
+X-CSE-ConnectionGUID: QCPY4/DZR7exeWjBbmPgUw==
+X-CSE-MsgGUID: Ig+j53zmS+KV9dRCqU2Eqw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,317,1744095600"; 
+   d="scan'208";a="157761772"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 18:53:05 -0700
+Message-ID: <a83fbbdd-ab31-4439-a6e9-594a3d4a837e@linux.intel.com>
+Date: Thu, 17 Jul 2025 09:51:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] iommu/sva: Invalidate KVA range on kernel TLB
+ flush
+To: Yi Liu <yi.l.liu@intel.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Kevin Tian <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
+ Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
+ Dave Hansen <dave.hansen@intel.com>, Alistair Popple <apopple@nvidia.com>,
+ Peter Zijlstra <peterz@infradead.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Andy Lutomirski <luto@kernel.org>, "Tested-by : Yi Lai" <yi1.lai@intel.com>
+Cc: iommu@lists.linux.dev, security@kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250709062800.651521-1-baolu.lu@linux.intel.com>
+ <bdda74c0-9279-4b5e-ae5e-e5ce61c2bab8@intel.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <bdda74c0-9279-4b5e-ae5e-e5ce61c2bab8@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thursday, July 17, 2025 8:59 AM Alexei Starovoitov <alexei.starovoitov@g=
-mail.com> write:
-> On Wed, Jul 16, 2025 at 6:06=E2=80=AFAM Menglong Dong <menglong.dong@linu=
-x.dev> wrote:
-> >
-> > On Wednesday, July 16, 2025 12:35 AM Alexei Starovoitov <alexei.starovo=
-itov@gmail.com> write:
-> > > On Tue, Jul 15, 2025 at 1:37=E2=80=AFAM Menglong Dong <menglong.dong@=
-linux.dev> wrote:
-> > > >
-> > > >
-> > > > On 7/15/25 10:25, Alexei Starovoitov wrote:
-> > [......]
-> > > >
-> > > > According to my benchmark, it has ~5% overhead to save/restore
-> > > > *5* variants when compared with *0* variant. The save/restore of re=
-gs
-> > > > is fast, but it still need 12 insn, which can produce ~6% overhead.
-> > >
-> > > I think it's an ok trade off, because with one global trampoline
-> > > we do not need to call rhashtable lookup before entering bpf prog.
-> > > bpf prog will do it on demand if/when it needs to access arguments.
-> > > This will compensate for a bit of lost performance due to extra save/=
-restore.
-> >
-> > I don't understand here :/
-> >
-> > The rhashtable lookup is done at the beginning of the global trampoline,
-> > which is called before we enter bpf prog. The bpf progs is stored in the
-> > kfunc_md, and we need get them from the hash table.
->=20
-> Ahh. Right.
->=20
-> Looking at the existing bpf trampoline... It has complicated logic
-> to handle livepatching and tailcalls. Your global trampoline
-> doesn't, and once that is added it's starting to feel that it will
-> look just as complex as the current one.
-> So I think we better repurpose what we have.
-> Maybe we can rewrite the existing one in C too.
+On 7/16/25 18:54, Yi Liu wrote:
+> On 2025/7/9 14:28, Lu Baolu wrote:
+>> The vmalloc() and vfree() functions manage virtually contiguous, but not
+>> necessarily physically contiguous, kernel memory regions. When vfree()
+>> unmaps such a region, it tears down the associated kernel page table
+>> entries and frees the physical pages.
+>>
+>> In the IOMMU Shared Virtual Addressing (SVA) context, the IOMMU hardware
+>> shares and walks the CPU's page tables. Architectures like x86 share
+>> static kernel address mappings across all user page tables, allowing the
+>> IOMMU to access the kernel portion of these tables.
+> 
+> I remember Jason once clarified that no support for kernel SVA. I don't
+> think linux has such support so far. If so, may just drop the static
+> mapping terms. This can be attack surface mainly because the page table
+> may include both user and kernel mappings.
 
-You are right, the tailcalls is not handled yet. But for the livepatching,
-it is already handled, as we always get the origin ip from the stack
-and call it, just like how the bpf trampoline handle the livepatching.
-So no addition handling is needed here.
+Yes. Kernel SVA has already been removed from the tree.
 
->=20
-> How about the following approach.
-> I think we discussed something like this in the past
-> and Jiri tried to implement something like this.
-> Andrii reminded me recently about it.
->=20
-> Say, we need to attach prog A to 30k functions.
-> 10k with 2 args, 10k with 3 args, and 10k with 7 args.
-> We can generate 3 _existing_ bpf trampolines for 2,3,7 args
-> with hard coded prog A in there (the cookies would need to be
-> fetched via binary search similar to kprobe-multi).
-> The arch_prepare_bpf_trampoline() supports BPF_TRAMP_F_ORIG_STACK.
-> So one 2-arg trampoline will work to invoke prog A in all 10k 2-arg funct=
-ions.
-> We don't need to match types, but have to compare that btf_func_model-s
-> are the same.
->=20
-> Menglong, your global trampoline for 0,1,..6 args works only for x86,
-> because btf_func_model doesn't care about sizes of args,
-> but it's not the correct mental model to use.
->=20
-> The above "10k with 2 args" is a simplified example.
-> We will need an arch specific callback is_btf_func_model_equal()
-> that will compare func models in arch specific ways.
-> For x86-64 the number of args is all it needs.
-> For other archs it will compare sizes and flags too.
-> So 30k functions will be sorted into
-> 10k with btf_func_model_1, 10k with btf_func_model_2 and so on.
-> And the corresponding number of equivalent trampolines will be generated.
->=20
-> Note there will be no actual BTF types. All args will be untyped and
-> untrusted unlike current fentry.
-> We can go further and sort 30k functions by comparing BTFs
-> instead of btf_func_model-s, but I suspect 30k funcs will be split
-> into several thousands of exact BTFs. At that point multi-fentry
-> benefits are diminishing and we might as well generate 30k unique
-> bpf trampolines for 30k functions and avoid all the complexity.
-> So I would sort by btf_func_model compared by arch specific comparator.
->=20
-> Now say prog B needs to be attached to another 30k functions.
-> If all 30k+30k functions are different then it's the same as
-> the previous step.
-> Say, prog A is attached to 10k funcs with btf_func_model_1.
-> If prog B wants to attach to the exact same func set then we
-> just regenerate bpf trampoline with hard coded progs A and B
-> and reattach.
-> If not then we need to split the set into up to 3 sets.
-> Say, prog B wants 5k funcs, but only 1k func are common:
-> (prog_A, 9k func with btf_func_model_1) -> bpf trampoline X
-> (prog_A, prog_B, 1k funcs with btf_func_model_1) -> bpf trampoline Y
-> (prog_B, 4k funcs with btf_func_model_1) -> bpf trampoline Z
->=20
-> And so on when prog C needs to be attached.
-> At detach time we can merge sets/trampolines,
-> but for now we can leave it all fragmented.
-> Unlike regular fentry progs the multi-fentry progs are not going to
-> be attached for long time. So we can reduce the detach complexity.
->=20
-> The nice part of the algorithm is that coexistence of fentry
-> and multi-fentry is easy.
-> If fentry is already attached to some function we just
-> attach multi-fentry prog to that bpf trampoline.
-> If multi-fentry was attached first and fentry needs to be attached,
-> we create a regular bpf trampoline and add both progs there.
+>> Modern IOMMUs often cache page table entries to optimize walk 
+>> performance,
+>> even for intermediate page table levels. If kernel page table mappings 
+>> are
+>> changed (e.g., by vfree()), but the IOMMU's internal caches retain stale
+>> entries, Use-After-Free (UAF) vulnerability condition arises. If these
+>> freed page table pages are reallocated for a different purpose, 
+>> potentially
+>> by an attacker, the IOMMU could misinterpret the new data as valid page
+>> table entries. This allows the IOMMU to walk into attacker-controlled
+>> memory, leading to arbitrary physical memory DMA access or privilege
+>> escalation.
+> 
+> Does this fix cover the page compaction and de-compaction as well? It is
 
-This seems not easy, and it is exactly how I handle the
-coexistence now:
+It should.
 
-  https://lore.kernel.org/bpf/20250528034712.138701-16-dongml2@chinatelecom=
-=2Ecn/
-  https://lore.kernel.org/bpf/20250528034712.138701-17-dongml2@chinatelecom=
-=2Ecn/
-  https://lore.kernel.org/bpf/20250528034712.138701-18-dongml2@chinatelecom=
-=2Ecn/
+> valuable to call out the mm subsystem does not notify iommu per page table
+> modifications except for the modifications related to user VA, hence SVA is
+> in risk to use stale intermediate caches due to this.
+> 
+>> To mitigate this, introduce a new iommu interface to flush IOMMU caches
+>> and fence pending page table walks when kernel page mappings are updated.
+>> This interface should be invoked from architecture-specific code that
+>> manages combined user and kernel page tables.
+> 
+> aha, this is what I'm trying to find. Using page tables with both kernel
+> and user mappings is the prerequisite for this bug. :)
 
-The most difficult part is that we need a way to replace the the
-multi-fentry with fentry for the function in the ftrace atomically. Of
-course, we can remove the global trampoline first, and then attach
-the bpf trampoline, which will make things much easier. But a
-short suspend will happen for the progs in fentry-multi.
+Yes.
 
->=20
-> The intersect and sorting by btf_func_model is not trivial,
-> but we can hold global trampoline_mutex, so no concerns of races.
->=20
-> Example:
-> bpf_link_A is a set of:
-> (prog_A, funcs X,Y with btf_func_model_1)
-> (prog_A, funcs N,M with btf_func_model_2)
->=20
-> To attach prog B via bpf_link_B that wants:
-> (prog_B, funcs Y,Z with btf_func_model_1)
-> (prog_B, funcs P,Q with btf_func_model_3)
->=20
-> walk all existing links, intersect and split, and update the links.
-> At the end:
->=20
-> bpf_link_A:
-> (prog_A, funcs X with btf_func_model_1)
-> (prog_A, prog_B funcs Y with btf_func_model_1)
-> (prog_A, funcs N,M with btf_func_model_2)
->=20
-> bpf_link_B:
-> (prog_A, prog_B funcs Y with btf_func_model_1)
-> (prog_B, funcs Z with btf_func_model_1)
-> (prog_B, funcs P,Q with btf_func_model_3)
->=20
-> When link is detached: walk its own tuples, remove the prog,
-> if nr_progs =3D=3D 0 -> detach corresponding trampoline,
-> if nr_progs > 0 -> remove prog and regenerate trampoline.
->=20
-> If fentry prog C needs to be attached to N it might split bpf_link_A:
-> (prog_A, funcs X with btf_func_model_1)
-> (prog_A, prog_B funcs Y with btf_func_model_1)
-> (prog_A, funcs M with btf_func_model_2)
-> (prog_A, prog_C funcs N with _fentry_)
->=20
-> Last time we gave up on it because we discovered that
-> overlap support was too complicated, but I cannot recall now
-> what it was :)
-> Maybe all of the above repeating some old mistakes.
+> 
+>> Fixes: 26b25a2b98e4 ("iommu: Bind process address spaces to devices")
+>> Cc: stable@vger.kernel.org
+>> Reported-by: Jann Horn <jannh@google.com>
+>> Co-developed-by: Jason Gunthorpe <jgg@nvidia.com>
+>> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+>> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+>> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+>> Reviewed-by: Vasant Hegde <vasant.hegde@amd.com>
+>> Tested-by: Yi Lai <yi1.lai@intel.com>
+>> ---
+>>   arch/x86/mm/tlb.c         |  2 ++
+>>   drivers/iommu/iommu-sva.c | 34 +++++++++++++++++++++++++++++++++-
+>>   include/linux/iommu.h     |  4 ++++
+>>   3 files changed, 39 insertions(+), 1 deletion(-)
+>>
+>> Change log:
+>> v2:
+>>   - Remove EXPORT_SYMBOL_GPL(iommu_sva_invalidate_kva_range);
+>>   - Replace the mutex with a spinlock to make the interface usable in the
+>>     critical regions.
+>>
+>> v1: https://lore.kernel.org/linux-iommu/20250704133056.4023816-1- 
+>> baolu.lu@linux.intel.com/
+>>
+>> diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+>> index 39f80111e6f1..a41499dfdc3f 100644
+>> --- a/arch/x86/mm/tlb.c
+>> +++ b/arch/x86/mm/tlb.c
+>> @@ -12,6 +12,7 @@
+>>   #include <linux/task_work.h>
+>>   #include <linux/mmu_notifier.h>
+>>   #include <linux/mmu_context.h>
+>> +#include <linux/iommu.h>
+>>   #include <asm/tlbflush.h>
+>>   #include <asm/mmu_context.h>
+>> @@ -1540,6 +1541,7 @@ void flush_tlb_kernel_range(unsigned long start, 
+>> unsigned long end)
+>>           kernel_tlb_flush_range(info);
+>>       put_flush_tlb_info();
+>> +    iommu_sva_invalidate_kva_range(start, end);
+>>   }
+>>   /*
+>> diff --git a/drivers/iommu/iommu-sva.c b/drivers/iommu/iommu-sva.c
+>> index 1a51cfd82808..fd76aefa5a88 100644
+>> --- a/drivers/iommu/iommu-sva.c
+>> +++ b/drivers/iommu/iommu-sva.c
+>> @@ -10,6 +10,9 @@
+>>   #include "iommu-priv.h"
+>>   static DEFINE_MUTEX(iommu_sva_lock);
+>> +static DEFINE_STATIC_KEY_FALSE(iommu_sva_present);
+>> +static LIST_HEAD(iommu_sva_mms);
+>> +static DEFINE_SPINLOCK(iommu_mms_lock);
+>>   static struct iommu_domain *iommu_sva_domain_alloc(struct device *dev,
+>>                              struct mm_struct *mm);
+>> @@ -42,6 +45,7 @@ static struct iommu_mm_data 
+>> *iommu_alloc_mm_data(struct mm_struct *mm, struct de
+>>           return ERR_PTR(-ENOSPC);
+>>       }
+>>       iommu_mm->pasid = pasid;
+>> +    iommu_mm->mm = mm;
+>>       INIT_LIST_HEAD(&iommu_mm->sva_domains);
+>>       /*
+>>        * Make sure the write to mm->iommu_mm is not reordered in front of
+>> @@ -132,8 +136,15 @@ struct iommu_sva *iommu_sva_bind_device(struct 
+>> device *dev, struct mm_struct *mm
+>>       if (ret)
+>>           goto out_free_domain;
+>>       domain->users = 1;
+>> -    list_add(&domain->next, &mm->iommu_mm->sva_domains);
+>> +    if (list_empty(&iommu_mm->sva_domains)) {
+>> +        scoped_guard(spinlock_irqsave, &iommu_mms_lock) {
+>> +            if (list_empty(&iommu_sva_mms))
+>> +                static_branch_enable(&iommu_sva_present);
+>> +            list_add(&iommu_mm->mm_list_elm, &iommu_sva_mms);
+>> +        }
+>> +    }
+>> +    list_add(&domain->next, &iommu_mm->sva_domains);
+>>   out:
+>>       refcount_set(&handle->users, 1);
+>>       mutex_unlock(&iommu_sva_lock);
+>> @@ -175,6 +186,15 @@ void iommu_sva_unbind_device(struct iommu_sva 
+>> *handle)
+>>           list_del(&domain->next);
+>>           iommu_domain_free(domain);
+>>       }
+>> +
+>> +    if (list_empty(&iommu_mm->sva_domains)) {
+>> +        scoped_guard(spinlock_irqsave, &iommu_mms_lock) {
+>> +            list_del(&iommu_mm->mm_list_elm);
+>> +            if (list_empty(&iommu_sva_mms))
+>> +                static_branch_disable(&iommu_sva_present);
+>> +        }
+>> +    }
+>> +
+>>       mutex_unlock(&iommu_sva_lock);
+>>       kfree(handle);
+>>   }
+>> @@ -312,3 +332,15 @@ static struct iommu_domain 
+>> *iommu_sva_domain_alloc(struct device *dev,
+>>       return domain;
+>>   }
+>> +
+>> +void iommu_sva_invalidate_kva_range(unsigned long start, unsigned 
+>> long end)
+>> +{
+>> +    struct iommu_mm_data *iommu_mm;
+>> +
+>> +    if (!static_branch_unlikely(&iommu_sva_present))
+>> +        return;
+>> +
+>> +    guard(spinlock_irqsave)(&iommu_mms_lock);
+>> +    list_for_each_entry(iommu_mm, &iommu_sva_mms, mm_list_elm)
+>> +        mmu_notifier_arch_invalidate_secondary_tlbs(iommu_mm->mm, 
+>> start, end);
+> 
+> is it possible the TLB flush side calls this API per mm?
 
-In my impression, this is exactly the solution of Jiri's, and this is
-part of the discussion that I know:
+Nope.
 
-  https://lore.kernel.org/bpf/ZfKY6E8xhSgzYL1I@krava/
+> 
+>> +}
+>> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+>> index 156732807994..31330c12b8ee 100644
+>> --- a/include/linux/iommu.h
+>> +++ b/include/linux/iommu.h
+>> @@ -1090,7 +1090,9 @@ struct iommu_sva {
+>>   struct iommu_mm_data {
+>>       u32            pasid;
+>> +    struct mm_struct    *mm;
+>>       struct list_head    sva_domains;
+>> +    struct list_head    mm_list_elm;
+>>   };
+>>   int iommu_fwspec_init(struct device *dev, struct fwnode_handle 
+>> *iommu_fwnode);
+>> @@ -1571,6 +1573,7 @@ struct iommu_sva *iommu_sva_bind_device(struct 
+>> device *dev,
+>>                       struct mm_struct *mm);
+>>   void iommu_sva_unbind_device(struct iommu_sva *handle);
+>>   u32 iommu_sva_get_pasid(struct iommu_sva *handle);
+>> +void iommu_sva_invalidate_kva_range(unsigned long start, unsigned 
+>> long end);
+>>   #else
+>>   static inline struct iommu_sva *
+>>   iommu_sva_bind_device(struct device *dev, struct mm_struct *mm)
+>> @@ -1595,6 +1598,7 @@ static inline u32 mm_get_enqcmd_pasid(struct 
+>> mm_struct *mm)
+>>   }
+>>   static inline void mm_pasid_drop(struct mm_struct *mm) {}
+>> +static inline void iommu_sva_invalidate_kva_range(unsigned long 
+>> start, unsigned long end) {}
+>>   #endif /* CONFIG_IOMMU_SVA */
+>>   #ifdef CONFIG_IOMMU_IOPF
+> 
 
->=20
-> Jiri,
-> How does the above proposal look to you?
->=20
-
-
-
-
+Thanks,
+baolu
 
