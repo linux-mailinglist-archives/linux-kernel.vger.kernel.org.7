@@ -1,84 +1,78 @@
-Return-Path: <linux-kernel+bounces-735626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D12CB091AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:27:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9703B091B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:27:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 274561C42019
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:27:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 915143B3E62
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49DDE2FCE02;
-	Thu, 17 Jul 2025 16:27:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB2B82FCE32;
+	Thu, 17 Jul 2025 16:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AN1jZygh"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a48SC85F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38AF42F9487
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 16:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121062FCE12;
+	Thu, 17 Jul 2025 16:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752769625; cv=none; b=rHAJeINPdkmh09qWsNPGWRdvIN6yINt8D8JPgz699IGMRSv+6NuBTYdEE+O40o79qXwC3O9+mB7jQL4ySsRnT0ENPDEtMpIfpQy1Dh4OBEeuuY0D+jHSMzRup+UOwfu9YFCEn0IL27LYlV6eQ7BsHm2OtMfD+uOEXtBaFmw0GYs=
+	t=1752769656; cv=none; b=rj+dIc6D8OQloIAuno1VE9WKfwhQwL7FWfmNFfSAP/tF3KM81Kxh5rR73FDQZ3SbuMShkiEvacABP2zTm1OTk7Sl+Cdgt3OP5NaH1EywRErI8OWRLjSyspiFWGG56q6OF8PmSDk6Yz0qGN1lqaWXYJxAXsdGRhre6jtjDHdlBEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752769625; c=relaxed/simple;
-	bh=hfXMXUKEWFwJgC4K/6+tGXth94IWkRRTGIeiIx/SN8I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=cYMGv17xDgAX1sRRw5AAcDTnszH/bHqVDcVnrIwcBt+plOXG7shv++fX1oRoMlZ5HRqZwi6tnGfq7j/N8quCt5ENii8d+CZyHXIyxXpcSrSQFqgCnIMxdMe8pqZO6amZ5WnGedNJf5X7C91AUV01zDywe6dbL6PFY5hCtSWNXyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AN1jZygh; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7d3f192a64eso112478885a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 09:27:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752769623; x=1753374423; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rAT5fXFHSpJYGBHtSFRK2w1oMePzqL3McbArpEULE/U=;
-        b=AN1jZyghKGQMat9YKS1OrOAkYGdhwyjDd04jFTJMlf5f0QIMfCtlysfXUp3DHehiFz
-         q0nJNgsjNeST1TlO40Kub62TBzq1WagIZujLqsNsm+aj7BrXXcqUPPZ1mNw8IJ1Ei4PH
-         QGJkmBNzMt9Tl9kc5RT83LAhXco978Ad3/EWcT/oL5l7fTFfNtiu8C4Ai4DtUETkpT92
-         jyavHm8jePJcdrxuM/aD0dhe2ntfWzYbRyaaoioDiDoZD26RbU0Bu5eG4fOLtgETDma8
-         yiizeCvLB7IpOayV/7kncRJsfb7quYzb5NcpW87KF/WOYcqyrZWF0FNBkzlyojDKEMaY
-         M5ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752769623; x=1753374423;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rAT5fXFHSpJYGBHtSFRK2w1oMePzqL3McbArpEULE/U=;
-        b=nCL1B6NDEtnqMuHGZ8qU5BDUoWVrCNAuN62h7fS2Q/MWWG6FvdFxFhd2i0UHz61iQ4
-         49eB6PnqJpPkfQ0t655JirlrOpa/hI1FlIE4dOovGDw/kg273LYNSwlnasPTX9frxmwB
-         daJkOjOf5kuTPZXrv5rvcTRu/gDQT5QqkqRgRc5n7VlXz8GFn20pJBN2/ENoD+Td6sYD
-         MEecoKZZ2BYtOP+yiW0F/+RNkvo99918lBdpAAfekK47XD5PVwhzDrZH8V2PP4xgbKTJ
-         CL9OqnFAnYCXwvTrq8dn1WwD4Aq6IjdXuPWwS9+JtPDX7GylYEVgRLxVxehWD5jZmzsW
-         XorA==
-X-Forwarded-Encrypted: i=1; AJvYcCUl13pRkybwMjXz/vVx6fgxDEtkTajWx7GAQ9tMfvbyAk412z806oOBOii0/SdCss877kKY5zWeWf4zMeM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCqej5xHBPKUEZD0KQCbBdBQDSwjNPrW6vsxMsqocuefLATlkg
-	fyhdd5FXrpboc7R+J7ybv+j5cfDt/MAYSA7gBFFxVe7OXuHn6Y5BXspe
-X-Gm-Gg: ASbGncuFgroVx3S+urJtMIGqdZMWdSnXkUtLkLolzDz/IiejZ//84s6OOZLWzSaN1zA
-	qZdZbCNqnzmVBwFNGkAVO3qVlf88Fuu4hyBNaihRzEI1jZcocM+Rgd2LKl8wlZPgukWzaElUbC1
-	RQ7bPo1mJWVzk0OP7PFNZMvFbcIyYXN2+lZUrnc6VRiEPvLlXNot9f0zFrbt41TOh11rlqIXb4e
-	I73xmzErLhjJD1GLj0EB6sJ55WnLEhJ4MEkk4A08QePDLhUHx5YF+Qqr0qqs6djmXIaoj6selug
-	F6FAw3y4R0mngRpSdGjVY566xBaeP+B5YmEuzTqaZ8ID99THCfxb/BA98sEOm8jF2aUJe+8/OVO
-	lkMVMs4NNYlQ=
-X-Google-Smtp-Source: AGHT+IHZ54/6K5i0E1+VM+AOUW/T7zxHmWh3bY4spHR+PWVYg/BV0boW9T2fTA+uI+fHgXN30+58Jw==
-X-Received: by 2002:a05:620a:8d6:b0:7e3:3288:8ec3 with SMTP id af79cd13be357-7e34d9ac33dmr380657085a.32.1752769623044;
-        Thu, 17 Jul 2025 09:27:03 -0700 (PDT)
-Received: from pc ([165.51.18.150])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e2e20a098bsm523067485a.109.2025.07.17.09.27.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 09:27:02 -0700 (PDT)
-Date: Thu, 17 Jul 2025 17:26:59 +0100
-From: Salah Triki <salah.triki@gmail.com>
-To: Eli Billauer <eli.billauer@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org
-Cc: salah.triki@gmail.com
-Subject: [PATCH v2] char: xillybus: Replace deprecated MSI API
-Message-ID: <aHkkU-BHX2Zn0SWY@pc>
+	s=arc-20240116; t=1752769656; c=relaxed/simple;
+	bh=T6IDN6DNaQO447cutHK+OtFjUXY+Qu5JPigU282jM1s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VuryVaMU+Afk2YtmCj1cgipF9vINjFckfO07w5Oqby0lpjwmWKPSdBdcuhkIOCehxxJ/Vh9ijmRVunFzGjtrZyBzuC6o5+oXNDB6nL3wrq2NwA7VoXY9GfvVVpcltADjd5lWVCQ4BZ+L4J4biAQnYGaHMwh6s8pVdxtDbfwJ1Ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a48SC85F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 561A8C4CEF0;
+	Thu, 17 Jul 2025 16:27:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752769655;
+	bh=T6IDN6DNaQO447cutHK+OtFjUXY+Qu5JPigU282jM1s=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=a48SC85FDMY07QgHo+q3jYkPuas5/szTj/achK2TFqdIYUOk8ZIyP1DCknSlhBznK
+	 BmhGrTP17YC4dqchFuTIb5r/gsE3SyYl90+gCDVk0zzXeW5g4Ou4HCgo2U5rwLa89q
+	 uj8U+SvRQHtzBuL1L2LXoanfYwNURPntUI0BjCtZP8z8I0C6g/AzBFtCwvqWVj2HEk
+	 WXZZPO0ABVVhgxLQSXFWHPVUYIndL0moMJJElgTNyPomfSmtCFdmn8VvdLpHdblh05
+	 K/W5mOpS3+QdQ9XPoJOTumGOLZkmyow2vFIbArVicnOAy81hjR3cV/BqAnEwoxorRb
+	 hNcEWuXYjSq/Q==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id CDF26CE09F5; Thu, 17 Jul 2025 09:27:34 -0700 (PDT)
+Date: Thu, 17 Jul 2025 09:27:34 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Indu Bhagat <indu.bhagat@oracle.com>,
+	"Jose E. Marchesi" <jemarch@gnu.org>,
+	Beau Belgrave <beaub@linux.microsoft.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
+	Sam James <sam@gentoo.org>
+Subject: Re: [PATCH v14 09/12] unwind deferred: Use SRCU
+ unwind_deferred_task_work()
+Message-ID: <a9bdf195-e9b2-4cd0-88ba-b6f68b3b72b3@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250717004910.297898999@kernel.org>
+ <20250717004957.918908732@kernel.org>
+ <47c3b0df-9f11-4e14-97e2-0f3ba3b09855@paulmck-laptop>
+ <20250717082526.7173106a@gandalf.local.home>
+ <41c204c0-eabc-4f4f-93f4-2568e2f962a9@paulmck-laptop>
+ <20250717121010.4246366a@batman.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,61 +81,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aed95641-4c95-5fbb-f359-885a3e2144f7@outbound.gmail.com>
+In-Reply-To: <20250717121010.4246366a@batman.local.home>
 
-Replace deprecated pci_enable_msi() with pci_alloc_irq_vectors(). And
-add devm action to free irq vectors.
+On Thu, Jul 17, 2025 at 12:10:10PM -0400, Steven Rostedt wrote:
+> On Thu, 17 Jul 2025 08:48:40 -0700
+> "Paul E. McKenney" <paulmck@kernel.org> wrote:
+> 
+> > So if there is some reason that you absolutely cannot immediately convert
+> > to SRCU-fast, let's please discuss.
+> 
+> There's two reasons I wouldn't add it immediately.
+> 
+> One, is the guard(srcu_fast) isn't in mainline yet. I would either need
+> to open code it, or play the tricks of basing code off your tree.
 
-Signed-off-by: Salah Triki <salah.triki@gmail.com>
----
-Changes in v2:
-    - Replace PCI_IRQ_ALL_TYPES with PCI_IRQ_MSI
-    - Delete pci_free_irq_vectors(pdev) in remove function
-    - Add devm action that calls pci_free_irq_vectors(pdev)
+Fair point!  But guard(srcu_fast) isn't in my tree, either, just
+guard(srcu_fast_nopreempt).  So why not add guard(srcu_fast) in your
+tree, and we can ack it.  Yes, that means we will have a merge conflict
+at some point, but it will be a trivial one.
 
- drivers/char/xillybus/xillybus_pcie.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+> Two, I'm still grasping at the concept of srcu_fast (and srcu_lite for
+> that matter), where I rather be slow and safe than optimize and be
+> unsafe. The code where this is used may be faulting in user space
+> memory, so it doesn't need the micro-optimizations now.
 
-diff --git a/drivers/char/xillybus/xillybus_pcie.c b/drivers/char/xillybus/xillybus_pcie.c
-index 9858711e3e79..ed3b77cb8127 100644
---- a/drivers/char/xillybus/xillybus_pcie.c
-+++ b/drivers/char/xillybus/xillybus_pcie.c
-@@ -32,6 +32,11 @@ static const struct pci_device_id xillyids[] = {
- 	{ /* End: all zeroes */ }
- };
- 
-+static void xilly_pci_free_irq_vectors(void *data)
-+{
-+	pci_free_irq_vectors(data);
-+}
-+
- static int xilly_probe(struct pci_dev *pdev,
- 		       const struct pci_device_id *ent)
- {
-@@ -76,11 +81,21 @@ static int xilly_probe(struct pci_dev *pdev,
- 	pci_set_master(pdev);
- 
- 	/* Set up a single MSI interrupt */
--	if (pci_enable_msi(pdev)) {
-+	rc = pci_alloc_irq_vectors(pdev, 1, 1, PCI_IRQ_MSI);
-+	if (rc < 0) {
- 		dev_err(endpoint->dev,
- 			"Failed to enable MSI interrupts. Aborting.\n");
- 		return -ENODEV;
- 	}
-+	
-+	rc = devm_add_action(&pdev->dev, xilly_pci_free_irq_vectors, pdev);
-+       	if (rc) {
-+		dev_err(endpoint->dev,
-+			"Failed to add devm action. Aborting.\n");
-+		pci_free_irq_vectors(pdev);
-+		return -ENODEV;
-+	}
-+
- 	rc = devm_request_irq(&pdev->dev, pdev->irq, xillybus_isr, 0,
- 			      xillyname, endpoint);
- 	if (rc) {
--- 
-2.43.0
+Straight-up SRCU and guard(srcu), then?  Both are already in mainline.
 
+Or are those read-side smp_mb() calls a no-go for this code?
+
+							Thanx, Paul
 
