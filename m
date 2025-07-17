@@ -1,130 +1,153 @@
-Return-Path: <linux-kernel+bounces-734707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 553E3B0850F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:37:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81EE3B08516
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:39:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5870E4E52AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:37:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D03B57AF7A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8D42165F3;
-	Thu, 17 Jul 2025 06:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE2B521765B;
+	Thu, 17 Jul 2025 06:39:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="TYoW3SNH"
-Received: from mail-ej1-f65.google.com (mail-ej1-f65.google.com [209.85.218.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KPKC40fJ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7AB072635
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 06:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BCEA202987;
+	Thu, 17 Jul 2025 06:39:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752734257; cv=none; b=to+NFdPlP9g6TTwiU9bl+Lv6zTC//280M8gVsNMDOkqyK7x5YmpnYu7ZOU5dfiaXldskjNTDjXyG0dX/AUU/2wO+Mhw2QN92bBYz8aGGSloy9cw9qKWxjlIJMcVdY0MX8j6L+RRms4RJt9bmgak1/xqHotVlhjDqfPcwx+dkIEU=
+	t=1752734364; cv=none; b=BuViWp4rwojlpVheZrufaidluPx3HztYzpTXrIpNSzHP3ZMVc+1CQroY+X7DkrfOBTllFePrbFIznR2me41v1LlPaechZtx78zIuKguGhEp4TG4ODppuJZKmbVlebpO/ylmeX5280ubTeVWneWcG9DR1Ur2i1fockCu/B2/0g3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752734257; c=relaxed/simple;
-	bh=Zni4kW5i/r0n1MT3GlQi9RAdKp2l+BHLM9aozZDydqo=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Subject:
-	 References:In-Reply-To; b=h8raQU3FqA7bczkWEDli6OexaBwS8XxnvvwF9SLBMgZ0BsuyzOgkafio0EoXiw1OcEHdw2Qz6S4b2HTmn0IMpkP+2kyTNMPxUOYj1tL61QEgg5QoFmwHejCUzUArpkJWHWfqEZUMh+kO0SGlEiGgtNVtECv3qVGcE+hUBMw1hV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=TYoW3SNH; arc=none smtp.client-ip=209.85.218.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ej1-f65.google.com with SMTP id a640c23a62f3a-ae0bc7aa21bso118357866b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 23:37:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1752734254; x=1753339054; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:to:from:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Zni4kW5i/r0n1MT3GlQi9RAdKp2l+BHLM9aozZDydqo=;
-        b=TYoW3SNH5iZ8nWo5x3YTIv2lAGyP2cJ6eFc+4n5U1Mm0CtpMZ2YBnGkTRUOJpuCmdH
-         Iy9Qsp2y9hjswmFtBWIDG4gENSbKZDCEFToVQNVboOnwURLu3W0Pa74dqbEnpjumkhPS
-         unFI294L37Z4DL5MyLvyngf/SYv+7LCkQ2NRVj4V7NDTkNkC2o2797jd0xMNJ4vaOIYY
-         lisKCrttO+Viw8XKylroIlqqZc8j0OP4Bzusq82RwxoWYWIc330OBtyxrAdne2CL8WZB
-         Bq7w4r/+Qp27cctQB1AQ7vcri0NsSiCIVC7shsmk0ySJZ86NsjZp69cQMGQ6UKccLAaM
-         nJsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752734254; x=1753339054;
-        h=in-reply-to:references:subject:to:from:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Zni4kW5i/r0n1MT3GlQi9RAdKp2l+BHLM9aozZDydqo=;
-        b=JsJPBcFJQfbHr+InJKMXHRdOFzy9BlSR5IBUwoGmgtgup9JuQc4JwdMyi0EmLhcdTX
-         iVDRBH7O+jc9iCIFenBKhVjTpk8GVfk21dxDsP5yPSwZAYS+e+GJJBfMGdgrs7vF6LZm
-         OJfr3NfPku/uX1zLV7y1IY2/A5Qd93p6MN8fotXd9rL5+9zLcICa2w0I6YSR71sigAOI
-         bzhps28E/zQmWy/0qyEJ5YZBk0h/Z1rmZOw4LAkkws09QbIwdGY0zGGQkNS6/5JAJuze
-         8Vr1xW4JMGzXjaQJQrXQi+NQvKzrqj8MUdvQBhwQGPwMXw7glkj1O3N6IINkcRkOht6b
-         0Rag==
-X-Forwarded-Encrypted: i=1; AJvYcCVvqoimz4iS1kwAeHyHjccsdcA6imwoXTdg+7wKUOnjHqKxYTkHRwY83nBHLgRGgYWkauCSlw/LsCBl1Nk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQbVfNQekmFMadsdem2r49OzMWc3jcnWAXe71Uvkx5yZsUgYpu
-	69Ku01YCgbLl+MRNpcSrUGud4LP5H0YYwWuPucpMRtyRM53Ng8udPf1LM2PNteONjmk=
-X-Gm-Gg: ASbGnctLfWhhTO06JNNqeWofkZ1pAtanN/qkGs8vhdt1bXL+UFTFyWt3JSAwnjH+T/m
-	fFFS2ojcZE3gq5zwSj6kXg8tGKmRmoApZ/R3MrkxXPxHMBeZbc4ubJv+sIFxv4ezM3d//niscl7
-	Rgid/TK3CkF92PMWgJHaWUwSfUcwtHIQrPYD1SRzKDkBKiNaVU6L1tb23zl8a80GFNSdi5Xpy5o
-	jnZ/o8BFYOXWul328tl8iVu0hC03Ld8mNFILdcHjiULVK91+cZ8GDc8h3Ygnh/DSZntCQL6vVKt
-	mG/8ITSBCEqW2GFVlIZMnpPy5tx/rZIXjv8TDejpNjFIky3ROiVN5z0ZQBf2L3dT4IgX9aziF8o
-	3XhQtI8hzvBSH/t3dj9wr3KzrYihG/UJ4dR4pJoXunvvem5dxJI/pkMdW
-X-Google-Smtp-Source: AGHT+IGz1stbTnvtFDRlGNi4Bv6lmWH+rbIuhvgmaYas5MP9Lr4lEhFJPcw6uCq9/uRql5jJ5FaC2w==
-X-Received: by 2002:a17:907:a588:b0:ae1:f1e0:8730 with SMTP id a640c23a62f3a-ae9ce1c2d25mr614526466b.57.1752734253912;
-        Wed, 16 Jul 2025 23:37:33 -0700 (PDT)
-Received: from localhost (212095005146.public.telering.at. [212.95.5.146])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e8294b5fsm1285352466b.125.2025.07.16.23.37.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Jul 2025 23:37:33 -0700 (PDT)
+	s=arc-20240116; t=1752734364; c=relaxed/simple;
+	bh=tj7j8zNEiQgoRq74whAa+oF+avtK+ncXdiSBOyLALKw=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=QAITmjH4LZ28o9umBq3MHYyWUoWdLT0suN7OsNntdj2uaE/j0t7i8WPOtq32Q+puZy1afjUuaLZNhXQm/g1UJnPCGG67l9nRpqguYvT8VV0zbqL4snSAJsJbBjFJspPLryg5Xho8j4zOhWTJiMb22X/Y+ena93A6wIWgLmw61qA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KPKC40fJ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56H5PRHe021567;
+	Thu, 17 Jul 2025 06:39:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=21hR7bKhLUcpuZcmQzimVs
+	k50DDrxVw8v80Xp2031tU=; b=KPKC40fJZ2pvmAxl4SkBhVtM1J3DyBwAZ0N1HG
+	XeKknspfS5nP6e9q3FO1Ga2qZqzk5ApLRQVap+IKrq2ksuXfvMXP/SACckT1qs89
+	Un8cc4VrZa4CqZvAprzMCChmvMCGRt7Cx7bglvnms2js+wnEg5agb8w65JD5SKKz
+	ErKWz78sLxfeBlmOx4TZA6V+eAhRiS+82CALDFrbGLIUclm5+M1eEKjue6xv+gW2
+	xN3WLdSe4ktxW/teA/8dRdrab89mmY1/iL3UDgJg0YdjVuJ/d1WM5qORClmf5z+i
+	/TodCHBvY++Yt4S0KT+mtl5u4c5dzY5Awfw+QWml9RVPQKRQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ufu8ed7g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Jul 2025 06:39:15 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56H6dEpV032244
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Jul 2025 06:39:15 GMT
+Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Wed, 16 Jul 2025 23:39:10 -0700
+From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Subject: [PATCH v2 0/4] Reference the common qcom,gcc.yaml schema
+Date: Thu, 17 Jul 2025 12:08:32 +0530
+Message-ID: <20250717-gcc-ref-fixes-v2-0-a2a571d2be28@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 17 Jul 2025 08:37:32 +0200
-Message-Id: <DBE4FRROKPLE.2O2PPHRU80073@fairphone.com>
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>, "Bjorn
- Andersson" <andersson@kernel.org>, "Konrad Dybcio"
- <konradybcio@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
- <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] dt-bindings: arm: qcom-soc: Document new Milos and
- Glymur SoCs
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250716162412.27471-2-krzysztof.kozlowski@linaro.org>
- <DBE47UNGCDLE.3AZF5XENB5BEB@fairphone.com>
- <7a552f24-50df-4c94-9bda-50712fc72485@linaro.org>
-In-Reply-To: <7a552f24-50df-4c94-9bda-50712fc72485@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGiaeGgC/12MMQ7CMAxFr1J5xsgJCgUm7oE6tI7TeqCFBCpQl
+ buTIrEwvv/13gJJokqCU7VAlFmTTmMBu6mAh3bsBdUXBkvWUU0H7JkxSsCgL0m4C+ScNa2hzkB
+ xbuVaj6JcmsKDpscU39/8bNb1Vzr+lWaDhCzee6F9XbvufH8q68hbnq7Q5Jw/UWg9D6wAAAA=
+X-Change-ID: 20250708-gcc-ref-fixes-3f05521a10b1
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Jeff Hugo <jeff.hugo@oss.qualcomm.com>
+CC: Ajit Pandey <quic_ajipan@quicinc.com>,
+        Jagadeesh Kona
+	<quic_jkona@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Taniya Das
+	<quic_tdas@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Satya Priya Kakitapalli
+	<quic_skakitap@quicinc.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDA1NiBTYWx0ZWRfX9bfuVFhj1BCq
+ ltXvCg9csQE94fc7pkAIqd1dEC1twcc6EtCgcmJOEPX2pI8HJg8P0z722Gl8YwqwKjVlJ1bUlCy
+ Tj5O5XjifEeVfLFXhLRo5Z5IIy2TXi3i9XEZqOLFl17JuZt8X27e1pHci0/vhwwufTsXg4bQ9R8
+ Q/MjKKiM8+4S+U7qjy5Ze7ZBPiWLT/+q9wIMbZcV8ZZar0BQV+dazjDF9lOtR114qrehNw4KtgY
+ CDCJRz0ThYcc45XEGhwERxRZHb/NrvtLuEa4LdKmHWLLQOxKpCDTDO6R23gmMK9xLf989U9kguR
+ yZQVhD4aa+o5mT7R2Rg7YkJMKgEDU/s0cxF3HPIav4z/LNdHQ8pilkc2FwERkgQ+P7WrFHKdpu5
+ rCLNeRvhUK3NY5zrkugrHP7iJGSiYb4pf5n8wceC+KDFUpvGP5CVH73m/XL7xHE5coDEHP33
+X-Proofpoint-ORIG-GUID: cn3y1hVdNI0cD56Zg9_NaXGhRe-Ey4jA
+X-Proofpoint-GUID: cn3y1hVdNI0cD56Zg9_NaXGhRe-Ey4jA
+X-Authority-Analysis: v=2.4 cv=f59IBPyM c=1 sm=1 tr=0 ts=68789a94 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=Z5aUh8xi8MX_VlDgfTAA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-17_01,2025-07-16_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 lowpriorityscore=0 malwarescore=0 spamscore=0 mlxscore=0
+ bulkscore=0 suspectscore=0 impostorscore=0 adultscore=0 priorityscore=1501
+ mlxlogscore=829 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507170056
 
-On Thu Jul 17, 2025 at 8:33 AM CEST, Krzysztof Kozlowski wrote:
-> On 17/07/2025 08:27, Luca Weiss wrote:
->> On Wed Jul 16, 2025 at 6:24 PM CEST, Krzysztof Kozlowski wrote:
->>> Extend the schema enforcing correct SoC-block naming to cover Milos
->>> (compatibles already accepted by some maintainers for next release) and
->>> Glymur (posted on mailing lists [1]) SoCs.
->>>
->>> Link: https://lore.kernel.org/linux-devicetree/20250716152017.4070029-1=
--pankaj.patil@oss.qualcomm.com/ [1]
->>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>
->>> ---
->>>
->>> I asked for documenting the Milos name at v2 of Milos patchset... it di=
-d
->>> not happen and patches are already being accepted.
->>=20
->> Sorry about that, I seem to have missed that.
->>=20
->> However I did not see any dt validation errors with my milos dts or
->> dt_binding_check on the bindings, where are these patterns relevant, in
->> case I should touch it again in the future?
->
-> There would not be any errors, because how these bindings are written -
-> to ignore other, unknown names.
+For all the possible Qualcomm clock controller bindings
+add qcom,gcc.yaml reference to unify the common
+parts of the binding.
 
-Ok clear, thanks for sending this patch!
+Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+---
+Changes in v2:
+- Drop the patches which didn't have the power-domain-cells.
+- Add Krzysztof's Suggested-by tag to all the patches.
+- Drop the Reviewed-by tag given on 1st patch as the series got NAK.
+- Link to v1: https://lore.kernel.org/r/20250709-gcc-ref-fixes-v1-0-ceddde06775b@quicinc.com
 
-Regards
-Luca
+---
+Satya Priya Kakitapalli (4):
+      dt-bindings: clock: qcom,sm8150-camcc: Reference qcom,gcc.yaml
+      dt-bindings: clock: qcom,mmcc: Reference qcom,gcc.yaml
+      dt-bindings: clock: qcom,sm4450-camcc: Reference qcom,gcc.yaml
+      dt-bindings: clock: qcom,sm4450-dispcc: Reference qcom,gcc.yaml
+
+ .../devicetree/bindings/clock/qcom,mmcc.yaml       | 24 +++-------------------
+ .../bindings/clock/qcom,sm4450-camcc.yaml          | 20 ++++--------------
+ .../bindings/clock/qcom,sm4450-dispcc.yaml         | 20 ++++--------------
+ .../bindings/clock/qcom,sm8150-camcc.yaml          | 20 ++++--------------
+ 4 files changed, 15 insertions(+), 69 deletions(-)
+---
+base-commit: 26ffb3d6f02cd0935fb9fa3db897767beee1cb2a
+change-id: 20250708-gcc-ref-fixes-3f05521a10b1
+
+Best regards,
+-- 
+Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+
 
