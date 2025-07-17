@@ -1,145 +1,239 @@
-Return-Path: <linux-kernel+bounces-735484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18394B08FED
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:53:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B330B08FF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:59:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 399B75679F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:53:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69D1BA47421
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F211C2F85DB;
-	Thu, 17 Jul 2025 14:53:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 810E92F85D5;
+	Thu, 17 Jul 2025 14:59:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bzimnicN"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FhU+0qHk"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF6DB2EBDFE
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 14:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44AF51DB375;
+	Thu, 17 Jul 2025 14:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752764017; cv=none; b=qdV+3DAmidZuH9ykQYUfuaTc6daRk1szl6WJiDjsAx7tROvxQtnLnIKSNlMuqV7OuVqbZW9RWwxa5S3o7cQKmyQRz1cNCClShvubkwkc05rP8eVJxa6WO8nfBlG0MR9Z0ETzm+KggoyK+Rr7jka9JCDjPxRA++p40wkuxuUcyTc=
+	t=1752764347; cv=none; b=ruVlSOw2A7JwyvLph30YSU+iCJmRkh1WAs+gyup+jVDyO00tjSdb5eawi5LcZP7AqFQwq9ziJSH8pOOM52XOAF437HbiP32hSGGjJR06yOhewTUIfrZtIt1OBpQXPH7gXLJkpD7fD1npkmpL/xhFLlgxhRhMFYAdW50DkxWEdl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752764017; c=relaxed/simple;
-	bh=3Mn1kK8tzmD1WS0Uc7HSvX+hJXq2rcddMFZmTCEf4yA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=BCIC+Jt1akxQuyzwn7Qq7Ihk6NtlFGWNatNqeYl5e9Q8/olhMj1WEfFgP3dMw/eZEhv8pQ2skBS5/PnmABjH80E1x6EOcqoWVl69mM3UmnqDjGT0ugQ8ngvmoI07U+iLCjtPAsXnOOEdrUxMT0jlm7lmu3+o2Ma8JzkV6/AIKj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bzimnicN; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-313ff01d2a6so912029a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 07:53:35 -0700 (PDT)
+	s=arc-20240116; t=1752764347; c=relaxed/simple;
+	bh=DTo3ffJbLlUuJEP+zhqi55XqmtMADhA+yWU6G/zt2jI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R6rZcbJ+/11+Yr1HxMdQraQRCRWjR7ltvuF+K+tAK8BVQJnrGe7jvcLAcT9/FjmOYfSCCvUrEANp7JigadGDvZf6cOa3V3QDW9z5qWtKHlwbGtGjNYSu0HxHo3JBvl30eCXepxUUUDcRAP3OM74H3m0iVD4avsKbvUxWTzGQ68Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FhU+0qHk; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b31ef5f24b7so61332a12.0;
+        Thu, 17 Jul 2025 07:59:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752764015; x=1753368815; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=J7wJP1NqWbg0/wW5WuIuZexwRRb7oyj5wBhc3Nu1g94=;
-        b=bzimnicN5v+SA/eT5wbwINqcm13vkbKTDuJTEYSp7rPdUHbv/tc37Lg0QtZosQ8QFQ
-         mqM/IQ8r2mNLHaKcdUiTSls33KeJ7jRjDlWJV9A+n6yOJTUvCZxc+Xm9HPPdxlhBKTmJ
-         OF12K8JvntPbqJ69/neKVPrPTuLHv30qhUUPWYJ4CkJgEg5rOy7zref1gimJCV+q9aG6
-         nOVOIPfCE5EIz1prkIFBhaASD3BjUpMEgDQwEWA3Kqo5rSA7kMmo6hhfHQon+0wYkjFb
-         2n/wTtRWvPotM8srDAUFhijaJMqcaEU3VQ0g+LXN8b8HvUwjYZV8N4eKH8AcGHh+BqBL
-         Xegw==
+        d=gmail.com; s=20230601; t=1752764345; x=1753369145; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9Ya0Pf7GBbiFI9yCYfAdyjgFg/XCTrL1Lup/5nSkjZ4=;
+        b=FhU+0qHkHKFZTw3TRKIG+/Mi2dWmhxULIm1f8LDiQobKGMshyXO/GPBCHJy3vevj9A
+         cjFJhBzvd652dqLPgxkYiYkBHPmNwjVZSn2y81rhyrXGU+v6mQwOAmpiZUOOAA9lWfOB
+         PE6uAL63Vwg7rGBrCWgL4luudcPYW+mrAmVAzn2f/fdUTXtPhqFUjo/rbKSMXUJXpTc6
+         wKAurJQ5VLFPcPBcO9pztpkoSoqBDHhEc2RaTLhBfMEQ4z8lHeWYNYmito0tGtLn10Ch
+         WWYtz6mKJLxwOdEYl0TjW3WkToSHDn2EDrl6ug4nHeK19vFfa2+IOsKW4FP8QqfrUyAo
+         6naQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752764015; x=1753368815;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=J7wJP1NqWbg0/wW5WuIuZexwRRb7oyj5wBhc3Nu1g94=;
-        b=XKWTDcidLCtTB1GDPHGY/XBeFrwMo6aWEEsmTMQWFzsG9byBmQ7S3CqkCJj/wDkjRo
-         UvYGDi1n9sZKbL8UAZpCCaHQVaYSvR4+3nBwzUT18lBjxpLa5K750g2ZQUGnIHUg5vXD
-         V0HUkorogwcEThh8tCHVZJx8SOlMwXlp/aXSYEh7U/BLTo4taxrWxInC2ZifPYyuZGH0
-         igac361mi6uNAY2kNgP613siXNAARt2N3cWPj7fn9iT+oO8l9Ln/6GYpj0nK5pJb9/A1
-         EQ/9nKAuMz4TWgssXsE08XL4FkcnQBzafUGegIYZWybiRQZQmiUfvfLd50HeCe7JJWyu
-         48rA==
-X-Forwarded-Encrypted: i=1; AJvYcCW3CNV3ZBrQmndlH/7c6ltcZ0I+IGR8IYp3wr+evEEwclXNF0TKkXPxRuPtGHE3qm6QBbNDgN8tA6n+hk8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+lLZWsbNvSufp7EIWBpwoumliP5eBSiUQmfUlguItXMiY48Ed
-	kCi9NoGuTY3vQRSCCqGyeP5w594iYQGPHOH/AxR/28tzXrhESWXYkRAbuFH5oaS7YIrgbKjDxFL
-	8EwyPMQ==
-X-Google-Smtp-Source: AGHT+IGKxEq/h6VGvllulb+B19zVX8xyn3ukqgkbd5wdwUs0a5DqFBozKOKBvbhqQGpTHmL6bvsTT7LiEXI=
-X-Received: from pjbsn8.prod.google.com ([2002:a17:90b:2e88:b0:311:6040:2c7a])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5624:b0:312:e744:5b76
- with SMTP id 98e67ed59e1d1-31c9e78b84cmr12238484a91.33.1752764015209; Thu, 17
- Jul 2025 07:53:35 -0700 (PDT)
-Date: Thu, 17 Jul 2025 07:53:33 -0700
-In-Reply-To: <68790db4.a00a0220.3af5df.0020.GAE@google.com>
+        d=1e100.net; s=20230601; t=1752764345; x=1753369145;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9Ya0Pf7GBbiFI9yCYfAdyjgFg/XCTrL1Lup/5nSkjZ4=;
+        b=mqnoyPLmHnwcGjg5VlePSwPY2I+2EuFXVAbdJSSavefntfP0gVodZES7OU45okZXxC
+         oAgDFiU2r8OHyQLpGhdX3FtXB8ASpaMuI+xHajVSr1KCk/sbqwoJM/2LAGl4lpb1icLU
+         0/7Rrz0Nqx7/xcIrEFujHD1uII9EoqjrBcg+hoB15Su11xNR+BX5RadnC2Rlsc+bguTv
+         pTh1OjwiaBGjcJr2zCjnWltdWxnO85eRA2KILtFEsOdmOzNsdfd8v4/+Zb+3OW6MDinx
+         2ulS4wmMz//U9/5kAbLdD+j7W7Hcaw05HqSkeTt4n7hg/GgOfSMihR++OZGE39dC8SAF
+         b+Pw==
+X-Forwarded-Encrypted: i=1; AJvYcCWV6ri8dt+vsE2Fyg4/n6ISJ5teUtw/0PbGnLsVEjhub0OmtD1axoFnawzcjlMhCneFXOCw1xnA@vger.kernel.org, AJvYcCXfABSH49f4HHHDbXDybjEnonfKDN6BnjIJUbKdxbNUJS/p6jcXPy+ZCY3o1SnM/x7+DFwu9vjut2IO7vs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx44/JCS27IlMcNfdirHeDMZ+wA9ItjPeKWzKF08OHhePRCiNdX
+	cVmuXi7woib1z7ly9V3zKYMLgOrXavlvFtYXurRn4oN4a2WsU5yozw9uuEjacaVwCi3k2O2Lacx
+	/CCsdgBnrTM+dLUa+tXe2gzJm9PaGkQaoDg==
+X-Gm-Gg: ASbGncsT8or5De2GY0/oURF10Jv8btqyV+8yRVS9siosPwJDnxRqJXMHFEu2Hcz2z1M
+	hKW9rVAYca+BnsdRdf9Fxi3AiA8vm+YP9XwoQnB3k+66LlrarE+ugH5bL08JtvbCLdOvkyZrpDI
+	KZTiYqwaK9hofiS2/DcAks0a68UVUKRMJUzq4m2XJnjENzJ4fD/ulWfIK8IU+bUbxiH8fVZ9mQp
+	pV2riBm
+X-Google-Smtp-Source: AGHT+IHHlq/nQ9G6EWKKiMZEs2wLT9KLcyNzfgfIaMgOnK9+QgUCsPjP/ogcxgDDwwAVqR5cbpqVFpHPsuJaCZ+oScY=
+X-Received: by 2002:a17:90b:4b8b:b0:311:9c9a:58e2 with SMTP id
+ 98e67ed59e1d1-31c9e798695mr3931081a91.7.1752764345395; Thu, 17 Jul 2025
+ 07:59:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <68790db4.a00a0220.3af5df.0020.GAE@google.com>
-Message-ID: <aHkObULA-4HV2uNo@google.com>
-Subject: Re: [syzbot] [kvm-x86?] WARNING in kvm_arch_vcpu_ioctl_run (6)
-From: Sean Christopherson <seanjc@google.com>
-To: syzbot <syzbot+cc2032ba16cc2018ca25@syzkaller.appspotmail.com>
-Cc: bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, mingo@redhat.com, 
-	pbonzini@redhat.com, syzkaller-bugs@googlegroups.com, tglx@linutronix.de, 
-	x86@kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20250716161753.231145-1-bgeffon@google.com> <CADnq5_P+a2g_YzKW7S4YSF5kQgXe+PNrMKEOAHuf9yhFg98pSQ@mail.gmail.com>
+ <CADyq12zB7+opz0vUgyAQSdbHcYMwbZrZp+qxKdYcqaeCeRVbCw@mail.gmail.com>
+ <CADnq5_OeTJqzg0DgV06b-u_AmgaqXL5XWdQ6h40zcgGj1mCE_A@mail.gmail.com> <CADyq12ysC9C2tsQ3GrQJB3x6aZPzM1o8pyTW8z4bxjGPsfEZvw@mail.gmail.com>
+In-Reply-To: <CADyq12ysC9C2tsQ3GrQJB3x6aZPzM1o8pyTW8z4bxjGPsfEZvw@mail.gmail.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Thu, 17 Jul 2025 10:58:53 -0400
+X-Gm-Features: Ac12FXzrKvidT2q85M3LPC-hr0sTqZC7FoEbjKXO6dUbumO7fgzZhruHSNnRlGI
+Message-ID: <CADnq5_PnktmP+0Hw0T04VkrkKoF_TGz5HOzRd1UZq6XOE0Rm1g@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu: Raven: don't allow mixing GTT and VRAM
+To: Brian Geffon <bgeffon@google.com>
+Cc: "Wentland, Harry" <Harry.Wentland@amd.com>, "Leo (Sunpeng) Li" <Sunpeng.Li@amd.com>, 
+	Alex Deucher <alexander.deucher@amd.com>, christian.koenig@amd.com, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, Yunxiang Li <Yunxiang.Li@amd.com>, 
+	Lijo Lazar <lijo.lazar@amd.com>, Prike Liang <Prike.Liang@amd.com>, 
+	Pratap Nirujogi <pratap.nirujogi@amd.com>, Luben Tuikov <luben.tuikov@amd.com>, 
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Garrick Evans <garrick@google.com>, 
+	Thadeu Lima de Souza Cascardo <cascardo@igalia.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 17, 2025, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    155a3c003e55 Merge tag 'for-6.16/dm-fixes-2' of git://git...
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1413e58c580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=8d5ef2da1e1c848
-> dashboard link: https://syzkaller.appspot.com/bug?extid=cc2032ba16cc2018ca25
-> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1213e58c580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13a567d4580000
-> 
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-155a3c00.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/725a320dfe66/vmlinux-155a3c00.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/9f06899bb6f3/bzImage-155a3c00.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+cc2032ba16cc2018ca25@syzkaller.appspotmail.com
-> 
-> WARNING: CPU: 1 PID: 6108 at arch/x86/kvm/x86.c:11645 kvm_arch_vcpu_ioctl_run+0x13bc/0x18c0 arch/x86/kvm/x86.c:11645
-> Modules linked in:
-> CPU: 1 UID: 0 PID: 6108 Comm: syz.0.16 Not tainted 6.16.0-rc6-syzkaller-00002-g155a3c003e55 #0 PREEMPT(full) 
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> RIP: 0010:kvm_arch_vcpu_ioctl_run+0x13bc/0x18c0 arch/x86/kvm/x86.c:11645
-> Code: 0a 00 00 00 00 00 00 e8 25 88 be 1e 31 ff 89 c5 89 c6 e8 e7 68 7a 00 85 ed 0f 8f f4 f0 ff ff e9 f5 f1 ff ff e8 95 6d 7a 00 90 <0f> 0b 90 e9 9c f0 ff ff e8 87 6d 7a 00 90 0f 0b 90 e9 d3 f0 ff ff
-> RSP: 0018:ffffc9000379fc38 EFLAGS: 00010293
-> RAX: 0000000000000000 RBX: ffff888044358000 RCX: ffffffff81417587
-> RDX: ffff88802327a440 RSI: ffffffff814184eb RDI: 0000000000000007
-> RBP: 0000000000000001 R08: 0000000000000007 R09: 0000000000000000
-> R10: 0000000000000001 R11: 0000000000000001 R12: ffff88804ff02000
-> R13: ffff8880443580d8 R14: 0000000000000000 R15: ffff88804ff02120
-> FS:  000055555f07c500(0000) GS:ffff8880d6813000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 000000005200000c CR3: 0000000033cb3000 CR4: 0000000000352ef0
-> Call Trace:
->  <TASK>
->  kvm_vcpu_ioctl+0x5eb/0x1690 virt/kvm/kvm_main.c:4464
->  vfs_ioctl fs/ioctl.c:51 [inline]
->  __do_sys_ioctl fs/ioctl.c:907 [inline]
->  __se_sys_ioctl fs/ioctl.c:893 [inline]
->  __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:893
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f4f8b18e929
-> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007ffdc1bf8098 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> RAX: ffffffffffffffda RBX: 00007f4f8b3b5fa0 RCX: 00007f4f8b18e929
-> RDX: 0000000000000000 RSI: 000000000000ae80 RDI: 0000000000000005
-> RBP: 00007f4f8b210ca1 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 00007f4f8b3b5fa0 R14: 00007f4f8b3b5fa0 R15: 0000000000000003
->  </TASK>
+On Wed, Jul 16, 2025 at 8:13=E2=80=AFPM Brian Geffon <bgeffon@google.com> w=
+rote:
+>
+> On Wed, Jul 16, 2025 at 5:03=E2=80=AFPM Alex Deucher <alexdeucher@gmail.c=
+om> wrote:
+> >
+> > On Wed, Jul 16, 2025 at 12:40=E2=80=AFPM Brian Geffon <bgeffon@google.c=
+om> wrote:
+> > >
+> > > On Wed, Jul 16, 2025 at 12:33=E2=80=AFPM Alex Deucher <alexdeucher@gm=
+ail.com> wrote:
+> > > >
+> > > > On Wed, Jul 16, 2025 at 12:18=E2=80=AFPM Brian Geffon <bgeffon@goog=
+le.com> wrote:
+> > > > >
+> > > > > Commit 81d0bcf99009 ("drm/amdgpu: make display pinning more flexi=
+ble (v2)")
+> > > > > allowed for newer ASICs to mix GTT and VRAM, this change also not=
+ed that
+> > > > > some older boards, such as Stoney and Carrizo do not support this=
+.
+> > > > > It appears that at least one additional ASIC does not support thi=
+s which
+> > > > > is Raven.
+> > > > >
+> > > > > We observed this issue when migrating a device from a 5.4 to 6.6 =
+kernel
+> > > > > and have confirmed that Raven also needs to be excluded from mixi=
+ng GTT
+> > > > > and VRAM.
+> > > >
+> > > > Can you elaborate a bit on what the problem is?  For carrizo and
+> > > > stoney this is a hardware limitation (all display buffers need to b=
+e
+> > > > in GTT or VRAM, but not both).  Raven and newer don't have this
+> > > > limitation and we tested raven pretty extensively at the time.
+> > >
+> > > Thanks for taking the time to look. We have automated testing and a
+> > > few igt gpu tools tests failed and after debugging we found that
+> > > commit 81d0bcf99009 is what introduced the failures on this hardware
+> > > on 6.1+ kernels. The specific tests that fail are kms_async_flips and
+> > > kms_plane_alpha_blend, excluding Raven from this sharing of GTT and
+> > > VRAM buffers resolves the issue.
+> >
+> > + Harry and Leo
+> >
+> > This sounds like the memory placement issue we discussed last week.
+> > In that case, the issue is related to where the buffer ends up when we
+> > try to do an async flip.  In that case, we can't do an async flip
+> > without a full modeset if the buffers locations are different than the
+> > last modeset because we need to update more than just the buffer base
+> > addresses.  This change works around that limitation by always forcing
+> > display buffers into VRAM or GTT.  Adding raven to this case may fix
+> > those tests but will make the overall experience worse because we'll
+> > end up effectively not being able to not fully utilize both gtt and
+> > vram for display which would reintroduce all of the problems fixed by
+> > 81d0bcf99009 ("drm/amdgpu: make display pinning more flexible (v2)").
+>
+> Thanks Alex, the thing is, we only observe this on Raven boards, why
+> would Raven only be impacted by this? It would seem that all devices
+> would have this issue, no? Also, I'm not familiar with how
 
-Ha!  syzbot finally found an upstream reproducer:
+It depends on memory pressure and available memory in each pool.
+E.g., initially the display buffer is in VRAM when the initial mode
+set happens.  The watermarks, etc. are set for that scenario.  One of
+the next frames ends up in a pool different than the original.  Now
+the buffer is in GTT.  The async flip interface does a fast validation
+to try and flip as soon as possible, but that validation fails because
+the watermarks need to be updated which requires a full modeset.
 
-https://lore.kernel.org/all/20250715190638.1899116-1-seanjc@google.com
+It's tricky to fix because you don't want to use the worst case
+watermarks all the time because that will limit the number available
+display options and you don't want to force everything to a particular
+memory pool because that will limit the amount of memory that can be
+used for display (which is what the patch in question fixed).  Ideally
+the caller would do a test commit before the page flip to determine
+whether or not it would succeed before issuing it and then we'd have
+some feedback mechanism to tell the caller that the commit would fail
+due to buffer placement so it would do a full modeset instead.  We
+discussed this feedback mechanism last week at the display hackfest.
+
+
+> kms_plane_alpha_blend works, but does this also support that test
+> failing as the cause?
+
+That may be related.  I'm not too familiar with that test either, but
+Leo or Harry can provide some guidance.
+
+Alex
+
+>
+> Thanks again,
+> Brian
+>
+> >
+> > Alex
+> >
+> > >
+> > > Brian
+> > >
+> > > >
+> > > >
+> > > > Alex
+> > > >
+> > > > >
+> > > > > Fixes: 81d0bcf99009 ("drm/amdgpu: make display pinning more flexi=
+ble (v2)")
+> > > > > Cc: Luben Tuikov <luben.tuikov@amd.com>
+> > > > > Cc: Christian K=C3=B6nig <christian.koenig@amd.com>
+> > > > > Cc: Alex Deucher <alexander.deucher@amd.com>
+> > > > > Cc: stable@vger.kernel.org # 6.1+
+> > > > > Tested-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+> > > > > Signed-off-by: Brian Geffon <bgeffon@google.com>
+> > > > > ---
+> > > > >  drivers/gpu/drm/amd/amdgpu/amdgpu_object.c | 3 ++-
+> > > > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > > > >
+> > > > > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c b/drivers=
+/gpu/drm/amd/amdgpu/amdgpu_object.c
+> > > > > index 73403744331a..5d7f13e25b7c 100644
+> > > > > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
+> > > > > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
+> > > > > @@ -1545,7 +1545,8 @@ uint32_t amdgpu_bo_get_preferred_domain(str=
+uct amdgpu_device *adev,
+> > > > >                                             uint32_t domain)
+> > > > >  {
+> > > > >         if ((domain =3D=3D (AMDGPU_GEM_DOMAIN_VRAM | AMDGPU_GEM_D=
+OMAIN_GTT)) &&
+> > > > > -           ((adev->asic_type =3D=3D CHIP_CARRIZO) || (adev->asic=
+_type =3D=3D CHIP_STONEY))) {
+> > > > > +           ((adev->asic_type =3D=3D CHIP_CARRIZO) || (adev->asic=
+_type =3D=3D CHIP_STONEY) ||
+> > > > > +            (adev->asic_type =3D=3D CHIP_RAVEN))) {
+> > > > >                 domain =3D AMDGPU_GEM_DOMAIN_VRAM;
+> > > > >                 if (adev->gmc.real_vram_size <=3D AMDGPU_SG_THRES=
+HOLD)
+> > > > >                         domain =3D AMDGPU_GEM_DOMAIN_GTT;
+> > > > > --
+> > > > > 2.50.0.727.gbf7dc18ff4-goog
+> > > > >
 
