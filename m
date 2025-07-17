@@ -1,71 +1,72 @@
-Return-Path: <linux-kernel+bounces-735089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EBD8B08ADC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:37:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3E63B08ADF
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:38:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10C597A64B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:36:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 230E617C6F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 824422989BF;
-	Thu, 17 Jul 2025 10:37:29 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46FC129A301;
+	Thu, 17 Jul 2025 10:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="LqdXjgPI"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6D628A700
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 10:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8339D29992E
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 10:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752748648; cv=none; b=RLDylLoQalr7Y5rymfjvV9/9h0DYZkpaN1EVBCzdGcnF48qbgpcgBGSnhaVKtIu6CBKxwSWhDC7nGUXd19AEXLWIfqfix23VnxGuJURnQCpW9hMoQnTjdGYxSTuJvPO9HtyFhtNAVlrvhL+8XZnJ6/2Asfd8rfqhVkOoxcCFi3w=
+	t=1752748671; cv=none; b=Dg6h/O4eWMMf3LLZ1Piz9j/T4+Kc4nJIpg5NDHUeGGpFrhhUocHGBbb3VmIuo3mgIEBZn1FBc6VsDkh2Z5r0nZTmH+NWMGk7bLzW/jkEXUQ+58UCg4waJrtDsEnr3Guu1RB80aZ6RWcPHJu/Ut73qdt+paFo202yX9uB8e1ZAMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752748648; c=relaxed/simple;
-	bh=vNF1CMCHSYUo0MbJtj+ZgR0ZX8axTN5Y/r3zasViEgo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=U+/TSYuMN7rzA7uqa+y6n973KX4D4Zj4IslYwTsQcxvEmdiU7DHssD4I5vbd54R1i4N/Fo+XQp1YjOAGg/ZapuhG6KD6aPDjyfY+jznsMSmYbAUbxo0sq4pb0Mno3us3Hc/CllUOt22wj+yO6fL+dnsy5ByQvV/yIpXAVi/yc1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1ucLz9-0003yS-4Z; Thu, 17 Jul 2025 12:37:07 +0200
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1ucLz6-008tc7-1P;
-	Thu, 17 Jul 2025 12:37:04 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1ucLz6-008rgp-13;
-	Thu, 17 Jul 2025 12:37:04 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
+	s=arc-20240116; t=1752748671; c=relaxed/simple;
+	bh=WTCmEgroE7xLdK+wx5mCjkRcrz5PP871ZaINUraGaHE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=e+LrD61FxkGu+P8zyNXNsSSXd01EHmfJ4v7wVt2wIrjWZJjZfRa7d7tQDkO0xhMFsaPJ37iuH2K3cfqIRpZ1Qpk6ayXLn1onXniD4I2f/ITlh2bJd/zaKUbW9KN//QCbwFWnawavOVEpofrAu7sOP4PYaQu1rlsiR2H5uKR0X0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=LqdXjgPI; arc=none smtp.client-ip=121.127.44.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: MIME-Version: References: In-Reply-To:
+ Message-ID: Date: Subject: Cc: To: From; q=dns/txt; s=fe-e1b5cab7be;
+ t=1752748668; bh=h+Hw8lQ0o+mOFqv9n5gcTSKBcsWJil+YqWJxNjP2g4Y=;
+ b=LqdXjgPIp9+k2/XUyn4eYsNsCpvYWg3FRpk1vuQpQc9S3D+3seKJ77aPm/NdgDYs8jEsNkDKG
+ 9FAKQIQTlO+CoGOEzuClG3L2EesOrGjU19WladIaw+bYppsBNY0EmBISaVe5diTTQbArY0tDjCk
+ wwzJEWmDRLvg/5wT3WyqWTwnubK/3Zg9I3fSk1lxfPn1wMQn/+Q7FcabrYja4opaMEzm91EYlr2
+ HK2KsYl9R7nVZEn84gnP54R6nOxRhQJhxF2D2ogbmb6JVSllblu+ZZjK+2OIQw1y8RYrta2E5uv
+ U+JjJqyTPbnFZLHCIKhzSXxCyKVEWZre9eO7rE3h7JMw==
+X-Forward-Email-ID: 6878d2695e51505848fe5f9e
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 121.127.44.73
+X-Forward-Email-Version: 1.1.6
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+From: Jonas Karlman <jonas@kwiboo.se>
+To: Heiko Stuebner <heiko@sntech.de>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Lukasz Majewski <lukma@denx.de>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Yao Zi <ziyao@disroot.org>,
+	Chukun Pan <amadeus@jmu.edu.cn>,
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+	linux-rockchip@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>,
-	Divya.Koppera@microchip.com
-Subject: [PATCH net-next v1 1/1] Documentation: networking: add detailed guide on Ethernet flow control configuration
-Date: Thu, 17 Jul 2025 12:37:02 +0200
-Message-Id: <20250717103702.2112988-1-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
+	Jonas Karlman <jonas@kwiboo.se>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v4 1/6] dt-bindings: arm: rockchip: Add Radxa ROCK 2A/2F
+Date: Thu, 17 Jul 2025 10:37:03 +0000
+Message-ID: <20250717103720.2853031-2-jonas@kwiboo.se>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20250717103720.2853031-1-jonas@kwiboo.se>
+References: <20250717103720.2853031-1-jonas@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,445 +74,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Introduce a new document, flow_control.rst, providing a comprehensive
-overview of Ethernet Flow Control in Linux. It explains how flow control
-works in full- and half-duplex modes, how autonegotiation resolves pause
-capabilities, and how users can inspect and configure flow control using
-ethtool and Netlink interfaces.
+The ROCK 2A and ROCK 2F is a high-performance single board computer
+developed by Radxa, based on the Rockchip RK3528A SoC.
 
-The document also covers typical MAC implementations, PHY behavior,
-ethtool driver operations, and provides a test plan for verifying driver
-behavior across various scenarios.
+Add devicetree binding documentation for the Radxa ROCK 2A and ROCK 2F
+boards.
 
-The legacy flow control section in phy.rst is replaced with a reference
-to this new document.
-
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- Documentation/networking/flow_control.rst | 372 ++++++++++++++++++++++
- Documentation/networking/index.rst        |   1 +
- Documentation/networking/phy.rst          |  11 +-
- 3 files changed, 374 insertions(+), 10 deletions(-)
- create mode 100644 Documentation/networking/flow_control.rst
+v4: No change
+v3: Collect a-b tag
+v2: No change
+---
+ Documentation/devicetree/bindings/arm/rockchip.yaml | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/Documentation/networking/flow_control.rst b/Documentation/networking/flow_control.rst
-new file mode 100644
-index 000000000000..2ec9c9bfd4c9
---- /dev/null
-+++ b/Documentation/networking/flow_control.rst
-@@ -0,0 +1,372 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+=====================
-+Ethernet Flow Control
-+=====================
-+
-+This document is a practical guide to Ethernet Flow Control in Linux, covering
-+what it is, how it works, and how to configure it.
-+
-+What is Flow Control?
-+=====================
-+
-+Flow control is a mechanism to prevent a fast sender from overwhelming a
-+slow receiver with data, which would cause buffer overruns and dropped packets.
-+The receiver can signal the sender to temporarily stop transmitting, giving it
-+time to process its backlog.
-+
-+How It Works: The Two Mechanisms
-+================================
-+
-+The method used for flow control depends on the link's duplex mode.
-+
-+1. Full-Duplex: PAUSE Frames (IEEE 802.3 Annex 31B)
-+---------------------------------------------------
-+On full-duplex links, devices can send and receive at the same time. Flow
-+control is achieved by sending a special **PAUSE frame**.
-+
-+* **What it is**: A standard Ethernet frame with a globally reserved
-+    destination MAC address (``01-80-C2-00-00-01``). This address is in a range
-+    that standard IEEE 802.1D-compliant bridges do not forward. However, some
-+    unmanaged or misconfigured bridges have been reported to forward these
-+    frames, which can disrupt flow control across a network.
-+
-+* **How it works**: The frame contains a `pause_time` value, telling the
-+    sender how long to wait before sending more data frames.
-+
-+* **Who uses it**: Any full-duplex link, from 10Mbps to multi-gigabit speeds.
-+
-+2. Half-Duplex: Collision-Based Flow Control
-+--------------------------------------------
-+On half-duplex links, a device cannot send and receive simultaneously, so PAUSE
-+frames are not used. Flow control is achieved by leveraging the CSMA/CD
-+(Carrier Sense Multiple Access with Collision Detection) protocol itself.
-+
-+* **How it works**: To inhibit incoming data, a receiving device can force a
-+    collision on the line. When the sending station detects this collision, it
-+    terminates its transmission, sends a "jam" signal, and then executes the
-+    "Collision backoff and retransmission" procedure as defined in IEEE 802.3,
-+    Section 4.2.3.2.5. This algorithm makes the sender wait for a random
-+    period before attempting to retransmit. By repeatedly forcing collisions,
-+    the receiver can effectively throttle the sender's transmission rate.
-+
-+.. note::
-+    While this mechanism is part of the IEEE standard, there is currently no
-+    generic kernel API to configure or control it. Drivers should not enable
-+    this feature until a standardized interface is available.
-+
-+Configuring Flow Control with `ethtool`
-+=======================================
-+
-+The standard tool for managing flow control is `ethtool`.
-+
-+Viewing the Current Settings
-+----------------------------
-+Use `ethtool -a <interface>` to see the current configuration.
-+
-+.. code-block:: text
-+
-+  $ ethtool -a eth0
-+  Pause parameters for eth0:
-+  Autonegotiate:  on
-+  RX:             on
-+  TX:             on
-+
-+* **Autonegotiate**: Shows if flow control settings are being negotiated with
-+    the link partner.
-+
-+* **RX**: Shows if we will *obey* PAUSE frames (pause our sending).
-+
-+* **TX**: Shows if we will *send* PAUSE frames (ask the peer to pause).
-+
-+If autonegotiation is on, `ethtool` will also show the active, negotiated result.
-+This result is calculated by `ethtool` itself based on the advertisement masks
-+from both link partners. It represents the expected outcome according to IEEE
-+802.3 rules, but the final decision on what is programmed into the MAC hardware
-+is made by the kernel driver.
-+
-+.. code-block:: text
-+
-+  RX negotiated: on
-+  TX negotiated: on
-+
-+Changing the Settings
-+---------------------
-+Use `ethtool -A <interface>` to change the settings.
-+
-+.. code-block:: bash
-+
-+  # Enable RX and TX pause, with autonegotiation
-+  ethtool -A eth0 autoneg on rx on tx on
-+
-+  # Force RX pause on, TX pause off, without autonegotiation
-+  ethtool -A eth0 autoneg off rx on tx off
-+
-+**Key Configuration Concepts**:
-+
-+* **Autonegotiation Mode**: The recommended mode. The driver programs the PHY
-+    to *advertise* the `rx` and `tx` capabilities. The final active state is
-+    determined by what both sides of the link agree on.
-+
-+* **Forced Mode**: This mode is necessary when autonegotiation is not used or
-+    not possible. This includes links where one or both partners have
-+    autonegotiation disabled, or in setups without a PHY (e.g., direct
-+    MAC-to-MAC connections). The driver bypasses PHY advertisement and
-+    directly forces the MAC into the specified `rx`/`tx` state. **Both sides
-+    of the link must be configured identically.**
-+
-+Component Roles in Flow Control
-+===============================
-+
-+The configuration of flow control involves several components, each with a
-+distinct role.
-+
-+The MAC (Media Access Controller)
-+---------------------------------
-+The MAC is the hardware component that actually sends and receives PAUSE
-+frames. Its capabilities define the upper limit of what the driver can support.
-+Known MAC implementation variations include:
-+
-+* **Flexible Full Flow Control**: Has separate enable/disable controls for the
-+    TX and RX paths. This is the most common and desirable implementation.
-+
-+* **Symmetric-Only Flow Control**: Provides a single control bit to
-+    enable/disable flow control in both directions simultaneously. It cannot
-+    support asymmetric configurations.
-+
-+* **Receive-Only Flow Control**: Can only process incoming PAUSE frames (to
-+    pause its own transmitter). It cannot generate PAUSE frames. If the system
-+    needs to send a PAUSE frame, it would have to be generated by software.
-+
-+* **Transmit-Only Flow Control**: Can only generate PAUSE frames when its own
-+    buffers are full. It ignores incoming PAUSE frames.
-+
-+* **Weak Overwrite Variant**: Often found in combined MAC+PHY chips. A single
-+    control bit determines whether the MAC uses the autonegotiated result or
-+    a forced, pre-defined setting.
-+
-+Additionally, some MACs provide a way to configure the `pause_time` value
-+(quanta) sent in PAUSE frames. This value's duration depends on the link
-+speed. As there is currently no generic kernel interface to configure this,
-+drivers often set it to a default or maximum value, which may not be optimal
-+for all use cases.
-+
-+Many MACs also implement automatic PAUSE frame transmission based on the fill
-+level of their internal RX FIFO. This is typically configured with two
-+thresholds:
-+
-+* **FLOW_ON (High Water Mark)**: When the RX FIFO usage reaches this
-+    threshold, the MAC automatically transmits a PAUSE frame to stop the sender.
-+
-+* **FLOW_OFF (Low Water Mark)**: When the RX FIFO usage drops below this
-+    threshold, the MAC transmits a PAUSE frame with a quanta of zero to tell
-+    the sender it can resume transmission.
-+
-+The optimal values for these thresholds often depend on the bandwidth of the
-+bus between the MAC and the system's CPU or RAM. Like the pause quanta, there
-+is currently no generic kernel interface for tuning these thresholds.
-+
-+The PHY (Physical Layer Transceiver)
-+------------------------------------
-+The PHY's role is to manage the autonegotiation process. It does not generate
-+or interpret PAUSE frames itself; it only communicates capabilities between
-+the two link partners.
-+
-+* **Advertisement**: The PHY advertises the MAC's flow control capabilities.
-+    This is done using two bits in the advertisement register: "Symmetric
-+    Pause" (Pause) and "Asymmetric Pause" (Asym). These bits should be
-+    interpreted as a combined value, not as independent flags. The kernel
-+    converts the user's `rx` and `tx` settings into this two-bit value as
-+    follows:
-+
-+    .. code-block:: text
-+
-+        tx rx  | Pause Asym
-+        -------+-----------
-+        0  0  |  0     0
-+        0  1  |  1     1
-+        1  0  |  0     1
-+        1  1  |  1     0
-+
-+* **Resolution**: After negotiation, the PHY reports the link partner's
-+    advertised Pause and Asym bits. The final flow control mode is determined
-+    by the combination of the local and partner advertisements, according to
-+    the IEEE 802.3 standard:
-+
-+    .. code-block:: text
-+
-+        Local Device | Link Partner |
-+        Pause Asym   | Pause Asym   | Result
-+        -------------+--------------+-----------
-+          0     X    |   0     X    | Disabled
-+          0     1    |   1     0    | Disabled
-+          0     1    |   1     1    | TX only
-+          1     0    |   0     X    | Disabled
-+          1     X    |   1     X    | TX + RX
-+          1     1    |   0     1    | RX only
-+
-+    It is important to note that the advertised bits reflect the *current
-+    configuration* of the MAC, which may not represent its full hardware
-+    capabilities.
-+
-+* **Limitations**: A PHY may have its own limitations and may not be able to
-+    advertise the full set of capabilities that the MAC supports.
-+
-+User Space Interface
-+--------------------
-+The primary user space tool for flow control configuration is `ethtool`. It
-+communicates with the kernel via netlink messages, specifically
-+`ETHTOOL_MSG_PAUSE_GET` and `ETHTOOL_MSG_PAUSE_SET`.
-+
-+These messages use a simple set of attributes that map to the members of the
-+`struct ethtool_pauseparam`:
-+
-+* `ETHTOOL_A_PAUSE_AUTONEG` -> `autoneg`
-+* `ETHTOOL_A_PAUSE_RX` -> `rx_pause`
-+* `ETHTOOL_A_PAUSE_TX` -> `tx_pause`
-+
-+The driver's implementation of the `.get_pauseparam` and `.set_pauseparam`
-+ethtool operations must correctly interpret these fields.
-+
-+* **On `get_pauseparam`**, the driver must report the user's configured flow
-+    control policy.
-+
-+    * The `autoneg` flag indicates the driver's behavior: if `on`, the driver
-+      will respect the negotiated outcome; if `off`, the driver will use a
-+      forced configuration.
-+
-+    * The `rx_pause` and `tx_pause` flags reflect the currently preferred
-+      configuration state, which depends on multiple factors.
-+
-+* **On `set_pauseparam`**, the driver must interpret the user's request:
-+
-+    * The `autoneg` flag acts as a mode selector. If `on`, the driver
-+      configures the PHY's advertisement based on `rx_pause` and `tx_pause`.
-+
-+    * If `off`, the driver forces the MAC into the state defined by
-+      `rx_pause` and `tx_pause`.
-+
-+Monitoring Flow Control
-+=======================
-+
-+The standard way to check if flow control is actively being used is to view the
-+pause-related statistics with the command:
-+``ethtool --include-statistics -a <interface>``
-+
-+.. code-block:: text
-+
-+  $ ethtool --include-statistics -a eth0
-+  Pause parameters for eth0:
-+  Autonegotiate:  on
-+  RX:             on
-+  TX:             on
-+  RX negotiated: on
-+  TX negotiated: on
-+  Statistics:
-+    tx_pause_frames: 0
-+    rx_pause_frames: 0
-+
-+The `tx_pause_frames` and `rx_pause_frames` counters show the number of PAUSE
-+frames sent and received. Non-zero or increasing values indicate that flow
-+control is active.
-+
-+If a driver does not support this standard statistics interface, it may expose
-+its own legacy counters via `ethtool -S <interface>`. The names of these
-+counters are driver-implementation specific.
-+
-+Test Plan
-+=========
-+
-+This section outlines test cases for verifying flow control configuration. The
-+`ethtool -s` command is used to set the base link state (autoneg on/off), and
-+`ethtool -A` is used to configure the pause parameters within that state.
-+
-+Case 1: Base Link is Autonegotiating
-+------------------------------------
-+*Prerequisite*: `ethtool -s eth0 autoneg on`
-+
-+**Test 1.1: Standard Pause Negotiation**
-+
-+* **Command**: `ethtool -A eth0 autoneg on rx on tx on`
-+
-+* **Expected Behavior**: The driver configures the PHY to advertise symmetric
-+  pause. The MAC will be programmed with the *result* of the negotiation.
-+
-+* **Verification**: `ethtool -a eth0` shows `Autonegotiate: on`, `RX: on`,
-+  `TX: on`. The `RX/TX negotiated` lines show the actual result.
-+
-+**Test 1.2: Forced Pause Overriding Autonegotiation**
-+
-+* **Command**: `ethtool -A eth0 autoneg off rx on tx off`
-+
-+* **Expected Behavior**: The driver stops advertising pause capabilities on
-+  the PHY to avoid misleading the link partner. It then forces the MAC to
-+  enable RX pause and disable TX pause, ignoring any potential negotiation
-+  result.
-+
-+* **Verification**: `ethtool -a eth0` shows `Autonegotiate: off`, `RX: on`,
-+  `TX: off`. No "negotiated" lines are shown.
-+
-+Case 2: Base Link is Forced (Not Autonegotiating)
-+-------------------------------------------------
-+*Prerequisite*: `ethtool -s eth0 autoneg off speed 1000 duplex full`
-+
-+**Test 2.1: Configure Pause Policy for Future Autonegotiation**
-+
-+* **Command**: `ethtool -A eth0 autoneg on rx on tx on`
-+
-+* **Expected Behavior**: The command succeeds. The driver stores the user's
-+  intent to use autonegotiation for flow control (`autoneg=on`). Since the
-+  base link is currently in a forced mode, it also immediately applies the
-+  requested `rx` and `tx` settings to the MAC's forced configuration. The
-+  `autoneg=on` policy will only become fully active (i.e., negotiated) if the
-+  link is later switched to autonegotiation.
-+
-+* **Verification**: `ethtool -a eth0` now shows `Autonegotiate: on`, `RX: on`,
-+  `TX: on`, reflecting the newly set policy. If the link is later reconfigured
-+  with `ethtool -s eth0 autoneg on`, this pause policy will be applied.
-+
-+**Test 2.2: Forced Pause Configuration**
-+
-+* **Command**: `ethtool -A eth0 autoneg off rx on tx on`
-+
-+* **Expected Behavior**: The driver stores the configuration and programs the
-+  MAC registers directly to enable both RX and TX pause.
-+
-+* **Verification**: `ethtool -a eth0` shows `Autonegotiate: off`, `RX: on`,
-+  `TX: on`.
-+
-+Case 3: Persistence of Settings
-+-------------------------------
-+This test verifies that the driver correctly remembers and applies the user's
-+intent across multiple commands that change the pause mode.
-+
-+*Prerequisite*: `ethtool -s eth0 autoneg on`
-+
-+**Test 3.1: Command Sequence**
-+1.  **`ethtool -A eth0 autoneg on rx on tx off`**
-+
-+    * **State**: The driver configures the PHY to advertise asymmetric pause
-+      (RX on, TX off). It stores `pause_autoneg=true`, `pause_rx=true`,
-+      `pause_tx=false`. The MAC uses the negotiated result.
-+
-+2.  **`ethtool -A eth0 autoneg off rx on tx on`**
-+
-+    * **State**: The driver now enters "forced overwrite" mode. It updates
-+      its stored state to `pause_autoneg=false`, `pause_rx=true`,
-+      `pause_tx=true`. It then forces the MAC to enable symmetric pause,
-+      ignoring the PHY's negotiation result.
-+
-+3.  **`ethtool -A eth0 autoneg on`**
-+
-+    * **State**: The driver reverts to following the negotiation. It sets its
-+      stored state to `pause_autoneg=true`. Since `rx` and `tx` were not
-+      specified, it uses its last known values (`rx=on`, `tx=on`) to update
-+      the PHY advertisement. The MAC is now programmed with the result of
-+      this new negotiation.
-+
-+* **Expected Behavior**: The driver correctly transitions between advertising
-+  pause, forcing pause, and returning to advertising, always maintaining the
-+  user's last specified configuration for `rx` and `tx` when toggling the
-+  `autoneg` mode.
-+
-diff --git a/Documentation/networking/index.rst b/Documentation/networking/index.rst
-index ac90b82f3ce9..e22f2ffee505 100644
---- a/Documentation/networking/index.rst
-+++ b/Documentation/networking/index.rst
-@@ -55,6 +55,7 @@ Contents:
-    eql
-    fib_trie
-    filter
-+   flow_control
-    generic-hdlc
-    generic_netlink
-    netlink_spec/index
-diff --git a/Documentation/networking/phy.rst b/Documentation/networking/phy.rst
-index 7f159043ad5a..9e171a4f3920 100644
---- a/Documentation/networking/phy.rst
-+++ b/Documentation/networking/phy.rst
-@@ -343,16 +343,7 @@ Some of the interface modes are described below:
- Pause frames / flow control
- ===========================
+diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
+index 28db6bd6aa5b..c5690098f2ed 100644
+--- a/Documentation/devicetree/bindings/arm/rockchip.yaml
++++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+@@ -881,6 +881,13 @@ properties:
+           - const: radxa,rock
+           - const: rockchip,rk3188
  
--The PHY does not participate directly in flow control/pause frames except by
--making sure that the SUPPORTED_Pause and SUPPORTED_AsymPause bits are set in
--MII_ADVERTISE to indicate towards the link partner that the Ethernet MAC
--controller supports such a thing. Since flow control/pause frames generation
--involves the Ethernet MAC driver, it is recommended that this driver takes care
--of properly indicating advertisement and support for such features by setting
--the SUPPORTED_Pause and SUPPORTED_AsymPause bits accordingly. This can be done
--either before or after phy_connect() and/or as a result of implementing the
--ethtool::set_pauseparam feature.
--
-+For detailed flow control behavior and configuration, see flow_control.rst.
- 
- Keeping Close Tabs on the PAL
- =============================
++      - description: Radxa ROCK 2A/2F
++        items:
++          - enum:
++              - radxa,rock-2a
++              - radxa,rock-2f
++          - const: rockchip,rk3528
++
+       - description: Radxa ROCK Pi 4A/A+/B/B+/C
+         items:
+           - enum:
 -- 
-2.39.5
+2.50.1
 
 
