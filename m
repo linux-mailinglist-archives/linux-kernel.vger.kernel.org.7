@@ -1,126 +1,143 @@
-Return-Path: <linux-kernel+bounces-735526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 702DCB09081
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:25:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 267A0B09087
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:27:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 495B1189D979
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:25:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7311758317E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:27:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA6CB2F9484;
-	Thu, 17 Jul 2025 15:25:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632852F85E7;
+	Thu, 17 Jul 2025 15:27:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QaU9i+od"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VjiNpk4f"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CEDC2F85DE;
-	Thu, 17 Jul 2025 15:25:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F9B1E520F;
+	Thu, 17 Jul 2025 15:27:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752765905; cv=none; b=NBEcjnFVlFXWCsqAg6X/Pfag6rJfI6Q8AwFD/tPlgpDmL5XHAfVini4Kq0NlEOywtbsmLIHJ/8P9yQE++1JsUaa5uU5mhF2uZvMSiFtfBSnG1R9aJJ4H66dLeR8Czsj+cJ3ZTqQzR1/tsmf5+DkoTcAYERltEcQhgSv4Zb6EhEk=
+	t=1752766034; cv=none; b=EuL448qs4JX4+SwLNyoDAA/OR0ZT1PyrG537VD/zg7MSxR8MD9L30vDzVd93zUgjyAvN4lgpOyOs248pXdPiOhSxw3l5jM1p3zuGQhGPcS4lrfhAEC3F77/qWbvlfKrdESfn9i35J82wYgWJF1nV9H0FhPYN77VErZf7EEF+N/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752765905; c=relaxed/simple;
-	bh=mVBl7jkFfQQPKcMZo2FqFRxKgFZixBaqxem8v889rXw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZkltVxJOI/iNlD6X+M1Fp/F3xWmERidqLgamgheojLLTeY8IO67frOU7x1DSUGKfqkY6EEtHYgiPMY059cDAXfLdbZqV9+D0jEP84IPaz89NEO1i1GMRqrpisqEG1/mTF6BFhAsBlIX/+qPFtBCKbpc8ioIHEny/Yp3aGdEb4yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QaU9i+od; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a53359dea5so534532f8f.0;
-        Thu, 17 Jul 2025 08:25:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752765902; x=1753370702; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K6VckmbMeNSXle4zRhCa92H9M1awVcFui2HysraFMAs=;
-        b=QaU9i+odghnAOqAuOb4DIRN4QMZn/wAmcFEisDySwERcc8JFE6cpVJz5D0BsS+FPNk
-         9Cf8/UcNxFtdYMm3LdJJqfqYG765q+RtlmcARBkzbffVJbTjiqJuqyyqAB5luLTtGz1j
-         YFOuB+Q5CXjcf+WsYo1bWD+puvj9a5+4/HyWNQVba8c4kIHqpMuCC+s+wh9RS7x2HlQ9
-         Ap6wSkOFXAa5R4+abUDUtBH/4HK2rSWRmDaPbcCpTuerwGvtkpKnRUUaU/BB6+6+p0xN
-         QoJ4Rv/jPHU1Jb1SJFkXlU1SHgD1yd4pWJ74Y7wERiVofyWWlGXkvhREc6zUz8D1eCP6
-         hBtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752765902; x=1753370702;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K6VckmbMeNSXle4zRhCa92H9M1awVcFui2HysraFMAs=;
-        b=nzi+bYt4bpVJHAYUAhGvLY1UgmZvqjJB4tTdtOhQieBunEpoPG6EQV2oaRWgVPyzp4
-         hqaQXVxI7bixTWF4A4yQiMp4T3sXIWtL1g0bgSsqX4SXM5mIbs5H3ej2Jdo3pY5ZK91w
-         FBp3P1DO5Tnzp2UrX1kcPWnJuK/WoTLPLVYqom2YfiKBiRl24QqUiDhxE1kUPeaGUj/o
-         Dmnu8RKQ+zX+iabwPzIB9K0hf19IhMGsiOa4G4keDIZnDcf6Y1u8WfWMoWqHzKCSC2+8
-         lfoo5NLInjJzQlVxkqHaeykw3on/xY6Fb/+NWvHOfhSWeA1ja8Qe6rGzAuLT0zwDj+Kr
-         0tww==
-X-Forwarded-Encrypted: i=1; AJvYcCV0dJ/AHXN3s8cp90ctkz5dE15WA6GkfmIKvAPl/i7h0QPAlZwQ5EejC2kJqYgwCeJ/L9qcKZ66y8UkSEL/@vger.kernel.org, AJvYcCVTYXXKetH5uHv37g3jZbLICuRVPtFLK3NIkPuv1dbT4pidQErlH6IWbmnJuUtnkvxh9toZkz1M7byXKdBtDJS2@vger.kernel.org, AJvYcCWxOVsk/kvhMVYloy8b9HdP876TBv4DnQiw14uwzJgIlX6Dp6mdfP373+BlimLE77FaarZond5QTm2nQw==@vger.kernel.org, AJvYcCXUqqXfMDpApGPkjnua+3WwYtE/dn03ea7GFVcihN6dBmI6i91VFnTcgHwoAQuvFPkjV9g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQ+m5jyxZFvFK5jUsPaM9UaS7B402F6qrrfG1A3jJUfYhIdtS9
-	G/dwrHUW+5s2lA7qBaIcuRFLmgmvuKbOrF5odx4qOjihaOQF+Ka0fWmBFlys5YwF1amXrMp0sNH
-	1oP8eOzo5XCTm0qHssh8dcd7u5bPCyHs=
-X-Gm-Gg: ASbGncuV9+I1OyimxIdy44kbfhNYIdS2GbvbYsHrIWakYjHNGwCMjh+dQZqz+j3ka16
-	KChMl2yeY5VIwFuaKNU0JFsjrYNdy8YLtw+QEqtWE38qFNZV0Ipb/31KpdEMmrjY1nAgrZiOMhT
-	QgqnpgFrf6donRBlVcCyXMhLw/yR8ackgvZfJ2pQUYQ0hYNce6C8SKdtNK5rBkduH7Uv5hQVJYR
-	9eRV2abWLuXQJe1SINfrDQ=
-X-Google-Smtp-Source: AGHT+IGeW++fImtoeS2B0SWaaDzKCqDG3PBDTK7fijr/paFUbpQ9Q2BBphVZE3USeT269JcqVLR3X4fwk0ujRPHOEEo=
-X-Received: by 2002:a05:6000:144b:b0:3b5:dfc2:f0ca with SMTP id
- ffacd0b85a97d-3b60e53ea17mr6047409f8f.40.1752765901784; Thu, 17 Jul 2025
- 08:25:01 -0700 (PDT)
+	s=arc-20240116; t=1752766034; c=relaxed/simple;
+	bh=NQE218xM/uYai0NdPYpenB3Q0L2BAgSxW5TXcN9SoN8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ylnbkq8PYKrFq1z5PpiQGGgb+sgDHIq1j+9NhfJ+9m7Q7AGkT0/2eL01k0/l14fm8Z5FkVFloV56QGJCHSziDrrbYPOXZYG0EuEZzfYKvIosMGvXeMCNp8uaN+qb38Dc/u4HIvKMxTJRukYVTfijeZsyHjJSpYWZJIPTn6EwIKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VjiNpk4f; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7118B43A0F;
+	Thu, 17 Jul 2025 15:27:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1752766024;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5NL0HDq/x0YbzoK0LOLm6d5hufR8+z/CcXms1AjNRP8=;
+	b=VjiNpk4fCmf82cJR2ZqX18tjYRN8oYbiIp2qIbRs/6CyL00Q3YyZwo605HMRj0aG5oRidi
+	PE99lhEO15h+58R0QkkxYSQvb138NQ689SkBEG1EgYDi1++GEu5dUshi9cd5Ls7O3rrOfg
+	zlPlYXDAdZowalqXxP0whOEfRxr1An36aVGQGZYn5gYaa9bCM7FkUOqDSDi0yvp+Yt7vaf
+	Gv5WuO8mxSiIIt8wzrNko9w19wi/lkHXzZNCoAgnk6qAfR/SOToS2rSs/2XGsG1l3psjVz
+	xBXjpvjg46BwEND9hMlMU/n4K2iU61Pc+8WyTPrmwGLvz3WnXLU4m5e/jIhwUg==
+From: Romain Gantois <romain.gantois@bootlin.com>
+To: Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH 1/2] misc: ti-fpc202: remove unneeded direction check
+Date: Thu, 17 Jul 2025 17:26:57 +0200
+Message-ID: <14379725.uLZWGnKmhe@fw-rgant>
+In-Reply-To: <20250717130357.53491-1-brgl@bgdev.pl>
+References: <20250717130357.53491-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250520-vmlinux-mmap-v5-0-e8c941acc414@isovalent.com>
- <20250520-vmlinux-mmap-v5-1-e8c941acc414@isovalent.com> <g2gqhkunbu43awrofzqb4cs4sxkxg2i4eud6p4qziwrdh67q4g@mtw3d3aqfgmb>
- <CAN+4W8hsK6FMBon0-J6mAYk1yVsamYL=cHqFkj3syepxiv16Ug@mail.gmail.com>
- <CAADnVQ+WZsaDS-Vuc9AN7P3=xvX8TG=rY65A8wYdOARLtkt6Mw@mail.gmail.com> <CAN+4W8i+PqYDcJjWk+g63W4kdKvhFKSad61q-T=JJky5m7j79w@mail.gmail.com>
-In-Reply-To: <CAN+4W8i+PqYDcJjWk+g63W4kdKvhFKSad61q-T=JJky5m7j79w@mail.gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 17 Jul 2025 08:24:48 -0700
-X-Gm-Features: Ac12FXww1JBCS6XraoQajcOSXv0y_LFuMb7d0LFifqkes7LZtbikQbv87_xdbD8
-Message-ID: <CAADnVQLJTmjt8nE-xoPhE=6Q+bDOWTTwQ9OqQjX+YKT5RPBNrA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v5 1/3] btf: allow mmap of vmlinux btf
-To: Lorenz Bauer <lmb@isovalent.com>
-Cc: Breno Leitao <leitao@debian.org>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
-	linux-arch <linux-arch@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	bpf <bpf@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, Alan Maguire <alan.maguire@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; boundary="nextPart3574599.e9J7NaK4W3";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeitdelgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfgggtsehgtderredttdejnecuhfhrohhmpeftohhmrghinhcuifgrnhhtohhishcuoehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepieekkeffvdeugfekjeegfefhvdetuefhtdelieduheeileduledvteelgefgffffnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehffidqrhhgrghnthdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhomhgrihhnrdhgrghnthhoihhssegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeejpdhrtghpthhtoheprghrnhgusegrrhhnuggsrdguvgdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopegsrhhglhessghguggvvhdrphhlpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhor
+ hhgpdhrtghpthhtoheplhhinhhugidqghhpihhosehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsggrrhhtohhsiidrghholhgrshiivgifshhkiheslhhinhgrrhhordhorhhg
+X-GND-Sasl: romain.gantois@bootlin.com
 
-On Thu, Jul 17, 2025 at 8:15=E2=80=AFAM Lorenz Bauer <lmb@isovalent.com> wr=
-ote:
->
-> On Thu, Jul 17, 2025 at 3:49=E2=80=AFPM Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
->
-> > __pa_symbol() should work for start_BTF, but would be good
-> > to double check with Ard that the rest stays linear.
->
-> Alexei,
->
-> This code in the arm64 setup does make me think we'll be OK.
->
-> kernel_code.start   =3D __pa_symbol(_stext);
-> kernel_code.end     =3D __pa_symbol(__init_begin - 1);
-> kernel_data.start   =3D __pa_symbol(_sdata);
-> kernel_data.end     =3D __pa_symbol(_end - 1);
->
-> Using these as start and end only makes sense to me if the addresses
-> are linear? See
-> https://elixir.bootlin.com/linux/v6.15.6/source/arch/arm64/kernel/setup.c=
-#L217
+--nextPart3574599.e9J7NaK4W3
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Romain Gantois <romain.gantois@bootlin.com>
+Date: Thu, 17 Jul 2025 17:26:57 +0200
+Message-ID: <14379725.uLZWGnKmhe@fw-rgant>
+In-Reply-To: <20250717130357.53491-1-brgl@bgdev.pl>
+References: <20250717130357.53491-1-brgl@bgdev.pl>
+MIME-Version: 1.0
 
-Thanks for checking. lgtm.
+Hi Bartosz,
+
+On Thursday, 17 July 2025 15:03:55 CEST Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> As of commit 92ac7de3175e3 ("gpiolib: don't allow setting values on input
+> lines"), the GPIO core makes sure values cannot be set on input lines.
+> Remove the unnecessary check.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  drivers/misc/ti_fpc202.c | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
+> diff --git a/drivers/misc/ti_fpc202.c b/drivers/misc/ti_fpc202.c
+> index f7cde245ac95..ca415ef45cbe 100644
+> --- a/drivers/misc/ti_fpc202.c
+> +++ b/drivers/misc/ti_fpc202.c
+> @@ -125,9 +125,6 @@ static void fpc202_gpio_set(struct gpio_chip *chip,
+> unsigned int offset, int ret;
+>  	u8 val;
+> 
+> -	if (fpc202_gpio_get_dir(offset) == GPIO_LINE_DIRECTION_IN)
+> -		return;
+> -
+>  	ret = fpc202_read(priv, FPC202_REG_OUT_A_OUT_B_VAL);
+>  	if (ret < 0) {
+>  		dev_err(&priv->client->dev, "Failed to set GPIO %d value! err 
+%d\n",
+> offset, ret);
+
+LGTM
+
+Reviewed-by: Romain Gantois <romain.gantois@bootlin.com>
+
+
+--nextPart3574599.e9J7NaK4W3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEETFOGm0tqZfYwVxBymGofZEoxB4MFAmh5FkEACgkQmGofZEox
+B4Pudw//WmOIYd5K4bpyhceplO0TUalfRdIGrupHCJxlFk7zh4Ox2rAaisvAGNQK
+E92g9JBQ1G2Ph/G7odM60nfwAjxPIP8RPGHDBuZ5r1GcU99UBidsnlrFZr2n5+O4
+8EyMUfHhORnWAMGIuYjGGsUxsh2f9RZZkX+T5Nt4aJ95ORlAuBOaPeZtzaqQwnvi
+X+I/f47RrHX7Krv8lSootjQvJar5lQJJa620jx6ym8nDj5hYUNIj3SvxUBFM8os1
+t2wsRQ0ULP2CWriBEAfXOI7jttdm4zFjAb2tjNm55FFyv59WLZyfcUyEhPH1FIav
+NBRL4L741QuKQ+UAEW9ss/QUFDsqp8XM5ze511D0MEGhAUIBVn+KEK8+3RGhHncQ
+oI3rIpKo/r8urENkOyKwZLbve2U9BjehVbf+7owLIGEHzVW02UbzxXi0G3D9+2nc
+QW+4/A2aFKrwd6P/QG3kB+Zmqy3mIL035QaACRW5A6566+hS+npBi7Sjzqfv6Aqu
+dMOsRd1TCoAcLDyVgNzYmbCVA1Sugu611GrIKoP64TmMB3oUs7lelRAcHYtTeIWQ
+oWGGInNwAr6Xf2qzu0LTq32hAliNht+z90Wk8yj8+nXoCS4MUhTpwWZDyKT+3Fuv
+OlO8J2XPBD8JU7TQtnNHRan4V8VbZtrKm1UwJ/KpHjlq0fqtjaU=
+=KXp/
+-----END PGP SIGNATURE-----
+
+--nextPart3574599.e9J7NaK4W3--
+
+
+
 
