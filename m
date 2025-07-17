@@ -1,42 +1,43 @@
-Return-Path: <linux-kernel+bounces-734854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E223B0872C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:42:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE3D8B08729
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:42:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC12D16741D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:42:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 196291A6610F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:42:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE5D262FF9;
-	Thu, 17 Jul 2025 07:42:15 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD0124BBEB;
+	Thu, 17 Jul 2025 07:42:12 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFADE25A352
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 07:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB8221A434
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 07:42:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752738135; cv=none; b=CxA77cYyizuEJg+uWbu2WM3n0kvcl1coQdFHvDwDstIM5DotVpqEYKekoE/I8FHN4GhWppvnRPXPfWtvNVTbNB4dTXT/lZtuHWE9N8sN0SonnY0+c71urpToBn4AsKq9yx40a9ADHOgAL5wTz0vTo5NTeqAiME9n452gI5aTyV8=
+	t=1752738131; cv=none; b=nvX+CQxyJkxhJsIELxzXds7YCzuKO+LyFHj4L9sxvN3YLjWF6O4R48JlcbHJbeLx7dNAVOPMka6EjrPj/kJEmrVRpDYTFrcMZ0/I+JphPueKb2jOdbUhssAcZ5pHkOWIVQ0YZz2x/D7Nsk4DCjBi8NT26xaLDarFJlCZRrRyiA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752738135; c=relaxed/simple;
-	bh=g3X00SYvCeXZLG46z+C2rjcZN3JC6eJKJGHVOl82V+E=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sNdixZbhl9NFefzPYlQk1wxStjIypNnlETr3BFu4/U1usU479vjtvN8IQVukrIOc0+/48vbrjKmz0S5/Zce18DtGmZdJTqlVqw/rPdKehSUxU+cPy5/4lvwfyLAXtcuDvn8TFGc2KGnidVj9ybF42MUNcZCGePYzqLR4yAT4hcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+	s=arc-20240116; t=1752738131; c=relaxed/simple;
+	bh=iLHtIrXVSDwXwIcgt8BjAOwEDl43HhY8nEWi8rXanNQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EbEEKURoaTQvHgW6riw4gaRP5mbzYHBX3ldzQ17bAFzmxggG7XwkMEgork9rpjWn9rtAiKkwQ3MZGNYOPHqGSgl7Np3zk0ZYvsOz0rwphauD1h4Ypyrrt/E2akYjbtiAJVfDTno+Qwlkt0BNosUcvhW4B7YLgtw6VCc5ypzWSoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bjPsd3WzLz2Cfqj;
-	Thu, 17 Jul 2025 15:37:57 +0800 (CST)
-Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id E2AB71400D4;
-	Thu, 17 Jul 2025 15:42:04 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bjPv904xMz13Mls;
+	Thu, 17 Jul 2025 15:39:17 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1E27B180B64;
+	Thu, 17 Jul 2025 15:42:06 +0800 (CST)
 Received: from kwepemq200018.china.huawei.com (7.202.195.108) by
- dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 17 Jul 2025 15:42:04 +0800
+ 15.2.1544.11; Thu, 17 Jul 2025 15:42:05 +0800
 Received: from localhost.localdomain (10.50.165.33) by
  kwepemq200018.china.huawei.com (7.202.195.108) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -47,10 +48,12 @@ To: <will@kernel.org>, <mark.rutland@arm.com>,
 CC: <hejunhao3@huawei.com>, <jonathan.cameron@huawei.com>,
 	<prime.zeng@hisilicon.com>, <linuxarm@huawei.com>,
 	<yangyicong@hisilicon.com>, <wangyushan12@huawei.com>
-Subject: [PATCH v4 0/2] drivers/perf: hisi: Add support for HiSilicon MN PMU driver
-Date: Thu, 17 Jul 2025 15:41:36 +0800
-Message-ID: <20250717074138.39903-1-yangyicong@huawei.com>
+Subject: [PATCH v4 1/2] drivers/perf: hisi: Add support for HiSilicon NoC PMU
+Date: Thu, 17 Jul 2025 15:41:37 +0800
+Message-ID: <20250717074138.39903-2-yangyicong@huawei.com>
 X-Mailer: git-send-email 2.31.0
+In-Reply-To: <20250717074138.39903-1-yangyicong@huawei.com>
+References: <20250717074138.39903-1-yangyicong@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,27 +67,516 @@ X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
 
 From: Yicong Yang <yangyicong@hisilicon.com>
 
-Add support for two new Uncore PMUs to monitor the events of the system bus
-(by NoC PMU) and the DVM operations (by MN PMU).
+Adds the support for HiSilicon NoC (Network on Chip) PMU which
+will be used to monitor the events on the system bus. The PMU
+device will be named after the SCL ID (either Super CPU cluster
+or Super IO cluster) and the index ID, just similar to other
+HiSilicon Uncore PMUs. Below PMU formats are provided besides
+the event:
 
-Change since v3:
-- Use ACPI driver data to retrieve the hardware capabilities
-Link: https://lore.kernel.org/linux-arm-kernel/20250619125557.57372-1-yangyicong@huawei.com/
+- ch: the transaction channel (data, request, response, etc) which
+  can be used to filter the counting.
+- tt_en: tracetag filtering enable. Just as other HiSilicon Uncore
+  PMUs the NoC PMU supports only counting the transactions with
+  tracetag.
 
-Junhao He (1):
-  drivers/perf: hisi: Add support for HiSilicon MN PMU driver
+The NoC PMU doesn't have an interrupt to indicate the overflow.
+However we have a 64 bit counter which is large enough and it's
+nearly impossible to overflow.
 
-Yicong Yang (1):
-  drivers/perf: hisi: Add support for HiSilicon NoC PMU
-
+Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
+---
  Documentation/admin-guide/perf/hisi-pmu.rst  |  11 +
  drivers/perf/hisilicon/Makefile              |   3 +-
- drivers/perf/hisilicon/hisi_uncore_mn_pmu.c  | 411 +++++++++++++++++
  drivers/perf/hisilicon/hisi_uncore_noc_pmu.c | 443 +++++++++++++++++++
- 4 files changed, 867 insertions(+), 1 deletion(-)
- create mode 100644 drivers/perf/hisilicon/hisi_uncore_mn_pmu.c
+ 3 files changed, 456 insertions(+), 1 deletion(-)
  create mode 100644 drivers/perf/hisilicon/hisi_uncore_noc_pmu.c
 
+diff --git a/Documentation/admin-guide/perf/hisi-pmu.rst b/Documentation/admin-guide/perf/hisi-pmu.rst
+index 48992a0b8e94..6f0ea4f641cc 100644
+--- a/Documentation/admin-guide/perf/hisi-pmu.rst
++++ b/Documentation/admin-guide/perf/hisi-pmu.rst
+@@ -112,6 +112,17 @@ uring channel. It is 2 bits. Some important codes are as follows:
+ - 2'b00: default value, count the events which sent to the both uring and
+   uring_ext channel;
+ 
++6. ch: NoC PMU supports filtering the event counts of certain transaction
++channel with this option. The current supported channels are as follows:
++
++- 3'b010: Request channel
++- 3'b100: Snoop channel
++- 3'b110: Response channel
++- 3'b111: Data channel
++
++7. tt_en: NoC PMU supports counting only transactions that have tracetag set
++if this option is set. See the 2nd list for more information about tracetag.
++
+ Users could configure IDs to count data come from specific CCL/ICL, by setting
+ srcid_cmd & srcid_msk, and data desitined for specific CCL/ICL by setting
+ tgtid_cmd & tgtid_msk. A set bit in srcid_msk/tgtid_msk means the PMU will not
+diff --git a/drivers/perf/hisilicon/Makefile b/drivers/perf/hisilicon/Makefile
+index 48dcc8381ea7..dcec8f39719d 100644
+--- a/drivers/perf/hisilicon/Makefile
++++ b/drivers/perf/hisilicon/Makefile
+@@ -1,7 +1,8 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ obj-$(CONFIG_HISI_PMU) += hisi_uncore_pmu.o hisi_uncore_l3c_pmu.o \
+ 			  hisi_uncore_hha_pmu.o hisi_uncore_ddrc_pmu.o hisi_uncore_sllc_pmu.o \
+-			  hisi_uncore_pa_pmu.o hisi_uncore_cpa_pmu.o hisi_uncore_uc_pmu.o
++			  hisi_uncore_pa_pmu.o hisi_uncore_cpa_pmu.o hisi_uncore_uc_pmu.o \
++			  hisi_uncore_noc_pmu.o
+ 
+ obj-$(CONFIG_HISI_PCIE_PMU) += hisi_pcie_pmu.o
+ obj-$(CONFIG_HNS3_PMU) += hns3_pmu.o
+diff --git a/drivers/perf/hisilicon/hisi_uncore_noc_pmu.c b/drivers/perf/hisilicon/hisi_uncore_noc_pmu.c
+new file mode 100644
+index 000000000000..2e3eb7881caa
+--- /dev/null
++++ b/drivers/perf/hisilicon/hisi_uncore_noc_pmu.c
+@@ -0,0 +1,443 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Driver for HiSilicon Uncore NoC (Network on Chip) PMU device
++ *
++ * Copyright (c) 2025 HiSilicon Technologies Co., Ltd.
++ * Author: Yicong Yang <yangyicong@hisilicon.com>
++ */
++#include <linux/bitops.h>
++#include <linux/cpuhotplug.h>
++#include <linux/device.h>
++#include <linux/io.h>
++#include <linux/mod_devicetable.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/property.h>
++#include <linux/sysfs.h>
++
++#include "hisi_uncore_pmu.h"
++
++#define NOC_PMU_VERSION			0x1e00
++#define NOC_PMU_GLOBAL_CTRL		0x1e04
++#define   NOC_PMU_GLOBAL_CTRL_PMU_EN	BIT(0)
++#define   NOC_PMU_GLOBAL_CTRL_TT_EN	BIT(1)
++#define NOC_PMU_CNT_INFO		0x1e08
++#define   NOC_PMU_CNT_INFO_OVERFLOW(n)	BIT(n)
++#define NOC_PMU_EVENT_CTRL0		0x1e20
++#define   NOC_PMU_EVENT_CTRL_TYPE	GENMASK(4, 0)
++/*
++ * Note channel of 0x0 will reset the counter value, so don't do it before
++ * we read out the counter.
++ */
++#define   NOC_PMU_EVENT_CTRL_CHANNEL	GENMASK(10, 8)
++#define   NOC_PMU_EVENT_CTRL_EN		BIT(11)
++#define NOC_PMU_EVENT_COUNTER0		0x1e80
++
++#define NOC_PMU_NR_COUNTERS		4
++#define NOC_PMU_CH_DEFAULT		0x7
++
++#define NOC_PMU_EVENT_CTRLn(ctrl0, n)	((ctrl0) + 4 * (n))
++#define NOC_PMU_EVENT_CNTRn(cntr0, n)	((cntr0) + 8 * (n))
++
++HISI_PMU_EVENT_ATTR_EXTRACTOR(ch, config1, 2, 0);
++HISI_PMU_EVENT_ATTR_EXTRACTOR(tt_en, config1, 3, 3);
++
++/* Dynamic CPU hotplug state used by this PMU driver */
++static enum cpuhp_state hisi_noc_pmu_cpuhp_state;
++
++struct hisi_noc_pmu_regs {
++	u32 version;
++	u32 pmu_ctrl;
++	u32 event_ctrl0;
++	u32 event_cntr0;
++	u32 ovflow_status;
++};
++
++/*
++ * Tracetag filtering is not per event and all the events should keep
++ * the consistence. Return true if the new comer doesn't match the
++ * tracetag filtering configuration of the current scheduled events.
++ */
++static bool hisi_noc_pmu_check_global_filter(struct perf_event *curr,
++					     struct perf_event *new)
++{
++	return hisi_get_tt_en(curr) == hisi_get_tt_en(new);
++}
++
++static void hisi_noc_pmu_write_evtype(struct hisi_pmu *noc_pmu, int idx, u32 type)
++{
++	struct hisi_noc_pmu_regs *reg_info = noc_pmu->dev_info->private;
++	u32 reg;
++
++	reg = readl(noc_pmu->base + NOC_PMU_EVENT_CTRLn(reg_info->event_ctrl0, idx));
++	reg &= ~NOC_PMU_EVENT_CTRL_TYPE;
++	reg |= FIELD_PREP(NOC_PMU_EVENT_CTRL_TYPE, type);
++	writel(reg, noc_pmu->base + NOC_PMU_EVENT_CTRLn(reg_info->event_ctrl0, idx));
++}
++
++static int hisi_noc_pmu_get_event_idx(struct perf_event *event)
++{
++	struct hisi_pmu *noc_pmu = to_hisi_pmu(event->pmu);
++	struct hisi_pmu_hwevents *pmu_events = &noc_pmu->pmu_events;
++	int cur_idx;
++
++	cur_idx = find_first_bit(pmu_events->used_mask, noc_pmu->num_counters);
++	if (cur_idx != noc_pmu->num_counters &&
++	    !hisi_noc_pmu_check_global_filter(pmu_events->hw_events[cur_idx], event))
++		return -EAGAIN;
++
++	return hisi_uncore_pmu_get_event_idx(event);
++}
++
++static u64 hisi_noc_pmu_read_counter(struct hisi_pmu *noc_pmu,
++				     struct hw_perf_event *hwc)
++{
++	struct hisi_noc_pmu_regs *reg_info = noc_pmu->dev_info->private;
++
++	return readq(noc_pmu->base + NOC_PMU_EVENT_CNTRn(reg_info->event_cntr0, hwc->idx));
++}
++
++static void hisi_noc_pmu_write_counter(struct hisi_pmu *noc_pmu,
++				       struct hw_perf_event *hwc, u64 val)
++{
++	struct hisi_noc_pmu_regs *reg_info = noc_pmu->dev_info->private;
++
++	writeq(val, noc_pmu->base + NOC_PMU_EVENT_CNTRn(reg_info->event_cntr0, hwc->idx));
++}
++
++static void hisi_noc_pmu_enable_counter(struct hisi_pmu *noc_pmu,
++					struct hw_perf_event *hwc)
++{
++	struct hisi_noc_pmu_regs *reg_info = noc_pmu->dev_info->private;
++	u32 reg;
++
++	reg = readl(noc_pmu->base + NOC_PMU_EVENT_CTRLn(reg_info->event_ctrl0, hwc->idx));
++	reg |= NOC_PMU_EVENT_CTRL_EN;
++	writel(reg, noc_pmu->base + NOC_PMU_EVENT_CTRLn(reg_info->event_ctrl0, hwc->idx));
++}
++
++static void hisi_noc_pmu_disable_counter(struct hisi_pmu *noc_pmu,
++					 struct hw_perf_event *hwc)
++{
++	struct hisi_noc_pmu_regs *reg_info = noc_pmu->dev_info->private;
++	u32 reg;
++
++	reg = readl(noc_pmu->base + NOC_PMU_EVENT_CTRLn(reg_info->event_ctrl0, hwc->idx));
++	reg &= ~NOC_PMU_EVENT_CTRL_EN;
++	writel(reg, noc_pmu->base + NOC_PMU_EVENT_CTRLn(reg_info->event_ctrl0, hwc->idx));
++}
++
++static void hisi_noc_pmu_enable_counter_int(struct hisi_pmu *noc_pmu,
++					    struct hw_perf_event *hwc)
++{
++	/* We don't support interrupt, so a stub here. */
++}
++
++static void hisi_noc_pmu_disable_counter_int(struct hisi_pmu *noc_pmu,
++					     struct hw_perf_event *hwc)
++{
++}
++
++static void hisi_noc_pmu_start_counters(struct hisi_pmu *noc_pmu)
++{
++	struct hisi_noc_pmu_regs *reg_info = noc_pmu->dev_info->private;
++	u32 reg;
++
++	reg = readl(noc_pmu->base + reg_info->pmu_ctrl);
++	reg |= NOC_PMU_GLOBAL_CTRL_PMU_EN;
++	writel(reg, noc_pmu->base + reg_info->pmu_ctrl);
++}
++
++static void hisi_noc_pmu_stop_counters(struct hisi_pmu *noc_pmu)
++{
++	struct hisi_noc_pmu_regs *reg_info = noc_pmu->dev_info->private;
++	u32 reg;
++
++	reg = readl(noc_pmu->base + reg_info->pmu_ctrl);
++	reg &= ~NOC_PMU_GLOBAL_CTRL_PMU_EN;
++	writel(reg, noc_pmu->base + reg_info->pmu_ctrl);
++}
++
++static u32 hisi_noc_pmu_get_int_status(struct hisi_pmu *noc_pmu)
++{
++	struct hisi_noc_pmu_regs *reg_info = noc_pmu->dev_info->private;
++
++	return readl(noc_pmu->base + reg_info->ovflow_status);
++}
++
++static void hisi_noc_pmu_clear_int_status(struct hisi_pmu *noc_pmu, int idx)
++{
++	struct hisi_noc_pmu_regs *reg_info = noc_pmu->dev_info->private;
++	u32 reg;
++
++	reg = readl(noc_pmu->base + reg_info->ovflow_status);
++	reg &= ~NOC_PMU_CNT_INFO_OVERFLOW(idx);
++	writel(reg, noc_pmu->base + reg_info->ovflow_status);
++}
++
++static void hisi_noc_pmu_enable_filter(struct perf_event *event)
++{
++	struct hisi_pmu *noc_pmu = to_hisi_pmu(event->pmu);
++	struct hisi_noc_pmu_regs *reg_info = noc_pmu->dev_info->private;
++	struct hw_perf_event *hwc = &event->hw;
++	u32 tt_en = hisi_get_tt_en(event);
++	u32 ch = hisi_get_ch(event);
++	u32 reg;
++
++	if (!ch)
++		ch = NOC_PMU_CH_DEFAULT;
++
++	reg = readl(noc_pmu->base + NOC_PMU_EVENT_CTRLn(reg_info->event_ctrl0, hwc->idx));
++	reg &= ~NOC_PMU_EVENT_CTRL_CHANNEL;
++	reg |= FIELD_PREP(NOC_PMU_EVENT_CTRL_CHANNEL, ch);
++	writel(reg, noc_pmu->base + NOC_PMU_EVENT_CTRLn(reg_info->event_ctrl0, hwc->idx));
++
++	/*
++	 * Since tracetag filter applies to all the counters, don't touch it
++	 * if user doesn't specify it explicitly.
++	 */
++	if (tt_en) {
++		reg = readl(noc_pmu->base + reg_info->pmu_ctrl);
++		reg |= NOC_PMU_GLOBAL_CTRL_TT_EN;
++		writel(reg, noc_pmu->base + reg_info->pmu_ctrl);
++	}
++}
++
++static void hisi_noc_pmu_disable_filter(struct perf_event *event)
++{
++	struct hisi_pmu *noc_pmu = to_hisi_pmu(event->pmu);
++	struct hisi_noc_pmu_regs *reg_info = noc_pmu->dev_info->private;
++	u32 tt_en = hisi_get_tt_en(event);
++	u32 reg;
++
++	/*
++	 * If we're not the last counter, don't touch the global tracetag
++	 * configuration.
++	 */
++	if (bitmap_weight(noc_pmu->pmu_events.used_mask, noc_pmu->num_counters) > 1)
++		return;
++
++	if (tt_en) {
++		reg = readl(noc_pmu->base + reg_info->pmu_ctrl);
++		reg &= ~NOC_PMU_GLOBAL_CTRL_TT_EN;
++		writel(reg, noc_pmu->base + reg_info->pmu_ctrl);
++	}
++}
++
++static const struct hisi_uncore_ops hisi_uncore_noc_ops = {
++	.write_evtype		= hisi_noc_pmu_write_evtype,
++	.get_event_idx		= hisi_noc_pmu_get_event_idx,
++	.read_counter		= hisi_noc_pmu_read_counter,
++	.write_counter		= hisi_noc_pmu_write_counter,
++	.enable_counter		= hisi_noc_pmu_enable_counter,
++	.disable_counter	= hisi_noc_pmu_disable_counter,
++	.enable_counter_int	= hisi_noc_pmu_enable_counter_int,
++	.disable_counter_int	= hisi_noc_pmu_disable_counter_int,
++	.start_counters		= hisi_noc_pmu_start_counters,
++	.stop_counters		= hisi_noc_pmu_stop_counters,
++	.get_int_status		= hisi_noc_pmu_get_int_status,
++	.clear_int_status	= hisi_noc_pmu_clear_int_status,
++	.enable_filter		= hisi_noc_pmu_enable_filter,
++	.disable_filter		= hisi_noc_pmu_disable_filter,
++};
++
++static struct attribute *hisi_noc_pmu_format_attrs[] = {
++	HISI_PMU_FORMAT_ATTR(event, "config:0-7"),
++	HISI_PMU_FORMAT_ATTR(ch, "config1:0-2"),
++	HISI_PMU_FORMAT_ATTR(tt_en, "config1:3"),
++	NULL
++};
++
++static const struct attribute_group hisi_noc_pmu_format_group = {
++	.name = "format",
++	.attrs = hisi_noc_pmu_format_attrs,
++};
++
++static struct attribute *hisi_noc_pmu_events_attrs[] = {
++	HISI_PMU_EVENT_ATTR(cycles, 0x0e),
++	/* Flux on/off the ring */
++	HISI_PMU_EVENT_ATTR(ingress_flow_sum, 0x1a),
++	HISI_PMU_EVENT_ATTR(egress_flow_sum, 0x17),
++	/* Buffer full duration on/off the ring */
++	HISI_PMU_EVENT_ATTR(ingress_buf_full, 0x19),
++	HISI_PMU_EVENT_ATTR(egress_buf_full, 0x12),
++	/* Failure packets count on/off the ring */
++	HISI_PMU_EVENT_ATTR(cw_ingress_fail, 0x01),
++	HISI_PMU_EVENT_ATTR(cc_ingress_fail, 0x09),
++	HISI_PMU_EVENT_ATTR(cw_egress_fail, 0x03),
++	HISI_PMU_EVENT_ATTR(cc_egress_fail, 0x0b),
++	/* Flux of the ring */
++	HISI_PMU_EVENT_ATTR(cw_main_flow_sum, 0x05),
++	HISI_PMU_EVENT_ATTR(cc_main_flow_sum, 0x0d),
++	NULL
++};
++
++static const struct attribute_group hisi_noc_pmu_events_group = {
++	.name = "events",
++	.attrs = hisi_noc_pmu_events_attrs,
++};
++
++static const struct attribute_group *hisi_noc_pmu_attr_groups[] = {
++	&hisi_noc_pmu_format_group,
++	&hisi_noc_pmu_events_group,
++	&hisi_pmu_cpumask_attr_group,
++	&hisi_pmu_identifier_group,
++	NULL
++};
++
++static int hisi_noc_pmu_dev_init(struct platform_device *pdev, struct hisi_pmu *noc_pmu)
++{
++	struct hisi_noc_pmu_regs *reg_info;
++
++	hisi_uncore_pmu_init_topology(noc_pmu, &pdev->dev);
++
++	if (noc_pmu->topo.scl_id < 0)
++		return dev_err_probe(&pdev->dev, -EINVAL, "failed to get scl-id\n");
++
++	if (noc_pmu->topo.index_id < 0)
++		return dev_err_probe(&pdev->dev, -EINVAL, "failed to get idx-id\n");
++
++	if (noc_pmu->topo.sub_id < 0)
++		return dev_err_probe(&pdev->dev, -EINVAL, "failed to get sub-id\n");
++
++	noc_pmu->base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(noc_pmu->base))
++		return dev_err_probe(&pdev->dev, PTR_ERR(noc_pmu->base),
++				     "fail to remap io memory\n");
++
++	noc_pmu->dev_info = device_get_match_data(&pdev->dev);
++	if (!noc_pmu->dev_info)
++		return -ENODEV;
++
++	noc_pmu->pmu_events.attr_groups = noc_pmu->dev_info->attr_groups;
++	noc_pmu->counter_bits = noc_pmu->dev_info->counter_bits;
++	noc_pmu->check_event = noc_pmu->dev_info->check_event;
++	noc_pmu->num_counters = NOC_PMU_NR_COUNTERS;
++	noc_pmu->ops = &hisi_uncore_noc_ops;
++	noc_pmu->dev = &pdev->dev;
++	noc_pmu->on_cpu = -1;
++
++	reg_info = noc_pmu->dev_info->private;
++	noc_pmu->identifier = readl(noc_pmu->base + reg_info->version);
++
++	return 0;
++}
++
++static void hisi_noc_pmu_remove_cpuhp_instance(void *hotplug_node)
++{
++	cpuhp_state_remove_instance_nocalls(hisi_noc_pmu_cpuhp_state, hotplug_node);
++}
++
++static void hisi_noc_pmu_unregister_pmu(void *pmu)
++{
++	perf_pmu_unregister(pmu);
++}
++
++static int hisi_noc_pmu_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct hisi_pmu *noc_pmu;
++	char *name;
++	int ret;
++
++	noc_pmu = devm_kzalloc(dev, sizeof(*noc_pmu), GFP_KERNEL);
++	if (!noc_pmu)
++		return -ENOMEM;
++
++	/*
++	 * HiSilicon Uncore PMU framework needs to get common hisi_pmu device
++	 * from device's drvdata.
++	 */
++	platform_set_drvdata(pdev, noc_pmu);
++
++	ret = hisi_noc_pmu_dev_init(pdev, noc_pmu);
++	if (ret)
++		return ret;
++
++	ret = cpuhp_state_add_instance(hisi_noc_pmu_cpuhp_state, &noc_pmu->node);
++	if (ret)
++		return dev_err_probe(dev, ret, "Fail to register cpuhp instance\n");
++
++	ret = devm_add_action_or_reset(dev, hisi_noc_pmu_remove_cpuhp_instance,
++				       &noc_pmu->node);
++	if (ret)
++		return ret;
++
++	hisi_pmu_init(noc_pmu, THIS_MODULE);
++
++	name = devm_kasprintf(dev, GFP_KERNEL, "hisi_scl%d_noc%d_%d",
++			      noc_pmu->topo.scl_id, noc_pmu->topo.index_id,
++			      noc_pmu->topo.sub_id);
++	if (!name)
++		return -ENOMEM;
++
++	ret = perf_pmu_register(&noc_pmu->pmu, name, -1);
++	if (ret)
++		return dev_err_probe(dev, ret, "Fail to register PMU\n");
++
++	return devm_add_action_or_reset(dev, hisi_noc_pmu_unregister_pmu,
++					&noc_pmu->pmu);
++}
++
++static struct hisi_noc_pmu_regs hisi_noc_v1_pmu_regs = {
++	.version = NOC_PMU_VERSION,
++	.pmu_ctrl = NOC_PMU_GLOBAL_CTRL,
++	.event_ctrl0 = NOC_PMU_EVENT_CTRL0,
++	.event_cntr0 = NOC_PMU_EVENT_COUNTER0,
++	.ovflow_status = NOC_PMU_CNT_INFO,
++};
++
++static const struct hisi_pmu_dev_info hisi_noc_v1 = {
++	.attr_groups = hisi_noc_pmu_attr_groups,
++	.counter_bits = 64,
++	.check_event = NOC_PMU_EVENT_CTRL_TYPE,
++	.private = &hisi_noc_v1_pmu_regs,
++};
++
++static const struct acpi_device_id hisi_noc_pmu_ids[] = {
++	{ "HISI04E0", (kernel_ulong_t) &hisi_noc_v1 },
++	{ }
++};
++MODULE_DEVICE_TABLE(acpi, hisi_noc_pmu_ids);
++
++static struct platform_driver hisi_noc_pmu_driver = {
++	.driver = {
++		.name = "hisi_noc_pmu",
++		.acpi_match_table = hisi_noc_pmu_ids,
++		.suppress_bind_attrs = true,
++	},
++	.probe = hisi_noc_pmu_probe,
++};
++
++static int __init hisi_noc_pmu_module_init(void)
++{
++	int ret;
++
++	ret = cpuhp_setup_state_multi(CPUHP_AP_ONLINE_DYN, "perf/hisi/noc:online",
++				      hisi_uncore_pmu_online_cpu,
++				      hisi_uncore_pmu_offline_cpu);
++	if (ret < 0) {
++		pr_err("hisi_noc_pmu: Fail to setup cpuhp callbacks, ret = %d\n", ret);
++		return ret;
++	}
++	hisi_noc_pmu_cpuhp_state = ret;
++
++	ret = platform_driver_register(&hisi_noc_pmu_driver);
++	if (ret)
++		cpuhp_remove_multi_state(hisi_noc_pmu_cpuhp_state);
++
++	return ret;
++}
++module_init(hisi_noc_pmu_module_init);
++
++static void __exit hisi_noc_pmu_module_exit(void)
++{
++	platform_driver_unregister(&hisi_noc_pmu_driver);
++	cpuhp_remove_multi_state(hisi_noc_pmu_cpuhp_state);
++}
++module_exit(hisi_noc_pmu_module_exit);
++
++MODULE_IMPORT_NS("HISI_PMU");
++MODULE_DESCRIPTION("HiSilicon SoC Uncore NoC PMU driver");
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Yicong Yang <yangyicong@hisilicon.com>");
 -- 
 2.24.0
 
