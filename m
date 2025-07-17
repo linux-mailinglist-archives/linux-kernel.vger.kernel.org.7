@@ -1,125 +1,306 @@
-Return-Path: <linux-kernel+bounces-735942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C706FB0959F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 22:20:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EAC95B09583
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 22:12:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F7751C4577B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 20:20:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39FF21892286
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 20:13:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3385224AE8;
-	Thu, 17 Jul 2025 20:19:56 +0000 (UTC)
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C112248B0;
+	Thu, 17 Jul 2025 20:12:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MV+7GME6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CAC11A314E;
-	Thu, 17 Jul 2025 20:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B03597346F
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 20:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752783596; cv=none; b=HVa6LGqGeDM6i6fcU2INN6HQm7wxpoXsRhv6L6FK4IZP3bCgI5qxNK7qM4ldxye+lmRFDWFwBEq4NxrPw7yMEFjwpOi6JjzRUGBUNmn4bMYlmaKYKI4kMeCljDLpG354/Yhap23UBKihKAqHyRIlGdTGi8xId7kGbued5c99VKs=
+	t=1752783166; cv=none; b=ZT+UK+/Qj1sHNez3D5L+pTCIJEQzElV3GcbTNEnlmctAscaLG/a7+26BYa85knaxb33uoUkEJgvR3/1EX4RUTtD/NvWcNszlnr7SGh4sdZv3GoWciQL+6X6/P22QWaqGUeC0/qNgzkBDJsXwWpvwH80HhMSn7OXYmN9rIF1AcGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752783596; c=relaxed/simple;
-	bh=ll4zLSoP/0JpovnjsFh1zK3OUkZpkwvJfmXIVQd06uc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rr9I7uSoze1QNTa8Ea+zFN+U1XTaTM91+MRCodZcQ0I+eH7RePqhaMHsYkF+hFTqpDZsSl+JhKzg7utHzsntnflGJaJVfyZr61uB/axadPtxl+qiKg5M6QKDJaD1QaFyMWSxTHFVaH19fEjQKHWxIoj542HoBW8xkeOQB4ocyXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 979162C0646D;
-	Thu, 17 Jul 2025 22:12:03 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 7BA6044FAC7; Thu, 17 Jul 2025 22:12:03 +0200 (CEST)
-Date: Thu, 17 Jul 2025 22:12:03 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Keith Busch <kbusch@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Parav Pandit <parav@nvidia.com>, virtualization@lists.linux.dev,
-	stefanha@redhat.com, alok.a.tiwari@oracle.com,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH RFC v5 1/5] pci: report surprise removal event
-Message-ID: <aHlZE18kPuHuDtTT@wunner.de>
-References: <cover.1752094439.git.mst@redhat.com>
- <fba3d235e38c1c6fcef2a30ed083ad9e25b20fa3.1752094439.git.mst@redhat.com>
- <aHSfeNhpocI4nmQk@wunner.de>
- <20250717091025-mutt-send-email-mst@kernel.org>
+	s=arc-20240116; t=1752783166; c=relaxed/simple;
+	bh=Y9BOWo1aGEIwbtA3tQmCs7treaSOmjwErr427SNsKV8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CfdXRP7wfz+JLvVuqSKedqUziU9IvkoJE6yiDqEZZMx5MfIsS89cHDkIqCTI9AsdOAHcVil3zj2sdDEM9A3pOUfuqFjxnVD7TJW50kCqrFrtbbHjzlv6fdDaT+EGJbgFti0Y4fA5oZatVan5MSyrI25cJ7R1gXH/h9Ad1Pb91cI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MV+7GME6; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752783163;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=KwbrI84IedQLHDSyTV7Sjdel/mNA8veF7wrxE3TB6nI=;
+	b=MV+7GME6rJOEQ0mJGtBM+PL0UR/4sQHRoz0/Oi51aZJQCDDC6HzZjj7dC/KUiOprvx3Am4
+	3aPUDZcOoy6iSEaInK4qo7Ue+jmlJMF1mMlg77wVWvtM+wm8YIbQE9iE7wNKkgurihzJk9
+	FO19+UiPnnKE2u+n47xNA72SrLCVN/I=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-631-BGnqyNC_MbCZPO4nlpCdUA-1; Thu, 17 Jul 2025 16:12:42 -0400
+X-MC-Unique: BGnqyNC_MbCZPO4nlpCdUA-1
+X-Mimecast-MFC-AGG-ID: BGnqyNC_MbCZPO4nlpCdUA_1752783161
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45624f0be48so7181705e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 13:12:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752783161; x=1753387961;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=KwbrI84IedQLHDSyTV7Sjdel/mNA8veF7wrxE3TB6nI=;
+        b=PVQeHoNBbPHkwFlX4LSUOYXwFLRbIhJajjtroykpld5jyrNJ46V7ZcpJ5+eD8nsbaI
+         +J5BGZMG72qhradZFcMuANttKtWDiTpi9qnvebfcE2XGnK6a9s/pWpP1FbhUxDkIOzRO
+         GGvdKg9yOrBBmMztCeBO070nwHTK9yPsFnDIhLqTbDwYsdrqBlmUI3lmXAw6U/yqN9Pi
+         Bm91uXNi72I2nq9oCkSMiEfx77OP3YlZYLkzrIiSDLZnEJQs0tP37ox1tRLdTRiY/Vp9
+         SOKNhyCZPNcV6Va/jX9ayKBYYqDJ4bnDigCx6hbqaBKsSCyxVWa7O0uy15MUr5t2XElk
+         3zfg==
+X-Gm-Message-State: AOJu0YzfqaN2VT/eO2GgkmIuDymHjfGmiIG7Si58JlEE3ePFTQO0TkmT
+	IlE6UxDr479K3iDiw17DXALuln6u3/1T9EufB8RusRFaFf25KTUsaZoxiB5uCB6I9drt3M3mXpu
+	HT3n4SUJYWRjnxMUYlzP2yA57mOOjZT4LCMlYyZp9avm6qzVxJKpfiLZnRMd3uRl2IA==
+X-Gm-Gg: ASbGnctw0vjEcRkIhJhwHPFcSYwzcKIBxow6De5SrZc7NiuD6q7dJql0yLpX7tDWKZ6
+	NsVF/iubmw+tnqddyn+XdLmUkTbbf7DoYZtFeyA5acR8Du2Ekrh+SR6UWsIHjKzrHEdZ8gT+XOD
+	7rg56ik5ZXzO8UAIalaVN31U77VzveueXAhODebmTPK9dYUMmiOsX58+YaGuBKozgEEGAvXuLzI
+	EK3m0tU6bOM9AvLIXtYHDL7xjXAWVo2eEjduvCcU/hv45mjzfPHLUaCKQK4WNloPuC2nVwajC+Z
+	ObTxjYJ01wrsy8hGGBB0mxkjx/smTL8X1S5WNI7ehJxLDm5LPynpOyhAJTAoWBkNC9aFSI0itjF
+	SQv9UovS+pU8L74YtIaOERNPv2/QP4lJDw5q+W7vKes/exR8feTDVbUhyelIBWpZB
+X-Received: by 2002:a05:600c:8209:b0:456:eb9:5236 with SMTP id 5b1f17b1804b1-4563253d35emr65010585e9.15.1752783160738;
+        Thu, 17 Jul 2025 13:12:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHauEOdTi1gNn5e67j5pIyWoWtoQZGIdE1jxaf6Cv3U+77VZ32+s2gCNs4Xz5QMDsPlAlc41Q==
+X-Received: by 2002:a05:600c:8209:b0:456:eb9:5236 with SMTP id 5b1f17b1804b1-4563253d35emr65010405e9.15.1752783160218;
+        Thu, 17 Jul 2025 13:12:40 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f35:2b00:b1a5:704a:6a0c:9ae? (p200300d82f352b00b1a5704a6a0c09ae.dip0.t-ipconnect.de. [2003:d8:2f35:2b00:b1a5:704a:6a0c:9ae])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b600a39281sm13907105f8f.73.2025.07.17.13.12.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Jul 2025 13:12:39 -0700 (PDT)
+Message-ID: <d62fd5c9-6ee1-466f-850b-97046b14ebff@redhat.com>
+Date: Thu, 17 Jul 2025 22:12:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250717091025-mutt-send-email-mst@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 7/9] mm/memory: factor out common code from
+ vm_normal_page_*()
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ xen-devel@lists.xenproject.org, linux-fsdevel@vger.kernel.org,
+ nvdimm@lists.linux.dev, Andrew Morton <akpm@linux-foundation.org>,
+ Juergen Gross <jgross@suse.com>, Stefano Stabellini
+ <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox
+ <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Zi Yan <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+ Hugh Dickins <hughd@google.com>, Oscar Salvador <osalvador@suse.de>,
+ Lance Yang <lance.yang@linux.dev>
+References: <20250717115212.1825089-1-david@redhat.com>
+ <20250717115212.1825089-8-david@redhat.com>
+ <1aef6483-18e6-463b-a197-34dd32dd6fbd@lucifer.local>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <1aef6483-18e6-463b-a197-34dd32dd6fbd@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 17, 2025 at 11:11:44AM -0400, Michael S. Tsirkin wrote:
-> On Mon, Jul 14, 2025 at 08:11:04AM +0200, Lukas Wunner wrote:
-> > On Wed, Jul 09, 2025 at 04:55:26PM -0400, Michael S. Tsirkin wrote:
-> > > At the moment, in case of a surprise removal, the regular remove
-> > > callback is invoked, exclusively.  This works well, because mostly, the
-> > > cleanup would be the same.
-> > > 
-> > > However, there's a race: imagine device removal was initiated by a user
-> > > action, such as driver unbind, and it in turn initiated some cleanup and
-> > > is now waiting for an interrupt from the device. If the device is now
-> > > surprise-removed, that never arrives and the remove callback hangs
-> > > forever.
-> > 
-> > For PCI devices in a hotplug slot, user space can initiate "safe removal"
-> > by writing "0" to the hotplug slot's "power" file in sysfs.
-> > 
-> > If the PCI device is yanked from the slot while safe removal is ongoing,
-> > there is likewise no way for the driver to know that the device is
-> > suddenly gone.  That's because pciehp_unconfigure_device() only calls
-> > pci_dev_set_disconnected() in the surprise removal case, not for
-> > safe removal.
-> > 
-> > The solution proposed here is thus not a complete one:  It may work
-> > if user space initiated *driver* removal, but not if it initiated *safe*
-> > removal of the entire device.  For virtio, that may be sufficient.
+>>
+>> -/*
+>> - * vm_normal_page -- This function gets the "struct page" associated with a pte.
+>> +/**
+>> + * vm_normal_page_pfn() - Get the "struct page" associated with a PFN in a
+>> + *			  non-special page table entry.
 > 
-> So just as an idea, something like this can work I guess?  I'm yet to
-> test this - wrote this on the go -
+> This is a bit nebulous/confusing, I mean you'll get PTE entries with PTE special
+> bit that'll have a PFN but just no struct page/folio to look at, or should not
+> be touched.
+> 
+> So the _pfn() bit doesn't really properly describe what it does.
+> 
+> I wonder if it'd be better to just separate out the special handler, have
+> that return a boolean indicating special of either form, and then separate
+> other shared code separately from that?
 
-Don't bother, it won't work:
+Let me think about that; I played with various approaches and this was 
+the best I was come up with before running in circles.
 
-pciehp_handle_presence_or_link_change() is called from pciehp_ist(),
-the IRQ thread.  During safe removal the IRQ thread is busy in
-pciehp_unconfigure_device() and waiting for the driver to unbind
-from devices being safe-removed.
+> 
+>> + * @vma: The VMA mapping the @pfn.
+>> + * @addr: The address where the @pfn is mapped.
+>> + * @pfn: The PFN.
+>> + * @entry: The page table entry value for error reporting purposes.
+>>    *
+>>    * "Special" mappings do not wish to be associated with a "struct page" (either
+>>    * it doesn't exist, or it exists but they don't want to touch it). In this
+>> @@ -603,10 +608,10 @@ static void print_bad_page_map(struct vm_area_struct *vma,
+>>    * (such as GUP) can still identify these mappings and work with the
+>>    * underlying "struct page".
+>>    *
+>> - * There are 2 broad cases. Firstly, an architecture may define a pte_special()
+>> - * pte bit, in which case this function is trivial. Secondly, an architecture
+>> - * may not have a spare pte bit, which requires a more complicated scheme,
+>> - * described below.
+>> + * There are 2 broad cases. Firstly, an architecture may define a "special"
+>> + * page table entry bit (e.g., pte_special()), in which case this function is
+>> + * trivial. Secondly, an architecture may not have a spare page table
+>> + * entry bit, which requires a more complicated scheme, described below.
+> 
+> Strikes me this bit of the comment should be with vm_normal_page(). As this
+> implies the 2 broad cases are handled here and this isn't the case.
 
-An IRQ thread is always single-threaded.  There's no second instance
-of the IRQ thread being run when another interrupt is signaled.
-Rather, the IRQ thread is re-run when it has finished.
+Well, pragmatism. Splitting up the doc doesn't make sense. Having it at 
+vm_normal_page() doesn't make sense.
 
-In *theory* what would be possible is to plumb this into pciehp_isr().
-That's the hardirq handler.  This one will indeed be run when an
-interrupt comes in while the IRQ thread is running.  Normally the
-hardirq handler would just collect the events for later consumption
-by the IRQ thread.  The hardirq handler could *theoretically* mark
-devices gone while they're being safe-removed.
+I'm sure the educated reader will be able to make sense of it :P
 
-I'm saying "theoretically" because in reality I don't think this is
-a viable approach either:  pciehp_ist() contains code to *ignore*
-link or presence changes if they were caused by a Secondary Bus Reset
-or Downstream Port Containment.  In that case we do *not* want to mark
-devices disconnected because they're only *temporarily* inaccessible.
-This requires waiting for the SBR or DPC to conclude, which can take
-several seconds.  We can't wait in the hardirq handler.
+But I'm happy to hear suggestions on how to do it differently :)
 
-So this cannot be solved with the current architecture of pciehp,
-at least not easily or in an elegant way.  Sorry!
+> 
+>>    *
+>>    * A raw VM_PFNMAP mapping (ie. one that is not COWed) is always considered a
+>>    * special mapping (even if there are underlying and valid "struct pages").
+>> @@ -639,15 +644,72 @@ static void print_bad_page_map(struct vm_area_struct *vma,
+>>    * don't have to follow the strict linearity rule of PFNMAP mappings in
+>>    * order to support COWable mappings.
+>>    *
+>> + * This function is not expected to be called for obviously special mappings:
+>> + * when the page table entry has the "special" bit set.
+> 
+> Hmm this is is a bit weird though, saying "obviously" special, because you're
+> handling "special" mappings here, but only for architectures that don't specify
+> the PTE special bit.
+> 
+> So it makes it quite nebulous what constitutes 'obviously' here, really you mean
+> pte_special().
 
-Thanks,
+Yes, I can clarify that.
 
-Lukas
+> 
+>> + *
+>> + * Return: Returns the "struct page" if this is a "normal" mapping. Returns
+>> + *	   NULL if this is a "special" mapping.
+>> + */
+>> +static inline struct page *vm_normal_page_pfn(struct vm_area_struct *vma,
+>> +		unsigned long addr, unsigned long pfn, unsigned long long entry)
+>> +{
+>> +	/*
+>> +	 * With CONFIG_ARCH_HAS_PTE_SPECIAL, any special page table mappings
+>> +	 * (incl. shared zero folios) are marked accordingly and are handled
+>> +	 * by the caller.
+>> +	 */
+>> +	if (!IS_ENABLED(CONFIG_ARCH_HAS_PTE_SPECIAL)) {
+>> +		if (unlikely(vma->vm_flags & (VM_PFNMAP | VM_MIXEDMAP))) {
+>> +			if (vma->vm_flags & VM_MIXEDMAP) {
+>> +				/* If it has a "struct page", it's "normal". */
+>> +				if (!pfn_valid(pfn))
+>> +					return NULL;
+>> +			} else {
+>> +				unsigned long off = (addr - vma->vm_start) >> PAGE_SHIFT;
+>> +
+>> +				/* Only CoW'ed anon folios are "normal". */
+>> +				if (pfn == vma->vm_pgoff + off)
+>> +					return NULL;
+>> +				if (!is_cow_mapping(vma->vm_flags))
+>> +					return NULL;
+>> +			}
+>> +		}
+>> +
+>> +		if (is_zero_pfn(pfn) || is_huge_zero_pfn(pfn))
+> 
+> This handles zero/zero huge page handling for non-pte_special() case
+> only. I wonder if we even need to bother having these marked special
+> generally since you can just check the PFN every time anyway.
+
+Well, that makes (a) pte_special() a bit weird -- not set for some 
+special pages and (b) requires additional runtime checks for the case we 
+all really care about -- pte_special().
+
+So I don't think we should change that.
+
+[...]
+
+>>
+>> +/**
+>> + * vm_normal_folio() - Get the "struct folio" associated with a PTE
+>> + * @vma: The VMA mapping the @pte.
+>> + * @addr: The address where the @pte is mapped.
+>> + * @pte: The PTE.
+>> + *
+>> + * Get the "struct folio" associated with a PTE. See vm_normal_page_pfn()
+>> + * for details.
+>> + *
+>> + * Return: Returns the "struct folio" if this is a "normal" mapping. Returns
+>> + *	   NULL if this is a "special" mapping.
+>> + */
+> 
+> Nice to add a comment, but again feels weird to have the whole explanation in
+> vm_normal_page_pfn() but then to invoke vm_normal_page()..
+
+You want people to do pointer chasing to find what they are looking for? :)
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
