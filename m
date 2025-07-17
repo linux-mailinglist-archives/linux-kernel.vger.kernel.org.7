@@ -1,139 +1,140 @@
-Return-Path: <linux-kernel+bounces-735064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86C6BB08A65
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:18:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4121CB08A6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:20:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AEC01C2314E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:18:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81E1256098F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:20:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E2D291C34;
-	Thu, 17 Jul 2025 10:18:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17FF629992B;
+	Thu, 17 Jul 2025 10:20:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z1USvtfD"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IBsNLYvI"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A331E1DE9;
-	Thu, 17 Jul 2025 10:18:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D144A1E1DE9;
+	Thu, 17 Jul 2025 10:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752747512; cv=none; b=k+0jkDwn8qZIqJY5fOVIl+p4y/aTSHpPRYHfu5ZZAQb6E2bym0F6QYmRfIBMgcadfi2D48OYk/TxZHeLc2OJVcyBWQqvZPC6KwXwZSItWyP5o9EVo8XWfe3nb8TZWfKy3WVvl12syNojF9FHoMu2yXCXoqbBP2n1g08HSISvP2I=
+	t=1752747622; cv=none; b=MY7j+NjftqBeVdPC/ZROarsDcw678XNFSTVO+qK8ahywgVB2L244NEJ2fu4fFXgMYud1pPKTw8rpdK5C7g2sp/xFwUlmKNZVM5+D+5h25kSzkBCH7GbgZ5IxJE5CMShcM8PkxPkLSr6IKhYXuV1M8OG3z4EqbzHS7JLXbeMEtk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752747512; c=relaxed/simple;
-	bh=UdkMaNQ5XdKn1NCcxIgSZbT+EuyNvw60BoYf1c/uglw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RDmZwhOxZLn5QjpiqOIdFQCpWYWgG5sjOk/WwiWdZkz0XH0sYZX7gKmpaU6dYjQ9upp4mIJOR04kAUxWhh9MlEHe+xahXvwGavbLjHzSBWjn7u/qndRbYtrBRbtNIPLAx5+LxRTtrc2ja4GmV91JodccY0JGxtBVtjmvt4FISB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z1USvtfD; arc=none smtp.client-ip=209.85.221.42
+	s=arc-20240116; t=1752747622; c=relaxed/simple;
+	bh=hiL8PeW9E547x46ejeKBtYo91AKJR5q+WcE1Wsi3I6o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cbp2CZR7kBy1Rplz22VQQkZwHYWKTcI5ruyzuMM6skcOKi5xs0MJLGUCB/znNokIDc8y4E6EVwDUsDWBMci+kCKWUZ0A8hAxfKWIAB/saRrP5TuFKO9DEA1XiLuR5QUz4kc+SOvPqsJO0PMS9hNUCVnm8yF4DoDf8cPz2M/7kuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IBsNLYvI; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a4fd1ba177so517158f8f.0;
-        Thu, 17 Jul 2025 03:18:30 -0700 (PDT)
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a6cdc27438so637677f8f.2;
+        Thu, 17 Jul 2025 03:20:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752747509; x=1753352309; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yJUJCrrGY1mC5sb7uP4Q2ZDApWsnctQlMWRg7UQIEV4=;
-        b=Z1USvtfDgWsTWA8LObUZws4o23BpcBZ6zeuHXE1gfu2Aa4ndcwgKuPAnYM7D4BcFhn
-         QvOL33M7v3a7tozjEl2EzkiTh3zOvGooBIMQCXGOUOE3z2rwx0WT0wuiVEMLinDsguD+
-         x/R9/lQWvTvz6VPLlvQJQCysqMmU+asIzCoz58i8+wJwwK34oc5mRU7mKwC9JumOBA2a
-         j0xCuic4vl7OIfmpEK+5pOfeKBHtuLpEo9BTJbLL+6xM4BOam1YNELbVN4vdP85upF+M
-         4Q33tWREW6H1NPtFUjfd1QTxbU2qSk8N94wL8pd9nR+MmfeBr65Qmpyu31XTPXUqab5w
-         LCFQ==
+        d=gmail.com; s=20230601; t=1752747618; x=1753352418; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=A3nqRBi7n+rmYbqWhl2914eyEJuadwuJxywGJKNC2w4=;
+        b=IBsNLYvIbb648B/Wl5slbiSQzJwRyP5YwYwgsx+rRKW8zITSZmsPIsnxo3xdDAfdrs
+         P2MsIXxw4M9Tv1cotdccgFIOp0lERz38gPnkGxewDjead7AgPbK/lLs7QSBVZs4sTqKN
+         2Lsz5YmbSiEfDI00So+m5MACwy0YJY6viRpMZ4y+iXClItbWDRvdI/nXq15NSh0Yutvy
+         MBgKWnC2yikTP5H9YrpH4VFHSm0df2/uOyxTDiM+jcmaEfflubcHdba77h/RQWAk8IE5
+         kOCc1sXSUfhJCYE5RsyDk42BamO/OqjyBs6BgXcnBRLhK43MEYepP1a6lNQ/XROc+1wm
+         BqRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752747509; x=1753352309;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=yJUJCrrGY1mC5sb7uP4Q2ZDApWsnctQlMWRg7UQIEV4=;
-        b=oVxB+j4HBls7WYBNlVW9KYmKfj20rrrlS/9zdlJiERvJmeO9cjwzQMIujxARU6GuSs
-         kOr+AFCYvzIb/NWP8oXBA4f74GbUihNWjN/z7isFzM9GkX56UkI9usXeqeiNNyAMcBre
-         MZCDB7NzY2eseknrEjEY+kvAZyMkx9diTAxh7tG5MalpOKd7Vs0GbgY1CW+eEwWn5E2t
-         NDXKPxObYBYIq8bLEcwl84YaAKUSxHdniX4pIxgQb9fndE/8Zb3tYzobdSn8uxJl4eHB
-         yf6Zn5fW4BFooD3OnCsz05SUFK3YywKjRZivELRHykjPaH5LwIDLWwyunoOsu7JzDy5R
-         tJGg==
-X-Forwarded-Encrypted: i=1; AJvYcCVGx7pZkYT4jC/HFihqt4kX80iPjwpHMDU2IxLjFCTmTO0Rxvze2wFJ/kSdUch4dcCEPumoHrw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6RFM/tQ96MylpLrp3wM+kInDnQjjSfFXlkhUW/jWLts635ei7
-	RRhtIzKV9J9VCvraVQHIq9J+Is5/KCJTx+LRQHyvguX0yrsVtXFPjUY4
-X-Gm-Gg: ASbGncuTY2uHRF7aCYikPITkRLyLJ/squP9QfuIp8OPaNfE2nKxRjMc5M0SyiGiezIp
-	Ej2VXi388m/IZvEZ96orEXEASjd/qoRpdBJSjYFDjNnE/9qCYvdHvRJ3osw8Nf2CBJSqYRg3oaq
-	I3uNHQ0JCM6gXtD79DpUuz9PuwMg6wRJhgBPOk8KWklKNETHGgemWGHWP0bq0ielsMcEKFYJ7tr
-	0MVXB7EM4uLMvvjceV/5Pa+10kQ/3Uo7qhTaAKlrxnqTB0n1XQjNkijBsfxFoUQoIOn+sVTLPlJ
-	s8OVmd1ECWmdOwSy0qQkVIKQhNIqtotIpbIjqcxnvMP1TsWTfaGTw3+etVFn
-X-Google-Smtp-Source: AGHT+IEDRCRoXA3j3hUcXdK6LLnmg68YMkKzm5D5pcFNpm7nGUBTMSLcudMdQSXLH9/Aa0UCq5JukA==
-X-Received: by 2002:a05:6000:645:b0:3a5:8991:64b7 with SMTP id ffacd0b85a97d-3b613a3ef64mr2017707f8f.26.1752747508880;
-        Thu, 17 Jul 2025 03:18:28 -0700 (PDT)
-Received: from debian ([45.84.137.104])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e80246asm46337205e9.10.2025.07.17.03.18.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Jul 2025 03:18:28 -0700 (PDT)
-Message-ID: <790b80ea-dee7-fd7b-aa42-e0cb5641737f@gmail.com>
-Date: Thu, 17 Jul 2025 12:18:13 +0200
+        d=1e100.net; s=20230601; t=1752747618; x=1753352418;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=A3nqRBi7n+rmYbqWhl2914eyEJuadwuJxywGJKNC2w4=;
+        b=I/1WHXI1gg4iz+/zP/5ncjUkjNP93XG83QGLHkM2WAyJgocMaNi8aqJNJDVcJF3g5D
+         Y/XybmgoXKBZpu9LPjiPzwA+k+uxVgPgDlpl7IuxWBgrQLwBCi7YxRH5n/ceNQjjrHlY
+         H+QMJCsM3IXt+pnTCAEn1g9mEGaMBP3m7L+kJbLv/Hprw7Cql1LrUe7YGfQh1hRhjvnK
+         yu/9m+YcNpHBPCJc/cnJhFiVPR09cjVlt36yns3tljcSIOd3iWIs5tcQ6zmivztIUP69
+         3F57PfojhXrzV3HzlMxXBZ/TtfHfGulvU+hQc9mEsybGroC6iGLueGGCpgJJEOzYzSQ4
+         LSrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+2dBhzY1JttF2Fpv/gDJxXy0LBoeUwOCtr1q0+Ora2xjwGWYAfXrmYgwGzmy0Nj9yiqK7Jm+d@vger.kernel.org, AJvYcCWDh4j4pJYwMcnqlK7LJSXV2NJ6O5XczB3oQHA7bK4sTa6eWSFqwCWBk9XlEfiAvDkVKUgJmbO1mZvm5dcE@vger.kernel.org, AJvYcCWZOOPCL6VHBBEmL2JrP8FSNQDeMbloVi52hXfuQAUhkhXSb6McmVBJZJcQlm4dOxmdu5396W/87NI3@vger.kernel.org, AJvYcCX3Nldd36smRKOK7501zTm1HvVod2jHAQmzoarFFKJtdAWA2Dv/qUHx4tYti5CViXCKm8vSDxcq7289lZRL9g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZboRq8fgpa896IgZ0uf6Q98H26c1Enj2cr4QUtfEwQ+LjTssu
+	GQokrIKo/fdkIYnsHkeqhR+X3cnlVH1likkMKULcUz0DxQTsamoLas7stTP1RJnwN+YFDybuefW
+	eQwJTPk2ieT52EDufx1jJM/3DnO0TRQ==
+X-Gm-Gg: ASbGncuR6WYKKITaIj2erHqmd7ui8wOxBdkHifSa5S59pKAqr42TBcnx8rVgeqM1w7c
+	pEQU84+hctPrt1TMC0LHw6xZrlr5nhkzL/clcX9SdjIo9wLg0D0fvYPWmDzBW8zGmX8S195jG5b
+	TYqTNGP7PLZLCgCy39ry3ob1L6xipBDvRrrJHWamTpvTQpU3xBBM3WVHhVfMdG0J+Il3Cxao2oO
+	ja+xbw=
+X-Google-Smtp-Source: AGHT+IEExzPg1ZFquopOlKqZeD7zQXYVPzF86QGynEvx2ljIbgvGg2a1b926W4qwEBzJfp6GnS5qUDt4LwMU28iXFjY=
+X-Received: by 2002:a05:6000:2482:b0:3a5:5fa4:a3f7 with SMTP id
+ ffacd0b85a97d-3b60e54a361mr4528105f8f.58.1752747617790; Thu, 17 Jul 2025
+ 03:20:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net] net: fix segmentation after TCP/UDP fraglist GRO
-To: Felix Fietkau <nbd@nbd.name>, netdev@vger.kernel.org,
- Eric Dumazet <edumazet@google.com>, Neal Cardwell <ncardwell@google.com>,
- Kuniyuki Iwashima <kuniyu@google.com>, "David S. Miller"
- <davem@davemloft.net>, David Ahern <dsahern@kernel.org>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Willem de Bruijn <willemb@google.com>
-Cc: linux-kernel@vger.kernel.org
-References: <20250705150622.10699-1-nbd@nbd.name>
-From: Richard Gobert <richardbgobert@gmail.com>
-In-Reply-To: <20250705150622.10699-1-nbd@nbd.name>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250701183625.1968246-1-alex.vinarskis@gmail.com> <20250701183625.1968246-2-alex.vinarskis@gmail.com>
+In-Reply-To: <20250701183625.1968246-2-alex.vinarskis@gmail.com>
+From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+Date: Thu, 17 Jul 2025 12:20:04 +0200
+X-Gm-Features: Ac12FXyjBUphoLYn2GR7CZGe1qBId6Bk9wQMdDWE_cy5din5jYzLL32gxBGRlVA
+Message-ID: <CAMcHhXouMRKEu+1hK-XYeuHa9RCXsEOR=ho0vEVCXewTsWFrtw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] arm64: dts: qcom: x1e80100-pmics: Disable pm8010
+ by default
+To: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, laurentiu.tudor1@dell.com, 
+	abel.vesa@linaro.org, bryan.odonoghue@linaro.org, 
+	jens.glathe@oldschoolsolutions.biz, stable@vger.kernel.org, 
+	Johan Hovold <johan+linaro@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Felix Fietkau wrote:
-> Since "net: gro: use cb instead of skb->network_header", the skb network
-> header is no longer set in the GRO path.
-> This breaks fraglist segmentation, which relies on ip_hdr()/tcp_hdr()
-> to check for address/port changes.
-> Fix this regression by selectively setting the network header for merged
-> segment skbs.
-> 
-> Fixes: 186b1ea73ad8 ("net: gro: use cb instead of skb->network_header")
-> Signed-off-by: Felix Fietkau <nbd@nbd.name>
+On Tue, 1 Jul 2025 at 20:36, Aleksandrs Vinarskis
+<alex.vinarskis@gmail.com> wrote:
+>
+> pm8010 is a camera specific PMIC, and may not be present on some
+> devices. These may instead use a dedicated vreg for this purpose (Dell
+> XPS 9345, Dell Inspiron..) or use USB webcam instead of a MIPI one
+> alltogether (Lenovo Thinbook 16, Lenovo Yoga..).
+>
+> Disable pm8010 by default, let platforms that actually have one onboard
+> enable it instead.
+>
+> Cc: <stable@vger.kernel.org>
+> Fixes: 2559e61e7ef4 ("arm64: dts: qcom: x1e80100-pmics: Add the missing PMICs")
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
 > ---
->  net/ipv4/tcp_offload.c | 1 +
->  net/ipv4/udp_offload.c | 1 +
->  2 files changed, 2 insertions(+)
-> 
-> diff --git a/net/ipv4/tcp_offload.c b/net/ipv4/tcp_offload.c
-> index d293087b426d..be5c2294610e 100644
-> --- a/net/ipv4/tcp_offload.c
-> +++ b/net/ipv4/tcp_offload.c
-> @@ -359,6 +359,7 @@ struct sk_buff *tcp_gro_receive(struct list_head *head, struct sk_buff *skb,
->  		flush |= skb->ip_summed != p->ip_summed;
->  		flush |= skb->csum_level != p->csum_level;
->  		flush |= NAPI_GRO_CB(p)->count >= 64;
-> +		skb_set_network_header(skb, skb_gro_receive_network_offset(skb));
->  
->  		if (flush || skb_gro_receive_list(p, skb))
->  			mss = 1;
-> diff --git a/net/ipv4/udp_offload.c b/net/ipv4/udp_offload.c
-> index 85b5aa82d7d7..e0a6bfa95118 100644
-> --- a/net/ipv4/udp_offload.c
-> +++ b/net/ipv4/udp_offload.c
-> @@ -767,6 +767,7 @@ static struct sk_buff *udp_gro_receive_segment(struct list_head *head,
->  					NAPI_GRO_CB(skb)->flush = 1;
->  					return NULL;
->  				}
-> +				skb_set_network_header(skb, skb_gro_receive_network_offset(skb));
->  				ret = skb_gro_receive_list(p, skb);
->  			} else {
->  				skb_gro_postpull_rcsum(skb, uh,
 
-Isn't it better to set the network header in skb_gro_receive_list instead?
+Hi,
 
-Other than that, LGTM.
+I've noticed this was reviewed some time ago, but was not included in
+for upcoming 6.17. Perhaps it was forgotten?
+
+Thanks in advance,
+Alex
+
+>  arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi b/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi
+> index e3888bc143a0..621890ada153 100644
+> --- a/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi
+> @@ -475,6 +475,8 @@ pm8010: pmic@c {
+>                 #address-cells = <1>;
+>                 #size-cells = <0>;
+>
+> +               status = "disabled";
+> +
+>                 pm8010_temp_alarm: temp-alarm@2400 {
+>                         compatible = "qcom,spmi-temp-alarm";
+>                         reg = <0x2400>;
+> --
+> 2.48.1
+>
 
