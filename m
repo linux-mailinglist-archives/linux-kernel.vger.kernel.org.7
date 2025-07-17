@@ -1,260 +1,1098 @@
-Return-Path: <linux-kernel+bounces-734868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33A0DB08763
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:58:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10B98B08765
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:58:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 897671AA4FB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:58:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97CF41AA509C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C080267F4C;
-	Thu, 17 Jul 2025 07:57:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11EF026E6FF;
+	Thu, 17 Jul 2025 07:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YIey0xO2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="pJyiuwTn"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878CE1E5B60;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E442561A2;
 	Thu, 17 Jul 2025 07:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752739075; cv=fail; b=PsKmvn/8g10IRfaPhX9MPlRLKOApIYhbQwQM+eCAa5ysPXFo6FQmNIEt2Ll9fhDKhqspO+vmKaLziwbty58O4P6H4BGU/YP66P8hn6flQdS6iV0TZ+Ar1ws90h/IAUOrrPiaq1k8zVcXGWdqZXXjF6H4w1FV21AyNWeGBzcnvLM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752739075; c=relaxed/simple;
-	bh=nLQ9EPavQPVe/ud5dZMt+a4brHz7hHpB3ISTlw2ffdg=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=hD0u4P0IHfRL+bQt8ankEPmCh+bpv4v0VdC4KabHqv7n8ZXIDcM0tFPUDF8lsm5jhRxcO4UKAbO272m0KBhKd/MQ680qoK/XQ5GPgl8XYNwUmzdAfQV5Ahi4FFK6yosKY/rLJAPAocQXzC4ctnfV4d5urAs+ZMDdjmPs6GJhvP0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YIey0xO2; arc=fail smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752739073; x=1784275073;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=nLQ9EPavQPVe/ud5dZMt+a4brHz7hHpB3ISTlw2ffdg=;
-  b=YIey0xO2cmBHMDAzXM9KZzV6ZY1tP6VEWSBzawV+Pj4sSpDQvWZ7rosl
-   MP7KDL9NPBvXhy9tOIpyw/OGj1/kZ8INLrrkh1MAVAUpTHXKrwPpTzvyL
-   OzVmU9NGwEPhnaety5Bg4ol7isePK2s1yHOu5wUTpcuEWAhMv2CxTib5m
-   xGdSXghvDEA86c4J7KYBy0zVbXo7yyNFe8FQlcsbeIYyDWJejbl+kMn6J
-   8fhVjBA4mJOlUiVAOi15xgxWKQ+KlKmKlVFO8T8fiZ6sNWKfVnSKRsenF
-   tOKXNsB/AS/YpWp95dKiB0VeDr9+u9YXqW5dnY9uAD/DP6s9cvCvWZRFL
-   A==;
-X-CSE-ConnectionGUID: 6tnfx7R3T0uRHAqQW9LPKg==
-X-CSE-MsgGUID: O3NRm9ttQIiosQSKGc2xvQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="72570132"
-X-IronPort-AV: E=Sophos;i="6.16,318,1744095600"; 
-   d="scan'208";a="72570132"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 00:57:46 -0700
-X-CSE-ConnectionGUID: 03V/kVGhQwSaZPQxsNg+8A==
-X-CSE-MsgGUID: 3XBhE5qWT1maMYLH24mC+g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,318,1744095600"; 
-   d="scan'208";a="157100547"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 00:57:45 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Thu, 17 Jul 2025 00:57:45 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Thu, 17 Jul 2025 00:57:45 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (40.107.93.69) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Thu, 17 Jul 2025 00:57:45 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qOXD/YiWFeQzAEEt0ZVzKeBw7xqPm6FYQPJdI+D95RIA9YxeyJ6TN2fg+DGlhzaBpr/tlfkqnc+Y1UNmjsVfO7sXou9oR7VpQGuJA1KijEP71HGRp12UvthypNVUMHVvDcBgEJbrIb1oJxU3y9XtN1rAsllzhvs1jy16lSWsT5wymS0q/vPD4cutvy7dcR0NhHlwhqedgPxtbLKNl1wJIWWyPylY0rPJomsPxDXgnRMatgcEJ30/q3q6rrn4UqUBUQyI20ZEQE3+ADIjoNopOOXSLbCrkgCmthT7EqQnx50eBeKm8QN7f66OEx6bSzOyMHR41n0ATqLR+iEu6ynmmg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cNuDKZikt+Z3NYTz3rCVm037kCDuIpUhK0kboH90nTs=;
- b=wHlpG4EXCmjSqlBW20oTzmZ/Z5WsTouXVx9fPhinZrn7UGdcHdnv/nIUReTqniD2sbW5YnLbAQ11TmlZPiCyPETpaiMigyZ52a5dBWic1xIwcA25tBPo6J+MIet0AoMZMmHZBxWP0bM/cKNEld3OJhlv96LwsexnlZ8bmhf8I4HRJp+8ZWFsktMI0T5IBjDhbj4ojOpr2XyKrQ495s8icIIGS6Sb5SPw1z8gQgAh90TcTpSbEKvCfJxeS0e/b/7WSsI+RaFFzvsSpXeHQnDnoj9DsAzpDH295AiFFmI/VHYLT8Oy4tsJjZjSH/j6mfzAd6xoOGYRC+sBvA2CKuO3sQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
- by SA1PR11MB6806.namprd11.prod.outlook.com (2603:10b6:806:24d::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.28; Thu, 17 Jul
- 2025 07:57:16 +0000
-Received: from CH3PR11MB8660.namprd11.prod.outlook.com
- ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
- ([fe80::cfad:add4:daad:fb9b%6]) with mapi id 15.20.8901.033; Thu, 17 Jul 2025
- 07:57:15 +0000
-Date: Thu, 17 Jul 2025 15:57:03 +0800
-From: Chao Gao <chao.gao@intel.com>
-To: Mathias Krause <minipli@grsecurity.net>
-CC: John Allen <john.allen@amd.com>, Xiaoyao Li <xiaoyao.li@intel.com>,
-	<kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-	<seanjc@google.com>, <pbonzini@redhat.com>, <dave.hansen@intel.com>,
-	<rick.p.edgecombe@intel.com>, <mlevitsk@redhat.com>,
-	<weijiang.yang@intel.com>, <xin@zytor.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
-	Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v11 00/23] Enable CET Virtualization
-Message-ID: <aHisz7hU0VGsf78Z@intel.com>
-References: <20250704085027.182163-1-chao.gao@intel.com>
- <88443d81-78ac-45ad-b359-b328b9db5829@intel.com>
- <aGsjtapc5igIjng+@intel.com>
- <aHgNSC4D2+Kb3Qyv@AUSJOHALLEN.amd.com>
- <faf246f5-70a7-41d5-bd69-ba76dfbf4784@grsecurity.net>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <faf246f5-70a7-41d5-bd69-ba76dfbf4784@grsecurity.net>
-X-ClientProxiedBy: SG2PR04CA0152.apcprd04.prod.outlook.com (2603:1096:4::14)
- To CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752739078; cv=none; b=pRRAp10Gd2jY3yO1qZafDFVudVF+eJJXUNewwxBRjakF2wk/ndSos4FquXTigheKsk5kip+OiEO235eDefcvRHkBPZ4kXHjFqcUzqx4YQe4EDU9wX57X64Vj0Lhy4fs0tdrHeLYPxW5Fb8nKo+kRbCu+zgJ6pyfMBWLqpF/ozwY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752739078; c=relaxed/simple;
+	bh=CcVTc7KcKBeJsIn3ZYTP9zdopJv03OpAr4GLPBMywNE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aFY50E/RDItFbxkZLrQwBwpLZEW+/skiexIS8RFBwkW6O03V2OhhYmlq76umi+eEZHXMY5u5KZ8ryJJTYYW32TaqdKuC+9i1zJ8196ZQO51RhCqLiODH7NqYofMJQB1f6ZnJNA37Xrt9MUOUne5bDBSe73estD0sYkSrNpC+KSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=pJyiuwTn; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1752739066; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=GSnxNWT+oZ0qs2+DOwiqkV1gyeVUDI0IFSMAs5n/Ki0=;
+	b=pJyiuwTn3iSY+U9tEsFWSlM1eAT2tF4EWWY0jPx7LmF/todeWea3YRs8PrSuH5Hy/hYPn45MJ52tQddfZRj+uT0HukM7diIULzYxHrcffLuxcJD0dG+43++7TGO5eqRf7aDVAamnQDngmXueIc+cO+QHTzSaMyL3ioQXf7WzPdA=
+Received: from localhost(mailfrom:guwen@linux.alibaba.com fp:SMTPD_---0Wj7Hs-5_1752739054 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 17 Jul 2025 15:57:45 +0800
+From: Wen Gu <guwen@linux.alibaba.com>
+To: richardcochran@gmail.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: xuanzhuo@linux.alibaba.com,
+	dust.li@linux.alibaba.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	guwen@linux.alibaba.com
+Subject: [PATCH net-next v3] ptp: add Alibaba CIPU PTP clock driver
+Date: Thu, 17 Jul 2025 15:57:34 +0800
+Message-Id: <20250717075734.62296-1-guwen@linux.alibaba.com>
+X-Mailer: git-send-email 2.32.0.3.g01195cf9f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|SA1PR11MB6806:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3dbe5c76-610b-4e6b-f3f9-08ddc5078b99
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?PQLwg0sRb2hEAL486PJWBgvPxYM2b8Ic4FkfW/n5EiO3qVesRX/g0wS3CdOw?=
- =?us-ascii?Q?ni28wp7N4L2RzBznZnfI12Bcm1uwMMq5W9b+FxVccCpaiNrUvfsKk7gBBFCi?=
- =?us-ascii?Q?5TgF9SZDQ+490AvvkykQXwO11WrPAjWTyAtxhGsVNwVC5hNqL2wbi5cjeFaM?=
- =?us-ascii?Q?mxSgKOdyzUBoxxI8anR/DAy3m8MErpTtLsUdrYNQTWc3k/s2tWBEzAHbeSTX?=
- =?us-ascii?Q?A4o9bwF5skSaCgc7NJyWGnaBjn+YNAqPg7shs5PRcdhgJ863LHej9L29ah8p?=
- =?us-ascii?Q?Hla8BfodRfwb/i+0IAyk5rq1aaT6FnDr+YoE8iAxh6iFt1f3GIe6JM/FrFNG?=
- =?us-ascii?Q?Bmb8r5sCZjtdo3SPDIerekGmlfFA3NIrfp1mIRo/wQfsChqAdEB+pgQgZtWV?=
- =?us-ascii?Q?FaPenFqzVw2IEhMeX9tkY4Y79/ayhBQ9e++Kk/fgvoHQVt3lkHV+W6bj9i6u?=
- =?us-ascii?Q?2XXQHBWTxstg8FfCuvrY95Dqq6lKXa/BmlhT2stNOTKT59q2ecscpLludoFC?=
- =?us-ascii?Q?5jKo2axDz6PFOfQxF4mkW7+rRIZu/HkxcfGN9WhSh0HVmf2UMMEhN7Mwf2oy?=
- =?us-ascii?Q?2hIIvLbF+VnSuWHnoyK8g/o0TRLf0enLa0PfhVtm50g/7t6HyVDJ8WbhTnEF?=
- =?us-ascii?Q?4caNqyPsMZ04pr9jaVT85S6ok7uAuK5pelL7gUoz8Qhcz3K6JG0waNoS4/tC?=
- =?us-ascii?Q?/vSL+Bq9faPbL++FK78RCJ9n0BQn8gQngXtyySicPzDPy+KjP5LYkGu5mrj6?=
- =?us-ascii?Q?pJlbmSddFPR2YlrqW7nZESIusAvxZ/qhacMBoSyGAEQQDNi2u3BVIS8SvNGx?=
- =?us-ascii?Q?WwpQh2Y80YscByqwqxKO+yPYhQIPYVYjOYWpUhHfiNivt4PhiSO567OIRb2K?=
- =?us-ascii?Q?ROK7tlL7mNYhKInQL0V1m80c3/XUAXPFxR1Zx8CB3RL7bx4zCE1vWbENNvAI?=
- =?us-ascii?Q?yPaUKl389St1mUv3rh735R+SUfSHHDv55r2yS6KjaQcCg3W7/60EmcqmDlnA?=
- =?us-ascii?Q?2YE26j4Be6HpqC1Hs8Ce4UDuPOYVfuRe8pPz3qfDqnwt55oPie0SGyxJbv/z?=
- =?us-ascii?Q?LVXJnOOlSEXDIVWOwxDInwOKCdMGZvj6uTeWWEnhwsPVtTzz/vwr5S5aHq7D?=
- =?us-ascii?Q?aFxoGL+gEx84idK8Duj7Om5+Mifcz2Drcf3XA+liivAi8TwyYn9549QCuR3J?=
- =?us-ascii?Q?l6yonM1Da1VH6tRylZb+KqNfUbPa0kWT0leYhZS+6gPng1fMfo7CHPCs0Z/Y?=
- =?us-ascii?Q?57TnG8c3XCyvTHrG/51tMEsjH5h4e/ZJC9/cqSDhZFhrJgcpNZjPoVSNKS/g?=
- =?us-ascii?Q?RpvPtKFo1I0eQV2sWxBzEhoMXdqN5eApj8L/4wcGAm4od+KUTwbJo2DdM2V3?=
- =?us-ascii?Q?Qvic6hd9niqB+FHavi573/8YwUKslNo1ugst8iDh5GkjotUi51qTgI9DuvYK?=
- =?us-ascii?Q?mqsKYa9Awfc=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?tve3oBt/nWE5xhxPdusW/jiVor2svZzcCMUUebsfnI9ej5CIMQD02OSoBhzO?=
- =?us-ascii?Q?4Qw5MkqbYODo4ebw7b48EeGmbBwldd4GSDId8MAiMfLxS9ltU4SlSVr7uu/N?=
- =?us-ascii?Q?ldIDziV5UragQDFVfDhxdqdGNd+jYuDRw0Un2u0btQRjr0WEdaAAO7rXb5Hx?=
- =?us-ascii?Q?rgsTtwMcJoAuEKQ6EcSSFZdHDtuCd2vezyT3+QOwIiHZki7iChMbY2yJL/pz?=
- =?us-ascii?Q?pIQ+OaX+HKB/Nzt50ABLzfWKhJZ7NW2okoO23Gzly73GDM8BXqkxz9h9lC2q?=
- =?us-ascii?Q?0tUriG02SxVlP9bsuqjaC14fcXtNviiNX45pK+1j+gZpwX2Mkc4TO9XRkQGJ?=
- =?us-ascii?Q?Npmvu6ptU6z0oE40VPQZbqcAOeZcb5iEUJqFE67jx65xapuJBuSNZnjDZcBx?=
- =?us-ascii?Q?+1ToAEXWwscckCIQq6oCu2FBbCy8kLgN5QjOfjBcUJG+YwQ7G4YwnoH/MD+E?=
- =?us-ascii?Q?lkv5UJKc8Vv+luflXZz0cVv2aK9KoE7k1A/XHYExFw5jS/DP3R5RhmCVPikS?=
- =?us-ascii?Q?sTFadoMA/v4ebxp0vO6q6ckkdNo2EMzKW+ANNF25Iss4MI6m+zjLMGHLe7sh?=
- =?us-ascii?Q?dRE5kVtZ7SCQ3zofvciBe3ZlLbwrENdRUwf7+t3S8LwE06I6ea8EQppRsFOv?=
- =?us-ascii?Q?qP8B21UDCYIZPN8ca2e8Q8m5tl0JZqNEHkW1FARrGEyCY/T8C9WO1RkGVmVA?=
- =?us-ascii?Q?rAEV0hH2RmYUpyDLR2p2Y3Mvu9s+ZpDJkrmQu9NBB2oJ9vPPCk9tP9UnB1sV?=
- =?us-ascii?Q?yAcnD3NikTXWUC7lfFKspeEE4642Jy8Rwmt0NNkGQBONklWx+IvQ53u3LnI3?=
- =?us-ascii?Q?O5nlZevTbhqzL0RWjuOeB06BdXVnGk9MHcKpMrGqBCy7qwtBfKQ4U7WiTZPa?=
- =?us-ascii?Q?dxXv3iHSZ9LQnI+ysU2lzHjNSvg7Ki6Pd8JjOrVGGr3L8vE3gVskoSEIoVt1?=
- =?us-ascii?Q?bTL7xFB0h3W5RubtpLFd1+bV5j3Lzk/hwfastJpWDn/wEHrqmxpo+ctdrHFf?=
- =?us-ascii?Q?VajCfujzSZ4JRDCWkwQ6H+d2bx8boQ1tTVP2x1qdVnaVliGnWa5aaCvrnD8g?=
- =?us-ascii?Q?Xc9dp1AUu7297MVt+1ts4gMRQXTaQn81fo6YolCWLqpYb9vasY2VvSo4rHJn?=
- =?us-ascii?Q?V+xxJohlE4kQ0kkQpkwz/sEtM7eA/t5SmE2qUOMWBgG7tKk/Dp5LdqqkOqKI?=
- =?us-ascii?Q?+ARArEYhXOfl/Pbvq0PUufjV4+7oytDIVWLx5/IQG12SN8Lg/PucDI5nmHHi?=
- =?us-ascii?Q?7QJ/vMdxMMZ9RPzSRRD+bCivlK8KadB4r3MXE75T/Oifv3t0Y7dApPC+deDs?=
- =?us-ascii?Q?khuUBpqlfpOmPGJJiBcJmxb+z/wEEsrBCFgUJuNl2HDNy2GXy9oSZX8v2idj?=
- =?us-ascii?Q?ZQM/LgvlqJPEtsPx4ID20mh9wDaaxmuoYJP2wY7YAgLG5VDAg7UmzGNIQmX4?=
- =?us-ascii?Q?Li3xPqy2MPDbmPt/AOaj2EL+sKehd4I9x4vFa2pk6Y7WDwfCxx07XtExLVHv?=
- =?us-ascii?Q?xaIDRAdNG8Os9XddQQh+IL/XRiiwWsYD48SAD+C5isCcXkRTRTLmYzvtNdw5?=
- =?us-ascii?Q?6VWa7mSCHwRjiQ0bIcmxWSbgVwconPcrEULCYOX9?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3dbe5c76-610b-4e6b-f3f9-08ddc5078b99
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2025 07:57:15.7734
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XmAifwVayHLESmbkPlFxHHrYYJWCUo96hlaUXgoNcLonXfmVj3OItx696LnGHnciq0GCs8yRi+97o6QcAH2iig==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB6806
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 17, 2025 at 09:00:04AM +0200, Mathias Krause wrote:
->On 16.07.25 22:36, John Allen wrote:
->> On Mon, Jul 07, 2025 at 09:32:37AM +0800, Chao Gao wrote:
->>> On Mon, Jul 07, 2025 at 12:51:14AM +0800, Xiaoyao Li wrote:
->>>> Hi Chao,
->>>>
->>>> On 7/4/2025 4:49 PM, Chao Gao wrote:
->>>>> Tests:
->>>>> ======================
->>>>> This series passed basic CET user shadow stack test and kernel IBT test in L1
->>>>> and L2 guest.
->>>>> The patch series_has_ impact to existing vmx test cases in KVM-unit-tests,the
->>>>> failures have been fixed here[1].
->>>>> One new selftest app[2] is introduced for testing CET MSRs accessibilities.
->>>>>
->>>>> Note, this series hasn't been tested on AMD platform yet.
->>>>>
->>>>> To run user SHSTK test and kernel IBT test in guest, an CET capable platform
->>>>> is required, e.g., Sapphire Rapids server, and follow below steps to build
->>>>> the binaries:
->>>>>
->>>>> 1. Host kernel: Apply this series to mainline kernel (>= v6.6) and build.
->>>>>
->>>>> 2. Guest kernel: Pull kernel (>= v6.6), opt-in CONFIG_X86_KERNEL_IBT
->>>>> and CONFIG_X86_USER_SHADOW_STACK options. Build with CET enabled gcc versions
->>>>> (>= 8.5.0).
->>>>>
->>>>> 3. Apply CET QEMU patches[3] before build mainline QEMU.
->>>>
->>>> You forgot to provide the links of [1][2][3].
->>>
->>> Oops, thanks for catching this.
->>>
->>> Here are the links:
->>>
->>> [1]: KVM-unit-tests fixup:
->>> https://lore.kernel.org/all/20230913235006.74172-1-weijiang.yang@intel.com/
->>> [2]: Selftest for CET MSRs:
->>> https://lore.kernel.org/all/20230914064201.85605-1-weijiang.yang@intel.com/
->>> [3]: QEMU patch:
->>> https://lore.kernel.org/all/20230720111445.99509-1-weijiang.yang@intel.com/
->>>
->>> Please note that [1] has already been merged. And [3] is an older version of
->>> CET for QEMU; I plan to post a new version for QEMU after the KVM series is
->>> merged.
->> 
->> Do you happen to have a branch with the in-progress qemu patches you are
->> testing with? I'm working on testing on AMD and I'm having issues
->> getting this old version of the series to work properly.
+This adds a driver for Alibaba CIPU PTP clock. The CIPU, an underlying
+infrastructure of Alibaba Cloud, synchronizes time with reference clocks
+continuously and provides PTP clocks for VMs and bare metals on cloud.
 
-Hi John,
+User space e.g. chrony, in VMs or bare metals can get the value of CIPU
+clock time through the ptp device exposed by this driver.
 
-Try this branch:
+Signed-off-by: Wen Gu <guwen@linux.alibaba.com>
+Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+---
+v3->v2:
+- follow the sysfs convention of one value per file;
+- rename enum constants for brevity;
+- improve macros for printing;
+- add more comments;
+v2->v1:
+https://lore.kernel.org/netdev/20250627072921.52754-1-guwen@linux.alibaba.com/
+- add Kconfig dependency on CONFIG_PCI to fix kernel test
+  robot's complaint.
+v1:
+https://lore.kernel.org/netdev/20250625132549.93614-1-guwen@linux.alibaba.com/
+---
+ MAINTAINERS            |   7 +
+ drivers/ptp/Kconfig    |  13 +
+ drivers/ptp/Makefile   |   1 +
+ drivers/ptp/ptp_cipu.c | 947 +++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 968 insertions(+)
+ create mode 100644 drivers/ptp/ptp_cipu.c
 
-https://github.com/gaochaointel/qemu-dev qemu-cet
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 3887d5906786..4473368390cd 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -786,6 +786,13 @@ S:	Maintained
+ F:	Documentation/i2c/busses/i2c-ali1563.rst
+ F:	drivers/i2c/busses/i2c-ali1563.c
+ 
++ALIBABA CIPU PTP DRIVER
++M:	Wen Gu <guwen@linux.alibaba.com>
++M:	Xuan Zhuo <xuanzhuo@linux.alibaba.com>
++L:	netdev@vger.kernel.org
++S:	Supported
++F:	drivers/ptp/ptp_cipu.c
++
+ ALIBABA ELASTIC RDMA DRIVER
+ M:	Cheng Xu <chengyou@linux.alibaba.com>
+ M:	Kai Shen <kaishen@linux.alibaba.com>
+diff --git a/drivers/ptp/Kconfig b/drivers/ptp/Kconfig
+index 204278eb215e..5811e569a077 100644
+--- a/drivers/ptp/Kconfig
++++ b/drivers/ptp/Kconfig
+@@ -252,4 +252,17 @@ config PTP_S390
+ 	  driver provides the raw clock value without the delta to
+ 	  userspace. That way userspace programs like chrony could steer
+ 	  the kernel clock.
++
++config PTP_1588_CLOCK_CIPU
++	tristate "Alibaba CIPU PTP clock"
++	depends on PTP_1588_CLOCK
++	depends on 64BIT
++	depends on PCI
++	help
++	  This driver adds support for using Alibaba CIPU clock device
++	  as a PTP clock. This is only useful in Alibaba Cloud CIPU
++	  infrastructure.
++
++	  To compile this driver as a module, choose M here: the module
++	  will be called ptp_cipu.
+ endmenu
+diff --git a/drivers/ptp/Makefile b/drivers/ptp/Makefile
+index 25f846fe48c9..a168254d3c35 100644
+--- a/drivers/ptp/Makefile
++++ b/drivers/ptp/Makefile
+@@ -23,3 +23,4 @@ obj-$(CONFIG_PTP_1588_CLOCK_VMW)	+= ptp_vmw.o
+ obj-$(CONFIG_PTP_1588_CLOCK_OCP)	+= ptp_ocp.o
+ obj-$(CONFIG_PTP_DFL_TOD)		+= ptp_dfl_tod.o
+ obj-$(CONFIG_PTP_S390)			+= ptp_s390.o
++obj-$(CONFIG_PTP_1588_CLOCK_CIPU)	+= ptp_cipu.o
+diff --git a/drivers/ptp/ptp_cipu.c b/drivers/ptp/ptp_cipu.c
+new file mode 100644
+index 000000000000..f7b11731efd4
+--- /dev/null
++++ b/drivers/ptp/ptp_cipu.c
+@@ -0,0 +1,947 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * PTP clock for Alibaba CIPU
++ *
++ * Copyright (C) 2025 Alibaba Inc.
++ */
++
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/pci.h>
++#include <linux/ptp_clock_kernel.h>
++#include <linux/types.h>
++#include <linux/version.h>
++#include <linux/utsname.h>
++
++#define DRV_VER_MAJOR		1
++#define DRV_VER_MINOR		3
++#define DRV_VER_SUBMINOR	0
++#ifndef DRV_TYPE
++#define DRV_TYPE		0
++#endif
++#define LINUX_UPSTREAM		0x1F
++
++enum {
++	PTP_CIPU_DEV_RESET,
++	PTP_CIPU_DEV_INIT,
++	PTP_CIPU_DEV_READY,
++}; /* device status */
++
++/* feature bits mask */
++#define PTP_CIPU_M_FT_TAI	BIT(0) /* 1: support TAI. 0: def UTC */
++#define PTP_CIPU_M_FT_EPOCH	BIT(1) /* 1: epoch base, 0: 1970-01-01. */
++#define PTP_CIPU_M_FT_IRQ_ABN	BIT(2) /* 1: abnormal event irq. */
++#define PTP_CIPU_M_FT_IRQ_REC	BIT(3) /* 1: recovery event irq. */
++
++/* timestamp bits mask */
++#define PTP_CIPU_M_TS_ABN	BIT_ULL(63) /* 1: normal, 0: abnormal */
++#define PTP_CIPU_M_TS_RESVD	BIT_ULL(62) /* reserved now */
++
++/* sync status bits mask */
++#define PTP_CIPU_M_ST_DEV_MT	BIT(0) /* maintenance timeout */
++#define PTP_CIPU_M_ST_CLK_ABN	BIT(1) /* atomic clock abnormal */
++#define PTP_CIPU_M_ST_DEV_BUSY	BIT(4) /* cipu device busy */
++#define PTP_CIPU_M_ST_DEV_ERR	BIT(7) /* cipu device error */
++
++#define PTP_CIPU_M_ST_PHC_ISSUE	\
++	(PTP_CIPU_M_ST_DEV_MT | PTP_CIPU_M_ST_CLK_ABN | \
++	 PTP_CIPU_M_ST_DEV_BUSY | PTP_CIPU_M_ST_DEV_ERR)
++
++/* TAI is not supported now */
++#define PTP_CIPU_DRV_CAP (PTP_CIPU_M_FT_EPOCH | PTP_CIPU_M_FT_IRQ_ABN | \
++			  PTP_CIPU_M_FT_IRQ_REC)
++
++struct ptp_cipu_regs {
++	u32	dev_feat;	/* RO, device features */
++	u32	gst_feat;	/* RW, guest features */
++	u32	drv_ver;	/* RW, driver version */
++	u32	env_ver;	/* RW, environment version */
++	u8	dev_stat;	/* RW, device status */
++	u8	sync_stat;	/* RO, sync status */
++	u16	reserved;
++	u32	tm_prec_ns;	/* RO, time precision */
++	u32	epo_base_yr;	/* RO, epoch base */
++	u32	leap_sec;	/* RO, leap second */
++	u32	max_lat_ns;	/* RO, max latency */
++	u32	mt_tout_us;	/* RO, maintenance timeout */
++	u64	tstamp_ns;	/* RO, timestamp */
++	u32	thresh_us;	/* RO, threshold */
++};
++
++#define PTP_CIPU_BAR_0	0
++#define PTP_CIPU_REG(reg) \
++	offsetof(struct ptp_cipu_regs, reg)
++
++enum {
++	EVT_TYPE_PTP,
++	EVT_TYPE_DEV,
++	EVT_TYPE_DRV,
++}; /* event types */
++
++enum {
++	EVT_P_GT_OPS,
++	EVT_P_GT_INVAL,
++	EVT_P_GT_TOUT,
++	EVT_P_GT_ETHRESH,
++	EVT_P_MAX,
++}; /* events related to ptp operations */
++
++enum {
++	EVT_H_CLK_ABN,
++	EVT_H_CLK_ABN_REC,
++	EVT_H_DEV_MT,
++	EVT_H_DEV_MT_REC,
++	EVT_H_DEV_MT_TOUT,
++	EVT_H_DEV_BUSY,
++	EVT_H_DEV_BUSY_REC,
++	EVT_H_DEV_ERR,
++	EVT_H_DEV_ERR_REC,
++	EVT_H_MAX,
++}; /* events related to hardware device */
++
++enum {
++	EVT_D_GENERAL,
++	EVT_D_PROBE_FAIL,
++	EVT_D_MAX,
++}; /* events related to driver ifself */
++
++struct ptp_cipu_stats {
++	u64	ptp_evts[EVT_P_MAX];
++	u64	dev_evts[EVT_H_MAX];
++}; /* statistics */
++
++#define PTP_DEV_ERR(dev, type, event, fmt, ...) \
++	dev_err_ratelimited(dev, "[%02x:%02x]: " fmt, \
++			    type, event, ##__VA_ARGS__)
++#define PTP_DEV_WARN(dev, type, event, fmt, ...) \
++	dev_warn_ratelimited(dev, "[%02x:%02x]: " fmt, \
++			     type, event, ##__VA_ARGS__)
++#define PTP_DEV_INFO(dev, type, event, fmt, ...) \
++	dev_info_ratelimited(dev, "[%02x:%02x]: " fmt, \
++			     type, event, ##__VA_ARGS__)
++
++#define PTP_CIPU_TIMER_PERIOD	(30 * HZ)
++
++struct ptp_cipu_timer_ctx {
++	u64 over_thresh_cnt;
++	u32 thresh_us;
++};
++
++enum {
++	PTP_CIPU_IRQ_0,
++	PTP_CIPU_IRQ_1,
++	PTP_CIPU_IRQ_NUM,
++};
++
++struct ptp_cipu_irq_ctx {
++	irqreturn_t (*irq_func)(int irq, void *data);
++};
++
++struct ptp_cipu_ctx {
++	struct pci_dev *pdev;
++	struct ptp_clock *ptp_clock;
++	struct ptp_clock_info ptp_info;
++	spinlock_t lock; /* lock for getting time */
++	int reg_len;
++	void __iomem *reg_addr;
++	struct ptp_cipu_regs regs;
++	struct ptp_cipu_stats __percpu *stats;
++	time64_t epo_base_ns;
++	struct workqueue_struct	*wq;
++	struct mutex sync_lock;	/* lock for sync_status */
++	struct work_struct sync_work;
++	struct delayed_work gen_timer; /* general timer */
++	struct ptp_cipu_timer_ctx timer_ctx;
++	struct delayed_work mt_timer; /* maintenance check timer */
++	u8 has_issue;
++};
++
++static int cipu_iowrite8_and_check(void __iomem *addr,
++				   u8 value, u8 *res)
++{
++	iowrite8(value, addr);
++	/* If the value is not what the device expects
++	 * or the device is broken, the write will fail.
++	 */
++	if (value != ioread8(addr))
++		return -EIO;
++	*res = value;
++	return 0;
++}
++
++static int cipu_iowrite32_and_check(void __iomem *addr,
++				    u32 value, u32 *res)
++{
++	iowrite32(value, addr);
++	/* If the value is not what the device expects
++	 * or the device is broken, the write will fail.
++	 */
++	if (value != ioread32(addr))
++		return -EIO;
++	*res = value;
++	return 0;
++}
++
++static void ptp_cipu_print_dev_events(struct ptp_cipu_ctx *ptp_ctx,
++				      int event)
++{
++	struct device *dev = &ptp_ctx->pdev->dev;
++	int type = EVT_TYPE_DEV;
++
++	switch (event) {
++	case EVT_H_CLK_ABN:
++		PTP_DEV_ERR(dev, type, event,
++			    "Atomic Clock Error Detected\n");
++		break;
++	case EVT_H_CLK_ABN_REC:
++		PTP_DEV_INFO(dev, type, event,
++			     "Atomic Clock Error Recovered\n");
++		break;
++	case EVT_H_DEV_MT:
++		PTP_DEV_ERR(dev, type, event,
++			    "Maintenance Exception Detected\n");
++		break;
++	case EVT_H_DEV_MT_REC:
++		PTP_DEV_INFO(dev, type, event,
++			     "Maintenance Exception Recovered\n");
++		break;
++	case EVT_H_DEV_MT_TOUT:
++		PTP_DEV_INFO(dev, type, event,
++			     "Maintenance Exception Failed to Recover within %d us\n",
++			     ptp_ctx->regs.mt_tout_us);
++		break;
++	case EVT_H_DEV_BUSY:
++		PTP_DEV_ERR(dev, type, event, "PHC Busy Detected\n");
++		break;
++	case EVT_H_DEV_BUSY_REC:
++		PTP_DEV_INFO(dev, type, event, "PHC Busy Recovered\n");
++		break;
++	case EVT_H_DEV_ERR:
++		PTP_DEV_ERR(dev, type, event, "PHC Error Detected\n");
++		break;
++	case EVT_H_DEV_ERR_REC:
++		PTP_DEV_INFO(dev, type, event, "PHC Error Recovered\n");
++		break;
++	default:
++		break;
++	}
++}
++
++static void ptp_cipu_print_ptp_events(struct ptp_cipu_ctx *ptp_ctx,
++				      int event)
++{
++	struct device *dev = &ptp_ctx->pdev->dev;
++	int type = EVT_TYPE_PTP;
++
++	switch (event) {
++	case EVT_P_GT_OPS:
++		/* no action required */
++		break;
++	case EVT_P_GT_INVAL:
++		PTP_DEV_WARN(dev, type, event,
++			     "PHC Get Time Failed Due to Invalid Timestamp\n");
++		break;
++	case EVT_P_GT_TOUT:
++		PTP_DEV_WARN(dev, type, event,
++			     "PHC Get Time Failed Due to Register Read Timeout\n");
++		break;
++	case EVT_P_GT_ETHRESH:
++		/* aggregate output to timer */
++		break;
++	default:
++		break;
++	}
++}
++
++static int ptp_cipu_record_events(struct ptp_cipu_ctx *ptp_ctx,
++				  int type, int event)
++{
++	switch (type) {
++	case EVT_TYPE_PTP:
++		if (event >= EVT_P_MAX)
++			goto out;
++		this_cpu_inc(ptp_ctx->stats->ptp_evts[event]);
++		ptp_cipu_print_ptp_events(ptp_ctx, event);
++		break;
++	case EVT_TYPE_DEV:
++		if (event >= EVT_H_MAX)
++			goto out;
++		this_cpu_inc(ptp_ctx->stats->dev_evts[event]);
++		ptp_cipu_print_dev_events(ptp_ctx, event);
++		break;
++	case EVT_TYPE_DRV:
++		if (event >= EVT_D_MAX)
++			goto out;
++		break;
++	default:
++		type = 0xff;
++		goto out;
++	}
++	return 0;
++
++out:
++	PTP_DEV_WARN(&ptp_ctx->pdev->dev, type, event,
++		     "Invalid Events\n");
++	return -EINVAL;
++}
++
++/* process exception or recovery, must be protected by sync_lock */
++static int ptp_cipu_process_sync_status(struct ptp_cipu_ctx *ptp_ctx)
++{
++	struct ptp_cipu_regs *regs = &ptp_ctx->regs;
++	u32 last_status, status, diff_status;
++
++	last_status = regs->sync_stat;
++	regs->sync_stat = ioread32(ptp_ctx->reg_addr + PTP_CIPU_REG(sync_stat));
++	status = regs->sync_stat;
++
++	ptp_ctx->has_issue = status & PTP_CIPU_M_ST_PHC_ISSUE ? 1 : 0;
++
++	diff_status = last_status ^ status;
++
++	if (diff_status & PTP_CIPU_M_ST_CLK_ABN)
++		ptp_cipu_record_events(ptp_ctx, EVT_TYPE_DEV,
++				       (status & PTP_CIPU_M_ST_CLK_ABN) ?
++				       EVT_H_CLK_ABN :
++				       EVT_H_CLK_ABN_REC);
++
++	if (diff_status & PTP_CIPU_M_ST_DEV_BUSY)
++		ptp_cipu_record_events(ptp_ctx, EVT_TYPE_DEV,
++				       (status & PTP_CIPU_M_ST_DEV_BUSY) ?
++				       EVT_H_DEV_BUSY :
++				       EVT_H_DEV_BUSY_REC);
++
++	if (diff_status & PTP_CIPU_M_ST_DEV_ERR)
++		ptp_cipu_record_events(ptp_ctx, EVT_TYPE_DEV,
++				       (status & PTP_CIPU_M_ST_DEV_ERR) ?
++				       EVT_H_DEV_ERR :
++				       EVT_H_DEV_ERR_REC);
++
++	if (diff_status & PTP_CIPU_M_ST_DEV_MT) {
++		ptp_cipu_record_events(ptp_ctx, EVT_TYPE_DEV,
++				       (status & PTP_CIPU_M_ST_DEV_MT) ?
++				       EVT_H_DEV_MT :
++				       EVT_H_DEV_MT_REC);
++		if (status & PTP_CIPU_M_ST_DEV_MT)
++			/* Maintenance exception occurs, start a timer
++			 * to check whether the maintenance status can
++			 * be recovered within time mt_tout_us.
++			 */
++			queue_delayed_work(ptp_ctx->wq, &ptp_ctx->mt_timer,
++					   usecs_to_jiffies(regs->mt_tout_us));
++		else if (!(status & PTP_CIPU_M_ST_DEV_MT))
++			/* Maintenance exception recovered. */
++			cancel_delayed_work(&ptp_ctx->mt_timer);
++	}
++	return status;
++}
++
++static void ptp_cipu_gen_timer(struct work_struct *work)
++{
++	struct ptp_cipu_ctx *ptp_ctx = container_of(to_delayed_work(work),
++						    struct ptp_cipu_ctx,
++						    gen_timer);
++	int cpu, thresh, last, now = 0;
++	struct ptp_cipu_stats *stats;
++
++	for_each_possible_cpu(cpu) {
++		stats = per_cpu_ptr(ptp_ctx->stats, cpu);
++		now += stats->ptp_evts[EVT_P_GT_ETHRESH];
++	}
++	last = ptp_ctx->timer_ctx.over_thresh_cnt;
++	thresh = ptp_ctx->timer_ctx.thresh_us;
++
++	ptp_ctx->timer_ctx.over_thresh_cnt = now;
++	ptp_ctx->timer_ctx.thresh_us = ptp_ctx->regs.thresh_us;
++
++	if (now > last)
++		PTP_DEV_WARN(&ptp_ctx->pdev->dev,
++			     EVT_TYPE_PTP, EVT_P_GT_ETHRESH,
++			     "Offset of PHC and System Time Exceeds %d us %d time(s)\n",
++			     thresh, now - last);
++	mod_delayed_work(ptp_ctx->wq, &ptp_ctx->gen_timer,
++			 PTP_CIPU_TIMER_PERIOD);
++}
++
++static void ptp_cipu_mt_timer(struct work_struct *work)
++{
++	struct ptp_cipu_ctx *ptp_ctx = container_of(to_delayed_work(work),
++						    struct ptp_cipu_ctx,
++						    mt_timer);
++	u32 sync_stat;
++
++	mutex_lock(&ptp_ctx->sync_lock);
++	sync_stat = ptp_cipu_process_sync_status(ptp_ctx);
++	if (sync_stat & PTP_CIPU_M_ST_DEV_MT)
++		ptp_cipu_record_events(ptp_ctx, EVT_TYPE_DEV,
++				       EVT_H_DEV_MT_TOUT);
++	mutex_unlock(&ptp_ctx->sync_lock);
++}
++
++static void ptp_cipu_sync_status_work(struct work_struct *work)
++{
++	struct ptp_cipu_ctx *ptp_ctx =
++		container_of(work, struct ptp_cipu_ctx, sync_work);
++
++	mutex_lock(&ptp_ctx->sync_lock);
++	ptp_cipu_process_sync_status(ptp_ctx);
++	mutex_unlock(&ptp_ctx->sync_lock);
++}
++
++static irqreturn_t ptp_cipu_status_handler(int irq, void *data)
++{
++	struct ptp_cipu_ctx *ptp_ctx = (struct ptp_cipu_ctx *)data;
++
++	queue_work(ptp_ctx->wq, &ptp_ctx->sync_work);
++	return IRQ_HANDLED;
++}
++
++static irqreturn_t ptp_cipu_update_threshold(int irq, void *data)
++{
++	struct ptp_cipu_ctx *ptp_ctx = (struct ptp_cipu_ctx *)data;
++
++	ptp_ctx->regs.thresh_us =
++		ioread32(ptp_ctx->reg_addr + PTP_CIPU_REG(thresh_us));
++	mod_delayed_work(ptp_ctx->wq, &ptp_ctx->gen_timer, 0);
++	return IRQ_HANDLED;
++}
++
++static struct ptp_cipu_irq_ctx irq_ctx[PTP_CIPU_IRQ_NUM] = {
++	[PTP_CIPU_IRQ_0] = { .irq_func = ptp_cipu_update_threshold },
++	[PTP_CIPU_IRQ_1] = { .irq_func = ptp_cipu_status_handler }
++};
++
++static int __ptp_cipu_gettimex(struct ptp_cipu_ctx *ptp_ctx,
++			       struct timespec64 *ts,
++			       struct ptp_system_timestamp *sts)
++{
++	struct ptp_cipu_regs *regs = &ptp_ctx->regs;
++	ktime_t tstamp_ns, intvl_ns, sys_ns, phc_ns;
++	struct timespec64 intvl;
++	unsigned long flags;
++
++	ptp_cipu_record_events(ptp_ctx, EVT_TYPE_PTP, EVT_P_GT_OPS);
++
++	spin_lock_irqsave(&ptp_ctx->lock, flags);
++	ptp_read_system_prets(sts);
++	tstamp_ns = readq(ptp_ctx->reg_addr + PTP_CIPU_REG(tstamp_ns));
++	ptp_read_system_postts(sts);
++	spin_unlock_irqrestore(&ptp_ctx->lock, flags);
++
++	if (tstamp_ns & PTP_CIPU_M_TS_ABN) {
++		/* invalid timestamp */
++		ptp_cipu_record_events(ptp_ctx, EVT_TYPE_PTP, EVT_P_GT_INVAL);
++		queue_work(ptp_ctx->wq, &ptp_ctx->sync_work);
++		return -EIO;
++	}
++
++	/* PHC had issues before, but timestamp is currently valid,
++	 * which means that there is an update of the sync_status to process.
++	 */
++	if (ptp_ctx->has_issue)
++		queue_work(ptp_ctx->wq, &ptp_ctx->sync_work);
++
++	intvl = timespec64_sub(sts->post_ts, sts->pre_ts);
++	intvl_ns = timespec64_to_ns(&intvl);
++	if (abs(intvl_ns) > regs->max_lat_ns) {
++		/* register read timeout */
++		ptp_cipu_record_events(ptp_ctx, EVT_TYPE_PTP, EVT_P_GT_TOUT);
++		return -EIO;
++	}
++
++	sys_ns = timespec64_to_ns(&sts->pre_ts) + intvl_ns / 2;
++	phc_ns = ptp_ctx->epo_base_ns + (tstamp_ns &
++		~(PTP_CIPU_M_TS_ABN | PTP_CIPU_M_TS_RESVD));
++
++	if (abs(phc_ns - sys_ns) >
++	    ptp_ctx->timer_ctx.thresh_us * NSEC_PER_USEC)
++		/* time drifting exceeds the threshold, just record it */
++		ptp_cipu_record_events(ptp_ctx, EVT_TYPE_PTP, EVT_P_GT_ETHRESH);
++
++	*ts = ns_to_timespec64(phc_ns);
++	return 0;
++}
++
++static int ptp_cipu_gettimex(struct ptp_clock_info *ptp, struct timespec64 *ts,
++			     struct ptp_system_timestamp *sts_user)
++{
++	struct ptp_cipu_ctx *ptp_ctx =
++			container_of(ptp, struct ptp_cipu_ctx, ptp_info);
++	struct ptp_system_timestamp sts_stack, *sts;
++
++	sts = sts_user ? sts_user : &sts_stack;
++
++	return __ptp_cipu_gettimex(ptp_ctx, ts, sts);
++}
++
++static int ptp_cipu_gettime(struct ptp_clock_info *ptp, struct timespec64 *ts)
++{
++	struct ptp_cipu_ctx *ptp_ctx =
++			container_of(ptp, struct ptp_cipu_ctx, ptp_info);
++	struct ptp_system_timestamp sts;
++
++	return __ptp_cipu_gettimex(ptp_ctx, ts, &sts);
++}
++
++static int ptp_cipu_enable(struct ptp_clock_info *info,
++			   struct ptp_clock_request *request, int on)
++{
++	return -EOPNOTSUPP;
++}
++
++static int ptp_cipu_settime(struct ptp_clock_info *p,
++			    const struct timespec64 *ts)
++{
++	return -EOPNOTSUPP;
++}
++
++static int ptp_cipu_adjfine(struct ptp_clock_info *ptp, long scaled_ppm)
++{
++	return -EOPNOTSUPP;
++}
++
++static int ptp_cipu_adjtime(struct ptp_clock_info *ptp, s64 delta)
++{
++	return -EOPNOTSUPP;
++}
++
++static struct ptp_clock_info ptp_cipu_clock_info = {
++	.owner		= THIS_MODULE,
++	.name		= "ptp_cipu",
++	.adjtime	= ptp_cipu_adjtime,
++	.adjfine	= ptp_cipu_adjfine,
++	.gettimex64	= ptp_cipu_gettimex,
++	.gettime64	= ptp_cipu_gettime,
++	.settime64	= ptp_cipu_settime,
++	.enable		= ptp_cipu_enable,
++};
++
++static int ptp_cipu_set_guest_features(struct ptp_cipu_ctx *ptp_ctx)
++{
++	struct ptp_cipu_regs *regs = &ptp_ctx->regs;
++
++	regs->dev_feat = ioread32(ptp_ctx->reg_addr + PTP_CIPU_REG(dev_feat));
++
++	return cipu_iowrite32_and_check(ptp_ctx->reg_addr +
++					PTP_CIPU_REG(gst_feat),
++					PTP_CIPU_DRV_CAP & regs->dev_feat,
++					&regs->gst_feat);
++}
++
++static int ptp_cipu_set_dev_status(struct ptp_cipu_ctx *ptp_ctx,
++				   int status)
++{
++	return cipu_iowrite8_and_check(ptp_ctx->reg_addr +
++				       PTP_CIPU_REG(dev_stat), status,
++				       &ptp_ctx->regs.dev_stat);
++}
++
++static int ptp_cipu_set_drv_version(struct ptp_cipu_ctx *ptp_ctx)
++{
++	struct ptp_cipu_regs *regs = &ptp_ctx->regs;
++	int version, patchlevel, sublevel;
++	u32 env_ver, drv_ver;
++	int rc;
++
++	if (sscanf(utsname()->release, "%u.%u.%u",
++		   &version, &patchlevel, &sublevel) != 3)
++		return -EINVAL;
++	sublevel = sublevel < 0xFF ? sublevel : 0xFF;
++
++	env_ver = (LINUX_UPSTREAM << 27) | (version << 16) |
++		  (patchlevel << 8) | sublevel;
++
++	rc = cipu_iowrite32_and_check(ptp_ctx->reg_addr +
++				      PTP_CIPU_REG(env_ver),
++				      env_ver, &regs->env_ver);
++	if (rc)
++		return rc;
++
++	drv_ver = (DRV_TYPE << 24) | (DRV_VER_MAJOR << 16) |
++		  (DRV_VER_MINOR << 8) | DRV_VER_SUBMINOR;
++
++	return cipu_iowrite32_and_check(ptp_ctx->reg_addr +
++					PTP_CIPU_REG(drv_ver), drv_ver,
++					&regs->drv_ver);
++}
++
++static int ptp_cipu_init_context(struct ptp_cipu_ctx *ptp_ctx)
++{
++	struct ptp_cipu_regs *regs = &ptp_ctx->regs;
++	void __iomem *reg_addr = ptp_ctx->reg_addr;
++	int rc = -ENOMEM;
++
++	spin_lock_init(&ptp_ctx->lock);
++	mutex_init(&ptp_ctx->sync_lock);
++	ptp_ctx->has_issue = 0;
++	INIT_WORK(&ptp_ctx->sync_work, ptp_cipu_sync_status_work);
++	INIT_DELAYED_WORK(&ptp_ctx->gen_timer, ptp_cipu_gen_timer);
++	INIT_DELAYED_WORK(&ptp_ctx->mt_timer, ptp_cipu_mt_timer);
++
++	ptp_ctx->stats = alloc_percpu(struct ptp_cipu_stats);
++	if (!ptp_ctx->stats)
++		return rc;
++
++	ptp_ctx->wq = alloc_workqueue("ptp-cipu-wq", 0, 0);
++	if (!ptp_ctx->wq)
++		goto out_stats;
++
++	rc = ptp_cipu_set_guest_features(ptp_ctx);
++	if (rc)
++		goto out_wq;
++
++	rc = ptp_cipu_set_drv_version(ptp_ctx);
++	if (rc)
++		goto out_wq;
++
++	regs->tm_prec_ns = ioread32(reg_addr + PTP_CIPU_REG(tm_prec_ns));
++	regs->max_lat_ns = ioread32(reg_addr + PTP_CIPU_REG(max_lat_ns));
++	regs->mt_tout_us = ioread32(reg_addr + PTP_CIPU_REG(mt_tout_us));
++	regs->thresh_us = ioread32(reg_addr + PTP_CIPU_REG(thresh_us));
++
++	if (regs->gst_feat & PTP_CIPU_M_FT_EPOCH) {
++		regs->epo_base_yr = ioread32(reg_addr +
++					    PTP_CIPU_REG(epo_base_yr));
++		ptp_ctx->epo_base_ns = NSEC_PER_SEC *
++				mktime64(regs->epo_base_yr, 1, 1, 0, 0, 0);
++	}
++
++	/* currently we don't support TAI */
++	if (regs->gst_feat & PTP_CIPU_M_FT_TAI)
++		regs->leap_sec = ioread32(reg_addr + PTP_CIPU_REG(leap_sec));
++
++	ptp_ctx->timer_ctx.thresh_us = regs->thresh_us;
++	queue_delayed_work(ptp_ctx->wq, &ptp_ctx->gen_timer,
++			   PTP_CIPU_TIMER_PERIOD);
++	return 0;
++
++out_wq:
++	destroy_workqueue(ptp_ctx->wq);
++out_stats:
++	free_percpu(ptp_ctx->stats);
++	return rc;
++}
++
++static void ptp_cipu_clear_context(struct ptp_cipu_ctx *ptp_ctx)
++{
++	cancel_delayed_work_sync(&ptp_ctx->gen_timer);
++	cancel_delayed_work_sync(&ptp_ctx->mt_timer);
++	cancel_work_sync(&ptp_ctx->sync_work);
++	destroy_workqueue(ptp_ctx->wq);
++	free_percpu(ptp_ctx->stats);
++}
++
++#define REG_ATTR_RO(name) \
++static ssize_t reg_##name##_show(struct device *dev, \
++				 struct device_attribute *attr, char *buf) \
++{ \
++	struct ptp_cipu_ctx *ctx = pci_get_drvdata(to_pci_dev(dev)); \
++	struct ptp_cipu_regs *regs = &ctx->regs; \
++	return sysfs_emit(buf, "0x%x\n", regs->name); \
++} \
++static DEVICE_ATTR_RO(reg_##name)
++
++REG_ATTR_RO(dev_feat);
++REG_ATTR_RO(gst_feat);
++REG_ATTR_RO(drv_ver);
++REG_ATTR_RO(env_ver);
++REG_ATTR_RO(dev_stat);
++REG_ATTR_RO(sync_stat);
++REG_ATTR_RO(tm_prec_ns);
++REG_ATTR_RO(epo_base_yr);
++REG_ATTR_RO(leap_sec);
++REG_ATTR_RO(max_lat_ns);
++REG_ATTR_RO(mt_tout_us);
++REG_ATTR_RO(thresh_us);
++
++#define STATS_ATTR_RO(name, events, index) \
++static ssize_t name##_show(struct device *dev, \
++			   struct device_attribute *attr, char *buf) \
++{ \
++	struct ptp_cipu_ctx *ctx = pci_get_drvdata(to_pci_dev(dev)); \
++	struct ptp_cipu_stats *stats; \
++	u64 sum = 0; \
++	int cpu; \
++	for_each_possible_cpu(cpu) { \
++		stats = per_cpu_ptr(ctx->stats, cpu); \
++		sum += stats->events[index]; \
++	} \
++	return sysfs_emit(buf, "0x%llx\n", sum); \
++} \
++static DEVICE_ATTR_RO(name)
++
++#define PTP_STATS_ATTR_RO(name, index) \
++	STATS_ATTR_RO(name, ptp_evts, index)
++
++#define DEV_STATS_ATTR_RO(name, index) \
++	STATS_ATTR_RO(name, dev_evts, index)
++
++/* PTP events statistics */
++PTP_STATS_ATTR_RO(ptp_gettm, EVT_P_GT_OPS);
++PTP_STATS_ATTR_RO(ptp_gettm_inval_err, EVT_P_GT_INVAL);
++PTP_STATS_ATTR_RO(ptp_gettm_tout_err, EVT_P_GT_TOUT);
++PTP_STATS_ATTR_RO(ptp_gettm_excd_thresh, EVT_P_GT_ETHRESH);
++
++/* device events statistics */
++DEV_STATS_ATTR_RO(dev_clk_abn, EVT_H_CLK_ABN);
++DEV_STATS_ATTR_RO(dev_clk_abn_rec, EVT_H_CLK_ABN_REC);
++DEV_STATS_ATTR_RO(dev_maint, EVT_H_DEV_MT);
++DEV_STATS_ATTR_RO(dev_maint_rec, EVT_H_DEV_MT_REC);
++DEV_STATS_ATTR_RO(dev_maint_tout, EVT_H_DEV_MT_TOUT);
++DEV_STATS_ATTR_RO(dev_busy, EVT_H_DEV_BUSY);
++DEV_STATS_ATTR_RO(dev_busy_rec, EVT_H_DEV_BUSY_REC);
++DEV_STATS_ATTR_RO(dev_err, EVT_H_DEV_ERR);
++DEV_STATS_ATTR_RO(dev_err_rec, EVT_H_DEV_ERR_REC);
++
++static ssize_t drv_cap_show(struct device *dev,
++			    struct device_attribute *attr, char *buf)
++{
++	u32 drv_cap = PTP_CIPU_DRV_CAP;
++
++	return sysfs_emit(buf, "0x%04x\n", drv_cap);
++}
++static DEVICE_ATTR_RO(drv_cap);
++
++static struct attribute *ptp_cipu_attrs[] = {
++	&dev_attr_reg_dev_feat.attr,
++	&dev_attr_reg_gst_feat.attr,
++	&dev_attr_reg_drv_ver.attr,
++	&dev_attr_reg_env_ver.attr,
++	&dev_attr_reg_dev_stat.attr,
++	&dev_attr_reg_sync_stat.attr,
++	&dev_attr_reg_tm_prec_ns.attr,
++	&dev_attr_reg_epo_base_yr.attr,
++	&dev_attr_reg_leap_sec.attr,
++	&dev_attr_reg_max_lat_ns.attr,
++	&dev_attr_reg_mt_tout_us.attr,
++	&dev_attr_reg_thresh_us.attr,
++
++	&dev_attr_ptp_gettm.attr,
++	&dev_attr_ptp_gettm_inval_err.attr,
++	&dev_attr_ptp_gettm_tout_err.attr,
++	&dev_attr_ptp_gettm_excd_thresh.attr,
++
++	&dev_attr_dev_clk_abn.attr,
++	&dev_attr_dev_clk_abn_rec.attr,
++	&dev_attr_dev_maint.attr,
++	&dev_attr_dev_maint_rec.attr,
++	&dev_attr_dev_maint_tout.attr,
++	&dev_attr_dev_busy.attr,
++	&dev_attr_dev_busy_rec.attr,
++	&dev_attr_dev_err.attr,
++	&dev_attr_dev_err_rec.attr,
++
++	&dev_attr_drv_cap.attr,
++	NULL,
++};
++
++static const struct attribute_group ptp_cipu_attr_group = {
++	.attrs = ptp_cipu_attrs,
++	.name = "cipu",
++};
++
++static int ptp_cipu_init_sysfs(struct pci_dev *pdev)
++{
++	return sysfs_create_group(&pdev->dev.kobj, &ptp_cipu_attr_group);
++}
++
++static void ptp_cipu_remove_sysfs(struct pci_dev *pdev)
++{
++	sysfs_remove_group(&pdev->dev.kobj, &ptp_cipu_attr_group);
++}
++
++static int ptp_cipu_init_irq(struct ptp_cipu_ctx *ptp_ctx)
++{
++	struct pci_dev *pdev = ptp_ctx->pdev;
++	int i, rc;
++
++	rc = pci_alloc_irq_vectors(pdev, PTP_CIPU_IRQ_NUM,
++				   PTP_CIPU_IRQ_NUM, PCI_IRQ_MSIX);
++	if (rc < 0)
++		goto out;
++
++	for (i = 0; i < PTP_CIPU_IRQ_NUM; i++) {
++		rc = pci_request_irq(pdev, i, irq_ctx[i].irq_func, NULL,
++				     ptp_ctx, "ptp-cipu");
++		if (rc)
++			goto out_vec;
++	}
++	return 0;
++
++out_vec:
++	for (i = i - 1; i >= 0; i--)
++		pci_free_irq(pdev, i, ptp_ctx);
++	pci_free_irq_vectors(pdev);
++out:
++	return rc;
++}
++
++static void ptp_cipu_clear_irq(struct ptp_cipu_ctx *ptp_ctx)
++{
++	struct pci_dev *pdev = ptp_ctx->pdev;
++	int i;
++
++	for (i = 0; i < PTP_CIPU_IRQ_NUM; i++)
++		pci_free_irq(pdev, i, ptp_ctx);
++	pci_free_irq_vectors(pdev);
++}
++
++static int ptp_cipu_probe(struct pci_dev *pdev,
++			  const struct pci_device_id *id)
++{
++	struct ptp_cipu_ctx *ptp_ctx;
++	int rc;
++
++	ptp_ctx = kzalloc(sizeof(*ptp_ctx), GFP_KERNEL);
++	if (!ptp_ctx) {
++		rc = -ENOMEM;
++		PTP_DEV_ERR(&pdev->dev, EVT_TYPE_DRV, EVT_D_PROBE_FAIL,
++			    "Context Allocated Error: %d\n", rc);
++		return rc;
++	}
++	ptp_ctx->pdev = pdev;
++	pci_set_drvdata(pdev, ptp_ctx);
++
++	rc = pci_enable_device(pdev);
++	if (rc) {
++		PTP_DEV_ERR(&pdev->dev, EVT_TYPE_DRV, EVT_D_PROBE_FAIL,
++			    "PCI Device Enabled Fail: %d\n", rc);
++		goto out_mem;
++	}
++
++	ptp_ctx->reg_len = sizeof(struct ptp_cipu_regs);
++	ptp_ctx->reg_addr = pci_iomap(pdev, PTP_CIPU_BAR_0, ptp_ctx->reg_len);
++	if (!ptp_ctx->reg_addr) {
++		rc = -ENOMEM;
++		PTP_DEV_ERR(&pdev->dev, EVT_TYPE_DRV, EVT_D_PROBE_FAIL,
++			    "PCI IO Map Error: %d\n", rc);
++		goto out_enable;
++	}
++
++	rc = ptp_cipu_set_dev_status(ptp_ctx, PTP_CIPU_DEV_RESET);
++	if (rc) {
++		PTP_DEV_ERR(&pdev->dev, EVT_TYPE_DRV, EVT_D_PROBE_FAIL,
++			    "Initialize Device Status to %d Error: %d\n",
++			    PTP_CIPU_DEV_RESET, rc);
++		goto out_map;
++	}
++
++	rc = ptp_cipu_init_context(ptp_ctx);
++	if (rc) {
++		PTP_DEV_ERR(&pdev->dev, EVT_TYPE_DRV, EVT_D_PROBE_FAIL,
++			    "Initialize Context Error: %d\n", rc);
++		goto out_map;
++	}
++
++	rc = ptp_cipu_set_dev_status(ptp_ctx, PTP_CIPU_DEV_INIT);
++	if (rc) {
++		PTP_DEV_ERR(&pdev->dev, EVT_TYPE_DRV, EVT_D_PROBE_FAIL,
++			    "Initialize Device Status to %d Error: %d\n",
++			    PTP_CIPU_DEV_INIT, rc);
++		goto out_context;
++	}
++
++	rc = ptp_cipu_init_irq(ptp_ctx);
++	if (rc) {
++		PTP_DEV_ERR(&pdev->dev, EVT_TYPE_DRV, EVT_D_PROBE_FAIL,
++			    "Initialize IRQ Error: %d\n", rc);
++		goto out_reset;
++	}
++
++	rc = ptp_cipu_init_sysfs(pdev);
++	if (rc) {
++		PTP_DEV_ERR(&pdev->dev, EVT_TYPE_DRV, EVT_D_PROBE_FAIL,
++			    "Initialize Sysfs Error: %d\n", rc);
++		goto out_irq;
++	}
++
++	ptp_ctx->ptp_info = ptp_cipu_clock_info;
++	ptp_ctx->ptp_clock = ptp_clock_register(&ptp_ctx->ptp_info,
++						&pdev->dev);
++	if (IS_ERR(ptp_ctx->ptp_clock)) {
++		rc = PTR_ERR(ptp_ctx->ptp_clock);
++		PTP_DEV_ERR(&pdev->dev, EVT_TYPE_DRV, EVT_D_PROBE_FAIL,
++			    "PTP Clock Register Error: %d\n", rc);
++		goto out_sysfs;
++	}
++
++	/* all set, enable irqs */
++	rc = ptp_cipu_set_dev_status(ptp_ctx, PTP_CIPU_DEV_READY);
++	if (rc) {
++		PTP_DEV_ERR(&pdev->dev, EVT_TYPE_DRV, EVT_D_PROBE_FAIL,
++			    "Initialize Device Status to %d Error: %d\n",
++			    PTP_CIPU_DEV_READY, rc);
++		goto out_clock;
++	}
++
++	PTP_DEV_INFO(&pdev->dev, EVT_TYPE_DRV, EVT_D_GENERAL,
++		     "Alibaba CIPU PHC Driver Loaded, Version v%d.%d.%d\n",
++		     DRV_VER_MAJOR, DRV_VER_MINOR, DRV_VER_SUBMINOR);
++	return rc;
++
++out_clock:
++	ptp_clock_unregister(ptp_ctx->ptp_clock);
++out_sysfs:
++	ptp_cipu_remove_sysfs(pdev);
++out_irq:
++	ptp_cipu_clear_irq(ptp_ctx);
++out_reset:
++	ptp_cipu_set_dev_status(ptp_ctx, PTP_CIPU_DEV_RESET);
++out_context:
++	ptp_cipu_clear_context(ptp_ctx);
++out_map:
++	pci_iounmap(pdev, ptp_ctx->reg_addr);
++out_enable:
++	pci_disable_device(pdev);
++out_mem:
++	kfree(ptp_ctx);
++	ptp_ctx = NULL;
++	return rc;
++}
++
++static void ptp_cipu_remove(struct pci_dev *pdev)
++{
++	struct ptp_cipu_ctx *ptp_ctx = pci_get_drvdata(pdev);
++
++	ptp_clock_unregister(ptp_ctx->ptp_clock);
++	ptp_cipu_remove_sysfs(pdev);
++	ptp_cipu_set_dev_status(ptp_ctx, PTP_CIPU_DEV_RESET); /* disable irqs */
++	ptp_cipu_clear_irq(ptp_ctx);
++	ptp_cipu_clear_context(ptp_ctx); /* wait for timer/worker to finish */
++	pci_iounmap(pdev, ptp_ctx->reg_addr);
++	pci_disable_device(pdev);
++	kfree(ptp_ctx);
++	PTP_DEV_INFO(&pdev->dev, EVT_TYPE_DRV, EVT_D_GENERAL,
++		     "Alibaba CIPU PHC Driver Unloaded\n");
++}
++
++static const struct pci_device_id ptp_cipu_pci_tbl[] = {
++	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_ALIBABA, 0x500C,
++			 PCI_VENDOR_ID_ALIBABA, 0x1123) },
++	{ }
++};
++MODULE_DEVICE_TABLE(pci, ptp_cipu_pci_tbl);
++
++static struct pci_driver ptp_cipu_driver = {
++	.name		= KBUILD_MODNAME,
++	.id_table	= ptp_cipu_pci_tbl,
++	.probe		= ptp_cipu_probe,
++	.remove		= ptp_cipu_remove,
++};
++
++static int __init ptp_cipu_init(void)
++{
++	return pci_register_driver(&ptp_cipu_driver);
++}
++
++static void __exit ptp_cipu_exit(void)
++{
++	pci_unregister_driver(&ptp_cipu_driver);
++}
++
++module_init(ptp_cipu_init);
++module_exit(ptp_cipu_exit);
++
++MODULE_DESCRIPTION("PTP clock for Alibaba CIPU");
++MODULE_AUTHOR("Wen Gu <guwen@linux.alibaba.com>");
++MODULE_LICENSE("GPL");
+-- 
+2.43.5
 
-Disclaimer: I haven't cleaned up the QEMU patches yet, so they are not of
-upstream quality.
-
->
->For me the old patches worked by changing the #define of
->MSR_KVM_GUEST_SSP from 0x4b564d09 to 0x4b564dff -- on top of QEMU 9.0.1,
->that is.
-
-Please note that aliasing guest SSP to the virtual MSR indexed by 0x4b564dff is
-not part of KVM uAPI in the v11 series. This means the index 0x4b564dff isn't
-stable; userspace should read/write guest SSP via KVM_GET/SET_ONE_REG ioctls.
 
