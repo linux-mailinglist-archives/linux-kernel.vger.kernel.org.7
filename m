@@ -1,133 +1,193 @@
-Return-Path: <linux-kernel+bounces-734747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88096B085C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:01:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 731C6B085D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:01:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C5CDA46322
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:59:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBB06A40AB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:59:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4202D21B9DA;
-	Thu, 17 Jul 2025 06:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA041DDC2A;
+	Thu, 17 Jul 2025 06:59:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IFF79MiQ"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cECTN+eV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F7421B9E0
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 06:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823422185AC;
+	Thu, 17 Jul 2025 06:59:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752735513; cv=none; b=QZ81Ht2qye7KS06Nyoqq6jlUyg1ss8nUn20dUQvzWyytk6CrbWt178HJAu53X7Go1ijPvbonJ7zoyQE+EbfS3Hq7dRBpK49MP+p2acXofuFaIpKv5JF33XM4ueEPTl0pNLmV5+nLRjgsrhbu+QIKTeSWTTkPPbIA0VNVByoqDTw=
+	t=1752735589; cv=none; b=m4/7BZ46i5f1MOAZi0IlfGCJdJIfD1bTKTspeKwTUOR40d4GRYiUuSMeJVu3ubehWWw3l5VkwtVFkUfYA+Ifa1ZAeBxowt6MT+wjDT4YHeiHjbsohSbv07ngAO+sug6nJszvm8Gji3NuLpSQkmhToYOfYNTCWpgBsm4Q9bRyWQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752735513; c=relaxed/simple;
-	bh=z3nRmP03paZuTUzH3iYR6M8dSi+f4ZtXMFt7dicR0HM=;
+	s=arc-20240116; t=1752735589; c=relaxed/simple;
+	bh=WfQDUZl8/0uR3HB4LyHO328cyXvBUlw0A/UhOlJxz1U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VVyV3owgNdHB4Y691B2AMaAsJPsPT98Pys1jBURmwGXcanWYpoOPf+5w2toAA9njSl82GQ1E69B8+QWmaH4MF0FWuZtuM467lCSTzPXcH1nuzmXXW5jqHyMFLolKVPyHQX+/UbX6BUp61V7jJBGJUSjgNs0AWtmqRB/mw9nxDiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IFF79MiQ; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ae04d3d63e6so118729666b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 23:58:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752735510; x=1753340310; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:reply-to:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9STJgt6LNRXF8Cd0XAEgDs1R//egyDOpIAZsOSygi9Q=;
-        b=IFF79MiQbfSPL8FNH7TqLYKSFRyS3biotGYNN6kSNCF244WOv0wmO0eq+iJXRwjo5z
-         YIDb4ekVXn2dMv810C7zEPu3hQBnMeqSlG0L/QI6TgUNDxKWulpH0NPnOy30AJTnxuGQ
-         mGwqb3pABIztx8u7NQ1fg9z3cQOeELeRJH6C42F14Yp71kk8OXNAEwsYW8LBX+Nr6wb7
-         mNlaz3E/l5Spdc6/4yDuukeYU6rU19em8vwkE+0zxgzv1vaItlTs0P5O6Yj1EBnL7Pck
-         FPRjT8ohrCuTmJ2j0Zy9W8OFo3rC69utLHwsAPkpz9ZViGEpA685j+eSXTtshYOYIyx+
-         ILCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752735510; x=1753340310;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:reply-to:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9STJgt6LNRXF8Cd0XAEgDs1R//egyDOpIAZsOSygi9Q=;
-        b=uwrSluHn3BEyTw3uzsHRcEf1HfxUrfAmv/cCKdnlZkr4tciryDhIuiF54XIhxew7V3
-         PoAi1J9X9JyR9akN9821wZ5qrD2gaN1jQehpmuZJ/R2bbvSRRfL4rPNC0NZWhF2C60xQ
-         zUI3ppmTo/fNVlngVerHSbRMa41ynqgVv1GeeW1i5xH5hK0ieFJRNqK+CMzhSOZLshuT
-         z8NQcafC7aVQT6PhSaSvCyQ8gyCdNUpPbaJnYCByIr66osIH4yckOSfJl3y0ElzXeJSC
-         ktpRbcfCKLHD++qXHTlr9pFypc7eqHl+DJ2oD8iGYRlyau//8++nboCzYILHYyY+9tNh
-         N/wQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVMK4sMQRGnbdNX9jtc/qwXmMMkTxpQLYqwOmj/Y6Xa43LGYFWNLHowskeBgVeIcgefVQr1uu5igoLVe5k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZOx2Ltlsob0qwzc+hxXV0w7WQ6lUKmZhjTB66xVRC8HhnrJDf
-	LB6YmJD1R17Qe2PDzEwDuzcILkJDyO3/9pe9yBXNHXfxHIawCwtz8oW1
-X-Gm-Gg: ASbGnctW6lhqKogDAJJi7/FW5xoxObZveis6kIRf36e8szUEiGUMsX/di6gLwjIak7g
-	1A7+QuUtmxc9WmZyqhPcAMvk/zmbNOHRzRegyWCRhrKX77Z8pyaQkpea+cYqcDmB1HNkKeoFF3F
-	oAtW5AdpnRfiKlQSfk/p7gFQaMNDn2bOcdkeKeamJOilt6yOTKHqkmXfJPWWQl4e36Zp81d4AdE
-	ITj/QMrIMZDVv66m7xTV5msJyFaKPQw7C39kFS9Gi25+xvA/C4cEWFlE9RTYub9XbblnP4peXIc
-	fVe+n3lehZfcBKGQIVwaxeSj1x3tyFyzuIMJL4quwixo7uG7qMJXyKbukLYHnhwHHSmmYOen9DG
-	5GkZOyu//ezw7wGLd6gC7eA==
-X-Google-Smtp-Source: AGHT+IGSuH9rjFfBTBD2n4nfGvgPIPAZkajjUrkNKRCRWx0KFpdpdNstIYlk22ZqsSFJbLNieAfhbw==
-X-Received: by 2002:a17:906:7315:b0:ae3:53b3:b67d with SMTP id a640c23a62f3a-ae9cddb6bb5mr521005066b.1.1752735509829;
-        Wed, 16 Jul 2025 23:58:29 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7eeae5fsm1314148266b.64.2025.07.16.23.58.29
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Jul 2025 23:58:29 -0700 (PDT)
-Date: Thu, 17 Jul 2025 06:58:28 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: wang lian <lianux.mm@gmail.com>, broonie@kernel.org, david@redhat.com,
-	lorenzo.stoakes@oracle.com, sj@kernel.org, ziy@nvidia.com,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	brauner@kernel.org, jannh@google.com, Liam.Howlett@oracle.com,
-	shuah@kernel.org, vbabka@suse.cz, ludovico.zy.wu@gmail.com,
-	gkwang@linx-info.com, p1ucky0923@gmail.com, ryncsn@gmail.com,
-	zijing.zhang@proton.me
-Subject: Re: [PATCH] selftests/mm: reuse FORCE_READ to replace "asm
- volatile("" : "+r" (XXX));"
-Message-ID: <20250717065828.cxnjfrl3iir5eb6y@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20250716123126.3851-1-lianux.mm@gmail.com>
- <20250716151543.998b121a58064011e9ce68cb@linux-foundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PieC6B5ENhjhj4R1iyRvC78g4bTw6VUfhkaw1HIbqWlQ7+OyA9smpa+WWei/rhK36kmiiZ/HXqEg9iOpxjl7fO7F50X0vfGmcA8mPCNaUYEnQ6kCktHC410vY+3re0olfapb22PRrZnPyAj1kCKLeLM1fDSWkAKLchfw9/317EM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cECTN+eV; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752735589; x=1784271589;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=WfQDUZl8/0uR3HB4LyHO328cyXvBUlw0A/UhOlJxz1U=;
+  b=cECTN+eVmQPVhXT/U2vkMof1i90qD/D23SrCoISImNpDAxAqykWtphGJ
+   AMCD+kLBwmMG9jlI8L6A4GVmeeXPd/ALBe7UYhl7D07i9s/ov3crmTNwU
+   c2DiPQ/nQ6R6vhZqrk6Y9RVmarwqo27olu4qQJkWPeHRO+tKTCawDLqhD
+   mmB5tuZHpvbpG4itzJol3Tir0YVkXuB6Ahe8Dt2Qy+AesuolkdciN2079
+   xho9XS9em/AymwAS6aoMtLxRU3pKA1U4tC8+cNR+I/gw7fzNModzXkAun
+   J/uND1BJ1SQNs1iwTo94CZQk+VDhmiupBd6zx6elRcVuIkHeUvbp1AzIm
+   Q==;
+X-CSE-ConnectionGUID: onUM6+B2T7OIMYyxrxvWJQ==
+X-CSE-MsgGUID: BqEkDFFhR3uduD0WAO17XQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="57608558"
+X-IronPort-AV: E=Sophos;i="6.16,318,1744095600"; 
+   d="scan'208";a="57608558"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 23:59:48 -0700
+X-CSE-ConnectionGUID: xCcATFy/QTatTT5/uaWjQw==
+X-CSE-MsgGUID: ZIXncjgcTTumw+1qNYHO7A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,318,1744095600"; 
+   d="scan'208";a="188654912"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 16 Jul 2025 23:59:42 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ucIah-000DGd-10;
+	Thu, 17 Jul 2025 06:59:39 +0000
+Date: Thu, 17 Jul 2025 14:59:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.oss.qualcomm.com@kernel.org>,
+	Jeff Johnson <jjohnson@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>,
+	Nirmal Patel <nirmal.patel@linux.intel.com>,
+	Jonathan Derrick <jonathan.derrick@linux.dev>
+Cc: oe-kbuild-all@lists.linux.dev, linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ath12k@lists.infradead.org,
+	ath11k@lists.infradead.org, ath10k@lists.infradead.org,
+	ilpo.jarvinen@linux.intel.com, linux-arm-msm@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+	Qiang Yu <qiang.yu@oss.qualcomm.com>
+Subject: Re: [PATCH 4/6] wifi: ath12k: Use pci_{enable/disable}_link_state()
+ APIs to enable/disable ASPM states
+Message-ID: <202507171411.xOxUslAs-lkp@intel.com>
+References: <20250716-ath-aspm-fix-v1-4-dd3e62c1b692@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250716151543.998b121a58064011e9ce68cb@linux-foundation.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20250716-ath-aspm-fix-v1-4-dd3e62c1b692@oss.qualcomm.com>
 
-On Wed, Jul 16, 2025 at 03:15:43PM -0700, Andrew Morton wrote:
->On Wed, 16 Jul 2025 20:31:26 +0800 wang lian <lianux.mm@gmail.com> wrote:
->
->> Several mm selftests use the `asm volatile("" : "+r" (variable));`
->> construct to force a read of a variable, preventing the compiler from
->> optimizing away the memory access. This idiom is cryptic and duplicated
->> across multiple test files.
->> 
->> Following a suggestion from David[1], this patch refactors this
->> common pattern into a FORCE_READ() macro
->> 
->>  tools/testing/selftests/mm/cow.c              | 30 +++++++++----------
->>  tools/testing/selftests/mm/hugetlb-madvise.c  |  5 +---
->>  tools/testing/selftests/mm/migration.c        | 13 ++++----
->>  tools/testing/selftests/mm/pagemap_ioctl.c    |  4 +--
->>  .../selftests/mm/split_huge_page_test.c       |  4 +--
->>  5 files changed, 24 insertions(+), 32 deletions(-)
->
->The patch forgot to move the FORCE_READ definition into a header?
->
+Hi Manivannan,
 
-I get this after applying the patch.
+kernel test robot noticed the following build errors:
 
-cow.c:1559:9: warning: implicit declaration of function ‘FORCE_READ’; did you mean ‘LOCK_READ’? [-Wimplicit-function-declaration]
- 1559 |         FORCE_READ(mem);
+[auto build test ERROR on 19272b37aa4f83ca52bdf9c16d5d81bdd1354494]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Manivannan-Sadhasivam-via-B4-Relay/PCI-ASPM-Fix-the-behavior-of-pci_enable_link_state-APIs/20250716-205857
+base:   19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+patch link:    https://lore.kernel.org/r/20250716-ath-aspm-fix-v1-4-dd3e62c1b692%40oss.qualcomm.com
+patch subject: [PATCH 4/6] wifi: ath12k: Use pci_{enable/disable}_link_state() APIs to enable/disable ASPM states
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20250717/202507171411.xOxUslAs-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250717/202507171411.xOxUslAs-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507171411.xOxUslAs-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/net/wireless/ath/main.c:22:
+   drivers/net/wireless/ath/ath.h: In function 'ath_pci_aspm_state':
+>> drivers/net/wireless/ath/ath.h:346:26: error: 'PCIE_LINK_STATE_L0S' undeclared (first use in this function)
+     346 |                 state |= PCIE_LINK_STATE_L0S;
+         |                          ^~~~~~~~~~~~~~~~~~~
+   drivers/net/wireless/ath/ath.h:346:26: note: each undeclared identifier is reported only once for each function it appears in
+>> drivers/net/wireless/ath/ath.h:348:26: error: 'PCIE_LINK_STATE_L1' undeclared (first use in this function)
+     348 |                 state |= PCIE_LINK_STATE_L1;
+         |                          ^~~~~~~~~~~~~~~~~~
+--
+   In file included from drivers/net/wireless/ath/ath9k/common.h:19,
+                    from drivers/net/wireless/ath/ath9k/ath9k.h:29,
+                    from drivers/net/wireless/ath/ath9k/beacon.c:18:
+   drivers/net/wireless/ath/ath9k/../ath.h: In function 'ath_pci_aspm_state':
+>> drivers/net/wireless/ath/ath9k/../ath.h:346:26: error: 'PCIE_LINK_STATE_L0S' undeclared (first use in this function)
+     346 |                 state |= PCIE_LINK_STATE_L0S;
+         |                          ^~~~~~~~~~~~~~~~~~~
+   drivers/net/wireless/ath/ath9k/../ath.h:346:26: note: each undeclared identifier is reported only once for each function it appears in
+>> drivers/net/wireless/ath/ath9k/../ath.h:348:26: error: 'PCIE_LINK_STATE_L1' undeclared (first use in this function)
+     348 |                 state |= PCIE_LINK_STATE_L1;
+         |                          ^~~~~~~~~~~~~~~~~~
+--
+   In file included from drivers/net/wireless/ath/carl9170/../regd.h:23,
+                    from drivers/net/wireless/ath/carl9170/carl9170.h:61,
+                    from drivers/net/wireless/ath/carl9170/main.c:47:
+   drivers/net/wireless/ath/carl9170/../ath.h: In function 'ath_pci_aspm_state':
+>> drivers/net/wireless/ath/carl9170/../ath.h:346:26: error: 'PCIE_LINK_STATE_L0S' undeclared (first use in this function)
+     346 |                 state |= PCIE_LINK_STATE_L0S;
+         |                          ^~~~~~~~~~~~~~~~~~~
+   drivers/net/wireless/ath/carl9170/../ath.h:346:26: note: each undeclared identifier is reported only once for each function it appears in
+>> drivers/net/wireless/ath/carl9170/../ath.h:348:26: error: 'PCIE_LINK_STATE_L1' undeclared (first use in this function)
+     348 |                 state |= PCIE_LINK_STATE_L1;
+         |                          ^~~~~~~~~~~~~~~~~~
+--
+   In file included from drivers/net/wireless/ath/ath6kl/../regd.h:23,
+                    from drivers/net/wireless/ath/ath6kl/wmi.c:24:
+   drivers/net/wireless/ath/ath6kl/../ath.h: In function 'ath_pci_aspm_state':
+>> drivers/net/wireless/ath/ath6kl/../ath.h:346:26: error: 'PCIE_LINK_STATE_L0S' undeclared (first use in this function)
+     346 |                 state |= PCIE_LINK_STATE_L0S;
+         |                          ^~~~~~~~~~~~~~~~~~~
+   drivers/net/wireless/ath/ath6kl/../ath.h:346:26: note: each undeclared identifier is reported only once for each function it appears in
+>> drivers/net/wireless/ath/ath6kl/../ath.h:348:26: error: 'PCIE_LINK_STATE_L1' undeclared (first use in this function)
+     348 |                 state |= PCIE_LINK_STATE_L1;
+         |                          ^~~~~~~~~~~~~~~~~~
+--
+   In file included from drivers/net/wireless/ath/ath10k/core.h:25,
+                    from drivers/net/wireless/ath/ath10k/mac.h:11,
+                    from drivers/net/wireless/ath/ath10k/mac.c:9:
+   drivers/net/wireless/ath/ath10k/../ath.h: In function 'ath_pci_aspm_state':
+>> drivers/net/wireless/ath/ath10k/../ath.h:346:26: error: 'PCIE_LINK_STATE_L0S' undeclared (first use in this function)
+     346 |                 state |= PCIE_LINK_STATE_L0S;
+         |                          ^~~~~~~~~~~~~~~~~~~
+   drivers/net/wireless/ath/ath10k/../ath.h:346:26: note: each undeclared identifier is reported only once for each function it appears in
+>> drivers/net/wireless/ath/ath10k/../ath.h:348:26: error: 'PCIE_LINK_STATE_L1' undeclared (first use in this function)
+     348 |                 state |= PCIE_LINK_STATE_L1;
+         |                          ^~~~~~~~~~~~~~~~~~
+
+
+vim +/PCIE_LINK_STATE_L0S +346 drivers/net/wireless/ath/ath.h
+
+   340	
+   341	static inline int ath_pci_aspm_state(u16 lnkctl)
+   342	{
+   343		int state = 0;
+   344	
+   345		if (lnkctl & PCI_EXP_LNKCTL_ASPM_L0S)
+ > 346			state |= PCIE_LINK_STATE_L0S;
+   347		if (lnkctl & PCI_EXP_LNKCTL_ASPM_L1)
+ > 348			state |= PCIE_LINK_STATE_L1;
+   349	
+   350		return state;
+   351	}
+   352	
 
 -- 
-Wei Yang
-Help you, Help me
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
