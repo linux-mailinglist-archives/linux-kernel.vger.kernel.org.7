@@ -1,100 +1,132 @@
-Return-Path: <linux-kernel+bounces-734984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89B2BB08919
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:18:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A86AB0890D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:12:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 168CC188BECE
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:18:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9B087B3EF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957492877F0;
-	Thu, 17 Jul 2025 09:17:59 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E1AE288525;
+	Thu, 17 Jul 2025 09:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FjXc1KzS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9D4260590;
-	Thu, 17 Jul 2025 09:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31F52C18A;
+	Thu, 17 Jul 2025 09:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752743879; cv=none; b=mHCKD1AHt8YIpj9bXZGHpsKvW5yZAu/VBkzT/9Hqs0M3/VEaVEVpruixQXRwSO7dinRqhTglI0/ScTL2vLKk8tlrOZnlS2RpQLwTjrDB0RfdE5XNaIDH7mvqM5z3ERA9nMBR9qMScOsBhKolw3lkeBk43q4z3rPmrXF/e3tWIKU=
+	t=1752743568; cv=none; b=Ofq2pZ2cDDjD8wecKbpmXMQVtqRYdu8mU/heBxBAx/Nq6sms8BILz/jRmVOF7xTau8PGBhAxt6Z2KrzVB0aHI0v/F0OqvF9Mk5uGZWaaYsUAiztRjSUH1bV/cS3Eo0q+UmKj2AxKAFBZSdqqhiq85Vp2GZXxJ8lmNyZdiX96ohI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752743879; c=relaxed/simple;
-	bh=TFQvGPlZdyuG12zsrvtzhTTnD8Pu2WUNbg8XKZaoLyo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=M++GB0I0AfInYXhBGEWxEStcPOfgxj8K5zKM2o4RR8PCU3pMjeZyHs4+GTyGPxJzI7nI2DJjVeATomQ75aGehI6zTM8kNzF9UdzxoN8rrRgxluSfgLdlSHX5K/CPRGYvXhQEthVH5du65FPPHYwrzwnjgLZyAlFa9w7BGcHzly0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bjS0B1TcCz2Cf6y;
-	Thu, 17 Jul 2025 17:13:46 +0800 (CST)
-Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9F4C2140123;
-	Thu, 17 Jul 2025 17:17:53 +0800 (CST)
-Received: from localhost.localdomain (10.175.101.6) by
- kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 17 Jul 2025 17:17:52 +0800
-From: Zizhi Wo <wozizhi@huawei.com>
-To: <jack@suse.com>, <brauner@kernel.org>, <axboe@kernel.dk>, <hch@lst.de>
-CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<wozizhi@huawei.com>, <yukuai3@huawei.com>, <yangerkun@huawei.com>
-Subject: [bug report] A filesystem abnormal mount issue
-Date: Thu, 17 Jul 2025 17:11:50 +0800
-Message-ID: <20250717091150.2156842-1-wozizhi@huawei.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1752743568; c=relaxed/simple;
+	bh=FfwpwvFvStXJyzoqvzeHLBsOgdYmdv3YtoCDXdc0Ltk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m4eb72xs9X3OOHk3KYRjBJ/bWOBhWscXeHcXNb7/2lxknhwURF25th++5pqbkdq86sJ8l2UloM29ltImKVwogX+lEoVKMJMAbVUNiUNwFnZGA5O6icwVd6ZDAutgNJa8NK4MPn34oHeigTl2cnkmaqfSBie/9vv0hPtmBmzvn38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FjXc1KzS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8A0BC4CEE3;
+	Thu, 17 Jul 2025 09:12:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752743568;
+	bh=FfwpwvFvStXJyzoqvzeHLBsOgdYmdv3YtoCDXdc0Ltk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FjXc1KzSobL8KtiQgBk1n9ZYmUhFqG3aHt3Bd3wAmLGgjGl1wCOWG3LeIAdwiN7lF
+	 wRBb3ihKXuBpcRxylaVohY1jPgYQG0kxx0Wf9W9OLnlsnLBcFtdTD/dwZI13X/0mAJ
+	 OUTvZagO24sLI6dbEPRkN0SQrJEawITbP4GKeHp+e+67sivX6er5X7FYbzURtkA7GG
+	 B5hyNU1japqRDiQOCBMWSV6DmcauoIRnDg1z9T9O/0vYyrgLFXS79HZ/ZkKo2UH2Ba
+	 mN5q4aZPFWTjQjFi7LPkscVVsx7eINZi+jMpQ7CIUZF599uv6F56pSFrWgkNyQBfYg
+	 TK0hYH7Ytdnrg==
+Date: Thu, 17 Jul 2025 11:12:45 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: "robh@kernel.org" <robh@kernel.org>, 
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
+	"richardcochran@gmail.com" <richardcochran@gmail.com>, Claudiu Manoil <claudiu.manoil@nxp.com>, 
+	Vladimir Oltean <vladimir.oltean@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>, 
+	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>, "davem@davemloft.net" <davem@davemloft.net>, 
+	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>, 
+	"pabeni@redhat.com" <pabeni@redhat.com>, "vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>, 
+	Frank Li <frank.li@nxp.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, 
+	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>, 
+	"F.S. Peng" <fushi.peng@nxp.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"imx@lists.linux.dev" <imx@lists.linux.dev>, "kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: Re: [PATCH v2 net-next 02/14] dt-bindings: net: add nxp,netc-timer
+ property
+Message-ID: <20250717-masterful-uppish-impala-b1d256@kuoka>
+References: <20250716073111.367382-1-wei.fang@nxp.com>
+ <20250716073111.367382-3-wei.fang@nxp.com>
+ <20250717-sceptical-quoll-of-protection-9c2104@kuoka>
+ <PAXPR04MB8510EB38C3DCF5713C6AC5C48851A@PAXPR04MB8510.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemf100017.china.huawei.com (7.202.181.16)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <PAXPR04MB8510EB38C3DCF5713C6AC5C48851A@PAXPR04MB8510.eurprd04.prod.outlook.com>
 
-Currently, we have the following test scenario:
+On Thu, Jul 17, 2025 at 08:32:38AM +0000, Wei Fang wrote:
+> > On Wed, Jul 16, 2025 at 03:30:59PM +0800, Wei Fang wrote:
+> > > NETC is a multi-function PCIe Root Complex Integrated Endpoint (RCiEP)
+> > > that contains multiple PCIe functions, such as ENETC and Timer. Timer
+> > > provides PTP time synchronization functionality and ENETC provides the
+> > > NIC functionality.
+> > >
+> > > For some platforms, such as i.MX95, it has only one timer instance, so
+> > > the binding relationship between Timer and ENETC is fixed. But for some
+> > > platforms, such as i.MX943, it has 3 Timer instances, by setting the
+> > > EaTBCR registers of the IERB module, we can specify any Timer instance
+> > > to be bound to the ENETC instance.
+> > >
+> > > Therefore, add "nxp,netc-timer" property to bind ENETC instance to a
+> > > specified Timer instance so that ENETC can support PTP synchronization
+> > > through Timer.
+> > >
+> > > Signed-off-by: Wei Fang <wei.fang@nxp.com>
+> > >
+> > > ---
+> > > v2 changes:
+> > > new patch
+> > > ---
+> > >  .../devicetree/bindings/net/fsl,enetc.yaml    | 23 +++++++++++++++++++
+> > >  1 file changed, 23 insertions(+)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/net/fsl,enetc.yaml
+> > b/Documentation/devicetree/bindings/net/fsl,enetc.yaml
+> > > index ca70f0050171..ae05f2982653 100644
+> > > --- a/Documentation/devicetree/bindings/net/fsl,enetc.yaml
+> > > +++ b/Documentation/devicetree/bindings/net/fsl,enetc.yaml
+> > > @@ -44,6 +44,13 @@ properties:
+> > >      unevaluatedProperties: false
+> > >      description: Optional child node for ENETC instance, otherwise use
+> > NETC EMDIO.
+> > >
+> > > +  nxp,netc-timer:
+> > 
+> > Heh, you got comments to use existing properties for PTP devices and
+> > consumers. I also said to you to use cell arguments how existing
+> > bindings use it.
+> > 
+> > You did not respond that you are not going to use existing properties.
+> > 
+> > So why existing timestamper is not correct? Is this not a timestamper?
+> > If it is, why do we need to repeat the same discussion...
+> > 
+> 
+> I do not think it is timestamper. Each ENETC has the ability to record the
+> sending/receiving timestamp of the packets on the Tx/Rx BD, but the
+> timestamp comes from the Timer. For platforms have multiple Timer
 
-disk_container=$(
-    ${docker} run...kata-runtime...io.kubernets.docker.type=container...
-)
-docker_id=$(
-    ${docker} run...kata-runtime...io.kubernets.docker.type=container...
-    io.katacontainers.disk_share="{"src":"/dev/sdb","dest":"/dev/test"}"...
-)
+Isn't this exactly what timestamper is supposed to do?
 
-${docker} stop "$disk_container"
-${docker} exec "$docker_id" mount /dev/test /tmp -->success!!
-
-When the "disk_container" is started, a series of block devices are
-created. During the startup of "docker_id", /dev/test is created using
-mknod. After "disk_container" is stopped, the created sda/sdb/sdc disks
-are deleted, but mounting /dev/test still succeeds.
-
-The reason is that runc calls unshare, which triggers clone_mnt(),
-increasing the "sb->s_active" reference count. As long as the "docker_id"
-does not exit, the superblock still has a reference count.
-
-So when mounting, the old superblock is reused in sget_fc(), and the mount
-succeeds, even if the actual device no longer exists. The whole process can
-be simplified as follows:
-
-mkfs.ext4 -F /dev/sdb
-mount /dev/sdb /mnt
-mknod /dev/test b 8 16    # [sdb 8:16]
-echo 1 > /sys/block/sdb/device/delete
-mount /dev/test /mnt1    # -> mount success
-
-The overall change was introduced by: aca740cecbe5 ("fs: open block device
-after superblock creation"). Previously, we would open the block device
-once. Now, if the old superblock can be reused, the block device won't be
-opened again.
-
-Would it be possible to additionally open the block device in read-only
-mode in super_s_dev_test() for verification? Or is there any better way to
-avoid this issue?
+Best regards,
+Krzysztof
 
 
