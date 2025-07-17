@@ -1,381 +1,153 @@
-Return-Path: <linux-kernel+bounces-735983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38846B0963D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 23:05:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E769B09640
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 23:06:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A2DA3A57DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:04:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA8B63A8E57
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:06:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 145992620FC;
-	Thu, 17 Jul 2025 21:03:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3BE22D793;
+	Thu, 17 Jul 2025 21:06:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="POjGQDLr"
-Received: from mail-oa1-f73.google.com (mail-oa1-f73.google.com [209.85.160.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CCQ6Zj5t"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EBA22343BE
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 21:03:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD30F222575
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 21:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752786184; cv=none; b=CmtyHlQXa94X0MziH0eL38h2Vn5FmUcPL7v9ZwQbRKS5XKPOB14FXlzc6HuKOOPzroUa12kmnysnr/95wK1KCmIvJaV84g2TSvKKqG/iceU8rJ9ZnNC2mFFwbf4+eIp/99dcdA/4K//x1S8MEY9Ik9HRe3o+Kx2WGoVx35Sw2gk=
+	t=1752786383; cv=none; b=Kzc5sPF2n8AzQ1vHxbcjSDLnKVx37xoP4OTdaq4ZL3Sq1k7+kj1+Evzy3DXQGLS1jqpnGkcIO/tI3rHTEqumfVtLFvrRkW3KzM7PAyLKi8w0YEr1kwM2YEe/5I06ttlmYdrphVcJn5PxAxxsPFwKdiEB4d0Ooc9gXDOu6cZijoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752786184; c=relaxed/simple;
-	bh=ILKxxdhVKBL3H3T+k9tCVz/84PR5Y8ZVsZPuSrjtHFc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=hnEVQwijPi5CFejUGLpnxzcgfGck9gZXP8TIEHVp1WZLX+NkZGJ6/TleOAnsjSCpOcFMBULOpLeMR2yfWrC6hQJLMHvnn1EOtO0x/itLNokECKxLlUTRPSclGekzJXNUJyMPkRujTr6gY11ErKus3a61v/TGs9ngeHJjqh+axfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=POjGQDLr; arc=none smtp.client-ip=209.85.160.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-oa1-f73.google.com with SMTP id 586e51a60fabf-2e90e7f170eso1324527fac.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 14:03:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752786181; x=1753390981; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HU89/GZC9oprC8rhKi3nOVfsuM3lRbUuTtm8KmujE+I=;
-        b=POjGQDLrL0x4MJMu6yyzNob/C2dPMptPTib52VWDLh0C6lISoT9Tq4EogWhZu2tFWg
-         NDinC10s7cGz8vb+NYZvC8rR1RxlgNShWbUjOVITyvxp2I6ePH0X0Bo+iIb8THKrH+V1
-         aSUKh6yetGiT6bTTf8CgwfEljG+LS0TeEQ8N9XHJ9dP+WQKZ7kMiqwklMAwsMpBzEHvn
-         sKXcskbSVpBsX6cg4d5gz+19eecUrCDgknEblP1YIxP3t2Q/oGqJvF3XF2GLq4ek8riH
-         Fo/GFrWn903+kXAj3NnTKSIcmX/iVwpAgE/jZ6Tfi1Gr4DKySkvGUhmyHG8uNIuoGnV2
-         7YTg==
+	s=arc-20240116; t=1752786383; c=relaxed/simple;
+	bh=Fu5f1KYcPNBKXbwBLRZ4Cig1/7uNC4oBZT6MsGsCCXY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tTtw/JqvV39WbGxbYNTJOXeE37p4fA5BD/t5A+d3SeshNgjO9noyVjydv1008K3SZ3y4MmC70L5uKxo+hq2bJfwg24RjtI7Y5Mjg2k+IjB+eES5FF66Bty8eUpfB6n+DcjnwM4INVfutisIUASGZQW82PDTJVLRzPrsuNwGkuCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CCQ6Zj5t; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56HC5nDh021258
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 21:06:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	0pHw80GM2tQXK/P5MspgwmNzeXrdomfpLEtnn34M6J0=; b=CCQ6Zj5taIIZgg77
+	BjsrbRhNCnxCoHw75tzik23Z5SkOjFbzC3ZWStbyKsGNyAA/8nYux/lu0Gdwf/EW
+	F/FadNR3e4hcsj/VB53T+14onJAyrVEondsZBKolYuQGymdKLSABgFCT9rPZ3yez
+	0BVC8k3zrT3sMnUxN+05vHZX8BGVDhUZ7MNuObkXxagKVeRUfFHuthRc+Pk2PvO2
+	uFEKBcvvsFQevJDztr3weGvJqNWkUsRWnusS7W5tfSf69ECcOrSWR9LiOaRoIe+e
+	lfdZ4WWm+mgi0hE9jTKA3ud+aIcxLDy4bgzq0McXapnCbw4I2pd6aVwOABwgVtzb
+	hAFFdA==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47w5dpm84c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 21:06:20 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6facde431b2so3842396d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 14:06:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752786181; x=1753390981;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+        d=1e100.net; s=20230601; t=1752786379; x=1753391179;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HU89/GZC9oprC8rhKi3nOVfsuM3lRbUuTtm8KmujE+I=;
-        b=tL7/HvtSkb6p1iSOI9G6s8IhOJUWqY+K4DUWsf1T1HjspFcAA7dTMpRVeH0yE78VLj
-         nAGqsKU6tuAb6xfr8NMtlIRgiW67bPlRiH9oHixmOQaZ5choYdhDlmdnAkYVwZKxB31Z
-         tIsbPmyD45cZsxxsKH/qHi3VvM2WNkMQ8Ge+bfH7R3Ej4jE1s/qUs2W7YUCz6Orp/yC5
-         NYzLVvaeZQEWrIOUbbJQFBnPC23Lvuai+mNoRX/BVf8lAkxGDhkvt47XTWvCcLOLdbjx
-         yBM0kc7lvCBMG9Qptg+7RxI7bCBDtAeNM2xoN6dU2kWPEnEJwFx5x6BaqkcwrX2aslCJ
-         ZUoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXAZmG+qg5lH7DPH931c0uoJr1AjuKPD0Eli9r5aqqGERaT+deW50PYmDFLEtigTkazK6LpCNXKGdsf2/g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxePbSNRY68Dr2NcO8rrYHsnRUKBN/Vbl2oXWELlmBJ7Ayagcv8
-	RXgoZmCsCTEJ7O2GwWDh6WS7f0In6k0B2DJp8F+nAoKqQAa2QyPoM8sRzY2S4l5UmOsy0cjDcdP
-	f93sSqZZCSA==
-X-Google-Smtp-Source: AGHT+IHigQdoOyZEy7c9tzzUz/1uR4HwaqALfA65QRdvTfANkkr3uJO1yLb6/cTnCmoAffWT+V9K2E+kwQyC
-X-Received: from oabrk3.prod.google.com ([2002:a05:6871:64c3:b0:2f7:9168:24fd])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6870:d207:b0:2ea:7574:e243
- with SMTP id 586e51a60fabf-2ffaf2bf7aemr6970652fac.9.1752786181359; Thu, 17
- Jul 2025 14:03:01 -0700 (PDT)
-Date: Thu, 17 Jul 2025 14:02:33 -0700
-In-Reply-To: <20250717210233.1143622-1-irogers@google.com>
+        bh=0pHw80GM2tQXK/P5MspgwmNzeXrdomfpLEtnn34M6J0=;
+        b=GtxiOeWGIKfK9uXj/ZGVIu+jD7IwoYKALBfki8fmPz14re6WBdxg8mpnG92t8AhLyN
+         iGYFTGtiwsgoSRQ0FWCIP8AOxPN4n0sl2AuGlPcktm1xri90mpNLo73AojzK5o0tMQ/8
+         NIjmL0fkVGVI1lh7No/qMMHNRKJt2MSIEKNgwpddozJ8eHP1ivzU5t0EeN84y49d/fhx
+         VvcAJYf8Vt0J8W1YDzLCe+74MLXj5xAJogjeuISj6Tg9eT9Wfw8hSHa8o94QLyBcv9kw
+         2YP3Yesn0gX24OlCqDCzyCptZnVoMqTC0QleViUt7LgddRVHHei9FDxKaG6DXBdUYsjD
+         x+5A==
+X-Forwarded-Encrypted: i=1; AJvYcCXufB0wUvZtjwd59s2yi3F1OyIHid3fmxaSUzyHtxXDTQbwvc6UT34zLcgCVwHg8kqBicMZWOYX9cuUST0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdyR/sLC0pOU+9mWNuHEOy/b7cQ34sWrgudmgJzCDNVVZt4V1f
+	fuIbZuLuevvIKa22ebIrkhSTp6v8xUfEcVpOy6+zNSmaCfvfp3kNTBh6fzcezrHfUeT/EaphkKV
+	z9IznkB5DlFBkuTHLeZJ51rlngMcUt5BRuVpe3/OvhfqHhxE1Q4bjpNg8kfUGgoDZBDU=
+X-Gm-Gg: ASbGncs1Y2mRBl/afhH9Ei5/1fmajEDmy6f/zUmdv5RThlTlAOU6bdlnkb08x3Z+Zsh
+	7daFNthXueiLJUsWcyRuUkKsURQ7U/NwAhIFowydxdMhQWIV4VHwVCw2E2CClYWmClut6nzBz2i
+	TrxX0Si8q2LEF5RAcAbS52BrHFhR6DKMLa7YNdIrsBFAlgoFu5RgqsFloA3lq1NVsqUdSdNyPVi
+	tiXojACIjfVnRLvNQwV3cQ8wZT+Nx5v+B4Lxx5rmAfoVzm7vYgfw4jqeqqK4EAtGo7Nw4muDpgK
+	8jj3vU5WmjMwXoiMSsehrh/16HiWSemY7ewlbmodT0N5H6fCwTiktOUEd7NricNVldZowjEdrU1
+	JcTp4JTFoN8J+3eZd6pU1
+X-Received: by 2002:a05:620a:28c1:b0:7e3:297d:ec32 with SMTP id af79cd13be357-7e342b37074mr503117985a.10.1752786379387;
+        Thu, 17 Jul 2025 14:06:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFgsvETj4x558m5O4J1Q3oaDXiBHmdl68wKzu5lszhWnL8Pa+XlDwiszt+zOKmmwEGKjcAMgg==
+X-Received: by 2002:a05:620a:28c1:b0:7e3:297d:ec32 with SMTP id af79cd13be357-7e342b37074mr503115285a.10.1752786379004;
+        Thu, 17 Jul 2025 14:06:19 -0700 (PDT)
+Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e8294bfdsm1408812966b.120.2025.07.17.14.06.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Jul 2025 14:06:18 -0700 (PDT)
+Message-ID: <b5a1314e-6733-41e3-9258-c3a88b2c90e7@oss.qualcomm.com>
+Date: Thu, 17 Jul 2025 23:06:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250717210233.1143622-1-irogers@google.com>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250717210233.1143622-13-irogers@google.com>
-Subject: [PATCH v2 12/12] perf parse-events: Support user CPUs mixed with threads/processes
-From: Ian Rogers <irogers@google.com>
-To: Thomas Falcon <thomas.falcon@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Ben Gainey <ben.gainey@arm.com>, 
-	James Clark <james.clark@linaro.org>, Howard Chu <howardchu95@gmail.com>, 
-	Weilin Wang <weilin.wang@intel.com>, Levi Yun <yeoreum.yun@arm.com>, 
-	"Dr. David Alan Gilbert" <linux@treblig.org>, Zhongqiu Han <quic_zhonhan@quicinc.com>, 
-	Blake Jones <blakejones@google.com>, Yicong Yang <yangyicong@hisilicon.com>, 
-	Anubhav Shelat <ashelat@redhat.com>, Thomas Richter <tmricht@linux.ibm.com>, 
-	Jean-Philippe Romain <jean-philippe.romain@foss.st.com>, Song Liu <song@kernel.org>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 2/3] arm64: dts: qcom: qcs8300: Add EPSS l3
+ interconnect provider node
+To: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>,
+        Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Sibi Sankar
+ <quic_sibis@quicinc.com>,
+        Odelu Kukatla <quic_okukatla@quicinc.com>,
+        Mike Tipton <mdtipton@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250711102540.143-1-raviteja.laggyshetty@oss.qualcomm.com>
+ <20250711102540.143-3-raviteja.laggyshetty@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250711102540.143-3-raviteja.laggyshetty@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDE4NiBTYWx0ZWRfX2YVphox5ZfJq
+ cuKji6UtaaUQEMI+u60eajHC3Qcq+aekVOT8CDEZQ0LWnJkB+LQOhLQDZ137LrGgT49yhwMEfie
+ ZZl/o3apieGHRDZbWKlPMIfkKePlvdoNnGgRhNFsYXamLuw9EU5NfCztAF8cE21Dr7gt3N7l0mp
+ 2o77hIdHGmvWvgrLblf/OT4k35DKpCT8XfwAPXKviy0+6URe9ty8Mt3k7st9/eTWfAySqufQvLG
+ Qz1fgpX6Ca+2spUhyNLi46FXYx8W5p0YLyGUOv3vNDZb3CUEp49fw/SdrXnrlhxzKg9jxJH0TAX
+ XLDJj3nZdhu3alZ/Y6/c4i3ZGNiu39eLwSmKg+ZWRh+Mpn4qhQbSfF+xxG885FrRKVbygDn5G2L
+ tC9axGk/boT0tPYiYhdAYkhglpDc1B0g+DPAHbGIpb96KWcMKpVI5KM2hx50SgnXg4tLdTsz
+X-Proofpoint-GUID: qquqALUjwWgqKD06PDBMnwhDqqEv6e_o
+X-Proofpoint-ORIG-GUID: qquqALUjwWgqKD06PDBMnwhDqqEv6e_o
+X-Authority-Analysis: v=2.4 cv=Y+r4sgeN c=1 sm=1 tr=0 ts=687965cc cx=c_pps
+ a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=yqcj6WI3IahE-w5yY7AA:9
+ a=QEXdDO2ut3YA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-17_04,2025-07-17_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 mlxlogscore=999 phishscore=0 malwarescore=0 priorityscore=1501
+ adultscore=0 impostorscore=0 mlxscore=0 suspectscore=0 lowpriorityscore=0
+ bulkscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507170186
 
-Counting events system-wide with a specified CPU prior to this change
-worked:
-```
-$ perf stat -e 'msr/tsc/,msr/tsc,cpu=cpu_core/,msr/tsc,cpu=cpu_atom/' -a sleep 1
+On 7/11/25 12:25 PM, Raviteja Laggyshetty wrote:
+> Add Epoch Subsystem (EPSS) L3 interconnect provider node for QCS8300 SoC.
+> As QCS8300 and SA8775P SoCs have same EPSS hardware, added SA8775P
+> compatible as fallback for QCS8300 EPSS device node.
+> 
+> Signed-off-by: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
+> ---
 
-  Performance counter stats for 'system wide':
+Squash patches 2 & 3 together (because otherwise you'll still be hitting
+the issue I described the last time)
 
-     59,393,419,099      msr/tsc/
-     33,927,965,927      msr/tsc,cpu=cpu_core/
-     25,465,608,044      msr/tsc,cpu=cpu_atom/
-```
+With that (modulo me trusting the numbers you put into the OPP table):
 
-However, when counting with process the counts became system wide:
-```
-$ perf stat -e 'msr/tsc/,msr/tsc,cpu=cpu_core/,msr/tsc,cpu=cpu_atom/' perf test -F 10
- 10.1: Basic parsing test                                            : Ok
- 10.2: Parsing without PMU name                                      : Ok
- 10.3: Parsing with PMU name                                         : Ok
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
- Performance counter stats for 'perf test -F 10':
-
-        59,233,549      msr/tsc/
-        59,227,556      msr/tsc,cpu=cpu_core/
-        59,224,053      msr/tsc,cpu=cpu_atom/
-```
-
-Make the handling of CPU maps with event parsing clearer. When an
-event is parsed creating an evsel the cpus should be either the PMU's
-cpumask or user specified CPUs.
-
-Update perf_evlist__propagate_maps so that it doesn't clobber the user
-specified CPUs. Try to make the behavior clearer, firstly fix up
-missing cpumasks. Next, perform sanity checks and adjustments from the
-global evlist CPU requests and for the PMU including simplifying to
-the "any CPU"(-1) value. Finally remove the event if the cpumask is
-empty.
-
-So that events are opened with a CPU and a thread change stat's
-create_perf_stat_counter to give both.
-
-With the change things are fixed:
-```
-$ perf stat --no-scale -e 'msr/tsc/,msr/tsc,cpu=cpu_core/,msr/tsc,cpu=cpu_atom/' perf test -F 10
- 10.1: Basic parsing test                                            : Ok
- 10.2: Parsing without PMU name                                      : Ok
- 10.3: Parsing with PMU name                                         : Ok
-
- Performance counter stats for 'perf test -F 10':
-
-        63,704,975      msr/tsc/
-        47,060,704      msr/tsc,cpu=cpu_core/                        (4.62%)
-        16,640,591      msr/tsc,cpu=cpu_atom/                        (2.18%)
-```
-
-However, note the "--no-scale" option is used. This is necessary as
-the running time for the event on the counter isn't the same as the
-enabled time because the thread doesn't necessarily run on the CPUs
-specified for the counter. All counter values are scaled with:
-
-  scaled_value = value * time_enabled / time_running
-
-and so without --no-scale the scaled_value becomes very large. This
-problem already exists on hybrid systems for the same reason. Here are
-2 runs of the same code with an instructions event that counts the
-same on both types of core, there is no real multiplexing happening on
-the event:
-
-```
-$ perf stat -e instructions perf test -F 10
-...
- Performance counter stats for 'perf test -F 10':
-
-        87,896,447      cpu_atom/instructions/                       (14.37%)
-        98,171,964      cpu_core/instructions/                       (85.63%)
-...
-$ perf stat --no-scale -e instructions perf test -F 10
-...
- Performance counter stats for 'perf test -F 10':
-
-        13,069,890      cpu_atom/instructions/                       (19.32%)
-        83,460,274      cpu_core/instructions/                       (80.68%)
-...
-```
-The scaling has inflated per-PMU instruction counts and the overall
-count by 2x.
-
-To fix this the kernel needs changing when a task+CPU event (or just
-task event on hybrid) is scheduled out. A fix could be that the state
-isn't inactive but off for such events, so that time_enabled counts
-don't accumulate on them.
-
-Reviewed-by: Thomas Falcon <thomas.falcon@intel.com>
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/lib/perf/evlist.c        | 118 ++++++++++++++++++++++-----------
- tools/perf/util/parse-events.c |  10 ++-
- tools/perf/util/stat.c         |   6 +-
- 3 files changed, 86 insertions(+), 48 deletions(-)
-
-diff --git a/tools/lib/perf/evlist.c b/tools/lib/perf/evlist.c
-index 9d9dec21f510..2d2236400220 100644
---- a/tools/lib/perf/evlist.c
-+++ b/tools/lib/perf/evlist.c
-@@ -36,49 +36,87 @@ void perf_evlist__init(struct perf_evlist *evlist)
- static void __perf_evlist__propagate_maps(struct perf_evlist *evlist,
- 					  struct perf_evsel *evsel)
- {
--	if (evsel->system_wide) {
--		/* System wide: set the cpu map of the evsel to all online CPUs. */
--		perf_cpu_map__put(evsel->cpus);
--		evsel->cpus = perf_cpu_map__new_online_cpus();
--	} else if (evlist->has_user_cpus && evsel->is_pmu_core) {
--		/*
--		 * User requested CPUs on a core PMU, ensure the requested CPUs
--		 * are valid by intersecting with those of the PMU.
--		 */
-+	if (perf_cpu_map__is_empty(evsel->cpus)) {
-+		if (perf_cpu_map__is_empty(evsel->pmu_cpus)) {
-+			/*
-+			 * Assume the unset PMU cpus were for a system-wide
-+			 * event, like a software or tracepoint.
-+			 */
-+			evsel->pmu_cpus = perf_cpu_map__new_online_cpus();
-+		}
-+		if (evlist->has_user_cpus && !evsel->system_wide) {
-+			/*
-+			 * Use the user CPUs unless the evsel is set to be
-+			 * system wide, such as the dummy event.
-+			 */
-+			evsel->cpus = perf_cpu_map__get(evlist->user_requested_cpus);
-+		} else {
-+			/*
-+			 * System wide and other modes, assume the cpu map
-+			 * should be set to all PMU CPUs.
-+			 */
-+			evsel->cpus = perf_cpu_map__get(evsel->pmu_cpus);
-+		}
-+	}
-+	/*
-+	 * Avoid "any CPU"(-1) for uncore and PMUs that require a CPU, even if
-+	 * requested.
-+	 */
-+	if (evsel->requires_cpu && perf_cpu_map__has_any_cpu(evsel->cpus)) {
- 		perf_cpu_map__put(evsel->cpus);
--		evsel->cpus = perf_cpu_map__intersect(evlist->user_requested_cpus, evsel->pmu_cpus);
-+		evsel->cpus = perf_cpu_map__get(evsel->pmu_cpus);
-+	}
- 
--		/*
--		 * Empty cpu lists would eventually get opened as "any" so remove
--		 * genuinely empty ones before they're opened in the wrong place.
--		 */
--		if (perf_cpu_map__is_empty(evsel->cpus)) {
--			struct perf_evsel *next = perf_evlist__next(evlist, evsel);
--
--			perf_evlist__remove(evlist, evsel);
--			/* Keep idx contiguous */
--			if (next)
--				list_for_each_entry_from(next, &evlist->entries, node)
--					next->idx--;
-+	/*
-+	 * Globally requested CPUs replace user requested unless the evsel is
-+	 * set to be system wide.
-+	 */
-+	if (evlist->has_user_cpus && !evsel->system_wide) {
-+		assert(!perf_cpu_map__has_any_cpu(evlist->user_requested_cpus));
-+		if (!perf_cpu_map__equal(evsel->cpus, evlist->user_requested_cpus)) {
-+			perf_cpu_map__put(evsel->cpus);
-+			evsel->cpus = perf_cpu_map__get(evlist->user_requested_cpus);
- 		}
--	} else if (!evsel->pmu_cpus || evlist->has_user_cpus ||
--		(!evsel->requires_cpu && perf_cpu_map__has_any_cpu(evlist->user_requested_cpus))) {
--		/*
--		 * The PMU didn't specify a default cpu map, this isn't a core
--		 * event and the user requested CPUs or the evlist user
--		 * requested CPUs have the "any CPU" (aka dummy) CPU value. In
--		 * which case use the user requested CPUs rather than the PMU
--		 * ones.
--		 */
-+	}
-+
-+	/* Ensure cpus only references valid PMU CPUs. */
-+	if (!perf_cpu_map__has_any_cpu(evsel->cpus) &&
-+	    !perf_cpu_map__is_subset(evsel->pmu_cpus, evsel->cpus)) {
-+		struct perf_cpu_map *tmp = perf_cpu_map__intersect(evsel->pmu_cpus, evsel->cpus);
-+
- 		perf_cpu_map__put(evsel->cpus);
--		evsel->cpus = perf_cpu_map__get(evlist->user_requested_cpus);
--	} else if (evsel->cpus != evsel->pmu_cpus) {
--		/*
--		 * No user requested cpu map but the PMU cpu map doesn't match
--		 * the evsel's. Reset it back to the PMU cpu map.
--		 */
-+		evsel->cpus = tmp;
-+	}
-+
-+	/*
-+	 * Was event requested on all the PMU's CPUs but the user requested is
-+	 * any CPU (-1)? If so switch to using any CPU (-1) to reduce the number
-+	 * of events.
-+	 */
-+	if (!evsel->system_wide &&
-+	    perf_cpu_map__equal(evsel->cpus, evsel->pmu_cpus) &&
-+	    perf_cpu_map__has_any_cpu(evlist->user_requested_cpus)) {
- 		perf_cpu_map__put(evsel->cpus);
--		evsel->cpus = perf_cpu_map__get(evsel->pmu_cpus);
-+		evsel->cpus = perf_cpu_map__get(evlist->user_requested_cpus);
-+	}
-+
-+	/* Sanity check assert before the evsel is potentially removed. */
-+	assert(!evsel->requires_cpu || !perf_cpu_map__has_any_cpu(evsel->cpus));
-+
-+	/*
-+	 * Empty cpu lists would eventually get opened as "any" so remove
-+	 * genuinely empty ones before they're opened in the wrong place.
-+	 */
-+	if (perf_cpu_map__is_empty(evsel->cpus)) {
-+		struct perf_evsel *next = perf_evlist__next(evlist, evsel);
-+
-+		perf_evlist__remove(evlist, evsel);
-+		/* Keep idx contiguous */
-+		if (next)
-+			list_for_each_entry_from(next, &evlist->entries, node)
-+				next->idx--;
-+
-+		return;
- 	}
- 
- 	if (evsel->system_wide) {
-@@ -98,6 +136,10 @@ static void perf_evlist__propagate_maps(struct perf_evlist *evlist)
- 
- 	evlist->needs_map_propagation = true;
- 
-+	/* Clear the all_cpus set which will be merged into during propagation. */
-+	perf_cpu_map__put(evlist->all_cpus);
-+	evlist->all_cpus = NULL;
-+
- 	list_for_each_entry_safe(evsel, n, &evlist->entries, node)
- 		__perf_evlist__propagate_maps(evlist, evsel);
- }
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index bd2d831d5123..fe2073c6b549 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -310,20 +310,18 @@ __add_event(struct list_head *list, int *idx,
- 	if (pmu) {
- 		is_pmu_core = pmu->is_core;
- 		pmu_cpus = perf_cpu_map__get(pmu->cpus);
-+		if (perf_cpu_map__is_empty(pmu_cpus))
-+			pmu_cpus = cpu_map__online();
- 	} else {
- 		is_pmu_core = (attr->type == PERF_TYPE_HARDWARE ||
- 			       attr->type == PERF_TYPE_HW_CACHE);
- 		pmu_cpus = is_pmu_core ? cpu_map__online() : NULL;
- 	}
- 
--	if (has_user_cpus) {
-+	if (has_user_cpus)
- 		cpus = perf_cpu_map__get(user_cpus);
--		/* Existing behavior that pmu_cpus matches the given user ones. */
--		perf_cpu_map__put(pmu_cpus);
--		pmu_cpus = perf_cpu_map__get(user_cpus);
--	} else {
-+	else
- 		cpus = perf_cpu_map__get(pmu_cpus);
--	}
- 
- 	if (init_attr)
- 		event_attr_init(attr);
-diff --git a/tools/perf/util/stat.c b/tools/perf/util/stat.c
-index b0205e99a4c9..50b1a92d16df 100644
---- a/tools/perf/util/stat.c
-+++ b/tools/perf/util/stat.c
-@@ -769,8 +769,6 @@ int create_perf_stat_counter(struct evsel *evsel,
- 			attr->enable_on_exec = 1;
- 	}
- 
--	if (target__has_cpu(target) && !target__has_per_thread(target))
--		return evsel__open_per_cpu(evsel, evsel__cpus(evsel), cpu_map_idx);
--
--	return evsel__open_per_thread(evsel, evsel->core.threads);
-+	return evsel__open_per_cpu_and_thread(evsel, evsel__cpus(evsel), cpu_map_idx,
-+					      evsel->core.threads);
- }
--- 
-2.50.0.727.gbf7dc18ff4-goog
-
+Konrad
 
