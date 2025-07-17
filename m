@@ -1,284 +1,127 @@
-Return-Path: <linux-kernel+bounces-734999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 115CCB08946
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:28:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BFCCB0894C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63D6D1A63A35
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:28:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC3891A643BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:30:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E09228A1C8;
-	Thu, 17 Jul 2025 09:28:00 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8C9128A1D8;
+	Thu, 17 Jul 2025 09:29:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="daIaCpDy"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27EB21C1ADB;
-	Thu, 17 Jul 2025 09:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE54289E0F;
+	Thu, 17 Jul 2025 09:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752744479; cv=none; b=a5HyoPBPJG3yCuU7bksVioNvLzRjMcSnfUx5tmTfZvtSLxUhavpYQ7XYCsizv2N4viomDMdk1EDJWJVucIvxzZV3RPTguUUoj3DSqs51V6poj6802ZSRS+O/2phottD9RwJROSYHiTtRhk8hLtA0DQI/oVc0pyicIrigQYq7hMQ=
+	t=1752744579; cv=none; b=h8ZF86Z47Dbed9Ot3SUeHM0BllDRcMgA7MnjNCMqVK7lKyJpCww0N42Xscj1xLLpp/EYeY4YXL7qxOJ4rfPuPKLwqVwZiPnvahNzQu3u439dvcUGQ+FnePJ3fk39r3CKmT/dG5vUJIXjFwpPSrvTBKAXIGz0tb0zjHDA0YOjILM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752744479; c=relaxed/simple;
-	bh=Nrisv3iac5Recw38a/vS83zFuPswes47Cx0toVADSMI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nYRIbFFhwug3px4dFhb25j4Ovb7I2tCGoHuSAeUaxPv+4arQSHJUty/FTwJgmQiEG+UxCBm4t+URj7eB77icMO8ljjhCm8UFrFGytShch8Z6L7o4T7NMdd7CVUlVrM9LEnDNRplr0BrfxiOn9S5tw2ZjdYfxyAq8zIqlWZ3WKNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 4eb8d16462f011f0b29709d653e92f7d-20250717
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:a8815af1-44b1-431a-a3bd-1bc6723159eb,IP:0,U
-	RL:0,TC:0,Content:6,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:6
-X-CID-META: VersionHash:6493067,CLOUDID:660a48c29affd680738ca3e315efb49c,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:4|50,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 4eb8d16462f011f0b29709d653e92f7d-20250717
-X-User: duanchenghao@kylinos.cn
-Received: from localhost [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <duanchenghao@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1185094994; Thu, 17 Jul 2025 17:27:50 +0800
-Date: Thu, 17 Jul 2025 17:27:46 +0800
-From: Chenghao Duan <duanchenghao@kylinos.cn>
-To: Hengqi Chen <hengqi.chen@gmail.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-	yangtiezhu@loongson.cn, chenhuacai@kernel.org, martin.lau@linux.dev,
-	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
-	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
-	haoluo@google.com, jolsa@kernel.org, kernel@xen0n.name,
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
-	bpf@vger.kernel.org, guodongtai@kylinos.cn, youling.tang@linux.dev,
-	jianghaoran@kylinos.cn
-Subject: Re: [PATCH v3 4/5] LoongArch: BPF: Add bpf_arch_xxxxx support for
- Loongarch
-Message-ID: <20250717092746.GA993901@chenghao-pc>
-References: <20250709055029.723243-1-duanchenghao@kylinos.cn>
- <20250709055029.723243-5-duanchenghao@kylinos.cn>
- <CAEyhmHS__fqHS8Bpg7+4apO7OuXG1sP3miCcAMT+Y3uU0+_xjg@mail.gmail.com>
+	s=arc-20240116; t=1752744579; c=relaxed/simple;
+	bh=PeRZn0vzFIsX5vcaApJyGGbknSYq0vd9WAI4xB1Xxcs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d70uLyXUq5JkQla9sTQNO17fj6cm7EfnVdH9rFq8NBdgnSHB5L00oD7KOHAcI4RP5S3y8OM8D6mIGU/nHNlc4h+nHzd98WXXqZu4ACmVNfcuzKsAkt+RiYyXxQDm2yqRvtd4cefCciyhiQsfQhi+fa/yrwNT/XfiRAx3xjSoNdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=daIaCpDy; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752744578; x=1784280578;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=PeRZn0vzFIsX5vcaApJyGGbknSYq0vd9WAI4xB1Xxcs=;
+  b=daIaCpDydpqERdFAdV2xkYBzc5XO6b9WBBMay9Cg7jGb5bZL8ZplusIC
+   K9qyXyozOGM+3TZJMMF5ztM1I1Fj88qYqJcxRYkkCu8rw6Iy949ObyKCo
+   h8VKS+jw8pJE61PqMoSJtNC+Z4uMSgCGi8YMMSgN+9FsMvVQnBHKs0VC1
+   JwBD5r4mseEBblf7l4MhRBTCP5IINjnluv9PxR+W/5aGM/GAbBK9kyM4I
+   D0o7zDQuCPcy3MmMg+jBZQaGSsJUBcrnHKwNYPRI6dULWnxLlezDyRB4f
+   feKuYsd5rrcvUNYn6xBL77YUpZGdfHdMG4ZngKqaqbfwi9NJPfjyJQVRa
+   Q==;
+X-CSE-ConnectionGUID: He5EEZ4xRByyOQL7QXqajA==
+X-CSE-MsgGUID: vQSx8/zVR2qyRzjsLJEb/g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="66080637"
+X-IronPort-AV: E=Sophos;i="6.16,318,1744095600"; 
+   d="scan'208";a="66080637"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 02:29:37 -0700
+X-CSE-ConnectionGUID: kTMDdV3RTKKJ60e/F1mtvw==
+X-CSE-MsgGUID: AdDq3+OvQXeQF1kxDk/1CA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,318,1744095600"; 
+   d="scan'208";a="188685491"
+Received: from soc-5cg4396xfb.clients.intel.com (HELO [172.28.180.72]) ([172.28.180.72])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 02:29:35 -0700
+Message-ID: <b5b46a1f-41e1-4a25-bb6c-885ad2851aeb@linux.intel.com>
+Date: Thu, 17 Jul 2025 11:29:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEyhmHS__fqHS8Bpg7+4apO7OuXG1sP3miCcAMT+Y3uU0+_xjg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Intel-wired-lan] [PATCH iwl-next v1] ixgbevf: remove unused
+ fields from struct ixgbevf_adapter
+To: Yuto Ohnuki <ytohnuki@amazon.com>,
+ Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, intel-wired-lan@lists.osuosl.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250717084609.28436-1-ytohnuki@amazon.com>
+Content-Language: pl, en-US
+From: Dawid Osuchowski <dawid.osuchowski@linux.intel.com>
+In-Reply-To: <20250717084609.28436-1-ytohnuki@amazon.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 16, 2025 at 08:21:59PM +0800, Hengqi Chen wrote:
-> On Wed, Jul 9, 2025 at 1:50 PM Chenghao Duan <duanchenghao@kylinos.cn> wrote:
-> >
-> > Implement the functions of bpf_arch_text_poke, bpf_arch_text_copy, and
-> > bpf_arch_text_invalidate on the LoongArch architecture.
-> >
-> > On LoongArch, since symbol addresses in the direct mapping
-> > region cannot be reached via relative jump instructions from the paged
-> > mapping region, we use the move_imm+jirl instruction pair as absolute
-> > jump instructions. These require 2-5 instructions, so we reserve 5 NOP
-> > instructions in the program as placeholders for function jumps.
-> >
-> > Co-developed-by: George Guo <guodongtai@kylinos.cn>
-> > Signed-off-by: George Guo <guodongtai@kylinos.cn>
-> > Signed-off-by: Chenghao Duan <duanchenghao@kylinos.cn>
-> > ---
-> >  arch/loongarch/include/asm/inst.h |  1 +
-> >  arch/loongarch/kernel/inst.c      | 32 +++++++++++
-> >  arch/loongarch/net/bpf_jit.c      | 90 +++++++++++++++++++++++++++++++
-> >  3 files changed, 123 insertions(+)
-> >
-> > diff --git a/arch/loongarch/include/asm/inst.h b/arch/loongarch/include/asm/inst.h
-> > index 2ae96a35d..88bb73e46 100644
-> > --- a/arch/loongarch/include/asm/inst.h
-> > +++ b/arch/loongarch/include/asm/inst.h
-> > @@ -497,6 +497,7 @@ void arch_simulate_insn(union loongarch_instruction insn, struct pt_regs *regs);
-> >  int larch_insn_read(void *addr, u32 *insnp);
-> >  int larch_insn_write(void *addr, u32 insn);
-> >  int larch_insn_patch_text(void *addr, u32 insn);
-> > +int larch_insn_text_copy(void *dst, void *src, size_t len);
-> >
-> >  u32 larch_insn_gen_nop(void);
-> >  u32 larch_insn_gen_b(unsigned long pc, unsigned long dest);
-> > diff --git a/arch/loongarch/kernel/inst.c b/arch/loongarch/kernel/inst.c
-> > index 674e3b322..8d6594968 100644
-> > --- a/arch/loongarch/kernel/inst.c
-> > +++ b/arch/loongarch/kernel/inst.c
-> > @@ -4,6 +4,7 @@
-> >   */
-> >  #include <linux/sizes.h>
-> >  #include <linux/uaccess.h>
-> > +#include <linux/set_memory.h>
-> >
-> >  #include <asm/cacheflush.h>
-> >  #include <asm/inst.h>
-> > @@ -218,6 +219,37 @@ int larch_insn_patch_text(void *addr, u32 insn)
-> >         return ret;
-> >  }
-> >
-> > +int larch_insn_text_copy(void *dst, void *src, size_t len)
-> > +{
-> > +       unsigned long flags;
-> > +       size_t wlen = 0;
-> > +       size_t size;
-> > +       void *ptr;
-> > +       int ret = 0;
-> > +
-> > +       set_memory_rw((unsigned long)dst, round_up(len, PAGE_SIZE) / PAGE_SIZE);
-> > +       raw_spin_lock_irqsave(&patch_lock, flags);
-> > +       while (wlen < len) {
-> > +               ptr = dst + wlen;
-> > +               size = min_t(size_t, PAGE_SIZE - offset_in_page(ptr),
-> > +                            len - wlen);
-> > +
-> > +               ret = copy_to_kernel_nofault(ptr, src + wlen, size);
-> > +               if (ret) {
-> > +                       pr_err("%s: operation failed\n", __func__);
-> > +                       break;
-> > +               }
-> > +               wlen += size;
-> > +       }
+On 2025-07-17 10:46 AM, Yuto Ohnuki wrote:
+> Remove hw_rx_no_dma_resources and eitr_param fields from struct
+> ixgbevf_adapter since these fields are never referenced in the driver.
 > 
-> Again, why do you do copy_to_kernel_nofault() in a loop ?
-
-The while loop processes all sizes. I referred to how ARM64 and
-RISC-V64 handle this using loops as well.
-
-> This larch_insn_text_copy() can be part of the first patch like
-> larch_insn_gen_{beq,bne}. WDYT ?
-
-From my perspective, it is acceptable to include both
-larch_insn_text_copy and larch_insn_gen_{beq,bne} in the same patch,
-or place them in the bpf_arch_xxxx patch. larch_insn_text_copy is
-solely used for BPF; the application scope of larch_insn_gen_{beq,bne}
-is not limited to BPF.
-
+> Note that the interrupt throttle rate is controlled by the
+> rx_itr_setting and tx_itr_setting variables.
 > 
-> > +       raw_spin_unlock_irqrestore(&patch_lock, flags);
-> > +       set_memory_rox((unsigned long)dst, round_up(len, PAGE_SIZE) / PAGE_SIZE);
-> > +
-> > +       if (!ret)
-> > +               flush_icache_range((unsigned long)dst, (unsigned long)dst + len);
-> > +
-> > +       return ret;
-> > +}
-> > +
-> >  u32 larch_insn_gen_nop(void)
-> >  {
-> >         return INSN_NOP;
-> > diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bpf_jit.c
-> > index 7032f11d3..9cb01f0b0 100644
-> > --- a/arch/loongarch/net/bpf_jit.c
-> > +++ b/arch/loongarch/net/bpf_jit.c
-> > @@ -4,6 +4,7 @@
-> >   *
-> >   * Copyright (C) 2022 Loongson Technology Corporation Limited
-> >   */
-> > +#include <linux/memory.h>
-> >  #include "bpf_jit.h"
-> >
-> >  #define REG_TCC                LOONGARCH_GPR_A6
-> > @@ -1367,3 +1368,92 @@ bool bpf_jit_supports_subprog_tailcalls(void)
-> >  {
-> >         return true;
-> >  }
-> > +
-> > +static int emit_jump_and_link(struct jit_ctx *ctx, u8 rd, u64 ip, u64 target)
-> > +{
-> > +       s64 offset = (s64)(target - ip);
-> > +
-> > +       if (offset && (offset >= -SZ_128M && offset < SZ_128M)) {
-> > +               emit_insn(ctx, bl, offset >> 2);
-> > +       } else {
-> > +               move_imm(ctx, LOONGARCH_GPR_T1, target, false);
-> > +               emit_insn(ctx, jirl, rd, LOONGARCH_GPR_T1, 0);
-> > +       }
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static int gen_jump_or_nops(void *target, void *ip, u32 *insns, bool is_call)
-> > +{
-> > +       struct jit_ctx ctx;
-> > +
-> > +       ctx.idx = 0;
-> > +       ctx.image = (union loongarch_instruction *)insns;
-> > +
-> > +       if (!target) {
-> > +               emit_insn((&ctx), nop);
-> > +               emit_insn((&ctx), nop);
-> > +               return 0;
-> > +       }
-> > +
-> > +       return emit_jump_and_link(&ctx, is_call ? LOONGARCH_GPR_T0 : LOONGARCH_GPR_ZERO,
-> > +                                 (unsigned long)ip, (unsigned long)target);
-> > +}
-> > +
-> > +int bpf_arch_text_poke(void *ip, enum bpf_text_poke_type poke_type,
-> > +                      void *old_addr, void *new_addr)
-> > +{
-> > +       u32 old_insns[5] = {[0 ... 4] = INSN_NOP};
-> > +       u32 new_insns[5] = {[0 ... 4] = INSN_NOP};
-> > +       bool is_call = poke_type == BPF_MOD_CALL;
-> > +       int ret;
-> > +
-> > +       if (!is_kernel_text((unsigned long)ip) &&
-> > +               !is_bpf_text_address((unsigned long)ip))
-> > +               return -ENOTSUPP;
-> > +
-> > +       ret = gen_jump_or_nops(old_addr, ip, old_insns, is_call);
-> > +       if (ret)
-> > +               return ret;
-> > +
-> > +       if (memcmp(ip, old_insns, 5 * 4))
-> > +               return -EFAULT;
-> > +
-> > +       ret = gen_jump_or_nops(new_addr, ip, new_insns, is_call);
-> > +       if (ret)
-> > +               return ret;
-> > +
-> > +       mutex_lock(&text_mutex);
-> > +       if (memcmp(ip, new_insns, 5 * 4))
-> > +               ret = larch_insn_text_copy(ip, new_insns, 5 * 4);
-> > +       mutex_unlock(&text_mutex);
-> > +       return ret;
-> > +}
-> > +
-> > +int bpf_arch_text_invalidate(void *dst, size_t len)
-> > +{
-> > +       int i;
-> > +       int ret = 0;
-> > +       u32 *inst;
-> > +
-> > +       inst = kvmalloc(len, GFP_KERNEL);
-> > +       if (!inst)
-> > +               return -ENOMEM;
-> > +
-> > +       for (i = 0; i < (len/sizeof(u32)); i++)
-> > +               inst[i] = INSN_BREAK;
-> > +
-> > +       if (larch_insn_text_copy(dst, inst, len))
-> > +               ret = -EINVAL;
-> > +
-> > +       kvfree(inst);
-> > +       return ret;
-> > +}
-> > +
-> > +void *bpf_arch_text_copy(void *dst, void *src, size_t len)
-> > +{
-> > +       if (larch_insn_text_copy(dst, src, len))
-> > +               return ERR_PTR(-EINVAL);
-> > +
-> > +       return dst;
-> > +}
-> > --
-> > 2.43.0
-> >
+> This change simplifies the ixgbevf driver by removing unused fields,
+> which improves maintainability.
+> 
+> Signed-off-by: Yuto Ohnuki <ytohnuki@amazon.com>
+> ---
+>   drivers/net/ethernet/intel/ixgbevf/ixgbevf.h | 3 ---
+>   1 file changed, 3 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/intel/ixgbevf/ixgbevf.h b/drivers/net/ethernet/intel/ixgbevf/ixgbevf.h
+> index 4384e892f967..3a379e6a3a2a 100644
+> --- a/drivers/net/ethernet/intel/ixgbevf/ixgbevf.h
+> +++ b/drivers/net/ethernet/intel/ixgbevf/ixgbevf.h
+> @@ -346,7 +346,6 @@ struct ixgbevf_adapter {
+>   	int num_rx_queues;
+>   	struct ixgbevf_ring *rx_ring[MAX_TX_QUEUES]; /* One per active queue */
+>   	u64 hw_csum_rx_error;
+> -	u64 hw_rx_no_dma_resources;
+>   	int num_msix_vectors;
+>   	u64 alloc_rx_page_failed;
+>   	u64 alloc_rx_buff_failed;
+> @@ -363,8 +362,6 @@ struct ixgbevf_adapter {
+>   	/* structs defined in ixgbe_vf.h */
+>   	struct ixgbe_hw hw;
+>   	u16 msg_enable;
+> -	/* Interrupt Throttle Rate */
+> -	u32 eitr_param;
+>   
+>   	struct ixgbevf_hw_stats stats;
+>   
+
+Reviewed-by: Dawid Osuchowski <dawid.osuchowski@linux.intel.com>
+
+Thanks,
+Dawid
 
