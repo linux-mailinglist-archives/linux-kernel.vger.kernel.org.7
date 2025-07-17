@@ -1,187 +1,155 @@
-Return-Path: <linux-kernel+bounces-735956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64681B095D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 22:41:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18CE3B095DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 22:42:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFCB71C28075
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 20:41:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D8F95A1B4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 20:42:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E27FF22541B;
-	Thu, 17 Jul 2025 20:40:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63DFA2264C5;
+	Thu, 17 Jul 2025 20:42:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XnX2EUUW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FhQhQ2ET"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D05A21ABAE
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 20:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6829B223DF9
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 20:42:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752784845; cv=none; b=BFDVZlhvCxB7EguT5x/0MgLv9v7DZ+dlQHSpXeAISVuvI4oedpenadipEqxEVQ3QeHGeU6aJVIB6Rsgtp5xmPef38u4j/JDhv6YDlIX1BZElpjRApT4TJnQdY7Vn0fLCtQNhIkM6GuLPu8ddMqdxWmhbewa+Xi7LA2diLI9RVtE=
+	t=1752784929; cv=none; b=VYHpFbpNTynzcZbkcaIjIhmGyEYw2lVx6mc1TNZ1ujUCNUf2J/Qx2gXoHF1tqJUYE8vBb8+IPEyeTei7pjMFXB/s+4tzFpkq9oz5ZgBCgRsHFJxPJHkyF9CFsX6/rYtc2JidJ6pXNFfP0BTngpbrFn3ODnq2TGTG1IGYVagvW8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752784845; c=relaxed/simple;
-	bh=jZor5q3K0/bsJTdrHWOpluj1LrLymYYt+jOUF1gOH7s=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NmvVMFrsh7bnJU5ium769swAO5khXrfgzZurX+WJ+bYGXmasqpUQC1Ftfv3VNqPft0PB206uQgbh9xt3Hc/h5Px2vYYDOkDQcuWnvmzwAg8pJnDnGyEaGMBavXvQt/b10vEVXeo2IuYfxRkiRgZl70zvIGjnJksTwNHISUe3nRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XnX2EUUW; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752784842;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+ZjoWkxShr/7VQUS74dCt1tHBZf9kwLb3D0DOEFdq6A=;
-	b=XnX2EUUWqeuJprgWeflslf++loA5Bb+EUcvasYDA890oihMDGCuQyhC0TAL/r6TcUfdlgD
-	4Lsflokjs/2XgWbE1RXQrPrLk3hKPO8R4FoYKqZ4gRsqLIUxJ3wEuXI1VdfDv2n5EWrLqV
-	wKYJUYorrlDbEwPUCtXM/EpCGkMpC7k=
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com
- [209.85.166.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-192-YdSegNoQNsaPRWS3kiEYoQ-1; Thu, 17 Jul 2025 16:40:41 -0400
-X-MC-Unique: YdSegNoQNsaPRWS3kiEYoQ-1
-X-Mimecast-MFC-AGG-ID: YdSegNoQNsaPRWS3kiEYoQ_1752784840
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3df57df1eb3so2029115ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 13:40:40 -0700 (PDT)
+	s=arc-20240116; t=1752784929; c=relaxed/simple;
+	bh=rNJhrVaOXBgN447nIGb70CYE7BeWUHH6Lro6HxrOsrc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nSql7fBpmGsO88+Pn51OJK390UODrlAmSaAwq0L4+NGFnM2kXDAENcinf7GOLhnfU5B3L+dvO83CO+nBPG8cAjIIhMwNc8Mrh5831aNbwG0RGYm3MFFH0n/D18avhlZx3GPBZ00fGRl6znLaJUFrHZ+9rD/oHnOQep0CnbR8djo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FhQhQ2ET; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56HCcrtM021792
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 20:42:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	TmpfxjkNhdt9dhUb9Z4sklqbRlDt+2S3rq7vCoARvZI=; b=FhQhQ2ETqrCc2+y4
+	HFVwT1131Db7D+9s4XwC3oIlNrsScBTDWs9VTASF3EX4t8uZ/yISjsuRGBcRa6zs
+	qy+oi3CA1Zwn23UH1vLa5d05L56n8CaVyfCMD3kLvjnVJErJSBm5RiislTStFI8M
+	7Vph2rnsQTY8rU1WGJ6uY4zUNnBFZqf/brojlUeokI7DuPmEi9S+xR5ETye+2F/D
+	ZbvqLezI2i+Yfld1A5Qwh45Osx5U3+wKekfrnR3kgA7L8UbvYxTirWo19hrWXIAB
+	ZW0Uf2kPXZck9qz4j/rdpS+s2XL/alH5pw2VDRAU82BsZcE2mBR+VawUaxsvhbrW
+	8VRfRQ==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ufu8gy3y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 20:42:06 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4a9bcdc73c0so3543561cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 13:42:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752784840; x=1753389640;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+ZjoWkxShr/7VQUS74dCt1tHBZf9kwLb3D0DOEFdq6A=;
-        b=oZgKNOYCLlmQE6WDm78yXGJ9q3hbZrEYQAUpOfADGsgX81Y93SQA5hN7aqT9Df24Uu
-         gmUSYKrWA97DB1328fc/pRSPfnAvKVSKlBjnWAbmu7f8RKXW3OkXnFNJrhuui8hRpuMP
-         DDWGtHcbozmqYtO/1dx4h6sVZHgsU+14ofdOIfh1sE/aY6Ajgc/KXDT+imbySzf1S9h/
-         9s10TBWJiBlhNhJ9vdPi4IxWPkh/kx7Hlq3GHi3q6l2DGzFbKHgOCBz4BxxfKyZEv7ep
-         JPe/JnIWmt2xQGeQWuZBHymW2YuLSSuolGHKu/Ex60p1ciQTfc+AYf0jR0bfhLK+u+9C
-         txWg==
-X-Forwarded-Encrypted: i=1; AJvYcCXUiOkAjSx6uTG+eRfgVNnyAeoEwSDzRy44cTnU3H7qcVZdkjWNdDjwE5VCi6t1jpyTrEdwDmMAyAfhXNA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQnoQJC+1NPxIQMGEGaT7L27xsAiSfPHcnUburbQfkJVmcue1T
-	/lOFrXam0auSEp4QYY/KQSW/EomC9lfHKwH+wObJdxJSMQObJF0Nh2FtmrnYb1pgVs5o8Vyey+U
-	KSPTrB6cEtQal6l79/H8OmSlC35eZ7QBtxOAdBdD4G24gMrMBJLJneuGf7fcjdk3B7w==
-X-Gm-Gg: ASbGnctSo7QwhDNZ3jE7FSRocZZ0YxuAUXfxxpm/z0qKpiImLIjtAntrI7GVTP3oidV
-	SScf5uZeeX+dq+Mx+I9bY/UGyqbaKUoK02tcOxbPUMrEOxMy99Y51iga1FPsxD52Vgb+CXpHKr0
-	qr6D9Ctpvd3KhtsMl4URDcV94uIgGyj5ihI8+qb+pxYc18p5mpq3ld03QcfbDLahb8x+Fwf+Mgx
-	yg360dx0bs/yXWdbJ6DbelJQBW8waoA2lpF9GcT1HUEFWxsgDsGLCkEADV0mOaNuuZ1GzURQ8lM
-	SlITonCWIpz7so0LX0Uwdxb4VTA30LSl3DjRWhEn/IM=
-X-Received: by 2002:a05:6e02:1885:b0:3e2:9368:6e78 with SMTP id e9e14a558f8ab-3e293686ff0mr7323105ab.2.1752784839979;
-        Thu, 17 Jul 2025 13:40:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF8Z+kXG/E/krCKoHN+cxCfsidjfMUmWqZhhhMjcQZuuXqC70a+/LRfIILiYRAxdr/OWMrdOg==
-X-Received: by 2002:a05:6e02:1885:b0:3e2:9368:6e78 with SMTP id e9e14a558f8ab-3e293686ff0mr7323005ab.2.1752784839493;
-        Thu, 17 Jul 2025 13:40:39 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e24613447asm53566505ab.17.2025.07.17.13.40.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 13:40:38 -0700 (PDT)
-Date: Thu, 17 Jul 2025 14:40:37 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Nipun Gupta <nipun.gupta@amd.com>, Nikhil Agarwal
- <nikhil.agarwal@amd.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH] cdx: Fix missing GENERIC_MSI_IRQ on compile test
-Message-ID: <20250717144037.08e88ab6.alex.williamson@redhat.com>
-In-Reply-To: <20250717133358.1541e5df.alex.williamson@redhat.com>
-References: <20250716064903.52397-2-krzysztof.kozlowski@linaro.org>
-	<20250717133358.1541e5df.alex.williamson@redhat.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+        d=1e100.net; s=20230601; t=1752784926; x=1753389726;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TmpfxjkNhdt9dhUb9Z4sklqbRlDt+2S3rq7vCoARvZI=;
+        b=teGDm4xm4CW9mp/JxcHm6KRuqdHmuvAX3dp+HNRo86PtzYtB0Sbz42bY1LwvWVgs+4
+         BEKwhqG2ulX6QpBMBDmQB+FncC+QaRBixPbSfhCDXZVMfIOPBLZkdBtxOxWv4QWfRCNA
+         w1dY+YFuviQjSQ/VcQNHY6ocJjG6tfSF1M9esAPB8f6bZWuJ6AezMs2LPvGiaGqOJMpb
+         YZ+NAFFsmG8EsrjHIOU2xZT6NQXADZFFpg85XFAvX/jEBCZUJnQ8DUhMKv665yadfyMI
+         I7EBWj67bnrfqIsM+W8iy30B6qsulSQGIXF3Pk8pgL2NRWW2mnANHq+CFwyapwztP14P
+         BzJA==
+X-Forwarded-Encrypted: i=1; AJvYcCWxQdUg3rv6EnM9l2duBSYa2LTBoY7YVmEsUk3SOO+NrCBEFLvdYz4yhH+E9GSNAB9Ctd1fyks478GUm4Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqQ1lMRu1BaF/4u5/Ba1Eah34XIK3zaCCHG6zE8oQJpL9ftaOL
+	SWJGMQ8zDMtm7twwH5D/Dovza9u1pbiF74Yi1JShsifOtNPTDgaqZNO8RbEWr9VXPMrDOyqxVng
+	QzZIQ5Tv4syNtkYoSqSSNT+ss1iFL9Uk9gS9cHlUMHN3iWojEB5a1UYJHK6niiVuiSpY=
+X-Gm-Gg: ASbGncuEVXjN8DHqohtGC/4ZJjRVwItKLBTqc0q0OOZxcbWXUMGsn3C+Ne7dlkBJaBo
+	vFSeaex+RgMqqKHqBLWNRK6j2gmMXe51KPgMPwZUiZxtV6fpOEP3MEqHBdSc6ddcdVg77GuWK8a
+	jKRcpLpMrosMSWIFqy24WYYfVbEhbJhgd1LvGGKEeRbvaW/OuGHHaRP1JTXSlmDOzG1NsChp2Yg
+	JEmSk+FovmGN/ubAAnbxcchRShoYd+jR5O48WCXfti/NEHnlEQMZsyIDIjO6Msqq0Vn2EbsWCop
+	tDf8ZQhxMBikPCwsNlAFJQgCWWMEjOcmlAxTGSekpsnDFiycWLAx1vUD31c6PPfBznk7tv3Z8/G
+	VRFG0OeCiUOmgJ6bzZaZ3
+X-Received: by 2002:a05:622a:1a98:b0:47a:e6e1:c071 with SMTP id d75a77b69052e-4ab90a82a28mr55030301cf.7.1752784926071;
+        Thu, 17 Jul 2025 13:42:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGRWAhwxvL0YQ5lOLx3J9S62rBalvJHOr8MWbHqXNprUdHSqk24MYX4tdyqOdn3P7ha6yUnvQ==
+X-Received: by 2002:a05:622a:1a98:b0:47a:e6e1:c071 with SMTP id d75a77b69052e-4ab90a82a28mr55029901cf.7.1752784925586;
+        Thu, 17 Jul 2025 13:42:05 -0700 (PDT)
+Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-611d04d8347sm10357916a12.42.2025.07.17.13.42.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Jul 2025 13:42:04 -0700 (PDT)
+Message-ID: <193de865-980d-4fd7-9c43-39ae387a5d0b@oss.qualcomm.com>
+Date: Thu, 17 Jul 2025 22:41:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 04/10] clock: qcom: gcc-ipq5424: Add gpll0_out_aux
+ clock
+To: Luo Jie <quic_luoj@quicinc.com>, Georgi Djakov <djakov@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Anusha Rao <quic_anusha@quicinc.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, quic_kkumarcs@quicinc.com,
+        quic_linchen@quicinc.com, quic_leiwei@quicinc.com,
+        quic_pavir@quicinc.com, quic_suruchia@quicinc.com
+References: <20250710-qcom_ipq5424_nsscc-v3-0-f149dc461212@quicinc.com>
+ <20250710-qcom_ipq5424_nsscc-v3-4-f149dc461212@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250710-qcom_ipq5424_nsscc-v3-4-f149dc461212@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDE4MyBTYWx0ZWRfX1BOD6MHWOQAO
+ SNhdog3ZPhVH9f9KFdkXfVYFHmR3H75To5hlPyGNzFnmxAGU0+NFP58u08PnzSFPAevRioDqnUA
+ GANK13/cJ9gxhqHY9vIX/W/lWd4Rqs/M9d+0Y07ezeTTIwQYMu6Ve5mbn8K0CbxZBLc0q/dCXiA
+ wDUaTTpGaT1J5+UGg4VynFLmsrLXDx3uLrKJ2/TEW+ieWp6J3j54bMf36ai0Sl1naf5M/9QTEYd
+ 3/1UCu+gPgueAuyEJap72PDLQkb6fKogeQPffBtN0dxea82efJLlOt2WIwByDmQgDvXhVTI51ql
+ ggAu+kfiWJ+zWgtt6R4Pj3M2Nour+e68cLYJRCnLBl+mc8AxXH1NHv5f+6RERl6CB9yivp0+X1r
+ az0rf78XFO9ktZjMv0RHDiO48YS54mjsJSl9X9aqNCoQI1It4HF6phnHNviIyfdWxt+IDcXn
+X-Proofpoint-ORIG-GUID: bOwuE7jjIJoXH8HtYGB0tnZv_vx4j68D
+X-Proofpoint-GUID: bOwuE7jjIJoXH8HtYGB0tnZv_vx4j68D
+X-Authority-Analysis: v=2.4 cv=f59IBPyM c=1 sm=1 tr=0 ts=6879601f cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8 a=qx8TOUd7-QwhcYYS848A:9
+ a=QEXdDO2ut3YA:10 a=jh1YyD438LUA:10 a=kacYvNCVWA4VmyqE58fU:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-17_03,2025-07-17_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 lowpriorityscore=0 malwarescore=0 spamscore=0 mlxscore=0
+ bulkscore=0 suspectscore=0 impostorscore=0 adultscore=0 priorityscore=1501
+ mlxlogscore=941 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507170183
 
-On Thu, 17 Jul 2025 13:33:58 -0600
-Alex Williamson <alex.williamson@redhat.com> wrote:
-
-> On Wed, 16 Jul 2025 08:49:04 +0200
-> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+On 7/10/25 2:28 PM, Luo Jie wrote:
+> The clock gpll0_out_aux acts as the parent clock for some of the NSS
+> (Network Subsystem) clocks.
 > 
-> > CDX_BUS driver uses msi_setup_device_data() which is selected by
-> > GENERIC_MSI_IRQ, thus compile testing without the latter failed:
-> > 
-> >   /usr/bin/ld: drivers/cdx/cdx.o: in function `cdx_probe':
-> >   build/drivers/cdx/cdx.c:314: undefined reference to `msi_setup_device_data'
-> > 
-> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> > Closes: https://lore.kernel.org/all/b2c54a12-480c-448a-8b90-333cb03d9c14@infradead.org/
-> > Fixes: 7f81907b7e3f ("cdx: Enable compile testing")
-> > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > ---
-> >  drivers/cdx/Kconfig | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/drivers/cdx/Kconfig b/drivers/cdx/Kconfig
-> > index 1f1e360507d7..3af41f51cf38 100644
-> > --- a/drivers/cdx/Kconfig
-> > +++ b/drivers/cdx/Kconfig
-> > @@ -8,6 +8,7 @@
-> >  config CDX_BUS
-> >  	bool "CDX Bus driver"
-> >  	depends on OF && ARM64 || COMPILE_TEST
-> > +	select GENERIC_MSI_IRQ
-> >  	help
-> >  	  Driver to enable Composable DMA Transfer(CDX) Bus. CDX bus
-> >  	  exposes Fabric devices which uses composable DMA IP to the  
-> 
-> This looks incomplete to me.  The Makefile has:
-> 
-> ifdef CONFIG_GENERIC_MSI_IRQ
-> obj-$(CONFIG_CDX_BUS) += cdx_msi.o
-> endif
-> 
-> The call to msi_setup_device_data(), the conditional inclusion of
-> cdx_msi.o, and cdx_msi.c itself were added in 0e439ba38e61 ("cdx: add
-> MSI support for CDX bus").  That's the source of the issue, not the
-> Kconfig update to build under COMPILE_TEST, but also the Makefile
-> should be updated to statically include cdx_msi.o.  Thanks,
+> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+> ---
 
-Also, we may not be philosophically aligned on this, but if CDX_BUS
-selects GENERIC_MSI_IRQ and CDX_CONTROLLER depends on CDX_BUS, then the
-select of the same under CDX_CONTROLLER becomes redundant.
+nit: subject: "clock:" -> "clk:" to match the other commits to this
+subsystem
 
-Independent of that there are also some ifdefs in cdx_bus.h that would
-become invalid if the entire CDX_BUS depends on GENERIC_MSI_IRQ.  It
-really kinda looks like CDX_BUS expects a use case that doesn't depend
-on GENERIC_MSI_IRQ and I wonder if the right answer isn't just:
-
-diff --git a/drivers/cdx/cdx.c b/drivers/cdx/cdx.c
-index 092306ca2541..3d50f8cd9c0b 100644
---- a/drivers/cdx/cdx.c
-+++ b/drivers/cdx/cdx.c
-@@ -310,7 +310,7 @@ static int cdx_probe(struct device *dev)
- 	 * Setup MSI device data so that generic MSI alloc/free can
- 	 * be used by the device driver.
- 	 */
--	if (cdx->msi_domain) {
-+	if (IS_ENABLED(CONFIG_GENERIC_MSI_IRQ) && cdx->msi_domain) {
- 		error = msi_setup_device_data(&cdx_dev->dev);
- 		if (error)
- 			return error;
-@@ -833,7 +833,7 @@ int cdx_device_add(struct cdx_dev_params *dev_params)
- 		     ((cdx->id << CDX_CONTROLLER_ID_SHIFT) | (cdx_dev->bus_num & CDX_BUS_NUM_MASK)),
- 		     cdx_dev->dev_num);
- 
--	if (cdx->msi_domain) {
-+	if (IS_ENABLED(CONFIG_GENERIC_MSI_IRQ) && cdx->msi_domain) {
- 		cdx_dev->num_msi = dev_params->num_msi;
- 		dev_set_msi_domain(&cdx_dev->dev, cdx->msi_domain);
- 	}
-
-Then I suppose vfio-cdx would also have the option to either
-select/depend on GENERIC_MSI_IRQ or perhaps get away with stubbing
-vfio_cdx_set_irqs_ioctl and vfio_cdx_irqs_cleanup and conditionally
-building intr.o, depending on if there's a use case without MSI.
-Thanks,
-
-Alex
-
+Konrad
 
