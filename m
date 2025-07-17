@@ -1,149 +1,271 @@
-Return-Path: <linux-kernel+bounces-734737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A623B0858E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:55:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B421B08593
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:56:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F39D55812A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:55:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 537781A6102E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:56:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EE7821C9EA;
-	Thu, 17 Jul 2025 06:55:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B768D21ABDC;
+	Thu, 17 Jul 2025 06:55:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="gdcGCMAm"
-Received: from mail-ed1-f66.google.com (mail-ed1-f66.google.com [209.85.208.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="qPmVGwQF"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2041.outbound.protection.outlook.com [40.107.212.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6678B219A67
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 06:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.66
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752735307; cv=none; b=h7iL+OYnK6e4hWDMziLwElsLbHFcmI4EzfS9sqMtkg2czFOQjvbzTjGMwpS/iOLHG2rrVmzSsrhf0l/M38n6Z/m6Vfamwk5uB932GO+1v1PUMSk5qPJLUzwG82Yfn8CZB3BWRvXg8LpDTFgJvQ2gB57jWRrHX8PWRKlENNnqdf8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752735307; c=relaxed/simple;
-	bh=ofhA9RZIk4qK/ObGD/C/ec3J4PZjgTsyOWqBjcz8540=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dndkJK2TbvEYr2Uqp+XcjKcIrmyBQW2kKthhJ7IcBDM2IuhvKPSE7YT375lIGjXOPK/bJzGE9Guwt6iLPSuWYrXeB9z4NFZkC7FHW/pIA0C7v42vuWP3+GmddNvzz4g3MODdepbpeg1MLcWucPALqnDYp4hGq5UO5D+hM3QZVzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=gdcGCMAm; arc=none smtp.client-ip=209.85.208.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ed1-f66.google.com with SMTP id 4fb4d7f45d1cf-60c93c23b08so1109693a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 23:55:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1752735304; x=1753340104; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rYbV51/nzoj2zUAYRNyGSsBe1Ra4KqNdW7VDa67aLhY=;
-        b=gdcGCMAmu3HA+GnekioSysSrnvPwDpese0Q5M64y5W7j5+kGoBTPvzz0h9f0r4nFIc
-         cywpXh4YmbVgLa7FlSmDvAm291eWV27XshYC3bt0/gTXLjZc6FAhhNIPv1/H7ZKNmLxI
-         xTWJuoR2iZCwmrPNOFMCDSrW+roskgHYwp1szf9ziVlvgzd+AkPutt+ha6tTi9FACsFa
-         n3ykVCzILQIXkZDL6Lq1QsenzRQwN7G/bSpD51GXFrGUhgK1HX8Po1boroa5fHoazqzF
-         AtFKiwrsTul+kGMUYXePLerDC2MdQ+rhTpxKy41SVbkqcf7cD6b+RlJIn0WrTWzRKm3i
-         AtkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752735304; x=1753340104;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rYbV51/nzoj2zUAYRNyGSsBe1Ra4KqNdW7VDa67aLhY=;
-        b=VLTJbABbjz9GAeI2dwJYlhNvEpuf4rdne02vMAM3Tvl6xDSOU3v0ULEfoOOAkFFZPS
-         F9EyqpdUyO8MqKUIwKgtzZNYXMpIIiGtXojdefHlGSNq3vFaKaFtdX8lw3CI/tCGbYeY
-         ZSL8tqNn/GfAeTjoNNMEA4IEMV8Vw1XJSAh+jVnrN01mMw5kkFIuqOJYbM3PVUqfRsXo
-         TaVpK3aJ8Zec9BGEaXfIO+YuzqPmSAK8KVzqH06g5g/W44dSz+GoCOO7H1oD1bcX0sIx
-         nZkhScWqMxIC7jlTPQkofxhzxk34HMtCJOoJSSsAIHOAmW5i9HZtlxevk+ei1krahSP0
-         Jl9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWo+J3gmshB9TNBEpaIHj3m3Dav4x+IhI0dDWzfhbhwZznG7OLqGc+LW4c77g8xwxByCtovxueP/xAOmJo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSc7srZ9rLNwApYSMErdo1Nr0P2CeT1RewSqrT2gcQ/DtWycMG
-	zqiMOubONv7imAa59RmGOygkV6eMjy/a1rXvLjxpTKpGRorOK/SWlYCnUbklRWFAOn8=
-X-Gm-Gg: ASbGncudzniPwbOKVjL/hneet1x1TgQaG5cQQ1Y/t2fmpYFflRbBtjGE3KMabyN3i0A
-	V6eGBP3D1HjapYYHnN/jNRkVqtS8Z0WoAcbOcGk/Oi0GVW+r6YjJ5+abKQ6lWs0AnJJPcnbo2rK
-	oQMuTVzH7fxYWk2Esk2rSB4WmmesBdwrNb6+z0VYvgrHQ0jmlBJfKg1PK8zQV+uia2GlWNTRs5q
-	mt8e8dCGJZLpg3vGzRTyz9Wc7mx6x1xULwY8ad5+yrbLLTQ3LbPfW/3ksiTPFVJftzK5rxIzn20
-	E46mghg8SLGqLNsiEQYSVuNDEjBa+lgOG7+Z9P0PjcPxqjayrhhfEpJLzbtiSchknnv5KQNDYOQ
-	cQ71zwC86iorede7jnEIUNg50at+fYJxYld7PBbwzZUzV5+PkNrtGQDlGvClNIRMZIrHB
-X-Google-Smtp-Source: AGHT+IGCMa79Ak/KZtDl4v+vAe363Fk1VViVdgQtd6Y0WVZGvhTIykL9Hsq6Biw3grMwr05Z3oUtyg==
-X-Received: by 2002:a05:6402:d0e:b0:607:ea0c:6590 with SMTP id 4fb4d7f45d1cf-61285bd4fcfmr4635510a12.24.1752735303707;
-        Wed, 16 Jul 2025 23:55:03 -0700 (PDT)
-Received: from otso.local (212095005146.public.telering.at. [212.95.5.146])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-612477e1d2bsm4688882a12.34.2025.07.16.23.55.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 23:55:03 -0700 (PDT)
-From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Thu, 17 Jul 2025 08:54:46 +0200
-Subject: [PATCH 3/3] dt-bindings: soc: qcom,rpmh-rsc: Remove double colon
- from description
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA76218AC4;
+	Thu, 17 Jul 2025 06:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752735327; cv=fail; b=I6011qf6Dpmi02AhNchII4/HoOUJJqGF+knazH762MzKN1Y0K0pVymDPutnH/pqrjeGUvTiowXoApXhZYLd7FCSH6DJ89ybzwCBIMImQZUKfOCTwQCdPansNoBi+kgwE7h94ys8ncC0UtVMDJTazPAftVt9bOBAej08fYdNXBzM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752735327; c=relaxed/simple;
+	bh=I4LeD/sejPUWx0aK/bgeBDW0DJ+UoQI+TSIEhLQ+V2Q=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=f7mWOYMqKJrceDvQkWa0OqTF1sV4FQOF5AsJwQaEWj8sR/s95vUGWnLj0qZD3X4GSBjW2tE8IUlh/z8FS0ufB+MNT9KwGifypxbK0B5Xo4uHGTjf4nHyMUvOkHxARiy2bvmjLwmZUoWAvxigu7bYK+jqmMfxxjIfaGyVn1WLBTU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=qPmVGwQF; arc=fail smtp.client-ip=40.107.212.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jbBAo9t3nnEypoOPXyKBgRO7v2lKTwbpuH7Nt4gzRDkxJhz2Wvs1ptOX3BkNofezexb0phHTPtgJS+mGOOFZI7HnacmG87KFpfAOVeUuXj16UN9QBga4SnAtveHvMau7LW0qjXz0Cu9Mu1/aVJQcz8KfUkprIU8sZh4CGio/eKlqpefZ6uy9/KChuYexK8nveyWR2JwkYcCdo7cQWg0ltevKRTCb/Rvtjq4EFIk+DsZZtnr91DYJSL2OBzqp1Vnd/EhGXiZZZZlZDHT4oQugQKdTXN0RbDKzr169jP4uToilk4EeLFKH4Nb+jm0a0uBXy5cVcsLc0719oXAHOA3z5A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=465E46VYv+6kr1lXZKXi7wmckSdFALxYg0sGVeme4KY=;
+ b=L5PLCloKfWdvbXmsxyqTHHzzyUbN1sqosCAU//iJxtNzn0pge0jwduNlkl6ukIu9OzJ8ab622ZgnXxf9lhX/pPof2Hl6EyokS83VNW6ft4us1eYZDu0x6no4jfmN3k8Lud09X3RGOqJVKWFyw5u9kZJcqW+G4kzNaiat/5noJRf0N4ZO2ewsva/ZdTZfeQRsTG7y2hdeRTOKtkFhc3egSfasMIJoktuGnefPfB55Z48T0SFsukvziD6LqBSYTzqMj8Cnr2Vd7Y8DKSD0AmIDWo6jZzI26rzJpA5HUyONj7ZJF8K77aACADR+75JD9yDolmT+Rtnzg2/zM4oLgeHUeQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=465E46VYv+6kr1lXZKXi7wmckSdFALxYg0sGVeme4KY=;
+ b=qPmVGwQFD7//hunr8IvV7F05BEjDm9zEIMA3iGjnFjHIZc+vFClbEwrtoqueBBkjW50uX0AP7ney+uhJqW9LMrAyYKdxFGQ/Z4IK0iauR1uMT9IT2JY5ML5EALN/xY+VF+UdLnGIXSBVo5ApcBPBOfWWOmbGNlFuY0JGDqopoXU=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BL3PR12MB9049.namprd12.prod.outlook.com (2603:10b6:208:3b8::21)
+ by CY5PR12MB6622.namprd12.prod.outlook.com (2603:10b6:930:42::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.39; Thu, 17 Jul
+ 2025 06:55:22 +0000
+Received: from BL3PR12MB9049.namprd12.prod.outlook.com
+ ([fe80::ae6a:9bdd:af5b:e9ad]) by BL3PR12MB9049.namprd12.prod.outlook.com
+ ([fe80::ae6a:9bdd:af5b:e9ad%6]) with mapi id 15.20.8901.024; Thu, 17 Jul 2025
+ 06:55:22 +0000
+Message-ID: <145ab956-4dd5-4298-bbad-77759d70383f@amd.com>
+Date: Thu, 17 Jul 2025 01:55:18 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/4] iommu/amd: Fix host kdump support for SNP
+To: Vasant Hegde <vasant.hegde@amd.com>, joro@8bytes.org,
+ suravee.suthikulpanit@amd.com, thomas.lendacky@amd.com,
+ Sairaj.ArunKodilkar@amd.com, herbert@gondor.apana.org.au
+Cc: seanjc@google.com, pbonzini@redhat.com, will@kernel.org,
+ robin.murphy@arm.com, john.allen@amd.com, davem@davemloft.net, bp@alien8.de,
+ michael.roth@amd.com, iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-crypto@vger.kernel.org, kvm@vger.kernel.org
+References: <cover.1752605725.git.ashish.kalra@amd.com>
+ <ce33833e743a6018efe19aa2d0e555eba41dcb96.1752605725.git.ashish.kalra@amd.com>
+ <529c8436-1aeb-41bc-94bd-8b0f128e6222@amd.com>
+ <49ef7e43-6a5d-452a-936b-87a573225d1e@amd.com>
+ <e5665a37-d9b0-428b-bb6c-6d05c60bdd51@amd.com>
+Content-Language: en-US
+From: "Kalra, Ashish" <ashish.kalra@amd.com>
+In-Reply-To: <e5665a37-d9b0-428b-bb6c-6d05c60bdd51@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SA0PR11CA0067.namprd11.prod.outlook.com
+ (2603:10b6:806:d2::12) To BL3PR12MB9049.namprd12.prod.outlook.com
+ (2603:10b6:208:3b8::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250717-bindings-double-colon-v1-3-c04abc180fcd@fairphone.com>
-References: <20250717-bindings-double-colon-v1-0-c04abc180fcd@fairphone.com>
-In-Reply-To: <20250717-bindings-double-colon-v1-0-c04abc180fcd@fairphone.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Jonathan Marek <jonathan@marek.ca>, 
- Martin Botka <martin.botka@somainline.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
- Robert Marko <robert.markoo@sartura.hr>, Shawn Guo <shawn.guo@linaro.org>, 
- Vinod Koul <vkoul@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, 
- krishna Lanka <quic_vamslank@quicinc.com>, Iskren Chernev <me@iskren.info>, 
- Loic Poulain <loic.poulain@oss.qualcomm.com>, 
- Imran Shaik <quic_imrashai@quicinc.com>, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
- Ajit Pandey <quic_ajipan@quicinc.com>, Danila Tikhonov <danila@jiaxyga.com>, 
- David Wronek <david@mainlining.org>, Jens Reidel <adrian@travitia.xyz>, 
- Priya Kakitapalli <quic_skakitap@quicinc.com>, 
- Dmitry Baryshkov <lumag@kernel.org>, 
- Rajendra Nayak <quic_rjendra@quicinc.com>, 
- Georgi Djakov <djakov@kernel.org>, Abel Vesa <abel.vesa@linaro.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752735293; l=1085;
- i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
- bh=ofhA9RZIk4qK/ObGD/C/ec3J4PZjgTsyOWqBjcz8540=;
- b=VJbUUQ0rCnBxTbImTmB/hVXOv7XbLDUVYLoJsKSS+TR2gyz2+Ol258xtVReyF40biRSlSSPz2
- pmPtDCH1uODDNHkEuJpdy7Eb/+p1eRmo+VM2KO//CPgIZeIXd7ORQSJ
-X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
- pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL3PR12MB9049:EE_|CY5PR12MB6622:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7b656663-b481-40aa-4346-08ddc4fee666
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Mmlobml2b1FYRXM0WXczcVNjQnJGbURLS3dlaFVoOFdwS1pVVTZ0aEMrZytH?=
+ =?utf-8?B?cmNQUjVKU0JnOVZkV2NTY25HdjVSb3owd0tSZ3RFcExpUWpXNVF6T3hBYVBh?=
+ =?utf-8?B?eGorWjRhZVBGamdtK2ZtcWRxbUVLaXVLcHR1RCsxVEplK3ZKNXJ0OWtZVE5S?=
+ =?utf-8?B?Tm4vSC9iRzBzSml1OUJsWXdiU3JNc2VqaUVxdUdHR3dETURUTWh6L1N4WE1S?=
+ =?utf-8?B?am9TMWt6NVdETU05UHRWNi80T3lYeU40MkVqUnAxNGtXTnM5RUVEUStTK2Mz?=
+ =?utf-8?B?emhvUUYxWGNXQkFid3p1dVQ2NFN4OWlITDZtTWl5V2V2ZUw0WnhSbmlFR1c4?=
+ =?utf-8?B?TGR3a0E0WVBUbUlEalNGUlk5MU5OVXF6T1E1aE9ocWNJSUw3ZjdoOW84N3FJ?=
+ =?utf-8?B?MmFXM2dTdldmZHZKNlNqT0k3L0t0UkJsL1pjZ2paQVMydytSTzdNcSszZkZs?=
+ =?utf-8?B?NEpTajNKOFIyY3ozZ3hReFBTeDJ2Z3JEYkR2NC8xYUVINkVUUmM2dHJLRERT?=
+ =?utf-8?B?R1VoQVpWUzNrOFFQVTdzVjNpSm5RYVpMLzZBUFdMK2lFMFYvMUlORDY2QmxZ?=
+ =?utf-8?B?RUhnVElJZ2xBUyswQVBjelA0WWxhc2J4WlNnN3BiY0wvTm1uYW5GTFJSbEhY?=
+ =?utf-8?B?eGoxK2t4RlRYMlJTNG1jNzl2c05xU2FGL2IrVmRtaFRYRlF0MC9IdEtMeVpK?=
+ =?utf-8?B?amhHN1k1eVJOTEl6ZWdXUW9RdGFCTHo1ajhoQTNEMUdkYWNlSUhmQitteXNw?=
+ =?utf-8?B?b3VuTEJCd1VFZSsvcThYd2xTcEJ2bGxhTWdxTnBXc0lOc0JrV2d3U2ZOUzZD?=
+ =?utf-8?B?bXZKckg5U0UzK2JMbWFoVmt3aUxqTHFFcERzOVZxSldKNCtFYnpFc2FxVVAy?=
+ =?utf-8?B?RjdoT3AxeFNMLzNVcjVpaFhmYWoweFo0Z0V5ckdWZGMxeFB4Wlpidy9kZ2lP?=
+ =?utf-8?B?Rm1xczF5SkhwMER1SjZSdjBwcjVCcEE2cUR5TTNWeWF1T29DNnFnZnhRTTFm?=
+ =?utf-8?B?cklZVGFLMWZvb1NJRHIxYUR2a0liMm1TNUNoYmlpUVdGOExTeVQwYkNEdUdj?=
+ =?utf-8?B?K1pmUlByR3Zxa1UySjhTSldpVnRHTGJXWi96OWNJaVFkRGJJVG52L3VkVnZx?=
+ =?utf-8?B?L1lrMS9CWlh5cXBlVVpWS1ZJanVIcmsycjYyckRaWHhabXhNYXBsTGZycjlZ?=
+ =?utf-8?B?OHkrejM1dGxmU1NqWGlZcUZhcnRacXB4NlpKZEMrSlA4WDRnUm5TWjAzM20y?=
+ =?utf-8?B?aTdNMmVBU2ExWndQZEFFM0F2Mkx4OHI5Wml4WVp5Y1RuOER2TzdCV2hta0sy?=
+ =?utf-8?B?K3BvRVgwMHQ1MjdrbVp2ZDJlMFdqK3VtajFQMUUydVg5c2pCZGRZZXc0MGF2?=
+ =?utf-8?B?YnE2V2UvM3FwMmhpbkoyL01IczdZWEpWamxhdmpqZHJwaHBiY2toZ2ppZCt0?=
+ =?utf-8?B?dFJJaHEvTks4UWhLdnlVdXkraytiekxBOWNrOURRMmZ6R2UrWVplTjA2bmdx?=
+ =?utf-8?B?Q3ZPTDFzT2toNlFtd0R1cThoRlpXbnhxeHV6eGs5RC9oRDBsa253ZG1sRUhT?=
+ =?utf-8?B?UldCSTFETU1ERmF3VU9nWXp1N2c4TDRRbTBoNVRGODJqUjZKNEN2RHVrM2lB?=
+ =?utf-8?B?cEVONEtuUGJnOVZycFZpNHVTT20vM3M0clJEQWY1YjB6QTYxb2xIMHVrb3JF?=
+ =?utf-8?B?eFBFZ0VBaGNmYWF3bHRwVWowVmpxMFBpM2lqQjNzZnJCMEpwWThZYXVrS2lw?=
+ =?utf-8?B?OFgzTTVkeVlWaXB3bSs2c0lyMkNXMHpCOGlyUExndzBtRXpCek1zZ2pLblha?=
+ =?utf-8?B?dVNVTmRmaVNpKzFHbmZtNXk2UzVhSjJaRVZXL09IZFN0a3JabXo2NVR4aFFL?=
+ =?utf-8?B?T3VQMXBQSG5NcHIvU1lkcEg3SnQyYzM3SWZLQlc3Uk5tcFNINHhpSyszckRy?=
+ =?utf-8?Q?Yh4uP4hvmm8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR12MB9049.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Z0NQZ0I4ZEJ5RmZEVnBrWHAzNkpFeVdmWUhaNk9reEhBcjloVFhtb2JyOGdO?=
+ =?utf-8?B?RkhWWml6RzgrUDNGeTI4a0tMVTFJdlF3SE0zckVFdGVMUFRaOUxTeXAvRW1s?=
+ =?utf-8?B?clVaTmZMaXBRT3BPZ29tbHhVZEdXSlBDVmxqRzFDTlh6Z2NDbWxzdUlacmtC?=
+ =?utf-8?B?YmNibWhCVW40T1JtTkY3bmllbnFlZ1MyeDE3ekx0eEhCZHYrdStTTlVaV0RO?=
+ =?utf-8?B?ek90SUpjSEZPOTdxbGk2UWV2YWRiN0xabjMwQlI5cVNIbElVVDZUamFjZGhJ?=
+ =?utf-8?B?Wnl4RVFFeG5yYk80aVhsZ3RDTDZrTkQ5R0VHdEhmUmxiY2Z1T0o5WGhHY08w?=
+ =?utf-8?B?VUhaS01DdXFjbC9TcHM3MllDbGhBY2QreC9OUzZ6WGtjME5FL3VSZHlMa29Q?=
+ =?utf-8?B?ZlkzZ3ZZUnNQZ1djeWE3US9TQVRsNVllelZJWFFTTm1MTXJUWXNpTm02czdB?=
+ =?utf-8?B?UTIvSmRSajNXb3lZcHZSMzhYUzdLa0laY1pWb3dCM0NTWDVHSW9nZ1VVcDhR?=
+ =?utf-8?B?aTVwZEYybUttNE13L3JWTmJmNFpNWXYzNHBZcml5Yi9EM0x4ZWwzUTBYWU42?=
+ =?utf-8?B?SE85aEtlTlYrL3ZhVGJxdVovL0IxVmVCV21ScWRrc0dZOHh4cmx2Qjk0a3hJ?=
+ =?utf-8?B?R0pFNkdQd3JUbnVCTDNwRWR3dFNKNXdEd2NVU0hlRnoweG4vbnZmM2E2Y01x?=
+ =?utf-8?B?WjBvQ2QyUHBIeDFVaFdNZHEzOVZFeTJmWFVDWjlHcjA1VmdOMWdIK3Y3aG1m?=
+ =?utf-8?B?eVFyQUtvQlRDdGtxSHkvNzJiK1BhT2lGeE9BZGZFVEpEVTJQdSs1Q2VpTkJ1?=
+ =?utf-8?B?R0NPZC9pUmdLK0lqNGVSZCtnTzF4eG11MHVIRFlYR2IrUk8yek5iNklFYllz?=
+ =?utf-8?B?UzdxMWw2eGM5UHlsbjZWbnVGQ0h4WXRpMzZqRTBzdWhwdUlIbEc4WjBtNnFZ?=
+ =?utf-8?B?RWtpSEs1RjFsVURqMUgwVGtZakxiVytnVFhqejAxZHpDb2FidStPdnJMTHhE?=
+ =?utf-8?B?aXJybUxmYnZZQU4rNzZSSmd6SzU1T3VyZ3Jsc3Rlb1RPTzNWT3F3cnhEL2RW?=
+ =?utf-8?B?MVpkRkFlYlltLytyVHNMejdDOXZ6encxakptZThEd0JoOGc5S1ZNc2FUc0Y3?=
+ =?utf-8?B?RmtsVHlOeEVVVEZ0bDZYMFRWdXZlRWh3eUtoNG5taWV0LzlveG9QYkh0eGdD?=
+ =?utf-8?B?UFRqbEFkL01CbTlIajZleXE1ZzFySFNCaE1tNUQxUzFCMVdnakpNQ2RvRC9R?=
+ =?utf-8?B?MC9aMXpHazVzUWU2dnJLS3cxd0lCS1RQWWdxVlZKczREUCtTQmJVVzRDR1N2?=
+ =?utf-8?B?TkhSUThlakhhOWlGcllDS2Z5a2J3SWR5NDBVYkF0MmY5dlQ3SGg5ay9TYWJX?=
+ =?utf-8?B?enRRSldwNG1OTXU2ZC9kY2h3bm1NVFErRzZsb2phNDN2ZXpRa2UxRXBYazFr?=
+ =?utf-8?B?elhSOEg4azRmci9KY0JtcVUxUmNMVjJTOUR5WnFQYUxnWVhEU0NOWlJrS2lX?=
+ =?utf-8?B?ZXNReHhGclQ0SWZzT0tWd2xEV0VXRU1kby9XbnYySjRlcW0vRFpGM005bFds?=
+ =?utf-8?B?UHdLWGIwQkw5UnkyRGxYdGF0cmpSQS9IckJBWlZ2NXpEWEszZ0c1di90S0RU?=
+ =?utf-8?B?ekJKZTRxYXZMVWZ6UE84TFY1ajYxV0RmekVGRnR1dVBqMTZTYVNNdll2bzEv?=
+ =?utf-8?B?NGVJWkwrT09sbUxwMHdXMlFDR3ZrR3MxSUNuS3ZRZmV6SDVZMkRRTVZlS0NL?=
+ =?utf-8?B?dG9rbkZvMlh1cXFOWGFOTWxJM2cyZ0RIQXdLMDRYU2lLeklsM1hmOURmeXJs?=
+ =?utf-8?B?OUY4cnlEQWxNMkpEZ3NEeWVjcWtzb3M5SFZwYXg3RFF1UUduVWtodU5LYmlF?=
+ =?utf-8?B?Vk9PNUpPc1NTSTNGWmRPMkY3YlR6MzFoT0lwUEJoZVZCeFFiNmo4bThNc3N6?=
+ =?utf-8?B?dWU3UVg0RE4zTkF3cGVsVGFFU2hhV3MrMlpPSDVySlk5U1lTaG9IOWd0QXdu?=
+ =?utf-8?B?MEVxTSt2c3pEMHI5NmFsZGZZRDRnSkMvLzNRMmJubzl6R21GMDZWUzUrUnNH?=
+ =?utf-8?B?NnVmZERTWHVvcFY2dXBpQXBnQlAvYnhVQ3dPMFdSdWJyUzU4K00wYzM3RWlQ?=
+ =?utf-8?Q?4jT4YdR/w42D4bVeUXoPYLf16?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7b656663-b481-40aa-4346-08ddc4fee666
+X-MS-Exchange-CrossTenant-AuthSource: BL3PR12MB9049.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2025 06:55:22.4178
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6IAwcs3B31TjauZxWi/mcp55GY2CLodEqM441gsm4c+Gux1B3etw6nAlaEHNvnZLMCHnahwGy8rMTKtGNygatA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6622
 
-No double colon is necessary in the description. Fix it.
+Hello Vasant,
 
-Reported-by: Rob Herring <robh@kernel.org>
-Closes: https://lore.kernel.org/lkml/20250625150458.GA1182597-robh@kernel.org/
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
- Documentation/devicetree/bindings/soc/qcom/qcom,rpmh-rsc.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 7/17/2025 1:22 AM, Vasant Hegde wrote:
+> 
+> 
+> On 7/17/2025 3:42 AM, Kalra, Ashish wrote:
+>> Hello Vasant,
+>>
+>> On 7/16/2025 4:46 AM, Vasant Hegde wrote:
+>>>
+>>>
+>>> On 7/16/2025 12:57 AM, Ashish Kalra wrote:
+>>>> From: Ashish Kalra <ashish.kalra@amd.com>
+>>>>
+>>>> When a crash is triggered the kernel attempts to shut down SEV-SNP
+>>>> using the SNP_SHUTDOWN_EX command. If active SNP VMs are present,
+>>>> SNP_SHUTDOWN_EX fails as firmware checks all encryption-capable ASIDs
+>>>> to ensure none are in use and that a DF_FLUSH is not required. If a
+>>>> DF_FLUSH is required, the firmware returns DFFLUSH_REQUIRED, causing
+>>>> SNP_SHUTDOWN_EX to fail.
+>>>>
+>>>> This casues the kdump kernel to boot with IOMMU SNP enforcement still
+>>>> enabled and IOMMU completion wait buffers (CWBs), command buffers,
+>>>> device tables and event buffer registers remain locked and exclusive
+>>>> to the previous kernel. Attempts to allocate and use new buffers in
+>>>> the kdump kernel fail, as the hardware ignores writes to the locked
+>>>> MMIO registers (per AMD IOMMU spec Section 2.12.2.1).
+>>>>
+>>>> As a result, the kdump kernel cannot initialize the IOMMU or enable IRQ
+>>>> remapping which is required for proper operation.
+>>>>
+>>>> This results in repeated "Completion-Wait loop timed out" errors and a
+>>>> second kernel panic: "Kernel panic - not syncing: timer doesn't work
+>>>> through Interrupt-remapped IO-APIC"
+>>>>
+>>>> The following MMIO registers are locked and ignore writes after failed
+>>>> SNP shutdown:
+>>>> Device Table Base Address Register
+>>>> Command Buffer Base Address Register
+>>>> Event Buffer Base Address Register
+>>>> Completion Store Base Register/Exclusion Base Register
+>>>> Completion Store Limit Register/Exclusion Range Limit Register
+>>>>
+>>>
+>>> May be you can rephrase the description as first patch covered some of these
+>>> details
+>>
+>> We do need to include the complete description here as this is the final
+>> patch of the series which fixes the kdump boot.
+>>
+>> Do note, that the description in the first patch only mentions the 
+>> IOMMU buffers - command, CWB and event buffers for reuse and this commit
+>> log covers all reusing and remapping required - IOMMU buffers, device table,
+>> etc.
+>>  
+>>>> Instead of allocating new buffers, re-use the previous kernel’s pages
+>>>> for completion wait buffers, command buffers, event buffers and device
+>>>> tables and operate with the already enabled SNP configuration and
+>>>> existing data structures.
+>>>>
+>>>> This approach is now used for kdump boot regardless of whether SNP is
+>>>> enabled during kdump.
+>>>>
+>>>> The fix enables successful crashkernel/kdump operation on SNP hosts
+>>>> even when SNP_SHUTDOWN_EX fails.
+>>>>
+>>>> Fixes: c3b86e61b756 ("x86/cpufeatures: Enable/unmask SEV-SNP CPU feature")
+>>>
+>>> I am not sure why you have marked only this patch as Fixes? Also it won't fix
+>>> the kdump if someone just backports only this patch right?
+>>>
+>>
+>> As mentioned in the cover letter, this is the final patch of the series which 
+>> actually fixes the SNP kdump boot, so i kept Fixes: tag as part of this patch.
+>>> I am not sure if i can add Fixes: tag to all the four patches in this series ?
+> 
+> But just adding Fixes to this one patch is adding more confusion and
+> complicating backport process.
+> 
+> Is this really a fix? Did kdump ever worked on SNP enabled system? If yes then
+> add Fixes to all patches. If not call it as an enhancement.
+> 
 
-diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,rpmh-rsc.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,rpmh-rsc.yaml
-index 036562eb5140c78c10d845fd6efe42470b41895c..26d9bc773ec5cd42c147c776d2865fa2b435bc24 100644
---- a/Documentation/devicetree/bindings/soc/qcom/qcom,rpmh-rsc.yaml
-+++ b/Documentation/devicetree/bindings/soc/qcom/qcom,rpmh-rsc.yaml
-@@ -28,7 +28,7 @@ description: |
-     SLEEP   - Triggered by F/W
-     WAKE    - Triggered by F/W
-     CONTROL - Triggered by F/W
--  See also:: <dt-bindings/soc/qcom,rpmh-rsc.h>
-+  See also: <dt-bindings/soc/qcom,rpmh-rsc.h>
- 
-   The order in which they are described in the DT, should match the hardware
-   configuration.
+Well, kdump only worked on SNP enabled systems if there are no active SNP VMs.
 
--- 
-2.50.1
+But i think it makes more sense to remove the Fixes: tag from these patch-series
+as this SNP kdump support is more or less a feature enhancement for SNP.
+
+Thanks,
+Ashish
 
 
