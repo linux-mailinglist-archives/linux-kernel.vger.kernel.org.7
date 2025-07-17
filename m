@@ -1,230 +1,148 @@
-Return-Path: <linux-kernel+bounces-735926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52C3BB09562
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 22:04:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80DD3B09569
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 22:05:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9541C4A03CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 20:04:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76C9A1895D53
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 20:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF75224B09;
-	Thu, 17 Jul 2025 20:03:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15B92248AF;
+	Thu, 17 Jul 2025 20:04:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="isfTM6xU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="X/RnAtaM"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8B3223316
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 20:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B8F2236FF
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 20:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752782634; cv=none; b=PSf545z5jmgJb+WaSmJaNiI6EG2VenamwOfmI8lZp0UvLoEDRB0ThhUZzpCJ9zgUbSZ3KvaFdI5qLC56HTJIFD0O7GCkpM1oaAFEF8FsptbXSN1vzuvC00NPgOSVT8CSOFgp73pz5PLTbrRWvbNq0HWVQbSnSZgidXj4JpeMFvU=
+	t=1752782685; cv=none; b=TRtTGKzSKjE47AKyI4259Oia9QB5HmzsxTvwv6XUbfItLReBeexzyeSv+AnIVvLerIIvRSNmmbfQdyCzaZ04SmLvkQ1w32zv39v0qydJh/hh+ivb6sGxyBaFqkcRztgep75HKnCNTL7p6dmAvSAmh8Op7MTqT87f+MkSJPcPsO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752782634; c=relaxed/simple;
-	bh=Q/F1zAOvHokBZlzDec5Cjn3EbeBfpbAqOlMColJ54Aw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h24owqBMfXdMnk5UtOkiCzTRcWtE8voR9iiFyL1kGstcVg0s536xowiBiPn4nvMyDdcDTgkPHdWcFLT+3A7Mf4ycvl/EizY4uyuKqPt6mLNIiE4fKwAi6rNBieZRRXUqlfodf8RcwEQsN6KCQa6UmvfLXVCTyK7Sek3zn8hmf08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=isfTM6xU; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752782631;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ClNVtTZhZp5gAwQFZwS1SAbGnOFesIfcYAsTrAvuVJw=;
-	b=isfTM6xUVSP/Fgvogs5yHVEarcKEO14JLyAtMq9FdjMuADmePaKqQuFY+K0ZXTsue4cYX/
-	NSDQC0BgnTl+e17YCZsejM691oVQNdmte2Mj7JF0FW29bTcpLbOG4G+K1c/3HtoBe7q4Sv
-	hXkcpoUCOK/myo5HTSUZsrSHQoftovM=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-245-M6ttOkeKOLmmjYQljRnroA-1; Thu, 17 Jul 2025 16:03:48 -0400
-X-MC-Unique: M6ttOkeKOLmmjYQljRnroA-1
-X-Mimecast-MFC-AGG-ID: M6ttOkeKOLmmjYQljRnroA_1752782627
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4562985ac6aso13872945e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 13:03:48 -0700 (PDT)
+	s=arc-20240116; t=1752782685; c=relaxed/simple;
+	bh=U/+v7KLWnVxoUKhIBBslHybhE/t5sUE6Pg10SYhDzK4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LT3pCxwzTpcq4DiL/CMjU6Jh3iAmcR3u/kATs4963Up2Sb5w+oSYoWcZtTKt0R1tvUzV/Z0kU1KfVx+aj/iJ/R7CJWF+tsuDHyPH0e7o3RmUrq9YG1CqE0DUcVGilgEQB6Vr7CMJoLsPsu4lgWlv5uwmYqfHCa6otbfv7mze64s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=X/RnAtaM; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-313336f8438so216524a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 13:04:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1752782683; x=1753387483; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3/v0WT+7vq9SCfoMg2Yag6ZEXMrfYo0BDeUgpiKJwjw=;
+        b=X/RnAtaMalF0WoNywXqWuMCKNDVBr5wz/XH7cZ3kn1ZoHkxK41QbmfBML9phnPCbbY
+         jkMiQYiMrAX4EBHgF8+i9YX4rKzZtz6swxrPBOBW9EZDPE5OH5c/oAX33IdS1zUqnSFd
+         8hcf77p2eZ8I3Zs8RikJMWPLU4zLGbowu4NdS/ZK53MzJXj/SYcBtT6bgz7nk2hR4xfX
+         So39mTbNFkb/4+QgXjgGlh4m9FJnZmbcdPCw8S1M5yTXwnBqyaMh6N+gKa+C4f/2nwD0
+         0waZ3sseO6QbGjWDLzxcoWAE0FZyTpUdRFTFUMcvtaXR3oFsVU4wDqOJx8IxL95DsyxJ
+         0RMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752782627; x=1753387427;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ClNVtTZhZp5gAwQFZwS1SAbGnOFesIfcYAsTrAvuVJw=;
-        b=TEU9mnLa4gNdTbIDgqoBXDIk5wpYbRrbXWJ4c3fEPUF/X1T8YYhcEqUz8YZ+7KUH4G
-         +9NmILnHnt54Px9XT3mL+pntCKcPLc51P4PkeSuOgnYBy3aauJH4JrGPMyOc1fALThnc
-         LdMU8SPB58KHBLIEQ8eILK1HS7BcJzQOMt3tk1wZP6j5JPp1bdootWLV4VWlPa6//e3T
-         xQ/dE13bgD+agBwPaHLkU8/QVQu0j5zGnxzvQmTXj2ZWSowL8P1Lsy4T6TVEFxY9y6Md
-         FgOH/W+mKXF/JUNxELntiumwtTw98l61TltuxCtiDggl6WmS0J0ge3USDqCUdhT+vS/L
-         iINA==
-X-Gm-Message-State: AOJu0Ywy75/1kDYF9PKZJ3GK9u9zXdemymNau/gce5gkR3bbuUjaDfpZ
-	SSvyfDRerJnDE1kT85q6Oi2C9er0ciCH5OTUTa4mTMXrdPVM9jT1S0amU9rIIjzslWcflsHWngF
-	EAXSV3diOF0g/Ig+1sCwRCeFS3LI/U1dbK4G1G/lUsyCFNj6KuvrHEJbdf1pi8Axpvg==
-X-Gm-Gg: ASbGncvG1Pl4XmlXs9f1RWXnW1bQQUIQDEdMUOsCNTC1q5nQp2gmhBHsJVncvOXm6k1
-	zLQtGkE238yHfEtOVx+9UDUheR5A6wXFIyi3+FNuO5Q04xMAKp8FGbG4e5OaVaGZXJt9GtMqyz9
-	BoI+mYIA2E91I/tNi+DM/OQvv2lbkF91r8xsacRDlFe3X4GW1c0pW/No7sB7pTlB6Gmdo06RCFU
-	RgDcK26v5AeQXm1Xjs3CjEIK/hSgov6rQY9HHYk6WscdXps6Icono81+FpBYqeHkkqEiMPkYDcz
-	XSzc1HVGiUy+AqdWf2UL/FkZhEUSinAcoc2mhbgHjZ5W42hZtZyUK4qCsapm2n0culVaP3Fk75m
-	qdueDff0TKaZK/+5ytbv7sLxYO49X04Sw0RyROFGTPMb5SBXSt3bXmOyv63AzdCa0
-X-Received: by 2002:a05:600c:3481:b0:456:f9f:657 with SMTP id 5b1f17b1804b1-4562e3c503amr79745915e9.27.1752782626927;
-        Thu, 17 Jul 2025 13:03:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHITXVfZtwqa7P8f0u6oWcFw1NazxQtB99hClGfTnR+mgLoVDMe7M6pKVDkyJRWFMthviCSvw==
-X-Received: by 2002:a05:600c:3481:b0:456:f9f:657 with SMTP id 5b1f17b1804b1-4562e3c503amr79745695e9.27.1752782626423;
-        Thu, 17 Jul 2025 13:03:46 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f35:2b00:b1a5:704a:6a0c:9ae? (p200300d82f352b00b1a5704a6a0c09ae.dip0.t-ipconnect.de. [2003:d8:2f35:2b00:b1a5:704a:6a0c:9ae])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45630ec9129sm49616075e9.29.2025.07.17.13.03.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Jul 2025 13:03:45 -0700 (PDT)
-Message-ID: <b7457b96-2b78-4202-8380-4c7cd70767b9@redhat.com>
-Date: Thu, 17 Jul 2025 22:03:44 +0200
+        d=1e100.net; s=20230601; t=1752782683; x=1753387483;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3/v0WT+7vq9SCfoMg2Yag6ZEXMrfYo0BDeUgpiKJwjw=;
+        b=SALwsuES9j+a0pcFAHmF/JyCIz4xWL0xcJ3vV/hNBDgkU5Y+1CiSBV166bRtyBPiiX
+         qTY0Cv4RckHl6Aa2F1A54hAfhXJBXM8dGAdrZ7g4OaZtB4tpli/C/79dIy1E7uBv4wfI
+         qwZpl9VZoZjw7bSgFm5uKBIXc4iuPVzrsTUQXJyEEPNip9M+OW4amx8f1bTG/SZ5NeBL
+         ALA0m9a+TfgK3vcW9FWoOZe8gZgd3foK2BYb2Zf1h6hMM5hjjJSmiyYkqGhEaW9avrxk
+         Qa6nIqehyW7bFe/cs/T+Uf4Kwh+GBWxyFtoHG1V3sZSPWx/Jr2wcpzWp6IEaEuQFloff
+         IGbg==
+X-Forwarded-Encrypted: i=1; AJvYcCUu45AIhkujJU6YUUqurOiErHMaOi0+O54N1p+mIcle53LMQ6FgTrjW2Yasia/pQoh50Dkw6FzgwQC9jgo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybfrzvLjiNgwChzGQdtFGvjqo2mdIMgkVE+NCdYciAIZLveSee
+	fVUTm4xyjO8j1Ca4rQG6ItUroL5EuGOB/iDMoGMp7P286SJX7n2/1q4ORrn9vUMBZX6H8imSF1U
+	TM0HIyPoOuSfbUZjFuFH8hblsXLk2IzCfdMt0esxppw==
+X-Gm-Gg: ASbGncv2DKaO78cdkTFdNTmGC2exE1vethhzHx9LQOOsT0/kXK3JoR2OCfagiBCz9wG
+	82H4WmXy+H1SymBBxMvRiOjs75TsbqggeWGQvYhGrYyvTS2L/Wvg4OgwRFAs8LtdhJX/1U34cMa
+	NsP7WE870M8G8uWcEXerRctCwaykrnMWqEcfm26Jdtq+IjO+QKdpYoqyOt/AJ9J6WXZUmQuiwcT
+	heOj02K
+X-Google-Smtp-Source: AGHT+IEhtJhj93AM6HYFT5RBg05Ilw6taTJ3/mXZBlGWr1wjpnrg+tZXlSuFBThy/hFSUe1C/9a92iYVg1S6R9eX2Uk=
+X-Received: by 2002:a17:90b:3d09:b0:311:fde5:c4ae with SMTP id
+ 98e67ed59e1d1-31c9e776737mr4663891a91.6.1752782682862; Thu, 17 Jul 2025
+ 13:04:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 7/9] mm/memory: factor out common code from
- vm_normal_page_*()
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- xen-devel@lists.xenproject.org, linux-fsdevel@vger.kernel.org,
- nvdimm@lists.linux.dev, Andrew Morton <akpm@linux-foundation.org>,
- Juergen Gross <jgross@suse.com>, Stefano Stabellini
- <sstabellini@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox
- <willy@infradead.org>, Jan Kara <jack@suse.cz>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Zi Yan <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
- Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
- Hugh Dickins <hughd@google.com>, Oscar Salvador <osalvador@suse.de>,
- Lance Yang <lance.yang@linux.dev>
-References: <20250717115212.1825089-1-david@redhat.com>
- <20250717115212.1825089-8-david@redhat.com>
- <1aef6483-18e6-463b-a197-34dd32dd6fbd@lucifer.local>
- <50190a14-78fb-4a4a-82fa-d7b887aa4754@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <50190a14-78fb-4a4a-82fa-d7b887aa4754@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250708202212.2851548-1-csander@purestorage.com>
+In-Reply-To: <20250708202212.2851548-1-csander@purestorage.com>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Thu, 17 Jul 2025 16:04:31 -0400
+X-Gm-Features: Ac12FXz4umVHFmIzVUIOYyEMbfS69u7WsqSmgyR0PovCc2BoXLdELiz-nczSAh8
+Message-ID: <CADUfDZr6d_EV6sek0K1ULpg2T862PsnnFT08PhoX9WjHGBA=0w@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] io_uring/btrfs: remove struct io_uring_cmd_data
+To: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
+	Jens Axboe <axboe@kernel.dk>
+Cc: Mark Harmstone <maharmstone@fb.com>, linux-btrfs@vger.kernel.org, 
+	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 17.07.25 21:55, Lorenzo Stoakes wrote:
-> On Thu, Jul 17, 2025 at 08:51:51PM +0100, Lorenzo Stoakes wrote:
->>> @@ -721,37 +772,21 @@ struct page *vm_normal_page_pmd(struct vm_area_struct *vma, unsigned long addr,
->>>   		print_bad_page_map(vma, addr, pmd_val(pmd), NULL);
->>>   		return NULL;
->>>   	}
->>> -
->>> -	if (unlikely(vma->vm_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
->>> -		if (vma->vm_flags & VM_MIXEDMAP) {
->>> -			if (!pfn_valid(pfn))
->>> -				return NULL;
->>> -			goto out;
->>> -		} else {
->>> -			unsigned long off;
->>> -			off = (addr - vma->vm_start) >> PAGE_SHIFT;
->>> -			if (pfn == vma->vm_pgoff + off)
->>> -				return NULL;
->>> -			if (!is_cow_mapping(vma->vm_flags))
->>> -				return NULL;
->>> -		}
->>> -	}
->>> -
->>> -	if (is_huge_zero_pfn(pfn))
->>> -		return NULL;
->>> -	if (unlikely(pfn > highest_memmap_pfn)) {
->>> -		print_bad_page_map(vma, addr, pmd_val(pmd), NULL);
->>> -		return NULL;
->>> -	}
->>> -
->>> -	/*
->>> -	 * NOTE! We still have PageReserved() pages in the page tables.
->>> -	 * eg. VDSO mappings can cause them to exist.
->>> -	 */
->>> -out:
->>> -	return pfn_to_page(pfn);
->>> +	return vm_normal_page_pfn(vma, addr, pfn, pmd_val(pmd));
->>
->> Hmm this seems broken, because you're now making these special on arches with
->> pte_special() right? But then you're invoking the not-special function?
->>
->> Also for non-pte_special() arches you're kind of implying they _maybe_ could be
->> special.
-> 
-> OK sorry the diff caught me out here, you explicitly handle the pmd_special()
-> case here, duplicatively (yuck).
-> 
-> Maybe you fix this up in a later patch :)
+Hi Jens,
+Are you satisfied with the updated version of this series? Let me know
+if there's anything else you'd like to see.
 
-I had that, but the conditions depend on the level, meaning: unnecessary 
-checks for pte/pmd/pud level.
+Thanks,
+Caleb
 
-I had a variant where I would pass "bool special" into 
-vm_normal_page_pfn(), but I didn't like it.
-
-To optimize out, I would have to provide a "level" argument, and did not 
-convince myself yet that that is a good idea at this point.
-
--- 
-Cheers,
-
-David / dhildenb
-
+On Tue, Jul 8, 2025 at 4:22=E2=80=AFPM Caleb Sander Mateos
+<csander@purestorage.com> wrote:
+>
+> btrfs's ->uring_cmd() implementations are the only ones using io_uring_cm=
+d_data
+> to store data that lasts for the lifetime of the uring_cmd. But all uring=
+_cmds
+> have to pay the memory and CPU cost of initializing this field and freein=
+g the
+> pointer if necessary when the uring_cmd ends. There is already a pdu fiel=
+d in
+> struct io_uring_cmd that ->uring_cmd() implementations can use for storag=
+e. The
+> only benefit of op_data seems to be that io_uring initializes it, so
+> ->uring_cmd() can read it to tell if there was a previous call to ->uring=
+_cmd().
+>
+> Introduce a flag IORING_URING_CMD_REISSUE that ->uring_cmd() implementati=
+ons can
+> use to tell if this is the first call to ->uring_cmd() or a reissue of th=
+e
+> uring_cmd. Switch btrfs to use the pdu storage for its btrfs_uring_encode=
+d_data.
+> If IORING_URING_CMD_REISSUE is unset, allocate a new btrfs_uring_encoded_=
+data.
+> If it's set, use the existing one in op_data. Free the btrfs_uring_encode=
+d_data
+> in the btrfs layer instead of relying on io_uring to free op_data. Finall=
+y,
+> remove io_uring_cmd_data since it's now unused.
+>
+> Caleb Sander Mateos (4):
+>   btrfs/ioctl: don't skip accounting in early ENOTTY return
+>   io_uring/cmd: introduce IORING_URING_CMD_REISSUE flag
+>   btrfs/ioctl: store btrfs_uring_encoded_data in io_btrfs_cmd
+>   io_uring/cmd: remove struct io_uring_cmd_data
+>
+>  fs/btrfs/ioctl.c             | 41 +++++++++++++++++++++++++-----------
+>  include/linux/io_uring/cmd.h | 11 ++--------
+>  io_uring/uring_cmd.c         | 18 ++++++----------
+>  io_uring/uring_cmd.h         |  1 -
+>  4 files changed, 37 insertions(+), 34 deletions(-)
+>
+> v2:
+> - Don't branch twice on -EAGAIN in io_uring_cmd() (Jens)
+> - Rebase on for-6.17/io_uring
+>
+> --
+> 2.45.2
+>
 
