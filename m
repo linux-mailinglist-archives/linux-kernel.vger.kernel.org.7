@@ -1,89 +1,61 @@
-Return-Path: <linux-kernel+bounces-735044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A98D6B08A0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:58:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45D32B08A14
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:59:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F202A47764
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:57:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 738097BDD3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:56:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61495292B2E;
-	Thu, 17 Jul 2025 09:57:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18535293B49;
+	Thu, 17 Jul 2025 09:58:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m005fpLc"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UhvWfng3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2900D288CBE
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 09:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70121288CBE;
+	Thu, 17 Jul 2025 09:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752746274; cv=none; b=ALtmDJjaAuWU35RelQVWz1POS9UGCCzvLUbG22UU7W8RsK2ErXGyQkBOAz3t2+PudCpFexrHduYz7NW1KWjPevQV+YSEvARaggxl7lJUo/HIon1obAqh9ZIfPqyM4jDcgucEIxuPtsPgkjLw1qKJ3Mq4mKyymosEz/ECNzqPmcg=
+	t=1752746283; cv=none; b=sR2zo9dYchMXQyEgGki0jvyOdDr74+yQEWWdjpwgRm4pQbHz3kXx/dpJkkV4OON6fVmoTpIBeeDaDcOh6xMAj4bpEI+B0PGxmgniEMHlwTWlqCHhc1BVzt45tsuzRhQSEvqiGXaNXZgtUjIond3RIDLoAibaAZlfSE0bueHoMrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752746274; c=relaxed/simple;
-	bh=C5c7x2+5FmrN92Gtg4+eigW/yNecgUmNAwgsD6/1sDo=;
+	s=arc-20240116; t=1752746283; c=relaxed/simple;
+	bh=UcUgBkuYffStTu9fwls0Y3+yc53zyJShMuqRpuh0m6U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CAqFlg/ep7l4hcnNo3pwXgxh5t60prToUyM6nMIsR2DCc196cfiGamsPGKyuH+lczEOxN2GVg7xb2B00i/PUUv59XzLMuxdjRpKZ0xzWV942sSBIZjHZrCOSbTrrDaG1N3yCNJVZrid5oQz7MvVjxnrtnT4nTe0gU4yKulMnWtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m005fpLc; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ad56cbc7b07so125065766b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 02:57:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752746270; x=1753351070; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=A9sprcw+FL+M/3WWYR2avdQL7tHTil5o2+4ysJZAMdQ=;
-        b=m005fpLcWnAvz0JjkEffvSN+/hoEF9efLY4NGGZa4QIIjkqdTs7VODtbCSKCjqMWW6
-         lgaeZhLmotaL897hwGqK5UT2DtrafSo2tocknaatWcJMQFCVlc7C5qfmmpAyg81ttVQ/
-         Pw63quyidt44Jmq0Lq9QFxuGMX2NmIgx55Ibz409wa74gN8YQpk84YrXGuwmrmxB/MDA
-         K6fRpaFGszLJaShnOKD1573GuGQyMYHlY4bpSDNAI0mDwQmWYrFNc10BYLB356kjTxWS
-         aq+dy7hCmn8ZsKY1cpCAD64TBmDST26CC05dpiNRYkBWfNra55254x4B/XJqVeqoS2ZV
-         gXxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752746270; x=1753351070;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A9sprcw+FL+M/3WWYR2avdQL7tHTil5o2+4ysJZAMdQ=;
-        b=vbkLdyiHmTYWn0FhLZsH3r1K+czEZ29GwGuCiilw/nTa8wk2dUC/F11chnwWhPKCU+
-         7BgBYAseeTmutd//B8Yuair4SHVbZXPRAn0WsrtXOoCSydIlq6jmFPSDCIHOMlH6Ug/W
-         xroohpyqNg8UvF242UCP9TOtfLIy+ngcccCtcJi2BHbFqsChv9D0iJgDTE9/P0qW95NR
-         nu/ZyN6CsWYH1Q1y5aoa6cbayaP0mMDrIih0aa50gXy8AMNZ0wZQqP7XQK9NBxoCxItO
-         DdOXlWl4GhpgQSllQZCsIpE67XmTr73qx4jcbcDyh4CZe76hS4L09uvFJjX5BMAvB57G
-         jA2A==
-X-Forwarded-Encrypted: i=1; AJvYcCVMar6PEGuiWOXjdPbQ4ww9GuPVpXL1nCTpeNVd+TYJkOUIAtBEC/0L1ZkGL6yiwEIl5hKXgSQr4GU9Ta4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsOU98KHKPsj5sDAkwIOj5p8a9aDs9yz0BZeMEBV6PNhQVoH+w
-	HIE1mTOmoMyECm4YfO8ywBnkm266pjCK1oID7449TgjEHmoTB6ePMAYN2Rht/y3AGk8=
-X-Gm-Gg: ASbGncsADQFxcqeGs4Vpw2KyQ2kGsf/ElQDJcZCwvYTGTDtC6dsiLVVw0pmtB7xrHqG
-	rl1su67hK51RuAcBUXUzMlzgtZihr/HoHQrMRFB+nn5ntmmMvHHj6hUGDitJIaeJbLUl/D8Jl2P
-	WexhYxqGa5pJCi8nK0uP/QXS9G04P1XqIYHtUhvWt5/7po+yeMJgOYgN+n/P+WHcyn/xWkCuUgE
-	68mrBlgLJkXgdpM9xL6b6UDnQ/3RqN1eKwTbIKw8/oKh2cd1nk8bEbLwp0c+rf5Jqr0F1cfJ64h
-	jvOBdl8ZPUQOpw/G4MRog4tMzMzdMNAKdLYIM6yxzLPgE69Eizb56i2mtoZcJH10ZhKO1vQvJFe
-	KR6MxdPvjraDb0Y1T9nA=
-X-Google-Smtp-Source: AGHT+IF2F1sezQkalvkubfc1kydTpgVG5QuWYuPnjDm/LqI0gsy0QRNYJ/pRxI93KXsHSADKAggVsw==
-X-Received: by 2002:a17:906:fd84:b0:ae3:63fd:c3af with SMTP id a640c23a62f3a-ae9cddf1080mr542887866b.16.1752746270277;
-        Thu, 17 Jul 2025 02:57:50 -0700 (PDT)
-Received: from linaro.org ([82.79.186.23])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e82dee16sm1337846666b.152.2025.07.17.02.57.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 02:57:49 -0700 (PDT)
-Date: Thu, 17 Jul 2025 12:57:47 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-Cc: sboyd@kernel.org, mturquette@baylibre.com, andersson@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	quic_rjendra@quicinc.com, taniya.das@oss.qualcomm.com,
-	linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 7/7] clk: qcom: gcc: Add support for Global Clock
- Controller
-Message-ID: <aHjJG2nrJJZvqxSu@linaro.org>
-References: <20250716152017.4070029-1-pankaj.patil@oss.qualcomm.com>
- <20250716152017.4070029-8-pankaj.patil@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=im6TFTLGZlQgj81EIexbybFBpSayOKRquBPTERxosSjeDt44gPPYW6f7V3UUiulGxHC/augHznRJj6v9utIeMLepmKPKbPJnO28AgCVXIw5wn73BdKKoxWKmm6RfDu5A2Lsb8vk1EL3ZSigDkvtiqS6eF3Njcg7ekXcqsjlt/C8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UhvWfng3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46846C4CEE3;
+	Thu, 17 Jul 2025 09:58:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752746283;
+	bh=UcUgBkuYffStTu9fwls0Y3+yc53zyJShMuqRpuh0m6U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UhvWfng3K9WZ0rqIyPCE+c3v/AD/aq47bpEszhmoia4fLXW3W9JL1eimyr6/pUyDq
+	 H1Q4N81D1NDt4X12/6FIjOxVKPvv+VYGj5n6YQ+UmSKSNSckfFH8cOCQB6csLeRMMg
+	 af2a29ptpPbP2icx80CsOlWpYonOkXMUnvz5is9fjezihWGMLl22rqg8R1ivi1sZb+
+	 zELsDeUScZYjFgE94OdkQRP1J27LmHVaXw1zFlx1Pvs+ytdm+WkuNnJMCIS0vrbB00
+	 1TMhIt/hDBX7S/YCwCGYqtJ+dUB2clUtoXBrPzVx/7sItHqDhlIDKIYycvrNxCDBXQ
+	 0byBA1G8EV/ow==
+Date: Thu, 17 Jul 2025 10:57:57 +0100
+From: Will Deacon <will@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, James Morse <james.morse@arm.com>,
+	Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>,
+	Robert Moore <robert.moore@intel.com>, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, acpica-devel@lists.linux.dev,
+	kernel-team@meta.com, Catalin Marinas <catalin.marinas@arm.com>,
+	osandov@fb.com, leo.yan@arm.com, rmikey@meta.com
+Subject: Re: [PATCH v2] arm64: Mark kernel as tainted on SAE and SError panic
+Message-ID: <aHjJJf4KTzXLBjM0@willie-the-truck>
+References: <20250716-vmcore_hw_error-v2-1-f187f7d62aba@debian.org>
+ <aHd8uvMegWXHyhvN@J2N7QTR9R3>
+ <xdvsnmcgfk7kkeq4r43l2c3h4vrlhuy4s6g2nybzsibyna3ipd@tkb7elmgn5m5>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,34 +64,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250716152017.4070029-8-pankaj.patil@oss.qualcomm.com>
+In-Reply-To: <xdvsnmcgfk7kkeq4r43l2c3h4vrlhuy4s6g2nybzsibyna3ipd@tkb7elmgn5m5>
 
-On 25-07-16 20:50:17, Pankaj Patil wrote:
-> From: Taniya Das <taniya.das@oss.qualcomm.com>
+On Wed, Jul 16, 2025 at 03:52:55AM -0700, Breno Leitao wrote:
+> On Wed, Jul 16, 2025 at 11:19:38AM +0100, Mark Rutland wrote:
+> > On Wed, Jul 16, 2025 at 02:42:01AM -0700, Breno Leitao wrote:
+> > > Set TAINT_MACHINE_CHECK when SError or Synchronous External Abort (SEA)
+> > > interrupts trigger a panic to flag potential hardware faults. This
+> > > tainting mechanism aids in debugging and enables correlation of
+> > > hardware-related crashes in large-scale deployments.
+> > > 
+> > > This change aligns with similar patches[1] that mark machine check
+> > > events when the system crashes due to hardware errors.
+> > > 
+> > > Link: https://lore.kernel.org/all/20250702-add_tain-v1-1-9187b10914b9@debian.org/ [1]
+> > > Signed-off-by: Breno Leitao <leitao@debian.org>
+> > > ---
+> > > Changes in v2:
+> > > - Also taint the kernel on Synchronous External Abort panics (Will Deacon)
+> > > - Link to v1: https://lore.kernel.org/r/20250714-vmcore_hw_error-v1-1-8cf45edb6334@debian.org
+> > 
+> > I think something went wrong when respinning this patch, because the v1
+> > link above is incorrect, and should be:
+> > 
+> >   https://lore.kernel.org/linux-arm-kernel/20250710-arm_serror-v1-1-2a3def3740d7@debian.org/
+> > 
+> > The Cc header for this posting matches that of the unrelated patch (and
+> > excludes Will, Catalin, etc), rather than that of the real v1. The
+> > change-id trailer also doesn't match v1.
+> > 
+> > The actual patch and commit message look fine to me, so:
 > 
-> Add support for Global clock controller for Glymur platform.
-> 
-> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
-> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-> ---
->  drivers/clk/qcom/Kconfig      |   10 +
->  drivers/clk/qcom/Makefile     |    1 +
->  drivers/clk/qcom/gcc-glymur.c | 8623 +++++++++++++++++++++++++++++++++
->  3 files changed, 8634 insertions(+)
->  create mode 100644 drivers/clk/qcom/gcc-glymur.c
-> 
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index 051301007aa6..1d9e8c6aeaed 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -645,6 +645,16 @@ config SAR_GPUCC_2130P
->  	  Say Y if you want to support graphics controller devices and
->  	  functionality such as 3D graphics.
+> Sorry about it, it was totally my mess with b4 on two different
+> machines/branches. I've been testing it on a arm64 hosts that
+> has no email access. When I picked the patch into the machine with
+> email, I messed up where to cherry pick and branches.
 >  
-> +config SC_GCC_GLYMUR
+> > Acked-by: Mark Rutland <mark.rutland@arm.com>
+> > 
+> > I assume that Will or Catalin will be happy to pick this up. I've added
+> > those missing folk to this reply, so I don't imagine this should need a
+> > respin.
+> 
+> Thanks. I will not respin then (unless requested).
+> 
+> Sorry for the mess,
 
-Wait, are we going back to this now?
+No probs, I'll figure it out!
 
-X Elite had CLK_X1E80100_GCC, so maybe this should be CLK_GLYMUR_GCC
-then.
+Will
 
