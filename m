@@ -1,79 +1,80 @@
-Return-Path: <linux-kernel+bounces-735866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 291DBB094B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:16:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B27CCB094BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:17:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82E841C4686C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:17:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1BF65871E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:17:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B7F52FCE00;
-	Thu, 17 Jul 2025 19:16:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F9482FE368;
+	Thu, 17 Jul 2025 19:16:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cuicDF0b"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e2MZoIvq"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31401213E85;
-	Thu, 17 Jul 2025 19:16:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5455E215075;
+	Thu, 17 Jul 2025 19:16:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752779805; cv=none; b=KhjzdfSOsnSNHg6cmRso0btBQ3UpGhcIB0+HVevdS6M23QVpdLBe7hIWOaB8oYWWG/ZEvlY3ONL3bpGBnVu+4LG0kzbQXVgTyGxXTbSSyFCCxUkInJD5eaIlNU+El+rx5+MvCNPju0m3y5HVYnhifH21B53tjgyMoMvmQmAknT8=
+	t=1752779806; cv=none; b=D/jGRIrGaTFVH4Th/lOPR7dJQYkUWYChx1G3x7FgsUGOgYekukveaBhJgNZ/yvNb/+tr6PA+WBCBhgcmolJH4Bx5saz+QqTs0EHH0vJeYCLtIl+Bk0FxpGwCkI0LtIRYFhwMLtJJCfAhMmBrgQoEt22ASfdZni/bdDi/XCtMV3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752779805; c=relaxed/simple;
-	bh=PyayYQ0JPKYC1bSL+yF6YQ9AEnmvymFEa0T+fiUNE9w=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dtckiInXGkf4GRUrvOplOyd1mJLFy07edSJCGgnG9lXAP5x3/FrBdxe+dLKIJEZPCzcJnzdmwjNtNA3lVbctsLe0A7Ueq5SpYIPki2l73MAEskDgJwDF0unnoG6GDnnOW/PCJHvuZ7NzEDUAB5rBX5XhzYttSrEizYWQFTnM8YU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cuicDF0b; arc=none smtp.client-ip=209.85.221.46
+	s=arc-20240116; t=1752779806; c=relaxed/simple;
+	bh=PyB/CZMxUn55sPN3ZHQgk/pnsj+LAy/0OIGcsrAdeRo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=RSuZUQ4cL1gI4bklhzPHyWoEp0h64HKjocnwg5SFP/ZyLN9Q0DbIqBoAoDWYIEks2SA8VqKubFiiLCDsYMAKrS/4qIbX7G4OJm8T3QaWITqgJ0Lc+YlIAv/nNkxkKrPcOUdbrQn9QWVbdeIRzAKXXBBu9PsVdtqIXJYGmvxW5XA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e2MZoIvq; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a536ecbf6fso846069f8f.2;
-        Thu, 17 Jul 2025 12:16:43 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4560add6cd2so11205755e9.0;
+        Thu, 17 Jul 2025 12:16:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752779802; x=1753384602; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mzt9wZOnZ6+CbKPnKZeU8dqGY8Qw3egF+06TS84cda4=;
-        b=cuicDF0bXb51Qi9S+KWHZNmXYbpjX39ulCr0v1ToRNefXgqI5SBhJtrRbYnlLrDDQH
-         QjhY3KhZnnUPomQC5vya5fjh29vYt6EOUHWCIClBfwDkTDFe2WN99/RSkBgxsv8DnJ9U
-         l02+WEhqS9SCvGlcYyNft/mBCfoB/1LfT4rHqqmBBUaNJsE/H6n5Lr7lHJvoWb14Gb86
-         mvCgjo8LR4T4eaqXBvY3rT0isOmAGN1Db+pNP33tx6u4NEpmIaVlb2bhwCSwxAV1fQJl
-         fJbwWawgezfIJURmbAJuuZnVXgTK1XmIapAg+uxe8lLd1jsy4jy0kKSLy36SYDhp2cS2
-         EsWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752779802; x=1753384602;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1752779803; x=1753384603; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Mzt9wZOnZ6+CbKPnKZeU8dqGY8Qw3egF+06TS84cda4=;
-        b=YsF5owwvjHaL54MFNiGktQemvdlIvnNfyMcXJecE5ZqgihIPSERtai2d9HN33E9HL2
-         BV5dHWAArS0GiIU8zcYqDaFaGuY82QBps74Lqn379U7MfPlcyZsWwRBMx8DWkZTF/irB
-         fVzlWY4gGubQwJNsy9qY7rZ5ojQ91ZRCHsz0BaEFXZLKmLSBnvPD2voEaojD7gS9oNvl
-         WXVW1fG3LFLUjl3L6zZVVvWPcNNk0avjVPLMfWXuIdALwvT6wFsDOTMechLGgl0gl5VM
-         x9vxWyThMY9odhnxCiF3e1TWW2LmntiGhOENxw8huWWPbHV8MZB37giO1CpQxo9IicZ8
-         3LJw==
-X-Forwarded-Encrypted: i=1; AJvYcCVrqkMeApjeOCi8olKV6bWoglmcQn3+smiM0q82zu1BMEgclnph4dowvbJXpdroIq7Fm/UpwvfoD5CG@vger.kernel.org, AJvYcCX/N8pafVZO/mi0zmSGrkY+sSAcZ7umbIjwTXFr5bBsbuejjDvTfGFcj/+r87XsRCWn6N1Y6ngNTh022Idq@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6r5J7LCd5GKSuAARcVQyYvhq4bNO8Zl2pcDE7iqHKlfX7M2dn
-	S+TTssaep7ZEN0YRIIw6wTFE9jFI33p8cwe0gApmBxBFLkQnMGbF0bRO
-X-Gm-Gg: ASbGncu16rC8KJUwgv3S2UU6VhKp0zoJawDYSfoxvcy6+iyPSF/wTNKHs/Ryra3j27v
-	PW08LRYmtwl7l+UmBftm8ahcCgkKtz251GWHlikJUMBFAB4312WYTIHpr5+qJUlVtUtK4Tuk5SE
-	Lh7THcb8SHaOd670/BHsakLNNRO2ioL7/9fYcSil9pMR/5i+ltQc20RqrgZMdkUa98qj3bC0QV4
-	+pyQb+G79e8okVtLSAobky7TEPsyXLOcMqtgwGREmpGtDNrMKo1g1kCY/ebifwU7IJy9QzqBG9t
-	lo3afjbR/YvwZj+sBNy4UMwaok4jMKkHSuiBwzdEBA+PNkHDlaVFBUdQEkweY3vPBlRZvwDBD4E
-	TyyA7mVMM04PdsmYpjDy3tbNawKe26uc1
-X-Google-Smtp-Source: AGHT+IFF8lsVWJTJwrDMD6i4As+eyuiIbEESQQF0qhNLx6tTwcszxJEOXDFYIrXcHilqwhBPrGxWeg==
-X-Received: by 2002:a05:6000:420b:b0:3a8:6260:d321 with SMTP id ffacd0b85a97d-3b613e60143mr3320230f8f.3.1752779802135;
-        Thu, 17 Jul 2025 12:16:42 -0700 (PDT)
+        bh=dXS6IlzCXXiWTFVQaBT3Lr0CwTpzt5HQ3tRbwjKwIVc=;
+        b=e2MZoIvqDzs86zd+eGp179zRNFkANi/lycYHolLL2/xJr+5wTEkfKc4oQwjB3yZeNj
+         EI1MVma8XAe9r35pQNSPnNs53os8jvfcJbGKkP/uxxWCXwGEQZkJHT5WP4v3Pn+qZcZJ
+         f8J0GMrVFKMwsMjGYQRNwfP22KsB2wARQZT6dRuvhc4dVG7JcAHtN+QzPn+yWIEkWLfn
+         RJsFmmaWqFyUs+W3N6pJc11wc56bzbbgHYH0xK5dLWD1LDg4d5vrDVKxgjghAEl4MzrW
+         PXmZgWm0jT5LtiO+szulXy+2FMLWbotrXGZUD3GVNN1mT6WHg2ovIRFO3F6R3VzcVaJh
+         4OVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752779803; x=1753384603;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dXS6IlzCXXiWTFVQaBT3Lr0CwTpzt5HQ3tRbwjKwIVc=;
+        b=E30vsssPS+n/zjQraXYOf7TX81ixTPjzLd5spA2OuRKUT88qKgryc1igiR6f706bkS
+         aI3XEDFFAmxFKHU1pbwCTqSv4PRd4v8uoUkWrUBemkQtBhEDanHx6TfxlqpUap5S0r8L
+         8treOvS6eDlg1rpdEZ9S1CrJKzGl7uxtmfkD8D8ie+CsyUHzG8LbTG2AWg9vnoBMpr4k
+         sjQKhCCNmBOzswoDEP53543jy+nOUfTqZZloxsX2Q8zeqhalz8oENzzZxaBkQi+Uh58X
+         IdxlHPxcnE+4pV6Av7bguAnAVIKrF5khu1mygb1fITXTajjMPHqkKlRGOtV2RzRDpPj2
+         c0vA==
+X-Forwarded-Encrypted: i=1; AJvYcCUSyGvOFvZmeIE1nlCnyOZKk695xZLYr099vniA6rCOdn3q5S47uDqvyy9S09kQESIaAH9zgZiQ1O6rV/Bb@vger.kernel.org, AJvYcCV/dfaflyIT6+JB/rZXugnbqfL4yMKujBfYzxdc4xS0Mg0pgAxRX7Cgo2SmrWG1+Z+J/72gTkjoj5lD@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZA8x0TYOZoHx8ntu0iqJ/2zdWnrDKp3yGVhcDckJeZp+fM4V7
+	EuTz7GuDs1eCYjCu9tcwElrYOVggz0p4v/fgig7UAeLupNGG2u67L99y
+X-Gm-Gg: ASbGncsANDXGMMlh0POlNC2UZgP1G1DR/GU9oDJMdP2ijNzJfOLD7RmgFne72Ly2ILg
+	MdeJ8Xy5fMaKpy4ChirmWC9GctR89JGwa381ZdXt20vzSoLgOOZA+qD8ymV0qh0hmImxYWWUdd0
+	8TlsDlFrW4vMfGelMUhqjYlt7dmKDHSfmjBCt+psTYpw1qToxAoRMh/2Zb/5D0psOXwRJA5y+k1
+	Wwncgq9qU7XKZbtGi5yIm6DcGLP4GKCn0UQ59KsiOf0jiNpdsyeO65VMWsE1mHArNSo6fpLw6Uw
+	1yc55SgcwJbXFbNHunp+8cvfVc/mU2msgYmPgUrJAptI04eInTRlA9sj+a/ERYsr+NAudeBptC6
+	pr9m3Ek1sbvSobowEifFIFQ==
+X-Google-Smtp-Source: AGHT+IFdO+XRcbjzoMbTOgsB553gBGGYSvejU7mep2+ENo9zQ9I4WEUO9p1GUi72lBKstfRX+R/XeA==
+X-Received: by 2002:a05:600c:3b9b:b0:456:f22:ca49 with SMTP id 5b1f17b1804b1-4563a498d0bmr9790875e9.0.1752779803165;
+        Thu, 17 Jul 2025 12:16:43 -0700 (PDT)
 Received: from localhost ([2001:861:3385:e20:6384:4cf:52c5:3194])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b5e8dc22a8sm21918017f8f.34.2025.07.17.12.16.41
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-456278ab486sm70291115e9.1.2025.07.17.12.16.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 12:16:41 -0700 (PDT)
+        Thu, 17 Jul 2025 12:16:42 -0700 (PDT)
 From: Raphael Gallais-Pou <rgallaispou@gmail.com>
-Subject: [PATCH 0/4] STi device-tree display subsystem rework
-Date: Thu, 17 Jul 2025 21:15:31 +0200
-Message-Id: <20250717-sti-rework-v1-0-46d516fb1ebb@gmail.com>
+Date: Thu, 17 Jul 2025 21:15:32 +0200
+Subject: [PATCH 1/4] drm/sti: check dma_set_coherent_mask return value
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,10 +83,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIANNLeWgC/03M0QrCIBTG8VcZ5zrjaNNYV71H7EKd2w61OXRYM
- Xz3bBB0+f/g+20QXSAX4VJtEFyiSH4uwQ8V2FHPg2PUlQaBQmKNnMWVWHBPH+7MIDZScn1SwkI
- 5LMH19NqxW1t6pLj68N7tJL7rj1H/TBIMWceN4r3Bc1Or6zBpehytn6DNOX8A7qr4j6QAAAA=
-X-Change-ID: 20250401-sti-rework-b009551a362c
+Message-Id: <20250717-sti-rework-v1-1-46d516fb1ebb@gmail.com>
+References: <20250717-sti-rework-v1-0-46d516fb1ebb@gmail.com>
+In-Reply-To: <20250717-sti-rework-v1-0-46d516fb1ebb@gmail.com>
 To: Alain Volmat <alain.volmat@foss.st.com>, 
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
  Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
@@ -96,56 +96,50 @@ To: Alain Volmat <alain.volmat@foss.st.com>,
 Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
  linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1460; i=rgallaispou@gmail.com;
- h=from:subject:message-id; bh=PyayYQ0JPKYC1bSL+yF6YQ9AEnmvymFEa0T+fiUNE9w=;
- b=owEBbQKS/ZANAwAKAechimjUEsK1AcsmYgBoeUwQs4pAM5O38T3nlF8WEU7Y1ach2SghQdlSd
- adJbgagmsiJAjMEAAEKAB0WIQQgmXv2E+fvbV/9ui/nIYpo1BLCtQUCaHlMEAAKCRDnIYpo1BLC
- tUxUEACQ1QihV0/vZF+Z/ZIMLTCNbEanzLlzjAJHu/gACUzwmyqQJhxOU2sI0NlfI4fNnrDXVXX
- 3jXo+32bwmKHyRv00ls59P4a2tNtmANDSLl29KDKXRQofRMWv8Z4gadAbZyH9+vV08C5a34d7KP
- HGmgHSzq3EzRHjI3+uLXSSayuLzZlWKc8wF0XPbSLvna47gLHxqjZ9TQg9QOIyswiDsIXchnSKs
- JSJGCTSQQzbU04fuToq8JHXUSoMUHclxDppK0+SfJ/r77L4+0DWUy2bzuyf8G/ixqNragahIjBW
- YvoOvV/xGgXrdKUnt7cfP2CRRCpIcgRUx9KL0hBol/m6Xm5QuSY66guBwaNJkBCBjLnibmw/jab
- uny3szjVv6tviSINjWBqFxxIqV9lPGGjs1krT4VhA8pxmNIDvWhyRw0iz+FbyU/8nhyKkFGKzwM
- egEKm3+tFJSy5/nT/2BiC7P36ip9UyFi1s7+1lhIV3kY5ZCy6j3XDET5JyyC445WceMSPGy9drt
- PdKXf1ILK1uaMaOTREFlH5zQb8pADUj/v3A8n1c7PJPtC479R7Er/hFwGPD8VXo7lU4dALC7IGA
- oW1UaNYAKydYyRTL0a8gHxXM2jeIj12ozjm2xhrJO2uE4jZ+aav5Ou/vGzJn29QZ0zJqBylIydS
- 4yPttkUKVVLkHTg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=913; i=rgallaispou@gmail.com;
+ h=from:subject:message-id; bh=PyB/CZMxUn55sPN3ZHQgk/pnsj+LAy/0OIGcsrAdeRo=;
+ b=owEBbQKS/ZANAwAKAechimjUEsK1AcsmYgBoeUwYYCgacxXo0fm/BVR90qG/tODN+dH4bygpw
+ oxe1gR/9UCJAjMEAAEKAB0WIQQgmXv2E+fvbV/9ui/nIYpo1BLCtQUCaHlMGAAKCRDnIYpo1BLC
+ tdC4D/9PsDag3hJ3pQT2IHv5rLHgtffYGReR75toGfxoxm1xIDATWpwXpz7AMz28dIoe7TBdrIa
+ 9HaawGMVTwTcwbJAUXtJUK5ZJKfKaTEV4O7ytjQUcLKE583M3ZKtQb2vNe1Hv4ATzGfW6RB7LGZ
+ T6dHZ1PC/1J5esXSpzBZ3l0pHjcrrcgfWov8h1qqQBXjH24xsrn3xlIxSE7sukbSyOHlVXXZGrw
+ B73Oduzy9HRac0Hm30rsQ74ijETnbiHKxzTmAN7fBtI131mv24arM41DW73wOFGomii8pcARPPS
+ /ucgzpxx+oREkpfs+PFc0JHGSjj1DoQcwl5Xvvg0+CaEt73jSRxReU7z5837VahsAWJ07n9CiQn
+ /WzTU26kGplGZHF6VXQwZolwEHSdquw5c45amV9Sa7GoX24lFThAOwAxe+Upa7jadOUKCbuq9Dp
+ ldRu9H+6AXybqAAeU8MTZx+T3qWnJvPOlvxWrjJt+BQNcFJj2Hd87bz0gGgMzCyqlgCDUFqc5zE
+ /jvw5El2+HA5ui3BTLbAMFp4edudZpw4XrGtVLQBhiP1qtzTzrkBsZsDXYkuv+bfpeIOL7trQU1
+ baadlcUS+IgxC4wNKOqw8fkdXP6H1g866ElvJYPcxKALSNovXCapIeIeRWxadbIdbquNk8ki9uz
+ z04oBK8+NQOGNug==
 X-Developer-Key: i=rgallaispou@gmail.com; a=openpgp;
  fpr=20997BF613E7EF6D5FFDBA2FE7218A68D412C2B5
 
-This serie aims to rework the display-subsystem node, which was
-previously included directly within the SoC node.  This was wrong
-because it is an abstraction and describes how IPs behave together, not
-what the hardware is.  Instead, extract display-subsystem outside of the
-SoC node, and let IPs describe their connections.  Doing so helps the
-readability, and eases the understanding of the hardware.
-
-Several nodes have been renamed to stick to the generic names defined in
-the device-tree specification.
-
-This series depends on another sent a few days ago.  It is not critical
-though, since not having it only triggers warnings when building
-deprecated device-trees.  Please see link below.
-
-Link: https://lore.kernel.org/lkml/20250714-sti-rework-v2-0-f4274920858b@gmail.com
+Return value for DMA allocation was not checked.  Check it and return
+error code in case of failing.
 
 Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
 ---
-Raphael Gallais-Pou (4):
-      drm/sti: check dma_set_coherent_mask return value
-      drm/sti: make use of drm_of_component_probe
-      ARM: dts: sti: extract display subsystem out of soc
-      ARM: dts: sti: remove useless cells fields
+ drivers/gpu/drm/sti/sti_drv.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
- arch/arm/boot/dts/st/stih410.dtsi | 316 ++++++++++++++++++++++----------------
- drivers/gpu/drm/sti/sti_drv.c     |  18 +--
- 2 files changed, 192 insertions(+), 142 deletions(-)
----
-base-commit: b9a572f471993d3e8bf874fcb57f331d66650440
-change-id: 20250401-sti-rework-b009551a362c
+diff --git a/drivers/gpu/drm/sti/sti_drv.c b/drivers/gpu/drm/sti/sti_drv.c
+index 5e9332df21df0db30f10b7a6f5a41cba85c4f7ae..42f21ab91957b38cb9aef012b6ee7f4ae1683edf 100644
+--- a/drivers/gpu/drm/sti/sti_drv.c
++++ b/drivers/gpu/drm/sti/sti_drv.c
+@@ -234,8 +234,11 @@ static int sti_platform_probe(struct platform_device *pdev)
+ 	struct device_node *node = dev->of_node;
+ 	struct device_node *child_np;
+ 	struct component_match *match = NULL;
++	int ret;
+ 
+-	dma_set_coherent_mask(dev, DMA_BIT_MASK(32));
++	ret = dma_set_coherent_mask(dev, DMA_BIT_MASK(32));
++	if (ret)
++		return ret;
+ 
+ 	devm_of_platform_populate(dev);
+ 
 
-Best regards,
 -- 
-Raphael Gallais-Pou <rgallaispou@gmail.com>
+2.50.1
 
 
