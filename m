@@ -1,226 +1,209 @@
-Return-Path: <linux-kernel+bounces-735310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00DDCB08D99
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:55:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D39EFB08DA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:56:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32EB11698D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:55:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32AD8189F044
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:56:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 154A72D77E3;
-	Thu, 17 Jul 2025 12:54:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32CFA2D4B62;
+	Thu, 17 Jul 2025 12:56:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hrMlycHp"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RyXngj54"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8A928BA81
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 12:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819F81F92A
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 12:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752756864; cv=none; b=JYUenYeRg19EQr9zompFOtn7TSJv9Jur4rXkRR3a9rSGk2l9fBrDqxyKSB82qxX+mSjM/kEOi6ojy1eRRZHiawyxzqVl+EY/bJYO1uuFicSRRUZkQ/1NX+aYzf7Twra4volP1ZU9iWxALbgrqOEZjaNexCi2R8WwbzGb1TdZN4Y=
+	t=1752756979; cv=none; b=tqI0tZAnNSCHz1iKAh+TbhFPF8JxOhJ3KwXFT/LJP8Rb5DLRe67eOWqFtE+o7OGXZCMZo8Htv94HOL5sAHCw6bG12OFYABaG61WFA3VInxfFBZ6Z74UwhdYl/7UXKFMZbpbB22qRaZqq6g//uoGQPdWms662995VCZtnry8iocY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752756864; c=relaxed/simple;
-	bh=z+X8A9P+G8blqjkqdD7ikKkiAkXVI7kyhvLjlBrrHu4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CgMYSITUAWGMB9YoWxFMS1Jzp37s2smk1AFrCpSRS+kpwePo1RbfW16HDrY2lnyvR9lqwetwFsMB3RkLp9vLWT9+cz0WVhPzqyVH/JzqZV36BYE4DV8ZWGLL+dOWNbBAs8rt79pZcq2XcmWJ4G+WIC7TVpRes5LZmX9zt48o74s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hrMlycHp; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56HBl9xD022256
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 12:54:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vY8+U+AdtRViJLGrgNvdoFy3geTUrpbdX4fYqj2cMJg=; b=hrMlycHpVroEaQWv
-	kvr7GMs0/d5F2a2bWEpuQjEeAcymkwr8AR7f+kkqFutISuf8c5VOhdsnRDiij3MU
-	xv8/AXzwFDEz5wgcKNOcRdr7io0UYfSSN66IhgRHw5aqREFiV4/eTgYhOa+IBuwE
-	tHWBE0qnQaZKQYbyuOkiBsaCk97Zx21Mx/6TCTrTmH0kzGFgCbZc1Eq4UlFwXnjx
-	RVDECAhnZ7ndwfDBS8a/87WusyGFWL1AFqGT56KzR3lifZ0k1AtBAknaHJ/mQO5H
-	sLoEPrFCkGytbPijhTLD3NnnSu7k1YKo9x2Q83p72Evc/4AkyuGuZzq/eM5AZyGC
-	R2SApg==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47wqsy7kuc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 12:54:21 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6fabbaa1937so3132926d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 05:54:21 -0700 (PDT)
+	s=arc-20240116; t=1752756979; c=relaxed/simple;
+	bh=5C68isv16CT0CTBNXFFoBkmNFftxlWs2cMLo/GtIm0E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oAqqXtAUKCamZ6KEoKRpKZZIWD3g61WWflu/L0UfHwO8SZKEbBKf8vNfEEtB7J6/ywt5W2Yab2/Wrbl1rQrTJ2RdTOmXcW1V4j1ePXyvWUFi1dkEbGtdw3XdJGIHA7bT5TiWFXj/35ml5caWxCT0Mn0/P17APTH2gUFjpCbMMPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RyXngj54; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ae04d3d63e6so176549366b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 05:56:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1752756976; x=1753361776; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WxaYrBDTVkKxfQbbC2Gba/aI7Id05pjU0f5koQSOkMA=;
+        b=RyXngj540rAKNbNcyBykmgND9Ax+MQhbqPoAUpR8WyGpIlaAt1Ydtwr8NYdDAWbaFx
+         T1xE6Li6jwYR+aj4GS985x2+Bjkp6smr3Eavx9gvAWL8H5rimkgqjfUvAqMEzBCo5K9b
+         GFV/SW5dEJoJRAr+NBVYt0xxOOz6yDfeCZteSo7VIe5cYIa9cN0VrD1gpKrMHXyWXztG
+         lDwuJ3HwP/ZvNahNwNXuW9akJ51VPIJjzsEaVwWv+Zu9fgjhVEyWPWVN+hMGfmA7UIQg
+         sC/QP4S3Zr1yzGRSHaT2D/FsOqwZWsjcrs9vBkD/7Xlmsedtsr5KjKIg5goUmC/VbwK8
+         CtoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752756860; x=1753361660;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vY8+U+AdtRViJLGrgNvdoFy3geTUrpbdX4fYqj2cMJg=;
-        b=LsosH7l33aNOtBFVZe8oHPQ6U+pqSwpP1oYuRg0ZHWMcjclo4K4hYCxKYYNwfb6ShX
-         gTerYtMfqhmDsgUzLNbOMpmwjZ5zctm6pA/5MZ3/ZPw/weL2yYJc2RsQcJofmI6yV1Uk
-         g3pUzhVV7P27oXizAZ5/W7Dp7TE0E9YA11oqDZRpeNJ2fhEQeqJqfvZwVVJV9nj9aw3w
-         CtW4CA6RUgq6Pe1NDz9C8BzzhflqRaUcIxSOIzrWArJMBz3IOXmJNd1f5gHbwGVZ38I0
-         7jSIFk3pzaNpY0D/M1kQOaKoVBMK4JC1Cq9yLzzs/Dcjx/ho2caxrpdflB+qW9CNsSs1
-         T31Q==
-X-Gm-Message-State: AOJu0YxkHn7eAIdSPipHaiH4vgP5VGYZatLiHH+3DRLxXZ43YC8DIvNC
-	KGEyNB97vVkymeE9ZIjDLTfpr1Qrt1bZ/6+8s8EQogVMWyezyNRkjgxLpDzZhxfod6jtrFIwY+W
-	VJ+O6Cnaf3RBmmFTL7qWyyvsN0j4q3HnHLPt+ESsVmuMdO3Vc/RXwcNaDqWJ49uVu4fE=
-X-Gm-Gg: ASbGnct3gLpmemKmDGMKIhCVA+2FM9yk6Z+VkRzo9Z4wi81JoncsmkLWdgemwCpgxCE
-	JhhdYEZnlLvOcUweiYHFKy1VNQzcQRr0RHdMgc82J8eLWvgKB595guLWb27W9cOF6A21n5BFgla
-	ieNpTl55aXcKHiPCcxIz2/nf0ogRMN8x53AdEniTCStcm0lk1EkIzRM4DuyyMvRMF+QyFZR3nNN
-	3QYhnWaP7wdty3Qkdo6n/zfxJgRUidBOZpEhiJG0NYUKeDFIDH71LkcRc6ZXu6Tp7VM53Fp6yFw
-	qTeGz4MT+xJ9tJB7nGBjgutKBcg9ewB6CGoRnszkcFExgUdIInvZwRBr3h/H1n7tC6tNf0/mLM3
-	sxo26zrH2WLQ2peYrjvfE
-X-Received: by 2002:a05:620a:2949:b0:7d5:d01f:602 with SMTP id af79cd13be357-7e342b68dd0mr446381685a.14.1752756860528;
-        Thu, 17 Jul 2025 05:54:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGIHZdErHUxcQSzMlX3jaAJn024q0jCOwgH+lHrqH9oe6WV/+qWTPGrVNeWc8ZrO5OBCGW2Tg==
-X-Received: by 2002:a05:620a:2949:b0:7d5:d01f:602 with SMTP id af79cd13be357-7e342b68dd0mr446379985a.14.1752756860098;
-        Thu, 17 Jul 2025 05:54:20 -0700 (PDT)
-Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e82dedc0sm1354487066b.160.2025.07.17.05.54.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Jul 2025 05:54:19 -0700 (PDT)
-Message-ID: <e1335aff-00b4-4505-bcf5-0eb8f2974a75@oss.qualcomm.com>
-Date: Thu, 17 Jul 2025 14:54:17 +0200
+        d=1e100.net; s=20230601; t=1752756976; x=1753361776;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WxaYrBDTVkKxfQbbC2Gba/aI7Id05pjU0f5koQSOkMA=;
+        b=cq8vPrce2mhA10rqr0cZ+zCfl6dEIl76jrl7F4YxmA2njmPjdu0DtCL3h90/IzJ+z1
+         F630AbhwE0xir2pTgZswgXe6UlwI2CDdXCgcnuz9Obeh0X1P09GKyyOhls2U4vbvLSqS
+         QcZ+1jLDcVQeEQI14LNstrpaN31495Pv8/ElXFVKF+tvu1gSlSCSgS/wcCfMhPuhloE4
+         +pMoi8pbU/PhAy+4LACqq9yeC1xQrlfX4F3XdWo+59kCD5HWxsfdbOgMGYObFsF19zcz
+         PAyarCM65TJueMfIoWirZ2O885ED30HmPsVSTXoQSdsEgtGNNdfHYxaGQv0p7xHVn7Hk
+         X/2g==
+X-Gm-Message-State: AOJu0Yx1gaBI3JPzUaL7BXeIoOjEqc6qkW44favLrEQ3U0u8TH82v06H
+	8Rw46bDADRDJDJppWJjYTaodxMPDaalCsP6HhR/1WThE0QuGEWirPvL79zTMrpmwFsA=
+X-Gm-Gg: ASbGncsCtTgiFPpJHfEV9or4tBITij6puxnFjxUR+HpV5mwIUN7AZScBrIc6v8eWP8c
+	EPuyRB9czuSYw5/wuaHBiMZBE9YG4Tlg2Yvbe1RmqJk5S6fHd0xDF2S4zTdcRGCh2EuaWZoEXXT
+	YMkQoZT+q5yNgsmZIIMEIjOBos8pl6Ow3GXW2pgI3dpNVzAZ9AVKiRb8pNMAL8K+bp1ms2YLSP/
+	CBmG7p9+in9TjNsiv6wjbS4EFRY/ZFI7DihQN9hffMIDtoHnekZueMhtaS/HkAbFlWUO5SzHaB2
+	Ms+iNHT5e6j5Inyta0ryfQdThULwXsOZf3zIhPWpqcpT5DgoEXYYSsY7G+9WgpfsNd+c3Pa3HUZ
+	SulC60MwwVWa+Gf4QQJH89tjjhVuf099m7EM8kpIr7A==
+X-Google-Smtp-Source: AGHT+IGmCGE/i+JFILHa3yjqtTV+kluEfiMhkPeizaGTvt5XqMP2gjydr2tNH35RxMZLV0xAGbCITA==
+X-Received: by 2002:a17:907:3a96:b0:ae3:cb50:2c6b with SMTP id a640c23a62f3a-ae9ce0b930emr443038966b.38.1752756975732;
+        Thu, 17 Jul 2025 05:56:15 -0700 (PDT)
+Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e82e3a8csm1366209566b.154.2025.07.17.05.56.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Jul 2025 05:56:15 -0700 (PDT)
+Date: Thu, 17 Jul 2025 14:56:13 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Tiffany Yang <ynaffit@google.com>
+Cc: linux-kernel@vger.kernel.org, John Stultz <jstultz@google.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
+	Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
+	Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Chen Ridong <chenridong@huawei.com>, kernel-team@android.com, 
+	Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [RFC PATCH v2] cgroup: Track time in cgroup v2 freezer
+Message-ID: <5rm53pnhpdeqljxqywh26gffh6vlyb5j5s6pzxhv52odhkl4fm@o6p7daoponsn>
+References: <20250714050008.2167786-2-ynaffit@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] media: qcom: camss: tpg: Add TPG support for
- SA8775P
-To: Wenmeng Liu <quic_wenmliu@quicinc.com>, Robert Foss <rfoss@kernel.org>,
-        Todor Tomov <todor.too@gmail.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-References: <20250717-lemans_tpg-v2-0-a2538659349c@quicinc.com>
- <20250717-lemans_tpg-v2-3-a2538659349c@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250717-lemans_tpg-v2-3-a2538659349c@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDExMyBTYWx0ZWRfX83two4kKmpgF
- 4w9/g/mQBBgFAF4W7oLiICJ4dz7jT203pmLGKBcLGMONP1N+cjeyi4OfaqRykvBGI8f+L2RTcmA
- WeJKUdiBhvtqYqFp/AbVjbrhE/eZaRzIQnjLTX2t0R+fQClrmKjkPLzlJweMjhf/YN4J/3k7RiZ
- SwcyO2NFQcyZKCYX0CoG9WTGmGde8G/wKEiP+z92aF6ug44scfjMcMvBgBy4RlqMgAEzl9h25ou
- JjemFGKF633hxDmsvxDkq/GtFhVQFSnnab5nvaKidj57VV1oadpoGlxl0H7+Wy+PUz+j8BtxAb+
- mP1Y+4KvwVH1czmG7wjBplBsWDKr8Iq1EdkdPK2dtITMvbFVXy+6kOXe9sF5KudBYBoLPE2OCjb
- 2EfQ+wGPWdjC62Z7x7wTtjzqKrfzPL4pNWAxjHJD7pdQU3zqtYyiUsvESh0LUa6Gj6zZtUXr
-X-Proofpoint-GUID: YKJOs2Ktck6jPS0BdTFTzF8-2HrFgScc
-X-Proofpoint-ORIG-GUID: YKJOs2Ktck6jPS0BdTFTzF8-2HrFgScc
-X-Authority-Analysis: v=2.4 cv=McZsu4/f c=1 sm=1 tr=0 ts=6878f27d cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8 a=pSl5WCw3oxHEiR9bIskA:9
- a=QEXdDO2ut3YA:10 a=pJ04lnu7RYOZP9TFuWaZ:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-17_01,2025-07-17_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 mlxlogscore=999 impostorscore=0 mlxscore=0 phishscore=0
- adultscore=0 lowpriorityscore=0 bulkscore=0 clxscore=1015 suspectscore=0
- spamscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507170113
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="q6g6m5syrpxykbo6"
+Content-Disposition: inline
+In-Reply-To: <20250714050008.2167786-2-ynaffit@google.com>
 
-On 7/17/25 5:20 AM, Wenmeng Liu wrote:
-> Add support for TPG found on SA8775P.
-> 
-> Signed-off-by: Wenmeng Liu <quic_wenmliu@quicinc.com>
-> ---
 
-[...]
+--q6g6m5syrpxykbo6
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [RFC PATCH v2] cgroup: Track time in cgroup v2 freezer
+MIME-Version: 1.0
 
-> +static int tpg_stream_on(struct tpg_device *tpg)
+Hello Tiffany.
+
+On Sun, Jul 13, 2025 at 10:00:09PM -0700, Tiffany Yang <ynaffit@google.com>=
+ wrote:
+=20
+> Other sources of delay can cause similar issues, but this change focuses
+> on allowing frozen time to be accounted for in particular because of how
+> large it can grow and how unevenly it can affect applications running on
+> the system.
+
+I'd like to incorporate the reason from your other mail:
+| Since there isn't yet a clear way to identify a set of "lost" time
+| that everyone (or at least a wider group of users) cares about, it
+| seems like iterating over components of interest is the best way=20
+into this commit message (because that's a stronger ponit that your use
+case alone).
+
+
+> Any feedback would be much appreciated!
+
+I can see benefits of this new stat field conceptually, I have some
+remarks to implementation and suggestions to conventions below.
+
+> --- a/Documentation/admin-guide/cgroup-v2.rst
+> +++ b/Documentation/admin-guide/cgroup-v2.rst
+> @@ -1018,6 +1018,14 @@ All cgroup core files are prefixed with "cgroup."
+>  	it's possible to delete a frozen (and empty) cgroup, as well as
+>  	create new sub-cgroups.
+> =20
+> +  cgroup.freeze.stat
+
+With the given implementation (and use scenario), this'd better exposed
+in
+  cgroup.freeze.stat.local
+
+I grok the hierarchical summing would make little sense and it'd make
+implementaion more complex. With that I'm thinking about formulation:
+
+	Cumulative time that cgroup has spent between freezing and
+	thawing, regardless of whether by self or ancestor cgroups. NB
+	(not) reaching "frozen" state is not accounted here.
+
+> +	A read-only flat-keyed file which exists in non-root cgroups.
+> +	The following entry is defined:
+> +
+> +	  freeze_time_total_ns
+> +		Cumulative time that this cgroup has spent in the freezing
+> +		state, regardless of whether or not it reaches "frozen".
+> +
+
+Rather use microseconds, it's the cgroup API convention and I'm not
+sure nanosecods exposed here are the needed precision.
+
+       1    _____
+frozen 0 __/     \__
+          ab    cd
+
+Yeah, I find the mesurent between a and c the sanest.
+
+
+> +static int cgroup_freeze_stat_show(struct seq_file *seq, void *v)
 > +{
-> +	struct tpg_testgen_config *tg = &tpg->testgen;
-> +	struct v4l2_mbus_framefmt *input_format;
-> +	const struct tpg_format_info *format;
-> +	u8 lane_cnt = tpg->res->lane_cnt;
-> +	u8 i;
-> +	u8 dt_cnt = 0;
-> +	u32 val;
+> +	struct cgroup *cgrp =3D seq_css(seq)->cgroup;
+> +	u64 freeze_time =3D 0;
 > +
-> +	/* Loop through all enabled VCs and configure stream for each */
-> +	for (i = 0; i < tpg->res->vc_cnt; i++) {
-> +		input_format = &tpg->fmt[MSM_TPG_PAD_SRC + i];
-> +		format = tpg_get_fmt_entry(tpg->res->formats->formats,
-> +					   tpg->res->formats->nformats,
-> +					   input_format->code);
+> +	spin_lock_irq(&css_set_lock);
+> +	if (test_bit(CGRP_FREEZE, &cgrp->flags))
+> +		freeze_time =3D ktime_get_ns() - cgrp->freezer.freeze_time_start_ns;
 > +
-> +		val = (input_format->height & 0xffff) << TPG_VC_m_DT_n_CFG_0_FRAME_HEIGHT;
-> +		val |= (input_format->width & 0xffff) << TPG_VC_m_DT_n_CFG_0_FRAME_WIDTH;
-> +		writel_relaxed(val, tpg->base + TPG_VC_m_DT_n_CFG_0(i, dt_cnt));
-> +
-> +		val = format->data_type << TPG_VC_m_DT_n_CFG_1_DATA_TYPE;
-> +		writel_relaxed(val, tpg->base + TPG_VC_m_DT_n_CFG_1(i, dt_cnt));
-> +
-> +		val = (tg->mode - 1) << TPG_VC_m_DT_n_CFG_2_PAYLOAD_MODE;
-> +		val |= 0xBE << TPG_VC_m_DT_n_CFG_2_USER_SPECIFIED_PAYLOAD;
-> +		val |= format->encode_format << TPG_VC_m_DT_n_CFG_2_ENCODE_FORMAT;
-> +		writel_relaxed(val, tpg->base + TPG_VC_m_DT_n_CFG_2(i, dt_cnt));
-> +
-> +		writel_relaxed(0xA00, tpg->base + TPG_VC_n_COLOR_BARS_CFG(i));
-> +
-> +		writel_relaxed(0x4701, tpg->base + TPG_VC_n_HBI_CFG(i));
-> +		writel_relaxed(0x438, tpg->base + TPG_VC_n_VBI_CFG(i));
+> +	freeze_time +=3D cgrp->freezer.freeze_time_total_ns;
+> +	spin_unlock_irq(&css_set_lock);
 
-Please provide context for the magic numbers> +
-> +		writel_relaxed(0x12345678, tpg->base + TPG_VC_n_LSFR_SEED(i));
-> +
-> +		/* configure one DT, infinite frames */
-> +		val = i << TPG_VC_n_CFG0_VC_NUM;
-> +		val |= 0 << TPG_VC_n_CFG0_NUM_FRAMES;
-> +		writel_relaxed(val, tpg->base + TPG_VC_n_CFG0(i));
-> +	}
-> +
-> +	writel_relaxed(1, tpg->base + TPG_TOP_IRQ_MASK);
-> +
-> +	val = 1 << TPG_CTRL_TEST_EN;
-> +	val |= 0 << TPG_CTRL_PHY_SEL;
-> +	val |= (lane_cnt - 1) << TPG_CTRL_NUM_ACTIVE_LANES;
-> +	val |= 0 << TPG_CTRL_VC_DT_PATTERN_ID;
-> +	val |= (tpg->res->vc_cnt - 1) << TPG_CTRL_NUM_ACTIVE_VC;
-> +	writel_relaxed(val, tpg->base + TPG_CTRL);
+I don't like taking this spinlock only for the matter of reading this
+attribute. The intention should be to keep the (un)freezeing mostly
+unaffected at the expense of these readers (seqcount or u64 stats?).
 
-You want the last writel here (and in _off()) to *not* be relaxed,
-so that all the prior accesses would have been sent off to the hw
+Alternative approach: either there's outer watcher who can be notified
+by cgroup.events:frozen or it's an inner watcher who couldn't actively
+read the field anyway. So the field could only show completed
+freeze/thaw cycles from the past (i.e. not substitute clock_gettime(2)
+when the cgroup is frozen), which could simplify querying the flag too.
 
-[...]
+> @@ -5758,6 +5780,7 @@ static struct cgroup *cgroup_create(struct cgroup *=
+parent, const char *name,
+>  	 * if the parent has to be frozen, the child has too.
+>  	 */
+>  	cgrp->freezer.e_freeze =3D parent->freezer.e_freeze;
+> +	cgrp->freezer.freeze_time_total_ns =3D 0;
 
-> +static u32 tpg_hw_version(struct tpg_device *tpg)
-> +{
-> +	u32 hw_version;
-> +	u32 hw_gen;
-> +	u32 hw_rev;
-> +	u32 hw_step;
-> +
-> +	hw_version = readl_relaxed(tpg->base + TPG_HW_VERSION);
-> +	hw_gen = (hw_version >> HW_VERSION_GENERATION) & 0xF;
-> +	hw_rev = (hw_version >> HW_VERSION_REVISION) & 0xFFF;
-> +	hw_step = (hw_version >> HW_VERSION_STEPPING) & 0xFFFF;
+struct cgroup is kzalloc'd, this is unnecessary
 
-FIELD_GET()
 
-> +	dev_dbg(tpg->camss->dev, "tpg HW Version = %u.%u.%u\n",
-> +		hw_gen, hw_rev, hw_step);
+--q6g6m5syrpxykbo6
+Content-Type: application/pgp-signature; name="signature.asc"
 
-dev_dbg_once()
+-----BEGIN PGP SIGNATURE-----
 
-[...]
+iHUEABYKAB0WIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaHjy2wAKCRB+PQLnlNv4
+CH7EAQDY/o6R+lacKfz1+91E3EVQCP4sdVNh+dNpbxVSWafRfwEA5NxSlz0R5PDl
+pbF5wGiWALd3rY8lxnwtBYZjwJODJAY=
+=sEiS
+-----END PGP SIGNATURE-----
 
-> +static int tpg_reset(struct tpg_device *tpg)
-> +{
-> +	writel_relaxed(0, tpg->base + TPG_CTRL);
-> +	writel_relaxed(0, tpg->base + TPG_TOP_IRQ_MASK);
-> +	writel_relaxed(1, tpg->base + TPG_TOP_IRQ_CLEAR);
-> +	writel_relaxed(1, tpg->base + TPG_IRQ_CMD);
-> +	writel_relaxed(1, tpg->base + TPG_CLEAR);
-
-similar comment as before
-
-Konrad
+--q6g6m5syrpxykbo6--
 
