@@ -1,197 +1,133 @@
-Return-Path: <linux-kernel+bounces-735088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CA94B08AD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:36:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9DE3B08AE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:38:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D5E67B0661
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:35:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EF411C23AED
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:38:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60BFD29992E;
-	Thu, 17 Jul 2025 10:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9734229ACE6;
+	Thu, 17 Jul 2025 10:37:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ntDdZyBH"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="g/9sSgqy"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFCCB1DE8A3;
-	Thu, 17 Jul 2025 10:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 182FF298277
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 10:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752748593; cv=none; b=DcCAjK35uFB20CSdjrC6oWEUMogwzt8mSTaqChf9uduI8m4Jd5SY6ovPQ23vEKqLhLGWSQitlbAKvo1dpLsOncjEz8cKfyFHIXz4ZYJMJddL0fNlcpKEnwimSib0tBQqFJrBsBTQX3jb74Xu/vvRk3l70SZB6x5508oJCXilBKw=
+	t=1752748672; cv=none; b=Tg6ToP1sgHx3ClX93cGXDRbqjqiGqPKaC5Oh1g0IWgjlzFNVLqabHndKI73zLeLdTQorJuIkCysxdNruDbkEuotudlHK/LsE54FoGTNNC2japl6ITXwwBWLrPo0wcKQOdQqgQk5YH7C5IL78SHexA3zSramLfMzOm/+MzN/Udvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752748593; c=relaxed/simple;
-	bh=xqQlXd0lb1r+JYcGwIbgeT/oRINSjbiPGiuQzE3If+M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K2OBFTcWjX/JwopKRdA3R7OKU1hd04Vkj8gHbJnbq9tVJifFaPq73sbKFHSU6SnczTZxebuy7HBxNU5KT5TeAl9mLPJzNQNhjX91DFGUAnVHTVGSqOjwIC4V7JqJ2KhG9SpB9owu0+gd7EerWnWrj5OIUqdM66CRGnzNSnPk3a8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ntDdZyBH; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1752748590;
-	bh=xqQlXd0lb1r+JYcGwIbgeT/oRINSjbiPGiuQzE3If+M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ntDdZyBHOgKnPOdEGQw/I5EL8KR2PXe6U3DisRLzypC795hgqWv+OLRQf+cWqSflJ
-	 2YeI3EMt87mUa5Cg0s575h9jR8fm13kTDSxreIvCvw/lVco+wq4FdPBTk7yC0DHQqm
-	 gV2pFTBonGcj0SPoICTLc4SrvRHRhgikxbb/HVonr+dl7pj+GKyMBnoUjd90nQcvkA
-	 y6W+3henmYDkJKk4A6F/HhMNTa13xyIjYIN1RFNzhAMBiKoEKwnkrAW2xdC5FHB9I2
-	 EpKeLcPsKbpTntbNSjiXw/dM72FLmBCfJJf96r9gbbpDTISuXkU8npuvY43xaSAOUa
-	 /G34kMeufYjng==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4FAD317E0B72;
-	Thu, 17 Jul 2025 12:36:29 +0200 (CEST)
-Message-ID: <0089a5e5-4e16-4d30-8b56-3811a6d7af88@collabora.com>
-Date: Thu, 17 Jul 2025 12:36:28 +0200
+	s=arc-20240116; t=1752748672; c=relaxed/simple;
+	bh=GgpNL/XXWtKjZf510/o0Qy50FLTQiRccuWLFGLTEmAM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qwstqmKQVC+OBKiOQpJXbh+3Y4q4pYOWDeux8nyPEzy/dKYjdNQ2buAArhV/4c52nz3Jfs3/fPMAS+QkMHMsfyJ6F/IeeMlinVohHa/nrYnYFdA3oJavP3En2K1sEcS9RVWUPjYzPocEJjWucfDlJfy3AfQNvwtMa8rtr2yCgxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=g/9sSgqy; arc=none smtp.client-ip=121.127.44.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: MIME-Version: Message-ID: Date: Subject: Cc:
+ To: From; q=dns/txt; s=fe-e1b5cab7be; t=1752748668;
+ bh=4QObQHg0Pp7WjLsIyMhmuEM54eUelHYMuhyQ1jYYViw=;
+ b=g/9sSgqyRSk7L/LFokcJjNX/swhKgGiITHC2ULsJ4xAJiZpC5XubzDs09qpZaUZC3FhkL1bkS
+ /WQBGYBrPjqNlZFRuWp5+0DxnHjLdPbGZ2XeCO4lfMG2AD456HK+AnrGIIX3fdrkOvpqdStB+rj
+ V585QM7oxdbd501bhWsbvSetXkjW9J0gAdkFNQwbelzCuGfPuA6T6k8p7+xs5c8PU20/K11MBWy
+ jSn+BDFDJS8gywUaoYiN600yh7aL2po24v+2sTLSv6/rU5fB9dzrVWkV14lH05mOqIuRULmuQ7e
+ Pz36zHrFYdyz0K69TtGiYToaj7uPHat/BD59Nj7ETvCw==
+X-Forward-Email-ID: 6878d2655e51505848fe5f75
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 121.127.44.73
+X-Forward-Email-Version: 1.1.6
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+From: Jonas Karlman <jonas@kwiboo.se>
+To: Heiko Stuebner <heiko@sntech.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Yao Zi <ziyao@disroot.org>,
+	Chukun Pan <amadeus@jmu.edu.cn>,
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+	linux-rockchip@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Jonas Karlman <jonas@kwiboo.se>
+Subject: [PATCH v4 0/6] arm64: dts: rockchip: Add ROCK 2A/2F, Sige1 and NanoPi Zero2
+Date: Thu, 17 Jul 2025 10:37:02 +0000
+Message-ID: <20250717103720.2853031-1-jonas@kwiboo.se>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] dt-bindings: clock: mediatek: Describe MT6789
- clock controllers
-To: Krzysztof Kozlowski <krzk@kernel.org>, Arseniy Velikanov <me@adomerle.pw>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- ~postmarketos/upstreaming@lists.sr.ht
-References: <20250715222221.29406-1-me@adomerle.pw>
- <20250716-manipulative-dormouse-of-current-9af4e6@krzk-bin>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250716-manipulative-dormouse-of-current-9af4e6@krzk-bin>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Il 16/07/25 09:04, Krzysztof Kozlowski ha scritto:
-> On Wed, Jul 16, 2025 at 02:22:20AM +0400, Arseniy Velikanov wrote:
->> +properties:
->> +  compatible:
->> +    items:
->> +      - enum:
->> +          - mediatek,mt6789-afe
->> +          - mediatek,mt6789-camsys
->> +          - mediatek,mt6789-camsys-rawa
->> +          - mediatek,mt6789-camsys-rawb
->> +          - mediatek,mt6789-imgsys
->> +          - mediatek,mt6789-imp-iic-wrap-c
->> +          - mediatek,mt6789-imp-iic-wrap-en
->> +          - mediatek,mt6789-imp-iic-wrap-w
->> +          - mediatek,mt6789-ipesys
->> +          - mediatek,mt6789-mdpsys
->> +          - mediatek,mt6789-mfgcfg
->> +          - mediatek,mt6789-vdecsys
->> +          - mediatek,mt6789-vencsys
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  '#clock-cells':
->> +    const: 1
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    afe: clock-controller@11210000 {
->> +        compatible = "mediatek,mt6789-afe";
->> +        reg = <0x11210000 0x1000>;
->> +        #clock-cells = <1>;
->> +    };
->> +
-> 
-> Drop the rest of nodes. One example is enough. They are ALL THE SAME.
-> 
-> ...
-> 
->> diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt6789-sys-clock.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt6789-sys-clock.yaml
->> new file mode 100644
->> index 000000000000..d6f70ee918ad
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/mediatek,mt6789-sys-clock.yaml
->> @@ -0,0 +1,68 @@
->> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/clock/mediatek,mt6789-sys-clock.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: MediaTek System Clock Controller for MT6789
->> +
->> +maintainers:
->> +  - Arseniy Velikanov <me@adomerle.pw>
->> +
->> +description:
->> +  The Mediatek system clock controller provides various clocks and system configuration
->> +  like reset and bus protection on MT6789.
->> +
->> +properties:
->> +  compatible:
->> +    items:
->> +      - enum:
->> +          - mediatek,mt6789-apmixedsys
-> 
-> Why this does not fit existing binding file? Or Mediatek maintainers
-> preference was to switch to one-binding-per-SoC?
-> 
+This series adds dt-bindings and initial device tree for the following
+Rockchip RK3528A boards:
+- Radxa ROCK 2A/2F
+- ArmSoM Sige1
+- FriendlyElec NanoPi Zero2
 
-We have been using one binding per soc for sys-clock and multimedia clocks because
-the sys-clock has multiple clock controllers in one macro-block, while all of the
-multimedia (and peripheral, depending on the soc) are in different macro-blocks.
-There are also some historical reasons which aren't really relevant anymore.
+The bt/wifi_reg_on pins are described in the device tree using
+rfkill-gpio nodes.
 
-So, we do have mt{soc}-sys-clock.yaml, mt{soc}-clock.yaml - that's right.
+Changes in v4:
+- Remove disable-wp prop from sdio0
+- Collect r-b and t-b tags
 
-> 
->> +          - mediatek,mt6789-topckgen
->> +          - mediatek,mt6789-infracfg-ao
->> +          - mediatek,mt6789-mcusys
->> +      - const: syscon
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  '#clock-cells':
->> +    const: 1
->> +
->> +  '#reset-cells':
->> +    const: 1
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    mcusys: syscon@c530000 {
-> 
-> Drop unused labels, everywhere.
-> 
-> Also, node name is supposed to be clock or reset controller, not syscon.
-> 
+Changes in v3:
+- Rename led nodes to led-0/led-1
+- Remove pinctrl* props from sdio0
+- Collect a-b tags
 
-MCUSYS is all three - but please use clock-controller.
+Changes in v2:
+- Limit sdmmc max-frequency to 100 MHz on ROCK 2A/2F
+- Drop clock-output-names prop from rtc node on Sige1 and NanoPi Zero2
+- Drop regulator-boot-on from usb 2.0 host regulators on Sige1
+- Add bluetooth and wifi nodes on Sige1
+- Collect t-b tag for NanoPi Zero2
 
-Cheers,
-Angelo
+These boards can be booted from emmc or sd-card using the U-Boot 2025.07
+generic-rk3528 target or work-in-progress patches for these boards [1].
 
+For working bluetooth on ArmSoM Sige1 the patch "arm64: dts: rockchip:
+Fix UART DMA support for RK3528" [2] is required.
+
+[1] https://source.denx.de/u-boot/contributors/kwiboo/u-boot/-/commits/rk3528
+[2] https://lore.kernel.org/r/20250709210831.3170458-1-jonas@kwiboo.se
+
+Jonas Karlman (6):
+  dt-bindings: arm: rockchip: Add Radxa ROCK 2A/2F
+  arm64: dts: rockchip: Add Radxa ROCK 2A/2F
+  dt-bindings: arm: rockchip: Add ArmSoM Sige1
+  arm64: dts: rockchip: Add ArmSoM Sige1
+  dt-bindings: arm: rockchip: Add FriendlyElec NanoPi Zero2
+  arm64: dts: rockchip: Add FriendlyElec NanoPi Zero2
+
+ .../devicetree/bindings/arm/rockchip.yaml     |  17 +
+ arch/arm64/boot/dts/rockchip/Makefile         |   4 +
+ .../boot/dts/rockchip/rk3528-armsom-sige1.dts | 464 ++++++++++++++++++
+ .../boot/dts/rockchip/rk3528-nanopi-zero2.dts | 340 +++++++++++++
+ .../boot/dts/rockchip/rk3528-rock-2.dtsi      | 293 +++++++++++
+ .../boot/dts/rockchip/rk3528-rock-2a.dts      |  82 ++++
+ .../boot/dts/rockchip/rk3528-rock-2f.dts      |  10 +
+ 7 files changed, 1210 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-armsom-sige1.dts
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-nanopi-zero2.dts
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-rock-2.dtsi
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-rock-2a.dts
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-rock-2f.dts
+
+-- 
+2.50.1
 
 
