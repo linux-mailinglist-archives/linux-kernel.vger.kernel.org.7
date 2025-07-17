@@ -1,103 +1,217 @@
-Return-Path: <linux-kernel+bounces-734518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17718B082AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 04:01:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF428B082AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 04:01:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 887951AA585B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:01:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AD291AA5866
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:01:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE1E1A4E70;
-	Thu, 17 Jul 2025 02:00:58 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED42F1D5AC6;
+	Thu, 17 Jul 2025 02:01:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T9R//HVr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1392E36F3
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 02:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4288C1BC58;
+	Thu, 17 Jul 2025 02:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752717657; cv=none; b=NB+bT+f2Uff3ThMS7ayOyNKDVFo1JrsuzfPPznzAqg0aX5vuJxmYiOmkPFf1TwxS7ZsQyRXIYGv/oC7a97RI1w1yh06xYQntbSIp7ry3Q+o3PKl+8LkpfRtJbfyRJW0nTf980xLrmI6oYSsTkoB3FgicfXsFD0Yjqg78rrvegH8=
+	t=1752717670; cv=none; b=ER0f4flVldEwvbj7439Nx/fUWlebBvEL6MmAD90CPl8L8zzrRS/9ZODArEXA1RwKPy8sWobwDSaOqowRF6ZFQozzRC0g9Vc+ONrPEb/40lt/Kth1L67SlCrdNlD9NmWZilJCOoBIMlBgSvdxz0aoFJsY7wTYfw1Jxnd2bp4VdTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752717657; c=relaxed/simple;
-	bh=kYiRtY0WtLx6HxDc9u68HzXYDf75iIxVrXgDAuu5g5E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YwLuC4L5nAGK0pzE5d7iICHenlRmN1Ar5K0qXEzWt+18FXuYKxMdVvxS4IiZjRWeUI6kuhKxWBkgBZxF3YHqntU6fnfp+UfH4CBF3Agt4ArQnR/SeWBYCLKzCrIGZV4tzOTRI3vSxDjX9OEuAgKsrTljdu9x5+w3bdllRJR3KJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4bjGHw4xl0zdbwV;
-	Thu, 17 Jul 2025 09:56:44 +0800 (CST)
-Received: from kwepemf100007.china.huawei.com (unknown [7.202.181.221])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3A02C18007F;
-	Thu, 17 Jul 2025 10:00:52 +0800 (CST)
-Received: from [10.67.109.184] (10.67.109.184) by
- kwepemf100007.china.huawei.com (7.202.181.221) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 17 Jul 2025 10:00:51 +0800
-Message-ID: <fa509f25-cbd6-41d5-8f34-bbd45062a8b7@huawei.com>
-Date: Thu, 17 Jul 2025 10:00:51 +0800
+	s=arc-20240116; t=1752717670; c=relaxed/simple;
+	bh=S7Y8uiFlZlxrGHyyuEem013pBJJXIkns4WysoiiW7tw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eH+TmGDNpy+vJejhsI1UZ/fYIPsT7sAyGcpqkNdv2feOcuKwiBVn6AKSfmHpdIsVls9E79K8X50AnlcQSiORKqMb6KSCZjXxu7wbEho2WdD525yUG3GVCsgfmnyORXNAT9NnCleZNXJYPF3SDjsIoapWoge5ZB6OyOTAfQNMxik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T9R//HVr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AD18C4CEE7;
+	Thu, 17 Jul 2025 02:01:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752717669;
+	bh=S7Y8uiFlZlxrGHyyuEem013pBJJXIkns4WysoiiW7tw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=T9R//HVrOII6pCWTJfXfKlkYXyHyCqHFyM1TkVjra35UBaj2gpa/tTm3D52lkxau5
+	 f9ejgGEmKr3xF6mLy5OKecxnjcBTS+wUbz7K9c7zT1MyPrlWyyNyfwlol1xYRXjaN8
+	 5MWbGNZ1OicJT9XJf8baTIqy11+LVC1N3vu771F4t9P9PyYsBl63SzrwHHDWNDsD2Y
+	 +QWFZc/jMRDrc8gWvpkOnRbzc1mPfeLiAorsKaoKJoIQjN/Q+PrvqnaOkE5wn3BAL0
+	 57NLM0brSk1WbgMvPII83wP0nc4bUy8UYnG7GR+ISrSpu0lPjyrEG/1Fsj+mG9t2X4
+	 aIY5SnIlX5TPQ==
+Date: Wed, 16 Jul 2025 19:01:06 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Jens Remus <jremus@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org, x86@kernel.org, Steven Rostedt <rostedt@kernel.org>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Ilya Leoshkevich <iii@linux.ibm.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, 
+	Indu Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, 
+	Beau Belgrave <beaub@linux.microsoft.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, 
+	Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>
+Subject: Re: [RFC PATCH v1 08/16] unwind_user: Enable archs that save RA/FP
+ in other registers
+Message-ID: <oasyyga72yuiad7y2nzh7wcd7t7wmxnsbo2kuvsn5xsnuypewd@ukxxgdjbvegz>
+References: <20250710163522.3195293-1-jremus@linux.ibm.com>
+ <20250710163522.3195293-9-jremus@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next] riscv: Enable ARCH_HAVE_NMI_SAFE_CMPXCHG
-Content-Language: en-US
-To: Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>,
-	<linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-CC: Pu Lehui <pulehui@huaweicloud.com>
-References: <20250711090443.1688404-1-pulehui@huaweicloud.com>
-From: Pu Lehui <pulehui@huawei.com>
-In-Reply-To: <20250711090443.1688404-1-pulehui@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemf100007.china.huawei.com (7.202.181.221)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250710163522.3195293-9-jremus@linux.ibm.com>
 
+On Thu, Jul 10, 2025 at 06:35:14PM +0200, Jens Remus wrote:
+> +#ifndef unwind_user_get_reg
+> +
+> +/**
+> + * generic_unwind_user_get_reg - Get register value.
+> + * @val: Register value.
+> + * @regnum: DWARF register number to obtain the value from.
+> + *
+> + * Returns zero if successful. Otherwise -EINVAL.
+> + */
+> +static inline int generic_unwind_user_get_reg(unsigned long *val, int regnum)
+> +{
+> +	return -EINVAL;
+> +}
+> +
+> +#define unwind_user_get_reg generic_unwind_user_get_reg
+> +
+> +#endif /* !unwind_user_get_reg */
 
+I believe the traditional way to do this is to give the function the
+same name as the define:
 
-On 2025/7/11 17:04, Pu Lehui wrote:
-> From: Pu Lehui <pulehui@huawei.com>
-> 
-> The implement of cmpxchg() in riscv is based on atomic primitives and
-> has NMI-safe features, so it can be used safely in the in_nmi context.
-> ftrace's ringbuffer relies on NMI-safe cmpxchg() in the NMI context.
-> Currently, in_nmi() is true when riscv kprobe is in trap-based mode, so
-> this config needs to be selected, otherwise kprobetrace will not be
+#ifndef unwind_user_get_reg
+static inline int unwind_user_get_reg(unsigned long *val, int regnum)
+{
+	return -EINVAL;
+}
+#define unwind_user_get_reg unwind_user_get_reg
+#endif
 
-Gentle ping~
+> +/**
+> + * generic_sframe_set_frame_reginfo - Populate info to unwind FP/RA register
+> + * from SFrame offset.
+> + * @reginfo: Unwind info for FP/RA register.
+> + * @offset: SFrame offset value.
+> + *
+> + * A non-zero offset value denotes a stack offset from CFA and indicates
+> + * that the register is saved on the stack. A zero offset value indicates
+> + * that the register is not saved.
+> + */
+> +static inline void generic_sframe_set_frame_reginfo(
+> +	struct unwind_user_reginfo *reginfo,
+> +	s32 offset)
+> +{
+> +	if (offset) {
+> +		reginfo->loc = UNWIND_USER_LOC_STACK;
+> +		reginfo->frame_off = offset;
+> +	} else {
+> +		reginfo->loc = UNWIND_USER_LOC_NONE;
+> +	}
+> +}
 
-The issue can be reproduced by the following steps:
+This just inits the reginfo struct, can we call it sframe_init_reginfo()?
 
-cd /sys/kernel/debug/tracing/
-echo 'p do_nanosleep' > kprobe_events
-echo 1 > events/kprobes/enable
-sleep 1
-cat trace # trace log will not show without this patch
+Also the function comment seems completely superfluous as the function
+is completely obvious.
 
-> available.
-> 
-> Signed-off-by: Pu Lehui <pulehui@huawei.com>
-> ---
->   arch/riscv/Kconfig | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index 36061f4732b7..0e2dfa98338a 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -23,6 +23,7 @@ config RISCV
->   	select ARCH_ENABLE_MEMORY_HOTREMOVE if MEMORY_HOTPLUG
->   	select ARCH_ENABLE_SPLIT_PMD_PTLOCK if PGTABLE_LEVELS > 2
->   	select ARCH_ENABLE_THP_MIGRATION if TRANSPARENT_HUGEPAGE
-> +	select ARCH_HAVE_NMI_SAFE_CMPXCHG
->   	select ARCH_HAS_BINFMT_FLAT
->   	select ARCH_HAS_CRC32 if RISCV_ISA_ZBC
->   	select ARCH_HAS_CRC64 if 64BIT && RISCV_ISA_ZBC
+Also the signature should match kernel style, something like:
+
+static inline void
+sframe_init_reginfo(struct unwind_user_reginfo *reginfo, s32 offset)
+
+> @@ -98,26 +98,57 @@ static int unwind_user_next(struct unwind_user_state *state)
+>  
+>  
+>  	/* Get the Return Address (RA) */
+> -	if (frame->ra_off) {
+> +	switch (frame->ra.loc) {
+> +	case UNWIND_USER_LOC_NONE:
+> +		if (!IS_ENABLED(CONFIG_HAVE_USER_RA_REG) || !topmost)
+> +			goto done;
+> +		ra = user_return_address(task_pt_regs(current));
+> +		break;
+> +	case UNWIND_USER_LOC_STACK:
+> +		if (!frame->ra.frame_off)
+> +			goto done;
+>  		/* Make sure that the address is word aligned */
+>  		shift = sizeof(long) == 4 || compat_fp_state(state) ? 2 : 3;
+> -		if ((cfa + frame->ra_off) & ((1 << shift) - 1))
+> +		if ((cfa + frame->ra.frame_off) & ((1 << shift) - 1))
+>  			goto done;
+> -		if (unwind_get_user_long(ra, cfa + frame->ra_off, state))
+> +		if (unwind_get_user_long(ra, cfa + frame->ra.frame_off, state))
+>  			goto done;
+> -	} else {
+> -		if (!IS_ENABLED(CONFIG_HAVE_USER_RA_REG) || !topmost)
+> +		break;
+> +	case UNWIND_USER_LOC_REG:
+> +		if (!IS_ENABLED(CONFIG_HAVE_UNWIND_USER_LOC_REG) || !topmost)
+>  			goto done;
+> -		ra = user_return_address(task_pt_regs(current));
+> +		if (unwind_user_get_reg(&ra, frame->ra.regnum))
+> +			goto done;
+> +		break;
+> +	default:
+> +		WARN_ON_ONCE(1);
+> +		goto done;
+
+The default case will never happen, can we make it a BUG()?
+
+>  	}
+>  
+>  	/* Get the Frame Pointer (FP) */
+> -	if (frame->fp_off && unwind_get_user_long(fp, cfa + frame->fp_off, state))
+> +	switch (frame->fp.loc) {
+> +	case UNWIND_USER_LOC_NONE:
+> +		break;
+
+The UNWIND_USER_LOC_NONE behavior is different here compared to above.
+Do we also need UNWIND_USER_LOC_PT_REGS?
+
+> +	case UNWIND_USER_LOC_STACK:
+> +		if (!frame->fp.frame_off)
+> +			goto done;
+> +		if (unwind_get_user_long(fp, cfa + frame->fp.frame_off, state))
+> +			goto done;
+> +		break;
+> +	case UNWIND_USER_LOC_REG:
+> +		if (!IS_ENABLED(CONFIG_HAVE_UNWIND_USER_LOC_REG) || !topmost)
+> +			goto done;
+
+The topmost checking is *really* getting cumbersome, I do hope we can
+get rid of that.
+
+> +		if (unwind_user_get_reg(&fp, frame->fp.regnum))
+> +			goto done;
+> +		break;
+> +	default:
+> +		WARN_ON_ONCE(1);
+>  		goto done;
+> +	}
+
+BUG(1) here as well.
+
+>  	state->ip = ra;
+>  	state->sp = sp;
+> -	if (frame->fp_off)
+> +	if (frame->fp.loc != UNWIND_USER_LOC_NONE)
+>  		state->fp = fp;
+
+Instead of the extra conditional here, can fp be initialized to zero?
+Either at the top of the function or in the RA switch statement?
+
+-- 
+Josh
 
