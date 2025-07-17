@@ -1,174 +1,208 @@
-Return-Path: <linux-kernel+bounces-735592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0930B09157
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:08:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3D86B09152
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:07:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5EBE3B16DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:07:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 155E31AA50C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:07:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA11D2F6FA3;
-	Thu, 17 Jul 2025 16:07:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74DD2F94AF;
+	Thu, 17 Jul 2025 16:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="xIBlWW/c"
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="B8EiIeeD"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F037D2F949A
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 16:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561262F8C47
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 16:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752768459; cv=none; b=VrW4yaHHpP26Fd4CnwLFZxeI9STuq1jtA9SsKbd+ubAsAXBgVvHK/NydsidevmOGQ9p2rNHT2zR9Q4KH/IVBqaR5tKxttqI/Sy9vFmffXuNO33zrdysQmVkErfhUc00KkA1WKwQME+C2vJlhskZdu954EmTwsCI2w7hqUKOq23g=
+	t=1752768452; cv=none; b=aJ8oVT5w2st713ZxYE+IH6w+RVF/i4BgI1DNIWxTvXk7r0V9toIm3HgOZFKMe3QMjF9se6TLKHzl4IIrCwEBftNBNYPOi/+CO2bNE1k/3QVCOiDSnKRGPxe2xJukZzmxNoV72lBoqTd3T1vAs0bIa2rrnh03qE7oSuBepicqaeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752768459; c=relaxed/simple;
-	bh=lyLH5zPYEo/90zXKov9olGhnt0IMM0Xu8LtN9jXR2gg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FD3sB7ckAzGou8TlRerQvuv7bxHWsyKTwVQffrlHJy1A8oL3kJ3l7qua1wHzIKN/XIReAJhD5S9mnh63xX3W5vSfK4LgjiCqrpYfmILKbsK3XWCkbWb8vQ3KiboJp/dh/AE92ry2WDq79PIGwGPm4jz2od6rFw++WdteZNneDrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=xIBlWW/c; arc=none smtp.client-ip=209.85.166.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-86a052d7897so94851539f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 09:07:36 -0700 (PDT)
+	s=arc-20240116; t=1752768452; c=relaxed/simple;
+	bh=HuMkvESuXq2jYyN9U/v45ZQ3yZUvaYoaX0ldJ5jJ7sU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N0ad2Qrbvt/tbUsatMi4nFGPejJyEfsRCTvlaRLAe/tGO+HLjm2zalwbmIKdClbW8d/MpidH4vCU80pa7a25kTybQaxSwWBsL4/vP+uzxhJ2VjoEyzyvO9UUiU2AKuMiVUlPnI+SO7R82vCIN4piYBVFUdZPBtnVr6G6gZSw5VQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=B8EiIeeD; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45618ddd62fso12381895e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 09:07:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1752768456; x=1753373256; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Lgpunb85reZG9xTZwbNVBuO0rswFdgZzY975TX/jRuQ=;
-        b=xIBlWW/cq3uKkbFl8m9C33O7fLQes4KdNBqtNhhFQOnhqAs7XKZu9qYv/NbsW531uq
-         ZgmOnLm5hc0UdmrOSq+AbHgeBhCeyLC0hThoXH/s6n3M57WCg+XH6KovAiu3+SSWiACs
-         Dj+TfB4/IvOJfxq0mTeuUH7mH4MqqEuwRLsZQ1NcBzFmGcgVSxXoXkSqRCFZ9qD7ZvKC
-         y7BeVaEdjXfO+rJSD5MSvr1eRiuEk+jgBUh3SEWeMcxOUg3u6kGQe1xueuCqUt+9gjcK
-         95/jCpBQcaO+uRLnVecEkI4jHZeQ2kDYCo+Jj0p0QGLha1mguBccm4P/7JyhC2mWZ6MT
-         NQDQ==
+        d=suse.com; s=google; t=1752768449; x=1753373249; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=82OHoUr0Z9aQ08e56ySzE42nN8RW+aLi/MMtZyEhPrU=;
+        b=B8EiIeeDTr26ry3siJUDizBLXQuERTbBi0L0M3eiXlxJokCRdq+WEB81viTP5zNbqj
+         svvHZo1ZNsnij4qFy6U50K+ylhQ/jvqpeOS0CyFo13k9SWmVtwCqfYzW2f4XDq4URjKV
+         RmeN1+qfgW07ScoxhvQVxEm9YugTQOeX0WfZiS2sWpAjzABcHCE3i38DDZgNMLuUVqSj
+         vZhVc7Fq87srlpZskaplehSc41Iq6W1kp3orCbl4zP2oudp1Ppsc+nvnQIInEgaFn++0
+         WjenNGlUagN9Usyr1xBHOGtsRhpRQGEXdpTDlm+B3YLsohq6z8yYPVgNQS9Rf+vd9/d1
+         hAag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752768456; x=1753373256;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Lgpunb85reZG9xTZwbNVBuO0rswFdgZzY975TX/jRuQ=;
-        b=HYJfnRWebQKT/T4g/fK7GFuw2M5X65QWJJYXJ9sVlZEjCXh1uz4OK1AFU1KrHeX3LF
-         kqu/VoDrNbqNnuVj+dmXSmgL202PSCsB6Xgoqj/kqGZ8/uXVYFemnlNVvGbTVG6zbkmK
-         reCfVCOcRh9euelOUuDZi4c8HNETDWiIOqC5m8xEPVs7DnBN3uhBizdcYLU+sWfMtjiV
-         C3jWnwnl021z2wnQEKBywW7Dfcs4AXxyN/2/gEwKgC9UVMMOu67bnn7qxXnRZcOLaJaz
-         ycnwDsIhzC2MwFvg7KPj9cF84vJph2SH9J23ncrozvyj6vVAsViqOBJP7a2sw/CLXYsK
-         h2qA==
-X-Forwarded-Encrypted: i=1; AJvYcCWnK3gZV4BoSixgZui+rv/98KLqHk+Q1zACKAII2FUDaT5OK1opgJyfuIwmyWpwmdk+9nzjQVB3N2nG03A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEa4uyG1lebxtBv00dZm2oftmwAD/ctyfocj3ImDbN1e7cH2lV
-	k3/snKPlhWVS0QN8f8ClmhI7PctZPu8HPjveXZQe8HDI2QP3mFo/TMhzcqKjZlrvQmyWdACfivE
-	rx1GrdT3v6nFKn8DoNt6uKjLSD1G3XbsOcb0CisSr0c2zFcXGxs+/D6o=
-X-Gm-Gg: ASbGnctD3LDBC28gTOxyl9na+g7dgOt+iidPWbwIh+SE4cFJ3u6p2WkaU7LPWERVmHd
-	6Je87MlxPVkKIS78+AI7H6Tn7nT9CPO0EFGyj6NDX4kDxPPbQJTG9gUoclnhdNbdJb/wmK0f8Fg
-	QGWOF3eJjfKU4pIs6NFrY5yy1YVkGiXctrgX3TiXmpfkvLFm9FMojWwH5eSu7MZhZ/QBBi1jIqD
-	qIDsgRj
-X-Google-Smtp-Source: AGHT+IEvFzIaLhWODX98bcuKZ7fOXM6ICF0D1a2FOT238qB2mbI8P4hj1EYgmfVXY5KwbAkFGmwNg5EwCX4keK/F3+g=
-X-Received: by 2002:a05:6602:1688:b0:86d:f35:a100 with SMTP id
- ca18e2360f4ac-879c08a6227mr887776039f.5.1752768455796; Thu, 17 Jul 2025
- 09:07:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752768449; x=1753373249;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=82OHoUr0Z9aQ08e56ySzE42nN8RW+aLi/MMtZyEhPrU=;
+        b=HvFpwk+VuDhwuUcER0acosXbGbAJgy5Zvt+8eOE8CctmtJmCe1Ttvpg8CMurrOERGG
+         kgcsHwI9h/xfUKfNiQ2H+poF/g7SELa2nOrjl/gUk/noR9ZIcgcH+IhOp9zaH/28kvGf
+         d4ds2+cLSeAMp8DboWwtmfBC6sMrihN6y1NEOdRNeyDQ5ouZNWtcaoHVm/anpwwycxJO
+         QUhy0Fn2mtgg5oOo6MC/c+bYioEeKtW5yHGpQFKZiMAnDZ0+nj/pcEoA9AOyP2wDRG/t
+         E+L0pFb8BVlHhuu473x1Zl4XM3l5hHq2uALqIZ51+Akcx7ZPvU4VH7UXCSTXgNRjabJ0
+         UTkA==
+X-Forwarded-Encrypted: i=1; AJvYcCUnGzOrIOWiwZyCRF/EPHnHgbBw7XoypFE8FGhTiobtdwelWzzznuTGeFXnBvm5ruwG01IR8RkuToIQopk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2LzfZWRmon5awF9r4Zfm9UzURBu9vAFyDFzDRsRULUbK21cGV
+	b1erUr/gpqSJekXN9+0Z0fUVUWSJ8gN8Z3EnPVLQEMbBp7CRRTkv2j/ahUzGNiDtNbk=
+X-Gm-Gg: ASbGncs8xGKLcknnLvaM6Jq6Dx5eTptmQYmjs1dAv2sDWassLVHfeZJmkhAFMv265RP
+	c3pEvs5VYVbl35OHWTYp2xPlnmFfDx5RKnRWEO1f82qk8lMXxTP68/u4PrEtEtPCsUrtrW/DVNR
+	YSJ/YjSUoHODltXi5pVUVHvTQDTEfxOUjjbz9mHvpkgvTq1sYh4Xmu8MWyzCLxnt6NBhj+UPPVb
+	9K7PDXthkORn6Gk35PXuSGzNxCKhCAx62AtGlmgOX3JEH8aEAdiGmZQ2JFZhrML2v04i8Uzw5yR
+	eToYWzWj4ek+LEcxCSXaWMTAdOj2WHAghvdylbebE08J1XPEu8O41MQ8EtbdE0WhQCV3yo7gQqS
+	Uh7BrHnqjGHqcKNudHIXXaqU=
+X-Google-Smtp-Source: AGHT+IHzm2I/lhPKbGUV5CyURK1Tn69rc/pQKbI+7FTppM+fvafp7RbqiJF9UaoOuE40qre4CBuyNw==
+X-Received: by 2002:a05:600c:4f4f:b0:456:2cd9:fc41 with SMTP id 5b1f17b1804b1-4562e3b9937mr64319855e9.20.1752768448653;
+        Thu, 17 Jul 2025 09:07:28 -0700 (PDT)
+Received: from [192.168.2.177] ([91.116.220.47])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45634f4c34dsm26799925e9.6.2025.07.17.09.07.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Jul 2025 09:07:28 -0700 (PDT)
+Message-ID: <27025862-dc2c-438d-8413-d61ddff01a44@suse.com>
+Date: Thu, 17 Jul 2025 18:07:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250522-pmu_event_info-v3-0-f7bba7fd9cfe@rivosinc.com> <20250522-pmu_event_info-v3-6-f7bba7fd9cfe@rivosinc.com>
-In-Reply-To: <20250522-pmu_event_info-v3-6-f7bba7fd9cfe@rivosinc.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Thu, 17 Jul 2025 21:37:25 +0530
-X-Gm-Features: Ac12FXzE6RMfrSSbSC6EtRsKNfdVOghcMO95e74CACCW8lH380ZKbHD2qUlzeo0
-Message-ID: <CAAhSdy3UGPjrdzY2x6c=SCa11i1fKZUOna_vEf+8a=ieSvgPug@mail.gmail.com>
-Subject: Re: [PATCH v3 6/9] KVM: Add a helper function to validate vcpu gpa range
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Mayuresh Chitale <mchitale@ventanamicro.com>, linux-riscv@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	Atish Patra <atishp@rivosinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] arm64: dts: s32g3: Fix whitespace issue in device
+ tree
+To: Dan Carpenter <dan.carpenter@linaro.org>, Xu Yang <xu.yang_2@nxp.com>
+Cc: Chester Lin <chester62515@gmail.com>,
+ Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
+ NXP S32 Linux Team <s32@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ imx@lists.linux.dev, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1752703107.git.dan.carpenter@linaro.org>
+ <52960eb1-4432-436b-89aa-d50fc7da2c3a@sabinyo.mountain>
+Content-Language: en-US, ca-ES, es-ES
+From: Matthias Brugger <mbrugger@suse.com>
+Autocrypt: addr=mbrugger@suse.com; keydata=
+ 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
+ PVrr2NoUqi/bxI8fFQJD1jVj8K0=
+In-Reply-To: <52960eb1-4432-436b-89aa-d50fc7da2c3a@sabinyo.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Paolo,
 
-On Fri, May 23, 2025 at 12:33=E2=80=AFAM Atish Patra <atishp@rivosinc.com> =
-wrote:
->
-> The arch specific code may need to validate a gpa range if it is a shared
-> memory between the host and the guest. Currently, there are few places
-> where it is used in RISC-V implementation. Given the nature of the functi=
-on
-> it may be used for other architectures. Hence, a common helper function
-> is added.
->
-> Signed-off-by: Atish Patra <atishp@rivosinc.com>
+
+On 17/07/2025 00:46, Dan Carpenter wrote:
+> Checkpatch points out that this should use spaces instead of tabs.
+> "ERROR: code indent should use tabs where possible".
+> 
+> Reported-by: Xu Yang <xu.yang_2@nxp.com>
+> Closes: https://lore.kernel.org/all/u7glt7mn33lbdeskbr4ily6tjjifvffy64llwpi5b2rrhx5tnv@y2h2y3oz3xc4/
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Reviewed-by: Matthias Brugger <mbrugger@suse.com>
+
 > ---
->  include/linux/kvm_host.h |  2 ++
->  virt/kvm/kvm_main.c      | 21 +++++++++++++++++++++
->  2 files changed, 23 insertions(+)
->
-> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> index 291d49b9bf05..adda61cc4072 100644
-> --- a/include/linux/kvm_host.h
-> +++ b/include/linux/kvm_host.h
-> @@ -1383,6 +1383,8 @@ static inline int kvm_vcpu_map_readonly(struct kvm_=
-vcpu *vcpu, gpa_t gpa,
->
->  unsigned long kvm_vcpu_gfn_to_hva(struct kvm_vcpu *vcpu, gfn_t gfn);
->  unsigned long kvm_vcpu_gfn_to_hva_prot(struct kvm_vcpu *vcpu, gfn_t gfn,=
- bool *writable);
-> +int kvm_vcpu_validate_gpa_range(struct kvm_vcpu *vcpu, gpa_t gpa, unsign=
-ed long len,
-> +                               bool write_access);
->  int kvm_vcpu_read_guest_page(struct kvm_vcpu *vcpu, gfn_t gfn, void *dat=
-a, int offset,
->                              int len);
->  int kvm_vcpu_read_guest_atomic(struct kvm_vcpu *vcpu, gpa_t gpa, void *d=
-ata,
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index e85b33a92624..3f52f5571fa6 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -3301,6 +3301,27 @@ int kvm_vcpu_write_guest(struct kvm_vcpu *vcpu, gp=
-a_t gpa, const void *data,
->  }
->  EXPORT_SYMBOL_GPL(kvm_vcpu_write_guest);
->
-> +int kvm_vcpu_validate_gpa_range(struct kvm_vcpu *vcpu, gpa_t gpa, unsign=
-ed long len,
-> +                               bool write_access)
-> +{
-> +       gfn_t gfn =3D gpa >> PAGE_SHIFT;
-> +       int seg;
-> +       int offset =3D offset_in_page(gpa);
-> +       bool writable =3D false;
-> +       unsigned long hva;
-> +
-> +       while ((seg =3D next_segment(len, offset)) !=3D 0) {
-> +               hva =3D kvm_vcpu_gfn_to_hva_prot(vcpu, gfn, &writable);
-> +               if (kvm_is_error_hva(hva) || (writable ^ write_access))
-> +                       return -EPERM;
-> +               offset =3D 0;
-> +               len -=3D seg;
-> +               ++gfn;
-> +       }
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(kvm_vcpu_validate_gpa_range);
-> +
+>   arch/arm64/boot/dts/freescale/s32g3.dtsi | 32 ++++++++++++------------
+>   1 file changed, 16 insertions(+), 16 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/s32g3.dtsi b/arch/arm64/boot/dts/freescale/s32g3.dtsi
+> index 68c11ebd405f..e80144e33efb 100644
+> --- a/arch/arm64/boot/dts/freescale/s32g3.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/s32g3.dtsi
+> @@ -489,22 +489,22 @@ usbmisc: usbmisc@44064200 {
+>   			reg = <0x44064200 0x200>;
+>   		};
+>   
+> -                usbotg: usb@44064000 {
+> -                        compatible = "nxp,s32g3-usb", "nxp,s32g2-usb";
+> -                        reg = <0x44064000 0x200>;
+> -                        interrupt-parent = <&gic>;
+> -                        interrupts = <GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH>, /* OTG Core */
+> -                                     <GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH>; /* OTG Wakeup */
+> -                        clocks = <&clks 94>, <&clks 95>;
+> -                        fsl,usbmisc = <&usbmisc 0>;
+> -                        ahb-burst-config = <0x3>;
+> -                        tx-burst-size-dword = <0x10>;
+> -                        rx-burst-size-dword = <0x10>;
+> -                        phy_type = "ulpi";
+> -                        dr_mode = "host";
+> -                        maximum-speed = "high-speed";
+> -                        status = "disabled";
+> -                };
+> +		usbotg: usb@44064000 {
+> +			compatible = "nxp,s32g3-usb", "nxp,s32g2-usb";
+> +			reg = <0x44064000 0x200>;
+> +			interrupt-parent = <&gic>;
+> +			interrupts = <GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH>, /* OTG Core */
+> +				     <GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH>; /* OTG Wakeup */
+> +			clocks = <&clks 94>, <&clks 95>;
+> +			fsl,usbmisc = <&usbmisc 0>;
+> +			ahb-burst-config = <0x3>;
+> +			tx-burst-size-dword = <0x10>;
+> +			rx-burst-size-dword = <0x10>;
+> +			phy_type = "ulpi";
+> +			dr_mode = "host";
+> +			maximum-speed = "high-speed";
+> +			status = "disabled";
+> +		};
+>   
+>   		i2c0: i2c@401e4000 {
+>   			compatible = "nxp,s32g3-i2c",
 
-Can you please review this common helper since it is in virt/kvm ?
-
->  static int __kvm_gfn_to_hva_cache_init(struct kvm_memslots *slots,
->                                        struct gfn_to_hva_cache *ghc,
->                                        gpa_t gpa, unsigned long len)
->
-> --
-> 2.43.0
->
-
-Regards,
-Anup
 
