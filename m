@@ -1,103 +1,151 @@
-Return-Path: <linux-kernel+bounces-735281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACA6EB08D37
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:42:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58B54B08D3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:43:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32C61189462E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:42:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 732B6A46019
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:43:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2DA2C3271;
-	Thu, 17 Jul 2025 12:42:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDCD12D3733;
+	Thu, 17 Jul 2025 12:43:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pjK5XcOQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FouS25H9"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A177E9;
-	Thu, 17 Jul 2025 12:42:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821261F92A;
+	Thu, 17 Jul 2025 12:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752756135; cv=none; b=TqEzAlrQDe/UoLsxDKErR0tfUnt2I+EY9y2o21ulZl7evU8Tru9yCMcY1uRa3rXWSC7sQuiFjhiJHzRZoNZLmYQa1HdIzmUUMF4OoFeoM7nYG3Nmsan/gxWBoXAo7VuUDxhfEhVaqywj3LjFYTwenjrkNlLZqiCZuUUaXnpLdAQ=
+	t=1752756189; cv=none; b=J8WZ41FWW4YN7JP6z+t3EOUNaaW6tYZMY4H8hOc8JBcScGuIfYgoKhWBGGVFkJRD1WBFTPzd7HzWddtgxVdbyKP8+Ej9s963MghboGzDzuhiWn1f7Me8c1cUUsafkZVo17AlYm3h0GaHfaydb20pVNXW/BIYTDSZFsdj9BfaPIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752756135; c=relaxed/simple;
-	bh=ZBY36t6x50q8YzRo+BWSKkd27H/7AfalmvHRzL44imU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VATUlAzUiRfQl/0aPLWdN175P22Oy8Dmdjh7B+AsXQ7r4SzCY8xKreMCeEbMgN5L0smayVB/CUCSiRSvGAeHQNlPxrltblxha/sO6gkgTmq81IlQ+K1ymmPg+okx5J6bxnG52H7wCoD9pGV0q2Uj0QWfKUoCq1/wV97Iek1Xfuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pjK5XcOQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0E99C4CEE3;
-	Thu, 17 Jul 2025 12:42:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752756135;
-	bh=ZBY36t6x50q8YzRo+BWSKkd27H/7AfalmvHRzL44imU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pjK5XcOQBtD8/L1ha67M2mu0f609rbwi7BfOqhatr1LcEPBfC1s3ow72ilT5tERiO
-	 mzR8YMBo4AJ5Vlw8cHTNNPx+CiMgz2Q8M5It4a7caKGpUu5uVJWn+JRBWb5p7wZf4X
-	 Chhy1h2Awqn4RxoC9mBUKEkiplJ3gsSTlUfDI41FVjtDn8yOgkFY58I4TDxq5B2I7K
-	 wPQrybzH/jnHJU1pzUVKxKL0RqSYB+R4XkT202uXP77PdkWNOBcgqRNHQOuVW2pKsx
-	 ocD27OmpjCu6FAUKTvEjtmfbP60vVEqtvTER3+qlJkZyNXtE/DlT+uhRQqK1pQbWm8
-	 m9xpMBL6obipA==
-Date: Thu, 17 Jul 2025 18:12:06 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Florian Fainelli <florian.fainelli@broadcom.com>, nsaenz@kernel.org
-Cc: linux-kernel@vger.kernel.org, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Jim Quinlan <jim2101024@gmail.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, "open list:BROADCOM STB PCIE DRIVER" <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH 1/2] MAINTAINERS: Drop Nicolas from maintaining
- pcie-brcmstb
-Message-ID: <bulofvsxrn7qm7vcuxhweqwlzaf7rkvzsmyg4ox67gi6gc55lg@xl2hlxd5fii5>
-References: <20250624231923.990361-1-florian.fainelli@broadcom.com>
- <20250624231923.990361-2-florian.fainelli@broadcom.com>
+	s=arc-20240116; t=1752756189; c=relaxed/simple;
+	bh=COcQw/nm6DgVQsv6NohuIht1Jtb3N9YHU6/YJbBS1ck=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eiIystI/nhu2A9KZd2LxxOZW3q70dxorc1/CoN3EUUVxQU6rBeArcxc9t06tuiPT+Om8YsEfaKt3Wqw3b0Q3MzJrZwFcJAx4RyV7xpcMrt6GqCcjRq5+KWbUJe5Br2sRjmp50eLwST9BDBpwcG/KUgER7RIQfpYylsnrICc7A2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FouS25H9; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3b60565d5f4so109306f8f.0;
+        Thu, 17 Jul 2025 05:43:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752756185; x=1753360985; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=d40bmhYnCHJ8YDHvaQ0Txhm8cZhbp1/LzycBNKupukg=;
+        b=FouS25H9x1SFkvLpj3i+AkbZt6LYkzI1HVCqm0POQWSD8LFDRYEPc9ZikoYVJU4Ef4
+         8zZsmBEAIP1rjObymfADV6CH9Vvps4sC0g/wENQhCOO10Le79xxeK1dTSLprYMDKUprk
+         /nxSSJJmzR0O16Q2NmpO4I6ZTQ1DpFtwniXJToq6pkNvjICBbhUtA5wcw0aVOODLhdV0
+         vn9Az5iYhbvQpqqNzvp+nKB/ry5PyAl/DfKP/gYX2nJoyaxMkUxPigPzJ29HBXMtLUN+
+         q1mEtxckWnQNqf6B5NrxjcH/l0xkP6IsHOYX0m+DMy0/a9fm9COYoCymndzfZE3FE2IY
+         hWSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752756185; x=1753360985;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=d40bmhYnCHJ8YDHvaQ0Txhm8cZhbp1/LzycBNKupukg=;
+        b=fDyHxS65l6lhifVaMw7O+qIQ93GjKsdamKIU+J0XKLUIOAg224jxKDZSQ+Fu+pSk1F
+         CUzfCiGk5b6NYGJUKj3sv7cyDP3Ysir5touiZ8I+myWmmQUykgUmLuuK5JHHB2nuh7Eb
+         +OoDGUXjl2Fu+xX0Kat3z9wfrHXPDzG3n80nGOTJb/gs1S5LvMdrXFKfU4PIDpZHpGQn
+         O36lunBTtYMh2Ds/ri0sV3m60lc/xMaOUc8sYUpFwBmWvOU/rV06TbcbKlgt+TNMw8Nn
+         e2r6eVJ+y1rff/NbbeHxNyfrfsV62YRPXRSthulZDvGS5ej5nMx7UkShtFOEDHr8syMY
+         0TEA==
+X-Forwarded-Encrypted: i=1; AJvYcCWVb4SFPurIaCMDAPYtGVtV9JcBobRN4g1xMUa/j56z2UV9xr7RCQ9yVnqjgdkILpTPQvbJsy6CcWGuJ3A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgfHM64eS6E5V1fE0ppf+5APVbRk/rXM2H0inuzZ62bNa0VhXX
+	kb/HTYuZvfEjn/9qMLC54U+MuSP0lFRfr6QR2STqpsLvJMbZa/dYBaD3
+X-Gm-Gg: ASbGnctr3vK31ziAtWh/WdVK3m02d5W/uVx3103f3hCxxn0kKZDzqeBAAaQEGsQmR8B
+	iKv5/9rPNJPhk9zrPznAlo4kDi/9BtQKf0LqeufkC2n1L3RVT8jtRK2Cro/A+OisFehqgHt0IY1
+	CUgKKwKzMpNdxQCDDsILwzrrq85ZcdhzrLgO1r6g/cgZ8BLy6Zb1GABNmVdWTP5/nhZcGzpvLKk
+	EA5D5J4o5h4b2fp7tRx8glf3DSpk8Tchx7RMyZrakBnGx7A6mcp3sf3KdBUxa8TzAlFItqJ3VUr
+	q8xH88nJntCq6wTaa/slBe17jEnTCUk/HvuBxyo5QhHlzJTh+YZSqpSu0jUzeYowcO7inKA2oWd
+	7Id3YeyZcZTpgXrdT+T+vC/Ui7NbAgVWRBCFiJAIG8+VUACKwqAox6VCi6H4V
+X-Google-Smtp-Source: AGHT+IFRlywe4tl9dYYqcWEYvjS6es1ezgBsDewHP6wfjpW6IO7HrqdyJCKLgzPhHOHXTcX8BEw3wA==
+X-Received: by 2002:a05:6000:18ab:b0:3a5:7875:576 with SMTP id ffacd0b85a97d-3b60dd4a802mr2670732f8f.1.1752756184266;
+        Thu, 17 Jul 2025 05:43:04 -0700 (PDT)
+Received: from localhost.localdomain ([154.182.204.213])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc3a62sm20506454f8f.40.2025.07.17.05.43.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Jul 2025 05:43:03 -0700 (PDT)
+From: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
+To: hansg@kernel.org,
+	mchehab@kernel.org,
+	sakari.ailus@linux.intel.com,
+	andy@kernel.org,
+	gregkh@linuxfoundation.org
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel-mentees@lists.linux.dev,
+	skhan@linuxfoundation.org,
+	dan.carpenter@linaro.org,
+	Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
+Subject: [PATCH v3] staging: media: atomisp: add missing mutex lock in atomisp_s_fmt_cap
+Date: Thu, 17 Jul 2025 15:42:34 +0300
+Message-Id: <20250717124234.24572-1-abdelrahmanfekry375@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250624231923.990361-2-florian.fainelli@broadcom.com>
 
-+ Nicolas (who was not CCed)
+The function atomisp_set_fmt() modifies shared device state and expects
+callers to hold the isp->mutex for synchronization. While most internal
+callers correctly lock the mutex before invoking atomisp_set_fmt(), the
+V4L2 ioctl handler atomisp_s_fmt_cap() does not.
 
-On Tue, Jun 24, 2025 at 04:19:22PM GMT, Florian Fainelli wrote:
-> Nicolas indicated a long time back that he would not have the bandwidth
-> and indeed, has not provided any review or feedback since.
-> 
+This results in an unsafe execution path for VIDIOC_S_FMT ioctls
+(e.g. via v4l2-ctl), where shared structures such as pipe->pix and
+pipe->frame_info may be modified concurrently without proper protection.
 
-Nicolas, I hope you are fine with this change. So I'm going ahead and merging
-it. If you don't feel so, please let me know.
+- Fix this by explicitly locking isp->mutex in atomisp_s_fmt_cap().
 
-- Mani
+Fixes: 4bdab80981ca ("media: atomisp: Make it possible to call atomisp_set_fmt() without a file handle")
+Signed-off-by: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
+---
+v3:
+- Use guard(mutex) as suggested by Dan Carpenter and Andy Shevchenko
+- Remove extra blank line after variable declaration
+- Fix include order as requested by Andy Shevchenko
 
-> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
-> ---
->  MAINTAINERS | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 41d95e7c60c6..439edc5babb3 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -5093,7 +5093,6 @@ F:	include/linux/platform_data/brcmnand.h
->  
->  BROADCOM STB PCIE DRIVER
->  M:	Jim Quinlan <jim2101024@gmail.com>
-> -M:	Nicolas Saenz Julienne <nsaenz@kernel.org>
->  M:	Florian Fainelli <florian.fainelli@broadcom.com>
->  R:	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
->  L:	linux-pci@vger.kernel.org
-> -- 
-> 2.43.0
-> 
+v2: https://lore.kernel.org/all/20250717013003.20936-1-abdelrahmanfekry375@gmail.com/
+- Add Fixes tag
+- use cleanup.h micros instead of explicitly calling mutex_lock/unlock
 
+v1: https://lore.kernel.org/all/20250716014225.15279-1-abdelrahmanfekry375@gmail.com/
+---
+ drivers/staging/media/atomisp/pci/atomisp_ioctl.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/staging/media/atomisp/pci/atomisp_ioctl.c b/drivers/staging/media/atomisp/pci/atomisp_ioctl.c
+index bb8b2f2213b0..2690c05afff3 100644
+--- a/drivers/staging/media/atomisp/pci/atomisp_ioctl.c
++++ b/drivers/staging/media/atomisp/pci/atomisp_ioctl.c
+@@ -7,6 +7,7 @@
+  * Copyright (c) 2010 Silicon Hive www.siliconhive.com.
+  */
+ 
++#include <linux/cleanup.h>
+ #include <linux/delay.h>
+ #include <linux/pci.h>
+ 
+@@ -416,7 +417,9 @@ static int atomisp_s_fmt_cap(struct file *file, void *fh,
+ 			     struct v4l2_format *f)
+ {
+ 	struct video_device *vdev = video_devdata(file);
++	struct atomisp_device *isp = video_get_drvdata(vdev);
+ 
++	guard(mutex)(&isp->mutex);
+ 	return atomisp_set_fmt(vdev, f);
+ }
+ 
 -- 
-மணிவண்ணன் சதாசிவம்
+2.25.1
+
 
