@@ -1,269 +1,318 @@
-Return-Path: <linux-kernel+bounces-735610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEED9B0918A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:18:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1530BB09188
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:18:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 383A9188A304
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:18:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 332BE3B2F7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:17:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98AB02FBFE4;
-	Thu, 17 Jul 2025 16:17:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8FDB2FA654;
+	Thu, 17 Jul 2025 16:17:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PSgMAeAA"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jVUNLfi+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA0C1C2C9
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 16:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01CF71F9F73;
+	Thu, 17 Jul 2025 16:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752769069; cv=none; b=PgRF8Rb424azmWqWr4ovzvtfURO0htrcLFkp25iCKlZPTTYGE38CgW+jkCohhNKwRxk5J+jmMtIotdnIQUO8o4R4I1chr8zxdUoAtUSuPkwvf1JEMrAIB6E+Wi09lEacGwtyih2v/tm5MGb0RZpfcSg+8Gk/ksY1fwQJ9zvQkRI=
+	t=1752769069; cv=none; b=KEXHQ4Zf6gNSFXrz0HJ9Q5vpkUZWd3ZnlF5v0NMzuPw3pHHizo69D14UF/CpNPacKU/2O//6ttKU4hmZ8vk8Ufnfdp3DzP6xdTUXIlmft3gVLReOBTE6gCOmff8b59pQnWsZbRuwFCqK5iuZaHW+0M8oaE7hNFczDZOuQWkTwEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752769069; c=relaxed/simple;
-	bh=4Y/RjTkTJBG1lcOSM/R+PpjsJ58T7Ydi95mMf2enko8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hwXaUtksZAi+2QO6tu3sP+T5gLwQz31boCROVcmn8IQ6b2SsRknICa/0MbsdP8U4RO4qbOPw3VkN56J3BrKDlbdZgUllL1w8V/Y2hu/7R1O3Dhj1DOu1xoL3VVRFQGCiHgT+pCsy2a2Q33LtqUcX6yUWHTdmHasnXaGxf2JFPmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PSgMAeAA; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-553b5165cf5so1390878e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 09:17:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752769066; x=1753373866; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4Y/RjTkTJBG1lcOSM/R+PpjsJ58T7Ydi95mMf2enko8=;
-        b=PSgMAeAAPc/Jl5L/MBOijdfKvVN+tZfTwfp/3VWA+7jBRL6t16zbHUK0bnoIKic4o7
-         PDfdfrfWYz1RPznBcg+ueghDLZpq9RyMrV4oqQDHG4uj79XiYBN9kprUKE0v/jpzSMfw
-         GK5F6JVAmLaumy9iqEYwMrwrsQ5UfmuWPJtVs3HGf7WwygGYu5DGzC3ygrVf2TEnP994
-         D42FhbTXKm5J1WIEaIIKP7MezWOiAwgjO3OHWV+J6FvUQyGD8L5Yqcz83JTCOFCdgyiN
-         pl00AL805j6bfwdmMhwrMmeJa/DILxHrtVPHOsWZZJasMXRGMoSc+HMR1BLnPARGLryR
-         5e9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752769066; x=1753373866;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4Y/RjTkTJBG1lcOSM/R+PpjsJ58T7Ydi95mMf2enko8=;
-        b=WM/uqpTIZv/5rJJunyfxzpP6HXv6iWp3oaPtIEOH54LJW4mG3jSDufc6jpJ5AGH+oY
-         EBS9NySMl/eV6jeogtJ0t4hxAK4NcwycoORGcLvz7BBbPitA8J4FbQtf+5484KlJM6fn
-         KGahnmqrWkTvJjjFKxE+ck3tTGgbZgLB9MNgmi64QU9SiW9L9/rIWq8b09ob2J5Pvuc9
-         Elz2bt6t48WcFoNYWoyXzHRAFTdO1e/6RJOa5SzPPkRkk/eKtohCRZ0Obxz/UrjWNMo9
-         xrSKmK+zlGtwea5WmuCj12qOCmT1+E2vJfI+qc01l+6PgVNeSTRfbQR23NChP3uXeVrO
-         mmAA==
-X-Forwarded-Encrypted: i=1; AJvYcCWMfHtcz5AjE8mtA7Sw/RLqk+YVdvhZNypYpczEVkHuEARptk4rKm0zPLDagwVSuJfvz4HdtOaeXgZ5Clk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOMBphzCDZnrSrOak84AI9Yhn8r+l6SqV1OWEHlZutwRGeM76B
-	aKlgnBkZgTp4GWEGujB1YtB72LSg2RU695T/cv6xZlkoCwyjF4dFLwpVmCPked+gmrP1BqVznTs
-	5FMj2A8dfSyVGnVz+hf6HnGRxdGcScES3MxDK1FWw
-X-Gm-Gg: ASbGncvf43Ka9qNinyAFEzsnUPiYP8O9OheGtwzpcrYQK/f9d2OT/ydgQCIa/n+Q5Sm
-	Kah8sFSoySBZ/p7UsJQ1ro/nToFhcdXYG6Ly8lJLaxKlEGp8KB15lmdr7eHF1Ow8I2sU7eqGya4
-	GgxbWFCVncchBYtX5lyeDoAULfe09ODZ7eT2UBWu82TOkx7sRbK8e7rYXdvmzIvRzTGwAI9plBO
-	1Jz1OU=
-X-Google-Smtp-Source: AGHT+IE9DWaA8FRK4xUpNKqB8FmzMQNZFjlXe/JlqckiMUc8pQOkJKRNMXU1R+kPwSGJz+qYdQKKmPj7Fqf+yBV+I3I=
-X-Received: by 2002:a05:6512:31ca:b0:553:65bc:4250 with SMTP id
- 2adb3069b0e04-55a2338ab11mr2382217e87.27.1752769065572; Thu, 17 Jul 2025
- 09:17:45 -0700 (PDT)
+	bh=5/0GW3qMX+v5dZmKkYORWMeOrUeiQ5jFCrlbFwBqtGE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gZQRZ1ggKrEgU+/0v1qOoT/bCPtOMtt35zMNDUtsLcyBjfkjpMHWZLk6YnKRTzcI+hpW0QoCxPaX/tVEpfzKyeE9q1cYd0wUwCXYIPsVTT9vlEE7lVfJ0c2bwU0ld0xmybjXJ6Fp7NJYkpla9k/hC4czlQ3n01VAKlTm06uHhvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jVUNLfi+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E4D9C4CEFE;
+	Thu, 17 Jul 2025 16:17:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752769068;
+	bh=5/0GW3qMX+v5dZmKkYORWMeOrUeiQ5jFCrlbFwBqtGE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jVUNLfi+h7dB7+1AiQYuppDpjh0UTMdbI9jg/omd0tsvQ3l0vDeutV8zxnXC9zk24
+	 UyDZ+ErX+0zKRY6q8auC4f+SMyIONhnlEWxQWRL/5aBg5HvWLWFV6b7T6+g+ZXuq/e
+	 fehuWMQaMa0HjLNDQBzLZSQ2Wap+RudbqctRCdkkXKEInNOHSgTIaFh0tLW7JcDb0y
+	 G4t4VrMRcv2OjdTlyZrqiwoKjenw5UufkthtgHsbbVeJM2f2aLXxE/dviY8CTuecy7
+	 VITnK18mRvfxw644GgKxx9g/IASeZ6XXu5mdzKr04K/FWcWNMtGY4eVRY68gQcGg+x
+	 i2Dp6GSQaiijg==
+Date: Thu, 17 Jul 2025 09:17:47 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
+	Ritesh Harjani <ritesh.list@gmail.com>, john.g.garry@oracle.com,
+	tytso@mit.edu, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v3 04/13] ltp/fsx.c: Add atomic writes support to fsx
+Message-ID: <20250717161747.GG2672039@frogsfrogsfrogs>
+References: <cover.1752329098.git.ojaswin@linux.ibm.com>
+ <5bbd19e1615ca2a485b3b430c92f0260ee576f5e.1752329098.git.ojaswin@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250515182322.117840-1-pasha.tatashin@soleen.com>
- <20250515182322.117840-11-pasha.tatashin@soleen.com> <20250624-akzeptabel-angreifbar-9095f4717ca4@brauner>
- <CA+CK2bBu4ex9O5kPcR7++DVg3RM8ZWg3BCpcc6CboJ=aG8mVmQ@mail.gmail.com>
- <20250625-akrobatisch-libellen-352997eb08ef@brauner> <CALzav=d+XgS1bUs-v7+ws5nYU9y=4uc1c8oVLHrJ16qLpnUi9Q@mail.gmail.com>
- <mafs0sejmse57.fsf@kernel.org> <CALzav=dhuoaS73ikufCf2D11Vq=jfMceYv0abdMxOdaHzmVR0g@mail.gmail.com>
- <mafs04iveu8gs.fsf@kernel.org>
-In-Reply-To: <mafs04iveu8gs.fsf@kernel.org>
-From: David Matlack <dmatlack@google.com>
-Date: Thu, 17 Jul 2025 09:17:17 -0700
-X-Gm-Features: Ac12FXw3JFpwS5UWAzvXtdE2XcBaOGxi7uu6xW5eZbBjwaUzxU-r0d7vc1g83dU
-Message-ID: <CALzav=cUQGF_DnmyDOORssoThmfQwnPgUxQiLmXyAKY1-hyT4g@mail.gmail.com>
-Subject: Re: [RFC v2 10/16] luo: luo_ioctl: add ioctl interface
-To: Pratyush Yadav <pratyush@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, Pasha Tatashin <pasha.tatashin@soleen.com>, jasonmiu@google.com, 
-	graf@amazon.com, changyuanl@google.com, rppt@kernel.org, rientjes@google.com, 
-	corbet@lwn.net, rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, 
-	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com, 
-	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org, 
-	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev, 
-	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com, 
-	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org, 
-	dan.j.williams@intel.com, david@redhat.com, joel.granados@kernel.org, 
-	rostedt@goodmis.org, anna.schumaker@oracle.com, song@kernel.org, 
-	zhangguopeng@kylinos.cn, linux@weissschuh.net, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, gregkh@linuxfoundation.org, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, rafael@kernel.org, 
-	dakr@kernel.org, bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
-	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5bbd19e1615ca2a485b3b430c92f0260ee576f5e.1752329098.git.ojaswin@linux.ibm.com>
 
-On Mon, Jul 14, 2025 at 7:56=E2=80=AFAM Pratyush Yadav <pratyush@kernel.org=
-> wrote:
-> On Thu, Jun 26 2025, David Matlack wrote:
-> > On Thu, Jun 26, 2025 at 8:42=E2=80=AFAM Pratyush Yadav <pratyush@kernel=
-.org> wrote:
-> >> On Wed, Jun 25 2025, David Matlack wrote:
-> >> > On Wed, Jun 25, 2025 at 2:36=E2=80=AFAM Christian Brauner <brauner@k=
-ernel.org> wrote:
-> >> >> >
-> >> >> > While I agree that a filesystem offers superior introspection and
-> >> >> > integration with standard tools, building this complex, stateful
-> >> >> > orchestration logic on top of VFS seemed to be forcing a square p=
-eg
-> >> >> > into a round hole. The ioctl interface, while more opaque, provid=
-es a
-> >> >> > direct and explicit way to command the state machine and manage t=
-hese
-> >> >> > complex lifecycle and dependency rules.
-> >> >>
-> >> >> I'm not going to argue that you have to switch to this kexecfs idea
-> >> >> but...
-> >> >>
-> >> >> You're using a character device that's tied to devmptfs. In other w=
-ords,
-> >> >> you're already using a filesystem interface. Literally the whole co=
-de
-> >> >> here is built on top of filesystem APIs. So this argument is just v=
-ery
-> >> >> wrong imho. If you can built it on top of a character device using =
-VFS
-> >> >> interfaces you can do it as a minimal filesystem.
-> >> >>
-> >> >> You're free to define the filesystem interface any way you like it.=
- We
-> >> >> have a ton of examples there. All your ioctls would just be tied to=
- the
-> >> >> fileystem instance instead of the /dev/somethingsomething character
-> >> >> device. The state machine could just be implemented the same way.
-> >> >>
-> >> >> One of my points is that with an fs interface you can have easy sta=
-te
-> >> >> seralization on a per-service level. IOW, you have a bunch of virtu=
-al
-> >> >> machines running as services or some networking services or whateve=
-r.
-> >> >> You could just bind-mount an instance of kexecfs into the service a=
-nd
-> >> >> the service can persist state into the instance and easily recover =
-it
-> >> >> after kexec.
-> >> >
-> >> > This approach sounds worth exploring more. It would avoid the need f=
-or
-> >> > a centralized daemon to mediate the preservation and restoration of
-> >> > all file descriptors.
-> >>
-> >> One of the jobs of the centralized daemon is to decide the _policy_ of
-> >> who gets to preserve things and more importantly, make sure the right
-> >> party unpreserves the right FDs after a kexec. I don't see how this
-> >> interface fixes this problem. You would still need a way to identify
-> >> which kexecfs instance belongs to who and enforce that. The kernel
-> >> probably shouldn't be the one doing this kind of policy so you still
-> >> need some userspace component to make those decisions.
-> >
-> > The main benefits I see of kexecfs is that it avoids needing to send
-> > all FDs over UDS to/from liveupdated and therefore the need for
-> > dynamic cross-process communication (e.g. RPCs).
-> >
-> > Instead, something just needs to set up a kexecfs for each VM when it
-> > is created, and give the same kexecfs back to each VM after kexec.
-> > Then VMs are free to save/restore any FDs in that kexecfs without
-> > cross-process communication or transferring file descriptors.
->
-> Isn't giving back the right kexecfs instance to the right VMM the main
-> problem? After a kexec, you need a way to make that policy decision. You
-> would need a userspace agent to do that.
->
-> I think what you are suggesting does make a lot of sense -- the agent
-> should be handing out sessions instead of FDs, which would make FD
-> save/restore simpler for applications. But that can be done using the
-> ioctl interface as well. Each time you open() the /dev/liveupdate, you
-> get a new session. Instead of file FDs like memfd or iommufs, we can
-> have the agent hand out these session FDs and anything that was saved
-> using this session would be ready for restoring.
->
-> My main point is that this can be done with the current interface as
-> well as kexecfs. I think there is very much a reason for considering
-> kexecfs (like not being dependent on devtmpfs), but I don't think this
-> is necessarily the main one.
+On Sat, Jul 12, 2025 at 07:42:46PM +0530, Ojaswin Mujoo wrote:
+> Implement atomic write support to help fuzz atomic writes
+> with fsx.
+> 
+> Suggested-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> ---
+>  ltp/fsx.c | 109 +++++++++++++++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 104 insertions(+), 5 deletions(-)
+> 
+> diff --git a/ltp/fsx.c b/ltp/fsx.c
+> index 163b9453..ea39ca29 100644
+> --- a/ltp/fsx.c
+> +++ b/ltp/fsx.c
+> @@ -40,6 +40,7 @@
+>  #include <liburing.h>
+>  #endif
+>  #include <sys/syscall.h>
+> +#include "statx.h"
+>  
+>  #ifndef MAP_FILE
+>  # define MAP_FILE 0
+> @@ -49,6 +50,10 @@
+>  #define RWF_DONTCACHE	0x80
+>  #endif
+>  
+> +#ifndef RWF_ATOMIC
+> +#define RWF_ATOMIC	0x40
+> +#endif
+> +
+>  #define NUMPRINTCOLUMNS 32	/* # columns of data to print on each line */
+>  
+>  /* Operation flags (bitmask) */
+> @@ -110,6 +115,7 @@ enum {
+>  	OP_READ_DONTCACHE,
+>  	OP_WRITE,
+>  	OP_WRITE_DONTCACHE,
+> +	OP_WRITE_ATOMIC,
+>  	OP_MAPREAD,
+>  	OP_MAPWRITE,
+>  	OP_MAX_LITE,
+> @@ -200,6 +206,11 @@ int	uring = 0;
+>  int	mark_nr = 0;
+>  int	dontcache_io = 1;
+>  int	hugepages = 0;                  /* -h flag */
+> +int	do_atomic_writes = 1;		/* -a flag disables */
+> +
+> +/* User for atomic writes */
+> +int awu_min = 0;
+> +int awu_max = 0;
+>  
+>  /* Stores info needed to periodically collapse hugepages */
+>  struct hugepages_collapse_info {
+> @@ -288,6 +299,7 @@ static const char *op_names[] = {
+>  	[OP_READ_DONTCACHE] = "read_dontcache",
+>  	[OP_WRITE] = "write",
+>  	[OP_WRITE_DONTCACHE] = "write_dontcache",
+> +	[OP_WRITE_ATOMIC] = "write_atomic",
+>  	[OP_MAPREAD] = "mapread",
+>  	[OP_MAPWRITE] = "mapwrite",
+>  	[OP_TRUNCATE] = "truncate",
+> @@ -422,6 +434,7 @@ logdump(void)
+>  				prt("\t***RRRR***");
+>  			break;
+>  		case OP_WRITE_DONTCACHE:
+> +		case OP_WRITE_ATOMIC:
+>  		case OP_WRITE:
+>  			prt("WRITE    0x%x thru 0x%x\t(0x%x bytes)",
+>  			    lp->args[0], lp->args[0] + lp->args[1] - 1,
+> @@ -1073,6 +1086,25 @@ update_file_size(unsigned offset, unsigned size)
+>  	file_size = offset + size;
+>  }
+>  
+> +static int is_power_of_2(unsigned n) {
+> +	return ((n & (n - 1)) == 0);
+> +}
+> +
+> +/*
+> + * Round down n to nearest power of 2.
+> + * If n is already a power of 2, return n;
+> + */
+> +static int rounddown_pow_of_2(int n) {
+> +	int i = 0;
+> +
+> +	if (is_power_of_2(n))
+> +		return n;
+> +
+> +	for (; (1 << i) < n; i++);
+> +
+> +	return 1 << (i - 1);
+> +}
+> +
+>  void
+>  dowrite(unsigned offset, unsigned size, int flags)
+>  {
+> @@ -1081,6 +1113,27 @@ dowrite(unsigned offset, unsigned size, int flags)
+>  	offset -= offset % writebdy;
+>  	if (o_direct)
+>  		size -= size % writebdy;
+> +	if (flags & RWF_ATOMIC) {
+> +		/* atomic write len must be inbetween awu_min and awu_max */
+> +		if (size < awu_min)
+> +			size = awu_min;
+> +		if (size > awu_max)
+> +			size = awu_max;
+> +
+> +		/* atomic writes need power-of-2 sizes */
+> +		size = rounddown_pow_of_2(size);
+> +
+> +		/* atomic writes need naturally aligned offsets */
+> +		offset -= offset % size;
 
-The main problem I'd like solved is requiring all FDs to preserved and
-restored in the context of a central daemon, since I think this will
-inevitably cause problems for KVM. I agree with you that this problem
-can also be solved in other ways, such as session FDs (good idea!).
+I don't think you should be modifying offset/size here.  Normally for
+fsx we do all the rounding of the file range in the switch statement
+after the "calculate appropriate op to run" comment statement.
 
->
-> >
-> > Policy can be enforced by controlling access to kexecfs mounts. This
-> > naturally fits into the standard architecture of running untrusted VMs
-> > (e.g. using chroots and containers to enforce security and isolation).
->
-> How? After a kexec, how do you tell which process can get which kexecfs
-> mount/instance? If any of them can get any, then we lose all sort of
-> policy enforcement.
+--D
 
-I was imagining it's up to whatever process/daemon creates the kexecfs
-instances before kexec is also responsible for reassociating them with
-the right processes after kexec.
-
-If you are asking how that association would be done mechanically, I
-was imagining it would be through a combination of filesystem
-permissions, mounts, and chroots. For example, the kexecfs instance
-for VM A would be mounted in VM A's chroot. VM A would then only have
-access to its own kexecfs instance.
-
-> >> > I'm not sure that we can get rid of the machine-wide state machine
-> >> > though, as there is some kernel state that will necessarily cross
-> >> > these kexecfs domains (e.g. IOMMU driver state). So we still might
-> >> > need /dev/liveupdate for that.
-> >>
-> >> Generally speaking, I think both VFS-based and IOCTL-based interfaces
-> >> are more or less equally expressive/powerful. Most of the ioctl
-> >> operations can be translated to a VFS operation and vice versa.
-> >>
-> >> For example, the fsopen() call is similar to open("/dev/liveupdate") -=
--
-> >> both would create a live update session which auto closes when the FD =
-is
-> >> closed or FS unmounted. Similarly, each ioctl can be replaced with a
-> >> file in the FS. For example, LIVEUPDATE_IOCTL_FD_PRESERVE can be
-> >> replaced with a fd_preserve file where you write() the FD number.
-> >> LIVEUPDATE_IOCTL_GET_STATE or LIVEUPDATE_IOCTL_PREPARE, etc. can be
-> >> replaced by a "state" file where you can read() or write() the state.
-> >>
-> >> I think the main benefit of the VFS-based interface is ease of use.
-> >> There already exist a bunch of utilites and libraries that we can use =
-to
-> >> interact with files. When we have ioctls, we would need to write
-> >> everything ourselves. For example, instead of
-> >> LIVEUPDATE_IOCTL_GET_STATE, you can do "cat state", which is a bit
-> >> easier to do.
-> >>
-> >> As for downsides, I think we might end up with a bit more boilerplate
-> >> code, but beyond that I am not sure.
-> >
-> > I agree we can more or less get to the same end state with either
-> > approach. And also, I don't think we have to do one or the other. I
-> > think kexecfs is something that we can build on top of this series.
-> > For example, kexecfs would be a new kernel subsystem that registers
-> > with LUO.
->
-> Yeah, fair point. Though I'd rather we agree on one and go with that.
-> Having two interfaces for the same thing isn't the best.
-
-Agreed, tt would be better to have a single way to preserve FDs rather
-than 2 (LUO ioctl and kexecfs).
+> +
+> +		/* Skip the write if we are crossing max filesize */
+> +		if ((offset + size) > maxfilelen) {
+> +			if (!quiet && testcalls > simulatedopcount)
+> +				prt("skipping atomic write past maxfilelen\n");
+> +			log4(OP_WRITE_ATOMIC, offset, size, FL_SKIPPED);
+> +			return;
+> +		}
+> +	}
+>  	if (size == 0) {
+>  		if (!quiet && testcalls > simulatedopcount && !o_direct)
+>  			prt("skipping zero size write\n");
+> @@ -1088,7 +1141,10 @@ dowrite(unsigned offset, unsigned size, int flags)
+>  		return;
+>  	}
+>  
+> -	log4(OP_WRITE, offset, size, FL_NONE);
+> +	if (flags & RWF_ATOMIC)
+> +		log4(OP_WRITE_ATOMIC, offset, size, FL_NONE);
+> +	else
+> +		log4(OP_WRITE, offset, size, FL_NONE);
+>  
+>  	gendata(original_buf, good_buf, offset, size);
+>  	if (offset + size > file_size) {
+> @@ -1108,8 +1164,9 @@ dowrite(unsigned offset, unsigned size, int flags)
+>  		       (monitorstart == -1 ||
+>  			(offset + size > monitorstart &&
+>  			(monitorend == -1 || offset <= monitorend))))))
+> -		prt("%lld write\t0x%x thru\t0x%x\t(0x%x bytes)\tdontcache=%d\n", testcalls,
+> -		    offset, offset + size - 1, size, (flags & RWF_DONTCACHE) != 0);
+> +		prt("%lld write\t0x%x thru\t0x%x\t(0x%x bytes)\tdontcache=%d atomic_wr=%d\n", testcalls,
+> +		    offset, offset + size - 1, size, (flags & RWF_DONTCACHE) != 0,
+> +		    (flags & RWF_ATOMIC) != 0);
+>  	iret = fsxwrite(fd, good_buf + offset, size, offset, flags);
+>  	if (iret != size) {
+>  		if (iret == -1)
+> @@ -1785,6 +1842,30 @@ do_dedupe_range(unsigned offset, unsigned length, unsigned dest)
+>  }
+>  #endif
+>  
+> +int test_atomic_writes(void) {
+> +	int ret;
+> +	struct statx stx;
+> +
+> +	ret = xfstests_statx(AT_FDCWD, fname, 0, STATX_WRITE_ATOMIC, &stx);
+> +	if (ret < 0) {
+> +		fprintf(stderr, "main: Statx failed with %d."
+> +			" Failed to determine atomic write limits, "
+> +			" disabling!\n", ret);
+> +		return 0;
+> +	}
+> +
+> +	if (stx.stx_attributes & STATX_ATTR_WRITE_ATOMIC &&
+> +	    stx.stx_atomic_write_unit_min > 0) {
+> +		awu_min = stx.stx_atomic_write_unit_min;
+> +		awu_max = stx.stx_atomic_write_unit_max;
+> +		return 1;
+> +	}
+> +
+> +	fprintf(stderr, "main: IO Stack does not support "
+> +			"atomic writes, disabling!\n");
+> +	return 0;
+> +}
+> +
+>  #ifdef HAVE_COPY_FILE_RANGE
+>  int
+>  test_copy_range(void)
+> @@ -2356,6 +2437,12 @@ have_op:
+>  			goto out;
+>  		}
+>  		break;
+> +	case OP_WRITE_ATOMIC:
+> +		if (!do_atomic_writes) {
+> +			log4(OP_WRITE_ATOMIC, offset, size, FL_SKIPPED);
+> +			goto out;
+> +		}
+> +		break;
+>  	}
+>  
+>  	switch (op) {
+> @@ -2385,6 +2472,11 @@ have_op:
+>  			dowrite(offset, size, 0);
+>  		break;
+>  
+> +	case OP_WRITE_ATOMIC:
+> +		TRIM_OFF_LEN(offset, size, maxfilelen);
+> +		dowrite(offset, size, RWF_ATOMIC);
+> +		break;
+> +
+>  	case OP_MAPREAD:
+>  		TRIM_OFF_LEN(offset, size, file_size);
+>  		domapread(offset, size);
+> @@ -2511,13 +2603,14 @@ void
+>  usage(void)
+>  {
+>  	fprintf(stdout, "usage: %s",
+> -		"fsx [-dfhknqxyzBEFHIJKLORWXZ0]\n\
+> +		"fsx [-adfhknqxyzBEFHIJKLORWXZ0]\n\
+>  	   [-b opnum] [-c Prob] [-g filldata] [-i logdev] [-j logid]\n\
+>  	   [-l flen] [-m start:end] [-o oplen] [-p progressinterval]\n\
+>  	   [-r readbdy] [-s style] [-t truncbdy] [-w writebdy]\n\
+>  	   [-A|-U] [-D startingop] [-N numops] [-P dirpath] [-S seed]\n\
+>  	   [--replay-ops=opsfile] [--record-ops[=opsfile]] [--duration=seconds]\n\
+>  	   ... fname\n\
+> +	-a: disable atomic writes\n\
+>  	-b opnum: beginning operation number (default 1)\n\
+>  	-c P: 1 in P chance of file close+open at each op (default infinity)\n\
+>  	-d: debug output for all operations\n\
+> @@ -3059,9 +3152,13 @@ main(int argc, char **argv)
+>  	setvbuf(stdout, (char *)0, _IOLBF, 0); /* line buffered stdout */
+>  
+>  	while ((ch = getopt_long(argc, argv,
+> -				 "0b:c:de:fg:hi:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
+> +				 "0ab:c:de:fg:hi:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
+>  				 longopts, NULL)) != EOF)
+>  		switch (ch) {
+> +		case 'a':
+> +			prt("main(): Atomic writes disabled\n");
+> +			do_atomic_writes = 0;
+> +			break;
+>  		case 'b':
+>  			simulatedopcount = getnum(optarg, &endp);
+>  			if (!quiet)
+> @@ -3475,6 +3572,8 @@ main(int argc, char **argv)
+>  		exchange_range_calls = test_exchange_range();
+>  	if (dontcache_io)
+>  		dontcache_io = test_dontcache_io();
+> +	if (do_atomic_writes)
+> +		do_atomic_writes = test_atomic_writes();
+>  
+>  	while (keep_running())
+>  		if (!test())
+> -- 
+> 2.49.0
+> 
+> 
 
