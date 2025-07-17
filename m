@@ -1,59 +1,61 @@
-Return-Path: <linux-kernel+bounces-734856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C3BAB08738
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:44:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA16EB0873B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:44:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6237D16434A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:44:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FE8F7BBA53
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:43:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA3DD253359;
-	Thu, 17 Jul 2025 07:44:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F1725A352;
+	Thu, 17 Jul 2025 07:44:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NGCcUSmp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LEemG10q"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67EE32AD14
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 07:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A8D24EABC
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 07:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752738250; cv=none; b=qrkwDKW4KOaD8pR93C/SFIrpK/e0a4H6eOIikhbFm2P1sC/37CNbYUYQfwsAGwVHwy4HmpKW4OwkbvnFv6A3U2fHjw4dQZjXk1QQXayB4MHTrs0nCpmDTitaKY/uCC4xB+Zmt1DQSYpBeyEvk1vmYWtaWjoA6jsz814+hvHkTlc=
+	t=1752738262; cv=none; b=NYJcUB23prprfJPkEitHe6aX5yQDWsviAfrvitHVix8im9jy2cP5SDVcLIp5qfeFvwC5vZ6asyiITQzDT57Pj43OU6m7DOsoY1yZ1TauvuTGjjXsB58vFrWQ4Q8cS2olCEBmml8zzDRSDhb9OjwEA815qUaddeuCrkSy2m3qGlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752738250; c=relaxed/simple;
-	bh=ZM5tD7+0eFKJmyE0cmz84E6oU6+wMlx4Zku9qVJa29U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iVrhuwfgvRUpNWpqwnMvh3aptClJ6qmlYt+5GRMVmlTXtBJsc9Ai4Gj+u2KiYZWT6OncisrgrRaWOioFGL+JDI9jX++9I+vmty1aTRDJD9hfmNFaZZobq3+QnJoQ3/FEIeQOvMjeKkohdIX3cu+88LOUdV/8iVsC5GSR0ulfMSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NGCcUSmp; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1752738262; c=relaxed/simple;
+	bh=TQIHlEcSKGtLiz2zsMO14h59IGGtrgkWgRByjfrGNm4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=HzVcdyei/HCWA/odeQqf9ltDiCm+Gn5a+tplSQ73/jSxz/bxWDh0uM1RsT7ZJKxA827G+ffMd01cu5lueIOME8C6vnHq8Cxo0MNTNoPa3EFJ97h7BUTv5fgso7eVpzujD6NRNaFF0bWJ9PKo6WkDiFYJK0z+Jcj/vmJ8KQB1kg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LEemG10q; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752738247;
+	s=mimecast20190719; t=1752738259;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=5JHOkbClq+KJbfrHcBtMiIH4aYWxo1yewDYQHM+bbaM=;
-	b=NGCcUSmpgGoTmV8d7+qmMXJg782K6raKFVgyK02QA2mYO3ttgErnL2yGgKSlceKcDNAjPb
-	G7RDiJ2V1qQhDNJzgaSYzQxJ0/K2Nzc9BSfAd6ZnIBKzUQkyiAaT0KS5ucHXJ0SxwB937C
-	eP2qm5HtfZ2zilB37sTh/dMEM/RXkc8=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e3FL5KeZTGvNky3nE8CMUmDsedmN1uj7FKzFsp/P6KI=;
+	b=LEemG10q85KMsWwPKjxyMkeqeYz9hmLDFj6fQuVIGATTLh784vmfE/fqBCX4AUzgwDViyL
+	6KF1+OtiWa1jxCM5WxJyq9TbD/e03WidL+d4sRoV2BvNIepkLVxVzbG+nxzZWA0VjuO4q+
+	LvtnCvV7ItCuo3r0mk16YNQg+QSdq5U=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-355-NUiLPwbYPkW-v0qESwr28A-1; Thu,
- 17 Jul 2025 03:44:05 -0400
-X-MC-Unique: NUiLPwbYPkW-v0qESwr28A-1
-X-Mimecast-MFC-AGG-ID: NUiLPwbYPkW-v0qESwr28A_1752738244
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-336-mb0H_st9PrmCkZKXYoF6CQ-1; Thu,
+ 17 Jul 2025 03:44:12 -0400
+X-MC-Unique: mb0H_st9PrmCkZKXYoF6CQ-1
+X-Mimecast-MFC-AGG-ID: mb0H_st9PrmCkZKXYoF6CQ_1752738250
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 91C7D1800282;
-	Thu, 17 Jul 2025 07:44:03 +0000 (UTC)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 38C7F18001F7;
+	Thu, 17 Jul 2025 07:44:10 +0000 (UTC)
 Received: from warthog.procyon.org.com (unknown [10.42.28.2])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 72E3F18016F9;
-	Thu, 17 Jul 2025 07:44:00 +0000 (UTC)
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 40C5A1956089;
+	Thu, 17 Jul 2025 07:44:05 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
 To: netdev@vger.kernel.org
 Cc: David Howells <dhowells@redhat.com>,
@@ -63,10 +65,17 @@ Cc: David Howells <dhowells@redhat.com>,
 	Eric Dumazet <edumazet@google.com>,
 	Paolo Abeni <pabeni@redhat.com>,
 	linux-afs@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net v2 0/5] rxrpc: Miscellaneous fixes
-Date: Thu, 17 Jul 2025 08:43:40 +0100
-Message-ID: <20250717074350.3767366-1-dhowells@redhat.com>
+	linux-kernel@vger.kernel.org,
+	Jeffrey Altman <jaltman@auristor.com>,
+	"Junvyyang, Tencent Zhuque Lab" <zhuque@tencent.com>,
+	LePremierHomme <kwqcheii@proton.me>,
+	Simon Horman <horms@kernel.org>,
+	stable@vger.kernel.org
+Subject: [PATCH net v2 1/5] rxrpc: Fix irq-disabled in local_bh_enable()
+Date: Thu, 17 Jul 2025 08:43:41 +0100
+Message-ID: <20250717074350.3767366-2-dhowells@redhat.com>
+In-Reply-To: <20250717074350.3767366-1-dhowells@redhat.com>
+References: <20250717074350.3767366-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,47 +83,123 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Here are some fixes for rxrpc:
+The rxrpc_assess_MTU_size() function calls down into the IP layer to find
+out the MTU size for a route.  When accepting an incoming call, this is
+called from rxrpc_new_incoming_call() which holds interrupts disabled
+across the code that calls down to it.  Unfortunately, the IP layer uses
+local_bh_enable() which, config dependent, throws a warning if IRQs are
+enabled:
 
- (1) Fix the calling of IP routing code with IRQs disabled.
+WARNING: CPU: 1 PID: 5544 at kernel/softirq.c:387 __local_bh_enable_ip+0x43/0xd0
+...
+RIP: 0010:__local_bh_enable_ip+0x43/0xd0
+...
+Call Trace:
+ <TASK>
+ rt_cache_route+0x7e/0xa0
+ rt_set_nexthop.isra.0+0x3b3/0x3f0
+ __mkroute_output+0x43a/0x460
+ ip_route_output_key_hash+0xf7/0x140
+ ip_route_output_flow+0x1b/0x90
+ rxrpc_assess_MTU_size.isra.0+0x2a0/0x590
+ rxrpc_new_incoming_peer+0x46/0x120
+ rxrpc_alloc_incoming_call+0x1b1/0x400
+ rxrpc_new_incoming_call+0x1da/0x5e0
+ rxrpc_input_packet+0x827/0x900
+ rxrpc_io_thread+0x403/0xb60
+ kthread+0x2f7/0x310
+ ret_from_fork+0x2a/0x230
+ ret_from_fork_asm+0x1a/0x30
+...
+hardirqs last  enabled at (23): _raw_spin_unlock_irq+0x24/0x50
+hardirqs last disabled at (24): _raw_read_lock_irq+0x17/0x70
+softirqs last  enabled at (0): copy_process+0xc61/0x2730
+softirqs last disabled at (25): rt_add_uncached_list+0x3c/0x90
 
- (2) Fix a recvmsg/recvmsg race when the first completes a call.
+Fix this by moving the call to rxrpc_assess_MTU_size() out of
+rxrpc_init_peer() and further up the stack where it can be done without
+interrupts disabled.
 
- (3) Fix a race between notification, recvmsg and sendmsg releasing a call.
+It shouldn't be a problem for rxrpc_new_incoming_call() to do it after the
+locks are dropped as pmtud is going to be performed by the I/O thread - and
+we're in the I/O thread at this point.
 
- (4) Fix abort of abort.
+Fixes: a2ea9a907260 ("rxrpc: Use irq-disabling spinlocks between app and I/O thread")
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Jeffrey Altman <jaltman@auristor.com>
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: Junvyyang, Tencent Zhuque Lab <zhuque@tencent.com>
+cc: LePremierHomme <kwqcheii@proton.me>
+cc: Jakub Kicinski <kuba@kernel.org>
+cc: Paolo Abeni <pabeni@redhat.com>
+cc: "David S. Miller" <davem@davemloft.net>
+cc: Eric Dumazet <edumazet@google.com>
+cc: Simon Horman <horms@kernel.org>
+cc: linux-afs@lists.infradead.org
+cc: netdev@vger.kernel.org
+cc: stable@vger.kernel.org
+---
+ net/rxrpc/ar-internal.h | 1 +
+ net/rxrpc/call_accept.c | 1 +
+ net/rxrpc/peer_object.c | 6 ++----
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
- (5) Fix call-level aborts that should be connection-level aborts.
-
-David
-
-The patches can be found here also:
-
-	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=rxrpc-fixes
-
-Changes
-=======
-ver #2)
- - Moved a trace note from patch 5 to patch 3 where it is used.
-
-David Howells (5):
-  rxrpc: Fix irq-disabled in local_bh_enable()
-  rxrpc: Fix recv-recv race of completed call
-  rxrpc: Fix notification vs call-release vs recvmsg
-  rxrpc: Fix transmission of an abort in response to an abort
-  rxrpc: Fix to use conn aborts for conn-wide failures
-
- include/trace/events/rxrpc.h |  6 +++++-
- net/rxrpc/ar-internal.h      |  4 ++++
- net/rxrpc/call_accept.c      | 14 ++++++++------
- net/rxrpc/call_object.c      | 28 ++++++++++++----------------
- net/rxrpc/io_thread.c        | 14 ++++++++++++++
- net/rxrpc/output.c           | 22 +++++++++++++---------
- net/rxrpc/peer_object.c      |  6 ++----
- net/rxrpc/recvmsg.c          | 23 +++++++++++++++++++++--
- net/rxrpc/security.c         |  8 ++++----
- 9 files changed, 83 insertions(+), 42 deletions(-)
+diff --git a/net/rxrpc/ar-internal.h b/net/rxrpc/ar-internal.h
+index 376e33dce8c1..df1a618dbf7d 100644
+--- a/net/rxrpc/ar-internal.h
++++ b/net/rxrpc/ar-internal.h
+@@ -1383,6 +1383,7 @@ struct rxrpc_peer *rxrpc_lookup_peer_rcu(struct rxrpc_local *,
+ 					 const struct sockaddr_rxrpc *);
+ struct rxrpc_peer *rxrpc_lookup_peer(struct rxrpc_local *local,
+ 				     struct sockaddr_rxrpc *srx, gfp_t gfp);
++void rxrpc_assess_MTU_size(struct rxrpc_local *local, struct rxrpc_peer *peer);
+ struct rxrpc_peer *rxrpc_alloc_peer(struct rxrpc_local *, gfp_t,
+ 				    enum rxrpc_peer_trace);
+ void rxrpc_new_incoming_peer(struct rxrpc_local *local, struct rxrpc_peer *peer);
+diff --git a/net/rxrpc/call_accept.c b/net/rxrpc/call_accept.c
+index 49fccee1a726..226b4bf82747 100644
+--- a/net/rxrpc/call_accept.c
++++ b/net/rxrpc/call_accept.c
+@@ -406,6 +406,7 @@ bool rxrpc_new_incoming_call(struct rxrpc_local *local,
+ 
+ 	spin_unlock(&rx->incoming_lock);
+ 	read_unlock_irq(&local->services_lock);
++	rxrpc_assess_MTU_size(local, call->peer);
+ 
+ 	if (hlist_unhashed(&call->error_link)) {
+ 		spin_lock_irq(&call->peer->lock);
+diff --git a/net/rxrpc/peer_object.c b/net/rxrpc/peer_object.c
+index e2f35e6c04d6..366431b0736c 100644
+--- a/net/rxrpc/peer_object.c
++++ b/net/rxrpc/peer_object.c
+@@ -149,8 +149,7 @@ struct rxrpc_peer *rxrpc_lookup_peer_rcu(struct rxrpc_local *local,
+  * assess the MTU size for the network interface through which this peer is
+  * reached
+  */
+-static void rxrpc_assess_MTU_size(struct rxrpc_local *local,
+-				  struct rxrpc_peer *peer)
++void rxrpc_assess_MTU_size(struct rxrpc_local *local, struct rxrpc_peer *peer)
+ {
+ 	struct net *net = local->net;
+ 	struct dst_entry *dst;
+@@ -277,8 +276,6 @@ static void rxrpc_init_peer(struct rxrpc_local *local, struct rxrpc_peer *peer,
+ 
+ 	peer->hdrsize += sizeof(struct rxrpc_wire_header);
+ 	peer->max_data = peer->if_mtu - peer->hdrsize;
+-
+-	rxrpc_assess_MTU_size(local, peer);
+ }
+ 
+ /*
+@@ -297,6 +294,7 @@ static struct rxrpc_peer *rxrpc_create_peer(struct rxrpc_local *local,
+ 	if (peer) {
+ 		memcpy(&peer->srx, srx, sizeof(*srx));
+ 		rxrpc_init_peer(local, peer, hash_key);
++		rxrpc_assess_MTU_size(local, peer);
+ 	}
+ 
+ 	_leave(" = %p", peer);
 
 
