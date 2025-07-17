@@ -1,140 +1,135 @@
-Return-Path: <linux-kernel+bounces-735617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5897BB0919A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:22:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FA85B0919C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:22:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E7C03B5740
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:21:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD8CB3BDB36
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9112FCE00;
-	Thu, 17 Jul 2025 16:21:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 879EA2FCE07;
+	Thu, 17 Jul 2025 16:22:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="SzA3lFda"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED562FC3AE;
-	Thu, 17 Jul 2025 16:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="eVy7uHZT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A382FC3AE;
+	Thu, 17 Jul 2025 16:22:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752769314; cv=none; b=p0TBJDclnsUnQ/ABYANXmGGt/JqTzaauFy5JLPYgDZyxsrcGQk1Ead30UiXfsOJGRrulh9RdR2Kz5LBJn8RECeBolgnOBWBRGS5/CzCkeYmFE4OccVniJkMMTURUvtyV47oX25SIC6MRzcCrGnZdOO2JmOQRIjrq1F/TsPpriHE=
+	t=1752769322; cv=none; b=t+WCqkNFuCRd8CIro3ZYu8roSwWcz7CkGUl4sMyxPmwlLLXcIBi3Szz9SZnYwsOIvoF8B6XGyP2Pu3buLodxiRwSQp5D41VxIQVUoMgE6EHMRoa8O+zrb8+/3I4FRWl0nVlRs2QHzRcKpIyL9A9IUOtc5xpLAnWXMc3sDCo119o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752769314; c=relaxed/simple;
-	bh=2pmx4VHDOfW7yUHLn0E6vYG5Rq+jiNJpfmJJNIOrGEs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uyPNEDlqBiZmYV/BrWyXWNH0NUP0DWvP5DImJBUVQNOF1b537kQi5OJ2kVhocwRHgZL6hMQARvvcFuVoxp3zhiJ0NyO7oOTR/lb8mS7qugtJOCJwHoTE459xE1qoVXlhxK/JNa1foKvirWeUAl4lxYyKc9uyXTO7txs45E0f01o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=SzA3lFda; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.65.225.6] (unknown [20.236.10.129])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 398AE211426B;
-	Thu, 17 Jul 2025 09:21:52 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 398AE211426B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1752769312;
-	bh=7K0UPEjUxHWApQG9NiExsOn4DGOruZ9qlwBae9uaRRI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SzA3lFda7i8ZDz++gtdU8oCWjkeUmebzAW85NcfPXgGg9V1tobU3mmv7GSG/GltBg
-	 YKA0d8Y/633t0rndP/lnnadLSVU17ShO3OgTr/ZkHE6XUWV6TCHmVXguLvl4u6o9it
-	 OABs4Lg/d8kUzRrUioRJexoggIA/3gEF8k2C4qRA=
-Message-ID: <68143eb0-e6a7-4579-bedb-4c2ec5aaef6b@linux.microsoft.com>
-Date: Thu, 17 Jul 2025 09:21:51 -0700
+	s=arc-20240116; t=1752769322; c=relaxed/simple;
+	bh=mdENDvIIGpzFKmMKjGR3YOrxLip3diwkL5qZ2b2U3+M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RHgamuRTIIrWQgZP81P0zAk7jJt9ph9Z0LBNnpklzy8ZRYoLsf/Zar51smvJQRBLHwhTOVM04/wIvUseRyA4wkJrb3mLcty02uUtLK+yIBoKXU9IK4QOaGKuRDSNYtuFz0ovD5JkJDJf6xUffD0NXhTmetEs/qk/tS5c1SoWS2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=eVy7uHZT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC639C4CEE3;
+	Thu, 17 Jul 2025 16:22:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752769321;
+	bh=mdENDvIIGpzFKmMKjGR3YOrxLip3diwkL5qZ2b2U3+M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eVy7uHZTR6yb9U4wQpRg+geTzky+/6LySc/HdgbLDYeFGOaBEUgA7oEDO51U5Ea7R
+	 ZTYiP/tkiJ5HCJD0Ymakrt5JyYRk4Tfl4u2dLP6bXpH/yMzeQa4Ltq5Msh+JSYtsuv
+	 QT55dSGm4ZZ1r4x5yWxJ5vPUVDfElLWtKZQiYyeg=
+Date: Thu, 17 Jul 2025 18:21:58 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, Dave Ertman <david.m.ertman@intel.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Leon Romanovsky <leon@kernel.org>, linux-kernel@vger.kernel.org,
+	Michal Simek <michal.simek@amd.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Ira Weiny <ira.weiny@intel.com>
+Subject: Re: [PATCH net v2 1/4] auxiliary: Support hexadecimal ids
+Message-ID: <2025071736-viscous-entertain-ff6c@gregkh>
+References: <20250716000110.2267189-1-sean.anderson@linux.dev>
+ <20250716000110.2267189-2-sean.anderson@linux.dev>
+ <2025071637-doubling-subject-25de@gregkh>
+ <719ff2ee-67e3-4df1-9cec-2d9587c681be@linux.dev>
+ <2025071747-icing-issuing-b62a@gregkh>
+ <5d8205e1-b384-446b-822a-b5737ea7bd6c@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/2] Drivers: hv: Introduce mshv_vtl driver
-To: Michael Kelley <mhklinux@outlook.com>,
- Naman Jain <namjain@linux.microsoft.com>,
- "K . Y . Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>
-Cc: Roman Kisel <romank@linux.microsoft.com>,
- Anirudh Rayabharam <anrayabh@linux.microsoft.com>,
- Saurabh Sengar <ssengar@linux.microsoft.com>,
- Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
- ALOK TIWARI <alok.a.tiwari@oracle.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>
-References: <20250611072704.83199-1-namjain@linux.microsoft.com>
- <20250611072704.83199-3-namjain@linux.microsoft.com>
- <SN6PR02MB4157F9F1F8493C74C9FCC6E4D449A@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Language: en-US
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-In-Reply-To: <SN6PR02MB4157F9F1F8493C74C9FCC6E4D449A@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5d8205e1-b384-446b-822a-b5737ea7bd6c@linux.dev>
 
-On 7/9/2025 10:19 AM, Michael Kelley wrote:
-> From: Naman Jain <namjain@linux.microsoft.com> Sent: Wednesday, June 11, 2025 12:27 AM
->> +
->> +union mshv_synic_overlay_page_msr {
->> +	u64 as_uint64;
->> +	struct {
->> +		u64 enabled: 1;
->> +		u64 reserved: 11;
->> +		u64 pfn: 52;
->> +	};
+On Thu, Jul 17, 2025 at 12:04:15PM -0400, Sean Anderson wrote:
+> On 7/17/25 11:59, Greg Kroah-Hartman wrote:
+> > On Thu, Jul 17, 2025 at 11:49:37AM -0400, Sean Anderson wrote:
+> >> On 7/16/25 01:09, Greg Kroah-Hartman wrote:
+> >> > On Tue, Jul 15, 2025 at 08:01:07PM -0400, Sean Anderson wrote:
+> >> >> Support creating auxiliary devices with the id included as part of the
+> >> >> name. This allows for hexadecimal ids, which may be more appropriate for
+> >> >> auxiliary devices created as children of memory-mapped devices. If an
+> >> >> auxiliary device's id is set to AUXILIARY_DEVID_NONE, the name must
+> >> >> be of the form "name.id".
+> >> >> 
+> >> >> With this patch, dmesg logs from an auxiliary device might look something
+> >> >> like
+> >> >> 
+> >> >> [    4.781268] xilinx_axienet 80200000.ethernet: autodetected 64-bit DMA range
+> >> >> [   21.889563] xilinx_emac.mac xilinx_emac.mac.80200000 net4: renamed from eth0
+> >> >> [   32.296965] xilinx_emac.mac xilinx_emac.mac.80200000 net4: PHY [axienet-80200000:05] driver [RTL8211F Gigabit Ethernet] (irq=70)
+> >> >> [   32.313456] xilinx_emac.mac xilinx_emac.mac.80200000 net4: configuring for inband/sgmii link mode
+> >> >> [   65.095419] xilinx_emac.mac xilinx_emac.mac.80200000 net4: Link is Up - 1Gbps/Full - flow control rx/tx
+> >> >> 
+> >> >> this is especially useful when compared to what might happen if there is
+> >> >> an error before userspace has the chance to assign a name to the netdev:
+> >> >> 
+> >> >> [    4.947215] xilinx_emac.mac xilinx_emac.mac.1 (unnamed net_device) (uninitialized): incorrect link mode  for in-band status
+> >> >> 
+> >> >> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+> >> >> ---
+> >> >> 
+> >> >> Changes in v2:
+> >> >> - Add example log output to commit message
+> >> > 
+> >> > I rejected v1, why is this being sent again?
+> >> 
+> >> You asked for explanation, I provided it. I specifically pointed out why
+> >> I wanted to do things this way. But I got no response. So here in v2.
+> > 
+> > Again, I said, "do not do that, this is not how ids work in the driver
+> > model", and you tried to show lots of reasons why you wanted to do it
+> > this way despite me saying so.
+> > 
+> > So again, no, sorry, this isn't ok.  Don't attempt to encode information
+> > in a device id like you are trying to do here, that's not what a device
+> > id is for at all.  I need to go dig up my old patch that made all device
+> > ids random numbers just to see what foolish assumptions busses and
+> > userspace tools are making....
 > 
-> Since this appear to be a Hyper-V synthetic MSR, add __packed?
-> 
->> +};
->> +
->> +union hv_register_vsm_capabilities {
->> +	u64 as_uint64;
->> +	struct {
->> +		u64 dr6_shared: 1;
->> +		u64 mbec_vtl_mask: 16;
->> +		u64 deny_lower_vtl_startup: 1;
->> +		u64 supervisor_shadow_stack: 1;
->> +		u64 hardware_hvpt_available: 1;
->> +		u64 software_hvpt_available: 1;
->> +		u64 hardware_hvpt_range_bits: 6;
->> +		u64 intercept_page_available: 1;
->> +		u64 return_action_available: 1;
->> +		u64 reserved: 35;
->> +	} __packed;
->> +};
->> +
->> +union hv_register_vsm_page_offsets {
->> +	struct {
->> +		u64 vtl_call_offset : 12;
->> +		u64 vtl_return_offset : 12;
->> +		u64 reserved_mbz : 40;
->> +	};
->> +	u64 as_uint64;
->> +} __packed;
-> 
-> We've usually put the __packed on the struct definition.  Consistency .... :-)
-> 
-> Don't these three register definitions belong somewhere in the
-> hvhdk or hvgdk include files?
-> 
+> But it *is* how ids work in platform devices.
 
-I agree, hv_register_vsm_capabilities and hv_register_vsm_page_offsets
-can be moved to the appropriate include/hyperv/ header/s.
+No one should ever use platform devices/bus as an excuse to do anything,
+it's "wrong" in so many ways, but needs to be because of special
+reasons.  No other bus should work like that, sorry.
 
-Regarding mshv_synic_overlay_page_msr, it is a generic structure that
-appears to be used for several overlay page MSRs (SIMP, SIEF, etc).
+> And because my auxiliary
+> devices are created by a platform device, it is guaranteed that the
+> platform device id is unique and that it will also be unique for
+> auxiliary devices. So there is no assumption here about the uniqueness
+> of any given id.
 
-But, the type doesn't appear in the hv*dk headers explicitly; it's just
-used internally by the hypervisor.
+Then perhaps use the faux device api instead?
 
-I think it should be renamed with a hv_ prefix to indicate it's part of
-the hypervisor ABI, and a brief comment with the provenance:
+thanks,
 
-/* SYNIC_OVERLAY_PAGE_MSR - internal, identical to hv_synic_simp */
-union hv_synic_overlay_page_msr {
-	/* <snip> */
-};
-
-And I'm fine with it staying in this file since it's only used here right
-now, and doesn't really come from the one of the hyperv headers.
-
-Nuno
+greg k-h
 
