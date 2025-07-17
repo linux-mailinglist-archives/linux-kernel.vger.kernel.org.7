@@ -1,94 +1,170 @@
-Return-Path: <linux-kernel+bounces-735600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB3FDB09175
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:11:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85687B09176
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:11:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 699A75A3969
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:10:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA353A6031B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:10:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9938F2FA625;
-	Thu, 17 Jul 2025 16:10:22 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1C3D2FA620;
+	Thu, 17 Jul 2025 16:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="DQPGjgUX"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46322798F8;
-	Thu, 17 Jul 2025 16:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B062F6FBA
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 16:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752768622; cv=none; b=ThvXc98qduV7m9id+VcvVqH79141DOxT9eo5dCFfUgm6ikyeg3hexyzXXVu392yu+YXQLXRYkYDw9AX3yKwqtYiSszNIp8sbrzK0eqIbteeG4vha+OvYvoG9ZI75GVcj7Tkh0QjvvEr7Xln5VLvPe3+9aJ8A47SBvG9Rzjnil5A=
+	t=1752768631; cv=none; b=NBSWoBBfl7oEUvXmK70GPl7COFgR/8v4WUomnT0KvltI1ba6xz+zehU5s2c2vytnSQhD5Ijs19iFJ65uOda+o2coJ86oYbyj40YndnwG4tPK9vvf5Wnuay7W6FVBhx+V4sLQJTOHeZgwH0pvqRzJkDPDO6Mx3fcSZDs2mYVE9eA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752768622; c=relaxed/simple;
-	bh=MEE7jUnILcqy02mFh59Pt3b8dmrhQ15xcoDXSJtbSHU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Q7JEgJryiUXP9xyFtAzN3ug+tyqIQnLax9msBqAdfiOvDzj7+ODxrQPLs4hi3eCOhCpN3SOuDItw+wPcNhzdt81PphGqazMfxj9a6BgjXl9gp0WUBx/ReQ53ARL4TsSLKCaUthLJHrFE7R63j8qvhMfBO3URz/iLm6AWiInzjuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf15.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay04.hostedemail.com (Postfix) with ESMTP id A07601A015A;
-	Thu, 17 Jul 2025 16:10:16 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf15.hostedemail.com (Postfix) with ESMTPA id 926121A;
-	Thu, 17 Jul 2025 16:10:11 +0000 (UTC)
-Date: Thu, 17 Jul 2025 12:10:10 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
- Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri
- Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Thomas
- Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, Indu
- Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, Beau
- Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton
- <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, Florian Weimer
- <fweimer@redhat.com>, Sam James <sam@gentoo.org>
-Subject: Re: [PATCH v14 09/12] unwind deferred: Use SRCU
- unwind_deferred_task_work()
-Message-ID: <20250717121010.4246366a@batman.local.home>
-In-Reply-To: <41c204c0-eabc-4f4f-93f4-2568e2f962a9@paulmck-laptop>
-References: <20250717004910.297898999@kernel.org>
-	<20250717004957.918908732@kernel.org>
-	<47c3b0df-9f11-4e14-97e2-0f3ba3b09855@paulmck-laptop>
-	<20250717082526.7173106a@gandalf.local.home>
-	<41c204c0-eabc-4f4f-93f4-2568e2f962a9@paulmck-laptop>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752768631; c=relaxed/simple;
+	bh=iL9Rg9BcclSrfkiXyVGogIE9zS/+mUhtDWk0wktYXhk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KQ5pcPGUWpJtw2t1FzgZbpTXiizmvppY86dXQxEGQVUna08VMgGF3DepK2RLJ1hsqN5r3Lr/sOXba2lot57RHAhRHKxVBZce7tV5Jwt0Lj4tcUhXaoJSx6M8G886Bhr1nI/ChWG0ZMzuYQj0Pgf/+4ryYMALAhC6taWrLfidE5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=DQPGjgUX; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8666B1E74;
+	Thu, 17 Jul 2025 18:09:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1752768593;
+	bh=iL9Rg9BcclSrfkiXyVGogIE9zS/+mUhtDWk0wktYXhk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DQPGjgUXYJFW82YbjdEZYJmgPU5SkC8h/wKcZYWQgAVV3Rs3GnX13/8lyl7ZW0se0
+	 floIegj4K7iZCB7th7NBiwP2EAMY9EXqCJV05HV7Ro0wr8EZ/DCwdMpwFZUGzAsJaZ
+	 H0E0GXSYDI+VOLBL9knLUC8eAFEScfjPo8qxndu0=
+Message-ID: <94f54b9b-174c-44b7-861e-a90e9c6a0bb5@ideasonboard.com>
+Date: Thu, 17 Jul 2025 19:10:23 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/3] drm/tidss: oldi: Add property to identify OLDI
+ supported VP
+To: Jayesh Choudhary <j-choudhary@ti.com>
+Cc: airlied@gmail.com, simona@ffwll.ch, linux-kernel@vger.kernel.org,
+ jyri.sarha@iki.fi, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, dri-devel@lists.freedesktop.org, devarsht@ti.com,
+ mwalle@kernel.org
+References: <20250704094851.182131-1-j-choudhary@ti.com>
+ <20250704094851.182131-2-j-choudhary@ti.com>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20250704094851.182131-2-j-choudhary@ti.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Stat-Signature: kdknodp68bw95bn3nquegp911ku4afyt
-X-Rspamd-Server: rspamout03
-X-Rspamd-Queue-Id: 926121A
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19I34z/YVXYuCJ3MjtZncdDCod0DMq55jI=
-X-HE-Tag: 1752768611-991244
-X-HE-Meta: U2FsdGVkX1/UwkCZQDm25iYOuhSZ2rZcAaq3zn9cQi5QJCA1fCyyGm0tMkPx0MoBQVLxJ1qTso7VU0Lnu+8CbOaBi629CWWX/4fwXyzTtvxXVeI1jOZAOgWhGNF4OD0fmB/7jkFyiEs3pmEMeQw4Nzvu+SUGUBVixLnFEdaqwpfkp9JAJOFER3pHSNLNmCQV2zDn1Mg5idJwm5YZ+QQdNWAlJFFzKzbD6C4rt1fdyhVslLbMlmOavVjkgExAUxmCNBIMIY0bXdsR0NXqKo32zg/83YJDoQGzw63usR1pQLD3scMwSpWOf5eUlgXvgSqX+KbFuNKzhdGWZwmohq6MfxHEqlwxqQXV
 
-On Thu, 17 Jul 2025 08:48:40 -0700
-"Paul E. McKenney" <paulmck@kernel.org> wrote:
+Hi,
 
-> So if there is some reason that you absolutely cannot immediately convert
-> to SRCU-fast, let's please discuss.
+On 04/07/2025 12:48, Jayesh Choudhary wrote:
+> TIDSS should know which VP has OLDI output to avoid calling clock
+> functions for that VP as those are controlled by oldi driver. Add a
 
-There's two reasons I wouldn't add it immediately.
+"OLDI"
 
-One, is the guard(srcu_fast) isn't in mainline yet. I would either need
-to open code it, or play the tricks of basing code off your tree.
+> property "is_oldi_vp" to "tidss_device" structure for that. Mark it
+> 'true' in tidss_oldi_init() and 'false' in tidss_oldi_deinit().
 
-Two, I'm still grasping at the concept of srcu_fast (and srcu_lite for
-that matter), where I rather be slow and safe than optimize and be
-unsafe. The code where this is used may be faulting in user space
-memory, so it doesn't need the micro-optimizations now.
+The above is not wrong, but I think it would be nicer to be more
+specific what's this about: it's not really about OLDI, but whether
+tidss crtc/dispc controls the clock. I would name the field
+"is_ext_vp_clk" or something similar.
 
--- Steve
+ Tomi
+
+> Fixes: 7246e0929945 ("drm/tidss: Add OLDI bridge support")
+> Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
+> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+> ---
+>  drivers/gpu/drm/tidss/tidss_drv.h  | 2 ++
+>  drivers/gpu/drm/tidss/tidss_oldi.c | 2 ++
+>  2 files changed, 4 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/tidss/tidss_drv.h b/drivers/gpu/drm/tidss/tidss_drv.h
+> index 0ae24f645582..82beaaceadb3 100644
+> --- a/drivers/gpu/drm/tidss/tidss_drv.h
+> +++ b/drivers/gpu/drm/tidss/tidss_drv.h
+> @@ -24,6 +24,8 @@ struct tidss_device {
+>  
+>  	const struct dispc_features *feat;
+>  	struct dispc_device *dispc;
+> +	bool is_oldi_vp[TIDSS_MAX_PORTS];
+> +
+>  
+>  	unsigned int num_crtcs;
+>  	struct drm_crtc *crtcs[TIDSS_MAX_PORTS];
+> diff --git a/drivers/gpu/drm/tidss/tidss_oldi.c b/drivers/gpu/drm/tidss/tidss_oldi.c
+> index b0f99656e87e..63e07c8edeaa 100644
+> --- a/drivers/gpu/drm/tidss/tidss_oldi.c
+> +++ b/drivers/gpu/drm/tidss/tidss_oldi.c
+> @@ -430,6 +430,7 @@ void tidss_oldi_deinit(struct tidss_device *tidss)
+>  	for (int i = 0; i < tidss->num_oldis; i++) {
+>  		if (tidss->oldis[i]) {
+>  			drm_bridge_remove(&tidss->oldis[i]->bridge);
+> +			tidss->is_oldi_vp[tidss->oldis[i]->parent_vp] = false;
+>  			tidss->oldis[i] = NULL;
+>  		}
+>  	}
+> @@ -579,6 +580,7 @@ int tidss_oldi_init(struct tidss_device *tidss)
+>  		oldi->bridge.timings = &default_tidss_oldi_timings;
+>  
+>  		tidss->oldis[tidss->num_oldis++] = oldi;
+> +		tidss->is_oldi_vp[oldi->parent_vp] = true;
+>  		oldi->tidss = tidss;
+>  
+>  		drm_bridge_add(&oldi->bridge);
+
 
