@@ -1,94 +1,111 @@
-Return-Path: <linux-kernel+bounces-735709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27384B092CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:10:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05EF2B092E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:13:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EE2EA44F78
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:09:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D72665A45B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:11:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7694A2FE399;
-	Thu, 17 Jul 2025 17:09:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81CB2FD584;
+	Thu, 17 Jul 2025 17:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="i96kezw3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="faoYpRrV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F94192580;
-	Thu, 17 Jul 2025 17:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4B71DE8A3
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 17:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752772169; cv=none; b=o8KWKI1OqesfT3QEwPc4B5dV3h6ddH3eWQo4SZMwPfwFd2sIu+PovbCCLtZwnT/kcSivCGb8Pld0qMCHCE9f6mr7fPyRBOzvMCBik4j+Kf488eVuLR13bwAGEN5vDH3l/pZiekl4tVfud8iQnai/JQrzo9KFsci0/N4UEHZO9a8=
+	t=1752772273; cv=none; b=Xrk6kp8ilMQGr2hvKfwq3BLI/SXsdI3pFuIXYg/GJzh2NV5IImBf+ywDkc9YZdW+0/ziN5GQcErIIcy9ZDO1Upcw9UH16FlZFZ6iQ90YXoa1Vm9jnS4AqI6jE4nsxqDLXp9NnV5FlfwzD3vnkW3V6wyGf64J1TcuZqqAPoP3d1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752772169; c=relaxed/simple;
-	bh=u6la9tDTJ5T/duEum+F8U3W49+M9cN7pHyMCo1XksV4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uOZCkDehH/wLxYUscKAiRHBzBrKNLe8cuCJtfs7Y1TbD9Hc+Fr2NEsng3HlwJqX8G33eR5AkzaLYhCcsvnXSaAoSkmUbeJ4cdKsg9ROKlSlgXzMzTJAW6t8b/2QloNN2b5Q373186CfO/OYInmwVMEBBTGRn9WbgLFQzbQfMYpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=i96kezw3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D16AC4CEE3;
-	Thu, 17 Jul 2025 17:09:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752772169;
-	bh=u6la9tDTJ5T/duEum+F8U3W49+M9cN7pHyMCo1XksV4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i96kezw3do0YCiSM+7DTmqWoLhSqwjZd+MTNRGyKzDEizNEc0IIuj+I0TIqiWc0d8
-	 7DAEI6bcpYdyNncFiwKelt1D0bTc7OeISB1OkeG7JiuY0f7qYaWRDiPdbrjiQQC2+z
-	 P/QjuUnWgw04R+l+/KQIzbSNLybAUwIAhTlwoYms=
-Date: Thu, 17 Jul 2025 19:09:26 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Suchit K <suchitkarunakaran@gmail.com>
-Cc: Yonghong Song <yonghong.song@linux.dev>, ast@kernel.org,
-	daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev,
-	eddyz87@gmail.com, song@kernel.org, john.fastabend@gmail.com,
-	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com,
-	jolsa@kernel.org, bpf@vger.kernel.org, skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] libbpf: Replace strcpy() with memcpy() in
- bpf_object__new()
-Message-ID: <2025071756-motor-slackness-ef0d@gregkh>
-References: <20250717115936.7025-1-suchitkarunakaran@gmail.com>
- <f6c4944d-c6c2-4a7e-8dd3-791d0c29022b@linux.dev>
- <CAO9wTFjEJOfF7krFuV=DkZFzRU3FpRXtnq93UaX8=_Y=wnwbHw@mail.gmail.com>
+	s=arc-20240116; t=1752772273; c=relaxed/simple;
+	bh=GVUHGju2+ZDh6FoEwREwk2SXt0lnoraJ0qlp8NVftCI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T1XH6QW2du9LYc4ksg/pUrK/wvV1fFFfwDp9vGFHrH9q+AEDupXtniQLq10rgyiYyJAGEY5mCletAbEftzlxJeyahzx8uxGaeUlHqcy6S8hC0ialwi8lAZ511HL+N1isjfwK87z5lSW5zww8IzbGse4YlsczBWJH5duZi5cLZ+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=faoYpRrV; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752772270;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=3JDncZPC9OMcQ6vJ0w/uC4y2BfDtUILRnDAHQlRDKF4=;
+	b=faoYpRrVFSJCxJ4MbU5xw//VedGkqdvpkjfTr9WA3WDBEMTQsYJCZqF1msO6U7ocL1frYT
+	BgBlrVPPOqqrpLI6cF7+RZYo1bWNiu8macBBrGAt+lgihj0IcdSz3AMYZah1jb0/ODjsVX
+	6FtlQOKwOgPyBYbbIeEUQTLj/Ucnpog=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-685-gScbiNX9OQaGZX7tjnFFVA-1; Thu,
+ 17 Jul 2025 13:11:07 -0400
+X-MC-Unique: gScbiNX9OQaGZX7tjnFFVA-1
+X-Mimecast-MFC-AGG-ID: gScbiNX9OQaGZX7tjnFFVA_1752772265
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 38B0E19560B6;
+	Thu, 17 Jul 2025 17:11:05 +0000 (UTC)
+Received: from p16v.luc.cera.cz (unknown [10.44.34.5])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6C5CD195608D;
+	Thu, 17 Jul 2025 17:11:01 +0000 (UTC)
+From: Ivan Vecera <ivecera@redhat.com>
+To: netdev@vger.kernel.org
+Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Prathosh Satish <Prathosh.Satish@microchip.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Michal Schmidt <mschmidt@redhat.com>,
+	Petr Oros <poros@redhat.com>
+Subject: [PATCH net-next 0/2] dpll: zl3073x: Read clock ID from device property
+Date: Thu, 17 Jul 2025 19:10:58 +0200
+Message-ID: <20250717171100.2245998-1-ivecera@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAO9wTFjEJOfF7krFuV=DkZFzRU3FpRXtnq93UaX8=_Y=wnwbHw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Thu, Jul 17, 2025 at 10:29:50PM +0530, Suchit K wrote:
-> On Thu, 17 Jul 2025 at 22:19, Yonghong Song <yonghong.song@linux.dev> wrote:
-> >
-> >
-> >
-> > On 7/17/25 4:59 AM, Suchit Karunakaran wrote:
-> > > Replace the unsafe strcpy() call with memcpy() when copying the path
-> > > into the bpf_object structure. Since the memory is pre-allocated to
-> > > exactly strlen(path) + 1 bytes and the length is already known, memcpy()
-> > > is safer than strcpy().
-> >
-> > I don't understand in this particular context why strcpy()
-> > is less safer than memcpy(). Both of them will achieve the
-> > exactly same goal.
-> >
-> 
-> Sorry, I meant that strcpy() is generally considered unsafe because it
-> doesn't perform bounds checking. Its use is deprecated and
-> discouraged, as noted in Documentation/process/deprecated.rst. I made
-> this change with that in mind, although I'm not entirely certain
-> whether it's actually unsafe in this specific context.
-> 
+The current ZL3073x firmware revisions do not provide any information
+unique for the particular chip that could be use to generate clock ID
+necessary for a DPLL device registration.
 
-Your change also did not do any bounds checking at all, so how is this
-now safer?
+Currently the driver generates random clock ID during probe and a user
+have and option to change this value using devlink interface.
 
-confused,
+The situation is very similar to network controllers that do not have
+assigned a fixed MAC address.
 
-greg k-h
+The purpose of this series is to allow to specify the clock ID property
+through DT. If the property is not provided then the driver will use
+randomly generated value as fallback.
+
+Patch breakdown:
+Patch 1 - adds clock-id property to dpll-device DT schema
+Patch 2 - adds support for this DT property in zl3073x driver
+
+Ivan Vecera (2):
+  dt-bindings: dpll: Add clock ID property
+  dpll: zl3073x: Initialize clock ID from device property
+
+ .../devicetree/bindings/dpll/dpll-device.yaml |  5 +++
+ drivers/dpll/zl3073x/core.c                   | 32 ++++++++++++++++---
+ 2 files changed, 32 insertions(+), 5 deletions(-)
+
+-- 
+2.49.1
+
 
