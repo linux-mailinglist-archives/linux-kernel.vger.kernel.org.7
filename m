@@ -1,263 +1,108 @@
-Return-Path: <linux-kernel+bounces-735725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B755B09311
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:22:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12FADB09306
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:20:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 209D71C470FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:22:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B85EBA45233
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:20:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B09E5301133;
-	Thu, 17 Jul 2025 17:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8720B2FD891;
+	Thu, 17 Jul 2025 17:20:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=netcube.li header.i=@netcube.li header.b="j6vbc5Wg"
-Received: from mail.netcube.li (mail.netcube.li [173.249.15.149])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KN8liwjn"
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA562FF475;
-	Thu, 17 Jul 2025 17:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.249.15.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BECE2FD59D;
+	Thu, 17 Jul 2025 17:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752772890; cv=none; b=WKi4ug9v6ycgN0nYJtarFVg0yUQIANqhnK9wUHalby76DFdxNOH9QTAd4sNBUCc8f7afmF3lSVuHrepi56kkwIJ+KkPIP13tYgNb2Ca+tD9EGNX1JjXayk7gWrP8TSbPQGE6QuTVh8erp+7F7e8jlu4atVX194XkmktdiB2Mhwk=
+	t=1752772848; cv=none; b=pA0XeKe5Mb7ujNgh3KuODUK92edNTPvGDyyRrug0NeTnnnto7oZx2FJibB16COqfxZJrzQfj9f6MMlXGHJbGFhm12jpKk5S6r9h+emimq0CT2MSkJ9a0hEcSrpAQJqohzbxtbUu789GjLrX93smZA/mqPuL+hlFU91v0y+AP7RI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752772890; c=relaxed/simple;
-	bh=BqQDK5WDZs+N2J3PbOjtJsFlWt5RqNJQS3rtgYM8ONo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=oR26PK0uOg8PcUjwmbvDWLxOVDN4wpz3YjdUgoWEQtrPbuWyqtAxnziXeduA5gLvdxcfX/vC9WFKR+kZ6kqMwT4UgaN6DgcNHMnE+FE4RdPUGvIDrpidECWM4Spc6t+hynYGWxXn5+934RmZ4eg0eC2AO1XCtbd4ieragrVke7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=netcube.li; spf=pass smtp.mailfrom=netcube.li; dkim=pass (1024-bit key) header.d=netcube.li header.i=@netcube.li header.b=j6vbc5Wg; arc=none smtp.client-ip=173.249.15.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=netcube.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netcube.li
-dkim-signature: v=1; a=rsa-sha256; d=netcube.li; s=s1;
-	c=relaxed/relaxed; q=dns/txt; h=From:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Transfer-Encoding:In-Reply-To:References;
-	bh=WyDcoUgiFmook1ozmdcf58KRoeXbCwJK6UVX+xvXw14=;
-	b=j6vbc5WgGmwh32gsn3DRD/RgNALfjxuTmLuUXNdV5/jg0jCPUXVWKvSZvVvOVBXyWMLLWOcg4HtGk9mYk82f5htr3Ju0OwoiHcLF60jE7A+/kx7B4raZkZ2w0g9qD9Jux3GPwKKmCZSMj08wy001i8KIhHua65PcFQSGU7FDknw=
-Received: from lukas-hpz440workstation.lan.sk100508.local (cm70-231.liwest.at [212.241.70.231])
-	by mail.netcube.li with ESMTPA
-	; Thu, 17 Jul 2025 19:21:11 +0200
-From: Lukas Schmid <lukas.schmid@netcube.li>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Maxime Ripard <mripard@kernel.org>
-Cc: Lukas Schmid <lukas.schmid@netcube.li>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: [PATCH v5 5/5] ARM: dts: sunxi: add support for NetCube Systems Nagami Keypad Carrier
-Date: Thu, 17 Jul 2025 19:20:32 +0200
-Message-Id: <20250717172035.3508831-6-lukas.schmid@netcube.li>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250717172035.3508831-1-lukas.schmid@netcube.li>
-References: <20250717172035.3508831-1-lukas.schmid@netcube.li>
+	s=arc-20240116; t=1752772848; c=relaxed/simple;
+	bh=QzW3TzJHY7MTLMOOnMpu8mKFRvV0aVq6toqLC/Mg3PU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bWa3NDJGiJrSDeSkLWbstEDOAToH0b4i82Pfk29+BXZhPo0K7e5jR3Z6ZWTDBkE2qER+joRiFmHE2ZQ+D84lkiLTY3Z1rb+S8fST4j9ubYP1tLLf4rxk3WfhCsnxXDDGA4te70Q1rvWa+ghWXpv9mY743Bl0/R6jCB06DA/jfyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KN8liwjn; arc=none smtp.client-ip=209.85.160.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2c6ed7efb1dso832503fac.2;
+        Thu, 17 Jul 2025 10:20:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752772845; x=1753377645; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=QzW3TzJHY7MTLMOOnMpu8mKFRvV0aVq6toqLC/Mg3PU=;
+        b=KN8liwjnxwH/FrkPls/1jOAFu8tA3FLPuhyb4+bQbeYkAJM250hn/HMWYqIV6vfvQB
+         b90VXRP/P/URz92W5sg7/U0SgCivmB6eRcCRhj2YlKM9IhmjArUT7xNqx2CBfyPZeesV
+         G23N+pALhV4HfarxRMPrjSxtNBIBGbXkDuFMHAisoUCS2I9wNy9ei1CPIFtl1oBd/XCS
+         Dalv0LyYDR6Y7E6zOKavLR9ERfyL94sbDGH3dAVAGgvzIB7INUdsZPxM0GQeJjGh5zzZ
+         ePRiAnpJcdazDYgEJfJTQaeCWXIxv9sg/j9G3P0gVHrEGrU3zJGkzGH44SKF8yCIiqux
+         lkog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752772845; x=1753377645;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QzW3TzJHY7MTLMOOnMpu8mKFRvV0aVq6toqLC/Mg3PU=;
+        b=w7lxT6Fsyhjgs7K6AMojkqgT7NqlCATnZSlOFrGlB3FZCNc2HTbmmAYNdpa5HFp7JZ
+         K8OfmPiSKq3P6N9Wi44INVRDepc0z+hBeHF7hMOgVbrRrz6BzbLk9+6iXVrunONo74Tu
+         iwLVULyDzU7luEYmO46vrH5xiZve4PvMcy/giMjK/vvaBJA9JYXCvTIE5/O/NjuE4ryM
+         kpLhhEhspOiZbbAExXpLY8ZgO29slKqX6eDM55Phd2iTEMavWDUZLrdtqyxhYgdz/FOZ
+         WklIfjyoHYUcydL9T43XeuQl59I9mK4VhLh4sLLB/37/gdNxElbIcJADJ/lLNruP6J70
+         /isQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUMm0604MikcqmWRQPvWl9Oj7ASN+zyTZ8Lbt059vRS9nBNS5wEAKpcoqBfXRgpN1uuz7BYUnLFoHiVn/CU@vger.kernel.org, AJvYcCXBkuhdTi3zp9RKAOI5xxTUlzbc81vSoiNbqb9f2FW1uV32kdR4oWr6PUXmKaFJzyeIESw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQINg6cMx254MKUOkPj/FZOLT3A68ql5GHSAp4Hbu9f05OvNSl
+	7yj6x3Ejxw3YskE/w5fWDa8jUbZzK0VqqVyJO66RNeVQqG96/Ugs/ZToAUwyc/aE4of7GRKE8KW
+	FuOquzKknCjRtxVRs0SiYVImjn5ZvL/o=
+X-Gm-Gg: ASbGncs0IGCcN9MwYCoteMV762ss5n0AoLopBIPsan7qCilsMiDtfbpHPKV5jGLRuAz
+	4DP3eaUGWWQIs8H+/vqK7CXmLc+LcDiiJcbxJmCKyH//Al9mLItSWYJziBnwbNxUXxmSdiDsQZp
+	DDQ/fGPXuATefqLQZc5DJYBfEtp0ISoXXvab6lWO7tPYL3leq2MBszBXdW3N8fncmuFUY9nAZWI
+	5OpMVAC
+X-Google-Smtp-Source: AGHT+IGkry+/VfENK4FfpgTo78UQOqjs2I1quI25rQ7ik3+6oBFDseF6tGEewUI75qPag3XTu41YslI06Xj3GfBcdds=
+X-Received: by 2002:a05:687c:2c20:b0:2ff:cb23:97b4 with SMTP id
+ 586e51a60fabf-2ffcb2398d7mr3207511fac.18.1752772845406; Thu, 17 Jul 2025
+ 10:20:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250717115936.7025-1-suchitkarunakaran@gmail.com>
+ <f6c4944d-c6c2-4a7e-8dd3-791d0c29022b@linux.dev> <CAO9wTFjEJOfF7krFuV=DkZFzRU3FpRXtnq93UaX8=_Y=wnwbHw@mail.gmail.com>
+ <2025071756-motor-slackness-ef0d@gregkh>
+In-Reply-To: <2025071756-motor-slackness-ef0d@gregkh>
+From: Suchit K <suchitkarunakaran@gmail.com>
+Date: Thu, 17 Jul 2025 22:50:34 +0530
+X-Gm-Features: Ac12FXxLcp2VHp2DpkAP_e7qN_lhHYsL-fQPhMc5_0UqSpWKkgNzljuXToTD3Yw
+Message-ID: <CAO9wTFioFna7r_qxfWNQasAYC6rodkqP+1GdYJKSQEFKg-xXtg@mail.gmail.com>
+Subject: Re: [PATCH] libbpf: Replace strcpy() with memcpy() in bpf_object__new()
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Yonghong Song <yonghong.song@linux.dev>, ast@kernel.org, daniel@iogearbox.net, 
+	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
+	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me, 
+	haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org, 
+	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The NetCube Systems Nagami Keypad Carrier uses the Nagami SoM and contains
-a MCP23008 for connecting to a 4x3 matrix keypad and internal status led.
-The I2C2 interface is connected to said MCP23008 and also a header for an
-PN532 NFC-Module. It also provides a pin-header for a bi-color status led.
-Ethernet with PoE support is available on a screwterminal after magnetics.
+> Your change also did not do any bounds checking at all, so how is this
+> now safer?
+>
+> confused,
+>
+> greg k-h
 
-Signed-off-by: Lukas Schmid <lukas.schmid@netcube.li>
----
- arch/arm/boot/dts/allwinner/Makefile          |   1 +
- ...8i-t113s-netcube-nagami-keypad-carrier.dts | 156 ++++++++++++++++++
- 2 files changed, 157 insertions(+)
- create mode 100644 arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami-keypad-carrier.dts
-
-diff --git a/arch/arm/boot/dts/allwinner/Makefile b/arch/arm/boot/dts/allwinner/Makefile
-index af287bb32..a2137bbe2 100644
---- a/arch/arm/boot/dts/allwinner/Makefile
-+++ b/arch/arm/boot/dts/allwinner/Makefile
-@@ -259,6 +259,7 @@ dtb-$(CONFIG_MACH_SUN8I) += \
- 	sun8i-s3-pinecube.dtb \
- 	sun8i-t113s-mangopi-mq-r-t113.dtb \
- 	sun8i-t113s-netcube-nagami-basic-carrier.dtb \
-+	sun8i-t113s-netcube-nagami-keypad-carrier.dtb \
- 	sun8i-t3-cqa3t-bv3.dtb \
- 	sun8i-v3-sl631-imx179.dtb \
- 	sun8i-v3s-anbernic-rg-nano.dtb \
-diff --git a/arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami-keypad-carrier.dts b/arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami-keypad-carrier.dts
-new file mode 100644
-index 000000000..ed2b94eeb
---- /dev/null
-+++ b/arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami-keypad-carrier.dts
-@@ -0,0 +1,156 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (C) 2025 Lukas Schmid <lukas.schmid@netcube.li>
-+ */
-+
-+/dts-v1/;
-+#include "sun8i-t113s-netcube-nagami.dtsi"
-+
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/leds/common.h>
-+
-+/ {
-+	model = "NetCube Systems Nagami Keypad Carrier Board";
-+	compatible = "netcube,nagami-keypad-carrier", "netcube,nagami",
-+				 "allwinner,sun8i-t113s";
-+
-+	keypad: keypad {
-+		compatible = "gpio-matrix-keypad";
-+		debounce-delay-ms = <5>;
-+		col-scan-delay-us = <2>;
-+
-+		row-gpios = <&mcp23008 0 0
-+					 &mcp23008 1 0
-+					 &mcp23008 2 0
-+					 &mcp23008 3 0>;
-+
-+		col-gpios = <&mcp23008 6 0
-+					 &mcp23008 5 0
-+					 &mcp23008 4 0>;
-+
-+		linux,keymap = <0x00000201
-+						0x00010202
-+						0x00020203
-+						0x01000204
-+						0x01010205
-+						0x01020206
-+						0x02000207
-+						0x02010208
-+						0x02020209
-+						0x0300020A
-+						0x03010200
-+						0x0302020B>;
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		led-heartbeat {
-+			gpios = <&mcp23008 7 GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "heartbeat";
-+			color = <LED_COLOR_ID_YELLOW>;
-+			function = LED_FUNCTION_HEARTBEAT;
-+		};
-+
-+		led_status_red: led-status-red {
-+			gpios = <&pio 3 16 GPIO_ACTIVE_HIGH>;  /* PD16 */
-+			color = <LED_COLOR_ID_RED>;
-+			function = LED_FUNCTION_STATUS;
-+		};
-+
-+		led_status_green: led-status-green {
-+			gpios = <&pio 3 22 GPIO_ACTIVE_HIGH>;  /* PD22 */
-+			color = <LED_COLOR_ID_GREEN>;
-+			function = LED_FUNCTION_STATUS;
-+		};
-+	};
-+
-+	multi-led {
-+		compatible = "leds-group-multicolor";
-+		color = <LED_COLOR_ID_MULTI>;
-+		function = LED_FUNCTION_STATUS;
-+		leds = <&led_status_red &led_status_green>;
-+	};
-+};
-+
-+&i2c2 {
-+	status = "okay";
-+
-+	mcp23008: gpio@20 {
-+		compatible = "microchip,mcp23008";
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		reg = <0x20>;
-+		interrupts-extended = <&pio 5 6 IRQ_TYPE_LEVEL_LOW>;  /* PF6 */
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+};
-+
-+&pio {
-+	gpio-line-names = "", "", "", "", // PA
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "", // PB
-+					  "", "", "UART3_TX", "UART3_RX",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "eMMC_CLK", "eMMC_CMD", // PC
-+					  "eMMC_D2", "eMMC_D1", "eMMC_D0", "eMMC_D3",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "", // PD
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "LED_STATUS_RED", "", "", "",
-+					  "I2C2_SCL", "I2C2_SDA", "LED_STATUS_GREEN", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "ETH_CRSDV", "ETH_RXD0", "ETH_RXD1", "ETH_TXCK", // PE
-+					  "ETH_TXD0", "ETH_TXD1", "ETH_TXEN", "",
-+					  "ETH_MDC", "ETH_MDIO", "QWIIC_nINT", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "", // PF
-+					  "", "", "KEY_nINT", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "ESP_CLK", "ESP_CMD", "ESP_D0", "ESP_D1", // PG
-+					  "ESP_D2", "ESP_D3", "UART1_TXD", "UART1_RXD",
-+					  "ESP_nBOOT", "ESP_nRST", "I2C3_SCL", "I2C3_SDA",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "";
-+};
-+
-+&usb_otg {
-+	dr_mode = "peripheral";
-+	status = "okay";
-+};
-+
-+&usbphy {
-+	status = "okay";
-+};
--- 
-2.39.5
-
-
+I assumed bounds checking wasn't necessary here because obj is
+allocated at the start of the function with enough space
+(sizeof(struct bpf_object) + strlen(path) + 1). My main motivation for
+the change was the deprecation of strcpy(). However, thinking about it
+now, I'm not entirely sure memcpy is even needed in this context. I'd
+really appreciate any feedback or clarification on the best approach
+here.
 
