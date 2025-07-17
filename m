@@ -1,95 +1,261 @@
-Return-Path: <linux-kernel+bounces-735997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6076DB09677
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 23:45:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0793B09678
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 23:47:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0200D4E6A01
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:45:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1944F1AA6E4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5279F2264D2;
-	Thu, 17 Jul 2025 21:45:52 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05EFB2343C0;
+	Thu, 17 Jul 2025 21:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mgLVdxQI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8257B12C544
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 21:45:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119DA12C544;
+	Thu, 17 Jul 2025 21:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752788752; cv=none; b=bBereh4gCV1OASHx4fnFvKCQ1FtAiP45icMVpBaxt73B01nV4BF1gzB2oOu2uXncE0RoJiNf+Ogz+IE1KZo6kQZt6jk36UN+xgeErhdYzMyllilNZr8ai28A8zsUbNeYFmX9RQvfywTmYSx6j/NBw54QlHz2sbijX/Bso6IZYI8=
+	t=1752788834; cv=none; b=tZ92HhGpQAUh6VPM3th+eySarVIrqlaUfgHOeuLHlaep1UfWr2UwH+s8J9yTSGhjzGfMcPWZmkO2omnLOYMaEni57wRDOiRwOvnooCcqvMCYYRs5fJf/N1PoLQJMohSRtIvlow14EQ2KUL66/VKnlfcOaZ6S8OPRF5snSjizhTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752788752; c=relaxed/simple;
-	bh=TVoGFX4wIvyvNURmhxpl3VbnP9x2Gb3LDc6h2mJ28OE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=OhT0c4yB7IqNgrP+Az5tbKJhTvCvSGnVCVUE0tiYmGmqa0oQeZNVmc5ZOabJhY3VHUXOEFn+j5HfBHEgKr//sfX1vEecWUIxDjXuO9FRzxKizqZIn+YJLZCCW29Y77kJUCndU9FA1yzcqX6R6kKpDNBIpWY49tD8SzU7uuGFN5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8760733a107so154456039f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 14:45:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752788749; x=1753393549;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xj2jDWTiFySKciwoQfmuZmolQBkcyx5/o3qYA+zdNPc=;
-        b=u2BHro1i0086zp3/rPjRuYc4BVcS9wCkYO3rHQYEVzbgWl0OBQN9kb1l/Od0VqIM2+
-         2bbFhjTB2RxykPDhrBjQNvY+xwkQuTnpfT7CgxB2AkcQubtltt5LZu1Qg1E5aN+t72M3
-         95LvZpmiIoWv5DrZ7M3VvkFy3La/z9dK5JtxJ+f7h18nFforMy19F7H4u3oCUjXoctDe
-         R00XoJsfDouo1QryNBXUTwrzfQE+sAC4OlFhsTR0bnKRY3Y1r9Qw/HTwxGzdeMl7wr3y
-         Xc3AJFTse388yj2cUnxLuBe9WG3vh1O4z2rZD7RW21zIRHyw4TfcEharPtceKaC9ikr2
-         4XfA==
-X-Gm-Message-State: AOJu0Ywxv4HMt+UVKh3Nuz5bWKvme/2JrZqmnhMjDv7qcQ8dOlfaXMpu
-	rISwzG9KMqn7DKjEqjgGnHQsB5CArFXP0RbUG8Nikmxnc6GrJACY1bsAHxDef1s6ySvfrUqVDjd
-	RpqVyYrPjgD+MGT/qj6Gsl44xWqJyB1mtepapjDX/Xrbp31CtEed/x+OwfZ8=
-X-Google-Smtp-Source: AGHT+IFYwcTWgWQLOgaOTyYKJ+OAC0nNqSsBYN0yW2Cia4WO2zjdvM6Z1LbTRiombDz+3SqAVnla135XHxsWXQsb8COYRvVhBqiH
+	s=arc-20240116; t=1752788834; c=relaxed/simple;
+	bh=GeBjQgp4CQ51rAjMKKw1UHa/3iVrylWuqhz/SLl9yW8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mzpO8YzJD96nEdpq4eP9kXkT3tk2e8I+a3ZFpIW2/yqKZPZcw41/AoN0Bpswj/KGDnCh1jHmPCRqytYOQIg7YvJZYbF424zYxlGPoLGwSPP1m0xDHAw8HDfOQeFZVahKayVEKDRyjSaUZu5mwKjh+2vbQQPU0XZ81fI89S5QAjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mgLVdxQI; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752788832; x=1784324832;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=GeBjQgp4CQ51rAjMKKw1UHa/3iVrylWuqhz/SLl9yW8=;
+  b=mgLVdxQItNyld4Rb/gwo0VmGIFJ86xh2UTMn69jowNoM37oJ4ynyVsAA
+   uK8T/ZO6Lt+kWOPFxjja1V8WeamJW9FA0vGtMqTAnRJmiuo8/sBlbgeUo
+   aRRbexRnx8Y7dnPKlCQMkqq3272J3WBYH4tM4JtGv7Iy1TWr+mEfmnnod
+   oCnhyajbwejFBAoggf16xQziysEu4/hg6wmXySAAqbFVaq/8puGyOK8sU
+   DVtYVc0aAowPTDO1aXCnFBOgjv+dq8x+MqJTvvMst+lbHnFmjtvvyLDne
+   boMfes2T2PRPVm+3vr46N72xI9/zEoPh52p+Cp+ohpsEEml/Hwc8yFVHs
+   g==;
+X-CSE-ConnectionGUID: 4YkX+8c2Rw69HxEk/p9njw==
+X-CSE-MsgGUID: G+2jPjG5R8CP99Uw6eB9qg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11495"; a="66527737"
+X-IronPort-AV: E=Sophos;i="6.16,319,1744095600"; 
+   d="scan'208";a="66527737"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 14:47:11 -0700
+X-CSE-ConnectionGUID: QB0xRGOjTxulF9AV/YJHiw==
+X-CSE-MsgGUID: CHggClCeQWqKgbsdbbXIjw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,319,1744095600"; 
+   d="scan'208";a="157295485"
+Received: from vverma7-mobl3.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.124.221.39])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 14:47:06 -0700
+From: Kai Huang <kai.huang@intel.com>
+To: dave.hansen@intel.com,
+	bp@alien8.de,
+	tglx@linutronix.de,
+	peterz@infradead.org,
+	mingo@redhat.com,
+	hpa@zytor.com,
+	thomas.lendacky@amd.com
+Cc: x86@kernel.org,
+	kas@kernel.org,
+	rick.p.edgecombe@intel.com,
+	dwmw@amazon.co.uk,
+	linux-kernel@vger.kernel.org,
+	pbonzini@redhat.com,
+	seanjc@google.com,
+	kvm@vger.kernel.org,
+	reinette.chatre@intel.com,
+	isaku.yamahata@intel.com,
+	dan.j.williams@intel.com,
+	ashish.kalra@amd.com,
+	nik.borisov@suse.com,
+	chao.gao@intel.com,
+	sagis@google.com
+Subject: [PATCH v4 0/7] TDX host: kexec/kdump support
+Date: Fri, 18 Jul 2025 09:46:37 +1200
+Message-ID: <cover.1752730040.git.kai.huang@intel.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3887:b0:876:19b9:1aaa with SMTP id
- ca18e2360f4ac-87c0f22dcdbmr22363539f.9.1752788749702; Thu, 17 Jul 2025
- 14:45:49 -0700 (PDT)
-Date: Thu, 17 Jul 2025 14:45:49 -0700
-In-Reply-To: <67b2eaf8.050a0220.173698.0020.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68796f0d.a00a0220.3af5df.0024.GAE@google.com>
-Subject: Forwarded: Re: [syzbot] [bcachefs] KASAN: use-after-free Read in crypto_poly1305_update
-From: syzbot <syzbot+d587b24799bd8c2d32f4@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+This series is the latest attempt to support kexec on TDX host following
+Dave's suggestion to use a percpu boolean to control WBINVD during
+kexec.
 
-***
+Hi Boris/Tom,
 
-Subject: Re: [syzbot] [bcachefs] KASAN: use-after-free Read in crypto_poly1305_update
-Author: kent.overstreet@linux.dev
+As requested, I added the first patch to cleanup the last two 'unsigned
+int' parameters of the relocate_kernel() into one 'unsigned int' and pass
+flags instead.  The patch 2 (patch 1 in v3) also gets updated based on
+that.  Would you help to review?  Thanks.
 
-On Thu, Jul 17, 2025 at 01:49:03PM -0700, syzbot wrote:
-> syzbot suspects this issue was fixed by commit:
-> 
-> commit d89a34b14df5c205de698c23c3950b2b947cdb97
-> Author: Alan Huang <mmpgouride@gmail.com>
-> Date:   Sat Jun 14 09:18:07 2025 +0000
-> 
->     bcachefs: Move bset size check before csum check
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1722a58c580000
-> start commit:   2408a807bfc3 Merge tag 'vfs-6.14-rc4.fixes' of git://git.k..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=6cc40dfe827ffb85
-> dashboard link: https://syzkaller.appspot.com/bug?extid=d587b24799bd8c2d32f4
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12c4f2e4580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17e4c498580000
-> 
-> If the result looks correct, please mark the issue as fixed by replying with:
-> 
-#syz fix: bcachefs: Move bset size check before csum check
+I tested that both normal kexec and preserve_context kexec works (using
+the tools/testing/selftests/kexec/test_kexec_jump.sh).  But I don't have
+SME capable machine to test.
+
+Hi Tom, I added your Reviewed-by and Tested-by in the patch 2 anyway
+since I believe the change is trivial and straightforward).  But due to
+the cleanup patch, I appreciate if you can help to test the first two
+patches again.  Thanks a lot!
+
+v3 -> v4:
+ - Rebase to latest tip/master.
+ - Add a cleanup patch to consolidate relocate_kernel()'s last two
+   function parameters -- Boris.
+ - Address comments received -- please see individual patches.
+ - Collect tags (Tom, Rick, binbin).
+
+ v3: https://lore.kernel.org/kvm/cover.1750934177.git.kai.huang@intel.com/
+
+v2 -> v3 (all trivial changes):
+
+ - Rebase on latest tip/master
+   - change to use __always_inline for do_seamcall() in patch 2
+ - Update patch 2 (changelog and code comment) to remove the sentence
+   which says "not all SEAMCALLs generate dirty cachelines of TDX
+   private memory but just treat all of them do."  -- Dave.
+ - Add Farrah's Tested-by for all TDX patches.
+
+The v2 had one informal RFC patch appended to show "some optimization"
+which can move WBINVD from the kexec phase to an early stage in KVM.
+Paolo commented and Acked that patch (thanks!), so this v3 made that
+patch as a formal one (patch 6).  But technically it is not absolutely
+needed in this series but can be done in the future.
+
+More history info can be found in v2:
+
+ https://lore.kernel.org/lkml/cover.1746874095.git.kai.huang@intel.com/
+
+=== More information ===
+
+TDX private memory is memory that is encrypted with private Host Key IDs
+(HKID).  If the kernel has ever enabled TDX, part of system memory
+remains TDX private memory when kexec happens.  E.g., the PAMT (Physical
+Address Metadata Table) pages used by the TDX module to track each TDX
+memory page's state are never freed once the TDX module is initialized.
+TDX guests also have guest private memory and secure-EPT pages.
+
+After kexec, the new kernel will have no knowledge of which memory page
+was used as TDX private page and can use all memory as regular memory.
+
+1) Cache flush
+
+Per TDX 1.5 base spec "8.6.1.Platforms not Using ACT: Required Cache
+Flush and Initialization by the Host VMM", to support kexec for TDX, the
+kernel needs to flush cache to make sure there's no dirty cachelines of
+TDX private memory left over to the new kernel (when the TDX module
+reports TDX_FEATURES.CLFLUSH_BEFORE_ALLOC as 1 in the global metadata for
+the platform).  The kernel also needs to make sure there's no more TDX
+activity (no SEAMCALL) after cache flush so that no new dirty cachelines
+of TDX private memory are generated.
+
+SME has similar requirement.  SME kexec support uses WBINVD to do the
+cache flush.  WBINVD is able to flush cachelines associated with any
+HKID.  Reuse the WBINVD introduced by SME to flush cache for TDX.
+
+Currently the kernel explicitly checks whether the hardware supports SME
+and only does WBINVD if true.  Instead of adding yet another TDX
+specific check, this series uses a percpu boolean to indicate whether
+WBINVD is needed on that CPU during kexec.
+
+2) Reset TDX private memory using MOVDIR64B
+
+The TDX spec (the aforementioned section) also suggests the kernel
+*should* use MOVDIR64B to clear TDX private page before the kernel
+reuses it as regular one.
+
+However, in reality the situation can be more flexible.  Per TDX 1.5
+base spec ("Table 16.2: Non-ACT Platforms Checks on Memory Reads in Ci
+Mode" and "Table 16.3: Non-ACT Platforms Checks on Memory Reads in Li
+Mode"), the read/write to TDX private memory using shared KeyID without
+integrity check enabled will not poison the memory and cause machine
+check.
+
+Note on the platforms with ACT (Access Control Table), there's no
+integrity check involved thus no machine check is possible to happen due
+to memory read/write using different KeyIDs.
+
+KeyID 0 (TME key) doesn't support integrity check.  This series chooses
+to NOT reset TDX private memory but leave TDX private memory as-is to the
+new kernel.  As mentioned above, in practice it is safe to do so.
+
+3) One limitation
+
+If the kernel has ever enabled TDX, after kexec the new kernel won't be
+able to use TDX anymore.  This is because when the new kernel tries to
+initialize TDX module it will fail on the first SEAMCALL due to the
+module has already been initialized by the old kernel.
+
+More (non-trivial) work will be needed for the new kernel to use TDX,
+e.g., one solution is to just reload the TDX module from the location
+where BIOS loads the TDX module (/boot/efi/EFI/TDX/).  This series
+doesn't cover this, but leave this as future work.
+
+4) Kdump support
+
+This series also enables kdump with TDX, but no special handling is
+needed for crash kexec (except turning on the Kconfig option):
+
+ - kdump kernel uses reserved memory from the old kernel as system ram,
+   and the old kernel will never use the reserved memory as TDX memory.
+ - /proc/vmcore contains TDX private memory pages.  It's meaningless to
+   read them, but it doesn't do any harm either.
+
+5) TDX "partial write machine check" erratum
+
+On the platform with TDX erratum, a partial write (a write transaction
+of less than a cacheline lands at memory controller) to TDX private
+memory poisons that memory, and a subsequent read triggers machine
+check.  On those platforms, the kernel needs to reset TDX private memory
+before jumping to the new kernel otherwise the new kernel may see
+unexpected machine check.
+
+The kernel currently doesn't track which page is TDX private memory.
+It's not trivial to reset TDX private memory.  For simplicity, this
+series simply disables kexec/kdump for such platforms.  This can be
+enhanced in the future.
+
+
+
+Kai Huang (7):
+  x86/kexec: Consolidate relocate_kernel() function parameters
+  x86/sme: Use percpu boolean to control WBINVD during kexec
+  x86/virt/tdx: Mark memory cache state incoherent when making SEAMCALL
+  x86/kexec: Disable kexec/kdump on platforms with TDX partial write
+    erratum
+  x86/virt/tdx: Remove the !KEXEC_CORE dependency
+  x86/virt/tdx: Update the kexec section in the TDX documentation
+  KVM: TDX: Explicitly do WBINVD when no more TDX SEAMCALLs
+
+ Documentation/arch/x86/tdx.rst       | 14 ++++-----
+ arch/x86/Kconfig                     |  1 -
+ arch/x86/include/asm/kexec.h         | 12 ++++++--
+ arch/x86/include/asm/processor.h     |  2 ++
+ arch/x86/include/asm/tdx.h           | 31 +++++++++++++++++++-
+ arch/x86/kernel/cpu/amd.c            | 17 +++++++++++
+ arch/x86/kernel/machine_kexec_64.c   | 43 ++++++++++++++++++++++------
+ arch/x86/kernel/process.c            | 24 +++++++---------
+ arch/x86/kernel/relocate_kernel_64.S | 30 +++++++++++--------
+ arch/x86/kvm/vmx/tdx.c               | 12 ++++++++
+ arch/x86/virt/vmx/tdx/tdx.c          | 16 +++++++++--
+ 11 files changed, 155 insertions(+), 47 deletions(-)
+
+
+base-commit: e180b3a224cb519388c2f61ca7bc1eaf94cec1fb
+-- 
+2.50.0
+
 
