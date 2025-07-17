@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-735091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3E63B08ADF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:38:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81F58B08AE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:38:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 230E617C6F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:38:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33802A63240
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:37:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46FC129A301;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD31B29A9FA;
 	Thu, 17 Jul 2025 10:37:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="LqdXjgPI"
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="B5XDznTV"
 Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8339D29992E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8539B299954
 	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 10:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752748671; cv=none; b=Dg6h/O4eWMMf3LLZ1Piz9j/T4+Kc4nJIpg5NDHUeGGpFrhhUocHGBbb3VmIuo3mgIEBZn1FBc6VsDkh2Z5r0nZTmH+NWMGk7bLzW/jkEXUQ+58UCg4waJrtDsEnr3Guu1RB80aZ6RWcPHJu/Ut73qdt+paFo202yX9uB8e1ZAMQ=
+	t=1752748672; cv=none; b=Jma4NonD/aHJdOZ0FZFRmcdeKYoj6hZj/GKzXCkqo3mIReRkZ8VOT6x5JnB4x6iNLnI/StucNKTDsaaUTD9v44Pvthl883HP7yW6xwObDWu4hBBj0iGdhvfPzRXz1X5X/9nVLH3NZC70dVjeIiE5yNwDOyDGSil5eXoBW4X0BmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752748671; c=relaxed/simple;
-	bh=WTCmEgroE7xLdK+wx5mCjkRcrz5PP871ZaINUraGaHE=;
+	s=arc-20240116; t=1752748672; c=relaxed/simple;
+	bh=RHVmmJ3Pn525XSw4ExIeWxfODiKwnr26/kYhtPeye0c=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=e+LrD61FxkGu+P8zyNXNsSSXd01EHmfJ4v7wVt2wIrjWZJjZfRa7d7tQDkO0xhMFsaPJ37iuH2K3cfqIRpZ1Qpk6ayXLn1onXniD4I2f/ITlh2bJd/zaKUbW9KN//QCbwFWnawavOVEpofrAu7sOP4PYaQu1rlsiR2H5uKR0X0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=LqdXjgPI; arc=none smtp.client-ip=121.127.44.73
+	 MIME-Version; b=rKia29nETra2BNLwMlkPUD/uW3sg7QMfY40/R8qMuJODr2wug/Px6CCZq4uCTfKqsBaGOxsiZ3nHOJzHhd0s0rQInn65gOuSFhmdXKIHMarO0xxeBRpIAeYEOpdjGIpJF7wQRKmhf4UL3tcGuCVBHuoAijYkxdmj2KMd1QDxnOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=B5XDznTV; arc=none smtp.client-ip=121.127.44.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
  h=Content-Transfer-Encoding: MIME-Version: References: In-Reply-To:
  Message-ID: Date: Subject: Cc: To: From; q=dns/txt; s=fe-e1b5cab7be;
- t=1752748668; bh=h+Hw8lQ0o+mOFqv9n5gcTSKBcsWJil+YqWJxNjP2g4Y=;
- b=LqdXjgPIp9+k2/XUyn4eYsNsCpvYWg3FRpk1vuQpQc9S3D+3seKJ77aPm/NdgDYs8jEsNkDKG
- 9FAKQIQTlO+CoGOEzuClG3L2EesOrGjU19WladIaw+bYppsBNY0EmBISaVe5diTTQbArY0tDjCk
- wwzJEWmDRLvg/5wT3WyqWTwnubK/3Zg9I3fSk1lxfPn1wMQn/+Q7FcabrYja4opaMEzm91EYlr2
- HK2KsYl9R7nVZEn84gnP54R6nOxRhQJhxF2D2ogbmb6JVSllblu+ZZjK+2OIQw1y8RYrta2E5uv
- U+JjJqyTPbnFZLHCIKhzSXxCyKVEWZre9eO7rE3h7JMw==
-X-Forward-Email-ID: 6878d2695e51505848fe5f9e
+ t=1752748668; bh=L13MOQ3eusIHZuQBJdx4TLjWdRO8SOVWdxZ9KhOagNc=;
+ b=B5XDznTVgCa+0nvB8MdzDBkaVMhd8TZBuhDVmiwBU4bLZLfwtL4S09j+MDE59+UcTgNoCSlwm
+ Cuw//XjSNqDFXJ9DU3aEE1rPqgq0tpIblT/4j4hd2uFq7+fYKvWeyeKUfiYR2CkIe6j+1yJSnag
+ R3aEAUjkO+WfPjNwmUqWo92SMC2CXNFAn3LWVnj4xKBf9hiIhQRx98WdLGP3WaMUXKXWNTGQSOw
+ sb2yQ+9JVF2E6xExrghMD0WD19AMZEvIr42oxFFRh1xlYwf/j/2h6swsOOOU8C7d3gi7kK5Byy+
+ g+j7M61hrkr3imHLuN6jr9R4HuFb403bNgdktR1lHH9A==
+X-Forward-Email-ID: 6878d26f5e51505848fe5fcf
 X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
  121.127.44.73
 X-Forward-Email-Version: 1.1.6
@@ -59,11 +59,10 @@ Cc: Yao Zi <ziyao@disroot.org>,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v4 1/6] dt-bindings: arm: rockchip: Add Radxa ROCK 2A/2F
-Date: Thu, 17 Jul 2025 10:37:03 +0000
-Message-ID: <20250717103720.2853031-2-jonas@kwiboo.se>
+	Jonas Karlman <jonas@kwiboo.se>
+Subject: [PATCH v4 2/6] arm64: dts: rockchip: Add Radxa ROCK 2A/2F
+Date: Thu, 17 Jul 2025 10:37:04 +0000
+Message-ID: <20250717103720.2853031-3-jonas@kwiboo.se>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250717103720.2853031-1-jonas@kwiboo.se>
 References: <20250717103720.2853031-1-jonas@kwiboo.se>
@@ -78,37 +77,446 @@ Content-Transfer-Encoding: 8bit
 The ROCK 2A and ROCK 2F is a high-performance single board computer
 developed by Radxa, based on the Rockchip RK3528A SoC.
 
-Add devicetree binding documentation for the Radxa ROCK 2A and ROCK 2F
-boards.
+Add initial device tree for the Radxa ROCK 2A and ROCK 2F boards.
 
 Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Tested-by: Yao Zi <ziyao@disroot.org>
+Reviewed-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Tested-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 ---
-v4: No change
-v3: Collect a-b tag
-v2: No change
----
- Documentation/devicetree/bindings/arm/rockchip.yaml | 7 +++++++
- 1 file changed, 7 insertions(+)
+v4: Collect r-b and t-b tags
+v3: Rename led nodes to led-0/led-1 (Chukun Pan)
+v2: Limit sdmmc max-frequency to 100 MHz (Yao Zi)
 
-diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
-index 28db6bd6aa5b..c5690098f2ed 100644
---- a/Documentation/devicetree/bindings/arm/rockchip.yaml
-+++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
-@@ -881,6 +881,13 @@ properties:
-           - const: radxa,rock
-           - const: rockchip,rk3188
- 
-+      - description: Radxa ROCK 2A/2F
-+        items:
-+          - enum:
-+              - radxa,rock-2a
-+              - radxa,rock-2f
-+          - const: rockchip,rk3528
+Schematics:
+- https://dl.radxa.com/rock2/2a/v1.2/radxa_rock_2a_v1.2_schematic.pdf
+- https://dl.radxa.com/rock2/2f/radxa_rock2f_v1.01_schematic.pdf
+---
+ arch/arm64/boot/dts/rockchip/Makefile         |   2 +
+ .../boot/dts/rockchip/rk3528-rock-2.dtsi      | 293 ++++++++++++++++++
+ .../boot/dts/rockchip/rk3528-rock-2a.dts      |  82 +++++
+ .../boot/dts/rockchip/rk3528-rock-2f.dts      |  10 +
+ 4 files changed, 387 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-rock-2.dtsi
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-rock-2a.dts
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-rock-2f.dts
+
+diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
+index 099520962ffb..4cb6106b16f2 100644
+--- a/arch/arm64/boot/dts/rockchip/Makefile
++++ b/arch/arm64/boot/dts/rockchip/Makefile
+@@ -90,6 +90,8 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-sapphire.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-sapphire-excavator.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399pro-rock-pi-n10.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3528-radxa-e20c.dtb
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3528-rock-2a.dtb
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3528-rock-2f.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3562-evb2-v10.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-anbernic-rg-arc-d.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-anbernic-rg-arc-s.dtb
+diff --git a/arch/arm64/boot/dts/rockchip/rk3528-rock-2.dtsi b/arch/arm64/boot/dts/rockchip/rk3528-rock-2.dtsi
+new file mode 100644
+index 000000000000..aedc7ee9ee46
+--- /dev/null
++++ b/arch/arm64/boot/dts/rockchip/rk3528-rock-2.dtsi
+@@ -0,0 +1,293 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +
-       - description: Radxa ROCK Pi 4A/A+/B/B+/C
-         items:
-           - enum:
++/dts-v1/;
++
++#include <dt-bindings/input/input.h>
++#include <dt-bindings/leds/common.h>
++#include <dt-bindings/pwm/pwm.h>
++#include "rk3528.dtsi"
++
++/ {
++	aliases {
++		i2c1 = &i2c1;
++		mmc0 = &sdhci;
++		mmc1 = &sdmmc;
++		serial0 = &uart0;
++	};
++
++	chosen {
++		stdout-path = "serial0:1500000n8";
++	};
++
++	adc-keys {
++		compatible = "adc-keys";
++		io-channels = <&saradc 0>;
++		io-channel-names = "buttons";
++		keyup-threshold-microvolt = <1800000>;
++		poll-interval = <100>;
++
++		button-maskrom {
++			label = "MASKROM";
++			linux,code = <KEY_SETUP>;
++			press-threshold-microvolt = <0>;
++		};
++	};
++
++	leds: leds {
++		compatible = "gpio-leds";
++		pinctrl-names = "default";
++		pinctrl-0 = <&state_led_b>;
++
++		led-0 {
++			color = <LED_COLOR_ID_BLUE>;
++			default-state = "on";
++			function = LED_FUNCTION_HEARTBEAT;
++			gpios = <&gpio1 RK_PA3 GPIO_ACTIVE_HIGH>;
++			linux,default-trigger = "heartbeat";
++		};
++	};
++
++	vdd_0v9: regulator-0v9-vdd {
++		compatible = "regulator-fixed";
++		regulator-name = "vdd_0v9";
++		regulator-always-on;
++		regulator-boot-on;
++		regulator-min-microvolt = <900000>;
++		regulator-max-microvolt = <900000>;
++		vin-supply = <&vcc5v0_sys>;
++	};
++
++	vcc_ddr: regulator-1v1-vcc-ddr {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc_ddr";
++		regulator-always-on;
++		regulator-boot-on;
++		regulator-min-microvolt = <1100000>;
++		regulator-max-microvolt = <1100000>;
++		vin-supply = <&vcc5v0_sys>;
++	};
++
++	vcc_1v8: regulator-1v8-vcc {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc_1v8";
++		regulator-always-on;
++		regulator-boot-on;
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		vin-supply = <&vcc_3v3>;
++	};
++
++	vcc_3v3: regulator-3v3-vcc {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc_3v3";
++		regulator-always-on;
++		regulator-boot-on;
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		vin-supply = <&vcc5v0_sys>;
++	};
++
++	vcc_wifi: regulator-3v3-vcc-wifi {
++		compatible = "regulator-fixed";
++		enable-active-high;
++		gpios = <&gpio4 RK_PA4 GPIO_ACTIVE_HIGH>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&usb_wifi_pwr>;
++		regulator-name = "vcc_wifi";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		vin-supply = <&vcc_3v3>;
++	};
++
++	vcc5v0_sys: regulator-5v0-vcc-sys {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc5v0_sys";
++		regulator-always-on;
++		regulator-boot-on;
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++	};
++
++	vcc5v0_usb20: regulator-5v0-vcc-usb20 {
++		compatible = "regulator-fixed";
++		enable-active-high;
++		gpios = <&gpio0 RK_PA1 GPIO_ACTIVE_HIGH>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&usb_host_en>;
++		regulator-name = "vcc5v0_usb20";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		vin-supply = <&vcc5v0_sys>;
++	};
++
++	vccio_sd: regulator-vccio-sd {
++		compatible = "regulator-gpio";
++		gpios = <&gpio1 RK_PC1 GPIO_ACTIVE_HIGH>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&sdmmc_vol_ctrl_h>;
++		regulator-name = "vccio_sd";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <3300000>;
++		states = <1800000 0x0>, <3300000 0x1>;
++		vin-supply = <&vcc5v0_sys>;
++	};
++
++	vdd_arm: regulator-vdd-arm {
++		compatible = "pwm-regulator";
++		pwms = <&pwm1 0 5000 PWM_POLARITY_INVERTED>;
++		pwm-supply = <&vcc5v0_sys>;
++		regulator-name = "vdd_arm";
++		regulator-always-on;
++		regulator-boot-on;
++		regulator-min-microvolt = <746000>;
++		regulator-max-microvolt = <1201000>;
++		regulator-settling-time-up-us = <250>;
++	};
++
++	vdd_logic: regulator-vdd-logic {
++		compatible = "pwm-regulator";
++		pwms = <&pwm2 0 5000 PWM_POLARITY_INVERTED>;
++		pwm-supply = <&vcc5v0_sys>;
++		regulator-name = "vdd_logic";
++		regulator-always-on;
++		regulator-boot-on;
++		regulator-min-microvolt = <705000>;
++		regulator-max-microvolt = <1006000>;
++		regulator-settling-time-up-us = <250>;
++	};
++
++	rfkill {
++		compatible = "rfkill-gpio";
++		label = "rfkill-wlan";
++		pinctrl-names = "default";
++		pinctrl-0 = <&wifi_reg_on_h>;
++		radio-type = "wlan";
++		shutdown-gpios = <&gpio1 RK_PA6 GPIO_ACTIVE_HIGH>;
++	};
++};
++
++&cpu0 {
++	cpu-supply = <&vdd_arm>;
++};
++
++&cpu1 {
++	cpu-supply = <&vdd_arm>;
++};
++
++&cpu2 {
++	cpu-supply = <&vdd_arm>;
++};
++
++&cpu3 {
++	cpu-supply = <&vdd_arm>;
++};
++
++&gpu {
++	mali-supply = <&vdd_logic>;
++	status = "okay";
++};
++
++&i2c1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c1m0_xfer>;
++	status = "okay";
++
++	eeprom@50 {
++		compatible = "belling,bl24c16a", "atmel,24c16";
++		reg = <0x50>;
++		pagesize = <16>;
++		read-only;
++		vcc-supply = <&vcc_3v3>;
++	};
++};
++
++&pinctrl {
++	bluetooth {
++		bt_wake_host_h: bt-wake-host-h {
++			rockchip,pins = <1 RK_PC2 RK_FUNC_GPIO &pcfg_pull_down>;
++		};
++
++		host_wake_bt_h: host-wake-bt-h {
++			rockchip,pins = <1 RK_PA5 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
++	leds {
++		state_led_b: state-led-b {
++			rockchip,pins = <1 RK_PA3 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
++	sdmmc {
++		sdmmc_vol_ctrl_h: sdmmc-vol-ctrl-h {
++			rockchip,pins = <1 RK_PC1 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
++	usb {
++		usb_host_en: usb-host-en {
++			rockchip,pins = <0 RK_PA1 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
++	wifi {
++		usb_wifi_pwr: usb-wifi-pwr {
++			rockchip,pins = <4 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++
++		wifi_reg_on_h: wifi-reg-on-h {
++			rockchip,pins = <1 RK_PA6 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++
++		wifi_wake_host_h: wifi-wake-host-h {
++			rockchip,pins = <1 RK_PA7 RK_FUNC_GPIO &pcfg_pull_down>;
++		};
++	};
++};
++
++&pwm1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pwm1m0_pins>;
++	status = "okay";
++};
++
++&pwm2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pwm2m0_pins>;
++	status = "okay";
++};
++
++&saradc {
++	vref-supply = <&vcc_1v8>;
++	status = "okay";
++};
++
++&sdhci {
++	bus-width = <8>;
++	cap-mmc-highspeed;
++	mmc-hs200-1_8v;
++	no-sd;
++	no-sdio;
++	non-removable;
++	vmmc-supply = <&vcc_3v3>;
++	vqmmc-supply = <&vcc_1v8>;
++	status = "okay";
++};
++
++&sdmmc {
++	bus-width = <4>;
++	cap-mmc-highspeed;
++	cap-sd-highspeed;
++	disable-wp;
++	max-frequency = <100000000>;
++	sd-uhs-sdr104;
++	vmmc-supply = <&vcc_3v3>;
++	vqmmc-supply = <&vccio_sd>;
++	status = "okay";
++};
++
++&uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0m0_xfer>;
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/rockchip/rk3528-rock-2a.dts b/arch/arm64/boot/dts/rockchip/rk3528-rock-2a.dts
+new file mode 100644
+index 000000000000..c03ae1dd3456
+--- /dev/null
++++ b/arch/arm64/boot/dts/rockchip/rk3528-rock-2a.dts
+@@ -0,0 +1,82 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++
++/dts-v1/;
++
++#include "rk3528-rock-2.dtsi"
++
++/ {
++	model = "Radxa ROCK 2A";
++	compatible = "radxa,rock-2a", "rockchip,rk3528";
++
++	aliases {
++		ethernet0 = &gmac1;
++	};
++
++	vcc5v0_usb30_otg: regulator-5v0-vcc-usb30-otg {
++		compatible = "regulator-fixed";
++		enable-active-high;
++		gpios = <&gpio1 RK_PC3 GPIO_ACTIVE_HIGH>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&usb_otg_en>;
++		regulator-name = "vcc5v0_usb30_otg";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		vin-supply = <&vcc5v0_sys>;
++	};
++};
++
++&gmac1 {
++	clock_in_out = "output";
++	phy-handle = <&rgmii_phy>;
++	phy-mode = "rgmii-id";
++	phy-supply = <&vcc_3v3>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&rgmii_miim>, <&rgmii_tx_bus2>, <&rgmii_rx_bus2>,
++		    <&rgmii_rgmii_clk>, <&rgmii_rgmii_bus>;
++	status = "okay";
++};
++
++&leds {
++	pinctrl-names = "default";
++	pinctrl-0 = <&state_led_b>, <&sys_led_g>;
++
++	led-1 {
++		color = <LED_COLOR_ID_GREEN>;
++		default-state = "on";
++		function = LED_FUNCTION_STATUS;
++		gpios = <&gpio3 RK_PC1 GPIO_ACTIVE_LOW>;
++		linux,default-trigger = "default-on";
++	};
++};
++
++&mdio1 {
++	rgmii_phy: ethernet-phy@1 {
++		compatible = "ethernet-phy-ieee802.3-c22";
++		reg = <0x1>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&gmac1_rstn_l>;
++		reset-assert-us = <20000>;
++		reset-deassert-us = <100000>;
++		reset-gpios = <&gpio4 RK_PC2 GPIO_ACTIVE_LOW>;
++	};
++};
++
++&pinctrl {
++	ethernet {
++		gmac1_rstn_l: gmac1-rstn-l {
++			rockchip,pins = <4 RK_PC2 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
++	leds {
++		sys_led_g: sys-led-g {
++			rockchip,pins = <3 RK_PC1 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
++	usb {
++		usb_otg_en: usb-otg-en {
++			rockchip,pins = <1 RK_PC3 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++};
+diff --git a/arch/arm64/boot/dts/rockchip/rk3528-rock-2f.dts b/arch/arm64/boot/dts/rockchip/rk3528-rock-2f.dts
+new file mode 100644
+index 000000000000..3e2b9b685cb2
+--- /dev/null
++++ b/arch/arm64/boot/dts/rockchip/rk3528-rock-2f.dts
+@@ -0,0 +1,10 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++
++/dts-v1/;
++
++#include "rk3528-rock-2.dtsi"
++
++/ {
++	model = "Radxa ROCK 2F";
++	compatible = "radxa,rock-2f", "rockchip,rk3528";
++};
 -- 
 2.50.1
 
