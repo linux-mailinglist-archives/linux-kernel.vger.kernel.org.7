@@ -1,363 +1,354 @@
-Return-Path: <linux-kernel+bounces-734934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69554B0887C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:54:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F41AB08879
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:53:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C90C1C226ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:53:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74292A6197A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B773F285C8A;
-	Thu, 17 Jul 2025 08:52:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06CCF28642E;
+	Thu, 17 Jul 2025 08:52:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JoCMg+TT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="xWHrAi2p"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC428285C83;
-	Thu, 17 Jul 2025 08:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815CE287253;
+	Thu, 17 Jul 2025 08:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752742342; cv=none; b=uUvOIfbj+wdk+brXBo6ks36+c7p2ovCGm0e7Wcc1ZOdjxbK8QjoexV2iefyNw6IgCPlHZhtDsOUnZlEY9eAJmeR/hbJEgzFJrswXW3qbaTpnzqRauAdrXvm0WG3fCC944pLG+Jv1wY+RsWHmQhmKv/iSmOK26V4VUwulJRApH9Q=
+	t=1752742374; cv=none; b=bVK6BrndGdY5bZJhaRpmqc5yKShZnK+yufZDgc5dJnh8XdswoYEIUzZYaRpCQLXvY83PrYybPt1yf65pUY4TQHhX+otUQWwnxI9ILjrtgFXDpBGCvc56aLV3FXGX1nLg6Y5/8dJ7OQy9dsVzG3M4zCAZRFNFhTXV2Rn4gPsBMD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752742342; c=relaxed/simple;
-	bh=zQ2q2p+X54vWSXTSlQEJoWNnQD11CBMqUstKSQYiAt4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=C2l7NmVYgCE0E7Vt3IvieJtEWtM8yXZ18P7p+gwnOsIHNgsnsfAvpLCNqvEPejM0tHu+/x81MqNBkJN584gxrPbq7mFXPv1q11rg/igJBEuBZ9m8JJp438w1hHxHwc/Dcs2v6/AXGEdhvRko+iR0ecacwiCBSCshdrUyh4h+WPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JoCMg+TT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D362C4CEE3;
-	Thu, 17 Jul 2025 08:52:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752742341;
-	bh=zQ2q2p+X54vWSXTSlQEJoWNnQD11CBMqUstKSQYiAt4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=JoCMg+TTtDg4BotHO9UOOsJREERXFV+0aSeXwYq7PuqT8qNWbsWkh0MqH5QXD5f2p
-	 5t3/jOx85EbSjtUnnOSAf4GGDIqG+BBjUFoqCYj9X25R/xjf9EF3mNYQzM/DJA3aWP
-	 lnwanVqpuNb78OMA7nQbS2fjhqF6EOvMewJJRqgxWCrvyhz7dz4JASsZfEGghGdvRT
-	 2hZ7GSeT+pVKke0SDsKI0NElrPNMRyJ/cRDy6YJSr8P9TOhT7+73lAxtLmsJQMBjOF
-	 0/yTNdaDflLDzXKIi65uAU6IG0Rd2sHMOBg415tcTHSMaoweMBN3kx1oVZHrffJbwX
-	 NbTxVTcu4VCDA==
-From: Kees Cook <kees@kernel.org>
-To: David Gow <davidgow@google.com>
-Cc: Kees Cook <kees@kernel.org>,
-	Rae Moar <rmoar@google.com>,
-	Tamir Duberstein <tamird@gmail.com>,
-	Eric Biggers <ebiggers@kernel.org>,
-	"Steven Rostedt (Google)" <rostedt@goodmis.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Petr Mladek <pmladek@suse.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH] seq_buf: Introduce KUnit tests
-Date: Thu, 17 Jul 2025 01:52:12 -0700
-Message-Id: <20250717085156.work.363-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1752742374; c=relaxed/simple;
+	bh=ytAsy/vavJPcE7Vcm9shahUUbwVlqhcR3CZxTdfJH6Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ReB9jF/vakuCoYPPjBuo41eXIUn3Wv4aA3MdeksqrvEaN41tfX9VC7Uabm7mfIf4g6tjrkgZkv3Q0B5SzdoRkDVTPGr8O/5mYR3NKGkhjUi0vzDPEqTYrOCJVrgDRFi0Ajf7gKHBSWyjcBVFfvUmreBkHBa0AzCLJHUr8pYNzuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=xWHrAi2p; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1752742362; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=izEHRbUDFXVD/qrVi0rkduqZr+AH5if+rSaP/Tz+aXs=;
+	b=xWHrAi2pt/8dyichi2lcqMO91azBlRGT0kxxC+KCNS1F6J+8TXvgr2BfGmHUjAxjkvnT/vDE7Tc8u7wc5uPm+UsNLRjynQSUGrnN1FMfVAvknqOvKsUmlwGhVhEBE9kIRR/QuZL+DCIJIViggdehMXiCzm12HANFUk7rHdzb5vQ=
+Received: from 30.246.162.71(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0Wj7R5AM_1752742357 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 17 Jul 2025 16:52:39 +0800
+Message-ID: <e932c232-bf54-4acb-b49d-e72bbb98c1ea@linux.alibaba.com>
+Date: Thu, 17 Jul 2025 16:52:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9135; i=kees@kernel.org; h=from:subject:message-id; bh=zQ2q2p+X54vWSXTSlQEJoWNnQD11CBMqUstKSQYiAt4=; b=owGbwMvMwCVmps19z/KJym7G02pJDBkVO/cYHJqe3Jw8+2GP87n9+sInZFxXSMrdWnBmuel5X bt3MQ9/dZSyMIhxMciKKbIE2bnHuXi8bQ93n6sIM4eVCWQIAxenAEzkwVZGhr6GS6JR/IJqEl4P hJ9I35R9cVs2bknixh2L13Lw19idecLwm2X52mVGt5RXvt05L2StysZzOybtEM5VvRIybWamY+L sXm4A
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v19 0/2] ACPI: APEI: fix potential hardlockup due to
+ infinite SEA excepction loop
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: catalin.marinas@arm.com, sudeep.holla@arm.com, guohanjun@huawei.com,
+ lpieralisi@kernel.org, linux-acpi@vger.kernel.org, yazen.ghannam@amd.com,
+ mark.rutland@arm.com, mingo@redhat.com, robin.murphy@arm.com,
+ Jonathan.Cameron@huawei.com, bp@alien8.de,
+ linux-arm-kernel@lists.infradead.org, wangkefeng.wang@huawei.com,
+ tanxiaofei@huawei.com, mawupeng1@huawei.com, tony.luck@intel.com,
+ linmiaohe@huawei.com, naoya.horiguchi@nec.com, james.morse@arm.com,
+ tongtiangen@huawei.com, gregkh@linuxfoundation.org, will@kernel.org,
+ jarkko@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ akpm@linux-foundation.org, linux-edac@vger.kernel.org, x86@kernel.org,
+ justin.he@arm.com, ardb@kernel.org, ying.huang@linux.alibaba.com,
+ ashish.kalra@amd.com, baolin.wang@linux.alibaba.com, tglx@linutronix.de,
+ dave.hansen@linux.intel.com, lenb@kernel.org, hpa@zytor.com,
+ robert.moore@intel.com, lvying6@huawei.com, xiexiuqi@huawei.com,
+ zhuo.song@linux.alibaba.com
+References: <20250714114212.31660-1-xueshuai@linux.alibaba.com>
+ <CAJZ5v0gmuBwCXovP7WvmUss7midrJdPXNDCbhTV0tCWMb_V2ZQ@mail.gmail.com>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <CAJZ5v0gmuBwCXovP7WvmUss7midrJdPXNDCbhTV0tCWMb_V2ZQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Add KUnit tests for the seq_buf API to ensure its correctness and
-prevent future regressions.
 
-The tests cover the following functions:
-- seq_buf_init()
-- DECLARE_SEQ_BUF()
-- seq_buf_clear()
-- seq_buf_puts()
-- seq_buf_putc()
-- seq_buf_printf()
-- seq_buf_get_buf()
-- seq_buf_commit()
 
-$ tools/testing/kunit/kunit.py run seq_buf
-=================== seq_buf (9 subtests) ===================
-[PASSED] seq_buf_init_test
-[PASSED] seq_buf_declare_test
-[PASSED] seq_buf_clear_test
-[PASSED] seq_buf_puts_test
-[PASSED] seq_buf_puts_overflow_test
-[PASSED] seq_buf_putc_test
-[PASSED] seq_buf_printf_test
-[PASSED] seq_buf_printf_overflow_test
-[PASSED] seq_buf_get_buf_commit_test
-===================== [PASSED] seq_buf =====================
+在 2025/7/17 03:09, Rafael J. Wysocki 写道:
+> On Mon, Jul 14, 2025 at 1:42 PM Shuai Xue <xueshuai@linux.alibaba.com> wrote:
+>>
+>> Dear maintainer:
+>>
+>> I am writing to respectfully request your review and consideration for merging
+>> this patch series, which addresses potential hardlockup due to infinite
+>> SEA excepction loop ( see bellow for details).
+>>
+>> As noted by @Catalin,
+>>
+>>> James Morse is listed as reviewer of the ACPI APEI code but he's busy
+>>> with resctrl/MPAM. Adding Lorenzo, Sudeep and Hanjun as arm64 ACPI
+>>> maintainers, hopefully they can help.
+>>
+>> This patch series has undergone extensive review through 19 iterations Received
+>> 13 'Reviewed-by' tags from various reviewers. Notably includes review approval
+>> from arm64 ACPI maintainer Hanjun Guo.
+>>
+>> The patches have been thoroughly tested and refined based on community feedback.
+>> I believe they are ready for integration into the mainline kernel.
+>>
+>> I would greatly appreciate your time in reviewing these changes and
+>> providing your ack if you find them acceptable for merging.
+>>
+>> Thank you for your continued support and maintenance of the kernel.
+>>
+>> changes since last v18:
+>> - add reviewed-by tag for patch 1-2 from Hanjun
+>>
+>> no code changes since last v18:
+>> - drop a mm/hwpoison patch which is merged into mainline
+>>
+>> changes singce v17:
+>> - rebase to Linux 6.13-rc7 with no functional changes
+>> - add reviewed-by tag for patch 1-3 from Jane Chu
+>> - add reviewed-by tag for patch 3 from Yazen
+>>
+>> changes singce v16:
+>> - add reviewed-by tag for patch 1 and patch 2 from Yazen
+>> - rewrite warning message for force kill (per Yazen)
+>> - warn with dev_err in ghes (per Jarkko)
+>> - add return value -ENXIO in memory_failure comments  (per Yazen)
+>> - Link: https://lore.kernel.org/lkml/20241104015430.98599-1-xueshuai@linux.alibaba.com/
+>>
+>> changes singce v15:
+>> - add HW_ERR and GHES_PFX prefix per Yazen
+>>
+>> changes since v14:
+>> - add reviewed-by tags from Jarkko and Jonathan
+>> - remove local variable and use twcb->pfn
+>>
+>> changes since v13:
+>> - add reviewed-by tag from Jarkko
+>> - rename task_work to ghes_task_work (per Jarkko)
+>>
+>> changes since v12:
+>> - tweak error message for force kill (per Jarkko)
+>> - fix comments style (per Jarkko)
+>> - fix commit log typo (per Jarko)
+>>
+>> changes since v11:
+>> - rebase to Linux 6.11-rc6
+>> - fix grammer and typo in commit log (per Borislav)
+>> - remove `sync_` perfix of `sync_task_work`  (per Borislav)
+>> - comments flags and description of `task_work`  (per Borislav)
+>>
+>> changes since v10:
+>> - rebase to v6.8-rc2
+>>
+>> changes since v9:
+>> - split patch 2 to address exactly one issue in one patch (per Borislav)
+>> - rewrite commit log according to template (per Borislav)
+>> - pickup reviewed-by tag of patch 1 from James Morse
+>> - alloc and free twcb through gen_pool_{alloc, free) (Per James)
+>> - rewrite cover letter
+>>
+>> changes since v8:
+>> - remove the bug fix tag of patch 2 (per Jarkko Sakkinen)
+>> - remove the declaration of memory_failure_queue_kick (per Naoya Horiguchi)
+>> - rewrite the return value comments of memory_failure (per Naoya Horiguchi)
+>>
+>> changes since v7:
+>> - rebase to Linux v6.6-rc2 (no code changed)
+>> - rewritten the cover letter to explain the motivation of this patchset
+>>
+>> changes since v6:
+>> - add more explicty error message suggested by Xiaofei
+>> - pick up reviewed-by tag from Xiaofei
+>> - pick up internal reviewed-by tag from Baolin
+>>
+>> changes since v5 by addressing comments from Kefeng:
+>> - document return value of memory_failure()
+>> - drop redundant comments in call site of memory_failure()
+>> - make ghes_do_proc void and handle abnormal case within it
+>> - pick up reviewed-by tag from Kefeng Wang
+>>
+>> changes since v4 by addressing comments from Xiaofei:
+>> - do a force kill only for abnormal sync errors
+>>
+>> changes since v3 by addressing comments from Xiaofei:
+>> - do a force kill for abnormal memory failure error such as invalid PA,
+>> unexpected severity, OOM, etc
+>> - pcik up tested-by tag from Ma Wupeng
+>>
+>> changes since v2 by addressing comments from Naoya:
+>> - rename mce_task_work to sync_task_work
+>> - drop ACPI_HEST_NOTIFY_MCE case in is_hest_sync_notify()
+>> - add steps to reproduce this problem in cover letter
+>>
+>> changes since v1:
+>> - synchronous events by notify type
+>> - Link: https://lore.kernel.org/lkml/20221206153354.92394-3-xueshuai@linux.alibaba.com/
+>>
+>> ## Cover Letter
+>>
+>> There are two major types of uncorrected recoverable (UCR) errors :
+>>
+>> - Synchronous error: The error is detected and raised at the point of the
+>>    consumption in the execution flow, e.g. when a CPU tries to access
+>>    a poisoned cache line. The CPU will take a synchronous error exception
+>>    such as Synchronous External Abort (SEA) on Arm64 and Machine Check
+>>    Exception (MCE) on X86. OS requires to take action (for example, offline
+>>    failure page/kill failure thread) to recover this uncorrectable error.
+>>
+>> - Asynchronous error: The error is detected out of processor execution
+>>    context, e.g. when an error is detected by a background scrubber. Some data
+>>    in the memory are corrupted. But the data have not been consumed. OS is
+>>    optional to take action to recover this uncorrectable error.
+>>
+>> Currently, both synchronous and asynchronous error use
+>> memory_failure_queue() to schedule memory_failure() exectute in kworker
+>> context. As a result, when a user-space process is accessing a poisoned
+>> data, a data abort is taken and the memory_failure() is executed in the
+>> kworker context:
+>>
+>>    - will send wrong si_code by SIGBUS signal in early_kill mode, and
+>>    - can not kill the user-space in some cases resulting a synchronous
+>>      error infinite loop
+>>
+>> Issue 1: send wrong si_code in early_kill mode
+>>
+>> Since commit a70297d22132 ("ACPI: APEI: set memory failure flags as
+>> MF_ACTION_REQUIRED on synchronous events")', the flag MF_ACTION_REQUIRED
+>> could be used to determine whether a synchronous exception occurs on
+>> ARM64 platform.  When a synchronous exception is detected, the kernel is
+>> expected to terminate the current process which has accessed poisoned
+>> page. This is done by sending a SIGBUS signal with an error code
+>> BUS_MCEERR_AR, indicating an action-required machine check error on
+>> read.
+>>
+>> However, when kill_proc() is called to terminate the processes who have
+>> the poisoned page mapped, it sends the incorrect SIGBUS error code
+>> BUS_MCEERR_AO because the context in which it operates is not the one
+>> where the error was triggered.
+>>
+>> To reproduce this problem:
+>>
+>>    # STEP1: enable early kill mode
+>>    #sysctl -w vm.memory_failure_early_kill=1
+>>    vm.memory_failure_early_kill = 1
+>>
+>>    # STEP2: inject an UCE error and consume it to trigger a synchronous error
+>>    #einj_mem_uc single
+>>    0: single   vaddr = 0xffffb0d75400 paddr = 4092d55b400
+>>    injecting ...
+>>    triggering ...
+>>    signal 7 code 5 addr 0xffffb0d75000
+>>    page not present
+>>    Test passed
+>>
+>> The si_code (code 5) from einj_mem_uc indicates that it is BUS_MCEERR_AO
+>> error and it is not fact.
+>>
+>> To fix it, queue memory_failure() as a task_work so that it runs in
+>> the context of the process that is actually consuming the poisoned data.
+>>
+>> After this patch set:
+>>
+>>    # STEP1: enable early kill mode
+>>    #sysctl -w vm.memory_failure_early_kill=1
+>>    vm.memory_failure_early_kill = 1
+>>
+>>    # STEP2: inject an UCE error and consume it to trigger a synchronous error
+>>    #einj_mem_uc single
+>>    0: single   vaddr = 0xffffb0d75400 paddr = 4092d55b400
+>>    injecting ...
+>>    triggering ...
+>>    signal 7 code 4 addr 0xffffb0d75000
+>>    page not present
+>>    Test passed
+>>
+>> The si_code (code 4) from einj_mem_uc indicates that it is BUS_MCEERR_AR
+>> error as we expected.
+>>
+>> Issue 2: a synchronous error infinite loop due to memory_failure() failed
+>>
+>> If a user-space process, e.g. devmem, a poisoned page which has been set
+>> HWPosion flag, kill_accessing_process() is called to send SIGBUS to the
+>> current processs with error info. Because the memory_failure() is
+>> executed in the kworker contex, it will just do nothing but return
+>> EFAULT. So, devmem will access the posioned page and trigger an
+>> excepction again, resulting in a synchronous error infinite loop. Such
+>> loop may cause platform firmware to exceed some threshold and reboot
+>> when Linux could have recovered from this error.
+>>
+>> To reproduce this problem:
+>>
+>>    # STEP 1: inject an UCE error, and kernel will set HWPosion flag for related page
+>>    #einj_mem_uc single
+>>    0: single   vaddr = 0xffffb0d75400 paddr = 4092d55b400
+>>    injecting ...
+>>    triggering ...
+>>    signal 7 code 4 addr 0xffffb0d75000
+>>    page not present
+>>    Test passed
+>>
+>>    # STEP 2: access the same page and it will trigger a synchronous error infinite loop
+>>    devmem 0x4092d55b400
+>>
+>> To fix it, if memory_failure() failed, perform a force kill to current process.
+>>
+>> Issue 3: a synchronous error infinite loop due to no memory_failure() queued
+>>
+>> No memory_failure() work is queued unless all bellow preconditions check passed:
+>>
+>> - `if (!(mem_err->validation_bits & CPER_MEM_VALID_PA))` in ghes_handle_memory_failure()
+>> - `if (flags == -1)` in ghes_handle_memory_failure()
+>> - `if (!IS_ENABLED(CONFIG_ACPI_APEI_MEMORY_FAILURE))` in ghes_do_memory_failure()
+>> - `if (!pfn_valid(pfn) && !arch_is_platform_page(physical_addr)) ` in ghes_do_memory_failure()
+>>
+>> If the preconditions are not passed, the user-space process will trigger SEA again.
+>> This loop can potentially exceed the platform firmware threshold or even
+>> trigger a kernel hard lockup, leading to a system reboot.
+>>
+>> To fix it, if no memory_failure() queued, perform a force kill to current process.
+>>
+>> And the the memory errors triggered in kernel-mode[5], also relies on this
+>> patchset to kill the failure thread.
+>>
+>> Lv Ying and XiuQi from Huawei also proposed to address similar problem[2][4].
+>> Acknowledge to discussion with them.
+>>
+>> [1] Add ARMv8 RAS virtualization support in QEMU https://patchew.org/QEMU/20200512030609.19593-1-gengdongjiu@huawei.com/
+>> [2] https://lore.kernel.org/lkml/20221205115111.131568-3-lvying6@huawei.com/
+>> [3] https://lkml.kernel.org/r/20220914064935.7851-1-xueshuai@linux.alibaba.com
+>> [4] https://lore.kernel.org/lkml/20221209095407.383211-1-lvying6@huawei.com/
+>> [5] https://patchwork.kernel.org/project/linux-arm-kernel/cover/20240528085915.1955987-1-tongtiangen@huawei.com/
+>>
+>> Shuai Xue (2):
+>>    ACPI: APEI: send SIGBUS to current task if synchronous memory error
+>>      not recovered
+>>    ACPI: APEI: handle synchronous exceptions in task work
+>>
+>>   drivers/acpi/apei/ghes.c | 88 +++++++++++++++++++++++++---------------
+>>   include/acpi/ghes.h      |  3 --
+>>   include/linux/mm.h       |  1 -
+>>   mm/memory-failure.c      | 13 ------
+>>   4 files changed, 55 insertions(+), 50 deletions(-)
+>>
+>> --
+> 
+> Both patches applied as 6.17 material with some minor edits in the changelogs.
+> 
+> Thanks!
 
-Signed-off-by: Kees Cook <kees@kernel.org>
----
-I used an LLM to produce this; it did pretty well, but I had to help it
-get the Kconfig and make targets in the right places, and I tweaked some
-of the edge cases and added a bit more (perhaps redundant) state checking.
+Hi, Rafael,
 
-Cc: David Gow <davidgow@google.com>
-Cc: Rae Moar <rmoar@google.com>
-Cc: Tamir Duberstein <tamird@gmail.com>
-Cc: Eric Biggers <ebiggers@kernel.org>
-Cc: "Steven Rostedt (Google)" <rostedt@goodmis.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
----
- lib/Kconfig.debug         |   9 ++
- lib/tests/Makefile        |   1 +
- lib/tests/seq_buf_kunit.c | 205 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 215 insertions(+)
- create mode 100644 lib/tests/seq_buf_kunit.c
+After nearly three years and 19 revisions, this patch series has finally
+been merged. I am deeply grateful to all 13 reviewers for their
+professional feedback and valuable suggestions throughout the process.
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index cf05bf1df983..048efc3183d5 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -2470,6 +2470,15 @@ config SCANF_KUNIT_TEST
- 
- 	  If unsure, say N.
- 
-+config SEQ_BUF_KUNIT_TEST
-+	tristate "KUnit test for seq_buf" if !KUNIT_ALL_TESTS
-+	depends on KUNIT
-+	default KUNIT_ALL_TESTS
-+	help
-+	  This builds unit tests for the seq_buf library.
-+
-+	  If unsure, say N.
-+
- config STRING_KUNIT_TEST
- 	tristate "KUnit test string functions at runtime" if !KUNIT_ALL_TESTS
- 	depends on KUNIT
-diff --git a/lib/tests/Makefile b/lib/tests/Makefile
-index 84b15c986b8c..fa6d728a8b5b 100644
---- a/lib/tests/Makefile
-+++ b/lib/tests/Makefile
-@@ -36,6 +36,7 @@ obj-$(CONFIG_OVERFLOW_KUNIT_TEST) += overflow_kunit.o
- obj-$(CONFIG_PRINTF_KUNIT_TEST) += printf_kunit.o
- obj-$(CONFIG_RANDSTRUCT_KUNIT_TEST) += randstruct_kunit.o
- obj-$(CONFIG_SCANF_KUNIT_TEST) += scanf_kunit.o
-+obj-$(CONFIG_SEQ_BUF_KUNIT_TEST) += seq_buf_kunit.o
- obj-$(CONFIG_SIPHASH_KUNIT_TEST) += siphash_kunit.o
- obj-$(CONFIG_SLUB_KUNIT_TEST) += slub_kunit.o
- obj-$(CONFIG_TEST_SORT) += test_sort.o
-diff --git a/lib/tests/seq_buf_kunit.c b/lib/tests/seq_buf_kunit.c
-new file mode 100644
-index 000000000000..74648dbda13f
---- /dev/null
-+++ b/lib/tests/seq_buf_kunit.c
-@@ -0,0 +1,205 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * KUnit tests for the seq_buf API
-+ *
-+ * Copyright (C) 2025, Google LLC.
-+ */
-+
-+#include <kunit/test.h>
-+#include <linux/seq_buf.h>
-+
-+static void seq_buf_init_test(struct kunit *test)
-+{
-+	char buf[32];
-+	struct seq_buf s;
-+
-+	seq_buf_init(&s, buf, sizeof(buf));
-+
-+	KUNIT_EXPECT_EQ(test, s.size, 32);
-+	KUNIT_EXPECT_EQ(test, s.len, 0);
-+	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-+	KUNIT_EXPECT_EQ(test, seq_buf_buffer_left(&s), 32);
-+	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 0);
-+	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "");
-+}
-+
-+static void seq_buf_declare_test(struct kunit *test)
-+{
-+	DECLARE_SEQ_BUF(s, 24);
-+
-+	KUNIT_EXPECT_EQ(test, s.size, 24);
-+	KUNIT_EXPECT_EQ(test, s.len, 0);
-+	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-+	KUNIT_EXPECT_EQ(test, seq_buf_buffer_left(&s), 24);
-+	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 0);
-+	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "");
-+}
-+
-+static void seq_buf_clear_test(struct kunit *test)
-+{
-+	DECLARE_SEQ_BUF(s, 128);
-+
-+	seq_buf_puts(&s, "hello");
-+	KUNIT_EXPECT_EQ(test, s.len, 5);
-+	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-+	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "hello");
-+
-+	seq_buf_clear(&s);
-+
-+	KUNIT_EXPECT_EQ(test, s.len, 0);
-+	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-+	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "");
-+}
-+
-+static void seq_buf_puts_test(struct kunit *test)
-+{
-+	DECLARE_SEQ_BUF(s, 16);
-+
-+	seq_buf_puts(&s, "hello");
-+	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 5);
-+	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-+	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "hello");
-+
-+	seq_buf_puts(&s, " world");
-+	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 11);
-+	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-+	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "hello world");
-+}
-+
-+static void seq_buf_puts_overflow_test(struct kunit *test)
-+{
-+	DECLARE_SEQ_BUF(s, 10);
-+
-+	seq_buf_puts(&s, "123456789");
-+	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-+	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 9);
-+
-+	seq_buf_puts(&s, "0");
-+	KUNIT_EXPECT_TRUE(test, seq_buf_has_overflowed(&s));
-+	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 10);
-+	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "123456789");
-+
-+	seq_buf_clear(&s);
-+	KUNIT_EXPECT_EQ(test, s.len, 0);
-+	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-+	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "");
-+}
-+
-+static void seq_buf_putc_test(struct kunit *test)
-+{
-+	DECLARE_SEQ_BUF(s, 4);
-+
-+	seq_buf_putc(&s, 'a');
-+	seq_buf_putc(&s, 'b');
-+	seq_buf_putc(&s, 'c');
-+
-+	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 3);
-+	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-+	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "abc");
-+
-+	seq_buf_putc(&s, 'd');
-+	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 4);
-+	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-+	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "abc");
-+
-+	seq_buf_putc(&s, 'e');
-+	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 4);
-+	KUNIT_EXPECT_TRUE(test, seq_buf_has_overflowed(&s));
-+	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "abc");
-+
-+	seq_buf_clear(&s);
-+	KUNIT_EXPECT_EQ(test, s.len, 0);
-+	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-+	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "");
-+}
-+
-+static void seq_buf_printf_test(struct kunit *test)
-+{
-+	DECLARE_SEQ_BUF(s, 32);
-+
-+	seq_buf_printf(&s, "hello %s", "world");
-+	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 11);
-+	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-+	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "hello world");
-+
-+	seq_buf_printf(&s, " %d", 123);
-+	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 15);
-+	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-+	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "hello world 123");
-+}
-+
-+static void seq_buf_printf_overflow_test(struct kunit *test)
-+{
-+	DECLARE_SEQ_BUF(s, 16);
-+
-+	seq_buf_printf(&s, "%lu", 1234567890UL);
-+	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-+	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 10);
-+	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "1234567890");
-+
-+	seq_buf_printf(&s, "%s", "abcdefghij");
-+	KUNIT_EXPECT_TRUE(test, seq_buf_has_overflowed(&s));
-+	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 16);
-+	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "1234567890abcde");
-+
-+	seq_buf_clear(&s);
-+	KUNIT_EXPECT_EQ(test, s.len, 0);
-+	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-+	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "");
-+}
-+
-+static void seq_buf_get_buf_commit_test(struct kunit *test)
-+{
-+	DECLARE_SEQ_BUF(s, 16);
-+	char *buf;
-+	size_t len;
-+
-+	len = seq_buf_get_buf(&s, &buf);
-+	KUNIT_EXPECT_EQ(test, len, 16);
-+	KUNIT_EXPECT_PTR_NE(test, buf, NULL);
-+
-+	memcpy(buf, "hello", 5);
-+	seq_buf_commit(&s, 5);
-+
-+	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 5);
-+	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-+	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "hello");
-+
-+	len = seq_buf_get_buf(&s, &buf);
-+	KUNIT_EXPECT_EQ(test, len, 11);
-+	KUNIT_EXPECT_PTR_NE(test, buf, NULL);
-+
-+	memcpy(buf, " worlds!", 8);
-+	seq_buf_commit(&s, 6);
-+
-+	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 11);
-+	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-+	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "hello world");
-+
-+	len = seq_buf_get_buf(&s, &buf);
-+	KUNIT_EXPECT_EQ(test, len, 5);
-+	KUNIT_EXPECT_PTR_NE(test, buf, NULL);
-+
-+	seq_buf_commit(&s, -1);
-+	KUNIT_EXPECT_TRUE(test, seq_buf_has_overflowed(&s));
-+}
-+
-+static struct kunit_case seq_buf_test_cases[] = {
-+	KUNIT_CASE(seq_buf_init_test),
-+	KUNIT_CASE(seq_buf_declare_test),
-+	KUNIT_CASE(seq_buf_clear_test),
-+	KUNIT_CASE(seq_buf_puts_test),
-+	KUNIT_CASE(seq_buf_puts_overflow_test),
-+	KUNIT_CASE(seq_buf_putc_test),
-+	KUNIT_CASE(seq_buf_printf_test),
-+	KUNIT_CASE(seq_buf_printf_overflow_test),
-+	KUNIT_CASE(seq_buf_get_buf_commit_test),
-+	{}
-+};
-+
-+static struct kunit_suite seq_buf_test_suite = {
-+	.name = "seq_buf",
-+	.test_cases = seq_buf_test_cases,
-+};
-+
-+kunit_test_suite(seq_buf_test_suite);
--- 
-2.34.1
+Rafael, thank you as well for your approval. I'm also pleased to see new
+reviewers joining the APEI area.
 
+Best regards,
+Shuai
 
