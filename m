@@ -1,196 +1,203 @@
-Return-Path: <linux-kernel+bounces-735246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40AE7B08CBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:20:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5757EB08CBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:20:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77CCB17AAA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:20:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C52C8171E52
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:20:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B442BD029;
-	Thu, 17 Jul 2025 12:20:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B3982BD030;
+	Thu, 17 Jul 2025 12:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="d4ykoyMn"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="fp7NMoxo"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011036.outbound.protection.outlook.com [52.101.65.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D2C29E11A;
-	Thu, 17 Jul 2025 12:20:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752754841; cv=none; b=gn7wIb1jbIuvDfjDefrhkbB3XDME0abj+939fUmb/o2+RYTIcyhMCjeDdktRq/qaB/POQeXpWrtAxIxsYAR5/rx5jiTs+Kb/9Wfxnocqw2Cp6d2ITVirsyWjKWKBOX5raabYugsQjleSsIrzQbpacX5WklwaVH9/JepkohhzpZo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752754841; c=relaxed/simple;
-	bh=ZS+XMyc2OjepWm/2n+Z4UnBBTiA/16wHSV4qkGBitFU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q9vno+GAVEVZdZySaPXZubn28GYK1L99+7sk8is7MuaEFW8Y5DUI4DBTtgyUyDLRd7k/P8IqQICYVpQ6jRgRyBPV8SMRTaQQhq2D6S/bDqKfU0ZCaujBS5pgJV0M1/3A73Nqo2hdejjcnlJlDJH7JZSREd6sTDs9AYixnaoeeiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=d4ykoyMn; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56H2nWat014315;
-	Thu, 17 Jul 2025 12:20:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=vxDa4d
-	saVKf1GSqQa3TGwafIsFgUbHZVRPNoZEvaQpY=; b=d4ykoyMnkEYUiew+h+FNYL
-	XgPWYrspWuj7irGTKHLYMojbTh+uBi4hcfrFjPLHT3E9j8CZMOiPp+tATAuxdUbB
-	+o7t+pTda+Cqm287xXKRWekSCDKqWi1wr46pZ0KwBM+08ZLCSGO2N0pMoPXS2brv
-	b+CSxCfd7/LJxuKCz+aL7YW1HNV367bohxadUphTaFPk8HftZBfyGTgWacOM7wry
-	e5Ek2ZTbnxoJ2SVVoGtJHpBE5o47arGx21+R6oBBSuJrVje2djeFSRwnbasa1I/H
-	dDF4jLpRE3zo1mb9vM0Uc5nZ4hJM2ij78xcG47/qWPezNAS8QGi9NBISNO2tzmsQ
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47uf7davr5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Jul 2025 12:20:17 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56HA4q3E021906;
-	Thu, 17 Jul 2025 12:20:16 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 47v4r3bskb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Jul 2025 12:20:16 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56HCKCIF58196372
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 17 Jul 2025 12:20:12 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A55D42004D;
-	Thu, 17 Jul 2025 12:20:12 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 39E6B20043;
-	Thu, 17 Jul 2025 12:20:12 +0000 (GMT)
-Received: from [9.152.222.105] (unknown [9.152.222.105])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 17 Jul 2025 12:20:12 +0000 (GMT)
-Message-ID: <63665c54-db44-452f-b321-1162ff6c3fe4@linux.ibm.com>
-Date: Thu, 17 Jul 2025 14:20:12 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9D01A288;
+	Thu, 17 Jul 2025 12:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.36
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752754823; cv=fail; b=kZzrC/cfNyn6TTxqxH0lM/MZMTKM2U95ZyuTF7zVY9e/QcKcPYclRMZ5L3nNzgkrefton8RRaObWbaGZHbphDNX1lKcfoxNMMcVm0GMyw93+QrZomJA7DGIsa2ZjWD4FqM23T/o/wp/FdfEyWiFuvOguTkvAbvdKVBn0sfWzObs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752754823; c=relaxed/simple;
+	bh=nzII6kfPIdvWP1+36KneMXBQLce1cfwEnPDFZRwyZWU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=dm2fwvPYpJRP44lkHy7bJ80J3qC/xsAhwHvjrnIwuPJuLEId3X/CZh5/FADoFEidYnUvx0IRqVF0ZYHZXy017/4xpse8/KBlu+fmP8yBiiQoABQvxqH1MJIrtzzJzF6GoFp7ZQyUqVZmu66Rz6dIH+PG5O6IKX2QKzCSutnC7V0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=fp7NMoxo; arc=fail smtp.client-ip=52.101.65.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JD2+a6Az/Zn8X30jshmLnGW/KneeQUIkHxhR+DcD+KCwWixyfRhJhFICBoW8T8xFLQJWr30Nr1VxMex4CBDg3JQDSuH384XlwrOwStkgtUIpmY9HlGRlcDpnBNzoajkhCIPairN8CiZVqbpe5aM9mOd34Qp0fZrC+4GffUdtbT4tnuFgP62g1M5s3bLTeD2YiV+ZsZfx4vQHIaBL88dFCyAtesnlv24tURJxzT3yIMIVSoPJM4uwpgT2FgfMyfQGG7jxiTCGPB/sCl3/9zC5oFKieTxYWAT9UfBaN5sSJiCT5LPGSSclaixIMZijSwOUovh88HkaXRRt/4vYNP7vPg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IowhF6B3SuV/JtB7K5aGOlepR7mjqlFrY3a5e+hrbeA=;
+ b=J/2aNTMQKOzNRVd01Px1L3ahH4bdnRITOw9Z0J9XNRibW4C3u7jRNcHRMNRAh33JAAbo2gnzG1Mgdlzbl5bHqpSakGxOTWumbjsV1d4WyGfOnsTc8auX/4A0yDh5+mT672y/dsWNyYV+K+wGdzDpjwObKb3NBpxH8MJFlyOE12QZ/dY9RvfdTmzUq/nC3sQu48Au0H6u2gQ/4VzLRLA1Ggi1PyABQ4Fdc7Tjqkm2rUqb8xzKdndfE+BDFnyic+F9SWNEEY0etD3gFeM6BxP+swxV3fTXho8C+VwA1OJwNVcdG3iutGDNtn9iS+RLR98CcJgqA4oNa7IqfpNHRFWhfw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IowhF6B3SuV/JtB7K5aGOlepR7mjqlFrY3a5e+hrbeA=;
+ b=fp7NMoxo9YbUons33QhbiIuRVex0ckFpWGn0u4MOVxbAnSBzV4SU/JsmfZp7rJAICD2ZjGl7whOmJrL3KPycL70V5nWWSuQsPtwiQeTDu3oebe5VmEEfzNbt5CPGtVDgmuKyaPafVJJzNjEiofQqZ84uY10TMirK6WE1TYnDuUUyOHajlze+AgjOPc55HkQoekPGYxQb9FYpMwyiH6STC+5f/WrwNh0j5RKOUp/ZjR17nymcXa3/RfsK8wDyDq7goFy/to8r3/EKBTuRzcICblHmMGlpfuIhl0Ms4ZTdRgWQB4F72A0+K98wTmckAV2Mb2wXVByu/hcpaZJdcytPog==
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by AM9PR04MB7602.eurprd04.prod.outlook.com (2603:10a6:20b:2db::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.39; Thu, 17 Jul
+ 2025 12:20:19 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%5]) with mapi id 15.20.8922.028; Thu, 17 Jul 2025
+ 12:20:19 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: Frank Li <frank.li@nxp.com>
+CC: "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"richardcochran@gmail.com" <richardcochran@gmail.com>, Claudiu Manoil
+	<claudiu.manoil@nxp.com>, Vladimir Oltean <vladimir.oltean@nxp.com>, Clark
+ Wang <xiaoning.wang@nxp.com>, "andrew+netdev@lunn.ch"
+	<andrew+netdev@lunn.ch>, "davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
+	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
+	"vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>,
+	"shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de"
+	<s.hauer@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>, "F.S.
+ Peng" <fushi.peng@nxp.com>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: RE: [PATCH v2 net-next 09/14] net: enetc: save the parsed information
+ of PTP packet to skb->cb
+Thread-Topic: [PATCH v2 net-next 09/14] net: enetc: save the parsed
+ information of PTP packet to skb->cb
+Thread-Index: AQHb9iaFET7Qgju8UEqMGYTREvwIe7Q1OQGAgAECrZA=
+Date: Thu, 17 Jul 2025 12:20:19 +0000
+Message-ID:
+ <PAXPR04MB851096B85B36D611CC12C2CE8851A@PAXPR04MB8510.eurprd04.prod.outlook.com>
+References: <20250716073111.367382-1-wei.fang@nxp.com>
+ <20250716073111.367382-10-wei.fang@nxp.com>
+ <aHgPjwiIWfhYnPyC@lizhi-Precision-Tower-5810>
+In-Reply-To: <aHgPjwiIWfhYnPyC@lizhi-Precision-Tower-5810>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|AM9PR04MB7602:EE_
+x-ms-office365-filtering-correlation-id: e08271a4-dafc-4f32-faf3-08ddc52c4b69
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|19092799006|1800799024|7416014|376014|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?Xg44I7Uqp0FZ2PsZfAq1vVdl0PJqeccWQnWdU2cunNF/yoKrhxZFhpqgk+K4?=
+ =?us-ascii?Q?p3c/BLfctvY8QhpzTeRp0Ca6Ug78FxCQnSRnbkCsqspGtlFSlbTgKnmLo5rT?=
+ =?us-ascii?Q?KQAymwYngQiGb5nB0DLnqGyIHp4jmu/MrF3BeS6dg45XBnsXEcq41MdRo8o5?=
+ =?us-ascii?Q?GeH5AKZGRTR+eyF7k7hejp4+0GS3WqIWaJ7iS48ymXxDGXqITCfzdrnoIrcS?=
+ =?us-ascii?Q?jFf3d8ZPSki6odWjbnmcxwJrXPVzeiYjz3lqwOonHfbi1JJr65dhjC7/2XSF?=
+ =?us-ascii?Q?pxvkHtJdF38XjSighRbubGH8DwPjK5f4b0KiEBIR3EEHw3X8/mXIcip9L56m?=
+ =?us-ascii?Q?UevJI/vIQnlGpV1puK04MQF574rkYpAvC/PVNTIn6Ome3cNM7AO5bfnu6l7k?=
+ =?us-ascii?Q?ezQ0UxVpRagRjnk6/v0483uvvG+i1/9u8ybBcK2mc5tZKUm2NjOt/kcRPcII?=
+ =?us-ascii?Q?Zx8/E7Cq5y95PEC60Xjt9cYMbR2GKgkHd5NV6rKg4xdqVlebQG3XVIbjcUt4?=
+ =?us-ascii?Q?2hf1qg553PEcvljrwrmNReWP5hfkWe69kn2X7+PELjlb21lowIPEPVniOksw?=
+ =?us-ascii?Q?B759BhWv42xvvOUB7Mi7IUjBq/QARh3UtTSQO33WgxhzvNQFRTu4jqZKK4zN?=
+ =?us-ascii?Q?J1Md2/mN5fSf3GEDhKvbcnV/mHXbc1oA507b+zm+Vu1/6ma+8POeQqi4Heoe?=
+ =?us-ascii?Q?s/U42MYa1cvKNzAf9UnDmXVrQ/y7ie0s4yoYuG90Y4wgsXXGPba5vqgIEEDQ?=
+ =?us-ascii?Q?uDdriBB2OZ1pWYU6du1ftt1i0aIpsexC9UR5dO+02hFbtfyWLsbMQsn+sl9W?=
+ =?us-ascii?Q?P2iqFLJmJ3WAUjGQaVFb9p6BvNauEZw9ZwJcB/zUeXHGFZqpVPbRHGBukhsf?=
+ =?us-ascii?Q?zH6pnrYxKr2e5pl7RqR3dv/40qFvjuFtVGLdsON74ieincMWlsLQEMPaBVan?=
+ =?us-ascii?Q?tweMlDGJbyhU1ls70jHGt5AsANEUHNzxINeKTj26qeyo/uMndtjXD8sbmpsI?=
+ =?us-ascii?Q?tATt/hDDx9Ayhog/vCjFHIl9KG/jNzF1G9aaWDzOxNfsIe+wT0LiL+LgOIyn?=
+ =?us-ascii?Q?V7tTjVsZksMlQlWFqKQykqqy7eEESMLg5MITEUtwoLzBHE4xK2vMp4EzngpZ?=
+ =?us-ascii?Q?VytyRAsK8TwLuua412tho++gxPaiRMbJHovM3maGtP6aNQw2oCqZyAlDikyT?=
+ =?us-ascii?Q?mC9ksF7CM2aDarS/V2Hj095ghDVgUe2LW8NS8/RCurHAxHA99ldQGRqhA1VU?=
+ =?us-ascii?Q?8HPrTo9Y0JEsW+pRvXP/fpzJzA9a6gC7YA3FduizgbVOoyb+H0fC3dPixm93?=
+ =?us-ascii?Q?9+uyGMMC76ZOxFo6T8nNbK/2rCq3ojlfHtg6YGQtG59BKhIIWXHlxIL52NDc?=
+ =?us-ascii?Q?XgGa99yy3oaAKlOeupOg0kKnHrUm2x9+vJsO7+mjd5wtCcEwIkG5e6JWzhNF?=
+ =?us-ascii?Q?sOiCtnb8FBQ68T8+UpmZYO8fLshISA8WDVsRlfnXkhefCnFm55awmg=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(1800799024)(7416014)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?cvpyZvA9KmBj+if3rNsBhGEb4rzqyAhMQiuxI3+RM3Dkdmi7SfiMTImYehj/?=
+ =?us-ascii?Q?ciSHX4naF722hGCqDwPvfpK0z77GVJO4noaupmOkUB+4xG6fvQ9DAlQTUogb?=
+ =?us-ascii?Q?N8l99W7J4AfIOEWNKnc59znU5r7K34LnUgH75/qHUfVsuzESWNMmZd9+vj/C?=
+ =?us-ascii?Q?RTIu8Auu4AbA2yyORiScji50aVp7hWdY8vz3k8A5Y/4iZ23tpQhRwV3oanwf?=
+ =?us-ascii?Q?kFYn984YSv83keGU1LaGOFSO4hTjJn7D1XDXjvAGEG2UqPVfBYkvekTJPt5J?=
+ =?us-ascii?Q?jx4rmdF5WFkiY4PzdppWuvGSNlThpNRBWbgoi8XgJ6ftITIsigEcPax34ji+?=
+ =?us-ascii?Q?Y8Ckmw8yENN0LfYeJl/0Gwi62FtlSF7KKuxbfMIm/NXmAYJHZGpN2+Jx8eH2?=
+ =?us-ascii?Q?wfLNMYbF6vuPHpqUpE9ATMLCXJSpYLz2Ekyp8yHyCIEbrSINsnZlClnYYdgs?=
+ =?us-ascii?Q?iArIot1bowDk15FlzesYHzKvIhXu4yAHZeh3fXxqym2ZLIG2M1NIjm/E1nGN?=
+ =?us-ascii?Q?J2MtLAgNk+D/M01lEEXJ3MK5PYiGIXxnZ4L2u8EnayOoabvOD1rhskkeON8d?=
+ =?us-ascii?Q?UBaRjE9TxpQ1EnsBmPoVy/fVufLsvwWKC9PvydjiE4BSjWe0S14eh+REcHHE?=
+ =?us-ascii?Q?Eg2E4QxRq/VaiGU8NK5TvfsNmhGZ9y77ZHQ5N4oORIzfyulYCSnyLLcknpcK?=
+ =?us-ascii?Q?LWxXe4YzECtNESPSw1HjP4mOY4xbHw9/yJlJhnvR5ViC/t/MhzdhXWeU8FH4?=
+ =?us-ascii?Q?yDixNp5jOpJ+FM1qog9vldRGNoYN2ohECcVbmiTuiZrlmG0LClcmnqt/tyt8?=
+ =?us-ascii?Q?2lBRR0XXzcDxZwoDUGUXN6exfqQtQY0ruCrndS0nfnU3bK6zuR3xsRjp9xoH?=
+ =?us-ascii?Q?QS6wxXQFaDc3/CF9gJWyMjOyLY7aCm0PyDfDEPrq5LCursdX6ohYo6vKDdAU?=
+ =?us-ascii?Q?ra8rx3G89W4J9x0oxoA6Hf5KsIQevdUUhkJhDrmZkB45rP/7vz6Ml2nB/fDb?=
+ =?us-ascii?Q?bx1iTDB8CzPRm7v9ORplb1ZApT+gkc1sebYE07zNiCp2EMTlvzcRwRcPLVTQ?=
+ =?us-ascii?Q?TTeULmZc846NSoY4VQjU9z9xtxLChowTllaLpKytB+VL4QcxzCk0IK+Ilh2H?=
+ =?us-ascii?Q?woIAVCITzuN+zYhVoMkaHgcBNXNqNwXIm5hBAQo4xOCLUjgQ3/qWvWA4sU4W?=
+ =?us-ascii?Q?J6P+i08Aq41b1m0KbSFHBQ6BEv05K/bjQzFbn1KEzW87dca1+Km+lunGtWd9?=
+ =?us-ascii?Q?GiAzKcwNWYeAZcA+RLJkQcrOVzM9bA87bWWSrLuN05+QZ+F4QakVHgcuQbRV?=
+ =?us-ascii?Q?DvZ1X9aXBna+a8irWhNzuyC9u6I6cq3mBBlkYaZ0AQ0O/ztOzJmQYV62gFwd?=
+ =?us-ascii?Q?Rv3cWPME2fGtBJhirQI/GWpQmpmoXvz6RSLP4uHfyJhpUx8XbJ1oEH1YbX73?=
+ =?us-ascii?Q?RmhdHRHuwbLp6sFQGhen9xl6lG3LwGFevhZUfJXOdJZRWo+Kle3Wy6F9xIeD?=
+ =?us-ascii?Q?T3vMROwnK1KxV9qQXr+WdE+KzEONTuHluCotoREZJHTAE6lpxpPzUc7TYHwA?=
+ =?us-ascii?Q?1b9FfQuA2xJWvTHC3Vk=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 12/16] unwind_user/backchain: Introduce back chain
- user space unwinding
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-        bpf@vger.kernel.org, x86@kernel.org,
-        Steven Rostedt <rostedt@kernel.org>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Ilya Leoshkevich <iii@linux.ibm.com>,
-        Masami Hiramatsu
- <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Indu Bhagat <indu.bhagat@oracle.com>,
-        "Jose E. Marchesi" <jemarch@gnu.org>,
-        Beau Belgrave <beaub@linux.microsoft.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
-        Sam James <sam@gentoo.org>
-References: <20250710163522.3195293-1-jremus@linux.ibm.com>
- <20250710163522.3195293-13-jremus@linux.ibm.com>
- <a4dd5okskro2h45zmqgg3etj6uwici2hoop2uaf6iqrlaej7yh@xlduwjqke4ec>
-Content-Language: en-US
-From: Jens Remus <jremus@linux.ibm.com>
-Organization: IBM Deutschland Research & Development GmbH
-In-Reply-To: <a4dd5okskro2h45zmqgg3etj6uwici2hoop2uaf6iqrlaej7yh@xlduwjqke4ec>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: bGZpIMXx8PT6QA5CtiYS_BsveqaVeW6H
-X-Authority-Analysis: v=2.4 cv=LoGSymdc c=1 sm=1 tr=0 ts=6878ea81 cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=cok-IRdpjc9kUBDcOJQA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: bGZpIMXx8PT6QA5CtiYS_BsveqaVeW6H
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDEwOCBTYWx0ZWRfX8BBSj3WS42T7 0aRkTrkXm8KXg5FDZHT/gE4rF9kq3K7UGnmb+TriNxppRXxmRRLH3ZKVI/KCBhob9uaQjhoi4Ta hEXAcBJu13WcGh+yUHs6j+oRVSGHGX4G5d5ZZ8FYn1qRRfAXGLbNaYFOmGeI6LKHpfclExQGjdw
- fHraFQDQ9qBI8dB8hCU8IJldsx60BMThPBF+20NtKHsUBE5hybbcXzQMB4V3fCbSueuJ1KLYYmh NAcNzH8MJTbHE79O8kn3ji4sBuQX7vi5s2ZsUWq4tgerS9ImOBN0tmr915mSnvcGNW4nZb1qrva a1CYg9IMbKdjF34YKN1lUZW42eVS9Y0bhM9Aj15wYWE8ZkWi4jsQUDkm0xOpbHXCYf1/dFLdp/b
- kBWTvaVFbCs5Nl1ozg/spKxWQIbJsCsZ7wRVo1uvKRyksFNqg/AJC4NGnonUeUMs6KgofrgN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-17_01,2025-07-17_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- lowpriorityscore=0 spamscore=0 malwarescore=0 impostorscore=0
- clxscore=1015 phishscore=0 mlxlogscore=999 priorityscore=1501
- suspectscore=0 mlxscore=0 adultscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507170108
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e08271a4-dafc-4f32-faf3-08ddc52c4b69
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jul 2025 12:20:19.0447
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: w6u5dYEQVbITIFbM/jKcCdfqKpu1TIYBs/CHvzu+DPLSKMFIkn41T84x6fXSmonoefTwNAmmz775WnC0tCmnkw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB7602
 
-On 17.07.2025 04:06, Josh Poimboeuf wrote:
-> On Thu, Jul 10, 2025 at 06:35:18PM +0200, Jens Remus wrote:
->> @@ -66,12 +73,20 @@ static int unwind_user_next(struct unwind_user_state *state)
->>  		/* sframe expects the frame to be local storage */
->>  		frame = &_frame;
->>  		if (sframe_find(state->ip, frame, topmost)) {
->> -			if (!IS_ENABLED(CONFIG_HAVE_UNWIND_USER_FP))
->> -				goto done;
->> -			frame = &fp_frame;
->> +			if (IS_ENABLED(CONFIG_HAVE_UNWIND_USER_FP)) {
->> +				frame = &fp_frame;
->> +			} else if (IS_ENABLED(CONFIG_HAVE_UNWIND_USER_BACKCHAIN)) {
->> +				if (unwind_user_backchain_next(state))
->> +					goto done;
->> +				goto done_backchain;
->> +			}
->>  		}
->>  	} else if (fp_state(state)) {
->>  		frame = &fp_frame;
->> +	} else if (backchain_state(state)) {
->> +		if (unwind_user_backchain_next(state))
->> +			goto done;
->> +		goto done_backchain;
->>  	} else {
->>  		goto done;
->>  	}
->> @@ -153,6 +168,7 @@ static int unwind_user_next(struct unwind_user_state *state)
->>  
->>  	arch_unwind_user_next(state);
->>  
->> +done_backchain:
->>  	state->topmost = false;
->>  	return 0;
-> 
-> This feels very grafted on, is there not some way to make it more
-> generic, i.e., to just work with CONFIG_HAVE_UNWIND_USER_FP?
+> > -				old_sec_h =3D *(__be16 *)(data + offset2);
+> > +				old_sec_h =3D *(__be16 *)(data + tstamp_off);
+> >  				inet_proto_csum_replace2(&uh->check, skb, old_sec_h,
+> >  							 new_sec_h, false);
+> >
+> > -				old_sec_l =3D *(__be32 *)(data + offset2 + 2);
+> > +				old_sec_l =3D *(__be32 *)(data + tstamp_off + 2);
+> >  				inet_proto_csum_replace4(&uh->check, skb, old_sec_l,
+> >  							 new_sec_l, false);
+> >
+> > -				old_nsec =3D *(__be32 *)(data + offset2 + 6);
+> > +				old_nsec =3D *(__be32 *)(data + tstamp_off + 6);
+> >  				inet_proto_csum_replace4(&uh->check, skb, old_nsec,
+> >  							 new_nsec, false);
+> >  			}
+> >
+> > -			*(__be16 *)(data + offset2) =3D new_sec_h;
+> > -			*(__be32 *)(data + offset2 + 2) =3D new_sec_l;
+> > -			*(__be32 *)(data + offset2 + 6) =3D new_nsec;
+> > +			*(__be16 *)(data + tstamp_off) =3D new_sec_h;
+> > ++			*(__be32 *)(data + tstamp_off + 2) =3D new_sec_l;
+> > ++			*(__be32 *)(data + tstamp_off + 6) =3D new_nsec;
+>=20
+> strange why there are two ++ here.
 
-I agree.  It could probably be made to compute the cfa_off and ra.offset
-or ra.regnum.  Let me explore that, provided there would be any acceptance
-for unwind user backchain at all. Note that Power is using backchain as
-well, so they may want to build on that as well.
-
-> Also, if distros aren't even compiling with -mbackchain, I wonder if we
-> can just not do this altogether :-)
-
-My original intent was to use unwind user's for_each_user_frame() to
-replace the exiting stack tracing logic in arch_stack_walk_user_common()
-in arch/s390/kernel/stacktrace.c, which currently supports backchain.
-Given that for_each_user_frame() was made private in the latest unwind
-user series version hinders me.  The use was also low, because the
-currentl arch_stack_walk_user_common() implementation does not support
-page faults, so that the attempt to use unwind user sframe would always
-fail and fallback to unwind user backchain.  My hope was that somebody
-with more Kernel skills could give me a few hints at how it could be
-made to support deferred unwind. :-)
-
-Regards,
-Jens
--- 
-Jens Remus
-Linux on Z Development (D3303)
-+49-7031-16-1128 Office
-jremus@de.ibm.com
-
-IBM
-
-IBM Deutschland Research & Development GmbH; Vorsitzender des Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
-IBM Data Privacy Statement: https://www.ibm.com/privacy/
+I do not know, I will fix it, thanks
 
 
