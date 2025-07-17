@@ -1,167 +1,201 @@
-Return-Path: <linux-kernel+bounces-735203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1696FB08C1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:54:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CACCCB08C30
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:55:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5971F188BB60
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:54:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29930189F738
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ADC92BDC11;
-	Thu, 17 Jul 2025 11:52:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE7C2BE64A;
+	Thu, 17 Jul 2025 11:52:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jAt0LGkS"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O7UGW1d3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D8B92BD586
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 11:52:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A10729ACC6;
+	Thu, 17 Jul 2025 11:52:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752753153; cv=none; b=HM3zCza/RktJxRhuQCF70+rhwxg9mttuIKMU2vmVlkyUtfEMXDsErBgAeA5X87mH4OYfm93MqUx2fI7mY/qYeHMKvvauo1+RLWaMiBICaAMb+veb8+1tOGYkr/Wii8uXf2zIoEa6davaiow/264T/01skpDp0N7lfWah2wofZEw=
+	t=1752753174; cv=none; b=fjnftJ5VVQcsCS0YPMuBHUqZI1FYGIdLeAtbpIgic/yJpnVMYDKzJ1C/i4rwuTP/KAHlN4kU/TMBAoRxJWH0EGCTvOsPEz+IPu4LudQ1QXDUBsi9BNurk/p6bS7A//CoFOJbkKKKgGGKZbdLNvTaiAqM7Lhx92ZDx9j7cqr7hZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752753153; c=relaxed/simple;
-	bh=JhYxfdlFBrgBJs/tk2SA7Oedtf+sGKDg3q3NMifzV6c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PbT6wcWiRzSaxd6kSU6rrvk5NJWdgnZZlVkI1ZI4MeW1o7tlkKOylyp9n/KlDPUXANldisZHl1YT0v2Xzh4fC5u4Q0k/YNZcexLCR/fIgrUQA/qWpO+oiE1k7FNT77iWtCx4LKP2n+4pTD8dfDswuV5sUK8QIfZTHZJTvaI/esI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jAt0LGkS; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56H4XZXm015642
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 11:52:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	WZVGQnL5TZo99a4mnnswTTOdpwcB5rmoTJT1t4G0z/I=; b=jAt0LGkSBPvwMg3V
-	FvC9NZYuq2vosfYQDNrxR9Y7DZPBHxBFTmPd/UBx/Td2R8TKg1jwg8gOMIwOx+MU
-	A3h1+Fj5rymhZ5wKlwJ0BRIMoqB01E5jXC996ekTd9mupCtAfVWgh9gxG2iQaqtV
-	FW5lADnuCsAKof2+kQ6JJ80/0M1yNbQWj0D1gTY37+64By3DgGvLpy9XUlHy4eeF
-	+OxsIMYUoMlDyov8+/le1F/rL5Z4uX8eXWSvjdi03Qb6w5zvPDYjKUwJUETJyN1T
-	CS4K+XcpeOQSg/XNZk51Wp1Y41sh8N7am3UgY6Oh3j5bxgAxvTfw/cvtowWoZUam
-	sout6Q==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47w5dytew4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 11:52:31 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4ab7a01c38cso1796031cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 04:52:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752753150; x=1753357950;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WZVGQnL5TZo99a4mnnswTTOdpwcB5rmoTJT1t4G0z/I=;
-        b=U4bHxQDXYjxAvvVzu7oyXCEBydY639TxHiOckwctH3fKwVD9FGCRDUZySnfLF+Uc3h
-         RiOdDPG5pbWFuojqQko36FVxjngX0h1hFTebMe5SmJ9qg3zVlC/2Gna8aNPCkh+wlkL8
-         mCUNC7OipdnOLl8/rPbq7B/SN9t7y0LvKvG9i14m7Kg97I8F03C/YASxGKhSPIOkiHjx
-         WOJt16dbUXYaEsA1U4RPMYXjMCPfgklCnrZmHmjd3ebkXfv4Y7bdlQZhr2AErdStj4/R
-         nM7FUb5xJcUCPnoJ0YmTtvNbJlDy7aEkNg6T3G864CFt3MdWGvr9u7DtcowgCoUEgZmK
-         eZgw==
-X-Forwarded-Encrypted: i=1; AJvYcCWjDQWwzjxhGV7bDqA00ZC/gAKUTvPPvTY9pY/AZkpyz6DMOgeUlP4giLp/z4bzAqSw2dHt/PBuDyLsnN4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOzMjl1F7SJz9VnUtuEFdEL396QxEoCYC7Tdvt1Duv+TYFIysU
-	EqdOSnDBQiv/U+ooKNU7HboZxRd/wOnn50TlwM+rvQ8MP1D6YUz6yaS54DFgOn+m6WpLckplfJ4
-	WLRG6JoAKOm1dnlxOPKIqhM0kq89FzbGFVulMbf7Y7uTEPbkLsGcqpeMEjBEuLFysgE3MKtbzdZ
-	c=
-X-Gm-Gg: ASbGncuEVXNUgikfQgQWHIkCMpojseLgaNtfCJBmAhkhkva9iMDEwHLW2ButTBJpGtt
-	k2IqJHUfavS7LWsf+e4hvaPB002rnsRIYk3EGANiYaFhywcnc4YsnyPXo3M+oWO7eCNIwyVKpWe
-	NTExRBQoEt0EIyZ3i3P4BfxvxzNR/ColAea21CCMf6tsAKu88nIob1quLjYYGfARkOwgYvpZ9mH
-	AHtVSCnhbDvgjtu458RBs9oiUahflztJsQE8/n3QpE2UeZvTXRHl9rkuxbbaOx272LOIwbSpNxk
-	I8u5IyVujiTizQ2UVj/Cvs9fvQECAwrUvL+NAd+y+l40GldFoxKDfV6Sn0Xi3DSavO3rk3YOpqN
-	Ip1+VCjoDLPpEKt9CaBgu
-X-Received: by 2002:a05:622a:1889:b0:4ab:76d2:1981 with SMTP id d75a77b69052e-4ab90a4e458mr45118421cf.5.1752753149737;
-        Thu, 17 Jul 2025 04:52:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEuOt8ES7BujIafZFzB0IDxfkg7AjYigc52yOQaSQVHFHTLySwxQnQewjoSqSZcB6Uo+8EkFA==
-X-Received: by 2002:a05:622a:1889:b0:4ab:76d2:1981 with SMTP id d75a77b69052e-4ab90a4e458mr45118231cf.5.1752753149235;
-        Thu, 17 Jul 2025 04:52:29 -0700 (PDT)
-Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-611c9734069sm10024385a12.48.2025.07.17.04.52.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Jul 2025 04:52:28 -0700 (PDT)
-Message-ID: <e69e6128-3f50-4bd3-89bb-09d7b237a568@oss.qualcomm.com>
-Date: Thu, 17 Jul 2025 13:52:26 +0200
+	s=arc-20240116; t=1752753174; c=relaxed/simple;
+	bh=768jnmLVmr/V6ZyVJm0rYYFSz76GLOLtXyYMf0pndCk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cRl+QNEmBjST2nZuAfvO6PUwY6ttP1UDtgGn7LfvvmwH07M8I0BWsugzxrRNHmVT07l+9fcRKRUEYDVMDIn6iHx2RdejXQdLSpPhOTzz4/G0NtdYhZPA4VMR9zhevAzDaL6suy+2oZC1YukZtvx0KQU+JCGupD2BtPFSvYSRYuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O7UGW1d3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 276E6C4CEF6;
+	Thu, 17 Jul 2025 11:52:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752753173;
+	bh=768jnmLVmr/V6ZyVJm0rYYFSz76GLOLtXyYMf0pndCk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=O7UGW1d3rjbTWkmaRHwUuO+4xw8pbVWJb/FnZE7jAYa9Rk8FiEZuhmIoIdcRiu4mP
+	 mvKD5TYzhiaeMPUaszLAa+1ep6tyzZSBcGwilCx7XZjbTF0FZ3ZxEbC4SvfYJKkYwc
+	 DIDM5QDywPSAo2EGXHsTDJUBRSkSyf8dlB49GC5QeXSpNnH9nObwZU0RWPX5heiSTK
+	 NijJp76wqTWn3Ogf7f7IALBu523yGOa1QJlgPBzKU/WbmKrDX3x8l32U7JtoH+889G
+	 BV3VLFNA0U1UeQXSHf7wGX5P44vMv6wJYnnZNe0fJO/lbdi//0Sh3GKTSbm00oul2K
+	 knMskkyRTSktw==
+Date: Thu, 17 Jul 2025 12:52:46 +0100
+From: Will Deacon <will@kernel.org>
+To: James Clark <james.clark@linaro.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>, leo.yan@arm.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev
+Subject: Re: [PATCH v3 04/10] arm64/boot: Enable EL2 requirements for
+ SPE_FEAT_FDS
+Message-ID: <aHjkDl7TXX9UjVmo@willie-the-truck>
+References: <20250605-james-perf-feat_spe_eft-v3-0-71b0c9f98093@linaro.org>
+ <20250605-james-perf-feat_spe_eft-v3-4-71b0c9f98093@linaro.org>
+ <aHUMMk9JUdK6luLN@willie-the-truck>
+ <04d52182-6043-4eaf-a898-9f8ccc893e5f@linaro.org>
+ <aHZQH7QGhi5pbXU8@willie-the-truck>
+ <e1210c84-69d1-4fb2-88c2-a6a1bcb179c5@linaro.org>
+ <80b7c29e-83b9-46a4-826e-d252ad425d4d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] pinctrl: qcom: Add glymur pinctrl driver
-To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>, andersson@kernel.org,
-        linus.walleij@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, quic_rjendra@quicinc.com
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250716150822.4039250-1-pankaj.patil@oss.qualcomm.com>
- <20250716150822.4039250-3-pankaj.patil@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250716150822.4039250-3-pankaj.patil@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: ePHil95fPxILEBH0rUtHYXtypY_Kizie
-X-Authority-Analysis: v=2.4 cv=RtXFLDmK c=1 sm=1 tr=0 ts=6878e3ff cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=-TUSC38FYRssDIeIjfMA:9
- a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDEwMyBTYWx0ZWRfX8kSY864FlJAw
- /xY50dEc3dGwvT6ikOLSotHhyvaOl+tGvaN4ptsTP9w3JLqHBJa/5PjIciyPJkkhGL3J+RjDU4P
- +dfMp1XyYg7z2mFDnk3tVE3xuG/PdUw3oK5YH8SRVGHFxGAOwRvQZ8O4c9jqxL4yO+98dRQh99A
- 7GZhVvzsQVXxb4YreopwC+j01hZQhrlF6EF9kg0geN6ZXFQPww2cKgVyBZhsMhpKGHXtM+PcqqB
- V6S3Y4KK36sTDduEMpH+7C5gbbFjxXXzFQ7yOK6fslDJCYHlRGcbXqAN7ttMwb6lHQNw/rvV32z
- pic5Ss2BUaLtxNRZ4fk3Pnv+wFAqkJDsR+z/RLxxAijtnYBfqCctGD7UpRsnXxPsKLnXn0GnRyg
- kXjwJzNoBKAbrfCJw6CRz2vcnmOfGDIjLB9INPvYC33/ZwkaXdjLb0LtPASLhikR0Ijnujjl
-X-Proofpoint-GUID: ePHil95fPxILEBH0rUtHYXtypY_Kizie
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-17_01,2025-07-17_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 mlxscore=0 bulkscore=0 suspectscore=0 lowpriorityscore=0
- impostorscore=0 malwarescore=0 clxscore=1015 mlxlogscore=999
- priorityscore=1501 phishscore=0 spamscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507170103
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <80b7c29e-83b9-46a4-826e-d252ad425d4d@linaro.org>
 
-On 7/16/25 5:08 PM, Pankaj Patil wrote:
-> Add TLMM pinctrl driver to support pin configuration with pinctrl
-> framework for Glymur SoC.
+On Tue, Jul 15, 2025 at 02:28:19PM +0100, James Clark wrote:
 > 
-> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-> ---
+> 
+> On 15/07/2025 2:10 pm, James Clark wrote:
+> > 
+> > 
+> > On 15/07/2025 1:57 pm, Will Deacon wrote:
+> > > On Tue, Jul 15, 2025 at 01:48:03PM +0100, James Clark wrote:
+> > > > 
+> > > > 
+> > > > On 14/07/2025 2:54 pm, Will Deacon wrote:
+> > > > > On Thu, Jun 05, 2025 at 11:49:02AM +0100, James Clark wrote:
+> > > > > > SPE data source filtering (optional from Armv8.8)
+> > > > > > requires that traps to
+> > > > > > the filter register PMSDSFR be disabled. Document the requirements and
+> > > > > > disable the traps if the feature is present.
+> > > > > > 
+> > > > > > Tested-by: Leo Yan <leo.yan@arm.com>
+> > > > > > Signed-off-by: James Clark <james.clark@linaro.org>
+> > > > > > ---
+> > > > > >    Documentation/arch/arm64/booting.rst | 11 +++++++++++
+> > > > > >    arch/arm64/include/asm/el2_setup.h   | 14 ++++++++++++++
+> > > > > >    2 files changed, 25 insertions(+)
+> > > > > > 
+> > > > > > diff --git a/Documentation/arch/arm64/booting.rst
+> > > > > > b/Documentation/ arch/arm64/booting.rst
+> > > > > > index dee7b6de864f..abd75085a239 100644
+> > > > > > --- a/Documentation/arch/arm64/booting.rst
+> > > > > > +++ b/Documentation/arch/arm64/booting.rst
+> > > > > > @@ -404,6 +404,17 @@ Before jumping into the kernel, the
+> > > > > > following conditions must be met:
+> > > > > >        - HDFGWTR2_EL2.nPMICFILTR_EL0 (bit 3) must be
+> > > > > > initialised to 0b1.
+> > > > > >        - HDFGWTR2_EL2.nPMUACR_EL1 (bit 4) must be initialised to 0b1.
+> > > > > > +  For CPUs with SPE data source filtering (FEAT_SPE_FDS):
+> > > > > > +
+> > > > > > +  - If EL3 is present:
+> > > > > > +
+> > > > > > +    - MDCR_EL3.EnPMS3 (bit 42) must be initialised to 0b1.
+> > > > > > +
+> > > > > > +  - If the kernel is entered at EL1 and EL2 is present:
+> > > > > > +
+> > > > > > +    - HDFGRTR2_EL2.nPMSDSFR_EL1 (bit 19) must be initialised to 0b1.
+> > > > > > +    - HDFGWTR2_EL2.nPMSDSFR_EL1 (bit 19) must be initialised to 0b1.
+> > > > > > +
+> > > > > >      For CPUs with Memory Copy and Memory Set
+> > > > > > instructions (FEAT_MOPS):
+> > > > > >      - If the kernel is entered at EL1 and EL2 is present:
+> > > > > > diff --git a/arch/arm64/include/asm/el2_setup.h
+> > > > > > b/arch/arm64/ include/asm/el2_setup.h
+> > > > > > index 1e7c7475e43f..02b4a7fc016e 100644
+> > > > > > --- a/arch/arm64/include/asm/el2_setup.h
+> > > > > > +++ b/arch/arm64/include/asm/el2_setup.h
+> > > > > > @@ -279,6 +279,20 @@
+> > > > > >        orr    x0, x0, #HDFGRTR2_EL2_nPMICFILTR_EL0
+> > > > > >        orr    x0, x0, #HDFGRTR2_EL2_nPMUACR_EL1
+> > > > > >    .Lskip_pmuv3p9_\@:
+> > > > > > +    mrs    x1, id_aa64dfr0_el1
+> > > > > > +    ubfx    x1, x1, #ID_AA64DFR0_EL1_PMSVer_SHIFT, #4
+> > > > > > +    /* If SPE is implemented, */
+> > > > > > +    cmp    x1, #ID_AA64DFR0_EL1_PMSVer_IMP
+> > > > > > +    b.lt    .Lskip_spefds_\@
+> > > > > > +    /* we can read PMSIDR and */
+> > > > > > +    mrs_s    x1, SYS_PMSIDR_EL1
+> > > > > > +    and    x1, x1,  #PMSIDR_EL1_FDS
+> > > > > > +    /* if FEAT_SPE_FDS is implemented, */
+> > > > > > +    cbz    x1, .Lskip_spefds_\@
+> > > > > > +    /* disable traps to PMSDSFR. */
+> > > > > > +    orr    x0, x0, #HDFGRTR2_EL2_nPMSDSFR_EL1
+> > > > > 
+> > > > > Why is this being done here rather than alongside the existing SPE
+> > > > > configuration of HDFGRTR_EL2 and HDFGWTR_EL2 near the start of
+> > > > > __init_el2_fgt?
+> > > > > 
+> > > > I thought everything was separated by which trap configs it writes to,
+> > > > rather than the feature. This SPE feature is in HDFGRTR2 so I put it in
+> > > > __init_el2_fgt2 rather than __init_el2_fgt.
+> > > 
+> > > That's fair; __init_el2_fgt isn't the right place. But the redundancy of
+> > > re-reading PMSVer from DFR0 is a little jarring.
+> > > 
+> > > > I suppose we could have a single __init_el2_spe that writes to
+> > > > both HDFGRTR
+> > > > and HDFGRTR2 but we'd have to be careful to not overwrite what
+> > > > was already
+> > > > done in the other sections.
+> > > 
+> > > Right, perhaps it would be clearer to have trap-preserving macros for
+> > > features in a specific ID register rather than per-trap configuration
+> > > register macros.
+> > > 
+> > > In other words, we have something like __init_fgt_aa64dfr0 which would
+> > > configure the FGT and FGT2 registers based on features in aa64dfr0. I
+> > > think you'd need to have a play to see how it ends up looking but the
+> > > main thing to avoid is having duplicate ID register parsing code for
+> > > setting up FGT and FGT2 traps.
+> > > 
+> > 
+> > I'll give it a go but that could end up being fragile to something that
+> > is dependent on two different ID registers in the future. Then we'd end
+> > up in the same situation for a different reason.
+> > 
+> 
+> I think I've run into it already. Wouldn't checking for FGT and FGT2 have to
+> be repeated when doing each ID register? Now we only do that once at the
+> start of __init_el2_fgt and __init_el2_fgt2, even if we might sometimes
+> check a different ID register twice. But if we flipped it we'd always have
+> to repeat those.
 
-[...]
+Bah, this is quite horrible! Maybe the best we can do for now is have a
+macro for safely getting at PMBIDR?
 
-> +	[249] = PINGROUP(249, pmc_oca_n, _, _, _, _, _, _, _, _, _, _),
-> +	[250] = UFS_RESET(ufs_reset, 0x104004),
+At some point, I suspect this whole FGT-configuration logic will need
+reworking but at the moment it's hard to see what the best approach
+would be.
 
-You'll need to borrow the #define from 8750 pinctrl
-
-and then:
-
-UFS_RESET(ufs_reset, 0x104004, 0x105000),
-
-> +	[251] = SDC_QDSD_PINGROUP(sdc2_clk, 0xff000, 14, 6),
-> +	[252] = SDC_QDSD_PINGROUP(sdc2_cmd, 0xff000, 11, 3),
-> +	[253] = SDC_QDSD_PINGROUP(sdc2_data, 0xff000, 9, 0),
-> +};
-> +
-
-[...]
-
-> +static const struct msm_pinctrl_soc_data glymur_tlmm = {
-> +	.pins = glymur_pins,
-> +	.npins = ARRAY_SIZE(glymur_pins),
-> +	.functions = glymur_functions,
-> +	.nfunctions = ARRAY_SIZE(glymur_functions),
-> +	.groups = glymur_groups,
-> +	.ngroups = ARRAY_SIZE(glymur_groups),
-> +	.ngpios = 250,
-
-251 (0..=250, incl. ufs reset)
-
-Konrad
+Will
 
