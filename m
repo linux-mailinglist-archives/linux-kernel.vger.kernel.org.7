@@ -1,306 +1,260 @@
-Return-Path: <linux-kernel+bounces-734867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D78DB0875D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:57:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33A0DB08763
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:58:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82B8F56626A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:57:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 897671AA4FB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:58:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE8D01EF0B9;
-	Thu, 17 Jul 2025 07:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C080267F4C;
+	Thu, 17 Jul 2025 07:57:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JUcH0Xdw"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YIey0xO2"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092F7263F5E
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 07:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752739011; cv=none; b=OZFK78fuDayQHQEEmK283f3dfGjvxQLGcwUcIc/OoyjAGZ/UAFgEsG/UuD65gtrwcqKW3DH8t/f8NZqF9vsmncJVTi0JlCSVw82Y4P8iBtw2cEQMF1rB9mVQwxG8GDXCfLuncJE6Pw+Y3FafQPHEaqb+MwduQmQkAX4lyl7mtiE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752739011; c=relaxed/simple;
-	bh=ivftYy165sS8mvKEBHuADgPv+nDQA+lt7mqET/+JXhE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XwOFbGkBMhAReZvYnZSPN8H41j2cqgNGDGSya0KHmT7ufEA7xj6gMZvIrFsQVRrI1MUbrrfyGYQQHwyW7WMbKJLM+xiW0JsMo9qUIcSSJfNFL33cyLQYU0gE+HjjDp0XF5ysqgRzSbFg4tH82YRzv2Yn9VvEiEReJQ7nrwCdobk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JUcH0Xdw; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-32f1aaf0d60so6672651fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 00:56:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1752739007; x=1753343807; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TPNshWzmBQZhfeU9vekXY/PZSb0CpR11Ox+v95g7FJI=;
-        b=JUcH0XdwyQlS0QoypOAQuPedy39cfqBLgOljsVdo6nooTWfgBoLmJKgzSIti12uBuD
-         3wTY29xN85UD3whrVKFoxnGRb5aViL4pYAxtZC5T5tPEWxZ3WTu9reAlDKbm4VR95dCX
-         tju2DdPYWdfiCGG9o0DTLcqR5/JFBG4pdPmrY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752739007; x=1753343807;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TPNshWzmBQZhfeU9vekXY/PZSb0CpR11Ox+v95g7FJI=;
-        b=o8AxKb+FGlfLNpATad+fiwBO6pBNEOt+i3Af9exFmMQasRm3y6BU3jThzAVbrY5Z/F
-         tw92bEfyLrYPW3WndhADnYyIvLeFD7By8iGX7HRtx8954+kvNoM5aN/rXB8NjS2qy5ky
-         Ha0kV8Pa42KbsqNy2XPvn1KHNTGkLM5LTdEebH/UKOBdQBTmwi8IHv4UzH64ju2WZi4y
-         9pw8zhJMNUeRioh4wZom3+ke3XqdL3GO/2Vjmoke0XMXad8GMrL0dq+lP6yyad521hZc
-         T/2RKuNQc+8f33uHvVOR826x26wrDDbd422DfiH+O+Li4IY38Rtdby8v/QLqm/ueml4S
-         xQIg==
-X-Forwarded-Encrypted: i=1; AJvYcCXVz9M7f7QxvT93G9bggjDWtVOX7lVPGOX+lrJXZVBdLZGsaRc/mkjdFlBmPn4K89VMeu4h6tryMmqiHng=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0S5LOixjgWqiynLtwIxAMuQfQQH4uGwpiDmvx2ilhcQLwYk4N
-	nC/ljPS+IBE3vMqMo6cGNrZSdZu0AFybMGvgkqasvqEpTpFqSoTlViWGlObR/mhOXC9JxsGBtE3
-	H7JatYg==
-X-Gm-Gg: ASbGnctojT8gFMcfYy4zBOYyYVYYPQSkR01fU1npt7Z0VuKROjYxlkYC5+5piuwoP9A
-	A/llOnu9Foroh8v25PSg3SzXmR1RBCXuWfBGPa6bAuXeDmtMTYOaVa4Q2LhEnPAKYJqQuqJjQVC
-	Bg1ZtufKZ0FSVgXf93Ic1uaWey6+qrYM94iz2Limz4y6j3OP94UEWFQzl+d6VfdskzHW41ipFgX
-	75695/9D7/QpQ5yXf7x7L8yajW8D83MZ5JJeL2lSc9rc0/+wS6DAYaRdqAFmnp4S8n1hyMsDVrd
-	tLn7q2xWUHiSaR0p4VDQh4rFtn0eETZz1Dxn96/IKUdwTjbbe32iRuMpHl6cEF4TZCB9qGGMq/z
-	ifICJ/KcZqfUb5G7aRYk8zHVH1cQdgF+O8X7OfLinbMbWi46BTgxwSb753RvTxkbYOgooLo7O2r
-	hdSg==
-X-Google-Smtp-Source: AGHT+IG06381e/XP3pvYOmH/KQ/Oit/WV10yQDnuk2mTQyO3rjInyzCk9SnbTz/7ZYm0a3ZsMWLAiw==
-X-Received: by 2002:a05:6512:3f25:b0:553:2dce:3aad with SMTP id 2adb3069b0e04-55a2958fc26mr503739e87.7.1752739006659;
-        Thu, 17 Jul 2025 00:56:46 -0700 (PDT)
-Received: from ribalda.c.googlers.com (166.141.88.34.bc.googleusercontent.com. [34.88.141.166])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5593c7bbb21sm2946272e87.31.2025.07.17.00.56.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 00:56:46 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Thu, 17 Jul 2025 07:56:45 +0000
-Subject: [PATCH] media: uvcvideo: Drop stream->mutex
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878CE1E5B60;
+	Thu, 17 Jul 2025 07:57:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752739075; cv=fail; b=PsKmvn/8g10IRfaPhX9MPlRLKOApIYhbQwQM+eCAa5ysPXFo6FQmNIEt2Ll9fhDKhqspO+vmKaLziwbty58O4P6H4BGU/YP66P8hn6flQdS6iV0TZ+Ar1ws90h/IAUOrrPiaq1k8zVcXGWdqZXXjF6H4w1FV21AyNWeGBzcnvLM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752739075; c=relaxed/simple;
+	bh=nLQ9EPavQPVe/ud5dZMt+a4brHz7hHpB3ISTlw2ffdg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=hD0u4P0IHfRL+bQt8ankEPmCh+bpv4v0VdC4KabHqv7n8ZXIDcM0tFPUDF8lsm5jhRxcO4UKAbO272m0KBhKd/MQ680qoK/XQ5GPgl8XYNwUmzdAfQV5Ahi4FFK6yosKY/rLJAPAocQXzC4ctnfV4d5urAs+ZMDdjmPs6GJhvP0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YIey0xO2; arc=fail smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752739073; x=1784275073;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=nLQ9EPavQPVe/ud5dZMt+a4brHz7hHpB3ISTlw2ffdg=;
+  b=YIey0xO2cmBHMDAzXM9KZzV6ZY1tP6VEWSBzawV+Pj4sSpDQvWZ7rosl
+   MP7KDL9NPBvXhy9tOIpyw/OGj1/kZ8INLrrkh1MAVAUpTHXKrwPpTzvyL
+   OzVmU9NGwEPhnaety5Bg4ol7isePK2s1yHOu5wUTpcuEWAhMv2CxTib5m
+   xGdSXghvDEA86c4J7KYBy0zVbXo7yyNFe8FQlcsbeIYyDWJejbl+kMn6J
+   8fhVjBA4mJOlUiVAOi15xgxWKQ+KlKmKlVFO8T8fiZ6sNWKfVnSKRsenF
+   tOKXNsB/AS/YpWp95dKiB0VeDr9+u9YXqW5dnY9uAD/DP6s9cvCvWZRFL
+   A==;
+X-CSE-ConnectionGUID: 6tnfx7R3T0uRHAqQW9LPKg==
+X-CSE-MsgGUID: O3NRm9ttQIiosQSKGc2xvQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="72570132"
+X-IronPort-AV: E=Sophos;i="6.16,318,1744095600"; 
+   d="scan'208";a="72570132"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 00:57:46 -0700
+X-CSE-ConnectionGUID: 03V/kVGhQwSaZPQxsNg+8A==
+X-CSE-MsgGUID: 3XBhE5qWT1maMYLH24mC+g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,318,1744095600"; 
+   d="scan'208";a="157100547"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 00:57:45 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Thu, 17 Jul 2025 00:57:45 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Thu, 17 Jul 2025 00:57:45 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (40.107.93.69) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Thu, 17 Jul 2025 00:57:45 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qOXD/YiWFeQzAEEt0ZVzKeBw7xqPm6FYQPJdI+D95RIA9YxeyJ6TN2fg+DGlhzaBpr/tlfkqnc+Y1UNmjsVfO7sXou9oR7VpQGuJA1KijEP71HGRp12UvthypNVUMHVvDcBgEJbrIb1oJxU3y9XtN1rAsllzhvs1jy16lSWsT5wymS0q/vPD4cutvy7dcR0NhHlwhqedgPxtbLKNl1wJIWWyPylY0rPJomsPxDXgnRMatgcEJ30/q3q6rrn4UqUBUQyI20ZEQE3+ADIjoNopOOXSLbCrkgCmthT7EqQnx50eBeKm8QN7f66OEx6bSzOyMHR41n0ATqLR+iEu6ynmmg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cNuDKZikt+Z3NYTz3rCVm037kCDuIpUhK0kboH90nTs=;
+ b=wHlpG4EXCmjSqlBW20oTzmZ/Z5WsTouXVx9fPhinZrn7UGdcHdnv/nIUReTqniD2sbW5YnLbAQ11TmlZPiCyPETpaiMigyZ52a5dBWic1xIwcA25tBPo6J+MIet0AoMZMmHZBxWP0bM/cKNEld3OJhlv96LwsexnlZ8bmhf8I4HRJp+8ZWFsktMI0T5IBjDhbj4ojOpr2XyKrQ495s8icIIGS6Sb5SPw1z8gQgAh90TcTpSbEKvCfJxeS0e/b/7WSsI+RaFFzvsSpXeHQnDnoj9DsAzpDH295AiFFmI/VHYLT8Oy4tsJjZjSH/j6mfzAd6xoOGYRC+sBvA2CKuO3sQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
+ by SA1PR11MB6806.namprd11.prod.outlook.com (2603:10b6:806:24d::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.28; Thu, 17 Jul
+ 2025 07:57:16 +0000
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b%6]) with mapi id 15.20.8901.033; Thu, 17 Jul 2025
+ 07:57:15 +0000
+Date: Thu, 17 Jul 2025 15:57:03 +0800
+From: Chao Gao <chao.gao@intel.com>
+To: Mathias Krause <minipli@grsecurity.net>
+CC: John Allen <john.allen@amd.com>, Xiaoyao Li <xiaoyao.li@intel.com>,
+	<kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+	<seanjc@google.com>, <pbonzini@redhat.com>, <dave.hansen@intel.com>,
+	<rick.p.edgecombe@intel.com>, <mlevitsk@redhat.com>,
+	<weijiang.yang@intel.com>, <xin@zytor.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v11 00/23] Enable CET Virtualization
+Message-ID: <aHisz7hU0VGsf78Z@intel.com>
+References: <20250704085027.182163-1-chao.gao@intel.com>
+ <88443d81-78ac-45ad-b359-b328b9db5829@intel.com>
+ <aGsjtapc5igIjng+@intel.com>
+ <aHgNSC4D2+Kb3Qyv@AUSJOHALLEN.amd.com>
+ <faf246f5-70a7-41d5-bd69-ba76dfbf4784@grsecurity.net>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <faf246f5-70a7-41d5-bd69-ba76dfbf4784@grsecurity.net>
+X-ClientProxiedBy: SG2PR04CA0152.apcprd04.prod.outlook.com (2603:1096:4::14)
+ To CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250717-uvc-onelocksless-v1-1-91a1b834186a@chromium.org>
-X-B4-Tracking: v=1; b=H4sIALyseGgC/x3MTQqAIBBA4avIrBM00H6uEi3KphoSDYckiO6et
- PwW7z3AmAgZevFAwkxMMRToSoDbp7ChpKUYalUb1Wgrr+xkDOijO9gjs5yttaZFpde2g5KdCVe
- 6/+Uwvu8HbzXi5mIAAAA=
-X-Change-ID: 20250716-uvc-onelocksless-b66658e01f89
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Hans de Goede <hansg@kernel.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.14.2
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|SA1PR11MB6806:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3dbe5c76-610b-4e6b-f3f9-08ddc5078b99
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?PQLwg0sRb2hEAL486PJWBgvPxYM2b8Ic4FkfW/n5EiO3qVesRX/g0wS3CdOw?=
+ =?us-ascii?Q?ni28wp7N4L2RzBznZnfI12Bcm1uwMMq5W9b+FxVccCpaiNrUvfsKk7gBBFCi?=
+ =?us-ascii?Q?5TgF9SZDQ+490AvvkykQXwO11WrPAjWTyAtxhGsVNwVC5hNqL2wbi5cjeFaM?=
+ =?us-ascii?Q?mxSgKOdyzUBoxxI8anR/DAy3m8MErpTtLsUdrYNQTWc3k/s2tWBEzAHbeSTX?=
+ =?us-ascii?Q?A4o9bwF5skSaCgc7NJyWGnaBjn+YNAqPg7shs5PRcdhgJ863LHej9L29ah8p?=
+ =?us-ascii?Q?Hla8BfodRfwb/i+0IAyk5rq1aaT6FnDr+YoE8iAxh6iFt1f3GIe6JM/FrFNG?=
+ =?us-ascii?Q?Bmb8r5sCZjtdo3SPDIerekGmlfFA3NIrfp1mIRo/wQfsChqAdEB+pgQgZtWV?=
+ =?us-ascii?Q?FaPenFqzVw2IEhMeX9tkY4Y79/ayhBQ9e++Kk/fgvoHQVt3lkHV+W6bj9i6u?=
+ =?us-ascii?Q?2XXQHBWTxstg8FfCuvrY95Dqq6lKXa/BmlhT2stNOTKT59q2ecscpLludoFC?=
+ =?us-ascii?Q?5jKo2axDz6PFOfQxF4mkW7+rRIZu/HkxcfGN9WhSh0HVmf2UMMEhN7Mwf2oy?=
+ =?us-ascii?Q?2hIIvLbF+VnSuWHnoyK8g/o0TRLf0enLa0PfhVtm50g/7t6HyVDJ8WbhTnEF?=
+ =?us-ascii?Q?4caNqyPsMZ04pr9jaVT85S6ok7uAuK5pelL7gUoz8Qhcz3K6JG0waNoS4/tC?=
+ =?us-ascii?Q?/vSL+Bq9faPbL++FK78RCJ9n0BQn8gQngXtyySicPzDPy+KjP5LYkGu5mrj6?=
+ =?us-ascii?Q?pJlbmSddFPR2YlrqW7nZESIusAvxZ/qhacMBoSyGAEQQDNi2u3BVIS8SvNGx?=
+ =?us-ascii?Q?WwpQh2Y80YscByqwqxKO+yPYhQIPYVYjOYWpUhHfiNivt4PhiSO567OIRb2K?=
+ =?us-ascii?Q?ROK7tlL7mNYhKInQL0V1m80c3/XUAXPFxR1Zx8CB3RL7bx4zCE1vWbENNvAI?=
+ =?us-ascii?Q?yPaUKl389St1mUv3rh735R+SUfSHHDv55r2yS6KjaQcCg3W7/60EmcqmDlnA?=
+ =?us-ascii?Q?2YE26j4Be6HpqC1Hs8Ce4UDuPOYVfuRe8pPz3qfDqnwt55oPie0SGyxJbv/z?=
+ =?us-ascii?Q?LVXJnOOlSEXDIVWOwxDInwOKCdMGZvj6uTeWWEnhwsPVtTzz/vwr5S5aHq7D?=
+ =?us-ascii?Q?aFxoGL+gEx84idK8Duj7Om5+Mifcz2Drcf3XA+liivAi8TwyYn9549QCuR3J?=
+ =?us-ascii?Q?l6yonM1Da1VH6tRylZb+KqNfUbPa0kWT0leYhZS+6gPng1fMfo7CHPCs0Z/Y?=
+ =?us-ascii?Q?57TnG8c3XCyvTHrG/51tMEsjH5h4e/ZJC9/cqSDhZFhrJgcpNZjPoVSNKS/g?=
+ =?us-ascii?Q?RpvPtKFo1I0eQV2sWxBzEhoMXdqN5eApj8L/4wcGAm4od+KUTwbJo2DdM2V3?=
+ =?us-ascii?Q?Qvic6hd9niqB+FHavi573/8YwUKslNo1ugst8iDh5GkjotUi51qTgI9DuvYK?=
+ =?us-ascii?Q?mqsKYa9Awfc=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?tve3oBt/nWE5xhxPdusW/jiVor2svZzcCMUUebsfnI9ej5CIMQD02OSoBhzO?=
+ =?us-ascii?Q?4Qw5MkqbYODo4ebw7b48EeGmbBwldd4GSDId8MAiMfLxS9ltU4SlSVr7uu/N?=
+ =?us-ascii?Q?ldIDziV5UragQDFVfDhxdqdGNd+jYuDRw0Un2u0btQRjr0WEdaAAO7rXb5Hx?=
+ =?us-ascii?Q?rgsTtwMcJoAuEKQ6EcSSFZdHDtuCd2vezyT3+QOwIiHZki7iChMbY2yJL/pz?=
+ =?us-ascii?Q?pIQ+OaX+HKB/Nzt50ABLzfWKhJZ7NW2okoO23Gzly73GDM8BXqkxz9h9lC2q?=
+ =?us-ascii?Q?0tUriG02SxVlP9bsuqjaC14fcXtNviiNX45pK+1j+gZpwX2Mkc4TO9XRkQGJ?=
+ =?us-ascii?Q?Npmvu6ptU6z0oE40VPQZbqcAOeZcb5iEUJqFE67jx65xapuJBuSNZnjDZcBx?=
+ =?us-ascii?Q?+1ToAEXWwscckCIQq6oCu2FBbCy8kLgN5QjOfjBcUJG+YwQ7G4YwnoH/MD+E?=
+ =?us-ascii?Q?lkv5UJKc8Vv+luflXZz0cVv2aK9KoE7k1A/XHYExFw5jS/DP3R5RhmCVPikS?=
+ =?us-ascii?Q?sTFadoMA/v4ebxp0vO6q6ckkdNo2EMzKW+ANNF25Iss4MI6m+zjLMGHLe7sh?=
+ =?us-ascii?Q?dRE5kVtZ7SCQ3zofvciBe3ZlLbwrENdRUwf7+t3S8LwE06I6ea8EQppRsFOv?=
+ =?us-ascii?Q?qP8B21UDCYIZPN8ca2e8Q8m5tl0JZqNEHkW1FARrGEyCY/T8C9WO1RkGVmVA?=
+ =?us-ascii?Q?rAEV0hH2RmYUpyDLR2p2Y3Mvu9s+ZpDJkrmQu9NBB2oJ9vPPCk9tP9UnB1sV?=
+ =?us-ascii?Q?yAcnD3NikTXWUC7lfFKspeEE4642Jy8Rwmt0NNkGQBONklWx+IvQ53u3LnI3?=
+ =?us-ascii?Q?O5nlZevTbhqzL0RWjuOeB06BdXVnGk9MHcKpMrGqBCy7qwtBfKQ4U7WiTZPa?=
+ =?us-ascii?Q?dxXv3iHSZ9LQnI+ysU2lzHjNSvg7Ki6Pd8JjOrVGGr3L8vE3gVskoSEIoVt1?=
+ =?us-ascii?Q?bTL7xFB0h3W5RubtpLFd1+bV5j3Lzk/hwfastJpWDn/wEHrqmxpo+ctdrHFf?=
+ =?us-ascii?Q?VajCfujzSZ4JRDCWkwQ6H+d2bx8boQ1tTVP2x1qdVnaVliGnWa5aaCvrnD8g?=
+ =?us-ascii?Q?Xc9dp1AUu7297MVt+1ts4gMRQXTaQn81fo6YolCWLqpYb9vasY2VvSo4rHJn?=
+ =?us-ascii?Q?V+xxJohlE4kQ0kkQpkwz/sEtM7eA/t5SmE2qUOMWBgG7tKk/Dp5LdqqkOqKI?=
+ =?us-ascii?Q?+ARArEYhXOfl/Pbvq0PUufjV4+7oytDIVWLx5/IQG12SN8Lg/PucDI5nmHHi?=
+ =?us-ascii?Q?7QJ/vMdxMMZ9RPzSRRD+bCivlK8KadB4r3MXE75T/Oifv3t0Y7dApPC+deDs?=
+ =?us-ascii?Q?khuUBpqlfpOmPGJJiBcJmxb+z/wEEsrBCFgUJuNl2HDNy2GXy9oSZX8v2idj?=
+ =?us-ascii?Q?ZQM/LgvlqJPEtsPx4ID20mh9wDaaxmuoYJP2wY7YAgLG5VDAg7UmzGNIQmX4?=
+ =?us-ascii?Q?Li3xPqy2MPDbmPt/AOaj2EL+sKehd4I9x4vFa2pk6Y7WDwfCxx07XtExLVHv?=
+ =?us-ascii?Q?xaIDRAdNG8Os9XddQQh+IL/XRiiwWsYD48SAD+C5isCcXkRTRTLmYzvtNdw5?=
+ =?us-ascii?Q?6VWa7mSCHwRjiQ0bIcmxWSbgVwconPcrEULCYOX9?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3dbe5c76-610b-4e6b-f3f9-08ddc5078b99
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2025 07:57:15.7734
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: XmAifwVayHLESmbkPlFxHHrYYJWCUo96hlaUXgoNcLonXfmVj3OItx696LnGHnciq0GCs8yRi+97o6QcAH2iig==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB6806
+X-OriginatorOrg: intel.com
 
-Since commit c93d73c9c2cf ("media: uvcvideo: Use vb2 ioctl and fop
-helpers"), the IOCTLs are serialized. Due to this there is no more need
-to protect ctrl, cur_format or cur_frame from concurrent access.
+On Thu, Jul 17, 2025 at 09:00:04AM +0200, Mathias Krause wrote:
+>On 16.07.25 22:36, John Allen wrote:
+>> On Mon, Jul 07, 2025 at 09:32:37AM +0800, Chao Gao wrote:
+>>> On Mon, Jul 07, 2025 at 12:51:14AM +0800, Xiaoyao Li wrote:
+>>>> Hi Chao,
+>>>>
+>>>> On 7/4/2025 4:49 PM, Chao Gao wrote:
+>>>>> Tests:
+>>>>> ======================
+>>>>> This series passed basic CET user shadow stack test and kernel IBT test in L1
+>>>>> and L2 guest.
+>>>>> The patch series_has_ impact to existing vmx test cases in KVM-unit-tests,the
+>>>>> failures have been fixed here[1].
+>>>>> One new selftest app[2] is introduced for testing CET MSRs accessibilities.
+>>>>>
+>>>>> Note, this series hasn't been tested on AMD platform yet.
+>>>>>
+>>>>> To run user SHSTK test and kernel IBT test in guest, an CET capable platform
+>>>>> is required, e.g., Sapphire Rapids server, and follow below steps to build
+>>>>> the binaries:
+>>>>>
+>>>>> 1. Host kernel: Apply this series to mainline kernel (>= v6.6) and build.
+>>>>>
+>>>>> 2. Guest kernel: Pull kernel (>= v6.6), opt-in CONFIG_X86_KERNEL_IBT
+>>>>> and CONFIG_X86_USER_SHADOW_STACK options. Build with CET enabled gcc versions
+>>>>> (>= 8.5.0).
+>>>>>
+>>>>> 3. Apply CET QEMU patches[3] before build mainline QEMU.
+>>>>
+>>>> You forgot to provide the links of [1][2][3].
+>>>
+>>> Oops, thanks for catching this.
+>>>
+>>> Here are the links:
+>>>
+>>> [1]: KVM-unit-tests fixup:
+>>> https://lore.kernel.org/all/20230913235006.74172-1-weijiang.yang@intel.com/
+>>> [2]: Selftest for CET MSRs:
+>>> https://lore.kernel.org/all/20230914064201.85605-1-weijiang.yang@intel.com/
+>>> [3]: QEMU patch:
+>>> https://lore.kernel.org/all/20230720111445.99509-1-weijiang.yang@intel.com/
+>>>
+>>> Please note that [1] has already been merged. And [3] is an older version of
+>>> CET for QEMU; I plan to post a new version for QEMU after the KVM series is
+>>> merged.
+>> 
+>> Do you happen to have a branch with the in-progress qemu patches you are
+>> testing with? I'm working on testing on AMD and I'm having issues
+>> getting this old version of the series to work properly.
 
-Drop stream->mutex after thanking it for years of good service.
+Hi John,
 
-Use this opportunity to do fix some CodeStyle.
+Try this branch:
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/usb/uvc/uvc_driver.c   |  4 ----
- drivers/media/usb/uvc/uvc_metadata.c |  8 ++------
- drivers/media/usb/uvc/uvc_v4l2.c     | 39 ++++++++----------------------------
- drivers/media/usb/uvc/uvcvideo.h     |  6 ------
- 4 files changed, 10 insertions(+), 47 deletions(-)
+https://github.com/gaochaointel/qemu-dev qemu-cet
 
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index 775bede0d93d9b3e5391914aa395326d3de6a3b1..3039e6a533b82dd917050d416c9ced8756d69170 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -183,8 +183,6 @@ static void uvc_stream_delete(struct uvc_streaming *stream)
- 	if (stream->async_wq)
- 		destroy_workqueue(stream->async_wq);
- 
--	mutex_destroy(&stream->mutex);
--
- 	usb_put_intf(stream->intf);
- 
- 	kfree(stream->formats);
-@@ -201,8 +199,6 @@ static struct uvc_streaming *uvc_stream_new(struct uvc_device *dev,
- 	if (stream == NULL)
- 		return NULL;
- 
--	mutex_init(&stream->mutex);
--
- 	stream->dev = dev;
- 	stream->intf = usb_get_intf(intf);
- 	stream->intfnum = intf->cur_altsetting->desc.bInterfaceNumber;
-diff --git a/drivers/media/usb/uvc/uvc_metadata.c b/drivers/media/usb/uvc/uvc_metadata.c
-index 229e08ff323eed9129d835b24ea2e8085bb713b8..d1d4fade634bd3f8b12bbaa75388db42aecc25ea 100644
---- a/drivers/media/usb/uvc/uvc_metadata.c
-+++ b/drivers/media/usb/uvc/uvc_metadata.c
-@@ -100,14 +100,10 @@ static int uvc_meta_v4l2_set_format(struct file *file, void *fh,
- 	 * Metadata buffers would still be perfectly parseable, but it's more
- 	 * consistent and cleaner to disallow that.
- 	 */
--	mutex_lock(&stream->mutex);
--
- 	if (vb2_is_busy(&stream->meta.queue.queue))
--		ret = -EBUSY;
--	else
--		stream->meta.format = fmt->dataformat;
-+		return -EBUSY;
- 
--	mutex_unlock(&stream->mutex);
-+	stream->meta.format = fmt->dataformat;
- 
- 	return ret;
- }
-diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
-index 160f9cf6e6dbdbf39e3eff56a5d5ea1d977fbe22..d7be4d59f0c73b983aa01321f4acc8f8bf6e83ef 100644
---- a/drivers/media/usb/uvc/uvc_v4l2.c
-+++ b/drivers/media/usb/uvc/uvc_v4l2.c
-@@ -329,14 +329,12 @@ static int uvc_v4l2_try_format(struct uvc_streaming *stream,
- 	 * developers test their webcams with the Linux driver as well as with
- 	 * the Windows driver).
- 	 */
--	mutex_lock(&stream->mutex);
- 	if (stream->dev->quirks & UVC_QUIRK_PROBE_EXTRAFIELDS)
- 		probe->dwMaxVideoFrameSize =
- 			stream->ctrl.dwMaxVideoFrameSize;
- 
- 	/* Probe the device. */
- 	ret = uvc_probe_video(stream, probe);
--	mutex_unlock(&stream->mutex);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -395,19 +393,15 @@ static int uvc_ioctl_g_fmt(struct file *file, void *fh,
- 	struct uvc_streaming *stream = handle->stream;
- 	const struct uvc_format *format;
- 	const struct uvc_frame *frame;
--	int ret = 0;
- 
- 	if (fmt->type != stream->type)
- 		return -EINVAL;
- 
--	mutex_lock(&stream->mutex);
- 	format = stream->cur_format;
- 	frame = stream->cur_frame;
- 
--	if (format == NULL || frame == NULL) {
--		ret = -EINVAL;
--		goto done;
--	}
-+	if (!format || !frame)
-+		return -EINVAL;
- 
- 	fmt->fmt.pix.pixelformat = format->fcc;
- 	fmt->fmt.pix.width = frame->wWidth;
-@@ -419,9 +413,7 @@ static int uvc_ioctl_g_fmt(struct file *file, void *fh,
- 	fmt->fmt.pix.xfer_func = format->xfer_func;
- 	fmt->fmt.pix.ycbcr_enc = format->ycbcr_enc;
- 
--done:
--	mutex_unlock(&stream->mutex);
--	return ret;
-+	return 0;
- }
- 
- static int uvc_ioctl_s_fmt(struct file *file, void *fh,
-@@ -441,19 +433,14 @@ static int uvc_ioctl_s_fmt(struct file *file, void *fh,
- 	if (ret < 0)
- 		return ret;
- 
--	mutex_lock(&stream->mutex);
--	if (vb2_is_busy(&stream->queue.queue)) {
--		ret = -EBUSY;
--		goto done;
--	}
-+	if (vb2_is_busy(&stream->queue.queue))
-+		return -EBUSY;
- 
- 	stream->ctrl = probe;
- 	stream->cur_format = format;
- 	stream->cur_frame = frame;
- 
--done:
--	mutex_unlock(&stream->mutex);
--	return ret;
-+	return 0;
- }
- 
- static int uvc_ioctl_g_parm(struct file *file, void *fh,
-@@ -466,9 +453,7 @@ static int uvc_ioctl_g_parm(struct file *file, void *fh,
- 	if (parm->type != stream->type)
- 		return -EINVAL;
- 
--	mutex_lock(&stream->mutex);
- 	numerator = stream->ctrl.dwFrameInterval;
--	mutex_unlock(&stream->mutex);
- 
- 	denominator = 10000000;
- 	v4l2_simplify_fraction(&numerator, &denominator, 8, 333);
-@@ -519,12 +504,9 @@ static int uvc_ioctl_s_parm(struct file *file, void *fh,
- 	uvc_dbg(stream->dev, FORMAT, "Setting frame interval to %u/%u (%u)\n",
- 		timeperframe.numerator, timeperframe.denominator, interval);
- 
--	mutex_lock(&stream->mutex);
- 
--	if (uvc_queue_streaming(&stream->queue)) {
--		mutex_unlock(&stream->mutex);
-+	if (uvc_queue_streaming(&stream->queue))
- 		return -EBUSY;
--	}
- 
- 	format = stream->cur_format;
- 	frame = stream->cur_frame;
-@@ -556,14 +538,11 @@ static int uvc_ioctl_s_parm(struct file *file, void *fh,
- 
- 	/* Probe the device with the new settings. */
- 	ret = uvc_probe_video(stream, &probe);
--	if (ret < 0) {
--		mutex_unlock(&stream->mutex);
-+	if (ret < 0)
- 		return ret;
--	}
- 
- 	stream->ctrl = probe;
- 	stream->cur_frame = frame;
--	mutex_unlock(&stream->mutex);
- 
- 	/* Return the actual frame period. */
- 	timeperframe.numerator = probe.dwFrameInterval;
-@@ -941,10 +920,8 @@ static int uvc_ioctl_g_selection(struct file *file, void *fh,
- 
- 	sel->r.left = 0;
- 	sel->r.top = 0;
--	mutex_lock(&stream->mutex);
- 	sel->r.width = stream->cur_frame->wWidth;
- 	sel->r.height = stream->cur_frame->wHeight;
--	mutex_unlock(&stream->mutex);
- 
- 	return 0;
- }
-diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-index 757254fc4fe930ae61c9d0425f04d4cd074a617e..86765b9d7935f0888476249c3fb826cd7f36b35c 100644
---- a/drivers/media/usb/uvc/uvcvideo.h
-+++ b/drivers/media/usb/uvc/uvcvideo.h
-@@ -469,12 +469,6 @@ struct uvc_streaming {
- 	const struct uvc_format *cur_format;
- 	const struct uvc_frame *cur_frame;
- 
--	/*
--	 * Protect access to ctrl, cur_format, cur_frame and hardware video
--	 * probe control.
--	 */
--	struct mutex mutex;
--
- 	/* Buffers queue. */
- 	unsigned int frozen : 1;
- 	struct uvc_video_queue queue;
+Disclaimer: I haven't cleaned up the QEMU patches yet, so they are not of
+upstream quality.
 
----
-base-commit: d968e50b5c26642754492dea23cbd3592bde62d8
-change-id: 20250716-uvc-onelocksless-b66658e01f89
+>
+>For me the old patches worked by changing the #define of
+>MSR_KVM_GUEST_SSP from 0x4b564d09 to 0x4b564dff -- on top of QEMU 9.0.1,
+>that is.
 
-Best regards,
--- 
-Ricardo Ribalda <ribalda@chromium.org>
-
+Please note that aliasing guest SSP to the virtual MSR indexed by 0x4b564dff is
+not part of KVM uAPI in the v11 series. This means the index 0x4b564dff isn't
+stable; userspace should read/write guest SSP via KVM_GET/SET_ONE_REG ioctls.
 
