@@ -1,222 +1,168 @@
-Return-Path: <linux-kernel+bounces-734421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C73EB08162
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:25:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEC76B08165
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:28:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 811B44A7E6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:25:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B7F01C23EC8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:28:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4FE07262E;
-	Thu, 17 Jul 2025 00:25:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6171B4D8CE;
+	Thu, 17 Jul 2025 00:27:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ORS8BUmb"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CDzlUWKL"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7112E72623;
-	Thu, 17 Jul 2025 00:25:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A4681799F;
+	Thu, 17 Jul 2025 00:27:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752711912; cv=none; b=hm/f+DokQcNhGcN9+M1dqiQ/zt0YFkSBzSHQWaxu0PFtFxvy4cB0urHf4kYYYQxpWcXPxd4QJSmQAVBbKr8jRvJCdb6m4wbwO6VtOcxvmUdZaqUI2oqgmeXGBsFAvXRffLmRrvIhK+3ram7TRx+yTqqK7RzZsR5nYBE9Mu146QI=
+	t=1752712076; cv=none; b=ZqMM95C/SaSNJSwrD8RPI5xyHhjUv9ftndkLc1YY9r6ORuLlrfgL1SN/yRVxHF5Rf8aC9YlgEbRntZGBVGaU5V179HD2scRQ1vMh76BLZkZnqBb7UvYxXZmqZJISsAE74j9rI9F6gWxITUhGDJjvIlPa5aD5AV4WJ865RD2nyGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752711912; c=relaxed/simple;
-	bh=Gxa9PKufh+aR/0kJPhDsDZBqTrxI5XIdOR4wCRI+bg0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=skKgwVd8ryj61vpfXv+lH6UV8IlpyTzU2+A0YsiNmwYX70xf1+PAWMwuVUARvSi4fKzI/oFkpex0wllTUjsGse+3yTk8vbr0NEb+FuTN1tsPJKYSJ52qCJEtb1gQw4WJPyxprd//ULiEDXr6nriiSYpRoHzDMEWcd26Wm0Ed03M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ORS8BUmb; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1752712076; c=relaxed/simple;
+	bh=B1VrwBO8GfeRLwe0QIm4yIzRse6Q7xt/6UjTMPlmCuY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mUBjwyIeFbWnkG2CiutYZ0QO0Q8RLAHfcw7Cec09OXERw8Jcs5Cq55SapzCgCzyxQl+HAKjVutPX3P5MN4Xil935etbr659qUE0ItYmGQEbiEPrG85c6p/g0lPjqZhIprS2ldEGv8cd6vNK+JzcrqJl5+vmBM1aU7jAz0ba32o4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CDzlUWKL; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-31393526d0dso382932a91.0;
-        Wed, 16 Jul 2025 17:25:10 -0700 (PDT)
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-32b8134ef6aso4209551fa.0;
+        Wed, 16 Jul 2025 17:27:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752711910; x=1753316710; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=WmWfwzZK0KTH8AomG9GKSVKLZ4xZpIh4lyGzd2MmRKg=;
-        b=ORS8BUmbOgcD3qeKruFbB2S5nXx8rGrdYcQ707j74XYsNov28ixbv7aglCE3owgkfG
-         GWxCf5vD4rGWVOh9iH03Ph3CYwmuAp5cgayRQrwa7j0akRcMBwVA5tHEwVYkcc5NU8sI
-         2d8/EV0RCDvSj15YnID5nIK7m7Fgh5C30Gm1atPIBvwgNiEUO5REJl7z+0VjD3ACdeYC
-         Q5MaKXmWJ8Mc5Ox27ea6Ya3xF7OG2XmyS0du4nfAv5BwzJJdoQBFJ30ICpZJc27OBi7m
-         i570YLdBrcNxo4v4lLPb25J7xTDkQCwKxpBupLLyCZpg47Erg/ujPFd0KT6CmXAdhbVq
-         khHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752711910; x=1753316710;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1752712073; x=1753316873; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WmWfwzZK0KTH8AomG9GKSVKLZ4xZpIh4lyGzd2MmRKg=;
-        b=amdVQ+rg0Hli0phwh7AyuUKBZkqBDn/6Ld3aNHOjLDzMyjrwicbARz4bhQmVntSk4B
-         gRkpNaUwQOWJLpGfUZEPPEd+SHxoB6+AUJW0GR7iRpZy3ctwxZ+ZdESyHN5eOrve3KSm
-         LRqhNeWl4mCk1EnrZIAIn7rEJM3nz7npP6oMjeZXOS5F1aHMmztqcaHMmwasBOngynlF
-         DoneeFZhjPaw3P9oTd0xiDhTQCmOSfLcTNjGsQGfY4G3A7vWwHXdZwvxTcJdPoK4cZac
-         f0/nnn/xlXiDKcZE86/L1Ft00H9FaDDWlp3TtH4WGtgXt9y1SCXBjbVO4ZlmY2iYZZFg
-         i4pA==
-X-Forwarded-Encrypted: i=1; AJvYcCUMmiXJVeyC4W4CMAv5dFug9fQbaqq5ib5I3L68Wzm4DPBqG50aInCCvxkPoDFI8m3PtdxfxZ/ydTprfkw=@vger.kernel.org, AJvYcCWEhlXi7/kz/ks4hcf/v23F1MTFkOphgw93tThtudJTQaqdtVgWDSnEFOWGiYwYlkS8Eg7/UOWa5nMte1Ey0/E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIugkxDLJ9k7QrRdD2LEnYZzY6G6LAkeCzrcRSBBE2Wm5WLBwe
-	4sXfGegQ+ccVa4lgs6ZPB9MTDNXD5QazvzaYiavmWsb+TnnbnTctIlkZ
-X-Gm-Gg: ASbGncuanzYmj9WqackVx59MojFoC+t/+xb1ZlUfDBnRk59QLyXqRKSb4utkrOp3vUx
-	J8Alh1DPZqnkIDs1UaVA8cJyVKDzFMr1LX1ymts3lLiiLYZ9wTse6+i+XMDGslKAmqTY8ERc8Sn
-	XOJUynyVcmYWXCo5ww9IX2hp/uzCESAL8JRX4H5szSAsttWFXqCucaFeDPA8tFhfloEFI8xXWoU
-	uWCt3A5Z0tbw8Yr38l/7sbhwYbA14TpcDHULf9I+KQy1GVCUguwGFg8on5NBuzXvHrLpLcZ9r3H
-	ki2BT9ppHeXbAWJT7PAv5qxNovey8gJbBEgQrNWv0MCcXkc3Z9gcOl5MKP4wG2LmPkAZRuV6Sit
-	9j5JcV2p+Qyjb5tip/wl8QnM0rLUjCsev7aO5RSob0De8DBF11IDNCoi8l+WW1Scwqilg390=
-X-Google-Smtp-Source: AGHT+IEu/O0VhHXkV8gf/X0iOQ2i+OmIoFF8JYbZacGHj1Foi2wbmBVgypYCDMTArPmJRfakeImHcA==
-X-Received: by 2002:a17:90b:1d47:b0:31c:15d9:8aa with SMTP id 98e67ed59e1d1-31c9e78cefamr6061720a91.34.1752711909554;
-        Wed, 16 Jul 2025 17:25:09 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4289274sm131099335ad.43.2025.07.16.17.25.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Jul 2025 17:25:09 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <c38edb68-e250-4c54-8a91-e678d3f1eae9@roeck-us.net>
-Date: Wed, 16 Jul 2025 17:25:08 -0700
+        bh=NI1Ghd98wnZnXdj9LhDIQuSGHuKyUbZcQleXiLmcq1Y=;
+        b=CDzlUWKL4kuC96p3/QXVkn9NTJke82GjIoZx6lB7MKPVKqZ2oXpo4Un8H2xQjTzeIi
+         Z/IqoM1lSigtWPHmA9cD87DsEg1PFyEX+jnz7Lmt9ne6pDMsqks+tHLRKyDIFIDdnAyy
+         DQX/x6t+1LavOrTgxPhWLHUY/XBRx2AtvFS73djHXrGdZIwY4gkzeoxAzZLAW7rp2bqt
+         sz70724ll7qw/KaC8BFnUOtDg17VDoew1Wk6MAf8ecFFRFBtrny7zQOF4+gcdtdpX71W
+         8P4YprDhkOJp4LPxJ7Scp+t0q01csc7ImbswPKBqibQ2peQeco7mI47lUbdqK2i8BgAw
+         U/pA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752712073; x=1753316873;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NI1Ghd98wnZnXdj9LhDIQuSGHuKyUbZcQleXiLmcq1Y=;
+        b=cFqtIe0WZ7JUkVwhjJBjNhGPvtIw/62FoazZVu2bbApVHRSqF0RGrFpG4pG6Zi9xoS
+         WBV/Ylq9OnsvwCuwWBIhZZp4cqxJhGZZZbAdX8iNm7EMQ06NTYv8rNNV0BWQsfIptwLu
+         URLZulus3WsCW/Kg3ZINooDsm4mbqv6K4ZAO+DZfX8By/cjbmjR/9Eg6zZitnj1/qnyl
+         9KpiUjvHrQHTeBZEEOFlAg3hqbdfEZeZEgccCFdqPC4Vq+Swpm2b+D0+vnH2BkVQrseE
+         iiTy2nxActYDkXoDkiBhmsAAAIwKnGzlAFJIedo3tBH2X+lDMnr0KUOiFJlNjS98KXp9
+         D94Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUIM/TCSml0iLDaWqf+KzhEymjTe2osTqAcdFnLKYLyM0HL2jyim3OAlJ+fGv5UnIDramDhBHwKF0kv@vger.kernel.org, AJvYcCWnTVs/4Md/S9WR0QyyBb0a8kDnXEaPHyU/MnPGmH+WRKw2MAKQg5WOWJs7Kh/BWRgd7oxR3N0GZ0aDyHI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdGqtx/YsNo6eTCU9Ml6WpFVslI7QdBSNHilDmK6eTj/+ihx2i
+	mvGf7CX7dM+RC6ommr9COhIlWsVs6A4GTIPy5lMNvwkNhRxaEkQeX4Lg
+X-Gm-Gg: ASbGncvYow6KhJCve0TIsDPuTnveTLujCDi3QadEYHqodUJFRO30ueaVOHKvus+gu4Z
+	wim0Kp1fxXae1UfdT363Zd5tHXK/Wuw8p2Qp+YyyC/xkx/Bkipn0O40F873uWYUdyM0ZaauO4wg
+	JMvocD5gDSAVM8j4JNYIp4OPCI7U1OMKYJ/tRlvim0ID92ZxC7BJkr6WAhXteRcKF/1HnmDrwwt
+	RdfOxdaZBW/BPwQbBHCSotAQ2O34GoY9pORT997WkbERpKEiMZAAfbwZIWvyvYGXqkj/mdaQ8AI
+	Qegsby4UI1L0IUWSnFWCmvBxoU7MZgrTVXJ/UppOF1+MwPVV9eZDl/ZP7un0sh+JRXkJ7EuzHPQ
+	KSgOPbKwT9UJS9zK39BHbGB6VsBDdMwLTDymxnr/fUT89j4EMGhs=
+X-Google-Smtp-Source: AGHT+IEtnpCQntmpq2730cwK3D2dKN35j2w4G9/hV8f0woAbrYcmCW/k6Pk/MtGuOpl2V9gC93akGA==
+X-Received: by 2002:ac2:4c46:0:b0:553:2f33:ac04 with SMTP id 2adb3069b0e04-55a296fcefbmr262480e87.26.1752712072668;
+        Wed, 16 Jul 2025 17:27:52 -0700 (PDT)
+Received: from SC-WS-02452.corp.sbercloud.ru ([85.174.192.104])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5593c7ee97asm2793177e87.78.2025.07.16.17.27.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 17:27:52 -0700 (PDT)
+Date: Thu, 17 Jul 2025 03:27:50 +0300
+From: Sergey Bashirov <sergeybashirov@gmail.com>
+To: Antonio Quartulli <antonio@mandelbit.com>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, linux-nfs@vger.kernel.org
+Cc: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+	Sergey Bashirov <sergeybashirov@gmail.com>, Konstantin Evtushenko <koevtushenko@yandex.com>, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pNFS: fix uninitialized pointer access
+Message-ID: <h4ydkt7c23ha46j33i42wh2ecdwtcrgxnvfb6c7mo3dqc7l2kz@ng7fev5rbqmi>
+References: <20250716143848.14713-1-antonio@mandelbit.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] watchdog: Don't use "proxy" headers
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- James Hilliard <james.hilliard1@gmail.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>
-References: <20250708133646.70384-1-andriy.shevchenko@linux.intel.com>
- <20250708133646.70384-3-andriy.shevchenko@linux.intel.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <20250708133646.70384-3-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250716143848.14713-1-antonio@mandelbit.com>
+User-Agent: NeoMutt/20231103
 
-On 7/8/25 06:33, Andy Shevchenko wrote:
-> Update header inclusions to follow IWYU (Include What You Use)
-> principle.
-> 
-> Note that kernel.h is discouraged to be included as it's written
-> at the top of that file.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On Wed, Jul 16, 2025 at 04:38:48PM +0200, Antonio Quartulli wrote:
+> In ext_tree_encode_commit() if no block extent is encoded due to lack
+> of buffer space, ret is set to -ENOSPC and we end up accessing be_prev
+> despite it being uninitialized.
 
+This static check warning appears to be a false positive. This is an
+internal static function that is not exported outside the module via
+an interface or API. Inside the module we always use a buffer size
+that is a multiple of PAGE_SIZE, so at least one page is provided.
+The block extent size does not exceed 44 bytes, so we can always
+encode at least one extent. Thus, we never fail on the first iteration.
+Either ret is zero, or ret is nonzero and at least one extent is encoded.
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-
+> Fix this behaviour by bailing out right away when no extent is encoded.
+>
+> Fixes: d84c4754f874 ("pNFS: Fix extent encoding in block/scsi layout")
+> Addresses-Coverity-ID: 1647611 ("Memory - illegal accesses  (UNINIT)")
+> Signed-off-by: Antonio Quartulli <antonio@mandelbit.com>
 > ---
->   drivers/watchdog/watchdog_core.h       |  8 +++++++-
->   drivers/watchdog/watchdog_pretimeout.c |  2 ++
->   include/linux/watchdog.h               | 12 ++++++++----
->   3 files changed, 17 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/watchdog/watchdog_core.h b/drivers/watchdog/watchdog_core.h
-> index 5b35a8439e26..ab825d9f9248 100644
-> --- a/drivers/watchdog/watchdog_core.h
-> +++ b/drivers/watchdog/watchdog_core.h
-> @@ -24,8 +24,14 @@
->    *	This material is provided "AS-IS" and at no charge.
->    */
->   
-> -#include <linux/hrtimer.h>
-> +#include <linux/cdev.h>
-> +#include <linux/device.h>
-> +#include <linux/hrtimer_types.h>
-> +#include <linux/init.h>
->   #include <linux/kthread.h>
-> +#include <linux/mutex_types.h>
-> +#include <linux/types.h>
-> +#include <linux/watchdog.h>
->   
->   #define MAX_DOGS	32	/* Maximum number of watchdog devices */
->   
-> diff --git a/drivers/watchdog/watchdog_pretimeout.c b/drivers/watchdog/watchdog_pretimeout.c
-> index e5295c990fa1..2526436dc74d 100644
-> --- a/drivers/watchdog/watchdog_pretimeout.c
-> +++ b/drivers/watchdog/watchdog_pretimeout.c
-> @@ -7,6 +7,8 @@
->   #include <linux/slab.h>
->   #include <linux/spinlock.h>
->   #include <linux/string.h>
-> +#include <linux/sysfs.h>
-> +#include <linux/types.h>
->   #include <linux/watchdog.h>
->   
->   #include "watchdog_core.h"
-> diff --git a/include/linux/watchdog.h b/include/linux/watchdog.h
-> index 99660197a36c..8c60687a3e55 100644
-> --- a/include/linux/watchdog.h
-> +++ b/include/linux/watchdog.h
-> @@ -9,14 +9,18 @@
->   #ifndef _LINUX_WATCHDOG_H
->   #define _LINUX_WATCHDOG_H
->   
-> -
->   #include <linux/bitops.h>
-> -#include <linux/cdev.h>
-> -#include <linux/device.h>
-> -#include <linux/kernel.h>
-> +#include <linux/limits.h>
->   #include <linux/notifier.h>
-> +#include <linux/printk.h>
-> +#include <linux/types.h>
-> +
->   #include <uapi/linux/watchdog.h>
->   
-> +struct attribute_group;
-> +struct device;
-> +struct module;
-> +
->   struct watchdog_ops;
->   struct watchdog_device;
->   struct watchdog_core_data;
+>  fs/nfs/blocklayout/extent_tree.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/fs/nfs/blocklayout/extent_tree.c b/fs/nfs/blocklayout/extent_tree.c
+> index 315949a7e92d..82e19205f425 100644
+> --- a/fs/nfs/blocklayout/extent_tree.c
+> +++ b/fs/nfs/blocklayout/extent_tree.c
+> @@ -598,6 +598,11 @@ ext_tree_encode_commit(struct pnfs_block_layout *bl, __be32 *p,
+>  		if (ext_tree_layoutupdate_size(bl, *count) > buffer_size) {
+>  			(*count)--;
+>  			ret = -ENOSPC;
+> +			/* bail out right away if no extent was encoded */
+> +			if (!*count) {
 
+We can't exit here without setting the value of lastbyte, which is one
+of the function outputs. Please set it to U64_MAX to let upper layer
+logic handle it properly. Or, see the alternative solution at the end.
+  +				*lastbyte = U64_MAX;
+
+> +				spin_unlock(&bl->bl_ext_lock);
+> +				return ret;
+> +			}
+>  			break;
+>  		}
+>
+
+If we need to fix this, I'd rather add an early check whether the buffer
+size is large enough to encode at least one extent at the beginning of
+the function. Before spinlock is acquired and ext_tree traversed. This
+looks more natural to me. But I'm not sure if this will satisfy the
+static checker.
+
+diff --git a/fs/nfs/blocklayout/extent_tree.c b/fs/nfs/blocklayout/extent_tree.c
+index 315949a7e92d..e80f2f82378f 100644
+--- a/fs/nfs/blocklayout/extent_tree.c
++++ b/fs/nfs/blocklayout/extent_tree.c
+@@ -588,6 +588,12 @@ ext_tree_encode_commit(struct pnfs_block_layout *bl, __be32 *p,
+        struct pnfs_block_extent *be, *be_prev;
+        int ret = 0;
+
++       if (ext_tree_layoutupdate_size(bl, 1) > buffer_size) {
++               *count = 0;
++               *lastbyte = U64_MAX;
++               return -ENOSPC;
++       }
++
+        spin_lock(&bl->bl_ext_lock);
+        for (be = ext_tree_first(&bl->bl_ext_rw); be; be = ext_tree_next(be)) {
+                if (be->be_state != PNFS_BLOCK_INVALID_DATA ||
+
+
+--
+Sergey Bashirov
 
