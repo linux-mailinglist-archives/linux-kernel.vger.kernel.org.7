@@ -1,228 +1,127 @@
-Return-Path: <linux-kernel+bounces-735670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95A8BB09255
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:57:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ED51B09284
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:01:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0ACB5A1A34
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:57:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C1EA5A204B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B924A2FD5B0;
-	Thu, 17 Jul 2025 16:57:22 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D9E2FCFE1
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 16:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26DBC2FD89C;
+	Thu, 17 Jul 2025 16:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fpyk+pPf"
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169A82FCFFE;
+	Thu, 17 Jul 2025 16:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752771442; cv=none; b=rS4gbrCN7UtKxFjZrod5K95DANQSproMMrQvcpvetbPLCV3xqZPUrQXZzuMXNOa/ihtX6ec43kQg2A8Jp/HEIHrevwkm5JZZkmNQlXwccoz9acAog0fKUX/WzP9BaVI47ue/oAnVeFFjJtncvduBs1ytscJjsMUuEl5KzdO5t38=
+	t=1752771566; cv=none; b=UvaMYxXzckGy8K1OVEwDSqbQQBxbMO0uXsrNn6x9iO1inEiKtnWwh2M/P9P4EcKdYh27LP0AX3n1cox4SWU6LcwCu8eI9qQzG5FYtZU62X4L7d/OxYLeegPNXd3+Lv57I1Lmf2W/AxMvPB2XviWPsTd1nG096wQmy/oHa8cls8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752771442; c=relaxed/simple;
-	bh=ijTER4NxnoTYjWPfsGTVVsZbR4kOu38wXqr7PQEnLmY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z5eXNFtpktQcg/Ywxdob3l0ofWD8opa9PKTVjosegYO7jR+srygjMnxACOvR62aLzO+fxNGZnXm4jFH4UvIWOjgvtV2HB3CkzlOzXFvUy47RhWoK5ULZQNmq+LjJo1sJWdsEflsqpQECGC9vz+yHr0w1V+Z9uL1mrd25NhMmfHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 097051596;
-	Thu, 17 Jul 2025 09:57:11 -0700 (PDT)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 569D83F694;
-	Thu, 17 Jul 2025 09:57:15 -0700 (PDT)
-Date: Thu, 17 Jul 2025 18:57:02 +0200
-From: Beata Michalska <beata.michalska@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, clm@meta.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/12] sched: Address schbench regression
-Message-ID: <aHkrQXhRtYi3ydKo@arm.com>
-References: <20250702114924.091581796@infradead.org>
- <aHj01PaJ_rcsduMn@arm.com>
+	s=arc-20240116; t=1752771566; c=relaxed/simple;
+	bh=If1xPwlarJra+6OM7a2NpAh+OP713cfx9A4bU8aU6Cc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WQucWfdNbsaejXxV7TlQTWZxbQoGWk9QaHkT70Yi6bQjAnABTArZPDW99HylMBlVpNL7Il9dILzbJqwnkU8qpnR4ZBSlfTPrkjlxcANHKP+HZJ/p4POcLZKl0jkix4F+3sITW/PdkMuM9q+xCv4kms49ZZiKS09ficExKn+9mPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fpyk+pPf; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e8bcfaaaacaso1156710276.1;
+        Thu, 17 Jul 2025 09:59:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752771564; x=1753376364; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=u/zwFbYAKcArN372lmLzuTd5flHgKC3aB7a6CtpyhgY=;
+        b=fpyk+pPfAipGwudUEnXdj8XgXF0+d67VNhqdQzl8uHuc4IhGLPP1aOfkTRKo8m5I/M
+         IgzajZ+DrESmZINkV6iBsBVxjpxT3uybjHK2TO6ksQ7lSvBrZtCRtlUlE9fHn+pvfpt6
+         cU+gw4Gh113c9J9g7fASPLpQrnJR1u0EbH5H1XQhOqEQmYJ5R3tH281Y8s+oZQ9oG2I5
+         GhbcIvcpogpp/CjhRLjBclvPmgdBQw0tuN4vwYJ0djeSbqeI3/sn89PGYY6cKbNbQgWE
+         AnypU2aPJEZugnw550r4Q4Kf1YB+1bstc+BX7wjZcOVnsuzvtos+QF58IW7i+EKWBHKr
+         OyRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752771564; x=1753376364;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=u/zwFbYAKcArN372lmLzuTd5flHgKC3aB7a6CtpyhgY=;
+        b=By6CSk2DF3IVWdrkkA96714V58dGU2h/gS6CoOI5H/cPCcIB3bmgH/7edtJY47FQf8
+         Cx+SNBc53IY5dgMEgrjbXwTxgpdIeLNI7wmUH48hI+NrTPFvf9y7xU0xVNLYyKbpODGM
+         QFEi2BWuZoQ97TEgtZ3Fi1V32sqlvCQLoTu9P0hhd37kLNj2NDSAeZ/rlhtJeFwsv+8n
+         /92+/BebR3A+A7qZkctXS6SkrRnaB084DzULcCLL7dIBsLdxegEAfG1W3a21B7K7A6Mz
+         Owd9O/gTyTYNgIP9DpAkJnxOetLqSWB8egTgBFA2VkXcoc0nBp2HGXV5DiPnpfwXP5lY
+         vasw==
+X-Forwarded-Encrypted: i=1; AJvYcCVxdxW18Wz9rACsGn+POhhY8+Es6TQD16KbWShMkDswvM+r/vMKb63xwlr0wicx6E2OTalg3ZNaiM2YjL9m@vger.kernel.org, AJvYcCXozHLdOlA/eKLT0qCvhBvdvnCbt4WQwTjKc/11WtE9jqJqfOwPAdr+FqWDrG4wifna5ymKEq9evySk@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywadt24A2F+1LO1HhnO8pUVN2c5P1JaGCvK7qF/tD+V0vancWui
+	rIS6/xuAKadc1ibayd8jCdW3KRw6ZwkgwrqJVlccxgiJUIxp+2fJ0K/JmzQ8fm+HYDukqSvIElh
+	uNEfIbtVBYRUxR7Ws5sPZHRKD/+ry16M=
+X-Gm-Gg: ASbGncse8c178NTCobnj+ozVMo1xc7K2eAvr2J43UfUZTq38i2kiF6oL1C+fUbuBszL
+	QF5OBDzhTu5fsRxSJQh03BIbp95VaWH4gl+6Y3W4kqC4AlCcNItKNxJpj9h8+LjV9UINY6UJrWP
+	ulU5Ou034nK7lT4DmkeMAlOmco4ZBNdSQHXhNKfNTaJMgYcl5ADSHHyvHKqDcj8j1hGKHF0MC0U
+	p7kprtZuvfv1EsRNIiVeMlQQ0tdtOHUNiokumuyArE2zIReQyk=
+X-Google-Smtp-Source: AGHT+IGOLRT7dSbLqr1m4qPtVmh++Ue6u0sY/ivKvKuVaXedWB1iHHAt5QU0mf6SGdBtoWyjpsCDhwubHItgX3V3b5A=
+X-Received: by 2002:a05:6902:1147:b0:e8d:718f:cffa with SMTP id
+ 3f1490d57ef6-e8d718fd4d2mr2645469276.6.1752771563936; Thu, 17 Jul 2025
+ 09:59:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aHj01PaJ_rcsduMn@arm.com>
+References: <CAF3JpA7a0ExYEJ8_c7v7evKsV83s+_p7qUoH9uiYZLPxT_Md6g@mail.gmail.com>
+ <20250717145911.GB112967@mit.edu>
+In-Reply-To: <20250717145911.GB112967@mit.edu>
+From: Moon Hee Lee <moonhee.lee.ca@gmail.com>
+Date: Thu, 17 Jul 2025 09:59:13 -0700
+X-Gm-Features: Ac12FXzKQgdJ4Meqkxbx9lkBFJwxLXj6l8EsX4wACgQvgjYGOQxzCEQPsuvRwr0
+Message-ID: <CAF3JpA6RwyzQMdG4y3P_8jkaS8qUFPerE5MJ8Xecs+VkbPEmpg@mail.gmail.com>
+Subject: Re: [PATCH] ext4: do not BUG when INLINE_DATA_FL lacks system.data xattr
+To: "Theodore Ts'o" <tytso@mit.edu>
+Cc: syzbot+544248a761451c0df72f@syzkaller.appspotmail.com, 
+	adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jul 17, 2025 at 03:04:55PM +0200, Beata Michalska wrote:
-> Hi Peter,
-> 
-> Below are the results of running the schbench on Altra
-> (as a reminder 2-core MC, 2 Numa Nodes, 160 cores)
-> 
-> `Legend:
-> - 'Flags=none' means neither TTWU_QUEUE_DEFAULT nor
->   TTWU_QUEUE_DELAYED is set (or available).
-> - '*…*' marks Top-3 Min & Max, Bottom-3 Std dev, and
->   Top-3 90th-percentile values.
-> 
-> Base 6.16-rc5
->   Flags=none
->   Min=681870.77 | Max=913649.50 | Std=53802.90       | 90th=890201.05
-> 
-> sched/fair: bump sd->max_newidle_lb_cost when newidle balance fails
->   Flags=none
->   Min=770952.12 | Max=888047.45 | Std=34430.24       | 90th=877347.24
-> 
-> sched/psi: Optimize psi_group_change() cpu_clock() usage
->   Flags=none
->   Min=748137.65 | Max=936312.33 | Std=56818.23       | 90th=*921497.27*
-> 
-> sched/deadline: Less agressive dl_server handling
->   Flags=none
->   Min=783621.95 | Max=*944604.67* | Std=43538.64     | 90th=*909961.16*
-> 
-> sched: Optimize ttwu() / select_task_rq()
->   Flags=none
->   Min=*826038.87* | Max=*1003496.73* | Std=49875.43  | 90th=*971944.88*
-> 
-> sched: Use lock guard in ttwu_runnable()
->   Flags=none
->   Min=780172.75 | Max=914170.20 | Std=35998.33       | 90th=866095.80
-> 
-> sched: Add ttwu_queue controls
->   Flags=TTWU_QUEUE_DEFAULT
->   Min=*792430.45* | Max=903422.78 | Std=33582.71     | 90th=887256.68
-> 
->   Flags=none
->   Min=*803532.80* | Max=894772.48 | Std=29359.35     | 90th=877920.34
-> 
-> sched: Introduce ttwu_do_migrate()
->   Flags=TTWU_QUEUE_DEFAULT
->   Min=749824.30 | Max=*965139.77* | Std=57022.47     | 90th=903659.07
->  
->   Flags=none
->   Min=787464.65 | Max=885349.20 | Std=27030.82       | 90th=875750.44
-> 
-> psi: Split psi_ttwu_dequeue()
->   Flags=TTWU_QUEUE_DEFAULT
->   Min=762960.98 | Max=916538.12 | Std=42002.19       | 90th=876425.84
->  
->   Flags=none
->   Min=773608.48 | Max=920812.87 | Std=42189.17       | 90th=871760.47
-> 
-> sched: Re-arrange __ttwu_queue_wakelist()
->   Flags=TTWU_QUEUE_DEFAULT
->   Min=702870.58 | Max=835243.42 | Std=44224.02       | 90th=825311.12
-> 
->   Flags=none
->   Min=712499.38 | Max=838492.03 | Std=38351.20       | 90th=817135.94
-> 
-> sched: Use lock guard in sched_ttwu_pending()
->   Flags=TTWU_QUEUE_DEFAULT
->   Min=729080.55 | Max=853609.62 | Std=43440.63       | 90th=838684.48
-> 
->   Flags=none
->   Min=708123.47 | Max=850804.48 | Std=40642.28       | 90th=830295.08
-> 
-> sched: Change ttwu_runnable() vs sched_delayed
->   Flags=TTWU_QUEUE_DEFAULT
->   Min=580218.87 | Max=838684.07 | Std=57078.24       | 90th=792973.33
-> 
->   Flags=none
->   Min=721274.90 | Max=784897.92 | Std=*19017.78*     | 90th=774792.30
-> 
-> sched: Add ttwu_queue support for delayed tasks
->   Flags=none
->   Min=712979.48 | Max=830192.10 | Std=33173.90       | 90th=798599.66
-> 
->   Flags=TTWU_QUEUE_DEFAULT
->   Min=698094.12 | Max=857627.93 | Std=38294.94       | 90th=789981.59
->  
->   Flags=TTWU_QUEUE_DEFAULT/TTWU_QUEUE_DELAYED
->   Min=683348.77 | Max=782179.15 | Std=25086.71       | 90th=750947.00
-> 
->   Flags=TTWU_QUEUE_DELAYED
->   Min=669822.23 | Max=807768.85 | Std=38766.41       | 90th=794052.05
-> 
-> sched: fix ttwu_delayed
-This one is actually:
-sched: Add ttwu_queue support for delayed tasks
-+
-https://lore.kernel.org/all/0672c7df-543c-4f3e-829a-46969fad6b34@amd.com/
+>
+> Thanks ofor the patch!  However, instead of doing an xattr lookup in
+> ext4_prepare_inline_data(), we can more simply and more efficiently
+> just not BUG in ext4_update_inline_data, like this:
 
-Apologies for that.
+Thanks for the response and for taking the time to address the issue.
 
----
-BR
-Beata
->   Flags=none
->   Min=671844.35 | Max=798737.67 | Std=33438.64       | 90th=788584.62
-> 
->   Flags=TTWU_QUEUE_DEFAULT
->   Min=688607.40 | Max=828679.53 | Std=33184.78       | 90th=782490.23
-> 
->   Flags=TTWU_QUEUE_DEFAULT/TTWU_QUEUE_DELAYED
->   Min=579171.13 | Max=643929.18 | Std=*14644.92*     | 90th=639764.16
-> 
->   Flags=TTWU_QUEUE_DELAYED
->   Min=614265.22 | Max=675172.05 | Std=*13309.92*     | 90th=647181.10
-> 
-> 
-> Best overall performer:
-> sched: Optimize ttwu() / select_task_rq()
->   Flags=none
->   Min=*826038.87* | Max=*1003496.73* | Std=49875.43 | 90th=*971944.88*
-> 
-> Hope this will he somehwat helpful.
-> 
-> ---
-> BR
-> Beata
-> 
-> On Wed, Jul 02, 2025 at 01:49:24PM +0200, Peter Zijlstra wrote:
-> > Hi!
-> > 
-> > Previous version:
-> > 
-> >   https://lkml.kernel.org/r/20250520094538.086709102@infradead.org
-> > 
-> > 
-> > Changes:
-> >  - keep dl_server_stop(), just remove the 'normal' usage of it (juril)
-> >  - have the sched_delayed wake list IPIs do select_task_rq() (vingu)
-> >  - fixed lockdep splat (dietmar)
-> >  - added a few preperatory patches
-> > 
-> > 
-> > Patches apply on top of tip/master (which includes the disabling of private futex)
-> > and clm's newidle balance patch (which I'm awaiting vingu's ack on).
-> > 
-> > Performance is similar to the last version; as tested on my SPR on v6.15 base:
-> > 
-> > v6.15:
-> > schbench-6.15.0-1.txt:average rps: 2891403.72
-> > schbench-6.15.0-2.txt:average rps: 2889997.02
-> > schbench-6.15.0-3.txt:average rps: 2894745.17
-> > 
-> > v6.15 + patches 1-10:
-> > schbench-6.15.0-dirty-4.txt:average rps: 3038265.95
-> > schbench-6.15.0-dirty-5.txt:average rps: 3037327.50
-> > schbench-6.15.0-dirty-6.txt:average rps: 3038160.15
-> > 
-> > v6.15 + all patches:
-> > schbench-6.15.0-dirty-deferred-1.txt:average rps: 3043404.30
-> > schbench-6.15.0-dirty-deferred-2.txt:average rps: 3046124.17
-> > schbench-6.15.0-dirty-deferred-3.txt:average rps: 3043627.10
-> > 
-> > 
-> > Patches can also be had here:
-> > 
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git sched/core
-> > 
-> > 
-> > I'm hoping we can get this merged for next cycle so we can all move on from this.
-> > 
-> > 
-> 
+Just to clarify the intent behind the earlier patch [1]: it was meant to
+catch the missing system.data xattr early in ext4_prepare_inline_data(),
+before branching into paths that assume the xattr is present.
+
+> @@ -354,6 +354,12 @@ static int ext4_update_inline_data(handle_t *handle, struct inode *inode,
+>         if (error)
+>                 goto out;
+>
+> +       if (is.s.not_found) {
+> +               EXT4_ERROR_INODE(inode, "missing inline data xattr");
+> +               error = -EFSCORRUPTED;
+> +               goto out;
+> +       }
+> +
+>         BUG_ON(is.s.not_found);
+
+The current patch addresses ext4_update_inline_data() directly, but the
+same condition also leads to a BUG_ON in ext4_create_inline_data() [2],
+which the earlier approach intended to prevent as well.
+
+Later, a third instance was found in ext4_inline_data_truncate() [3],
+which also contains a similar BUG_ON and might need the same kind of
+check.
+
+Reducing duplicated checks across these sites would be beneficial, though
+fixing each case directly also looks reasonable and straightforward.
+
+[1] https://lore.kernel.org/all/20250710175837.29822-2-moonhee.lee.ca@gmail.com/
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/ext4/inline.c?h=v6.16-rc6#n306
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/ext4/inline.c?h=v6.16-rc6#n1906
 
