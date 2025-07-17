@@ -1,97 +1,99 @@
-Return-Path: <linux-kernel+bounces-734692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1534DB084D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:24:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC59FB084DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:26:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 585A717D1F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:24:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29D021AA23C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:26:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB292215F48;
-	Thu, 17 Jul 2025 06:23:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCF85215F7D;
+	Thu, 17 Jul 2025 06:26:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OvL6y+Aw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bsYUzHPK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3573B19D09C;
-	Thu, 17 Jul 2025 06:23:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F26286348;
+	Thu, 17 Jul 2025 06:26:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752733437; cv=none; b=u+srtToLaYAkaBgTfjyuFAx/1+WqlVRIEYZVLEpBdbMnfyUtZr7mMpz4cgs6yETemlj6I23dTI+a+QtNR98uue3c8TwATdO8SZNnFksYdOTocMU4HBuyZDlUo1z+yEWNDotialGK+v/XCrHYYKcQxa3Msj6mUFj8pKBG4sj5eRI=
+	t=1752733567; cv=none; b=NuTGI5I3dqjT7SWxtNhntaMp1g/etNlYCXeV7xgYrT2y7TPWPTYDeGUV8kegqEv8pM9C6NxUOgl1wxEe7PHUQOHjXVqL4x33jyRlZ000aEfLEoL63/07WSKXQ4NVnSLd7SXqN1s7Wg942zJDg+pjlqE7tBSWyESpjFAlRIEX7R8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752733437; c=relaxed/simple;
-	bh=grCqqOhvrUeiogwwXn1hgC2+UR2PNKwWKTQf5JysCHQ=;
+	s=arc-20240116; t=1752733567; c=relaxed/simple;
+	bh=ALc32Cmc4l9iDna3BPh+GAS5NVn2l26NMOLaLbDPIqw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R/uU5ZVsHzrT+ma430T9KDrxvqhGEgxrreCrAE4iiO+LDb+1sskKztNMdw8eQ+2UWhGSY4XLxZqtX4V/E5fZMEKhVN6D4aSgu1lyt2U5nDJW4ekjDNS7PzGvJ5hxHTmPkVbHijX+ht90BnikO9w1AdtCFpAt0X/S4B6oZ4hYvRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OvL6y+Aw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B466BC4CEE3;
-	Thu, 17 Jul 2025 06:23:56 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=rzYJwhANmpU25+HH/Ulwo4jxG0YUbWTu6erMc4NoB6e4seYIwDMBsLfuQms6BN4B5HEwolISvbEF3z7JU9ZRiJQeKV2qQae/vT3k2vLx+EMPld9/wHyEU2pYMttYZbyDMSeGF9ABpRnbNMaR8rM99LJhl+f4sRDZYBX7D1EvpSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bsYUzHPK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 359B7C4CEE3;
+	Thu, 17 Jul 2025 06:26:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752733436;
-	bh=grCqqOhvrUeiogwwXn1hgC2+UR2PNKwWKTQf5JysCHQ=;
+	s=k20201202; t=1752733565;
+	bh=ALc32Cmc4l9iDna3BPh+GAS5NVn2l26NMOLaLbDPIqw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OvL6y+AwE70BcSEKYDbamLABzepC1/VOf94wmaIIwzg+54NZsU5s805mYUHt5+qjP
-	 AhVzcvjfopmhh6biXMWf1agj3s1/aznjxnPwIViG/GyS8Hhf5qgg1jGppszDmefFBp
-	 5ZyvGF8Mb3bjVy9MKcOtpW4hN6qjRAYaZBTDo8IrOW7QN+AyCywGTe3k2lv6WvvBew
-	 UoZV9XXTMR5BVrw5hYd8LbKcYCjFIMvAqkM+YEsAe0G0mXVzQXIMfFoC1e4FF8ARCz
-	 MwM5X2erYpFRgbsvw54xmJHKTebVdUzFpeArnvdFo9ZroFWZcHvh2bHxyW6qq1q3iW
-	 tAO54/U6NLGCw==
-Date: Wed, 16 Jul 2025 23:23:56 -0700
-From: Kees Cook <kees@kernel.org>
-To: Tiffany Yang <ynaffit@google.com>
-Cc: linux-kernel@vger.kernel.org, kernel-team@android.com,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Carlos Llamas <cmllamas@google.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
-Subject: Re: [PATCH v4 2/6] binder: Store lru freelist in binder_alloc
-Message-ID: <202507162323.8A11B97@keescook>
-References: <20250717011011.3365074-1-ynaffit@google.com>
- <20250717011011.3365074-3-ynaffit@google.com>
+	b=bsYUzHPK2b6ghKNaRx0ZnkaqAowJKppyrk7QO98VhYzlmdRJRCD8FhJcw7rxhxUn/
+	 s0H7D5rusPiz4JvrkyMTTTTEhlkpSUj/ZkytVtphPUdtL7fqVC76fgQg3bRXkEGSSo
+	 kQDDhRgGKXT7Vp1IkZOU/uw1mVTPzHCDaZlXHa4n/IaPOFTO84ZA4c/1XV9tZ4W8II
+	 BpER3Rp3dgLgy3yUTXN/BtlxhtjJGouX7Ncs1EUvbHJUWdO24sdO2tSzhq0vq5ttLl
+	 sqTtWpKh4ER/oEP8duMHS0bW9oPVyGX5K4dgQh/+Ck+MaeJ+xiRFLdGlOECiw1VvlH
+	 HgTWh9RjJVibw==
+Date: Thu, 17 Jul 2025 08:26:03 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
+Cc: "krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
+	"laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, 
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, =?utf-8?B?QW5kcsOp?= Apitzsch <git@apitzsch.eu>, 
+	Ricardo Ribalda <ribalda@chromium.org>, Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>, 
+	Matthias Fend <matthias.fend@emfend.at>, Sylvain Petinot <sylvain.petinot@foss.st.com>, 
+	Jingjing Xiong <jingjing.xiong@intel.com>, Benjamin Mugnier <benjamin.mugnier@foss.st.com>, 
+	Dongcheng Yan <dongcheng.yan@intel.com>, Arnd Bergmann <arnd@arndb.de>, Hans de Goede <hansg@kernel.org>, 
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 1/2] dt-bindings: media: i2c: Add ov2735 sensor
+Message-ID: <20250717-ruddy-tanuki-of-foundation-ad9bf2@kuoka>
+References: <20250716134426.8348-1-hardevsinh.palaniya@siliconsignals.io>
+ <20250716134426.8348-2-hardevsinh.palaniya@siliconsignals.io>
+ <PN3P287MB35196D806DD3183F5C3AA623FF56A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250717011011.3365074-3-ynaffit@google.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <PN3P287MB35196D806DD3183F5C3AA623FF56A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
 
-On Wed, Jul 16, 2025 at 06:10:05PM -0700, Tiffany Yang wrote:
-> Store a pointer to the free pages list that the binder allocator should
-> use for a process inside of struct binder_alloc. This change allows
-> binder allocator code to be tested and debugged deterministically while
-> a system is using binder; i.e., without interfering with other binder
-> processes and independently of the shrinker. This is necessary to
-> convert the current binder_alloc_selftest into a kunit test that does
-> not rely on hijacking an existing binder_proc to run.
-> 
-> A binder process's binder_alloc->freelist should not be changed after
-> it is initialized. A sole exception is the process that runs the
-> existing binder_alloc selftest. Its freelist can be temporarily replaced
-> for the duration of the test because it runs as a single thread before
-> any pages can be added to the global binder freelist, and the test frees
-> every page it allocates before dropping the binder_selftest_lock. This
-> exception allows the existing selftest to be used to check for
-> regressions, but it will be dropped when the binder_alloc tests are
-> converted to kunit in a subsequent patch in this series.
-> 
-> Acked-by: Carlos Llamas <cmllamas@google.com>
-> Signed-off-by: Tiffany Yang <ynaffit@google.com>
+On Wed, Jul 16, 2025 at 01:58:52PM +0000, Hardevsinh Palaniya wrote:
+> Hi Krzysztof
+>=20
+> > From: Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>
+> >=C2=A0
+> > Add bindings for Omnivision OV2735 sensor.
+> >=C2=A0
+> > Signed-off-by: Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>
+> > Signed-off-by: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.=
+io>
+>=20
+> I haven't added your Reviewed-by tag yet, as I made some modifications to=
+ the DT bindings.
 
-Reviewed-by: Kees Cook <kees@kernel.org>
+What modifications? You must be specific in the changelog which
+modifications caused tag dropping. I don't see such information at all.
 
--- 
-Kees Cook
+Please read submitting patches before posting next version.
+
+I already provided you to exact documentation paragraph explaining this.
+Did you clicked the link I gave you or just ignored?
+
+Best regards,
+Krzysztof
+
 
