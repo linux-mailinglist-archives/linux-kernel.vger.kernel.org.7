@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-735976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B4B1B09636
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 23:03:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C197B09637
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 23:04:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DECA3173AFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:03:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4159D7B8E5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:02:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679B723D28F;
-	Thu, 17 Jul 2025 21:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D30FE22DFBE;
+	Thu, 17 Jul 2025 21:02:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sRVv5RzC"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1pJDrG3e"
+Received: from mail-oa1-f73.google.com (mail-oa1-f73.google.com [209.85.160.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF5023CEF8
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 21:02:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9735B23ED6A
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 21:02:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752786172; cv=none; b=esGGXXtfnc5KRihnXvVYOPdTZkuz7ZzD0Qv3bL+BsoTn/AYdOYgH3WI0lmKZ9dWuH2Xv4uLv1mbetACgScdl/aeETzrUAg7B4X4JIGpq6VjaZInXzhITRxYjiHKohntQWCjrPHTQd/W8jMFOrO/eIS2y4k/UCMsSubs1XH+fGdQ=
+	t=1752786174; cv=none; b=XP4QHWWLihSf/LRKUhB+5NfOzmnYxT89ZVv3LMiPKQLRIpDkfoF1TUbQobRVajYYyXTXFoiacstZOmRGNOzimEYAhmQO8YcRXvIjSwytIm6NIE5fLcPx2r2YqKYwGwV+Qu785EvqGohgcVsZPNScF/rkyDV7JNbX1RcQEddvopY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752786172; c=relaxed/simple;
-	bh=5J3GWGp3X0qKm/PVDdnh3hIcgm2jxUOFfVXtpeT61dk=;
+	s=arc-20240116; t=1752786174; c=relaxed/simple;
+	bh=q5gclP8enVIDgmFTy0uPjEoUXrIKoG7WxEpD69DREJQ=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=AgNpywd+zkC2O5hR/GNS9vRiMc/S5AeKS+w9OWU4vuVcTBIv04CJGiI/MnKRrULc7g6n06RL6JH4Bc9xu/XQ39YVkzDk9us6WSTvEUddi3RE9u3cSjGMD95g+6N9kZEVxsT7AkT/GYW98ElPorA+cnXi1kEAsfGbGmCxphug1N8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sRVv5RzC; arc=none smtp.client-ip=209.85.210.202
+	 To:Content-Type; b=po7oybsHD3f7UCHJCqaYammR/IQNNOyVaWY6qbIGwc+bQWFvJrvfN/fzTgxckR3khzS3WgCRARMZGuhRBeQmVjNR1Uig/UIOMSBKO6ijwDOnENVM2R79JCuulG7GYmr05oEquhZCw0zrENHo/hQ8i3RLpkY1KiHLMGhZM6ycNks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1pJDrG3e; arc=none smtp.client-ip=209.85.160.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-747ddba7c90so1210351b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 14:02:50 -0700 (PDT)
+Received: by mail-oa1-f73.google.com with SMTP id 586e51a60fabf-2f3b9f042a6so1430241fac.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 14:02:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752786170; x=1753390970; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1752786171; x=1753390971; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=3cEtMLLOSHTjrlHrzBNeeaYGWDamKeHqpltFXvpLlqk=;
-        b=sRVv5RzCkUHBICoK1Pot95sB6dqCXvkoXVT4hEvEERmRDElwRjybjgYcH8o4ccZpMP
-         sfUSyN4TsPcCqj4/jGyH9bklws3HWvhZJ+LmWIlCXmsxW4Ulaw/ilyXGuNLsIZgZi69P
-         v7TJ1zge5kl6DJ7Epyko3fmqRuVCWgoIN0BhyyPwT/foK8O+6AbCnUEaRX21FY+nMjEh
-         3HxJ9GQXfQGCzqeCe3151eTCUdXKYSPbw/4Lw2iCLFYcF8bUTBIBu3EaOV295KXH/rwW
-         E3qFp+9b6gCyN8E9fB5eTtVLo1z2DiW5SNx+6zQ7qh3ErTO5xlxWn5Tc/MZJOrl5rdAb
-         P2ZQ==
+        bh=9k2/D5iQ4L1OZOaKDLGd73SeKK5tMn2kJdyY+h5+RPA=;
+        b=1pJDrG3enDpQ+hK4ypwhrXVLne8nRXF9kopAQD4eyXAMvl4KZiYnZXtgO2wCCvKoS7
+         R8f2n6GnlscYha0CWgBpBLhY+DZdwvAnOhvmsji+BX3c87y9ZtLSTHq29NHBb0yFYFQS
+         aQIll6JwdUhJ9qrLbEWBrk+APwHP7Iseg1p3RcbuDpbKyUD0u0xeNLyf986xeSqoS8+7
+         LzGQOugF3XjqvV/4VRSjCZFLTN/ucWhoYG6N4abiKuOLSdAckXFyIjnHzvqYWL/cRb1E
+         ywi2A47bVnWgNZr0x46qYdCBxMuWYXbo11bsnRnGzo9d9XOxUdeTJabImJq8PkcPIgRL
+         iRMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752786170; x=1753390970;
+        d=1e100.net; s=20230601; t=1752786171; x=1753390971;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3cEtMLLOSHTjrlHrzBNeeaYGWDamKeHqpltFXvpLlqk=;
-        b=f5wdKveovBXQdiL8Aocjqu6vNWRS9p0lPVSYol5eMtWk+5555KQMJM1/lbE2eGRtVq
-         Wu1S4rHOMOjXttHKHp/ezwTkPwWytHxrH9QcZ9QVns/TEvyNs5rXToihQs3BCqLfRXCS
-         Wotdcz66g5MR+zM5b2rzH8cbKwxcjY3Y/XOvwYRJ8mD4N67r09LRFmw8y4DSgXb39paG
-         KxukLjr2y3BmuIR4AfOsATH2dkFVeZieeRJ+9uUQ2Q4FokunQzL1x8BlEWNZu/qJAd4k
-         iiN8q3a+VlStD6rt0EttziuFJB9XOenkS1vvoHmHWv2wV2sxGTRJAJt8H/PUOLYPLH94
-         XYEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUtWXg1ImMCdm47HIrmsYFqyOQ+UhxHRRYgHN0Uaag8KjBDd1Xzbtq23WA0iw80x1thHi6ndWpnxbhgKIQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlBELszeF2bo1En4lXE3+gJlTDt0I9We0HTlqx4c0ndEq+w4tB
-	6Njq38UMnJHjt+wBmXpzTlwDJilc8UgM3oJtKw7yhUlgX2BlMPpDg8t6iY5ATeWC5CCGdqjrhCP
-	eBIIzmmSJQg==
-X-Google-Smtp-Source: AGHT+IEMNILVPqbTTcQQfUzM0VBg4pa6EBAxiY3VpesCWCLEgrb+MP1b407NfUsQ8yyKQfHuTaAVlYA//qlr
-X-Received: from pgww7.prod.google.com ([2002:a05:6a02:2c87:b0:b3f:bb3:6f59])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:328d:b0:21f:86f1:e2dd
- with SMTP id adf61e73a8af0-23810c59df1mr13097697637.11.1752786169626; Thu, 17
- Jul 2025 14:02:49 -0700 (PDT)
-Date: Thu, 17 Jul 2025 14:02:27 -0700
+        bh=9k2/D5iQ4L1OZOaKDLGd73SeKK5tMn2kJdyY+h5+RPA=;
+        b=ZZ0t9TpS5q/n6A2gqZKFv+6CZuTM8h78mUwruY+DaUngkIU+CO86o+tVuPrmfurtRD
+         RImGzSS+L3cq0rvETUZjJ/3JlYYo96pVqJRqA/Xl7qQl+jKAgElFRsaDGgfvR/HnmrJH
+         f3X47OyU0acG3B9ZrtkvGaWsfkphOVsYS9W9prDFVFpcDYBwUxhksvxU8ecUgSJ8WNxu
+         UsR+hUCULO0OO/RPwQT+g63fEjMXRxgTE9WQ2R2ZzY8wDGXx0stSCPgVUACER/OWDQ9h
+         JvoxugkcUN3bVQXXi4obMd6Yb1UbiuLXuq2z5jTBn7EAJU4nVQJceMldZ5FruDALx5u7
+         DuVA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1ghDp5BO0UHsKZ3/Uk4j+SU15OVfKoRmmHDqYU07QhFPN28K4xqGYK8KjOuIP4G2gmEFjfH0LrKJ37Lk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwedFpexreQw8+vt14bVdWkHuvCg+LXUrjecHeusnAJxE1DRCo8
+	es6g1zhcvBSLFf+nTtlOvf4N6H4F3HVqLmJ4UvqTeeTJ2/IIUjC6oLpNZYn4JYn9TkmjY/dTULr
+	6jakbpfOBgQ==
+X-Google-Smtp-Source: AGHT+IHC9ZZCEmJyp8ykZmSgFWVo+Qs9NWZAEYYccPZ1/jBQqB5hEbwCXwo2B6OdDesRj9peeNspk9nfYpZI
+X-Received: from oabla12.prod.google.com ([2002:a05:6871:410c:b0:2bc:757d:e145])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6870:3b83:b0:2ff:8ad9:f12
+ with SMTP id 586e51a60fabf-2ffb23eee80mr5406266fac.22.1752786171572; Thu, 17
+ Jul 2025 14:02:51 -0700 (PDT)
+Date: Thu, 17 Jul 2025 14:02:28 -0700
 In-Reply-To: <20250717210233.1143622-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250717210233.1143622-1-irogers@google.com>
 X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250717210233.1143622-7-irogers@google.com>
-Subject: [PATCH v2 06/12] libperf evsel: Rename own_cpus to pmu_cpus
+Message-ID: <20250717210233.1143622-8-irogers@google.com>
+Subject: [PATCH v2 07/12] libperf evsel: Factor perf_evsel__exit out of perf_evsel__delete
 From: Ian Rogers <irogers@google.com>
 To: Thomas Falcon <thomas.falcon@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
 	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -91,217 +91,54 @@ To: Thomas Falcon <thomas.falcon@intel.com>, Peter Zijlstra <peterz@infradead.or
 	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-own_cpus is generally the cpumask from the PMU. Rename to pmu_cpus to
-try to make this clearer. Variable rename with no other changes.
+This allows the perf_evsel__exit to be called when the struct
+perf_evsel is embedded inside another struct, such as struct evsel in
+perf.
 
 Reviewed-by: Thomas Falcon <thomas.falcon@intel.com>
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/lib/perf/evlist.c                 |  8 ++++----
- tools/lib/perf/evsel.c                  |  2 +-
- tools/lib/perf/include/internal/evsel.h |  2 +-
- tools/perf/tests/event_update.c         |  4 ++--
- tools/perf/util/evsel.c                 |  6 +++---
- tools/perf/util/header.c                |  4 ++--
- tools/perf/util/parse-events.c          |  2 +-
- tools/perf/util/synthetic-events.c      |  4 ++--
- tools/perf/util/tool_pmu.c              | 12 ++++++------
- 9 files changed, 22 insertions(+), 22 deletions(-)
+ tools/lib/perf/evsel.c                  | 7 ++++++-
+ tools/lib/perf/include/internal/evsel.h | 1 +
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/tools/lib/perf/evlist.c b/tools/lib/perf/evlist.c
-index b1f4c8176b32..9d9dec21f510 100644
---- a/tools/lib/perf/evlist.c
-+++ b/tools/lib/perf/evlist.c
-@@ -46,7 +46,7 @@ static void __perf_evlist__propagate_maps(struct perf_evlist *evlist,
- 		 * are valid by intersecting with those of the PMU.
- 		 */
- 		perf_cpu_map__put(evsel->cpus);
--		evsel->cpus = perf_cpu_map__intersect(evlist->user_requested_cpus, evsel->own_cpus);
-+		evsel->cpus = perf_cpu_map__intersect(evlist->user_requested_cpus, evsel->pmu_cpus);
- 
- 		/*
- 		 * Empty cpu lists would eventually get opened as "any" so remove
-@@ -61,7 +61,7 @@ static void __perf_evlist__propagate_maps(struct perf_evlist *evlist,
- 				list_for_each_entry_from(next, &evlist->entries, node)
- 					next->idx--;
- 		}
--	} else if (!evsel->own_cpus || evlist->has_user_cpus ||
-+	} else if (!evsel->pmu_cpus || evlist->has_user_cpus ||
- 		(!evsel->requires_cpu && perf_cpu_map__has_any_cpu(evlist->user_requested_cpus))) {
- 		/*
- 		 * The PMU didn't specify a default cpu map, this isn't a core
-@@ -72,13 +72,13 @@ static void __perf_evlist__propagate_maps(struct perf_evlist *evlist,
- 		 */
- 		perf_cpu_map__put(evsel->cpus);
- 		evsel->cpus = perf_cpu_map__get(evlist->user_requested_cpus);
--	} else if (evsel->cpus != evsel->own_cpus) {
-+	} else if (evsel->cpus != evsel->pmu_cpus) {
- 		/*
- 		 * No user requested cpu map but the PMU cpu map doesn't match
- 		 * the evsel's. Reset it back to the PMU cpu map.
- 		 */
- 		perf_cpu_map__put(evsel->cpus);
--		evsel->cpus = perf_cpu_map__get(evsel->own_cpus);
-+		evsel->cpus = perf_cpu_map__get(evsel->pmu_cpus);
- 	}
- 
- 	if (evsel->system_wide) {
 diff --git a/tools/lib/perf/evsel.c b/tools/lib/perf/evsel.c
-index 2a85e0bfee1e..127abe7df63d 100644
+index 127abe7df63d..13a307fc75ae 100644
 --- a/tools/lib/perf/evsel.c
 +++ b/tools/lib/perf/evsel.c
-@@ -46,7 +46,7 @@ void perf_evsel__delete(struct perf_evsel *evsel)
+@@ -40,7 +40,7 @@ struct perf_evsel *perf_evsel__new(struct perf_event_attr *attr)
+ 	return evsel;
+ }
+ 
+-void perf_evsel__delete(struct perf_evsel *evsel)
++void perf_evsel__exit(struct perf_evsel *evsel)
+ {
+ 	assert(evsel->fd == NULL);  /* If not fds were not closed. */
  	assert(evsel->mmap == NULL); /* If not munmap wasn't called. */
- 	assert(evsel->sample_id == NULL); /* If not free_id wasn't called. */
+@@ -48,6 +48,11 @@ void perf_evsel__delete(struct perf_evsel *evsel)
  	perf_cpu_map__put(evsel->cpus);
--	perf_cpu_map__put(evsel->own_cpus);
-+	perf_cpu_map__put(evsel->pmu_cpus);
+ 	perf_cpu_map__put(evsel->pmu_cpus);
  	perf_thread_map__put(evsel->threads);
++}
++
++void perf_evsel__delete(struct perf_evsel *evsel)
++{
++	perf_evsel__exit(evsel);
  	free(evsel);
  }
+ 
 diff --git a/tools/lib/perf/include/internal/evsel.h b/tools/lib/perf/include/internal/evsel.h
-index ea78defa77d0..b97dc8c92882 100644
+index b97dc8c92882..fefe64ba5e26 100644
 --- a/tools/lib/perf/include/internal/evsel.h
 +++ b/tools/lib/perf/include/internal/evsel.h
-@@ -99,7 +99,7 @@ struct perf_evsel {
- 	 * cpu map for opening the event on, for example, the first CPU on a
- 	 * socket for an uncore event.
- 	 */
--	struct perf_cpu_map	*own_cpus;
-+	struct perf_cpu_map	*pmu_cpus;
- 	struct perf_thread_map	*threads;
- 	struct xyarray		*fd;
- 	struct xyarray		*mmap;
-diff --git a/tools/perf/tests/event_update.c b/tools/perf/tests/event_update.c
-index 9301fde11366..cb9e6de2e033 100644
---- a/tools/perf/tests/event_update.c
-+++ b/tools/perf/tests/event_update.c
-@@ -109,8 +109,8 @@ static int test__event_update(struct test_suite *test __maybe_unused, int subtes
- 	TEST_ASSERT_VAL("failed to synthesize attr update name",
- 			!perf_event__synthesize_event_update_name(&tmp.tool, evsel, process_event_name));
+@@ -133,6 +133,7 @@ struct perf_evsel {
  
--	perf_cpu_map__put(evsel->core.own_cpus);
--	evsel->core.own_cpus = perf_cpu_map__new("1,2,3");
-+	perf_cpu_map__put(evsel->core.pmu_cpus);
-+	evsel->core.pmu_cpus = perf_cpu_map__new("1,2,3");
- 
- 	TEST_ASSERT_VAL("failed to synthesize attr update cpus",
- 			!perf_event__synthesize_event_update_cpus(&tmp.tool, evsel, process_event_cpus));
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index d9b6bf78d67b..ba0c9799928b 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -488,7 +488,7 @@ struct evsel *evsel__clone(struct evsel *dest, struct evsel *orig)
- 		return NULL;
- 
- 	evsel->core.cpus = perf_cpu_map__get(orig->core.cpus);
--	evsel->core.own_cpus = perf_cpu_map__get(orig->core.own_cpus);
-+	evsel->core.pmu_cpus = perf_cpu_map__get(orig->core.pmu_cpus);
- 	evsel->core.threads = perf_thread_map__get(orig->core.threads);
- 	evsel->core.nr_members = orig->core.nr_members;
- 	evsel->core.system_wide = orig->core.system_wide;
-@@ -1527,7 +1527,7 @@ void evsel__config(struct evsel *evsel, struct record_opts *opts,
- 		attr->exclude_user   = 1;
- 	}
- 
--	if (evsel->core.own_cpus || evsel->unit)
-+	if (evsel->core.pmu_cpus || evsel->unit)
- 		evsel->core.attr.read_format |= PERF_FORMAT_ID;
- 
- 	/*
-@@ -1680,7 +1680,7 @@ void evsel__exit(struct evsel *evsel)
- 	evsel__free_config_terms(evsel);
- 	cgroup__put(evsel->cgrp);
- 	perf_cpu_map__put(evsel->core.cpus);
--	perf_cpu_map__put(evsel->core.own_cpus);
-+	perf_cpu_map__put(evsel->core.pmu_cpus);
- 	perf_thread_map__put(evsel->core.threads);
- 	zfree(&evsel->group_name);
- 	zfree(&evsel->name);
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index 53d54fbda10d..d941d7aa0f49 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -4507,8 +4507,8 @@ int perf_event__process_event_update(const struct perf_tool *tool __maybe_unused
- 	case PERF_EVENT_UPDATE__CPUS:
- 		map = cpu_map__new_data(&ev->cpus.cpus);
- 		if (map) {
--			perf_cpu_map__put(evsel->core.own_cpus);
--			evsel->core.own_cpus = map;
-+			perf_cpu_map__put(evsel->core.pmu_cpus);
-+			evsel->core.pmu_cpus = map;
- 		} else
- 			pr_err("failed to get event_update cpus\n");
- 	default:
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index a337e4d22ff2..d506f9943506 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -320,7 +320,7 @@ __add_event(struct list_head *list, int *idx,
- 
- 	(*idx)++;
- 	evsel->core.cpus = cpus;
--	evsel->core.own_cpus = perf_cpu_map__get(cpus);
-+	evsel->core.pmu_cpus = perf_cpu_map__get(cpus);
- 	evsel->core.requires_cpu = pmu ? pmu->is_uncore : false;
- 	evsel->core.is_pmu_core = is_pmu_core;
- 	evsel->pmu = pmu;
-diff --git a/tools/perf/util/synthetic-events.c b/tools/perf/util/synthetic-events.c
-index 2fc4d0537840..7c00b09e3a93 100644
---- a/tools/perf/util/synthetic-events.c
-+++ b/tools/perf/util/synthetic-events.c
-@@ -2045,7 +2045,7 @@ int perf_event__synthesize_event_update_name(const struct perf_tool *tool, struc
- int perf_event__synthesize_event_update_cpus(const struct perf_tool *tool, struct evsel *evsel,
- 					     perf_event__handler_t process)
- {
--	struct synthesize_cpu_map_data syn_data = { .map = evsel->core.own_cpus };
-+	struct synthesize_cpu_map_data syn_data = { .map = evsel->core.pmu_cpus };
- 	struct perf_record_event_update *ev;
- 	int err;
- 
-@@ -2126,7 +2126,7 @@ int perf_event__synthesize_extra_attr(const struct perf_tool *tool, struct evlis
- 			}
- 		}
- 
--		if (evsel->core.own_cpus) {
-+		if (evsel->core.pmu_cpus) {
- 			err = perf_event__synthesize_event_update_cpus(tool, evsel, process);
- 			if (err < 0) {
- 				pr_err("Couldn't synthesize evsel cpus.\n");
-diff --git a/tools/perf/util/tool_pmu.c b/tools/perf/util/tool_pmu.c
-index 7aa4f315b0ac..d99e699e646d 100644
---- a/tools/perf/util/tool_pmu.c
-+++ b/tools/perf/util/tool_pmu.c
-@@ -357,10 +357,10 @@ bool tool_pmu__read_event(enum tool_pmu_event ev, struct evsel *evsel, u64 *resu
- 			/*
- 			 * "Any CPU" event that can be scheduled on any CPU in
- 			 * the PMU's cpumask. The PMU cpumask should be saved in
--			 * own_cpus. If not present fall back to max.
-+			 * pmu_cpus. If not present fall back to max.
- 			 */
--			if (!perf_cpu_map__is_empty(evsel->core.own_cpus))
--				*result = perf_cpu_map__nr(evsel->core.own_cpus);
-+			if (!perf_cpu_map__is_empty(evsel->core.pmu_cpus))
-+				*result = perf_cpu_map__nr(evsel->core.pmu_cpus);
- 			else
- 				*result = cpu__max_present_cpu().cpu;
- 		}
-@@ -386,12 +386,12 @@ bool tool_pmu__read_event(enum tool_pmu_event ev, struct evsel *evsel, u64 *resu
- 			/*
- 			 * "Any CPU" event that can be scheduled on any CPU in
- 			 * the PMU's cpumask. The PMU cpumask should be saved in
--			 * own_cpus, if not present then just the online cpu
-+			 * pmu_cpus, if not present then just the online cpu
- 			 * mask.
- 			 */
--			if (!perf_cpu_map__is_empty(evsel->core.own_cpus)) {
-+			if (!perf_cpu_map__is_empty(evsel->core.pmu_cpus)) {
- 				struct perf_cpu_map *tmp =
--					perf_cpu_map__intersect(online, evsel->core.own_cpus);
-+					perf_cpu_map__intersect(online, evsel->core.pmu_cpus);
- 
- 				*result = perf_cpu_map__nr(tmp);
- 				perf_cpu_map__put(tmp);
+ void perf_evsel__init(struct perf_evsel *evsel, struct perf_event_attr *attr,
+ 		      int idx);
++void perf_evsel__exit(struct perf_evsel *evsel);
+ int perf_evsel__alloc_fd(struct perf_evsel *evsel, int ncpus, int nthreads);
+ void perf_evsel__close_fd(struct perf_evsel *evsel);
+ void perf_evsel__free_fd(struct perf_evsel *evsel);
 -- 
 2.50.0.727.gbf7dc18ff4-goog
 
