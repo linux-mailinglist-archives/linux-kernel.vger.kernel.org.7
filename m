@@ -1,135 +1,188 @@
-Return-Path: <linux-kernel+bounces-735223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EF69B08C59
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:02:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8865B08C62
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:02:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20C1D3A8029
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:01:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 169221C249A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:02:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8370B29DB7F;
-	Thu, 17 Jul 2025 12:01:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F5E29DB99;
+	Thu, 17 Jul 2025 12:02:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="lYE8f5kU"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="O1T7GrUX"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 894BB29C35A
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 12:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D447429C339;
+	Thu, 17 Jul 2025 12:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752753714; cv=none; b=EAFpqUJUatVEr8SpT/we0Rn0d2i9C1oy0kHXmPqq2xrGBsSEitF/ldfWg7L0FjjTAIEKzTVEzlwqOO4ke4URyFXD9hDSj1v7yd7Bx6pxakZSqYr4NXj72GaPJQZOz/MBttU6DWloZZs8GLXY0i9JF9ah3b8ugK1wCTRIUf3nVxU=
+	t=1752753745; cv=none; b=kUkzcZn9xctjtgW5YJpIJ9jRWNYsm9BLHJmILngIaYfQWT/mTRWmowy9zwVy1blxLOSkxQlAWTtCXgWPIuq9u1xgRbku6DQC9p2L46S3N8axroeefzGM3Yay48KBOXNfJzWpZtS1t+G3DGYYblez6rFPtIqZsc/RqPW4m9fVkFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752753714; c=relaxed/simple;
-	bh=kjEyn7nEjF8oiVB6GgmGedSuLAr7HCIjBycrDFOZBKY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=eC5mxr6QPzod1WffFr4KPcgM0siKtouCg//+/ROh9b6IjmI6VkhfLbYsDa8DFwy2hpJ+xGl28XAIZ9Qpkpv/1wmOm21JK0UBf54PvTTp4CzgkWj4eMDSK+1OjsDrxhWUupDCs78K2A34plNQCrlGeTGJ60MmLyznWAIBnL/9cpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=lYE8f5kU; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3e059b14cb1so8368775ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 05:01:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1752753712; x=1753358512; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=61ZOPEc1Npv0N7lkKyvYLgeXrgu1p1u4u8vtKljsiog=;
-        b=lYE8f5kUqvO+XsNQ/XO+6VW86/pIpFACuVd/pl7Et4Hw1+gRnpawN95JAutzedDP9O
-         nkCqB/eoIGz5n0adNm9VbJYr0k5R9L1FbylvG+rCi+niTJDUM7lCrMGzaUqROeNilr4C
-         RJNQP8zBbrPO+InZ0fQ9Lip15LzVZdQRSrgoAbAhKHUcyiKdo+jfxxadpgFP7yv7kiwr
-         nyLorzD87mtZU4OL/Yfc+WgM9G6Rw6BMZarx6Mu9CECKyxsRD6RknxcXjhKhpiIFinEU
-         Yud6DdQ4JHeztnXArJpr+sKT1mMdlIGKg6syWxrZMg7ahk6uFenscA3o8UChYh1/2zpi
-         ExAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752753712; x=1753358512;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=61ZOPEc1Npv0N7lkKyvYLgeXrgu1p1u4u8vtKljsiog=;
-        b=shhROl3qPwp5OLEMgYXdLTZjnOhRJpa8IRmB0lG04596G38Mfdl4+lJ2PoxV3jQgX/
-         1ZIqHPHKBCZTkK5bzCz79YDraWxhOMs1TcrVy/J+zKGYFUui5j6gqTQSL2vFE2TcfZUM
-         ywCC9jyPkrTG6eWDqfHrfBUYHxY66O7ph9mkB1G+Ob1rC2GLLu5gGyVZ7r0stQX3/TcZ
-         GOCWFQwofs7lpFA5iodXF4xAE9+GaRST8lSydCMfdrvcvfJMOztjEh5a3+Yj6KWgblmf
-         LCsjjOYuw3n09OWBd5ZEuRCrCyDjDNwKRv9L09en/t7705dOCGc7RbA2THrYw3BhL75W
-         YRdw==
-X-Forwarded-Encrypted: i=1; AJvYcCXfLmhus7BCDdf/aYvpZLluB9DQNTZFtmcWJuSNH0n+v3ZRgKALJQH2XVOr5EgSMVsK9nR6RhVTbIrxE5w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLzOSma3jly9ujJRv+PtinA3/l/dQ6VXHE2U//Gcx9pdPsg9sR
-	bzseDDKKn95KIlisrZ7G3329bO7B4xtN05ypOTtUFbc+GUwYoqSKAcKrfoZ1jEuH8CY=
-X-Gm-Gg: ASbGncsOctHnRglTEMQ+pFJiTPMbLviIs0QTGsBfR1YgW2df5wkfwvrcmSTGTABvPoY
-	EIe/Zork+hsd3SHZNissA/4YXkSgEXbwBV2LJ6XstqFyw2iQfY0mzw9aYKfmv0H9hMaNj8lt1XF
-	AVOe96CmD87brVN6THVtsGCA+t9XqddD4E0nhqapVuphjPo96SQSWjaP5phwzVSIWZRIOkrjk4v
-	99xKB2qAgDsz7sNVTuBC8r+1V8LyTSZ5cVtsdEFBCMBpCcJuOyoWNqVeNYSNroMpV7jr00Y3asK
-	NdA9SlCvYY+5n/UcHyPcOwnlHQTf3n4ducWKvH1KynS0B4qA0lAnjV5t7Q6XoIObpzlrhYqdebl
-	IQ5AbeAz+wtpkiQ==
-X-Google-Smtp-Source: AGHT+IGuqUVz1MlM22DWouaSIEqVc7JUz/swP0ZPOQK4pvQiO3B+o4V938h5qOKiQPbhSq72i+cb3A==
-X-Received: by 2002:a05:6e02:4618:b0:3df:e7d:fda8 with SMTP id e9e14a558f8ab-3e28b718bcamr29664265ab.1.1752753712400;
-        Thu, 17 Jul 2025 05:01:52 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e24611ce92sm49563745ab.6.2025.07.17.05.01.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 05:01:51 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com, 
- song@kernel.org, yukuai3@huawei.com, hch@lst.de, nilay@linux.ibm.com, 
- cem@kernel.org, John Garry <john.g.garry@oracle.com>
-Cc: dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
- linux-raid@vger.kernel.org, linux-block@vger.kernel.org, 
- ojaswin@linux.ibm.com, martin.petersen@oracle.com, 
- akpm@linux-foundation.org, linux-xfs@vger.kernel.org, djwong@kernel.org, 
- dlemoal@kernel.org
-In-Reply-To: <20250711105258.3135198-1-john.g.garry@oracle.com>
-References: <20250711105258.3135198-1-john.g.garry@oracle.com>
-Subject: Re: [PATCH v7 0/6] block/md/dm: set chunk_sectors from stacked dev
- stripe size
-Message-Id: <175275371113.371765.7347642796595215334.b4-ty@kernel.dk>
-Date: Thu, 17 Jul 2025 06:01:51 -0600
+	s=arc-20240116; t=1752753745; c=relaxed/simple;
+	bh=U9UwDrSbWaiDmvTA0BWFaYzVtEq4zRVfB/UuI5qqODI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bgBAGetbBFz0ARNSUggALp+sOQFcBhjuO4/p6Cv1bJ2gVNzXQPI6QTz+pEjEi087em0lAg+jV/jWra1Eytc3PyLZB1cuD4WAm6A56/7sF6s8whsisLE8u4sqqVUZdidEMkKRVLz3VuYarcLk/wxhcQ9cdzfLgZduadQVQRQ0UiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=O1T7GrUX; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56H44NNR028071;
+	Thu, 17 Jul 2025 12:02:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	PgbN5SgJ+4eZw4UavhDcuBv73OTeH2sfBYqdzXx9WzM=; b=O1T7GrUXnOvod8An
+	Y4NLIcUZmtafNazj/PcZnoppXwSkkOeGhkM8qDbY1HMHelbZkwbTfJDUnm44GeHo
+	oWybS+Vl8+kaSy/EqxiiovFTqRbzKqVxEF1suqvaMjcOcUjMpNSS9Bo7mrEK/XgK
+	ZtMfPN4vP67o9QsWZkhZiuZ40IDpQSX+cKaT0FyiNnU/pgIu81A/PqgQJIm2DKPU
+	zoz9NpWgJ4tZfviJxE0BEorxKbeL1OBD9LP1EatSomf+htAi0WIgMpsM3e77lE4z
+	ldfxQz9PEGiRWh3H21MzK+VXP2NzBMzFhlSw2mcUQjldkDHQRY1t0CLYQU7aWMdf
+	WVt6lw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47wnh5yruc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Jul 2025 12:02:08 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56HC28sV017128
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Jul 2025 12:02:08 GMT
+Received: from [10.216.39.173] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 17 Jul
+ 2025 05:02:04 -0700
+Message-ID: <2d5edf11-2d13-bcc7-93a9-e0a223bd6eb8@quicinc.com>
+Date: Thu, 17 Jul 2025 17:32:01 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-2ce6c
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH 3/3] media: iris: Add support for SM8750 (VPU v3.5)
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Dikshita Agarwal
+	<quic_dikshita@quicinc.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        "Bryan
+ O'Donoghue" <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Philipp Zabel
+	<p.zabel@pengutronix.de>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250714-sm8750-iris-v1-0-3006293a5bc7@linaro.org>
+ <20250714-sm8750-iris-v1-3-3006293a5bc7@linaro.org>
+ <7b0a984f-b62a-ac4d-74bf-a6e839c59272@quicinc.com>
+ <d4c39f2c-9f95-4e65-87a3-78173b39adf1@linaro.org>
+ <1c5df071-7000-ab45-dbc6-4384d883ba24@quicinc.com>
+ <a6dbca7e-4d49-49a6-987c-8cd587501c98@linaro.org>
+ <3a87c37b-b392-598a-736f-bb01e4c311e1@quicinc.com>
+ <f6f86227-8d26-400b-9ad6-605cee966b56@linaro.org>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <f6f86227-8d26-400b-9ad6-605cee966b56@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=dKimmPZb c=1 sm=1 tr=0 ts=6878e640 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
+ a=ONz1pvL7zxQUDdDM2XMA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: 8qbDmR90wHf7hglQOvKe1nz6DD92OhHg
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDEwNSBTYWx0ZWRfX3a5JuebAMS5L
+ 201l8H1DNnntdIukv+pEVAjbS8Bd1Jl0UM6z+kq7ehDFmoTONv3ZNL5ntkNVwm8zGfrU8QPW/N+
+ I99XOK5Cj0m/A4n5XpHje9t6xrLl15ZZDHVzE56ovn530s+m9AM+rCr/j8z9ReN6OVLgjRblMZa
+ UZhQOxjBaz95vPBtT+fuhdDFvAWiopLPcqE3RwOfYv9ew2OS7/fYFDPg0H83AAbP/loilAq1tfZ
+ x1yebKZI+RMtar0Q8i8+0aNt5xuKMTzBJYOJxUI/2aUPdP0jc2LdMDFtpvf3bGG6dqAMscaHS4g
+ NSYSVdzI8ngpN5D6f0lf2M++APXSM3u/g/cVFT2X3h8I45dOGgm1HQFv2meDEs1ENNowkVfQPE8
+ XmNByKDWmR/rIbtHbMdLvgjw+J3Zp+BGZCB4ZSmG+UfWTur65s5aIcCnk6j0TJb5ZX3dBYza
+X-Proofpoint-ORIG-GUID: 8qbDmR90wHf7hglQOvKe1nz6DD92OhHg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-17_01,2025-07-17_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 clxscore=1015 mlxlogscore=848 mlxscore=0 spamscore=0
+ adultscore=0 impostorscore=0 priorityscore=1501 suspectscore=0 bulkscore=0
+ phishscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507170105
 
 
-On Fri, 11 Jul 2025 10:52:52 +0000, John Garry wrote:
-> This value in io_min is used to configure any atomic write limit for the
-> stacked device. The idea is that the atomic write unit max is a
-> power-of-2 factor of the stripe size, and the stripe size is available
-> in io_min.
+On 7/17/2025 4:24 PM, Krzysztof Kozlowski wrote:
+> On 17/07/2025 12:50, Dikshita Agarwal wrote:
+>>>>>>> +	for (i = 0; i < core->iris_platform_data->num_vpp_pipe; i++) {
+>>>>>>> +		ret = readl_poll_timeout(core->reg_base + VCODEC_SS_IDLE_STATUSN + 4 * i,
+>>>>>>> +					 val, val & 0x400000, 2000, 20000);
+>>>>>>> +		if (ret)
+>>>>>>> +			goto disable_power;
+>>>>>>> +	}
+>>>>>>> +
+>>>>>>> +	ret = readl_poll_timeout(core->reg_base + AON_WRAPPER_MVP_NOC_LPI_STATUS,
+>>>>>>> +				 val, val & BIT(0), 200, 2000);
+>>>>>> what are you polling here for?
+>>>>>
+>>>>>
+>>>>> This is not different than existing code. I don't understand why you are
+>>>>> commenting on something which is already there.
+>>>>
+>>>> Which code are you referring to?
+>>>
+>>> To the existing vpu33 which had Reviewed-by: Vikash Garodia
+>>> <quic_vgarodia@quicinc.com>
+>>>
+>>> You understand that everything here is the same, everything is a copy
+>>> while adding just few more things?
+>>>
+>>> My patch is not doing in this respect anything different that what you
+>>> reviewed.
+>>>
+>>
+>> It seems to have been missed in vpu33 power off sequence as well and should
+>> be fixed.
+>>
+>> Still, as mentioned earlier as well, your reference should be
+>> HPG/downstream driver of SM8750 not the previous generation (SM8650).
 > 
-> Using io_min causes issues, as:
-> a. it may be mutated
-> b. the check for io_min being set for determining if we are dealing with
-> a striped device is hard to get right, as reported in [0].
+> Yes and partially no, because we write upstream code matching or
+> extending existing upstream driver. As you said earlier, downstream is
+> not the truth always:
 > 
-> [...]
+> "That shouldn’t be the case. The downstream design is different, which
+> is why the driver requires the above code to move the GDSC"
+> 
+> so here I built on top of SM8650 and re-iterate whatever mistakes are
+> there. The best if someone fixes VPU33 and then I rebase on top,
+> re-using fixed code as my base.
 
-Applied, thanks!
+You have mixed different comments made earlier.
 
-[1/6] ilog2: add max_pow_of_two_factor()
-      commit: 6381061d82141909c382811978ccdd7566698bca
-[2/6] block: sanitize chunk_sectors for atomic write limits
-      commit: 1de67e8e28fc47d71ee06ffa0185da549b378ffb
-[3/6] md/raid0: set chunk_sectors limit
-      commit: 4b8beba60d324d259f5a1d1923aea2c205d17ebc
-[4/6] md/raid10: set chunk_sectors limit
-      commit: 7ef50c4c6a9c36fa3ea6f1681a80c0bf9a797345
-[5/6] dm-stripe: limit chunk_sectors to the stripe size
-      commit: 5fb9d4341b782a80eefa0dc1664d131ac3c8885d
-[6/6] block: use chunk_sectors when evaluating stacked atomic write limits
-      commit: 63d092d1c1b1f773232c67c87debe557aab5aca0
+1. Downstream GDSCs are still in HW_CTRL mode, while upstream GDSCs are migrated
+to HW_CTRL_TRIGGER. This does not need a fix in SM8650, but in the
+"iris_vpu35_power_on_hw" which you have added in this patch for SM8750.
 
-Best regards,
--- 
-Jens Axboe
+2. Register write "AON_WRAPPER_MVP_NOC_LPI_CONTROL" with 0x1 is needed on both
+SM8650 and SM8750, before polling AON_WRAPPER_MVP_NOC_LPI_STATUS in
+"iris_vpu35_power_off_hw" function.
 
+I can soon submit a patch to fix SM8650 with the missing register write, but i
+do not see a need to wait for it to continue your development on SM8750.
 
-
+Regards,
+Vikash
 
