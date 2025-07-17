@@ -1,77 +1,80 @@
-Return-Path: <linux-kernel+bounces-735500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45809B09034
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:09:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2397B09035
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:09:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A2297B8116
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:07:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 176F57B9561
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:07:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 581FF2F0C43;
-	Thu, 17 Jul 2025 15:09:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5805A2F8C4E;
+	Thu, 17 Jul 2025 15:09:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VNLDk0r9"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UBrG9y6l"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6426910A1E
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 15:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B0702F85F5
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 15:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752764948; cv=none; b=Lr6fpZBbKgX8o57SaaTJOX3PtEpbq7zz4RdEc2YpzUifhe6wh+qJ4GrNLtNjxSOjT1Sy4uUDuOyCnbsYk0doSEoWqBRFBtE3CK0d8doja0jPsMFdLoRIqlEfa1MIN21R7LfhQvv0XjX7dt1+XJDYCtItPj6AJkbxIujsz2Clww4=
+	t=1752764950; cv=none; b=kAYF6oOe93oNr3DB7ZxOecffZev5QRDxK9NOA9ZEkNcH8gLYdqSu0tUyZ/v4/VIHNeY3LrvM93acHOZs7VMFfhbQcRlMr9ctwbnj6WgGdk1KO3XHJgQqfBDtFKJlozOE46zCTLyHiu2jyiXM7RCfx4x8rYJA6XWYrJPsKKBdQCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752764948; c=relaxed/simple;
-	bh=EiDVBW76tvLcvcxgrKHMClTLXcXHYkd8R9wEyzxQqCE=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=tcpVRso7hKHzuwrU/bezj0WeK72FY/AcHYZ58wF9PNwdZ10NiMR0uoAW/2ZdiM19yI3R1WcFAOzC5QUQLUybyRtzZ/l24fsYGUy4RsFhKsD8D9rujJN4Qz7xgIdOa+GOOUkSjlHSJqn9t4ZWDn9YMOJhXI/RI+wIX+XK0miVQSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VNLDk0r9; arc=none smtp.client-ip=209.85.216.74
+	s=arc-20240116; t=1752764950; c=relaxed/simple;
+	bh=e2N7oTY2cgHu2RKJ+FKHz780v8w7gc4fcXnxguLDIU8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Content-Type; b=eKpTBIDtJ4kAFxPi8x6+ussO/NJXBzve/lqjCdvCrX7/F5wna1a8D+C/FJSuv791JwpMy+WS8fV1k5yR28bY9V969iWzJaGIi47mWZd7Fh0m3eXXc4gy/kO9fJV7Q8XiH+GihzveHu5GDW71BfgkcGhRAEkaHlkkI+GFHWRI6RA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UBrG9y6l; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3141a9a6888so1060296a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 08:09:07 -0700 (PDT)
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b38fc4d8dbaso1167466a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 08:09:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752764947; x=1753369747; darn=vger.kernel.org;
-        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=MIXUDuq7ovshxxSYABdfkB3392ffxtbOzDMl2+dJvEY=;
-        b=VNLDk0r9FCqWv9fvO3zXgcTQhP8UOyAhz9oNz0xd6mBw6f2MhRUoEcyh9oXkvlG/ff
-         K/ASBXBCZN6+LilCOZupZ3jnjfGR+tbEDt1EhSX8ZMgiCnZqB4hDWIwWDn0mQRgigT0L
-         MgNbfp6aLtqyWb2+a2Dk0tVxEE8A5ZKqik7FpMIRqzPpwWvQc97Vcbb0Fw0u2Onx0cJz
-         RULcBx3TYCCFWSfWMNZTOX6slsG7D+OuLhsnnKhowuqY+iBROjOezSyD8T8yhm961Qri
-         q1NKfAVyU6qmhKqIUDy4xMhqL8Epv2nMDPdEMqR1Qz0EDJGfc2jplPiWwoM6HcsQyTOZ
-         yfYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752764947; x=1753369747;
-        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+        d=google.com; s=20230601; t=1752764949; x=1753369749; darn=vger.kernel.org;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=MIXUDuq7ovshxxSYABdfkB3392ffxtbOzDMl2+dJvEY=;
-        b=nAx05jOVL/OsHIdlqHJVviTzPlQtw8KvDm/F0UtR2jNicSrPNlVyZxTZp/YANbp6Gf
-         PSovE9FevnvanPhGzQN+oA7IbPOvTTJ4Wqd9jYNuHNre1bK5cAyfgw+ls36hM0Nl4Rjs
-         ouK0a/vsCQPUHeqT4tHnSI+YbN0oHaXeMGzK6qzX339/4V+tQ32Bxl23V6jT1Fs7b36T
-         M+bs+6ZLaFztSx51gbz3BuqZni4BuxtdgtizSd1E2ONzhtoOv2VfUgMvE0y/Yi+Klpv6
-         u85TXfnwZPSwKqNhB/7XyGURQUtH1xbA9KVrgp3NBGbNzR7wDYjM6Ck1Hdqh9pFf3bvi
-         p9DA==
-X-Forwarded-Encrypted: i=1; AJvYcCUT4yKd4SJtKktx69cVXTwUhXFVUkhK5Gx6ki/KGMLFOwcTg8fHP5ObQVih6hUWK/AJSU6cad+q9tvvMg4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsfrR5xclZ14Pq3eZklUbHq91Sat08qYlUaplkL2XVrqgweoUQ
-	WD0qMiL13wO+CSoFFCZ8ZBSbDxyg6NBa4iMVl0ivGuNS4Dw7dMzIchMRmSZFPd4SobP5jZbx2l/
-	7TXtCkpROcw==
-X-Google-Smtp-Source: AGHT+IFL73neqb2Qi4RrByaNIFT61LP8vi6nbcp4FuivM0fh4JTn/cRc9MN7woer2IIWixLA8PMuIsJuPgsE
-X-Received: from pjbsp7.prod.google.com ([2002:a17:90b:52c7:b0:311:c197:70a4])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5307:b0:311:b3e7:fb38
- with SMTP id 98e67ed59e1d1-31c9e76371bmr11205278a91.19.1752764946725; Thu, 17
- Jul 2025 08:09:06 -0700 (PDT)
-Date: Thu, 17 Jul 2025 08:08:53 -0700
+        bh=xcRx1AnfVIz4234lB8ggVFO+piASilvu9GQSG89S72I=;
+        b=UBrG9y6lYnAedbQ3p/oTigAY9QrKH2HvNL0gGipfOor6eZ7RCPfsoZNff1WYsoMPrl
+         UP/nSW2ijLnOrq/b81OkOPUNmNBfkWQeYxnBX9qnyEcsd438kIlgDF33vQzPAFQ2Fqqt
+         VmVGIjpksyFUcmGKu7TRrcnyWut8qFUBEDXPPcWHMNlKof7xwJIKk3jjuVNiGhYiT0Ot
+         9D6I0eHVvvz/fmK00xOodsgd8717IzPL6fa3tkQScoGwEcEZ4S6zplm3P3s2K6yIMTB5
+         48CKD7kEP43ZIZVxjCjxFox4f5psYCrQ0jDqY1U9LbS1Zl+ba/sxZWPzhTx415GZq0wF
+         u0og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752764949; x=1753369749;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xcRx1AnfVIz4234lB8ggVFO+piASilvu9GQSG89S72I=;
+        b=VgF9lf4kOQAhnLXVXthQblLnLzv6RcmEhNRNoKi5g5q2CeKxRgPDonYYbw7YrCzutw
+         gGV6aUr0wlsX1KFwArbgNscj2HbOj+ELwTUgrhS315bSSXhDLrgaTd8saalA8ZuzY0O3
+         wziy5mkvnk6i9SqF+a4u2506KfuLxeuOIwOZbDlHtXVYwoq39WjiV/kaNt9ISbKlOOID
+         DRDKjK7dAm0cJF5+GPKAULXOYOb9+xOVG1z+x+kQYizufEhTU/JeQCkPgABCicO7xF0X
+         xPtHTnrS+HeWXEJ6FuKsefpM8Rz96VgJxq3aUMNI/4G+VOBkzPnJ899Uj/RCQdfSUILF
+         cTEA==
+X-Forwarded-Encrypted: i=1; AJvYcCWXjsPUGcFE9Of21qH9qImvsO/q3B3dyG4sWdnanrqda8xwM6FnI6Lrxvq04ToRjtBmwvnrUQYOr8f4Fk4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQKZDJ0usJUQk+h4rr8Xb0pll64cwdlgMoglxo2ewL0zZdl0Oq
+	OsfmMeqgUtjF0vfinSWflTfEizfaupUq8YrZ9ejf26cCmKJdboNLQTPEtcUyeUjsvG9yVEqt5p0
+	T8Az+LvcFpQ==
+X-Google-Smtp-Source: AGHT+IHSj8dNhtoUR+ln6GApAc1Wa0LZ6OyasRb6Nd6ZtNENLFtcT6z3cMDUavEA6p5ZusIU4xoikFN8aOn4
+X-Received: from pjff6.prod.google.com ([2002:a17:90b:5626:b0:311:d79d:e432])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:184d:b0:311:f684:d3cd
+ with SMTP id 98e67ed59e1d1-31c9f3c6068mr9597668a91.12.1752764948730; Thu, 17
+ Jul 2025 08:09:08 -0700 (PDT)
+Date: Thu, 17 Jul 2025 08:08:54 -0700
+In-Reply-To: <20250717150855.1032526-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20250717150855.1032526-1-irogers@google.com>
 X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250717150855.1032526-1-irogers@google.com>
-Subject: [PATCH v2 1/3] tools subcmd: Tighten the filename size in check_if_command_finished
+Message-ID: <20250717150855.1032526-2-irogers@google.com>
+Subject: [PATCH v2 2/3] perf pmu: Switch FILENAME_MAX to NAME_MAX
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -82,61 +85,38 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-FILENAME_MAX is often PATH_MAX (4kb), far more than needed for the
-/proc path. Make the buffer size sufficient for the maximum integer
-plus "/proc/" and "/status" with a '\0' terminator.
+FILENAME_MAX is the same as PATH_MAX (4kb) in glibc rather than
+NAME_MAX's 255. Switch to using NAME_MAX and ensure the '\0' is
+accounted for in the path's buffer size.
 
-Fixes: 5ce42b5de461 ("tools subcmd: Add non-waitpid check_if_command_finished()")
+Fixes: 754baf426e09 ("perf pmu: Change aliases from list to hashmap")
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
-v2: Fix precedence issue reported by the kernel test robot.
----
- tools/lib/subcmd/run-command.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ tools/perf/util/pmu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/lib/subcmd/run-command.c b/tools/lib/subcmd/run-command.c
-index 0a764c25c384..b7510f83209a 100644
---- a/tools/lib/subcmd/run-command.c
-+++ b/tools/lib/subcmd/run-command.c
-@@ -5,6 +5,7 @@
- #include <ctype.h>
- #include <fcntl.h>
- #include <string.h>
-+#include <linux/compiler.h>
- #include <linux/string.h>
- #include <errno.h>
- #include <sys/wait.h>
-@@ -216,10 +217,20 @@ static int wait_or_whine(struct child_process *cmd, bool block)
- 	return result;
- }
- 
-+/*
-+ * Conservative estimate of number of characaters needed to hold an a decoded
-+ * integer, assume each 3 bits needs a character byte and plus a possible sign
-+ * character.
-+ */
-+#ifndef is_signed_type
-+#define is_signed_type(type) (((type)(-1)) < (type)1)
-+#endif
-+#define MAX_STRLEN_TYPE(type) (sizeof(type) * 8 / 3 + (is_signed_type(type) ? 1 : 0))
-+
- int check_if_command_finished(struct child_process *cmd)
+diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+index b09b2ea2407a..f3da6e27bfcb 100644
+--- a/tools/perf/util/pmu.c
++++ b/tools/perf/util/pmu.c
+@@ -453,7 +453,7 @@ static struct perf_pmu_alias *perf_pmu__find_alias(struct perf_pmu *pmu,
  {
- #ifdef __linux__
--	char filename[FILENAME_MAX + 12];
-+	char filename[6 + MAX_STRLEN_TYPE(typeof(cmd->pid)) + 7 + 1];
- 	char status_line[256];
- 	FILE *status_file;
+ 	struct perf_pmu_alias *alias;
+ 	bool has_sysfs_event;
+-	char event_file_name[FILENAME_MAX + 8];
++	char event_file_name[NAME_MAX + 8];
  
-@@ -227,7 +238,7 @@ int check_if_command_finished(struct child_process *cmd)
- 	 * Check by reading /proc/<pid>/status as calling waitpid causes
- 	 * stdout/stderr to be closed and data lost.
- 	 */
--	sprintf(filename, "/proc/%d/status", cmd->pid);
-+	sprintf(filename, "/proc/%u/status", cmd->pid);
- 	status_file = fopen(filename, "r");
- 	if (status_file == NULL) {
- 		/* Open failed assume finish_command was called. */
+ 	if (hashmap__find(pmu->aliases, name, &alias))
+ 		return alias;
+@@ -752,7 +752,7 @@ static int pmu_aliases_parse(struct perf_pmu *pmu)
+ 
+ static int pmu_aliases_parse_eager(struct perf_pmu *pmu, int sysfs_fd)
+ {
+-	char path[FILENAME_MAX + 7];
++	char path[NAME_MAX + 8];
+ 	int ret, events_dir_fd;
+ 
+ 	scnprintf(path, sizeof(path), "%s/events", pmu->name);
 -- 
 2.50.0.727.gbf7dc18ff4-goog
 
