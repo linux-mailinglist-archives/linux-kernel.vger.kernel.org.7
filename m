@@ -1,222 +1,147 @@
-Return-Path: <linux-kernel+bounces-734668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 154E7B08491
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:06:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D57D3B0849F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:09:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07AD47B8B66
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:05:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D283C3AEC1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:09:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDAE1206F23;
-	Thu, 17 Jul 2025 06:06:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A422A207A20;
+	Thu, 17 Jul 2025 06:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dr/HrUbz"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c8mupa7H"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68576204598
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 06:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3426E204598;
+	Thu, 17 Jul 2025 06:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752732401; cv=none; b=QoLOF4qslxOY+9sQgrpAgwZespsIMMyHzlCM0Iq1vJsD4npck13Qyoa1q5M5L+KXhLDv1zXBM5fwEMf7oDzqZWNL/5KjApQexsnKLjlOA3FoZVPX58cERRiiWEo1a9CE0G16t79iOYC1fbEEb+jxaXCIOZE4YB/kHHqpnLEf29U=
+	t=1752732580; cv=none; b=hLZyAGvSEmOaGefOnghoYkQzmxnKuPniCgen7mjT/+DytHnXBGzE0HkeFR/HKYXDGuTGoVFx4ts8mtJTFe/StJZdLiX6++uZXFfCLG4Dkf8sK2wmCSZjwNsdNWabofHz9Nxts31T3e/KIDshmEiN5T3mcG6wC7WX2QFS0iBgg34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752732401; c=relaxed/simple;
-	bh=w/XNXA0/1Ho+Fsc2IZ/94LPEGGsUlTvRDCA0izkaS2U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qVYWfYgYsUq3pBp0AcN7xzUY9D+JwlWVF9ftSY9QyaXG+1f+gWeLw406KdcgdiLoRq+I8N/wZNbnDW82wDDdML7FwGHrvDPw47huGiw0PCJeZPtBrAzMgvrIuGIMSgIz2aNTYD9eAuGmfk9X75NjnpP6enOry5MlToTjGMfTvuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Dr/HrUbz; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b34a71d9208so372967a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 23:06:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752732399; x=1753337199; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8IV5c7k8FkRHMfVKUwEzdiWKabmC2jryJUoHOy4flaA=;
-        b=Dr/HrUbzj3gKIkVDRXX3V563dsvakYaM7cpXbxtts71ai2wLK9rMMa4P3jJtaEzlu3
-         1NmfN0Is+KO6l2JAYnKSHZZika5SPPG5BvjYJit2QLiUV0qyIRWYHC97FYq9jtMFnhTT
-         P658X2INGOLcd2uJiErTCbDCJmbVqub79NijT06jh6/iuDiy1xZ7tTcM7Zd/CB1uPJJm
-         UOOV9hykZENKe83vvswfgs06OWjE9HLReYwzfPBlS13JrTkFY3iisBsTJMGUxdj6jJBo
-         9JTbU8mPjkCzQ64wRU+rGF0zQ3hVNLY8kJ/9On42lznhAu84brwq1UCRQhhLSY7zhusu
-         uK0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752732399; x=1753337199;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8IV5c7k8FkRHMfVKUwEzdiWKabmC2jryJUoHOy4flaA=;
-        b=npGBjb6GNSfpFq2iyKTlzR1W+HSMGmAt0q+lpR2goMII+K3WT0u34FBVO/moOSMMD+
-         QerEF1shN0XYJ5eSTWyVxEm5gjf4ySyRBnCgzL8E3TbKH29SQk6TClb8NL2pz0GGysGt
-         fyE/e2UKJgRPKab2wJBZ/zal8AkSXKnKQVo54dH9v57zmcwTzt8rz/Keju+mCyHN60dd
-         s4dHxGnKZ6aRQL//zeqic3i1GLl9aGvG3TPajY8ZUmmaX1qSEDsDL9CmyXntFIz54Boz
-         1bchUffItcY7B85QQwbjxR/rkSnb4H+9ky3wGBDNouwvG2X8fKCszEA0RGAKnBkA5G1I
-         Nmmg==
-X-Forwarded-Encrypted: i=1; AJvYcCUoHkuacKX2LwVKFGndV0ebg08jbWBksK22SmOXWyn0mrPIr8/i6RcCd8TfdQyWAQdFoizKoPsUSYb9+Rw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBqXV9Ix8JBNyl+LEmNXT2LSR8X0ez4RaCijC1IKw/TxNsP/v/
-	VYoco4bBtZaCSTXyZGWS9kRlwsNYYECWwpsw4cmPSNigTaJoe0krvLLIhftJEp6A5cbA+cgrUl8
-	nSVUcJwyi3EdL9uqQ9OWAgX6NCWZWRo3WyIL/VWU3XQ==
-X-Gm-Gg: ASbGncuoLvnJ8HDTwuwkH8DZmyufV/Zg1TH/V4cF4zPmZfIZOmPMSRRk/nZTz8Vf/A3
-	ZJuL1TuphH0BKmpZh1/LC+6WShFc3MnIk1Os8g2h0KceijlfuMr3dSvqJPCTy83Ya1m13T5LR9i
-	NGVjSnk1ZX/Z5CAQnUUeVhBQFi69mVaCW7SbMAIgsuuS0SvxNUlzPoJgq+AwgH3YNh3BSXaRaYQ
-	vdXyZFGTbnAu1TfGcMRCeh3sjSHKvq76gHRxCkvSL5CLfzl1nE=
-X-Google-Smtp-Source: AGHT+IElD+hWffueY9O2l5MlqFuqIXzGyCKBnFzcuaWJr5IbzPpnXRMfFI73nz6+ivP3Lmv0Z3fyQZbpDdsSYxJ75Ro=
-X-Received: by 2002:a17:90b:4985:b0:311:ea13:2e63 with SMTP id
- 98e67ed59e1d1-31c9f47c919mr7014030a91.13.1752732398519; Wed, 16 Jul 2025
- 23:06:38 -0700 (PDT)
+	s=arc-20240116; t=1752732580; c=relaxed/simple;
+	bh=06sfEwPwapl7HSwBzGHEiTcJjFqV4RXxkshBTqEhmwM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M5PYGFpoCXmlLR8D90WKoYG6tn4b9dYcnDpAcmGCHU+mcAkz24BGwxM/IvVmbeu4/Kie2J6y7W/8m+ml1BwSUT9g9Zof68Wx4HEDBSA5qj81d73hoiEneuoS3gR5Tca4oh5iM9s0fY8jPT+1fH0XHPvjPO5fe4HfSPb37Yvmm0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c8mupa7H; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752732578; x=1784268578;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=06sfEwPwapl7HSwBzGHEiTcJjFqV4RXxkshBTqEhmwM=;
+  b=c8mupa7H9PuA6RfQyftp5tLXPiHVZzBK4jKfOUcvOS7xcHkC3g1qPdXk
+   ANeMzGm6U65aW0EldONUrTYS8B/c3O935WTVkMbNJfwDRikiOZv1ugRcl
+   881GU3+uRFHojr9CJj1KaaZU3B0NOABsFX7+l6M54WkeQX0e0tRw6zSGp
+   fYH6Xd2oz8eKOAe5jRFJeJRHD23TGMOFyD/KPk71neCvW4uysiAP0fv/q
+   GpEiKKp8mss/9qUauvFeXp3MJOA+3oUvoKyN4xtZJNY5AlXfTR2iQZoC4
+   yqHG692sRJf+PCfUnFIIQLe46RXLCkYqWOmUBrQ44lYNeTsKWqru3IcF6
+   g==;
+X-CSE-ConnectionGUID: BSQNHMTGQkyhLFa0cN64Xw==
+X-CSE-MsgGUID: glWSZqdeTtWPaHJRhXXBzg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="54711586"
+X-IronPort-AV: E=Sophos;i="6.16,318,1744095600"; 
+   d="scan'208";a="54711586"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 23:09:37 -0700
+X-CSE-ConnectionGUID: 8o1ZTcU5T068tA/m6Rj96Q==
+X-CSE-MsgGUID: GNfgJmtrTmaUQvJelTDqJg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,318,1744095600"; 
+   d="scan'208";a="163340836"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 16 Jul 2025 23:09:35 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ucHoB-000DCr-26;
+	Thu, 17 Jul 2025 06:09:31 +0000
+Date: Thu, 17 Jul 2025 14:08:39 +0800
+From: kernel test robot <lkp@intel.com>
+To: Yassine Ouaissa via B4 Relay <devnull+yassine.ouaissa.allegrodvt.com@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Michael Tretter <m.tretter@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Michal Simek <monstr@monstr.eu>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Yassine OUAISSA <yassine.ouaissa@allegrodvt.com>,
+	Nicolas Dufresne <nicolas@ndufresne.ca>
+Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 4/4] media: allegro-dvt: Add Gen 3 IP stateful decoder
+ driver
+Message-ID: <202507171313.1yaQJ9Tl-lkp@intel.com>
+References: <20250716-allegro_dvt_al300_dec_driver-v4-4-f87c01c9f7b5@allegrodvt.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250715163613.640534312@linuxfoundation.org>
-In-Reply-To: <20250715163613.640534312@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 17 Jul 2025 11:36:26 +0530
-X-Gm-Features: Ac12FXw75ij4GhIMb8FWW5TzSpjmuX_6qgN5xYsecfajFGkyv7O_tsvhp9A2AFw
-Message-ID: <CA+G9fYvnLqHYteeXiucdCJzpcxJ=w7v+RFn1GE2pa_LjFSNV9g@mail.gmail.com>
-Subject: Re: [PATCH 5.10 000/209] 5.10.240-rc3 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250716-allegro_dvt_al300_dec_driver-v4-4-f87c01c9f7b5@allegrodvt.com>
 
-On Tue, 15 Jul 2025 at 22:06, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 5.10.240 release.
-> There are 209 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 17 Jul 2025 16:35:35 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
-5.10.240-rc3.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-5.10.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Hi Yassine,
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+kernel test robot noticed the following build warnings:
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+[auto build test WARNING on 155a3c003e555a7300d156a5252c004c392ec6b0]
 
-## Build
-* kernel: 5.10.240-rc3
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 2067ea3274d013cacad86f86222ade38d0f51a7b
-* git describe: v5.10.239-210-g2067ea3274d0
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.10.y/build/v5.10=
-.239-210-g2067ea3274d0
+url:    https://github.com/intel-lab-lkp/linux/commits/Yassine-Ouaissa-via-B4-Relay/media-allegro-dvt-Move-the-current-driver-to-a-subdirectory/20250716-225824
+base:   155a3c003e555a7300d156a5252c004c392ec6b0
+patch link:    https://lore.kernel.org/r/20250716-allegro_dvt_al300_dec_driver-v4-4-f87c01c9f7b5%40allegrodvt.com
+patch subject: [PATCH v4 4/4] media: allegro-dvt: Add Gen 3 IP stateful decoder driver
+config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20250717/202507171313.1yaQJ9Tl-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250717/202507171313.1yaQJ9Tl-lkp@intel.com/reproduce)
 
-## Test Regressions (compared to v5.10.238-353-g9dc843c66f6f)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507171313.1yaQJ9Tl-lkp@intel.com/
 
-## Metric Regressions (compared to v5.10.238-353-g9dc843c66f6f)
+All warnings (new ones prefixed by >>):
 
-## Test Fixes (compared to v5.10.238-353-g9dc843c66f6f)
+   drivers/media/platform/allegro-dvt/al300/al_codec_util.c: In function 'al_codec_cmd_cleanup':
+   drivers/media/platform/allegro-dvt/al300/al_codec_util.c:149:9: error: implicit declaration of function 'kfree' [-Werror=implicit-function-declaration]
+     149 |         kfree(cmd->reply);
+         |         ^~~~~
+   drivers/media/platform/allegro-dvt/al300/al_codec_util.c: In function 'al_codec_cmd_create':
+   drivers/media/platform/allegro-dvt/al300/al_codec_util.c:165:15: error: implicit declaration of function 'kmalloc'; did you mean 'mm_alloc'? [-Werror=implicit-function-declaration]
+     165 |         cmd = kmalloc(sizeof(*cmd), GFP_KERNEL);
+         |               ^~~~~~~
+         |               mm_alloc
+>> drivers/media/platform/allegro-dvt/al300/al_codec_util.c:165:13: warning: assignment to 'struct al_codec_cmd *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+     165 |         cmd = kmalloc(sizeof(*cmd), GFP_KERNEL);
+         |             ^
+>> drivers/media/platform/allegro-dvt/al300/al_codec_util.c:169:20: warning: assignment to 'void *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+     169 |         cmd->reply = kmalloc(reply_size, GFP_KERNEL);
+         |                    ^
+   cc1: some warnings being treated as errors
 
-## Metric Fixes (compared to v5.10.238-353-g9dc843c66f6f)
 
-## Test result summary
-total: 41250, pass: 31019, fail: 1800, skip: 8248, xfail: 183
+vim +165 drivers/media/platform/allegro-dvt/al300/al_codec_util.c
 
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 100 total, 100 passed, 0 failed
-* arm64: 28 total, 28 passed, 0 failed
-* i386: 20 total, 20 passed, 0 failed
-* mips: 22 total, 22 passed, 0 failed
-* parisc: 3 total, 0 passed, 3 failed
-* powerpc: 21 total, 21 passed, 0 failed
-* riscv: 9 total, 9 passed, 0 failed
-* s390: 9 total, 9 passed, 0 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 6 total, 6 passed, 0 failed
-* x86_64: 24 total, 24 passed, 0 failed
+   160	
+   161	struct al_codec_cmd *al_codec_cmd_create(int reply_size)
+   162	{
+   163		struct al_codec_cmd *cmd;
+   164	
+ > 165		cmd = kmalloc(sizeof(*cmd), GFP_KERNEL);
+   166		if (!cmd)
+   167			return NULL;
+   168	
+ > 169		cmd->reply = kmalloc(reply_size, GFP_KERNEL);
 
-## Test suites summary
-* boot
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-exec
-* kselftest-fpu
-* kselftest-futex
-* kselftest-intel_pstate
-* kselftest-kcmp
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* lava
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
