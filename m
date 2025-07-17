@@ -1,135 +1,96 @@
-Return-Path: <linux-kernel+bounces-736078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 154B4B09847
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 01:40:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47E0CB09857
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 01:42:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A44491C264C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 23:41:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAD4F1C43E43
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 23:42:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E265424633C;
-	Thu, 17 Jul 2025 23:40:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D20225A39;
+	Thu, 17 Jul 2025 23:42:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UdLl34r+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="NkbcIlH5"
+Received: from mail3-163.sinamail.sina.com.cn (mail3-163.sinamail.sina.com.cn [202.108.3.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46CBE244663;
-	Thu, 17 Jul 2025 23:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A3921A928
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 23:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752795644; cv=none; b=j0Ke+msGihRSGrsYPmskkq3cxSAG1ac6TvskDVboRx79vK9wE81Hl2fKq2jYL4gp4jLyRdE0lLhYL9PLd6WulLhPcyVwjErTZGPhoXBPAiwldUUoHMFU3Gflv1BIQ/8I6b0O8O9p5yBi/eSt5TUGK7d0AbfP0gX69+RpojDtqlE=
+	t=1752795755; cv=none; b=glGSi58yKVdcPCP/b8nXOOUw2tmEZX2mRL89skAPLj6dFy/x27i0N3PESqfYZ8vBUC6C0QbUccFVxrQcii1cRUBQofKVAS7RyABbEg+mW5UMz7Y2ZIj541EXDmFVPbH/FjYataDk9nNHFYNfYST2quRXU1GBA3XjaWaRgw0WBZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752795644; c=relaxed/simple;
-	bh=ghBY1u06RQVl7caGRzm3Kqd91PsHNCfEneyju2vTcIA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jUCKmSAU0W555P1S/aHn42BRBaO62gWEGW9iZjh4nJNvDKuoBGscjkPXqYBxAx9/l03QgaXCbaFlQdt8mVRJW7DN4bEAUmyniBfwmbDKepALBWFYmmMeJafe69CfhLNitHAWaDRcBSDuMqQyJxLD+vyeRR0gIfoMYx6+NyDsizU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UdLl34r+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3429C4CEE3;
-	Thu, 17 Jul 2025 23:40:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752795644;
-	bh=ghBY1u06RQVl7caGRzm3Kqd91PsHNCfEneyju2vTcIA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UdLl34r+HqmNKqWBlkKD1rEBbNQo8dTKaB2cDs3pjy7GoC7tvjxuNI08s91vqC3jy
-	 3muBFKYDArqYVpTO7NwuFpoeSLiZMhYKZ6m0tYtvNmAknUQprv7fGSQmulYKbdVJDj
-	 SyyD9uKEwXibjrJOszDDiNOmKuGDf3vaqNmOe9Mvb+L3FrLgcLC/QK9Hnpb/0HzfS4
-	 ar0PRWxwtVKFgwFdNcEILDKlgapYnkd9nZOVYdJihPJZkutFOSpXWDh0OW8y683kkL
-	 OxTtJ7pagF0Hj4t4H30Tosq3G9mG8FXZnFyG0ImUfxCDlaitqDhrFA31bSeCrQZ4ME
-	 SWU0lipl3oi3g==
-Date: Thu, 17 Jul 2025 16:40:42 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Gur Stavi <gur.stavi@huawei.com>
-Cc: <andrew+netdev@lunn.ch>, <christophe.jaillet@wanadoo.fr>,
- <corbet@lwn.net>, <davem@davemloft.net>, <edumazet@google.com>,
- <fuguiming@h-partners.com>, <gongfan1@huawei.com>, <guoxin09@huawei.com>,
- <helgaas@kernel.org>, <horms@kernel.org>, <jdamato@fastly.com>,
- <lee@trager.us>, <linux-doc@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <luosifu@huawei.com>,
- <meny.yossefi@huawei.com>, <mpe@ellerman.id.au>, <netdev@vger.kernel.org>,
- <pabeni@redhat.com>, <przemyslaw.kitszel@intel.com>,
- <shenchenyang1@hisilicon.com>, <shijing34@huawei.com>,
- <sumang@marvell.com>, <vadim.fedorenko@linux.dev>, <wulike1@huawei.com>,
- <zhoushuai28@huawei.com>, <zhuyikai1@h-partners.com>
-Subject: Re: [PATCH net-next v09 1/8] hinic3: Async Event Queue interfaces
-Message-ID: <20250717164042.6802a18b@kernel.org>
-In-Reply-To: <20250717080229.1054761-1-gur.stavi@huawei.com>
-References: <20250716183208.26b87aa8@kernel.org>
-	<20250717080229.1054761-1-gur.stavi@huawei.com>
+	s=arc-20240116; t=1752795755; c=relaxed/simple;
+	bh=tLMeuWcY5dZ/SP2YIJD/jIA7A4PgzYheE3z+47KMQRI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=UXzg0YvpG6lFFc5q1YAifYwu5k3IX4F0ivXhjd4VtbtPkBwsxb61jTofcXsaZw7K7j5LKBZ4VcPE1BBfgs+X1oTJn6vvLOUzQr0DPb/uj5aEewHcnRJPBJeO29C9m+4fYwh8aNvXJdjaRKeNcNNINY+vCa15aAdW0FssS8q2Fpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=NkbcIlH5; arc=none smtp.client-ip=202.108.3.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1752795750;
+	bh=0gdzAFi3nL1mlUMjX1WcxIl7a1Y3sVw0Mhg8EU6lFuQ=;
+	h=From:Subject:Date:Message-ID;
+	b=NkbcIlH5XMoQRyj58il5+8Z6+aHUmvQcpK+UcEXk/uW7ova3Cz6EISlfBXyPVAJOl
+	 pPsj+GrwlB8tZlwbpzxUNi1ea0H9Gjqh6JzWxkQ86FwMOh0CKMFN9s2MKqoOuxG5iq
+	 Do7LD5G/MfChq23b4GAE/8BA8YcHaI4kX4nQuHaY=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.34) with ESMTP
+	id 68798A5C000060FC; Thu, 18 Jul 2025 07:42:21 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 091516291755
+X-SMAIL-UIID: 730DF730D7E4429D9DCD6571EC87227F-20250718-074222-1
+From: Hillf Danton <hdanton@sina.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: syzbot <syzbot+ebfd0e44b5c11034e1eb@syzkaller.appspotmail.com>,
+	akpm@linux-foundation.org,
+	liam.howlett@oracle.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	syzkaller-bugs@googlegroups.com,
+	vbabka@suse.cz
+Subject: Re: [syzbot] [mm?] KASAN: slab-use-after-free Read in mas_next_slot (2)
+Date: Fri, 18 Jul 2025 07:42:11 +0800
+Message-ID: <20250717234212.2329-1-hdanton@sina.com>
+In-Reply-To: <4c29e030-4ba8-48e3-96bb-015d43768db0@lucifer.local>
+References: <20250717014623.2253-1-hdanton@sina.com> <68787417.a70a0220.693ce.0037.GAE@google.com> <8a2f1892-3184-4aaf-91ea-522e9ba2391b@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu, 17 Jul 2025 11:02:29 +0300 Gur Stavi wrote:
-> On Tue, 15 Jul 2025 08:28:36 +0800 Fan Gong wrote:
-> > +/* Data provided to/by cmdq is arranged in structs with little endian fields but
-> > + * every dword (32bits) should be swapped since HW swaps it again when it
-> > + * copies it from/to host memory. This is a mandatory swap regardless of the
-> > + * CPU endianness.  
+On Thu, 17 Jul 2025 17:06:34 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+
+Top reply is not encouraged lad.
+
+> OK on second thoughts, there is one additional thing we need to do on each
+> loop to avoid observing the same VMA, either the prior logic of checking
+> directly or a vma_next().
 > 
-> > This comment makes no sense, FWIW. The device writes a byte steam
-> > to host memory. For what you're saying to make sense the device would
-> > have to intentionally switch the endian based on the host CPU.
-> > And if it could do that why wouldn't it do it in the opposite
-> > direction, avoiding the swap ? :/
+> So this may be a consequence of that.
+> 
+> I will respin the series to make life easier...
+> 
+Better after syzbot gives you Tested-by.
+
+> On Thu, Jul 17, 2025 at 05:18:17AM +0100, Lorenzo Stoakes wrote:
+> > This looks to be unrelated to my patch and some issue with syzbot (it's doing
+> > weird injection stuff).
 > >
-> > I suppose the device is always writing in be32 words, and you should
-> > be converting from be32.
-> >  
-> 
-> Lets assume the following is a simplified PACKED cmdq struct:
-> 
-> struct some_cmdq {
-> 	__le16 a;
-> 	__le32 b;
-> 	__le16 c;
-> };
-> 
-> Lets denote x0 as lsb of field x. x3 as msb of 32 bits field.
-> 
-> Byte stream in CPU memory is:
-> a0, a1, b0, b1, b2, b3, c0, c1
-> 
-> The HW expects the following byte stream:
-> b1, b0, a1, a0, c1, c0, b3 ,b2
-> 
-> A native struct would be:
-> 
-> struct some_cmdq {
-> 	__be16 b_lo;
-> 	__be16 a;
-> 	__be16 c;
-> 	__be16 b_hi;
-> }
-> 
-> It does not make sense from code readability perspective.
-> While this is a simplified example, there are similar problems in real cmdq
-> structs.
-> Also group of fields that makes sense (based on their names) for being
-> logically near each other become separated in "native" big endian arrangements.
-> 
-> This is a case where driver need to compensate for bad HW decisions.
-
-My point was just that the calculation does not survive change of
-endian on the host. You given an example of the host struct being
-in LE and then the swap working out. But IIRC the driver does not
-use LE for its view of the fields. So the host view of the struct
-is:
-
-struct some_cmdq {
- 	u16 a;
- 	u32 b;
- 	u16 c;
-};
-
-The comment saying that the swap is "regardless of host endianness"
-is just confusion on the part of the author :/
+> > As I said, I have tested the change with reproducer locally and it fixes the
+> > issue, and I have been able to reliably observe that (note, without any of the
+> > below stuff happening).
+> >
+> > Thanks
 
