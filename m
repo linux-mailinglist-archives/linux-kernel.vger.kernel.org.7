@@ -1,111 +1,94 @@
-Return-Path: <linux-kernel+bounces-735593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 830B5B09159
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:08:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB3FDB09175
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:11:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A7453BAFB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:07:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 699A75A3969
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:10:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D26A6288C12;
-	Thu, 17 Jul 2025 16:07:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tAGbOtcC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9938F2FA625;
+	Thu, 17 Jul 2025 16:10:22 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23E972F94B3;
-	Thu, 17 Jul 2025 16:07:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46322798F8;
+	Thu, 17 Jul 2025 16:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752768466; cv=none; b=GPl9RVyTQ4huFuoDVtVy1lX5Mcot3AB9UXZ+wdGma0ipb0syDZVjgMy2rNDnq8DpwJwSQjrefe2IR06xKTh4Xdj9or5hPcfrqh6OPFkTNQQEl0ZKzQ9botfJn1og8J0QXxmVRfqUjDDd5slLGbTbv9DYcqgzmPhK0rvR5KVLgEA=
+	t=1752768622; cv=none; b=ThvXc98qduV7m9id+VcvVqH79141DOxT9eo5dCFfUgm6ikyeg3hexyzXXVu392yu+YXQLXRYkYDw9AX3yKwqtYiSszNIp8sbrzK0eqIbteeG4vha+OvYvoG9ZI75GVcj7Tkh0QjvvEr7Xln5VLvPe3+9aJ8A47SBvG9Rzjnil5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752768466; c=relaxed/simple;
-	bh=v2chc4+o3ov/exmstx/9bcH/3+pU/JelIQvVtGcGpKU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RjypQzc/HD6gW3KVbWrQ68B1f67oLm3sUcS+2DOuJHQnGulNEQRPAR7DbjGRwCMUtqkwVHtHkXVuABbiQduriXjfC7qPzAXA3cliHbnIbYbQA4LZFtJqw9afGq3qzuSzlUZmuAYKA237TTm8xcZw/EhaZ6CbpWShcwFD4wVHcg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tAGbOtcC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B9C4C4CEE3;
-	Thu, 17 Jul 2025 16:07:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752768465;
-	bh=v2chc4+o3ov/exmstx/9bcH/3+pU/JelIQvVtGcGpKU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tAGbOtcCosdWnAwvYWLIP6j9NNA0Oh8fPZuQfeQp2nrIbcJAIr3XtHb0wuWbR7n4u
-	 yLxiveozlVpyX6XqI5j8YUB8rAEOqVUhZ1sa3I0IcmhcgBzqdnD2CQJq61f6QpNKxd
-	 N6Ri74yoaGJNmNTBKNQADjr/LNPxE3NnGR7rc60iFDKAz3u547ZfM/Cfhlf1w71BHj
-	 kTkpToPdIYgM5YkS8fdURbD77B4NjZeLhlOHyyMEhnC0ng0G89M9eJVV0nHe8H10ed
-	 NXGxBM3TUJxfPrHcu/LKVd/moLANn+C1cQVle3thDipCi+jbT+gfZj35NdMBjqxZzr
-	 ZkMhVur7WtfTg==
-Date: Thu, 17 Jul 2025 17:07:40 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Dzmitry Sankouski <dsankouski@gmail.com>
-Cc: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 3/3] regulator: add s2dos05 regulator support
-Message-ID: <2fddbe2b-2ffa-4d3d-8750-6ba8f5b140d7@sirena.org.uk>
-References: <20240617-starqltechn_integration_upstream-v5-0-ea1109029ba5@gmail.com>
- <20240617-starqltechn_integration_upstream-v5-3-ea1109029ba5@gmail.com>
- <7bec6fc2-6643-4ddf-9475-8ead4b312912@gmail.com>
- <CABTCjFBTY4NV2yKyRO31MacGFAnJ4T-viDLrXkPs9z66VU6nyQ@mail.gmail.com>
- <3e640051-35e5-4eb8-aa00-cb57abcbb919@gmail.com>
- <CABTCjFDQoQcrkYwBhaH0bzdxHd6OsGh1J+iFqme5R3HfLdeq3g@mail.gmail.com>
+	s=arc-20240116; t=1752768622; c=relaxed/simple;
+	bh=MEE7jUnILcqy02mFh59Pt3b8dmrhQ15xcoDXSJtbSHU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Q7JEgJryiUXP9xyFtAzN3ug+tyqIQnLax9msBqAdfiOvDzj7+ODxrQPLs4hi3eCOhCpN3SOuDItw+wPcNhzdt81PphGqazMfxj9a6BgjXl9gp0WUBx/ReQ53ARL4TsSLKCaUthLJHrFE7R63j8qvhMfBO3URz/iLm6AWiInzjuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf15.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay04.hostedemail.com (Postfix) with ESMTP id A07601A015A;
+	Thu, 17 Jul 2025 16:10:16 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf15.hostedemail.com (Postfix) with ESMTPA id 926121A;
+	Thu, 17 Jul 2025 16:10:11 +0000 (UTC)
+Date: Thu, 17 Jul 2025 12:10:10 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri
+ Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Thomas
+ Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, Indu
+ Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, Beau
+ Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, Florian Weimer
+ <fweimer@redhat.com>, Sam James <sam@gentoo.org>
+Subject: Re: [PATCH v14 09/12] unwind deferred: Use SRCU
+ unwind_deferred_task_work()
+Message-ID: <20250717121010.4246366a@batman.local.home>
+In-Reply-To: <41c204c0-eabc-4f4f-93f4-2568e2f962a9@paulmck-laptop>
+References: <20250717004910.297898999@kernel.org>
+	<20250717004957.918908732@kernel.org>
+	<47c3b0df-9f11-4e14-97e2-0f3ba3b09855@paulmck-laptop>
+	<20250717082526.7173106a@gandalf.local.home>
+	<41c204c0-eabc-4f4f-93f4-2568e2f962a9@paulmck-laptop>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Mam4tI5vOlRazw+P"
-Content-Disposition: inline
-In-Reply-To: <CABTCjFDQoQcrkYwBhaH0bzdxHd6OsGh1J+iFqme5R3HfLdeq3g@mail.gmail.com>
-X-Cookie: May I ask a question?
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: kdknodp68bw95bn3nquegp911ku4afyt
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: 926121A
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19I34z/YVXYuCJ3MjtZncdDCod0DMq55jI=
+X-HE-Tag: 1752768611-991244
+X-HE-Meta: U2FsdGVkX1/UwkCZQDm25iYOuhSZ2rZcAaq3zn9cQi5QJCA1fCyyGm0tMkPx0MoBQVLxJ1qTso7VU0Lnu+8CbOaBi629CWWX/4fwXyzTtvxXVeI1jOZAOgWhGNF4OD0fmB/7jkFyiEs3pmEMeQw4Nzvu+SUGUBVixLnFEdaqwpfkp9JAJOFER3pHSNLNmCQV2zDn1Mg5idJwm5YZ+QQdNWAlJFFzKzbD6C4rt1fdyhVslLbMlmOavVjkgExAUxmCNBIMIY0bXdsR0NXqKo32zg/83YJDoQGzw63usR1pQLD3scMwSpWOf5eUlgXvgSqX+KbFuNKzhdGWZwmohq6MfxHEqlwxqQXV
 
+On Thu, 17 Jul 2025 08:48:40 -0700
+"Paul E. McKenney" <paulmck@kernel.org> wrote:
 
---Mam4tI5vOlRazw+P
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> So if there is some reason that you absolutely cannot immediately convert
+> to SRCU-fast, let's please discuss.
 
-On Thu, Jul 17, 2025 at 05:36:45PM +0300, Dzmitry Sankouski wrote:
-> =D1=87=D1=82, 17 =D0=B8=D1=8E=D0=BB. 2025=E2=80=AF=D0=B3. =D0=B2 14:33, I=
-vaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>:
-> > On 7/17/25 11:12, Dzmitry Sankouski wrote:
+There's two reasons I wouldn't add it immediately.
 
-> > > It's already merged, see
-> > > https://lore.kernel.org/all/20240617-starqltechn_integration_upstream=
--v5-2-ea1109029ba5@gmail.com/
+One, is the guard(srcu_fast) isn't in mainline yet. I would either need
+to open code it, or play the tricks of basing code off your tree.
 
-> > I don't see patch 3/3 being merged anywhere, nor is it in my linux-next=
- clone
-> > from today. Do you _not_ need it anymore?
+Two, I'm still grasping at the concept of srcu_fast (and srcu_lite for
+that matter), where I rather be slow and safe than optimize and be
+unsafe. The code where this is used may be faulting in user space
+memory, so it doesn't need the micro-optimizations now.
 
-> Indeed, that commit is not present, that's strange. I'll reset that patch=
- later.
-
-There's outstanding review comments to fix...
-
---Mam4tI5vOlRazw+P
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmh5H8wACgkQJNaLcl1U
-h9ARcAf/elpz9PNu1x8pXer8UpwQEurVm+O8iiofRhkoXqhXGwabdS65PARe/lCw
-bxgLFeB9kK9Pi7ZlRoGquzebixgcY4DvL740wCok9vj4ewAvKAkqym9CqgWdXUFs
-lLlgoE5j+Nah2Uh9AhIbsPigWiWHMWBnLqqcmxkBUsLKdUibLcPs6/hRbwE8fKxA
-HPB7omLn+JSCctWQZ8ij8men+1jd2/5Q1gaVZrzVRRkufyG/tspY6gBPXUlROfGR
-qf+SxrUtgt6DPvXlq3swJQSjiXacgXOJNF8B5dWkUqhdtNduwNYcpEDO+jj34Zdf
-pi03mPuCHWwijgGwRrQ0IpFqwT1/Yw==
-=iPEz
------END PGP SIGNATURE-----
-
---Mam4tI5vOlRazw+P--
+-- Steve
 
