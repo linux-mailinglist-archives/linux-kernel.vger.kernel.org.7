@@ -1,115 +1,229 @@
-Return-Path: <linux-kernel+bounces-734962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99AA6B088D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:05:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F56FB088D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:04:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 212D617677A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:04:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DE171894083
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2130F29825B;
-	Thu, 17 Jul 2025 09:01:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="otEWzRLD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3837328F933;
+	Thu, 17 Jul 2025 09:01:39 +0000 (UTC)
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4124C288C33;
-	Thu, 17 Jul 2025 09:01:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610D728A715;
+	Thu, 17 Jul 2025 09:01:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752742907; cv=none; b=oy2exyqj6uLMG5MXiax0QjEQDk46mNpVEmFan59QosQq5lSKturVliDxII/omvuiaq9I1CCkKW1CMyo9Za6+9CI6znEhZtaSLMz7UQLjYqwj51kNKR3Hvp90jCo12/lpDrkeCKmPQNSAMp6zitXf6TuA8/LIgczvxEXD1adg7uY=
+	t=1752742898; cv=none; b=uHzBH/5yk3Ofjb1rH1Q2Rw67leMcZutId/YxX/laBHY/y4s4vlzRMmMt75PvbSGnyjtbBD9r9Kzlu6kYXpUPSiRcAaCd+rbquw83t9FUgyZF0v7R53CsHG8tqv8uxego86U0vRNqXAVmYB6FCpzA3Z78DVhmgXOISsllc++RLjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752742907; c=relaxed/simple;
-	bh=tWBft60ygd6gngCGX7mXJTwPqVkgMB4+83ojVoEpFi4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RphxDmKvjpTXrMX8mbaMvrJItOpyjtOO1Z2XWcbM7lhSVJ9F0dViGv2AJLqMMgbBcHW0YbVvCsqzcrI8Azr0Zw/w5FBsN+LoaJ4iPgTTxGfQq4Dn9kG+42Oh+EjIPCpAl4G0v5yktxP1scubErnj1I6X+S8f0LjMrBWSL/3POKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=otEWzRLD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02D6EC4CEEB;
-	Thu, 17 Jul 2025 09:01:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752742907;
-	bh=tWBft60ygd6gngCGX7mXJTwPqVkgMB4+83ojVoEpFi4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=otEWzRLDXZQDwtPujyy82OfLxmGjrLjC4FO/Rlnbv635mdYQDGAMI/SCK6Jj8YQ7d
-	 RLbzarPAfVcKj2a5cdBHr8YIit2NL1tQeXaxA2nDGyFB0InH09R7uR1dzX0TkfXnBQ
-	 JYILx+mgkkn0LFsrQWpTbhUfFDzD86QXUZUwP+HDyTMyAbcjUdk0A/XPpuHYjdIg6V
-	 Kxz9jJalT5vJtS/EDmfhGvvBOL1dfj99VV8017J557CS1yqpgom3AW6jphlzoQJ4a7
-	 17MRJx/X9mJNDkEA0AutRhlG4khnaNLGdget1zCx4ftD4O0hF+5bFtE/GV7oEwDxd9
-	 1JV/LVgNi+F7w==
-From: Will Deacon <will@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Will Deacon <will@kernel.org>,
-	Keir Fraser <keirf@google.com>,
-	Steven Moreland <smoreland@google.com>,
-	Frederick Mayle <fmayle@google.com>,
-	Stefan Hajnoczi <stefanha@redhat.com>,
-	Stefano Garzarella <sgarzare@redhat.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-	netdev@vger.kernel.org,
-	virtualization@lists.linux.dev
-Subject: [PATCH v4 9/9] vsock/virtio: Allocate nonlinear SKBs for handling large transmit buffers
-Date: Thu, 17 Jul 2025 10:01:16 +0100
-Message-Id: <20250717090116.11987-10-will@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250717090116.11987-1-will@kernel.org>
-References: <20250717090116.11987-1-will@kernel.org>
+	s=arc-20240116; t=1752742898; c=relaxed/simple;
+	bh=n6tjybBAfhSWYdb2X5IJ/kL/Ezr9vo+W7eGkw3m0LxI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RDc8ZtMtivyePJCARsG1i/jgQyEbnNEfPcipnzuDy8HeE84Ss1byNAMF5qEgVHD8fOVqrtw+muofvXPvJMz4f9P6wu9OCpW3PjxFSnd/pxdoAuFi9y5am4ZekzZgRgolPoJk3djm07Xuf3DWdK9ioiraPed2fhSnpyBK8gw3vis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 20A8042DF9;
+	Thu, 17 Jul 2025 09:01:30 +0000 (UTC)
+Message-ID: <d3c9e302-d8e6-47ef-b2f5-53c56f8ab5e2@ghiti.fr>
+Date: Thu, 17 Jul 2025 11:01:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/7] riscv: hwprobe: Add MIPS vendor extension probing
+To: aleksa.paunovic@htecgroup.com, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Jonathan Corbet <corbet@lwn.net>
+Cc: Palmer Dabbelt <palmer@sifive.com>, Conor Dooley <conor@kernel.org>,
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20250625-p8700-pause-v4-0-6c7dd7f85756@htecgroup.com>
+ <20250625-p8700-pause-v4-4-6c7dd7f85756@htecgroup.com>
+Content-Language: en-US
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20250625-p8700-pause-v4-4-6c7dd7f85756@htecgroup.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeitdduiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnheptdfhleefjeegheevgeeljeellefgvefhkeeiffekueejteefvdevhfelvdeggeeinecukfhppedukeehrddvudefrdduheegrdduhedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudekhedrvddufedrudehgedrudehuddphhgvlhhopegluddtrddugedrtddrudefngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopedugedprhgtphhtthhopegrlhgvkhhsrgdrphgruhhnohhvihgtsehhthgvtghgrhhouhhprdgtohhmpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvl
+ hhtrdgtohhmpdhrtghpthhtoheprghouhesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopegtohhrsggvtheslhifnhdrnhgvth
+X-GND-Sasl: alex@ghiti.fr
 
-When transmitting a vsock packet, virtio_transport_send_pkt_info() calls
-virtio_transport_alloc_linear_skb() to allocate and fill SKBs with the
-transmit data. Unfortunately, these are always linear allocations and
-can therefore result in significant pressure on kmalloc() considering
-that the maximum packet size (VIRTIO_VSOCK_MAX_PKT_BUF_SIZE +
-VIRTIO_VSOCK_SKB_HEADROOM) is a little over 64KiB, resulting in a 128KiB
-allocation for each packet.
+On 6/25/25 16:20, Aleksa Paunovic via B4 Relay wrote:
+> From: Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
+>
+> Add a new hwprobe key "RISCV_HWPROBE_KEY_VENDOR_EXT_MIPS_0" which allows
+> userspace to probe for the new xmipsexectl vendor extension.
+>
+> Signed-off-by: Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
+> ---
+>   arch/riscv/include/asm/hwprobe.h                   |  3 ++-
+>   .../include/asm/vendor_extensions/mips_hwprobe.h   | 23 ++++++++++++++++++++++
+>   arch/riscv/include/uapi/asm/hwprobe.h              |  1 +
+>   arch/riscv/include/uapi/asm/vendor/mips.h          |  3 +++
+>   arch/riscv/kernel/sys_hwprobe.c                    |  4 ++++
+>   arch/riscv/kernel/vendor_extensions/Makefile       |  1 +
+>   arch/riscv/kernel/vendor_extensions/mips_hwprobe.c | 22 +++++++++++++++++++++
+>   7 files changed, 56 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/riscv/include/asm/hwprobe.h b/arch/riscv/include/asm/hwprobe.h
+> index 7fe0a379474ae2c64d300d6fee4a012173f6a6d7..948d2b34e94e84e4c2c351ffe91f4b3afcefc3f7 100644
+> --- a/arch/riscv/include/asm/hwprobe.h
+> +++ b/arch/riscv/include/asm/hwprobe.h
+> @@ -8,7 +8,7 @@
+>   
+>   #include <uapi/asm/hwprobe.h>
+>   
+> -#define RISCV_HWPROBE_MAX_KEY 13
+> +#define RISCV_HWPROBE_MAX_KEY 14
+>   
+>   static inline bool riscv_hwprobe_key_is_valid(__s64 key)
+>   {
+> @@ -22,6 +22,7 @@ static inline bool hwprobe_key_is_bitmask(__s64 key)
+>   	case RISCV_HWPROBE_KEY_IMA_EXT_0:
+>   	case RISCV_HWPROBE_KEY_CPUPERF_0:
+>   	case RISCV_HWPROBE_KEY_VENDOR_EXT_THEAD_0:
+> +	case RISCV_HWPROBE_KEY_VENDOR_EXT_MIPS_0:
+>   	case RISCV_HWPROBE_KEY_VENDOR_EXT_SIFIVE_0:
+>   		return true;
+>   	}
+> diff --git a/arch/riscv/include/asm/vendor_extensions/mips_hwprobe.h b/arch/riscv/include/asm/vendor_extensions/mips_hwprobe.h
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..0af8c07c22f293b5f772709f774de78dd60c7f39
+> --- /dev/null
+> +++ b/arch/riscv/include/asm/vendor_extensions/mips_hwprobe.h
+> @@ -0,0 +1,23 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (C) 2025 MIPS.
+> + */
+> +
+> +#ifndef _ASM_RISCV_VENDOR_EXTENSIONS_MIPS_HWPROBE_H_
+> +#define _ASM_RISCV_VENDOR_EXTENSIONS_MIPS_HWPROBE_H_
+> +
+> +#include <linux/cpumask.h>
+> +#include <uapi/asm/hwprobe.h>
+> +
+> +
 
-Rework the vsock SKB allocation so that, for sizes with page order
-greater than PAGE_ALLOC_COSTLY_ORDER, a nonlinear SKB is allocated
-instead with the packet header in the SKB and the transmit data in the
-fragments. Note that this affects both the vhost and virtio transports.
 
-Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
-Signed-off-by: Will Deacon <will@kernel.org>
----
- net/vmw_vsock/virtio_transport_common.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+2 newlines here ^
 
-diff --git a/net/vmw_vsock/virtio_transport_common.c b/net/vmw_vsock/virtio_transport_common.c
-index c9eb7f7ac00d..fe92e5fa95b4 100644
---- a/net/vmw_vsock/virtio_transport_common.c
-+++ b/net/vmw_vsock/virtio_transport_common.c
-@@ -109,7 +109,8 @@ static int virtio_transport_fill_skb(struct sk_buff *skb,
- 		return __zerocopy_sg_from_iter(info->msg, NULL, skb,
- 					       &info->msg->msg_iter, len, NULL);
- 
--	return memcpy_from_msg(skb_put(skb, len), info->msg, len);
-+	virtio_vsock_skb_put(skb, len);
-+	return skb_copy_datagram_from_iter(skb, 0, &info->msg->msg_iter, len);
- }
- 
- static void virtio_transport_init_hdr(struct sk_buff *skb,
-@@ -261,7 +262,7 @@ static struct sk_buff *virtio_transport_alloc_skb(struct virtio_vsock_pkt_info *
- 	if (!zcopy)
- 		skb_len += payload_len;
- 
--	skb = virtio_vsock_alloc_linear_skb(skb_len, GFP_KERNEL);
-+	skb = virtio_vsock_alloc_skb(skb_len, GFP_KERNEL);
- 	if (!skb)
- 		return NULL;
- 
--- 
-2.50.0.727.gbf7dc18ff4-goog
+
+> +#ifdef CONFIG_RISCV_ISA_VENDOR_EXT_MIPS
+> +void hwprobe_isa_vendor_ext_mips_0(struct riscv_hwprobe *pair, const struct cpumask *cpus);
+> +#else
+> +static inline void hwprobe_isa_vendor_ext_mips_0(struct riscv_hwprobe *pair,
+> +						 const struct cpumask *cpus)
+> +{
+> +	pair->value = 0;
+> +}
+> +#endif
+> +
+> +#endif // _ASM_RISCV_VENDOR_EXTENSIONS_MIPS_HWPROBE_H_
+> diff --git a/arch/riscv/include/uapi/asm/hwprobe.h b/arch/riscv/include/uapi/asm/hwprobe.h
+> index aaf6ad97049931381f9542bb9316c873ec6ab9f6..5d30a4fae37a82ef4d968d20b187420772ad8946 100644
+> --- a/arch/riscv/include/uapi/asm/hwprobe.h
+> +++ b/arch/riscv/include/uapi/asm/hwprobe.h
+> @@ -106,6 +106,7 @@ struct riscv_hwprobe {
+>   #define RISCV_HWPROBE_KEY_VENDOR_EXT_THEAD_0	11
+>   #define RISCV_HWPROBE_KEY_ZICBOM_BLOCK_SIZE	12
+>   #define RISCV_HWPROBE_KEY_VENDOR_EXT_SIFIVE_0	13
+> +#define RISCV_HWPROBE_KEY_VENDOR_EXT_MIPS_0	14
+>   /* Increase RISCV_HWPROBE_MAX_KEY when adding items. */
+>   
+>   /* Flags */
+> diff --git a/arch/riscv/include/uapi/asm/vendor/mips.h b/arch/riscv/include/uapi/asm/vendor/mips.h
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..11d41651178233a5f06ab9541ea0506d9883aa19
+> --- /dev/null
+> +++ b/arch/riscv/include/uapi/asm/vendor/mips.h
+> @@ -0,0 +1,3 @@
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> +
+> +#define RISCV_HWPROBE_VENDOR_EXT_XMIPSEXECTL	(1 << 0)
+> diff --git a/arch/riscv/kernel/sys_hwprobe.c b/arch/riscv/kernel/sys_hwprobe.c
+> index 0b170e18a2beba576f4f8787d6ef6aa67c5c3d0e..6c73e167ef4ccc7f99dd2793acde2595fffdcbad 100644
+> --- a/arch/riscv/kernel/sys_hwprobe.c
+> +++ b/arch/riscv/kernel/sys_hwprobe.c
+> @@ -15,6 +15,7 @@
+>   #include <asm/uaccess.h>
+>   #include <asm/unistd.h>
+>   #include <asm/vector.h>
+> +#include <asm/vendor_extensions/mips_hwprobe.h>
+>   #include <asm/vendor_extensions/sifive_hwprobe.h>
+>   #include <asm/vendor_extensions/thead_hwprobe.h>
+>   #include <vdso/vsyscall.h>
+> @@ -309,6 +310,9 @@ static void hwprobe_one_pair(struct riscv_hwprobe *pair,
+>   	case RISCV_HWPROBE_KEY_VENDOR_EXT_THEAD_0:
+>   		hwprobe_isa_vendor_ext_thead_0(pair, cpus);
+>   		break;
+> +	case RISCV_HWPROBE_KEY_VENDOR_EXT_MIPS_0:
+> +		hwprobe_isa_vendor_ext_mips_0(pair, cpus);
+> +		break;
+>   
+>   	/*
+>   	 * For forward compatibility, unknown keys don't fail the whole
+> diff --git a/arch/riscv/kernel/vendor_extensions/Makefile b/arch/riscv/kernel/vendor_extensions/Makefile
+> index ccad4ebafb43412e72e654da3bdb9face53b80c6..bf116c82b6bdb3aee23e27fc0b2a69be7c7a5ccb 100644
+> --- a/arch/riscv/kernel/vendor_extensions/Makefile
+> +++ b/arch/riscv/kernel/vendor_extensions/Makefile
+> @@ -2,6 +2,7 @@
+>   
+>   obj-$(CONFIG_RISCV_ISA_VENDOR_EXT_ANDES)	+= andes.o
+>   obj-$(CONFIG_RISCV_ISA_VENDOR_EXT_MIPS)  	+= mips.o
+> +obj-$(CONFIG_RISCV_ISA_VENDOR_EXT_MIPS)  	+= mips_hwprobe.o
+>   obj-$(CONFIG_RISCV_ISA_VENDOR_EXT_SIFIVE)	+= sifive.o
+>   obj-$(CONFIG_RISCV_ISA_VENDOR_EXT_SIFIVE)	+= sifive_hwprobe.o
+>   obj-$(CONFIG_RISCV_ISA_VENDOR_EXT_THEAD)	+= thead.o
+> diff --git a/arch/riscv/kernel/vendor_extensions/mips_hwprobe.c b/arch/riscv/kernel/vendor_extensions/mips_hwprobe.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..43944f2b484af257fa358cda53c12b4d6f54b78b
+> --- /dev/null
+> +++ b/arch/riscv/kernel/vendor_extensions/mips_hwprobe.c
+> @@ -0,0 +1,22 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2025 MIPS.
+> + */
+> +
+> +#include <asm/vendor_extensions/mips.h>
+> +#include <asm/vendor_extensions/mips_hwprobe.h>
+> +#include <asm/vendor_extensions/vendor_hwprobe.h>
+> +
+> +#include <linux/cpumask.h>
+> +#include <linux/types.h>
+> +
+> +#include <uapi/asm/hwprobe.h>
+> +#include <uapi/asm/vendor/mips.h>
+> +
+> +void hwprobe_isa_vendor_ext_mips_0(struct riscv_hwprobe *pair,
+> +				   const struct cpumask *cpus)
+> +{
+> +	VENDOR_EXTENSION_SUPPORTED(
+> +		pair, cpus, riscv_isa_vendor_ext_list_mips.per_hart_isa_bitmap,
+> +		{ VENDOR_EXT_KEY(XMIPSEXECTL); });
+> +}
+
+
+I'll remove the superfluous newline when merging the patchset:
+
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+
+Thanks,
+
+Alex
 
 
