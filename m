@@ -1,215 +1,210 @@
-Return-Path: <linux-kernel+bounces-735156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4F06B08B97
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:16:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 736ACB08B9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:17:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED1E8585333
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:16:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53FC64E3D24
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:17:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9551A29A9FE;
-	Thu, 17 Jul 2025 11:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE3EE28D8F8;
+	Thu, 17 Jul 2025 11:17:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ImT21xl5"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O+R4rl+h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B9E29AAFE
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 11:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 481E7263F4E
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 11:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752750998; cv=none; b=BI1sG2JI4mkTMjgEToEJeVGO1ktiqYS52c5Ldshc7+UyV/gsb0DFKF0l7UfW5cldS4le0vibVaaYBtxW5HKpURiXSfcw3nr26m3cmlwZI2uYjMBUQAByvX7N0EAlzGRWLgAk98QcxyFvW8hxjKqlVe42UBnVPkwkA9SF3IIVTic=
+	t=1752751063; cv=none; b=TxM/031/uAN350TL83mV4/m6oGjeoU1GAleVPpogfznVqSWZseSx2ahYm3+T6g6cQJIFw9EFo3rvWr7mfPoZsI9ToYtBUc+qAMQfLfehfGg9aVOF4RFaRugRrMzK/tuLsGj8Y4+OH2WvlfA+wkdy4kU/cPZKJgdLIKlAUTLZA0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752750998; c=relaxed/simple;
-	bh=IRUe127TymGTKdjcSBkg4PKr2Cb+9jXVulcgUozWB3g=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gKo20Gg881Ma0fvsupA9vfOCjLCfpOmYSaT2tGWBRlqIrZDu+plMjKzwDV9j62RdZL/gKmjWBrGuI953E+Ujy3aSYfasnvu+dqPxGYzUFIcye2IVK2OqWr2vYVyee8ddLZycvH2tYIf5k6y8Dn5k1hpbLGVky5NSqvh6+lOuvq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ImT21xl5; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56H4Y7V3028124
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 11:16:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=IviiJoOMAMhIycQf6n/gwd8j
-	l6mb2ERtOrn+nwQU3d8=; b=ImT21xl5J3z2RjTL+w0brBj1bgtU8/SxQB53LPR/
-	dCxD3ieMSN2yneOkGbPBeA+st2e/PKPOxAxMaWyU+6qAs2u9xgNm5IS/8iKqvtsu
-	UrvDHXjHltRVygdo6WEg18CXtXuTY+XS66hiiqcEpUk0YZv2sCu6KRUA5mMjRpBf
-	k63m6hqupVPUZRWZWZQQY0mMUnyRpMtW/no8IUSp/Vzz25VJH/kXHuJdBTlTaVn2
-	XevX4RElhdB6GIUAsB+Mb3c1We3CQ2poKxlqglaMoBmo2qfF/gKp5Y7yA+m87XN6
-	3L9q9GXE6kCFS5/1ukR34Rr53nI+BTc9pAZIf5XvcqoLJQ==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47wnh5yn2b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 11:16:35 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6fad29c1b72so12301286d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 04:16:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752750994; x=1753355794;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IviiJoOMAMhIycQf6n/gwd8jl6mb2ERtOrn+nwQU3d8=;
-        b=eyGKtM/eqylDKSk1vLTvPssqyI4kgTcm5o9FUmy3ou3rCinVaJ0vbAA8/tECr079+K
-         +gBiKrF+W9M+dkE6FUcGBK9gcpP5a6TGERLaFbxRoiXtTc07+ybYVr0fIbyPTgn7RIMx
-         TuDWykPe+gufGsJH3cCx3JRslurd68P42YM436lIuK4BVKjtUWVYhcMA+BdGIity3hOM
-         Jzq157wf1ej1pTVh/RckGEMLsoFJwzE7fGXrRUp5F2sp4JTUPnKuIlRun4Y7vMjvU8YQ
-         P1KBPGBgWWiPpo0JzZUh7lcGdZ8bFtNoIG/LIdHcZSLTMtVqZq21h+yB90mfqMGx9rdg
-         hF/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUmth8apuN3UUJZv5JcyB5XAT39B/Y5tNv0/EhXUoywSZ76HL7pv6TYoYG1IWDkhTqDmNWs+H4IUmA9gs4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTP2WYW4OONGoIyd85AINZp2KZnmD0uTgdr5feM2cguRkphRsr
-	d4a2EWThFqPrbDOYln5CUBeHRp4BqA9EGmDxyCTPxZxAtOiFc5ERibuzN2lgA5htHwcZN26kQLB
-	+7O6riryDwGO6H9KRsZfr0h+072bDOfaR6UkBYolXy/JT6mK9XEVYKOoAddc6M9qZ3v4=
-X-Gm-Gg: ASbGncscGFTDGUq1tdP0QySdcDItLa+gV2vOBYYV0Zc4HkguyqGdEDhhgPIQW3L5KC+
-	ch5rbDTyUjiT6gMaKkuP/XeNqlXmS/82kCMwdhfgbQLBr6V9CjB9xQKfkjCyk+10uPAiAXijOcX
-	2D4i/R4AHctDd91IrVqNINA5mEeXFYG63B2NSyY8UAA8b6bwUQZjUl5+omKvB7mvB6vb2Z7Arbb
-	Od4PXmISomN+Kb4+xPwzXOY1VOlU196LaugrK8ffWpcFIEDM9c5cR6BfiqPnf3qZx5RS/jD6R/x
-	MRrUx5vVkymNh9NScKjZCgOHsK5rSQvbKu0M3qOwkRH59dppk4TP3r5C+WI/t4jEW/PPIxuuIuw
-	=
-X-Received: by 2002:ad4:5bce:0:b0:704:e120:50da with SMTP id 6a1803df08f44-705073a2d83mr30439836d6.29.1752750993891;
-        Thu, 17 Jul 2025 04:16:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG2v1zi0j2L7zsAt4Ih6tCoD4JfALtxxdhEUf9CdOlZ0NqloLBOpqpwEjtfUDhbRRRGRobiQQ==
-X-Received: by 2002:ad4:5bce:0:b0:704:e120:50da with SMTP id 6a1803df08f44-705073a2d83mr30439216d6.29.1752750993357;
-        Thu, 17 Jul 2025 04:16:33 -0700 (PDT)
-Received: from trex (153.red-79-144-197.dynamicip.rima-tde.net. [79.144.197.153])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e0d872sm20627262f8f.60.2025.07.17.04.16.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 04:16:32 -0700 (PDT)
-From: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
-X-Google-Original-From: Jorge Ramirez <JorgeRamirez-Ortiz>
-Date: Thu, 17 Jul 2025 13:16:31 +0200
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        quic_vgarodia@quicinc.com, quic_dikshita@quicinc.com,
-        krzk+dt@kernel.org, konradybcio@kernel.org, mchehab@kernel.org,
-        andersson@kernel.org, conor+dt@kernel.org,
-        amit.kucheria@oss.qualcomm.com, linux-media@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 1/7] media: dt-bindings: venus: Add qcm2290 dt schema
-Message-ID: <aHjbjw8Z79Xcd/ZJ@trex>
-References: <20250715204749.2189875-1-jorge.ramirez@oss.qualcomm.com>
- <20250715204749.2189875-2-jorge.ramirez@oss.qualcomm.com>
- <8a63f517-a443-48e4-9b9c-0c4b362f59f8@linaro.org>
- <aHiZpnFhhR5O0h97@trex>
- <0bb2867a-393b-46f9-ad6f-1aeee5a3a9d4@kernel.org>
+	s=arc-20240116; t=1752751063; c=relaxed/simple;
+	bh=ck3WJaJW7UsSniUfSg6V0s188bzrbx5xdODkJYkBbUM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p88dZyFmoCvvPFcRJRC2Bxlku3KOzzOOQyNL6yao85mhyUyYgYBDffgPwhXRSL2VYu+9P0lr0GjXcP8Ckht3UGaT4XXXIVOMbXeT6+f0u8bVsDN+ern5UDhBDap+VLpPiujc/FHSe2WjaFRtdMjncjVrL8aoP+ZRRTPgH/caRf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O+R4rl+h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F02BAC4CEE3;
+	Thu, 17 Jul 2025 11:17:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752751062;
+	bh=ck3WJaJW7UsSniUfSg6V0s188bzrbx5xdODkJYkBbUM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=O+R4rl+h8eVjVlShHOCSq/FdYimQbkVITwRjMsuCGdAE8GK00CU/QAZPRG2MLRXnL
+	 uc+bidRBwOrtVoO/iZrOqM6UX1Vo3kH2i8UtGHG9wTvu3+Bh6I3Q3ViOD1H6AUA0NP
+	 3NQ7joVxmStt3SLcWPgJ8f16VpJv9cHKZO+XV0z5QLEbvkPjxFPRAjfeovPV+bRVWA
+	 RaFPzR9vUMxKd+Yf8lAZIS8JOWFv9v94Na+6waoNw9Xl9SaccWwNA3fqtEJuAjUSHf
+	 m30eJZdYYzECw9nW7c127uv2fFDJ6Kfv4yi2I9Q8U5ktvMgH1mA614fv8AiQiES9ca
+	 A04BTQV18K5xQ==
+Date: Thu, 17 Jul 2025 12:17:38 +0100
+From: Mark Brown <broonie@kernel.org>
+To: jeff_chang@richtek.com
+Cc: lgirdwood@gmail.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] regulator: rt5133: Add RT5133 PMIC regulator Support
+Message-ID: <223ac66e-7aa2-4ffd-b4e6-07b55f53d84a@sirena.org.uk>
+References: <20250717081623.2674579-1-jeff_chang@richtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="hEt47VzocmbKr/rL"
+Content-Disposition: inline
+In-Reply-To: <20250717081623.2674579-1-jeff_chang@richtek.com>
+X-Cookie: May I ask a question?
+
+
+--hEt47VzocmbKr/rL
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0bb2867a-393b-46f9-ad6f-1aeee5a3a9d4@kernel.org>
-X-Authority-Analysis: v=2.4 cv=dKimmPZb c=1 sm=1 tr=0 ts=6878db93 cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=Ki5fnJvzvo7yLsyA0quaxQ==:17
- a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=gEfo2CItAAAA:8 a=EUspDBNiAAAA:8
- a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8 a=cAyxk2cvX3BNt2Rx_zQA:9 a=CjuIK1q_8ugA:10
- a=pJ04lnu7RYOZP9TFuWaZ:22 a=sptkURWiP4Gy88Gu7hUp:22 a=cvBusfyB2V15izCimMoJ:22
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: F7qyZ32p0q8WL3xqKqT8uKvGBDY6H0l9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDA5OSBTYWx0ZWRfXwPBMnqbk3q0K
- Ievpkpb4uEymSrAfzIQPnOJNmHUwXcim16RBpO1BNQeSxHFr/9RfuowPO0WojFK6apLyT4ODgkX
- jDNbGIY3dW5tJ9SJbt5Yr4ZrWGeOR4ZowFC0Xq/wUeOLXtbxdnhrk1fVLk3gMpizYKeCqZAs5X3
- CS1uDoyqwV+oAytgz5w1qjj9NLu1L7V7O58xtIv3slDdfYJVk55UEskjCAClGrl5qdKIYbDx5eU
- EEjhj1dXLrtN/mLRvofCd0dGeiQkq50d5OQFn6qAQp3gq+56Xh1JK9VzOVybfbr3UM6pbYmtZaN
- BIVq5s4lai+kj+gQpOCss1C+ZEEX480r8qOXATOj7tuXp5xUJZbmv/75RbIUtlrKXQrWI3FMwGo
- Jd8s91vLodzmFuVPcawdJPR7pcXSoz5sqVLp8BsfxcahZsPM8hwHbawygl8kZzN+ptHkNTjZ
-X-Proofpoint-ORIG-GUID: F7qyZ32p0q8WL3xqKqT8uKvGBDY6H0l9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-17_01,2025-07-17_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 clxscore=1015 mlxlogscore=999 mlxscore=0 spamscore=0
- adultscore=0 impostorscore=0 priorityscore=1501 suspectscore=0 bulkscore=0
- phishscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507170099
+Content-Transfer-Encoding: quoted-printable
 
-On 17/07/25 08:45:17, Krzysztof Kozlowski wrote:
-> On 17/07/2025 08:35, Jorge Ramirez wrote:
-> > On 17/07/25 00:22:53, Bryan O'Donoghue wrote:
-> >> On 15/07/2025 21:47, Jorge Ramirez-Ortiz wrote:
-> >>> Add a schema for the venus video encoder/decoder on the qcm2290.
-> >>>
-> >>> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
-> >>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> >>> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> >>> ---
-> >>>   .../bindings/media/qcom,qcm2290-venus.yaml    | 127 ++++++++++++++++++
-> >>>   1 file changed, 127 insertions(+)
-> >>>   create mode 100644 Documentation/devicetree/bindings/media/qcom,qcm2290-venus.yaml
-> >>>
-> >>> diff --git a/Documentation/devicetree/bindings/media/qcom,qcm2290-venus.yaml b/Documentation/devicetree/bindings/media/qcom,qcm2290-venus.yaml
-> >>> new file mode 100644
-> >>> index 000000000000..0371f8dd91a3
-> >>> --- /dev/null
-> >>> +++ b/Documentation/devicetree/bindings/media/qcom,qcm2290-venus.yaml
-> >>> @@ -0,0 +1,127 @@
-> >>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> >>> +%YAML 1.2
-> >>> +---
-> >>> +$id: http://devicetree.org/schemas/media/qcom,qcm2290-venus.yaml#
-> >>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >>> +
-> >>> +title: Qualcomm QCM2290 Venus video encode and decode accelerators
-> >>> +
-> >>> +maintainers:
-> >>> +  - Vikash Garodia <quic_vgarodia@quicinc.com>
-> >>
-> >> Shouldn't you be on this list ? If you upstream a file I think you should
-> >> list yourself as responsible for its glory or its mess.
-> > 
-> > happy to do it. The MAINTAINER's file covered all the files named
-> 
-> This should be the person(s) interested and caring about this hardware,
-> which means:
-> 1. Subsystem maintainers: no
-> 2. Driver maintainers: usually yes
-> 3. Author(s) of new hardware support: usually yes
+On Thu, Jul 17, 2025 at 04:16:01PM +0800, jeff_chang@richtek.com wrote:
+> From: Jeff Chang <jeff_chang@richtek.com>
+>=20
+> RT5133 is an intefrated chip. It includes 8 LDOs and 3 GPOs that
 
-perfect, will do 
+Integrated?
 
-> 
-> > schemas/media/*venus* so my understanding was that I shouldn't.
-> 
-> I cannot comment why people decided to go one way or another in other
-> code, but it as well could be just incorrect choice thinking only people
-> in MAINTAINERS care about hardware.
-> 
-> ...
-> 
-> >>> +
-> >>> +        memory-region = <&pil_video_mem>;
-> >>> +        iommus = <&apps_smmu 0x860 0x0>,
-> >>> +                 <&apps_smmu 0x880 0x0>,
-> >>> +                 <&apps_smmu 0x861 0x04>,
-> >>> +                 <&apps_smmu 0x863 0x0>,
-> >>> +                 <&apps_smmu 0x804 0xe0>;
-> >>
-> >> You're listing five iommus.
-> >>
-> >> I understand there's some disagreement about whether or not to list all of
-> >> the potential use-cases but, TBH I don't think those are good arguments.
-> >>
-> >> Unless there's some technical prohibition I can't think of listing all five
-> >> maxItems:5 .. let's just do that.
-> > 
-> > since the device tree should describe hardware and not policy, and the
-> > driver seems to be able to ignore the unused SIDs I think this is the
-> > right thing to do.
-> 
-> 
-> It was never about the driver but about whether you should describe in
-> DTS for non-secure world the entries which are secure world. The answer
-> in general is that you can and there will be benefits (e.g. sharing DTS
-> with secure world implementations).
+> Signed-off-by: Jeff Chang <jeff_chang@richtek.com>
+> ---
+>  .../bindings/regulator/richtek,rt5133.yaml    | 164 +++++
+>  drivers/regulator/Kconfig                     |  13 +
+>  drivers/regulator/Makefile                    |   1 +
+>  drivers/regulator/rt5133-regulator.c          | 636 ++++++++++++++++++
+>  4 files changed, 814 insertions(+)
 
-all right, sounds good then, thanks
+The DT bindings should be sent as a separate patch copied to the DT
+maintainers, this should be a small series.
+
+> +  soft-start-time-sel:
+> +    type: object
+> +    description: |
+> +      soft-start time of LDO
+> +        0: 1ms
+> +        1: 2ms
+> +        2: 4ms
+> +        3: 8ms
+
+Implement the set_soft_start() operation and use standard bindings for
+this.
+
+> +  rt5133-ldo1-supply:
+> +    description: |
+> +      Only for LDO7 LDO8, pvin7 and pvin8 reference design are RT5133 LD=
+O1.
+> +      If not connect to LDO1 vout, this property for pvin7 and pvin8 is =
+necessary.
+
+You should probably just define all the supplies for all the regulators,
+then if some of them are supplied from other regulators on the device
+that can be represented naturally.
+
+> +++ b/drivers/regulator/rt5133-regulator.c
+> @@ -0,0 +1,636 @@
+> +// SPDX-License-Identifier: GPL-4.0
+> +/*
+> + * Copyright (C) 2025 Richtek Technology Corp.
+> + *
+> + * Author: ChiYuan Huang <cy_huang@richtek.com>
+> + */
+
+What's with the GPL-4.0 license?  The kernel is GPL 2.0 plus extras, and
+AFAIK there is no GPL-4.0.
+
+Please also make the entire comment a C++ one so things look more intention=
+al.
+
+> +static bool dbg_log_en;
+> +module_param(dbg_log_en, bool, 0644);
+> +#define rt_dbg(dev, fmt, ...)	\
+> +	do { \
+> +		if (dbg_log_en) \
+> +			dev_info(dev, "%s " fmt, __func__, ##__VA_ARGS__); \
+> +	} while (0)
+
+Just use the standard dev_dbg().
+
+> +#define RT5133_DRV_VERSION		"1.0.2_MTK"
+
+We normally don't version drivers, the versions don't get updated by
+people doing normal kernel work.
+
+> +static irqreturn_t rt5133_intr_handler(int irq_number, void *data)
+> +{
+> +	struct rt5133_priv *priv =3D data;
+> +	u32 intr_evts =3D 0, handle_evts;
+> +	int i, ret;
+> +
+> +	ret =3D regmap_bulk_read(priv->regmap, RT5133_REG_BASE_EVT, &intr_evts,
+> +			       RT5133_INTR_BYTE_NR);
+> +	if (ret)
+> +		goto out_intr_handler;
+> +
+> +	handle_evts =3D intr_evts & RT5133_BASE_EVT_MASK;
+> +	/*
+> +	 * VREF_EVT is a special case, if base off
+> +	 * this event will also be trigger. Skip it
+> +	 */
+> +	if (handle_evts & ~RT5133_VREF_EVT_MASK)
+> +		dev_info(priv->dev, "base event occurred [0x%02x]\n",
+> +			 handle_evts);
+
+This logging might get noisy.  Also if there are no events the handler
+should return IRQ_NONE so genirq can handle things if they go wrong
+(same for the read error above).
+
+> +static const struct regmap_config rt5133_regmap_config =3D {
+> +	.reg_bits =3D 8,
+> +	.val_bits =3D 8,
+> +	.max_register =3D RT5133_REG_LDO8_CTRL4,
+> +};
+
+May as well enable a cache for the non-volatile registers?
+
+> +static int rt5133_probe(struct i2c_client *i2c)
+> +{
+> +	struct rt5133_priv *priv;
+> +	struct regulator_config config =3D {0};
+> +	int i, ret;
+> +
+> +	dev_info(&i2c->dev, "%s start(%s)\n", __func__, RT5133_DRV_VERSION);
+
+Remove all these dev_info() logs during normal operation, logging the
+chip revision if you read one would make sense but just "I'm here" logs
+aren't so useful.
+
+> +	priv->gc.label =3D dev_name(&i2c->dev);
+> +	priv->gc.parent =3D &i2c->dev;
+> +	priv->gc.base =3D -1;
+> +	priv->gc.ngpio =3D RT5133_GPIO_NR;
+> +	priv->gc.set =3D rt5133_gpio_set;
+> +	priv->gc.get =3D rt5133_gpio_get;
+> +	priv->gc.direction_output =3D rt5133_gpio_direction_output;
+
+These should be _cansleep operations given that the device is controlled
+via I2C.
+
+--hEt47VzocmbKr/rL
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmh429IACgkQJNaLcl1U
+h9DKbgf/RLalWU1f+igInC1kHGYOwAtnmOg8y7lOxzJYkKFwxIB5tUFRuPBnes9j
+gpWbJvFdNk0LnvqgOVW4zl6i2i2DmhyrU+2a9gQA7onKq8AB/M/cXp+1ipwqWa++
+qJLn7/8sneOAK2ErVvVYD1sCQjd+BKJNC+odLInE9UYXhxBIC53jwssGwDs/sPPG
+r36sENNn2J4kpa94MHqlHLpbXmva2rQjl2KVF7F0H+l/8Y9CuvzkijrQCWaCS1yI
+RCR1BvrymhjR57x4gt4GvYR7ZmtEF4jDsVt6N/wY/gPrrLQfuoE1dC6+6X8vs+DH
+Iq4YUGoOJd2BiSFsk1CPW9js1kU6gw==
+=Y2gP
+-----END PGP SIGNATURE-----
+
+--hEt47VzocmbKr/rL--
 
