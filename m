@@ -1,213 +1,228 @@
-Return-Path: <linux-kernel+bounces-735664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EABEEB09249
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:56:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95A8BB09255
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:57:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 965347A5719
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:54:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0ACB5A1A34
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84752FD580;
-	Thu, 17 Jul 2025 16:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="do7rrhQW"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF162E36EF
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 16:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B924A2FD5B0;
+	Thu, 17 Jul 2025 16:57:22 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D9E2FCFE1
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 16:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752771365; cv=none; b=esmmc12cvkQbAKK/I65ATjL0OwwQ1dJ/sYWkO3OMdnQj7VT/wPUloy1CRqkZExRZHG/P2Bx+vvv765dK8tklGDqP2G6zMpqht6qq1gSxw83UeID4Lpl0PwkSo7bm+v8QJuPE2UfhiNI9uudf3NbZ+7GEzq8wzrhKJGI61ldTyF8=
+	t=1752771442; cv=none; b=rS4gbrCN7UtKxFjZrod5K95DANQSproMMrQvcpvetbPLCV3xqZPUrQXZzuMXNOa/ihtX6ec43kQg2A8Jp/HEIHrevwkm5JZZkmNQlXwccoz9acAog0fKUX/WzP9BaVI47ue/oAnVeFFjJtncvduBs1ytscJjsMUuEl5KzdO5t38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752771365; c=relaxed/simple;
-	bh=oiWWGXY/ZhkUfsSKuD6veSuHIoiki619k4jyqYPZ4hY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=L6CX4RP4abMXnmyuaG3/3sNrpAvEDS/oKAAJcBW9NwfF71dZRfTOgPpgc8j7EmSOl7EHXmo80/XxVGT5jn8Z+11Sx19KXTNbzJNexP1JKc+S97xEv26SsPdiX0lWCNdi0fNB2Z3abtUvD1UiQTGnat8GjfmmxnowxbTagpccUhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=do7rrhQW; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-313c3915345so1710689a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 09:56:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752771363; x=1753376163; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YtKaXiis7X8OUZ8IxU2O9gUN20EGW8+A38M9nr3POFE=;
-        b=do7rrhQWaSACO5YZHj4l754Y4Gq2ijoRB6GT/RMhVTJVRoyXD3Wgr9Eelvop8GU/IO
-         7/qDNfwqKGhAJMioMtz0OLTOYGX8RDRaa9fh4ALvjRzpT8Pyw0OXUOmDe9LkJVdWfqtn
-         ypjAsHgcj08IstV98nbv90ArQvSNelVP+aSDB69xEs2e8eyfZZCxIw+US8dMBRYzeWxw
-         KHw+i4cn1F0wjKJVyStRbCq2BcOejZQWpOqXphvTdSRjjdxqqvN//rQOQC8OMpBXFPut
-         8Bfce7prNrrax/6LYJFy7vX5KHIN902B/FHnhPwBH7e53MplVNvElyrn+gW/bcE26d0Z
-         i8kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752771363; x=1753376163;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=YtKaXiis7X8OUZ8IxU2O9gUN20EGW8+A38M9nr3POFE=;
-        b=EOgV224BvBxjI6dKGzJXBLU8f5PwRPZB/BsY59dNr1wY92ZEMUkB8SCdn8oa8fQ+kH
-         VWwtjl0r9Nl9jggr/MhcqLFolZeUIY93RvutLb4oaQZYO3AFSRNslrh29AQvMyQFHXVC
-         vU4/8SCB6pINERdjAo3riRJpbmpc0hlq6QXffFJjeeGPCe7fChwG7IKH7B0seZHdj+23
-         g53veiKChnSAo369DVaZCY/133QmhheERERNvs3sQz9gJksuIK9GtpWtZw3H73+hGybx
-         nKf192a+AmibrnQHDr9vLWbE/PEBRL+sZMITSr6PvxfY+1zL8p3iNyIjs90MGETtbphe
-         73Iw==
-X-Forwarded-Encrypted: i=1; AJvYcCWhWfXGI0y99HzmrMhTATsMHiG7ejl6tSpfBoUW8IDyPkX4e2g/0mhql4htsm89nICBM2IEqG24u8pWKak=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4fjgNvGyGl422YKB09pYwiWgrcYuZW64WhgZuBiHX/QNF0PJ/
-	qmW3lMsbNsOrNjROrD/0ThEvvZRS3d7Hv08L6hPPGmvn/KeDNLiXowN7g8OIIy0GKoltYGo3tyR
-	s8/c+c2iMknTlL23+NlXjN5CtrQ==
-X-Google-Smtp-Source: AGHT+IGT+Ip7MN3kC7WfmhPlW1Zbfs3wNc+DIuzQ2qHyU4q2gnwNyjohySS08EGy0S5iPmKjYIt5Af/xFOvpCcEiDQ==
-X-Received: from pjg12.prod.google.com ([2002:a17:90b:3f4c:b0:312:df0e:5f09])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:2584:b0:311:df4b:4b81 with SMTP id 98e67ed59e1d1-31caf8ef446mr4773759a91.25.1752771362614;
- Thu, 17 Jul 2025 09:56:02 -0700 (PDT)
-Date: Thu, 17 Jul 2025 09:56:01 -0700
-In-Reply-To: <aHjDIxxbv0DnqI6S@yilunxu-OptiPlex-7050>
+	s=arc-20240116; t=1752771442; c=relaxed/simple;
+	bh=ijTER4NxnoTYjWPfsGTVVsZbR4kOu38wXqr7PQEnLmY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z5eXNFtpktQcg/Ywxdob3l0ofWD8opa9PKTVjosegYO7jR+srygjMnxACOvR62aLzO+fxNGZnXm4jFH4UvIWOjgvtV2HB3CkzlOzXFvUy47RhWoK5ULZQNmq+LjJo1sJWdsEflsqpQECGC9vz+yHr0w1V+Z9uL1mrd25NhMmfHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 097051596;
+	Thu, 17 Jul 2025 09:57:11 -0700 (PDT)
+Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 569D83F694;
+	Thu, 17 Jul 2025 09:57:15 -0700 (PDT)
+Date: Thu, 17 Jul 2025 18:57:02 +0200
+From: Beata Michalska <beata.michalska@arm.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, clm@meta.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/12] sched: Address schbench regression
+Message-ID: <aHkrQXhRtYi3ydKo@arm.com>
+References: <20250702114924.091581796@infradead.org>
+ <aHj01PaJ_rcsduMn@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <d3832fd95a03aad562705872cbda5b3d248ca321.1747264138.git.ackerleytng@google.com>
- <CA+EHjTxtHOgichL=UvAzczoqS1608RSUNn5HbmBw2NceO941ng@mail.gmail.com>
- <CAGtprH8eR_S50xDnnMLHNCuXrN2Lv_0mBRzA_pcTtNbnVvdv2A@mail.gmail.com>
- <CA+EHjTwjKVkw2_AK0Y0-eth1dVW7ZW2Sk=73LL9NeQYAPpxPiw@mail.gmail.com>
- <CAGtprH_Evyc7tLhDB0t0fN+BUx5qeqWq8A2yZ5-ijbJ5UJ5f-g@mail.gmail.com>
- <9502503f-e0c2-489e-99b0-94146f9b6f85@amd.com> <20250624130811.GB72557@ziepe.ca>
- <CAGtprH_qh8sEY3s-JucW3n1Wvoq7jdVZDDokvG5HzPf0HV2=pg@mail.gmail.com>
- <aGTvTbPHuXbvj59t@yzhao56-desk.sh.intel.com> <diqz8qknhj3l.fsf@ackerleytng-ctop.c.googlers.com>
- <aHjDIxxbv0DnqI6S@yilunxu-OptiPlex-7050>
-Message-ID: <diqzqzyeg3j2.fsf@ackerleytng-ctop.c.googlers.com>
-Subject: Re: [RFC PATCH v2 04/51] KVM: guest_memfd: Introduce
- KVM_GMEM_CONVERT_SHARED/PRIVATE ioctls
-From: Ackerley Tng <ackerleytng@google.com>
-To: Xu Yilun <yilun.xu@linux.intel.com>
-Cc: Yan Zhao <yan.y.zhao@intel.com>, Vishal Annapurve <vannapurve@google.com>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Alexey Kardashevskiy <aik@amd.com>, Fuad Tabba <tabba@google.com>, kvm@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	linux-fsdevel@vger.kernel.org, ajones@ventanamicro.com, 
-	akpm@linux-foundation.org, amoorthy@google.com, anthony.yznaga@oracle.com, 
-	anup@brainfault.org, aou@eecs.berkeley.edu, bfoster@redhat.com, 
-	binbin.wu@linux.intel.com, brauner@kernel.org, catalin.marinas@arm.com, 
-	chao.p.peng@intel.com, chenhuacai@kernel.org, dave.hansen@intel.com, 
-	david@redhat.com, dmatlack@google.com, dwmw@amazon.co.uk, 
-	erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, graf@amazon.com, 
-	haibo1.xu@intel.com, hch@infradead.org, hughd@google.com, ira.weiny@intel.com, 
-	isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com, 
-	jarkko@kernel.org, jgowans@amazon.com, jhubbard@nvidia.com, jroedel@suse.de, 
-	jthoughton@google.com, jun.miao@intel.com, kai.huang@intel.com, 
-	keirf@google.com, kent.overstreet@linux.dev, kirill.shutemov@intel.com, 
-	liam.merwick@oracle.com, maciej.wieczor-retman@intel.com, 
-	mail@maciej.szmigiero.name, maz@kernel.org, mic@digikod.net, 
-	michael.roth@amd.com, mpe@ellerman.id.au, muchun.song@linux.dev, 
-	nikunj@amd.com, nsaenz@amazon.es, oliver.upton@linux.dev, palmer@dabbelt.com, 
-	pankaj.gupta@amd.com, paul.walmsley@sifive.com, pbonzini@redhat.com, 
-	pdurrant@amazon.co.uk, peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, 
-	qperret@google.com, quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
-	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
-	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
-	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
-	rppt@kernel.org, seanjc@google.com, shuah@kernel.org, steven.price@arm.com, 
-	steven.sistare@oracle.com, suzuki.poulose@arm.com, thomas.lendacky@amd.com, 
-	usama.arif@bytedance.com, vbabka@suse.cz, viro@zeniv.linux.org.uk, 
-	vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org, 
-	willy@infradead.org, xiaoyao.li@intel.com, yilun.xu@intel.com, 
-	yuzenghui@huawei.com, zhiquan1.li@intel.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aHj01PaJ_rcsduMn@arm.com>
 
-Xu Yilun <yilun.xu@linux.intel.com> writes:
+On Thu, Jul 17, 2025 at 03:04:55PM +0200, Beata Michalska wrote:
+> Hi Peter,
+> 
+> Below are the results of running the schbench on Altra
+> (as a reminder 2-core MC, 2 Numa Nodes, 160 cores)
+> 
+> `Legend:
+> - 'Flags=none' means neither TTWU_QUEUE_DEFAULT nor
+>   TTWU_QUEUE_DELAYED is set (or available).
+> - '*…*' marks Top-3 Min & Max, Bottom-3 Std dev, and
+>   Top-3 90th-percentile values.
+> 
+> Base 6.16-rc5
+>   Flags=none
+>   Min=681870.77 | Max=913649.50 | Std=53802.90       | 90th=890201.05
+> 
+> sched/fair: bump sd->max_newidle_lb_cost when newidle balance fails
+>   Flags=none
+>   Min=770952.12 | Max=888047.45 | Std=34430.24       | 90th=877347.24
+> 
+> sched/psi: Optimize psi_group_change() cpu_clock() usage
+>   Flags=none
+>   Min=748137.65 | Max=936312.33 | Std=56818.23       | 90th=*921497.27*
+> 
+> sched/deadline: Less agressive dl_server handling
+>   Flags=none
+>   Min=783621.95 | Max=*944604.67* | Std=43538.64     | 90th=*909961.16*
+> 
+> sched: Optimize ttwu() / select_task_rq()
+>   Flags=none
+>   Min=*826038.87* | Max=*1003496.73* | Std=49875.43  | 90th=*971944.88*
+> 
+> sched: Use lock guard in ttwu_runnable()
+>   Flags=none
+>   Min=780172.75 | Max=914170.20 | Std=35998.33       | 90th=866095.80
+> 
+> sched: Add ttwu_queue controls
+>   Flags=TTWU_QUEUE_DEFAULT
+>   Min=*792430.45* | Max=903422.78 | Std=33582.71     | 90th=887256.68
+> 
+>   Flags=none
+>   Min=*803532.80* | Max=894772.48 | Std=29359.35     | 90th=877920.34
+> 
+> sched: Introduce ttwu_do_migrate()
+>   Flags=TTWU_QUEUE_DEFAULT
+>   Min=749824.30 | Max=*965139.77* | Std=57022.47     | 90th=903659.07
+>  
+>   Flags=none
+>   Min=787464.65 | Max=885349.20 | Std=27030.82       | 90th=875750.44
+> 
+> psi: Split psi_ttwu_dequeue()
+>   Flags=TTWU_QUEUE_DEFAULT
+>   Min=762960.98 | Max=916538.12 | Std=42002.19       | 90th=876425.84
+>  
+>   Flags=none
+>   Min=773608.48 | Max=920812.87 | Std=42189.17       | 90th=871760.47
+> 
+> sched: Re-arrange __ttwu_queue_wakelist()
+>   Flags=TTWU_QUEUE_DEFAULT
+>   Min=702870.58 | Max=835243.42 | Std=44224.02       | 90th=825311.12
+> 
+>   Flags=none
+>   Min=712499.38 | Max=838492.03 | Std=38351.20       | 90th=817135.94
+> 
+> sched: Use lock guard in sched_ttwu_pending()
+>   Flags=TTWU_QUEUE_DEFAULT
+>   Min=729080.55 | Max=853609.62 | Std=43440.63       | 90th=838684.48
+> 
+>   Flags=none
+>   Min=708123.47 | Max=850804.48 | Std=40642.28       | 90th=830295.08
+> 
+> sched: Change ttwu_runnable() vs sched_delayed
+>   Flags=TTWU_QUEUE_DEFAULT
+>   Min=580218.87 | Max=838684.07 | Std=57078.24       | 90th=792973.33
+> 
+>   Flags=none
+>   Min=721274.90 | Max=784897.92 | Std=*19017.78*     | 90th=774792.30
+> 
+> sched: Add ttwu_queue support for delayed tasks
+>   Flags=none
+>   Min=712979.48 | Max=830192.10 | Std=33173.90       | 90th=798599.66
+> 
+>   Flags=TTWU_QUEUE_DEFAULT
+>   Min=698094.12 | Max=857627.93 | Std=38294.94       | 90th=789981.59
+>  
+>   Flags=TTWU_QUEUE_DEFAULT/TTWU_QUEUE_DELAYED
+>   Min=683348.77 | Max=782179.15 | Std=25086.71       | 90th=750947.00
+> 
+>   Flags=TTWU_QUEUE_DELAYED
+>   Min=669822.23 | Max=807768.85 | Std=38766.41       | 90th=794052.05
+> 
+> sched: fix ttwu_delayed
+This one is actually:
+sched: Add ttwu_queue support for delayed tasks
++
+https://lore.kernel.org/all/0672c7df-543c-4f3e-829a-46969fad6b34@amd.com/
 
-> On Wed, Jul 16, 2025 at 03:22:06PM -0700, Ackerley Tng wrote:
->> Yan Zhao <yan.y.zhao@intel.com> writes:
->>=20
->> > On Tue, Jun 24, 2025 at 07:10:38AM -0700, Vishal Annapurve wrote:
->> >> On Tue, Jun 24, 2025 at 6:08=E2=80=AFAM Jason Gunthorpe <jgg@ziepe.ca=
-> wrote:
->> >> >
->> >> > On Tue, Jun 24, 2025 at 06:23:54PM +1000, Alexey Kardashevskiy wrot=
-e:
->> >> >
->> >> > > Now, I am rebasing my RFC on top of this patchset and it fails in
->> >> > > kvm_gmem_has_safe_refcount() as IOMMU holds references to all the=
-se
->> >> > > folios in my RFC.
->> >> > >
->> >> > > So what is the expected sequence here? The userspace unmaps a DMA
->> >> > > page and maps it back right away, all from the userspace? The end
->> >> > > result will be the exactly same which seems useless. And IOMMU TL=
-B
->> >>=20
->> >>  As Jason described, ideally IOMMU just like KVM, should just:
->> >> 1) Directly rely on guest_memfd for pinning -> no page refcounts take=
-n
->> >> by IOMMU stack
->> > In TDX connect, TDX module and TDs do not trust VMM. So, it's the TDs =
-to inform
->> > TDX module about which pages are used by it for DMAs purposes.
->> > So, if a page is regarded as pinned by TDs for DMA, the TDX module wil=
-l fail the
->> > unmap of the pages from S-EPT.
->> >
->> > If IOMMU side does not increase refcount, IMHO, some way to indicate t=
-hat
->> > certain PFNs are used by TDs for DMA is still required, so guest_memfd=
- can
->> > reject the request before attempting the actual unmap.
->> > Otherwise, the unmap of TD-DMA-pinned pages will fail.
->> >
->> > Upon this kind of unmapping failure, it also doesn't help for host to =
-retry
->> > unmapping without unpinning from TD.
->> >
->> >
->>=20
->> Yan, Yilun, would it work if, on conversion,
->>=20
->> 1. guest_memfd notifies IOMMU that a conversion is about to happen for a
->>    PFN range
->
-> It is the Guest fw call to release the pinning.
+Apologies for that.
 
-I see, thanks for explaining.
-
-> By the time VMM get the
-> conversion requirement, the page is already physically unpinned. So I
-> agree with Jason the pinning doesn't have to reach to iommu from SW POV.
->
-
-If by the time KVM gets the conversion request, the page is unpinned,
-then we're all good, right?
-
-When guest_memfd gets the conversion request, as part of conversion
-handling it will request to zap the page from stage-2 page tables. TDX
-module would see that the page is unpinned and the unmapping will
-proceed fine. Is that understanding correct?
-
->> 2. IOMMU forwards the notification to TDX code in the kernel
->> 3. TDX code in kernel tells TDX module to stop thinking of any PFNs in
->>    the range as pinned for DMA?
->
-> TDX host can't stop the pinning. Actually this mechanism is to prevent
-> host from unpin/unmap the DMA out of Guest expectation.
->
-
-On this note, I'd also like to check something else. Putting TDX connect
-and IOMMUs aside, if the host unmaps a guest private page today without
-the guest requesting it, the unmapping will work and the guest will be
-broken, right?
-
-> Thanks,
-> Yilun
->
->>=20
->> If the above is possible then by the time we get to unmapping from
->> S-EPTs, TDX module would already consider the PFNs in the range "not
->> pinned for DMA".
-
+---
+BR
+Beata
+>   Flags=none
+>   Min=671844.35 | Max=798737.67 | Std=33438.64       | 90th=788584.62
+> 
+>   Flags=TTWU_QUEUE_DEFAULT
+>   Min=688607.40 | Max=828679.53 | Std=33184.78       | 90th=782490.23
+> 
+>   Flags=TTWU_QUEUE_DEFAULT/TTWU_QUEUE_DELAYED
+>   Min=579171.13 | Max=643929.18 | Std=*14644.92*     | 90th=639764.16
+> 
+>   Flags=TTWU_QUEUE_DELAYED
+>   Min=614265.22 | Max=675172.05 | Std=*13309.92*     | 90th=647181.10
+> 
+> 
+> Best overall performer:
+> sched: Optimize ttwu() / select_task_rq()
+>   Flags=none
+>   Min=*826038.87* | Max=*1003496.73* | Std=49875.43 | 90th=*971944.88*
+> 
+> Hope this will he somehwat helpful.
+> 
+> ---
+> BR
+> Beata
+> 
+> On Wed, Jul 02, 2025 at 01:49:24PM +0200, Peter Zijlstra wrote:
+> > Hi!
+> > 
+> > Previous version:
+> > 
+> >   https://lkml.kernel.org/r/20250520094538.086709102@infradead.org
+> > 
+> > 
+> > Changes:
+> >  - keep dl_server_stop(), just remove the 'normal' usage of it (juril)
+> >  - have the sched_delayed wake list IPIs do select_task_rq() (vingu)
+> >  - fixed lockdep splat (dietmar)
+> >  - added a few preperatory patches
+> > 
+> > 
+> > Patches apply on top of tip/master (which includes the disabling of private futex)
+> > and clm's newidle balance patch (which I'm awaiting vingu's ack on).
+> > 
+> > Performance is similar to the last version; as tested on my SPR on v6.15 base:
+> > 
+> > v6.15:
+> > schbench-6.15.0-1.txt:average rps: 2891403.72
+> > schbench-6.15.0-2.txt:average rps: 2889997.02
+> > schbench-6.15.0-3.txt:average rps: 2894745.17
+> > 
+> > v6.15 + patches 1-10:
+> > schbench-6.15.0-dirty-4.txt:average rps: 3038265.95
+> > schbench-6.15.0-dirty-5.txt:average rps: 3037327.50
+> > schbench-6.15.0-dirty-6.txt:average rps: 3038160.15
+> > 
+> > v6.15 + all patches:
+> > schbench-6.15.0-dirty-deferred-1.txt:average rps: 3043404.30
+> > schbench-6.15.0-dirty-deferred-2.txt:average rps: 3046124.17
+> > schbench-6.15.0-dirty-deferred-3.txt:average rps: 3043627.10
+> > 
+> > 
+> > Patches can also be had here:
+> > 
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git sched/core
+> > 
+> > 
+> > I'm hoping we can get this merged for next cycle so we can all move on from this.
+> > 
+> > 
+> 
 
