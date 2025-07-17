@@ -1,123 +1,120 @@
-Return-Path: <linux-kernel+bounces-734586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB933B08373
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 05:32:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80A2CB08375
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 05:33:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDBEE3B241A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 03:32:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3E461AA530E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 03:34:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E721A9B24;
-	Thu, 17 Jul 2025 03:32:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0617C1BE871;
+	Thu, 17 Jul 2025 03:33:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Sd120Sj+"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FusCoqje"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08AF31B4247
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 03:32:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D61931DA62E;
+	Thu, 17 Jul 2025 03:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752723156; cv=none; b=m8DGVhNzkjX6eJcOl+jEW2H+gxyuvI53fLZgcMONyUZy9vY4TRYRu0vRcex3vzFvseV7+KCO0dDnKR4DICDNtzSorwJH3YegpDdqAOoueSfx8N5TqDehw74iuobhi9JqGDKiQBBRIGsh9DGGfzJ+PYhonJa71KsHtDyPf1vtFJY=
+	t=1752723218; cv=none; b=Xfq0zntsxD5FKf1N7I/kEoFp9MjGBTeChGvoqKfvwnp1jVTEtdlhaLUZn54oxXzr8dQ56HZrSSXE/xjJb9DuoLavmakMeL1XGlAkOA+77Wo4NoKMhRUTmR0iHLtmRVYzNBToWG0svVXti2N+ZHxKVDHb4akCd16o5PiNy8+P6lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752723156; c=relaxed/simple;
-	bh=u0HoJ5h72t0o8MWHTDCV8a9gVUilTrQ2p+/B69p45b0=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=UIT/NSIyTcvoBLJS/e0O5s0xGPb2q1+2XEov8H/neS6ENSOO4qkj4rZlDpsu4hOcU3wQ0nbE/L0/Qwk+szM5uNYNsrJldsw5tQPIDx+lbhjDhJz0kmI1bTorI2WCDGRnlVCNMFjVZEOsNCFDspUwe8mhU0icwrQYMwewsuQe1h8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Sd120Sj+; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250717033231epoutp03153291af7ba7680c80ba70366626475e~S7GuYVtkg2855128551epoutp03E
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 03:32:31 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250717033231epoutp03153291af7ba7680c80ba70366626475e~S7GuYVtkg2855128551epoutp03E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1752723151;
-	bh=wtgAOa4GSUziwCJMssifdopqTXEYBR+/Wnr2hYJlNsE=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=Sd120Sj+9mJ5AEfd0hWAR+iJG/xwqmDSpPHOBKqqtSilpIwuL+i9vI7cBeVcGk5rV
-	 VHwftBpIqtmSQtrHuV4AqttCi014zdVdw2zQkNA6wcQ/Nebdf0JFkFmjEgWPHitQX+
-	 0wKawRiAmvS/R9Z2tCXmWDoBzHFV0QzquNMGMamw=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250717033231epcas5p2a3c51123fe882ea8c53d5d9f7fc62cdb~S7GtsS0PK2221822218epcas5p2Z;
-	Thu, 17 Jul 2025 03:32:31 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.93]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4bjJQQ2y70z6B9mF; Thu, 17 Jul
-	2025 03:32:30 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250717033229epcas5p1464870a12adb7d5bc1f8f167a3915592~S7Gr936NM1620016200epcas5p1S;
-	Thu, 17 Jul 2025 03:32:29 +0000 (GMT)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250717033227epsmtip25b85527e412e4455b6917d0c14a48faf~S7GqrEfkj0106101061epsmtip2W;
-	Thu, 17 Jul 2025 03:32:27 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Sowon Na'" <sowon.na@samsung.com>, <robh@kernel.org>,
-	<krzk@kernel.org>, <conor+dt@kernel.org>, <vkoul@kernel.org>,
-	<kishon@kernel.org>
-Cc: <krzk+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>
-In-Reply-To: <20250702013316.2837427-2-sowon.na@samsung.com>
-Subject: RE: [PATCH 1/5] phy: samsung-ufs: update calibration settings for
- EVT2
-Date: Thu, 17 Jul 2025 09:02:26 +0530
-Message-ID: <1e9001dbf6cb$6c210960$44631c20$@samsung.com>
+	s=arc-20240116; t=1752723218; c=relaxed/simple;
+	bh=NxcYhOyfWQrT7mpklE3E8/PuJaPlbavmD2SNVWaOFb0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K9GjSL/131fM+YQvUUDBmwELilG378mIApsuGc4+YbWlLxRrnxsWQ52xE7Q1xtItRzGG4vsRVdl/q7g9yygG0pdC1yQiGIbquQk0DPia7jKFZ3f7kzfOgjMLtTz3+qkfZmM/7DvF3ge5/2H50tFb3L8NXdSPYtJMf4aC/cJoH4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FusCoqje; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45555e3317aso2556375e9.3;
+        Wed, 16 Jul 2025 20:33:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752723215; x=1753328015; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9oA8y14yagrQ5k6xSbfVfV7QH4qEs2A8CSReVFmZTWA=;
+        b=FusCoqjegfZkj22l4PYv4+tvsTL5O9ZDaKyp7dtES3fS9Rf7RBqt7ui00zXW+fOou4
+         ko3NFa1inqgSwmFcyxFAEDZUai6noX4a/n8/L6gKIkiXvC9q0qunJGgkrjepKY/qMjac
+         oV45Ptcl0hM09TW+VAlWaU0gtwdSzKPgiiOLn2X1xbaQExpPIyaTJnHXrDJ/SGHCKBk7
+         7Z+9GGsMDXsMvC9YBjdp3jVeSG8RP7shgZpWkEAOdnKS1QLIWIqbtgLJsOcwlzoSQIwC
+         AaqDfg5uELNRQSPqXP+AfrhMKWKfu9OnFlMmX6X8DBlfXzWR31TTf96CaED6qJXk/1GC
+         2Y7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752723215; x=1753328015;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9oA8y14yagrQ5k6xSbfVfV7QH4qEs2A8CSReVFmZTWA=;
+        b=kcJIdKLnE9IPeq6t9s+2KNGZbwaD10Mi7T50hICGhMbl6jQNjGt+Q8D3fZoBz0+PsN
+         LVrJOJ6dOWfu6PtGFphVxUzUoKdKoV5RiPhbt2hVzR/A8MNKd5U1M6Sw6h5HvlC+CSiS
+         IByYmTNFItGoMRH1mZIMANKLqvOrjhhZgEBoiB1a1dDME/kAG/xb3URaOxsO/M2zitUj
+         g5qUtPqdyPeBctHKPb0TUkuShoJNavxBZo8MDJI+r+YKGJKfaLp9z9RDqTi+V7e8HNWJ
+         z+b1pXQL64rEJjrXisDPy5Yvvo693mjU0Bb42AM58GMnl2ZOAKOeFrx3J3fZINNRXi3C
+         z2Uw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJuih9g7Khn1KOsAePWnJ66eq+ao0yn5koO9lKQgG4KqXqBtDOtaOCNk1YoZA32OtC/rw=@vger.kernel.org, AJvYcCVAQrjdISAzAVjt5XUyNngdpfFPIZ+y/a+x4eE5ei9+ChEOEXG+fZ1C3e4ZrCaSy061KS7nk7u6Yuula6uU@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3DJnE81fbEoqsYchySFYqWsyW9wxQWFMtdzlDTsftI25mbxQ9
+	ol9u/ZvFVBiw7Q915qrLebsfUjLncv3+OtffrdawZDCgbebsIlmpMm7+WOPDhgGO9glHoqIFHG5
+	WFXCjClPk2kbfPOEeNBmtgZGz6XtexDw=
+X-Gm-Gg: ASbGncv/wiWVUNB6Rwp9+FSFCQCOK1AzrFwSNYX2i2gALuZqBP9dxNpPlxjaw1xA66L
+	GgtSVZXBOAJ9dZgyGF6IwmkEZHl17wBGwwP6677DgMs7Hh9dww9JxG1M/eyRiPRujH9uDgxn2f9
+	RU5JoRLhzua1PN0UA6lLJoKjgXaZlivf0r7fkHd5q0/9cHSrdFc87onWkDXi1FrWj2N8vfyRunh
+	uiVC16U8YqXI4r98Rd6urKuOFUly9EhRiiS
+X-Google-Smtp-Source: AGHT+IG+pmFZbAAM7Z9l3eMc+Veb/P/zicLt/6saYIOedxnEL29h5HnKsL/4dSTZ6zRwHN779i9D9qxS7EslSQ7ngVY=
+X-Received: by 2002:a05:600c:4688:b0:43c:f8fc:f697 with SMTP id
+ 5b1f17b1804b1-4562e3548e5mr51501185e9.9.1752723215028; Wed, 16 Jul 2025
+ 20:33:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250717032828.500146-1-yangfeng59949@163.com> <20250717032828.500146-2-yangfeng59949@163.com>
+In-Reply-To: <20250717032828.500146-2-yangfeng59949@163.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 16 Jul 2025 20:33:23 -0700
+X-Gm-Features: Ac12FXyw-BcEEGJjU0Q-RBC4WK4I7LITosRIzBxYH8dQ4nYSu_X4D71WO5qzivo
+Message-ID: <CAADnVQL2OWzpEujGafMObS-V6LKbJsg5rLDEG7b9L2VfJ0uS8g@mail.gmail.com>
+Subject: Re: [PATCH v2 bpf-next 1/2] bpf: Fix macro redefined
+To: Feng Yang <yangfeng59949@163.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, 
+	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: en-us
-Thread-Index: AQKcRDJWwAug8EBOlN5S0ESXxoAVsAJii8AiAqsl+u+yjJ7w0A==
-X-CMS-MailID: 20250717033229epcas5p1464870a12adb7d5bc1f8f167a3915592
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250702013332epcas2p159e663ba3bde9f5bf28ccd743c211fd8
-References: <20250702013316.2837427-1-sowon.na@samsung.com>
-	<CGME20250702013332epcas2p159e663ba3bde9f5bf28ccd743c211fd8@epcas2p1.samsung.com>
-	<20250702013316.2837427-2-sowon.na@samsung.com>
 
-Hi Sowon,=20
+On Wed, Jul 16, 2025 at 8:29=E2=80=AFPM Feng Yang <yangfeng59949@163.com> w=
+rote:
+>
+> From: Feng Yang <yangfeng@kylinos.cn>
+>
+> When compiling a program that include <linux/bpf.h> and <bpf/bpf_helpers.=
+h>, (For example: make samples/bpf)
+> the following warning will be generated:
+> In file included from tcp_dumpstats_kern.c:7:
+> samples/bpf/libbpf/include/bpf/bpf_helpers.h:321:9: warning: 'bpf_stream_=
+printk' macro redefined [-Wmacro-redefined]
+>   321 | #define bpf_stream_printk(stream_id, fmt, args...)               =
+               \
+>       |         ^
+> include/linux/bpf.h:3626:9: note: previous definition is here
+>  3626 | #define bpf_stream_printk(ss, ...) bpf_stream_stage_printk(&ss, _=
+_VA_ARGS__)
+>       |         ^
+>
+> The main reason is due to below in sample/bpf/Makefile:
 
-> -----Original Message-----
-> From: Sowon Na <sowon.na=40samsung.com>
-> Sent: Wednesday, July 2, 2025 7:03 AM
-> To: robh=40kernel.org; krzk=40kernel.org; conor+dt=40kernel.org;
-> vkoul=40kernel.org; alim.akhtar=40samsung.com; kishon=40kernel.org
-> Cc: krzk+dt=40kernel.org; linux-kernel=40vger.kernel.org;
-> devicetree=40vger.kernel.org; linux-samsung-soc=40vger.kernel.org;
-> sowon.na=40samsung.com
-> Subject: =5BPATCH 1/5=5D phy: samsung-ufs: update calibration settings fo=
-r EVT2
->=20
-> The hardware EVT version for exynosautov920 has been updated, with EVT2
-> confirmed as the final production version. Accordingly, this patch update=
-s the
-> UFS PHY calibration settings to match EVT2 hardware characteristics.
->=20
-This patch does more then what is mentioned here,=20
-please update the commit with all the changes so that we understand why the=
- changes was done.=20
-=2E
-=2E
-.=5Bsnip=5D
-> -=23define EXYNOSAUTOV920_CDR_LOCK_OFFSET
-> 	0xce4
-> -
-> +=23define EXYNOSAUTOV920_CAL_DONE_OFFSET
-> 	0xce0
-Any reason for not using CRD lock and using Cal Done?=20
+No. We're not going to change kernel code because of samples.
 
-
+--
+pw-bot: cr
 
