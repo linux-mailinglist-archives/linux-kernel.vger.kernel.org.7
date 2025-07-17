@@ -1,126 +1,166 @@
-Return-Path: <linux-kernel+bounces-734497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9234B08278
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 03:36:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D72BB0827D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 03:37:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2F14178247
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 01:36:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ECBD3BB971
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 01:37:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E934C1E9B04;
-	Thu, 17 Jul 2025 01:36:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B08F1E0083;
+	Thu, 17 Jul 2025 01:37:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m6lieXeh"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h34KecRM"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E936A1A288;
-	Thu, 17 Jul 2025 01:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE9A2F509;
+	Thu, 17 Jul 2025 01:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752716162; cv=none; b=l6NINaVSLZC9qHSfERNhJNT5PwisnueQN3vPfK0L1hpsH3CgxKQw1d0VruMBiPnTQYzFwWPHvz877DEX5+CdpPgBeg5CNRUw7gGEjdnjqDNB4rEr0Oy/V6RYQx/YvcJkHnvT4fz/LJUaZEKnEITZTSvSAWQCz5t9Xwzz1hhf4qY=
+	t=1752716240; cv=none; b=Wwd6NYRA3JWaLDrWuFg3yq0aB7tr++vK/MAKSK1NOCHGJcb+wlxpmZ/8PFqh/6QDdCojKD9AKAOI3r/7ASxskB1aMbH3yrcIYOo790zVorPO7mTrMsvaMwMoJVxiotKtPLkWdx8eaTvh2Og07yMAs/gVCUN7Wn5/M034AtjMILQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752716162; c=relaxed/simple;
-	bh=o1Fwf6j0ISsue9f3wIBUFF15vSnmrMxAjknVIWB6IA0=;
+	s=arc-20240116; t=1752716240; c=relaxed/simple;
+	bh=fMo1n/FvRV5iyO+K3WHcXIK+6Whi7Zr0qbAPz05a1Ps=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N71mzP0Y7toY83HWkZEW501nd5a/C7+WFmiFK//2qYRzinqoCiyfUofInf1ukp/KHLetA9hWUgY1RgR9IU3lpVBQ8Rikx6qRaKOtJ7U2J3cj/Zzstilre8G+AoAiEFeIVygoD8Jidgq4DI1FGYHIWGN4SDVM7S6AqwNWUz0f04Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m6lieXeh; arc=none smtp.client-ip=209.85.219.173
+	 To:Cc:Content-Type; b=e03/rkAbj5SMYTh/+kUiAoefoxG8Lx70Iv90Qw+0ImxdnsaTlf4NPCiyDeHaQC4I8Prr8c4gDTfj3l3kL9GvSwMT7/mvcEXicbVZnBocKFZ7ZBps8tLzIXOfNVegBA/7X3Q04U3KO8woRMrMmYMdBFPy3jvvYa815NVSmtCQxRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h34KecRM; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e8bd443c9c9so62205276.1;
-        Wed, 16 Jul 2025 18:36:00 -0700 (PDT)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4561514c7f0so4063535e9.0;
+        Wed, 16 Jul 2025 18:37:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752716160; x=1753320960; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1752716237; x=1753321037; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=o1Fwf6j0ISsue9f3wIBUFF15vSnmrMxAjknVIWB6IA0=;
-        b=m6lieXehDUGMplaTEpyZAXeteGc1bDOItf8qOKaTJ86jwyPP1sM4a+A9yo870KtBx/
-         pnlGyq8rYPdHU4CuaPa/e8lFecTMg3hy5B/kxHxt+Qyw7DkRI4Xccd3tIzTyfgoJI8+K
-         M9JjAzp7y52A4MpOBcu+c+GQUkgGu2ULX03loRPHBWntpP37qkd0+pI4NCRhmcv34q+f
-         H2GNh312z+GjDPjZ5EO4JsbxYR87TCul2VJA8mS4J+Hz5GTzqgOI7XJ6+gqX856MIWJU
-         aPuJqu2YGhdlkJvYJ3wKyR9x8gtA6+WYKuUWHV2O3Ge8WNGrdd3uyZKpQ/Rfo0CZCoym
-         aPTg==
+        bh=N1wYYVCoFZRUOZZtbrCGDeTHy7mPiZt2di/nk1haH1g=;
+        b=h34KecRMbZmumcuT3o+rxP3uqE27bRRfMF5xQdeeHuQQo3SbokPnOo3PtuEasg6VTb
+         3GeSbk1uA9UDGTDaad+f8c47qBinN321Xd04hfTT6zPrms8oZuEIrZCtLsa0IUVdQF5Z
+         IkvmZZ/EbX4WVfe+9caV/bBHWt2TZfyyBVnXO1ojkNC5HSLXLvBQzEYAOe0ALhTkeGcN
+         JJj1fhm5/j+VnbaVX28Ox1fyZyxySaWbgFZ69ka/wplvrIMW7BZBaHOsOzMOzzIM4P+g
+         Q3IgPllJqXW5ZBVm+z86A6wBYnEOYnEbGX3yfT4daKlHZjYWTeXp1A9k5hj6tLEareGy
+         mhOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752716160; x=1753320960;
+        d=1e100.net; s=20230601; t=1752716237; x=1753321037;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=o1Fwf6j0ISsue9f3wIBUFF15vSnmrMxAjknVIWB6IA0=;
-        b=kuJXuUVkeqYrKle77uIkZqRLI0ZyFJmoEIPMt9z6qkhqPkbCPEs6PGevrd/fRvvePr
-         wqvxvATlylOj7mEGOqz5qJixa4L2/55hjk1n7Y4NHitpfIBFHEKwJZOVrxA/xdCFMv1m
-         vQVL2vilpP3IVpIcJ0pIxo3jbahvRsRKW7kLb8w6/gjb/+fwJapOCVM+hbNQheTvckRc
-         SxlL0IicRmYP9IM7zWIRXGTgY6RejFNYbR+cqeWvfuyrBtWeKQWqPQi7pUGvF7O+U4X8
-         MV/WDVc7zSepq8ILBmN6CzhTxx1+h4FNBkqMOu37bMMQvON3/DVVtaoc0V3oR012CgsO
-         Ti8A==
-X-Forwarded-Encrypted: i=1; AJvYcCWNJkK9UVRZMoXs4IflxOvskd/RdbryULSNf36ENywFqE+YM9PPRBVEOtG83a5DDD4+U3Gsb0eNsRl5tlw=@vger.kernel.org, AJvYcCXnXhxr5WYuoO1OtW9HCh70Yh8c5XmJnI0tCbnG18+qyHThUKAd/mEfbnzbUNq8mrqXKLuMklf8xG9iJAA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZetgKtAfAlaML8ejr0c/XQw5n+6BvbuIIyan2xt0vZQjJAGp5
-	oFZoR4UVsG8CEo/qfejkq6OQNvjf3otVgW/iHZJ0wSWU1DmU2Ac4t9R1jgBP3hPU7POrvs4n8OP
-	WLYAmVu3QlKoDI7Rdvp0bMqqRSr5jVlI=
-X-Gm-Gg: ASbGncs4PosdrCjNlKo/Kc1VhJdqx4EnsvEW8UvrRXc6LipXLuuNVvQ8KlsWJSk2KXe
-	1gOW8v6IBMt6I1TaWannGCYobgvXT418AJHfXg2x3Joz6UbyWhTdYjkqA3BQoUoOctXk3MmKnhv
-	aNBoyX0r32fQUk6GgOLkLdd9UqSrdtyfuQofU44TORmxWM6X1PWef8Ii/4S5Ch5cKW81PNVjh0J
-	/eIGmCC8g==
-X-Google-Smtp-Source: AGHT+IH/lQdFasnZ/62xy2rm8W8eVyEAu66p8hWMQS2ruZDTPQ4cnqhJNz+LLsT9MNxR7g7j30hd5GKkZuTm9PifFRU=
-X-Received: by 2002:a05:6902:490d:b0:e8b:ca74:622e with SMTP id
- 3f1490d57ef6-e8bca7464f5mr2429870276.1.1752716159856; Wed, 16 Jul 2025
- 18:35:59 -0700 (PDT)
+        bh=N1wYYVCoFZRUOZZtbrCGDeTHy7mPiZt2di/nk1haH1g=;
+        b=JXRHOxmIlyh/Nr/MjgujLprpcCAmkWxwAfj5ow/rB88tJXlmAXCnExhE2nHj2j55+a
+         H+jlgZc/XJdmNn4HXr4WVxFA/5UzIPjhPJ/348RkUl9oE2GIjXgA6E12Ftt/v1lkoTU9
+         tmrldJaEkl6p8DzhvMRKKivlVE2u+qvqPqxtkXyAmrewhV3mgYS4P6T3k5Qq9X0hpUGo
+         SKSkWgoAv1J03QDMojEdWghTx1LsLR73biF1c478GdlDn2+tAesT+90zmYFnvOrpGfOT
+         PTzVlUvnNV5EKNxL6XMIf88432a0gI9Yt+6Ax83/hmwThd4ts4HV7N4byxWUGN4i+SL6
+         zr0g==
+X-Forwarded-Encrypted: i=1; AJvYcCU/Zyd0AwmwMsMcFj0fEZ4XUkTVio3fQxD0z1WgoQP48gA7InIM5wMCtS/GC62vjZ2tB+H0kxhtgdR0YOe/igM9@vger.kernel.org, AJvYcCUS5AzY1Tx9Ut0aWWzIsff4XGwW07QqjbEax9Co8d693IKQQPs9KvD1yPDGIP8f2Csgr70=@vger.kernel.org, AJvYcCV9nbNAHaf4AfVzfGSrzxbCiWFLRS6kXVlHQ8o9WfX2s+s3Xcy9Iis9b4/wwhIqjU4f/q81JkYCVk6RzBkh@vger.kernel.org
+X-Gm-Message-State: AOJu0YwD1T6TtNl7BakN5OG4xGmRySByxAueOw5ZEYFu4UUe/OFqF+Pu
+	oW+RpZOMebO24Jo2w0+p/W9pluBlNSpTDDvfpCbS1qe1u1SJ9o6ZbveQEJs/q42WCRFasPlDJtn
+	f7bEjxs4VbU8zlRmssOTa4jSBHKnHn7w=
+X-Gm-Gg: ASbGncuZwLvgLCdtGi7hKnmEtWu+PS/UjJiTwWJi/V/wPYxHKKudThj2TtJ9B74dRfx
+	o5cZ9E1WnIfJj/VtsQ9iNyesuteqWsgi7t5z+87x10UGRD4vzr4iXm7J5l1vR0BwEOiT1icEfvo
+	jWernSG5dJlOWcxC+GyLTgyjo1I1EpcE8k8mdtG+/FE0EyGbk27B+tP0xvh97RpvaPMeEVBuy4K
+	D+3k5jBFsXmUSIzynv9SThydFeAYkdKIVD4
+X-Google-Smtp-Source: AGHT+IGgV6MdxSmi6TQO5PCsDGnID2h2AYYqZv+RgBvrOCAatiFMutwhoHVVe0kXdaQxyhlEINYmbYtkTBm/JZ3X4WI=
+X-Received: by 2002:a05:600c:3e09:b0:453:dbe:7574 with SMTP id
+ 5b1f17b1804b1-4562edaa0b3mr47452695e9.12.1752716236784; Wed, 16 Jul 2025
+ 18:37:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250712191325.132666-1-abdelrahmanfekry375@gmail.com> <eb7fd8f3-1d6e-421f-b5d9-f9e2d2992da5@suswa.mountain>
-In-Reply-To: <eb7fd8f3-1d6e-421f-b5d9-f9e2d2992da5@suswa.mountain>
-From: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
-Date: Thu, 17 Jul 2025 04:35:47 +0300
-X-Gm-Features: Ac12FXxNSZIFdZuBHmzo8FplFaJtPqK8r6zWUmZ798tWJAaeeE-AzyDD9PmzLmE
-Message-ID: <CAGn2d8Mkfdmd3Td3aKQwaa539nMfL0rmJ5d6tLr9A12HSkCUzg@mail.gmail.com>
-Subject: Re: [PATCH 0/3] staging: media: atomisp: More Cleanup on driver AtomIsp
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: hansg@kernel.org, mchehab@kernel.org, sakari.ailus@linux.intel.com, 
-	andy@kernel.org, gregkh@linuxfoundation.org, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev, 
-	linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org
+References: <20250714120408.1627128-1-mannkafai@gmail.com> <20250714120408.1627128-4-mannkafai@gmail.com>
+In-Reply-To: <20250714120408.1627128-4-mannkafai@gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 16 Jul 2025 18:37:05 -0700
+X-Gm-Features: Ac12FXx3K0NczfO52DOfjKkMx8MTLQOgGs2G-OeBUYMXF1gUhlhYGLeeOWQSvBk
+Message-ID: <CAADnVQ+H6oHMFPvWkXuHv9oanHT57F_HrD_ZpxB0X=37vdAoyw@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v2 3/3] selftests/bpf: Add selftest for attaching
+ tracing programs to functions in deny list
+To: KaFai Wan <mannkafai@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, Yafang Shao <laoar.shao@gmail.com>, 
+	LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, Leon Hwang <leon.hwang@linux.dev>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dan,
-Thanks for your feedback
+On Mon, Jul 14, 2025 at 5:04=E2=80=AFAM KaFai Wan <mannkafai@gmail.com> wro=
+te:
+>
+> The reuslt:
+>
+>   $ tools/testing/selftests/bpf/test_progs --name=3Dtracing_deny
+>   #467/1   tracing_deny/migrate_disable:OK
+>   #467     tracing_deny:OK
+>   Summary: 1/1 PASSED, 0 SKIPPED, 0 FAILED
+>
+> Signed-off-by: KaFai Wan <mannkafai@gmail.com>
+> ---
+>  .../selftests/bpf/prog_tests/tracing_deny.c       | 11 +++++++++++
+>  tools/testing/selftests/bpf/progs/tracing_deny.c  | 15 +++++++++++++++
+>  2 files changed, 26 insertions(+)
+>  create mode 100644 tools/testing/selftests/bpf/prog_tests/tracing_deny.c
+>  create mode 100644 tools/testing/selftests/bpf/progs/tracing_deny.c
+>
+> diff --git a/tools/testing/selftests/bpf/prog_tests/tracing_deny.c b/tool=
+s/testing/selftests/bpf/prog_tests/tracing_deny.c
+> new file mode 100644
+> index 000000000000..460c59a9667f
+> --- /dev/null
+> +++ b/tools/testing/selftests/bpf/prog_tests/tracing_deny.c
+> @@ -0,0 +1,11 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <test_progs.h>
+> +#include "tracing_deny.skel.h"
+> +
+> +void test_tracing_deny(void)
+> +{
+> +       /* migrate_disable depends on CONFIG_SMP */
+> +       if (libbpf_find_vmlinux_btf_id("migrate_disable", BPF_TRACE_FENTR=
+Y) > 0)
+> +               RUN_TESTS(tracing_deny);
+> +}
+> diff --git a/tools/testing/selftests/bpf/progs/tracing_deny.c b/tools/tes=
+ting/selftests/bpf/progs/tracing_deny.c
+> new file mode 100644
+> index 000000000000..98ef834f0b6d
+> --- /dev/null
+> +++ b/tools/testing/selftests/bpf/progs/tracing_deny.c
+> @@ -0,0 +1,15 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/bpf.h>
+> +#include <bpf/bpf_helpers.h>
+> +#include <bpf/bpf_tracing.h>
+> +#include "bpf_misc.h"
+> +
+> +char _license[] SEC("license") =3D "GPL";
+> +
+> +SEC("fentry/migrate_disable")
+> +__failure __msg("Attaching tracing programs to function 'migrate_disable=
+' is rejected.")
+> +int BPF_PROG(migrate_disable)
+> +{
+> +       return 0;
+> +}
 
-On Wed, Jul 16, 2025 at 9:21=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
->
-> On Sat, Jul 12, 2025 at 10:13:22PM +0300, Abdelrahman Fekry wrote:
-> > Continuing the cleanup work that is being done on the AtomIsp driver,
-> > This series:
-> >
-> > - Process the error inside hmm_init().
-> > - Unifies the HMM init tracking method.
-> > - move hmm related function to hmm.c.
-> >
-> > Previously, These patches were sent individualy but they build on
-> > each other so i resent them as one patch series
-> >
-> > Suggested-by: Hans de Goede <hansg@kernel.org>
-> > Signed-off-by: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
->
-> These seem reasonable enough to me.
->
-> Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
->
-> But it would be better if someone could test them as well.
-I tested this by building the driver and i really don't think further
-testing is needed
-since this series doesn't introduce any behavioral or functional change.
->
-> regards,
-> dan carpenter
+Please roll these two tiny files into existing files in progs/ and prog_tes=
+ts/
+directories.
+Every file takes time to compile 4 times, so let's avoid unnecessary overhe=
+ad.
 
-Best Regards,
-Abdelrahman Fekry
+--
+pw-bot: cr
 
