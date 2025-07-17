@@ -1,66 +1,71 @@
-Return-Path: <linux-kernel+bounces-735049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2C92B08A24
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:01:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B906AB08A29
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:02:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D490F3ABA2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:01:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D22C03B552C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:01:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8235B2989A4;
-	Thu, 17 Jul 2025 10:01:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EFFF298CB6;
+	Thu, 17 Jul 2025 10:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HjBOa/6/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WsID2V0s"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D63D1291C2C;
-	Thu, 17 Jul 2025 10:01:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6FA298994;
+	Thu, 17 Jul 2025 10:01:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752746505; cv=none; b=DQwXZPjjDaP/Oq3GJVQ4ndO2lezCM4oAMSjX+B5T4/If89e5bqzqgPltc9mLbscPk4S8GoVz8QkoHDLeOG54kTlshSvnB7Vklf08QWvB8sdjX+YX8+seVJYiNyfe6TAbd25C3axBKkB78I5Liiyr9fgyAz/G57Mq+7eFoWm5+Ds=
+	t=1752746517; cv=none; b=LtUnhelzIaj6hV2CmOXmOQzhVjPOH4H8ZSYhUivEnlFB7/ACKygJNoQfu0V8ubAUxz7q8wDDOYCRUl580IsMk54+dJBu4WuZn0p1ZcKzfeO0gbKEJQMdgkXXBDw/455HCKHgKwRtH3mrOn3Vs1oBPIzNmPMYyMd8a3ov0CAoh0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752746505; c=relaxed/simple;
-	bh=+j+eCxhAwMeuOk6CPW8cOQpG6iMGem0qQfDERMTYX1w=;
+	s=arc-20240116; t=1752746517; c=relaxed/simple;
+	bh=fJQ+2oEx65X73kZYLhyRibH8bNmQTyazpPzrgi/ip1Y=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YkmUR886XH4LHOucX//Zyc82OZXbC29hta+GKjSGB73Ph/Q+ZYHmJtR4/ijD45a/TGmwKNmrDD4iE210U0TyzPa+DPRhezYm0gzPCOgso6SSxOpg8Z97mJhLEeUcW1McsVWXIZQfn0Xv4DV17sKvJhrmrkFl1khmW9ZMIaPkIHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HjBOa/6/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEE8FC4CEE3;
-	Thu, 17 Jul 2025 10:01:40 +0000 (UTC)
+	 MIME-Version:Content-Type; b=PFb7DxKq6mwI1OK2qxTtJcIbVtGxg24pG94WXHNNXosFl2n/cxe92thiyw+NQWKJtDcLB1prwiCm4iORRNNrJMcTtcuGp4BtTFNxyf13Hokg0YM6uYpcOl+eFtmhAmaN34c3ChCO/w3Aa4utvwbGW17waEbk5HJDeowLJLmgIcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WsID2V0s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B30F6C4CEEB;
+	Thu, 17 Jul 2025 10:01:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752746503;
-	bh=+j+eCxhAwMeuOk6CPW8cOQpG6iMGem0qQfDERMTYX1w=;
+	s=k20201202; t=1752746516;
+	bh=fJQ+2oEx65X73kZYLhyRibH8bNmQTyazpPzrgi/ip1Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HjBOa/6/rjeQmkuagBVYJ4w+ptSHrSktsNmbO3EWlM6vHNR9ypNVw27viG1YEVwyN
-	 ZmiBr8p4kRj3Bolr+iAKuSgk1ZBbQvTeAgryria0lU8aQSff/Bpufo/XgxLJ2CFq2G
-	 9hN5hyhJYjZpupuwASgw1SRTWWJbtUHRKEZ/Kp7t217UKJ0Fdzh+4gK8lxkdI04/Ur
-	 xqkD9KJWEGhH+VkHYFJJrIGu3kvZ+dd9tHw0MlxVOLvpuyhDgzjW9zcgukHIzS43OV
-	 ePK6HyZDLkCJdtjRb1XX0exJAx3oaiZRgg21m2c/N0kdFT6uJYPiVGVzPqcjYckyoX
-	 txKEhvgxPhsrQ==
+	b=WsID2V0soseOGU9BAyxuzAMgdU0jAWJjMiXP1mJKtiYoh9vWjY0isSL5b1zJlopj2
+	 /ZGr2CYFkjNNJa8Owr+PPRu91CPJJJdHIhhI/EQUTS8C+vGOAAs5OxcO12C8oaCs+w
+	 MXuTCMjEB07ZcN3csUeoGU0iy7Hp/HG8Fepv5geMeHVeTpd9mKNMMJtGaTNbN2ETP6
+	 Sq4+EBQ5JFu1zUR/vjBknjp7+e14Cr6o2s5kIZeukQc0OdyLCe/837clqpEsFBkfJI
+	 nkmWhLZb0KmmZOLa5f7eKB2jRlPpuFdSeuadPLB5u5tw7SmNkqMps96Fh6s8+fUWiL
+	 9jGivpbfd2nXw==
 From: Will Deacon <will@kernel.org>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux IOMMU <iommu@lists.linux.dev>,
-	Bagas Sanjaya <bagasdotme@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	cros-qcom-dts-watchers@chromium.org,
+	Robin Murphy <robin.murphy@arm.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Konrad Dybcio <konradybcio@kernel.org>
 Cc: catalin.marinas@arm.com,
 	kernel-team@android.com,
 	Will Deacon <will@kernel.org>,
-	Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>,
-	Vasant Hegde <vasant.hegde@amd.com>,
-	Ashish Kalra <Ashish.Kalra@amd.com>,
-	=?UTF-8?q?J=C3=B6rg=20R=C3=B6del?= <joro@8bytes.org>,
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] iommu/amd: Wrap debugfs ABI testing symbols snippets in literal code blocks
-Date: Thu, 17 Jul 2025 11:01:27 +0100
-Message-Id: <175274236192.231177.6963644719927204310.b4-ty@kernel.org>
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v2 0/4] Retire SDM845-cheza devboards
+Date: Thu, 17 Jul 2025 11:01:30 +0100
+Message-Id: <175274460748.247797.878702173890066148.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250717010331.8941-1-bagasdotme@gmail.com>
-References: <20250717010331.8941-1-bagasdotme@gmail.com>
+In-Reply-To: <20250716-topic-goodnight_cheza-v2-0-6fa8d3261813@oss.qualcomm.com>
+References: <20250716-topic-goodnight_cheza-v2-0-6fa8d3261813@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,22 +75,21 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Thu, 17 Jul 2025 08:03:31 +0700, Bagas Sanjaya wrote:
-> Commit 39215bb3b0d929 ("iommu/amd: Add documentation for AMD IOMMU
-> debugfs support") documents debugfs ABI symbols for AMD IOMMU, but
-> forgets to wrap examples snippets and their output in literal code
-> blocks, hence Sphinx reports indentation warnings:
+On Wed, 16 Jul 2025 12:16:06 +0200, Konrad Dybcio wrote:
+> Cheza was a prototype class of boards, based on the 2017 SDM845 SoC,
+> used for bringing up ChromiumOS on Snapdragon platforms.
 > 
-> Documentation/ABI/testing/debugfs-amd-iommu:31: ERROR: Unexpected indentation. [docutils]
-> Documentation/ABI/testing/debugfs-amd-iommu:31: WARNING: Block quote ends without a blank line; unexpected unindent. [docutils]
-> Documentation/ABI/testing/debugfs-amd-iommu:31: WARNING: Block quote ends without a blank line; unexpected unindent. [docutils]
+> Today, almost none are left in existence, and the small amount of
+> remaining ones don't get any real use.
+> 
+> To ease maintenance burden, remove it from the kernel tree.
 > 
 > [...]
 
-Applied to iommu (amd/amd-vi), thanks!
+Applied SMMU bindings change to iommu (arm/smmu/bindings), thanks!
 
-[1/1] iommu/amd: Wrap debugfs ABI testing symbols snippets in literal code blocks
-      https://git.kernel.org/iommu/c/9628e5c85b1e
+[3/4] dt-bindings: arm-smmu: Remove sdm845-cheza specific entry
+      https://git.kernel.org/iommu/c/ac1207f516c2
 
 Cheers,
 -- 
