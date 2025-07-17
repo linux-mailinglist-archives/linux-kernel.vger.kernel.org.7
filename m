@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-734684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D3E4B084C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:22:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D315B084C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:22:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF4F6581EA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:22:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 669F93BC75B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:21:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F256E21576E;
-	Thu, 17 Jul 2025 06:22:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434D92153FB;
+	Thu, 17 Jul 2025 06:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="tHIeouCv"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2118.outbound.protection.outlook.com [40.107.244.118])
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="lRqFC9gz"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2131.outbound.protection.outlook.com [40.107.244.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35A421507F
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 06:22:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E0E2147E6
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 06:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.131
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752733325; cv=fail; b=KQiWiYoX+ELtjJQZe1/2NrTCIPWkmO8dJEWl7t5re9kdoKOEz6SXyZjNlTwtf8p76GNdtD226nK+yGmZ/qNEC+xrKtDUInZj7f9gM+qWdrzNUxaP8p14XBmTfDLLMINRn4owKD2V2RMbihW6N/ml/d6Hy32QgmnYC7XPttYrgwo=
+	t=1752733339; cv=fail; b=huZtveFBrp8iHC9Rum/iMrzWezkc9KHWQSkD21ZpfMzZfH/q2Zho6bncKXIuX6PTDHtnaoWGLb7xKoKBHtoJs/dtDBkMjUFNrGqKkxd4dRMvOTGM5IzGMm/K5I5lrpxk2ZOxFc994zJ1KzBEkqGlT1e7wKW/2WuP2hz/AADKU5M=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752733325; c=relaxed/simple;
-	bh=nyepzh4yxo/21jDVL+Ub73ZWLc+Qxyo8E9TxTVu/ws8=;
+	s=arc-20240116; t=1752733339; c=relaxed/simple;
+	bh=Igmprgi40j/ac6TxQQ11+hvEQBOwv7K6+DWP1o71TzU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jXi8WKwJG2lznkFiDLtyW2iNfjQxwLxfUOh7N50AzseoLve8pCZAc66Dn6aeAq3Avf32h85vWWzYQSDeeDIng7wHsvULVCt0Au9zrZCCMZP3pcZNSIpDBQO+TsValzsZKPa+/mUrzsfLKEkQDKTPX1m1YQ5uHrMHUNEeRR7ZVcw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=tHIeouCv; arc=fail smtp.client-ip=40.107.244.118
+	 Content-Type:MIME-Version; b=UVLt1GJPiSgSDFZwQtXUWS0LZygB3nihqR6V0MfsQOJ+WYAW/R+aR90Pd4Jpue1mFRjtg4VqUkM7BAwxBYeqoBwuGnMdDq31vkZ4C7Z4fDXNi+XjTg4WjotmZOFyp1zFVrwSd55QgFoNhwjTfnv7ZBCksPKFUhwV7cScLBT9K+E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=lRqFC9gz; arc=fail smtp.client-ip=40.107.244.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cXiQFS+MVMiegUna/KSppzC7LTk3C+EY+yMwlo/bGiytbb0Zh4LwzolaSUUccfzovdbKbanJH4jHQ8OqeNZ1nIy7TNW3sMgPY2vi17V81R+BAsUSnnAt9yuuK1SzOx1ovjMcy2XwB7UU61s0vGKRSE2lgRzaYesDxRygX7L7pGajSn7wOMsQ7MhU+0EYScNsWjniQwRWOcaa3q6yVGrgpcO2ntNQLp12c8c3fF9tCMbHjnsMTqR6+UxWkMB533rAHaOW9WtBCcDqyu6Yl4Ejy0IpeQo1bbE/EbHl7fBz2oeeLyyvHeGjxuAF3y1SEaGRqoympZe9ILrIjIWTpKgz/g==
+ b=yt6qJmcw9fy79xtn86iXixfElYNKifcA5nmWyS0mYKFMtov8y+j20Qt+ad4AspswRCvQ9AqUvpXCe/wj2C6RIsfP2356vwp+2wkdaU1gZdzW4WFvzudLqZ/isx+iD3gx0Li/Y/OoK4veh4lNN+0THVCyp5eicRWljjm7qSKuTlmEEdMJwnqMyngowVVthGHynb5LBRJ9yCkWwa4cvG1uufB1BcKGQU+gSnDlfpHu5A/vFEz+f1j+V7xPsjhsIJvRbA7waWPA5RocMCZlsQpTZSam4Y0zxDsJ9j8ZxYZJJm211tRe1EFE/ED3C4Ej7UTW32gKafopELgN15A+Jj84rQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Yx5J3kY5wdlF2swVLKrIu/oidcFcb6sWkPuog/U4SM8=;
- b=uxAysKjHpSY3Ig9MhYvI4AMmq2iP6WL4MXJWltTV671qgpMd1OG1tvjEufoesOBRl0y88SO4Fdk6WYxYL/xf6/LPDV+7Ws/XrGAn1vSfv+gKb7OhPlC9X/xiHI1x4rf/SQxsbfM1uF8onLNBBphI4c3nQkXKFNaCxM1dZBDyCiYL/64E6d247vP1DN2lWZfOHBp4UmBlbAVrqalvV/gYn5tzaToH4GtZ6e7CeZeDf8PSXMKNBQauGE1fBoYQWM85gdteBOGfLVNjAM0cyFkHcCR7wVipj5+4JddLtszyD3hjqlVLiRIhg97ycCMF697pWh4jDnpcnT+kiTwRETS8eA==
+ bh=Q6iSvUyFEpW9gKmODm4qeOMDD1w5EESSbQCc5Yx6gcg=;
+ b=KwIHjxxmd6CvynVlGV6sJ/5XbwYfdGivNudZIITt/lYN7fq2nNcemXUUIIkGYfA38xlOZHtU+NxGY1oEHay/W16d0PAxs8hbOXoyGyi/+hzo/3Q5ncvswf4mpjUaBGHH0Sfasne96rdlrwm1lEAgi4mOQWGSBMYU7RUG5wOa1t35p8G+bUOeMUJWK72gsfJXJaHYnpV4My+bRGOwcjOAHU+FQr13LtNbvvDhudzgfpHo6WRyTwVGaRYkq+HzH4ZIIQFcQf/SshOIl//Ic/ytl/5Nnyi9KDxOvdcqLiePxWiI0JR4YrkI9WNVBIYLTceKnRoapIgMDLS56J3Vy4WeWQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
  header.from=os.amperecomputing.com; dkim=pass
@@ -44,18 +44,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=os.amperecomputing.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Yx5J3kY5wdlF2swVLKrIu/oidcFcb6sWkPuog/U4SM8=;
- b=tHIeouCvIA0vEXDPmw7a1a4MC/PaYgyu7byLSHpylpJ1SX3nh7WvzRFYMf0PBR7KWpaJYurdDPhLpxkmKBwdIu5ZNCPxiBn3lXTzYZkUtF4mb/H+cH404+k3UJXNGQNzcWUkMVRoMaXrWgkSvrul+GIOFiFNgf0lP/T1ghYQwso=
+ bh=Q6iSvUyFEpW9gKmODm4qeOMDD1w5EESSbQCc5Yx6gcg=;
+ b=lRqFC9gzPRPXaqZ5pi8jR4cW0q2E0y5NAahUlt2QQEknViNG6Y26R/X2lAkLZmpx8ACFBHQKKLF1K32FWJ+bples+V+lnx6zv5F7VdfhtgWPMufS7JhpdBQTNK345TR77ehDzxXBCHdSyFP87VddknCrvc7XyfiSZ9vnbvDFGxA=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
 Received: from PH0PR01MB6761.prod.exchangelabs.com (2603:10b6:510:76::23) by
  PH0PR01MB7287.prod.exchangelabs.com (2603:10b6:510:10a::21) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8922.39; Thu, 17 Jul 2025 06:22:01 +0000
+ 15.20.8922.39; Thu, 17 Jul 2025 06:22:14 +0000
 Received: from PH0PR01MB6761.prod.exchangelabs.com
  ([fe80::bf98:19e8:71ee:cf2]) by PH0PR01MB6761.prod.exchangelabs.com
  ([fe80::bf98:19e8:71ee:cf2%7]) with mapi id 15.20.8922.035; Thu, 17 Jul 2025
- 06:22:01 +0000
+ 06:22:13 +0000
 From: Adam Li <adamli@os.amperecomputing.com>
 To: mingo@redhat.com,
 	peterz@infradead.org,
@@ -71,16 +71,16 @@ Cc: dietmar.eggemann@arm.com,
 	patches@amperecomputing.com,
 	shkaushik@amperecomputing.com,
 	Adam Li <adamli@os.amperecomputing.com>
-Subject: [PATCH v2 3/6] sched/fair: Only count group weight for CPUs doing load balance when looking for src group
-Date: Thu, 17 Jul 2025 06:20:33 +0000
-Message-Id: <20250717062036.432243-4-adamli@os.amperecomputing.com>
+Subject: [RFC PATCH v2 4/6] sched/fair: Make update_sg_wakeup_stats() helper functions handle NULL pointers
+Date: Thu, 17 Jul 2025 06:20:34 +0000
+Message-Id: <20250717062036.432243-5-adamli@os.amperecomputing.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250717062036.432243-1-adamli@os.amperecomputing.com>
 References: <20250717062036.432243-1-adamli@os.amperecomputing.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: JH0PR01CA0166.apcprd01.prod.exchangelabs.com
- (2603:1096:990:75::26) To PH0PR01MB6761.prod.exchangelabs.com
+X-ClientProxiedBy: SI2PR02CA0052.apcprd02.prod.outlook.com
+ (2603:1096:4:196::18) To PH0PR01MB6761.prod.exchangelabs.com
  (2603:10b6:510:76::23)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -90,102 +90,236 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: PH0PR01MB6761:EE_|PH0PR01MB7287:EE_
-X-MS-Office365-Filtering-Correlation-Id: cf710adc-e410-43da-fa3a-08ddc4fa3da0
+X-MS-Office365-Filtering-Correlation-Id: 830fa674-0e0f-456b-e989-08ddc4fa4519
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|7416014|366016|1800799024|52116014|376014|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?UMLL04HOtQxSD5K+wVLTRUJu3cLexynRnHd+4XYJ6fapS3dnt/u15TOlwOfd?=
- =?us-ascii?Q?59SGLptLpFcIiFzUuwZEFoSNE5d0hjhSEvb8lIx1PwjAiGStXUznABEaqZd5?=
- =?us-ascii?Q?M/lO2Yga4oVu+sJDixrypQ+0Ytn6oCYqYjiR7Nnhy0VElVfGuaKbvMc++r+E?=
- =?us-ascii?Q?0GSC/oBshmJhU7Czbky/JWt+D9ebOGSTeTflN6w0s72QHkocNxQSk6SJspi0?=
- =?us-ascii?Q?voMhkcRIrpL1U7R1SUk+o3RySm6eeY+hdCmbC4/NJH6j0d3C0F21c1svZUvz?=
- =?us-ascii?Q?YJF+pBAMIw9kfHnuGK+81+kXLG7WSzU9sK9pq25xWEP1GXTN7ABzMkAafeL+?=
- =?us-ascii?Q?JufJ8hoNLvMW62w/mYaTh+1zTbgdD84yq7P6RWg3ZScbumTNwnfthYPZzmJL?=
- =?us-ascii?Q?WJoMzRnh4EI4mkuJDQD2oNn4kKSedEvK9by2mYrofKJuVt7fum94kaLvmK+0?=
- =?us-ascii?Q?piu7KIEIJTfcfcuVIVSkn9EvIg6a1BRZ71boG0l4fYCRcANAAEfDRZl0RgJE?=
- =?us-ascii?Q?nJrb3s6byX8JVnXOr1d5EKVp6YbsxFQoq1e8PoznHmRxiSMOf+N6HqjaGcgH?=
- =?us-ascii?Q?Vc92IjkYPv9uYd0dVwB2ZDggu02SlyQKHcx+nd7tCfFVKK/2Z+o1AMBVC0Gn?=
- =?us-ascii?Q?c3uWVu5oQjIFCkIsYyHz5eyJKi6b5zHCOwA74YFQVwSO4Mo657bYljp4FuC7?=
- =?us-ascii?Q?lFtBToq1ZU+lFKH/1yZuk3IyOSABQmnVGP3ZDy+becOg+mOhQU3JQZ33MrxD?=
- =?us-ascii?Q?3g2kt66oktVauyYVe1UzGWUPkdmlUrU1kmqdEhoulKKctxs1iFMVZ4Fzw90j?=
- =?us-ascii?Q?mFm/Hs8BS9+YYBmDLbkzv6zeXxTlzUvSz/i30zj12sy6aogofaN/Zd52pIPl?=
- =?us-ascii?Q?0/vlDqq2PFw4okPXsWdCdCcCJOO2oUoblW7dtmoSHDoXzR4m/F3raZsh/y3S?=
- =?us-ascii?Q?+fu9mqskY8c3dGDWVzffnZFSIGR+KqrIVpVght/4ZBrDcgrSUpAZJOrN47Jw?=
- =?us-ascii?Q?lyZnKKCLX75yDJ/f/yyFTXsPWyKdf5h76swLikbxkXgrsNAaaM00mAyzKi1D?=
- =?us-ascii?Q?eULvNazMHC1jWn3J9picrXNA05euXJwrMQZVFHDidhSnwn9gbZAHXj8oo9Tu?=
- =?us-ascii?Q?JeqM92yxG7BwLWQADTD6vwmOU+gEbbXA4zWupp078nrjKPwVZa3k0m2t3gI/?=
- =?us-ascii?Q?DwZf1rmHC4DTMy4dlrhORU0UTmgfhoUNIYDatyd4gNivlU+QYGLIfJ4XKcLA?=
- =?us-ascii?Q?nSw6Ctyi27q44nAu6CS7i9mRsWDZbuOia3rqgFj+H17oqNCF9iDBXKYPnkqL?=
- =?us-ascii?Q?eRwlrFL768xeVPMCQeL9CAdSJEOMCERho4LAY1Il0d1X3m6+S9JDY/ahG8Gr?=
- =?us-ascii?Q?DoooKDCvlv5vuTsyJDNCvyY1ud/AnRfn+EhXjVtacZwDk37Bvp9HqYMQg5N/?=
- =?us-ascii?Q?hjiUUj4KJPEr0pCEv/N6wDIdX/TZ4hEwUZ5ivekNAId8duT+5Yt6Gg=3D=3D?=
+	=?us-ascii?Q?eU0nzCVUeF58prkEkjnU81LlWxErthtnjUOxTcFCEWa3qB82rt6jnJyOVuFl?=
+ =?us-ascii?Q?P/7FitX+bi448hamAY1SWY/iaB7UMmRrOKcOXVLXp74Jkm09h4QRo6g7ozdg?=
+ =?us-ascii?Q?45UuR6WettGrLVjcly5U7w98/+/LhjEN7IsseqvhX51WO+75uWboRDABAgwz?=
+ =?us-ascii?Q?hFWL6ayxW0kp/QE93r/A8yb3iv/KGVewN6gK8TWY8lWXFUszVuHMXR3j1UlF?=
+ =?us-ascii?Q?75ffz/JA18+TgCNWDtEFXGA/IAgSaJcYRCLmNcdQlFrKMkEhGZbPVatlCx85?=
+ =?us-ascii?Q?IVOp/q27uasqfumaQiSzWa/vx5H4HwIyYTuZNeFWlQyiPGCtTUenM+LW+KwT?=
+ =?us-ascii?Q?w2Md9ZngCbFxlDoL8K8UZAUq2pboqmxLdhBBdVOqu+7+1WazGybluiYVR16p?=
+ =?us-ascii?Q?8LSk+EutbU9HLgysYmezR200UY8HCQjA7HeTCvmcyPZSIywUeWI8r58feeER?=
+ =?us-ascii?Q?iTn10iCuZXjcQD+sVRt0V0iC8hOpc3U2vjhis5GxVqSJ93nHZG+wBWftxDz1?=
+ =?us-ascii?Q?z5D5S0mLJ9lq/1Q2wG23/uW+v2HGXL7GRdSoS6H4yXEWe+dxziGfe2z8N6gg?=
+ =?us-ascii?Q?YD9dvXR4ylH0WK/YHhe7zkeP8ajSBvY1hOum/KNcvt65GFN1OHonadgoqEpH?=
+ =?us-ascii?Q?Zj7g3ksAKkvXeGFzc8DbWzKy9QgMBfZh+J+eSu5TwWWO1R5tAmkNTVMTg241?=
+ =?us-ascii?Q?YV0xCIP1LxofsaNTJORaFzb6W16RYJC0JGXW5x96uKa3F3j7ES/tyItOqV+w?=
+ =?us-ascii?Q?jTXTlU30pusznLB4J9zzfBBfHU+oJE6lcTc4j4YNVw0rRZQDHhCIVkUvbfNb?=
+ =?us-ascii?Q?mkOvLsQDdi2QYDmUR0mLbh+pT+3jIU1BhnPLzDfVjqVtHP4J1coF1hGXaGkv?=
+ =?us-ascii?Q?W2rXN+R5BgiwlqX1241qjD/B5muO7gdwZYY0TqPbs7SuQGJFJKgo6tQnNj2Q?=
+ =?us-ascii?Q?PjWWCcxWrf7bkrcbO02EpWSnP4NXk6mDf+4vbCmiyfkqR6fgfu6ahuC6RZnp?=
+ =?us-ascii?Q?XmNoz4yuyik3YXlZ5tjFNcDuqQQOS1HcMobuolFwANzUgPlbsgZ9eYXaZ9H6?=
+ =?us-ascii?Q?J8WB6e6cZYe615SzU+5fIXDjUcFuQa+coBtjRlPt2kKmTAwXe4NB3ikp0B48?=
+ =?us-ascii?Q?Mhmyauv8pA1VMzm+aZ98MNDZZjLBQEfFmrsBiMNVOX/Ocxd73sqsDkxTn8uO?=
+ =?us-ascii?Q?jmvHSHeJsXe4hlqZypmGZB5WpykWeb9kbwpyLhtRrf4FRFt8aGZFo9CG8HvH?=
+ =?us-ascii?Q?iuI86xjAfrDXMnhaY+TjQMXeuSLQAODil89z7rajXhc8uwMTOmTMWlbPiIj7?=
+ =?us-ascii?Q?0XTlwL/Qv5RmYTdlBsVl0y4j71g7fn3PLgHmRjOkvQ/hI40YqMqyzDn/VT6L?=
+ =?us-ascii?Q?foDnd7tRWQ8vVNaerOLrN5h8LOZ88mYipn6hWFN/OF/pX1Rnhe554XklE8Zj?=
+ =?us-ascii?Q?6Mfb+DMsLgJyC/jj5b6jP/GVSv3FcYyYFpuVrDtpo+2gF6P3zWDWKg=3D=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR01MB6761.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(1800799024)(52116014)(376014)(38350700014);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?2yGG9j70PrLDq8Qvd33Z2bmc3wUvekY++pP0hK4wbhPEm3ZX0K5DIN6FhKhO?=
- =?us-ascii?Q?WYoxzVgB5+i7gGbfEJShJksqS+msTL9Kd7EUT1eQRynz9erEtzIWxSuywAdq?=
- =?us-ascii?Q?41z9B9ts8kR+kFAEfW/kaafeGEeuV2oOxNEUyQftB999TxR6i8DU8t+zXnl6?=
- =?us-ascii?Q?Iod0IhNzWXPKvzVX6/Z6R+hYrMN6rB9bKr/sNZDaccBKyz3dnZ5XoTtUd6Qv?=
- =?us-ascii?Q?3guM8uznciYl4s8KZl7aZGhVEov33JXGjoNFffUrWzIqjvrv03ERLqCv+L3i?=
- =?us-ascii?Q?OiMp384pXJdKeRPoPm1GwMqVfy5CC8Awa0v8Mo4Z6wAxbeQNXgKTtuVZFgaX?=
- =?us-ascii?Q?LvIwS9k5pibzzEJouW0b9nBokh6tacJLGh25/Mhy9xsCnLCVE73gfuMS5bPx?=
- =?us-ascii?Q?J+j1CEOawPidQV76vtyituMK4DbD8VQMRvgc6/WeHuf16tRfFfNN4PWNjPiq?=
- =?us-ascii?Q?xw3PdPjqLR8VsOQ2GShGi5arsbD515gj3Ndk4Ilr4Jn8oDk05BRlmnASf+nJ?=
- =?us-ascii?Q?vRlryObLzF9BvnchjbID8r2H2umATv8NULXnRH+POVGrlNX5PZLENDMN7z1j?=
- =?us-ascii?Q?gIp8l48VY5P7aQOGUSHPunXtUQg3ahB5EAvKrehn/N6jK/do8hGCZoDcoWOm?=
- =?us-ascii?Q?hF+1+9auVI68pbCCWuWx9qnfcQ7qxB+aFLRiYyqXvgTZwpg3S/oL4ytU6C3j?=
- =?us-ascii?Q?xB9+1W2yYim4Zucs9iAKLH46uAATZ0NWOVbeI6cqMIVtjyOXQj+s+cHA6OJD?=
- =?us-ascii?Q?4ILaOR6SvwkTgnNweYEM0byEU1HZTDLlyaMD7rEARSf/olblk/mCHgTJoItI?=
- =?us-ascii?Q?HdVMC+hlWG8zaPKgNO/WSG0LgNHn8mHikuaeum+SIUQehKDnKVnM0j1moIlg?=
- =?us-ascii?Q?m7j4M6tR6KP4Lw9PQ/sLXjQFSJVuMqhFT54gMODpqHRS8Gvhkk6ZAk4j2PKn?=
- =?us-ascii?Q?pxYND4Ygrht57BuMT23zo5uh/jDEEFzvCp8rqSdjAfD0TLoFKx41ZQ9W5S6c?=
- =?us-ascii?Q?hm47fMLBxQY0fwPSjntt9yeeZHRCi/zDSb95coTowrd6ttN8/vS8pkghXvl3?=
- =?us-ascii?Q?eS6gGRmYnnCYGCWLXQCQX78SpXvgxJmiTzHSQ0jkAMThXORH4+2+Xy2TOLq1?=
- =?us-ascii?Q?kLAgNSOLKWoVKvX15GzG+jBjRrbw9C18YefgdUJiT6B+vFErx80SKyRg+P2u?=
- =?us-ascii?Q?bT7e0Lnp0cEcIzBKKn/ZORg/otJqeorHKq9PgRW9tpvYaIi24juAJMUfOS81?=
- =?us-ascii?Q?raJrDAdM5D/FEwdlIhKw9xBZaCpYaJZz7pabXBxoi/uaOzUiDrEfDlZzVI3Z?=
- =?us-ascii?Q?t21zY8DyAGmFolvkwm0xbcKbTGrgb70CeXXmL/NwNGramIL7kXaUDXGaS7/5?=
- =?us-ascii?Q?BsO8v93GapE6yPDWoh27WZ1LGxKf5wRG9/DjyGI1gebLs5SBXdY+gi9YkTSm?=
- =?us-ascii?Q?veRVcAJKQ1uF++QIPW8shThwFe6CGCa88Zn2rfsTs9UJChbh8NIDTmVAN+PB?=
- =?us-ascii?Q?GNbKcdCgKlmwWZrKivJLDeoCCRzdU/4TL0S3vhywxQUHe51GLXSXgq8IBIAP?=
- =?us-ascii?Q?n7YLjkd4oSq1fu5qwho9Ik+pvHmPzoOBZR71uQ2qxh4gGbvpWHX/UvWPmC41?=
- =?us-ascii?Q?8A8ObglLesnjl7Qog0Ud698=3D?=
+	=?us-ascii?Q?qeIhzGU3PLpuURS/nKNx71nswF2Wv1M+dLtKnefMRLu5a8Vej6nWovhZDnBd?=
+ =?us-ascii?Q?5c8+J4hZNiVcx3RHCyI7maajN1m/ueMsaSHFapFrMT0jZ/qYg34omUwewPUE?=
+ =?us-ascii?Q?vSJ4d92pDRlVlgu0jn0E9ajrxeIiP1Hn8ZXn9usuz4b46FGEj1djLpIK9fBp?=
+ =?us-ascii?Q?4oiLQtJNlR74YsHnvxe8C1/mfY+kQoxOyEoVM9MoI/1DdEmTUnNTswnhdfxx?=
+ =?us-ascii?Q?+R6uCA6ufx7SrJ4d+dmfn1KU4hk4Jx/Z81GWzgZNRNI3MqtXbzxiWlaZtQwp?=
+ =?us-ascii?Q?Ahz0M0Rj+PXTb7p1vThsd9QPnmlCCS0MU3eJ6Iy6Gdw1m+NUddsg8II7QS7+?=
+ =?us-ascii?Q?mrRAXSfHivYsAVtEsnDNlag/FFPtMuKJ9iLocFnu5OruRQueamVsUzWEZJv3?=
+ =?us-ascii?Q?okMxea8Zd9qdyu+8fL48+AtQQ0AdbcmhHbe/+sQsCDbb8up/ceVAs+gSTgPJ?=
+ =?us-ascii?Q?dyi5RGPzB8VfEBdp3He8u2LywVQfTG8R2fcXqs1WJIzhySX5UyT+cROWqeoJ?=
+ =?us-ascii?Q?BTAebK7TebDhPhbWe6T3hQf2BAbKZjepEw8FmFCubu4NrsZLflQn1jdgr88d?=
+ =?us-ascii?Q?9jKf+E3k6lxf0KkV7k/8kXheBWhL7nqxiVNfPFxj26pdKc5IVGILNGC+6oDT?=
+ =?us-ascii?Q?A3qLoqrpZpgQHHGwu5JSEpRMudOcZsO/JJ6PHdlaWP1vMVIANMXUIWjnL1W0?=
+ =?us-ascii?Q?fyVhnblazV+M3npxSWuYqLnaws93vF9kGqIuwweoJYcHRu1OTUDubuXr+wgJ?=
+ =?us-ascii?Q?P12H8pUqvUxkatBITRP9nOKqmMi4KFz2N9MBGfr+NC+0+iq21255/EfQaL5K?=
+ =?us-ascii?Q?+59A57FE+lccxNTWqf0vsH1y2jW3HAKbighmbP8GQfmKmKApJgrR036kSv7N?=
+ =?us-ascii?Q?h8g8PCTbud1yN9PbBjX/OHtJ/SjOzqcfo80dcxPWTJEvcNJ/ljhDyXQA3ZRK?=
+ =?us-ascii?Q?XzGi4w9IQCs2xkhmkflTpsk2yabl3C0/IgRxxzHzEnufh61dHTWH7Fiq2Dxd?=
+ =?us-ascii?Q?TJ8JKZxoQcUBHa1c31BCtDdRApEBkbUSS/tBo0leon5ArP4uT+/3j6Il1WxC?=
+ =?us-ascii?Q?5/lOqpaH7kXs8sMBw1rSXkzzFcMwYVlkmomD4yzUZt7Sa6jGXoCMheyUQvKP?=
+ =?us-ascii?Q?G6LpXuUc7zbzmFEQhNx3Sai5ZijT1KTcHmKMLxP4H6YUeSyWmZugJ6ETpRYx?=
+ =?us-ascii?Q?ps+UfVle7sLy+0q0jiN1V5QP7uhefnQadXESRlS8vcCzdupj6l4+Yb7o1B9L?=
+ =?us-ascii?Q?DjiyQx3TuGXQVsbDm1GMZNuQZKboQcbk0AsCau9AkszavSAm0jEi3vCEK4EE?=
+ =?us-ascii?Q?y8z0I4m8M8azut7WagDd7h4kgtCbKU9tEn4CspgT6o8JDGe7Do3trcmeGkvf?=
+ =?us-ascii?Q?+gInCUunxbPps6DWuWKqIKhZyOS52W3xiyKBJQn4EHBvo4xoC70tE/ujszmD?=
+ =?us-ascii?Q?4fV9MdAjKtUlqpVwNPzoq82JhpVlH6EWchhEg7o7SjDHbN9ALfE3TY3t+1Ey?=
+ =?us-ascii?Q?0NMtSHjHJMbzgWU6r4+KeFF9GaPi596a8KY0uquqSSz8P2G37CgBbCn4SWTp?=
+ =?us-ascii?Q?wp8/ywppVn3MH3WN8m+FdeEi3Xz0V772Iq4pJDfCIbQxPk+lSvKxNv8vCLZP?=
+ =?us-ascii?Q?uj+oIKcx/jZb/1w83v0iuhs=3D?=
 X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cf710adc-e410-43da-fa3a-08ddc4fa3da0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 830fa674-0e0f-456b-e989-08ddc4fa4519
 X-MS-Exchange-CrossTenant-AuthSource: PH0PR01MB6761.prod.exchangelabs.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2025 06:22:01.4965
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2025 06:22:13.8640
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kLTpIG8Ydp6k7TONz8q5CaaBdUnHv35ZKLz0K7Rd7A8nG8otvMHYOjHhU0iAnZds4GvsSNUz0N9QVxjFORwQg1POvUDjSq8RuZc+brqywZKnBR7Vk5WBhFeYbEYG9FPN
+X-MS-Exchange-CrossTenant-UserPrincipalName: Xfp+q9Y3N3+Ihtv5sWQb0q4LSRNExWqKmNud8qejEICyLbXvB+lsLn9BujqU6jeEezUHV2htscrqr0mEk8CLteuOhzd/yS7az4df8rMwg/0Y3ta4cJemIa6JEqfnGdrI
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR01MB7287
 
-Load balancing is limitted to a set of CPUs, such as active CPUs.
-Group classification may be incorrect if group weight counts inactive CPUs.
+update_sg_wakeup_stats() uses a set of helper functions:
+  cpu_load_without(struct task_struct *p),
+  cpu_runnable_without(struct task_struct *p),
+  cpu_util_without(struct task_struct *p),
+  task_running_on_cpu(struct task_struct *p),
+  idle_cpu_without(struct task_struct *p).
+
+update_sg_lb_stats() uses similar helper functions, without the 'p'
+argument: cpu_load(), cpu_runnable(), cpu_util_cfs(), idle_cpu().
+
+Make update_sg_wakeup_stats() helper functions handle the case when
+'p==NULL'. So update_sg_lb_stats() can use the same helper functions.
+
+This is the first step to unify update_sg_wakeup_stats() and
+update_sg_lb_stats().
 
 Signed-off-by: Adam Li <adamli@os.amperecomputing.com>
 ---
- kernel/sched/fair.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/sched/fair.c | 95 ++++++++++++++++++++++++---------------------
+ 1 file changed, 50 insertions(+), 45 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 452e2df961b9..db9ec6a6acdf 100644
+index db9ec6a6acdf..69dac5b337d8 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -10427,7 +10427,7 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+@@ -7250,7 +7250,8 @@ static unsigned long cpu_load_without(struct rq *rq, struct task_struct *p)
+ 	unsigned int load;
  
- 	sgs->group_capacity = group->sgc->capacity;
+ 	/* Task has no contribution or is new */
+-	if (cpu_of(rq) != task_cpu(p) || !READ_ONCE(p->se.avg.last_update_time))
++	if (!p || cpu_of(rq) != task_cpu(p) ||
++	    !READ_ONCE(p->se.avg.last_update_time))
+ 		return cpu_load(rq);
  
--	sgs->group_weight = group->group_weight;
-+	sgs->group_weight = cpumask_weight_and(sched_group_span(group), env->cpus);
+ 	cfs_rq = &rq->cfs;
+@@ -7273,7 +7274,8 @@ static unsigned long cpu_runnable_without(struct rq *rq, struct task_struct *p)
+ 	unsigned int runnable;
  
- 	/* Check if dst CPU is idle and preferred to this group */
- 	if (!local_group && env->idle && sgs->sum_h_nr_running &&
+ 	/* Task has no contribution or is new */
+-	if (cpu_of(rq) != task_cpu(p) || !READ_ONCE(p->se.avg.last_update_time))
++	if (!p || cpu_of(rq) != task_cpu(p) ||
++	    !READ_ONCE(p->se.avg.last_update_time))
+ 		return cpu_runnable(rq);
+ 
+ 	cfs_rq = &rq->cfs;
+@@ -7285,6 +7287,51 @@ static unsigned long cpu_runnable_without(struct rq *rq, struct task_struct *p)
+ 	return runnable;
+ }
+ 
++/*
++ * task_running_on_cpu - return 1 if @p is running on @cpu.
++ */
++
++static unsigned int task_running_on_cpu(int cpu, struct task_struct *p)
++{
++	/* Task has no contribution or is new */
++	if (!p || cpu != task_cpu(p) || !READ_ONCE(p->se.avg.last_update_time))
++		return 0;
++
++	if (task_on_rq_queued(p))
++		return 1;
++
++	return 0;
++}
++
++/**
++ * idle_cpu_without - would a given CPU be idle without p ?
++ * @cpu: the processor on which idleness is tested.
++ * @p: task which should be ignored.
++ *
++ * Return: 1 if the CPU would be idle. 0 otherwise.
++ */
++static int idle_cpu_without(int cpu, struct task_struct *p)
++{
++	struct rq *rq = cpu_rq(cpu);
++
++	if (!p)
++		return idle_cpu(cpu);
++
++	if (rq->curr != rq->idle && rq->curr != p)
++		return 0;
++
++	/*
++	 * rq->nr_running can't be used but an updated version without the
++	 * impact of p on cpu must be used instead. The updated nr_running
++	 * be computed and tested before calling idle_cpu_without().
++	 */
++
++	if (rq->ttwu_pending)
++		return 0;
++
++	return 1;
++}
++
+ static unsigned long capacity_of(int cpu)
+ {
+ 	return cpu_rq(cpu)->cpu_capacity;
+@@ -8099,7 +8146,7 @@ unsigned long cpu_util_cfs_boost(int cpu)
+ static unsigned long cpu_util_without(int cpu, struct task_struct *p)
+ {
+ 	/* Task has no contribution or is new */
+-	if (cpu != task_cpu(p) || !READ_ONCE(p->se.avg.last_update_time))
++	if (!p || cpu != task_cpu(p) || !READ_ONCE(p->se.avg.last_update_time))
+ 		p = NULL;
+ 
+ 	return cpu_util(cpu, p, -1, 0);
+@@ -10631,48 +10678,6 @@ static inline enum fbq_type fbq_classify_rq(struct rq *rq)
+ 
+ struct sg_lb_stats;
+ 
+-/*
+- * task_running_on_cpu - return 1 if @p is running on @cpu.
+- */
+-
+-static unsigned int task_running_on_cpu(int cpu, struct task_struct *p)
+-{
+-	/* Task has no contribution or is new */
+-	if (cpu != task_cpu(p) || !READ_ONCE(p->se.avg.last_update_time))
+-		return 0;
+-
+-	if (task_on_rq_queued(p))
+-		return 1;
+-
+-	return 0;
+-}
+-
+-/**
+- * idle_cpu_without - would a given CPU be idle without p ?
+- * @cpu: the processor on which idleness is tested.
+- * @p: task which should be ignored.
+- *
+- * Return: 1 if the CPU would be idle. 0 otherwise.
+- */
+-static int idle_cpu_without(int cpu, struct task_struct *p)
+-{
+-	struct rq *rq = cpu_rq(cpu);
+-
+-	if (rq->curr != rq->idle && rq->curr != p)
+-		return 0;
+-
+-	/*
+-	 * rq->nr_running can't be used but an updated version without the
+-	 * impact of p on cpu must be used instead. The updated nr_running
+-	 * be computed and tested before calling idle_cpu_without().
+-	 */
+-
+-	if (rq->ttwu_pending)
+-		return 0;
+-
+-	return 1;
+-}
+-
+ /*
+  * update_sg_wakeup_stats - Update sched_group's statistics for wakeup.
+  * @sd: The sched_domain level to look for idlest group.
 -- 
 2.34.1
 
