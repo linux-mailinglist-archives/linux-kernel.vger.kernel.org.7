@@ -1,220 +1,331 @@
-Return-Path: <linux-kernel+bounces-735061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA0BDB08A57
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:12:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DC20B08A5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:13:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9399D4E4AD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:12:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E886B7B0AB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:11:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09719299928;
-	Thu, 17 Jul 2025 10:12:50 +0000 (UTC)
-Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [118.143.206.90])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A081D5CE8;
-	Thu, 17 Jul 2025 10:12:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.143.206.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA0829994B;
+	Thu, 17 Jul 2025 10:13:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JpZcuX7e"
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCEC4298CC3;
+	Thu, 17 Jul 2025 10:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752747169; cv=none; b=QFTHH4RVabslPbi3TO1825yA0ZGgTitC9JYOk0DEcBYAadTlCBEkfIArmbeXpbSQBnfyWYul+g9h6X45nAY0ek4gGEUCX5WWfU5J8mY4ser1MfEjMac6cosf43muiGDS9QSa1E8rnvaWXe/Dnj8lkIIG7CVcjS5JIDh3Hmwe8xM=
+	t=1752747190; cv=none; b=D2lpoGFCji4aKSh04VICSbNypooz8sBpNPRjIQUZ+oCj2Gzq3d+T+/lU46HsN9UApmNr5dXWmXZner4gzsyAy6PsGUMd39H35u7u0YriG1zdCchmpdwmd+zGcO8Gp6BadDcZGGIYD1lBOv8iZ9wQm09jTQxwf8iZ1lGvoUuAqrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752747169; c=relaxed/simple;
-	bh=uEgTeSOrVumG9zN+PvcCy4nZs+ahw73Jgn2Q3UeBxYU=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=aC/PpBtSnoGxnPs6fHpuGm5mifQ91a61YpwwceRrJc80pDsPHR20O+LhLKxqJKa/I1zXInLb8EcXWtC6XuuVgnVLruxweYm1JHfYkcWwxdenJbgl66Et6Izec9nQk4RSESD/7g3AOx0GdWY+FAE+Gc4hI+jTuJeAo6h36qi+Y9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=118.143.206.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
-X-CSE-ConnectionGUID: rrR6SmeVQHem/wIpXjI+pA==
-X-CSE-MsgGUID: cyioYL1iTzmTefqXy2HvNw==
-X-IronPort-AV: E=Sophos;i="6.16,318,1744041600"; 
-   d="scan'208";a="120777319"
-From: =?gb2312?B?1uzi/ces?= <zhukaiqian@xiaomi.com>
-To: "rafael@kernel.org" <rafael@kernel.org>
-CC: Daniel Lezcano <daniel.lezcano@linaro.org>, "christian.loehle@arm.com"
-	<christian.loehle@arm.com>, "quic_zhonhan@quicinc.com"
-	<quic_zhonhan@quicinc.com>, "linux-pm@vger.kernel.org"
-	<linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH] cpuidle: menu: find the typical interval by a heuristic
- classification method
-Thread-Topic: [PATCH] cpuidle: menu: find the typical interval by a heuristic
- classification method
-Thread-Index: Adv2/kCxxcwMPvuoQ+OgADfpnC9xOw==
-Date: Thu, 17 Jul 2025 10:11:32 +0000
-Message-ID: <fa1c6faa96344fa9803675b179d7a329@xiaomi.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1752747190; c=relaxed/simple;
+	bh=1dHnw1vAQgMpykmsQRAyaeiM+QvQbO8n66y5jsDIxZc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MG+j3/Br4yhyefswEZjc0HGECH7V5Szr+kNlz5i6gz96EhvXigqr/zc81PnMuODGFCnCj3CrXxOjRtMXMAnBVJmyL5tfAkxv7q7t0mKts0FWFpzO8LqZ/eEWnq/MAEwn0U12rwSbfpU2tiTcfwecqvrFDasgYdYsLnn4CjOKBz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JpZcuX7e; arc=none smtp.client-ip=209.85.167.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-41b4bf6ead9so542845b6e.3;
+        Thu, 17 Jul 2025 03:13:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752747188; x=1753351988; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5hSPjsM7QKYflgb+oQCXCInkDUTd/I69aUahHfwDbwM=;
+        b=JpZcuX7ehiD3EgX2jVtWU3sARsH/O0JjNzFU0JOM8eVwO4GCE/ufT6W5SiLvPQeSN4
+         /RxuYR3lKqQM/JvnarnVE6hV+XAlf2oXxnjF0r1iYNYfAOPErIbxWCyBashnWL1AWEK/
+         U7n19Ld/0QScsQL9S2y8QwSw9tzTkBWC86dXOMdZriRshnG7lucIzIuw/3HRYpgY75LN
+         FNHnDhwqGKEM0uGKGuaG5BWkwN6jSLC/wbzM8bnmyn7dpIZN6xjb2HrRSrDx0eSr/0yn
+         zQ4s3vsUF2aAj7GytWbBDkJxXEiIgu+yz0Lfa9MbwG1EiJKEvh7oP6jF+PhHpN8vz/cE
+         42/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752747188; x=1753351988;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5hSPjsM7QKYflgb+oQCXCInkDUTd/I69aUahHfwDbwM=;
+        b=PpKUjyUcp+LRFDHgzzNr6AG3Revtakutnldq7SMkGrc5Ug2oGch4Vb/+bxEc1KrIF8
+         Ln8IL+1FhICyT1JtraPHlr53BowhDAuuYu+ac/7GeMeo1sA3fZ7WWlkP8sU44q+AmfEp
+         wakNKbK0cpJe4q76FohT3OfjmiFwcZVUECxpChikqltRnhUXZ/vH7lmAyKWHyfMZbmLa
+         Az6OKB89yTbPWcfz9Ypz7YR/x3ggX0b5aCpq8Gy50f5UK2Is/AYp3+QmeMHRv6tXxUev
+         ZdfvbF65X4Nm+oMbBY19Nt3MA37tbP1o434rQXnYbirdVpvBWG9bjX7gtX8eszpj0Z+v
+         Kb9g==
+X-Forwarded-Encrypted: i=1; AJvYcCVmsumNw4p7C1A4GA6H/VixQzwiItvU6xkJJ6/DqdkK0eFJwEoc32dZYDf68PDL9ca6O6I=@vger.kernel.org, AJvYcCVwk7UWRio9WdTdOg76G8d469kFd2K4b/Sig3LaytL08LutGGA/esxBiI4G7WRVd9KfeCWZt632FrBbwC4n@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWQ5m1kai8KIvt3fOCD+MONtfly0F+ROOS+kSZUWfHK77MmrNa
+	gZ/ojEBwtzvmQaXYedOimIsU182LfmZBlNYSwjqYv46esi/3uGdiHpzDPi86yZjT2kFoeHpQ/qk
+	GBoc+zZ2689uyBZao+OZHf8kfYBgKGguKYmEM6lo=
+X-Gm-Gg: ASbGncsW+wwmXQVyEOb54u2Y/38NS7UsukXIfDBChEu8V/Fsa35VIS2/Kab2ezGtC7O
+	MbrKTOTyzTFeiB3yzg59g45zUvBd44VXUacyxhKS9gST8MU/OnJNoO/i7P/7BVGOBiQbYIxvHq1
+	5JgjerQitEJeWzej0vlvK9+sYhZ55Qr8F4Yxlz3p0HbRxGthaiqWi9KUmVe5i46hjK6b83rvr8L
+	YBVv9E=
+X-Google-Smtp-Source: AGHT+IFYWO5FGaRZp1uWHyLuZVVuTLhXeJVIxht6qdNIMmZQwYZyDvKova0EF40lnv85bryudIMcS19Up/0D/LP64/4=
+X-Received: by 2002:a05:6808:3c4b:b0:41c:b43b:edbc with SMTP id
+ 5614622812f47-41d04c94f2emr4984872b6e.22.1752747187727; Thu, 17 Jul 2025
+ 03:13:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250709055029.723243-1-duanchenghao@kylinos.cn>
+ <20250709055029.723243-5-duanchenghao@kylinos.cn> <CAEyhmHS__fqHS8Bpg7+4apO7OuXG1sP3miCcAMT+Y3uU0+_xjg@mail.gmail.com>
+ <20250717092746.GA993901@chenghao-pc>
+In-Reply-To: <20250717092746.GA993901@chenghao-pc>
+From: Hengqi Chen <hengqi.chen@gmail.com>
+Date: Thu, 17 Jul 2025 18:12:55 +0800
+X-Gm-Features: Ac12FXx6whW96zQ6bIZM8TqDDZxilosr5wnN6L0hS4B3__8umbTdKW2D60gn1IU
+Message-ID: <CAEyhmHTpJ0OKbW1QEFV+XMxCC9kL2eSwKMkk7=YyLprjNxc8iA@mail.gmail.com>
+Subject: Re: [PATCH v3 4/5] LoongArch: BPF: Add bpf_arch_xxxxx support for Loongarch
+To: Chenghao Duan <duanchenghao@kylinos.cn>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
+	yangtiezhu@loongson.cn, chenhuacai@kernel.org, martin.lau@linux.dev, 
+	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev, 
+	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me, 
+	haoluo@google.com, jolsa@kernel.org, kernel@xen0n.name, 
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, bpf@vger.kernel.org, 
+	guodongtai@kylinos.cn, youling.tang@linux.dev, jianghaoran@kylinos.cn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-VGhlIGl0ZXJhdGlvbnMgb2YgZGV2aWF0aW9uIGNhbGN1bGF0aW9uIGdpdmVzIHRvbyBsZXNzIHBy
-ZWRpY3Rpb25zIG9uDQp0aGUgaWRsZSBpbnRlcnZhbCBieSB0cnlpbmcgdG8gZmluZCBhIHNpbmds
-ZSByZXBlYXRpbmcgcGF0dGVybiBmcm9tIHRoZQ0Kd2hvbGUgaGlzdG9yeS4gVGhpcyBpcyBub3Qg
-YWx3YXlzIHRoZSBjYXNlIHdoZW4gdGhlIHdvcmtsb2FkIGlzIGZsb3dpbmcuDQoNClRoaXMgYWxn
-b3JpdGhtIGFzc3VtZXMgdGhlcmUncmUgbXVsdGlwbGUgcmVwZWF0aW5nIHBhdHRlcm5zIGhldXJp
-c3RpY2FsbHksDQphbmQgdHJpZXMgdG8gZGV0ZXJtaW5lIHdoaWNoIGlzIHRoZSBtb3N0IHByb21p
-c2luZyBvbmUgZnJvbSB0aGUgYXZlcmFnZXMNCm9mIGRpZmZlcmVudCBpZGxlIHN0YXRlcy4gSXQg
-YWxzbyB0YWtlcyB0aGUgb2NjdXJyZW5jZSBzZXF1ZW5jZSBpbnRvDQpjb25zaWRlcmF0aW9uLCBh
-bmQgZ2l2ZXMgdGhlIHByZWRpY3Rpb24gY2xvc2UgdG8gdGhlIHJlY2VudCBpZGxlLg0KDQpUaGlz
-IGluY3JlYXNlZCB0aGUgc2hhbGxvdyBpZGxlIHN0YXRlcyBkZXRlY3RlZCwgYnV0IHRoZSBkaWZm
-ZXJlbmNlIGluIGRlZXANCnNsZWVwIHRpbWUgZGlkbid0IGNoYW5nZSBhIGxvdC4gVGhlIHBlcmZv
-cm1hbmNlIG9uIG15IHBsYXRmb3JtLCBhcw0KZXhwZWN0ZWQsIGhhcyBpbXByb3ZlZC4NCg0KQmVm
-b3JlOg0KTXVsdGktQ29yZSBTY29yZSAgICAgICAgICAgICAgNzI3OQ0KT3ZlcmFsbCAgICBhYm92
-ZSAgIHVuZGVyDQogIDM0MTA3ICAgIDAuMDAgICAgMi43NQ0KICAgODIwMCAgIDU5LjkwICAgIDcu
-MDINCiAgMjk4ODEgICA1Ny4wNiAgICAwLjAwDQoNCkFmdGVyOg0KTXVsdGktQ29yZSBTY29yZSAg
-ICAgICAgICAgICAgNzM2NQ0KT3ZlcmFsbCAgICBhYm92ZSAgIHVuZGVyDQogIDQ5OTEzICAgIDAu
-MDAgICAgNi40Mw0KICAgNzg4MSAgIDQ0LjUxICAgMTguMDgNCiAgMjMxMDggICA1Mi4zOCAgICAw
-LjAwDQoNClRoZXJlJ3MgYW5vdGhlciByZS1jbGFzc2lmaWNhdGlvbiBtZXRob2QsIHdoaWNoLCBp
-bnN0ZWFkIG9mIGxvb2tpbmcgZm9yIHRoZQ0KcmVwZWF0aW5nLWludGVydmFsLCB0ZW5kcyB0byBm
-aW5kIHRoZSByZXBlYXRpbmcgc3RhdGUuIEl0IGdpdmVzIGEgYmV0dGVyIHJlc3VsdA0Kb24gcGVy
-Zm9ybWFuY2UgZ2FpbiwgYnV0IG1heSBodXJ0IHRoZSBwb3dlciBjb25zdW1wdGlvbi4NCg0KaWYg
-KGJlc3Rfc3RhdGUgPT0gZHJ2LT5zdGF0ZV9jb3VudCAtIDEgfHwgc3RhdGVfYXZnW2Jlc3Rfc3Rh
-dGVdID09IDApIHsNCmFkal93ZWlnaHRbYmVzdF9zdGF0ZV0gKz0gd2VpZ2h0c1tpXTsNCmFkal9h
-dmdbYmVzdF9zdGF0ZV0gKz0gdmFsdWU7DQphZGpfaGl0W2Jlc3Rfc3RhdGVdKys7DQp9IGVsc2Ug
-aWYgKGJlc3RfZGlmZiA8IHN0YXRlX2F2Z1tiZXN0X3N0YXRlXSAqIDIpIHsNCmFkal93ZWlnaHRb
-YmVzdF9zdGF0ZV0gKz0gd2VpZ2h0c1tpXTsNCmFkal9hdmdbYmVzdF9zdGF0ZV0gKz0gdmFsdWU7
-DQphZGpfaGl0W2Jlc3Rfc3RhdGVdKys7DQp9IGVsc2Ugew0KYWRqX3dlaWdodFtiZXN0X3N0YXRl
-ICsgMV0gKz0gd2VpZ2h0c1tpXTsNCmFkal9hdmdbYmVzdF9zdGF0ZSArIDFdICs9IHZhbHVlOw0K
-YWRqX2hpdFtiZXN0X3N0YXRlICsgMV0rKzsNCn0NCg0KUmVwZWF0aW5nIFN0YXRlOg0KTXVsdGkt
-Q29yZSBTY29yZSAgICAgICAgICAgICAgNzQyMQ0KT3ZlcmFsbCAgICBhYm92ZSAgIHVuZGVyDQog
-IDYwODU3ICAgIDAuMDAgICAgOC4zMA0KICAgMzgzOCAgIDI5Ljg4ICAgMTguNDINCiAgMTUzMTgg
-ICAzOS4wNSAgICAwLjAwDQoNCg0KU2lnbmVkLW9mZi1ieTogS2FpcWlhbiBaaHUgPHpodWthaXFp
-YW5AeGlhb21pLmNvbT4NCi0tLQ0KIGRyaXZlcnMvY3B1aWRsZS9nb3Zlcm5vcnMvbWVudS5jIHwg
-MTc0ICsrKysrKysrKysrKysrKystLS0tLS0tLS0tLS0tLS0NCiAxIGZpbGUgY2hhbmdlZCwgODkg
-aW5zZXJ0aW9ucygrKSwgODUgZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL2Nw
-dWlkbGUvZ292ZXJub3JzL21lbnUuYyBiL2RyaXZlcnMvY3B1aWRsZS9nb3Zlcm5vcnMvbWVudS5j
-DQppbmRleCA1MmQ1ZDI2ZmM3YzYuLjUyNzIzZWMxYTBhNiAxMDA2NDQNCi0tLSBhL2RyaXZlcnMv
-Y3B1aWRsZS9nb3Zlcm5vcnMvbWVudS5jDQorKysgYi9kcml2ZXJzL2NwdWlkbGUvZ292ZXJub3Jz
-L21lbnUuYw0KQEAgLTk5LDEwOSArOTksMTEzIEBAIHN0YXRpYyBERUZJTkVfUEVSX0NQVShzdHJ1
-Y3QgbWVudV9kZXZpY2UsIG1lbnVfZGV2aWNlcyk7DQoNCiBzdGF0aWMgdm9pZCBtZW51X3VwZGF0
-ZShzdHJ1Y3QgY3B1aWRsZV9kcml2ZXIgKmRydiwgc3RydWN0IGNwdWlkbGVfZGV2aWNlICpkZXYp
-Ow0KDQotLyoNCi0gKiBUcnkgZGV0ZWN0aW5nIHJlcGVhdGluZyBwYXR0ZXJucyBieSBrZWVwaW5n
-IHRyYWNrIG9mIHRoZSBsYXN0IDgNCi0gKiBpbnRlcnZhbHMsIGFuZCBjaGVja2luZyBpZiB0aGUg
-c3RhbmRhcmQgZGV2aWF0aW9uIG9mIHRoYXQgc2V0DQotICogb2YgcG9pbnRzIGlzIGJlbG93IGEg
-dGhyZXNob2xkLiBJZiBpdCBpcy4uLiB0aGVuIHVzZSB0aGUNCi0gKiBhdmVyYWdlIG9mIHRoZXNl
-IDggcG9pbnRzIGFzIHRoZSBlc3RpbWF0ZWQgdmFsdWUuDQotICovDQotc3RhdGljIHVuc2lnbmVk
-IGludCBnZXRfdHlwaWNhbF9pbnRlcnZhbChzdHJ1Y3QgbWVudV9kZXZpY2UgKmRhdGEpDQorc3Rh
-dGljIGludCBnZXRfYWN0dWFsX3N0YXRlKHN0cnVjdCBjcHVpZGxlX2RyaXZlciAqZHJ2LA0KKyAg
-ICBzdHJ1Y3QgY3B1aWRsZV9kZXZpY2UgKmRldiwNCisgICAgaW50IGR1cmF0aW9uX3VzKQ0KIHsN
-Ci1zNjQgdmFsdWUsIG1pbl90aHJlc2ggPSAtMSwgbWF4X3RocmVzaCA9IFVJTlRfTUFYOw0KLXVu
-c2lnbmVkIGludCBtYXgsIG1pbiwgZGl2aXNvcjsNCi11NjQgYXZnLCB2YXJpYW5jZSwgYXZnX3Nx
-Ow0KLWludCBpOw0KK2ludCBhY3R1YWw7DQoNCi1hZ2FpbjoNCi0vKiBDb21wdXRlIHRoZSBhdmVy
-YWdlIGFuZCB2YXJpYW5jZSBvZiBwYXN0IGludGVydmFscy4gKi8NCi1tYXggPSAwOw0KLW1pbiA9
-IFVJTlRfTUFYOw0KLWF2ZyA9IDA7DQotdmFyaWFuY2UgPSAwOw0KLWRpdmlzb3IgPSAwOw0KLWZv
-ciAoaSA9IDA7IGkgPCBJTlRFUlZBTFM7IGkrKykgew0KLXZhbHVlID0gZGF0YS0+aW50ZXJ2YWxz
-W2ldOw0KLS8qDQotICogRGlzY2FyZCB0aGUgc2FtcGxlcyBvdXRzaWRlIHRoZSBpbnRlcnZhbCBi
-ZXR3ZWVuIHRoZSBtaW4gYW5kDQotICogbWF4IHRocmVzaG9sZHMuDQotICovDQotaWYgKHZhbHVl
-IDw9IG1pbl90aHJlc2ggfHwgdmFsdWUgPj0gbWF4X3RocmVzaCkNCi1jb250aW51ZTsNCitmb3Ig
-KGludCBpID0gMDsgaSA8IGRydi0+c3RhdGVfY291bnQ7IGkrKykgew0KK2lmIChkdXJhdGlvbl91
-cyA8IGRydi0+c3RhdGVzW2ldLnRhcmdldF9yZXNpZGVuY3kpDQorYnJlYWs7DQorDQorYWN0dWFs
-ID0gaTsNCit9DQorDQorcmV0dXJuIGFjdHVhbDsNCit9DQorDQorc3RhdGljIHVuc2lnbmVkIGlu
-dCBnZXRfdHlwaWNhbF9pbnRlcnZhbChzdHJ1Y3QgY3B1aWRsZV9kcml2ZXIgKmRydiwNCisgc3Ry
-dWN0IGNwdWlkbGVfZGV2aWNlICpkZXYsDQorIHN0cnVjdCBtZW51X2RldmljZSAqZGF0YSkNCit7
-DQoraW50IGNudCA9IDA7DQorDQoraW50IHN0YXRlX2hpdFtDUFVJRExFX1NUQVRFX01BWF07DQor
-aW50IHN0YXRlX2F2Z1tDUFVJRExFX1NUQVRFX01BWF07DQoraW50IGFkal93ZWlnaHRbQ1BVSURM
-RV9TVEFURV9NQVhdOw0KK2ludCBhZGpfYXZnW0NQVUlETEVfU1RBVEVfTUFYXTsNCitpbnQgYWRq
-X2hpdFtDUFVJRExFX1NUQVRFX01BWF07DQoraW50IGhpdF90aHJlcyA9IG1heCgyLCBJTlRFUlZB
-TFMgLyBkcnYtPnN0YXRlX2NvdW50KTsNCitpbnQgd2VpZ2h0c1tJTlRFUlZBTFNdID0gezUsIDMs
-IDIsIDF9Ow0KK2ludCB3ZWlnaHQgPSAwOw0KK2ludCBoaWdoX3N0YXRlID0gLTE7DQoNCi1kaXZp
-c29yKys7DQoNCi1hdmcgKz0gdmFsdWU7DQotdmFyaWFuY2UgKz0gdmFsdWUgKiB2YWx1ZTsNCisv
-KiBHb2luZyB0aHJvdWdoIHRoZSBoaXN0b3J5LCBhbmQgZGl2aWRlIHRoZW0gYnkgdGhlIGFjdHVh
-bCBzdGF0ZSAqLw0KK2ZvciAoaW50IGkgPSAwOyBpIDwgSU5URVJWQUxTOyBpKyspIHsNCitpbnQg
-YWN0dWFsID0gZ2V0X2FjdHVhbF9zdGF0ZShkcnYsIGRldiwgZGF0YS0+aW50ZXJ2YWxzW2ldKTsN
-Cg0KLWlmICh2YWx1ZSA+IG1heCkNCi1tYXggPSB2YWx1ZTsNCisvKiBDb3VudCB0aGUgaWRsZSBz
-dGF0ZXMgaGl0IGluIHRoZSBoaXN0b3J5ICovDQorc3RhdGVfYXZnW2FjdHVhbF0gKz0gZGF0YS0+
-aW50ZXJ2YWxzW2ldOw0KK3N0YXRlX2hpdFthY3R1YWxdKys7DQoNCi1pZiAodmFsdWUgPCBtaW4p
-DQotbWluID0gdmFsdWU7DQorY250Kys7DQogfQ0KDQotaWYgKCFtYXgpDQoraWYgKGNudCA8IGhp
-dF90aHJlcykNCiByZXR1cm4gVUlOVF9NQVg7DQoNCi1pZiAoZGl2aXNvciA9PSBJTlRFUlZBTFMp
-IHsNCi1hdmcgPj49IElOVEVSVkFMX1NISUZUOw0KLXZhcmlhbmNlID4+PSBJTlRFUlZBTF9TSElG
-VDsNCi19IGVsc2Ugew0KLWRvX2RpdihhdmcsIGRpdmlzb3IpOw0KLWRvX2Rpdih2YXJpYW5jZSwg
-ZGl2aXNvcik7DQorLyogY2FsY3VsYXRlIHRoZSBhdmVyYWdlIG9mIGVhY2ggc3RhdGUgKi8NCitm
-b3IgKGludCBpID0gMDsgaSA8IGRydi0+c3RhdGVfY291bnQ7IGkrKykgew0KK2lmIChzdGF0ZV9o
-aXRbaV0gPiAxKQ0KK3N0YXRlX2F2Z1tpXSAvPSBzdGF0ZV9oaXRbaV07DQogfQ0KDQotYXZnX3Nx
-ID0gYXZnICogYXZnOw0KLXZhcmlhbmNlIC09IGF2Z19zcTsNCisvKiB0cnkgdG8gcmUtYXNzaWdu
-IHRoZSBkYXRhIHBvaW50cyBieSB0aGUgY2xvc2VuZXNzICovDQorZm9yIChpbnQgaSA9IDA7IGkg
-PCBJTlRFUlZBTFM7IGkrKykgew0KKy8qIFN0YXJ0aW5nIGZyb20gdGhlIHJlY2VudCBoaXN0b3J5
-ICovDQoraW50IGlkeCA9ICgoZGF0YS0+aW50ZXJ2YWxfcHRyIC0gaSAtIDEpICsgSU5URVJWQUxT
-KSAlIElOVEVSVkFMUzsNCit1bnNpZ25lZCBpbnQgZGlmZjsNCit1bnNpZ25lZCBpbnQgYmVzdF9k
-aWZmID0gVUlOVF9NQVg7DQordW5zaWduZWQgaW50IGJlc3Rfc3RhdGUsIG5leHRfc3RhdGU7DQor
-dW5zaWduZWQgaW50IHZhbHVlID0gZGF0YS0+aW50ZXJ2YWxzW2lkeF07DQorDQorZm9yIChpbnQg
-c3RhdGUgPSAwOyBzdGF0ZSA8IGRydi0+c3RhdGVfY291bnQ7IHN0YXRlKyspIHsNCitkaWZmID0g
-YWJzKHN0YXRlX2F2Z1tzdGF0ZV0gLSB2YWx1ZSk7DQoraWYgKGRpZmYgPCBiZXN0X2RpZmYpIHsN
-CitiZXN0X2RpZmYgPSBkaWZmOw0KK2Jlc3Rfc3RhdGUgPSBzdGF0ZTsNCit9DQorfQ0KDQotLyoN
-Ci0gKiBUaGUgdHlwaWNhbCBpbnRlcnZhbCBpcyBvYnRhaW5lZCB3aGVuIHN0YW5kYXJkIGRldmlh
-dGlvbiBpcw0KLSAqIHNtYWxsIChzdGRkZXYgPD0gMjAgdXMsIHZhcmlhbmNlIDw9IDQwMCB1c14y
-KSBvciBzdGFuZGFyZA0KLSAqIGRldmlhdGlvbiBpcyBzbWFsbCBjb21wYXJlZCB0byB0aGUgYXZl
-cmFnZSBpbnRlcnZhbCAoYXZnID4NCi0gKiA2KnN0ZGRldiwgYXZnXjIgPiAzNip2YXJpYW5jZSku
-IFRoZSBhdmVyYWdlIGlzIHNtYWxsZXIgdGhhbg0KLSAqIFVJTlRfTUFYIGFrYSBVMzJfTUFYLCBz
-byBjb21wdXRpbmcgaXRzIHNxdWFyZSBkb2VzIG5vdA0KLSAqIG92ZXJmbG93IGEgdTY0LiBXZSBz
-aW1wbHkgcmVqZWN0IHRoaXMgY2FuZGlkYXRlIGF2ZXJhZ2UgaWYNCi0gKiB0aGUgc3RhbmRhcmQg
-ZGV2aWF0aW9uIGlzIGdyZWF0ZXIgdGhhbiA3MTUgcyAod2hpY2ggaXMNCi0gKiByYXRoZXIgdW5s
-aWtlbHkpLg0KLSAqDQotICogVXNlIHRoaXMgcmVzdWx0IG9ubHkgaWYgdGhlcmUgaXMgbm8gdGlt
-ZXIgdG8gd2FrZSB1cyB1cCBzb29uZXIuDQotICovDQotaWYgKGxpa2VseSh2YXJpYW5jZSA8PSBV
-NjRfTUFYLzM2KSkgew0KLWlmICgoYXZnX3NxID4gdmFyaWFuY2UgKiAzNiAmJiBkaXZpc29yICog
-NCA+PSBJTlRFUlZBTFMgKiAzKSB8fA0KLSAgICB2YXJpYW5jZSA8PSA0MDApDQotcmV0dXJuIGF2
-ZzsNCitpZiAoYmVzdF9kaWZmIDwgKHN0YXRlX2F2Z1tiZXN0X3N0YXRlXSA+PiAyKSkgew0KK2Fk
-al9hdmdbYmVzdF9zdGF0ZV0gKz0gdmFsdWU7DQorYWRqX2hpdFtiZXN0X3N0YXRlXSsrOw0KK2Fk
-al93ZWlnaHRbYmVzdF9zdGF0ZV0gKz0gd2VpZ2h0c1tpXTsNCit9IGVsc2UgaWYgKGJlc3Rfc3Rh
-dGUgPCBkcnYtPnN0YXRlX2NvdW50IC0gMSkgew0KK25leHRfc3RhdGUgPSBiZXN0X3N0YXRlICsg
-MTsNCitkaWZmID0gYWJzKHN0YXRlX2F2Z1tuZXh0X3N0YXRlXSAtIHZhbHVlKTsNCitpZiAoZGlm
-ZiA8IChzdGF0ZV9hdmdbbmV4dF9zdGF0ZV0gPj4gMikpIHsNCithZGpfYXZnW25leHRfc3RhdGVd
-ICs9IHZhbHVlOw0KK2Fkal9oaXRbbmV4dF9zdGF0ZV0rKzsNCithZGpfd2VpZ2h0W25leHRfc3Rh
-dGVdICs9IHdlaWdodHNbaV07DQorfQ0KK30NCiB9DQoNCi0vKg0KLSAqIElmIHRoZXJlIGFyZSBv
-dXRsaWVycywgZGlzY2FyZCB0aGVtIGJ5IHNldHRpbmcgdGhyZXNob2xkcyB0byBleGNsdWRlDQot
-ICogZGF0YSBwb2ludHMgYXQgYSBsYXJnZSBlbm91Z2ggZGlzdGFuY2UgZnJvbSB0aGUgYXZlcmFn
-ZSwgdGhlbg0KLSAqIGNhbGN1bGF0ZSB0aGUgYXZlcmFnZSBhbmQgc3RhbmRhcmQgZGV2aWF0aW9u
-IGFnYWluLiBPbmNlIHdlIGdldA0KLSAqIGRvd24gdG8gdGhlIGxhc3QgMy80IG9mIG91ciBzYW1w
-bGVzLCBzdG9wIGV4Y2x1ZGluZyBzYW1wbGVzLg0KLSAqDQotICogVGhpcyBjYW4gZGVhbCB3aXRo
-IHdvcmtsb2FkcyB0aGF0IGhhdmUgbG9uZyBwYXVzZXMgaW50ZXJzcGVyc2VkDQotICogd2l0aCBz
-cG9yYWRpYyBhY3Rpdml0eSB3aXRoIGEgYnVuY2ggb2Ygc2hvcnQgcGF1c2VzLg0KKy8qIFdlJ3Zl
-IGFkanVzdGVkIHRoZSBoaXQgc3RhdHVzIGJ5IHRoZSBjbG9zZW5lc3MsIGlmIG9uZSBzdGF0ZSBp
-cyBzdGlsbA0KKyAqIGhpdCBtb3JlIG9mdGVuIGFuZCBzZWxlY3RlZCByZWNlbnRseSwgd2UgY2Fu
-IGFzc3VtZSB0aGF0IHN0YXRlIGlzIG1vcmUNCisgKiBsaWtlbHkgdG8gaGFwcGVuIGluIHRoZSBm
-dXR1cmUNCiAgKi8NCi1pZiAoZGl2aXNvciAqIDQgPD0gSU5URVJWQUxTICogMykgew0KLS8qDQot
-ICogSWYgdGhlcmUgYXJlIHN1ZmZpY2llbnRseSBtYW55IGRhdGEgcG9pbnRzIHN0aWxsIHVuZGVy
-DQotICogY29uc2lkZXJhdGlvbiBhZnRlciB0aGUgb3V0bGllcnMgaGF2ZSBiZWVuIGVsaW1pbmF0
-ZWQsDQotICogcmV0dXJuaW5nIHdpdGhvdXQgYSBwcmVkaWN0aW9uIHdvdWxkIGJlIGEgbWlzdGFr
-ZSBiZWNhdXNlIGl0DQotICogaXMgbGlrZWx5IHRoYXQgdGhlIG5leHQgaW50ZXJ2YWwgd2lsbCBu
-b3QgZXhjZWVkIHRoZSBjdXJyZW50DQotICogbWF4aW11bSwgc28gcmV0dXJuIHRoZSBsYXR0ZXIg
-aW4gdGhhdCBjYXNlLg0KLSAqLw0KLWlmIChkaXZpc29yID49IElOVEVSVkFMUyAvIDIpDQotcmV0
-dXJuIG1heDsNCi0NCi1yZXR1cm4gVUlOVF9NQVg7DQorZm9yIChpbnQgc3RhdGUgPSAwOyBzdGF0
-ZSA8IGRydi0+c3RhdGVfY291bnQ7IHN0YXRlKyspIHsNCitpZiAoYWRqX3dlaWdodFtzdGF0ZV0g
-PiAxICYmIGFkal9oaXRbc3RhdGVdID49IGhpdF90aHJlcykgew0KK2Fkal9hdmdbc3RhdGVdIC89
-IGFkal9oaXRbc3RhdGVdOw0KKw0KK2lmIChhZGpfd2VpZ2h0W3N0YXRlXSA+IHdlaWdodCkgew0K
-K3dlaWdodCA9IGFkal93ZWlnaHRbc3RhdGVdOw0KK2hpZ2hfc3RhdGUgPSBzdGF0ZTsNCit9IGVs
-c2UgaWYgKGFkal93ZWlnaHRbc3RhdGVdID09IHdlaWdodCkgew0KK2lmIChhZGpfaGl0W3N0YXRl
-XSA+IGFkal9oaXRbaGlnaF9zdGF0ZV0pDQoraGlnaF9zdGF0ZSA9IHN0YXRlOw0KK30NCit9DQog
-fQ0KDQotLyogVXBkYXRlIHRoZSB0aHJlc2hvbGRzIGZvciB0aGUgbmV4dCByb3VuZC4gKi8NCi1p
-ZiAoYXZnIC0gbWluID4gbWF4IC0gYXZnKQ0KLW1pbl90aHJlc2ggPSBtaW47DQotZWxzZQ0KLW1h
-eF90aHJlc2ggPSBtYXg7DQoraWYgKHdlaWdodCkNCityZXR1cm4gYWRqX2F2Z1toaWdoX3N0YXRl
-XTsNCg0KLWdvdG8gYWdhaW47DQorcmV0dXJuIFVJTlRfTUFYOw0KIH0NCg0KIC8qKg0KQEAgLTIy
-NSw3ICsyMjksNyBAQCBzdGF0aWMgaW50IG1lbnVfc2VsZWN0KHN0cnVjdCBjcHVpZGxlX2RyaXZl
-ciAqZHJ2LCBzdHJ1Y3QgY3B1aWRsZV9kZXZpY2UgKmRldiwNCiB9DQoNCiAvKiBGaW5kIHRoZSBz
-aG9ydGVzdCBleHBlY3RlZCBpZGxlIGludGVydmFsLiAqLw0KLXByZWRpY3RlZF9ucyA9IGdldF90
-eXBpY2FsX2ludGVydmFsKGRhdGEpICogTlNFQ19QRVJfVVNFQzsNCitwcmVkaWN0ZWRfbnMgPSBn
-ZXRfdHlwaWNhbF9pbnRlcnZhbChkcnYsIGRldiwgZGF0YSkgKiBOU0VDX1BFUl9VU0VDOw0KIGlm
-IChwcmVkaWN0ZWRfbnMgPiBSRVNJREVOQ1lfVEhSRVNIT0xEX05TKSB7DQogdW5zaWduZWQgaW50
-IHRpbWVyX3VzOw0KDQotLQ0KMi4zNC4xDQoNCiMvKioqKioqsb7Tyrz+vLDG5Li9vP66rNPQ0KHD
-17mry761xLGjw9zQxc+io6y99s/e09q3osvNuPjJz8PmtdjWt9bQwdCz9rXEuPbIy7vyyLrX6aGj
-vfvWucjOus7G5Mv7yMvS1MjOus7Qzsq9yrnTw6OosPzAqLWrsrvP3tPayKuyv7vysr+31rXY0LnC
-tqGiuLTWxqGiu/LJoreio6mxvtPKvP7W0LXE0MXPoqGjyOe5+8T6tO3K1cHLsb7Tyrz+o6zH68T6
-waK8tLXnu7C78tPKvP7NqNaqt6K8/sjLsqLJvrP9sb7Tyrz+o6EgVGhpcyBlLW1haWwgYW5kIGl0
-cyBhdHRhY2htZW50cyBjb250YWluIGNvbmZpZGVudGlhbCBpbmZvcm1hdGlvbiBmcm9tIFhJQU9N
-SSwgd2hpY2ggaXMgaW50ZW5kZWQgb25seSBmb3IgdGhlIHBlcnNvbiBvciBlbnRpdHkgd2hvc2Ug
-YWRkcmVzcyBpcyBsaXN0ZWQgYWJvdmUuIEFueSB1c2Ugb2YgdGhlIGluZm9ybWF0aW9uIGNvbnRh
-aW5lZCBoZXJlaW4gaW4gYW55IHdheSAoaW5jbHVkaW5nLCBidXQgbm90IGxpbWl0ZWQgdG8sIHRv
-dGFsIG9yIHBhcnRpYWwgZGlzY2xvc3VyZSwgcmVwcm9kdWN0aW9uLCBvciBkaXNzZW1pbmF0aW9u
-KSBieSBwZXJzb25zIG90aGVyIHRoYW4gdGhlIGludGVuZGVkIHJlY2lwaWVudChzKSBpcyBwcm9o
-aWJpdGVkLiBJZiB5b3UgcmVjZWl2ZSB0aGlzIGUtbWFpbCBpbiBlcnJvciwgcGxlYXNlIG5vdGlm
-eSB0aGUgc2VuZGVyIGJ5IHBob25lIG9yIGVtYWlsIGltbWVkaWF0ZWx5IGFuZCBkZWxldGUgaXQh
-KioqKioqLyMNCg==
+On Thu, Jul 17, 2025 at 5:27=E2=80=AFPM Chenghao Duan <duanchenghao@kylinos=
+.cn> wrote:
+>
+> On Wed, Jul 16, 2025 at 08:21:59PM +0800, Hengqi Chen wrote:
+> > On Wed, Jul 9, 2025 at 1:50=E2=80=AFPM Chenghao Duan <duanchenghao@kyli=
+nos.cn> wrote:
+> > >
+> > > Implement the functions of bpf_arch_text_poke, bpf_arch_text_copy, an=
+d
+> > > bpf_arch_text_invalidate on the LoongArch architecture.
+> > >
+> > > On LoongArch, since symbol addresses in the direct mapping
+> > > region cannot be reached via relative jump instructions from the page=
+d
+> > > mapping region, we use the move_imm+jirl instruction pair as absolute
+> > > jump instructions. These require 2-5 instructions, so we reserve 5 NO=
+P
+> > > instructions in the program as placeholders for function jumps.
+> > >
+> > > Co-developed-by: George Guo <guodongtai@kylinos.cn>
+> > > Signed-off-by: George Guo <guodongtai@kylinos.cn>
+> > > Signed-off-by: Chenghao Duan <duanchenghao@kylinos.cn>
+> > > ---
+> > >  arch/loongarch/include/asm/inst.h |  1 +
+> > >  arch/loongarch/kernel/inst.c      | 32 +++++++++++
+> > >  arch/loongarch/net/bpf_jit.c      | 90 +++++++++++++++++++++++++++++=
+++
+> > >  3 files changed, 123 insertions(+)
+> > >
+> > > diff --git a/arch/loongarch/include/asm/inst.h b/arch/loongarch/inclu=
+de/asm/inst.h
+> > > index 2ae96a35d..88bb73e46 100644
+> > > --- a/arch/loongarch/include/asm/inst.h
+> > > +++ b/arch/loongarch/include/asm/inst.h
+> > > @@ -497,6 +497,7 @@ void arch_simulate_insn(union loongarch_instructi=
+on insn, struct pt_regs *regs);
+> > >  int larch_insn_read(void *addr, u32 *insnp);
+> > >  int larch_insn_write(void *addr, u32 insn);
+> > >  int larch_insn_patch_text(void *addr, u32 insn);
+> > > +int larch_insn_text_copy(void *dst, void *src, size_t len);
+> > >
+> > >  u32 larch_insn_gen_nop(void);
+> > >  u32 larch_insn_gen_b(unsigned long pc, unsigned long dest);
+> > > diff --git a/arch/loongarch/kernel/inst.c b/arch/loongarch/kernel/ins=
+t.c
+> > > index 674e3b322..8d6594968 100644
+> > > --- a/arch/loongarch/kernel/inst.c
+> > > +++ b/arch/loongarch/kernel/inst.c
+> > > @@ -4,6 +4,7 @@
+> > >   */
+> > >  #include <linux/sizes.h>
+> > >  #include <linux/uaccess.h>
+> > > +#include <linux/set_memory.h>
+> > >
+> > >  #include <asm/cacheflush.h>
+> > >  #include <asm/inst.h>
+> > > @@ -218,6 +219,37 @@ int larch_insn_patch_text(void *addr, u32 insn)
+> > >         return ret;
+> > >  }
+> > >
+> > > +int larch_insn_text_copy(void *dst, void *src, size_t len)
+> > > +{
+> > > +       unsigned long flags;
+> > > +       size_t wlen =3D 0;
+> > > +       size_t size;
+> > > +       void *ptr;
+> > > +       int ret =3D 0;
+> > > +
+> > > +       set_memory_rw((unsigned long)dst, round_up(len, PAGE_SIZE) / =
+PAGE_SIZE);
+> > > +       raw_spin_lock_irqsave(&patch_lock, flags);
+> > > +       while (wlen < len) {
+> > > +               ptr =3D dst + wlen;
+> > > +               size =3D min_t(size_t, PAGE_SIZE - offset_in_page(ptr=
+),
+> > > +                            len - wlen);
+> > > +
+> > > +               ret =3D copy_to_kernel_nofault(ptr, src + wlen, size)=
+;
+> > > +               if (ret) {
+> > > +                       pr_err("%s: operation failed\n", __func__);
+> > > +                       break;
+> > > +               }
+> > > +               wlen +=3D size;
+> > > +       }
+> >
+> > Again, why do you do copy_to_kernel_nofault() in a loop ?
+>
+> The while loop processes all sizes. I referred to how ARM64 and
+> RISC-V64 handle this using loops as well.
+
+Any pointers ?
+
+>
+> > This larch_insn_text_copy() can be part of the first patch like
+> > larch_insn_gen_{beq,bne}. WDYT ?
+>
+> From my perspective, it is acceptable to include both
+> larch_insn_text_copy and larch_insn_gen_{beq,bne} in the same patch,
+> or place them in the bpf_arch_xxxx patch. larch_insn_text_copy is
+> solely used for BPF; the application scope of larch_insn_gen_{beq,bne}
+> is not limited to BPF.
+>
+
+The implementation of larch_insn_text_copy() seems generic.
+
+> >
+> > > +       raw_spin_unlock_irqrestore(&patch_lock, flags);
+> > > +       set_memory_rox((unsigned long)dst, round_up(len, PAGE_SIZE) /=
+ PAGE_SIZE);
+> > > +
+> > > +       if (!ret)
+> > > +               flush_icache_range((unsigned long)dst, (unsigned long=
+)dst + len);
+> > > +
+> > > +       return ret;
+> > > +}
+> > > +
+> > >  u32 larch_insn_gen_nop(void)
+> > >  {
+> > >         return INSN_NOP;
+> > > diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bpf_ji=
+t.c
+> > > index 7032f11d3..9cb01f0b0 100644
+> > > --- a/arch/loongarch/net/bpf_jit.c
+> > > +++ b/arch/loongarch/net/bpf_jit.c
+> > > @@ -4,6 +4,7 @@
+> > >   *
+> > >   * Copyright (C) 2022 Loongson Technology Corporation Limited
+> > >   */
+> > > +#include <linux/memory.h>
+> > >  #include "bpf_jit.h"
+> > >
+> > >  #define REG_TCC                LOONGARCH_GPR_A6
+> > > @@ -1367,3 +1368,92 @@ bool bpf_jit_supports_subprog_tailcalls(void)
+> > >  {
+> > >         return true;
+> > >  }
+> > > +
+> > > +static int emit_jump_and_link(struct jit_ctx *ctx, u8 rd, u64 ip, u6=
+4 target)
+> > > +{
+> > > +       s64 offset =3D (s64)(target - ip);
+> > > +
+> > > +       if (offset && (offset >=3D -SZ_128M && offset < SZ_128M)) {
+> > > +               emit_insn(ctx, bl, offset >> 2);
+> > > +       } else {
+> > > +               move_imm(ctx, LOONGARCH_GPR_T1, target, false);
+> > > +               emit_insn(ctx, jirl, rd, LOONGARCH_GPR_T1, 0);
+> > > +       }
+> > > +
+> > > +       return 0;
+> > > +}
+> > > +
+> > > +static int gen_jump_or_nops(void *target, void *ip, u32 *insns, bool=
+ is_call)
+> > > +{
+> > > +       struct jit_ctx ctx;
+> > > +
+> > > +       ctx.idx =3D 0;
+> > > +       ctx.image =3D (union loongarch_instruction *)insns;
+> > > +
+> > > +       if (!target) {
+> > > +               emit_insn((&ctx), nop);
+> > > +               emit_insn((&ctx), nop);
+> > > +               return 0;
+> > > +       }
+> > > +
+> > > +       return emit_jump_and_link(&ctx, is_call ? LOONGARCH_GPR_T0 : =
+LOONGARCH_GPR_ZERO,
+> > > +                                 (unsigned long)ip, (unsigned long)t=
+arget);
+> > > +}
+> > > +
+> > > +int bpf_arch_text_poke(void *ip, enum bpf_text_poke_type poke_type,
+> > > +                      void *old_addr, void *new_addr)
+> > > +{
+> > > +       u32 old_insns[5] =3D {[0 ... 4] =3D INSN_NOP};
+> > > +       u32 new_insns[5] =3D {[0 ... 4] =3D INSN_NOP};
+> > > +       bool is_call =3D poke_type =3D=3D BPF_MOD_CALL;
+> > > +       int ret;
+> > > +
+> > > +       if (!is_kernel_text((unsigned long)ip) &&
+> > > +               !is_bpf_text_address((unsigned long)ip))
+> > > +               return -ENOTSUPP;
+> > > +
+> > > +       ret =3D gen_jump_or_nops(old_addr, ip, old_insns, is_call);
+> > > +       if (ret)
+> > > +               return ret;
+> > > +
+> > > +       if (memcmp(ip, old_insns, 5 * 4))
+> > > +               return -EFAULT;
+> > > +
+> > > +       ret =3D gen_jump_or_nops(new_addr, ip, new_insns, is_call);
+> > > +       if (ret)
+> > > +               return ret;
+> > > +
+> > > +       mutex_lock(&text_mutex);
+> > > +       if (memcmp(ip, new_insns, 5 * 4))
+> > > +               ret =3D larch_insn_text_copy(ip, new_insns, 5 * 4);
+> > > +       mutex_unlock(&text_mutex);
+> > > +       return ret;
+> > > +}
+> > > +
+> > > +int bpf_arch_text_invalidate(void *dst, size_t len)
+> > > +{
+> > > +       int i;
+> > > +       int ret =3D 0;
+> > > +       u32 *inst;
+> > > +
+> > > +       inst =3D kvmalloc(len, GFP_KERNEL);
+> > > +       if (!inst)
+> > > +               return -ENOMEM;
+> > > +
+> > > +       for (i =3D 0; i < (len/sizeof(u32)); i++)
+> > > +               inst[i] =3D INSN_BREAK;
+> > > +
+> > > +       if (larch_insn_text_copy(dst, inst, len))
+> > > +               ret =3D -EINVAL;
+> > > +
+> > > +       kvfree(inst);
+> > > +       return ret;
+> > > +}
+> > > +
+> > > +void *bpf_arch_text_copy(void *dst, void *src, size_t len)
+> > > +{
+> > > +       if (larch_insn_text_copy(dst, src, len))
+> > > +               return ERR_PTR(-EINVAL);
+> > > +
+> > > +       return dst;
+> > > +}
+> > > --
+> > > 2.43.0
+> > >
 
