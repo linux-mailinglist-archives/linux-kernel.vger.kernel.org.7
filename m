@@ -1,122 +1,230 @@
-Return-Path: <linux-kernel+bounces-735925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C625DB0955C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 22:03:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52C3BB09562
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 22:04:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37DFFA4062F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 20:03:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9541C4A03CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 20:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4458224B05;
-	Thu, 17 Jul 2025 20:03:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF75224B09;
+	Thu, 17 Jul 2025 20:03:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PPIf0N7L"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="isfTM6xU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D6A22248AE;
-	Thu, 17 Jul 2025 20:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8B3223316
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 20:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752782625; cv=none; b=YdMMn+lpaT+1Lb7WYPGeOYz/z+ZUBhQwShet/DsbEbwdscbS7u6N5M9qH8TBRiRE7b/hnyAXkZuIs003AUsuOCw+YK5QXhBSGt9wauHkhDC01lDkXE7qnazv9ccbNYHTjfy7uy0WgzNVYQpFQpubdC9cBw/Z+lrLmAbQV9HClV0=
+	t=1752782634; cv=none; b=PSf545z5jmgJb+WaSmJaNiI6EG2VenamwOfmI8lZp0UvLoEDRB0ThhUZzpCJ9zgUbSZ3KvaFdI5qLC56HTJIFD0O7GCkpM1oaAFEF8FsptbXSN1vzuvC00NPgOSVT8CSOFgp73pz5PLTbrRWvbNq0HWVQbSnSZgidXj4JpeMFvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752782625; c=relaxed/simple;
-	bh=GbbFf4P++LZ5LAjbxnYkefUt6T1cVX6IVZ1E4kcxEUk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=b4UbhMwzI0L9vLGR3IiRcpM3RwdPFrZm2VUHrHbt22hXvxi+Bn1W1h5JrLquCHHjyC0hPR+EctxB/N56lYuZEYXGb5tAJe1aPEhGtW11Xzb60TgZdffsGBqRrbO1czBRbv5CCf4/A5YPbWx3u7c6/Y6FGCu18HHYlkAPbRtY0oQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PPIf0N7L; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-60707b740a6so1834403a12.0;
-        Thu, 17 Jul 2025 13:03:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752782621; x=1753387421; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=D+hmUjjtNkvOoCL2FgLUC0+cXPvo2NeWyD5bUF7BZQg=;
-        b=PPIf0N7LWUahv5LpPkLLj0aFombmprI/mqIOCmC9dpUfy9Hfvq7Oh0Sig1uW2SKSox
-         ksqieb7E5rcgHHqO1hBcIEUMbUvO8wYxDRW0F/rla+Ne6uwb8PltWy44AhwOuhNi+PyJ
-         MEGodQR+fD9GQGhMU9FY3Tjn81XuAMLm22q624hODvWORronymZ0z08+WQWdrAJcEfTY
-         asgXu4T9nYmu9T0zsMp2Yo4H4sX8tm1aY+tBHPvtXOnriwgrfdU7kU9Q8/JVBVo/6Jky
-         +8ywhxDS39FhQ7fkbytKG11BzsYlrClkYUY5oBIqZ/aubKh+ubYspRgB/0lqO5Mf3ihY
-         XkKA==
+	s=arc-20240116; t=1752782634; c=relaxed/simple;
+	bh=Q/F1zAOvHokBZlzDec5Cjn3EbeBfpbAqOlMColJ54Aw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h24owqBMfXdMnk5UtOkiCzTRcWtE8voR9iiFyL1kGstcVg0s536xowiBiPn4nvMyDdcDTgkPHdWcFLT+3A7Mf4ycvl/EizY4uyuKqPt6mLNIiE4fKwAi6rNBieZRRXUqlfodf8RcwEQsN6KCQa6UmvfLXVCTyK7Sek3zn8hmf08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=isfTM6xU; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752782631;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ClNVtTZhZp5gAwQFZwS1SAbGnOFesIfcYAsTrAvuVJw=;
+	b=isfTM6xUVSP/Fgvogs5yHVEarcKEO14JLyAtMq9FdjMuADmePaKqQuFY+K0ZXTsue4cYX/
+	NSDQC0BgnTl+e17YCZsejM691oVQNdmte2Mj7JF0FW29bTcpLbOG4G+K1c/3HtoBe7q4Sv
+	hXkcpoUCOK/myo5HTSUZsrSHQoftovM=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-245-M6ttOkeKOLmmjYQljRnroA-1; Thu, 17 Jul 2025 16:03:48 -0400
+X-MC-Unique: M6ttOkeKOLmmjYQljRnroA-1
+X-Mimecast-MFC-AGG-ID: M6ttOkeKOLmmjYQljRnroA_1752782627
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4562985ac6aso13872945e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 13:03:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752782621; x=1753387421;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=D+hmUjjtNkvOoCL2FgLUC0+cXPvo2NeWyD5bUF7BZQg=;
-        b=N2bibGAgXwYCjVm2DpgCskAhh5w0Z8amS1avJwJPEzUFCQiX735ldnVY/wwRBZJDua
-         0IpgMj+A4NVpRaAvHhMcUAQqXG/F0sKD27IsBzDeQqyhTJkgtBH9kn9HCM25ve7Jlxnq
-         A0H1Rm23f3Mqu7BOuW0MXnjLOh4e6S7yfo3uWBhWON3jJ9o51fe1nRQ6VFyziqhaVDhq
-         cGN6X3uoMCDg44VTf9EpoIH8X6pYXxaqi3zfz/Z5EJGO2y7cDk939G+sNsn/Wh3DkLy/
-         VP1tHYAbMQd6k0T8Xw5qrCClx30fQStzoIVB2MhVtA1k3Gp+6lfN8aMnqYu362K0vqCO
-         3Dqw==
-X-Gm-Message-State: AOJu0YzfYABO0NtEYMDXA6vhEl2ta+3TzrRa2iYJOm2Dor2TJlP+aCqM
-	l34yav/Tp5a2JKqSewpvEs3q88zKCGqdlJ+lZ5jZaCvP3gO9tKYC2YDaF34VsE11
-X-Gm-Gg: ASbGnctCzkE0pvk9I7hYnpW2x2A2yuep1Gq87zHBp54rmNwO3cPjqPEAp+VvUogL10F
-	KSxgU4k22QtZgh/gRN88wykKxeZ5vTf90kvrNnJRmj58USd04y5XE+YfOiENrJ2eBsOTRAIwL26
-	ZC3ytetOKece9bhI6U4HLT0+1AT9xPs6pfzlfDoTR2s/8nl1/60g9kJ1kVeyE2Rg9KnXHNwdBK8
-	BEpAqQWkpMDinECCcFVcVZjTQS/VoaPczEpsLukdry3EaEU0JksBWjSUH2g6unqcZuj3UM+rxqb
-	J3GzTDfai+f8nwo29o1z6dHru2nuY1JdSCDc4EKip9yvE+2lUN4tTSPnqMJ+DaklYUPxS9qfpOB
-	Nv8wdBNGuoc96jTrUjgT+VCRHrMAPHOkJh1+8Uxeo03XIFkrfYqg=
-X-Google-Smtp-Source: AGHT+IFyEmm2ugMzQsrPl2HoBwGozdL2mymVQxFdeNTG/awzFM0Fa477DdUaSmlW7blFO9JtbqHYYA==
-X-Received: by 2002:aa7:c583:0:b0:604:e6fb:e2e1 with SMTP id 4fb4d7f45d1cf-61285e05ccemr6532963a12.33.1752782620526;
-        Thu, 17 Jul 2025 13:03:40 -0700 (PDT)
-Received: from teknoraver-mbp.local.lan ([151.26.31.229])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-611c9542fe5sm10336821a12.35.2025.07.17.13.03.39
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 17 Jul 2025 13:03:40 -0700 (PDT)
-From: Matteo Croce <technoboy85@gmail.com>
-To: bpf@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Matteo Croce <teknoraver@meta.com>
-Subject: [PATCH bpf-next] libbpf: fix warning
-Date: Thu, 17 Jul 2025 22:03:37 +0200
-Message-Id: <20250717200337.49168-1-technoboy85@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+        d=1e100.net; s=20230601; t=1752782627; x=1753387427;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ClNVtTZhZp5gAwQFZwS1SAbGnOFesIfcYAsTrAvuVJw=;
+        b=TEU9mnLa4gNdTbIDgqoBXDIk5wpYbRrbXWJ4c3fEPUF/X1T8YYhcEqUz8YZ+7KUH4G
+         +9NmILnHnt54Px9XT3mL+pntCKcPLc51P4PkeSuOgnYBy3aauJH4JrGPMyOc1fALThnc
+         LdMU8SPB58KHBLIEQ8eILK1HS7BcJzQOMt3tk1wZP6j5JPp1bdootWLV4VWlPa6//e3T
+         xQ/dE13bgD+agBwPaHLkU8/QVQu0j5zGnxzvQmTXj2ZWSowL8P1Lsy4T6TVEFxY9y6Md
+         FgOH/W+mKXF/JUNxELntiumwtTw98l61TltuxCtiDggl6WmS0J0ge3USDqCUdhT+vS/L
+         iINA==
+X-Gm-Message-State: AOJu0Ywy75/1kDYF9PKZJ3GK9u9zXdemymNau/gce5gkR3bbuUjaDfpZ
+	SSvyfDRerJnDE1kT85q6Oi2C9er0ciCH5OTUTa4mTMXrdPVM9jT1S0amU9rIIjzslWcflsHWngF
+	EAXSV3diOF0g/Ig+1sCwRCeFS3LI/U1dbK4G1G/lUsyCFNj6KuvrHEJbdf1pi8Axpvg==
+X-Gm-Gg: ASbGncvG1Pl4XmlXs9f1RWXnW1bQQUIQDEdMUOsCNTC1q5nQp2gmhBHsJVncvOXm6k1
+	zLQtGkE238yHfEtOVx+9UDUheR5A6wXFIyi3+FNuO5Q04xMAKp8FGbG4e5OaVaGZXJt9GtMqyz9
+	BoI+mYIA2E91I/tNi+DM/OQvv2lbkF91r8xsacRDlFe3X4GW1c0pW/No7sB7pTlB6Gmdo06RCFU
+	RgDcK26v5AeQXm1Xjs3CjEIK/hSgov6rQY9HHYk6WscdXps6Icono81+FpBYqeHkkqEiMPkYDcz
+	XSzc1HVGiUy+AqdWf2UL/FkZhEUSinAcoc2mhbgHjZ5W42hZtZyUK4qCsapm2n0culVaP3Fk75m
+	qdueDff0TKaZK/+5ytbv7sLxYO49X04Sw0RyROFGTPMb5SBXSt3bXmOyv63AzdCa0
+X-Received: by 2002:a05:600c:3481:b0:456:f9f:657 with SMTP id 5b1f17b1804b1-4562e3c503amr79745915e9.27.1752782626927;
+        Thu, 17 Jul 2025 13:03:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHITXVfZtwqa7P8f0u6oWcFw1NazxQtB99hClGfTnR+mgLoVDMe7M6pKVDkyJRWFMthviCSvw==
+X-Received: by 2002:a05:600c:3481:b0:456:f9f:657 with SMTP id 5b1f17b1804b1-4562e3c503amr79745695e9.27.1752782626423;
+        Thu, 17 Jul 2025 13:03:46 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f35:2b00:b1a5:704a:6a0c:9ae? (p200300d82f352b00b1a5704a6a0c09ae.dip0.t-ipconnect.de. [2003:d8:2f35:2b00:b1a5:704a:6a0c:9ae])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45630ec9129sm49616075e9.29.2025.07.17.13.03.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Jul 2025 13:03:45 -0700 (PDT)
+Message-ID: <b7457b96-2b78-4202-8380-4c7cd70767b9@redhat.com>
+Date: Thu, 17 Jul 2025 22:03:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 7/9] mm/memory: factor out common code from
+ vm_normal_page_*()
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ xen-devel@lists.xenproject.org, linux-fsdevel@vger.kernel.org,
+ nvdimm@lists.linux.dev, Andrew Morton <akpm@linux-foundation.org>,
+ Juergen Gross <jgross@suse.com>, Stefano Stabellini
+ <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox
+ <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Zi Yan <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+ Hugh Dickins <hughd@google.com>, Oscar Salvador <osalvador@suse.de>,
+ Lance Yang <lance.yang@linux.dev>
+References: <20250717115212.1825089-1-david@redhat.com>
+ <20250717115212.1825089-8-david@redhat.com>
+ <1aef6483-18e6-463b-a197-34dd32dd6fbd@lucifer.local>
+ <50190a14-78fb-4a4a-82fa-d7b887aa4754@lucifer.local>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <50190a14-78fb-4a4a-82fa-d7b887aa4754@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Matteo Croce <teknoraver@meta.com>
+On 17.07.25 21:55, Lorenzo Stoakes wrote:
+> On Thu, Jul 17, 2025 at 08:51:51PM +0100, Lorenzo Stoakes wrote:
+>>> @@ -721,37 +772,21 @@ struct page *vm_normal_page_pmd(struct vm_area_struct *vma, unsigned long addr,
+>>>   		print_bad_page_map(vma, addr, pmd_val(pmd), NULL);
+>>>   		return NULL;
+>>>   	}
+>>> -
+>>> -	if (unlikely(vma->vm_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
+>>> -		if (vma->vm_flags & VM_MIXEDMAP) {
+>>> -			if (!pfn_valid(pfn))
+>>> -				return NULL;
+>>> -			goto out;
+>>> -		} else {
+>>> -			unsigned long off;
+>>> -			off = (addr - vma->vm_start) >> PAGE_SHIFT;
+>>> -			if (pfn == vma->vm_pgoff + off)
+>>> -				return NULL;
+>>> -			if (!is_cow_mapping(vma->vm_flags))
+>>> -				return NULL;
+>>> -		}
+>>> -	}
+>>> -
+>>> -	if (is_huge_zero_pfn(pfn))
+>>> -		return NULL;
+>>> -	if (unlikely(pfn > highest_memmap_pfn)) {
+>>> -		print_bad_page_map(vma, addr, pmd_val(pmd), NULL);
+>>> -		return NULL;
+>>> -	}
+>>> -
+>>> -	/*
+>>> -	 * NOTE! We still have PageReserved() pages in the page tables.
+>>> -	 * eg. VDSO mappings can cause them to exist.
+>>> -	 */
+>>> -out:
+>>> -	return pfn_to_page(pfn);
+>>> +	return vm_normal_page_pfn(vma, addr, pfn, pmd_val(pmd));
+>>
+>> Hmm this seems broken, because you're now making these special on arches with
+>> pte_special() right? But then you're invoking the not-special function?
+>>
+>> Also for non-pte_special() arches you're kind of implying they _maybe_ could be
+>> special.
+> 
+> OK sorry the diff caught me out here, you explicitly handle the pmd_special()
+> case here, duplicatively (yuck).
+> 
+> Maybe you fix this up in a later patch :)
 
-When compiling libbpf with some compilers, this warning is triggered:
+I had that, but the conditions depend on the level, meaning: unnecessary 
+checks for pte/pmd/pud level.
 
-libbpf.c: In function ‘bpf_object__gen_loader’:
-libbpf.c:9209:28: error: ‘calloc’ sizes specified with ‘sizeof’ in the earlier argument and not in the later argument [-Werror=calloc-transposed-args]
- 9209 |         gen = calloc(sizeof(*gen), 1);
-      |                            ^
-libbpf.c:9209:28: note: earlier argument should specify number of elements, later size of each element
+I had a variant where I would pass "bool special" into 
+vm_normal_page_pfn(), but I didn't like it.
 
-Fix this by inverting the calloc() arguments.
+To optimize out, I would have to provide a "level" argument, and did not 
+convince myself yet that that is a good idea at this point.
 
-Signed-off-by: Matteo Croce <teknoraver@meta.com>
----
- tools/lib/bpf/libbpf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-index aee36402f0a3..af85989ae2c9 100644
---- a/tools/lib/bpf/libbpf.c
-+++ b/tools/lib/bpf/libbpf.c
-@@ -9210,7 +9210,7 @@ int bpf_object__gen_loader(struct bpf_object *obj, struct gen_loader_opts *opts)
- 		return libbpf_err(-EFAULT);
- 	if (!OPTS_VALID(opts, gen_loader_opts))
- 		return libbpf_err(-EINVAL);
--	gen = calloc(sizeof(*gen), 1);
-+	gen = calloc(1, sizeof(*gen));
- 	if (!gen)
- 		return libbpf_err(-ENOMEM);
- 	gen->opts = opts;
 -- 
-2.39.5 (Apple Git-154)
+Cheers,
+
+David / dhildenb
 
 
