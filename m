@@ -1,185 +1,262 @@
-Return-Path: <linux-kernel+bounces-735767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A939B09393
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:49:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EEB3B0939D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:51:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8AE7A419D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:48:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74EA158713E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 385222FE363;
-	Thu, 17 Jul 2025 17:49:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 837262FEE14;
+	Thu, 17 Jul 2025 17:51:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S7eMBl4Y"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FJfC3E6s"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF0F4503B;
-	Thu, 17 Jul 2025 17:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F1FB2FE383;
+	Thu, 17 Jul 2025 17:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752774551; cv=none; b=pdrwVjqazf6B2xDWgmRDg1VVEWxkFBSObGLxV/KfKsIUoTIYjx8j+ynaj0lT97NXOljG7alIsKPH2pnH23+NHzpcY/lfUI1elLl3lECZBq/jmKh8C5BZtUTNUZfd9WLvWykVuOtbPvd3M+1Zd5UiZoYnJHX2QABHHbkr3RkHMYY=
+	t=1752774688; cv=none; b=uI7OCyAKDGUOt0Gmf/2pw5awmflHLFoTVuJQnWxzqsQKrVTKRn4W5Un5hzYbnf/QRuE2QSxQfSyFfytH2skr+GIOuZtX0Uh+vTYrMCjMSHHGIjHlVQR4aKGtBoJ3pEzRzMaL9C6ThUriLzdIucLpsHtaG7/iLe8q+Pest30tduw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752774551; c=relaxed/simple;
-	bh=y4wWrmyfw7DwHelGL4OSKv0kZIIHrb2UwV+U2MepAqw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LRMHObzCmNut5qV2V3ygm70pkVgbmDTUKvo/KSMdGH496UY5CKzCwNKyiguml8Eu9f+JK3RTPR51pZbhwNA0glTdziYnRMTpGvNn6hB9Im4f3cfjnB1U6TBbd4h2a/TgqNqQD9FtxYikb+I8fQYWybS/70/5gpp5k7EFatoznIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S7eMBl4Y; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752774550; x=1784310550;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=y4wWrmyfw7DwHelGL4OSKv0kZIIHrb2UwV+U2MepAqw=;
-  b=S7eMBl4YJ2uDDbhSppcsV+seJ0vCTru3uX1g2udMCgqYoYHkGy9D5KNM
-   /PZDCrKjBV2YUlF2TnOeez/8tR7LNcQtQI5z3ZFPNYmQBurUE/TKAu4+D
-   8t8R/ZaJeMZSPhGK0Itxga+0DncAOtZ8yPpwrXfC4ejwjl8J+GezM/uLW
-   cd+ChdwZzAGnnxm3GlpokZJzP0QPjRgLQYfyvuIQQZ1DTmZn/8ciIlyd6
-   f6YiOVn/w94klRLxPAAEcCY4PPTFkOesXtmf02XVPtk68W5R1TAc5sG2H
-   ykWB3do5skH2HNbaL2dkLrPyeoFUJlFbc2EVlrCh6BTXJhch6ZHBgtMyE
-   w==;
-X-CSE-ConnectionGUID: i5DTlQk1T4qVRIw2iLd8KA==
-X-CSE-MsgGUID: vBEUL+P8S8ydnhzSzkUsuA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11495"; a="58874440"
-X-IronPort-AV: E=Sophos;i="6.16,319,1744095600"; 
-   d="scan'208";a="58874440"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 10:49:09 -0700
-X-CSE-ConnectionGUID: nlXwjKWYQOu2Z1cU7NJLgQ==
-X-CSE-MsgGUID: WY3ru5eRQyynmRsRRlftJA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,319,1744095600"; 
-   d="scan'208";a="158427334"
-Received: from mjruhl-desk.amr.corp.intel.com (HELO localhost) ([10.124.221.12])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 10:49:08 -0700
-Date: Thu, 17 Jul 2025 10:49:07 -0700
-From: David Box <david.e.box@linux.intel.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: mani@kernel.org, bhelgaas@google.com, vicamo.yang@canonical.com, 
-	kenny@panix.com, ilpo.jarvinen@linux.intel.com, nirmal.patel@linux.intel.com, 
-	linux-pm@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC 0/2] PCI/ASPM: Allow controller-defined default link state
-Message-ID: <six3j62wzjgby3lpu6lixzudm7ktqhbz7or5mdfe5k4vgwt4gs@poy42cz7dox3>
-References: <20250717004034.2998443-1-david.e.box@linux.intel.com>
- <4xcwba3d4slmz5gfuwypavxqreobnigzyu4vib6powtbibytyp@mmqcns27vlyr>
- <CAJZ5v0h+v5pUP39vTWpNNK2D8=X2UdjUTtZ7yQHCQ2k=r2kkMg@mail.gmail.com>
- <tbj67d2j4bzf3em5nw73w354lqji3baurajbseyouls53odjxq@4edjrxtdaeum>
- <CAJZ5v0htsq80MT53HQ+=yJZjjjtaKc7Ccmvps6j9Z5phjT0d4w@mail.gmail.com>
+	s=arc-20240116; t=1752774688; c=relaxed/simple;
+	bh=7gqdu9FRzLbWwVYcJ1xgji2kq0oWwr4gM+5MAVL14+0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=U5mgNjyjZ4YlrRIuem3rJugalZ3NExZ9fUcG9RE7xzkQBAAsyXpGnFp0qF3tOFPGG0zR2Z60wW8M+h9LB43LUqZIv4Dp+0MxH5EfjqUHBOzuglUDHbxyDyGC0y3CbM0iNONCOUn99SCjBtXwhn8bzhMeAkkQ9sFGQ1gr7xWgJj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FJfC3E6s; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56HHp6UQ063119;
+	Thu, 17 Jul 2025 12:51:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1752774666;
+	bh=JlYC+23jy0kiGaogzz7XRNceSyu876I7Z5My7gH79ig=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=FJfC3E6sk6iJDG+kR3lsMTlFsjvO72vldw+zpi9S1Qj9bsuehnk3kHJ9qjuV0HiCT
+	 NC1y7xQzBZYz5dBZatvnShADDDH11r28UDV/yim9w8pwc7JQar3gXsQXFqso3VgFK/
+	 wIH78uPKYpQWht8K9xRbNTEoLF9hS6DO7f0UUfrk=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56HHp6Gf397301
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 17 Jul 2025 12:51:06 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 17
+ Jul 2025 12:51:06 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 17 Jul 2025 12:51:05 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56HHp64m2244017;
+	Thu, 17 Jul 2025 12:51:06 -0500
+Message-ID: <4826def7-5dcb-4453-ab3b-0d14880dab93@ti.com>
+Date: Thu, 17 Jul 2025 12:51:05 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] watchdog: rti_wdt: Add reaction control
+To: Andrew Davis <afd@ti.com>, Guenter Roeck <linux@roeck-us.net>
+CC: Wim Van Sebroeck <wim@linux-watchdog.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+        <linux-watchdog@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250707180002.3918865-1-jm@ti.com>
+ <20250707180002.3918865-3-jm@ti.com>
+ <cc37e797-d3e5-444d-8016-c437a0534001@roeck-us.net>
+ <d96541bc-644d-4c90-b9f7-1e4afd16aeb6@ti.com>
+ <953f78a8-3928-479d-8700-dfe1cea15454@roeck-us.net>
+ <299c363a-23c7-4522-b58c-100f49c4eece@ti.com>
+ <7d2bb793-14d0-45d8-b8bd-b770cdb4ca70@roeck-us.net>
+ <fc095373-1171-4718-b492-8a74d03f99ba@ti.com>
+ <92be34eb-2408-4273-9e37-bec0b0d68f10@ti.com>
+Content-Language: en-US
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <92be34eb-2408-4273-9e37-bec0b0d68f10@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0htsq80MT53HQ+=yJZjjjtaKc7Ccmvps6j9Z5phjT0d4w@mail.gmail.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, Jul 17, 2025 at 05:37:01PM +0200, Rafael J. Wysocki wrote:
-> On Thu, Jul 17, 2025 at 4:13 PM David Box <david.e.box@linux.intel.com> wrote:
-> >
-> > Hi Mani, Rafael,
-> >
-> > On Thu, Jul 17, 2025 at 12:03:32PM +0200, Rafael J. Wysocki wrote:
-> > > On Thu, Jul 17, 2025 at 8:55 AM Manivannan Sadhasivam <mani@kernel.org> wrote:
-> > > >
-> > > > On Wed, Jul 16, 2025 at 05:40:24PM GMT, David E. Box wrote:
-> > > > > Hi all,
-> > > > >
-> > > > > This RFC series addresses a limitation in the PCIe ASPM subsystem where
-> > > > > devices on synthetic PCIe hierarchies, such as those created by Intel’s
-> > > > > Volume Management Device (VMD), do not receive default ASPM settings
-> > > > > because they are not visible to firmware. As a result, ASPM remains
-> > > > > disabled on these devices unless explicitly enabled later by the driver,
-> > > > > contrary to platform power-saving expectations.
-> > > > >
-> > > > > Problem with Current Behavior
-> > > > >
-> > > > > Today, ASPM default policy is set in pcie_aspm_cap_init() based on values
-> > > > > provided by BIOS. For devices under VMD, BIOS has no visibility into the
-> > > > > hierarchy, and therefore no ASPM defaults are applied. The VMD driver can
-> > > > > attempt to walk the bus hierarchy and enable ASPM post-init using runtime
-> > > > > mechanisms, but this fails when aspm_disabled is set because the kernel
-> > > > > intentionally blocks runtime ASPM changes under ACPI’s FADT_NO_ASPM flag.
-> > > > > However, this flag does not apply to VMD, which controls its domain
-> > > > > independently of firmware.
-> > > > >
-> > > > > Goal
-> > > > >
-> > > > > The ideal solution is to allow VMD or any controller driver managing a
-> > > > > synthetic hierarchy to provide a default ASPM link state at the same time
-> > > > > it's set for BIOS, in pcie_aspm_cap_init().
-> > > > >
-> > > >
-> > > > I like the idea and would like to use it to address the similar limitation on
-> > > > Qcom SoCs where the BIOS doesn't configure ASPM settings for any devices and
-> > > > sometimes there is no BIOS at all (typical for SoCs used in embedded usecases).
-> > > > So I was using pci_walk_bus() in the controller driver to enable ASPM for all
-> > > > devices, but that obviously has issues with hotplugged devices.
-> > > >
-> > > > > Solution
-> > > > >
-> > > > > 1. A new bus flag, PCI_BUS_FLAGS_ASPM_DEFAULT_OVERRIDE, based on Rafael's
-> > > > > suggestion, to signal that the driver intends to override the default ASPM
-> > > > > setting. 2. A new field, aspm_bus_link_state, in 'struct pci_bus' to supply
-> > > > > the desired default link state using the existing PCIE_LINK_STATE_XXX
-> > > > > bitmask.
-> > > > >
-> > > >
-> > > > Why would you need to make it the 'bus' specific flag? It is clear that the
-> > > > controller driver is providing the default ASPM setting. So pcie_aspm_cap_init()
-> > > > should be able to use the value provided by it for all busses.
-> > > >
-> > > > Like:
-> > > >
-> > > > diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-> > > > index 2ad1852ac9b2..830496e556af 100644
-> > > > --- a/drivers/pci/pcie/aspm.c
-> > > > +++ b/drivers/pci/pcie/aspm.c
-> > > > @@ -791,6 +791,7 @@ static void aspm_l1ss_init(struct pcie_link_state *link)
-> > > >  static void pcie_aspm_cap_init(struct pcie_link_state *link, int blacklist)
-> > > >  {
-> > > >         struct pci_dev *child = link->downstream, *parent = link->pdev;
-> > > > +       struct pci_host_bridge *host = pci_find_host_bridge(parent->bus);
-> >
-> > I see. This is better. I'll make this change.
-> >
-> > > >         u32 parent_lnkcap, child_lnkcap;
-> > > >         u16 parent_lnkctl, child_lnkctl;
-> > > >         struct pci_bus *linkbus = parent->subordinate;
-> > > > @@ -866,8 +867,8 @@ static void pcie_aspm_cap_init(struct pcie_link_state *link, int blacklist)
-> > > >         }
-> > > >
-> > > >         /* Save default state */
-> > > > -       if (parent->bus->bus_flags & PCI_BUS_FLAGS_NO_ASPM_DEFAULT)
-> > > > -               link->aspm_default = parent->bus->aspm_bus_link_state;
-> > > > +       if (host && host->aspm_bus_link_state)
-> > > > +               link->aspm_default = host->aspm_bus_link_state;
-> > > >         else
-> > > >                 link->aspm_default = link->aspm_enabled;
-> > > >
-> > > > This avoids the usage of the bus flag (which your series is not at all making
-> > > > use of) and allows setting the 'host_bridge::aspm_bus_link_state' easily by the
-> > > > controller drivers.
-> > >
-> > > This is very similar to what I have just suggested and I like this one.
-> >
-> > I considered this. But 0 could technically mean that the controller wants
-> > ASPM to be disabled. The VMD driver doesn't need to do this though and if
-> > others don't currently need this then I can drop the flag.
+Hi Andrew,
+
+On 7/17/25 11:44 AM, Andrew Davis wrote:
+> On 7/17/25 10:24 AM, Judith Mendez wrote:
+>> Hi Guenter,
+>>
+>> On 7/16/25 1:50 PM, Guenter Roeck wrote:
+>>> On 7/10/25 07:08, Judith Mendez wrote:
+>>>> Hi Guenter, Andrew,
+>>>>
+>>>> On 7/7/25 5:55 PM, Guenter Roeck wrote:
+>>>>> On Mon, Jul 07, 2025 at 04:49:31PM -0500, Andrew Davis wrote:
+>>>>>> On 7/7/25 3:58 PM, Guenter Roeck wrote:
+>>>>>>> On Mon, Jul 07, 2025 at 01:00:02PM -0500, Judith Mendez wrote:
+>>>>>>>> This allows to configure reaction between NMI and reset for WWD.
+>>>>>>>>
+>>>>>>>> On K3 SoC's other than AM62L SoC [0], watchdog reset output is 
+>>>>>>>> routed
+>>>>>>>> to the ESM module which can subsequently route the signal to safety
+>>>>>>>> master or SoC reset. On AM62L, the watchdog reset output is routed
+>>>>>>>> to the SoC HW reset block. So, add a new compatible for AM62l to 
+>>>>>>>> add
+>>>>>>>> SoC data and configure reaction to reset instead of NMI.
+>>>>>>>>
+>>>>>>>> [0] https://www.ti.com/product/AM62L
+>>>>>>>> Signed-off-by: Judith Mendez <jm@ti.com>
+>>>>>>>> ---
+>>>>>>>>    drivers/watchdog/rti_wdt.c | 32 ++++++++++++++++++++++++++++----
+>>>>>>>>    1 file changed, 28 insertions(+), 4 deletions(-)
+>>>>>>>>
+>>>>>>>> diff --git a/drivers/watchdog/rti_wdt.c 
+>>>>>>>> b/drivers/watchdog/rti_wdt.c
+>>>>>>>> index d1f9ce4100a8..c9ee443c70af 100644
+>>>>>>>> --- a/drivers/watchdog/rti_wdt.c
+>>>>>>>> +++ b/drivers/watchdog/rti_wdt.c
+>>>>>>>> @@ -35,7 +35,8 @@
+>>>>>>>>    #define RTIWWDRXCTRL    0xa4
+>>>>>>>>    #define RTIWWDSIZECTRL    0xa8
+>>>>>>>> -#define RTIWWDRX_NMI    0xa
+>>>>>>>> +#define RTIWWDRXN_RST    0x5
+>>>>>>>> +#define RTIWWDRXN_NMI    0xa
+>>>>>>>>    #define RTIWWDSIZE_50P        0x50
+>>>>>>>>    #define RTIWWDSIZE_25P        0x500
+>>>>>>>> @@ -63,22 +64,29 @@
+>>>>>>>>    static int heartbeat;
+>>>>>>>> +struct rti_wdt_data {
+>>>>>>>> +    bool reset;
+>>>>>>>> +};
+>>>>>>>> +
+>>>>>>>>    /*
+>>>>>>>>     * struct to hold data for each WDT device
+>>>>>>>>     * @base - base io address of WD device
+>>>>>>>>     * @freq - source clock frequency of WDT
+>>>>>>>>     * @wdd  - hold watchdog device as is in WDT core
+>>>>>>>> + * @data - hold configuration data
+>>>>>>>>     */
+>>>>>>>>    struct rti_wdt_device {
+>>>>>>>>        void __iomem        *base;
+>>>>>>>>        unsigned long        freq;
+>>>>>>>>        struct watchdog_device    wdd;
+>>>>>>>> +    const struct rti_wdt_data *data;
+>>>>>>>>    };
+>>>>>>>>    static int rti_wdt_start(struct watchdog_device *wdd)
+>>>>>>>>    {
+>>>>>>>>        u32 timer_margin;
+>>>>>>>>        struct rti_wdt_device *wdt = watchdog_get_drvdata(wdd);
+>>>>>>>> +    u8 reaction;
+>>>>>>>>        int ret;
+>>>>>>>>        ret = pm_runtime_resume_and_get(wdd->parent);
+>>>>>>>> @@ -101,8 +109,13 @@ static int rti_wdt_start(struct 
+>>>>>>>> watchdog_device *wdd)
+>>>>>>>>         */
+>>>>>>>>        wdd->min_hw_heartbeat_ms = 520 * wdd->timeout + 
+>>>>>>>> MAX_HW_ERROR;
+>>>>>>>> -    /* Generate NMI when wdt expires */
+>>>>>>>> -    writel_relaxed(RTIWWDRX_NMI, wdt->base + RTIWWDRXCTRL);
+>>>>>>>> +    /* Reset device if wdt serviced outside of window or 
+>>>>>>>> generate NMI if available */
+>>>>>>>
+>>>>>>> Shouldn't that be "or generate NMI if _not_ available" ?
+>>>>>>>
+>>>>>>
+>>>>>> For almost all the K3 devices, the WDT has two selectable outputs, 
+>>>>>> one resets
+>>>>>> the device directly, the other is this "NMI" which is wired to an 
+>>>>>> ESM module
+>>>>>> which can take other actions (but usually it just also resets the 
+>>>>>> device).
+>>>>>> For AM62L that second NMI output is not wired (no ESM module), so 
+>>>>>> our only
+>>>>>> choice is to set the WDT to direct reset mode.
+>>>>>>
+>>>>>> The wording is a little strange, but the "or generate NMI if 
+>>>>>> available" meaning
+>>>>>> if NMI is available, then do that. Reset being the fallback when 
+>>>>>> _not_ available.
+>>>>>>
+>>>>>> Maybe this would work better:
+>>>>>>
+>>>>>> /* If WDT is serviced outside of window, generate NMI if 
+>>>>>> available, or reset device */
+>>>>>>
+>>>>>
+>>>>> The problem is that the code doesn't match the comment. The code 
+>>>>> checks the
+>>>>> "reset" flag and requests a reset if available. If doesn't check an 
+>>>>> "nmi"
+>>>>> flag.
+>>>>>
+>>>>> If the preference is NMI, as your comment suggests, the flag should 
+>>>>> be named
+>>>>> "nmi" and be set if NMI is available. That would align the code and 
+>>>>> the
+>>>>> comment. Right now both code and comment are misleading, since the 
+>>>>> presence
+>>>>> of a reset flag (and setting it to false) suggests that a direct 
+>>>>> reset is
+>>>>> not available, and that reset is preferred if available. A reset is 
+>>>>> the
+>>>>> normally expected behavior for a watchdog, so the fact that this is 
+>>>>> _not_
+>>>>> the case for this watchdog should be made more visible.
+>>>>
+>>>>
+>>>> How about:
+>>>>
+>>>>
+>>>> /* If WWDT serviced outside of window, generate NMI or reset the device
+>>>> if NMI not available */
+>>>>
+>>>> if (wdt->data->reset)
+>>>>      reaction = RTIWWDRXN_RST;
+>>>> else
+>>>>      reaction = RTIWWDRXN_NMI;
+>>>>
+>>>
+>>> As I have said before, the problem is the "reset" flag. Its name 
+>>> suggests that
+>>> it means "reset is available". That is not what it actually means. It 
+>>> means
+>>> "NMI is not available". So I suggested to rename it to "nmi" or maybe 
+>>> "no_nmi".
+>>> Please educate me - why is that such a problem to name the flag to 
+>>> match its
+>>> meaning ?
+>>
+>> wdt->data->reset makes more sense because it shows there is a
+>> physical line routed to the MAIN RESET HW LOGIC:
+>>
+>>  >> if (wdt->data->reset)
+>>  >>      reaction = RTIWWDRXN_RST;
+>>  >> else
+>>  >>      reaction = RTIWWDRXN_NMI;
+>>
+>> If there is a direct reset line to MAIN RESET HW logic, then the
+>> reaction should be reset, if there is no reset line, then generate
+>> and NMI to ESM.
+>>
 > 
-> Until anyone wants 0 to mean something different from "figure out the
-> default settings for me", I would not use the flag.
-> 
+> There is a reset line on all K3 devices, if you did it this way then
+> all devices would have wdt->data->reset set to true and you wouldn't
+> need this logic at all. The thing that changes is if NMI/ESM is
+> available or not, so as Guenter suggests the flag should be called
+> "nmi" or similar and you switch on that.
 
-Okay. Thanks for the review. I'll send the next out as a regular patch
-after testing.
+Looking at the integration spec, I do not see a direct reset line for
+any device besides am62l, could you confirm that what I am reading
+is correct please?
 
-David
+  ~ Judith
+
 
