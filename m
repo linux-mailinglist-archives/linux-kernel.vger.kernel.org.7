@@ -1,203 +1,276 @@
-Return-Path: <linux-kernel+bounces-735540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9678B090B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:37:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC016B090B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:38:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D6F216ABA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:37:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF4914E42F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:38:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354362F9485;
-	Thu, 17 Jul 2025 15:37:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2702F8C5F;
+	Thu, 17 Jul 2025 15:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I4DCe0Wu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="XlkkyD6l"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011005.outbound.protection.outlook.com [52.101.65.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7906C1E47A5;
-	Thu, 17 Jul 2025 15:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752766639; cv=none; b=Y8DRVVhqN0fHAkgv3dtW7U17p32xU2SU8qEPO0h4AYJk8sFZOqlzw/bjhho7ZIl7Ky2gCdQDQI8JekufJhxApk+xR3NjZ2ND7Gu8v+V1BC7DwnFMD8XkuDOP8FC0KQsptyY7pq2/b3cMqf5RKgYmm5GfDU1azusLeDvLW7MvyOo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752766639; c=relaxed/simple;
-	bh=a0vlojsWLFqpyamqySLu2FdpCAD0OWEIk4/dwKtK5A4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IIxEVCqQQFH8yQwdIsrJTT9xGfbEumzHaffHjXkG3/y1uEHc98UoRCtGnDAtFsEWqlMheON9qkhVPi0Ej6WQe/1mO7W3LSnx2AjG6nih7XSAQE38aE9aahS+qKOwkQdwFZTr9mySRSTdEaeT+N8khI/XPQSiTFU7zM2btaybgOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I4DCe0Wu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D69F2C4CEE3;
-	Thu, 17 Jul 2025 15:37:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752766638;
-	bh=a0vlojsWLFqpyamqySLu2FdpCAD0OWEIk4/dwKtK5A4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=I4DCe0Wu76JCO9xDZy6z3QT2EJSoL/4HAqn+/RCsaDSmDHrDAffYxqBN+fp1+p8qT
-	 Rm+phDh+PpHpqtRCqc0X8nSSZcIeu5Y+kW1sTJ4WCwdKawJm0plH+j2eYbLeySCVAE
-	 81bCNEtaI4kWfJNmEfRnw2VQLLHyX50NKRojmVmmt/CTilaNNjHCGIO9P9XDz9a8FJ
-	 dosf7emh8TZRcXGVBafNZfeuga5fSHkOyiUywPe6eFDpJ0fHumazp7yuthkjkq/YpQ
-	 aD7zkmdIF9i1mmE5cbn/4LyVyecfchmSV8Xlwd5dHP9oCVt7RqRJSp7FJjE6gmRfKw
-	 3UJpxNawRqRJg==
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-611f48c6e30so541433eaf.0;
-        Thu, 17 Jul 2025 08:37:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW1tfAg67VouVbSCH1D2K/p6MxEjPkQmjtL/HZg8T0XT3iQfbop2/eLNP+N9K9vUiG2cOZ7g10yW9PKf3Y=@vger.kernel.org, AJvYcCWEOw74NqA51kAcA/lOXbzkKg7YHTFXfoKuLH0buZ3Ovl7QvP/vvcn1n8Ij6It7nKTAfyOLrpTT3XE7@vger.kernel.org, AJvYcCX+007svqMEdh/moRgrZvflPzxF07ygQC1cRhIC2GogPftfGS/XQWLPHhZNPmVJqeAdoeVdWa43VPY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztFYDUYI/XGgCbUWzDqJ5Wtu71CKYZY8ZdnVEOtEXXLIvptEPK
-	1y1ziq2kodTYWxgiQvKqksc6t4jtthUJhkaffdtpP/Bex8e9rNSBUhG1hhHLu1rNxJ2X96NQ3NJ
-	YPESTGTcJst/IcNdExIdGSTtud0Z6XoA=
-X-Google-Smtp-Source: AGHT+IEml34oxpvPpWkQPR5hHME0NYRSKwIBLGlh1zEHVcWbgVoD5yKsFFOO7VaTzk+7e7M5k8nyi+GD5WtLrHXmAjs=
-X-Received: by 2002:a05:6820:6408:b0:615:7f6b:2ccc with SMTP id
- 006d021491bc7-615ad9c1bb9mr1656821eaf.3.1752766633284; Thu, 17 Jul 2025
- 08:37:13 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A9E1E572F;
+	Thu, 17 Jul 2025 15:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.5
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752766707; cv=fail; b=lEmPlbOP9u7ZqhJZx6HA+KwdssbtakJtnfThSKk+KcsBqBpEZB2YbNOD8F0e51Nd6L6YdaYvGch1o08KSqkgYGzn0Ox3myzbcMw4QFIUAYfjTY+jUcLFHKzEdEMwMFk6FIAkx+bsszS802raKTZe5mTcUs/v7B0sk/BiJQXT7U8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752766707; c=relaxed/simple;
+	bh=Ucf/R7ZHq4jt1LD2+Fc70rHbign/6Jmoi2clllCWz5A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=uwlzWYJZp3ejGtWNgULbPeAgCbJZp9hlOJ/O1eMVGB0aPhF26iwZKxIKiuro0eCnUTcLbGxffhsjrD57U2tzEtkKKGeKHs7dwSxt5ITkcREuEtKDTUwcYxizameO0nei8K9Mka3LyMUf+WQHDRChGVZTYzCtwvfRH1mDNJsglvY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=XlkkyD6l; arc=fail smtp.client-ip=52.101.65.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=J73Nk8dxSt/MxL4bmS1ZDwjscPgjcS0eCwAr7Sj/ZW04SEvAG5VEeihCLzaea+w0vfzD/RZ/+UnaI6bWkVIyUd0/5EYRTk6zTrA52JbnaROeWqqKyNSU5p/uTI0Cmco4+5Pk5L+VcgWUVdu9wMtBrSGlxYNhUWRCNdi0fEYkS3n8cG11b26EPh5R9bmMpeqgDYN5bjcAQAS0pLVCrLrzRpEOpGw396VBeJCZzCH0OmCjJWVtwsFxvRPYvff62WuRMui/Ogo/4JSWjaB8gEk+ZqKE/oI6UmnTNMHTfIQG+190Kxg3qT0zR8oP5Yj9kZiL71gjauZaWzWtI2zdclwG1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YcGDk7oyl8cLtrQ3qrd0ata13NKrFfOstTfRAXipnVA=;
+ b=j7+SEkeYdHEPIikVLvMhot/riL36K93f9Y6PDXHGtUug3rHawI3hrQ4e19tjV5zaCjij9OgCn3rUir5omFDpLLdaJ2xbDU31GQUfQCfKTJRLn9Ghpb7BCUzdqy4PHzKxl4GSAAckHoFGw39yFK7eXZDHQcvB7vncE7lxDzD1m6NV2rNGmMMq1u+XYCUWV4vvNQls3H9ym75jpwCODFn9Syg8nsfBLk9OA8QXtVZXGhOLP3G3V6o1ppi2wMV2MLacxO6VDE6vEsomXS6ZSJc8J0ojZi5ojYyEG57PSOseCe+fgJR+pIf6mrlHcdVFVEY2EzeoQqw9DOw/JMMcAMsrQA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YcGDk7oyl8cLtrQ3qrd0ata13NKrFfOstTfRAXipnVA=;
+ b=XlkkyD6l9myGPJMUx3uHZ8pjuyDAYuyP7umxqhPt1KqE6VmjQ/1PSaW6HzDRsld8pIPjPgmc5TWJsv4vKpYre11gjcPWl0gLcdi8vHr1xjy9HcAv8hRpk6aXwQgEtJPkyAlSrAa2K8k3nVYkSvCZwwYOffjDnTVWQFs/6kQQeQClGAkhjVFnO8L0moFHpDRx5M8vnkQs4IKuapAJEhWbSp7R+3sPyn+BorSWjztO73xpFh9ndpAd+EDAWm6L2QxYa1mpsRbFbYynfEZu5+Gn9q4IF2EyhUGSaupWeSWdqTnp5feMoqPRVIONURizvSlxO9SDzug/mBqRk6tvCW6wdA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AM8PR04MB7250.eurprd04.prod.outlook.com (2603:10a6:20b:1dc::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.39; Thu, 17 Jul
+ 2025 15:38:21 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8922.037; Thu, 17 Jul 2025
+ 15:38:21 +0000
+Date: Thu, 17 Jul 2025 11:38:15 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+Cc: imx@lists.linux.dev, Abel Vesa <abelvesa@kernel.org>,
+	Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, dri-devel@lists.freedesktop.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 02/10] clk: imx95-blk-ctl: Save/restore registers when
+ RPM routines are called
+Message-ID: <aHkY51MOgl4v2Y9/@lizhi-Precision-Tower-5810>
+References: <20250716081519.3400158-1-laurentiu.palcu@oss.nxp.com>
+ <20250716081519.3400158-3-laurentiu.palcu@oss.nxp.com>
+ <aHfvbTpQ4LmexJpA@lizhi-Precision-Tower-5810>
+ <lp3m4bahzbwvb6nfu2o6hsr5cux3y4rgdasbgba2jc774iei5a@plfpzihh7pen>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <lp3m4bahzbwvb6nfu2o6hsr5cux3y4rgdasbgba2jc774iei5a@plfpzihh7pen>
+X-ClientProxiedBy: AM0PR02CA0155.eurprd02.prod.outlook.com
+ (2603:10a6:20b:28d::22) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250717004034.2998443-1-david.e.box@linux.intel.com>
- <4xcwba3d4slmz5gfuwypavxqreobnigzyu4vib6powtbibytyp@mmqcns27vlyr>
- <CAJZ5v0h+v5pUP39vTWpNNK2D8=X2UdjUTtZ7yQHCQ2k=r2kkMg@mail.gmail.com> <tbj67d2j4bzf3em5nw73w354lqji3baurajbseyouls53odjxq@4edjrxtdaeum>
-In-Reply-To: <tbj67d2j4bzf3em5nw73w354lqji3baurajbseyouls53odjxq@4edjrxtdaeum>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 17 Jul 2025 17:37:01 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0htsq80MT53HQ+=yJZjjjtaKc7Ccmvps6j9Z5phjT0d4w@mail.gmail.com>
-X-Gm-Features: Ac12FXyNRFPLuXjNGlwSJ-_TR4lsaaA7B_XUzqOjzN5kL3XwM3ytEw5kXKjHd5w
-Message-ID: <CAJZ5v0htsq80MT53HQ+=yJZjjjtaKc7Ccmvps6j9Z5phjT0d4w@mail.gmail.com>
-Subject: Re: [RFC 0/2] PCI/ASPM: Allow controller-defined default link state
-To: David Box <david.e.box@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, mani@kernel.org, bhelgaas@google.com, 
-	vicamo.yang@canonical.com, kenny@panix.com, ilpo.jarvinen@linux.intel.com, 
-	nirmal.patel@linux.intel.com, linux-pm@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM8PR04MB7250:EE_
+X-MS-Office365-Filtering-Correlation-Id: 02546a40-03e7-48fa-e1ff-08ddc547f5c9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|19092799006|1800799024|52116014|376014|7416014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?woBzS/g0ozaiWd7Xa9ubtu2QJkRwg/hatLmH5o8AvlA1Rzp1mxcqxax3zHqL?=
+ =?us-ascii?Q?kDzS0aJBGTWhin2Vly7V+PZL+O2CC70mN9Od35LJijlnjSd04/BBpwuxz2Qj?=
+ =?us-ascii?Q?yPsCYXfj0den94XtkWQO+MFZrvXSKDln+nR3WjNVUfRKu+BO7GCMUdf1WAEN?=
+ =?us-ascii?Q?AlcYvUotVnyHrygnceo9YUgzkKmibZAA5bNkHW5I2Dfv+2cXhza3q1IjzQsv?=
+ =?us-ascii?Q?uBQrP+kYBa/PkWQdu1OhQtiyqhDM+BoeLwscdP5unKY1gGXgTDQlrkmtG1Xf?=
+ =?us-ascii?Q?OoETHYzcM0nQ8Qog9wO1iJ4Eql8VUfcUUzXAKxOl6OMNmk1ZjFJsQ+rXuMd/?=
+ =?us-ascii?Q?HhiRSBuZKpWnjPMHzcrdLbaQxH+AXRIOPhwDgIGHMj3I2ja2+n4kgm+zH2dG?=
+ =?us-ascii?Q?nC7XpNUKRdTyK4lmr4syxLBCO9pCJhsWB0ZKWajeRIX8+LcHle9KR1I0XPKT?=
+ =?us-ascii?Q?tQG2dVFWjJqPTM/z7wsYHcInYJHcw38O6I7e9MPYmJpLFGniOQuSTdSk5Wn4?=
+ =?us-ascii?Q?nK58T7D7MicovFVw9VnY7rmfh/nr3TSKeJUJsCbDxmWNFyfPYB023Q2gr/0Y?=
+ =?us-ascii?Q?Vew2Ynjo9uEsPR6VaLOTyRFo3v5yz0dGJipNvbwZMs5Y9ozX6jRmpyoBbJIR?=
+ =?us-ascii?Q?2A0Drpy24fi7nMshBT0PA5Yz6sz52lOX9TYVbye2xyiC3t2LsOdTLC5FJTcj?=
+ =?us-ascii?Q?cYBoFkVEi/hQroLJ+AkelPgqjpOKijz0PrTWuzC6dE9hvtbjxzRJhkuTckqx?=
+ =?us-ascii?Q?t7ZtPeu3ooFSZvxez1YBP3YuvrF+QIG97jfvxrianD0TXXBNOzdJam0dmjiE?=
+ =?us-ascii?Q?aitqbQ2owZBQx7VhNhwhmIeqWr5mDhMxmUvXI7EUm7RkFTuHHbP1ADQU7BN0?=
+ =?us-ascii?Q?YKV9+nQTbi5tj/0ngWyPbpBpRy3G+50nRiau4+8k35lQ+m9AFV/80+NSAmmE?=
+ =?us-ascii?Q?15SZqRgh2hqI5ccshPolmjkTYCOMJtay9CcHRVgJ9DrTc+ov1tFKrWX9rzTM?=
+ =?us-ascii?Q?HDYSD5XHcJoTsXc44OL+Gp/hwid8py3rveozUEL94sVAF7imxNyLyl8fwhVE?=
+ =?us-ascii?Q?QMJ4di5wSYZ+yWsTA9dsoB/v+P5nUcr+bHFbgl6XuzuLXi4s3qzd7YdhVQ2p?=
+ =?us-ascii?Q?u+IMeyQu43K7vXM3Ywuqln7InoAJwtY+urDF1ACedhzMGG10z/9Q9IbDrjD/?=
+ =?us-ascii?Q?Zi1imMl1BqNjsw04qFYgfNUng7ZxFGkh88pD0x49bIJvXNk9s6ODBPjMIG2g?=
+ =?us-ascii?Q?Mmwcrz4UjNjY0DdvE3NjU08x3tzurUNrnpaSMo4+2p6obO9NtJLg326nFLUF?=
+ =?us-ascii?Q?Nxy4G0x77dAWYGsdbM2t43AA8xq1rLBN0CJ3KhMj5X+DuLdUQMxEwrzk6+T2?=
+ =?us-ascii?Q?I4d/U0BYLMzetCYhvigLZyyTjcDqwvhJRIzU/547m7IIUcN+VAxDdB0v41uy?=
+ =?us-ascii?Q?0pCfcKsYM9vYT9ZPhJ5TbOIT6Qdh/HP3rCYWtspgFnqO+Jzl7WvB2w=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(1800799024)(52116014)(376014)(7416014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?XwpjlwUe/gaUoc0TS17Co42GdS2nK2w319jlrq/Ybf0H6N4la4U6javahobX?=
+ =?us-ascii?Q?TFFJqYnVxARFwZEAOPhAdeCVPSu5t8WvawrdInCcl8nyJV4B82nsgK0MJTXp?=
+ =?us-ascii?Q?gbB9AKuiBdUMMnsup2iufxxq5d6Jp8NCpBlbBA3VkjQWFY+NW9vHkHgfEa1/?=
+ =?us-ascii?Q?vJGw9jExfO4V8mb5xSGDddb5o5oLj4DcLQUXk5cUmP6jUImHh4qp2iDJe36G?=
+ =?us-ascii?Q?AV/R+0YaItb9kjjNpWMz44L1xX9/ZuAajgPz7O8eyKJPeJFS/LmiNDmt5Os/?=
+ =?us-ascii?Q?Ox/EbctMNvlQIAug7W7Mn/kZiAZa8wE3jjsIdAqQEyYZsEcRHGL6ZtHSOn8E?=
+ =?us-ascii?Q?hKc9PkFxA8XUn3uJJoT8mFdVh7R6nkvr8VZK79Lf0b6uIM8WS7Ah0SiuYYE5?=
+ =?us-ascii?Q?EshSp3EpPoq5mBP+zO7XyxrzTLRY3bb+HMhrTQHoTzP/FRFmuR1V0Q8koe+G?=
+ =?us-ascii?Q?qa9pi0VDahWfdXKhl1x4f755xPqaBPc1lkDA2o+kCvp9yTv0Ft9qZrjSdeHG?=
+ =?us-ascii?Q?nZN3M0du1m6I8C/vZ8V3jXCBVyYZmbAZsMqKWJuOp0YiPTkQzI0H87ZWp78R?=
+ =?us-ascii?Q?sCJC7dyIYOrrGBmIt/9bC8AXLyuwb4c6xTpXKG8OqAiU0ckUr9cDG4KtptFv?=
+ =?us-ascii?Q?f03UzSwNILXKuhMcDCdp1VUddhhgBlaNkq2PXQCxxEPKh0htquY6NjY7I2nI?=
+ =?us-ascii?Q?iVLiwCTTkuVhEeBvYayR0bLVKcgD7sv+j6kp/AM2b7GC3Ef17HAOEHHX/IY6?=
+ =?us-ascii?Q?t8lPJWqDE/W5WfzHQLAhLoexV1Cwmiruq2eRmSaYPDx3hJogmrRqxQ/ijG0o?=
+ =?us-ascii?Q?YTOSRm5ZCpUjBIuhYIrOmCOSDEsz/OhaHToBE6+3UR1D5nJAP/z1JExoFmyL?=
+ =?us-ascii?Q?V8IER1AGkaVHgdz7fvHYx6DfYPuED+KYTntkB8aQRp6lDEXFiU3f0sA8doxC?=
+ =?us-ascii?Q?+dA9IFbyV4qhfnlqkBWiXqKK77AKDyWDOceaJjZ4N/E2rU/DRbCITMamh5Nm?=
+ =?us-ascii?Q?4MXqI/cM5FXV13KfINbMTnYZl6gGlLgWlDObpvQZTh/d8nvzSDT2wyCgvm8A?=
+ =?us-ascii?Q?sZo0Yyso7yJvltUku6h/uScVTw1J5R+LOMwHjAVMdd6irCLXbubUV91BDCA4?=
+ =?us-ascii?Q?IamkHS0iqGf8gO26Uqf+hxsvm53ygMOv/K9HIt6bkDxbzcXqZ95twV/BgT7e?=
+ =?us-ascii?Q?AKzBewRBnSQvDlVMrFj8S3xaa2nwY2Dul4Gl2+R96+dNMJynZjASXClaHZr7?=
+ =?us-ascii?Q?7JpLNJHxKU4VkBFwCc0k8czY5G9iY93WC7Ihbn4mhvupm2z9nhtLjzwdFZJH?=
+ =?us-ascii?Q?1+GaPIJnc/kURa2b/BJC613ii4oArQNLAbVeffn4Gw14bqL762N0zDKR2nup?=
+ =?us-ascii?Q?089KJuA2cUf0kBRiS+ZB/OtKlw6zrhZHKEglgYUU4Wfq+Ar3zyAXVR5ED05P?=
+ =?us-ascii?Q?s6vqxePyy2mQR8i4eYMoFgP+d9LcocfVarHJkrDGaZVHMYzaBxHe8FCw5EkS?=
+ =?us-ascii?Q?/qm3kHbiz6hzUFXnwiVMQ6cqrxKi4l01/4XRV8sgobsUn0ubIVP8dLzobXxW?=
+ =?us-ascii?Q?xr1Mx6cf+mcL2e5bdTuzdsll8KKNUTze11+BummB?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 02546a40-03e7-48fa-e1ff-08ddc547f5c9
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2025 15:38:21.5486
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: HBeUf3lV5HL3psW+zVxIW5vpbahGriuUYDj4nNK8fC/DvUxdFIOJK6W+Ivn5TWxP1slwOnF0xPPijyKTWPdb+g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7250
 
-On Thu, Jul 17, 2025 at 4:13=E2=80=AFPM David Box <david.e.box@linux.intel.=
-com> wrote:
+On Thu, Jul 17, 2025 at 03:23:38PM +0300, Laurentiu Palcu wrote:
+> Hi Frank,
 >
-> Hi Mani, Rafael,
->
-> On Thu, Jul 17, 2025 at 12:03:32PM +0200, Rafael J. Wysocki wrote:
-> > On Thu, Jul 17, 2025 at 8:55=E2=80=AFAM Manivannan Sadhasivam <mani@ker=
-nel.org> wrote:
+> On Wed, Jul 16, 2025 at 02:29:01PM -0400, Frank Li wrote:
+> > On Wed, Jul 16, 2025 at 11:15:06AM +0300, Laurentiu Palcu wrote:
+> > > If runtime PM is used for the clock providers and they're part of a
+> > > power domain, then the power domain supply will be cut off when runtime
+> > > suspended. That means all BLK CTL registers belonging to that power
+> > > domain will be reset. Save the registers, then, before entering suspend
+> > > and restore them in resume.
 > > >
-> > > On Wed, Jul 16, 2025 at 05:40:24PM GMT, David E. Box wrote:
-> > > > Hi all,
-> > > >
-> > > > This RFC series addresses a limitation in the PCIe ASPM subsystem w=
-here
-> > > > devices on synthetic PCIe hierarchies, such as those created by Int=
-el=E2=80=99s
-> > > > Volume Management Device (VMD), do not receive default ASPM setting=
-s
-> > > > because they are not visible to firmware. As a result, ASPM remains
-> > > > disabled on these devices unless explicitly enabled later by the dr=
-iver,
-> > > > contrary to platform power-saving expectations.
-> > > >
-> > > > Problem with Current Behavior
-> > > >
-> > > > Today, ASPM default policy is set in pcie_aspm_cap_init() based on =
-values
-> > > > provided by BIOS. For devices under VMD, BIOS has no visibility int=
-o the
-> > > > hierarchy, and therefore no ASPM defaults are applied. The VMD driv=
-er can
-> > > > attempt to walk the bus hierarchy and enable ASPM post-init using r=
-untime
-> > > > mechanisms, but this fails when aspm_disabled is set because the ke=
-rnel
-> > > > intentionally blocks runtime ASPM changes under ACPI=E2=80=99s FADT=
-_NO_ASPM flag.
-> > > > However, this flag does not apply to VMD, which controls its domain
-> > > > independently of firmware.
-> > > >
-> > > > Goal
-> > > >
-> > > > The ideal solution is to allow VMD or any controller driver managin=
-g a
-> > > > synthetic hierarchy to provide a default ASPM link state at the sam=
-e time
-> > > > it's set for BIOS, in pcie_aspm_cap_init().
-> > > >
+> > > Also, fix the suspend/resume routines and make sure we disable/enable
+> > > the clock correctly.
 > > >
-> > > I like the idea and would like to use it to address the similar limit=
-ation on
-> > > Qcom SoCs where the BIOS doesn't configure ASPM settings for any devi=
-ces and
-> > > sometimes there is no BIOS at all (typical for SoCs used in embedded =
-usecases).
-> > > So I was using pci_walk_bus() in the controller driver to enable ASPM=
- for all
-> > > devices, but that obviously has issues with hotplugged devices.
+> > > Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+> > > ---
+> > >  drivers/clk/imx/clk-imx95-blk-ctl.c | 25 +++++++++++++------------
+> > >  1 file changed, 13 insertions(+), 12 deletions(-)
 > > >
-> > > > Solution
-> > > >
-> > > > 1. A new bus flag, PCI_BUS_FLAGS_ASPM_DEFAULT_OVERRIDE, based on Ra=
-fael's
-> > > > suggestion, to signal that the driver intends to override the defau=
-lt ASPM
-> > > > setting. 2. A new field, aspm_bus_link_state, in 'struct pci_bus' t=
-o supply
-> > > > the desired default link state using the existing PCIE_LINK_STATE_X=
-XX
-> > > > bitmask.
-> > > >
-> > >
-> > > Why would you need to make it the 'bus' specific flag? It is clear th=
-at the
-> > > controller driver is providing the default ASPM setting. So pcie_aspm=
-_cap_init()
-> > > should be able to use the value provided by it for all busses.
-> > >
-> > > Like:
-> > >
-> > > diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-> > > index 2ad1852ac9b2..830496e556af 100644
-> > > --- a/drivers/pci/pcie/aspm.c
-> > > +++ b/drivers/pci/pcie/aspm.c
-> > > @@ -791,6 +791,7 @@ static void aspm_l1ss_init(struct pcie_link_state=
- *link)
-> > >  static void pcie_aspm_cap_init(struct pcie_link_state *link, int bla=
-cklist)
+> > > diff --git a/drivers/clk/imx/clk-imx95-blk-ctl.c b/drivers/clk/imx/clk-imx95-blk-ctl.c
+> > > index c72debaf3a60b..3f6bcc33bbe99 100644
+> > > --- a/drivers/clk/imx/clk-imx95-blk-ctl.c
+> > > +++ b/drivers/clk/imx/clk-imx95-blk-ctl.c
+> > > @@ -453,7 +453,9 @@ static int imx95_bc_runtime_suspend(struct device *dev)
 > > >  {
-> > >         struct pci_dev *child =3D link->downstream, *parent =3D link-=
->pdev;
-> > > +       struct pci_host_bridge *host =3D pci_find_host_bridge(parent-=
->bus);
->
-> I see. This is better. I'll make this change.
->
-> > >         u32 parent_lnkcap, child_lnkcap;
-> > >         u16 parent_lnkctl, child_lnkctl;
-> > >         struct pci_bus *linkbus =3D parent->subordinate;
-> > > @@ -866,8 +867,8 @@ static void pcie_aspm_cap_init(struct pcie_link_s=
-tate *link, int blacklist)
-> > >         }
+> > >  	struct imx95_blk_ctl *bc = dev_get_drvdata(dev);
 > > >
-> > >         /* Save default state */
-> > > -       if (parent->bus->bus_flags & PCI_BUS_FLAGS_NO_ASPM_DEFAULT)
-> > > -               link->aspm_default =3D parent->bus->aspm_bus_link_sta=
-te;
-> > > +       if (host && host->aspm_bus_link_state)
-> > > +               link->aspm_default =3D host->aspm_bus_link_state;
-> > >         else
-> > >                 link->aspm_default =3D link->aspm_enabled;
+> > > +	bc->clk_reg_restore = readl(bc->base + bc->pdata->clk_reg_offset);
+> > >  	clk_disable_unprepare(bc->clk_apb);
+> > > +
+> > >  	return 0;
+> > >  }
 > > >
-> > > This avoids the usage of the bus flag (which your series is not at al=
-l making
-> > > use of) and allows setting the 'host_bridge::aspm_bus_link_state' eas=
-ily by the
-> > > controller drivers.
+> > > @@ -461,7 +463,10 @@ static int imx95_bc_runtime_resume(struct device *dev)
+> > >  {
+> > >  	struct imx95_blk_ctl *bc = dev_get_drvdata(dev);
+> > >
+> > > -	return clk_prepare_enable(bc->clk_apb);
+> > > +	clk_prepare_enable(bc->clk_apb);
 > >
-> > This is very similar to what I have just suggested and I like this one.
+> > Need check clk_prepare_enable()'s return value!
+> >
+> > > +	writel(bc->clk_reg_restore, bc->base + bc->pdata->clk_reg_offset);
+> > > +
+> > > +	return 0;
+> > >  }
+> > >  #endif
+> > >
+> > > @@ -469,17 +474,12 @@ static int imx95_bc_runtime_resume(struct device *dev)
+> > >  static int imx95_bc_suspend(struct device *dev)
+> > >  {
+> > >  	struct imx95_blk_ctl *bc = dev_get_drvdata(dev);
+> > > -	int ret;
+> > >
+> > > -	if (bc->pdata->rpm_enabled) {
+> > > -		ret = pm_runtime_get_sync(bc->dev);
+> > > -		if (ret < 0) {
+> > > -			pm_runtime_put_noidle(bc->dev);
+> > > -			return ret;
+> > > -		}
+> > > -	}
+> > > +	if (pm_runtime_suspended(dev))
+> > > +		return 0;
+> > >
+> > >  	bc->clk_reg_restore = readl(bc->base + bc->pdata->clk_reg_offset);
+> > > +	clk_disable_unprepare(bc->clk_apb);
+> > >
+> > >  	return 0;
+> > >  }
+> > > @@ -488,10 +488,11 @@ static int imx95_bc_resume(struct device *dev)
+> > >  {
+> > >  	struct imx95_blk_ctl *bc = dev_get_drvdata(dev);
+> > >
+> > > -	writel(bc->clk_reg_restore, bc->base + bc->pdata->clk_reg_offset);
+> > > +	if (pm_runtime_suspended(dev))
+> > > +		return 0;
+> > >
+> > > -	if (bc->pdata->rpm_enabled)
+> > > -		pm_runtime_put(bc->dev);
+> > > +	clk_prepare_enable(bc->clk_apb);
+> > > +	writel(bc->clk_reg_restore, bc->base + bc->pdata->clk_reg_offset);
+> > >
+> > >  	return 0;
+> > >  }
+> >
+> > Look like needn't imx95_bc_resume() and imx95_bc_suspend()
+> >
+> > DEFINE_RUNTIME_DEV_PM_OPS() will use pm_runtime_force_suspend(), which
+> > do similar things with above logic.
 >
-> I considered this. But 0 could technically mean that the controller wants
-> ASPM to be disabled. The VMD driver doesn't need to do this though and if
-> others don't currently need this then I can drop the flag.
+> As I said for v1, we cannot use DEFINE_RUNTIME_DEV_PM_OPS(). This driver
+> is used for various clock providers and RPM can be disabled for some of
+> them (see rpm_enabled flag in platform data). When RPM is disabled and
+> DEFINE_RUNTIME_DEV_PM_OPS() is used, pm_runtime_force_suspend() is
+> called, as you pointed out, and suspend() is never called.
 
-Until anyone wants 0 to mean something different from "figure out the
-default settings for me", I would not use the flag.
+Sorry, I missed your message at v1. do you know which flag impact this?
+
+Frank
+
+>
+> Thanks,
+> Laurentiu
+>
+> >
+> > Frank
+> >
+> >
+> > > --
+> > > 2.34.1
+> > >
 
