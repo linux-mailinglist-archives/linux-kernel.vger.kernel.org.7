@@ -1,345 +1,137 @@
-Return-Path: <linux-kernel+bounces-735019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E14BB0898A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:43:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F635B08996
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:45:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DD0C1AA5839
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:43:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77F0717BAE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:45:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C2628A1CB;
-	Thu, 17 Jul 2025 09:43:19 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B906728A702;
+	Thu, 17 Jul 2025 09:45:01 +0000 (UTC)
+Received: from baidu.com (mx22.baidu.com [220.181.50.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B2328850C
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 09:43:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625C228A3FC
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 09:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752745398; cv=none; b=YLobH6Leespc6iEsCZwIdvFYr3o4GTb2RC+NsH4LnHjTde5psC+FErJVhsxK8P94CxY+E+9NohRIqppd4MK5ycwEb/k0i0e32yfvZtYyvVlTK31trkNvztKYJxXfnw0ICXB/oFZIJ+rq4sxWY2Frm7jGhA2n6WkDSSNyXnVPzCU=
+	t=1752745501; cv=none; b=WfkOY2TKojqYWcMdnJRP04kQwbQYcFbDWzZRdAW0ZbYMcUOdVFRt7qeXgdmP18ol8lIQechjaaFssejdcibWuSCa7oLmV12SbUKK1EGFjBSZVb7L7IDpyKpeJ5Ib5lGoREAj2bhOK6zEs+dbPceNfqIew/FbaRv+UQ+NRVH3Smg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752745398; c=relaxed/simple;
-	bh=+mA92FjzqTftsGVBO5wZq7CMWFfu4DpJmkiG1pcV3uc=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=ZfJNCZRQvNKOMq60iLoYmKvIuWyTqOqDSkIDiEt67HMtvCBbHgb0ddsz2ro48ErBH/aTgOPCNSTtoAYxk0uLefj2WVmvVKlGKLjvhwEvz11WmtylZMF6LUhhk1xJ8bsWDNx6vXIiD2cZ37S3JI9/WTgFs8Ox2v7jVnsvMlThIEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bjSbd6MzHz2FbPx;
-	Thu, 17 Jul 2025 17:41:01 +0800 (CST)
-Received: from dggpemf100012.china.huawei.com (unknown [7.185.36.196])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0CB57140123;
-	Thu, 17 Jul 2025 17:43:07 +0800 (CST)
-Received: from [10.174.177.163] (10.174.177.163) by
- dggpemf100012.china.huawei.com (7.185.36.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 17 Jul 2025 17:43:05 +0800
-Subject: Re: [PATCH] dm: introduce spinlocks to prevent concurrent usage and
- release of device_metadata and hash
-To: Li Lingfeng <lilingfeng3@huawei.com>, <dm-devel@lists.linux.dev>
-CC: <agk@redhat.com>, <snitzer@kernel.org>, <mpatocka@redhat.com>,
-	<tusharsu@linux.microsoft.com>, <colin.i.king@gmail.com>,
-	<linux-kernel@vger.kernel.org>, <yi.zhang@huawei.com>,
-	<yangerkun@huawei.com>, <yukuai3@huawei.com>, <chengzhihao1@huawei.com>,
-	<lilingfeng@huaweicloud.com>
-References: <20250717140728.3221243-1-lilingfeng3@huawei.com>
-From: Hou Tao <houtao1@huawei.com>
-Message-ID: <5a29db22-13a9-f3ea-dbf2-13ce7f7aa649@huawei.com>
-Date: Thu, 17 Jul 2025 17:43:05 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1752745501; c=relaxed/simple;
+	bh=CKWUAx3I1kSr/hGyutDFcPettfcApk3ft9EYC5zonDg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XRa3d3A5xigm/c32a5V/aqQvNSGZQhAHdHk0g9lQHgvAJvHpKWybaY+w+ZMJSw595OI+I5RIC+HLiIia9IDJOrzPu22XfO6ljwhi8Od6xSwNxi+Lq6bVy+J+BTPn2R+h6jxUjG04x+zLAvRtgxXA2HnZeCRjc52Rm9yHwxPcSHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: Fushuai Wang <wangfushuai@baidu.com>
+To: <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <hpa@zytor.com>,
+	<chang.seok.bae@intel.com>, <sohil.mehta@intel.com>, <peterz@infradead.org>,
+	<vigbalas@amd.com>, <aruna.ramakrishna@oracle.com>, <seanjc@google.com>
+CC: <linux-kernel@vger.kernel.org>, Fushuai Wang <wangfushuai@baidu.com>
+Subject: [PATCH] x86/fpu: Fix potential NULL dereference in avx512_status()
+Date: Thu, 17 Jul 2025 17:43:08 +0800
+Message-ID: <20250717094308.94450-1-wangfushuai@baidu.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250717140728.3221243-1-lilingfeng3@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- dggpemf100012.china.huawei.com (7.185.36.196)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: bjhj-exc7.internal.baidu.com (172.31.3.17) To
+ bjhj-exc17.internal.baidu.com (172.31.4.15)
+X-FEAS-Client-IP: 172.31.4.15
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-Hi,
+When CONFIG_X86_DEBUG_FPU=y is set, x86_task_fpu() returns NULL for
+kernel threads. The avx512_status() function would then dereference this
+NULL pointer via READ_ONCE(x86_task_fpu(task)->avx512_timestamp).
+when reading /proc/*/arch_status, causing a kernel NULL pointer dereference
+and system will crash.
 
-On 7/17/2025 10:07 PM, Li Lingfeng wrote:
-> There is a window between freeing md->ima.active_table.hash and setting
-> md->ima.active_table.hash to NULL in dm_ima_measure_on_device_resume().
-> If dm_ima_measure_on_device_remove() accesses md->ima.active_table.hash
-> concurrently during this window, it could lead to a double free or UAF,
-> as shown below:
+[ 8215.540977] Oops: general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] SMP KASAN NOPTI
+[ 8215.542290] CPU: 3 UID: 0 PID: 9285 Comm: cat Kdump: loaded Tainted: G        W           6.16.0-rc1 #4 PREEMPT(full)
+[ 8215.543000] Tainted: [W]=WARN
+[ 8215.544481] RIP: 0010:proc_pid_arch_status+0x30/0xe0
+[ 8215.545408] Code: 1f 44 00 00 55 48 89 fd 48 89 cf 53 48 83 ec 08 e8 e5 64 ff ff 48 ba 00 00 00 00 00 fc ff df 48 8d 78 08 48 8
+9 f9 48 c1 e9 03 <80> 3c 11 00 75 7d 48 8b 58 08 48 c7 c2 ff ff ff ff 48 85 db 74 3d
+[ 8215.548456] RSP: 0018:ff11000194107b08 EFLAGS: 00010202
+[ 8215.549443] RAX: 0000000000000000 RBX: ff11000211a9c9a0 RCX: 0000000000000001
+[ 8215.550581] RDX: dffffc0000000000 RSI: ffffffff96d0d020 RDI: 0000000000000008
+[ 8215.551740] RBP: ff11000111792490 R08: 0000000000000001 R09: ffe21c002117d61d
+[ 8215.552917] R10: ff11000108beb0eb R11: 0000000000000000 R12: ff11000108a80b80
+[ 8215.554111] R13: ff11000108beb0e8 R14: ffffffff96d0d020 R15: 0000000000000001
+[ 8215.555323] FS:  00007f75c18ad740(0000) GS:ff11000e266d1000(0000) knlGS:0000000000000000
+[ 8215.556629] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 8215.557880] CR2: 00005605184020f8 CR3: 0000000164499005 CR4: 0000000000771ef0
+[ 8215.559553] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[ 8215.560882] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[ 8215.562205] PKRU: 55555554
+[ 8215.563277] Call Trace:
+[ 8215.564338]  <TASK>
+[ 8215.565383]  proc_single_show+0x10c/0x1c0
+[ 8215.566568]  seq_read_iter+0x3e5/0x1050
+[ 8215.567787]  seq_read+0x24b/0x3b0
+[ 8215.569305]  ? __pfx_seq_read+0x10/0x10
+[ 8215.570509]  ? __pfx_handle_pte_fault+0x10/0x10
+[ 8215.571782]  ? __pfx_arch_get_unmapped_area_topdown+0x10/0x10
+[ 8215.573142]  ? __pfx_cp_new_stat+0x10/0x10
+[ 8215.574417]  vfs_read+0x186/0xad0
+[ 8215.575657]  ? __pfx_mas_prev+0x10/0x10
+[ 8215.576947]  ? __pfx_vfs_read+0x10/0x10
+[ 8215.578234]  ? count_memcg_events+0x1ce/0x410
+[ 8215.579523]  ? fdget_pos+0x1c9/0x4c0
+[ 8215.580737]  ksys_read+0xef/0x1c0
+[ 8215.581896]  ? __pfx_ksys_read+0x10/0x10
+[ 8215.583265]  ? do_user_addr_fault+0x4c6/0xb50
+[ 8215.584633]  do_syscall_64+0x73/0x330
+[ 8215.585773]  ? irqentry_exit_to_user_mode+0x32/0x210
+[ 8215.586967]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[ 8215.588137] RIP: 0033:0x7f75c17147e2
+[ 8215.589209] Code: c0 e9 b2 fe ff ff 50 48 8d 3d 8a b4 0c 00 e8 a5 1d 02 00 0f 1f 44 00 00 f3 0f 1e fa 64 8b 04 25 18 00 00 00 8
+5 c0 75 10 0f 05 <48> 3d 00 f0 ff ff 77 56 c3 0f 1f 44 00 00 48 83 ec 28 48 89 54 24
+[ 8215.592896] RSP: 002b:00007fffd6935ef8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+[ 8215.594238] RAX: ffffffffffffffda RBX: 0000000000020000 RCX: 00007f75c17147e2
+[ 8215.595551] RDX: 0000000000020000 RSI: 00005605183e2000 RDI: 0000000000000003
+[ 8215.596876] RBP: 00005605183e2000 R08: 0000000000000000 R09: 00005605183e10f0
+[ 8215.598187] R10: 00005605183fe000 R11: 0000000000000246 R12: 0000000000000000
+[ 8215.599494] R13: 0000000000000003 R14: 0000000000020000 R15: 0000000000020000
+[ 8215.600807]  </TASK>
 
-The UAF is a problem. However, I think the order of
-dm_ima_measure_on_device_remove() and dm_ima_measure_on_device_resume is
-bigger problem. Is it possible to order these two invocations properly
-by using suspend_lock ?
->
-> BUG: KASAN: slab-use-after-free in dm_ima_measure_on_device_remove+0x3fc/0x6c0
-> Read of size 71 at addr ffff88817bb9e220 by task dmsetup/2303
->
-> CPU: 2 UID: 0 PID: 2303 Comm: dmsetup Not tainted 6.16.0-rc6-dirty #7 PREEMPT(none)
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-2.fc40 04/01/2014
-> Call Trace:
->  <TASK>
->  dump_stack_lvl+0x5b/0x80
->  print_address_description.constprop.0+0x88/0x310
->  print_report+0x12f/0x21d
->  kasan_report+0xcc/0x190
->  kasan_check_range+0x104/0x1b0
->  __asan_memcpy+0x23/0x60
->  dm_ima_measure_on_device_remove+0x3fc/0x6c0
->  dev_remove+0x123/0x1e0
->  ctl_ioctl+0x2a2/0x480
->  dm_ctl_ioctl+0xe/0x20
->  __x64_sys_ioctl+0xc7/0x110
->  do_syscall_64+0x72/0x390
->  entry_SYSCALL_64_after_hwframe+0x76/0x7e
->
-> To reproduce this issue, add a delay between freeing
-> md->ima.active_table.hash and setting it to NULL, using the following
-> steps:
-> dmsetup create mydevice --table "0 2097152 linear /dev/sda 0"
-> dmsetup suspend mydevice
-> dmsetup reload mydevice --table "0 2097152 linear /dev/sdb 0"
-> dmsetup resume mydevice &
-> dmsetup remove mydevice
->
-> The device_metadata also appears to have a similar issue.
-> Add spinlocks for hash and device_metadata to prevent concurrent
-> usage and release.
+Fixes: 22aafe3bcb67 ("x86/fpu: Remove init_task FPU state dependencies, add debugging warning for PF_KTHREAD tasks")
+Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
+---
+ arch/x86/kernel/fpu/xstate.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-Instead of adding four spin-locks, how about only using one ?
->
-> Fixes: 91ccbbac1747 ("dm ima: measure data on table load")
-> Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
-> ---
->  drivers/md/dm-ima.c | 45 +++++++++++++++++++++++++++++++++++++++++++++
->  drivers/md/dm-ima.h |  2 ++
->  2 files changed, 47 insertions(+)
->
-> diff --git a/drivers/md/dm-ima.c b/drivers/md/dm-ima.c
-> index b90f34259fbb..ff2ac54addb8 100644
-> --- a/drivers/md/dm-ima.c
-> +++ b/drivers/md/dm-ima.c
-> @@ -170,6 +170,10 @@ void dm_ima_reset_data(struct mapped_device *md)
->  {
->  	memset(&(md->ima), 0, sizeof(md->ima));
->  	md->ima.dm_version_str_len = strlen(DM_IMA_VERSION_STR);
-> +	spin_lock_init(&md->ima.active_table.device_metadata_lock);
-> +	spin_lock_init(&md->ima.inactive_table.device_metadata_lock);
-> +	spin_lock_init(&md->ima.active_table.hash_lock);
-> +	spin_lock_init(&md->ima.inactive_table.hash_lock);
->  }
->  
->  /*
-> @@ -336,19 +340,24 @@ void dm_ima_measure_on_table_load(struct dm_table *table, unsigned int status_fl
->  	for (i = 0; i < digest_size; i++)
->  		snprintf((digest_buf + hash_alg_prefix_len + (i*2)), 3, "%02x", digest[i]);
->  
-> +	spin_lock(&table->md->ima.inactive_table.hash_lock);
->  	if (table->md->ima.active_table.hash != table->md->ima.inactive_table.hash)
->  		kfree(table->md->ima.inactive_table.hash);
->  
->  	table->md->ima.inactive_table.hash = digest_buf;
->  	table->md->ima.inactive_table.hash_len = strlen(digest_buf);
-> +	spin_unlock(&table->md->ima.inactive_table.hash_lock);
-> +
->  	table->md->ima.inactive_table.num_targets = num_targets;
->  
-> +	spin_lock(&table->md->ima.inactive_table.device_metadata_lock);
->  	if (table->md->ima.active_table.device_metadata !=
->  	    table->md->ima.inactive_table.device_metadata)
->  		kfree(table->md->ima.inactive_table.device_metadata);
->  
->  	table->md->ima.inactive_table.device_metadata = device_data_buf;
->  	table->md->ima.inactive_table.device_metadata_len = device_data_buf_len;
-> +	spin_unlock(&table->md->ima.inactive_table.device_metadata_lock);
->  
->  	goto exit;
->  error:
-> @@ -388,18 +397,22 @@ void dm_ima_measure_on_device_resume(struct mapped_device *md, bool swap)
->  	l += md->ima.dm_version_str_len;
->  
->  	if (swap) {
-> +		spin_lock(&md->ima.active_table.hash_lock);
->  		if (md->ima.active_table.hash != md->ima.inactive_table.hash)
->  			kfree(md->ima.active_table.hash);
->  
->  		md->ima.active_table.hash = NULL;
->  		md->ima.active_table.hash_len = 0;
-> +		spin_unlock(&md->ima.active_table.hash_lock);
->  
-> +		spin_lock(&md->ima.active_table.device_metadata_lock);
->  		if (md->ima.active_table.device_metadata !=
->  		    md->ima.inactive_table.device_metadata)
->  			kfree(md->ima.active_table.device_metadata);
->  
->  		md->ima.active_table.device_metadata = NULL;
->  		md->ima.active_table.device_metadata_len = 0;
-> +		spin_unlock(&md->ima.active_table.device_metadata_lock);
->  		md->ima.active_table.num_targets = 0;
->  
->  		if (md->ima.inactive_table.hash) {
-> @@ -429,6 +442,7 @@ void dm_ima_measure_on_device_resume(struct mapped_device *md, bool swap)
->  		nodata = false;
->  	}
->  
-> +	spin_lock(&md->ima.active_table.hash_lock);
->  	if (md->ima.active_table.hash) {
->  		memcpy(device_table_data + l, active, active_len);
->  		l += active_len;
-> @@ -442,6 +456,7 @@ void dm_ima_measure_on_device_resume(struct mapped_device *md, bool swap)
->  
->  		nodata = false;
->  	}
-> +	spin_unlock(&md->ima.active_table.hash_lock);
->  
->  	if (nodata) {
->  		r = dm_ima_alloc_and_copy_name_uuid(md, &dev_name, &dev_uuid, noio);
-> @@ -503,6 +518,7 @@ void dm_ima_measure_on_device_remove(struct mapped_device *md, bool remove_all)
->  	memcpy(device_table_data + l, DM_IMA_VERSION_STR, md->ima.dm_version_str_len);
->  	l += md->ima.dm_version_str_len;
->  
-> +	spin_lock(&md->ima.active_table.device_metadata_lock);
->  	if (md->ima.active_table.device_metadata) {
->  		memcpy(device_table_data + l, device_active_str, device_active_len);
->  		l += device_active_len;
-> @@ -513,7 +529,9 @@ void dm_ima_measure_on_device_remove(struct mapped_device *md, bool remove_all)
->  
->  		nodata = false;
->  	}
-> +	spin_unlock(&md->ima.active_table.device_metadata_lock);
->  
-> +	spin_lock(&md->ima.inactive_table.device_metadata_lock);
->  	if (md->ima.inactive_table.device_metadata) {
->  		memcpy(device_table_data + l, device_inactive_str, device_inactive_len);
->  		l += device_inactive_len;
-> @@ -524,7 +542,9 @@ void dm_ima_measure_on_device_remove(struct mapped_device *md, bool remove_all)
->  
->  		nodata = false;
->  	}
-> +	spin_unlock(&md->ima.inactive_table.device_metadata_lock);
->  
-> +	spin_lock(&md->ima.active_table.hash_lock);
->  	if (md->ima.active_table.hash) {
->  		memcpy(device_table_data + l, active_table_str, active_table_len);
->  		l += active_table_len;
-> @@ -538,7 +558,9 @@ void dm_ima_measure_on_device_remove(struct mapped_device *md, bool remove_all)
->  
->  		nodata = false;
->  	}
-> +	spin_unlock(&md->ima.active_table.hash_lock);
->  
-> +	spin_lock(&md->ima.inactive_table.hash_lock);
->  	if (md->ima.inactive_table.hash) {
->  		memcpy(device_table_data + l, inactive_table_str, inactive_table_len);
->  		l += inactive_table_len;
-> @@ -552,6 +574,7 @@ void dm_ima_measure_on_device_remove(struct mapped_device *md, bool remove_all)
->  
->  		nodata = false;
->  	}
-> +	spin_unlock(&md->ima.inactive_table.hash_lock);
->  	/*
->  	 * In case both active and inactive tables, and corresponding
->  	 * device metadata is cleared/missing - record the name and uuid
-> @@ -582,17 +605,31 @@ void dm_ima_measure_on_device_remove(struct mapped_device *md, bool remove_all)
->  	kfree(device_table_data);
->  	kfree(capacity_str);
->  exit:
-> +	spin_lock(&md->ima.active_table.device_metadata_lock);
-> +	spin_lock(&md->ima.inactive_table.device_metadata_lock);
->  	kfree(md->ima.active_table.device_metadata);
->  
->  	if (md->ima.active_table.device_metadata !=
->  	    md->ima.inactive_table.device_metadata)
->  		kfree(md->ima.inactive_table.device_metadata);
->  
-> +	md->ima.active_table.device_metadata = NULL;
-> +	md->ima.inactive_table.device_metadata = NULL;
-> +	spin_unlock(&md->ima.inactive_table.device_metadata_lock);
-> +	spin_unlock(&md->ima.active_table.device_metadata_lock);
-> +
-> +	spin_lock(&md->ima.active_table.hash_lock);
-> +	spin_lock(&md->ima.inactive_table.hash_lock);
->  	kfree(md->ima.active_table.hash);
->  
->  	if (md->ima.active_table.hash != md->ima.inactive_table.hash)
->  		kfree(md->ima.inactive_table.hash);
->  
-> +	md->ima.active_table.hash = NULL;
-> +	md->ima.inactive_table.hash = NULL;
-> +	spin_unlock(&md->ima.inactive_table.hash_lock);
-> +	spin_unlock(&md->ima.active_table.hash_lock);
-> +
->  	dm_ima_reset_data(md);
->  
->  	kfree(dev_name);
-> @@ -623,6 +660,8 @@ void dm_ima_measure_on_table_clear(struct mapped_device *md, bool new_map)
->  	memcpy(device_table_data + l, DM_IMA_VERSION_STR, md->ima.dm_version_str_len);
->  	l += md->ima.dm_version_str_len;
->  
-> +	spin_lock(&md->ima.inactive_table.hash_lock);
-> +	spin_lock(&md->ima.inactive_table.device_metadata_lock);
->  	if (md->ima.inactive_table.device_metadata_len &&
->  	    md->ima.inactive_table.hash_len) {
->  		memcpy(device_table_data + l, md->ima.inactive_table.device_metadata,
-> @@ -642,6 +681,8 @@ void dm_ima_measure_on_table_clear(struct mapped_device *md, bool new_map)
->  
->  		nodata = false;
->  	}
-> +	spin_unlock(&md->ima.inactive_table.device_metadata_lock);
-> +	spin_unlock(&md->ima.inactive_table.hash_lock);
->  
->  	if (nodata) {
->  		if (dm_ima_alloc_and_copy_name_uuid(md, &dev_name, &dev_uuid, noio))
-> @@ -660,19 +701,23 @@ void dm_ima_measure_on_table_clear(struct mapped_device *md, bool new_map)
->  	dm_ima_measure_data("dm_table_clear", device_table_data, l, noio);
->  
->  	if (new_map) {
-> +		spin_lock(&md->ima.inactive_table.hash_lock);
->  		if (md->ima.inactive_table.hash &&
->  		    md->ima.inactive_table.hash != md->ima.active_table.hash)
->  			kfree(md->ima.inactive_table.hash);
->  
->  		md->ima.inactive_table.hash = NULL;
->  		md->ima.inactive_table.hash_len = 0;
-> +		spin_unlock(&md->ima.inactive_table.hash_lock);
->  
-> +		spin_lock(&md->ima.inactive_table.device_metadata_lock);
->  		if (md->ima.inactive_table.device_metadata &&
->  		    md->ima.inactive_table.device_metadata != md->ima.active_table.device_metadata)
->  			kfree(md->ima.inactive_table.device_metadata);
->  
->  		md->ima.inactive_table.device_metadata = NULL;
->  		md->ima.inactive_table.device_metadata_len = 0;
-> +		spin_unlock(&md->ima.inactive_table.device_metadata_lock);
->  		md->ima.inactive_table.num_targets = 0;
->  
->  		if (md->ima.active_table.hash) {
-> diff --git a/drivers/md/dm-ima.h b/drivers/md/dm-ima.h
-> index 568870a1a145..a021056f4ab5 100644
-> --- a/drivers/md/dm-ima.h
-> +++ b/drivers/md/dm-ima.h
-> @@ -35,6 +35,7 @@ struct dm_ima_device_table_metadata {
->  	 * pairs delimited by a semicolon at the end of the list.
->  	 */
->  	char *device_metadata;
-> +	spinlock_t device_metadata_lock;
->  	unsigned int device_metadata_len;
->  	unsigned int num_targets;
->  
-> @@ -43,6 +44,7 @@ struct dm_ima_device_table_metadata {
->  	 * attributes' key-value pairs from the active/inactive tables.
->  	 */
->  	char *hash;
-> +	spinlock_t hash_lock;
->  	unsigned int hash_len;
->  };
->  
+diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
+index 9aa9ac8399ae..16f813a42f42 100644
+--- a/arch/x86/kernel/fpu/xstate.c
++++ b/arch/x86/kernel/fpu/xstate.c
+@@ -1859,9 +1859,14 @@ long fpu_xstate_prctl(int option, unsigned long arg2)
+  */
+ static void avx512_status(struct seq_file *m, struct task_struct *task)
+ {
+-	unsigned long timestamp = READ_ONCE(x86_task_fpu(task)->avx512_timestamp);
++	unsigned long timestamp = 0;
+ 	long delta;
+ 
++#ifdef CONFIG_X86_DEBUG_FPU
++	if (!(task->flags & PF_KTHREAD))
++#endif
++		timestamp = READ_ONCE(x86_task_fpu(task)->avx512_timestamp);
++
+ 	if (!timestamp) {
+ 		/*
+ 		 * Report -1 if no AVX512 usage
+-- 
+2.36.1
 
 
