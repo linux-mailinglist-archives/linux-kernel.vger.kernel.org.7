@@ -1,87 +1,86 @@
-Return-Path: <linux-kernel+bounces-735143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48098B08B60
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:58:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BDA6B08B63
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:58:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5A905882C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:58:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E3DAA41FA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B3529ACE4;
-	Thu, 17 Jul 2025 10:55:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34DE629CB42;
+	Thu, 17 Jul 2025 10:56:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IZDJwHd6"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Tm02R3gE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDAB929A327
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 10:55:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E99D629C33E
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 10:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752749752; cv=none; b=pnqEL9h/iwXWezF/DBxgDzHBzrSLIHbpUs+CWeroNLQtux0RL5ySt5u8x6crKWjeOJidiMm46lSgNMpB3yE1sVoIG/pPT7/y8LaXslXE85qDqh9f5fnBIT7YrfPf0clDcLlUDGF79BxsQ17wjIzQinsVuDVT9k6vx6cislDkROQ=
+	t=1752749759; cv=none; b=ePtiZTzu+gjmQLf13LyxOExc4O0IsUk0YbH4X+DR644IULjnr1kad4XbKFb636nk+rHHyI11um8x5JWtXvQztkzvO/iOXP6VZ6CphCcF+6E/ORWuHKEFxjzPze97f+FXu+0eCXnxUhbV7jal+lFdcaSCk5lBsxu5N6bWZctB/qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752749752; c=relaxed/simple;
-	bh=m4bhiRaxDw14G00aNNxF0/Fk5xp4oxLL37CkgM+bSuk=;
+	s=arc-20240116; t=1752749759; c=relaxed/simple;
+	bh=gSxihFMQdPhp7IfEUpVtWMpenx++JDqChT8iAbuth6A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U5IZnhQBWl905ia1o2G7TZGNTgh0MLgpWGIRllTZY/8sE4wt2kczXU1+ADzuHvWtF8X6dw+/RYlfCRinJOGT6lF3nTrrdIWRZ90p0L8ZzXKKhUc3gMZ5hBgJ1kt0dJBQz4U3lv3O5ThVJXUHiNiKdbosx9bIKbouLBHNOS7cEMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IZDJwHd6; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56H4etkq032308
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 10:55:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	EsEUvuBRDMzRKRRLJsUyfbmC1yOuPlsLU/0xN60mrqE=; b=IZDJwHd6XDcNhEnd
-	3yf4+K38F3BML7mfcVVvbjH/f2Qlf0RdNFFggnIMqcGgv+5Tx0PZmXfho42t04C1
-	pKsN6fTlZYmh5W077iGc97meCjX52xm4sbvx7+NN855CHSby5S6C3cW9gvHayI+Z
-	YRFiQEnF8EnHazbc9mgiPOtVsjKT0rYYbVwRpSNlRztyM7kDY9kwqbSqqIlesG3O
-	SN+Em2culeXThD9nnqxvOn5WH211W6FBvPA2gpI3RRHyQm6TZvSyboWXkhGEd+fp
-	wjMTQulwOHt3I/Esw85vMa4xMcnyuWecMgFQosNTBD/xy+gDyhKdfxfukzSBjAZR
-	oo3vHA==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ug387f7b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 10:55:49 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4ab7077ad49so1401401cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 03:55:49 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=dFCZNxXgxooMT5G4M9Ts3xqvUw95o0vTvMhYjRzJBMy9kHvzyFLzB16Q4vmK15j2CCOSRPUeTXoEfjTO8J7EOYf0/fRQ66QAAsJ73t0mo10rObYIcWEGMtNA0Bof2QkR7vO9WwoYnVoAqGCRfIqM/1iKUPFejkKOhZR56llhXUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Tm02R3gE; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752749757;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ayOJzRkHPyVA0X2izytcAplXmRZn6T5HJvLKOLJn4i8=;
+	b=Tm02R3gER4fpTgQy7CQgMuYvmxZs8k6ZznzYC2WmgFXdQM3nmnZ9jqOQSkTT4pUzCHG+gU
+	UUCHy3GKz9ca3D6tW2EAyo5ljNoL/4hb6DMH6q7AxCiw3nzGtu0wZdtPnOPLA4JhKLfZLx
+	w0P8PlyggRqROH4ojEZ1oDbgq8yIg20=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-391-u-CJ9TrmOmykAFBx4pUhRQ-1; Thu, 17 Jul 2025 06:55:55 -0400
+X-MC-Unique: u-CJ9TrmOmykAFBx4pUhRQ-1
+X-Mimecast-MFC-AGG-ID: u-CJ9TrmOmykAFBx4pUhRQ_1752749754
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-455ea9cb0beso6856775e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 03:55:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752749749; x=1753354549;
+        d=1e100.net; s=20230601; t=1752749754; x=1753354554;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EsEUvuBRDMzRKRRLJsUyfbmC1yOuPlsLU/0xN60mrqE=;
-        b=Gvq8n0egt3hj294+YBhAaEpeTWbWvdUrCPElpFo6jxy+KPdhNRTokhfN6012G5dF1O
-         v79NgzPkdH75s1R6looSdOsordf2dar6UQbW8oH6sYKfb4IyzVgY5YujvgoQjO80C4qn
-         9+k0hfVw0jCI0zGzlvpo+gnH2ErufZWNkr510hEPSVBtrUQn8kbq0XSeTp764+DTPyaT
-         2ALdI+IOfuNCijfnAA0DakS7cmctSlNLsbD9A5LnrCnwwDgGPfZepu8OthHF1xmqzw5Z
-         2uK2SOzZWWl0JzzbRMcIzfbw1ZbRQDz1s8WlFtzF6ACpGARTjwaJcwrrUF/l5ujPkv62
-         j5fw==
-X-Forwarded-Encrypted: i=1; AJvYcCWQQokllX7UQbs6wuH+c2cLfsRZSGoye0iAyVfm2GTRg4mPOTfkDI0k5xUnPfeVfOMGh1FqDluZ7GU6i1w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4ONIcPsg7dTg/RM5Rd0x3AzxXgC42+HjJW5Oz9X4s2qE5LSrP
-	0O+7/7Mu4bD+ETe1aLwqUgTQTXrVv6RsIHhTdwAAhR7O5GQUiBCH/S/8dBRdBDRWb6heZ77d2o/
-	xHR/lcn3cfdbVC79eXR5w92w7xvKLR9JMUgl/hDRT//dPNWqUwHXJwh29lh+NYd986io=
-X-Gm-Gg: ASbGncs/FqDtXuneoerip/hHMQGGOkD5Wk8F3Eb5g4gasbQFI0PsYzBIS5Plovm9zFN
-	dHynkCiILGGeB0AYnwxTJvhR37YiCNB3ndSHHgAmIa0mOY4NSreu2tK5/GBO3s6behoXol0ihcu
-	eEzHeVEbJud9h0r9SghcjYwwpC2mxTrO6gFCyMAC+TY//ZWmi8k+BxS6SO1K1LMB034VTK5Z9fy
-	QYtpWe+BqBPNMcJe/RkWZW2QqVchav07K5VPFbbZqCh9mJXmYsG1cshgfLcHHRunKl0ERA4JUYE
-	261+IU7ns6pJQUgpG7dtdnT806p4HsNmEGKuxO5G+9+wbdaSYev7nJa9LbxgH1POV+9xct4lpIo
-	hThIvb443CCd+luYiBP6J
-X-Received: by 2002:ac8:7e89:0:b0:4a9:7029:ac46 with SMTP id d75a77b69052e-4ab90cb3599mr37973891cf.13.1752749748775;
-        Thu, 17 Jul 2025 03:55:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEIXtaAbwds9yIaxYyNO5vMi4lC/pKMkm1pehCrB0BGO1mpogQimYGvbA/xUnAXMGKXn/lD6Q==
-X-Received: by 2002:ac8:7e89:0:b0:4a9:7029:ac46 with SMTP id d75a77b69052e-4ab90cb3599mr37973741cf.13.1752749748206;
-        Thu, 17 Jul 2025 03:55:48 -0700 (PDT)
-Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-611c9733935sm10034847a12.46.2025.07.17.03.55.45
+        bh=ayOJzRkHPyVA0X2izytcAplXmRZn6T5HJvLKOLJn4i8=;
+        b=jRwLtxB6bar7sWqx3h9TKoKmkGX06Uy1h4OZoksExXNjy69DHFC8r+31bGYB0XS1Iz
+         7mXU+/I0ZxWBkUgfFyWPTpopXe8dMKvTyNgjFdiaeDg7/Ie76J2MEvDKo4YIIZM0O4tJ
+         9NHyU9UBEcu4UtdF/r9OnmIw3x2zgJ0RoBlyLtG7aPyeXNuggPpFTlfSZrH81Z9/Nw3k
+         hSd/rT8heKOaxLQBtPgQvwBQusWyXdFUTAnRVW9F1m/NKkaSTnbvWqckcYsX6LN4QN/U
+         cKYiHP9s25LqZORNjKjcF2jbdAp/7N+0dBi5jIYvEON/uyZlA9wgtjdnEcLRTTXq05Pd
+         95vA==
+X-Forwarded-Encrypted: i=1; AJvYcCWecQoZQcMfWlE7ItyJelXGATr5PuYNUG7dev1PU0m+BM7g54MN4Oc+uRAt2wzDNPThn9DmcHfMEr5Wvj0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9HgOCBjZ3jWl61L+L+KBpMjbyBsvmaBIUG0klzcS7XnZtTrQD
+	6zzGg4b5FWNeGyDCZYBYYrFMZnQoKtRVVVGGhWG3Alm4js1wyKA36Br4V1JmALBZU4C8B2qAtC8
+	283dk+D7OGLWKR2ZbGMqMAlC3fXpuY3zN/MyHSdDLInYDoFWgVIHixgCeaM25OB8inA==
+X-Gm-Gg: ASbGncswPiaVHKlorb695i/UOAfnolthS8RRnll2XQE9k0VmNaUNY4jDNo7tSszB2T3
+	kksWqQqrqmc0yJ0YbcQ+0KZe6EKmoZ2HIEzF51m6SZUB6sn47L5gWZqX4EMKoXGue9wTwYzrLc4
+	sWAKNznCTR8IpCmIdkl82KkUsaUenX4f91LvcDMO6P/upL76jQRZB2eArSVGNchtclLCbbt7WHn
+	UTjultB5iPhrVC+3zfdfYI/jMnWYkwvH1+BH8PHbPXlCiiuqM3Qa0r/uoy33UtG1YTxE2dKCUhy
+	LP2+oDbeS/8AuICazV2HCaAJY/CGPDE23mbAnixf+ckPBK8eceDWOvWF86sr5Nt0s8+yAemqE5B
+	z4EaiKUrvuJ4=
+X-Received: by 2002:a05:600c:3b97:b0:456:27a4:50ac with SMTP id 5b1f17b1804b1-4562e3a29e9mr48983265e9.23.1752749754322;
+        Thu, 17 Jul 2025 03:55:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG9hmzgeO6mfBS8jGYj9rG77mwI5Itg2IPeN3BeV/EmE/d7ghhRi3L/99no/15vSa70B3AChg==
+X-Received: by 2002:a05:600c:3b97:b0:456:27a4:50ac with SMTP id 5b1f17b1804b1-4562e3a29e9mr48983105e9.23.1752749753937;
+        Thu, 17 Jul 2025 03:55:53 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45634f4c34dsm18920425e9.6.2025.07.17.03.55.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Jul 2025 03:55:47 -0700 (PDT)
-Message-ID: <5502b2eb-f6d1-4ece-b918-1c8561a92607@oss.qualcomm.com>
-Date: Thu, 17 Jul 2025 12:55:44 +0200
+        Thu, 17 Jul 2025 03:55:53 -0700 (PDT)
+Message-ID: <650be1b7-a175-4e89-b7ea-808ec0d2a8b3@redhat.com>
+Date: Thu, 17 Jul 2025 12:55:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,87 +88,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/6] wifi: ath12k: Use pci_{enable/disable}_link_state()
- APIs to enable/disable ASPM states
-To: Baochen Qiang <baochen.qiang@oss.qualcomm.com>,
-        Manivannan Sadhasivam <mani@kernel.org>
-Cc: manivannan.sadhasivam@oss.qualcomm.com,
-        Jeff Johnson
- <jjohnson@kernel.org>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-        Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-        Nirmal Patel <nirmal.patel@linux.intel.com>,
-        Jonathan Derrick <jonathan.derrick@linux.dev>,
-        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ath12k@lists.infradead.org, ath11k@lists.infradead.org,
-        ath10k@lists.infradead.org, Bjorn Helgaas <helgaas@kernel.org>,
-        ilpo.jarvinen@linux.intel.com, linux-arm-msm@vger.kernel.org,
-        linux-pci@vger.kernel.org,
-        Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-        Qiang Yu <qiang.yu@oss.qualcomm.com>
-References: <20250716-ath-aspm-fix-v1-0-dd3e62c1b692@oss.qualcomm.com>
- <20250716-ath-aspm-fix-v1-4-dd3e62c1b692@oss.qualcomm.com>
- <38ace6a3-d594-4438-a193-cf730a7b87d6@oss.qualcomm.com>
- <wyqtr3tz3k2zdf62kgtcepf3sedm7z7wacv27visl2xsrqspmq@wi4fgef2mn2m>
- <03806d02-1cfc-4db2-8b63-c1e51f5456e2@oss.qualcomm.com>
+Subject: Re: [PATCH net-next 3/3] net/mlx5: Support getcyclesx and
+ getcrosscycles
+To: Tariq Toukan <tariqt@nvidia.com>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>
+Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+ Mark Bloch <mbloch@nvidia.com>, Richard Cochran <richardcochran@gmail.com>,
+ netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Carolina Jubran <cjubran@nvidia.com>
+References: <1752556533-39218-1-git-send-email-tariqt@nvidia.com>
+ <1752556533-39218-4-git-send-email-tariqt@nvidia.com>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <03806d02-1cfc-4db2-8b63-c1e51f5456e2@oss.qualcomm.com>
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <1752556533-39218-4-git-send-email-tariqt@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDA5NiBTYWx0ZWRfX587c7IV993GA
- AibWdPosIW6ie3V4RjXlDY+pGdVJNkjZOYdIu8DCVgVGB9Nnf/p3u+q14HOgD/YWPZn2nNEalk7
- 4/VoX+1rbOkrdGIQbXjuakia4W4XJh/RUY5eCuFyiECMRT5Bsnel968eY9UFDhM/1+RM3KfpBw0
- sPDoN8qxnFfnxhD/h52n0FvUnwdH/npXJdDUPXrW5jF0fGzHFVvYdoN47JxqVIe5pQY9pe4rRpt
- UuCTZvj7+h7dNq4b1tCYw4MljW6abS+Wl/ExTryhHOQK1a+4Z9miO45lY8py4LuxZCX4mDyvo3H
- S3w+0OVY8C64y0LNM9fe27AT4haVLvto4XfOf/BN9liG+TiO4bFUnQUUH/unjzS/qXTSr8OEcC5
- FpOQvj8gM4zRK2V9DuDJCIPscPjMIWgrLbaqOgZLwVaDgTpc9f+wS1VK4iMWVjYGFnjDn8vv
-X-Proofpoint-GUID: O1GgH-jSk6IS-LWqAAb8DHCsQPzyfxPD
-X-Authority-Analysis: v=2.4 cv=SZT3duRu c=1 sm=1 tr=0 ts=6878d6b5 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=a0K6PxZnllCBz7J7qkkA:9
- a=QEXdDO2ut3YA:10 a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-ORIG-GUID: O1GgH-jSk6IS-LWqAAb8DHCsQPzyfxPD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-17_01,2025-07-16_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 mlxlogscore=999 mlxscore=0 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 adultscore=0 impostorscore=0 malwarescore=0
- phishscore=0 spamscore=0 suspectscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507170096
+Content-Transfer-Encoding: 8bit
 
-On 7/17/25 12:46 PM, Baochen Qiang wrote:
+On 7/15/25 7:15 AM, Tariq Toukan wrote:
+> From: Carolina Jubran <cjubran@nvidia.com>
 > 
+> Implement the getcyclesx64 and getcrosscycles callbacks in ptp_info to
+> expose the device’s raw free-running counter.
 > 
-> On 7/17/2025 6:31 PM, Manivannan Sadhasivam wrote:
->> On Thu, Jul 17, 2025 at 05:24:13PM GMT, Baochen Qiang wrote:
->>
-
-[...]
-
->>> In addition, frequently I can see below AER warnings:
->>>
->>> [  280.383143] aer_ratelimit: 30 callbacks suppressed
->>> [  280.383151] pcieport 0000:00:1c.0: AER: Correctable error message received from
->>> 0000:00:1c.0
->>> [  280.383177] pcieport 0000:00:1c.0: PCIe Bus Error: severity=Correctable, type=Data Link
->>> Layer, (Transmitter ID)
->>> [  280.383184] pcieport 0000:00:1c.0:   device [8086:7ab8] error status/mask=00001000/00002000
->>> [  280.383193] pcieport 0000:00:1c.0:    [12] Timeout
->>>
->>
->> I don't see any AER errors either.
+> Signed-off-by: Carolina Jubran <cjubran@nvidia.com>
+> Reviewed-by: Dragos Tatulea <dtatulea@nvidia.com>
+> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+> ---
+>  .../ethernet/mellanox/mlx5/core/lib/clock.c   | 74 ++++++++++++++++++-
+>  1 file changed, 73 insertions(+), 1 deletion(-)
 > 
-> My WLAN chip is attached via a PCIe-to-M.2 adapter, maybe some hardware issue? However I
-> never saw them until your changes applied.
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lib/clock.c b/drivers/net/ethernet/mellanox/mlx5/core/lib/clock.c
+> index b1e2deeefc0c..2f75726674a9 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/lib/clock.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/lib/clock.c
+> @@ -306,6 +306,23 @@ static int mlx5_mtctr_syncdevicetime(ktime_t *device_time,
+>  	return 0;
+>  }
+>  
+> +static int
+> +mlx5_mtctr_syncdevicecyclestime(ktime_t *device_time,
+> +				struct system_counterval_t *sys_counterval,
+> +				void *ctx)
+> +{
+> +	struct mlx5_core_dev *mdev = ctx;
+> +	u64 device;
+> +	int err;
+> +
+> +	err = mlx5_mtctr_read(mdev, false, sys_counterval, &device);
+> +	if (err)
+> +		return err;
+> +	*device_time = ns_to_ktime(device);
 
-It'd be useful to know whether that's a Qualcomm platform running
-an upstream-ish kernel, or some other host - we've had platform-
-specific issues in the past and the necessary margining/tuning presets
-were only introduced recently
+If the goal is providing a raw cycle counter, why still using a timespec
+to the user space? A plain u64 would possibly be less ambiguous.
 
-Konrad
+/P
+
 
