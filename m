@@ -1,103 +1,85 @@
-Return-Path: <linux-kernel+bounces-735373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00DC0B08E67
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:39:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18BBCB08E6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:39:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67E031A67F65
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:39:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B904B58510B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:39:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FF3E2EBDD3;
-	Thu, 17 Jul 2025 13:38:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7EB22ECD09;
+	Thu, 17 Jul 2025 13:39:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="tMsPNcXH"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Q+KJh1Wq"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399622EBB9C;
-	Thu, 17 Jul 2025 13:38:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC6F42EBDC6;
+	Thu, 17 Jul 2025 13:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752759524; cv=none; b=BQdWhX7dBnGINL66I8wABed/KO1ZM/Mzxoa0a1C0hyyem/X1316M8HqcF/c7k1x2oB2Ime/gDy2sW0VFLHqF8vV4smH4ON7BRKzqhk2M8bKfGVvgIL41jc9xxFsgtHGQYzA8CFQWb2mLzJNpE+9axt4U6gDvQYxPKYpNlKu0q/g=
+	t=1752759545; cv=none; b=cZRAnmILLx+mEx4KcekwF8MQDMY2bwD2pxVVnhfV6/4SOMzZ1BWc0CXAfaw8hIxt2I+w2QaxQAQS2vvVRobnOkzocs8uGiDr7bB+tKRuK73BD7dglvvSRcL5leFLR1VROm9kFL30uGxD2rHesLdYodilvlo+rdFyfiFNvbe9Z4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752759524; c=relaxed/simple;
-	bh=uQfSNFlNg98YFrMdP5gFMZ5p5OhiQXKb/LaDDdUua6s=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=sR1OPzfxfI7yj0kX+UXvV8kgKItLwv2MrcB/jS/KQoxxUMVQsvboaV1ROuCRotVyvUNHhUzydpRN8QjJCn6aF07Ix/T6tGgRyRatyoANm14w9GYbivQAErkRl/YH4QsZuCXpLhXFb4PmunmoTqb5Sl9HDVO80KSKTIC8GLTLR8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=tMsPNcXH; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 7E6E6403E1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1752759522; bh=S/PZcD3Zl7lYlVPPjGPO1OpsE0GIe47JfzpR5Bdpu+I=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=tMsPNcXHt3ec5z8as+zeYuIwWyVlKvqrvjV0pDt5DTo2IGyPONxC6OZodicf/ccGZ
-	 hxqPv1URGZHBMV6j1nS3JnB52s3E2jW1GXwf7HeR95Jn3LiaGVQIiBNWjdIqFpyMEm
-	 1dAzSsEYQogvgdaTQwYtQhL7lvgKPEt67/0RSxe8OhEzsWG+zifqyG1XU6GvaQ+wzL
-	 qLZrMQS885cos9VcpCS74uw3B62KQpbxxMsSXHapwr2ONYzhdX6lWVU/1LgIUBEZre
-	 d85vtGBSpd2IUz5yvhL4pisdZbaZHCeZwEoXCbZ5us5cuSIfwKcIVTu0kYckY6bvcK
-	 sPyy0tct5u0Sg==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 7E6E6403E1;
-	Thu, 17 Jul 2025 13:38:42 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Ignacio =?utf-8?Q?Pe=C3=B1a?= <ignacio.pena87@gmail.com>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Ignacio Pena
- <ignacio.pena87@gmail.com>
-Subject: Re: [PATCH] Documentation: Add patch-validator to dev-tools
-In-Reply-To: <20250717074745.8333-1-ignacio.pena87@gmail.com>
-References: <20250717074745.8333-1-ignacio.pena87@gmail.com>
-Date: Thu, 17 Jul 2025 07:38:41 -0600
-Message-ID: <874ivbc4ym.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1752759545; c=relaxed/simple;
+	bh=yLN7VF//2CVZZPmoMJ7VBKPuAA7aA4dv0y6POh5P3tM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nwgVbnsNUoq2oQaXMw2DjU31zXzTKf1L9ZCuH7TaGYBPEJNLqx2b88oD18zyn3Nec45vQqGJGZ+xcNC6njW2Ai1rbEsR+LinfYuCFe4XvpbTbsdjxxYEk7Nvvs2eQRPDwW0fK435KoHPzd6AjaGe9W4VmDSo2IRhcweu0sv6cKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Q+KJh1Wq; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=lfFBam5+7+XtNm3Zq2vi9q8MGJfF20M+DYWOSgZx/tw=; b=Q+KJh1WqNBwy2WWan3Kc7Aj2yo
+	rAwNzQN0U4ZpVzpocnC7ExYI46KBa7Arun4/bG7JTVA/RIatOEG4UBaREuYWToLZoyKyRKD5qaABD
+	rToD3q+xu/avOqwMy8RTYPoWBLrRvTpukCshNTCkODKC8R6/9iS7Zec5Hr5BNkIZ8ddM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1ucOov-001tOr-Un; Thu, 17 Jul 2025 15:38:45 +0200
+Date: Thu, 17 Jul 2025 15:38:45 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Luo Jie <quic_luoj@quicinc.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3 1/3] net: phy: qcom: Add PHY counter support
+Message-ID: <a19b72e5-bcee-46c8-9c6e-234af9b103b9@lunn.ch>
+References: <20250715-qcom_phy_counter-v3-0-8b0e460a527b@quicinc.com>
+ <20250715-qcom_phy_counter-v3-1-8b0e460a527b@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250715-qcom_phy_counter-v3-1-8b0e460a527b@quicinc.com>
 
-Ignacio Pe=C3=B1a <ignacio.pena87@gmail.com> writes:
+On Tue, Jul 15, 2025 at 07:02:26PM +0800, Luo Jie wrote:
+> Add PHY counter functionality to the shared library. The implementation
+> is identical for the current QCA807X and QCA808X PHYs.
+> 
+> The PHY counter can be configured to perform CRC checking for both received
+> and transmitted packets. Additionally, the packet counter can be set to
+> automatically clear after it is read.
+> 
+> The PHY counter includes 32-bit packet counters for both RX (received) and
+> TX (transmitted) packets, as well as 16-bit counters for recording CRC
+> error packets for both RX and TX.
+> 
+> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
 
-> From: Ignacio Pena <ignacio.pena87@gmail.com>
->
-> Add documentation for patch-validator, a comprehensive tool that helps
-> kernel contributors validate their patches before submission. This tool
-> catches common mistakes that frequently lead to patch rejections,
-> improving the quality of submissions and reducing maintainer workload.
->
-> The validator performs 21+ automated checks including:
-> - Patch format validation (subject line, changelog placement)
-> - DCO compliance and licensing verification=20=20
-> - checkpatch.pl integration with enhanced reporting
-> - Build impact analysis and testing recommendations
-> - Common novice pattern detection
-> - Git configuration validation
->
-> Also includes companion tools for finding first contributions,
-> testing patches safely, and validating patch series.
->
-> Link: https://github.com/ipenas-cl/kernel-patch-validator
-> Signed-off-by: Ignacio Pena <ignacio.pena87@gmail.com>
-> ---
->  Documentation/dev-tools/index.rst           |   1 +
->  Documentation/dev-tools/patch-validator.rst | 287 +++++++++++++++++++
->  2 files changed, 288 insertions(+)
->  create mode 100644 Documentation/dev-tools/patch-validator.rst
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Interesting ... overall, we don't generally have detailed documentation
-for out-of-tree utilities, though there isn't necessarily any reason why
-we couldn't.  But I'm curious as to why you haven't submitted the tool
-itself?
-
-Thanks,
-
-jon
+    Andrew
 
