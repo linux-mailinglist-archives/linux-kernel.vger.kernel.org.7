@@ -1,132 +1,148 @@
-Return-Path: <linux-kernel+bounces-735463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 416E6B08FAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:39:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCD9FB08FB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:41:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7F9717059A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:39:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E3163B5F31
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C31F52F7D0B;
-	Thu, 17 Jul 2025 14:39:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827252F85D2;
+	Thu, 17 Jul 2025 14:41:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tAMGnnBw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GP448qg6"
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E80A17A5BE;
-	Thu, 17 Jul 2025 14:39:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D05B2F7CFF
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 14:41:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752763169; cv=none; b=CnZdtR2bA0Mp6gr2NvUBO1DW3RTu9z2sl74WA7xV7eNWzGHzRz938sYXka2YBpl/4ywAoLqzBX0VZIkzhuqIfX8ced7oyMpPoZ0k1Q+vgADPfqyZIUX16z0SCrgVQVk8VxdIw7npD3u3i48dUw6dlJrMLorU883q+3vh2GqceuM=
+	t=1752763272; cv=none; b=Mh1HLWhnfFb/O7NlRWQdwzXPmhDmIoeJlOjl4MSq1VFScpsG+WlQirSOpxIHjEmKRnfTXeV0FoExhQ73TW+r1djesss9QSWmSFaTsO7KDm7w74PfwK0JOvb5FB0UKqJXkKiD/+M7tsjqd6tVfz2Kj5p2atBmxDhowI0Hrff/H1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752763169; c=relaxed/simple;
-	bh=82qjO1FcZChfrJSSYDvIcIBTha4Cb9ltZfCG1dU1NPg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YHA8R+nO+hIompVNv3+xIzyTvoi8Xk5PUHfQJ6XXKNX7zhd2u/XOWmTyqdc9wvrJji8DTlU+BW44dwAcS80WICKLRCiSxc4qIxcqgodlKLRZhkypv12iFWffLtNtMRlYBVKOFO5fVi4ZZfeMGjcLvypOdoOOZhLJ5cf6oLmJu4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tAMGnnBw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D84DEC4CEE3;
-	Thu, 17 Jul 2025 14:39:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752763168;
-	bh=82qjO1FcZChfrJSSYDvIcIBTha4Cb9ltZfCG1dU1NPg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tAMGnnBwFENk5rjhI8tUHpgEU7iCQIW5qQEKiehX8vZh21ajm5CJ2QpFomoEJSNlD
-	 OXYexQtzB+xcNkgF9DProkwBHp2gnk7I4q0DVTkSS6S3AILcvGGOkTt+izjqrJoK+d
-	 4WRtS+FbPvT8PA4zq/6BGtURsYH2Li/MwD7SlotTWTXNhq58y1jZ9a7KmEkAjfbXs9
-	 +ULvDEAGaws/HFXj0G2jRN2MSQmsKcUPbC4G00POzcu9DgaSKQr0kcVfe1aAgkJ5NJ
-	 frmiyjc21Zs/4aI8X34WlElboIXTBG1HmAM6/gvnJSW+yucsovcbYXDFwkxlQ0dGXE
-	 AHBScR63tbjSQ==
-Message-ID: <19b62fb0-fb49-4a90-bff4-f5634547f2fe@kernel.org>
-Date: Thu, 17 Jul 2025 16:39:23 +0200
+	s=arc-20240116; t=1752763272; c=relaxed/simple;
+	bh=labVMQqdJyvR5/jdB07TNWqq4YEJd5WCdpHU0L+bS5o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NP7hbhKwTiLrhhxc3sVHX9MKPcTVEbnOVe1v1/XfrhXGltxdvF5LVrSjIB4q/TloHuh/IbSQrRJoqrQypdrU+anb0oyWgKgRh1uruRtlupDbJCNTkE+g3XQ3BN58UCTRRK5Fp9oPIB198YjN6Axwfy/9nXouPT8VOWJ6lDry4ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GP448qg6; arc=none smtp.client-ip=209.85.210.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-72c09f8369cso362758a34.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 07:41:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752763269; x=1753368069; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KOLlzqOvF05B7j1/cu0Mg0IOPy7P+W/8Ezls8+sFmRc=;
+        b=GP448qg6hgmMNFqEA3GIdZ5r8Vz6milupeD3S3rNz82MuyLRdsGxrtYSQfGS8Ra0bM
+         EvmMzDemtK3w1ry6N5Kll4Ra59bkqaE/XC5c4jVe32k9FUlX1R43bDAmATohadKMsgnu
+         iSklSxqB/cdOovmJh2Ca0andhd6KdaNxmRwB8tGFQusIiwTIenEQJAHZAbmWpkBl+WWO
+         E2sJ0hQmetRzZUaJOFNp6qFB3NVjDGioMFJJ5PPlMTkcMTbkJhAIDe+3ZTtEtgTWzgpl
+         VAcSG6HA0xoJqaccYStxve5x3W6idT7Cjf81W+qT7EGgCZ62BP9ipg3d/fSQFfO1rPZE
+         wQ8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752763269; x=1753368069;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KOLlzqOvF05B7j1/cu0Mg0IOPy7P+W/8Ezls8+sFmRc=;
+        b=qISmFezrtO9bzHa8EjS3mI7HoZXhHYnsBFjJd0HrVNFVDI6pgmSiN9xh6iPUY0ofKq
+         jDwSHiMbXffIfZ7ANC68ilrLvC2bNCAC2wTa17cJo/d3FQ8RI6tAjXQbj/gp0ybUoxkQ
+         BMSQBFbm1tXWPhgA3FgyFG7YZbP2jmcrezSD/BFi0zVtTjOPSaukPkNDkyL6pq8Xok/S
+         3vrT0EyM5P5WVGghKrKW10/Pj6AnsWZlf/+8qw+vQPXvgaxqDbv27z/vKUREgpOJzQ9i
+         V//N7B1VKOdLtWz2huCwdRi/t33G+AB4HvfLO0BmpBdOo6c9VjopiOZREM9fH8PLzq/P
+         wcUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVneRi6XsYFfU2dTrtthojKpI892WDOG8daH3wdZZN3fkNPQSLvO7mAfdpDEtVdMcIomTvBVJOXT4xIBBI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBpMV0y//zzi4zmT8hzEAQI/XAgMU+KWj90XKnDkJy54zdSzIj
+	L5cQ6jjGj82FYm4L+lDjwd54H1NM2IPJQk1T/Pm2Gs9fSzjv5QaViSFRVfDq8XgKiePH29qErqK
+	DVbKb
+X-Gm-Gg: ASbGncs+JkphksvZq9+0M58hIBOqcPiZT/MlbO/5kOOHMdaSv0RKIvNHaY6Yjnh5A40
+	DjY8X0gOVTrFl+gWiSVq8J1nVQAROeHLoanHOIUWNxm6/uNhUVllmvvpy6E8q13VtfYRiFSNAeT
+	YWaaMaJkpI7sPbAas71iU/AnP+TySYv/0mY+hqYkX9xZ9CqSku6AYW4CZFr35ZwHtb583yK5bhC
+	Nni5Hk+bkFfRI0dRXgHyJEagTrazA06OlWcPBxFXUwLp3YcXtgHgaCzA32/AH4746i+gBXzgCpF
+	cFYyRK7DmRbQsesXAmK6dQaAwZWWMO+pjMdRyh/OBKmo5DdDRSGVK8y/pBHukwMc/2T4B5MtlIr
+	WFo44JkbltcYkxLUjaUMO2OH2NLAx
+X-Google-Smtp-Source: AGHT+IHY11r3be2AgKsKzf76injlnJw53F2oFbGYqPw0mSWwU9m3Yv2l9kEZegI+e2J/7Nm8/oQtQQ==
+X-Received: by 2002:a05:6830:7202:b0:73d:baa3:82cc with SMTP id 46e09a7af769-73e64aa353bmr4811092a34.19.1752763269281;
+        Thu, 17 Jul 2025 07:41:09 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:2c38:70d4:43e:b901])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2ff8ede965fsm2575267fac.40.2025.07.17.07.41.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Jul 2025 07:41:08 -0700 (PDT)
+Date: Thu, 17 Jul 2025 17:41:06 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Timothy Hayes <timothy.hayes@arm.com>,
+	Sascha Bischoff <sascha.bischoff@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] irqchip/gic-v5: Fix error handling in
+ gicv5_its_irq_domain_alloc()
+Message-ID: <5c22b679-853d-410c-973a-ba3c91a54b84@suswa.mountain>
+References: <cover.1752693640.git.dan.carpenter@linaro.org>
+ <4787a3c4-9713-4b99-9b8a-7ba227e91d02@sabinyo.mountain>
+ <aHjBe9k2Igl2iopq@lpieralisi>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] pinctrl: qcom: Add glymur pinctrl driver
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Pankaj Patil <pankaj.patil@oss.qualcomm.com>, andersson@kernel.org,
- linus.walleij@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, quic_rjendra@quicinc.com
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250716150822.4039250-1-pankaj.patil@oss.qualcomm.com>
- <20250716150822.4039250-3-pankaj.patil@oss.qualcomm.com>
- <e69e6128-3f50-4bd3-89bb-09d7b237a568@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <e69e6128-3f50-4bd3-89bb-09d7b237a568@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aHjBe9k2Igl2iopq@lpieralisi>
 
-On 17/07/2025 13:52, Konrad Dybcio wrote:
->> +static const struct msm_pinctrl_soc_data glymur_tlmm = {
->> +	.pins = glymur_pins,
->> +	.npins = ARRAY_SIZE(glymur_pins),
->> +	.functions = glymur_functions,
->> +	.nfunctions = ARRAY_SIZE(glymur_functions),
->> +	.groups = glymur_groups,
->> +	.ngroups = ARRAY_SIZE(glymur_groups),
->> +	.ngpios = 250,
+On Thu, Jul 17, 2025 at 11:25:15AM +0200, Lorenzo Pieralisi wrote:
+> On Wed, Jul 16, 2025 at 02:38:22PM -0500, Dan Carpenter wrote:
+> > There are two issues to fix in this code:
+> > 1) If gicv5_alloc_lpi() fails the original code was checking the wrong
+> > variable.  Fix the mixup between "ret" and "lpi".
+> > 2) If irq_domain_alloc_irqs_parent() fails, then clean up all the loop
+> > iterations instead of just the current iteration.
+> > 
+> > Fixes: 57d72196dfc8 ("irqchip/gic-v5: Add GICv5 ITS support")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> >  drivers/irqchip/irq-gic-v5-its.c | 14 +++++++++++---
+> >  1 file changed, 11 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/irqchip/irq-gic-v5-its.c b/drivers/irqchip/irq-gic-v5-its.c
+> > index 55360ae9f1f6..8cc8563e27d5 100644
+> > --- a/drivers/irqchip/irq-gic-v5-its.c
+> > +++ b/drivers/irqchip/irq-gic-v5-its.c
+> > @@ -949,15 +949,18 @@ static int gicv5_its_irq_domain_alloc(struct irq_domain *domain, unsigned int vi
+> >  	device_id = its_dev->device_id;
+> >  
+> >  	for (i = 0; i < nr_irqs; i++) {
+> > -		lpi = gicv5_alloc_lpi();
+> > +		ret = gicv5_alloc_lpi();
+> >  		if (ret < 0) {
+> >  			pr_debug("Failed to find free LPI!\n");
+> >  			goto out_eventid;
 > 
-> 251 (0..=250, incl. ufs reset)
-
-
-The binding said 238 GPIOs...
-
+> This should be:
 > 
-> Konrad
+> goto out_free_lpi;
+> 
 
+Yes, you're right.
 
-Best regards,
-Krzysztof
+> otherwise we miss cleaning up for [0, i - 1] on LPI alloc failure.
+> 
+> I can fix it up - not sure it is worth splitting it into two patches,
+> just let me know please how you want me to handle it.
+
+I don't think it should be split up.  As a reviewer I would be annoyed
+by a split up version of this.
+
+I'm a little bit surprised by the offer to fix it up for me...  Is this
+going through your tree?  It's probably easiest if I just send a v2...
+Let me do that.
+
+regards,
+dan carpenter
+
 
