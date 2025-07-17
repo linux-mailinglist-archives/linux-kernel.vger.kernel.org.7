@@ -1,150 +1,168 @@
-Return-Path: <linux-kernel+bounces-735059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51106B08A4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:08:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DB10B08A4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:10:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11FF14E451D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:07:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B39F173001
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:10:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B36E229993A;
-	Thu, 17 Jul 2025 10:08:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6F5298CDA;
+	Thu, 17 Jul 2025 10:10:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tsGOlj71"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pOt1xFZV"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F197C295DBA;
-	Thu, 17 Jul 2025 10:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D76D295DBA;
+	Thu, 17 Jul 2025 10:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752746899; cv=none; b=REQ/IC3qX44HpwrnLquIyk73nYDeWF1LGB8w59ukPoKXmExqzaF3pVwwKLUkdD9md/RSGMOxx47LK811LKzJgSsm0KlnUnkflIDfqY7BJDJmtLQZXiW6P1AmZ5zxtn+J7C21dPGDYTPF8CeABLaeB1K8KpL+hGRx3W+6stZppGc=
+	t=1752747012; cv=none; b=EjGjwntdQzhntcryM0rA2J/jc4MHe+++TtpiwTlJ2b198ajaJEloSv8Ts/OrlId4U6prfrPtMNnYX96Qu30NN7LBHrlnHOgxrjj9J0Pb50uHgyDQ5UoiTZmgxZ1Iz/PWK7S8YdCJRYGiFbfo+HCDF6VwfN4Qp+kxAIMzJcWJIGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752746899; c=relaxed/simple;
-	bh=4hP+nyTzsHr+HW8bo2r86lHJYv3b9wAQ8DWbNVa32jg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a/0IIHTOL9JNLmtOR3AOfv04W7kaZF7B0dTJ/1byd8PpdfTto3jLnH6gS6T5Qj4oQfktdj/luPwztbZHLviLVU2zHT7bjX9YsheZVtW3pUn1lu9EhiyZXxA3bgdhAk5Ql3itxqQjhmOIWMwtFeI22kniFqbInRqAjvkeCqOVSG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tsGOlj71; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56691C4CEE3;
-	Thu, 17 Jul 2025 10:08:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752746896;
-	bh=4hP+nyTzsHr+HW8bo2r86lHJYv3b9wAQ8DWbNVa32jg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tsGOlj71QTbjVVS4eK+K5Y1lblwMDlpMc8Wf8ZWAF2bSbk1ytL2w/z2bj46HRN8RK
-	 57t0UIhUFY+TwwNRf+gpNOa/5ooaQEwjPN2idbtKgnzlmsusVHGmLRvqfoURMtC/fT
-	 TCdz6tOb0tCYLXj2A7M3feWkzB0/w2Kdk9G8iU1NkygHqEJkFxwwapPKiUSSHsFjkb
-	 0r+LbeQ8YqhUxIL8Dufk67n+S8DGpEzXwDXEO8wCW1//FaB6KNdlbq+Xw8YWvm3fY7
-	 15cYza3sUK6aOMW9je5KoztIstgkiAXuS/ZHrFjroWtPWuPAsCqwQ4zd25eke6cUVQ
-	 SyzIS8sY1xZVw==
-Message-ID: <40534488-24f6-4958-b032-d45a177dfd80@kernel.org>
-Date: Thu, 17 Jul 2025 12:08:11 +0200
+	s=arc-20240116; t=1752747012; c=relaxed/simple;
+	bh=fM66syPDBDaGXozEXczdoyxzbBDgGN1br0Q5Pn9cP1s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bHtgPN/4nzgyEzGPIaUGeIYLRRcS1a2/dRAjLMbwU943mdUBChT1aED4NmxNyyD1RR1RbFNs11fzVRrpMeOTGatocEeCm5Ba2btox3RWgLRBJoQz1diOdbwJ9Y/M3Pj/kSJ8OIxGiko/lePoP+R0y4L+gN+heJcGnZhgShLl4Vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pOt1xFZV; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56H5qELY007702;
+	Thu, 17 Jul 2025 10:09:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=0CFBkZpd3OJObSfMTq/xvQJl1QNj8J
+	fGuKu8YtLUZpg=; b=pOt1xFZVUxwg32jLjBdczRHWAkMb9pCngBryK40IMEyPsx
+	l3UQJ+e/vUboPW7vQMUYPWTvpWc0PhT6jHsL6lFWyGA2+HbB/EnApcW6GFYN5Clb
+	iTNPuMjs2KkWnsQYb5A2fVz2Drjgb76PI/lTSTCxu8YL28/Ygnw73OUuI0ukWSjh
+	RZ7ipKx0k4Se+fPGmEK8tl8KtS2yKQzrFQjxSVs7uN1ZcDiuQMJRa3EjdluKVWEF
+	zsqFBNRLv8mEw8HBWdbNYMGREYsmzQLnNBIpNLMyCPB6nQUVavfMXqVhI7mrEVHa
+	WDLQdbjkc4QrK6Ljfbjw1T+/V1JncWgZauvsTIAg==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47vdfmw4ty-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Jul 2025 10:09:49 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56H64uif021890;
+	Thu, 17 Jul 2025 10:09:48 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 47v4r3bb35-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Jul 2025 10:09:48 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56HA9kOg58786170
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 17 Jul 2025 10:09:46 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 34F102006E;
+	Thu, 17 Jul 2025 10:09:46 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 361BD2006F;
+	Thu, 17 Jul 2025 10:09:43 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.17.40])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 17 Jul 2025 10:09:42 +0000 (GMT)
+Date: Thu, 17 Jul 2025 15:39:40 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: Baokun Li <libaokun1@huawei.com>
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+        jack@suse.cz, linux-kernel@vger.kernel.org, julia.lawall@inria.fr,
+        yi.zhang@huawei.com, yangerkun@huawei.com, libaokun@huaweicloud.com
+Subject: Re: [PATCH v3 01/17] ext4: add ext4_try_lock_group() to skip busy
+ groups
+Message-ID: <aHjL5J3Ui9VMZt2o@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+References: <20250714130327.1830534-1-libaokun1@huawei.com>
+ <20250714130327.1830534-2-libaokun1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/7] clk: qcom: gcc: Add support for Global Clock
- Controller
-To: Abel Vesa <abel.vesa@linaro.org>,
- Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-Cc: sboyd@kernel.org, mturquette@baylibre.com, andersson@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- quic_rjendra@quicinc.com, taniya.das@oss.qualcomm.com,
- linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250716152017.4070029-1-pankaj.patil@oss.qualcomm.com>
- <20250716152017.4070029-8-pankaj.patil@oss.qualcomm.com>
- <aHjJG2nrJJZvqxSu@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <aHjJG2nrJJZvqxSu@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250714130327.1830534-2-libaokun1@huawei.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: d3hsKeZUeIe_zX55JxWI8zSE4AZ2VVNH
+X-Authority-Analysis: v=2.4 cv=JOI7s9Kb c=1 sm=1 tr=0 ts=6878cbed cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=i0EeH86SAAAA:8 a=VnNF1IyMAAAA:8 a=G4Sw1XTuHnxZOQXlz7YA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-ORIG-GUID: d3hsKeZUeIe_zX55JxWI8zSE4AZ2VVNH
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDA4NSBTYWx0ZWRfXzFogapu+5LWm /OY2AuZQwC8c6cBeUlZFlP1y/LRUkxHVM8OnpgNZYDure/yuBlIeG73A/FI0zwIxMDR0NP0F0LC 1T8Zww+7D0wxgxvS8oeeil9wl7vYRmakmDg2jlyvwIPD3lKahYm9i2wcbmRj9N4PMKU2fJfqcqU
+ IJzCRf2Wl+b3Yhf5ezz0DEOMRqrtfG0vv8sAkbUFsMhfoW6bJXT5xy9zcwZSSmFJ0y2yq7FWo4D OmGlu4u5n2U/ozHFDvrj24DM3RfXMxaBfm16M0RpIbf4UEv5HTgdpdR88mEmxmjrGaOuvo3iAaC TUhGXW1rTicW+CG1sNcV+Vd2vlGw+c+qPSUcxAB0MVvaF4zhzIFAD3eMdfT1TQ9sxSPkUERJhkN
+ 0IA9QHoJO+ma4mu6X8NjtTkUMomfn3uhOo/fs7fGGmzzow/IjRxVw8fWypwsYNvOOsEQyQd7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-17_01,2025-07-16_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 mlxlogscore=565 malwarescore=0 clxscore=1011 bulkscore=0
+ priorityscore=1501 mlxscore=0 spamscore=0 adultscore=0 impostorscore=0
+ suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507170085
 
-On 17/07/2025 11:57, Abel Vesa wrote:
-> On 25-07-16 20:50:17, Pankaj Patil wrote:
->> From: Taniya Das <taniya.das@oss.qualcomm.com>
->>
->> Add support for Global clock controller for Glymur platform.
->>
->> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
->> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
->> ---
->>  drivers/clk/qcom/Kconfig      |   10 +
->>  drivers/clk/qcom/Makefile     |    1 +
->>  drivers/clk/qcom/gcc-glymur.c | 8623 +++++++++++++++++++++++++++++++++
->>  3 files changed, 8634 insertions(+)
->>  create mode 100644 drivers/clk/qcom/gcc-glymur.c
->>
->> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
->> index 051301007aa6..1d9e8c6aeaed 100644
->> --- a/drivers/clk/qcom/Kconfig
->> +++ b/drivers/clk/qcom/Kconfig
->> @@ -645,6 +645,16 @@ config SAR_GPUCC_2130P
->>  	  Say Y if you want to support graphics controller devices and
->>  	  functionality such as 3D graphics.
->>  
->> +config SC_GCC_GLYMUR
+On Mon, Jul 14, 2025 at 09:03:11PM +0800, Baokun Li wrote:
+> When ext4 allocates blocks, we used to just go through the block groups
+> one by one to find a good one. But when there are tons of block groups
+> (like hundreds of thousands or even millions) and not many have free space
+> (meaning they're mostly full), it takes a really long time to check them
+> all, and performance gets bad. So, we added the "mb_optimize_scan" mount
+> option (which is on by default now). It keeps track of some group lists,
+> so when we need a free block, we can just grab a likely group from the
+> right list. This saves time and makes block allocation much faster.
 > 
-> Wait, are we going back to this now?
+> But when multiple processes or containers are doing similar things, like
+> constantly allocating 8k blocks, they all try to use the same block group
+> in the same list. Even just two processes doing this can cut the IOPS in
+> half. For example, one container might do 300,000 IOPS, but if you run two
+> at the same time, the total is only 150,000.
 > 
-> X Elite had CLK_X1E80100_GCC, so maybe this should be CLK_GLYMUR_GCC
-> then.
+> Since we can already look at block groups in a non-linear way, the first
+> and last groups in the same list are basically the same for finding a block
+> right now. Therefore, add an ext4_try_lock_group() helper function to skip
+> the current group when it is locked by another process, thereby avoiding
+> contention with other processes. This helps ext4 make better use of having
+> multiple block groups.
+> 
+> Also, to make sure we don't skip all the groups that have free space
+> when allocating blocks, we won't try to skip busy groups anymore when
+> ac_criteria is CR_ANY_FREE.
+> 
+> Performance test data follows:
+> 
+> Test: Running will-it-scale/fallocate2 on CPU-bound containers.
+> Observation: Average fallocate operations per container per second.
+> 
+> |CPU: Kunpeng 920   |          P80            |
+> |Memory: 512GB      |-------------------------|
+> |960GB SSD (0.5GB/s)| base  |    patched      |
+> |-------------------|-------|-----------------|
+> |mb_optimize_scan=0 | 2667  | 4821  (+80.7%)  |
+> |mb_optimize_scan=1 | 2643  | 4784  (+81.0%)  |
+> 
+> |CPU: AMD 9654 * 2  |          P96            |
+> |Memory: 1536GB     |-------------------------|
+> |960GB SSD (1GB/s)  | base  |    patched      |
+> |-------------------|-------|-----------------|
+> |mb_optimize_scan=0 | 3450  | 15371 (+345%)   |
+> |mb_optimize_scan=1 | 3209  | 6101  (+90.0%)  |
+> 
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> Reviewed-by: Jan Kara <jack@suse.cz>
 
+Hey Baokun, I reviewed some of the patches in v2 but i think that was
+very last moment so I'll add the comments in this series, dont mind the
+copy paste :)
 
-Yeah, the SC is meaningless here, unless you call it CLK_SC8480XP_GCC,
-so the authors need to decide on one naming. Not mixtures..
+The patch itself looks good, thanks for the changes.
 
+Feel free to add:
 
-Best regards,
-Krzysztof
+ Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+
+Regards,
+ojaswin
+
 
