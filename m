@@ -1,386 +1,184 @@
-Return-Path: <linux-kernel+bounces-734732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85665B08578
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:52:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5A42B08576
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:52:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 353C21C24AA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:52:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C591B179D23
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092A6218AC4;
-	Thu, 17 Jul 2025 06:52:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C06D421A421;
+	Thu, 17 Jul 2025 06:52:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JnatKgWr"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JsY+I9Ub"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F10621772D
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 06:51:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B7B219317
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 06:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752735120; cv=none; b=H8p1K69b2fo4Kyl9kPZXJF7ZKTcefsaGhYCHoqzmCuLTml7yDca+OkGabEyZIdSSkNexUI+t+JWZC6bkJeDH9vh/tJVwgE30zAUur7fk1OHJVimMSRYtHKe15aj6sjXqCpgZ49ubRvx7+/2yVnX1joTG1PCjfBFk873cKSPa5rQ=
+	t=1752735130; cv=none; b=YW1oylj1LdHTntEENPdOaMSi5jRsyKJJPh7nQZsU6iFLBKutt+UiGg/eaK5M0Cp9HbJsh+Fj6v4trloUu4jC1Y6vDpV5DF+LVnh4WSyl5XCPySXTrKuthF8Kdk8LPcRQvWEOjqmVIvfpbiHEli9qwitwz9KA9dW+ZBYcQNbxeQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752735120; c=relaxed/simple;
-	bh=xTfpokh+eM0H7vAUTJOWN2GUKk3IEDrRn1bH73Hrt1M=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dcEPceeIcYjsvTSQXVdRK2JqUKdR9v2fbFxOY22KsK6MHjH5cOfBzcoqv5WbDfIrp98vVkM6LMUly1J5Ju6Co6brLFYrxxFu+gTwE9E1bdjOZkLD1iBYp+gvTK8n7geuIzLFjAhjIOxPYv7I7Oe8+xJT4bU8un5xMRsP7P+lSe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JnatKgWr; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56H4BgAb022228
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 06:51:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=q9sPxZbJPv/UCPRDIroL0FL6
-	33a28OgGsC/135RRF34=; b=JnatKgWrnpG0FqyRAv4PD44/v8jlAIrUHm7I5mwC
-	kVxNwKPXaSbSxYJODfnJzAFn4mg9NeLY8h9dKTRCGp0zofn/JY31K5j3QVeMi686
-	2CRiTlnpoveFrEWHFIduz6W207nAj10jqsCCqgHcNLQ+zlC9eu8hf0XgAzoYl3xq
-	JHQdSxIz1U8njPCljOtNuYm2KlDF9XFE8gcRIgtUkmhh3AEm5/olvKBR8NfPw0gI
-	GTk/ASYnFzzvC0i40ZxNMWqgdtMv2vOnmasYDA68spdP4591gUnzpM1DQFfPcd6H
-	M34z/bL0u6IxLozqB9sWd3F28Of+L60Fi3T0gRgzwDRkQA==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47wqsy6gdy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 06:51:57 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7e1aeab456cso73817785a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 23:51:57 -0700 (PDT)
+	s=arc-20240116; t=1752735130; c=relaxed/simple;
+	bh=4aprBz8glMknobxqf/4Df+ZFPpRBLytda12HfBEjLtE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pi5/Ws4c7gXZxJOwE9OUchnfVOQqKCWwlAEm5z3lqSqR2zVZmotgFuzJKziZaC7pfhbN9kmpbMiOrY5QpGWpTy3DKMeNx5dYcz3ieX8iePuqcUEOwNJgofqVvCRY0gNl3+FZZbYO3DgB/vH6fCT2fQ4I/8I5k4zDktKtl7Yvmfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JsY+I9Ub; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ae3a4a773e1so10153966b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 23:52:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752735126; x=1753339926; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=GAKiwOJ1iHtP7/BKK42T12euA+Mx9VznVRPmGcAF52s=;
+        b=JsY+I9Ubb+7G+jwgA3gmx1+YtM8u1xHPj2Wtv/T1x1xlnxIPSZ1XZQlY7l8Nla4Zmk
+         lReVj96gsVYA8uyFta4S9lBPfc+c0jJMc891JoIbS0rYVpy2Vj5GuAw6rhDQrPjETkv4
+         9scOA6e/WOcV0c8RKUczOKiVntWQPt2SOJph6vpVuW4uaLwfmjKbyjTNsseFGxm1sfRx
+         dnCcXS5cGnFZtqZSJri2u8r2jJv3c+L36u0FGeWjiSIGRpUBmlVADs1Pahrnz603o3Ao
+         Cs4c/6z03nwk3cjobj1JVDDhT3njzAg4vduE+Z2lmvWItT3BsMBUD+K+el83bVqCpGt+
+         3dPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752735116; x=1753339916;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q9sPxZbJPv/UCPRDIroL0FL633a28OgGsC/135RRF34=;
-        b=KXS+BtkHbX7Frnr8KkNPzzQoOaMSENHwMXHuW4zLNw5/qdjI7nPT4jGSnrDu3BQsNJ
-         PQDID0cdtLdKbbOk0kO0wDauHQR7GEpIem177edcIt8HcfuSIpLY86Aoz6xRInAa/HNA
-         zu4r9FZtAsMhaSIuK7viWoTNSdSQYGUKGFqVpT6GtsRMMF7/dWf92tJ2/+cQ3MWc1AXw
-         xqEkEx+ouM/mGraputNqn6RMyqDQ9qX3mmfrWGCgx5hdeGvRc9k3y0NmKa9TGjBjE0lJ
-         3NGh9LywcOpqLoT8g8UzKO2mOexm1VgUOV9v0yWMMT1tHTe8Hx+KCn3pggO4pzWVo0/w
-         YjbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUImEfztgE0O5IOJfTO5I7ywbdrusQ9hstBM1gdFZPnXKQbE9hkBe/nNTmtqPJZlcGIdcuIlqsJuLybzlQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsDgJcDpPCXNQXxbbBpinaeoTnEIn4gkOetysYPcTCtAZcM7P6
-	bJ638rScw0qj5mSUvgf1RhGvMukX5x/omY/4QUsMYNNfIWF6Yn8VjjdreYQJPoR7FcUEAylNqDm
-	xNXcQIRnPBVb6txiiuUU+AwNhUx5H+k/7LETOxOSGVOr+Ss2scZvUahy43djNQumb2aY=
-X-Gm-Gg: ASbGncseyUoCupmFeiGbORx8eY9XxsHtUD/u0dzyAUbbfpfmSDnUT4Vswsv+vlhxuw4
-	nVNTyCiiVn48p9jUkHBSsH9N0QbCDiAscA5yHcVOwRtdLDE9Cplc27SkY/oju3tjp59RiQaCBru
-	CN/z6k1lV9IvVKOlbVGgwncTK49YwWmL+yM7DaAhz6z08atLI2+DJAxKOhmHnuFRnyLuiDZgOes
-	yjemFJIt0SobijjmO6ZIXNlij/Ab1NHM/3MAYooR+ufI0X3dxWAstLSfia9Rix4agG3kV5pp2b5
-	G7LnGfphd1vAASztc/XM1rSEQjz7R5gPzdSUsnw/fhn2K9HgnU2vcsJNjEpFeLeNgrNRaOa4514
-	=
-X-Received: by 2002:a05:620a:4606:b0:7e3:2b48:7a83 with SMTP id af79cd13be357-7e342b5bd3cmr750104585a.39.1752735115891;
-        Wed, 16 Jul 2025 23:51:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHVfrBEr4ilxky/eDf4VZ8EjlWDAXKMdDdNkfwskeQj3T1yecsUXR+JjMCV9BPPVRtGb8bPIQ==
-X-Received: by 2002:a05:620a:4606:b0:7e3:2b48:7a83 with SMTP id af79cd13be357-7e342b5bd3cmr750102785a.39.1752735115303;
-        Wed, 16 Jul 2025 23:51:55 -0700 (PDT)
-Received: from trex (153.red-79-144-197.dynamicip.rima-tde.net. [79.144.197.153])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b612db7060sm2146179f8f.52.2025.07.16.23.51.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 23:51:54 -0700 (PDT)
-From: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
-X-Google-Original-From: Jorge Ramirez <JorgeRamirez-Ortiz>
-Date: Thu, 17 Jul 2025 08:51:53 +0200
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>,
-        quic_vgarodia@quicinc.com, quic_dikshita@quicinc.com,
-        krzk+dt@kernel.org, konradybcio@kernel.org, mchehab@kernel.org,
-        andersson@kernel.org, conor+dt@kernel.org,
-        amit.kucheria@oss.qualcomm.com, linux-media@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 2/7] media: venus: Conditionally register codec nodes
- based on firmware version
-Message-ID: <aHidibqhMyexExXJ@trex>
-References: <20250715204749.2189875-1-jorge.ramirez@oss.qualcomm.com>
- <20250715204749.2189875-3-jorge.ramirez@oss.qualcomm.com>
- <2fd0d1a7-70ee-43ac-af84-d2321c40e8f8@linaro.org>
+        d=1e100.net; s=20230601; t=1752735126; x=1753339926;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GAKiwOJ1iHtP7/BKK42T12euA+Mx9VznVRPmGcAF52s=;
+        b=QbMDAqBY4cO0mOLfcVrhktBxERqpDvhkKl6JYzuOly5fVRp3V1iY0vRY94YMY1n200
+         CdSFsGjQOt/BaD+Mh4CfoHYrj5TqF8GFiiKBduHk5qvBvw/lQfVv8YJmPSaLoCWRE+Ry
+         d8tMcKmT7HcQxy+dHpdjjScrvDtxyPC0WczS5od9p2vu1Ql4Og+A8aB/1snEzJDGPXdH
+         +pvzBIJoUJq8ElTRK1sUvdG0BJ4tib7MLPq115p04Cv2fC9eUxJ0PCT0vcQoMKAxwI/1
+         RMD3+Bi8Nzj+5eXYXmuVWjfOeo/mzHpEjbW+DEwGQ9c6ye7UVBh4BGatMAYUN5QATsUD
+         kwmg==
+X-Gm-Message-State: AOJu0YzMTbW5nBagXgW/COj1K+PiEUCDalINVIDynVKo7UwIscRbKmoU
+	0B+Mhcn1UYPDdABX2i9o6N1fM9xKmkXuXxQa9lqJAIgfBiBUhyHfG9xW0Hu7NzDBlfZrS/qO8UZ
+	AQvW5B4M=
+X-Gm-Gg: ASbGncvyD1U/i8MguVMj1uukpCyZrtfg+58nSw0s2+BfZAvlm4sZ47c2CQQreWFf+Z0
+	0zbjx0euRjjojWkPDmaok3V1AJniqac89LMrGDnKkW4r6f9nqgBKYNNK7YTeCsQ4fONO/ugfXYu
+	IWFavbZw22GuxoXtY2KL99q8SpgLHIbjj4QSL1lH0V9YklyqbyogzFREh6HmwWNIjpwsIIfBylB
+	6nBES9zp40GjO9IsdwraNjV/EIFDzpaPE+X1ZnNTNfVWLDxnuKUWErR9/WdISIkaMCBGZh7A62/
+	tb2b6X0QhSJ6mGKhfM+uRJvX+HMCnTU2qrT5Zw6UyKv4eEGFXVBLAe9PCXFiVhJkSc/FWvwvW9I
+	k13NYjbgavtUq74s7M7G+tdS/IVUyeQOkB1fjXo2RRv04CygIlpqi
+X-Google-Smtp-Source: AGHT+IHDmHt87Z4pWyoF707n1KL/8xK3Tw04QOD37t7QY9/Fch26OgA/ABV9exObOWcKcNLXM/hzQQ==
+X-Received: by 2002:a17:907:1b03:b0:ade:328a:95d1 with SMTP id a640c23a62f3a-ae9c9b21003mr213021966b.10.1752735126446;
+        Wed, 16 Jul 2025 23:52:06 -0700 (PDT)
+Received: from [192.168.1.29] ([178.197.222.89])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec55e1e0dcsm41040566b.65.2025.07.16.23.52.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Jul 2025 23:52:05 -0700 (PDT)
+Message-ID: <135b57cf-76bf-4ed1-8392-eec43711801b@linaro.org>
+Date: Thu, 17 Jul 2025 08:52:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2fd0d1a7-70ee-43ac-af84-d2321c40e8f8@linaro.org>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDA1NyBTYWx0ZWRfX2T3yi7RsI9sk
- zlqx/pcun5tQpvfMyP/JHAUo+YwD/9KqOX07ZtcIwTSv5ORJhautgEHvRxeqIRnccLyLS5SqzNz
- 035PaIKJbAy/tM/Jh5TOg+uVng+W+5XBkJH7ZAhG/cM5ZsTbyl9yClTgphfLM2N6z1TzUhBkKUJ
- Sr/bzAOFxU88+nsPpgOPJ+o6LTpLn9SHFUd6n5TGdfYs8a7HNEIzYu+wdpyLuf5BTQ0EYwQLRAZ
- sDZUsNg3jDEA1aI/bvlezi/hlQUtcSKaBj4mrhe4oby46jyvzs+74q4enXj19u5NLP8jfPPRe1N
- 3pXssuLFOZW0HaDeVUe2JxcrN/Z4rev5qocpUVzc7WXJP6c6c2TLIhnFrXLzdy6O5btCmxMzX/5
- 2Bx/BdDDXIRtazsDKHZWi0qbu/GrsyvkyU1LYbo44l5Jy/fV9Zq8+AP/5WHa3Hq7/hG0X5pR
-X-Proofpoint-GUID: UuB5mNW5KjMkCXKY76h_9-G6MOAM0Npl
-X-Proofpoint-ORIG-GUID: UuB5mNW5KjMkCXKY76h_9-G6MOAM0Npl
-X-Authority-Analysis: v=2.4 cv=McZsu4/f c=1 sm=1 tr=0 ts=68789d8d cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=Ki5fnJvzvo7yLsyA0quaxQ==:17
- a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=QkW7CUjfO7Dj9zUrQigA:9
- a=CjuIK1q_8ugA:10 a=PEH46H7Ffwr30OY-TuGO:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-17_01,2025-07-16_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 mlxlogscore=999 impostorscore=0 mlxscore=0 phishscore=0
- adultscore=0 lowpriorityscore=0 bulkscore=0 clxscore=1015 suspectscore=0
- spamscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507170057
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: Tree for Jul 16 (drivers/vfio/cdx/intr.c)
+To: Randy Dunlap <rdunlap@infradead.org>,
+ Stephen Rothwell <sfr@canb.auug.org.au>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linux-um@lists.infradead.org, Linux KVM <kvm@vger.kernel.org>,
+ Nipun Gupta <nipun.gupta@amd.com>, Nikhil Agarwal <nikhil.agarwal@amd.com>
+References: <20250716212558.4dd0502b@canb.auug.org.au>
+ <4a6fd102-f8e0-42f3-b789-6e3340897032@infradead.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <4a6fd102-f8e0-42f3-b789-6e3340897032@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 17/07/25 00:37:33, Bryan O'Donoghue wrote:
-> On 15/07/2025 21:47, Jorge Ramirez-Ortiz wrote:
-> > The encoding and decoding capabilities of a VPU can vary depending on the
-> > firmware version in use.
-> > 
-> > This commit adds support for platforms with OF_DYNAMIC enabled to
-> > conditionally skip the creation of codec device nodes at runtime if the
-> > loaded firmware does not support the corresponding functionality.
-> > 
-> > Note that the driver becomes aware of the firmware version only after the
-> > HFI layer has been initialized.
-> > 
-> > Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
-> > ---
-> >   drivers/media/platform/qcom/venus/core.c | 76 +++++++++++++++---------
-> >   drivers/media/platform/qcom/venus/core.h |  8 +++
-> >   2 files changed, 57 insertions(+), 27 deletions(-)
-> > 
-> > diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
-> > index 4c049c694d9c..b7d6745b6124 100644
-> > --- a/drivers/media/platform/qcom/venus/core.c
-> > +++ b/drivers/media/platform/qcom/venus/core.c
-> > @@ -28,6 +28,15 @@
-> >   #include "pm_helpers.h"
-> >   #include "hfi_venus_io.h"
-> > +static inline bool venus_fw_supports_codec(struct venus_core *core,
-> > +					   const struct venus_min_fw *ver)
-> > +{
-> > +	if (!ver)
-> > +		return true;
-> > +
-> > +	return is_fw_rev_or_newer(core, ver->major, ver->minor, ver->rev);
-> > +}
-> > +
-> >   static void venus_coredump(struct venus_core *core)
-> >   {
-> >   	struct device *dev;
-> > @@ -103,7 +112,9 @@ static void venus_sys_error_handler(struct work_struct *work)
-> >   	core->state = CORE_UNINIT;
-> >   	for (i = 0; i < max_attempts; i++) {
-> > -		if (!pm_runtime_active(core->dev_dec) && !pm_runtime_active(core->dev_enc))
-> > +		/* Not both nodes might be available */
+On 17/07/2025 01:07, Randy Dunlap wrote:
 > 
-> "Neither node available" the latter for preference.
-
-what about "One or both nodes may be unavailable" ?
-
 > 
-> > +		if ((!core->dev_dec || !pm_runtime_active(core->dev_dec)) &&
-> > +		    (!core->dev_enc || !pm_runtime_active(core->dev_enc)))
+> On 7/16/25 4:25 AM, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> Changes since 20250715:
+>>
 > 
-> Is this change about registration or is it a fix trying to sneak in under
-> the radar ?
-
-I think this functionality - the ability to enable or disable individual
-encode/decode nodes based on firmware capabilities - should be standard
-across multimedia drivers.
-
-For example, on the AR50_LITE platform, the _current_ driver/firmware
-combo does not support encoding as it requires secure buffer handling
-which is not yet implemented in the kernel (changes to iommu, etc)
-
-So, rather than disabling Venus entirely, I think it makes sense to
-expose the decoder node, which remains fully functional and unaffected
-by the secure buffer requirement.
-
-Hence this commit (so yeah, I am not trying to sneak a fix, I swear!) 
-
+> on ARCH=um SUBARCH=x86_64:
 > 
-> >   			break;
-> >   		msleep(10);
-> >   	}
-> > @@ -202,7 +213,8 @@ static u32 to_v4l2_codec_type(u32 codec)
-> >   	}
-> >   }
-> > -static int venus_enumerate_codecs(struct venus_core *core, u32 type)
-> > +static int venus_enumerate_codecs(struct venus_core *core, u32 type,
-> > +				  const struct venus_min_fw *ver)
-> >   {
-> >   	const struct hfi_inst_ops dummy_ops = {};
-> >   	struct venus_inst *inst;
-> > @@ -213,6 +225,9 @@ static int venus_enumerate_codecs(struct venus_core *core, u32 type)
-> >   	if (core->res->hfi_version != HFI_VERSION_1XX)
-> >   		return 0;
-> > +	if (!venus_fw_supports_codec(core, ver))
-> > +		return 0;
-> Its not really a codec you're checking there, its a version.
+> ../drivers/vfio/cdx/intr.c: In function ‘vfio_cdx_msi_enable’:
+> ../drivers/vfio/cdx/intr.c:41:15: error: implicit declaration of function ‘msi_domain_alloc_irqs’; did you mean ‘msi_domain_get_virq’? [-Wimplicit-function-declaration]
+>    41 |         ret = msi_domain_alloc_irqs(dev, MSI_DEFAULT_DOMAIN, nvec);
+>       |               ^~~~~~~~~~~~~~~~~~~~~
+>       |               msi_domain_get_virq
+> ../drivers/vfio/cdx/intr.c: In function ‘vfio_cdx_msi_disable’:
+> ../drivers/vfio/cdx/intr.c:135:9: error: implicit declaration of function ‘msi_domain_free_irqs_all’ [-Wimplicit-function-declaration]
+>   135 |         msi_domain_free_irqs_all(dev, MSI_DEFAULT_DOMAIN);
+>       |         ^~~~~~~~~~~~~~~~~~~~~~~~
 > 
-> The name should reflect that.
-
-but the check isn't just about the firmware version: it is about whether
-the firmware in use supports a specific coded based on the firmware
-version knowledge built in the driver.
-
-so really, while the logic involves a version check, it is really about
-the codec capability.
-
-I could rename it as is_codec_enabled_by_fw() if the current naming is
-not clear.
-
 > 
-> > +
-> >   	inst = kzalloc(sizeof(*inst), GFP_KERNEL);
-> >   	if (!inst)
-> >   		return -ENOMEM;
-> > @@ -288,14 +303,14 @@ static irqreturn_t venus_isr_thread(int irq, void *dev_id)
-> >   #if defined(CONFIG_OF_DYNAMIC)
-> >   static int venus_add_video_core(struct venus_core *core, const char *node_name,
-> > -				const char *compat)
-> > +				const char *compat, const struct venus_min_fw *ver)
-> >   {
-> >   	struct of_changeset *ocs = core->ocs;
-> >   	struct device *dev = core->dev;
-> >   	struct device_node *np, *enp;
-> >   	int ret;
-> > -	if (!node_name)
-> > +	if (!node_name || !venus_fw_supports_codec(core, ver))
-> >   		return 0;
-> >   	enp = of_find_node_by_name(dev->of_node, node_name);
-> > @@ -330,11 +345,13 @@ static int venus_add_dynamic_nodes(struct venus_core *core)
-> >   	of_changeset_init(core->ocs);
-> > -	ret = venus_add_video_core(core, core->res->dec_nodename, "venus-decoder");
-> > +	ret = venus_add_video_core(core, core->res->dec_nodename, "venus-decoder",
-> > +				   core->res->dec_minfw);
-> >   	if (ret)
-> >   		goto err;
-> > -	ret = venus_add_video_core(core, core->res->enc_nodename, "venus-encoder");
-> > +	ret = venus_add_video_core(core, core->res->enc_nodename, "venus-encoder",
-> > +				   core->res->enc_minfw);
-> >   	if (ret)
-> >   		goto err;
-> > @@ -363,6 +380,9 @@ static void venus_remove_dynamic_nodes(struct venus_core *core)
-> >   #else
-> >   static int venus_add_dynamic_nodes(struct venus_core *core)
-> >   {
-> > +	WARN_ONCE(core->res->enc_minfw || core->res->dec_minfw,
-> > +		  "Feature not supported");
-> > +
-> >   	return 0;
-> >   }
-> > @@ -432,7 +452,7 @@ static int venus_probe(struct platform_device *pdev)
-> >   					IRQF_TRIGGER_HIGH | IRQF_ONESHOT,
-> >   					"venus", core);
-> >   	if (ret)
-> > -		goto err_core_put;
-> > +		goto err_hfi_destroy;
-> >   	venus_assign_register_offsets(core);
-> > @@ -448,19 +468,9 @@ static int venus_probe(struct platform_device *pdev)
-> >   	if (ret < 0)
-> >   		goto err_runtime_disable;
-> > -	if (core->res->dec_nodename || core->res->enc_nodename) {
-> > -		ret = venus_add_dynamic_nodes(core);
-> > -		if (ret)
-> > -			goto err_runtime_disable;
-> > -	}
-> > -
-> > -	ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
-> > -	if (ret)
-> > -		goto err_remove_dynamic_nodes;
-> > -
-> >   	ret = venus_firmware_init(core);
-> >   	if (ret)
-> > -		goto err_of_depopulate;
-> > +		goto err_runtime_disable;
-> >   	ret = venus_boot(core);
-> >   	if (ret)
-> > @@ -474,34 +484,46 @@ static int venus_probe(struct platform_device *pdev)
-> >   	if (ret)
-> >   		goto err_venus_shutdown;
-> > -	ret = venus_enumerate_codecs(core, VIDC_SESSION_TYPE_DEC);
-> > +	if (core->res->dec_nodename || core->res->enc_nodename) {
-> > +		ret = venus_add_dynamic_nodes(core);
-> > +		if (ret)
-> > +			goto err_core_deinit;
-> > +	}
-> > +
-> > +	ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
-> >   	if (ret)
-> > -		goto err_core_deinit;
-> > +		goto err_remove_dynamic_nodes;
-> > +
-> > +	ret = venus_enumerate_codecs(core, VIDC_SESSION_TYPE_DEC,
-> > +				     core->res->dec_minfw);
-> > +	if (ret)
-> > +		goto err_of_depopulate;
-> > -	ret = venus_enumerate_codecs(core, VIDC_SESSION_TYPE_ENC);
-> > +	ret = venus_enumerate_codecs(core, VIDC_SESSION_TYPE_ENC,
-> > +				     core->res->enc_minfw);
-> >   	if (ret)
-> > -		goto err_core_deinit;
-> > +		goto err_of_depopulate;
-> >   	ret = pm_runtime_put_sync(dev);
-> >   	if (ret) {
-> >   		pm_runtime_get_noresume(dev);
-> > -		goto err_core_deinit;
-> > +		goto err_of_depopulate;
-> >   	}
-> >   	venus_dbgfs_init(core);
-> >   	return 0;
-> > +err_of_depopulate:
-> > +	of_platform_depopulate(dev);
-> > +err_remove_dynamic_nodes:
-> > +	venus_remove_dynamic_nodes(core);
-> >   err_core_deinit:
-> >   	hfi_core_deinit(core, false);
-> >   err_venus_shutdown:
-> >   	venus_shutdown(core);
-> >   err_firmware_deinit:
-> >   	venus_firmware_deinit(core);
-> > -err_of_depopulate:
-> > -	of_platform_depopulate(dev);
-> > -err_remove_dynamic_nodes:
-> > -	venus_remove_dynamic_nodes(core);
-> >   err_runtime_disable:
-> >   	pm_runtime_put_noidle(dev);
-> >   	pm_runtime_disable(dev);
-> > diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
-> > index 5b1ba1c69adb..3af8386b78be 100644
-> > --- a/drivers/media/platform/qcom/venus/core.h
-> > +++ b/drivers/media/platform/qcom/venus/core.h
-> > @@ -50,6 +50,12 @@ struct bw_tbl {
-> >   	u32 peak_10bit;
-> >   };
-> > +struct venus_min_fw {
-> > +	u32 major;
-> > +	u32 minor;
-> > +	u32 rev;
-> > +};
+> Those missing functions are provided by CONFIG_GENERIC_MSI_IRQ
+> (which is not set).
 > 
-> I'd call this venus_firmware_version
+> Should VFIO_CDX select GENERIC_MSI_IRQ or just not build on ARCH=um?
 
-I guess you right- doing so will enable future extensibility if we need
-to do some different version checks. ok.
 
-> 
-> > +
-> >   enum vpu_version {
-> >   	VPU_VERSION_AR50,
-> >   	VPU_VERSION_AR50_LITE,
-> > @@ -92,6 +98,8 @@ struct venus_resources {
-> >   	u32 cp_nonpixel_start;
-> >   	u32 cp_nonpixel_size;
-> >   	const char *fwname;
-> > +	const struct venus_min_fw *enc_minfw;
-> > +	const struct venus_min_fw *dec_minfw;
-> 
-> and then I'd do as you have done here, indicate that the struct
-> venus_firmware_version is a *enc_min_fw_ver;
+I think this will be also resolved with my change to select
+GENERIC_MSI_IRQ by CDX_BUS, but to be fair, I think that VFIO_CDX should
+also select GENERIC_MSI_IRQ. My reasoning is that:
+1. GENERIC_MSI_IRQ is non-user selectable, thus it is supposed to be
+selected by Kconfig entries
+2. Every explicit user of a code should select such symbol, not rely on
+someone else selecting it.
 
-ack
+I will send a patch proposing this.
 
-> 
-> >   	const char *enc_nodename;
-> >   	const char *dec_nodename;
-> >   };
+Best regards,
+Krzysztof
 
