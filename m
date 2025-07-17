@@ -1,114 +1,121 @@
-Return-Path: <linux-kernel+bounces-735482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 766C7B08FEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:53:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58B14B08FEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:53:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E85463A5619
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:51:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B5741AA8BD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E102F85C3;
-	Thu, 17 Jul 2025 14:51:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA8AF2F85D3;
+	Thu, 17 Jul 2025 14:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lW3185EN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s0R8BKVU"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9C0514E2E2;
-	Thu, 17 Jul 2025 14:51:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF122F7D16
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 14:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752763883; cv=none; b=s+7NYvZotLU93gtKeWDabdjA1waK7o1WMwdybP9l+KFBl6ESKw0FXzZORgan7lJERoYimZQwZjfnpqcizII6QnZOGeF4IyTeDWMmXe+HObr/Npc6H9gPbMreYsCoc6nKL/i45hLcBoArZXRI0Omdr3+/lulNW2O/vIT/ZlHu/eE=
+	t=1752763942; cv=none; b=OzmzSZnxTWRy4X1NHDl/apcupQ8SDNF8C3Fy/J6Kikqxol4KmJe3BDpUL21GrbKAAOg8VKOrSvhQINimyy+BnMvQ834OocXA8xoghhHzsOi8KwdukFPBTgNZRsm5CQMdtPPLwXcJ4fAjFagAXR1vKRQYV+pjNUI3SkdjjEyM7IA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752763883; c=relaxed/simple;
-	bh=MP9BmCbwpKpHjixUZfTCj8rTrM1iVy1gnis52tX8tgw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=SlM3fV4R76YmY836F9t0t30Cm/ZbUKWGfm/7fH0ikylG2dzp6wPxmwjy0IbI+UuU4DDongTaIBTk/AJXdjeOanJ8UvpuXUSBDwoFpAKquLZZ1vI5ah9STYgqXqwcIdlxacCS4lbG7HgS5aczhfAH/6zjKFvMRIML0Z2AUxxu/KA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lW3185EN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2D3DCC4CEEB;
-	Thu, 17 Jul 2025 14:51:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752763883;
-	bh=MP9BmCbwpKpHjixUZfTCj8rTrM1iVy1gnis52tX8tgw=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=lW3185ENnwmrOFhKcU5lDziS9wvic8V3+AfQvu7fwITJIZFxVnpVoBR9XgNjUp8Nz
-	 BDCnB9pvRwLGFLxQEiZUpX1g4QSkPUdMNfkUIYfg4/zaZbWvHq/WEkxM+Rw6cRF6Rv
-	 FfpBZsxeJ+CQIzW8aU5FHTZe5d0XmFMUVSg+MKKxIFz3CVzroJBQFy3oZpEKb3eVuE
-	 M5f/ISBPKt+DXDbUKQu9J23Oy/p44EEsLxLJIwMjn46GNEoha3WGZ/Sq7PBkVZFiFU
-	 g9QkNO9Z3RoG16NdyGhWsBawdUOPGpImkMjt/XNl61wAmnkvZAbe6IsKDawXt2Fi0D
-	 1T/kXQCTeP+CA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 229A8C83F34;
-	Thu, 17 Jul 2025 14:51:23 +0000 (UTC)
-From: =?utf-8?q?Nuno_S=C3=A1_via_B4_Relay?= <devnull+nuno.sa.analog.com@kernel.org>
-Date: Thu, 17 Jul 2025 15:51:34 +0100
-Subject: [PATCH] mfd: adp5585: Drop useless return statement
+	s=arc-20240116; t=1752763942; c=relaxed/simple;
+	bh=80MorPPaHl9TsLZ1DeLV0RCLCihSjoeyYd2It40MXpE=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=QmiPUoFl4Z4/PlOq6WkbBrVCC4DgihhzXvJgGhWZQo2ocgKLyTX8urFObVxsSUZm4Q7vxKi+Ii6oj8WA3kon37r0j4aXmodd1f89A4Kc7trd6ImrXibgvjey3KDJ30+ox8cObbsHma+Qc98VFjPIYE+zVyKQ5QqZMGHI30JPzck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s0R8BKVU; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-235089528a0so19234865ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 07:52:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752763940; x=1753368740; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fzF8ddTvRDmr6+lqbUYAfepTkIRTUO0jsFB9VN0seVE=;
+        b=s0R8BKVU6eVsMa8sSMcY/3aXDM9zZRcIUqSnA93l0t98tsjvJ5fKA32qbbC7BIb4rI
+         hJFmFDY4kLEnqZt2YExISfm6hMz+e9EejDNgijce7kPtFwHVURL+sl2zYjxYirPdyC6Q
+         oVHEuiFvo139y3hlMTRv2oTMQ/CtBwUam8qypF+82YkswcVtJT30ck0askPOHNd0nxVR
+         6/CRzjZGaWmvEYrge8O2oBzMLC6HMUncwwW22ni1iEkvVx2352rF7cGYe/V0gzz69IcV
+         G+7OVoveVPY+SS+w0faiVt74didos2hfmknGS5OlG3aGiilezOdDqcx7e103h7Fvple7
+         9fUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752763940; x=1753368740;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fzF8ddTvRDmr6+lqbUYAfepTkIRTUO0jsFB9VN0seVE=;
+        b=aEdd4YahrzAw0RhN5Yf3vf346P39El/Mhcny6cBvERj8GGABfBq7/s1gjV4wMl2ijg
+         eisWOosFAKQxKyCclZIHfO/MVDFvZ7Gp45qCQUhn2BAGuZKz/ZKMN3IrE5GtYFuko7G4
+         CeqSD+7vVzgLBPcbVaWCjexCIsXSufZYb9WFPY21C+AHMUJQFgVnSgKfSVjHG0+NO1bn
+         WviWqRkQNX3GuxEXeXXSyhnqA0HGkmEBQKukg+J+FUtZbAmWqCSu89C+el7PSkMGcrHR
+         smX4gIoMVGtg78G04F476Era1LXsbgPD91JvQLIEkLtJYNRH7O2c+/0i7CK1MvTTyjCY
+         E0dw==
+X-Forwarded-Encrypted: i=1; AJvYcCXMbN2KemQufxOCpjHR4qqjFUHBZpGBXVwvUEqoiOMj3E1xGIJ+sPzryJBRHfpp+kFbYL/adMiAWVoYZYA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3uVLbDWy3ettkSFfn5NuLuEJq0mONNuKwdeXAyZl6ii1Pk9Us
+	U4XK8usP8OOdlM6GJLXY3cyHZ5iSMO6gVaY0I9C2lRKLoJgCyVXnxlUnIGhjafrePUFs0spyv7y
+	CVnjP8w==
+X-Google-Smtp-Source: AGHT+IH0TCNIA5Uad/LzniAvXS4UqU3CneQAWw0fd9zV5z/MZrAkbvNQTuD79l+G1oNGskvTAYSGIso5kE8=
+X-Received: from pjbsn8.prod.google.com ([2002:a17:90b:2e88:b0:311:e71e:3fb9])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:f605:b0:234:7837:91de
+ with SMTP id d9443c01a7336-23e38fb9eedmr1052995ad.26.1752763940025; Thu, 17
+ Jul 2025 07:52:20 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Thu, 17 Jul 2025 07:52:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250717-adp5585-drop-ret-v1-1-2ae65bd780aa@analog.com>
-X-B4-Tracking: v=1; b=H4sIAPUNeWgC/x3MQQqAIBBA0avErBvQwKyuEi0sp5qNyRgRiHdPW
- r7F/xkSCVOCqckg9HDiK1TotoHtdOEgZF8NneqMstqi89GYwaCXK6LQjf2qtRqtdcp5qFkU2vn
- 9l/NSygfVjARQYgAAAA==
-X-Change-ID: 20250717-adp5585-drop-ret-6b110977a0ad
-To: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Lee Jones <lee@kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752763896; l=1199;
- i=nuno.sa@analog.com; s=20231116; h=from:subject:message-id;
- bh=fa2lU4nXFqoCVVCIfit96zG313AYsYjHUMW+fLWBw3E=;
- b=GiPWHTiCOaER8fe0hS7yssIfg0FKiPLqsOJf5qw/KWPP/gHcS0Kfr3Z8XPeTl0hrOj1aeyVKq
- k91h25x/INrBz+yG0MNRoZFWCp/XSIsuCDZfZmlNahBrcY3zchJ9HwH
-X-Developer-Key: i=nuno.sa@analog.com; a=ed25519;
- pk=3NQwYA013OUYZsmDFBf8rmyyr5iQlxV/9H4/Df83o1E=
-X-Endpoint-Received: by B4 Relay for nuno.sa@analog.com/20231116 with
- auth_id=100
-X-Original-From: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
-Reply-To: nuno.sa@analog.com
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+Message-ID: <20250717145216.85338-1-seanjc@google.com>
+Subject: [GIT PULL] KVM: x86: TDX fixes for 6.16-rc7
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Sean Christopherson <seanjc@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Nuno Sá <nuno.sa@analog.com>
+Please pull three TDX fixes for 6.16, two of which have potential to cause ABI
+problems.
 
-In adp5585_reset_ev_parse(), when parsing the
-adi,reset-pulse-width-us property, we were returning in case it was
-found and valid. No point in doing that as we'll be returning anyways
-after the exiting the property scope. And it could actually lead to bugs
-if new properties happen to added after this one.
+The following changes since commit 4578a747f3c7950be3feb93c2db32eb597a3e55b:
 
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/linux-gpio/c85604d9e077511b8aa6ee0786579594cc0103d4.camel@gmail.com/T/#ma25557bd06ccd2531dc9c85ba6be74af781b81aa
-Signed-off-by: Nuno Sá <nuno.sa@analog.com>
----
- drivers/mfd/adp5585.c | 1 -
- 1 file changed, 1 deletion(-)
+  KVM: x86: avoid underflow when scaling TSC frequency (2025-07-09 13:52:50 -0400)
 
-diff --git a/drivers/mfd/adp5585.c b/drivers/mfd/adp5585.c
-index 58f7cebe2ea4f2c68f64370449f5fbce8a2f14ed..46b3ce3d7bae8981824a957f6b4ee471d803c981 100644
---- a/drivers/mfd/adp5585.c
-+++ b/drivers/mfd/adp5585.c
-@@ -432,7 +432,6 @@ static int adp5585_reset_ev_parse(struct adp5585_dev *adp5585)
- 					     "Invalid value(%u) for adi,reset-pulse-width-us\n",
- 					     prop_val);
- 		}
--		return ret;
- 	}
- 
- 	return 0;
+are available in the Git repository at:
 
----
-base-commit: 8f3ef4da96dd3f3e12f6313cbe8cd16a39e9abae
-change-id: 20250717-adp5585-drop-ret-6b110977a0ad
---
+  https://github.com/kvm-x86/linux.git tags/kvm-x86-fixes-6.16-rc7
 
-Thanks!
-- Nuno Sá
+for you to fetch changes up to b8be70ec2b47ca62ccb54dc3c2ab9a9c93653e00:
 
+  KVM: VMX: Ensure unused kvm_tdx_capabilities fields are zeroed out (2025-07-15 14:04:39 -0700)
 
+----------------------------------------------------------------
+KVM TDX fixes for 6.16
+
+ - Fix a formatting goof in the TDX documentation.
+
+ - Reject KVM_SET_TSC_KHZ for guests with a protected TSC (currently only TDX).
+
+ - Ensure struct kvm_tdx_capabilities fields that are not explicitly set by KVM
+   are zeroed.
+
+----------------------------------------------------------------
+Binbin Wu (1):
+      Documentation: KVM: Fix unexpected unindent warning
+
+Kai Huang (1):
+      KVM: x86: Reject KVM_SET_TSC_KHZ vCPU ioctl for TSC protected guest
+
+Sean Christopherson (1):
+      KVM: VMX: Ensure unused kvm_tdx_capabilities fields are zeroed out
+
+ Documentation/virt/kvm/api.rst | 11 +++++++++--
+ arch/x86/kvm/vmx/tdx.c         |  7 ++++---
+ arch/x86/kvm/x86.c             |  4 ++++
+ 3 files changed, 17 insertions(+), 5 deletions(-)
 
