@@ -1,159 +1,109 @@
-Return-Path: <linux-kernel+bounces-735147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B13BDB08B7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:01:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B551B08B84
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:05:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5661E3A38A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:00:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7A5F7AE87F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:00:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA36429A9F9;
-	Thu, 17 Jul 2025 11:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AAD3299AAE;
+	Thu, 17 Jul 2025 11:01:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mmS2bh3z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="S0lFNahX"
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31067286430;
-	Thu, 17 Jul 2025 11:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D18299A80
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 11:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752750051; cv=none; b=RDF+a7Vdzu9mMXr8cel6I0FHW1CnIxUhjPrHplbLRl6mamdBIZsw4FOmwceSEqBb+Gt3EMHH5kMZVgiV61YeVw9qM0ugkAPfXcnxfLeq/d0VUvU2grwBY5u4hN25Zy31txwiC04U81VS9NparFPrHdV8LodEj+jHpE9zVE7aAIE=
+	t=1752750082; cv=none; b=g8yj/FczwvslzlSkUaxgTzm4OU9rJHS7gxmnaRxCJ2grpKMqqP88Z0RrgjUkkTlx2938pEEcZIbCNFWDlkrbIAxblZhUFvmnEjkz7ntPbPfSKHhuZIue92ygB3iM4DGQnzCV1Roe2h7AqUVauRKIawcwCZ3Px7p/NzLDY/6YgKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752750051; c=relaxed/simple;
-	bh=ZBx+1uOYGb21L1VmSZS2MGG+D0QkvcjmRdzZ22pUJgg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t0v/N2ANZHYj1fv9g++M+fBCOdQBvKbAX1gzKRoMF7T/JyUd5U4+LZGlcJTuSfUzRK62mx/YJHAbwobVrEbANuqPji0+jLD+YkGYOczwJJ+FkNF7mlVb/sfe50q2nfvtpd1oOOJNbL0GieU+PEj6X0qKli8fda61+/dngjZ7uFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mmS2bh3z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFBD8C4CEE3;
-	Thu, 17 Jul 2025 11:00:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752750050;
-	bh=ZBx+1uOYGb21L1VmSZS2MGG+D0QkvcjmRdzZ22pUJgg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mmS2bh3z78CFwfXMDnaTv6EiQXYde1raNqwno1MXUfsMlZ332JSUa1dnzcdpkqwXl
-	 Ofw0uQc/w53TVNGN7bsewtN5WVStBcd1lJvg0r/byyrOE1iOBjwuQDrvjZe+BeFSEp
-	 wYQgnwGLtgwym6yczXaCgg7IKwoxpEwKBtdiFDFgJbjMf2HNxcN6sEbUt97IrTxygQ
-	 LyYWcdr0fpZvIefr3NThnXIue/h73qVr81Qite9U0MLjqcSPUz4qeB6ZCiPe6tXKA6
-	 Pvk/FKbwYrzhp8tobEkalQlHa8Dd2voXNh/kml1HshqahosY39yESFLSn4XIZEnFTt
-	 Njl5nLAYTxFew==
-Message-ID: <25eb573c-a37e-4f8c-8fd6-5ca62e1a29b9@kernel.org>
-Date: Thu, 17 Jul 2025 13:00:43 +0200
+	s=arc-20240116; t=1752750082; c=relaxed/simple;
+	bh=O8Q2Ri+xPIZNZdP9v4uNvlUK/QDUi6xWs3wVLQLNQvQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pMLRe1Rz92wn7+DGyoaDxla7O9mLLkcoUdP3luJztim9nQWbX68+K8bfiPHL/Atrf0Dudn80R4wHnDYr5hZdQYGfhmXfYG2hHJEUB3N0dw0K44IkNvz/SeKjW9I48OCp+w8EILNc7cU7xXgkfI1pMOQW9KjZaUDr/YOe1WbjkWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=S0lFNahX; arc=none smtp.client-ip=115.124.30.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1752750069; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=GtW0rdIfVmySTDjD9sh3sNcn546n42oEmIA+IY//UPk=;
+	b=S0lFNahXj83rr4H5Y+zb0HFg0txFDuw8qHbd4oEPxVlYhoijnWOoD1OJIm0Y38uypihoqHYWcav0mikR0B8rYd238VsYnVJ2R+qD+FLayoKQEQ+vs0EkFINw0X3WoCAY/Os8g9Jy1XJDyr2/LHTP2oREUZDX8ILW6m1GQJ+NPNQ=
+Received: from localhost(mailfrom:fengwei_yin@linux.alibaba.com fp:SMTPD_---0Wj7tIj8_1752750068 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 17 Jul 2025 19:01:08 +0800
+From: fengwei_yin@linux.alibaba.com
+To: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Cc: kees@kernel.org,
+	fengwei_yin@linux.alibaba.com,
+	zhourundong.zrd@linux.alibaba.com
+Subject: [PATCH] binfmt_elf: remove the 4k limitation of program header size
+Date: Thu, 17 Jul 2025 19:01:08 +0800
+Message-ID: <20250717110108.55586-1-fengwei_yin@linux.alibaba.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] dt-bindings: media: i2c: Add ov2735 sensor
-To: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
-Cc: "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
- "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
- "laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>,
- Ricardo Ribalda <ribalda@chromium.org>,
- Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
- Matthias Fend <matthias.fend@emfend.at>,
- Sylvain Petinot <sylvain.petinot@foss.st.com>,
- Jingjing Xiong <jingjing.xiong@intel.com>,
- Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
- Dongcheng Yan <dongcheng.yan@intel.com>, Arnd Bergmann <arnd@arndb.de>,
- Hans de Goede <hansg@kernel.org>,
- "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20250716134426.8348-1-hardevsinh.palaniya@siliconsignals.io>
- <20250716134426.8348-2-hardevsinh.palaniya@siliconsignals.io>
- <20250717-hulking-earthworm-of-atheism-68a02c@kuoka>
- <PN3P287MB3519C2A2B8DC207AC0AF2C50FF51A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <PN3P287MB3519C2A2B8DC207AC0AF2C50FF51A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 17/07/2025 09:28, Hardevsinh Palaniya wrote:
-> Hi Krzysztof,
-> 
->> On Wed, Jul 16, 2025 at 07:14:16PM +0530, Hardevsinh Palaniya wrote:
->>> +        properties:
->>> +          data-lanes:
->>> +            items:
->>> +              - const: 1
->>> +              - const: 2
->>> +          link-frequencies: true
->>
->> Drop
->>
->> I don't understand why this appeared. I don't think anyone asked for it?
-> 
-> Laurent suggested validating the link frequency in the Device Tree.  
-> 
-> Link[1]: https://lore.kernel.org/linux-media/20250710212131.GG22436@pendragon.ideasonboard.com/
+From: Yin Fengwei <fengwei_yin@linux.alibaba.com>
 
-... and I do not see here validation "that the link frequencies
-specified in DT match".
+We have assembly code generated by a script. GCC successfully compiles
+it. However, the kernel cannot load it on an ARM64 platform with a 4K
+page size. In contrast, the same ELF file loads correctly on the same
+platform with a 64K page size.
 
-How do you validate that 1111 Hz is not / is a valid link frequency? How
-did you exactly resolve the comment about validating?
+The root cause is the Linux kernel's ELF_MIN_ALIGN limitation on the
+program headers of ELF files. The ELF file contains 78 program headers
+(the script inserts many holes when generating the assembly code). On
+ARM64 with a 4K page size, the ELF_MIN_ALLIGN enforces a maximum of 74
+program headers, causing the ELF file to fail. However, with a 64K page
+size, the ELF_MIN_ALIGN is relaxed to over 1,184 program headers, allowing
+the file to run correctly.
 
-If your hardware operates on specific link frequencies, list them.
-Otherwise this is redundant - validates nothing, changes nothing, does
-not make the code more obvious.
+Cook kindly identified that this limitation was introduced in
+Linux-0.99.15f without an explanation for its purpose [1].
 
+The ELF specification does not impose such a restriction on program
+headers. Removing the ELF_MIN_ALIGN limitation on program headers to
+align with the ELF spec. After removing ELF_MIN_ALIGN limitation,
+64K size limitation still exist which should be sufficient.
 
-Best regards,
-Krzysztof
+[1] https://lore.kernel.org/linux-mm/202506270854.A729825@keescook/
+
+Originally-by: Kees Cook <kees@kernel.org>
+Signed-off-by: Yin Fengwei <fengwei_yin@linux.alibaba.com>
+---
+Explaination about "Originally-by": it's debug code from Cook. And
+he didn't show the intention to submit it as patch. The change did
+fix the issue I hit...
+
+ fs/binfmt_elf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index a43363d593e5..1cb35a2bc528 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -519,7 +519,7 @@ static struct elf_phdr *load_elf_phdrs(const struct elfhdr *elf_ex,
+ 	/* Sanity check the number of program headers... */
+ 	/* ...and their total size. */
+ 	size = sizeof(struct elf_phdr) * elf_ex->e_phnum;
+-	if (size == 0 || size > 65536 || size > ELF_MIN_ALIGN)
++	if (size == 0 || size > 65536)
+ 		goto out;
+ 
+ 	elf_phdata = kmalloc(size, GFP_KERNEL);
+-- 
+2.49.0
+
 
