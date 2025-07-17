@@ -1,771 +1,584 @@
-Return-Path: <linux-kernel+bounces-736070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EFD4B097EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 01:31:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 434FDB09809
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 01:33:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75B0F1683E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 23:31:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBDC118916D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 23:33:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99AFC28A1F5;
-	Thu, 17 Jul 2025 23:29:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDA2225A39;
+	Thu, 17 Jul 2025 23:30:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="oQtlk4kB"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QKpQ9CLg"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B99C2877D5
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 23:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2DFD24633C;
+	Thu, 17 Jul 2025 23:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752794946; cv=none; b=dmXwcl76UNqWQEvgXMp4fqEaBbt2AJrlXzazzaaxIRVbctVzytwcZzmBoNVwd1W/HAySBV9lq4AvnV2VSRl41LQsyOLbl8LHjrbqkUfXbc0BejM6mylHqLr+Q2hoHEg77fqwz6ySIYSVLk7HzUJFF4qkdKueOboI2oCR1oYqTZQ=
+	t=1752795014; cv=none; b=fQAMHhp1x0MABVoDDyK16qMorIlA2MBpp79KPOS+cykAqN994EozfUqwfNiNfFvPpY2xcOYpEj9IxhGbAvUSNEKdKde9ta0MvcYhLJQguvl6PVMw+VMHP5Kgf+CWplZW+zMvFx5tUpipR+ATLNHAem5BKwwWdSOjdJfJac/Ogz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752794946; c=relaxed/simple;
-	bh=Eo6Wy62P8HtW0Q4HjhWR3xKbDOiW9UUfKZH66pv4erc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PIRzVHFMGqHiBwzZ2ej8nW4wFauMX+i18ENXPdTChKmF7oslOXxhGQ0BWqUzyBIOyRZkTDzOZmRaDOQZ9BB46vTV0GWhAg8b9FxX98aJ6nJVEQaOA77kRfqRqLRh5JSz0rGpB1QetwQYFKbSZJZ1hnZY+H1NfbD6K4WyvVeehfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=oQtlk4kB; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56HNRmbC016003
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 23:29:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zqRkb8pF/4h+k9xswu+5inCNM8xsKadkBjRwCpuViJE=; b=oQtlk4kBJQ0aihxv
-	xh42kodOq25sbdL1T1mZNZqu9wsVpfgD171TmFhaNcdHu2Xf8Lr9Kz+T/p8JToor
-	07x1UsLKQL0sUDN115UOnjEUEfFxnTH9JLqHphUu17pdCP8Inqzb9grzvdovseZQ
-	UusvDY/CdAlpIoXoyZO+BbrkqDMqtrkGI0SLlYJK2oA7+hnWX2VAHmuiqRuiiejl
-	d9CHA7fB0Iy0lnp9H5QuJi+rT38hI4tsGq8QZr6whhBpfA9k2ioryZokHXP4+kdF
-	m1BNcbSFUvaWlpWV2hTFNT9sqShYv9Hn3Pdur6XlN8kzj833Tc5hwLbz6W0qhB3N
-	xs35oA==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47w5dyvekv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 23:29:03 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-23dc7d3e708so9983425ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 16:29:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752794942; x=1753399742;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zqRkb8pF/4h+k9xswu+5inCNM8xsKadkBjRwCpuViJE=;
-        b=uZHxwTQn/nd0FjGVFIC+ex9idM9NQaEBXvPgXSCSLqITWAFaMAaF/RQor6W2cQweO4
-         mCVx+SDSrR7E1yxpsaZyzy+KcKCqse4oUdz8HQ+TrQHeKbx501u7SsZegIdmRb6xJRiO
-         PlXdaxF5SCXB1hO2qjDI5xZXu5xQxT5SxRgtWkxDbMNf+uNhX0EqaX2Yfp9gTBAsEvgN
-         NYQ+MwMRbHrjiYW5VK07NlSxNhl5ffRB1D7zIb+D7TTIM6okBmAV+ZZHm4Fnl/1QKFFL
-         euLzHv1g9FZOzhl+TGN9DGtryENC8arPxxDMDVL12FNVQbKPq9ZoBRRFVC6zwxGGM+xz
-         Qhmg==
-X-Forwarded-Encrypted: i=1; AJvYcCUYmaxbwcmyETqrsAFkUf9+06jHqzJbJt5LV0MHrTgImTdaBu+rKuMx9V7Xl2CXRZIxwhmigGNZfQUbpMM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWblc74sh1Ew0lMbVlJR0FmKpMFOEw1KmwApkFeP7hpLmDc6Hs
-	Z4F/Rl6qYaSkXfaQJd1cGAvrGA3tI3i+5+O6CHeq5ElKp/6qXRCUYrfW8d9G/ltJWt3Gsy1r0cI
-	UxBxaUI9lK9WSwwJQFOGGuesIx6r7vcbKlO8VroS7VFhH2zP+xlcTq80ezlz858gLLQE=
-X-Gm-Gg: ASbGncsxt3UwxZip42a7FW4YbC6hnbSQRm1vJz0+KfrJTBpCQHq1IMpJfO5M4RJGbC3
-	1HqMtLFPq6At3or8gMHUtXPhd45wiWehr3vHY8YsvNfFpMQybLue7YqqmKwS595tVElPAXu/ZqA
-	9AZB5PD+0Mn/l+IEINcgEopLRvTeomhKlhUjswEZH8pyvtRscNy+/gfoRb6H+BpZVqIHBxCe73u
-	9biF/XEmGZE7cToDlHSs/Th1IQsehnlNvLcTeZq+TwWZ2fcMpeC+NEuicxyrYGyPu5+IbCyaUIG
-	el/g2upsS42S51wKzsNrJmRp1SeUjfWkaXfvP+tMeiSxkLPLp97RLVm/NKni9qqJDL7WeNNpjWj
-	DTWsIlgGNGbrBEXFEUeNOJNTZ
-X-Received: by 2002:a17:903:1112:b0:23d:dcba:a467 with SMTP id d9443c01a7336-23e25684a8bmr117785455ad.4.1752794942000;
-        Thu, 17 Jul 2025 16:29:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE0nTY4fHu+xGa9A7Ojqymgaxywl1w1RLs8FHRSfQgN+a5MpPoK+jiWB+Km6ZaQJrJ7dCKNlw==
-X-Received: by 2002:a17:903:1112:b0:23d:dcba:a467 with SMTP id d9443c01a7336-23e25684a8bmr117785155ad.4.1752794941419;
-        Thu, 17 Jul 2025 16:29:01 -0700 (PDT)
-Received: from jesszhan-linux.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b5e3cb7sm2002195ad.17.2025.07.17.16.28.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 16:29:00 -0700 (PDT)
-From: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
-Date: Thu, 17 Jul 2025 16:28:47 -0700
-Subject: [PATCH v3 5/5] arm64: dts: qcom: Add MST pixel streams for
- displayport
+	s=arc-20240116; t=1752795014; c=relaxed/simple;
+	bh=+To6mgWrS77GrePuDAmGHzjc7XaKL9HmNu2b9nYB8ig=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TgfkSfY7G5qtz2mdAV/vCC7qERSZUlUXuIk5AlnVXJlTbCbswT1oxI0iN3MfbMbwxIQAuTwa4Urd/pGhwILz/WCm0nd3+KEx2qFX+NgenGYWWqQ4GIMOZi/25QUySgNxuUSqat2j4ixCsTLTwNfpIf8oKHnJ2eV71wMzCEAnluc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QKpQ9CLg; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752795012; x=1784331012;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=+To6mgWrS77GrePuDAmGHzjc7XaKL9HmNu2b9nYB8ig=;
+  b=QKpQ9CLg4PnHa+ci70zL4POXgrcItMm96q48bosPZ2V5LG/qoufYavUl
+   e9zg/e2GT3uhxjNyzzZrKNQT6ju9Nuhg9z03pC2HYkdHVwPHrN6EKXaI0
+   tTQE5lQeO0HufmsBGsFeSZsRS3uTmkf0kBYfiHEbgz8slvKC6xPBTqEhV
+   gMTsMwoAvsHrnu7xGql/I/HF25HZFbKhTP/wplwm7nYPUU5L5e/ZdG7vV
+   6QIZuTMaizi1uLPm4IV9RR68wAkYZnd0BFHBlzI/3bi07ziKEnJJJ43yE
+   dZfHtnE+qi1GaCwHWw6qJR5+zXqo6VUC89y/9i0OaqsT61gW3FdCOp8mn
+   g==;
+X-CSE-ConnectionGUID: /fa3xnrmQ9OvZMzFicKugQ==
+X-CSE-MsgGUID: A2geMhNKTeC4jzvy/1MR7A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11495"; a="77624782"
+X-IronPort-AV: E=Sophos;i="6.16,320,1744095600"; 
+   d="scan'208";a="77624782"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 16:30:11 -0700
+X-CSE-ConnectionGUID: M49pwBJvSFq16d5M9p+5eQ==
+X-CSE-MsgGUID: vTxQITMLQieLISsVJ5VVaA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,320,1744095600"; 
+   d="scan'208";a="158615585"
+Received: from ldmartin-desk2.corp.intel.com (HELO [10.125.108.3]) ([10.125.108.3])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 16:30:08 -0700
+Message-ID: <739ad358-2260-417f-896d-26d98d8dec53@intel.com>
+Date: Thu, 17 Jul 2025 16:30:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250717-dp_mst_bindings-v3-5-72ce08285703@oss.qualcomm.com>
-References: <20250717-dp_mst_bindings-v3-0-72ce08285703@oss.qualcomm.com>
-In-Reply-To: <20250717-dp_mst_bindings-v3-0-72ce08285703@oss.qualcomm.com>
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <lumag@kernel.org>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>,
-        Abel Vesa <abel.vesa@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Mahadevan <quic_mahap@quicinc.com>,
-        Krishna Manikandan <quic_mkrishn@quicinc.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Danila Tikhonov <danila@jiaxyga.com>,
-        cros-qcom-dts-watchers@chromium.org,
-        Rob Clark <robin.clark@oss.qualcomm.com>
-Cc: Abhinav Kumar <abhinav.kumar@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Yongxing Mou <quic_yongmou@quicinc.com>
-X-Mailer: b4 0.15-dev-a9b2a
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752794927; l=26884;
- i=jessica.zhang@oss.qualcomm.com; s=20230329; h=from:subject:message-id;
- bh=Eo6Wy62P8HtW0Q4HjhWR3xKbDOiW9UUfKZH66pv4erc=;
- b=J7086Q2E1oZhhsTkVGHCxkYRAp51smmyKiw2239g5+4gsg4jvR8VUm8FdNlIHzx+bfEs+7Dmi
- DRBkmYPYQvIAFePSFwq62FVbLNn56oaEM8ZpDgfW2ejtTmtx7+8tqEy
-X-Developer-Key: i=jessica.zhang@oss.qualcomm.com; a=ed25519;
- pk=gAUCgHZ6wTJOzQa3U0GfeCDH7iZLlqIEPo4rrjfDpWE=
-X-Proofpoint-ORIG-GUID: q_Xz1oQo33SX8OHmsNv4VFyOe9VUQjtJ
-X-Authority-Analysis: v=2.4 cv=RtXFLDmK c=1 sm=1 tr=0 ts=6879873f cx=c_pps
- a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=M642VWYP8yQGdStLr8gA:9
- a=QEXdDO2ut3YA:10 a=GvdueXVYPmCkWapjIL-Q:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDIwNiBTYWx0ZWRfX3UeiGDjBMomE
- WDDAC6CBaoU5cpWHTqNErrDstp+q4SsgUKCfdKSc7rY8KkFqiMhpCcM/PR0qIo+TKs/Mzt3yC67
- 9/Bi/5MTthu7fCVReKlBcT1rJYtudeKuJ/bCA3LSJR5Dbsnav7SqNrT8SLHg87D5+lMbxdDac76
- IygKjadoUZuuGDPMo1wVkKHq59pzGK75Q63cCJLuBqyVH3y10BVfiliQ5L6LKky4IOtdneXD20a
- xFS/u91HMooDL20uGMCKbob2WpEpqtkuaTiJZS8pb6JaatXlxsgyIxi+PEoIECa9XBgzI7HlVq5
- P4JWDOpt4UjRAqBiE00VPR6wXi6pgfcC2N9gB6KtMz/XugoJqkegmkZwMiGU3vvOkIZBv4I4DBz
- s4KUmoS48tp5lBbeZ7NO7DawcJa3o/gB71kMTPcH4pfHVCyUkJEsTwcYxgkh2OVf0GMfVZNS
-X-Proofpoint-GUID: q_Xz1oQo33SX8OHmsNv4VFyOe9VUQjtJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-17_04,2025-07-17_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 mlxscore=0 bulkscore=0 suspectscore=0 lowpriorityscore=0
- impostorscore=0 malwarescore=0 clxscore=1015 mlxlogscore=514
- priorityscore=1501 phishscore=0 spamscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507170206
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/7] Add managed SOFT RESERVE resource handling
+To: "Koralahalli Channabasappa, Smita"
+ <Smita.KoralahalliChannabasappa@amd.com>,
+ Alison Schofield <alison.schofield@intel.com>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+ linux-pm@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox
+ <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+ "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>,
+ Pavel Machek <pavel@kernel.org>, Li Ming <ming.li@zohomail.com>,
+ Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+ Ying Huang <huang.ying.caritas@gmail.com>,
+ Yao Xingtao <yaoxt.fnst@fujitsu.com>, Peter Zijlstra <peterz@infradead.org>,
+ Greg KH <gregkh@linuxfoundation.org>,
+ Nathan Fontenot <nathan.fontenot@amd.com>,
+ Terry Bowman <terry.bowman@amd.com>, Robert Richter <rrichter@amd.com>,
+ Benjamin Cheatham <benjamin.cheatham@amd.com>,
+ PradeepVineshReddy Kodamati <PradeepVineshReddy.Kodamati@amd.com>,
+ Zhijian Li <lizhijian@fujitsu.com>
+References: <20250715180407.47426-1-Smita.KoralahalliChannabasappa@amd.com>
+ <aHbDLaKt30TglvFa@aschofie-mobl2.lan>
+ <4ac55e2c-54a9-4fab-b0c5-2a928faef33e@amd.com>
+ <aHgJq6mZiATsY-nX@aschofie-mobl2.lan>
+ <9fc29940-3d73-4c71-bb2d-e0c9a0259228@amd.com>
+ <aHg6Ri74pew-lenA@aschofie-mobl2.lan>
+ <844ed7f7-f185-4706-a0ab-efc2f93e6ebb@amd.com>
+ <d6844c8e-ea40-451e-8607-a8e6bb4f352b@intel.com>
+ <c6891159-1f86-48d8-b411-7115fddf261c@amd.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <c6891159-1f86-48d8-b411-7115fddf261c@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The following chipsets support 2 total pixel streams:
-  - sa8775p (on mdss_dp1)
-  - sc8180x
-  - sc8280xp (mdss_dp0-2 only)
-  - sm8150
-  - sm8350
-  - sm8450
-  - sm8650
-  - x1e80100
 
-The following chipset also supports 4 total pixel streams:
-  - sa8775p (mdss_dp0 only)
 
-Add the appropriate amount of pixel stream clocks for their respective
-displayport-controllers.
+On 7/17/25 4:20 PM, Koralahalli Channabasappa, Smita wrote:
+> On 7/17/2025 12:06 PM, Dave Jiang wrote:
+>>
+>>
+>> On 7/17/25 10:58 AM, Koralahalli Channabasappa, Smita wrote:
+>>>
+>>>
+>>> On 7/16/2025 4:48 PM, Alison Schofield wrote:
+>>>> On Wed, Jul 16, 2025 at 02:29:52PM -0700, Koralahalli Channabasappa, Smita wrote:
+>>>>> On 7/16/2025 1:20 PM, Alison Schofield wrote:
+>>>>>> On Tue, Jul 15, 2025 at 11:01:23PM -0700, Koralahalli Channabasappa, Smita wrote:
+>>>>>>> Hi Alison,
+>>>>>>>
+>>>>>>> On 7/15/2025 2:07 PM, Alison Schofield wrote:
+>>>>>>>> On Tue, Jul 15, 2025 at 06:04:00PM +0000, Smita Koralahalli wrote:
+>>>>>>>>> This series introduces the ability to manage SOFT RESERVED iomem
+>>>>>>>>> resources, enabling the CXL driver to remove any portions that
+>>>>>>>>> intersect with created CXL regions.
+>>>>>>>>
+>>>>>>>> Hi Smita,
+>>>>>>>>
+>>>>>>>> This set applied cleanly to todays cxl-next but fails like appended
+>>>>>>>> before region probe.
+>>>>>>>>
+>>>>>>>> BTW - there were sparse warnings in the build that look related:
+>>>>>>>>       CHECK   drivers/dax/hmem/hmem_notify.c
+>>>>>>>> drivers/dax/hmem/hmem_notify.c:10:6: warning: context imbalance in 'hmem_register_fallback_handler' - wrong count at exit
+>>>>>>>> drivers/dax/hmem/hmem_notify.c:24:9: warning: context imbalance in 'hmem_fallback_register_device' - wrong count at exit
+>>>>>>>
+>>>>>>> Thanks for pointing this bug. I failed to release the spinlock before
+>>>>>>> calling hmem_register_device(), which internally calls platform_device_add()
+>>>>>>> and can sleep. The following fix addresses that bug. I’ll incorporate this
+>>>>>>> into v6:
+>>>>>>>
+>>>>>>> diff --git a/drivers/dax/hmem/hmem_notify.c b/drivers/dax/hmem/hmem_notify.c
+>>>>>>> index 6c276c5bd51d..8f411f3fe7bd 100644
+>>>>>>> --- a/drivers/dax/hmem/hmem_notify.c
+>>>>>>> +++ b/drivers/dax/hmem/hmem_notify.c
+>>>>>>> @@ -18,8 +18,9 @@ void hmem_fallback_register_device(int target_nid, const
+>>>>>>> struct resource *res)
+>>>>>>>     {
+>>>>>>>            walk_hmem_fn hmem_fn;
+>>>>>>>
+>>>>>>> -       guard(spinlock)(&hmem_notify_lock);
+>>>>>>> +       spin_lock(&hmem_notify_lock);
+>>>>>>>            hmem_fn = hmem_fallback_fn;
+>>>>>>> +       spin_unlock(&hmem_notify_lock);
+>>>>>>>
+>>>>>>>            if (hmem_fn)
+>>>>>>>                    hmem_fn(target_nid, res);
+>>>>>>> -- 
+>>>>>>
+>>>>>> Hi Smita,  Adding the above got me past that, and doubling the timeout
+>>>>>> below stopped that from happening. After that, I haven't had time to
+>>>>>> trace so, I'll just dump on you for now:
+>>>>>>
+>>>>>> In /proc/iomem
+>>>>>> Here, we see a regions resource, no CXL Window, and no dax, and no
+>>>>>> actual region, not even disabled, is available.
+>>>>>> c080000000-c47fffffff : region0
+>>>>>>
+>>>>>> And, here no CXL Window, no region, and a soft reserved.
+>>>>>> 68e80000000-70e7fffffff : Soft Reserved
+>>>>>>      68e80000000-70e7fffffff : dax1.0
+>>>>>>        68e80000000-70e7fffffff : System RAM (kmem)
+>>>>>>
+>>>>>> I haven't yet walked through the v4 to v5 changes so I'll do that next.
+>>>>>
+>>>>> Hi Alison,
+>>>>>
+>>>>> To help better understand the current behavior, could you share more about
+>>>>> your platform configuration? specifically, are there two memory cards
+>>>>> involved? One at c080000000 (which appears as region0) and another at
+>>>>> 68e80000000 (which is falling back to kmem via dax1.0)? Additionally, how
+>>>>> are the Soft Reserved ranges laid out on your system for these cards? I'm
+>>>>> trying to understand the "before" state of the resources i.e, prior to
+>>>>> trimming applied by my patches.
+>>>>
+>>>> Here are the soft reserveds -
+>>>> [] BIOS-e820: [mem 0x000000c080000000-0x000000c47fffffff] soft reserved
+>>>> [] BIOS-e820: [mem 0x0000068e80000000-0x0000070e7fffffff] soft reserved
+>>>>
+>>>> And this is what we expect -
+>>>>
+>>>> c080000000-17dbfffffff : CXL Window 0
+>>>>     c080000000-c47fffffff : region2
+>>>>       c080000000-c47fffffff : dax0.0
+>>>>         c080000000-c47fffffff : System RAM (kmem)
+>>>>
+>>>>
+>>>> 68e80000000-8d37fffffff : CXL Window 1
+>>>>     68e80000000-70e7fffffff : region5
+>>>>       68e80000000-70e7fffffff : dax1.0
+>>>>         68e80000000-70e7fffffff : System RAM (kmem)
+>>>>
+>>>> And, like in prev message, iv v5 we get -
+>>>>
+>>>> c080000000-c47fffffff : region0
+>>>>
+>>>> 68e80000000-70e7fffffff : Soft Reserved
+>>>>     68e80000000-70e7fffffff : dax1.0
+>>>>       68e80000000-70e7fffffff : System RAM (kmem)
+>>>>
+>>>>
+>>>> In v4, we 'almost' had what we expect, except that the HMEM driver
+>>>> created those dax devices our of Soft Reserveds before region driver
+>>>> could do same.
+>>>>
+>>>
+>>> Yeah, the only part I’m uncertain about in v5 is scheduling the fallback work from the failure path of cxl_acpi_probe(). That doesn’t feel like the right place to do it, and I suspect it might be contributing to the unexpected behavior.
+>>>
+>>> v4 had most of the necessary pieces in place, but it didn’t handle situations well when the driver load order didn’t go as expected.
+>>>
+>>> Even if we modify v4 to avoid triggering hmem_register_device() directly from cxl_acpi_probe() which helps avoid unresolved symbol errors when cxl_acpi_probe() loads too early, and instead only rely on dax_hmem to pick up Soft Reserved regions after cxl_acpi creates regions, we still run into timing issues..
+>>>
+>>> Specifically, there's no guarantee that hmem_register_device() will correctly skip the following check if the region state isn't fully ready, even with MODULE_SOFTDEP("pre: cxl_acpi") or using late_initcall() (which I tried):
+>>>
+>>> if (IS_ENABLED(CONFIG_CXL_REGION) &&
+>>>          region_intersects(res->start, resource_size(res), IORESOURCE_MEM, IORES_DESC_CXL) != REGION_DISJOINT) {..
+>>>
+>>> At this point, I’m running out of ideas on how to reliably coordinate this.. :(
+>>>
+>>> Thanks
+>>> Smita
+>>>
+>>>>>
+>>>>> Also, do you think it's feasible to change the direction of the soft reserve
+>>>>> trimming, that is, defer it until after CXL region or memdev creation is
+>>>>> complete? In this case it would be trimmed after but inline the existing
+>>>>> region or memdev creation. This might simplify the flow by removing the need
+>>>>> for wait_event_timeout(), wait_for_device_probe() and the workqueue logic
+>>>>> inside cxl_acpi_probe().
+>>>>
+>>>> Yes that aligns with my simple thinking. There's the trimming after a region
+>>>> is successfully created, and it seems that could simply be called at the end
+>>>> of *that* region creation.
+>>>>
+>>>> Then, there's the round up of all the unused Soft Reserveds, and that has
+>>>> to wait until after all regions are created, ie. all endpoints have arrived
+>>>> and we've given up all hope of creating another region in that space.
+>>>> That's the timing challenge.
+>>>>
+>>>> -- Alison
+>>>>
+>>>>>
+>>>>> (As a side note I experimented changing cxl_acpi_init() to a late_initcall()
+>>>>> and observed that it consistently avoided probe ordering issues in my setup.
+>>>>>
+>>>>> Additional note: I realized that even when cxl_acpi_probe() fails, the
+>>>>> fallback DAX registration path (via cxl_softreserv_mem_update()) still waits
+>>>>> on cxl_mem_active() and wait_for_device_probe(). I plan to address this in
+>>>>> v6 by immediately triggering fallback DAX registration
+>>>>> (hmem_register_device()) when the ACPI probe fails, instead of waiting.)
+>>>>>
+>>>>> Thanks
+>>>>> Smita
+>>>>>
+>>>>>>
+>>>>>>>
+>>>>>>> As for the log:
+>>>>>>> [   53.652454] cxl_acpi:cxl_softreserv_mem_work_fn:888: Timeout waiting for
+>>>>>>> cxl_mem probing
+>>>>>>>
+>>>>>>> I’m still analyzing that. Here's what was my thought process so far.
+>>>>>>>
+>>>>>>> - This occurs when cxl_acpi_probe() runs significantly earlier than
+>>>>>>> cxl_mem_probe(), so CXL region creation (which happens in
+>>>>>>> cxl_port_endpoint_probe()) may or may not have completed by the time
+>>>>>>> trimming is attempted.
+>>>>>>>
+>>>>>>> - Both cxl_acpi and cxl_mem have MODULE_SOFTDEPs on cxl_port. This does
+>>>>>>> guarantee load order when all components are built as modules. So even if
+>>>>>>> the timeout occurs and cxl_mem_probe() hasn’t run within the wait window,
+>>>>>>> MODULE_SOFTDEP ensures that cxl_port is loaded before both cxl_acpi and
+>>>>>>> cxl_mem in modular configurations. As a result, region creation is
+>>>>>>> eventually guaranteed, and wait_for_device_probe() will succeed once the
+>>>>>>> relevant probes complete.
+>>>>>>>
+>>>>>>> - However, when both CONFIG_CXL_PORT=y and CONFIG_CXL_ACPI=y, there's no
+>>>>>>> guarantee of probe ordering. In such cases, cxl_acpi_probe() may finish
+>>>>>>> before cxl_port_probe() even begins, which can cause wait_for_device_probe()
+>>>>>>> to return prematurely and trigger the timeout.
+>>>>>>>
+>>>>>>> - In my local setup, I observed that a 30-second timeout was generally
+>>>>>>> sufficient to catch this race, allowing cxl_port_probe() to load while
+>>>>>>> cxl_acpi_probe() is still active. Since we cannot mix built-in and modular
+>>>>>>> components (i.e., have cxl_acpi=y and cxl_port=m), the timeout serves as a
+>>>>>>> best-effort mechanism. After the timeout, wait_for_device_probe() ensures
+>>>>>>> cxl_port_probe() has completed before trimming proceeds, making the logic
+>>>>>>> good enough to most boot-time races.
+>>>>>>>
+>>>>>>> One possible improvement I’m considering is to schedule a
+>>>>>>> delayed_workqueue() from cxl_acpi_probe(). This deferred work could wait
+>>>>>>> slightly longer for cxl_mem_probe() to complete (which itself softdeps on
+>>>>>>> cxl_port) before initiating the soft reserve trimming.
+>>>>>>>
+>>>>>>> That said, I'm still evaluating better options to more robustly coordinate
+>>>>>>> probe ordering between cxl_acpi, cxl_port, cxl_mem and cxl_region and
+>>>>>>> looking for suggestions here.
+>>
+>> Hi Smita,
+>> Reading this thread and thinking about what can be done to deal with this. Throwing out some ideas and see what you think. My idea is to create two global counters that are are protected by a lock. You hava delayed workqueue that checks these counters. If counter1 is 0, go back to sleep and check later continuously with a reasonable time period. Every time a memdev endpoint starts probe, increment counter1 and counter2 atomically. Every time the probe is successful, decrement counter2. When you reach the condition of 'if (counter1 && counter2 == 0)' I think you can start soft reserve discovery.
+>>
+>> A different idea came from Dan. Arm a timer on the first memdev probe. Kick the timer to increment every time a new memdev gets probed. At some point things settles and timer goes off to trigger soft reserved discovery.
+>>
+>> I think either one will not require special ordering of the modules being loaded.
+>>
+>> DJ
+> 
+> I think we might need both, the counters and a settling timer to coordinate Soft Reserved trimming and DAX registration.
+> 
+> Here's the rough flow I'm thinking of. Let me know the flaws in this approach.
 
-Signed-off-by: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/sa8775p.dtsi  | 34 ++++++++++++----
- arch/arm64/boot/dts/qcom/sar2130p.dtsi | 10 +++--
- arch/arm64/boot/dts/qcom/sc7280.dtsi   | 10 +++--
- arch/arm64/boot/dts/qcom/sc8180x.dtsi  | 20 +++++++---
- arch/arm64/boot/dts/qcom/sc8280xp.dtsi | 72 +++++++++++++++++++++++-----------
- arch/arm64/boot/dts/qcom/sm8150.dtsi   | 10 +++--
- arch/arm64/boot/dts/qcom/sm8250.dtsi   | 10 +++--
- arch/arm64/boot/dts/qcom/sm8350.dtsi   | 10 +++--
- arch/arm64/boot/dts/qcom/sm8450.dtsi   | 10 +++--
- arch/arm64/boot/dts/qcom/sm8550.dtsi   | 10 +++--
- arch/arm64/boot/dts/qcom/sm8650.dtsi   | 10 +++--
- arch/arm64/boot/dts/qcom/x1e80100.dtsi | 30 +++++++++-----
- 12 files changed, 167 insertions(+), 69 deletions(-)
+Seems reasonable to me. Don't forget to cancel timer if your condition is met and you are woken up early by a probe() finish. It really is best effort in dealing with the situation.
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-index 45f536633f64..2c85eb2fc79a 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-@@ -4237,15 +4237,28 @@ mdss0_dp0: displayport-controller@af54000 {
- 					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_AUX_CLK>,
- 					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_LINK_CLK>,
- 					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_LINK_INTF_CLK>,
--					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_PIXEL0_CLK>;
-+					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_PIXEL0_CLK>,
-+					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_PIXEL1_CLK>,
-+					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_PIXEL2_CLK>,
-+					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_PIXEL3_CLK>;
- 				clock-names = "core_iface",
- 					      "core_aux",
- 					      "ctrl_link",
- 					      "ctrl_link_iface",
--					      "stream_pixel";
-+					      "stream_pixel",
-+					      "stream_1_pixel",
-+					      "stream_2_pixel",
-+					      "stream_3_pixel";
- 				assigned-clocks = <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_LINK_CLK_SRC>,
--						  <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_PIXEL0_CLK_SRC>;
--				assigned-clock-parents = <&mdss0_dp0_phy 0>, <&mdss0_dp0_phy 1>;
-+						  <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_PIXEL0_CLK_SRC>,
-+						  <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_PIXEL1_CLK_SRC>,
-+						  <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_PIXEL2_CLK_SRC>,
-+						  <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_PIXEL3_CLK_SRC>;
-+				assigned-clock-parents = <&mdss0_dp0_phy 0>,
-+							 <&mdss0_dp0_phy 1>,
-+							 <&mdss0_dp0_phy 1>,
-+							 <&mdss0_dp0_phy 1>,
-+							 <&mdss0_dp0_phy 1>;
- 				phys = <&mdss0_dp0_phy>;
- 				phy-names = "dp";
- 
-@@ -4316,15 +4329,20 @@ mdss0_dp1: displayport-controller@af5c000 {
- 					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX1_AUX_CLK>,
- 					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX1_LINK_CLK>,
- 					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX1_LINK_INTF_CLK>,
--					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX1_PIXEL0_CLK>;
-+					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX1_PIXEL0_CLK>,
-+					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX1_PIXEL1_CLK>;
- 				clock-names = "core_iface",
- 					      "core_aux",
- 					      "ctrl_link",
- 					      "ctrl_link_iface",
--					      "stream_pixel";
-+					      "stream_pixel",
-+					      "stream_1_pixel";
- 				assigned-clocks = <&dispcc0 MDSS_DISP_CC_MDSS_DPTX1_LINK_CLK_SRC>,
--						  <&dispcc0 MDSS_DISP_CC_MDSS_DPTX1_PIXEL0_CLK_SRC>;
--				assigned-clock-parents = <&mdss0_dp1_phy 0>, <&mdss0_dp1_phy 1>;
-+						  <&dispcc0 MDSS_DISP_CC_MDSS_DPTX1_PIXEL0_CLK_SRC>,
-+						  <&dispcc0 MDSS_DISP_CC_MDSS_DPTX1_PIXEL1_CLK_SRC>;
-+				assigned-clock-parents = <&mdss0_dp1_phy 0>,
-+							 <&mdss0_dp1_phy 1>,
-+							 <&mdss0_dp1_phy 1>;
- 				phys = <&mdss0_dp1_phy>;
- 				phy-names = "dp";
- 
-diff --git a/arch/arm64/boot/dts/qcom/sar2130p.dtsi b/arch/arm64/boot/dts/qcom/sar2130p.dtsi
-index b0e342810ae7..96090a948ade 100644
---- a/arch/arm64/boot/dts/qcom/sar2130p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sar2130p.dtsi
-@@ -2139,16 +2139,20 @@ mdss_dp0: displayport-controller@ae90000 {
- 					 <&dispcc DISP_CC_MDSS_DPTX0_AUX_CLK>,
- 					 <&dispcc DISP_CC_MDSS_DPTX0_LINK_CLK>,
- 					 <&dispcc DISP_CC_MDSS_DPTX0_LINK_INTF_CLK>,
--					 <&dispcc DISP_CC_MDSS_DPTX0_PIXEL0_CLK>;
-+					 <&dispcc DISP_CC_MDSS_DPTX0_PIXEL0_CLK>,
-+					 <&dispcc DISP_CC_MDSS_DPTX0_PIXEL1_CLK>;
- 				clock-names = "core_iface",
- 					      "core_aux",
- 					      "ctrl_link",
- 					      "ctrl_link_iface",
--					      "stream_pixel";
-+					      "stream_pixel",
-+					      "stream_1_pixel";
- 
- 				assigned-clocks = <&dispcc DISP_CC_MDSS_DPTX0_LINK_CLK_SRC>,
--						  <&dispcc DISP_CC_MDSS_DPTX0_PIXEL0_CLK_SRC>;
-+						  <&dispcc DISP_CC_MDSS_DPTX0_PIXEL0_CLK_SRC>,
-+						  <&dispcc DISP_CC_MDSS_DPTX0_PIXEL1_CLK_SRC>;
- 				assigned-clock-parents = <&usb_dp_qmpphy QMP_USB43DP_DP_LINK_CLK>,
-+							 <&usb_dp_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>,
- 							 <&usb_dp_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>;
- 
- 				phys = <&usb_dp_qmpphy QMP_USB43DP_DP_PHY>;
-diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-index b1cc3bc1aec8..48b6a17dcea0 100644
---- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-@@ -5012,15 +5012,19 @@ mdss_dp: displayport-controller@ae90000 {
- 					 <&dispcc DISP_CC_MDSS_DP_AUX_CLK>,
- 					 <&dispcc DISP_CC_MDSS_DP_LINK_CLK>,
- 					 <&dispcc DISP_CC_MDSS_DP_LINK_INTF_CLK>,
--					 <&dispcc DISP_CC_MDSS_DP_PIXEL_CLK>;
-+					 <&dispcc DISP_CC_MDSS_DP_PIXEL_CLK>,
-+					 <&dispcc DISP_CC_MDSS_DP_PIXEL1_CLK>;
- 				clock-names = "core_iface",
- 						"core_aux",
- 						"ctrl_link",
- 						"ctrl_link_iface",
--						"stream_pixel";
-+						"stream_pixel",
-+						"stream_1_pixel";
- 				assigned-clocks = <&dispcc DISP_CC_MDSS_DP_LINK_CLK_SRC>,
--						  <&dispcc DISP_CC_MDSS_DP_PIXEL_CLK_SRC>;
-+						  <&dispcc DISP_CC_MDSS_DP_PIXEL_CLK_SRC>,
-+						  <&dispcc DISP_CC_MDSS_DP_PIXEL1_CLK_SRC>;
- 				assigned-clock-parents = <&usb_1_qmpphy QMP_USB43DP_DP_LINK_CLK>,
-+							 <&usb_1_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>,
- 							 <&usb_1_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>;
- 				phys = <&usb_1_qmpphy QMP_USB43DP_DP_PHY>;
- 				phy-names = "dp";
-diff --git a/arch/arm64/boot/dts/qcom/sc8180x.dtsi b/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-index b84e47a461a0..ca188c7f1f26 100644
---- a/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-@@ -3233,16 +3233,20 @@ mdss_dp0: displayport-controller@ae90000 {
- 					 <&dispcc DISP_CC_MDSS_DP_AUX_CLK>,
- 					 <&dispcc DISP_CC_MDSS_DP_LINK_CLK>,
- 					 <&dispcc DISP_CC_MDSS_DP_LINK_INTF_CLK>,
--					 <&dispcc DISP_CC_MDSS_DP_PIXEL_CLK>;
-+					 <&dispcc DISP_CC_MDSS_DP_PIXEL_CLK>,
-+					 <&dispcc DISP_CC_MDSS_DP_PIXEL1_CLK>;
- 				clock-names = "core_iface",
- 					      "core_aux",
- 					      "ctrl_link",
- 					      "ctrl_link_iface",
--					      "stream_pixel";
-+					      "stream_pixel",
-+					      "stream_1_pixel";
- 
- 				assigned-clocks = <&dispcc DISP_CC_MDSS_DP_LINK_CLK_SRC>,
--						  <&dispcc DISP_CC_MDSS_DP_PIXEL_CLK_SRC>;
-+						  <&dispcc DISP_CC_MDSS_DP_PIXEL_CLK_SRC>,
-+						  <&dispcc DISP_CC_MDSS_DP_PIXEL1_CLK_SRC>;
- 				assigned-clock-parents = <&usb_prim_qmpphy QMP_USB43DP_DP_LINK_CLK>,
-+							 <&usb_prim_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>,
- 							 <&usb_prim_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>;
- 
- 				phys = <&usb_prim_qmpphy QMP_USB43DP_DP_PHY>;
-@@ -3311,16 +3315,20 @@ mdss_dp1: displayport-controller@ae98000 {
- 					 <&dispcc DISP_CC_MDSS_DP_AUX1_CLK>,
- 					 <&dispcc DISP_CC_MDSS_DP_LINK1_CLK>,
- 					 <&dispcc DISP_CC_MDSS_DP_LINK1_INTF_CLK>,
--					 <&dispcc DISP_CC_MDSS_DP_PIXEL2_CLK>;
-+					 <&dispcc DISP_CC_MDSS_DP_PIXEL2_CLK>,
-+					 <&dispcc DISP_CC_MDSS_DP_PIXEL1_CLK>;
- 				clock-names = "core_iface",
- 					      "core_aux",
- 					      "ctrl_link",
- 					      "ctrl_link_iface",
--					      "stream_pixel";
-+					      "stream_pixel",
-+					      "stream_1_pixel";
- 
- 				assigned-clocks = <&dispcc DISP_CC_MDSS_DP_LINK1_CLK_SRC>,
--						  <&dispcc DISP_CC_MDSS_DP_PIXEL2_CLK_SRC>;
-+						  <&dispcc DISP_CC_MDSS_DP_PIXEL2_CLK_SRC>,
-+						  <&dispcc DISP_CC_MDSS_DP_PIXEL1_CLK_SRC>;
- 				assigned-clock-parents = <&usb_sec_qmpphy QMP_USB43DP_DP_LINK_CLK>,
-+							 <&usb_sec_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>,
- 							 <&usb_sec_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>;
- 
- 				phys = <&usb_sec_qmpphy QMP_USB43DP_DP_PHY>;
-diff --git a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
-index 87555a119d94..11ea2fa0b853 100644
---- a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
-@@ -4338,15 +4338,19 @@ mdss0_dp0: displayport-controller@ae90000 {
- 					 <&dispcc0 DISP_CC_MDSS_DPTX0_AUX_CLK>,
- 					 <&dispcc0 DISP_CC_MDSS_DPTX0_LINK_CLK>,
- 					 <&dispcc0 DISP_CC_MDSS_DPTX0_LINK_INTF_CLK>,
--					 <&dispcc0 DISP_CC_MDSS_DPTX0_PIXEL0_CLK>;
-+					 <&dispcc0 DISP_CC_MDSS_DPTX0_PIXEL0_CLK>,
-+					 <&dispcc0 DISP_CC_MDSS_DPTX0_PIXEL1_CLK>;
- 				clock-names = "core_iface", "core_aux",
- 					      "ctrl_link",
- 					      "ctrl_link_iface",
--					      "stream_pixel";
-+					      "stream_pixel",
-+					      "stream_1_pixel";
- 
- 				assigned-clocks = <&dispcc0 DISP_CC_MDSS_DPTX0_LINK_CLK_SRC>,
--						  <&dispcc0 DISP_CC_MDSS_DPTX0_PIXEL0_CLK_SRC>;
-+						  <&dispcc0 DISP_CC_MDSS_DPTX0_PIXEL0_CLK_SRC>,
-+						  <&dispcc0 DISP_CC_MDSS_DPTX0_PIXEL1_CLK_SRC>;
- 				assigned-clock-parents = <&usb_0_qmpphy QMP_USB43DP_DP_LINK_CLK>,
-+							 <&usb_0_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>,
- 							 <&usb_0_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>;
- 
- 				phys = <&usb_0_qmpphy QMP_USB43DP_DP_PHY>;
-@@ -4417,14 +4421,18 @@ mdss0_dp1: displayport-controller@ae98000 {
- 					 <&dispcc0 DISP_CC_MDSS_DPTX1_AUX_CLK>,
- 					 <&dispcc0 DISP_CC_MDSS_DPTX1_LINK_CLK>,
- 					 <&dispcc0 DISP_CC_MDSS_DPTX1_LINK_INTF_CLK>,
--					 <&dispcc0 DISP_CC_MDSS_DPTX1_PIXEL0_CLK>;
-+					 <&dispcc0 DISP_CC_MDSS_DPTX1_PIXEL0_CLK>,
-+					 <&dispcc0 DISP_CC_MDSS_DPTX1_PIXEL1_CLK>;
- 				clock-names = "core_iface", "core_aux",
- 					      "ctrl_link",
--					      "ctrl_link_iface", "stream_pixel";
-+					      "ctrl_link_iface", "stream_pixel",
-+					      "stream_1_pixel";
- 
- 				assigned-clocks = <&dispcc0 DISP_CC_MDSS_DPTX1_LINK_CLK_SRC>,
--						  <&dispcc0 DISP_CC_MDSS_DPTX1_PIXEL0_CLK_SRC>;
-+						  <&dispcc0 DISP_CC_MDSS_DPTX1_PIXEL0_CLK_SRC>,
-+						  <&dispcc0 DISP_CC_MDSS_DPTX1_PIXEL1_CLK_SRC>;
- 				assigned-clock-parents = <&usb_1_qmpphy QMP_USB43DP_DP_LINK_CLK>,
-+							 <&usb_1_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>,
- 							 <&usb_1_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>;
- 
- 				phys = <&usb_1_qmpphy QMP_USB43DP_DP_PHY>;
-@@ -4494,10 +4502,12 @@ mdss0_dp2: displayport-controller@ae9a000 {
- 					 <&dispcc0 DISP_CC_MDSS_DPTX2_AUX_CLK>,
- 					 <&dispcc0 DISP_CC_MDSS_DPTX2_LINK_CLK>,
- 					 <&dispcc0 DISP_CC_MDSS_DPTX2_LINK_INTF_CLK>,
--					 <&dispcc0 DISP_CC_MDSS_DPTX2_PIXEL0_CLK>;
-+					 <&dispcc0 DISP_CC_MDSS_DPTX2_PIXEL0_CLK>,
-+					 <&dispcc0 DISP_CC_MDSS_DPTX2_PIXEL1_CLK>;
- 				clock-names = "core_iface", "core_aux",
- 					      "ctrl_link",
--					      "ctrl_link_iface", "stream_pixel";
-+					      "ctrl_link_iface", "stream_pixel",
-+					      "stream_1_pixel";
- 				interrupt-parent = <&mdss0>;
- 				interrupts = <14>;
- 				phys = <&mdss0_dp2_phy>;
-@@ -4505,8 +4515,11 @@ mdss0_dp2: displayport-controller@ae9a000 {
- 				power-domains = <&rpmhpd SC8280XP_MMCX>;
- 
- 				assigned-clocks = <&dispcc0 DISP_CC_MDSS_DPTX2_LINK_CLK_SRC>,
--						  <&dispcc0 DISP_CC_MDSS_DPTX2_PIXEL0_CLK_SRC>;
--				assigned-clock-parents = <&mdss0_dp2_phy 0>, <&mdss0_dp2_phy 1>;
-+						  <&dispcc0 DISP_CC_MDSS_DPTX2_PIXEL0_CLK_SRC>,
-+						  <&dispcc0 DISP_CC_MDSS_DPTX2_PIXEL1_CLK_SRC>;
-+				assigned-clock-parents = <&mdss0_dp2_phy 0>,
-+							 <&mdss0_dp2_phy 1>,
-+							 <&mdss0_dp2_phy 1>;
- 				operating-points-v2 = <&mdss0_dp2_opp_table>;
- 
- 				#sound-dai-cells = <0>;
-@@ -5669,10 +5682,12 @@ mdss1_dp0: displayport-controller@22090000 {
- 					 <&dispcc1 DISP_CC_MDSS_DPTX0_AUX_CLK>,
- 					 <&dispcc1 DISP_CC_MDSS_DPTX0_LINK_CLK>,
- 					 <&dispcc1 DISP_CC_MDSS_DPTX0_LINK_INTF_CLK>,
--					 <&dispcc1 DISP_CC_MDSS_DPTX0_PIXEL0_CLK>;
-+					 <&dispcc1 DISP_CC_MDSS_DPTX0_PIXEL0_CLK>,
-+					 <&dispcc1 DISP_CC_MDSS_DPTX0_PIXEL1_CLK>;
- 				clock-names = "core_iface", "core_aux",
- 					      "ctrl_link",
--					      "ctrl_link_iface", "stream_pixel";
-+					      "ctrl_link_iface", "stream_pixel",
-+					      "stream_1_pixel";
- 				interrupt-parent = <&mdss1>;
- 				interrupts = <12>;
- 				phys = <&mdss1_dp0_phy>;
-@@ -5680,8 +5695,11 @@ mdss1_dp0: displayport-controller@22090000 {
- 				power-domains = <&rpmhpd SC8280XP_MMCX>;
- 
- 				assigned-clocks = <&dispcc1 DISP_CC_MDSS_DPTX0_LINK_CLK_SRC>,
--						  <&dispcc1 DISP_CC_MDSS_DPTX0_PIXEL0_CLK_SRC>;
--				assigned-clock-parents = <&mdss1_dp0_phy 0>, <&mdss1_dp0_phy 1>;
-+						  <&dispcc1 DISP_CC_MDSS_DPTX0_PIXEL0_CLK_SRC>,
-+						  <&dispcc1 DISP_CC_MDSS_DPTX0_PIXEL1_CLK_SRC>;
-+				assigned-clock-parents = <&mdss1_dp0_phy 0>,
-+							 <&mdss1_dp0_phy 1>,
-+							 <&mdss1_dp0_phy 1>;
- 				operating-points-v2 = <&mdss1_dp0_opp_table>;
- 
- 				#sound-dai-cells = <0>;
-@@ -5741,10 +5759,12 @@ mdss1_dp1: displayport-controller@22098000 {
- 					 <&dispcc1 DISP_CC_MDSS_DPTX1_AUX_CLK>,
- 					 <&dispcc1 DISP_CC_MDSS_DPTX1_LINK_CLK>,
- 					 <&dispcc1 DISP_CC_MDSS_DPTX1_LINK_INTF_CLK>,
--					 <&dispcc1 DISP_CC_MDSS_DPTX1_PIXEL0_CLK>;
-+					 <&dispcc1 DISP_CC_MDSS_DPTX1_PIXEL0_CLK>,
-+					 <&dispcc1 DISP_CC_MDSS_DPTX1_PIXEL1_CLK>;
- 				clock-names = "core_iface", "core_aux",
- 					      "ctrl_link",
--					      "ctrl_link_iface", "stream_pixel";
-+					      "ctrl_link_iface", "stream_pixel",
-+					      "stream_1_pixel";
- 				interrupt-parent = <&mdss1>;
- 				interrupts = <13>;
- 				phys = <&mdss1_dp1_phy>;
-@@ -5752,8 +5772,11 @@ mdss1_dp1: displayport-controller@22098000 {
- 				power-domains = <&rpmhpd SC8280XP_MMCX>;
- 
- 				assigned-clocks = <&dispcc1 DISP_CC_MDSS_DPTX1_LINK_CLK_SRC>,
--						  <&dispcc1 DISP_CC_MDSS_DPTX1_PIXEL0_CLK_SRC>;
--				assigned-clock-parents = <&mdss1_dp1_phy 0>, <&mdss1_dp1_phy 1>;
-+						  <&dispcc1 DISP_CC_MDSS_DPTX1_PIXEL0_CLK_SRC>,
-+						  <&dispcc1 DISP_CC_MDSS_DPTX1_PIXEL1_CLK_SRC>;
-+				assigned-clock-parents = <&mdss1_dp1_phy 0>,
-+							 <&mdss1_dp1_phy 1>,
-+							 <&mdss1_dp1_phy 1>;
- 				operating-points-v2 = <&mdss1_dp1_opp_table>;
- 
- 				#sound-dai-cells = <0>;
-@@ -5813,10 +5836,12 @@ mdss1_dp2: displayport-controller@2209a000 {
- 					 <&dispcc1 DISP_CC_MDSS_DPTX2_AUX_CLK>,
- 					 <&dispcc1 DISP_CC_MDSS_DPTX2_LINK_CLK>,
- 					 <&dispcc1 DISP_CC_MDSS_DPTX2_LINK_INTF_CLK>,
--					 <&dispcc1 DISP_CC_MDSS_DPTX2_PIXEL0_CLK>;
-+					 <&dispcc1 DISP_CC_MDSS_DPTX2_PIXEL0_CLK>,
-+					 <&dispcc1 DISP_CC_MDSS_DPTX2_PIXEL1_CLK>;
- 				clock-names = "core_iface", "core_aux",
- 					      "ctrl_link",
--					      "ctrl_link_iface", "stream_pixel";
-+					      "ctrl_link_iface", "stream_pixel",
-+					      "stream_1_pixel";
- 				interrupt-parent = <&mdss1>;
- 				interrupts = <14>;
- 				phys = <&mdss1_dp2_phy>;
-@@ -5824,8 +5849,11 @@ mdss1_dp2: displayport-controller@2209a000 {
- 				power-domains = <&rpmhpd SC8280XP_MMCX>;
- 
- 				assigned-clocks = <&dispcc1 DISP_CC_MDSS_DPTX2_LINK_CLK_SRC>,
--						  <&dispcc1 DISP_CC_MDSS_DPTX2_PIXEL0_CLK_SRC>;
--				assigned-clock-parents = <&mdss1_dp2_phy 0>, <&mdss1_dp2_phy 1>;
-+						  <&dispcc1 DISP_CC_MDSS_DPTX2_PIXEL0_CLK_SRC>,
-+						  <&dispcc1 DISP_CC_MDSS_DPTX2_PIXEL1_CLK_SRC>;
-+				assigned-clock-parents = <&mdss1_dp2_phy 0>,
-+							 <&mdss1_dp2_phy 1>,
-+							 <&mdss1_dp2_phy 1>;
- 				operating-points-v2 = <&mdss1_dp2_opp_table>;
- 
- 				#sound-dai-cells = <0>;
-diff --git a/arch/arm64/boot/dts/qcom/sm8150.dtsi b/arch/arm64/boot/dts/qcom/sm8150.dtsi
-index cdb47359c4c8..3a21a2e2c04d 100644
---- a/arch/arm64/boot/dts/qcom/sm8150.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8150.dtsi
-@@ -3894,16 +3894,20 @@ mdss_dp: displayport-controller@ae90000 {
- 					 <&dispcc DISP_CC_MDSS_DP_AUX_CLK>,
- 					 <&dispcc DISP_CC_MDSS_DP_LINK_CLK>,
- 					 <&dispcc DISP_CC_MDSS_DP_LINK_INTF_CLK>,
--					 <&dispcc DISP_CC_MDSS_DP_PIXEL_CLK>;
-+					 <&dispcc DISP_CC_MDSS_DP_PIXEL_CLK>,
-+					 <&dispcc DISP_CC_MDSS_DP_PIXEL1_CLK>;
- 				clock-names = "core_iface",
- 					      "core_aux",
- 					      "ctrl_link",
- 					      "ctrl_link_iface",
--					      "stream_pixel";
-+					      "stream_pixel",
-+					      "stream_1_pixel";
- 
- 				assigned-clocks = <&dispcc DISP_CC_MDSS_DP_LINK_CLK_SRC>,
--						  <&dispcc DISP_CC_MDSS_DP_PIXEL_CLK_SRC>;
-+						  <&dispcc DISP_CC_MDSS_DP_PIXEL_CLK_SRC>,
-+						  <&dispcc DISP_CC_MDSS_DP_PIXEL1_CLK_SRC>;
- 				assigned-clock-parents = <&usb_1_qmpphy QMP_USB43DP_DP_LINK_CLK>,
-+							 <&usb_1_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>,
- 							 <&usb_1_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>;
- 
- 				phys = <&usb_1_qmpphy QMP_USB43DP_DP_PHY>;
-diff --git a/arch/arm64/boot/dts/qcom/sm8250.dtsi b/arch/arm64/boot/dts/qcom/sm8250.dtsi
-index f0d18fd37aaf..fc7c610c15d2 100644
---- a/arch/arm64/boot/dts/qcom/sm8250.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8250.dtsi
-@@ -4774,16 +4774,20 @@ mdss_dp: displayport-controller@ae90000 {
- 					 <&dispcc DISP_CC_MDSS_DP_AUX_CLK>,
- 					 <&dispcc DISP_CC_MDSS_DP_LINK_CLK>,
- 					 <&dispcc DISP_CC_MDSS_DP_LINK_INTF_CLK>,
--					 <&dispcc DISP_CC_MDSS_DP_PIXEL_CLK>;
-+					 <&dispcc DISP_CC_MDSS_DP_PIXEL_CLK>,
-+					 <&dispcc DISP_CC_MDSS_DP_PIXEL1_CLK>;
- 				clock-names = "core_iface",
- 					      "core_aux",
- 					      "ctrl_link",
- 					      "ctrl_link_iface",
--					      "stream_pixel";
-+					      "stream_pixel",
-+					      "stream_1_pixel";
- 
- 				assigned-clocks = <&dispcc DISP_CC_MDSS_DP_LINK_CLK_SRC>,
--						  <&dispcc DISP_CC_MDSS_DP_PIXEL_CLK_SRC>;
-+						  <&dispcc DISP_CC_MDSS_DP_PIXEL_CLK_SRC>,
-+						  <&dispcc DISP_CC_MDSS_DP_PIXEL1_CLK_SRC>;
- 				assigned-clock-parents = <&usb_1_qmpphy QMP_USB43DP_DP_LINK_CLK>,
-+							 <&usb_1_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>,
- 							 <&usb_1_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>;
- 
- 				phys = <&usb_1_qmpphy QMP_USB43DP_DP_PHY>;
-diff --git a/arch/arm64/boot/dts/qcom/sm8350.dtsi b/arch/arm64/boot/dts/qcom/sm8350.dtsi
-index 971c828a7555..6a930292edd3 100644
---- a/arch/arm64/boot/dts/qcom/sm8350.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8350.dtsi
-@@ -2872,16 +2872,20 @@ mdss_dp: displayport-controller@ae90000 {
- 					 <&dispcc DISP_CC_MDSS_DP_AUX_CLK>,
- 					 <&dispcc DISP_CC_MDSS_DP_LINK_CLK>,
- 					 <&dispcc DISP_CC_MDSS_DP_LINK_INTF_CLK>,
--					 <&dispcc DISP_CC_MDSS_DP_PIXEL_CLK>;
-+					 <&dispcc DISP_CC_MDSS_DP_PIXEL_CLK>,
-+					 <&dispcc DISP_CC_MDSS_DP_PIXEL1_CLK>;
- 				clock-names = "core_iface",
- 					      "core_aux",
- 					      "ctrl_link",
- 					      "ctrl_link_iface",
--					      "stream_pixel";
-+					      "stream_pixel",
-+					      "stream_1_pixel";
- 
- 				assigned-clocks = <&dispcc DISP_CC_MDSS_DP_LINK_CLK_SRC>,
--						  <&dispcc DISP_CC_MDSS_DP_PIXEL_CLK_SRC>;
-+						  <&dispcc DISP_CC_MDSS_DP_PIXEL_CLK_SRC>,
-+						  <&dispcc DISP_CC_MDSS_DP_PIXEL1_CLK_SRC>;
- 				assigned-clock-parents = <&usb_1_qmpphy QMP_USB43DP_DP_LINK_CLK>,
-+							 <&usb_1_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>,
- 							 <&usb_1_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>;
- 
- 				phys = <&usb_1_qmpphy QMP_USB43DP_DP_PHY>;
-diff --git a/arch/arm64/boot/dts/qcom/sm8450.dtsi b/arch/arm64/boot/dts/qcom/sm8450.dtsi
-index 54c6d0fdb2af..b0680ef30c1f 100644
---- a/arch/arm64/boot/dts/qcom/sm8450.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8450.dtsi
-@@ -3431,16 +3431,20 @@ mdss_dp0: displayport-controller@ae90000 {
- 					 <&dispcc DISP_CC_MDSS_DPTX0_AUX_CLK>,
- 					 <&dispcc DISP_CC_MDSS_DPTX0_LINK_CLK>,
- 					 <&dispcc DISP_CC_MDSS_DPTX0_LINK_INTF_CLK>,
--					 <&dispcc DISP_CC_MDSS_DPTX0_PIXEL0_CLK>;
-+					 <&dispcc DISP_CC_MDSS_DPTX0_PIXEL0_CLK>,
-+					 <&dispcc DISP_CC_MDSS_DPTX0_PIXEL1_CLK>;
- 				clock-names = "core_iface",
- 					      "core_aux",
- 					      "ctrl_link",
- 					      "ctrl_link_iface",
--					      "stream_pixel";
-+					      "stream_pixel",
-+					      "stream_1_pixel";
- 
- 				assigned-clocks = <&dispcc DISP_CC_MDSS_DPTX0_LINK_CLK_SRC>,
--						  <&dispcc DISP_CC_MDSS_DPTX0_PIXEL0_CLK_SRC>;
-+						  <&dispcc DISP_CC_MDSS_DPTX0_PIXEL0_CLK_SRC>,
-+						  <&dispcc DISP_CC_MDSS_DPTX0_PIXEL1_CLK_SRC>;
- 				assigned-clock-parents = <&usb_1_qmpphy QMP_USB43DP_DP_LINK_CLK>,
-+							 <&usb_1_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>,
- 							 <&usb_1_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>;
- 
- 				phys = <&usb_1_qmpphy QMP_USB43DP_DP_PHY>;
-diff --git a/arch/arm64/boot/dts/qcom/sm8550.dtsi b/arch/arm64/boot/dts/qcom/sm8550.dtsi
-index 71a7e3b57ece..226c457338d9 100644
---- a/arch/arm64/boot/dts/qcom/sm8550.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8550.dtsi
-@@ -3545,16 +3545,20 @@ mdss_dp0: displayport-controller@ae90000 {
- 					 <&dispcc DISP_CC_MDSS_DPTX0_AUX_CLK>,
- 					 <&dispcc DISP_CC_MDSS_DPTX0_LINK_CLK>,
- 					 <&dispcc DISP_CC_MDSS_DPTX0_LINK_INTF_CLK>,
--					 <&dispcc DISP_CC_MDSS_DPTX0_PIXEL0_CLK>;
-+					 <&dispcc DISP_CC_MDSS_DPTX0_PIXEL0_CLK>,
-+					 <&dispcc DISP_CC_MDSS_DPTX0_PIXEL1_CLK>;
- 				clock-names = "core_iface",
- 					      "core_aux",
- 					      "ctrl_link",
- 					      "ctrl_link_iface",
--					      "stream_pixel";
-+					      "stream_pixel",
-+					      "stream_1_pixel";
- 
- 				assigned-clocks = <&dispcc DISP_CC_MDSS_DPTX0_LINK_CLK_SRC>,
--						  <&dispcc DISP_CC_MDSS_DPTX0_PIXEL0_CLK_SRC>;
-+						  <&dispcc DISP_CC_MDSS_DPTX0_PIXEL0_CLK_SRC>,
-+						  <&dispcc DISP_CC_MDSS_DPTX0_PIXEL1_CLK_SRC>;
- 				assigned-clock-parents = <&usb_dp_qmpphy QMP_USB43DP_DP_LINK_CLK>,
-+							 <&usb_dp_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>,
- 							 <&usb_dp_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>;
- 
- 				phys = <&usb_dp_qmpphy QMP_USB43DP_DP_PHY>;
-diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-index 495ea9bfd008..72c63afe9029 100644
---- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-@@ -5388,16 +5388,20 @@ mdss_dp0: displayport-controller@af54000 {
- 					 <&dispcc DISP_CC_MDSS_DPTX0_AUX_CLK>,
- 					 <&dispcc DISP_CC_MDSS_DPTX0_LINK_CLK>,
- 					 <&dispcc DISP_CC_MDSS_DPTX0_LINK_INTF_CLK>,
--					 <&dispcc DISP_CC_MDSS_DPTX0_PIXEL0_CLK>;
-+					 <&dispcc DISP_CC_MDSS_DPTX0_PIXEL0_CLK>,
-+					 <&dispcc DISP_CC_MDSS_DPTX0_PIXEL1_CLK>;
- 				clock-names = "core_iface",
- 					      "core_aux",
- 					      "ctrl_link",
- 					      "ctrl_link_iface",
--					      "stream_pixel";
-+					      "stream_pixel",
-+					      "stream_1_pixel";
- 
- 				assigned-clocks = <&dispcc DISP_CC_MDSS_DPTX0_LINK_CLK_SRC>,
--						  <&dispcc DISP_CC_MDSS_DPTX0_PIXEL0_CLK_SRC>;
-+						  <&dispcc DISP_CC_MDSS_DPTX0_PIXEL0_CLK_SRC>,
-+						  <&dispcc DISP_CC_MDSS_DPTX0_PIXEL1_CLK_SRC>;
- 				assigned-clock-parents = <&usb_dp_qmpphy QMP_USB43DP_DP_LINK_CLK>,
-+							 <&usb_dp_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>,
- 							 <&usb_dp_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>;
- 
- 				operating-points-v2 = <&dp_opp_table>;
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-index a8eb4c5fe99f..e86b6cb20096 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-@@ -5306,16 +5306,20 @@ mdss_dp0: displayport-controller@ae90000 {
- 					 <&dispcc DISP_CC_MDSS_DPTX0_AUX_CLK>,
- 					 <&dispcc DISP_CC_MDSS_DPTX0_LINK_CLK>,
- 					 <&dispcc DISP_CC_MDSS_DPTX0_LINK_INTF_CLK>,
--					 <&dispcc DISP_CC_MDSS_DPTX0_PIXEL0_CLK>;
-+					 <&dispcc DISP_CC_MDSS_DPTX0_PIXEL0_CLK>,
-+					 <&dispcc DISP_CC_MDSS_DPTX0_PIXEL1_CLK>;
- 				clock-names = "core_iface",
- 					      "core_aux",
- 					      "ctrl_link",
- 					      "ctrl_link_iface",
--					      "stream_pixel";
-+					      "stream_pixel",
-+					      "stream_1_pixel";
- 
- 				assigned-clocks = <&dispcc DISP_CC_MDSS_DPTX0_LINK_CLK_SRC>,
--						  <&dispcc DISP_CC_MDSS_DPTX0_PIXEL0_CLK_SRC>;
-+						  <&dispcc DISP_CC_MDSS_DPTX0_PIXEL0_CLK_SRC>,
-+						  <&dispcc DISP_CC_MDSS_DPTX0_PIXEL1_CLK_SRC>;
- 				assigned-clock-parents = <&usb_1_ss0_qmpphy QMP_USB43DP_DP_LINK_CLK>,
-+							 <&usb_1_ss0_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>,
- 							 <&usb_1_ss0_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>;
- 
- 				operating-points-v2 = <&mdss_dp0_opp_table>;
-@@ -5389,16 +5393,20 @@ mdss_dp1: displayport-controller@ae98000 {
- 					 <&dispcc DISP_CC_MDSS_DPTX1_AUX_CLK>,
- 					 <&dispcc DISP_CC_MDSS_DPTX1_LINK_CLK>,
- 					 <&dispcc DISP_CC_MDSS_DPTX1_LINK_INTF_CLK>,
--					 <&dispcc DISP_CC_MDSS_DPTX1_PIXEL0_CLK>;
-+					 <&dispcc DISP_CC_MDSS_DPTX1_PIXEL0_CLK>,
-+					 <&dispcc DISP_CC_MDSS_DPTX1_PIXEL1_CLK>;
- 				clock-names = "core_iface",
- 					      "core_aux",
- 					      "ctrl_link",
- 					      "ctrl_link_iface",
--					      "stream_pixel";
-+					      "stream_pixel",
-+					      "stream_1_pixel";
- 
- 				assigned-clocks = <&dispcc DISP_CC_MDSS_DPTX1_LINK_CLK_SRC>,
--						  <&dispcc DISP_CC_MDSS_DPTX1_PIXEL0_CLK_SRC>;
-+						  <&dispcc DISP_CC_MDSS_DPTX1_PIXEL0_CLK_SRC>,
-+						  <&dispcc DISP_CC_MDSS_DPTX1_PIXEL1_CLK_SRC>;
- 				assigned-clock-parents = <&usb_1_ss1_qmpphy QMP_USB43DP_DP_LINK_CLK>,
-+							 <&usb_1_ss1_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>,
- 							 <&usb_1_ss1_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>;
- 
- 				operating-points-v2 = <&mdss_dp1_opp_table>;
-@@ -5472,16 +5480,20 @@ mdss_dp2: displayport-controller@ae9a000 {
- 					 <&dispcc DISP_CC_MDSS_DPTX2_AUX_CLK>,
- 					 <&dispcc DISP_CC_MDSS_DPTX2_LINK_CLK>,
- 					 <&dispcc DISP_CC_MDSS_DPTX2_LINK_INTF_CLK>,
--					 <&dispcc DISP_CC_MDSS_DPTX2_PIXEL0_CLK>;
-+					 <&dispcc DISP_CC_MDSS_DPTX2_PIXEL0_CLK>,
-+					 <&dispcc DISP_CC_MDSS_DPTX2_PIXEL1_CLK>;
- 				clock-names = "core_iface",
- 					      "core_aux",
- 					      "ctrl_link",
- 					      "ctrl_link_iface",
--					      "stream_pixel";
-+					      "stream_pixel",
-+					      "stream_1_pixel";
- 
- 				assigned-clocks = <&dispcc DISP_CC_MDSS_DPTX2_LINK_CLK_SRC>,
--						  <&dispcc DISP_CC_MDSS_DPTX2_PIXEL0_CLK_SRC>;
-+						  <&dispcc DISP_CC_MDSS_DPTX2_PIXEL0_CLK_SRC>,
-+						  <&dispcc DISP_CC_MDSS_DPTX2_PIXEL1_CLK_SRC>;
- 				assigned-clock-parents = <&usb_1_ss2_qmpphy QMP_USB43DP_DP_LINK_CLK>,
-+							 <&usb_1_ss2_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>,
- 							 <&usb_1_ss2_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>;
- 
- 				operating-points-v2 = <&mdss_dp2_opp_table>;
+DJ
 
--- 
-2.50.1
+> 
+> 1. cxl_acpi_probe() schedules cxl_softreserv_work_fn() and exits early.
+> This work item is responsible for trimming leftover Soft Reserved memory ranges once all cxl_mem devices have finished probing.
+> 
+> 2. A delayed work is initialized for the settle timer:
+> 
+> INIT_DELAYED_WORK(&cxl_probe_settle_work, cxl_probe_settle_fn);
+> 
+> 3. In cxl_mem_probe():
+>      - Increment counter2 (memdevs in progress).
+>      - Increment counter1 (memdevs discovered).
+>      - On probe completion (success or failure), decrement counter2.
+>      - After each probe, re-arm the settle timer to extend the quiet
+>        period if more devices arrive (this might fail Im not sure if cxl
+>        mem devices come in too late)..
+>        mod_delayed_work(system_wq, &cxl_probe_settle_work, 30 * HZ);
+>      - Call wake_up(&cxl_softreserv_waitq); after each probe to notify
+>        listeners.
+> 
+> 4. The settle timer callback (cxl_probe_settle_fn()) runs when no new devices have probed for a while (30s)
+>      timer_expired = true;
+>      wake_up(&cxl_softreserv_waitq);
+> 
+> 5. In cxl_softreserv_work_fn()
+>     wait_event(cxl_softreserv_waitq,
+>     atomic_read(&cxl_mem_counter1) > 0 &&
+>     atomic_read(&cxl_mem_counter2) == 0 &&
+>     atomic_read(&timer_expired));
+> 
+> 6. Once unblocked, cxl_softreserv_work_fn() trims Soft Reserved regions via cxl_region_softreserv_update().
+> (We do not perform any DAX fallback here as we dont want to endup with unresolved symbols when DAX_HMEM loads too late..)
+> 
+> 7. Separately, dax_hmem_platform_probe() runs independently on module load, but also blocks on the same wait_event() condition if CONFIG_CXL_ACPI is enabled. Once the condition is satisfied, it invokes hmem_register_device() to register leftover Soft Reserved memory.
+> 
+> Thanks
+> Smita
+> 
+>>
+>>>>>>>
+>>>>>>> Thanks
+>>>>>>> Smita
+>>>>>>>
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> This isn't all the logs, I trimmed. Let me know if you need more or
+>>>>>>>> other info to reproduce.
+>>>>>>>>
+>>>>>>>> [   53.652454] cxl_acpi:cxl_softreserv_mem_work_fn:888: Timeout waiting for cxl_mem probing
+>>>>>>>> [   53.653293] BUG: sleeping function called from invalid context at ./include/linux/sched/mm.h:321
+>>>>>>>> [   53.653513] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 1875, name: kworker/46:1
+>>>>>>>> [   53.653540] preempt_count: 1, expected: 0
+>>>>>>>> [   53.653554] RCU nest depth: 0, expected: 0
+>>>>>>>> [   53.653568] 3 locks held by kworker/46:1/1875:
+>>>>>>>> [   53.653569]  #0: ff37d78240041548 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work+0x578/0x630
+>>>>>>>> [   53.653583]  #1: ff6b0385dedf3e38 (cxl_sr_work){+.+.}-{0:0}, at: process_one_work+0x1bd/0x630
+>>>>>>>> [   53.653589]  #2: ffffffffb33476d8 (hmem_notify_lock){+.+.}-{3:3}, at: hmem_fallback_register_device+0x23/0x60
+>>>>>>>> [   53.653598] Preemption disabled at:
+>>>>>>>> [   53.653599] [<ffffffffb1e23993>] hmem_fallback_register_device+0x23/0x60
+>>>>>>>> [   53.653640] CPU: 46 UID: 0 PID: 1875 Comm: kworker/46:1 Not tainted 6.16.0CXL-NEXT-ALISON-SR-V5+ #5 PREEMPT(voluntary)
+>>>>>>>> [   53.653643] Workqueue: events cxl_softreserv_mem_work_fn [cxl_acpi]
+>>>>>>>> [   53.653648] Call Trace:
+>>>>>>>> [   53.653649]  <TASK>
+>>>>>>>> [   53.653652]  dump_stack_lvl+0xa8/0xd0
+>>>>>>>> [   53.653658]  dump_stack+0x14/0x20
+>>>>>>>> [   53.653659]  __might_resched+0x1ae/0x2d0
+>>>>>>>> [   53.653666]  __might_sleep+0x48/0x70
+>>>>>>>> [   53.653668]  __kmalloc_node_track_caller_noprof+0x349/0x510
+>>>>>>>> [   53.653674]  ? __devm_add_action+0x3d/0x160
+>>>>>>>> [   53.653685]  ? __pfx_devm_action_release+0x10/0x10
+>>>>>>>> [   53.653688]  __devres_alloc_node+0x4a/0x90
+>>>>>>>> [   53.653689]  ? __devres_alloc_node+0x4a/0x90
+>>>>>>>> [   53.653691]  ? __pfx_release_memregion+0x10/0x10 [dax_hmem]
+>>>>>>>> [   53.653693]  __devm_add_action+0x3d/0x160
+>>>>>>>> [   53.653696]  hmem_register_device+0xea/0x230 [dax_hmem]
+>>>>>>>> [   53.653700]  hmem_fallback_register_device+0x37/0x60
+>>>>>>>> [   53.653703]  cxl_softreserv_mem_register+0x24/0x30 [cxl_core]
+>>>>>>>> [   53.653739]  walk_iomem_res_desc+0x55/0xb0
+>>>>>>>> [   53.653744]  ? __pfx_cxl_softreserv_mem_register+0x10/0x10 [cxl_core]
+>>>>>>>> [   53.653755]  cxl_region_softreserv_update+0x46/0x50 [cxl_core]
+>>>>>>>> [   53.653761]  cxl_softreserv_mem_work_fn+0x4a/0x110 [cxl_acpi]
+>>>>>>>> [   53.653763]  ? __pfx_autoremove_wake_function+0x10/0x10
+>>>>>>>> [   53.653768]  process_one_work+0x1fa/0x630
+>>>>>>>> [   53.653774]  worker_thread+0x1b2/0x360
+>>>>>>>> [   53.653777]  kthread+0x128/0x250
+>>>>>>>> [   53.653781]  ? __pfx_worker_thread+0x10/0x10
+>>>>>>>> [   53.653784]  ? __pfx_kthread+0x10/0x10
+>>>>>>>> [   53.653786]  ret_from_fork+0x139/0x1e0
+>>>>>>>> [   53.653790]  ? __pfx_kthread+0x10/0x10
+>>>>>>>> [   53.653792]  ret_from_fork_asm+0x1a/0x30
+>>>>>>>> [   53.653801]  </TASK>
+>>>>>>>>
+>>>>>>>> [   53.654193] =============================
+>>>>>>>> [   53.654203] [ BUG: Invalid wait context ]
+>>>>>>>> [   53.654451] 6.16.0CXL-NEXT-ALISON-SR-V5+ #5 Tainted: G        W
+>>>>>>>> [   53.654623] -----------------------------
+>>>>>>>> [   53.654785] kworker/46:1/1875 is trying to lock:
+>>>>>>>> [   53.654946] ff37d7824096d588 (&root->kernfs_rwsem){++++}-{4:4}, at: kernfs_add_one+0x34/0x390
+>>>>>>>> [   53.655115] other info that might help us debug this:
+>>>>>>>> [   53.655273] context-{5:5}
+>>>>>>>> [   53.655428] 3 locks held by kworker/46:1/1875:
+>>>>>>>> [   53.655579]  #0: ff37d78240041548 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work+0x578/0x630
+>>>>>>>> [   53.655739]  #1: ff6b0385dedf3e38 (cxl_sr_work){+.+.}-{0:0}, at: process_one_work+0x1bd/0x630
+>>>>>>>> [   53.655900]  #2: ffffffffb33476d8 (hmem_notify_lock){+.+.}-{3:3}, at: hmem_fallback_register_device+0x23/0x60
+>>>>>>>> [   53.656062] stack backtrace:
+>>>>>>>> [   53.656224] CPU: 46 UID: 0 PID: 1875 Comm: kworker/46:1 Tainted: G        W           6.16.0CXL-NEXT-ALISON-SR-V5+ #5 PREEMPT(voluntary)
+>>>>>>>> [   53.656227] Tainted: [W]=WARN
+>>>>>>>> [   53.656228] Workqueue: events cxl_softreserv_mem_work_fn [cxl_acpi]
+>>>>>>>> [   53.656232] Call Trace:
+>>>>>>>> [   53.656232]  <TASK>
+>>>>>>>> [   53.656234]  dump_stack_lvl+0x85/0xd0
+>>>>>>>> [   53.656238]  dump_stack+0x14/0x20
+>>>>>>>> [   53.656239]  __lock_acquire+0xaf4/0x2200
+>>>>>>>> [   53.656246]  lock_acquire+0xd8/0x300
+>>>>>>>> [   53.656248]  ? kernfs_add_one+0x34/0x390
+>>>>>>>> [   53.656252]  ? __might_resched+0x208/0x2d0
+>>>>>>>> [   53.656257]  down_write+0x44/0xe0
+>>>>>>>> [   53.656262]  ? kernfs_add_one+0x34/0x390
+>>>>>>>> [   53.656263]  kernfs_add_one+0x34/0x390
+>>>>>>>> [   53.656265]  kernfs_create_dir_ns+0x5a/0xa0
+>>>>>>>> [   53.656268]  sysfs_create_dir_ns+0x74/0xd0
+>>>>>>>> [   53.656270]  kobject_add_internal+0xb1/0x2f0
+>>>>>>>> [   53.656273]  kobject_add+0x7d/0xf0
+>>>>>>>> [   53.656275]  ? get_device_parent+0x28/0x1e0
+>>>>>>>> [   53.656280]  ? __pfx_klist_children_get+0x10/0x10
+>>>>>>>> [   53.656282]  device_add+0x124/0x8b0
+>>>>>>>> [   53.656285]  ? dev_set_name+0x56/0x70
+>>>>>>>> [   53.656287]  platform_device_add+0x102/0x260
+>>>>>>>> [   53.656289]  hmem_register_device+0x160/0x230 [dax_hmem]
+>>>>>>>> [   53.656291]  hmem_fallback_register_device+0x37/0x60
+>>>>>>>> [   53.656294]  cxl_softreserv_mem_register+0x24/0x30 [cxl_core]
+>>>>>>>> [   53.656323]  walk_iomem_res_desc+0x55/0xb0
+>>>>>>>> [   53.656326]  ? __pfx_cxl_softreserv_mem_register+0x10/0x10 [cxl_core]
+>>>>>>>> [   53.656335]  cxl_region_softreserv_update+0x46/0x50 [cxl_core]
+>>>>>>>> [   53.656342]  cxl_softreserv_mem_work_fn+0x4a/0x110 [cxl_acpi]
+>>>>>>>> [   53.656343]  ? __pfx_autoremove_wake_function+0x10/0x10
+>>>>>>>> [   53.656346]  process_one_work+0x1fa/0x630
+>>>>>>>> [   53.656350]  worker_thread+0x1b2/0x360
+>>>>>>>> [   53.656352]  kthread+0x128/0x250
+>>>>>>>> [   53.656354]  ? __pfx_worker_thread+0x10/0x10
+>>>>>>>> [   53.656356]  ? __pfx_kthread+0x10/0x10
+>>>>>>>> [   53.656357]  ret_from_fork+0x139/0x1e0
+>>>>>>>> [   53.656360]  ? __pfx_kthread+0x10/0x10
+>>>>>>>> [   53.656361]  ret_from_fork_asm+0x1a/0x30
+>>>>>>>> [   53.656366]  </TASK>
+>>>>>>>> [   53.662274] BUG: scheduling while atomic: kworker/46:1/1875/0x00000002
+>>>>>>>> [   53.663552]  schedule+0x4a/0x160
+>>>>>>>> [   53.663553]  schedule_timeout+0x10a/0x120
+>>>>>>>> [   53.663555]  ? debug_smp_processor_id+0x1b/0x30
+>>>>>>>> [   53.663556]  ? trace_hardirqs_on+0x5f/0xd0
+>>>>>>>> [   53.663558]  __wait_for_common+0xb9/0x1c0
+>>>>>>>> [   53.663559]  ? __pfx_schedule_timeout+0x10/0x10
+>>>>>>>> [   53.663561]  wait_for_completion+0x28/0x30
+>>>>>>>> [   53.663562]  __synchronize_srcu+0xbf/0x180
+>>>>>>>> [   53.663566]  ? __pfx_wakeme_after_rcu+0x10/0x10
+>>>>>>>> [   53.663571]  ? i2c_repstart+0x30/0x80
+>>>>>>>> [   53.663576]  synchronize_srcu+0x46/0x120
+>>>>>>>> [   53.663577]  kill_dax+0x47/0x70
+>>>>>>>> [   53.663580]  __devm_create_dev_dax+0x112/0x470
+>>>>>>>> [   53.663582]  devm_create_dev_dax+0x26/0x50
+>>>>>>>> [   53.663584]  dax_hmem_probe+0x87/0xd0 [dax_hmem]
+>>>>>>>> [   53.663585]  platform_probe+0x61/0xd0
+>>>>>>>> [   53.663589]  really_probe+0xe2/0x390
+>>>>>>>> [   53.663591]  ? __pfx___device_attach_driver+0x10/0x10
+>>>>>>>> [   53.663593]  __driver_probe_device+0x7e/0x160
+>>>>>>>> [   53.663594]  driver_probe_device+0x23/0xa0
+>>>>>>>> [   53.663596]  __device_attach_driver+0x92/0x120
+>>>>>>>> [   53.663597]  bus_for_each_drv+0x8c/0xf0
+>>>>>>>> [   53.663599]  __device_attach+0xc2/0x1f0
+>>>>>>>> [   53.663601]  device_initial_probe+0x17/0x20
+>>>>>>>> [   53.663603]  bus_probe_device+0xa8/0xb0
+>>>>>>>> [   53.663604]  device_add+0x687/0x8b0
+>>>>>>>> [   53.663607]  ? dev_set_name+0x56/0x70
+>>>>>>>> [   53.663609]  platform_device_add+0x102/0x260
+>>>>>>>> [   53.663610]  hmem_register_device+0x160/0x230 [dax_hmem]
+>>>>>>>> [   53.663612]  hmem_fallback_register_device+0x37/0x60
+>>>>>>>> [   53.663614]  cxl_softreserv_mem_register+0x24/0x30 [cxl_core]
+>>>>>>>> [   53.663637]  walk_iomem_res_desc+0x55/0xb0
+>>>>>>>> [   53.663640]  ? __pfx_cxl_softreserv_mem_register+0x10/0x10 [cxl_core]
+>>>>>>>> [   53.663647]  cxl_region_softreserv_update+0x46/0x50 [cxl_core]
+>>>>>>>> [   53.663654]  cxl_softreserv_mem_work_fn+0x4a/0x110 [cxl_acpi]
+>>>>>>>> [   53.663655]  ? __pfx_autoremove_wake_function+0x10/0x10
+>>>>>>>> [   53.663658]  process_one_work+0x1fa/0x630
+>>>>>>>> [   53.663662]  worker_thread+0x1b2/0x360
+>>>>>>>> [   53.663664]  kthread+0x128/0x250
+>>>>>>>> [   53.663666]  ? __pfx_worker_thread+0x10/0x10
+>>>>>>>> [   53.663668]  ? __pfx_kthread+0x10/0x10
+>>>>>>>> [   53.663670]  ret_from_fork+0x139/0x1e0
+>>>>>>>> [   53.663672]  ? __pfx_kthread+0x10/0x10
+>>>>>>>> [   53.663673]  ret_from_fork_asm+0x1a/0x30
+>>>>>>>> [   53.663677]  </TASK>
+>>>>>>>> [   53.700107] BUG: scheduling while atomic: kworker/46:1/1875/0x00000002
+>>>>>>>> [   53.700264] INFO: lockdep is turned off.
+>>>>>>>> [   53.701315] Preemption disabled at:
+>>>>>>>> [   53.701316] [<ffffffffb1e23993>] hmem_fallback_register_device+0x23/0x60
+>>>>>>>> [   53.701631] CPU: 46 UID: 0 PID: 1875 Comm: kworker/46:1 Tainted: G        W           6.16.0CXL-NEXT-ALISON-SR-V5+ #5 PREEMPT(voluntary)
+>>>>>>>> [   53.701633] Tainted: [W]=WARN
+>>>>>>>> [   53.701635] Workqueue: events cxl_softreserv_mem_work_fn [cxl_acpi]
+>>>>>>>> [   53.701638] Call Trace:
+>>>>>>>> [   53.701638]  <TASK>
+>>>>>>>> [   53.701640]  dump_stack_lvl+0xa8/0xd0
+>>>>>>>> [   53.701644]  dump_stack+0x14/0x20
+>>>>>>>> [   53.701645]  __schedule_bug+0xa2/0xd0
+>>>>>>>> [   53.701649]  __schedule+0xe6f/0x10d0
+>>>>>>>> [   53.701652]  ? debug_smp_processor_id+0x1b/0x30
+>>>>>>>> [   53.701655]  ? lock_release+0x1e6/0x2b0
+>>>>>>>> [   53.701658]  ? trace_hardirqs_on+0x5f/0xd0
+>>>>>>>> [   53.701661]  schedule+0x4a/0x160
+>>>>>>>> [   53.701662]  schedule_timeout+0x10a/0x120
+>>>>>>>> [   53.701664]  ? debug_smp_processor_id+0x1b/0x30
+>>>>>>>> [   53.701666]  ? trace_hardirqs_on+0x5f/0xd0
+>>>>>>>> [   53.701667]  __wait_for_common+0xb9/0x1c0
+>>>>>>>> [   53.701668]  ? __pfx_schedule_timeout+0x10/0x10
+>>>>>>>> [   53.701670]  wait_for_completion+0x28/0x30
+>>>>>>>> [   53.701671]  __synchronize_srcu+0xbf/0x180
+>>>>>>>> [   53.701677]  ? __pfx_wakeme_after_rcu+0x10/0x10
+>>>>>>>> [   53.701682]  ? i2c_repstart+0x30/0x80
+>>>>>>>> [   53.701685]  synchronize_srcu+0x46/0x120
+>>>>>>>> [   53.701687]  kill_dax+0x47/0x70
+>>>>>>>> [   53.701689]  __devm_create_dev_dax+0x112/0x470
+>>>>>>>> [   53.701691]  devm_create_dev_dax+0x26/0x50
+>>>>>>>> [   53.701693]  dax_hmem_probe+0x87/0xd0 [dax_hmem]
+>>>>>>>> [   53.701695]  platform_probe+0x61/0xd0
+>>>>>>>> [   53.701698]  really_probe+0xe2/0x390
+>>>>>>>> [   53.701700]  ? __pfx___device_attach_driver+0x10/0x10
+>>>>>>>> [   53.701701]  __driver_probe_device+0x7e/0x160
+>>>>>>>> [   53.701703]  driver_probe_device+0x23/0xa0
+>>>>>>>> [   53.701704]  __device_attach_driver+0x92/0x120
+>>>>>>>> [   53.701706]  bus_for_each_drv+0x8c/0xf0
+>>>>>>>> [   53.701708]  __device_attach+0xc2/0x1f0
+>>>>>>>> [   53.701710]  device_initial_probe+0x17/0x20
+>>>>>>>> [   53.701711]  bus_probe_device+0xa8/0xb0
+>>>>>>>> [   53.701712]  device_add+0x687/0x8b0
+>>>>>>>> [   53.701715]  ? dev_set_name+0x56/0x70
+>>>>>>>> [   53.701717]  platform_device_add+0x102/0x260
+>>>>>>>> [   53.701718]  hmem_register_device+0x160/0x230 [dax_hmem]
+>>>>>>>> [   53.701720]  hmem_fallback_register_device+0x37/0x60
+>>>>>>>> [   53.701722]  cxl_softreserv_mem_register+0x24/0x30 [cxl_core]
+>>>>>>>> [   53.701734]  walk_iomem_res_desc+0x55/0xb0
+>>>>>>>> [   53.701738]  ? __pfx_cxl_softreserv_mem_register+0x10/0x10 [cxl_core]
+>>>>>>>> [   53.701745]  cxl_region_softreserv_update+0x46/0x50 [cxl_core]
+>>>>>>>> [   53.701751]  cxl_softreserv_mem_work_fn+0x4a/0x110 [cxl_acpi]
+>>>>>>>> [   53.701752]  ? __pfx_autoremove_wake_function+0x10/0x10
+>>>>>>>> [   53.701756]  process_one_work+0x1fa/0x630
+>>>>>>>> [   53.701760]  worker_thread+0x1b2/0x360
+>>>>>>>> [   53.701762]  kthread+0x128/0x250
+>>>>>>>> [   53.701765]  ? __pfx_worker_thread+0x10/0x10
+>>>>>>>> [   53.701766]  ? __pfx_kthread+0x10/0x10
+>>>>>>>> [   53.701768]  ret_from_fork+0x139/0x1e0
+>>>>>>>> [   53.701771]  ? __pfx_kthread+0x10/0x10
+>>>>>>>> [   53.701772]  ret_from_fork_asm+0x1a/0x30
+>>>>>>>> [   53.701777]  </TASK>
+>>>>>>>>
+>>>>>>>
+>>>>>
+>>>
+>>
+> 
+> 
 
 
