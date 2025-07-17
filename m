@@ -1,276 +1,238 @@
-Return-Path: <linux-kernel+bounces-734447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1127B081F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:55:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 903C7B081F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:56:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F87D1C40FFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:56:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF3303A423F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0628C191F9C;
-	Thu, 17 Jul 2025 00:55:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528D01A3164;
+	Thu, 17 Jul 2025 00:55:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OCNca29K"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MeiVTJk6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A12077E9
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 00:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD5819B3EC;
+	Thu, 17 Jul 2025 00:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752713750; cv=none; b=L7amxjZyJgIMpC2iClOIvvZPPRANGLJd+x8lgrc1qriNCG+1L4Jx6xVkg7eVzmY7S/nra54394xyCCqD6vV4384EVCh9/Yt+3Tyvlz8RzUvWRllwFrZo5TVR0HQD+Kx3rTpoM4bDv2jESZKaS37RD8O3Lty/riLbRKTjgzeL+Ig=
+	t=1752713751; cv=none; b=Slq0TQZAeGMVvOK7/9SbjcivzH8KlpNkrWCjmLkh9bSKNL4Z4O3YhfUCVP7ZIi2T234rRUWOiXp+N5Fgj5q9CuT4fMFQJr2KSXg8RAupSzLnWJ3aHrVdBsGofJ+5ZtM1C5+YYxIw7dvgALOmMzFU0frI/q9IjAQHIPpz8k5XXBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752713750; c=relaxed/simple;
-	bh=Lwd7xExybTot6x05t/ihJ3H+SIWk5GM8UXSeQC6XPKk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CDIV9XUX8rs889UAYcETtXeE6IXBeAS6BQG/KZ5hLemAKfKv0UjLfnGA0cSuDuWLixKREhf/K/Zi5uCjxVIyIOMZl0Ls4Hd9oSEPDEfoM50KBJjtF+DUXeH5UntOC817xgy7VfQJ179b2zqLqD/IDsJI6ZOiiJzljTBLhYPM0dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OCNca29K; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56GGDWpA032260
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 00:55:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	IE2mv/XyFgD4b+TvkQGaKdoVQYDSr2EgRQz4YF0xCJw=; b=OCNca29K4/heGuRI
-	EuoPnowCMwoZD2GJk0v9O20MttCKZB0gRAcvZzZPPCbx9Q2uMUzQ21mJgoqzFQjD
-	Odfj+DMhJXRXXz3uKKqBhI3F0JEgq4VHi1N+6mY+igTUdBhaTFTcuqu5QecEvyuF
-	ztD8SErr+ku9d/WRaz0H8UbZP5ykZGIXd6/M+xHcgYf1WJ0NjWru43SgQT0t7B0t
-	zWnHQh0LVS80FQXNkuc14oju7UtxAmzb8SGkj1SsVSjUnsFscUOHJgvuO7R3N0Fi
-	LSTVtwEh8b0uR8be32h8vzzSQoXSUQXZS7+2BMLjyuLksnggQO6yEk0qkkf2BmQv
-	9SkOzA==
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ug385y06-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 00:55:47 +0000 (GMT)
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b2c37558eccso317768a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 17:55:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752713746; x=1753318546;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IE2mv/XyFgD4b+TvkQGaKdoVQYDSr2EgRQz4YF0xCJw=;
-        b=s8iZAyxT+M52kfVkixkHhydTdnlOpBlAJrZEBBGKoc7O/u9Jho7jF6qEKnTWsKDX5b
-         EsZLjVNTyzE9Hxmh5qc/X5SAl4+4t8+WokpEJTiIm0taDI1GnrD6/yq7hQ2DuM4tR3E2
-         DTDREDwG4dZv0ua8lksfKYkDREcx4UZ4vNYgrxO8DjkR1bFssRbD+4vJdio2yyrCUBEu
-         iBRCT8VSr8FPGZDRcWTbdB2ugoDktGCw/L2migoXxmmF/JISYxq8HOF+r82IlfGkxxTF
-         XSOBHky7Al27jx7eGREekiB5WIqNBKJkqTylTJJxS3kNFKm4VXTBNhFC8rOvMSteH5Im
-         vwxw==
-X-Forwarded-Encrypted: i=1; AJvYcCVEgXbMdtjc+EIY7K/+ckrI/QGxOQsfKg1kdhswtoBgNzWBW7BKju3b2eB9ylsf7E5zsiifgg4UDrcz1rM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyURpdecVZa436W2qSxU4HS/HVI5hYhGsKuOp+YqkbC7z7moDY0
-	uUAL7vtCTe9aaCB674NXT3/PazHNQekUOA6OJvLZu2V9cyIURilmnp56TtxYKT5xzF50o0x+g9l
-	KWcJMNeLcSgIp+I0qjOE1+//0e5jhi8JXelLFhvnoJueF4KrNQiUDb3VxIcRVmwbXS4o=
-X-Gm-Gg: ASbGncunIXLOtDmwbX1YGPKFSDm+ljTP0xImRrchah+0Kf8MM8dkwQyiX03uyWzMgLT
-	jqzaKoceQwWpdANhrwIWEWr5SxppLQqvKlEzz/JYAC+QC4PcYUsBsNj0I5W/J0uSS9HSnPWbA2n
-	f1UZyDVHXVJBYDufeoCXM4dZGaoNMRlFynch5gR88R8fRRSPLl9t7HaY25NU6ozNtv6WkcpMMvR
-	Wr1ZbOlIaVzrZ1nQrAVp28ZM+Xz8zpPjN92q5uwwZjMe36U8jaUN7AXgI1l9fscmuXmXCCAMKdp
-	L+IAmzLUXqlTrkfWJZXyacAPOnjJBNDPLNnFB5fXjGkNEmygzMqMJG2LCQ6B8Xt9HVrjlEIyMGc
-	1OHEtnyUyMbTehPoTKRqaKLG5
-X-Received: by 2002:a05:6a20:431b:b0:215:efed:acfc with SMTP id adf61e73a8af0-237d5f28f06mr9124555637.7.1752713745949;
-        Wed, 16 Jul 2025 17:55:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEsusfkryQNV4zgPxlZ3pgSGcpHupRiF5HVteLlYpaFodV/KYUSAfdyKsskldFXBYJwvAiNtA==
-X-Received: by 2002:a05:6a20:431b:b0:215:efed:acfc with SMTP id adf61e73a8af0-237d5f28f06mr9124527637.7.1752713745535;
-        Wed, 16 Jul 2025 17:55:45 -0700 (PDT)
-Received: from [10.133.33.228] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3bbe6bd7d1sm14379656a12.35.2025.07.16.17.55.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Jul 2025 17:55:44 -0700 (PDT)
-Message-ID: <4850a2a5-dbeb-43f4-9005-1cc022545dcd@oss.qualcomm.com>
-Date: Thu, 17 Jul 2025 08:55:39 +0800
+	s=arc-20240116; t=1752713751; c=relaxed/simple;
+	bh=DYm3EvaQLJoiyOXjVFZNQ8DlNCYXYVwjCLAypaAjzrI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bm7Y9a5GuXLn8hh1yeryuJypqM6SrmUXflrFvaVbYB3+6Gt9WQWVXL5Cszj/c0hgOiLoJHDnAry7HFEPHX/GuFCYpdL5A1zQb4Yi+fk5UL6UB32oLKcNI5HsJy72g2v1lLyyKvK0NPUTFbIs6R50lkRGHW7Fp+9/q1NJF/mr43s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MeiVTJk6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAAAEC4CEF5;
+	Thu, 17 Jul 2025 00:55:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752713751;
+	bh=DYm3EvaQLJoiyOXjVFZNQ8DlNCYXYVwjCLAypaAjzrI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MeiVTJk6sxUkZVWdqir4DjLwZvaEjg8SIZq1AQACBBB1s6NVyUuKv14ZRJrZoF+Tx
+	 Hji6qctY0WJRtXrcwYZYk0fHLAbVlp921Sf0yZvKuNbC0ThRynaqRx9B+DhkvIXhFO
+	 IILLAg74pHkcVMnzAm/9CiD8ahuEw1hvAvKNIlY+SsIaYegsO6ZSuJEhweji+CxmcD
+	 /2sGA4L33BVYQ9UN9+6nOFubY0H5Hdh7sdwHSyJsZjXw3IlXUgusl7VHVsi4Zb0kwy
+	 wvjP5cY/LxUnFQbyHJUcsfWcphu/gCApyRW7ehy9nfzDKW4pUhKkd6zgX8EdKYJk9y
+	 sVFWZnEm3YQbw==
+Date: Wed, 16 Jul 2025 17:55:48 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v3 1/8] perf annotate: Rename to
+ __hist_entry__tui_annotate()
+Message-ID: <aHhKFPylk4BDw9wA@google.com>
+References: <20250716050054.14130-1-namhyung@kernel.org>
+ <20250716050054.14130-2-namhyung@kernel.org>
+ <aHgIsWPhKDZx6R_-@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 RESEND 01/10] coresight: core: Refactoring
- ctcu_get_active_port and make it generic
-To: Mike Leach <mike.leach@linaro.org>, Jie Gan <jie.gan@oss.qualcomm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        James Clark <james.clark@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Tingwei Zhang <quic_tingweiz@quicinc.com>,
-        Yuanfang Zhang <quic_yuanfang@quicinc.com>,
-        Mao Jinlong <quic_jinlmao@quicinc.com>, coresight@lists.linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250714063109.591-1-jie.gan@oss.qualcomm.com>
- <20250714063109.591-2-jie.gan@oss.qualcomm.com>
- <CAJ9a7VjyWtopbnTirRnd4-486PrdQH00cvUR0kcPde2hxCUH-A@mail.gmail.com>
-Content-Language: en-US
-From: Jie Gan <jie.gan@oss.qualcomm.com>
-In-Reply-To: <CAJ9a7VjyWtopbnTirRnd4-486PrdQH00cvUR0kcPde2hxCUH-A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDAwNiBTYWx0ZWRfX3tqUS8CGZ8oR
- W1hMDayRbKkO4/EhQRvfS17BoZSSbeETUTjvtzuCxFJibviKAcnb9ByK1F15YEbY7CjbSM4rAzf
- /kRJMWS8UEn+DteXUnzhNoPQyT8QturOJKYykke8daBmtzuzNhKVy2Jv/yw9f2YD39wN4dPOdj6
- LRnHe8nMFy79FF3dtGKnj4aHXZwpw7aoH9I0bRZeDjKqQxyk7qofKjaf8deEh5ZuyKMuGK+1Piw
- LKoSZfEvFAJTY2JT+pNouCR1aQy1oP6XlIXplskrdHB5AjZeSy9bbAiDd4PojKtWIYNoO0yLY/K
- jdkQRvQSA120vncYpVLi3FX9jpGydGDS7fzmj6E7ME9p7gypuQNyW4SSuoRbXYf6ncX9DyTExlk
- K9hReVI9gesn6ImvMDOlJbXlCZSGKl+RB4u/LrDeEZ5olMFNjQePfuttWeR3J51k+mwc8egR
-X-Proofpoint-GUID: 3skN85J7D15bMwtXL4zCHr6B5jirAAzq
-X-Authority-Analysis: v=2.4 cv=SZT3duRu c=1 sm=1 tr=0 ts=68784a13 cx=c_pps
- a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=CCvaVWANnUWFBPVUepYA:9
- a=QEXdDO2ut3YA:10 a=3WC7DwWrALyhR5TkjVHa:22
-X-Proofpoint-ORIG-GUID: 3skN85J7D15bMwtXL4zCHr6B5jirAAzq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-16_05,2025-07-16_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 mlxlogscore=999 mlxscore=0 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 adultscore=0 impostorscore=0 malwarescore=0
- phishscore=0 spamscore=0 suspectscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507170006
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aHgIsWPhKDZx6R_-@x1>
 
+Hi, welcome back!
 
+On Wed, Jul 16, 2025 at 05:16:49PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Tue, Jul 15, 2025 at 10:00:47PM -0700, Namhyung Kim wrote:
+> > There are three different but similar functions for annotation on TUI.
+> 
+> Why the two initial __? Normally this is when its about work on some
+> data structure but the pointer to it isn't passed, but in this case the
+> first arg is a 'struct hist_entry *', so calling it
+> hist_entry__tui_annotate() would be right?
+> 
+> Well, there is already a hist_entry__tui_annotate(), that does some
+> term setup before calling this "new" __hist_entry__tui_annotate().
+> 
+> Looks confusing tho :-\
 
-On 7/16/2025 6:20 PM, Mike Leach wrote:
-> Hi,
-> 
-> On Mon, 14 Jul 2025 at 07:31, Jie Gan <jie.gan@oss.qualcomm.com> wrote:
->>
->> Remove ctcu_get_active_port from CTCU module and add it to the core
->> framework.
->>
->> The port number is crucial for the CTCU device to identify which ETR
->> it serves. With the port number we can correctly get required parameters
->> of the CTCU device in TMC module.
->>
->> Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
->> ---
->>   drivers/hwtracing/coresight/coresight-core.c  | 24 +++++++++++++++++++
->>   .../hwtracing/coresight/coresight-ctcu-core.c | 19 +--------------
->>   drivers/hwtracing/coresight/coresight-priv.h  |  2 ++
->>   3 files changed, 27 insertions(+), 18 deletions(-)
->>
->> diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
->> index 1accd7cbd54b..5297a5ff7921 100644
->> --- a/drivers/hwtracing/coresight/coresight-core.c
->> +++ b/drivers/hwtracing/coresight/coresight-core.c
->> @@ -580,6 +580,30 @@ struct coresight_device *coresight_get_sink(struct coresight_path *path)
->>   }
->>   EXPORT_SYMBOL_GPL(coresight_get_sink);
->>
->> +/**
->> + * coresight_get_port_helper: get the in-port number of the helper device
->> + * that is connected to the csdev.
->> + *
-> 
-> As written this looks at all connections, not just those that are
-> helpers. That is fine, so perhaps rename as such.
-> 
-> e.g. coresight_get_in_port_dest
-> 
-> and name the input parameters src , dest respectively.
+I thought it's a pattern to have a wrapper to deal with some boilerplate
+code like this or locking, and have an internal function (with the "__"
+prefix) to do the real work so that it can be called in a different
+condition.
 
-Make sense for me, will update in next version.
-Thanks for the suggestion.
+But I can rename if you don't feel comfortable with this.  Any
+suggestion?
+
+Thanks,
+Namhyung
 
 > 
->> + * @csdev: csdev of the device that is connected to helper.
->> + * @helper: csdev of the helper device.
->> + *
->> + * Return: port number upson success or -EINVAL for fail.
+> - Arnaldo
 > 
-> sp: upon/upson
-> 
->> + */
->> +int coresight_get_port_helper(struct coresight_device *csdev,
->> +                             struct coresight_device *helper)
->> +{
->> +       struct coresight_platform_data *pdata = helper->pdata;
->> +       int i;
->> +
->> +       for (i = 0; i < pdata->nr_inconns; ++i) {
->> +               if (pdata->in_conns[i]->src_dev == csdev)
->> +                       return pdata->in_conns[i]->dest_port;
->> +       }
->> +
->> +       return -EINVAL;
->> +}
->> +EXPORT_SYMBOL_GPL(coresight_get_port_helper);
->> +
->>   u32 coresight_get_sink_id(struct coresight_device *csdev)
->>   {
->>          if (!csdev->ea)
->> diff --git a/drivers/hwtracing/coresight/coresight-ctcu-core.c b/drivers/hwtracing/coresight/coresight-ctcu-core.c
->> index c6bafc96db96..28ea4a216345 100644
->> --- a/drivers/hwtracing/coresight/coresight-ctcu-core.c
->> +++ b/drivers/hwtracing/coresight/coresight-ctcu-core.c
->> @@ -118,23 +118,6 @@ static int __ctcu_set_etr_traceid(struct coresight_device *csdev, u8 traceid, in
->>          return 0;
->>   }
->>
->> -/*
->> - * Searching the sink device from helper's view in case there are multiple helper devices
->> - * connected to the sink device.
->> - */
->> -static int ctcu_get_active_port(struct coresight_device *sink, struct coresight_device *helper)
->> -{
->> -       struct coresight_platform_data *pdata = helper->pdata;
->> -       int i;
->> -
->> -       for (i = 0; i < pdata->nr_inconns; ++i) {
->> -               if (pdata->in_conns[i]->src_dev == sink)
->> -                       return pdata->in_conns[i]->dest_port;
->> -       }
->> -
->> -       return -EINVAL;
->> -}
->> -
->>   static int ctcu_set_etr_traceid(struct coresight_device *csdev, struct coresight_path *path,
->>                                  bool enable)
->>   {
->> @@ -147,7 +130,7 @@ static int ctcu_set_etr_traceid(struct coresight_device *csdev, struct coresight
->>                  return -EINVAL;
->>          }
->>
->> -       port_num = ctcu_get_active_port(sink, csdev);
->> +       port_num = coresight_get_port_helper(sink, csdev);
->>          if (port_num < 0)
->>                  return -EINVAL;
->>
->> diff --git a/drivers/hwtracing/coresight/coresight-priv.h b/drivers/hwtracing/coresight/coresight-priv.h
->> index 33e22b1ba043..07a5f03de81d 100644
->> --- a/drivers/hwtracing/coresight/coresight-priv.h
->> +++ b/drivers/hwtracing/coresight/coresight-priv.h
->> @@ -156,6 +156,8 @@ void coresight_remove_links(struct coresight_device *orig,
->>   u32 coresight_get_sink_id(struct coresight_device *csdev);
->>   void coresight_path_assign_trace_id(struct coresight_path *path,
->>                                     enum cs_mode mode);
->> +int coresight_get_port_helper(struct coresight_device *csdev,
->> +                             struct coresight_device *helper);
->>
-> rename here too
-
-will do.
-
-Best Regards,
-Jie
-
-> 
->>   #if IS_ENABLED(CONFIG_CORESIGHT_SOURCE_ETM3X)
->>   int etm_readl_cp14(u32 off, unsigned int *val);
->> --
->> 2.34.1
->>
-> 
-> regards
-> 
-> Mike
-
+> > Rename it to __hist_entry__tui_annotate() and make sure it passes 'he'.
+> > It's not used for now but it'll be needed for later use.
+> > 
+> > Also remove map_symbol__tui_annotate() which was a simple wrapper.
+> > 
+> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > ---
+> >  tools/perf/ui/browsers/annotate.c | 17 +++++++----------
+> >  tools/perf/ui/browsers/hists.c    |  2 +-
+> >  tools/perf/util/annotate.h        | 12 ------------
+> >  tools/perf/util/hist.h            | 12 +++++++-----
+> >  4 files changed, 15 insertions(+), 28 deletions(-)
+> > 
+> > diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
+> > index 183902dac042ecb0..28ef146f29e8e742 100644
+> > --- a/tools/perf/ui/browsers/annotate.c
+> > +++ b/tools/perf/ui/browsers/annotate.c
+> > @@ -27,6 +27,7 @@ struct annotate_browser {
+> >  	struct rb_node		   *curr_hot;
+> >  	struct annotation_line	   *selection;
+> >  	struct arch		   *arch;
+> > +	struct hist_entry	   *he;
+> >  	bool			    searching_backwards;
+> >  	char			    search_bf[128];
+> >  };
+> > @@ -557,7 +558,7 @@ static bool annotate_browser__callq(struct annotate_browser *browser,
+> >  	target_ms.map = ms->map;
+> >  	target_ms.sym = dl->ops.target.sym;
+> >  	annotation__unlock(notes);
+> > -	symbol__tui_annotate(&target_ms, evsel, hbt);
+> > +	__hist_entry__tui_annotate(browser->he, &target_ms, evsel, hbt);
+> >  	sym_title(ms->sym, ms->map, title, sizeof(title), annotate_opts.percent_type);
+> >  	ui_browser__show_title(&browser->b, title);
+> >  	return true;
+> > @@ -1032,12 +1033,6 @@ static int annotate_browser__run(struct annotate_browser *browser,
+> >  	return key;
+> >  }
+> >  
+> > -int map_symbol__tui_annotate(struct map_symbol *ms, struct evsel *evsel,
+> > -			     struct hist_browser_timer *hbt)
+> > -{
+> > -	return symbol__tui_annotate(ms, evsel, hbt);
+> > -}
+> > -
+> >  int hist_entry__tui_annotate(struct hist_entry *he, struct evsel *evsel,
+> >  			     struct hist_browser_timer *hbt)
+> >  {
+> > @@ -1046,11 +1041,12 @@ int hist_entry__tui_annotate(struct hist_entry *he, struct evsel *evsel,
+> >  	SLang_init_tty(0, 0, 0);
+> >  	SLtty_set_suspend_state(true);
+> >  
+> > -	return map_symbol__tui_annotate(&he->ms, evsel, hbt);
+> > +	return __hist_entry__tui_annotate(he, &he->ms, evsel, hbt);
+> >  }
+> >  
+> > -int symbol__tui_annotate(struct map_symbol *ms, struct evsel *evsel,
+> > -			 struct hist_browser_timer *hbt)
+> > +int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
+> > +			       struct evsel *evsel,
+> > +			       struct hist_browser_timer *hbt)
+> >  {
+> >  	struct symbol *sym = ms->sym;
+> >  	struct annotation *notes = symbol__annotation(sym);
+> > @@ -1064,6 +1060,7 @@ int symbol__tui_annotate(struct map_symbol *ms, struct evsel *evsel,
+> >  			.priv	 = ms,
+> >  			.use_navkeypressed = true,
+> >  		},
+> > +		.he = he,
+> >  	};
+> >  	struct dso *dso;
+> >  	int ret = -1, err;
+> > diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
+> > index d26b925e3d7f46af..55455c49faf01891 100644
+> > --- a/tools/perf/ui/browsers/hists.c
+> > +++ b/tools/perf/ui/browsers/hists.c
+> > @@ -2484,8 +2484,8 @@ do_annotate(struct hist_browser *browser, struct popup_action *act)
+> >  	else
+> >  		evsel = hists_to_evsel(browser->hists);
+> >  
+> > -	err = map_symbol__tui_annotate(&act->ms, evsel, browser->hbt);
+> >  	he = hist_browser__selected_entry(browser);
+> > +	err = __hist_entry__tui_annotate(he, &act->ms, evsel, browser->hbt);
+> >  	/*
+> >  	 * offer option to annotate the other branch source or target
+> >  	 * (if they exists) when returning from annotate
+> > diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
+> > index 8b5131d257b01e3e..0f640e4871744262 100644
+> > --- a/tools/perf/util/annotate.h
+> > +++ b/tools/perf/util/annotate.h
+> > @@ -471,18 +471,6 @@ int hist_entry__annotate_printf(struct hist_entry *he, struct evsel *evsel);
+> >  int hist_entry__tty_annotate(struct hist_entry *he, struct evsel *evsel);
+> >  int hist_entry__tty_annotate2(struct hist_entry *he, struct evsel *evsel);
+> >  
+> > -#ifdef HAVE_SLANG_SUPPORT
+> > -int symbol__tui_annotate(struct map_symbol *ms, struct evsel *evsel,
+> > -			 struct hist_browser_timer *hbt);
+> > -#else
+> > -static inline int symbol__tui_annotate(struct map_symbol *ms __maybe_unused,
+> > -				struct evsel *evsel  __maybe_unused,
+> > -				struct hist_browser_timer *hbt __maybe_unused)
+> > -{
+> > -	return 0;
+> > -}
+> > -#endif
+> > -
+> >  void annotation_options__init(void);
+> >  void annotation_options__exit(void);
+> >  
+> > diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
+> > index c64254088fc77246..11ae738772ca4f61 100644
+> > --- a/tools/perf/util/hist.h
+> > +++ b/tools/perf/util/hist.h
+> > @@ -712,8 +712,9 @@ struct block_hist {
+> >  #include "../ui/keysyms.h"
+> >  void attr_to_script(char *buf, struct perf_event_attr *attr);
+> >  
+> > -int map_symbol__tui_annotate(struct map_symbol *ms, struct evsel *evsel,
+> > -			     struct hist_browser_timer *hbt);
+> > +int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
+> > +			       struct evsel *evsel,
+> > +			       struct hist_browser_timer *hbt);
+> >  
+> >  int hist_entry__tui_annotate(struct hist_entry *he, struct evsel *evsel,
+> >  			     struct hist_browser_timer *hbt);
+> > @@ -741,9 +742,10 @@ int evlist__tui_browse_hists(struct evlist *evlist __maybe_unused,
+> >  {
+> >  	return 0;
+> >  }
+> > -static inline int map_symbol__tui_annotate(struct map_symbol *ms __maybe_unused,
+> > -					   struct evsel *evsel __maybe_unused,
+> > -					   struct hist_browser_timer *hbt __maybe_unused)
+> > +static inline int __hist_entry__tui_annotate(struct hist_entry *he __maybe_unused,
+> > +					     struct map_symbol *ms __maybe_unused,
+> > +					     struct evsel *evsel __maybe_unused,
+> > +					     struct hist_browser_timer *hbt __maybe_unused)
+> >  {
+> >  	return 0;
+> >  }
+> > -- 
+> > 2.50.0
 
