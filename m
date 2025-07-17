@@ -1,117 +1,151 @@
-Return-Path: <linux-kernel+bounces-735380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB756B08E81
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:49:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 006DAB08E86
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:51:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15075586999
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:49:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF6EC7A9E02
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:49:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DEF62F5C5C;
-	Thu, 17 Jul 2025 13:49:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446FD2F5C54;
+	Thu, 17 Jul 2025 13:51:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jMjZ+mdG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FWm4oQjK"
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6540D291C1A;
-	Thu, 17 Jul 2025 13:49:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBAAD2E717F;
+	Thu, 17 Jul 2025 13:51:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752760151; cv=none; b=Q3Y1D+6Y8na5jYNOcyfJHZq6HPPEZmvRUSRTHjFkQgjO3KLFUXUxe1U6o7bIbvsETebYoyWAq1M24t3l/tgg5h6KzRMBgukSfq7HhsoWrxS/QVFkLTNDok5pqisdRTdGCCxX/mitB35f4vnwdv4IaHsNzjZff6jtkQmL5WyKQpk=
+	t=1752760267; cv=none; b=b/NZ3GDaQ9CP6+ifCZvA9MvwkI2IiuVctM3Z88165oA198WcmRYfGpuWR/KQD4Ke6ZqLshKEwHcoifjlM4GNnnbDvQ5w0fYKmay0pxrr0TYxPo0amXOh0llbdABrqsjY8TwEIAUimUBUEH0LG22ZyTr3QkPqPhzx0PfXoN8w5vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752760151; c=relaxed/simple;
-	bh=nHp+NjjyXCVy5oSDMxTXYAES3M36KwyjgL5lVBfYtOw=;
+	s=arc-20240116; t=1752760267; c=relaxed/simple;
+	bh=19aZVShZ6HFtYfeUxh4qhpz2sGVEMtS5ltBy75+3rio=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RR/3bMFnawS/m8qvXJOqP1xm6XimYPVa0io8fhctArexwLeURNMj2LZ1dNXe0XFCGtdyAKs2HL52FGnh4z2L3GB8lITG2XgcUzX+BHyBeQrgnX8VjpGeUd2XzKYHGKGRRocCEaFBpg9ZOGW41wDmrrdLCsF5R93sj2g/lqG86Wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jMjZ+mdG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15904C4CEE3;
-	Thu, 17 Jul 2025 13:49:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752760150;
-	bh=nHp+NjjyXCVy5oSDMxTXYAES3M36KwyjgL5lVBfYtOw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jMjZ+mdG32BefaMZSw2A5Nl3cP0yrGeQPpIJ5UPA6H0f5cHiQNAHHNA9Vwe4pl1BG
-	 wsZIyoFUWVhchl3yyMjyBkxCuXDJa3Bvw8H20ppUqSY365MLNRwUIQGm2pBp1PngG8
-	 3TsqVRNESm1SQGA0jGdGeAWQoQmu++Wcbg5XaOM/3ymoagoEbpAsNTkUGAA4NKxnH1
-	 LLW9nXl2wr+ylna8xCbL/2Sjjh1XnWnmy0CdxwH5jiASlw3pCNcFdo+sNjLB9jWTiZ
-	 IKBF3EfmFX/gwhHdJ0pIJZUbsHKDTXKMTnK04MhVmgV8VWtxnk1b/FNsDI+w85WkmY
-	 pilwzSi69xZ/w==
-Date: Thu, 17 Jul 2025 14:49:02 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>, Willy Tarreau <w@1wt.eu>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
-	Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Kees Cook <kees@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-	linux-doc@vger.kernel.org, workflows@vger.kernel.org,
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v5 00/15] kunit: Introduce UAPI testing framework
-Message-ID: <aed80898-a805-447e-85dd-473df306a4ed@sirena.org.uk>
-References: <20250717-kunit-kselftests-v5-0-442b711cde2e@linutronix.de>
- <20250717132259.GA25835@lst.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=V4JoJRs/UivXY0zmNADhDCP26Qs2Ze5sSlEgRWFqJYoivFAnlgltjLBxJBFn7ZIUnjSrmerSKs6bclKJhiBxm2RHsq7C9cMkvKDw3JGfbILQKL5SLjibfYBBU2EaPlrhb9VSkU1tn/Uz5dSpQytUqrJmeaQIGcSVXmTIe/rC8LI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FWm4oQjK; arc=none smtp.client-ip=209.85.222.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-87f2aed4092so514198241.2;
+        Thu, 17 Jul 2025 06:51:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752760265; x=1753365065; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=OFoZFsmVBgIgOnRb6v56ZyJVL3iVN9nED2Us643BX3E=;
+        b=FWm4oQjKgn7CbQ0eCwi8zVgoX/Wvwx3oGkyH/FvP6n+QgyYL84gPgCOggJwjadK8q/
+         Xn09BPdgr40B+rUVwv0AWY9ztJl/qQLTff75DAeyOe82xfjTB1p13TnOQLGaURfx3c6L
+         AO7fmMW3ajskuuT1ufa46DpFNaIwTKYzxatbgLT/R/bkOOTgzW3flHpdEU9Ukabd9qvx
+         AXEha5bBZ25dgiTSGO0y2PQ8wH+THws7vHFnyLg1BsRS/+r/1YVRiEebiK9iolT5Ktp0
+         wZiTazai3rTHEBmjM2kiuMTPBYWCVAQGwYSCimQE/v8DMd1CMcf4O8vTFkviyZWGKcAE
+         c7GA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752760265; x=1753365065;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OFoZFsmVBgIgOnRb6v56ZyJVL3iVN9nED2Us643BX3E=;
+        b=l9sAvldPrtaRz4eRABH94k2i+Dzuun1KbWGofFhJpWl/gSiNtXS431iJ3VqAzHd3KO
+         2Q3sFfzISyWtnFixWtpliyoWfIrbf4eV9RfXhFFXHH/HxdnJX1+ET+7QprCSN9mdgHN2
+         kKiyQFRguOM7lXQSbQsvyPiQozi+nxiW345GjhR7dERmVhUBUOznwtAYollBtGPa3/4z
+         3ZffM0VqnXwYVKGLn/faCagZZkNTVsnQqGu2uoXCVy2+1tvpao0idhS5+Whhd2WBlMaE
+         iW3j/J95TgQrhjx3U5B6tAPQMzqJWfRGJWLy+c2XKeOHJ2BhnfQn/8n9J3MeXPkwJ/K/
+         IExw==
+X-Forwarded-Encrypted: i=1; AJvYcCWIaUSMcphI22AE/gKVyOrYqhHwWnNx4Ec6w5OJLTZZirGMMq8aISuK/sHqG0CTD+uI9wFF8OKg3VDkxVE=@vger.kernel.org, AJvYcCXZoOBAxihN4pMiC31WIrspscpiGUb5z9K/lssn7LTwoH/a+FuPvznPZ+uL1iTUh/QqBmSEIqGW+YRS@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxhkyi6oy9I/894+2SCC7Sj1t0t2NFouGsC44Px/jE3oe/8K4PE
+	0D/9kWhc9G4g4WoLY9S5HnPTlg+0nfzFEIMcmlk3+gOkzFnACfBwh20R
+X-Gm-Gg: ASbGncvF5qQAlewQ9IRh9trbDFaieeDsTtKDKocU+kmcQ+8uWey54W8o4TsLQubNQ/U
+	O7L/VoxWGxMkVL8AtiXvwZAYG9F6mr3Vfvyy8zK2QNLQ2tKWEI5hMIGGP+Vk8o3/+lNwrCFBYgD
+	w8OzNff3FN8o5FKBfMok/ELiFHz83O93/3yiMicaRosSWfCgaRjGNF1csCw6EZEUKhAys8zRshM
+	439wS301lygTLCepwWFb1wd8WWNlaUqBI8iClymaLMWgR8P3AZHGHJiLBD7BSe+C4WA03UScGoL
+	RzoqZQgHl934BT4cTaUF+6SY/Q68gQhRw6UkDR8NPNp/NVj1/sbJ+Jz/X8dR6c+VP3F0QlRydNp
+	1wc5IA8CQSw==
+X-Google-Smtp-Source: AGHT+IGzgyrDUgDH08RDqZ3hkrbd5Lom3WMZY7KIBjhCX4qRVfQkKF54K0pt01hz0j8j+3pC5nv9qg==
+X-Received: by 2002:a05:6102:4421:b0:4e7:dbd2:4604 with SMTP id ada2fe7eead31-4f8999bcbeamr4068557137.17.1752760264477;
+        Thu, 17 Jul 2025 06:51:04 -0700 (PDT)
+Received: from geday ([2804:7f2:800b:2246::dead:c001])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4f62faf5ec1sm2853884137.23.2025.07.17.06.51.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Jul 2025 06:51:03 -0700 (PDT)
+Date: Thu, 17 Jul 2025 10:50:49 -0300
+From: Geraldo Nascimento <geraldogabriel@gmail.com>
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Shawn Lin <shawn.lin@rock-chips.com>,
+	linux-rockchip@lists.infradead.org,
+	Hugh Cole-Baker <sigmaris@gmail.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v3 2/3] PCI: rockchip-host: Retry link training on
+ failure without PERST#
+Message-ID: <aHj_ue-eFQu_NgHd@geday>
+References: <cover.1749582046.git.geraldogabriel@gmail.com>
+ <b7c09279b4a7dbdba92543db9b9af169776bd90c.1749582046.git.geraldogabriel@gmail.com>
+ <zuiq3b2rsixymtjr3xzrb26clikvlja62wgj65umnse4kuk75c@x5qan73ispxe>
+ <aFk-MeIWFcBiGBPr@geday>
+ <djbhz7qfyzrn7mdqmvqhyh6yjsjyigjly7py4f7aj5f4qbabou@67gk3qdnvzws>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="bKFrlx/B5i2FyXcs"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250717132259.GA25835@lst.de>
-X-Cookie: May I ask a question?
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <djbhz7qfyzrn7mdqmvqhyh6yjsjyigjly7py4f7aj5f4qbabou@67gk3qdnvzws>
 
+On Thu, Jul 17, 2025 at 05:59:32PM +0530, Manivannan Sadhasivam wrote:
+> On Mon, Jun 23, 2025 at 08:44:49AM GMT, Geraldo Nascimento wrote:
+> > On Mon, Jun 23, 2025 at 05:29:46AM -0600, Manivannan Sadhasivam wrote:
+> > > On Tue, Jun 10, 2025 at 04:05:40PM -0300, Geraldo Nascimento wrote:
+> > > > +reinit:
+> > > 
+> > > So this reinit part only skips the PERST# assert, but calls
+> > > rockchip_pcie_init_port() which resets the Root Port including PHY. I don't
+> > > think it is safe to do it if PERST# is wired.
+> > 
+> > I don't understand, could you be a bit more verbose on why do you
+> > think this is dangerous?
+> > 
+> 
+> When the Root Port and PHY gets reset, there is a good chance that the refclk
+> would also be cutoff. So if that happens without PERST# assert, then the device
+> has no chance to clean its state machine. If the device gets its own refclk,
+> then it is a different story, but we should not make assumptions.
 
---bKFrlx/B5i2FyXcs
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Mani, thank you for your time spent looking into this!
 
-On Thu, Jul 17, 2025 at 03:23:00PM +0200, Christoph Hellwig wrote:
-> On Thu, Jul 17, 2025 at 10:48:02AM +0200, Thomas Wei=DFschuh wrote:
+I'm not sure if the following information helps, but patch 2 of this
+series disables the PCIe 3.3V always-on/boot-on through DT. That was
+not incidental, and in fact it is required for patch 1 to work.
 
-> > If the kernel toolchain is not fit to
-> > produce userspace because of a missing libc, the kernel's own nolibc can
-> > be used instead.
+Then, if you follow the proposed code change, you will see that power
+is effectively cut via disabling the power regulators, even before
+disabling the clocks. So there's effectively zero chance of corrupting
+the endpoint device state machine, since the device is power-cycled.
 
-> Is nolibc enough to run all the selftests?  If so we should just do
-> it unconditionally, but linking to different libraries by availability
-> seems a bit problematic.
+While I understand we should not make assumptions on kernel work, and
+that the patch is unmergeable on its current form (it's a goddamn hack),
+it does empirically alleviate a very real report, that of known-good
+working devices refusing to cooperate with Rockchip-IP PCIe.
 
-There's some that rely on standard userspace libraries for accessing the
-functionality they're testing or for things like crypto which would
-require a bunch more work.
+I agree we should wait on Shawn Lin's feedback.
 
---bKFrlx/B5i2FyXcs
-Content-Type: application/pgp-signature; name="signature.asc"
+Thank you,
+Geraldo Nascimento
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmh4/00ACgkQJNaLcl1U
-h9Ch8gf/cpaAY8IBIFlBrmWIiQkiJ0FFikWlfW+MYZ7O15f9qA8GKRgtK4Nyeyrf
-buC78gz9f/UdKKBdArLYyoEf73opCWjXWwP1Fh0nTK3KWwiFPfbYsjpf0w0jx58V
-9ZjqqXzhTMvg8vgJHhEVV57dFkjzE9iOATxG7nwq/mHjZT5ct65LkW0qYFcjaXt9
-P90/dGgYC5BYct1wwET6oTBQ/wzO4iBpBMfg2a/kF1y8hfe08Yp/1VWlxXu4YFTH
-enY7XYkHBTJBoXqbCF9oquWhxKPymOn4gp8ojzBqZZEGHAILJyZOLbJpzeQ865bi
-j1Gh2DNVxeHaX8nSKTWuvmR2g0uPwA==
-=9rbF
------END PGP SIGNATURE-----
-
---bKFrlx/B5i2FyXcs--
+> 
+> - Mani
+> 
+> -- 
+> மணிவண்ணன் சதாசிவம்
 
