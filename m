@@ -1,264 +1,136 @@
-Return-Path: <linux-kernel+bounces-734861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8123BB08748
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:45:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8FA4B0874C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:46:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C216156421B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:45:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B09C7BBD10
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 993FF26E6F3;
-	Thu, 17 Jul 2025 07:44:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC66256C7E;
+	Thu, 17 Jul 2025 07:46:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="few6KKyN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WqYvVgxY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F19F25B31B
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 07:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8793117E0;
+	Thu, 17 Jul 2025 07:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752738282; cv=none; b=kL8DtQ/SK1eFEG24JUazo4Ep2a2GU92eMGDO6BwDbL5U23IvGG/+0/FZqRq03NRXTuZ4D/snmivcEN+l70+kVAK30T5T39Tz+UDGHTnfSdmiDzGg/vbrNELfCKR9gxi/c/cGT/FoPMLVK330xH1EZsp78fk0E3desbqMf83tAB8=
+	t=1752738369; cv=none; b=unVLQRALKA96GfRwrDP+ldmGBkvGPICEayBb1q9FF+de1dzjeAGsgvpUF09wQRnQUAcU4kItWYI5DdRlTEHUGvqwD5hWXewOLbnSNkOmf8RQCCawgPLPLzAIS7eK1BliZ8SUDmhesNF5P2XIsQZ6X3DKLAf3sDU+uv2GVJlLK3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752738282; c=relaxed/simple;
-	bh=wgEaEOYrNfW6/ZI622k50gFLkRBA4GvQMzSqKH+iRtM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QwUYIH9lHS72kzsvWdlunjWOgYkjOIzo+j+TPuKfcrlH1IzIxi3ju5U20kaQKgMWengSu0go2BOuoGTjnQWIXIdCEIF/p09wCUwsVFnZmB1X+jXLCp6STEGJlcj4uuBSl3vCuUFV0piWIOzXPUevEWEHRcAqdTCXvG2w9GZ7S8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=few6KKyN; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752738280;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BARdK3M75VCMxXhs5BHV5EfarnbaGb893QTcxlP2ZM4=;
-	b=few6KKyNuzyQ5wv5A94n6zrz+hzX0tg1hhNoWTKfPUfshpKpu/oUEGnPhxeaFoX6IjWP4T
-	WhrIlJJIvYoJ7tWJDp7vuso8XABYJuOS06ZFgAwHoUJCcUlNnICb0upYacURyUW+JbfquW
-	Vyox6KWWY1unjv66aWmQ0bGyleeUKUc=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-55-zCtiDZvoMWO3VgaIwPVr9Q-1; Thu,
- 17 Jul 2025 03:44:36 -0400
-X-MC-Unique: zCtiDZvoMWO3VgaIwPVr9Q-1
-X-Mimecast-MFC-AGG-ID: zCtiDZvoMWO3VgaIwPVr9Q_1752738275
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3A67119560B0;
-	Thu, 17 Jul 2025 07:44:35 +0000 (UTC)
-Received: from warthog.procyon.org.com (unknown [10.42.28.2])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2303318004AD;
-	Thu, 17 Jul 2025 07:44:31 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: netdev@vger.kernel.org
-Cc: David Howells <dhowells@redhat.com>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-afs@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Jeffrey Altman <jaltman@auristor.com>,
-	Simon Horman <horms@kernel.org>,
-	stable@vger.kernel.org
-Subject: [PATCH net v2 5/5] rxrpc: Fix to use conn aborts for conn-wide failures
-Date: Thu, 17 Jul 2025 08:43:45 +0100
-Message-ID: <20250717074350.3767366-6-dhowells@redhat.com>
-In-Reply-To: <20250717074350.3767366-1-dhowells@redhat.com>
-References: <20250717074350.3767366-1-dhowells@redhat.com>
+	s=arc-20240116; t=1752738369; c=relaxed/simple;
+	bh=FXtHecgjkslmm6Te8ddh6F4hjWk/SLneIUCHaBDGU6o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IQ+plixlnY4YiqytumhTXK0stynqAc+PqvTQbem9rFZNpTneYxAkf0SyVL+Vlc9ZHBV0ltvw+tfiYrETPt0T0ZJGF4Ih92TFDf1/Lv+0ZSlSgJxsgLlFD0WBdWpVHgEuMxrjuxYvHw9fH3YohQPmwYswfP1AayBXbqH4JFk2Sm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WqYvVgxY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 034A0C4CEEB;
+	Thu, 17 Jul 2025 07:46:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752738369;
+	bh=FXtHecgjkslmm6Te8ddh6F4hjWk/SLneIUCHaBDGU6o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WqYvVgxYf0CLHH0IU1OSBjcaH7/z34DorzYCGw/a5sAlf/STLj6pLuS9JInNx61e1
+	 huhWwlsyhhQLGceJvGLrbOJHkjliGJCy8+joA4G6ea+m1TY69wElL7Ayk+WZ5OP/kH
+	 rdqupTLvhhrWL6nUVTHhvxqOWYT+YqXRtfYytkRdNwK5I4m2rmo7YqHheEIn0FAmlE
+	 TQ8WzjuG/dcLAdaL3DZj0IOzTDshfmrnEmdU6qtf7GesWwnz795csQYxTrSgo71tk3
+	 /s2veG//qMjOxccYufs4IQBBLO/a4IMwzC33T712jqr3Z7b3b3Tfp8Ed1SOyoMXEhU
+	 iusnz3xG18mIQ==
+Date: Thu, 17 Jul 2025 07:46:06 +0000
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: Radu Vele <raduvele@google.com>
+Cc: Benson Leung <bleung@chromium.org>,
+	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
+	Jameson Thies <jthies@google.com>,
+	Andrei Kuchynski <akuchynski@chromium.org>,
+	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] platform/chrome: cros_ec_typec: Add lock per-port
+Message-ID: <aHiqPuBm8Znmph61@google.com>
+References: <20250711003502.857536-1-raduvele@google.com>
+ <20250711003502.857536-2-raduvele@google.com>
+ <aHCPDXonAevxkMho@google.com>
+ <CACKy9TJHtA5K2YqdNdnMuTvOsz4OCkRds4Hbj8aZdK5VXpMgWw@mail.gmail.com>
+ <aHXwOtrFpn-yRFvs@google.com>
+ <CACKy9TJvkx0Bi69pO187dxs8EUt3foc0seNYjn=vK4WCuTHYxQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+In-Reply-To: <CACKy9TJvkx0Bi69pO187dxs8EUt3foc0seNYjn=vK4WCuTHYxQ@mail.gmail.com>
 
-Fix rxrpc to use connection-level aborts for things that affect the whole
-connection, such as the service ID not matching a local service.
+On Wed, Jul 16, 2025 at 01:39:53PM +0200, Radu Vele wrote:
+> On Tue, Jul 15, 2025 at 8:07 AM Tzung-Bi Shih <tzungbi@kernel.org> wrote:
+> >
+> > On Mon, Jul 14, 2025 at 10:32:03AM +0200, Radu Vele wrote:
+> > > On Fri, Jul 11, 2025 at 6:12 AM Tzung-Bi Shih <tzungbi@kernel.org> wrote:
+> > > >
+> > > > On Fri, Jul 11, 2025 at 12:35:02AM +0000, Radu Vele wrote:
+> > > > > Add a lock associated to each port to protect port data against
+> > > > > concurrent access. Concurrency may result from sysfs commands
+> > > > > and ec events.
+> > > >
+> > > > I realized the critical sections are way too large.  What exactly data the
+> > > > lock tries to protect?  Is the race possibility introduced by any previous
+> > > > commits?  Please provide more context.
+> > >
+> > > With the implementation of the role swap operations from the previous
+> > > commit (and also enter usb mode from another recent commit) we
+> > > introduce the possibility of concurrent access to the cros_ec_typec port
+> > > data from the userspace (e.g. trigger a power role swap from sysfs) vs
+> > > from EC events (e.g. partner triggered a role swap that we accept).
+> > > This is the main reason to propose a per-port lock. This way we ensure
+> > > we protect the state of each port in the cros_ec_typec driver.
+> >
+> > To make sure I understand, did you mean the lock tries to prevent from
+> > sending multiple commands to EC at a time?  If yes, does it still need
+> > if the underlying ec_dev is guranteed that [1]?
+> 
+> Not really, as I noticed that both the ec and Type-C connector class
+> use their own mutexes.
+> 
+> My intention with the mutexes is to avoid race conditions in the case
+> when a role swap is in progress but at the same time there is a
+> `cros_port_update` that modifies the state of the port. Another
+> example I have in mind is when the port is being unregistered and
+> a role swap is issued.
 
-Fixes: 57af281e5389 ("rxrpc: Tidy up abort generation infrastructure")
-Reported-by: Jeffrey Altman <jaltman@auristor.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Jeffrey Altman <jaltman@auristor.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: Jakub Kicinski <kuba@kernel.org>
-cc: Paolo Abeni <pabeni@redhat.com>
-cc: "David S. Miller" <davem@davemloft.net>
-cc: Eric Dumazet <edumazet@google.com>
-cc: Simon Horman <horms@kernel.org>
-cc: linux-afs@lists.infradead.org
-cc: netdev@vger.kernel.org
-cc: stable@vger.kernel.org
----
+The critical section is too large to understand which fields in the data
+structure it tries to protect.  Please review again whether the lock is
+needed or not and shrink the critical section if possible.
 
-Notes:
-    Changes
-    =======
-    ver #2)
-     - Moved trace note declaration out to earlier patch that uses it
+If taking the changes in cros_typec_perform_role_swap() as another example:
 
- net/rxrpc/ar-internal.h |  3 +++
- net/rxrpc/call_accept.c | 12 ++++++------
- net/rxrpc/io_thread.c   | 14 ++++++++++++++
- net/rxrpc/output.c      | 19 ++++++++++---------
- net/rxrpc/security.c    |  8 ++++----
- 5 files changed, 37 insertions(+), 19 deletions(-)
+    static int cros_typec_perform_role_swap(...)
+    {
+        ...
+        struct ec_params_usb_pd_control req;
 
-diff --git a/net/rxrpc/ar-internal.h b/net/rxrpc/ar-internal.h
-index df1a618dbf7d..5b7342d43486 100644
---- a/net/rxrpc/ar-internal.h
-+++ b/net/rxrpc/ar-internal.h
-@@ -44,6 +44,7 @@ enum rxrpc_skb_mark {
- 	RXRPC_SKB_MARK_SERVICE_CONN_SECURED, /* Service connection response has been verified */
- 	RXRPC_SKB_MARK_REJECT_BUSY,	/* Reject with BUSY */
- 	RXRPC_SKB_MARK_REJECT_ABORT,	/* Reject with ABORT (code in skb->priority) */
-+	RXRPC_SKB_MARK_REJECT_CONN_ABORT, /* Reject with connection ABORT (code in skb->priority) */
- };
- 
- /*
-@@ -1253,6 +1254,8 @@ int rxrpc_encap_rcv(struct sock *, struct sk_buff *);
- void rxrpc_error_report(struct sock *);
- bool rxrpc_direct_abort(struct sk_buff *skb, enum rxrpc_abort_reason why,
- 			s32 abort_code, int err);
-+bool rxrpc_direct_conn_abort(struct sk_buff *skb, enum rxrpc_abort_reason why,
-+			     s32 abort_code, int err);
- int rxrpc_io_thread(void *data);
- void rxrpc_post_response(struct rxrpc_connection *conn, struct sk_buff *skb);
- static inline void rxrpc_wake_up_io_thread(struct rxrpc_local *local)
-diff --git a/net/rxrpc/call_accept.c b/net/rxrpc/call_accept.c
-index a4d76f2da684..00982a030744 100644
---- a/net/rxrpc/call_accept.c
-+++ b/net/rxrpc/call_accept.c
-@@ -374,8 +374,8 @@ bool rxrpc_new_incoming_call(struct rxrpc_local *local,
- 	spin_lock(&rx->incoming_lock);
- 	if (rx->sk.sk_state == RXRPC_SERVER_LISTEN_DISABLED ||
- 	    rx->sk.sk_state == RXRPC_CLOSE) {
--		rxrpc_direct_abort(skb, rxrpc_abort_shut_down,
--				   RX_INVALID_OPERATION, -ESHUTDOWN);
-+		rxrpc_direct_conn_abort(skb, rxrpc_abort_shut_down,
-+					RX_INVALID_OPERATION, -ESHUTDOWN);
- 		goto no_call;
- 	}
- 
-@@ -422,12 +422,12 @@ bool rxrpc_new_incoming_call(struct rxrpc_local *local,
- 
- unsupported_service:
- 	read_unlock_irq(&local->services_lock);
--	return rxrpc_direct_abort(skb, rxrpc_abort_service_not_offered,
--				  RX_INVALID_OPERATION, -EOPNOTSUPP);
-+	return rxrpc_direct_conn_abort(skb, rxrpc_abort_service_not_offered,
-+				       RX_INVALID_OPERATION, -EOPNOTSUPP);
- unsupported_security:
- 	read_unlock_irq(&local->services_lock);
--	return rxrpc_direct_abort(skb, rxrpc_abort_service_not_offered,
--				  RX_INVALID_OPERATION, -EKEYREJECTED);
-+	return rxrpc_direct_conn_abort(skb, rxrpc_abort_service_not_offered,
-+				       RX_INVALID_OPERATION, -EKEYREJECTED);
- no_call:
- 	spin_unlock(&rx->incoming_lock);
- 	read_unlock_irq(&local->services_lock);
-diff --git a/net/rxrpc/io_thread.c b/net/rxrpc/io_thread.c
-index 27b650d30f4d..e939ecf417c4 100644
---- a/net/rxrpc/io_thread.c
-+++ b/net/rxrpc/io_thread.c
-@@ -97,6 +97,20 @@ bool rxrpc_direct_abort(struct sk_buff *skb, enum rxrpc_abort_reason why,
- 	return false;
- }
- 
-+/*
-+ * Directly produce a connection abort from a packet.
-+ */
-+bool rxrpc_direct_conn_abort(struct sk_buff *skb, enum rxrpc_abort_reason why,
-+			     s32 abort_code, int err)
-+{
-+	struct rxrpc_skb_priv *sp = rxrpc_skb(skb);
-+
-+	trace_rxrpc_abort(0, why, sp->hdr.cid, 0, sp->hdr.seq, abort_code, err);
-+	skb->mark = RXRPC_SKB_MARK_REJECT_CONN_ABORT;
-+	skb->priority = abort_code;
-+	return false;
-+}
-+
- static bool rxrpc_bad_message(struct sk_buff *skb, enum rxrpc_abort_reason why)
- {
- 	return rxrpc_direct_abort(skb, why, RX_PROTOCOL_ERROR, -EBADMSG);
-diff --git a/net/rxrpc/output.c b/net/rxrpc/output.c
-index 17c33b5cf7dd..8b5903b6e481 100644
---- a/net/rxrpc/output.c
-+++ b/net/rxrpc/output.c
-@@ -829,7 +829,13 @@ void rxrpc_reject_packet(struct rxrpc_local *local, struct sk_buff *skb)
- 	msg.msg_controllen = 0;
- 	msg.msg_flags = 0;
- 
--	memset(&whdr, 0, sizeof(whdr));
-+	whdr = (struct rxrpc_wire_header) {
-+		.epoch		= htonl(sp->hdr.epoch),
-+		.cid		= htonl(sp->hdr.cid),
-+		.callNumber	= htonl(sp->hdr.callNumber),
-+		.serviceId	= htons(sp->hdr.serviceId),
-+		.flags		= ~sp->hdr.flags & RXRPC_CLIENT_INITIATED,
-+	};
- 
- 	switch (skb->mark) {
- 	case RXRPC_SKB_MARK_REJECT_BUSY:
-@@ -837,6 +843,9 @@ void rxrpc_reject_packet(struct rxrpc_local *local, struct sk_buff *skb)
- 		size = sizeof(whdr);
- 		ioc = 1;
- 		break;
-+	case RXRPC_SKB_MARK_REJECT_CONN_ABORT:
-+		whdr.callNumber	= 0;
-+		fallthrough;
- 	case RXRPC_SKB_MARK_REJECT_ABORT:
- 		whdr.type = RXRPC_PACKET_TYPE_ABORT;
- 		code = htonl(skb->priority);
-@@ -850,14 +859,6 @@ void rxrpc_reject_packet(struct rxrpc_local *local, struct sk_buff *skb)
- 	if (rxrpc_extract_addr_from_skb(&srx, skb) == 0) {
- 		msg.msg_namelen = srx.transport_len;
- 
--		whdr.epoch	= htonl(sp->hdr.epoch);
--		whdr.cid	= htonl(sp->hdr.cid);
--		whdr.callNumber	= htonl(sp->hdr.callNumber);
--		whdr.serviceId	= htons(sp->hdr.serviceId);
--		whdr.flags	= sp->hdr.flags;
--		whdr.flags	^= RXRPC_CLIENT_INITIATED;
--		whdr.flags	&= RXRPC_CLIENT_INITIATED;
--
- 		iov_iter_kvec(&msg.msg_iter, WRITE, iov, ioc, size);
- 		ret = do_udp_sendmsg(local->socket, &msg, size);
- 		if (ret < 0)
-diff --git a/net/rxrpc/security.c b/net/rxrpc/security.c
-index 078d91a6b77f..2bfbf2b2bb37 100644
---- a/net/rxrpc/security.c
-+++ b/net/rxrpc/security.c
-@@ -140,15 +140,15 @@ const struct rxrpc_security *rxrpc_get_incoming_security(struct rxrpc_sock *rx,
- 
- 	sec = rxrpc_security_lookup(sp->hdr.securityIndex);
- 	if (!sec) {
--		rxrpc_direct_abort(skb, rxrpc_abort_unsupported_security,
--				   RX_INVALID_OPERATION, -EKEYREJECTED);
-+		rxrpc_direct_conn_abort(skb, rxrpc_abort_unsupported_security,
-+					RX_INVALID_OPERATION, -EKEYREJECTED);
- 		return NULL;
- 	}
- 
- 	if (sp->hdr.securityIndex != RXRPC_SECURITY_NONE &&
- 	    !rx->securities) {
--		rxrpc_direct_abort(skb, rxrpc_abort_no_service_key,
--				   sec->no_key_abort, -EKEYREJECTED);
-+		rxrpc_direct_conn_abort(skb, rxrpc_abort_no_service_key,
-+					sec->no_key_abort, -EKEYREJECTED);
- 		return NULL;
- 	}
- 
+        guard(mutex)(&port->lock);
 
+        req...
+        cros_ec_cmd(...)
+
+        req...
+        cros_ec_cmd(...)
+
+        switch (...) {
+
+            typec_set_data_role...
+
+            typec_set_pwr_role...
+        }
+    }
+
+The `req` and `cros_ec_cmd` obviously don't need to protect.  Does
+typec_set_data_role() and typec_set_pwr_role() need to protect from
+concurrent calling?
 
