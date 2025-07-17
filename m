@@ -1,155 +1,147 @@
-Return-Path: <linux-kernel+bounces-734640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B778B08444
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:27:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74F1AB08448
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:29:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B349A7B1A5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 05:25:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E70D91A63CEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 05:30:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A28C1FF1A1;
-	Thu, 17 Jul 2025 05:27:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6B6202C50;
+	Thu, 17 Jul 2025 05:29:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bCOLYyYz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="osh6IZKI"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9BB81DE4C2;
-	Thu, 17 Jul 2025 05:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B69A1DE4C2;
+	Thu, 17 Jul 2025 05:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752730024; cv=none; b=tnlEnQdOM925rw0a7tBi5STlmdZttY4fk1sjRL7QPRNuoVCyznl4/nchj1L2EuWZTwKR/TCqh6OY2OxWgh6OuLunVK/voSIaxidGtQqhzQt8ljyhHveXkWLnqq4VX2Nx/DSouGRMaLovReUW213aWM5CgEwUcuO9+z9bxiWt6ds=
+	t=1752730183; cv=none; b=kPA765ni1rMhFXdV3KvzngUHkn1fW4cZ4yL4XevmVQ3Tnh4jLqZamLQtujm5Q7ETL3BS3YuJiVM+EBuW5qOGIHJE7w+dCVstspWOwHx14kvh8a0N1cwDA1ifQ5dM5yFxTZSwkmWdH7J7PiXATxFU7biRSgyo+KocZ+1J9kUNNb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752730024; c=relaxed/simple;
-	bh=WHynN3RVdKyk3zkts6sRyj9KOWiQ90DdnEukQI8ear4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RSqEOcIS810HRYCyrwSyrVoTMF97myYIXjNw3FI90ksHbFcdXhTFeRxnam3JWb+ZWp1GGU88gQCHvRpyZhtekLJmEIGrRHS9iB6/AgAjXeX16fmYr4lOOFEEgxDM7MkSCU26GoDX2Y4DYAZSGcUduIq91uQXVcNvIS0NgP1MrS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bCOLYyYz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B810FC4CEE3;
-	Thu, 17 Jul 2025 05:27:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752730024;
-	bh=WHynN3RVdKyk3zkts6sRyj9KOWiQ90DdnEukQI8ear4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bCOLYyYzJ0BI5iXBrUIPsBz6zEdv1MW1P2boc7rYfEQl8Kq1mXZnPbvQq9E95QXth
-	 iZFCHycWLEA2ptKmdmjXc+eZwLJMjgy+BrDBdCtxbzXMTF6sHzYn+U8CW3URT+kBoq
-	 4M4HB+JjOdr7VTyvTjowTEM1Gb7UkiVE15DsQ2H2geR1+Vr8TqVHRclIUBEbqdQGVl
-	 DzNFfgGGePJe8MjqXjN69fDanp+Ebywa4ByfCalpPXVc5xH2tgPJDeRyBh1peqyaw1
-	 6gC9H76ha42V4ztBIepF/6IePHMcfTxOl80DKR8xxY0q+SyV7awljmiDryFAnrk3MH
-	 zGEpdv1UQkYCA==
-Message-ID: <48e6e92d-6b6a-4850-9396-f3afa327ca3a@kernel.org>
-Date: Thu, 17 Jul 2025 07:26:59 +0200
+	s=arc-20240116; t=1752730183; c=relaxed/simple;
+	bh=1YOTVp4nHv0BZ7i58c4SKiaJdSMcdRVXOcAQIUL+unc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SU48t89pP034MkmTF20ESb5HJiRB74tun0SZxuW81Iuby0IExNspmmf1THqPC4/rysyKbPetYIHmSa0TF2dyBSw5C9kmTCcmfPm9JBo8zYSh1udgDuetLRXMBMicWsURb2ydmuevTD6WaDbzi1g6yoZZzHkhjvvUBvavHSXKZ2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=osh6IZKI; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56H5RGPQ021636;
+	Thu, 17 Jul 2025 05:29:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	3MhQvyCES0nl5lKNd0WhTNMhyxl4JLHMvRYThxKdV2c=; b=osh6IZKImUiId3uP
+	I8i+mJvt6GH8K4tI7cXffyX9b72ST5SjurEhaNzQnFMbTvNCNf0IBVWrwUQOsRaQ
+	A3WZ1+5wncBQdWZQJWkQlxeZrkr6wMGmGTJknR8DkoI5lMZmxd+qHztfYjWqQ1ri
+	nnELRbdKAuwTcLjFlC+9L1tSgw4BA0AA3z6duA0cYPY53xL16TTNMU6AImq4U+Cu
+	9DrWmelnAfwtWq9fRipYT+ktZRA2zi1cazc9mSWD6G25YzzjrEVEJsxI5Ni7aWw6
+	d+K5LRX0BQyoYRiwSSGU3PjOigJWg7qK5CvaCwPJ9JpHtgAXZsHpQnVpOSLqvlEX
+	2IU7xQ==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ufu8e7a5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Jul 2025 05:29:21 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56H5TKml028519
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Jul 2025 05:29:20 GMT
+Received: from [10.216.39.173] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 16 Jul
+ 2025 22:29:16 -0700
+Message-ID: <0cac2138-391e-ffc9-4cdc-07668795e6d1@quicinc.com>
+Date: Thu, 17 Jul 2025 10:59:13 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] kernel/fork: Increase minimum number of allowed
- threads
-To: Hauke Mehrtens <hauke@hauke-m.de>, sashal@kernel.org,
- linux-kernel@vger.kernel.org
-Cc: frederic@kernel.org, david@redhat.com, viro@zeniv.linux.org.uk,
- paulmck@kernel.org, stable@vger.kernel.org,
- David Laight <david.laight.linux@gmail.com>, Tejun Heo <tj@kernel.org>,
- Lai Jiangshan <jiangshanlai@gmail.com>,
- "Luis R . Rodriguez" <mcgrof@kernel.org>
-References: <20250711230829.214773-1-hauke@hauke-m.de>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH] dt-bindings: media: qcom,sm8550-iris: Add X1E80100
+ compatible
 Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20250711230829.214773-1-hauke@hauke-m.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Stephan Gerhold <stephan.gerhold@linaro.org>,
+        Dikshita Agarwal
+	<quic_dikshita@quicinc.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+CC: Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-media@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Stefan Schmidt
+	<stefan.schmidt@linaro.org>
+References: <20250704-x1e-iris-v1-1-c3137d979e43@linaro.org>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <20250704-x1e-iris-v1-1-c3137d979e43@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDA0NSBTYWx0ZWRfXzXvZnxdlIFUW
+ YfMJOUFPu8u80vhbhYSjfAa0WOJ601mDot1uUuO06Re1+JhvDW1OJ04S9oLA8ZqO1lKh9Mt0Qdg
+ tJwBy+WBVAdtGF+QO2eE2mVUJiYEEnQjLhinH5q+LDdi6/0xLZOO1ELKmuiUrosnej2rcVFW7Ms
+ Zlx0wkgzo4lzUpBBodCs4IAQQuOPikUbE92FSl8cdrxUn9qBu3k4xpJlCWrxctcDXscjQlMpPXD
+ 0wZAb098YJcTivF+7nf2VX93qgDZfXenMa/QbFdf34tDpZCTI6xndMk5Ootym2ZGPaJ54o4ayR6
+ 06t2fqlb9YHsHshVgNY429jDwm7xx7151Scwf+kJaVxBHINRnHYETKS6hh4UUorhMAGfrq9ZT0j
+ I78Ldzi+wbgZyIvb3Ap6o/G8JuqbLc2Im29b4ZDIGtCnJYUl+mBuD3OkPTukg7kkzXp9AfA4
+X-Proofpoint-ORIG-GUID: NOrIs6m6EPrQvtJYahuhIBUGYXCJ0QYX
+X-Proofpoint-GUID: NOrIs6m6EPrQvtJYahuhIBUGYXCJ0QYX
+X-Authority-Analysis: v=2.4 cv=f59IBPyM c=1 sm=1 tr=0 ts=68788a31 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=KKAkSRfTAAAA:8
+ a=COk6AnOGAAAA:8 a=NRAvYGhPTOzaQrcWcUcA:9 a=QEXdDO2ut3YA:10
+ a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-17_01,2025-07-16_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 lowpriorityscore=0 malwarescore=0 spamscore=0 mlxscore=0
+ bulkscore=0 suspectscore=0 impostorscore=0 adultscore=0 priorityscore=1501
+ mlxlogscore=999 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507170045
 
-Cc wqueue & umode helper folks
 
-On 12. 07. 25, 1:08, Hauke Mehrtens wrote:
-> A modern Linux system creates much more than 20 threads at bootup.
-> When I booted up OpenWrt in qemu the system sometimes failed to boot up
-> when it wanted to create the 419th thread. The VM had 128MB RAM and the
-> calculation in set_max_threads() calculated that max_threads should be
-> set to 419. When the system booted up it tried to notify the user space
-> about every device it created because CONFIG_UEVENT_HELPER was set and
-> used. I counted 1299 calls to call_usermodehelper_setup(), all of
-> them try to create a new thread and call the userspace hotplug script in
-> it.
+On 7/4/2025 7:08 PM, Stephan Gerhold wrote:
+> Iris in X1E80100 is pretty much identical to SM8550. We can use the same
+> firmware image and the same definitions in the driver, so just add
+> qcom,x1e80100-iris to the existing list with qcom,sm8550-iris as fallback
+> compatible.
 > 
-> This fixes bootup of Linux on systems with low memory.
-> 
-> I saw the problem with qemu 10.0.2 using these commands:
-> qemu-system-aarch64 -machine virt -cpu cortex-a57 -nographic
-> 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
 > ---
->   kernel/fork.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>  Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index 7966c9a1c163..388299525f3c 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -115,7 +115,7 @@
->   /*
->    * Minimum number of threads to boot the kernel
->    */
-> -#define MIN_THREADS 20
-> +#define MIN_THREADS 600
+> diff --git a/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml b/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
+> index c79bf2101812d83b99704f38b7348a9f728dff44..9504d7ea23f4a30fd2d03e8683721641f8b1a115 100644
+> --- a/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
+> +++ b/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
+> @@ -20,6 +20,7 @@ properties:
+>        - items:
+>            - enum:
+>                - qcom,sa8775p-iris
+> +              - qcom,x1e80100-iris
+>            - const: qcom,sm8550-iris
+>        - enum:
+>            - qcom,qcs8300-iris
+> 
+> ---
 
-As David noted, this is not the proper fix. It appears that usermode 
-helper should use limited thread pool. I.e. instead of 
-system_unbound_wq, alloc_workqueue("", WQ_UNBOUND, max_active) with 
-max_active set to max_threads divided by some arbitrary constant (3? 4?)?
-
-regards,
--- 
-js
-suse labs
-
+Reviewed-by: Vikash Garodia <quic_vgarodia@quicinc.com>
 
