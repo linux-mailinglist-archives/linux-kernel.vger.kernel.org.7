@@ -1,294 +1,140 @@
-Return-Path: <linux-kernel+bounces-734549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23E7DB08306
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 04:39:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4044EB08309
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 04:42:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57FBE4A2767
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:39:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85ADD4A292A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:42:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A5981DF968;
-	Thu, 17 Jul 2025 02:39:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0861DF738;
+	Thu, 17 Jul 2025 02:42:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tbDn+RFm"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YJ7vt248"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9244A186A
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 02:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772011DB127
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 02:42:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752719943; cv=none; b=BMtCr1l5+6ORlMymc/nICupE3GquBegMEq1qmiLyLaWMrhA7h3IuQjBYy6UnyDxXIYCtck6E/FLmPXGs82+9UG3Oat04JcRWysIQxnuMqEgHeNQwpCMfU9lPKrGibP0J8kvhOHElhrLyCAGZqEkh6eTPynRoURJWIAKijVNoUfk=
+	t=1752720125; cv=none; b=rxtkorRp7bPSB7HYF/Piq4JI+Huha7UO6nkHPw5xc1CLflJCIUGSBzUirtFU37YFZvWyLn1L/D1EdJF58ZB8ziazkvIw7H7tNkutHlt7A3dXh1NvaMoAeyS8pVq4j7pNcNmNbdo5O3UXHibN9Ko4M/fYF46Lhf9Z9ecHmEe/iRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752719943; c=relaxed/simple;
-	bh=X7EU9oEee9oD4miJuStT9hSRTZ4i2ynWyxm3zI8D50c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UoKqIrHmDYd+QMELSI8+BzFVx5TIpxQOqBM5Q1bT9mWIFfq1nAXjikfDbG0+gxkdIN+On5CBkoyWrt2Gfbdn8kAM2kzgskSqWvV/ihHlvtSXPX/Xky2yeGOMQNcEzx3GMOM84cS1H2puqb4jP7w6BzxtW489H1lGkfLjAWEi0sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tbDn+RFm; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752719929;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RY0ytnIDZuO0Ep0XUcgWNN7p8LAkaHqP1azq5AefPSA=;
-	b=tbDn+RFmzLUpmv3Q1dhNH2K3g66MNrivL4joRJCVSBziuhYHuHWEgXG8VUxrRCn/mMyPUu
-	LSOw702iIe00IAAlnPYCgXiblRtwBmZAX00yiToAEDQYRRXoCvqrT0wKuniIHRt8BOpz9R
-	XojfCI4iISnHR4N4fH/bMs/dByoVNh4=
-From: Menglong Dong <menglong.dong@linux.dev>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
- Menglong Dong <menglong8.dong@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>, bpf <bpf@vger.kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>,
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- LKML <linux-kernel@vger.kernel.org>,
- Network Development <netdev@vger.kernel.org>
-Subject:
- Re: multi-fentry proposal. Was: [PATCH bpf-next v2 02/18] x86,bpf: add
- bpf_global_caller for global trampoline
-Date: Thu, 17 Jul 2025 10:37:41 +0800
-Message-ID: <3643244.iIbC2pHGDl@7940hx>
-In-Reply-To:
- <CAADnVQLpAmZG_1827HS1dDaWBGraxY6UO92=tCX6eM9ZbqEBKQ@mail.gmail.com>
-References:
- <20250703121521.1874196-1-dongml2@chinatelecom.cn>
- <3364591.aeNJFYEL58@7940hx>
- <CAADnVQLpAmZG_1827HS1dDaWBGraxY6UO92=tCX6eM9ZbqEBKQ@mail.gmail.com>
+	s=arc-20240116; t=1752720125; c=relaxed/simple;
+	bh=WIpCLItC2ezfA0UV9Dlo9EYwXZqp5BLSvGaPx6T5xOE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ojj2rhxgD/D0cmFRMJ0bKwePTCymULyYVIfsCp3m9aDZZJ15ZnqGQlDd5Q1XllrKtX+PrFLPMpQGuBZ28/XJpyvaZXASWZ+7BbNCdQ0gnzdOefNnRauxG/mFa2z9tBrMygPEdLjzuzsRQmhKN9f1Xnzj8iA/t3vtdc3BR9WR8vU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YJ7vt248; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752720123; x=1784256123;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=WIpCLItC2ezfA0UV9Dlo9EYwXZqp5BLSvGaPx6T5xOE=;
+  b=YJ7vt248IcAb9IGO/dC5ZgUk1vKPJwp74SDqMLtL2yWwFl6Kve+p2t0A
+   6+mN0pdmS+hBxy1T2zoiFjcqdsCXoP8hzgrJsGFUkeczGrVsiskwlRNks
+   Mxinidge/CYazsUUeaQjRjdtMC6hDTz62DFFRbRjlEtFK1mqdhWzN1rky
+   9PhgO9r2+DksAXdg6yfv6SHMusahyAjUyreDRfZYP2ZvRTMgCtxXj6mXx
+   whPQN+dZ+xbUvuH22VsFAt7zzs7ktWgiDH6TqIAIB1l0RwE2osX25IwO9
+   fdwUMn59EqM9+l06OggGAiqvnDyMn4Qxjea2lYw//Gr7OoJT2wFOxq7Rv
+   g==;
+X-CSE-ConnectionGUID: d71eBNOWRxGBbgiDnIgciw==
+X-CSE-MsgGUID: DxgeTjWrTGOR+7I2cJ0Hsg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="55131651"
+X-IronPort-AV: E=Sophos;i="6.16,317,1744095600"; 
+   d="scan'208";a="55131651"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 19:41:55 -0700
+X-CSE-ConnectionGUID: sPRbPZyyTUK4BL9DzAqfRg==
+X-CSE-MsgGUID: vAzme0n+QtizLgyIyw6dmg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,317,1744095600"; 
+   d="scan'208";a="163300039"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 19:41:54 -0700
+Message-ID: <8aedbbcc-9f4c-4700-acb7-43ec4f540135@linux.intel.com>
+Date: Thu, 17 Jul 2025 10:40:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/11] iommu/vt-d: Optimize iotlb_sync_map for
+ non-caching/non-RWBF modes
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Joerg Roedel <joro@8bytes.org>, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250714045028.958850-1-baolu.lu@linux.intel.com>
+ <20250714045028.958850-3-baolu.lu@linux.intel.com>
+ <20250716141218.GA2166806@nvidia.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20250716141218.GA2166806@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thursday, July 17, 2025 10:13 AM Alexei Starovoitov <alexei.starovoitov@=
-gmail.com> write:
-> On Wed, Jul 16, 2025 at 6:51=E2=80=AFPM Menglong Dong <menglong.dong@linu=
-x.dev> wrote:
-> >
-> > On Thursday, July 17, 2025 8:59 AM Alexei Starovoitov <alexei.starovoit=
-ov@gmail.com> write:
-> > > On Wed, Jul 16, 2025 at 6:06=E2=80=AFAM Menglong Dong <menglong.dong@=
-linux.dev> wrote:
-> > > >
-> > > > On Wednesday, July 16, 2025 12:35 AM Alexei Starovoitov <alexei.sta=
-rovoitov@gmail.com> write:
-> > > > > On Tue, Jul 15, 2025 at 1:37=E2=80=AFAM Menglong Dong <menglong.d=
-ong@linux.dev> wrote:
-> > > > > >
-> > > > > >
-> > > > > > On 7/15/25 10:25, Alexei Starovoitov wrote:
-> > > > [......]
-> > > > > >
-> > > > > > According to my benchmark, it has ~5% overhead to save/restore
-> > > > > > *5* variants when compared with *0* variant. The save/restore o=
-f regs
-> > > > > > is fast, but it still need 12 insn, which can produce ~6% overh=
-ead.
-> > > > >
-> > > > > I think it's an ok trade off, because with one global trampoline
-> > > > > we do not need to call rhashtable lookup before entering bpf prog.
-> > > > > bpf prog will do it on demand if/when it needs to access argument=
-s.
-> > > > > This will compensate for a bit of lost performance due to extra s=
-ave/restore.
-> > > >
-> > > > I don't understand here :/
-> > > >
-> > > > The rhashtable lookup is done at the beginning of the global trampo=
-line,
-> > > > which is called before we enter bpf prog. The bpf progs is stored i=
-n the
-> > > > kfunc_md, and we need get them from the hash table.
-> > >
-> > > Ahh. Right.
-> > >
-> > > Looking at the existing bpf trampoline... It has complicated logic
-> > > to handle livepatching and tailcalls. Your global trampoline
-> > > doesn't, and once that is added it's starting to feel that it will
-> > > look just as complex as the current one.
-> > > So I think we better repurpose what we have.
-> > > Maybe we can rewrite the existing one in C too.
-> >
-> > You are right, the tailcalls is not handled yet. But for the livepatchi=
-ng,
-> > it is already handled, as we always get the origin ip from the stack
-> > and call it, just like how the bpf trampoline handle the livepatching.
-> > So no addition handling is needed here.
-> >
-> > >
-> > > How about the following approach.
-> > > I think we discussed something like this in the past
-> > > and Jiri tried to implement something like this.
-> > > Andrii reminded me recently about it.
-> > >
-> > > Say, we need to attach prog A to 30k functions.
-> > > 10k with 2 args, 10k with 3 args, and 10k with 7 args.
-> > > We can generate 3 _existing_ bpf trampolines for 2,3,7 args
-> > > with hard coded prog A in there (the cookies would need to be
-> > > fetched via binary search similar to kprobe-multi).
-> > > The arch_prepare_bpf_trampoline() supports BPF_TRAMP_F_ORIG_STACK.
-> > > So one 2-arg trampoline will work to invoke prog A in all 10k 2-arg f=
-unctions.
-> > > We don't need to match types, but have to compare that btf_func_model=
-=2Ds
-> > > are the same.
-> > >
-> > > Menglong, your global trampoline for 0,1,..6 args works only for x86,
-> > > because btf_func_model doesn't care about sizes of args,
-> > > but it's not the correct mental model to use.
-> > >
-> > > The above "10k with 2 args" is a simplified example.
-> > > We will need an arch specific callback is_btf_func_model_equal()
-> > > that will compare func models in arch specific ways.
-> > > For x86-64 the number of args is all it needs.
-> > > For other archs it will compare sizes and flags too.
-> > > So 30k functions will be sorted into
-> > > 10k with btf_func_model_1, 10k with btf_func_model_2 and so on.
-> > > And the corresponding number of equivalent trampolines will be genera=
-ted.
-> > >
-> > > Note there will be no actual BTF types. All args will be untyped and
-> > > untrusted unlike current fentry.
-> > > We can go further and sort 30k functions by comparing BTFs
-> > > instead of btf_func_model-s, but I suspect 30k funcs will be split
-> > > into several thousands of exact BTFs. At that point multi-fentry
-> > > benefits are diminishing and we might as well generate 30k unique
-> > > bpf trampolines for 30k functions and avoid all the complexity.
-> > > So I would sort by btf_func_model compared by arch specific comparato=
-r.
-> > >
-> > > Now say prog B needs to be attached to another 30k functions.
-> > > If all 30k+30k functions are different then it's the same as
-> > > the previous step.
-> > > Say, prog A is attached to 10k funcs with btf_func_model_1.
-> > > If prog B wants to attach to the exact same func set then we
-> > > just regenerate bpf trampoline with hard coded progs A and B
-> > > and reattach.
-> > > If not then we need to split the set into up to 3 sets.
-> > > Say, prog B wants 5k funcs, but only 1k func are common:
-> > > (prog_A, 9k func with btf_func_model_1) -> bpf trampoline X
-> > > (prog_A, prog_B, 1k funcs with btf_func_model_1) -> bpf trampoline Y
-> > > (prog_B, 4k funcs with btf_func_model_1) -> bpf trampoline Z
-> > >
-> > > And so on when prog C needs to be attached.
-> > > At detach time we can merge sets/trampolines,
-> > > but for now we can leave it all fragmented.
-> > > Unlike regular fentry progs the multi-fentry progs are not going to
-> > > be attached for long time. So we can reduce the detach complexity.
-> > >
-> > > The nice part of the algorithm is that coexistence of fentry
-> > > and multi-fentry is easy.
-> > > If fentry is already attached to some function we just
-> > > attach multi-fentry prog to that bpf trampoline.
-> > > If multi-fentry was attached first and fentry needs to be attached,
-> > > we create a regular bpf trampoline and add both progs there.
-> >
-> > This seems not easy, and it is exactly how I handle the
-> > coexistence now:
-> >
-> >   https://lore.kernel.org/bpf/20250528034712.138701-16-dongml2@chinatel=
-ecom.cn/
-> >   https://lore.kernel.org/bpf/20250528034712.138701-17-dongml2@chinatel=
-ecom.cn/
-> >   https://lore.kernel.org/bpf/20250528034712.138701-18-dongml2@chinatel=
-ecom.cn/
->=20
-> hmm. exactly? That's very different.
-> You're relying on kfunc_md for prog list.
-> The above proposal doesn't need kfunc_md in the critical path.
-> All progs are built into the trampolines.
->=20
-> > The most difficult part is that we need a way to replace the the
-> > multi-fentry with fentry for the function in the ftrace atomically. Of
-> > course, we can remove the global trampoline first, and then attach
-> > the bpf trampoline, which will make things much easier. But a
-> > short suspend will happen for the progs in fentry-multi.
->=20
-> I don't follow.
-> In the above proposal fentry attach/detach is atomic.
-> Prepare a new trampoline, single call to ftrace to modify_fentry().
+On 7/16/25 22:12, Jason Gunthorpe wrote:
+> On Mon, Jul 14, 2025 at 12:50:19PM +0800, Lu Baolu wrote:
+>> @@ -1833,6 +1845,8 @@ static int dmar_domain_attach_device(struct dmar_domain *domain,
+>>   	if (ret)
+>>   		goto out_block_translation;
+>>   
+>> +	domain->iotlb_sync_map |= domain_need_iotlb_sync_map(domain, iommu);
+> 
+> This has no locking and is in the wrong order anyhow :(
+> 
+> Any change to how invalidation works has to be done before attaching
+> the HW so that the required invalidations are already happening before
+> the HW can walk the page table.
+> 
+> And you need to serialize somehow with concurrent map/unmap as iommufd
+> doesn't prevent userspace from racing attach with map/unmap.
 
-modify_fentry() is used to operate on the same ftrace_ops. For
-example, we have the bpf trampoline A, and its corresponding
-ftrace_ops is opsA. Now, the image of the trampolineA is updated,
-we call modify_fentry() for opsA to update the direct call of it.
+domain->iotlb_sync_map does not change the driver's behavior. It simply
+indicates that there's no need to waste time calling
+cache_tag_flush_range_np(), as it's just a no-op.
 
-When we talk about the coexistence, it means the functionA is
-attached with the global trampoline B, whose ftrace_ops is
-opsB. We can't call modify_fentry(trampolineA, new_addr) here,
-as the opsA is not register yet. And we can't call register_fentry
-too, as the functionA is already in the direct_functions when we
-register opsB.
+> 
+> The cache_tag_assign_domain() looks similarly wrong too, it needs to
+> start invalidating the cache tag of the new domain, then change the
+> context then stop invalidating the cache tag of the old
+> domain. Otherwise there are invalidation races.
+> 
+> Finally, if the HW needs RWBF then this also needs to do the buffer
+> flush in this thread before installing the context to prevent a race.
+> 
+> Overall this dynamic behavior may just be a bad idea, and perhaps you
+> can live with domains having the domain->iotlb_sync_map as a static
+> property set once during paging domain allocation.
+> 
+> If the iommu requires iotlb_sync_map but the domain does not have it
+> then the attach is rejected. This reduces domain sharing
+> possibilities, but maybe that is just fine??
 
-So we need a way to do such transition.
+I previously discussed this with Kevin, and we agreed on a phase-by-
+phase approach. As I mentioned, domain->iotlb_sync_map is merely a hint
+for the driver, preventing it from looping through all cache tags to
+determine if any cache invalidation work needs to be performed. We
+already know it's predetermined that no work needs to be done.
 
->=20
-> > >
-> > > The intersect and sorting by btf_func_model is not trivial,
-> > > but we can hold global trampoline_mutex, so no concerns of races.
-> > >
-> > > Example:
-> > > bpf_link_A is a set of:
-> > > (prog_A, funcs X,Y with btf_func_model_1)
-> > > (prog_A, funcs N,M with btf_func_model_2)
-> > >
-> > > To attach prog B via bpf_link_B that wants:
-> > > (prog_B, funcs Y,Z with btf_func_model_1)
-> > > (prog_B, funcs P,Q with btf_func_model_3)
-> > >
-> > > walk all existing links, intersect and split, and update the links.
-> > > At the end:
-> > >
-> > > bpf_link_A:
-> > > (prog_A, funcs X with btf_func_model_1)
-> > > (prog_A, prog_B funcs Y with btf_func_model_1)
-> > > (prog_A, funcs N,M with btf_func_model_2)
-> > >
-> > > bpf_link_B:
-> > > (prog_A, prog_B funcs Y with btf_func_model_1)
-> > > (prog_B, funcs Z with btf_func_model_1)
-> > > (prog_B, funcs P,Q with btf_func_model_3)
-> > >
-> > > When link is detached: walk its own tuples, remove the prog,
-> > > if nr_progs =3D=3D 0 -> detach corresponding trampoline,
-> > > if nr_progs > 0 -> remove prog and regenerate trampoline.
-> > >
-> > > If fentry prog C needs to be attached to N it might split bpf_link_A:
-> > > (prog_A, funcs X with btf_func_model_1)
-> > > (prog_A, prog_B funcs Y with btf_func_model_1)
-> > > (prog_A, funcs M with btf_func_model_2)
-> > > (prog_A, prog_C funcs N with _fentry_)
-> > >
-> > > Last time we gave up on it because we discovered that
-> > > overlap support was too complicated, but I cannot recall now
-> > > what it was :)
-> > > Maybe all of the above repeating some old mistakes.
-> >
-> > In my impression, this is exactly the solution of Jiri's, and this is
-> > part of the discussion that I know:
-> >
-> >   https://lore.kernel.org/bpf/ZfKY6E8xhSgzYL1I@krava/
->=20
-> Yes. It's similar, but somehow it feels simple enough now.
-> The algorithms for both detach and attach fit on one page,
-> and everything is uniform. There are no spaghetty of corner cases.
->=20
+RWBF is only required on some early implementations where memory
+coherence was not yet implemented by the VT-d engine. It should be
+difficult to find such systems in modern environments. Thus,
+iotlb_sync_map is primarily relevant for nested translation that
+utilizes S2 shadowing page tables. This, too, is a legacy feature, as
+Intel has supported hardware-assisted nested translation for years.
 
+Making iotlb_sync_map static is a feature, not an optimization. We are
+still evaluating the value of this, as it's only truly helpful if there
+are real use cases.
 
-
-
+Thanks,
+baolu
 
