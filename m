@@ -1,170 +1,205 @@
-Return-Path: <linux-kernel+bounces-735955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 688A8B095D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 22:41:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31997B095CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 22:40:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD7507B94DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 20:39:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8380F1C2818E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 20:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69AAC22B8D9;
-	Thu, 17 Jul 2025 20:40:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5857D2264CA;
+	Thu, 17 Jul 2025 20:40:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XtqtllOa"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BLkmmo7k"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB2F42248AE;
-	Thu, 17 Jul 2025 20:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321232248A5
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 20:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752784835; cv=none; b=R3SoLgCLFCM6h4Mu0SWJKHfpT4ulsjSnmtRL8PXVs1Y7b9YucRCS7tR3bd4/jEYc/Xe02ZP/L3RN+AR+UCRXyHBYKMRNtkrwMi6vmnCvg6ejFrJ2Ptp0AamxxPfBrOW9YTcQ5aP7LW1Y5YemHlkjKtH68619oKI3oy+yb15UaPY=
+	t=1752784834; cv=none; b=ii9+qIj0tLDQz1Aqb3hzJRzj/Zo4Z022BAKq4IKtOd6Dsyze45W31FGjf3GTFjWvTjC80ENqa/dda3puzIfkjO3LbkKRKixAFq80dO5wFGRF6xhnGM1ZSe+tZaq592WvjjGSx0LQ4IuCUV+6AvZM8P8f8+g5rdDs/DBMzPhjRGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752784835; c=relaxed/simple;
-	bh=PdIbTdktWh/WBwrcyr3gCqj0Qy8ntRTyRqr3z/psMAs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hiQwHLGhNYnCtb4rNcIFPP/ZCRLEiB5uaWoKgYOQeaOIwYg4ZYwPS+T3ZM/vpYEb2Ib+2ImPrl6NBhNPR24TfbNwXMHqXxbJIYMyGB5NYxQTXN52NPW9l25Abc35XJ9pm604u8iwgQTM8Wxr7rSZAm7+5hn2xEQGTHNA0VsQgX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XtqtllOa; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752784834; x=1784320834;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PdIbTdktWh/WBwrcyr3gCqj0Qy8ntRTyRqr3z/psMAs=;
-  b=XtqtllOaT7ptrwI6riTgpMLsAQN/HpFPsEWqZIr3r/QavIQ7ZCYzDBNx
-   p1Ohp/uKsfu95R3vseMgKzPxeiWbKNk7+0dZ5iK9NAx9pw1JRk2akb2tj
-   4Xi2A1y30rX8i2bmBeulaSMCqM7GdF0nPiOjyvWUMphl2mMllaUNt4WSR
-   ECXlaUoiI0+g9XtbwaDSjahfDYhP0x9ctRINIjmby3MkLhchBirRJfRzX
-   vpSudkr3tjE/ftWuLb2OiIEkS7CqbcR9X49+UYKR73OaKzlO/v0iNhFSb
-   mBHaxSrdGx4TnX0H6jNFHV+zxKIqX/Il+R92ZttdBKm1kJAScXUMzJrj7
-   w==;
-X-CSE-ConnectionGUID: kNeOfRNlQXi7UgpOGqXIRQ==
-X-CSE-MsgGUID: 7tCDUj5sSNSUCnx4mZ3IsQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11495"; a="55200007"
-X-IronPort-AV: E=Sophos;i="6.16,319,1744095600"; 
-   d="scan'208";a="55200007"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 13:40:34 -0700
-X-CSE-ConnectionGUID: IuN4fVvGSIalVbCR9aDz2Q==
-X-CSE-MsgGUID: BkOKgBq2Qm2hEkuq4K7EAw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,319,1744095600"; 
-   d="scan'208";a="158585075"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 17 Jul 2025 13:40:29 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ucVP1-000E0Z-0X;
-	Thu, 17 Jul 2025 20:40:27 +0000
-Date: Fri, 18 Jul 2025 04:39:46 +0800
-From: kernel test robot <lkp@intel.com>
-To: Cosmin Tanislav <demonsingur@gmail.com>,
-	Cosmin Tanislav <cosmin.tanislav@analog.com>,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
-	Julien Massot <julien.massot@collabora.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-staging@lists.linux.dev, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v6 19/24] media: i2c: maxim-serdes: add MAX96724 driver
-Message-ID: <202507180433.nXvvwmFy-lkp@intel.com>
-References: <20250716193111.942217-20-demonsingur@gmail.com>
+	s=arc-20240116; t=1752784834; c=relaxed/simple;
+	bh=+PKURqZUiFLHGFdok2C2mZeAkQagOq/qdJTWlYR6YI4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XjmcQHdfPJ8HO8NeaMxQN488rtqGKeRZHF2t9RflSVunybqr4l2byQ+8McxRKNmDVTYTYWwMQJ1WbX0KD8oIbVIZwe6DMonoXEGIoNDn6AMeRz7e2ZQCk1g7Vc+U1tX/ILSiFmGZJNbf6WRDI/le6vlmDugkEuTbM5XSGXlp8Jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BLkmmo7k; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56HJNDtK022256
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 20:40:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	HcA+kp3HypSPdvU2NDchUlEnmvRzp6s5z33xRBR58yg=; b=BLkmmo7kc3scYKxZ
+	mjfnbXvyG0g7oXjZUoiUEQ44uLA6XV5nH9+mSFD+fAkInK+06RhrU+wF5uqUFPXY
+	UCbek+1GQTOFiEvsYUvD655hpeVtv0OYahZP7QFc29/Q7s9AU0n+bdqxit4zCoDo
+	SrDSKDeMU2P+x7tTNOxEOTHR6+GhzvPofq9jZzr19qUHAU/zoTBBgXdzXKf1F9Yb
+	XFsAVz00EoI2V/4chGHDZsOaC7e/5ZOcZPyuK49/YV+lGWU9v6wawmujcXbSQuKY
+	UDjd9RHMkXuQ8FBJOTN9tI5+yasOyvyrr21eXBC+xby4vgIT/6k3RqwygmyWwxyr
+	aO7PFQ==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47wqsy9309-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 20:40:32 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4ab3bd0f8d5so1909821cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 13:40:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752784831; x=1753389631;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HcA+kp3HypSPdvU2NDchUlEnmvRzp6s5z33xRBR58yg=;
+        b=Jlk2XKO9yjLdSrMEIvqHpb5Pb6azXnm6djOqMdsUWWx3AdZnAABj2Ai4FbC98YBnHB
+         pwStNWg7UFlYtrCwN12cA4rSDe04QAzRCLrcIYkc5SqUJUWCzXMCj/pEtnFqcflsbxQk
+         aHL5ZokO81OQ2XQ7vOBGG0xPoHSHvpw0Y1wPfPp3wLxUm+5DAIU5eRU7Tv6R5bdWU/pS
+         QkhtWEoZdSwwqaIHWMN5bnuPRiuCjPd8QzocxUVUL93rzDMMHwfqZWRPVxLZz4EZhSUc
+         /IKB+DMAha71kTi2rsrgRqnYo4r34ccUoBFRdLC1jKMSHQw9SV3f68+yXvvVrMphSybk
+         ErkA==
+X-Forwarded-Encrypted: i=1; AJvYcCWBnq5arUv3bO4qGT3ulFeAfQ2YUbuYLWpDRv/nKjcaeiLG7T0gMLVQrEJsAz5PxE+P6xqy0DdRRT7myjk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxI/640wqvnCuLjzNBGc17s07IhhFDYTSFasJTQfip1GfsaalgX
+	2ct4IJ0qoaQ1e7k+TEcGDm6H/0pr+W2jZHEXVNCQang+Q9D2oHuiLfjOInw3gLlgvgrlV3npXq0
+	bY2ywFOPK9ThQNStOEoOcnm0OPMuT+MZRTnpgz9tM86GA3Fa1hKSh4by92TIDKAs2e2U=
+X-Gm-Gg: ASbGncuHm1botumyAAYz2wozmxZ0fm172B857dqqeATTYp5+RaQpZtq1JIXqG7WS7rO
+	XkZlCD9e6oo6a5ogvpMoZZLY1XlLL4BOVmAlBnqjwVa/+ZYoAv6OrpPcwWd/mwp3XEWxyAFCbqt
+	6UKWiWcYRwP58SFVBj/bgqDfx70k/tmSf935RjQ0kTEzKtOxHg/VfxonQYiTl/iZGQYBowyklCi
+	RLQ8QEq/1aqlB0UyqlTmkpNJrzgDkR2hyDvUEj2UNMT+fbhY7lLoLod56UsJ0BR5E2x7vOutF8s
+	htZV4QbHXhG8Zs84X7NYzDWehEqrWN69N9z/m1gZr85HWyVj48CVEubl5+EX1LRlXW7g4KX5AST
+	xihO55qqdrEcT2pYw0DwW
+X-Received: by 2002:a05:622a:1211:b0:4ab:5d26:db88 with SMTP id d75a77b69052e-4ab909ca3c2mr62008031cf.3.1752784830702;
+        Thu, 17 Jul 2025 13:40:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGacEtOK6P1w0TqLkAVvy3zfLW2JrPG0JSKgt/e9kAEeqsdXApuxd5RMOc2e1Ib7SbZf4Jkog==
+X-Received: by 2002:a05:622a:1211:b0:4ab:5d26:db88 with SMTP id d75a77b69052e-4ab909ca3c2mr62007551cf.3.1752784829965;
+        Thu, 17 Jul 2025 13:40:29 -0700 (PDT)
+Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e8264fd2sm1430651366b.108.2025.07.17.13.40.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Jul 2025 13:40:29 -0700 (PDT)
+Message-ID: <ad726c8c-0eb0-4498-a430-f906ea61c80f@oss.qualcomm.com>
+Date: Thu, 17 Jul 2025 22:40:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250716193111.942217-20-demonsingur@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 02/10] clk: qcom: ipq5424: Enable NSS NoC clocks to use
+ icc-clk
+To: Luo Jie <quic_luoj@quicinc.com>, Georgi Djakov <djakov@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Anusha Rao <quic_anusha@quicinc.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, quic_kkumarcs@quicinc.com,
+        quic_linchen@quicinc.com, quic_leiwei@quicinc.com,
+        quic_pavir@quicinc.com, quic_suruchia@quicinc.com
+References: <20250710-qcom_ipq5424_nsscc-v3-0-f149dc461212@quicinc.com>
+ <20250710-qcom_ipq5424_nsscc-v3-2-f149dc461212@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250710-qcom_ipq5424_nsscc-v3-2-f149dc461212@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDE4MyBTYWx0ZWRfX3mV2zLgmo3j7
+ Xg3UvZvLF4iuoSlwh+pM27OY42ixI+bsomV2wVjfF2db4Furtk7c3wPI4TABkW0XLKB1Fs4ie3k
+ payfS2MUZ2ugI/36LEJM4YXM1DnqChlJKWpYBgqr5+zX2PUgLpAXQDf3jgiFyb1ULG3uold7dni
+ FtFsl12xlv4ABM1k9r+3kVoLWRhTkc+0izX6F/bnoMoQ3oAC0zvRopfThl511GM8ndVSZlHiPJp
+ Aiz2DAdf3IWd88LCzTJ2Vc6HQpTfv+GMwWDaFm4aOOCt+sTNVQWD/sQ0MHvv6OsPCaQ835YwSU7
+ j5SQIE3ek9LoYueq3CGiiQlAu3Qp+ghipgXtvX5ZJ9rFNxpgddcPzTU5XHbQdHw5lPKoEY+46H5
+ ihIfA8YJPakyKSMX1acAjVVu5HDjOwGCUTV0Onf3SVwmuvRXUuEK2mE/57QdRW4xsHki3TeP
+X-Proofpoint-GUID: TbopmKRDNS-4Rr3ysy-XEygHhycQzezY
+X-Proofpoint-ORIG-GUID: TbopmKRDNS-4Rr3ysy-XEygHhycQzezY
+X-Authority-Analysis: v=2.4 cv=McZsu4/f c=1 sm=1 tr=0 ts=68795fc0 cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8 a=53G8P9gWY_1ATa02Ga8A:9
+ a=QEXdDO2ut3YA:10 a=a_PwQJl-kcHnX1M80qC6:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-17_03,2025-07-17_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 mlxlogscore=999 impostorscore=0 mlxscore=0 phishscore=0
+ adultscore=0 lowpriorityscore=0 bulkscore=0 clxscore=1015 suspectscore=0
+ spamscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507170183
 
-Hi Cosmin,
+On 7/10/25 2:28 PM, Luo Jie wrote:
+> Add NSS NoC clocks using the icc-clk framework to create interconnect
+> paths. The network subsystem (NSS) can be connected to these NoCs.
 
-kernel test robot noticed the following build errors:
+Are there any other similar clocks that we should expect to pop up
+in the future? We should most definitely have a single commit that
+takes care of everything that'll be used going forward.
 
-[auto build test ERROR on next-20250716]
-[also build test ERROR on v6.16-rc6]
-[cannot apply to robh/for-next staging/staging-testing staging/staging-next staging/staging-linus arm64/for-next/core linus/master v6.16-rc6 v6.16-rc5 v6.16-rc4]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+grep "\[.*NOC.*CLK\]" drivers/clk/qcom/gcc-ipq5424.c | wc -l
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Cosmin-Tanislav/media-mc-Add-INTERNAL-pad-flag/20250717-033901
-base:   next-20250716
-patch link:    https://lore.kernel.org/r/20250716193111.942217-20-demonsingur%40gmail.com
-patch subject: [PATCH v6 19/24] media: i2c: maxim-serdes: add MAX96724 driver
-config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20250718/202507180433.nXvvwmFy-lkp@intel.com/config)
-compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250718/202507180433.nXvvwmFy-lkp@intel.com/reproduce)
+returns a number of them that aren't described as icc clocks, most
+notably the GCC_CNOC_USB_CLK is consumed as a regular clock.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507180433.nXvvwmFy-lkp@intel.com/
+> 
+> Also update to use the expected icc_first_node_id for registering the
+> icc clocks.
 
-All errors (new ones prefixed by >>):
+This is a separate fix
 
->> drivers/media/i2c/maxim-serdes/max96724.c:273:6: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     273 |                                  FIELD_PREP(MAX96724_PWR1_RESET_ALL, 1));
-         |                                  ^
-   drivers/media/i2c/maxim-serdes/max96724.c:494:6: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     494 |                                  FIELD_PREP(MAX96724_MIPI_TX10_CSI2_LANE_CNT,
-         |                                  ^
-   drivers/media/i2c/maxim-serdes/max96724.c:693:7: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     693 |                            FIELD_PREP(MAX96724_MIPI_TX13_MAP_SRC_DT,
-         |                            ^
-   drivers/media/i2c/maxim-serdes/max96724.c:741:7: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     741 |                                   FIELD_PREP(MAX96724_MIPI_TX57_TUN_DEST,
-         |                                   ^
-   drivers/media/i2c/maxim-serdes/max96724.c:914:8: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     914 |                             FIELD_PREP(MAX96724_PATGEN_0_VTG_MODE,
-         |                             ^
-   drivers/media/i2c/maxim-serdes/max96724.c:957:6: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     957 |                                  FIELD_PREP(MAX96724_VPRBS_PATGEN_CLK_SRC,
-         |                                  ^
-   drivers/media/i2c/maxim-serdes/max96724.c:985:7: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     985 |                                   FIELD_PREP(MAX96724_PATGEN_1_PATGEN_MODE,
-         |                                   ^
-   7 errors generated.
+> 
+> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+> ---
+>  drivers/clk/qcom/gcc-ipq5424.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/qcom/gcc-ipq5424.c b/drivers/clk/qcom/gcc-ipq5424.c
+> index 3d42f3d85c7a..3a01cb277cac 100644
+> --- a/drivers/clk/qcom/gcc-ipq5424.c
+> +++ b/drivers/clk/qcom/gcc-ipq5424.c
+> @@ -1,7 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * Copyright (c) 2018,2020 The Linux Foundation. All rights reserved.
+> - * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+> + * Copyright (c) 2024-2025 Qualcomm Innovation Center, Inc. All rights reserved.
 
+Please follow the latest recommendations for the copyright notices
 
-vim +/FIELD_PREP +273 drivers/media/i2c/maxim-serdes/max96724.c
+Konrad
 
-   262	
-   263	static int max96724_reset(struct max96724_priv *priv)
-   264	{
-   265		int ret;
-   266	
-   267		ret = max96724_wait_for_device(priv);
-   268		if (ret)
-   269			return ret;
-   270	
-   271		ret = regmap_update_bits(priv->regmap, MAX96724_PWR1,
-   272					 MAX96724_PWR1_RESET_ALL,
- > 273					 FIELD_PREP(MAX96724_PWR1_RESET_ALL, 1));
-   274		if (ret)
-   275			return ret;
-   276	
-   277		fsleep(10000);
-   278	
-   279		return max96724_wait_for_device(priv);
-   280	}
-   281	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>   */
+>  
+>  #include <linux/clk-provider.h>
+> @@ -3250,6 +3250,9 @@ static const struct qcom_icc_hws_data icc_ipq5424_hws[] = {
+>  	{ MASTER_ANOC_PCIE3, SLAVE_ANOC_PCIE3, GCC_ANOC_PCIE3_2LANE_M_CLK },
+>  	{ MASTER_CNOC_PCIE3, SLAVE_CNOC_PCIE3, GCC_CNOC_PCIE3_2LANE_S_CLK },
+>  	{ MASTER_CNOC_USB, SLAVE_CNOC_USB, GCC_CNOC_USB_CLK },
+> +	{ MASTER_NSSNOC_NSSCC, SLAVE_NSSNOC_NSSCC, GCC_NSSNOC_NSSCC_CLK },
+> +	{ MASTER_NSSNOC_SNOC_0, SLAVE_NSSNOC_SNOC_0, GCC_NSSNOC_SNOC_CLK },
+> +	{ MASTER_NSSNOC_SNOC_1, SLAVE_NSSNOC_SNOC_1, GCC_NSSNOC_SNOC_1_CLK },
+>  };
+>  
+>  static const struct of_device_id gcc_ipq5424_match_table[] = {
+> @@ -3284,6 +3287,7 @@ static const struct qcom_cc_desc gcc_ipq5424_desc = {
+>  	.num_clk_hws = ARRAY_SIZE(gcc_ipq5424_hws),
+>  	.icc_hws = icc_ipq5424_hws,
+>  	.num_icc_hws = ARRAY_SIZE(icc_ipq5424_hws),
+> +	.icc_first_node_id = IPQ_APPS_ID,
+>  };
+>  
+>  static int gcc_ipq5424_probe(struct platform_device *pdev)
+> 
 
