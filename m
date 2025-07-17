@@ -1,167 +1,139 @@
-Return-Path: <linux-kernel+bounces-735528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC9ABB09088
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:27:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 895A8B09097
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:29:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EE825866CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:27:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C79C4A59AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:28:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC86A2F8C5D;
-	Thu, 17 Jul 2025 15:27:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 207412F94A2;
+	Thu, 17 Jul 2025 15:28:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jkc2HIzl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IVf3JCjV"
+Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E462F8C5C;
-	Thu, 17 Jul 2025 15:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B192F9481
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 15:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752766038; cv=none; b=BrLGdDohM+hE2wbB7AeR7LV/uTyUUL3nNPD5N23ohQrU4FHsNrcORmwUCv3+pXnS373b3jVrbCaVgBb8AVU/TtSMkRHYJNW4NaRre/M13ZAUodFCLZtA9VNdumoX21MoaYIG3FDzaAx2SxDxEaL70OxshyzgEzCV/xhODCaYBv8=
+	t=1752766137; cv=none; b=Xfgl10nHkm1mDlKmG/8FSaGcmdinLqwOCCuAmKCQhZVXDdfw2sESmBaSJMXxaING72eegGbEF8Z3HJbNEluCxr4ljWLaY/jwrjJFJ3A+ANVUyNJFZTIZ/Sm9kluSJ4Y1i9TpgCaY7tJXwN5XI/DAdBi7vaZ037RG0/xNxqKmzQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752766038; c=relaxed/simple;
-	bh=4yydri2iXJ+vkt3rGzpbKbnKbfLngsgnmN/hlvqV+sM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eL4zG9cd/B9R35Feuy3eJAndRU4s2ZV2kGr+TKXXTE/+zGV68ysIvr9JsjVotaDNO1TJMOmx9puk1tv+Jno8W/oYxIHORBOfb2wMr+uSdEKGWBceXNlnxWwVumueWnL0VWRDyfEU+HY5ED7buIptL9hHSzoxbI1EfKFtmUn+FzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jkc2HIzl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B64C4C4CEE3;
-	Thu, 17 Jul 2025 15:27:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752766037;
-	bh=4yydri2iXJ+vkt3rGzpbKbnKbfLngsgnmN/hlvqV+sM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Jkc2HIzlh/f85sSERCDk6FnHc0o7b/fmOkjr6/ic6/EdFaEA6woHqSEIO4UapszO3
-	 e44POPFs96UF2owJnF1avPhvQuRZb5ouwef1zHHAjIy52Oz0BirO81qvr+Eh2YT8b6
-	 8B8xIrTOYVNMboxBpbEH4wB1OHUbsvjAVNYlwhxBEM/r8CJNP34/vxr9JgvjPrkoca
-	 9gDVTA8RV8ohYM5nBBQ4rKUGFvm1jVOwuhO4KfdUicfQSuM29KK4mSro9vBNXeCaXu
-	 5/ZyE4QwYAq1ZyS+4u2iCDD0/ofDKmH9rlEu+Yb7H+ZnnDzW+otjrPKMmLW+4mE4YC
-	 FCYvQo3eJAbIA==
-Date: Thu, 17 Jul 2025 16:27:10 +0100
-From: Will Deacon <will@kernel.org>
-To: James Clark <james.clark@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>, leo.yan@arm.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH v3 07/10] perf: arm_spe: Add support for filtering on
- data source
-Message-ID: <aHkWTlaRKdXbnA0r@willie-the-truck>
-References: <20250605-james-perf-feat_spe_eft-v3-0-71b0c9f98093@linaro.org>
- <20250605-james-perf-feat_spe_eft-v3-7-71b0c9f98093@linaro.org>
- <aHUOig-kaRo15ZH5@willie-the-truck>
- <7f51d4f9-7e08-49b5-ab43-8bc765bb2ca8@linaro.org>
- <aHkI5_IOV35L4YJa@willie-the-truck>
- <ca99af3b-e358-4c2b-8d62-0b6c29984391@linaro.org>
+	s=arc-20240116; t=1752766137; c=relaxed/simple;
+	bh=ZTybutIGIe/T86UdDmuxPEBUZ4/0J/+CghZD6UmpFXA=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=NNA3GBU4d7IGKNNqySmifbFGI4Wh9KJtnIqLxpPT/wdFvKvTognqPNI5geesR+GVZ9U2bEdiwNJ6OcpZ2EHfept7ON5Q95jWfnd/9ELR8NcbpRZtXL1kSYamDmoU376oPe5wRXac1BTrXZ9nG8PqWDyQeWQCkzfVgz65RTlrm5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--czapiga.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IVf3JCjV; arc=none smtp.client-ip=209.85.208.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--czapiga.bounces.google.com
+Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-607206f0d57so900446a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 08:28:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752766134; x=1753370934; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=cthjB1lBYL4eZHBHey5xzm0tQ6bcoKzfDDKS2kEQSBw=;
+        b=IVf3JCjVqMF9ojp8nfRsgSRnz4M67R5tdzbqcpt+DiKsKgU0t7AzvBkXOYCpBzk70E
+         /aHe8VVl2IgwZd3WZ+bB9qyR4pv7H0QPO5TgHc2f83EpmmCaqmSwwAyxf/FiR0/hccRc
+         QqhvRqHe7SMybx08Bl231ObAzCfZaESjJfnGan3GSGfoCbkVDTd0vPDWwkPBKH3i4IO+
+         Tm2201YuQJeQQ/ByqcTP9P18YGewTgv8BfpqKyx1ZYAcAoNWhn2z+ah9HOTvOYC/gV6i
+         LPPzWZYtF7278xFla67vHRJV8xzJTPz17IgTl7PHAv7rUTFKugTyVMcHS5cx5wr+d1vt
+         xLRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752766134; x=1753370934;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cthjB1lBYL4eZHBHey5xzm0tQ6bcoKzfDDKS2kEQSBw=;
+        b=aTAnYdjjH4+xjZLJMUWky0xy71ey+ZJu5nLjlwE6UvHnDD4jj/vfPTCsqVwWDe99s8
+         z2+w7OkXcY39zrl9H9VlhbQkEI7BUi9YaF2QwOOS8uHcUBmQIdlRHjU0hbpso1LXEKaO
+         qv1UaulCgVhy+JV1VaKWp8tu7MZOYI9hUwD+UEQnFtfvlxbWKpPPhdS02BB48qmzN2e9
+         U2ugecKclrzDcCMbSvkb82oQKcoDI/RVXYiNTj0FxDh+ewbb5eZC04vWh6i0kYNczcEx
+         iOfBrBYigXhnWSfLEI+PCeJQN0QsROGWdzSeMG8HsOxQWdeVgbWRT0bIRg+L6eyD0ca/
+         nNOA==
+X-Forwarded-Encrypted: i=1; AJvYcCXa54SezhQD45xzt3li8zVEmP+IokpcWdykbIFKCTpKlmXiWl5yXbsmj1BZg8PFrtcwoOGuR0fySnh9pqo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx65HPjnx8gNxKKMHIIByV5FY72Xitn9f88UeH31Bmn4Fxt6+VO
+	DmD8OeN1B+0jENJCQp3H3nTyuuXZSqfdYz8FnDnR2Ugv2TtFH6IzdlbTAWlEaFE3IEBVglLbGTI
+	57MEHZmmK4A==
+X-Google-Smtp-Source: AGHT+IHcKFjMlNrrNgjCyppcSr//KTBbsIGPrwjAmE7PGmpW5re2EjYf1MQOj1siVvkpiPv/SNTkfwglWCmV
+X-Received: from edqj23.prod.google.com ([2002:aa7:c417:0:b0:612:92c2:b49d])
+ (user=czapiga job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:3548:b0:607:206f:a25
+ with SMTP id 4fb4d7f45d1cf-612859304ddmr5716235a12.9.1752766134233; Thu, 17
+ Jul 2025 08:28:54 -0700 (PDT)
+Date: Thu, 17 Jul 2025 15:28:51 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ca99af3b-e358-4c2b-8d62-0b6c29984391@linaro.org>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+Message-ID: <20250717152851.3709744-1-czapiga@google.com>
+Subject: [PATCH v2] spi: intel: Allow writeable MTD partition with module param
+From: Jakub Czapiga <czapiga@google.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Konrad Adamczyk <konrada@google.com>, 
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jakub Czapiga <czapiga@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jul 17, 2025 at 04:16:32PM +0100, James Clark wrote:
-> 
-> 
-> On 17/07/2025 3:29 pm, Will Deacon wrote:
-> > On Tue, Jul 15, 2025 at 02:04:18PM +0100, James Clark wrote:
-> > > On 14/07/2025 3:04 pm, Will Deacon wrote:
-> > > > On Thu, Jun 05, 2025 at 11:49:05AM +0100, James Clark wrote:
-> > > > > @@ -406,6 +416,9 @@ static u64 arm_spe_event_to_pmsfcr(struct perf_event *event)
-> > > > >    	if (ATTR_CFG_GET_FLD(attr, inv_event_filter))
-> > > > >    		reg |= PMSFCR_EL1_FnE;
-> > > > > +	if (ATTR_CFG_GET_FLD(attr, data_src_filter))
-> > > > > +		reg |= PMSFCR_EL1_FDS;
-> > > > 
-> > > > Is the polarity correct here? The description of PMSDSFR_EL1.S<m> suggests
-> > > > that setting bits to 1 _excludes_ the FDS filtering.
-> > > > 
-> > > 
-> > > Setting filter bits to 1 means that samples matching are included. Setting
-> > > bits to 0 means that they are excluded. And PMSFCR_EL1.FDS enables filtering
-> > > as a whole, so if the user sets any filter bit to 1 we want to enable
-> > > filtering:
-> > > 
-> > >    PMSDSFR_EL1.S<m>
-> > > 
-> > >    0b0  If PMSFCR_EL1.FDS is 1, do not record load operations that have
-> > >         bits [5:0] of the Data Source packet set to <m>.
-> > > 
-> > >    0b1  Load operations with Data Source <m> are unaffected by
-> > >         PMSFCR_EL1.FDS.
-> > > 
-> > > I think it's all the right way around and it ends up being the same as the
-> > > other filters in SPE. Because we're using any bit being set to enable the
-> > > filtering, the only thing you can't do is enable filtering with a 0 filter,
-> > > but I didn't think that was useful. See the previous discussion on this
-> > > here:
-> > > https://lore.kernel.org/all/5752f039-51c1-4452-b5df-03ff06da7be3@linaro.org/
-> > > 
-> > > Reading the "Data source filtering" section in the docs change at the end
-> > > might help too.
-> > 
-> > Sorry, but I still don't get it :/
-> > 
-> > afaict, if any of the bits in 'data_src_filter' are _zero_ then we
-> > should set PMSFCR_EL1.FDS. That also means that a mask of zero means all
-> > loads are filtered, which is what the architecture says and is what we
-> > should provide to userspace.
-> > 
-> > Will
-> 
-> We'd have to add another format flag to enable data source filtering then,
-> because otherwise the default would be zero and people's samples would
-> disappear.
-> 
-> But the only use cases I could think of were more like "I want to see
-> samples from data source 1":
-> 
->   -e arm_spe/data_src_filter=0x1/
-> 
-> Or "I want to see all data sources except 1":
-> 
->   -e arm_spe/data_src_filter=0xfffffffe/
-> 
-> Filtering out all samples with any data source didn't seem to make sense to
-> me, and I think you can already do that with the other filters (remove loads
-> etc).
-> 
-> It would be a shame to be inconsistent and to add an enable flag just for
-> that one case because the other filters in SPE are auto enabled for non-zero
-> values. Although to be fair for PMSFCR.FT and others, zero filters are
-> explicitly not allowed:
-> 
->   If this field is set to 1 and the PMSFCR_EL1.{ST, LD, B} bits are all
->   set to zero, it is CONSTRAINED UNPREDICTABLE whether no samples are
->   recorded or the PE behaves as if PMSFCR_EL1.FT is set to 0
-> 
-> Seems like FDS doesn't end up as neat as the others, but IMO I can't see
-> anyone needing a zero filter. I did discuss it with Leo and we decided that
-> we could always add the enable flag at a later date if a use case turned up
-> and it wouldn't be a breaking change.
-> 
-> But if you think it's there so it should be exposed I can add it.
+The MTD device is blocked from writing to the SPI-NOR chip if any region
+of it is write-protected, even if "writeable=1" module parameter is set.
 
-What about if we expose the inverse of PMSDSFR_EL1 to userspace instead?
+Add ability to bypass this behaviour by introducing new module parameter
+"ignore_protestion_status" which allows to rely on the write protection
+mechanism of SPI-NOR chip itself, which most modern chips (since
+the 1990'+) have already implemented.
 
-Will
+Any erase/write operations performed on the write-protected section will
+be rejected by the chip.
+
+Signed-off-by: Jakub Czapiga <czapiga@google.com>
+---
+v1 -> v2:
+- Fix typo in the macro name.
+
+ drivers/spi/spi-intel.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/spi/spi-intel.c b/drivers/spi/spi-intel.c
+index 5d5a546c62ea..6428e7de1aec 100644
+--- a/drivers/spi/spi-intel.c
++++ b/drivers/spi/spi-intel.c
+@@ -189,6 +189,11 @@ struct intel_spi_mem_op {
+ static bool writeable;
+ module_param(writeable, bool, 0);
+ MODULE_PARM_DESC(writeable, "Enable write access to SPI flash chip (default=0)");
++static bool ignore_protection_status;
++module_param(ignore_protection_status, bool, 0);
++MODULE_PRAM_DESC(
++	ignore_protection_status,
++	"Do not block SPI flash chip write access even if it is write-protected (default=0)");
+ 
+ static void intel_spi_dump_regs(struct intel_spi *ispi)
+ {
+@@ -1248,13 +1253,15 @@ static void intel_spi_fill_partition(struct intel_spi *ispi,
+ 			continue;
+ 
+ 		/*
+-		 * If any of the regions have protection bits set, make the
+-		 * whole partition read-only to be on the safe side.
++		 * If any of the regions have protection bits set and
++		 * the ignore protection status parameter is not set,
++		 * make the whole partition read-only to be on the safe side.
+ 		 *
+ 		 * Also if the user did not ask the chip to be writeable
+ 		 * mask the bit too.
+ 		 */
+-		if (!writeable || intel_spi_is_protected(ispi, base, limit)) {
++		if (!writeable || (!ignore_protection_status &&
++				   intel_spi_is_protected(ispi, base, limit))) {
+ 			part->mask_flags |= MTD_WRITEABLE;
+ 			ispi->protected = true;
+ 		}
+-- 
+2.50.0.727.gbf7dc18ff4-goog
+
 
