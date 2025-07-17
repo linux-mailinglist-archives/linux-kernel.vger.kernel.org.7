@@ -1,57 +1,47 @@
-Return-Path: <linux-kernel+bounces-734516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D6E5B082A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 03:58:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA213B082A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 04:00:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FB52173B9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 01:58:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB83317558C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE8A41B0F1E;
-	Thu, 17 Jul 2025 01:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ej2YWayh"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E72B1CAA79;
+	Thu, 17 Jul 2025 02:00:13 +0000 (UTC)
+Received: from ssh247.corpemail.net (ssh247.corpemail.net [210.51.61.247])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8249D7263B
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 01:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E2213BC3F
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 02:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.247
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752717496; cv=none; b=t5qPjje7NwFuzElKdMU1n4+/xoj8qW6jvPizpn0kfxK5ImVfX0txms0aDqjxbmijNV/0D63vdBWYqQd8vs+dE0veMSJnDHV0pM1s9ERmb4fP3wxYrRMbqIXC8eLAhiXH/TbAHm4Ou1NQk4zGzj7djtuk12hoS+Dg91Gb4OObBN4=
+	t=1752717613; cv=none; b=lghff1gLSL6MudK8opSJN8/rqeoHWOt72vipgGL2TNu/EYgyLo4D/V0eyGw6XNNLAagtbubYu7veTEUS3OaC/TbHGYw+oZBubMLDgVfnD0NLzZxXUk6NU87hUOUkJAmsdD3vDI7AW68reje3WKccOXJ95hzyKBc9yxw5BP+//OY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752717496; c=relaxed/simple;
-	bh=is6KyaSXGSqCngT7e2V3DgRJv49jMlpRi0X3V1USDG4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=I1KBPNJWSUpPa0RP3RI0QN+K4qbU6Ta4O9MchQDqDJikEVKeftPZKPgYrxkYrS6th3L5PuOlW6ADrSf5Cc3qsxZmnxKT4NDNMDrQFjRRE3D4oMT3N2T2ngqBa0bwdtVl5RRI+rwQZQRQ669izTpkKD8y/SIP1f44KOak8r6H2j0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ej2YWayh; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752717492;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KwiwtufpFedxgqMjpz1kH9fqYtgdYnalndUuHDgZNrQ=;
-	b=ej2YWayhpu5nKiqXw79QqDkgrdyzyfGGaXRuVp8PMbDHEzLV/kscqEvOIlRiPVdhMXBaAF
-	39UxDtQqQHggdEJyLVlFy6G+S38dOM4yWDUqiwlwsBvknd+vkgRSj/qdwD5ctJcSTfHSiG
-	uBJN9i0eqgZxLKf2cl/BDA8EaJYGZj0=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Davidlohr Bueso <dave@stgolabs.net>
-Cc: akpm@linux-foundation.org,  mhocko@kernel.org,  hannes@cmpxchg.org,
-  shakeel.butt@linux.dev,  yosryahmed@google.com,  linux-mm@kvack.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] mm/memcg: make memory.reclaim interface generic
-In-Reply-To: <20250623185851.830632-3-dave@stgolabs.net> (Davidlohr Bueso's
-	message of "Mon, 23 Jun 2025 11:58:49 -0700")
-References: <20250623185851.830632-1-dave@stgolabs.net>
-	<20250623185851.830632-3-dave@stgolabs.net>
-Date: Wed, 16 Jul 2025 18:58:04 -0700
-Message-ID: <87bjpjshn7.fsf@linux.dev>
+	s=arc-20240116; t=1752717613; c=relaxed/simple;
+	bh=bo0OaTgnyapKUp7jo6Q9C/PXK53tTjC1DKb2/QGimfA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nX/COoi6/lbuN83yvb5RzWi8GYU9u04ozEgzembPRxTkgXLG0own03sJJ+s0OJihWjaebkIiRUtQewdjgjAKqM0767010QS6mByo9PMLHPpQABzO1jS58U0DLF3gpUNCImW83pmZBXnsrjTGcurEKc9Zyn1vQhHz4w/CLdlxtZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.247
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from jtjnmail201622.home.langchao.com
+        by ssh247.corpemail.net ((D)) with ASMTP (SSL) id 202507170958577543;
+        Thu, 17 Jul 2025 09:58:57 +0800
+Received: from localhost.localdomain (10.94.15.194) by
+ jtjnmail201622.home.langchao.com (10.100.2.22) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.57; Thu, 17 Jul 2025 09:58:57 +0800
+From: Bo Liu <liubo03@inspur.com>
+To: <xiang@kernel.org>, <chao@kernel.org>
+CC: <linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>, Bo Liu
+	<liubo03@inspur.com>
+Subject: [PATCH v2] erofs: fix build error with CONFIG_EROFS_FS_ZIP_ACCEL=y
+Date: Wed, 16 Jul 2025 21:58:48 -0400
+Message-ID: <20250717015848.4804-1-liubo03@inspur.com>
+X-Mailer: git-send-email 2.18.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,91 +49,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Migadu-Flow: FLOW_OUT
+X-ClientProxiedBy: Jtjnmail201615.home.langchao.com (10.100.2.15) To
+ jtjnmail201622.home.langchao.com (10.100.2.22)
+tUid: 20257170958579e39912c5d14bf5a236e6e429856e73f
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-Davidlohr Bueso <dave@stgolabs.net> writes:
+fix build err:
+ ld.lld: error: undefined symbol: crypto_req_done
+   referenced by decompressor_crypto.c
+       fs/erofs/decompressor_crypto.o:(z_erofs_crypto_decompress) in archive vmlinux.a
+   referenced by decompressor_crypto.c
+       fs/erofs/decompressor_crypto.o:(z_erofs_crypto_decompress) in archive vmlinux.a
 
-> This adds a general call for both parsing as well as the
-> common reclaim semantics. memcg is still the only user and
-> no change in semantics.
->
-> Signed-off-by: Davidlohr Bueso <dave@stgolabs.net>
-> ---
->  mm/internal.h   |  2 +
->  mm/memcontrol.c | 77 ++------------------------------------
->  mm/vmscan.c     | 98 +++++++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 104 insertions(+), 73 deletions(-)
-> ...
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index c13c01eb0b42..63ddec550c3b 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -57,6 +57,7 @@
->  #include <linux/rculist_nulls.h>
->  #include <linux/random.h>
->  #include <linux/mmu_notifier.h>
-> +#include <linux/parser.h>
->  
->  #include <asm/tlbflush.h>
->  #include <asm/div64.h>
-> @@ -6714,6 +6715,15 @@ unsigned long try_to_free_mem_cgroup_pages(struct mem_cgroup *memcg,
->  
->  	return nr_reclaimed;
->  }
-> +#else
-> +unsigned long try_to_free_mem_cgroup_pages(struct mem_cgroup *memcg,
-> +					   unsigned long nr_pages,
-> +					   gfp_t gfp_mask,
-> +					   unsigned int reclaim_options,
-> +					   int *swappiness)
-> +{
-> +	return 0;
-> +}
->  #endif
->  
->  static void kswapd_age_node(struct pglist_data *pgdat, struct scan_control *sc)
-> @@ -7708,6 +7718,94 @@ int node_reclaim(struct pglist_data *pgdat, gfp_t gfp_mask, unsigned int order)
->  
->  	return ret;
->  }
-> +
-> +enum {
-> +	MEMORY_RECLAIM_SWAPPINESS = 0,
-> +	MEMORY_RECLAIM_SWAPPINESS_MAX,
-> +	MEMORY_RECLAIM_NULL,
-> +};
-> +static const match_table_t tokens = {
-> +	{ MEMORY_RECLAIM_SWAPPINESS, "swappiness=%d"},
-> +	{ MEMORY_RECLAIM_SWAPPINESS_MAX, "swappiness=max"},
-> +	{ MEMORY_RECLAIM_NULL, NULL },
-> +};
-> +
-> +int user_proactive_reclaim(char *buf, struct mem_cgroup *memcg, pg_data_t *pgdat)
-> +{
-> +	unsigned int nr_retries = MAX_RECLAIM_RETRIES;
-> +	unsigned long nr_to_reclaim, nr_reclaimed = 0;
-> +	int swappiness = -1;
-> +	char *old_buf, *start;
-> +	substring_t args[MAX_OPT_ARGS];
-> +
-> +	if (!buf || (!memcg && !pgdat))
-> +		return -EINVAL;
-> +
-> +	buf = strstrip(buf);
-> +
-> +	old_buf = buf;
-> +	nr_to_reclaim = memparse(buf, &buf) / PAGE_SIZE;
-> +	if (buf == old_buf)
-> +		return -EINVAL;
-> +
-> +	buf = strstrip(buf);
+ ld.lld: error: undefined symbol: crypto_acomp_decompress
+   referenced by decompressor_crypto.c
+       fs/erofs/decompressor_crypto.o:(z_erofs_crypto_decompress) in archive vmlinux.a
 
-To be honest, not a big fan of this refactoring. Effectively parts of
-the memcg user interface are moved into mm/vmscan.c. I get that you want
-to use the exact same interface somewhere else, but still...
+ ld.lld: error: undefined symbol: crypto_alloc_acomp
+   referenced by decompressor_crypto.c
+       fs/erofs/decompressor_crypto.o:(z_erofs_crypto_enable_engine) in archive vmlinux.a
 
-Is it possible to keep it in mm/memcontrol.c?
-Also maybe split the actual reclaim mechanism and user's input parsing?
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202507161032.QholMPtn-lkp@intel.com/
+Fixes: b4a29efc5146 ("erofs: support DEFLATE decompression by using Intel QAT")
+Signed-off-by: Bo Liu <liubo03@inspur.com>
 
-Thanks
+v1: https://lore.kernel.org/linux-erofs/7a1dbee70a604583bae5a29f690f4231@inspur.com/T/#t
+
+change since v1:
+- add Fixes commits
+---
+ fs/erofs/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/erofs/Kconfig b/fs/erofs/Kconfig
+index 6beeb7063871..60510a041bf1 100644
+--- a/fs/erofs/Kconfig
++++ b/fs/erofs/Kconfig
+@@ -147,6 +147,7 @@ config EROFS_FS_ZIP_ZSTD
+ config EROFS_FS_ZIP_ACCEL
+ 	bool "EROFS hardware decompression support"
+ 	depends on EROFS_FS_ZIP
++	select CRYPTO
+ 	help
+ 	  Saying Y here includes hardware accelerator support for reading
+ 	  EROFS file systems containing compressed data.  It gives better
+-- 
+2.31.1
+
 
