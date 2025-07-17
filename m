@@ -1,188 +1,188 @@
-Return-Path: <linux-kernel+bounces-735860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9A79B0949F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:12:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0021AB094A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:13:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B43B13BA8A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:12:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 620341C45DEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C09A2FCE3D;
-	Thu, 17 Jul 2025 19:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HSwgFfZG"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3C82FE31C;
+	Thu, 17 Jul 2025 19:13:35 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD7F219A89;
-	Thu, 17 Jul 2025 19:12:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21DB259498
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 19:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752779542; cv=none; b=dObf3O0dVFHBFDmvWc8Ok38ZF8IUWS5HFPRPj/r75ZHDkTdgkekv6I8wiGNUa1mru2BU8dkvdrozEdiXL1AigZyoocOF8GEi4imPvQ+/r6bHw9vlxZ/1JFsGp8ZeL2h+eQrglHWFfYq/bE35eoKgBzU38ri+IIHPZnqT6V9x9Hc=
+	t=1752779615; cv=none; b=deVzkUA9chOqRFK8Fc0amgrOW21VwLsql5af/bcEOdBibd3FjARK20R3FXkif63ILVCbYBrw2HTP1NZHyGxHlqfqDT/CQ0XRRA2wQh2S4paG6issgUHALYy+2wwOQYnL0q6eZpSkyXhovsC4JRd4q3+x12vHvJSNYYKVBazIhrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752779542; c=relaxed/simple;
-	bh=F+z9dJqtorOP+qQIzHQYSO2CaHwSC7NGKb/mEtxj7+o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uOxKk4JMMZuxyUv8IZ5ZR5/w334Ge+L/GkU4hG6/PER6AUF2hDdHhFLEXYEp6uzm6V23dstg1fv+DlShdpiZ3kLzbYLfNJJqHM2dEprgtZ0PlC7WW5P26X63zGBgob/cYCjHEH8k5BK8JpfN5xa2vvyX5KOrFvRXb05AAkN88pU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HSwgFfZG; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-32e14ce168eso15159131fa.1;
-        Thu, 17 Jul 2025 12:12:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752779539; x=1753384339; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r8cy/I2SGSe5R+g8DSOkgMJeJimpkG4pmlMho5BfIgY=;
-        b=HSwgFfZGrwCWl4HPgRYCT4TJAZkiooM2MX8dA3RJqJbzpZUdcysuUPpdmDGfMhrkFT
-         NT3lX811+hDFfqQLVuWIcIsLA100o1da08KY3SThAzfLnKqweP2tKW3czv7EZ3z/UqVa
-         haK3cC4kea7TXh2+hpKyTuJ6Ro/Hqky3LMK4NgSU8pXkDzkBfKQECy1exTaWYMk0ZnmU
-         cJTJ/qcvbj6yZy38WhY1T37hCs2qCVYgrD4o2/cz5Hsf2+wOaV5rH0bU6CYDhBwUfakD
-         2QXsALkCTyKZQ00wGp81hHzu53QJUi/Qr0n+kAwtZ/t7Uhna864f6iWAkwUq9HF85CWC
-         5rnw==
+	s=arc-20240116; t=1752779615; c=relaxed/simple;
+	bh=7drBQArmul0bNW++/grAft4ilAca/Mnd679QZ+Bn92I=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Zj6J//ZAxByiOSAx3OkJLBrbFk3ib4v96mdpmpltZ14ZfCtXw42GS0wmSUTQQXcEcGD3FxKPMDJvWAjbIfpwI+1ybTUg/i3K98FzZUCW05C+JZvZ4NNJVEQCK4yHMWRBB2aEwHnjPVpGDXeLhsuq5VwFqlce5vcQCjn5ihzYPCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-869e9667f58so251286639f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 12:13:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752779539; x=1753384339;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=r8cy/I2SGSe5R+g8DSOkgMJeJimpkG4pmlMho5BfIgY=;
-        b=GXP8Q1+wDTRzK5izhng9ja88ov8cR6EGUdlon6Ax+3HhipqB3Oils7YfSKb9R/LfT6
-         Nis3qvl0N0nxTB9gnmunZ1+8zyf6721NYjdiozc63OEj0GcjZkUAzc8Ti35RJL8Emtgo
-         9IPDN8ZNqNf5beQyIAimLt+Etg4eoKZug6EuEQ6LEWwtHJppzSQDJe6j+nUxh08Ki9RN
-         I4zKxXRTWjLL4J6V2177Ut/zw5GIDUBaRjMHG8OYDpydlAPw80FUKLXQn15avMk/rLie
-         KXNNE3QFSTkLWnarAliY2CuSMjHcmBY+IhABlVUXrOaX4HtDRpNoPqpFkYl9eEJOL2qL
-         GkIg==
-X-Forwarded-Encrypted: i=1; AJvYcCWZ24oiCyuIw3OXBHBmFfRLg9xH9jK+suDWF6FeLXKapuYgy0fJKQCmyvdPbEkmxmDa0VowMRPT/PeXou8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqpRL7aO2jokPiXXhYBljSjjj03EmAe+u+C2wFIVlfw5DchoDV
-	vLy3FMKNZiZF/EUT80MxAqQG4GIN3tg/dRCjVoXX+jRe3WWC78/VQEPTmbfx+q50WG1Iu30Nzrm
-	324l3mGIl81b52peWx2U+MzT7SjITyyflqfV+S40=
-X-Gm-Gg: ASbGnctfg4VH8eJWds78allFUuYRIzDJ4/QTwxxkZ+lqd6dBvoezO7mdf7ar0vCGsJW
-	cqD5z6WVfZMm7xR5pQ2SUk49zgBlGVDzFm9WiCeZu8dWSnNAjJz6gF2/7hEYPqecH59aW9fzqW6
-	1jhRbTYuLev5YlE5RUEX/fri90XCpOndsyXg0AsGfwMsOcvC2LWBR0ygnVj/DtwaiApsyQ2tLFF
-	jLtSQ==
-X-Google-Smtp-Source: AGHT+IEsQzxwh6vmqyje9uCfCmyVHTYc98stcN/PtmOAvNGrEr+2cYe5fzrz8IECuPcjkVU9pT++3NB/b/xV/lv38kM=
-X-Received: by 2002:a2e:8216:0:b0:32a:7750:a0e1 with SMTP id
- 38308e7fff4ca-3308f5df808mr24409731fa.26.1752779538369; Thu, 17 Jul 2025
- 12:12:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752779613; x=1753384413;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GWdSGCRq+7SVgHzFW0mmkhT41NWWYrMSP/M+TxAFGNI=;
+        b=SlDW5AD2yXn/hN/gSelKmNIUeEkf0cYmVJq0kxOes3Xys3pFkWStbdmtoJVYX6GDzK
+         wV8Bqb+Umx5dU1ZtZ0BU1QLnVqyAtmWF2S9d8QBjafq3W4YgTrNGSkKSGeKYiNb2pWfB
+         xvBnfp04FWA7KZTiT2fKpwkIDFg9N/QrhLFezVnpIdftDfH1c7M+KWohAZdLWRRdxtXZ
+         goAsm/7aWmHc2zmWgR0ghC1wS0H70JgEIgK7sL2zeX9Co4MS8zwfA91WeaFFn+ImSODF
+         94BAjXQScyc25tGiMezjqoeW0wRg0dy0ZhCSaYsHJZX8y4W3QkLuStGTJRzKDhzKGgCK
+         H6Jg==
+X-Forwarded-Encrypted: i=1; AJvYcCX/948xJzzI93YcNjIl3eJX4uREURXFhWnwOchIfVE8mqAVjgPOAE4p7xF6IyBrDRmOb8K+px75Ix5cWPU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoNITdIyhdYXMqddeNTmoA7R3kZJ8Xb9+Vk1ks5TxKiRiAssfl
+	iZmXnfAchV9uaCEAkxctUG+N/c2ARxinppw6nLYotDlSH/I3v8mh3oDCVcy0K+f/mTv7tONEC0C
+	LFbKEWO/HDfTncXMNB2BGsfoifZCyLE0ZNcW9RDJqstjqftzoh+Wj7xBkz3c=
+X-Google-Smtp-Source: AGHT+IFOtEwoW+pIIgXzo3NIwMKX8VH8wayWU79dvKMTTDNcHt64bMPJql7UtkDElqdMDzXnG4soPcCYRJTAKBtOVi0Hz4a/J1il
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aHfd_H6c9MheDoQP@chrisdown.name>
-In-Reply-To: <aHfd_H6c9MheDoQP@chrisdown.name>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Thu, 17 Jul 2025 15:12:06 -0400
-X-Gm-Features: Ac12FXzB_0zUIsSp5xm9ZWt9rc1hLN5Z9bpzBcsaxVhXAwI6y5RADY9QatDFkKs
-Message-ID: <CABBYNZJo48983SWhxcB7UzWXPeUofRCMhQ8mJjih-rJoTET3_Q@mail.gmail.com>
-Subject: Re: [PATCH] Bluetooth: hci_event: Mask data status from LE ext adv reports
-To: Chris Down <chris@chrisdown.name>
-Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-team@fb.com, Jaganath Kanakkassery <jaganath.k.os@gmail.com>
+X-Received: by 2002:a05:6e02:1445:b0:3df:2cd1:f61b with SMTP id
+ e9e14a558f8ab-3e282c5298fmr65746315ab.0.1752779612874; Thu, 17 Jul 2025
+ 12:13:32 -0700 (PDT)
+Date: Thu, 17 Jul 2025 12:13:32 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68794b5c.a70a0220.693ce.0050.GAE@google.com>
+Subject: [syzbot] [mm?] BUG: unable to handle kernel paging request in move_pages
+From: syzbot <syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, peterx@redhat.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Chris,
+Hello,
 
-On Wed, Jul 16, 2025 at 1:14=E2=80=AFPM Chris Down <chris@chrisdown.name> w=
-rote:
->
-> The Event_Type field in an LE Extended Advertising Report uses bits 5
-> and 6 for data status (e.g. fragmentation), not the PDU type itself.
->
-> The ext_evt_type_to_legacy() function fails to mask these status bits
-> before evaluation. This causes valid advertisements with status bits set
-> (e.g. a fragmented non-connectable advertisement, which ends up showing
-> as PDU type 0x40) to be misclassified as unknown and subsequently
-> dropped. This is okay for most checks which use bitwise AND on the
-> relevant event type bits, but it doesn't work for non-connectable types,
-> which are checked with '=3D=3D LE_EXT_ADV_NON_CONN_IND' (that is, zero).
+syzbot found the following issue on:
 
-Can you include a sample trace of the above? Also it would be great to
-have a mgmt-tester for example that attempts to generate an
-advertisement like that to exercise such change.
+HEAD commit:    e8352908bdcd Add linux-next specific files for 20250716
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=17f81382580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b7b0e60e17dc5717
+dashboard link: https://syzkaller.appspot.com/bug?extid=b446dbe27035ef6bd6c2
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10041382580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10eb158c580000
 
-> This patch introduces a PDU type mask to ensure only the relevant bits
-> are evaluated, allowing for the correct translation of all valid
-> extended advertising packets.
->
-> Signed-off-by: Chris Down <chris@chrisdown.name>
-> Cc: linux-bluetooth@vger.kernel.org
-> ---
->  net/bluetooth/hci_event.c | 20 ++++++++++++--------
->  1 file changed, 12 insertions(+), 8 deletions(-)
->
-> diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
-> index c0eb03e5cbf8..077c93b5fae0 100644
-> --- a/net/bluetooth/hci_event.c
-> +++ b/net/bluetooth/hci_event.c
-> @@ -6237,10 +6237,14 @@ static void hci_le_adv_report_evt(struct hci_dev =
-*hdev, void *data,
->         hci_dev_unlock(hdev);
->  }
->
-> +#define LE_EXT_ADV_DATA_STATUS_MASK GENMASK(6, 5)
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ae8cc81c1781/disk-e8352908.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/57aaea991896/vmlinux-e8352908.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/feb871619bd4/bzImage-e8352908.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com
+
+BUG: unable to handle page fault for address: ffffea6000391008
+#PF: supervisor read access in kernel mode
+#PF: error_code(0x0000) - not-present page
+PGD 13fff8067 P4D 13fff8067 PUD 0 
+Oops: Oops: 0000 [#1] SMP KASAN PTI
+CPU: 1 UID: 0 PID: 5860 Comm: syz-executor832 Not tainted 6.16.0-rc6-next-20250716-syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+RIP: 0010:_compound_head include/linux/page-flags.h:284 [inline]
+RIP: 0010:move_pages+0xbe6/0x1430 mm/userfaultfd.c:1824
+Code: c1 ec 06 4b 8d 1c 2c 48 83 c3 08 48 89 d8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df 80 3c 08 00 74 08 48 89 df e8 9a 30 f4 ff <48> 8b 1b 48 89 de 48 83 e6 01 31 ff e8 59 70 8f ff 48 89 d8 48 83
+RSP: 0018:ffffc90003f778a8 EFLAGS: 00010246
+RAX: 1ffffd4c00072201 RBX: ffffea6000391008 RCX: dffffc0000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000003 R09: 0000000000000004
+R10: dffffc0000000000 R11: fffff520007eef00 R12: 0000006000391000
+R13: ffffea0000000000 R14: 200018000e4401fd R15: 00002000003ab000
+FS:  00007ff35708f6c0(0000) GS:ffff8881258aa000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffea6000391008 CR3: 0000000074390000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ userfaultfd_move fs/userfaultfd.c:1923 [inline]
+ userfaultfd_ioctl+0x2e8b/0x4c80 fs/userfaultfd.c:2046
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:598 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:584
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7ff3570d6519
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 51 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ff35708f218 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007ff357160308 RCX: 00007ff3570d6519
+RDX: 0000200000000180 RSI: 00000000c028aa05 RDI: 0000000000000003
+RBP: 00007ff357160300 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ff35712d074
+R13: 0000200000000180 R14: 0000200000000188 R15: 00002000002b9000
+ </TASK>
+Modules linked in:
+CR2: ffffea6000391008
+---[ end trace 0000000000000000 ]---
+RIP: 0010:_compound_head include/linux/page-flags.h:284 [inline]
+RIP: 0010:move_pages+0xbe6/0x1430 mm/userfaultfd.c:1824
+Code: c1 ec 06 4b 8d 1c 2c 48 83 c3 08 48 89 d8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df 80 3c 08 00 74 08 48 89 df e8 9a 30 f4 ff <48> 8b 1b 48 89 de 48 83 e6 01 31 ff e8 59 70 8f ff 48 89 d8 48 83
+RSP: 0018:ffffc90003f778a8 EFLAGS: 00010246
+RAX: 1ffffd4c00072201 RBX: ffffea6000391008 RCX: dffffc0000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000003 R09: 0000000000000004
+R10: dffffc0000000000 R11: fffff520007eef00 R12: 0000006000391000
+R13: ffffea0000000000 R14: 200018000e4401fd R15: 00002000003ab000
+FS:  00007ff35708f6c0(0000) GS:ffff8881258aa000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffea6000391008 CR3: 0000000074390000 CR4: 00000000003526f0
+----------------
+Code disassembly (best guess):
+   0:	c1 ec 06             	shr    $0x6,%esp
+   3:	4b 8d 1c 2c          	lea    (%r12,%r13,1),%rbx
+   7:	48 83 c3 08          	add    $0x8,%rbx
+   b:	48 89 d8             	mov    %rbx,%rax
+   e:	48 c1 e8 03          	shr    $0x3,%rax
+  12:	48 b9 00 00 00 00 00 	movabs $0xdffffc0000000000,%rcx
+  19:	fc ff df
+  1c:	80 3c 08 00          	cmpb   $0x0,(%rax,%rcx,1)
+  20:	74 08                	je     0x2a
+  22:	48 89 df             	mov    %rbx,%rdi
+  25:	e8 9a 30 f4 ff       	call   0xfff430c4
+* 2a:	48 8b 1b             	mov    (%rbx),%rbx <-- trapping instruction
+  2d:	48 89 de             	mov    %rbx,%rsi
+  30:	48 83 e6 01          	and    $0x1,%rsi
+  34:	31 ff                	xor    %edi,%edi
+  36:	e8 59 70 8f ff       	call   0xff8f7094
+  3b:	48 89 d8             	mov    %rbx,%rax
+  3e:	48                   	rex.W
+  3f:	83                   	.byte 0x83
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
->  static u8 ext_evt_type_to_legacy(struct hci_dev *hdev, u16 evt_type)
->  {
-> -       if (evt_type & LE_EXT_ADV_LEGACY_PDU) {
-> -               switch (evt_type) {
-> +       u16 pdu_type =3D evt_type & ~LE_EXT_ADV_DATA_STATUS_MASK;
-> +
-> +       if (pdu_type & LE_EXT_ADV_LEGACY_PDU) {
-> +               switch (pdu_type) {
->                 case LE_LEGACY_ADV_IND:
->                         return LE_ADV_IND;
->                 case LE_LEGACY_ADV_DIRECT_IND:
-> @@ -6257,21 +6261,21 @@ static u8 ext_evt_type_to_legacy(struct hci_dev *=
-hdev, u16 evt_type)
->                 goto invalid;
->         }
->
-> -       if (evt_type & LE_EXT_ADV_CONN_IND) {
-> -               if (evt_type & LE_EXT_ADV_DIRECT_IND)
-> +       if (pdu_type & LE_EXT_ADV_CONN_IND) {
-> +               if (pdu_type & LE_EXT_ADV_DIRECT_IND)
->                         return LE_ADV_DIRECT_IND;
->
->                 return LE_ADV_IND;
->         }
->
-> -       if (evt_type & LE_EXT_ADV_SCAN_RSP)
-> +       if (pdu_type & LE_EXT_ADV_SCAN_RSP)
->                 return LE_ADV_SCAN_RSP;
->
-> -       if (evt_type & LE_EXT_ADV_SCAN_IND)
-> +       if (pdu_type & LE_EXT_ADV_SCAN_IND)
->                 return LE_ADV_SCAN_IND;
->
-> -       if (evt_type =3D=3D LE_EXT_ADV_NON_CONN_IND ||
-> -           evt_type & LE_EXT_ADV_DIRECT_IND)
-> +       if (pdu_type =3D=3D LE_EXT_ADV_NON_CONN_IND ||
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-I'm not sure I would keep checking for  LE_EXT_ADV_NON_CONN_IND, maybe
-just return LE_ADV_NONCONN_IND, LE_EXT_ADV_NON_CONN_IND is not
-actually a bit it is the absence of any bits being set, so I guess the
-only invalid adv are the ones for legacy which seem to require a bit
-to be set.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-> +           pdu_type & LE_EXT_ADV_DIRECT_IND)
->                 return LE_ADV_NONCONN_IND;
->
->  invalid:
-> --
-> 2.49.0
->
->
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
---=20
-Luiz Augusto von Dentz
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
