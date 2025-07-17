@@ -1,80 +1,59 @@
-Return-Path: <linux-kernel+bounces-734913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEB4DB0881D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:45:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42C96B08825
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:46:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 097281A67098
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:46:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 893FB4A7BDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:46:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45E76283FD0;
-	Thu, 17 Jul 2025 08:45:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z9p5phMy"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C495286411;
+	Thu, 17 Jul 2025 08:46:03 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9446127AC4B
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 08:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8151C1D7984;
+	Thu, 17 Jul 2025 08:45:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752741933; cv=none; b=KtFtgrGBFisDX0h1kQ+XKR7pYjc2BRLI1kAdsTWUByq5B/gD/RcXvQrCWfqlQ4+RVIgLFSmke52+kqEUpDj/kjAvrBvKKnGxnBxQ/iKaa5u5gE0CTtTM4szaR+AN0w/6p9D9lfJ+KjMobMQ5PQEGMLenZUph5956fraLPJIB58A=
+	t=1752741962; cv=none; b=KgAmJT85VMpf3Og0hHFWuxBYfYxOfpK+1pXiMdVjueBKG92zlorbnNf1gFle8r97kOSX2Zxg39/yggFXVzWtQZT/1Es/dzGgrbUoHTDyzDze+ZHyMuEhH3BnU0KYhL9cbvM48LNAJxH/bcJu6h9UQxyzcNXxyUv5eZKGamXLLKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752741933; c=relaxed/simple;
-	bh=KeBoICQi5vCriX+lE0bMVyU8SmgjFFfJAbuXSXLwOvU=;
+	s=arc-20240116; t=1752741962; c=relaxed/simple;
+	bh=SpCr1wY1nWMBDF/jcIen/XcUs4WWiwoXCVsFiT4+rOI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DzPujdRussuNIEc7M/2lzITQTvotGQ6CsvxFnYjJaRWvL5H+bOd+7cx0U/eXUKde1WhT4THOqR/QjG2ag9w3RvSkGyBY3foqOp05En2dJXJTtXFbPIOyB8QXggnHe9qRv10s7Ekss9lXfwJPM6kMVkrhEv/KU4m0gc8ptVfuei4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z9p5phMy; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a54700a46eso414904f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 01:45:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752741930; x=1753346730; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lI0pEfmVhQWkOv8EPGMn/xg7zISwfZGg3TSb4XZEXe4=;
-        b=Z9p5phMyeHNhIDU3Bgy2gPhCpHerknLxBYm7WCG/LwPrxjMpI4USLbCyaOjiVnN2Bc
-         0akJB43+4J3uta7FFI0j6VAD1cP64fyKo/TvC47bs35lBzsSewyivPQegM6s9TIKd63z
-         zLB0zu4ZpRlUhXJHIcCrIoDgY4BSLNerw6TUyhoKJeJMG21cVl/AazO7JVwTdN92tt7v
-         099tssRKwqNSXSCtTIWnjJPEs728HkTSydhzSa/WbaKLaFxrfvfE+FWEOlo2CKKsRJqK
-         XTw3F5eThczER5JNuWtg/B8Qf9LF5GvqrgYn4O2CPnmm9LqxPQNtQaAJIFAaheUVJEwl
-         x0CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752741930; x=1753346730;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lI0pEfmVhQWkOv8EPGMn/xg7zISwfZGg3TSb4XZEXe4=;
-        b=f8PvHkFqTAUT9NjHRZeB57KFVBSKQyx5vP2jqKAEzMvLW8LrLPcsLkYTC6tFh65qd2
-         Tqqr4sG9SqTO4EPme+hosi1Rf48Vj+U1yHFZduEva9oieKnXzWDMwl274qX17f65y22a
-         Lg4gLfdlrx+HrVxDS98wEaU1le44POVI32sLry3hjkNPCw+HWzUcU4muyAWYRUfdxJ8G
-         25MFOZyzwNyOayuICTe3lt49f3KXCCLoklk1Sdepp0+mPoCxmQ0VnbeF3q5XzWHYQPnp
-         t9Rk3JNHtdv8Y1iuWsz89bcu7TBUy60+8zVRNYA22tSuFVVgtglKUFUytOWz/72xmR6i
-         Ogjw==
-X-Forwarded-Encrypted: i=1; AJvYcCWZh//idznibjR08jsB4PHW8zTbVQ6b810PAsVNFYLCY5nGBx01XhvK/VHJMMxBUBqWMxbSnzm5BelPew4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCJDY/68TPooXLBXLidTCDzuwJ5OlxiiVu+zJo+9Dg4eaPdMpO
-	r1Tb+Hi3KH5yQUMCKOJIMfA6ijQrkrfp8OOhA61QEAXKFYkOidetbdN6HHcaEBZvXAk=
-X-Gm-Gg: ASbGncumtpq0UIGr6BNElsEmdXUtwSpQd/B9XcbDyn+KRTjgetUycsVsRsFtfiGPZqT
-	gqpOD0tNZfdT958sFjrqLAiQ7CXZojigtB8jpN3TSUJvOYy3XVkQRK4T3PnDiDS07vKMfYNwuRd
-	Js7F2CQkSVDNY38vjlTjWZBHkmE4zGJsLZFdorHIPt+WXvWOzWhPAENst1oK1S1bJW9bVKc/kgr
-	wiRgTUY0P5rrOFl/TjK4Qve8gFH7L88NFUC2CRYh/r3kDzcp/hxc95MjH9QfbiIWVVUFcUVhM+z
-	3Oe2TpiaDSR6taiRRa/mIwiwRIVuNK4p3AHa9CjkXTFi9xLm6xGx0ko+ZLX34FCcQl0trOkMM5X
-	gZTofTTikOy9D2bHpFdacXuLUznVdzyNHYElNiprL1up16zVP/8sVbZuoYxbzra5JDxzC5I94Y9
-	JE
-X-Google-Smtp-Source: AGHT+IHynfEiO6GXy/zERfnUna5/ILOl/Jpu2n8FLydUo9tQGpFN5rGKrkj6TlP/t2+2sNcZBF+q3Q==
-X-Received: by 2002:a05:6000:250d:b0:3a5:58a5:6a83 with SMTP id ffacd0b85a97d-3b613e66eaemr1561801f8f.13.1752741929767;
-        Thu, 17 Jul 2025 01:45:29 -0700 (PDT)
-Received: from ?IPV6:2a0d:e487:37e:ce58:94c8:a752:de4:96bb? ([2a0d:e487:37e:ce58:94c8:a752:de4:96bb])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-45634f5cad3sm15783305e9.9.2025.07.17.01.45.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Jul 2025 01:45:29 -0700 (PDT)
-Message-ID: <d1e84ad9-eeea-4d0b-9f29-1dd4be49225c@linaro.org>
-Date: Thu, 17 Jul 2025 10:45:24 +0200
+	 In-Reply-To:Content-Type; b=b+8noUaZ0k5At416jrDOcFKc0pGTtk/Qz3v1ZffusjVxQDnBQwW8/SbmD6SzPFdEC+ug7mIA38kMclTuRS2BxkQTW2JGQHVl5AMkMPi+Df5yl1ek/i4rkDKC79K8Hhg1RkaGx6ZuKL0WP9nzkcURN9N8iePdd6GFfK5rE4DfapM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 71bcb7c662ea11f0b29709d653e92f7d-20250717
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:5b400d1e-93d1-4470-9488-307bbdf30090,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:375b463e6296087dc82d2f9d9e64701d,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
+	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 71bcb7c662ea11f0b29709d653e92f7d-20250717
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 857520807; Thu, 17 Jul 2025 16:45:51 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 6D0EBE008FA5;
+	Thu, 17 Jul 2025 16:45:51 +0800 (CST)
+X-ns-mid: postfix-6878B83E-628209128
+Received: from [172.25.120.24] (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 9F292E008FA3;
+	Thu, 17 Jul 2025 16:45:49 +0800 (CST)
+Message-ID: <6ab5e858-c0bd-4cb0-b1f8-b95c452c6b6b@kylinos.cn>
+Date: Thu, 17 Jul 2025 16:45:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,65 +61,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/15] dt-bindings: thermal: qcom-tsens: document the
- Milos Temperature Sensor
-To: Luca Weiss <luca.weiss@fairphone.com>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Manivannan Sadhasivam <mani@kernel.org>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- "David S. Miller" <davem@davemloft.net>, Vinod Koul <vkoul@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Robert Marko <robimarko@gmail.com>,
- Das Srinagesh <quic_gurus@quicinc.com>, Thomas Gleixner
- <tglx@linutronix.de>, Jassi Brar <jassisinghbrar@gmail.com>,
- Amit Kucheria <amitk@kernel.org>, Thara Gopinath <thara.gopinath@gmail.com>,
- Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
- Ulf Hansson <ulf.hansson@linaro.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-crypto@vger.kernel.org, dmaengine@vger.kernel.org,
- linux-mmc@vger.kernel.org
-References: <20250713-sm7635-fp6-initial-v2-0-e8f9a789505b@fairphone.com>
- <20250713-sm7635-fp6-initial-v2-8-e8f9a789505b@fairphone.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20250713-sm7635-fp6-initial-v2-8-e8f9a789505b@fairphone.com>
+Subject: Re: [PATCH v4] PM / Freezer: Skip zombie/dead processes to reduce
+ freeze latency
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: "rafael J . wysocki" <rafael@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, len brown <len.brown@intel.com>,
+ pavel machek <pavel@kernel.org>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250716062639.1528066-1-zhangzihuan@kylinos.cn>
+ <20250716062639.1528066-2-zhangzihuan@kylinos.cn>
+ <20250716163854.GE16401@redhat.com>
+ <c6c7e8b5-430b-4616-b9e8-46500621bb84@kylinos.cn>
+ <20250717013158.GF16401@redhat.com>
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+In-Reply-To: <20250717013158.GF16401@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 
-On 7/13/25 10:05, Luca Weiss wrote:
-> Document the Temperature Sensor (TSENS) on the Milos SoC.
-> 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
->   Documentation/devicetree/bindings/thermal/qcom-tsens.yaml | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml b/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
-> index 0e653bbe9884953b58c4d8569b8d096db47fd54f..94311ebd7652d42eb6f3ae0dba792872c90b623f 100644
-> --- a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
-> +++ b/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
-> @@ -49,6 +49,7 @@ properties:
->         - description: v2 of TSENS
->           items:
->             - enum:
-> +              - qcom,milos-tsens
->                 - qcom,msm8953-tsens
->                 - qcom,msm8996-tsens
->                 - qcom,msm8998-tsens
-> 
+Hi Oleg,
 
-Applied, thanks
+=E5=9C=A8 2025/7/17 09:31, Oleg Nesterov =E5=86=99=E9=81=93:
+> Hi Zihuan,
+>
+> On 07/17, Zihuan Zhang wrote:
+>>>> +			 */
+>>>> +			if (p =3D=3D current || p->exit_state || !freeze_task(p))
+>>>>   				continue;
+>>> I leave this to you and Rafael, but this change doesn't look safe to =
+me.
+>>> What if the exiting task does some IO after exit_notify() ?
+>> Tasks that have passed exit_notify() and entered EXIT_ZOMBIE are no lo=
+nger
+>> schedulable,
+> How so? please look at do_exit(). The exiting task is still running
+> until it does its last __schedule() in do_task_dead().
+>
+To verify the potential presence of EXIT_DEAD tasks during the freezing=20
+stage, I added some logging in try_to_freeze_tasks() to print out any=20
+task with exit_state =3D=3D EXIT_DEAD. Then I created a fork storm scenar=
+io=20
+to ensure a large number of tasks are exiting during the freeze window.
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+In practice, even after running hundreds of iterations under heavy load,=20
+I wasn=E2=80=99t able to capture any such task being printed. Since the e=
+xit=20
+phase is very fast, it seems unlikely that an EXIT_DEAD task stays in=20
+the process list long enough to be observed during the freeze loop.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+So I believe it's safe to skip tasks with exit_state=C2=A0 in this contex=
+t.
+
+diff --git a/kernel/power/process.c b/kernel/power/process.c
+index c1d6c5150033..054fad43ed31 100644
+--- a/kernel/power/process.c
++++ b/kernel/power/process.c
+@@ -59,6 +59,8 @@ static int try_to_freeze_tasks(bool user_only)
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0* a more generic exclusion mechanism for other=20
+non-freezable tasks.
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0* However, for now, exit_state is sufficient=20
+to skip user processes.
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0*/
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 if (p->exit_state =3D=3D EXIT_DEAD)
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0pr_info("current process is going t=
+o=20
+dead name:%s pid:%d=C2=A0 \n", p->comm, p->pid);
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 if (p =3D=3D current || p->exit_state ||=20
+!freeze_task(p))
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 continue;
+
+>> so they cannot do I/O anymore. Skipping them during freezing
+>> should be safe
+> Oleg.
+>
 
