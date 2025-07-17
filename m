@@ -1,267 +1,349 @@
-Return-Path: <linux-kernel+bounces-735005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3134FB0895B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:34:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70986B08962
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:34:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C2C5A47EAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:33:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2839616A917
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF49D289E1F;
-	Thu, 17 Jul 2025 09:34:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2B028B7D6;
+	Thu, 17 Jul 2025 09:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="geSHJib7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CNTnva7+"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26DB63208;
-	Thu, 17 Jul 2025 09:34:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752744843; cv=fail; b=faFtkX0GOCuJeb2cRYrv+69gutVuLB2d3Uyq0wJYKXGUtIt22jSks2TEwto8icOTlAFLaKRqvoqb5/wKnghjQoQ/LFgPnQa4EB0MeHDwPbfBxwI0UR3SILXxnvurev2LdOKTnGDXAQBPWfy1vne85omtHaAsYZ/YRhGAXJ0yq1w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752744843; c=relaxed/simple;
-	bh=wMVwKCzGPlKZnqCPjp1F6XuBPvjP/2rtRPViOKxFKFU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=efaNPpSA+6r4UIjtfa05Y4EQt4RetUTgVF7xhCo6GWti+1SH3OmWjFnGKPS5E2eRTAxKY5SB7z34JFl3J2HlRPnJ4gEjVfuH9gWAXKfZd6hIHrxb3+oK+IHltrySAcL4v2Fchw9vBTv0wfKV7+9qE4uCdVDjrL41C0Kh+pK5Hqs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=geSHJib7; arc=fail smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752744842; x=1784280842;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=wMVwKCzGPlKZnqCPjp1F6XuBPvjP/2rtRPViOKxFKFU=;
-  b=geSHJib7KJ07NglHTEC43geOWEu3sW3xqb8GfHZdyk3dbmnPLjH3ZHIb
-   i1IZk5USQKXvgQuRjxpTzIY+AMqRkroaFBsC94m5CsIz6GKQu7aEOybn5
-   4vVReS1zdVE/TL0vjdl49iemdwlsPAXrYjUtA0bYBW+y7V/I8A4MfeT5+
-   SXKuJhjrqQ2j4HbPGdtceKi9wLTa9x+GL9IT5aAzdiTBhX/h9KbiOlrp4
-   m1O/CH4dpal2Ujri4e/pdc0mcSmRp6FmG42GJmDjzydfVMLJmV/lu8HrX
-   0RE6mbPEG5Wk59iPVjcVjcxuGWxu5xHUNnAnIQ2h35PqmccGRuB5iMmq4
-   g==;
-X-CSE-ConnectionGUID: ywgjPzruTtqbahNzMgUc7g==
-X-CSE-MsgGUID: kUg60ni1Ra+uy5naDlQSdg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="58784438"
-X-IronPort-AV: E=Sophos;i="6.16,318,1744095600"; 
-   d="scan'208";a="58784438"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 02:34:01 -0700
-X-CSE-ConnectionGUID: dQ417DndRhWYmHto3bxmjg==
-X-CSE-MsgGUID: d1QlflHhRUSyXkfMDxUnnQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,318,1744095600"; 
-   d="scan'208";a="157121025"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 02:34:02 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Thu, 17 Jul 2025 02:34:00 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Thu, 17 Jul 2025 02:34:00 -0700
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (40.107.102.77)
- by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Thu, 17 Jul 2025 02:34:00 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tu5MBVo29L3wKz7RNafzOCHTMGPtg6sbfhFa/Aoklkzc/vSL+9uOr3jsNcJnW0DOw6W0gIELu1c/hWL07Whq6mJraCA/Q+Vd1gIncn/rMEHI76PbW0bgI53hgCAGwDsczkBuKtkU/XBxMG0oMP/QExzrkRXgkRHtuhFcGk7UgoZUe7HMw54TPwNFOVb8FcClAD1kMIP2NlHbzHGv0gP6Z32UnObqA0H/0KoxKeCPqUyU2xyG56vY7QMqLRhGguVp0TAc+yCwLc5SsEYAiadynKqk8PG84+NJ4f5OGHWL2rWOE2ggedVoPlmSdNIjWVe+iBA3gO+VNVCQZSaYQYXShA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ib120EDByQZZztunftTyJkwzldwbNuDAchlQouakrj4=;
- b=lVoFTOiFEwUpxwWrPxA6MYP8X/Ftyg8ITFhID+fvX8zkI5nGF19GY7oAl2srlisa3bS3vbu1xkBvLaTBEitlK1FQOzJB2aRdZlSVXyHGGISEdCFFYqf8mw8kBsiyeLsHrYPAJP4ScV+9pHiWqkpyt6obtqs85k/X5ztSDtyER/lLRCtPDwiKm8ruf/YHNeDw5HgklsGEf0cTJrznJV2V4xRdvfMWkKPMQpLFOUZ/hYbabM07wTL1cPrORa55mzgipDPEr3eSFJRfZOvOtUGFoRQ2lK+uNvfH87E6r3e+zBHSKisNMvLJpME5+WUp8pu8lstMj8upQ7TK4FPLPILYQg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from IA3PR11MB8986.namprd11.prod.outlook.com (2603:10b6:208:577::21)
- by SA2PR11MB4780.namprd11.prod.outlook.com (2603:10b6:806:11d::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.39; Thu, 17 Jul
- 2025 09:33:58 +0000
-Received: from IA3PR11MB8986.namprd11.prod.outlook.com
- ([fe80::395e:7a7f:e74c:5408]) by IA3PR11MB8986.namprd11.prod.outlook.com
- ([fe80::395e:7a7f:e74c:5408%4]) with mapi id 15.20.8922.037; Thu, 17 Jul 2025
- 09:33:58 +0000
-From: "Loktionov, Aleksandr" <aleksandr.loktionov@intel.com>
-To: Yuto Ohnuki <ytohnuki@amazon.com>, "Nguyen, Anthony L"
-	<anthony.l.nguyen@intel.com>, "Kitszel, Przemyslaw"
-	<przemyslaw.kitszel@intel.com>
-CC: Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	"intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [Intel-wired-lan] [PATCH iwl-next v1] ixgbevf: remove unused
- fields from struct ixgbevf_adapter
-Thread-Topic: [Intel-wired-lan] [PATCH iwl-next v1] ixgbevf: remove unused
- fields from struct ixgbevf_adapter
-Thread-Index: AQHb9vdVlz1/3hpwIU6AYIrCLSnYbrQ2DaYA
-Date: Thu, 17 Jul 2025 09:33:58 +0000
-Message-ID: <IA3PR11MB8986F59CEDE4BF3B7994241EE551A@IA3PR11MB8986.namprd11.prod.outlook.com>
-References: <20250717084609.28436-1-ytohnuki@amazon.com>
-In-Reply-To: <20250717084609.28436-1-ytohnuki@amazon.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: IA3PR11MB8986:EE_|SA2PR11MB4780:EE_
-x-ms-office365-filtering-correlation-id: 6ed85ffe-1e92-4d89-c904-08ddc5150e94
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?56qCEEZVZ77wZtrnhsG6/HXnzlCdNIcjjsyHnWXPDgX1w2CXlvDrLkoRRUet?=
- =?us-ascii?Q?EesOBlRTGQw3NzUm/XnQ3DQvdNg97rJ6YmEiwmPxMaiIiLgcgEGyx0MAgdLU?=
- =?us-ascii?Q?SWAETFElTZ9qlE7f/v0xaTa4RSRrpyeM57ckln5u311iVFi6gFOLo6aLApVJ?=
- =?us-ascii?Q?t3tNfWGZDPsycWJuO878VOOiY39ndWYaAS0DNk78sFTt4Mq/1C12et4Ufg6y?=
- =?us-ascii?Q?BWwoSW+PGXcFebpvVS5a3NDvWo1xgYgcaLeMW5eLE3SHusvkSAuZ7aIENDBJ?=
- =?us-ascii?Q?XtEsgImUiC5vNXG5HwfEeyqIkHUFTnKy1UBkr9KjvOq2AvFm6iW1TOBwFqhK?=
- =?us-ascii?Q?+e0n0NNJsEPxFu/3mfJBlZgWCwtceC49MqmXpxyFN8WeHLqxoFsrXQmFPgL2?=
- =?us-ascii?Q?Oar911jRrN66WxX/2V+xXZQCo7lFWxq4uMr++5KAct27wP0rio5gfgR497ZU?=
- =?us-ascii?Q?YeF/kaDfWRjqtTMk8yt+Dr+2dCiUzrmY0J56W436LNTsFrnhEjrTE05kK3NJ?=
- =?us-ascii?Q?8iK9MxtljEaq99e9nCN664HaArXAbCMzcJpcGtk6kqRfE0ly/Oc48v7GjR4U?=
- =?us-ascii?Q?3X01z3ZCjuXEB1RtB/N4H3SUOjSR4TM5yNgbeLF9IZuUx9zhMPg/YVHsR+mO?=
- =?us-ascii?Q?VGyPmNW+D8Osy+EjQy8fXJjqLkFrIQjsmu7GbxKRyQX0vPdAVRjcthP+UJcA?=
- =?us-ascii?Q?PS/I2RSUO3kEewbM96P8hqt7rY7TfcI557rsmndzWAfW5j8bO7o5Anzpd73a?=
- =?us-ascii?Q?GMfX4LPyikjZdk6iBCvttKpU5OSvA8CjiwoG4Spf7MF1JhwrztthMP6JiJrG?=
- =?us-ascii?Q?NoOse8ZAiO8IC7s7nu8exmVwZ83M/fGJfdmD5fxZcLMbpQ+SB2yHzLf39syH?=
- =?us-ascii?Q?hE7aG1xCclbq5MShUrjove9AfPQPL8Ft6tssMEHRHVkBaJbW8HV5TLbOvN4R?=
- =?us-ascii?Q?R9vYNNG63UTWwMZDFj2h6S8KSAsbv9SgN1XzeYHandp0t0BP5DEDBngvXRXQ?=
- =?us-ascii?Q?8He6gb20A3ZEZl4AOqOcBX4iFJiqLwJIpgYGCjwY40+fkGh7mfo/ccztkcx0?=
- =?us-ascii?Q?g7sn1hnZscMuxResail17mVvNHyRlJvFf/5H9XP2J/tQe+3ybx5UgEoNoKPZ?=
- =?us-ascii?Q?FmnOIJpoXy5xR1dyOU2Omsr6BRxxJJFoSj0leZCxyTgDj5IkGs8UQFB3ph5P?=
- =?us-ascii?Q?qBE8s/obFGDwZ7fKPwEDQS6LeR3c2XjT5P95fmCB8x6fDEQl+l0UXSxXCV6K?=
- =?us-ascii?Q?7moQ9oQrKvM1ExiZ6UvGk9TrqNg8RBH9XnTN09jh9Pq23y71Lx0xNWhJm3Ri?=
- =?us-ascii?Q?lJnnzaCXBWEDeMbbqAvq4fZ+SiJhoClMUyBYcCVyL1aPewbeXe4686EaGDPF?=
- =?us-ascii?Q?Z58nB4m6ZBDtn9rGICoqmf160r9zByKxr+kWM1M75JZUsv5FeJsHDOW1fu8n?=
- =?us-ascii?Q?9uQ2AcCaJp/6zd4y4DSVajQRdSpPmp7qamzjik8OlkFFRgaj8+Gszw=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA3PR11MB8986.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?Tk3iHXTRUpkdaBfBiWndhFMzDcK78V7gxgHWOQMZsl7nP9AOGoUWb+qGqm3/?=
- =?us-ascii?Q?fZcf4Vi6hT1YcXDwKw00jLblIrmXuaEKNFz65DeVlTLndoBdKCungWwzJDuQ?=
- =?us-ascii?Q?p4JcKNkF4FOCoW/iqtMwimmtV5kSLagha1/89h1zwEzQ/rYiLqtopLil7hfh?=
- =?us-ascii?Q?ZBHwO1kUAJncfDIkpHopkjS1Hv8qN7xAkSk+yhOhIVWQti2ikifh/QPa3ZVi?=
- =?us-ascii?Q?cb6qX8s41KXWJScSnu4+CMb/SbLzcejcJALgilhdGGHHkXcVh+0X95a2ONyr?=
- =?us-ascii?Q?YZexrbe5mEHmacycHe3tOl/vie/bOhFy16gwQ46YHPU7UaLWG26bhi9PeZQx?=
- =?us-ascii?Q?lpJVSo77KFpafP9SQs/hIfSe8BvfnlhjAkF5iFJunXNcawI7hf5HuizvYO7D?=
- =?us-ascii?Q?7EJNTUfbHabkbW457PJAtBWn4+ZRtMceQyLj7xlshQ7DbwToNo51Et86T07T?=
- =?us-ascii?Q?s8aWe0v17YWFbO9AfdKrfMcnVWKHaARAb102BBkIW8Eo3fv0gbiEDXVzBZ4q?=
- =?us-ascii?Q?9pg2uUHwi51EQhvIpc3Uo48c4ot1S8H4lSfpvNM2v/rGkpS/2y91DBiWWKVs?=
- =?us-ascii?Q?OvVZprbT8ZPlW+X70v74hSYpKHybk0rtDkr3hbH7jP9KqPOfpkzbPshTCIFm?=
- =?us-ascii?Q?R+PWpOZ3OzWteCGcSoX5qsr+3aH+Xv0vOZo9w8S03WvVjsa4z1LBuqQDGTqg?=
- =?us-ascii?Q?jcTdgMo94e6ZuLixerHLvxF2+k1gP7jjlcjFkwR8dOl+0K2vHF5erDQabZ2v?=
- =?us-ascii?Q?FMO9cQS1i8Dx7P2uKfvJJebb1gWi4O9ebnBFlff78wOJZrW0okSfKYXeySv0?=
- =?us-ascii?Q?/t7Mc3ew9hx5UkdkLgvTXTZUSz5YczBxAjilbT2OiFgSjVSpC6gCVMpZ4vy9?=
- =?us-ascii?Q?xgzv0cUPX/Cx8OCLVwdDFLRmSj80kbF2ZNmXMUsS9mBEJEpTHXVXnlCYOQsx?=
- =?us-ascii?Q?jmoj6+XEfZqyBnTLgoiPffXaAWmjdCbtjbUIxGRXxy4HLmJhU3yTgoNTpuI1?=
- =?us-ascii?Q?0oExMw4Esr5aWuTMhXaPaZV67fFK5Mw0r9q9D1XbrmYmqY00aSM9fqgm4Qt+?=
- =?us-ascii?Q?jSG6CseEfJfTeLwXKEUP6P+sw6cDtmOqFip+YUPxF8TV4yBstKYDZnKGceyU?=
- =?us-ascii?Q?wfkGo2RgEmrTpei7jHBumB5zgLMwvfNhCdBTSpYq/vKOti+zGhe0m/Awjaaw?=
- =?us-ascii?Q?/Hat4a9Gj3LryXBe9av0neEhN39CaQBLlmE1s/oT7Kjhc/QnKMzxd6wM6qll?=
- =?us-ascii?Q?c655x/O8a3/FzTVa8GsGdiEFIZoKb3jXTTgKdaJivh7tYs14/BywtFqLUJ89?=
- =?us-ascii?Q?LjrL2LH2dKxtlp7UqFpNHy+7s8xMPJUReIZG4brwb2W9qDRYlIl4NMed+buB?=
- =?us-ascii?Q?c15NcRgO2xGb7LNHqay2zF5myeQUDzVjeoF6Mdwbk3xOFmhVa6pqFtj8WNAk?=
- =?us-ascii?Q?nQSmW3lx27W+QtMVXYFSyB8jaswMsEaxJBNvxUdPCwICiTbMr57n8ofJnrgQ?=
- =?us-ascii?Q?SppxvLfDNFb2TqDisj8xbWRNVhqlM/RPsxb1qTqb3f/HtVkG5BgVlAX0o9bZ?=
- =?us-ascii?Q?hgo992MRuZ+Cco+BXLGrOVll/1M12cO1zerAmFdv42txDB2fdCBlt77wd5V3?=
- =?us-ascii?Q?8A=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67346289E1F
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 09:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752744858; cv=none; b=EbmpyaQanb+6T3VR6D5NTpwKrVvIj5D4FnQ5FfAQueQHZoo8YMHgmftmr0LdYyP+RIG/nVGC/P3ZchribJBbvhWAMXaqVOpTa9hgzSLdJ2yWeysA8jpZMVNTX1/V9whdLabQwyiYra8XEsvt27kOql9Ma4iVSKB7jXOZ2KExSRI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752744858; c=relaxed/simple;
+	bh=Ennb6Ziwqm6bJQ30TcLz7toa3HFvyzpDeeS1W3sdkTM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y8fDzPo3u5VVcnptL5Fn5hgMajF6PdhF92ZlflQXhB4llLaTycHEMPxQ/zM04AZv+FAbXuwzCl7nFFsiyu4cKWxHlhlggKx+WAFcPStLEVdWvYFekBh/EmvZzH5QX4XhyqdxmFt+vRNrWRLGKZVTFfXUW07W9RBe4vwuoEt7vhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CNTnva7+; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45617a1bcdcso1336455e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 02:34:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752744854; x=1753349654; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=g/Oipk/8uKSbLekB9aZXETn7St9hKr6hAgH4lVQ/8ls=;
+        b=CNTnva7+tVwnJOZFqEkk7oA/0Uv+Bwqgk48M0bodjyMatSEQfk2vLYUHYSbUknh8m1
+         5lq8bhO+NDirTTc9qU1bRjNuP8kfysPXN06bpkwk9Fwc+XH7PlT6FDENFamWFV6gGaTp
+         YRg9KudBMnTOL0vMxiuREOovywVvOSddG+PaZ9c2OeCFdOJvAcr+nSuWlQHGWJLII5K+
+         8ilrHIGGZryGzGWdYy7zuB2zxSDWydP3gqtVULR9NUDoI7CKX9rJquc80aerQCUbCm8G
+         gJMHER5VIDdOufzX+lgn/cCUHxKZ+oNQb5rlC50pNE33UDunlCjsQO2LamVLjnD3eDOL
+         9xcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752744854; x=1753349654;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g/Oipk/8uKSbLekB9aZXETn7St9hKr6hAgH4lVQ/8ls=;
+        b=wFwbXZlGdazHz64NhNpirPEPzdF8EGxfCnM3qd5CMAnYO3trOY5hZH1R/sxFsquBes
+         QmdwscfF1u3L6NEVBLnMuw32PX9I8qL9wfPn/OEAl3wOymiAlFc8cmcC6C6eT59UQivh
+         SKCi+O3/Yfx710yyYIk0LL0rp7zVUA4bPIzBhziRWYTUMBpRNN2AdASyRWJcqLbBdR+y
+         YpNPMmdwxvPTJmxGVtJKL1+0FMuAruflxVxJhuoBlNQ6UOEbOwmCbyChVrom4/eXZRzT
+         fY19z5WYkuIqAmmHzmtmHp1itXFeFCzkgucV5mi5b4TbpyjBUi8RIDjBRBy1AkjbF3Hu
+         t39A==
+X-Forwarded-Encrypted: i=1; AJvYcCUJrvGGO4ZAxH5292PrctdJzNVd61xlTmFfiGA5lu1UISasaUrapYTj7eQ5FYp+xIScFKi9DeZphRLAtWU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQmdvUjgGwZnfOLXJ5YsKu16O7W/UDnDgGt5MnAn8tOiC9iDTX
+	P9ULKqFO/ULnGhAX4OydRCj/AhV+JsME0yqtTjy6rXlXexcrG3YpCvlP8q3FTZADu7I=
+X-Gm-Gg: ASbGncs7lTz7EFtKIGhmD+H9AACQ+REugjYivxEraeputMsn61N9CP0IkOD4EEW2NST
+	cXZ1GTKSQmFMQ1nKk3xFOFTsGw1baBUCCL5OD59TUmIVkV7k2CWIGusli3kg8hzHeYumOglYAj3
+	TNCGzm8R5HdEoJOtpf3njxe07CIZILQ5nky1u4Ue6QZ119yvewyLE3+bkycS/ntHL1WNc0/hTSG
+	5IP68t2sX+Iee7WVtWpWMiFHnNwpIXBkdR31O/m6Pct+aObBeI0jmIA7EtyRcVUaVE+l+QAhYtZ
+	N9KLkMJU0+nN7b58dpROtpi39waDdjYw2m6kyZhFzY0OGZFnBTEzBY+8FF2eECh1bUSDaP48DMe
+	7F9WR9Y1AsdKdAbmQYWdJAm9XPuVIXjed4KII2WvXlQ==
+X-Google-Smtp-Source: AGHT+IGBNtPAF/42mVIyEKgo2198k/q9jrEA3iXwTq8C16itJxw86l55h9xQXzu6wCjrHnVlNiIXMw==
+X-Received: by 2002:a05:600c:548b:b0:43b:c844:a4ba with SMTP id 5b1f17b1804b1-4562e047a0amr25633015e9.3.1752744853694;
+        Thu, 17 Jul 2025 02:34:13 -0700 (PDT)
+Received: from [192.168.1.29] ([178.197.222.89])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e7f36b2sm45419765e9.6.2025.07.17.02.34.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Jul 2025 02:34:13 -0700 (PDT)
+Message-ID: <a6dbca7e-4d49-49a6-987c-8cd587501c98@linaro.org>
+Date: Thu, 17 Jul 2025 11:34:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB8986.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6ed85ffe-1e92-4d89-c904-08ddc5150e94
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jul 2025 09:33:58.5525
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: gcihQhWKUpmbjnF8+5MaPOXHYJhR4ehr6J0PMPw/4ZpYRJ/yZ5KTdEJYV39NfEG3Su+adCxxroXig8A/7qAUa6f14TTph1E7M3phTnKlEbM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB4780
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] media: iris: Add support for SM8750 (VPU v3.5)
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250714-sm8750-iris-v1-0-3006293a5bc7@linaro.org>
+ <20250714-sm8750-iris-v1-3-3006293a5bc7@linaro.org>
+ <7b0a984f-b62a-ac4d-74bf-a6e839c59272@quicinc.com>
+ <d4c39f2c-9f95-4e65-87a3-78173b39adf1@linaro.org>
+ <1c5df071-7000-ab45-dbc6-4384d883ba24@quicinc.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <1c5df071-7000-ab45-dbc6-4384d883ba24@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+On 17/07/2025 09:37, Dikshita Agarwal wrote:
+>>>> +	.clk_tbl_size = ARRAY_SIZE(sm8750_clk_table),
+>>>> +	/* Upper bound of DMA address range */
+>>>> +	.dma_mask = 0xe0000000 - 1,
+>>>> +	.fwname = "qcom/vpu/vpu35_4v.mbn",
+>>> Could you clarify where this firmware has been merged? Also, it appears
+>>> that the naming convention hasn't been followed.
+>>
+>>
+>> I mentioned in the DTS patchset but not here, so I will add it in the
+>> cover letter - firmware is not released. About the name I cannot
+>> comment, that's the name I got from qcom. Happy to use whatever name you
+>> prefer.
+>>
+> 
+> 
+> You can name it vpu35_p4.mbn to maintain consistency with the current
+> naming convention.
 
 
+Sure.
 
-> -----Original Message-----
-> From: Intel-wired-lan <intel-wired-lan-bounces@osuosl.org> On Behalf
-> Of Yuto Ohnuki
-> Sent: Thursday, July 17, 2025 10:46 AM
-> To: Nguyen, Anthony L <anthony.l.nguyen@intel.com>; Kitszel,
-> Przemyslaw <przemyslaw.kitszel@intel.com>
-> Cc: Andrew Lunn <andrew+netdev@lunn.ch>; David S . Miller
-> <davem@davemloft.net>; Eric Dumazet <edumazet@google.com>; Jakub
-> Kicinski <kuba@kernel.org>; Paolo Abeni <pabeni@redhat.com>; intel-
-> wired-lan@lists.osuosl.org; netdev@vger.kernel.org; linux-
-> kernel@vger.kernel.org; Yuto Ohnuki <ytohnuki@amazon.com>
-> Subject: [Intel-wired-lan] [PATCH iwl-next v1] ixgbevf: remove unused
-> fields from struct ixgbevf_adapter
->=20
-> Remove hw_rx_no_dma_resources and eitr_param fields from struct
-> ixgbevf_adapter since these fields are never referenced in the driver.
->=20
-> Note that the interrupt throttle rate is controlled by the
-> rx_itr_setting and tx_itr_setting variables.
->=20
-> This change simplifies the ixgbevf driver by removing unused fields,
-> which improves maintainability.
->=20
-> Signed-off-by: Yuto Ohnuki <ytohnuki@amazon.com>
-Can you add 'Fixes:' or 'Cleanup:' tag ?
+> 
+> 
+>>
+>>
+>>>> +static int iris_vpu35_power_on_hw(struct iris_core *core)
+>>>> +{
+>>>> +	int ret;
+>>>> +	u32 val;
+>>>> +
+>>>> +	ret = iris_enable_power_domains(core, core->pmdomain_tbl->pd_devs[IRIS_HW_POWER_DOMAIN]);
+>>>> +	if (ret)
+>>>> +		return ret;
+>>>> +
+>>>> +	/* Switch GDSC to SW control */
+>>>> +	writel(0x0, core->reg_base + WRAPPER_CORE_POWER_CONTROL);
+>>> GDSCs have been transitioned from HW_CTRL to HW_CTRL_TRIGGER, placing them
+>>> under software control by default, what is the need of doing this?
+>>>> +	ret = readl_poll_timeout(core->reg_base + WRAPPER_CORE_POWER_STATUS,
+>>>> +				 val, val & BIT(1), 200, 2000);
+>>
+>>
+>> The need comes from differences between this and previous generation,
+> 
+> 
+> which previous generation you’re referring to?
 
-Alex
-> ---
->  drivers/net/ethernet/intel/ixgbevf/ixgbevf.h | 3 ---
->  1 file changed, 3 deletions(-)
->=20
-> diff --git a/drivers/net/ethernet/intel/ixgbevf/ixgbevf.h
-> b/drivers/net/ethernet/intel/ixgbevf/ixgbevf.h
-> index 4384e892f967..3a379e6a3a2a 100644
-> --- a/drivers/net/ethernet/intel/ixgbevf/ixgbevf.h
-> +++ b/drivers/net/ethernet/intel/ixgbevf/ixgbevf.h
-> @@ -346,7 +346,6 @@ struct ixgbevf_adapter {
->  	int num_rx_queues;
->  	struct ixgbevf_ring *rx_ring[MAX_TX_QUEUES]; /* One per active
-> queue */
->  	u64 hw_csum_rx_error;
-> -	u64 hw_rx_no_dma_resources;
->  	int num_msix_vectors;
->  	u64 alloc_rx_page_failed;
->  	u64 alloc_rx_buff_failed;
-> @@ -363,8 +362,6 @@ struct ixgbevf_adapter {
->  	/* structs defined in ixgbe_vf.h */
->  	struct ixgbe_hw hw;
->  	u16 msg_enable;
-> -	/* Interrupt Throttle Rate */
-> -	u32 eitr_param;
->=20
->  	struct ixgbevf_hw_stats stats;
->=20
-> --
-> 2.47.1
->=20
->=20
->=20
->=20
-> Amazon Web Services EMEA SARL, 38 avenue John F. Kennedy, L-1855
-> Luxembourg, R.C.S. Luxembourg B186284
->=20
-> Amazon Web Services EMEA SARL, Irish Branch, One Burlington Plaza,
-> Burlington Road, Dublin 4, Ireland, branch registration number 908705
->=20
->=20
 
+The one I mentioned in the commit msg - SM8650.
+
+> HW_CTRL_TRIGGER is supported on SM8550 and all later SOCs, and if you look
+> at videocc changes, same applies to SM8750 as well.
+> 
+> 
+> 
+>> mostly based on downstream sources. I think the hardware just did not
+>> boot up without it.
+> 
+> 
+> That shouldn’t be the case. The downstream design is different, which is
+> why the driver requires the above code to move the GDSC to software control
+> before enabling the clock. With HW_CTRL_TRIGGER, this step isn’t needed, so
+> the above code is unnecessary.
+> 
+> 
+>>
+>> You need to fix your email client to add line breaks around your
+>> replies, because it is very difficult to spot them. It's close to
+>> impossible...
+>>
+>>
+>>>> +	if (ret)
+>>>> +		goto err_disable_power;
+>>>> +
+>>>> +	ret = iris_prepare_enable_clock(core, IRIS_AXI_CLK);
+>>>> +	if (ret)
+>>>> +		goto err_gdsc;
+>>>> +
+>>>> +	ret = iris_prepare_enable_clock(core, IRIS_HW_FREERUN_CLK);
+>>>> +	if (ret)
+>>>> +		goto err_disable_axi_clk;
+>>>> +
+>>>> +	ret = iris_prepare_enable_clock(core, IRIS_HW_CLK);
+>>>> +	if (ret)
+>>>> +		goto err_disable_hw_free_clk;
+>>>> +
+>>>> +	ret = dev_pm_genpd_set_hwmode(core->pmdomain_tbl->pd_devs[IRIS_HW_POWER_DOMAIN], true);
+>>>> +	if (ret)
+>>>> +		goto err_disable_hw_clk;
+>>>> +
+>>>> +	return 0;
+>>>> +
+>>>> +err_disable_hw_clk:
+>>>> +	iris_disable_unprepare_clock(core, IRIS_HW_CLK);
+>>>> +err_disable_hw_free_clk:
+>>>> +	iris_disable_unprepare_clock(core, IRIS_HW_FREERUN_CLK);
+>>>> +err_disable_axi_clk:
+>>>> +	iris_disable_unprepare_clock(core, IRIS_AXI_CLK);
+>>>> +err_gdsc:
+>>>> +	writel(BIT(0), core->reg_base + WRAPPER_CORE_POWER_CONTROL);
+>>>> +err_disable_power:
+>>>> +	iris_disable_power_domains(core, core->pmdomain_tbl->pd_devs[IRIS_HW_POWER_DOMAIN]);
+>>>> +
+>>>> +	return ret;
+>>>> +}
+>>>> +
+>>>> +static void iris_vpu35_power_off_hw(struct iris_core *core)
+>>>> +{
+>>>> +	u32 val = 0, value, i;
+>>>> +	int ret;
+>>>> +
+>>>> +	if (iris_vpu3x_hw_power_collapsed(core))
+>>>> +		goto disable_power;
+>>>> +
+>>>> +	value = readl(core->reg_base + WRAPPER_CORE_CLOCK_CONFIG);
+>>>> +	if (value)
+>>>> +		writel(CORE_CLK_RUN, core->reg_base + WRAPPER_CORE_CLOCK_CONFIG);
+>>>> +
+>>>> +	for (i = 0; i < core->iris_platform_data->num_vpp_pipe; i++) {
+>>>> +		ret = readl_poll_timeout(core->reg_base + VCODEC_SS_IDLE_STATUSN + 4 * i,
+>>>> +					 val, val & 0x400000, 2000, 20000);
+>>>> +		if (ret)
+>>>> +			goto disable_power;
+>>>> +	}
+>>>> +
+>>>> +	ret = readl_poll_timeout(core->reg_base + AON_WRAPPER_MVP_NOC_LPI_STATUS,
+>>>> +				 val, val & BIT(0), 200, 2000);
+>>> what are you polling here for?
+>>
+>>
+>> This is not different than existing code. I don't understand why you are
+>> commenting on something which is already there.
+> 
+> Which code are you referring to?
+
+To the existing vpu33 which had Reviewed-by: Vikash Garodia
+<quic_vgarodia@quicinc.com>
+
+You understand that everything here is the same, everything is a copy
+while adding just few more things?
+
+My patch is not doing in this respect anything different that what you
+reviewed.
+
+
+> 
+> You are not setting AON_WRAPPER_MVP_NOC_LPI_CONTROL and polling for its status.
+
+True, neither old reviewed code has done. I am not changing or fixing
+any existing logic, I am only adding new clocks and resets.
+
+> 
+> The current code is incomplete and missing several steps.
+
+Current you mean what was:
+Reviewed-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+?
+
+> Please review and provide a corrected version.
+> 
+> 
+>>
+>>>> +	if (ret)
+>>>> +		goto disable_power;
+>>>> +
+>>>> +	/* set MNoC to low power, set PD_NOC_QREQ (bit 0) */
+>>> Could you share the reference for this sqeunece, this looks half-cooked.
+>>> Would recommend following Hardware programmin guide(HPG) for this.
+>>
+>>
+>> Why? Look at existing code. It's the same.
+> 
+> 
+> Which existing code? Please be specific.
+
+
+Existing upstream VPU33 which this builts on top of. And that existing
+upstream VPU33 was Reviewed-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+
+> I don't think you referred to downstream code for this, because I see a lot
+> of missing pieces here.
+> 
+> 
+>>
+>> I think I responded to all your comments - it barely possible to spot
+>> them in the quote.
+>>
+> 
+> 
+> No, you have missed some of the later comments. Since the code is snipped,
+> I can’t point out those comments here.
+
+
+It's impossible to find them in the original response.
+
+
+Best regards,
+Krzysztof
 
