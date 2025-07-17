@@ -1,135 +1,214 @@
-Return-Path: <linux-kernel+bounces-734642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5FBCB0844D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:36:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D630B0844E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:36:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E899B4A4493
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 05:36:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C610E1A651A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 05:36:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB3D201269;
-	Thu, 17 Jul 2025 05:36:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dE3bGRf8"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D69F1C5D72;
+	Thu, 17 Jul 2025 05:36:24 +0000 (UTC)
+Received: from ssh248.corpemail.net (ssh248.corpemail.net [210.51.61.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAAFB4689;
-	Thu, 17 Jul 2025 05:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7333A4689
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 05:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752730575; cv=none; b=IigXpn5V7tBG3zKndD56pk6gUPnfYgukdw9JsWj/QNtIRXxyelXzEoF2E/slUA5d6AuujRqI0xF6GRCYU8DgxXju0eM7rWXAkSmb2o/5a5Dc+ICIoO06y0r3TifMj3i14DTexzI6tLBl1FpDd01ChR6vrVJxhQZkgfrb6VnatD0=
+	t=1752730583; cv=none; b=iKrfVqyh6Gx+aBzzBno15n8GkKynuRA0/nozqHWQZL7zOpqyDwFSgO2iGHNr4BN2KptdNF1hP/XHa8knx5TRmqy3hh5cFFg9fC5qkO8gXRyhwkjD3ONzTFD2MdL7ww0Mca5Hpnk+sNc9UYhqxWYs1zRVJnIYuYxKMFx3qPnDvmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752730575; c=relaxed/simple;
-	bh=FEmlEcSayOIHsQNQPyzw+jI8YB/J7gFPYA1NgXXjKwM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=IbAHel5iun8BehjDiPoEmXDtDLEt+Z3ZWKe02IJEBq/+xdEmV9RCm+FYVWceJKn90GqceqBojjXyx5G1/kqVAmD3jbzHD3SsIzLDYdbGF7Z6qIgYgmpFuYqKvCNROnGSDuHsd4sZnX5xtGF2AZwuF9zxgALHe3LOYuMQAQIwYtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dE3bGRf8; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56H4Xolt021709;
-	Thu, 17 Jul 2025 05:36:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	pJZ+0E9soK2DsOvwW41J5kJoGn76x716XyaTvcDEhqw=; b=dE3bGRf8sGA2L0fS
-	ovXARM2mGg1368Q++AYCK95sjn8tSLBqOtyv3DWKvNw87FniF+CQMm7QfYCXOIZL
-	96HEDS/Z7vq/7TwQ5WMI7tVKxtN7AXCY12xN8RdgoAQPbbHmUVcCBU4x3kXlZhhW
-	1UYy6MH6hhtmjhLAWKs6vYpry7TsuhILic+w5vq3w8uEgMjFmujLjzXuoG44K+Go
-	7b8740KeuGskzwQ+RCMWkxug+1lmsVF6yQxkO4CR1V1lX9BGJtIG/ED56TM8idtZ
-	W83xvjKfputJHCBgs3rSGLa6td6Y18A4NXDngxZDBwsoKwizOfZwZFiMmSlEIdmI
-	9AK+dA==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ufu8e7rm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Jul 2025 05:36:01 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56H5a0wD012740
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Jul 2025 05:36:00 GMT
-Received: from [10.216.39.173] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 16 Jul
- 2025 22:35:57 -0700
-Message-ID: <841a9087-f3cb-870f-5d33-77ad1b0eef28@quicinc.com>
-Date: Thu, 17 Jul 2025 11:05:54 +0530
+	s=arc-20240116; t=1752730583; c=relaxed/simple;
+	bh=z/w+88z0chlNP62DE/ZjauMd5BaLR4p23XHtbzuKQKE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=HcEko1Asr58zveGvdOCwfuOB/+PsuwtfnO8OO2FFh5lHdfQ83e7rffI9mBLoMqfRoSUBc4LQdzaNJ39uOxjCvKx7hFzffOM/Oal2J24oNt28ISznWIffRq9TUpqLCrBzqGWkoIlWeLUF01sVSdQI3aBUr+EwsgcYQAg/14EC5LM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from jtjnmail201621.home.langchao.com
+        by ssh248.corpemail.net ((D)) with ASMTP (SSL) id 202507171336085477;
+        Thu, 17 Jul 2025 13:36:08 +0800
+Received: from jtjnmail201622.home.langchao.com (10.100.2.22) by
+ jtjnmail201621.home.langchao.com (10.100.2.21) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.57; Thu, 17 Jul 2025 13:36:07 +0800
+Received: from jtjnmail201622.home.langchao.com ([fe80::15c3:8d74:3aa6:25f6])
+ by jtjnmail201622.home.langchao.com ([fe80::15c3:8d74:3aa6:25f6%7]) with mapi
+ id 15.01.2507.057; Thu, 17 Jul 2025 13:36:07 +0800
+From: =?utf-8?B?Qm8gTGl1ICjliJjms6IpLea1qua9ruS/oeaBrw==?=
+	<liubo03@inspur.com>
+To: "hsiangkao@linux.alibaba.com" <hsiangkao@linux.alibaba.com>,
+	"xiang@kernel.org" <xiang@kernel.org>, "chao@kernel.org" <chao@kernel.org>
+CC: "linux-erofs@lists.ozlabs.org" <linux-erofs@lists.ozlabs.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2] erofs: fix build error with
+ CONFIG_EROFS_FS_ZIP_ACCEL=y
+Thread-Topic: [PATCH v2] erofs: fix build error with
+ CONFIG_EROFS_FS_ZIP_ACCEL=y
+Thread-Index: AQHb9r5bhEEMaSKriE2nZnjqJiZT7bQ1FgiAgAC1fpA=
+Date: Thu, 17 Jul 2025 05:36:07 +0000
+Message-ID: <d850ca30f0fd4c54a2ff66c984571565@inspur.com>
+References: <b741fd09704a087a6fa48359812c4a7717-7-25linux.alibaba.com@g.corp-email.com>
+ <c46f71ae-f04c-4aa6-99fb-cf8f8e751589@linux.alibaba.com>
+In-Reply-To: <c46f71ae-f04c-4aa6-99fb-cf8f8e751589@linux.alibaba.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator:
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature";
+	micalg=SHA1; boundary="----=_NextPart_000_0022_01DBF71F.B2288B50"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 00/25] Enable H.264/H.265 encoder support and fixes in
- common code
-Content-Language: en-US
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
-        Abhinav Kumar
-	<abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil
-	<hverkuil@xs4all.nl>,
-        Stefan Schmidt <stefan.schmidt@linaro.org>,
-        "Vedang
- Nagar" <quic_vnagar@quicinc.com>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250704-iris-video-encoder-v1-0-b6ce24e273cf@quicinc.com>
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-In-Reply-To: <20250704-iris-video-encoder-v1-0-b6ce24e273cf@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
+tUid: 2025717133608f519e00ca0dd2aafeeb36228f4d41a22
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
+
+------=_NextPart_000_0022_01DBF71F.B2288B50
+Content-Type: text/plain;
+	charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDA0NyBTYWx0ZWRfX3BM5acTuXAvV
- tiFLYrEYtfpCmXteEVMhMKPMsp64Z2FpgehlLQiJBu921R45QLRdbW94xnaFb/FENrizQK2DEej
- fuChMAmh6xoIxH3ILbpP8F1VAHX9Jj300LlWDeXnQ4xTruYvvCDZXlASpkifJxqznaCaKiQtAW3
- Osn+Z6Awd3xaRQH2heqJb2lu+l2KntXV/VAGmoICYALUIeh44Hd1pC74PZ5wgMm4zJ/p17UBhoj
- 5WCMv/ZPlqQWC5mdFQQA6e9TWzLRyEGB5O6LmOJ5WN6Z3AK7FZRlMIz+ou0Uq3Sihv134Nwk3jh
- TB5BXDf36LjRcX1I31m36xIygdnjOYRXBl/Urhg90VVS9wOgyOKmSkaub7qZmuoYY8QgYDY/FI/
- niWk/qndsukFHskXMG/jx5dpk/X+4CYmq6DRK3kL70PfZNM9KmSOS9xvppBn0TJF5WHi/lXx
-X-Proofpoint-ORIG-GUID: 6lpaXJ_rJyZ6BKl_DTnzk40Ex9EPc3Xx
-X-Proofpoint-GUID: 6lpaXJ_rJyZ6BKl_DTnzk40Ex9EPc3Xx
-X-Authority-Analysis: v=2.4 cv=f59IBPyM c=1 sm=1 tr=0 ts=68788bc1 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
- a=fSTb7FvrLMLh5MOGqSAA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-17_01,2025-07-16_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 lowpriorityscore=0 malwarescore=0 spamscore=0 mlxscore=0
- bulkscore=0 suspectscore=0 impostorscore=0 adultscore=0 priorityscore=1501
- mlxlogscore=533 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507170047
 
+>On 2025/7/17 09:58, Bo Liu wrote:
+>> fix build err:
+>>   ld.lld: error: undefined symbol: crypto_req_done
+>>     referenced by decompressor_crypto.c
+>>         fs/erofs/decompressor_crypto.o:(z_erofs_crypto_decompress) in
+>archive vmlinux.a
+>>     referenced by decompressor_crypto.c
+>>         fs/erofs/decompressor_crypto.o:(z_erofs_crypto_decompress) in
+>> archive vmlinux.a
+>>
+>>   ld.lld: error: undefined symbol: crypto_acomp_decompress
+>>     referenced by decompressor_crypto.c
+>>         fs/erofs/decompressor_crypto.o:(z_erofs_crypto_decompress) in
+>> archive vmlinux.a
+>>
+>>   ld.lld: error: undefined symbol: crypto_alloc_acomp
+>>     referenced by decompressor_crypto.c
+>>         fs/erofs/decompressor_crypto.o:(z_erofs_crypto_enable_engine)
+>> in archive vmlinux.a
+>>
+>> Reported-by: kernel test robot <lkp@intel.com>
+>> Closes:
+>> https://lore.kernel.org/oe-kbuild-all/202507161032.QholMPtn-lkp@intel.
+>> com/
+>> Fixes: b4a29efc5146 ("erofs: support DEFLATE decompression by using
+>> Intel QAT")
+>> Signed-off-by: Bo Liu <liubo03@inspur.com>
+>>
+>> v1:
+>> https://lore.kernel.org/linux-erofs/7a1dbee70a604583bae5a29f690f4231@i
+>> nspur.com/T/#t
+>>
+>> change since v1:
+>> - add Fixes commits
+>> ---
+>>   fs/erofs/Kconfig | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/fs/erofs/Kconfig b/fs/erofs/Kconfig index
+>> 6beeb7063871..60510a041bf1 100644
+>> --- a/fs/erofs/Kconfig
+>> +++ b/fs/erofs/Kconfig
+>> @@ -147,6 +147,7 @@ config EROFS_FS_ZIP_ZSTD
+>>   config EROFS_FS_ZIP_ACCEL
+>>   	bool "EROFS hardware decompression support"
+>>   	depends on EROFS_FS_ZIP
+>> +	select CRYPTO
+>
+>After testing, I think we should rely on CRYPTO_ACOMP or CRYPTO_ACOMP2
+>instead.
+>
+>Otherwise it will still fails.
 
-On 7/4/2025 1:23 PM, Dikshita Agarwal wrote:
-> Hi All,
-> 
-> This patch series adds support for H.264 and H.265 encoder in iris 
-> driver and includes a few fixes and cleanup in the common code that were 
-> identified during encoder bring-up process.
-> 
-> The changes include:
-> - Enabling support for H.264 and H.265 encoding.
-> - Fixes and improvements in shared componenets used by both encoder and 
-> decoder paths.
-> - Ensuring compatibility and stability with the existing decoder flow.
-> 
-> All patches have been tested with v4l2-compliance, v4l2-ctl and 
-> Gstreamer on SM8250 and SM8550 for encoder, at the same time ensured 
-> that the existing decoder functionality remains uneffected.
-> 
+I will change it.
 
-Tested-by: Vikash Garodia <quic_vgarodia@quicinc.com> # X1E80100
+Thanks.
+Bo Liu.
+
+------=_NextPart_000_0022_01DBF71F.B2288B50
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+
+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
+hkiG9w0DBzAdBgNVHQ4EFgQUsmXTjDrO/nhxGDpnz5cAr1neWI8wHwYDVR0jBBgwFoAUXlkDprRM
+WGCRTvYetaU5pjLBNWowggEPBgNVHR8EggEGMIIBAjCB/6CB/KCB+YaBumxkYXA6Ly8vQ049SU5T
+UFVSLUNBLENOPUpUQ0EyMDEyLENOPUNEUCxDTj1QdWJsaWMlMjBLZXklMjBTZXJ2aWNlcyxDTj1T
+ZXJ2aWNlcyxDTj1Db25maWd1cmF0aW9uLERDPWhvbWUsREM9bGFuZ2NoYW8sREM9Y29tP2NlcnRp
+ZmljYXRlUmV2b2NhdGlvbkxpc3Q/YmFzZT9vYmplY3RDbGFzcz1jUkxEaXN0cmlidXRpb25Qb2lu
+dIY6aHR0cDovL0pUQ0EyMDEyLmhvbWUubGFuZ2NoYW8uY29tL0NlcnRFbnJvbGwvSU5TUFVSLUNB
+LmNybDCCASwGCCsGAQUFBwEBBIIBHjCCARowgbEGCCsGAQUFBzAChoGkbGRhcDovLy9DTj1JTlNQ
+VVItQ0EsQ049QUlBLENOPVB1YmxpYyUyMEtleSUyMFNlcnZpY2VzLENOPVNlcnZpY2VzLENOPUNv
+bmZpZ3VyYXRpb24sREM9aG9tZSxEQz1sYW5nY2hhbyxEQz1jb20/Y0FDZXJ0aWZpY2F0ZT9iYXNl
+P29iamVjdENsYXNzPWNlcnRpZmljYXRpb25BdXRob3JpdHkwZAYIKwYBBQUHMAKGWGh0dHA6Ly9K
+VENBMjAxMi5ob21lLmxhbmdjaGFvLmNvbS9DZXJ0RW5yb2xsL0pUQ0EyMDEyLmhvbWUubGFuZ2No
+YW8uY29tX0lOU1BVUi1DQSgxKS5jcnQwKQYDVR0lBCIwIAYIKwYBBQUHAwIGCCsGAQUFBwMEBgor
+BgEEAYI3CgMEMDUGCSsGAQQBgjcVCgQoMCYwCgYIKwYBBQUHAwIwCgYIKwYBBQUHAwQwDAYKKwYB
+BAGCNwoDBDBBBgNVHREEOjA4oCIGCisGAQQBgjcUAgOgFAwSbGl1Ym8wM0BpbnNwdXIuY29tgRJs
+aXVibzAzQGluc3B1ci5jb20wUwYJKwYBBAGCNxkCBEYwRKBCBgorBgEEAYI3GQIBoDQEMlMtMS01
+LTIxLTE2MDY5ODA4NDgtNzA2Njk5ODI2LTE4MDE2NzQ1MzEtMjU4ODUyMzQ4MA0GCSqGSIb3DQEB
+CwUAA4IBAQAucjq5s0Qq1UtBIL8Und9mnrfn3azil+rXBoZf/N+DNuZYml+Ct4SDC0tng7F5kSt/
+2zU4vShrkviUh8kjCstCrPyqkxQodvm7reuGuBKZLy9PLZR0oB3S7vD9gUdMCw7UianFwY+mgbG/
+33dY43zujZIY8DMm6od3GMZlIueeqB6VyEESU4+ll2VFPyLXPzUMBK7DLAEnOiPbJSUvR7738lSk
+DPXxdujcFhL9wxTvh/3ghYuY0OCwf+HM7TFBSSFxa1wdkfO8aA9Bl6tY5awZ6bbsr+3+FRf/h1jW
+ZQOCCnEGixEPN0irb1ZjdI2O4u1TlTwZAYXdLVRqmr2vi1KHMYIDkzCCA48CAQEwcDBZMRMwEQYK
+CZImiZPyLGQBGRYDY29tMRgwFgYKCZImiZPyLGQBGRYIbGFuZ2NoYW8xFDASBgoJkiaJk/IsZAEZ
+FgRob21lMRIwEAYDVQQDEwlJTlNQVVItQ0ECE34AA47lMgPE5azBUewAAQADjuUwCQYFKw4DAhoF
+AKCCAfgwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjUwNzE3MDUz
+NTQ0WjAjBgkqhkiG9w0BCQQxFgQU7SDPVqnWGPYGWZx14xm9pnhCYaYwfwYJKwYBBAGCNxAEMXIw
+cDBZMRMwEQYKCZImiZPyLGQBGRYDY29tMRgwFgYKCZImiZPyLGQBGRYIbGFuZ2NoYW8xFDASBgoJ
+kiaJk/IsZAEZFgRob21lMRIwEAYDVQQDEwlJTlNQVVItQ0ECE34AA47lMgPE5azBUewAAQADjuUw
+gYEGCyqGSIb3DQEJEAILMXKgcDBZMRMwEQYKCZImiZPyLGQBGRYDY29tMRgwFgYKCZImiZPyLGQB
+GRYIbGFuZ2NoYW8xFDASBgoJkiaJk/IsZAEZFgRob21lMRIwEAYDVQQDEwlJTlNQVVItQ0ECE34A
+A47lMgPE5azBUewAAQADjuUwgZMGCSqGSIb3DQEJDzGBhTCBgjAKBggqhkiG9w0DBzALBglghkgB
+ZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcN
+AwICAUAwBwYFKw4DAhowCwYJYIZIAWUDBAIDMAsGCWCGSAFlAwQCAjALBglghkgBZQMEAgEwDQYJ
+KoZIhvcNAQEBBQAEggEALe/aGvTg8r9U7Iljpta2fp9tfRI98eeTNISgece+1OiYv+x5/yXqbA6i
+KP4BW06ST9/qoCLGGeCRuKI++OLQZlbdw/7TdkX+nsI9cuR/hD2MtDprMtP5ch2C8EEF18MEyXoG
+/2CmFVTQJW1lsklPRodUDMzgix9/TFcfK8IB1g5iCbHzqeKKT5rlBJ5Tyn48/2K0SZYx8UpVn2I6
+XTJk884vlr/UrQYWWDkTePAYEBJdUfqO8hqQjU7derYHR+WMYs73+Dd8B4U6DaCLJ7FEQe8842ov
+IGkI8uroWrhnepXYivLpecwiOEB8gfOjfVv0OXqcNA6oT9XKpu2Vuh4CvQAAAAAAAA==
+
+------=_NextPart_000_0022_01DBF71F.B2288B50--
 
