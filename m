@@ -1,208 +1,246 @@
-Return-Path: <linux-kernel+bounces-735583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8ED7B0913E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:03:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EA72B09137
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01F705A47F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:01:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A4363A0718
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E32E2F8C46;
-	Thu, 17 Jul 2025 16:00:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4D22FBFF5;
+	Thu, 17 Jul 2025 16:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gBMpdII8"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QRZiaPOP"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8722FA65D;
-	Thu, 17 Jul 2025 16:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0607C1DE894
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 16:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752768009; cv=none; b=EcF4dUyjsJ+mZLPpRqiVoO0WzGzn77r5nAB510WBD33t2ox8WARhuFHE5cSmGL8OH851tDa78cQS1JYqivaekzunoZk2nE5g7dbyowXicJhfwGGrUlztHaYRGTRwqaXWDf9eiOe925plf8nwgpqXcLwepEIfaADCbkfV9O2pVsg=
+	t=1752768050; cv=none; b=W7kudJINn2+6PTjPRenDTGdRPcUfcXhkDeFOecx1CI7ldWu9dLkSlPZGun0diWZuEYvdbxU+i5KPtIL78NNFwyk4OeQ5evHeUClcuIFbMJNcr1gYFd26yl4gJ46feUer7VuXBBydkDbF+MC+rmbkZbmpWpBc1Nr4YNM9JBloK2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752768009; c=relaxed/simple;
-	bh=ozatPYm8SkCRErUJZAqo7DV6TZZ+7eY1RkGwfl3kkqY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RY4Vk93ylDiQ/n+04GQ+53i1yX8ecCoMRnKPUBBwWE4OkUtd1ZBbPNFtv8AybJdJShtU6YzmFwSwa2mneksD+kzNlR9GHyxVlHEe1nwXUcy3FZsF/EVx005/ZXPooJOih9MKC5Ygzuzs/Y9Gp0jekgyZ1yent4B/+euycL8qNCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gBMpdII8; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752768008; x=1784304008;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ozatPYm8SkCRErUJZAqo7DV6TZZ+7eY1RkGwfl3kkqY=;
-  b=gBMpdII8leJoqx20gWOm0EuFjd9CWG8e4hcSyECr8ZTM8StgkccOpdFR
-   GtbUpI2y909DxEb5SnvvYk0ZN80R4ZqsIe1x5joJY1LI7h87VpDNitki4
-   CjV5wRMYkVKt/hcQA9aLZaiFuVQQ5Co5pbXmBxezZkWPPecjviZQf2yil
-   pRIpXBvzBEsB20ozg34NjNC1n6Uf0s96qMmAFWqn5vNPNfVQ8fLUSM5rV
-   WmlDhWIFpZrgsvtOx3BNO+dYCe0P0D2c34KMMnpLPd2pQI12dUchpz2+N
-   rmoI012qH+d3Sv521yYRVs5JbLrAz6uIuDu3UfiVUP1lsyhBjCgSQz2l2
-   Q==;
-X-CSE-ConnectionGUID: TBqp/MerR9KJHRBpiJPuFw==
-X-CSE-MsgGUID: XilDiSxZRnSGomzjdaaLHg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11495"; a="77585774"
-X-IronPort-AV: E=Sophos;i="6.16,319,1744095600"; 
-   d="scan'208";a="77585774"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 09:00:07 -0700
-X-CSE-ConnectionGUID: r095Z+45RpqpTaJi1g3AEg==
-X-CSE-MsgGUID: Nm1YwRngSc+K7tDnca0fbg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,319,1744095600"; 
-   d="scan'208";a="157501256"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 17 Jul 2025 09:00:01 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ucR1a-000Dmh-0F;
-	Thu, 17 Jul 2025 15:59:58 +0000
-Date: Thu, 17 Jul 2025 23:59:43 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alexander Wilhelm <alexander.wilhelm@westermo.com>,
-	Jeff Johnson <jjohnson@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-wireless@vger.kernel.org,
-	ath12k@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 07/11] wifi: ath12k: fix endianness handling in QMI bdf
- download
-Message-ID: <202507172333.LZcmFwWs-lkp@intel.com>
-References: <20250716075100.1447352-8-alexander.wilhelm@westermo.com>
+	s=arc-20240116; t=1752768050; c=relaxed/simple;
+	bh=tdMnZDV0ZUzpuqi/2w8metSuOM7yP30flpfjeQHKPH8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sm86O1uSIdRCiHULamLSEDu4Zq8CHmiW7v/rTHceEYvZgM/VQwOclSXLSBi8BBT4JWmrXc6N7+ZudWv5ZAQKbTvxv9BunOpIxph/nE1HCl4tD2q2zpUgeCLkafGVNieBBqJA/ArJ0WAmcUipTNQb4Qi6iMoxt+0T4ohY6p7poMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QRZiaPOP; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <11735f77-25cc-4220-b7be-e6fda8f72161@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752768036;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BkfJI7cpXj5VUYoq0tgOuznhgFvkJXnYXizplgvtnLg=;
+	b=QRZiaPOPI2oFCm3y1XvKEslN/kfEtJa+BEIHas8L+A0pjwN9DRbHj6OhPS96Juru/Aob/c
+	FqqqyWYCDSXtfnzcTlgxcN8FPK526PEbhWkT7jBP99EKvs67P4EGDoB//Ot9w/WcKpCwM3
+	FaJh/qPOsWK2Wu5NFYrXKl8c4+Nl3L0=
+Date: Thu, 17 Jul 2025 12:00:13 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250716075100.1447352-8-alexander.wilhelm@westermo.com>
+Subject: Re: [PATCH 7/7] hwmon: iio: Add alarm support
+To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
+ Jonathan Cameron <jic23@kernel.org>, Jean Delvare <jdelvare@suse.com>,
+ Guenter Roeck <linux@roeck-us.net>, linux-iio@vger.kernel.org,
+ linux-hwmon@vger.kernel.org
+Cc: Andy Shevchenko <andy@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, linux-kernel@vger.kernel.org,
+ David Lechner <dlechner@baylibre.com>
+References: <20250715012023.2050178-1-sean.anderson@linux.dev>
+ <20250715012023.2050178-8-sean.anderson@linux.dev>
+ <afc6aa6ad4b633f9d834acf933734985f14c5563.camel@gmail.com>
+ <6455be16-d287-4d5e-9556-e1789d43708c@linux.dev>
+ <9c6f99e022270b1b9c2f178f8f415270f11e59df.camel@gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <9c6f99e022270b1b9c2f178f8f415270f11e59df.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Alexander,
+On 7/16/25 02:37, Nuno Sá wrote:
+> On Tue, 2025-07-15 at 13:02 -0400, Sean Anderson wrote:
+>> On 7/15/25 07:28, Nuno Sá wrote:
+>> > On Mon, 2025-07-14 at 21:20 -0400, Sean Anderson wrote:
+>> > > Add alarm support based on IIO threshold events. The alarm is cleared on
+>> > > read, but will be set again if the condition is still present. This is
+>> > > detected by disabling and re-enabling the event. The same trick is done
+>> > > when creating the attribute to detect already-triggered events.
+>> > > 
+>> > > The alarms are updated by an event listener. To keep the notifier call
+>> > > chain short, we create one listener per iio device, shared across all
+>> > > hwmon devices.
+>> > > 
+>> > > To avoid dynamic creation of alarms, alarms for all possible events are
+>> > > allocated at creation. Lookup is done by a linear scan, as I expect
+>> > > events to occur rarely. If performance becomes an issue, a binary search
+>> > > could be done instead (or some kind of hash lookup).
+>> > > 
+>> > > Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+>> > > ---
+>> > > 
+>> > >  drivers/hwmon/iio_hwmon.c | 322 +++++++++++++++++++++++++++++++++++++-
+>> > >  1 file changed, 321 insertions(+), 1 deletion(-)
+>> > > 
+>> > > diff --git a/drivers/hwmon/iio_hwmon.c b/drivers/hwmon/iio_hwmon.c
+>> > > index 3db4d4b30022..c963bc5452ba 100644
+>> > > --- a/drivers/hwmon/iio_hwmon.c
+>> > > +++ b/drivers/hwmon/iio_hwmon.c
+>> > > @@ -8,6 +8,7 @@
+>> > >  #include <linux/slab.h>
+>> > >  #include <linux/mod_devicetable.h>
+>> > >  #include <linux/module.h>
+>> > > +#include <linux/notifier.h>
+>> > >  #include <linux/err.h>
+>> > >  #include <linux/platform_device.h>
+>> > >  #include <linux/property.h>
+>> > > @@ -15,7 +16,192 @@
+>> > >  #include <linux/hwmon.h>
+>> > >  #include <linux/hwmon-sysfs.h>
+>> > >  #include <linux/iio/consumer.h>
+>> > > +#include <linux/iio/events.h>
+>> > > +#include <linux/iio/iio.h>
+>> > >  #include <linux/iio/types.h>
+>> > > +#include <uapi/linux/iio/events.h>
+>> > > +
+>> > > +/* Protects iio_hwmon_listeners and listeners' refcnt */
+>> > > +DEFINE_MUTEX(iio_hwmon_listener_lock);
+>> > > +LIST_HEAD(iio_hwmon_listeners);
+>> > > +
+>> > > +/**
+>> > > + * struct iio_hwmon_listener - Listener for IIO events
+>> > > + * @block: Notifier for events
+>> > > + * @ids: Array of IIO event ids, one per alarm
+>> > > + * @alarms: Bitmap of alarms
+>> > > + * @num_alarms: Length of @ids and @alarms
+>> > > + * @indio_dev: Device we are listening to
+>> > > + * @list: List of all listeners
+>> > > + * @refcnt: Reference count
+>> > > + */
+>> > > +struct iio_hwmon_listener {
+>> > > +	struct notifier_block block;
+>> > > +	u64 *ids;
+>> > > +	unsigned long *alarms;
+>> > > +	size_t num_alarms;
+>> > > +
+>> > > +	struct iio_dev *indio_dev;
+>> > > +	struct list_head list;
+>> > > +	unsigned int refcnt;
+>> > > +};
+>> > > +
+>> > > +/**
+>> > > + * iio_hwmon_lookup_alarm() - Find an alarm by id
+>> > > + * @listener: Event listener
+>> > > + * @id: IIO event id
+>> > > + *
+>> > > + * Return: index of @id in @listener->ids, or -1 if not found
+>> > > + */
+>> > > +static ssize_t iio_hwmon_lookup_alarm(struct iio_hwmon_listener *listener,
+>> > > +				      u64 id)
+>> > > +{
+>> > > +	ssize_t i;
+>> > > +
+>> > > +	for (i = 0; i < listener->num_alarms; i++)
+>> > > +		if (listener->ids[i] == id)
+>> > > +			return i;
+>> > > +
+>> > > +	return -1;
+>> > > +}
+>> > > +
+>> > > +static int iio_hwmon_listener_callback(struct notifier_block *block,
+>> > > +				       unsigned long action, void *data)
+>> > > +{
+>> > > +	struct iio_hwmon_listener *listener =
+>> > > +		container_of(block, struct iio_hwmon_listener, block);
+>> > > +	struct iio_event_data *ev = data;
+>> > > +	ssize_t i;
+>> > > +
+>> > > +	if (action != IIO_NOTIFY_EVENT)
+>> > > +		return NOTIFY_DONE;
+>> > > +
+>> > > +	i = iio_hwmon_lookup_alarm(listener, ev->id);
+>> > > +	if (i >= 0)
+>> > > +		set_bit(i, listener->alarms);
+>> > > +	else
+>> > > +		dev_warn_once(&listener->indio_dev->dev,
+>> > > +			      "unknown event %016llx\n", ev->id);
+>> > > +
+>> > > +	return NOTIFY_DONE;
+>> > > +}
+>> > > +
+>> > > +/**
+>> > > + * iio_event_id() - Calculate an IIO event id
+>> > > + * @channel: IIO channel for this event
+>> > > + * @type: Event type (theshold, rate-of-change, etc.)
+>> > > + * @dir: Event direction (rising, falling, etc.)
+>> > > + *
+>> > > + * Return: IIO event id corresponding to this event's IIO id
+>> > > + */
+>> > > +static u64 iio_event_id(struct iio_chan_spec const *chan,
+>> > > +			enum iio_event_type type,
+>> > > +			enum iio_event_direction dir)
+>> > > +{
+>> > > +	if (chan->differential)
+>> > > +		return IIO_DIFF_EVENT_CODE(chan->type, chan->channel,
+>> > > +					   chan->channel2, type, dir);
+>> > > +	if (chan->modified)
+>> > > +		return IIO_MOD_EVENT_CODE(chan->type, chan->channel,
+>> > > +					  chan->channel2, type, dir);
+>> > > +	return IIO_UNMOD_EVENT_CODE(chan->type, chan->channel, type, dir);
+>> > > +}
+>> > > +
+>> > > +/**
+>> > > + * iio_hwmon_listener_get() - Get a listener for an IIO device
+>> > > + * @indio_dev: IIO device to listen to
+>> > > + *
+>> > > + * Look up or create a new listener for @indio_dev. The returned listener is
+>> > > + * registered with @indio_dev, but events still need to be manually enabled.
+>> > > + * You must call iio_hwmon_listener_put() when you are done.
+>> > > + *
+>> > > + * Return: Listener for @indio_dev, or an error pointer
+>> > > + */
+>> > > +static struct iio_hwmon_listener *iio_hwmon_listener_get(struct iio_dev
+>> > > *indio_dev)
+>> > > +{
+>> > > +	struct iio_hwmon_listener *listener;
+>> > > +	int err = -ENOMEM;
+>> > > +	size_t i, j;
+>> > > +
+>> > > +	guard(mutex)(&iio_hwmon_listener_lock);
+>> > > +	list_for_each_entry(listener, &iio_hwmon_listeners, list) {
+>> > > +		if (listener->indio_dev == indio_dev) {
+>> > > +			if (likely(listener->refcnt != UINT_MAX))
+>> > > +				listener->refcnt++;
+>> > 
+>> > I dunno for the above to ever happen :).
+>> 
+>> Well, I can remove it if you like.
+>> 
+>> > And as Andy stated, let's just use proper refcount APIs.
+>> 
+>> No point in using atomic ops if they are only accessed under a mutex.
+> 
+> Not the point... If there are proper APIs for handling things like this, not sure why
+> not using and then coming up with things like the above? And the same goes to the
+> release path.
 
-kernel test robot noticed the following build warnings:
+The API is for doing reference counts *atomically*. If you do not need
+atomic reference counting, then it is the *wrong* API. I suggest reading
+the block comment at the beginning of refcnt.h to see the sorts of
+contortions it has to go through because it is an atomic API. Since we
+hold a mutex, we can just increment/decrement. I will remove the
+saturation check to avoid confusion.
 
-[auto build test WARNING on ath/ath-next]
-[also build test WARNING on linus/master v6.16-rc6 next-20250717]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Alexander-Wilhelm/wifi-ath12k-fix-endianness-handling-in-QMI-host-capability-request/20250716-162058
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/ath/ath.git ath-next
-patch link:    https://lore.kernel.org/r/20250716075100.1447352-8-alexander.wilhelm%40westermo.com
-patch subject: [PATCH 07/11] wifi: ath12k: fix endianness handling in QMI bdf download
-config: alpha-randconfig-r122-20250717 (https://download.01.org/0day-ci/archive/20250717/202507172333.LZcmFwWs-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 8.5.0
-reproduce: (https://download.01.org/0day-ci/archive/20250717/202507172333.LZcmFwWs-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507172333.LZcmFwWs-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> drivers/net/wireless/ath/ath12k/qmi.c:2996:37: sparse: sparse: bad assignment (+=) to restricted __le32
-
-vim +2996 drivers/net/wireless/ath/ath12k/qmi.c
-
-  2919	
-  2920	static int ath12k_qmi_load_file_target_mem(struct ath12k_base *ab,
-  2921						   const u8 *data, u32 len, u8 type)
-  2922	{
-  2923		struct qmi_wlanfw_bdf_download_req_msg_v01 *req;
-  2924		struct qmi_wlanfw_bdf_download_resp_msg_v01 resp = {};
-  2925		struct qmi_txn txn;
-  2926		const u8 *temp = data;
-  2927		int ret = 0;
-  2928		u32 remaining = len;
-  2929	
-  2930		req = kzalloc(sizeof(*req), GFP_KERNEL);
-  2931		if (!req)
-  2932			return -ENOMEM;
-  2933	
-  2934		while (remaining) {
-  2935			req->valid = 1;
-  2936			req->file_id_valid = 1;
-  2937			req->file_id = cpu_to_le32(ab->qmi.target.board_id);
-  2938			req->total_size_valid = 1;
-  2939			req->total_size = cpu_to_le32(remaining);
-  2940			req->seg_id_valid = 1;
-  2941			req->data_valid = 1;
-  2942			req->bdf_type = type;
-  2943			req->bdf_type_valid = 1;
-  2944			req->end_valid = 1;
-  2945			req->end = 0;
-  2946	
-  2947			if (remaining > QMI_WLANFW_MAX_DATA_SIZE_V01) {
-  2948				req->data_len = cpu_to_le32(QMI_WLANFW_MAX_DATA_SIZE_V01);
-  2949			} else {
-  2950				req->data_len = cpu_to_le32(remaining);
-  2951				req->end = 1;
-  2952			}
-  2953	
-  2954			if (type == ATH12K_QMI_FILE_TYPE_EEPROM) {
-  2955				req->data_valid = 0;
-  2956				req->end = 1;
-  2957				req->data_len = cpu_to_le32(ATH12K_QMI_MAX_BDF_FILE_NAME_SIZE);
-  2958			} else {
-  2959				memcpy(req->data, temp, le32_to_cpu(req->data_len));
-  2960			}
-  2961	
-  2962			ret = qmi_txn_init(&ab->qmi.handle, &txn,
-  2963					   qmi_wlanfw_bdf_download_resp_msg_v01_ei,
-  2964					   &resp);
-  2965			if (ret < 0)
-  2966				goto out;
-  2967	
-  2968			ath12k_dbg(ab, ATH12K_DBG_QMI, "qmi bdf download req fixed addr type %d\n",
-  2969				   type);
-  2970	
-  2971			ret = qmi_send_request(&ab->qmi.handle, NULL, &txn,
-  2972					       QMI_WLANFW_BDF_DOWNLOAD_REQ_V01,
-  2973					       QMI_WLANFW_BDF_DOWNLOAD_REQ_MSG_V01_MAX_LEN,
-  2974					       qmi_wlanfw_bdf_download_req_msg_v01_ei, req);
-  2975			if (ret < 0) {
-  2976				qmi_txn_cancel(&txn);
-  2977				goto out;
-  2978			}
-  2979	
-  2980			ret = qmi_txn_wait(&txn, msecs_to_jiffies(ATH12K_QMI_WLANFW_TIMEOUT_MS));
-  2981			if (ret < 0)
-  2982				goto out;
-  2983	
-  2984			if (resp.resp.result != QMI_RESULT_SUCCESS_V01) {
-  2985				ath12k_warn(ab, "qmi BDF download failed, result: %d, err: %d\n",
-  2986					    resp.resp.result, resp.resp.error);
-  2987				ret = -EINVAL;
-  2988				goto out;
-  2989			}
-  2990	
-  2991			if (type == ATH12K_QMI_FILE_TYPE_EEPROM) {
-  2992				remaining = 0;
-  2993			} else {
-  2994				remaining -= le32_to_cpu(req->data_len);
-  2995				temp += le32_to_cpu(req->data_len);
-> 2996				req->seg_id += cpu_to_le32(1);
-  2997				ath12k_dbg(ab, ATH12K_DBG_QMI,
-  2998					   "qmi bdf download request remaining %i\n",
-  2999					   remaining);
-  3000			}
-  3001		}
-  3002	
-  3003	out:
-  3004		kfree(req);
-  3005		return ret;
-  3006	}
-  3007	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--Sean
 
