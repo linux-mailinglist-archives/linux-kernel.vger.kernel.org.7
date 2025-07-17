@@ -1,45 +1,79 @@
-Return-Path: <linux-kernel+bounces-735023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ED68B08995
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:44:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68A35B0899C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:46:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D75A189BCE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:44:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 940884A0C77
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:46:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F45288CBE;
-	Thu, 17 Jul 2025 09:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D44B71547CC;
+	Thu, 17 Jul 2025 09:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="g3GkkJxe"
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bJJ64sE7"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A7B33086
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 09:44:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946903BBC9
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 09:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752745469; cv=none; b=BXpDMyyC3C5gepReOCzokFLT+MK1KT60v8QyeSPSOnKe1O9RINPcqRm1Wo/Npf+fWuzl4sxSRWju2rJdvp0OqqACWKfrXgBS0WDQdfx6uwrtz0WCe561GFUqqfFJHx9szW6aCvngcnxUU7078MDEAt/hXdfeUMrOs4ohEd5c2BI=
+	t=1752745557; cv=none; b=iP+Bgq14CNHb9zyAvAo1GD7/uGRRYEkgD+uGMkFkf0PkD2gpwqV2aCo/8vyjxPB/4mPn6N2FsqMABzBhix+QJemrLnqLLW91CK0vS2nL+o4+vsd2BITH33Js+c1efk7JeITbxT3xj1oNfHBsvAXCbA3RR0LJFcfUFkJ4f8Hqbvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752745469; c=relaxed/simple;
-	bh=iaq7HJ9qfvE98rHBSH+nyMmWcZRGFr9hPrQ/UJaAxWw=;
+	s=arc-20240116; t=1752745557; c=relaxed/simple;
+	bh=icvA0K1RPNBcWvfLGCmVKRBjbcIiYHmiy0ARHjx5WsA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J5gxkeFI0lxuyJ4a1rsC4iaGuyO9KtA3u7IdOBNVz9s0kfTu58715L3l/Bh4zfdU5inNhp3uudrNQlboQdAz2e8XpyPmwcEmObCnyWwpOxIZCQZsWJC919EX3A2MrvVxb/4JTP00qjnCPV52BITIDrykgo7F7sOLdk5no+WNkoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=g3GkkJxe; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1752745464; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=PkCKxsY6Zs44X+GOM2QndRR5634GVOJV4plJy537mWM=;
-	b=g3GkkJxeiYO+P2iOLsXiBGegRkvPifQrpsC2UDf9ZWfdxbxQI1gbaZ/SMnNJfAPPsrO2ussfbjzaW/U7jqNw3PJXld69g11HlGivUd4s9oCtALNFJNzwrFHvgeMwV1+Aa6KYLrOSr7XXnnvBeo27hIctP8p7jrbeYxoQRYjb0Ow=
-Received: from 30.74.144.120(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0Wj7eO2U_1752745463 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 17 Jul 2025 17:44:23 +0800
-Message-ID: <853a5211-cdab-4bdf-b0c4-8092dd943ff5@linux.alibaba.com>
-Date: Thu, 17 Jul 2025 17:44:23 +0800
+	 In-Reply-To:Content-Type; b=WPsIGulMQxTgub693A4ZUnvqrf8gJZKGCy4v7MuW8ULjOkvXipShyC4r0H2h3pJxwbgg5YlxcqvZN0wtqWO553td6Iiz4EADH7gpuvxWKq9xdBLyQ+ywne/7B3aopm8+cSa+4w4p16A8y1uHHSYT6x/gE2Wfau5hRuSDZq46z0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bJJ64sE7; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-455b00283a5so4589255e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 02:45:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752745554; x=1753350354; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4UUb+eCCVRH9h09fVkojxVw36lrz4Ml2/6BK0w+a3Nk=;
+        b=bJJ64sE7ElzZf0LGDF+KQU5J3rGT2qjQAZdFWW9zG8CoP4+aKDavgcMdVyKYlV56eR
+         Zco96hfKijdjLHY4z65V0XgOZbN2/1NQ1hn9ajJchvY27cMY8Kr2gTRRUUc10dquiwWH
+         EIy529hfKMPAeAy9L9i7GLmU2R7MSAqkMV0pmRm/SV43lL14jxoYBb4O2IMgHDciSya7
+         +75L3aQS9nuyVIdF9rz/LHQ3+E631Lg4QloQfF0BHD+djy2Yrm4ATaP44c5jFb4rDMLY
+         wYMxHDpCZCOpInAJVrzfMN5ru10QWz/H9mGaPUiyouvTiTgF3B8QHIDW161yH7mARoQZ
+         XxEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752745554; x=1753350354;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4UUb+eCCVRH9h09fVkojxVw36lrz4Ml2/6BK0w+a3Nk=;
+        b=RJoz5SvHZLANW02AeV0lcLOyHXm7Y+Kh+vIW3ZRLnRKxBCeKLay6e6eIPGwhWyLPQg
+         oHgXvNZ+XOT6Pjz2le52RxUyAJ2wBiGIs7i+qpBITsFBg3ULNPmc7NWPxWEzq/oitLdT
+         I7spsCcC1ox2TFjYG53djo7Z7XnAbtv/2CizTLxlXRduAKZWyKy+4VYlMOs5XRw41Ywo
+         h6e7KwSX7TMrk7PXrx7bEJiLwyMm8yOT48IX7k8YKJF0orfDFZvL00n+0nD7o6Ug/Tl7
+         xFo+15OSfo/tnKgNUjQYp2sEhB9wHMC+7WuWYrGq4nn+w/Rmx/Bwoy/cdzVVVEbRmn3m
+         PEWg==
+X-Forwarded-Encrypted: i=1; AJvYcCWSwWTy0AHsNxuZCbgU7QAecb2b6GVoCEdrDH8WhMMICoOrezGAcpWM7vXzgntGNvuPCqTFTZGHyeq4fww=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzO4ANw41XHCqBqOvLU0F60gTXwDhN7eQ34L8lrhy+xQ2aKolQj
+	sJccBCSYhuBVpj/6Ln/F4Wu03biu6btqxEGWjl5AdPj2U80kVMEH7BwLntxd404FF30=
+X-Gm-Gg: ASbGncvIOg5ktEdgWSpjynzbRUfm7BaZBc8iqyC5iAUecvSu0K3wtrKWtngqx0D9P+m
+	1agQmo24aI9wIOo1+F/tqSjuQrxHnTZbEbBagZaxJgl4MxVg9zt0N1vplBGG0rpAWFVD+GD+Kfj
+	72/raLz8UmGTeO9/6XOAe2fTbeY6RvXsd5IMQh0ozdeXYLXgl5bUqbGEuqSwXOj7w81aDG+HbrX
+	nQuD5clesLeIxpeDu3bGQSvacaTWMRJjl33UxSRT+97v509ouEfGkprQlZ6pcLDZhsdOPeZ4N/e
+	aDmJp/JGH1TZjlVo/P6r1R/V6HyrZ9Nw/HDHbg5ZUSb0HNXNOb/rWOssC2UrXWMDNxOx0noPaHq
+	0T15pjx6FPAgpZZNqH+0pNhaLwt7fa8o5gXNbq6aTSwxZv2ETKmpXALKz0iHYoGM=
+X-Google-Smtp-Source: AGHT+IHP2SvnCCzI3J6cTXMGXPD2s7F8PxV92aFEphVYbHWG+syxiVGQMy54GQ/w+kIwvVDzdKb1dw==
+X-Received: by 2002:a05:6000:4a06:b0:3a4:dc32:6cbc with SMTP id ffacd0b85a97d-3b60dd53fe5mr5975700f8f.20.1752745553877;
+        Thu, 17 Jul 2025 02:45:53 -0700 (PDT)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc1de0sm20112044f8f.24.2025.07.17.02.45.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Jul 2025 02:45:53 -0700 (PDT)
+Message-ID: <00be65fd-2a25-4b6d-8fb8-7a40f8ca846c@linaro.org>
+Date: Thu, 17 Jul 2025 10:45:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,97 +81,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH mm-new 2/2] mm/shmem: writeout free swap if
- swap_writeout() reactivates
-To: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Baoquan He <bhe@redhat.com>, Barry Song <21cnbao@gmail.com>,
- Chris Li <chrisl@kernel.org>, David Rientjes <rientjes@google.com>,
- Kairui Song <ryncsn@gmail.com>, Kemeng Shi <shikemeng@huaweicloud.com>,
- Shakeel Butt <shakeel.butt@linux.dev>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <87beaec6-a3b0-ce7a-c892-1e1e5bd57aa3@google.com>
- <5c911f7a-af7a-5029-1dd4-2e00b66d565c@google.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <5c911f7a-af7a-5029-1dd4-2e00b66d565c@google.com>
+Subject: Re: [PATCH v7 7/7] arm64: dts: qcom: qrb2210-rb1: Enable Venus
+To: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>,
+ quic_vgarodia@quicinc.com, quic_dikshita@quicinc.com, krzk+dt@kernel.org,
+ konradybcio@kernel.org, mchehab@kernel.org, andersson@kernel.org,
+ conor+dt@kernel.org, amit.kucheria@oss.qualcomm.com
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250715204749.2189875-1-jorge.ramirez@oss.qualcomm.com>
+ <20250715204749.2189875-8-jorge.ramirez@oss.qualcomm.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20250715204749.2189875-8-jorge.ramirez@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi Hugh,
-
-On 2025/7/16 16:08, Hugh Dickins wrote:
-> If swap_writeout() returns AOP_WRITEPAGE_ACTIVATE (for example, because
-> zswap cannot compress and memcg disables writeback), there is no virtue
-> in keeping that folio in swap cache and holding the swap allocation:
-> shmem_writeout() switch it back to shmem page cache before returning.
+On 15/07/2025 21:47, Jorge Ramirez-Ortiz wrote:
+> Enable Venus on the QRB2210 RB1 development board.
 > 
-> Folio lock is held, and folio->memcg_data remains set throughout, so
-> there is no need to get into any memcg or memsw charge complications:
-> swap_free_nr() and delete_from_swap_cache() do as much as is needed (but
-> beware the race with shmem_free_swap() when inode truncated or evicted).
-> 
-> Doing the same for an anonymous folio is harder, since it will usually
-> have been unmapped, with references to the swap left in the page tables.
-> Adding a function to remap the folio would be fun, but not worthwhile
-> unless it has other uses, or an urgent bug with anon is demonstrated.
-> 
-> Signed-off-by: Hugh Dickins <hughd@google.com>
+> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
 > ---
->   mm/shmem.c | 33 ++++++++++++++++++++++++++++++++-
->   1 file changed, 32 insertions(+), 1 deletion(-)
+>   arch/arm64/boot/dts/qcom/qrb2210-rb1.dts | 4 ++++
+>   1 file changed, 4 insertions(+)
 > 
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 33675361031b..5a7ce4c8bad6 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -1655,6 +1655,7 @@ int shmem_writeout(struct folio *folio, struct swap_iocb **plug,
->   
->   	if (!folio_alloc_swap(folio, __GFP_HIGH | __GFP_NOMEMALLOC | __GFP_NOWARN)) {
->   		bool first_swapped = shmem_recalc_inode(inode, 0, nr_pages);
-> +		int error;
->   
->   		/*
->   		 * Add inode to shmem_unuse()'s list of swapped-out inodes,
-> @@ -1675,7 +1676,37 @@ int shmem_writeout(struct folio *folio, struct swap_iocb **plug,
->   		shmem_delete_from_page_cache(folio, swp_to_radix_entry(folio->swap));
->   
->   		BUG_ON(folio_mapped(folio));
-> -		return swap_writeout(folio, plug);
-> +		error = swap_writeout(folio, plug);
-> +		if (error != AOP_WRITEPAGE_ACTIVATE) {
-> +			/* folio has been unlocked */
-> +			return error;
-> +		}
+> diff --git a/arch/arm64/boot/dts/qcom/qrb2210-rb1.dts b/arch/arm64/boot/dts/qcom/qrb2210-rb1.dts
+> index b2e0fc5501c1..8ccc217d2a80 100644
+> --- a/arch/arm64/boot/dts/qcom/qrb2210-rb1.dts
+> +++ b/arch/arm64/boot/dts/qcom/qrb2210-rb1.dts
+> @@ -711,3 +711,7 @@ &wifi {
+>   &xo_board {
+>   	clock-frequency = <38400000>;
+>   };
 > +
-> +		/*
-> +		 * The intention here is to avoid holding on to the swap when
-> +		 * zswap was unable to compress and unable to writeback; but
-> +		 * it will be appropriate if other reactivate cases are added.
-> +		 */
-> +		error = shmem_add_to_page_cache(folio, mapping, index,
-> +				swp_to_radix_entry(folio->swap),
-> +				__GFP_HIGH | __GFP_NOMEMALLOC | __GFP_NOWARN);
-> +		/* Swap entry might be erased by racing shmem_free_swap() */
-> +		if (!error) {
-> +			spin_lock(&info->lock);
-> +			info->swapped -= nr_pages;
-> +			spin_unlock(&info->lock);
+> +&venus {
+> +	status = "okay";
+> +};
 
-Using the helper 'shmem_recalc_inode(inode, 0, -nr_pages)' seems more 
-readable?
 
-> +			swap_free_nr(folio->swap, nr_pages);
-> +		}
-> +
-> +		/*
-> +		 * The delete_from_swap_cache() below could be left for
-> +		 * shrink_folio_list()'s folio_free_swap() to dispose of;
-> +		 * but I'm a little nervous about letting this folio out of
-> +		 * shmem_writeout() in a hybrid half-tmpfs-half-swap state
-> +		 * e.g. folio_mapping(folio) might give an unexpected answer.
-> +		 */
-> +		delete_from_swap_cache(folio);
+goes here
 
-IIUC, Should the delete_from_swap_cache() also be moved into the 'if 
-(!error)' branch? Since if shmem_free_swap() has freed the swap entry, 
-it would also reclaim the swap cache, no?
+&venus {
+	status = "okay";
+};
+
+&wifi {
+         vdd-0.8-cx-mx-supply = <&pm4125_l7>;
+         vdd-1.8-xo-supply = <&pm4125_l13>;
+         vdd-1.3-rfa-supply = <&pm4125_l10>;
+         vdd-3.3-ch0-supply = <&pm4125_l22>;
+         qcom,calibration-variant = "Thundercomm_RB1";
+         firmware-name = "qcm2290";
+         status = "okay";
+};
+
+&xo_board {
+         clock-frequency = <38400000>;
+};
+
+---
+bod
 
