@@ -1,119 +1,109 @@
-Return-Path: <linux-kernel+bounces-735066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83D81B08A6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:21:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 113A9B08A71
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:23:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D43C3A7CB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:21:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8C963AA28B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0631298CC3;
-	Thu, 17 Jul 2025 10:21:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nBob1YaS"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB14A1E1DE9;
-	Thu, 17 Jul 2025 10:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E88B2900AA;
+	Thu, 17 Jul 2025 10:23:41 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C504503B
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 10:23:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752747689; cv=none; b=r31ZOiLvNDvEkdunCO9Y42mLeSpM2enCX9f9c/VSbDajePqZFprQPO+ouR8EVhrfUqcTzJ1vMqq11+UFkh4A95prZhM5Rz0RKGJW+HO6wajnjUvV0ynmiBVhckCHPKEJ3y7ZXdS6FVwikpWNKojdZzD0J6fKpXTY4bTxCW24iZ8=
+	t=1752747821; cv=none; b=nHwbdLm8DQo+y/9+AJz18RKeTu5bRVufp/ASyNVq0QipGxFCkrzZ7XEHVWGBnTyL4Q7rY1T28BBtsoiRPoc5F+NUB5E+HuEozEYNEwu0rT7Eqi1Hc2E2ZTS50X9KxhQU9/LzMzIESLVeh1GRq5JV9UvMbtUAoCsJGNlxvTayt7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752747689; c=relaxed/simple;
-	bh=VDEvp4nPa1fTYguPdURxWsEZGCTUTGn8gTFvVXSjEEk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WLaKDBA1r9z/3bEzGd2v/0o+Wh37lZnUr333J/oXMvNnM+zSKtyja3HIRvPEYzsLJeCnMqHl94WwkduMiwrOf+u7dR1aS5n14yjpDEzjRTBWqps+bUgYehJndUpW0M/zIAB3uOkZ3sSbndqBflamAuVdNIsuNZAQc4Ely1uteUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nBob1YaS; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-454f428038eso7264465e9.2;
-        Thu, 17 Jul 2025 03:21:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752747686; x=1753352486; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=R0SDQOrTuS1H9lUpxF+kJGVHmuSWWz5UnyQqpeF3N/I=;
-        b=nBob1YaSc3ZTAenMoDx6NhsnYxh+/vBrt4imCCpZt4ot79LbaFCJQBmJmR1jk+9ZyP
-         Fo9mLivzHSm7OPi8fOnjzbj1mM3Iy2NH+InvqXifsD0JMmd/pZmLwMvG7PFT49xlXHZD
-         LLKS2uQ8pLALsNbVStTXuDWDCPFJL+bIP7Ioj9JMu//vkN/88V01EE8d5mgCkCztod3C
-         cOf8zdiBALOLTUsDpxPg7PoXhkEF7z1tjovJLxQCbRgy1PYGBLZqTKFSmsWkVFA22i1V
-         17HSWizIbdHIa8bT0fQjsVHDIffEF7ubLZyZ40kVY4vpEv/0gFSxA+m3sTmHV6a8W4Fk
-         QfEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752747686; x=1753352486;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=R0SDQOrTuS1H9lUpxF+kJGVHmuSWWz5UnyQqpeF3N/I=;
-        b=GV6fC4Fkdk5Q6hVNif4mTkSTmzzIG3vJVoY7WwrbyuTKsYsAA3B5pZpprRwSw8Busm
-         ZcfJHgl/N+S9Mnag6l5AS+6A7QWrvtgGURxI1CXG+qYqFi5PW5kpo2OU/uGVCkst9J00
-         sc4KQ6+Xu1VhAWJ6+id79WTu4FhDBtkdPNWWpkTP/HNAtrGqpZC03M5jGQZ78frnMfn/
-         OpCY4Cjmr6FKIWhB5Vp+ztqt+rRhLJbYVMqLLoxINENNlY9QH9OMAtROAD6+qAsJbLBG
-         WJNAnwGIdN6PsZ8saG0tWFId+gqahEQS1r8y9EUMMwxGEQoG6EgwaifZmbvn1VqrTIvi
-         9uFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUi1HQk0uHx0UcQng+/+f3B9zt/X3e1ruVXY2l51yn97QYY9Fvz6slTAgE1L4ziBrpc1MtTfOwMIFFfQ39/fQ==@vger.kernel.org, AJvYcCXCiOtjNyX/HnqL+niZEgxEeTUVUQWE8C2Tv1oasETZAHdm4/6I+sCA8FwPwDTFsuCVSgDcH5Vb0j+UdRNk@vger.kernel.org, AJvYcCXSYJhTrpAwohWwel96wp5YNC7qjBZXS2eQg17MNYwVuZtcDb0gfJ/cJmwyuEqOxd8WW5XdW6zfjXMm@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/P1J76jyxMyJBbhiyEp7g4PAek7kToCLe6jYjXlPzmJNtL2mi
-	zX3iIwoWJSfV+rL58IhS4CBLwaz0VFjDfGzAew0go1X0MzAHKZXS1siJUPL1R/PXdMokYRolmyQ
-	sJnAWUaoKJ+HhQyphZSX0CH95YjBRVPV45CDYbg==
-X-Gm-Gg: ASbGnctpcdoE7edXPhQ80DCmiI99B3EghYxYofnZofuYSjDLmV87+6qbd2AjmgT3Es4
-	GK/5VFaF8j2IfDo2zYIsFDHSbMDl4Twcj+HorFBzCVkTAKfLPjyE9qYblJVjMw5Ae3tIRkwkTDy
-	3KYvO3pjTfZvTf9K/yojMoFPt7unaXvBbschiy6Vcu+j3TBlpJPAZ7dYAWDf3Oa829ugKTb2HKa
-	U3wa4+5qg6kRbhPIQ==
-X-Google-Smtp-Source: AGHT+IFv6PBDOX156MvNUaV8Z5aPrBU4/FhLTnO0xFtNzvyAZYCODnCC9mUWUFf0SytFNxDo8Gj6Wf3YhC7QoNI3akg=
-X-Received: by 2002:a05:600c:a009:b0:456:13d8:d141 with SMTP id
- 5b1f17b1804b1-456389d8690mr7082975e9.27.1752747685756; Thu, 17 Jul 2025
- 03:21:25 -0700 (PDT)
+	s=arc-20240116; t=1752747821; c=relaxed/simple;
+	bh=5GDC4YKogpT5kG3m+HMg1GSAAu2zwX7ZaNU1tqR7eNE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YURCCcsAFw55tVnupM92tEocF3Wi5HRexMIfq21/2VJ8m2g29ZRvey/UmxLmpkk2l6O97a4vGtcM8nOcRFEX71lRx71TVn+T0MvijQ56OyjmfHX9ld65b4BG8annHUEBj6JnR+q44GPfVTUnJqGkaPk65W67K8rf365CT/nkcZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 85EDF1596;
+	Thu, 17 Jul 2025 03:23:21 -0700 (PDT)
+Received: from [10.1.28.24] (e122027.cambridge.arm.com [10.1.28.24])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BC7903F6A8;
+	Thu, 17 Jul 2025 03:23:26 -0700 (PDT)
+Message-ID: <97149cf3-b3cb-4b90-a486-7eea5ee41b59@arm.com>
+Date: Thu, 17 Jul 2025 11:23:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250630205514.14022-1-alex.vinarskis@gmail.com>
-In-Reply-To: <20250630205514.14022-1-alex.vinarskis@gmail.com>
-From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-Date: Thu, 17 Jul 2025 12:21:14 +0200
-X-Gm-Features: Ac12FXxvNJ0B0zaGN1T4nR7wK4g-_GSIvgNfz6hKS1s0YPdaG7xpe40EqrOql8w
-Message-ID: <CAMcHhXoNFnAhSoOzTQ0quHJd6=CbZYEsozcSxTJaiYXWWQ6Ayw@mail.gmail.com>
-Subject: Re: [PATCH v1 0/2] X1E HBR3 fixes
-To: Bjorn Andersson <andersson@kernel.org>, Johan Hovold <johan+linaro@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/panfrost: Fix leak when free gem object
+To: lihongtao <lihongtao@kylinos.cn>,
+ Boris Brezillon <boris.brezillon@collabora.com>
+Cc: Rob Herring <robh@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250710030527.167710-1-lihongtao@kylinos.cn>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250710030527.167710-1-lihongtao@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 30 Jun 2025 at 22:55, Aleksandrs Vinarskis
-<alex.vinarskis@gmail.com> wrote:
->
-> It appears during initial series to enable HBR3 earlier this year [1]
-> few devices were left out, add them.
->
-> [1] https://lore.kernel.org/all/20250226231436.16138-1-alex.vinarskis@gmail.com/
->
-> Aleksandrs Vinarskis (2):
->   arm64: dts: qcom: x1-crd: Enable HBR3 on external DPs
->   arm64: dts: qcom: x1e78100-lenovo-thinkpad-t14s: Enable HBR3 on
->     external DPs
->
->  arch/arm64/boot/dts/qcom/x1-crd.dtsi                        | 3 +++
->  arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi | 2 ++
->  2 files changed, 5 insertions(+)
->
-> --
+On 10/07/2025 04:05, lihongtao wrote:
+> obj->mappings.lock should be destroyed when free
+> panfrost gem object in panfrost_gem_free_object.
 
-Hi,
+mutex_destroy() doesn't actually release any resources. It is purely a
+debugging feature (if CONFIG_DEBUG_MUTEXES is disabled then it is
+compiled away completely).
 
-I've noticed this was reviewed some time ago, but was not included in
-for upcoming 6.17. Perhaps it was forgotten?
+So it's not a "leak" as such. But there is some value in using it as it
+would (in debug builds) warn us if we attempt to destroy a locked mutex
+or attempt to use a mutex after the destroy.
 
-Thanks in advance,
-Alex
+But if we're going to fix this I think we should be more complete. A
+quick grep should we have 6 different mutexes in panfrost:
 
-> 2.48.1
->
+panfrost_device.c:      mutex_init(&pfdev->sched_lock);
+panfrost_device.c:      mutex_init(&pfdev->debugfs.gems_lock);
+panfrost_drv.c: mutex_init(&pfdev->shrinker_lock);
+panfrost_gem.c: mutex_init(&obj->mappings.lock);
+panfrost_gem.c: mutex_init(&obj->label.lock);
+panfrost_perfcnt.c:     mutex_init(&perfcnt->lock);
+
+But there's only one existing call to mutex_destroy():
+
+panfrost_gem.c: mutex_destroy(&bo->label.lock);
+
+It would be good to consider if the other mutexes should also be destroyed.
+
+Thanks,
+Steve
+
+> 
+> Signed-off-by: lihongtao <lihongtao@kylinos.cn>
+> ---
+>  drivers/gpu/drm/panfrost/panfrost_gem.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_gem.c b/drivers/gpu/drm/panfrost/panfrost_gem.c
+> index 963f04ba2de6..00549f482eec 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_gem.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_gem.c
+> @@ -49,6 +49,7 @@ static void panfrost_gem_free_object(struct drm_gem_object *obj)
+>  		kvfree(bo->sgts);
+>  	}
+>  
+> +	mutex_destroy(&bo->mappings.lock);
+>  	drm_gem_shmem_free(&bo->base);
+>  }
+>  
+
 
