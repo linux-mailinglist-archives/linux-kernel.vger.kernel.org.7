@@ -1,190 +1,214 @@
-Return-Path: <linux-kernel+bounces-734510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ED0FB08297
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 03:45:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02AE1B08292
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 03:43:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5F041A65859
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 01:45:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBE0B4E2235
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 01:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F1778F4B;
-	Thu, 17 Jul 2025 01:45:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Gi/yguL5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7EE1DB127;
+	Thu, 17 Jul 2025 01:43:42 +0000 (UTC)
+Received: from unicom146.biz-email.net (unicom146.biz-email.net [210.51.26.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF9AB1411EB;
-	Thu, 17 Jul 2025 01:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F4C2030A
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 01:43:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752716720; cv=none; b=tXcRzUucYG3SqjDNn46XivAa5jMxJG32FVAjbft8IKYO3pdbVfnuny0VMsRShiGvotgByuFOGku6GnAkhv9ZtQ3X4gY7FFazjRgqT0gOxgdgxmON8SMzdYui+C+60iwjULuTnox3a7mZ6GC6CB0+2L7/g7adRUxRcwNalU7H1vI=
+	t=1752716621; cv=none; b=gXhg1/2mWeEa3Qav8t2TGiJ+fh/fCLoOK5KReo7kCKcuJe3aPOIylZAhoc0MN6p9IkcG9ko9ISmzod35OLfmJRi5SKtmrvsH7pXfHw0fGb0n7CwvrdR/Ek6jqy2cZjmCnedzbDOZAv4Hz/ctln21A79SFmZmT5wHUGE0rhwr+sY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752716720; c=relaxed/simple;
-	bh=/RbAH5gsGsI/vSlzeaWK3wAywHETxlvVMYZZu9wtIAc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rLnOEs54ksTQnRn9DUtOLCbsHKSzgj2nM8vRmjps/dtAlVyFHMtyJVHm6NUJJYwKfHhAN50GlHMnm5ZoDhXSqDo/U+ukCJBDVnENcdTc8uOMt7bqty7dGpsAduBuKFO87Tj2KLlOfZyv+MwupjCBHui4HRypsak83rKFH6zIDa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Gi/yguL5; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752716719; x=1784252719;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=/RbAH5gsGsI/vSlzeaWK3wAywHETxlvVMYZZu9wtIAc=;
-  b=Gi/yguL5CR9a5O8MlmBfDZ0HJMl/Rciv4prGbkYC+7v8JQdNyPWeq1og
-   y2BIHu+QFo9SgR57jDzGhnUZvyJ7NFVWx4oTEGvsJnEgbD+ZwRUAQQm1b
-   HHkRs5x28LwwApBpQGdy6b7x3/Y5Tf3YM9YB9qELSOF8sqqZ1npEeoNh9
-   YOXKzgEx80AaURrKtj2M41/WPqTJnFqr70ARAUvfXok1jI17sl14t2XRj
-   u3K/nDffqzzxaBXp0vPifNEFO6D8Hc3UDqqvuWTKUmhuiJUJVjk+siClp
-   80IqFMzRkX/MJqY3lrgWdeO7toCP53DhvSjfoaUkAl3mWfpJl3O5x86XC
-   w==;
-X-CSE-ConnectionGUID: 7DYuFzd0Sg6sDXxoXBvJkA==
-X-CSE-MsgGUID: fHfd/zEzQ52j5Qd9JFtR9g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="72546445"
-X-IronPort-AV: E=Sophos;i="6.16,317,1744095600"; 
-   d="scan'208";a="72546445"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 18:45:17 -0700
-X-CSE-ConnectionGUID: 6UKYyFDdSqa817g2UuA1EA==
-X-CSE-MsgGUID: kbyc6LnuSFqjH0eZnWHQqA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,317,1744095600"; 
-   d="scan'208";a="163288796"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 18:45:12 -0700
-Message-ID: <df5353e2-1d54-476b-90ab-e673686dcc41@linux.intel.com>
-Date: Thu, 17 Jul 2025 09:43:19 +0800
+	s=arc-20240116; t=1752716621; c=relaxed/simple;
+	bh=dJoAIfytZrOpSuXqCuHmHzo0RzD3zrIAcWuneaIzZ74=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=WrUd6TYbdI9uIkssnaQJpWvZRJSAKXVohZIb/mN5ZKLlsuNvjOVd1E4PNK+vi+ei9svtJ/8BeNF2L5l0OkZ+EMs8Em9bk0e76U1rBAXQL6IZnw5jOUjWafDZ3b9L0ZgPT7naXPk4wz0bI6Qo2kxeGt+zS4cC7UhOpSFQV+fflhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from jtjnmail201619.home.langchao.com
+        by unicom146.biz-email.net ((D)) with ASMTP (SSL) id 202507170943338503;
+        Thu, 17 Jul 2025 09:43:33 +0800
+Received: from jtjnmail201622.home.langchao.com (10.100.2.22) by
+ jtjnmail201619.home.langchao.com (10.100.2.19) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.57; Thu, 17 Jul 2025 09:43:33 +0800
+Received: from jtjnmail201622.home.langchao.com ([fe80::15c3:8d74:3aa6:25f6])
+ by jtjnmail201622.home.langchao.com ([fe80::15c3:8d74:3aa6:25f6%7]) with mapi
+ id 15.01.2507.057; Thu, 17 Jul 2025 09:43:33 +0800
+From: =?utf-8?B?Qm8gTGl1ICjliJjms6IpLea1qua9ruS/oeaBrw==?=
+	<liubo03@inspur.com>
+To: "hsiangkao@linux.alibaba.com" <hsiangkao@linux.alibaba.com>,
+	"xiang@kernel.org" <xiang@kernel.org>, "chao@kernel.org" <chao@kernel.org>
+CC: "linux-erofs@lists.ozlabs.org" <linux-erofs@lists.ozlabs.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] erofs: fix build error with CONFIG_EROFS_FS_ZIP_ACCEL=y
+Thread-Topic: [PATCH] erofs: fix build error with CONFIG_EROFS_FS_ZIP_ACCEL=y
+Thread-Index: AQHb9rs+z1tDqdTop0ya67w6HSZeFbQ1A9AAgACGdvA=
+Date: Thu, 17 Jul 2025 01:43:33 +0000
+Message-ID: <7a1dbee70a604583bae5a29f690f4231@inspur.com>
+References: <b628d0517cde6f8914e65e1d7365d22217-7-25linux.alibaba.com@g.corp-email.com>
+ <7d4b5f45-a8c1-47d6-8404-9cad88a297c1@linux.alibaba.com>
+In-Reply-To: <7d4b5f45-a8c1-47d6-8404-9cad88a297c1@linux.alibaba.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator:
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature";
+	micalg=SHA1; boundary="----=_NextPart_000_0009_01DBF6FF.3AF80DF0"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] iommu/sva: Invalidate KVA range on kernel TLB
- flush
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Kevin Tian <kevin.tian@intel.com>, Jann Horn <jannh@google.com>,
- Vasant Hegde <vasant.hegde@amd.com>, Dave Hansen <dave.hansen@intel.com>,
- Alistair Popple <apopple@nvidia.com>, Uladzislau Rezki <urezki@gmail.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Andy Lutomirski <luto@kernel.org>, "Tested-by : Yi Lai" <yi1.lai@intel.com>,
- iommu@lists.linux.dev, security@kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250709062800.651521-1-baolu.lu@linux.intel.com>
- <20250710135432.GO1613376@noisy.programming.kicks-ass.net>
- <094fdad4-297b-44e9-a81c-0fe4da07e63f@linux.intel.com>
- <20250711083252.GE1099709@noisy.programming.kicks-ass.net>
- <e049c100-2e54-4fd7-aadd-c181f9626f14@linux.intel.com>
- <20250715122504.GK2067380@nvidia.com>
- <f58a6825-e53a-4751-97cc-0891052936f1@linux.intel.com>
- <20250716120817.GY2067380@nvidia.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20250716120817.GY2067380@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+tUid: 20257170943332caa2229f388bf2fd194f9f14c2e5d33
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
+
+------=_NextPart_000_0009_01DBF6FF.3AF80DF0
+Content-Type: text/plain;
+	charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On 7/16/25 20:08, Jason Gunthorpe wrote:
-> On Wed, Jul 16, 2025 at 02:34:04PM +0800, Baolu Lu wrote:
->>>> @@ -654,6 +656,9 @@ struct iommu_ops {
->>>>
->>>>    	int (*def_domain_type)(struct device *dev);
->>>>
->>>> +	void (*paging_cache_invalidate)(struct iommu_device *dev,
->>>> +					unsigned long start, unsigned long end);
->>>
->>> How would you even implement this in a driver?
->>>
->>> You either flush the whole iommu, in which case who needs a rage, or
->>> the driver has to iterate over the PASID list, in which case it
->>> doesn't really improve the situation.
+>On 2025/7/17 09:34, Bo Liu wrote:
+>> fix build err:
+>>   ld.lld: error: undefined symbol: crypto_req_done
+>>     referenced by decompressor_crypto.c
+>>         fs/erofs/decompressor_crypto.o:(z_erofs_crypto_decompress) in
+>archive vmlinux.a
+>>     referenced by decompressor_crypto.c
+>>         fs/erofs/decompressor_crypto.o:(z_erofs_crypto_decompress) in
+>archive vmlinux.a
 >>
->> The Intel iommu driver supports flushing all SVA PASIDs with a single
->> request in the invalidation queue.
-> 
-> How? All PASID !=0 ? The HW has no notion about a SVA PASID vs no-SVA
-> else. This is just flushing almost everything.
-
-The intel iommu driver allocates a dedicated domain id for all sva
-domains. It can flush all cache entries with that domain id tagged.
-
-> 
->>> If this is a concern I think the better answer is to do a defered free
->>> like the mm can sometimes do where we thread the page tables onto a
->>> linked list, flush the CPU cache and push it all into a work which
->>> will do the iommu flush before actually freeing the memory.
+>>   ld.lld: error: undefined symbol: crypto_acomp_decompress
+>>     referenced by decompressor_crypto.c
+>>         fs/erofs/decompressor_crypto.o:(z_erofs_crypto_decompress) in
+>archive vmlinux.a
 >>
->> Is it a workable solution to use schedule_work() to queue the KVA cache
->> invalidation as a work item in the system workqueue? By doing so, we
->> wouldn't need the spinlock to protect the list anymore.
-> 
-> Maybe.
-> 
-> MM is also more careful to pull the invalidation out some of the
-> locks, I don't know what the KVA side is like..
-How about something like the following? It's compiled but not tested.
+>>   ld.lld: error: undefined symbol: crypto_alloc_acomp
+>>     referenced by decompressor_crypto.c
+>>         fs/erofs/decompressor_crypto.o:(z_erofs_crypto_enable_engine) in
+>archive vmlinux.a
+>
+>Could you add a `Fixes` tag for this?
+>
+I will add this.
 
-struct kva_invalidation_work_data {
-	struct work_struct work;
-	unsigned long start;
-	unsigned long end;
-	bool free_on_completion;
-};
+Thanks
+Bo Liu
 
-static void invalidate_kva_func(struct work_struct *work)
-{
-	struct kva_invalidation_work_data *data =
-		container_of(work, struct kva_invalidation_work_data, work);
-	struct iommu_mm_data *iommu_mm;
+------=_NextPart_000_0009_01DBF6FF.3AF80DF0
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
 
-	guard(mutex)(&iommu_sva_lock);
-	list_for_each_entry(iommu_mm, &iommu_sva_mms, mm_list_elm)
-		mmu_notifier_arch_invalidate_secondary_tlbs(iommu_mm->mm,
-				data->start, data->end);
+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
+MAwGCisGAQQBgjcKAwQwRAYJKoZIhvcNAQkPBDcwNTAOBggqhkiG9w0DAgICAIAwDgYIKoZIhvcN
+AwQCAgCAMAcGBSsOAwIHMAoGCCqGSIb3DQMHMB0GA1UdDgQWBBTkHdp/y3+DuDJ13Q1YzgU9iV7N
+dzAfBgNVHSMEGDAWgBReWQOmtExYYJFO9h61pTmmMsE1ajCCAQ8GA1UdHwSCAQYwggECMIH/oIH8
+oIH5hoG6bGRhcDovLy9DTj1JTlNQVVItQ0EsQ049SlRDQTIwMTIsQ049Q0RQLENOPVB1YmxpYyUy
+MEtleSUyMFNlcnZpY2VzLENOPVNlcnZpY2VzLENOPUNvbmZpZ3VyYXRpb24sREM9aG9tZSxEQz1s
+YW5nY2hhbyxEQz1jb20/Y2VydGlmaWNhdGVSZXZvY2F0aW9uTGlzdD9iYXNlP29iamVjdENsYXNz
+PWNSTERpc3RyaWJ1dGlvblBvaW50hjpodHRwOi8vSlRDQTIwMTIuaG9tZS5sYW5nY2hhby5jb20v
+Q2VydEVucm9sbC9JTlNQVVItQ0EuY3JsMIIBKQYIKwYBBQUHAQEEggEbMIIBFzCBsQYIKwYBBQUH
+MAKGgaRsZGFwOi8vL0NOPUlOU1BVUi1DQSxDTj1BSUEsQ049UHVibGljJTIwS2V5JTIwU2Vydmlj
+ZXMsQ049U2VydmljZXMsQ049Q29uZmlndXJhdGlvbixEQz1ob21lLERDPWxhbmdjaGFvLERDPWNv
+bT9jQUNlcnRpZmljYXRlP2Jhc2U/b2JqZWN0Q2xhc3M9Y2VydGlmaWNhdGlvbkF1dGhvcml0eTBh
+BggrBgEFBQcwAoZVaHR0cDovL0pUQ0EyMDEyLmhvbWUubGFuZ2NoYW8uY29tL0NlcnRFbnJvbGwv
+SlRDQTIwMTIuaG9tZS5sYW5nY2hhby5jb21fSU5TUFVSLUNBLmNydDBBBgNVHREEOjA4oCIGCisG
+AQQBgjcUAgOgFAwSbGl1Ym8wM0BpbnNwdXIuY29tgRJsaXVibzAzQGluc3B1ci5jb20wDQYJKoZI
+hvcNAQELBQADggEBAA+BaY3B3qXmvZq7g7tZLzq2VQjU//XHTmyl58GLDWdVHsuX3lrAGwEfLVnU
+odpvthjtb7T7xEUzJh4F62zLFSm8HOBPH1B+6SFQKChHZeM0pauvXr1krRtVv82RgLsU26XrXFUP
+N+NcPwt7vOw1zHOiDic4anL3A9gsuDljAi2l+CA5RY05yL+8orasEAhOYL6+ks9aB8QiCxbZzShk
+DTMkrh0N1DjoBLaibtnlI/fxOUYM6vgdiI+FC02G41B364ZAc1mabSFvGIP6cIdr/olprPQOj9cq
+6zMi05qUBUj22hDvhcY0TlT4fEJSrvblp/LG6qTtVI3ilUAxhe8i9cIwggezMIIGm6ADAgECAhN+
+AAOO5TIDxOWswVHsAAEAA47lMA0GCSqGSIb3DQEBCwUAMFkxEzARBgoJkiaJk/IsZAEZFgNjb20x
+GDAWBgoJkiaJk/IsZAEZFghsYW5nY2hhbzEUMBIGCgmSJomT8ixkARkWBGhvbWUxEjAQBgNVBAMT
+CUlOU1BVUi1DQTAeFw0yNTA3MTcwMTIxMDVaFw0zMDA3MTYwMTIxMDVaMIG3MRMwEQYKCZImiZPy
+LGQBGRYDY29tMRgwFgYKCZImiZPyLGQBGRYIbGFuZ2NoYW8xFDASBgoJkiaJk/IsZAEZFgRob21l
+MTMwMQYDVQQLDCrmtarmva7nlLXlrZDkv6Hmga/kuqfkuJrogqHku73mnInpmZDlhazlj7gxGDAW
+BgNVBAMMD+WImOazoihsaXVibzAzKTEhMB8GCSqGSIb3DQEJARYSbGl1Ym8wM0BpbnNwdXIuY29t
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmt17k1i6xhukLYDgv4PB5YV9rNmuVKH5
+WO2ehZYIJn186Qt0EkhhoA7T2xt4AVZWaon2N27/bGKOp4xz8BYIPWpODowfg2FtrABqvJxsGQxf
+VakiH5YBpPG4fUO+Y0D8vqKw4bAJ5I5quixu2t8OZenYCvvlLMXyP2KSshCJWVDw9rMEQhemcDot
+PJfH9vFM085tUCvhPpjyMGq6/moGO8JQZ262X3XsFKnE0Zs9KMjtP6G4lJcmWfgwu3rAH3hMKRK6
+bTsLPO+bY3TRz8avw8S1UmjJLTb2HDFLkzXzpOhDdKjO2Fk9V7JNmpjk7YQ7P8LLA1hVInOUjFv6
+GR61vQIDAQABo4IEEzCCBA8wCwYDVR0PBAQDAgWgMD0GCSsGAQQBgjcVBwQwMC4GJisGAQQBgjcV
+CILyqR+Egdd6hqmRPYaA9xWD2I9cgUr9iyaBlKdNAgFkAgFhMEQGCSqGSIb3DQEJDwQ3MDUwDgYI
+KoZIhvcNAwICAgCAMA4GCCqGSIb3DQMEAgIAgDAHBgUrDgMCBzAKBggqhkiG9w0DBzAdBgNVHQ4E
+FgQUsmXTjDrO/nhxGDpnz5cAr1neWI8wHwYDVR0jBBgwFoAUXlkDprRMWGCRTvYetaU5pjLBNWow
+ggEPBgNVHR8EggEGMIIBAjCB/6CB/KCB+YaBumxkYXA6Ly8vQ049SU5TUFVSLUNBLENOPUpUQ0Ey
+MDEyLENOPUNEUCxDTj1QdWJsaWMlMjBLZXklMjBTZXJ2aWNlcyxDTj1TZXJ2aWNlcyxDTj1Db25m
+aWd1cmF0aW9uLERDPWhvbWUsREM9bGFuZ2NoYW8sREM9Y29tP2NlcnRpZmljYXRlUmV2b2NhdGlv
+bkxpc3Q/YmFzZT9vYmplY3RDbGFzcz1jUkxEaXN0cmlidXRpb25Qb2ludIY6aHR0cDovL0pUQ0Ey
+MDEyLmhvbWUubGFuZ2NoYW8uY29tL0NlcnRFbnJvbGwvSU5TUFVSLUNBLmNybDCCASwGCCsGAQUF
+BwEBBIIBHjCCARowgbEGCCsGAQUFBzAChoGkbGRhcDovLy9DTj1JTlNQVVItQ0EsQ049QUlBLENO
+PVB1YmxpYyUyMEtleSUyMFNlcnZpY2VzLENOPVNlcnZpY2VzLENOPUNvbmZpZ3VyYXRpb24sREM9
+aG9tZSxEQz1sYW5nY2hhbyxEQz1jb20/Y0FDZXJ0aWZpY2F0ZT9iYXNlP29iamVjdENsYXNzPWNl
+cnRpZmljYXRpb25BdXRob3JpdHkwZAYIKwYBBQUHMAKGWGh0dHA6Ly9KVENBMjAxMi5ob21lLmxh
+bmdjaGFvLmNvbS9DZXJ0RW5yb2xsL0pUQ0EyMDEyLmhvbWUubGFuZ2NoYW8uY29tX0lOU1BVUi1D
+QSgxKS5jcnQwKQYDVR0lBCIwIAYIKwYBBQUHAwIGCCsGAQUFBwMEBgorBgEEAYI3CgMEMDUGCSsG
+AQQBgjcVCgQoMCYwCgYIKwYBBQUHAwIwCgYIKwYBBQUHAwQwDAYKKwYBBAGCNwoDBDBBBgNVHREE
+OjA4oCIGCisGAQQBgjcUAgOgFAwSbGl1Ym8wM0BpbnNwdXIuY29tgRJsaXVibzAzQGluc3B1ci5j
+b20wUwYJKwYBBAGCNxkCBEYwRKBCBgorBgEEAYI3GQIBoDQEMlMtMS01LTIxLTE2MDY5ODA4NDgt
+NzA2Njk5ODI2LTE4MDE2NzQ1MzEtMjU4ODUyMzQ4MA0GCSqGSIb3DQEBCwUAA4IBAQAucjq5s0Qq
+1UtBIL8Und9mnrfn3azil+rXBoZf/N+DNuZYml+Ct4SDC0tng7F5kSt/2zU4vShrkviUh8kjCstC
+rPyqkxQodvm7reuGuBKZLy9PLZR0oB3S7vD9gUdMCw7UianFwY+mgbG/33dY43zujZIY8DMm6od3
+GMZlIueeqB6VyEESU4+ll2VFPyLXPzUMBK7DLAEnOiPbJSUvR7738lSkDPXxdujcFhL9wxTvh/3g
+hYuY0OCwf+HM7TFBSSFxa1wdkfO8aA9Bl6tY5awZ6bbsr+3+FRf/h1jWZQOCCnEGixEPN0irb1Zj
+dI2O4u1TlTwZAYXdLVRqmr2vi1KHMYIDkzCCA48CAQEwcDBZMRMwEQYKCZImiZPyLGQBGRYDY29t
+MRgwFgYKCZImiZPyLGQBGRYIbGFuZ2NoYW8xFDASBgoJkiaJk/IsZAEZFgRob21lMRIwEAYDVQQD
+EwlJTlNQVVItQ0ECE34AANHR1UxsCE9f8IsAAAAA0dEwCQYFKw4DAhoFAKCCAfgwGAYJKoZIhvcN
+AQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjUwNzE3MDE0MzIwWjAjBgkqhkiG9w0B
+CQQxFgQUa9SKy+5VREpQVRwh+K9KHFefhHgwfwYJKwYBBAGCNxAEMXIwcDBZMRMwEQYKCZImiZPy
+LGQBGRYDY29tMRgwFgYKCZImiZPyLGQBGRYIbGFuZ2NoYW8xFDASBgoJkiaJk/IsZAEZFgRob21l
+MRIwEAYDVQQDEwlJTlNQVVItQ0ECE34AA47lMgPE5azBUewAAQADjuUwgYEGCyqGSIb3DQEJEAIL
+MXKgcDBZMRMwEQYKCZImiZPyLGQBGRYDY29tMRgwFgYKCZImiZPyLGQBGRYIbGFuZ2NoYW8xFDAS
+BgoJkiaJk/IsZAEZFgRob21lMRIwEAYDVQQDEwlJTlNQVVItQ0ECE34AA47lMgPE5azBUewAAQAD
+juUwgZMGCSqGSIb3DQEJDzGBhTCBgjAKBggqhkiG9w0DBzALBglghkgBZQMEASowCwYJYIZIAWUD
+BAEWMAsGCWCGSAFlAwQBAjAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcNAwICAUAwBwYFKw4DAhow
+CwYJYIZIAWUDBAIDMAsGCWCGSAFlAwQCAjALBglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEA
+TRKO7WvzJ9SjqvoT+IhLVH3WDsoB1qw3VlX/4Vyfafl82YrRvbmeeRx4EtWr0uIwsjOC3pnQjsZp
+lyZ/Pq5gSlbD7xPJsoHXtPzwMdswpKOSvRugfcQmr+nefSeOI20UsfpxjhpjtzN3P22FXLHodTGd
+h8n9g/7BuKW7rNChCO1Jdd0QqFsrpEGbQ/ptT958fO0vk4Wc94BPT9Omusrm9HdMe28nsgw9/tep
+Ef9AMAgcvss79w3BYxDYy3oOSh6o5kGc1ZhrOk+b6ZgBq84RRlluMFqWxpEIX8pa4jhaH/scQjBI
+PIZq7Vhgh0x0r0r/8i+nrcPAy7P4qqE9L8ZqqgAAAAAAAA==
 
-	if (data->free_on_completion)
-		kfree(data);
-}
-
-void iommu_sva_invalidate_kva_range(unsigned long start, unsigned long end)
-{
-	struct kva_invalidation_work_data stack_data;
-
-	if (!static_branch_unlikely(&iommu_sva_present))
-		return;
-
-	/*
-	 * Since iommu_sva_mms is an unbound list, iterating it in an atomic
-	 * context could introduce significant latency issues.
-	 */
-	if (in_atomic()) {
-		struct kva_invalidation_work_data *data =
-			kzalloc(sizeof(*data), GFP_ATOMIC);
-
-		if (!data)
-			return;
-
-		data->start = start;
-		data->end = end;
-		INIT_WORK(&data->work, invalidate_kva_func);
-		data->free_on_completion = true;
-		schedule_work(&data->work);
-		return;
-	}
-
-	stack_data.start = start;
-	stack_data.end = end;
-	invalidate_kva_func(&stack_data.work);
-}
-
-Thanks,
-baolu
+------=_NextPart_000_0009_01DBF6FF.3AF80DF0--
 
