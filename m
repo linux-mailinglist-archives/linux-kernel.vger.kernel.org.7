@@ -1,96 +1,139 @@
-Return-Path: <linux-kernel+bounces-736079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47E0CB09857
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 01:42:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 703C1B09871
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 01:45:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAD4F1C43E43
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 23:42:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CE751C466C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 23:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D20225A39;
-	Thu, 17 Jul 2025 23:42:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A9A246764;
+	Thu, 17 Jul 2025 23:44:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="NkbcIlH5"
-Received: from mail3-163.sinamail.sina.com.cn (mail3-163.sinamail.sina.com.cn [202.108.3.163])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SzfaH+Fh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A3921A928
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 23:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B583E24110F;
+	Thu, 17 Jul 2025 23:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752795755; cv=none; b=glGSi58yKVdcPCP/b8nXOOUw2tmEZX2mRL89skAPLj6dFy/x27i0N3PESqfYZ8vBUC6C0QbUccFVxrQcii1cRUBQofKVAS7RyABbEg+mW5UMz7Y2ZIj541EXDmFVPbH/FjYataDk9nNHFYNfYST2quRXU1GBA3XjaWaRgw0WBZs=
+	t=1752795873; cv=none; b=rBylCJ5pkbjJcyNa8aMBj1xhv1MFOgq+9PON01LWl8GvdDrxV8+LJOoMjnEDY6NqnN4BP4X9YrOXNBM+y1RAy+eRbru6J0XKebQIay8C8GLiRbKl6HbFwTOr7fmGdlSRQmKEu+KQkF//qkiAsc7sTo+lqUCifrYjIdrpMPlTuAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752795755; c=relaxed/simple;
-	bh=tLMeuWcY5dZ/SP2YIJD/jIA7A4PgzYheE3z+47KMQRI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UXzg0YvpG6lFFc5q1YAifYwu5k3IX4F0ivXhjd4VtbtPkBwsxb61jTofcXsaZw7K7j5LKBZ4VcPE1BBfgs+X1oTJn6vvLOUzQr0DPb/uj5aEewHcnRJPBJeO29C9m+4fYwh8aNvXJdjaRKeNcNNINY+vCa15aAdW0FssS8q2Fpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=NkbcIlH5; arc=none smtp.client-ip=202.108.3.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1752795750;
-	bh=0gdzAFi3nL1mlUMjX1WcxIl7a1Y3sVw0Mhg8EU6lFuQ=;
-	h=From:Subject:Date:Message-ID;
-	b=NkbcIlH5XMoQRyj58il5+8Z6+aHUmvQcpK+UcEXk/uW7ova3Cz6EISlfBXyPVAJOl
-	 pPsj+GrwlB8tZlwbpzxUNi1ea0H9Gjqh6JzWxkQ86FwMOh0CKMFN9s2MKqoOuxG5iq
-	 Do7LD5G/MfChq23b4GAE/8BA8YcHaI4kX4nQuHaY=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.34) with ESMTP
-	id 68798A5C000060FC; Thu, 18 Jul 2025 07:42:21 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 091516291755
-X-SMAIL-UIID: 730DF730D7E4429D9DCD6571EC87227F-20250718-074222-1
-From: Hillf Danton <hdanton@sina.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: syzbot <syzbot+ebfd0e44b5c11034e1eb@syzkaller.appspotmail.com>,
-	akpm@linux-foundation.org,
-	liam.howlett@oracle.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	syzkaller-bugs@googlegroups.com,
-	vbabka@suse.cz
-Subject: Re: [syzbot] [mm?] KASAN: slab-use-after-free Read in mas_next_slot (2)
-Date: Fri, 18 Jul 2025 07:42:11 +0800
-Message-ID: <20250717234212.2329-1-hdanton@sina.com>
-In-Reply-To: <4c29e030-4ba8-48e3-96bb-015d43768db0@lucifer.local>
-References: <20250717014623.2253-1-hdanton@sina.com> <68787417.a70a0220.693ce.0037.GAE@google.com> <8a2f1892-3184-4aaf-91ea-522e9ba2391b@lucifer.local>
+	s=arc-20240116; t=1752795873; c=relaxed/simple;
+	bh=p+zcJCk2jQCao3tbaNCKX2gTkeKcqcP1LFqr4M5zOWw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QbjUe9WpPSZoIaLrmmMCWX2A8slxHEyZsuzOmiU3qeLkFTiQMHscOj0oHA2gWicb1Gt2pxQ8N3dDGV3jZD2WPPSUTm30dXIwy7n8ryJjxMgUBmkH19AtD3MHg8oube4ZJWq9Iqo5TxbayzkZ2Z0GlsA0O+bbs0jeBIFuEi4I01c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SzfaH+Fh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48199C4CEE3;
+	Thu, 17 Jul 2025 23:44:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752795872;
+	bh=p+zcJCk2jQCao3tbaNCKX2gTkeKcqcP1LFqr4M5zOWw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SzfaH+FhFmxrsnixPz4XGiqkapozOWi8ChI7CSEpCZPXUIYgDLoaIe0U5ADzTbQJ7
+	 f1OqUQWtXS1H/Pr2YdLygl9awACVlG0md/OtapEra+hfYKeuBztSV2Ryr5syzFO+Jz
+	 o4UqzSAWuhqu62sWGMkoLiQQuo2cfuXvkrxxr6NcECBDf7WjrzrvuejOEt8CsO0VSv
+	 cRIhC8TeBImb38mMiUC8+KqWNwkv/slpjN6FvPz6YACfYPzKS7JyX/A73nqxxiNf3f
+	 353JwtjtJggSriJkQRXcu63oXn2G1Icb9B5kCoDHuVXsWo7/hIPFWXRmatT02Q/+2X
+	 VHhSRY2NMGoPw==
+Date: Thu, 17 Jul 2025 16:44:31 -0700
+From: Kees Cook <kees@kernel.org>
+To: Martin Uecker <ma.uecker@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	David Laight <david.laight.linux@gmail.com>,
+	Alejandro Colomar <alx@kernel.org>, linux-mm@kvack.org,
+	linux-hardening@vger.kernel.org,
+	Christopher Bazley <chris.bazley.wg14@gmail.com>,
+	shadow <~hallyn/shadow@lists.sr.ht>, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>,
+	Alexander Potapenko <glider@google.com>,
+	Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>,
+	David Rientjes <rientjes@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	Andrew Clayton <andrew@digital-domain.net>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Michal Hocko <mhocko@suse.com>, Al Viro <viro@zeniv.linux.org.uk>,
+	Sam James <sam@gentoo.org>, Andrew Pinski <pinskia@gmail.com>
+Subject: Re: [RFC v5 6/7] sprintf: Add [v]sprintf_array()
+Message-ID: <202507171640.F649D58897@keescook>
+References: <cover.1751823326.git.alx@kernel.org>
+ <cover.1752182685.git.alx@kernel.org>
+ <04c1e026a67f1609167e834471d0f2fe977d9cb0.1752182685.git.alx@kernel.org>
+ <CAHk-=wiNJQ6dVU8t7oM0sFpSqxyK8JZQXV5NGx7h+AE0PY4kag@mail.gmail.com>
+ <28c8689c7976b4755c0b5c2937326b0a3627ebf6.camel@gmail.com>
+ <20250711184541.68d770b9@pumpkin>
+ <CAHk-=wjC0pAFfMBHKtCLOAcUvLs30PpjKoMfN9aP1-YwD0MZ5Q@mail.gmail.com>
+ <202507142211.F1E0730A@keescook>
+ <d43ebab47ee70cd11bddf78c424ec341b4c797cf.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <d43ebab47ee70cd11bddf78c424ec341b4c797cf.camel@gmail.com>
 
-On Thu, 17 Jul 2025 17:06:34 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-
-Top reply is not encouraged lad.
-
-> OK on second thoughts, there is one additional thing we need to do on each
-> loop to avoid observing the same VMA, either the prior logic of checking
-> directly or a vma_next().
+On Tue, Jul 15, 2025 at 08:24:29AM +0200, Martin Uecker wrote:
+> Am Montag, dem 14.07.2025 um 22:19 -0700 schrieb Kees Cook:
+> > On Fri, Jul 11, 2025 at 10:58:56AM -0700, Linus Torvalds wrote:
+> > >         struct seq_buf s;
+> > >         seq_buf_init(&s, buf, szie);
+> > 
+> > And because some folks didn't like this "declaration that requires a
+> > function call", we even added:
+> > 
+> > 	DECLARE_SEQ_BUF(s, 32);
+> > 
+> > to do it in 1 line. :P
+> > 
+> > I would love to see more string handling replaced with seq_buf.
 > 
-> So this may be a consequence of that.
+> Why not have?
 > 
-> I will respin the series to make life easier...
+> struct seq_buf s = SEQ_BUF(32);
 > 
-Better after syzbot gives you Tested-by.
+> 
+> So the kernel has safe abstractions, there are just not used enough.
 
-> On Thu, Jul 17, 2025 at 05:18:17AM +0100, Lorenzo Stoakes wrote:
-> > This looks to be unrelated to my patch and some issue with syzbot (it's doing
-> > weird injection stuff).
-> >
-> > As I said, I have tested the change with reproducer locally and it fixes the
-> > issue, and I have been able to reliably observe that (note, without any of the
-> > below stuff happening).
-> >
-> > Thanks
+Yeah, that should be fine. The trouble is encapsulating the actual
+buffer itself. But things like spinlocks need initialization too, so
+it's not too unusual to need a constructor for things living in a
+struct.
+
+If the struct had DECLARE which created 2 variables, then an INIT could
+just reuse the special name...
+
+> The string builder is for safely construcing new strings, the
+> string view is for safely accessing parts of existing strings.
+
+seq_buf doesn't currently have a "view" API, just a "make sure the
+result is NUL terminated, please enjoy this char *"
+
+> Also what I found really convenient and useful in this context
+> was to have an accessor macro that expose the  buffer as a 
+> regular array cast to the correct size:
+> 
+>  *( (char(*)[(x)->N]) (x)->data )
+> 
+> (put into statement expressions to avoid double evaluation)
+> 
+> instead of simply returning a char*
+
+Yeah, I took a look through your proposed C string library routines. I
+think it would be pretty nice, but it does feel like it has to go
+through a lot of hoops when C should have something native. Though to
+be clear, I'm not saying seq_buf is the answer. :)
+
+-- 
+Kees Cook
 
