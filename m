@@ -1,253 +1,401 @@
-Return-Path: <linux-kernel+bounces-735167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C27E7B08BAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:25:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 29C85B08BC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:30:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACB1A58629E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:25:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C4BB17A0B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:30:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7C729AB10;
-	Thu, 17 Jul 2025 11:25:20 +0000 (UTC)
-Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED247299A9C;
+	Thu, 17 Jul 2025 11:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f8Y660q+"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE34029AB09
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 11:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC1128A72A;
+	Thu, 17 Jul 2025 11:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752751519; cv=none; b=rQUWVgAB/Ng3zrQ+oA3aiEfEd5oP8gNGw/0klR/AFNuCCLzBP1k8OtP7ZJvP8L2vxcRpg3dXDu+ysycj5e5mMEGHQc+iW1BEKDiwoj+pSWXcqdklkSr+H99MARCGj3SeUpy2+GGwX4fUzRirvflQq9ueDT2C1076I21ZMcXK/fg=
+	t=1752751818; cv=none; b=KLwWU8TblJfelz6bv3gvd6sdZ6nYLHLn2esGldNw0Eru/D3lr9RCLU7w4sbJfnF6ZoN/gZ2fYgTNRmyj7TYo3NdWGCSnQ/3u+mWXtaMN/KxpNsOi1b2goPde6v5p0fQe6Yhkl8x1tYeYp28f6VgzCkUQPtxk5suf7rze3JleGpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752751519; c=relaxed/simple;
-	bh=gH/B4Syrc/gx/Qj2HDbJs0C2w1+VRdHj/3ux9GpgN4Y=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=rKCTcyFJJ701wcBgctZ19hFUmFpaAq0EUx+dvrM/0rY9GMwgD9vgbV7iJAaZjPGCA5hHTXLYDNJBCPduIallCb8Jwv23Vj91rQv+jKqdYwUaaVzf0rDZ0PliIUl+VlycDC5M3uXm1CAREsWtzhC73Oa9dtuLcG74Fqz+skVaeac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 56HBP2Ot080046;
-	Thu, 17 Jul 2025 19:25:02 +0800 (+08)
-	(envelope-from haiyan.liu@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4bjVpf4qznz2K25V6;
-	Thu, 17 Jul 2025 19:20:42 +0800 (CST)
-Received: from BJMBX01.spreadtrum.com (10.0.64.7) by BJMBX01.spreadtrum.com
- (10.0.64.7) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Thu, 17 Jul
- 2025 19:25:01 +0800
-Received: from BJMBX01.spreadtrum.com ([fe80::54e:9a:129d:fac7]) by
- BJMBX01.spreadtrum.com ([fe80::54e:9a:129d:fac7%16]) with mapi id
- 15.00.1497.048; Thu, 17 Jul 2025 19:25:01 +0800
-From: =?utf-8?B?5YiY5rW354eVIChIYWl5YW4gTGl1KQ==?= <haiyan.liu@unisoc.com>
-To: Mark Rutland <mark.rutland@arm.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "rust-for-linux@vger.kernel.org"
-	<rust-for-linux@vger.kernel.org>,
-        =?utf-8?B?5Luj5a2Q5Li6IChaaXdlaSBEYWkp?=
-	<Ziwei.Dai@unisoc.com>,
-        =?utf-8?B?5ZGo5bmzIChQaW5nIFpob3UvOTAzMik=?=
-	<Ping.Zhou1@unisoc.com>,
-        =?utf-8?B?5p2o5Li95aicIChMaW5hIFlhbmcp?=
-	<lina.yang@unisoc.com>,
-        =?utf-8?B?546L5Y+MIChTaHVhbmcgV2FuZyk=?=
-	<shuang.wang@unisoc.com>,
-        Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda
-	<ojeda@kernel.org>,
-        Matthew Maurer <mmaurer@google.com>, Ard Biesheuvel
-	<ardb@kernel.org>,
-        Sami Tolvanen <samitolvanen@google.com>
-Subject: Meet compiled kernel binaray abnormal issue while enabling generic
- kasan in kernel 6.12 with some default KBUILD_RUSTFLAGS on
-Thread-Topic: Meet compiled kernel binaray abnormal issue while enabling
- generic kasan in kernel 6.12 with some default KBUILD_RUSTFLAGS on
-Thread-Index: Adv3DSICcwf62OtITcOZW4s1EETCgw==
-Date: Thu, 17 Jul 2025 11:25:00 +0000
-Message-ID: <3655537d80024fc8bccb7874dfed4c73@BJMBX01.spreadtrum.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-transport-fromentityheader: Hosted
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1752751818; c=relaxed/simple;
+	bh=EJy3Zvt5yLPjLg2fFwXOwF7+ndUgkYuhJm9BJnISMKg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aKLGbagykIhsVxTfYKvSHpS6w/Yho9VPVEWmwvbxFm4IHq0YgfGqmwzCYe/gb/VKekKC4ZmHxPbwzLmU3IOnH2qMJ3i6GuA36O+JxiSUMb8UpbqswQqxNJ6j+OPcZ0A0O386Gw3n4L29si8k6wPH/8aGNpWNqD2WIW7zGrcifbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f8Y660q+; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b34ab678931so595997a12.0;
+        Thu, 17 Jul 2025 04:30:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752751816; x=1753356616; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tarMCPEgQUfhUrhse/oyfU/4k8xUqzVR/2XeCxNejcU=;
+        b=f8Y660q+EiJIpG7g4qagHdJNWw4nWmttU8OGwNFrIL29oof0WBoRvC9YoiVjx6kkvW
+         pjrvNOnYEMQMS9ZVR1cnG+MdmAr4wVvNDDufshbJMmkmIpTOv7dO8Tbo8ou6MLtJmOX4
+         9i+M2PW3D3XK0Ezt/l1om100zo+6DovOR+8rR1iujlLSD5TaIYIXG7Kwu5XzOeWxmlgp
+         qr/ouPq65QReidWFa7MmugjSpXH72RYluye0U44pW86Mph6tequ2v9+84HIQe4NhcXUD
+         zF8kztjDqcCWRIbzYv0LtJPvKar6IhwRNv3yh59vIEJlytGz1crh4jTIzGFfoaMXTZSl
+         1IVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752751816; x=1753356616;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tarMCPEgQUfhUrhse/oyfU/4k8xUqzVR/2XeCxNejcU=;
+        b=rSjrp4OH9f68QMszO7T83z6xvyxVB+fLRuSMNHOSSuEwNg+JpWOhhOlnWVa6Pgwg5G
+         0Tu0hzpKE1AcmHnvp9cWqFL2+N4IdZGq3dJamUI7gzJpO1LqcmaqJZ/v57dpK72Wsar0
+         KH+ZZ1ZD+Fh6BoBNvarLw8BNpsgZ4LC8GtwGK3ZjyZwv+q9kyS80gVngB4WLTsVpJlTu
+         nMLnq6NrCr1zgNfNKTA6K2lAY4KW3TpFCHLOTou/UVVz7zDxIeh1jsb4bf+qnFwhtYpa
+         yaywWrKgZyEb3ijwJCKYb7FGWz59x0B4QzT0jMpBGqFXxJVFxOMJkoFlAfVQq4DtrOPE
+         sFgw==
+X-Forwarded-Encrypted: i=1; AJvYcCUMQSV82qdD1s0/+P0HAt6k10dBI/RAHabHkK51JCKHzKADiBaWEdNvVrx9548/2vWtskl4krfCR5akMuzy@vger.kernel.org, AJvYcCV3m0p1CppY8XMRWt3sf8KGme3bvWFvbMvrdBrFHwvcoffj83kZEBkeR2Zmo8gfdrlbI5M2MhfXmjen4g==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywry6RuhF4Kl7jV5l9UsLvX+KKOEWxW1hiHseh7pb/hhHDIWPfL
+	fxznyiJ5224pzwNVF369tI16M0bYjccuLVI2yrX6FKOUCmLDmfMebU+O
+X-Gm-Gg: ASbGncuKr55goslH5VNvEUG1KobFBUWsLUHASikw9vvEfoOv2Vi9Q1WrDg/zK6VWir2
+	WbU124R58g8cz7Pr0nuLLe19TkPLl36AZOMXeHjpPoaRx+GPc2V/KY1KFABM5Tn/p0y4JLVOTET
+	5lLdIixq9t3+Ib/oV77FKq9OG/1jrj6pqSKcnnMweoP3LoOjEf1cfSwaV4vtXy/sc9LQbg8UCBR
+	SZXZHvMLIjQLcUrAZMJ65uCBYohIBTEcJaLFnWXpJJ6wDqTciTA7mXQ8MzhobqArn1T1xmnhfOX
+	0C8KrjhoC5lk4/1YpxYPq1zSvIk/Ds/xRiDEwTXaUMxtn6SV810DD8Dz8LHau+8kINprorj0nl3
+	ECcvtKB1MPjz1BQho8P4eHHjRhbTpZIX1JT15ph1Fthmor9g+0836zkGBNwLY
+X-Google-Smtp-Source: AGHT+IFEY9z3AQHpC/dTdlPikOlqkbIdC0J1XPGiqN31juk902TaLfl8KNOK8U+wbcwa2IPs9dl9Xw==
+X-Received: by 2002:a17:90b:3cc6:b0:312:1dc9:9f67 with SMTP id 98e67ed59e1d1-31c9e6e2d84mr9801746a91.2.1752751815561;
+        Thu, 17 Jul 2025 04:30:15 -0700 (PDT)
+Received: from name2965-Precision-7820-Tower.. ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c9f287bcasm3162576a91.32.2025.07.17.04.30.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Jul 2025 04:30:14 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: jikos@kernel.org,
+	bentiss@kernel.org
+Cc: hadess@hadess.net,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jeongjun Park <aha310510@gmail.com>
+Subject: [PATCH] HID: steelseries: refactor probe() and remove()
+Date: Thu, 17 Jul 2025 20:26:43 +0900
+Message-Id: <20250717112643.1410093-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MAIL:SHSQR01.spreadtrum.com 56HBP2Ot080046
+Content-Transfer-Encoding: 8bit
 
-DQoNCj4gLS0tLS3pgq7ku7bljp/ku7YtLS0tLQ0KPiDlj5Hku7bkuro6IE1hcmsgUnV0bGFuZCA8
-bWFyay5ydXRsYW5kQGFybS5jb20+DQo+IOWPkemAgeaXtumXtDogMjAyNeW5tDfmnIgxN+aXpSAx
-ODozOQ0KPiDmlLbku7bkuro6IOWImOa1t+eHlSAoSGFpeWFuIExpdSkgPGhhaXlhbi5saXVAdW5p
-c29jLmNvbT4NCj4g5oqE6YCBOiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBsaW51eC1h
-cm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7IHJ1c3QtZm9yLWxpbnV4QHZnZXIua2VybmVs
-Lm9yZzsg5Luj5a2Q5Li6IChaaXdlaSBEYWkpDQo+IDxaaXdlaS5EYWlAdW5pc29jLmNvbT47IOWR
-qOW5syAoUGluZyBaaG91LzkwMzIpIDxQaW5nLlpob3UxQHVuaXNvYy5jb20+OyDmnajkuL3lqJwg
-KExpbmEgWWFuZykgPGxpbmEueWFuZ0B1bmlzb2MuY29tPjsg546L5Y+MDQo+IChTaHVhbmcgV2Fu
-ZykgPHNodWFuZy53YW5nQHVuaXNvYy5jb20+OyBBbGljZSBSeWhsIDxhbGljZXJ5aGxAZ29vZ2xl
-LmNvbT47IE1pZ3VlbCBPamVkYSA8b2plZGFAa2VybmVsLm9yZz47IE1hdHRoZXcgTWF1cmVyDQo+
-IDxtbWF1cmVyQGdvb2dsZS5jb20+OyBBcmQgQmllc2hldXZlbCA8YXJkYkBrZXJuZWwub3JnPjsg
-U2FtaSBUb2x2YW5lbiA8c2FtaXRvbHZhbmVuQGdvb2dsZS5jb20+DQo+IOS4u+mimDogUmU6IE1l
-ZXQgY29tcGlsZWQga2VybmVsIGJpbmFyYXkgYWJub3JtYWwgaXNzdWUgd2hpbGUgZW5hYmxpbmcg
-Z2VuZXJpYyBrYXNhbiBpbiBrZXJuZWwgNi4xMiB3aXRoIHNvbWUgZGVmYXVsdCBLQlVJTERfUlVT
-VEZMQUdTDQo+IG9uDQo+IA0KPiANCj4g5rOo5oSPOiDov5nlsIHpgq7ku7bmnaXoh6rkuo7lpJbp
-g6jjgILpmaTpnZ7kvaDnoa7lrprpgq7ku7blhoXlrrnlronlhajvvIzlkKbliJnkuI3opoHngrnl
-h7vku7vkvZXpk77mjqXlkozpmYTku7bjgIINCj4gQ0FVVElPTjogVGhpcyBlbWFpbCBvcmlnaW5h
-dGVkIGZyb20gb3V0c2lkZSBvZiB0aGUgb3JnYW5pemF0aW9uLiBEbyBub3QgY2xpY2sgbGlua3Mg
-b3Igb3BlbiBhdHRhY2htZW50cyB1bmxlc3MgeW91IHJlY29nbml6ZSB0aGUgc2VuZGVyDQo+IGFu
-ZCBrbm93IHRoZSBjb250ZW50IGlzIHNhZmUuDQo+IA0KPiANCj4gDQo+IEhpLA0KPiANCj4gRnJv
-bSBhIHF1aWNrIHNjYW4sIEkgdGhpbmsgdGhpcyBtaWdodCBoYXZlIHNvbWV0aGluZyB0byBkbyB3
-aXRoIFVOV0lORF9QQVRDSF9QQUNfSU5UT19TQ1MsIG5vdGVzIGJlbG93Lg0KPiANCj4gT24gTW9u
-LCBKdWwgMTQsIDIwMjUgYXQgMDM6MTI6MzNBTSArMDAwMCwg5YiY5rW354eVIChIYWl5YW4gTGl1
-KSB3cm90ZToNCj4gPiBJIGFtIGVuYWJsaW5nIGdlbmVyaWMga2FzYW4gZmVhdHVyZSBpbiBrZXJu
-ZWwgNi4xMiwgYW5kIG1ldCBrZXJuZWwgYm9vdCBjcmFzaC4NCj4gPiBVbmFibGUgdG8gaGFuZGxl
-IGtlcm5lbCBOVUxMIHBvaW50ZXIgZGVyZWZlcmVuY2UgYXQgdmlydHVhbCBhZGRyZXNzDQo+ID4g
-MDAwMDAwMDAwMDAwMDAwOCBwYyA6IGRvX2Jhc2ljX3NldHVwKzB4NmMvMHhhYyBsciA6DQo+ID4g
-ZG9fYmFzaWNfc2V0dXArMHg4OC8weGFjIHNwIDogZmZmZmZmYzA4MDA4N2U0MA0KPiANCj4gQ2Fu
-IHlvdSBzYXkgd2hpY2ggaGFyZHdhcmUgdGhpcyBpcyBvbj8gR2l2ZW4gdGhpcyBpcyBhIE5VTEwt
-ZGVyZWZlcmVuY2UsIHRoaXMgbG9va3MgaWtlIGEgZG9kZ3kgcG9pbnRlciAob3IgbWVtb3J5IGNv
-cnJ1cHRpb24pIHJhdGhlciB0aGFuDQo+IGEgUEFDIGZhaWx1cmUuDQo+IA0KPiA+IEFmdGVyIGRl
-YnVnLCBJIGZpbmQgc29tZSBlcnJvciBpbiBkb19jdG9ycygpLg0KPiA+IE5vcm1hbGx5LCB0aGUg
-Y29tcGxpZXIgc2hvdWxkIGluc2VydCB0aGUgcGFjaWFzcCBpbnN0cnVjdGlvbiBhdCB0aGUgZnVu
-Y3Rpb24gZW50cnkgc28gdGhhdCBpdHMgY29ycmVzcG9uZGluZyBhdXRpYXNwIGluc3RydWN0aW9u
-IGlzIHVzZWQgdG8NCj4gdmFsaWRhdGUgdGhlIHJldHVybiBhZGRyZXNzIHdoZW4gdGhlIGZ1bmN0
-aW9uIHJldHVybnMuDQo+ID4gTlNYOkZGRkZGRkMwODAwQTg0MEN8RjgwMDg2NUUgICAgIGFzYW4u
-bW9kdWxlX2N0b3I6ICAgc3RyICB4MzAsW3gxOF0sIzB4OO+8m3gzMCxbeDE4XSwjOA0KPiA+IE5T
-WDpGRkZGRkZDMDgwMEE4NDEwfEE5QkY3QkZEICAgICAgICAgICAgICAgICAgICAgICBzdHAgICAg
-IHgyOSx4MzAsW3NwLCMtMHgxMF0hICAgOyB4MjkseDMwLFtzcCwjLTE2XSENCj4gPiBOU1g6RkZG
-RkZGQzA4MDBBODQxNHw5MTAwMDNGRCAgICAgICAgICAgICAgICAgICAgICAgbW92ICAgICB4Mjks
-c3ANCj4gPiBOU1g6RkZGRkZGQzA4MDBBODQxOHxCMDAyMzQyMCAgICAgICAgICAgICAgICAgICAg
-ICAgYWRycCAgICB4MCwweEZGRkZGRkMwODQ3MkQwMDANCj4gPiBOU1g6RkZGRkZGQzA4MDBBODQx
-Q3w5MTM5MDAwMCAgICAgICAgICAgICAgICAgICAgICAgYWRkICAgICB4MCx4MCwjMHhFNDAgICAg
-IDsgeDAseDAsIzM2NDgNCj4gPiBOU1g6RkZGRkZGQzA4MDBBODQyMHw1MjgwMDBBMSAgICAgICAg
-ICAgICAgICAgICAgICAgbW92ICAgICB3MSwjMHg1ICAgICAgICAgIDsgdzEsIzUNCj4gPiBOU1g6
-RkZGRkZGQzA4MDBBODQyNHw5NDIyQUY1MCAgICAgICAgICAgICAgICAgICAgICAgYmwgICAgICAw
-eEZGRkZGRkMwODA5NTQxNjQgICA7IF9fYXNhbl9yZWdpc3Rlcl9nbG9iYWxzDQo+ID4gTlNYOkZG
-RkZGRkMwODAwQTg0Mjh8QThDMTdCRkQgICAgICAgICAgICAgICAgICAgICAgIGxkcCAgICAgeDI5
-LHgzMCxbc3BdLCMweDEwICAgOyB4MjkseDMwLFtzcF0sIzE2DQo+ID4gTlNYOkZGRkZGRkMwODAw
-QTg0MkN8Rjg1RjhFNUUgICAgICAgICAgICAgICAgICAgICAgIGxkciAgICAgeDMwLFt4MTgsIy0w
-eDhdISAgIDsgeDMwLFt4MTgsIy04XSENCj4gPiBOU1g6RkZGRkZGQzA4MDBBODQzMHxENjVGMDND
-MCAgICAgICAgICAgICAgICAgICAgICAgcmV0DQo+IA0KPiBIZXJlIHlvdSBldmlkZW50bHkgaGF2
-ZSBzaGFkb3cgY2FsbCBzdGFjayBlbmFibGVkLi4uDQo+IA0KPiA+IE5TWDpGRkZGRkZDMDgwMEE4
-NDc4fEQ1MDMyMzNGICBhc2FuLm1vZHVsZV9jdG9yOiAgICBwYWNpYXNwDQo+ID4gTlNYOkZGRkZG
-RkMwODAwQTg0N0N8QTlCRjdCRkQgICAgICAgICAgICAgICAgICAgICAgIHN0cCAgICAgeDI5LHgz
-MCxbc3AsIy0weDEwXSEgICA7IHgyOSx4MzAsW3NwLCMtMTZdIQ0KPiA+IE5TWDpGRkZGRkZDMDgw
-MEE4NDgwfDkxMDAwM0ZEICAgICAgICAgICAgICAgICAgICAgICBtb3YgICAgIHgyOSxzcA0KPiA+
-IE5TWDpGRkZGRkZDMDgwMEE4NDg0fEIwMDIzNDIwICAgICAgICAgICAgICAgICAgICAgICBhZHJw
-ICAgIHgwLDB4RkZGRkZGQzA4NDcyRDAwMA0KPiA+IE5TWDpGRkZGRkZDMDgwMEE4NDg4fDkxM0Uw
-MDAwICAgICAgICAgICAgICAgICAgICAgICBhZGQgICAgIHgwLHgwLCMweEY4MCAgICAgOyB4MCx4
-MCwjMzk2OA0KPiA+IE5TWDpGRkZGRkZDMDgwMEE4NDhDfDUyODAwMDIxICAgICAgICAgICAgICAg
-ICAgICAgICBtb3YgICAgIHcxLCMweDEgICAgICAgICAgOyB3MSwjMQ0KPiA+IE5TWDpGRkZGRkZD
-MDgwMEE4NDkwfDk0MjJBRjM1ICAgICAgICAgICAgICAgICAgICAgICBibCAgICAgIDB4RkZGRkZG
-QzA4MDk1NDE2NCAgIDsgX19hc2FuX3JlZ2lzdGVyX2dsb2JhbHMNCj4gPiBOU1g6RkZGRkZGQzA4
-MDBBODQ5NHxBOEMxN0JGRCAgICAgICAgICAgICAgICAgICAgICAgbGRwICAgICB4MjkseDMwLFtz
-cF0sIzB4MTAgICA7IHgyOSx4MzAsW3NwXSwjMTYNCj4gPiBOU1g6RkZGRkZGQzA4MDBBODQ5OHxE
-NTAzMjNCRiAgICAgICAgICAgICAgICAgICAgICAgYXV0aWFzcA0KPiA+IE5TWDpGRkZGRkZDMDgw
-MEE4NDlDfEQ2NUYwM0MwICAgICAgICAgICAgICAgICAgICAgICByZXQNCj4gDQo+IC4uLiBidXQg
-aGVyZSB5b3UgZXZpZGVudGx5IGRvbid0LCBhbmQgaGF2ZSBQQUMgaW5zdGVhZC4NCj4gDQo+IEFy
-ZSB0aGVzZSBmcm9tIHRoZSBzYW1lIGtlcm5lbCBJbWFnZT8NCg0KIFllcywgdGhleSBhcmUgZnJv
-bSB0aGUgc2FtZSBrZXJuZWwgaW1hZ2UgYnV0IG5vdCB0aGUgc2FtZSBhc2FuLm1vZHVsZV9jdG9y
-IGZ1bmN0aW9uLiBUaGUgR2xvYmFsVmFyaWFibGUgYXJlIGRpZmZlcmVudC4NCg0KPiBBcmUgdGhl
-c2UgZGVjb2RlZCBmcm9tIHRoZSBzdGF0aWMga2VybmVsIGJpbmFyeSwgb3IgYXJlIHRoZXNlIGR1
-bXBzIGZyb20gbWVtb3J5IG9uY2UgYSBrZXJuZWwgaGFzIGJvb3RlZCAob3IgaXMgaW4gdGhlIHBy
-b2Nlc3Mgb2YNCj4gYm9vdGluZyk/DQoNCiBUaGVzZSBhcmUgZHVtcGVkIGZyb20gbWVtb3J5IGR1
-cmluZyB0aGUga2VybmVsIGJvb3RlZCBieSB0cmFjZTMyLg0KDQo+ID4gQnV0IGFjdHVhbGx5LCBp
-biB0d28gYXNhbi5tb2R1bGVfY3RvciBmdW5jdGlvbnMsIHRoZXJlIGlzIG9ubHkgYXV0aWFzcCAg
-aW5zdHJ1Y3Rpb24gaW5zZXJ0ZWQgYmVmb3JlIHJldHVybiwgZm9yIHZhbGlkYXRpb24gb2YgcmV0
-dXJuIGFkZHJlc3MsDQo+IHdoaWxlIHBhY2lhc3AgaW5zdHJ1Y3Rpb24gaXMgbWlzc2luZyBiZWZv
-cmUuDQo+ID4gTlNYOkZGRkZGRkMwODAwQTcyRDh8RjgwMDg2NUUgIGFzYW4ubW9kdWxlX2N0b3I6
-ICAgIHN0ciAgICAgeDMwLFt4MThdLCMweDggICA7IHgzMCxbeDE4XSwjOA0KPiA+IE5TWDpGRkZG
-RkZDMDgwMEE3MkRDfEY4MUYwRkZFICAgICAgICAgICAgICAgICAgICAgICBzdHIgICAgIHgzMCxb
-c3AsIy0weDEwXSEgICA7IHgzMCxbc3AsIy0xNl0hDQo+ID4gTlNYOkZGRkZGRkMwODAwQTcyRTB8
-QjAwMjMzQzAgICAgICAgICAgICAgICAgICAgICAgIGFkcnAgICAgeDAsMHhGRkZGRkZDMDg0NzIw
-MDAwDQo+ID4gTlNYOkZGRkZGRkMwODAwQTcyRTR8OTEzNTAwMDAgICAgICAgICAgICAgICAgICAg
-ICAgIGFkZCAgICAgeDAseDAsIzB4RDQwICAgICA7IHgwLHgwLCMzMzkyDQo+ID4gTlNYOkZGRkZG
-RkMwODAwQTcyRTh8NTI4MDNENjEgICAgICAgICAgICAgICAgICAgICAgIG1vdiAgICAgdzEsIzB4
-MUVCICAgICAgICA7IHcxLCM0OTENCj4gPiBOU1g6RkZGRkZGQzA4MDBBNzJFQ3w5NDIyQjM5RSAg
-ICAgICAgICAgICAgICAgICAgICAgYmwgICAgICAweEZGRkZGRkMwODA5NTQxNjQgICA7IF9fYXNh
-bl9yZWdpc3Rlcl9nbG9iYWxzDQo+ID4gTlNYOkZGRkZGRkMwODAwQTcyRjB8Rjg0MTA3RkUgICAg
-ICAgICAgICAgICAgICAgICAgIGxkciAgICAgeDMwLFtzcF0sIzB4MTAgICA7IHgzMCxbc3BdLCMx
-Ng0KPiA+IE5TWDpGRkZGRkZDMDgwMEE3MkY0fEQ1MDMyM0JGICAgICAgICAgICAgICAgICAgICAg
-ICBhdXRpYXNwDQo+ID4gTlNYOkZGRkZGRkMwODAwQTcyRjh8RDY1RjAzQzAgICAgICAgICAgICAg
-ICAgICAgICAgIHJldA0KPiANCj4gVGhhcyBoYXMgYSBtaXh0dXJlIG9mIFNDUyBhbmQgUEFDOyB0
-aGVyZSdzIGEgc2hhZG93IGNhbGwgc3RhY2sgcHJvbG9ndWUgYnV0IGEgUEFDIGVwaWxvZ3VlOg0K
-PiANCj4gICAgICAgICBzdHIgICAgIHgzMCwgW3gxOF0sICM4ICAvLyBTQ1MNCj4gICAgICAgICAu
-Li4NCj4gICAgICAgICBhdXRpYXNwICAgICAgICAgICAgICAgICAvLyBQQUMNCg0KWWVzLCB0aGlz
-IGlzIG15IGlzc3VlIGFuZCBJIHdhbnRlZCB0byByZXNvbHZlLg0KDQo+IC4uLiBzbyBJJ2xsIGhh
-emFyZCBhIGd1ZXNzIHRoYXQgdGhlc2UgYXJlIGR1bXBzIGZyb20gbWVtb3J5LCBhbmQgeW91IGhh
-dmUgVU5XSU5EX1BBVENIX1BBQ19JTlRPX1NDUyBzZWxlY3RlZC4gQXNzdW1pbmcgdGhhdCBpcyB0
-aGUNCj4gY2FzZSwgZWl0aGVyIHRoaXMgZHVtcCBoYXMgYmVlbiBtYWRlIG1pZC1wYXRjaGluZywg
-b3IgdGhlIHBhdGNoaW5nIGhhcyBnb25lIHdyb25nIHNvbWVob3cgYW5kIGxlZnQgdGhlIHByb2xv
-Z3Vlcy9lcGlsb2d1ZXMgaW4gYW4NCj4gaW5jb25zaXN0ZW50IHN0YXRlIChhbmQgdGhlIE5VTEwg
-ZGVyZWZlcmVuY2UgY291bGQgYmUgYSBzZWNvbmRhcnkgZWZmZWN0IG9mIHRoYXQpLg0KPg0KPiBB
-cmQsIGRvZXMgdGhhdCBzb3VuZCBwbGF1c2libGUgdG8geW91Pw0KPg0KPiBJIGNhbid0IHNlZSB3
-aHkgdGhhdCB3b3VsZCBkZXBlbmQgb24gS0JVSUxEX1JVU1RGTEFHUywgYnV0IG1heWJlIHRoZSBE
-V0FSRiBnZW5lcmF0ZWQgYnkgcnVzdGMgaGFzIGNvbmZ1c2VkIHRoZSBwYXRjaGluZyBjb2RlDQo+
-IHNvbWVob3csIG9yIHRoZSBsaW5rZXIgaGFzIGFnZ3JlZ2F0ZWQgdGhhdCBpbiBhIHN1cHJpc2lu
-ZyB3YXkuDQo+IE1hcmsuDQoNCiAgWWVzLCBUaGFuayB5b3UuIFdoYXQgY2FuIGNhdXNlIHRoaXMg
-aXNzdWU/IENhbiB5b3UgZ2l2ZSBzb21lIGRpcmVjdGlvbnMgc28gdGhhdCB3ZSBjYW4gZ3JhZHVh
-bGx5IGludmVzdGlnYXRlLg0KDQo+IA0KPiA+IE5TWDpGRkZGRkZDMDgwMEE3MzkwfEY4MDA4NjVF
-ICBhc2FuLm1vZHVsZV9jdG9yOiAgICBzdHIgICAgIHgzMCxbeDE4XSwjMHg4ICAgOyB4MzAsW3gx
-OF0sIzgNCj4gPiBOU1g6RkZGRkZGQzA4MDBBNzM5NHxGODFGMEZGRSAgICAgICAgICAgICAgICAg
-ICAgICAgc3RyICAgICB4MzAsW3NwLCMtMHgxMF0hICAgOyB4MzAsW3NwLCMtMTZdIQ0KPiA+IE5T
-WDpGRkZGRkZDMDgwMEE3Mzk4fEIwMDIzNDAwICAgICAgICAgICAgICAgICAgICAgICBhZHJwICAg
-IHgwLDB4RkZGRkZGQzA4NDcyODAwMA0KPiA+IE5TWDpGRkZGRkZDMDgwMEE3MzlDfDkxMjEwMDAw
-ICAgICAgICAgICAgICAgICAgICAgICBhZGQgICAgIHgwLHgwLCMweDg0MCAgICAgOyB4MCx4MCwj
-MjExMg0KPiA+IE5TWDpGRkZGRkZDMDgwMEE3M0EwfDUyODAwNkUxICAgICAgICAgICAgICAgICAg
-ICAgICBtb3YgICAgIHcxLCMweDM3ICAgICAgICAgOyB3MSwjNTUNCj4gPiBOU1g6RkZGRkZGQzA4
-MDBBNzNBNHw5NDIyQjM3MCAgICAgICAgICAgICAgICAgICAgICAgYmwgICAgICAweEZGRkZGRkMw
-ODA5NTQxNjQgICA7IF9fYXNhbl9yZWdpc3Rlcl9nbG9iYWxzDQo+ID4gTlNYOkZGRkZGRkMwODAw
-QTczQTh8Rjg0MTA3RkUgICAgICAgICAgICAgICAgICAgICAgIGxkciAgICAgeDMwLFtzcF0sIzB4
-MTAgICA7IHgzMCxbc3BdLCMxNg0KPiA+IE5TWDpGRkZGRkZDMDgwMEE3M0FDfEQ1MDMyM0JGICAg
-ICAgICAgICAgICAgICAgICAgICBhdXRpYXNwDQo+ID4gTlNYOkZGRkZGRkMwODAwQTczQjB8RDY1
-RjAzQzAgICAgICAgICAgICAgICAgICAgICAgIHJldA0KPiA+DQo+ID4gSSBjb21wYXJlIGtlcm5l
-bCA2LjYgYW5kIGtlcm5lbCA2LjEyIEFSTSBNYWtlZmlsZSwgYW5kIGZpbmQgdGhlIGRpZmZlcmVu
-Y2UuDQo+ID4gS2VybmVsNi42IE1ha2VmaWxlDQo+ID4gNjYgaWZlcSAoJChDT05GSUdfQVJNNjRf
-QlRJX0tFUk5FTCkseSkNCj4gPiA2NyAgIEtCVUlMRF9DRkxBR1MgKz0gLW1icmFuY2gtcHJvdGVj
-dGlvbj1wYWMtcmV0K2J0aQ0KPiA+IDY4IGVsc2UgaWZlcSAoJChDT05GSUdfQVJNNjRfUFRSX0FV
-VEhfS0VSTkVMKSx5KQ0KPiA+IDY5ICAgaWZlcSAoJChDT05GSUdfQ0NfSEFTX0JSQU5DSF9QUk9U
-X1BBQ19SRVQpLHkpDQo+ID4gNzAgICAgIEtCVUlMRF9DRkxBR1MgKz0gLW1icmFuY2gtcHJvdGVj
-dGlvbj1wYWMtcmV0DQo+ID4gNzEgICBlbHNlDQo+ID4gNzIgICAgIEtCVUlMRF9DRkxBR1MgKz0g
-LW1zaWduLXJldHVybi1hZGRyZXNzPW5vbi1sZWFmDQo+ID4gNzMgICBlbmRpZg0KPiA+IDc0IGVs
-c2UNCj4gPiA3NSAgIEtCVUlMRF9DRkxBR1MgKz0gJChjYWxsIGNjLW9wdGlvbiwtbWJyYW5jaC1w
-cm90ZWN0aW9uPW5vbmUpDQo+ID4gNzYgZW5kaWYNCj4gPg0KPiA+IEtlcm5lbDYuMTIgIE1ha2Vm
-aWxlDQo+ID4gODEgaWZlcSAoJChDT05GSUdfQVJNNjRfQlRJX0tFUk5FTCkseSkNCj4gPiA4MiAg
-IEtCVUlMRF9DRkxBR1MgKz0gLW1icmFuY2gtcHJvdGVjdGlvbj1wYWMtcmV0K2J0aQ0KPiA+IDgz
-ICAgS0JVSUxEX1JVU1RGTEFHUyArPSAtWmJyYW5jaC1wcm90ZWN0aW9uPWJ0aSxwYWMtcmV0DQo+
-ID4gODQgZWxzZSBpZmVxICgkKENPTkZJR19BUk02NF9QVFJfQVVUSF9LRVJORUwpLHkpDQo+ID4g
-ODUgICBLQlVJTERfUlVTVEZMQUdTICs9IC1aYnJhbmNoLXByb3RlY3Rpb249cGFjLXJldA0KPiA+
-IDg2ICAgaWZlcSAoJChDT05GSUdfQ0NfSEFTX0JSQU5DSF9QUk9UX1BBQ19SRVQpLHkpDQo+ID4g
-ODcgICAgIEtCVUlMRF9DRkxBR1MgKz0gLW1icmFuY2gtcHJvdGVjdGlvbj1wYWMtcmV0DQo+ID4g
-ODggICBlbHNlDQo+ID4gODkgICAgIEtCVUlMRF9DRkxBR1MgKz0gLW1zaWduLXJldHVybi1hZGRy
-ZXNzPW5vbi1sZWFmDQo+ID4gOTAgICBlbmRpZg0KPiA+IDkxIGVsc2UNCj4gPiA5MiAgIEtCVUlM
-RF9DRkxBR1MgKz0gJChjYWxsIGNjLW9wdGlvbiwtbWJyYW5jaC1wcm90ZWN0aW9uPW5vbmUpDQo+
-ID4gOTMgZW5kaWYNCj4gPg0KPiA+IEFmdGVyIEkgZGVsZXRlIHRoZSBydXN0IGJ1aWxkIGZsYWdz
-LCB0aGUgYXNhbi5tb2R1bGVfY3RvciBiaW5hcnkgaXMgcmlnaHQgYW5kIGthc2FuIGZlYXR1cmUg
-d29ya3MgZmluZS5Db3VsZCB5b3UgaGVscCBjaGVjayB3aHkNCj4gS0JVSUxEX1JVU1RGTEFHUyBp
-bXBhY3RzIGtlcm5lbCBjb21wbGljYXRpb24gd2l0aCBrYXNhbiBmZWF0dXJlIGVuYWJsZWQgYW5k
-IGhvdyBjYW4gdGhpcyBpc3N1ZSBmaXhlZD8NCj4gPg0KPiA+IEkgdXNlIHRoZSBidWlsZC5jb25m
-aWcuY29uc3RhbnRzOg0KPiA+IEJSQU5DSD1hbmRyb2lkMTYtNi4xMg0KPiA+IEtNSV9HRU5FUkFU
-SU9OPTQNCj4gPiBDTEFOR19WRVJTSU9OPXI1MzYyMjUNCj4gPiBSVVNUQ19WRVJTSU9OPTEuODIu
-MA0KPiA+IEFBUkNINjRfTkRLX1RSSVBMRT1hYXJjaDY0LWxpbnV4LWFuZHJvaWQzMQ0KPiA+IFg4
-Nl82NF9OREtfVFJJUExFPXg4Nl82NC1saW51eC1hbmRyb2lkMzENCj4gPiBBUk1fTkRLX1RSSVBM
-RT1hcm0tbGludXgtYW5kcm9pZGVhYmkzMQ0KPiA+DQo+ID4gY29tcGlsZSBjb25maWd1cmF0aW9u
-IGlzIDoNCj4gPiBDT05GSUdfR0NDX1ZFUlNJT049MA0KPiA+IENPTkZJR19DQ19JU19DTEFORz15
-DQo+ID4gQ09ORklHX0NMQU5HX1ZFUlNJT049MTkwMDAxDQo+ID4gQ09ORklHX0FTX0lTX0xMVk09
-eQ0KPiA+IENPTkZJR19BU19WRVJTSU9OPTE5MDAwMQ0KPiA+IENPTkZJR19MRF9WRVJTSU9OPTAN
-Cj4gPiBDT05GSUdfTERfSVNfTExEPXkNCj4gPiBDT05GSUdfTExEX1ZFUlNJT049MTkwMDAxDQo+
-ID4gQ09ORklHX1JVU1RDX1ZFUlNJT049MTA4MjAwDQo+ID4gQ09ORklHX1JVU1RfSVNfQVZBSUxB
-QkxFPXkNCj4gPiBDT05GSUdfUlVTVENfTExWTV9WRVJTSU9OPTE5MDAwMQ0KPiA+IENPTkZJR19D
-Q19DQU5fTElOSz15DQo+ID4gQ09ORklHX0NDX0NBTl9MSU5LX1NUQVRJQz15DQo+ID4gQ09ORklH
-X0NDX0hBU19BU01fR09UT19PVVRQVVQ9eQ0KPiA+IENPTkZJR19DQ19IQVNfQVNNX0dPVE9fVElF
-RF9PVVRQVVQ9eQ0KPiA+IENPTkZJR19UT09MU19TVVBQT1JUX1JFTFI9eQ0KPiA+IENPTkZJR19D
-Q19IQVNfQVNNX0lOTElORT15DQo+ID4gQ09ORklHX0NDX0hBU19OT19QUk9GSUxFX0ZOX0FUVFI9
-eQ0KPiA+IENPTkZJR19QQUhPTEVfVkVSU0lPTj0xMjUNCj4gPiBDT05GSUdfSVJRX1dPUks9eQ0K
-PiA+IENPTkZJR19CVUlMRFRJTUVfVEFCTEVfU09SVD15DQo+ID4gQ09ORklHX1RIUkVBRF9JTkZP
-X0lOX1RBU0s9eQ0KPiA+DQo+ID4gVGhhbmsgeW91DQo=
+steelseries_srws1_probe() still does not use devm_kzalloc() and
+devm_led_classdev_register(), so there is a lot of code to safely manage
+heap, which reduces readability and may cause memory leaks due to minor
+patch mistakes in the future.
+
+Therefore, it should be changed to use devm_kzalloc() and
+devm_led_classdev_register() to easily and safely manage heap.
+
+Also, the current steelseries driver mainly checks sd->quriks to determine
+which product a specific HID device is, which is not the correct way.
+
+remove(), unlike probe(), does not receive struct hid_device_id as an
+argument, so it must check hdev unconditionally to know which product
+it is.
+
+However, since struct steelseries_device and struct steelseries_srws1_data
+have different structures, if SRWS1 is removed in remove(), converts
+hdev->dev, which is initialized to struct steelseries_srws1_data,
+to struct steelseries_device and uses it. This causes various
+memory-related bugs as completely unexpected values exist in member
+variables of the structure.
+
+Therefore, in order to modify probe() and remove() to work properly,
+Arctis 1, 9 should be added to HID_USB_DEVICE and some functions should be
+modified to check hdev->product when determining HID device product.
+
+Fixes: a0c76896c3fb ("HID: steelseries: Add support for Arctis 1 XBox")
+Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+---
+ drivers/hid/hid-ids.h         |   2 +
+ drivers/hid/hid-quirks.c      |   2 +
+ drivers/hid/hid-steelseries.c | 109 ++++++++++++----------------------
+ 3 files changed, 43 insertions(+), 70 deletions(-)
+
+diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+index 33cc5820f2be..d2833cf913c5 100644
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -1289,6 +1289,8 @@
+ 
+ #define USB_VENDOR_ID_STEELSERIES	0x1038
+ #define USB_DEVICE_ID_STEELSERIES_SRWS1	0x1410
++#define USB_DEVICE_ID_STEELSERIES_ARCTIS_1  0x12b6
++#define USB_DEVICE_ID_STEELSERIES_ARCTIS_9  0x12c2
+ 
+ #define USB_VENDOR_ID_SUN		0x0430
+ #define USB_DEVICE_ID_RARITAN_KVM_DONGLE	0xcdab
+diff --git a/drivers/hid/hid-quirks.c b/drivers/hid/hid-quirks.c
+index 9bf9ce8dc803..d401fbdb7335 100644
+--- a/drivers/hid/hid-quirks.c
++++ b/drivers/hid/hid-quirks.c
+@@ -691,6 +691,8 @@ static const struct hid_device_id hid_have_special_driver[] = {
+ #endif
+ #if IS_ENABLED(CONFIG_HID_STEELSERIES)
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_STEELSERIES, USB_DEVICE_ID_STEELSERIES_SRWS1) },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_STEELSERIES, USB_DEVICE_ID_STEELSERIES_ARCTIS_1) },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_STEELSERIES, USB_DEVICE_ID_STEELSERIES_ARCTIS_9) },
+ #endif
+ #if IS_ENABLED(CONFIG_HID_SUNPLUS)
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_SUNPLUS, USB_DEVICE_ID_SUNPLUS_WDESKTOP) },
+diff --git a/drivers/hid/hid-steelseries.c b/drivers/hid/hid-steelseries.c
+index d4bd7848b8c6..8af98d67959e 100644
+--- a/drivers/hid/hid-steelseries.c
++++ b/drivers/hid/hid-steelseries.c
+@@ -249,11 +249,11 @@ static int steelseries_srws1_probe(struct hid_device *hdev,
+ {
+ 	int ret, i;
+ 	struct led_classdev *led;
++	struct steelseries_srws1_data *drv_data;
+ 	size_t name_sz;
+ 	char *name;
+ 
+-	struct steelseries_srws1_data *drv_data = kzalloc(sizeof(*drv_data), GFP_KERNEL);
+-
++	drv_data = devm_kzalloc(&hdev->dev, sizeof(*drv_data), GFP_KERNEL);
+ 	if (drv_data == NULL) {
+ 		hid_err(hdev, "can't alloc SRW-S1 memory\n");
+ 		return -ENOMEM;
+@@ -264,18 +264,18 @@ static int steelseries_srws1_probe(struct hid_device *hdev,
+ 	ret = hid_parse(hdev);
+ 	if (ret) {
+ 		hid_err(hdev, "parse failed\n");
+-		goto err_free;
++		goto err;
+ 	}
+ 
+ 	if (!hid_validate_values(hdev, HID_OUTPUT_REPORT, 0, 0, 16)) {
+ 		ret = -ENODEV;
+-		goto err_free;
++		goto err;
+ 	}
+ 
+ 	ret = hid_hw_start(hdev, HID_CONNECT_DEFAULT);
+ 	if (ret) {
+ 		hid_err(hdev, "hw start failed\n");
+-		goto err_free;
++		goto err;
+ 	}
+ 
+ 	/* register led subsystem */
+@@ -288,10 +288,10 @@ static int steelseries_srws1_probe(struct hid_device *hdev,
+ 	name_sz = strlen(hdev->uniq) + 16;
+ 
+ 	/* 'ALL', for setting all LEDs simultaneously */
+-	led = kzalloc(sizeof(struct led_classdev)+name_sz, GFP_KERNEL);
++	led = devm_kzalloc(&hdev->dev, sizeof(struct led_classdev)+name_sz, GFP_KERNEL);
+ 	if (!led) {
+ 		hid_err(hdev, "can't allocate memory for LED ALL\n");
+-		goto err_led;
++		goto out;
+ 	}
+ 
+ 	name = (void *)(&led[1]);
+@@ -303,16 +303,18 @@ static int steelseries_srws1_probe(struct hid_device *hdev,
+ 	led->brightness_set = steelseries_srws1_led_all_set_brightness;
+ 
+ 	drv_data->led[SRWS1_NUMBER_LEDS] = led;
+-	ret = led_classdev_register(&hdev->dev, led);
+-	if (ret)
+-		goto err_led;
++	ret = devm_led_classdev_register(&hdev->dev, led);
++	if (ret) {
++		hid_err(hdev, "failed to register LED %d. Aborting.\n", SRWS1_NUMBER_LEDS);
++		goto out; /* let the driver continue without LEDs */
++	}
+ 
+ 	/* Each individual LED */
+ 	for (i = 0; i < SRWS1_NUMBER_LEDS; i++) {
+-		led = kzalloc(sizeof(struct led_classdev)+name_sz, GFP_KERNEL);
++		led = devm_kzalloc(&hdev->dev, sizeof(struct led_classdev)+name_sz, GFP_KERNEL);
+ 		if (!led) {
+ 			hid_err(hdev, "can't allocate memory for LED %d\n", i);
+-			goto err_led;
++			break;
+ 		}
+ 
+ 		name = (void *)(&led[1]);
+@@ -324,53 +326,18 @@ static int steelseries_srws1_probe(struct hid_device *hdev,
+ 		led->brightness_set = steelseries_srws1_led_set_brightness;
+ 
+ 		drv_data->led[i] = led;
+-		ret = led_classdev_register(&hdev->dev, led);
++		ret = devm_led_classdev_register(&hdev->dev, led);
+ 
+ 		if (ret) {
+ 			hid_err(hdev, "failed to register LED %d. Aborting.\n", i);
+-err_led:
+-			/* Deregister all LEDs (if any) */
+-			for (i = 0; i < SRWS1_NUMBER_LEDS + 1; i++) {
+-				led = drv_data->led[i];
+-				drv_data->led[i] = NULL;
+-				if (!led)
+-					continue;
+-				led_classdev_unregister(led);
+-				kfree(led);
+-			}
+-			goto out;	/* but let the driver continue without LEDs */
++			break;	/* but let the driver continue without LEDs */
+ 		}
+ 	}
+ out:
+ 	return 0;
+-err_free:
+-	kfree(drv_data);
++err:
+ 	return ret;
+ }
+-
+-static void steelseries_srws1_remove(struct hid_device *hdev)
+-{
+-	int i;
+-	struct led_classdev *led;
+-
+-	struct steelseries_srws1_data *drv_data = hid_get_drvdata(hdev);
+-
+-	if (drv_data) {
+-		/* Deregister LEDs (if any) */
+-		for (i = 0; i < SRWS1_NUMBER_LEDS + 1; i++) {
+-			led = drv_data->led[i];
+-			drv_data->led[i] = NULL;
+-			if (!led)
+-				continue;
+-			led_classdev_unregister(led);
+-			kfree(led);
+-		}
+-
+-	}
+-
+-	hid_hw_stop(hdev);
+-	kfree(drv_data);
+-}
+ #endif
+ 
+ #define STEELSERIES_HEADSET_BATTERY_TIMEOUT_MS	3000
+@@ -405,13 +372,12 @@ static int steelseries_headset_request_battery(struct hid_device *hdev,
+ 
+ static void steelseries_headset_fetch_battery(struct hid_device *hdev)
+ {
+-	struct steelseries_device *sd = hid_get_drvdata(hdev);
+ 	int ret = 0;
+ 
+-	if (sd->quirks & STEELSERIES_ARCTIS_1)
++	if (hdev->product == USB_DEVICE_ID_STEELSERIES_ARCTIS_1)
+ 		ret = steelseries_headset_request_battery(hdev,
+ 			arctis_1_battery_request, sizeof(arctis_1_battery_request));
+-	else if (sd->quirks & STEELSERIES_ARCTIS_9)
++	else if (hdev->product == USB_DEVICE_ID_STEELSERIES_ARCTIS_9)
+ 		ret = steelseries_headset_request_battery(hdev,
+ 			arctis_9_battery_request, sizeof(arctis_9_battery_request));
+ 
+@@ -567,14 +533,7 @@ static int steelseries_probe(struct hid_device *hdev, const struct hid_device_id
+ 	struct steelseries_device *sd;
+ 	int ret;
+ 
+-	sd = devm_kzalloc(&hdev->dev, sizeof(*sd), GFP_KERNEL);
+-	if (!sd)
+-		return -ENOMEM;
+-	hid_set_drvdata(hdev, sd);
+-	sd->hdev = hdev;
+-	sd->quirks = id->driver_data;
+-
+-	if (sd->quirks & STEELSERIES_SRWS1) {
++	if (hdev->product == USB_DEVICE_ID_STEELSERIES_SRWS1) {
+ #if IS_BUILTIN(CONFIG_LEDS_CLASS) || \
+     (IS_MODULE(CONFIG_LEDS_CLASS) && IS_MODULE(CONFIG_HID_STEELSERIES))
+ 		return steelseries_srws1_probe(hdev, id);
+@@ -583,6 +542,13 @@ static int steelseries_probe(struct hid_device *hdev, const struct hid_device_id
+ #endif
+ 	}
+ 
++	sd = devm_kzalloc(&hdev->dev, sizeof(*sd), GFP_KERNEL);
++	if (!sd)
++		return -ENOMEM;
++	hid_set_drvdata(hdev, sd);
++	sd->hdev = hdev;
++	sd->quirks = id->driver_data;
++
+ 	ret = hid_parse(hdev);
+ 	if (ret)
+ 		return ret;
+@@ -610,17 +576,19 @@ static int steelseries_probe(struct hid_device *hdev, const struct hid_device_id
+ 
+ static void steelseries_remove(struct hid_device *hdev)
+ {
+-	struct steelseries_device *sd = hid_get_drvdata(hdev);
++	struct steelseries_device *sd;
+ 	unsigned long flags;
+ 
+-	if (sd->quirks & STEELSERIES_SRWS1) {
++	if (hdev->product == USB_DEVICE_ID_STEELSERIES_SRWS1) {
+ #if IS_BUILTIN(CONFIG_LEDS_CLASS) || \
+     (IS_MODULE(CONFIG_LEDS_CLASS) && IS_MODULE(CONFIG_HID_STEELSERIES))
+-		steelseries_srws1_remove(hdev);
++		goto srws1_remove;
+ #endif
+ 		return;
+ 	}
+ 
++	sd = hid_get_drvdata(hdev);
++
+ 	spin_lock_irqsave(&sd->lock, flags);
+ 	sd->removed = true;
+ 	spin_unlock_irqrestore(&sd->lock, flags);
+@@ -628,6 +596,7 @@ static void steelseries_remove(struct hid_device *hdev)
+ 	cancel_delayed_work_sync(&sd->battery_work);
+ 
+ 	hid_hw_close(hdev);
++srws1_remove:
+ 	hid_hw_stop(hdev);
+ }
+ 
+@@ -667,10 +636,10 @@ static int steelseries_headset_raw_event(struct hid_device *hdev,
+ 	unsigned long flags;
+ 
+ 	/* Not a headset */
+-	if (sd->quirks & STEELSERIES_SRWS1)
++	if (hdev->product == USB_DEVICE_ID_STEELSERIES_SRWS1)
+ 		return 0;
+ 
+-	if (sd->quirks & STEELSERIES_ARCTIS_1) {
++	if (hdev->product == USB_DEVICE_ID_STEELSERIES_ARCTIS_1) {
+ 		hid_dbg(sd->hdev,
+ 			"Parsing raw event for Arctis 1 headset (%*ph)\n", size, read_buf);
+ 		if (size < ARCTIS_1_BATTERY_RESPONSE_LEN ||
+@@ -688,7 +657,7 @@ static int steelseries_headset_raw_event(struct hid_device *hdev,
+ 		}
+ 	}
+ 
+-	if (sd->quirks & STEELSERIES_ARCTIS_9) {
++	if (hdev->product == USB_DEVICE_ID_STEELSERIES_ARCTIS_9) {
+ 		hid_dbg(sd->hdev,
+ 			"Parsing raw event for Arctis 9 headset (%*ph)\n", size, read_buf);
+ 		if (size < ARCTIS_9_BATTERY_RESPONSE_LEN) {
+@@ -757,11 +726,11 @@ static const struct hid_device_id steelseries_devices[] = {
+ 	  .driver_data = STEELSERIES_SRWS1 },
+ 
+ 	{ /* SteelSeries Arctis 1 Wireless for XBox */
+-	  HID_USB_DEVICE(USB_VENDOR_ID_STEELSERIES, 0x12b6),
+-	.driver_data = STEELSERIES_ARCTIS_1 },
++	  HID_USB_DEVICE(USB_VENDOR_ID_STEELSERIES, USB_DEVICE_ID_STEELSERIES_ARCTIS_1),
++	  .driver_data = STEELSERIES_ARCTIS_1 },
+ 
+ 	{ /* SteelSeries Arctis 9 Wireless for XBox */
+-	  HID_USB_DEVICE(USB_VENDOR_ID_STEELSERIES, 0x12c2),
++	  HID_USB_DEVICE(USB_VENDOR_ID_STEELSERIES, USB_DEVICE_ID_STEELSERIES_ARCTIS_9),
+ 	  .driver_data = STEELSERIES_ARCTIS_9 },
+ 
+ 	{ }
+--
 
