@@ -1,119 +1,87 @@
-Return-Path: <linux-kernel+bounces-735363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46934B08E48
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:31:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26C99B08E4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:32:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD8A63A8941
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:31:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C58C179175
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:32:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1ED22E62B8;
-	Thu, 17 Jul 2025 13:31:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E951C2E9EB8;
+	Thu, 17 Jul 2025 13:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NqF+RiED"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="qUywYP61"
+Received: from mail-106102.protonmail.ch (mail-106102.protonmail.ch [79.135.106.102])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7966A2E6128
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 13:31:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEF762E88AF;
+	Thu, 17 Jul 2025 13:31:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752759080; cv=none; b=jc/ttL3m0ew41lNLifAZQG0bww9jrjCEjlePLgyVMnx+Yx3IZGEMERlu/QNhl7eQEP2DQ1UBtGAs2Rp5GHK+2n6waDCtGiSbNe4JbBeT0d+gTERsWNUee7djotOmRvqZqxM7c71fXqra9+KbXX/pfWDSqjButRVTYEhuP7Uru7c=
+	t=1752759110; cv=none; b=o2pKMm2/cMzNKPYIIVtv/d3jocvywRwd4r/UydreeeUcK5aKewDKMjLfydxYQlfpBa4b/EK/6ro4ET2hEoVmTwK1GDsXX/zF5MHSlSBcJd4qOOgZYg9qMVH06V0gkirTzXRgNz4n8GnaNAHb5wCCG22mO2Z+yn+Obujg4wKAZ/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752759080; c=relaxed/simple;
-	bh=GK65W7rCCP6PYZFGXbMxCGBPgIK/98u7Jbpr258sYms=;
-	h=From:In-Reply-To:References:To:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=LJwb7lk3drY5Yys833Xd321R7WTousGOki7KtsUe9HOfsfq7tocATUSZrIgPkK3ic5NbisnffK1ijRg0ZGQRcE8KPiEpQ7kaKuPbe4vGozivlS4K8evdB1HBf+qfOgSY7fbQnKbmFS7L/OmEjCQR8s2HpmW3zjTmBXrg5fTYMJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=fail (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NqF+RiED reason="signature verification failed"; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752759076;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KEycMEjSIHuMJWfbML+0v4uxeifaLK0H8rWbOjaZJzo=;
-	b=NqF+RiED2KSVX3LJutG8yJJeVI1exRMRub0natPLgppt4/pTwrOp/Z1HJBnCkpJp97qLZT
-	2i4moniL/k/p3TtWoJSXS4/zjdW28dUJl/jZ6qU3D/SidKmm2KOWxGkdu7dl5xkqjkDsK4
-	fuEKZ26LOVMhX4uIUth6ABIfNrG4cKk=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-318-GQRGT67gPK-ToQzamFnUAQ-1; Thu,
- 17 Jul 2025 09:31:13 -0400
-X-MC-Unique: GQRGT67gPK-ToQzamFnUAQ-1
-X-Mimecast-MFC-AGG-ID: GQRGT67gPK-ToQzamFnUAQ_1752759066
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DF89319560B3;
-	Thu, 17 Jul 2025 13:31:04 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.2])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3729C18003FC;
-	Thu, 17 Jul 2025 13:30:50 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20250717080617.35577-2-bagasdotme@gmail.com>
-References: <20250717080617.35577-2-bagasdotme@gmail.com> <20250717080617.35577-1-bagasdotme@gmail.com>
-To: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-    Linux Documentation <linux-doc@vger.kernel.org>,
-    Linux RCU <rcu@vger.kernel.org>,
-    Linux CPU Architectures Development <linux-arch@vger.kernel.org>,
-    Linux LKMM <lkmm@lists.linux.dev>, Linux KVM <kvm@vger.kernel.org>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>,
-    Frederic Weisbecker <frederic@kernel.org>,
-    Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-    Joel Fernandes <joelagnelf@nvidia.com>,
-    Josh Triplett <josh@joshtriplett.org>,
-    Boqun Feng <boqun.feng@gmail.com>,
-    Uladzislau Rezki <urezki@gmail.com>,
-    Steven Rostedt <rostedt@goodmis.org>,
-    Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-    Lai Jiangshan <jiangshanlai@gmail.com>,
-    Zqiang <qiang.zhang@linux.dev>, Jonathan Corbet <corbet@lwn.net>,
-    Alan Stern <stern@rowland.harvard.edu>,
-    Andrea Parri <parri.andrea@gmail.com>, Will Deacon <will@kernel.org>,
-    Peter Zijlstra <peterz@infradead.org>,
-    Nicholas Piggin <npiggin@gmail.com>,
-    David Howells <dhowells@redhat.com>,
-    Jade Alglave <j.alglave@ucl.ac.uk>,
-    Luc Maranget <luc.maranget@inria.fr>,
-    Akira Yokosawa <akiyks@gmail.com>,
-    Daniel Lustig <dlustig@nvidia.com>,
-    Mark Rutland <mark.rutland@arm.com>, Ingo Molnar <mingo@redhat.com>,
-    Waiman Long <longman@redhat.com>,
-    Paolo Bonzini <pbonzini@redhat.com>,
-    Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>,
-    "Mike Rapoport (Microsoft)" <rppt@kernel.org>,
-    Changyuan Lyu <changyuanl@google.com>,
-    Dan Williams <dan.j.williams@intel.com>, Xavier <xavier_qy@163.com>,
-    Randy Dunlap <rdunlap@infradead.org>,
-    Maarten Lankhorst <dev@lankhorst.se>,
-    Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH 1/4] Documentation: memory-barriers: Convert to reST format
+	s=arc-20240116; t=1752759110; c=relaxed/simple;
+	bh=aPEWDW3DKbruNkNr+5qftKrpi1xMqYprC+1aHTuSLYw=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RMUMTxdQaRTk15f6Tvk3pkntHFrBV6GiBG9N+NWdLXGZxuo4GGL1mrOBM+e5bOE/eADu7BVxL9NGH7qFr8TtFi0eVpK67ZTKHWjs7OvvoXD+z5HaeJnyAeBnykKEphMY2Zg1RZoBRxo4kKe4Ywof1/bBfD+85eZK+GAMUk9Pn4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=qUywYP61; arc=none smtp.client-ip=79.135.106.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1752759105; x=1753018305;
+	bh=aPEWDW3DKbruNkNr+5qftKrpi1xMqYprC+1aHTuSLYw=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=qUywYP613MdGorQ6Skw0P4OHml0OlX7xMq8/HtjRKCM0b4AnphpKQ8UQj05AVyOKq
+	 Jvo/77m/3rzY9zTxNRdadHYf9XjSJ29YEs/9JfkAAl6QOpnDiwU01b8vKud06URERr
+	 z6DV53QMPqWQSKKHKwiJsuahKpuCzzCcVXnqkoZDi+POZzOdrkPMoYbfadJM15V2Kt
+	 8HsLFlM2KSqTviUwbfNyCUm9iFC1OhvF0oNimT4jLkCZZX2jI+834P4C6fi2ienf6d
+	 UE4cObV7oUVTBMGyLXdU6HOJ+KLLzKoH85QIQqF1NsDxbsWnwuGzClUkChQdgqHcZf
+	 4xQy/wPq/eiHg==
+Date: Thu, 17 Jul 2025 13:31:40 +0000
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+From: Yassine Oudjana <y.oudjana@protonmail.com>
+Cc: Manivannan Sadhasivam <mani@kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, =?utf-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Luca Weiss <luca@lucaweiss.eu>, linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] iio: Add Qualcomm Sensor Manager driver
+Message-ID: <pf5Z61lF8AhA7lEZ3mew6aSShDnuQUe_da_gGIcw6cftOM0kuxDYHrnIbiOA91kHYw2RCQP4MvqOkubyJisqu8MmfcFI8yB5bXagfEO-U_Y=@protonmail.com>
+In-Reply-To: <CAHp75Vf8NzYRMeM=+S4p9LGnOd4iXcdw93hBjd=Rn=LqBXgwgA@mail.gmail.com>
+References: <20250710-qcom-smgr-v2-0-f6e198b7aa8e@protonmail.com> <20250710-qcom-smgr-v2-4-f6e198b7aa8e@protonmail.com> <CAHp75Vf8NzYRMeM=+S4p9LGnOd4iXcdw93hBjd=Rn=LqBXgwgA@mail.gmail.com>
+Feedback-ID: 6882736:user:proton
+X-Pm-Message-ID: c4341d71dd1799d4c6fdd96eeabe45193f82ce56
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3830638.1752759048.1@warthog.procyon.org.uk>
-Date: Thu, 17 Jul 2025 14:30:48 +0100
-Message-ID: <3830639.1752759048@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-I believe memory-barriers.txt is often referred to outside of the kernel and
-should retain that name.  Maybe that's no longer the case.
+On Thursday, July 10th, 2025 at 9:58 AM, Andy Shevchenko <andy.shevchenko@g=
+mail.com> wrote:
 
-David
+> On Thu, Jul 10, 2025 at 11:06=E2=80=AFAM Yassine Oudjana via B4 Relay
+> devnull+y.oudjana.protonmail.com@kernel.org wrote:
+>=20
+> > Add a driver for sensors exposed by the Qualcomm Sensor Manager service=
+,
+> > which is provided by SLPI or ADSP on Qualcomm SoCs. Supported sensors
+> > include accelerometers, gyroscopes, pressure sensors, proximity sensors
+> > and magnetometers.
+>=20
+>=20
+> First of all it's almost 2kLoCs, it's on the edge of unreviewable
+> code. Please, try to make 3+ patches out of this one.
+> Second, take your time and check what your code is using from the
+> kernel internal libraries and APIs and follow IWYU principle when
+> including headers.
+
+I can cleanly split it into 2 patches by putting the QMI components
+in a separate patch. Not sure about 3+ patches but will try my best.
+Will review includes.
 
 
