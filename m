@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-735128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C710B08B2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:52:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEAB6B08B35
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:53:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FD6F585AA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:52:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 584734E13F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:52:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F0E2D94BC;
-	Thu, 17 Jul 2025 10:46:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC792DC354;
+	Thu, 17 Jul 2025 10:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tox3PrHp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mGKvmMCm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95D412D9ED3
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 10:46:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D522DC338;
+	Thu, 17 Jul 2025 10:46:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752749185; cv=none; b=kK8XAZb7HXnR0GDuW1lLOf28P9UdcdIVHn32hJkKzkMgFojjvHKpfrN1tg7gFL6WMbk2hXg6qTTUV83rF2QHgYQiZoMVkxltlPznlqXTsL4oRdNXx1Y+uU7VxkTo0F7mIp2/jXPdgO95UXrMyq3TxPAzCutqZr+JVmGVc9Ksbiw=
+	t=1752749188; cv=none; b=Z9C1OCxCHQfckHFqmjPgm8N5fSz2riKdVdQYKMh4JOfzvErV4GC+Vx/sJZ6c6b6uVYxD6zsnSHOgfnsKfjwwhYtqY5tR6A/3WvNFcm5Ng9Ra7pkPJChKx78X/+6D/656oa2CenffDI/yR3fR/f8GjsADpBlWb2/UnXKxOK2nPGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752749185; c=relaxed/simple;
-	bh=DkXyeHIa2nF3AOICnuR48ynTr+TBeqyOhPxZL4J6QaI=;
+	s=arc-20240116; t=1752749188; c=relaxed/simple;
+	bh=gx5/G6zzlqK9prZpiz6/I2jYvB1WZ4q5jmJ/0wHnyEw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NqjOlmNDCS2VMr8+8AfgB7YLN9Wy+X42y5dIZx/6cLoJU5BVQoyC6UOxTxakW+ralqLh15uJ7S8fteqky3VQkEF29jPJerSxeFbAxHiExTWg68Whx4dHGNqk+cxoTQ1W/dnyfczYji/LP7U//ElD6OV95yUzOKB9sAYCfb+kdEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tox3PrHp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70513C4CEF0;
-	Thu, 17 Jul 2025 10:46:23 +0000 (UTC)
+	 MIME-Version:Content-Type; b=eZo57tQBJYrEZydbsJeje9hcO5DuERvmD/9p32gBZAd1UUK++4jAdEUWfkuy4t9IhLRX7nat0swK3dyn6/L4w52PN1J7dvMaBbZICDelrCYpswIINlLt+KEXU+M/P+iLloc2fh6YCx6Km3njBHetzterBcECuEe8t8ydd9B8SQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mGKvmMCm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AD73C4CEED;
+	Thu, 17 Jul 2025 10:46:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752749185;
-	bh=DkXyeHIa2nF3AOICnuR48ynTr+TBeqyOhPxZL4J6QaI=;
+	s=k20201202; t=1752749187;
+	bh=gx5/G6zzlqK9prZpiz6/I2jYvB1WZ4q5jmJ/0wHnyEw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Tox3PrHpqhMu4xO+ihUu6MVqf01Sb8Xh3Et3hs89aTklPc3ulrOULXRavXbCqZ/p1
-	 6RXdYxCi2isSjHKE3hdICYxsIW4769UOwpBCdLkZHXKRkXL9BvQiQMjfr0zJEw9F9x
-	 NJ9vBGiF6p2WFedui28zaJa5VisB4fUHvrRGI8Ld2TCw9/OLAg/9QrhHV5C0pZsZ2r
-	 Qz6Lb31ICdq/YJXnAj8/cE3QcQW/P0W1hcygFXWAfWm3hw6ug+LiWm5aIP5VCVA23I
-	 cZdhFjk2C+snEYl8nSPiQ5++JdMLl69cJj/JZWwSLbak50C8e4+vBflQ1X4WW+GrRC
-	 z+Ka3ZoQBRNbw==
+	b=mGKvmMCmUZ+GzcSVQRFWy3zlaCTPGCGzmUiN5x7qOgZ3wcIXrPY0e5Dy/lXX2PsBO
+	 W+JhlTJSfnxllqQyhZ2r4UXNZ9k8pOslCZBD0sRg3fimb95vLgHTNvhtVkpuhHGDot
+	 d4mFNt/KtHtHN/zN+vinIJD23AKyMCdRYYfwTnwQuodhnf0jJ1O6yu6SeURhDdh9mF
+	 1e4MC9lT7FZ69d6EKGbh/TK6NM7vR5xtYfqRFPF+EyLDXv4x7ah+iZxvyu/DJwFPzu
+	 1ZbxaBeYtmX/dinV4MTPeduJYna467wXWy5/AI4BmfQhCF4dqKtAv+uAoh33i/MO98
+	 KEHclzV/CGZTg==
 From: Will Deacon <will@kernel.org>
-To: linux-arm-kernel@lists.infradead.org,
-	Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: catalin.marinas@arm.com,
-	kernel-team@android.com,
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Mark Brown <broonie@kernel.org>
+Cc: kernel-team@android.com,
 	Will Deacon <will@kernel.org>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	linux-kernel@vger.kernel.org,
-	Dev Jain <dev.jain@arm.com>
-Subject: Re: [PATCH V2] arm64/mm: Drop redundant addr increment in set_huge_pte_at()
-Date: Thu, 17 Jul 2025 11:46:15 +0100
-Message-Id: <175274693707.736549.5663594233250106618.b4-ty@kernel.org>
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kselftest/arm4: Provide local defines for AT_HWCAP3
+Date: Thu, 17 Jul 2025 11:46:16 +0100
+Message-Id: <175274687562.736017.4541105049784210584.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250716035432.293682-1-anshuman.khandual@arm.com>
-References: <20250716035432.293682-1-anshuman.khandual@arm.com>
+In-Reply-To: <20250715-arm64-selftest-bodge-hwcap3-v1-1-541b54bc43bb@kernel.org>
+References: <20250715-arm64-selftest-bodge-hwcap3-v1-1-541b54bc43bb@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,16 +64,20 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Wed, 16 Jul 2025 04:54:32 +0100, Anshuman Khandual wrote:
-> The 'addr' need not be incremented in the loop because that is not going to
-> be used subsequently.
+On Tue, 15 Jul 2025 22:11:41 +0100, Mark Brown wrote:
+> Some build environments for the selftests are not picking up the newly
+> added AT_HWCAP3 when using the libc headers, even with headers_install
+> (which we require already for the arm64 selftests).  As a quick fix add
+> local definitions of the constant to tools use it, while auxvec.h is
+> installed with some toolchains it needs some persuasion to get picked up.
 > 
 > 
+> [...]
 
-Applied to arm64 (for-next/misc), thanks!
+Applied to arm64 (for-next/kselftest), thanks!
 
-[1/1] arm64/mm: Drop redundant addr increment in set_huge_pte_at()
-      https://git.kernel.org/arm64/c/aa46e18836c0
+[1/1] kselftest/arm4: Provide local defines for AT_HWCAP3
+      https://git.kernel.org/arm64/c/54c605124da6
 
 Cheers,
 -- 
