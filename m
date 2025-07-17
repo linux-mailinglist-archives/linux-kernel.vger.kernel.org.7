@@ -1,113 +1,187 @@
-Return-Path: <linux-kernel+bounces-735308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9A3CB08D96
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:54:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DB90B08D90
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:54:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 207BB3B8944
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:54:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4E9B17ADB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:54:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE752D8790;
-	Thu, 17 Jul 2025 12:54:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C51D2D77E9;
+	Thu, 17 Jul 2025 12:54:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OrRxBStl"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fOq6KgHr"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB5B2D46AD;
-	Thu, 17 Jul 2025 12:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71661A9B24;
+	Thu, 17 Jul 2025 12:54:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752756849; cv=none; b=L5abjRIm029NANUNtqdRmgUYl4tcYrPFwoxiAMJAoRF7r1fJBKC3HVNOy/gWDqbTQcLQNYP+bllgVWTA02DXRJZDz9Ny3lTVSdEAbWQfROdTH6hNTTc0TTIadPzo3FLP6S+7AROf+kJ0kGQEa9dsetggvubEvFBf5IWRdTLr/V0=
+	t=1752756847; cv=none; b=TMzybFHFoEZLNAY++FgJGOy4yINfaNXXG3YvztpA00QeTvZGCpMrIiooy4Bsfip7qDqUDS6COpNPeqgmpXGcBOsdVuDDxCgXntTt66XL2ujH1yNWlnR83qfU6Owhax2NLftby0+jWG5TTQPk30r98Kq1TZcHRvf0W6uNMpOkSJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752756849; c=relaxed/simple;
-	bh=6TqfmLAeBvpkFMFttqys3Zi3RrrHoD67gu5Uh3aTgmU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TOy3Uu47nwIvHbE0yZvZ+IPZ7wdy3mUmfCwWima6+TKYo9Ae7rMubzimkKp+Q2SKfxtNIJC+/p7RtGRlQT4Nd0V9WQpPUbl1boKiBcvEg58tdtSIrIEuIaIEa7D2ynRO9R6U4WzQ+BUTb2vT+59hUqbfvUe7vD5KpCU+76rMpUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OrRxBStl; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ae0a0cd709bso366549166b.0;
-        Thu, 17 Jul 2025 05:54:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752756846; x=1753361646; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6TqfmLAeBvpkFMFttqys3Zi3RrrHoD67gu5Uh3aTgmU=;
-        b=OrRxBStlj3bZYFGwn/SrPad57cYkaImlmktRRPR2bAGr9IdfPuwNmEIFO8lvaLX/bg
-         38F3v7FmKWZq6MQRs7XUw62Xx0O+vZ3U+JwS4/W2iEGZ7uaJOZr0onegB54oeOujHd8n
-         eMrxtmqcT/qJfJ81G4Fs65/YKxC4V0vEWd607IALGXQ+Pc22nwXfN3kx05vlgLaZwug1
-         fxlnlEZF3Wy1z0hmzmnaOBm02mWgoq0ZPXSh6+jPgVPFxrdnsEcSt5Zl8tnf2XyfiJVX
-         IdbRgIKPdhzPkMaM9yeuNS4HuC5i3Mghy5H8IR47mpWddjocUH2oMMPeKOulifU7YiVO
-         KctA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752756846; x=1753361646;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6TqfmLAeBvpkFMFttqys3Zi3RrrHoD67gu5Uh3aTgmU=;
-        b=lYHPpO2eMyGe70lPektG4a12W57YsyS60wJqPV9j4k1qcPDbRmVL1UWp+4+AOwFX2U
-         rlZYR+6qKGJPqlVBcvzqSievLDnU2wF03sWT2GKfdwnFjvX1HsdW2mR0nGNQgSMgbo4M
-         th0Ho0+Elcn5bZ1lmPNU33RXbIJROLjSZH+zvyAprycbYq74eRODTqg4kDTQ+Hhwl4et
-         29hRjFqlUijo9LDnAATM/n15Y/7riP1HGd3W1mTBcCTyfgBwIIDRDC4w1k2m7APGJios
-         Cj2ygaVsmjISYro/AzsPZWK7GJCG4MnXpCVnPTQ2jmSzQOK9Tt7o+qGlwbVbONoaHjeW
-         40Eg==
-X-Forwarded-Encrypted: i=1; AJvYcCVh2diaO3rFYnPX9q0s84Jmg20H/Az2c4CFKt/UheVXKi3dNq5ZyGXWUyCUm0AUlfVEJv3nCd75r/PDLY0=@vger.kernel.org, AJvYcCWH891vw1g0eVUaglAKC74aTiWem7xxtTPk3qQFZ/qi292fQOzgY/KFDiGLNMQeVG0nzJDvBGoYD+GjZk0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySlfwhvRQwZcoYUqhjIKQtBI/6y73zMcBjajVOkXRTNsLiS7BO
-	/pjhmmiem/physZpE8yVV45H6gNX9s9+sz+aQI7RCSyJTewTeDW4BWu+HlcbQcx+WOBubOP1x+v
-	EOLSj9fzPBHJ/LmGvN3hbmH8gQ20HANo=
-X-Gm-Gg: ASbGncuPNFmhGt8vLI+kRFmdvgNauZn71wgFbIGe+yI36PDnVpTuvJjF4sNT73UH4CX
-	19FETeYOhZHiYqGmXPvADz+c6b8z9WqGh/lUvIRs9064gUVFXxeVvMrKbVoG05V6ZIOuBshc/ac
-	V0idz8DgkSe7JcNAYHoAWX3XhdPHO/hF4w6WmklINTBfr+0q7Selie1tjYGxbwRqHU2fUaTSRJf
-	UiQg6sgRQ==
-X-Google-Smtp-Source: AGHT+IGwgcvfuosm5N+DZ25mI8Ik05xk7HliuiBmFYrl28GiWWkRW4WUjkaBwNjkPRhTpYEMuODvsj0bfLReIdUzIcI=
-X-Received: by 2002:a17:907:2d86:b0:ae9:cd0a:5827 with SMTP id
- a640c23a62f3a-aec4deaf092mr281081666b.20.1752756845076; Thu, 17 Jul 2025
- 05:54:05 -0700 (PDT)
+	s=arc-20240116; t=1752756847; c=relaxed/simple;
+	bh=vm7rjKk2WBjAzKboKgHsRERIHEJs5SaRfJhF1SVD710=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FhtRFfPR6y+G6wKdtRAG9P8PBg7OgrcqoLfjSZHd/iBbHhjHJZvPIvqpGR2sDcPigpXnWjAITPox7WmQw50MleYu9TbVjhkJItUxzamIZeIG9Q0zqWTiGSd4mjqKxHp0XeWCqbhFo5s8F7CqdL+ZAGI9pWY0ElG/yVyPIomtmGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fOq6KgHr; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56HCSrjh032365;
+	Thu, 17 Jul 2025 12:53:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=gv/kowvjHeVVZFqg8gcLOw
+	h9SGFpccdtvK5B8me4OS8=; b=fOq6KgHrepAIEWd7QdpD33oyGzgDeIMvOS3Q13
+	nrebvNOb6Pbx8mfsW55pR5oIvfa15Nsn18Z7FxJUEiK2IJXVxGkuDRzM/iXXDVbh
+	+nILtmCxiipgTjqshJ6p2AsqlCkWdEFP/tnbSRH2g1+Vx/mSIrBkLxDf4NJF3+4n
+	P8TBQMkRXpwHQKya8tfV0CCvLImp/3ARpZr09JhTkcDgOJOqPx8RMPM9oqZt6bdd
+	dnBldfNbOIFwglxrcrb+xD5qAjNL0vY7AduoP+aUHCp32UvOQenxspYemNKNVOXd
+	6fp974GyiEMKy64HD195CHH6nt99/vEa7+2+gR8mA1NvzalA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ug387tfx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Jul 2025 12:53:55 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56HCrsCQ006184
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Jul 2025 12:53:54 GMT
+Received: from hu-jinlmao-lv.qualcomm.com (10.49.16.6) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Thu, 17 Jul 2025 05:53:54 -0700
+From: Mao Jinlong <quic_jinlmao@quicinc.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+	<mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+CC: Mao Jinlong <quic_jinlmao@quicinc.com>, <coresight@lists.linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+Subject: [PATCH v9 0/2] coresight: Add label sysfs node support 
+Date: Thu, 17 Jul 2025 05:53:40 -0700
+Message-ID: <20250717125343.3820505-1-quic_jinlmao@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250717124234.24572-1-abdelrahmanfekry375@gmail.com>
-In-Reply-To: <20250717124234.24572-1-abdelrahmanfekry375@gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 17 Jul 2025 15:53:27 +0300
-X-Gm-Features: Ac12FXwwqnptpnT5aQ5qlp88PaC6-4KM13ZfLkpBCRIfiqwB3k8OHjQ8YI8f-Yo
-Message-ID: <CAHp75Vei5e3TMxTTWXBZVWsGqFbYwn6QQoOKz-MYmFd4xaTraw@mail.gmail.com>
-Subject: Re: [PATCH v3] staging: media: atomisp: add missing mutex lock in atomisp_s_fmt_cap
-To: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
-Cc: hansg@kernel.org, mchehab@kernel.org, sakari.ailus@linux.intel.com, 
-	andy@kernel.org, gregkh@linuxfoundation.org, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev, 
-	linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org, 
-	dan.carpenter@linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDExMSBTYWx0ZWRfX7sxWeONXsZQ3
+ 9Sex4yl3yxxBzQ2nMn7+XfXSngDiKwMuVzxL555NgMEJF4TpDRBuXVL8gckxWBpU8mVopbgt0xz
+ wqQMNA7chcCmDvIEcrfPGZYroXzMQ6TfK3G2vkjddXH1u/fPaAVy6UQy7pkEgLD24YPjnMrbI0d
+ ju260uou0pZs7wQfsmTWpV3UcBwk4omxbV5Vk0AIQLqw5YqhR9Z7OznoVwXW7oX3FHB7Bf0gzhO
+ QlD705ilEXzISJDNsa0lPpDvF9LiSpeQQzPUyCxYYoNvxBzuOhBPwiGK9lFwPE2AxAzkslX/A9N
+ J+gVMTQKl4tKlowVa8zR0eroIsS4qKu9WlmyN1E734QSPLrc0Ad9JmHtWNT8Xy3F6ElUBc1EX7j
+ cVgNf7xn0J5FaUsVY5pWImsLFWdYo/c7/VxE2bIHI/rPiv8Kikddmo+j1/HxVgoXlWHc2D8+
+X-Proofpoint-GUID: 3TukOeIus2vuJQlRipfgxDO71s10ulp0
+X-Authority-Analysis: v=2.4 cv=SZT3duRu c=1 sm=1 tr=0 ts=6878f263 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=3H110R4YSZwA:10 a=Wb1JkmetP80A:10 a=D19gQVrFAAAA:8 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=C_w9g3tfadNPII6ijWgA:9 a=W4TVW4IDbPiebHqcZpNg:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: 3TukOeIus2vuJQlRipfgxDO71s10ulp0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-17_01,2025-07-17_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 mlxlogscore=999 mlxscore=0 priorityscore=1501
+ lowpriorityscore=0 bulkscore=0 adultscore=0 impostorscore=0 malwarescore=0
+ phishscore=0 spamscore=0 suspectscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507170111
 
-On Thu, Jul 17, 2025 at 3:43=E2=80=AFPM Abdelrahman Fekry
-<abdelrahmanfekry375@gmail.com> wrote:
->
-> The function atomisp_set_fmt() modifies shared device state and expects
-> callers to hold the isp->mutex for synchronization. While most internal
-> callers correctly lock the mutex before invoking atomisp_set_fmt(), the
-> V4L2 ioctl handler atomisp_s_fmt_cap() does not.
->
-> This results in an unsafe execution path for VIDIOC_S_FMT ioctls
-> (e.g. via v4l2-ctl), where shared structures such as pipe->pix and
-> pipe->frame_info may be modified concurrently without proper protection.
->
-> - Fix this by explicitly locking isp->mutex in atomisp_s_fmt_cap().
+Change since V8:
+1. Add label in all documentations of coresight components.
+2. Add control of the visibility of the label sysfs attribute.
+V8 link: https://lkml.org/lkml/2025/7/3/985
 
-Now LGTM, FWIW,
-Reviewed-by: Andy Shevchneko <andy@kernel.org>
+Change since V7:
+1. Update the conflict when apply to coresight next.
+2. Update the Date and version in ABI file.
+V7 link: https://patchwork.kernel.org/project/linux-arm-kernel/patch/20250226121926.2687497-3-quic_jinlmao@quicinc.com/
 
---=20
-With Best Regards,
-Andy Shevchenko
+Change since V6:
+1. Update the date and verison in ABI file.
+
+Change since V5:
+1. Update the kernel version of ABI files.
+2. Add link of different patch versions.
+V5 link: https://patchwork.kernel.org/project/linux-arm-msm/cover/20241210122253.31926-1-quic_jinlmao@quicinc.com/
+
+Change since V4:
+1. Add label in DT and add label sysfs node for each coresight device.
+V4 link: https://patchwork.kernel.org/project/linux-arm-msm/cover/20240703122340.26864-1-quic_jinlmao@quicinc.com/
+
+Change since V3:
+1. Change device-name to arm,cs-dev-name.
+2. Add arm,cs-dev-name to only CTI and sources' dt-binding.
+V3 link: https://patchwork.kernel.org/project/linux-arm-msm/cover/20240131082628.6288-1-quic_jinlmao@quicinc.com/
+
+Change since V2:
+1. Fix the error in coresight core.
+drivers/hwtracing/coresight/coresight-core.c:1775:7: error: assigning to 'char *' from 'const char *' discards qualifiers
+
+2. Fix the warning when run dtbinding check.
+Documentation/devicetree/bindings/arm/arm,coresight-cpu-debug.yaml: device-name: missing type definition
+V2 link: https://patchwork.kernel.org/project/linux-arm-msm/cover/20240115164252.26510-1-quic_jinlmao@quicinc.com/
+
+Change since V1:
+1. Change coresight-name to device name.
+2. Add the device-name in coresight dt bindings.
+V1 link: https://patchwork.kernel.org/project/linux-arm-kernel/patch/20230208110716.18321-1-quic_jinlmao@quicinc.com/#25231737
+
+Mao Jinlong (2):
+  dt-bindings: arm: Add label in the coresight components
+  coresight: Add label sysfs node support
+
+ .../testing/sysfs-bus-coresight-devices-cti   |  6 ++
+ .../sysfs-bus-coresight-devices-dummy-source  |  6 ++
+ .../testing/sysfs-bus-coresight-devices-etb10 |  6 ++
+ .../testing/sysfs-bus-coresight-devices-etm3x |  6 ++
+ .../testing/sysfs-bus-coresight-devices-etm4x |  6 ++
+ .../sysfs-bus-coresight-devices-funnel        |  6 ++
+ .../testing/sysfs-bus-coresight-devices-stm   |  6 ++
+ .../testing/sysfs-bus-coresight-devices-tmc   |  6 ++
+ .../testing/sysfs-bus-coresight-devices-tpdm  |  6 ++
+ .../testing/sysfs-bus-coresight-devices-trbe  |  6 ++
+ .../bindings/arm/arm,coresight-cti.yaml       |  4 ++
+ .../arm/arm,coresight-dummy-sink.yaml         |  4 ++
+ .../arm/arm,coresight-dummy-source.yaml       |  4 ++
+ .../arm/arm,coresight-dynamic-funnel.yaml     |  4 ++
+ .../arm/arm,coresight-dynamic-replicator.yaml |  4 ++
+ .../bindings/arm/arm,coresight-etb10.yaml     |  4 ++
+ .../bindings/arm/arm,coresight-etm.yaml       |  4 ++
+ .../arm/arm,coresight-static-funnel.yaml      |  4 ++
+ .../arm/arm,coresight-static-replicator.yaml  |  4 ++
+ .../bindings/arm/arm,coresight-tmc.yaml       |  4 ++
+ .../bindings/arm/arm,coresight-tpiu.yaml      |  4 ++
+ .../bindings/arm/qcom,coresight-ctcu.yaml     |  4 ++
+ .../arm/qcom,coresight-remote-etm.yaml        |  4 ++
+ .../bindings/arm/qcom,coresight-tpda.yaml     |  4 ++
+ .../bindings/arm/qcom,coresight-tpdm.yaml     |  4 ++
+ drivers/hwtracing/coresight/coresight-sysfs.c | 71 ++++++++++++++++++-
+ 26 files changed, 189 insertions(+), 2 deletions(-)
+
+-- 
+2.25.1
+
 
