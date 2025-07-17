@@ -1,144 +1,167 @@
-Return-Path: <linux-kernel+bounces-735628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E05A6B091E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:31:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99332B091E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:31:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D04131C44CC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:31:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7176B4A1180
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE9830115C;
-	Thu, 17 Jul 2025 16:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04C42FCE0F;
+	Thu, 17 Jul 2025 16:29:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eJaW5FYN"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EB/yJJZw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA70B2FBFE9
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 16:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2412FBFE9;
+	Thu, 17 Jul 2025 16:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752769678; cv=none; b=LecTplbxGJXOGCh2dwdotchTCFfPwagnDVOiy/b9omguqZj7tdWUzZcgMaGFgzgTopvyc95lpGUJzk6KswFAjo13EM1bmPO/B8vyg4zK1eGWkCXt+VnDqZWaorgFWTidb5iPMVqbNqWpqGXZzaT4FGoPYy444cjZge3wOafaLWk=
+	t=1752769745; cv=none; b=vBzkwW1+k6SfIiPhyv434Dob5wQ9ac0HjELSFCzDBUxHw1vJzNAeVK1FDJ0/Z8Q7cBuPnIx4OuifksZ3D0c8RFNHhnzSCcyLURW4fn76Z+BxOpU61b9NE/egTiaHq0rdEtP+mm2ErhqGJqfx4cChemm03Mcbk+4attnKr84zCHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752769678; c=relaxed/simple;
-	bh=YLu4Qo0NgwDqCYSE9LkUP789zJ9Z1MNQWKn0CtVFQhM=;
+	s=arc-20240116; t=1752769745; c=relaxed/simple;
+	bh=aZF1ATdJMr1PS2dVQ/dXpHcgfoJwBOuwhpzYqVEDeUM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l1Ez809sa6DyrWrmQ8SD+jNQSpDjZZXu8LIqRqZdwpt88sgmv1LjEpfbtdxHT/OgAE5DFBJksAzVFSkScki6eK8Bm//01z0KHTCk9h71dof5Mn8DezY6G3mUh6jP0WBz1/5CPPfbAmS4XZpQF7QdhpGscYWrzd5jvSERumZCXsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eJaW5FYN; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <03e04d98-e5eb-41c0-8407-23cccd578dbe@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752769673;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4Ay4UsrwBiPcaslZNYrakqAaTaS1CuBXla7xAvqK4iw=;
-	b=eJaW5FYN3JIqaJZB1WK5+nmumKzxiIdylG3v2/byRwszJdN7xY/ErtD/wKGWIDxY/r0CyE
-	eA0uTx59AjxDvKL5jzF7aI4+g82sbb19mGdMvZ9tY80nyztEB9+ROft0/sFIfvW0x7RkAV
-	TDgELQ4sup+IAwpp036PgvB8G8CbbSo=
-Date: Thu, 17 Jul 2025 12:27:44 -0400
+	 In-Reply-To:Content-Type; b=umUSQdHOGofJHYtWYblQeFp1fPEzwMCV0nPIrmQ8yEm2zWnsjGfhxLgsTy3uQKJHG5nSeCPSyu/SXUMIft0gfMVnf8DazPBAC+oC0//ItS0CXlgaduF0hjTCgGH+rcrNVMydQ4pgTG6lR9FWeCPY97yUObQa4vde1LlwBbALXA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EB/yJJZw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F1AFC4CEE3;
+	Thu, 17 Jul 2025 16:29:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752769744;
+	bh=aZF1ATdJMr1PS2dVQ/dXpHcgfoJwBOuwhpzYqVEDeUM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=EB/yJJZwqhIqCgtStaaxbPgeBRQD37uzZp7GLCrsDl8s7ls7XmitVZEHCqgaoEkXy
+	 saLqu4WZbTv9px/HdgbpWCbuL/F6+i6I7WRaPkL/rIK549r7Eik2+8GGHQrj2AjE2F
+	 Y+x/hWjMVRZGdcL9USOZoI1CpIK9jYYmImGgvbdeNKQERYSKa98VRyHZXHvMn5ZMKV
+	 5XLOklLRHV5tj0ze3eMxw66KX9E9Fk0O1nwG2qhzfWw93LglxoQXOTRcJxB9F+z/zb
+	 YtYIwbk5SiAWoi7bi4KjkIZPd7OR+3WH2nXCXD/c9SlEQzLX9iRmwOk4rBRZliM+v7
+	 B8MtHr3gpusrw==
+Message-ID: <8a4d8f82-dd9b-41bb-b883-231a78cdc1e1@kernel.org>
+Date: Thu, 17 Jul 2025 11:29:03 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net v2 1/4] auxiliary: Support hexadecimal ids
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- netdev@vger.kernel.org, Dave Ertman <david.m.ertman@intel.com>,
- Saravana Kannan <saravanak@google.com>, Leon Romanovsky <leon@kernel.org>,
- linux-kernel@vger.kernel.org, Michal Simek <michal.simek@amd.com>,
- linux-arm-kernel@lists.infradead.org, Ira Weiny <ira.weiny@intel.com>
-References: <20250716000110.2267189-1-sean.anderson@linux.dev>
- <20250716000110.2267189-2-sean.anderson@linux.dev>
- <2025071637-doubling-subject-25de@gregkh>
- <719ff2ee-67e3-4df1-9cec-2d9587c681be@linux.dev>
- <2025071747-icing-issuing-b62a@gregkh>
- <5d8205e1-b384-446b-822a-b5737ea7bd6c@linux.dev>
- <2025071736-viscous-entertain-ff6c@gregkh>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/1] PCI/sysfs: Expose PCIe device serial number
+To: Matthew Wood <thepacketgeek@gmail.com>,
+ Bjorn Helgaas <bhelgaas@google.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+References: <20250717162240.512045-1-thepacketgeek@gmail.com>
+ <20250717162240.512045-2-thepacketgeek@gmail.com>
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <2025071736-viscous-entertain-ff6c@gregkh>
-Content-Type: text/plain; charset=UTF-8
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <20250717162240.512045-2-thepacketgeek@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
-On 7/17/25 12:21, Greg Kroah-Hartman wrote:
-> On Thu, Jul 17, 2025 at 12:04:15PM -0400, Sean Anderson wrote:
->> On 7/17/25 11:59, Greg Kroah-Hartman wrote:
->> > On Thu, Jul 17, 2025 at 11:49:37AM -0400, Sean Anderson wrote:
->> >> On 7/16/25 01:09, Greg Kroah-Hartman wrote:
->> >> > On Tue, Jul 15, 2025 at 08:01:07PM -0400, Sean Anderson wrote:
->> >> >> Support creating auxiliary devices with the id included as part of the
->> >> >> name. This allows for hexadecimal ids, which may be more appropriate for
->> >> >> auxiliary devices created as children of memory-mapped devices. If an
->> >> >> auxiliary device's id is set to AUXILIARY_DEVID_NONE, the name must
->> >> >> be of the form "name.id".
->> >> >> 
->> >> >> With this patch, dmesg logs from an auxiliary device might look something
->> >> >> like
->> >> >> 
->> >> >> [    4.781268] xilinx_axienet 80200000.ethernet: autodetected 64-bit DMA range
->> >> >> [   21.889563] xilinx_emac.mac xilinx_emac.mac.80200000 net4: renamed from eth0
->> >> >> [   32.296965] xilinx_emac.mac xilinx_emac.mac.80200000 net4: PHY [axienet-80200000:05] driver [RTL8211F Gigabit Ethernet] (irq=70)
->> >> >> [   32.313456] xilinx_emac.mac xilinx_emac.mac.80200000 net4: configuring for inband/sgmii link mode
->> >> >> [   65.095419] xilinx_emac.mac xilinx_emac.mac.80200000 net4: Link is Up - 1Gbps/Full - flow control rx/tx
->> >> >> 
->> >> >> this is especially useful when compared to what might happen if there is
->> >> >> an error before userspace has the chance to assign a name to the netdev:
->> >> >> 
->> >> >> [    4.947215] xilinx_emac.mac xilinx_emac.mac.1 (unnamed net_device) (uninitialized): incorrect link mode  for in-band status
->> >> >> 
->> >> >> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
->> >> >> ---
->> >> >> 
->> >> >> Changes in v2:
->> >> >> - Add example log output to commit message
->> >> > 
->> >> > I rejected v1, why is this being sent again?
->> >> 
->> >> You asked for explanation, I provided it. I specifically pointed out why
->> >> I wanted to do things this way. But I got no response. So here in v2.
->> > 
->> > Again, I said, "do not do that, this is not how ids work in the driver
->> > model", and you tried to show lots of reasons why you wanted to do it
->> > this way despite me saying so.
->> > 
->> > So again, no, sorry, this isn't ok.  Don't attempt to encode information
->> > in a device id like you are trying to do here, that's not what a device
->> > id is for at all.  I need to go dig up my old patch that made all device
->> > ids random numbers just to see what foolish assumptions busses and
->> > userspace tools are making....
->> 
->> But it *is* how ids work in platform devices.
-> 
-> No one should ever use platform devices/bus as an excuse to do anything,
-> it's "wrong" in so many ways, but needs to be because of special
-> reasons.  No other bus should work like that, sorry.
-> 
->> And because my auxiliary
->> devices are created by a platform device, it is guaranteed that the
->> platform device id is unique and that it will also be unique for
->> auxiliary devices. So there is no assumption here about the uniqueness
->> of any given id.
-> 
-> Then perhaps use the faux device api instead?
+On 7/17/25 11:22 AM, Matthew Wood wrote:
+> Add a single sysfs read-only interface for reading PCIe device serial
+> numbers from userspace in a programmatic way. This device attribute
+> uses the same hexadecimal 1-byte dashed formatting as lspci serial number
+> capability output. If a device doesn't support the serial number
+> capability, the device_serial_number sysfs attribute will not be visible.
 
-There's *another* pseudo bus? OK the reason why is that faux was added
-four months ago and there is nothing under Documentation for it. So I
-had no idea it existed. I will have a look, but perhaps you should write
-up some documentation about why someone might want to use a "faux" bus
-over the auxiliary bus or MFD.
+You didn't update the commit message here for 'serial_number'.
 
---Sean
+> 
+> Signed-off-by: Matthew Wood <thepacketgeek@gmail.com>
+
+With the commit and below comment fixed you can add this to your next spin.
+
+Reviewed-by: Mario Limonciello <superm1@kernel.org>
+
+> ---
+>   Documentation/ABI/testing/sysfs-bus-pci |  9 +++++++++
+>   drivers/pci/pci-sysfs.c                 | 26 ++++++++++++++++++++++---
+>   2 files changed, 32 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-bus-pci b/Documentation/ABI/testing/sysfs-bus-pci
+> index 69f952fffec7..4da41471cc6b 100644
+> --- a/Documentation/ABI/testing/sysfs-bus-pci
+> +++ b/Documentation/ABI/testing/sysfs-bus-pci
+> @@ -612,3 +612,12 @@ Description:
+>   
+>   		  # ls doe_features
+>   		  0001:01        0001:02        doe_discovery
+> +
+> +What:		/sys/bus/pci/devices/.../serial_number
+> +Date:		July 2025
+IIRC this should be the date that this is first introduced into the 
+kernel.  So if this is 6.17 material it should be October 2025 and if 
+it's 6.18 material it should be December 2025.
+
+It's getting close to the merge window so I'm not sure right now which 
+Bjorn would prefer.
+
+I would say make it October 2025 and if it slips it just gets updated 
+for the next spin.
+
+> +Contact:	Matthew Wood <thepacketgeek@gmail.com>
+> +Description:
+> +		This is visible only for PCIe devices that support the serial
+> +		number extended capability. The file is read only and due to
+> +		the possible sensitivity of accessible serial numbers, admin
+> +		only.
+> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+> index 268c69daa4d5..bc0e0add15d1 100644
+> --- a/drivers/pci/pci-sysfs.c
+> +++ b/drivers/pci/pci-sysfs.c
+> @@ -239,6 +239,22 @@ static ssize_t current_link_width_show(struct device *dev,
+>   }
+>   static DEVICE_ATTR_RO(current_link_width);
+>   
+> +static ssize_t serial_number_show(struct device *dev,
+> +				       struct device_attribute *attr, char *buf)
+> +{
+> +	struct pci_dev *pci_dev = to_pci_dev(dev);
+> +	u64 dsn;
+> +
+> +	dsn = pci_get_dsn(pci_dev);
+> +	if (!dsn)
+> +		return -EIO;
+> +
+> +	return sysfs_emit(buf, "%02llx-%02llx-%02llx-%02llx-%02llx-%02llx-%02llx-%02llx\n",
+> +		dsn >> 56, (dsn >> 48) & 0xff, (dsn >> 40) & 0xff, (dsn >> 32) & 0xff,
+> +		(dsn >> 24) & 0xff, (dsn >> 16) & 0xff, (dsn >> 8) & 0xff, dsn & 0xff);
+> +}
+> +static DEVICE_ATTR_ADMIN_RO(serial_number);
+> +
+>   static ssize_t secondary_bus_number_show(struct device *dev,
+>   					 struct device_attribute *attr,
+>   					 char *buf)
+> @@ -660,6 +676,7 @@ static struct attribute *pcie_dev_attrs[] = {
+>   	&dev_attr_current_link_width.attr,
+>   	&dev_attr_max_link_width.attr,
+>   	&dev_attr_max_link_speed.attr,
+> +	&dev_attr_serial_number.attr,
+>   	NULL,
+>   };
+>   
+> @@ -1749,10 +1766,13 @@ static umode_t pcie_dev_attrs_are_visible(struct kobject *kobj,
+>   	struct device *dev = kobj_to_dev(kobj);
+>   	struct pci_dev *pdev = to_pci_dev(dev);
+>   
+> -	if (pci_is_pcie(pdev))
+> -		return a->mode;
+> +	if (!pci_is_pcie(pdev))
+> +		return 0;
+>   
+> -	return 0;
+> +	if (a == &dev_attr_serial_number.attr && !pci_get_dsn(pdev))
+> +		return 0;
+> +
+> +	return a->mode;
+>   }
+>   
+>   static const struct attribute_group pci_dev_group = {
+
 
