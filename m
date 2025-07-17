@@ -1,268 +1,631 @@
-Return-Path: <linux-kernel+bounces-735017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9147AB08980
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:40:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 045BDB0898C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:43:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED2DA189EDCB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:40:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 460B6A41C03
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:43:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C55E28A3F3;
-	Thu, 17 Jul 2025 09:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA63828B7E0;
+	Thu, 17 Jul 2025 09:43:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eLBpKFoL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="P2w9SBQE"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF61F288CBE;
-	Thu, 17 Jul 2025 09:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7B728850C;
+	Thu, 17 Jul 2025 09:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752745216; cv=none; b=AqZaVqPF1r8xte/vVXPt3MIslsbRmsitjdskSXh0Qv/spuCVR1ZhFhtJIuioU4g7hfOZpNpok6KYR0qn+Zfu/WqKw6u5TMkjo8Rr7tC0B/yNusReClifNdMY2I+a3iMD0kcEhiz+cekbW5CF8rX/YyIOXtWlodhnYin67RPKAhQ=
+	t=1752745408; cv=none; b=X3A9jnz0fDMP1Y8klOhUHlL944DSrxvvNKON3gt57D8XV24n6nCgf3M9hKwgTl46iyuFz8Qec9DkcZNMoBkbR4haMgUTVq6+jJO+3eCwQaNytSIRPp2hXKsokM58mpa3VsUCqYBH/reSMlAKhcKfu9/dc9T6uWMbzZRIp2iraus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752745216; c=relaxed/simple;
-	bh=n/jEGmNwmstPDrrsksmS7Eun3jba5X+4dX/kbanNKYw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qpK304jt9lbqBo9Shn2GMHJqiQ0P9U3LgBjVdwxxk6jv5PRiXlo+NJy90Ri3C2zr44p5lAsXhdpGBXSGsRjpWiAYJODDlw1iSSkbtB/q6WtArAujYSUEd59sRve5L/5Y3TXEu2XjB2y2yfjB4IuYMnKHI64vlktxlci0oFZ8/fY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eLBpKFoL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AD3CC4CEE3;
-	Thu, 17 Jul 2025 09:40:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752745216;
-	bh=n/jEGmNwmstPDrrsksmS7Eun3jba5X+4dX/kbanNKYw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=eLBpKFoLhhM4XYYE2FkftIhVy1C5Vv5jMDARviBBZE7eDzWIDsKWNlVdHfVC4CqjV
-	 HLTGY45sO5bGtBDGpGpgIBrsceQEVdb7Aa6ueHxmiYHbctgYb0pKIeyZYwzxn5JZ/c
-	 KM3aMcOYAKk+7lKCaiNBS51q2udhyM0xNlEfqszg9Oqnzr/w3dasrFQB4S9CtJf/6s
-	 EmeV105c6j9u8wCEzPcKSZPwR1Und1vZJ6afXi8JonYuPFmpvUWBQgYgxXYTS0IopC
-	 9QGqZPa5J7poCwI0Ri+vl7L16QHU0qmJf6z8MzOReYi5QaH2/XpSvck+TfzZ51vhRD
-	 0FJAf6Mp0HGFw==
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-61208b86da2so187328eaf.2;
-        Thu, 17 Jul 2025 02:40:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVkB7Fi8FfTBmRWzycl835QN6FJ+6A5UcSv//zHSyogsgM8H+2mwR38TUHvriCUkgxBSArDqe3Yp01Urgk=@vger.kernel.org, AJvYcCW3L8L6AeQMdla/h9dcoPdS9iPh28IQ0k1Tgzk3Gg/j6mj1iR0VJeGMAJnbbA+8YEyp0NzLXu5mPjI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmC99nX0kObSOFSI3afAmW5rr0HXuodCLXjjd2oOPt0taymNjP
-	97fCO5oQ2ttGjqLM3I6KYU3lKZvcTNQBqM0xopyxt+uj+Ta89GSYxR/gr6Ly+9YvXw1I8Kye+h5
-	5W7wrDUrwvxu51Bmt3bzA10gmiULd88A=
-X-Google-Smtp-Source: AGHT+IHyFjB0hVzWZMrgRfqjqyCBvNUF3k8laQHHTCdJ62HP30es2BBivCx9gqjaAWEnntZ0aahfFQqpXc1LqYLpVgI=
-X-Received: by 2002:a05:6820:4b87:b0:610:fc12:cbb4 with SMTP id
- 006d021491bc7-6159fe1ef24mr5129587eaf.1.1752745215456; Thu, 17 Jul 2025
- 02:40:15 -0700 (PDT)
+	s=arc-20240116; t=1752745408; c=relaxed/simple;
+	bh=G7Hb7FeOrgQ8UwCwmeyr2yC/YoZNz3jb5vCPiQH+Wok=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bMLSnS5kwk4tzFRAAjZY5DWwH9UEwVTJdPwd3BRR2UqGtxgVOpqcMCMyAL7y2Fux1OFJFi/x746GohiXrH7XS0S5VHYFgG5nbl1mW0Pb05ikJsv1jeiGyq8JUmpaouYhjT9xg85aCaovktl/c/ztifrUQMFT0qkQ//Nto3QeQOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=P2w9SBQE; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56H9h5Cv2706530;
+	Thu, 17 Jul 2025 04:43:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1752745385;
+	bh=RYJvgbfTwF+7OnJoBVTQ1flmnVbzU5fwW3fxVDxylhc=;
+	h=From:To:CC:Subject:Date;
+	b=P2w9SBQEg1vTvoUY5g1peOsDTotGmAfK04pKhrRj4d1P4T4Af3PUnv05e2PhKxX7m
+	 ve+EH+x/Hp3vJEo2mPdL4usqYc5fx+wAUaIAhU0lja3ikQwwCdQquUTbSa9K/AekR7
+	 wJNs/wF/OAa53aWULGi7Ka3nu4vjfsJlrHKS7qLE=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56H9h5RB2701297
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 17 Jul 2025 04:43:05 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 17
+ Jul 2025 04:43:04 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 17 Jul 2025 04:43:04 -0500
+Received: from hm-pc.dhcp.ti.com (hm-pc.dhcp.ti.com [10.24.69.129])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56H9gx3f1639397;
+	Thu, 17 Jul 2025 04:43:00 -0500
+From: Himanshu Mittal <h-mittal1@ti.com>
+To: <horms@kernel.org>, <h-mittal1@ti.com>, <pabeni@redhat.com>,
+        <kuba@kernel.org>, <edumazet@google.com>, <davem@davemloft.net>,
+        <andrew+netdev@lunn.ch>
+CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>,
+        Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>,
+        <m-malladi@ti.com>, <pratheesh@ti.com>, <prajith@ti.com>
+Subject: [PATCH net v3] net: ti: icssg-prueth: Fix buffer allocation for ICSSG
+Date: Thu, 17 Jul 2025 15:12:20 +0530
+Message-ID: <20250717094220.546388-1-h-mittal1@ti.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6198088.lOV4Wx5bFT@rjwysocki.net> <CAGETcx-ddJMua5_VMNofr2vZ9n5Oyo4iT6Bac825L8tFqqQsxg@mail.gmail.com>
-In-Reply-To: <CAGETcx-ddJMua5_VMNofr2vZ9n5Oyo4iT6Bac825L8tFqqQsxg@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 17 Jul 2025 11:40:04 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jBQbDx2G0ZUy+Jx2yAdt_KCOJhOEbpQfLar=yWwvbhOA@mail.gmail.com>
-X-Gm-Features: Ac12FXw6-PWegMeVz_LQhekIZH8m6qssTfLXZ96WnnZI-UK1ShtRgVUHOqFUplU
-Message-ID: <CAJZ5v0jBQbDx2G0ZUy+Jx2yAdt_KCOJhOEbpQfLar=yWwvbhOA@mail.gmail.com>
-Subject: Re: [PATCH v1] PM: sleep: Rearrange suspend/resume error handling in
- the core
-To: Saravana Kannan <saravanak@google.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Wed, Jul 16, 2025 at 11:52=E2=80=AFPM Saravana Kannan <saravanak@google.=
-com> wrote:
->
-> On Wed, Jul 16, 2025 at 12:31=E2=80=AFPM Rafael J. Wysocki <rafael@kernel=
-.org> wrote:
-> >
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > Notice that device_suspend_noirq(), device_suspend_late() and
-> > device_suspend() all set async_error on errors, so they don't really
-> > need to return a value.  Accordingly, make them all void and use
-> > async_error in their callers instead of their return values.
-> >
-> > Moreover, since async_error is updated concurrently without locking
-> > during asynchronous suspend and resume processing, use READ_ONCE() and
-> > WRITE_ONCE() for accessing it in those places to ensure that all of the
-> > accesses will be carried out as expected.
-> >
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >
-> > Based on the current linux-pm.git material in linux-next.
-> >
-> > ---
-> >  drivers/base/power/main.c |   79 ++++++++++++++++++++-----------------=
----------
-> >  1 file changed, 35 insertions(+), 44 deletions(-)
-> >
-> > --- a/drivers/base/power/main.c
-> > +++ b/drivers/base/power/main.c
-> > @@ -767,7 +767,7 @@
-> >         TRACE_RESUME(error);
-> >
-> >         if (error) {
-> > -               async_error =3D error;
-> > +               WRITE_ONCE(async_error, error);
-> >                 dpm_save_failed_dev(dev_name(dev));
-> >                 pm_dev_err(dev, state, async ? " async noirq" : " noirq=
-", error);
-> >         }
-> > @@ -824,7 +824,7 @@
-> >         mutex_unlock(&dpm_list_mtx);
-> >         async_synchronize_full();
-> >         dpm_show_time(starttime, state, 0, "noirq");
-> > -       if (async_error)
-> > +       if (READ_ONCE(async_error))
-> >                 dpm_save_failed_step(SUSPEND_RESUME_NOIRQ);
-> >
-> >         trace_suspend_resume(TPS("dpm_resume_noirq"), state.event, fals=
-e);
-> > @@ -910,7 +910,7 @@
-> >         complete_all(&dev->power.completion);
-> >
-> >         if (error) {
-> > -               async_error =3D error;
-> > +               WRITE_ONCE(async_error, error);
-> >                 dpm_save_failed_dev(dev_name(dev));
-> >                 pm_dev_err(dev, state, async ? " async early" : " early=
-", error);
-> >         }
-> > @@ -971,7 +971,7 @@
-> >         mutex_unlock(&dpm_list_mtx);
-> >         async_synchronize_full();
-> >         dpm_show_time(starttime, state, 0, "early");
-> > -       if (async_error)
-> > +       if (READ_ONCE(async_error))
-> >                 dpm_save_failed_step(SUSPEND_RESUME_EARLY);
-> >
-> >         trace_suspend_resume(TPS("dpm_resume_early"), state.event, fals=
-e);
-> > @@ -1086,7 +1086,7 @@
-> >         TRACE_RESUME(error);
-> >
-> >         if (error) {
-> > -               async_error =3D error;
-> > +               WRITE_ONCE(async_error, error);
-> >                 dpm_save_failed_dev(dev_name(dev));
-> >                 pm_dev_err(dev, state, async ? " async" : "", error);
-> >         }
-> > @@ -1150,7 +1150,7 @@
-> >         mutex_unlock(&dpm_list_mtx);
-> >         async_synchronize_full();
-> >         dpm_show_time(starttime, state, 0, NULL);
-> > -       if (async_error)
-> > +       if (READ_ONCE(async_error))
-> >                 dpm_save_failed_step(SUSPEND_RESUME);
-> >
-> >         cpufreq_resume();
-> > @@ -1387,7 +1387,7 @@
-> >   * The driver of @dev will not receive interrupts while this function =
-is being
-> >   * executed.
-> >   */
-> > -static int device_suspend_noirq(struct device *dev, pm_message_t state=
-, bool async)
-> > +static void device_suspend_noirq(struct device *dev, pm_message_t stat=
-e, bool async)
-> >  {
-> >         pm_callback_t callback =3D NULL;
-> >         const char *info =3D NULL;
-> > @@ -1398,7 +1398,7 @@
-> >
-> >         dpm_wait_for_subordinate(dev, async);
-> >
-> > -       if (async_error)
-> > +       if (READ_ONCE(async_error))
-> >                 goto Complete;
-> >
-> >         if (dev->power.syscore || dev->power.direct_complete)
-> > @@ -1431,7 +1431,7 @@
-> >  Run:
-> >         error =3D dpm_run_callback(callback, dev, state, info);
-> >         if (error) {
-> > -               async_error =3D error;
-> > +               WRITE_ONCE(async_error, error);
-> >                 dpm_save_failed_dev(dev_name(dev));
-> >                 pm_dev_err(dev, state, async ? " async noirq" : " noirq=
-", error);
-> >                 goto Complete;
-> > @@ -1457,12 +1457,10 @@
-> >         complete_all(&dev->power.completion);
-> >         TRACE_SUSPEND(error);
-> >
-> > -       if (error || async_error)
-> > -               return error;
-> > +       if (error || READ_ONCE(async_error))
-> > +               return;
-> >
-> >         dpm_async_suspend_superior(dev, async_suspend_noirq);
-> > -
-> > -       return 0;
-> >  }
-> >
-> >  static void async_suspend_noirq(void *data, async_cookie_t cookie)
-> > @@ -1477,7 +1475,7 @@
-> >  {
-> >         ktime_t starttime =3D ktime_get();
-> >         struct device *dev;
-> > -       int error =3D 0;
-> > +       int error;
->
-> Are we still keeping around the error variable ... (question continues
-> further down)
-> >
-> >         trace_suspend_resume(TPS("dpm_suspend_noirq"), state.event, tru=
-e);
-> >
-> > @@ -1508,13 +1506,13 @@
-> >
-> >                 mutex_unlock(&dpm_list_mtx);
-> >
-> > -               error =3D device_suspend_noirq(dev, state, false);
-> > +               device_suspend_noirq(dev, state, false);
-> >
-> >                 put_device(dev);
-> >
-> >                 mutex_lock(&dpm_list_mtx);
-> >
-> > -               if (error || async_error) {
-> > +               if (READ_ONCE(async_error)) {
-> >                         dpm_async_suspend_complete_all(&dpm_late_early_=
-list);
-> >                         /*
-> >                          * Move all devices to the target list to resum=
-e them
-> > @@ -1528,9 +1526,8 @@
-> >         mutex_unlock(&dpm_list_mtx);
-> >
-> >         async_synchronize_full();
-> > -       if (!error)
-> > -               error =3D async_error;
-> >
-> > +       error =3D READ_ONCE(async_error);
->
-> Just to cache the value locally so that the value used for the "if()"
-> check is the one that's sent to dpm_show_time()?
+Fixes overlapping buffer allocation for ICSSG peripheral
+used for storing packets to be received/transmitted.
+There are 3 buffers:
+1. Buffer for Locally Injected Packets
+2. Buffer for Forwarding Packets
+3. Buffer for Host Egress Packets
 
-Generally, yes.
+In existing allocation buffers for 2. and 3. are overlapping causing
+packet corruption.
 
-To be more precise, the READ_ONCE() is not really necessary after the
-async_synchronize_full(), so "bare" async_error could be used going
-forward, but then I would need to add a comment explaining this here
-and in two other places, so I chose to just use the existing local
-variable to store the value.
+Packet corruption observations:
+During tcp iperf testing, due to overlapping buffers the received ack
+packet overwrites the packet to be transmitted. So, we see packets on
+wire with the ack packet content inside the content of next TCP packet
+from sender device.
 
-> Put another way, why can't we also delete the local "error" variable?
+Details for AM64x switch mode:
+-> Allocation by existing driver:
++---------+-------------------------------------------------------------+
+|         |          SLICE 0             |          SLICE 1             |
+|         +------+--------------+--------+------+--------------+--------+
+|         | Slot | Base Address | Size   | Slot | Base Address | Size   |
+|---------+------+--------------+--------+------+--------------+--------+
+|         | 0    | 70000000     | 0x2000 | 0    | 70010000     | 0x2000 |
+|         | 1    | 70002000     | 0x2000 | 1    | 70012000     | 0x2000 |
+|         | 2    | 70004000     | 0x2000 | 2    | 70014000     | 0x2000 |
+| FWD     | 3    | 70006000     | 0x2000 | 3    | 70016000     | 0x2000 |
+| Buffers | 4    | 70008000     | 0x2000 | 4    | 70018000     | 0x2000 |
+|         | 5    | 7000A000     | 0x2000 | 5    | 7001A000     | 0x2000 |
+|         | 6    | 7000C000     | 0x2000 | 6    | 7001C000     | 0x2000 |
+|         | 7    | 7000E000     | 0x2000 | 7    | 7001E000     | 0x2000 |
++---------+------+--------------+--------+------+--------------+--------+
+|         | 8    | 70020000     | 0x1000 | 8    | 70028000     | 0x1000 |
+|         | 9    | 70021000     | 0x1000 | 9    | 70029000     | 0x1000 |
+|         | 10   | 70022000     | 0x1000 | 10   | 7002A000     | 0x1000 |
+| Our     | 11   | 70023000     | 0x1000 | 11   | 7002B000     | 0x1000 |
+| LI      | 12   | 00000000     | 0x0    | 12   | 00000000     | 0x0    |
+| Buffers | 13   | 00000000     | 0x0    | 13   | 00000000     | 0x0    |
+|         | 14   | 00000000     | 0x0    | 14   | 00000000     | 0x0    |
+|         | 15   | 00000000     | 0x0    | 15   | 00000000     | 0x0    |
++---------+------+--------------+--------+------+--------------+--------+
+|         | 16   | 70024000     | 0x1000 | 16   | 7002C000     | 0x1000 |
+|         | 17   | 70025000     | 0x1000 | 17   | 7002D000     | 0x1000 |
+|         | 18   | 70026000     | 0x1000 | 18   | 7002E000     | 0x1000 |
+| Their   | 19   | 70027000     | 0x1000 | 19   | 7002F000     | 0x1000 |
+| LI      | 20   | 00000000     | 0x0    | 20   | 00000000     | 0x0    |
+| Buffers | 21   | 00000000     | 0x0    | 21   | 00000000     | 0x0    |
+|         | 22   | 00000000     | 0x0    | 22   | 00000000     | 0x0    |
+|         | 23   | 00000000     | 0x0    | 23   | 00000000     | 0x0    |
++---------+------+--------------+--------+------+--------------+--------+
+--> here 16, 17, 18, 19 overlapping with below express buffer
 
-It could be deleted, but I preferred to make fewer changes in this patch.
++-----+-----------------------------------------------+
+|     |       SLICE 0       |        SLICE 1          |
+|     +------------+----------+------------+----------+
+|     | Start addr | End addr | Start addr | End addr |
++-----+------------+----------+------------+----------+
+| EXP | 70024000   | 70028000 | 7002C000   | 70030000 | <-- Overlapping
+| PRE | 70030000   | 70033800 | 70034000   | 70037800 |
++-----+------------+----------+------------+----------+
 
-> Assuming we need to keep "error":
->
-> Reviewed-by: Saravana Kannan <saravanak@google.com>
++---------------------+----------+----------+
+|                     | SLICE 0  |  SLICE 1 |
++---------------------+----------+----------+
+| Default Drop Offset | 00000000 | 00000000 |     <-- Field not configured
++---------------------+----------+----------+
 
-Thanks!
+-> Allocation this patch brings:
++---------+-------------------------------------------------------------+
+|         |          SLICE 0             |          SLICE 1             |
+|         +------+--------------+--------+------+--------------+--------+
+|         | Slot | Base Address | Size   | Slot | Base Address | Size   |
+|---------+------+--------------+--------+------+--------------+--------+
+|         | 0    | 70000000     | 0x2000 | 0    | 70040000     | 0x2000 |
+|         | 1    | 70002000     | 0x2000 | 1    | 70042000     | 0x2000 |
+|         | 2    | 70004000     | 0x2000 | 2    | 70044000     | 0x2000 |
+| FWD     | 3    | 70006000     | 0x2000 | 3    | 70046000     | 0x2000 |
+| Buffers | 4    | 70008000     | 0x2000 | 4    | 70048000     | 0x2000 |
+|         | 5    | 7000A000     | 0x2000 | 5    | 7004A000     | 0x2000 |
+|         | 6    | 7000C000     | 0x2000 | 6    | 7004C000     | 0x2000 |
+|         | 7    | 7000E000     | 0x2000 | 7    | 7004E000     | 0x2000 |
++---------+------+--------------+--------+------+--------------+--------+
+|         | 8    | 70010000     | 0x1000 | 8    | 70050000     | 0x1000 |
+|         | 9    | 70011000     | 0x1000 | 9    | 70051000     | 0x1000 |
+|         | 10   | 70012000     | 0x1000 | 10   | 70052000     | 0x1000 |
+| Our     | 11   | 70013000     | 0x1000 | 11   | 70053000     | 0x1000 |
+| LI      | 12   | 00000000     | 0x0    | 12   | 00000000     | 0x0    |
+| Buffers | 13   | 00000000     | 0x0    | 13   | 00000000     | 0x0    |
+|         | 14   | 00000000     | 0x0    | 14   | 00000000     | 0x0    |
+|         | 15   | 00000000     | 0x0    | 15   | 00000000     | 0x0    |
++---------+------+--------------+--------+------+--------------+--------+
+|         | 16   | 70014000     | 0x1000 | 16   | 70054000     | 0x1000 |
+|         | 17   | 70015000     | 0x1000 | 17   | 70055000     | 0x1000 |
+|         | 18   | 70016000     | 0x1000 | 18   | 70056000     | 0x1000 |
+| Their   | 19   | 70017000     | 0x1000 | 19   | 70057000     | 0x1000 |
+| LI      | 20   | 00000000     | 0x0    | 20   | 00000000     | 0x0    |
+| Buffers | 21   | 00000000     | 0x0    | 21   | 00000000     | 0x0    |
+|         | 22   | 00000000     | 0x0    | 22   | 00000000     | 0x0    |
+|         | 23   | 00000000     | 0x0    | 23   | 00000000     | 0x0    |
++---------+------+--------------+--------+------+--------------+--------+
+
++-----+-----------------------------------------------+
+|     |       SLICE 0       |        SLICE 1          |
+|     +------------+----------+------------+----------+
+|     | Start addr | End addr | Start addr | End addr |
++-----+------------+----------+------------+----------+
+| EXP | 70018000   | 7001C000 | 70058000   | 7005C000 |
+| PRE | 7001C000   | 7001F800 | 7005C000   | 7005F800 |
++-----+------------+----------+------------+----------+
+
++---------------------+----------+----------+
+|                     | SLICE 0  |  SLICE 1 |
++---------------------+----------+----------+
+| Default Drop Offset | 7001F800 | 7005F800 |
++---------------------+----------+----------+
+
+Rootcause: missing buffer configuration for Express frames in
+function: prueth_fw_offload_buffer_setup()
+
+Details:
+Driver implements two distinct buffer configuration functions that are
+invoked based on the driver state and ICSSG firmware:-
+- prueth_fw_offload_buffer_setup()
+- prueth_emac_buffer_setup()
+
+During initialization, driver creates standard network interfaces
+(netdevs) and configures buffers via prueth_emac_buffer_setup().
+This function properly allocates and configures all required memory
+regions including:
+- LI buffers
+- Express packet buffers
+- Preemptible packet buffers
+
+However, when the driver transitions to an offload mode (switch/HSR/PRP),
+buffer reconfiguration is handled by prueth_fw_offload_buffer_setup().
+This function does not reconfigure the buffer regions required for
+Express packets, leading to incorrect buffer allocation.
+
+Fixes: abd5576b9c57 ("net: ti: icssg-prueth: Add support for ICSSG switch firmware")
+Signed-off-by: Himanshu Mittal <h-mittal1@ti.com>
+---
+ drivers/net/ethernet/ti/icssg/icssg_config.c  | 158 ++++++++++++------
+ drivers/net/ethernet/ti/icssg/icssg_config.h  |  80 +++++++--
+ drivers/net/ethernet/ti/icssg/icssg_prueth.c  |  20 ++-
+ drivers/net/ethernet/ti/icssg/icssg_prueth.h  |   2 +
+ .../net/ethernet/ti/icssg/icssg_switch_map.h  |   3 +
+ 5 files changed, 190 insertions(+), 73 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.c b/drivers/net/ethernet/ti/icssg/icssg_config.c
+index ddfd1c02a885..da53eb04b0a4 100644
+--- a/drivers/net/ethernet/ti/icssg/icssg_config.c
++++ b/drivers/net/ethernet/ti/icssg/icssg_config.c
+@@ -288,8 +288,12 @@ static int prueth_fw_offload_buffer_setup(struct prueth_emac *emac)
+ 	int i;
+ 
+ 	addr = lower_32_bits(prueth->msmcram.pa);
+-	if (slice)
+-		addr += PRUETH_NUM_BUF_POOLS * PRUETH_EMAC_BUF_POOL_SIZE;
++	if (slice) {
++		if (prueth->pdata.banked_ms_ram)
++			addr += MSMC_RAM_BANK_SIZE;
++		else
++			addr += PRUETH_SW_TOTAL_BUF_SIZE_PER_SLICE;
++	}
+ 
+ 	if (addr % SZ_64K) {
+ 		dev_warn(prueth->dev, "buffer pool needs to be 64KB aligned\n");
+@@ -297,43 +301,66 @@ static int prueth_fw_offload_buffer_setup(struct prueth_emac *emac)
+ 	}
+ 
+ 	bpool_cfg = emac->dram.va + BUFFER_POOL_0_ADDR_OFFSET;
+-	/* workaround for f/w bug. bpool 0 needs to be initialized */
+-	for (i = 0; i <  PRUETH_NUM_BUF_POOLS; i++) {
++
++	/* Configure buffer pools for forwarding buffers
++	 * - used by firmware to store packets to be forwarded to other port
++	 * - 8 total pools per slice
++	 */
++	for (i = 0; i <  PRUETH_NUM_FWD_BUF_POOLS_PER_SLICE; i++) {
+ 		writel(addr, &bpool_cfg[i].addr);
+-		writel(PRUETH_EMAC_BUF_POOL_SIZE, &bpool_cfg[i].len);
+-		addr += PRUETH_EMAC_BUF_POOL_SIZE;
++		writel(PRUETH_SW_FWD_BUF_POOL_SIZE, &bpool_cfg[i].len);
++		addr += PRUETH_SW_FWD_BUF_POOL_SIZE;
+ 	}
+ 
+-	if (!slice)
+-		addr += PRUETH_NUM_BUF_POOLS * PRUETH_EMAC_BUF_POOL_SIZE;
+-	else
+-		addr += PRUETH_SW_NUM_BUF_POOLS_HOST * PRUETH_SW_BUF_POOL_SIZE_HOST;
+-
+-	for (i = PRUETH_NUM_BUF_POOLS;
+-	     i < 2 * PRUETH_SW_NUM_BUF_POOLS_HOST + PRUETH_NUM_BUF_POOLS;
+-	     i++) {
+-		/* The driver only uses first 4 queues per PRU so only initialize them */
+-		if (i % PRUETH_SW_NUM_BUF_POOLS_HOST < PRUETH_SW_NUM_BUF_POOLS_PER_PRU) {
+-			writel(addr, &bpool_cfg[i].addr);
+-			writel(PRUETH_SW_BUF_POOL_SIZE_HOST, &bpool_cfg[i].len);
+-			addr += PRUETH_SW_BUF_POOL_SIZE_HOST;
++	/* Configure buffer pools for Local Injection buffers
++	 *  - used by firmware to store packets received from host core
++	 *  - 16 total pools per slice
++	 */
++	for (i = 0; i < PRUETH_NUM_LI_BUF_POOLS_PER_SLICE; i++) {
++		int cfg_idx = i + PRUETH_NUM_FWD_BUF_POOLS_PER_SLICE;
++
++		/* The driver only uses first 4 queues per PRU,
++		 * so only initialize buffer for them
++		 */
++		if ((i % PRUETH_NUM_LI_BUF_POOLS_PER_PORT_PER_SLICE)
++			 < PRUETH_SW_USED_LI_BUF_POOLS_PER_PORT_PER_SLICE) {
++			writel(addr, &bpool_cfg[cfg_idx].addr);
++			writel(PRUETH_SW_LI_BUF_POOL_SIZE,
++			       &bpool_cfg[cfg_idx].len);
++			addr += PRUETH_SW_LI_BUF_POOL_SIZE;
+ 		} else {
+-			writel(0, &bpool_cfg[i].addr);
+-			writel(0, &bpool_cfg[i].len);
++			writel(0, &bpool_cfg[cfg_idx].addr);
++			writel(0, &bpool_cfg[cfg_idx].len);
+ 		}
+ 	}
+ 
+-	if (!slice)
+-		addr += PRUETH_SW_NUM_BUF_POOLS_HOST * PRUETH_SW_BUF_POOL_SIZE_HOST;
+-	else
+-		addr += PRUETH_EMAC_RX_CTX_BUF_SIZE;
++	/* Express RX buffer queue
++	 *  - used by firmware to store express packets to be transmitted
++	 *    to the host core
++	 */
++	rxq_ctx = emac->dram.va + HOST_RX_Q_EXP_CONTEXT_OFFSET;
++	for (i = 0; i < 3; i++)
++		writel(addr, &rxq_ctx->start[i]);
++
++	addr += PRUETH_SW_HOST_EXP_BUF_POOL_SIZE;
++	writel(addr, &rxq_ctx->end);
+ 
++	/* Pre-emptible RX buffer queue
++	 *  - used by firmware to store preemptible packets to be transmitted
++	 *    to the host core
++	 */
+ 	rxq_ctx = emac->dram.va + HOST_RX_Q_PRE_CONTEXT_OFFSET;
+ 	for (i = 0; i < 3; i++)
+ 		writel(addr, &rxq_ctx->start[i]);
+ 
+-	addr += PRUETH_EMAC_RX_CTX_BUF_SIZE;
+-	writel(addr - SZ_2K, &rxq_ctx->end);
++	addr += PRUETH_SW_HOST_PRE_BUF_POOL_SIZE;
++	writel(addr, &rxq_ctx->end);
++
++	/* Set pointer for default dropped packet write
++	 *  - used by firmware to temporarily store packet to be dropped
++	 */
++	rxq_ctx = emac->dram.va + DEFAULT_MSMC_Q_OFFSET;
++	writel(addr, &rxq_ctx->start[0]);
+ 
+ 	return 0;
+ }
+@@ -347,13 +374,13 @@ static int prueth_emac_buffer_setup(struct prueth_emac *emac)
+ 	u32 addr;
+ 	int i;
+ 
+-	/* Layout to have 64KB aligned buffer pool
+-	 * |BPOOL0|BPOOL1|RX_CTX0|RX_CTX1|
+-	 */
+-
+ 	addr = lower_32_bits(prueth->msmcram.pa);
+-	if (slice)
+-		addr += PRUETH_NUM_BUF_POOLS * PRUETH_EMAC_BUF_POOL_SIZE;
++	if (slice) {
++		if (prueth->pdata.banked_ms_ram)
++			addr += MSMC_RAM_BANK_SIZE;
++		else
++			addr += PRUETH_EMAC_TOTAL_BUF_SIZE_PER_SLICE;
++	}
+ 
+ 	if (addr % SZ_64K) {
+ 		dev_warn(prueth->dev, "buffer pool needs to be 64KB aligned\n");
+@@ -361,39 +388,66 @@ static int prueth_emac_buffer_setup(struct prueth_emac *emac)
+ 	}
+ 
+ 	bpool_cfg = emac->dram.va + BUFFER_POOL_0_ADDR_OFFSET;
+-	/* workaround for f/w bug. bpool 0 needs to be initilalized */
+-	writel(addr, &bpool_cfg[0].addr);
+-	writel(0, &bpool_cfg[0].len);
+ 
+-	for (i = PRUETH_EMAC_BUF_POOL_START;
+-	     i < PRUETH_EMAC_BUF_POOL_START + PRUETH_NUM_BUF_POOLS;
+-	     i++) {
+-		writel(addr, &bpool_cfg[i].addr);
+-		writel(PRUETH_EMAC_BUF_POOL_SIZE, &bpool_cfg[i].len);
+-		addr += PRUETH_EMAC_BUF_POOL_SIZE;
++	/* Configure buffer pools for forwarding buffers
++	 *  - in mac mode - no forwarding so initialize all pools to 0
++	 *  - 8 total pools per slice
++	 */
++	for (i = 0; i <  PRUETH_NUM_FWD_BUF_POOLS_PER_SLICE; i++) {
++		writel(0, &bpool_cfg[i].addr);
++		writel(0, &bpool_cfg[i].len);
+ 	}
+ 
+-	if (!slice)
+-		addr += PRUETH_NUM_BUF_POOLS * PRUETH_EMAC_BUF_POOL_SIZE;
+-	else
+-		addr += PRUETH_EMAC_RX_CTX_BUF_SIZE * 2;
++	/* Configure buffer pools for Local Injection buffers
++	 *  - used by firmware to store packets received from host core
++	 *  - 16 total pools per slice
++	 */
++	bpool_cfg = emac->dram.va + BUFFER_POOL_0_ADDR_OFFSET;
++	for (i = 0; i < PRUETH_NUM_LI_BUF_POOLS_PER_SLICE; i++) {
++		int cfg_idx = i + PRUETH_NUM_FWD_BUF_POOLS_PER_SLICE;
++
++		/* In EMAC mode, only first 4 buffers are used,
++		 * as 1 slice needs to handle only 1 port
++		 */
++		if (i < PRUETH_EMAC_USED_LI_BUF_POOLS_PER_PORT_PER_SLICE) {
++			writel(addr, &bpool_cfg[cfg_idx].addr);
++			writel(PRUETH_EMAC_LI_BUF_POOL_SIZE,
++			       &bpool_cfg[cfg_idx].len);
++			addr += PRUETH_EMAC_LI_BUF_POOL_SIZE;
++		} else {
++			writel(0, &bpool_cfg[cfg_idx].addr);
++			writel(0, &bpool_cfg[cfg_idx].len);
++		}
++	}
+ 
+-	/* Pre-emptible RX buffer queue */
+-	rxq_ctx = emac->dram.va + HOST_RX_Q_PRE_CONTEXT_OFFSET;
++	/* Express RX buffer queue
++	 *  - used by firmware to store express packets to be transmitted
++	 *    to host core
++	 */
++	rxq_ctx = emac->dram.va + HOST_RX_Q_EXP_CONTEXT_OFFSET;
+ 	for (i = 0; i < 3; i++)
+ 		writel(addr, &rxq_ctx->start[i]);
+ 
+-	addr += PRUETH_EMAC_RX_CTX_BUF_SIZE;
++	addr += PRUETH_EMAC_HOST_EXP_BUF_POOL_SIZE;
+ 	writel(addr, &rxq_ctx->end);
+ 
+-	/* Express RX buffer queue */
+-	rxq_ctx = emac->dram.va + HOST_RX_Q_EXP_CONTEXT_OFFSET;
++	/* Pre-emptible RX buffer queue
++	 *  - used by firmware to store preemptible packets to be transmitted
++	 *    to host core
++	 */
++	rxq_ctx = emac->dram.va + HOST_RX_Q_PRE_CONTEXT_OFFSET;
+ 	for (i = 0; i < 3; i++)
+ 		writel(addr, &rxq_ctx->start[i]);
+ 
+-	addr += PRUETH_EMAC_RX_CTX_BUF_SIZE;
++	addr += PRUETH_EMAC_HOST_PRE_BUF_POOL_SIZE;
+ 	writel(addr, &rxq_ctx->end);
+ 
++	/* Set pointer for default dropped packet write
++	 *  - used by firmware to temporarily store packet to be dropped
++	 */
++	rxq_ctx = emac->dram.va + DEFAULT_MSMC_Q_OFFSET;
++	writel(addr, &rxq_ctx->start[0]);
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.h b/drivers/net/ethernet/ti/icssg/icssg_config.h
+index c884e9fa099e..60d69744ffae 100644
+--- a/drivers/net/ethernet/ti/icssg/icssg_config.h
++++ b/drivers/net/ethernet/ti/icssg/icssg_config.h
+@@ -26,21 +26,71 @@ struct icssg_flow_cfg {
+ #define PRUETH_MAX_RX_FLOWS	1	/* excluding default flow */
+ #define PRUETH_RX_FLOW_DATA	0
+ 
+-#define PRUETH_EMAC_BUF_POOL_SIZE	SZ_8K
+-#define PRUETH_EMAC_POOLS_PER_SLICE	24
+-#define PRUETH_EMAC_BUF_POOL_START	8
+-#define PRUETH_NUM_BUF_POOLS	8
+-#define PRUETH_EMAC_RX_CTX_BUF_SIZE	SZ_16K	/* per slice */
+-#define MSMC_RAM_SIZE	\
+-	(2 * (PRUETH_EMAC_BUF_POOL_SIZE * PRUETH_NUM_BUF_POOLS + \
+-	 PRUETH_EMAC_RX_CTX_BUF_SIZE * 2))
+-
+-#define PRUETH_SW_BUF_POOL_SIZE_HOST	SZ_4K
+-#define PRUETH_SW_NUM_BUF_POOLS_HOST	8
+-#define PRUETH_SW_NUM_BUF_POOLS_PER_PRU 4
+-#define MSMC_RAM_SIZE_SWITCH_MODE \
+-	(MSMC_RAM_SIZE + \
+-	(2 * PRUETH_SW_BUF_POOL_SIZE_HOST * PRUETH_SW_NUM_BUF_POOLS_HOST))
++/* Defines for forwarding path buffer pools:
++ *   - used by firmware to store packets to be forwarded to other port
++ *   - 8 total pools per slice
++ *   - only used in switch mode (as no forwarding in mac mode)
++ */
++#define PRUETH_NUM_FWD_BUF_POOLS_PER_SLICE			8
++#define PRUETH_SW_FWD_BUF_POOL_SIZE				(SZ_8K)
++
++/* Defines for local injection path buffer pools:
++ *   - used by firmware to store packets received from host core
++ *   - 16 total pools per slice
++ *   - 8 pools per port per slice and each slice handles both ports
++ *   - only 4 out of 8 pools used per port (as only 4 real QoS levels in ICSSG)
++ *   - switch mode: 8 total pools used
++ *   - mac mode:    4 total pools used
++ */
++#define PRUETH_NUM_LI_BUF_POOLS_PER_SLICE			16
++#define PRUETH_NUM_LI_BUF_POOLS_PER_PORT_PER_SLICE		8
++#define PRUETH_SW_LI_BUF_POOL_SIZE				SZ_4K
++#define PRUETH_SW_USED_LI_BUF_POOLS_PER_SLICE			8
++#define PRUETH_SW_USED_LI_BUF_POOLS_PER_PORT_PER_SLICE		4
++#define PRUETH_EMAC_LI_BUF_POOL_SIZE				SZ_8K
++#define PRUETH_EMAC_USED_LI_BUF_POOLS_PER_SLICE			4
++#define PRUETH_EMAC_USED_LI_BUF_POOLS_PER_PORT_PER_SLICE	4
++
++/* Defines for host egress path - express and preemptible buffers
++ *   - used by firmware to store express and preemptible packets
++ *     to be transmitted to host core
++ *   - used by both mac/switch modes
++ */
++#define PRUETH_SW_HOST_EXP_BUF_POOL_SIZE	SZ_16K
++#define PRUETH_SW_HOST_PRE_BUF_POOL_SIZE	(SZ_16K - SZ_2K)
++#define PRUETH_EMAC_HOST_EXP_BUF_POOL_SIZE	PRUETH_SW_HOST_EXP_BUF_POOL_SIZE
++#define PRUETH_EMAC_HOST_PRE_BUF_POOL_SIZE	PRUETH_SW_HOST_PRE_BUF_POOL_SIZE
++
++/* Buffer used by firmware to temporarily store packet to be dropped */
++#define PRUETH_SW_DROP_PKT_BUF_SIZE		SZ_2K
++#define PRUETH_EMAC_DROP_PKT_BUF_SIZE		PRUETH_SW_DROP_PKT_BUF_SIZE
++
++/* Total switch mode memory usage for buffers per slice */
++#define PRUETH_SW_TOTAL_BUF_SIZE_PER_SLICE \
++	(PRUETH_SW_FWD_BUF_POOL_SIZE * PRUETH_NUM_FWD_BUF_POOLS_PER_SLICE + \
++	 PRUETH_SW_LI_BUF_POOL_SIZE * PRUETH_SW_USED_LI_BUF_POOLS_PER_SLICE + \
++	 PRUETH_SW_HOST_EXP_BUF_POOL_SIZE + \
++	 PRUETH_SW_HOST_PRE_BUF_POOL_SIZE + \
++	 PRUETH_SW_DROP_PKT_BUF_SIZE)
++
++/* Total switch mode memory usage for all buffers */
++#define PRUETH_SW_TOTAL_BUF_SIZE \
++	(2 * PRUETH_SW_TOTAL_BUF_SIZE_PER_SLICE)
++
++/* Total mac mode memory usage for buffers per slice */
++#define PRUETH_EMAC_TOTAL_BUF_SIZE_PER_SLICE \
++	(PRUETH_EMAC_LI_BUF_POOL_SIZE * \
++	 PRUETH_EMAC_USED_LI_BUF_POOLS_PER_SLICE + \
++	 PRUETH_EMAC_HOST_EXP_BUF_POOL_SIZE + \
++	 PRUETH_EMAC_HOST_PRE_BUF_POOL_SIZE + \
++	 PRUETH_EMAC_DROP_PKT_BUF_SIZE)
++
++/* Total mac mode memory usage for all buffers */
++#define PRUETH_EMAC_TOTAL_BUF_SIZE \
++	(2 * PRUETH_EMAC_TOTAL_BUF_SIZE_PER_SLICE)
++
++/* Size of 1 bank of MSMC/OC_SRAM memory */
++#define MSMC_RAM_BANK_SIZE			SZ_256K
+ 
+ #define PRUETH_SWITCH_FDB_MASK ((SIZE_OF_FDB / NUMBER_OF_FDB_BUCKET_ENTRIES) - 1)
+ 
+diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+index 86fc1278127c..2f5c4335dec3 100644
+--- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
++++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+@@ -1764,10 +1764,15 @@ static int prueth_probe(struct platform_device *pdev)
+ 		goto put_mem;
+ 	}
+ 
+-	msmc_ram_size = MSMC_RAM_SIZE;
+ 	prueth->is_switchmode_supported = prueth->pdata.switch_mode;
+-	if (prueth->is_switchmode_supported)
+-		msmc_ram_size = MSMC_RAM_SIZE_SWITCH_MODE;
++	if (prueth->pdata.banked_ms_ram) {
++		/* Reserve 2 MSMC RAM banks for buffers to avoid arbitration */
++		msmc_ram_size = (2 * MSMC_RAM_BANK_SIZE);
++	} else {
++		msmc_ram_size = PRUETH_EMAC_TOTAL_BUF_SIZE;
++		if (prueth->is_switchmode_supported)
++			msmc_ram_size = PRUETH_SW_TOTAL_BUF_SIZE;
++	}
+ 
+ 	/* NOTE: FW bug needs buffer base to be 64KB aligned */
+ 	prueth->msmcram.va =
+@@ -1924,7 +1929,8 @@ static int prueth_probe(struct platform_device *pdev)
+ 
+ free_pool:
+ 	gen_pool_free(prueth->sram_pool,
+-		      (unsigned long)prueth->msmcram.va, msmc_ram_size);
++		      (unsigned long)prueth->msmcram.va,
++		      prueth->msmcram.size);
+ 
+ put_mem:
+ 	pruss_release_mem_region(prueth->pruss, &prueth->shram);
+@@ -1976,8 +1982,8 @@ static void prueth_remove(struct platform_device *pdev)
+ 	icss_iep_put(prueth->iep0);
+ 
+ 	gen_pool_free(prueth->sram_pool,
+-		      (unsigned long)prueth->msmcram.va,
+-		      MSMC_RAM_SIZE);
++		(unsigned long)prueth->msmcram.va,
++		prueth->msmcram.size);
+ 
+ 	pruss_release_mem_region(prueth->pruss, &prueth->shram);
+ 
+@@ -1994,12 +2000,14 @@ static const struct prueth_pdata am654_icssg_pdata = {
+ 	.fdqring_mode = K3_RINGACC_RING_MODE_MESSAGE,
+ 	.quirk_10m_link_issue = 1,
+ 	.switch_mode = 1,
++	.banked_ms_ram = 0,
+ };
+ 
+ static const struct prueth_pdata am64x_icssg_pdata = {
+ 	.fdqring_mode = K3_RINGACC_RING_MODE_RING,
+ 	.quirk_10m_link_issue = 1,
+ 	.switch_mode = 1,
++	.banked_ms_ram = 1,
+ };
+ 
+ static const struct of_device_id prueth_dt_match[] = {
+diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+index 23c465f1ce7f..3bb9fd8c3804 100644
+--- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
++++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+@@ -251,11 +251,13 @@ struct prueth_emac {
+  * @fdqring_mode: Free desc queue mode
+  * @quirk_10m_link_issue: 10M link detect errata
+  * @switch_mode: switch firmware support
++ * @banked_ms_ram: banked memory support
+  */
+ struct prueth_pdata {
+ 	enum k3_ring_mode fdqring_mode;
+ 	u32	quirk_10m_link_issue:1;
+ 	u32	switch_mode:1;
++	u32	banked_ms_ram:1;
+ };
+ 
+ struct icssg_firmwares {
+diff --git a/drivers/net/ethernet/ti/icssg/icssg_switch_map.h b/drivers/net/ethernet/ti/icssg/icssg_switch_map.h
+index 490a9cc06fb0..7e053b8af3ec 100644
+--- a/drivers/net/ethernet/ti/icssg/icssg_switch_map.h
++++ b/drivers/net/ethernet/ti/icssg/icssg_switch_map.h
+@@ -180,6 +180,9 @@
+ /* Used to notify the FW of the current link speed */
+ #define PORT_LINK_SPEED_OFFSET                             0x00A8
+ 
++/* 2k memory pointer reserved for default writes by PRU0*/
++#define DEFAULT_MSMC_Q_OFFSET                              0x00AC
++
+ /* TAS gate mask for windows list0 */
+ #define TAS_GATE_MASK_LIST0                                0x0100
+ 
+-- 
+2.48.1
+
 
