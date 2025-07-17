@@ -1,149 +1,104 @@
-Return-Path: <linux-kernel+bounces-735010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9826DB0896A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:38:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35645B08974
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:38:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB2AF3B791C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:37:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FFB3189856B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C0AC28B3ED;
-	Thu, 17 Jul 2025 09:37:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7CCD28B41D;
+	Thu, 17 Jul 2025 09:38:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Jt+ZgRWa"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UwPkftbr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB1219DFA2;
-	Thu, 17 Jul 2025 09:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 056FE635;
+	Thu, 17 Jul 2025 09:38:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752745074; cv=none; b=HQ0tt6vnvFF7mtqd2bxLqUihNRiZSR2gps+b4f9gHv2N0ROpb79Nstn57yir0ExiWrWOgN2JIb/w+7GZA7QfjAcLGE+dJfgibd7MTzlcTj2e4LM0/4NcyJa90HEr1UBHlVQFRYWC9BvKmD/gSYCK/az3EJTyS0nCGqo7MtUCAig=
+	t=1752745123; cv=none; b=JPtE8ImqvJCRFbPQlZHlEKIXb2hTGizxTZ8xcuO0/Z16TMmBxWc1DoZK957iC8STiRsTVj7MHBqQJJvWWPzl4rKey/WEUcCObUDV2qRyIBl68+QO8UKnFKzk6f7MrUWiUq0OiaIndrGYDszUB6H3G87WU5BUHmGmioglKSMepmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752745074; c=relaxed/simple;
-	bh=M8y+OfB3/gTGlHiZRmj3zVXgpIHR8e4nTN+jjclnz8E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fAwQapQlmlwrIhTpyRwqT54pd7dA1kUN7lJgiFDT9Vj0wcI7Mprg1opyBx8BLQm1vYFSTVoCGa785CMxfxRVkMc5IcVbpSLwavxkMukxrUNVPyFOkdw7g9xh/j4P8tA7DksJLU18dkkOhS9DaIogProA5LDhEPye5p5ggovJ9Zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Jt+ZgRWa; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56H9bMY33050978;
-	Thu, 17 Jul 2025 04:37:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1752745042;
-	bh=rnORj6AwUklafQliia+PljSSSNZViblW/zSxNbyZ6Ks=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=Jt+ZgRWaRZ9mL/QoDBRinVRNWfgjmmowSR6IC9lqeRJJRsT+As4WaU6+WafqPJuzf
-	 e02vXZR4TEY59hWvhsAL1Hip/MTvyoJXyoTk3yrpg9dVQu9hHcCh0NIIpI4SpI8phA
-	 xPs8ZgH2RnJpazm6Q9ldLMnN00LEMttHjOp51pS4=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56H9bLWX128452
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 17 Jul 2025 04:37:22 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 17
- Jul 2025 04:37:21 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 17 Jul 2025 04:37:21 -0500
-Received: from [172.24.29.51] (ltpw0g6zld.dhcp.ti.com [172.24.29.51])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56H9bBNA1949782;
-	Thu, 17 Jul 2025 04:37:12 -0500
-Message-ID: <94196b50-1fd7-410e-83e8-b71bb6835acd@ti.com>
-Date: Thu, 17 Jul 2025 15:07:10 +0530
+	s=arc-20240116; t=1752745123; c=relaxed/simple;
+	bh=SSrptMa19AA/XTd/MCF/BLG2gYrgYjh0sTQ0u3DDHqU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=AqtKy1XPQsiHRR5dq+uZf3EumbF6y9edepgF/azkD1udaz/Eoq9oIUnl8HApw5ZWzNxxuWauaFAWp9Y5WKk2tqesJKgbu3fTgA/GxmgyjgeP0uRiNNBgx2tvt/+qkdJmE7hrHQeZNA1zpWl/BQcI8HiPqYosTN9acFUcgNpx+QU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UwPkftbr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 80E5EC4CEE3;
+	Thu, 17 Jul 2025 09:38:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752745122;
+	bh=SSrptMa19AA/XTd/MCF/BLG2gYrgYjh0sTQ0u3DDHqU=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=UwPkftbrO7iMGO5OaH1JvZV0nI6Hq3UFTYB6bCrA5HJMoJhq9yiSWIbMxsvMNvKN+
+	 foJ/V+IDZiy51TF0vN0fMk7pDuSSYEjcRLlmchjfApOGG83UEk3mt3mHCRHWJl10t5
+	 hCFZAuK6UPv9mtsso20Gi1dryQC7qW2mW7kNOVYFp0RReZEksOUgloT3fDU3tnzEQ8
+	 C25n+ZsO/IGz3AZvI15+jAeea/iAW9oCJk/G+N/DQEJJyi76LIDDA0M1icnx8fbRqm
+	 7yMzL1Go89NN/AE1Y7CbWj7nB1+acnG8lUpZcfqVHffc0DstEEZwVmc2KY2igFGJyh
+	 QFOgTE636FgEg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D7B4C83F22;
+	Thu, 17 Jul 2025 09:38:42 +0000 (UTC)
+From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
+Subject: [PATCH 0/2] rtc: add amlogic C3 RTC node
+Date: Thu, 17 Jul 2025 17:38:36 +0800
+Message-Id: <20250717-rtc-c3-node-v1-0-4f9ae059b8e6@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2] net: ti: icssg-prueth: Fix buffer allocation for
- ICSSG
-To: Simon Horman <horms@kernel.org>
-CC: <pabeni@redhat.com>, <kuba@kernel.org>, <edumazet@google.com>,
-        <davem@davemloft.net>, <andrew+netdev@lunn.ch>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>,
-        <m-malladi@ti.com>, <pratheesh@ti.com>, <prajith@ti.com>
-References: <20250710131250.1294278-1-h-mittal1@ti.com>
- <20250711144323.GV721198@horms.kernel.org>
- <b626dc40-e05b-40e0-b300-45ced82d2f97@ti.com>
- <20250715102943.GU721198@horms.kernel.org>
-Content-Language: en-US
-From: "MITTAL, HIMANSHU" <h-mittal1@ti.com>
-In-Reply-To: <20250715102943.GU721198@horms.kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-B4-Tracking: v=1; b=H4sIAJzEeGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDc0Nz3aKSZN1kY928/JRU3aQkcwtTS4sUS8MkYyWgjoKi1LTMCrBp0bG
+ 1tQD5coUqXQAAAA==
+To: Yiting Deng <yiting.deng@amlogic.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org, linux-rtc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Xianwei Zhao <xianwei.zhao@amlogic.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752745121; l=635;
+ i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
+ bh=SSrptMa19AA/XTd/MCF/BLG2gYrgYjh0sTQ0u3DDHqU=;
+ b=1Jqgf8NPSE7AO66ZMlpxMqW+iQaU9ydrgRT4qpUFi1Uv4UGyEUcAN6agdhwHQqm9FqRSysslV
+ k2tboqtelnLAnleh9ywMSUYZjh+K/q1JBXMPnZy73WrgbjpraPQhO18
+X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
+ pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
+X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
+ auth_id=107
+X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Reply-To: xianwei.zhao@amlogic.com
+
+Add C3 rtc compatible string and device node.
+
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+---
+Xianwei Zhao (2):
+      dt-bindings: rtc: amlogic,a4-rtc: Add compatible string for C3
+      arm64: dts: amlogic: C3: Add RTC controller node
+
+ .../devicetree/bindings/rtc/amlogic,a4-rtc.yaml          | 11 ++++++++---
+ arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi              | 16 ++++++++++++++++
+ 2 files changed, 24 insertions(+), 3 deletions(-)
+---
+base-commit: 0bafe291cb429d39b5ff70bcf7b2f3ab026dcb02
+change-id: 20250717-rtc-c3-node-bb78598d91b3
+
+Best regards,
+-- 
+Xianwei Zhao <xianwei.zhao@amlogic.com>
 
 
-On 7/15/2025 3:59 PM, Simon Horman wrote:
-> On Tue, Jul 15, 2025 at 12:37:45PM +0530, MITTAL, HIMANSHU wrote:
->
-> ...
->
->>>> +-----+-----------------------------------------------+
->>>> |     |       SLICE 0       |        SLICE 1          |
->>>> |     +------------+----------+------------+----------+
->>>> |     | Start addr | End addr | Start addr | End addr |
->>>> +-----+------------+----------+------------+----------+
->>>> | EXP | 70024000   | 70028000 | 7002C000   | 70030000 | <-- Overlapping
->>> Thanks for the detailed explanation with these tables.
->>> It is very helpful. I follow both the existing and new mappings
->>> with their help. Except for one thing.
->>>
->>> It's not clear how EXP was set to the values on the line above.
->>> Probably I'm missing something very obvious.
->>> Could you help me out here?
->> The root cause for this issue is that, buffer configuration for Express
->> Frames
->> in function: prueth_fw_offload_buffer_setup() is missing.
->>
->>
->> Details:
->> The driver implements two distinct buffer configuration functions that are
->> invoked
->> based on the driver state and ICSSG firmware:-
->> prueth_fw_offload_buffer_setup()
->> - prueth_emac_buffer_setup()
->>
->> During initialization, the driver creates standard network interfaces
->> (netdevs) and
->> configures buffers via prueth_emac_buffer_setup(). This function properly
->> allocates
->> and configures all required memory regions including:
->> - LI buffers
->> - Express packet buffers
->> - Preemptible packet buffers
->>
->> However, when the driver transitions to an offload mode (switch/HSR/PRP),
->> buffer reconfiguration is handled by prueth_fw_offload_buffer_setup().
->> This function does not reconfigure the buffer regions required for Express
->> packets,
->> leading to incorrect buffer allocation.
-> Thanks for your patience, I see that now :)
->
-> I'm sorry to drag this out, but I do think it would be useful to add
-> information above the lines of the above to the patch description.
-Thanks for the feedback, I will add this information and create an 
-updated patch.
->>>> | PRE | 70030000   | 70033800 | 70034000   | 70037800 |
->>>> +-----+------------+----------+------------+----------+
->>>>
->>>> +---------------------+----------+----------+
->>>> |                     | SLICE 0  |  SLICE 1 |
->>>> +---------------------+----------+----------+
->>>> | Default Drop Offset | 00000000 | 00000000 |     <-- Field not configured
->>>> +---------------------+----------+----------+
->>> ...
 
