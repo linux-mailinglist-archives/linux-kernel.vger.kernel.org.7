@@ -1,519 +1,240 @@
-Return-Path: <linux-kernel+bounces-735902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BD18B09504
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:33:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB758B09506
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:34:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D535DA661B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:33:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B2011AA5805
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:34:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 037D12F6FBA;
-	Thu, 17 Jul 2025 19:33:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACD892FA65B;
+	Thu, 17 Jul 2025 19:34:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hcAK9Uw/";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BCTnvuRR";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="flcpHr5p";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="60QRonxR"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="loxtWY9x";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="j5yxv1gk"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95A9CA4B
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 19:33:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752780818; cv=none; b=eZT8s36UNHDV16ANTn4yItKSaWkkkbyd6tbIZqzM2D7OdDBjCepcAeFqJLgLYKGZ4bEW3VHV7G0XhXiZUTbJIJBjAN7Dmgx+z2XQxdZZyNhAxmjTTXJxm6Y1JFdpG2b3wUL/ABDyPeuU6VgTJrBZjHmrR3Jh++t2/jb0ov0mO1k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752780818; c=relaxed/simple;
-	bh=tD1oxhgaY1oVagM39DM+ZPmmFC4diDofLXqkQauTA1Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e+6VK2983A+Yki6sZFAjnGtsTLWCW55gxO4RDu2+wFd/X03oW+IEHOD+SM+K9TJQJhdz0uFQDdf2vA3FmWKTyTbZmAZPENIUGRFRbvOmeDdWLN0Gf//Wc7TfyhKKNnSsi7iTwLWbApHh5p1LEiGgbsqsyT6L3g0WdeHOyYzCptI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hcAK9Uw/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BCTnvuRR; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=flcpHr5p; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=60QRonxR; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id EC3192203B;
-	Thu, 17 Jul 2025 19:33:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1752780814; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Ccb//KfzLk/Dst47cd0bS7WG+KflhTDu6dx4m7hNowI=;
-	b=hcAK9Uw/yGRnl+3rw6PEnRUKPqrNRhAuDfQjM6hsWrB7tgQ5s8k1GSX4z3EeyKfvnDkB5z
-	uTExk4X+SvWziGu0BqPXC8EbCRqGfqM/qkOlvbjPFl6kGHRg5fmJva5Q9/hWuel9+up0Ke
-	YA58BEC8i8uKbW7SMROkLTjbfyDsRj0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1752780814;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Ccb//KfzLk/Dst47cd0bS7WG+KflhTDu6dx4m7hNowI=;
-	b=BCTnvuRRprlRsvho2XpyCNO/7IKEA6nkuI49ryyfCh9m4w/XbwZR5j4BB3hDUTYThL1WPB
-	v8Sr6xTs9uzySQBQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=flcpHr5p;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=60QRonxR
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1752780812; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Ccb//KfzLk/Dst47cd0bS7WG+KflhTDu6dx4m7hNowI=;
-	b=flcpHr5pGSP7yNWEvc8E4UaC1KWF+8PWV87RnyKK8ks3A3Wh15UGbBWTrjmWRroxKOcb9a
-	/O2/+XEnhyo5b99mK+V82xm94gqjvxXkfnKq/nMk5jToPEiefpecB/m9o0ugXRB/IKp0eb
-	GfNOgDUz4vCPgrgIjfDLpGVLiOrkfe0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1752780812;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Ccb//KfzLk/Dst47cd0bS7WG+KflhTDu6dx4m7hNowI=;
-	b=60QRonxRgjowKUiEcuunXruMuRg2uAnJlGrc6BBDbIyG9ykZ+unrI1RQmpLUJ16OVjRbMU
-	MKvgu1TE35HFyjAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CDFE113A6C;
-	Thu, 17 Jul 2025 19:33:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id otaOMQxQeWhoBAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 17 Jul 2025 19:33:32 +0000
-Message-ID: <10e6b8f1-4383-425f-be7e-2d632cebb1c8@suse.cz>
-Date: Thu, 17 Jul 2025 21:33:32 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414082C3271
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 19:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752780863; cv=fail; b=bQ5oBC1czLGjUpmG4s9/6S1XZdyNhoovT5KJlxfGAbk0e2KvwqQR7C5ybnVwTjqB4YAoJM014OjgMP/0q7tyk3/8VSUb7GaPhg3Zk5igVN4Tr5w8ttSLwkxSQ/dA8JVvXeZ3IKYVvzu0pEsNJqpp8LgZXtujA8h9IXGespXHG9A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752780863; c=relaxed/simple;
+	bh=5kKM5iamN1vyF3npjEKjcEwoqlIbfAbcb1jG+TmvTqs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=jBdVbw75c2zCFUakhqsxdr/LFEMTRje+TgkzOfR7/+Ipnk0VIi+jvp8uO1Dkr1BC7H3JRHfsKN5k8CvycwZIEyBY22jbkQS5O/TqKyse6uitI89Xv4gr5z1hSadaRx9R61IcC8Tp2Yl+OZ2UpllBVjS7HxEAgkeRFhdexiYXly8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=loxtWY9x; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=j5yxv1gk; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56HJXoVZ019115;
+	Thu, 17 Jul 2025 19:34:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=5kKM5iamN1vyF3npjE
+	KjcEwoqlIbfAbcb1jG+TmvTqs=; b=loxtWY9xAqdBdeDzah8oA7OthBY0GtoBOC
+	rjpJBjHAsXO3XIc8QR4t/c02gnA6hUN1NB+BZ6p8E3oFGIP34m0KFr/ep04zGgtz
+	F/8stYDClBjWNFs70tFqoqZmrjzaNoHjHmljGs/srfE2R2Gc0s0aNGEqTSnLHUcY
+	Yy7mMR0fgjrIeQ7MKKtkS5e8CzSyPDC/tWiEJ+3HV4KGPf5efm+5Rnkh1quK6Q+j
+	e5XehaVOl5SsYJn3RR9dJ66+LTONVpD6KV+5/BKjOIkFDtncFsaQjJrcKlzjJ92P
+	jfB/Kg3DDb0+AaBWglbmTMEyWuSAQeq0jubWvg3+nuXaSFE/aQMg==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47ujy4usfj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 17 Jul 2025 19:34:00 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56HIYqpT040461;
+	Thu, 17 Jul 2025 19:33:58 GMT
+Received: from ch5pr02cu005.outbound.protection.outlook.com (mail-northcentralusazon11012022.outbound.protection.outlook.com [40.107.200.22])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 47ue5d7msr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 17 Jul 2025 19:33:58 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vZNnGQ7vdyipy1bQcjMzfYEdX0L64cFKexj7z02ClQojM39yBsQRWhkp14asU9mGnzNadO/rnPtOHloCIHRLeS948K7ekRfZtwBVclep+vHs5mkfxvgQHsPlQNpjk5Gx2KYIfWUBC2zaNdov350BbOQ8anXdw25mPFQk0IthcWpLlVXmBM4XHbz8eepcm5mWv7mQGMlD3eZz2ZhTLPg9XLAsxK5zcLToswcVUwc4SteTcBQXG7w/zyCw6MeKH5/zciY5VTcvYUZRCy8IAu9eflv2TwT7GaJZXjgxke3eVsx9c+rhaAXYy1HuWGeTjrCnfsw9OksvIJJaaBB6NQrTyw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5kKM5iamN1vyF3npjEKjcEwoqlIbfAbcb1jG+TmvTqs=;
+ b=RQK9kfDjgiXWY8n4CUbiu4uZ2vyqO2SeVC2xOuh6LoxZ6k+KB/A7eAkoO2+sWzA5KT/onq5xdnvwryYVDRrf+chbLvydreG6S9zksgFj+gGOtOEnLvwvm+sMfSwdv6mtKacaNTe977UW/E4OELL5Esri3GU0KaxfMDBnoWeBSDnNXt2FG5pgh3Sk46S3wndfLBEFX0m+Kbswje3W1lGDNX/SImUNTLf1oiOKTFa8x83MpyyocgH78iv5+0syGEgAoypEJzo5yrqFBgGvwBWoAY+cxETH7k5S3dcDjju/UxwvUbXKY0vvHR54R8hjPjIdkQsRgHaznAyNFwpiinyv+Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5kKM5iamN1vyF3npjEKjcEwoqlIbfAbcb1jG+TmvTqs=;
+ b=j5yxv1gkDf8zGOeUnfzliCh5OgxmhWUuO9Y57+1zlVdIA1jWmkgHGIwdqiIFhNq0Ka0Oq/yvsszeVeWB2W8HxNGEt/gr1iWVlo41Rc1XSAhszuZB3JeFNljM8gzMmGUKVGvl+6m9aYqBRy3m3aAfzMgvnHQtg3hcFMEZufH5D8A=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by BLAPR10MB5140.namprd10.prod.outlook.com (2603:10b6:208:320::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.39; Thu, 17 Jul
+ 2025 19:33:56 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%6]) with mapi id 15.20.8922.037; Thu, 17 Jul 2025
+ 19:33:56 +0000
+Date: Thu, 17 Jul 2025 20:33:54 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Zi Yan <ziy@nvidia.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        Antonio Quartulli <antonio@mandelbit.com>, linux-mm@kvack.org,
+        Hugh Dickins <hughd@google.com>,
+        Kirill Shutemov <k.shutemov@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/huge_memory: refactor after-split (page) cache code.
+Message-ID: <6f6279d5-802a-40b4-a0c7-e8d316ec4cbc@lucifer.local>
+References: <20250716171112.3666150-1-ziy@nvidia.com>
+ <a479057f-5401-44ea-b3a8-dfd82b826721@lucifer.local>
+ <31D32C5B-6719-4E3D-880A-666044C4A48B@nvidia.com>
+ <5464ABD7-C4C9-4BEF-9E5E-21F5A18C42D9@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5464ABD7-C4C9-4BEF-9E5E-21F5A18C42D9@nvidia.com>
+X-ClientProxiedBy: LO6P123CA0036.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:2fe::10) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/6] mm: Drain LRUs upon resume to userspace on nohz_full
- CPUs
-Content-Language: en-US
-To: Frederic Weisbecker <frederic@kernel.org>, Michal Hocko
- <mhocko@suse.com>, Matthew Wilcox <willy@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@redhat.com>,
- Marcelo Tosatti <mtosatti@redhat.com>, Oleg Nesterov <oleg@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
- Valentin Schneider <vschneid@redhat.com>, linux-mm@kvack.org
-References: <20250703140717.25703-1-frederic@kernel.org>
- <20250703140717.25703-7-frederic@kernel.org>
- <aGaTh2esRWr3L6IC@casper.infradead.org> <aGar8p-GlbqXtl7U@tiehlicka>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <aGar8p-GlbqXtl7U@tiehlicka>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:mid,suse.cz:dkim,suse.cz:email];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: EC3192203B
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|BLAPR10MB5140:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8b14dc5b-7bca-4036-4ccd-08ddc568dede
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?rtugqgAgwb+oCFELSbQn5h65bFAEkrJ12USNHYOD2YS/tQfRUuv/VXw+0LT+?=
+ =?us-ascii?Q?uw+suqmEx75jzv+rbKxl2P/NjHTRMw5HhxSfrLupphSGmaoK7Gzob3cneLHj?=
+ =?us-ascii?Q?xz6rZCD4/CIvx94yJA55VQ3ekVHgBceP67ylCblw+gsZ8l0HYm8sXgZpu+6y?=
+ =?us-ascii?Q?5DoqwdtzZUt5Atbi8HiKo3p93+EyDULwDEl+eR/NJuvKotKq4OKBIwsbXsY2?=
+ =?us-ascii?Q?/dEMFoSaZOgCP83SJDBNAB/goDUUJJtHVn065Z+cq/PEEujzjZq5TIOIVJu4?=
+ =?us-ascii?Q?uC3imNywJDIVfa+IVk3SG9pN4cy4lj7AJGeaIsFyykSQkKftLa2hlN+XSpDR?=
+ =?us-ascii?Q?nzmTLBisxzmd5M8U2t20v7GxSqcRYAVdDeXyFv4Z6hi+QiwrEasrrYW798Tm?=
+ =?us-ascii?Q?WlgpUmk5/WhaowQy31JlOH2u42SvrAYCeEpaneJX/Fy8mF78bw6mI5m5aaf0?=
+ =?us-ascii?Q?3CCxktK2bf5CGpSBmt40r1RqBYUkL0E1AeAvNjjBP+EQAXHyXYGAdK5+gAK0?=
+ =?us-ascii?Q?A0RfM63TZ9agTg6QgEfTtYMxyaJL+NrlbdDUrm+RTvwztg8sZdGCtHHsQf5v?=
+ =?us-ascii?Q?TCw/MjemSGeQL3GVmHHTJGAmUht0fL3BuqN/lRhnfSeG12170mxQVZIliaPn?=
+ =?us-ascii?Q?shthjONKyfBflijm9DJU6nc54ElzdKN+dz3tIBb4UUWhdMU3mDorQE4WfuY6?=
+ =?us-ascii?Q?c6rtBEDAZkV61x+YgRhX9ADRIPyo1ekTzci5oj0YfZEY1dAa9ygEb9Y+3QMr?=
+ =?us-ascii?Q?9gjfnxoBGkvF/MKLZdTotFCzMxXN2Md6oqcWHnBJic5z+/xRwMCntSrbG90Z?=
+ =?us-ascii?Q?kuslq+RbKO4xpB/0ej9VfLZo1F7bPg3kxKCNqslD8j7F+KYYZR7eBYUeA0vt?=
+ =?us-ascii?Q?EYoYWVhs+Ia5OwwCs+G4twuQVTp2sFoFyYeT9gUXEkVbM5mju9Hug2kg/REs?=
+ =?us-ascii?Q?AH5OybPKlyfgxMbdbY3TAwBBrQfjRs4bA23cCozBmNa3nqm+lySkX4FnLcWs?=
+ =?us-ascii?Q?KqeOZIRnTztGScYuf/iyN2mkCHvacca6whZ1Jh3WAUtv8mwhyJPGEvGe77oy?=
+ =?us-ascii?Q?A488xCDYcSc12UG273kYLarJdYYDxKQGuKP90JdcpFzG2+KVgQ2n5sEvw2zt?=
+ =?us-ascii?Q?B0/ORC2PxQ8WnZ/IBKAMkw4PFnyHb1J3hyhkNDdjYoOcnaNhYNwHHiy/DQdT?=
+ =?us-ascii?Q?Zi2DYaLXpOOfD6SeuAYDpkQihmKpSu/sPakcXi9peu+6Nt1YDhJV33xfdMlu?=
+ =?us-ascii?Q?6uRRrUmqA8DJyWZyFicUn9e1LXYHc+y3440PQJ92AuEUw2GKrb0Xh4ZNIQcv?=
+ =?us-ascii?Q?eHSQkvrdhUnOhsq6h9kgJBNUT01esSKIm7/HcRuuTYxy14Kf+JONmL2HXeAf?=
+ =?us-ascii?Q?FJTHdVdxAhr/BHcZmZ+RIBQHpAvugrIBPJhE44jJ+HQeYWAp3O+Od51xKQy+?=
+ =?us-ascii?Q?XFFBWrsT/ac=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?kIw9RJl+XWMHKYI6/uKuhAD0h/tdH9nRDcMTwPi0hASORqQrgmIkIaZ+l85s?=
+ =?us-ascii?Q?Z/nscojZJfS/DmdwfKxkbOfrPIxFoTPpxVU/dFYG0UihbzjW8+GdcE2r9jqB?=
+ =?us-ascii?Q?BLZVtJhkgBA9sYAtTTGj2C7fheVwpJBV1ZiEbzPPni3n8Aa9omJH9zoaPRkD?=
+ =?us-ascii?Q?X++1btZboxwFh4sFycu1cN2CVSkPKWgmhqRJ2yKJkEbJIQLbwIUFqtOm1q22?=
+ =?us-ascii?Q?ayhk7kTp93Ei7UrKHR+PKPiRzuZXcbOgjSQA0vjFI6TajnTcLrXJNkNnfK4V?=
+ =?us-ascii?Q?rGAGp2NOrXoscW929EUHJUrQhnAyXNKobyU6NI5TIPiMQG16jzQRCCkE7Ent?=
+ =?us-ascii?Q?219xT2bb1U4Kb5WvvrxBONbTTDU7LbRi98grhTEtlS1LfLMA3snu0TbEK/DW?=
+ =?us-ascii?Q?u8Xr1BSuM2diKuFqHAI3iiZLPIKaPxP8ST49wshAblx74aonyjjd4gwBMifC?=
+ =?us-ascii?Q?EWXHjRjiTc+RPuMlpdIR9yYzkUGA/7DhcKSWm0pVzgi8qhz8FRShVWKECXhx?=
+ =?us-ascii?Q?IOxNfFVKDwuychwH3oeMO5evUSzw/8lUiKc4JNEz2kgX32dBknGL/2vIXaKw?=
+ =?us-ascii?Q?5JlU2Uo5YYErWHrHfBQQ0qOjOTIsM4Ugy1ADlZ7MeVfREBj+IRPI5N7E0hOd?=
+ =?us-ascii?Q?53WrOowQA6I1jJ2B9k+31xz/2mDIC97REfy2XBd6iQjOmUXu0+qwX4yQ9qL1?=
+ =?us-ascii?Q?Y7s7ruPPl5YwYT1aX6TtMOXclzxMKOie2Sacv/mfB6FjA6Kt2WRRPM73duiF?=
+ =?us-ascii?Q?wTdLOZTM1PTNNmcuTIldfvPEoEu++1WVCP949qdOeJd1xOWt614k6fGpRNsj?=
+ =?us-ascii?Q?sZsCbnhCf6vbxvlpeJCUiKAin2v21Rhl8VciESaSB0s5XDIaM5jPAvQIXGwg?=
+ =?us-ascii?Q?n/BNKxMiTBYcf2uWHfGqb034yESSogLoatHh/rxvYMU+svJFj7da4FYHk4RD?=
+ =?us-ascii?Q?wMyYSqFkXeqdaq9Z48ALvLGCH5ZSibUjQWgzXL1Ic3paBGm5RxNtPD6bIbfd?=
+ =?us-ascii?Q?k6QyU8uG9jLv3NA8MDorRJCVWvSnP+isA6Dxr0z1u8+S9g2KGsbnELbrH3v3?=
+ =?us-ascii?Q?+uGhmpAv5pHSW32ZTUgAndcvXSggnmg2vdrR7vWY9ANqB8yTukuqazvLdtHi?=
+ =?us-ascii?Q?fXKNNSE5VdVGdhQw5s5QCc+36b6hWFK0XG+iWee+NboQkYeMTacQ935Kvnuw?=
+ =?us-ascii?Q?/jiH0aYFNhgAo0znsEcbb1gR9sf/NTg4aj8S//TXcFVmBIFpXHMgPMcEUaQn?=
+ =?us-ascii?Q?bTVnfkw+OBQc3xwx9EDWsT6RnLxUjbIJ86seaSXPr7kb4KToFZRRwZ3YWXVP?=
+ =?us-ascii?Q?vuVOOP3tErGoYfUxfIrwn+lnpdoNl3xA8tDFC6PJBFW8K33GcMM1mJPogTjR?=
+ =?us-ascii?Q?H++86HwBil9wxkHVkL6zI+i8y4Mrvs18vdjbnuy8SIzCXRWjehXYX+a6NeSv?=
+ =?us-ascii?Q?FsLsztYerwS7+XCRH1WuyYTorObpTU5prWnOHBOvV5NUhDOBuAteojg2i1YV?=
+ =?us-ascii?Q?lUBtnGNlz9Yh9cXgnio4ztYFZY3IF5FZWy5ORYgXJbegO/B1XUTAutaDNDdX?=
+ =?us-ascii?Q?A2s74T8WW8Ns0QJj5uDaJbwunJmemxu0cPv9h3tGs/a64gaXNnMcmkh1GfQy?=
+ =?us-ascii?Q?9A=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	lN26JesmUOD1VwjGdlMJXNpAYAb7Gao58I6IDuTkiDiwfxylII3kksAjwAFWCcMQJGyux+z8LkhJZZZCikOo8D/5Eh4h7sgzo06TPPdq8UxVYPXsCiBR9qNth78iEaWOXrZsOFjtAxcro4fe8wIEYtWQF/wxzDzBoSCGKIDK7EKKvwf7hBmfYC1PXROFfXhDiIkpbW/Qvk9QE7gWcr2c2mmCE4VH9fT1NSDAHkAA0a3MlXVl/Vv0Iz8zbuh2+8TwRrpERqAAsaClW0BOZUCnS4JZSZxkjq2Ofp//vvC1MYC4GUqba1GvtHAkxoIvnK8vX8r+DGzgKfQhg6nQf+jv1BFRhWll5M6IuyRdNu6CPEWcNhlYllxNAgjTEkZ4/uG5Ota0pbOCrlsvl32B4UBZ5/2hWNsnR85uuHAoaRbi+gVoUt6/YydtBlo8byoGbfdGuuvYE7Xf+X2Gb4djKqp/OfDgwBUGZN8k3Jii+lqq5kQh3Rk0isrciUQyE4lwqpxcthWTooYYV8PKET2cG/hb8OmI41a/7ja+4ng0sR83PmBwnSabEt6A8J98Wn0hch80IzhIxj5shm4i3XtyyGi7zKfqzveKHOljpANIz4SEwaE=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8b14dc5b-7bca-4036-4ccd-08ddc568dede
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2025 19:33:56.3489
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: eXK9WhBTTnugCjbGiTT6+Gui03RzJQfjqPy7kuffnsM5XxpiUC/1z8Em5jmuZdY9F6MzgTav7RTjX1K1cxbwjOU6oSZ5PVY/vk3+VbMdjBw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR10MB5140
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-17_03,2025-07-17_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 adultscore=0
+ spamscore=0 suspectscore=0 phishscore=0 mlxlogscore=999 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2507170173
+X-Proofpoint-ORIG-GUID: PKbnKoTqsZXEDMOOwMQ-8dk8L84Y_Y0m
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDE3MyBTYWx0ZWRfX/jerVf67S5eA ODEkWzilzovMa1gP4v311hbNgC1wSYG5EjMOzhr/HVaRGpys6VHNgcqMRkk5ys/TzkNsYBNGOv+ yidoXKXN/wYI1qWT13oHvT4kiUochiXgsmvlbcsD4G3VcpTz+e6CqMdSaJk43ETBYFtppmBfI0k
+ HcbAyKbZRZM0Tn1Ht6FhTH6PIqmRs+6EIrWx19oC9BkC80/9Ls4WBoaQX2kB0w08dnCiqz8nFS3 ZOk0Ud24/DP9be56wJ4ZPyQjPLAGaqkHkdVloWA8KJiX0uMotKIPd/v8Ffee8CqAGmgrCur/1NF 7fc0rQnA7D8p1KzVRNqaR8Wifk18PXqaiDSsFw+Dv9f8lp1pXEnLAzdDiS//DTA0MohOG8Kwtf2
+ GaUIYzWHx3MZYXwXEyX99ISBMiDh0FByAYcVgaxL9dlk/MuKF2fjCoI5BzG5JWfIz6Ia+pDt
+X-Authority-Analysis: v=2.4 cv=Xtr6OUF9 c=1 sm=1 tr=0 ts=68795028 b=1 cx=c_pps a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10 a=4vA7rrgGAFFNbZ5MZBwA:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:13600
+X-Proofpoint-GUID: PKbnKoTqsZXEDMOOwMQ-8dk8L84Y_Y0m
 
-On 7/3/25 18:12, Michal Hocko wrote:
-> On Thu 03-07-25 15:28:23, Matthew Wilcox wrote:
->> On Thu, Jul 03, 2025 at 04:07:17PM +0200, Frederic Weisbecker wrote:
->> > +unsigned int folio_batch_add(struct folio_batch *fbatch,
->> > +			     struct folio *folio)
->> > +{
->> > +	unsigned int ret;
->> > +
->> > +	fbatch->folios[fbatch->nr++] = folio;
->> > +	ret = folio_batch_space(fbatch);
->> > +	isolated_task_work_queue();
->> 
->> Umm.  LRUs use folio_batches, but they are definitely not the only user
->> of folio_batches.  Maybe you want to add a new lru_batch_add()
->> abstraction, because this call is definitely being done at the wrong
->> level.
-> 
-> You have answered one of my question in other response. My initial
-> thought was that __lru_add_drain_all seems to be a better fit. But then
+On Thu, Jul 17, 2025 at 11:45:13AM -0400, Zi Yan wrote:
+>
+> >>
+> >> Since we no longer need to make new_folio->index >= end work for anon
+> >> folios, can we drop the end = -1 in the if (is_anon) { ... } branch?
+> >
+> > Sure.
+>
+> A second thought on this one. If I remove end = -1, can static analysis
+> tools understand that end is not used when a folio is anonymous?
+> Probably, I can initialize end to -1 and remove end = -1 in is_anon
+> branch.
 
-__lru_add_drain_all is the part where we queue the drain work to other cpus.
-In order to not disrupt isolated cpus, the isolated cpus have to self-
-schedule the work to be done on resume, which indeed means at the moment
-they are filling the batches to be drained, as this patch does.
+I don't think we should be concering ourselves with this generally
+speaking.
 
-> we have a problem that draining will become an unbounded operation which
-> will become a problem for lru_cache_disable which will never converge
-> until isolated workload does the draining. So it indeed seems like we
-> need to queue draining when a page is added. Are there other places
-> where we put folios into teh folio_batch than folio_batch_add? I cannot
-> seem to see any...
+But doesn't David's suggested changes preclude this anyway? As you'd only
+be referencing end if mapping is set? But then that'd rely on !anon...
 
-The problem Matthew points out isn't that there would be other places that
-add folios to a fbatch, other than folio_batch_add(). The problem is that
-many of the folio_batch_add() add something to a temporary batch on a stack,
-which is not subject to lru draining, so it's wasteful to queue the
-draining for those. 
+Perhaps you can just move figuring out what end is to the if (mapping)
+block...
 
-The below diff should address this by creating folio_batch_add_lru() which
-is only used in the right places that do fill a lru-drainable folio batch.
-It also makes the function static inline again, in mm/internal.h, which
-means it's adding some includes to it. For that I had to fix up some wrong
-include places of internal.h in varous mm files - these includes should not
-appear below "#define CREATE_TRACE_POINTS".
+But as Dan alluded I think (hope :P) humans read this stuff in the end
+before reporting :)
 
-Frederic, feel free to fold this in your patch with my Co-developed-by:
+So if you add a comment very clearly stating that end won't be used if
+!mapping then that alone would do I think.
 
-I also noted that since this now handles invalidate_bh_lrus_cpu() maybe we
-can drop the cpu_is_isolated() check from bh_lru_install(). I'm not even
-sure if the check is equivalent or stronger than the check used in
-isolated_task_work_queue().
+But I see Dan's replying here anyway so will leave to his expertise/your
+discretion.
 
-I have a bit of remaining worry for __lru_add_drain_all() simply skipping
-the isolated cpus because then it doesn't wait for the flushing to be
-finished via flush_work(). It can thus return before the isolated cpu does
-its drain-on-resume, which might violate some expectations of
-lru_cache_disable(). Is there a possibility to make it wait for the drain-
-on-resume or determine there's not any, in a reliable way?
-
-----8<----
-From eb6fb0b60a2ede567539e4be071cb92ff5ec221a Mon Sep 17 00:00:00 2001
-From: Vlastimil Babka <vbabka@suse.cz>
-Date: Thu, 17 Jul 2025 21:05:48 +0200
-Subject: [PATCH] mm: introduce folio_batch_add_lru
-
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
----
- include/linux/pagevec.h | 18 ++++++++++++++++--
- include/linux/swap.h    |  2 +-
- mm/internal.h           | 19 +++++++++++++++++--
- mm/mlock.c              |  6 +++---
- mm/mmap.c               |  4 ++--
- mm/percpu-vm.c          |  2 --
- mm/percpu.c             |  5 +++--
- mm/rmap.c               |  4 ++--
- mm/swap.c               | 25 +------------------------
- mm/vmalloc.c            |  6 +++---
- 10 files changed, 48 insertions(+), 43 deletions(-)
-
-diff --git a/include/linux/pagevec.h b/include/linux/pagevec.h
-index 7e647b8df4c7..5d3a0cccc6bf 100644
---- a/include/linux/pagevec.h
-+++ b/include/linux/pagevec.h
-@@ -61,8 +61,22 @@ static inline unsigned int folio_batch_space(struct folio_batch *fbatch)
- 	return PAGEVEC_SIZE - fbatch->nr;
- }
- 
--unsigned int folio_batch_add(struct folio_batch *fbatch,
--			     struct folio *folio);
-+/**
-+ * folio_batch_add() - Add a folio to a batch.
-+ * @fbatch: The folio batch.
-+ * @folio: The folio to add.
-+ *
-+ * The folio is added to the end of the batch.
-+ * The batch must have previously been initialised using folio_batch_init().
-+ *
-+ * Return: The number of slots still available.
-+ */
-+static inline unsigned folio_batch_add(struct folio_batch *fbatch,
-+		struct folio *folio)
-+{
-+	fbatch->folios[fbatch->nr++] = folio;
-+	return folio_batch_space(fbatch);
-+}
- 
- /**
-  * folio_batch_next - Return the next folio to process.
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index d74ad6c893a1..0bede5cd4f61 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -401,7 +401,7 @@ extern void lru_add_drain(void);
- extern void lru_add_drain_cpu(int cpu);
- extern void lru_add_drain_cpu_zone(struct zone *zone);
- extern void lru_add_drain_all(void);
--extern void lru_add_and_bh_lrus_drain(void);
-+void lru_add_and_bh_lrus_drain(void);
- void folio_deactivate(struct folio *folio);
- void folio_mark_lazyfree(struct folio *folio);
- extern void swap_setup(void);
-diff --git a/mm/internal.h b/mm/internal.h
-index 6b8ed2017743..c2848819ce5f 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -18,12 +18,12 @@
- #include <linux/swapops.h>
- #include <linux/swap_cgroup.h>
- #include <linux/tracepoint-defs.h>
-+#include <linux/pagevec.h>
-+#include <linux/sched/isolation.h>
- 
- /* Internal core VMA manipulation functions. */
- #include "vma.h"
- 
--struct folio_batch;
--
- /*
-  * Maintains state across a page table move. The operation assumes both source
-  * and destination VMAs already exist and are specified by the user.
-@@ -414,6 +414,21 @@ static inline vm_fault_t vmf_anon_prepare(struct vm_fault *vmf)
- 	return ret;
- }
- 
-+/*
-+ * A version of folio_batch_add() to use with batches that are drained from
-+ * lru_add_drain() and checked in cpu_needs_drain()
-+ */
-+static inline unsigned int
-+folio_batch_add_lru(struct folio_batch *fbatch, struct folio *folio)
-+{
-+	/*
-+	 * We could perhaps not queue when returning 0 which means the caller
-+	 * should flush the batch immediately, but that's rare anyway.
-+	 */
-+	isolated_task_work_queue();
-+	return folio_batch_add(fbatch, folio);
-+}
-+
- vm_fault_t do_swap_page(struct vm_fault *vmf);
- void folio_rotate_reclaimable(struct folio *folio);
- bool __folio_end_writeback(struct folio *folio);
-diff --git a/mm/mlock.c b/mm/mlock.c
-index 3cb72b579ffd..a95f248efdf2 100644
---- a/mm/mlock.c
-+++ b/mm/mlock.c
-@@ -254,7 +254,7 @@ void mlock_folio(struct folio *folio)
- 	}
- 
- 	folio_get(folio);
--	if (!folio_batch_add(fbatch, mlock_lru(folio)) ||
-+	if (!folio_batch_add_lru(fbatch, mlock_lru(folio)) ||
- 	    folio_test_large(folio) || lru_cache_disabled())
- 		mlock_folio_batch(fbatch);
- 	local_unlock(&mlock_fbatch.lock);
-@@ -277,7 +277,7 @@ void mlock_new_folio(struct folio *folio)
- 	__count_vm_events(UNEVICTABLE_PGMLOCKED, nr_pages);
- 
- 	folio_get(folio);
--	if (!folio_batch_add(fbatch, mlock_new(folio)) ||
-+	if (!folio_batch_add_lru(fbatch, mlock_new(folio)) ||
- 	    folio_test_large(folio) || lru_cache_disabled())
- 		mlock_folio_batch(fbatch);
- 	local_unlock(&mlock_fbatch.lock);
-@@ -298,7 +298,7 @@ void munlock_folio(struct folio *folio)
- 	 * which will check whether the folio is multiply mlocked.
- 	 */
- 	folio_get(folio);
--	if (!folio_batch_add(fbatch, folio) ||
-+	if (!folio_batch_add_lru(fbatch, folio) ||
- 	    folio_test_large(folio) || lru_cache_disabled())
- 		mlock_folio_batch(fbatch);
- 	local_unlock(&mlock_fbatch.lock);
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 09c563c95112..4d9a5d8616c3 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -54,11 +54,11 @@
- #include <asm/tlb.h>
- #include <asm/mmu_context.h>
- 
-+#include "internal.h"
-+
- #define CREATE_TRACE_POINTS
- #include <trace/events/mmap.h>
- 
--#include "internal.h"
--
- #ifndef arch_mmap_check
- #define arch_mmap_check(addr, len, flags)	(0)
- #endif
-diff --git a/mm/percpu-vm.c b/mm/percpu-vm.c
-index cd69caf6aa8d..cd3aa1610294 100644
---- a/mm/percpu-vm.c
-+++ b/mm/percpu-vm.c
-@@ -8,8 +8,6 @@
-  * Chunks are mapped into vmalloc areas and populated page by page.
-  * This is the default chunk allocator.
-  */
--#include "internal.h"
--
- static struct page *pcpu_chunk_page(struct pcpu_chunk *chunk,
- 				    unsigned int cpu, int page_idx)
- {
-diff --git a/mm/percpu.c b/mm/percpu.c
-index b35494c8ede2..b8c34a931205 100644
---- a/mm/percpu.c
-+++ b/mm/percpu.c
-@@ -93,11 +93,12 @@
- #include <asm/tlbflush.h>
- #include <asm/io.h>
- 
-+#include "internal.h"
-+#include "percpu-internal.h"
-+
- #define CREATE_TRACE_POINTS
- #include <trace/events/percpu.h>
- 
--#include "percpu-internal.h"
--
- /*
-  * The slots are sorted by the size of the biggest continuous free area.
-  * 1-31 bytes share the same slot.
-diff --git a/mm/rmap.c b/mm/rmap.c
-index fb63d9256f09..a4eab1664e25 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -78,12 +78,12 @@
- 
- #include <asm/tlbflush.h>
- 
-+#include "internal.h"
-+
- #define CREATE_TRACE_POINTS
- #include <trace/events/tlb.h>
- #include <trace/events/migrate.h>
- 
--#include "internal.h"
--
- static struct kmem_cache *anon_vma_cachep;
- static struct kmem_cache *anon_vma_chain_cachep;
- 
-diff --git a/mm/swap.c b/mm/swap.c
-index da08c918cef4..98897171adaf 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -156,29 +156,6 @@ static void lru_add(struct lruvec *lruvec, struct folio *folio)
- 	trace_mm_lru_insertion(folio);
- }
- 
--/**
-- * folio_batch_add() - Add a folio to a batch.
-- * @fbatch: The folio batch.
-- * @folio: The folio to add.
-- *
-- * The folio is added to the end of the batch.
-- * The batch must have previously been initialised using folio_batch_init().
-- *
-- * Return: The number of slots still available.
-- */
--unsigned int folio_batch_add(struct folio_batch *fbatch,
--			     struct folio *folio)
--{
--	unsigned int ret;
--
--	fbatch->folios[fbatch->nr++] = folio;
--	ret = folio_batch_space(fbatch);
--	isolated_task_work_queue();
--
--	return ret;
--}
--EXPORT_SYMBOL(folio_batch_add);
--
- static void folio_batch_move_lru(struct folio_batch *fbatch, move_fn_t move_fn)
- {
- 	int i;
-@@ -215,7 +192,7 @@ static void __folio_batch_add_and_move(struct folio_batch __percpu *fbatch,
- 	else
- 		local_lock(&cpu_fbatches.lock);
- 
--	if (!folio_batch_add(this_cpu_ptr(fbatch), folio) || folio_test_large(folio) ||
-+	if (!folio_batch_add_lru(this_cpu_ptr(fbatch), folio) || folio_test_large(folio) ||
- 	    lru_cache_disabled())
- 		folio_batch_move_lru(this_cpu_ptr(fbatch), move_fn);
- 
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index ab986dd09b6a..b3a28e353b7e 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -44,12 +44,12 @@
- #include <asm/shmparam.h>
- #include <linux/page_owner.h>
- 
--#define CREATE_TRACE_POINTS
--#include <trace/events/vmalloc.h>
--
- #include "internal.h"
- #include "pgalloc-track.h"
- 
-+#define CREATE_TRACE_POINTS
-+#include <trace/events/vmalloc.h>
-+
- #ifdef CONFIG_HAVE_ARCH_HUGE_VMAP
- static unsigned int __ro_after_init ioremap_max_page_shift = BITS_PER_LONG - 1;
- 
--- 
-2.50.1
-
-
- 
-
+>
+> Best Regards,
+> Yan, Zi
 
