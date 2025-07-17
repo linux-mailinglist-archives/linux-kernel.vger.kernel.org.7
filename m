@@ -1,197 +1,225 @@
-Return-Path: <linux-kernel+bounces-735160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7492B08BA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:20:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 596CDB08B9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:19:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 135051AA24EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:20:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E1EF58581D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:19:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B73B29AAFD;
-	Thu, 17 Jul 2025 11:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027FE299959;
+	Thu, 17 Jul 2025 11:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="oXUL+P+y"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OKzjy+23"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD37289367
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 11:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB61289367;
+	Thu, 17 Jul 2025 11:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752751233; cv=none; b=GFDFvrvlleYDsi0k6vPZsNMFCwzxICHCJ6gT2dR6sx8lnuc24Gss6V1TcWjNzMiJd699LuqQx1THt6wMcbrgvy9Za4LwnAyzirfZb6CSs7VnoR4hUSW2H2Q8P3u4T+QEZFYZYWQbiwz0CNGXHr7eb3fSZEXyUZyrAtymzy6uKAo=
+	t=1752751151; cv=none; b=pcj/Tusp2keBSjV5aw00j4eZGwdX/OW5wgeWxjfPpIex0kq7GVm7KhhLme19seRoxmYnjIe5JzjPEeTrmphOCVQ4Tt/wbT1ONkm801GTX5zshvsNJftX/KPnIPZpOl/ZJWxtrfhOTUvJOswXae58rAvJJwTZ3TgU/LbXoeeuWnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752751233; c=relaxed/simple;
-	bh=n7EgR3Hsz1zlkX2gP62LRR8KKpmqcxE2D67RRmid0L0=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=hDTRgsQq6Xzid1lJPAOAj2xJ7H/vl4Z13FVGsnX53u4I3xxnh9D+nOkhBWxXq6oTqBzbruG4doki5yfayYP4MLVraTeUnic9dOkFniceVPTAG5zi3S6jl2HZAq2FJ6mJaP3HRLjqQTYNxqbEi5fxJYq1+kH6gM7TkwXVKJubB4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=oXUL+P+y; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250717112028epoutp041e0fef8c04bc9988dece460a43aa62d4~TBfSnopLL2137221372epoutp04x
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 11:20:28 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250717112028epoutp041e0fef8c04bc9988dece460a43aa62d4~TBfSnopLL2137221372epoutp04x
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1752751228;
-	bh=vaeHUHDhpHicpyEPArevNCJsvIdCbCzGZYXB98wgi1s=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=oXUL+P+yi1b6GGgxeAdl3fkacZa5Eqwy/w97hspuH5aKuqUTGcg6efrNCStz5Tzd/
-	 yCPzt5bW4gyx16aycTiIlK4Vp8+YvTB6omd5U4PCw/NZxqu0nBNDn8G5J+vweYDWld
-	 wnEnp5ANA8Wd8ifKZLuFE/Hap1AuHQi/L9MFEjEk=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250717112026epcas5p17ba342f1a18c68254b3c95c7aa7117e0~TBfQ8Kwl32028120281epcas5p1v;
-	Thu, 17 Jul 2025 11:20:26 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.90]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4bjVpK3w9Hz6B9m7; Thu, 17 Jul
-	2025 11:20:25 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250717111830epcas5p1c4816682379933819fef343a70e1e13b~TBdk6ieaL0129601296epcas5p1l;
-	Thu, 17 Jul 2025 11:18:30 +0000 (GMT)
-Received: from INBRO001840 (unknown [107.122.3.105]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250717111827epsmtip2d57c2524f47be7d8d1a79801f3a884f0~TBdiAJ8Ex3070830708epsmtip2O;
-	Thu, 17 Jul 2025 11:18:27 +0000 (GMT)
-From: "Pritam Manohar Sutar" <pritam.sutar@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <vkoul@kernel.org>,
-	<kishon@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
-	<andre.draszik@linaro.org>, <peter.griffin@linaro.org>,
-	<neil.armstrong@linaro.org>, <kauschluss@disroot.org>,
-	<ivo.ivanov.ivanov1@gmail.com>, <m.szyprowski@samsung.com>,
-	<s.nawrocki@samsung.com>
-Cc: <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <rosa.pila@samsung.com>,
-	<dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
-	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
-In-Reply-To: <40c06385-26bc-4d5f-8fdc-fee2600afdeb@kernel.org>
-Subject: RE: [PATCH v4 2/6] phy: exynos5-usbdrd: support HS phy for
- ExynosAutov920
-Date: Thu, 17 Jul 2025 16:48:26 +0530
-Message-ID: <000d01dbf70c$86602e00$93208a00$@samsung.com>
+	s=arc-20240116; t=1752751151; c=relaxed/simple;
+	bh=UGme35FMYts4C+w0JEhpFk9WMpbpTAudZRkRDn7b2nw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=qDI1jEeaTJuSdys2kkXgN62q17ftefZmpiH2CloPhb9sEzRbIq/KttA7zc5PBjy3BG1EJJg7g+Vere1lOhsJpyww8EZRTpsTmD7qGuXzEHeaH9i5jPsfTbO8JPii4spV0OTVblCbOyI385L++S/ZhInIlH1UT2t/Ov3tAby8t84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OKzjy+23; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D773C4CEE3;
+	Thu, 17 Jul 2025 11:19:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752751151;
+	bh=UGme35FMYts4C+w0JEhpFk9WMpbpTAudZRkRDn7b2nw=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=OKzjy+233mvOwYar9R1WZxxyhXVS/VNF+OjpeRyyzXy+9AQVnO8C6tSNiTxNgN1JO
+	 LptR++4v6Aslau5497vxGp0yIwBV74Kcjl4DevatuT7ZqstnNKIcXBXqbEkhgiMAST
+	 qUdo4l+yxl6N+vtLQfyI7HcxLFQK7uFVHg4EWsWia4vX/2TZcMoqMuNSdiieDO5EE6
+	 Md9GGo64q7f+vktG8iQ2XE1iLrUk+AT53hRzS/jLx7T5PieDAJPjCq1qiyx5Pq6LEA
+	 o6wbbZbYJqPA0d29BO2SsItyvknesQ9KkyB4yTDXer7ZcCNvTBxWL2BnVv0R8CbiTY
+	 U8MxDSaWsmgLw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: en-in
-Thread-Index: AQJAgQZ9LFXBZrDskwNBYris6jFv1AFx24JLAb5T8KIBPEtVBrNJsbUw
-X-CMS-MailID: 20250717111830epcas5p1c4816682379933819fef343a70e1e13b
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250701115959epcas5p40f28954777a620b018251301eea13873
-References: <20250701120706.2219355-1-pritam.sutar@samsung.com>
-	<CGME20250701115959epcas5p40f28954777a620b018251301eea13873@epcas5p4.samsung.com>
-	<20250701120706.2219355-3-pritam.sutar@samsung.com>
-	<40c06385-26bc-4d5f-8fdc-fee2600afdeb@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 17 Jul 2025 13:19:05 +0200
+Message-Id: <DBEAFCFHFU35.1IZI3ZSJSIRAY@kernel.org>
+Subject: Re: [PATCH v2] rust: add a sample alloc usage
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>, "Hui Zhu"
+ <zhuhui@kylinos.cn>, "Geliang Tang" <geliang@kernel.org>, "Lorenzo Stoakes"
+ <lorenzo.stoakes@oracle.com>, "Vlastimil Babka" <vbabka@suse.cz>, "Liam R.
+ Howlett" <Liam.Howlett@oracle.com>, "Uladzislau Rezki" <urezki@gmail.com>
+To: "Hui Zhu" <hui.zhu@linux.dev>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250717095053.49239-1-hui.zhu@linux.dev>
+In-Reply-To: <20250717095053.49239-1-hui.zhu@linux.dev>
 
-Hi Krzysztof,
+(Cc: Lorenzo, Vlastimil, Liam, Uladzislau)
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> Sent: 12 July 2025 01:46 PM
-> To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>; vkoul=40kernel.org=
+On Thu Jul 17, 2025 at 11:50 AM CEST, Hui Zhu wrote:
+> diff --git a/samples/rust/Makefile b/samples/rust/Makefile
+> index bd2faad63b4f..7c3e68d9ada5 100644
+> --- a/samples/rust/Makefile
+> +++ b/samples/rust/Makefile
+> @@ -10,6 +10,7 @@ obj-$(CONFIG_SAMPLE_RUST_DRIVER_PLATFORM)	+=3D rust_dri=
+ver_platform.o
+>  obj-$(CONFIG_SAMPLE_RUST_DRIVER_FAUX)		+=3D rust_driver_faux.o
+>  obj-$(CONFIG_SAMPLE_RUST_DRIVER_AUXILIARY)	+=3D rust_driver_auxiliary.o
+>  obj-$(CONFIG_SAMPLE_RUST_CONFIGFS)		+=3D rust_configfs.o
+> +obj-$(CONFIG_SAMPLE_RUST_ALLOC)		+=3D rust_alloc.o
+
+I think adding an example for large alignment is fine, but let's do this in=
+ a
+doc-test on VBox in rust/kernel/alloc/kbox.rs. I think adding a separate mo=
+dule
+for this is overkill.
+
+Note that doc-tests are executed on boot if CONFIG_RUST_KERNEL_DOCTESTS=3Dy=
+.
+
+> diff --git a/samples/rust/rust_alloc.rs b/samples/rust/rust_alloc.rs
+> new file mode 100644
+> index 000000000000..61efde37b5f2
+> --- /dev/null
+> +++ b/samples/rust/rust_alloc.rs
+> @@ -0,0 +1,88 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +// Copyright (c) 2025, Kylin Software
+> +
+> +//! Rust alloc sample.
+> +
+> +use kernel::bindings;
+> +use kernel::prelude::*;
+> +
+> +module! {
+> +    type: RustAlloc,
+> +    name: "rust_alloc",
+> +    authors: ["Rust for Linux Contributors"],
+> +    description: "Rust alloc sample",
+> +    license: "GPL",
+> +}
+> +
+> +const VBOX_SIZE: usize =3D 1024;
+> +const VBOX_LARGE_ALIGN: usize =3D bindings::PAGE_SIZE * 4;
+
+Please use kernel::page::PAGE_SIZE instead.
+
+> +const KVEC_VAL: [usize; 3] =3D [10, 20, 30];
+> +
+> +#[repr(align(128))]
+> +struct VboxBlob([u8; VBOX_SIZE]);
+> +
+> +// This structure is used to test the allocation of alignments larger
+> +// than PAGE_SIZE.
+> +// Since this is not yet supported, avoid accessing the contents of
+> +// the structure for now.
+> +#[allow(dead_code)]
+> +#[repr(align(8192))]
+> +struct VboxLargeAlignBlob([u8; VBOX_LARGE_ALIGN]);
+> +
+> +struct RustAlloc {
+> +    vbox_blob: VBox<VboxBlob>,
+> +    kvec_blob: KVec<usize>,
+> +}
+> +
+> +fn check_align(addr: usize, align: usize) -> bool {
+> +    debug_assert!(align.is_power_of_two());
+> +    if addr & (align - 1) !=3D 0 {
+> +        pr_err!("Address {:#x} is not aligned with {:#x}.\n", addr, alig=
+n);
+> +        false
+> +    } else {
+> +        true
+> +    }
+> +}
+
+I think check_align() is unnecessary -- we don't need to test this in this
+context.
+
+Instead, I suggest to add some doc-tests to the `Allocator` impls for `Kmal=
+loc`,
+`Vmalloc` and `KVmalloc` in rust/kernel/alloc/allocator.rs testing that the=
+y
+return the expected alignment. This would be a valuable test case for those=
+. If
+you're interested in adding them, please feel free to do so. :)
+
+> +impl kernel::Module for RustAlloc {
+> +    fn init(_module: &'static ThisModule) -> Result<Self> {
+> +        pr_info!("Rust allocator sample (init)\n");
+> +
+> +        let vbox_blob =3D VBox::<VboxBlob>::new_uninit(GFP_KERNEL)?;
+> +        if !check_align(vbox_blob.as_ptr() as usize, 128) {
+> +            return Err(EINVAL);
+> +        }
+> +        let vbox_blob =3D vbox_blob.write(VboxBlob([0xfeu8; VBOX_SIZE]))=
 ;
-> kishon=40kernel.org; robh=40kernel.org; krzk+dt=40kernel.org;
-> conor+dt=40kernel.org; alim.akhtar=40samsung.com; andre.draszik=40linaro.=
-org;
-> peter.griffin=40linaro.org; neil.armstrong=40linaro.org; kauschluss=40dis=
-root.org;
-> ivo.ivanov.ivanov1=40gmail.com; m.szyprowski=40samsung.com;
-> s.nawrocki=40samsung.com
-> Cc: linux-phy=40lists.infradead.org; devicetree=40vger.kernel.org; linux-
-> kernel=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; linux-s=
-amsung-
-> soc=40vger.kernel.org; rosa.pila=40samsung.com; dev.tailor=40samsung.com;
-> faraz.ata=40samsung.com; muhammed.ali=40samsung.com;
-> selvarasu.g=40samsung.com
-> Subject: Re: =5BPATCH v4 2/6=5D phy: exynos5-usbdrd: support HS phy for
-> ExynosAutov920
->=20
-> On 01/07/2025 14:07, Pritam Manohar Sutar wrote:
-> > This SoC has a single USB 3.1 DRD combo phy that supports both
-> > UTMI+ (HS) and PIPE3 (SS) and three USB2.0 DRD HS phy controllers
-> > those only support the UTMI+ (HS) interface.
-> >
-> > Support only UTMI+ port for this SoC which is very similar to what the
-> > existing Exynos850 supports.
-> >
-> > This SoC shares phy isol between USBs. Bypass PHY isol when first USB
-> > is powered on and enable it when all of then are powered off. Add
-> > required change in phy driver to support HS phy for this SoC.
-> >
-> > Reviewed-by: Neil Armstrong <neil.armstrong=40linaro.org>
->=20
-> Drop
 
-Sure.
+Given that you initialize it with a value anyways, you can just do
 
->=20
-> You again added significant changes and claimed they were reviewed.
->=20
-> > Signed-off-by: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
-> > ---
-> >  drivers/phy/samsung/phy-exynos5-usbdrd.c    =7C 131 ++++++++++++++++++=
-++
-> >  include/linux/soc/samsung/exynos-regs-pmu.h =7C   2 +
-> >  2 files changed, 133 insertions(+)
-> >
-> > diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> > b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> > index dd660ebe8045..64f3316f6ad4 100644
-> > --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> > +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> > =40=40 -480,6 +480,8 =40=40 struct exynos5_usbdrd_phy =7B
-> >  	enum typec_orientation orientation;
-> >  =7D;
-> >
-> > +static atomic_t usage_count =3D ATOMIC_INIT(0);
+	let blob =3D VBox::new(Blob([0xfeu8; SIZE]), GFP_KERNEL)?;
 
-Presently, existed SoC in driver, supports only one USB port and=20
-it does not have any complications to handle shared isol. However,=20
-phy isols are shared across USB20s in ExynosAutov920=20
-(here ExynosAutov920 has 4 ports with shared phy isols). phy isol=20
-should be enabled when all ports are disabled else bypassed if any=20
-one of usbs is in use. phy isol is handled at bootloader in Downstream code=
-.=20
-USB20 ports won't work if isol is not handled in any bootloader. Hence,=20
-added usage_count for the purpose.
-  =20
-But still, it depends on phy isol architecture, if SoC shares phy isol with=
-=20
-USBs or it can have separate phy isols for each usbs.
+instead.
 
->=20
-> No, you cannot have singletons. How are you going to handle two independe=
-nt
-> phys?
+> +        if let Ok(_) =3D VBox::<VboxLargeAlignBlob>::new_uninit(GFP_KERN=
+EL) {
+> +            pr_err!("Allocations for VBox with alignments larger than PA=
+GE_SIZE should fail, but here it succeeded.\n");
+> +            return Err(EINVAL);
+> +        }
 
-Agreed with your point and have to handle shared and separate isols in same=
- driver. =20
-We will take this later in subsequent patch-sets.
-  =20
-For now, will remove this usage_count and bring up only basic support for E=
-xynosAutov920 phy.
+This can just be
 
->=20
-> Best regards,
-> Krzysztof
+	assert!(VBox::<VboxLargeAlignBlob>::new_uninit(GFP_KERNEL).is_err());
 
-Thank you.
+within a doc-test.
 
-Regards,
-Pritam
+> +        let mut kvec_blob =3D KVec::new();
+> +        kvec_blob.extend_from_slice(&KVEC_VAL, GFP_KERNEL)?;
+
+We already have doc-tests for KVec::new() and KVec::extend_from_slice() in
+rust/kernel/alloc/kvec.rs.
+
+> +        Ok(Self {
+> +            vbox_blob,
+> +            kvec_blob,
+> +        })
+> +    }
+> +}
+> +
+> +impl Drop for RustAlloc {
+> +    fn drop(&mut self) {
+> +        pr_info!("Rust allocator sample (exit)\n");
+> +
+> +        // check the values
+> +        for b in self.vbox_blob.0.as_slice().iter() {
+> +            if *b !=3D 0xfeu8 {
+> +                pr_err!("vbox_blob contains wrong values\n");
+> +            }
+> +        }
+> +
+> +        if self.kvec_blob.as_slice() !=3D KVEC_VAL {
+> +            pr_err!("kvec_blob contains wrong values\n");
+> +        }
+
+Here you're basically testing Vec::as_slice(). We don't have doc-tests for
+as_slice() and as_slice_mut() in rust/kernel/alloc/kvec.rs. Please feel fre=
+e to
+add them. :)
+
+> +    }
+> +}
 
 
