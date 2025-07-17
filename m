@@ -1,107 +1,121 @@
-Return-Path: <linux-kernel+bounces-735614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37516B09193
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:19:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3EC0B09195
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:20:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE6143B36FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:19:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0F5C1892E2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C542FC000;
-	Thu, 17 Jul 2025 16:19:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 717102FC002;
+	Thu, 17 Jul 2025 16:19:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="rmGHzEq3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SYxc3fER"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634172FBFE9;
-	Thu, 17 Jul 2025 16:19:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA60145346;
+	Thu, 17 Jul 2025 16:19:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752769188; cv=none; b=XTwK2cDHn3Dl04R3hojxs7hvKINMaiD/wiophjJhCTLRAQmk1ipvmEYRpfCnktPcKfUdJW1trCilX+h5lrhbXdGfa7FBNq8Z5X20PwjOG9IZmNlg5AQZ6qM5UrVpbIvZZ0uxuXq39zIDixN/RcfRT6mgqIEn7VhxBDtYZAeA9XU=
+	t=1752769197; cv=none; b=dPNN2/oEYbhaVAmvmyGEPaFz131MuAhWbJZPBElSOYevjSp1MbR6wfhwpY0Orjg1xKtrIwNjxNDYflYkMNiWg9x/0VkoPjxiqPQVQ9VC01aDROivoPW1baf9CGPC6Emdm3YONxvClWFDRtToqvgyDfS26MygCLONIrJ4Ga3u7xI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752769188; c=relaxed/simple;
-	bh=bIKb0O30JNksa/bN12EZuB7px7OzxQsuWs1UcWRnoFE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sv9n1n0gkB5vdIduCGzwZMkVJyyNSuNXjyQK8+7IKB7ZNaTLEKHRTUEyh6KYvDQuxKfGYHS31wWAaAob9wIPZdOPrzZ9QDvTh75XhoNXOtpglfaZ7eA0e7BQi06lh6CYYsf6FFfVuWjpNQ5BibfiW0xfDCRowqE7GTItd6jzeRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=rmGHzEq3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 696CAC4CEE3;
-	Thu, 17 Jul 2025 16:19:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752769187;
-	bh=bIKb0O30JNksa/bN12EZuB7px7OzxQsuWs1UcWRnoFE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rmGHzEq3Hr8C08qx5NRedsRToEeS1+Glfg7n27g+/SaEOOsHXdXMYu48TbsSbrR/O
-	 DKp2OISn627WLR61OWZsYZSscnYXaljAqPdswFGmiG0E1JPk1FmXlEImvk9RE4BaDS
-	 2iUklXU8rSCh8hh+pMJAYT4h6M7F3krkKCn2x8+c=
-Date: Thu, 17 Jul 2025 18:19:44 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Valentina Manea <valentina.manea.m@gmail.com>,
-	Shuah Khan <shuah@kernel.org>, Hongren Zheng <i@zenithal.me>,
-	"Brian G. Merrell" <bgmerrell@novell.com>, kernel@collabora.com,
-	Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/9] usb: vhci-hcd: Do not split quoted strings
-Message-ID: <2025071713-passivism-suggest-436d@gregkh>
-References: <20250717-vhci-hcd-suspend-fix-v1-0-2b000cd05952@collabora.com>
- <20250717-vhci-hcd-suspend-fix-v1-5-2b000cd05952@collabora.com>
+	s=arc-20240116; t=1752769197; c=relaxed/simple;
+	bh=+4LCQYFgagsp07CeF/hAV/umbNEl6K6FJwmZLTdae8A=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Bh0wrSyxk5CVm/GjujWBwc+UQ+y5/ETUT2ryiZwHDe4NKLivsQStYOMXWFegxANxaY5XYx23htXF5LPugANZZQ0Ba4DsPvNr1FrGhliUqtuAgFP/JpsoWssoVFF2dSQFtPRsf2Z3x3C7Hz5clF3VsnQwbfyXHVGuBuQilkLgBaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SYxc3fER; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53DE5C4CEF0;
+	Thu, 17 Jul 2025 16:19:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752769197;
+	bh=+4LCQYFgagsp07CeF/hAV/umbNEl6K6FJwmZLTdae8A=;
+	h=From:Date:Subject:To:Cc:From;
+	b=SYxc3fERcNvgvNz8wcAj5JS8+e+k481hRPuiEGLvjZPm/5rdNM8yyKhlvHXnmitH3
+	 +QuEiJ9k1moPoL681tKV7cjqLxg0iCmoYt6faYm1NvlZUNGsRhfcZO0ZyWX1PfFek+
+	 h9GzeHqayNVaaPnwUZe+QWSdfcahtjprEMWSNFPANvSt4i5GedINQ7ra1O70BWNX8J
+	 qoWnACOS6FOtcwvQ7xrXqR+P297amvxJsfqezp+/TCyO0EDeEfAexSyNT3c5A3dikQ
+	 JrLkrDC/uluFSJIW+JpglONJizLBk23rp0S5kJuS8Is7/7kQoRD+pCQHEfMvpvZijs
+	 JXYtV7/TRurVA==
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-61208b86da2so328490eaf.2;
+        Thu, 17 Jul 2025 09:19:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX0jFC13RvxQBFYHlJXlNWCwbWIp0An5oZEXFaiDUpvyJ5rSpfk+db+T0ZTE7mJeNs2XqouLQSRmGmyt0k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJplcqQUWza86GGcLBlk/7L/LpEnG+rmuf2lo33XPaYj/A5fnk
+	rylARdZyyenh/+n2dUBt0dmqiAAZhDGFe0UXmFMwt7sqngJ5vXg/vm2yy/QDsTMww9lnR3bbM2C
+	WgDTRPkAMQ6vcKxKUkdrMCRk/Fdw2C8c=
+X-Google-Smtp-Source: AGHT+IGZ2vl3jDTKnMkPOHGs/ayhsRrEwojeTvoE+jTzWm+YUrmstwqEwJ7fzk3oAOZGvCrcT2E7LE0yLgZWYLWCOc4=
+X-Received: by 2002:a4a:e90d:0:b0:615:a91b:8e7b with SMTP id
+ 006d021491bc7-615a91b909bmr4296814eaf.4.1752769196562; Thu, 17 Jul 2025
+ 09:19:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250717-vhci-hcd-suspend-fix-v1-5-2b000cd05952@collabora.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 17 Jul 2025 18:19:45 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gX0Tj5GYLu6rPj2iWfep1shMAZbV740_wr=Gss928CXA@mail.gmail.com>
+X-Gm-Features: Ac12FXytljNEdTzgaJ52nkTptnM8CcDeacP-wV1pey2q6oONUxLd6iQek3_yQlU
+Message-ID: <CAJZ5v0gX0Tj5GYLu6rPj2iWfep1shMAZbV740_wr=Gss928CXA@mail.gmail.com>
+Subject: [GIT PULL] Power management fixes for v6.16-rc7
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jul 17, 2025 at 06:54:54PM +0300, Cristian Ciocaltea wrote:
-> Join the split strings to make checkpatch happy and regain ability to
-> grep for those log messages in the source code:
-> 
->   WARNING: quoted string split across lines
-> 
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> ---
->  drivers/usb/usbip/vhci_hcd.c | 21 +++++++--------------
->  1 file changed, 7 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/usb/usbip/vhci_hcd.c b/drivers/usb/usbip/vhci_hcd.c
-> index 3f888455d238b983a6aafa52418fb89a914c32b5..53691d5e77d386b0b0e16fe9d08824baa04c0b1e 100644
-> --- a/drivers/usb/usbip/vhci_hcd.c
-> +++ b/drivers/usb/usbip/vhci_hcd.c
-> @@ -376,8 +376,7 @@ static int vhci_hub_control(struct usb_hcd *hcd, u16 typeReq, u16 wValue,
->  		switch (wValue) {
->  		case USB_PORT_FEAT_SUSPEND:
->  			if (hcd->speed >= HCD_USB3) {
-> -				pr_err(" ClearPortFeature: USB_PORT_FEAT_SUSPEND req not "
-> -				       "supported for USB 3.0 roothub\n");
-> +				pr_err(" ClearPortFeature: USB_PORT_FEAT_SUSPEND req not supported for USB 3.0 roothub\n");
+Hi Linus,
 
-Why the leading " "?
+Please pull from the tag
 
-And shouldn't this be dev_err()?
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ pm-6.16-rc7
 
->  				goto error;
->  			}
->  
-> @@ -506,8 +505,7 @@ static int vhci_hub_control(struct usb_hcd *hcd, u16 typeReq, u16 wValue,
->  		case USB_PORT_FEAT_LINK_STATE:
->  			usbip_dbg_vhci_rh(" SetPortFeature: USB_PORT_FEAT_LINK_STATE\n");
->  			if (hcd->speed < HCD_USB3) {
-> -				pr_err("USB_PORT_FEAT_LINK_STATE req not "
-> -				       "supported for USB 2.0 roothub\n");
-> +				pr_err("USB_PORT_FEAT_LINK_STATE req not supported for USB 2.0 roothub\n");
+with top-most commit ebd6884167eac94bae9f92793fcd84069d9e4415
 
-dev_err()?
+ PM: sleep: Update power.completion for all devices on errors
 
-Same for the others.
+on top of commit 347e9f5043c89695b01e66b3ed111755afcf1911
 
-thanks,
+ Linux 6.16-rc6
 
-greg k-h
+to receive power management fixes for 6.16-rc7.
+
+These address three issues introduced during the current development
+cycle and related to system suspend and hibernation, one triggering
+when asynchronous suspend of devices fails, one possibly affecting
+memory management in the core suspend code error path, and one due
+to duplicate filesystems freezing during system suspend:
+
+ - Fix a deadlock that may occur on asynchronous device suspend
+   failures due to missing completion updates in error paths (Rafael
+   Wysocki).
+
+ - Drop a misplaced pm_restore_gfp_mask() call, which may cause
+   swap to be accessed too early if system suspend fails, from
+   suspend_devices_and_enter() (Rafael Wysocki).
+
+ - Remove duplicate filesystems_freeze/thaw() calls, which sometimes
+   cause systems to be unable to resume, from enter_state() (Zihuan
+   Zhang).
+
+Thanks!
+
+
+---------------
+
+Rafael J. Wysocki (2):
+      PM: suspend: Drop a misplaced pm_restore_gfp_mask() call
+      PM: sleep: Update power.completion for all devices on errors
+
+Zihuan Zhang (1):
+      PM: suspend: clean up redundant filesystems_freeze/thaw() handling
+
+---------------
+
+ drivers/base/power/main.c | 19 +++++++++++++++++++
+ kernel/power/suspend.c    |  5 +----
+ 2 files changed, 20 insertions(+), 4 deletions(-)
 
