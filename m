@@ -1,188 +1,144 @@
-Return-Path: <linux-kernel+bounces-735224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8865B08C62
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:02:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CC61B08C64
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:03:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 169221C249A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:02:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23EFA3B5BD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F5E29DB99;
-	Thu, 17 Jul 2025 12:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E98329DB78;
+	Thu, 17 Jul 2025 12:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="O1T7GrUX"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="mq3KE43u"
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D447429C339;
-	Thu, 17 Jul 2025 12:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D4F291C1A
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 12:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752753745; cv=none; b=kUkzcZn9xctjtgW5YJpIJ9jRWNYsm9BLHJmILngIaYfQWT/mTRWmowy9zwVy1blxLOSkxQlAWTtCXgWPIuq9u1xgRbku6DQC9p2L46S3N8axroeefzGM3Yay48KBOXNfJzWpZtS1t+G3DGYYblez6rFPtIqZsc/RqPW4m9fVkFE=
+	t=1752753798; cv=none; b=OptVQ1Kr345n4R4gDj9BTp1XtL0JYgafojOOiLUGnR9yD1M692ymuToDA62jcLxmj23jyEsU2vUPK5yJ1TWn3fx+1L2VFIKUD1Vg3KZI4JG068XTHSlZgr3nlc4ZfWtO0hFjjtsBly2GZjSfrrwih7mGhHrAWZ2a75DQ1yHS9LQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752753745; c=relaxed/simple;
-	bh=U9UwDrSbWaiDmvTA0BWFaYzVtEq4zRVfB/UuI5qqODI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bgBAGetbBFz0ARNSUggALp+sOQFcBhjuO4/p6Cv1bJ2gVNzXQPI6QTz+pEjEi087em0lAg+jV/jWra1Eytc3PyLZB1cuD4WAm6A56/7sF6s8whsisLE8u4sqqVUZdidEMkKRVLz3VuYarcLk/wxhcQ9cdzfLgZduadQVQRQ0UiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=O1T7GrUX; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56H44NNR028071;
-	Thu, 17 Jul 2025 12:02:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	PgbN5SgJ+4eZw4UavhDcuBv73OTeH2sfBYqdzXx9WzM=; b=O1T7GrUXnOvod8An
-	Y4NLIcUZmtafNazj/PcZnoppXwSkkOeGhkM8qDbY1HMHelbZkwbTfJDUnm44GeHo
-	oWybS+Vl8+kaSy/EqxiiovFTqRbzKqVxEF1suqvaMjcOcUjMpNSS9Bo7mrEK/XgK
-	ZtMfPN4vP67o9QsWZkhZiuZ40IDpQSX+cKaT0FyiNnU/pgIu81A/PqgQJIm2DKPU
-	zoz9NpWgJ4tZfviJxE0BEorxKbeL1OBD9LP1EatSomf+htAi0WIgMpsM3e77lE4z
-	ldfxQz9PEGiRWh3H21MzK+VXP2NzBMzFhlSw2mcUQjldkDHQRY1t0CLYQU7aWMdf
-	WVt6lw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47wnh5yruc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Jul 2025 12:02:08 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56HC28sV017128
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Jul 2025 12:02:08 GMT
-Received: from [10.216.39.173] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 17 Jul
- 2025 05:02:04 -0700
-Message-ID: <2d5edf11-2d13-bcc7-93a9-e0a223bd6eb8@quicinc.com>
-Date: Thu, 17 Jul 2025 17:32:01 +0530
+	s=arc-20240116; t=1752753798; c=relaxed/simple;
+	bh=5sUyuEyDxYzNwvF/7nF2kx8JP8Y5SfRqqnTK/JmhFx4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZsuoYXaMz/UEDuDwLFz1ADk1rJrQX+WY3x0oJTQRb/ID+V8zH5H1YsSbaJS4cvKmgCWgRJthPs156q8z634ZgNxm6Hrp5BnYOkJxvjQGuhZ8QrobyYSj2oMQiMc7NRGhoVqXqOyfLRAaRXaN7RCyKYSYbolDkCVE8HSERpFxV8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=mq3KE43u; arc=none smtp.client-ip=209.85.166.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-87c09672708so4724139f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 05:03:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1752753796; x=1753358596; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MdczZfWBYlBsJGjMXmJfIpSAsQhEzzJLRKIMejj7UJA=;
+        b=mq3KE43uyhw1GsptyFTVLpVa9Jhlih+m9VMpEpiZ1xVNhzKR5r+mqARyHz/vzdE2P+
+         ox4CXBFfpczlr6eTRnqSRShuXFEeWRoTLohnWWTRcXM7UMwpYHFWoMwbPQWs1K6sT5BC
+         hanQdTJmAxibrmv2eib/ckTIROTfzCv6X9zWb/sUXt8wZsOumYV0+240c/kkUq8bTdVI
+         4HNB4NTAAR92Hcl1AmQSOALtd4XmK2AqLjKKbtOU0gv4cXK2e50hj+tA/nzmjR8nbS7z
+         sCDqqNw+2/PO7RNE74IQZqf94OX92XI9+57mmsfiHx9SuFYTH/xyWhULiIZdJYv99zHn
+         kLaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752753796; x=1753358596;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MdczZfWBYlBsJGjMXmJfIpSAsQhEzzJLRKIMejj7UJA=;
+        b=h8TyNKYI49Afp7cpcEXK1oK/60fZWCcvswcvqnI0CtZ3Q1u7MmdZ7awrvJ3YpzOUXz
+         583cJ5kr8VqA+5nnIaPv657sCLUK9BEHcLWn6SoJPHI1yLaWAQno37KYG+55AgF1R9Oh
+         HWzJhfbYIO6Ap44t5qpIemmr9cWEA5KjZ+2dk8RC7ukY638jh7jps7XjqJqplMGLXHmQ
+         c7htAijU6sUAt+IlO27TFzszLgeFisEG/nF+xyo6Vgzzoe5udvC0j4mam6HFOSJB6L2Y
+         fOBJ4h/LUbSVV1tq/Hi/8+pKxz+vdQfbDniSHA2EmBFG8MP33fDeSwQ63Zz4FItOVgn1
+         Ky4g==
+X-Forwarded-Encrypted: i=1; AJvYcCXXC2JstsmkiTYJ4Pia9W7CFX2zonav+xWu/JXPSKUkUlw2EZQHMPNhAE9NAmHcPNkT23l2oUh27lAcwuM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKkoIwnroApuv2K8xX0ODcin4RJb+DJVvEOiOXJtHCOdj6JW/R
+	+yMsjH29Y73zfKWldzcaoROViHj1C7gSydsqIGaZJ9+MB/T4YPY+0QoHFE2SY2thH67fJ/plJEx
+	vksispX5sU26kvurPjUcdaepvkcshJjEOYtwu7AIkAA==
+X-Gm-Gg: ASbGncuCGdlfsc2moeSXzkB5/ERmZTxHInHQeZ1/hhUDaJ6CSoJ4HN798UJnGbTQXkK
+	5a0dS6R93RcYNRSrxJPSHWK2OqANZ1QY+8cM0jTGAMZi4OHFUvFUs3kxl3zCcX2EODPCsk4ZgP1
+	3lKMhLi/ucfjZjyhhCL5OXv5ozKb8v9Do2vkjLFhxRRsjU/fKsW+YrcnL1r4ieex7L20HcdA5Eb
+	nEyEpCsC1D8EM4=
+X-Google-Smtp-Source: AGHT+IEIPZpywuhs1CvUOSh4UNExbMIYSBBP4YpBBndeSSlxDKRJE4v/uEqa/SeaPqJ739w3Q/p24P3FjwMeUrY6uKw=
+X-Received: by 2002:a05:6602:6016:b0:875:bc7e:26ce with SMTP id
+ ca18e2360f4ac-879c2519d3amr647026439f.0.1752753796201; Thu, 17 Jul 2025
+ 05:03:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 3/3] media: iris: Add support for SM8750 (VPU v3.5)
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Dikshita Agarwal
-	<quic_dikshita@quicinc.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        "Bryan
- O'Donoghue" <bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel
-	<p.zabel@pengutronix.de>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250714-sm8750-iris-v1-0-3006293a5bc7@linaro.org>
- <20250714-sm8750-iris-v1-3-3006293a5bc7@linaro.org>
- <7b0a984f-b62a-ac4d-74bf-a6e839c59272@quicinc.com>
- <d4c39f2c-9f95-4e65-87a3-78173b39adf1@linaro.org>
- <1c5df071-7000-ab45-dbc6-4384d883ba24@quicinc.com>
- <a6dbca7e-4d49-49a6-987c-8cd587501c98@linaro.org>
- <3a87c37b-b392-598a-736f-bb01e4c311e1@quicinc.com>
- <f6f86227-8d26-400b-9ad6-605cee966b56@linaro.org>
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-In-Reply-To: <f6f86227-8d26-400b-9ad6-605cee966b56@linaro.org>
+References: <50989f0a02790f9d7dc804c2ade6387c4e7fbdbc.1749634392.git.zhouquan@iscas.ac.cn>
+In-Reply-To: <50989f0a02790f9d7dc804c2ade6387c4e7fbdbc.1749634392.git.zhouquan@iscas.ac.cn>
+From: Anup Patel <anup@brainfault.org>
+Date: Thu, 17 Jul 2025 17:33:02 +0530
+X-Gm-Features: Ac12FXzaP5e6ToyKGdPw9vauuEDoz4G5gaSf7T3TkFpqI1hEBh5Tf1rGli--9AE
+Message-ID: <CAAhSdy0BvhZ_TsaKEK3j+0kNQYRekVyfHOFh=eAkj2H7Znrm1g@mail.gmail.com>
+Subject: Re: [PATCH] RISC-V: KVM: Avoid re-acquiring memslot in kvm_riscv_gstage_map()
+To: zhouquan@iscas.ac.cn
+Cc: ajones@ventanamicro.com, atishp@atishpatra.org, paul.walmsley@sifive.com, 
+	palmer@dabbelt.com, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=dKimmPZb c=1 sm=1 tr=0 ts=6878e640 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
- a=ONz1pvL7zxQUDdDM2XMA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: 8qbDmR90wHf7hglQOvKe1nz6DD92OhHg
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDEwNSBTYWx0ZWRfX3a5JuebAMS5L
- 201l8H1DNnntdIukv+pEVAjbS8Bd1Jl0UM6z+kq7ehDFmoTONv3ZNL5ntkNVwm8zGfrU8QPW/N+
- I99XOK5Cj0m/A4n5XpHje9t6xrLl15ZZDHVzE56ovn530s+m9AM+rCr/j8z9ReN6OVLgjRblMZa
- UZhQOxjBaz95vPBtT+fuhdDFvAWiopLPcqE3RwOfYv9ew2OS7/fYFDPg0H83AAbP/loilAq1tfZ
- x1yebKZI+RMtar0Q8i8+0aNt5xuKMTzBJYOJxUI/2aUPdP0jc2LdMDFtpvf3bGG6dqAMscaHS4g
- NSYSVdzI8ngpN5D6f0lf2M++APXSM3u/g/cVFT2X3h8I45dOGgm1HQFv2meDEs1ENNowkVfQPE8
- XmNByKDWmR/rIbtHbMdLvgjw+J3Zp+BGZCB4ZSmG+UfWTur65s5aIcCnk6j0TJb5ZX3dBYza
-X-Proofpoint-ORIG-GUID: 8qbDmR90wHf7hglQOvKe1nz6DD92OhHg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-17_01,2025-07-17_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 clxscore=1015 mlxlogscore=848 mlxscore=0 spamscore=0
- adultscore=0 impostorscore=0 priorityscore=1501 suspectscore=0 bulkscore=0
- phishscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507170105
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Jun 11, 2025 at 3:30=E2=80=AFPM <zhouquan@iscas.ac.cn> wrote:
+>
+> From: Quan Zhou <zhouquan@iscas.ac.cn>
+>
+> The caller has already passed in the memslot, and there are
+> two instances `{kvm_faultin_pfn/mark_page_dirty}` of retrieving
+> the memslot again in `kvm_riscv_gstage_map`, we can replace them
+> with `{__kvm_faultin_pfn/mark_page_dirty_in_slot}`.
+>
+> Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
 
-On 7/17/2025 4:24 PM, Krzysztof Kozlowski wrote:
-> On 17/07/2025 12:50, Dikshita Agarwal wrote:
->>>>>>> +	for (i = 0; i < core->iris_platform_data->num_vpp_pipe; i++) {
->>>>>>> +		ret = readl_poll_timeout(core->reg_base + VCODEC_SS_IDLE_STATUSN + 4 * i,
->>>>>>> +					 val, val & 0x400000, 2000, 20000);
->>>>>>> +		if (ret)
->>>>>>> +			goto disable_power;
->>>>>>> +	}
->>>>>>> +
->>>>>>> +	ret = readl_poll_timeout(core->reg_base + AON_WRAPPER_MVP_NOC_LPI_STATUS,
->>>>>>> +				 val, val & BIT(0), 200, 2000);
->>>>>> what are you polling here for?
->>>>>
->>>>>
->>>>> This is not different than existing code. I don't understand why you are
->>>>> commenting on something which is already there.
->>>>
->>>> Which code are you referring to?
->>>
->>> To the existing vpu33 which had Reviewed-by: Vikash Garodia
->>> <quic_vgarodia@quicinc.com>
->>>
->>> You understand that everything here is the same, everything is a copy
->>> while adding just few more things?
->>>
->>> My patch is not doing in this respect anything different that what you
->>> reviewed.
->>>
->>
->> It seems to have been missed in vpu33 power off sequence as well and should
->> be fixed.
->>
->> Still, as mentioned earlier as well, your reference should be
->> HPG/downstream driver of SM8750 not the previous generation (SM8650).
-> 
-> Yes and partially no, because we write upstream code matching or
-> extending existing upstream driver. As you said earlier, downstream is
-> not the truth always:
-> 
-> "That shouldn’t be the case. The downstream design is different, which
-> is why the driver requires the above code to move the GDSC"
-> 
-> so here I built on top of SM8650 and re-iterate whatever mistakes are
-> there. The best if someone fixes VPU33 and then I rebase on top,
-> re-using fixed code as my base.
+LGTM.
 
-You have mixed different comments made earlier.
+Reviewed-by: Anup Patel <anup@brainfault.org>
 
-1. Downstream GDSCs are still in HW_CTRL mode, while upstream GDSCs are migrated
-to HW_CTRL_TRIGGER. This does not need a fix in SM8650, but in the
-"iris_vpu35_power_on_hw" which you have added in this patch for SM8750.
+Queued this patch for Linux-6.17
 
-2. Register write "AON_WRAPPER_MVP_NOC_LPI_CONTROL" with 0x1 is needed on both
-SM8650 and SM8750, before polling AON_WRAPPER_MVP_NOC_LPI_STATUS in
-"iris_vpu35_power_off_hw" function.
+Thanks,
+Anup
 
-I can soon submit a patch to fix SM8650 with the missing register write, but i
-do not see a need to wait for it to continue your development on SM8750.
-
-Regards,
-Vikash
+> ---
+>  arch/riscv/kvm/mmu.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/riscv/kvm/mmu.c b/arch/riscv/kvm/mmu.c
+> index 1087ea74567b..f9059dac3ba3 100644
+> --- a/arch/riscv/kvm/mmu.c
+> +++ b/arch/riscv/kvm/mmu.c
+> @@ -648,7 +648,8 @@ int kvm_riscv_gstage_map(struct kvm_vcpu *vcpu,
+>                 return -EFAULT;
+>         }
+>
+> -       hfn =3D kvm_faultin_pfn(vcpu, gfn, is_write, &writable, &page);
+> +       hfn =3D __kvm_faultin_pfn(memslot, gfn, is_write ? FOLL_WRITE : 0=
+,
+> +                               &writable, &page);
+>         if (hfn =3D=3D KVM_PFN_ERR_HWPOISON) {
+>                 send_sig_mceerr(BUS_MCEERR_AR, (void __user *)hva,
+>                                 vma_pageshift, current);
+> @@ -670,7 +671,7 @@ int kvm_riscv_gstage_map(struct kvm_vcpu *vcpu,
+>                 goto out_unlock;
+>
+>         if (writable) {
+> -               mark_page_dirty(kvm, gfn);
+> +               mark_page_dirty_in_slot(kvm, memslot, gfn);
+>                 ret =3D gstage_map_page(kvm, pcache, gpa, hfn << PAGE_SHI=
+FT,
+>                                       vma_pagesize, false, true);
+>         } else {
+> --
+> 2.34.1
+>
 
