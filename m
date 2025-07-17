@@ -1,172 +1,247 @@
-Return-Path: <linux-kernel+bounces-734893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 349ADB087CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:20:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA18EB087CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:21:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 175323BC409
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:20:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D336585087
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:21:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A477427CB04;
-	Thu, 17 Jul 2025 08:20:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB81127F019;
+	Thu, 17 Jul 2025 08:21:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fMBo4lRl"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="V7WCq4rQ"
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022082.outbound.protection.outlook.com [40.107.75.82])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8966B263F5E
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 08:20:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752740443; cv=none; b=a0hlNcyLh9stFgfR2oGf0gJ4ogSddSlWeVr5WzCIIojK30otzgTOnwwHDTnUjkFsKyO4txaP9rc11yXHler2pseSBQv0oF4/he3/HfLmtwK96cfcXzXOC64IV1nNcwreGO8zIZfPgGOYeYZbNOOm4TwUvkwW2uFrjEDbWqUWRBQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752740443; c=relaxed/simple;
-	bh=xtE1BEijImzQ1+EyvVeZicpa6Rbr5rJKyFTiSZFDxbY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gS7vXiZDFPH0KaiNkddxH1XGIUfoOpvDhSUnkYfroyiZYrcPOHCzzG9iCH/iyEPg2rgqT//tdMD4m//Uf9b8l8ZfGJTElvE0U9Uz5mggiqf2MFOh3lp/usxXlizzsWHFzeKwoTYxZG6m0osyEN2rm8/+Z1X6VLom6NWMAdo7VDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fMBo4lRl; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a588da60dfso383162f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 01:20:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752740439; x=1753345239; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aSn1ikrBu2w6g+uJ3D3dKbejXUUZcJbs+RYM3hSQgKE=;
-        b=fMBo4lRlik3YTDpGC0ZNZi1dUcV6KuzHYcUaP5Y7MX/h9BBidYEmwgbfMGliMxAb1Q
-         CwCDDSjAfK4u00O1p7z85GlixLlycO9IzqWSssRhImoXTODsRd/8LQbjR+wqVe1EqFZi
-         ysUETCMLQ6wXfaUG61bIMDXlnhx2cpKKKdcptpsBIJL7273bKhlO4EL2kWUyO7GBfaNq
-         6ljFM3RU9UyyEniuO5iBBQJrDHnCHn76keNvcIqRQNzqDgjfTtJZ6NrTEu36DOUiKfwb
-         Yv4wHRcosjZUUv4khCj89FbCXu0fP9ws2oYPdHjAmDYhgjk6iu5/RnZEHVeQgOEasreE
-         LWMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752740439; x=1753345239;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aSn1ikrBu2w6g+uJ3D3dKbejXUUZcJbs+RYM3hSQgKE=;
-        b=fyInZrmcEszB4NbxubGpPG/PwqtrsJCNQvKi7OLQzNx9Nl9gZurD82CgLoX5FZy1OU
-         OSacPEtdHvExT6cIEeekXoUGEWLPTCJTS5vAMJT+yv7ox6QA905h8L9QtIiCWg9b0Oo3
-         Ks8yKVwZ139lFywX+FxRyONNWvnPapIFQjrZOEWMKdvzevTX1FG2Y2DOmlEoe20abM4M
-         HheQ8qDcXakmCd5CQbtsgVefA2tzls3S9TqRxbcQccYhRnMWqeQd0CloNDIsZcgDOgiS
-         CXZIeHGLmEhsyKWBmzzruQbNOq86/8a7x+qfIPpsS/sdTZZWh0zLMI0bjMkqXTPyoCNm
-         ae5A==
-X-Forwarded-Encrypted: i=1; AJvYcCWh2LykCe95H+S1fpbIfh53fujh0k9Pbl5gvnLqOdkB9Lk2KsXgOXZj2yqyK3KA7j2PcaJvLLwOEloRd4o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVNh4BQdc+W/TmWYl8iQc93OGyMpYKOawEzT58K1LqQP8TRuIx
-	iPSO0YFHwQxRDTFYHw2EQurlwEY4yXS20SJVYhWkyCMCkEObAQX9BbIGJfX5cdVbUGs=
-X-Gm-Gg: ASbGnctOJl6l/9gmOkafQOe6Hc5ur8V651DLA/xZhfJyj3JoZVSe48BxedcT5y0Hf4i
-	OUbrd/qcBMOLSDK6eUhggEW3D0SeT670yyt0uo5kMx2HNIKyck/DK8Q4M6vnjbi7f79Sg/0PyCa
-	lxn8Ov15l6Ri0pysoevxmYaXTcYA4sHd7Sn9OtZVKdC6UJOgVynUstNlhhk8CBIGmGiQeHtaAyV
-	jS8qCBikiX/z26UbzUGuvLhvylfNQSXdxiEO6BbyFSQMc9iaEsjVXEOfeeRKtLMXfeK2G76ODi8
-	UCS14E2QEVioHYi2qKEMwy+f4fRDrnFEJOLK57t5EhkOVBJkLazMKbaKZqJYHjpJEXPoAAdQFkP
-	2+fC4UvnQkP4gd9C+JXnx99+tqdAUKNM3W4MAKbzvX+yc26VnERE53nhhwMXxEM6PKipYAKjC4R
-	k2
-X-Google-Smtp-Source: AGHT+IFrAHuwDARLY/8Ay2Ov5spI2j+L1Q0PXdz00Ci8rMXPWEOFk1gUDBGwxIvEnn/1FaCq6ZYz8w==
-X-Received: by 2002:a5d:6f0e:0:b0:3a6:d92d:9f7c with SMTP id ffacd0b85a97d-3b60e4c5212mr5057459f8f.9.1752740438729;
-        Thu, 17 Jul 2025 01:20:38 -0700 (PDT)
-Received: from ?IPV6:2a0d:e487:37e:ce58:94c8:a752:de4:96bb? ([2a0d:e487:37e:ce58:94c8:a752:de4:96bb])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b5e8e14e82sm20214519f8f.71.2025.07.17.01.20.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Jul 2025 01:20:37 -0700 (PDT)
-Message-ID: <14c91ee4-3a09-4ec9-966f-0d563d7c8966@linaro.org>
-Date: Thu, 17 Jul 2025 10:20:35 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E3E7262E;
+	Thu, 17 Jul 2025 08:21:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752740502; cv=fail; b=Q60/MCHLTVglbQxghQ5+SSISFU2WKfeu0wULY9t1SnJHJi/Fzmt8WMRUiJ4d62rXONkQwsF5xwHLBOzC0o6GG1oOhk3WkuGaeJu8P5UYDg9ZNADELfiaNUowaXSG+aZDL4qm6+TZMvIDZrfxGCUOZFMBnCbFze3IS4AlpWTZrP8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752740502; c=relaxed/simple;
+	bh=gzVtyOosevYZaZK5cytYouEaPjqQ+o/8MMnvYE/lzds=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ajMlxT/0PSQonTKH2QS1WoP0qHpyZtmPzNHw52Mg0AfTzqJMsNqHN+4ff6eDz7tCPFrwNBBah86cDjKQq11byQBlHImqd53EqpDzn2T4MD78liR3VnWQ9+/p8DE7wIWixXBoawlWN+rfaSQQ17M7g5+XOo8M3mbcyPlIuHu8rGU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=V7WCq4rQ; arc=fail smtp.client-ip=40.107.75.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=iK1+W5LUuzgECvoAXJsYAHHcYO1OFCwp0jkI873nNv2yz9AMEghN3yz845313cxKd09egCxPpeiHzVx5LscuxS0xqF6hVRk0fDNFHnBNB1MwEngKs28JCOCsZjXVgEIkBN9H8tDdubGJukNJKTCNAxn1rvgqIidGN5nUUbXP22j26NZbUW3oG0RH35Q8K9wXZC1Jc32mWHshUcGQa3D7fpUD86/lWPgziuEUQEGnfrEXF7Le08/qzM8euYVtHrWLqEQ0zwDVDOOehzjqL2iuglzI9MkoyLi5eO6vW2Q1y1g456Nq41F20Izu9GB+lxuHEnyrK3shFnXx8iHLZ7+1Tw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gzVtyOosevYZaZK5cytYouEaPjqQ+o/8MMnvYE/lzds=;
+ b=bzhomsbo8tp7V+9o2nbaruFcO4xtg+/GdwwQuDFIoA0t7wNdc9YzXVSP0bQt+LkNCes6CJNAkoF8Mdj0p6iUUXxAysp6KFOX032VET1bvfbZXvc7r08v2MKQCllTl3LV0oNlquqSaHUsD2Cfsr0YGvWyD45ulHlzW5dRLp0CwlD9U6WoPw0QrTZ0Aw8XKKIrMV99Pv4qtDBs3f73cyXTQjiOIW76YKmRJmo9RDXHROot4vNKa5nDyRs3ilfSjGtD8MMMO0mO/C3czK5pMWyVCT07fc6wUMl9AYSdw+crHPzZGB533q57okImVSkWP7o3KhyqEMvHSSm6Qlz11SljDA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
+ header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gzVtyOosevYZaZK5cytYouEaPjqQ+o/8MMnvYE/lzds=;
+ b=V7WCq4rQdxuSS5+ZnzNV33C5kmth7wejNIw3o0P1PTTwEN6yJTER6QKbkrYfE3biq/CmZwxRDS/RU5E5kWs0hUhDNOBXkUJbL0e3W6VP5aoZ1x7CcJrS8fwmQW2CvVvnbVu7m1HWkN2KJWsgnFoIRsCPIxPEWpDBTBPTVgwYS+3zPLlSI6QzEFLSBwiyN1IplOGnaOMY14YdG/cTHxEfw1KCoosRAMhTYpcfCB054FsTnuS9bXBL4Abxf4vWOZ7wDa/3wP7F67VueIQvxYdLqpPpI6DNquEWm295UdDjnrHnMbTh+E9ERnn36JO2xG0ahw6Erf88spiTJ1NsJTF8Ew==
+Received: from SEZPR06MB5763.apcprd06.prod.outlook.com (2603:1096:101:ab::9)
+ by SI6PR06MB7116.apcprd06.prod.outlook.com (2603:1096:4:244::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.29; Thu, 17 Jul
+ 2025 08:21:33 +0000
+Received: from SEZPR06MB5763.apcprd06.prod.outlook.com
+ ([fe80::ba6c:3fc5:c2b5:ee71]) by SEZPR06MB5763.apcprd06.prod.outlook.com
+ ([fe80::ba6c:3fc5:c2b5:ee71%4]) with mapi id 15.20.8901.033; Thu, 17 Jul 2025
+ 08:21:33 +0000
+From: YH Chung <yh_chung@aspeedtech.com>
+To: Jeremy Kerr <jk@codeconstruct.com.au>, "matt@codeconstruct.com.au"
+	<matt@codeconstruct.com.au>, "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+	"davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com"
+	<edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, BMC-SW <BMC-SW@aspeedtech.com>
+CC: Khang D Nguyen <khangng@amperemail.onmicrosoft.com>
+Subject: RE: [PATCH] net: mctp: Add MCTP PCIe VDM transport driver
+Thread-Topic: [PATCH] net: mctp: Add MCTP PCIe VDM transport driver
+Thread-Index:
+ AQHb9Igk7vn3xpIukEauwkU1/K0+nrQxUL6AgAACe7CAAQ2aAIAAWoUggAMVaICAAAU3gIAAGncAgAACR9A=
+Date: Thu, 17 Jul 2025 08:21:33 +0000
+Message-ID:
+ <SEZPR06MB57634C3876BF0DF92174CDFA9051A@SEZPR06MB5763.apcprd06.prod.outlook.com>
+References: <20250714062544.2612693-1-yh_chung@aspeedtech.com>
+	 <a01f2ed55c69fc22dac9c8e5c2e84b557346aa4d.camel@codeconstruct.com.au>
+	 <SEZPR06MB57635C8B59C4B0C6053BC1C99054A@SEZPR06MB5763.apcprd06.prod.outlook.com>
+	 <27c18b26e7de5e184245e610b456a497e717365d.camel@codeconstruct.com.au>
+	 <SEZPR06MB5763AD0FC90DD6AF334555DA9051A@SEZPR06MB5763.apcprd06.prod.outlook.com>
+	 <7e8f741b24b1426ae71171dff253921315668bf1.camel@codeconstruct.com.au>
+	 <SEZPR06MB5763125EBCAAA4F0C14C939E9051A@SEZPR06MB5763.apcprd06.prod.outlook.com>
+ <2fbeb73a21dc9d9f7cffdb956c712ad28ecf1a7f.camel@codeconstruct.com.au>
+In-Reply-To:
+ <2fbeb73a21dc9d9f7cffdb956c712ad28ecf1a7f.camel@codeconstruct.com.au>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=aspeedtech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SEZPR06MB5763:EE_|SI6PR06MB7116:EE_
+x-ms-office365-filtering-correlation-id: 4beac4b5-5885-4063-8a0b-08ddc50af0b2
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|366016|1800799024|42112799006|38070700018|921020;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?M1v0qxPf4ey08D7Gjt9uvJIzorqCpsuZbiTjkubjxiI/X1ci1oyQr95DwvRY?=
+ =?us-ascii?Q?f+d4NZzZ0Joj/l75A4zzpjYrRLLbRMF7vBN1zdSIY3Rn7N0sQ81z4aoUIUWf?=
+ =?us-ascii?Q?IQHEzjHt6qfh/hFb/7y2cnJXGytwnR2iVCu4TAUzpgHPox2+vTNtZLoLHBHe?=
+ =?us-ascii?Q?RlZYo7tJyvBz11Q2hQus44SxeAQU1/vCOdPkc5u8aE5+HL8ITuvx1KKLWbuw?=
+ =?us-ascii?Q?yxs6A0XUhxvmJ/q+RHfOqRiaFxhqfoZMIa2qTg4ORo9jt2luSuHmBPbVNWVK?=
+ =?us-ascii?Q?TZw1TSZJn0dXcSMP800vvsbOp3S+SEW2rDQ1GjB4DbtyavtWbmtDa9F7Q38u?=
+ =?us-ascii?Q?5ltFGdatK8jabFxvtYX60qaYeqW68yB2xT5aK35Yy0J8DYyRgrYR4d6eQ3M3?=
+ =?us-ascii?Q?oeHcQHPa+i5IIJTOyykJVlX11xxVMft6ezCygHYeaNsSZYRpmHiJSI+MfvtP?=
+ =?us-ascii?Q?q+ABV3k1UBpqTVIIXy9RDkHsFZRXzJuC9zVkW+5oef2NNSBsT1Dse/3Iz1l+?=
+ =?us-ascii?Q?91jQKquEtWIXQ/31FenWu+VFJ0cC0p4ZHl4CM+Qrc3+p/zWkZln+/2BPxESy?=
+ =?us-ascii?Q?Sdc+FShmrwbOT2j7RxEb7iR6u+c3wG/XQ+0m93wVYQh8XSQ2wekPHe6JJX3E?=
+ =?us-ascii?Q?HsrFoWEAFvh/VlzLNoWHR4qXZMewcyn+4nBadTXqZxsTbqYRZITISPKQatY0?=
+ =?us-ascii?Q?UcdkcCDdElSEVDwgpOEtj40+vCTkqcdyNOHfX58R8brKIuTO0IepPd81z0qC?=
+ =?us-ascii?Q?QwUTCMS++eGeBKtY23Sex2DDR3bU2o1Af/krOLg8tP+jUi9AClhMCGVGzEHL?=
+ =?us-ascii?Q?H2/O8bTVjqHX3cdgV9Uxyyt5ggw6HSyHQ7husP/Bks0diQpD3xi5wezqa+H1?=
+ =?us-ascii?Q?GCbd7F82FsTmJ6JhtsKCUq/POantZK81kBo1Bb4NL80YAO7uVxzZ+ustKWtK?=
+ =?us-ascii?Q?bM4g+yYFc3pxAtvXEeo1I5DE/OdLDPiQEttbqOwtTbtejURGv3sGaca9ej7G?=
+ =?us-ascii?Q?0o0k7fPxDwAz2ZFPeVnVIIIJwGGYekqtgrkqWs+VdU0siB/AtXejMGkHSMkj?=
+ =?us-ascii?Q?/DVKhISbrrCmdztBFpfL4Yafcf9RYsnDBTINyWFSfVdWwp+ENi0TYJkF13eW?=
+ =?us-ascii?Q?KDnpKjJPRUD+zU4M7TtGziqin05AR13W0uUQLYDlkv74sdPjxvBC5IImGGoz?=
+ =?us-ascii?Q?5SIsjFSV8aCfnbomPG7zPe/okOzNZ4WmNm5RIkgO4bU7yY/PQ8ZqGOequgsV?=
+ =?us-ascii?Q?z8+Fk4BR6HteJi2GH4WY1L/n2VposaCl4arBrU7twv/wHRb7HGQHoJ0c8YBk?=
+ =?us-ascii?Q?zH9jyW7AOfx05Jf+G6UTJ5FAXL+MMldaOTv77GZ7XwxA8h3u8vDqhDnK+/3b?=
+ =?us-ascii?Q?zX1sBs4Vdw/ZeUeuGv436v2McQ5oa3qoAwCEdzKHr6XLEqTv2iJlzzSv8j4I?=
+ =?us-ascii?Q?w90WlnQmUoLsIjbwT0A2ZKDp4t5Pl8Se5SZYaX+rY48Qa+nxqZ49cCVG+7Vm?=
+ =?us-ascii?Q?644pcEcDIaaw8DU=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5763.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(42112799006)(38070700018)(921020);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?8UU2PZcG4mlVYudk+114fMDsRCzK8AV4KiIqu4fJou3Pqw34ozyksEYzh//5?=
+ =?us-ascii?Q?j/CslXg+yIyGAYH6f7EewqyYvSifCeWtLR6YPOa3DcYlB30lffBXzQzJyO92?=
+ =?us-ascii?Q?t3qG6mByov8mZxMqR2Fn0seHjF+ShncAPhRHuEexonyYMe4DILufwOA5x3wP?=
+ =?us-ascii?Q?rqxdYpOEBVGsilEihAz6bLc4tu+NFU2EHwKuCvtksyZvN+NHv8njoaKVn/5n?=
+ =?us-ascii?Q?g9eQp2Xrf6jrTqKPItVOQfI0OnvmJSvHNA6ZGh5XffXYTLWlDlxyOUTO/SwX?=
+ =?us-ascii?Q?eK3oeN0hGI2xD7w7D7FB3rVGAS2zN1OjCu8WJxdkbuKChNqsX+vqlMTJ0wVJ?=
+ =?us-ascii?Q?HnFdFJU3SyAKEiyGk/NSyA8pvsPGWGPFb3dJNPNLw1sAw8m3aooXVOYEA/jU?=
+ =?us-ascii?Q?Gh9/EQsocqa0JL3fKSfMFXE/b+bQogJsgwIluuirAGbY1W8Iblupeu3sN7lv?=
+ =?us-ascii?Q?/c6nHHZjRH1RCzf2q65Ac//JHLvjoXK0l3DHsZ6datufoAatoYy8NsGSxNt0?=
+ =?us-ascii?Q?3bw3qO4k+EYXSNXBvMEidE1Y8AzBv5CcDlMrgVJOO9YzKVRlbP88YxJLlkSz?=
+ =?us-ascii?Q?4njrjuF7xjapVWxufVMiddsn6ZAarqDlgHjgRLVOPWetZN8cTPRCH1xO7pUX?=
+ =?us-ascii?Q?swFyA7MqL1otJ85RLQqH9Nl0lUv6dImGZzLd5XJkpAOFbMq67OeVWz5H+UqG?=
+ =?us-ascii?Q?aSqQF65lZsClRAtU9YNm75Ni6zyyQdkeAOdcFUJEEGQQrgwt9izvEG8cIp6r?=
+ =?us-ascii?Q?gjagS8UGArK5VEFWmCgH1DA7tsahB2NsW+Ev04XM+qnv5ofhO9C0tS8eY3IB?=
+ =?us-ascii?Q?tNsSckaUS74rLuzgMfr8NzBbS4N6O3fw4GrgHV61OgH5oPLSnckDzGTwQV68?=
+ =?us-ascii?Q?RIRbrrgXYVvykeV7FC+OUmDKYGmyQm9fn+DEwa9TgNPrFRcEN3AhOO32z4Rt?=
+ =?us-ascii?Q?THtqSkVVdLrt0rxzFRxsbLmQX80xvgTr7WptRvfTVgB//az3EWL+Jkhb0PPj?=
+ =?us-ascii?Q?I0xySw0QOdUarO/+ITC6O84hfie5lC7ToYqvGO5pK0++C/hkGT8iJCXUt0Ug?=
+ =?us-ascii?Q?9kVr31Y13Sw1+WW79IJWL3uLQFx0ypIxUFDzrPyIdOuk5yX14Kpk9JNlhaXP?=
+ =?us-ascii?Q?SLZiIWcr6FnahB2xoNbC43OtScT54ZJOeGkuNGFCxqMGchxLkQKM5xNMpoQ4?=
+ =?us-ascii?Q?83E7E/GPP5Da8ufCSYnF/LCOQXLt/lMkUZsi1umXgU+4WARnBUefURF2/UXK?=
+ =?us-ascii?Q?J122Wm6esqHgu+U3xxV3Z4G6erFy0J0FOuj7H5BeqsTudL+foSigNf37FlKW?=
+ =?us-ascii?Q?kiTdtxvO15RYxgIIBF8FZP1Z58KwozXBr0QkQDj4G2gKPSJZ0NyleJmhu+pX?=
+ =?us-ascii?Q?kdY68ArS5shwH7i8KVUAHhBWp081kI0hfZemdyRnUHwWSMO0fKSTe40ulDLF?=
+ =?us-ascii?Q?cIchkhdNoDnCHb63JKR1l/61UN0ApZsrJxpkHOGjE8dohc3+fuwGmhHnApo/?=
+ =?us-ascii?Q?LOl97FO2cFxWT/aQbClwu+z6ggCrYW/TT80Y+E9bICA/Q0HxESby9pYC7QbK?=
+ =?us-ascii?Q?ep59xwYJedx3EjAKm5CzVb7z/Vxw04WeF7ycwSr0?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/7] RK3576 thermal sensor support, including OTP trim
- adjustments
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: Alexey Charkov <alchark@gmail.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
- Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, Ye Zhang <ye.zhang@rock-chips.com>
-References: <20250610-rk3576-tsadc-upstream-v6-0-b6e9efbf1015@collabora.com>
- <aHgHxR1_Gzu8Dwbm@mai.linaro.org> <4178173.5fSG56mABF@diego>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <4178173.5fSG56mABF@diego>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: aspeedtech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5763.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4beac4b5-5885-4063-8a0b-08ddc50af0b2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jul 2025 08:21:33.4731
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ZvhBz5xEfnDJWSAZFySNC2IXJpxdi8JXWE0qCAJLi4Vdj5XlVHeF4xwBDmX+wEWk68rx/y8AFOFg+dKxBLgb3Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI6PR06MB7116
 
-On 7/17/25 09:21, Heiko Stübner wrote:
-> Hi Daniel,
-> 
-> Am Mittwoch, 16. Juli 2025, 22:12:53 Mitteleuropäische Sommerzeit schrieb Daniel Lezcano:
->> On Tue, Jun 10, 2025 at 02:32:36PM +0200, Nicolas Frattaroli wrote:
->>> This series adds support for the RK3576's thermal sensor.
->>>
->>> The sensor has six channels, providing measurements for the package
->>> temperature, the temperature of the big cores, the temperature of the
->>> little cores, and the GPU, NPU and DDR controller.
->>>
->>> In addition to adding support for the sensor itself, the series also
->>> adds support for reading thermal trim values out of the device tree.
->>> Most of this functionality is not specific to this SoC, but needed to be
->>> implemented to make the sensors a little more accurate in order to
->>> investigate whether the TRM swapped GPU and DDR or downstream swapped
->>> GPU and DDR in terms of channel IDs, as downstream disagrees with what's
->>> in the TRM, and the difference is so small and hard to pin down with
->>> testing that the constant offset between the two sensors was a little
->>> annoying for me to deal with.
->>>
->>> I ended up going with the channel assignment the TRM lists, as I see the
->>> DDR sensor get a larger deviation from baseline temperatures during memory
->>> stress tests (stress-ng --memrate 8 --memrate-flush) than what the TRM
->>> claims is the GPU sensor but downstream claims is the DDR sensor. Input
->>> from Rockchip engineers on whether the TRM is right or wrong welcome.
->>>
->>> The trim functionality is only used by RK3576 at the moment. Code to
->>> handle other SoCs can rely on the shared otp reading and perhaps even
->>> the IP revision specific function, but may need its own IP revision
->>> specific functions added as well. Absent trim functionality in other
->>> SoCs should not interfere with the modified common code paths.
->>>
->>> Patch 1 is a cleanup patch for the rockchip thermal driver, where a
->>> function was confusingly named.
->>>
->>> Patch 2 adds the RK3576 compatible to the bindings.
->>>
->>> Patch 3 adds support for this SoC's thermal chip to the driver. It is a
->>> port of the downstream commit adding support for this.
->>>
->>> Patch 4 adds some documentation for imminent additional functionality to
->>> the binding, namely the trim value stuff.
->>>
->>> Patch 5 adds support for reading these OTP values in the
->>> rockchip_thermal driver, and makes use of them. The code is mostly new
->>> upstream code written by me, using downstream code as reference.
+Hi Jeremy,
+
+>> From my perspective, the other MCTP transport drivers do make use of
+>> abstraction layers that already exist in the kernel tree. For example,
+>> mctp-i3c uses i3c_device_do_priv_xfers(), which ultimately invokes
+>> operations registered by the underlying I3C driver. This is
+>> effectively an abstraction layer handling the hardware-specific
+>> details of TX packet transmission.
 >>
->> Replaced previously applied version V5 with this V6 patches 1-5
-> 
-> are these commits available somewhere?
-> 
-> Because git.kernel.org reports that
->    https://git.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git
-> has not seen activity in a while?
-> 
+>> In our case, there is no standard interface-like those for
+>> I2C/I3C-that serves PCIe VDM.
+>
+>But that's not what you're proposing here - your abstraction layer serves =
+one
+>type of PCIe VDM messaging (MCTP), for only one PCIe VDM MCTP driver.
+>
+>If you were proposing adding a *generic* PCIe VDM interface, that is suita=
+ble
+>for all messaging types (not just MCTP), and all PCIe VDM hardware (not ju=
+st
+>ASPEED's) that would make more sense. But I think that would be a much lar=
+ger
+>task than what you're intending here.
+>
+Agreed. Our proposed interface is intended only for MCTP, and thus not gene=
+ric for all VDM messages.
 
-I just pushed the bleeding-edge branch
+>Start small. If we have other use-cases for an abstraction layer, we can
+>introduce it at that point - where we have real-world design inputs for it=
+.
+>
+We're planning to split the MCTP controller driver into two separate driver=
+s for AST2600 and AST2700, removing the AST2600-specific workarounds in the=
+ process for improving long-term maintainability. And it's part of the reas=
+on we want to decouple the binding protocol logic into its own layer.
 
+Would it be preferable to create a directory such as net/mctp/aspeed/ to ho=
+st the abstraction layer alongside the hardware-specific drivers?
+We're considering this structure to help encapsulate the shared logic and k=
+eep the MCTP PCIe VDM-related components organized.
+Appreciate any guidance on whether this aligns with the expected upstream o=
+rganization.
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+>Regardless, we have worked out that there is nothing to actually abstract
+>*anyway*.
+>
+>> > The direct approach would definitely be preferable, if possible.
+>> >
+>> Got it. Then we'll remove the kernel thread and do TX directly.
+>
+>Super!
+>
+>> > Excellent question! I suspect we would want a four-byte
+>> > representation,
+>> > being:
+>> >
+>> > [0]: routing type (bits 0:2, others reserved)
+>> > [1]: segment (or 0 for non-flit mode)
+>> > [2]: bus
+>> > [3]: device / function
+>> >
+>> > which assumes there is some value in combining formats between flit-
+>> > and non-flit modes. I am happy to adjust if there are better ideas.
+>> >
+>> This looks good to me-thanks for sharing!
+>
+>No problem! We'll still want a bit of wider consensus on this, because we
+>cannot change it once upstreamed.
+>
+>Cheers,
+>
+>
+>Jeremy
 
