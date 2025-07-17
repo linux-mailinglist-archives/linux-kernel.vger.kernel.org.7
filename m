@@ -1,178 +1,374 @@
-Return-Path: <linux-kernel+bounces-734713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CA7AB08528
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:40:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E24BBB08513
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:39:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBBF6A42461
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:39:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AE561AA293F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:39:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1EC1E3DDB;
-	Thu, 17 Jul 2025 06:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD6C2153FB;
+	Thu, 17 Jul 2025 06:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cDoEaijy"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="4hdCoOen"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2067.outbound.protection.outlook.com [40.107.220.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9B021A454;
-	Thu, 17 Jul 2025 06:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752734379; cv=none; b=KgOGOZOO0C3pJTqCmDvEXHQ2kVldKSoy1royM6MCy+qD81hfMBTs7uTBJZ0B025ObYwRXIXRP4xO8g6ZE3BpukPmfL5kVCjhlAJYI9aJ3gzLsMSzRQivU3ye7X5AmlOA5SHhbFaMdnbS0BOo04mQncsCKvMQSyCwOENM6RvyiZk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752734379; c=relaxed/simple;
-	bh=eZzJ3/zksrrJbDCYNyCMKblV9Q9k/Cyo6z9ekYQeYog=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=rebjpRRxUJImgDW28KAA7fiK4Gvk8Dy94EZO70k+/lOijJe5H9WDo8FePNJ9vPa0KgaihDXXXZCiibQ9fLrGaZPoLJXG6u5fuwvCFLwS21A/MdgxoPVYBUE3vWuX5lUkonWzH9iB/gx7kG16EbW9uLIwMrWG/uN9UblkAA2SWEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cDoEaijy; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56H467qA003009;
-	Thu, 17 Jul 2025 06:39:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	iZFXGo1+tT7aj/ISeCFFTA2HIZnGtqClrhqnODi65iE=; b=cDoEaijyO30DXsJM
-	d4BiD17kKGac3Y+UMPs1sJ2haUfmTX3Y0ITa2Vb3yigGsFjqy5byT6w9QfmOXRZU
-	3YzkBm5OeNnsoX0WKOP3454Tckmt9ioD1Bi2Nkmw93kOQexMDnZaS/ziiWonJeDm
-	dmonoBfPLG1zX9zncQRtJP1lPN2lWsZ2wXViA1IbxChZtPCuwqon4fVUL5KK5Hyq
-	9mKVnBts4RwXTMa5DnLi9wST2IRHeXNCVP7iRF4yy83GbHNLa5PMFM+O3OWbwbsT
-	eFDI2c2ScgkB72tCvU7aPHbQz/9fxkJXIwHiZ2JCNJS213dnk+an05ikDouUzG3t
-	A01ERg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47xsukrb71-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Jul 2025 06:39:35 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56H6dYnQ032531
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Jul 2025 06:39:34 GMT
-Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Wed, 16 Jul 2025 23:39:30 -0700
-From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-Date: Thu, 17 Jul 2025 12:08:36 +0530
-Subject: [PATCH v2 4/4] dt-bindings: clock: qcom,sm4450-dispcc: Reference
- qcom,gcc.yaml
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5FFB72635;
+	Thu, 17 Jul 2025 06:39:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752734351; cv=fail; b=sVy0S+I35pW3FD+05WX3d7E5YsM6fjsZFpjLKqPCkNVM332uuRjfI24fcul/hzbVf6Bei3dYk3slBlYyUHYGHSJlilNfsdGSZLTZEGP3oDbWkzZ/yLiZauatIZcez9X6TZWQf0VJkVFduHA8eSi90HLSwiHTUHwpaJcr+ZBQ9Bo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752734351; c=relaxed/simple;
+	bh=aLqvNTJd6wdvIgVGXnhMGP4neko6ABXlsHhXNBIpfAM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=qWPUZHxIrWSISEgFTqil1ETnGIcRLGIIKA6Kbp7b+Gnqq5KU1JnaGS1XEP+cNoDgvZeS7ljGypNrB0AYwpsc27mYmnBiqfoaYX96iDODK8zfbMhSLxvLzVRLfZ8Gf4Ni+Tt6sfNaSi2XpErJAk1yv+v1ZxhvRgkaOpahHxPlDoY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=4hdCoOen; arc=fail smtp.client-ip=40.107.220.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Gj3zkSXfpDivBKBO+qF1KEAPA8LQEsE24DJFh3k/vWZE+wF43kSBg4a5cVbTVTbpty7r0n4Au8vZciWCads5DJBICdmkqJyIeL/aQbZnjnPZHNvHdnZzGrlIqv+ypRHwOb5k7NdUPhfrwm/jACFoeoNiJcIlAQr01h2QagDwAX95fYFv6efaNJiyQYw1nXXjqHe7L77Uy7aGuNtlj6h2XDEIQFWJix43glgq3t19v8TbR2Qyr6fO4aQK44/8f2/uemDT391JsCNlHe/Dz5SS9lXM5s7YQkrSWd9jsN/I0DnFAlx7FAivC/3m1leMuj1/UETHXMWZlzexic3LgZBtPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QlJ8Rr/MWZMUxav8xaVaopF/z05HrXEXw5vwAWhTUiY=;
+ b=lP8g7Gir9b6mLFA0bq9Ojpo34Zq5KXq01Z9kN6zSAuWLbHuwmPjwlTBO4kaCQSStIvc1AlMNEBeuq1km4R296xnpNoRXAMjk0wl6nki5WYDc+N8nNekMd2m9IUkzc6qW8tYQ47YYfLAowofQDJ1bLyZ18ZwVViFUtc4/IXnnehBxFRheqq0wEfA/O4sBlW4tGU6KFoDLLNoYFTbDhfHfze5L4kQwAPR9h668413+v+mBHCvcqCD8OttO9DnV+NjY5J6wNy6injczFdAqnN56cq9QR+z2238wjcj8oyCNt4nSQiUWfN4afpbgAq+k7dRbf1+7LePCY8soAnXCZAdSMw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QlJ8Rr/MWZMUxav8xaVaopF/z05HrXEXw5vwAWhTUiY=;
+ b=4hdCoOensDK0hyoQ2aO7AJvxfdyuP+xKI2Kkkeit/PFLwF421RXGgWGaz/I4Ya/Oc8OoRLbFBpLA0dpa4OK+ektPEvJfsIPRvH9fXqb9wfOIU6XLrggumM3hOYrtN7XnlXCNMRD4O33+//JaaqeOgKzdJUmOhM4aBpQOKun2/B8=
+Received: from SA1PR12MB8120.namprd12.prod.outlook.com (2603:10b6:806:331::16)
+ by CH2PR12MB4088.namprd12.prod.outlook.com (2603:10b6:610:a5::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.39; Thu, 17 Jul
+ 2025 06:39:04 +0000
+Received: from SA1PR12MB8120.namprd12.prod.outlook.com
+ ([fe80::a160:b30e:1d9c:eaea]) by SA1PR12MB8120.namprd12.prod.outlook.com
+ ([fe80::a160:b30e:1d9c:eaea%6]) with mapi id 15.20.8901.023; Thu, 17 Jul 2025
+ 06:39:04 +0000
+From: "Verma, Devendra" <Devendra.Verma@amd.com>
+To: Vinod Koul <vkoul@kernel.org>
+CC: "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"mani@kernel.org" <mani@kernel.org>
+Subject: RE: [RESEND PATCH] dmaengine: dw-edma: Add Simple Mode Support
+Thread-Topic: [RESEND PATCH] dmaengine: dw-edma: Add Simple Mode Support
+Thread-Index: AQHb5AaGsGs5kTrW3UWG39W5gh/nlLQWBTmAgAiaQpCAF2AAUA==
+Date: Thu, 17 Jul 2025 06:39:04 +0000
+Message-ID:
+ <SA1PR12MB81205B80D32E62204E9244B69551A@SA1PR12MB8120.namprd12.prod.outlook.com>
+References: <20250623061733.1864392-1-devverma@amd.com>
+ <aF3Eg_xtxZjZTEop@vaman>
+ <SA1PR12MB81208BAD2A5D264482333FF79540A@SA1PR12MB8120.namprd12.prod.outlook.com>
+In-Reply-To:
+ <SA1PR12MB81208BAD2A5D264482333FF79540A@SA1PR12MB8120.namprd12.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=True;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2025-07-02T09:29:10.0000000Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
+ Internal Distribution
+ Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=3;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR12MB8120:EE_|CH2PR12MB4088:EE_
+x-ms-office365-filtering-correlation-id: 40ec2cd1-10f6-435b-944f-08ddc4fc9f8a
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?upaZ1Wdl+FNFzEnTLeBDnQ1rUbb2lfEp3kiZNGvpoQD0yZYcZ1/QbF1qYv0a?=
+ =?us-ascii?Q?ZaQZvpfWrvGn03Hkr55eQK6ck6zeMMrbABYoC1L3aUfPNcS68VhyDbJ+b0hj?=
+ =?us-ascii?Q?bNWlpNIuDctNlplJkS9KyUTWS0h/oquKctv+x5zLGXaByU7EfYlwZbExlutN?=
+ =?us-ascii?Q?zgC1U1QyrJ5bmWO4cslUCqDwDjbfmw22bF2w2fbljrbTSyvzfg+VNxdQvm3h?=
+ =?us-ascii?Q?3JLLG52CUW3lxW8lUeraejPeR4+SfAlF9nnMrPtbbMY4YMTDvGO7imRIZ6uy?=
+ =?us-ascii?Q?GouRS2C6J3pDmBJ2Xz6ETfLwgIp8OQGIXrhwLfgfefLqvMfBYM4YTE6PvHwt?=
+ =?us-ascii?Q?3qphkoXJWg2glbkp455qHKxfcgNF9B6ABcINQs6d/NEps4phCsIZAE41Q9K7?=
+ =?us-ascii?Q?heXhz8EhYiyJMPNPbavGz6ZWuH4lsmRU5yGqclYgC/QARR70NMs13Wfq4xE7?=
+ =?us-ascii?Q?B+Xd9hH3V0x3eZ7HmvplBdX75+CPWBHmWaFQ1jbJpkWYbaJnwV0ryyGS1Umy?=
+ =?us-ascii?Q?BsC3uSmmKUtJmaugbCeB7kxH68pDXvAVHmdnNG/hTBQyp338k05zcCLQPnli?=
+ =?us-ascii?Q?QpbcJ/18OGmzP2bbQ6WXdlAwWLLcQ3+HXgYdfn5ZlgftHQ9Z76JEcc0UWa8i?=
+ =?us-ascii?Q?6sIcimB/Nc//+dHEKFlmPNWWkw7s/ozyDvQXNJN5F302Ecps8L/MtH8o7nNv?=
+ =?us-ascii?Q?9AFiFfY6A4NoQ0qnHwHEyVG88QESwpKe3WxHmCjLaRxBnAqoHWpj9YFsp2Ya?=
+ =?us-ascii?Q?YTzfgAiQXcycWEnOITn93UtqPzRvmLaStQqi/gDvRw2eI/3f5BflLUomngtI?=
+ =?us-ascii?Q?0iGOINqzqagBqsthPt3Oth6eNhVkPbIBmGCBMbH/6T97GxgkCkq6s+kE8VO8?=
+ =?us-ascii?Q?GuPibUS2PKnLrne8JqjitbcXYGmrThv2Cg+zZOdOWXt9o2gq7IU7H0mnNT1D?=
+ =?us-ascii?Q?y+sH9q5mhlFcmzmyRfUakwHYKxxzHQuUanZmJPtTXFNF3gTMG25Xz7X53Szm?=
+ =?us-ascii?Q?iLVE8esrQeo7BFB8cRPIWjYZRzJJiqSQI0lmtm+bL5vDBAVNw2uiHtwmLwm4?=
+ =?us-ascii?Q?TTsmCD+CGX7MzKKNcHv37BBekJJkXuhBVuZiGOHZ652QsoK/w72uUdP5eNEx?=
+ =?us-ascii?Q?x7J1WPfYhqf7Mf5UxrxszKt2VGreQldMims/XZCajJw81ckYsSPwBJ7YboSk?=
+ =?us-ascii?Q?PdRxJjDgdWOn7ZvcdJl/bzlgKPJmeibO5Ov3KJkd7Lf0yi/o44IjuQ/wCx36?=
+ =?us-ascii?Q?N2dIis9lOwimeDWsl++jl8BF9VDHk5zn8s9r8QqzZYPC/OltoEbZkt/JH99E?=
+ =?us-ascii?Q?t3zv0LQPakT1JQwpPBj/8pZWiGdHhwW4NS3tRB7zwrNlkQZ1LR8XKSu5m4ni?=
+ =?us-ascii?Q?rzWBBpCHneDSxYaeL3h371MTemDKKN97LCw6XCjkTDUh9+cy9GVSwM08glWV?=
+ =?us-ascii?Q?nAuBJOuCGBfRye9lXm/pzE04+z8PtC2D2lKAGeRyH0WH+8fFCOGt0A=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR12MB8120.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?+qx2cQvsexOHv2p8l/lJzpDLUXBu3B6i9N7HmFffxmC475eSX8pDXlIekCWO?=
+ =?us-ascii?Q?XzWUmwVK5lCFjJjvMVAKLFPwgUPjZegsKYH1XU7m/+0fG8O+Z1T/sviNKJsX?=
+ =?us-ascii?Q?V0Zk9924P0gKVEofMCVvlVsT2+R8Bw9FZoFRjp3gcrKFg1TZPkQ4t4x6l4Tt?=
+ =?us-ascii?Q?ai3/gQAL5JlrW0NKXWX3QVz9/kiQtvImJiF8DZ6XSFTPPkPjLxiV+3fuCUtQ?=
+ =?us-ascii?Q?kVGQT1GwoSDAK0ar+t0ny23GvwcfzcxX4/Yd1ul2Nnua7gZNN0UGriajRuml?=
+ =?us-ascii?Q?n0Ohw0oNGovOHCkYuvxSJOnDvrkw68QZcinxDjnBrgKUK2fmsTxsWRHu2kZz?=
+ =?us-ascii?Q?vIz8kJWPxF19TNaI0XOqojf40psptGMevuO35EAuwIxRq5/Ozbt1LKlN3opb?=
+ =?us-ascii?Q?M2YlF1hM4oDWbDt9PSFn9sz5yw4Mq8aqz4a0blwEG68nZZOwnSckPtQsjwT9?=
+ =?us-ascii?Q?GkKPUgUhonc/rON/9KB3+0PaUcVIML2z5AMsUcywGDF0nxjUFFIulw5fNAH3?=
+ =?us-ascii?Q?+S1+0V/gtl98uvamLQghwYYrBy8WUDuBolwJg/9+2lxFe4WlRuT+LQ3cFOX7?=
+ =?us-ascii?Q?gBKJCDoSwg48AtGRsz50urrH3vSHPcu7DCsejPgAykGhPU7pY/aHodVa0WFc?=
+ =?us-ascii?Q?0PCRXCdkza0IY7zIfnKoiQBxbVgFb8LtfTAr9JGj8o9FCIw3NfvVTADDgcwJ?=
+ =?us-ascii?Q?xjZyl1zAq67hwQ8VNWF3IIcDxR38DNGFOc97LhrjsJ8XAL4EbRHcX6o1RwmZ?=
+ =?us-ascii?Q?qtaPnFJCJ0RawjmzF4C+o6L/aWiXcy6e7WwiCLq/SJD5mYVirPoUtkWoCOpT?=
+ =?us-ascii?Q?V8sgV+Nj4flAA9aenQost5ODLe6Z1ISiGP+cRH/F3lwomZOkokfjz+M9/w7s?=
+ =?us-ascii?Q?MUlyO6UKYNQF0zRHFxBf1dPg7Zsh72rS41LOtHCxOF+MlkSDRB7RRBZJZ2CU?=
+ =?us-ascii?Q?aGtWuyGJspm6WOp0bLPGGKgFmBZaEPYd+F8CJtKxa92eArTM2r+mQ8+1Ltex?=
+ =?us-ascii?Q?TmvDb93BbSfgF38zDGtxgqlpbOpKFzehoMVeoV/SC0Cl5duXqgUapL3ssl0H?=
+ =?us-ascii?Q?I/YbBH51X3mI81Q5xDA+rI0d48ha+f+JvBDhIC7SW4ZMlUU5lrEJwn58Qoz7?=
+ =?us-ascii?Q?TyjxuBVSrX7HXcxfzEdB9UGFhldoEIDWVsBckMnPO5ZJOj1Kai7a50Hi5S8c?=
+ =?us-ascii?Q?CEHMOMvk7px0sKuthqvOgq7sGY0QTqpJVNz6QHSCrfvyRRT1m2rgbinSkJsD?=
+ =?us-ascii?Q?OELPH/gPkFwTCryYNuVAr4XSmRyNHZSWhIpRbcisCVPQMSpbQNaFz9CGZ4wx?=
+ =?us-ascii?Q?6Too+VRcAfqqbLpi8ZUrlisr+aDd25UOuXLc+w6AruvO0TuD2VOw5S4l9ENj?=
+ =?us-ascii?Q?bVAJt/Oa0X9MyVkfdWRXcZtrTl+hf++JFtAcE9KiueaVQaptAKxwushYDk86?=
+ =?us-ascii?Q?bIXCNE5XBElaNNeccUFvP2NnNSSPpKGgx/NFXIJiJVMQSnXTQkimwSAz0Nnk?=
+ =?us-ascii?Q?xrpOu6PvZr4aSEVRCatq/e7oyBdrepxSd9zTFNpp6iy2Str8dLhGHZPL25CA?=
+ =?us-ascii?Q?TvhUpjq+Vi3Vhl6f3uo=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250717-gcc-ref-fixes-v2-4-a2a571d2be28@quicinc.com>
-References: <20250717-gcc-ref-fixes-v2-0-a2a571d2be28@quicinc.com>
-In-Reply-To: <20250717-gcc-ref-fixes-v2-0-a2a571d2be28@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Jeff Hugo <jeff.hugo@oss.qualcomm.com>
-CC: Ajit Pandey <quic_ajipan@quicinc.com>,
-        Jagadeesh Kona
-	<quic_jkona@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Taniya Das
-	<quic_tdas@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 1wUHVXB-AULJtfkJ9i9uIFe9KwijSou-
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDA1NiBTYWx0ZWRfX2dXlI1hN0RXS
- FugT0tjrjsAIcrOQ7E/QtW8WxdKSGWcLlh6OhI1hcx1NOwGhz1mvQTnLwWmK1jl2iQVzvCj3TON
- avoyrG4fpuyDx0aM35uqkjwP1TcBInhN4jPesf2CUHWDGErU8TyscSGJvNeSROvipHpfXLs/0nl
- +eDVGIOGUEr7KDzAvYRaD4Zi/nOOoe3UsTQbQ0TcoORGaktLCQVIC6iX/DfpGMhIYqtNYXuRHFj
- /ocAZgGnEhk0J7NMEPh3POr3pkdG02E4BRXpSOxoq4ywAt9zGQyQOx19J6uAVQKTpaHJSZ1XRic
- xiQ+hqu2Cu1NAe7C0Husp7TsWmyJ7CTjbN/XN70Xl/4pPEgb5SV/C6S+pAn8oFU7VjCxtefHUT2
- SxDnvEk7gpqc26YoaOeM89SFTiA0woySL5PRT7cA0uqlWqYwZ5eq50Dhu8G5ClgTkIq8LzQp
-X-Proofpoint-GUID: 1wUHVXB-AULJtfkJ9i9uIFe9KwijSou-
-X-Authority-Analysis: v=2.4 cv=JJk7s9Kb c=1 sm=1 tr=0 ts=68789aa7 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8
- a=COk6AnOGAAAA:8 a=vY0fMMrL0GyAagIjfbUA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-17_01,2025-07-16_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 mlxlogscore=999 adultscore=0 clxscore=1015
- malwarescore=0 bulkscore=0 spamscore=0 lowpriorityscore=0 priorityscore=1501
- impostorscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507170056
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR12MB8120.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 40ec2cd1-10f6-435b-944f-08ddc4fc9f8a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jul 2025 06:39:04.3722
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 28QncwAlE4LIOPuJz3FkzA0Lrz7MRjfOCPfn83qdxabS7tktImPe92shxmXDwttEvlj3kzLIZ9bmLVW6KT4EYg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4088
 
-Reference the common qcom,gcc.yaml schema to unify the common
-parts of the binding.
+[AMD Official Use Only - AMD Internal Distribution Only]
 
-Suggested-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
----
- .../bindings/clock/qcom,sm4450-dispcc.yaml           | 20 ++++----------------
- 1 file changed, 4 insertions(+), 16 deletions(-)
+Gentle reminder!
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sm4450-dispcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm4450-dispcc.yaml
-index 2aa05353eff17326b9f4234ac1c99dcd82a6abdb..03208166689a9305142d619509dd8fb73a2f629c 100644
---- a/Documentation/devicetree/bindings/clock/qcom,sm4450-dispcc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,sm4450-dispcc.yaml
-@@ -20,9 +20,6 @@ properties:
-   compatible:
-     const: qcom,sm4450-dispcc
- 
--  reg:
--    maxItems: 1
--
-   clocks:
-     items:
-       - description: Board XO source
-@@ -32,24 +29,15 @@ properties:
-       - description: Byte clock from DSI PHY0
-       - description: Pixel clock from DSI PHY0
- 
--  '#clock-cells':
--    const: 1
--
--  '#reset-cells':
--    const: 1
--
--  '#power-domain-cells':
--    const: 1
--
- required:
-   - compatible
--  - reg
-   - clocks
--  - '#clock-cells'
--  - '#reset-cells'
-   - '#power-domain-cells'
- 
--additionalProperties: false
-+allOf:
-+  - $ref: qcom,gcc.yaml#
-+
-+unevaluatedProperties: false
- 
- examples:
-   - |
+Regards,
+Devendra
 
--- 
-2.25.1
-
+> -----Original Message-----
+> From: Verma, Devendra
+> Sent: Wednesday, July 2, 2025 15:09
+> To: Vinod Koul <vkoul@kernel.org>
+> Cc: dmaengine@vger.kernel.org; linux-kernel@vger.kernel.org; mani@kernel.=
+org
+> Subject: RE: [RESEND PATCH] dmaengine: dw-edma: Add Simple Mode Support
+>
+> Hi Vinod
+>
+> Thanks for the review.
+>
+> > -----Original Message-----
+> > From: Vinod Koul <vkoul@kernel.org>
+> > Sent: Friday, June 27, 2025 03:37
+> > To: Verma, Devendra <Devendra.Verma@amd.com>
+> > Cc: dmaengine@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > mani@kernel.org
+> > Subject: Re: [RESEND PATCH] dmaengine: dw-edma: Add Simple Mode
+> > Support
+> >
+> > Caution: This message originated from an External Source. Use proper
+> > caution when opening attachments, clicking links, or responding.
+> >
+> >
+> > On 23-06-25, 11:47, Devendra K Verma wrote:
+> > > The HDMA IP supports the simple mode (non-linked list).
+> > > In this mode the channel registers are configured to initiate a
+> > > single DMA data transfer. The channel can be configured in simple
+> > > mode via peripheral param of dma_slave_config param.
+> > >
+> > > Signed-off-by: Devendra K Verma <devverma@amd.com>
+> > > ---
+> > >  drivers/dma/dw-edma/dw-edma-core.c    | 10 +++++
+> > >  drivers/dma/dw-edma/dw-edma-core.h    |  2 +
+> > >  drivers/dma/dw-edma/dw-hdma-v0-core.c | 53
+> > ++++++++++++++++++++++++++-
+> > >  include/linux/dma/edma.h              |  8 ++++
+> > >  4 files changed, 72 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/dma/dw-edma/dw-edma-core.c
+> > > b/drivers/dma/dw-edma/dw-edma-core.c
+> > > index c2b88cc99e5d..4dafd6554277 100644
+> > > --- a/drivers/dma/dw-edma/dw-edma-core.c
+> > > +++ b/drivers/dma/dw-edma/dw-edma-core.c
+> > > @@ -235,9 +235,19 @@ static int dw_edma_device_config(struct
+> > > dma_chan
+> > *dchan,
+> > >                                struct dma_slave_config *config)  {
+> > >       struct dw_edma_chan *chan =3D dchan2dw_edma_chan(dchan);
+> > > +     struct dw_edma_peripheral_config *pconfig =3D config->periphera=
+l_config;
+> > > +     unsigned long flags;
+> > > +
+> > > +     if (WARN_ON(config->peripheral_config &&
+> > > +                 config->peripheral_size !=3D sizeof(*pconfig)))
+> > > +             return -EINVAL;
+> > >
+> > > +     spin_lock_irqsave(&chan->vc.lock, flags);
+> > >       memcpy(&chan->config, config, sizeof(*config));
+> > > +
+> > > +     chan->non_ll_en =3D pconfig ? pconfig->non_ll_en : false;
+> > >       chan->configured =3D true;
+> > > +     spin_unlock_irqrestore(&chan->vc.lock, flags);
+> > >
+> > >       return 0;
+> > >  }
+> > > diff --git a/drivers/dma/dw-edma/dw-edma-core.h
+> > > b/drivers/dma/dw-edma/dw-edma-core.h
+> > > index 71894b9e0b15..c0266976aa22 100644
+> > > --- a/drivers/dma/dw-edma/dw-edma-core.h
+> > > +++ b/drivers/dma/dw-edma/dw-edma-core.h
+> > > @@ -86,6 +86,8 @@ struct dw_edma_chan {
+> > >       u8                              configured;
+> > >
+> > >       struct dma_slave_config         config;
+> > > +
+> > > +     bool                            non_ll_en;
+> >
+> > why do you need this? What is the decision to use non ll vs ll one?
+> >
+>
+> The IP supports both the modes, LL mode and non-LL mode.
+> In the current driver code, the support for non-LL mode is not present. T=
+his patch
+> enables the non-LL aka simple mode support by means of the peripheral_con=
+fig
+> option in the dmaengine_slave_config.
+>
+> > >  };
+> > >
+> > >  struct dw_edma_irq {
+> > > diff --git a/drivers/dma/dw-edma/dw-hdma-v0-core.c
+> > > b/drivers/dma/dw-edma/dw-hdma-v0-core.c
+> > > index e3f8db4fe909..3237c807a18e 100644
+> > > --- a/drivers/dma/dw-edma/dw-hdma-v0-core.c
+> > > +++ b/drivers/dma/dw-edma/dw-hdma-v0-core.c
+> > > @@ -225,7 +225,7 @@ static void dw_hdma_v0_sync_ll_data(struct
+> > dw_edma_chunk *chunk)
+> > >               readl(chunk->ll_region.vaddr.io);  }
+> > >
+> > > -static void dw_hdma_v0_core_start(struct dw_edma_chunk *chunk, bool
+> > > first)
+> > > +static void dw_hdma_v0_ll_start(struct dw_edma_chunk *chunk, bool
+> > > +first)
+> > >  {
+> > >       struct dw_edma_chan *chan =3D chunk->chan;
+> > >       struct dw_edma *dw =3D chan->dw; @@ -263,6 +263,57 @@ static
+> > > void dw_hdma_v0_core_start(struct
+> > dw_edma_chunk *chunk, bool first)
+> > >       SET_CH_32(dw, chan->dir, chan->id, doorbell,
+> > > HDMA_V0_DOORBELL_START);  }
+> > >
+> > > +static void dw_hdma_v0_non_ll_start(struct dw_edma_chunk *chunk) {
+> > > +     struct dw_edma_chan *chan =3D chunk->chan;
+> > > +     struct dw_edma *dw =3D chan->dw;
+> > > +     struct dw_edma_burst *child;
+> > > +     u32 val;
+> > > +
+> > > +     list_for_each_entry(child, &chunk->burst->list, list) {
+> > > +             SET_CH_32(dw, chan->dir, chan->id, ch_en, BIT(0));
+> > > +
+> > > +             /* Source address */
+> > > +             SET_CH_32(dw, chan->dir, chan->id, sar.lsb, lower_32_bi=
+ts(child-
+> >sar));
+> > > +             SET_CH_32(dw, chan->dir, chan->id, sar.msb,
+> > > + upper_32_bits(child->sar));
+> > > +
+> > > +             /* Destination address */
+> > > +             SET_CH_32(dw, chan->dir, chan->id, dar.lsb, lower_32_bi=
+ts(child-
+> >dar));
+> > > +             SET_CH_32(dw, chan->dir, chan->id, dar.msb,
+> > > + upper_32_bits(child->dar));
+> > > +
+> > > +             /* Transfer size */
+> > > +             SET_CH_32(dw, chan->dir, chan->id, transfer_size,
+> > > + child->sz);
+> > > +
+> > > +             /* Interrupt setup */
+> > > +             val =3D GET_CH_32(dw, chan->dir, chan->id, int_setup) |
+> > > +                             HDMA_V0_STOP_INT_MASK |
+> > HDMA_V0_ABORT_INT_MASK |
+> > > +                             HDMA_V0_LOCAL_STOP_INT_EN |
+> > > + HDMA_V0_LOCAL_ABORT_INT_EN;
+> > > +
+> > > +             if (!(dw->chip->flags & DW_EDMA_CHIP_LOCAL))
+> > > +                     val |=3D HDMA_V0_REMOTE_STOP_INT_EN |
+> > > + HDMA_V0_REMOTE_ABORT_INT_EN;
+> > > +
+> > > +             SET_CH_32(dw, chan->dir, chan->id, int_setup, val);
+> > > +
+> > > +             /* Channel control setup */
+> > > +             val =3D GET_CH_32(dw, chan->dir, chan->id, control1);
+> > > +             val &=3D ~HDMA_V0_LINKLIST_EN;
+> > > +             SET_CH_32(dw, chan->dir, chan->id, control1, val);
+> > > +
+> > > +             /* Ring the doorbell */
+> > > +             SET_CH_32(dw, chan->dir, chan->id, doorbell,
+> > HDMA_V0_DOORBELL_START);
+> > > +     }
+> > > +}
+> > > +
+> > > +static void dw_hdma_v0_core_start(struct dw_edma_chunk *chunk, bool
+> > > +first) {
+> > > +     struct dw_edma_chan *chan =3D chunk->chan;
+> > > +
+> > > +     if (!chan->non_ll_en)
+> > > +             dw_hdma_v0_ll_start(chunk, first);
+> > > +     else
+> > > +             dw_hdma_v0_non_ll_start(chunk); }
+> > > +
+> > >  static void dw_hdma_v0_core_ch_config(struct dw_edma_chan *chan)  {
+> > >       struct dw_edma *dw =3D chan->dw; diff --git
+> > > a/include/linux/dma/edma.h b/include/linux/dma/edma.h index
+> > > 3080747689f6..82d808013a66 100644
+> > > --- a/include/linux/dma/edma.h
+> > > +++ b/include/linux/dma/edma.h
+> > > @@ -101,6 +101,14 @@ struct dw_edma_chip {
+> > >       struct dw_edma          *dw;
+> > >  };
+> > >
+> > > +/**
+> > > + * struct dw_edma_peripheral_config - peripheral spicific configurat=
+ions
+> > > + * @non_ll_en:                enable non-linked list mode of operati=
+ons
+> > > + */
+> > > +struct dw_edma_peripheral_config {
+> > > +     bool                    non_ll_en;
+> > > +};
+> > > +
+> > >  /* Export to the platform drivers */  #if
+> > > IS_REACHABLE(CONFIG_DW_EDMA)  int dw_edma_probe(struct
+> dw_edma_chip
+> > > *chip);
+> > > --
+> > > 2.43.0
+> >
+> > --
+> > ~Vinod
 
