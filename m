@@ -1,92 +1,100 @@
-Return-Path: <linux-kernel+bounces-734940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D589B0888C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:56:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA3BDB08905
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:11:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D9271640E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:56:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D4A21888DBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:10:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8511D287269;
-	Thu, 17 Jul 2025 08:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="tT/ZC83o"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48497279788;
+	Thu, 17 Jul 2025 09:09:59 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E141D7E42;
-	Thu, 17 Jul 2025 08:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE191D90DD;
+	Thu, 17 Jul 2025 09:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752742570; cv=none; b=a9bnJfJVDB3e82uwyukaODrYOFZKE5uXV94Mrbo7WXvQ7+v4QvMjvuuNk+MTffW3IAKY6jRgyouu/zYdUWdw/fUP/+pO6Sk3v5DJs98yOKrpdp3dhQmdGgE7QICCyzL+Iezzv2WrMvzBa5zzgUvUwrZ4IYeoiGnKOyk9MPZx+wA=
+	t=1752743398; cv=none; b=K/yZ0xgQmNyrPjMJsOi/tydW6WS0Zg4zkPbD7eVJaszKFwbc+pL7/ArQUVRO85j0yk/fwBoli0Zm6wZ7RnksMzKW91JZU44p281csuirI00wLCXZAMUE/cPSQAfHHxjanKipYdmt1opg+ojW2DIb5Veo/Q2bl6lLiyL/oDkybaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752742570; c=relaxed/simple;
-	bh=wDjQPMKJX0LfmbNdBRZ1OBogs0OKw4CpCIC/t1TB3cE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Fmlt7WtoTrcrvKSTMhOtVSX1dn0y/ByGdKAp/JCWEUV/BrIzKqUVvm5HcfiKta3tskdQj3sw2Um44EXX63wPv5P6QUHeNk3oe/OkVs+GHe3wYQek7mcli73gxI30/4OMV9aBSONPZGglafbmz7jcwsnjhGYYC7caQFuiwNH9CmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=tT/ZC83o; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=Fm+vi59i9irqfaRjqlbyWIfZXnbSE0lm3Voox3qjKyc=; b=tT/ZC83oK9pfqOUtNYaMWeLtR9
-	4szPu82OhfnmbqTHM02mJ5HA+uo9DzoAIfJhUBNp9qbHlQTvtdKRmptLURXy5yEY8duFhCcHP3l93
-	mgOhwHq9q0caPlboimPajD2p9ha55k1Rtmocr3g8Xogqmf6q495s3UjUcTF5v6PgqYsLBsXBU6h2M
-	YHe2i1jotnsNjdYLWX9resJmajYUo8rrogd9b3TqTs9/3r/4OW5iRL4Ej0d05JYYRqDOR18FftJ1v
-	If9vm7shhUe6lW0T42nn1tMKHI3Uygjuct/vzCzsKlr6uMzjaD7W4z3KsfJ+chR224ZYRlBB9u7C+
-	53CNTb6g==;
-Received: from i53875bf7.versanet.de ([83.135.91.247] helo=phil..)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1ucKOx-0001jZ-P7; Thu, 17 Jul 2025 10:55:39 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Diederik de Haas <didi.debian@cknow.org>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	Dragan Simic <dsimic@manjaro.org>,
-	Johan Jonker <jbx6244@gmail.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: rockchip: Add maskrom button to R5S + R5C
-Date: Thu, 17 Jul 2025 10:55:37 +0200
-Message-ID: <175274250488.2883196.9223067039415566893.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250716083355.327451-1-didi.debian@cknow.org>
-References: <20250716083355.327451-1-didi.debian@cknow.org>
+	s=arc-20240116; t=1752743398; c=relaxed/simple;
+	bh=hgTacjCZKHPRTU/iKzSAPK9twm58zRnjFPzE2b0P37M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ABWymEC+J6MEwO1AlCeIhl1eTOgSFsY1iWncsaiOkT6uEBKsBemhe45x9SPM2nkx9w7Byff7am978JrJ4KSN4B+bHLP8YPRoc+h4tjP1nFI1nHQNajs/YPHHicv1a3MEXnJ22+NvzJo6W6A9aj8L3lhGYBE0uMWlJnhKL1kMyXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bjRvf21WKzYR0kk;
+	Thu, 17 Jul 2025 17:09:50 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 083D81A1C57;
+	Thu, 17 Jul 2025 17:09:49 +0800 (CST)
+Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
+	by APP4 (Coremail) with SMTP id gCh0CgCnIhPNvXhosUc4Ag--.62465S2;
+	Thu, 17 Jul 2025 17:09:47 +0800 (CST)
+From: Chen Ridong <chenridong@huaweicloud.com>
+To: tj@kernel.org,
+	hannes@cmpxchg.org,
+	mkoutny@suse.com,
+	rafael@kernel.org,
+	pavel@kernel.org,
+	timvp@google.com
+Cc: cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	lujialin4@huawei.com,
+	chenridong@huawei.com
+Subject: [PATCH v2 -next 0/2] sched,freezer: prevent tasks from escaping being frozen
+Date: Thu, 17 Jul 2025 08:55:48 +0000
+Message-Id: <20250717085550.3828781-1-chenridong@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCnIhPNvXhosUc4Ag--.62465S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYa7kC6x804xWl14x267AKxVW8JVW5JwAF
+	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
+	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xv
+	wVC0I7IYx2IY6xkF7I0E14v26F4UJVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7
+	xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
+	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
+	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxa
+	n2IY04v7MxAIw28IcxkI7VAKI48JMxAqzxv26xkF7I0En4kS14v26r1q6r43MxC20s026x
+	CaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_
+	JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r
+	1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_
+	Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8Jr
+	UvcSsGvfC2KfnxnUUI43ZEXa7IU1zuWJUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
+From: Chen Ridong <chenridong@huawei.com>
 
-On Wed, 16 Jul 2025 10:33:35 +0200, Diederik de Haas wrote:
-> Both the R5S and R5C have a MASKROM button connected via saradc.
-> For both the R5S as the R5C it's described on page 9 of their
-> respective schematic, identified as 'Recovery'.
-> 
-> 
+This series fixes an issue where a task may escape freezing.
 
-Applied, thanks!
+---
 
-And added a NanoPi before the "R5S + R5C"
+v2: remove the warning in the __thaw_task and revert cff5f49d433f
 
-[1/1] arm64: dts: rockchip: Add maskrom button to R5S + R5C
-      commit: 07e04c071a35abe12957b575cd1453ccafc02eb6
+v1: https://lore.kernel.org/lkml/20250703133427.3301899-1-chenridong@huaweicloud.com/
 
-Best regards,
+Chen Ridong (2):
+  sched,freezer: Remove unnecessary warning in __thaw_task
+  Revert "cgroup_freezer: cgroup_freezing: Check if not frozen"
+
+ kernel/cgroup/legacy_freezer.c |  8 +-------
+ kernel/freezer.c               | 15 +++------------
+ 2 files changed, 4 insertions(+), 19 deletions(-)
+
 -- 
-Heiko Stuebner <heiko@sntech.de>
+2.34.1
+
 
