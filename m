@@ -1,93 +1,131 @@
-Return-Path: <linux-kernel+bounces-735888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42FE5B094E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:22:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6133EB094E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:22:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FD503B0606
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:21:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADC6E3BA152
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:22:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF9F02FEE22;
-	Thu, 17 Jul 2025 19:19:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C20B2FEE3A;
+	Thu, 17 Jul 2025 19:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OgvTO6yi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="sbAp6+nn"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 162322FE321;
-	Thu, 17 Jul 2025 19:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7514A2FBFEB
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 19:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752779988; cv=none; b=CwBLYEp/Z7FZFD1Dl9HkI907trlwpN9RLPwd6UdWRZu1e9V+5EztsRmKB+a+vRJjY7rct3amkSURUfZi+8UmXlQZJbCq650sTGdSjFeNx7N7+JThXkp6Z/kFGm1tBHj81H+LhR03ypF11fjFQOMp8255RkEPVys277B6ArisjEc=
+	t=1752780029; cv=none; b=UJY85n7kOF/q2TYM5pkIrnvim5XqB4HN7gMMTLbN4RciKlVxd/pfeTBwgxOvsTnSPq+VwOUz68gdB9NXsYuHRJnmuUq9MPxGAIyIqCCTtQxLBrLHHlwitQdmWsexZ7RBSU3IPWeENa3rDBB4zCH/lfiT5AAmt3Gr7DW9QrDU3mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752779988; c=relaxed/simple;
-	bh=pb/j8Q5qVbV5DQi8rmEfVT/4W8kYDiyQSOcCQSIcqqU=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=twkO07wy0JH645OCbo4KpHvtvHkzubLSAFRlvB2gq0pgpgd376ikGNBfU/1GiOW/tos+pVg3OBWlZRfCaQ/H5JoTIuFz/NMyK5Dk8Ook9ryaChGSh3QDZVjSXRoCCHquh1nbJYI05QlUGJ5yDkvUG8Xhs1PbdBfiz8N8Nz/76aE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OgvTO6yi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C215C4CEE3;
-	Thu, 17 Jul 2025 19:19:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752779987;
-	bh=pb/j8Q5qVbV5DQi8rmEfVT/4W8kYDiyQSOcCQSIcqqU=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=OgvTO6yia1qhArh65Z/fn/iEOXQwmAdbq99QDPNyrvv08foI3wcNIfKnHvBYyvpvf
-	 Qj4/e1K/BzxSmWcWtbpIlOVIrPuq4WfDDIhy9vYPq5Vh3sjCvTcej8QKndIhW58qtZ
-	 EOY3gmCW75pztjT2Zw46gy7DpJZK2LTz/n4od9iq2Z52dg+IZr8pgFJtFEwZaLwiXx
-	 eqAKB2noQFAXJZeU+XERI4lZ9pzgcMwESzku1XLqKTTSH6/Z4q6BGhddZn2P3vz65M
-	 ZJ54MtEvo2d3dGNMkbj7YiT6efUqm3zaZPZjG7d7HU9AaXoTWMv++6a7jUoVVA6paG
-	 alL99IubscXjQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADD17383BAC1;
-	Thu, 17 Jul 2025 19:20:07 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1752780029; c=relaxed/simple;
+	bh=TMKaD2jDZftv2KL4usKq/1tWi4qHNmQsjmx7ZcR3kqI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BXRSKSUej9QdkUOiv+yH8lZoHSWrvGDJNgz2Q1Ygr7ZZEj2VD69Sn65rfbR5DSu8SdGwJSG7J50PQhR8MRj1XjVfLcdON/CeB35wvdtSJPcYee26DpDCEdGRXSsUJylrljqfXUdmdJt+7c0nRAEJ4EaSuttQgIr4b6CUr3tLuXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=sbAp6+nn; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5561d41fc96so1574534e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 12:20:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1752780025; x=1753384825; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gWmeJ/AYffWPF+7aeLi3O1CN5eBnowfZ5iJlSoV66Ok=;
+        b=sbAp6+nnq/u3USPVZGW4iwlInFi/C6FH7dCTKS+TGYR8Ktl6ip1qvyFh4cVWF1MBh5
+         +UxnpU3bByWpfu7Z5HI2uXaCjUAciqAA8RpG2jobpVAkikxFlaIceW7yyDfeolkUCIGg
+         e3TVDWFFTvLMUdECYuJOA1lY3FW8XLnXyXVm7FmntEAvRuaAqHQ4AiGOLDpblwWQQmlX
+         TkQ7lBqvHbQM0xmZDnjO2yzJxFWxeUG44IlfiIFeJTJTkRjsWBC8ys8sNSP7SnGw9GDP
+         r0w27hsLxzvhT/E7iMBSuAuuHnijRhroUpyVotwy4V6jZs0WrBGn1T9xYRb4k/mrSozB
+         ONZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752780025; x=1753384825;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gWmeJ/AYffWPF+7aeLi3O1CN5eBnowfZ5iJlSoV66Ok=;
+        b=ZCDYaOIh9SX6tkAN41C82HCBdU9uvJ9/p/E8fSkVE0smc1y/3sW1NVVhpq7HxGwuUP
+         0E7L54eETbi2FA22+0LozQ/ynJklY+9/zoUOaseIW3C/Zxx5NmnX/0O0uvFKht1ssmi8
+         JsB+b5FsJOUmBSAgfAGD4tQ7gNjba2MbVmrfdArjg5u+sOBRbQ1b+DvestzCjD3WGBZa
+         zK4hCbN/0EoKYg6rfTdz3jUbFQR17mV4e4OPjLQZ/ASfG4d8haQsWAuEhfsjzvfOqtSw
+         Fjh891jeA2EHwe8Udf08yUhMPPclW/oRRNWCKGWglaDkiDMa1xADuntznNAFOkFGJqHl
+         1NZw==
+X-Forwarded-Encrypted: i=1; AJvYcCUnqV8aMmYcdwYxi0HTQ5fFQZOt3hwCmlj9J9dWFMaH0IFPaS6pG5QZhxtDtnQ9acQAJ5vRGWwGtnBMDnk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyw2Yfeh+H5jPyrVxwfu2er2xhMOJi1oeCZGYz1HKB7mq4Npv69
+	VxT/cROmB5XndbwA81SSEysbutQHLl6sea+Miwe+gTfHSso1g84Z5xTKHzlsn+bL+g/oaYPJAos
+	mYh5JATbs/I1U/xGv0K02nPK9rCvY6huzofyyq5z2LcFq888Sw1MBu8Y=
+X-Gm-Gg: ASbGncvTLuc8zvtliry7Q5GPeB5uPvfGjs9kM9nXH9XB9uGprLNWz7wFu5GWxZm24pa
+	n5qUmtrPhc0up0nvEhXwZMnP2bP4SwDWFg4lr34Ey2K30Mhcty+Y4JqtYTb1zqBOq879cIKReGD
+	R61W0lnCNIpCHZBUca0SigEd5dTAYscyMCj1NtxCAGPcqPQjfmLAn5D/J3U8RYad9QyPp/zPuPb
+	7VuErOl7UzkkSAm4pQFcBWccK2SsYgN9CjclsY=
+X-Google-Smtp-Source: AGHT+IHBqWiNsRs7vWuJdEggEGVd2H9f8DdxvzoK+Bh6RPSuDwvhNgHoglZoAw8m1co7xPnKhEzvtoGChRKZ44lXf5U=
+X-Received: by 2002:a05:6512:6184:b0:553:3178:2928 with SMTP id
+ 2adb3069b0e04-55a23f1eb8fmr2611071e87.16.1752780025333; Thu, 17 Jul 2025
+ 12:20:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net/mlx5e: TX, Fix dma unmapping for devmem tx
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175278000627.2046530.16940004452982858685.git-patchwork-notify@kernel.org>
-Date: Thu, 17 Jul 2025 19:20:06 +0000
-References: <1752649242-147678-1-git-send-email-tariqt@nvidia.com>
-In-Reply-To: <1752649242-147678-1-git-send-email-tariqt@nvidia.com>
-To: Tariq Toukan <tariqt@nvidia.com>
-Cc: edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, saeedm@nvidia.com,
- leon@kernel.org, mbloch@nvidia.com, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- dtatulea@nvidia.com, almasrymina@google.com
+References: <20250711174332.1.I623f788178c1e4c5b1a41dbfc8c7fa55966373c0@changeid>
+ <xg45pqki76l4v7lgdqsnv34agh5hxqscoabrkexnk2zbzewho5@5dmmk46yebua>
+ <aHbGax-7CiRmnKs7@google.com> <cnbtk5ziotlksmmledv6hyugpn6zpvyrjlogtkg6sspaw5qcas@humkwz6o5xf6>
+ <aHfXrT_rU0JAjnVD@google.com> <aHgmzpNzMTL2alhp@google.com>
+In-Reply-To: <aHgmzpNzMTL2alhp@google.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 17 Jul 2025 21:20:14 +0200
+X-Gm-Features: Ac12FXzeMHloLpoxCo2SJb7cHfTgSTnMXV5KQxSGs3TLk0VL7h8ZlOyW2yje9eY
+Message-ID: <CAMRc=Meepp_5WS2Tdu2gevUbv-_D_Xb-NfAneP5UBYJNck22Vw@mail.gmail.com>
+Subject: Re: [PATCH] PCI/pwrctrl: Only destroy alongside host bridge
+To: Brian Norris <briannorris@chromium.org>
+Cc: Manivannan Sadhasivam <mani@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
+	Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+On Thu, Jul 17, 2025 at 12:25=E2=80=AFAM Brian Norris <briannorris@chromium=
+.org> wrote:
+>
+> On Wed, Jul 16, 2025 at 09:47:41AM -0700, Brian Norris wrote:
+> > (2) Even after resolving 1, I'm seeing pci_free_host_bridge() exit with
+> >     a bridge->dev.kboj.kref refcount of 1 in some cases. I don't yet
+> >     have an explanation of that one.
+>
+> Ah, well now I have an explanation:
+> One should always be skeptical of out-of-tree drivers.
+>
+> In this case, one of my endpoint drivers was mismanaging a pci_dev_put()
+> reference count, and that cascades to all its children and links,
+> including the host bridge.
+>
+> Once I fix that (and the aforementioned problem (1)), it seems my
+> problems go away.
+>
+> I'll let a v2 soak in my local environment, and unless I hear some news
+> from Bartosz about OF_POPULATED to change my mind, I'll send it out
+> eventually.
+>
+> Brian
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Hi! Sorry for the late reply, I would really like to be able to assist
+with these changes (although Mani is doing a great job!) I'm currently
+really busy with other stuff. :( FWIW I just spent 30 minutes looking
+at the tree as of commit f1536585588b~1 and I am no longer sure what
+exactly did I refer to when I said that the PCI core clears the
+OF_POPULATED flag but I'm 100% sure I was facing this issue and seeing
+OF nodes associated with a device that's registered without this flag.
 
-On Wed, 16 Jul 2025 10:00:42 +0300 you wrote:
-> From: Dragos Tatulea <dtatulea@nvidia.com>
-> 
-> net_iovs should have the dma address set to 0 so that
-> netmem_dma_unmap_page_attrs() correctly skips the unmap. This was
-> not done in mlx5 when support for devmem tx was added and resulted
-> in the splat below when the platform iommu was enabled.
-> 
-> [...]
+Looking at it again now, it's no longer obvious, I wish I had been
+more verbose in the commit message. Feel free to try and revert this
+change, maybe over a year later it's no longer needed (or never was).
+If it is, we should quickly see some issues triggered by it.
 
-Here is the summary with links:
-  - [net-next] net/mlx5e: TX, Fix dma unmapping for devmem tx
-    https://git.kernel.org/netdev/net-next/c/870bc1aaa0f9
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Bartosz
 
