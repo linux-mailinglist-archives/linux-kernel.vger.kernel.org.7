@@ -1,254 +1,125 @@
-Return-Path: <linux-kernel+bounces-735233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44498B08C81
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:08:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55503B08C86
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:08:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BAAB1AA671A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:08:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 386A0A647C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C9A29E110;
-	Thu, 17 Jul 2025 12:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A26F2BCF75;
+	Thu, 17 Jul 2025 12:07:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HS2k0NC/"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="Nbg/lMwq"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7841A29DB71;
-	Thu, 17 Jul 2025 12:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F025A29E114;
+	Thu, 17 Jul 2025 12:07:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752754065; cv=none; b=UIM0g+muH8krRQMMflFkaTcS/IvJy8CQh+1yhU9/n2Dbxauna8Y4wXlL25bylwlINcGNWBY6AN5irdnEg9m11N5XsbeykkoAGAfizvwrkXJNBsZ2q4YC56ZW2JKrABrsoGJfTyGTCMkrwEvCQx9cJl+wiSIZigkrmjfuV8FWPY4=
+	t=1752754067; cv=none; b=fJ7XH+mHaUa9f4Pqy7CJKhS/PzzRb3guW5L2LINCQHzXQr3M/6/DmT2UWWIRQCVRPzgMobBXW5vXyDFJo9RaeQGlSHoa4vpGBpKEJrCQAPuKA2ZxLESFUfGVikWjmJO+bi4106C64Z0G8+a9OemmMRm3BbzhbDk3V3qgHb/EYS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752754065; c=relaxed/simple;
-	bh=NaywgpXUfmk808d08shCS5CpSipsDBCVSUhV6te/H0g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HxQ/z3UPBpH+XXNXrXm+vqbmisbX6AVPjgf3nNOnbnvchbKlz75cIm/dUmvkaYyKXflDxxoxksZ5bVnHnhJTRYK5kbePldUY5qMFUBBHk3HQUmLwl0TP0AG1Z2KTV87ayFGp2FGusWRigSyq50m51kXf/nzHn8gBgKwDxsDx+Co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HS2k0NC/; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56H84OqQ009892;
-	Thu, 17 Jul 2025 12:07:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=fkQ5nh
-	/pNLG66i3iwDVG1pCnJzB4owT2W6b4rH84xsQ=; b=HS2k0NC/Bu3MbmmmT+Qo4M
-	nZ0s6vjkEdoeoSlXfinFFJKia4l5kgOVjy4pAfpDMj71QSdN2AEKJVOqFMfsGmS0
-	fCIt9pllF9cRzN75Z1Y7ARrNav3+nxR3rlV91WEWRBx9ebvhJrW9gGXcuPsgi3nw
-	49eY4BffeE1gM4boI7LjgJA0ST0m3M3JGuV70KFjkh1BAfxQhZap8b4sftdeo8dm
-	J9bw19mi8/wTMompTfy4CicYD55XamimmBrGUIAQ4nZ6C0iGcThh4g3joauF7vB8
-	mUgzWv1WkWaKjMnI2nGda3JlEtXwT1Cvc4JyB3pp/tEvad7cLfVCtEIHDxAvuI9Q
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47uf7dasyc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Jul 2025 12:07:12 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56H81xAt008135;
-	Thu, 17 Jul 2025 12:07:10 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 47v2e0v700-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Jul 2025 12:07:10 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56HC76Bf51446218
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 17 Jul 2025 12:07:06 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A7C152004B;
-	Thu, 17 Jul 2025 12:07:05 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3B9F620043;
-	Thu, 17 Jul 2025 12:07:05 +0000 (GMT)
-Received: from [9.152.222.105] (unknown [9.152.222.105])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 17 Jul 2025 12:07:05 +0000 (GMT)
-Message-ID: <94e27f70-58f6-431d-9623-9c349a5977ff@linux.ibm.com>
-Date: Thu, 17 Jul 2025 14:07:05 +0200
+	s=arc-20240116; t=1752754067; c=relaxed/simple;
+	bh=heLBpBS+UNyu400fsfQ7AHME4bX/Aw6S0dGsXsDJqx4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nKMFrsPx9xXHzjYaHYQBwhAGu7WXj199BAAB5dm8ManY8iIpzLrGcA9KMhVj1B0twUZJ/cYwY55Ij8w6wQ6t2g1uh1VgWXqSlk+S1WEDXW+m1ihRkIyuJdjc73sb+qBPbqHmer8LNxOOZ7zR6aPugK3v3ckyMzyEcaDlsm0QH3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=Nbg/lMwq; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bjWrt05HWz9spH;
+	Thu, 17 Jul 2025 14:07:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1752754062;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M2ybh1HtN61EqnwEX7w+RBXpg6drT9A8UjYiaAe7+9c=;
+	b=Nbg/lMwqYQ7RdUmujBnBs7sqvXWbAL1VjgMtWdfg6Vod71r7uQGV6MlSF1iJS3sgoYwmjC
+	ITsrV5wLVFlsVwEHveYY4MmVvDLIKioRhEbz8Tx1uqYCexUWMzJkrbSRQbEph6ZxD8YA+B
+	hLjLl4ygK/sLIQosFGBKbpTYt6J1NGRIaF1aNgau5MhKsKxBOyQqh1IYGI+WtpsgaOZQfJ
+	UNHCCsPxg+IUmX8KQLkhmEqbEAmAvHLYE3Aqfplup74bYRVuAVqE0cNHeNLx5h4GlL9Rq9
+	eMNglH3B6JzyC/mexb8GCIii/yPfEZEbFJh1lAvCLkpgVcO9j5MoY+r7/JuYVg==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
+Date: Thu, 17 Jul 2025 14:07:31 +0200
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Suren Baghdasaryan <surenb@google.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, 
+	"H . Peter Anvin" <hpa@zytor.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, 
+	Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Michal Hocko <mhocko@suse.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, 
+	willy@infradead.org, linux-mm@kvack.org, x86@kernel.org, linux-block@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org, 
+	gost.dev@samsung.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [PATCH v2 3/5] mm: add static PMD zero page
+Message-ID: <pesfhdmkz2essyfcesxqekwkxbrkw343qifwkuzrvirw6yyn4i@xjkigwtyczrh>
+References: <20250707142319.319642-1-kernel@pankajraghav.com>
+ <20250707142319.319642-4-kernel@pankajraghav.com>
+ <26fded53-b79d-4538-bc56-3d2055eb5d62@redhat.com>
+ <fbcb6038-43a9-4d47-8cf7-f5ca32824079@redhat.com>
+ <gr6zfputin56222rjxbvnsacvuhh3ghabjbk6dgf4mcvgm2bs6@w7jak5ywgskw>
+ <ea55eb30-552a-4fca-83e0-342ec7c98768@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 08/16] unwind_user: Enable archs that save RA/FP in
- other registers
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-        bpf@vger.kernel.org, x86@kernel.org,
-        Steven Rostedt <rostedt@kernel.org>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Ilya Leoshkevich <iii@linux.ibm.com>,
-        Masami Hiramatsu
- <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Indu Bhagat <indu.bhagat@oracle.com>,
-        "Jose E. Marchesi" <jemarch@gnu.org>,
-        Beau Belgrave <beaub@linux.microsoft.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
-        Sam James <sam@gentoo.org>
-References: <20250710163522.3195293-1-jremus@linux.ibm.com>
- <20250710163522.3195293-9-jremus@linux.ibm.com>
- <oasyyga72yuiad7y2nzh7wcd7t7wmxnsbo2kuvsn5xsnuypewd@ukxxgdjbvegz>
- <3he7rlcdchkwjtpbdt5khqflg4dipuvkneydhju2jjgs2ujqoh@2rpb6dutdogx>
-Content-Language: en-US
-From: Jens Remus <jremus@linux.ibm.com>
-Organization: IBM Deutschland Research & Development GmbH
-In-Reply-To: <3he7rlcdchkwjtpbdt5khqflg4dipuvkneydhju2jjgs2ujqoh@2rpb6dutdogx>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: cxwyZyQTHxquzH2YNFyzrV9PufD81870
-X-Authority-Analysis: v=2.4 cv=LoGSymdc c=1 sm=1 tr=0 ts=6878e770 cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=6cQHZidUprn78mSFta8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: cxwyZyQTHxquzH2YNFyzrV9PufD81870
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDEwMyBTYWx0ZWRfX/xbY89F61XhH u9TKTO5Z7WdIW2tp4yZUU2qxmPvZay+5pA40IX5LdLJ3PREcXzfk6oeaFXhh+2RRWT19g0Vrbg0 DnZvvid7TXGiZfEwANAJGEsN4Two2xlU40Dhfl2LXUF74W3oOmAjA4xQX+y7Jb3qODSuFtFZ1Uy
- i4qgUJYTU+xYCvVklIaaoNU/yGmv69eI6jjr/5GkQ3BE5c5CkNJIwMf6/fivghJYa6/7DSTcwYE u+l2baK66DvWRkMYqRYFRn/B6adm3D3sKCVFZ23H+vo1Z3WphzXBnwGqP7F8ZIOkxUIWbL5a86u NLdWY4GjrAt3kTu0dEHrVAjJfzS+9j6fqKeba0XD6sFdEfbgZObA4v2vEfeVLZfkbmvwBA9p4uZ
- DopXQkANBPE+H6Q8bBxR4DIorUNhn5mwve6qFGjveJfgv5kT2Vf/GxSd1SXsYrRI/YBoNlkt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-17_01,2025-07-17_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- lowpriorityscore=0 spamscore=0 malwarescore=0 impostorscore=0
- clxscore=1015 phishscore=0 mlxlogscore=999 priorityscore=1501
- suspectscore=0 mlxscore=0 adultscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507170103
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ea55eb30-552a-4fca-83e0-342ec7c98768@redhat.com>
+X-Rspamd-Queue-Id: 4bjWrt05HWz9spH
 
-On 17.07.2025 04:50, Josh Poimboeuf wrote:
-> On Wed, Jul 16, 2025 at 07:01:09PM -0700, Josh Poimboeuf wrote:
->>>  	state->ip = ra;
->>>  	state->sp = sp;
->>> -	if (frame->fp_off)
->>> +	if (frame->fp.loc != UNWIND_USER_LOC_NONE)
->>>  		state->fp = fp;
->>
->> Instead of the extra conditional here, can fp be initialized to zero?
->> Either at the top of the function or in the RA switch statement?
-
-No, but fp could be initialized to state->fp, so that it retains its
-value.
-
-> So it's been a while since I looked at the original code, but I actually
-> think there's a bug here.
+On Thu, Jul 17, 2025 at 01:46:03PM +0200, David Hildenbrand wrote:
+> On 17.07.25 12:34, Pankaj Raghav (Samsung) wrote:
+> > > > Then, we'd only need a config option to allow for that to happen.
+> > > 
+> > > Something incomplete and very hacky just to give an idea. It would try allocating
+> > > it if there is actual code running that would need it, and then have it
+> > > stick around forever.
+> > > 
+> > Thanks a lot for this David :) I think this is a much better idea and
+> > reduces the amount code and reuse the existing infrastructure.
+> > 
+> > I will try this approach in the next version.
+> > 
+> > <snip>
+> > > +       /*
+> > > +        * Our raised reference will prevent the shrinker from ever having
+> > > +        * success -> static.
+> > > +        */
+> > > +       if (atomic_read(&huge_zero_folio_is_static))
+> > > +               return huge_zero_folio;
+> > > +       /* TODO: memblock allocation if buddy is not up yet? Or Reject that earlier. */
+> > 
+> > Do we need memblock allocation? At least the use cases I forsee for
+> > static pmd zero page are all after the mm is up. So I don't see why we
+> > need to allocate it via memblock.
 > 
-> There's a subtlety in the original code:
+> Even better!
 > 
-> 	if (frame->fp_off && unwind_get_user_long(fp, cfa + frame->fp_off, state))
-> 		goto done;
-> 
-> 	state->ip = ra;
-> 	state->sp = cfa;
-> 	if (frame->fp_off)
-> 		state->fp = fp;
-> 
-> 	arch_unwind_user_next(state);
-> 
-> Note that unlike !frame->ra_off, !frame->fp_off does NOT end the unwind.
-> That only means the FP offset is unknown for the current frame.  Which
-> is a perfectly valid condition, e.g. if the function doesn't have frame
-> pointers or if it's before the prologue.
-> 
-> In that case, the unwind should continue, and state->fp's existing value
-> should be preserved, as it might already have a valid value from a
-> previous frame.
+> We might want to detect whether allocation of the huge zeropage failed a
+> couple of times and then just give up. Otherwise, each and every user of the
+> largest zero folio will keep allocating it.
 
-I fully agree with all of the above.
+Yes, that makes sense. We need sort of like a global counter to count
+the nr of failures and then give up trying to allocate it if it goes
+above a threshold.
 
-> So the following is wrong:
-> 
-> 	case UNWIND_USER_LOC_STACK:
-> 		if (!frame->fp.frame_off)
-> 			goto done;
-> 		if (unwind_get_user_long(fp, cfa + frame->fp.frame_off, state))
-> 			goto done;
-> 		break;
-> 
-> Instead of having !fp.frame_off stopping the unwind, it should just
-> break out of the switch statement and keep going.
-
-If frame->fp.loc is UNWIND_USER_LOC_STACK then frame->fp.frame_off must
-have a value != 0.  At least if we keep the original semantic.
-
-We can omit this check, if we assume all producers of frame behave
-correctly.  For instance user unwind sframe would not produce that
-(see below).  Could it somehow be made a debug-config-only check?
-
-> And that means the following is also wrong:
-> 
-> 	state->ip = ra;
-> 	state->sp = sp;
-> 	if (frame->fp.loc != UNWIND_USER_LOC_NONE)
-> 		state->fp = fp;
-> 
-> because state->fp needs to preserved for the STACK+!fp.frame_off case.
-
-unwind user sframe will not produce that:
-
-static inline void
-sframe_init_reginfo(struct unwind_user_reginfo *reginfo, s32 offset)
-{
-	if (offset) {
-		reginfo->loc = UNWIND_USER_LOC_STACK;
-		reginfo->frame_off = offset;
-	} else {
-		reginfo->loc = UNWIND_USER_LOC_NONE;
-	}
-}
-
-> So, something like this?
-> 
-> 	bool preserve_fp = false;
-> 	...
-> 
-> 	/* Get the Frame Pointer (FP) */
-> 	switch (frame->fp.loc) {
-> 	case UNWIND_USER_LOC_NONE:
-> 		preserve_fp = true;
-> 		break;
-> 	case UNWIND_USER_LOC_STACK:
-> 		if (!frame->fp.frame_off) {
-> 			preserve_fp = true;
-> 			break;
-> 		}
-> 	...
-> 
-> 	state->ip = ra;
-> 	state->sp = sp;
-> 	if (!preserve_fp)
-> 		state->fp = fp;
-
-I don't think all of this is necessary.
-
-frame->fp.loc == UNWIND_USER_LOC_NONE already indicates the state->fp
-retains it's previous value.
-
-> BTW, I would suggest renaming "frame_off" to "offset",
-> "frame->fp.offset" reads better and is more compact.
-
-Makes sense.  I'll change that.
-
-Regards,
-Jens
--- 
-Jens Remus
-Linux on Z Development (D3303)
-+49-7031-16-1128 Office
-jremus@de.ibm.com
-
-IBM
-
-IBM Deutschland Research & Development GmbH; Vorsitzender des Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
-IBM Data Privacy Statement: https://www.ibm.com/privacy/
-
+--
+Pankaj
 
