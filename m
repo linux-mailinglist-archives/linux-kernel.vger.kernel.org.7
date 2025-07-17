@@ -1,214 +1,107 @@
-Return-Path: <linux-kernel+bounces-734507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02AE1B08292
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 03:43:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56668B08295
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 03:45:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBE0B4E2235
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 01:43:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C38841A65A29
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 01:45:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7EE1DB127;
-	Thu, 17 Jul 2025 01:43:42 +0000 (UTC)
-Received: from unicom146.biz-email.net (unicom146.biz-email.net [210.51.26.146])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427E01E0083;
+	Thu, 17 Jul 2025 01:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UEpo+rqR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F4C2030A
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 01:43:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF331A4E70
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 01:44:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752716621; cv=none; b=gXhg1/2mWeEa3Qav8t2TGiJ+fh/fCLoOK5KReo7kCKcuJe3aPOIylZAhoc0MN6p9IkcG9ko9ISmzod35OLfmJRi5SKtmrvsH7pXfHw0fGb0n7CwvrdR/Ek6jqy2cZjmCnedzbDOZAv4Hz/ctln21A79SFmZmT5wHUGE0rhwr+sY=
+	t=1752716701; cv=none; b=K7vywl+1y4SuEDJh//qSSj7yxistqux9InlAKsL4ddt/K4JbUTsFeGcXW+pJMAt5feGqMQu6NnXKVj55c4MMVM3MLE5VDMIl6aaNQN3V98laqq92cFNwFJfPST9Pof1tAjq94fdmN6mMDj0rQ8hUiCK+Ain45zDHL5Je10WQbNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752716621; c=relaxed/simple;
-	bh=dJoAIfytZrOpSuXqCuHmHzo0RzD3zrIAcWuneaIzZ74=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=WrUd6TYbdI9uIkssnaQJpWvZRJSAKXVohZIb/mN5ZKLlsuNvjOVd1E4PNK+vi+ei9svtJ/8BeNF2L5l0OkZ+EMs8Em9bk0e76U1rBAXQL6IZnw5jOUjWafDZ3b9L0ZgPT7naXPk4wz0bI6Qo2kxeGt+zS4cC7UhOpSFQV+fflhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from jtjnmail201619.home.langchao.com
-        by unicom146.biz-email.net ((D)) with ASMTP (SSL) id 202507170943338503;
-        Thu, 17 Jul 2025 09:43:33 +0800
-Received: from jtjnmail201622.home.langchao.com (10.100.2.22) by
- jtjnmail201619.home.langchao.com (10.100.2.19) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.57; Thu, 17 Jul 2025 09:43:33 +0800
-Received: from jtjnmail201622.home.langchao.com ([fe80::15c3:8d74:3aa6:25f6])
- by jtjnmail201622.home.langchao.com ([fe80::15c3:8d74:3aa6:25f6%7]) with mapi
- id 15.01.2507.057; Thu, 17 Jul 2025 09:43:33 +0800
-From: =?utf-8?B?Qm8gTGl1ICjliJjms6IpLea1qua9ruS/oeaBrw==?=
-	<liubo03@inspur.com>
-To: "hsiangkao@linux.alibaba.com" <hsiangkao@linux.alibaba.com>,
-	"xiang@kernel.org" <xiang@kernel.org>, "chao@kernel.org" <chao@kernel.org>
-CC: "linux-erofs@lists.ozlabs.org" <linux-erofs@lists.ozlabs.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] erofs: fix build error with CONFIG_EROFS_FS_ZIP_ACCEL=y
-Thread-Topic: [PATCH] erofs: fix build error with CONFIG_EROFS_FS_ZIP_ACCEL=y
-Thread-Index: AQHb9rs+z1tDqdTop0ya67w6HSZeFbQ1A9AAgACGdvA=
-Date: Thu, 17 Jul 2025 01:43:33 +0000
-Message-ID: <7a1dbee70a604583bae5a29f690f4231@inspur.com>
-References: <b628d0517cde6f8914e65e1d7365d22217-7-25linux.alibaba.com@g.corp-email.com>
- <7d4b5f45-a8c1-47d6-8404-9cad88a297c1@linux.alibaba.com>
-In-Reply-To: <7d4b5f45-a8c1-47d6-8404-9cad88a297c1@linux.alibaba.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator:
-Content-Type: multipart/signed; protocol="application/x-pkcs7-signature";
-	micalg=SHA1; boundary="----=_NextPart_000_0009_01DBF6FF.3AF80DF0"
+	s=arc-20240116; t=1752716701; c=relaxed/simple;
+	bh=ONLWOvD91xvIKfJNcN6tYgfnVKNjFuGu3WLSSsooFIs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GRePpydD//NFRHeAAhl3/1CwIksSMoP1aFdgfuM2VmQbCTQndl0FXdfkoloAYExMqyUK4s/o+BvRlTCpPeH/kPPNR77phFVeNq4MV/Cdy9Cuxt6qSw48Xv+wHEOEKbr9z29z5ZwoVjTZbT9QuUEMmBKNtyMe2nEzdxn/2uUzQqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UEpo+rqR; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752716699;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ONLWOvD91xvIKfJNcN6tYgfnVKNjFuGu3WLSSsooFIs=;
+	b=UEpo+rqRB7UkN/kwSwbljk4nUP+F0FUFeWaEr+3/5Zo80qfLgWmIYLbFvLSMw4eLK+cQSR
+	zNRVy2JkxSFRj0J4ZTNBeBtCqtkRbkhsNrhThZP3oyKWZ+NQzr4hYK3IGuBsLobL5CPazn
+	BWtrVCfpwPSNmBe2R9rj+RnXhFlcLzg=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-395-3xMH7MR0MAShw8kPpdOueQ-1; Wed,
+ 16 Jul 2025 21:44:54 -0400
+X-MC-Unique: 3xMH7MR0MAShw8kPpdOueQ-1
+X-Mimecast-MFC-AGG-ID: 3xMH7MR0MAShw8kPpdOueQ_1752716693
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6CB51180034E;
+	Thu, 17 Jul 2025 01:44:52 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.32.192])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 50ED11954213;
+	Thu, 17 Jul 2025 01:44:48 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu, 17 Jul 2025 03:44:01 +0200 (CEST)
+Date: Thu, 17 Jul 2025 03:43:57 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	"rafael J . wysocki" <rafael@kernel.org>,
+	len brown <len.brown@intel.com>, pavel machek <pavel@kernel.org>,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] PM / Freezer: Skip zombie/dead processes to reduce
+ freeze latency
+Message-ID: <20250717014356.GG16401@redhat.com>
+References: <20250716062639.1528066-1-zhangzihuan@kylinos.cn>
+ <20250716062639.1528066-2-zhangzihuan@kylinos.cn>
+ <20250716163854.GE16401@redhat.com>
+ <20250716183637.GJ4105545@noisy.programming.kicks-ass.net>
+ <f5985910-d175-4c51-90b6-9d087a59936b@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-tUid: 20257170943332caa2229f388bf2fd194f9f14c2e5d33
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f5985910-d175-4c51-90b6-9d087a59936b@kylinos.cn>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-------=_NextPart_000_0009_01DBF6FF.3AF80DF0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: 7bit
-
->On 2025/7/17 09:34, Bo Liu wrote:
->> fix build err:
->>   ld.lld: error: undefined symbol: crypto_req_done
->>     referenced by decompressor_crypto.c
->>         fs/erofs/decompressor_crypto.o:(z_erofs_crypto_decompress) in
->archive vmlinux.a
->>     referenced by decompressor_crypto.c
->>         fs/erofs/decompressor_crypto.o:(z_erofs_crypto_decompress) in
->archive vmlinux.a
->>
->>   ld.lld: error: undefined symbol: crypto_acomp_decompress
->>     referenced by decompressor_crypto.c
->>         fs/erofs/decompressor_crypto.o:(z_erofs_crypto_decompress) in
->archive vmlinux.a
->>
->>   ld.lld: error: undefined symbol: crypto_alloc_acomp
->>     referenced by decompressor_crypto.c
->>         fs/erofs/decompressor_crypto.o:(z_erofs_crypto_enable_engine) in
->archive vmlinux.a
+On 07/17, Zihuan Zhang wrote:
 >
->Could you add a `Fixes` tag for this?
->
-I will add this.
+> The main reason we didn’t rely directly on PF_NOFREEZE is that it’s a
+> mutable flag — in some cases, it can be cleared later, which makes early
+> skipping potentially unsafe.
 
-Thanks
-Bo Liu
+Afaics userspace tasks can only set PF_NOFREEZE in do_task_dead() and never
+clear it.
 
-------=_NextPart_000_0009_01DBF6FF.3AF80DF0
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
+Apart from lock_system_sleep(). That is why (I think) Peter rightly suggests
+to take system_transition_mutex in this function earlier.
 
-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
-MAwGCisGAQQBgjcKAwQwRAYJKoZIhvcNAQkPBDcwNTAOBggqhkiG9w0DAgICAIAwDgYIKoZIhvcN
-AwQCAgCAMAcGBSsOAwIHMAoGCCqGSIb3DQMHMB0GA1UdDgQWBBTkHdp/y3+DuDJ13Q1YzgU9iV7N
-dzAfBgNVHSMEGDAWgBReWQOmtExYYJFO9h61pTmmMsE1ajCCAQ8GA1UdHwSCAQYwggECMIH/oIH8
-oIH5hoG6bGRhcDovLy9DTj1JTlNQVVItQ0EsQ049SlRDQTIwMTIsQ049Q0RQLENOPVB1YmxpYyUy
-MEtleSUyMFNlcnZpY2VzLENOPVNlcnZpY2VzLENOPUNvbmZpZ3VyYXRpb24sREM9aG9tZSxEQz1s
-YW5nY2hhbyxEQz1jb20/Y2VydGlmaWNhdGVSZXZvY2F0aW9uTGlzdD9iYXNlP29iamVjdENsYXNz
-PWNSTERpc3RyaWJ1dGlvblBvaW50hjpodHRwOi8vSlRDQTIwMTIuaG9tZS5sYW5nY2hhby5jb20v
-Q2VydEVucm9sbC9JTlNQVVItQ0EuY3JsMIIBKQYIKwYBBQUHAQEEggEbMIIBFzCBsQYIKwYBBQUH
-MAKGgaRsZGFwOi8vL0NOPUlOU1BVUi1DQSxDTj1BSUEsQ049UHVibGljJTIwS2V5JTIwU2Vydmlj
-ZXMsQ049U2VydmljZXMsQ049Q29uZmlndXJhdGlvbixEQz1ob21lLERDPWxhbmdjaGFvLERDPWNv
-bT9jQUNlcnRpZmljYXRlP2Jhc2U/b2JqZWN0Q2xhc3M9Y2VydGlmaWNhdGlvbkF1dGhvcml0eTBh
-BggrBgEFBQcwAoZVaHR0cDovL0pUQ0EyMDEyLmhvbWUubGFuZ2NoYW8uY29tL0NlcnRFbnJvbGwv
-SlRDQTIwMTIuaG9tZS5sYW5nY2hhby5jb21fSU5TUFVSLUNBLmNydDBBBgNVHREEOjA4oCIGCisG
-AQQBgjcUAgOgFAwSbGl1Ym8wM0BpbnNwdXIuY29tgRJsaXVibzAzQGluc3B1ci5jb20wDQYJKoZI
-hvcNAQELBQADggEBAA+BaY3B3qXmvZq7g7tZLzq2VQjU//XHTmyl58GLDWdVHsuX3lrAGwEfLVnU
-odpvthjtb7T7xEUzJh4F62zLFSm8HOBPH1B+6SFQKChHZeM0pauvXr1krRtVv82RgLsU26XrXFUP
-N+NcPwt7vOw1zHOiDic4anL3A9gsuDljAi2l+CA5RY05yL+8orasEAhOYL6+ks9aB8QiCxbZzShk
-DTMkrh0N1DjoBLaibtnlI/fxOUYM6vgdiI+FC02G41B364ZAc1mabSFvGIP6cIdr/olprPQOj9cq
-6zMi05qUBUj22hDvhcY0TlT4fEJSrvblp/LG6qTtVI3ilUAxhe8i9cIwggezMIIGm6ADAgECAhN+
-AAOO5TIDxOWswVHsAAEAA47lMA0GCSqGSIb3DQEBCwUAMFkxEzARBgoJkiaJk/IsZAEZFgNjb20x
-GDAWBgoJkiaJk/IsZAEZFghsYW5nY2hhbzEUMBIGCgmSJomT8ixkARkWBGhvbWUxEjAQBgNVBAMT
-CUlOU1BVUi1DQTAeFw0yNTA3MTcwMTIxMDVaFw0zMDA3MTYwMTIxMDVaMIG3MRMwEQYKCZImiZPy
-LGQBGRYDY29tMRgwFgYKCZImiZPyLGQBGRYIbGFuZ2NoYW8xFDASBgoJkiaJk/IsZAEZFgRob21l
-MTMwMQYDVQQLDCrmtarmva7nlLXlrZDkv6Hmga/kuqfkuJrogqHku73mnInpmZDlhazlj7gxGDAW
-BgNVBAMMD+WImOazoihsaXVibzAzKTEhMB8GCSqGSIb3DQEJARYSbGl1Ym8wM0BpbnNwdXIuY29t
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmt17k1i6xhukLYDgv4PB5YV9rNmuVKH5
-WO2ehZYIJn186Qt0EkhhoA7T2xt4AVZWaon2N27/bGKOp4xz8BYIPWpODowfg2FtrABqvJxsGQxf
-VakiH5YBpPG4fUO+Y0D8vqKw4bAJ5I5quixu2t8OZenYCvvlLMXyP2KSshCJWVDw9rMEQhemcDot
-PJfH9vFM085tUCvhPpjyMGq6/moGO8JQZ262X3XsFKnE0Zs9KMjtP6G4lJcmWfgwu3rAH3hMKRK6
-bTsLPO+bY3TRz8avw8S1UmjJLTb2HDFLkzXzpOhDdKjO2Fk9V7JNmpjk7YQ7P8LLA1hVInOUjFv6
-GR61vQIDAQABo4IEEzCCBA8wCwYDVR0PBAQDAgWgMD0GCSsGAQQBgjcVBwQwMC4GJisGAQQBgjcV
-CILyqR+Egdd6hqmRPYaA9xWD2I9cgUr9iyaBlKdNAgFkAgFhMEQGCSqGSIb3DQEJDwQ3MDUwDgYI
-KoZIhvcNAwICAgCAMA4GCCqGSIb3DQMEAgIAgDAHBgUrDgMCBzAKBggqhkiG9w0DBzAdBgNVHQ4E
-FgQUsmXTjDrO/nhxGDpnz5cAr1neWI8wHwYDVR0jBBgwFoAUXlkDprRMWGCRTvYetaU5pjLBNWow
-ggEPBgNVHR8EggEGMIIBAjCB/6CB/KCB+YaBumxkYXA6Ly8vQ049SU5TUFVSLUNBLENOPUpUQ0Ey
-MDEyLENOPUNEUCxDTj1QdWJsaWMlMjBLZXklMjBTZXJ2aWNlcyxDTj1TZXJ2aWNlcyxDTj1Db25m
-aWd1cmF0aW9uLERDPWhvbWUsREM9bGFuZ2NoYW8sREM9Y29tP2NlcnRpZmljYXRlUmV2b2NhdGlv
-bkxpc3Q/YmFzZT9vYmplY3RDbGFzcz1jUkxEaXN0cmlidXRpb25Qb2ludIY6aHR0cDovL0pUQ0Ey
-MDEyLmhvbWUubGFuZ2NoYW8uY29tL0NlcnRFbnJvbGwvSU5TUFVSLUNBLmNybDCCASwGCCsGAQUF
-BwEBBIIBHjCCARowgbEGCCsGAQUFBzAChoGkbGRhcDovLy9DTj1JTlNQVVItQ0EsQ049QUlBLENO
-PVB1YmxpYyUyMEtleSUyMFNlcnZpY2VzLENOPVNlcnZpY2VzLENOPUNvbmZpZ3VyYXRpb24sREM9
-aG9tZSxEQz1sYW5nY2hhbyxEQz1jb20/Y0FDZXJ0aWZpY2F0ZT9iYXNlP29iamVjdENsYXNzPWNl
-cnRpZmljYXRpb25BdXRob3JpdHkwZAYIKwYBBQUHMAKGWGh0dHA6Ly9KVENBMjAxMi5ob21lLmxh
-bmdjaGFvLmNvbS9DZXJ0RW5yb2xsL0pUQ0EyMDEyLmhvbWUubGFuZ2NoYW8uY29tX0lOU1BVUi1D
-QSgxKS5jcnQwKQYDVR0lBCIwIAYIKwYBBQUHAwIGCCsGAQUFBwMEBgorBgEEAYI3CgMEMDUGCSsG
-AQQBgjcVCgQoMCYwCgYIKwYBBQUHAwIwCgYIKwYBBQUHAwQwDAYKKwYBBAGCNwoDBDBBBgNVHREE
-OjA4oCIGCisGAQQBgjcUAgOgFAwSbGl1Ym8wM0BpbnNwdXIuY29tgRJsaXVibzAzQGluc3B1ci5j
-b20wUwYJKwYBBAGCNxkCBEYwRKBCBgorBgEEAYI3GQIBoDQEMlMtMS01LTIxLTE2MDY5ODA4NDgt
-NzA2Njk5ODI2LTE4MDE2NzQ1MzEtMjU4ODUyMzQ4MA0GCSqGSIb3DQEBCwUAA4IBAQAucjq5s0Qq
-1UtBIL8Und9mnrfn3azil+rXBoZf/N+DNuZYml+Ct4SDC0tng7F5kSt/2zU4vShrkviUh8kjCstC
-rPyqkxQodvm7reuGuBKZLy9PLZR0oB3S7vD9gUdMCw7UianFwY+mgbG/33dY43zujZIY8DMm6od3
-GMZlIueeqB6VyEESU4+ll2VFPyLXPzUMBK7DLAEnOiPbJSUvR7738lSkDPXxdujcFhL9wxTvh/3g
-hYuY0OCwf+HM7TFBSSFxa1wdkfO8aA9Bl6tY5awZ6bbsr+3+FRf/h1jWZQOCCnEGixEPN0irb1Zj
-dI2O4u1TlTwZAYXdLVRqmr2vi1KHMYIDkzCCA48CAQEwcDBZMRMwEQYKCZImiZPyLGQBGRYDY29t
-MRgwFgYKCZImiZPyLGQBGRYIbGFuZ2NoYW8xFDASBgoJkiaJk/IsZAEZFgRob21lMRIwEAYDVQQD
-EwlJTlNQVVItQ0ECE34AANHR1UxsCE9f8IsAAAAA0dEwCQYFKw4DAhoFAKCCAfgwGAYJKoZIhvcN
-AQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjUwNzE3MDE0MzIwWjAjBgkqhkiG9w0B
-CQQxFgQUa9SKy+5VREpQVRwh+K9KHFefhHgwfwYJKwYBBAGCNxAEMXIwcDBZMRMwEQYKCZImiZPy
-LGQBGRYDY29tMRgwFgYKCZImiZPyLGQBGRYIbGFuZ2NoYW8xFDASBgoJkiaJk/IsZAEZFgRob21l
-MRIwEAYDVQQDEwlJTlNQVVItQ0ECE34AA47lMgPE5azBUewAAQADjuUwgYEGCyqGSIb3DQEJEAIL
-MXKgcDBZMRMwEQYKCZImiZPyLGQBGRYDY29tMRgwFgYKCZImiZPyLGQBGRYIbGFuZ2NoYW8xFDAS
-BgoJkiaJk/IsZAEZFgRob21lMRIwEAYDVQQDEwlJTlNQVVItQ0ECE34AA47lMgPE5azBUewAAQAD
-juUwgZMGCSqGSIb3DQEJDzGBhTCBgjAKBggqhkiG9w0DBzALBglghkgBZQMEASowCwYJYIZIAWUD
-BAEWMAsGCWCGSAFlAwQBAjAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcNAwICAUAwBwYFKw4DAhow
-CwYJYIZIAWUDBAIDMAsGCWCGSAFlAwQCAjALBglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEA
-TRKO7WvzJ9SjqvoT+IhLVH3WDsoB1qw3VlX/4Vyfafl82YrRvbmeeRx4EtWr0uIwsjOC3pnQjsZp
-lyZ/Pq5gSlbD7xPJsoHXtPzwMdswpKOSvRugfcQmr+nefSeOI20UsfpxjhpjtzN3P22FXLHodTGd
-h8n9g/7BuKW7rNChCO1Jdd0QqFsrpEGbQ/ptT958fO0vk4Wc94BPT9Omusrm9HdMe28nsgw9/tep
-Ef9AMAgcvss79w3BYxDYy3oOSh6o5kGc1ZhrOk+b6ZgBq84RRlluMFqWxpEIX8pa4jhaH/scQjBI
-PIZq7Vhgh0x0r0r/8i+nrcPAy7P4qqE9L8ZqqgAAAAAAAA==
+> In contrast, exit_state is stable and skipping tasks based on it is safe.
 
-------=_NextPart_000_0009_01DBF6FF.3AF80DF0--
+I don't think it is really safe...
+
+Oleg.
+
 
