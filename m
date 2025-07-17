@@ -1,217 +1,113 @@
-Return-Path: <linux-kernel+bounces-736005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7796B09686
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 23:49:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 82C6AB09688
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 23:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74A9A1891F14
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:49:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 946131899826
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:49:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0462E256C89;
-	Thu, 17 Jul 2025 21:47:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD3C238142;
+	Thu, 17 Jul 2025 21:48:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iHZS3gQS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZxDPC3P/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD75E227E9B;
-	Thu, 17 Jul 2025 21:47:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA64237173
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 21:48:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752788872; cv=none; b=jENVSPTkg5IUL5sJctY43pRFciaZJLVhGe+kQBT6s77TiImB+udkakfF3YaBlpAsP9QkkidREJ7laga43ATp5706jyHmtCoGFyKljfVcgn10UbIjjNL4PBKBAGRQlPj0thHvBVCjFMFS0c/gDAw20Z8SPUu0A7Kox2dS3upG7+8=
+	t=1752788903; cv=none; b=S+317P1nGnGxiEvfICvy95Irsw3lRNtyBuaELKdeTPEwS4JvJ12HKfU7fsq+DmWS2LcFVNNMrfpdWdGmSHbQdc+bdnUvQggS5f8tjFtwOgVziP1kKdFJ894dfB25GK4XTEUUlJVYiu1bCWkiY/15T/Qj3xpO2bEeQWGpuJEalfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752788872; c=relaxed/simple;
-	bh=ahOiCUs+Yg+YQbOgK04CJLyH5SnWaNojDAAU7pvqq/Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=j9kN83FmCu9eeOqhpA8p5ep9FU0AVkEH+c3bJ1s2YzfWkpF3AmUFW64rs1OVOG6efVnQIqQrLSSoAa/4Tep237lbIoHzpzSveQ9J9XkYAX66OHSvi4nKA47Ih5zZb6DhXPEjzQKOIyS+T+bmv/IB/AjLaFYhYxcNiVi5Y6NUYuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iHZS3gQS; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752788871; x=1784324871;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ahOiCUs+Yg+YQbOgK04CJLyH5SnWaNojDAAU7pvqq/Y=;
-  b=iHZS3gQSse89njZpb3Ubugo7VS3VuOJnc8chiJM3SEltm72Q2wWHXNGW
-   JZ5VnXKiaX8ZwTf+LUQZ5UZ643XoHOBZOS6TkRGh/5d1hQq45YHeOHmxV
-   ui3bJ3AD3fzFv/PXAdeJStNsZLuiw1R3rNNjkZ66Uhtj3vPzIWfQH1pXh
-   DOADOxaym/mGM6/tSY5hD/3DYVDEDvqFn0POgtd3boTfL7qjwL1ceRSCf
-   cVebUDMadwKQ28d5xCjqzHYre+7dXFTMbffgjLqX34nvOarOTDZnn5jlM
-   v//FNxsZ/iFe553Ka1dKthNrgi5AlsFhiR/bTQhH1CrV8NTDx7gjaR16j
-   w==;
-X-CSE-ConnectionGUID: X/7KiMrQRGSu1wV748psWw==
-X-CSE-MsgGUID: tiw1vh0+Rc2+Hf94mS7erQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11495"; a="66527858"
-X-IronPort-AV: E=Sophos;i="6.16,319,1744095600"; 
-   d="scan'208";a="66527858"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 14:47:51 -0700
-X-CSE-ConnectionGUID: Z6CfNKPmTQubgc4dCZ9uSQ==
-X-CSE-MsgGUID: /3GsRR2uQCaHkWewtBKG4w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,319,1744095600"; 
-   d="scan'208";a="157295559"
-Received: from vverma7-mobl3.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.124.221.39])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 14:47:45 -0700
-From: Kai Huang <kai.huang@intel.com>
-To: dave.hansen@intel.com,
-	bp@alien8.de,
-	tglx@linutronix.de,
-	peterz@infradead.org,
-	mingo@redhat.com,
-	hpa@zytor.com,
-	thomas.lendacky@amd.com
-Cc: x86@kernel.org,
-	kas@kernel.org,
-	rick.p.edgecombe@intel.com,
-	dwmw@amazon.co.uk,
-	linux-kernel@vger.kernel.org,
-	pbonzini@redhat.com,
-	seanjc@google.com,
-	kvm@vger.kernel.org,
-	reinette.chatre@intel.com,
-	isaku.yamahata@intel.com,
-	dan.j.williams@intel.com,
-	ashish.kalra@amd.com,
-	nik.borisov@suse.com,
-	chao.gao@intel.com,
-	sagis@google.com,
-	Farrah Chen <farrah.chen@intel.com>,
-	Binbin Wu <binbin.wu@linux.intel.com>
-Subject: [PATCH v4 7/7] KVM: TDX: Explicitly do WBINVD when no more TDX SEAMCALLs
-Date: Fri, 18 Jul 2025 09:46:44 +1200
-Message-ID: <a85faae420b2a52bd8a3022900ffa8351c66d1ed.1752730040.git.kai.huang@intel.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <cover.1752730040.git.kai.huang@intel.com>
-References: <cover.1752730040.git.kai.huang@intel.com>
+	s=arc-20240116; t=1752788903; c=relaxed/simple;
+	bh=KFu/f4mb35n+OCQZznsVjFhv7QmBQ0nFhjam9YEqwIU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YfkXThF1a3EXrB4nGEFWAUzG9IY3aJ9oU80ysCK3qeNYhvwudIyTo3EaBva5iFA9H59l9389iGKW6U8LOIdUXTK1bJ4LUP+xeMHeOuFCKutNrx1ecpgsTIhsVS3Q6ik2Pv5HIpiJSYFKjqQehHtDFGsKeDu+Rst0+rvcA6EhMs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZxDPC3P/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E64C9C4CEE3;
+	Thu, 17 Jul 2025 21:48:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752788903;
+	bh=KFu/f4mb35n+OCQZznsVjFhv7QmBQ0nFhjam9YEqwIU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZxDPC3P/gOTXNTRrGpD5sZ3TpjXo/Ulo+bK0Ygi7VHBrgKHcDPwBHSlIqbJLaN+L2
+	 itUjotfgDbux1HtHnfdVQJ9A643KOa3dyuVaW0mOTBONLJby8KI/c9BSsRMjtkpIS5
+	 mcF8Zy++3QGK8tNRSyptIRZPkTT9bcHuFei5YoG6FN3zMhHhOadJ6JX1GuQoI4aYbZ
+	 gWoXlaQYgeSOw/WZwIjoaLOVoeButLNwwkhWxJ9n60faJZfZc5gU3npBIGqX9iZzRL
+	 YvgnYwJ/rAp7pgn9tHKYRNovFJoRK0YZj17H6qM4QR2/aaUeFj/tpVu5idwK7nEIwM
+	 042nDHNtmB51A==
+Date: Thu, 17 Jul 2025 11:48:21 -1000
+From: 'Tejun Heo' <tj@kernel.org>
+To: liuwenfang <liuwenfang@honor.com>
+Cc: 'David Vernet' <void@manifault.com>, 'Andrea Righi' <arighi@nvidia.com>,
+	'Changwoo Min' <changwoo@igalia.com>,
+	'Ingo Molnar' <mingo@redhat.com>,
+	'Peter Zijlstra' <peterz@infradead.org>,
+	'Juri Lelli' <juri.lelli@redhat.com>,
+	'Vincent Guittot' <vincent.guittot@linaro.org>,
+	'Dietmar Eggemann' <dietmar.eggemann@arm.com>,
+	'Steven Rostedt' <rostedt@goodmis.org>,
+	'Ben Segall' <bsegall@google.com>, 'Mel Gorman' <mgorman@suse.de>,
+	'Valentin Schneider' <vschneid@redhat.com>,
+	"'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] sched_ext: Fix cpu_released while changing sched
+ policy of the running task
+Message-ID: <aHlvpRIcymNPPWh9@slm.duckdns.org>
+References: <fca528bb34394de3a7e87a873fadd9df@honor.com>
+ <aFmwHzO2AKFXO_YS@slm.duckdns.org>
+ <7ae16e02aba64a318d8e67be9e3b7f8e@honor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7ae16e02aba64a318d8e67be9e3b7f8e@honor.com>
 
-On TDX platforms, during kexec, the kernel needs to make sure there are
-no dirty cachelines of TDX private memory before booting to the new
-kernel to avoid silent memory corruption to the new kernel.
+Hello,
 
-During kexec, the kexec-ing CPU firstly invokes native_stop_other_cpus()
-to stop all remote CPUs before booting to the new kernel.  The remote
-CPUs will then execute stop_this_cpu() to stop themselves.
+On Sat, Jun 28, 2025 at 07:20:59AM +0000, liuwenfang wrote:
+>  static void switched_from_scx(struct rq *rq, struct task_struct *p)
+>  {
+> +	switch_class(rq, p, true);
+> +
+>  	scx_ops_disable_task(p);
+>  }
 
-The kernel has a percpu boolean to indicate whether the cache of a CPU
-may be in incoherent state.  In stop_this_cpu(), the kernel does WBINVD
-if that percpu boolean is true.
+Hmm... but this function can be called when @p is not currently running from
+setscheduler() path, and it wouldn't make sense to call switch_class()
+during that.
 
-TDX turns on that percpu boolean on a CPU when the kernel does SEAMCALL.
-This makes sure the caches will be flushed during kexec.
+>  static void wakeup_preempt_scx(struct rq *rq, struct task_struct *p,int wake_flags) {}
+> -static void switched_to_scx(struct rq *rq, struct task_struct *p) {}
+> +static void switched_to_scx(struct rq *rq, struct task_struct *p)
+> +{
+> +	lockdep_assert_rq_held(rq);
+> +
+> +	if (static_branch_unlikely(&scx_ops_cpu_preempt) &&
+> +	    unlikely(rq->scx.cpu_released)) {
+> +		/*
+> +		 * If the previous sched_class for the current CPU was not SCX,
+> +		 * notify the BPF scheduler that it again has control of the
+> +		 * core. This callback complements ->cpu_release(), which is
+> +		 * emitted in switch_class().
+> +		 */
+> +		if (SCX_HAS_OP(cpu_acquire))
+> +			SCX_CALL_OP(SCX_KF_REST, cpu_acquire, rq, cpu_of(rq), NULL);
+> +		rq->scx.cpu_released = false;
+> +	}
+> +}
 
-However, the native_stop_other_cpus() and stop_this_cpu() have a "race"
-which is extremely rare to happen but could cause the system to hang.
+Ditto. This should only apply if @p is current, right?
 
-Specifically, the native_stop_other_cpus() firstly sends normal reboot
-IPI to remote CPUs and waits one second for them to stop.  If that times
-out, native_stop_other_cpus() then sends NMIs to remote CPUs to stop
-them.
+Thanks.
 
-The aforementioned race happens when NMIs are sent.  Doing WBINVD in
-stop_this_cpu() makes each CPU take longer time to stop and increases
-the chance of the race happening.
-
-Explicitly flush cache in tdx_disable_virtualization_cpu() after which
-no more TDX activity can happen on this cpu.  This moves the WBINVD to
-an earlier stage than stop_this_cpus(), avoiding a possibly lengthy
-operation at a time where it could cause this race.
-
-Signed-off-by: Kai Huang <kai.huang@intel.com>
-Acked-by: Paolo Bonzini <pbonzini@redhat.com>
-Tested-by: Farrah Chen <farrah.chen@intel.com>
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
----
-
-v3 -> v4:
- - Change doing wbinvd() from rebooting notifier to
-   tdx_disable_virtualization_cpu() to cover the case where more
-   SEAMCALL can be made after cache flush, i.e., doing kexec when
-   there's TD alive.  - Chao.
- - Add check to skip wbinvd if the boolean is false. -- Chao
- - Fix typo in the comment -- Binbin.
-
----
- arch/x86/include/asm/tdx.h  |  2 ++
- arch/x86/kvm/vmx/tdx.c      | 12 ++++++++++++
- arch/x86/virt/vmx/tdx/tdx.c | 12 ++++++++++++
- 3 files changed, 26 insertions(+)
-
-diff --git a/arch/x86/include/asm/tdx.h b/arch/x86/include/asm/tdx.h
-index 6865f62436ad..5f1f4e8594c0 100644
---- a/arch/x86/include/asm/tdx.h
-+++ b/arch/x86/include/asm/tdx.h
-@@ -221,6 +221,7 @@ u64 tdh_mem_page_remove(struct tdx_td *td, u64 gpa, u64 level, u64 *ext_err1, u6
- u64 tdh_phymem_cache_wb(bool resume);
- u64 tdh_phymem_page_wbinvd_tdr(struct tdx_td *td);
- u64 tdh_phymem_page_wbinvd_hkid(u64 hkid, struct page *page);
-+void tdx_cpu_flush_cache(void);
- #else
- static inline void tdx_init(void) { }
- static inline int tdx_cpu_enable(void) { return -ENODEV; }
-@@ -228,6 +229,7 @@ static inline int tdx_enable(void)  { return -ENODEV; }
- static inline u32 tdx_get_nr_guest_keyids(void) { return 0; }
- static inline const char *tdx_dump_mce_info(struct mce *m) { return NULL; }
- static inline const struct tdx_sys_info *tdx_get_sysinfo(void) { return NULL; }
-+static inline void tdx_cpu_flush_cache(void) { }
- #endif	/* CONFIG_INTEL_TDX_HOST */
- 
- #endif /* !__ASSEMBLER__ */
-diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index f31ccdeb905b..478baaa1bfb5 100644
---- a/arch/x86/kvm/vmx/tdx.c
-+++ b/arch/x86/kvm/vmx/tdx.c
-@@ -444,6 +444,18 @@ void tdx_disable_virtualization_cpu(void)
- 		tdx_flush_vp(&arg);
- 	}
- 	local_irq_restore(flags);
-+
-+	/*
-+	 * No more TDX activity on this CPU from here.  Flush cache to
-+	 * avoid having to do WBINVD in stop_this_cpu() during kexec.
-+	 *
-+	 * Kexec calls native_stop_other_cpus() to stop remote CPUs
-+	 * before booting to new kernel, but that code has a "race"
-+	 * when the normal REBOOT IPI times out and NMIs are sent to
-+	 * remote CPUs to stop them.  Doing WBINVD in stop_this_cpu()
-+	 * could potentially increase the possibility of the "race".
-+	 */
-+	tdx_cpu_flush_cache();
- }
- 
- #define TDX_SEAMCALL_RETRIES 10000
-diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-index d6ee4e5a75d2..c098a6e0382b 100644
---- a/arch/x86/virt/vmx/tdx/tdx.c
-+++ b/arch/x86/virt/vmx/tdx/tdx.c
-@@ -1870,3 +1870,15 @@ u64 tdh_phymem_page_wbinvd_hkid(u64 hkid, struct page *page)
- 	return seamcall(TDH_PHYMEM_PAGE_WBINVD, &args);
- }
- EXPORT_SYMBOL_GPL(tdh_phymem_page_wbinvd_hkid);
-+
-+void tdx_cpu_flush_cache(void)
-+{
-+	lockdep_assert_preemption_disabled();
-+
-+	if (!this_cpu_read(cache_state_incoherent))
-+		return;
-+
-+	wbinvd();
-+	this_cpu_write(cache_state_incoherent, false);
-+}
-+EXPORT_SYMBOL_GPL(tdx_cpu_flush_cache);
 -- 
-2.50.0
-
+tejun
 
