@@ -1,113 +1,103 @@
-Return-Path: <linux-kernel+bounces-734524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C285B082BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 04:06:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54841B082BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 04:11:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FDEA1C21086
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:06:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 826894A7B5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:11:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB491D5CF2;
-	Thu, 17 Jul 2025 02:06:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF981D5CF2;
+	Thu, 17 Jul 2025 02:10:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fvZi6t2s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="X1iEtJcq"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64FD0383;
-	Thu, 17 Jul 2025 02:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA85383;
+	Thu, 17 Jul 2025 02:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752717966; cv=none; b=RTph/8KIRXdUoVTQj6iToP8YPD7cDo8HBj7cwW+8NhgiWeNIjZOml871hg9ZDcGxMNQuFAK6zLtvCnHxWFU3ZC7KQDt++T60c/tVjyN/7uvHi/iJ3T++d8Oan+k/ppbr3UyDC85Y/42Zj3QQMbJKW4dgdIEhr//+k2TagJwFdlU=
+	t=1752718256; cv=none; b=P9Dq7Yy6VhckQM8/VM4aFDwNENygGDcEc6hdfqgLCMeJz5HDcgFQgDVa+LTmwZPW1HVrdc+1K0pqcsEME7RjMA9U0dl+Xkovuj2+86cxBXTb6ssaXoyAeL4UWuCCUYCyENp895UixLFJg3TMnWn4hKKgJGAbEQdxc3i8QwYy8Zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752717966; c=relaxed/simple;
-	bh=GEUd1AmzQwdYuwp2PPPg8qHYUSWLqdn6zZ9PO8zi+T8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KSLyOG+/fOtqYGe8SAsFriCTbkaBLE9FP46ZnsFdyHSuFsevsfp2yR/fA/Pokhn2v2tCnLBrH6s4bOPzaxA077feDbkOR8Bs5xecLwxoWwP2RBjdhLZRTjPLeGAPR2Jd08Boi9udrc+I7298+3sSAj+YA1F3xZxo4trPsWRqq2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fvZi6t2s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39B24C4CEE7;
-	Thu, 17 Jul 2025 02:06:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752717965;
-	bh=GEUd1AmzQwdYuwp2PPPg8qHYUSWLqdn6zZ9PO8zi+T8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fvZi6t2sJvKlfsUcnWKrsaiMrqkIJ2Sl3kVi0jQ1SFPh4x2OZEwAvJEgKyusSQpKT
-	 QQ9oG2xKAnnzmMj7+QXZJ1N9X+R3Q+jAKnGI5GXSLAWgujMrTD+U+MTueNi35HGqoB
-	 rE94rEeOcjPe4d2LrRE8i8oAgphJ1t1lprvYUnyO1IQJj2snGLhKImEy/jg8k5xCHo
-	 7pgCiIL/nSF8vlxx75fNnDrYs/FzIdTYOCyqQeU/B3kHMB6Hzrb0QtCdvWEF9uywHF
-	 5xc+VYapQfEbFZjm6K0XKOz04W7w4T5PRdUzQnv77pYhdOQS5GvMqKykBX00RyalVE
-	 hauZfn7lGz6yQ==
-Date: Wed, 16 Jul 2025 19:06:02 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Jens Remus <jremus@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, x86@kernel.org, Steven Rostedt <rostedt@kernel.org>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Ilya Leoshkevich <iii@linux.ibm.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, 
-	Indu Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, 
-	Beau Belgrave <beaub@linux.microsoft.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, 
-	Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>
-Subject: Re: [RFC PATCH v1 12/16] unwind_user/backchain: Introduce back chain
- user space unwinding
-Message-ID: <a4dd5okskro2h45zmqgg3etj6uwici2hoop2uaf6iqrlaej7yh@xlduwjqke4ec>
-References: <20250710163522.3195293-1-jremus@linux.ibm.com>
- <20250710163522.3195293-13-jremus@linux.ibm.com>
+	s=arc-20240116; t=1752718256; c=relaxed/simple;
+	bh=E3P04Zk97V1KVNAa6A19+AuiHhE4WdUG6JK/+ixB8JU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OycDUrBpInIXCHj9jm9EJ3z/2YNkLVwe/ai5D03JdixK/LwM7VHvlSw1oHi3Gajm20Lc8j8s5y9fI2Ob9Fv3hG6z3/J0UFtmK/nHdh5frqGJ9oWIlLH4BBL3mqqlve5q72G0nKQLCobbuwPAK4L4/huNi6g+JLj8WuMbs8f/E5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=X1iEtJcq; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=GBcZdsaYhycHmmpGcko2jxY5iOjLzHLcpfJfli6A5+I=; b=X1iEtJcq8pTGZ7jmZEb11JZLDx
+	VlLa3qlqLeuqkD4H0GhyTzrcwZj8kWOl/+KH2Te15HE0OEJOvN4uvA9WutTv2C9JLn9wt/pt/lGLr
+	+umGHe+RuUydIpO1l45PW/MomPb4ZMxFBgoKLTrUCllTz9KIGGeg/52mKG1D7uPHHZMS+Vx325/s+
+	+hQrsxHpRqKtOS3KnS23hP5XknqRwLDemP1k23dNHrKQpHZPeBr4YW6SdVVxSNdqaxm69nJscLwZK
+	EEhGrRxhCB8u0h9ultkqEjBCv0RkoXkgaOr3fcrLFNwwkJWFgpyDhhhHlAp9dB7gTTuPqUYF8w86w
+	59EE+GwQ==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ucE5E-000000092fy-3nkv;
+	Thu, 17 Jul 2025 02:10:52 +0000
+Message-ID: <c8fdeee9-6421-4943-9c79-f3a48441488a@infradead.org>
+Date: Wed, 16 Jul 2025 19:10:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250710163522.3195293-13-jremus@linux.ibm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iommu/amd: Wrap debugfs ABI testing symbols snippets in
+ literal code blocks
+To: Bagas Sanjaya <bagasdotme@gmail.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Documentation <linux-doc@vger.kernel.org>,
+ Linux IOMMU <iommu@lists.linux.dev>
+Cc: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>,
+ Will Deacon <will@kernel.org>, Vasant Hegde <vasant.hegde@amd.com>,
+ Ashish Kalra <Ashish.Kalra@amd.com>, =?UTF-8?B?SsO2cmcgUsO2ZGVs?=
+ <joro@8bytes.org>, Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+ Robin Murphy <robin.murphy@arm.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+References: <20250717010331.8941-1-bagasdotme@gmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250717010331.8941-1-bagasdotme@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 10, 2025 at 06:35:18PM +0200, Jens Remus wrote:
-> @@ -66,12 +73,20 @@ static int unwind_user_next(struct unwind_user_state *state)
->  		/* sframe expects the frame to be local storage */
->  		frame = &_frame;
->  		if (sframe_find(state->ip, frame, topmost)) {
-> -			if (!IS_ENABLED(CONFIG_HAVE_UNWIND_USER_FP))
-> -				goto done;
-> -			frame = &fp_frame;
-> +			if (IS_ENABLED(CONFIG_HAVE_UNWIND_USER_FP)) {
-> +				frame = &fp_frame;
-> +			} else if (IS_ENABLED(CONFIG_HAVE_UNWIND_USER_BACKCHAIN)) {
-> +				if (unwind_user_backchain_next(state))
-> +					goto done;
-> +				goto done_backchain;
-> +			}
->  		}
->  	} else if (fp_state(state)) {
->  		frame = &fp_frame;
-> +	} else if (backchain_state(state)) {
-> +		if (unwind_user_backchain_next(state))
-> +			goto done;
-> +		goto done_backchain;
->  	} else {
->  		goto done;
->  	}
-> @@ -153,6 +168,7 @@ static int unwind_user_next(struct unwind_user_state *state)
->  
->  	arch_unwind_user_next(state);
->  
-> +done_backchain:
->  	state->topmost = false;
->  	return 0;
 
-This feels very grafted on, is there not some way to make it more
-generic, i.e., to just work with CONFIG_HAVE_UNWIND_USER_FP?
 
-Also, if distros aren't even compiling with -mbackchain, I wonder if we
-can just not do this altogether :-)
+On 7/16/25 6:03 PM, Bagas Sanjaya wrote:
+> Commit 39215bb3b0d929 ("iommu/amd: Add documentation for AMD IOMMU
+> debugfs support") documents debugfs ABI symbols for AMD IOMMU, but
+> forgets to wrap examples snippets and their output in literal code
+> blocks, hence Sphinx reports indentation warnings:
+> 
+> Documentation/ABI/testing/debugfs-amd-iommu:31: ERROR: Unexpected indentation. [docutils]
+> Documentation/ABI/testing/debugfs-amd-iommu:31: WARNING: Block quote ends without a blank line; unexpected unindent. [docutils]
+> Documentation/ABI/testing/debugfs-amd-iommu:31: WARNING: Block quote ends without a blank line; unexpected unindent. [docutils]
+> 
+> Wrap them to fix the warnings.
+> 
+> Fixes: 39215bb3b0d9 ("iommu/amd: Add documentation for AMD IOMMU debugfs support")
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Closes: https://lore.kernel.org/linux-next/20250716204207.73869849@canb.auug.org.au/
+> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> ---
+>  Documentation/ABI/testing/debugfs-amd-iommu | 125 +++++++++++---------
+>  1 file changed, 71 insertions(+), 54 deletions(-)
+
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
+
+Thanks.
 
 -- 
-Josh
+~Randy
 
