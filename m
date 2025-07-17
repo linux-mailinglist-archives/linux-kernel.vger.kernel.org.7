@@ -1,466 +1,227 @@
-Return-Path: <linux-kernel+bounces-734579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 742BDB0835F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 05:22:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 346B4B08362
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 05:23:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB5EF4A6DAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 03:22:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 931E45619C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 03:23:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E28541EBA19;
-	Thu, 17 Jul 2025 03:22:16 +0000 (UTC)
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.75.44.102])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D689313AD38;
-	Thu, 17 Jul 2025 03:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.75.44.102
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752722536; cv=none; b=Qn36oLmGez5XE5ByhG0WLl7Mw27YyL83LDfSLRcht040VW3OaDe7ljrgjHiKmJ1uNC1jqRusq1OgJTacA7Cqmlv7Nncra5wu7Z9VVdUQBuJg+BLvdnqfiLWaR8Tg9c2cxsqNXg+DkiUS1NGHNJBINSR63dA8hlhlc9tyLLAm51g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752722536; c=relaxed/simple;
-	bh=W96+LDyE1irEgxC7jxOOdGc0NuKEL30Q9vj/5P7B59U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pubR/NvSe4PWc8RaTNQVL9MXTAIDw8IVIaMe3zCyiREfLj62lsToTuguxyO2I1PhiMUghXYbiEMS+kivYYXyFKvLa4n74Wv129mGs3yd61kjfxisd7iPSpSj3ci2OLM7iH+5zdU4q46j3AtChofVo+1PqQAtufcTdpO+bJauNYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=13.75.44.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
-Received: from hust.edu.cn (unknown [172.16.0.52])
-	by app2 (Coremail) with SMTP id HwEQrADnx+webHho67DgAQ--.19054S2;
-	Thu, 17 Jul 2025 11:21:02 +0800 (CST)
-Received: from [10.12.169.51] (unknown [10.12.169.51])
-	by gateway (Coremail) with SMTP id _____wBH5JgcbHho4NgnAQ--.34638S2;
-	Thu, 17 Jul 2025 11:21:01 +0800 (CST)
-Message-ID: <62791237-0194-42c1-9c9f-d4d4d06b8af6@hust.edu.cn>
-Date: Thu, 17 Jul 2025 11:21:00 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076711F2380;
+	Thu, 17 Jul 2025 03:23:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="oXhre5G0"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013010.outbound.protection.outlook.com [40.107.162.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CAF07E9;
+	Thu, 17 Jul 2025 03:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752722608; cv=fail; b=Ie/Kv+yarkT2+6HIA4P3PZJwqJQn09fH6NgyE7oXa6fnqSbh800HiJC3tQFM1tjRwVHw2fzYQp+srcsufwUquJYvBt7s0o1jSfVwiNAUHtNx16MIMfozcBnKw5xNqw2JVMIbygC1jI4WGc1VEZLC8+VMttufjxcoXbssv3S8OXc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752722608; c=relaxed/simple;
+	bh=C7KYOXhYLrnuhnx8GMUR2PXqPYaUZCMkaN2wBXeVhWU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=srS1iFMjXn45542j/4lkDvTAuKmUVvUJc+Ud1hPQr96GoDLFzI2NX9giFYAd+5brqV2j2EgQbYW0iAKZMD96gTyf+ghd6lBRNvIZdNlpw6QHgn0nLvWJfAiFxJByiO7xT3C9Hu9Y0QmlF4oB6imSBLE1ir5F/f2GGRKBiuc6eS4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=oXhre5G0; arc=fail smtp.client-ip=40.107.162.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KFbUtW6QWZSNPJuszw+EO8AbQHTfKrzvBzvUQhtN52k12oq8HT3euseCwU3hc+mzzg+hbqWog7pJ5TD91ClPTwbb9Lvt90fMYmYTHr7wFURtgEBOX9/c2b3EZF0XaxvezluI9ZosIyQHITnPgaWfC4Mhn8DonvOTZuQUnvr0ofcyuo/VaBftkcVhxGg87jj80Rummv0m97BepTJP6u7J5Z1lGpy0ZjkkHMOXYgqeeV7qi3qJ2ICG5ogKqcqywHKWnkNjOthPLUx0iHd8o00c3MxbQswRwvaqWf/uQeh81GvGxcfjBG3kp7Y4hgJD1UB/BICdYSbcCt1Hjxb4o6PJ+w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wKrmIM5jfx8i35B3FTH9wpLFdwZawSv8EpBNWdSE9Bo=;
+ b=FYCL4I1/IiloV1bCpv1V6IN/UgXnFhVcPIUWTlG8GjbJBewxWwpAAbPYQRmXfxkZBrRYmckq0dYNVxdJj+wbaJ8CiCcjLuDetZyigeLZKHLgENcXaiLexuZKXJHURz8dS5iDlzNzbu8+bR4CvQ1+YZzd7O8RZ8YFPK+uXQR/Ks4T2JI99zBQzj/3H+V18S86Zbmk1GImApWQxfgB7vp0GT1rFP8gEx0sk1q6nSt8StLKep246Kg5H/2ot8nS9nUnuctHFzzOsrxPY5/bh7pFLNYOgQSsQlt+eKhNSVokRNMq3AkKIzKhd7oqxmg94pus7o5K/dM5dkirGrnCF+S8fA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wKrmIM5jfx8i35B3FTH9wpLFdwZawSv8EpBNWdSE9Bo=;
+ b=oXhre5G00c54cm4csvr0plmdxwPB4Sb5G+D0BgSKfRN69Ss2wMNv+kpjRRsmbvQc8KSbEE3cXiN1PAfjoNwxCKNqi3+0pCIXnkoAoWgMEkVTLV1ZRceWwOlOCv6Dr37jk547nqp7wPG3sfEc2L0D0zv27MzAMpHnKV+9Y0QsZYeouisinEs4yHZpKVNEfgABj9OxgqsOeab8jp6+a7LFkcH1HkOd9fEv/+JbX0aD4CzpnxtrbUP1sor/K1KOTEqBFn+pPWEa0MkLsMPQf7tFaJ4oXgv6d/h+dk+pybJpko0EuPmtJlG7zU4e1tyuGVygwVwo+I2JpDN5m2d9Uzt8DQ==
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by VI0PR04MB10096.eurprd04.prod.outlook.com (2603:10a6:800:24c::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.37; Thu, 17 Jul
+ 2025 03:23:23 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%5]) with mapi id 15.20.8922.028; Thu, 17 Jul 2025
+ 03:23:22 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: Frank Li <frank.li@nxp.com>, "robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>
+CC: "richardcochran@gmail.com" <richardcochran@gmail.com>, Claudiu Manoil
+	<claudiu.manoil@nxp.com>, Vladimir Oltean <vladimir.oltean@nxp.com>, Clark
+ Wang <xiaoning.wang@nxp.com>, "andrew+netdev@lunn.ch"
+	<andrew+netdev@lunn.ch>, "davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
+	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
+	"vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>,
+	"shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de"
+	<s.hauer@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>, "F.S.
+ Peng" <fushi.peng@nxp.com>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: RE: [PATCH v2 net-next 02/14] dt-bindings: net: add nxp,netc-timer
+ property
+Thread-Topic: [PATCH v2 net-next 02/14] dt-bindings: net: add nxp,netc-timer
+ property
+Thread-Index: AQHb9iZmm/EQyWHMi0uUtvbMzlnJDrQ1I0KAgACC2tA=
+Date: Thu, 17 Jul 2025 03:23:22 +0000
+Message-ID:
+ <PAXPR04MB851091A05F842B7E3CC33D3E8851A@PAXPR04MB8510.eurprd04.prod.outlook.com>
+References: <20250716073111.367382-1-wei.fang@nxp.com>
+ <20250716073111.367382-3-wei.fang@nxp.com>
+ <aHf9UfUQggd/Oxh/@lizhi-Precision-Tower-5810>
+In-Reply-To: <aHf9UfUQggd/Oxh/@lizhi-Precision-Tower-5810>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|VI0PR04MB10096:EE_
+x-ms-office365-filtering-correlation-id: ae34df72-1c1d-460c-e076-08ddc4e14916
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|1800799024|19092799006|7416014|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?seIKh+Tf4R2KMBsowIC1S3qDa4si+qjwfB74edb0SfHm89t+sawnmB8jW1Jx?=
+ =?us-ascii?Q?bKefVRK3tcMF9Tu6dOM+HTc7FGJbYjGtJ8U35AP3Q+RwUKmXCYoLArs5eH7o?=
+ =?us-ascii?Q?UusXRjmNNJ+gW/2GPXN8Y9QpDDqEnbvh6+dqM+hj/O7EQ1quB3xdNI7V46kM?=
+ =?us-ascii?Q?V3MONFSIyqvc50/hTfC3XS9WMAMnHYBdEy8lT53f2tXYYK551l0p5SLwG0rn?=
+ =?us-ascii?Q?msZ+iGPyIZBgVSRmqCH34R0fEGDEst8YyD8F5vZyK3I6QVWpYOylAg/Ulksn?=
+ =?us-ascii?Q?fytcUEzBGPBGfZ/+YbFftYuoNbLrOBlVVNL8kDaQFee0qWT2V3l4SbA9ksVx?=
+ =?us-ascii?Q?hJU/q+hhqoEt7XSAao2EOMBZWweumPWSNFDBx0/lrYXaYo9woNBC3ACXMQvk?=
+ =?us-ascii?Q?o9EO3MeXjQg0O3x5PzzhrRy5DzXEp00hHRT7XNj04AfSlN1FLXhSkh20ULPT?=
+ =?us-ascii?Q?JV45JY/V4KkcU7WaoZqp7WEXklRMFmdJ8oiMjgq+iVpus8RSPba6/OA3ZZnQ?=
+ =?us-ascii?Q?rEozSCA0hA1ipoubYu7POPD5D6v57zVDNO4rtx24mlD+BFbisU/dxVzwZmtR?=
+ =?us-ascii?Q?mS61QYK/K5DbUcDIdmNxFrZV7a7UbxRAySwnJ2k3NJyGto4QRS1M6CTZL8cn?=
+ =?us-ascii?Q?YUNaBBvjW9Z6g+vRUnI/WeCvq5EBn/M/e2QvQ5PFW2wJOfmZjnK64i096sY6?=
+ =?us-ascii?Q?TF3Ulu2hx9DN8x4yOvRje3XUbKYaB4vPwj6uwt3OxSazRw6PxDL7ORYlYosk?=
+ =?us-ascii?Q?PiXmvcrWp25ZEZgPLRxGzWQPrCUOHY4GdqItPjE4rAzxXnbW/vwRtAYysFXJ?=
+ =?us-ascii?Q?ffrLP7+AMQixc7/PSUc9KbAIOWYfDTOzkPBABrsifYA7qNeCpNKy1V8C13/X?=
+ =?us-ascii?Q?LII0kQqMzzUBHWZthoD4vjFh9IxHxyLvLf7KAU9bRT+k5NAggOtcN4uotVNz?=
+ =?us-ascii?Q?EtMitjyyfjNu7Z/fJMizSdlZffbsRvCe08u4dODfqiAzJpN41wlWBFl5pO96?=
+ =?us-ascii?Q?hJQGTwTpT85Ttls/Ee4HUk36pE7nTCqHMUmAFlqW0yGJ6FhGUVXYrGI+WkTg?=
+ =?us-ascii?Q?APH/GQAq2S4HhRzhqUP8gqo1Q96mIV+9BaI5Jz9dE1rVhw/COSdQmlqWRcYR?=
+ =?us-ascii?Q?2R/FTQj8fhChTtNOflADqwXGMprlyrBclyDU5aT5tQnhcRDGbRG4SC6+nDpm?=
+ =?us-ascii?Q?+04TAudivRUSO3ve5obqtyzz8CLkFUwCYo3keQ85oKy38kHJpe3KADsWks9/?=
+ =?us-ascii?Q?+SJ6OTJdpbEuGtsrGpU9ZD0jCvbVzX7D74Bh5+oyhykVVYHa79cRv8KAFM7V?=
+ =?us-ascii?Q?69E4J0AJU/XsC3mOP8CahPeqy/hqmTeh4bGZ0GZJX3T0FxoJTHWPBmFGfUVC?=
+ =?us-ascii?Q?makRRVnxJTFhOnlkkdeBI6yJzNC4jGYsfoN5H6g453JpcJ7BoaqrTmGl0lJL?=
+ =?us-ascii?Q?vTw8WyiliiI83ToiIs0KY53HTvAiCKjqQjfnaIlaTZ+aA8UANtfrvg=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?AJI0h99qykXg+/I/XQaPau5bCy/uG7CVlxGy/sMzIfNo3UT4ydLXvlhAwqt1?=
+ =?us-ascii?Q?aHvKPhhJdzrwr4XvYe+mSfx33b5ZPFlc7oXi2Sm+/EOzePKkTZPmzS6cwsX4?=
+ =?us-ascii?Q?IINHBeypy5R5G804Aeya5VgN/WgO4DCIW8FO9IwaBU3uQ7xYDn1UsGkHNeFM?=
+ =?us-ascii?Q?jyBH4vKPiZqT13ycNwHtStL+50oSYdUiy2AzlCxVFEHDd+cmqQ03mEyn8BL/?=
+ =?us-ascii?Q?O0RGZJEtBOr7LjU1FsWuwJVsuvRNXdb29SOx2u+Bs31Tm3V9XGCh7Ngm01+d?=
+ =?us-ascii?Q?bDDgs73ktA620ya3hfecOOsCAPzrmcUXYsVIwPf/u8BQCRZoh5gW/DYx6TdO?=
+ =?us-ascii?Q?dj0hYcea5Cx4gz+hUNAR4JDrCb/XI5HQKyuKKNZA4MsF90kllmw2PWff24cl?=
+ =?us-ascii?Q?CsdH05qOLcIu0NH4Fcqlg93/jutRg3GAJQaNNBlODJmSDPnw8cmvQEVZs2BO?=
+ =?us-ascii?Q?2GF//LsOvuCvGVr4WHXZ/FdZpiG00JJXEFNwqBaksX/pTqC0iol4iOohRsyu?=
+ =?us-ascii?Q?WwDBB3uVLz5t9QZDi7GGnbyZns8rdOJAJ8Z0RwZ8LCQyoUkH/XaPBIwbkfXs?=
+ =?us-ascii?Q?cjorxZ9J3EgTQQJjS7WdHMzPYQzqM0ws1DmvAlFBGr5bJkCOgIIMGgf5a0sH?=
+ =?us-ascii?Q?vCmU/tlL/HzejKYTAI3S7SUegAMwSOG79tSzY1TW9NTbRKgFCLqHnw81b9kV?=
+ =?us-ascii?Q?MsWGhNEGIcGwn5Ek3rIJG2rmfOxJQIBuBA8b7Ook6KDadZ2C29/HLv5pAE/L?=
+ =?us-ascii?Q?4IQwLHsci8nMTR0d5M0n06A6HJdMAVDa+WEwVXe8kyeQoBzwwwIfuwu6npFv?=
+ =?us-ascii?Q?yqNAAfvaes5ao5EqGHcSujBSjYAzVwdsGz2z/DR0oIJ7eb1dENRRDvcd5ciN?=
+ =?us-ascii?Q?s1ui0khdP2PVwpsdFtyw13ut7+a7LF7ay6lJZf/5CG6TrtL6mmXJEVj+aeq5?=
+ =?us-ascii?Q?O4uUcDBHkHwRwqiox8IlCO2X/DYaMjs/ity/HEohIiJtKjvVbKu6SK2kKA6F?=
+ =?us-ascii?Q?Y7/+TVwxPQOZZvb++1n0/zustlUGkDfF65cdOdbVLolU2YcuRuBkajUYrdg3?=
+ =?us-ascii?Q?5Me7zq+pfGG01u+JAZRfrRRQFBRtDo2a/i+ii8f2FVWm5P/j8C0UOlcuC4Mj?=
+ =?us-ascii?Q?R+CkHqLZ/+hIcIURtrLxPAaalKKZolAbh4udeFNoRFi0jtmZoO2uWZMqw54/?=
+ =?us-ascii?Q?6d31nYOxxnpPMOTv6h29sBCZRwlly/eFli19ShMGuzGrAFIzW2bmp/rIWAz3?=
+ =?us-ascii?Q?LiL3VzNsxQx9G8NkkrpZSxMb/mSVQrlnDd7fewxfzk2oGQSFVkrVU5gEeUu4?=
+ =?us-ascii?Q?lR4lHWbajjdCDr6+NXNDyUF5VrpLISxybH8SYq3RmOXInHx5nFS8vAfOHQqo?=
+ =?us-ascii?Q?TUw59b7ZVayjoUyUF3j2dxJBH0glO9rx40uzrxUnbDaaherZ6ZTcywtCWAex?=
+ =?us-ascii?Q?zVTR5DlJR98CRM0o4fNSQJg+JS68SsgAnMdar3vj6ZSPNx5UbeyP9vUseO2x?=
+ =?us-ascii?Q?qEyhXeFrviVYeui5fCEg8/YxU7NZ7aeHbt6P2UTp2YhfWeUwQ7267ulL5Ptd?=
+ =?us-ascii?Q?UnBMLEOeBNzBdbQc8cw=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Docs/zh_CN: Translate ubifs.rst to Simplified Chinese
-To: shao.mingyin@zte.com.cn, mudongliangabcd@gmail.com
-Cc: seakeel@gmail.com, alexs@kernel.org, si.yanteng@linux.dev,
- corbet@lwn.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- yang.yang29@zte.com.cn, xu.xin16@zte.com.cn, yang.tao172@zte.com.cn,
- ye.xingchen@zte.com.cn, wang.yaxin@zte.com.cn
-References: <20250717111632142lkEfTvZNyiwIN73cdQ5J9@zte.com.cn>
-From: Dongliang Mu <dzm91@hust.edu.cn>
-In-Reply-To: <20250717111632142lkEfTvZNyiwIN73cdQ5J9@zte.com.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:HwEQrADnx+webHho67DgAQ--.19054S2
-Authentication-Results: app2; spf=neutral smtp.mail=dzm91@hust.edu.cn;
-X-Coremail-Antispam: 1UD129KBjvJXoW3XFyDAr43Jry3Jw1rCr1kuFg_yoWDJFyxpF
-	n7GFWxKry8Jry8Cr12gw1UX3sFyr1rA3WUXr1xJF17Jr1vyrWIgr1qqrn09r18GrW8AFyU
-	Zr4DJry7ur15ZrDanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmYb7Iv0xC_Cr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
-	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
-	v20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK
-	6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1ln4kS14v26r
-	1Y6r17M2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI
-	12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj64x0Y40En7xvr7AKxV
-	W8Jr0_Cr1UMcIj6x8ErcxFaVAv8VW8uFyUJr1UMcIj6xkF7I0En7xvr7AKxVW8Jr0_Cr1U
-	McvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCF04k20xvY0x0EwIxGrwCF04k20x
-	vE74AGY7Cv6cx26r4fZr1UJr1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_
-	JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
-	AY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAI
-	cVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42
-	IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIev
-	Ja73UjIFyTuYvjxUVoGHUUUUU
-X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ae34df72-1c1d-460c-e076-08ddc4e14916
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jul 2025 03:23:22.9217
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: p54ZBZGIJCaA553jQRpwdopWx9P1aEqmFgdY4NkPhG3aQRgwInAGx8MlDUzRs561ZVxMXtNdwyzgXY2Oqq5zmw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10096
 
+> On Wed, Jul 16, 2025 at 03:30:59PM +0800, Wei Fang wrote:
+> > NETC is a multi-function PCIe Root Complex Integrated Endpoint (RCiEP)
+> > that contains multiple PCIe functions, such as ENETC and Timer. Timer
+> > provides PTP time synchronization functionality and ENETC provides the
+> > NIC functionality.
+> >
+> > For some platforms, such as i.MX95, it has only one timer instance, so
+> > the binding relationship between Timer and ENETC is fixed. But for
+> > some platforms, such as i.MX943, it has 3 Timer instances, by setting
+> > the EaTBCR registers of the IERB module, we can specify any Timer
+> > instance to be bound to the ENETC instance.
+> >
+> > Therefore, add "nxp,netc-timer" property to bind ENETC instance to a
+> > specified Timer instance so that ENETC can support PTP synchronization
+> > through Timer.
+> >
+> > Signed-off-by: Wei Fang <wei.fang@nxp.com>
+> >
+> > ---
+> > v2 changes:
+> > new patch
+> > ---
+> >  .../devicetree/bindings/net/fsl,enetc.yaml    | 23 +++++++++++++++++++
+> >  1 file changed, 23 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/net/fsl,enetc.yaml
+> > b/Documentation/devicetree/bindings/net/fsl,enetc.yaml
+> > index ca70f0050171..ae05f2982653 100644
+> > --- a/Documentation/devicetree/bindings/net/fsl,enetc.yaml
+> > +++ b/Documentation/devicetree/bindings/net/fsl,enetc.yaml
+> > @@ -44,6 +44,13 @@ properties:
+> >      unevaluatedProperties: false
+> >      description: Optional child node for ENETC instance, otherwise use
+> NETC EMDIO.
+> >
+> > +  nxp,netc-timer:
+> > +    $ref: /schemas/types.yaml#/definitions/phandle
+> > +    description:
+> > +      Specifies a reference to a node representing a NETC Timer device=
+,
+> > +      which provides time synchronization as required for IEEE 1588 an=
+d
+> > +      IEEE 802.1AS-2020.
+> > +
+>=20
+> I think it is quite common. add ptp-timer ethernet-controller.yaml?
+>=20
 
-On 7/17/25 11:16 AM, shao.mingyin@zte.com.cn wrote:
->
-> > On Thu, Jul 17, 2025 at 9:41 AM Alex Shi <seakeel@gmail.com> wrote:
->
-> > >
->
-> > > These 2 patches could be sent out as a patchset.
->
-> > >
->
-> >
->
-> > I will explain this statement a little further. Since your two patches
->
-> > both modify translations/zh_CN/filesystems/index.rst, they have their
->
-> > own dependencies or orders.
->
-> > In other words, this patch should be merged before the other one.
->
-> >
->
-> > In this case, it's better to submit a patchset (patchset has internal
->
-> > orders, patch 0/2, patch 1/2, patch 2/2) to reviewers and maintainers.
->
-> >
->
-> > Dongliang Mu
->
-> >
->
-> Thanks for your feedback!
->
->
-> I understand your explanation.
->
->
-> In addition to these two documents, I also translated gfs2.rst and
->
-> gfs2-events.rst, which also require modifications to
->
-> translations/zh_CN/file systems/index.rst. Therefore, should I submit
->
-> these four patches as a patchset?
->
-Correct
->
->
-> Best regards,
->
-> Mingyin
->
-> >
->
-> > > Thanks
->
-> > >
->
-> > > <shao.mingyin@zte.com.cn> 于2025年7月15日周二 15:15写道：
->
-> > > >
->
-> > > > From: Shao Mingyin <shao.mingyin@zte.com.cn>
->
-> > > >
->
-> > > > translate the "ubifs.rst" into Simplified Chinese.
->
-> > > >
->
-> > > > Update to commit 5f5cae9b0e81("Documentation: ubifs: Fix
->
-> > > > compression idiom")
->
-> > > >
->
-> > > > Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
->
-> > > > Signed-off-by: yang tao <yang.tao172@zte.com.cn>
->
-> > > > ---
->
-> > > >  .../translations/zh_CN/filesystems/index.rst |   1 +
->
-> > > >  .../translations/zh_CN/filesystems/ubifs.rst | 111 
-> ++++++++++++++++++
->
-> > > >  2 files changed, 112 insertions(+)
->
-> > > >  create mode 100644 
-> Documentation/translations/zh_CN/filesystems/ubifs.rst
->
-> > > >
->
-> > > > diff --git 
-> a/Documentation/translations/zh_CN/filesystems/index.rst 
-> b/Documentation/translations/zh_CN/filesystems/index.rst
->
-> > > > index 9f2a8b003778..faaa0f097223 100644
->
-> > > > --- a/Documentation/translations/zh_CN/filesystems/index.rst
->
-> > > > +++ b/Documentation/translations/zh_CN/filesystems/index.rst
->
-> > > > @@ -26,4 +26,5 @@ Linux Kernel中的文件系统
->
-> > > >     virtiofs
->
-> > > >     debugfs
->
-> > > >     tmpfs
->
-> > > > +   ubifs
->
-> > > >
->
-> > > > diff --git 
-> a/Documentation/translations/zh_CN/filesystems/ubifs.rst 
-> b/Documentation/translations/zh_CN/filesystems/ubifs.rst
->
-> > > > new file mode 100644
->
-> > > > index 000000000000..27997777f4ea
->
-> > > > --- /dev/null
->
-> > > > +++ b/Documentation/translations/zh_CN/filesystems/ubifs.rst
->
-> > > > @@ -0,0 +1,111 @@
->
-> > > > +.. SPDX-License-Identifier: GPL-2.0
->
-> > > > +
->
-> > > > +.. include:: ../disclaimer-zh_CN.rst
->
-> > > > +
->
-> > > > +:Original: Documentation/filesystems/ubifs.rst
->
-> > > > +
->
-> > > > +:翻译:
->
-> > > > +
->
-> > > > +   邵明寅 Shao Mingyin <shao.mingyin@zte.com.cn>
->
-> > > > +
->
-> > > > +:校译:
->
-> > > > +
->
-> > > > +   - 杨涛 yang tao <yang.tao172@zte.com.cn>
->
-> > > > +
->
-> > > > +===============
->
-> > > > +UBI 文件系统
->
-> > > > +===============
->
-> > > > +
->
-> > > > +简介
->
-> > > > +============
->
-> > > > +
->
-> > > > +UBIFS 文件系统全称为 UBI 文件系统（UBI File System）。UBI 
-> 代表无序块镜像（Unsorted
->
-> > > > +Block Images）。UBIFS 
-> 是一种闪存文件系统，这意味着它专为闪存设备设计。需要理解的是，UBIFS
->
-> > > > +与 Linux 中任何传统文件系统（如 Ext2、XFS、JFS 等）完全不同。UBIFS 
-> 代表一类特殊的文件系统，
->
-> > > > +它们工作在 MTD 设备而非块设备上。该类别的另一个 Linux 文件系统是 
-> JFFS2。
->
-> > > > +
->
-> > > > +为更清晰说明，以下是 MTD 设备与块设备的简要比较：
->
-> > > > +
->
-> > > > +1. MTD 设备代表闪存设备，由较大尺寸的擦除块组成，通常约 
-> 128KiB。块设备由小块组成，通常 512
->
-> > > > +   字节。
->
-> > > > +2. MTD 设备支持 3 
-> 种主要操作：在擦除块内偏移位置读取、在擦除块内偏移位置写入、以及擦除整个擦除
->
-> > > > +   块。块设备支持 2 种主要操作：读取整个块和写入整个块。
->
-> > > > +3. 整个擦除块必须先擦除才能重写内容。块可直接重写。
->
-> > > > +4. 擦除块在经历一定次数的擦写周期后会磨损，通常 SLC NAND 和 NOR 
-> 闪存为 100K-1G 次，MLC
->
-> > > > +   NAND 闪存为 1K-10K 次。块设备不具备磨损特性。
->
-> > > > +5. 擦除块可能损坏（仅限 NAND 
-> 闪存），软件需处理此问题。硬盘上的块通常不会损坏，因为硬件有坏块
->
-> > > > +   替换机制（至少现代 LBA 硬盘如此）。
->
-> > > > +
->
-> > > > +这充分说明了 UBIFS 与传统文件系统的本质差异。
->
-> > > > +
->
-> > > > +UBIFS 工作在 UBI 层之上。UBI 是一个独立的软件层（位于 
-> drivers/mtd/ubi），本质上是卷管理和
->
-> > > > +磨损均衡层。它提供称为 UBI 卷的高级抽象，比 MTD 设备更上层。UBI 
-> 设备的编程模型与 MTD 设备非
->
-> > > > +常相似，仍由大容量擦除块组成，支持读/写/擦除操作，但 UBI 
-> 设备消除了磨损和坏块限制（上述列表的第
->
-> > > > +4 和第 5 项）。
->
-> > > > +
->
-> > > > +某种意义上，UBIFS 是 JFFS2 文件系统的下一代产品，但它与 JFFS2 
-> 差异巨大且不兼容。主要区别如下：
->
-> > > > +
->
-> > > > +* JFFS2 工作在 MTD 设备之上，UBIFS 依赖于 UBI 并工作在 UBI 卷之上。
->
-> > > > +* JFFS2 没有介质索引，需在挂载时构建索引，这要求全介质扫描。UBIFS 
-> 在闪存介质上维护文件系统索引
->
-> > > > +  信息，无需全介质扫描，因此挂载速度远快于 JFFS2。
->
-> > > > +* JFFS2 是直写（write-through）文件系统，而 UBIFS 
-> 支持回写（write-back），这使得 UBIFS
->
-> > > > +  写入速度快得多。
->
-> > > > +
->
-> > > > +与 JFFS2 类似，UBIFS 支持实时压缩，可将大量数据存入闪存。
->
-> > > > +
->
-> > > > +与 JFFS2 类似，UBIFS 能容忍异常重启和断电。它不需要类似 fsck.ext2 
-> 的工具。UBIFS 会自动重放日
->
-> > > > +志并从崩溃中恢复，确保闪存数据结构的一致性。
->
-> > > > +
->
-> > > > +UBIFS 
-> 具有对数级扩展性（其使用的数据结构多为树形），因此挂载时间和内存消耗不像 
-> JFFS2 那样线性依
->
-> > > > +赖于闪存容量。这是因为 UBIFS 在闪存介质上维护文件系统索引。但 UBIFS 
-> 依赖于线性扩展的 UBI 层，
->
-> > > > +因此整体 UBI/UBIFS 栈仍是线性扩展。尽管如此，UBIFS/UBI 
-> 的扩展性仍显著优于 JFFS2。
->
-> > > > +
->
-> > > > +UBIFS 开发者认为，未来可开发同样具备对数级扩展性的 UBI2。UBI2 
-> 将支持与 UBI 相同的 API，但二进
->
-> > > > +制不兼容。因此 UBIFS 无需修改即可使用 UBI2。
->
-> > > > +
->
-> > > > +挂载选项
->
-> > > > +=============
->
-> > > > +
->
-> > > > +(*) 表示默认选项。
->
-> > > > +
->
-> > > > +==================== 
-> =======================================================
->
-> > > > +bulk_read               批量读取以利用闪存介质的顺序读取加速特性
->
-> > > > +no_bulk_read (*)        禁用批量读取
->
-> > > > +no_chk_data_crc (*)     跳过数据节点的 CRC 校验以提高读取性能。 
-> 仅在闪存
->
-> > > > +                        介质高度可靠时使用此选项。 
-> 此选项可能导致文件内容损坏无法被
->
-> > > > +                        察觉。
->
-> > > > +chk_data_crc            强制校验数据节点的 CRC
->
-> > > > +compr=none              覆盖默认压缩器，设置为"none"
->
-> > > > +compr=lzo               覆盖默认压缩器，设置为"LZO"
->
-> > > > +compr=zlib              覆盖默认压缩器，设置为"zlib"
->
-> > > > +auth_key=               指定用于文件系统身份验证的密钥。
->
-> > > > +                        使用此选项将强制启用身份验证。
->
-> > > > +                        传入的密钥必须存在于内核密钥环中， 
-> 且类型必须是'logon'
->
-> > > > +auth_hash_name=         用于身份验证的哈希算法。同时用于哈希计算和 
-> HMAC
->
-> > > > + 生成。典型值包括"sha256"或"sha512"
->
-> > > > +==================== 
-> =======================================================
->
-> > > > +
->
-> > > > +快速使用指南
->
-> > > > +========================
->
-> > > > +
->
-> > > > +挂载的 UBI 卷通过 "ubiX_Y" 或 "ubiX:NAME" 语法指定，其中 "X" 是 UBI 
-> 设备编号，"Y" 是 UBI
->
-> > > > +卷编号，"NAME" 是 UBI 卷名称。
->
-> > > > +
->
-> > > > +将 UBI 设备 0 的卷 0 挂载到 /mnt/ubifs::
->
-> > > > +
->
-> > > > +    $ mount -t ubifs ubi0_0 /mnt/ubifs
->
-> > > > +
->
-> > > > +将 UBI 设备 0 的 "rootfs" 卷挂载到 /mnt/ubifs（"rootfs" 是卷名）::
->
-> > > > +
->
-> > > > +    $ mount -t ubifs ubi0:rootfs /mnt/ubifs
->
-> > > > +
->
-> > > > +以下是内核启动参数的示例，用于将 mtd0 附加到 UBI 并挂载 "rootfs" 
-> 卷：
->
-> > > > +ubi.mtd=0 root=ubi0:rootfs rootfstype=ubifs
->
-> > > > +
->
-> > > > +参考资料
->
-> > > > +==========
->
-> > > > +
->
-> > > > +UBIFS 文档及常见问题解答/操作指南请访问 MTD 官网：
->
-> > > > +
->
-> > > > +- http://www.linux-mtd.infradead.org/doc/ubifs.html
->
-> > > > +- http://www.linux-mtd.infradead.org/faq/ubifs.html
->
-> > > > --
->
-> > > > 2.25.1
->
->
->
->
+Good suggestion, but I'd like to ask for the opinions of others.
+Rob, Krzysztof, Conor, what do you think?
 
 
