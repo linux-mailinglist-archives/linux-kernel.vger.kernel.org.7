@@ -1,233 +1,184 @@
-Return-Path: <linux-kernel+bounces-735992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C81DB09666
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 23:37:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBB41B09667
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 23:38:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E73A14E2623
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:36:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 715BF16EF48
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:38:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20863231839;
-	Thu, 17 Jul 2025 21:37:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B3B22E3E9;
+	Thu, 17 Jul 2025 21:38:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="endpx1zJ"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="leLicwMk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F58013B58A;
-	Thu, 17 Jul 2025 21:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B32113B58A
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 21:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752788238; cv=none; b=Tz7nNlcfER/k7mqPOHN1xHMAJXcC13XkebbefTylUNfb0wiagup2ilPdHp6cqpCXr8m5lrgRowRPOs02ApzZXb6W6ATWlILrrbnbMOkRHZS1gZZgTnrvYj8dFSMm2t1V+T9ZPy4ix9nQgmgGjva/ZTu1bVj4KaGZccAn7Q27zRs=
+	t=1752788297; cv=none; b=SQIYBPJjBf7CRY3XQ97os3mbxY0JGRE+U2a6pduy570jn707+biLJSnw/bfyaVsNn3+XZnFYvuy+XmhizYWPbK/CAP4MdL5Lpk1TJHJL4ZPlx34/3AmVlglRVyfghZxd1kapt+Jp+kt4lhkObs2U0/FkBDmoDwsgDrdZXMCcMAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752788238; c=relaxed/simple;
-	bh=Vt0eyJA3FmaRCjFqmL01QcwdudmtM4ZMzbFSb8wQFDs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ki9kWd5atvHOaZtXbAPTSraLV7nhDDVWUo6zSaOcx2pxC/+NGwSLuhubs+a20H4s5Ut+4KuV8CqyzyrtnigpfUKzsIHinXLJxhgJnnz+m55cqeISAY9PXvgPldWNusN9PgXuZ8HQ19WHNCuxy2+Adze9hEdhHT434MQnQXPWMJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=endpx1zJ; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-60867565fb5so2357135a12.3;
-        Thu, 17 Jul 2025 14:37:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752788235; x=1753393035; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DrtASW4nJI5s0TcFU7BZl03KBcG7L4TmJyfK+6pQD+I=;
-        b=endpx1zJrg1PxosKB/VE4fg7lX70Hb+MKoIpg4alOZ6/jQ852FXKhrEwa9pQNvhVcA
-         mS0df1XQ37WvQUHVqtDbw9osNLEPWv/mP2EJZwaQPINCnMOS1K5wI+ur1qBfO4Ug6f6l
-         wc07RJd0vlqO409FqWyPC5ilw5Ty7HfNrY1EMJ0TxtanVezPJmX92b9QmpQ/F46HFuot
-         Bjr/W9LA8aV5Jg0Oj5W5t6u3RJZKAcUopIJPydndTV/gzQBb9uHesKp1fPGfQk3xVFOf
-         v8vOrGdxNpygnGtnki6AjopZ/Cpl4lrF0PuBeQLmq9nqB8+KhDJM3MX5fG84XvIX4ptH
-         jsrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752788235; x=1753393035;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DrtASW4nJI5s0TcFU7BZl03KBcG7L4TmJyfK+6pQD+I=;
-        b=QF4K+An/OeD1NDsO2R1Yku2d8rFbREJQ3KQbwNxHggSa7MPDppHAT+fVnJlgmIB88b
-         fLbwExCveHJZZC3KerIVvcSWqVhUduxjMPpQuyYmzfzIK4a4HxSQtc0+uCDSitblqn4m
-         4GclscPlHsZ9piX21j2ZQ1GewX7kCTm0CfxXb7TmVE8LdnNgD7oeKDgrjF9P80BWHmDn
-         nXqyfAUxTU6w5Tr7PiHj6wdQoBGTqdH49m7wQYpjLhABj30KRGm66VfkFTTgCJBL+kvJ
-         ZViJjPXA7wNNwKMbYlwYOYTE/y+X6aH5KB4WO9fIkhezbSYrXDqGllBpcgJ7lg5L2ve2
-         SEnA==
-X-Forwarded-Encrypted: i=1; AJvYcCX054ZbGsR+82+Ruyu+Y5Wd3JDFNJPYV7zciKnRLiqiEmq7Uga+C0vYV2lAeZraQVMX543CJZ+6gbAlG2ob@vger.kernel.org, AJvYcCXPx/5sqmUMMrOpOHvAfsc+vsOkagj4mnADcL5SQbrQBTjDa/Gy0Mz1Oz3JMs1txQyrDsRcZAX5LsW2WEk4@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3aLA1o94j7f1h6WGND2BcpLNagQfzUFtxAEw0LHz1Yc6ZQyoJ
-	TXOT14RUOY/0EKK/YiK5sSbvNxhWKVRWpnSpz6j73P0wKeZszBWg/7Eq4rd2R/gzBJRpV8K2FdP
-	G4S6aD4g7Q31zprJYbkEhENCnZG2ltw==
-X-Gm-Gg: ASbGncsqVJlnXeDaz/nssDnnTt20pBhkZiA3BWre4K1jDSrI/GFDIoXQXZcFQ3Hn6qf
-	I9Y88yHe/cug+OkIembw8p4SqXUaaKmgKFXNVvQJCwVkxKH/IbZYyVTNWHQwU93ssQZTWS20k7R
-	yhxQn9XQ5NiRf08s3LoARaRKvJ+FLAeBLZ5JrVRX9NB7pfdnEXYDLv604318fxDwfYoel1vH/QS
-	XsbBKaqv5HA8uBOUmICBjraMfVyQ2WxeAzTX94=
-X-Google-Smtp-Source: AGHT+IFVlRN4WGIlFsUPwjfESSFGLiHpyki75MoVraFsVt7ReruuctGVWu4zLsO1ep8kuBhcM77A+tPIk089SPdJwm0=
-X-Received: by 2002:a05:6402:2685:b0:611:d497:e8a8 with SMTP id
- 4fb4d7f45d1cf-612823da4c1mr8091202a12.27.1752788234592; Thu, 17 Jul 2025
- 14:37:14 -0700 (PDT)
+	s=arc-20240116; t=1752788297; c=relaxed/simple;
+	bh=LiNK5XiD8Nkw+QptQUEajGCLfd37k6W3AFn17ZWlEs4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RVGBYs9law7ZZqLarbteh8FE0fuWho1wdfexBQKJqywEA1x04W6qqpX6ekRTyjF0a+SHzaT8CrYzXe9dZJwPZCLlnYmEToa0Y7+S+4xy1WqRLxZ8JT939aQa3EHx0ukMyzPnKXcEwOSSfWnHiFuDY8dGvq+v2h6wf9JOXp0BHMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=leLicwMk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B203C4CEE3;
+	Thu, 17 Jul 2025 21:38:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752788297;
+	bh=LiNK5XiD8Nkw+QptQUEajGCLfd37k6W3AFn17ZWlEs4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=leLicwMk8Tr98ssWQ4QP7o2sRyOpyDBzmCRQ0w4teIPliRyK7fxdeCHXiu60MYGuQ
+	 G+9Tf98zcOXPZnkuO9XGoOLS3/TNrTWju013xwdhW+ZEE3MnfEOAoWAO1oX3rqe1dl
+	 OOFB4ODRV3UXJaL/Zt5l8TKqp0vbyz4dy0cNxM10nqJU1WsGlFisMJ0H7Ka50Uuvxl
+	 mo8YYSlu0E92imjY1d2wkQ7moFa0hoEUjGVh5t4n+uS1Ogh9XeWPxrfpUSlM2zj6v7
+	 sQWHcUXxB866n4+KZTDKOWhjBxigZkDeZx7vWA/HzCgf6T6UpPsgzJVDaILu0x5UMf
+	 JUj6qof9HLCRA==
+Date: Thu, 17 Jul 2025 11:38:15 -1000
+From: 'Tejun Heo' <tj@kernel.org>
+To: liuwenfang <liuwenfang@honor.com>
+Cc: 'David Vernet' <void@manifault.com>, 'Andrea Righi' <arighi@nvidia.com>,
+	'Changwoo Min' <changwoo@igalia.com>,
+	'Ingo Molnar' <mingo@redhat.com>,
+	'Peter Zijlstra' <peterz@infradead.org>,
+	'Juri Lelli' <juri.lelli@redhat.com>,
+	'Vincent Guittot' <vincent.guittot@linaro.org>,
+	'Dietmar Eggemann' <dietmar.eggemann@arm.com>,
+	'Steven Rostedt' <rostedt@goodmis.org>,
+	'Ben Segall' <bsegall@google.com>, 'Mel Gorman' <mgorman@suse.de>,
+	'Valentin Schneider' <vschneid@redhat.com>,
+	"'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] sched_ext: Fix cpu_released while RT task and SCX
+ task are scheduled concurrently
+Message-ID: <aHltRzhQjwPsGovj@slm.duckdns.org>
+References: <fca528bb34394de3a7e87a873fadd9df@honor.com>
+ <aFmwHzO2AKFXO_YS@slm.duckdns.org>
+ <ced96acd54644325b77c2d8f9fcda658@honor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250714173554.14223-1-daleyo@gmail.com> <20250714173554.14223-7-daleyo@gmail.com>
- <A9DB4AE061FD8BB9+3519a519-1a29-49c1-a07d-28a0577677cc@radxa.com>
- <CA+kEDGGaKrYO9Pu3un_Nq_6AOZC5L9sG+CEwh2ZEzWFeHGqtEA@mail.gmail.com> <eb0f5be5-3a6f-4969-affd-c01a6216ad0c@oss.qualcomm.com>
-In-Reply-To: <eb0f5be5-3a6f-4969-affd-c01a6216ad0c@oss.qualcomm.com>
-From: =?UTF-8?B?SsOpcsO0bWUgZGUgQnJldGFnbmU=?= <jerome.debretagne@gmail.com>
-Date: Thu, 17 Jul 2025 23:36:38 +0200
-X-Gm-Features: Ac12FXyoN-ygLAdINlTQHq9O6GwthS9JPnfwymokk-OCpRjxgsVHQiOVjtDhOY4
-Message-ID: <CA+kEDGE1kb12pW_OH1n4LmB9PVtgEsft563p9Cx_Mxev9Em3Ow@mail.gmail.com>
-Subject: Re: [PATCH 6/9] drm/msm/dp: Work around bogus maximum link rate
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Xilin Wu <sophon@radxa.com>, Dale Whinham <daleyo@gmail.com>, Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <lumag@kernel.org>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ced96acd54644325b77c2d8f9fcda658@honor.com>
 
-Le jeu. 17 juil. 2025 =C3=A0 23:10, Konrad Dybcio
-<konrad.dybcio@oss.qualcomm.com> a =C3=A9crit :
+Hello,
+
+My aplogies for really late reply. I've been off work and ended up a lot
+more offline than I expected.
+
+On Sat, Jun 28, 2025 at 06:50:32AM +0000, liuwenfang wrote:
+> Supposed RT task(RT1) is running on CPU0 and RT task(RT2) is awakened on CPU1,
+> RT1 becomes sleep and SCX task(SCX1) will be dispatched to CPU0, RT2 will be
+> placed on CPU0:
+> 
+> CPU0(schedule)                                     CPU1(try_to_wake_up)
+> set_current_state(TASK_INTERRUPTIBLE)              try_to_wake_up # RT2
+> __schedule                                           select_task_rq # CPU0 is selected
+> LOCK rq(0)->lock # lock CPU0 rq                        ttwu_queue
+>   deactivate_task # RT1                                  LOCK rq(0)->lock # busy waiting
+>     pick_next_task # no more RT tasks on rq                 |
+>       prev_balance                                          |
+>         balance_scx                                         |
+>           balance_one                                       |
+>             rq->scx.cpu_released = false;                   |
+>               consume_global_dsq                            |
+>                 consume_dispatch_q                          |
+>                   consume_remote_task                       |
+>                     UNLOCK rq(0)->lock                      V
+>                                                          LOCK rq(0)->lock # succ
+>                     deactivate_task # SCX1               ttwu_do_activate
+>                     LOCK rq(0)->lock # busy waiting      activate_task # RT2 equeued
+>                        |                                 UNLOCK rq(0)->lock
+>                        V
+>                     LOCK rq(0)->lock # succ
+>                     activate_task # SCX1
+>       pick_task # RT2 is picked
+>       put_prev_set_next_task # prev is RT1, next is RT2, rq->scx.cpu_released = false;
+> UNLOCK rq(0)->lock
+> 
+> At last, RT2 will be running on CPU0 with rq->scx.cpu_released being false!
+> 
+> So, Add the scx_next_task_picked () and check sched class again to fix the value
+> of rq->scx.cpu_released.
+
+Yeah, the problem and diagnosis look correct to me. It'd be nice if we don't
+have to add an explicit hook but ops.cpu_acquire() needs to be called before
+dispatching to the CPU and then we can lose while doing ops.pick_task().
+
+> Signed-off-by: l00013971 <l00013971@hihonor.com>
+
+Can you please use "FIRST_NAME LAST_NAME <EMAIL>" when signing off?
+
+> -static void switch_class(struct rq *rq, struct task_struct *next)
+> +static void switch_class(struct rq *rq, struct task_struct *next, bool prev_on_scx)
+>  {
+>  	const struct sched_class *next_class = next->sched_class;
+>  
+> @@ -3197,7 +3197,8 @@ static void switch_class(struct rq *rq, struct task_struct *next)
+>  	 * kick_cpus_irq_workfn() who is waiting for this CPU to perform a
+>  	 * resched.
+>  	 */
+> -	smp_store_release(&rq->scx.pnt_seq, rq->scx.pnt_seq + 1);
+> +	if (prev_on_scx)
+> +		smp_store_release(&rq->scx.pnt_seq, rq->scx.pnt_seq + 1);
+
+It's currently obviously broken as the seq is currently only incremented on
+scx -> !scx transitions but it should be called on all transitions. This is
+a breakage introduced by b999e365c298 ("sched, sched_ext: Replace
+scx_next_task_picked() with sched_class->switch_class()").
+
+> +void scx_next_task_picked(struct rq *rq, struct task_struct *prev,
+> +			  struct task_struct *next)
+> +{
+> +	bool prev_on_scx = prev && (prev->sched_class == &ext_sched_class);
+
+I don't think @prev or @next can ever be NULL, can they?
+
+> +
+> +	if (!scx_enabled() ||
+
+Let's make this an inline function in ext.h. The pnt_seq update should be
+moved here after scx_enabled() test, I think. This probably should be a
+separate patch.
+
+> +	    !next ||
+> +	    next->sched_class == &ext_sched_class)
+> +		return;
+> +
+> +	switch_class(rq, next, prev_on_scx);
+> +}
 >
-> On 7/17/25 10:27 PM, J=C3=A9r=C3=B4me de Bretagne wrote:
-> > On 2025/7/17 04:21, Xilin Wu <sophon@radxa.com> wrote :
-> >>
-> >> On 2025/7/15 01:35:42, Dale Whinham wrote:
-> >>> From: J=C3=A9r=C3=B4me de Bretagne <jerome.debretagne@gmail.com>
-> >>>
-> >>> The OLED display in the Surface Pro 11 reports a maximum link rate of
-> >>> zero in its DPCD, causing it to fail to probe correctly.
-> >>>
-> >>> The Surface Pro 11's DSDT table contains some XML with an
-> >>> "EDPOverrideDPCDCaps" block that defines the max link rate as 0x1E
-> >>> (8.1Gbps/HBR3).
-> >>>
-> >>> Add a quirk to conditionally override the max link rate if its value
-> >>> is zero specifically for this model.
-> >>>
-> >>> Signed-off-by: J=C3=A9r=C3=B4me de Bretagne <jerome.debretagne@gmail.=
-com>
-> >>> Signed-off-by: Dale Whinham <daleyo@gmail.com>
-> >>> ---
-> >>>   drivers/gpu/drm/msm/dp/dp_panel.c | 13 +++++++++++++
-> >>>   1 file changed, 13 insertions(+)
-> >>>
-> >>> diff --git a/drivers/gpu/drm/msm/dp/dp_panel.c b/drivers/gpu/drm/msm/=
-dp/dp_panel.c
-> >>> index 4e8ab75c771b..b2e65b987c05 100644
-> >>> --- a/drivers/gpu/drm/msm/dp/dp_panel.c
-> >>> +++ b/drivers/gpu/drm/msm/dp/dp_panel.c
-> >>> @@ -11,6 +11,8 @@
-> >>>   #include <drm/drm_of.h>
-> >>>   #include <drm/drm_print.h>
-> >>>
-> >>> +#include <linux/dmi.h>
-> >>> +
-> >>>   #define DP_MAX_NUM_DP_LANES 4
-> >>>   #define DP_LINK_RATE_HBR2   540000 /* kbytes */
-> >>>
-> >>> @@ -58,6 +60,17 @@ static int msm_dp_panel_read_dpcd(struct msm_dp_pa=
-nel *msm_dp_panel)
-> >>>       if (rc)
-> >>>               return rc;
-> >>>
-> >>> +     /*
-> >>> +      * for some reason the ATNA30DW01-1 OLED panel in the Surface P=
-ro 11
-> >>> +      * reports a max link rate of 0 in the DPCD. Fix it to match th=
-e
-> >>> +      * EDPOverrideDPCDCaps string found in the ACPI DSDT
-> >>> +      */
-> >>> +     if (dpcd[DP_MAX_LINK_RATE] =3D=3D 0 &&
-> >>> +         dmi_match(DMI_SYS_VENDOR, "Microsoft Corporation") &&
-> >>> +         dmi_match(DMI_PRODUCT_NAME, "Microsoft Surface Pro, 11th Ed=
-ition")) {
-> >>> +             dpcd[1] =3D DP_LINK_BW_8_1;
-> >>> +     }
-> >>> +
-> >>
-> >> My Galaxy Book4 Edge with the ATNA60CL07-0 panel also reports a max li=
-nk
-> >> rate of 0. But I think eDP v1.4 panels need a different way to retriev=
-e
-> >> supported links rates, which could be found in the amdgpu [1], i915 [2=
-]
-> >> and nouveau [3] drivers.
-> >
-> > Thanks Xilin for the sharing and pointers into 3 other drivers, that
-> > would explain the current limitation for Adreno GPUs. Fixing it would
-> > require a big contribution independent of the actual SP11 enablement.
->
-> FWIW Adreno is a wholly separate (from DPU - the display engine) block
+>  static void put_prev_task_scx(struct rq *rq, struct task_struct *p,
+>  			      struct task_struct *next)
+>  {
+> @@ -3253,7 +3267,7 @@ static void put_prev_task_scx(struct rq *rq, struct task_struct *p,
+>  		 */
+>  		if (p->scx.slice && !scx_rq_bypassing(rq)) {
+>  			dispatch_enqueue(&rq->scx.local_dsq, p, SCX_ENQ_HEAD);
+> -			goto switch_class;
+> +			return;
+...
+> @@ -2465,6 +2468,8 @@ static inline void put_prev_set_next_task(struct rq *rq,
+>  
+>  	__put_prev_set_next_dl_server(rq, prev, next);
+>  
+> +	scx_next_task_picked(rq, prev, next);
 
-Thanks Konrad, indeed I should have referred to the display engine.
+It's a bit unfortunate that we need to add this hook but I can't see another
+way around it for both the problem you're reporting and the pnt_seq issue.
+Maybe name it scx_put_prev_set_next(rq, prev, next) for consistency?
 
-> >
-> > Is it a feature planned in the short-medium term within the MSM driver?
-> > If not, would a quirk like [4] be acceptable upstream in the meanwhile?
->
-> I'm not a display guy, but this looks like yet another block of code
-> begging to be commonized across DP drivers,
+Thanks.
 
-I agree 100% in principle, but the 3 implementations are different today.
-
-> so I wouldn't expect it to be a big blocker.
-
-Well, it is for me :)
-
-> Adding a panel quirk doesn't seem in order, as the panel is /probably/
-> very much in spec, and it's the driver bit that's missing.
-
-I agree that a quirk shouldn't be needed. I guess we'll work on
-upstreaming everything else and keep an out-of-tree patch for this
-issue for the moment That's a bit sad as this will block regular
-users from easily installing / testing via the Ubuntu Concept ISO
-for instance.
-
-Or could the quirk be accepted temporarily with good comments
-then reverted when the driver adds the missing support? I guess
-it would depend on the time scale of this support landing.
-
-Cheers,
-J=C3=A9r=C3=B4me
-
-> Konrad
->
-> >
-> > [4] https://github.com/JeromeDeBretagne/linux-surface-pro-11/commit/d26=
-5cfb
-> >
-> > Thanks a lot,
-> > J=C3=A9r=C3=B4me
-> >
-> >
-> >
-> >> [1]:
-> >> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tr=
-ee/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_capability.c#n2098
-> >> [2]:
-> >> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tr=
-ee/drivers/gpu/drm/i915/display/intel_dp.c#n4281
-> >> [3]:
-> >> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tr=
-ee/drivers/gpu/drm/nouveau/nouveau_dp.c#n101
-> >>
-> >>
-> >>>       msm_dp_panel->vsc_sdp_supported =3D drm_dp_vsc_sdp_supported(pa=
-nel->aux, dpcd);
-> >>>       link_info =3D &msm_dp_panel->link_info;
-> >>>       link_info->revision =3D dpcd[DP_DPCD_REV];
-> >>
-> >>
-> >> --
-> >> Best regards,
-> >> Xilin Wu <sophon@radxa.com>
-> >
+-- 
+tejun
 
