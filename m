@@ -1,56 +1,130 @@
-Return-Path: <linux-kernel+bounces-735604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 329A5B09179
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:12:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CED3BB09180
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:14:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D821175B77
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:12:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FC66188803D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:14:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765762FA63D;
-	Thu, 17 Jul 2025 16:11:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 210BE2FA62F;
+	Thu, 17 Jul 2025 16:14:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rKjHWyrC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aHRei6ps"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C264652F66;
-	Thu, 17 Jul 2025 16:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E68288C12;
+	Thu, 17 Jul 2025 16:14:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752768715; cv=none; b=Hqw9X57zn4TORxHiX4XQUzD4zmakNUWeUUznAWtn0vAyvWckMZCk5pHbHJGCB2tdRGE58cwxZyE06kt+9VTfYBzDqx5CKEMsiAgfFzAAh2lpKPOGw7ZcWW+42m+AC6Bo4rD1QXlsUCU74KteIczPRlHgQXHuMZNUB8bVWET0qOM=
+	t=1752768861; cv=none; b=Y8B5r8faTZDkc7LnsqCnEHeynm2V/jsnvjec/7fYOwerB5e3d0lMNsYs2Q9xr7n6sDtTRN76eoAlVOFGYNsRUabp+gUlqGoxkXWpqMzwEW/9dXHHX3+jw7SkYHXr2GvDsBSxB/UMXSrjpXiXh0TnePvnEXNtziUh86iLYUQxUYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752768715; c=relaxed/simple;
-	bh=leH2qi5T+fPbxH0BYXBy6va7/khYJFfEzKY8QCgbiBw=;
+	s=arc-20240116; t=1752768861; c=relaxed/simple;
+	bh=/P/sV+sQCJwwTH0lx/U38MZ3P+zHFO7z6yDbHcy0kNg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WDdJn9L6EbyaVuioU5TREaKzljKc3Rz+BWbKkODO/kxrYHUB2yTVoPMJKkSDouXAgX9DmxTFD9mqV4mUvHzFjnYZrCcdJcYmhbb/rqV+o/wb7rz1eURPiH5JML3XKrThifPhuhzQnjzZei5qBYMqDN4r6ykS2MNbMVLh3CQ035s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rKjHWyrC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52440C4CEE3;
-	Thu, 17 Jul 2025 16:11:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752768715;
-	bh=leH2qi5T+fPbxH0BYXBy6va7/khYJFfEzKY8QCgbiBw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rKjHWyrCYggNTQGZ5DpW6iNTFIKlkChJWgOv03hSKTRrbkuC7Jur10tlZH/GslEVa
-	 Z9UU+0S+KBz5y82979vKx16rRYKdOPc6UgiqzfEF1Un0Xvo2iNa3Rdc8kx7NW0M3TM
-	 E2eJDHGDjWYGk6QYk5qxs12tYAy7wtmvuGgZ9ciakbUMtPZJfIlsViPwwa4yiaZ+aI
-	 GGO3YhDSfRy3g1AIxxO70Qk++3RTpPBppUV6z6teah8cWoHrOXmTFSte+8iVEtSg20
-	 Sw4LQH9vFsaWV41Nysc87/1RkD4jKgdck74CvDHdPhlZxAMT2H31fHhuJ9Yszmnbfj
-	 Dr4LbI3geDC8A==
-Date: Thu, 17 Jul 2025 09:11:54 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
-	Ritesh Harjani <ritesh.list@gmail.com>, john.g.garry@oracle.com,
-	tytso@mit.edu, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v3 02/13] common/rc: Fix fsx for ext4 with bigalloc
-Message-ID: <20250717161154.GF2672039@frogsfrogsfrogs>
-References: <cover.1752329098.git.ojaswin@linux.ibm.com>
- <84a1820482419a1f1fb599bc35c2b7dcc1abbcb9.1752329098.git.ojaswin@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=e/xkWyH17fstiOnjlhhEmvCDUnLKUbOR7gJWpFhs2W5abKdx5GdnuaofgOhCWk8sVFpIIq3LhlGSVdDxXb17WNt//LAmUnacNjOAXbYGr/jvIIgGFemJVWbDlac8m+hU3sAs/ZCumGclmttRStt5bOAVrb3Z0KSR78DCj3sS1n8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aHRei6ps; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6facc3b9559so15369916d6.0;
+        Thu, 17 Jul 2025 09:14:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752768859; x=1753373659; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L+yz+W/V56qlFCu6Ortl7e+6CnAcr0ty8ni1aHJ/G24=;
+        b=aHRei6psRIS6wK/YPANELOJz8d9aWwSfHDqZqPi2V9W7IqBrWXekZxera6oogrOxCP
+         5U25mfgLd0Q5LY+NbaXJQGBueQ4/dkC6Ht9QbKTEf5sf17PJjPuShd6nlkwOSKKjAwqW
+         rDZuYt1SKPfATkCqha+vZ7mB4V3+0rkhwRCVUhlMYZDC+vPmcZx9dj0bgjuL7zckyNdf
+         BqwRnoSuCuHEBzKIwqL4hQ0+1LMGx3jSheQnrmoinhoXgOEZX0EwB1vOqOaSGs95NoCX
+         XP/YSqGXS0EcSuDDbtMO7nWNnZ2ooyYITxB+92sp//DBO7LjZVTLkUhZ27XEzapr2VoE
+         YYYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752768859; x=1753373659;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L+yz+W/V56qlFCu6Ortl7e+6CnAcr0ty8ni1aHJ/G24=;
+        b=aMbJm8e+ojhIiKE1aZCgt9O2b0rwb5kBbp/TfVkoAmP4vnEeDitpL/J/2FcgMOaEyS
+         GnRTJ3d8NAT7dnMm4yemAFjK1dOh+pdacT9tChbAdyjlBKLHfe8ZpCnKnZveJyoHsQb2
+         FAOxkJ/kGWzvYBpkqGMRMOvbmjspqCn9yxHEO3RdrGjanbLB+uwDVx0WchQx2vcYC/49
+         Wii9SQmuDfFvU9sS1QO8ElGsVHHn4hZkzmOx+fzicqsvaEAPBBIZK0svliWwz0/7W3Hx
+         7bScmyDOxSyXtft//C1ZuoVLZbG5J+nd1APD+sVokFC8yieg8vPYrvaUaLFLcZYlo5H6
+         25VA==
+X-Forwarded-Encrypted: i=1; AJvYcCWreoY41/R5Q5y1WcyrhBe4KM908xDYCzbrjZ/racnB1137Pt7IsCj5w38P8cSd+Tw47nnqUGSXFqyoVbI=@vger.kernel.org, AJvYcCXrgmMhwx8BCXpRG1Lf9RP0K2X+RN4RuNsx97EkpPjoUxPCms3wrgwyHTEDiYVVjAj5zbCbIiGTa6QIOD54Fl8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpHWU7lI+wFfy2EzBieQwdsYxOsvv6Lcqmkpvgu37aIL2qv5wl
+	IagNKdp2z3a+LyCMbfs3Smr+i+opCdoRc8khyZX8iEsextaEU6nH3LdX
+X-Gm-Gg: ASbGncsVoeHQXbrwac354GQTDxLoOluzyrhvjenEaXhf+aGuVpiw8YWtbS83c3DQ3Mw
+	WQOol55vPF1xo8zTJLh7oMs71FxhVAj1MhgjrijmrzG8HJkumQQUDpWGti4oPn2DVAtVRiQ2wrP
+	gWOfvxha8ANNebKhW6ALBbO2JOqrVhQAO1gY2mEowoKxDK/R6MyMP/6v6hSgs2cr4FrZEpkCPjT
+	ymJyyQRcHIh4jRpzo2zgQDlN2dX+1YwgrdUcpX1aG3kgZk0caf7jCKUqhCSrjmNWHHz/21KjTDb
+	KtxGPQRy/H2x/63OtjYwGAohsg20yDEjIKy3tLnLjnu1bHESK0mhga9bZKBSxlQtQQIMOErXSNS
+	r3TSVpNHZ8MeQA5nknHBhMuFWjaELXokGITGXEALz3CEjgg8shZK/qsD5G7FotFEt68amy9+8KA
+	jyODkMnc5XbWqG
+X-Google-Smtp-Source: AGHT+IGPXNss7QM/3gt8EaNhAyoHgBwLz/cvFQg+KILkOzEQ9CC5cn74rJSv6rbv4jcqqkFdPVow4g==
+X-Received: by 2002:ad4:4ee1:0:b0:702:d0e6:6e6b with SMTP id 6a1803df08f44-704f6bfd432mr111820616d6.45.1752768858643;
+        Thu, 17 Jul 2025 09:14:18 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70497d39d14sm86256086d6.76.2025.07.17.09.14.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Jul 2025 09:14:18 -0700 (PDT)
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 50D6CF40068;
+	Thu, 17 Jul 2025 12:14:17 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-10.internal (MEProxy); Thu, 17 Jul 2025 12:14:17 -0400
+X-ME-Sender: <xms:WSF5aBq0IeXzv2Yh02VaaWVgfcxo6yej423YJ7xjyZo4iAjVdUhgDg>
+    <xme:WSF5aHnK1wY0eaadXUvWS-EEn3eOMQoO049h5pLab7DXztVWHZOM_YEu39sIXU-Pz
+    mH9HgtH_kuI2rm9rg>
+X-ME-Received: <xmr:WSF5aCyiTGOTpDGgCzV20ONDcDVASJ7hh8CnFMjLjc5sEWVCnTQ6iYHgYw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeiuddtfecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
+    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
+    hrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveeiudffiedv
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqh
+    hunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddu
+    jeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvg
+    drnhgrmhgvpdhnsggprhgtphhtthhopeduledpmhhouggvpehsmhhtphhouhhtpdhrtghp
+    thhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehhuhhirdiihhhuse
+    hlihhnuhigrdguvghvpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhr
+    tghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphhtthhope
+    hgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhnfegpghhhsehp
+    rhhothhonhhmrghilhdrtghomhdprhgtphhtthhopehlohhsshhinheskhgvrhhnvghlrd
+    horhhgpdhrtghpthhtoheprgdrhhhinhgusghorhhgsehkvghrnhgvlhdrohhrghdprhgt
+    phhtthhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtghomh
+X-ME-Proxy: <xmx:WSF5aE2eit8GwdcxDzZsIkWPPFN4DKRNHoYnoO-mSWt9xU9axqthLA>
+    <xmx:WSF5aGDyHYJAW1kNxzJ6djBb2o2vI8DssiugjZPNAS9R8vXk9teT8g>
+    <xmx:WSF5aB_F8bBhYIC1qj4u4LV7aKfWRaKNyJwNRixVg_kr9qNPZWd4EQ>
+    <xmx:WSF5aE8AVU2Ck9YQAes6FLYPb1OgFNeQLDfWiaVUqGV-43FeI7maOw>
+    <xmx:WSF5aB0QqzAN9sDKSpgx3UWsOdl1XT7UyqDmQwn4j4NgJe_UlAQ3rsh->
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 17 Jul 2025 12:14:16 -0400 (EDT)
+Date: Thu, 17 Jul 2025 09:14:15 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Hui Zhu <hui.zhu@linux.dev>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	bjorn3_gh@protonmail.com, Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	Hui Zhu <zhuhui@kylinos.cn>, Geliang Tang <geliang@kernel.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Uladzislau Rezki <urezki@gmail.com>
+Subject: Re: [PATCH v2] rust: add a sample alloc usage
+Message-ID: <aHkhVwD7WKm1dSsa@Mac.home>
+References: <20250717095053.49239-1-hui.zhu@linux.dev>
+ <DBEAFCFHFU35.1IZI3ZSJSIRAY@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,84 +133,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <84a1820482419a1f1fb599bc35c2b7dcc1abbcb9.1752329098.git.ojaswin@linux.ibm.com>
+In-Reply-To: <DBEAFCFHFU35.1IZI3ZSJSIRAY@kernel.org>
 
-On Sat, Jul 12, 2025 at 07:42:44PM +0530, Ojaswin Mujoo wrote:
-> Insert range and collapse range only works with bigalloc in case
-> the range is cluster size aligned, which fsx doesnt take care. To
-> work past this, disable insert range and collapse range on ext4, if
-> bigalloc is enabled.
+On Thu, Jul 17, 2025 at 01:19:05PM +0200, Danilo Krummrich wrote:
+> (Cc: Lorenzo, Vlastimil, Liam, Uladzislau)
 > 
-> This is achieved by defining a new function _set_default_fsx_avoid
-> called via run_fsx helper. This can be used to selectively disable
-> fsx options based on the configuration.
+> On Thu Jul 17, 2025 at 11:50 AM CEST, Hui Zhu wrote:
+> > diff --git a/samples/rust/Makefile b/samples/rust/Makefile
+> > index bd2faad63b4f..7c3e68d9ada5 100644
+> > --- a/samples/rust/Makefile
+> > +++ b/samples/rust/Makefile
+> > @@ -10,6 +10,7 @@ obj-$(CONFIG_SAMPLE_RUST_DRIVER_PLATFORM)	+= rust_driver_platform.o
+> >  obj-$(CONFIG_SAMPLE_RUST_DRIVER_FAUX)		+= rust_driver_faux.o
+> >  obj-$(CONFIG_SAMPLE_RUST_DRIVER_AUXILIARY)	+= rust_driver_auxiliary.o
+> >  obj-$(CONFIG_SAMPLE_RUST_CONFIGFS)		+= rust_configfs.o
+> > +obj-$(CONFIG_SAMPLE_RUST_ALLOC)		+= rust_alloc.o
 > 
-> Co-developed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> ---
->  common/rc | 27 +++++++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
+> I think adding an example for large alignment is fine, but let's do this in a
+> doc-test on VBox in rust/kernel/alloc/kbox.rs. I think adding a separate module
+
+I would suggest using #[kunit_tests(..)], which is similar to how
+doc-test run, for it if we only use it for test purposes.
+
+Regards,
+Boqun
+
+> for this is overkill.
 > 
-> diff --git a/common/rc b/common/rc
-> index 9a9d3cc8..218cf253 100644
-> --- a/common/rc
-> +++ b/common/rc
-> @@ -5113,10 +5113,37 @@ _require_hugepage_fsx()
->  		_notrun "fsx binary does not support MADV_COLLAPSE"
->  }
->  
-> +_set_default_fsx_avoid() {
-> +	local file=$1
-> +
-> +	case "$FSTYP" in
-> +	"ext4")
-> +		local dev=$(findmnt -n -o SOURCE --target $file)
-> +
-> +		# open code instead of _require_dumpe2fs cause we don't
-> +		# want to _notrun if dumpe2fs is not available
-> +		if [ -z "$DUMPE2FS_PROG" ]; then
-> +			echo "_set_default_fsx_avoid: dumpe2fs not found, skipping bigalloc check." >> $seqres.full
-> +			return
-> +		fi
-
-I hate to be the guy who says one thing and then another, but ...
-
-If we extended _get_file_block_size to report the ext4 bigalloc cluster
-size, would that be sufficient to keep testing collapse/insert range?
-
-I guess the tricky part here is that bigalloc allows sub-cluster
-mappings and we might not want to do all file IO testing in such big
-units.
-
-> +
-> +		$DUMPE2FS_PROG -h $dev 2>&1 | grep -q bigalloc && {
-> +			export FSX_AVOID+=" -I -C"
-
-No need to export FSX_AVOID to subprocesses.
-
---D
-
-> +		}
-> +		;;
-> +	# Add other filesystem types here as needed
-> +	*)
-> +		;;
-> +	esac
-> +}
-> +
->  _run_fsx()
->  {
->  	echo "fsx $*"
->  	local args=`echo $@ | sed -e "s/ BSIZE / $bsize /g" -e "s/ PSIZE / $psize /g"`
-> +
-> +	_set_default_fsx_avoid $testfile
-> +
->  	set -- $FSX_PROG $args $FSX_AVOID $TEST_DIR/junk
->  	echo "$@" >>$seqres.full
->  	rm -f $TEST_DIR/junk
-> -- 
-> 2.49.0
+> Note that doc-tests are executed on boot if CONFIG_RUST_KERNEL_DOCTESTS=y.
 > 
-> 
+[...]
 
