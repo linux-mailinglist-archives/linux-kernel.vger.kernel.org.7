@@ -1,522 +1,494 @@
-Return-Path: <linux-kernel+bounces-734577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01DD6B0835A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 05:21:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3617B0835D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 05:21:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CBD71C213FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 03:21:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27AC11C2690F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 03:21:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6E620459A;
-	Thu, 17 Jul 2025 03:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KKkw1lxU"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A55A81FF601;
-	Thu, 17 Jul 2025 03:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7E51F4169;
+	Thu, 17 Jul 2025 03:21:22 +0000 (UTC)
+Received: from zg8tmja5ljk3lje4mi4ymjia.icoremail.net (zg8tmja5ljk3lje4mi4ymjia.icoremail.net [209.97.182.222])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF8AB1E9B31;
+	Thu, 17 Jul 2025 03:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.182.222
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752722443; cv=none; b=UT2qwG0QwVGzJw9sDmYlH9jZ5z4PjjVOFy1tOUUmd0rHKcj7QOoG3WmoWXIi5z8M5mlskJUZdYpQQdeV+7hf61JU2zSNnPj0U0prrcEDkXB9RJSBH5GPBTUyJPuxGwbGATV0wrf9Xol7XAaBYRX1lbdThjHWc1Y4HqtIiN6EkcE=
+	t=1752722481; cv=none; b=J78zmPIZUAjJAHV5NzyH30IZZl6JmT23C5+oZHKZnGIzQBe+WSNKeDu6/RPNBUbsHll929rAm1KZYntONgp4hdC02ecPhh4i64dBrIH0NKjVXtSGwXYzH7ptIPsSWWgKRZcH0ZDlIjV8NkWON2IVO9Telf160+oLttbkVERc2hU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752722443; c=relaxed/simple;
-	bh=aJOzE9DowZm3gqIql2B3msjdfyg7QyA5ZEazy58SkYM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=e7hYtaSFtcOyy5x3zKEWU1rR0teAGSgDjM0lISz+VZfPWcejIEp3mUgKe7T8nn8wrFUxCcbkGLGZ/jR7INUcG/5AlG1uC43qaw1tT4gphXDGt36etlqFAz0S+86NJmtWw/guTgDqtajI5yxsGtVuyQGc6d3LUfSOofCbVjWcfa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KKkw1lxU; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56GGDUiG008525;
-	Thu, 17 Jul 2025 03:20:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	oAc3sJBLBZ9UQq2xRjQ9oMBhA7ruu9lwFKJBVTeTDrw=; b=KKkw1lxUGkNvLbdl
-	+eEG63peZWF7FQQg6pKeDf1I0lvG1SQn84zVXV6wINtW9JUBOmnFClwFgedr9fzS
-	7I09w5DXn9UG4mPrX4IyUKC5jVfg16jfdrCi2KgjJIbbEEt52Oppr2lEC1P092hW
-	D+UmpB9vfZ3IiaI2OizUKsJCFSE0iXp6g+Zu/D+qkRhLhsavzG4n8uGk1XcKEuat
-	IyZ5buMBTwbIK/id4XpAQy16UaCNF42plqJGocf/fxHfaN0Mv1O4B+L94fVczEsx
-	ziCSE/3pmFVV2AgrCkd9sNpybpah+3WMjjK0sooq11vw9Fo1J8P6SwDbQJazy5Eo
-	FBp+pA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ufxb64jb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Jul 2025 03:20:37 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56H3KaeG007573
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Jul 2025 03:20:36 GMT
-Received: from cse-cd01-lnx.ap.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Wed, 16 Jul 2025 20:20:34 -0700
-From: Wenmeng Liu <quic_wenmliu@quicinc.com>
-Date: Thu, 17 Jul 2025 11:20:07 +0800
-Subject: [PATCH v2 3/3] media: qcom: camss: tpg: Add TPG support for
- SA8775P
+	s=arc-20240116; t=1752722481; c=relaxed/simple;
+	bh=V3Ae8zPeZowSxtzELDuak4LXUrDGSFQhmmEK7xC2JVQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LWLb3a2DtEFiyUlxD8nRxbyKxXUbknJaMTe+WZsCTbCyTcdTd4kbEeTJBUYRQxsGy6kvwed3f9+8aSIcZHjKNqA1ogDMOZO8qy8xVswfd982UNfYUWV4P/QgiAKEzJ5xcAVo5j3ptJceiSg47Wnq3dbjxEJhRmRKPjbS+v9jPhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=209.97.182.222
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
+Received: from hust.edu.cn (unknown [172.16.0.52])
+	by app2 (Coremail) with SMTP id HwEQrACXnnb2a3hoorDgAQ--.19409S2;
+	Thu, 17 Jul 2025 11:20:22 +0800 (CST)
+Received: from [10.12.169.51] (unknown [10.12.169.51])
+	by gateway (Coremail) with SMTP id _____wDXkpnya3hoF9gnAQ--.42960S2;
+	Thu, 17 Jul 2025 11:20:21 +0800 (CST)
+Message-ID: <c4880812-e968-488c-9df0-2208f7f4fcb0@hust.edu.cn>
+Date: Thu, 17 Jul 2025 11:20:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250717-lemans_tpg-v2-3-a2538659349c@quicinc.com>
-References: <20250717-lemans_tpg-v2-0-a2538659349c@quicinc.com>
-In-Reply-To: <20250717-lemans_tpg-v2-0-a2538659349c@quicinc.com>
-To: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
-        "Bryan
- O'Donoghue" <bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        Wenmeng Liu <quic_wenmliu@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752722426; l=13062;
- i=quic_wenmliu@quicinc.com; s=20250211; h=from:subject:message-id;
- bh=aJOzE9DowZm3gqIql2B3msjdfyg7QyA5ZEazy58SkYM=;
- b=S+b6Ak+k3kDHQGqiBEMO937xVMq/LiRrdnFnXl6l7cIX7RHDC9i/cDNpp9FsIm+Qo1ulwphIk
- Vnud7unsgXuDtx2+q0xTnXOtyxkva7k4HmJFj3mFzWVfX1kUxAqhUNX
-X-Developer-Key: i=quic_wenmliu@quicinc.com; a=ed25519;
- pk=PTegr3w0f1C9dOSL6CUdJR5+u+X/4vsW7VMfwIMeMXQ=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Jdph4Z166nLWsoCifXBaXj5kBTL6mSPd
-X-Proofpoint-ORIG-GUID: Jdph4Z166nLWsoCifXBaXj5kBTL6mSPd
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDAyOCBTYWx0ZWRfX66ZJdCFpt4h0
- TmmnFtldACtKH3stJceWl953/TYb8Lr9C253U31e1+FDwz/nVAMCNzZCRTPVmqfQoOHTUYQ01aQ
- rpu3nJA4QcVg/wgMoveV9Z+offC0utTRMAa4Rsrm+OJgWpOKDzi5bXEfzS3rIA+Y7ewm5TMF79X
- bF4DSjGktW0nKiGZllACfoLwzq2wIQ2uPBJal+6vbl1GcikYaFNkElGYN0D162cvdO97GDk5l9H
- 5VD4LIaAcPONOF78Dp3424YLlnvfHfzJK0ku2zIcZONWN6032np8xIS7WkiMNsgKNfFpjAKoDNl
- JSevM5z+o977rcROpHF4U45JPFRczLabRKG/yNW8V0w2XpIqm1fX4zm7sIAN3ioT7++luaOLluN
- vPkAoCgrXty+Zv6KAMJoiMBQveaSoxHxgwEuIcc0DAynF1Mwa2CXxa1ZvKQv+FWprx9vQ05n
-X-Authority-Analysis: v=2.4 cv=Xc2JzJ55 c=1 sm=1 tr=0 ts=68786c05 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
- a=4iagCNAp_ivI1716DHcA:9 a=hSIi_ENWJPfcIP4Z:21 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-17_01,2025-07-16_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 mlxscore=0 priorityscore=1501 adultscore=0 mlxlogscore=999
- phishscore=0 suspectscore=0 spamscore=0 lowpriorityscore=0 impostorscore=0
- clxscore=1015 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507170028
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Docs/zh_CN: Translate ubifs-authentication.rst to
+ Simplified Chinese
+To: shao.mingyin@zte.com.cn, seakeel@gmail.com
+Cc: alexs@kernel.org, si.yanteng@linux.dev, corbet@lwn.net,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yang.yang29@zte.com.cn, xu.xin16@zte.com.cn, yang.tao172@zte.com.cn,
+ ye.xingchen@zte.com.cn, wang.yaxin@zte.com.cn
+References: <20250717110513773fyfRnUCJdXpLjkcN-21jJ@zte.com.cn>
+From: Dongliang Mu <dzm91@hust.edu.cn>
+In-Reply-To: <20250717110513773fyfRnUCJdXpLjkcN-21jJ@zte.com.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:HwEQrACXnnb2a3hoorDgAQ--.19409S2
+Authentication-Results: app2; spf=neutral smtp.mail=dzm91@hust.edu.cn;
+X-Coremail-Antispam: 1UD129KBjvAXoWfurW8tF1xGFy3KF4kWr4kJFb_yoW8Kry7Zo
+	WUuryfuw47Jr13XrW5Jw18Xr4DJ3WUWrnFyay7tr17Gryjy3WSyF1UJw13G3y5Ar45K3W5
+	ta4rJr13Aa15XF15n29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+	AaLaJ3UjIYCTnIWjp_UUUOk7k0a2IF6F4UM7kC6x804xWl1xkIjI8I6I8E6xAIw20EY4v2
+	0xvaj40_Wr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7
+	IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xv
+	wVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2kKe7AKxV
+	WUXVWUAwAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY
+	07AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VACjcxG62k0Y48FwI
+	0_Gr1j6F4UJwAv7VCjz48v1sIEY20_GFW3Jr1UJwAv7VCY1x0262k0Y48FwI0_Gr1j6F4U
+	JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42xK82IYc2Ij64vIr41l42xK82
+	IY6x8ErcxFaVAv8VW8uFyUJr1UMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v2
+	6r1Y6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17
+	CEb7AF67AKxVWUtVW8ZwCIccxYrVCIc48FwI0_Gr0_Xr1lIxkGc2Ij64vIr41lIxAIcVC0
+	I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04
+	k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7Cj
+	xVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU0uHq3UUUUU==
+X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
 
-Add support for TPG found on SA8775P.
 
-Signed-off-by: Wenmeng Liu <quic_wenmliu@quicinc.com>
----
- drivers/media/platform/qcom/camss/Makefile         |   1 +
- .../media/platform/qcom/camss/camss-csid-gen3.c    |  17 ++
- drivers/media/platform/qcom/camss/camss-tpg-gen1.c | 245 +++++++++++++++++++++
- drivers/media/platform/qcom/camss/camss.c          |  56 +++++
- 4 files changed, 319 insertions(+)
+On 7/17/25 11:05 AM, shao.mingyin@zte.com.cn wrote:
+>> From: seakeel <seakeel@gmail.com>
+>> To: Shao Mingyin10345846;
+>> Cc: alexs <alexs@kernel.org>;si.yanteng <si.yanteng@linux.dev>;dzm91 <dzm91@hust.edu.cn>;corbet <corbet@lwn.net>;linux-doc <linux-doc@vger.kernel.org>;linux-kernel <linux-kernel@vger.kernel.org>;Yang Yang10192021;Xu Xin10311587;Yang Tao10262512;Ye Xingchen10329245;Wang Yaxin00350371;
+>> Date: 2025/07/17 09:39
+>> Subject: Re: [PATCH] Docs/zh_CN: Translate ubifs-authentication.rst to Simplified Chinese
+>> <shao.mingyin@zte.com.cn> 于2025年7月15日周二 15:26写道：
+>>> From: Shao Mingyin <shao.mingyin@zte.com.cn>
+>>>
+>>> translate the "ubifs-authentication.rst" into Simplified Chinese.
+>>>
+>>> Update to commit d56b699d76d1("Documentation: Fix typos")
+>>>
+>>> Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
+>>> Signed-off-by: yang tao <yang.tao172@zte.com.cn>
+>>> ---
+>>>   .../translations/zh_CN/filesystems/index.rst  |   1 +
+>>>   .../filesystems/ubifs-authentication.rst      | 334 ++++++++++++++++++
+>>>   2 files changed, 335 insertions(+)
+>>>   create mode 100644 Documentation/translations/zh_CN/filesystems/ubifs-authentication.rst
+>>>
+>>> diff --git a/Documentation/translations/zh_CN/filesystems/index.rst b/Documentation/translations/zh_CN/filesystems/index.rst
+>>> index faaa0f097223..3c25b39739db 100644
+>>> --- a/Documentation/translations/zh_CN/filesystems/index.rst
+>>> +++ b/Documentation/translations/zh_CN/filesystems/index.rst
+>>> @@ -27,4 +27,5 @@ Linux Kernel中的文件系统
+>>>      debugfs
+>>>      tmpfs
+>>>      ubifs
+>>> +   ubifs-authentication
+>>>
+>>> diff --git a/Documentation/translations/zh_CN/filesystems/ubifs-authentication.rst b/Documentation/translations/zh_CN/filesystems/ubifs-authentication.rst
+>>> new file mode 100644
+>>> index 000000000000..3e57f1eaebdc
+>>> --- /dev/null
+>>> +++ b/Documentation/translations/zh_CN/filesystems/ubifs-authentication.rst
+>>> @@ -0,0 +1,334 @@
+>>> +.. SPDX-License-Identifier: GPL-2.0
+>>> +
+>>> +.. include:: ../disclaimer-zh_CN.rst
+>>> +
+>>> +:Original: Documentation/filesystems/ubifs-authentication.rst
+>>> +
+>>> +:翻译:
+>>> +
+>>> +   邵明寅 Shao Mingyin <shao.mingyin@zte.com.cn>
+>>> +
+>>> +:校译:
+>>> +
+>>> +   - 杨涛 yang tao <yang.tao172@zte.com.cn>
+>>> +
+>>> +============================
+>>> +UBIFS认证支持
+>>> +============================
+>> Hi mingyin,
+>>
+>> Please take care of the rst file format first.
+>> https://en.wikipedia.org/wiki/ReStructuredText
+>>
+>> Thanks
+>> Alex
+>>
+> Hi Alex,
+>
+> Thanks for your feedback!
+>
+> I have  taken care to ensure that the document conforms to the RST format.
+> 1. I use the reStructureDext plugin in VSode to perform syntax checks
+> on the document to ensure there are no errors or warnings.
+> 2. By executing 'make htmldocs', the corresponding
+> ubifs-authentication.html can be generated.
+>
+> Could you please further explain the specific issue with the RST format?
 
-diff --git a/drivers/media/platform/qcom/camss/Makefile b/drivers/media/platform/qcom/camss/Makefile
-index e4cf3033b8798cf0ffeff85409ae4ed3559879c1..274fa1e8fef3ce972a94e7355651c3801bc1dddc 100644
---- a/drivers/media/platform/qcom/camss/Makefile
-+++ b/drivers/media/platform/qcom/camss/Makefile
-@@ -25,5 +25,6 @@ qcom-camss-objs += \
- 		camss-video.o \
- 		camss-format.o \
- 		camss-tpg.o \
-+		camss-tpg-gen1.o \
- 
- obj-$(CONFIG_VIDEO_QCOM_CAMSS) += qcom-camss.o
-diff --git a/drivers/media/platform/qcom/camss/camss-csid-gen3.c b/drivers/media/platform/qcom/camss/camss-csid-gen3.c
-index 581399b6a767fc2ba0764dc0f5228e737cdd0d67..2af4fc039948a1a43a2e4eed33004cbfd6bf66fb 100644
---- a/drivers/media/platform/qcom/camss/camss-csid-gen3.c
-+++ b/drivers/media/platform/qcom/camss/camss-csid-gen3.c
-@@ -69,6 +69,8 @@
- #define		CSI2_RX_CFG0_VC_MODE		3
- #define		CSI2_RX_CFG0_DL0_INPUT_SEL	4
- #define		CSI2_RX_CFG0_PHY_NUM_SEL	20
-+#define		CSI2_RX_CFG0_TPG_NUM_EN		27
-+#define		CSI2_RX_CFG0_TPG_NUM_SEL	28
- 
- #define CSID_CSI2_RX_CFG1		0x204
- #define		CSI2_RX_CFG1_ECC_CORRECTION_EN	BIT(0)
-@@ -112,7 +114,10 @@ static void __csid_configure_rx(struct csid_device *csid,
- 				struct csid_phy_config *phy, int vc)
- {
- 	int val;
-+	struct camss *camss;
-+	struct tpg_device *tpg;
- 
-+	camss = csid->camss;
- 	val = (phy->lane_cnt - 1) << CSI2_RX_CFG0_NUM_ACTIVE_LANES;
- 	val |= phy->lane_assign << CSI2_RX_CFG0_DL0_INPUT_SEL;
- 	val |= (phy->csiphy_id + CSI2_RX_CFG0_PHY_SEL_BASE_IDX) << CSI2_RX_CFG0_PHY_NUM_SEL;
-@@ -120,6 +125,18 @@ static void __csid_configure_rx(struct csid_device *csid,
- 	if (IS_CSID_690(csid) && (vc > 3))
- 		val |= 1 << CSI2_RX_CFG0_VC_MODE;
- 
-+	if (camss->tpg) {
-+		tpg = &camss->tpg[phy->csiphy_id];
-+
-+		if (tpg->testgen.mode > 0) {
-+			val |= (phy->csiphy_id + 1) << CSI2_RX_CFG0_TPG_NUM_SEL;
-+			val |= 1 << CSI2_RX_CFG0_TPG_NUM_EN;
-+		} else {
-+			val |= 0 << CSI2_RX_CFG0_TPG_NUM_SEL;
-+			val |= 0 << CSI2_RX_CFG0_TPG_NUM_EN;
-+		}
-+	}
-+
- 	writel(val, csid->base + CSID_CSI2_RX_CFG0);
- 
- 	val = CSI2_RX_CFG1_ECC_CORRECTION_EN;
-diff --git a/drivers/media/platform/qcom/camss/camss-tpg-gen1.c b/drivers/media/platform/qcom/camss/camss-tpg-gen1.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..a8899ccac52b0ad66296182f3fb70ad34bb1f711
---- /dev/null
-+++ b/drivers/media/platform/qcom/camss/camss-tpg-gen1.c
-@@ -0,0 +1,245 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * camss-tpg-gen1.c
-+ *
-+ * Qualcomm MSM Camera Subsystem - TPG (Test Patter Generator) Module
-+ *
-+ * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
-+#include <linux/completion.h>
-+#include <linux/interrupt.h>
-+#include <linux/io.h>
-+#include <linux/kernel.h>
-+#include <linux/of.h>
-+
-+#include "camss-tpg.h"
-+#include "camss.h"
-+
-+#define TPG_HW_VERSION		0x0
-+#define		HW_VERSION_STEPPING		0
-+#define		HW_VERSION_REVISION		16
-+#define		HW_VERSION_GENERATION		28
-+
-+#define TPG_HW_STATUS		0x4
-+
-+#define TPG_VC_n_GAIN_CFG(n)	(0x60 + (n) * 0x60)
-+
-+#define TPG_CTRL	0x64
-+#define		TPG_CTRL_TEST_EN		0
-+#define		TPG_CTRL_PHY_SEL		3
-+#define		TPG_CTRL_NUM_ACTIVE_LANES	4
-+#define		TPG_CTRL_VC_DT_PATTERN_ID	6
-+#define		TPG_CTRL_OVERLAP_SHDR_EN	10
-+#define		TPG_CTRL_NUM_ACTIVE_VC		30
-+#define			NUM_ACTIVE_VC_0_ENABLED		0
-+#define			NUM_ACTIVE_VC_0_1_ENABLED	1
-+#define			NUM_ACTIVE_VC_0_1_2_ENABLED	2
-+#define			NUM_ACTIVE_VC_0_1_3_ENABLED	3
-+
-+#define TPG_VC_n_CFG0(n)	(0x68 + (n) * 0x60)
-+#define		TPG_VC_n_CFG0_VC_NUM		0
-+#define		TPG_VC_n_CFG0_NUM_ACTIVE_DT	8
-+#define			NUM_ACTIVE_SLOTS_0_ENABLED		0
-+#define			NUM_ACTIVE_SLOTS_0_1_ENABLED		1
-+#define			NUM_ACTIVE_SLOTS_0_1_2_ENABLED		2
-+#define			NUM_ACTIVE_SLOTS_0_1_3_ENABLED		3
-+#define		TPG_VC_n_CFG0_NUM_BATCH		12
-+#define		TPG_VC_n_CFG0_NUM_FRAMES	16
-+
-+#define TPG_VC_n_LSFR_SEED(n)		(0x6C + (n) * 0x60)
-+
-+#define TPG_VC_n_HBI_CFG(n)		(0x70 + (n) * 0x60)
-+
-+#define TPG_VC_n_VBI_CFG(n)		(0x74 + (n) * 0x60)
-+
-+#define TPG_VC_n_COLOR_BARS_CFG(n)		(0x78 + (n) * 0x60)
-+#define		TPG_VC_n_COLOR_BARS_CFG_PIX_PATTERN		0
-+#define		TPG_VC_n_COLOR_BARS_CFG_QCFA_EN			3
-+#define		TPG_VC_n_COLOR_BARS_CFG_SPLIT_EN		4
-+#define		TPG_VC_n_COLOR_BARS_CFG_NOISE_EN		5
-+#define		TPG_VC_n_COLOR_BARS_CFG_ROTATE_PERIOD		8
-+#define		TPG_VC_n_COLOR_BARS_CFG_XCFA_EN			16
-+#define		TPG_VC_n_COLOR_BARS_CFG_SIZE_X			24
-+#define		TPG_VC_n_COLOR_BARS_CFG_SIZE_Y			28
-+
-+#define TPG_VC_m_DT_n_CFG_0(m, n)	(0x7C + (m) * 0x60 + (n) * 0xC)
-+#define		TPG_VC_m_DT_n_CFG_0_FRAME_HEIGHT	0
-+#define		TPG_VC_m_DT_n_CFG_0_FRAME_WIDTH		16
-+
-+#define TPG_VC_m_DT_n_CFG_1(m, n)	(0x80 + (m) * 0x60 + (n) * 0xC)
-+#define		TPG_VC_m_DT_n_CFG_1_DATA_TYPE		0
-+#define		TPG_VC_m_DT_n_CFG_1_ECC_XOR_MASK	8
-+#define		TPG_VC_m_DT_n_CFG_1_CRC_XOR_MASK	16
-+
-+#define TPG_VC_m_DT_n_CFG_2(m, n)	(0x84 + (m) * 0x60 + (n) * 0xC)
-+#define		TPG_VC_m_DT_n_CFG_2_PAYLOAD_MODE		0
-+#define		TPG_VC_m_DT_n_CFG_2_USER_SPECIFIED_PAYLOAD	4
-+#define		TPG_VC_m_DT_n_CFG_2_ENCODE_FORMAT		28
-+
-+#define TPG_VC_n_COLOR_BAR_CFA_COLOR0(n)	(0xB0 + (n) * 0x60)
-+#define TPG_VC_n_COLOR_BAR_CFA_COLOR1(n)	(0xB4 + (n) * 0x60)
-+#define TPG_VC_n_COLOR_BAR_CFA_COLOR2(n)	(0xB8 + (n) * 0x60)
-+#define TPG_VC_n_COLOR_BAR_CFA_COLOR3(n)	(0xBC + (n) * 0x60)
-+
-+/* Line offset between VC(n) and VC(n-1), n form 1 to 3 */
-+#define TPG_VC_n_SHDR_CFG	(0x84 + (n) * 0x60)
-+
-+#define TPG_TOP_IRQ_STATUS	0x1E0
-+#define TPG_TOP_IRQ_MASK	0x1E4
-+#define TPG_TOP_IRQ_CLEAR	0x1E8
-+#define TPG_TOP_IRQ_SET		0x1EC
-+#define TPG_IRQ_CMD		0x1F0
-+#define TPG_CLEAR		0x1F4
-+
-+static int tpg_stream_on(struct tpg_device *tpg)
-+{
-+	struct tpg_testgen_config *tg = &tpg->testgen;
-+	struct v4l2_mbus_framefmt *input_format;
-+	const struct tpg_format_info *format;
-+	u8 lane_cnt = tpg->res->lane_cnt;
-+	u8 i;
-+	u8 dt_cnt = 0;
-+	u32 val;
-+
-+	/* Loop through all enabled VCs and configure stream for each */
-+	for (i = 0; i < tpg->res->vc_cnt; i++) {
-+		input_format = &tpg->fmt[MSM_TPG_PAD_SRC + i];
-+		format = tpg_get_fmt_entry(tpg->res->formats->formats,
-+					   tpg->res->formats->nformats,
-+					   input_format->code);
-+
-+		val = (input_format->height & 0xffff) << TPG_VC_m_DT_n_CFG_0_FRAME_HEIGHT;
-+		val |= (input_format->width & 0xffff) << TPG_VC_m_DT_n_CFG_0_FRAME_WIDTH;
-+		writel_relaxed(val, tpg->base + TPG_VC_m_DT_n_CFG_0(i, dt_cnt));
-+
-+		val = format->data_type << TPG_VC_m_DT_n_CFG_1_DATA_TYPE;
-+		writel_relaxed(val, tpg->base + TPG_VC_m_DT_n_CFG_1(i, dt_cnt));
-+
-+		val = (tg->mode - 1) << TPG_VC_m_DT_n_CFG_2_PAYLOAD_MODE;
-+		val |= 0xBE << TPG_VC_m_DT_n_CFG_2_USER_SPECIFIED_PAYLOAD;
-+		val |= format->encode_format << TPG_VC_m_DT_n_CFG_2_ENCODE_FORMAT;
-+		writel_relaxed(val, tpg->base + TPG_VC_m_DT_n_CFG_2(i, dt_cnt));
-+
-+		writel_relaxed(0xA00, tpg->base + TPG_VC_n_COLOR_BARS_CFG(i));
-+
-+		writel_relaxed(0x4701, tpg->base + TPG_VC_n_HBI_CFG(i));
-+		writel_relaxed(0x438, tpg->base + TPG_VC_n_VBI_CFG(i));
-+
-+		writel_relaxed(0x12345678, tpg->base + TPG_VC_n_LSFR_SEED(i));
-+
-+		/* configure one DT, infinite frames */
-+		val = i << TPG_VC_n_CFG0_VC_NUM;
-+		val |= 0 << TPG_VC_n_CFG0_NUM_FRAMES;
-+		writel_relaxed(val, tpg->base + TPG_VC_n_CFG0(i));
-+	}
-+
-+	writel_relaxed(1, tpg->base + TPG_TOP_IRQ_MASK);
-+
-+	val = 1 << TPG_CTRL_TEST_EN;
-+	val |= 0 << TPG_CTRL_PHY_SEL;
-+	val |= (lane_cnt - 1) << TPG_CTRL_NUM_ACTIVE_LANES;
-+	val |= 0 << TPG_CTRL_VC_DT_PATTERN_ID;
-+	val |= (tpg->res->vc_cnt - 1) << TPG_CTRL_NUM_ACTIVE_VC;
-+	writel_relaxed(val, tpg->base + TPG_CTRL);
-+
-+	return 0;
-+}
-+
-+static void tpg_stream_off(struct tpg_device *tpg)
-+{
-+	writel_relaxed(0, tpg->base + TPG_CTRL);
-+	writel_relaxed(0, tpg->base + TPG_TOP_IRQ_MASK);
-+	writel_relaxed(1, tpg->base + TPG_TOP_IRQ_CLEAR);
-+	writel_relaxed(1, tpg->base + TPG_IRQ_CMD);
-+	writel_relaxed(1, tpg->base + TPG_CLEAR);
-+}
-+
-+static void tpg_configure_stream(struct tpg_device *tpg, u8 enable)
-+{
-+	if (enable)
-+		tpg_stream_on(tpg);
-+	else
-+		tpg_stream_off(tpg);
-+}
-+
-+static int tpg_configure_testgen_pattern(struct tpg_device *tpg, s32 val)
-+{
-+	if (val > 0 && val <= TPG_PAYLOAD_MODE_COLOR_BARS)
-+		tpg->testgen.mode = val;
-+
-+	return 0;
-+}
-+
-+/*
-+ * tpg_hw_version - tpg hardware version query
-+ * @tpg: tpg device
-+ *
-+ * Return HW version or error
-+ */
-+static u32 tpg_hw_version(struct tpg_device *tpg)
-+{
-+	u32 hw_version;
-+	u32 hw_gen;
-+	u32 hw_rev;
-+	u32 hw_step;
-+
-+	hw_version = readl_relaxed(tpg->base + TPG_HW_VERSION);
-+	hw_gen = (hw_version >> HW_VERSION_GENERATION) & 0xF;
-+	hw_rev = (hw_version >> HW_VERSION_REVISION) & 0xFFF;
-+	hw_step = (hw_version >> HW_VERSION_STEPPING) & 0xFFFF;
-+	dev_dbg(tpg->camss->dev, "tpg HW Version = %u.%u.%u\n",
-+		hw_gen, hw_rev, hw_step);
-+
-+	return hw_version;
-+}
-+
-+/*
-+ * tpg_isr - tpg module interrupt service routine
-+ * @irq: Interrupt line
-+ * @dev: tpg device
-+ *
-+ * Return IRQ_HANDLED on success
-+ */
-+static irqreturn_t tpg_isr(int irq, void *dev)
-+{
-+	struct tpg_device *tpg = dev;
-+	u32 val;
-+
-+	val = readl_relaxed(tpg->base + TPG_TOP_IRQ_STATUS);
-+	writel_relaxed(val, tpg->base + TPG_TOP_IRQ_CLEAR);
-+	writel_relaxed(1, tpg->base + TPG_IRQ_CMD);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+/*
-+ * tpg_reset - Trigger reset on tpg module and wait to complete
-+ * @tpg: tpg device
-+ *
-+ * Return 0 on success or a negative error code otherwise
-+ */
-+static int tpg_reset(struct tpg_device *tpg)
-+{
-+	writel_relaxed(0, tpg->base + TPG_CTRL);
-+	writel_relaxed(0, tpg->base + TPG_TOP_IRQ_MASK);
-+	writel_relaxed(1, tpg->base + TPG_TOP_IRQ_CLEAR);
-+	writel_relaxed(1, tpg->base + TPG_IRQ_CMD);
-+	writel_relaxed(1, tpg->base + TPG_CLEAR);
-+
-+	return 0;
-+}
-+
-+static void tpg_subdev_init(struct tpg_device *tpg)
-+{
-+	tpg->testgen.modes = testgen_payload_modes;
-+	tpg->testgen.nmodes = TPG_PAYLOAD_MODE_NUM_SUPPORTED_GEN1;
-+}
-+
-+const struct tpg_hw_ops tpg_ops_gen1 = {
-+	.configure_stream = tpg_configure_stream,
-+	.configure_testgen_pattern = tpg_configure_testgen_pattern,
-+	.hw_version = tpg_hw_version,
-+	.isr = tpg_isr,
-+	.reset = tpg_reset,
-+	.subdev_init = tpg_subdev_init,
-+};
-diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
-index 34f71039038e881ced9c9f06bd70915b5c5f610f..ced31e3655a52a7b2e55b109085cf24a9e230f1d 100644
---- a/drivers/media/platform/qcom/camss/camss.c
-+++ b/drivers/media/platform/qcom/camss/camss.c
-@@ -2935,6 +2935,53 @@ static const struct camss_subdev_resources csiphy_res_8775p[] = {
- 	},
- };
- 
-+static const struct camss_subdev_resources tpg_res_8775p[] = {
-+	/* TPG0 */
-+	{
-+		.regulators = {  },
-+		.clock = { "csiphy_rx" },
-+		.clock_rate = { { 400000000 } },
-+		.reg = { "tpg0" },
-+		.interrupt = { "tpg0" },
-+		.tpg = {
-+			.lane_cnt = 4,
-+			.vc_cnt = 1,
-+			.formats = &tpg_formats_gen1,
-+			.hw_ops = &tpg_ops_gen1
-+		}
-+	},
-+
-+	/* TPG1 */
-+	{
-+		.regulators = {  },
-+		.clock = { "csiphy_rx" },
-+		.clock_rate = { { 400000000 } },
-+		.reg = { "tpg1" },
-+		.interrupt = { "tpg1" },
-+		.tpg = {
-+			.lane_cnt = 4,
-+			.vc_cnt = 1,
-+			.formats = &tpg_formats_gen1,
-+			.hw_ops = &tpg_ops_gen1
-+		}
-+	},
-+
-+	/* TPG2 */
-+	{
-+		.regulators = {  },
-+		.clock = { "csiphy_rx" },
-+		.clock_rate = { { 400000000 } },
-+		.reg = { "tpg2" },
-+		.interrupt = { "tpg2" },
-+		.tpg = {
-+			.lane_cnt = 4,
-+			.vc_cnt = 1,
-+			.formats = &tpg_formats_gen1,
-+			.hw_ops = &tpg_ops_gen1
-+		}
-+	},
-+};
-+
- static const struct camss_subdev_resources csid_res_8775p[] = {
- 	/* CSID0 */
- 	{
-@@ -4445,6 +4492,13 @@ static int camss_probe(struct platform_device *pdev)
- 	if (!camss->csiphy)
- 		return -ENOMEM;
- 
-+	if (camss->res->version == CAMSS_8775P) {
-+		camss->tpg = devm_kcalloc(dev, camss->res->tpg_num,
-+					  sizeof(*camss->tpg), GFP_KERNEL);
-+		if (!camss->tpg)
-+			return -ENOMEM;
-+	}
-+
- 	camss->csid = devm_kcalloc(dev, camss->res->csid_num, sizeof(*camss->csid),
- 				   GFP_KERNEL);
- 	if (!camss->csid)
-@@ -4638,11 +4692,13 @@ static const struct camss_resources sa8775p_resources = {
- 	.version = CAMSS_8775P,
- 	.pd_name = "top",
- 	.csiphy_res = csiphy_res_8775p,
-+	.tpg_res = tpg_res_8775p,
- 	.csid_res = csid_res_8775p,
- 	.csid_wrapper_res = &csid_wrapper_res_sa8775p,
- 	.vfe_res = vfe_res_8775p,
- 	.icc_res = icc_res_sa8775p,
- 	.csiphy_num = ARRAY_SIZE(csiphy_res_8775p),
-+	.tpg_num = ARRAY_SIZE(tpg_res_8775p),
- 	.csid_num = ARRAY_SIZE(csid_res_8775p),
- 	.vfe_num = ARRAY_SIZE(vfe_res_8775p),
- 	.icc_path_num = ARRAY_SIZE(icc_res_sa8775p),
 
--- 
-2.34.1
+译文格式要求
+------------
+
+	- 每行长度最多不超过40个字符
+	- 每行长度请保持一致
+	- 标题的下划线长度请按照一个英文一个字符、一个中文两个字符与标题对齐
+	- 其它的修饰符请与英文文档保持一致
+
+
+Refer to how-to.rst [1] for more details.
+
+
+[1] 
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/translations/zh_CN/how-to.rst
+
+
+Dongliang Mu
+
+>
+> Best regards,
+> Mingyin
+>>> +
+>>> +引言
+>>> +============
+>>> +UBIFS 利用 fscrypt 框架为文件内容及文件名提供保密性。这能防止攻击者在单一时间点读取文件系
+>>> +统内容的攻击行为。典型案例是智能手机丢失时，攻击者若没有文件系统解密密钥则无法读取设备上的个
+>>> +人数据。
+>>> +
+>>> +在现阶段，UBIFS 加密尚不能防止攻击者篡改文件系统内容后用户继续使用设备的攻击场景。这种情况
+>>> +下，攻击者可任意修改文件系统内容而不被用户察觉。例如修改二进制文件使其执行时触发恶意行为
+>>> +[DMC-CBC-ATTACK]。由于 UBIFS 大部分文件系统元数据以明文存储，使得文件替换和内容篡改变得
+>>> +相当容易。
+>>> +
+>>> +其他全盘加密系统（如 dm-crypt）可以覆盖所有文件系统元数据，这类系统虽然能增加这种攻击的难度，
+>>> +但特别是当攻击者能多次访问设备时，也有可能实现攻击。对于基于 Linux 块 IO 层的 dm-crypt 等文
+>>> +件系统，可通过 dm-integrity 或 dm-verity 子系统[DM-INTEGRITY, DM-VERITY]在块层实现完整数据认
+>>> +证，这些功能也可与 dm-crypt 结合使用[CRYPTSETUP2]。
+>>> +
+>>> +本文描述一种为 UBIFS 实现文件内容认证和完整元数据认证的方法。由于 UBIFS 使用 fscrypt 进行文件内
+>>> +容和文件名加密，认证系统可与 fscrypt 集成以利用密钥派生等现有功能。但系统同时也应支持在不启用加
+>>> +密的情况下使用 UBIFS 认证。
+>>> +
+>>> +
+>>> +MTD, UBI & UBIFS
+>>> +----------------
+>>> +在 Linux 中，MTD（内存技术设备）子系统提供访问裸闪存设备的统一接口。运行于 MTD 之上的重要
+>>> +子系统是 UBI（无序块映像），它为闪存设备提供卷管理功能，类似于块设备的 LVM。此外，UBI 还处理闪
+>>> +存特有的磨损均衡和透明 I/O 错误处理。UBI 向上层提供逻辑擦除块(LEB)，并透明地映射到闪存的物理擦
+>>> +除块(PEB)。
+>>> +
+>>> +UBIFS 是运行于 UBI 之上的裸闪存文件系统。因此 UBI 处理磨损均衡和部分闪存特性，而 UBIFS
+>>> +专注于可扩展性、性能和可恢复性。
+>>> +
+>>> +::
+>>> +
+>>> +       +------------+ +*******+ +-----------+ +-----+
+>>> +       |            | * UBIFS * | UBI-BLOCK | | ... |
+>>> +       | JFFS/JFFS2 | +*******+ +-----------+ +-----+
+>>> +       |            | +-----------------------------+ +-----------+ +-----+
+>>> +       |            | |              UBI            | | MTD-BLOCK | | ... |
+>>> +       +------------+ +-----------------------------+ +-----------+ +-----+
+>>> +       +------------------------------------------------------------------+
+>>> +       |                  MEMORY TECHNOLOGY DEVICES (MTD)                 |
+>>> +       +------------------------------------------------------------------+
+>>> +       +-----------------------------+ +--------------------------+ +-----+
+>>> +       |         NAND DRIVERS        | |        NOR DRIVERS       | | ... |
+>>> +       +-----------------------------+ +--------------------------+ +-----+
+>>> +
+>>> +            图1：处理裸闪存的 Linux 内核子系统
+>>> +
+>>> +
+>>> +
+>>> +UBIFS 内部维护多个持久化在闪存上的数据结构：
+>>> +
+>>> +- *索引*：存储在闪存上的 B+ 树，叶节点包含文件系统数据
+>>> +- *日志*：在更新闪存索引前收集文件系统变更的辅助数据结构，可减少闪存磨损
+>>> +- *树节点缓存(TNC)*：反映当前文件系统状态的内存 B+ 树，避免频繁读取闪存。本质上是索引的内
+>>> +  存表示，但包含额外属性
+>>> +- *LEB属性树(LPT)*：用于统计每个 UBI LEB 空闲空间的闪存B+树
+>>> +
+>>> +本节后续将详细讨论UBIFS的闪存数据结构。因为 TNC 不直接持久化到闪存，其在此处的重要性较低。
+>>> +更多 UBIFS 细节详见[UBIFS-WP]。
+>>> +
+>>> +
+>>> +UBIFS 索引与树节点缓存
+>>> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>> +
+>>> +UBIFS 在闪存上的基础实体称为 *节点* ，包含多种类型。如存储文件内容块的数据节点
+>>> +( ``struct ubifs_data_node`` )，或表示 VFS 索引节点的 inode 节点
+>>> +( ``struct ubifs_ino_node`` )。几乎所有节点共享包含节点类型、长度、序列号等基础信息的通用头
+>>> +( ``ubifs_ch`` )（见内核源码 ``fs/ubifs/ubifs-media.h`` ）。LPT条目和填充节点（用于填充 LEB
+>>> +尾部不可用空间）等次要节点类型除外。
+>>> +
+>>> +为避免每次变更重写整个 B+ 树，UBIFS 采用 *wandering tree* 实现：仅重写变更节点，旧版本被标记
+>>> +废弃而非立即擦除。因此索引不固定存储于闪存某处，而是在闪存上 *wanders* ，在 LEB 被
+>>> +UBIFS 重用前，闪存上会存在废弃部分。为定位最新索引，UBIFS 在 UBI LEB 1 存储称为 *主节点* 的特
+>>> +殊节点，始终指向最新 UBIFS 索引根节点。为增强可恢复性，主节点还备份到 LEB 2。因此挂载 UBIFS
+>>> +只需读取 LEB 1 和 2 获取当前主节点，进而定位最新闪存索引。
+>>> +
+>>> +TNC 是闪存索引的内存表示，包含未持久化的运行时属性（如脏标记）。TNC 作为回写式缓存，所有闪存索引
+>>> +修改都通过 TNC 完成。与其他缓存类似，TNC 无需将完整索引全部加载到内存中，需要时从闪存读取部分内
+>>> +容。 *提交* 是更新闪存文件系统结构（如索引）的 UBIFS 操作。每次提交时，标记为脏的 TNC 节点被写入
+>>> +闪存以更新持久化索引。
+>>> +
+>>> +
+>>> +日志
+>>> +~~~~~~~
+>>> +
+>>> +为避免闪存磨损，索引仅在满足特定条件（如 ``fsync(2)`` ）时才持久化（提交）。日志用于记录索引提
+>>> +交之间的所有变更（以 inode 节点、数据节点等形式）。挂载时从闪存读取日志并重放到 TNC（此时 TNC
+>>> +按需从闪存索引创建）。
+>>> +
+>>> +UBIFS 保留一组专用于日志的 LEB（称为 *日志区* ）。日志区 LEB 数量在文件系统创建时配置（使用
+>>> +``mkfs.ubifs`` ）并存储于超级块节点。日志区仅含两类节点： *引用节点* 和 *提交起始节点* 。执行索
+>>> +引提交时写入提交起始节点，每次日志更新时写入引用节点。每个引用节点指向构成日志条目的其他节点（
+>>> +inode 节点、数据节点等）在闪存上的位置，这些节点称为 *bud* ，描述包含数据的实际文件系统变更。
+>>> +
+>>> +日志区以环形缓冲区维护。当日志将满时触发提交操作，同时写入提交起始节点。因此挂载时 UBIFS 查找
+>>> +最新提交起始节点，仅重放其后的引用节点。提交起始节点前的引用节点将被忽略（因其已属于闪存索引）。
+>>> +
+>>> +写入日志条目时，UBIFS 首先确保有足够空间写入引用节点和该条目的 bud。然后先写引用节点，再写描述
+>>> +文件变更的 bud。在日志重放阶段，UBIFS 会记录每个参考节点，并检查其引用的 LEB位置以定位 buds。
+>>> +若这些数据损坏或丢失，UBIFS 会尝试通过重新读取 LEB 来恢复，但仅针对日志中最后引用的 LEB，因为只
+>>> +有它可能因断电而损坏。若恢复失败，UBIFS 将拒绝挂载。对于其他 LEB 的错误，UBIFS 会直接终止挂载操
+>>> +作。
+>>> +
+>>> +::
+>>> +
+>>> +       | ----    LOG AREA     ---- | ----------    MAIN AREA    ------------ |
+>>> +
+>>> +        -----+------+-----+--------+----   ------+-----+-----+---------------
+>>> +        \    |      |     |        |   /  /      |     |     |               \
+>>> +        / CS |  REF | REF |        |   \  \ DENT | INO | INO |               /
+>>> +        \    |      |     |        |   /  /      |     |     |               \
+>>> +         ----+------+-----+--------+---   -------+-----+-----+----------------
+>>> +                 |     |                  ^            ^
+>>> +                 |     |                  |            |
+>>> +                 +------------------------+            |
+>>> +                       |                               |
+>>> +                       +-------------------------------+
+>>> +
+>>> +
+>>> +                图2：包含提交起始节点(CS)和引用节点(REF)的日志区闪存布局，引用节点指向含
+>>> +                    bud 的主区
+>>> +
+>>> +
+>>> +LEB属性树/表
+>>> +~~~~~~~~~~~~~~~~~~~~~~~
+>>> +
+>>> +LEB 属性树用于存储每个 LEB 的信息，包括 LEB 类型、LEB 上的空闲空间和 *脏空间* （旧空间，废弃
+>>> +内容） [1]_ 的数量。因为 UBIFS 从不在单个 LEB 混合存储索引节点和数据节点，所以 LEB 的类型至关
+>>> +重要，每个 LEB 都有特定用途，这对空闲空间计算非常有帮助。详见[UBIFS-WP]。
+>>> +
+>>> +LEB 属性树也是 B+ 树，但远小于索引。因为其体积小，所以每次提交时都整块写入，保存 LPT 是原子操作。
+>>> +
+>>> +
+>>> +.. [1] 由于LEB只能追加写入不能覆盖，空闲空间（即 LEB 剩余可写空间）与废弃内容（先前写入但未
+>>> +   擦除前不能覆盖）存在区别。
+>>> +
+>>> +
+>>> +UBIFS认证
+>>> +====================
+>>> +
+>>> +本章介绍UBIFS认证，使UBIFS能验证闪存上元数据和文件内容的真实性与完整性。
+>>> +
+>>> +
+>>> +威胁模型
+>>> +------------
+>>> +
+>>> +UBIFS 认证可检测离线数据篡改。虽然不能防止篡改，但是能让（可信）代码检查闪存文件内容和文件系统元
+>>> +数据的完整性与真实性，也能检查文件内容被替换的攻击。
+>>> +
+>>> +UBIFS 认证不防护全闪存内容回滚（攻击者可转储闪存内容并在后期还原）。也不防护单个索引提交的部分
+>>> +回滚（攻击者能部分撤销变更）。这是因为 UBIFS 不立即覆盖索引树或日志的旧版本，而是标记为废弃，
+>>> +稍后由垃圾回收擦除。攻击者可擦除当前树部分内容并还原闪存上尚未擦除的旧版本。因每次提交总会写入
+>>> +索引根节点和主节点的新版本而不覆盖旧版本，UBI 的磨损均衡操作（将内容从物理擦除块复制到另一擦除
+>>> +块且非原子擦除原块）进一步助长此问题。
+>>> +
+>>> +UBIFS 认证不覆盖认证密钥提供后攻击者在设备执行代码的攻击，需结合安全启动和可信启动等措施确保设
+>>> +备仅执行可信代码。
+>>> +
+>>> +
+>>> +认证
+>>> +--------------
+>>> +
+>>> +为完全信任从闪存读取的数据，所有存储在闪存的 UBIFS 数据结构均需认证：
+>>> +- 包含文件内容、扩展属性、文件长度等元数据的索引
+>>> +- 通过记录文件系统变更来包含文件内容和元数据的日志
+>>> +- 存储 UBIFS 用于空闲空间统计的 UBI LEB 元数据的 LPT
+>>> +
+>>> +
+>>> +索引认证
+>>> +~~~~~~~~~~~~~~~~~~~~
+>>> +
+>>> +借助 *wandering tree* 概念，UBIFS 仅更新和持久化从叶节点到根节点的变更部分。这允许用子节点哈
+>>> +希增强索引树节点。最终索引基本成为 Merkle 树：因索引叶节点含实际文件系统数据，其父索引节点的
+>>> +哈希覆盖所有文件内容和元数据。文件变更时，UBIFS 索引从叶节点到根节点（含主节点）相应更新，此
+>>> +过程可挂钩以同步重新计算各变更节点的哈希。读取文件时，UBIFS 可从叶节点到根节点逐级验证哈希确保
+>>> +节点完整性。
+>>> +
+>>> +为确保整个索引真实性，UBIFS 主节点存储基于密钥的哈希(HMAC)，覆盖自身内容及索引树根节点哈希。
+>>> +如前所述，主节点在索引持久化时（即索引提交时）总会写入闪存。
+>>> +
+>>> +此方法仅修改 UBIFS 索引节点和主节点以包含哈希，其他类型节点保持不变，减少了对 UBIFS 用户（如
+>>> +嵌入式设备）宝贵的存储开销。
+>>> +
+>>> +::
+>>> +
+>>> +                             +---------------+
+>>> +                             |  Master Node  |
+>>> +                             |    (hash)     |
+>>> +                             +---------------+
+>>> +                                     |
+>>> +                                     v
+>>> +                            +-------------------+
+>>> +                            |  Index Node #1    |
+>>> +                            |                   |
+>>> +                            | branch0   branchn |
+>>> +                            | (hash)    (hash)  |
+>>> +                            +-------------------+
+>>> +                               |    ...   |  (fanout: 8)
+>>> +                               |          |
+>>> +                       +-------+          +------+
+>>> +                       |                         |
+>>> +                       v                         v
+>>> +            +-------------------+       +-------------------+
+>>> +            |  Index Node #2    |       |  Index Node #3    |
+>>> +            |                   |       |                   |
+>>> +            | branch0   branchn |       | branch0   branchn |
+>>> +            | (hash)    (hash)  |       | (hash)    (hash)  |
+>>> +            +-------------------+       +-------------------+
+>>> +                 |   ...                     |   ...   |
+>>> +                 v                           v         v
+>>> +               +-----------+         +----------+  +-----------+
+>>> +               | Data Node |         | INO Node |  | DENT Node |
+>>> +               +-----------+         +----------+  +-----------+
+>>> +
+>>> +
+>>> +           图3：索引节点哈希与主节点 HMAC 的覆盖范围
+>>> +
+>>> +
+>>> +
+>>> +健壮性性和断电安全性的关键在于以原子操作持久化哈希值与文件内容。UBIFS 现有的变更节点持久化机制专为此设计，
+>>> +能够确保断电时安全恢复。为索引节点添加哈希值不会改变该机制，因为每个哈希值都与其对应节点以原子操作同步持久化。
+>>> +
+>>> +
+>>> +日志认证
+>>> +~~~~~~~~~~~~~~~~~~~~~~
+>>> +
+>>> +日志也需要认证。因为日志持续写入，必须频繁地添加认证信息以确保断电时未认证数据量可控。方法是从提交起
+>>> +始节点开始，对先前引用节点、当前引用节点和 bud 节点创建连续哈希链。适时地在bud节点间插入认证节
+>>> +点，这种新节点类型包含哈希链当前状态的 HMAC。因此日志可认证至最后一个认证节点。日志尾部无认证节
+>>> +点的部分无法认证，在日志重放时跳过。
+>>> +
+>>> +日志认证示意图如下::
+>>> +
+>>> +    ,,,,,,,,
+>>> +    ,......,...........................................
+>>> +    ,. CS  ,               hash1.----.           hash2.----.
+>>> +    ,.  |  ,                    .    |hmac            .    |hmac
+>>> +    ,.  v  ,                    .    v                .    v
+>>> +    ,.REF#0,-> bud -> bud -> bud.-> auth -> bud -> bud.-> auth ...
+>>> +    ,..|...,...........................................
+>>> +    ,  |   ,
+>>> +    ,  |   ,,,,,,,,,,,,,,,
+>>> +    .  |            hash3,----.
+>>> +    ,  |                 ,    |hmac
+>>> +    ,  v                 ,    v
+>>> +    , REF#1 -> bud -> bud,-> auth ...
+>>> +    ,,,|,,,,,,,,,,,,,,,,,,
+>>> +       v
+>>> +      REF#2 -> ...
+>>> +       |
+>>> +       V
+>>> +      ...
+>>> +
+>>> +因为哈希值包含引用节点，攻击者无法重排或跳过日志头重放，仅能移除日志尾部的bud节点或引用节点，最大
+>>> +限度将文件系统回退至上次提交。
+>>> +
+>>> +日志区位置存储于主节点。因为主节点通过 HMAC 认证，所以未经检测无法篡改。日志区大小在文件系统创建时由
+>>> +`mkfs.ubifs` 指定并存储于超级块节点。为避免篡改此值及其他参数，超级块结构添加 HMAC。超级块
+>>> +节点存储在 LEB 0，仅在功能标志等变更时修改，文件变更时不修改。
+>>> +
+>>> +
+>>> +LPT认证
+>>> +~~~~~~~~~~~~~~~~~~
+>>> +
+>>> +LPT 根节点在闪存上的位置存储于 UBIFS 主节点。因为 LPT 每次提交时都以原子操作写入和读取，无需单独认证
+>>> +树节点。通过主节点存储的简单哈希保护完整 LPT 即可。因为主节点自身已认证，通过验证主节点真实性并
+>>> +比对存储的 LTP 哈希与读取的闪存 LPT 计算哈希值，即可验证 LPT 真实性。
+>>> +
+>>> +
+>>> +密钥管理
+>>> +--------------
+>>> +
+>>> +为了简化实现，UBIFS 认证使用单一密钥计算超级块、主节点、提交起始节点和引用节点的 HMAC。创建文
+>>> +件系统(`mkfs.ubifs`) 时需提供此密钥以认证超级块节点。挂载文件系统时也需此密钥验证认证节点并
+>>> +为变更生成新 HMAC。
+>>> +
+>>> +UBIFS 认证旨在与 UBIFS 加密(fscrypt)协同工作以提供保密性和真实性。因为 UBIFS 加密采用基于目录
+>>> +的差异化加密策略，可能存在多个 fscrypt 主密钥甚至未加密目录。而 UBIFS 认证采用全有或全无方式，要么认
+>>> +证整个文件系统要么完全不认证。基于此特性，且为确保认证机制可独立于加密功能使用，UBIFS 认证不与
+>>> +fscrypt 共享主密钥，而是维护独立的认证专用密钥。
+>>> +
+>>> +提供认证密钥的API尚未定义，但可通过类似 fscrypt 的用户空间密钥环提供。需注意当前 fscrypt 方
+>>> +案存在缺陷，用户空间 API 终将变更[FSCRYPT-POLICY2]。
+>>> +
+>>> +用户仍可通过用户空间提供单一口令或密钥覆盖 UBIFS 认证与加密。相应用户空间工具可解决此问题：除派
+>>> +生的 fscrypt 加密主密钥外，额外派生认证密钥。
+>>> +
+>>> +为检查挂载时密钥可用性，UBIFS 超级块节点将额外存储认证密钥的哈希。此方法类似 fscrypt 加密策
+>>> +略 v2 提出的方法[FSCRYPT-POLICY2]。
+>>> +
+>>> +
+>>> +未来扩展
+>>> +=================
+>>> +
+>>> +特定场景下，若供应商需要向客户提供认证文件系统镜像，应该能在不共享 UBIFS 认证密钥的前提下实现。方
+>>> +法是在每个 HMAC 外额外存储数字签名，供应商随文件系统镜像分发公钥。若该文件系统后续需要修改，
+>>> +若后续需修改该文件系统，UBIFS 可在首次挂载时将全部数字签名替换为 HMAC，其处理逻辑与 IMA/EVM 子系
+>>> +统应对此类情况的方式类似。此时，HMAC 密钥需按常规方式预先提供。
+>>> +
+>>> +
+>>> +参考
+>>> +==========
+>>> +
+>>> +[CRYPTSETUP2]        https://www.saout.de/pipermail/dm-crypt/2017-November/005745.html
+>>> +
+>>> +[DMC-CBC-ATTACK]     https://www.jakoblell.com/blog/2013/12/22/practical-malleability-attack-against-cbc-en
+>>> +crypted-luks-partitions/
+>>> +
+>>> +[DM-INTEGRITY]       https://www.kernel.org/doc/Documentation/device-mapper/dm-integrity.rst
+>>> +
+>>> +[DM-VERITY]          https://www.kernel.org/doc/Documentation/device-mapper/verity.rst
+>>> +
+>>> +[FSCRYPT-POLICY2]    https://www.spinics.net/lists/linux-ext4/msg58710.html
+>>> +
+>>> +[UBIFS-WP]           http://www.linux-mtd.infradead.org/doc/ubifs_whitepaper.pdf
+>>> --
+>>> 2.25.1
 
 
