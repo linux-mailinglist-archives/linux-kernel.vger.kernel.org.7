@@ -1,266 +1,310 @@
-Return-Path: <linux-kernel+bounces-735470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C093DB08FC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:44:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D104B08FC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:47:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96B203B1B95
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:44:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C237A3AE4F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:46:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E42332F7D0B;
-	Thu, 17 Jul 2025 14:44:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80D22F7D02;
+	Thu, 17 Jul 2025 14:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="leqL4wNi"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NSCznqsT";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="xlfW3B4A"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DF8F2BEC28
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 14:44:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752763491; cv=none; b=RYVPw7+WvVxnIKsPKVnyQIdHrKtXZMjgyfUvZe2zRMfHamoiBvag7+6zPrM9FkrJkQlzRt8M8IN7jtV6r16yMQjsOI5UW/g2stmc8XGSMiKAAyIiFaOs9fYY+ZekSX+8MTSplvzpfeMfEnpPsjLDjBhn+kUMeIayWBkqFMj4ZoA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752763491; c=relaxed/simple;
-	bh=N7zNq45QUNdUpyjATamHndz1kMnW2ULq+Iir8spcIZw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iRqt2ykLaUTRCNjhZ78EdIkaYivFlKm7qJkBlu55QjuU1tkI/aOnB7/kbVqYYOmxvLqe5DW9rGqv8aW13+zSjL2A6pSC5/RLvoj9t06RT56z3QlQTzSDGJUGWu6fx7rO+Geoai8yFpu7oHtKR1H1Qtz3YnojokDQArQESv7/3/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=leqL4wNi; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-23649faf69fso9741725ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 07:44:48 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58E882F7CEE
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 14:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752763618; cv=fail; b=jTQ0aRUN9Ln8SIE5i6bjsN+Vp/5yHnZfZSCFeMYZO8ginxfqf6t9ak4S6L5Qe02i1qHdrzNvMOyt9HK8p5ot2BwwCk3WUqXEdn4Ru5tMrhwQ0Iea/MKf2FsUVvmOIrFlXxLwQwAUMBqn207oL6AOpw8901igym4jddvXn800EGY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752763618; c=relaxed/simple;
+	bh=y7L+ttuErBo/FYxHWWYPDq9enHFslHTjpIgA2sT/j1g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=OYC2w4LW1Ij9tLewJfb0ourAVlyVifD6Jp91TCL7bdS8m4qqc0SNfwMh86Qm/Iz4tFhrFOClvoJ/TTB+zg+kv1HTvRUQu7JNxBGJjii68QlEwQSE7LbmXYXXw5RJvsrJ5kvrgYJ5Bq/ZB7hujuZN+7CRVm+WBqiekxok2uVHgI0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=NSCznqsT; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=xlfW3B4A; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56HEfsbB027100;
+	Thu, 17 Jul 2025 14:46:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=ypMrdcyidLIYqGA6w3
+	oYgYDTqpBHZPE8IxWSmziyC/I=; b=NSCznqsTR9HUyyOP/KivTJMnVmgDdQkiL4
+	I/NcmT5AwC3qmkXrWxlSb4F34PBJ+NOMUk7RYG/CYKgUShvaq1ibUgF7ZtY17hR/
+	2JXOAl8ToDxhp4WW6kpQq+o/JLJRzEKzmja2Zn3oxL7oNqJ4HhfUGbD/CeqqrmhI
+	pBlk+f2A59PlKo3OXHYq3K31AaGYY68quQjzwU5cfgaRzxlXqH2RomksfqXd3xxX
+	j27sOCBBz3Sumr3iJnzHvBjJ/ngvyNfy8BzgYg+i+zUFkZszxlZ6FqRDGXyrLrbV
+	CHVVyMfGYeg2C53K9BhWVQY/K0mCZP8c8GpNwPDz1uQO7YEzyNFg==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47ujy4u5gp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 17 Jul 2025 14:46:27 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56HDl2Df013045;
+	Thu, 17 Jul 2025 14:46:26 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10on2055.outbound.protection.outlook.com [40.107.92.55])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 47ue5cb4ku-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 17 Jul 2025 14:46:26 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=c4G5rl2ADsbOJMlvfekHizcohuEGKg+oMlkNoRiHDrf8FPJru3uZWn3WwLZXUInFvljkV5jx805kTlqknoT65S28MWJAYhmGwGsN8BDme1pzHtRl3Qw7HbHluY9is2Yl4G9yB5xqF4o0SGXJ1sfIbwlyayloPHo/lD6k7mmU0SjbzsZfslqRtpI/YyDqlhjuDi1/tbAO6MwoBI5AT/+YpZrfDbbCiygj+cBv2zi9Ch6eA5QpiVE8FubOKjnzT9J70xDMVGTXt5c1zTnBc8/KQSZCQiI8LBBxpmY6Aladkikz47J2vo2oTR4lrKJFsMj3fpAYtQp2Vh+738cwitCUCQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ypMrdcyidLIYqGA6w3oYgYDTqpBHZPE8IxWSmziyC/I=;
+ b=Og+xgqHGuyr4sh6UmQGhn6UKZiTEsongSjOT+2brpyH5pBxWpTQiBeS/YoLQHYGaqmnhx/uoZDoS3hKiSFYyt5d9JtsowSC85nSkrd8LeG3b5bHt0Iit3Bnq4PRW+8JV80AD004SLcCFBBZm4P3jpOYzQjPCDF01hlwHHOjMCctip8Fn1hMRPAjRGa+NCQmSmdlAAAD8GEZ9DW0FWDNtsImtIH8Aqumi7Zr52IFajyBVhmrkgLo8prshLSELv8n3WdjajlK44IXSNEaPkzoZRrg295jFXau18xiZi3DystRpEMbppk60M6/mksjRNIR3H87hOh4+j8actwch4DIMUA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752763488; x=1753368288; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HMki3EREzOkEdCOqJgQuxQoEpYrU9bwlyOJXDCisQCI=;
-        b=leqL4wNiDuf5F6bVJJadKFKU2XC12tD0ByftsRKOXFgZ2mwY2jbh+B6DtPmm0qYMoL
-         /spx6vGog7DPsmb0vTMlPNEFhH7PDjejMUzsJPkh9+89r0cDJ9UVwtqEOSYI9rCKm+ht
-         22ZORQ/MIB8qyb1c7Iyrbrc/0wPvfHeKl3o2aRM+yLEKV5LjYdyD8hzbOJxGXjmprjSl
-         euq3L48kd1cB30URiyOPsd6GY49oeeN6lMkOpDCgbgATUu1HKrCjAefcBimotZHlkJex
-         5LGJT+vEiO6ZoP4UXdk6uK975bgppuT/8YCcAQZUnVLdqG6X5a7w+q/T+UrTlHJYSd7e
-         qVjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752763488; x=1753368288;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HMki3EREzOkEdCOqJgQuxQoEpYrU9bwlyOJXDCisQCI=;
-        b=pk9phQ+kPgzfrJFyYsRc4IjP6X6szwUzph4Nk7NuHRwAb4BiJvsSlQD6hcld6keMBb
-         A4E3enbvl7Lg83uU9uvevMmFmLfM254kmqoUo4WARnkiSnQunrQpHglzpUWKyfCQI6oz
-         brzsoni2fI7Gh9bpqxCLG3i/036OLojVHlWTWtVCBnOysYjqOYbJNoI3oiy9tF89WliI
-         hAmWqhITAYclkSMNThZysK9ZC2tJSOrAVeMLKaM9Uo71zzSVvdmnVp4jYMcCmTOdjf8S
-         SVP3GLRSjRNRL2DweqR/aIkwAvtKCTGJm1pt+NmdX0X2pJq6gbQBY14S3aowrEq3OOly
-         I8mQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+xjIWXsp2tLXoaSUzgrUS/V6U0wElCGFmUfAQXe6jJ603gwqYVGJ+yLWeArr/Oz6c5rSJeoxeBwebHWM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyU+fpJpV9l/6Y+r0RoJSkjmGmuozxj181qd3yMBsHYtfL8UYY
-	4L0q2tO3bTVTji7ECc1XsKpouWnrnmA/eAWxuZeOWySsmTABcf0xStMgsL+lSBWaQzf6/i+81Jk
-	OPo8H9Jo=
-X-Gm-Gg: ASbGnctm5GuN0t5PdMI6UyaBN9mhygg485r4zZW7Wes6T3nyMliUHANhl17hv4oLak8
-	gpJ8iumPmV2nn1hW78whVmf8w5IF+2uQ8jfyCt1GyPsj3wvWtfLbYF4n8X3LTEdm/N4Fkc22/2x
-	OxUfcbBOX2fAP+iHxm8hxlTt+7yWTvWBiQTVSIW5nzoUPYZyik7n/ii6PqmhY7gMlAIkbjQziAk
-	J7r5q4ubHt9ElLGhn4OjJu/X+NbBX26mT15GnPt0tvyQMP80hHvlPZ6pxyOed2l/JeUbN/3M1Fx
-	5QKcvPxqWfWOQ7/7EkwQmNU+gV35KIHwft+HB3YKlvkaG2E5ViT+4V2M2Dqrg8Lby8CVu1Bh/I8
-	hr3TmogxsUDABzh+E5OAfpUgo
-X-Google-Smtp-Source: AGHT+IFxbtqBAGkJym8+VFRPzdrsyZhZt1QmNmPClKyw9FUHG1z6ALCqHlkDrXho3ZJx8sxkci5pug==
-X-Received: by 2002:a17:903:1ac8:b0:234:d431:ec6e with SMTP id d9443c01a7336-23e256849dfmr104855025ad.3.1752763488194;
-        Thu, 17 Jul 2025 07:44:48 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:e0c8:a1e8:3882:b37])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4322b2dsm145347495ad.92.2025.07.17.07.44.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 07:44:47 -0700 (PDT)
-Date: Thu, 17 Jul 2025 08:44:45 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Hiago De Franco <hiagofranco@gmail.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-remoteproc@vger.kernel.org,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Bjorn Andersson <andersson@kernel.org>, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	daniel.baluta@nxp.com, iuliana.prodan@oss.nxp.com,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Hiago De Franco <hiago.franco@toradex.com>,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v8] remoteproc: imx_rproc: detect and attach to
- pre-booted remote cores
-Message-ID: <aHkMXWfs0iXqFTbw@p14s>
-References: <20250716194638.113115-1-hiagofranco@gmail.com>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ypMrdcyidLIYqGA6w3oYgYDTqpBHZPE8IxWSmziyC/I=;
+ b=xlfW3B4AdfHbrhU2YCsJIcmPias7ah1vLGHFhMRWoHCz70UVbsXcty7MXHqbec8XFOzNlm9n149oPGyQoZnLuAw4JMtxYIjsqaudUh6nOUtVbYXLNzDjoS+yv2GeC3xPXIA70bjpHhLNTwy2DCFrbP9GWt6tEHTPOsT++L8Pj+g=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by CH3PR10MB7457.namprd10.prod.outlook.com (2603:10b6:610:159::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.39; Thu, 17 Jul
+ 2025 14:46:24 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%6]) with mapi id 15.20.8922.037; Thu, 17 Jul 2025
+ 14:46:24 +0000
+Date: Thu, 17 Jul 2025 15:46:22 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Zi Yan <ziy@nvidia.com>
+Cc: David Hildenbrand <david@redhat.com>,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        Antonio Quartulli <antonio@mandelbit.com>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>,
+        Kirill Shutemov <k.shutemov@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/huge_memory: refactor after-split (page) cache code.
+Message-ID: <a479057f-5401-44ea-b3a8-dfd82b826721@lucifer.local>
+References: <20250716171112.3666150-1-ziy@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250716171112.3666150-1-ziy@nvidia.com>
+X-ClientProxiedBy: LO4P265CA0052.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2ac::15) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250716194638.113115-1-hiagofranco@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|CH3PR10MB7457:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5c32f17a-ec1f-4d2f-7b71-08ddc540b3cd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?CtqNoa10HVx2Jgk8mA1xZvkHKVS+2qUpny5jDXu0XrRku011hyPmi0ATpZhl?=
+ =?us-ascii?Q?oBtT5VjR1/a0BElQV41YQXkjuBacgtxADS3olfo2PwOk2Z4IfClWOY7y2blf?=
+ =?us-ascii?Q?KK5VqQL8xmd12FcR5rnR+SRceriwvBdezsz56aKQBt3RzkzWn10bN1Gtl6eA?=
+ =?us-ascii?Q?xFEAyxYmTrbeJrSvFRRPxuCj0S/wA5Oy63XNUH09fnmQskF0NlNC1OunnJDV?=
+ =?us-ascii?Q?y5o6/774xNAf6MwarEWA0gFXKLPo2eZ2T7QxJY6GMo9hOshkLFLEsgfMFy6B?=
+ =?us-ascii?Q?Xf6nsSwTojO61T+FNpcDlE0ebntCWxe48uuyUOkmIhVp0naZVdmFzk82Wy/i?=
+ =?us-ascii?Q?qpxCl1p7GjGLeltW/IKKr0YilgEBBjWJeTD8BBr8wq9whS4wdNsIUsWNV5SN?=
+ =?us-ascii?Q?Dx4QDmcY/q47pmicz9+lZceRDXWlt3aBFHB7KpUcxTssH4KbXGRCEE3YMQNE?=
+ =?us-ascii?Q?kQc4nd6CT2BECmW/RQbNgtpkg71eNAj5mD8lcx4/g73bPjJTUz8ad5UZuMuP?=
+ =?us-ascii?Q?uHK8nHzV9srNvJQBqRMGxbOKY5BA8JLfEj/O71P4W5T0UqqvliPGfsQLoqNk?=
+ =?us-ascii?Q?VxkLPHIgjQAOTYulo/bWlpduhklXumRwIUp7p9o+CR17HS/LwnnKrFdtBczN?=
+ =?us-ascii?Q?r7/j7hqhGORsH3HxLshMxk9yoFsk546bCWhZ3FO4SAAewWkog7vIBPU5puaq?=
+ =?us-ascii?Q?bVCbHyef70PNgYa88rwHnOCh51rQujS0GchpH4xIoiafRZvyyCW4WeRgRfM4?=
+ =?us-ascii?Q?nea8S7dKZi0ZfEiBxA9cH5AUQOFRsKgltY392oJ1f86bdELfqbvS2SGG/vq9?=
+ =?us-ascii?Q?SvSI6IDLdrOw0kDmd5ZWk6T2pirWgZOjpbc0iqF5CXL9fzHkRzbaIzzC3N3U?=
+ =?us-ascii?Q?nHha3o9jwxggqt9ndzoQ0evkY6zceHFBRVH8NNZR6uvGgu9BdiBhM8We5CzD?=
+ =?us-ascii?Q?HryM79cLWNgU1eO4CDn56Se61xFqElxDqpXK/mp2vyNREVQrsWklu7xr91il?=
+ =?us-ascii?Q?0XX5ZtJ20rydb79m8p0NHBvmEtOEV+Wrmzq2ikMR65QAblQITVDKFQktEWT1?=
+ =?us-ascii?Q?HRZgS1mRQk+dFEwD351myXcND6fMkuKCqnlrWzXbn3+x3/XwKPXUKg37W/5F?=
+ =?us-ascii?Q?nUc2qyy6ospoqGU7TofCoYH3gCxwFZgpD+tlZ42PfyYdENle34wHHhRdHl22?=
+ =?us-ascii?Q?t0kGImHz/sNRbEeYDJxrvO6RrZpsI0sG5geu7UCAgsUSqrH3yREoAEe8WxvT?=
+ =?us-ascii?Q?/F/z46OfwnSJwLRQbuS/jdmFSxR/eEc7V7dRA0KeTv6S6mvN/JKddvlpUvWR?=
+ =?us-ascii?Q?9Ahh44y/IxMohWUwB4HK34qVon9+jWWfUWo8Q8iQeclasIDCI/dpMQZAGA6Z?=
+ =?us-ascii?Q?TrvWuZa8FEOfURQpz/HiryKhoh0m0BVxnIi3hck+o7KAin3Fz/lztymfyFss?=
+ =?us-ascii?Q?+5DAL9T+pKg=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?GHSyJnN6ODw0KLCYClP8V71qRKnH//mI7WAWNTKTan2ArxqKo2pQ6o8BjLeC?=
+ =?us-ascii?Q?c4vAGJlsSngW8oswIHGJfeL1ZluMzL6MVIXAoHDa72IlM37o4J9/qOAKusW6?=
+ =?us-ascii?Q?givZmKaY3ttLIjNsiC/eXOUYYurRuKMMeW6G44ciRMqJ/lRuZO1PMxzFC1OY?=
+ =?us-ascii?Q?agNL0CovFjt2hvqDA3+OLCFcC5yCvM1kTaOpYjGEHxZAqFeOv1snTztdjobt?=
+ =?us-ascii?Q?rLj82fK6gqwE1a6wiOjMFgCLP4d/nXl4XxpbFDDAzwZn4EdfdLIuHWWiOALy?=
+ =?us-ascii?Q?FMp3lPvb2CrkPw1BNZfT/fPQbRgC1reqiG3/1HPdxXL9IUuX0zfVnbIEnxcn?=
+ =?us-ascii?Q?mDAFY5sO0QJ2tch/9Kj8vjNOd7XcP4zshAkqU/S0RJWihQ3Wni5Y5rhdBxfW?=
+ =?us-ascii?Q?FbfSTdZeO4I4U7Ar/Xt+lTaJzT/wCW7fEv0oEpNZ3yZaXE+k+M9fhM28CIMU?=
+ =?us-ascii?Q?6zZf/N13Wv2BVxAkGxcgRYTzFciy7InOVl/sf9u1YGlx1d935gtQDuabCqGO?=
+ =?us-ascii?Q?cwUW8FdbzxMGQ1fOdMZ/08bPTAZfis8YccvM70GaVw04adUEavy1Gs0allQ9?=
+ =?us-ascii?Q?o6Pd1WJEXO9aOInErSIheBIKv7GBnKG2M2qNwI9xDCyVjsfTRoc1rZW0Dt1G?=
+ =?us-ascii?Q?UqzwBzRJ0u+07FAI+jPvYgz0P3EMwvtOD2G3Wo0TYs/OJvVo2StwfGfTaieD?=
+ =?us-ascii?Q?JeCemgjEjvd8ixF2YqodZ38PXp6e/pC9ucZhAbXnHyISJPHl9iy6lrICesCu?=
+ =?us-ascii?Q?rYU3HLTyYOKjQZNgliY3i4mF4QrUfO9ktG6PC9QJD2+FsKIyYeNjh8ULcbk2?=
+ =?us-ascii?Q?b5TVTtKwtz0GFVfYK+PndXwKESEYC+7z7sLOB3jO+obLKcFzp8eviCOrf2dQ?=
+ =?us-ascii?Q?iKqrNDjVC2dvCMmS/c3z4gZ9w1Ass7w4raV9JBv/IIZCkEO+JbrDmqrqpZYz?=
+ =?us-ascii?Q?1XtLC0LSjyH6V0YAviSUyvpzKfLQovrtEADWyJOk+afcmsRvm8OdNF53NniI?=
+ =?us-ascii?Q?Agc0aA56wvtFER4AUKqFV0ojWz4yorW3xSYnGlZjMW+ZxdJOuuvRpBQLoQFU?=
+ =?us-ascii?Q?Bpgrw883XtRPFpdHv4+ut9HpGxLOMAYhMn8T9wdGP/Mw5dwRSZDQVmuOZ/c5?=
+ =?us-ascii?Q?+GTWVTJTo6Nyxa+MO9t3uE64pX/lB7HbEQyREJCZD++XdyLyzo2e1hZcOsHh?=
+ =?us-ascii?Q?YjmYF1uTd5KOt3m74oqrkB+hKaCwp7gw5CIdsgVaCPRoGL9xAuwLgOA5vQB+?=
+ =?us-ascii?Q?msRWp9hR/VVd/skb7bSyG86a2BrqgZCWH3hW1rFrCxLzCwlFCc9EbcWgEcK9?=
+ =?us-ascii?Q?BrBLGVSCfXXYcmJk0i9geuIpQY8n/d4Rf0bwK9ni7l4rljulOWUwB5+xqqwX?=
+ =?us-ascii?Q?ffeoI1i1DD/9qRJoI2SpGtheNy8Fp9CN2BxiJKzANI5HO0QsYHgd66lFmAzc?=
+ =?us-ascii?Q?QMLnKst0f+EPqcap65DIKPiyoP329NbMtrlfzI01P7jPcNgPcpXjg2FdWqDa?=
+ =?us-ascii?Q?rlyFFZMQt0PER3mI6DV8dMWqa7Dr5uo0phdXhsGWK6lblm/ZUOOrGRpdgxQx?=
+ =?us-ascii?Q?RpJRYcsH6gKKRZjvM5GMIzxuuBxtIT2ZQicljn4B7YYtVJqQ9vLnb1MoGFlp?=
+ =?us-ascii?Q?5Q=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	Tz9GvbYF1b3WE8mGk+XofFki5iOGY8ddmHdPryL1G8nNugbIRzJF0hzU/SQnpSByW/dlCCoTClBx0die4032EKFLMLG9FEhU5b6slar2CbwzCl5G6x1e8dj847YicmyHhCeFOlQ7j11/ohuJZ6mMSr0XJjKcEWUkq+pzJK5nP9JUI68Ob6qzZhd6D7lHhBiOF1jJTrLGX3f5ClBS1Ft1cuBvvshfS9vW5QLqVJ7dwYG//dn3VZ4HLX46YeQtOF+I4Fszdj3oLohJ8mGn12ViGCSxbDCN7TGb3LxLStuI/x7EJBLU1HlPe3tvQzWK7nVozaCyFVwa+ReACvpCRoDPp8eiAvhDKH9sK/DGBUzjwIS3YvBhDOnUsuPjTMYsPMsoocqjxq7Ynkr2ZOl0oZ84aHwRyJT7iyBfTbKH7v/w1s6JiIgE4O8NzaqHzAvl/AE2s9FuHr89q0unAifzlYtOt2KREF5vvKYpHLzAUZYoa2UrXeo148Al+BBe8JcGNhugcby3GzIYLn/CCIzxjLdpCBTZToHuJx56MGDe6JQVOCzW2019Z9VDMvE0ppYsh3eTKsI/e5vnqmPJnuYuINZDNZJWx7Rw0sU73CnSXiEXhd0=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5c32f17a-ec1f-4d2f-7b71-08ddc540b3cd
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2025 14:46:24.2437
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: FIs3QxFu9Ge/6XQtManMvL59VTF0Hp63O3JrPssujFwVP1EoWynNZk8Xq2+yeoyK9SPJVPBkWtXJ02D8rXHYmWaW85fHf10ab8NO44u6Bak=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB7457
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-17_01,2025-07-17_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 malwarescore=0
+ phishscore=0 spamscore=0 mlxlogscore=999 bulkscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2507170129
+X-Proofpoint-ORIG-GUID: Sbk4T5QeB6PsxpFa1FqECQK_4akVH6F5
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDEzMCBTYWx0ZWRfXzbXAQxY9bBp0 IpWpNpXbf2jeg04lR22vahfxHj7L+5gCS/hQvKtDuGmwlyTDNYusWsKV7P6eGNktLmcA+9+V5yR 7QAuq7qGPZL8d0eI1OlFCqm8acn1/4QtlNNwmMFC8hmeanSJG0qze0hVSQE+MEM9EsiHXPSqCav
+ noIYGn9pwdlnEj/u9XHN4reY6xKKROtMN6crP2ruJCcEEY0MDwZtHs3fCnvYEAj9ee3BEJJrQlc CEi4E7TBtmVJ0wrestb5lQKVWX1LDtrIRpJJUPGFNEcmgq9nXuv7jcQs5U1htUBdh1oHc5LMZfH IVtIXlrB+DKD3PvcY57JyWOhSjVtjkApKYdyYKyJ/Yg3x96GKlFFmEy1lOuRCesLcpBXBUE8Nn0
+ oo5h5z10myPeqkWi0RudsrAG7xm1dr2eRrMBC26GdwYI0r37L4FLaoolOIpY4jQztiMvETkz
+X-Authority-Analysis: v=2.4 cv=Xtr6OUF9 c=1 sm=1 tr=0 ts=68790cc3 b=1 cx=c_pps a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=R7-U5TooAAAA:8 a=20KFwNOVAAAA:8 a=Ikd4Dj_1AAAA:8 a=yPCof4ZbAAAA:8 a=F7BmVioxN7Ndg4eA_BMA:9 a=CjuIK1q_8ugA:10
+ a=0qitgU11kHl69ATa7WPA:22 cc=ntf awl=host:12061
+X-Proofpoint-GUID: Sbk4T5QeB6PsxpFa1FqECQK_4akVH6F5
 
-On Wed, Jul 16, 2025 at 04:46:38PM -0300, Hiago De Franco wrote:
-> From: Hiago De Franco <hiago.franco@toradex.com>
-> 
-> When the Cortex-M remote core is started and already running before
-> Linux boots (typically by the Cortex-A bootloader using a command like
-> bootaux), the current driver is unable to attach to it. This is because
-> the driver only checks for remote cores running in different SCU
-> partitions. However in this case, the M-core is in the same partition as
-> Linux and is already powered up and running by the bootloader.
-> 
-> This patch adds a check using dev_pm_genpd_is_on() to verify whether the
-> M-core's power domains are already on. If all power domain devices are
-> on, the driver assumes the M-core is running and proceed to attach to
-> it.
-> 
-> To accomplish this, we need to avoid passing any attach_data or flags to
-> dev_pm_domain_attach_list(), allowing the platform device become a
-> consumer of the power domain provider without changing its current
-> state.
-> 
-> During probe, also enable and sync the device runtime PM to make sure
-> the power domains are correctly managed when the core is controlled by
-> the kernel.
-> 
-> Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Reviewed-by: Peng Fan <peng.fan@nxp.com>
-> Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
+On Wed, Jul 16, 2025 at 01:11:12PM -0400, Zi Yan wrote:
+> Smatch/coverity checkers report NULL mapping referencing issues[1][2][3]
+> every time the code is modified, because they do not understand that
+> mapping cannot be NULL when a folio is in page cache in the code.
+> Refactor the code to make it explicit.
+>
+> No functional change is intended.
+>
+> [1]https://lore.kernel.org/linux-mm/2afe3d59-aca5-40f7-82a3-a6d976fb0f4f@stanley.mountain/
+> [2]https://lore.kernel.org/oe-kbuild/64b54034-f311-4e7d-b935-c16775dbb642@suswa.mountain/
+> [3]https://lore.kernel.org/linux-mm/20250716145804.4836-1-antonio@mandelbit.com/
+>
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
 
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+This is fantastic, thanks Zi! There's a nit below but I actually almost
+_don't_ want you to address it :P
+
+Therefore:
+
+Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
 > ---
-> Hi Mathieu, Ulf,
-> 
-> This is the v8 of patch3 from the patch series:
-> https://lore.kernel.org/all/20250629172512.14857-1-hiagofranco@gmail.com/
-> 
-> As patches 1 and 2 are already applied on Ulf's next branch, as
-> requested I am sending now only the v8 of patch 3.
-> 
-> I made a small correction into the commit description, s/SCFW
-> partitions/SCU partitions/g and updated with the check for the return
-> value.
-> 
-> I hope this is ok.
-> 
-> Thanks!
-> 
-> Hiago.
-> 
-> v7 -> v8:
->     - Added return error check for dev_pm_domain_attach_list().
->     - Commit description: changed to use "SCU partitions" instead of
->       "SCFW partitions". This is more accurate since these are hardware
->       enforced partitions.
-> v6 -> v7:
->  - Added Peng reviewed-by.
-> v5 -> v6:
->  - Commit description improved, as suggested. Added Ulf Hansson reviewed
->    by. Comment on imx-rproc.c improved.
-> v4 -> v5:
->  - pm_runtime_get_sync() removed in favor of
->    pm_runtime_resume_and_get(). Now it also checks the return value of
->    this function.
->  - Added pm_runtime_disable() and pm_runtime_put() to imx_rproc_remove()
->    function.
-> v3 -> v4:
->  - Changed to use the new dev_pm_genpd_is_on() function instead, as
->    suggested by Ulf. This will now get the power status of the two
->    remote cores power domains to decided if imx_rpoc needs to attach or
->    not. In order to do that, pm_runtime_enable() and
->    pm_runtime_get_sync() were introduced and pd_data was removed.
-> v2 -> v3:
->  - Unchanged.
-> v1 -> v2:
->  - Dropped unecessary include. Removed the imx_rproc_is_on function, as
->    suggested.
-> ---
-> ---
->  drivers/remoteproc/imx_rproc.c | 41 +++++++++++++++++++++++++++++-----
->  1 file changed, 35 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> index 627e57a88db2..a6eef0080ca9 100644
-> --- a/drivers/remoteproc/imx_rproc.c
-> +++ b/drivers/remoteproc/imx_rproc.c
-> @@ -18,6 +18,7 @@
->  #include <linux/of_reserved_mem.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_domain.h>
-> +#include <linux/pm_runtime.h>
->  #include <linux/reboot.h>
->  #include <linux/regmap.h>
->  #include <linux/remoteproc.h>
-> @@ -890,10 +891,8 @@ static int imx_rproc_partition_notify(struct notifier_block *nb,
->  static int imx_rproc_attach_pd(struct imx_rproc *priv)
->  {
->  	struct device *dev = priv->dev;
-> -	int ret;
-> -	struct dev_pm_domain_attach_data pd_data = {
-> -		.pd_flags = PD_FLAG_DEV_LINK_ON,
-> -	};
-> +	int ret, i;
-> +	bool detached = true;
->  
->  	/*
->  	 * If there is only one power-domain entry, the platform driver framework
-> @@ -902,8 +901,25 @@ static int imx_rproc_attach_pd(struct imx_rproc *priv)
->  	if (dev->pm_domain)
->  		return 0;
->  
-> -	ret = dev_pm_domain_attach_list(dev, &pd_data, &priv->pd_list);
-> -	return ret < 0 ? ret : 0;
-> +	ret = dev_pm_domain_attach_list(dev, NULL, &priv->pd_list);
-> +	if (ret < 0)
-> +		return ret;
-> +	/*
-> +	 * If all the power domain devices are already turned on, the remote
-> +	 * core is already powered up and running when the kernel booted (e.g.,
-> +	 * started by U-Boot's bootaux command). In this case attach to it.
-> +	 */
-> +	for (i = 0; i < ret; i++) {
-> +		if (!dev_pm_genpd_is_on(priv->pd_list->pd_devs[i])) {
-> +			detached = false;
-> +			break;
-> +		}
-> +	}
+>  mm/huge_memory.c | 43 ++++++++++++++++++++++++++++---------------
+>  1 file changed, 28 insertions(+), 15 deletions(-)
+>
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 31b5c4e61a57..fe17b0a157cd 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -3804,6 +3804,8 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
+>  		 */
+>  		for (new_folio = folio_next(folio); new_folio != next_folio;
+>  		     new_folio = next) {
+> +			unsigned long nr_pages = folio_nr_pages(new_folio);
 > +
-> +	if (detached)
-> +		priv->rproc->state = RPROC_DETACHED;
+>  			next = folio_next(new_folio);
+>
+>  			expected_refs = folio_expected_ref_count(new_folio) + 1;
+> @@ -3811,25 +3813,36 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
+>
+>  			lru_add_split_folio(folio, new_folio, lruvec, list);
+>
+> -			/* Some pages can be beyond EOF: drop them from cache */
+> -			if (new_folio->index >= end) {
+> -				if (shmem_mapping(mapping))
+> -					nr_shmem_dropped += folio_nr_pages(new_folio);
+> -				else if (folio_test_clear_dirty(new_folio))
+> -					folio_account_cleaned(
+> -						new_folio,
+> -						inode_to_wb(mapping->host));
+> -				__filemap_remove_folio(new_folio, NULL);
+> -				folio_put_refs(new_folio,
+> -					       folio_nr_pages(new_folio));
+> -			} else if (mapping) {
+> -				__xa_store(&mapping->i_pages, new_folio->index,
+> -					   new_folio, 0);
+> -			} else if (swap_cache) {
+> +			/*
+> +			 * Anonymous folio with swap cache.
+> +			 * NOTE: shmem in swap cache is not supported yet.
+
+Nice added context!
+
+> +			 */
+> +			if (swap_cache) {
+>  				__xa_store(&swap_cache->i_pages,
+>  					   swap_cache_index(new_folio->swap),
+>  					   new_folio, 0);
+> +				continue;
+> +			}
 > +
-> +	return 0;
->  }
->  
->  static int imx_rproc_detect_mode(struct imx_rproc *priv)
-> @@ -1146,6 +1162,15 @@ static int imx_rproc_probe(struct platform_device *pdev)
+> +			/* Anonymouse folio without swap cache */
+
+I almost don't want to comment here because 'anony-mouse' is really cute :P
+but yeah nit I think you have a trailing 'e' here that my cats would be
+VERY interested in... ;)
+
+> +			if (!mapping)
+> +				continue;
+> +
+> +			/* Add the new folio to the page cache. */
+> +			if (new_folio->index < end) {
+> +				__xa_store(&mapping->i_pages, new_folio->index,
+> +					   new_folio, 0);
+> +				continue;
+>  			}
+> +
+> +			/* Drop folio beyond EOF: ->index >= end */
+> +			if (shmem_mapping(mapping))
+> +				nr_shmem_dropped += nr_pages;
+> +			else if (folio_test_clear_dirty(new_folio))
+> +				folio_account_cleaned(
+> +					new_folio, inode_to_wb(mapping->host));
+> +			__filemap_remove_folio(new_folio, NULL);
+> +			folio_put_refs(new_folio, nr_pages);
 >  		}
->  	}
->  
-> +	if (dcfg->method == IMX_RPROC_SCU_API) {
-> +		pm_runtime_enable(dev);
-> +		ret = pm_runtime_resume_and_get(dev);
-> +		if (ret) {
-> +			dev_err(dev, "pm_runtime get failed: %d\n", ret);
-> +			goto err_put_clk;
-> +		}
-> +	}
-> +
->  	ret = rproc_add(rproc);
->  	if (ret) {
->  		dev_err(dev, "rproc_add failed\n");
-> @@ -1171,6 +1196,10 @@ static void imx_rproc_remove(struct platform_device *pdev)
->  	struct rproc *rproc = platform_get_drvdata(pdev);
->  	struct imx_rproc *priv = rproc->priv;
->  
-> +	if (priv->dcfg->method == IMX_RPROC_SCU_API) {
-> +		pm_runtime_disable(priv->dev);
-> +		pm_runtime_put(priv->dev);
-> +	}
->  	clk_disable_unprepare(priv->clk);
->  	rproc_del(rproc);
->  	imx_rproc_put_scu(rproc);
-> -- 
-> 2.39.5
-> 
+>  		/*
+>  		 * Unfreeze @folio only after all page cache entries, which
+> --
+> 2.47.2
+>
+
+Since we no longer need to make new_folio->index >= end work for anon
+folios, can we drop the end = -1 in the if (is_anon) { ... } branch?
 
