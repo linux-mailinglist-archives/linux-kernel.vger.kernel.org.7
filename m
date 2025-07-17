@@ -1,169 +1,124 @@
-Return-Path: <linux-kernel+bounces-735169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45046B08BB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:27:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEBFBB08BB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:28:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7268F3AAF6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:26:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F21421A67AE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E6C129ACCB;
-	Thu, 17 Jul 2025 11:27:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFA6D29ACC6;
+	Thu, 17 Jul 2025 11:28:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dw8P4cZb"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Ugzp4CCh"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3485A28D8F8;
-	Thu, 17 Jul 2025 11:26:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79288299A93
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 11:28:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752751619; cv=none; b=rlFycLJboADhHV9XuXV+C/I/lj9WkzwzvqVzPN65QmDM39QtqGFat50MbfcJs+xpen6HhwMdQZqqILHHoocrFpCkRizgrwLRbzfvdukFIASbCE+6oFDJQMwIkHXtnCEJg9wfvYTPYKGLumCadaMg5K3Ucb2XhwK/iMrgRiaKV4g=
+	t=1752751695; cv=none; b=TCRAErB/deJuOC0FrvZhfY9CAnfbtl/wyw5h6uw8KAxP5L90of+GOaoZ7SUqfnw0Zes29HUQ5OKOhZBPu9xlnPnkd4D0iQ5Uz8e9Hv/T0cEJ/9vVnyU1X4izmF4ZVdCDlL2LiHuevqiiRk4aefTZh6IfgS1Q8M9Uwim0H0m8QyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752751619; c=relaxed/simple;
-	bh=n5lz0P7zqJhekiegT2JchABpgJQ16TCu5PSuMlnO1/E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A0OCDgt6myRyY62nxUSuan037OxPdRQPdnMd8QcwmwbV21eRLueuOjQvkZIc4ut8l70Wk2eDFi5pMEjxcf0Wbv57ox4x6iVBEJM4icVQOogoYKRGaiIYVnM+0FL61+DXZzJF0aD2wJx24oqfFyccam97cMfxYFLHdfrSFzVz7/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dw8P4cZb; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-31332cff2d5so717916a91.1;
-        Thu, 17 Jul 2025 04:26:57 -0700 (PDT)
+	s=arc-20240116; t=1752751695; c=relaxed/simple;
+	bh=vPsus7n+ZehouuNJIhJaopxKH86tOGKiwPcKPd0ygOU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GDmhCwOa1iGG/0nmVEKtd9M6SYi6HyysEBJjjNcvgaq6M3Jaoz50YM8xPo2bF3y1pnCyiIdeEcJ9ECor3zpf0jjX/n7K9tXdp3Rb4QSbOp3p/mU8SAnUq2MatdFBLUwXSd3kzVWisPSpaKaHziY3i9/6a8VAxKRXerHmoPFX51k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Ugzp4CCh; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4561607166aso6329345e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 04:28:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752751617; x=1753356417; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mamQmxuSC1gLOH8NTWGobgALudQdb1hsjmYCRHW0pFo=;
-        b=Dw8P4cZbvvqxoTHoaGVSgRCA1IesPO8Yc6gCmC7HTlpDbjxo5ohDlCA1FjS5DoR/TK
-         tNkgJKcREb7QJ3Xfe+BZqeaHx8QQo3tcDC56jDgLNQ46AWDXQTVXBM9EyEM/aG1kykNo
-         piD0Tx9exBx63V9qLnNfq7Ssx18RZ6Ux91WSr09VqjCViG3Wvch76RwOWPP0pcPVWnF+
-         xKbh5VXYHhI417Uu1IwwjcA1eDwMI7c9TUKGzQJBhbE8lQZw6EUf97G4pa9c6Md2z20k
-         iZmVY92z2AOilczo6f5ZeOVebu9gRgbQ7GMpamfsCor3gjISWJ9r4cxU1/qN4sm76M6C
-         s9jw==
+        d=suse.com; s=google; t=1752751692; x=1753356492; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=l4EyBkCfQk118hwy23YpMyJEobctr2YH/JMj7abcP1o=;
+        b=Ugzp4CChlld0bsXq1K3L0t8+UdgvAUk/ojf7/B0Hl2xQOcOcL5uAOZZGuhwPxyHn1E
+         vZVPC8jhdpVZm2mIW/vlGEglM+wi6cczcxFFTfPVPsB7ihsN7wSFk4xw0ndVRi33/vO+
+         loXpFEsNOGNHxgIXOfhSZlTAnFpD5gvwcugw+huxGlzKIfqIR2Q2CZSzGY1slmNdsMxj
+         z0keptv8RvVcuJE1trKnJ9UMTv1fjWXuFc2Cym3WaO1o4Bx1BRm216gMNWlVli1QXb9v
+         cfQB9lffuWMFfoYBxc4qAEm16iBh1jFIOardQVq15oejckLMQkXDGQtBxJNoGBVb46G2
+         R+1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752751617; x=1753356417;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mamQmxuSC1gLOH8NTWGobgALudQdb1hsjmYCRHW0pFo=;
-        b=bGAo4cZXJW9h22JnP7P35tKYEP8rEzXH8eaWq+n+XzJtAgF5PMJJE0XXMHDNy32ZSC
-         5j0HWlZHH33APMTk638ihWGIMom986nOlgGWE2gaNeYni2i97mSO5ssCprya/0mk94yG
-         UNKFEnHn+X3TkN0Ja8M4wfMRq/hO2yxNy/LK1A1Wue60EKpvNdXxxTOJHXCjylqxE4/x
-         RCV6CQ/B0rw48nI05tFxGYes32V/dKgZKpSFo7cAbqFCy5PEDyZ4OmqnXQEvAp4lAoTX
-         CDsISK8URyofQ6pbT/OF4o9y4AYLc+h1vqgxl8UqpkH4oNbY1NlQyHPiImxL13x5aG9x
-         zlAg==
-X-Forwarded-Encrypted: i=1; AJvYcCWYMnPcwXiITM/Yh4Wvxi6hWtwaZFpUuHU31S7odDLLc/OEP5dXJzG/27zNQIKKkxkSeFZ3@vger.kernel.org, AJvYcCXK2nBmco8ksTvRBzvP60rJVqOeRSWVxPvi+nIEE/sn/ocMTKAoeddCP4eLIXrbMrEVWFIkDF5dcev2sw==@vger.kernel.org, AJvYcCXrKfuYKFyhaKphZ9cY1Gs2xhL/19y8cADwtU0/pk9c6r2MxFHUCSlPHzvyLw4O9mFO6Sw=@vger.kernel.org, AJvYcCXxtIEryRAnRt08/WW6fObKubXP8VHUADPFvpqHxoiBrAu4lnTr84ZO8e563zM+p8fJjnMqXjsz17ka@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6PX5fkihaoGHnI6xvZU2Tagw3Dqt5z0cLbgmmY2aoExlRwaLN
-	qS9iEtD7U8jMSMOvpqCHTcR7HZfS5K7gprwoOeZKnjvIA5qQ8GXht6fH
-X-Gm-Gg: ASbGncspYywC1NR4BR6V4E9dDLaFr8+qJheCAW3stLs2hpVLOErmQAfj41yZexbTRFP
-	iBohiSgqJXWM96D6N1Zupk0D7w0KCWNf3+JBzcEtERQ1IoqRmZZBtplD9DF20HGP6I2gCmSAbAg
-	WzEhpThefhIdVSD9g+UcYE7fRV7cEXk1EwtDs+vXfOVg9PKQEM/YEfP4OTNaWpc+Y8X1ZBkdrc1
-	r63nIwQd0d2Y0YGCavmFBTGZQ/08DmfsRPB68KByDOWVXKxlwI0rlPpECe2mXGonkq312MsFCBQ
-	vGXzNbaLytY44bunnxg+WgCPiSN+BHn0/Ki0Vg+M8NyGtk8loXulRat4Vu2Tc/PL+gBveLmsUtv
-	NtO4zuMBOyzPyfDuOQZBUZ+KAtaZP7/0m
-X-Google-Smtp-Source: AGHT+IHgByp/+dn0A3OWrLhB0GDZBc03RDMuL7JkWfT26AK/PVvD8T61v8pd5crnp3FDaRyCdZGR6g==
-X-Received: by 2002:a17:90b:28cc:b0:311:b0d3:865 with SMTP id 98e67ed59e1d1-31c9e7931a3mr7920094a91.32.1752751617130;
-        Thu, 17 Jul 2025 04:26:57 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31caf7c3729sm1361493a91.18.2025.07.17.04.26.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 04:26:54 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id DFA1D420A819; Thu, 17 Jul 2025 18:26:50 +0700 (WIB)
-Date: Thu, 17 Jul 2025 18:26:50 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux RCU <rcu@vger.kernel.org>,
-	Linux CPU Architectures Development <linux-arch@vger.kernel.org>,
-	Linux LKMM <lkmm@lists.linux.dev>, Linux KVM <kvm@vger.kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang@linux.dev>, Jonathan Corbet <corbet@lwn.net>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Andrea Parri <parri.andrea@gmail.com>,
-	Will Deacon <will@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
-	David Howells <dhowells@redhat.com>,
-	Jade Alglave <j.alglave@ucl.ac.uk>,
-	Luc Maranget <luc.maranget@inria.fr>,
-	Akira Yokosawa <akiyks@gmail.com>,
-	Daniel Lustig <dlustig@nvidia.com>,
-	Mark Rutland <mark.rutland@arm.com>, Ingo Molnar <mingo@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Tejun Heo <tj@kernel.org>,
-	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
-	Changyuan Lyu <changyuanl@google.com>,
-	Dan Williams <dan.j.williams@intel.com>, Xavier <xavier_qy@163.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Maarten Lankhorst <dev@lankhorst.se>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH 0/4] Convert atomic_*.txt and memory-barriers.txt to reST
-Message-ID: <aHjd-oisajaKW_Z5@archie.me>
-References: <20250717080617.35577-1-bagasdotme@gmail.com>
- <20250717105554.GA1479557@noisy.programming.kicks-ass.net>
+        d=1e100.net; s=20230601; t=1752751692; x=1753356492;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=l4EyBkCfQk118hwy23YpMyJEobctr2YH/JMj7abcP1o=;
+        b=i4yF6rt9xRycnUfebrD9TeKn5SZQNDIFwkLEqjftsEWCQ0IUL3Nr24IYCnFm+5aAyw
+         w5KOcl1YhYRrRfjdjbCq9KRXnCST06nIz0gevb0xORboIuY0V5Ic+U3ApE6MS1cfwPc6
+         NBCrAuTh0lH1Q5mOCXCjyLKvyaVKkJH8ekd5Ep8szDa3dUVOgUV2VyBk4339uHUtxN/M
+         knnOBNmthIC2rJZewHuh9Wl/ox0oMJFDWatfUFBUTCv0KoNANUBkCkVqftl/Z8d0jim6
+         j4xTZzcfFYR4NZeIbJxZhXp5qLJOeRubTNhyVES8DiGFz09q+qvwcdQnrrkZPecw++iA
+         nVHg==
+X-Forwarded-Encrypted: i=1; AJvYcCUXjR3MYK5SWhqOti7SS+Zcju/b2v+j8KqwlUYEChuL/SCd0iUxlf/8Ml3B2OgySAYzXchceu+QGREGL34=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpEjiuSIckpfwwDWbuJkP78NVAMqcDsJn8htiDvDZlWY7ryhNd
+	Mm1vxpo1NtIrFGqiOjvYWNBYJdI2cN5tXMk0I9sRx7+nhJY5pJFALAS+2I6vgap63VE=
+X-Gm-Gg: ASbGncvoUdEU2WNCxkWExg3Y4CORshDD2u/pruXyDQXpqzbjMCt0tH+2mMdmEj2da+s
+	IEqUS3Kol5kyefkVvHaglS4JsBUWeKcp6S9mq0oFYNQ5XqnFptStd5XKMaffLnU5YBzssfePrbc
+	81aYoqJ8P8yCFAI9+UKXWQwBJc1Q7Wey0ELx62dW+tJHUGI7lk+qkcTwvwGp9sZUlrR/R/17dvP
+	xur7EEphZ+V91dUQAZFfqH/RlB3xefvmsbCykAJr43nvl4HV0t+lXgO2lHTTPvOtTIEMODVYKK+
+	EGqAA5cRYafrWmCELDrrabzJ8O3LnbIoJ1OZ2YDHOc0cJIYGx5F+EOZu2Q0kWXSD8K2gaHQ1IY7
+	FRghgL1U6ah/xLhfUwjV/lUPRHfCIYou3c06Garu56q6jQSSi8gB7Ghp5P7W/TglzvA==
+X-Google-Smtp-Source: AGHT+IEEj/81mVMNXoPOUWUO7P/YkTI7YWJCQoKZ+jwcD015HAkVi+WItslIOuhDgRa9wqEhexgbsA==
+X-Received: by 2002:a05:600c:3545:b0:456:1a69:94fa with SMTP id 5b1f17b1804b1-4562e03e75cmr63822605e9.13.1752751691688;
+        Thu, 17 Jul 2025 04:28:11 -0700 (PDT)
+Received: from ?IPV6:2001:a61:1347:1201:4432:54ab:26c1:9ebc? ([2001:a61:1347:1201:4432:54ab:26c1:9ebc])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45634f82f29sm19552955e9.23.2025.07.17.04.28.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Jul 2025 04:28:11 -0700 (PDT)
+Message-ID: <c9d07302-37f0-4f0d-8669-094aa6fc2450@suse.com>
+Date: Thu, 17 Jul 2025 13:28:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="JBAf7wDkA/Ps+xxf"
-Content-Disposition: inline
-In-Reply-To: <20250717105554.GA1479557@noisy.programming.kicks-ass.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: USB cdc-acm driver: break and command
+To: "H. Peter Anvin" <hpa@zytor.com>, Oliver Neukum <oneukum@suse.com>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+ gregkh@linuxfoundation.org, Jiri Slaby <jirislaby@kernel.org>,
+ linux-serial@vger.kernel.org
+References: <ce54ae11-72bb-4ac7-980b-c1cbc798a209@zytor.com>
+ <fa20ab91-5ebf-427d-b938-31ea6fb945cf@suse.com>
+ <83B89F79-D28B-4F2C-87EA-F5078BD7ED17@zytor.com>
+ <2c807a7e-d55d-4670-9a86-e3fcaa3e52ba@suse.com>
+ <f979468c-434a-43e9-8c50-8e92188abc11@zytor.com>
+Content-Language: en-US
+From: Oliver Neukum <oneukum@suse.com>
+In-Reply-To: <f979468c-434a-43e9-8c50-8e92188abc11@zytor.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 16.07.25 19:49, H. Peter Anvin wrote:
+> On 2025-07-16 09:17, Oliver Neukum wrote:
 
---JBAf7wDkA/Ps+xxf
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>> Understood. It still seems dirty to me. If you want to send strings to a
+>> device
+>> the proper way is to use a device node and write().
+>>   
+> 
+> There is definitely something to be said for that; or at least a file
+> descriptor.  We do have cases in the kernel -- notably opening the pts
+> corresponding to a ptmx file descriptor -- that do that sort of
+> "auxiliary open" kind of thing.
+> 
+> The big question is how that interacts with the rest of the ACM driver,
+> as well as all the lifetime issues you mentioned elsewhere.
 
-On Thu, Jul 17, 2025 at 12:55:54PM +0200, Peter Zijlstra wrote:
-> On Thu, Jul 17, 2025 at 03:06:13PM +0700, Bagas Sanjaya wrote:
-> > Bagas Sanjaya (4):
-> >   Documentation: memory-barriers: Convert to reST format
-> >   Documentation: atomic_bitops: Convert to reST format
-> >   Documentation: atomic_t: Convert to reST format
-> >   Documentation: atomic_bitops, atomic_t, memory-barriers: Link to
-> >     newly-converted docs
->=20
-> NAK
->=20
-> If these are merged I will no longer touch / update these files.
+It would seem to me that CDC already has something very similar in form
+of CDC-WDM. If acm_probe() can call tty_port_register_device(), it can also
+register a secondary character device. Or are you worried about how to tell
+user space which devices belong together?
 
-Why? Do you mean these docs should be kept as-is (not converted)? Jon wrote
-in e40573a43d163a that the conversion were opposed but AFAIK I can't find
-the rationale on lore.
+	Regards
+		Oliver
 
-Thanks.
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---JBAf7wDkA/Ps+xxf
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaHjd9QAKCRD2uYlJVVFO
-o5gTAP9lBzNcAUcWTLaW0MwlnQrRBczAAM2O5+rQWHZiuprqawD9ETZgMoUlvAOY
-cmL08HFZ09BvD9UIA2iITCiObHR22QA=
-=vYMt
------END PGP SIGNATURE-----
-
---JBAf7wDkA/Ps+xxf--
 
