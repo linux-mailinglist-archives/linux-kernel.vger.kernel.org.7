@@ -1,146 +1,194 @@
-Return-Path: <linux-kernel+bounces-735320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACC52B08DC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:01:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E27CB08DC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:01:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6ED133B9D90
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:01:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86DEF582BA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:01:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 948A02D8DC8;
-	Thu, 17 Jul 2025 13:00:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 589F42D94A2;
+	Thu, 17 Jul 2025 13:01:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="D3paOvIm"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sPHQTEIa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968DC2D879C
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 13:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6A22D8DC5;
+	Thu, 17 Jul 2025 13:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752757259; cv=none; b=Elx5VokQnyPKOzFzOMMhYE0qNCnZFnlaxQTt7Fa3gTBpG8nkypUQVjbLnrewY/MfmoJjGOghnPev95t95D0KuPY+MgdxFPA9ihyBUjIM1mcqyxeqNCD5dzBc6iW8SPM8xkj9ukSLC8wQJKTYJNuwfXAjLEFHtS6SQUWYp+djDYM=
+	t=1752757259; cv=none; b=AV47CichiXsSrI9vfuVse7JABWTseZHK5JaCnv5+qIUaV6gV8AJeDPivtNnoNfPPMbM7uP7xiXuwACzd+IY2wz30KXZWbOCh1o+4BSOqXGi57THTW7yTFaoRX5iKWYqKwOblF+dt24JuaAu9QdC0HczO0ZhS8rtWx7KlPqmb0Es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752757259; c=relaxed/simple;
-	bh=4R9lsc48a67psU3Pr1dtqISLFfU1EyeEeVLBRsDHQ9M=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=RjIFmZECkErCFFpp3YIVG0SmdPEfDll2smLvv/MMl0F2gWV20xqXs2Uw4RwUdZN9AD4038G3t+A1XiNfkbjPWfYvLEbzNpETwkNLIpkosUdHdBcq8rUkMJKG7KzzAIdlh1LKrlh18O8ZD/6FQcWU9ctkTr/ji+OW1M6KqDazZ8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=D3paOvIm; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56HC61Ig021601
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 13:00:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UsxenPoC8lra25vGZoVrKrqJsQX6ay90sm0xWM3ltaI=; b=D3paOvImo+HHDZvK
-	1z6eOiH0RTwW/2Py4ROR3hnLNj3h3ebsfNzQ/3W8L0g23byXPueN4aMms8HvDxrV
-	xz/hyDD3gC2qlFA6teiUO9Cepsy0V9wMoJw06X0Cg3YdEy0wQi95fw4lMw3sS1KZ
-	LcWAH7330IDbzB1EOeFp5pFG/7IArmBl7u3bb3kdasQnU8IMKjj9qdA97Cb6D5wk
-	TKUXqz+HRxYv9GcVpXrW5x5+RppDVtZ/gGL/DL/GFS4iSdgjsuAiyxiDYX0ai8GN
-	kL3QU2lrByBzCP9RkH1qPpeT68L7mNJEgaJW4x+jO7U4eRzeqczGt0H9SttGt0Fo
-	WQK2ug==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47w5dpjren-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 13:00:56 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-23827190886so9832315ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 06:00:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752757256; x=1753362056;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UsxenPoC8lra25vGZoVrKrqJsQX6ay90sm0xWM3ltaI=;
-        b=LGpwrScFeaH05/fJddIUW03nWyZyCmSewMSV0ZzL7U/OKazuiavbX/Gzg0YF6an5L7
-         nLW5IynNPswK+zRT1NfZrW4I4MQ2+fdBzUpJRILsLftGut5gwovw7042ilKyyXVMDkrc
-         hP76TgBWRrBHTC2QiXUuu8S5dBw+XItMagp8tJxpDddoZTJOoyRz2GsVdfctP1GEl9Tw
-         sR97YcoHEOe0FIY8A5QuoLwliK2vPXUI2CHObVlVeVeu1ymk4kXAVuoZiog9au4aeOx5
-         UpnPXlrUV3eiWHOjqic9ah/ESNE8v6Zy8Qz2B1BIKiAZ79eXXq/ljHLlhRvvfGt/hqog
-         uclQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU+0p7F4dB+s11BCqpky+yHaeftPkkJ10Fp/obCBT+ARKGKapuAlV7THzzfS+eU1zuIX5+OJ/NZkTIAFZ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqFKhK9Z+Gey2nqkSGzkjB10ko3Q2LgnRRRgllNiT+h2RhQjKv
-	7Nq9d7Djw5cFC/bywX+axglSnRzgu5KtP4q6ZqrfEDaS576EFVjPfh1cPzovHrCvZSTIrJmvBpL
-	2MKgB2eBc3q7Y4+4tOni9JrcD+pD6zLHacVNLx6M4ipSTHNE3OfIIu6/Eg+nSAPEnb2dh5tL5Yo
-	w=
-X-Gm-Gg: ASbGncv5/BqIsS0EM9n04hhXVfXkkJzAfXoWCQa++L/LP9q5jdtyD7mfwg/8/XLkPkj
-	kofhqQGsLE5fEaVssCMIjDC9kE9FcKpvLnmo4Kw0NwPDj4Nu3Niu0vqmqonLKaUtAL6wiefTiXT
-	uWJgDFTUW1ecziqNtg2fmmUl/fOTlibwm51otnEUHrWfHfMWGMgU/sOPcKPI/8NkbKkGxtp8fFB
-	J/cf3Mv54Kh6Y5tjfLNN8eDsf7LMsOuIPSYUai4oqDznFjd1ZUU5NW0CU/nZI9TGXsd+O+1BRjZ
-	i4DVi2Lk4hvx7AOlQ+0RD7FahP1cttSKNTwd
-X-Received: by 2002:a17:902:d2cc:b0:234:a139:11fa with SMTP id d9443c01a7336-23e2566ae85mr106699075ad.3.1752757255538;
-        Thu, 17 Jul 2025 06:00:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG6kLQyELqoUaThRM/8jo3nwD/JTvp0msjb/NlH5yEoYUZGlu5Twk019E2H65MO9AFL6Ponlw==
-X-Received: by 2002:a17:902:d2cc:b0:234:a139:11fa with SMTP id d9443c01a7336-23e2566ae85mr106698245ad.3.1752757254911;
-        Thu, 17 Jul 2025 06:00:54 -0700 (PDT)
-Received: from [192.168.1.17] ([120.60.63.84])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de42847casm147179855ad.14.2025.07.17.06.00.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 06:00:54 -0700 (PDT)
-From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-X-Google-Original-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Toan Le <toan@os.amperecomputing.com>, Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250710180749.2970379-1-robh@kernel.org>
-References: <20250710180749.2970379-1-robh@kernel.org>
-Subject: Re: [PATCH] dt-bindings: PCI: Convert apm,xgene-pcie to DT schema
-Message-Id: <175275725132.8776.11740165619532481906.b4-ty@kernel.org>
-Date: Thu, 17 Jul 2025 18:30:51 +0530
+	bh=WsrnxRFgk4YdAIg8GBjZrRJX6IRI0hJv13ASmf9n3nQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SQbGWQgyD8Ufk1dLN9T67oikAtpx0i9LyrbvbDT6P1IMF04QnaGgeh5lkjXKSb5ceH+VZce5KEKLdhQszHoL1vndCFxvOk2Aux6zR02M18atUPM1RiRW82fjQEEkfwKQGBoltCLqqGfTDcHAKdYeCghev9CseSFQXaC8M2FN+Ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sPHQTEIa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 146F8C4CEED;
+	Thu, 17 Jul 2025 13:00:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752757259;
+	bh=WsrnxRFgk4YdAIg8GBjZrRJX6IRI0hJv13ASmf9n3nQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=sPHQTEIaLOqHjAd+a6VGO4LFhX0K5x0qNlj2wV/3jCbBEZWb04BOgr8Ah9zfISCbB
+	 LwHFPlzh7wbWeUoIKQdGpuRhH+QrbDtVPrrfZdp7ppmOze2G7eB38KTM6HvHf9PBVH
+	 +N18EFxrryJskRxta+gEzXWi6WaKVb99prOmozOJkK0fZx9xURDbq/H5lW1W/ZrQyY
+	 tnI82vXmG2BWgxFS/Pzcg8FAYhFz/jRxcmBLuEzpB4/xF1ryR1S6yh2SD6WQGntxwC
+	 NuDIdlrEZ+ysaQt3344+lWmGvmRxq2iFo2HW6qx5XdaRCE6UdaS24SmEzsx2sduxFk
+	 0lAuQjD7zHsvg==
+Message-ID: <8cdea7c7-739a-4101-9e2f-1bb36632ff5a@kernel.org>
+Date: Thu, 17 Jul 2025 15:00:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDExNCBTYWx0ZWRfXw73FdG2ihjvY
- ELVqZfxI+QHWL9WmKgYoYd+YLm8kb4xGO0vSDqPrNR9BhX/NmFRmbVhMZia7IaX6qax2TiI4qrm
- DY5a9X49qdvjq30tHxCgATN3pndCXjvDfkfecA3avBHCmEGYCUzpXQWGngF0Lgudd+JK1OhRbG+
- JodCW/2Pwn4828g304Ju5/kUlko0CN5fq4CvJO8yKRzvH92dwA5PCBpKnnIv0jlNo54kJcmQVVI
- tCcNh1tPgBjIa6Xtw8xX44YI/hhfeE2cPL1woRsWY0v+UWLrQWKWu54g0W0f1qxSkT+LOsiKDkO
- imHqUNA6tj4Hz1iwYnfOLX0JXbH154qLvVNYqJIfuZqa3SanGIvUX1r2fwzfb9foJ9rqqMRM84I
- bk56W9MTNhVdV7KDXxrG6majnQcI33MrbyAyxyrU/g/B2JBH0lykroqRRUxcFHQQg0AjKvRQ
-X-Proofpoint-GUID: IN3XqVmmaiv2oFUV_CvrotdnrAlOue69
-X-Proofpoint-ORIG-GUID: IN3XqVmmaiv2oFUV_CvrotdnrAlOue69
-X-Authority-Analysis: v=2.4 cv=Y+r4sgeN c=1 sm=1 tr=0 ts=6878f408 cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=A4mJK6/VAfRUM2WLv3bxlg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=Tk-7pMtUu1chtXBpElQA:9
- a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-17_01,2025-07-17_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 mlxlogscore=795 phishscore=0 malwarescore=0 priorityscore=1501
- adultscore=0 impostorscore=0 mlxscore=0 suspectscore=0 lowpriorityscore=0
- bulkscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507170114
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] dt-bindings: media: i2c: Add ov2735 sensor
+To: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
+Cc: "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+ "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
+ "laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>,
+ Ricardo Ribalda <ribalda@chromium.org>,
+ Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
+ Matthias Fend <matthias.fend@emfend.at>,
+ Sylvain Petinot <sylvain.petinot@foss.st.com>,
+ Jingjing Xiong <jingjing.xiong@intel.com>,
+ Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+ Dongcheng Yan <dongcheng.yan@intel.com>, Arnd Bergmann <arnd@arndb.de>,
+ Hans de Goede <hansg@kernel.org>,
+ "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250716134426.8348-1-hardevsinh.palaniya@siliconsignals.io>
+ <20250716134426.8348-2-hardevsinh.palaniya@siliconsignals.io>
+ <20250717-hulking-earthworm-of-atheism-68a02c@kuoka>
+ <PN3P287MB3519C2A2B8DC207AC0AF2C50FF51A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
+ <25eb573c-a37e-4f8c-8fd6-5ca62e1a29b9@kernel.org>
+ <PN3P287MB3519907E3C113D6CD9D564E3FF51A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <PN3P287MB3519907E3C113D6CD9D564E3FF51A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-
-On Thu, 10 Jul 2025 13:07:48 -0500, Rob Herring (Arm) wrote:
-> Convert the Applied Micro X-Gene PCIe binding to DT schema format. It's
-> a straight forward conversion.
+On 17/07/2025 13:55, Hardevsinh Palaniya wrote:
+>> On 17/07/2025 09:28, Hardevsinh Palaniya wrote:
+>>>  Hi Krzysztof,
+>>>
+>>>> On Wed, Jul 16, 2025 at 07:14:16PM +0530, Hardevsinh Palaniya wrote:
+>>>>> +        properties:
+>>>>> +          data-lanes:
+>>>>> +            items:
+>>>>> +              - const: 1
+>>>>> +              - const: 2
+>>>>> +          link-frequencies: true
+>>>>
+>>>> Drop
+>>>>
+>>>> I don't understand why this appeared. I don't think anyone asked for it?
+>>>
+>>> Laurent suggested validating the link frequency in the Device Tree.
+>>>
+>>> Link[1]: https://lore.kernel.org/linux-media/20250710212131.GG22436@pendragon.ideasonboard.com/
+>>
+>> ... and I do not see here validation "that the link frequencies
+>> specified in DT match".
+>>
+>> How do you validate that 1111 Hz is not / is a valid link frequency? How
+>> did you exactly resolve the comment about validating?
 > 
+> In the ov2735_parse_endpoint() function, the driver validates the link frequency
+> from DT using `v4l2_link_freq_to_bitmap()`. If an unsupported value like 1111 Hz is
+> provided, it returns an error: 
+
+
+But that's driver. You said that you added this property based on
+feedback on validation. There is no validation here, thus the reason of
+this property is not fulfilled and that's why I was asking. I know now
+the answer...
+
+
+
 > 
+> ret = v4l2_link_freq_to_bitmap(ov2735->dev, bus_cfg.link_frequencies,
+>                                bus_cfg.nr_of_link_frequencies,
+>                                link_freq_menu_items,
+>                                ARRAY_SIZE(link_freq_menu_items),
+>                                &link_freq_bitmap);
+> if (ret) {
+>         ret = dev_err_probe(ov2735->dev,
+>                             -EINVAL, "only 420MHz frequency is available\n");
+>         goto error_out;
+> }
+> 
+> So, validation is already done in the driver.
+> 
+> I understand that `link-frequencies: true` in the schema only declares the property
+> without restricting values. Would you prefer the schema to explicitly allow only
+> 420MHz like this?
 
-Applied, thanks!
 
-[1/1] dt-bindings: PCI: Convert apm,xgene-pcie to DT schema
-      commit: ac8ff3e15ec6c54f11d38a6f5016de323ca1d576
+You missed the last paragraph of my last email. I don't want to have
+here what the driver is doing, but what the hardware is/needs/requires.
+It can also be missing completely, because we don't enforce such rules
+on other bindings.
+
 
 Best regards,
--- 
-Manivannan Sadhasivam <mani@kernel.org>
-
+Krzysztof
 
