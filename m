@@ -1,145 +1,88 @@
-Return-Path: <linux-kernel+bounces-735139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC323B08B4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:56:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 127DBB08B44
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:55:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AC87189D3CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:57:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A83C18855A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:56:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399B82C08DB;
-	Thu, 17 Jul 2025 10:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9747D2BDC04;
+	Thu, 17 Jul 2025 10:50:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="akf2AHgg"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UHmQglIM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C912C08AB
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 10:50:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4342BD5A3;
+	Thu, 17 Jul 2025 10:50:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752749448; cv=none; b=mLoRuqgrLA54MSUE6wkvrDuFvnjwkxA1Jw9PsI1uub/08hsDMC7o2HMJ/3nb/aTK5+AnWYnJxN+XXnQVBFW5wNWtGDWoHj0AdK+0P1b2bbxdMo7e8bs+qUb3v5+N5O1xCWaQQ1SQfqxQYpGYl7oaKwqypc5c9Rfl4Qp7pN7HMdk=
+	t=1752749414; cv=none; b=c/ft8VOPX18nOwvAkxxEghiOsgvo2F6LpbPN1bxw/lap0dtsp+bwHjpPNv0qCN10rddh8TAAW0l1EP7lAAfqdGOiM+Vhejn6vJ0YkjGvaZrCE1tN6dACiMhozEBzfvyXaq7Jt5N2um/KUZ+5Y0vQEe0QGn9CttvCHjQQ1njWhfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752749448; c=relaxed/simple;
-	bh=bimHPaBVRFzOcIg3hsOFOyJmN+xsJmZuG39O1v5bTas=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=E5gYtwCX/np/UgUz+zHOPG21iqTbywmi5aFEvlr4DYS/knVkgHLZOW2+4/f2ILAj6bMLJjEAsUNHYgzvkpBgIMJdgVRgLEgIA99BxpgscJlxDD28/AGBLKJZ7PCIIVmF78gKjLNSaPWNdLFq3sDXzfvjkLLGir/LeJ/2uw0i5pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=akf2AHgg; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1752749433; x=1753354233; i=markus.elfring@web.de;
-	bh=bimHPaBVRFzOcIg3hsOFOyJmN+xsJmZuG39O1v5bTas=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=akf2AHggwn+Aep1URneTLW2uzULXnOCMAyaEeA3UnobWXA5sr1NssSc2gR7X5MyK
-	 MlwHiOETwO4CfJJHbH7isSCjBhbLRkACAYYlwUw/w/dYbhWJOSTV1JQXTVFzVfE54
-	 AUYSazV0FrZB+ZKW3kE4jheUNhqXN+xXP9IBqSN5S/yzj5upiOMBEsy9wDzjleHq8
-	 nMkyvz8VBsPPW+Y3KeYQEYx8wdZkjyFLJ2tRNCCqwVu/ui6KPXkpGZg0zcnTn9rLD
-	 0A1a3etw/sAJWwaRecNfct0g2IeJhCWKYPbC/BhsV02OL3HcuQcv+7ItzSvMI1B7p
-	 5wcLDI0udZNEn/uBNA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.185]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MbTL1-1v9V5M1Jof-00kWzM; Thu, 17
- Jul 2025 12:50:33 +0200
-Message-ID: <e46c137e-8d31-4c61-83b0-ec01e1d8513d@web.de>
-Date: Thu, 17 Jul 2025 12:50:06 +0200
+	s=arc-20240116; t=1752749414; c=relaxed/simple;
+	bh=hDOjBV4YT6b3RAQ8NLSnONEpRqZ2nMDiso747uOSaGI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lL0YBya8YwxLnHPKpxpoQz+2KQ+TER5Gb9bPd2gDnvyzJFXcsYghY/aDjiEG6gAXB+YB729foq3xcyw6Njn19sV8B7zBHBhwGrnOZuJzUxpwfPzS+/PNzu5BUV9OJK9ikbQPUZR/VMWPRDxmtazVBXY00fLBaRxRkC6MJ3jm9sQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UHmQglIM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA402C4CEE3;
+	Thu, 17 Jul 2025 10:50:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752749413;
+	bh=hDOjBV4YT6b3RAQ8NLSnONEpRqZ2nMDiso747uOSaGI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UHmQglIMgtIFLTii8jKa4YBbEFugy6Cwwolr3lxVU/Nz61Txj8vVVpatZRSmyuC4/
+	 bTzmc5uY4MFGAzrD9NmfTM41rQAYlDhyPpQrbmo3AFkQ10QWBs+Muwi5D3c1TsVJaD
+	 7oFoF3yceSdlqFL0fvDzUf31HXvJD9lDQ3rHRwxlGQBaBubJ/+87BX9ztKKEjSxIMf
+	 xRDhFO8cLQijI0GHMFgMyp6p0pdkqET8Hsqx02pRt6KUsKF80iNy6SkugpKqDK7s84
+	 avmoc4IDpzo7sIzWEfJr+1jcooUXobW69IudbTcXIZfFrdwZkF38fsRNterj5rdZcQ
+	 dMZfrrJAd7DIw==
+Date: Thu, 17 Jul 2025 12:50:10 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Peter Chen <peter.chen@cixtech.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, jassisinghbrar@gmail.com, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	cix-kernel-upstream@cixtech.com, maz@kernel.org, sudeep.holla@arm.com, kajetan.puchalski@arm.com, 
+	eballetb@redhat.com, Guomin Chen <Guomin.Chen@cixtech.com>, 
+	Gary Yang <gary.yang@cixtech.com>
+Subject: Re: [PATCH v10 8/9] arm64: dts: cix: Add sky1 base dts initial
+ support
+Message-ID: <20250717-arcane-didactic-dachshund-db7619@kuoka>
+References: <20250717072209.176807-1-peter.chen@cixtech.com>
+ <20250717072209.176807-9-peter.chen@cixtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: lihongtao@kylinos.cn, dri-devel@lists.freedesktop.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- David Airlie <airlied@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Rob Herring <robh@kernel.org>,
- Steven Price <steven.price@arm.com>, Simona Vetter <simona@ffwll.ch>,
- Thomas Zimmermann <tzimmermann@suse.de>
-References: <20250710030527.167710-1-lihongtao@kylinos.cn>
-Subject: Re: [PATCH] drm/panfrost: Fix leak when free gem object
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250710030527.167710-1-lihongtao@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:NBgso35dyLgdBM7vmiBKrv/TFW4bOmXCDYZ1muVQgmvlmXby2nJ
- 0pKCx0hPIMaRH3YtDLcM+aj318jhhx7nDWmK+0FTIH7zGHXw+4q0jZz6O2T063SqPXGupe0
- YGi6vL446fb11C9cuIBcaPhqvPQktGf1kwJ6q9yKWE0SK6oambNzwGtC0EjzJjuSmdrSxm+
- yu4Hf8AiNtQbHsJoW8I7w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:UUVsK4oT/w8=;441H2mriJgR5bJznIpan8tFWcFt
- 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
- kO0ZSWQLUHCRiC7KLZmqiqhLww
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250717072209.176807-9-peter.chen@cixtech.com>
 
-> obj->mappings.lock should be destroyed when free
-> panfrost gem object in panfrost_gem_free_object.
+On Thu, Jul 17, 2025 at 03:22:08PM +0800, Peter Chen wrote:
+> CIX SKY1 SoC is high performance Armv9 SoC designed by Cixtech,
+> and Orion O6 is the motherboard launched by Radxa. See below for
+> detail:
+> https://docs.radxa.com/en/orion/o6/getting-started/introduction
+> 
+> In this commit, it only adds limited components for running initramfs
+> at Orion O6.
+> 
+> Tested-by: Enric Balletbo i Serra <eballetb@redhat.com>
+> Tested-by: Kajetan Puchalski <kajetan.puchalski@arm.com>
+> Signed-off-by: Peter Chen <peter.chen@cixtech.com>
+> Signed-off-by: Guomin Chen <Guomin.Chen@cixtech.com>
+> Signed-off-by: Gary Yang <gary.yang@cixtech.com>
+> ---
 
-How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
-=E2=80=9CCc=E2=80=9D) accordingly?
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-See also:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.16-rc6#n94
+Best regards,
+Krzysztof
 
-Regards,
-Markus
 
