@@ -1,176 +1,138 @@
-Return-Path: <linux-kernel+bounces-734526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2498CB082C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 04:12:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6841DB082C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 04:13:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D2C04A7AE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:12:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66400162074
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:13:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526981DF759;
-	Thu, 17 Jul 2025 02:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="C8qSUifp"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26ADB1DE4F6;
+	Thu, 17 Jul 2025 02:13:05 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E10691B983F
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 02:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195E3155A59;
+	Thu, 17 Jul 2025 02:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752718324; cv=none; b=TZiYKjMBy8NNhlbQOaTonozaUFp4X/HpB/mD9Egjm9lLbixRd/Ylym2sfERAMUhYG3cOzSJOZkKJserUFMbsdzCh0ySdSeRPvT1RraoxIdUCWR3goIW4yxqkBJYiMafLOXMphekTMOgBVbBT62YW/AxL8kqgIYTV61vIFQxGdxE=
+	t=1752718384; cv=none; b=AdtGn4+MIeK5ZFm7q5K6EwxmhUOz5JRA1u7RVq9VG0PzkkIMV2SQzPdNw2CVmLaus8WCYdFauNUvs1+4hHlErAEiQA4zHe/NRLWTjrthvpU9nrXlvzQrDxi7u4YfXrJqOYrFtZISrVl4wh2CgjMQ65DHGjbQrndNIiWUt46BHdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752718324; c=relaxed/simple;
-	bh=b+dsztBU/r5KZ5oBd4fLVEt5uMjqjDnr7oo/Ji9YG2A=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Subject:
-	 References:In-Reply-To; b=JjU3636Gf4TwvHZHx6WuHqf0cvFOPdFPWJU7SqVMIiboIgBTJIabe4x7GQoOQnCg2iNUvW+BeVodWJsJbVf3m8Ro1do79uxGvpvzosJPmH3bJ9kh/MVhHN0CdmiWcYdCKmQeN4N0HOFR30MWnt/eo3daqpghJVkjzbZ+OJDhf3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=C8qSUifp; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7e34493ecb4so50014885a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 19:12:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1752718321; x=1753323121; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8Ut1Oz5cd4mrEHQ1G48QmwzT5AxIKSMflR+AU1YWamE=;
-        b=C8qSUifpcGHb8plW4ItZQ65sjSTRw6E0bS9xEcmiI55WSN9lZuD0o23ohTIG8/v0/4
-         9CYW16W0n4fkYyIRiK1xpfTkyVLYizEnaZWz85UAO+AtZHj7RYb+XjS+Wp3g/6KdNll7
-         yAEHAqALOLTZbLGmv2Ec6ssSgR4XOElfRiulEN+zV15fnmpk2UAgJ9yljLaXlb5/d7f0
-         Ia8PrpzWLQtJDBObVFj2G41aMqMCLzxH1jbtTpV0jzwelcq0O0HCi3FHOQ5kgh92mTBC
-         l3P0VL6R20eG/0U7bv6pmyrLdAcLvS0p1rxahakCfLoUD53gXhKfSWL6s9vdaNobydId
-         taXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752718321; x=1753323121;
-        h=in-reply-to:references:subject:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8Ut1Oz5cd4mrEHQ1G48QmwzT5AxIKSMflR+AU1YWamE=;
-        b=RvC7kqFM/6qK/rA0Tajzs8fNwf7GixVAp8ehYN1810HSUEKyIFEzI1lmyxK6RO2zci
-         ja7Oai7IIB4FVKKKzdX5oDWrbc2vaxGpz+3N73+R6rTMK/reIISV7qlvNXP47PtpsaEa
-         ZleWbemEndBVf9SzpR75qV9DjDyJgt0ZzZ6OkAmFhgopFMtgEQQq1FHoNg0VxlcsdK0I
-         UCznQzdqISIyMH/pHz/SXsCWEv6iREoKvYP2dA8xJhMBXIWKoX3IewWC811fI4dN705O
-         ifbruo4uagrv0ECz7KDezaxeOIMeK9wZi8WWSpKrAiNRLtVYrTHvXs4roanDjaAvZ9SB
-         nk0w==
-X-Forwarded-Encrypted: i=1; AJvYcCWOvt0oGAjodfoYpmyUS/V4RK+s48IoB/+Gf0JXP8QRzwpceR3hehHmBltCUGBN/NrDGmwNZfdp/R6qaZQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyenhnEEpk38drVI/Ow5gxQ2seqQvXCB+d2JIdAYu9dTXqQ/iYP
-	J+EpP1f1XaqNA7oYexXJbNK/cmhLE6FiRwIKlBZ5s2YlGBRQEmaVqCqXlpS5WNW3QA==
-X-Gm-Gg: ASbGncvlxXXWAyDU0DgZmuWpidKpMEkMS4KoiYu8G5JMqr1MBKX025ABBPPNvIPo/nw
-	tywmF8r29I4eAmfJFSssdlHJ8XWMqlFIUBuhqVcJGjZQY2nc4XnlvT44uduFAJPmnArHLYdnUeN
-	YjHogf0/7h0OI1+kdVbV/llFAcOCtfQhCXir6svNXxqg+BkuBzs9qEd5CFx8mLgCeQE+T+DxTku
-	40XT1nRgb75yt+LyHnPuSTL7MjMpAKSLKD9GWpfbJcLuDTpWmdeaxbbglHBG0NoducNgpIpgj7G
-	JsePcSoalOuuArlTobUIG8NLD7seO6jU/8x1O0JDxf0GOOwGNqDaaj7FNc551Nml9VQZViy1FVx
-	c8Cv6+0hvl2wlNwfOISR1f5sYNZB4DEtrsPcu0AVsasKuN4XfIPfOJrc5wxZarIhSMAc=
-X-Google-Smtp-Source: AGHT+IFuGKGX5Ead/7aQlWXcVtLRDlQcD2Ir2V+fQdBijZ0wUN1PmbDTqZlpVsgTNU2+Tbf1nb3Oew==
-X-Received: by 2002:a05:620a:31a0:b0:7df:dea8:6384 with SMTP id af79cd13be357-7e34362a36cmr806543485a.47.1752718320727;
-        Wed, 16 Jul 2025 19:12:00 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7e342f14ca0sm178636785a.111.2025.07.16.19.12.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 19:12:00 -0700 (PDT)
-Date: Wed, 16 Jul 2025 22:11:59 -0400
-Message-ID: <941986e9f4f295f247e5982002e16fe9@paul-moore.com>
+	s=arc-20240116; t=1752718384; c=relaxed/simple;
+	bh=9NhBKwyrzpmtVxgSk23CnQtxjPIyKvPPzUT0pV/3PCE=;
+	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
+	 Subject:Content-Type; b=Vpuiofq04j3QUfSVLWXanAbYAdRwNqByffC3lv+ZmBALiHXxuJSrwZHb8m+L8Dx/o9enZtv9pdmvyWx+mHqj7A7Plp5pOt+60v13D75zR1eUIarAZysJhyd65tfnvvbDkPB5QURey1hauVMYlX73nVhBjBUHtlEe2/vQdPuqeVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4bjGfX523rz6Fy5l;
+	Thu, 17 Jul 2025 10:12:52 +0800 (CST)
+Received: from xaxapp01.zte.com.cn ([10.88.99.176])
+	by mse-fl2.zte.com.cn with SMTP id 56H2CeDM090833;
+	Thu, 17 Jul 2025 10:12:40 +0800 (+08)
+	(envelope-from fan.yu9@zte.com.cn)
+Received: from mapi (xaxapp02[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Thu, 17 Jul 2025 10:12:41 +0800 (CST)
+Date: Thu, 17 Jul 2025 10:12:41 +0800 (CST)
+X-Zmail-TransId: 2afa68785c19ffffffffe26-47038
+X-Mailer: Zmail v1.0
+Message-ID: <20250717101241665SpBGi_zaErkDSM2Rgmx3o@zte.com.cn>
+In-Reply-To: <CAAVpQUCDJOnwRhjcwFke2vTZQ8rymopC3hpyPteLA3cRgXFz9Q@mail.gmail.com>
+References: 20250716100006458kPWBPIJB6IdzWuUKlv4tF@zte.com.cn,CAAVpQUCDJOnwRhjcwFke2vTZQ8rymopC3hpyPteLA3cRgXFz9Q@mail.gmail.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20250716_2146/pstg-lib:20250716_1156/pstg-pwork:20250716_2146
-From: Paul Moore <paul@paul-moore.com>
-To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, Casey Schaufler <casey@schaufler-ca.com>, John Johansen <john.johansen@canonical.com>, Blaise Boscaccy <bboscaccy@linux.microsoft.com>, =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, selinux@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH] lsm,selinux: Add LSM blob support for BPF objects
-References: <20250715222655.705241-1-bboscaccy@linux.microsoft.com>
-In-Reply-To: <20250715222655.705241-1-bboscaccy@linux.microsoft.com>
+Mime-Version: 1.0
+From: <fan.yu9@zte.com.cn>
+To: <kuniyu@google.com>
+Cc: <kuba@kernel.org>, <edumazet@google.com>, <ncardwell@google.com>,
+        <davem@davemloft.net>, <dsahern@kernel.org>, <pabeni@redhat.com>,
+        <horms@kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+        <yang.yang29@zte.com.cn>, <xu.xin16@zte.com.cn>,
+        <tu.qiang35@zte.com.cn>, <jiang.kun2@zte.com.cn>,
+        <qiu.yutan@zte.com.cn>, <wang.yaxin@zte.com.cn>,
+        <he.peilin@zte.com.cn>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCBuZXQtbmV4dCB2Nl0gdGNwOiB0cmFjZSByZXRyYW5zbWl0IGZhaWx1cmVzIGluIHRjcF9yZXRyYW5zbWl0X3NrYg==?=
+Content-Type: multipart/mixed;
+	boundary="=====_001_next====="
+X-MAIL:mse-fl2.zte.com.cn 56H2CeDM090833
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: fan.yu9@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.133 unknown Thu, 17 Jul 2025 10:12:52 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 68785C24.001/4bjGfX523rz6Fy5l
 
-On Jul 15, 2025 Blaise Boscaccy <bboscaccy@linux.microsoft.com> wrote:
-> 
-> This patch introduces LSM blob support for BPF maps, programs, and
-> tokens to enable LSM stacking and multiplexing of LSM modules that
-> govern BPF objects. Additionally, the existing BPF hooks used by
-> SELinux have been updated to utilize the new blob infrastructure,
-> removing the assumption of exclusive ownership of the security
-> pointer.
-> 
-> Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-> ---
->  include/linux/lsm_hooks.h         |   3 +
->  security/security.c               | 120 +++++++++++++++++++++++++++++-
->  security/selinux/hooks.c          |  56 +++-----------
->  security/selinux/include/objsec.h |  17 +++++
->  4 files changed, 147 insertions(+), 49 deletions(-)
 
-...
 
-> @@ -835,6 +841,72 @@ static int lsm_bdev_alloc(struct block_device *bdev)
->  	return 0;
->  }
->  
-> +/**
-> + * lsm_bpf_map_alloc - allocate a composite bpf_map blob
-> + * @map: the bpf_map that needs a blob
-> + *
-> + * Allocate the bpf_map blob for all the modules
-> + *
-> + * Returns 0, or -ENOMEM if memory can't be allocated.
-> + */
-> +static int lsm_bpf_map_alloc(struct bpf_map *map)
-> +{
-> +	if (blob_sizes.lbs_bpf_map == 0) {
-> +		map->security = NULL;
-> +		return 0;
-> +	}
-> +
-> +	map->security = kzalloc(blob_sizes.lbs_bpf_map, GFP_KERNEL);
-> +	if (!map->security)
-> +		return -ENOMEM;
-> +
-> +	return 0;
-> +}
+--=====_001_next=====
+Content-Type: multipart/related;
+	boundary="=====_002_next====="
 
-Casey suggested considering kmem_cache for the different BPF objects,
-but my gut feeling is that none ofthe BPF objects are going to be
-allocated with either enough frequency, or enough quantity, where a
-simple kzalloc() wouldn't be sufficient, at least for now.  Thoughts
-on this Blaise?
 
-Assuming we stick with kazlloc() based allocation, please look at using
-the lsm_blob_alloc() helper function as Song mentioned  As I'm writing
-this I'm realizing there are a few allocatiors that aren't using the
-helper, I need to fix those up ...
+--=====_002_next=====
+Content-Type: multipart/alternative;
+	boundary="=====_003_next====="
 
-It's worth mentioning that the allocation scheme is an internal LSM
-implementation detail, something we can change at any time with a small
-patch, so I wouldn't stress too much about "Getting it Right" at this
-point in time.
 
-> @@ -5763,7 +5862,12 @@ int security_bpf_token_capable(const struct bpf_token *token, int cap)
->   */
->  void security_bpf_map_free(struct bpf_map *map)
->  {
-> +	if (!map->security)
-> +		return;
-> +
+--=====_003_next=====
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
 
-We don't currently check if map->security is NULL in the current hook,
-or the SELinux callback (it's not a common pattern for the LSM blobs),
-did you run into a problem where the blob pointer was NULL?
+PiA+IHByaW50IGZtdDogInNrYmFkZHI9JXAgc2thZGRyPSVwIGZhbWlseT0lcyBzcG9ydD0laHUg
+ZHBvcnQ9JWh1IHNhZGRyPSVwSTQgZGFkZHI9JXBJNCBzYWRkcnY2PSVwSTZjIGRhZGRydjY9JXBJ
+NmMgc3RhdGU9JXMgZXJyPSVkIg0KPiA+DQo+ID4gU3VnZ2VzdGVkLWJ5OiBLdW5peXVraUl3YXNo
+aW1hIDxrdW5peXVAZ29vZ2xlLmNvbT4NCj4gDQo+IEkgZG9uJ3QgZGVzZXJ2ZSB0aGlzIHRhZy4g
+IChBbHNvLCBhIHNwYWNlIGJldHdlZW4gZmlyc3QvbGFzdCBuYW1lIGlzIG1pc3NpbmcuKQ0KPiAN
+Cj4gU3VnZ2VzdGVkLWJ5IGNhbiBiZSB1c2VkIHdoZW4gdGhlIGNvcmUgaWRlYSBpcyBwcm92aWRl
+ZCBieSBzb21lb25lLA0KPiBidXQgbm90IHdoZW4gc29tZW9uZSBqdXN0IHJldmlld3MgdGhlIHBh
+dGNoIGFuZCBwb2ludHMgb3V0IHNvbWV0aGluZw0KPiB3cm9uZy4NCj4gDQo+IEJ1dCBjb2RlLXdp
+c2UsIHRoZSBjaGFuZ2UgbG9va3MgZ29vZCB0byBtZS4NCj4gDQo+IFJldmlld2VkLWJ5OiBLdW5p
+eXVraSBJd2FzaGltYSA8a3VuaXl1QGdvb2dsZS5jb20+DQpIaSBLdW5peXVraSwNCg0KVGhhbmsg
+eW91IGZvciB5b3VyIHRob3JvdWdoIHJldmlldyBhbmQgZ3VpZGFuY2UgLSBpdCdzIGdyZWF0bHkg
+YXBwcmVjaWF0ZWQuDQpJJ2xsIHN1Ym1pdCB2NyB3aXRoIGNvcnJlY3RlZCB0YWdzIDopLg==
 
-The same comment applies to all three blob types.
 
->  	call_void_hook(bpf_map_free, map);
-> +	kfree(map->security);
-> +	map->security = NULL;
->  }
->  
->  /**
+--=====_003_next=====
+Content-Type: text/html ;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
 
---
-paul-moore.com
+PGRpdiBjbGFzcz0iemNvbnRlbnRSb3ciPjxwPiZndDsgJmd0OyBwcmludCBmbXQ6ICJza2JhZGRy
+PSVwIHNrYWRkcj0lcCBmYW1pbHk9JXMgc3BvcnQ9JWh1IGRwb3J0PSVodSBzYWRkcj0lcEk0IGRh
+ZGRyPSVwSTQgc2FkZHJ2Nj0lcEk2YyBkYWRkcnY2PSVwSTZjIHN0YXRlPSVzIGVycj0lZCI8L3A+
+PHA+Jmd0OyAmZ3Q7PC9wPjxwPiZndDsgJmd0OyBTdWdnZXN0ZWQtYnk6IEt1bml5dWtpSXdhc2hp
+bWEgJmx0O2t1bml5dUBnb29nbGUuY29tJmd0OzwvcD48cD4mZ3Q7Jm5ic3A7PC9wPjxwPiZndDsg
+SSBkb24ndCBkZXNlcnZlIHRoaXMgdGFnLiZuYnNwOyAoQWxzbywgYSBzcGFjZSBiZXR3ZWVuIGZp
+cnN0L2xhc3QgbmFtZSBpcyBtaXNzaW5nLik8L3A+PHA+Jmd0OyZuYnNwOzwvcD48cD4mZ3Q7IFN1
+Z2dlc3RlZC1ieSBjYW4gYmUgdXNlZCB3aGVuIHRoZSBjb3JlIGlkZWEgaXMgcHJvdmlkZWQgYnkg
+c29tZW9uZSw8L3A+PHA+Jmd0OyBidXQgbm90IHdoZW4gc29tZW9uZSBqdXN0IHJldmlld3MgdGhl
+IHBhdGNoIGFuZCBwb2ludHMgb3V0IHNvbWV0aGluZzwvcD48cD4mZ3Q7IHdyb25nLjwvcD48cD4m
+Z3Q7Jm5ic3A7PC9wPjxwPiZndDsgQnV0IGNvZGUtd2lzZSwgdGhlIGNoYW5nZSBsb29rcyBnb29k
+IHRvIG1lLjwvcD48cD4mZ3Q7Jm5ic3A7PC9wPjxwPiZndDsgUmV2aWV3ZWQtYnk6IEt1bml5dWtp
+IEl3YXNoaW1hICZsdDtrdW5peXVAZ29vZ2xlLmNvbSZndDs8L3A+PHA+SGkgS3VuaXl1a2ksPC9w
+PjxwPjxicj48L3A+PHA+VGhhbmsgeW91IGZvciB5b3VyIHRob3JvdWdoIHJldmlldyBhbmQgZ3Vp
+ZGFuY2UgLSBpdCdzIGdyZWF0bHkgYXBwcmVjaWF0ZWQuPC9wPjxwPkknbGwgc3VibWl0IHY3IHdp
+dGggY29ycmVjdGVkIHRhZ3MgOikuPGJyPjwvcD48L2Rpdj4=
+
+
+--=====_003_next=====--
+
+--=====_002_next=====--
+
+--=====_001_next=====--
+
 
