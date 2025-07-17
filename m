@@ -1,179 +1,170 @@
-Return-Path: <linux-kernel+bounces-735298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87A6CB08D77
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:50:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3AD6B08D8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:53:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC68A189485D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:50:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21783A40E70
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:52:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A3D2C3260;
-	Thu, 17 Jul 2025 12:50:36 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C13942D77F4;
+	Thu, 17 Jul 2025 12:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mi2dJABB"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EAA311712
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 12:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4482D59F8
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 12:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752756636; cv=none; b=EMxzgqWMJAteDmuvDvzIrr5Ij2XlqqiXJ1DcPA7Hph3piDCSYABIDvac5oRieeUohcpO//0XLCS+UAdroslzV68oGfLKAZF+PPJExdsHvATSm4n1g6S243h5tERI4S/bdiqrgndmjuvwnHUdlZLfHzOiW+fiiOBGqhSauQFG+lk=
+	t=1752756747; cv=none; b=MHpXB1VLyW6uxMGb24o8xLnyjb9QSh0BiJEfsVHayAJffv8i50cXbhzrdzoxllvcAsa/MUaijdIp8/MhXf9NmgEkJ5msayd9kEtZVvSDe09JW+KzpV32h1+yIIPwU7iIqCuo2ubNxvXn1DEEf3E/MNQ/PRTWk9gq60MViruvp3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752756636; c=relaxed/simple;
-	bh=gq1sg5K1PsA/jH85Wh+Kf7jH78KhklYnNFGPwjTeAYE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=m6LreNYnu4NEVCbzcJN9ci2mThNPIvkV9Er+Emv0HPwqCdRKX4h7fpRJwCRK6ffAO1BYUV7Mh44cef2mwNJlLqtIT1f+1+OZr2kiHhQsUPAUuTe6uAX9IqkXfHbOJHyDd8CDBOSYSUpwa01V9nMokLIsomecThkHTMKnLoGbrjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-86f4e2434b6so104583239f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 05:50:34 -0700 (PDT)
+	s=arc-20240116; t=1752756747; c=relaxed/simple;
+	bh=a67q9vRiltRTZHMR3Ms76FxNaY5qSMRH7L5XmrAljeY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BgYNf4+tPRxn5SMYHlDodfhmwsaOrIIsnyx0EwyQKTPpYsp0qyMeqVlJAB/7erpAUW+aipj3jiyI7ajuyX7d8tEORWl1SxQuaa6brXMwBT1BgPurSqXqgKoTDSXV643CNk6xEzLHCbPmh6I0CSnL4n6X4TabKL4iQNV7sNWzEaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mi2dJABB; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56HBk1Yq022239
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 12:52:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	5vBbIFMsukX9HGUnJnPR68gUMxT8rTJ0JNXNOwtyoPM=; b=mi2dJABBWnLK3AWI
+	pxak5GCGoxNf2lp3htEsWycGZdDFYNlOMDHzJOE+V3JNWMcA0Bj6nnSRrnFBRl17
+	4wPVmAdQXyzYpFu7xrxZzCLUcP69xntuF3Rd6eJ09QEuSwxW7oSy4z9TB2wrp1Rx
+	+z5NtcS66gvu1+KucS7WaHehIaL3bqP7zwqceYejylvJ8V8OgGpA0l/yPTbPW9l7
+	gTTKfPFyd2cIfEGgSh9MJSj5P7wJbG0orDqNF9HolwyjPyF+/thBTb8QYywN/vk8
+	JHena3Rs7ZaVP+eU5Zu4kCaDI1nxDiCNaGQAaXvXVAD3l6AvhKXaBuA8RswDCmB8
+	ztSrww==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47wqsy7knk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 12:52:25 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4ab3ab7f74bso2268901cf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 05:52:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752756633; x=1753361433;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=79v0ZMHCi6HvCZzKTQZtWwDKcFqEx9XOZ+voG4e7hlg=;
-        b=DnFONxZQG64Nb6gnxthPEKdR2ADitBN0Wu4a3ti49ja92BkLKyS/VhoUXVun3faY/W
-         8Vr2Y6WaCA/2JhVy9tvWDCEumS/Q6mEXLAKsgzuvA+U1LPEj6e8YwHmle9bKzP/XqVZk
-         aGTXwr/XvLFxeHJjfd8I4DnEvbE2xJxgdfcm1WdPJQBPX9BBjpYsuHE9OexsXxWBMP9v
-         i5v4wN9LXdN/HTcjrdMVOW6QXPiGIMM5ZxATRMaRhnx0gV48VCBfvcsDh1pcxOTSLMaO
-         N8zKKbXneHtW+TNpURPLVpI9/n8qK8BeYH0GTBskKKwjxo73G6UKxrMsdDP9KjiDjxWE
-         FQFA==
-X-Forwarded-Encrypted: i=1; AJvYcCV5vKEc8YJi9gCTfQOSopDftO2bF6IwQ/lUEcgW4cU165paTYkZ0IoQp0+yk/WhBEmReBMuAW2hBmZTZ4Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHXuwDEsIAd99sXVIGjlp1oHx8RZSJ1phA9uF6GyYz6yh4Fq6Y
-	3coXgblY0r43WYx379kZCngiQ8jKQLEsnssJkICXHWZF7MKLbEFlfk/dN5NnDBDivrE1APt9iU4
-	NBiMiD696MK7DdlzMYVSuDYhLaEu2hcv5aiaGdyo5hxvCQAc6XTnq6giRSJw=
-X-Google-Smtp-Source: AGHT+IHLZ1HCqSnFjMR4KLHP6SFDjuByghjjlKM+B2N0WB4+I6KGatYCQmwuh+/cN09KFsyTM/Tb0HctEAScqEwluVEPrTO4zOPc
+        d=1e100.net; s=20230601; t=1752756744; x=1753361544;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5vBbIFMsukX9HGUnJnPR68gUMxT8rTJ0JNXNOwtyoPM=;
+        b=eMTFaY1a/Wp9ioIlTnQ8VM+4nq+IkpKY1sYIgS0nZIYNhgZdwKdc92gdxLK879BPut
+         ZbUuA2Y0lVnOUSWnRfZHXNWvPipSmvGS0uarLwKERi0Cm8BYLIEVrAS6ERJ+WNvb1TM/
+         SxABzdC1Q5WTZFyazqbCvKv4eqmFR3mJCVzQGsXEDhUynukXoN0BUQLmIPm0jbARaKkc
+         b6ux9zTHiy7brWZ5qnMQfjlezjjwSBgjV3+vUIFIhKevY5IGC1IAjKkkeMpW53+d+lno
+         c18ma1DDBZedd2ss5hP5IKFsL3F0sr4enb9l7Bo5TJkvqNITVRgxB2eitE1YOzS64HlC
+         yS1Q==
+X-Gm-Message-State: AOJu0YwrxL4M0tm6vgECSb30rRxQgGGvVyth3/xnQBOL1y62MPQEo2zN
+	DzC1DfMEOhmEHNZFZtqrJ1ROXbrSU++TOGolYDCRuYmBFIywk4S9duFHCyaXs/5luFE6X9LU5+k
+	tBIuRwGbM5zAEoMFqBNNdEkXlvf/Yf/+m9BlBZxwneXj3G0G5wf5O8qyoctAvAFlsci8=
+X-Gm-Gg: ASbGncvtTS69kk8R192x/ikZ3heqgp/QJ6g46FDEArVbheiFlO5+D+IIGoZz7lwstXX
+	PrGnbh16DTwCJt+T0uybTgDQhxXbQl0XfeRhsPBaH+zBtda2qCNSjZ6V8XLYbZmnZ4BqZxxX9bh
+	Wqsb1mNIKO5z2+vUw7XQlJYErY/Gk+WwxZ4IDkWNhr2/A2C9JhCGpkS4OUuqYvTiuCVZ8DVM1A/
+	Ziz0LEnlHZ/RLwj/iWB1dfjMcPiDv+wXFhXkYRgPfWwNCqFudM5NtHPUPnGsZFE15RF/hAFpS5j
+	oCU+V60ZGFtBeZXFRWlvPU2JLqx+2wRAElRsT2CHb+hFWfatd6MGyyBvY3kI7qpC83LQU5ZPS9z
+	WqHO8OrUzHVFO2RQU8dtb
+X-Received: by 2002:a05:622a:164b:b0:4a9:a2d2:5cd5 with SMTP id d75a77b69052e-4ab90a5b7c7mr43642511cf.6.1752756743603;
+        Thu, 17 Jul 2025 05:52:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF1GDc8kUpCOa+DP/D8Ogh1qBcyaDm+IZkeR2eLPatJQacP1EZjywXx5Ij/ieSAvtDStqwKug==
+X-Received: by 2002:a05:622a:164b:b0:4a9:a2d2:5cd5 with SMTP id d75a77b69052e-4ab90a5b7c7mr43642321cf.6.1752756743170;
+        Thu, 17 Jul 2025 05:52:23 -0700 (PDT)
+Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-611c976d9f7sm10021774a12.54.2025.07.17.05.52.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Jul 2025 05:52:22 -0700 (PDT)
+Message-ID: <b16a5efd-21d8-4a59-b425-425800003c95@oss.qualcomm.com>
+Date: Thu, 17 Jul 2025 14:52:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:48b:b0:879:674e:2c73 with SMTP id
- ca18e2360f4ac-879c295015amr844546439f.4.1752756633440; Thu, 17 Jul 2025
- 05:50:33 -0700 (PDT)
-Date: Thu, 17 Jul 2025 05:50:33 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6878f199.a70a0220.693ce.0047.GAE@google.com>
-Subject: [syzbot] [kernel?] WARNING in comedi_compat_ioctl
-From: syzbot <syzbot+6048f8e5da91c7055339@syzkaller.appspotmail.com>
-To: abbotti@mev.co.uk, hsweeten@visionengravers.com, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] media: qcom: camss: Add link support for TPG
+ common
+To: Wenmeng Liu <quic_wenmliu@quicinc.com>, Robert Foss <rfoss@kernel.org>,
+        Todor Tomov <todor.too@gmail.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+References: <20250717-lemans_tpg-v2-0-a2538659349c@quicinc.com>
+ <20250717-lemans_tpg-v2-2-a2538659349c@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250717-lemans_tpg-v2-2-a2538659349c@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDExMyBTYWx0ZWRfX+1bFnLXkJejk
+ LXcU/cM3/DF8YqkaWLNXVkpRD3x9ncmlxXMSbId5c840Aj+TTfoxTlNIeIZEqU0FckGweVHKg9+
+ Rh0fQqQYsSI+frxPr3ONxszJLHARAvb53iB4SL/EFieXQqMY3r1em2ArEBYbLDlaa2NyKiRtEA/
+ XMPpmMPuaa9NVPKFv3p/lkXShRM4j0rVyR7zM/974eHofCXxkfla2ylntGL7BQEAyomA7M0tUcb
+ uJNtRrUfphR4O3BdWie+cxtbUNfkfzS25FLRm47P9IRPqiRhWPV40AbyOsPI+zGFWDH0087ObJ9
+ N75n2ieICnHkt2azbFcJekllUrUtlXjGOj3v/O/UvNxbHxbysZgu/J6ODh76Bloaq1TaKw6hnN6
+ zFPav35CqoLDby7Zbi3yEnQXgt72hwFKDXPJ0NYodCiQiu6pBva5TG70EqE4uFUmBfPIknGM
+X-Proofpoint-GUID: mcEyMC34HT99Ui5GEJz48yAiANZFwDbY
+X-Proofpoint-ORIG-GUID: mcEyMC34HT99Ui5GEJz48yAiANZFwDbY
+X-Authority-Analysis: v=2.4 cv=McZsu4/f c=1 sm=1 tr=0 ts=6878f209 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8 a=ea1JrDabYO8hHO9gwP8A:9
+ a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-17_01,2025-07-17_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 mlxlogscore=999 impostorscore=0 mlxscore=0 phishscore=0
+ adultscore=0 lowpriorityscore=0 bulkscore=0 clxscore=1015 suspectscore=0
+ spamscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507170113
 
-Hello,
+On 7/17/25 5:20 AM, Wenmeng Liu wrote:
+> TPG is connected to the csid as an entity, the link
+> needs to be adapted.
+> 
+> Signed-off-by: Wenmeng Liu <quic_wenmliu@quicinc.com>
+> ---
+>  drivers/media/platform/qcom/camss/camss-csid.c | 44 +++++++++++++++++-----
+>  drivers/media/platform/qcom/camss/camss.c      | 52 ++++++++++++++++++++++++++
+>  2 files changed, 87 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/camss/camss-csid.c b/drivers/media/platform/qcom/camss/camss-csid.c
+> index 5284b5857368c37c202cd89dad6ae8042b637537..1ee4c4cc61cb32ce731dd8123522cc729d1ae3bb 100644
+> --- a/drivers/media/platform/qcom/camss/camss-csid.c
+> +++ b/drivers/media/platform/qcom/camss/camss-csid.c
+> @@ -1226,6 +1226,23 @@ void msm_csid_get_csid_id(struct media_entity *entity, u8 *id)
+>  	*id = csid->id;
+>  }
+>  
+> +/*
+> + * csid_get_csiphy_tpg_lane_assign - Calculate lane assign by tpg lane num
+> + * @num - tpg lane num
+> + *
+> + * Return lane assign
+> + */
+> +static u32 csid_get_csiphy_tpg_lane_assign(int num)
+> +{
+> +	u32 lane_assign = 0;
+> +	int i;
+> +
+> +	for (i = (num - 1); i >= 0; i--)
+> +		lane_assign |= i << (i * 4);
 
-syzbot found the following issue on:
+for (lane_idx = 0; lane_idx < lane_num: i++)
+	u32_encode_bits(idx, 4 * idx)
 
-HEAD commit:    3f31a806a62e Merge tag 'mm-hotfixes-stable-2025-07-11-16-1..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=152307d4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=84eae426cbd8669c
-dashboard link: https://syzkaller.appspot.com/bug?extid=6048f8e5da91c7055339
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
+should be equivalent and a little more comprehensible
 
-Unfortunately, I don't have any reproducer for this issue yet.
+although it would be nice to know where the 4 comes from (some register
+bitwidth perhaps?)
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-3f31a806.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/51112e82d2bc/vmlinux-3f31a806.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/dfafec79e704/bzImage-3f31a806.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+6048f8e5da91c7055339@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 6660 at mm/page_alloc.c:4935 __alloc_frozen_pages_noprof+0x30b/0x23f0 mm/page_alloc.c:4935
-Modules linked in:
-CPU: 0 UID: 0 PID: 6660 Comm: syz.2.103 Not tainted 6.16.0-rc5-syzkaller-00266-g3f31a806a62e #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:__alloc_frozen_pages_noprof+0x30b/0x23f0 mm/page_alloc.c:4935
-Code: f0 5b 5d 41 5c 41 5d 41 5e 41 5f e9 8f 12 73 09 83 fe 0a 0f 86 0a fe ff ff 80 3d 17 9d 7d 0e 00 75 0b c6 05 0e 9d 7d 0e 01 90 <0f> 0b 90 45 31 f6 eb 81 4d 85 f6 74 22 44 89 fa 89 ee 4c 89 f7 e8
-RSP: 0018:ffffc9000dfe7988 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 000000000000001a RDI: 0000000000040dc0
-RBP: 00000027fffffb00 R08: 0000000000000007 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000001 R12: 000000000000001a
-R13: 1ffff92001bfcf46 R14: 00000027fffffb00 R15: 000000000000001a
-FS:  0000000000000000(0000) GS:ffff888097520000(0063) knlGS:00000000f503cb40
-CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-CR2: 00000000f7496188 CR3: 0000000066b87000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- __alloc_pages_noprof+0xb/0x1b0 mm/page_alloc.c:4993
- __alloc_pages_node_noprof include/linux/gfp.h:284 [inline]
- alloc_pages_node_noprof include/linux/gfp.h:311 [inline]
- ___kmalloc_large_node+0x84/0x1e0 mm/slub.c:4272
- __kmalloc_large_node_noprof+0x1c/0x70 mm/slub.c:4300
- __do_kmalloc_node mm/slub.c:4316 [inline]
- __kmalloc_noprof.cold+0xc/0x61 mm/slub.c:4340
- kmalloc_noprof include/linux/slab.h:909 [inline]
- kmalloc_array_noprof include/linux/slab.h:948 [inline]
- compat_insnlist drivers/comedi/comedi_fops.c:3145 [inline]
- comedi_compat_ioctl+0x3e9/0x910 drivers/comedi/comedi_fops.c:3225
- __do_compat_sys_ioctl fs/ioctl.c:1005 [inline]
- __se_compat_sys_ioctl fs/ioctl.c:948 [inline]
- __ia32_compat_sys_ioctl+0x23f/0x370 fs/ioctl.c:948
- do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
- __do_fast_syscall_32+0x7c/0x3a0 arch/x86/entry/syscall_32.c:306
- do_fast_syscall_32+0x32/0x80 arch/x86/entry/syscall_32.c:331
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-RIP: 0023:0xf708e579
-Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
-RSP: 002b:00000000f503c55c EFLAGS: 00000296 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 000000008008640b
-RDX: 0000000080000080 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000296 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-----------------
-Code disassembly (best guess), 2 bytes skipped:
-   0:	10 06                	adc    %al,(%rsi)
-   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
-   6:	10 07                	adc    %al,(%rdi)
-   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
-   c:	10 08                	adc    %cl,(%rax)
-   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
-  1e:	00 51 52             	add    %dl,0x52(%rcx)
-  21:	55                   	push   %rbp
-  22:	89 e5                	mov    %esp,%ebp
-  24:	0f 34                	sysenter
-  26:	cd 80                	int    $0x80
-* 28:	5d                   	pop    %rbp <-- trapping instruction
-  29:	5a                   	pop    %rdx
-  2a:	59                   	pop    %rcx
-  2b:	c3                   	ret
-  2c:	90                   	nop
-  2d:	90                   	nop
-  2e:	90                   	nop
-  2f:	90                   	nop
-  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
-  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Konrad
 
