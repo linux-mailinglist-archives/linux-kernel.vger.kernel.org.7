@@ -1,219 +1,232 @@
-Return-Path: <linux-kernel+bounces-735829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB58DB0943D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 20:46:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DFFCB0944A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 20:47:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EEC45A0DE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:45:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0CC01C481DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:47:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFFA12FE31D;
-	Thu, 17 Jul 2025 18:44:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5E59302063;
+	Thu, 17 Jul 2025 18:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b="N2G56BT/"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AIfbBjIs"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3608199FBA
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 18:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752777888; cv=none; b=O1/5lEao9eNsvmc/ZW5vyP4Ai+OHfuNxbnt2cVIpKziZ6KQleJenrGdjCk3JSgbUj3e8AqIwkbA3cgmKL113djoN17sJLYLcOj/U4ma65VTOGgjMJX0shrMwxtm9eCAF86+6g0fJeC+BZtS30hNUE4MFk1HJW3MInMLyLp5rJ2c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752777888; c=relaxed/simple;
-	bh=ZCBDhVYdtk0y4eJcRuRLbrOsD67LlslZ+NDvFYkKj5o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=dNSUPSbN9suP+xASWqoo8xhAB92DysocmwGFjanZjumN/mt1ufuJnfXNkICabtnp87wyMp+rADHyareKfLxkuvHyh/pyLqeP5G9tVL87dU1YM6ILrXKG8J58fBwmunC9aagrWZuo4HN4W6hu9xeHu2SoyMNwMaABAyyIWGN0RgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com; spf=pass smtp.mailfrom=iencinas.com; dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b=N2G56BT/; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iencinas.com
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iencinas.com;
-	s=key1; t=1752777873;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=mAKc0gZj12q7OYrgO0jy//NODW8HnTIl71eRaw/GUw8=;
-	b=N2G56BT/BbYgC1C9q9Sr13xf+d4zwHYofERaUf+6Gk8OnCgO/Kkje/FKkRk26DhZuSh8qv
-	h+p1OztjWOrZaZNlhbNVTuvjyQK4/3SpMQ74iAjvb5NGIM81oYDe0Xef5LcYcBPyaw7qoG
-	p1NWs46vI3loIjEHlyZYd5bNGAmtEowjEhGuFDP6KwZ1imNjkklT2hixlnWwtLFK/tuC3G
-	hkG2WSMtxS+KmHhtYCzC6Kswqo5PNRelZdVPUPvra0/hlRyZrSgIAKeuqVJazPkEmbN+lj
-	nGGI8YPL2oofUEVdCQqzjOfn3kG5OsFbiIxu9xYm/JaEHUYZl7hMH/8IR0c/yQ==
-From: Ignacio Encinas <ignacio@iencinas.com>
-Date: Thu, 17 Jul 2025 19:44:02 +0100
-Subject: [PATCH v5] riscv: introduce asm/swab.h
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5AE213E89;
+	Thu, 17 Jul 2025 18:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752777924; cv=fail; b=nEUbwl8ZUlSlHsm2teRMcZchpUW5XjK/Ht/mBQfceoSfGd4v0mkD5h20SctUO9Ze931JZ9ZAXN1V76Nx0oIiJsJaiNtcUHgVMtPF/cUS+xkkMz6CTZs8hilKj1pitOmv8slM/7kap8fQ+PZeN/dyfJLJ5MgWC7Sk0bvSNBB+fp0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752777924; c=relaxed/simple;
+	bh=H73szXXCyvowu5wY6ynRN2FL3jbJPi+5cKQACOOHcFs=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=H5HBStyt99nEGP8hQB/5kJpRaxcmQAgnGaPQUB8gNV4YhXhTbGvHhxBLiDfsOfB93B5znKWHYRo21L048+g+GB3TVoaJSMXdzS5qqcQdw4TRIw9MYWQCHg3Nw7k/C5hY//nBNC8q/nQvwhWUP2aijAYBZbv3ehMpqIKLmn5ltiA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AIfbBjIs; arc=fail smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752777923; x=1784313923;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=H73szXXCyvowu5wY6ynRN2FL3jbJPi+5cKQACOOHcFs=;
+  b=AIfbBjIsS3MT8G5qd8vClimLi4ArqoTLL48W/Gt6AFNSsnq0l5ZRPGue
+   HKUmvZn1ymKV3rDh6UvcE5ZoWNenFHuguVDHASot/0YKhFt/PUfUf0UQQ
+   A33+Le57yj/A0zjGEYHmhubWpDsIBRPzFUv/yE++xT2+DIhGy06PReUpH
+   KtYxf4fKnLVgUDrDB+PCQ9oV5omgGXJQMgjK733PRRjp25pOjc4KG6nv/
+   5ANOv/BKXGPtAbe6yoMSN2h8A4DzncE0UB8KhjRnfFoXW/icDa86TOYLz
+   HA8Vn7ienL7Tc8VQCUNRHN+shMhRPhStWBF+fOVbXk/Hg9qXxz1j4LFmF
+   g==;
+X-CSE-ConnectionGUID: hJ7XCgHyQviWz7l5oG2ZdA==
+X-CSE-MsgGUID: 4Gd6rZtbSA+wtulwUWYs7g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11495"; a="55192015"
+X-IronPort-AV: E=Sophos;i="6.16,319,1744095600"; 
+   d="scan'208";a="55192015"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 11:45:20 -0700
+X-CSE-ConnectionGUID: dsJsr5NWRxSlKULGhtHzDg==
+X-CSE-MsgGUID: D8Wp4LkdRTKPW0O/HQ5G+Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,319,1744095600"; 
+   d="scan'208";a="158440476"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 11:45:17 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Thu, 17 Jul 2025 11:45:09 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Thu, 17 Jul 2025 11:45:09 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (40.107.223.58)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Thu, 17 Jul 2025 11:45:08 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=C9lJJglQAvrJlA1lHFPKjNb6N6hHZAkHFybw/ddJ6SdjFHzO6zo2PCqeUFKW/FNh+M0WMoTNNp2oPRJLRUSUm4LK3yk+KCVkkcHIfVFKpbh3+Iu7lnNQMcs4XL5zDwgCKscJ6SmV5RyhT2072czPyLl25w1E2FxQcWLX3VCTl3PpZEIxIA7ddTsEehcANZUyeWBtilKPqYmWeg0Fbyta78zuiNasDyfcIRlnd0BqOZvJI8PCXi6TiIk0Vsk8BzUudCFLHO4IGl35jz0nsJasr4caMelibKF8yvinxZD58oIByQ5O+MFzQhF5gLUP9GWSCPzC4hQXPgqYr9TLuifuEw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KhfmphOcoTk7z0GPwltuAKkoyMFY90ts9pTGf+l36yo=;
+ b=LBTA/Jy5FU7iITnaZ2wajbVLiJnlR19JZ4Dwbm6CSaDHLqqtRKXs2FjObjMGlxCO4BTxteW/4JVOpHq/+/Orn3G31rY0EhvDAWj6GNKJpaHHCouFiKs1aArcHb4qN5u9gU5HWVgmzikMLSy1UdK+rhtrVtVYRq538GxgW97BO1pf3ZxbUdFTy3r0rQZpzEMut+l4eftDFr95Wojcmk2RNxVAMkHi5OxtKIFZCREWp5PDDZOPvrGMjS9hO+f17CfPE4vEhfPqzY8XmNJV0Zo0Os8g3bOmVUZ1ZyOpdn8QJtnOoxNmig7RU6VSEPiVeEcwfYno3RxPVjre8r5WZhQBrQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by CH8PR11MB9507.namprd11.prod.outlook.com (2603:10b6:610:2bd::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.36; Thu, 17 Jul
+ 2025 18:44:26 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%4]) with mapi id 15.20.8922.037; Thu, 17 Jul 2025
+ 18:44:26 +0000
+Message-ID: <5c96741c-25ad-4c4f-bcba-b5905d7bf200@intel.com>
+Date: Thu, 17 Jul 2025 11:44:23 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 06/34] x86/resctrl: Add ABMC feature in the command
+ line options
+To: Babu Moger <babu.moger@amd.com>, <corbet@lwn.net>, <tony.luck@intel.com>,
+	<james.morse@arm.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
+	<bp@alien8.de>, <dave.hansen@linux.intel.com>
+CC: <Dave.Martin@arm.com>, <x86@kernel.org>, <hpa@zytor.com>,
+	<akpm@linux-foundation.org>, <paulmck@kernel.org>, <rostedt@goodmis.org>,
+	<Neeraj.Upadhyay@amd.com>, <david@redhat.com>, <arnd@arndb.de>,
+	<fvdl@google.com>, <seanjc@google.com>, <jpoimboe@kernel.org>,
+	<pawan.kumar.gupta@linux.intel.com>, <xin@zytor.com>,
+	<manali.shukla@amd.com>, <tao1.su@linux.intel.com>, <sohil.mehta@intel.com>,
+	<kai.huang@intel.com>, <xiaoyao.li@intel.com>, <peterz@infradead.org>,
+	<xin3.li@intel.com>, <kan.liang@linux.intel.com>,
+	<mario.limonciello@amd.com>, <thomas.lendacky@amd.com>, <perry.yuan@amd.com>,
+	<gautham.shenoy@amd.com>, <chang.seok.bae@intel.com>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<peternewman@google.com>, <eranian@google.com>
+References: <cover.1752013061.git.babu.moger@amd.com>
+ <00cd603997e3ee6a389f83aef066fe7313b1abaf.1752013061.git.babu.moger@amd.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <00cd603997e3ee6a389f83aef066fe7313b1abaf.1752013061.git.babu.moger@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW2PR16CA0003.namprd16.prod.outlook.com (2603:10b6:907::16)
+ To SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250717-riscv-swab-v5-1-1d5bb7c42f38@iencinas.com>
-X-B4-Tracking: v=1; b=H4sIAHFEeWgC/23MQU7DMBCF4atUXmM047HdmBX3QCxsZ0JnQVLZy
- ICq3B23QiJBXb4nff9FVS7CVT0dLqpwkyrL3Id7OKh8ivMbaxn7VgaMA4KjLlJz0/UzJp0GTMH
- GEDMm1cG58CRft9jLa98nqR9L+b61G17f3wzCNtNQoybrneEJmYN/Fp6zzLE+5uVdXUvNbHXYa
- aNBj46SH31MAd0dTX/aAu00dU1pOoIbB2CiO9putPE7bbv21gBasNEP+Z9e1/UH6rs8pGEBAAA
- =
-X-Change-ID: 20250307-riscv-swab-b81b94a9ac1b
-To: Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org, 
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Palmer Dabbelt <palmer@rivosinc.com>, 
- Ignacio Encinas <ignacio@iencinas.com>
-X-Migadu-Flow: FLOW_OUT
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|CH8PR11MB9507:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9a04b6f0-efb5-47a7-cecd-08ddc561f4b4
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?NE9hMWpaRVd0WWwzL1pBTHU0WHQvZ1dvMkxGeEV1bm85dStENUw2UVJoZzNr?=
+ =?utf-8?B?NldqNG4wTW9VZDNCbWVRaElNbHBYTUVoY2NQcjNxUWpFazYxb25NR1FwOGdn?=
+ =?utf-8?B?ems5NmtZd3dkVEp3THRPMzRuRUlCVDd5VmtkRjJlcGNBQTAzOUM5NU5SMTJm?=
+ =?utf-8?B?NGkxbUhyN1k2ZlBFR0FNbEpVNzIwYWtPUEVxVi9XLzJIVmJmWVpYRVoyOHRS?=
+ =?utf-8?B?SVlQMFBlTllNenJwNHZMeHY1dzVzenAzTnJQWU1oWSt6U2prSDJEZUNWc3FX?=
+ =?utf-8?B?aWtBaVgzc0NCZGxERUdrWnBSTTg4V0hkR1ZYVUl2MHE3dm5iSjdvZ3p2OHVC?=
+ =?utf-8?B?WUdyQ3JhS2kzREhabWhMQkt0U1ZHdkNUTTAyOFVBcDNlalk0TmFqdnlYR2NC?=
+ =?utf-8?B?VVZCcjUvUWJ2aUhqei9WR1lPLytqS08yajZLWEZCb0pkMklxZkIveDd2RDZu?=
+ =?utf-8?B?MFl1OHlHc1V5QlJDOUs0VXozS1BMQU9LN1ZlUEU1KzBHdWZmRTlIZXJGWFc5?=
+ =?utf-8?B?bkNsZDJWdXh2RnNmaUl3cDEwdHI2Y0x4bTZSeVozT1JwTjdDbzhrYWhOb0g2?=
+ =?utf-8?B?QU5mb1kxV0tITEJsZTRsaVB3U3ZDRWpFbk9scTJ1RERMYi9CSk0zZkpmZUVn?=
+ =?utf-8?B?QXJEWEhwT3ZUdFFHR3cwZ2lwNTNCTVFYNTVySnlZZy80ODh4MUdqT0tDSW9w?=
+ =?utf-8?B?V0ZzOWZIZXpBY2c0ZW92MnNlTnlaWUR4QXRYYUQvMS9PdGpVbnhDQ09ya1Jy?=
+ =?utf-8?B?UXVpdGdMU2MwaGRLWm1yUzdvTUtHSlprMU84OGIycnVPQkdKRXRJWEZKNkd2?=
+ =?utf-8?B?OFlKVGE0NC84YmFKUFVUM0kxK3U3bFZlTmwxOUlKVUhuUGJiSDBTdGpjVDFI?=
+ =?utf-8?B?OXVrSG1rTmxTbHRwWllYSEZ2OVM5empjRnlIdzhzL2lnMFNDZnNucm1vaUVh?=
+ =?utf-8?B?WGRHUTFGSzlsWnZnQzdBMzJaSTR2Ti80Wjh2QmJVRnFnemovRGd4RTk4aW9U?=
+ =?utf-8?B?bEJtOWc3M0xNeFNVOHBJRm9KT3NUKzg5QXg5YkVqYkgvUmZtK2FSVTNYRVNk?=
+ =?utf-8?B?ZWpLM0Uzb2h6RE52UDVVNHdYaWZiVGUrN1N2OHpMSk9XMVpDeisrbkxyVEUy?=
+ =?utf-8?B?T2ZscDkwTDZwTEw4c2xrNXJKckFXM2ZFU2taQWVEcHB1M1NZbDBUdXNQVE1E?=
+ =?utf-8?B?R0szalhaWmhKdksxeU1kZmxwYW9TZVFpSVpRekNuTE50VDZteWhoYUFBd0dG?=
+ =?utf-8?B?NGY3UEhLRUhzN3p0QnFVVEpuSnk3eWdCbC9LTVphQWozNWVjYzlIbmRDa1ZN?=
+ =?utf-8?B?NlJ3bER2VHRQSUsxK3FzUGtQUEp6R2dHNmNQMHF1UmVtL1NnRVhVK1dKQUJw?=
+ =?utf-8?B?aFV1Z3NCSUFFOGxSeVdSL2pqa2IyU0wvQXorMGpIbGJhY3l3QlE4Q1ZobEo0?=
+ =?utf-8?B?TmFodWZQeWRTMGlGYjVrSEV6clNsZ2VjZ3Y4WHMySlRxbXpBSFdyelN0eFpT?=
+ =?utf-8?B?NzBWdjduaEdjVUNnc1dVcHp4R25PeW1wSGpFa1FxakFlV1FHNm5URzlFSlBD?=
+ =?utf-8?B?UXE2US9TcHYrb05UVVlINUN6eUI2RG53WmpiOGRGMUJGYzVpOFN3T01FRzF3?=
+ =?utf-8?B?MU40TjhxcGgrQkRjaGFMYlZpN0d0NC9PTVI3K0xaQkh3M25kYU1vUEx3R1hO?=
+ =?utf-8?B?a2ZhMldNNkNJVEJ0K1dCdndqS0pMNnZUZGlHZXRaN2dVaUxCb2x4Vmk3QTY4?=
+ =?utf-8?B?VHVvcVF1NG1SeU9qZVV4Q2NjMzNKdVpETTYvenQ5TmhwekxqbkQwYzU0MlFh?=
+ =?utf-8?B?SmlpdXhtVkVrMFlOQSt1dVRGaGtHRGMrWnppbzVqVk1VR1lDRExoblRJU3JJ?=
+ =?utf-8?B?ZjhBSXpGVUw5UGpJanpFWTJBVG44WTJiWWJGU3h0dVBZcXh2WmdMNjMyVC8v?=
+ =?utf-8?Q?GDRN9v7j/rs=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UHhUMGs1b1FnRENRL2ZaS09ZY3krQnRBWE1IdmZKNlpKcFNGajJmenZKSGU5?=
+ =?utf-8?B?RERIZFpHc2VTUmpOUWNWWHdITnQvVTVERWVnOEVNOVFwek9SMjZBbXp0YTFP?=
+ =?utf-8?B?UC9OVzN1Ym9vY3BlSUJzbTY2eWYvdUV1emZLV3lKNitQKy9qeFEvSktRNTVQ?=
+ =?utf-8?B?NHFtOWdkanNiYjBWUnovV05zN1FmRitvT3RQY1JSMHlkSExtOU5QbndSMFd6?=
+ =?utf-8?B?OXFXMXArQlQzVUNaU2ZIVjJYL2JhenBsKzJJTWhhNFlKWjN2Y05ZT21EMHF4?=
+ =?utf-8?B?RDFlUWVpbml6UG5QWktxN1o5Q2pZN1VpMDE2V0VFZ1M5VkFLNytJL0xqTVgz?=
+ =?utf-8?B?S2FXdVZvekp1WkMvaThobjBJdkRGL2lwMnpUd05EYVpTbGxGb0s1S2Rpc3RI?=
+ =?utf-8?B?UWE1RzZvSFcwZXRtQkV3Q1hvUSswdUdySDdpamlDOG1LY2YwOFdwM1NDWGNN?=
+ =?utf-8?B?MG12TDBKUXVkWVNibjFDbzZVUUVnUXhZT1FmaFdFQy9maTNsU2VORXFIcU02?=
+ =?utf-8?B?TnlZUmhnRXhOcjVZL2tRVFJWVU9pLzBpK1UyQ3liak1FVHo2cEZYU0tDQm1T?=
+ =?utf-8?B?ZjJYYTg4NEJhMVRzY2U1R0MySC9IYXN3eE8vUm5NYW5uY2dlY2xqUTc3OFBj?=
+ =?utf-8?B?T0dJTW1KUnllcHRnaUdSbm1kREpHbnJGdFJpa0JIbVRyenhmRGhrU2VZMndr?=
+ =?utf-8?B?UUFBZUJ6cmVJQTNEOWt0TGNxT0ttTHpUUXFJMFlTbnF6ckxVanR4WEZlZ3hy?=
+ =?utf-8?B?RG1hVzNZK0kvd1Y5UWJaVU8va1hqdjlTTnpld2lYY29vQ1pvYk5JOEhqTzlv?=
+ =?utf-8?B?MEYrTU43ek1QSElEQ3FHUXFyNzIzRVQ1VWlBMjJHVnhFVkVZazhZYXl1YUlh?=
+ =?utf-8?B?bThXUTFpVEFyOUxxTzFMeDJiNStzK3QxNlNja25UVk1OZ2dkMHJEMHl5R1ds?=
+ =?utf-8?B?ajMvUFdocEtqVDZ5UlkwU3IxVEo1VTRuSWpsbVREYWRqNWhTTmtxQUtDaGM0?=
+ =?utf-8?B?Q1BCS24wYkFOMmVTM2VZS1J6dU1IRTViOGdWRFNaUURRbER3VjNLc1BxVnVi?=
+ =?utf-8?B?b0lRbFR6QzlQSmZaaDFzdmdBcXBZR0V4eGl5VVZoMDFJOC9UUncvbWFTMUpn?=
+ =?utf-8?B?TkIwSytZTFZxN0o4bXp6MG5YWUk0QjkzYjBlRzBvcjNuTzkwK0VZdk90QW8z?=
+ =?utf-8?B?bktRN09uMU9PQklNaVlWQ0JJU0s5M1dCS05aVGluamplb1pNQ00zT2QwejJX?=
+ =?utf-8?B?L0JBU1IvU0FaRklucDlWdnZtOG5sSlpia1hPazVlR2kxVWNKcDZCMjdiSWc5?=
+ =?utf-8?B?cFdsbk1DQ1grb3VDTXJPT3pkUy9QOGRvTnBFUHRrUkJINmRrNGlqZG5WaEtj?=
+ =?utf-8?B?U1dpRk9aaGFtTWlpT21MUjI4MEVETStrd1ovRXRLQVRiL1kydTNuYUMwL2Jo?=
+ =?utf-8?B?a0NVNFRXa0N5VDVLL0o5VXBJMm9hdmttQUEwbnI1Mm0zelZtTlRPNHBzNHF1?=
+ =?utf-8?B?LzZZYk9taWd6MzBYYUE0MzB2Si9PaVNqTld1a3FncXZITUZOWmhHa2VZZmJ5?=
+ =?utf-8?B?Rm1rVVZnK3E2SVJNQjNFWlZsTmQ3UjUybTVQaWpKN0hLWEZDRWdwZE9qR2wy?=
+ =?utf-8?B?dWJleVFZRGFDbklON3U4THVVTnc3VEVSaTRWL1pOZWNkL01HMUV6VzZFblVv?=
+ =?utf-8?B?QWhRWURwbzZ1TjVtamNYancwd2Z1Yk1TNktpNjgxSkliOXJ1dnVKUGZNQVZV?=
+ =?utf-8?B?cXoyQzVsTE5OT1paQnB4SHVTUzgzK24xU0RtQkdEWWNoamdzU2o5ZldqRlNj?=
+ =?utf-8?B?UDVqQmZtSjVLS3pTQmxSN1I2Vm9XaUJPQzI2OUVGeEV1QjV6QjZYdk9YNnZO?=
+ =?utf-8?B?SXdnM09NYXZsUVViQmlVWHJWTlBTZENLVDVROW1lRjdsZktYajUwb1hBSkox?=
+ =?utf-8?B?YlJ3YU03dFlnQ2JPR1o1bTJiMisxS1c3Rms5SjUva0hnb1h2bUZDbmdYUS9Z?=
+ =?utf-8?B?Sm92SEZMN29SK1VjWWZvT0FZR25GZ3B2d0NlRGVCeFJaREZaVXVmejNNYk9Q?=
+ =?utf-8?B?aEFma1Bsb21CVVRJUXZuNVlYblBuUWY4NG9LaDV0UjE0ckhyS014THdWU1Ay?=
+ =?utf-8?B?ZkFCa0NUTHZOUVlOTDlsbVhHZVRtOVhGMEN5eWNTcnZrSjRyWW1FdDF4ZDNu?=
+ =?utf-8?B?MGc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9a04b6f0-efb5-47a7-cecd-08ddc561f4b4
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2025 18:44:26.6084
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: NzWebRwS2ufmfmKjGv6TKwPHJ2jn0KU0YaejQqhrwN99idNrtYvo3KNR4AWW3bPLolCieoItynTX5UuICCVL5F9Lg7qCA1dCDo+4rRn9h/0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH8PR11MB9507
+X-OriginatorOrg: intel.com
 
-Implement endianness swap macros for RISC-V.
+Hi Babu,
 
-Use the rev8 instruction when Zbb is available. Otherwise, rely on the
-default mask-and-shift implementation.
+On 7/8/25 3:17 PM, Babu Moger wrote:
+> Add a kernel command-line parameter to enable or disable the exposure of
+> the ABMC (Assignable Bandwidth Monitoring Counters) hardware feature to
+> resctrl.
+> 
+> Signed-off-by: Babu Moger <babu.moger@amd.com>
+> ---
 
-Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
-Signed-off-by: Ignacio Encinas <ignacio@iencinas.com>
----
-Motivated by [1]. Tested with crc_kunit as pointed out here [2]. I can't 
-provide performance numbers as I don't have RISC-V hardware.
+Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
 
-[1] https://lore.kernel.org/all/20250302220426.GC2079@quark.localdomain/
-[2] https://lore.kernel.org/all/20250216225530.306980-1-ebiggers@kernel.org/
----
-Changes in v5:
-- Duplicate ___constant_swab helpers in arch/riscv/include/asm/swab.h to
-  avoid delaying the patch as suggested by Alex in [3] (drop patch 1 and
-  convert this into a 1-patch series)
-- Link to v4: https://lore.kernel.org/r/20250426-riscv-swab-v4-0-64201404a68c@iencinas.com
-
-[3] https://lore.kernel.org/linux-riscv/7e22a448-3cee-4475-b69b-3dd45b57f168@ghiti.fr/
-
-Changes in v4:
-
-- Add missing include in the 1st patch, reported by
-  https://lore.kernel.org/all/202504042300.it9RcOSt-lkp@intel.com/
-- Rewrite the ARCH_SWAB macro as suggested by Arnd
-- Define __arch_swab64 for CONFIG_32BIT (Ben)
-- Link to v3: https://lore.kernel.org/r/20250403-riscv-swab-v3-0-3bf705d80e33@iencinas.com
-
-Changes in v3:
-
-PATCH 2:
-  Use if(riscv_has_extension_likely) instead of asm goto (Eric). It
-  looks like both versions generate the same assembly. Perhaps we should
-  do the same change in other places such as arch/riscv/include/asm/bitops.h
-- Link to v2: https://lore.kernel.org/r/20250319-riscv-swab-v2-0-d53b6d6ab915@iencinas.com
-
-Changes in v2:
-- Introduce first patch factoring out the default implementation into
-  asm-generic
-- Remove blank line to make checkpatch happy
-- Link to v1: https://lore.kernel.org/r/20250310-riscv-swab-v1-1-34652ef1ee96@iencinas.com
----
- arch/riscv/include/asm/swab.h | 87 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 87 insertions(+)
-
-diff --git a/arch/riscv/include/asm/swab.h b/arch/riscv/include/asm/swab.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..4f408f59fada7251d62f56d174ae76ff19f4a319
---- /dev/null
-+++ b/arch/riscv/include/asm/swab.h
-@@ -0,0 +1,87 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+#ifndef _ASM_RISCV_SWAB_H
-+#define _ASM_RISCV_SWAB_H
-+
-+#include <linux/types.h>
-+#include <linux/compiler.h>
-+#include <asm/cpufeature-macros.h>
-+#include <asm/hwcap.h>
-+#include <asm-generic/swab.h>
-+
-+#if defined(CONFIG_RISCV_ISA_ZBB) && !defined(NO_ALTERNATIVE)
-+
-+// Duplicated from include/uapi/linux/swab.h
-+#define ___constant_swab16(x) ((__u16)(				\
-+	(((__u16)(x) & (__u16)0x00ffU) << 8) |			\
-+	(((__u16)(x) & (__u16)0xff00U) >> 8)))
-+
-+#define ___constant_swab32(x) ((__u32)(				\
-+	(((__u32)(x) & (__u32)0x000000ffUL) << 24) |		\
-+	(((__u32)(x) & (__u32)0x0000ff00UL) <<  8) |		\
-+	(((__u32)(x) & (__u32)0x00ff0000UL) >>  8) |		\
-+	(((__u32)(x) & (__u32)0xff000000UL) >> 24)))
-+
-+#define ___constant_swab64(x) ((__u64)(				\
-+	(((__u64)(x) & (__u64)0x00000000000000ffULL) << 56) |	\
-+	(((__u64)(x) & (__u64)0x000000000000ff00ULL) << 40) |	\
-+	(((__u64)(x) & (__u64)0x0000000000ff0000ULL) << 24) |	\
-+	(((__u64)(x) & (__u64)0x00000000ff000000ULL) <<  8) |	\
-+	(((__u64)(x) & (__u64)0x000000ff00000000ULL) >>  8) |	\
-+	(((__u64)(x) & (__u64)0x0000ff0000000000ULL) >> 24) |	\
-+	(((__u64)(x) & (__u64)0x00ff000000000000ULL) >> 40) |	\
-+	(((__u64)(x) & (__u64)0xff00000000000000ULL) >> 56)))
-+
-+#define ARCH_SWAB(size, value)						\
-+({									\
-+	unsigned long x = value;					\
-+									\
-+	if (riscv_has_extension_likely(RISCV_ISA_EXT_ZBB)) {            \
-+		asm volatile (".option push\n"				\
-+			      ".option arch,+zbb\n"			\
-+			      "rev8 %0, %1\n"				\
-+			      ".option pop\n"				\
-+			      : "=r" (x) : "r" (x));			\
-+		x = x >> (BITS_PER_LONG - size);			\
-+	} else {                                                        \
-+		x = ___constant_swab##size(value);                      \
-+	}								\
-+	x;								\
-+})
-+
-+static __always_inline __u16 __arch_swab16(__u16 value)
-+{
-+	return ARCH_SWAB(16, value);
-+}
-+
-+static __always_inline __u32 __arch_swab32(__u32 value)
-+{
-+	return ARCH_SWAB(32, value);
-+}
-+
-+#ifdef CONFIG_64BIT
-+static __always_inline __u64 __arch_swab64(__u64 value)
-+{
-+	return ARCH_SWAB(64, value);
-+}
-+#else
-+static __always_inline __u64 __arch_swab64(__u64 value)
-+{
-+	__u32 h = value >> 32;
-+	__u32 l = value & ((1ULL << 32) - 1);
-+
-+	return ((__u64)(__arch_swab32(l)) << 32) | ((__u64)(__arch_swab32(h)));
-+}
-+#endif
-+
-+#define __arch_swab64 __arch_swab64
-+#define __arch_swab32 __arch_swab32
-+#define __arch_swab16 __arch_swab16
-+
-+#undef ___constant_swab16
-+#undef ___constant_swab32
-+#undef ___constant_swab64
-+
-+#undef ARCH_SWAB
-+
-+#endif /* defined(CONFIG_RISCV_ISA_ZBB) && !defined(NO_ALTERNATIVE) */
-+#endif /* _ASM_RISCV_SWAB_H */
-
----
-base-commit: 155a3c003e555a7300d156a5252c004c392ec6b0
-change-id: 20250307-riscv-swab-b81b94a9ac1b
-
-Best regards,
--- 
-Ignacio Encinas <ignacio@iencinas.com>
-
+Reinette
 
