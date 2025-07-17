@@ -1,143 +1,580 @@
-Return-Path: <linux-kernel+bounces-735619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E56DCB0919E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:22:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06110B091A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DD0C16B204
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:22:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACA1C4E16D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4EE2FCE09;
-	Thu, 17 Jul 2025 16:22:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B7B32FC3DF;
+	Thu, 17 Jul 2025 16:23:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KIvCsXYQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GWy/28m3"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDCA92FC3D6;
-	Thu, 17 Jul 2025 16:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5DE2FC3D6
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 16:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752769351; cv=none; b=kvt1nwqF56Sd4QB2+SBwjg5TfmoiFVZNIKiYrB9NR9mBjbhRwN6P8kaC1tZdJgu+lFyB4k4Uv0c+3Sp7+Rb3K7tOEXfzcZQy58Pl7GuVkBVZl3UzTO0qCcReRjG6W5ffMhALMtGOHRfMDn165L/C/vc5Qy48WxsGQvRQDg3/Fes=
+	t=1752769381; cv=none; b=cGhLwpMF7x2YMet3YWpvOwre5/+8txdWTzJQkuLxG5xSIVI/b1GneeJMO/RqyDSDjpaL8Zryu2SUGnrvFqqlQAW5bkPSAAnTIUXXPCcSQ+kOMjk1Aom1FDZF5/L7qHze+K+PuX6xl7mFICzdrbfZrTxF+YKu8eb3w8u4WwY3XhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752769351; c=relaxed/simple;
-	bh=aOZ4UXUHU742RZyFYCBD+aqPcjlKc9y2ocreOqmH2+E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NYhMyXMeNqUMVWVoDkN/kr1M0R7b/YzFCXqBmiOAEsAjaUHV4Ioa1Ygg1NojqKFrsQ+iSGDHe7m5a28NJGLRgbksL3FiIACHzKgf3sSF7tNbNiJFrVvxX/wagALAJGOBAxNSNR8ZpPA/Kxl/aWoVbiSe6AMKNRMl8guVGbwi1JA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KIvCsXYQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4517DC4CEE3;
-	Thu, 17 Jul 2025 16:22:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752769351;
-	bh=aOZ4UXUHU742RZyFYCBD+aqPcjlKc9y2ocreOqmH2+E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KIvCsXYQHYks0NgRDnTRPc28F6C8gvGrllbssBaykoV4JWoFBxW6PM5AvZlK7TrOO
-	 ra3zO1ZI63G3g7ne17DqZ8N5OQyCQ3Cl+9xR1Z12gThzNS4EhslrD1QAvLcNwekyIA
-	 CfcgY7dDyDUKn6KUPIsmDxPwo65uFh5HrKjJTczQDvZX9wzGKF3Lra9uKcBqgkjoIm
-	 dP9ukrfo6d5Vofd7WPVkl25IT2q+E3AjHVr4uhhgBSjI0rGNRIucu6/UklZgXI0Q1s
-	 bwkK2VO2g1SGQpnA00TB9kjtDUYt7rCNyZdsw2lkHvrUoPxrb8bN1yxEHMayhPRtKj
-	 OJ7hvbof5MUUg==
-Date: Thu, 17 Jul 2025 09:22:30 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
-	Ritesh Harjani <ritesh.list@gmail.com>, john.g.garry@oracle.com,
-	tytso@mit.edu, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v3 08/13] generic/1229: Stress fsx with atomic writes
- enabled
-Message-ID: <20250717162230.GH2672039@frogsfrogsfrogs>
-References: <cover.1752329098.git.ojaswin@linux.ibm.com>
- <1e1e7d552e91fab58037b7b35ffbf8b2e7070be5.1752329098.git.ojaswin@linux.ibm.com>
+	s=arc-20240116; t=1752769381; c=relaxed/simple;
+	bh=D/alBt/IO0rXB4lbViRL+PF3NluC/vCh5+UjJNMc89c=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=LB0omV5wOcA4NUsombbQp6bcKN/I/wY6HetWaoRVooyi9nepYsBnYuqQhk4QXkVEalVkTc3l5xlYNVdoObV0H+JxPsSMLxF0THf2mKmkFaII9cdBIlXrnQPuQ+jr7fCxkdvkWaDsSGK1sbp4GTwzOMwLE7oc02iYilgCOGaL3f0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GWy/28m3; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4538bc52a8dso9305615e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 09:22:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752769377; x=1753374177; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=10QORs6KuK3KoVhoNTRYpOhsvpEP9POMNGa7ng7GyN4=;
+        b=GWy/28m3zqQNF+Zdb13Of+SqIapJy/EaOqyJaHNrTZazGcXZsD9C8GEWYZoefiWENW
+         W4GdxyjiOH36A+dKVj2EnpmtfRK0UPDW916c6/stldnZ6eUlxoJgfyb2tM7R4PouD9k1
+         Wgo09y/RESUJzitzv1oc9rZuxJCd/vluXqOteEw4KUUeHQzmlKSO6N07QPXgC9HjVZc6
+         d53QeoWTlmj2bzr52fe5LQWYXnFH1Y2TTiVcfDK7SQPzfcBqS5E9zzHbPPtwzlfXiQaC
+         8kQsbPOZEba92zQxQq5w51K83OWqV9YXV3X9DBZU6+v7hWb9bF0YTjQ5hInVi2QJ1+18
+         OuiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752769377; x=1753374177;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=10QORs6KuK3KoVhoNTRYpOhsvpEP9POMNGa7ng7GyN4=;
+        b=nPF2IV0w4/WX+2juVsyYBzVucOHe057dunar46a+Eub7cxshrVUcJD3YwG74lkzsdl
+         ipQ8nWdY8C7OkqdHXIoNNM3ppd8D5m63kHRVQZwFtXplnjeOtC2k6A+Zngo9hf5UgUtf
+         Gf73X0srVD0olGReTj3EIuVzAUskJpxQXuTfzqZ0iGu3+9SW7ku45iBi2QEhR/FIAbwO
+         nPbD0HEK3Xisc20JrutUMsXTkBLg8BZqGkkAMsXQ5EY1gLsAN5hcQbOPDLqEO84WKyDA
+         YhXIS4RxraLoF/8NN/tBQzlNgh3sF6zYP3YjTiaMmQxK81ULA+JMkHYZoDnomjIXEnYk
+         PKnw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHq0w501T1NDVevMMAfdHygNHwY9fzMjKTmCb1Y5cCxTvXSCBMeA0TgSXvN2pnRPgpMYXr+KE6+NLq+ug=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsvnEjVEAqni6xXbMWSNgIbS2i4n8tEXFcZU/KyT19UukFNWb0
+	VfEaeacTkwTZMO+xWRGhSmnvngmAUTpv3sxVXOZiRrg3ieTpl2PjwE5JWPgo7M2TwNo=
+X-Gm-Gg: ASbGnctmYH+x5jntAkJnVVnE0Sh+u/JlRl0oimlF6x6XJmqvuOUyU58xtTqHEpu1N5A
+	4wq/lKPk2qqTUoJ925AAyaSL1b1b3lgxP3T54Ctp3Sa9WwgFT0xyT30TZB4I//NMhV9S7SepxID
+	eNlQptgXjfB2p/5UNydGC33xLhKdRFJRtE8pIIZiDu0y8aUc/Fpx3Nu0mMb9XamzNF/y8hRmmbr
+	PEFAQCic7Ccfwq9IFyiQSvoLXt4anEgJ7cXp051pAsOzfl52WR4tD26eOUmdIfc6rpvMTEgpuUD
+	PAp4zkywWJv1cUdBJJIRipIN8p+8dTGgki5ipTof3sSpUOXOD4bYg2DTkWvAgCKi7dogAn0NTBo
+	LUkot4nOjUjeO+EX0xdJ3TIsSeHBz9XGtbOk675SG1xzzaWb+j8muXw==
+X-Google-Smtp-Source: AGHT+IE++zTw7j6btUVkqUEYspAqPSCyXgCDgYCI8SNJwqI7G1Fq6QlWWZg6HM2OXb9NaKUehGX6vg==
+X-Received: by 2002:a05:600c:620e:b0:456:43c:dcdc with SMTP id 5b1f17b1804b1-4562e2aa7bbmr68434475e9.33.1752769376585;
+        Thu, 17 Jul 2025 09:22:56 -0700 (PDT)
+Received: from gpeter-l.roam.corp.google.com ([209.198.129.187])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e80731bsm55078025e9.15.2025.07.17.09.22.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Jul 2025 09:22:55 -0700 (PDT)
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Thu, 17 Jul 2025 17:22:36 +0100
+Subject: [PATCH v7] soc: samsung: exynos-pmu: Enable CPU Idle for gs101
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1e1e7d552e91fab58037b7b35ffbf8b2e7070be5.1752329098.git.ojaswin@linux.ibm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250717-gs101-cpuidle-v7-1-33d51770114b@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAEsjeWgC/33PwW7DIAwG4FepOI/JGANJT3uPaQcGJkWqkgq2a
+ FOVdx/ppV2i7fhb+n7bV1G5ZK7ieLiKwnOueRpbcE8HEU5+HFjm2LJAQAMGSQ5VgZLh8pnjmWX
+ wKfQ2xo76KJq5FE7569b3+tbyKdePqXzf6me1Tv9qmpUE6dk7511H6O3LOY++TM9TGcRaNeOdW
+ 6W2HBun5DulOBBQ3HH9wNFtuZZtPwKQwZjYwo7TnTvot5waN5ZRxYjUW73j5l9uGn/XFDUqwM7
+ uj7cPfP+7XbeD5mBMCpj6X3xZlh9IyFDN5gEAAA==
+X-Change-ID: 20250524-gs101-cpuidle-cafc96dd849d
+To: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>
+Cc: William Mcvicker <willmcvicker@google.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel-team@android.com, sudeep.holla@arm.com, 
+ Peter Griffin <peter.griffin@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=15370;
+ i=peter.griffin@linaro.org; h=from:subject:message-id;
+ bh=D/alBt/IO0rXB4lbViRL+PF3NluC/vCh5+UjJNMc89c=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBoeSNevp2Fd+5CIDHpUymfxKHigKhGd6hKVqRGL
+ esvln6QdI+JAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaHkjXgAKCRDO6LjWAjRy
+ umJ/D/9x3WOsdHblLVE+GAdOaT8T6h4/DDFr9n4GBhg9X+DjjpbjV9pLs0Okd5UuBdDNOsq7kVb
+ 2qE5aEsib8QktmC9aflhmui7Cp+wZ/uTqRI7fwzgJwfHsE1dyc3x8bb7kNyDKMxv/c8SieeFMRY
+ kelw8Kq97IwdyQ+kzVuEcnxJVmMvizPtUEoV83MrGz3yUKEKmoHj1FhiWk/7kZizBzEnoEtV7oD
+ MXxr65iqfejyhD67uuO45q28gAgWmpjTI7KZtDroEWB34ivJoHCBcGPUzbYcHHWaCdxv1x9KgxC
+ h8GFkMguEC9BYFqnuwPB1B3wfo7CbeAIM6zz1ZMjWnqzSFhr+d1pX+rN99K6aEe3ozvjP8Hw21U
+ IcOP9rsOA200I0D70GKBqiXnrQoDU0tbhfD1p4z0n1YfMTHu4x6TWqI3APi6Dq+Pnci201+j1RA
+ 7SIr9kOwSY7s8zMOQQmQ3pUuUZNB5XbYCSa2mbRsVveCFnlImQZ6H0Hl5BdHLMN7emwkZwN2zHF
+ CAVkcP564gLeN1PZX7rdqnQf6XzrJxOTgTTdksbFOsG8WU6IWjULHaS9zvvWI4pLTFmso3v0Cs+
+ DlhtbYIxCoOYTJJKcViirTwWCmZZw583MCJ4UHjf2ji/XkX5ypKty3/6s+uTV8/vSaHAed7c41w
+ l5uqDmK+3UIFGVQ==
+X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
+ fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-On Sat, Jul 12, 2025 at 07:42:50PM +0530, Ojaswin Mujoo wrote:
-> Stress file with atomic writes to ensure we excercise codepaths
-> where we are mixing different FS operations with atomic writes
-> 
-> Suggested-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Register cpu pm notifiers for gs101 which call the
+gs101_cpu_pmu_online/offline callbacks which in turn program the ACPM
+C2 hint. This hint is required to actually enter the C2 idle state in
+addition to the PSCI calls due to limitations in the el3mon/ACPM firmware.
 
-Hrm, doesn't generic/521 test this already if the fs happens to support
-atomic writes?
+A couple of corner cases are handled, namely when the system is rebooting
+or suspending we ignore the request. Additionally the request is ignored if
+the CPU is in CPU hot plug. Some common code is refactored so that it can
+be called from both the CPU hot plug callbacks and CPU PM notifier taking
+into account that CPU PM notifiers are called with IRQs disabled whereas
+CPU hotplug callbacks are not.
 
---D
+Additionally due to CPU PM notifiers using raw_spinlock the locking is
+updated to use raw_spinlock variants, this includes updating the pmu_regs
+regmap to use .use_raw_spinlock = true and additionally creating and
+registering a custom  pmu-intr-gen regmap instead of using the regmap
+provided by syscon.
 
-> ---
->  tests/generic/1229     | 41 +++++++++++++++++++++++++++++++++++++++++
->  tests/generic/1229.out |  2 ++
->  2 files changed, 43 insertions(+)
->  create mode 100755 tests/generic/1229
->  create mode 100644 tests/generic/1229.out
-> 
-> diff --git a/tests/generic/1229 b/tests/generic/1229
-> new file mode 100755
-> index 00000000..98e9b50c
-> --- /dev/null
-> +++ b/tests/generic/1229
-> @@ -0,0 +1,41 @@
-> +#! /bin/bash
-> +# SPDX-License-Identifier: GPL-2.0
-> +# Copyright (c) 2025 IBM Corporation. All Rights Reserved.
-> +#
-> +# FS QA Test 1229
-> +#
-> +# fuzz fsx with atomic writes
-> +#
-> +. ./common/preamble
-> +. ./common/atomicwrites
-> +_begin_fstest rw auto quick atomicwrites
-> +
-> +_require_odirect
-> +_require_scratch_write_atomic
-> +
-> +_scratch_mkfs >> $seqres.full 2>&1
-> +_scratch_mount  >> $seqres.full 2>&1
-> +
-> +testfile=$SCRATCH_MNT/testfile
-> +touch $testfile
-> +
-> +awu_max=$(_get_atomic_write_unit_max $testfile)
-> +blksz=$(_get_block_size $SCRATCH_MNT)
-> +bsize=`$here/src/min_dio_alignment $SCRATCH_MNT $SCRATCH_DEV`
-> +
-> +# fsx usage:
-> +#
-> +# -N numops: total # operations to do
-> +# -l flen: the upper bound on file size
-> +# -o oplen: the upper bound on operation size (64k default)
-> +# -Z: O_DIRECT ()
-> +
-> +_run_fsx_on_file $testfile -N 10000 -o $awu_max -A -l 500000 -r $bsize -w $bsize -Z $FSX_AVOID  >> $seqres.full
-> +if [[ "$?" != "0" ]]
-> +then
-> +	_fail "fsx returned error: $?"
-> +fi
-> +
-> +echo "Silence is golden"
-> +status=0
-> +exit
-> diff --git a/tests/generic/1229.out b/tests/generic/1229.out
-> new file mode 100644
-> index 00000000..737d61c6
-> --- /dev/null
-> +++ b/tests/generic/1229.out
-> @@ -0,0 +1,2 @@
-> +QA output created by 1229
-> +Silence is golden
-> -- 
-> 2.49.0
-> 
-> 
+Note: this patch has a runtime dependency on adding 'local-timer-stop' dt
+property to the CPU nodes. This informs the time framework to switch to a
+broadcast timer as the local timer will be shutdown. Without that DT
+property specified the system hangs in early boot with this patch applied.
+
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+---
+Hi folks,
+
+This patch adds support for CPU Idle on gs101. In particular it achieves
+this by registerring a cpu pm notifier and programming a ACPM hint. This is
+required in addition to the PSCI calls to enter the c2 idle state due to
+limitations in the el3mon/ACPM firmware.
+
+Note: the `local-timer-stop` DT patch mentioned above is already queued.
+
+We can measure the impact of these changes upstream using the fuel gauge
+series from Thomas Antoine [2]. With the ACPM hint now programmed
+/sys/class/power_supply/max77759-fg/current_avg is a postive number around
+150000 microamps meaning we are charging the battery (assuming it isn't
+already full).
+
+Prior to programming the hint this would report a negative number around
+-150000 microamps meaning the battery was discharing.
+
+This has also been tested with kernel/configs/debug.config options enabled,
+monitoring the cpuidle sysfs files, and a script to hotplug CPUs in a loop
+to test the interactions between cpu idle and hotplug parts.
+
+Thanks,
+
+Peter
+
+[1] https://lore.kernel.org/lkml/20250421-b4-gs101_max77759_fg-v3-0-50cd8caf9017@uclouvain.be/
+---
+Changes in v7:
+- Remove atomics and protect suspend/reboot flags with the existing raw spinlock (Krzysztof)
+- Use a bitmap for in_cpuhp (Krzysztof)
+- Align the naming of various flags (sys_inreboot, sys_insuspend, in_cpuhp) (Peter)
+- Link to v6: https://lore.kernel.org/r/20250711-gs101-cpuidle-v6-1-503ec55fc2f9@linaro.org
+
+Changes in v6:
+- Add more verbose comment on why the hint values are required for gs101
+  CPU hotplug & CPU Idle states in addition to standard PSCI calls (Sudeep) 
+- Link to v5: https://lore.kernel.org/r/20250709-gs101-cpuidle-v5-1-b34d3210286d@linaro.org
+
+Changes in v5:
+- Rename hotplug_ing flag to in_hotplug to aid readability
+- Use NOIRQ_SYSTEM_SLEEP_PM_OPS wrapper for dev_pm_ops (Krzysztof)
+- Link to v4: https://lore.kernel.org/r/20250709-gs101-cpuidle-v4-1-56e21dd24963@linaro.org
+
+Changes in v4:
+- Avoid lockdep [ BUG: Invalid wait context ] on boot (André)
+  - Updated callbacks to use raw_spinlock variants
+  - Ensure pmu_regs regmap uses a raw_spinlock
+  - Create pmu-intr-gen regmap that uses a raw_spinlock
+- Use pm_sleep_ptr to avoid #ifdef (André)
+- Refactor CPU hotplug and cpuidle parts into dedicated function
+- Remove unnecessary break; statement (André)
+- Link to v3: https://lore.kernel.org/r/20250627-gs101-cpuidle-v3-1-0200452dfe60@linaro.org
+
+Changes in v3:
+- Add more verbose comment regarding spinlock (Krzysztof)
+- Remove per-cpu hotplug_ing bool to avoid highly discouraged remote writes
+  (Krzysztof)
+- Add extra comments for similarly named functions  (Krzysztof)
+- Initialize lock before for_each_online_cpu() in probe() (Peter)
+- Use spin_lock_irqsave in cpu hot plug callbacks (Peter/Krzysztof)
+- Rebase on next-20250627
+- Link to v2: https://lore.kernel.org/r/20250611-gs101-cpuidle-v2-0-4fa811ec404d@linaro.org
+
+Changes in v2:
+- rebase onto next-20250610
+- Add #ifdef CONFIG_PM_SLEEP to avoid
+  Fix warning: unused variable 'cpupm_pm_ops' [-Wunused-const-variable] (0-day)
+- Link to v1: https://lore.kernel.org/r/20250524-gs101-cpuidle-v1-0-aea77a7842a6@linaro.org
+---
+ drivers/soc/samsung/exynos-pmu.c | 276 +++++++++++++++++++++++++++++++++++----
+ 1 file changed, 254 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
+index a77288f49d249f890060c595556708334383c910..22c50ca2aa79bf1945255ee6cc7443d7309b2573 100644
+--- a/drivers/soc/samsung/exynos-pmu.c
++++ b/drivers/soc/samsung/exynos-pmu.c
+@@ -7,7 +7,9 @@
+ 
+ #include <linux/array_size.h>
+ #include <linux/arm-smccc.h>
++#include <linux/bitmap.h>
+ #include <linux/cpuhotplug.h>
++#include <linux/cpu_pm.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/mfd/core.h>
+@@ -15,6 +17,7 @@
+ #include <linux/of_platform.h>
+ #include <linux/platform_device.h>
+ #include <linux/delay.h>
++#include <linux/reboot.h>
+ #include <linux/regmap.h>
+ 
+ #include <linux/soc/samsung/exynos-regs-pmu.h>
+@@ -35,6 +38,15 @@ struct exynos_pmu_context {
+ 	const struct exynos_pmu_data *pmu_data;
+ 	struct regmap *pmureg;
+ 	struct regmap *pmuintrgen;
++	/*
++	 * Serialization lock for CPU hot plug and cpuidle ACPM hint
++	 * programming. Also protects in_cpuhp, sys_insuspend & sys_inreboot
++	 * flags.
++	 */
++	raw_spinlock_t cpupm_lock;
++	unsigned long *in_cpuhp;
++	bool sys_insuspend;
++	bool sys_inreboot;
+ };
+ 
+ void __iomem *pmu_base_addr;
+@@ -221,6 +233,15 @@ static const struct regmap_config regmap_smccfg = {
+ 	.reg_read = tensor_sec_reg_read,
+ 	.reg_write = tensor_sec_reg_write,
+ 	.reg_update_bits = tensor_sec_update_bits,
++	.use_raw_spinlock = true,
++};
++
++static const struct regmap_config regmap_pmu_intr = {
++	.name = "pmu_intr_gen",
++	.reg_bits = 32,
++	.reg_stride = 4,
++	.val_bits = 32,
++	.use_raw_spinlock = true,
+ };
+ 
+ static const struct exynos_pmu_data gs101_pmu_data = {
+@@ -330,13 +351,19 @@ struct regmap *exynos_get_pmu_regmap_by_phandle(struct device_node *np,
+ EXPORT_SYMBOL_GPL(exynos_get_pmu_regmap_by_phandle);
+ 
+ /*
+- * CPU_INFORM register hint values which are used by
+- * EL3 firmware (el3mon).
++ * CPU_INFORM register "hint" values are required to be programmed in addition to
++ * the standard PSCI calls to have functional CPU hotplug and CPU idle states.
++ * This is required to workaround limitations in the el3mon/ACPM firmware.
+  */
+ #define CPU_INFORM_CLEAR	0
+ #define CPU_INFORM_C2		1
+ 
+-static int gs101_cpuhp_pmu_online(unsigned int cpu)
++/*
++ * __gs101_cpu_pmu_ prefix functions are common code shared by CPU PM notifiers
++ * (CPUIdle) and CPU hotplug callbacks. Functions should be called with IRQs
++ * disabled and cpupm_lock held.
++ */
++static int __gs101_cpu_pmu_online(unsigned int cpu)
+ {
+ 	unsigned int cpuhint = smp_processor_id();
+ 	u32 reg, mask;
+@@ -358,10 +385,48 @@ static int gs101_cpuhp_pmu_online(unsigned int cpu)
+ 	return 0;
+ }
+ 
+-static int gs101_cpuhp_pmu_offline(unsigned int cpu)
++/* Called from CPU PM notifier (CPUIdle code path) with IRQs disabled */
++static int gs101_cpu_pmu_online(void)
++{
++	int cpu;
++
++	raw_spin_lock(&pmu_context->cpupm_lock);
++
++	if (pmu_context->sys_inreboot) {
++		raw_spin_unlock(&pmu_context->cpupm_lock);
++		return NOTIFY_OK;
++	}
++
++	cpu = smp_processor_id();
++	__gs101_cpu_pmu_online(cpu);
++	raw_spin_unlock(&pmu_context->cpupm_lock);
++
++	return NOTIFY_OK;
++}
++
++/* Called from CPU hot plug callback with IRQs enabled */
++static int gs101_cpuhp_pmu_online(unsigned int cpu)
++{
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&pmu_context->cpupm_lock, flags);
++
++	__gs101_cpu_pmu_online(cpu);
++	/*
++	 * Mark this CPU as having finished the hotplug.
++	 * This means this CPU can now enter C2 idle state.
++	 */
++	clear_bit(cpu, pmu_context->in_cpuhp);
++	raw_spin_unlock_irqrestore(&pmu_context->cpupm_lock, flags);
++
++	return 0;
++}
++
++/* Common function shared by both CPU hot plug and CPUIdle */
++static int __gs101_cpu_pmu_offline(unsigned int cpu)
+ {
+-	u32 reg, mask;
+ 	unsigned int cpuhint = smp_processor_id();
++	u32 reg, mask;
+ 
+ 	/* set cpu inform hint */
+ 	regmap_write(pmu_context->pmureg, GS101_CPU_INFORM(cpuhint),
+@@ -379,6 +444,165 @@ static int gs101_cpuhp_pmu_offline(unsigned int cpu)
+ 	regmap_read(pmu_context->pmuintrgen, GS101_GRP1_INTR_BID_UPEND, &reg);
+ 	regmap_write(pmu_context->pmuintrgen, GS101_GRP1_INTR_BID_CLEAR,
+ 		     reg & mask);
++
++	return 0;
++}
++
++/* Called from CPU PM notifier (CPUIdle code path) with IRQs disabled */
++static int gs101_cpu_pmu_offline(void)
++{
++	int cpu;
++
++	raw_spin_lock(&pmu_context->cpupm_lock);
++	cpu = smp_processor_id();
++
++	if (test_bit(cpu, pmu_context->in_cpuhp)) {
++		raw_spin_unlock(&pmu_context->cpupm_lock);
++		return NOTIFY_BAD;
++	}
++
++	/* Ignore CPU_PM_ENTER event in reboot or suspend sequence. */
++	if (pmu_context->sys_insuspend || pmu_context->sys_inreboot) {
++		raw_spin_unlock(&pmu_context->cpupm_lock);
++		return NOTIFY_OK;
++	}
++
++	__gs101_cpu_pmu_offline(cpu);
++	raw_spin_unlock(&pmu_context->cpupm_lock);
++
++	return NOTIFY_OK;
++}
++
++/* Called from CPU hot plug callback with IRQs enabled */
++static int gs101_cpuhp_pmu_offline(unsigned int cpu)
++{
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&pmu_context->cpupm_lock, flags);
++	/*
++	 * Mark this CPU as entering hotplug. So as not to confuse
++	 * ACPM the CPU entering hotplug should not enter C2 idle state.
++	 */
++	set_bit(cpu, pmu_context->in_cpuhp);
++	__gs101_cpu_pmu_offline(cpu);
++
++	raw_spin_unlock_irqrestore(&pmu_context->cpupm_lock, flags);
++
++	return 0;
++}
++
++static int gs101_cpu_pm_notify_callback(struct notifier_block *self,
++					unsigned long action, void *v)
++{
++	switch (action) {
++	case CPU_PM_ENTER:
++		return gs101_cpu_pmu_offline();
++
++	case CPU_PM_EXIT:
++		return gs101_cpu_pmu_online();
++	}
++
++	return NOTIFY_OK;
++}
++
++static struct notifier_block gs101_cpu_pm_notifier = {
++	.notifier_call = gs101_cpu_pm_notify_callback,
++	/*
++	 * We want to be called first, as the ACPM hint and handshake is what
++	 * puts the CPU into C2.
++	 */
++	.priority = INT_MAX
++};
++
++static int exynos_cpupm_reboot_notifier(struct notifier_block *nb,
++					unsigned long event, void *v)
++{
++	unsigned long flags;
++
++	switch (event) {
++	case SYS_POWER_OFF:
++	case SYS_RESTART:
++		raw_spin_lock_irqsave(&pmu_context->cpupm_lock, flags);
++		pmu_context->sys_inreboot = true;
++		raw_spin_unlock_irqrestore(&pmu_context->cpupm_lock, flags);
++		break;
++	}
++
++	return NOTIFY_OK;
++}
++
++static struct notifier_block exynos_cpupm_reboot_nb = {
++	.priority = INT_MAX,
++	.notifier_call = exynos_cpupm_reboot_notifier,
++};
++
++static int setup_cpuhp_and_cpuidle(struct device *dev)
++{
++	struct device_node *intr_gen_node;
++	struct resource intrgen_res;
++	void __iomem *virt_addr;
++	int ret, cpu;
++
++	intr_gen_node = of_parse_phandle(dev->of_node,
++					 "google,pmu-intr-gen-syscon", 0);
++	if (!intr_gen_node) {
++		/*
++		 * To maintain support for older DTs that didn't specify syscon
++		 * phandle just issue a warning rather than fail to probe.
++		 */
++		dev_warn(dev, "pmu-intr-gen syscon unavailable\n");
++		return 0;
++	}
++
++	/*
++	 * To avoid lockdep issues (CPU PM notifiers use raw spinlocks) create
++	 * a mmio regmap for pmu-intr-gen that uses raw spinlocks instead of
++	 * syscon provided regmap.
++	 */
++	ret = of_address_to_resource(intr_gen_node, 0, &intrgen_res);
++	of_node_put(intr_gen_node);
++
++	virt_addr = devm_ioremap(dev, intrgen_res.start,
++				 resource_size(&intrgen_res));
++	if (!virt_addr)
++		return -ENOMEM;
++
++	pmu_context->pmuintrgen = devm_regmap_init_mmio(dev, virt_addr,
++							&regmap_pmu_intr);
++	if (IS_ERR(pmu_context->pmuintrgen)) {
++		dev_err(dev, "failed to initialize pmu-intr-gen regmap\n");
++		return PTR_ERR(pmu_context->pmuintrgen);
++	}
++
++	/* register custom mmio regmap with syscon */
++	ret = of_syscon_register_regmap(intr_gen_node,
++					pmu_context->pmuintrgen);
++	if (ret)
++		return ret;
++
++	pmu_context->in_cpuhp = devm_bitmap_zalloc(dev, num_possible_cpus(),
++						   GFP_KERNEL);
++	if (!pmu_context->in_cpuhp)
++		return -ENOMEM;
++
++	raw_spin_lock_init(&pmu_context->cpupm_lock);
++	pmu_context->sys_inreboot = false;
++	pmu_context->sys_insuspend = false;
++
++	/* set PMU to power on */
++	for_each_online_cpu(cpu)
++		gs101_cpuhp_pmu_online(cpu);
++
++	/* register CPU hotplug callbacks */
++	cpuhp_setup_state(CPUHP_BP_PREPARE_DYN,	"soc/exynos-pmu:prepare",
++			  gs101_cpuhp_pmu_online, NULL);
++
++	cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "soc/exynos-pmu:online",
++			  NULL, gs101_cpuhp_pmu_offline);
++
++	/* register CPU PM notifiers for cpuidle */
++	cpu_pm_register_notifier(&gs101_cpu_pm_notifier);
++	register_reboot_notifier(&exynos_cpupm_reboot_nb);
+ 	return 0;
+ }
+ 
+@@ -435,23 +659,9 @@ static int exynos_pmu_probe(struct platform_device *pdev)
+ 	pmu_context->dev = dev;
+ 
+ 	if (pmu_context->pmu_data && pmu_context->pmu_data->pmu_cpuhp) {
+-		pmu_context->pmuintrgen = syscon_regmap_lookup_by_phandle(dev->of_node,
+-							"google,pmu-intr-gen-syscon");
+-		if (IS_ERR(pmu_context->pmuintrgen)) {
+-			/*
+-			 * To maintain support for older DTs that didn't specify syscon phandle
+-			 * just issue a warning rather than fail to probe.
+-			 */
+-			dev_warn(&pdev->dev, "pmu-intr-gen syscon unavailable\n");
+-		} else {
+-			cpuhp_setup_state(CPUHP_BP_PREPARE_DYN,
+-					  "soc/exynos-pmu:prepare",
+-					  gs101_cpuhp_pmu_online, NULL);
+-
+-			cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
+-					  "soc/exynos-pmu:online",
+-					  NULL, gs101_cpuhp_pmu_offline);
+-		}
++		ret = setup_cpuhp_and_cpuidle(dev);
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	if (pmu_context->pmu_data && pmu_context->pmu_data->pmu_init)
+@@ -471,10 +681,32 @@ static int exynos_pmu_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static int exynos_cpupm_suspend_noirq(struct device *dev)
++{
++	raw_spin_lock(&pmu_context->cpupm_lock);
++	pmu_context->sys_insuspend = true;
++	raw_spin_unlock(&pmu_context->cpupm_lock);
++	return 0;
++}
++
++static int exynos_cpupm_resume_noirq(struct device *dev)
++{
++	raw_spin_lock(&pmu_context->cpupm_lock);
++	pmu_context->sys_insuspend = false;
++	raw_spin_unlock(&pmu_context->cpupm_lock);
++	return 0;
++}
++
++static const struct dev_pm_ops cpupm_pm_ops = {
++	NOIRQ_SYSTEM_SLEEP_PM_OPS(exynos_cpupm_suspend_noirq,
++				  exynos_cpupm_resume_noirq)
++};
++
+ static struct platform_driver exynos_pmu_driver = {
+ 	.driver  = {
+ 		.name   = "exynos-pmu",
+ 		.of_match_table = exynos_pmu_of_device_ids,
++		.pm = pm_sleep_ptr(&cpupm_pm_ops),
+ 	},
+ 	.probe = exynos_pmu_probe,
+ };
+
+---
+base-commit: 024e09e444bd2b06aee9d1f3fe7b313c7a2df1bb
+change-id: 20250524-gs101-cpuidle-cafc96dd849d
+
+Best regards,
+-- 
+Peter Griffin <peter.griffin@linaro.org>
+
 
