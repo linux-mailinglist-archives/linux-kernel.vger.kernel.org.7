@@ -1,119 +1,127 @@
-Return-Path: <linux-kernel+bounces-735496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D704B09024
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:04:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FF4DB09026
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:05:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31E541889F31
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:04:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D29F43B133F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:05:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09322F7D10;
-	Thu, 17 Jul 2025 15:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="Y5BO4wZ3"
-Received: from sonic312-50.consmr.mail.gq1.yahoo.com (sonic312-50.consmr.mail.gq1.yahoo.com [98.137.69.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC46F29C33A
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 15:04:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.69.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47AAD2F85E9;
+	Thu, 17 Jul 2025 15:05:20 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F5513790B;
+	Thu, 17 Jul 2025 15:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752764675; cv=none; b=qWX2DCZyWMYoTXNHfsqZsd7Ntv55nP8ZN8BNLu9Kuze90/CZ4QJx4uKpja88P/GOl8XwQ5oM2Sg8QQxFxttbFxmLq6Oio2fBAAdSYIr1kYucYMM8fZpdbvZjiTbtxzPmTzMF3pJdOU+STi5EonG3Mw4mCPXVnQzyJYIKOZkaCqo=
+	t=1752764719; cv=none; b=CfnmF/BgeaZoJ3mUIGo99OKfK8P+3UTisv40SrsTTEi4P6V5/ivS62GC6SHIMAvM0hAm4ke3ZcRKRyuHyLZBw9EtNYACtGt6pauuB8KgtGiAWsSpbr6GPdhuxxuRvY8cbLxyofG+SEa2I545F0R+dmIxtbyjs/wM/aWDrSpaWZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752764675; c=relaxed/simple;
-	bh=qph9+q1rOcSsRaYShqgMocS+6FgNwJq9ZDYiIPJt+YY=;
-	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version:
-	 References; b=CliEKzl4g9Ub/eN23weekhikAA7eSQrHt08xOFV1L6bV4aChfNDw90Lh9Jseh/f5fVdoXhCrr9vym/H6A9CzxsfYDS7SUNQxWwRhBmQBe85t+je4pHW5ecHnF4XBICk2WFGl4FFA5D8QtXtqLdERVtgO8I5fx6AmA0+ys4yCUGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com; spf=pass smtp.mailfrom=aol.com; dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b=Y5BO4wZ3; arc=none smtp.client-ip=98.137.69.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aol.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1752764667; bh=D9iUuabqF0YH5VxUkmcyijJUylhadetT2e0qPHlIxFM=; h=Subject:From:To:Cc:Date:References:From:Subject:Reply-To; b=Y5BO4wZ3D9j+HvUhl0HWelZ6lxmNkjrprggVakkYf3MNs4U+ew5LfoomRhA9QQkyZMBggxVDOV97Mouy9Fa2fmQohnji04+5pWlA5Xrf4NI6c9XUZlRBxDkRoAIGTs1tqxwnSROHtfF812RltInw5p8c19s+jcgOIhUI8IWwnL2AwiTXqZoKQEIAVNokMnJ1+dlQMsgiW+B8pJcZilzG7ZLNfUdIV+ucAc1gEfEPsCkRcJuGTlwft9Y6AmAukhT+bwKo66hbKGq6PxK55Amtd/IJte2Fv5vXU4ec5z494TPBBYpfypKdWVMmB5Z8fOULacAUl6qeENcCIMsxVjuQuw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1752764667; bh=5KC/HpFzulTmfsKz+UTOw9DGS7ufB4r1a5dg+UTIQDQ=; h=X-Sonic-MF:Subject:From:To:Date:From:Subject; b=AUczxSIrF7x3E9wF9t1qhCsyNBZNAAXMmTfyhdke1Yq/zOsle1ckeFXp4L8hdlgKZ/ttx3bV+bchVlhs6TJS+ipy5mNemw7Ms7pVfNtRXt+RUokNlTB2VbroY7waOAbNvxTtNnzAZ4xMCNYMURMFcetK/4gDF4BTilOhpJxIyr4CJq8ZR6yv2c0w7PwBbSthpMVb4CD82AziMys9KT3CM1ukkoSOx8Vy9Gbau6Aw9cVddIZxa1Q83hDZanvK4n+tobpfjZBv8ep8pPmNtjIdpuRcHVodmkyFCW2+CAI+kuyF2cazGmP5XKSKKZ3RSl7q4ijTZZJEhDwrB03Z5jWkog==
-X-YMail-OSG: jzuBMS0VM1lZLT0M2x4c5R7WDWpyfZSyppHK7x7w5NINkNJbefb_AVOhmTe9WF5
- QOJi.smccwIcfB.B0OMlzEPtw._EHpWjurY15.jWZacMsbSsSpDxU6EO6k.FPabjUK3VZNXuDTXH
- rINTBoSE1NgWSFRIZ74tt.Ncdsh2k385iNGH7NAoAjkzOqu7l5Qr7ZJsvImRFTHZM_i6wjSDgtDa
- e93SWjkTXEcLSzsL5w_OTXP.Mo68rjZuMH2EPl1zzTLeshi23UxzGnwOwEjfA4JHjiq2RIXMKK2H
- .__aQEAkUbZYwnrxRNEQiYi8F2kQZq8PbbXqfL8kQfqZJttcqtOybvCsyNURbBlkr2xl9zq2Ou_.
- u_80QPqLOF6JqA8UmCHR.Grth313MCMGdrz1e37Hhlw2hCSvP8XlwV897d3huuwBfQmcVOq3U4EC
- bDJnpg0WDy4HMSW_AAkemTFIwRQ07P3k.ph_TQvT4Ar2OrZiqYtVHdJtEs7UdI2TG7910KAAr9VS
- vXd4RrEAM4MZuI2hbODWMeCUYpOX3TieCyGdbzclsg92EdElMNsOasrQEC3BP7k4S4WwX_62Rich
- AbNruzHl6clXPul.q0NxA0Ph8nKImKN.6esy1quSCGSkvX3knBFsv3D1picP9qCyTeaR3CcNw9Z8
- qrB71L.ts.TPO6WGuhlSOk682lYipO_rYP7nmg2QZBWAHZWhZwjmqlvNCjeu9m.CAQmTKiVFhXl_
- Xn7BUJp8JE9qz9vuz9gcvvhWWTcd2BN1kuoeZ.oqCwBQ5krs3klYbOyRhwWc8M9WKpdIzQbDWSbR
- wrn6iaRo8g8ObIe.mQJ4MYxVldHUXFIeeskQryVvFyf9VFxabwwTBkW21XLkFJR6BIIiSx69.72S
- 08yBOoBypZWuPonyfoyWCsJC4WQ.xJQptIX9kyNmGP48pmZdGdR5tkldESuj3Ygf1f08aJtzMlXA
- Zl8PQdq.03D8Ye1ahImH6iiBa5EcSMS_vAOnJcHB25InO.ukq1qLW5QrDu72aBUV7Kbbj6Pc6q_d
- 02phUQ8I2QD7NROjRrQBccxIlPFNwSdFw4q5p5laZhN99w.AHc1B4t9boX5W3vkymg6UgGAOmMjS
- 3wk9heY8hzgKjZU4qhDLdp00eqgsg7WlVXn_TVDneEKUSMMD9WkqOIYd8fYEjKJpooxfeq406IbV
- j0y5qxt2OWHPF0J54NDkzq9hw_poyfrFPbloyAG_7Asj1I4YBvtZy6koRvwI9gII.OyE3VeGhJGF
- CFTgQrQab5G2PPH88C1cl.62V.PxSIgYXCj6A.9_nqgB4uf1GJ1Y19URrPTvzvQikOt4JKeuQF_U
- wcLHv97gRw7TtUxKsoy4vhVOhFm9MoouzoidWlNPXjrMB93dKFZbBb8sV5CE1Zpc.FrhXR42xgaw
- VjTrtlKv3fpA0ESzzx0RWuU93Tgltc05c99Zze2bx0Uw4B8BEaICKevO6ygJSNW7XDYfoWIiKGIk
- 17_XGpHGvtMSKbmZccTW4ynIWcbjvp6GDMER2Gm0t6.YX8RXT6Nqw73rZQ307bkbdFLWxhkIwCar
- fcPRYwhtz2tMJl3uFQY2U_A.5eDN43qq6WzzXbDHcJoeIivEgEONXlBaqczRbKmb0Y.70pa9FZUV
- ykTz0_XvAk0uXvhF.XoPd6.VzPWO385Y.4urcdLltu1IdyieqaQ6qmZKQyopffRerjYH6f0ujwHN
- sIgtro6.bolv3VsdahQHF7es.q4cdWMrLKFj6M66PwCEkGIr9jFe72JjHcfCNVCN9iNhZ3Hegx4Q
- SFV.kS_C46kdQswTO3snA2BGbgsytZPrXCXraHHvKaAqNyvioKKPf5b.8lkATsVnx85oQikQRqGJ
- SLsx6d7pUYEkySaqpFej0UlArGt_PydepVT.DXueRaDdlI8wd7qAkWtGKjcrhKAMKDs2b.neqLZw
- 7gjEWWmnvVg4Ju0_bH7ho1IjNHrsGHVnz1c4zSspbCxwQcSFM4lwtMFp77n2O1roTzh79eWxWnMT
- rHDhLB5BHeF02eEcMV3fImqX7wtRCLL.vhUuijj1DgHUutmJoi9VkrP5wsgCOdMaXNyhmrKkz2QD
- IuvWO1r3Mt_an7p9WK35PtBblSdusKQTgkEcfo3uEK2i2.W_b7ThT8ZWw_DUnKQOHrvPaExlxt82
- xoatbZzmMBbQVZPikXZTMdoaELLjHvkcWvwIWMSWWNMh0hHsyrasTMfbBMgGaYWeYOadRq5J12kM
- eHZ1TW8rZ7WwO5zLSe9M_DA--
-X-Sonic-MF: <rubenru09@aol.com>
-X-Sonic-ID: a3ee4bf8-e3f2-483f-bc3d-4080f96275fb
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.gq1.yahoo.com with HTTP; Thu, 17 Jul 2025 15:04:27 +0000
-Received: by hermes--production-ir2-858bd4ff7b-rsjdf (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 4d525182e20f6561a12343f19593cf10;
-          Thu, 17 Jul 2025 15:02:24 +0000 (UTC)
-Message-ID: <2a6afe3532235c7b76758163e2439e55c93df241.camel@aol.com>
-Subject: DRM GUD driver debug logging
-From: Ruben Wauters <rubenru09@aol.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard	
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
-	 <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Date: Thu, 17 Jul 2025 16:02:21 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	s=arc-20240116; t=1752764719; c=relaxed/simple;
+	bh=uoLRd01WGj9blBLb7RINWtE7jWKrNCOt2K+pkM8WXHk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WNrqYDw4XvNi/QUwnAyuNurpk2A67LS3Juj6UoFDcBK7LLOM2YhO/K59R9rZMFkeO09ToeIXrGZx4pzV1d358XCVBujO90Zp49j7BUA3QmCTZ9RMXs/nkE5Gs8PEZW5LSjs4WjqTrczx5Orwe/dG4A0zpBb6F74GRBBGrcYrXJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D20241596;
+	Thu, 17 Jul 2025 08:05:09 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0B73C3F694;
+	Thu, 17 Jul 2025 08:05:14 -0700 (PDT)
+Date: Thu, 17 Jul 2025 16:05:09 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Nick Chan <towinchenmi@gmail.com>
+Cc: Will Deacon <will@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Janne Grunau <j@jannau.net>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>, Sven Peter <sven@kernel.org>,
+	Marc Zyngier <maz@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org,
+	asahi@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH RESEND v7 00/21] drivers/perf: apple_m1: Add Apple
+ A7-A11, T2 SoC support
+Message-ID: <aHkRJdAuvhS2mNQj@J2N7QTR9R3>
+References: <20250616-apple-cpmu-v7-0-df2778a44d5c@gmail.com>
+ <aHUeUMmn_19EayL1@willie-the-truck>
+ <be327242-ad55-476a-bed4-44c33c263962@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2a6afe3532235c7b76758163e2439e55c93df241.camel.ref@aol.com>
-X-Mailer: WebService/1.1.24187 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.aol
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <be327242-ad55-476a-bed4-44c33c263962@gmail.com>
 
-Hello
+On Mon, Jul 14, 2025 at 11:59:36PM +0800, Nick Chan wrote:
+> 
+> Will Deacon 於 2025/7/14 夜晚11:12 寫道:
+> > On Mon, Jun 16, 2025 at 09:31:49AM +0800, Nick Chan wrote:
+> >> This series adds support for the CPU PMU in the older Apple A7-A11, T2
+> >> SoCs. These PMUs may have a different event layout, less counters, or
+> >> deliver their interrupts via IRQ instead of a FIQ. Since some of those
+> >> older SoCs support 32-bit EL0, counting for 32-bit EL0 also need to
+> >> be enabled by the driver where applicable.
+> >>
+> >> Patch 1 adds the DT bindings.
+> >> Patch 2-7 prepares the driver to allow adding support for those
+> >> older SoCs.
+> > Modulo my nits, the patches look alright to this point...
+> >
+> >> Patch 8-12 adds support for the older SoCs.
+> > ... but I'm not sure if anybody actually cares about these older SoCs
+> > and, even if they do, what the state of the rest of Linux is on those
+> > parts. I recall horror stories about the OS being quietly migrated
+> > between CPUs with incompatible features, at which point I think we have
+> > to question whether we actually care about supporting this hardware.
+> The "horror" story you mentioned is about Apple A10/A10X/T2, which
+> has a big little switcher integrated into the cpufreq block, so when the
+> cpufreq driver switch between states in the same way as on other
+> SoCs, on these SoCs that would silently cause a CPU migration. There
+> is only one incompatible feature that I am aware of which is 32-bit EL0
+> support.
 
-I was taking a look at the code for the gud driver. I am aware this
-driver was recently orphaned and I wish to get up to speed on it, and
-maybe with enough learning and work I can take over maintainance of it
-in the future.
+Surely the MIDR/REVIDR/AIDR also change?
 
-I noticed that in the function gud_disconnect in gud_driv.c on like 623
-there is the following code
+In general, silent migration isn't acceptable for the kernel, even if
+you largely happen to get away with that today. It is not acceptable for
+architectural feature support to change dynamically.
 
-	drm_dbg(drm, "%s:\n", __func__);
+> However, since the CPUs in these SoCs does not support
+> 4K pages anyways in practice this is not an issue for as long as
+> CONFIG_EXPERT is disabled.
 
-checkpatch.pl marks this as unnecessary ftrace like logging, and
-suggests to use ftrace instead. Since (as far as I can tell) this
-effectively just prints the function name, would it not be better to
-just use ftrace for debugging and remove this call all together?
+Do these parts have EL2?
 
-While it isn't actively *harming* the code as such, it does seem a bit
-unnecessary.
+> > On the other hand, if it all works swimmingly and it's just the PMU
+> > driver that needs updating, then I could get on board with it.
+> 
+> As mentioned above, it does all work fine when CONFIG_EXPERT is not
+> enabled, and if it is enabled, then 32-bit process may crash with illegal
+> instruction but everything else will still works fine.
 
-I'd like to know the DRM maintainers opinions. I know this particular
-driver does not have a maintainer dedicated to it, so I'd like to know
-the opinion of those that maintain the subsystem, and anyone else that
-has any opinion.
+I don't think that's quite true, unless these parts are also violating
+the architecture.
 
-Thank you
+If the CPU doesn't implement AArch32, then an ERET to AArch32 is
+illegal. The way illegal exception returns are handled means that this
+will result in a (fatal) illegal execution state exception being taken
+from the exception return code in the kernel, not an UNDEF being taken
+from userspace that would result in a SIGILL.
 
-Ruben Wauters
+I do not think that we should pretend to support hardware with silent
+microarchitectural migration. So at the very least, we do not care about
+A10/A10X/T2.
+
+Mark.
 
