@@ -1,128 +1,141 @@
-Return-Path: <linux-kernel+bounces-735747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3AE4B09349
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:35:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E762EB0934F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:36:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C70DF16B8C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:35:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C90316985A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E423D2FE311;
-	Thu, 17 Jul 2025 17:35:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 307A82FD891;
+	Thu, 17 Jul 2025 17:36:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="mDCHvEke"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QtBFdYPP"
+Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351221F95C;
-	Thu, 17 Jul 2025 17:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 290DF1F95C;
+	Thu, 17 Jul 2025 17:36:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752773725; cv=none; b=Cujtd29OI/yYAALgaJJ5rMn6OZ8+g4HenYVCq0co61nlY0oq4Uv/FAfGuIdn8kVKn/uEuGd7rYIakmqC3T8iq8QPRQM80D3rnwN/OY2Vv2GJ7/P3AwOu+1Pq9ql1E6wEQPSpZuRK1KmK1k3N/hKdot7D0snnGL49lRA/YKa7eBA=
+	t=1752773802; cv=none; b=idNuiHP6OZt4CkbawgxqtQk/ifPC6fN2bHnuQRrYHU3SQcUDFdmJntMcukMN1fAlwwL5hufKR3PwzCrjDmFRAozyUZKv2tLG2pwk6eifhLII1kASQFuTYS0Wyi0c1d74W0wdJalUEX7zv4jGEWi5NYDZbef2Gj1CFaCQ8LsL0kM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752773725; c=relaxed/simple;
-	bh=gnhAK40p9NXzzGOPYQ+r2xlTzVBnm3D99hUHeFDiKvE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b3q/lJJUsMtD44Nx3MVQCFrHzmZdQ4x9qmzMTG52zxaBy6ueI29Qqw1IhDEeSBoGU2zGliNgvjg3zDFv3pZqDyBLo6bjxiksPLxJMvgg25Ix8M6bDDI0Zd2loavFapWIOgYMaieoq5+splH7sz2+Ypdnh7C7Mq2hvHqt345IFmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=mDCHvEke; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1752773721;
-	bh=gnhAK40p9NXzzGOPYQ+r2xlTzVBnm3D99hUHeFDiKvE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mDCHvEkex3g6W2cxbn941o0g2nkcVizXXbgBYtpjpRJS1fOzEF9fWXxw6NEr+BPDT
-	 NREQKpeFEOVYzh70JbeVLFcRDemWDONZmk2QpocaH/3IuhVmqdBDONMJIlhsnFMHFm
-	 gy3kLNohL0XjNWzOW5hm5qyHPcrL5AJMSPyAyGbkPDN+lKFwx85os9O660YiHvBjJu
-	 8GJ1MyCzYgSAbLIXGOej+dAjeedKSOvV61ObnbYN61mfj4LNTNHmMmcUUsWdNO1Lkb
-	 kyXftRtKkFBAOvGhh8wmXXfx3CwnrMsHCc/iFQs2HDT/PplnhFW0jeFcQzzGkJEzxA
-	 36+EvKF11MPQg==
-Received: from [192.168.1.90] (unknown [82.79.138.60])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 13FC017E0C37;
-	Thu, 17 Jul 2025 19:35:21 +0200 (CEST)
-Message-ID: <581bd772-edb7-44e9-b08f-af4c456ea9f1@collabora.com>
-Date: Thu, 17 Jul 2025 20:35:20 +0300
+	s=arc-20240116; t=1752773802; c=relaxed/simple;
+	bh=cB6DQZZHGeGf9lhOToyZC9Jks80AC8cDhzlt0qfdW5g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tgx/fD64n87C5WWaqLgT9q9zwmHNnvjfbIQHtECLCEzPYZaeQVmDoS0BwdRXX9ZPYbPn9vtNmhOCmKBrKjle1LgfzjiKW8JhCBzOkF/Boct3kMTH5fUgdvSMKPnCDrjTY+A6h5m17/i1fsE4RTHUpjcpUgW9eFZKMU9ieJKUgAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QtBFdYPP; arc=none smtp.client-ip=209.85.161.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-615a256240bso548547eaf.3;
+        Thu, 17 Jul 2025 10:36:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752773800; x=1753378600; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pWnTwg7QjqvfjwMKttxZ6TeT8zZsjInkESBYkju/BoY=;
+        b=QtBFdYPPhqTXHhlt6rjn/12uMaZxfXAq0Rm5bqcjOFzDNh2dYvwh5gIBt1XUIf8L4+
+         LaHlPCLlKSiosq0i2Q8VN7hDKiVE4Jb7pFgiUWzjep/OiIf/8Szkg8wUeczi8XyOARFE
+         EZO271JaaSHek9DTli5rAJj4lfA447H4aUpLOSpkfSPzpu1uALBcJ7DcGkeabf3a7FFj
+         aCXwbncwGX5DJ9XKF3WExsSbxZyJEDsccaONA2qSvWkYhNcqB5wMtX/ABZu5L9E3u5v0
+         Wu+OMMlAMFIqvF+URU1QLuwCLoGd91sNlG4ktR35xlzH8RecoRbLC0WZjii3s73pQkeh
+         hncA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752773800; x=1753378600;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pWnTwg7QjqvfjwMKttxZ6TeT8zZsjInkESBYkju/BoY=;
+        b=DLpZ9ddMmbIOI9/CY6Bk5mNTc3SllcHGUsexy+zME/HoJR5zNHDAypFeN3LzB7ucgH
+         +iEZlbdmJniz9y++MOimANQqzqYbIkS+qDS1wzwdv/h+z4vbzBboJfimCNycoPHVeocC
+         x1/mKf9lJiBIALv0sMJ+0yY72RKSrC3DIwUSN1v1LgavVQcTUp1zh5uSQR5zT4hn06r0
+         O4x7IcTU/gpFrhr6eojb4ADFc7j7fidb55kIuDpKaDOT7VYkPLrv/QZv8j8ZNtFUaQEu
+         cqa6Sc6gVypOH5eKOtAkdapF4//2COmuR/3X0hS9yXD48TCHVEHDB4Owstz0Anjdlf6B
+         hSOg==
+X-Forwarded-Encrypted: i=1; AJvYcCV+rIgj/3q2nEgYaipWRTp514V+ljdwqI5zOgu/Wauf4SwrgZ3sFaSHhWpvV/1Fs64PSRg+3sEjfsGy@vger.kernel.org, AJvYcCXDanunnmcF9NUnqeRRWGzeshRfQVvgS/Sxgd2Ntd9kUDTGoXwAy3BtbwZlnTSw4dhPSuGjj2R/xOQp0oc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxu7nCWC3y8Os+mxZDZtM+qwX/c2fz36W5fjPf16UxJh3Jf1UqV
+	v2Gehacobn3zOEzjITCQCcx8SouabF6Wrh1OvFtJtQsGZpXdJswyJOeVCWAtkNAcTdEm7H4/sKa
+	yseBV9BwU/uAwUh0Bt6x8TQAou9jrZDU=
+X-Gm-Gg: ASbGnctb7MNCSKq+xr6vM0vZDn6/ojharU3QEeRKff9LwtXTU+Zs3kd3AbVpbUQMvsU
+	00ce6dRru1IUNM5v7rZxBAwSZcn70ShZhd89/sJ9uDUVWGhRav216wsp4/Tu3+HtgT2iTDs55WZ
+	GBF1FQxEoUddxp5rYIPdu423+gdRUGky9K4q6sufXxkxc/Th/kcA5OB/mpKEJQ/qh8odJRzm1lk
+	yn13BwfASVTGpNf/Rg=
+X-Google-Smtp-Source: AGHT+IHrb3+kGA/Pf4+/HuAwQiwxkAKO5ok2v8Yqtp10nkrGuuIA/Mbn0z5PrudGEVL+q9uWRjlr6OOW/MUOkxDA85g=
+X-Received: by 2002:a05:6820:f04:b0:611:a81d:bdf1 with SMTP id
+ 006d021491bc7-615ad9d97c1mr2878741eaf.6.1752773800093; Thu, 17 Jul 2025
+ 10:36:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/9] usb: vhci-hcd: Do not split quoted strings
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Valentina Manea <valentina.manea.m@gmail.com>,
- Shuah Khan <shuah@kernel.org>, Hongren Zheng <i@zenithal.me>,
- "Brian G. Merrell" <bgmerrell@novell.com>, kernel@collabora.com,
- Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250717-vhci-hcd-suspend-fix-v1-0-2b000cd05952@collabora.com>
- <20250717-vhci-hcd-suspend-fix-v1-5-2b000cd05952@collabora.com>
- <2025071713-passivism-suggest-436d@gregkh>
-Content-Language: en-US
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-In-Reply-To: <2025071713-passivism-suggest-436d@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250716182220.203631-1-marcelomoreira1905@gmail.com> <20250717163916.GR2672049@frogsfrogsfrogs>
+In-Reply-To: <20250717163916.GR2672049@frogsfrogsfrogs>
+From: Marcelo Moreira <marcelomoreira1905@gmail.com>
+Date: Thu, 17 Jul 2025 14:36:28 -0300
+X-Gm-Features: Ac12FXw5w1_9i4hyD-LbPxtSt7tFawOjHh2b0UFI2vkNqVhxdpsfk6PFyygcq64
+Message-ID: <CAPZ3m_jXwp1FfsvtR2s3nwATT3fER=Mc6qj+GzKuUhY5tjQFNQ@mail.gmail.com>
+Subject: Re: [PATCH] xfs: Replace strncpy with strscpy
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: cem@kernel.org, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/17/25 7:19 PM, Greg Kroah-Hartman wrote:
-> On Thu, Jul 17, 2025 at 06:54:54PM +0300, Cristian Ciocaltea wrote:
->> Join the split strings to make checkpatch happy and regain ability to
->> grep for those log messages in the source code:
->>
->>   WARNING: quoted string split across lines
->>
->> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
->> ---
->>  drivers/usb/usbip/vhci_hcd.c | 21 +++++++--------------
->>  1 file changed, 7 insertions(+), 14 deletions(-)
->>
->> diff --git a/drivers/usb/usbip/vhci_hcd.c b/drivers/usb/usbip/vhci_hcd.c
->> index 3f888455d238b983a6aafa52418fb89a914c32b5..53691d5e77d386b0b0e16fe9d08824baa04c0b1e 100644
->> --- a/drivers/usb/usbip/vhci_hcd.c
->> +++ b/drivers/usb/usbip/vhci_hcd.c
->> @@ -376,8 +376,7 @@ static int vhci_hub_control(struct usb_hcd *hcd, u16 typeReq, u16 wValue,
->>  		switch (wValue) {
->>  		case USB_PORT_FEAT_SUSPEND:
->>  			if (hcd->speed >= HCD_USB3) {
->> -				pr_err(" ClearPortFeature: USB_PORT_FEAT_SUSPEND req not "
->> -				       "supported for USB 3.0 roothub\n");
->> +				pr_err(" ClearPortFeature: USB_PORT_FEAT_SUSPEND req not supported for USB 3.0 roothub\n");
-> 
-> Why the leading " "?
+Em qui., 17 de jul. de 2025 =C3=A0s 13:39, Darrick J. Wong
+<djwong@kernel.org> escreveu:
+>
+> On Wed, Jul 16, 2025 at 03:20:37PM -0300, Marcelo Moreira wrote:
+> > The `strncpy` function is deprecated for NUL-terminated strings as
+> > explained in the "strncpy() on NUL-terminated strings" section of
+> > Documentation/process/deprecated.rst.
+> >
+> > In `xrep_symlink_salvage_inline()`, the `target_buf` (which is `sc->buf=
+`)
+> > is intended to hold a NUL-terminated symlink path. The original code
+> > used `strncpy(target_buf, ifp->if_data, nr)`, where `nr` is the maximum
+> > number of bytes to copy. This approach is problematic because `strncpy(=
+)`
+> > does not guarantee NUL-termination if the source string is truncated
+> > exactly at `nr` bytes, which can lead to out-of-bounds read issues
+> > if the buffer is later treated as a NUL-terminated string.
+> > Evidence from `fs/xfs/scrub/symlink.c` (e.g., `strnlen(sc->buf,
+> > XFS_SYMLINK_MAXLEN)`) confirms that `sc->buf` is indeed expected to be
+> > NUL-terminated. Furthermore, `sc->buf` is allocated with
+> > `kvzalloc(XFS_SYMLINK_MAXLEN + 1, ...)`, explicitly reserving space for
+> > the NUL terminator.
+> >
+> > `strscpy()` is the proper replacement because it guarantees NUL-termina=
+tion
+> > of the destination buffer, correctly handles the copy limit, and aligns
+> > with current kernel string-copying best practices.
+> > Other recommended functions like `strscpy_pad()`, `memcpy()`, or
+> > `memcpy_and_pad()` were not used because:
+> > - `strscpy_pad()` would unnecessarily zero-pad the entire buffer beyond=
+ the
+> >   NUL terminator, which is not required as the function returns `nr` by=
+tes.
+> > - `memcpy()` and `memcpy_and_pad()` do not guarantee NUL-termination, w=
+hich
+> >   is critical given `target_buf` is used as a NUL-terminated string.
+> >
+> > This change improves code safety and clarity by using a safer function =
+for
+> > string copying.
+>
+> Did you find an actual bug in online fsck, or is this just
+> s/strncpy/strscpy/ ?  If the code already works correctly, please leave
+> it alone.  Unless you want to take on all the online fsck and fuzz
+> testing to make sure the changes don't break anything.
 
-Yeah, not sure if that was on purpose, but I agree it doesn't make much
-sense.  Will fix this up. 
+This was s/strncpy/strscpy/ , no real bug.
 
-> And shouldn't this be dev_err()?
-
-I'll add a separate patch to convert all pr_*() instances, as there are
-plenty of them.
-
->>  				goto error;
->>  			}
->>  
->> @@ -506,8 +505,7 @@ static int vhci_hub_control(struct usb_hcd *hcd, u16 typeReq, u16 wValue,
->>  		case USB_PORT_FEAT_LINK_STATE:
->>  			usbip_dbg_vhci_rh(" SetPortFeature: USB_PORT_FEAT_LINK_STATE\n");
->>  			if (hcd->speed < HCD_USB3) {
->> -				pr_err("USB_PORT_FEAT_LINK_STATE req not "
->> -				       "supported for USB 2.0 roothub\n");
->> +				pr_err("USB_PORT_FEAT_LINK_STATE req not supported for USB 2.0 roothub\n");
-> 
-> dev_err()?
-> 
-> Same for the others.
-> 
-> thanks,
-> 
-> greg k-h
-
+--=20
+Cheers,
+Marcelo Moreira
 
