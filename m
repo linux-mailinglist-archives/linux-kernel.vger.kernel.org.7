@@ -1,94 +1,114 @@
-Return-Path: <linux-kernel+bounces-735480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13A9BB08FE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:51:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 766C7B08FEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:53:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D230584F44
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:51:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E85463A5619
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:51:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AF462FA62E;
-	Thu, 17 Jul 2025 14:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E102F85C3;
+	Thu, 17 Jul 2025 14:51:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZwcY1CzA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lW3185EN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 963112F94BB;
-	Thu, 17 Jul 2025 14:50:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9C0514E2E2;
+	Thu, 17 Jul 2025 14:51:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752763811; cv=none; b=avTCUk1jYM0OO1boLNHpPeQwuVn/95cgscKxD1mhIO0v4kUVd8lDdx4IZoyqZiqwhlZXDqEkNVorA261tC/SIAkjL+lKoTo20nB/Yqop416z32sDEfwo4Vvhz6tf2tVhpWkYNIB2xA5DkUoGzD2jSqMe9MMyYHNR6KyIXcXLgNU=
+	t=1752763883; cv=none; b=s+7NYvZotLU93gtKeWDabdjA1waK7o1WMwdybP9l+KFBl6ESKw0FXzZORgan7lJERoYimZQwZjfnpqcizII6QnZOGeF4IyTeDWMmXe+HObr/Npc6H9gPbMreYsCoc6nKL/i45hLcBoArZXRI0Omdr3+/lulNW2O/vIT/ZlHu/eE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752763811; c=relaxed/simple;
-	bh=mIgncsRmQiPT7wJ6VbqzaJZYzg6DVLSBFP2f1woV0Ys=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ErQ5AAvaIKekNmQ67dctF0bCFcUwdl0TggH3B//aNeeZzgpGVM4AG/yREmkwfSbUdH9LZXXfbXVRI4R4Q+8MghwnR3YbiEpHEuIhzxRz2E2v6CPg1b0X8K0kESWth25jK46LBrfV90u9PSvhamYKhUcZKkkFwbG/ihOyLmT0U30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZwcY1CzA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26E12C4CEE3;
-	Thu, 17 Jul 2025 14:50:11 +0000 (UTC)
+	s=arc-20240116; t=1752763883; c=relaxed/simple;
+	bh=MP9BmCbwpKpHjixUZfTCj8rTrM1iVy1gnis52tX8tgw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=SlM3fV4R76YmY836F9t0t30Cm/ZbUKWGfm/7fH0ikylG2dzp6wPxmwjy0IbI+UuU4DDongTaIBTk/AJXdjeOanJ8UvpuXUSBDwoFpAKquLZZ1vI5ah9STYgqXqwcIdlxacCS4lbG7HgS5aczhfAH/6zjKFvMRIML0Z2AUxxu/KA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lW3185EN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2D3DCC4CEEB;
+	Thu, 17 Jul 2025 14:51:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752763811;
-	bh=mIgncsRmQiPT7wJ6VbqzaJZYzg6DVLSBFP2f1woV0Ys=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ZwcY1CzAOwKu5adgJxP56GIG6f4LpRYZ/yiyPZ3/g1gmaQP2NuzLBRqN/CxklVZKb
-	 gULC3/rq5pnq61WhLUEWBakXZ4Jp8m3Eq6dVumJJAVFwDIz9UJcm1DGHYnuja+JHeY
-	 b6QseCt9R+mjIDnpsyhFYotSzlvRlqgz4f1oZXkOzFdnRIPVTsAWuvOuUF08gS4Qei
-	 0J+8RWGPGmGQPExDT6PSw60zbkC5xWokv33j5Nwm55rLrRINa5w6FkLx1Vv6zmzpYP
-	 DCF5SDUlmNkAXRG1czddebhnpTDYOiQnwIEtbMB+ER4tywnsGNllakd358XtjM7wp/
-	 P4smLzX38Cjmw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70C93383BF47;
-	Thu, 17 Jul 2025 14:50:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1752763883;
+	bh=MP9BmCbwpKpHjixUZfTCj8rTrM1iVy1gnis52tX8tgw=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=lW3185ENnwmrOFhKcU5lDziS9wvic8V3+AfQvu7fwITJIZFxVnpVoBR9XgNjUp8Nz
+	 BDCnB9pvRwLGFLxQEiZUpX1g4QSkPUdMNfkUIYfg4/zaZbWvHq/WEkxM+Rw6cRF6Rv
+	 FfpBZsxeJ+CQIzW8aU5FHTZe5d0XmFMUVSg+MKKxIFz3CVzroJBQFy3oZpEKb3eVuE
+	 M5f/ISBPKt+DXDbUKQu9J23Oy/p44EEsLxLJIwMjn46GNEoha3WGZ/Sq7PBkVZFiFU
+	 g9QkNO9Z3RoG16NdyGhWsBawdUOPGpImkMjt/XNl61wAmnkvZAbe6IsKDawXt2Fi0D
+	 1T/kXQCTeP+CA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 229A8C83F34;
+	Thu, 17 Jul 2025 14:51:23 +0000 (UTC)
+From: =?utf-8?q?Nuno_S=C3=A1_via_B4_Relay?= <devnull+nuno.sa.analog.com@kernel.org>
+Date: Thu, 17 Jul 2025 15:51:34 +0100
+Subject: [PATCH] mfd: adp5585: Drop useless return statement
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v3] virtio-net: fix recursived rtnl_lock() during
- probe()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175276383099.1959085.14014268800421819820.git-patchwork-notify@kernel.org>
-Date: Thu, 17 Jul 2025 14:50:30 +0000
-References: <20250716115717.1472430-1-zuozhijie@bytedance.com>
-In-Reply-To: <20250716115717.1472430-1-zuozhijie@bytedance.com>
-To: Zigit Zo <zuozhijie@bytedance.com>
-Cc: mst@redhat.com, jasowang@redhat.com, xuanzhuo@linux.alibaba.com,
- eperezma@redhat.com, virtualization@lists.linux.dev, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, kuba@kernel.org, pabeni@redhat.com,
- andrew+netdev@lunn.ch, edumazet@google.com
+Message-Id: <20250717-adp5585-drop-ret-v1-1-2ae65bd780aa@analog.com>
+X-B4-Tracking: v=1; b=H4sIAPUNeWgC/x3MQQqAIBBA0avErBvQwKyuEi0sp5qNyRgRiHdPW
+ r7F/xkSCVOCqckg9HDiK1TotoHtdOEgZF8NneqMstqi89GYwaCXK6LQjf2qtRqtdcp5qFkU2vn
+ 9l/NSygfVjARQYgAAAA==
+X-Change-ID: 20250717-adp5585-drop-ret-6b110977a0ad
+To: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Lee Jones <lee@kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752763896; l=1199;
+ i=nuno.sa@analog.com; s=20231116; h=from:subject:message-id;
+ bh=fa2lU4nXFqoCVVCIfit96zG313AYsYjHUMW+fLWBw3E=;
+ b=GiPWHTiCOaER8fe0hS7yssIfg0FKiPLqsOJf5qw/KWPP/gHcS0Kfr3Z8XPeTl0hrOj1aeyVKq
+ k91h25x/INrBz+yG0MNRoZFWCp/XSIsuCDZfZmlNahBrcY3zchJ9HwH
+X-Developer-Key: i=nuno.sa@analog.com; a=ed25519;
+ pk=3NQwYA013OUYZsmDFBf8rmyyr5iQlxV/9H4/Df83o1E=
+X-Endpoint-Received: by B4 Relay for nuno.sa@analog.com/20231116 with
+ auth_id=100
+X-Original-From: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
+Reply-To: nuno.sa@analog.com
 
-Hello:
+From: Nuno Sá <nuno.sa@analog.com>
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+In adp5585_reset_ev_parse(), when parsing the
+adi,reset-pulse-width-us property, we were returning in case it was
+found and valid. No point in doing that as we'll be returning anyways
+after the exiting the property scope. And it could actually lead to bugs
+if new properties happen to added after this one.
 
-On Wed, 16 Jul 2025 19:57:17 +0800 you wrote:
-> The deadlock appears in a stack trace like:
-> 
->   virtnet_probe()
->     rtnl_lock()
->     virtio_config_changed_work()
->       netdev_notify_peers()
->         rtnl_lock()
-> 
-> [...]
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/linux-gpio/c85604d9e077511b8aa6ee0786579594cc0103d4.camel@gmail.com/T/#ma25557bd06ccd2531dc9c85ba6be74af781b81aa
+Signed-off-by: Nuno Sá <nuno.sa@analog.com>
+---
+ drivers/mfd/adp5585.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Here is the summary with links:
-  - [net,v3] virtio-net: fix recursived rtnl_lock() during probe()
-    https://git.kernel.org/netdev/net/c/be5dcaed694e
+diff --git a/drivers/mfd/adp5585.c b/drivers/mfd/adp5585.c
+index 58f7cebe2ea4f2c68f64370449f5fbce8a2f14ed..46b3ce3d7bae8981824a957f6b4ee471d803c981 100644
+--- a/drivers/mfd/adp5585.c
++++ b/drivers/mfd/adp5585.c
+@@ -432,7 +432,6 @@ static int adp5585_reset_ev_parse(struct adp5585_dev *adp5585)
+ 					     "Invalid value(%u) for adi,reset-pulse-width-us\n",
+ 					     prop_val);
+ 		}
+-		return ret;
+ 	}
+ 
+ 	return 0;
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+---
+base-commit: 8f3ef4da96dd3f3e12f6313cbe8cd16a39e9abae
+change-id: 20250717-adp5585-drop-ret-6b110977a0ad
+--
+
+Thanks!
+- Nuno Sá
 
 
 
