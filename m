@@ -1,116 +1,174 @@
-Return-Path: <linux-kernel+bounces-734947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60E9FB088A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:59:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B01D1B088B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:01:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECAE2A455EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:59:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6ED54167C27
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:01:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 181C42882DF;
-	Thu, 17 Jul 2025 08:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5382B288535;
+	Thu, 17 Jul 2025 09:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IGpASrfm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="Ne0VSSo1"
+Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617C8287269;
-	Thu, 17 Jul 2025 08:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94B9B1FC0EF;
+	Thu, 17 Jul 2025 09:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752742760; cv=none; b=Haa33QC1hOWxa0+ppp2Vm1HqCk5G+3a83PS+cnM7Tdv9XASM+hXn45x6062LC0dmU1pYnSmTAuHirERA+yzOMb+MfD5q7IvPV/ddnVlOeRwa7JIGj4QnIjiHPz5Gge3tlUxCGSdYG3qCNLrUUQRk6pqofNNyh9ApjC5W3l/vnRE=
+	t=1752742850; cv=none; b=lX992GUmPVJPIokd3rtG/uljBNvPsES3zqJbfKvlECOc8JhIAm/EUqeaY1Y5oBTchnnW36tenPHv7BHK8nLaQucQtLXga6zH/AKmdeP484AMAM25HwKZY8XhqEGUDKE22Wzm1J7xyVSIRhG5fH5JzoeyIfStPd7GFGZG8Gp7pXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752742760; c=relaxed/simple;
-	bh=M7D/j07sXCiX3umOa4PmP/ROxTjpH2Q+J8kImyrBWYs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DVQaX61s7xzFEAjtDl6E5LgEzhLY6X4pCG/MXxsj5K/PQNxTnQtm/965YFAg1KT0kQzjDHbo3yIi+yEFz50yb7NMEqiZH6KrtfWLUzS34j4mSga0XtPecmE/svBpO8ns7HwP+GEux6SyyGLX4Pw2dptSjkdMbfl+IY1ERMWySjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IGpASrfm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D4059C4CEED;
-	Thu, 17 Jul 2025 08:59:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752742758;
-	bh=M7D/j07sXCiX3umOa4PmP/ROxTjpH2Q+J8kImyrBWYs=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=IGpASrfmw1FDQQOEgSJMncOd/GV51zSPjIHldeEP7xjxpylB5G7IgmZteNAjDnunu
-	 Cckxgdn8xqJ+AChr43i5R3K+HKWRb3oqnWXum8ir/i4H4uNMHRMnouv6dLMPTGgY+P
-	 jQcERLetqSEzWkoSqNNb3ibnknvwo56qllmIkunmKjMBXx/QrJtvObD/YUGn5sMIKO
-	 h/sEzduEONXMPxGSECcvBbAPqDOqBgxGJ9aHCpBMewHYFA626Ly6ZaIKRd93CVPln+
-	 MByC6YFIIfnQccqy4CRahR0LfSkbHk0tmgkraPngf6P7Tf3cMooK8gFzVo6/uaPHXw
-	 LzTXHG0NHDpOQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4EE9C83F1A;
-	Thu, 17 Jul 2025 08:59:18 +0000 (UTC)
-From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
-Date: Thu, 17 Jul 2025 16:59:17 +0800
-Subject: [PATCH] dts: arm: amlogic: fix pwm node for c3
+	s=arc-20240116; t=1752742850; c=relaxed/simple;
+	bh=y+NgVNqs9UPssA6IR1WIkBlfTnT0s5ae7SOiR83nCUU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PRxRIc/d1XaedwOY9K5tCRfbLXCD3xw6ca2/NPQ0mDvc9dfmtEl/5C24x59RlCF4xh6OPNRsQoaW/JCICel1xupjYlQaua3cvQeKy+PirVQvRHtmwz5vjGSYkXlbsCfMOULMILQoFxLUbuo+9rkjamy/C4sVk1A5akzqqFI6ERs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=Ne0VSSo1; arc=none smtp.client-ip=46.19.9.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
+	s=default; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=dsr9dRbVAldNjV8JKgEZYv9SvaMuV8zTMgrBYyOwtvE=; b=Ne0VSSo1FLMDjFtkk3AAUBO5xK
+	pTqhbA0WtSEWXzGsjQ9zMWPhGJPBdZs0rj5gEFVGGscS0TVlWNbFMQna8knEIof9bjUXTMcpoFAW9
+	s+XZji/MfUzftQXCOFDAAebFBP60xagu34eHu5Pcoi7RvfnesdqDwk1GiARfXnyzOE21NGOdmjAaz
+	ahO/BCLMzXImHsBQi6pJYKKNaKBZCDwsEhuTRoOlYrRMO3ct1crtcglsT5jvA/XuuOSYKC8QN6um4
+	iGPGgbcgZOkMSbCEbbOgRvT/JyUNDjBLHYkEsm4K6DgLKcHWvshJAds9DcSVCu0g7pJy2hFKLCtpm
+	4JxFgFDA==;
+Received: from [89.212.21.243] (port=53282 helo=localhost.localdomain)
+	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <primoz.fiser@norik.com>)
+	id 1ucKTp-00DbO3-1Q;
+	Thu, 17 Jul 2025 11:00:40 +0200
+From: Primoz Fiser <primoz.fiser@norik.com>
+To: Wei Fang <wei.fang@nxp.com>,
+	Shenwei Wang <shenwei.wang@nxp.com>,
+	Clark Wang <xiaoning.wang@nxp.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	davem@davemloft.net,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: imx@lists.linux.dev,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	upstream@lists.phytec.de
+Subject: [PATCH 0/2] Populate of_node for i.MX netdevs
+Date: Thu, 17 Jul 2025 11:00:35 +0200
+Message-Id: <20250717090037.4097520-1-primoz.fiser@norik.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250717-fix-pwm-node-v1-1-45021777efa9@amlogic.com>
-X-B4-Tracking: v=1; b=H4sIAGS7eGgC/x2MQQqAIBAAvxJ7bkEFlfpKdLBcaw9ZKFQg/j3pO
- AwzBTIlpgxjVyDRzZnP2ED2Hay7ixsh+8aghNLCSouBX7yeA+PpCY2koOziBiM0tORK1Py/m+Z
- aP+a/zN9eAAAA
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Chuan Liu <chuan.liu@amlogic.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Xianwei Zhao <xianwei.zhao@amlogic.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752742757; l=1025;
- i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
- bh=o5anEexAdJpsa2RWVePMFRWkvLxzPjZ8flBM5Edgoco=;
- b=WiA8ozMtVIYrzvTWtrwaxBiYQ1SRzjW6Ye/Tg8+39l0g9LF2BvFGboskS2qOMR+lmFFa8W+jL
- Wo+31HvFNR4DFp7Ch5eHYMjU1LfkqNrvMUZSOaxphRUWBHalHX/VvNz
-X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
- pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
-X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
- auth_id=107
-X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Reply-To: xianwei.zhao@amlogic.com
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cpanel.siel.si
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - norik.com
+X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: primoz.fiser@norik.com
+X-Authenticated-Sender: cpanel.siel.si: primoz.fiser@norik.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Recently when working on predictable network names for i.MX SoCs, it
+was discovered that of_node sysfs properties are missing for FEC and
+EQOS interfaces.
 
-Fix reg address for c3 pwm node.
+Without this, udev is unable to expose the OF_* properties (OF_NAME,
+OF_FULLNAME, OF_COMPATIBLE, OF_ALIAS, etc.) and thus we cannot identify
+interface based on those properties.
 
-Fixes: 431a5281e701 ("arm64: dts: amlogic: Add Amlogic C3 PWM")
-Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
----
-Fix c3 pwm node reg.
----
- arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Fix this by populating netdev of_node in respective drivers.
 
-diff --git a/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
-index cb9ea3ca6ee0..71b2b3b547f7 100644
---- a/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
-@@ -792,7 +792,7 @@ spicc1: spi@52000 {
- 			pwm_mn: pwm@54000 {
- 				compatible = "amlogic,c3-pwm",
- 					     "amlogic,meson-s4-pwm";
--				reg = <0x0 54000 0x0 0x24>;
-+				reg = <0x0 0x54000 0x0 0x24>;
- 				clocks = <&clkc_periphs CLKID_PWM_M>,
- 					 <&clkc_periphs CLKID_PWM_N>;
- 				#pwm-cells = <3>;
+Result:
 
----
-base-commit: 58abdca0eb653c1a2e755ba9ba406ee475d87636
-change-id: 20250717-fix-pwm-node-61ef27ba9605
+$ ls -l /sys/class/net/end1/of_node
+/sys/class/net/end1/of_node -> 
+'../../../../../../../firmware/devicetree/base/soc@0/bus@42800000/ethernet@428a0000'/
+$ ls -l /sys/class/net/end0/of_node                                                                              
+/sys/class/net/end0/of_node -> 
+'../../../../../../../firmware/devicetree/base/soc@0/bus@42800000/ethernet@42890000'/
 
-Best regards,
+$ udevadm info /sys/class/net/end0
+P: /devices/platform/soc@0/42800000.bus/42890000.ethernet/net/end0
+M: end0
+R: 0
+U: net
+I: 2
+E: DEVPATH=/devices/platform/soc@0/42800000.bus/42890000.ethernet/net/end0
+E: SUBSYSTEM=net
+E: OF_NAME=ethernet
+E: OF_FULLNAME=/soc@0/bus@42800000/ethernet@42890000
+E: OF_COMPATIBLE_0=fsl,imx93-fec
+E: OF_COMPATIBLE_1=fsl,imx8mq-fec
+E: OF_COMPATIBLE_2=fsl,imx6sx-fec
+E: OF_COMPATIBLE_N=3
+E: OF_ALIAS_0=ethernet0
+E: INTERFACE=end0
+E: IFINDEX=2
+E: USEC_INITIALIZED=5227083
+E: ID_NET_DRIVER=fec
+E: ID_NET_NAMING_SCHEME=latest
+E: ID_NET_NAME_MAC=enx502df44dbd5e
+E: ID_NET_NAME_ONBOARD=end0
+E: ID_PATH=platform-42890000.ethernet
+E: ID_PATH_TAG=platform-42890000_ethernet
+E: SYSTEMD_ALIAS=/sys/subsystem/net/devices/end0
+E: TAGS=:systemd:
+E: CURRENT_TAGS=:systemd:
+
+$ udevadm info /sys/class/net/end1
+P: /devices/platform/soc@0/42800000.bus/428a0000.ethernet/net/end1
+M: end1
+R: 1
+U: net
+I: 3
+E: DEVPATH=/devices/platform/soc@0/42800000.bus/428a0000.ethernet/net/end1
+E: SUBSYSTEM=net
+E: OF_NAME=ethernet
+E: OF_FULLNAME=/soc@0/bus@42800000/ethernet@428a0000
+E: OF_COMPATIBLE_0=nxp,imx93-dwmac-eqos
+E: OF_COMPATIBLE_1=snps,dwmac-5.10a
+E: OF_COMPATIBLE_N=2
+E: OF_ALIAS_0=ethernet1
+E: INTERFACE=end1
+E: IFINDEX=3
+E: USEC_INITIALIZED=5370305
+E: ID_NET_NAMING_SCHEME=latest
+E: ID_NET_NAME_MAC=enx502df44dbd5f
+E: ID_NET_NAME_ONBOARD=end1
+E: ID_PATH=platform-428a0000.ethernet
+E: ID_PATH_TAG=platform-428a0000_ethernet
+E: SYSTEMD_ALIAS=/sys/subsystem/net/devices/end1
+E: TAGS=:systemd:
+E: CURRENT_TAGS=:systemd:
+
+
+Primoz Fiser (2):
+  net: fec: fec_probe(): Populate netdev of_node
+  net: stmmac: Populate netdev of_node
+
+ drivers/net/ethernet/freescale/fec_main.c         | 1 +
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 1 +
+ 2 files changed, 2 insertions(+)
+
 -- 
-Xianwei Zhao <xianwei.zhao@amlogic.com>
-
+2.34.1
 
 
