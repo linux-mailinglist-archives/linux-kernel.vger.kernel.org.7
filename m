@@ -1,118 +1,81 @@
-Return-Path: <linux-kernel+bounces-736058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 362FDB097B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 01:28:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59C6CB097DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 01:30:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A87F4A77BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 23:28:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B45993AE8DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 23:29:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8865328A400;
-	Thu, 17 Jul 2025 23:25:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64294261595;
+	Thu, 17 Jul 2025 23:27:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TDQPJoue"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a8YGUGNi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4FF262FFF;
-	Thu, 17 Jul 2025 23:25:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA2B25229D;
+	Thu, 17 Jul 2025 23:27:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752794721; cv=none; b=UM1oaHxt+lyXIxtkUqw2rLm+2YrrjkeGSPyWU4+JHxKSSn+NTuX+qbWDkygzTidXgKih7YrmEzqXqeH0t26tvnMCvIzJJxwbMPVbtFU781MGptJJV+dSGNs26xWtoVlTfyQ7oIOkZpSUy5HoxTrefjYDv6SZr8Dgj+Ar5k/n+90=
+	t=1752794866; cv=none; b=ox1uE+BASqwFrXglqAu8ppAbC7sgIBAP83jneDFI///KItTs5MZjutnxrFD/F/5hUJIp1x9NVrjtV0iXESGf9qbnvgMuMOywVhBLRpchizAlN2WNXiu2jEAsUs7ZIOGidSZd+MbHNy1XcwKv72YEKZ/rT5FrVdk++sDadH90VrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752794721; c=relaxed/simple;
-	bh=qfrc6vYarbMRQKv1a7xZvSfoxfkNIKlLJL8wJGuWS5I=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DC7zM2wkAME8tBtzUxE4DKbcl5Wt/itdtLMY0Hz6lg2GVQ5ao6jQlrRAKGGXvdeT3iyuPFBKgWPixL9z57mxDPFmId4QrOudHc0a43xy5fJq3yJrb/kB7Okj/6W+GQ9gryOmHfi54EWliGLOCgsb1lBB8Ul/yqRaS09EziZ2+9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TDQPJoue; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B75F1C2BCC6;
-	Thu, 17 Jul 2025 23:25:20 +0000 (UTC)
+	s=arc-20240116; t=1752794866; c=relaxed/simple;
+	bh=p0MagdDdWIYiV7kWUeC2SQBLjV/Zj1bBydkf6E4DF48=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=h3baBivQsr9jwZbk2ZdQeUwZsfnaP8VDnbwL9YuULbQnMh8pMpT0DlirqFcnVCJeQZSHII8ObrPFwNXjlvZ/yxkQ0AM8DiBcSm8NmKlrmynNls3bN4Jzfmz3VJ6GQ7c8X0DfwHrnjODb7iFWbIzGcI1JGsnpfdtklAuKPDIKJmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a8YGUGNi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48E97C4CEE3;
+	Thu, 17 Jul 2025 23:27:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752794720;
-	bh=qfrc6vYarbMRQKv1a7xZvSfoxfkNIKlLJL8wJGuWS5I=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TDQPJoue8FZRuS/LJrGq2GchrAASLibnSmGeRRoSUGpvH3awBC+7kUb1yyaVYH89y
-	 ULfO45CeKqJRVGvpXRA0BcyHOvq/18F0odTwMODSsaKPhyZ6a5RObjGBHyzV8F/o67
-	 bRdab3eThDwtbXMkLCf7OvDiOrTOIwe/+HGDzhnD0XxLPtqyR6jgFUfqETsGM1mdv+
-	 bnFaNOMq8O4teU/HwNwUrtNBKmLU5MLmrmRF+Dfv34p8l9jQ3mz2PYnKIToPImVNxa
-	 KM1ucd9mD0unIDTP+r5FbWZidX3EtXT5OQTFbfBDNgNkXEVraPMIWLffBOUAzwljDl
-	 L3ZGqkwchCdPg==
-From: Kees Cook <kees@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org,
-	Ingo Molnar <mingo@kernel.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	kasan-dev@googlegroups.com,
-	linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org,
-	linux-efi@vger.kernel.org,
-	linux-kbuild@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	sparclinux@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH v3 13/13] configs/hardening: Enable CONFIG_INIT_ON_FREE_DEFAULT_ON
-Date: Thu, 17 Jul 2025 16:25:18 -0700
-Message-Id: <20250717232519.2984886-13-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250717231756.make.423-kees@kernel.org>
-References: <20250717231756.make.423-kees@kernel.org>
+	s=k20201202; t=1752794866;
+	bh=p0MagdDdWIYiV7kWUeC2SQBLjV/Zj1bBydkf6E4DF48=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=a8YGUGNiC15dATsGZXMiATuiAhkjO0M3CLSjwT8Rp/2WernKImAKFMQMYzp0OvLf3
+	 4kpfh8Umx4A6GNKQUrp+McM4MBz2/KqbUIPkiYDHHBFY3p7y/ab73Rr4sDqffWKOEu
+	 Yo06aJEGc574l31kabrqte/6LZiW/u9Sa+ZUoQFh0cPiJOW5piWGJw3/su3xH7d5c5
+	 DA4T/kX9OZht1pMiANvQlIbDjE7FNZqeJX3qjrDY6XRJShCh/rlrKO3HyCOW4denS/
+	 1a2a9wIgWhJf7b9Ftun+015iWSiluo831KNm7SfotdOSjeW4YyeDe9K/FM5ElJApk7
+	 zo34Hk2Oq9wnw==
+Date: Thu, 17 Jul 2025 18:27:45 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Timothy Pearson <tpearson@raptorengineering.com>
+Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-pci <linux-pci@vger.kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	christophe leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Shawn Anastasio <sanastasio@raptorengineering.com>
+Subject: Re: [PATCH v3 5/6] PCI: pnv_php: Fix surprise plug detection and
+ recovery
+Message-ID: <20250717232745.GA2662794@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=961; i=kees@kernel.org; h=from:subject; bh=qfrc6vYarbMRQKv1a7xZvSfoxfkNIKlLJL8wJGuWS5I=; b=owGbwMvMwCVmps19z/KJym7G02pJDBmVbbGrLRYky9XJyFyITXiqam157PKKj7mdDyYc/Xw7s uRv7WSGjlIWBjEuBlkxRZYgO/c4F4+37eHucxVh5rAygQxh4OIUgIkc62Vk+Hwt/L3Rbm1tn84l unrT0jgulm5lD+LgcnL+WfbLeJOREcN/7/17erb+Zmw+2dikfKTxS9XuurzmRR6/80+FfF6/xlG FFQA=
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <171044224.1359864.1752615546988.JavaMail.zimbra@raptorengineeringinc.com>
 
-To reduce stale data lifetimes, enable CONFIG_INIT_ON_FREE_DEFAULT_ON as
-well. This matches the addition of CONFIG_STACKLEAK=y, which is doing
-similar for stack memory.
+On Tue, Jul 15, 2025 at 04:39:06PM -0500, Timothy Pearson wrote:
+> The existing PowerNV hotplug code did not handle surprise plug events
+> correctly, leading to a complete failure of the hotplug system after
+> device removal and a required reboot to detect new devices.
 
-Signed-off-by: Kees Cook <kees@kernel.org>
----
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: <linux-hardening@vger.kernel.org>
----
- kernel/configs/hardening.config | 3 +++
- 1 file changed, 3 insertions(+)
+> +++ b/drivers/pci/hotplug/pnv_php.c
+> @@ -4,12 +4,14 @@
+>   *
+>   * Copyright Gavin Shan, IBM Corporation 2016.
+>   * Copyright (C) 2025 Raptor Engineering, LLC
+> + * Copyright (C) 2025 Raptor Computing Systems, LLC
 
-diff --git a/kernel/configs/hardening.config b/kernel/configs/hardening.config
-index d24c2772d04d..64caaf997fc0 100644
---- a/kernel/configs/hardening.config
-+++ b/kernel/configs/hardening.config
-@@ -60,6 +60,9 @@ CONFIG_LIST_HARDENED=y
- # Initialize all heap variables to zero on allocation.
- CONFIG_INIT_ON_ALLOC_DEFAULT_ON=y
- 
-+# Initialize all heap variables to zero on free to reduce stale data lifetime.
-+CONFIG_INIT_ON_FREE_DEFAULT_ON=y
-+
- # Initialize all stack variables to zero on function entry.
- CONFIG_INIT_STACK_ALL_ZERO=y
- 
--- 
-2.34.1
-
+Just to double-check that you want both copyright lines here?
 
