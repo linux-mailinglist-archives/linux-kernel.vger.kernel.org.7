@@ -1,221 +1,166 @@
-Return-Path: <linux-kernel+bounces-734808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E2A8B0868A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:25:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70EF6B0868F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:26:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D374D189E4E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:25:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DA801898FB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B521225A4F;
-	Thu, 17 Jul 2025 07:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C266A2264BC;
+	Thu, 17 Jul 2025 07:25:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="NOuXmQ6t"
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a8fpDqOO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24872248BF
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 07:25:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583092264B1
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 07:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752737105; cv=none; b=TekNd/Q4G9aEEkwW4wUHx+uPZEv8RkHt7W4uW1uQ6yZYdI6zuOli5/dRrRTUfLdAk5P60YImP4u20HlAt7hIx2b5Ayp72+vAl9YFboY1KJFNGgJcPv9V4tcPvz/DXUbLm/lSmGX6kE4hY8ly31+tqcwKGJhgWM9K45m5MIcxnzI=
+	t=1752737131; cv=none; b=FHXVFpvZaS6DbhkCWRWJgt0aBxkRT/d4YyDSt/sGDKBXpGNkhKQ/VHQmgsTEkiROMUuCl9v45hOCVBSHvFTnQzqZp7i4jEhEDGKmKOe5XUOydLJqLq3LQ4sNuTos64u08OPSkWdhvQDy0bioM4ni9PcjGDPay8TpOMhvnF4tvv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752737105; c=relaxed/simple;
-	bh=Gyrr6czyof+CG/WoQJ4Juc3W7orjc65KwRKgFjDWelc=;
+	s=arc-20240116; t=1752737131; c=relaxed/simple;
+	bh=j58zeUSOM0h/p9sADyLgvkI2QIcTR+seK1bRLizS8o0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l6z/wF8bfGsyQ2NVxIJW2lcDNEgdrhKIvR+eSsOiraHguzHiYmVeSkF7v9CNeQtAuvM+h2p0j0vtTOM9lsZfSh0VtlSowiyJhbhS4JHl0tCjWnDJ0BMXeQDS5GSVAhX7tka1rG6MRO3D+33gX0y99oTA7saDezCFivYUeBGdh7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=NOuXmQ6t; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e8bd2eae9e0so578248276.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 00:25:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1752737103; x=1753341903; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DZO3PPY2XBP748YrMIC0vrtHH5fS4RDPrIYRbHrH2g8=;
-        b=NOuXmQ6tzLP9j/BpBplCSvBlB5bZbYmSSwHIHO7XEZbfbASzDBIQyL/PEmWIBehzlx
-         l2EQw7Y15USB3bCU5OAzJTgoPbziWNB+JHNTDRmFqI92EMRCrujG7CM3IuCvCrdZFRL9
-         reBAJGff8FmgVCUBMUEtap/PMqRfcM35OTq+UIoBSws4rFPvxa9RtaHVrEwi10X19jp1
-         vIErf9iz651YmAvmcfrVKfNQpPFguFhVrMLDO839k2M3auUBE7rWweGRq+gnR3EcffTL
-         f/uktwOcZlJe7p9ny8FU1U6+fThtI3G9WKQK55pZaO9OItNtywQLoSrhcEPQPEBi6rSC
-         Jc+w==
+	 To:Cc:Content-Type; b=eRCwIPNCsmpI0oLOdGLl/n3AU6KSJVGlfORCZ7t4prgv/TmzLZ9aJKm1Ja2dEbaDgjzpAIU/idvfadeXOOE+Ziqco0tOrKHNaXUNM72gAOhshEiYE5xLd+Z4H7h9+fyCov2SWnPzS2ZgNGKj51hooXRHyVXBoKE/k7z89B7vjxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a8fpDqOO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752737128;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g2qRJ0vhUxgZfAdGXu3qCJFwuvYHORHNNQHgAFNdhP0=;
+	b=a8fpDqOOZ14SwwHWKQdxHb4j+ZjFwg9OBglWpTZswPtgDIaNVMepVTXocNqFPIBAYWw1vV
+	93Rw40qd3MspumJe7532WsoS6UOmrY9v2XKA3hVg+5ryKIdKcjTg/omleO5oohlrVIVuGy
+	ihR0fk2pFRQaRZEp8SC+8iDVOjrZhlA=
+Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com
+ [209.85.128.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-324-Urc1tNu5PJmnbg1-IsJAXw-1; Thu, 17 Jul 2025 03:25:26 -0400
+X-MC-Unique: Urc1tNu5PJmnbg1-IsJAXw-1
+X-Mimecast-MFC-AGG-ID: Urc1tNu5PJmnbg1-IsJAXw_1752737126
+Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-713ff70871dso6651487b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 00:25:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752737103; x=1753341903;
+        d=1e100.net; s=20230601; t=1752737126; x=1753341926;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DZO3PPY2XBP748YrMIC0vrtHH5fS4RDPrIYRbHrH2g8=;
-        b=lHDWi57CWNbSYOQWaDJ2ml8CsWzwXRMggx7V571XMNqnBuYOjYlMD1cMOonkggvAfo
-         Pj+XQdCUuCjzSps7IXVovjX04aPL/aQbmDl9M0tEpXJEoh1ten/M/TbwY0q+HVth9tYN
-         whQIWiigfVd9mrd0sFNfqz9zJeIiDK4QnhmMKTboGGKXJs59L01GDMJTiZEyXkd8MB9P
-         urrr1Jpf8JO2sDXgxP2R2yFa3Q4V6ctwkaSvoD8xTkrAnZ6S4V0i50cNvsHLkYnozsT5
-         6YZVrg1fS3AtT/DVBb6WbZWBqU3TEMlVEFPURhs+lO5h1sbtiQ+EEK1DuECCxqOT0HIK
-         Bp+g==
-X-Forwarded-Encrypted: i=1; AJvYcCWFdb45YbO1WPn+KNJL1rj8ct80MbZUHBzcUm6p9wwbY956MwNV8IV7cUkwxKUFDPtIYfg//iD4EOyU4x8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrEEGJcZbQj07Qey7uWzE9V6eV4DvjeE7LYqJjoPGa//+u6rzi
-	CCwNVgLFCHybvc7/sneSgohuLdPmSoq3wkwyvyWLgul1erF34O5UyFh6NFvE3autK7BdwrOCYAa
-	O9sZTbBns5mIC+vj5oXvkuhep+IuweCjHj0u/p2vHAA==
-X-Gm-Gg: ASbGncvLnB0A4NwEpwDW8Hmy3l3xcT3ZE1K0GkkBLF9/akO21QEPLojZwnxqUoaSlNr
-	GGPPpHDTX8cF8K3ux4kV6TWRpfehJx66F1xty1p9M4CJ8nVVKu9SL0gNdu6uvNzxwlASYGTS5RS
-	YSYO9LRpIqojZ5qo8ncMEYUAYegnIEZsszmzRwqBtuBGS0xKZddbKKwW3+2VCZR33GyN9ecxZj2
-	xJKasekCA==
-X-Google-Smtp-Source: AGHT+IHbHhPYYb+k831eazsYDNt1rPOncGE6SqrWC+YnWF0atILZMfYXZRzierPS88Y0Mp8rI/N8+hI6L8iMWb3zj3o=
-X-Received: by 2002:a05:6902:2b12:b0:e89:85ba:2197 with SMTP id
- 3f1490d57ef6-e8bc246bb0fmr6368800276.19.1752737102417; Thu, 17 Jul 2025
- 00:25:02 -0700 (PDT)
+        bh=g2qRJ0vhUxgZfAdGXu3qCJFwuvYHORHNNQHgAFNdhP0=;
+        b=bkgSm/VvdiNAKXIdIX9bh0EthUfjqPNrNvUxNludk28ExBzMss9L5t48lKZX0GtHSk
+         Y/pK3qjrz/LIxz/J24gyX1dU9zJ03kY6YpMxjznezIFeaHIvCxmazDJYuNJT4nCRx1HG
+         6jUnMj6/ilR4fxdeg+Uoe6QCBVKfSPIcS6Xt5cU8NCepSEtCu0dJ7Spj5Plf8hl97RYl
+         wKrWT70dVMjvdoZQkQj/u0Rqfzl8VYDbrJ4zAl8xixHuNFS0XWUbsTtuOVsZDF0I3N+H
+         507f9ky/ej4S44CGo9qY9XOw5GgoS+42bpLBjoGQ81j2yU6t8zUcNH/4dBI0oBti1lKX
+         7udQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXdy8MPVx1KmSsndld7ccuBBSdp04Fg184Tjp8tcHnYpERdljiwbiCKbfgGRDUcIW8TNCNXfJQ5ZsK2YDw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4jeh3VM0IPmR9dmG2rpzTIyopSWzUNtOyMomPgSrlohzT60Fl
+	HuokGGzt1KKUc6Lx0sVGMILj33/XCh5U2hy50iXnbK/wBbGPhbRTiTF3sHfBfbpHugAo5GnPbcp
+	h05incFPlgH/khRDTeFaZ8yEyDGg8w04Ue0sBrZDduOqJhlCPE1s+ULAug6Odb+9GyRc2O8YCxS
+	Ul3xNncHJLm/AYe2M6+8gKeCZi0rgRRuqP65yUzHYE
+X-Gm-Gg: ASbGncvPqURJZuY34EjNs/NIROS1dqNo6OpKHXSZhUXimCSlurHt8Y2PWp1QVzMKxRW
+	tMoroXe4JO6/Z24Q4xMoS/u3Orx3VSpex80ShJMJ7fxtmHtMFKfO5tOGrYRPj3ivD5oK/ueGiC1
+	lzKzH/ZttYXaxnp+Z+Q0uA1Yo=
+X-Received: by 2002:a05:690c:6c8f:b0:70a:2675:70b3 with SMTP id 00721157ae682-71837475aaemr81219637b3.17.1752737126010;
+        Thu, 17 Jul 2025 00:25:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE3zLwOVx14CX9ZFk5M7NptbR4Vtkv7y2swdOQcVV2bdsXyIwCQieST6so7r6GPy5LTDbi4OxzkmKDiHQeVo40=
+X-Received: by 2002:a05:690c:6c8f:b0:70a:2675:70b3 with SMTP id
+ 00721157ae682-71837475aaemr81219087b3.17.1752737125474; Thu, 17 Jul 2025
+ 00:25:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709025516.28051-1-nick.hu@sifive.com> <20250709025516.28051-2-nick.hu@sifive.com>
- <CAAhSdy2J6C8LvBCB0LKd2np47qBQ2EFXXnDvb2OjYKqSOF7EbQ@mail.gmail.com>
-In-Reply-To: <CAAhSdy2J6C8LvBCB0LKd2np47qBQ2EFXXnDvb2OjYKqSOF7EbQ@mail.gmail.com>
-From: Nick Hu <nick.hu@sifive.com>
-Date: Thu, 17 Jul 2025 15:24:51 +0800
-X-Gm-Features: Ac12FXxQ4tgNQntiZzQuZ4AONH_MLogmY5rpxtlHgkk0sUx63aRfaZn6OnTU0yk
-Message-ID: <CAKddAkAOeoKZ9A7t4eK5JPN0xaVPBojCeY0X9khu-b=irE5=JQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] irqchip/riscv-imsic: Restore the IMSIC registers
-To: Anup Patel <anup@brainfault.org>
-Cc: Alexandre Ghiti <alex@ghiti.fr>, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>
+References: <20250714003207.113275-1-npache@redhat.com> <20250714003207.113275-9-npache@redhat.com>
+ <290d669f-e358-471a-95b7-c46f974742d0@redhat.com>
+In-Reply-To: <290d669f-e358-471a-95b7-c46f974742d0@redhat.com>
+From: Nico Pache <npache@redhat.com>
+Date: Thu, 17 Jul 2025 01:24:58 -0600
+X-Gm-Features: Ac12FXw-dqZQr1iCc1PpyFCVkqA86TGy_82hTQcSrhEKTcjVPQocXibYjfgQIuE
+Message-ID: <CAA1CXcAciHMz7RCAqFZcnDk-nvhfd-G7QSdMub1aYzKAq8pdHw@mail.gmail.com>
+Subject: Re: [PATCH v9 08/14] khugepaged: skip collapsing mTHP to smaller orders
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	ziy@nvidia.com, baolin.wang@linux.alibaba.com, lorenzo.stoakes@oracle.com, 
+	Liam.Howlett@oracle.com, ryan.roberts@arm.com, dev.jain@arm.com, 
+	corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org, 
+	mathieu.desnoyers@efficios.com, akpm@linux-foundation.org, baohua@kernel.org, 
+	willy@infradead.org, peterx@redhat.com, wangkefeng.wang@huawei.com, 
+	usamaarif642@gmail.com, sunnanyong@huawei.com, vishal.moola@gmail.com, 
+	thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com, 
+	kirill.shutemov@linux.intel.com, aarcange@redhat.com, raquini@redhat.com, 
+	anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de, 
+	will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org, 
+	jglisse@google.com, surenb@google.com, zokeefe@google.com, hannes@cmpxchg.org, 
+	rientjes@google.com, mhocko@suse.com, rdunlap@infradead.org, hughd@google.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 17, 2025 at 1:15=E2=80=AFPM Anup Patel <anup@brainfault.org> wr=
-ote:
+On Wed, Jul 16, 2025 at 8:32=E2=80=AFAM David Hildenbrand <david@redhat.com=
+> wrote:
 >
-> On Wed, Jul 9, 2025 at 8:26=E2=80=AFAM Nick Hu <nick.hu@sifive.com> wrote=
-:
+> On 14.07.25 02:32, Nico Pache wrote:
+> > khugepaged may try to collapse a mTHP to a smaller mTHP, resulting in
+> > some pages being unmapped. Skip these cases until we have a way to chec=
+k
+> > if its ok to collapse to a smaller mTHP size (like in the case of a
+> > partially mapped folio).
 > >
-> > When the system woken up from the low power state, the IMSIC might be i=
-n
-> > the reset state. Therefore adding the CPU PM callbacks to restore the
-> > IMSIC register when the cpu resume from the low power state.
+> > This patch is inspired by Dev Jain's work on khugepaged mTHP support [1=
+].
 > >
-> > Signed-off-by: Nick Hu <nick.hu@sifive.com>
-> > Reviewed-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-> > Reviewed-by: Cyan Yang <cyan.yang@sifive.com>
+> > [1] https://lore.kernel.org/lkml/20241216165105.56185-11-dev.jain@arm.c=
+om/
+> >
+> > Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> > Co-developed-by: Dev Jain <dev.jain@arm.com>
+> > Signed-off-by: Dev Jain <dev.jain@arm.com>
+> > Signed-off-by: Nico Pache <npache@redhat.com>
 > > ---
-> >  drivers/irqchip/irq-riscv-imsic-early.c | 41 ++++++++++++++++++++-----
-> >  1 file changed, 33 insertions(+), 8 deletions(-)
+> >   mm/khugepaged.c | 7 ++++++-
+> >   1 file changed, 6 insertions(+), 1 deletion(-)
 > >
-> > diff --git a/drivers/irqchip/irq-riscv-imsic-early.c b/drivers/irqchip/=
-irq-riscv-imsic-early.c
-> > index d9ae87808651..f64d9a0642bb 100644
-> > --- a/drivers/irqchip/irq-riscv-imsic-early.c
-> > +++ b/drivers/irqchip/irq-riscv-imsic-early.c
-> > @@ -7,6 +7,7 @@
-> >  #define pr_fmt(fmt) "riscv-imsic: " fmt
-> >  #include <linux/acpi.h>
-> >  #include <linux/cpu.h>
-> > +#include <linux/cpu_pm.h>
-> >  #include <linux/interrupt.h>
-> >  #include <linux/io.h>
-> >  #include <linux/irq.h>
-> > @@ -109,14 +110,8 @@ static void imsic_handle_irq(struct irq_desc *desc=
-)
-> >         chained_irq_exit(chip, desc);
-> >  }
+> > diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> > index 5d7c5be9097e..a701d9f0f158 100644
+> > --- a/mm/khugepaged.c
+> > +++ b/mm/khugepaged.c
+> > @@ -612,7 +612,12 @@ static int __collapse_huge_page_isolate(struct vm_=
+area_struct *vma,
+> >               folio =3D page_folio(page);
+> >               VM_BUG_ON_FOLIO(!folio_test_anon(folio), folio);
 > >
-> > -static int imsic_starting_cpu(unsigned int cpu)
-> > +static void imsic_restore(void)
-> >  {
-> > -       /* Mark per-CPU IMSIC state as online */
-> > -       imsic_state_online();
-> > -
-> > -       /* Enable per-CPU parent interrupt */
-> > -       enable_percpu_irq(imsic_parent_irq, irq_get_trigger_type(imsic_=
-parent_irq));
-> > -
-> >         /* Setup IPIs */
-> >         imsic_ipi_starting_cpu();
-> >
-> > @@ -128,6 +123,19 @@ static int imsic_starting_cpu(unsigned int cpu)
-> >
-> >         /* Enable local interrupt delivery */
-> >         imsic_local_delivery(true);
-> > +}
-> > +
-> > +static int imsic_starting_cpu(unsigned int cpu)
-> > +{
-> > +       /* Mark per-CPU IMSIC state as online */
-> > +       imsic_state_online();
-> > +
-> > +       /* Enable per-CPU parent interrupt */
-> > +       enable_percpu_irq(imsic_parent_irq,
-> > +                         irq_get_trigger_type(imsic_parent_irq));
-> > +
-> > +       /* Restore the imsic reg */
-> > +       imsic_restore();
-> >
-> >         return 0;
-> >  }
-> > @@ -143,6 +151,23 @@ static int imsic_dying_cpu(unsigned int cpu)
-> >         return 0;
-> >  }
-> >
-> > +static int imsic_notifier(struct notifier_block *self, unsigned long c=
-md,
-> > +                         void *v)
+> > -             /* See hpage_collapse_scan_pmd(). */
+> > +             if (order !=3D HPAGE_PMD_ORDER && folio_order(folio) >=3D=
+ order) {
+> > +                     result =3D SCAN_PTE_MAPPED_HUGEPAGE;
+> > +                     goto out;
+> > +             }
 >
-> s/imsic_notifier/imsic_pm_notifier/
+> Probably worth adding a TODO in the code like
 >
-Will update it in the next version. Thanks
+> /*
+>   * TODO: In some cases of partially-mapped folios, we'd actually
+>   * want to collapse.
+>   */
+Done! Good idea with these TODOs!
+>
+> Acked-by: David Hildenbrand <david@redhat.com>
+Thank you :)
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
-Regards,
-Nick
-> The "void *v" parameter can be on the same line as function declaration.
->
-> > +{
-> > +       switch (cmd) {
-> > +       case CPU_PM_EXIT:
-> > +               /* Restore the imsic reg */
-> > +               imsic_restore();
-> > +               break;
-> > +       }
-> > +
-> > +       return NOTIFY_OK;
-> > +}
-> > +
-> > +static struct notifier_block imsic_notifier_block =3D {
->
-> s/imsic_notifier_block/imsic_pm_notifier_block/
->
-> > +       .notifier_call =3D imsic_notifier,
-> > +};
-> > +
-> >  static int __init imsic_early_probe(struct fwnode_handle *fwnode)
-> >  {
-> >         struct irq_domain *domain;
-> > @@ -180,7 +205,7 @@ static int __init imsic_early_probe(struct fwnode_h=
-andle *fwnode)
-> >         cpuhp_setup_state(CPUHP_AP_IRQ_RISCV_IMSIC_STARTING, "irqchip/r=
-iscv/imsic:starting",
-> >                           imsic_starting_cpu, imsic_dying_cpu);
-> >
-> > -       return 0;
-> > +       return cpu_pm_register_notifier(&imsic_notifier_block);
-> >  }
-> >
-> >  static int __init imsic_early_dt_init(struct device_node *node, struct=
- device_node *parent)
-> > --
-> > 2.17.1
-> >
->
-> Otherwise, this looks good to me.
->
-> Reviewed-by: Anup Patel <anup@brainfault.org>
->
-> Regards,
-> Anup
 
