@@ -1,159 +1,142 @@
-Return-Path: <linux-kernel+bounces-735517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 518C8B0906A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:19:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D190BB0906C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:19:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05D364A27E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:18:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A52A14A2AE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 339EF1E8322;
-	Thu, 17 Jul 2025 15:18:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B58B29AB09;
+	Thu, 17 Jul 2025 15:19:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UrHJ1mw/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="l1bZu5xd"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E471E5705;
-	Thu, 17 Jul 2025 15:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C831E8322
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 15:19:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752765533; cv=none; b=ktDCkBeCTgJJPdp/tqufvVLbFFRxChWvPLJE2jvOIm2T+tIsj/ROEe8MDDyyULnZeiNUQMER9JZBMK0Tgw5tRD6TA/lkcEbIazLGgTL0NkZ4YWHzgsmbTWmRrsUPVAwzlQNHBxWzgeEQcAtEOnPVQs7GgR1SjZO20KMtJz8rHQI=
+	t=1752765554; cv=none; b=tyWOfkJymJO5flLMpobEr4brJVLK3b5/gY/x1PgFLejZ7i2LupcMAklu1hcCyE19r9JXv9NA710RoY92s73+KvWS34FvfFpkJAWCS6aLg76p3bQRPDxShT30MXRtGXhLbm028X/pJiDpnWGqkRmQBbBQm0w0puoCuC2UmVVJHUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752765533; c=relaxed/simple;
-	bh=i51GL0/XBY+T8EAFA0XMbcleXQzO6d2CK+vxamRH1O8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tXkRF9WCzKPXrg1sPKL2Je/M/41AablscT9LQ+nbAPWmyEV6v+8SONeoL3+ftGlt44o/TwYAUGZA9ALaXWu2GP0v8YZOP5wF3aGuuA8WtepQQjEIGkAxLJeVdM/2LH6VBGKZblKs5oX3pjysxBPxZSyBH8BFh9XsMDO+l1VLtcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UrHJ1mw/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64FDAC4CEE3;
-	Thu, 17 Jul 2025 15:18:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752765533;
-	bh=i51GL0/XBY+T8EAFA0XMbcleXQzO6d2CK+vxamRH1O8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UrHJ1mw/O+W7jGxquzxO/p0OFh/Wl36U4kuTP+metx4SiSzajc1xtIzSOCfIzfAc1
-	 T6fCpUJxUEDRU+WQbX9YOjLTghQ+fHozow2zWHlqCw17vGI+wWK+rY5X1jVb3+FjMl
-	 Kq/mieDHzjeIUq/T4meNx5civIbqS3i8WQzZS6hE0dIhEv8Tq5Xn2sFk6uZxCvgLso
-	 at3hdRpJky76Y95d4gSHvn51jBbkgiKD4wBgeCHL0awVPf/HSUxEfjANaWhPmK4M4J
-	 sTfgtNvZb02kGfgfEW9pmCwIvaqG7/xsgBvgrboXztmCC4yaV7xJmnGaBlByXW3/j/
-	 xLrxWrxyLkvkw==
-Date: Thu, 17 Jul 2025 10:18:50 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Ling Xu <quic_lxu5@quicinc.com>
-Cc: srini@kernel.org, amahesh@qti.qualcomm.com, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org, arnd@arndb.de, 
-	gregkh@linuxfoundation.org, quic_kuiw@quicinc.com, ekansh.gupta@oss.qualcomm.com, 
-	devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 4/4] misc: fastrpc: add support for gdsp remoteproc
-Message-ID: <nayazjofc3aexosw5v7xpnn7rwbcjlzyvrgv7ixf3m5o26rdu7@obmkmmvjcjc6>
-References: <20250714054133.3769967-1-quic_lxu5@quicinc.com>
- <20250714054133.3769967-5-quic_lxu5@quicinc.com>
- <qg7uvhr2pazrjqrqyraj7pr3hxbzadhenbkps7q4uqhilao2o2@653xyxcx2iak>
- <95541f45-141b-49c9-9b87-1339ee4b436b@quicinc.com>
+	s=arc-20240116; t=1752765554; c=relaxed/simple;
+	bh=sEH8huyYpvNQfqn9VnitIqOJAs+4IuQO9XkijYeBhU4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Sby1WD5P38oX/CntOvFjT/P9IdLZvXiJUz1PUB7oorr6Xj7gP7f+lO7AzVti/izAUo0+5fhVg/Dmxy5k477TUBjHRInPQp/GvwREOGkJmkKtjSXYMzFm2G83jc9D/TwJHAXa3E3Lpg3LJDpvMJ5qOcQncu+BMUTtN9TWyxOzeOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=l1bZu5xd; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7e3142e58cfso67260885a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 08:19:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1752765552; x=1753370352; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F5xUBrBCpzFPT/Ceifws++OIUGJp175GJMu2Bn4O4tU=;
+        b=l1bZu5xdE6uWJs44259xRXhy10gnZRtWRoUxfxENA3CQ552uq/scQJyqpj9ccblpWy
+         VgQKUgKIl2nrZlxCN36Ax6sirnNolTz4rkKjktVUJpumCDuJydj0YAxIdpY4kKGJiFOg
+         U1arDbrsTrH8AGUSUfy0ZZwXCe+X333PEIzP7ojFAiyvuhHnoJ4LXHp7oXMmMh/OUvcJ
+         OmE+kd1uh0IyAMiwOnmP0aju1y8u0agFvyfqp0E0AGmv/jtxQW0f2hhm+z0duxLHXXbK
+         paDpCCiVOit2mLMZu/7DiPxm7ugojlEzWXyCuz0MaczLfTgOnkQRI1KOf6WzfDZC1wVN
+         plZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752765552; x=1753370352;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=F5xUBrBCpzFPT/Ceifws++OIUGJp175GJMu2Bn4O4tU=;
+        b=KGDr5OcCJmnEBkg2TNXNCGrfeLxs0z4okELWHNYE8ae8/78U2beKoomEqoaMpsLDS8
+         BMYGxZOk/F4x1j+I9RBuUhPa2wNR7WUrEXNcg2J8w9NHPx4PN9ub/QgFWITQUSu2qitq
+         JQHR0htLmkaJXewYeWtaeJeN4zg3FCXgQl/Ds+FBPT89JqPxuTZLM9KcUAL3uedzA607
+         1QH/GbjdZhz8OWPQLcSc2w24BWxjIpbUrb2zOzYBVeg4+RGRh6wvVXdgPyy658Z13jpV
+         TmPu2XAPxGAUKk6mwsaYhhQuxTBzKc4hAIaX2uHJ22B6wueu8n59jswZF8sHqab0bT3F
+         Z6Xg==
+X-Forwarded-Encrypted: i=1; AJvYcCXX1lBdz5naHavTUUcCstZ853s3AM2TZvo5UJ/xTn0uHKgKU8K69PA2V1cOIYt22ALv+WVF51o01eDwLJY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRgiytDp8jQs3ppyRsxMTm69T6W+Q+JctbWuFQeUGXVpXZydsk
+	OBJLPN66xykappn0AFta8RDY2rqdLvmstow1IzCprS2C0rNbXist+a3sgDQ4IVtf625yvKfLt+T
+	Zk1Fq7MTV/4dgr7Dhbe4JULGkN82v1jsygKqdpXA2WA==
+X-Gm-Gg: ASbGncvkKLpt/G9R0Ymoq61CIhAJ1GD/uN4gLGW+95vYkXVbTXr0mqhqsLewDz5qc2d
+	p0lx91Ukja8W4onJq7ytlScMntZv09PIG7BOFhKtZBWBnito0gy5vO48RzjKPGvKLWinys7A4AA
+	sCn8SBlidkraGsSND6fAwC129774nj78mYtvNP/dPDEzqRP4NumoV92ue2TjR2LfGQg7T90uLC1
+	hzpF+g0
+X-Google-Smtp-Source: AGHT+IE3X2vck2pgSl2t6KFn5NgHq0p0Hh8fU3rZDbhsrXFgiaKsssOSMAr59vMNLRAJb0iXVxOVbhMl8sP6UXRX7pU=
+X-Received: by 2002:a05:620a:1794:b0:7e3:320b:437 with SMTP id
+ af79cd13be357-7e343351613mr1118889785a.1.1752765551906; Thu, 17 Jul 2025
+ 08:19:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <95541f45-141b-49c9-9b87-1339ee4b436b@quicinc.com>
+References: <20250522-pmu_event_info-v3-0-f7bba7fd9cfe@rivosinc.com> <20250522-pmu_event_info-v3-3-f7bba7fd9cfe@rivosinc.com>
+In-Reply-To: <20250522-pmu_event_info-v3-3-f7bba7fd9cfe@rivosinc.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Thu, 17 Jul 2025 20:48:58 +0530
+X-Gm-Features: Ac12FXyPbawu-s2Ss3H3yKP5ugd9T6IetcEyIWyv14Bbl9oa3EI2UsBfWrZcDw8
+Message-ID: <CAAhSdy304FBYo-3TZyNhKqtDsUSnW+B=U3ktR5JHLr9+LLqXEg@mail.gmail.com>
+Subject: Re: [PATCH v3 3/9] RISC-V: KVM: Add support for Raw event v2
+To: Atish Patra <atishp@rivosinc.com>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Mayuresh Chitale <mchitale@ventanamicro.com>, linux-riscv@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Palmer Dabbelt <palmer@rivosinc.com>, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 17, 2025 at 10:28:44AM +0800, Ling Xu wrote:
-> 在 7/17/2025 3:31 AM, Bjorn Andersson 写道:
-> > On Mon, Jul 14, 2025 at 11:11:33AM +0530, Ling Xu wrote:
-> >> Some platforms (like sa8775p) feature one or more GPDSPs (General
-> >> Purpose DSPs). Similar to other kinds of Hexagon DSPs, they provide
-> >> a FastRPC implementation, allowing code execution in both signed and
-> >> unsigned protection domains. Extend the checks to allow domain names
-> >> starting with "gdsp" (possibly followed by an index).
-> >>
-> > 
-> > This was called cdsp1 before patch 3 where you removed it and now the
-> > same id is introduced but this time with the name GDSP.
-> > 
-> > Iirc there was a cdsp1 in SA8295P/SA8540P, are you silently dropping
-> > support for that here? Or perhaps just renaming it?
-> > 
-> Cdsp1 support is still there. It's instance of cdsp domain, so we merged it
-> in cdsp logic.
-> 
+On Fri, May 23, 2025 at 12:33=E2=80=AFAM Atish Patra <atishp@rivosinc.com> =
+wrote:
+>
+> SBI v3.0 introuced a new raw event type v2 for wider mhpmeventX
 
-But doesn't that mean that
+s/introuced/introduced/
 
-  #define CDSP1_DOMAIN_ID (4)
+> programming. Add the support in kvm for that.
+>
+> Signed-off-by: Atish Patra <atishp@rivosinc.com>
+> ---
+>  arch/riscv/kvm/vcpu_pmu.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/arch/riscv/kvm/vcpu_pmu.c b/arch/riscv/kvm/vcpu_pmu.c
+> index 78ac3216a54d..15d71a7b75ba 100644
+> --- a/arch/riscv/kvm/vcpu_pmu.c
+> +++ b/arch/riscv/kvm/vcpu_pmu.c
+> @@ -60,6 +60,7 @@ static u32 kvm_pmu_get_perf_event_type(unsigned long ei=
+dx)
+>                 type =3D PERF_TYPE_HW_CACHE;
+>                 break;
+>         case SBI_PMU_EVENT_TYPE_RAW:
+> +       case SBI_PMU_EVENT_TYPE_RAW_V2:
+>         case SBI_PMU_EVENT_TYPE_FW:
+>                 type =3D PERF_TYPE_RAW;
+>                 break;
+> @@ -128,6 +129,9 @@ static u64 kvm_pmu_get_perf_event_config(unsigned lon=
+g eidx, uint64_t evt_data)
+>         case SBI_PMU_EVENT_TYPE_RAW:
+>                 config =3D evt_data & RISCV_PMU_RAW_EVENT_MASK;
+>                 break;
+> +       case SBI_PMU_EVENT_TYPE_RAW_V2:
+> +               config =3D evt_data & RISCV_PMU_RAW_EVENT_V2_MASK;
+> +               break;
+>         case SBI_PMU_EVENT_TYPE_FW:
+>                 if (ecode < SBI_PMU_FW_MAX)
+>                         config =3D (1ULL << 63) | ecode;
+>
+> --
+> 2.43.0
+>
 
-was wrong? It should have been using the 3?
+Otherwise, it looks good to me.
 
-Isn't that a bugfix? If so there should be one patch fixing that.
-
-Perhaps I'm misunderstanding the relevance of these numbers though.
+Reviewed-by: Anup Patel <anup@brainfault.org>
 
 Regards,
-Bjorn
-
-> else if (!strncmp(domain, "cdsp", 4))
-> 	return CDSP_DOMAIN_ID;
-> 
-> In fastrpc_get_domain_id, it return CDSP_DOMAIN_ID for cdsp1 because they use
-> same deamon.
-> > Regards,
-> > Bjorn
-> > 
-> >> Signed-off-by: Ling Xu <quic_lxu5@quicinc.com>
-> >> ---
-> >>  drivers/misc/fastrpc.c | 6 +++++-
-> >>  1 file changed, 5 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-> >> index 85b6eb16b616..d05969de406e 100644
-> >> --- a/drivers/misc/fastrpc.c
-> >> +++ b/drivers/misc/fastrpc.c
-> >> @@ -27,6 +27,7 @@
-> >>  #define MDSP_DOMAIN_ID (1)
-> >>  #define SDSP_DOMAIN_ID (2)
-> >>  #define CDSP_DOMAIN_ID (3)
-> >> +#define GDSP_DOMAIN_ID (4)
-> >>  #define FASTRPC_MAX_SESSIONS	14
-> >>  #define FASTRPC_MAX_VMIDS	16
-> >>  #define FASTRPC_ALIGN		128
-> >> @@ -2249,6 +2250,8 @@ static int fastrpc_get_domain_id(const char *domain)
-> >>  		return MDSP_DOMAIN_ID;
-> >>  	else if (!strncmp(domain, "sdsp", 4))
-> >>  		return SDSP_DOMAIN_ID;
-> >> +	else if (!strncmp(domain, "gdsp", 4))
-> >> +		return GDSP_DOMAIN_ID;
-> >>  
-> >>  	return -EINVAL;
-> >>  }
-> >> @@ -2323,13 +2326,14 @@ static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
-> >>  	case ADSP_DOMAIN_ID:
-> >>  	case MDSP_DOMAIN_ID:
-> >>  	case SDSP_DOMAIN_ID:
-> >> -		/* Unsigned PD offloading is only supported on CDSP */
-> >> +		/* Unsigned PD offloading is only supported on CDSP and GDSP */
-> >>  		data->unsigned_support = false;
-> >>  		err = fastrpc_device_register(rdev, data, secure_dsp, domain);
-> >>  		if (err)
-> >>  			goto err_free_data;
-> >>  		break;
-> >>  	case CDSP_DOMAIN_ID:
-> >> +	case GDSP_DOMAIN_ID:
-> >>  		data->unsigned_support = true;
-> >>  		/* Create both device nodes so that we can allow both Signed and Unsigned PD */
-> >>  		err = fastrpc_device_register(rdev, data, true, domain);
-> >> -- 
-> >> 2.34.1
-> >>
-> 
-> -- 
-> Thx and BRs,
-> Ling Xu
-> 
+Anup
 
