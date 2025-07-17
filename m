@@ -1,148 +1,221 @@
-Return-Path: <linux-kernel+bounces-734661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0943FB08478
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:01:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D319B0847F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:02:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E389A3ACBC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:01:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B61E3ACE3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7212066CF;
-	Thu, 17 Jul 2025 06:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A2D2045B5;
+	Thu, 17 Jul 2025 06:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TbSLvajK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="uMdgbKoL"
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA8F1DE2C9
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 06:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9608E1DE2C9;
+	Thu, 17 Jul 2025 06:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752732083; cv=none; b=YvnoY7zMrxrvwG6GoMDfLfVrV1HmNoDB6zZ3Yu1H6bYo9NH5ofb162qlF0a8mHsua2CdRDU14dez7vnfEQXe1VlptadYORxDaKE9t/hrE/Q2xao5tyzQP0bwr+wbDHxY+/Lr9FVnKluUkGNHk1waf46SHZ/9fIYOteYgyiKifzE=
+	t=1752732105; cv=none; b=cRehRSTSMa/6DRA1ub7DjpWxD3Xi34ReYBBZC7udv+e04HTM1P54gsERmMK30m3+fjpG1s31j6FjdEuTvuHMDD2L8AqINfgiehTaexpl8ISctrRTtPgnBKEvTjrPsnQuCVNc1omzhV56YNuVN/CL1KNW8ZwaioOoDXGiR7hn/8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752732083; c=relaxed/simple;
-	bh=jxOpZ0mtCseo/bSPj1OyB2eE1E7Wq+zP8rpLdjVZc98=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cqxDmRMckD7Gj6R1vr9fzi7MKrtWzr5xmJaKPRUih+jW6ThGDYLlUe6MmQeJ4Sz8GvZ7hlpreMwJ2p/PJuCXQlfhcAHitMVtYmYaoCaGATBziFiG2pDCCZGTjgQ11WEKFoKhGgwUdH8SpV2y8dxd3bU1q2o+6dVrS7dF5wVXnBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TbSLvajK; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752732081;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jxOpZ0mtCseo/bSPj1OyB2eE1E7Wq+zP8rpLdjVZc98=;
-	b=TbSLvajKOhgIR4z96LnsCR475UeEyvnFBjOPf0tf7LFLqrkaSZHLJUUeMRwfVSkQO+PzMS
-	SwVjRx4xgvKII3szdcZaKR/ZoObZLRmlagH9coUOXiWVrfAKEbhTmTwaFLYCV8aNRIYANY
-	bSZk9c/g96Til++afC7D/xDky7vuR/0=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-70-Orr8XJQ3OmmqTZ2zB1-dUw-1; Thu, 17 Jul 2025 02:01:19 -0400
-X-MC-Unique: Orr8XJQ3OmmqTZ2zB1-dUw-1
-X-Mimecast-MFC-AGG-ID: Orr8XJQ3OmmqTZ2zB1-dUw_1752732078
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-31315427249so598012a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 23:01:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752732078; x=1753336878;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jxOpZ0mtCseo/bSPj1OyB2eE1E7Wq+zP8rpLdjVZc98=;
-        b=OWAG+/PxNz/xOXRiwNL2owyid1XOI/JolJEGKmLg+yIS2R5fR1caRooOys0QP72FsK
-         j4Bw0MVI5XgLOCEZSkdDob6lLAYCDT8nCYyCDe65hZZe+71GHPYMmD6yAWzbOVicGocE
-         BQjxcviflzVw93Lf0u1MlzSMV3F6ui5w23U6X1sMedycH9MKnlHv+t/DiLysSfAWY4kz
-         mNN6DtEj1m2e8U7ZrRVOlIqjTRwX1pTq/qWvgDPmsIrPZRjvZofqFhRgfijc6SmhQmVB
-         /D1bco5c/uVkVflHI1u5baQwiTalNP9kNcxXFGE3xGR15c+PSIsAYM4t6G/9HFVyvmr0
-         kYhg==
-X-Forwarded-Encrypted: i=1; AJvYcCXaZI1wvQFwfAzacpC7ymMRJ5XNFNfgDbd98yVFGcAV8m35qoWudcwFDIByKtSCSbR86IIsk31wgjxAsh0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyh84x6VF7XP3Z2aRWS/zPR8VFBCZv43DofsZ2oJpp4t/nB7gRb
-	VvF9YelBwnw9poJWPu4ibcVaSDfs9gQnB8/oieLKxE7mZKFtc2dPbmpO34OUsXuuOJyzYAPwFLs
-	shXyfHgUAbgt82s4SSgbGftMK/JRAjfnVDabHFvONq/xn/jwPm7jY6fRiNcxPP/fqP8cf5PQ03i
-	Jc1latzm/94WxE9j4NKdjTN6hib9Sb+6C4JL7ZiJEG
-X-Gm-Gg: ASbGncuIEKJ27lGg1aJ0f5fHD15WgQWgchsh42BwsJ64dPeMk/gC2KDdNV6ykeOzYr8
-	N2n1k9+qiIn530Su39FInFQdoxx9HtlkLKry8bf5MpajXLgMV6hCl3ZskQrQf7CQqA2MiisbLqn
-	y7K7wxwLZ1VF07k7A7/0Q+
-X-Received: by 2002:a17:90b:3d08:b0:311:c93b:3ca2 with SMTP id 98e67ed59e1d1-31c9e6e96fdmr7785016a91.6.1752732078187;
-        Wed, 16 Jul 2025 23:01:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHwj9WmmYZqqcY9e7xgqKnA/kJN103hoaasmkwFwEeUcw9OvLCJ0a3fMKNsQmV80tmXN1QWinAAhZ7uGEl6g/c=
-X-Received: by 2002:a17:90b:3d08:b0:311:c93b:3ca2 with SMTP id
- 98e67ed59e1d1-31c9e6e96fdmr7784953a91.6.1752732077622; Wed, 16 Jul 2025
- 23:01:17 -0700 (PDT)
+	s=arc-20240116; t=1752732105; c=relaxed/simple;
+	bh=kgtVqvwlod8Z6YOaWjf/XRHjhxy8aItRXUE+zGYfaI4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G8QhS/pkeQ01k71cLPgcDXjds6TRxjLxnusQduuICQNEMt7+7mLghtQApxj8uNt/hEe2ZvE/f9Y+m+S6A+WQdTHbUfbSO2DUq5nWDzPquPV1TTI8pWGrlKP9UYLgaE9HXA/twKTv/KWwT2R0FRkymQtousFbFWZxZ+Nb2sYWE0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=uMdgbKoL; arc=none smtp.client-ip=115.124.30.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1752732093; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+	bh=EXr2e9539IDLWE6BwA3P6pUOhfIwjBSRbIyfoPl3QUo=;
+	b=uMdgbKoL8sptMHXmE5XBpbz1NryIJCV7bL9vvnRWZ5sqU27Ur36Ia0/6l+XBGoUDJaQJ3vLDmKv7eyCp66cl2kEIASUNDIn2MjMtqEfQVtujsy5EH8HACfL/y1oE373Q53h9wLYGPHY38BFDODtYMNYf+MHSgr/xg6GZcTHect4=
+Received: from localhost(mailfrom:yaoyuan@linux.alibaba.com fp:SMTPD_---0Wj70AqW_1752732092 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 17 Jul 2025 14:01:32 +0800
+Date: Thu, 17 Jul 2025 14:01:32 +0800
+From: Yao Yuan <yaoyuan@linux.alibaba.com>
+To: Keir Fraser <keirf@google.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, Sean Christopherson <seanjc@google.com>, 
+	Eric Auger <eric.auger@redhat.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH v2 3/4] KVM: Implement barriers before accessing
+ kvm->buses[] on SRCU read paths
+Message-ID: <ndwhwg4lmy22vnqy3yqnpdqj7o366crbrhgj5py5fm3g3l2ow3@5s24dzpkswa2>
+References: <20250716110737.2513665-1-keirf@google.com>
+ <20250716110737.2513665-4-keirf@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250714084755.11921-1-jasowang@redhat.com> <20250716170406.637e01f5@kernel.org>
- <CACGkMEvj0W98Jc=AB-g8G0J0u5pGAM4mBVCrp3uPLCkc6CK7Ng@mail.gmail.com> <20250717015341-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20250717015341-mutt-send-email-mst@kernel.org>
-From: Jason Wang <jasowang@redhat.com>
-Date: Thu, 17 Jul 2025 14:01:06 +0800
-X-Gm-Features: Ac12FXzpdsVwGDtCJSLzaoSwQSJcC8NcxCnl7Zblf_dU7B8OIQV_ThQuhTzi5L0
-Message-ID: <CACGkMEvX==TSK=0gH5WaFecMY1E+o7mbQ6EqJF+iaBx6DyMiJg@mail.gmail.com>
-Subject: Re: [PATCH net-next V2 0/3] in order support for vhost-net
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, eperezma@redhat.com, kvm@vger.kernel.org, 
-	virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, jonah.palmer@oracle.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250716110737.2513665-4-keirf@google.com>
 
-On Thu, Jul 17, 2025 at 1:55=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com>=
- wrote:
+On Wed, Jul 16, 2025 at 11:07:36AM +0800, Keir Fraser wrote:
+> This ensures that, if a VCPU has "observed" that an IO registration has
+> occurred, the instruction currently being trapped or emulated will also
+> observe the IO registration.
 >
-> On Thu, Jul 17, 2025 at 10:03:00AM +0800, Jason Wang wrote:
-> > On Thu, Jul 17, 2025 at 8:04=E2=80=AFAM Jakub Kicinski <kuba@kernel.org=
-> wrote:
-> > >
-> > > On Mon, 14 Jul 2025 16:47:52 +0800 Jason Wang wrote:
-> > > > This series implements VIRTIO_F_IN_ORDER support for vhost-net. Thi=
-s
-> > > > feature is designed to improve the performance of the virtio ring b=
-y
-> > > > optimizing descriptor processing.
-> > > >
-> > > > Benchmarks show a notable improvement. Please see patch 3 for detai=
-ls.
-> > >
-> > > You tagged these as net-next but just to be clear -- these don't appl=
-y
-> > > for us in the current form.
-> > >
-> >
-> > Will rebase and send a new version.
-> >
-> > Thanks
+> At the same time, enforce that kvm_get_bus() is used only on the
+> update side, ensuring that a long-term reference cannot be obtained by
+> an SRCU reader.
 >
-> Indeed these look as if they are for my tree (so I put them in
-> linux-next, without noticing the tag).
-
-I think that's also fine.
-
-Do you prefer all vhost/vhost-net patches to go via your tree in the future=
-?
-
-(Note that the reason for the conflict is because net-next gets UDP
-GSO feature merged).
-
+> Signed-off-by: Keir Fraser <keirf@google.com>
+> ---
+>  arch/x86/kvm/vmx/vmx.c   |  7 +++++++
+>  include/linux/kvm_host.h | 10 +++++++---
+>  virt/kvm/kvm_main.c      | 33 +++++++++++++++++++++++++++------
+>  3 files changed, 41 insertions(+), 9 deletions(-)
 >
-> But I also guess guest bits should be merged in the same cycle
-> as host bits, less confusion.
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index 191a9ed0da22..425e3d8074ab 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -5861,6 +5861,13 @@ static int handle_invalid_guest_state(struct kvm_vcpu *vcpu)
+>  		if (kvm_test_request(KVM_REQ_EVENT, vcpu))
+>  			return 1;
+>
+> +		/*
+> +		 * Ensure that any updates to kvm->buses[] observed by the
+> +		 * previous instruction (emulated or otherwise) are also
+> +		 * visible to the instruction we are about to emulate.
+> +		 */
+> +		smp_rmb();
+> +
+>  		if (!kvm_emulate_instruction(vcpu, 0))
+>  			return 0;
+>
+> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> index 3bde4fb5c6aa..9132148fb467 100644
+> --- a/include/linux/kvm_host.h
+> +++ b/include/linux/kvm_host.h
+> @@ -965,11 +965,15 @@ static inline bool kvm_dirty_log_manual_protect_and_init_set(struct kvm *kvm)
+>  	return !!(kvm->manual_dirty_log_protect & KVM_DIRTY_LOG_INITIALLY_SET);
+>  }
+>
+> +/*
+> + * Get a bus reference under the update-side lock. No long-term SRCU reader
+> + * references are permitted, to avoid stale reads vs concurrent IO
+> + * registrations.
+> + */
+>  static inline struct kvm_io_bus *kvm_get_bus(struct kvm *kvm, enum kvm_bus idx)
+>  {
+> -	return srcu_dereference_check(kvm->buses[idx], &kvm->srcu,
+> -				      lockdep_is_held(&kvm->slots_lock) ||
+> -				      !refcount_read(&kvm->users_count));
+> +	return rcu_dereference_protected(kvm->buses[idx],
+> +					 lockdep_is_held(&kvm->slots_lock));
 
-Work for me, I will post guest bits.
+I want to consult the true reason for using protected version here,
+save unnecessary READ_ONCE() ?
 
-Thanks
-
+>  }
+>
+>  static inline struct kvm_vcpu *kvm_get_vcpu(struct kvm *kvm, int i)
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index 222f0e894a0c..9ec3b96b9666 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -1103,6 +1103,15 @@ void __weak kvm_arch_create_vm_debugfs(struct kvm *kvm)
+>  {
+>  }
+>
+> +/* Called only on cleanup and destruction paths when there are no users. */
+> +static inline struct kvm_io_bus *kvm_get_bus_for_destruction(struct kvm *kvm,
+> +							     enum kvm_bus idx)
+> +{
+> +	return rcu_dereference_protected(kvm->buses[idx],
+> +					 !refcount_read(&kvm->users_count));
+> +}
+> +
+> +
+>  static struct kvm *kvm_create_vm(unsigned long type, const char *fdname)
+>  {
+>  	struct kvm *kvm = kvm_arch_alloc_vm();
+> @@ -1228,7 +1237,7 @@ static struct kvm *kvm_create_vm(unsigned long type, const char *fdname)
+>  out_err_no_arch_destroy_vm:
+>  	WARN_ON_ONCE(!refcount_dec_and_test(&kvm->users_count));
+>  	for (i = 0; i < KVM_NR_BUSES; i++)
+> -		kfree(kvm_get_bus(kvm, i));
+> +		kfree(kvm_get_bus_for_destruction(kvm, i));
+>  	kvm_free_irq_routing(kvm);
+>  out_err_no_irq_routing:
+>  	cleanup_srcu_struct(&kvm->irq_srcu);
+> @@ -1276,7 +1285,7 @@ static void kvm_destroy_vm(struct kvm *kvm)
+>
+>  	kvm_free_irq_routing(kvm);
+>  	for (i = 0; i < KVM_NR_BUSES; i++) {
+> -		struct kvm_io_bus *bus = kvm_get_bus(kvm, i);
+> +		struct kvm_io_bus *bus = kvm_get_bus_for_destruction(kvm, i);
+>
+>  		if (bus)
+>  			kvm_io_bus_destroy(bus);
+> @@ -5838,6 +5847,18 @@ static int __kvm_io_bus_write(struct kvm_vcpu *vcpu, struct kvm_io_bus *bus,
+>  	return -EOPNOTSUPP;
+>  }
+>
+> +static struct kvm_io_bus *kvm_get_bus_srcu(struct kvm *kvm, enum kvm_bus idx)
+> +{
+> +	/*
+> +	 * Ensure that any updates to kvm_buses[] observed by the previous VCPU
+> +	 * machine instruction are also visible to the VCPU machine instruction
+> +	 * that triggered this call.
+> +	 */
+> +	smp_mb__after_srcu_read_lock();
+> +
+> +	return srcu_dereference(kvm->buses[idx], &kvm->srcu);
+> +}
+> +
+>  int kvm_io_bus_write(struct kvm_vcpu *vcpu, enum kvm_bus bus_idx, gpa_t addr,
+>  		     int len, const void *val)
+>  {
+> @@ -5850,7 +5871,7 @@ int kvm_io_bus_write(struct kvm_vcpu *vcpu, enum kvm_bus bus_idx, gpa_t addr,
+>  		.len = len,
+>  	};
+>
+> -	bus = srcu_dereference(vcpu->kvm->buses[bus_idx], &vcpu->kvm->srcu);
+> +	bus = kvm_get_bus_srcu(vcpu->kvm, bus_idx);
+>  	if (!bus)
+>  		return -ENOMEM;
+>  	r = __kvm_io_bus_write(vcpu, bus, &range, val);
+> @@ -5869,7 +5890,7 @@ int kvm_io_bus_write_cookie(struct kvm_vcpu *vcpu, enum kvm_bus bus_idx,
+>  		.len = len,
+>  	};
+>
+> -	bus = srcu_dereference(vcpu->kvm->buses[bus_idx], &vcpu->kvm->srcu);
+> +	bus = kvm_get_bus_srcu(vcpu->kvm, bus_idx);
+>  	if (!bus)
+>  		return -ENOMEM;
+>
+> @@ -5919,7 +5940,7 @@ int kvm_io_bus_read(struct kvm_vcpu *vcpu, enum kvm_bus bus_idx, gpa_t addr,
+>  		.len = len,
+>  	};
+>
+> -	bus = srcu_dereference(vcpu->kvm->buses[bus_idx], &vcpu->kvm->srcu);
+> +	bus = kvm_get_bus_srcu(vcpu->kvm, bus_idx);
+>  	if (!bus)
+>  		return -ENOMEM;
+>  	r = __kvm_io_bus_read(vcpu, bus, &range, val);
+> @@ -6028,7 +6049,7 @@ struct kvm_io_device *kvm_io_bus_get_dev(struct kvm *kvm, enum kvm_bus bus_idx,
+>
+>  	srcu_idx = srcu_read_lock(&kvm->srcu);
+>
+> -	bus = srcu_dereference(kvm->buses[bus_idx], &kvm->srcu);
+> +	bus = kvm_get_bus_srcu(kvm, bus_idx);
+>  	if (!bus)
+>  		goto out_unlock;
 >
 > --
-> MST
+> 2.50.0.727.gbf7dc18ff4-goog
 >
-
 
