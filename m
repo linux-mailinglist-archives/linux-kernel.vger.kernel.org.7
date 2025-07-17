@@ -1,173 +1,213 @@
-Return-Path: <linux-kernel+bounces-735408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FEE3B08EE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:13:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC6E4B08EEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:14:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2E871C25C6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:14:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A390D7B5688
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:13:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10DB72F6FBA;
-	Thu, 17 Jul 2025 14:13:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888472F6FB5;
+	Thu, 17 Jul 2025 14:14:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V5oZPJKS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hmGGgrYZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF12027A448;
-	Thu, 17 Jul 2025 14:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA0427A448;
+	Thu, 17 Jul 2025 14:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752761622; cv=none; b=XJZLnyADfpkwLEgSpYDrNi06x/JxS6+BTNqrJpvlVoqF3TtehSrYhUB2A7j6NqAMOmP/0XHVKEu+AclN4IVZHR83DVUwi6rnSdORzvA/yAGJ4CV612WHMsHVXdK6wsOHkUAWHlzeXMlJhe2zt3CBpIVfQhdNClHLpKn4VF9iMhQ=
+	t=1752761663; cv=none; b=ecRZwUe3OuuXt8L2uEstChlbwFTRlIkVMgJn/gt5FLr90ubI0S5TccpnYo//d0BjOlXiIQ3Ys86hOpbv55LLzE/CvsDuJBkxfJ+J24HAKG54DT9kbSZ6McYUiKwFCFYjuD6Eu8vcZ4a1bdznYVux3ARMrDJ5WheQsr/e9Gk2EXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752761622; c=relaxed/simple;
-	bh=ixTarqeqejac41PWZorCK+piEbuwQFHdq8Neteuk/3g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PXCYqKwljK4+rSkSOL8dp6VmBBWIOnSMWieohigBmTLYh1dlI9uVlc45Vyuy8uo6KmX3/EX2ImH1Fdxl8np9gFvlANxqe8q2XYV2BNBStXtcWsttsa6SjMgMVRehWkK3zi0wb3JQ5ILo0nd+Y3M3zU+ENdio2fGqEuB2C7r17As=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V5oZPJKS; arc=none smtp.client-ip=198.175.65.10
+	s=arc-20240116; t=1752761663; c=relaxed/simple;
+	bh=3vWAkc4NBBEgL0bm5FI3OoK4PX5l4yfcxpfaZZRvNz0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=t2ePOesmIoyRO5GkK9RGOuYQ4kuoz9QiErpH7dfwid5wOIYsvAHCrncjnF2ZRN2LrycHRwz1fppJiJKFv07z0ZjT9MZd1zNpk3NerC7pDGD4m6vado1rDSvap8S0hryhS7M1rtH6Fb4f3vjR6m1eKsJqVDkQht1lSSHORUHLFIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hmGGgrYZ; arc=none smtp.client-ip=198.175.65.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752761621; x=1784297621;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=ixTarqeqejac41PWZorCK+piEbuwQFHdq8Neteuk/3g=;
-  b=V5oZPJKS4A4VF6FcmdBd1d+luulgptA+/0HdYGafeYdx60Ly4B9PHIwq
-   597TEEn/i6lsiWXo+Ez6IHmapl71UzPYfcAQdHWhaeN9q7N2ru6E/TW2s
-   CjEkHr5eQUrRm6GetXM71lpxmhD6OVIssI71nG9TiQMJKZ8rZtQeaP6/a
-   BluhV4P51A/bgJudJ12EUduBwQxEqIIUhNKN4E5sEKrQ8UboPYSEI9/6n
-   hRxzflfkW3VSl0NbI4Ydj/ZWci7oyLWVmbPzUCHRPE416vQeId6XqEkUn
-   o56z4xnzuPHuoOiZVHueABCSDBy7artd4/7VU6/Rqc5teRHWnA9f4c+r9
-   g==;
-X-CSE-ConnectionGUID: m5cF1hdxQYyUeYUr+wD6zA==
-X-CSE-MsgGUID: uaU/yPrTS/K5lKurATKzkw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11495"; a="72492811"
+  t=1752761663; x=1784297663;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=3vWAkc4NBBEgL0bm5FI3OoK4PX5l4yfcxpfaZZRvNz0=;
+  b=hmGGgrYZ+S/W9KzD16sVC0NQEBBzA1XUdwWgDI7M2n1IMYBkZBgYxcS/
+   5PVQ/yfVXajYl5N8ZeUaaH2KRdGbUwErIwrTVIic/cSCJ2+FIzqgtVQTM
+   61bnO/5i5JBPgB1OrQqLo828Wu2o8+MFoNLNvvYZPj42J8mxIJ0aUm7D8
+   iT1BZATSqkuGipEQZhjX6YRZ1TtN0p/QDYrVNC3/GEQEmW++L38npMsTI
+   Vom35JeyNYN4CHLD8uK8XsPt4+7/xbY6gHiSyai+EVgPuOIR8BiHxmdPw
+   g6lEYv46HkYW//KDTldq5snS2omjZnj51Ge5rVGij1APAHIYJm7K2mphe
+   Q==;
+X-CSE-ConnectionGUID: Se8mjyDBRiGemKdaXa0uMA==
+X-CSE-MsgGUID: xJR3xvi8QpmznvW97CALDA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11495"; a="66487073"
 X-IronPort-AV: E=Sophos;i="6.16,319,1744095600"; 
-   d="scan'208";a="72492811"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 07:13:40 -0700
-X-CSE-ConnectionGUID: c0SEBkQLQ3ifnSFgFsCsxQ==
-X-CSE-MsgGUID: l71rYqsoSICoEFkTeH+eRg==
+   d="scan'208";a="66487073"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 07:14:22 -0700
+X-CSE-ConnectionGUID: avlw3jjNSrqv2y4GmrK/1A==
+X-CSE-MsgGUID: HnjyhLQdQW2jSWjBEuOS9Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,319,1744095600"; 
-   d="scan'208";a="158268797"
-Received: from rfrazer-mobl3.amr.corp.intel.com (HELO localhost) ([10.124.220.193])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 07:13:40 -0700
-Date: Thu, 17 Jul 2025 07:13:38 -0700
-From: David Box <david.e.box@linux.intel.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, mani@kernel.org
-Cc: bhelgaas@google.com, vicamo.yang@canonical.com, kenny@panix.com, 
-	ilpo.jarvinen@linux.intel.com, nirmal.patel@linux.intel.com, linux-pm@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC 0/2] PCI/ASPM: Allow controller-defined default link state
-Message-ID: <tbj67d2j4bzf3em5nw73w354lqji3baurajbseyouls53odjxq@4edjrxtdaeum>
-References: <20250717004034.2998443-1-david.e.box@linux.intel.com>
- <4xcwba3d4slmz5gfuwypavxqreobnigzyu4vib6powtbibytyp@mmqcns27vlyr>
- <CAJZ5v0h+v5pUP39vTWpNNK2D8=X2UdjUTtZ7yQHCQ2k=r2kkMg@mail.gmail.com>
+   d="scan'208";a="157875215"
+Received: from fdefranc-mobl3.ger.corp.intel.com (HELO fdefranc-mobl3.localnet) ([10.245.246.203])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 07:14:16 -0700
+From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+To: Gregory Price <gourry@gourry.net>
+Cc: Dave Jiang <dave.jiang@intel.com>, linux-cxl@vger.kernel.org,
+ Davidlohr Bueso <dave@stgolabs.net>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>, Jonathan Corbet <corbet@lwn.net>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH v3] cxl: docs/driver-api/conventions resolve conflicts btw CFMWS,
+ LMH, ED
+Date: Thu, 17 Jul 2025 16:14:13 +0200
+Message-ID: <17128669.tgchFWduMW@fdefranc-mobl3>
+In-Reply-To: <aGwmFwGNmw8n9zGR@gourry-fedora-PF4VCD3F>
+References:
+ <20250623152923.1048525-1-fabio.m.de.francesco@linux.intel.com>
+ <1985851.b9uPGUboIS@fdefranc-mobl3> <aGwmFwGNmw8n9zGR@gourry-fedora-PF4VCD3F>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0h+v5pUP39vTWpNNK2D8=X2UdjUTtZ7yQHCQ2k=r2kkMg@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-Hi Mani, Rafael,
+On Monday, July 7, 2025 9:55:03=E2=80=AFPM Central European Summer Time Gre=
+gory Price wrote:
+> On Fri, Jul 04, 2025 at 12:05:33PM +0200, Fabio M. De Francesco wrote:
+> > On Thursday, July 3, 2025 9:40:21=E2=80=AFPM Central European Summer Ti=
+me Gregory Price wrote:
+> > > On Tue, Jul 01, 2025 at 08:23:57AM -0700, Dave Jiang wrote:
+> > > >=20
+> > > >=20
+> > > > On 6/23/25 12:19 PM, Gregory Price wrote:
+> > > > > On Mon, Jun 23, 2025 at 05:29:02PM +0200, Fabio M. De Francesco w=
+rote:
+> > > > >> Add documentation on how to resolve conflicts between CXL Fixed =
+Memory
+> > > > >> Windows, Platform Memory Holes, and Endpoint Decoders.
+> > > > >>
+> > > > >> Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux=
+=2Eintel.com>
+> > > > >=20
+> > > > > I won't block a doc update on a suggestion so
+> > > > >=20
+> > > > > Reviewed-by: Gregory Price <gourry@gourry.net>
+> > > > >=20
+> > > > >> +Platform Firmware (BIOS) might reserve part of physical address=
+es below
+> > > > >> +4 GB (e.g., the Low Memory Hole that describes PCIe memory spac=
+e for MMIO
+> > > > >> +or a requirement for the greater than 8 way interleave CXL regi=
+ons starting
+> > > > >> +at address 0). In that case the Window Size value cannot be any=
+more
+> > > > >> +constrained to the NIW * 256 MB above-mentioned rule.
+> > > > >=20
+> > > > > It might be nice to have a diagram that explains this visually, a=
+s it's
+> > > > > difficult for me to understand the implications through words alo=
+ne...
+> > > >=20
+> > > > +1 on request for diagram to explain. We should try to document thi=
+s issue as clearly as possible. Thank you.
+> > > >
+> > >=20
+> > > At the very least, it would be nice to have an explicitly example that
+> > > explains the expected cfmws/decoder configurations that are valid but
+> > > "technically" violate the spec
+> > >=20
+> > > I *think* this basically boils down to "CFMWS size is not aligned, but
+> > > all the decoders it targets are"?  If I understand this correctly?
+> > >=20
+> > Yes, this is the intended meaning.=20
+> >=20
+> > E.g, two windows, 384 GB total memory, LMH at 2 GB:
+> >=20
+> > Window | CFMWS Base | CFMWS Size | HDM Decoder Base | HDM Decoder Size =
+| Ways | Granularity
+> >   0    |   0 GB     |     2 GB   |      0 GB        |       3 GB       =
+|  12  |    256
+> >   1    |   4 GB     |   380 GB   |      0 GB        |     380 GB       =
+|  12  |    256
+>=20
+>=20
+> In this example, does the root decoder have 0/2 and the host bridge
+> decoder have 0/3?  Because root decoders objects are created by reading
+> the CFMWS Base/Size - while host bridge decoder objects are created by
+> reading the host bridge DVSECS.
+>
+> Or does the linux code read CFMWS Base/Size and create a root decoder
+> with 0/3 because "that's what it should have"?  etc
+>
+No, sorry for any confusion. I also noticed that some unwanted additional
+lines slipped in my last reply, probably for a copy/paste mistake.
 
-On Thu, Jul 17, 2025 at 12:03:32PM +0200, Rafael J. Wysocki wrote:
-> On Thu, Jul 17, 2025 at 8:55 AM Manivannan Sadhasivam <mani@kernel.org> wrote:
-> >
-> > On Wed, Jul 16, 2025 at 05:40:24PM GMT, David E. Box wrote:
-> > > Hi all,
-> > >
-> > > This RFC series addresses a limitation in the PCIe ASPM subsystem where
-> > > devices on synthetic PCIe hierarchies, such as those created by Intel’s
-> > > Volume Management Device (VMD), do not receive default ASPM settings
-> > > because they are not visible to firmware. As a result, ASPM remains
-> > > disabled on these devices unless explicitly enabled later by the driver,
-> > > contrary to platform power-saving expectations.
-> > >
-> > > Problem with Current Behavior
-> > >
-> > > Today, ASPM default policy is set in pcie_aspm_cap_init() based on values
-> > > provided by BIOS. For devices under VMD, BIOS has no visibility into the
-> > > hierarchy, and therefore no ASPM defaults are applied. The VMD driver can
-> > > attempt to walk the bus hierarchy and enable ASPM post-init using runtime
-> > > mechanisms, but this fails when aspm_disabled is set because the kernel
-> > > intentionally blocks runtime ASPM changes under ACPI’s FADT_NO_ASPM flag.
-> > > However, this flag does not apply to VMD, which controls its domain
-> > > independently of firmware.
-> > >
-> > > Goal
-> > >
-> > > The ideal solution is to allow VMD or any controller driver managing a
-> > > synthetic hierarchy to provide a default ASPM link state at the same time
-> > > it's set for BIOS, in pcie_aspm_cap_init().
-> > >
-> >
-> > I like the idea and would like to use it to address the similar limitation on
-> > Qcom SoCs where the BIOS doesn't configure ASPM settings for any devices and
-> > sometimes there is no BIOS at all (typical for SoCs used in embedded usecases).
-> > So I was using pci_walk_bus() in the controller driver to enable ASPM for all
-> > devices, but that obviously has issues with hotplugged devices.
-> >
-> > > Solution
-> > >
-> > > 1. A new bus flag, PCI_BUS_FLAGS_ASPM_DEFAULT_OVERRIDE, based on Rafael's
-> > > suggestion, to signal that the driver intends to override the default ASPM
-> > > setting. 2. A new field, aspm_bus_link_state, in 'struct pci_bus' to supply
-> > > the desired default link state using the existing PCIE_LINK_STATE_XXX
-> > > bitmask.
-> > >
-> >
-> > Why would you need to make it the 'bus' specific flag? It is clear that the
-> > controller driver is providing the default ASPM setting. So pcie_aspm_cap_init()
-> > should be able to use the value provided by it for all busses.
-> >
-> > Like:
-> >
-> > diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-> > index 2ad1852ac9b2..830496e556af 100644
-> > --- a/drivers/pci/pcie/aspm.c
-> > +++ b/drivers/pci/pcie/aspm.c
-> > @@ -791,6 +791,7 @@ static void aspm_l1ss_init(struct pcie_link_state *link)
-> >  static void pcie_aspm_cap_init(struct pcie_link_state *link, int blacklist)
-> >  {
-> >         struct pci_dev *child = link->downstream, *parent = link->pdev;
-> > +       struct pci_host_bridge *host = pci_find_host_bridge(parent->bus);
+Let me explain...
 
-I see. This is better. I'll make this change.
+The table above shows a real configuration copied from an x86 platform=20
+where the Low Memory Hole (LMH) starts at 2GB.=20
 
-> >         u32 parent_lnkcap, child_lnkcap;
-> >         u16 parent_lnkctl, child_lnkctl;
-> >         struct pci_bus *linkbus = parent->subordinate;
-> > @@ -866,8 +867,8 @@ static void pcie_aspm_cap_init(struct pcie_link_state *link, int blacklist)
-> >         }
-> >
-> >         /* Save default state */
-> > -       if (parent->bus->bus_flags & PCI_BUS_FLAGS_NO_ASPM_DEFAULT)
-> > -               link->aspm_default = parent->bus->aspm_bus_link_state;
-> > +       if (host && host->aspm_bus_link_state)
-> > +               link->aspm_default = host->aspm_bus_link_state;
-> >         else
-> >                 link->aspm_default = link->aspm_enabled;
-> >
-> > This avoids the usage of the bus flag (which your series is not at all making
-> > use of) and allows setting the 'host_bridge::aspm_bus_link_state' easily by the
-> > controller drivers.
-> 
-> This is very similar to what I have just suggested and I like this one.
+The"HDM Decoder Base/Size" refers specifically to the CXL Endpoint=20
+Decoders HPA range Base/Size. The first row of the table describes the=20
+first window (CFMWS[0]), whose HPA rage base/size is 0/2GB, and the=20
+Endpoint Decoder that the CXL driver should match with that CFMWS,=20
+whose HPA range base/size is 0/3GB.
 
-I considered this. But 0 could technically mean that the controller wants
-ASPM to be disabled. The VMD driver doesn't need to do this though and if
-others don't currently need this than I can drop the flag.
+The Endpoint Decoder follows the 256MB x 12 interleave ways rule=20
+mandated by the CXL specifications. Instead the CFMWS is truncated=20
+immediately before the beginning of the LMH, because it needs to publish
+only those memory locations that the system can address.  =20
 
-David
+Currently the CXL driver fails during the Region construction and=20
+subsequent Endpoint Decoders attachment because it cannot match Root=20
+Decoders (that are created with HPA ranges base/size equal to CFMWS)
+and Switch Decoders with Endpoint decoders due to this size discrepancy.=20
+
+The driver expects that the Endpoint Decoders HPA ranges to be contained=20
+into their corresponding Root Decoders. Furthermore, Linux fails to=20
+attach Endpoint decoders to already constructed CXL Regions because of=20
+the same size discrepancy issue.=20
+>=20
+> I think you need to describe what the expected behavior is for what linux
+> will produce in terms of the decoder objects given the above.
+>
+The expected behavior is that Linux should be able to match the Endpoint=20
+Decoder with the Root Decoder range even if the CFMWS size is smaller=20
+than the Decoder's, as long as the latter adheres to the 256MB * interleave=
+=20
+ways rule. Furthermore, Linux should be able to match the Endpoint decoders=
+=20
+with already constructed CXL Regions and allow the attachment process to=20
+succeed.=20
+
+This would enable the utilization of the 2GB memory described by CFMWS[0].
+
+I hope this time I explained the LMH interference with CXL Regions=20
+construction and Endpoint Decoders attachment with better clarity.
+
+If this explanation suffices, I will incorporate it into the next version
+of this patch and also explain that "HDM Decoder" stands for Endpoint Decod=
+er=20
+and that the CFMWS HPA base/size describes the System Physical Address (SPA=
+)=20
+which the CXL driver uses to make Root Decoders HPA range base/size.=20
+
+Thanks,
+
+=46abio
+
+
 
