@@ -1,223 +1,242 @@
-Return-Path: <linux-kernel+bounces-735638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C0EAB091F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:36:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D76AAB091F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:35:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8A847BB9A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:32:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1458816B8E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05A162F85C9;
-	Thu, 17 Jul 2025 16:34:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C1D2FA643;
+	Thu, 17 Jul 2025 16:35:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="twfIqnxN"
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Es6iKDxd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22791F9F73
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 16:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F901E5207;
+	Thu, 17 Jul 2025 16:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752770056; cv=none; b=uCZAiUfQkIF7GgVw5yM73KRvHlg9yt7xGu51FJLNdsipfOK2q9LmrXzmNH57w5ajABkfqPQihcU9KeGJln7BoHXBEYiwja//OleBT3fmip/E3wIcvcg8DTI9VJQGZykKOHFTmkInvYuT/REIin63KmY42yfY/eg+198AeL0ikqs=
+	t=1752770111; cv=none; b=psqIp1JzhjUTQIrZOBH7YO+6SmcLgWJ/YJTgodkD+SOdTS/7WVe2LUx8tNpar5a54HcmcZrR3j0bC6v+NE860VAWqXrv0IWwtUr6bnjscUbgCAJkTnRRBoig4AwZMGU3fqgOm3gSShM1ce9RbAmRdZVXUXI3kAvCZxOQJxsdm7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752770056; c=relaxed/simple;
-	bh=U8WUmZ7UrNn0Gg7xFUg8nTdTA48ShRt5aSRebhZeSX0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aTLJTuOijlanObeZ6P1ZtO0xxZLBi2TK86eBMn3jwKe6sCJww7aZ1vCn/DNbzm7/pCN6vBM01CcOn6mLnzqzOwrjl8b3rK9FdFBVZH8s+CAxkpwX5Hw1mxWDkWPgVeM6jaKeoGG2xSos5T6C9279NzlrfNCCIkmnhoUuYdPJuow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=twfIqnxN; arc=none smtp.client-ip=209.85.160.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-2ea080f900cso471342fac.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 09:34:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752770051; x=1753374851; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=X2+K5kZAESVH5bjbMGycl+BENKKTT9M601876vlEf2I=;
-        b=twfIqnxNVyFg+dBEBcwcMVLpGCxLrJVeZiT5ZvAwPeKxrpUMvm6TC/aO7Mbak+FMzn
-         6/HBDpzPfQHlsQvahkXfobOdvu6+zheHEEVYQbeep8kJAfVYyMkaxYQQ96sT+AHv6V6c
-         N2EVsZ5+EDOYfuS3VFMT3fhrYppN7gqAvX7BGxFd4RYlf5Oelq9pWkDdquD8jfZFNkRT
-         2icQCiRb4cFpzWa1FQNgld8WJV22T+dolM5UEgxkEKj+FN80dur6lAPaV6QYJzKHTvun
-         CK8h9AieHPgaa5IFMntXTmFRcU8syAebzK+Y9DhGAO4gnoBephEiwILw/wWPylF09VTJ
-         VVRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752770051; x=1753374851;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=X2+K5kZAESVH5bjbMGycl+BENKKTT9M601876vlEf2I=;
-        b=I9mcKraV22yx1Ml+k3rzn2awqhUvFGBXUFRkDIebnP4qbnJY9WkcGyNqO8GYGpa4vD
-         0B1cgnH2kWl2nuhmlWqL81mYleB3dWfoW8hdsTHPA1lMmNiM/+Cfaggcge74jX9HDgU5
-         lOAb2Ns0K1nu1zPiMifNV8VRyzI3DLhh3dSXsO+00QPA9WDzG+bo6r8ZxrdWpb/G+2OY
-         wQ49E1gXmcqZ76tXCqg9jFYnCRe8152igOBg0gsiBZgf/VxprSKl80eYKhyWg0LfYDDA
-         KAhDALRGl8PNVVxiyR6sCRmL7LEap8tlJhRARokNrv+78SwHxTxPmAN9DBMey+S/UCvT
-         oV6w==
-X-Forwarded-Encrypted: i=1; AJvYcCUEhDuP7dhOBrJgc/LUYjOjpfHeAfpRZDolFPHM6FTMiLEutw0i4XAluOEx1D6pxQBx2a0RygOqJDcwWig=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyhy3lI8grK4ihumjT/dst4szMd5DbVfhzp3os1H4YCWk74q8Tc
-	2zT3osZlfhOqZlVaoYIrbP+ZIBJcL4CULzKTBCZD4DlYXe0/kigPeejTFOqil8xmsw9+/lriLJU
-	2HxZ4ihbD/5XCyDfToyrw2JTA7uAFSEYOo6W3RK3luA==
-X-Gm-Gg: ASbGnctho2e21/IA2QYXvrIMFN2q+0T24jtxhmTk8oaOUzJctWyhZjQU0D3/6/XAHdx
-	H6/J5V50verpv0QckQq0Kbm7DaIQqPDHcRhMIjnYhWGD5qcUaRJDG2ll5sVn29Wt4IjcVjtorMO
-	/1deZShBK2i2qhWuL8juqC1LgGES02ZLGc8cfLQOOnfEA0XEZcWPETsIc6hUygoc9+Xf5/JEw20
-	P1OC1IiPA==
-X-Google-Smtp-Source: AGHT+IFwM46WAT88MwJQfwmy316aoGs2iMb5yuh3tLyPaOUzGsTIYwh4NOAiA1/hlEtURXz89n0/pWNod1NhIzdMukc=
-X-Received: by 2002:a05:6870:2c9a:b0:296:aef8:fe9a with SMTP id
- 586e51a60fabf-2ffb223d9damr5943160fac.7.1752770050610; Thu, 17 Jul 2025
- 09:34:10 -0700 (PDT)
+	s=arc-20240116; t=1752770111; c=relaxed/simple;
+	bh=RAcZ+A+iHinoFPvbrIQmeXWWCLpNcugJR3aQB6YG3Kw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k9pjtNgqmR7UOx5an0nUq7cbS3n6OjCn6aGCuGmnNXrkHkpMTJWp2QIihz0Gws3FVMe7+B5PZONW2XQQwz3Us/xSyXZa/4jHfh1Mrj5K6s1u0dDXKYHtHC5g3UKkFuA6/jEWKTaSU9l7kAIVHEe/BHIBDbM+FhtEXwiB6EHipwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Es6iKDxd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DAA7C4CEE3;
+	Thu, 17 Jul 2025 16:35:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752770111;
+	bh=RAcZ+A+iHinoFPvbrIQmeXWWCLpNcugJR3aQB6YG3Kw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Es6iKDxdHVOaFrpn9HOdL2whny8QNiTLqNE8fu8C4MZYEw33qLuiHZSceTs8o9BWO
+	 VO3E5OVuoQ+4rNeeYlHgSY0ySmXsmf/hKidDN5tBeBYId6iJXVeY3GdOA+eDEjrEuv
+	 JNaqWXiYYS/EomttGfUth/aXuuxlL0f3kz5iUHAoxRCXduUWeeTE/1yX4lRcKh3V4m
+	 Swhr/h/w7OGDSIC4zaB0eUbA0zC5KXigkcAlzKOd9Gqgr5qdc4KI/E8Nlk4vB3BrUG
+	 /1exYl6bOdVsTxy39QOFQCcK42z9insgpkV4I2a7/W5/vwi7UnLOGudmCAIltxoOCe
+	 Zvm8w0hdFBJwg==
+Date: Thu, 17 Jul 2025 09:35:10 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
+	Ritesh Harjani <ritesh.list@gmail.com>, john.g.garry@oracle.com,
+	tytso@mit.edu, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v3 07/13] generic/1228: Add atomic write multi-fsblock
+ O_[D]SYNC tests
+Message-ID: <20250717163510.GJ2672039@frogsfrogsfrogs>
+References: <cover.1752329098.git.ojaswin@linux.ibm.com>
+ <ae247b8d0a9b1309a2e4887f8dd30c1d6e479848.1752329098.git.ojaswin@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250711-gs101-cpuidle-v6-1-503ec55fc2f9@linaro.org> <5597644b-267d-40d0-aa33-a8a665cebd70@kernel.org>
-In-Reply-To: <5597644b-267d-40d0-aa33-a8a665cebd70@kernel.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Thu, 17 Jul 2025 17:33:54 +0100
-X-Gm-Features: Ac12FXxDArSCCUN95XLlnHhF6jYPPCI7qSjY8zS1Dogc057C5wMeWh2BJ5AljmM
-Message-ID: <CADrjBPq_ofiUirxUx+VyzTeGMgWKLmFRhPErVTSV3Qd3hKp-RA@mail.gmail.com>
-Subject: Re: [PATCH v6] soc: samsung: exynos-pmu: Enable CPU Idle for gs101
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	William Mcvicker <willmcvicker@google.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-team@android.com, sudeep.holla@arm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ae247b8d0a9b1309a2e4887f8dd30c1d6e479848.1752329098.git.ojaswin@linux.ibm.com>
 
-Hi Krzysztof,
+On Sat, Jul 12, 2025 at 07:42:49PM +0530, Ojaswin Mujoo wrote:
+> This adds various atomic write multi-fsblock stresst tests
+> with mixed mappings and O_SYNC, to ensure the data and metadata
+> is atomically persisted even if there is a shutdown.
+> 
+> Suggested-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> ---
+>  tests/generic/1228     | 139 +++++++++++++++++++++++++++++++++++++++++
+>  tests/generic/1228.out |   2 +
+>  2 files changed, 141 insertions(+)
+>  create mode 100755 tests/generic/1228
+>  create mode 100644 tests/generic/1228.out
+> 
+> diff --git a/tests/generic/1228 b/tests/generic/1228
+> new file mode 100755
+> index 00000000..3f9a6af1
+> --- /dev/null
+> +++ b/tests/generic/1228
+> @@ -0,0 +1,139 @@
+> +#! /bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +# Copyright (c) 2025 IBM Corporation. All Rights Reserved.
+> +#
+> +# FS QA Test 1228
+> +#
+> +# Atomic write multi-fsblock data integrity tests with mixed mappings
+> +# and O_SYNC
+> +#
+> +. ./common/preamble
+> +. ./common/atomicwrites
+> +_begin_fstest auto quick rw atomicwrites
+> +
+> +_require_scratch_write_atomic_multi_fsblock
+> +_require_atomic_write_test_commands
+> +_require_scratch_shutdown
+> +_require_xfs_io_command "truncate"
+> +
+> +_scratch_mkfs >> $seqres.full
+> +_scratch_mount >> $seqres.full
+> +
+> +check_data_integrity() {
+> +	actual=$(_hexdump $testfile)
+> +	if [[ "$expected" != "$actual" ]]
+> +	then
+> +		echo "Integrity check failed"
+> +		echo "Integrity check failed" >> $seqres.full
+> +		echo "# Expected file contents:" >> $seqres.full
+> +		echo "$expected" >> $seqres.full
+> +		echo "# Actual file contents:" >> $seqres.full
+> +		echo "$actual" >> $seqres.full
+> +
+> +		_fail "Data integrity check failed. The atomic write was torn."
+> +	fi
+> +}
+> +
+> +prep_mixed_mapping() {
+> +	$XFS_IO_PROG -c "truncate 0" $testfile >> $seqres.full
+> +	local off=0
+> +	local mapping=""
+> +
+> +	local operations=("W" "H" "U")
+> +	local num_blocks=$((awu_max / blksz))
+> +	for ((i=0; i<num_blocks; i++)); do
+> +		local index=$((RANDOM % ${#operations[@]}))
+> +		local map="${operations[$index]}"
+> +		local mapping="${mapping}${map}"
+> +
+> +		case "$map" in
+> +			"W")
+> +				$XFS_IO_PROG -dc "pwrite -S 0x61 -b $blksz $off $blksz" $testfile > /dev/null
+> +				;;
+> +			"H")
+> +				# No operation needed for hole
+> +				;;
+> +			"U")
+> +				$XFS_IO_PROG -c "falloc $off $blksz" $testfile >> /dev/null
+> +				;;
+> +		esac
+> +		off=$((off + blksz))
+> +	done
+> +
+> +	echo "+ + Mixed mapping prep done. Full mapping pattern: $mapping" >> $seqres.full
+> +
+> +	sync $testfile
+> +}
+> +
+> +verify_atomic_write() {
+> +	if [[ "$1" == "shutdown" ]]
+> +	then
+> +		local do_shutdown=1
+> +	fi
+> +
+> +	test $bytes_written -eq $awu_max || _fail "atomic write len=$awu_max assertion failed"
+> +
+> +	if [[ $do_shutdown -eq "1" ]]
+> +	then
+> +		echo "Shutting down filesystem" >> $seqres.full
+> +		_scratch_shutdown >> $seqres.full
+> +		_scratch_cycle_mount >>$seqres.full 2>&1 || _fail "remount failed for Test-3"
+> +	fi
+> +
+> +	check_data_integrity
+> +}
+> +
+> +mixed_mapping_test() {
+> +	prep_mixed_mapping
+> +
+> +	echo "+ + Performing O_DSYNC atomic write from 0 to $awu_max" >> $seqres.full
+> +	bytes_written=$($XFS_IO_PROG -dc "pwrite -DA -V1 -b $awu_max 0 $awu_max" $testfile | \
+> +		        grep wrote | awk -F'[/ ]' '{print $2}')
+> +
+> +	verify_atomic_write $1
 
-Thanks, as always, for your review feedback.
+The shutdown happens after the synchronous write completes?  If so, then
+what part of recovery is this testing?
 
-On Sat, 12 Jul 2025 at 18:42, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On 11/07/2025 15:50, Peter Griffin wrote:
-> >
-> >  #include <linux/soc/samsung/exynos-regs-pmu.h>
-> > @@ -35,6 +37,14 @@ struct exynos_pmu_context {
-> >       const struct exynos_pmu_data *pmu_data;
-> >       struct regmap *pmureg;
-> >       struct regmap *pmuintrgen;
-> > +     /*
-> > +      * Serialization lock for CPU hot plug and cpuidle ACPM hint
-> > +      * programming. Also protects the in_hotplug flag.
-> > +      */
-> > +     raw_spinlock_t cpupm_lock;
-> > +     bool *in_hotplug;
->
-> This should be bitmap - more obvious code.
+--D
 
-I've done this in v7 which I just sent.
-
->
-> > +     atomic_t sys_suspended;
-> > +     atomic_t sys_rebooting;
-> >  };
-> >
-> >  void __iomem *pmu_base_addr;
-> > @@ -221,6 +231,15 @@ static const struct regmap_config regmap_smccfg = {
-> >       .reg_read = tensor_sec_reg_read,
-> >       .reg_write = tensor_sec_reg_write,
-> >       .reg_update_bits = tensor_sec_update_bits,
-> > +     .use_raw_spinlock = true,
-> > +};
-> > +
-> > +static const struct regmap_config regmap_pmu_intr = {
-> > +     .name = "pmu_intr_gen",
-> > +     .reg_bits = 32,
-> > +     .reg_stride = 4,
-> > +     .val_bits = 32,
-> > +     .use_raw_spinlock = true,
-> >  };
-> >
-> >  static const struct exynos_pmu_data gs101_pmu_data = {
-> > @@ -330,13 +349,19 @@ struct regmap *exynos_get_pmu_regmap_by_phandle(struct device_node *np,
-> >  EXPORT_SYMBOL_GPL(exynos_get_pmu_regmap_by_phandle);
-> >
->
->
-> ...
->
-> > +/* Called from CPU PM notifier (CPUIdle code path) with IRQs disabled */
-> > +static int gs101_cpu_pmu_offline(void)
-> > +{
-> > +     int cpu;
-> > +
-> > +     raw_spin_lock(&pmu_context->cpupm_lock);
-> > +     cpu = smp_processor_id();
-> > +
-> > +     if (pmu_context->in_hotplug[cpu]) {
-> > +             raw_spin_unlock(&pmu_context->cpupm_lock);
-> > +             return NOTIFY_BAD;
-> > +     }
-> > +
-> > +     __gs101_cpu_pmu_offline(cpu);
-> > +     raw_spin_unlock(&pmu_context->cpupm_lock);
-> > +
-> > +     return NOTIFY_OK;
-> > +}
-> > +
-> > +/* Called from CPU hot plug callback with IRQs enabled */
-> > +static int gs101_cpuhp_pmu_offline(unsigned int cpu)
-> > +{
-> > +     unsigned long flags;
-> > +
-> > +     raw_spin_lock_irqsave(&pmu_context->cpupm_lock, flags);
-> > +     /*
-> > +      * Mark this CPU as entering hotplug. So as not to confuse
-> > +      * ACPM the CPU entering hotplug should not enter C2 idle state.
-> > +      */
-> > +     pmu_context->in_hotplug[cpu] = true;
-> > +     __gs101_cpu_pmu_offline(cpu);
-> > +
-> > +     raw_spin_unlock_irqrestore(&pmu_context->cpupm_lock, flags);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int gs101_cpu_pm_notify_callback(struct notifier_block *self,
-> > +                                     unsigned long action, void *v)
-> > +{
-> > +     switch (action) {
-> > +     case CPU_PM_ENTER:
-> > +             /*
-> > +              * Ignore CPU_PM_ENTER event in reboot or
-> > +              * suspend sequence.
-> > +              */
-> > +
-> > +             if (atomic_read(&pmu_context->sys_suspended) ||
-> > +                 atomic_read(&pmu_context->sys_rebooting))
->
-> I don't get exactly why you need here atomics. You don't have here
-> barriers, so ordering is not kept (non-RMW atomics are unordered), so
-> maybe ordering was not the problem to be solved here. But then you don't
-> use these at all as RMW and this is even explicitly described in atomic doc!
->
-> "Therefore, if you find yourself only using the Non-RMW operations of
-> atomic_t, you do not in fact need atomic_t at all and are doing it wrong."
->
-> And it is right. READ/WRITE_ONCE gives you the same.
->
-> The question is whether you need ordering or barriers in general
-> (atomics don't give you these) - you have here control dependency
-> if-else, however it is immediately followed with gs101_cpu_pmu_offline()
-> which will use spin-lock (so memory barrier).
->
-> Basically you should have here comment explaining why there is no
-> barrier - you rely on barrier from spin lock in next calls.
->
-> And if my reasoning is correct, then you should use just READ/WRITE_ONCE.
-
-There was a bad assumption on my part that atomic_read etc would have
-barriers. After looking at this some more in v7 I decided to protect
-the reboot/suspend flags with the raw spinlock. I think that makes it
-much easier to reason about the code.
-
-Thanks,
-
-Peter
+> +}
+> +
+> +testfile=$SCRATCH_MNT/testfile
+> +touch $testfile
+> +
+> +awu_max=$(_get_atomic_write_unit_max $testfile)
+> +blksz=$(_get_block_size $SCRATCH_MNT)
+> +
+> +# Create an expected pattern to compare with
+> +$XFS_IO_PROG -tc "pwrite -b $awu_max 0 $awu_max" $testfile >> $seqres.full
+> +expected=$(_hexdump $testfile)
+> +echo "# Expected file contents:" >> $seqres.full
+> +echo "$expected" >> $seqres.full
+> +echo >> $seqres.full
+> +
+> +echo "# Test 1: Do O_DSYNC atomic write on random mixed mapping:" >> $seqres.full
+> +echo >> $seqres.full
+> +for ((iteration=1; iteration<=10; iteration++)); do
+> +	echo "=== Mixed Mapping Test Iteration $iteration ===" >> $seqres.full
+> +
+> +	echo "+ Testing without shutdown..." >> $seqres.full
+> +	mixed_mapping_test
+> +	echo "Passed!" >> $seqres.full
+> +
+> +	echo "+ Testing with sudden shutdown..." >> $seqres.full
+> +	mixed_mapping_test "shutdown"
+> +	echo "Passed!" >> $seqres.full
+> +
+> +	echo "Iteration $iteration completed: OK" >> $seqres.full
+> +	echo >> $seqres.full
+> +done
+> +echo "# Test 1: Do O_SYNC atomic write on random mixed mapping (10 iterations): OK" >> $seqres.full
+> +
+> +
+> +echo >> $seqres.full
+> +echo "# Test 2: Do extending O_SYNC atomic writes: " >> $seqres.full
+> +bytes_written=$($XFS_IO_PROG -dstc "pwrite -A -V1 -b $awu_max 0 $awu_max" $testfile | \
+> +                grep wrote | awk -F'[/ ]' '{print $2}')
+> +verify_atomic_write "shutdown"
+> +echo "# Test 2: Do extending O_SYNC atomic writes: OK" >> $seqres.full
+> +
+> +# success, all done
+> +echo "Silence is golden"
+> +status=0
+> +exit
+> +
+> diff --git a/tests/generic/1228.out b/tests/generic/1228.out
+> new file mode 100644
+> index 00000000..1baffa91
+> --- /dev/null
+> +++ b/tests/generic/1228.out
+> @@ -0,0 +1,2 @@
+> +QA output created by 1228
+> +Silence is golden
+> -- 
+> 2.49.0
+> 
+> 
 
