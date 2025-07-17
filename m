@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-735183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70B5BB08BDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:43:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2EC9B08BDF
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF8EC175D9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:43:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 641A81AA35FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3785929ACF0;
-	Thu, 17 Jul 2025 11:43:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6B029ACEC;
+	Thu, 17 Jul 2025 11:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Sh64oX4M"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VoozCwnj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5FD5219EB
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 11:43:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26DC1F9F73
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 11:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752752633; cv=none; b=Gg96vjEN0dClUp+cTSbc8e4zykrzYp8OOEm5rCCT4fH/TC8IuAeYSAEHp0VT8TFGok1uQPVKVgslNjZDmtkoYzKNDULUHCC56xnBu4/KLbCOSNgN0jlA2FmOO0qsijmrh5Geccd8tzQEZalaPfE68dk/nuviOqL7gn83T87Dht0=
+	t=1752752659; cv=none; b=uf9/czFZUq4WGd/RBs/4ONZNNmH7MvGPbogyDKSwGjAtgTTJAu4iW76SASdxYLj3LidHZKfvhGKE9R2EnCs6Oj1I3sPlCFmyzHWyagT2rMsXUbiKKvFe2V4GMu6iZ34snxjnCLio+U3cQiAF9UKJKqq5YOVakckJD9X/tqGEGSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752752633; c=relaxed/simple;
-	bh=8NgOVC5TWuXLLTumrhHon19hOmU7y9DnEei4mvnV3vo=;
+	s=arc-20240116; t=1752752659; c=relaxed/simple;
+	bh=ZRXGNluVXv3zZ4clOLaq1Ndil6J/AuQBuOFSUtnqaUE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bTA8HMZdRYvEMxcIVjmirnVpU7Zc81roIezVJl1ZGvTeOIcqsHB98Xd1ZF3ZGDeAo7raxpuIyuv3FQEewuJLwK3RspPyea/uTRG5pj/DWV0MwLi1EBeUCVL6ZVItpVx5HF3dSlqEdUrUaTGSWvPj/yqtmXmh00qfB3AF/llM2Lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Sh64oX4M; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=LSkanJz3rhfp0zPC4zrdaQz1ZO2UFOvyWTZMwDPxowFZnYC2Vzrs1xsqG+PgcbbKzBHUqgaOXQn1Uu3hmo+xYEHJnFi4dfYTzdqnJOmnB/u/JnV+6ZGbKtsySBFkGBIO9Ujz13pY8SZkVoGAhbkpT4P1mxeWqu64A3vbjEoI6a0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VoozCwnj; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752752630;
+	s=mimecast20190719; t=1752752656;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jULBQKJrWLUsKU87AiMGbdZPIoRYqIz+YQ5Sy/VjIug=;
-	b=Sh64oX4My5i5thG/Nvna7a+ya5ApgsK85T5HYAun3uPZpGpefr34KMRWVKA4TRlRjbTdyp
-	8LN0d+a/6FscWin/2+AXHZZu+U7SFt1ODSffMxTrCodLjAWZi6999jjOgwX5TfU8z6gdSw
-	e+nkYNgCcdDPx0S2Re1vz4EfYdloPbo=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=9WU5UWcIBWif5znmowNFh28ppk/v4mj1iGxdt2Apq5w=;
+	b=VoozCwnj6lHbmW+4nQjVrRZ7cTnJjHHZ3w7t8S6ZvZVL4c2SCcr31hP4UBs7zBZxY7WiHM
+	wHp9vRPb4k4Y3pN+FmPHaCHwfx7rSy4GbXk8qTzh3gjnE9NJxDjHHGWWbebsKiMSO1FnV7
+	yzCe5JaHnqGVy2L/JGUjMImOxqh95N8=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-645-bGvWpQDPPEGlkZAWHnK9FQ-1; Thu, 17 Jul 2025 07:43:49 -0400
-X-MC-Unique: bGvWpQDPPEGlkZAWHnK9FQ-1
-X-Mimecast-MFC-AGG-ID: bGvWpQDPPEGlkZAWHnK9FQ_1752752628
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-451d2037f1eso5182035e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 04:43:49 -0700 (PDT)
+ us-mta-662-9wPDUfauPCykbhkOXL4Llw-1; Thu, 17 Jul 2025 07:44:15 -0400
+X-MC-Unique: 9wPDUfauPCykbhkOXL4Llw-1
+X-Mimecast-MFC-AGG-ID: 9wPDUfauPCykbhkOXL4Llw_1752752654
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-455eda09c57so5320125e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 04:44:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752752628; x=1753357428;
+        d=1e100.net; s=20230601; t=1752752654; x=1753357454;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=jULBQKJrWLUsKU87AiMGbdZPIoRYqIz+YQ5Sy/VjIug=;
-        b=lcuFVpH7P61fgZquBSfHwMji47sAPDcs5CbcdOoglAgi+zEV9K232YLaoTSnapwSW1
-         +v2NbLG1kNft4jk9YECnWEgohFK6JGAcjWmPzd38YMlVgdONZdkkZXrryj7NCB8GOAVX
-         UUBZoiW1TE48NkupKnYZRC9Y5IgEL/5BVKht6YAkXiBu5tZv49t7/4R01NB8fTJsoLTD
-         HHdaJBfIQ5KWSFtEfh+XYzG1rNNGEby6cRycEbSwBmg4GprL57gd5/KLyAMHxFbWYP7C
-         dVX6rx/KzXEiendTFKnd8uIRAgJLmcEos86Exg8lDbPtjzcYuLmB6DQMWhqj9dGu3oRv
-         ZYtw==
-X-Forwarded-Encrypted: i=1; AJvYcCUN1N7p2QW/GjFrmPrYImj8YUr4pYwGJ0mE4m0A6VxreyN5CVSQS5lVnlph/doJT84+PpQO6wlg6aboUy4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMxv0LX+0RtEpLlNFZmsPch7CFZVm/FQz9ngCGJ0ZQ8Yg89UXM
-	C4Cn2kwS1WGHPH4duiD8OuLNaww7qTWfj8sN+W5YXiRS2rWmoWvZVq2LdZcsP5dlb2bcWUp/P2k
-	+HQ/gqt3FZlTH70ZpNuVvzoVzSGzNnWaGy5t/QyOtRSzZWuBpSaqdxHJX9kF/qhS4VQ==
-X-Gm-Gg: ASbGncsCilC5lG2aLibdz54pur/FRUbbhD0MU8oBlJOz+r95mnGEJ1/pmCFPbpEvMST
-	0/447o+ZYFqsD23vYgOszfXewL902fxbyWbeffapYnnkvZq5hBb0nffGxM6dz1CgUtMck5KYL3l
-	rdTmhQZfRGvV4zZ9jGcChw7ALjhUGsXWK6K+fDhWSS+rdcqUk+mDSQeRfZoFDcLSOpDTN4FrF+/
-	oiClflKTZEVUNdAGrVf8glv6A9nUEX8uRCXIGzSgkn+lFhk8OVKqa8ur51IsKf887FLSsNMmdBp
-	NyvViXbK59Xhvpq3d8981iH3BoL73TTyBCOys0vCk1G2IedPxJoW/DIHMe7pvO8zpKr9JKw3DjX
-	U3MRfNnCmKlQvF7cTdGo1TWoRnmIVbS/ORyLViRe1Pem1XoSD1Mq3NUXPj2FB5pSc
-X-Received: by 2002:a05:600c:1d1f:b0:456:27a4:50ad with SMTP id 5b1f17b1804b1-45637292eacmr14012615e9.33.1752752628272;
-        Thu, 17 Jul 2025 04:43:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFkjE+fWZ5MrjhWxS/kV+A6LCPCtWXb5br97yuhRNTUKIVY46Jn8e9BqorOYSDoZOgt2+4w3w==
-X-Received: by 2002:a05:600c:1d1f:b0:456:27a4:50ad with SMTP id 5b1f17b1804b1-45637292eacmr14012345e9.33.1752752627805;
-        Thu, 17 Jul 2025 04:43:47 -0700 (PDT)
+        bh=9WU5UWcIBWif5znmowNFh28ppk/v4mj1iGxdt2Apq5w=;
+        b=tI+4MAnaNf7sUrg6VyBK7amRZaFhVRodi5uWw9QknCiNbcLSqyPbkbF/BwLDnntuzR
+         XwNrsWztH+vaukw46EFfC4H/vDZgIUlcP6zABKc6Vjyvde3aF9pN9zvnblZCHjq+/PcL
+         PXHEgOtddEIxNbf4sqaHwivLyAlZeeF/4X3/yXcjVSaXEOfEVLyx1q+QxihtTXdZmi7m
+         XA+eiGxUdvaPoWLM3PjyxJRQee0vmNJwdt5VILdsFyCJP8qOqhiwVbeNHM/EU0kuY3fr
+         /1jS8z6k02oOmCDvSNLUi8SbRK8XQEtvKc9EJP3a6GaxpQoHx9XoewWq3vfwawq6KGMD
+         Ddjw==
+X-Forwarded-Encrypted: i=1; AJvYcCV0g4mOWMA1LPueAdhWAWUoJaf0tg+hO2Z3OSoFSMiTBc9eFUfQtxWd5K1hxxHuAiepU9DVRX3pyRdvMUM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJpHl2cZ7aA6cYPGkaUiDG08KjfS/ZqgIzuAZdj7fTqdDjNg0s
+	LCBo935IgM/aIfpf0AyP6DmMmHsumKmPSasnSX334u+c9SqUf9zyjHZ6dJMRN0fgMRbNg5BSqAU
+	EsMfzoZnAs91rhNQHe3ZLhAc+9J/P40gLJganZ8jlDxK7kdm0B1v7eR/T95EMNw1rHg==
+X-Gm-Gg: ASbGncs2Z/h6aXXqZJCpbwkkIqbwKd2C4AG80AZ2GpYxLjCxru3qkMJCZP8OMvYaw0q
+	GpmG34eb3hlxp5DQ9qmUHE7FNPmMyNyUm0qOH4gcR+4F8UliXX4k1GUgEneNKFffA9lIvdg3Wh7
+	nEjFwKeNyLBJrDlWkPCDU8BKhWP7VQNhYKRt4K5pKbKRxKQKQNJN/ykGPvTaRq7/OT12Ib38rio
+	nRR7HyaqKK/YhVTUOe1WnnZUCBxZN1+GAv/VR3OEYsHlvFpshmsqwKMZ6FZkhzbIvBcRS8qYFM/
+	HIZydxh5jLsKGT/u821IhlNZn8gKEf+pvLw2SHnJAb+7nDLG+NEchzrBdCqEz1QGXPk8Rl/XQVK
+	4QbFiA58oxFUgFPFrRNVAEijxv5CGtsXgT8z0bol6seUCRfCQzW/IqO5eQSMcmKnv
+X-Received: by 2002:a05:600c:3d96:b0:456:c48:491f with SMTP id 5b1f17b1804b1-4562e3548f0mr74184495e9.10.1752752654217;
+        Thu, 17 Jul 2025 04:44:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF+YkRslUaUKSYWlT2QF2X4TYmoTTKMAomOHcnx7rkseDkuAEJ7oII61TD6hxz3G6a7Dh8AqA==
+X-Received: by 2002:a05:600c:3d96:b0:456:c48:491f with SMTP id 5b1f17b1804b1-4562e3548f0mr74184085e9.10.1752752653773;
+        Thu, 17 Jul 2025 04:44:13 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f1f:3600:dc8:26ee:9aa9:fdc7? (p200300d82f1f36000dc826ee9aa9fdc7.dip0.t-ipconnect.de. [2003:d8:2f1f:3600:dc8:26ee:9aa9:fdc7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e89c87esm48000855e9.33.2025.07.17.04.43.46
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e8018a4sm48479605e9.9.2025.07.17.04.44.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Jul 2025 04:43:47 -0700 (PDT)
-Message-ID: <d27e9451-8807-4c86-b2aa-063639f7801d@redhat.com>
-Date: Thu, 17 Jul 2025 13:43:45 +0200
+        Thu, 17 Jul 2025 04:44:13 -0700 (PDT)
+Message-ID: <2fdacd57-2314-47c7-9eeb-6928221ce516@redhat.com>
+Date: Thu, 17 Jul 2025 13:44:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,16 +89,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests/mm: reuse FORCE_READ to replace "asm
- volatile("" : "+r" (XXX));"
-To: wang lian <lianux.mm@gmail.com>, akpm@linux-foundation.org
-Cc: Liam.Howlett@oracle.com, brauner@kernel.org, broonie@kernel.org,
- gkwang@linx-info.com, jannh@google.com, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, lorenzo.stoakes@oracle.com, ludovico.zy.wu@gmail.com,
- p1ucky0923@gmail.com, ryncsn@gmail.com, shuah@kernel.org, sj@kernel.org,
- vbabka@suse.cz, zijing.zhang@proton.me, ziy@nvidia.com
-References: <20250716151543.998b121a58064011e9ce68cb@linux-foundation.org>
- <20250717104811.3773-1-lianux.mm@gmail.com>
+Subject: Re: [PATCH 1/2] selftests/mm: refactor common code and improve test
+ skipping in guard_region
+To: wang lian <lianux.mm@gmail.com>, akpm@linux-foundation.org,
+ broonie@kernel.org, lorenzo.stoakes@oracle.com, sj@kernel.org,
+ ziy@nvidia.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc: brauner@kernel.org, gkwang@linx-info.com, jannh@google.com,
+ Liam.Howlett@oracle.com, ludovico.zy.wu@gmail.com, p1ucky0923@gmail.com,
+ richard.weiyang@gmail.com, ryncsn@gmail.com, shuah@kernel.org,
+ vbabka@suse.cz, zijing.zhang@proton.me
+References: <20250717112407.13507-1-lianux.mm@gmail.com>
+ <20250717112407.13507-2-lianux.mm@gmail.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -146,47 +147,72 @@ Autocrypt: addr=david@redhat.com; keydata=
  WBe5lqcozu9LpNDH/brVSzHCSb7vjNGvvSVESDuoiHK8gNlf0v+epy5WYd7CGAgODPvDShGN
  g3eXuA==
 Organization: Red Hat
-In-Reply-To: <20250717104811.3773-1-lianux.mm@gmail.com>
+In-Reply-To: <20250717112407.13507-2-lianux.mm@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 17.07.25 12:48, wang lian wrote:
->> On Wed, 16 Jul 2025 20:31:26 +0800 wang lian <lianux.mm@gmail.com> wrote:
+On 17.07.25 13:24, wang lian wrote:
+> Move the generic `FORCE_READ` macro from `guard-regions.c` to the shared
+> `vm_util.h` header to promote code reuse.
 > 
->>> Several mm selftests use the `asm volatile("" : "+r" (variable));`
->>> construct to force a read of a variable, preventing the compiler from
->>> optimizing away the memory access. This idiom is cryptic and duplicated
->>> across multiple test files.
->>>
->>> Following a suggestion from David[1], this patch refactors this
->>> common pattern into a FORCE_READ() macro
->>>
->>>   tools/testing/selftests/mm/cow.c              | 30 +++++++++----------
->>>   tools/testing/selftests/mm/hugetlb-madvise.c  |  5 +---
->>>   tools/testing/selftests/mm/migration.c        | 13 ++++----
->>>   tools/testing/selftests/mm/pagemap_ioctl.c    |  4 +--
->>>   .../selftests/mm/split_huge_page_test.c       |  4 +--
->>>   5 files changed, 24 insertions(+), 32 deletions(-)
+> In `guard-regions.c`, replace `ksft_exit_skip()` with the `SKIP()` macro
+> to ensure only the current test is skipped on permission failure, instead
+> of terminating the entire test binary.
 > 
->> The patch forgot to move the FORCE_READ definition into a header?
+> Signed-off-by: wang lian <lianux.mm@gmail.com>
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> ---
+>   tools/testing/selftests/mm/guard-regions.c | 9 +--------
+>   tools/testing/selftests/mm/vm_util.h       | 7 +++++++
+>   2 files changed, 8 insertions(+), 8 deletions(-)
 > 
-> Hi Andrew,
-> You are absolutely right. My apologies for the inconvenience.
-> This patch was sent standalone based on a suggestion from David during
-> the discussion of a previous, larger patch series. In that original series,
-> I had already moved the FORCE_READ() macro definition into vm_util.h.
-> 
-> You can find the original patch series and discussion at this link:
-> https://lore.kernel.org/lkml/20250714130009.14581-1-lianux.mm@gmail.com/
-> It should also be in your mailing list archive.
-> 
-> To make this easier to review and apply, I can send a new, small patch series
-> that first introduces the FORCE_READ() macro in vm_util.h and then applies this refactoring.
+> diff --git a/tools/testing/selftests/mm/guard-regions.c b/tools/testing/selftests/mm/guard-regions.c
+> index 93af3d3760f9..b0d42eb04e3a 100644
+> --- a/tools/testing/selftests/mm/guard-regions.c
+> +++ b/tools/testing/selftests/mm/guard-regions.c
+> @@ -35,13 +35,6 @@
+>   static volatile sig_atomic_t signal_jump_set;
+>   static sigjmp_buf signal_jmp_buf;
+>   
+> -/*
+> - * Ignore the checkpatch warning, we must read from x but don't want to do
+> - * anything with it in order to trigger a read page fault. We therefore must use
+> - * volatile to stop the compiler from optimising this away.
+> - */
+> -#define FORCE_READ(x) (*(volatile typeof(x) *)x)
+> -
+>   /*
+>    * How is the test backing the mapping being tested?
+>    */
+> @@ -582,7 +575,7 @@ TEST_F(guard_regions, process_madvise)
+>   
+>   	/* OK we don't have permission to do this, skip. */
+>   	if (count == -1 && errno == EPERM)
+> -		ksft_exit_skip("No process_madvise() permissions, try running as root.\n");
+> +		SKIP(return, "No process_madvise() permissions, try running as root.\n");
+>   
+>   	/* Returns the number of bytes advised. */
+>   	ASSERT_EQ(count, 6 * page_size);
+> diff --git a/tools/testing/selftests/mm/vm_util.h b/tools/testing/selftests/mm/vm_util.h
+> index 2b154c287591..c20298ae98ea 100644
+> --- a/tools/testing/selftests/mm/vm_util.h
+> +++ b/tools/testing/selftests/mm/vm_util.h
+> @@ -18,6 +18,13 @@
+>   #define PM_SWAP                       BIT_ULL(62)
+>   #define PM_PRESENT                    BIT_ULL(63)
+>   
+> +/*
+> + * Ignore the checkpatch warning, we must read from x but don't want to do
+> + * anything with it in order to trigger a read page fault. We therefore must use
+> + * volatile to stop the compiler from optimising this away.
+> + */
+> +#define FORCE_READ(x) (*(volatile typeof(x) *)x)
+> +
+>   extern unsigned int __page_size;
+>   extern unsigned int __page_shift;
+>   
 
-Please simply perform the move of FORCE_READ() in this very patch where 
-you also use it elswehere.
-
-I missed that when skimming over this patch.
+The FORCE_READ() stuff belongs into patch #2.
 
 -- 
 Cheers,
