@@ -1,150 +1,130 @@
-Return-Path: <linux-kernel+bounces-735764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABBF8B0938A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:44:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 24733B0938E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:46:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B521E168652
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:44:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 273C7169ACB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:46:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 787842FE38E;
-	Thu, 17 Jul 2025 17:44:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C95222FE32A;
+	Thu, 17 Jul 2025 17:46:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dG9kkDkV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="BVUwV39I"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7292FC3DB;
-	Thu, 17 Jul 2025 17:44:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 184881BC9E2;
+	Thu, 17 Jul 2025 17:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752774282; cv=none; b=ZyU2X6KUc5aWodQzGWqKZwZ0rwHhQ668y/FAoKXp0HqKZn39/FJGBy3N6v/buT8Qwm7tydslhCQ1cNG9UBQadhfZ375IL7jpMHtqYmcgjT8NjX0aUaYyoXzwv5dMd0PfDAWF/Csgoy+4UerngYPFbZNH7BLtw3GWANA751gQTv8=
+	t=1752774360; cv=none; b=kLSXV5ESgqOFvtd1EtKJr++f6V2k6L8+A63RrGV50FZDOjD7K0IpYOZTxMp1s8mBncEEQe0Gjyxevo471P5YlPv52cDvu9o/Kh0XBFZtPiuK55iwkkLNyez3E5Qt7cpd4n5opiQcXOlhxNTc91q/HhW0HNhMn/BCuOmPKRib+Gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752774282; c=relaxed/simple;
-	bh=2WNUl7kyz/4/3vixbfH5Y+4CmMQgWbIBu6ljnStnCq0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=blCD65WxP+1c6Xrk4jMNjvBiACEr/uXlkn7zKYDTDBCafqTcrRwr9EsxrOFtFILsWNu6ArDDjhJItaP7Z1udBB0DR8iJZA0McWx1kniOTPXzZBgGOHmlsd94R5EDMxS2inWPIfNvkP7DVRd4/Jkz7hK7IWGjyy2P0QwJe2PQADY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dG9kkDkV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19486C4CEE3;
-	Thu, 17 Jul 2025 17:44:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752774282;
-	bh=2WNUl7kyz/4/3vixbfH5Y+4CmMQgWbIBu6ljnStnCq0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dG9kkDkVBUZSvPKcI1O58rQ74A1sQkG0I7YLwsM06A3Q77yyjfcUXEG05ibbDYcFb
-	 88IjxnUyEiGPMNxvER3n+juXuGnte81eM1WOg6ZyoX/r/VgY5Q1tCfROCeeH2DmVSc
-	 3/ft0SQofUZ6n2F68zJfyWJ2KyqXnlxYr40csj5CIzQ2d0QLW71Ccp7IfTLEI4qv6K
-	 deXFnWSCwBXbuZwpsysgJ7sKps18BS+dMSV6xycZUCqk7ASY71CwBbkHVTH2y9dKRI
-	 a6OkH9CrO/JMwpOeOrmqT0bltQsvFHGlGhqg07PjGdo2ywOgFbz9bHIParCdGyDQEs
-	 Y8+a6U19cT6aQ==
-Date: Thu, 17 Jul 2025 07:44:41 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: "Paul E . McKenney" <paulmck@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	JP Kobryn <inwardvessel@gmail.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Ying Huang <huang.ying.caritas@gmail.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	bpf@vger.kernel.org, linux-mm@kvack.org, cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>
-Subject: Re: [PATCH v3] cgroup: llist: avoid memory tears for llist_node
-Message-ID: <aHk2iXXJkgaDkXVe@slm.duckdns.org>
-References: <20250704180804.3598503-1-shakeel.butt@linux.dev>
+	s=arc-20240116; t=1752774360; c=relaxed/simple;
+	bh=jSg9M9xq3ydADWKsrSUaLkgM7GusH07ANZzgpTiTznw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=G8ItsPTubD9psit0Bs1iBlXHmvtMhayITHiFXpCv3BjRh3DNjjXT67stt0kadiJkxleSb7f0XAc6fsKKoB+smx6TvIXczqyWCK1Y316Jy0Zmyb/n9rUciFileE4qzO5auPXbF+Sj97Ptzrj3Z4h15EvIy3dZtYB/zFMZTTIeOG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=BVUwV39I; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 56HHjFXv9294376, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1752774315; bh=YJ+zT5/MB62bjNXoBMwmCBRMXQ3+FNMGUJo9CZpwvqI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=BVUwV39I5SJV4QhxXelrZhk+9YIh9Et3Qb2DEEoVbcz11hcBFqs3ywTi3ik6LiK+T
+	 UT4bEOq0w1gYWMZy0A6fy4XM9m/Y4UR+oyv83+h4vjUMltGw9rEM5joycE8pt3qbRE
+	 6glPdmagMCAOFWeLY7PtlzF6oSSX2sVkta3JgepVND2+WO59eCsNt/Nf7BtpgQ7a9X
+	 4fkVAyH6WnkjEUu0OSYG6KfIScS48LxxDOr3gwmjq3P8T6sYamkoOk/1k+V8l72IOy
+	 C4k5yGc9UzmUTHMuex9Ve44o4zbb4K3THyvl0Xm1Pi4Xf+JMKFBYUBJf/+IrXEnRon
+	 uhQDjiOY6dwpQ==
+Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 56HHjFXv9294376
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 18 Jul 2025 01:45:15 +0800
+Received: from RTEXDAG02.realtek.com.tw (172.21.6.101) by
+ RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 18 Jul 2025 01:45:15 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXDAG02.realtek.com.tw (172.21.6.101) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Fri, 18 Jul 2025 01:45:13 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::81fc:50c6:85d5:cb47]) by
+ RTEXMBS04.realtek.com.tw ([fe80::81fc:50c6:85d5:cb47%5]) with mapi id
+ 15.01.2507.035; Fri, 18 Jul 2025 01:45:13 +0800
+From: Hau <hau@realtek.com>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        nic_swsd
+	<nic_swsd@realtek.com>,
+        "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "edumazet@google.com"
+	<edumazet@google.com>,
+        "kuba@kernel.org" <kuba@kernel.org>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH net-next] r8169: add quirk for RTL8116af SerDes
+Thread-Topic: [PATCH net-next] r8169: add quirk for RTL8116af SerDes
+Thread-Index: AQHb8hYZ3m83qQJc5k6oVaa3M0JZALQvxoaAgAH73gD//33vgIAFX8dQ
+Date: Thu, 17 Jul 2025 17:45:13 +0000
+Message-ID: <c8bf99d9c3fc49958bad7f66863f72c2@realtek.com>
+References: <20250711034412.17937-1-hau@realtek.com>
+ <9291f271-eafe-4f65-aa08-3c6cb4236f64@lunn.ch>
+ <50df9352e81e4688b917072949b2ee4c@realtek.com>
+ <e571d596-da26-4596-bf90-b858b5a2f5b4@lunn.ch>
+In-Reply-To: <e571d596-da26-4596-bf90-b858b5a2f5b4@lunn.ch>
+Accept-Language: zh-TW, en-US
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250704180804.3598503-1-shakeel.butt@linux.dev>
 
-On Fri, Jul 04, 2025 at 11:08:04AM -0700, Shakeel Butt wrote:
-> Before the commit 36df6e3dbd7e ("cgroup: make css_rstat_updated nmi
-> safe"), the struct llist_node is expected to be private to the one
-> inserting the node to the lockless list or the one removing the node
-> from the lockless list. After the mentioned commit, the llist_node in
-> the rstat code is per-cpu shared between the stacked contexts i.e.
-> process, softirq, hardirq & nmi. It is possible the compiler may tear
-> the loads or stores of llist_node. Let's avoid that.
-> 
-> KCSAN reported the following race:
-> 
->  Reported by Kernel Concurrency Sanitizer on:
->  CPU: 60 UID: 0 PID: 5425 ... 6.16.0-rc3-next-20250626 #1 NONE
->  Tainted: [E]=UNSIGNED_MODULE
->  Hardware name: ...
->  ==================================================================
->  ==================================================================
->  BUG: KCSAN: data-race in css_rstat_flush / css_rstat_updated
->  write to 0xffffe8fffe1c85f0 of 8 bytes by task 1061 on cpu 1:
->   css_rstat_flush+0x1b8/0xeb0
->   __mem_cgroup_flush_stats+0x184/0x190
->   flush_memcg_stats_dwork+0x22/0x50
->   process_one_work+0x335/0x630
->   worker_thread+0x5f1/0x8a0
->   kthread+0x197/0x340
->   ret_from_fork+0xd3/0x110
->   ret_from_fork_asm+0x11/0x20
->  read to 0xffffe8fffe1c85f0 of 8 bytes by task 3551 on cpu 15:
->   css_rstat_updated+0x81/0x180
->   mod_memcg_lruvec_state+0x113/0x2d0
->   __mod_lruvec_state+0x3d/0x50
->   lru_add+0x21e/0x3f0
->   folio_batch_move_lru+0x80/0x1b0
->   __folio_batch_add_and_move+0xd7/0x160
->   folio_add_lru_vma+0x42/0x50
->   do_anonymous_page+0x892/0xe90
->   __handle_mm_fault+0xfaa/0x1520
->   handle_mm_fault+0xdc/0x350
->   do_user_addr_fault+0x1dc/0x650
->   exc_page_fault+0x5c/0x110
->   asm_exc_page_fault+0x22/0x30
->  value changed: 0xffffe8fffe18e0d0 -> 0xffffe8fffe1c85f0
-> 
-> $ ./scripts/faddr2line vmlinux css_rstat_flush+0x1b8/0xeb0
-> css_rstat_flush+0x1b8/0xeb0:
-> init_llist_node at include/linux/llist.h:86
-> (inlined by) llist_del_first_init at include/linux/llist.h:308
-> (inlined by) css_process_update_tree at kernel/cgroup/rstat.c:148
-> (inlined by) css_rstat_updated_list at kernel/cgroup/rstat.c:258
-> (inlined by) css_rstat_flush at kernel/cgroup/rstat.c:389
-> 
-> $ ./scripts/faddr2line vmlinux css_rstat_updated+0x81/0x180
-> css_rstat_updated+0x81/0x180:
-> css_rstat_updated at kernel/cgroup/rstat.c:90 (discriminator 1)
-> 
-> These are expected race and a simple READ_ONCE/WRITE_ONCE resolves these
-> reports. However let's add comments to explain the race and the need for
-> memory barriers if stronger guarantees are needed.
-> 
-> More specifically the rstat updater and the flusher can race and cause a
-> scenario where the stats updater skips adding the css to the lockless
-> list but the flusher might not see those updates done by the skipped
-> updater. This is benign race and the subsequent flusher will flush those
-> stats and at the moment there aren't any rstat users which are not fine
-> with this kind of race. However some future user might want more
-> stricter guarantee, so let's add appropriate comments to ease the job of
-> future users.
-> 
-> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
-> Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
-> Fixes: 36df6e3dbd7e ("cgroup: make css_rstat_updated nmi safe")
-
-Applied to cgroup/for-6.17. Sorry about the delay. I'm on a vacation and
-ended up a lot more offline than I expected to be.
+> On Mon, Jul 14, 2025 at 03:28:37PM +0000, Hau wrote:
+> > >
+> > > Can you give us a few more details. What is on the other end of the
+> SERDES?
+> > > An SGMII PHY? An SFP cage? An Ethernet switch chip?
+> > >
+> > > A quick search suggests it is used with an SFP cage. How is the I2C
+> > > bus connected? What about GPIOs? Does the RTL8116af itself have
+> > > GPIOs and an I2C bus?
+> > >
+>=20
+> > RTL8116af 's SERDES will connect to a SFP cage. It has GPIO and a I2C
+> > bus. But driver did not use it to access SFP cage.  Driver depends on
+> > mac io 0x6c (LinkStatus) to check link status.
+>=20
+> You cannot correctly use an SFP cage without using the I2C bus and the
+> GPIOs. e.g. A copper SFP module likely needs SGMII, where as a fibre
+> module needs 1000BaseX. You need to reprogram the PCS depending on
+> what the SFP EEPROM says.
+>=20
+> The kernel has all the code needed to coordinate this, phylink. All you n=
+eed
+> to do is write a standard Linux I2C bus driver, a standard Linux GPIO dri=
+ver,
+> and turn your PCS into a Linux PCS. You can then instantiate an SFP devic=
+e.
+> The txgbe driver does this, you can probably copy the code from there.
+>=20
+> Have you licensed these parts? The txgbe hardware uses synopsys I2C and
+> PCS. So all that was needed was a wrapper around the existing drivers.
+>=20
+Thanks for your advice. I will check this internally to see if we can do th=
+is on device.
 
 Thanks.
-
--- 
-tejun
 
