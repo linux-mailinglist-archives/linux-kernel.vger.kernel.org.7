@@ -1,160 +1,94 @@
-Return-Path: <linux-kernel+bounces-734472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 037ADB0823B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 03:26:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89F13B0823E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 03:26:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F09784A3ECB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 01:25:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3FC0561592
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 01:26:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 350261DA10B;
-	Thu, 17 Jul 2025 01:25:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RVbIPsGh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63B711DB375;
+	Thu, 17 Jul 2025 01:26:17 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B58710A1F;
-	Thu, 17 Jul 2025 01:25:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C281D130E;
+	Thu, 17 Jul 2025 01:26:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752715553; cv=none; b=VYwmMbGcSC5BcIkgjGxnNtrE28ASPxuGCB1nKoT7lyV9DoqpHIIpUqyXkQdHmQoWaUdcpd6jVOKn9gi8GrkAwHegpFt4VRpLKplN1Ig/Iydk5DCAj6bgjcKct9Ddm+a6Cn+WSHcRPruyZr8eog4UesTDH/xciNbXDIHXjCcv6EU=
+	t=1752715577; cv=none; b=VTGzA4sAf5SmT2/oKkPV9K5Sw+RyzKTk8YpFsnMTdu0ZxMnkHyvds8NAuU8DDzTfZSk4D0pymUBGp63kQbayj0kU4FOvf/heLCv7S1BkApnMGzx/+9EmlYrNpXy7/+siM+wEHf5y/fpyfnoucTTqLj/Ya4wOenOQqLLC+CLyURU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752715553; c=relaxed/simple;
-	bh=eJW4DqvpNT9WZHN3RA/qOqnzpM5aERTsDG8vrMculSo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=uuWU51yhULpNM4dYMtYxA1ThQGlI1EopM6J8+m/Ccj6k9IVgu6H+iEZnpjQftXNU8gJXbQRfYywA075W/r+ARx4DBEoDKB0yBVijDlWBhd0FxeHiHxgKF1cSoSSML2UFAaviCMn1IcKYlmZZs5rQPjA+3cWzwqsSUN6RxX0F11Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RVbIPsGh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37EACC4CEE7;
-	Thu, 17 Jul 2025 01:25:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752715553;
-	bh=eJW4DqvpNT9WZHN3RA/qOqnzpM5aERTsDG8vrMculSo=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=RVbIPsGhNQVhy08SIkFMzDX9E2ZHDYGh89e3uIeEPpmPlh83AIxGQNQRQb5G0KL55
-	 mO0BZ5TQx07gVZg9HSW5YhW+dY2kCj1vT5frvFTbO3HBa/lWPGPdROFdhhK4N9v5kq
-	 B9OO0vX52zs9SBBtPN/AhJ0QV3f5HgNAIzrMgOQvDRj6M27mOzzDuznSzB/QdvydyV
-	 bRWY9Ko9VYTL2u2Cxv3YiI7OqDqF8gN/YLOJgMmGC/KXSaW63HfskGCC9MSHMeWjkd
-	 UJYaH1MqafFkrbArQzhNzQTdrjXRIPlSJxnvk+YJSFO0B2B+Bz71f9InJXcraWJ62i
-	 ykhdavSsQtRnw==
-Message-ID: <fe04c8823b6d17fc45430f4991322f400228ba1e.camel@kernel.org>
-Subject: Re: [PATCH net-next 2/4] tcp: add tcp_sock_set_maxseg
-From: Geliang Tang <geliang@kernel.org>
-To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, mptcp@lists.linux.dev, 
- Mat Martineau <martineau@kernel.org>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet	 <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni	 <pabeni@redhat.com>, Simon Horman
- <horms@kernel.org>, Neal Cardwell	 <ncardwell@google.com>, Kuniyuki
- Iwashima <kuniyu@google.com>, David Ahern	 <dsahern@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 17 Jul 2025 09:25:45 +0800
-In-Reply-To: <20250716-net-next-mptcp-tcp_maxseg-v1-2-548d3a5666f6@kernel.org>
-References: 
-	<20250716-net-next-mptcp-tcp_maxseg-v1-0-548d3a5666f6@kernel.org>
-	 <20250716-net-next-mptcp-tcp_maxseg-v1-2-548d3a5666f6@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.56.0-1 
+	s=arc-20240116; t=1752715577; c=relaxed/simple;
+	bh=gxAUpE8VBN7v0rV0nMnestBQ5EL+ueS4F4ZJIgcrVHA=;
+	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
+	 Subject:Content-Type; b=B5SsRRQIsjwGU3YFbT2k6sID7BBt+I+yyrE/7nBNmcS0utxhQR+T9kXTG4J9BrH2G/O2va3s41WUnbgB2Kl1YifwH3y8lrgCAJ9Q0dYAiqdRPikbJdSNkNytuEA4drbrGMX2LRzRaZGOf8eeLVRc+TUQOK6T76/O1XXR5MXvLj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4bjFcX5h0Vz8Xs6x;
+	Thu, 17 Jul 2025 09:26:04 +0800 (CST)
+Received: from xaxapp04.zte.com.cn ([10.99.98.157])
+	by mse-fl2.zte.com.cn with SMTP id 56H1PoN0037389;
+	Thu, 17 Jul 2025 09:25:50 +0800 (+08)
+	(envelope-from jiang.peng9@zte.com.cn)
+Received: from mapi (xaxapp01[null])
+	by mapi (Zmail) with MAPI id mid31;
+	Thu, 17 Jul 2025 09:25:51 +0800 (CST)
+Date: Thu, 17 Jul 2025 09:25:51 +0800 (CST)
+X-Zmail-TransId: 2af96878511fffffffffe78-dc0f4
+X-Mailer: Zmail v1.0
+Message-ID: <20250717092551456yMDDlrv0yFKFOsnqotOlG@zte.com.cn>
+In-Reply-To: <20250716095046-mutt-send-email-mst@kernel.org>
+References: 20250705105803198ff11jYCkg1TxntcCEb00R@zte.com.cn,20250716095046-mutt-send-email-mst@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+From: <jiang.peng9@zte.com.cn>
+To: <mst@redhat.com>
+Cc: <jasowang@redhat.com>, <krzk@kernel.org>, <xuanzhuo@linux.alibaba.com>,
+        <eperezma@redhat.com>, <sumit.semwal@linaro.org>,
+        <christian.koenig@amd.com>, <virtualization@lists.linux.dev>,
+        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <xu.xin16@zte.com.cn>,
+        <yang.yang29@zte.com.cn>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCB2Ml0gdmlydGlvOiBVcGRhdGUga2VybmVsZG9jIGluIGRyaXZlcnMvdmlydGlvL3ZpcnRpb19kbWFfYnVmLmM=?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 56H1PoN0037389
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: jiang.peng9@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.133 unknown Thu, 17 Jul 2025 09:26:04 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 6878512C.000/4bjFcX5h0Vz8Xs6x
 
-Hi Matt,
+> The extra documentation unfortunately just mechanically repeats what the
+> code does. Code comments should explain the reasoning behind the code,
+> instead.
 
-On Wed, 2025-07-16 at 12:28 +0200, Matthieu Baerts (NGI0) wrote:
-> From: Geliang Tang <tanggeliang@kylinos.cn>
-> 
-> Add a helper tcp_sock_set_maxseg() to directly set the TCP_MAXSEG
-> sockopt from kernel space.
-> 
-> This new helper will be used in the following patch from MPTCP.
-> 
-> Signed-off-by: Geliang Tang <tanggeliang@kylinos.cn>
-> Acked-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-> ---
->  include/linux/tcp.h |  1 +
->  net/ipv4/tcp.c      | 23 ++++++++++++++---------
->  2 files changed, 15 insertions(+), 9 deletions(-)
-> 
-> diff --git a/include/linux/tcp.h b/include/linux/tcp.h
-> index
-> 1a5737b3753d06165bc71e257a261bcd7a0085ce..57e478bfaef20369f5dba1cff54
-> 0e52c9302ebf4 100644
-> --- a/include/linux/tcp.h
-> +++ b/include/linux/tcp.h
-> @@ -621,6 +621,7 @@ void tcp_sock_set_nodelay(struct sock *sk);
->  void tcp_sock_set_quickack(struct sock *sk, int val);
->  int tcp_sock_set_syncnt(struct sock *sk, int val);
->  int tcp_sock_set_user_timeout(struct sock *sk, int val);
-> +int tcp_sock_set_maxseg(struct sock *sk, int val);
->  
->  static inline bool dst_tcp_usec_ts(const struct dst_entry *dst)
->  {
-> diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
-> index
-> 31149a0ac849192b46c67dd569efeeeb0a041a0b..c9cdc4e99c4f11a75471b8895b9
-> c52ad8da3a7ff 100644
-> --- a/net/ipv4/tcp.c
-> +++ b/net/ipv4/tcp.c
-> @@ -3751,6 +3751,19 @@ int tcp_set_window_clamp(struct sock *sk, int
-> val)
->  	return 0;
->  }
->  
-> +int tcp_sock_set_maxseg(struct sock *sk, int val)
-> +{
-> +	/* Values greater than interface MTU won't take effect.
-> However
-> +	 * at the point when this call is done we typically don't
-> yet
-> +	 * know which interface is going to be used
-> +	 */
-> +	if (val && (val < TCP_MIN_MSS || val > MAX_TCP_WINDOW))
-> +		return -EINVAL;
-> +
-> +	tcp_sk(sk)->rx_opt.user_mss = val;
-> +	return 0;
-> +}
-> +
->  /*
->   *	Socket option code for TCP.
->   */
-> @@ -3883,15 +3896,7 @@ int do_tcp_setsockopt(struct sock *sk, int
-> level, int optname,
->  
->  	switch (optname) {
->  	case TCP_MAXSEG:
-> -		/* Values greater than interface MTU won't take
-> effect. However
-> -		 * at the point when this call is done we typically
-> don't yet
-> -		 * know which interface is going to be used
-> -		 */
-> -		if (val && (val < TCP_MIN_MSS || val >
-> MAX_TCP_WINDOW)) {
-> -			err = -EINVAL;
-> -			break;
-> -		}
-> -		tp->rx_opt.user_mss = val;
-> +		tcp_sock_set_maxseg(sk, val);
+Thanks for the helpful feedback - I appreciate you taking the time to review this.
 
-Sorry, I forgot to set the return value here, it should be:
+In v3 I'll:
 
-		err = tcp_sock_set_maxseg(sk, val);
+1.Remove the parentheses from function names to match virtio conventions;
 
-I'll send a squash-to patch to fix this.
+2.Simplify all descriptions to focus on purpose rather than repeating code mechanics;
 
-Thanks,
--Geliang
+3.Consolidate return value documentation to essential information only.
 
->  		break;
->  
->  	case TCP_NODELAY:
+The revised patch will maintain W=1 warning fixes while aligning with the kernel's documentation philosophy. I'll send the update shortly.
+
+Best regards,
+Peng Jiang
 
