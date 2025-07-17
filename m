@@ -1,172 +1,179 @@
-Return-Path: <linux-kernel+bounces-735303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EBB3B08D85
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:52:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87A6CB08D77
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:50:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D13C5162EF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:52:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC68A189485D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:50:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 777E82D9494;
-	Thu, 17 Jul 2025 12:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TXv1jUaG"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A3D2C3260;
+	Thu, 17 Jul 2025 12:50:36 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5871F2D878D
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 12:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EAA311712
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 12:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752756707; cv=none; b=TcpqkarNHRlPuQ60qXAttp3K4z8SVb//8c+X/Ltg3VKYQ6tHf4U4Vml18Qi6xSfuRNVB54LVaVAW+9rtSl60BfTclRLVuSHpdVufUW1SD9qyLQaV08UdL4oog/boOT2M9lgmcwn1cy8GOujuczHRmjizLqOqGEkIy5ueycS6fVU=
+	t=1752756636; cv=none; b=EMxzgqWMJAteDmuvDvzIrr5Ij2XlqqiXJ1DcPA7Hph3piDCSYABIDvac5oRieeUohcpO//0XLCS+UAdroslzV68oGfLKAZF+PPJExdsHvATSm4n1g6S243h5tERI4S/bdiqrgndmjuvwnHUdlZLfHzOiW+fiiOBGqhSauQFG+lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752756707; c=relaxed/simple;
-	bh=avnk6sc8EHSeOS7ES2prPQK2MQlrFEYK/e/4co5pN+A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Vs4JelvK1uc1V+GJZkHS0zriVTiuN0PENxokjMtmf8rMcEiAVUyOQ44OrABaFNmEMPfGEczRL+75+/kANd3baNtz8EqYSLi0xYwCJWWtGZKJmyZGXrqtaP8ggijWsCzzDXeCLrLqiEQrtkRQXt+cslr+af9RerQj0X75IlwjT1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TXv1jUaG; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56HCeNYt008788
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 12:51:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	9bzr1TaVGkOfJPBjDfmJ+dlX1XuUnIuMJk+rn5ei2Ok=; b=TXv1jUaGkMiw9z4n
-	dxZrogRMLuA3TH7hSzGhmTxCMnpUsev5v6AcJxADvMStX7hZP2R86mq+jNWlAqKY
-	aQ02xK2QZxM0KoEOtAvTPlAR+ExADu+01B7/wDDgWSBE2K2GaRxfClZPrfC6Ewlf
-	48bHAH2kr2E3TwY1yG1pYEra0TPlmHN3vso4p00HgY85m7uU8aLp8oGL43kKCJP0
-	n3rhrN7Q+vDvmI9IV0mCXXfN2COryDoDLVyRkqGRv16DLdjvOKo2486cWKqlIQ+c
-	aaMnfS1lxn3LCvlpAql6isu75Bicl88AMKze6lrY0dPUwO5W4ZjmtLeETxWnoJzi
-	PrTQCg==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ufxb7pbx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 12:51:45 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7e1fb57a7adso84810885a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 05:51:45 -0700 (PDT)
+	s=arc-20240116; t=1752756636; c=relaxed/simple;
+	bh=gq1sg5K1PsA/jH85Wh+Kf7jH78KhklYnNFGPwjTeAYE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=m6LreNYnu4NEVCbzcJN9ci2mThNPIvkV9Er+Emv0HPwqCdRKX4h7fpRJwCRK6ffAO1BYUV7Mh44cef2mwNJlLqtIT1f+1+OZr2kiHhQsUPAUuTe6uAX9IqkXfHbOJHyDd8CDBOSYSUpwa01V9nMokLIsomecThkHTMKnLoGbrjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-86f4e2434b6so104583239f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 05:50:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752756704; x=1753361504;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9bzr1TaVGkOfJPBjDfmJ+dlX1XuUnIuMJk+rn5ei2Ok=;
-        b=VVvv9+BCVbVVRb/7kRDwD4r36HbN4QNgMSduyqwP/ULygid78voijibm0n5WiLGtdq
-         ZvzM/nLVW/JzGvkAAz1mfauMKi6w2LGbU+9iZbbd3L/tmkEI8ajVe4YPzyg09mmdZljz
-         4PVAsKG231hy2ZcwfAF4YXx519IB25yf9AHgrr9qNm2PNbPbntKKyG5xcNKfHPnaswES
-         q6uiTZyEcS6/xhNBsHLqlnoN3QbM/FMMoI4vEXHaCxY4WeF80unrS0Ww1PW0BDKQ10uz
-         znjsVg6ihpJ2lWT+TyIiDsSQRMxyuoeL7Cw93rGxmPsOonbKk5+JAo54fDrcpqlbdsXK
-         S4iQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXHz+6tTuShWDZAq8FyqoLo+C8T2IV5pIRl5ZswvCrjPmiN8OjpKOJUPTso5vHYUwGRj+ZGrSRmnHcPlr4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyc+pCRnBFH/4hCKuwwNuPbkZVLhRdvn5L8sHajKLcCPuYIgqLt
-	w/FI9YUpmI2mlZxZWfLkLZb2dPm3+m39BBstPt5lo1wkaFxyNwN3ZT1TQsTjiBx+McY9bxfuysh
-	Ehwd2WN5AzLYYz9V2eSqj7+R1XeganbIeZWJKdL4hnf8nFeZegY2Zu4Adiapj3JMAuwU=
-X-Gm-Gg: ASbGncvpUxNj9cOnYqhdMV0YO8dMhgT+wzZ8qC22qfBHII2cunZa8PBJhenSSuRISPM
-	SfRdLNlLvgkrYn1Mh1AwYqcd3K7LtUsyOnapo4ND/A6/8WVPkw0rw164ys8nkqUhISbCq728GCR
-	afis0K7V/4igazOfRRyd/ODBr9rBGqsP+GKXwIu7wnbnazdrHOxXuYWCfrFEUffOH6y1jLvqg7H
-	2umIoeQoRz0dqiAOUL7P3rlpdWdgPYCS66u46WSL8SCvRmWeldeZo3n866H8XeGFut+uBL8m2ds
-	w6XO60O7yct5dpZVjpv93skHqChWHZX6cfqqTPeqXcq+y/qTaraBRLOug3kqF/cV5B80e7ixSfG
-	kxRDI9/PSFNxrUN6jk8AQxVn+VjqTJFSMeBtTPD79+v3TEGTsQJC2
-X-Received: by 2002:a05:620a:63c3:b0:7e3:3836:b2e2 with SMTP id af79cd13be357-7e343617261mr981667985a.48.1752756704306;
-        Thu, 17 Jul 2025 05:51:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFBrP9UwwmwMrpp19kw5Ud4uZADb4Qpf7uPsYlVY6B9Br5gnf+nzoh6J5bkwRBddYMkvgY8XA==
-X-Received: by 2002:a05:620a:63c3:b0:7e3:3836:b2e2 with SMTP id af79cd13be357-7e343617261mr981661885a.48.1752756703651;
-        Thu, 17 Jul 2025 05:51:43 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5593c9d08fesm3032872e87.126.2025.07.17.05.51.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 05:51:42 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Date: Thu, 17 Jul 2025 15:48:19 +0300
-Subject: [PATCH 4/4] arm64: dts: qcom: sm8550: stop using SoC-specific
- genpd indices
+        d=1e100.net; s=20230601; t=1752756633; x=1753361433;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=79v0ZMHCi6HvCZzKTQZtWwDKcFqEx9XOZ+voG4e7hlg=;
+        b=DnFONxZQG64Nb6gnxthPEKdR2ADitBN0Wu4a3ti49ja92BkLKyS/VhoUXVun3faY/W
+         8Vr2Y6WaCA/2JhVy9tvWDCEumS/Q6mEXLAKsgzuvA+U1LPEj6e8YwHmle9bKzP/XqVZk
+         aGTXwr/XvLFxeHJjfd8I4DnEvbE2xJxgdfcm1WdPJQBPX9BBjpYsuHE9OexsXxWBMP9v
+         i5v4wN9LXdN/HTcjrdMVOW6QXPiGIMM5ZxATRMaRhnx0gV48VCBfvcsDh1pcxOTSLMaO
+         N8zKKbXneHtW+TNpURPLVpI9/n8qK8BeYH0GTBskKKwjxo73G6UKxrMsdDP9KjiDjxWE
+         FQFA==
+X-Forwarded-Encrypted: i=1; AJvYcCV5vKEc8YJi9gCTfQOSopDftO2bF6IwQ/lUEcgW4cU165paTYkZ0IoQp0+yk/WhBEmReBMuAW2hBmZTZ4Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHXuwDEsIAd99sXVIGjlp1oHx8RZSJ1phA9uF6GyYz6yh4Fq6Y
+	3coXgblY0r43WYx379kZCngiQ8jKQLEsnssJkICXHWZF7MKLbEFlfk/dN5NnDBDivrE1APt9iU4
+	NBiMiD696MK7DdlzMYVSuDYhLaEu2hcv5aiaGdyo5hxvCQAc6XTnq6giRSJw=
+X-Google-Smtp-Source: AGHT+IHLZ1HCqSnFjMR4KLHP6SFDjuByghjjlKM+B2N0WB4+I6KGatYCQmwuh+/cN09KFsyTM/Tb0HctEAScqEwluVEPrTO4zOPc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250717-fix-rpmhpd-abi-v1-4-4c82e25e3280@oss.qualcomm.com>
-References: <20250717-fix-rpmhpd-abi-v1-0-4c82e25e3280@oss.qualcomm.com>
-In-Reply-To: <20250717-fix-rpmhpd-abi-v1-0-4c82e25e3280@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Ling Xu <quic_lxu5@quicinc.com>, Dmitry Baryshkov <lumag@kernel.org>,
-        Tengfei Fan <quic_tengfan@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1098;
- i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
- bh=avnk6sc8EHSeOS7ES2prPQK2MQlrFEYK/e/4co5pN+A=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBoePHYGkw/Rph590C+UEwl4DnZrUOVRJn+NeX96
- gfPgIBO3pyJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCaHjx2AAKCRCLPIo+Aiko
- 1aY5B/4ktrdchoWj/19HvXv1ozvYVpbwr8rM1boFE1OPTarm6mFCOYCl+Fxu3Xwc0LjF+67NNk+
- eRVihFkq7YPWJmVPEQhjOieEtalR1r6hMDGCwm10nBBdbxD5fyxUeUgawIpDAYz4yNnTCQC2/ya
- e5DFpX93SZV0rXO6b1wiX2sB7E/0x0KDnhwLYEvDYOCGivZSkYxcDbTAYjOnWpXj9gSSHq833rx
- DWx9/OOlyEtYa1GQa2mX8jTSPqeWBHiCr3XOHiu+LeoStGdkEu0tVv3Al3AvVj6V/NdIs6x2/xL
- fKuRO4YpGrsx3gxqttwbw/hSiGOWVPA0dumdcNpJBr1ci5j9
-X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
-X-Proofpoint-GUID: KaXXPzHg8ixYCnTt8WiOrOe3snpKXsrO
-X-Proofpoint-ORIG-GUID: KaXXPzHg8ixYCnTt8WiOrOe3snpKXsrO
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDExMyBTYWx0ZWRfX4Nio8QC8WGPI
- Nh09ppG5U2803YhxCBHhrcJVN339LspLhGURtyiJe88I1RNMkX44B0+1ybVlvjjjhqBsObaNpmE
- ilPrJsndooEjXjxB133HZqIC4Lun0EINDzOeemLCvo1hW5Qcvr2tMSZljErQDr1G1Vmh4+rqRO+
- SywU5VHQtLxda6+blSp5T68/vxVXniHOyfwKh8h4fbpGVE6iXid4M5NVMNbXod0u2qP8FkjIMzb
- SwybexsvByhddkhH7LPHRlVz5scNtKIeS0W9XmgfGJvNaz4DUek3dpoKNHgRUyqEpBpVC52BJ7N
- xyEHjdycPKfHRNz9klo29hyGww/gWc/abAPR7Nf8vSNRI43SgbnPLfu7dIAaNvdDxFVWk08thaJ
- 3/jQV1KpA0PmvVlCXxN/H0RXxF4VNbZ7Nnjoj14YR0OMuh9uZ4RTR7uq5pTq8NZTJZZZL9bt
-X-Authority-Analysis: v=2.4 cv=Xc2JzJ55 c=1 sm=1 tr=0 ts=6878f1e1 cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=e06P08YCo0CmzbESZgoA:9 a=QEXdDO2ut3YA:10
- a=NFOGd7dJGGMPyQGDc5-O:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-17_01,2025-07-17_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 mlxscore=0 priorityscore=1501 adultscore=0 mlxlogscore=770
- phishscore=0 suspectscore=0 spamscore=0 lowpriorityscore=0 impostorscore=0
- clxscore=1015 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507170113
+X-Received: by 2002:a05:6602:48b:b0:879:674e:2c73 with SMTP id
+ ca18e2360f4ac-879c295015amr844546439f.4.1752756633440; Thu, 17 Jul 2025
+ 05:50:33 -0700 (PDT)
+Date: Thu, 17 Jul 2025 05:50:33 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6878f199.a70a0220.693ce.0047.GAE@google.com>
+Subject: [syzbot] [kernel?] WARNING in comedi_compat_ioctl
+From: syzbot <syzbot+6048f8e5da91c7055339@syzkaller.appspotmail.com>
+To: abbotti@mev.co.uk, hsweeten@visionengravers.com, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The SM8550 has switched to RPMHPD_* indices for RPMh power domains,
-however commit e271b59e39a6 ("arm64: dts: qcom: sm8550: Add camera clock
-controller") brought some more old-style indices. Convert all of them to
-use common RPMh PD indices.
+Hello,
 
-Fixes: e271b59e39a6 ("arm64: dts: qcom: sm8550: Add camera clock controller")
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+syzbot found the following issue on:
+
+HEAD commit:    3f31a806a62e Merge tag 'mm-hotfixes-stable-2025-07-11-16-1..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=152307d4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=84eae426cbd8669c
+dashboard link: https://syzkaller.appspot.com/bug?extid=6048f8e5da91c7055339
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-3f31a806.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/51112e82d2bc/vmlinux-3f31a806.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/dfafec79e704/bzImage-3f31a806.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6048f8e5da91c7055339@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 6660 at mm/page_alloc.c:4935 __alloc_frozen_pages_noprof+0x30b/0x23f0 mm/page_alloc.c:4935
+Modules linked in:
+CPU: 0 UID: 0 PID: 6660 Comm: syz.2.103 Not tainted 6.16.0-rc5-syzkaller-00266-g3f31a806a62e #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:__alloc_frozen_pages_noprof+0x30b/0x23f0 mm/page_alloc.c:4935
+Code: f0 5b 5d 41 5c 41 5d 41 5e 41 5f e9 8f 12 73 09 83 fe 0a 0f 86 0a fe ff ff 80 3d 17 9d 7d 0e 00 75 0b c6 05 0e 9d 7d 0e 01 90 <0f> 0b 90 45 31 f6 eb 81 4d 85 f6 74 22 44 89 fa 89 ee 4c 89 f7 e8
+RSP: 0018:ffffc9000dfe7988 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 000000000000001a RDI: 0000000000040dc0
+RBP: 00000027fffffb00 R08: 0000000000000007 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000001 R12: 000000000000001a
+R13: 1ffff92001bfcf46 R14: 00000027fffffb00 R15: 000000000000001a
+FS:  0000000000000000(0000) GS:ffff888097520000(0063) knlGS:00000000f503cb40
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+CR2: 00000000f7496188 CR3: 0000000066b87000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ __alloc_pages_noprof+0xb/0x1b0 mm/page_alloc.c:4993
+ __alloc_pages_node_noprof include/linux/gfp.h:284 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:311 [inline]
+ ___kmalloc_large_node+0x84/0x1e0 mm/slub.c:4272
+ __kmalloc_large_node_noprof+0x1c/0x70 mm/slub.c:4300
+ __do_kmalloc_node mm/slub.c:4316 [inline]
+ __kmalloc_noprof.cold+0xc/0x61 mm/slub.c:4340
+ kmalloc_noprof include/linux/slab.h:909 [inline]
+ kmalloc_array_noprof include/linux/slab.h:948 [inline]
+ compat_insnlist drivers/comedi/comedi_fops.c:3145 [inline]
+ comedi_compat_ioctl+0x3e9/0x910 drivers/comedi/comedi_fops.c:3225
+ __do_compat_sys_ioctl fs/ioctl.c:1005 [inline]
+ __se_compat_sys_ioctl fs/ioctl.c:948 [inline]
+ __ia32_compat_sys_ioctl+0x23f/0x370 fs/ioctl.c:948
+ do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
+ __do_fast_syscall_32+0x7c/0x3a0 arch/x86/entry/syscall_32.c:306
+ do_fast_syscall_32+0x32/0x80 arch/x86/entry/syscall_32.c:331
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+RIP: 0023:0xf708e579
+Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
+RSP: 002b:00000000f503c55c EFLAGS: 00000296 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 000000008008640b
+RDX: 0000000080000080 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000296 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+----------------
+Code disassembly (best guess), 2 bytes skipped:
+   0:	10 06                	adc    %al,(%rsi)
+   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
+   6:	10 07                	adc    %al,(%rdi)
+   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
+   c:	10 08                	adc    %cl,(%rax)
+   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
+  1e:	00 51 52             	add    %dl,0x52(%rcx)
+  21:	55                   	push   %rbp
+  22:	89 e5                	mov    %esp,%ebp
+  24:	0f 34                	sysenter
+  26:	cd 80                	int    $0x80
+* 28:	5d                   	pop    %rbp <-- trapping instruction
+  29:	5a                   	pop    %rdx
+  2a:	59                   	pop    %rcx
+  2b:	c3                   	ret
+  2c:	90                   	nop
+  2d:	90                   	nop
+  2e:	90                   	nop
+  2f:	90                   	nop
+  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+
+
 ---
- arch/arm64/boot/dts/qcom/sm8550.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8550.dtsi b/arch/arm64/boot/dts/qcom/sm8550.dtsi
-index 45713d46f3c52487d2638b7ab194c111f58679ce..a4ca06679c2f1eebacdd5938e380981c1b17925b 100644
---- a/arch/arm64/boot/dts/qcom/sm8550.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8550.dtsi
-@@ -3623,7 +3623,7 @@ camcc: clock-controller@ade0000 {
- 				 <&bi_tcxo_div2>,
- 				 <&bi_tcxo_ao_div2>,
- 				 <&sleep_clk>;
--			power-domains = <&rpmhpd SM8550_MMCX>;
-+			power-domains = <&rpmhpd RPMHPD_MMCX>;
- 			required-opps = <&rpmhpd_opp_low_svs>;
- 			#clock-cells = <1>;
- 			#reset-cells = <1>;
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
--- 
-2.39.5
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
