@@ -1,93 +1,109 @@
-Return-Path: <linux-kernel+bounces-736018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFF35B096D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 00:10:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4F53B096DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 00:13:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B2943B2341
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 22:10:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB478179FE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 22:13:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F934238D53;
-	Thu, 17 Jul 2025 22:10:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFDBB239591;
+	Thu, 17 Jul 2025 22:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="JnFTsEv6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m4KbMzq0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E6361EF092;
-	Thu, 17 Jul 2025 22:10:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255671EF092;
+	Thu, 17 Jul 2025 22:13:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752790249; cv=none; b=OE3FCjX5yjZcwsRhW4oIn8V5UK6mQ0a1QVplRNTvWWjiG/jgn2yk4vitWieaXVn4Qqb4h+wlxdQ4oEX84l1S/c6PSeAtvqgl21RV1KIiWh2/12SlWDB4cJrnpMeFr3rkTPEk1ku6Omjboy18JH4r9k9JfkumCkvuERfYy9inKPU=
+	t=1752790431; cv=none; b=JRrcdX+QqgmGz11I+j+kluHt2T8w+WWFt0RHcsEP/f1MS7oeJLeovCN0Z2mNMNvES8KRsW5CH4lxxl9GLygSTQjPHQWiIMPRhTO4xneA5tS9mP3tC59DHq5x5WXJsQTLPkyyGnPu6FvFBLlAXeo33emBSlgTMLXBvkDwF/y9aZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752790249; c=relaxed/simple;
-	bh=vZ0u5fd3DfJ6yBk3+g+sfM/GC0NNG81eBl17aO+ZI9c=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=TzmsaQFA3jRTvSViIjtBZMIE7+tReVhGFAWWyf8Rao1mTNc4rv3wagpZMMYT76NhpOy+Vu4Q1QStBvpuX/vLgwj0pDIysgfhm6H8hddBveea27Bvrm/+Apc1d/Skd0y2UPxpDGJVTl+svKJyxfB64DvAW/CjpW0geLZOVEZq+lA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=JnFTsEv6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A609C4CEE3;
-	Thu, 17 Jul 2025 22:10:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1752790249;
-	bh=vZ0u5fd3DfJ6yBk3+g+sfM/GC0NNG81eBl17aO+ZI9c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=JnFTsEv6asV1QHvn9oyLm0adlVD8YAwUk8D9+xSBsZ/4xRhcX7l4l0qMZNDgSRPEr
-	 VDRVgiNcFppstl5irHVMQqIlu2EyZC6EiTz9tDOSSNke5t727uDO0ipCsMi5ieUTgf
-	 xIAtuMC6pkfxnueF+6ZvQa0PYivWUcYkQ1GV4da4=
-Date: Thu, 17 Jul 2025 15:10:48 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Cc: hca@linux.ibm.com, christophe.leroy@csgroup.eu, andreyknvl@gmail.com,
- agordeev@linux.ibm.com, ryabinin.a.a@gmail.com, glider@google.com,
- dvyukov@google.com, kasan-dev@googlegroups.com,
- linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
- linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
- linux-s390@vger.kernel.org, linux-um@lists.infradead.org,
- linux-mm@kvack.org
-Subject: Re: [PATCH v3 01/12] lib/kasan: introduce CONFIG_ARCH_DEFER_KASAN
- option
-Message-Id: <20250717151048.bb6124bea54a31cd2b41faaf@linux-foundation.org>
-In-Reply-To: <20250717142732.292822-2-snovitoll@gmail.com>
-References: <20250717142732.292822-1-snovitoll@gmail.com>
-	<20250717142732.292822-2-snovitoll@gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752790431; c=relaxed/simple;
+	bh=6mM0rO+4DYmDGvRNLjroQJwJas0gjJn+LevbX/1O6Rs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=oB/uuG5dN65QGGN/J04gWA2XexdJxcE56jFtLDzlQBloyk6XnQJO6VwDJ4PN4hPtfztStMi9B7UaNDLx6X2IcIKJ98i3usfptPZ6aun4ueTIxKYkV7UJo6+pKB83Cba9jLz0HlTwN49wlsgQQzno5ymShQIG/mPoTMetvD7JbKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m4KbMzq0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71C03C4CEE3;
+	Thu, 17 Jul 2025 22:13:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752790430;
+	bh=6mM0rO+4DYmDGvRNLjroQJwJas0gjJn+LevbX/1O6Rs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=m4KbMzq0ycGjt/kp3z7LsAoa5H7Wja/Cf/qU5pIPyJvKxdfT69r5Vqz+7ntWj7GUx
+	 nekj3iH+v9NZcUe8ku/nO2TcT9aDUpsdPAxueFPpw9gNkQhyZjs2LyroG6KjUnAs0Q
+	 kOMQ0NvE0EpYfvddD2O1NTHYaeKV/4qm1WH2Ya/4TW+5ySUJ3Z571GM6cAyTpI7avp
+	 cDgL1swGfXOhBEf6h0de3kqcAwBmvjDOsaaJoMznK57yp2Hb6Konn8IlG51m5FVlIs
+	 J1uceLPOBmA4jrWNDpCXsjm9swI8POzFWFiWlbQAYrjH0oCCHjt14HjORZq8j0tqBI
+	 OkVkv+aJXLLGQ==
+Date: Thu, 17 Jul 2025 17:13:49 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org, lukas@wunner.de,
+	linux-kernel@vger.kernel.org, Jonathan.Cameron@huawei.com,
+	Dexuan Cui <decui@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Nirmal Patel <nirmal.patel@linux.intel.com>,
+	Rob Herring <robh@kernel.org>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Wei Liu <wei.liu@kernel.org>
+Subject: Re: [PATCH 0/3] PCI: Unify domain emulation and misc documentation
+ update
+Message-ID: <20250717221349.GA2658363@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250716160835.680486-1-dan.j.williams@intel.com>
 
-On Thu, 17 Jul 2025 19:27:21 +0500 Sabyrzhan Tasbolatov <snovitoll@gmail.com> wrote:
-
-> Introduce CONFIG_ARCH_DEFER_KASAN to identify architectures that need
-> to defer KASAN initialization until shadow memory is properly set up.
+On Wed, Jul 16, 2025 at 09:08:32AM -0700, Dan Williams wrote:
+> Bjorn,
 > 
-> Some architectures (like PowerPC with radix MMU) need to set up their
-> shadow memory mappings before KASAN can be safely enabled, while others
-> (like s390, x86, arm) can enable KASAN much earlier or even from the
-> beginning.
+> This is a small collection of miscellaneous updates that originated in
+> the PCI/TSM work, but are suitable to go ahead in v6.17. It is a
+> documentation update and a new pci_bus_find_emul_domain_nr() helper.
 > 
-> This option allows us to:
-> 1. Use static keys only where needed (avoiding overhead)
-> 2. Use compile-time constants for arch that don't need runtime checks
-> 3. Maintain optimal performance for both scenarios
+> First, the PCI/TSM work (Trusted Execution Environment Security Manager
+> (PCI device assignment for confidential guests)) wants to add some
+> additional PCI host bridge sysfs attributes. In preparation for that,
+> document what is already there.
 > 
-> Architectures that need deferred KASAN should select this option.
-> Architectures that can enable KASAN early will get compile-time
-> optimizations instead of runtime checks.
+> Next, the PCI/TSM effort proposes samples/devsec/ as a reference and
+> test implementation of all the TSM infrastructure. It is implemented via
+> host bridge emulation and aims to be cross-architecture compatible. It
+> stumbled over the current state of PCI domain number emulation being
+> arch and driver specific. Remove some of that differentiation and unify
+> the existing x86 host bridge emulators (hyper-v and vmd) on a common
+> pci_bus_find_emul_domain_nr() helper.
+> 
+> Dan Williams (3):
+>   PCI: Establish document for PCI host bridge sysfs attributes
+>   PCI: Enable host bridge emulation for PCI_DOMAINS_GENERIC platforms
+>   PCI: vmd: Switch to pci_bus_find_emul_domain_nr()
+> 
+>  .../ABI/testing/sysfs-devices-pci-host-bridge | 19 +++++++
+>  MAINTAINERS                                   |  1 +
+>  drivers/pci/controller/pci-hyperv.c           | 53 ++-----------------
+>  drivers/pci/controller/vmd.c                  | 33 ++++--------
+>  drivers/pci/pci.c                             | 43 ++++++++++++++-
+>  drivers/pci/probe.c                           |  8 ++-
+>  include/linux/pci.h                           |  4 ++
+>  7 files changed, 86 insertions(+), 75 deletions(-)
+>  create mode 100644 Documentation/ABI/testing/sysfs-devices-pci-host-bridge
 
-Looks nice and appears quite mature.  I'm reluctant to add it to mm.git
-during -rc6, especially given the lack of formal review and ack tags.
+Seems OK to me, modulo the conversation with Michael.  Would like a
+Reviewed-by from the owners of pci-hyperv.c and vmd.c, of course.
 
-But but but, that's what the mm-new branch is for.  I guess I'll add it
-to get some additional exposure, but whether I'll advance it into
-mm-unstable/linux-next for this cycle is unclear.
-
-What do you (and others) think?
+Bjorn
 
