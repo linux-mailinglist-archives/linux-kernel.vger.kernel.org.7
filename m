@@ -1,132 +1,82 @@
-Return-Path: <linux-kernel+bounces-736039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88415B0970A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 00:52:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3B4AB0970C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 00:53:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DB154E573A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 22:52:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DECA4E56B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 22:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6156238C23;
-	Thu, 17 Jul 2025 22:52:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F382F24167B;
+	Thu, 17 Jul 2025 22:52:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="1Iujcath"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="JCMJhbXa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E42171547CC;
-	Thu, 17 Jul 2025 22:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6E5241103
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 22:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752792764; cv=none; b=OrRQdQ211NlwLUyt30D8C9yZpYVJ/K9IADUZF1zlXfwahyDK8vU2ffUdcwo0NjvQTDwTK6ptZ9SOLotoemRSVhOrIA9GDJIHcBz8PxAK2RLZp30y8sQBHsE01AhQUUkiG/5S4+NqjlXxmIT5yAgLw2fDJwtJT9E6dBd0qP13Wec=
+	t=1752792767; cv=none; b=SnB4wkmayGe846GBH8yYzHrwWkV0nVuc/rGQymK/kXNKwOAFpf3iIoSmfV6chf9FweHuoYX+yvcNLTWBTjUlfO2pZYdjJkdrtuTFHodlbpMztSZYpxsu1QtStCFuU1ZBYaT9OzRp3qV5SWQHlNUqlzJboLJ3giin5YzLf2vOF7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752792764; c=relaxed/simple;
-	bh=iM7vGutXiV9jv9DBh78AMndt0vOp16U5gZNXCVl2QBU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pig/8VOAmMCIt/yHLOiKfItZ1D+AZ8d4kbSTfbmlszqPSLyt2dZyjb0SpYfVDXEd+ul0qbxSLkfB8zXsUqK7ggdXpth1a4l1Tn1n39xoo2l6CReaDkUu35vcj6ss0mn/AKl+uaFQqlDI1Eh3gX0kG1Pmnic2I16+Bo7CLEFGERk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de; spf=pass smtp.mailfrom=hauke-m.de; dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b=1Iujcath; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hauke-m.de
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4bjp8w4XcHz9srm;
-	Fri, 18 Jul 2025 00:52:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
-	t=1752792752;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TG54JTZbO77Ve++1V/J2c8Zltjjd4U0RCUVFfO4a/sg=;
-	b=1IujcathHVcIU3FV57F1kYXy7LaNwFtJdJEk12dF3X3JmsUI+TmebIYUi+9XKD2pvVf1zw
-	cAeChUiYRa6mjwttdI1vYLdo6+12HNfhxkQrZCOxl3Eh0tF/AiUULOrW44/ZnSHJMNXxGp
-	lPjFl81KcQnkTANvpB0w9UQI9F32NsXuOonmRAJOqTDEfgA0+Y9aKac5LvDx/0+1BxA4kR
-	IN7ptPSLp1K0EyGTj0pl1yfIS+Gb31OC6tmsyArvxOyJorVZ2a0XyH3L05tRQCy6m7XVjQ
-	JiNaHMBkG/nQZQ3j3MvX+y2hbH6OabB3soUwqw64wJwqHGHLZYeMaS6WrFMPgQ==
-Message-ID: <576d1040-4238-4bf0-aa61-e1261a38d780@hauke-m.de>
-Date: Fri, 18 Jul 2025 00:52:30 +0200
+	s=arc-20240116; t=1752792767; c=relaxed/simple;
+	bh=CSmc0JHp5Ls90DfiJWQpBqfObYBdpwcTd8QjfaVqd/I=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=sd7X8YUz6Z9tKqDw81TdNtFuhzpPXtGl31b5GKIUdtnWgpbxGP3mALTu1VogPUZB5Ly8+KXl8GjZdZ4iSiR/DyyXzYxSbHb+kfAUKwgNfYuW1cNVAy325uJV3TJo/PN0ZO5Bd7eVoFBa+LfrTyfpFvBVHM7yBdAIJglTznksWsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=JCMJhbXa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 816E9C4CEE3;
+	Thu, 17 Jul 2025 22:52:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1752792766;
+	bh=CSmc0JHp5Ls90DfiJWQpBqfObYBdpwcTd8QjfaVqd/I=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=JCMJhbXa7A202WishAfZaEuYxgBXTQ4WKne9zG5wtdJAkxYzfJcYxUh+rvT7QUKY6
+	 0zs+IVKaWvl3b/NGvROX2pHwIP5eKqOs3NrGr6Z63VPtpGyX0L4H/UO0euEFu75cjN
+	 7JbVT5FndhbLxQVPr/kYjYtallxbkOXPwE0i/ewk=
+Date: Thu, 17 Jul 2025 15:52:46 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Davidlohr Bueso <dave@stgolabs.net>, mhocko@kernel.org,
+ hannes@cmpxchg.org, roman.gushchin@linux.dev, yosryahmed@google.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] mm/memcg: make memory.reclaim interface generic
+Message-Id: <20250717155246.1f2a90c76d71b401255f11b9@linux-foundation.org>
+In-Reply-To: <ggavn7jgnti6uhdwlbgmuz4miplyh5zzixgmlye53qmaoh7tkp@3srwgtxrhtld>
+References: <20250623185851.830632-1-dave@stgolabs.net>
+	<20250623185851.830632-3-dave@stgolabs.net>
+	<ggavn7jgnti6uhdwlbgmuz4miplyh5zzixgmlye53qmaoh7tkp@3srwgtxrhtld>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH v2] kernel/fork: Increase minimum number of allowed
- threads
-To: David Laight <david.laight.linux@gmail.com>,
- Jiri Slaby <jirislaby@kernel.org>
-Cc: sashal@kernel.org, linux-kernel@vger.kernel.org, frederic@kernel.org,
- david@redhat.com, viro@zeniv.linux.org.uk, paulmck@kernel.org,
- stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
- Lai Jiangshan <jiangshanlai@gmail.com>,
- "Luis R . Rodriguez" <mcgrof@kernel.org>
-References: <20250711230829.214773-1-hauke@hauke-m.de>
- <48e6e92d-6b6a-4850-9396-f3afa327ca3a@kernel.org>
- <20250717223432.2a74e870@pumpkin>
-Content-Language: en-US
-From: Hauke Mehrtens <hauke@hauke-m.de>
-In-Reply-To: <20250717223432.2a74e870@pumpkin>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 7/17/25 23:34, David Laight wrote:
-> On Thu, 17 Jul 2025 07:26:59 +0200
-> Jiri Slaby <jirislaby@kernel.org> wrote:
+On Thu, 17 Jul 2025 15:17:09 -0700 Shakeel Butt <shakeel.butt@linux.dev> wrote:
+
+> On Mon, Jun 23, 2025 at 11:58:49AM -0700, Davidlohr Bueso wrote:
+> > +
+> > +int user_proactive_reclaim(char *buf, struct mem_cgroup *memcg, pg_data_t *pgdat)
+> > +{
+> > +	unsigned int nr_retries = MAX_RECLAIM_RETRIES;
+> > +	unsigned long nr_to_reclaim, nr_reclaimed = 0;
+> > +	int swappiness = -1;
+> > +	char *old_buf, *start;
+> > +	substring_t args[MAX_OPT_ARGS];
+> > +
+> > +	if (!buf || (!memcg && !pgdat))
 > 
->> Cc wqueue & umode helper folks
->>
->> On 12. 07. 25, 1:08, Hauke Mehrtens wrote:
->>> A modern Linux system creates much more than 20 threads at bootup.
->>> When I booted up OpenWrt in qemu the system sometimes failed to boot up
->>> when it wanted to create the 419th thread. The VM had 128MB RAM and the
->>> calculation in set_max_threads() calculated that max_threads should be
->>> set to 419. When the system booted up it tried to notify the user space
->>> about every device it created because CONFIG_UEVENT_HELPER was set and
->>> used. I counted 1299 calls to call_usermodehelper_setup(), all of
->>> them try to create a new thread and call the userspace hotplug script in
->>> it.
->>>
->>> This fixes bootup of Linux on systems with low memory.
->>>
->>> I saw the problem with qemu 10.0.2 using these commands:
->>> qemu-system-aarch64 -machine virt -cpu cortex-a57 -nographic
->>>
->>> Cc: stable@vger.kernel.org
->>> Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
->>> ---
->>>    kernel/fork.c | 2 +-
->>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/kernel/fork.c b/kernel/fork.c
->>> index 7966c9a1c163..388299525f3c 100644
->>> --- a/kernel/fork.c
->>> +++ b/kernel/fork.c
->>> @@ -115,7 +115,7 @@
->>>    /*
->>>     * Minimum number of threads to boot the kernel
->>>     */
->>> -#define MIN_THREADS 20
->>> +#define MIN_THREADS 600
->>
->> As David noted, this is not the proper fix. It appears that usermode
->> helper should use limited thread pool. I.e. instead of
->> system_unbound_wq, alloc_workqueue("", WQ_UNBOUND, max_active) with
->> max_active set to max_threads divided by some arbitrary constant (3? 4?)?
-> 
-> Or maybe just 1 ?
-> I'd guess all the threads either block in the same place or just block
-> each other??
+> I don't think this series is adding a use-case where both memcg and
+> pgdat are non-NULL, so let's error out on that as well.
 
-I will reduce the number of threads. Maybe to max 5 or maybe just one.
+As a followup, please.  This has been in -next for four weeks and I'd
+prefer not to have to route around it (again).
 
-I think we should still increase the minimum number of threads, but 
-something like 60 to 100 should be fine. It is calculated based RAM size 
-128MB RAM resulted already in 419 max threads.
-
-Hauke
 
