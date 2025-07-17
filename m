@@ -1,201 +1,175 @@
-Return-Path: <linux-kernel+bounces-735186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3396B08BE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:46:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6E3FB08BEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:47:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D5671AA4D2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:46:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8B591AA7A5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:48:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B1F2AE8E;
-	Thu, 17 Jul 2025 11:46:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB2D29B790;
+	Thu, 17 Jul 2025 11:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GCkX2a96"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NTiH8TwV"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F7232CCC5
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 11:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962932CCC5;
+	Thu, 17 Jul 2025 11:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752752770; cv=none; b=dlflAIFfZxxbUDohgXA9/BZBk2kVOVBobmtpxuEXARAE38ucw3Nvfz8/QVQpaG5hzOx7Gx7t0A2+WyhSAHryav5tMOQzRYs1k8AFaNAnog8MKxgf8MYNK4QrfuM8bz9NHGn0fnkjgEh1Yy0+sazhTsI9LCybjLy619QSUGoUO5M=
+	t=1752752845; cv=none; b=CLArFIyKM0J8WxSYvgppFdDjDzwFD+MrreZe9qNa6Jq7vh/YoQ0CEqDdmJuxIQ6+9X18WQMd1mXpMk6iFmrWtbHdMm8fa1BjgOmfnDJqWxxGxu1H2JXlK02wDRohL746AzjQgFyS/zn4KfJ+BQko/mJISC0Kr6sKQkYId8Y8vq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752752770; c=relaxed/simple;
-	bh=y5Yvsl4fGOPbGkM+LLjwuxdkLlvSVR7Mj0EaWJvOXyo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=twlDrjr4pNrX13PK7qtNN9JnjJ1YOyb1kRvK3O2vjMYWulY7nKdOnivQnODA4SS0TH2V1wbj6yObAOZ9GVlFSN30bTgS54AmtNSDG5FJ0Bwr2apn05aBMwcvp86uR+qVeXIiksfkROTLc6boqe10l/UqbaZAwatMyIUTETJe+pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GCkX2a96; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752752768;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=f3CNnOqez6AzkBc0azQI5WcTOpAKQZ1WjefmRJbSD+o=;
-	b=GCkX2a96l1NJI7SCSTPx0BhcJi2OopMdNEofOIDF9yyUaGnDvjsmACrAyjz7sbH4P7fsSL
-	m0JFVqFQarxAxo0zmjQNBHg3zH1qBbNOiNlxk+ZNyfYNoKNFuejbLgrM7/R6lXbFffFoaw
-	BI3SGYZxzBqRFrlpKIencpQBcBXlbE8=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-137-Gudn0nRzMDWg0rlsBRey8Q-1; Thu, 17 Jul 2025 07:46:07 -0400
-X-MC-Unique: Gudn0nRzMDWg0rlsBRey8Q-1
-X-Mimecast-MFC-AGG-ID: Gudn0nRzMDWg0rlsBRey8Q_1752752766
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-456267c79deso2603665e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 04:46:06 -0700 (PDT)
+	s=arc-20240116; t=1752752845; c=relaxed/simple;
+	bh=Q1O9ujEI/+5mMPGKVIHuQmTYkvZY6/Ie/ovaWQ6LnNo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pU6unDtRsY+TZ56aeQwinpi8ARiD+WoQuqC+cMnF17hwjO+RGh/YbH1Eq43BJHaKG6n0svE2pIw1GE4vmq71m9LejmIelpJUZfAxTe7gq+qNWBEv/udkRX/KrDWrUopMZMg3iYY5wQLSxn49kSWYeaAAawCJsUfva3bTPmOjsPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NTiH8TwV; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-556fd896c99so797349e87.3;
+        Thu, 17 Jul 2025 04:47:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752752842; x=1753357642; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=hUzQnHUphnbfFgIY49ERlZzZ414PTUWI3wMK+KFf1L8=;
+        b=NTiH8TwVujpGhzNK5mZn7AYCTZsHA4NPGGRNwzhoSfLo6sHNO0t88Ot2g7dHFLXrCW
+         P3AyD+9qAVjBjyGGP6gUfe3+hS9zl5DaKKcuRbCB9XptFC65BJhIfa2cEbWJ/0cT4VX/
+         G0a/U9+K2dL9QBrXD9EZRIfTkDW0Z+IQpXkeibxdwpjRLl8PVvG1tkINH/n8SZNNbVqF
+         U/la1IgQqbJ0MrIr1X/7pqvDaNiI6yXN6C1nHHwjUcV6lAustprLtuS0q2qEJ1bWFnw2
+         0g/zuitiwC9sEde4zuBR5FVBcgw5tkM1TbyIrib1Pwy/P3UIeFYqWDqFUnPXJzOGX5tG
+         2YEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752752766; x=1753357566;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=f3CNnOqez6AzkBc0azQI5WcTOpAKQZ1WjefmRJbSD+o=;
-        b=jr1AnD6ZAhvpegRkMS58PaJzTVtDu/Kmw5/+FgPS22G0YOsPEv8JWs+sCkghQxIFDP
-         NE+z6c5RSvRD+2vSl8oTE30+3ySHbolfwpt9MLOMr6gC2Px8RbBRADFhNsHxzj/kXTMU
-         rtKKN4SF7hILBkbjtO8fdsespsw4ENbD6dzIIhDI1RWOFdBvueGlKDvBwFiN6s5I4Dwr
-         VAxJdk2pZ0M/ZwzxX3tGrGnE6g+1k7wF54T335vRakl/9oJ8w/+LIFlrZTdQ6zi34y0G
-         uGLx0G3eosU1B+GFt4n/58Fo2Aqcl+RKcGUlL4mqMvWmZEVg4uMvjJVFeAKAcygAVmPB
-         9ySw==
-X-Forwarded-Encrypted: i=1; AJvYcCXD9q9y93cyWePztTPkFIP3f1ZsXdXTqNvVd6ndkNB9qSRsObP4sG1k74yOLqjCRY6SoSMZORHd3RWdSHs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYragfeJqtroA1mkGEmq1bDmfjRJ8sawKhCArzLe/z6YgQYDBq
-	V/XfYIaIsECaseIOF5gsRKs5gJeJcfAbqzDNYySV2XOSdWUwP8JIF0LJhZZh0oRw0cqDbambBm5
-	4RVNi1ZfcSDCVkwR0nEtpv9shDmGfHVFtFcPjnbk2PYYfhn/XlGpIaT+dnvR1K+jDRA==
-X-Gm-Gg: ASbGncuvkGHWt/Ap6iWWF3wj16LNJ7tlkmOO7GmgoGynzmn98wDop9ZSeFPgi9IZYwm
-	buE050zHqyXBjHK1exwVimRLyDqK8pQlGhdmOtbirYnx9QZtaR3lTvtWSR+HxWKYfkhN8GxDSA7
-	4V6X6XEHeb355GQN4YH+OFUnSwbrwoG2gILLhSyZppHJwsR52Q0+hiJuzgCE4P3oxaPUTEa95gL
-	GQnTwvu9RQAMoBMuSpVD4KBNbnLce6wOmOzqktNuQcN/K7AT2awjCqEQUPO5n2MPCDNvVQHCpM5
-	7LZ4kVzTyHc7EYeOeV/77dSXd/JTRW9Pfx0fjrem9AbTTiJG32ghMOI0rSG4oexhfIgNxxUDcya
-	h2J+1dey49e2+q/VDb+VjkpaBsQa3bNYGTUOvsX6ZvcUzpyKNH3zwrDbvHGDvVbIT
-X-Received: by 2002:a05:600c:a10f:b0:454:ad94:4b3d with SMTP id 5b1f17b1804b1-4562e37a0f7mr44076105e9.1.1752752765699;
-        Thu, 17 Jul 2025 04:46:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHmFjfdXEG/fRnZhxAAlgeVgrboqZitpFuKt4eHOADc0jjqpqiFBONXu1paEh0mp24W2TnnLQ==
-X-Received: by 2002:a05:600c:a10f:b0:454:ad94:4b3d with SMTP id 5b1f17b1804b1-4562e37a0f7mr44075725e9.1.1752752765217;
-        Thu, 17 Jul 2025 04:46:05 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f1f:3600:dc8:26ee:9aa9:fdc7? (p200300d82f1f36000dc826ee9aa9fdc7.dip0.t-ipconnect.de. [2003:d8:2f1f:3600:dc8:26ee:9aa9:fdc7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc91d8sm20291948f8f.42.2025.07.17.04.46.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Jul 2025 04:46:04 -0700 (PDT)
-Message-ID: <ea55eb30-552a-4fca-83e0-342ec7c98768@redhat.com>
-Date: Thu, 17 Jul 2025 13:46:03 +0200
+        d=1e100.net; s=20230601; t=1752752842; x=1753357642;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hUzQnHUphnbfFgIY49ERlZzZ414PTUWI3wMK+KFf1L8=;
+        b=Jc/xBNMSBDfWQt0PXVQsPwbfBB4wOJl/tIyaDHKH01UoPUo4KtY4lNXksH3rj4iCXf
+         sQc/vE9u5MnojZxPp3Fcrq1UPYvmTaPbI3QonjlQuFP9gFhSCW1y+sSilEGvv+ZMlZpN
+         yOHHpCT3XAOkpjuD05+H2sii38C5qvHqKJpa6AUxzKpDP/zznhqYo4DeP3XZ8PWimi0Y
+         efWMebRm5hkrqZhOrNZcyn7fyWImycNeuMyAtMgUVnnbzYiSqTONU2gxB2xAdINX3fii
+         fV/mPA/3oRt+laR/+YRnEeniUdZGxIHsExqdhJhz3bcX+hfmxamKh9YFB2Y+3JaZOboh
+         U2Lw==
+X-Forwarded-Encrypted: i=1; AJvYcCUfNOIGKPdLZARrT/Yp3/7/A17hRvYowNvyXIyI9ePDI5EfWXUkFeJmsUu/yrb6gmuMJU4692eg@vger.kernel.org, AJvYcCWB8kbizR9AqMJtdLsCXPNXbBmxSauavhKlwUowWt6dOQgiNMCVhl5DntSEXHnvaKZk8RtQz3qkhD+PTko=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiI+KNtvWq8o7dkj24QogvDVb714lzkvJye0BQO4QPFTy81pu0
+	b3dtjIvhVEtQrQmfUGRzr1us9ctBV4ZM/WldQh/4wo15NEVXHDavUA1o
+X-Gm-Gg: ASbGncvKAoyZPANEpxAoIriWazcuNIqE6qVoWew/d2cJRjy5VqA9MajUv7F4v+AzQiG
+	TVk/Q5gztzlxIeZ5NDffw7f6OFIszZKi9tpB2eLlgRJaJ/cAHvHqnjsAvk6hSk31b9Hruc1/OOw
+	aiufBgEqTAo1Ap9TxzuEpFwcB5epYs94DWyHc0N/Bl+8sleIrx03Fu9vAMpc6+aik9jYWu+ay0C
+	vJ59cm1QnqA8kZ2JKU/JbQctoAKZi8koiglJJhuBTtjgF3T7SVtYjhE/KsHbqGn8kMk/hMno6F+
+	an+WqQd9K99dMQ5tQpS6LnRu3GJBSDE+asw82BCWDwrNcjNwpAl8H27FXeKBbwO+s/nVy0EnD5U
+	wdRSMu/r3pxvh/NS72Bf9qB+sjFy/KQ==
+X-Google-Smtp-Source: AGHT+IEeUss8ZBlPkHLakvGxJF2K58yDRc8vQWOCbMdXUi501yCOkwF9vYWrYBaVVUbMnozeWCQi6Q==
+X-Received: by 2002:a05:6512:33c1:b0:553:d910:9340 with SMTP id 2adb3069b0e04-55a23f72cf3mr1951594e87.46.1752752841436;
+        Thu, 17 Jul 2025 04:47:21 -0700 (PDT)
+Received: from mobilestation ([178.176.56.174])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5593c7bca2asm3021540e87.29.2025.07.17.04.47.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Jul 2025 04:47:20 -0700 (PDT)
+Date: Thu, 17 Jul 2025 14:47:14 +0300
+From: Serge Semin <fancer.lancer@gmail.com>
+To: "G Thomas, Rohan" <rohan.g.thomas@altera.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Romain Gantois <romain.gantois@bootlin.com>, netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Matthew Gerlach <matthew.gerlach@altera.com>
+Subject: Re: [PATCH net-next 2/3] net: stmmac: xgmac: Correct supported speed
+ modes
+Message-ID: <6fsqayppkyubkucghk5i6m7jjgytajtzm4wxhtdkh7i2v3znk5@vwqbzz5uffyy>
+References: <20250714-xgmac-minor-fixes-v1-0-c34092a88a72@altera.com>
+ <20250714-xgmac-minor-fixes-v1-2-c34092a88a72@altera.com>
+ <b192c96a-2989-4bdf-ba4f-8b7bcfd09cfa@lunn.ch>
+ <e903cb0f-3970-4ad2-a0a2-ee58551779dc@altera.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/5] mm: add static PMD zero page
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: Suren Baghdasaryan <surenb@google.com>,
- Ryan Roberts <ryan.roberts@arm.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>,
- Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
- Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
- Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>,
- Michal Hocko <mhocko@suse.com>, Lorenzo Stoakes
- <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>,
- Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>,
- Dev Jain <dev.jain@arm.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
- willy@infradead.org, linux-mm@kvack.org, x86@kernel.org,
- linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org,
- gost.dev@samsung.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
-References: <20250707142319.319642-1-kernel@pankajraghav.com>
- <20250707142319.319642-4-kernel@pankajraghav.com>
- <26fded53-b79d-4538-bc56-3d2055eb5d62@redhat.com>
- <fbcb6038-43a9-4d47-8cf7-f5ca32824079@redhat.com>
- <gr6zfputin56222rjxbvnsacvuhh3ghabjbk6dgf4mcvgm2bs6@w7jak5ywgskw>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <gr6zfputin56222rjxbvnsacvuhh3ghabjbk6dgf4mcvgm2bs6@w7jak5ywgskw>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e903cb0f-3970-4ad2-a0a2-ee58551779dc@altera.com>
 
-On 17.07.25 12:34, Pankaj Raghav (Samsung) wrote:
->>> Then, we'd only need a config option to allow for that to happen.
->>
->> Something incomplete and very hacky just to give an idea. It would try allocating
->> it if there is actual code running that would need it, and then have it
->> stick around forever.
->>
-> Thanks a lot for this David :) I think this is a much better idea and
-> reduces the amount code and reuse the existing infrastructure.
+On Tue, Jul 15, 2025 at 07:03:58PM +0530, G Thomas, Rohan wrote:
+> Hi Andrew,
 > 
-> I will try this approach in the next version.
+> Thanks for reviewing the patch.
 > 
-> <snip>
->> +       /*
->> +        * Our raised reference will prevent the shrinker from ever having
->> +        * success -> static.
->> +        */
->> +       if (atomic_read(&huge_zero_folio_is_static))
->> +               return huge_zero_folio;
->> +       /* TODO: memblock allocation if buddy is not up yet? Or Reject that earlier. */
+> On 7/14/2025 7:12 PM, Andrew Lunn wrote:
+> > On Mon, Jul 14, 2025 at 03:59:18PM +0800, Rohan G Thomas via B4 Relay wrote:
+> > > From: Rohan G Thomas <rohan.g.thomas@altera.com>
+> > > 
+> > > Correct supported speed modes as per the XGMAC databook.
+> > > Commit 9cb54af214a7 ("net: stmmac: Fix IP-cores specific
+> > > MAC capabilities") removes support for 10M, 100M and
+> > > 1000HD. 1000HD is not supported by XGMAC IP, but it does
+> > > support 10M and 100M FD mode, and it also supports 10M and
+> > > 100M HD mode if the HDSEL bit is set in the MAC_HW_FEATURE0
+> > > reg. This commit adds support for 10M and 100M speed modes
+> > > for XGMAC IP.
+> > 
+> > > +++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
+> > > @@ -405,6 +405,7 @@ static int dwxgmac2_get_hw_feature(void __iomem *ioaddr,
+> > >   	dma_cap->sma_mdio = (hw_cap & XGMAC_HWFEAT_SMASEL) >> 5;
+> > >   	dma_cap->vlhash = (hw_cap & XGMAC_HWFEAT_VLHASH) >> 4;
+> > >   	dma_cap->half_duplex = (hw_cap & XGMAC_HWFEAT_HDSEL) >> 3;
+> > > +	dma_cap->mbps_10_100 = (hw_cap & XGMAC_HWFEAT_GMIISEL) >> 1;
+> > 
+> > The commit message does not mention this change.
 > 
-> Do we need memblock allocation? At least the use cases I forsee for
-> static pmd zero page are all after the mm is up. So I don't see why we
-> need to allocate it via memblock.
+> Agreed. Will do in the next version.
+> 
+> > 
+> > What does XGMAC_HWFEAT_GMIISEL mean? That a SERDES style interface is
+> > not being used? Could that be why Serge removed these speeds? He was
+> > looking at systems with a SERDES, and they don't support slower
+> > speeds?
+> > 
+> > 	Andrew
+> As per the XGMAC databook ver 3.10a, GMIISEL bit of MAC_HW_Feature_0
+> register indicates whether the XGMAC IP on the SOC is synthesized with
+> DWCXG_GMII_SUPPORT. Specifically, it states:
+> "1000/100/10 Mbps Support. This bit is set to 1 when the GMII Interface
+> option is selected."
+> 
+> So yes, it’s likely that Serge was working with a SERDES interface which
+> doesn't support 10/100Mbps speeds. Do you think it would be appropriate
+> to add a check for this bit before enabling 10/100Mbps speeds?
 
-Even better!
+DW XGMAC IP-core of v2.x and older don't support 10/100Mbps modes
+neither in the XGMII nor in the GMII interfaces. That's why I dropped
+the 10/100Mbps link capabilities retaining 1G, 2.5G and 10G speeds
+only (the only speeds supported for DW XGMAC 1.20a/2.11a Tx in the
+MAC_Tx_Configuration.SS register field). Although I should have
+dropped the MAC_5000FD too since it has been supported since v3.0
+IP-core version. My bad.(
 
-We might want to detect whether allocation of the huge zeropage failed a 
-couple of times and then just give up. Otherwise, each and every user of 
-the largest zero folio will keep allocating it.
+Starting from DW XGMAC v3.00a IP-core the list of the supported speeds
+has been extended to: 10/100Mbps (MII), 1G/2.5G (GMII), 2.5G/5G/10G
+(XGMII). Thus the more appropriate fix here should take into account
+the IP-core version. Like this:
+	if (dma_cap->mbps_1000 && MAC_Version.SNPSVER >= 0x30)
+		dma_cap->mbps_10_100 = 1;
 
--- 
-Cheers,
+Then you can use the mbps_1000 and mbps_10_100 flags to set the proper
+MAC-capabilities to hw->link.caps in the dwxgmac2_setup() method. I
+would have added the XGMII 2.5G/5G MAC-capabilities setting up to the
+dwxgmac2_setup() method too for the v3.x IP-cores and newer.
 
-David / dhildenb
+-Serge(y)
 
+> 
+> Best Regards,
+> Rohan
+> 
 
