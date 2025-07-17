@@ -1,148 +1,116 @@
-Return-Path: <linux-kernel+bounces-735144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BDA6B08B63
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:58:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8651B08B6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:59:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E3DAA41FA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:57:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D3ECB404E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34DE629CB42;
-	Thu, 17 Jul 2025 10:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C14F929E0FB;
+	Thu, 17 Jul 2025 10:56:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Tm02R3gE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cZ81kXZK"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E99D629C33E
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 10:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309C629C33E;
+	Thu, 17 Jul 2025 10:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752749759; cv=none; b=ePtiZTzu+gjmQLf13LyxOExc4O0IsUk0YbH4X+DR644IULjnr1kad4XbKFb636nk+rHHyI11um8x5JWtXvQztkzvO/iOXP6VZ6CphCcF+6E/ORWuHKEFxjzPze97f+FXu+0eCXnxUhbV7jal+lFdcaSCk5lBsxu5N6bWZctB/qU=
+	t=1752749778; cv=none; b=gy/SknQRBKp1K650McLbIMRmgAl8ec1VCgoN7+xMy4iJDklLVegWZFTbMugxAm/7Z1tSnk1aSk4j+9xGzPhSwgs8ZZYPRiMaUQjYUvwu31JqKKi9cx8p6O7Y2n2qDmb9LD090LvRdjJ3X04y8s0WX2OtEJokCa2r8yLq6wSxgT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752749759; c=relaxed/simple;
-	bh=gSxihFMQdPhp7IfEUpVtWMpenx++JDqChT8iAbuth6A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dFCZNxXgxooMT5G4M9Ts3xqvUw95o0vTvMhYjRzJBMy9kHvzyFLzB16Q4vmK15j2CCOSRPUeTXoEfjTO8J7EOYf0/fRQ66QAAsJ73t0mo10rObYIcWEGMtNA0Bof2QkR7vO9WwoYnVoAqGCRfIqM/1iKUPFejkKOhZR56llhXUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Tm02R3gE; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752749757;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ayOJzRkHPyVA0X2izytcAplXmRZn6T5HJvLKOLJn4i8=;
-	b=Tm02R3gER4fpTgQy7CQgMuYvmxZs8k6ZznzYC2WmgFXdQM3nmnZ9jqOQSkTT4pUzCHG+gU
-	UUCHy3GKz9ca3D6tW2EAyo5ljNoL/4hb6DMH6q7AxCiw3nzGtu0wZdtPnOPLA4JhKLfZLx
-	w0P8PlyggRqROH4ojEZ1oDbgq8yIg20=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-391-u-CJ9TrmOmykAFBx4pUhRQ-1; Thu, 17 Jul 2025 06:55:55 -0400
-X-MC-Unique: u-CJ9TrmOmykAFBx4pUhRQ-1
-X-Mimecast-MFC-AGG-ID: u-CJ9TrmOmykAFBx4pUhRQ_1752749754
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-455ea9cb0beso6856775e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 03:55:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752749754; x=1753354554;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ayOJzRkHPyVA0X2izytcAplXmRZn6T5HJvLKOLJn4i8=;
-        b=jRwLtxB6bar7sWqx3h9TKoKmkGX06Uy1h4OZoksExXNjy69DHFC8r+31bGYB0XS1Iz
-         7mXU+/I0ZxWBkUgfFyWPTpopXe8dMKvTyNgjFdiaeDg7/Ie76J2MEvDKo4YIIZM0O4tJ
-         9NHyU9UBEcu4UtdF/r9OnmIw3x2zgJ0RoBlyLtG7aPyeXNuggPpFTlfSZrH81Z9/Nw3k
-         hSd/rT8heKOaxLQBtPgQvwBQusWyXdFUTAnRVW9F1m/NKkaSTnbvWqckcYsX6LN4QN/U
-         cKYiHP9s25LqZORNjKjcF2jbdAp/7N+0dBi5jIYvEON/uyZlA9wgtjdnEcLRTTXq05Pd
-         95vA==
-X-Forwarded-Encrypted: i=1; AJvYcCWecQoZQcMfWlE7ItyJelXGATr5PuYNUG7dev1PU0m+BM7g54MN4Oc+uRAt2wzDNPThn9DmcHfMEr5Wvj0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9HgOCBjZ3jWl61L+L+KBpMjbyBsvmaBIUG0klzcS7XnZtTrQD
-	6zzGg4b5FWNeGyDCZYBYYrFMZnQoKtRVVVGGhWG3Alm4js1wyKA36Br4V1JmALBZU4C8B2qAtC8
-	283dk+D7OGLWKR2ZbGMqMAlC3fXpuY3zN/MyHSdDLInYDoFWgVIHixgCeaM25OB8inA==
-X-Gm-Gg: ASbGncswPiaVHKlorb695i/UOAfnolthS8RRnll2XQE9k0VmNaUNY4jDNo7tSszB2T3
-	kksWqQqrqmc0yJ0YbcQ+0KZe6EKmoZ2HIEzF51m6SZUB6sn47L5gWZqX4EMKoXGue9wTwYzrLc4
-	sWAKNznCTR8IpCmIdkl82KkUsaUenX4f91LvcDMO6P/upL76jQRZB2eArSVGNchtclLCbbt7WHn
-	UTjultB5iPhrVC+3zfdfYI/jMnWYkwvH1+BH8PHbPXlCiiuqM3Qa0r/uoy33UtG1YTxE2dKCUhy
-	LP2+oDbeS/8AuICazV2HCaAJY/CGPDE23mbAnixf+ckPBK8eceDWOvWF86sr5Nt0s8+yAemqE5B
-	z4EaiKUrvuJ4=
-X-Received: by 2002:a05:600c:3b97:b0:456:27a4:50ac with SMTP id 5b1f17b1804b1-4562e3a29e9mr48983265e9.23.1752749754322;
-        Thu, 17 Jul 2025 03:55:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG9hmzgeO6mfBS8jGYj9rG77mwI5Itg2IPeN3BeV/EmE/d7ghhRi3L/99no/15vSa70B3AChg==
-X-Received: by 2002:a05:600c:3b97:b0:456:27a4:50ac with SMTP id 5b1f17b1804b1-4562e3a29e9mr48983105e9.23.1752749753937;
-        Thu, 17 Jul 2025 03:55:53 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45634f4c34dsm18920425e9.6.2025.07.17.03.55.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Jul 2025 03:55:53 -0700 (PDT)
-Message-ID: <650be1b7-a175-4e89-b7ea-808ec0d2a8b3@redhat.com>
-Date: Thu, 17 Jul 2025 12:55:51 +0200
+	s=arc-20240116; t=1752749778; c=relaxed/simple;
+	bh=3M/AOQVTLSDh5r3YKRTNFCJGSOna/TBA4qCj/m7bPAQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sLRmZLMU1ZQp9epqMpExdftFWe9lqIwMcT6g1gIxse0QgDu/9D7L3KK2Up5O2sgLn941xMv1WmawlZXE3JTVmbl6QMX3461I0ws25Qa2H16ivtgawaPVoD1/EToSQ/DO4OV1YQ04tCH7w3S51S7a0CFiV+SJCxCWNHNTGgmE6iY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cZ81kXZK; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=BmmpUxNUC6XMNwTNVZDcW7v4Pq1RnOf8oWukxWYtaoU=; b=cZ81kXZKAfh8nI8K2/i7JPNtlU
+	q4+HoNdJwzvH6Rl1w/cf4hP1K9k1Ga+RvuWN3pPd9V0EypsX2RtJpLBtKXE9vWXh84dZNONrlkIJp
+	2Pi1Td3J1hDV3Z3HENRw1wOKcPThj4J7+GOIPnLlW2Q3eu+tJbHNp8Wxne64+Z9kVxCgQKvm/Su89
+	yUNnrNadjFWvecppjK2BFkTyE4J1f2tNRIKzuxg/0FPDwk0ppivY2q387tRbl6uErbXLUKlYB2nfP
+	gSiOv6Gsp04WmUlvkLS9PfiDj8QeVvGB+ZaOJYKbco6eZILxUG4JHLFqOPQ497wyKIaTHe8Xbxqhw
+	h0cvhmRg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ucMHM-0000000AGIF-0Owe;
+	Thu, 17 Jul 2025 10:55:56 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 40C35300186; Thu, 17 Jul 2025 12:55:54 +0200 (CEST)
+Date: Thu, 17 Jul 2025 12:55:54 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux RCU <rcu@vger.kernel.org>,
+	Linux CPU Architectures Development <linux-arch@vger.kernel.org>,
+	Linux LKMM <lkmm@lists.linux.dev>, Linux KVM <kvm@vger.kernel.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang@linux.dev>, Jonathan Corbet <corbet@lwn.net>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Andrea Parri <parri.andrea@gmail.com>,
+	Will Deacon <will@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+	David Howells <dhowells@redhat.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,
+	Luc Maranget <luc.maranget@inria.fr>,
+	Akira Yokosawa <akiyks@gmail.com>,
+	Daniel Lustig <dlustig@nvidia.com>,
+	Mark Rutland <mark.rutland@arm.com>, Ingo Molnar <mingo@redhat.com>,
+	Waiman Long <longman@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Tejun Heo <tj@kernel.org>,
+	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
+	Changyuan Lyu <changyuanl@google.com>,
+	Dan Williams <dan.j.williams@intel.com>, Xavier <xavier_qy@163.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Maarten Lankhorst <dev@lankhorst.se>,
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH 0/4] Convert atomic_*.txt and memory-barriers.txt to reST
+Message-ID: <20250717105554.GA1479557@noisy.programming.kicks-ass.net>
+References: <20250717080617.35577-1-bagasdotme@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 3/3] net/mlx5: Support getcyclesx and
- getcrosscycles
-To: Tariq Toukan <tariqt@nvidia.com>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>
-Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
- Mark Bloch <mbloch@nvidia.com>, Richard Cochran <richardcochran@gmail.com>,
- netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
- linux-kernel@vger.kernel.org, Carolina Jubran <cjubran@nvidia.com>
-References: <1752556533-39218-1-git-send-email-tariqt@nvidia.com>
- <1752556533-39218-4-git-send-email-tariqt@nvidia.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <1752556533-39218-4-git-send-email-tariqt@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250717080617.35577-1-bagasdotme@gmail.com>
 
-On 7/15/25 7:15 AM, Tariq Toukan wrote:
-> From: Carolina Jubran <cjubran@nvidia.com>
+On Thu, Jul 17, 2025 at 03:06:13PM +0700, Bagas Sanjaya wrote:
+> Atomic types, atomic bitops, and memory barriers docs are included in kernel
+> docs build since commit e40573a43d163a ("docs: put atomic*.txt and
+> memory-barriers.txt into the core-api book") as a wrapper stub for
+> corresponding uncoverted txt docs. Let's turn them into full-fledged reST docs. 
 > 
-> Implement the getcyclesx64 and getcrosscycles callbacks in ptp_info to
-> expose the device’s raw free-running counter.
-> 
-> Signed-off-by: Carolina Jubran <cjubran@nvidia.com>
-> Reviewed-by: Dragos Tatulea <dtatulea@nvidia.com>
-> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
-> ---
->  .../ethernet/mellanox/mlx5/core/lib/clock.c   | 74 ++++++++++++++++++-
->  1 file changed, 73 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lib/clock.c b/drivers/net/ethernet/mellanox/mlx5/core/lib/clock.c
-> index b1e2deeefc0c..2f75726674a9 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/lib/clock.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/lib/clock.c
-> @@ -306,6 +306,23 @@ static int mlx5_mtctr_syncdevicetime(ktime_t *device_time,
->  	return 0;
->  }
->  
-> +static int
-> +mlx5_mtctr_syncdevicecyclestime(ktime_t *device_time,
-> +				struct system_counterval_t *sys_counterval,
-> +				void *ctx)
-> +{
-> +	struct mlx5_core_dev *mdev = ctx;
-> +	u64 device;
-> +	int err;
-> +
-> +	err = mlx5_mtctr_read(mdev, false, sys_counterval, &device);
-> +	if (err)
-> +		return err;
-> +	*device_time = ns_to_ktime(device);
+> Bagas Sanjaya (4):
+>   Documentation: memory-barriers: Convert to reST format
+>   Documentation: atomic_bitops: Convert to reST format
+>   Documentation: atomic_t: Convert to reST format
+>   Documentation: atomic_bitops, atomic_t, memory-barriers: Link to
+>     newly-converted docs
 
-If the goal is providing a raw cycle counter, why still using a timespec
-to the user space? A plain u64 would possibly be less ambiguous.
+NAK
 
-/P
-
+If these are merged I will no longer touch / update these files.
 
