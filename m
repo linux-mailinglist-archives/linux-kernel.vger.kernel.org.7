@@ -1,117 +1,112 @@
-Return-Path: <linux-kernel+bounces-734937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86A28B08886
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:55:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BA03B08882
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:55:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1B721884A3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:54:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2646B585B47
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:55:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC2528750E;
-	Thu, 17 Jul 2025 08:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qhwsfa/V"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A942874E7;
+	Thu, 17 Jul 2025 08:55:05 +0000 (UTC)
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0750286D7F;
-	Thu, 17 Jul 2025 08:54:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A64A82868B7;
+	Thu, 17 Jul 2025 08:55:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752742444; cv=none; b=fhY6OkpZsKnlLmq2F46Faqj3/GJuEdu7/PuzPFsMMyYTCqqishZuzpRX/PApQsOyI5iwS/IE71I+E/bmhLTiSZk956PiAcs95ISE6AqmWgn0E1AtEkpQqQ5VR7T/FNvqWUr7qEWct7xHYfircHs3CH9VhgbBkCD+F3Frww+U6Mc=
+	t=1752742505; cv=none; b=X3nnt0dBLU51vks1OI8x/0nFIhFY1Czsm6+Mh1b2gFivJEYBPLglI0RInidgpTUgDJDWMu4YCqfxF9NaYMNZyjB5FEcrWHgLUsn28xAgxtDInznxyXCGG95wKrxAKWP09Ervsar/dgtV8/v4Adg3qrio+RNHtD6iluP2C82Jeek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752742444; c=relaxed/simple;
-	bh=ikS7eZGcyckpPcCBZR25oVV9mLaq7LJ2mNH1ZNn1IYI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hufDc3kW0qJFbbl8PWERm2bJDdMhSFO4vLZREsn314rEfnh0OAvCJVD7sounOvGI9no0w9JQmItlfr1pLrmeAjTHD8Sgq4QDjJGTIDEzZDK0taSr/DTpLedY4mjIuqyRpfSWILnjU2RiLKf5B6mfMQ/sI23j8dEOJDzAu4QCr00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qhwsfa/V; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752742441; x=1784278441;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ikS7eZGcyckpPcCBZR25oVV9mLaq7LJ2mNH1ZNn1IYI=;
-  b=Qhwsfa/VdxcZ4dEn9B52CSZBb+GJQmjQ2PY1HqtaWv82O3XjkHi/oPQ4
-   WdlJicb0443bhC9IW3Oy+12Ckl5I4o6dqDRMyPlbgstNNhxWB2lvqAFfm
-   2VwuSsJQDh8qzEVlQQ/uvVx5vieN60rl1GmixCP0qeWkHnut8r5PXtYS0
-   L4EG3EV+A+sM0CUnOQapakwdlbyevVINLJmRa7xS9eVhr9AV7bEp/QM3i
-   3t1rgncEdJp88Or+3vLBnggaFUEYGMDuB8TYs7xivr7AWnJ90ddCpBtS2
-   stUS/E6ZrdeGSJJFr3uaDq2DWG+Hcoc4RrU8TkqoQ4MqeZiyn03eU3PXk
-   Q==;
-X-CSE-ConnectionGUID: 3+bxPew5SJi+KrMDEiufmQ==
-X-CSE-MsgGUID: P5yhT7VDT/GKKexWUoLTtA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="77545620"
-X-IronPort-AV: E=Sophos;i="6.16,318,1744095600"; 
-   d="scan'208";a="77545620"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 01:54:01 -0700
-X-CSE-ConnectionGUID: d1C2phvQR4ieMhMwvadKsg==
-X-CSE-MsgGUID: kyaY/dfGQBaFgpqj3zXccA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,318,1744095600"; 
-   d="scan'208";a="158438320"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 17 Jul 2025 01:53:58 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ucKNH-000DPb-32;
-	Thu, 17 Jul 2025 08:53:55 +0000
-Date: Thu, 17 Jul 2025 16:53:36 +0800
-From: kernel test robot <lkp@intel.com>
-To: Richard Leitner <richard.leitner@linux.dev>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
-	Hans Verkuil <hverkuil@xs4all.nl>, linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org,
-	Richard Leitner <richard.leitner@linux.dev>
-Subject: Re: [PATCH v6 10/11] media: i2c: ov9282: implement try_ctrl for
- strobe_duration
-Message-ID: <202507171651.LXHLvA4w-lkp@intel.com>
-References: <20250716-ov9282-flash-strobe-v6-10-934f12aeff33@linux.dev>
+	s=arc-20240116; t=1752742505; c=relaxed/simple;
+	bh=tqxIONYX1LCYkk1Pt0xkmkCz19munA7lGobAGYzCGbE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PM5x1tvHlN2fzWBpR7eo1ERGjTM2h1wf3CcDUoWjpjousTL8R5UhCY4GUdCW1dvVJXea3DmLihnWLS/FqUId5LCgp9Vm7kEKdU5TUq2LkkDC39pyucs2qIZwcdgWstGO9StkJ+SVlH9yYXwAc6jaigzS0ouX+FM/8S5jw169R+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 15AFA41DF1;
+	Thu, 17 Jul 2025 08:54:57 +0000 (UTC)
+Message-ID: <3daff60c-0cf1-437e-bc70-8c84f1866613@ghiti.fr>
+Date: Thu, 17 Jul 2025 10:54:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250716-ov9282-flash-strobe-v6-10-934f12aeff33@linux.dev>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/7] riscv: Add xmipsexectl PAUSE instruction
+To: aleksa.paunovic@htecgroup.com, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Jonathan Corbet <corbet@lwn.net>
+Cc: Palmer Dabbelt <palmer@sifive.com>, Conor Dooley <conor@kernel.org>,
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20250625-p8700-pause-v4-0-6c7dd7f85756@htecgroup.com>
+ <20250625-p8700-pause-v4-3-6c7dd7f85756@htecgroup.com>
+Content-Language: en-US
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20250625-p8700-pause-v4-3-6c7dd7f85756@htecgroup.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeitdduhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnheptdeguefhhfevueejteevveeikeelkedvffdufeelveeggfeikeekgfeghfdttdevnecukfhppedukeehrddvudefrdduheegrdduhedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudekhedrvddufedrudehgedrudehuddphhgvlhhopegluddtrddugedrtddrudefngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopedugedprhgtphhtthhopegrlhgvkhhsrgdrphgruhhnohhvihgtsehhthgvtghgrhhouhhprdgtohhmpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvl
+ hhtrdgtohhmpdhrtghpthhtoheprghouhesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopegtohhrsggvtheslhifnhdrnhgvth
+X-GND-Sasl: alex@ghiti.fr
 
-Hi Richard,
+On 6/25/25 16:20, Aleksa Paunovic via B4 Relay wrote:
+> From: Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
+>
+> Add MIPS.PAUSE instruction opcode. This instruction is a part of the
+> xmipsexectl vendor extension.
+>
+> Signed-off-by: Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
+> ---
+>   arch/riscv/include/asm/vendor_extensions/mips.h | 7 +++++++
+>   1 file changed, 7 insertions(+)
+>
+> diff --git a/arch/riscv/include/asm/vendor_extensions/mips.h b/arch/riscv/include/asm/vendor_extensions/mips.h
+> index 757c941cfd86e9fced6169b1a82200e6bb5c6132..f8eca0bcf53e2de1bbdc66821fe95987105ed85a 100644
+> --- a/arch/riscv/include/asm/vendor_extensions/mips.h
+> +++ b/arch/riscv/include/asm/vendor_extensions/mips.h
+> @@ -13,4 +13,11 @@
+>   
+>   extern struct riscv_isa_vendor_ext_data_list riscv_isa_vendor_ext_list_mips;
+>   
+> +/* MIPS.PAUSE is an alternative opcode which is implemented to have the */
+> +/* same behavior as PAUSE on some MIPS RISCV cores. */
+> +/* It is a ‘hint’ encoding of the SLLI instruction, */
+> +/* with rd = 0, rs1 = 0 and imm = 5. */
 
-kernel test robot noticed the following build errors:
 
-[auto build test ERROR on d9946fe286439c2aeaa7953b8c316efe5b83d515]
+The comment block should have been like this:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Richard-Leitner/media-v4l-ctrls-add-a-control-for-flash-strobe-duration/20250716-171003
-base:   d9946fe286439c2aeaa7953b8c316efe5b83d515
-patch link:    https://lore.kernel.org/r/20250716-ov9282-flash-strobe-v6-10-934f12aeff33%40linux.dev
-patch subject: [PATCH v6 10/11] media: i2c: ov9282: implement try_ctrl for strobe_duration
-config: i386-randconfig-014-20250717 (https://download.01.org/0day-ci/archive/20250717/202507171651.LXHLvA4w-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250717/202507171651.LXHLvA4w-lkp@intel.com/reproduce)
+/*
+  * ...
+  */
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507171651.LXHLvA4w-lkp@intel.com/
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
+> +
+> +#define MIPS_PAUSE	".4byte 0x00501013\n\t"
+> +
+>   #endif // _ASM_RISCV_VENDOR_EXTENSIONS_MIPS_H
+>
 
-ERROR: modpost: "__udivdi3" [drivers/media/i2c/ov9282.ko] undefined!
->> ERROR: modpost: "__divdi3" [drivers/media/i2c/ov9282.ko] undefined!
+Unless there is something else to change in the following patches, no 
+need to resend the whole patchset just to fix the comment block, I'll do 
+it when I merge it.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+
+Thanks,
+
+Alex
+
 
