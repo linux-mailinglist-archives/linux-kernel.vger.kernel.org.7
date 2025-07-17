@@ -1,79 +1,80 @@
-Return-Path: <linux-kernel+bounces-735175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE7FEB08BC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:32:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 29A84B08BCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:33:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 351AB1891C9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:32:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A284A1C22D76
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:34:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D52C729ACCC;
-	Thu, 17 Jul 2025 11:32:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E0029ACCC;
+	Thu, 17 Jul 2025 11:33:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="MStfA7yq"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cmYXwm6A"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408A5275855
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 11:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F8119D07E;
+	Thu, 17 Jul 2025 11:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752751927; cv=none; b=EyPPyiULQwh4lARfKvuBJpclzNoIuIkTzUYjw3bt8kBvnwwa34/Y5rdBoNaTJ1uU7b4TKzKDCgWaH8lYgdfICKJ3ykve2iKtAxj1efAHD/cbyONJ1j252eNGHojVjuf4EhRGuikSDKxD5t3lji28k9f55j3aLKGlELuNR0UxWu0=
+	t=1752752019; cv=none; b=IM+Yy5lkxch4W0HdBFaav723KBELDwdGJSf/hovsG7ct2v1itlNE714rEyWJl9l+2owr3rpU6cI90xrGSxVQc8i+LUMHoSRTF4rgCxxoHA9NCpohvWgaYDzYQQzBLfT1X596Cw58gNIMqDLOzvp2w0W1q78sWHAFwnjalarkN2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752751927; c=relaxed/simple;
-	bh=NnqdSjL+Rs0PFPzmqEJ8dyDUymEj23QKvWFQ0LII9cE=;
+	s=arc-20240116; t=1752752019; c=relaxed/simple;
+	bh=6U2OH/CjEwXIt8VklPkbpyEDxQKKccJGFPTbQ20C3M4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ghg3sqKV4SuZX34lvVG+pWzE2FPMOahjwEphIREs8Y/+liZun8SZoxW6TEvCNF2dyKEU0dc2jIRuY0tmWTg5NJmbOqQuonFQ7vN9l7eiGL9L/DeItXrTPX3xUPo1WoTol/5jvdifUIaSl/ClyE4pNmeX9+4nl0M+bIpP8cS8BYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=MStfA7yq; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-607434e1821so1229186a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 04:32:04 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=CZfEf/u1e+j4RO9x1/NOeTaE3oYw+T+rn/1LKDtacNKLRdlxHQJbL/acLXbmRLGjNUc4R2I2cEFyvNE9982QRr3rnEJ87cIfeIwOW5C/Sj9Tp5lVZ1913Bbnl4Rlrvf8zg5JoNDHpBvdhV5PifMrWAF9OXgBs4s6yXNl8+gsN0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cmYXwm6A; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ae0df6f5758so145586266b.0;
+        Thu, 17 Jul 2025 04:33:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1752751923; x=1753356723; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=gmail.com; s=20230601; t=1752752015; x=1753356815; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=1nbfA/BUePz5jg5ZXDN13NPJjAM7aHo+l8+nJUpAVbk=;
-        b=MStfA7yqjyUiy6FWorOWCGMnWviIL61MbYLr9+S9d2cEU42jgE+c+ZTMbOdh65TyVK
-         Lc2NRilJf3B/KlkaN9eZoKtq+AKdH/gei6xAICwkqWaqcE5+1eSnU85ITN4rNfw2qt3F
-         Cg80tcjDVhQS+k3XPQGpRpPYseaYHuvmIG77VAUUqKZS8oYa/1QQmQcruoths6xaWwO/
-         ArzBSosIfztsxjVaIanBegJRKz7GcqwE5FuGEqQ1k2+M07PURDnAh6kZhiFr7msDjTHp
-         cJSxtayH7fYwi3krzmYDI2Skl5+0yJj1sFWfKJCHWcZCjFThZA/+U2Q51z1BhMxBuVzP
-         T1qQ==
+        bh=6U2OH/CjEwXIt8VklPkbpyEDxQKKccJGFPTbQ20C3M4=;
+        b=cmYXwm6Aa6VT8WZSu1zJAIRPe1Luxb2Xb0v9wNYFCoy0AYmm2rKaAxmGKLjeZvcwVz
+         lHpd+5gDJERgdlZNtPIIQUwkLuxjuQsWeLdYOPn6mE+naRzAkUiw4wP01CDQQ+pqZnAf
+         rApSpMMIWlm6HP3A2hLo4UfL413vJgr5M6+H0O6kpH0cMuWgEKDwwpHnRNnmV95BCYEd
+         lh3VBBENNKmCpy8XQVKAVcJJrEu6O2PVUITxYlc30fJIuC4/9s0+smQH4Fs/E1uI9ts0
+         J9BSQWwAmU+YAacZrlZjt1a69Yq6iEzGH/epFxC+rLGBlrN03h+4FWVBszBm7SVW4E/u
+         mf6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752751923; x=1753356723;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1752752015; x=1753356815;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1nbfA/BUePz5jg5ZXDN13NPJjAM7aHo+l8+nJUpAVbk=;
-        b=BhpoSq2+4MblbPnLP3ASqxCrNkG0vjGRUgm2GEU0KGfeVrFulI5YypWjJxe/bIJKzF
-         xkiMIvrxeXv21X//Jc7DZAN52+bKA8SpUp7JRr7lhn1BHqTPpgQCWVxonFqTDmRLEeqB
-         mjMwFLdPc1iRhGhuu0EFN8fLtUFzKOGvDRpArslWraaZVjbx5F2+j5Pq8fBcuxrmyfl1
-         eQQAIjvgJyaJqdk0qypFd+V2gSaczPtoXutMbDnQNcx5AgbNaHk+J6pS9271nGQY4kGt
-         szE6C+XvrGtlpsQRB/AZkG2IBCx3gB92m5hO250rkmv1yi7a85ID6yuKmIrrU2xHxBEc
-         41Bw==
-X-Forwarded-Encrypted: i=1; AJvYcCWWqy3ZHjR+DKRgBEGTckzaBJ8+QpZriuMGmwElFiiMzf9BVOGK7Ja+LI5IGGdQ+F5dWxjn+tAAHEtZ+jA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUhcyvhTkR34Y3pOocd4vIlelzyXkr5R31JaLYoz/v/Ebm4wNe
-	t8SSkI5OiMygkFI0SivgTJcBhdKB47vwNS7bRbNq9Bl5NCbN2+hSI2T2wN0Z1bEUpH4=
-X-Gm-Gg: ASbGncttjUfnzjEF9Nbxkx0yLPrVetr1uTtJQDBy1YrFth3o4UMkvgOG1bwUuCV9Ln6
-	Zfqd6RoZYYKJR21H1bhVG11WmkuCmkaarXpqf7ZURYczXpa0/RRsO8rAv8LsRZG6Bt36JymduFl
-	ItYb4sxNbL0Rx22unES28x2wSAXb1zQXEPPAHS4zMqljOLgSgAlyXOVSFm46iYDCcU0lYzyz/+0
-	LGfBWkcXFq7DNNj6WdZKTVtOk7s2DdixSxw6QKgofZ/XmX4UazhNoU22JFS3BfvLLh66HGmf74i
-	iulZT+5soN8lcVrQWfguhXYkDt0jtwuxTiUW4jLe1D9xxgyIE5zEkXJOr3KsKYe/zFIP6ApUbS4
-	rEj4TRgI176czlpy/r8aJhFjNPBzKgFixaLQ6hr6VvCfaa4uKechQ4WBfH1+cVpIlSQ==
-X-Google-Smtp-Source: AGHT+IHPpC07daK6TZIz+cLHthKtlpaXonfdOizJqTxBI8T6DYPMH3DS44MzKOLbMzR4Y0XLAVj+sg==
-X-Received: by 2002:a17:907:e2cb:b0:ae0:7db8:4189 with SMTP id a640c23a62f3a-ae9cde02ca4mr620673166b.18.1752751923449;
-        Thu, 17 Jul 2025 04:32:03 -0700 (PDT)
-Received: from ?IPV6:2001:a61:1347:1201:4432:54ab:26c1:9ebc? ([2001:a61:1347:1201:4432:54ab:26c1:9ebc])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7ee26b4sm1337874566b.45.2025.07.17.04.32.02
+        bh=6U2OH/CjEwXIt8VklPkbpyEDxQKKccJGFPTbQ20C3M4=;
+        b=PZMW7WTBZirLhNbH1uCOPZv/QiaKi1QsfiSIYcSAS1/3OYGM2u75JmkNxuagQLcteU
+         73vn4+JmaAu5HPEWmbkAIYk38Jv/6ZDhajgr5jb8dlgNCjato3CE9ALQl2DQ6m9Qkwb1
+         +0VaLEsgchj/HDNMHF8EuCkI0eG8WzMkwwTiYJxeRFn9bWcqXQxPqW+Xr/OYI6eugixL
+         fC9Ow1UdNIDelpGLwjOIOE04rpoboKtEJtboLvvDGqeb/m85xGu7/mKYem45D74/RSIv
+         aZIasgjzqVURNBZ3/3Uo1WtIyIbKtKZ5Bu6KfF1QYP6qGxJt8PWXxJeDRIgVFgNywLRY
+         dTfA==
+X-Forwarded-Encrypted: i=1; AJvYcCWIFvku4cZSNTAL/ur7qVZCDlzdniwHU0IQwI68/cIIjt4nmBdkdrjGN0BirhvTPnKr34GrWfMa3TtGFUdk@vger.kernel.org, AJvYcCXFhZACsSyBZ4ryxiQ4g4lpIMCm30cheRsg3pLclcR1W7d2EFabM8RLGPawLSB70msi3kg2TDuixgA5j94iSKDr+Dc=@vger.kernel.org, AJvYcCXzjoE/ZgGGrZRL4PsImqRJHWkfoKAYJffe/J8TqrYzs0NAqKWQyGTYWgODCMLI8mheN5uqLNoOP8dc@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLwbObwS31h4u4i6PbKigospZ9OgMPdxAThn4yIxmQ+vOfHh0v
+	d3iOJT93ip3sF2FO9xvbzg2IccWoZVQsH4w0ekVzuztYQ9AJNLv7wcA7TdH72w==
+X-Gm-Gg: ASbGncu6DDTQs0hpvl76RWOsqgPNiXyV66kKI0IDXXIitkdel4/A8NSvhg06UVhi0J+
+	h1D4R5N+D0Be730/5uj7Rrf6e8J8qVFwcwkNySqVHKGA/9X81pTS1MVRqk5pcnWiAks8piP4gug
+	fbKB4GbF/ESDvSuLM9BaRV0ch/VFULAUH9olZ6CcHZBaytcQpxPpK/UHTHis+zLy4fPRg/3spw8
+	bVkIBSfOU1iVqicKCCqyoMfRs826lPZzud9qRn33QFKu4JD0km/K6r+Vws2G0BmlKTDrSCUYgim
+	pXcQbfKcVOXb4Wz4bhQ8/sBcVXTAqfZAgLpwkWC2TJV0pNZV8EPVvRk1aKZ+uxoABDICbmJTFcG
+	HgR1aYuU0bi/R7pPOaiGoalxCPiqx/g66G1kWeSuNTCOqq9eAvunVJaPEaPAlYFd5U9eTjQVPUp
+	fp
+X-Google-Smtp-Source: AGHT+IFokpYaErCcaLWj5J3oTUvALXxh1UB06PRFPPxGEEZnsvtJjgJ9UYtDrOcF22Ow5ej2G53Evw==
+X-Received: by 2002:a17:907:ea8:b0:aec:56e0:c4a9 with SMTP id a640c23a62f3a-aec56e0c8f5mr139334766b.28.1752752015030;
+        Thu, 17 Jul 2025 04:33:35 -0700 (PDT)
+Received: from [192.168.1.107] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec53b053a4sm95354066b.139.2025.07.17.04.33.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Jul 2025 04:32:02 -0700 (PDT)
-Message-ID: <f63f2b91-a217-41fb-bbbb-1810d98838fd@suse.com>
-Date: Thu, 17 Jul 2025 13:32:01 +0200
+        Thu, 17 Jul 2025 04:33:34 -0700 (PDT)
+Message-ID: <3e640051-35e5-4eb8-aa00-cb57abcbb919@gmail.com>
+Date: Thu, 17 Jul 2025 14:33:32 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,48 +82,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: USB cdc-acm driver: break and command
-To: "H. Peter Anvin" <hpa@zytor.com>, Oliver Neukum <oneukum@suse.com>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
- gregkh@linuxfoundation.org, Jiri Slaby <jirislaby@kernel.org>,
- linux-serial@vger.kernel.org
-References: <ce54ae11-72bb-4ac7-980b-c1cbc798a209@zytor.com>
- <fa20ab91-5ebf-427d-b938-31ea6fb945cf@suse.com>
- <83B89F79-D28B-4F2C-87EA-F5078BD7ED17@zytor.com>
- <2c807a7e-d55d-4670-9a86-e3fcaa3e52ba@suse.com>
- <927f2d40-1004-4738-a1bc-0000d4d3e179@zytor.com>
+Subject: Re: [PATCH v5 3/3] regulator: add s2dos05 regulator support
 Content-Language: en-US
-From: Oliver Neukum <oneukum@suse.com>
-In-Reply-To: <927f2d40-1004-4738-a1bc-0000d4d3e179@zytor.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To: Dzmitry Sankouski <dsankouski@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20240617-starqltechn_integration_upstream-v5-0-ea1109029ba5@gmail.com>
+ <20240617-starqltechn_integration_upstream-v5-3-ea1109029ba5@gmail.com>
+ <7bec6fc2-6643-4ddf-9475-8ead4b312912@gmail.com>
+ <CABTCjFBTY4NV2yKyRO31MacGFAnJ4T-viDLrXkPs9z66VU6nyQ@mail.gmail.com>
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <CABTCjFBTY4NV2yKyRO31MacGFAnJ4T-viDLrXkPs9z66VU6nyQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 16.07.25 19:30, H. Peter Anvin wrote:
-  
-> ERRORS
-> 
->      The tcsendbreak() function shall fail if:
-> 
->      [EBADF]
->          The fildes argument is not a valid file descriptor.
->      [EIO]
->          The process group of the writing process is orphaned, the
-> calling thread is not blocking SIGTTOU, and the process is not ignoring
-> SIGTTOU.
->      [ENOTTY]
->          The file associated with fildes is not a terminal.
+On 7/17/25 11:12, Dzmitry Sankouski wrote:
+> чт, 17 июл. 2025 г. в 10:28, Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>:
+>> On 9/26/24 12:47, Dzmitry Sankouski wrote:
+>>> S2DOS05 has 1 buck and 4 LDO regulators, used for powering
+>>> panel/touchscreen.
+>>>
+>>> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+>> When is this going to get merged? This patch brings the regulators
+>> functionality of the pmic, so not having it merged is odd. This PMIC is
+>> used on other devices too, like the Galaxy S22.
+>>
+>> It seems like this has been hanging for almost an year at this point.
+>> If the author won't, will somebody resend it?
+>
+> It's already merged, see
+> https://lore.kernel.org/all/20240617-starqltechn_integration_upstream-v5-2-ea1109029ba5@gmail.com/
 
-I would take this as meaning that we cannot just return -EBUSY or -EWOULDBLOCK.
-Hence the generic layer would need to implement some sort of waiting
-logic.
+I don't see patch 3/3 being merged anywhere, nor is it in my linux-next clone
+from today. Do you _not_ need it anymore?
 
-> That's why I said if that is what is needed, it really belongs in the
-> tty core.  That's where the current internal delay is, after all.
+Best regards,
+Ivaylo
 
-Good. Don't get me wrong. I'd love to do this more efficiently,
-but the current API is less than optimal.
-
-	Regards
-		Oliver
+>
 
 
