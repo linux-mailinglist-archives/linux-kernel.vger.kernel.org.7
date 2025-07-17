@@ -1,290 +1,197 @@
-Return-Path: <linux-kernel+bounces-734528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53808B082C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 04:14:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BFAB3B082CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 04:14:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A0757AB71D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:12:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D77EE7B25C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27ACF1E2602;
-	Thu, 17 Jul 2025 02:14:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A6351DFDA1;
+	Thu, 17 Jul 2025 02:14:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kF8JTYY2"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BzlEQ4E/"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1BE1799F;
-	Thu, 17 Jul 2025 02:14:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6781DACA1
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 02:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752718452; cv=none; b=ATF3cq8Ydc3VsZDJBseKnfl+rtBCfc2LFTfugLW3bDba0qNhL4GbGg8Q+s4lQjrlphlcw42WFTUbLG3wn2jbNBfepzS2IVxbwg/ajplVbZgEo5rsCYJ9bViZoCku7nvVLpSQK51OqkdWPJs07sz65W9azFKXb62PsXuKbe/kcu4=
+	t=1752718471; cv=none; b=FSWh9P5Wae3O/D/o5ySxs5Z9OHt/7JKe0IWnp7IQd+fj6WfmhMQEbtW1I/DRpZKhT5uP4mtTeR0+AJqWr2dJsmGAYNA0SE9m+NBKswdvVwuC8Qaip4/XELRG5PNDMNNKb7IvYrc6IeSwoRX/rk8OBy9DWN5WvOkBq71852keVk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752718452; c=relaxed/simple;
-	bh=NNZ6/kasUwk/hZWeuRAfx2RCB4CBwevaseL0TdeUHMQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T21cijeTa/AJYJfWXM6FubuA4EmV9konhQIRlLKMcTNWVmuOXXhgvV8XFt866BSeJ96hG6PGfQP8c3t3ZFJ3H/1sDJFmpZlq6YuhFCUKv2LTUZsbG17HzuI15s4C0aQY6YyU1/PCufGylL10bFqEgI4PkG8Q6sxN+BgkZ/WkqZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kF8JTYY2; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4555f89b236so3815215e9.1;
-        Wed, 16 Jul 2025 19:14:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752718449; x=1753323249; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NjNilefCSmvk4mMPEA0XCD7CKf2tWX4gBv20NnzP/qk=;
-        b=kF8JTYY21oo5YRagIKOupi+RdTYTdLYl/EbttfDBWxnNo/II9JSsY0BhnIMFMD5qc2
-         lM4MOhSME7PuayMcRhnyPgLsIkZ45OldIcyP1VUdtf4vQIy0P2Of/rGHMeWbpclf4JMG
-         nfX+zc+1/BWA71sWJjpHGlcNuCbKucmGy/eP79murlqZEePlJwkcPdqbUSeTABVaUE+X
-         MtwrLOi9wmA8wasQaQE3KDPpNZhQ/FgZI/rkYfR4B+S50XjRXSGTVP7Xrx3CyTwOXKX+
-         0CPyyEqWfJbQ7tplLv9iNU5JX63GR+Jl5OjV+P1q9KDXe3wWHcyEMFSggOrrH6JdY+oE
-         h84Q==
+	s=arc-20240116; t=1752718471; c=relaxed/simple;
+	bh=Ocf7rDEVq/yfElBauBHcGF2Xn4oeGqrWWXKA3Ya4w88=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dYOQvB4Gl0LcCxW0J1JurCF4Ig6VV+S4+5+00xO3HnUDS/0icicl8Den6w1vvTDkcPru9Cqe9M6Iu44RVJPbGllUdvYJ/YMH6uexN6oYpOujI9X3UzZgJ+ieujS28kFA6VPapWwakOsGI5JP0uyNYGJ9YZKtRX84aeStmrwPsV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BzlEQ4E/; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56GGDWDD007301
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 02:14:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	DTC0WRX4p9Xlvnf+T/Nq7VBMyv7m6ojUA5HCSntnl+g=; b=BzlEQ4E/sVojPRjG
+	tn7FhnQ150jJYWfSIObH3trPsWcVJfaZRfEM+hu7takN7pHDO9ImELomAtdNQiBZ
+	D1FheRegFz2/wet9oqnpy3EA6LvuIRAEvt1xmRt0kgLeWbRlK4yKHTGZkkS7zPEA
+	a9wKeXyjfjJndJNtQ5RWbpbT0RKrU1jsj2COxdqNg+CRetxt9tCOstfrP5Hd/51E
+	9fY/YhaLKyow72R5OMOh7POJ4yDF0wATDb+/rOJELOtkhOT1aRQG0GyzRwg+PzDO
+	cHMbXmsazoLybXtn3Qoge2ax9V9xZ+Y2/FkUi+SdLalwxeXITSwaAc2IwFd/Iw0J
+	Xvs21A==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47wfca7647-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 02:14:28 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-23632fd6248so3840195ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 19:14:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752718449; x=1753323249;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NjNilefCSmvk4mMPEA0XCD7CKf2tWX4gBv20NnzP/qk=;
-        b=LQc6qH3+4DV5zGriAAAYf8OKKHIh21O8fhsb7Z7B+vjIOX/znV2zUh7T1oDtwJ+ADR
-         Yb0Ovoxh4Y58X0mFASHMGymxmfTxiHh2R1Z0D1QXDkpOpPeObkMJDPyxrcXYwzINMF3H
-         yT6Zd91+kQxL6Yc6GbW8wEE/yt9rblEMCwtQXaJoCzfK6nHkboiIFLFx/GpktfOhABaE
-         MRW2V1+x7BUM6cFC9Vtpxngs8fFDhxhEtPzG0wYgwDL9WadCZDHKFB/ScYn3zMIQEhr1
-         PvqcQtbldgXQn12yjBUh1AjqItQmZIoYX8pR0M/V5D+wJGdh0wJeDSxblV6Wn1uFOiZE
-         uoFA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8fTeP2/85gyblycZ6OBzoS9MhvZ54C+E3CN5Q+dosXG42AUr2KcLuEsoFFJ3Rq71ewsNOZyjH@vger.kernel.org, AJvYcCUHvZuGk3hljD7vHI1zM23UJ7TWNdEKCa2gDjruOKUzOF+RrOySQgYdzugvc4XxgrWYNM4=@vger.kernel.org, AJvYcCUdPmJQsQZ8ImjoCxU95hdTHjNay5G+ch7loRqsPftDmWpqyxK+Yo34tn5W8s7tBxryidk0ZRYxa3B5KVsp@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9R8KdLJRkhT1NGawoe1BlMVzlg/vWYH2FyEzGiMH+YNlGUhi4
-	nzxkVTWE1hF3rX05qCM7ZyYZgTMXqS4i1oj2B/uDcV46Nlf/4VfqoolRK65AhjxLx3rRNF+7UGx
-	pcMecUzVxFc4WAqx6qn+2KWVqxwMq8M4=
-X-Gm-Gg: ASbGncscIZMDowvxl7VW6h6Adx3CwEZ2oKrr9WwldHvLDXFvtYUhfAeBpW1kUeVuR/h
-	7DhgTf+P68kznNLzY0d2gGq21+Uk0JahTVwtrAfT3+08fTOOnM51oykc+NjEYtZ8NVcIQQEpvI7
-	fnU00mqi0Qqtjth9/S58dONT1HZkXwNKfIVHPBdLgq0prE+ABSyPx12qYZPiSY4GReBWI5bLR8E
-	CsYSUzpqkSlFtF7MSup7Y/qOlzQz8CCtj8T
-X-Google-Smtp-Source: AGHT+IG7qcWBIreCgk1dBskqFfxB/PSeNs/NhA2CiS3i01oxXcftRaFwDe8kMJ96PtDdc00HtE3I9FqTYcRCTAKA+aM=
-X-Received: by 2002:a05:6000:1447:b0:3b3:1e2e:ee07 with SMTP id
- ffacd0b85a97d-3b60e53fa01mr3918900f8f.56.1752718448513; Wed, 16 Jul 2025
- 19:14:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752718467; x=1753323267;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DTC0WRX4p9Xlvnf+T/Nq7VBMyv7m6ojUA5HCSntnl+g=;
+        b=mMp2H5+PesKSD0nHdmW4orgKAOLW3htH9LC33DILoqI+aNUDtQvBQOhvodhtsiUDjV
+         kuWp00yqXYdQ3CnUCnvGQHTpti4KafetWk4Z0QLOh9n9lVczc8S3FP4smhsQuNJ7IQKO
+         /MJpWShJabzqc8UaGesj6WiHQzrjMdgrp11Q+bGvKn8kteJSxkqq/afIZx6ap5RTFx9w
+         RkfcrQYLfC3j0DBTPvL9yEJI66PFYlp9O+93hyxNkzKM3fulp3zE2uihAMBZwXJxibEy
+         v6ZaJo5sogZIQ0nqhULtvdK2L2ETx30QsbHQ/lLunbTfTIPN+HcOso7Ql4bde9Pa52/+
+         W7iQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWoM7JCnqkw9Ux2sTijECBSmJaEada3LBIX8T6yo80o84Rthyfac2zsRTFxUggkifa+1hKlS2ot7J+2DYE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2Q9XJkQa2YC0Hfj1ZOu5e6pLlzqHSTbQbXas8LRuJ35FY+gsm
+	rCIZYxOB9QKOXDLrlSGBAIljjELcFhatlY2udwf/8FqStUUWjVRE5FYSTIDnelfqypjbN5jnC3t
+	x0DZfFiDo1nKSTKbwKu5zEGfdDWeSDgN6Mekb5EDMq3HgqZmvDnEBo9BxIwFIpqSOees=
+X-Gm-Gg: ASbGnct9vD5Wx0YjisJKMkJKPDgQnsXV1BAlOBrL6UcpvKI232BEriHuAzhRWlaOc7h
+	fTeiu7uYfzWY8xAzH7rJmSLq8CVy/ugpNOLOkhzcVvmHTLPlpCeZ2hQpmmuOZeHr+4ba4J5N/ya
+	H+pMlhEIJjrcTpKbQGN+5DaJ0JB94BSIr6EvZMOH7cU0DhsTfm//RVJ8KUvHneS6kI5QktgPNwU
+	zFrP3Y3bAmqPE0eD/Vovj10AyPT3ieTjoE8fAgj5Trb0c9zPp4IHIcWwoMHVq+AK+DIyvnEUR6E
+	7WbuUmG1e1/byD0r1NqYZip9PUi6UKFC7YPLUbebEOyHUfjkDJuTs3t5vU80dk5UWxiwNDOY2VC
+	LHCmuNZkqNdl4kvA01WZ3M8HOaXQ9
+X-Received: by 2002:a17:903:80e:b0:23e:3164:2bf1 with SMTP id d9443c01a7336-23e31642e68mr7927095ad.53.1752718467250;
+        Wed, 16 Jul 2025 19:14:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGn4xLdliAVfCrSfN9/WNrtrgGxPkMsfecnWK61oAUnA5ybvMwzlXtm6829MrraE7ebG577YQ==
+X-Received: by 2002:a17:903:80e:b0:23e:3164:2bf1 with SMTP id d9443c01a7336-23e31642e68mr7926835ad.53.1752718466838;
+        Wed, 16 Jul 2025 19:14:26 -0700 (PDT)
+Received: from [10.133.33.249] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de42864b9sm132765355ad.30.2025.07.16.19.14.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Jul 2025 19:14:26 -0700 (PDT)
+Message-ID: <bffff2bc-6f42-49f4-9147-a4d706929e93@oss.qualcomm.com>
+Date: Thu, 17 Jul 2025 10:14:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250703121521.1874196-1-dongml2@chinatelecom.cn>
- <4737114.cEBGB3zze1@7940hx> <CAADnVQJ47PJXxjqES8BvtWkPq3fj9D0oTF6qqeNNpG66-_MGCg@mail.gmail.com>
- <3364591.aeNJFYEL58@7940hx>
-In-Reply-To: <3364591.aeNJFYEL58@7940hx>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 16 Jul 2025 19:13:57 -0700
-X-Gm-Features: Ac12FXw4JUJq6YBPrSr49kCIUdQy_pin-_FqDdbtJFi1xmncZx1ElJ_QmUaIJ1c
-Message-ID: <CAADnVQLpAmZG_1827HS1dDaWBGraxY6UO92=tCX6eM9ZbqEBKQ@mail.gmail.com>
-Subject: Re: multi-fentry proposal. Was: [PATCH bpf-next v2 02/18] x86,bpf:
- add bpf_global_caller for global trampoline
-To: Menglong Dong <menglong.dong@linux.dev>
-Cc: Jiri Olsa <jolsa@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
-	Menglong Dong <menglong8.dong@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	bpf <bpf@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	LKML <linux-kernel@vger.kernel.org>, Network Development <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] dt-bindings: arm: qcom: Document HAMOA-IOT-EVK board
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250716-hamoa_initial-v1-0-f6f5d0f9a163@oss.qualcomm.com>
+ <20250716-hamoa_initial-v1-1-f6f5d0f9a163@oss.qualcomm.com>
+ <604a5823-c563-4d37-ab14-e3164f3b1cd8@kernel.org>
+Content-Language: en-US
+From: Yijie Yang <yijie.yang@oss.qualcomm.com>
+In-Reply-To: <604a5823-c563-4d37-ab14-e3164f3b1cd8@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDAxOCBTYWx0ZWRfX6dXJGDezCzOX
+ Z2chybV/ORVV3ZZS1QlbBtWy7KNfbOF4MgLsfG0br/VMOsQLq9bOSPQgN2oMK7DAEIlLE6P1SMP
+ stVPZsynCzxJ0ZK92g6mDYyN79+3QmCb7EAh598Q/U2wZZ7S6zTRIH76vy3K5ioRWcZyrRaHf4x
+ w7dRJDY+p+u725XSlRImhvBOWQnS2TEV5ISg5fTyeOKSnNfX+feMV0NkgrQG4YToYP2ePQCCzFL
+ hifJUOYy4RHj8b5RRpDKT+H/LIYe1G52lS+/8efXjmZU1eWd18VrshdF9zlRUqw7P36QrA/fUxO
+ 4zAiWSiHb+Q+KgNchnq/bJQsWDyQzw/hjOQ2N14DxG3wRGzLUyoQEr2EBmxCxTKUF0QakXqPGui
+ pAnNVt6bWcMtSJojLWl2MAeNoN5bYozc/YNfYlOiS15MzKYPf36tMLmcw8f9gq7jBn6nsCLa
+X-Proofpoint-GUID: S8hDLi6wX1bF2DL7MEKOtp3QfbiJY9yC
+X-Authority-Analysis: v=2.4 cv=SeX3duRu c=1 sm=1 tr=0 ts=68785c84 cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=VgApEbnXb6FI9c-La98A:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
+X-Proofpoint-ORIG-GUID: S8hDLi6wX1bF2DL7MEKOtp3QfbiJY9yC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-17_01,2025-07-16_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 mlxscore=0 priorityscore=1501 bulkscore=0 phishscore=0
+ lowpriorityscore=0 mlxlogscore=999 impostorscore=0 clxscore=1015 adultscore=0
+ suspectscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507170018
 
-On Wed, Jul 16, 2025 at 6:51=E2=80=AFPM Menglong Dong <menglong.dong@linux.=
-dev> wrote:
->
-> On Thursday, July 17, 2025 8:59 AM Alexei Starovoitov <alexei.starovoitov=
-@gmail.com> write:
-> > On Wed, Jul 16, 2025 at 6:06=E2=80=AFAM Menglong Dong <menglong.dong@li=
-nux.dev> wrote:
-> > >
-> > > On Wednesday, July 16, 2025 12:35 AM Alexei Starovoitov <alexei.staro=
-voitov@gmail.com> write:
-> > > > On Tue, Jul 15, 2025 at 1:37=E2=80=AFAM Menglong Dong <menglong.don=
-g@linux.dev> wrote:
-> > > > >
-> > > > >
-> > > > > On 7/15/25 10:25, Alexei Starovoitov wrote:
-> > > [......]
-> > > > >
-> > > > > According to my benchmark, it has ~5% overhead to save/restore
-> > > > > *5* variants when compared with *0* variant. The save/restore of =
-regs
-> > > > > is fast, but it still need 12 insn, which can produce ~6% overhea=
-d.
-> > > >
-> > > > I think it's an ok trade off, because with one global trampoline
-> > > > we do not need to call rhashtable lookup before entering bpf prog.
-> > > > bpf prog will do it on demand if/when it needs to access arguments.
-> > > > This will compensate for a bit of lost performance due to extra sav=
-e/restore.
-> > >
-> > > I don't understand here :/
-> > >
-> > > The rhashtable lookup is done at the beginning of the global trampoli=
-ne,
-> > > which is called before we enter bpf prog. The bpf progs is stored in =
-the
-> > > kfunc_md, and we need get them from the hash table.
-> >
-> > Ahh. Right.
-> >
-> > Looking at the existing bpf trampoline... It has complicated logic
-> > to handle livepatching and tailcalls. Your global trampoline
-> > doesn't, and once that is added it's starting to feel that it will
-> > look just as complex as the current one.
-> > So I think we better repurpose what we have.
-> > Maybe we can rewrite the existing one in C too.
->
-> You are right, the tailcalls is not handled yet. But for the livepatching=
-,
-> it is already handled, as we always get the origin ip from the stack
-> and call it, just like how the bpf trampoline handle the livepatching.
-> So no addition handling is needed here.
->
-> >
-> > How about the following approach.
-> > I think we discussed something like this in the past
-> > and Jiri tried to implement something like this.
-> > Andrii reminded me recently about it.
-> >
-> > Say, we need to attach prog A to 30k functions.
-> > 10k with 2 args, 10k with 3 args, and 10k with 7 args.
-> > We can generate 3 _existing_ bpf trampolines for 2,3,7 args
-> > with hard coded prog A in there (the cookies would need to be
-> > fetched via binary search similar to kprobe-multi).
-> > The arch_prepare_bpf_trampoline() supports BPF_TRAMP_F_ORIG_STACK.
-> > So one 2-arg trampoline will work to invoke prog A in all 10k 2-arg fun=
-ctions.
-> > We don't need to match types, but have to compare that btf_func_model-s
-> > are the same.
-> >
-> > Menglong, your global trampoline for 0,1,..6 args works only for x86,
-> > because btf_func_model doesn't care about sizes of args,
-> > but it's not the correct mental model to use.
-> >
-> > The above "10k with 2 args" is a simplified example.
-> > We will need an arch specific callback is_btf_func_model_equal()
-> > that will compare func models in arch specific ways.
-> > For x86-64 the number of args is all it needs.
-> > For other archs it will compare sizes and flags too.
-> > So 30k functions will be sorted into
-> > 10k with btf_func_model_1, 10k with btf_func_model_2 and so on.
-> > And the corresponding number of equivalent trampolines will be generate=
-d.
-> >
-> > Note there will be no actual BTF types. All args will be untyped and
-> > untrusted unlike current fentry.
-> > We can go further and sort 30k functions by comparing BTFs
-> > instead of btf_func_model-s, but I suspect 30k funcs will be split
-> > into several thousands of exact BTFs. At that point multi-fentry
-> > benefits are diminishing and we might as well generate 30k unique
-> > bpf trampolines for 30k functions and avoid all the complexity.
-> > So I would sort by btf_func_model compared by arch specific comparator.
-> >
-> > Now say prog B needs to be attached to another 30k functions.
-> > If all 30k+30k functions are different then it's the same as
-> > the previous step.
-> > Say, prog A is attached to 10k funcs with btf_func_model_1.
-> > If prog B wants to attach to the exact same func set then we
-> > just regenerate bpf trampoline with hard coded progs A and B
-> > and reattach.
-> > If not then we need to split the set into up to 3 sets.
-> > Say, prog B wants 5k funcs, but only 1k func are common:
-> > (prog_A, 9k func with btf_func_model_1) -> bpf trampoline X
-> > (prog_A, prog_B, 1k funcs with btf_func_model_1) -> bpf trampoline Y
-> > (prog_B, 4k funcs with btf_func_model_1) -> bpf trampoline Z
-> >
-> > And so on when prog C needs to be attached.
-> > At detach time we can merge sets/trampolines,
-> > but for now we can leave it all fragmented.
-> > Unlike regular fentry progs the multi-fentry progs are not going to
-> > be attached for long time. So we can reduce the detach complexity.
-> >
-> > The nice part of the algorithm is that coexistence of fentry
-> > and multi-fentry is easy.
-> > If fentry is already attached to some function we just
-> > attach multi-fentry prog to that bpf trampoline.
-> > If multi-fentry was attached first and fentry needs to be attached,
-> > we create a regular bpf trampoline and add both progs there.
->
-> This seems not easy, and it is exactly how I handle the
-> coexistence now:
->
->   https://lore.kernel.org/bpf/20250528034712.138701-16-dongml2@chinatelec=
-om.cn/
->   https://lore.kernel.org/bpf/20250528034712.138701-17-dongml2@chinatelec=
-om.cn/
->   https://lore.kernel.org/bpf/20250528034712.138701-18-dongml2@chinatelec=
-om.cn/
 
-hmm. exactly? That's very different.
-You're relying on kfunc_md for prog list.
-The above proposal doesn't need kfunc_md in the critical path.
-All progs are built into the trampolines.
 
-> The most difficult part is that we need a way to replace the the
-> multi-fentry with fentry for the function in the ftrace atomically. Of
-> course, we can remove the global trampoline first, and then attach
-> the bpf trampoline, which will make things much easier. But a
-> short suspend will happen for the progs in fentry-multi.
+On 2025-07-16 17:30, Krzysztof Kozlowski wrote:
+> On 16/07/2025 11:08, Yijie Yang wrote:
+>> Document the device tree binding for a new board named "EVK" based on
+>> the Qualcomm Hamoa-IoT platform.
+>>
+>> The "hamoa" name refers to a family of SoCs that share the same silicon
+>> die but are offered in multiple speed bins. The specific SoC used in
+>> this board is the x1e80100, which represents one such bin within the
+>> Hamoa family.
+>>
+>> Although "qcom,hamoa-iot-evk" is introduced as the board-specific
+>> compatible, the fallback compatible remains "qcom,x1e80100" to preserve
+>> compatibility with existing in-kernel drivers and software that already
+>> depend on this identifier.
+>>
+>> Signed-off-by: Yijie Yang <yijie.yang@oss.qualcomm.com>
+>> ---
+>>   Documentation/devicetree/bindings/arm/qcom.yaml | 9 +++++++--
+>>   1 file changed, 7 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
+>> index ae43b35565808ed27cd8354b9a342545c4a98ed6..83b09ec1100ca03044c832212a99e65cc1177985 100644
+>> --- a/Documentation/devicetree/bindings/arm/qcom.yaml
+>> +++ b/Documentation/devicetree/bindings/arm/qcom.yaml
+>> @@ -100,8 +100,8 @@ description: |
+>>           sm8550
+>>           sm8650
+>>           sm8750
+>> -        x1e78100
+>> -        x1e80100
+>> +        x1e78100 # hamoa
+>> +        x1e80100 # hamoa
+> 
+> 
+> Huh? Why, no drop.
 
-I don't follow.
-In the above proposal fentry attach/detach is atomic.
-Prepare a new trampoline, single call to ftrace to modify_fentry().
+Okay, I’ll leave it as is.
 
-> >
-> > The intersect and sorting by btf_func_model is not trivial,
-> > but we can hold global trampoline_mutex, so no concerns of races.
-> >
-> > Example:
-> > bpf_link_A is a set of:
-> > (prog_A, funcs X,Y with btf_func_model_1)
-> > (prog_A, funcs N,M with btf_func_model_2)
-> >
-> > To attach prog B via bpf_link_B that wants:
-> > (prog_B, funcs Y,Z with btf_func_model_1)
-> > (prog_B, funcs P,Q with btf_func_model_3)
-> >
-> > walk all existing links, intersect and split, and update the links.
-> > At the end:
-> >
-> > bpf_link_A:
-> > (prog_A, funcs X with btf_func_model_1)
-> > (prog_A, prog_B funcs Y with btf_func_model_1)
-> > (prog_A, funcs N,M with btf_func_model_2)
-> >
-> > bpf_link_B:
-> > (prog_A, prog_B funcs Y with btf_func_model_1)
-> > (prog_B, funcs Z with btf_func_model_1)
-> > (prog_B, funcs P,Q with btf_func_model_3)
-> >
-> > When link is detached: walk its own tuples, remove the prog,
-> > if nr_progs =3D=3D 0 -> detach corresponding trampoline,
-> > if nr_progs > 0 -> remove prog and regenerate trampoline.
-> >
-> > If fentry prog C needs to be attached to N it might split bpf_link_A:
-> > (prog_A, funcs X with btf_func_model_1)
-> > (prog_A, prog_B funcs Y with btf_func_model_1)
-> > (prog_A, funcs M with btf_func_model_2)
-> > (prog_A, prog_C funcs N with _fentry_)
-> >
-> > Last time we gave up on it because we discovered that
-> > overlap support was too complicated, but I cannot recall now
-> > what it was :)
-> > Maybe all of the above repeating some old mistakes.
->
-> In my impression, this is exactly the solution of Jiri's, and this is
-> part of the discussion that I know:
->
->   https://lore.kernel.org/bpf/ZfKY6E8xhSgzYL1I@krava/
+> 
+> 
+>>           x1p42100
+>>   
+>>     There are many devices in the list below that run the standard ChromeOS
+>> @@ -1162,6 +1162,11 @@ properties:
+>>                 - qcom,x1p42100-crd
+>>             - const: qcom,x1p42100
+>>   
+>> +      - items:
+>> +          - enum:
+>> +              - qcom,hamoa-iot-evk
+> 
+> Don't duplicate entries. Look how this file is organized.
 
-Yes. It's similar, but somehow it feels simple enough now.
-The algorithms for both detach and attach fit on one page,
-and everything is uniform. There are no spaghetty of corner cases.
+Sure, I will merge.
+
+> 
+> 
+> Best regards,
+> Krzysztof
+
+-- 
+Best Regards,
+Yijie
+
 
