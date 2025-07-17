@@ -1,380 +1,308 @@
-Return-Path: <linux-kernel+bounces-735784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53AA1B093D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 20:23:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E44C7B093DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 20:25:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA9E21C467EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:23:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DECC1AA72B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 712332FE337;
-	Thu, 17 Jul 2025 18:23:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3402FE394;
+	Thu, 17 Jul 2025 18:24:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oPlld6RI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qoMYEtIa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B6251925BC;
-	Thu, 17 Jul 2025 18:23:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4257E1DA10B;
+	Thu, 17 Jul 2025 18:24:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752776610; cv=none; b=iTj3a5NsF1KNVQIcyq3XUSpJCKn2fv9rAqrPEZ4THif4nzLINx5fUB6XBzXN4K1OB25SLEPJND3hoS2YR/sLx5efW1Kfg2xD06P06vRay7wyYKSru+ogDIhMhgCrpwaQTEFc3yuAIInPO7ISYh9N2ZH0Qzqfbnf/AJSCjBPQg0w=
+	t=1752776695; cv=none; b=bIXjXldOHmVumYZHa7RkNUCo9tpMZI3xW8kmQEYcVT6wF3c9GTp43F5Ai9uX/2XMfCnLWmzQa99xKxHfPeBHMYmyMMRChxlN3Q52TJlNPJr4zs0yL7kiqd1Ueki54HqFn5bBfT5/C263AFq/0AsZO4EfoaSBG5urC6pmpx+wz6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752776610; c=relaxed/simple;
-	bh=cmEx9GcDqNc3lsRf0Y1I5pNd4JYcHwEIEV5g1PJ2m/0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EFSHiOi76x5AxMtssVzLz6Z8VX2MiKVVQ/ipY8O9YfIAjH2jBE78dRaIGksiqdD9sIG7pcYmbqFtWLXxzC8rdHlx9gTv9itHu4wwjyzkkxsBxatolf04XzKVAHwVmzwtHjQW96tsSIMe9uBb8fqyT3Vge7T7Idk0SvEeNVMENys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oPlld6RI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28A65C4CEF0;
-	Thu, 17 Jul 2025 18:23:30 +0000 (UTC)
+	s=arc-20240116; t=1752776695; c=relaxed/simple;
+	bh=q8eKevXXi+UQ1OwFBOXGgOAL2sn/edb+P2x0UDs5fKY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=al0oVs4yyNkE7ch6+gNS+nJ8Nu2pYl++AkoPn9hZ5HOo9FEsiJo/d6VTWgakybCqEeyhivwq7Pqx6GsDtYvFeGdM7W7w9REhP+4ZlTEOI+ynWySepVbpj821GnngJvKLm07fDOUP8bnRx3avnCljPyjM2fsUoJWMVh++F3Rll6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qoMYEtIa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DF84C4CEE3;
+	Thu, 17 Jul 2025 18:24:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752776610;
-	bh=cmEx9GcDqNc3lsRf0Y1I5pNd4JYcHwEIEV5g1PJ2m/0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=oPlld6RIedFVE8cp1DCPzH9GIjhQ5JIm/MqNS2+o2bAsCTW2umpLCChmRkAIr5JqT
-	 l5cnL9ZBtdJjnDTcXK3aPp7lkVy27EhZ1lfojiJMY+64CRKgGqMZ12keNh242ihX96
-	 NkWz+AKXGIpmcVQAXNauEDZ/nUhJHXY4lgQu+iIZysPJVjJ4eE0nMkJ8YegcKRrkA1
-	 tQafrAbrqC+2xqvEWokmBNK9SYvfg4dsC7p86oh+QAKaF7ge2+Jl40eIimXijZ14NJ
-	 Xy4MkwYwB7y0yRaDFynuYbPRRb0VEuISkUFLxkHF3N2oZXO6TtYoExM28evz65sSh0
-	 oxQcIDdvkmzkQ==
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-615a02ebcc7so388612eaf.3;
-        Thu, 17 Jul 2025 11:23:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVwp2/CjCALqi2X5WbyVOFX0cvd9zaTBD2p2RpZ54tuiJM6+9dYsEVMAwJsUuGv2kcxFbwaQhtzu6I=@vger.kernel.org, AJvYcCWSGIAX5dTXFiD/CyvTYGTG6eFJ/ZF2w+7cBxhHuPyOMWoxa+t4J95BSUUyHD3e4JRit5nQ+OAIvifWrEQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPeKTU4/CYyP+Yv31dVZKuJOYHkxIzWZ4woDTX3uUH/KzWaMEM
-	e2Uf0VOPTHv1CXlVzShwoYCijxeQcAHogF69uWIoejD23g+46D7kwgSH1z+HxwjkV9Ne0KtS0Ev
-	Sjekpb1Kw7sVAlA3Qysu9RZPQqf59l00=
-X-Google-Smtp-Source: AGHT+IE6y506rUVjoZSAgM7zFpUSPFqp74G5jVT4nt+KBmG+TBjlc2XF10rPaDz0vFC3eHRBMQqYa2u+Y0FmH2lPBb0=
-X-Received: by 2002:a05:6820:178f:b0:615:ae24:916c with SMTP id
- 006d021491bc7-615ae24982cmr2761844eaf.4.1752776609065; Thu, 17 Jul 2025
- 11:23:29 -0700 (PDT)
+	s=k20201202; t=1752776694;
+	bh=q8eKevXXi+UQ1OwFBOXGgOAL2sn/edb+P2x0UDs5fKY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=qoMYEtIa27OeLBqqivsgvtk/Vg6bQIfYI4P1QYVk02Hw6Ju50qVIus8U537TJRdjP
+	 VXtKK2fQnkd5ns16zUWS3XPVeMo57KuaoEC7oe6cNTrTDlPIujqWj9VlbOjuudjHvV
+	 cLOmbN9n8SGiB5zDtTMLL3RNIulyHc18vjxksuu73WyzqQsVxDSai9iIq0F8WKf1BC
+	 yyUEn9q2Ff0ZqMBLhDD0fdI1P2I0QRfoZct7lPtdSK4WQ/JUsht+9yTDpQoasAdIxZ
+	 yay6ikjovkyppqsgpUa3CX6zqAD55H53PWm//E7p5wWYe94cImRpGyYQJx4x9zR+XV
+	 6hbWaOPtl30Mw==
+From: Puranjay Mohan <puranjay@kernel.org>
+To: Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Hari Bathini <hbathini@linux.ibm.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Puranjay Mohan <puranjay@kernel.org>,
+	Peilin Ye <yepeilin@google.com>,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Cc: linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	lkmm@lists.linux.dev
+Subject: [PATCH bpf-next 1/1] powerpc64/bpf: Add jit support for load_acquire and store_release
+Date: Thu, 17 Jul 2025 18:24:43 +0000
+Message-ID: <20250717182446.9408-2-puranjay@kernel.org>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20250717182446.9408-1-puranjay@kernel.org>
+References: <20250717182446.9408-1-puranjay@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <fa1c6faa96344fa9803675b179d7a329@xiaomi.com>
-In-Reply-To: <fa1c6faa96344fa9803675b179d7a329@xiaomi.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 17 Jul 2025 20:23:18 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iEKoozunNzeTHHqKCsvJ_ouUm+cFT_6mMohYCzAW39QQ@mail.gmail.com>
-X-Gm-Features: Ac12FXzOwDZ8qdL0Wdm1FVEOOD4ybHlQdgA9aAHzxjaHTlml15X-1ufXUaAP-tU
-Message-ID: <CAJZ5v0iEKoozunNzeTHHqKCsvJ_ouUm+cFT_6mMohYCzAW39QQ@mail.gmail.com>
-Subject: Re: [PATCH] cpuidle: menu: find the typical interval by a heuristic
- classification method
-To: =?UTF-8?B?5pyx5oG65Lm+?= <zhukaiqian@xiaomi.com>
-Cc: "rafael@kernel.org" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	"christian.loehle@arm.com" <christian.loehle@arm.com>, 
-	"quic_zhonhan@quicinc.com" <quic_zhonhan@quicinc.com>, 
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 17, 2025 at 12:12=E2=80=AFPM =E6=9C=B1=E6=81=BA=E4=B9=BE <zhuka=
-iqian@xiaomi.com> wrote:
->
-> The iterations of deviation calculation gives too less predictions on
-> the idle interval by trying to find a single repeating pattern from the
-> whole history. This is not always the case when the workload is flowing.
->
-> This algorithm assumes there're multiple repeating patterns heuristically=
-,
-> and tries to determine which is the most promising one from the averages
-> of different idle states. It also takes the occurrence sequence into
-> consideration, and gives the prediction close to the recent idle.
+Add JIT support for the load_acquire and store_release instructions. The
+implementation is similar to the kernel where:
 
-Instead of saying "this algorithm", please describe it or give a
-reference to a description of it that is not going to vanish from the
-Web at one point.
+        load_acquire  => plain load -> lwsync
+        store_release => lwsync -> plain store
 
-> This increased the shallow idle states detected, but the difference in de=
-ep
-> sleep time didn't change a lot. The performance on my platform, as
-> expected, has improved.
->
-> Before:
-> Multi-Core Score              7279
-> Overall    above   under
->   34107    0.00    2.75
->    8200   59.90    7.02
->   29881   57.06    0.00
->
-> After:
-> Multi-Core Score              7365
-> Overall    above   under
->   49913    0.00    6.43
->    7881   44.51   18.08
->   23108   52.38    0.00
+To test the correctness of the implementation, following selftests were
+run:
 
-It is unclear what the columns above mean and what's represented by
-the numbers, so qualifying the improvement is rather hard.
+  [fedora@linux-kernel bpf]$ sudo ./test_progs -a \
+  verifier_load_acquire,verifier_store_release,atomics
+  #11/1    atomics/add:OK
+  #11/2    atomics/sub:OK
+  #11/3    atomics/and:OK
+  #11/4    atomics/or:OK
+  #11/5    atomics/xor:OK
+  #11/6    atomics/cmpxchg:OK
+  #11/7    atomics/xchg:OK
+  #11      atomics:OK
+  #519/1   verifier_load_acquire/load-acquire, 8-bit:OK
+  #519/2   verifier_load_acquire/load-acquire, 8-bit @unpriv:OK
+  #519/3   verifier_load_acquire/load-acquire, 16-bit:OK
+  #519/4   verifier_load_acquire/load-acquire, 16-bit @unpriv:OK
+  #519/5   verifier_load_acquire/load-acquire, 32-bit:OK
+  #519/6   verifier_load_acquire/load-acquire, 32-bit @unpriv:OK
+  #519/7   verifier_load_acquire/load-acquire, 64-bit:OK
+  #519/8   verifier_load_acquire/load-acquire, 64-bit @unpriv:OK
+  #519/9   verifier_load_acquire/load-acquire with uninitialized
+  src_reg:OK
+  #519/10  verifier_load_acquire/load-acquire with uninitialized src_reg
+  @unpriv:OK
+  #519/11  verifier_load_acquire/load-acquire with non-pointer src_reg:OK
+  #519/12  verifier_load_acquire/load-acquire with non-pointer src_reg
+  @unpriv:OK
+  #519/13  verifier_load_acquire/misaligned load-acquire:OK
+  #519/14  verifier_load_acquire/misaligned load-acquire @unpriv:OK
+  #519/15  verifier_load_acquire/load-acquire from ctx pointer:OK
+  #519/16  verifier_load_acquire/load-acquire from ctx pointer @unpriv:OK
+  #519/17  verifier_load_acquire/load-acquire with invalid register R15:OK
+  #519/18  verifier_load_acquire/load-acquire with invalid register R15
+  @unpriv:OK
+  #519/19  verifier_load_acquire/load-acquire from pkt pointer:OK
+  #519/20  verifier_load_acquire/load-acquire from flow_keys pointer:OK
+  #519/21  verifier_load_acquire/load-acquire from sock pointer:OK
+  #519     verifier_load_acquire:OK
+  #556/1   verifier_store_release/store-release, 8-bit:OK
+  #556/2   verifier_store_release/store-release, 8-bit @unpriv:OK
+  #556/3   verifier_store_release/store-release, 16-bit:OK
+  #556/4   verifier_store_release/store-release, 16-bit @unpriv:OK
+  #556/5   verifier_store_release/store-release, 32-bit:OK
+  #556/6   verifier_store_release/store-release, 32-bit @unpriv:OK
+  #556/7   verifier_store_release/store-release, 64-bit:OK
+  #556/8   verifier_store_release/store-release, 64-bit @unpriv:OK
+  #556/9   verifier_store_release/store-release with uninitialized
+  src_reg:OK
+  #556/10  verifier_store_release/store-release with uninitialized src_reg
+  @unpriv:OK
+  #556/11  verifier_store_release/store-release with uninitialized
+  dst_reg:OK
+  #556/12  verifier_store_release/store-release with uninitialized dst_reg
+  @unpriv:OK
+  #556/13  verifier_store_release/store-release with non-pointer
+  dst_reg:OK
+  #556/14  verifier_store_release/store-release with non-pointer dst_reg
+  @unpriv:OK
+  #556/15  verifier_store_release/misaligned store-release:OK
+  #556/16  verifier_store_release/misaligned store-release @unpriv:OK
+  #556/17  verifier_store_release/store-release to ctx pointer:OK
+  #556/18  verifier_store_release/store-release to ctx pointer @unpriv:OK
+  #556/19  verifier_store_release/store-release, leak pointer to stack:OK
+  #556/20  verifier_store_release/store-release, leak pointer to stack
+  @unpriv:OK
+  #556/21  verifier_store_release/store-release, leak pointer to map:OK
+  #556/22  verifier_store_release/store-release, leak pointer to map
+  @unpriv:OK
+  #556/23  verifier_store_release/store-release with invalid register
+  R15:OK
+  #556/24  verifier_store_release/store-release with invalid register R15
+  @unpriv:OK
+  #556/25  verifier_store_release/store-release to pkt pointer:OK
+  #556/26  verifier_store_release/store-release to flow_keys pointer:OK
+  #556/27  verifier_store_release/store-release to sock pointer:OK
+  #556     verifier_store_release:OK
+  Summary: 3/55 PASSED, 0 SKIPPED, 0 FAILED
 
-> There's another re-classification method, which, instead of looking for t=
-he
-> repeating-interval, tends to find the repeating state. It gives a better =
-result
-> on performance gain, but may hurt the power consumption.
->
-> if (best_state =3D=3D drv->state_count - 1 || state_avg[best_state] =3D=
-=3D 0) {
-> adj_weight[best_state] +=3D weights[i];
-> adj_avg[best_state] +=3D value;
-> adj_hit[best_state]++;
-> } else if (best_diff < state_avg[best_state] * 2) {
-> adj_weight[best_state] +=3D weights[i];
-> adj_avg[best_state] +=3D value;
-> adj_hit[best_state]++;
-> } else {
-> adj_weight[best_state + 1] +=3D weights[i];
-> adj_avg[best_state + 1] +=3D value;
-> adj_hit[best_state + 1]++;
-> }
->
-> Repeating State:
-> Multi-Core Score              7421
-> Overall    above   under
->   60857    0.00    8.30
->    3838   29.88   18.42
->   15318   39.05    0.00
+Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
+---
+ arch/powerpc/include/asm/ppc-opcode.h        |  1 +
+ arch/powerpc/net/bpf_jit_comp64.c            | 82 ++++++++++++++++++++
+ tools/testing/selftests/bpf/progs/bpf_misc.h |  3 +-
+ 3 files changed, 85 insertions(+), 1 deletion(-)
 
-I'm not sure what the above part of the changelog means at all.
+diff --git a/arch/powerpc/include/asm/ppc-opcode.h b/arch/powerpc/include/asm/ppc-opcode.h
+index 4312bcb913a42..8053b24afc395 100644
+--- a/arch/powerpc/include/asm/ppc-opcode.h
++++ b/arch/powerpc/include/asm/ppc-opcode.h
+@@ -425,6 +425,7 @@
+ #define PPC_RAW_SC()			(0x44000002)
+ #define PPC_RAW_SYNC()			(0x7c0004ac)
+ #define PPC_RAW_ISYNC()			(0x4c00012c)
++#define PPC_RAW_LWSYNC()		(0x7c2004ac)
+ 
+ /*
+  * Define what the VSX XX1 form instructions will look like, then add
+diff --git a/arch/powerpc/net/bpf_jit_comp64.c b/arch/powerpc/net/bpf_jit_comp64.c
+index a25a6ffe7d7cc..025524378443e 100644
+--- a/arch/powerpc/net/bpf_jit_comp64.c
++++ b/arch/powerpc/net/bpf_jit_comp64.c
+@@ -409,6 +409,71 @@ asm (
+ "		blr				;"
+ );
+ 
++static int emit_atomic_ld_st(const struct bpf_insn insn, struct codegen_context *ctx, u32 *image)
++{
++	u32 code = insn.code;
++	u32 dst_reg = bpf_to_ppc(insn.dst_reg);
++	u32 src_reg = bpf_to_ppc(insn.src_reg);
++	u32 size = BPF_SIZE(code);
++	u32 tmp1_reg = bpf_to_ppc(TMP_REG_1);
++	u32 tmp2_reg = bpf_to_ppc(TMP_REG_2);
++	s16 off = insn.off;
++	s32 imm = insn.imm;
++
++	switch (imm) {
++	case BPF_LOAD_ACQ:
++		switch (size) {
++		case BPF_B:
++			EMIT(PPC_RAW_LBZ(dst_reg, src_reg, off));
++			break;
++		case BPF_H:
++			EMIT(PPC_RAW_LHZ(dst_reg, src_reg, off));
++			break;
++		case BPF_W:
++			EMIT(PPC_RAW_LWZ(dst_reg, src_reg, off));
++			break;
++		case BPF_DW:
++			if (off % 4) {
++				EMIT(PPC_RAW_LI(tmp1_reg, off));
++				EMIT(PPC_RAW_LDX(dst_reg, src_reg, tmp1_reg));
++			} else {
++				EMIT(PPC_RAW_LD(dst_reg, src_reg, off));
++			}
++			break;
++		}
++		EMIT(PPC_RAW_LWSYNC());
++		break;
++	case BPF_STORE_REL:
++		EMIT(PPC_RAW_LWSYNC());
++		switch (size) {
++		case BPF_B:
++			EMIT(PPC_RAW_STB(src_reg, dst_reg, off));
++			break;
++		case BPF_H:
++			EMIT(PPC_RAW_STH(src_reg, dst_reg, off));
++			break;
++		case BPF_W:
++			EMIT(PPC_RAW_STW(src_reg, dst_reg, off));
++			break;
++		case BPF_DW:
++			if (off % 4) {
++				EMIT(PPC_RAW_LI(tmp2_reg, off));
++				EMIT(PPC_RAW_STDX(src_reg, dst_reg, tmp2_reg));
++			} else {
++				EMIT(PPC_RAW_STD(src_reg, dst_reg, off));
++			}
++			break;
++		}
++		break;
++	default:
++		pr_err_ratelimited("unexpected atomic load/store op code %02x\n",
++				   imm);
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
+ /* Assemble the body code between the prologue & epilogue */
+ int bpf_jit_build_body(struct bpf_prog *fp, u32 *image, u32 *fimage, struct codegen_context *ctx,
+ 		       u32 *addrs, int pass, bool extra_pass)
+@@ -898,8 +963,25 @@ int bpf_jit_build_body(struct bpf_prog *fp, u32 *image, u32 *fimage, struct code
+ 		/*
+ 		 * BPF_STX ATOMIC (atomic ops)
+ 		 */
++		case BPF_STX | BPF_ATOMIC | BPF_B:
++		case BPF_STX | BPF_ATOMIC | BPF_H:
+ 		case BPF_STX | BPF_ATOMIC | BPF_W:
+ 		case BPF_STX | BPF_ATOMIC | BPF_DW:
++			if (bpf_atomic_is_load_store(&insn[i])) {
++				ret = emit_atomic_ld_st(insn[i], ctx, image);
++				if (ret)
++					return ret;
++
++				if (size != BPF_DW && insn_is_zext(&insn[i + 1]))
++					addrs[++i] = ctx->idx * 4;
++				break;
++			} else if (size == BPF_B || size == BPF_H) {
++				pr_err_ratelimited(
++					"eBPF filter atomic op code %02x (@%d) unsupported\n",
++					code, i);
++				return -EOPNOTSUPP;
++			}
++
+ 			save_reg = tmp2_reg;
+ 			ret_reg = src_reg;
+ 
+diff --git a/tools/testing/selftests/bpf/progs/bpf_misc.h b/tools/testing/selftests/bpf/progs/bpf_misc.h
+index 530752ddde8e4..c1cfd297aabf1 100644
+--- a/tools/testing/selftests/bpf/progs/bpf_misc.h
++++ b/tools/testing/selftests/bpf/progs/bpf_misc.h
+@@ -229,7 +229,8 @@
+ 
+ #if __clang_major__ >= 18 && defined(ENABLE_ATOMICS_TESTS) &&		\
+ 	(defined(__TARGET_ARCH_arm64) || defined(__TARGET_ARCH_x86) ||	\
+-	 (defined(__TARGET_ARCH_riscv) && __riscv_xlen == 64))
++	 (defined(__TARGET_ARCH_riscv) && __riscv_xlen == 64)) || \
++	  (defined(__TARGET_ARCH_powerpc))
+ #define CAN_USE_LOAD_ACQ_STORE_REL
+ #endif
+ 
+-- 
+2.47.1
 
-> Signed-off-by: Kaiqian Zhu <zhukaiqian@xiaomi.com>
-> ---
->  drivers/cpuidle/governors/menu.c | 174 ++++++++++++++++---------------
->  1 file changed, 89 insertions(+), 85 deletions(-)
->
-> diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors=
-/menu.c
-> index 52d5d26fc7c6..52723ec1a0a6 100644
-> --- a/drivers/cpuidle/governors/menu.c
-> +++ b/drivers/cpuidle/governors/menu.c
-> @@ -99,109 +99,113 @@ static DEFINE_PER_CPU(struct menu_device, menu_devi=
-ces);
->
->  static void menu_update(struct cpuidle_driver *drv, struct cpuidle_devic=
-e *dev);
->
-> -/*
-> - * Try detecting repeating patterns by keeping track of the last 8
-> - * intervals, and checking if the standard deviation of that set
-> - * of points is below a threshold. If it is... then use the
-> - * average of these 8 points as the estimated value.
-> - */
-> -static unsigned int get_typical_interval(struct menu_device *data)
-> +static int get_actual_state(struct cpuidle_driver *drv,
-> +    struct cpuidle_device *dev,
-> +    int duration_us)
->  {
-> -s64 value, min_thresh =3D -1, max_thresh =3D UINT_MAX;
-> -unsigned int max, min, divisor;
-> -u64 avg, variance, avg_sq;
-> -int i;
-> +int actual;
->
-> -again:
-> -/* Compute the average and variance of past intervals. */
-> -max =3D 0;
-> -min =3D UINT_MAX;
-> -avg =3D 0;
-> -variance =3D 0;
-> -divisor =3D 0;
-> -for (i =3D 0; i < INTERVALS; i++) {
-> -value =3D data->intervals[i];
-> -/*
-> - * Discard the samples outside the interval between the min and
-> - * max thresholds.
-> - */
-> -if (value <=3D min_thresh || value >=3D max_thresh)
-> -continue;
-> +for (int i =3D 0; i < drv->state_count; i++) {
-> +if (duration_us < drv->states[i].target_residency)
-> +break;
-> +
-> +actual =3D i;
-> +}
-> +
-> +return actual;
-> +}
-> +
-> +static unsigned int get_typical_interval(struct cpuidle_driver *drv,
-> + struct cpuidle_device *dev,
-> + struct menu_device *data)
-> +{
-> +int cnt =3D 0;
-> +
-> +int state_hit[CPUIDLE_STATE_MAX];
-> +int state_avg[CPUIDLE_STATE_MAX];
-> +int adj_weight[CPUIDLE_STATE_MAX];
-> +int adj_avg[CPUIDLE_STATE_MAX];
-> +int adj_hit[CPUIDLE_STATE_MAX];
-> +int hit_thres =3D max(2, INTERVALS / drv->state_count);
-> +int weights[INTERVALS] =3D {5, 3, 2, 1};
-> +int weight =3D 0;
-> +int high_state =3D -1;
->
-> -divisor++;
->
-> -avg +=3D value;
-> -variance +=3D value * value;
-> +/* Going through the history, and divide them by the actual state */
-> +for (int i =3D 0; i < INTERVALS; i++) {
-> +int actual =3D get_actual_state(drv, dev, data->intervals[i]);
->
-> -if (value > max)
-> -max =3D value;
-> +/* Count the idle states hit in the history */
-> +state_avg[actual] +=3D data->intervals[i];
-> +state_hit[actual]++;
->
-> -if (value < min)
-> -min =3D value;
-> +cnt++;
->  }
->
-> -if (!max)
-> +if (cnt < hit_thres)
->  return UINT_MAX;
->
-> -if (divisor =3D=3D INTERVALS) {
-> -avg >>=3D INTERVAL_SHIFT;
-> -variance >>=3D INTERVAL_SHIFT;
-> -} else {
-> -do_div(avg, divisor);
-> -do_div(variance, divisor);
-> +/* calculate the average of each state */
-> +for (int i =3D 0; i < drv->state_count; i++) {
-> +if (state_hit[i] > 1)
-> +state_avg[i] /=3D state_hit[i];
->  }
->
-> -avg_sq =3D avg * avg;
-> -variance -=3D avg_sq;
-> +/* try to re-assign the data points by the closeness */
-> +for (int i =3D 0; i < INTERVALS; i++) {
-> +/* Starting from the recent history */
-> +int idx =3D ((data->interval_ptr - i - 1) + INTERVALS) % INTERVALS;
-> +unsigned int diff;
-> +unsigned int best_diff =3D UINT_MAX;
-> +unsigned int best_state, next_state;
-> +unsigned int value =3D data->intervals[idx];
-> +
-> +for (int state =3D 0; state < drv->state_count; state++) {
-> +diff =3D abs(state_avg[state] - value);
-> +if (diff < best_diff) {
-> +best_diff =3D diff;
-> +best_state =3D state;
-> +}
-> +}
->
-> -/*
-> - * The typical interval is obtained when standard deviation is
-> - * small (stddev <=3D 20 us, variance <=3D 400 us^2) or standard
-> - * deviation is small compared to the average interval (avg >
-> - * 6*stddev, avg^2 > 36*variance). The average is smaller than
-> - * UINT_MAX aka U32_MAX, so computing its square does not
-> - * overflow a u64. We simply reject this candidate average if
-> - * the standard deviation is greater than 715 s (which is
-> - * rather unlikely).
-> - *
-> - * Use this result only if there is no timer to wake us up sooner.
-> - */
-> -if (likely(variance <=3D U64_MAX/36)) {
-> -if ((avg_sq > variance * 36 && divisor * 4 >=3D INTERVALS * 3) ||
-> -    variance <=3D 400)
-> -return avg;
-> +if (best_diff < (state_avg[best_state] >> 2)) {
-> +adj_avg[best_state] +=3D value;
-> +adj_hit[best_state]++;
-> +adj_weight[best_state] +=3D weights[i];
-> +} else if (best_state < drv->state_count - 1) {
-> +next_state =3D best_state + 1;
-> +diff =3D abs(state_avg[next_state] - value);
-> +if (diff < (state_avg[next_state] >> 2)) {
-> +adj_avg[next_state] +=3D value;
-> +adj_hit[next_state]++;
-> +adj_weight[next_state] +=3D weights[i];
-> +}
-> +}
->  }
->
-> -/*
-> - * If there are outliers, discard them by setting thresholds to exclude
-> - * data points at a large enough distance from the average, then
-> - * calculate the average and standard deviation again. Once we get
-> - * down to the last 3/4 of our samples, stop excluding samples.
-> - *
-> - * This can deal with workloads that have long pauses interspersed
-> - * with sporadic activity with a bunch of short pauses.
-> +/* We've adjusted the hit status by the closeness, if one state is still
-> + * hit more often and selected recently, we can assume that state is mor=
-e
-> + * likely to happen in the future
->   */
-> -if (divisor * 4 <=3D INTERVALS * 3) {
-> -/*
-> - * If there are sufficiently many data points still under
-> - * consideration after the outliers have been eliminated,
-> - * returning without a prediction would be a mistake because it
-> - * is likely that the next interval will not exceed the current
-> - * maximum, so return the latter in that case.
-> - */
-> -if (divisor >=3D INTERVALS / 2)
-> -return max;
-> -
-> -return UINT_MAX;
-> +for (int state =3D 0; state < drv->state_count; state++) {
-> +if (adj_weight[state] > 1 && adj_hit[state] >=3D hit_thres) {
-> +adj_avg[state] /=3D adj_hit[state];
-> +
-> +if (adj_weight[state] > weight) {
-> +weight =3D adj_weight[state];
-> +high_state =3D state;
-> +} else if (adj_weight[state] =3D=3D weight) {
-> +if (adj_hit[state] > adj_hit[high_state])
-> +high_state =3D state;
-> +}
-> +}
->  }
->
-> -/* Update the thresholds for the next round. */
-> -if (avg - min > max - avg)
-> -min_thresh =3D min;
-> -else
-> -max_thresh =3D max;
-> +if (weight)
-> +return adj_avg[high_state];
->
-> -goto again;
-> +return UINT_MAX;
->  }
->
->  /**
-> @@ -225,7 +229,7 @@ static int menu_select(struct cpuidle_driver *drv, st=
-ruct cpuidle_device *dev,
->  }
->
->  /* Find the shortest expected idle interval. */
-> -predicted_ns =3D get_typical_interval(data) * NSEC_PER_USEC;
-> +predicted_ns =3D get_typical_interval(drv, dev, data) * NSEC_PER_USEC;
->  if (predicted_ns > RESIDENCY_THRESHOLD_NS) {
->  unsigned int timer_us;
->
-> --
-
-If you want to change the get_typical_interval() algorithm, it needs
-to be justified much better than in the changelog of this patch
-because you are likely to affect at least some workloads adversely.
-
-Moreover, there are obvious whitespace issues in the patch which need
-to be addressed even before it can be reviewed.
-
-Also this absolutely is not 6.17 material, so if you decide to pursue
-it, please come back with it after 6.17-rc1 is out.
-
-Thanks!
 
