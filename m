@@ -1,200 +1,446 @@
-Return-Path: <linux-kernel+bounces-734816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BDA0B0869F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:28:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20FBEB086A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:28:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53A07171F46
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:28:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 729351A60771
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A9923AB9D;
-	Thu, 17 Jul 2025 07:28:09 +0000 (UTC)
-Received: from MA0PR01CU009.outbound.protection.outlook.com (mail-southindiaazon11020114.outbound.protection.outlook.com [52.101.227.114])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC90235C17;
+	Thu, 17 Jul 2025 07:28:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TrPppdYJ"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A91812376FC;
-	Thu, 17 Jul 2025 07:28:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.227.114
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752737289; cv=fail; b=anM1Vtiu72EoIW8ozg5BmRRK2PK0+eOrgAN9K8HXhqgWRuHB8o/UlziqhwXRovLm8vF6xEIebrGT5I8VeiGTV0YG5X7ELDjUS15X1erz9eTf7gr2lUpNhUcjYcGtrEtgeX8MQxSdt3fojzojUPlG9pX961aSmoxAHHpsNm3kf0A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752737289; c=relaxed/simple;
-	bh=UfEC8awLqrdgwjowCfEaWGgV7pWLauXtarm0FDo/5ZE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=AFamP9shSsTRcZJxIVvz5jjBGPuyTrH5S38BrXfKW7Qn0F0S3nGZSrUEkk6cEI4njukZyOxqBfniZmMFB4KCET0qo84CsC+8UnFE31xF4a5lX13UkVE0rjaoYJZGNHYJzzaD4nOd7agHlqlVqifAl+JN8DMFbFt0kiP4lybfz9g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io; spf=fail smtp.mailfrom=siliconsignals.io; arc=fail smtp.client-ip=52.101.227.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=siliconsignals.io
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Io4lg1UVRNlOpwUmeFQfTwuwLOmm243Yizi1tobH/qPKmu9ifdrWhc7iWPZMmA1aPmlcwLIYdxkLmSvF1XJTmIjEhB88sAvtusfUDmaly3CIIUGx8rfMpYB6a1EDv17nklK83b1lwzRhFurUdOf6J2Ah276TBFFQ4x3TAP7lPeSXII89c3RBBQL9BmjNwfNTxSHY0rradMU8D22A0GE5G1xEeiWS5ZncoVfSbkatYJ9Z4efDdjlIh3CrDKLJ8OzSfBMbk6br7wR6eK9AoFvy6SFvQMm95w3tpRiOYHsHSWEqxaLKLU+5qc3LKELR8tJORMFWsxa86qWzgAzsGEo+Cw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cxl7U42iI5rFZvDO2yku6isjg4BQSPwmGqx/j5kGjzs=;
- b=VmjcXQl3riBDLcHyG+U5j4Id7RxqDZ2aeL4aYRsm+Oy9DCgriZrUWEd2frmQEnDPwCN7cWGjgUvmP4IHjknreF1vfNd0NPD3BoT8srAzpZwOgPfYlHFTOhA0fQGExWxDcKuWsHg+F2M+C9E416hdfegLQaqIlfG9dpYZTospZJTjD28xJ3HLciUZ7N5cSuClyyyFa/XTCE3qLcdo3ehJeg8IkeSPw/TnELQn/BVCTvTroP/ffYE6u38CXk8q4loz4RX/Cf9PVfmZy/i/LU9MkEo9RQfJabdUJv6j1tiGphd00vs/Q2K8cZ6f9M7iD6FyUu8cZirWSo/vwtUZABACfA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siliconsignals.io; dmarc=pass action=none
- header.from=siliconsignals.io; dkim=pass header.d=siliconsignals.io; arc=none
-Received: from PN3P287MB3519.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:229::21)
- by PN2P287MB2158.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:1c4::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.39; Thu, 17 Jul
- 2025 07:28:03 +0000
-Received: from PN3P287MB3519.INDP287.PROD.OUTLOOK.COM
- ([fe80::5c9a:906e:318b:c418]) by PN3P287MB3519.INDP287.PROD.OUTLOOK.COM
- ([fe80::5c9a:906e:318b:c418%6]) with mapi id 15.20.8922.037; Thu, 17 Jul 2025
- 07:28:03 +0000
-From: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
-	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
-	"laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, Himanshu Bhavani
-	<himanshu.bhavani@siliconsignals.io>, Mauro Carvalho Chehab
-	<mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>, =?iso-8859-1?Q?Andr=E9_Apitzsch?=
-	<git@apitzsch.eu>, Ricardo Ribalda <ribalda@chromium.org>, Heimir Thor
- Sverrisson <heimir.sverrisson@gmail.com>, Matthias Fend
-	<matthias.fend@emfend.at>, Sylvain Petinot <sylvain.petinot@foss.st.com>,
-	Jingjing Xiong <jingjing.xiong@intel.com>, Benjamin Mugnier
-	<benjamin.mugnier@foss.st.com>, Dongcheng Yan <dongcheng.yan@intel.com>, Arnd
- Bergmann <arnd@arndb.de>, Hans de Goede <hansg@kernel.org>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 1/2] dt-bindings: media: i2c: Add ov2735 sensor
-Thread-Topic: [PATCH v4 1/2] dt-bindings: media: i2c: Add ov2735 sensor
-Thread-Index: AQHb9lfYoS/wf6j50k6uH/8lXesHXbQ12+aAgAAPulE=
-Date: Thu, 17 Jul 2025 07:28:03 +0000
-Message-ID:
- <PN3P287MB3519C2A2B8DC207AC0AF2C50FF51A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
-References: <20250716134426.8348-1-hardevsinh.palaniya@siliconsignals.io>
- <20250716134426.8348-2-hardevsinh.palaniya@siliconsignals.io>
- <20250717-hulking-earthworm-of-atheism-68a02c@kuoka>
-In-Reply-To: <20250717-hulking-earthworm-of-atheism-68a02c@kuoka>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siliconsignals.io;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PN3P287MB3519:EE_|PN2P287MB2158:EE_
-x-ms-office365-filtering-correlation-id: 9ffc3184-c4bb-43e7-7c6b-08ddc5037725
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|7416014|366016|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?MyLl/W7xpo4W7TvS4v2iubcswMRIKziAQtTXfiZFYknXlWlHS+M8lg7lRP?=
- =?iso-8859-1?Q?Ni9ZSnlDn++kfKRJzg8lEmlIoF7BVFdhXukIpyWmAIOs+5+Sm4ipQTnLyx?=
- =?iso-8859-1?Q?9+6FqWIksEKqypEhI3qeHHaVsqXlZTmSQEWF8v9vJAWM7eSyZ8ujP+rusQ?=
- =?iso-8859-1?Q?HsEOdFgauHHZ7EvsPSHruwvTXBtTr0j5wcCO+42Zh5mxX1haR7RAoIeiQT?=
- =?iso-8859-1?Q?FHsFfOJj6Vm8GTgo2iLUJkmAoinp0h20leQhwCLI2gaan1DC9MdBBak4rf?=
- =?iso-8859-1?Q?yUsrAbLIjTwx8dbGPXd8V9DAvUAheB+WEy1n/TIofJuqbJnmKE3Av3wFcD?=
- =?iso-8859-1?Q?HwDI1qkXdqTIThF4cJM4kcaxmjittZeCKRJf38K7BsVxYBVoO7epBlkGy7?=
- =?iso-8859-1?Q?kq62dd30sNGNmEw14DhaxUgFkxR8/GyZ9b4s/e+yLUYXMH97WofWpBSVeF?=
- =?iso-8859-1?Q?WixYnGKLh6K8HBV9s8FTqeyvCMjEuCYRyGR7IyX999VRwfT/92pN/Heyuy?=
- =?iso-8859-1?Q?f2vKDWv7WRmmHgUFNsc2wLGUezCGp8FUC3xHRBGfSqLnztWhjyQ6AYa2xj?=
- =?iso-8859-1?Q?IVr7uhsu3QHrdYR0nMf97lp0JpngJ/Vt8glHP7Z7cDQuvkIBAVyYYImXu8?=
- =?iso-8859-1?Q?+onXnyXHdEjAwu+5CxeP/zL7Go3JOryH3kOjfSwPBOOTJlqELZyOKgKG+c?=
- =?iso-8859-1?Q?ztzU7MYhroaYGTw5UZoJRaBr0uRklWhTaRklJ58ycESIhLcR7VeTmdJw0e?=
- =?iso-8859-1?Q?1vqWULr2hGYLNhxnA3nJw2kFAMSnyshUUPfGzo/v0rWP98wqtOFt4oo0Ad?=
- =?iso-8859-1?Q?31yX/fKC1w8VBsRexHjdl/cZH/NJWXJ8+fKF6O40fv49Dm+ksJy/+sqkSJ?=
- =?iso-8859-1?Q?t/un3+qJpizn4Q6rm04kWOCEbRXbssPtpROqETM8t21XPUeGG08qqyonfZ?=
- =?iso-8859-1?Q?Y0rrmmqKzFYq1psEO8+DzAwh6cxmnx2m0iTSuhG9xTbGzXJin5KnH3p2Xn?=
- =?iso-8859-1?Q?dwzZdgytYhAKbe+LBAAwRzQZdL+uqhJslhvVB3bNTzra238eKlPQPj8zVk?=
- =?iso-8859-1?Q?Fi19aYVd1n+1K5SPmGfuLQgK/l5yw8WwsJFqymbsBJhYPzAE0xUmePJ6O3?=
- =?iso-8859-1?Q?2cmcZu0o5cvyOiLA5/zj/Dn7JxPD0/NzCU8WgpDGM6E3QMBO+iCSwsh679?=
- =?iso-8859-1?Q?WhxjZsnQzRtuuRu5j60+qcE64KeFOD8/Fw5eMWQ0OFz9p8XAVDhylctbP+?=
- =?iso-8859-1?Q?QZ4ymaDPT+i0sTDq9HRBfkZU9/K3Fn46DzxYI8Z892OTeNkWTtLWVHro2n?=
- =?iso-8859-1?Q?sWkd4M5KReIX5BwlbQs5SIEGSMAW897pxiqzBJkyxE7mYoYQsVzfuxw+Kg?=
- =?iso-8859-1?Q?eDGU3R6RE62zG2cC9UGaYr/pMNK4hRrPGJaDe2eXf6dnx9tcrTa7I+RIcr?=
- =?iso-8859-1?Q?IlUp5xMQtPKklm40iBwbIWUYIt4NnNYPyC0quVcMkiRE1lY91Ifj5zWOtO?=
- =?iso-8859-1?Q?SiKSRhYmumK62lGyG8fGIguy6O2kDGnq0yWPMFzLjou+5gnMRNVqmiLsy8?=
- =?iso-8859-1?Q?zvaJJoA=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PN3P287MB3519.INDP287.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(376014)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?BuI3F9yx4XKVdIErLAbh05+9CmCio/jovszZWy0BBqWzo6Lw8RImoZY8Ok?=
- =?iso-8859-1?Q?X5A4qIZ3GS/szTgLefVhZHOQwHAsJOiYAdZw9xUqCDEB+CKRzNeSP0ECkv?=
- =?iso-8859-1?Q?xtJrqDwJUvzViSFSS6L8xO3uJI0G3Od9HULwIgfAGGdrTlMspb242fgIPv?=
- =?iso-8859-1?Q?YLKeOsZv84CUYfkdNkqciJZvbLSJEXHBekvFCwtKX41H3mtt5m0f8NCpy6?=
- =?iso-8859-1?Q?K8r6qEIyKI8S/6REruXNECMqOjyvOVQAdukv9vZw4JvSkuyFylVKS9LNls?=
- =?iso-8859-1?Q?oIV/y3xc5rKmo+vOW/lQl1EDBfdMhiLcuMS2/FFQ8LhAU4jsEiJEmtcFn3?=
- =?iso-8859-1?Q?fdTBWdFXYlkqnpHpnRorxnu9W00ZztKsrIiNF9pT3iI0gQ9J2ZUtCQBatO?=
- =?iso-8859-1?Q?eoEpy2hUhpg4Fdn371BxUjEakR1LLNm+STJRoxQNHy9h0YCTYXMqH79cG7?=
- =?iso-8859-1?Q?kcxpam//8SjNNKTJdB3wQWA7VfWqEYqy5efS9jsKaP9PPzOLZTN2n7RDhX?=
- =?iso-8859-1?Q?6uPFDnK2gjuyjcZusycOQGfMfAnso3dRhxnBSZ5fCYs327SPwcykYKqN2n?=
- =?iso-8859-1?Q?3tNKfruQ+aunKqrufD3BgbRsF4fkzYDGHhKSvL2ujCKi2Ev3I60cA6jxai?=
- =?iso-8859-1?Q?NCPBeRmhK4k7hlyFlj/UojCp+OshPCHylzL8THyVEwsZypekQ3/27PS9EK?=
- =?iso-8859-1?Q?M2nLY6mMyjhoD6PZCJsEqKS3mdMCxJF3z6aGfxmIgwVyhdqyUQ0mprw18n?=
- =?iso-8859-1?Q?iSNLzy6Nkf92CcEK5C4XdJKscEMdPkMsiaEnVb79wik67vwoDYkXh/ZLii?=
- =?iso-8859-1?Q?dRvtQiYL/W0g3wRZRPAftP4bRN8vAzqkroYsItc+i13kANJLHsL8kipUCX?=
- =?iso-8859-1?Q?w81F6/KqFo8YIeQK+GzwVqCrwuSuvdPG5fmH4n9OFFmja28+GVZkr7TQn2?=
- =?iso-8859-1?Q?kHCmjVnlUK0SMvqrjNi7WVg3zFgM7xyN9BGtOTAF5abIfd+BXqGqqt7sza?=
- =?iso-8859-1?Q?UglCxya0IAnbRtCWJu0VquaVws0SdEX4/ueZNafeyFQELLJVI4x5uS5k2c?=
- =?iso-8859-1?Q?olfRSROFh3YBQ9djGJzmTPeu1c9R2Z3qwf5AqeiS87elTvUWR0Dev9cI8+?=
- =?iso-8859-1?Q?XnQjYgOZVG/+3EV0wF6UiJv9rTlyHv2VmT51dK/GGQ3JTVBdR0yiyy9GZl?=
- =?iso-8859-1?Q?9O325024+zzdZmkUex05Xa1tUuJapuiyVTaGPjMjfcU+EHVW61jKMNUD/9?=
- =?iso-8859-1?Q?aLmEaRyLQ1J7mgfMC/KIroNXn818Yl2wlbW/im4xk41zmAXrBLRaN29XJY?=
- =?iso-8859-1?Q?rXvVWMIj5KVJ43wGQIyxcnkYGfyJ8UUUuz2AsRZnbU6FkL1osl5xIHpmFM?=
- =?iso-8859-1?Q?OcDHaqUtk1TMWGknHYY1MecKgbW9xiIndPIffYji7mPVWiWfIBA/Itq5c2?=
- =?iso-8859-1?Q?ygaOzp6ecvWH8KnWkaHTvXkp8aCpF5bJ8zGcjwmhzsvOLR0LCcaz+tencT?=
- =?iso-8859-1?Q?KP1Ht1uB8115HOiIYehmGsPe2k+1ekoDuDpPe7pC4wog1TaaUBtfly00mp?=
- =?iso-8859-1?Q?Frr+h/M0ycTpmmo8maSeluSTbYI8OnHypSQWdrBlH2lfyiOa5Lk+904lV8?=
- =?iso-8859-1?Q?42D7AlPdE+XRfNer0Iw5xrF3SpZ9q/9OFKWpXueB1bXX1ClkHcn5KtpWcP?=
- =?iso-8859-1?Q?QI8ByxQIu/xDpDOowq0=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE960231842;
+	Thu, 17 Jul 2025 07:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752737321; cv=none; b=Y6OswguDYOGR/e74zl5eYEko0uYrUTUrKOYhrZ83J8heHiuThEnuk/0KX+dASmbHJvzQcFJc+P9L/tQViIaPqEe5Ll0rQzl62abeuppeLpMu+JJbfy9i0onN3qy8bxiOsijEu8rvYup77F3pIgcLb+4llMfA01yyeZP61T2N+LU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752737321; c=relaxed/simple;
+	bh=4KzMyDzXjtYRrnvq2CFH/KwYRcMgVqV+Hn4qsI3FlUk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lxkoRJRmYEv/Qmtu9sq/oMCrsd2yKJNESA/GBLWEbQVHZB/dC5mK4+++herR1tgewIJRXfSFKzlj8wLozLh73YW10DJuYbujY0l2DQB1kaLatfW3xYlg+TI63EfZaUTj7Ll+fwwyWsdU0giQ6xBubwBpCFXAEN6h0Y1AkfGDqiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TrPppdYJ; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-60789b450ceso1154700a12.2;
+        Thu, 17 Jul 2025 00:28:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752737318; x=1753342118; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VcV5q/jmjieY/zsuCUeOgorppXDKoUYx+baj3sChvss=;
+        b=TrPppdYJTsrjs9OV+aqAUm6XYUx6TOPgjLFv7kCB0rDVHnfsPds+jab62rWt2jzqlW
+         6pJUmLAJJzvrZVby7obJU1L4oXvTOvmqbhtxUhzsNBR/yiRZwR6JfNz5dUKzhHPG6HZj
+         uariv6jRL/cC+jupHPV29UiOUZMFbSHUfoivyQ3u6NT/AM/fOoGvd+Gyhli/s28mC1zh
+         RFIWwEifEBKGnwSk0TiDtB0espE/j3EHVy1JOZUCSJ3KfjoN40NIc7nIQ5YF5zeRFXpI
+         tMRMdjFKNujDYadqKTmTeQpFBULnX5yfSjr+vTT0pkG4/PXlKFVg0lIkQ2+VWGOyXhoK
+         zXCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752737318; x=1753342118;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VcV5q/jmjieY/zsuCUeOgorppXDKoUYx+baj3sChvss=;
+        b=SEb0KSPPM9Jz0AE0s0TxQevyATriGHR3IHgO8xG3nTc52YcNE9D3emppf6kHU0rPcY
+         gK+Qz/Z3Jl1kco7z4AmH1XzfcG0ABS/aFMe0JjKMJoqHCooaNvIMxmznYGZ4qWlzLOWQ
+         Xvwlu+5fk/51YEzCGPn3vH2PQtPxWLijdN4/CBrRZEE4fUs3to65bWtjPED1TPyp7AKB
+         S5u5aAeSeUPnAg6NECM7TLDPPCj/nRmJdUMJ0bKJ0OpBEc0ayK9rW1MzL7bvRgwPF/FE
+         VTpRZjerDhH+3JgLstMIJum5YTBd0uB8DA09/kTgMfqAQCGiOIwccAllYMReClrIKGZq
+         vEEA==
+X-Forwarded-Encrypted: i=1; AJvYcCUx96keds92VkZIZYctPCRAxUuIevzHd8O7RB4MNf6IRsf1936CP5q2lvFTEkVnd53hgMJojW1fo8Jd@vger.kernel.org, AJvYcCWMO0d/cz0XGLFHAvJ5fXD6gg+SWVUNOvNHB7BsnD9ukCIACSpFoH8LiLYaAhpJofSeTIytWZlSbn7KAMo0RMQiH04=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQ2i61DvMy0qYRqal4idXIfGLcbp5D1TyNyHzCcfuy3Sd+0bg2
+	1Wneqq2mxUrFwtYwUYumKyhIfgRHAgVNVSYZof4VyH/1g5/4DfZkzyx3G62Kzg==
+X-Gm-Gg: ASbGnct9juVK5bs0appdWPKJTO60dF67rZ2u0mXchP2lDaEV7avnxugKL4xBu4GMoNS
+	wmNQV3LDtf3ow+eX3e8+CAjpyOcWnvYZ6OYUfSlU6c9Caf/xWUvIBlCuOJW/HTnJeeHg5bm44GI
+	KgnJ/o8TsEXvLMn+zsp93fwUkMU6PANJWPilbJ7BQuhxlJcCWH0jph6hdeaZf87nAX1dLRyI847
+	K1wCvrNuh2kIZw8hDg9rbyZaYTGpdO2CNb9HB1aAMcjw0CRz/DK8KCgoOPwxfV7czlZulJRveCI
+	VCgvNXUvgDZHjvq5rNPDBLuzDmYGoEqq/6aBbW2FuYjBMOt68seIY9U6Gz08ShihPnev1vl0z3F
+	HxIAHLQ3hJG8PaBmhb/JhwAYHPKYXwhbmiTCTFqiMj2D4ZAYmAlCquIjNJlMvhOoEqeJYlvbXdz
+	9M
+X-Google-Smtp-Source: AGHT+IF1n1djsujE+lHL1dVwvdQ5sh3qkSgDGn6tZyRKrPWKVYpqVF2qwCPbozb8mhaSseM7IFXZuQ==
+X-Received: by 2002:a17:907:7ba0:b0:ae3:4f80:ac4c with SMTP id a640c23a62f3a-ae9cdd834fdmr515165966b.12.1752737317563;
+        Thu, 17 Jul 2025 00:28:37 -0700 (PDT)
+Received: from [192.168.1.107] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e82646bcsm1318709966b.76.2025.07.17.00.28.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Jul 2025 00:28:37 -0700 (PDT)
+Message-ID: <7bec6fc2-6643-4ddf-9475-8ead4b312912@gmail.com>
+Date: Thu, 17 Jul 2025 10:28:35 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: siliconsignals.io
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PN3P287MB3519.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9ffc3184-c4bb-43e7-7c6b-08ddc5037725
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jul 2025 07:28:03.0634
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 7ec5089e-a433-4bd1-a638-82ee62e21d37
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: /zJDGh6nWy19xQx4JQazI7EwmVZ7wZ9F+jJiNJP/vThf4/DVWllKsGSnL0dtycJEjrq433AIo9HRJ9TUwcZlQ11gNsheFC7Cze4dirNU7eE5Hx5rYKwCjVpODYMuQzvk
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2P287MB2158
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/3] regulator: add s2dos05 regulator support
+Content-Language: en-US
+To: Dzmitry Sankouski <dsankouski@gmail.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20240617-starqltechn_integration_upstream-v5-0-ea1109029ba5@gmail.com>
+ <20240617-starqltechn_integration_upstream-v5-3-ea1109029ba5@gmail.com>
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <20240617-starqltechn_integration_upstream-v5-3-ea1109029ba5@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Krzysztof,=0A=
-=0A=
-> On Wed, Jul 16, 2025 at 07:14:16PM +0530, Hardevsinh Palaniya wrote:=0A=
-> > +=A0=A0=A0=A0=A0=A0=A0 properties:=0A=
-> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 data-lanes:=0A=
-> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 items:=0A=
-> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 - const: 1=0A=
-> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 - const: 2=0A=
-> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 link-frequencies: true=0A=
-> =0A=
-> Drop=0A=
-> =0A=
-> I don't understand why this appeared. I don't think anyone asked for it?=
-=0A=
-=0A=
-Laurent suggested validating the link frequency in the Device Tree.  =0A=
-=0A=
-Link[1]: https://lore.kernel.org/linux-media/20250710212131.GG22436@pendrag=
-on.ideasonboard.com/=0A=
-=0A=
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>=0A=
- =0A=
-Thanks!=0A=
-=0A=
-Best Regards,=0A=
-Hardev=
+On 9/26/24 12:47, Dzmitry Sankouski wrote:
+> S2DOS05 has 1 buck and 4 LDO regulators, used for powering
+> panel/touchscreen.
+>
+> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+
+When is this going to get merged? This patch brings the regulators
+functionality of the pmic, so not having it merged is odd. This PMIC is
+used on other devices too, like the Galaxy S22.
+
+It seems like this has been hanging for almost an year at this point.
+If the author won't, will somebody resend it?
+
+Regards,
+Ivaylo
+
+> ---
+> Changes in v4:
+> - remove excessive linux/module.h import
+> - use generic regulator helpers
+> - use of_match
+> - use devm_* for mem allocations
+> - use // style comment
+> - drop all junk Samsung code
+> - adjust to depend on sec-core
+>
+> Changes in v5:
+> - fix Kconfig and module description to be the same
+> - make regulators const
+> - code refactoring
+> - replace s2m* pattern on s2* to include s2dos05
+> ---
+>  MAINTAINERS                           |   2 +-
+>  drivers/regulator/Kconfig             |   8 ++++
+>  drivers/regulator/Makefile            |   1 +
+>  drivers/regulator/s2dos05-regulator.c | 176 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/regulator/s2dos05.h     |  73 +++++++++++++++++++++++++++++++++++++
+>  5 files changed, 259 insertions(+), 1 deletion(-)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 6a6c769a341a..0b9fca1030a8 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -20474,7 +20474,7 @@ F:	Documentation/devicetree/bindings/regulator/samsung,s2m*.yaml
+>  F:	Documentation/devicetree/bindings/regulator/samsung,s5m*.yaml
+>  F:	drivers/clk/clk-s2mps11.c
+>  F:	drivers/mfd/sec*.c
+> -F:	drivers/regulator/s2m*.c
+> +F:	drivers/regulator/s2*.c
+>  F:	drivers/regulator/s5m*.c
+>  F:	drivers/rtc/rtc-s5m.c
+>  F:	include/linux/mfd/samsung/
+> diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+> index 39297f7d8177..249933d6388d 100644
+> --- a/drivers/regulator/Kconfig
+> +++ b/drivers/regulator/Kconfig
+> @@ -1322,6 +1322,14 @@ config REGULATOR_RTQ2208
+>  	  and two ldos. It features wide output voltage range from 0.4V to 2.05V
+>  	  and the capability to configure the corresponding power stages.
+>  
+> +config REGULATOR_S2DOS05
+> +	tristate "Samsung S2DOS05 voltage regulator"
+> +	depends on MFD_SEC_CORE || COMPILE_TEST
+> +	help
+> +	  This driver provides support for the voltage regulators of the S2DOS05.
+> +	  The S2DOS05 is a companion power management IC for the smart phones.
+> +	  The S2DOS05 has 4 LDOs and 1 BUCK outputs.
+> +
+>  config REGULATOR_S2MPA01
+>  	tristate "Samsung S2MPA01 voltage regulator"
+>  	depends on MFD_SEC_CORE || COMPILE_TEST
+> diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
+> index 3d5a803dce8a..9b69546fb3f6 100644
+> --- a/drivers/regulator/Makefile
+> +++ b/drivers/regulator/Makefile
+> @@ -154,6 +154,7 @@ obj-$(CONFIG_REGULATOR_RTMV20)	+= rtmv20-regulator.o
+>  obj-$(CONFIG_REGULATOR_RTQ2134) += rtq2134-regulator.o
+>  obj-$(CONFIG_REGULATOR_RTQ6752)	+= rtq6752-regulator.o
+>  obj-$(CONFIG_REGULATOR_RTQ2208) += rtq2208-regulator.o
+> +obj-$(CONFIG_REGULATOR_S2DOS05) += s2dos05-regulator.o
+>  obj-$(CONFIG_REGULATOR_S2MPA01) += s2mpa01.o
+>  obj-$(CONFIG_REGULATOR_S2MPS11) += s2mps11.o
+>  obj-$(CONFIG_REGULATOR_S5M8767) += s5m8767.o
+> diff --git a/drivers/regulator/s2dos05-regulator.c b/drivers/regulator/s2dos05-regulator.c
+> new file mode 100644
+> index 000000000000..258cabf104ce
+> --- /dev/null
+> +++ b/drivers/regulator/s2dos05-regulator.c
+> @@ -0,0 +1,176 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +//
+> +// s2dos05.c - Regulator driver for the Samsung s2dos05
+> +//
+> +// Copyright (C) 2024 Dzmitry Sankouski <dsankouski@gmail.com>
+> +
+> +#include <linux/bug.h>
+> +#include <linux/delay.h>
+> +#include <linux/err.h>
+> +#include <linux/slab.h>
+> +#include <linux/module.h>
+> +#include <linux/regmap.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regulator/driver.h>
+> +#include <linux/regulator/machine.h>
+> +#include <linux/regulator/of_regulator.h>
+> +#include <linux/mfd/samsung/core.h>
+> +#include <linux/regulator/s2dos05.h>
+> +#include <linux/i2c.h>
+> +
+> +struct s2dos05_data {
+> +	struct regmap *regmap;
+> +	struct device *dev;
+> +};
+> +
+> +#define _BUCK(macro)	S2DOS05_BUCK##macro
+> +#define _buck_ops(num)	s2dos05_ops##num
+> +#define _LDO(macro)	S2DOS05_LDO##macro
+> +#define _REG(ctrl)	S2DOS05_REG##ctrl
+> +#define _ldo_ops(num)	s2dos05_ops##num
+> +#define _MASK(macro)	S2DOS05_ENABLE_MASK##macro
+> +#define _TIME(macro)	S2DOS05_ENABLE_TIME##macro
+> +
+> +#define BUCK_DESC(_name, _id, _ops, m, s, v, e, em, t, a) {	\
+> +	.name		= _name,				\
+> +	.id		= _id,					\
+> +	.ops		= _ops,					\
+> +	.of_match = of_match_ptr(_name),			\
+> +	.of_match_full_name = true,				\
+> +	.regulators_node = of_match_ptr("regulators"),		\
+> +	.type		= REGULATOR_VOLTAGE,			\
+> +	.owner		= THIS_MODULE,				\
+> +	.min_uV		= m,					\
+> +	.uV_step	= s,					\
+> +	.n_voltages	= S2DOS05_BUCK_N_VOLTAGES,		\
+> +	.vsel_reg	= v,					\
+> +	.vsel_mask	= S2DOS05_BUCK_VSEL_MASK,		\
+> +	.enable_reg	= e,					\
+> +	.enable_mask	= em,					\
+> +	.enable_time	= t,					\
+> +	.active_discharge_off = 0,				\
+> +	.active_discharge_on = S2DOS05_BUCK_FD_MASK,		\
+> +	.active_discharge_reg	= a,				\
+> +	.active_discharge_mask	= S2DOS05_BUCK_FD_MASK		\
+> +}
+> +
+> +#define LDO_DESC(_name, _id, _ops, m, s, v, e, em, t, a) {	\
+> +	.name		= _name,				\
+> +	.id		= _id,					\
+> +	.ops		= _ops,					\
+> +	.of_match = of_match_ptr(_name),			\
+> +	.of_match_full_name = true,				\
+> +	.regulators_node = of_match_ptr("regulators"),		\
+> +	.type		= REGULATOR_VOLTAGE,			\
+> +	.owner		= THIS_MODULE,				\
+> +	.min_uV		= m,					\
+> +	.uV_step	= s,					\
+> +	.n_voltages	= S2DOS05_LDO_N_VOLTAGES,		\
+> +	.vsel_reg	= v,					\
+> +	.vsel_mask	= S2DOS05_LDO_VSEL_MASK,		\
+> +	.enable_reg	= e,					\
+> +	.enable_mask	= em,					\
+> +	.enable_time	= t,					\
+> +	.active_discharge_off = 0,				\
+> +	.active_discharge_on = S2DOS05_LDO_FD_MASK,		\
+> +	.active_discharge_reg	= a,				\
+> +	.active_discharge_mask	= S2DOS05_LDO_FD_MASK		\
+> +}
+> +
+> +static const struct regulator_ops s2dos05_ops = {
+> +	.list_voltage		= regulator_list_voltage_linear,
+> +	.map_voltage		= regulator_map_voltage_linear,
+> +	.is_enabled		= regulator_is_enabled_regmap,
+> +	.enable			= regulator_enable_regmap,
+> +	.disable		= regulator_disable_regmap,
+> +	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
+> +	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
+> +	.set_voltage_time_sel	= regulator_set_voltage_time_sel,
+> +	.set_active_discharge	= regulator_set_active_discharge_regmap,
+> +};
+> +
+> +static const struct regulator_desc regulators[S2DOS05_REGULATOR_MAX] = {
+> +		// name, id, ops, min_uv, uV_step, vsel_reg, enable_reg
+> +		LDO_DESC("ldo1", _LDO(1), &_ldo_ops(), _LDO(_MIN1),
+> +			_LDO(_STEP1), _REG(_LDO1_CFG),
+> +			_REG(_EN), _MASK(_L1), _TIME(_LDO), _REG(_LDO1_CFG)),
+> +		LDO_DESC("ldo2", _LDO(2), &_ldo_ops(), _LDO(_MIN1),
+> +			_LDO(_STEP1), _REG(_LDO2_CFG),
+> +			_REG(_EN), _MASK(_L2), _TIME(_LDO), _REG(_LDO2_CFG)),
+> +		LDO_DESC("ldo3", _LDO(3), &_ldo_ops(), _LDO(_MIN2),
+> +			_LDO(_STEP1), _REG(_LDO3_CFG),
+> +			_REG(_EN), _MASK(_L3), _TIME(_LDO), _REG(_LDO3_CFG)),
+> +		LDO_DESC("ldo4", _LDO(4), &_ldo_ops(), _LDO(_MIN2),
+> +			_LDO(_STEP1), _REG(_LDO4_CFG),
+> +			_REG(_EN), _MASK(_L4), _TIME(_LDO), _REG(_LDO4_CFG)),
+> +		BUCK_DESC("buck", _BUCK(1), &_buck_ops(), _BUCK(_MIN1),
+> +			_BUCK(_STEP1), _REG(_BUCK_VOUT),
+> +			_REG(_EN), _MASK(_B1), _TIME(_BUCK), _REG(_BUCK_CFG)),
+> +};
+> +
+> +static int s2dos05_pmic_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
+> +	struct of_regulator_match *rdata = NULL;
+> +	struct s2dos05_data *s2dos05;
+> +	struct regulator_config config = { };
+> +	unsigned int rdev_num = ARRAY_SIZE(regulators);
+> +	int i, ret;
+> +
+> +	s2dos05 = devm_kzalloc(dev, sizeof(*s2dos05), GFP_KERNEL);
+> +	if (!s2dos05)
+> +		return -ENOMEM;
+> +
+> +	platform_set_drvdata(pdev, s2dos05);
+> +
+> +	rdata = devm_kcalloc(dev, rdev_num, sizeof(*rdata), GFP_KERNEL);
+> +	if (!rdata)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < rdev_num; i++)
+> +		rdata[i].name = regulators[i].name;
+> +
+> +	s2dos05->regmap = iodev->regmap_pmic;
+> +	s2dos05->dev = dev;
+> +	if (!dev->of_node)
+> +		dev->of_node = dev->parent->of_node;
+> +
+> +	for (i = 0; i < rdev_num; i++) {
+> +		struct regulator_dev *regulator;
+> +
+> +		config.init_data = rdata[i].init_data;
+> +		config.of_node = rdata[i].of_node;
+> +		config.dev = dev;
+> +		config.driver_data = s2dos05;
+> +		regulator = devm_regulator_register(&pdev->dev,
+> +						&regulators[i], &config);
+> +		if (IS_ERR(regulator)) {
+> +			ret = PTR_ERR(regulator);
+> +			dev_err(&pdev->dev, "regulator init failed for %d\n",
+> +				i);
+> +		}
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct platform_device_id s2dos05_pmic_id[] = {
+> +	{ "s2dos05-regulator" },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(platform, s2dos05_pmic_id);
+> +
+> +static struct platform_driver s2dos05_platform_driver = {
+> +	.driver = {
+> +		.name = "s2dos05",
+> +	},
+> +	.probe = s2dos05_pmic_probe,
+> +	.id_table = s2dos05_pmic_id,
+> +};
+> +module_platform_driver(s2dos05_platform_driver);
+> +
+> +MODULE_AUTHOR("Dzmitry Sankouski <dsankouski@gmail.com>");
+> +MODULE_DESCRIPTION("Samsung S2DOS05 Regulator Driver");
+> +MODULE_LICENSE("GPL");
+> diff --git a/include/linux/regulator/s2dos05.h b/include/linux/regulator/s2dos05.h
+> new file mode 100644
+> index 000000000000..2e89fcbce769
+> --- /dev/null
+> +++ b/include/linux/regulator/s2dos05.h
+> @@ -0,0 +1,73 @@
+> +/* SPDX-License-Identifier: GPL-2.0+ */
+> +// s2dos05.h
+> +//
+> +// Copyright (c) 2016 Samsung Electronics Co., Ltd
+> +//              http://www.samsung.com
+> +// Copyright (C) 2024 Dzmitry Sankouski <dsankouski@gmail.com>
+> +
+> +#ifndef __LINUX_S2DOS05_H
+> +#define __LINUX_S2DOS05_H
+> +
+> +// S2DOS05 registers
+> +// Slave Addr : 0xC0
+> +enum S2DOS05_reg {
+> +	S2DOS05_REG_DEV_ID,
+> +	S2DOS05_REG_TOPSYS_STAT,
+> +	S2DOS05_REG_STAT,
+> +	S2DOS05_REG_EN,
+> +	S2DOS05_REG_LDO1_CFG,
+> +	S2DOS05_REG_LDO2_CFG,
+> +	S2DOS05_REG_LDO3_CFG,
+> +	S2DOS05_REG_LDO4_CFG,
+> +	S2DOS05_REG_BUCK_CFG,
+> +	S2DOS05_REG_BUCK_VOUT,
+> +	S2DOS05_REG_IRQ_MASK = 0x0D,
+> +	S2DOS05_REG_SSD_TSD = 0x0E,
+> +	S2DOS05_REG_OCL = 0x10,
+> +	S2DOS05_REG_IRQ = 0x11
+> +};
+> +
+> +// S2DOS05 regulator ids
+> +enum S2DOS05_regulators {
+> +	S2DOS05_LDO1,
+> +	S2DOS05_LDO2,
+> +	S2DOS05_LDO3,
+> +	S2DOS05_LDO4,
+> +	S2DOS05_BUCK1,
+> +	S2DOS05_REG_MAX,
+> +};
+> +
+> +#define S2DOS05_IRQ_PWRMT_MASK	BIT(5)
+> +#define S2DOS05_IRQ_TSD_MASK	BIT(4)
+> +#define S2DOS05_IRQ_SSD_MASK	BIT(3)
+> +#define S2DOS05_IRQ_SCP_MASK	BIT(2)
+> +#define S2DOS05_IRQ_UVLO_MASK	BIT(1)
+> +#define S2DOS05_IRQ_OCD_MASK	BIT(0)
+> +
+> +#define S2DOS05_BUCK_MIN1	506250
+> +#define S2DOS05_LDO_MIN1	1500000
+> +#define S2DOS05_LDO_MIN2	2700000
+> +#define S2DOS05_BUCK_STEP1	6250
+> +#define S2DOS05_LDO_STEP1	25000
+> +#define S2DOS05_LDO_VSEL_MASK	0x7F
+> +#define S2DOS05_LDO_FD_MASK	0x80
+> +#define S2DOS05_BUCK_VSEL_MASK	0xFF
+> +#define S2DOS05_BUCK_FD_MASK	0x08
+> +
+> +#define S2DOS05_ENABLE_MASK_L1	BIT(0)
+> +#define S2DOS05_ENABLE_MASK_L2	BIT(1)
+> +#define S2DOS05_ENABLE_MASK_L3	BIT(2)
+> +#define S2DOS05_ENABLE_MASK_L4	BIT(3)
+> +#define S2DOS05_ENABLE_MASK_B1	BIT(4)
+> +
+> +#define S2DOS05_RAMP_DELAY	12000
+> +
+> +#define S2DOS05_ENABLE_TIME_LDO		50
+> +#define S2DOS05_ENABLE_TIME_BUCK	350
+> +
+> +#define S2DOS05_LDO_N_VOLTAGES	(S2DOS05_LDO_VSEL_MASK + 1)
+> +#define S2DOS05_BUCK_N_VOLTAGES (S2DOS05_BUCK_VSEL_MASK + 1)
+> +
+> +#define S2DOS05_REGULATOR_MAX	(S2DOS05_REG_MAX)
+> +
+> +#endif // __LINUX_S2DOS05_H
+>
+
 
