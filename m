@@ -1,168 +1,98 @@
-Return-Path: <linux-kernel+bounces-734422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEC76B08165
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:28:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 00E16B08169
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:30:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B7F01C23EC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:28:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33A371C27216
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:30:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6171B4D8CE;
-	Thu, 17 Jul 2025 00:27:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C9F7262E;
+	Thu, 17 Jul 2025 00:29:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CDzlUWKL"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ar/zduBn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A4681799F;
-	Thu, 17 Jul 2025 00:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20E119460;
+	Thu, 17 Jul 2025 00:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752712076; cv=none; b=ZqMM95C/SaSNJSwrD8RPI5xyHhjUv9ftndkLc1YY9r6ORuLlrfgL1SN/yRVxHF5Rf8aC9YlgEbRntZGBVGaU5V179HD2scRQ1vMh76BLZkZnqBb7UvYxXZmqZJISsAE74j9rI9F6gWxITUhGDJjvIlPa5aD5AV4WJ865RD2nyGY=
+	t=1752712191; cv=none; b=J3K+fv0n3mjTWDD7J8gwXlpItR2xaTG2brKgLJPmmXV+6VyLu47n3GCWsS71uXTnwLqlQnUy37rAnJ9j5y8Bba3oyhIs5Yafkf2RfLK2GiFOiH5UpkXKxDvkyQA2ZuRFxdlIxM1o3TF07kpy0IWN+UHnNzpCQ06HZDz944vwT+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752712076; c=relaxed/simple;
-	bh=B1VrwBO8GfeRLwe0QIm4yIzRse6Q7xt/6UjTMPlmCuY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mUBjwyIeFbWnkG2CiutYZ0QO0Q8RLAHfcw7Cec09OXERw8Jcs5Cq55SapzCgCzyxQl+HAKjVutPX3P5MN4Xil935etbr659qUE0ItYmGQEbiEPrG85c6p/g0lPjqZhIprS2ldEGv8cd6vNK+JzcrqJl5+vmBM1aU7jAz0ba32o4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CDzlUWKL; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-32b8134ef6aso4209551fa.0;
-        Wed, 16 Jul 2025 17:27:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752712073; x=1753316873; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NI1Ghd98wnZnXdj9LhDIQuSGHuKyUbZcQleXiLmcq1Y=;
-        b=CDzlUWKL4kuC96p3/QXVkn9NTJke82GjIoZx6lB7MKPVKqZ2oXpo4Un8H2xQjTzeIi
-         Z/IqoM1lSigtWPHmA9cD87DsEg1PFyEX+jnz7Lmt9ne6pDMsqks+tHLRKyDIFIDdnAyy
-         DQX/x6t+1LavOrTgxPhWLHUY/XBRx2AtvFS73djHXrGdZIwY4gkzeoxAzZLAW7rp2bqt
-         sz70724ll7qw/KaC8BFnUOtDg17VDoew1Wk6MAf8ecFFRFBtrny7zQOF4+gcdtdpX71W
-         8P4YprDhkOJp4LPxJ7Scp+t0q01csc7ImbswPKBqibQ2peQeco7mI47lUbdqK2i8BgAw
-         U/pA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752712073; x=1753316873;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NI1Ghd98wnZnXdj9LhDIQuSGHuKyUbZcQleXiLmcq1Y=;
-        b=cFqtIe0WZ7JUkVwhjJBjNhGPvtIw/62FoazZVu2bbApVHRSqF0RGrFpG4pG6Zi9xoS
-         WBV/Ylq9OnsvwCuwWBIhZZp4cqxJhGZZZbAdX8iNm7EMQ06NTYv8rNNV0BWQsfIptwLu
-         URLZulus3WsCW/Kg3ZINooDsm4mbqv6K4ZAO+DZfX8By/cjbmjR/9Eg6zZitnj1/qnyl
-         9KpiUjvHrQHTeBZEEOFlAg3hqbdfEZeZEgccCFdqPC4Vq+Swpm2b+D0+vnH2BkVQrseE
-         iiTy2nxActYDkXoDkiBhmsAAAIwKnGzlAFJIedo3tBH2X+lDMnr0KUOiFJlNjS98KXp9
-         D94Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUIM/TCSml0iLDaWqf+KzhEymjTe2osTqAcdFnLKYLyM0HL2jyim3OAlJ+fGv5UnIDramDhBHwKF0kv@vger.kernel.org, AJvYcCWnTVs/4Md/S9WR0QyyBb0a8kDnXEaPHyU/MnPGmH+WRKw2MAKQg5WOWJs7Kh/BWRgd7oxR3N0GZ0aDyHI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdGqtx/YsNo6eTCU9Ml6WpFVslI7QdBSNHilDmK6eTj/+ihx2i
-	mvGf7CX7dM+RC6ommr9COhIlWsVs6A4GTIPy5lMNvwkNhRxaEkQeX4Lg
-X-Gm-Gg: ASbGncvYow6KhJCve0TIsDPuTnveTLujCDi3QadEYHqodUJFRO30ueaVOHKvus+gu4Z
-	wim0Kp1fxXae1UfdT363Zd5tHXK/Wuw8p2Qp+YyyC/xkx/Bkipn0O40F873uWYUdyM0ZaauO4wg
-	JMvocD5gDSAVM8j4JNYIp4OPCI7U1OMKYJ/tRlvim0ID92ZxC7BJkr6WAhXteRcKF/1HnmDrwwt
-	RdfOxdaZBW/BPwQbBHCSotAQ2O34GoY9pORT997WkbERpKEiMZAAfbwZIWvyvYGXqkj/mdaQ8AI
-	Qegsby4UI1L0IUWSnFWCmvBxoU7MZgrTVXJ/UppOF1+MwPVV9eZDl/ZP7un0sh+JRXkJ7EuzHPQ
-	KSgOPbKwT9UJS9zK39BHbGB6VsBDdMwLTDymxnr/fUT89j4EMGhs=
-X-Google-Smtp-Source: AGHT+IEtnpCQntmpq2730cwK3D2dKN35j2w4G9/hV8f0woAbrYcmCW/k6Pk/MtGuOpl2V9gC93akGA==
-X-Received: by 2002:ac2:4c46:0:b0:553:2f33:ac04 with SMTP id 2adb3069b0e04-55a296fcefbmr262480e87.26.1752712072668;
-        Wed, 16 Jul 2025 17:27:52 -0700 (PDT)
-Received: from SC-WS-02452.corp.sbercloud.ru ([85.174.192.104])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5593c7ee97asm2793177e87.78.2025.07.16.17.27.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 17:27:52 -0700 (PDT)
-Date: Thu, 17 Jul 2025 03:27:50 +0300
-From: Sergey Bashirov <sergeybashirov@gmail.com>
-To: Antonio Quartulli <antonio@mandelbit.com>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, linux-nfs@vger.kernel.org
-Cc: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
-	Sergey Bashirov <sergeybashirov@gmail.com>, Konstantin Evtushenko <koevtushenko@yandex.com>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pNFS: fix uninitialized pointer access
-Message-ID: <h4ydkt7c23ha46j33i42wh2ecdwtcrgxnvfb6c7mo3dqc7l2kz@ng7fev5rbqmi>
-References: <20250716143848.14713-1-antonio@mandelbit.com>
+	s=arc-20240116; t=1752712191; c=relaxed/simple;
+	bh=gL7Z1M0HVgjTlVZJDpBe179+As3uy4yzCurXcAfgnLk=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=POJzkBpkx4uZtML+sv3geixVzSCcm/2CPXWO3SwndVm+NkRUvpMHbBJd+3c0UxI1yHY3y2PDrjkZxIwPfZR8+2ekKvq61F3BSGoY+DFwQtdoIZLi0mJ1BjrV77MuiXPznUtVE4ePJlLQSPyi5E4GxpCRI8bgH16fi4GDFCJBMUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ar/zduBn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 859E4C4CEE7;
+	Thu, 17 Jul 2025 00:29:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752712190;
+	bh=gL7Z1M0HVgjTlVZJDpBe179+As3uy4yzCurXcAfgnLk=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Ar/zduBnFZKEUGQAiOS/78L4Wwm/b9XE3n0wqJ0GF535hiYgTcDtIvhW2HA69rLz7
+	 D1yawRI/tAt3tB2TjkqAYGocT3+K4ToXf0u215bSmREIkdl8QWVV3wYb49MFpN0TDH
+	 B84tPKrQRnRO89MTwP7sRteaHBZAeKX+q4JyZJVH/smNc506KWV2IvC48WSIMFmBlh
+	 PkXAia1IV7jB6YwoNcgWKrqnssAE8yHOmNuUX7n89yMf3GvrV2wPqLnKIOvARk+A9k
+	 U2f4dzPZ67XvDfHqzM21gMqd4MgAVomiwNhwPZ10koHBLaK/XEuqh7zvx7NwGlT+3W
+	 IuieD1wdZJQqg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB147383BA38;
+	Thu, 17 Jul 2025 00:30:11 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250716143848.14713-1-antonio@mandelbit.com>
-User-Agent: NeoMutt/20231103
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v7 0/3] selftest: net: Add selftest for netpoll
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175271221077.1374954.5388109861761060959.git-patchwork-notify@kernel.org>
+Date: Thu, 17 Jul 2025 00:30:10 +0000
+References: <20250714-netpoll_test-v7-0-c0220cfaa63e@debian.org>
+In-Reply-To: <20250714-netpoll_test-v7-0-c0220cfaa63e@debian.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, shuah@kernel.org, horms@kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, willemdebruijn.kernel@gmail.com,
+ bpf@vger.kernel.org, kernel-team@meta.com, willemb@google.com
 
-On Wed, Jul 16, 2025 at 04:38:48PM +0200, Antonio Quartulli wrote:
-> In ext_tree_encode_commit() if no block extent is encoded due to lack
-> of buffer space, ret is set to -ENOSPC and we end up accessing be_prev
-> despite it being uninitialized.
+Hello:
 
-This static check warning appears to be a false positive. This is an
-internal static function that is not exported outside the module via
-an interface or API. Inside the module we always use a buffer size
-that is a multiple of PAGE_SIZE, so at least one page is provided.
-The block extent size does not exceed 44 bytes, so we can always
-encode at least one extent. Thus, we never fail on the first iteration.
-Either ret is zero, or ret is nonzero and at least one extent is encoded.
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-> Fix this behaviour by bailing out right away when no extent is encoded.
->
-> Fixes: d84c4754f874 ("pNFS: Fix extent encoding in block/scsi layout")
-> Addresses-Coverity-ID: 1647611 ("Memory - illegal accesses  (UNINIT)")
-> Signed-off-by: Antonio Quartulli <antonio@mandelbit.com>
-> ---
->  fs/nfs/blocklayout/extent_tree.c | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/fs/nfs/blocklayout/extent_tree.c b/fs/nfs/blocklayout/extent_tree.c
-> index 315949a7e92d..82e19205f425 100644
-> --- a/fs/nfs/blocklayout/extent_tree.c
-> +++ b/fs/nfs/blocklayout/extent_tree.c
-> @@ -598,6 +598,11 @@ ext_tree_encode_commit(struct pnfs_block_layout *bl, __be32 *p,
->  		if (ext_tree_layoutupdate_size(bl, *count) > buffer_size) {
->  			(*count)--;
->  			ret = -ENOSPC;
-> +			/* bail out right away if no extent was encoded */
-> +			if (!*count) {
+On Mon, 14 Jul 2025 02:56:47 -0700 you wrote:
+> I am submitting a new selftest for the netpoll subsystem specifically
+> targeting the case where the RX is polling in the TX path, which is
+> a case that we don't have any test in the tree today. This is done when
+> netpoll_poll_dev() called, and this test creates a scenario when that is
+> probably.
+> 
+> The test does the following:
+> 
+> [...]
 
-We can't exit here without setting the value of lastbyte, which is one
-of the function outputs. Please set it to U64_MAX to let upper layer
-logic handle it properly. Or, see the alternative solution at the end.
-  +				*lastbyte = U64_MAX;
+Here is the summary with links:
+  - [net-next,v7,1/3] selftests: drv-net: add helper/wrapper for bpftrace
+    https://git.kernel.org/netdev/net-next/c/3c561c547c39
+  - [net-next,v7,2/3] selftests: drv-net: Strip '@' prefix from bpftrace map keys
+    https://git.kernel.org/netdev/net-next/c/fd2aadcefbac
+  - [net-next,v7,3/3] selftests: net: add netpoll basic functionality test
+    https://git.kernel.org/netdev/net-next/c/b3019343e4bd
 
-> +				spin_unlock(&bl->bl_ext_lock);
-> +				return ret;
-> +			}
->  			break;
->  		}
->
-
-If we need to fix this, I'd rather add an early check whether the buffer
-size is large enough to encode at least one extent at the beginning of
-the function. Before spinlock is acquired and ext_tree traversed. This
-looks more natural to me. But I'm not sure if this will satisfy the
-static checker.
-
-diff --git a/fs/nfs/blocklayout/extent_tree.c b/fs/nfs/blocklayout/extent_tree.c
-index 315949a7e92d..e80f2f82378f 100644
---- a/fs/nfs/blocklayout/extent_tree.c
-+++ b/fs/nfs/blocklayout/extent_tree.c
-@@ -588,6 +588,12 @@ ext_tree_encode_commit(struct pnfs_block_layout *bl, __be32 *p,
-        struct pnfs_block_extent *be, *be_prev;
-        int ret = 0;
-
-+       if (ext_tree_layoutupdate_size(bl, 1) > buffer_size) {
-+               *count = 0;
-+               *lastbyte = U64_MAX;
-+               return -ENOSPC;
-+       }
-+
-        spin_lock(&bl->bl_ext_lock);
-        for (be = ext_tree_first(&bl->bl_ext_rw); be; be = ext_tree_next(be)) {
-                if (be->be_state != PNFS_BLOCK_INVALID_DATA ||
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
---
-Sergey Bashirov
 
