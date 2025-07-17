@@ -1,215 +1,278 @@
-Return-Path: <linux-kernel+bounces-735329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4574BB08DD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:05:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19F75B08DDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:05:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96BD9A663D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:04:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF7063A86B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:05:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934862C374B;
-	Thu, 17 Jul 2025 13:05:16 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 067822C327D
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 13:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8142C327D;
+	Thu, 17 Jul 2025 13:05:53 +0000 (UTC)
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 376AD29E0F0
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 13:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752757516; cv=none; b=SlADUIqaAgKuxoN5gZ9w7FCR+1wkYqX+PDN7wBs4ZbL3cc05cuHSULQLYL7QGcwDMO36KwrN4f0qMEBKWeK/6GEuVgiIYqoDQfoFD4OxkElP553r/KxstAwyCpxtLQRpc8LqVgFQIDBJgtOsbdvaIZgjfg3br9vcv8cDWvCxpgc=
+	t=1752757553; cv=none; b=KbX6eXnKSr2OD91rIfQkt2ZjlR+HhsvsjNLdihB3Kewm95koxLR2TyhOo/5NpPVHIeMMf9IJY6jrRDVWxLIIWu3nSt2XVKhnNFJRg4Bu1rxqKq3HYoakPGzeERCTmDF3HrPYVJ1m+NfneWGFfK5e0+aoXGttHCw+N4hio2xi2M0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752757516; c=relaxed/simple;
-	bh=smyMyIVuq+/HqQqFnheFZ/g1pMNhRu8WUzjjvc75wGY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SMBAcr9wAZRAaD9Qz2p2DfRUrnULHixqNcPzWpMeqvlTTke8Abw3eiaA6GgPeIJz0RkZH2tS6dE+m9xZuoxj/gR959vcm+Hrk+hchVLvoH23B9yZMbV3R+HB6HMLN6mfK6d4Y8nhubggoCtL9TGM2DpmnSZAE8pk0gtDDdViUvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 75DDB1596;
-	Thu, 17 Jul 2025 06:05:05 -0700 (PDT)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 74D143F694;
-	Thu, 17 Jul 2025 06:05:09 -0700 (PDT)
-Date: Thu, 17 Jul 2025 15:04:55 +0200
-From: Beata Michalska <beata.michalska@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, clm@meta.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/12] sched: Address schbench regression
-Message-ID: <aHj01PaJ_rcsduMn@arm.com>
-References: <20250702114924.091581796@infradead.org>
+	s=arc-20240116; t=1752757553; c=relaxed/simple;
+	bh=NMLZnzlmIf/uA05C9mlTJs9/jHSpAuhCtMXcuVgxdPQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=Jv9M5zhR9c+Tyqyt2rIVpbxAoW9gI2zgJxKWYd4aKTMC/kwfiEVHTCMQFS22ARDr9rpInu63xrF+5z6A8RzAoXQD3BqqEg9sKbPYnV6Wdd31MxFCal1w4d6HXGFtRrSnzRsJOrpgcld6WGwtpJVHlzX9CrSjus9eHIB6MG84iIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A208A441BF;
+	Thu, 17 Jul 2025 13:05:45 +0000 (UTC)
+Message-ID: <b0583098-204a-4ad1-b173-4bd00a358d61@ghiti.fr>
+Date: Thu, 17 Jul 2025 15:05:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 2/2] riscv: introduce percpu.h into include/asm
+From: Alexandre Ghiti <alex@ghiti.fr>
+To: Yunhui Cui <cuiyunhui@bytedance.com>, yury.norov@gmail.com,
+ linux@rasmusvillemoes.dk, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, dennis@kernel.org, tj@kernel.org,
+ cl@gentwo.org, linux-mm@kvack.org
+References: <20250618034328.21904-1-cuiyunhui@bytedance.com>
+ <20250618034328.21904-2-cuiyunhui@bytedance.com>
+ <c9ba6163-6703-441b-915c-d784044f862f@ghiti.fr>
+Content-Language: en-US
+In-Reply-To: <c9ba6163-6703-441b-915c-d784044f862f@ghiti.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250702114924.091581796@infradead.org>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeitdeihecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffhvfhfjggtgfesthekredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpeeiudelveeghfevteefueejleejgfeiveduffdvueehveekhfehueefvdelgfffueenucfkphepudekhedrvddufedrudehgedrudehudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedukeehrddvudefrdduheegrdduhedupdhhvghloheplgdutddrudegrddtrddufegnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepuddvpdhrtghpthhtoheptghuihihuhhnhhhuihessgihthgvuggrnhgtvgdrtghomhdprhgtphhtthhopeihuhhrhidrnhhorhhovhesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigsehrrghsmhhushhvihhllhgvmhhovghsrdgukhdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegrohhusegvvggtshdrs
+ ggvrhhkvghlvgihrdgvughupdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: alex@ghiti.fr
 
-Hi Peter,
+On 7/17/25 15:04, Alexandre Ghiti wrote:
+> Hi Yunhui,
+>
+> On 6/18/25 05:43, Yunhui Cui wrote:
+>> Current percpu operations rely on generic implementations, where
+>> raw_local_irq_save() introduces substantial overhead. Optimization
+>> is achieved through atomic operations and preemption disabling.
+>>
+>> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+>> ---
+>>   arch/riscv/include/asm/percpu.h | 138 ++++++++++++++++++++++++++++++++
+>>   1 file changed, 138 insertions(+)
+>>   create mode 100644 arch/riscv/include/asm/percpu.h
+>>
+>> diff --git a/arch/riscv/include/asm/percpu.h 
+>> b/arch/riscv/include/asm/percpu.h
+>> new file mode 100644
+>> index 0000000000000..423c0d01f874c
+>> --- /dev/null
+>> +++ b/arch/riscv/include/asm/percpu.h
+>> @@ -0,0 +1,138 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>> +
+>> +#ifndef __ASM_PERCPU_H
+>> +#define __ASM_PERCPU_H
+>> +
+>> +#include <linux/preempt.h>
+>> +
+>> +#define PERCPU_RW_OPS(sz)                        \
+>> +static inline unsigned long __percpu_read_##sz(void *ptr)        \
+>> +{                                    \
+>> +    return READ_ONCE(*(u##sz *)ptr);                \
+>> +}                                    \
+>> +                                    \
+>> +static inline void __percpu_write_##sz(void *ptr, unsigned long 
+>> val)    \
+>> +{                                    \
+>> +    WRITE_ONCE(*(u##sz *)ptr, (u##sz)val);                \
+>> +}
+>> +
+>> +#define __PERCPU_AMO_OP_CASE(sfx, name, sz, amo_insn)            \
+>> +static inline void                            \
+>> +__percpu_##name##_amo_case_##sz(void *ptr, unsigned long val)        \
+>> +{                                    \
+>> +    asm volatile (                            \
+>> +    "amo" #amo_insn #sfx " zero, %[val], %[ptr]"            \
+>> +    : [ptr] "+A" (*(u##sz *)ptr)                    \
+>> +    : [val] "r" ((u##sz)(val))                    \
+>> +    : "memory");                            \
+>> +}
+>> +
+>> +#define __PERCPU_AMO_RET_OP_CASE(sfx, name, sz, amo_insn)        \
+>> +static inline u##sz                            \
+>> +__percpu_##name##_return_amo_case_##sz(void *ptr, unsigned long 
+>> val)    \
+>> +{                                    \
+>> +    register u##sz ret;                        \
+>> +                                    \
+>> +    asm volatile (                            \
+>> +    "amo" #amo_insn #sfx " %[ret], %[val], %[ptr]"            \
+>> +    : [ptr] "+A" (*(u##sz *)ptr), [ret] "=r" (ret)            \
+>> +    : [val] "r" ((u##sz)(val))                    \
+>> +    : "memory");                            \
+>> +                                    \
+>> +    return ret + val;                        \
+>> +}
+>> +
+>> +#define PERCPU_OP(name, amo_insn)                    \
+>> +    __PERCPU_AMO_OP_CASE(.b, name, 8, amo_insn)            \
+>> +    __PERCPU_AMO_OP_CASE(.h, name, 16, amo_insn)            \
+>> +    __PERCPU_AMO_OP_CASE(.w, name, 32, amo_insn)            \
+>> +    __PERCPU_AMO_OP_CASE(.d, name, 64, amo_insn)            \
+>> +
+>> +#define PERCPU_RET_OP(name, amo_insn)                    \
+>> +    __PERCPU_AMO_RET_OP_CASE(.b, name, 8, amo_insn) \
+>> +    __PERCPU_AMO_RET_OP_CASE(.h, name, 16, amo_insn)        \
+>> +    __PERCPU_AMO_RET_OP_CASE(.w, name, 32, amo_insn)        \
+>> +    __PERCPU_AMO_RET_OP_CASE(.d, name, 64, amo_insn)
+>> +
+>> +PERCPU_RW_OPS(8)
+>> +PERCPU_RW_OPS(16)
+>> +PERCPU_RW_OPS(32)
+>> +PERCPU_RW_OPS(64)
+>> +
+>> +PERCPU_OP(add, add)
+>> +PERCPU_OP(andnot, and)
+>> +PERCPU_OP(or, or)
+>> +PERCPU_RET_OP(add, add)
+>> +
+>> +#undef PERCPU_RW_OPS
+>> +#undef __PERCPU_AMO_OP_CASE
+>> +#undef __PERCPU_AMO_RET_OP_CASE
+>> +#undef PERCPU_OP
+>> +#undef PERCPU_RET_OP
+>> +
+>> +#define _pcp_protect(op, pcp, ...)                    \
+>> +({                                    \
+>> +    preempt_disable_notrace();                    \
+>> +    op(raw_cpu_ptr(&(pcp)), __VA_ARGS__);                \
+>> +    preempt_enable_notrace();                    \
+>> +})
+>> +
+>> +#define _pcp_protect_return(op, pcp, args...)                \
+>> +({                                    \
+>> +    typeof(pcp) __retval;                        \
+>> +    preempt_disable_notrace();                    \
+>> +    __retval = (typeof(pcp))op(raw_cpu_ptr(&(pcp)), ##args);    \
+>> +    preempt_enable_notrace();                    \
+>> +    __retval;                            \
+>> +})
+>> +
+>> +#define this_cpu_read_1(pcp) _pcp_protect_return(__percpu_read_8, pcp)
+>> +#define this_cpu_read_2(pcp) _pcp_protect_return(__percpu_read_16, pcp)
+>> +#define this_cpu_read_4(pcp) _pcp_protect_return(__percpu_read_32, pcp)
+>> +#define this_cpu_read_8(pcp) _pcp_protect_return(__percpu_read_64, pcp)
+>> +
+>> +#define this_cpu_write_1(pcp, val) _pcp_protect(__percpu_write_8, 
+>> pcp, (unsigned long)val)
+>> +#define this_cpu_write_2(pcp, val) _pcp_protect(__percpu_write_16, 
+>> pcp, (unsigned long)val)
+>> +#define this_cpu_write_4(pcp, val) _pcp_protect(__percpu_write_32, 
+>> pcp, (unsigned long)val)
+>> +#define this_cpu_write_8(pcp, val) _pcp_protect(__percpu_write_64, 
+>> pcp, (unsigned long)val)
+>> +
+>> +#define this_cpu_add_1(pcp, val) 
+>> _pcp_protect(__percpu_add_amo_case_8, pcp, val)
+>> +#define this_cpu_add_2(pcp, val) 
+>> _pcp_protect(__percpu_add_amo_case_16, pcp, val)
+>> +#define this_cpu_add_4(pcp, val) 
+>> _pcp_protect(__percpu_add_amo_case_32, pcp, val)
+>> +#define this_cpu_add_8(pcp, val) 
+>> _pcp_protect(__percpu_add_amo_case_64, pcp, val)
+>> +
+>> +#define this_cpu_add_return_1(pcp, val)        \
+>> +_pcp_protect_return(__percpu_add_return_amo_case_8, pcp, val)
+>> +
+>> +#define this_cpu_add_return_2(pcp, val)        \
+>> +_pcp_protect_return(__percpu_add_return_amo_case_16, pcp, val)
+>> +
+>> +#define this_cpu_add_return_4(pcp, val)        \
+>> +_pcp_protect_return(__percpu_add_return_amo_case_32, pcp, val)
+>> +
+>> +#define this_cpu_add_return_8(pcp, val)        \
+>> +_pcp_protect_return(__percpu_add_return_amo_case_64, pcp, val)
+>> +
+>> +#define this_cpu_and_1(pcp, val) 
+>> _pcp_protect(__percpu_andnot_amo_case_8, pcp, ~val)
+>> +#define this_cpu_and_2(pcp, val) 
+>> _pcp_protect(__percpu_andnot_amo_case_16, pcp, ~val)
+>> +#define this_cpu_and_4(pcp, val) 
+>> _pcp_protect(__percpu_andnot_amo_case_32, pcp, ~val)
+>> +#define this_cpu_and_8(pcp, val) 
+>> _pcp_protect(__percpu_andnot_amo_case_64, pcp, ~val)
+>
+>
+> Why do we define __percpu_andnot based on amoand, and use 
+> __percpu_andnot with ~val here? Can't we just define __percpu_and?
+>
+>
+>> +
+>> +#define this_cpu_or_1(pcp, val) _pcp_protect(__percpu_or_amo_case_8, 
+>> pcp, val)
+>> +#define this_cpu_or_2(pcp, val) 
+>> _pcp_protect(__percpu_or_amo_case_16, pcp, val)
+>> +#define this_cpu_or_4(pcp, val) 
+>> _pcp_protect(__percpu_or_amo_case_32, pcp, val)
+>> +#define this_cpu_or_8(pcp, val) 
+>> _pcp_protect(__percpu_or_amo_case_64, pcp, val)
+>> +
+>> +#define this_cpu_xchg_1(pcp, val) _pcp_protect_return(xchg_relaxed, 
+>> pcp, val)
+>> +#define this_cpu_xchg_2(pcp, val) _pcp_protect_return(xchg_relaxed, 
+>> pcp, val)
+>> +#define this_cpu_xchg_4(pcp, val) _pcp_protect_return(xchg_relaxed, 
+>> pcp, val)
+>> +#define this_cpu_xchg_8(pcp, val) _pcp_protect_return(xchg_relaxed, 
+>> pcp, val)
+>> +
+>> +#define this_cpu_cmpxchg_1(pcp, o, n) 
+>> _pcp_protect_return(cmpxchg_relaxed, pcp, o, n)
+>> +#define this_cpu_cmpxchg_2(pcp, o, n) 
+>> _pcp_protect_return(cmpxchg_relaxed, pcp, o, n)
+>> +#define this_cpu_cmpxchg_4(pcp, o, n) 
+>> _pcp_protect_return(cmpxchg_relaxed, pcp, o, n)
+>> +#define this_cpu_cmpxchg_8(pcp, o, n) 
+>> _pcp_protect_return(cmpxchg_relaxed, pcp, o, n)
+>> +
+>> +#include <asm-generic/percpu.h>
+>> +
+>> +#endif /* __ASM_PERCPU_H */
+>
+>
+> It all looks good to me, just one thing, can you also implement 
+> this_cpu_cmpxchg64/128()?
+>
 
-Below are the results of running the schbench on Altra
-(as a reminder 2-core MC, 2 Numa Nodes, 160 cores)
+One last thing sorry, can you add a cover letter too?
 
-`Legend:
-- 'Flags=none' means neither TTWU_QUEUE_DEFAULT nor
-  TTWU_QUEUE_DELAYED is set (or available).
-- '*…*' marks Top-3 Min & Max, Bottom-3 Std dev, and
-  Top-3 90th-percentile values.
+Thanks!
 
-Base 6.16-rc5
-  Flags=none
-  Min=681870.77 | Max=913649.50 | Std=53802.90       | 90th=890201.05
-
-sched/fair: bump sd->max_newidle_lb_cost when newidle balance fails
-  Flags=none
-  Min=770952.12 | Max=888047.45 | Std=34430.24       | 90th=877347.24
-
-sched/psi: Optimize psi_group_change() cpu_clock() usage
-  Flags=none
-  Min=748137.65 | Max=936312.33 | Std=56818.23       | 90th=*921497.27*
-
-sched/deadline: Less agressive dl_server handling
-  Flags=none
-  Min=783621.95 | Max=*944604.67* | Std=43538.64     | 90th=*909961.16*
-
-sched: Optimize ttwu() / select_task_rq()
-  Flags=none
-  Min=*826038.87* | Max=*1003496.73* | Std=49875.43  | 90th=*971944.88*
-
-sched: Use lock guard in ttwu_runnable()
-  Flags=none
-  Min=780172.75 | Max=914170.20 | Std=35998.33       | 90th=866095.80
-
-sched: Add ttwu_queue controls
-  Flags=TTWU_QUEUE_DEFAULT
-  Min=*792430.45* | Max=903422.78 | Std=33582.71     | 90th=887256.68
-
-  Flags=none
-  Min=*803532.80* | Max=894772.48 | Std=29359.35     | 90th=877920.34
-
-sched: Introduce ttwu_do_migrate()
-  Flags=TTWU_QUEUE_DEFAULT
-  Min=749824.30 | Max=*965139.77* | Std=57022.47     | 90th=903659.07
- 
-  Flags=none
-  Min=787464.65 | Max=885349.20 | Std=27030.82       | 90th=875750.44
-
-psi: Split psi_ttwu_dequeue()
-  Flags=TTWU_QUEUE_DEFAULT
-  Min=762960.98 | Max=916538.12 | Std=42002.19       | 90th=876425.84
- 
-  Flags=none
-  Min=773608.48 | Max=920812.87 | Std=42189.17       | 90th=871760.47
-
-sched: Re-arrange __ttwu_queue_wakelist()
-  Flags=TTWU_QUEUE_DEFAULT
-  Min=702870.58 | Max=835243.42 | Std=44224.02       | 90th=825311.12
-
-  Flags=none
-  Min=712499.38 | Max=838492.03 | Std=38351.20       | 90th=817135.94
-
-sched: Use lock guard in sched_ttwu_pending()
-  Flags=TTWU_QUEUE_DEFAULT
-  Min=729080.55 | Max=853609.62 | Std=43440.63       | 90th=838684.48
-
-  Flags=none
-  Min=708123.47 | Max=850804.48 | Std=40642.28       | 90th=830295.08
-
-sched: Change ttwu_runnable() vs sched_delayed
-  Flags=TTWU_QUEUE_DEFAULT
-  Min=580218.87 | Max=838684.07 | Std=57078.24       | 90th=792973.33
-
-  Flags=none
-  Min=721274.90 | Max=784897.92 | Std=*19017.78*     | 90th=774792.30
-
-sched: Add ttwu_queue support for delayed tasks
-  Flags=none
-  Min=712979.48 | Max=830192.10 | Std=33173.90       | 90th=798599.66
-
-  Flags=TTWU_QUEUE_DEFAULT
-  Min=698094.12 | Max=857627.93 | Std=38294.94       | 90th=789981.59
- 
-  Flags=TTWU_QUEUE_DEFAULT/TTWU_QUEUE_DELAYED
-  Min=683348.77 | Max=782179.15 | Std=25086.71       | 90th=750947.00
-
-  Flags=TTWU_QUEUE_DELAYED
-  Min=669822.23 | Max=807768.85 | Std=38766.41       | 90th=794052.05
-
-sched: fix ttwu_delayed
-  Flags=none
-  Min=671844.35 | Max=798737.67 | Std=33438.64       | 90th=788584.62
-
-  Flags=TTWU_QUEUE_DEFAULT
-  Min=688607.40 | Max=828679.53 | Std=33184.78       | 90th=782490.23
-
-  Flags=TTWU_QUEUE_DEFAULT/TTWU_QUEUE_DELAYED
-  Min=579171.13 | Max=643929.18 | Std=*14644.92*     | 90th=639764.16
-
-  Flags=TTWU_QUEUE_DELAYED
-  Min=614265.22 | Max=675172.05 | Std=*13309.92*     | 90th=647181.10
+Alex
 
 
-Best overall performer:
-sched: Optimize ttwu() / select_task_rq()
-  Flags=none
-  Min=*826038.87* | Max=*1003496.73* | Std=49875.43 | 90th=*971944.88*
-
-Hope this will he somehwat helpful.
-
----
-BR
-Beata
-
-On Wed, Jul 02, 2025 at 01:49:24PM +0200, Peter Zijlstra wrote:
-> Hi!
-> 
-> Previous version:
-> 
->   https://lkml.kernel.org/r/20250520094538.086709102@infradead.org
-> 
-> 
-> Changes:
->  - keep dl_server_stop(), just remove the 'normal' usage of it (juril)
->  - have the sched_delayed wake list IPIs do select_task_rq() (vingu)
->  - fixed lockdep splat (dietmar)
->  - added a few preperatory patches
-> 
-> 
-> Patches apply on top of tip/master (which includes the disabling of private futex)
-> and clm's newidle balance patch (which I'm awaiting vingu's ack on).
-> 
-> Performance is similar to the last version; as tested on my SPR on v6.15 base:
-> 
-> v6.15:
-> schbench-6.15.0-1.txt:average rps: 2891403.72
-> schbench-6.15.0-2.txt:average rps: 2889997.02
-> schbench-6.15.0-3.txt:average rps: 2894745.17
-> 
-> v6.15 + patches 1-10:
-> schbench-6.15.0-dirty-4.txt:average rps: 3038265.95
-> schbench-6.15.0-dirty-5.txt:average rps: 3037327.50
-> schbench-6.15.0-dirty-6.txt:average rps: 3038160.15
-> 
-> v6.15 + all patches:
-> schbench-6.15.0-dirty-deferred-1.txt:average rps: 3043404.30
-> schbench-6.15.0-dirty-deferred-2.txt:average rps: 3046124.17
-> schbench-6.15.0-dirty-deferred-3.txt:average rps: 3043627.10
-> 
-> 
-> Patches can also be had here:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git sched/core
-> 
-> 
-> I'm hoping we can get this merged for next cycle so we can all move on from this.
-> 
-> 
+> And since this is almost a copy/paste from arm64, either mention it at 
+> the top of the file or (better) merge both implementations somewhere 
+> to avoid redefining existing code :) But up to you.
+>
+> Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+>
+> Thanks,
+>
+> Alex
+>
+>
+>
 
