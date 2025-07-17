@@ -1,210 +1,148 @@
-Return-Path: <linux-kernel+bounces-734660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B18F3B08474
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:00:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0943FB08478
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:01:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 172BA1A651B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:01:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E389A3ACBC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:01:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F442204598;
-	Thu, 17 Jul 2025 06:00:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7212066CF;
+	Thu, 17 Jul 2025 06:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Uw5rHiZP"
-Received: from out199-8.us.a.mail.aliyun.com (out199-8.us.a.mail.aliyun.com [47.90.199.8])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TbSLvajK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3881B28E7;
-	Thu, 17 Jul 2025 06:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.199.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA8F1DE2C9
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 06:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752732043; cv=none; b=IScMWWr6UOmWJ+0zqENqsCusZIbAL1TyFuHdo0/EUYSWNFxNkow1P++j+F2JGKjSux0xMXFsosxCc2fFUxWiZzShaQUaDIXyFsh4aXbAPhUt2U+oUpuXzfbo2KQsg3sa5/s2kd2vulgcVd3hFrsSGbvkBVHmqDwF2W638brDGMA=
+	t=1752732083; cv=none; b=YvnoY7zMrxrvwG6GoMDfLfVrV1HmNoDB6zZ3Yu1H6bYo9NH5ofb162qlF0a8mHsua2CdRDU14dez7vnfEQXe1VlptadYORxDaKE9t/hrE/Q2xao5tyzQP0bwr+wbDHxY+/Lr9FVnKluUkGNHk1waf46SHZ/9fIYOteYgyiKifzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752732043; c=relaxed/simple;
-	bh=U0T6Bu3tjl8ID5ejFptgFvM7VZPyHrQIU0QciKVcYMo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s6qsF4sBIxDeOA3H2I5jnnbhk2n46D4MsH5W8qLiBH+llxg1uH7l52dNDcNIsE/lej5HF4bcmqLS2yQK5WJpflfFt/9PlY04qR7TxPvt0hgrMEDl4Ned881ExYdFcAp9R/R8Vn4CsFJ8gb7EXSERAc0TSlT+BWdfuWEsKXTXCM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Uw5rHiZP; arc=none smtp.client-ip=47.90.199.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1752732017; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=6AjoES+phDjQlU6QcJ6LgfMU4/uIlwyP6l9QIPe7StE=;
-	b=Uw5rHiZPNgV0Zv7W1gSji8PdSiYwXz4DgOaJEOHrp3c7h1trRyg9MvbiOhOwQJb44fpw3+YDTtv1tNO4EJvl/luWSjQbjVIfLDM/eUiVNSD+Hax5CTJN7OrhWLjmfGnPcCCF9aSZuEnmolbf0HA/O1DDKTiX1Y7Skxb1Ok6P5g8=
-Received: from 30.246.162.71(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0Wj7.qAb_1752732014 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 17 Jul 2025 14:00:15 +0800
-Message-ID: <2687d27d-09ed-429d-9ec7-463c69a3fff7@linux.alibaba.com>
-Date: Thu, 17 Jul 2025 14:00:14 +0800
+	s=arc-20240116; t=1752732083; c=relaxed/simple;
+	bh=jxOpZ0mtCseo/bSPj1OyB2eE1E7Wq+zP8rpLdjVZc98=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cqxDmRMckD7Gj6R1vr9fzi7MKrtWzr5xmJaKPRUih+jW6ThGDYLlUe6MmQeJ4Sz8GvZ7hlpreMwJ2p/PJuCXQlfhcAHitMVtYmYaoCaGATBziFiG2pDCCZGTjgQ11WEKFoKhGgwUdH8SpV2y8dxd3bU1q2o+6dVrS7dF5wVXnBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TbSLvajK; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752732081;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jxOpZ0mtCseo/bSPj1OyB2eE1E7Wq+zP8rpLdjVZc98=;
+	b=TbSLvajKOhgIR4z96LnsCR475UeEyvnFBjOPf0tf7LFLqrkaSZHLJUUeMRwfVSkQO+PzMS
+	SwVjRx4xgvKII3szdcZaKR/ZoObZLRmlagH9coUOXiWVrfAKEbhTmTwaFLYCV8aNRIYANY
+	bSZk9c/g96Til++afC7D/xDky7vuR/0=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-70-Orr8XJQ3OmmqTZ2zB1-dUw-1; Thu, 17 Jul 2025 02:01:19 -0400
+X-MC-Unique: Orr8XJQ3OmmqTZ2zB1-dUw-1
+X-Mimecast-MFC-AGG-ID: Orr8XJQ3OmmqTZ2zB1-dUw_1752732078
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-31315427249so598012a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 23:01:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752732078; x=1753336878;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jxOpZ0mtCseo/bSPj1OyB2eE1E7Wq+zP8rpLdjVZc98=;
+        b=OWAG+/PxNz/xOXRiwNL2owyid1XOI/JolJEGKmLg+yIS2R5fR1caRooOys0QP72FsK
+         j4Bw0MVI5XgLOCEZSkdDob6lLAYCDT8nCYyCDe65hZZe+71GHPYMmD6yAWzbOVicGocE
+         BQjxcviflzVw93Lf0u1MlzSMV3F6ui5w23U6X1sMedycH9MKnlHv+t/DiLysSfAWY4kz
+         mNN6DtEj1m2e8U7ZrRVOlIqjTRwX1pTq/qWvgDPmsIrPZRjvZofqFhRgfijc6SmhQmVB
+         /D1bco5c/uVkVflHI1u5baQwiTalNP9kNcxXFGE3xGR15c+PSIsAYM4t6G/9HFVyvmr0
+         kYhg==
+X-Forwarded-Encrypted: i=1; AJvYcCXaZI1wvQFwfAzacpC7ymMRJ5XNFNfgDbd98yVFGcAV8m35qoWudcwFDIByKtSCSbR86IIsk31wgjxAsh0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyh84x6VF7XP3Z2aRWS/zPR8VFBCZv43DofsZ2oJpp4t/nB7gRb
+	VvF9YelBwnw9poJWPu4ibcVaSDfs9gQnB8/oieLKxE7mZKFtc2dPbmpO34OUsXuuOJyzYAPwFLs
+	shXyfHgUAbgt82s4SSgbGftMK/JRAjfnVDabHFvONq/xn/jwPm7jY6fRiNcxPP/fqP8cf5PQ03i
+	Jc1latzm/94WxE9j4NKdjTN6hib9Sb+6C4JL7ZiJEG
+X-Gm-Gg: ASbGncuIEKJ27lGg1aJ0f5fHD15WgQWgchsh42BwsJ64dPeMk/gC2KDdNV6ykeOzYr8
+	N2n1k9+qiIn530Su39FInFQdoxx9HtlkLKry8bf5MpajXLgMV6hCl3ZskQrQf7CQqA2MiisbLqn
+	y7K7wxwLZ1VF07k7A7/0Q+
+X-Received: by 2002:a17:90b:3d08:b0:311:c93b:3ca2 with SMTP id 98e67ed59e1d1-31c9e6e96fdmr7785016a91.6.1752732078187;
+        Wed, 16 Jul 2025 23:01:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHwj9WmmYZqqcY9e7xgqKnA/kJN103hoaasmkwFwEeUcw9OvLCJ0a3fMKNsQmV80tmXN1QWinAAhZ7uGEl6g/c=
+X-Received: by 2002:a17:90b:3d08:b0:311:c93b:3ca2 with SMTP id
+ 98e67ed59e1d1-31c9e6e96fdmr7784953a91.6.1752732077622; Wed, 16 Jul 2025
+ 23:01:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8] PCI: hotplug: Add a generic RAS tracepoint for hotplug
- event
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: rostedt@goodmis.org, lukas@wunner.de, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, bhelgaas@google.com,
- tony.luck@intel.com, bp@alien8.de, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, oleg@redhat.com, naveen@kernel.org,
- davem@davemloft.net, anil.s.keshavamurthy@intel.com, mark.rutland@arm.com,
- peterz@infradead.org, tianruidong@linux.alibaba.com,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>
-References: <20250716222533.GA2559636@bhelgaas>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <20250716222533.GA2559636@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250714084755.11921-1-jasowang@redhat.com> <20250716170406.637e01f5@kernel.org>
+ <CACGkMEvj0W98Jc=AB-g8G0J0u5pGAM4mBVCrp3uPLCkc6CK7Ng@mail.gmail.com> <20250717015341-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20250717015341-mutt-send-email-mst@kernel.org>
+From: Jason Wang <jasowang@redhat.com>
+Date: Thu, 17 Jul 2025 14:01:06 +0800
+X-Gm-Features: Ac12FXzpdsVwGDtCJSLzaoSwQSJcC8NcxCnl7Zblf_dU7B8OIQV_ThQuhTzi5L0
+Message-ID: <CACGkMEvX==TSK=0gH5WaFecMY1E+o7mbQ6EqJF+iaBx6DyMiJg@mail.gmail.com>
+Subject: Re: [PATCH net-next V2 0/3] in order support for vhost-net
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, eperezma@redhat.com, kvm@vger.kernel.org, 
+	virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, jonah.palmer@oracle.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Jul 17, 2025 at 1:55=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com>=
+ wrote:
+>
+> On Thu, Jul 17, 2025 at 10:03:00AM +0800, Jason Wang wrote:
+> > On Thu, Jul 17, 2025 at 8:04=E2=80=AFAM Jakub Kicinski <kuba@kernel.org=
+> wrote:
+> > >
+> > > On Mon, 14 Jul 2025 16:47:52 +0800 Jason Wang wrote:
+> > > > This series implements VIRTIO_F_IN_ORDER support for vhost-net. Thi=
+s
+> > > > feature is designed to improve the performance of the virtio ring b=
+y
+> > > > optimizing descriptor processing.
+> > > >
+> > > > Benchmarks show a notable improvement. Please see patch 3 for detai=
+ls.
+> > >
+> > > You tagged these as net-next but just to be clear -- these don't appl=
+y
+> > > for us in the current form.
+> > >
+> >
+> > Will rebase and send a new version.
+> >
+> > Thanks
+>
+> Indeed these look as if they are for my tree (so I put them in
+> linux-next, without noticing the tag).
 
+I think that's also fine.
 
-在 2025/7/17 06:25, Bjorn Helgaas 写道:
-> [+cc Ilpo, Jonathan (should have been included since the patch has his
-> Reviewed-by)]
-> 
+Do you prefer all vhost/vhost-net patches to go via your tree in the future=
+?
 
-Thanks.
+(Note that the reason for the conflict is because net-next gets UDP
+GSO feature merged).
 
-> Thanks for the ping; I noticed quite a bit of discussion but didn't
-> follow it myself, so didn't know it was basically all resolved.
-> 
-> On Mon, May 12, 2025 at 09:38:39AM +0800, Shuai Xue wrote:
->> Hotplug events are critical indicators for analyzing hardware health,
->> particularly in AI supercomputers where surprise link downs can
->> significantly impact system performance and reliability.
-> 
-> I dropped the "particularly in AI supercomputers" part because I think
-> this is relevant in general.
-> 
->> To this end, define a new TRACING_SYSTEM named pci, add a generic RAS
->> tracepoint for hotplug event to help healthy check, and generate
->> tracepoints for pcie hotplug event.
-> 
-> I'm not quite clear on the difference between "add generic RAS
-> tracepoint for hotplug event" and "generate tracepoints for pcie
-> hotplug event."  Are these two different things?
+>
+> But I also guess guest bits should be merged in the same cycle
+> as host bits, less confusion.
 
-The purpose of this patch is to address the lack of tracepoints for PCIe
-hotplug events in our production environment. In the initial RFC
-version, I defined tracepoints such as "Link Up" and "Link Down"
-specifically for PCIe hotplug. Later, Lukas suggested that these
-tracepoints could be made more generic so that other PCI hotplug drivers
-could also use them.
+Work for me, I will post guest bits.
 
-That’s why, when defining the event, I used a "generic" pci_hotplug_event
-instead of a pcie_hotplug_event. If you're interested in more details
-about this discussion, please refer to this link[1].
+Thanks
 
-[1]https://erol.kernel.org/linux-pci/git/0/commit/?id=0ffd56f572f25bcd6c2265a1863848a18dce0e29
+>
+> --
+> MST
+>
 
-However, currently only PCIe hotplug is using these tracepoints, which
-is why the CREATE_TRACE_POINTS macro is placed in
-drivers/pci/hotplug/pciehp_ctrl.c.
-
-> 
-> I see the new TRACE_EVENT(pci_hp_event, ...) definition.  Is that what
-> you mean by the "generic RAS tracepoint"?
-
-Yes.
-
-
-> 
-> And the five new trace_pci_hp_event() calls that use the TRACE_EVENT
-> are the "tracepoints for PCIe hotplug event"?
-
-Actually, the tracepoints are generic, although right now they are only
-used for PCIe hotplug.
-
-> 
->> Add enum pci_hotplug_event in
->> include/uapi/linux/pci.h so applications like rasdaemon can register
->> tracepoint event handlers for it.
->>
->> The output like below:
->>
->> $ echo 1 > /sys/kernel/debug/tracing/events/pci/pci_hp_event/enable
->> $ cat /sys/kernel/debug/tracing/trace_pipe
->>      <...>-206     [001] .....    40.373870: pci_hp_event: 0000:00:02.0 slot:10, event:Link Down
->>
->>      <...>-206     [001] .....    40.374871: pci_hp_event: 0000:00:02.0 slot:10, event:Card not present
-> 
->> +#define PCI_HOTPLUG_EVENT					\
->> +	EM(PCI_HOTPLUG_LINK_UP,			"Link Up")	\
->> +	EM(PCI_HOTPLUG_LINK_DOWN,		"Link Down")	\
->> +	EM(PCI_HOTPLUG_CARD_PRESENT,		"Card present")	\
->> +	EMe(PCI_HOTPLUG_CARD_NOT_PRESENT,	"Card not present")
-> 
-> Running this:
-> 
->    $ git grep -E "\<(EM|EMe)\("
-> 
-> I notice that these new events don't look like the others, which
-> mostly look like "word" or "event-type" or "VERB object".
-> 
-> I'm OK with this, but just giving you a chance to consider what will
-> be the least surprise to users and easiest for grep and shell
-> scripting.
-
-I think this is also common. For example, MF_PAGE_TYPE for
-memory_failure_event uses a similar format:
-
-#define MF_PAGE_TYPE \
-	EM ( MF_MSG_KERNEL, "reserved kernel page" ) \
-	EM ( MF_MSG_KERNEL_HIGH_ORDER, "high-order kernel page" )
-
-
-and aer_uncorrectable_errors for aer_event:
-
-#define aer_uncorrectable_errors				\
-	{PCI_ERR_UNC_UND,	"Undefined"},			\
-	{PCI_ERR_UNC_DLP,	"Data Link Protocol Error"},	\
-	{PCI_ERR_UNC_SURPDN,	"Surprise Down Error"},		\
-	{PCI_ERR_UNC_POISON_TLP,"Poisoned TLP"},
-
-> 
-> I also noticed capitalization of "Up" and "Down", but not "present"
-> and "not present".
-
-Aha, this is a bit tricky:)
-
-The original kernel log messages are not consistent either:
-
-ctrl_info(ctrl, "Slot(%s): Link Down\n",
-ctrl_info(ctrl, "Slot(%s): Card not present\n",
-
-I tried to keep the output as close as possible to the existing log
-messages. If you prefer a more consistent capitalization style, I can
-send another patch to fix that.
-
-
-> 
-> "Card" is only used occasionally and informally in the PCIe spec, and
-> not at all in the context of hotplug of Slot Status (Presence Detect
-> State refers to "adapter in the slot"), but it does match the pciehp
-> dmesg text, so it probably makes sense to use that.
-> 
-> Anyway, I applied this on pci/trace for v6.17.  If there's anything
-> you want to tweak in the commit log or event text, we can still do
-> that.
-> 
->    https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?h=trace
-> 
-> Bjorn
-
-Thank you again for applying this to pci/trace for v6.17. If there’s
-anything more to tweak in the commit log or event text, please let me
-know.
-
-Best regards,
-
-Shuai
 
