@@ -1,78 +1,193 @@
-Return-Path: <linux-kernel+bounces-735966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2988EB09608
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 22:55:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CCFEB0960C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 22:56:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06863A464B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 20:54:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9F97567EB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 20:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A0DC2264CD;
-	Thu, 17 Jul 2025 20:55:00 +0000 (UTC)
-Received: from erminea.space (erminea.space [51.250.125.203])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF9D222A4FE;
+	Thu, 17 Jul 2025 20:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rWA/cVgw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF1521B199
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 20:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.250.125.203
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E885EEBB;
+	Thu, 17 Jul 2025 20:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752785699; cv=none; b=s4g2OFqlvG9zkw68W8AsCb78dVSJmtlfjhe/YOf36jyEfZs2mllQWJ2d3K+X9mLA4By4a+ZGTTIqJ6HRna8vGVgNqGgNnCe1qWKe0pq7u9o7l5zpFKND4mOHQjgJuleNAc9bqgtIN2flQ6g+dGVYWJtqyB83hAHeV150LBBL4xI=
+	t=1752785810; cv=none; b=V1K0nhOSrIG2WKFOrR0Xe9KS719kwwfoyhwiIP7PF5YDy25WSSOH/2/tJNdNBeZs9sQHsFBx2B2cYYQv6KBmPPpYPaHIKNuIweMfaGsuWJI6x+W8Zv9peGVKaf9ZdCpe+tWMwbhPmHF8BWbwipOhQC4Y1Npygg/DKbVnTCBpBSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752785699; c=relaxed/simple;
-	bh=q8dxv91agcB5amds5q5rEuc+Gx0fAE3N0DKkgW2QDEI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MFq179mvI5+8OKSMew0oYE5nrtmrJ3gLep/GK7pYNis+m24oY/RUILMpNcX4Jun6qLlaoKOp9sJRm/2wPngBGIvD5HQytOgFgh9s6/58O8sj7eGmvM15xZL3kK/zKzQBfOAiMbmM4QnUWWBXpftwKflo7lKntw/kmO4YusPTreQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=erminea.space; spf=pass smtp.mailfrom=erminea.space; arc=none smtp.client-ip=51.250.125.203
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=erminea.space
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=erminea.space
-Received: from alyaptyap (unknown [37.204.49.201])
-	by erminea.space (Postfix) with ESMTPSA id 37F0213CE;
-	Thu, 17 Jul 2025 23:54:56 +0300 (MSK)
-From: Peter Shkenev <mustela@erminea.space>
-To: alexander.deucher@amd.com,
-	amd-gfx@lists.freedesktop.org,
-	christian.koenig@amd.com
-Cc: airlied@gmail.com,
-	simona@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/amdgpu: check if hubbub is NULL in debugfs/amdgpu_dm_capabilities
-Date: Thu, 17 Jul 2025 23:54:48 +0300
-Message-ID: <20250717205449.763512-1-mustela@erminea.space>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1752785810; c=relaxed/simple;
+	bh=Ys203Svg62wgyIV0TPHIA8gLtygtPUojKJwCWhI3mMs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=bv0iWPGPx2yAdd6Yn3tusdTzfbwXW4uI58BNQJ827a2vM7bp9JODKPBeFY3lKC+UvWhorsJi1jYN2n/JVyGPebT2N2Yshyo5gi1cH7HlFc6HfdogdniPbcOJNpxHCLgKL08G0wWzD1q5NLHVaRHV+G+eKNYhU/TxKPQbp8BrcGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rWA/cVgw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48843C4CEE3;
+	Thu, 17 Jul 2025 20:56:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752785809;
+	bh=Ys203Svg62wgyIV0TPHIA8gLtygtPUojKJwCWhI3mMs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=rWA/cVgwaGrm6pq4B7i4gDgcU3D87a0eBpWBu6FZZv6GNu/oXL0sn2F7la8RX9keL
+	 ZIaOeZynH3rSAnQr7/ivnd9PGS8+RxmcNv7IqrApDqvJqViLlUEF/a+vIRWMtN3L0v
+	 VM/T8+IiOeS6/oba0yONX3gEq6E5ZJHPQQf5/3VXBcXoCm4SG56nnjD0x3ygYC9uU4
+	 VqWtTn4aaJQ6x53maV01dTbDeTI94kdV875y9BOY6yvUEg6Ip8QOfCumfCnINkJwHI
+	 aJweomH1oTn2dEaoxKbr+ft7C1RdnxvFMD3+5tgWKhHpIbXdFsiO7fir+0B6ws+nS1
+	 C4NK478mZE6wA==
+From: <puranjay@kernel.org>
+To: Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman
+ <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Christophe
+ Leroy <christophe.leroy@csgroup.eu>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko
+ <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard
+ Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, Yonghong Song
+ <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, KP
+ Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo
+ <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, Hari Bathini
+ <hbathini@linux.ibm.com>, Naveen N Rao <naveen@kernel.org>, Mykola Lysenko
+ <mykolal@fb.com>, Peilin Ye <yepeilin@google.com>, Kumar Kartikeya Dwivedi
+ <memxor@gmail.com>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, "Paul E . McKenney" <paulmck@kernel.org>,
+ lkmm@lists.linux.dev
+Subject: Re: [PATCH RESEND bpf-next 1/1] powerpc64/bpf: Add jit support for
+ load_acquire and store_release
+In-Reply-To: <20250717202935.29018-2-puranjay@kernel.org>
+References: <20250717202935.29018-1-puranjay@kernel.org>
+ <20250717202935.29018-2-puranjay@kernel.org>
+Date: Thu, 17 Jul 2025 20:56:45 +0000
+Message-ID: <mb61pfreuy1rm.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-HUBBUB structure is not initialized on DCE hardware, so check if it is NULL
-to avoid null dereference while accessing amdgpu_dm_capabilities file in
-debugfs.
+Puranjay Mohan <puranjay@kernel.org> writes:
 
-Signed-off-by: Peter Shkenev <mustela@erminea.space>
----
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Somehow the cover letter for this patch was missed, adding it here:
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c
-index c7d13e743e6c..b726bcd18e29 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c
-@@ -3988,7 +3988,7 @@ static int capabilities_show(struct seq_file *m, void *unused)
- 
- 	struct hubbub *hubbub = dc->res_pool->hubbub;
- 
--	if (hubbub->funcs->get_mall_en)
-+	if (hubbub && hubbub->funcs->get_mall_en)
- 		hubbub->funcs->get_mall_en(hubbub, &mall_in_use);
- 
- 	if (dc->cap_funcs.get_subvp_en)
--- 
-2.50.1
+To test the functionality of these special instructions, a tool called
+blitmus[0] was used to convert the following baseline litmus test[1] to bpf
+programs:
 
+ C MP+poonceonces
+
+ (*
+  * Result: Sometimes
+  *
+  * Can the counter-intuitive message-passing outcome be prevented with
+  * no ordering at all?
+  *)
+
+ {}
+
+ P0(int *buf, int *flag)
+ {
+         WRITE_ONCE(*buf, 1);
+         WRITE_ONCE(*flag, 1);
+ }
+
+ P1(int *buf, int *flag)
+ {
+         int r0;
+         int r1;
+
+         r0 = READ_ONCE(*flag);
+         r1 = READ_ONCE(*buf);
+ }
+
+ exists (1:r0=1 /\ 1:r1=0) (* Bad outcome. *)
+
+Running the generated bpf program shows that the bad outcome is possible on
+powerpc:
+
+ [fedora@linux-kernel blitmus]$ sudo ./mp_poonceonces
+ Starting litmus test with configuration:
+   Test: MP+poonceonces
+   Iterations: 4100
+
+ Test MP+poonceonces Allowed
+ Histogram (4 states)
+ 21548375 :>1:r0=0; 1:r1=0;
+ 301187   :>1:r0=0; 1:r1=1;
+ 337147   *>1:r0=1; 1:r1=0;
+ 18813291 :>1:r0=1; 1:r1=1;
+ Ok
+
+ Witnesses
+ Positive: 337147, Negative: 40662853
+ Condition exists (1:r0=1 /\ 1:r1=0) is validated
+ Observation MP+poonceonces Sometimes 337147 40662853
+ Time MP+poonceonces 13.48
+
+ Thu Jul 17 18:12:51 UTC
+
+Now the second write and the first read is converted to store_release and
+load_acquire and it gives us the following litmus test[2]
+
+ C MP+pooncerelease+poacquireonce
+
+ (*
+  * Result: Never
+  *
+  * This litmus test demonstrates that smp_store_release() and
+  * smp_load_acquire() provide sufficient ordering for the message-passing
+  * pattern.
+  *)
+
+ {}
+
+ P0(int *buf, int *flag)
+ {
+         WRITE_ONCE(*buf, 1);
+         smp_store_release(flag, 1);
+ }
+
+ P1(int *buf, int *flag)
+ {
+         int r0;
+         int r1;
+
+         r0 = smp_load_acquire(flag);
+         r1 = READ_ONCE(*buf);
+ }
+
+ exists (1:r0=1 /\ 1:r1=0) (* Bad outcome. *)
+
+
+Running the generated bpf program shows that the bad outcome is *not* possible
+on powerpc with the implementation in this patch:
+
+ [fedora@linux-kernel blitmus]$ sudo ./mp_pooncerelease_poacquireonce
+ Starting litmus test with configuration:
+   Test: MP+pooncerelease+poacquireonce
+   Iterations: 4100
+
+ Test MP+pooncerelease+poacquireonce Allowed
+ Histogram (3 states)
+ 21036021 :>1:r0=0; 1:r1=0;
+ 14488694 :>1:r0=0; 1:r1=1;
+ 5475285  :>1:r0=1; 1:r1=1;
+ No
+
+ Witnesses
+ Positive: 0, Negative: 41000000
+ Condition exists (1:r0=1 /\ 1:r1=0) is NOT validated
+ Observation MP+pooncerelease+poacquireonce Never 0 41000000
+ Time MP+pooncerelease+poacquireonce 13.74
+
+ Thu Jul 17 18:13:40 UTC
+
+[0] https://github.com/puranjaymohan/blitmus
+[1] https://github.com/puranjaymohan/blitmus/blob/main/litmus_tests/MP%2Bpoonceonces.litmus
+[2] https://github.com/puranjaymohan/blitmus/blob/main/litmus_tests/MP%2Bpooncerelease%2Bpoacquireonce.litmus
 
