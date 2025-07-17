@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-734982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63044B08910
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:15:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00F95B08917
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:16:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 459A77A5530
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:13:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D571188BEBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:16:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5E3B288535;
-	Thu, 17 Jul 2025 09:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 339C7289367;
+	Thu, 17 Jul 2025 09:15:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bZW29Qwf"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LRMpg/3c"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C771A2857F1
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 09:14:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE05912C544;
+	Thu, 17 Jul 2025 09:15:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752743694; cv=none; b=krbzUuSepFSUgdtj6imuT6Q/o8oXPIPLBIcvb7BQN2aqinITrVD+BY04YyTT7cthGn4WvjC1IhNVgAA+G950gcDmKsNvijA2ozgJivkUF0utcCZPreBWL+nqhI3AAluhC1VC2R4p7D2Y7HoyOtDZl3GT8rF2cZMibWk1+MtGbgU=
+	t=1752743758; cv=none; b=RVXebvS2gWKxZbv1XP4JLMMY/n0GQZZbOgIf+sjmka1mgFwKTQkqrC8gnedoxgUYeVc1384XJStxVx06Tu3wfNzrwNlHyjpSXLdu5SGfirGIZsndfrv60hZQ5EMSfIoKbYmjDYJHWlGFMAZ6bctRCz4sQZEG4UD1So4goW/Kl7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752743694; c=relaxed/simple;
-	bh=5FUJ1ODXykL1dBKSpMRvaSvysoeEX1Nqlm3DE0Otw8Y=;
+	s=arc-20240116; t=1752743758; c=relaxed/simple;
+	bh=7xiU6lQp5gZes9PPa5o+K6K/0XTTIF97z1CduNvdwPQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pTZ5b8RarK7vKhw4ESIy2RgMJRXaX+ELZrXvld3VhGmWqJUZ1pneW/oYpO3zRjiAM1kTFViaEKHQsdEfJeF/3NxZOBURPNAOVE+xfslEBTCo49M00ybdOBU2QQSVDW4JYkfQt462CQc3BwIcDviDJPh4ZzO5pZx7VoG3IIaANA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bZW29Qwf; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ae3cd8fdd77so131778366b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 02:14:51 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=a8+pg/vR/beXdzLUNe+laAdvBjv2JlKl8wQnC+z8aWiJEnmxivniHkINg4231cQVDoQXibNL2fLWXenehnIi4PE/P/vbJ/xbNntjivT7rpqMXgmM27Gc9lJTRLLuKmyuxNSnklWXSuxW7YSkcD2fpYKURwp3oy8EpglopKPQnYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LRMpg/3c; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-adfb562266cso123622666b.0;
+        Thu, 17 Jul 2025 02:15:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1752743690; x=1753348490; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
+        d=gmail.com; s=20230601; t=1752743755; x=1753348555; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=qvF3zOb5xSpb1Uxmw4UNSSWpqvIymBAoaxDK8LkmqYY=;
-        b=bZW29Qwfn1HYSAuZOhBeqi+N9oj/dVBKrir4eHT+yUg6wT6L5YmOXuz461AKd6+a7/
-         lajShHBLvv2p0bcstJQ+bX/+PjxuGnK4sDo5sjcnmG3U/fCqXJmuXHyyVXXJf6jGr/2x
-         oAXwifZX0dHEqDW+Y5+hj/zWSjLCnwmrGZZXzYkwqMk71LM9S+r7kIw8W0JJPP437Mdy
-         ukybpxS3+RyUXpwvnbA0SBf2gV7/8ZVqcvjxsoxxlVPap3VE7mV3vGnm8Ni6Al0EmpYd
-         dgyDkdIjr2Gqd5DjI+MG9x6xSyBEFVQFtEBJIsqssxPf7veepX0MVn1Jeea1sopYNXIx
-         0MYg==
+        bh=XuQuLev07eyWeKHWKCNdTOJWBDIr2mJkHs95ZW2/jJQ=;
+        b=LRMpg/3cLLdpJvFqJGGaQqJ3LxQS8SZzFGKBWTIqPrPXrYIeiFHNVO/oZ/YGE+Z4Vj
+         5bnP9+PbRq2kRgbQBmHKo00Y4oEOJXwF5ruKUDjNp4L9UjjZuX9Qb/G7JiIPuIUUeyXU
+         OPQicYbFX3BhW+aXO+GF6m0n7bwpPx6/rva/y9TVYaNbKCbYDnvC3R9o/Loo56NPHgIp
+         pYK/2yDmdWwo2miqCUwGnGK0FwfKDSdp1ZCNeIUJPLSaFnHTJ0ZbFurNaJxpAw1cDsAU
+         pL5Msv8EZxvXcTN4AWbB+bfjrcK14pq4MFuVMQZOGvS8LmL7JC1qQF9jtvEQcaptZdU4
+         CpPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752743690; x=1753348490;
-        h=content-transfer-encoding:in-reply-to:content-language:from
+        d=1e100.net; s=20230601; t=1752743755; x=1753348555;
+        h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qvF3zOb5xSpb1Uxmw4UNSSWpqvIymBAoaxDK8LkmqYY=;
-        b=ZrIRdvKuNmS/myfC5AfrVLXiMcJ5d4cLP8XkO2Y9cu7VfLHEQ5fYWy8FMCLp7PoIuU
-         bkBN745SvNf+zk96yGqZ8NsfZXTgOIMnO6/OFipU+nI1XpGa7/c6Stpy+sZ43vHITLkD
-         ob+pFxDa/8w2qPfh4Uxkz0FZhdc/oXBBdjr+iWpCHFnQBAt5HjPwLgh1Qzh7LatQhakn
-         YNd2/qtcswwQLMZxqasdzm19GhkCf6dul/F51NWvHAB5FwKXuT0Kw90TWZylahqeL3aQ
-         SEldl/7hjhoVuzvvIIKCWVJhWsjWhB09TAXIFkDAn/ZYodtI6tzBqTpwD1/+VYUfzPg8
-         Dy+w==
-X-Forwarded-Encrypted: i=1; AJvYcCXhI3N/HNz/NdfzModiLzNvHdMXu89xDTQqJSrwB9ToJIqKyaJR0saUhCb9vhwWYwZKcIj34JOfEkG77Rg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwB2ogvWNfAdF/nh481+BVNinh/7Bvmi/dbEWLk7J/kuhW2+Z7C
-	F7abHIyLMF3dlqWlmKmKFqXzHcO0ZFagWsFptjZmkCalSVnOUH4YkUBZVzX4niqo5ns=
-X-Gm-Gg: ASbGncuxwnTDCmploUHse4BYXq6YnX8jEv8rCu6qbjYrcsGzc73f4AGNIp8yzv20U1t
-	UYc1jtO4MzA7oZ66fqui/IC0tgzZX8e0lIIexDwwibqpQ3EUg9SdXTwfwIGAEZbwGKSBjVFxEw3
-	MTH6FvmfD17YIbSyP9V3V0kTJo5cXZz882D3uUkrH8LAf68nnkSH2lmsMjrf9l7Ht9CpTHkOIra
-	kgB5YRmw16tBCTEoRGMZS5JHmJTid20MEzUubZYNQYAOhxSk5RLSxgQ229HIQk5ReC4RNGKI1xH
-	0/HfFeFKmbYonB3/+50WHsloUybf2uI9R4593i0tP1EhC+0kVHyBGf34w8gsMVpdNXD4lQhj7N3
-	inc1w5LFXaOJVy8StMbatVkUG2iwdhNblik1/
-X-Google-Smtp-Source: AGHT+IEnD/7R/2gqsCpLAcNMPV3t2q2FnJZCaxlABMRQi65QpmoSs4DiQ6mxeDbvEffx+/eNFV0Nbg==
-X-Received: by 2002:a17:906:f049:b0:ae0:cc3d:7929 with SMTP id a640c23a62f3a-ae9cdd861c1mr523581866b.1.1752743689884;
-        Thu, 17 Jul 2025 02:14:49 -0700 (PDT)
-Received: from [10.20.4.146] ([149.62.209.237])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e82964a9sm1336344566b.141.2025.07.17.02.14.47
+        bh=XuQuLev07eyWeKHWKCNdTOJWBDIr2mJkHs95ZW2/jJQ=;
+        b=DHDCYmpapE6N11YK+X3t4wXHWacmgdMSjdrqfZAd1E6efJUomLhGoA+6CYfEJW90MG
+         O5i7PPZx6ceXcVPX8BYtLwxhVXlXhCk3pnlr57E3a9oXMjoCGdyGOs9kX6xkSL2DWdd1
+         UVwb7KaQnlRbw0xhSkGXta1TWHZno+eazAQWIrB2+fx53FxqlI9wjX53Lg0MF4DZ/xWI
+         UFCsKMYoS4n3UhnvPihpS+b/wgMkv5TRS2zKv0CHs07cZ1+9qsrxT6SWIU4MnhDuGmpi
+         dOsXQ5ol3MPO3ZAnJ0ik5JxEVrER8WFpLuVD/sq3jNa2uxO8LvBs6nFd9TSz0KDWyxii
+         Rtgg==
+X-Forwarded-Encrypted: i=1; AJvYcCU3Hts5IJiyt6oC25xfiPK1hNWDziJRH5RbBmOMtNUrdV30KbkwPiR/zDggRl84yYwBb0M=@vger.kernel.org, AJvYcCVlz651BlNAzeggwJX77ikNqIp7aHNevlMjJp6KYzoWrhEbrORiLY8WcU7isQ4ts6jLPTJ48AAVFvx91qXaaTM=@vger.kernel.org, AJvYcCVmnjhrxkm+msW3vTotmXV71zlBeSBl1o07ggom6xGrkMZqYdMymFlEXPZP+6FWLe2gDtQw5qpDMly8NiKA@vger.kernel.org, AJvYcCWdwQ5PHWp8DnEq3mkpUVNIDMlnL/XQcBaLHV092iVrdx/zOr9atf1rJwKRJQUaF2FXsVw4ZXszeoiwjQ==@vger.kernel.org, AJvYcCWfkinIl8776SBtBvaLNlzJNdX8H9HJUzeE6jwNW427WlFdihUkKPLyWtOSklMtMGX4PAv0lJca@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvCO4TUYWsUNcnraCJjok17itv3Gkt8px9N0dmw5puPOJZh/bt
+	PvARvgvZ0b9Z/HbaPUff/tFTOTduoFvPfDQJ81eTmoEk6ym5h17uvfa1
+X-Gm-Gg: ASbGncuybiAAGLGbKlXTEhNpIawef5cQNsOTpKmBAPQ2uUv+BUvkfg820QuVtg6sdS3
+	Mr/I2a+JHZrp3IxkNSMv+5Ae0idb7xJXHyeNJmpgiejOWlYNHANmz0VJXKZG7vHOLfJqPE2//Ce
+	iqjsy3C7kVhwGTvzwsnhyK/1zc5QcJWPJ8HHIVou08neK4KLhSZMpb6QlYKuwF/a8d4/umEY48L
+	YQSy5plKQ2AfwAPBVKK3hBwQqld6KqxBChChxv2JUJn1hkpK1ucMglwuXtPVvQWaOTkiFIT1Gsh
+	roXv8ubNjdhsgEkflHsEm5Y8n3Jx+Vp8Uu9K9h+h9vfRpJA7zLIZM7kHXNLMuHEgCudL4cLfHe6
+	BC0cwKQlat/NxodrnFNEZs3+TfgZKGloGNMo=
+X-Google-Smtp-Source: AGHT+IEBp5fKU5jFwU7T/e+ghWZTAi9JtfLyT40aPkuCdbIfMXgA11Q2utS7ZVnD76C8XR+vIqhT6w==
+X-Received: by 2002:a17:907:c290:b0:ae9:876a:4f14 with SMTP id a640c23a62f3a-ae9c9ba50a9mr629028466b.59.1752743754656;
+        Thu, 17 Jul 2025 02:15:54 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325::1ac? ([2620:10d:c092:600::1:72cc])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-611f7365c7bsm8194693a12.62.2025.07.17.02.15.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Jul 2025 02:14:49 -0700 (PDT)
-Message-ID: <60d4e55c-2a4f-44b4-9c93-fab97938a19c@suse.com>
-Date: Thu, 17 Jul 2025 12:14:46 +0300
+        Thu, 17 Jul 2025 02:15:53 -0700 (PDT)
+Message-ID: <6e4a4ae7-b84e-470d-81e9-a58ecf9c9157@gmail.com>
+Date: Thu, 17 Jul 2025 10:17:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,144 +81,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 0/1] KVM: TDX: Decrease TDX VM shutdown time
-To: Sean Christopherson <seanjc@google.com>, Xiaoyao Li <xiaoyao.li@intel.com>
-Cc: pbonzini@redhat.com, Adrian Hunter <adrian.hunter@intel.com>,
- kvm@vger.kernel.org, rick.p.edgecombe@intel.com,
- kirill.shutemov@linux.intel.com, kai.huang@intel.com,
- reinette.chatre@intel.com, tony.lindgren@linux.intel.com,
- binbin.wu@linux.intel.com, isaku.yamahata@intel.com,
- linux-kernel@vger.kernel.org, yan.y.zhao@intel.com, chao.gao@intel.com
-References: <20250611095158.19398-1-adrian.hunter@intel.com>
- <175088949072.720373.4112758062004721516.b4-ty@google.com>
- <aF1uNonhK1rQ8ViZ@google.com>
- <7103b312-b02d-440e-9fa6-ba219a510c2d@intel.com>
- <aHEMBuVieGioMVaT@google.com>
- <3989f123-6888-459b-bb65-4571f5cad8ce@intel.com>
- <aHEdg0jQp7xkOJp5@google.com>
-From: Nikolay Borisov <nik.borisov@suse.com>
+Subject: Re: [PATCH net-next v10 02/12] netmem: use netmem_desc instead of
+ page to access ->pp in __netmem_get_pp()
+To: Mina Almasry <almasrymina@google.com>, Byungchul Park <byungchul@sk.com>,
+ "Lobakin, Aleksander" <aleksander.lobakin@intel.com>
+Cc: willy@infradead.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel_team@skhynix.com,
+ ilias.apalodimas@linaro.org, harry.yoo@oracle.com,
+ akpm@linux-foundation.org, andrew+netdev@lunn.ch, toke@redhat.com,
+ david@redhat.com, Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
+ surenb@google.com, mhocko@suse.com, linux-rdma@vger.kernel.org,
+ bpf@vger.kernel.org, vishal.moola@gmail.com, hannes@cmpxchg.org,
+ ziy@nvidia.com, jackmanb@google.com, wei.fang@nxp.com, shenwei.wang@nxp.com,
+ xiaoning.wang@nxp.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, anthony.l.nguyen@intel.com,
+ przemyslaw.kitszel@intel.com, sgoutham@marvell.com, gakula@marvell.com,
+ sbhatta@marvell.com, hkelam@marvell.com, bbhushan2@marvell.com,
+ tariqt@nvidia.com, ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org,
+ john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com,
+ leon@kernel.org, mbloch@nvidia.com, danishanwar@ti.com, rogerq@kernel.org,
+ nbd@nbd.name, lorenzo@kernel.org, ryder.lee@mediatek.com,
+ shayne.chen@mediatek.com, sean.wang@mediatek.com, matthias.bgg@gmail.com,
+ angelogioacchino.delregno@collabora.com, horms@kernel.org, m-malladi@ti.com,
+ krzysztof.kozlowski@linaro.org, matthias.schiffer@ew.tq-group.com,
+ robh@kernel.org, imx@lists.linux.dev, intel-wired-lan@lists.osuosl.org,
+ linux-arm-kernel@lists.infradead.org, linux-wireless@vger.kernel.org,
+ linux-mediatek@lists.infradead.org
+References: <20250714120047.35901-1-byungchul@sk.com>
+ <20250714120047.35901-3-byungchul@sk.com>
+ <CAHS8izO393X_BDJxnX2d-auhTwrUZK5wYdoAh_tJc0GBf0AqcQ@mail.gmail.com>
+ <CAHS8izNh7aCJOb1WKTx7CXNDPv_UBqFyq2XEHHhqHH=5JPmJCQ@mail.gmail.com>
+ <20250715013626.GA49874@system.software.com>
+ <CAHS8izNgfrN-MimH1uv349AqNudvQJoeOsyHpoBT_QokF3Zv=w@mail.gmail.com>
+ <20250716045124.GB12760@system.software.com>
+ <CAHS8izMK2JA4rGNMRMqQbZtJVEP8b_QPLXzoKNeVgQFzAmdv3g@mail.gmail.com>
 Content-Language: en-US
-In-Reply-To: <aHEdg0jQp7xkOJp5@google.com>
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <CAHS8izMK2JA4rGNMRMqQbZtJVEP8b_QPLXzoKNeVgQFzAmdv3g@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-
-
-On 11.07.25 г. 17:19 ч., Sean Christopherson wrote:
-> On Fri, Jul 11, 2025, Xiaoyao Li wrote:
->> On 7/11/2025 9:05 PM, Sean Christopherson wrote:
->>> On Fri, Jul 11, 2025, Xiaoyao Li wrote:
->>>> On 6/26/2025 11:58 PM, Sean Christopherson wrote:
->>>>> On Wed, Jun 25, 2025, Sean Christopherson wrote:
->>>>>> On Wed, 11 Jun 2025 12:51:57 +0300, Adrian Hunter wrote:
->>>>>>> Changes in V4:
->>>>>>>
->>>>>>> 	Drop TDX_FLUSHVP_NOT_DONE change.  It will be done separately.
->>>>>>> 	Use KVM_BUG_ON() instead of WARN_ON().
->>>>>>> 	Correct kvm_trylock_all_vcpus() return value.
->>>>>>>
->>>>>>> Changes in V3:
->>>>>>> 	Refer:
->>>>>>>                https://lore.kernel.org/r/aAL4dT1pWG5dDDeo@google.com
->>>>>>>
->>>>>>> [...]
->>>>>>
->>>>>> Applied to kvm-x86 vmx, thanks!
->>>>>>
->>>>>> [1/1] KVM: TDX: Add sub-ioctl KVM_TDX_TERMINATE_VM
->>>>>>          https://github.com/kvm-x86/linux/commit/111a7311a016
->>>>>
->>>>> Fixed up to address a docs goof[*], new hash:
->>>>>
->>>>>          https://github.com/kvm-x86/linux/commit/e4775f57ad51
->>>>>
->>>>> [*] https://lore.kernel.org/all/20250626171004.7a1a024b@canb.auug.org.au
->>>>
->>>> Hi Sean,
->>>>
->>>> I think it's targeted for v6.17, right?
->>>>
->>>> If so, do we need the enumeration for the new TDX ioctl? Yes, the userspace
->>>> could always try and ignore the failure. But since the ship has not sailed,
->>>> I would like to report it and hear your opinion.
->>>
->>> Bugger, you're right.  It's sitting at the top of 'kvm-x86 vmx', so it should be
->>> easy enough to tack on a capability.
->>>
->>> This?
+On 7/16/25 20:41, Mina Almasry wrote:
+...>> I will kill __netmem_get_pp() as you and I prefer.  However,
+>> __netmem_get_pp() users e.i. libeth_xdp_return_va() and
+>> libeth_xdp_tx_fill_buf() should be altered.  I will modify the code like:
 >>
->> I'm wondering if we need a TDX centralized enumeration interface, e.g., new
->> field in struct kvm_tdx_capabilities. I believe there will be more and more
->> TDX new features, and assigning each a KVM_CAP seems wasteful.
+>> as is: __netmem_get_pp(netmem)
+>> to be: __netmem_nmdesc(netmem)->pp
+>>
+>> Is it okay with you?
+>>
 > 
-> Oh, yeah, that's a much better idea.  In addition to not polluting KVM_CAP,
-> 
-> LOL, and we certainly have the capacity in the structure:
-> 
-> 	__u64 reserved[250];
-> 
-> Sans documentation, something like so?
-> 
-> --
-> diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
-> index 13da87c05098..70ffe6e8d216 100644
-> --- a/arch/x86/include/uapi/asm/kvm.h
-> +++ b/arch/x86/include/uapi/asm/kvm.h
-> @@ -963,6 +963,8 @@ struct kvm_tdx_cmd {
->          __u64 hw_error;
->   };
->   
-> +#define KVM_TDX_CAP_TERMINATE_VM       _BITULL(0) > +
->   struct kvm_tdx_capabilities {
->          __u64 supported_attrs;
->          __u64 supported_xfam;
-> @@ -972,7 +974,9 @@ struct kvm_tdx_capabilities {
->          __u64 kernel_tdvmcallinfo_1_r12;
->          __u64 user_tdvmcallinfo_1_r12;
->   
-> -       __u64 reserved[250];
-> +       __u64 supported_caps;
-> +
-> +       __u64 reserved[249];
->   
->          /* Configurable CPUID bits for userspace */
->          struct kvm_cpuid2 cpuid;
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index f4d4fd5cc6e8..783b1046f6c1 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -189,6 +189,8 @@ static int init_kvm_tdx_caps(const struct tdx_sys_info_td_conf *td_conf,
->          if (!caps->supported_xfam)
->                  return -EIO;
->   
-> +       caps->supported_caps = KVM_TDX_CAP_TERMINATE_VM;
+> When Pavel and I were saying 'remove __netmem_get_pp', I think we
+> meant to remove the entire concept of unsafe netmem -> page
+> conversions. I think we both don't like them. From this perspective,
+> __netmem_nmdesc(netmem)->pp is just as bad as __netmem_get_pp(netmem).
 
-nit: For the sake of consistency make that a |= so that all subsequent 
-additions to it will be uniform with the first.
-> +
->          caps->cpuid.nent = td_conf->num_cpuid_config;
->   
->          caps->user_tdvmcallinfo_1_r11 =
-> --
-> 
-> 
-> Aha!  And if we squeeze in a patch for 6.16. to zero out the reserved array, we
-> can even avoid adding a capability to enumerate the TDX capability functionality.
-> 
-> --
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index f4d4fd5cc6e8..9c2997665762 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -181,6 +181,8 @@ static int init_kvm_tdx_caps(const struct tdx_sys_info_td_conf *td_conf,
->   {
->          int i;
->   
-> +       memset(caps->reserved, 0, sizeof(caps->reserved));
-> +
->          caps->supported_attrs = tdx_get_supported_attrs(td_conf);
->          if (!caps->supported_attrs)
->                  return -EIO;
-> --
-> 
+Yes. It'd great to have all of them gone. IMHO it's much better
+to let the caller do the casting so at least it's explicit and
+assumptions are not hidden. E.g. instead of
+
+pp = __netmem_nmdesc(netmem)->pp;
+
+It'd be
+
+struct page *page = __netmem_to_page(netmem);
+
+page_to_nmdesc(page)->pp;
+// or page_get_pp(page), or whatever the helper is
+
+That might be easier as well.
+
+-- 
+Pavel Begunkov
+
 
