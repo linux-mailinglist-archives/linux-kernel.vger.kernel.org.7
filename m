@@ -1,126 +1,160 @@
-Return-Path: <linux-kernel+bounces-734571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9858FB08345
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 05:14:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D2DDB08344
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 05:14:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E88BC583A71
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 03:14:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 822CD18969F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 03:14:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73DDA1EFFA6;
-	Thu, 17 Jul 2025 03:14:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18951E5215;
+	Thu, 17 Jul 2025 03:14:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="B4YJXtHv"
-Received: from esa10.hc1455-7.c3s2.iphmx.com (esa10.hc1455-7.c3s2.iphmx.com [139.138.36.225])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VPGJm6p9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D533E1EA7C4;
-	Thu, 17 Jul 2025 03:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.138.36.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E4A7E107;
+	Thu, 17 Jul 2025 03:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752722059; cv=none; b=Xue3gT9HHt9+cqKOvxw6vbwVrRYtIK5nO5sSpe1l8tBGGAZOOiGnFIhAhsUs8gRgrCmPQg5PMYbRB1QOtVpMI73tDgHQJrA8R7kHeUdpAhcyNqDUXp9bAZ233gBZ819Y23YGWOuuQOmHQrQ/BayPnJfgbwsRhZr2dgUhJJokTrA=
+	t=1752722056; cv=none; b=b+2YS9wq0qW5TU28xKldddhjYguwTKcX15Iz9NKnnlnZO9aDN26jzansOU7glNSPu9vv18X2HilX6dXvzWMc4xu/7dCdZnF59FQEsMLtBq9FfDXiE5fuWhm7q94rnmMDf+3Yo24zwIg4lE9oz3JBOKFe5eTvV8M/NVuOjunNn5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752722059; c=relaxed/simple;
-	bh=HrO9HbcZaw+Yizcckt6SicAxm2AMunUDyxumEYtZkVM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=a7kdWNgF2UGgLstxWns3VKW9SMQU2rrISmwR1iWWdLjL0kWXjCIILtXww6U+rd9mHgEdAikdmFV/4vV2Zk/u9ipqalqqXpFcfowNqCe046bnSsUmZySS7rMTMx34e3S2emVJeGuDMiMKL3/D1w7AOvj8rtqT/M9HOiPOu4Xa11Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=B4YJXtHv; arc=none smtp.client-ip=139.138.36.225
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
-  t=1752722058; x=1784258058;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=HrO9HbcZaw+Yizcckt6SicAxm2AMunUDyxumEYtZkVM=;
-  b=B4YJXtHvj0rR7ifThL+k4hzQ/eWjQc41zu+CmBWdW5CQ/sMyy+tbf+C0
-   /LMssEVPUel/6bI2EY7pmzM8cl11e8njeIe2BrEqmG4zRE2/2yGhl8WVb
-   FouaImDVLsdp3elR/8kqdj4GkBRng+EI0tHKh9Wy/p3lS85+jfg878azF
-   vWvFUOXmy42NKH04ABWls9PzQ5V29dHsk0ZqDqEEJHTKoVbws0nrd7gBf
-   eeJqouDXfXzQ257YCWP+AsrLAxf/J/bkVBQIds5wQcFn128Hgc6dN0FWR
-   G52Z4b/bFEek0f/TCjf4UZtTOLpJI4TZcWoh/u8yZ5BkV19/JXMjBWIbM
+	s=arc-20240116; t=1752722056; c=relaxed/simple;
+	bh=lczO1AdKw3XeNe1pc8ZBsZpTAuXeYBEyhHeCUjSbWhA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uShgwWxNo8JSiu2ZyXSCSRM0V6vxFKiHvG7mcFycFC/TF64AFDSLfPV8vLWq2B1Rs/rSmYUGgN8imMTuCCw9tjzuygUV7panlRmafynKQns9ZfcEHJfsoBtJt2sJogfP4j+Kmnr1ZB4qn/71BTmqPWVBfOJtftT7jkAzz9m7atw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VPGJm6p9; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752722054; x=1784258054;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=lczO1AdKw3XeNe1pc8ZBsZpTAuXeYBEyhHeCUjSbWhA=;
+  b=VPGJm6p9nPlp/9/GlxP4soUTXUS6GIZ4usApA/iFL/w9pY8xYCMP0XJh
+   jTS3OBeB45B9pqwUQ0a94wnEI1OmTQu/CwPQMWz3DuOfCM4dhah91zvL5
+   u4T3ar1iAisyx31c6MdvHexcLc6u4YIly3Mc5LlzWT9F6KSeVmNMYWVxT
+   TdluCT/dQfFYGuxYpvvqAsK/IZ/kdeyqPQQUIVRiul1qSriKc7+lAxmq2
+   QeeeiK/MM14D7VzEf/hX4Xf6HA5FxgTzOlyp8kc06XdwlUYGQPvDEpCD5
+   rnzSrJxwr33wPgF4KMO7vBcqZLbE+S7AcvlquocH/JM854tO+O/b0y9JG
    Q==;
-X-CSE-ConnectionGUID: D4Vd6AjFRSuHfsDzz4A2Jw==
-X-CSE-MsgGUID: 93FTKPqeRe68f4ZDHP3xsg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="193997250"
-X-IronPort-AV: E=Sophos;i="6.16,317,1744038000"; 
-   d="scan'208";a="193997250"
-Received: from unknown (HELO az2nlsmgr3.o.css.fujitsu.com) ([20.61.8.234])
-  by esa10.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 12:13:07 +0900
-Received: from az2nlsmgm2.o.css.fujitsu.com (unknown [10.150.26.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by az2nlsmgr3.o.css.fujitsu.com (Postfix) with ESMTPS id 66FCE1000372;
-	Thu, 17 Jul 2025 03:13:07 +0000 (UTC)
-Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by az2nlsmgm2.o.css.fujitsu.com (Postfix) with ESMTPS id C01E51C0015D;
-	Thu, 17 Jul 2025 03:13:06 +0000 (UTC)
-Received: from FNSTPC.g08.fujitsu.local (unknown [10.167.135.44])
-	by edo.cn.fujitsu.com (Postfix) with ESMTP id 81B621A0071;
-	Thu, 17 Jul 2025 11:13:02 +0800 (CST)
-From: Li Zhijian <lizhijian@fujitsu.com>
-To: linux-cxl@vger.kernel.org
-Cc: dave@stgolabs.net,
-	jonathan.cameron@huawei.com,
-	dave.jiang@intel.com,
-	alison.schofield@intel.com,
-	vishal.l.verma@intel.com,
-	ira.weiny@intel.com,
-	dan.j.williams@intel.com,
-	linux-kernel@vger.kernel.org,
-	Li Zhijian <lizhijian@fujitsu.com>
-Subject: [PATCH for-next] cxl: Fix -Werror=return-type in cxl_decoder_detach()
-Date: Thu, 17 Jul 2025 11:12:51 +0800
-Message-ID: <20250717031251.1043825-1-lizhijian@fujitsu.com>
-X-Mailer: git-send-email 2.41.0
+X-CSE-ConnectionGUID: SFUnO/qvSwKyELgAR4KawQ==
+X-CSE-MsgGUID: zpfBwCuPRRKmmtqxi4SLQg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="54843432"
+X-IronPort-AV: E=Sophos;i="6.16,317,1744095600"; 
+   d="scan'208";a="54843432"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 20:14:13 -0700
+X-CSE-ConnectionGUID: n+iXT9pTRcSDkb3MoRbrsg==
+X-CSE-MsgGUID: JalUWRbzQIGtzshCblUsNQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,317,1744095600"; 
+   d="scan'208";a="161967452"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 20:14:12 -0700
+Message-ID: <2838eb7a-9d54-48f2-aabe-1428f65a4fd2@intel.com>
+Date: Thu, 17 Jul 2025 11:14:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] KVM: TDX: Don't report base TDVMCALLs
+To: Binbin Wu <binbin.wu@linux.intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+ Sean Christopherson <seanjc@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250717022010.677645-1-xiaoyao.li@intel.com>
+ <f0281c2f-4ddf-4a0c-81a2-b6de51a4fe82@linux.intel.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <f0281c2f-4ddf-4a0c-81a2-b6de51a4fe82@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Fix following compiling errors:
-In file included from ../drivers/cxl/core/pmu.c:10:
-../drivers/cxl/core/core.h: In function ‘cxl_decoder_detach’:
-../drivers/cxl/core/core.h:65:1: error: no return statement in function returning non-void [-Werror=return-type]
- }
- ^
-cc1: some warnings being treated as errors
-  CC [M]  drivers/nvdimm/claim.o
-make[6]: *** [../scripts/Makefile.build:287: drivers/cxl/core/pmu.o] Error 1
-make[6]: *** Waiting for unfinished jobs....
-  CC [M]  drivers/infiniband/core/verbs.o
+On 7/17/2025 10:45 AM, Binbin Wu wrote:
+> 
+> 
+> On 7/17/2025 10:20 AM, Xiaoyao Li wrote:
+>> Remove TDVMCALLINFO_GET_QUOTE from user_tdvmcallinfo_1_r11 reported to
+>> userspace to align with the direction of the GHCI spec.
+>>
+>> Recently, concern was raised about a gap in the GHCI spec that left
+>> ambiguity in how to expose to the guest that only a subset of GHCI
+>> TDVMCalls were supported. During the back and forth on the spec 
+>> details[0],
+>> <GetQuote> was moved from an individually enumerable TDVMCall, to one 
+>> that
+>> is part of the 'base spec', meaning it doesn't have a specific bit in the
+> 
+> 'GHCI base API' is more appropriate instead of 'base spec'
+> 
+>> <GetTDVMCallInfo> return values. Although the spec[1] is still in draft
+>> form, the GetQoute part has been agreed by the major TDX VMMs.
+> GetQoute  ->  <GetQuote>
+> 
+> typo and use <> to align with others.
+> 
+>>
+>> Unfortunately the commits that were upstreamed still treat <GetQuote> as
+>> individually enumerable. They set bit 0 in the user_tdvmcallinfo_1_r11
+>> which is reported to userspace to tell supported optional TDVMCalls,
+>> intending to say that <GetQuote> is supported.
+>>
+>> So stop reporting <GetQute> in user_tdvmcallinfo_1_r11 to align with
+> 
+> GetQute -> GetQuote
+> 
+>> the direction of the spec, and allow some future TDVMCall to use that 
+>> bit.
+>>
+>> [0] https://lore.kernel.org/all/aEmuKII8FGU4eQZz@google.com/
+>> [1] https://cdrdv2.intel.com/v1/dl/getContent/858626
+>>
+>> Fixes: 28224ef02b56 ("KVM: TDX: Report supported optional TDVMCALLs in 
+>> TDX capabilities")
+>> Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
+> 
+> Nits: typos and wording suggested above.
 
-Fixes: b3a88225519c ("cxl/region: Consolidate cxl_decoder_kill_region() and cxl_region_detach()")
-Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
----
-I'm curious why the LKP robot didn't report this.
----
- drivers/cxl/core/core.h | 1 +
- 1 file changed, 1 insertion(+)
+thanks for catching them!
 
-diff --git a/drivers/cxl/core/core.h b/drivers/cxl/core/core.h
-index 705a5f09aa78..2669f251d677 100644
---- a/drivers/cxl/core/core.h
-+++ b/drivers/cxl/core/core.h
-@@ -62,6 +62,7 @@ static inline int cxl_decoder_detach(struct cxl_region *cxlr,
- 				     struct cxl_endpoint_decoder *cxled,
- 				     int pos, enum cxl_detach_mode mode)
- {
-+	return 0;
- }
- static inline int cxl_region_init(void)
- {
--- 
-2.41.0
+I would like to leave them to Paolo to fix when he applies the patch 
+instead of spinning a v2.
+
+> Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+> 
+>> ---
+>>   arch/x86/kvm/vmx/tdx.c | 2 --
+>>   1 file changed, 2 deletions(-)
+>>
+>> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+>> index f31ccdeb905b..ea1261ca805f 100644
+>> --- a/arch/x86/kvm/vmx/tdx.c
+>> +++ b/arch/x86/kvm/vmx/tdx.c
+>> @@ -173,7 +173,6 @@ static void td_init_cpuid_entry2(struct 
+>> kvm_cpuid_entry2 *entry, unsigned char i
+>>       tdx_clear_unsupported_cpuid(entry);
+>>   }
+>> -#define TDVMCALLINFO_GET_QUOTE                BIT(0)
+>>   #define TDVMCALLINFO_SETUP_EVENT_NOTIFY_INTERRUPT    BIT(1)
+>>   static int init_kvm_tdx_caps(const struct tdx_sys_info_td_conf 
+>> *td_conf,
+>> @@ -192,7 +191,6 @@ static int init_kvm_tdx_caps(const struct 
+>> tdx_sys_info_td_conf *td_conf,
+>>       caps->cpuid.nent = td_conf->num_cpuid_config;
+>>       caps->user_tdvmcallinfo_1_r11 =
+>> -        TDVMCALLINFO_GET_QUOTE |
+>>           TDVMCALLINFO_SETUP_EVENT_NOTIFY_INTERRUPT;
+>>       for (i = 0; i < td_conf->num_cpuid_config; i++)
+> 
 
 
