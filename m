@@ -1,1404 +1,259 @@
-Return-Path: <linux-kernel+bounces-735133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B0A0B08B38
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:53:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97868B08B2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:52:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E8161C24CCC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:54:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DFC63AA45B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 104482DD5E0;
-	Thu, 17 Jul 2025 10:46:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523382D9EC6;
+	Thu, 17 Jul 2025 10:46:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vNnVg/8+"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fhwLQQSg"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFEAD2DBF5C;
-	Thu, 17 Jul 2025 10:46:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E3482D8DA5
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 10:46:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752749191; cv=none; b=joJxaUDUcTqc1usxKfNIrDSqKOjXv9Hk8mJUkohUD6LWGA5GgHr5eN5rjSUvzCzh9ImjWS5glLNCFnrxPDQI+d1v02MDsqiTI+7ElEBrxW4DcuQgd1XY4Qy1LHlf7leeI2gJ8zMkc6pO0UUJtqS7IpvQIbdnDPvd1eNC3oe4Hzo=
+	t=1752749184; cv=none; b=HetendZdX/v/CZOe7skzF0kCQIebDVffAZ+tCsUCtj7S0MLHJjzqG60E6MJaCp0IUmww2IrTD2+t3Ok+W8niZXPOyJ/imcVDahuutp0/X/dCFhb4gMODqdtbBESvcwFfm0k3P82gtfse+iCmPmK0L1CDL9Lmp2DxKdnuy0cShg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752749191; c=relaxed/simple;
-	bh=9hY/8OW4RZ/aCyB+nwuYkoJcODl5p0hvMLLamBNGSMU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=eG+PdsbAxTlqnmtRpZc6TaTKFemXUu3+oPK1L/bFDxJNHkeGh4qg8gH9KDbW1fOK0+cDhuqcTv8Yf8hHGrnwf2nwrFUolD51hsba462ueg+tWfwL8E3/Rsj9nDXnlyL9ljEUe/kiyr7wBrxgcNL/JAxzxP32XwwlFDvRsgA09ZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=vNnVg/8+; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.0.172] (mob-5-90-140-254.net.vodafone.it [5.90.140.254])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7617820EE;
-	Thu, 17 Jul 2025 12:45:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1752749149;
-	bh=9hY/8OW4RZ/aCyB+nwuYkoJcODl5p0hvMLLamBNGSMU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=vNnVg/8+ptDjIXdB8Z583VRGWeNglLZJ9Zryg6QhZUUZpX9aXndkL/rS+oUFG4kg/
-	 m+mKVZN6+3yozL3jyRys4t/hPaggqFkTNHIVxZZihgCAUxT5RhvokOjbOjz3Tay+n5
-	 4wZfv2wLVz1B86K3Y9VsvZBZh3GdE8ErXl+NaUNI=
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Date: Thu, 17 Jul 2025 12:45:52 +0200
-Subject: [PATCH DNI 26/26] media: pisp_be: Add support for multi-context
+	s=arc-20240116; t=1752749184; c=relaxed/simple;
+	bh=VvUtV52l3KImX65+9uDS4CdyADX7cz8MKiwoD8yRVK4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uhHKQ8l0QzJ95CPCMlAAY+ReaEcetAhVtN2Wt0Cja4nD6IEn3BLqMF+Uxz4TKB21+eckPfooonB6SXo6ooFwNYBwCDSY0DP6tYtbmFxBPZnzixSZLU/w7aMCF8BaBNTlkMQtEYiGPt9bp3XSA7UORli5ZXSuod0vUKIoSUkxU8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fhwLQQSg; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56H4XZQB015642
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 10:46:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	B723+r5BA8byBPbGDEYFQhUBH8gC/ULM8G4kkMzp/9M=; b=fhwLQQSgwvLCf9ab
+	+C/qprDc5R9QOC2pu3ZcWhRDBjWWi9PTbsx2XUyhTnsVoAJagIZscIRrl+VMH6yi
+	sr107eM3f2aBaXIya40TniFoJ0BXK0V4BYXl/qIkW5BznQeH1pmTPZC39Drv4IbT
+	wDwhOzBz1a3xuhpb1cv916N0bBN4RuI4Q9UT7rSlnTWHROHcRhGUk1YqEnIyjTca
+	ByOCxcESv6JrlX3Fsb3JzVI9KfSEK2uaQaCGYNNYcaa6KV63dAtCGY6fJNRDy8mM
+	2iqd2A7QiZlZUeMCrFC2TnelAQsUmGKXZ9MV/goKKXXBp6/0Ocf/HlDBuPFkuqQ3
+	ur08+Q==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47w5dyt8jx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 10:46:20 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-74ad608d60aso883442b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 03:46:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752749179; x=1753353979;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=B723+r5BA8byBPbGDEYFQhUBH8gC/ULM8G4kkMzp/9M=;
+        b=rjId8DXbKM8fBHuK5priappwQaONJW2cyksjA2co5jVEgrBhxT2EyRTADghw0jHuAv
+         H2WfjuEMlSf+PMlchT68kjv5QkeO+wL5n1QjFnicAGJUkGgoRK5xuqcVq+v3tLZ7dYRy
+         emJeHmuNf4OdEwiYYm+8OXyROFHCcEUD2UmyZ02q8W87nI+ojAVp0MNgH1JsXObyZ2NP
+         hKmDy7DwUXAfTh5iIavrQk9h5bQqJL4g7BKOBaGDv9HSVABmHPjuQhysLpdoIb+ANi2E
+         jVI1jMkhRZFUpuyKCEbfySubx8eaaxRXZzXlc4dWPD/ykT385wR5eCgPttng9kurNccy
+         qFcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWsujWbUa9rJla4cTpCL0Qx5xbgfMEsThJxyY7DQ4s4Oi5WyqZ5f64PebPYimybxrs0OBZV94fKm2o5cdk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylBd1jXukqaJJ8Yuf13pk3zkxOvbsdFiSuWWulXiyY16MUVCTf
+	5uPBVd3NO47rFJ4QPTkoUH9Y8C6/RyEM3BG5coFSS04gbQ+oy3dHDS6DvXSTBICgSTAozcQJGu9
+	f0MD4pDM/ML5iwTbj8llO4Uv5BT8bqchBZ+W0+Al2oetzwY9F2uNxkCA7y1XveqCGdek=
+X-Gm-Gg: ASbGncuAA6+siylzIorbqxSEuZmh1d47pNAAX4XAXUso/5wfZw0BeuMoFr5W4sP3KBT
+	PakN6IDkiMd2W+C441jQNeC/8CmnV3iq6rLscafZgQDI/SBV/D/dJh1UWNlnfxNwSfPThVBFIZv
+	jz6Tu/v7nPHKFODfdzG9BgtkFlsmn3Wk7pbPClbuzRmf2PxF0Nvf75ffScziKAbrRNKEo3mTOFK
+	H9CPIijO5bZE/ScC0SDL6p0SCNfyrDe7/G7sVnhiHP9ecOTnfFI7YbdLOvB+8dgLj+3Gh+PKHuE
+	V0a+ILPA+sqswt/eEJfyiNQibNN9hxBMOByUXoqXlmPx4gX4OEIjr3Kcz+LXzhLIIDSw5X3OGYI
+	BtfwmpHPGCf8fzlFwzijtlLuaGhxz06Xt
+X-Received: by 2002:a05:6a00:1d82:b0:759:3013:8dfa with SMTP id d2e1a72fcca58-75930138e54mr181452b3a.18.1752749179237;
+        Thu, 17 Jul 2025 03:46:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHJuVslIFv21m6ImazfJSUw6oMv57Mp8930u7+QPOdytv2k43uhEySGP6kVYQgfWfa8cNhOpw==
+X-Received: by 2002:a05:6a00:1d82:b0:759:3013:8dfa with SMTP id d2e1a72fcca58-75930138e54mr181410b3a.18.1752749178734;
+        Thu, 17 Jul 2025 03:46:18 -0700 (PDT)
+Received: from [10.133.33.245] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9f25269sm15886150b3a.107.2025.07.17.03.46.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Jul 2025 03:46:18 -0700 (PDT)
+Message-ID: <03806d02-1cfc-4db2-8b63-c1e51f5456e2@oss.qualcomm.com>
+Date: Thu, 17 Jul 2025 18:46:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/6] wifi: ath12k: Use pci_{enable/disable}_link_state()
+ APIs to enable/disable ASPM states
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: manivannan.sadhasivam@oss.qualcomm.com,
+        Jeff Johnson
+ <jjohnson@kernel.org>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+        Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        Nirmal Patel <nirmal.patel@linux.intel.com>,
+        Jonathan Derrick <jonathan.derrick@linux.dev>,
+        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ath12k@lists.infradead.org, ath11k@lists.infradead.org,
+        ath10k@lists.infradead.org, Bjorn Helgaas <helgaas@kernel.org>,
+        ilpo.jarvinen@linux.intel.com, linux-arm-msm@vger.kernel.org,
+        linux-pci@vger.kernel.org,
+        Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+        Qiang Yu <qiang.yu@oss.qualcomm.com>
+References: <20250716-ath-aspm-fix-v1-0-dd3e62c1b692@oss.qualcomm.com>
+ <20250716-ath-aspm-fix-v1-4-dd3e62c1b692@oss.qualcomm.com>
+ <38ace6a3-d594-4438-a193-cf730a7b87d6@oss.qualcomm.com>
+ <wyqtr3tz3k2zdf62kgtcepf3sedm7z7wacv27visl2xsrqspmq@wi4fgef2mn2m>
+Content-Language: en-US
+From: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
+In-Reply-To: <wyqtr3tz3k2zdf62kgtcepf3sedm7z7wacv27visl2xsrqspmq@wi4fgef2mn2m>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250717-multicontext-mainline-2025-v1-26-81ac18979c03@ideasonboard.com>
-References: <20250717-multicontext-mainline-2025-v1-0-81ac18979c03@ideasonboard.com>
-In-Reply-To: <20250717-multicontext-mainline-2025-v1-0-81ac18979c03@ideasonboard.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
- Kieran Bingham <kieran.bingham@ideasonboard.com>, 
- Nicolas Dufresne <nicolas.dufresne@collabora.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Tomasz Figa <tfiga@chromium.org>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Hans Verkuil <hverkuil@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=45175;
- i=jacopo.mondi@ideasonboard.com; h=from:subject:message-id;
- bh=9hY/8OW4RZ/aCyB+nwuYkoJcODl5p0hvMLLamBNGSMU=;
- b=owEBbQKS/ZANAwAKAXI0Bo8WoVY8AcsmYgBoeNRRDhnVf74fFKeO3LlsZ9mZJ6cstOH8Ga7n/
- ZSnie2j0xeJAjMEAAEKAB0WIQS1xD1IgJogio9YOMByNAaPFqFWPAUCaHjUUQAKCRByNAaPFqFW
- PCc/D/9HFAMA2b5HijfPO5HM8rV64RDKLFCffJe8NstsZkVu/Wx35U/6KPuTqeXye69dJBkWW2b
- ghDu/OkbnqdWYzuld4ISX9pGV9udcld5aPYU0CadLThJrrgHRD/ZVMYJ6aAwLrtnyif+ocOO192
- xtxVpIwF+M6TrzdDw0wOwWMI1SnxpKWyGUPgFtwfkdUosS+JlPT11WxELEkDXYG8+DE+x0pPeV4
- tWU+h3Mza5ki+IU23bj0kzaO4X4hQi7b8jwlsAFhNISJRonQA6nOk4GTpFjt5/UyATOBSboq6Zf
- LqIf4GSNtzVS7taZKe8/K4zq24lR5ZybF4igRQaSrlfxr25CagTWStD1QGFBYrUAzmY2YdeJjZW
- JPJUMng9cEFc6cx8rtkTw9YvIc1+5mdjYb+QBe5xn9Vo5z8F/1YeUQXaPqfHhma+F+SG9lakqJX
- s+MguDwLbR+Z1xucgQa/nRIYL2HRFqEZG0Ef/CE8ONc3EUitXNbDnDA93ev2PmYKPXVA20NKjpL
- iKi5BZ5siHWqv8uZCQbrCOBSoe0GiAkMMw2HYf5bPavCkk2WGPoPs9Z1p/yLp70q/WlNF3+0smk
- H21QJHD38s1DVUIEqQiQcz+51P2yrKgjwLhvqy2bn+Sn8pScTNXlIhq9vMjd7vjd4bwHDaZZDti
- J2yzAXXtTQlv0tw==
-X-Developer-Key: i=jacopo.mondi@ideasonboard.com; a=openpgp;
- fpr=72392EDC88144A65C701EA9BA5826A2587AD026B
+X-Proofpoint-ORIG-GUID: cbtqkdWKdka42BI63UTfhQXdG6i7nA1N
+X-Authority-Analysis: v=2.4 cv=RtXFLDmK c=1 sm=1 tr=0 ts=6878d47c cx=c_pps
+ a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=oqDAYNfCzTduPHUzJrAA:9
+ a=QEXdDO2ut3YA:10 a=OpyuDcXvxspvyRM73sMx:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDA5NCBTYWx0ZWRfXxZTze+8d7qjH
+ Kx54k0cypAVudbTeVDZIQMGwP52/mnymqq1Ktorxvv0rhWKg6697ocNNViw7K+GcjHzIPTFBx74
+ MaRvvhiIqdPpC8QyxsJPPayWuyzPeO+Zu/YW8j4j0t2oFe2fBMJukD6tarcgUBL7VhOl5jlOD+s
+ s6No8fYKU7FB8tn+OTyZTpBPbaeVrg61Lt4U6ufrALZ9Pg0/y7UvauRkOl65Ij4zRT7uhXONGJP
+ a8cdxpQi2gaCqbcg3xwGY17NYkWJUzYjRnMBcvmGMn5p0LvpDNZEQTL1oSeVIFJz6EkYaMfSpsb
+ youxZ+JZTGLq/RirnjyuvOJSHdrXIHtzTikJCYz236nv6toGNhBxpOUO2YRNISHa9oAdQ6IUXYT
+ fAeJQUonbhBxhDuj4SW3SJmzyfF35A5McGtawos6nrgFgS00BHWz3FSQolAvvyl6V4Gmv8Wc
+X-Proofpoint-GUID: cbtqkdWKdka42BI63UTfhQXdG6i7nA1N
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-17_01,2025-07-16_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 mlxscore=0 bulkscore=0 suspectscore=0 lowpriorityscore=0
+ impostorscore=0 malwarescore=0 clxscore=1015 mlxlogscore=999
+ priorityscore=1501 phishscore=0 spamscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507170094
 
-Add support for context multiplexing to the PiSP BackEnd driver.
 
-Move information that used to be per-node to the video context and
-global information to the media context.
 
-Implement media and video context allocation and release operations
-to allocate and initialize a context and initialize the video queue there
-contained.
+On 7/17/2025 6:31 PM, Manivannan Sadhasivam wrote:
+> On Thu, Jul 17, 2025 at 05:24:13PM GMT, Baochen Qiang wrote:
+> 
+> [...]
+> 
+>>> @@ -16,6 +16,8 @@
+>>>  #include "mhi.h"
+>>>  #include "debug.h"
+>>>  
+>>> +#include "../ath.h"
+>>> +
+>>>  #define ATH12K_PCI_BAR_NUM		0
+>>>  #define ATH12K_PCI_DMA_MASK		36
+>>>  
+>>> @@ -928,8 +930,7 @@ static void ath12k_pci_aspm_disable(struct ath12k_pci *ab_pci)
+>>>  		   u16_get_bits(ab_pci->link_ctl, PCI_EXP_LNKCTL_ASPM_L1));
+>>>  
+>>>  	/* disable L0s and L1 */
+>>> -	pcie_capability_clear_word(ab_pci->pdev, PCI_EXP_LNKCTL,
+>>> -				   PCI_EXP_LNKCTL_ASPMC);
+>>> +	pci_disable_link_state(ab_pci->pdev, PCIE_LINK_STATE_L0S | PCIE_LINK_STATE_L1);
+>>
+>> Not always, but sometimes seems the 'disable' does not work:
+>>
+>> [  279.920507] ath12k_pci_power_up 1475: link_ctl 0x43 //before disable
+>> [  279.920539] ath12k_pci_power_up 1482: link_ctl 0x43 //after disable
+>>
+>>
+>>>  
+>>>  	set_bit(ATH12K_PCI_ASPM_RESTORE, &ab_pci->flags);
+>>>  }
+>>> @@ -958,10 +959,7 @@ static void ath12k_pci_aspm_restore(struct ath12k_pci *ab_pci)
+>>>  {
+>>>  	if (ab_pci->ab->hw_params->supports_aspm &&
+>>>  	    test_and_clear_bit(ATH12K_PCI_ASPM_RESTORE, &ab_pci->flags))
+>>> -		pcie_capability_clear_and_set_word(ab_pci->pdev, PCI_EXP_LNKCTL,
+>>> -						   PCI_EXP_LNKCTL_ASPMC,
+>>> -						   ab_pci->link_ctl &
+>>> -						   PCI_EXP_LNKCTL_ASPMC);
+>>> +		pci_enable_link_state(ab_pci->pdev, ath_pci_aspm_state(ab_pci->link_ctl));
+>>
+>> always, the 'enable' is not working:
+>>
+>> [  280.561762] ath12k_pci_start 1180: link_ctl 0x43 //before restore
+>> [  280.561809] ath12k_pci_start 1185: link_ctl 0x42 //after restore
+>>
+> 
+> Interesting! I applied your diff and I never see this issue so far (across 10+
+> reboots):
 
-Remove the per-node video device format and the buffer queues and
-port the driver to use the ones in the video device context.
+I was not testing reboot. Here is what I am doing:
 
-The operations that used to work with a pispbe_node now operates on a
-pispbe_context.
+step1: rmmod ath12k
+step2: force LinkCtrl using setpci (make sure it is 0x43, which seems more likely to see
+the issue)
 
-- v4l2 ioctl ops: receive a file pointer, retrieve the associated context
-  from the open file handle
-- vb2 ops: receive a queue, retrieve the context from the queue
-- internal driver ops: given a media device context retrieve the video
-  context from the other video devices when assembling a job
+	sudo setpci -s 02:00.0 0x80.B=0x43
 
-Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
----
- .../media/platform/raspberrypi/pisp_be/pisp_be.c   | 651 +++++++++++++++------
- 1 file changed, 473 insertions(+), 178 deletions(-)
+step3: insmod ath12k and check linkctrl
 
-diff --git a/drivers/media/platform/raspberrypi/pisp_be/pisp_be.c b/drivers/media/platform/raspberrypi/pisp_be/pisp_be.c
-index df3cdd81843376abf98bb184cde74d4d66b0ecfe..742fc9dddbead84fb2c9a615c9dccb3afcc66a55 100644
---- a/drivers/media/platform/raspberrypi/pisp_be/pisp_be.c
-+++ b/drivers/media/platform/raspberrypi/pisp_be/pisp_be.c
-@@ -146,6 +146,29 @@ static const struct pispbe_node_description node_desc[PISPBE_NUM_NODES] = {
- 	((node)->buf_type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) || \
- 	((node)->buf_type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE))
- 
-+/* ----------------------------------------------------------------------------
-+ * Media device context
-+ */
-+
-+struct pispbe_media_context {
-+	struct media_device_context mdev_context;
-+	u32 streaming_map;
-+	unsigned int sequence;
-+	dma_addr_t config_dma_addr;
-+	struct pisp_be_tiles_config *config;
-+};
-+
-+static struct pispbe_media_context *
-+pispbe_media_context(struct media_device_context *mdev_context)
-+{
-+	return container_of(mdev_context, struct pispbe_media_context,
-+			    mdev_context);
-+}
-+
-+/* ----------------------------------------------------------------------------
-+ * Video device context
-+ */
-+
- /*
-  * Structure to describe a single node /dev/video<N> which represents a single
-  * input or output queue to the PiSP Back End device.
-@@ -161,14 +184,96 @@ struct pispbe_node {
- 	struct pispbe_dev *pispbe;
- 	/* Video device lock */
- 	struct mutex node_lock;
--	/* vb2_queue lock */
--	struct mutex queue_lock;
--	struct list_head ready_queue;
--	struct vb2_queue queue;
-+};
-+
-+static struct pispbe_node *pispbe_node_from_vdev(struct video_device *vdev)
-+{
-+	return container_of(vdev, struct pispbe_node, vfd);
-+}
-+
-+/* Structure to describe a single execution context for a node. */
-+
-+ struct pispbe_node_context {
-+	struct video_device_context vdev_context;
-+
- 	struct v4l2_format format;
-+	struct list_head ready_queue;
- 	const struct pisp_be_format *pisp_format;
-+	struct pispbe_dev *pispbe;
-+	struct pispbe_node *node;
-+};
-+
-+static struct pispbe_node_context *
-+pispbe_node_context(struct video_device_context *ctx)
-+{
-+	return container_of(ctx, struct pispbe_node_context, vdev_context);
-+}
-+
-+static struct pispbe_node_context *
-+pispbe_node_context_from_entity(struct media_entity_context *ctx)
-+{
-+	struct video_device_context *vdev_context =
-+			container_of(ctx, struct video_device_context, base);
-+
-+	return pispbe_node_context(vdev_context);
-+}
-+
-+static struct pispbe_node_context *
-+pispbe_node_context_from_queue(struct vb2_queue *queue)
-+{
-+	return pispbe_node_context(video_device_context_from_queue(queue));
-+}
-+
-+static struct pispbe_node_context *
-+pispbe_node_context_from_file(struct file *file, struct video_device *vfd)
-+{
-+	return pispbe_node_context(video_device_context_from_file(file, vfd));
-+}
-+
-+static struct pispbe_node_context *
-+pispbe_get_dev_context(struct pispbe_media_context *pispbe_mdev_context,
-+			struct video_device *vdev)
-+{
-+	struct video_device_context *ctx =
-+		video_device_context_get(&pispbe_mdev_context->mdev_context,
-+					 vdev);
-+
-+	return ctx ? pispbe_node_context(ctx) : NULL;
-+}
-+
-+static void pispbe_put_dev_context(struct pispbe_node_context *ctx)
-+{
-+	video_device_context_put(&ctx->vdev_context);
-+}
-+
-+static struct pispbe_media_context *
-+pispbe_media_context_from_dev(struct pispbe_node_context *context)
-+{
-+	return pispbe_media_context(context->vdev_context.base.mdev_context);
-+}
-+
-+/* ----------------------------------------------------------------------------
-+ * ISP subdevice context
-+ */
-+struct pispbe_subdev_context {
-+	struct v4l2_subdev_context sd_context;
- };
- 
-+static struct pispbe_subdev_context *
-+pispbe_subdev_context(struct v4l2_subdev_context *ctx)
-+{
-+	return container_of(ctx, struct pispbe_subdev_context, sd_context);
-+}
-+
-+static struct pispbe_subdev_context *
-+pispbe_subdev_context_from_entity(struct media_entity_context *ctx)
-+{
-+	struct v4l2_subdev_context *sd_context =
-+		container_of(ctx, struct v4l2_subdev_context, base);
-+
-+	return pispbe_subdev_context(sd_context);
-+}
-+
- /* For logging only, use the entity name with "pispbe" and separator removed */
- #define NODE_NAME(node) \
- 		(node_desc[(node)->id].ent_name + sizeof(PISPBE_NAME))
-@@ -181,6 +286,7 @@ struct pispbe_job {
- 	 * then captures, then metadata last.
- 	 */
- 	struct pispbe_buffer *buf[PISPBE_NUM_NODES];
-+	struct pispbe_media_context *context;
- };
- 
- struct pispbe_hw_enables {
-@@ -196,6 +302,7 @@ struct pispbe_job_descriptor {
- 	struct pisp_be_tiles_config *config;
- 	struct pispbe_hw_enables hw_enables;
- 	dma_addr_t tiles;
-+	struct pispbe_media_context *context;
- };
- 
- /*
-@@ -205,7 +312,6 @@ struct pispbe_job_descriptor {
- struct pispbe_dev {
- 	struct device *dev;
- 	struct pispbe_dev *pispbe;
--	struct pisp_be_tiles_config *config;
- 	void __iomem *be_reg_base;
- 	struct clk *clk;
- 	struct v4l2_device v4l2_dev;
-@@ -213,17 +319,15 @@ struct pispbe_dev {
- 	struct media_device mdev;
- 	struct media_pad pad[PISPBE_NUM_NODES]; /* output pads first */
- 	struct pispbe_node node[PISPBE_NUM_NODES];
--	dma_addr_t config_dma_addr;
--	unsigned int sequence;
--	u32 streaming_map;
- 	struct pispbe_job queued_job, running_job;
--	/* protects "hw_busy" flag, streaming_map and job_queue */
-+	/* protects "hw_busy" flag and job_queue */
- 	spinlock_t hw_lock;
- 	bool hw_busy; /* non-zero if a job is queued or is being started */
- 	struct list_head job_queue;
- 	int irq;
- 	u32 hw_version;
- 	u8 done, started;
-+	struct media_pipeline pipe;
- };
- 
- static u32 pispbe_rd(struct pispbe_dev *pispbe, unsigned int offset)
-@@ -307,30 +411,31 @@ struct pispbe_buffer {
- };
- 
- static int pispbe_get_planes_addr(dma_addr_t addr[3], struct pispbe_buffer *buf,
--				  struct pispbe_node *node)
-+				  struct pispbe_node_context *context)
- {
--	unsigned int num_planes = node->format.fmt.pix_mp.num_planes;
-+	struct v4l2_format *format = &context->format;
-+	unsigned int num_planes = format->fmt.pix_mp.num_planes;
- 	unsigned int plane_factor = 0;
- 	unsigned int size;
- 	unsigned int p;
- 
--	if (!buf || !node->pisp_format)
-+	if (!buf || !context->pisp_format)
- 		return 0;
- 
- 	/*
- 	 * Determine the base plane size. This will not be the same
--	 * as node->format.fmt.pix_mp.plane_fmt[0].sizeimage for a single
-+	 * as format->fmt.pix_mp.plane_fmt[0].sizeimage for a single
- 	 * plane buffer in an mplane format.
- 	 */
--	size = node->format.fmt.pix_mp.plane_fmt[0].bytesperline *
--	       node->format.fmt.pix_mp.height;
-+	size = format->fmt.pix_mp.plane_fmt[0].bytesperline *
-+	       format->fmt.pix_mp.height;
- 
- 	for (p = 0; p < num_planes && p < PISPBE_MAX_PLANES; p++) {
- 		addr[p] = vb2_dma_contig_plane_dma_addr(&buf->vb.vb2_buf, p);
--		plane_factor += node->pisp_format->plane_factor[p];
-+		plane_factor += context->pisp_format->plane_factor[p];
- 	}
- 
--	for (; p < PISPBE_MAX_PLANES && node->pisp_format->plane_factor[p]; p++) {
-+	for (; p < PISPBE_MAX_PLANES && context->pisp_format->plane_factor[p]; p++) {
- 		/*
- 		 * Calculate the address offset of this plane as needed
- 		 * by the hardware. This is specifically for non-mplane
-@@ -338,7 +443,7 @@ static int pispbe_get_planes_addr(dma_addr_t addr[3], struct pispbe_buffer *buf,
- 		 * for the V4L2_PIX_FMT_YUV420 format.
- 		 */
- 		addr[p] = addr[0] + ((size * plane_factor) >> 3);
--		plane_factor += node->pisp_format->plane_factor[p];
-+		plane_factor += context->pisp_format->plane_factor[p];
- 	}
- 
- 	return num_planes;
-@@ -354,11 +459,13 @@ static dma_addr_t pispbe_get_addr(struct pispbe_buffer *buf)
- 
- static void pispbe_xlate_addrs(struct pispbe_dev *pispbe,
- 			       struct pispbe_job_descriptor *job,
-+			       struct pispbe_media_context *mdev_context,
- 			       struct pispbe_buffer *buf[PISPBE_NUM_NODES])
- {
- 	struct pispbe_hw_enables *hw_en = &job->hw_enables;
- 	struct pisp_be_tiles_config *config = job->config;
- 	dma_addr_t *addrs = job->hw_dma_addrs;
-+	struct pispbe_node_context *ctx;
- 	int ret;
- 
- 	/* Take a copy of the "enable" bitmaps so we can modify them. */
-@@ -369,8 +476,10 @@ static void pispbe_xlate_addrs(struct pispbe_dev *pispbe,
- 	 * Main input first. There are 3 address pointers, corresponding to up
- 	 * to 3 planes.
- 	 */
--	ret = pispbe_get_planes_addr(addrs, buf[MAIN_INPUT_NODE],
--				     &pispbe->node[MAIN_INPUT_NODE]);
-+	ctx = pispbe_get_dev_context(mdev_context,
-+				     &pispbe->node[MAIN_INPUT_NODE].vfd);
-+	ret = pispbe_get_planes_addr(addrs, buf[MAIN_INPUT_NODE], ctx);
-+	pispbe_put_dev_context(ctx);
- 	if (ret <= 0) {
- 		/* Shouldn't happen, we have validated an input is available. */
- 		dev_warn(pispbe->dev, "ISP-BE missing input\n");
-@@ -426,9 +535,11 @@ static void pispbe_xlate_addrs(struct pispbe_dev *pispbe,
- 
- 	/* Main image output channels. */
- 	for (unsigned int i = 0; i < PISP_BACK_END_NUM_OUTPUTS; i++) {
-+		ctx = pispbe_get_dev_context(mdev_context,
-+					     &pispbe->node[OUTPUT0_NODE + i].vfd);
- 		ret = pispbe_get_planes_addr(addrs + 7 + 3 * i,
--					     buf[OUTPUT0_NODE + i],
--					     &pispbe->node[OUTPUT0_NODE + i]);
-+					     buf[OUTPUT0_NODE + i], ctx);
-+		pispbe_put_dev_context(ctx);
- 		if (ret <= 0)
- 			hw_en->rgb_enables &= ~(PISP_BE_RGB_ENABLE_OUTPUT0 << i);
- 	}
-@@ -449,37 +560,48 @@ static void pispbe_xlate_addrs(struct pispbe_dev *pispbe,
-  *
-  * Returns 0 if a job has been successfully prepared, < 0 otherwise.
-  */
--static int pispbe_prepare_job(struct pispbe_dev *pispbe)
-+static int pispbe_prepare_job(struct pispbe_dev *pispbe,
-+			      struct pispbe_node_context *context)
- {
-+	struct pispbe_media_context *mdev_context =
-+					pispbe_media_context_from_dev(context);
- 	struct pispbe_job_descriptor __free(kfree) *job = NULL;
- 	struct pispbe_buffer *buf[PISPBE_NUM_NODES] = {};
-+	struct pispbe_node_context *ctx;
- 	unsigned int streaming_map;
- 	unsigned int config_index;
--	struct pispbe_node *node;
- 
- 	lockdep_assert_irqs_enabled();
- 
- 	scoped_guard(spinlock_irq, &pispbe->hw_lock) {
- 		static const u32 mask = BIT(CONFIG_NODE) | BIT(MAIN_INPUT_NODE);
- 
--		if ((pispbe->streaming_map & mask) != mask)
-+		if ((mdev_context->streaming_map & mask) != mask)
- 			return -ENODEV;
- 
- 		/*
- 		 * Take a copy of streaming_map: nodes activated after this
- 		 * point are ignored when preparing this job.
- 		 */
--		streaming_map = pispbe->streaming_map;
-+		streaming_map = mdev_context->streaming_map;
- 	}
- 
- 	job = kzalloc(sizeof(*job), GFP_KERNEL);
- 	if (!job)
- 		return -ENOMEM;
- 
--	node = &pispbe->node[CONFIG_NODE];
--	buf[CONFIG_NODE] = list_first_entry_or_null(&node->ready_queue,
-+	job->context = mdev_context;
-+
-+	ctx = pispbe_get_dev_context(mdev_context,
-+				     &pispbe->node[CONFIG_NODE].vfd);
-+	if (!ctx)
-+		return -ENODEV;
-+
-+	buf[CONFIG_NODE] = list_first_entry_or_null(&ctx->ready_queue,
- 						    struct pispbe_buffer,
- 						    ready_list);
-+	pispbe_put_dev_context(ctx);
-+
- 	if (!buf[CONFIG_NODE])
- 		return -ENODEV;
- 
-@@ -487,8 +609,8 @@ static int pispbe_prepare_job(struct pispbe_dev *pispbe)
- 	job->buffers[CONFIG_NODE] = buf[CONFIG_NODE];
- 
- 	config_index = buf[CONFIG_NODE]->vb.vb2_buf.index;
--	job->config = &pispbe->config[config_index];
--	job->tiles = pispbe->config_dma_addr +
-+	job->config = &mdev_context->config[config_index];
-+	job->tiles = mdev_context->config_dma_addr +
- 		     config_index * sizeof(struct pisp_be_tiles_config) +
- 		     offsetof(struct pisp_be_tiles_config, tiles);
- 
-@@ -529,12 +651,17 @@ static int pispbe_prepare_job(struct pispbe_dev *pispbe)
- 			ignore_buffers = true;
- 		}
- 
--		node = &pispbe->node[i];
--
- 		/* Pull a buffer from each V4L2 queue to form the queued job */
--		buf[i] = list_first_entry_or_null(&node->ready_queue,
-+		ctx = pispbe_get_dev_context(mdev_context,
-+					     &pispbe->node[i].vfd);
-+		if (!ctx && !ignore_buffers)
-+			goto err_return_buffers;
-+
-+		buf[i] = list_first_entry_or_null(&ctx->ready_queue,
- 						  struct pispbe_buffer,
- 						  ready_list);
-+		pispbe_put_dev_context(ctx);
-+
- 		if (buf[i]) {
- 			list_del(&buf[i]->ready_list);
- 			job->buffers[i] = buf[i];
-@@ -545,7 +672,7 @@ static int pispbe_prepare_job(struct pispbe_dev *pispbe)
- 	}
- 
- 	/* Convert buffers to DMA addresses for the hardware */
--	pispbe_xlate_addrs(pispbe, job, buf);
-+	pispbe_xlate_addrs(pispbe, job, mdev_context, buf);
- 
- 	scoped_guard(spinlock_irq, &pispbe->hw_lock) {
- 		list_add_tail(&job->queue, &pispbe->job_queue);
-@@ -558,19 +685,25 @@ static int pispbe_prepare_job(struct pispbe_dev *pispbe)
- 
- err_return_buffers:
- 	for (unsigned int i = 0; i < PISPBE_NUM_NODES; i++) {
--		struct pispbe_node *n =  &pispbe->node[i];
--
- 		if (!buf[i])
- 			continue;
- 
- 		/* Return the buffer to the ready_list queue */
--		list_add(&buf[i]->ready_list, &n->ready_queue);
-+		ctx = pispbe_get_dev_context(mdev_context,
-+					     &pispbe->node[i].vfd);
-+		if (!ctx)
-+			continue;
-+
-+		list_add(&buf[i]->ready_list, &ctx->ready_queue);
-+		pispbe_put_dev_context(ctx);
- 	}
- 
- 	return -ENODEV;
- }
- 
--static void pispbe_schedule(struct pispbe_dev *pispbe, bool clear_hw_busy)
-+static void pispbe_schedule(struct pispbe_dev *pispbe,
-+			    struct pispbe_media_context *mdev_context,
-+			    bool clear_hw_busy)
- {
- 	struct pispbe_job_descriptor *job;
- 
-@@ -591,9 +724,11 @@ static void pispbe_schedule(struct pispbe_dev *pispbe, bool clear_hw_busy)
- 
- 		for (unsigned int i = 0; i < PISPBE_NUM_NODES; i++)
- 			pispbe->queued_job.buf[i] = job->buffers[i];
--		pispbe->queued_job.valid = true;
- 
- 		pispbe->hw_busy = true;
-+
-+		pispbe->queued_job.context = job->context;
-+		pispbe->queued_job.valid = true;
- 	}
- 
- 	/*
-@@ -615,13 +750,13 @@ static void pispbe_isr_jobdone(struct pispbe_dev *pispbe,
- 	for (unsigned int i = 0; i < PISPBE_NUM_NODES; i++) {
- 		if (buf[i]) {
- 			buf[i]->vb.vb2_buf.timestamp = ts;
--			buf[i]->vb.sequence = pispbe->sequence;
-+			buf[i]->vb.sequence = job->context->sequence;
- 			vb2_buffer_done(&buf[i]->vb.vb2_buf,
- 					VB2_BUF_STATE_DONE);
- 		}
- 	}
- 
--	pispbe->sequence++;
-+	job->context->sequence++;
- }
- 
- static irqreturn_t pispbe_isr(int irq, void *dev)
-@@ -674,18 +809,20 @@ static irqreturn_t pispbe_isr(int irq, void *dev)
- 	}
- 
- 	/* check if there's more to do before going to sleep */
--	pispbe_schedule(pispbe, can_queue_another);
-+	pispbe_schedule(pispbe, NULL, can_queue_another);
- 
- 	return IRQ_HANDLED;
- }
- 
- static int pisp_be_validate_config(struct pispbe_dev *pispbe,
-+				   struct pispbe_media_context *mdev_context,
- 				   struct pisp_be_tiles_config *config)
- {
- 	u32 bayer_enables = config->config.global.bayer_enables;
- 	u32 rgb_enables = config->config.global.rgb_enables;
-+	struct pispbe_node_context *context;
-+	struct v4l2_pix_format_mplane *mp;
- 	struct device *dev = pispbe->dev;
--	struct v4l2_format *fmt;
- 	unsigned int bpl, size;
- 
- 	if (!(bayer_enables & PISP_BE_BAYER_ENABLE_INPUT) ==
-@@ -702,36 +839,50 @@ static int pisp_be_validate_config(struct pispbe_dev *pispbe,
- 	}
- 
- 	/* Ensure output config strides and buffer sizes match the V4L2 formats. */
--	fmt = &pispbe->node[TDN_OUTPUT_NODE].format;
-+	context = pispbe_get_dev_context(mdev_context,
-+					 &pispbe->node[TDN_OUTPUT_NODE].vfd);
-+	if (!context)
-+		return -EINVAL;
-+
-+	mp = &context->format.fmt.pix_mp;
-+	pispbe_put_dev_context(context);
-+
- 	if (bayer_enables & PISP_BE_BAYER_ENABLE_TDN_OUTPUT) {
- 		bpl = config->config.tdn_output_format.stride;
- 		size = bpl * config->config.tdn_output_format.height;
- 
--		if (fmt->fmt.pix_mp.plane_fmt[0].bytesperline < bpl) {
-+		if (mp->plane_fmt[0].bytesperline < bpl) {
- 			dev_dbg(dev, "%s: bpl mismatch on tdn_output\n",
- 				__func__);
- 			return -EINVAL;
- 		}
- 
--		if (fmt->fmt.pix_mp.plane_fmt[0].sizeimage < size) {
-+		if (mp->plane_fmt[0].sizeimage < size) {
- 			dev_dbg(dev, "%s: size mismatch on tdn_output\n",
- 				__func__);
- 			return -EINVAL;
- 		}
- 	}
- 
--	fmt = &pispbe->node[STITCH_OUTPUT_NODE].format;
-+	context = pispbe_get_dev_context(mdev_context,
-+					 &pispbe->node[STITCH_OUTPUT_NODE].vfd);
-+	if (!context)
-+		return -EINVAL;
-+
-+	mp = &context->format.fmt.pix_mp;
-+	pispbe_put_dev_context(context);
-+
- 	if (bayer_enables & PISP_BE_BAYER_ENABLE_STITCH_OUTPUT) {
- 		bpl = config->config.stitch_output_format.stride;
- 		size = bpl * config->config.stitch_output_format.height;
- 
--		if (fmt->fmt.pix_mp.plane_fmt[0].bytesperline < bpl) {
-+		if (mp->plane_fmt[0].bytesperline < bpl) {
- 			dev_dbg(dev, "%s: bpl mismatch on stitch_output\n",
- 				__func__);
- 			return -EINVAL;
- 		}
- 
--		if (fmt->fmt.pix_mp.plane_fmt[0].sizeimage < size) {
-+		if (mp->plane_fmt[0].sizeimage < size) {
- 			dev_dbg(dev, "%s: size mismatch on stitch_output\n",
- 				__func__);
- 			return -EINVAL;
-@@ -746,8 +897,15 @@ static int pisp_be_validate_config(struct pispbe_dev *pispbe,
- 		    PISP_IMAGE_FORMAT_WALLPAPER_ROLL)
- 			continue; /* TODO: Size checks for wallpaper formats */
- 
--		fmt = &pispbe->node[OUTPUT0_NODE + j].format;
--		for (unsigned int i = 0; i < fmt->fmt.pix_mp.num_planes; i++) {
-+		context = pispbe_get_dev_context(mdev_context,
-+					  &pispbe->node[OUTPUT0_NODE + j].vfd);
-+		if (!context)
-+			return -EINVAL;
-+
-+		mp = &context->format.fmt.pix_mp;
-+		pispbe_put_dev_context(context);
-+
-+		for (unsigned int i = 0; i < mp->num_planes; i++) {
- 			bpl = !i ? config->config.output_format[j].image.stride
- 			    : config->config.output_format[j].image.stride2;
- 			size = bpl * config->config.output_format[j].image.height;
-@@ -756,13 +914,15 @@ static int pisp_be_validate_config(struct pispbe_dev *pispbe,
- 						PISP_IMAGE_FORMAT_SAMPLING_420)
- 				size >>= 1;
- 
--			if (fmt->fmt.pix_mp.plane_fmt[i].bytesperline < bpl) {
-+			if (mp->plane_fmt[i].bytesperline < bpl) {
- 				dev_dbg(dev, "%s: bpl mismatch on output %d\n",
- 					__func__, j);
-+				dev_dbg(dev, "Expected %u, got %u\n",
-+					bpl, mp->plane_fmt[i].bytesperline);
- 				return -EINVAL;
- 			}
- 
--			if (fmt->fmt.pix_mp.plane_fmt[i].sizeimage < size) {
-+			if (mp->plane_fmt[i].sizeimage < size) {
- 				dev_dbg(dev, "%s: size mismatch on output\n",
- 					__func__);
- 				return -EINVAL;
-@@ -777,10 +937,12 @@ static int pispbe_node_queue_setup(struct vb2_queue *q, unsigned int *nbuffers,
- 				   unsigned int *nplanes, unsigned int sizes[],
- 				   struct device *alloc_devs[])
- {
-+	struct pispbe_node_context *context = pispbe_node_context_from_queue(q);
-+	struct v4l2_format *format = &context->format;
- 	struct pispbe_node *node = vb2_get_drv_priv(q);
- 	struct pispbe_dev *pispbe = node->pispbe;
- 	unsigned int num_planes = NODE_IS_MPLANE(node) ?
--				  node->format.fmt.pix_mp.num_planes : 1;
-+				  format->fmt.pix_mp.num_planes : 1;
- 
- 	if (*nplanes) {
- 		if (*nplanes != num_planes)
-@@ -788,8 +950,8 @@ static int pispbe_node_queue_setup(struct vb2_queue *q, unsigned int *nbuffers,
- 
- 		for (unsigned int i = 0; i < *nplanes; i++) {
- 			unsigned int size = NODE_IS_MPLANE(node) ?
--				node->format.fmt.pix_mp.plane_fmt[i].sizeimage :
--				node->format.fmt.meta.buffersize;
-+				format->fmt.pix_mp.plane_fmt[i].sizeimage :
-+				format->fmt.meta.buffersize;
- 
- 			if (sizes[i] < size)
- 				return -EINVAL;
-@@ -801,8 +963,8 @@ static int pispbe_node_queue_setup(struct vb2_queue *q, unsigned int *nbuffers,
- 	*nplanes = num_planes;
- 	for (unsigned int i = 0; i < *nplanes; i++) {
- 		unsigned int size = NODE_IS_MPLANE(node) ?
--				node->format.fmt.pix_mp.plane_fmt[i].sizeimage :
--				node->format.fmt.meta.buffersize;
-+				    format->fmt.pix_mp.plane_fmt[i].sizeimage :
-+				    format->fmt.meta.buffersize;
- 		sizes[i] = size;
- 	}
- 
-@@ -815,15 +977,20 @@ static int pispbe_node_queue_setup(struct vb2_queue *q, unsigned int *nbuffers,
- 
- static int pispbe_node_buffer_prepare(struct vb2_buffer *vb)
- {
--	struct pispbe_node *node = vb2_get_drv_priv(vb->vb2_queue);
-+	struct vb2_queue *q = vb->vb2_queue;
-+	struct pispbe_node_context *context = pispbe_node_context_from_queue(q);
-+	struct pispbe_media_context *mdev_context =
-+					pispbe_media_context_from_dev(context);
-+	struct v4l2_format *format = &context->format;
-+	struct pispbe_node *node = context->node;
- 	struct pispbe_dev *pispbe = node->pispbe;
- 	unsigned int num_planes = NODE_IS_MPLANE(node) ?
--				  node->format.fmt.pix_mp.num_planes : 1;
-+				  format->fmt.pix_mp.num_planes : 1;
- 
- 	for (unsigned int i = 0; i < num_planes; i++) {
- 		unsigned long size = NODE_IS_MPLANE(node) ?
--				node->format.fmt.pix_mp.plane_fmt[i].sizeimage :
--				node->format.fmt.meta.buffersize;
-+				     format->fmt.pix_mp.plane_fmt[i].sizeimage :
-+				     format->fmt.meta.buffersize;
- 
- 		if (vb2_plane_size(vb, i) < size) {
- 			dev_dbg(pispbe->dev,
-@@ -836,12 +1003,12 @@ static int pispbe_node_buffer_prepare(struct vb2_buffer *vb)
- 	}
- 
- 	if (node->id == CONFIG_NODE) {
--		void *dst = &node->pispbe->config[vb->index];
-+		void *dst = &mdev_context->config[vb->index];
- 		void *src = vb2_plane_vaddr(vb, 0);
- 
- 		memcpy(dst, src, sizeof(struct pisp_be_tiles_config));
- 
--		return pisp_be_validate_config(pispbe, dst);
-+		return pisp_be_validate_config(pispbe, mdev_context, dst);
- 	}
- 
- 	return 0;
-@@ -849,27 +1016,34 @@ static int pispbe_node_buffer_prepare(struct vb2_buffer *vb)
- 
- static void pispbe_node_buffer_queue(struct vb2_buffer *buf)
- {
--	struct vb2_v4l2_buffer *vbuf =
--		container_of(buf, struct vb2_v4l2_buffer, vb2_buf);
--	struct pispbe_buffer *buffer =
--		container_of(vbuf, struct pispbe_buffer, vb);
--	struct pispbe_node *node = vb2_get_drv_priv(buf->vb2_queue);
-+	struct vb2_v4l2_buffer *vbuf = container_of(buf, struct vb2_v4l2_buffer,
-+						    vb2_buf);
-+	struct pispbe_buffer *buffer = container_of(vbuf, struct pispbe_buffer,
-+						    vb);
-+	struct vb2_queue *q = buf->vb2_queue;
-+	struct pispbe_node_context *context = pispbe_node_context_from_queue(q);
-+	struct pispbe_media_context *mdev_context =
-+					pispbe_media_context_from_dev(context);
-+	struct pispbe_node *node = context->node;
- 	struct pispbe_dev *pispbe = node->pispbe;
- 
- 	dev_dbg(pispbe->dev, "%s: for node %s\n", __func__, NODE_NAME(node));
--	list_add_tail(&buffer->ready_list, &node->ready_queue);
-+	list_add_tail(&buffer->ready_list, &context->ready_queue);
- 
- 	/*
- 	 * Every time we add a buffer, check if there's now some work for the hw
- 	 * to do.
- 	 */
--	if (!pispbe_prepare_job(pispbe))
--		pispbe_schedule(pispbe, false);
-+	if (!pispbe_prepare_job(pispbe, context))
-+		pispbe_schedule(pispbe, mdev_context, false);
- }
- 
- static int pispbe_node_start_streaming(struct vb2_queue *q, unsigned int count)
- {
--	struct pispbe_node *node = vb2_get_drv_priv(q);
-+	struct pispbe_node_context *context = pispbe_node_context_from_queue(q);
-+	struct pispbe_media_context *mdev_context =
-+					pispbe_media_context_from_dev(context);
-+	struct pispbe_node *node = context->node;
- 	struct pispbe_dev *pispbe = node->pispbe;
- 	struct pispbe_buffer *buf, *tmp;
- 	int ret;
-@@ -878,28 +1052,28 @@ static int pispbe_node_start_streaming(struct vb2_queue *q, unsigned int count)
- 	if (ret < 0)
- 		goto err_return_buffers;
- 
--	ret = video_device_pipeline_alloc_start(&node->vfd);
-+	ret = video_device_context_pipeline_alloc_start(&context->vdev_context);
- 	if (ret)
- 		goto err_return_buffers;
- 
- 	scoped_guard(spinlock_irq, &pispbe->hw_lock) {
--		node->pispbe->streaming_map |=  BIT(node->id);
--		node->pispbe->sequence = 0;
-+		mdev_context->streaming_map |=  BIT(node->id);
-+		mdev_context->sequence = 0;
- 	}
- 
- 	dev_dbg(pispbe->dev, "%s: for node %s (count %u)\n",
- 		__func__, NODE_NAME(node), count);
- 	dev_dbg(pispbe->dev, "Nodes streaming now 0x%x\n",
--		node->pispbe->streaming_map);
-+		mdev_context->streaming_map);
- 
- 	/* Maybe we're ready to run. */
--	if (!pispbe_prepare_job(pispbe))
--		pispbe_schedule(pispbe, false);
-+	if (!pispbe_prepare_job(pispbe, context))
-+		pispbe_schedule(pispbe, mdev_context, false);
- 
- 	return 0;
- 
- err_return_buffers:
--	list_for_each_entry_safe(buf, tmp, &node->ready_queue, ready_list) {
-+	list_for_each_entry_safe(buf, tmp, &context->ready_queue, ready_list) {
- 		list_del(&buf->ready_list);
- 		vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_QUEUED);
- 	}
-@@ -909,7 +1083,10 @@ static int pispbe_node_start_streaming(struct vb2_queue *q, unsigned int count)
- 
- static void pispbe_node_stop_streaming(struct vb2_queue *q)
- {
--	struct pispbe_node *node = vb2_get_drv_priv(q);
-+	struct pispbe_node_context *context = pispbe_node_context_from_queue(q);
-+	struct pispbe_media_context *mdev_context =
-+					pispbe_media_context_from_dev(context);
-+	struct pispbe_node *node = context->node;
- 	struct pispbe_dev *pispbe = node->pispbe;
- 	struct pispbe_job_descriptor *job, *temp;
- 	struct pispbe_buffer *buf;
-@@ -926,7 +1103,7 @@ static void pispbe_node_stop_streaming(struct vb2_queue *q)
- 	 */
- 	dev_dbg(pispbe->dev, "%s: for node %s\n", __func__, NODE_NAME(node));
- 	do {
--		buf = list_first_entry_or_null(&node->ready_queue,
-+		buf = list_first_entry_or_null(&context->ready_queue,
- 					       struct pispbe_buffer,
- 					       ready_list);
- 		if (buf) {
-@@ -935,14 +1112,14 @@ static void pispbe_node_stop_streaming(struct vb2_queue *q)
- 		}
- 	} while (buf);
- 
--	vb2_wait_for_all_buffers(&node->queue);
-+	vb2_wait_for_all_buffers(&context->vdev_context.queue);
- 
- 	video_device_pipeline_stop(&node->vfd);
- 
- 	spin_lock_irq(&pispbe->hw_lock);
--	pispbe->streaming_map &= ~BIT(node->id);
-+	mdev_context->streaming_map &= ~BIT(node->id);
- 
--	if (pispbe->streaming_map == 0) {
-+	if (mdev_context->streaming_map == 0) {
- 		/*
- 		 * If all nodes have stopped streaming release all jobs
- 		 * without holding the lock.
-@@ -960,7 +1137,7 @@ static void pispbe_node_stop_streaming(struct vb2_queue *q)
- 	pm_runtime_put_autosuspend(pispbe->dev);
- 
- 	dev_dbg(pispbe->dev, "Nodes streaming now 0x%x\n",
--		pispbe->streaming_map);
-+		mdev_context->streaming_map);
- }
- 
- static const struct vb2_ops pispbe_node_queue_ops = {
-@@ -1001,6 +1178,8 @@ static int pispbe_node_g_fmt_vid_cap(struct file *file, void *priv,
- {
- 	struct pispbe_node *node = video_drvdata(file);
- 	struct pispbe_dev *pispbe = node->pispbe;
-+	struct pispbe_node_context *context =
-+			pispbe_node_context_from_file(file, &node->vfd);
- 
- 	if (!NODE_IS_CAPTURE(node) || NODE_IS_META(node)) {
- 		dev_dbg(pispbe->dev,
-@@ -1009,7 +1188,7 @@ static int pispbe_node_g_fmt_vid_cap(struct file *file, void *priv,
- 		return -EINVAL;
- 	}
- 
--	*f = node->format;
-+	*f = context->format;
- 	dev_dbg(pispbe->dev, "Get capture format for node %s\n",
- 		NODE_NAME(node));
- 
-@@ -1021,6 +1200,8 @@ static int pispbe_node_g_fmt_vid_out(struct file *file, void *priv,
- {
- 	struct pispbe_node *node = video_drvdata(file);
- 	struct pispbe_dev *pispbe = node->pispbe;
-+	struct pispbe_node_context *context =
-+			pispbe_node_context_from_file(file, &node->vfd);
- 
- 	if (NODE_IS_CAPTURE(node) || NODE_IS_META(node)) {
- 		dev_dbg(pispbe->dev,
-@@ -1029,7 +1210,7 @@ static int pispbe_node_g_fmt_vid_out(struct file *file, void *priv,
- 		return -EINVAL;
- 	}
- 
--	*f = node->format;
-+	*f = context->format;
- 	dev_dbg(pispbe->dev, "Get output format for node %s\n",
- 		NODE_NAME(node));
- 
-@@ -1041,6 +1222,8 @@ static int pispbe_node_g_fmt_meta_out(struct file *file, void *priv,
- {
- 	struct pispbe_node *node = video_drvdata(file);
- 	struct pispbe_dev *pispbe = node->pispbe;
-+	struct pispbe_node_context *context =
-+			pispbe_node_context_from_file(file, &node->vfd);
- 
- 	if (!NODE_IS_META(node) || NODE_IS_CAPTURE(node)) {
- 		dev_dbg(pispbe->dev,
-@@ -1049,7 +1232,7 @@ static int pispbe_node_g_fmt_meta_out(struct file *file, void *priv,
- 		return -EINVAL;
- 	}
- 
--	*f = node->format;
-+	*f = context->format;
- 	dev_dbg(pispbe->dev, "Get output format for meta node %s\n",
- 		NODE_NAME(node));
- 
-@@ -1219,17 +1402,19 @@ static int pispbe_node_s_fmt_vid_cap(struct file *file, void *priv,
- {
- 	struct pispbe_node *node = video_drvdata(file);
- 	struct pispbe_dev *pispbe = node->pispbe;
-+	struct pispbe_node_context *context =
-+			pispbe_node_context_from_file(file, &node->vfd);
- 	int ret;
- 
- 	ret = pispbe_node_try_fmt_vid_cap(file, priv, f);
- 	if (ret < 0)
- 		return ret;
- 
--	if (vb2_is_busy(&node->queue))
-+	if (vb2_is_busy(&context->vdev_context.queue))
- 		return -EBUSY;
- 
--	node->format = *f;
--	node->pisp_format = pispbe_find_fmt(f->fmt.pix_mp.pixelformat);
-+	context->format = *f;
-+	context->pisp_format = pispbe_find_fmt(f->fmt.pix_mp.pixelformat);
- 
- 	dev_dbg(pispbe->dev, "Set capture format for node %s to %p4cc\n",
- 		NODE_NAME(node), &f->fmt.pix_mp.pixelformat);
-@@ -1242,17 +1427,19 @@ static int pispbe_node_s_fmt_vid_out(struct file *file, void *priv,
- {
- 	struct pispbe_node *node = video_drvdata(file);
- 	struct pispbe_dev *pispbe = node->pispbe;
-+	struct pispbe_node_context *context =
-+			pispbe_node_context_from_file(file, &node->vfd);
- 	int ret;
- 
- 	ret = pispbe_node_try_fmt_vid_out(file, priv, f);
- 	if (ret < 0)
- 		return ret;
- 
--	if (vb2_is_busy(&node->queue))
-+	if (vb2_is_busy(&context->vdev_context.queue))
- 		return -EBUSY;
- 
--	node->format = *f;
--	node->pisp_format = pispbe_find_fmt(f->fmt.pix_mp.pixelformat);
-+	context->format = *f;
-+	context->pisp_format = pispbe_find_fmt(f->fmt.pix_mp.pixelformat);
- 
- 	dev_dbg(pispbe->dev, "Set output format for node %s to %p4cc\n",
- 		NODE_NAME(node), &f->fmt.pix_mp.pixelformat);
-@@ -1265,17 +1452,19 @@ static int pispbe_node_s_fmt_meta_out(struct file *file, void *priv,
- {
- 	struct pispbe_node *node = video_drvdata(file);
- 	struct pispbe_dev *pispbe = node->pispbe;
-+	struct pispbe_node_context *context =
-+			pispbe_node_context_from_file(file, &node->vfd);
- 	int ret;
- 
- 	ret = pispbe_node_try_fmt_meta_out(file, priv, f);
- 	if (ret < 0)
- 		return ret;
- 
--	if (vb2_is_busy(&node->queue))
-+	if (vb2_is_busy(&context->vdev_context.queue))
- 		return -EBUSY;
- 
--	node->format = *f;
--	node->pisp_format = &meta_out_supported_formats[0];
-+	context->format = *f;
-+	context->pisp_format = &meta_out_supported_formats[0];
- 
- 	dev_dbg(pispbe->dev, "Set output format for meta node %s to %p4cc\n",
- 		NODE_NAME(node), &f->fmt.meta.dataformat);
-@@ -1287,8 +1476,10 @@ static int pispbe_node_enum_fmt(struct file *file, void  *priv,
- 				struct v4l2_fmtdesc *f)
- {
- 	struct pispbe_node *node = video_drvdata(file);
-+	struct pispbe_node_context *context =
-+			pispbe_node_context_from_file(file, &node->vfd);
- 
--	if (f->type != node->queue.type)
-+	if (f->type != context->vdev_context.queue.type)
- 		return -EINVAL;
- 
- 	if (NODE_IS_META(node)) {
-@@ -1362,13 +1553,17 @@ static const struct v4l2_ioctl_ops pispbe_node_ioctl_ops = {
- 	.vidioc_streamoff = vb2_ioctl_streamoff,
- };
- 
--static int pispbe_link_validate(struct media_link *link)
-+static int pispbe_link_validate(struct media_link *link,
-+				struct media_device_context *mdev_context)
- {
-+	struct pispbe_subdev_context *isp_context;
-+	struct pispbe_node_context *node_context;
- 	const struct v4l2_mbus_framefmt *sd_fmt;
- 	struct v4l2_pix_format_mplane *pix_mp;
- 	struct v4l2_subdev_state *state;
- 	struct media_entity *vdev_ent;
- 	struct media_entity *sd_ent;
-+	struct video_device *vdev;
- 	struct pispbe_node *node;
- 	struct v4l2_subdev *sd;
- 
-@@ -1380,8 +1575,12 @@ static int pispbe_link_validate(struct media_link *link)
- 		vdev_ent = link->sink->entity;
- 	}
- 
--	node = container_of(media_entity_to_video_device(vdev_ent),
--			    struct pispbe_node, vfd);
-+	vdev = media_entity_to_video_device(vdev_ent);
-+	node_context = pispbe_node_context(video_device_context_get(mdev_context,
-+								    vdev));
-+
-+	node = node_context->node;
-+
- 	switch (node->id) {
- 	case TDN_INPUT_NODE:
- 		fallthrough;
-@@ -1395,10 +1594,13 @@ static int pispbe_link_validate(struct media_link *link)
- 		/* Skip validation for these nodes. */
- 		return 0;
- 	}
--	pix_mp = &node->format.fmt.pix_mp;
-+	pix_mp = &node_context->format.fmt.pix_mp;
- 
- 	sd = media_entity_to_v4l2_subdev(sd_ent);
--	state = v4l2_subdev_get_unlocked_active_state(sd);
-+	isp_context = pispbe_subdev_context(v4l2_subdev_context_get(mdev_context,
-+								    sd));
-+
-+	state = v4l2_subdev_get_unlocked_active_state(&isp_context->sd_context);
- 	sd_fmt = v4l2_subdev_state_get_format(state, node->id);
- 
- 	/* Only check for sizes. */
-@@ -1419,28 +1621,16 @@ static int pispbe_link_validate(struct media_link *link)
- 	return 0;
- }
- 
--static const struct media_entity_operations pispbe_node_entity_ops = {
--	.link_validate = pispbe_link_validate,
--};
--
--static const struct video_device pispbe_videodev = {
--	.name = PISPBE_NAME,
--	.vfl_dir = VFL_DIR_M2M, /* gets overwritten */
--	.fops = &pispbe_fops,
--	.ioctl_ops = &pispbe_node_ioctl_ops,
--	.minor = -1,
--	.release = video_device_release_empty,
--};
--
--static void pispbe_node_def_fmt(struct pispbe_node *node)
-+static void pispbe_node_def_fmt(struct pispbe_node *node,
-+				struct pispbe_node_context *context)
- {
-+	struct v4l2_format *format = &context->format;
-+
- 	if (NODE_IS_META(node) && NODE_IS_OUTPUT(node)) {
- 		/* Config node */
--		struct v4l2_format *f = &node->format;
--
--		f->fmt.meta.dataformat = V4L2_META_FMT_RPI_BE_CFG;
--		f->fmt.meta.buffersize = sizeof(struct pisp_be_tiles_config);
--		f->type = node->buf_type;
-+		format->fmt.meta.dataformat = V4L2_META_FMT_RPI_BE_CFG;
-+		format->fmt.meta.buffersize = sizeof(struct pisp_be_tiles_config);
-+		format->type = node->buf_type;
- 	} else {
- 		struct v4l2_format f = {
- 			.fmt.pix_mp.pixelformat = V4L2_PIX_FMT_YUV420,
-@@ -1449,36 +1639,39 @@ static void pispbe_node_def_fmt(struct pispbe_node *node)
- 			.type = node->buf_type,
- 		};
- 		pispbe_try_format(&f, node);
--		node->format = f;
-+		*format = f;
- 	}
- 
--	node->pisp_format = pispbe_find_fmt(node->format.fmt.pix_mp.pixelformat);
-+	context->pisp_format = pispbe_find_fmt(format->fmt.pix_mp.pixelformat);
- }
- 
--/*
-- * Initialise a struct pispbe_node and register it as /dev/video<N>
-- * to represent one of the PiSP Back End's input or output streams.
-- */
--static int pispbe_init_node(struct pispbe_dev *pispbe, unsigned int id)
-+static int pispbe_alloc_node_context(struct media_entity *entity,
-+				     struct media_entity_context **ctx)
- {
--	bool output = NODE_DESC_IS_OUTPUT(&node_desc[id]);
--	struct pispbe_node *node = &pispbe->node[id];
--	struct media_entity *entity = &node->vfd.entity;
--	struct video_device *vdev = &node->vfd;
--	struct vb2_queue *q = &node->queue;
-+	struct video_device *vdev = container_of(entity, struct video_device,
-+						 entity);
-+	struct pispbe_node *node = pispbe_node_from_vdev(vdev);
-+	struct pispbe_dev *pispbe = node->pispbe;
-+	struct pispbe_node_context *context;
-+	struct vb2_queue *q;
- 	int ret;
- 
--	node->id = id;
--	node->pispbe = pispbe;
--	node->buf_type = node_desc[id].buf_type;
-+	*ctx = kzalloc(sizeof(*context), GFP_KERNEL);
-+	if (!*ctx)
-+		return -ENOMEM;
-+	context = (struct pispbe_node_context *)*ctx;
- 
--	mutex_init(&node->node_lock);
--	mutex_init(&node->queue_lock);
--	INIT_LIST_HEAD(&node->ready_queue);
-+	video_device_init_context(vdev, &context->vdev_context);
-+
-+	context->pispbe = pispbe;
-+	context->node = node;
- 
--	node->format.type = node->buf_type;
--	pispbe_node_def_fmt(node);
-+	INIT_LIST_HEAD(&context->ready_queue);
- 
-+	context->format.type = node->buf_type;
-+	pispbe_node_def_fmt(node, context);
-+
-+	q = &context->vdev_context.queue;
- 	q->type = node->buf_type;
- 	q->io_modes = VB2_MMAP | VB2_DMABUF;
- 	q->mem_ops = &vb2_dma_contig_memops;
-@@ -1488,21 +1681,70 @@ static int pispbe_init_node(struct pispbe_dev *pispbe, unsigned int id)
- 	q->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC;
- 	q->dev = pispbe->dev;
- 	/* get V4L2 to handle node->queue locking */
--	q->lock = &node->queue_lock;
-+	q->lock = &context->vdev_context.queue_lock;
- 
- 	ret = vb2_queue_init(q);
- 	if (ret < 0) {
- 		dev_err(pispbe->dev, "vb2_queue_init failed\n");
--		goto err_mutex_destroy;
-+		goto err_cleanup;
- 	}
- 
-+	return 0;
-+
-+err_cleanup:
-+	kfree(*ctx);
-+	return ret;
-+}
-+
-+static void pispbe_free_node_context(struct media_entity_context *ctx)
-+{
-+	struct pispbe_node_context *context =
-+					pispbe_node_context_from_entity(ctx);
-+
-+	list_del_init(&context->ready_queue);
-+	video_device_cleanup_context(&context->vdev_context);
-+	kfree(context);
-+}
-+
-+static const struct media_entity_operations pispbe_node_entity_ops = {
-+	.alloc_context = pispbe_alloc_node_context,
-+	.destroy_context = pispbe_free_node_context,
-+	.link_validate_context = pispbe_link_validate,
-+};
-+
-+static const struct video_device pispbe_videodev = {
-+	.name = PISPBE_NAME,
-+	.vfl_dir = VFL_DIR_M2M, /* gets overwritten */
-+	.fops = &pispbe_fops,
-+	.ioctl_ops = &pispbe_node_ioctl_ops,
-+	.minor = -1,
-+	.release = video_device_release_empty,
-+};
-+
-+/*
-+ * Initialise a struct pispbe_node and register it as /dev/video<N>
-+ * to represent one of the PiSP Back End's input or output streams.
-+ */
-+static int pispbe_init_node(struct pispbe_dev *pispbe, unsigned int id)
-+{
-+	bool output = NODE_DESC_IS_OUTPUT(&node_desc[id]);
-+	struct pispbe_node *node = &pispbe->node[id];
-+	struct media_entity *entity = &node->vfd.entity;
-+	struct video_device *vdev = &node->vfd;
-+	int ret;
-+
-+	node->id = id;
-+	node->pispbe = pispbe;
-+	node->buf_type = node_desc[id].buf_type;
-+
-+	mutex_init(&node->node_lock);
-+
- 	*vdev = pispbe_videodev; /* default initialization */
- 	strscpy(vdev->name, node_desc[id].ent_name, sizeof(vdev->name));
- 	vdev->v4l2_dev = &pispbe->v4l2_dev;
- 	vdev->vfl_dir = output ? VFL_DIR_TX : VFL_DIR_RX;
- 	/* get V4L2 to serialise our ioctls */
- 	vdev->lock = &node->node_lock;
--	vdev->queue = &node->queue;
- 	vdev->device_caps = V4L2_CAP_STREAMING | node_desc[id].caps;
- 
- 	node->pad.flags = output ? MEDIA_PAD_FL_SOURCE : MEDIA_PAD_FL_SINK;
-@@ -1512,15 +1754,16 @@ static int pispbe_init_node(struct pispbe_dev *pispbe, unsigned int id)
- 		dev_err(pispbe->dev,
- 			"Failed to register media pads for %s device node\n",
- 			NODE_NAME(node));
--		goto err_unregister_queue;
-+		goto err_mutex_destroy;
- 	}
- 
- 	ret = video_register_device(vdev, VFL_TYPE_VIDEO, -1);
-+
- 	if (ret) {
- 		dev_err(pispbe->dev,
- 			"Failed to register video %s device node\n",
- 			NODE_NAME(node));
--		goto err_unregister_queue;
-+		goto err_mutex_destroy;
- 	}
- 	video_set_drvdata(vdev, node);
- 
-@@ -1542,14 +1785,15 @@ static int pispbe_init_node(struct pispbe_dev *pispbe, unsigned int id)
- 
- err_unregister_video_dev:
- 	video_unregister_device(&node->vfd);
--err_unregister_queue:
--	vb2_queue_release(&node->queue);
- err_mutex_destroy:
- 	mutex_destroy(&node->node_lock);
--	mutex_destroy(&node->queue_lock);
- 	return ret;
- }
- 
-+/* ----------------------------------------------------------------------------
-+ * ISP subdevice operations
-+ */
-+
- static int pispbe_subdev_set_pad_fmt(struct v4l2_subdev *sd,
- 				     struct v4l2_subdev_state *state,
- 				     struct v4l2_subdev_format *format)
-@@ -1623,8 +1867,83 @@ static const struct v4l2_subdev_internal_ops pispbe_subdev_internal_ops = {
- 	.init_state = pispbe_init_state,
- };
- 
-+static int pispbe_alloc_subdev_context(struct media_entity *entity,
-+				       struct media_entity_context **ctx)
-+{
-+	struct v4l2_subdev *sd = container_of(entity, struct v4l2_subdev,
-+					      entity);
-+	struct pispbe_subdev_context *context;
-+
-+	*ctx = kzalloc(sizeof(*context), GFP_KERNEL);
-+	if (!*ctx)
-+		return -ENOMEM;
-+	context = (struct pispbe_subdev_context *)*ctx;
-+
-+	v4l2_subdev_init_context(sd, &context->sd_context);
-+
-+	return 0;
-+}
-+
-+static void pispbe_free_subdev_context(struct media_entity_context *ctx)
-+{
-+	struct pispbe_subdev_context *context =
-+					pispbe_subdev_context_from_entity(ctx);
-+
-+	v4l2_subdev_cleanup_context(&context->sd_context);
-+	kfree(context);
-+}
-+
- static const struct media_entity_operations pispbe_subdev_entity_ops = {
--	.link_validate = v4l2_subdev_link_validate,
-+	.alloc_context = pispbe_alloc_subdev_context,
-+	.destroy_context = pispbe_free_subdev_context,
-+	.link_validate_context = v4l2_subdev_link_validate_context,
-+};
-+
-+static int pispbe_media_alloc_context(struct media_device *mdev,
-+				      struct media_device_context **ctx)
-+{
-+	struct pispbe_media_context *context;
-+
-+	*ctx = kzalloc(sizeof(*context), GFP_KERNEL);
-+	if (!*ctx)
-+		return -ENOMEM;
-+	context = (struct pispbe_media_context *)*ctx;
-+
-+	media_device_init_context(mdev, &context->mdev_context);
-+
-+	context->streaming_map = 0;
-+
-+	context->config =
-+		dma_alloc_coherent(mdev->dev,
-+				   sizeof(struct pisp_be_tiles_config) *
-+				   PISP_BE_NUM_CONFIG_BUFFERS,
-+				   &context->config_dma_addr, GFP_KERNEL);
-+	if (!context->config) {
-+		dev_err(mdev->dev,
-+			"Unable to allocate cached config buffers.\n");
-+		return -ENOMEM;
-+	}
-+
-+	return 0;
-+}
-+static void pispbe_media_destroy_context(struct media_device_context *ctx)
-+{
-+	struct pispbe_media_context *context =
-+					(struct pispbe_media_context *)ctx;
-+
-+	if (context->config)
-+		dma_free_coherent(ctx->mdev->dev,
-+				  sizeof(struct pisp_be_tiles_config) *
-+				  PISP_BE_NUM_CONFIG_BUFFERS,
-+				  context->config, context->config_dma_addr);
-+
-+	media_device_cleanup_context(&context->mdev_context);
-+	kfree(context);
-+}
-+
-+static const struct media_device_ops pispbe_media_device_ops = {
-+	.alloc_context = pispbe_media_alloc_context,
-+	.destroy_context = pispbe_media_destroy_context,
- };
- 
- static int pispbe_init_subdev(struct pispbe_dev *pispbe)
-@@ -1677,6 +1996,7 @@ static int pispbe_init_devices(struct pispbe_dev *pispbe)
- 	mdev = &pispbe->mdev;
- 	mdev->hw_revision = pispbe->hw_version;
- 	mdev->dev = pispbe->dev;
-+	mdev->ops = &pispbe_media_device_ops;
- 	strscpy(mdev->model, PISPBE_NAME, sizeof(mdev->model));
- 	media_device_init(mdev);
- 
-@@ -1704,26 +2024,11 @@ static int pispbe_init_devices(struct pispbe_dev *pispbe)
- 	if (ret)
- 		goto err_unregister_nodes;
- 
--	pispbe->config =
--		dma_alloc_coherent(pispbe->dev,
--				   sizeof(struct pisp_be_tiles_config) *
--					PISP_BE_NUM_CONFIG_BUFFERS,
--				   &pispbe->config_dma_addr, GFP_KERNEL);
--	if (!pispbe->config) {
--		dev_err(pispbe->dev, "Unable to allocate cached config buffers.\n");
--		ret = -ENOMEM;
--		goto err_unregister_mdev;
--	}
--
- 	return 0;
- 
--err_unregister_mdev:
--	media_device_unregister(mdev);
- err_unregister_nodes:
--	while (num_regist-- > 0) {
-+	while (num_regist-- > 0)
- 		video_unregister_device(&pispbe->node[num_regist].vfd);
--		vb2_queue_release(&pispbe->node[num_regist].queue);
--	}
- 	v4l2_device_unregister_subdev(&pispbe->sd);
- 	media_entity_cleanup(&pispbe->sd.entity);
- err_unregister_v4l2:
-@@ -1735,14 +2040,6 @@ static int pispbe_init_devices(struct pispbe_dev *pispbe)
- 
- static void pispbe_destroy_devices(struct pispbe_dev *pispbe)
- {
--	if (pispbe->config) {
--		dma_free_coherent(pispbe->dev,
--				  sizeof(struct pisp_be_tiles_config) *
--					PISP_BE_NUM_CONFIG_BUFFERS,
--				  pispbe->config,
--				  pispbe->config_dma_addr);
--	}
--
- 	dev_dbg(pispbe->dev, "Unregister from media controller\n");
- 
- 	v4l2_device_unregister_subdev(&pispbe->sd);
-@@ -1751,9 +2048,7 @@ static void pispbe_destroy_devices(struct pispbe_dev *pispbe)
- 
- 	for (int i = PISPBE_NUM_NODES - 1; i >= 0; i--) {
- 		video_unregister_device(&pispbe->node[i].vfd);
--		vb2_queue_release(&pispbe->node[i].queue);
- 		mutex_destroy(&pispbe->node[i].node_lock);
--		mutex_destroy(&pispbe->node[i].queue_lock);
- 	}
- 
- 	media_device_cleanup(&pispbe->mdev);
+> 
+> [    3.758239] ath12k_pci_power_up 1475: link_ctl 0x42
+> [    3.758315] ath12k_pci_power_up 1480: link_ctl 0x40
+> [    4.383900] ath12k_pci_start 1180: link_ctl 0x40
+> [    4.384026] ath12k_pci_start 1185: link_ctl 0x42
+> 
+> Are you sure that you applied all the 6 patches in the series and not just the
+> ath patches? Because, the first 3 PCI core patches are required to make the API
+> work as intended.
 
--- 
-2.49.0
+pretty sure all of them:
+
+$ git log --oneline
+07387d1bc17f (HEAD -> VALIDATE-pci-enable-link-state-behavior) wifi: ath12k: dump linkctrl reg
+dbb3e5a7828b wifi: ath10k: Use pci_{enable/disable}_link_state() APIs to enable/disable
+ASPM states
+392d7b3486b3 wifi: ath11k: Use pci_{enable/disable}_link_state() APIs to enable/disable
+ASPM states
+f2b0685c456d wifi: ath12k: Use pci_{enable/disable}_link_state() APIs to enable/disable
+ASPM states
+b1c8fad998f1 PCI/ASPM: Improve the kernel-doc for pci_disable_link_state*() APIs
+b8f5204ba4b0 PCI/ASPM: Transition the device to D0 (if required) inside
+pci_enable_link_state_locked() API
+186b1bbd4c62 PCI/ASPM: Fix the behavior of pci_enable_link_state*() APIs
+5a1ad8faaa16 (tag: ath-202507151704, origin/master, origin/main, origin/HEAD) Add
+localversion-wireless-testing-ath
+
+
+> 
+>>
+>>>  }
+>>>  
+>>>  static void ath12k_pci_cancel_workqueue(struct ath12k_base *ab)
+>>>
+>>
+>> In addition, frequently I can see below AER warnings:
+>>
+>> [  280.383143] aer_ratelimit: 30 callbacks suppressed
+>> [  280.383151] pcieport 0000:00:1c.0: AER: Correctable error message received from
+>> 0000:00:1c.0
+>> [  280.383177] pcieport 0000:00:1c.0: PCIe Bus Error: severity=Correctable, type=Data Link
+>> Layer, (Transmitter ID)
+>> [  280.383184] pcieport 0000:00:1c.0:   device [8086:7ab8] error status/mask=00001000/00002000
+>> [  280.383193] pcieport 0000:00:1c.0:    [12] Timeout
+>>
+> 
+> I don't see any AER errors either.
+
+My WLAN chip is attached via a PCIe-to-M.2 adapter, maybe some hardware issue? However I
+never saw them until your changes applied.
+
+> 
+> - Mani
+> 
 
 
