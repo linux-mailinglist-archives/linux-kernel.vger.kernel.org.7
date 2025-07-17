@@ -1,275 +1,272 @@
-Return-Path: <linux-kernel+bounces-734474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60E30B08240
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 03:28:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92478B08243
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 03:29:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 922D01A61975
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 01:28:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74D661A61F0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 01:29:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56E71DB54C;
-	Thu, 17 Jul 2025 01:27:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7971DB54C;
+	Thu, 17 Jul 2025 01:29:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Sa24ydfb"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iJz6t8iI"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29EB210A1F;
-	Thu, 17 Jul 2025 01:27:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31CBA10A1F;
+	Thu, 17 Jul 2025 01:29:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752715675; cv=none; b=rM1Mkay0ahciLWAIiMQVNJKrNBl/XFbk7pOaWOQKP86z1EtBGZg+Tp6yQEkxtAJ4GJQiQCkOsQDAtcDMg6Ntpeh86czFZz3l7YS+N4gdPA66ryupg7sKOOo8f01glyHG4L8Ya/wEvYd83/tA1kvXwJdIFEeudYzK9A0S6KgiENY=
+	t=1752715750; cv=none; b=JOPg4GPyehlWhaTfN56NsnUrllFCgygPp4sPh/8O0ZB74PzSMe9dHGgYXbyYtpJV1YMvt8gdn5pHWUVXhyBifvfTPd0Mv430V8A+Ftm01oVs+3Dw/nZ66x3g3XjNV9i2XV8thOMZ16A65Yh60RMhhizmui/RWwuChQYYdF6AaSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752715675; c=relaxed/simple;
-	bh=bH78hp3R6n3DKw5HO88BlvlyXjAwSoCV5hGl6uuBB88=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HEi43/jkniiaDMnbK3awlYXSWhOxBg+sCY/Y49Rh6sw+MxSvmonVi2swtZuXqcH28TLC9k994WWlPiiMnE+7xZoJWTa9Lu6FUS8TcwsT7kRCFv1Y/qyccnzSu/fWYZKX/Jvqw0w7LYWj1K7l4hyGpSWOlvZSzwiP5ryEQiniH2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Sa24ydfb; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752715674; x=1784251674;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=bH78hp3R6n3DKw5HO88BlvlyXjAwSoCV5hGl6uuBB88=;
-  b=Sa24ydfbI57zORt4yscIOeJlylb+FrCHpU61+4HbmKlqjZ05WCstvFzJ
-   SRVnLzD9LsX9SNq3csGdqSTIe+wNLh6m/4JBKr2XHL2nd233JwuuGVfZ+
-   unVDGpKNA0by9Y7x5GqaPInSsruL72nQpFsXhpFSCbklZoURv8hri0BLu
-   9j3KhIpXNmgAz6oSyTfC1Ls8AygmpAlCfVDxoU7BlVFXynD14DqnZ16dP
-   uvLCya9aVLcGeAtunpWdr2yFYWHRafMu420PCLhiJOe1Z6MJkGtayq+qU
-   7ulOcY3G2d/VN5gIgQEAs0/SL+Pu5mci5+UvgIwhO1CApEu9P+9oHU1eG
-   Q==;
-X-CSE-ConnectionGUID: KQF4EqLUQ9ifjwl8R3D0dw==
-X-CSE-MsgGUID: Fr4r+TteQK+KE8RQcC/zxw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="54193307"
-X-IronPort-AV: E=Sophos;i="6.16,317,1744095600"; 
-   d="scan'208";a="54193307"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 18:27:53 -0700
-X-CSE-ConnectionGUID: jSx3NzMcTHudbSFGjLmckw==
-X-CSE-MsgGUID: v9byWzS1QXyEA+aDSbHwnw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,317,1744095600"; 
-   d="scan'208";a="161966049"
-Received: from unknown (HELO [10.238.3.238]) ([10.238.3.238])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 18:27:49 -0700
-Message-ID: <4475637c-4d34-4037-8f43-8b8280617554@linux.intel.com>
-Date: Thu, 17 Jul 2025 09:27:46 +0800
+	s=arc-20240116; t=1752715750; c=relaxed/simple;
+	bh=UlrrXtM8tNgFfq6xMaaCzyH7cU2VliG3j5sCapi28T8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IxkQ5bi07sYdadY4hc1sExiQV/LZUUVUQ29PoeWlyB4ZHl8Bw4toZC8WpX3AYqNErj00+0hMIpUQG3yr/SD4qZ7ykjW32422Pe9pnf706E+4gshXDudyza9mHujYfdT0tqzV7tAxuVBlLkUlFvsUDeg8MuZFr4nxGbDfMzREPrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iJz6t8iI; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2352400344aso3618765ad.2;
+        Wed, 16 Jul 2025 18:29:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752715748; x=1753320548; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rwOSrzQE9qPX9JEungps87v4vTnwvCojVTgK5M1yuaY=;
+        b=iJz6t8iIN9PYOEGib+rntqsDD21Tuj/ZvgojGAsdA2Gs/uHRzaiOQRsLbu6S2TVbPz
+         DW1LxIhcem6LKE3KL45ZjVJeBOQ8eiqvbrI4HeqFpiwp7K18GMve0UWnlec5OLW8SUUT
+         tSFOF1Wf+kCIjI644vc/Zb2hXWIeher33S9RgX4NgoH31Ol2SWVFbLZbRZaIWY/pm/1z
+         QwoM96t9qrzbE4r5Dm9IB+lb+y22ofX91tdCL4iZCow3WDwBvcIfSCiEtZHBGYGPPNjA
+         jWNPOeewSRAxqq0t0Nq1P4OZiMGwd5qpUG+itVAsHpv34AKYGGQ4csTvw6NsuY1aldCx
+         lYaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752715748; x=1753320548;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rwOSrzQE9qPX9JEungps87v4vTnwvCojVTgK5M1yuaY=;
+        b=oItgDRzuoIDgokFkej4mWjCZEUoraCOgLt7xyg/1nRWsFOwvk6ku7MQXRsrf9snpNn
+         +ZNNjDm4/X3slByW8UPjo7WbtXNvdM7Wy9WL4VXQCy0rfc+RkB35gXNZ+o2+gbL3p3aw
+         zbMh8AzrqAK9sDQNutMKlChhxMKtgV6/9O+T/mFuMNsq1Hv2+f0ZHKsAiL7tU4WumDHz
+         FvfvtMusY1fHcOvvcAuXtEmnZyBX2Mo+2g9M+QTBUecs9VIZMy3PYKrQTOR9NlNvuofe
+         1hWFD9uNqufpw2cAzQaj4hLVJzOsnH4c2FLY5ToEfNFkfqRJFMxh/q3Fa5OiRe/26KQb
+         3SFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUk4DCCt4X5H6BZmjmkzLnVGqzzSUvPt4XqtV2yBDGYJC9luzov6lK+QoIPi3PxMEaO68ctcRr6VmHvmvk=@vger.kernel.org, AJvYcCUpJ5RFzMUXhGJflOcpMUL4lz9yjoFkkTXIPiznkfgZcG42PxJW9eVWg3ST+uYoMzQM1qJSQXA0@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWQu3IJIHUfApx7GptkD6XN0uakmK3KMaNne3+H/SImgRpOLZ8
+	YRtp+nUXDFFqH+WN0NqhQWC2uq9jAEJ9kuDPE7X5H3pPLKQKRnz+nrBi
+X-Gm-Gg: ASbGncsjgNpqR3o1McjmvRRarDVCUha4YQkp99ejUT+5sZqT6qF/3ySNnIS4igRXU+A
+	Zpz6v2i1rJkSoaBuhJOmq/2ofri7xtM71vRmgL+i/zdi3tgOLilg+PR+1AgnitsN/AVLrj7/jh5
+	1LH4iO1XaJYCLx0xRL5Zn84zM/7gqOgUzNaYl2jYAya3ACYSLTPTqNVnraB2HQ+tF+6KNCmhzNT
+	y3PcsPQ5Iq4xBI8Tsrk5QNN9Ts3LNiV8l78ehh+hMOgo7rebhP+fh04vaxKz4WQJ4Ht6sZG0am1
+	ySQSUs/CKbzG7OdlLkK7pbD06QUj7EIDauVfer2xHOivohezEKpTdIy1zwTUu7FqtJ6FysSjGer
+	noro1I+wXezkgoouj5ZAi28Wid35A
+X-Google-Smtp-Source: AGHT+IFiWdV+Lg1jc5P98VoSBUHlA5igYTnjK8SHdtNmFOzxSkxzCZ/E5suiMJV2mnv6a8/JYCstTA==
+X-Received: by 2002:a17:903:2451:b0:231:e331:b7df with SMTP id d9443c01a7336-23e24fbef13mr75425575ad.29.1752715748330;
+        Wed, 16 Jul 2025 18:29:08 -0700 (PDT)
+Received: from syzkaller.mshome.net ([8.210.121.120])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4322dbdsm134632855ad.127.2025.07.16.18.29.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 18:29:07 -0700 (PDT)
+From: "Kito Xu (veritas501)" <hxzene@gmail.com>
+To: kuba@kernel.org
+Cc: Yeking@Red54.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	horms@kernel.org,
+	hxzene@gmail.com,
+	linux-kernel@vger.kernel.org,
+	mingo@kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	tglx@linutronix.de
+Subject: [PATCH v2] net: appletalk: Fix use-after-free in AARP proxy probe
+Date: Thu, 17 Jul 2025 01:28:43 +0000
+Message-Id: <20250717012843.880423-1-hxzene@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250716072241.16edbded@kernel.org>
+References: <20250716072241.16edbded@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] x86/tdx: Rename TDX_ATTR_* to TDX_TD_ATTR_*
-To: Xiaoyao Li <xiaoyao.li@intel.com>
-Cc: "Kirill A. Shutemov" <kas@kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Sean Christopherson <seanjc@google.com>, Paolo Bonzini
- <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- "H. Peter Anvin" <hpa@zytor.com>, linux-coco@lists.linux.dev,
- kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
- Rick Edgecombe <rick.p.edgecombe@intel.com>, Kai Huang
- <kai.huang@intel.com>, yan.y.zhao@intel.com, reinette.chatre@intel.com,
- adrian.hunter@intel.com, tony.lindgren@intel.com
-References: <20250715091312.563773-1-xiaoyao.li@intel.com>
- <20250715091312.563773-4-xiaoyao.li@intel.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250715091312.563773-4-xiaoyao.li@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+The AARP proxy‐probe routine (aarp_proxy_probe_network) sends a probe,
+releases the aarp_lock, sleeps, then re-acquires the lock.  During that
+window an expire timer thread (__aarp_expire_timer) can remove and
+kfree() the same entry, leading to a use-after-free.
 
+race condition:
 
-On 7/15/2025 5:13 PM, Xiaoyao Li wrote:
-> The macros TDX_ATTR_* and DEF_TDX_ATTR_* are related to TD attributes,
-> which are TD-scope attributes. Naming them as TDX_ATTR_* can be somewhat
-> confusing and might mislead people into thinking they are TDX global
-> things.
-It seems that tdx_attributes is limited to hold td attributes.
-For the same reason, is it better to rename tdx_attributes to tdx_td_attributes?
+         cpu 0                          |            cpu 1
+    atalk_sendmsg()                     |   atif_proxy_probe_device()
+    aarp_send_ddp()                     |   aarp_proxy_probe_network()
+    mod_timer()                         |   lock(aarp_lock) // LOCK!!
+    timeout around 200ms                |   alloc(aarp_entry)
+    and then call                       |   proxies[hash] = aarp_entry
+    aarp_expire_timeout()               |   aarp_send_probe()
+                                        |   unlock(aarp_lock) // UNLOCK!!
+    lock(aarp_lock) // LOCK!!           |   msleep(100);
+    __aarp_expire_timer(&proxies[ct])   |
+    free(aarp_entry)                    |
+    unlock(aarp_lock) // UNLOCK!!       |
+                                        |   lock(aarp_lock) // LOCK!!
+                                        |   UAF aarp_entry !!
 
-Otherwise,
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+==================================================================
+BUG: KASAN: slab-use-after-free in aarp_proxy_probe_network+0x560/0x630 net/appletalk/aarp.c:493
+Read of size 4 at addr ffff8880123aa360 by task repro/13278
 
-> Rename TDX_ATTR_* to TDX_TD_ATTR_* to explicitly clarify they are
-> TD-scope things.
->
-> Suggested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
-> ---
->   arch/x86/coco/tdx/debug.c         | 26 ++++++++--------
->   arch/x86/coco/tdx/tdx.c           |  8 ++---
->   arch/x86/include/asm/shared/tdx.h | 50 +++++++++++++++----------------
->   arch/x86/kvm/vmx/tdx.c            |  4 +--
->   4 files changed, 44 insertions(+), 44 deletions(-)
->
-> diff --git a/arch/x86/coco/tdx/debug.c b/arch/x86/coco/tdx/debug.c
-> index 28990c2ab0a1..8e477db4ce0a 100644
-> --- a/arch/x86/coco/tdx/debug.c
-> +++ b/arch/x86/coco/tdx/debug.c
-> @@ -7,21 +7,21 @@
->   #include <linux/printk.h>
->   #include <asm/tdx.h>
->   
-> -#define DEF_TDX_ATTR_NAME(_name) [TDX_ATTR_##_name##_BIT] = __stringify(_name)
-> +#define DEF_TDX_TD_ATTR_NAME(_name) [TDX_TD_ATTR_##_name##_BIT] = __stringify(_name)
->   
->   static __initdata const char *tdx_attributes[] = {
-> -	DEF_TDX_ATTR_NAME(DEBUG),
-> -	DEF_TDX_ATTR_NAME(HGS_PLUS_PROF),
-> -	DEF_TDX_ATTR_NAME(PERF_PROF),
-> -	DEF_TDX_ATTR_NAME(PMT_PROF),
-> -	DEF_TDX_ATTR_NAME(ICSSD),
-> -	DEF_TDX_ATTR_NAME(LASS),
-> -	DEF_TDX_ATTR_NAME(SEPT_VE_DISABLE),
-> -	DEF_TDX_ATTR_NAME(MIGRATABLE),
-> -	DEF_TDX_ATTR_NAME(PKS),
-> -	DEF_TDX_ATTR_NAME(KL),
-> -	DEF_TDX_ATTR_NAME(TPA),
-> -	DEF_TDX_ATTR_NAME(PERFMON),
-> +	DEF_TDX_TD_ATTR_NAME(DEBUG),
-> +	DEF_TDX_TD_ATTR_NAME(HGS_PLUS_PROF),
-> +	DEF_TDX_TD_ATTR_NAME(PERF_PROF),
-> +	DEF_TDX_TD_ATTR_NAME(PMT_PROF),
-> +	DEF_TDX_TD_ATTR_NAME(ICSSD),
-> +	DEF_TDX_TD_ATTR_NAME(LASS),
-> +	DEF_TDX_TD_ATTR_NAME(SEPT_VE_DISABLE),
-> +	DEF_TDX_TD_ATTR_NAME(MIGRATABLE),
-> +	DEF_TDX_TD_ATTR_NAME(PKS),
-> +	DEF_TDX_TD_ATTR_NAME(KL),
-> +	DEF_TDX_TD_ATTR_NAME(TPA),
-> +	DEF_TDX_TD_ATTR_NAME(PERFMON),
->   };
->   
->   #define DEF_TD_CTLS_NAME(_name) [TD_CTLS_##_name##_BIT] = __stringify(_name)
-> diff --git a/arch/x86/coco/tdx/tdx.c b/arch/x86/coco/tdx/tdx.c
-> index 7b2833705d47..186915a17c50 100644
-> --- a/arch/x86/coco/tdx/tdx.c
-> +++ b/arch/x86/coco/tdx/tdx.c
-> @@ -238,14 +238,14 @@ static void __noreturn tdx_panic(const char *msg)
->    *
->    * TDX 1.0 does not allow the guest to disable SEPT #VE on its own. The VMM
->    * controls if the guest will receive such #VE with TD attribute
-> - * TDX_ATTR_SEPT_VE_DISABLE.
-> + * TDX_TD_ATTR_SEPT_VE_DISABLE.
->    *
->    * Newer TDX modules allow the guest to control if it wants to receive SEPT
->    * violation #VEs.
->    *
->    * Check if the feature is available and disable SEPT #VE if possible.
->    *
-> - * If the TD is allowed to disable/enable SEPT #VEs, the TDX_ATTR_SEPT_VE_DISABLE
-> + * If the TD is allowed to disable/enable SEPT #VEs, the TDX_TD_ATTR_SEPT_VE_DISABLE
->    * attribute is no longer reliable. It reflects the initial state of the
->    * control for the TD, but it will not be updated if someone (e.g. bootloader)
->    * changes it before the kernel starts. Kernel must check TDCS_TD_CTLS bit to
-> @@ -254,14 +254,14 @@ static void __noreturn tdx_panic(const char *msg)
->   static void disable_sept_ve(u64 td_attr)
->   {
->   	const char *msg = "TD misconfiguration: SEPT #VE has to be disabled";
-> -	bool debug = td_attr & TDX_ATTR_DEBUG;
-> +	bool debug = td_attr & TDX_TD_ATTR_DEBUG;
->   	u64 config, controls;
->   
->   	/* Is this TD allowed to disable SEPT #VE */
->   	tdg_vm_rd(TDCS_CONFIG_FLAGS, &config);
->   	if (!(config & TDCS_CONFIG_FLEXIBLE_PENDING_VE)) {
->   		/* No SEPT #VE controls for the guest: check the attribute */
-> -		if (td_attr & TDX_ATTR_SEPT_VE_DISABLE)
-> +		if (td_attr & TDX_TD_ATTR_SEPT_VE_DISABLE)
->   			return;
->   
->   		/* Relax SEPT_VE_DISABLE check for debug TD for backtraces */
-> diff --git a/arch/x86/include/asm/shared/tdx.h b/arch/x86/include/asm/shared/tdx.h
-> index 11f3cf30b1ac..049638e3da74 100644
-> --- a/arch/x86/include/asm/shared/tdx.h
-> +++ b/arch/x86/include/asm/shared/tdx.h
-> @@ -20,31 +20,31 @@
->   #define TDG_VM_RD			7
->   #define TDG_VM_WR			8
->   
-> -/* TDX attributes */
-> -#define TDX_ATTR_DEBUG_BIT		0
-> -#define TDX_ATTR_DEBUG			BIT_ULL(TDX_ATTR_DEBUG_BIT)
-> -#define TDX_ATTR_HGS_PLUS_PROF_BIT	4
-> -#define TDX_ATTR_HGS_PLUS_PROF		BIT_ULL(TDX_ATTR_HGS_PLUS_PROF_BIT)
-> -#define TDX_ATTR_PERF_PROF_BIT		5
-> -#define TDX_ATTR_PERF_PROF		BIT_ULL(TDX_ATTR_PERF_PROF_BIT)
-> -#define TDX_ATTR_PMT_PROF_BIT		6
-> -#define TDX_ATTR_PMT_PROF		BIT_ULL(TDX_ATTR_PMT_PROF_BIT)
-> -#define TDX_ATTR_ICSSD_BIT		16
-> -#define TDX_ATTR_ICSSD			BIT_ULL(TDX_ATTR_ICSSD_BIT)
-> -#define TDX_ATTR_LASS_BIT		27
-> -#define TDX_ATTR_LASS			BIT_ULL(TDX_ATTR_LASS_BIT)
-> -#define TDX_ATTR_SEPT_VE_DISABLE_BIT	28
-> -#define TDX_ATTR_SEPT_VE_DISABLE	BIT_ULL(TDX_ATTR_SEPT_VE_DISABLE_BIT)
-> -#define TDX_ATTR_MIGRATABLE_BIT		29
-> -#define TDX_ATTR_MIGRATABLE		BIT_ULL(TDX_ATTR_MIGRATABLE_BIT)
-> -#define TDX_ATTR_PKS_BIT		30
-> -#define TDX_ATTR_PKS			BIT_ULL(TDX_ATTR_PKS_BIT)
-> -#define TDX_ATTR_KL_BIT			31
-> -#define TDX_ATTR_KL			BIT_ULL(TDX_ATTR_KL_BIT)
-> -#define TDX_ATTR_TPA_BIT		62
-> -#define TDX_ATTR_TPA			BIT_ULL(TDX_ATTR_TPA_BIT)
-> -#define TDX_ATTR_PERFMON_BIT		63
-> -#define TDX_ATTR_PERFMON		BIT_ULL(TDX_ATTR_PERFMON_BIT)
-> +/* TDX TD attributes */
-> +#define TDX_TD_ATTR_DEBUG_BIT		0
-> +#define TDX_TD_ATTR_DEBUG		BIT_ULL(TDX_TD_ATTR_DEBUG_BIT)
-> +#define TDX_TD_ATTR_HGS_PLUS_PROF_BIT	4
-> +#define TDX_TD_ATTR_HGS_PLUS_PROF	BIT_ULL(TDX_TD_ATTR_HGS_PLUS_PROF_BIT)
-> +#define TDX_TD_ATTR_PERF_PROF_BIT	5
-> +#define TDX_TD_ATTR_PERF_PROF		BIT_ULL(TDX_TD_ATTR_PERF_PROF_BIT)
-> +#define TDX_TD_ATTR_PMT_PROF_BIT	6
-> +#define TDX_TD_ATTR_PMT_PROF		BIT_ULL(TDX_TD_ATTR_PMT_PROF_BIT)
-> +#define TDX_TD_ATTR_ICSSD_BIT		16
-> +#define TDX_TD_ATTR_ICSSD		BIT_ULL(TDX_TD_ATTR_ICSSD_BIT)
-> +#define TDX_TD_ATTR_LASS_BIT		27
-> +#define TDX_TD_ATTR_LASS		BIT_ULL(TDX_TD_ATTR_LASS_BIT)
-> +#define TDX_TD_ATTR_SEPT_VE_DISABLE_BIT	28
-> +#define TDX_TD_ATTR_SEPT_VE_DISABLE	BIT_ULL(TDX_TD_ATTR_SEPT_VE_DISABLE_BIT)
-> +#define TDX_TD_ATTR_MIGRATABLE_BIT	29
-> +#define TDX_TD_ATTR_MIGRATABLE		BIT_ULL(TDX_TD_ATTR_MIGRATABLE_BIT)
-> +#define TDX_TD_ATTR_PKS_BIT		30
-> +#define TDX_TD_ATTR_PKS			BIT_ULL(TDX_TD_ATTR_PKS_BIT)
-> +#define TDX_TD_ATTR_KL_BIT		31
-> +#define TDX_TD_ATTR_KL			BIT_ULL(TDX_TD_ATTR_KL_BIT)
-> +#define TDX_TD_ATTR_TPA_BIT		62
-> +#define TDX_TD_ATTR_TPA			BIT_ULL(TDX_TD_ATTR_TPA_BIT)
-> +#define TDX_TD_ATTR_PERFMON_BIT		63
-> +#define TDX_TD_ATTR_PERFMON		BIT_ULL(TDX_TD_ATTR_PERFMON_BIT)
->   
->   /* TDX TD-Scope Metadata. To be used by TDG.VM.WR and TDG.VM.RD */
->   #define TDCS_CONFIG_FLAGS		0x1110000300000016
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index efb7d589b672..c539c2e6109f 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -62,7 +62,7 @@ void tdh_vp_wr_failed(struct vcpu_tdx *tdx, char *uclass, char *op, u32 field,
->   	pr_err("TDH_VP_WR[%s.0x%x]%s0x%llx failed: 0x%llx\n", uclass, field, op, val, err);
->   }
->   
-> -#define KVM_SUPPORTED_TD_ATTRS (TDX_ATTR_SEPT_VE_DISABLE)
-> +#define KVM_SUPPORTED_TD_ATTRS (TDX_TD_ATTR_SEPT_VE_DISABLE)
->   
->   static __always_inline struct kvm_tdx *to_kvm_tdx(struct kvm *kvm)
->   {
-> @@ -700,7 +700,7 @@ int tdx_vcpu_create(struct kvm_vcpu *vcpu)
->   	vcpu->arch.l1_tsc_scaling_ratio = kvm_tdx->tsc_multiplier;
->   
->   	vcpu->arch.guest_state_protected =
-> -		!(to_kvm_tdx(vcpu->kvm)->attributes & TDX_ATTR_DEBUG);
-> +		!(to_kvm_tdx(vcpu->kvm)->attributes & TDX_TD_ATTR_DEBUG);
->   
->   	if ((kvm_tdx->xfam & XFEATURE_MASK_XTILE) == XFEATURE_MASK_XTILE)
->   		vcpu->arch.xfd_no_write_intercept = true;
+CPU: 3 UID: 0 PID: 13278 Comm: repro Not tainted 6.15.2 #3 PREEMPT(full)
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1b0 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:408 [inline]
+ print_report+0xc1/0x630 mm/kasan/report.c:521
+ kasan_report+0xca/0x100 mm/kasan/report.c:634
+ aarp_proxy_probe_network+0x560/0x630 net/appletalk/aarp.c:493
+ atif_proxy_probe_device net/appletalk/ddp.c:332 [inline]
+ atif_ioctl+0xb58/0x16c0 net/appletalk/ddp.c:857
+ atalk_ioctl+0x198/0x2f0 net/appletalk/ddp.c:1818
+ sock_do_ioctl+0xdc/0x260 net/socket.c:1190
+ sock_ioctl+0x239/0x6a0 net/socket.c:1311
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:906 [inline]
+ __se_sys_ioctl fs/ioctl.c:892 [inline]
+ __x64_sys_ioctl+0x194/0x200 fs/ioctl.c:892
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcb/0x250 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+ </TASK>
+
+Allocated:
+ aarp_alloc net/appletalk/aarp.c:382 [inline]
+ aarp_proxy_probe_network+0xd8/0x630 net/appletalk/aarp.c:468
+ atif_proxy_probe_device net/appletalk/ddp.c:332 [inline]
+ atif_ioctl+0xb58/0x16c0 net/appletalk/ddp.c:857
+ atalk_ioctl+0x198/0x2f0 net/appletalk/ddp.c:1818
+
+Freed:
+ kfree+0x148/0x4d0 mm/slub.c:4841
+ __aarp_expire net/appletalk/aarp.c:90 [inline]
+ __aarp_expire_timer net/appletalk/aarp.c:261 [inline]
+ aarp_expire_timeout+0x480/0x6e0 net/appletalk/aarp.c:317
+
+The buggy address belongs to the object at ffff8880123aa300
+ which belongs to the cache kmalloc-192 of size 192
+The buggy address is located 96 bytes inside of
+ freed 192-byte region [ffff8880123aa300, ffff8880123aa3c0)
+
+Memory state around the buggy address:
+ ffff8880123aa200: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff8880123aa280: 00 00 00 00 fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff8880123aa300: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                       ^
+ ffff8880123aa380: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+ ffff8880123aa400: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+==================================================================
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Kito Xu (veritas501) <hxzene@gmail.com>
+---
+ net/appletalk/aarp.c | 24 +++++++++++++++++++++---
+ 1 file changed, 21 insertions(+), 3 deletions(-)
+
+diff --git a/net/appletalk/aarp.c b/net/appletalk/aarp.c
+index 9c787e2e4b17..4744e3fd4544 100644
+--- a/net/appletalk/aarp.c
++++ b/net/appletalk/aarp.c
+@@ -35,6 +35,7 @@
+ #include <linux/seq_file.h>
+ #include <linux/export.h>
+ #include <linux/etherdevice.h>
++#include <linux/refcount.h>
+ 
+ int sysctl_aarp_expiry_time = AARP_EXPIRY_TIME;
+ int sysctl_aarp_tick_time = AARP_TICK_TIME;
+@@ -44,6 +45,7 @@ int sysctl_aarp_resolve_time = AARP_RESOLVE_TIME;
+ /* Lists of aarp entries */
+ /**
+  *	struct aarp_entry - AARP entry
++ *	@refcnt: Reference count
+  *	@last_sent: Last time we xmitted the aarp request
+  *	@packet_queue: Queue of frames wait for resolution
+  *	@status: Used for proxy AARP
+@@ -55,6 +57,7 @@ int sysctl_aarp_resolve_time = AARP_RESOLVE_TIME;
+  *	@next: Next entry in chain
+  */
+ struct aarp_entry {
++	refcount_t			refcnt;
+ 	/* These first two are only used for unresolved entries */
+ 	unsigned long		last_sent;
+ 	struct sk_buff_head	packet_queue;
+@@ -79,6 +82,17 @@ static DEFINE_RWLOCK(aarp_lock);
+ /* Used to walk the list and purge/kick entries.  */
+ static struct timer_list aarp_timer;
+ 
++static inline void aarp_entry_get(struct aarp_entry *a)
++{
++	refcount_inc(&a->refcnt);
++}
++
++static inline void aarp_entry_put(struct aarp_entry *a)
++{
++	if (refcount_dec_and_test(&a->refcnt))
++		kfree(a);
++}
++
+ /*
+  *	Delete an aarp queue
+  *
+@@ -87,7 +101,7 @@ static struct timer_list aarp_timer;
+ static void __aarp_expire(struct aarp_entry *a)
+ {
+ 	skb_queue_purge(&a->packet_queue);
+-	kfree(a);
++	aarp_entry_put(a);
+ }
+ 
+ /*
+@@ -380,9 +394,11 @@ static void aarp_purge(void)
+ static struct aarp_entry *aarp_alloc(void)
+ {
+ 	struct aarp_entry *a = kmalloc(sizeof(*a), GFP_ATOMIC);
++	if (!a)
++		return NULL;
+ 
+-	if (a)
+-		skb_queue_head_init(&a->packet_queue);
++	refcount_set(&a->refcnt, 1);
++	skb_queue_head_init(&a->packet_queue);
+ 	return a;
+ }
+ 
+@@ -477,6 +493,7 @@ int aarp_proxy_probe_network(struct atalk_iface *atif, struct atalk_addr *sa)
+ 	entry->dev = atif->dev;
+ 
+ 	write_lock_bh(&aarp_lock);
++	aarp_entry_get(entry);
+ 
+ 	hash = sa->s_node % (AARP_HASH_SIZE - 1);
+ 	entry->next = proxies[hash];
+@@ -502,6 +519,7 @@ int aarp_proxy_probe_network(struct atalk_iface *atif, struct atalk_addr *sa)
+ 		retval = 1;
+ 	}
+ 
++	aarp_entry_put(entry);
+ 	write_unlock_bh(&aarp_lock);
+ out:
+ 	return retval;
+-- 
+2.34.1
 
 
