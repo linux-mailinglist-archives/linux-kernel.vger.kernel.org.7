@@ -1,127 +1,137 @@
-Return-Path: <linux-kernel+bounces-735398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12D53B08EC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:04:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94983B08ECB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:04:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F505A64CB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:02:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E060A65DB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C411D63D3;
-	Thu, 17 Jul 2025 14:02:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6002F6FA7;
+	Thu, 17 Jul 2025 14:04:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sOudqMFQ"
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="emQ2UBoJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12E481DE894
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 14:02:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534D21DE4E1;
+	Thu, 17 Jul 2025 14:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752760957; cv=none; b=SVxdmVgAh5Pkm0dHjL6NscV0ehPqh4dpnBoVX38+JZiKPNC9jx1OC+O7L1BdBRrcTSwaeB+oLJX8gJOE2LeeoNvr01DuX9VGVFVRDMLl/BAa6xx0UEQyIxfeo29TgMHKcR+36kHxySx2YZjSrscLiaxNcACiuexhy68cgPXx7II=
+	t=1752761040; cv=none; b=bOqDH3qHpjRLRKwPz3nCc2vpi8KEK+gZeHw6ORzHEbQvYEhq3DHPxc259vuEzab3Gt2xu0AJMbrNF9leksgMeLl1qzcGdXh62ltaQlbunz6CMLiv6qOs3BjkZkldk+vV9r9lxJMbTOlP6QRKRITaCzVfCnFKZ2eAdiv6CMSePss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752760957; c=relaxed/simple;
-	bh=jvjvNJ9/Hi0d0NH4OHDfhDk41aQZnW4W5eEeryeEQCo=;
+	s=arc-20240116; t=1752761040; c=relaxed/simple;
+	bh=HrJIUDz1/gSmosfV/HzJVV1oKci8biWIk6gmLw60auQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g9K0DRTSMWza4mGqTKlN69xhvzkamZp/1aseZIjKwefxdRgynIEBdsZ/n5HWzT2uh+rM+ZQUSgV1+Yrme2J3O+frE0nENkTOWj6Sgo6OJssbgQRt1t3KoGpHopFM2nPPGAPQPPMXSCEG+0MyowKRQ/nR/hSBEkVne3Li/yCMXC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sOudqMFQ; arc=none smtp.client-ip=209.85.160.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2eb5cbe41e1so662131fac.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 07:02:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752760955; x=1753365755; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=b/lGwtVvChzSLtqkQCS9MrMJ9VNP21TZnjqYYKZiq4I=;
-        b=sOudqMFQBI/K4o1vSwg0X2pqwEsWMmd+/3Wi8Hjk5j3/K9e8EBJmHtqH+61PVlT7p7
-         O0ZeTI1n/M+MJL3wJvdhs71Jue5nMHDIrNUBkeAEJGoPYslYU25nheq6XC8r6Tpfq5Sa
-         5Iwze7XczfLS+IJdtTL81vVrrLH8OOEk8QsUJBxCoeT0mnXx1abeQkmDHNs2nbd72j9+
-         R7benStUo2EgF8dj+/Yf0NlL0It0t675cpavNLmx4dWz8sxGF9h/2K4+BjijCHXwuX+s
-         bbW/HaIfoFgZ1k9TT/giC6SAUAof9X/fGHth7LygBVPbfpmNPrrHJkCQbkJTRX6agmBQ
-         jk4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752760955; x=1753365755;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b/lGwtVvChzSLtqkQCS9MrMJ9VNP21TZnjqYYKZiq4I=;
-        b=LBrya+bUYBQKyvCyLf/uQqg7gTtbo4+ur4l3adAStHuNUJpbxyOAIp+5S/tIv6QXoS
-         mvkkjUYrsuXsh7iysJmx4P5v/rIXoFQYq6WUMFcVzDpH5i3NxqrR70e6uDT3sV20w2/C
-         mHWmRzp63eqrQQHi0MujtE1cQ84YcZtqwcWuMa1ueP9RHeefbfzNd1A6DQ9XubWmROad
-         qYzi54YWkij601f5gQ/K28vtP+kgjRY0jcEBstskgwwObwBKa1eGoEYZqF3+Pjyww4DN
-         y+y6sMcdeHJix1Ysiz3u32xD64DkcP4PYeP9VeU+/TM3w7rMnxMLEEh6mbotjx+xwgGY
-         Tuxw==
-X-Forwarded-Encrypted: i=1; AJvYcCXhEdPs4zKtzQSToTdOMPK8/UE5jDDoz9OUc2MBhp5eeZn9//Jhw/+YbwdZyK6/YhgafaAhC32ys5T2Rfk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxynfTflDcKy8d6T/ARtYYLNb0V29q34fW1gDYb4ssqIfaI4evp
-	ywq5P5PlZcGzhrFT/Xam5JeW856dWi22f87jOREmme6nWJnDwOWM0VwDWqR46pZo8fk=
-X-Gm-Gg: ASbGncvV98Ab/VXPAuSH8+ELaBjhoLsw3GfoIKGVWgtxZY3IzvLI/NgMtrTHyj7BpK0
-	nrlHOGg2ozyhJdtZ92Ee56paO6GcFf7yl9Rny6ghoA841/Q63P1lUikwE317WGf0zU3/slY6OCc
-	HBeJpcJQVMLI3BeYNVohIAx6wL/URRyZNES3iUqAx4ee2skM9w4JzOqWVJoKj/xRYrU66IMVWZE
-	3UOxMWiFsy0R0SbuX33P3LYwQjNjdMaWUH1MlH3D17d5EYcSUNWe0dt7lBqUHhvcITJWWjkD2Lh
-	+PJHYIhzIcRbq+AUjRLRYB5st7hJhvPjRBEW2k1eGmYEvdkQ+keZzjTTtRZlbIQw0AE1dSwKQGO
-	ER1Ge8X+sD5hK2+jXT7TZvqSbtxRy
-X-Google-Smtp-Source: AGHT+IFLK3PoG0Ry9cupN+1Gy4j1J9SSXaeHm73Z+F4q8Igvf8Tt9wX4mzY9/+JFGf1Gd8BqtKEL3g==
-X-Received: by 2002:a05:6871:7b0a:b0:2d5:b7b7:2d6e with SMTP id 586e51a60fabf-2ffd2abcf70mr2255355fac.38.1752760954743;
-        Thu, 17 Jul 2025 07:02:34 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:2c38:70d4:43e:b901])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73e7b586ba3sm275626a34.40.2025.07.17.07.02.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 07:02:34 -0700 (PDT)
-Date: Thu, 17 Jul 2025 17:02:32 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Antonio Quartulli <antonio@mandelbit.com>
-Cc: Sergey Bashirov <sergeybashirov@gmail.com>, linux-nfs@vger.kernel.org,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Konstantin Evtushenko <koevtushenko@yandex.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=kTh8Gz7OQf9O6x5IN4+MHP6IecdG0OGt8fhI0X87io4fdqQY9uI1CYfViFSx228Bkwq3Vvh7PtOXJBvOPsVcHoEQ8nKn2/vcZbxaAXlqbsN+k8bCpC8bQZZDEhg510DXj229Jan6h3ZPQAgxvH6eSPeMn6QWnxHriuwdCphY+Gc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=emQ2UBoJ; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752761039; x=1784297039;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=HrJIUDz1/gSmosfV/HzJVV1oKci8biWIk6gmLw60auQ=;
+  b=emQ2UBoJAgZiognoA5iuxLU/3F2c6hPV8lOz1rsJF+17a5O8Y6OMWBUN
+   zn+j72OSxjlO6mfti9DmizlrbSeLm+crM4XVxFpM+JptxVdix2PNmra8H
+   M1jM3SQEwtmK6WzMOGBVhSW9tGUCspaqaJQeY77zU8vs4hVece9tt8EIb
+   NrVZm6WPmcGKWpCFPgJelmyJgbFEpoygBmQUpeH8CPItKpewSfiKstqrj
+   JTM+V/JrAWl6Zgq+OUMqOYhD3j9AF5QSqijNig3MBUUQpeU5pVxaCK5JD
+   HPGgp9vffQF83WFa9WuSsVRbfuHBIZygCyVgPZrg8HzHlsOPt2OTEo1Pq
+   w==;
+X-CSE-ConnectionGUID: QgF6RgxRRVicVZ+jzMQwvA==
+X-CSE-MsgGUID: eLG2i7P2S9iQREX61Gb2MA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11495"; a="72491404"
+X-IronPort-AV: E=Sophos;i="6.16,319,1744095600"; 
+   d="scan'208";a="72491404"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 07:03:44 -0700
+X-CSE-ConnectionGUID: 03/QImsWRR2VX+pNyYVvfA==
+X-CSE-MsgGUID: aYTLMBLmSrKPvInme1Wr/w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,319,1744095600"; 
+   d="scan'208";a="158266085"
+Received: from rfrazer-mobl3.amr.corp.intel.com (HELO localhost) ([10.124.220.193])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 07:03:44 -0700
+Date: Thu, 17 Jul 2025 07:03:42 -0700
+From: David Box <david.e.box@linux.intel.com>
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: "Kenneth R. Crudup" <kenny@panix.com>, rafael@kernel.org, 
+	bhelgaas@google.com, vicamo.yang@canonical.com, ilpo.jarvinen@linux.intel.com, 
+	nirmal.patel@linux.intel.com, linux-pm@vger.kernel.org, linux-pci@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pNFS: fix uninitialized pointer access
-Message-ID: <90cddfa9-2d0c-4806-b3df-6a5ddd13c97f@suswa.mountain>
-References: <20250716143848.14713-1-antonio@mandelbit.com>
- <h4ydkt7c23ha46j33i42wh2ecdwtcrgxnvfb6c7mo3dqc7l2kz@ng7fev5rbqmi>
- <b927d3dd-a4ed-46d7-b129-59eaf60305c7@suswa.mountain>
- <d9b026f1-6ed3-41ca-8699-914c45b0339b@mandelbit.com>
+Subject: Re: [RFC 0/2] PCI/ASPM: Allow controller-defined default link state
+Message-ID: <gulatdqqxkdc4oafmqoqiyf2f6gzlk2nfxhy3l5yxx4oyxgppf@mhsmuq4xansa>
+References: <20250717004034.2998443-1-david.e.box@linux.intel.com>
+ <7a229e18-fbfd-8652-ec2e-a3a3273f7fac@panix.com>
+ <l2rk6omhgysf55ee227ju2z5zyen6mksyl3lu37jwfabg45j3w@4cf7wxehxhv6>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <d9b026f1-6ed3-41ca-8699-914c45b0339b@mandelbit.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <l2rk6omhgysf55ee227ju2z5zyen6mksyl3lu37jwfabg45j3w@4cf7wxehxhv6>
 
-On Thu, Jul 17, 2025 at 10:01:42AM +0200, Antonio Quartulli wrote:
+On Thu, Jul 17, 2025 at 12:27:47PM +0530, Manivannan Sadhasivam wrote:
+> On Wed, Jul 16, 2025 at 11:12:45PM GMT, Kenneth R. Crudup wrote:
+> > 
+> > Unfortunately, having tested the patch (against Linus' master), it doesn't work.
+> > 
+> > I don't think the ASPM(?) state is making it to the VMD.
+> > 
 > 
-> I agree a comment would help.
+> Because, the VMD driver is not at all setting the PCI_BUS_FLAGS_NO_ASPM_DEFAULT
+> flag.
+
+Correct. I forgot to set the flag in the VMD driver. Other this approach
+should have worked.
+
+David
+
+> But I proposed an alternate method [1] to enable ASPM which would avoid
+> using the flag.
 > 
-> > Another option would be to initialize the be_prev to NULL.  This will
-> > silence the uninitialized variable warning.
+> - Mani
 > 
-> But will likely trigger a potential NULL-ptr-deref, because the static
-> analyzer believes we can get there with count==0.
+> [1] https://lore.kernel.org/linux-pci/4xcwba3d4slmz5gfuwypavxqreobnigzyu4vib6powtbibytyp@mmqcns27vlyr/
 > 
-
-I don't know how Coverity does this.  In my experience, writing Smatch
-I had to treat initializations to NULL as "ignore this variable".  We
-used to have an uninitialized_var() macro to silence uninitialized
-variables.  It did an assignment to itself something like:
-
-#define uninitialized_var(x) x = x
-
-But we removed it and changed all those places to just initialize the
-variables to zero.
-
-Even before, initializing things to zero was the standard way to silence
-GCC uninitialized variable warnings, so warning about NULL pointer
-dereferences tended to be prone to false positives and the worst kind of
-really complicated false positives too.
-
-regards,
-dan carpenter
-
+> > LMK if you need more info.
+> > 
+> > -Kenny
+> > 
+> > On Wed, 16 Jul 2025, David E. Box wrote:
+> > 
+> > > Testing is appreciated as I didn't get a chance to do so yet but plan to.
+> > 
+> > > Thanks, David
+> > >
+> > > ---
+> > >
+> > > David E. Box (2):
+> > >   PCI/ASPM: Allow drivers to provide ASPM link state via pci_bus
+> > >   PCI: vmd: Provide default ASPM link state for synthetic hierarchy
+> > >
+> > >  drivers/pci/controller/vmd.c |  7 +++++--
+> > >  drivers/pci/pcie/aspm.c      |  5 ++++-
+> > >  include/linux/pci.h          | 12 ++++++++----
+> > >  3 files changed, 17 insertions(+), 7 deletions(-)
+> > >
+> > >
+> > > base-commit: d0b3b7b22dfa1f4b515fd3a295b3fd958f9e81af
+> > >
+> > 
+> > -- 
+> > Kenneth R. Crudup / Sr. SW Engineer, Scott County Consulting, Orange County CA
+> > 
+> 
+> -- 
+> மணிவண்ணன் சதாசிவம்
 
