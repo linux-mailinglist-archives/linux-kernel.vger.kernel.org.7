@@ -1,37 +1,87 @@
-Return-Path: <linux-kernel+bounces-735182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4AF9B08BDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:43:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70B5BB08BDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:43:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F2F7189CA05
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:43:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF8EC175D9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:43:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D26229B227;
-	Thu, 17 Jul 2025 11:43:25 +0000 (UTC)
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3785929ACF0;
+	Thu, 17 Jul 2025 11:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Sh64oX4M"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EC7F219EB;
-	Thu, 17 Jul 2025 11:43:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5FD5219EB
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 11:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752752604; cv=none; b=TSj8cXzpQA6hxka39KALMyaLJW4lKFctLebiHNhq6o2Ig9M5bHlT2S6k5vnKdfvc9M49kmVkXEwEwLw6mM4yYpg5NHCJPw0Wk6tMSvAY+CclMRcj51kqpihyPVd89cg62+QHHeiST/8fic9x2y8ao3yLaIC6C2OSVsl1ALvwtjE=
+	t=1752752633; cv=none; b=Gg96vjEN0dClUp+cTSbc8e4zykrzYp8OOEm5rCCT4fH/TC8IuAeYSAEHp0VT8TFGok1uQPVKVgslNjZDmtkoYzKNDULUHCC56xnBu4/KLbCOSNgN0jlA2FmOO0qsijmrh5Geccd8tzQEZalaPfE68dk/nuviOqL7gn83T87Dht0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752752604; c=relaxed/simple;
-	bh=f/JGPIlkArCSuP1Bl9uUK8vHBn/y8/bhPS4T0Rg/pVE=;
+	s=arc-20240116; t=1752752633; c=relaxed/simple;
+	bh=8NgOVC5TWuXLLTumrhHon19hOmU7y9DnEei4mvnV3vo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Mlp/6AkEr7KtLwjAFg/ccSuVZT00Ta0l06lF69M9ndqcna4v2cJD4+hOWmogq7gvybN9u5mtQidBiZVytcU/yr2gXPbA2THtENBvuooAWbbD8wTk9XtYc59MmZF2o+92xC0f6n703er7jUud1FIG6IaIKRbBgEd5sMUEbDFfXBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id CB5944394B;
-	Thu, 17 Jul 2025 11:43:13 +0000 (UTC)
-Message-ID: <9c6135a9-3edd-443f-9ff2-fd70d8c8197d@ghiti.fr>
-Date: Thu, 17 Jul 2025 13:43:12 +0200
+	 In-Reply-To:Content-Type; b=bTA8HMZdRYvEMxcIVjmirnVpU7Zc81roIezVJl1ZGvTeOIcqsHB98Xd1ZF3ZGDeAo7raxpuIyuv3FQEewuJLwK3RspPyea/uTRG5pj/DWV0MwLi1EBeUCVL6ZVItpVx5HF3dSlqEdUrUaTGSWvPj/yqtmXmh00qfB3AF/llM2Lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Sh64oX4M; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752752630;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=jULBQKJrWLUsKU87AiMGbdZPIoRYqIz+YQ5Sy/VjIug=;
+	b=Sh64oX4My5i5thG/Nvna7a+ya5ApgsK85T5HYAun3uPZpGpefr34KMRWVKA4TRlRjbTdyp
+	8LN0d+a/6FscWin/2+AXHZZu+U7SFt1ODSffMxTrCodLjAWZi6999jjOgwX5TfU8z6gdSw
+	e+nkYNgCcdDPx0S2Re1vz4EfYdloPbo=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-645-bGvWpQDPPEGlkZAWHnK9FQ-1; Thu, 17 Jul 2025 07:43:49 -0400
+X-MC-Unique: bGvWpQDPPEGlkZAWHnK9FQ-1
+X-Mimecast-MFC-AGG-ID: bGvWpQDPPEGlkZAWHnK9FQ_1752752628
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-451d2037f1eso5182035e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 04:43:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752752628; x=1753357428;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=jULBQKJrWLUsKU87AiMGbdZPIoRYqIz+YQ5Sy/VjIug=;
+        b=lcuFVpH7P61fgZquBSfHwMji47sAPDcs5CbcdOoglAgi+zEV9K232YLaoTSnapwSW1
+         +v2NbLG1kNft4jk9YECnWEgohFK6JGAcjWmPzd38YMlVgdONZdkkZXrryj7NCB8GOAVX
+         UUBZoiW1TE48NkupKnYZRC9Y5IgEL/5BVKht6YAkXiBu5tZv49t7/4R01NB8fTJsoLTD
+         HHdaJBfIQ5KWSFtEfh+XYzG1rNNGEby6cRycEbSwBmg4GprL57gd5/KLyAMHxFbWYP7C
+         dVX6rx/KzXEiendTFKnd8uIRAgJLmcEos86Exg8lDbPtjzcYuLmB6DQMWhqj9dGu3oRv
+         ZYtw==
+X-Forwarded-Encrypted: i=1; AJvYcCUN1N7p2QW/GjFrmPrYImj8YUr4pYwGJ0mE4m0A6VxreyN5CVSQS5lVnlph/doJT84+PpQO6wlg6aboUy4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMxv0LX+0RtEpLlNFZmsPch7CFZVm/FQz9ngCGJ0ZQ8Yg89UXM
+	C4Cn2kwS1WGHPH4duiD8OuLNaww7qTWfj8sN+W5YXiRS2rWmoWvZVq2LdZcsP5dlb2bcWUp/P2k
+	+HQ/gqt3FZlTH70ZpNuVvzoVzSGzNnWaGy5t/QyOtRSzZWuBpSaqdxHJX9kF/qhS4VQ==
+X-Gm-Gg: ASbGncsCilC5lG2aLibdz54pur/FRUbbhD0MU8oBlJOz+r95mnGEJ1/pmCFPbpEvMST
+	0/447o+ZYFqsD23vYgOszfXewL902fxbyWbeffapYnnkvZq5hBb0nffGxM6dz1CgUtMck5KYL3l
+	rdTmhQZfRGvV4zZ9jGcChw7ALjhUGsXWK6K+fDhWSS+rdcqUk+mDSQeRfZoFDcLSOpDTN4FrF+/
+	oiClflKTZEVUNdAGrVf8glv6A9nUEX8uRCXIGzSgkn+lFhk8OVKqa8ur51IsKf887FLSsNMmdBp
+	NyvViXbK59Xhvpq3d8981iH3BoL73TTyBCOys0vCk1G2IedPxJoW/DIHMe7pvO8zpKr9JKw3DjX
+	U3MRfNnCmKlQvF7cTdGo1TWoRnmIVbS/ORyLViRe1Pem1XoSD1Mq3NUXPj2FB5pSc
+X-Received: by 2002:a05:600c:1d1f:b0:456:27a4:50ad with SMTP id 5b1f17b1804b1-45637292eacmr14012615e9.33.1752752628272;
+        Thu, 17 Jul 2025 04:43:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFkjE+fWZ5MrjhWxS/kV+A6LCPCtWXb5br97yuhRNTUKIVY46Jn8e9BqorOYSDoZOgt2+4w3w==
+X-Received: by 2002:a05:600c:1d1f:b0:456:27a4:50ad with SMTP id 5b1f17b1804b1-45637292eacmr14012345e9.33.1752752627805;
+        Thu, 17 Jul 2025 04:43:47 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f1f:3600:dc8:26ee:9aa9:fdc7? (p200300d82f1f36000dc826ee9aa9fdc7.dip0.t-ipconnect.de. [2003:d8:2f1f:3600:dc8:26ee:9aa9:fdc7])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e89c87esm48000855e9.33.2025.07.17.04.43.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Jul 2025 04:43:47 -0700 (PDT)
+Message-ID: <d27e9451-8807-4c86-b2aa-063639f7801d@redhat.com>
+Date: Thu, 17 Jul 2025 13:43:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -39,356 +89,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 7/7] riscv: errata: Fix the PAUSE Opcode for MIPS P8700
-To: aleksa.paunovic@htecgroup.com, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Jonathan Corbet <corbet@lwn.net>
-Cc: Palmer Dabbelt <palmer@sifive.com>, Conor Dooley <conor@kernel.org>,
- devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- Djordje Todorovic <djordje.todorovic@htecgroup.com>,
- Aleksandar Rikalo <arikalo@gmail.com>,
- Raj Vishwanathan4 <rvishwanathan@mips.com>
-References: <20250625-p8700-pause-v4-0-6c7dd7f85756@htecgroup.com>
- <20250625-p8700-pause-v4-7-6c7dd7f85756@htecgroup.com>
+Subject: Re: [PATCH] selftests/mm: reuse FORCE_READ to replace "asm
+ volatile("" : "+r" (XXX));"
+To: wang lian <lianux.mm@gmail.com>, akpm@linux-foundation.org
+Cc: Liam.Howlett@oracle.com, brauner@kernel.org, broonie@kernel.org,
+ gkwang@linx-info.com, jannh@google.com, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, lorenzo.stoakes@oracle.com, ludovico.zy.wu@gmail.com,
+ p1ucky0923@gmail.com, ryncsn@gmail.com, shuah@kernel.org, sj@kernel.org,
+ vbabka@suse.cz, zijing.zhang@proton.me, ziy@nvidia.com
+References: <20250716151543.998b121a58064011e9ce68cb@linux-foundation.org>
+ <20250717104811.3773-1-lianux.mm@gmail.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250625-p8700-pause-v4-7-6c7dd7f85756@htecgroup.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAmgsLPQFCRvGjuMACgkQTd4Q
+ 9wD/g1o0bxAAqYC7gTyGj5rZwvy1VesF6YoQncH0yI79lvXUYOX+Nngko4v4dTlOQvrd/vhb
+ 02e9FtpA1CxgwdgIPFKIuXvdSyXAp0xXuIuRPQYbgNriQFkaBlHe9mSf8O09J3SCVa/5ezKM
+ OLW/OONSV/Fr2VI1wxAYj3/Rb+U6rpzqIQ3Uh/5Rjmla6pTl7Z9/o1zKlVOX1SxVGSrlXhqt
+ kwdbjdj/csSzoAbUF/duDuhyEl11/xStm/lBMzVuf3ZhV5SSgLAflLBo4l6mR5RolpPv5wad
+ GpYS/hm7HsmEA0PBAPNb5DvZQ7vNaX23FlgylSXyv72UVsObHsu6pT4sfoxvJ5nJxvzGi69U
+ s1uryvlAfS6E+D5ULrV35taTwSpcBAh0/RqRbV0mTc57vvAoXofBDcs3Z30IReFS34QSpjvl
+ Hxbe7itHGuuhEVM1qmq2U72ezOQ7MzADbwCtn+yGeISQqeFn9QMAZVAkXsc9Wp0SW/WQKb76
+ FkSRalBZcc2vXM0VqhFVzTb6iNqYXqVKyuPKwhBunhTt6XnIfhpRgqveCPNIasSX05VQR6/a
+ OBHZX3seTikp7A1z9iZIsdtJxB88dGkpeMj6qJ5RLzUsPUVPodEcz1B5aTEbYK6428H8MeLq
+ NFPwmknOlDzQNC6RND8Ez7YEhzqvw7263MojcmmPcLelYbfOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCaCwtJQUJG8aPFAAKCRBN3hD3AP+DWlDnD/4k2TW+HyOOOePVm23F5HOhNNd7nNv3
+ Vq2cLcW1DteHUdxMO0X+zqrKDHI5hgnE/E2QH9jyV8mB8l/ndElobciaJcbl1cM43vVzPIWn
+ 01vW62oxUNtEvzLLxGLPTrnMxWdZgxr7ACCWKUnMGE2E8eca0cT2pnIJoQRz242xqe/nYxBB
+ /BAK+dsxHIfcQzl88G83oaO7vb7s/cWMYRKOg+WIgp0MJ8DO2IU5JmUtyJB+V3YzzM4cMic3
+ bNn8nHjTWw/9+QQ5vg3TXHZ5XMu9mtfw2La3bHJ6AybL0DvEkdGxk6YHqJVEukciLMWDWqQQ
+ RtbBhqcprgUxipNvdn9KwNpGciM+hNtM9kf9gt0fjv79l/FiSw6KbCPX9b636GzgNy0Ev2UV
+ m00EtcpRXXMlEpbP4V947ufWVK2Mz7RFUfU4+ETDd1scMQDHzrXItryHLZWhopPI4Z+ps0rB
+ CQHfSpl+wG4XbJJu1D8/Ww3FsO42TMFrNr2/cmqwuUZ0a0uxrpkNYrsGjkEu7a+9MheyTzcm
+ vyU2knz5/stkTN2LKz5REqOe24oRnypjpAfaoxRYXs+F8wml519InWlwCra49IUSxD1hXPxO
+ WBe5lqcozu9LpNDH/brVSzHCSb7vjNGvvSVESDuoiHK8gNlf0v+epy5WYd7CGAgODPvDShGN
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <20250717104811.3773-1-lianux.mm@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeitdegkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhephffhtdefjeetgfdvhfehgefhteekkeevffehheegtedtieduheeltdegheeuleffnecuffhomhgrihhnpegvnhhtrhihrdhssgenucfkphepudekhedrvddufedrudehgedrudehudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedukeehrddvudefrdduheegrdduhedupdhhvghloheplgdutddrudegrddtrddufegnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepudejpdhrtghpthhtoheprghlvghkshgrrdhprghunhhovhhitgeshhhtvggtghhrohhuphdrtghomhdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtp
- hhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegrohhusegvvggtshdrsggvrhhkvghlvgihrdgvughupdhrtghpthhtoheptghorhgsvghtsehlfihnrdhnvght
-X-GND-Sasl: alex@ghiti.fr
+Content-Transfer-Encoding: 7bit
 
-On 6/25/25 16:21, Aleksa Paunovic via B4 Relay wrote:
-> From: Djordje Todorovic <djordje.todorovic@htecgroup.com>
->
-> Add ERRATA_MIPS and ERRATA_MIPS_P8700_PAUSE_OPCODE configs.
-> Handle errata for the MIPS PAUSE instruction.
->
-> Signed-off-by: Djordje Todorovic <djordje.todorovic@htecgroup.com>
-> Signed-off-by: Aleksandar Rikalo <arikalo@gmail.com>
-> Signed-off-by: Raj Vishwanathan4 <rvishwanathan@mips.com>
-> Signed-off-by: Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
-> ---
->   arch/riscv/Kconfig.errata               | 23 +++++++++++
->   arch/riscv/errata/Makefile              |  1 +
->   arch/riscv/errata/mips/Makefile         |  5 +++
->   arch/riscv/errata/mips/errata.c         | 67 +++++++++++++++++++++++++++++++++
->   arch/riscv/include/asm/alternative.h    |  3 ++
->   arch/riscv/include/asm/cmpxchg.h        |  3 +-
->   arch/riscv/include/asm/errata_list.h    | 17 ++++++++-
->   arch/riscv/include/asm/vdso/processor.h |  4 +-
->   arch/riscv/include/asm/vendorid_list.h  |  1 +
->   arch/riscv/kernel/alternative.c         |  5 +++
->   arch/riscv/kernel/entry.S               |  2 +
->   arch/riscv/mm/init.c                    |  1 +
->   12 files changed, 129 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/riscv/Kconfig.errata b/arch/riscv/Kconfig.errata
-> index e318119d570de0acc0850a2e1a2505ecb71bea08..aca9b0cfcfecf91d4d1910f294ee109ed15f2d6c 100644
-> --- a/arch/riscv/Kconfig.errata
-> +++ b/arch/riscv/Kconfig.errata
-> @@ -21,6 +21,29 @@ config ERRATA_ANDES_CMO
->   
->   	  If you don't know what to do here, say "Y".
->   
-> +config ERRATA_MIPS
-> +	bool "MIPS errata"
-> +	depends on RISCV_ALTERNATIVE
-> +	help
-> +	  All MIPS errata Kconfig depend on this Kconfig. Disabling
-> +	  this Kconfig will disable all MIPS errata. Please say "Y"
-> +	  here if your platform uses MIPS CPU cores.
-> +
-> +	  Otherwise, please say "N" here to avoid unnecessary overhead.
-> +
-> +config ERRATA_MIPS_P8700_PAUSE_OPCODE
-> +	bool "Fix the PAUSE Opcode for MIPS P8700"
-> +	depends on ERRATA_MIPS && 64BIT
-> +	default n
-> +	help
-> +	   The RISCV MIPS P8700 uses a different opcode for PAUSE.
-> +	   It is a 'hint' encoding of the SLLI instruction,
-> +	   with rd=0, rs1=0 and imm=5. It will behave as a NOP
-> +	   instruction if no additional behavior beyond that of
-> +	   SLLI is implemented.
-> +
-> +	   If you are not using the P8700 processor, say n.
-> +
->   config ERRATA_SIFIVE
->   	bool "SiFive errata"
->   	depends on RISCV_ALTERNATIVE
-> diff --git a/arch/riscv/errata/Makefile b/arch/riscv/errata/Makefile
-> index bc6c77ba837d2da4c98dabab18083d27f46629c7..02a7a3335b1d557933e04cd6d0cf7bf4260b8c40 100644
-> --- a/arch/riscv/errata/Makefile
-> +++ b/arch/riscv/errata/Makefile
-> @@ -13,5 +13,6 @@ endif
->   endif
->   
->   obj-$(CONFIG_ERRATA_ANDES) += andes/
-> +obj-$(CONFIG_ERRATA_MIPS) += mips/
->   obj-$(CONFIG_ERRATA_SIFIVE) += sifive/
->   obj-$(CONFIG_ERRATA_THEAD) += thead/
-> diff --git a/arch/riscv/errata/mips/Makefile b/arch/riscv/errata/mips/Makefile
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..6278c389b801ee6e54e808c80e6e236c026329c7
-> --- /dev/null
-> +++ b/arch/riscv/errata/mips/Makefile
-> @@ -0,0 +1,5 @@
-> +ifdef CONFIG_RISCV_ALTERNATIVE_EARLY
-> +CFLAGS_errata.o := -mcmodel=medany
-> +endif
-> +
-> +obj-y += errata.o
-> diff --git a/arch/riscv/errata/mips/errata.c b/arch/riscv/errata/mips/errata.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..e984a8152208c34690f89d8101571b097485c360
-> --- /dev/null
-> +++ b/arch/riscv/errata/mips/errata.c
-> @@ -0,0 +1,67 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2025 MIPS.
-> + */
-> +
-> +#include <linux/memory.h>
-> +#include <linux/module.h>
-> +#include <asm/text-patching.h>
-> +#include <asm/alternative.h>
-> +#include <asm/errata_list.h>
-> +#include <asm/vendorid_list.h>
-> +#include <asm/vendor_extensions.h>
-> +#include <asm/vendor_extensions/mips.h>
-> +
-> +static inline bool errata_probe_pause(void)
-> +{
-> +	if (!IS_ENABLED(CONFIG_ERRATA_MIPS_P8700_PAUSE_OPCODE))
-> +		return false;
-> +
-> +	if (!riscv_isa_vendor_extension_available(MIPS_VENDOR_ID, XMIPSEXECTL))
-> +		return false;
-> +
-> +	return true;
-> +}
-> +
-> +static u32 mips_errata_probe(void)
-> +{
-> +	u32 cpu_req_errata = 0;
-> +
-> +	if (errata_probe_pause())
-> +		cpu_req_errata |= BIT(ERRATA_MIPS_P8700_PAUSE_OPCODE);
-> +
-> +	return cpu_req_errata;
-> +}
-> +
-> +void mips_errata_patch_func(struct alt_entry *begin, struct alt_entry *end,
-> +			    unsigned long archid, unsigned long impid,
-> +			    unsigned int stage)
-> +{
-> +	struct alt_entry *alt;
-> +	u32 cpu_req_errata = mips_errata_probe();
-> +	u32 tmp;
-> +
-> +	BUILD_BUG_ON(ERRATA_MIPS_NUMBER >= RISCV_VENDOR_EXT_ALTERNATIVES_BASE);
-> +
-> +	if (stage == RISCV_ALTERNATIVES_EARLY_BOOT)
-> +		return;
-> +
-> +	for (alt = begin; alt < end; alt++) {
-> +		if (alt->vendor_id != MIPS_VENDOR_ID)
-> +			continue;
-> +
-> +		if (alt->patch_id >= ERRATA_MIPS_NUMBER) {
-> +			WARN(1, "MIPS errata id:%d not in kernel errata list\n",
-> +			     alt->patch_id);
-> +			continue;
-> +		}
-> +
-> +		tmp = (1U << alt->patch_id);
-> +		if (cpu_req_errata && tmp) {
-> +			mutex_lock(&text_mutex);
-> +			patch_text_nosync(ALT_OLD_PTR(alt), ALT_ALT_PTR(alt),
-> +					  alt->alt_len);
-> +			mutex_unlock(&text_mutex);
-> +		}
-> +	}
-> +}
-> diff --git a/arch/riscv/include/asm/alternative.h b/arch/riscv/include/asm/alternative.h
-> index 3c2b59b25017929df92b4e6741ac1a9308bfec54..bc3ada8190a9e7dc7d904aeb3174c78329e4d8d7 100644
-> --- a/arch/riscv/include/asm/alternative.h
-> +++ b/arch/riscv/include/asm/alternative.h
-> @@ -48,6 +48,9 @@ struct alt_entry {
->   void andes_errata_patch_func(struct alt_entry *begin, struct alt_entry *end,
->   			     unsigned long archid, unsigned long impid,
->   			     unsigned int stage);
-> +void mips_errata_patch_func(struct alt_entry *begin, struct alt_entry *end,
-> +			      unsigned long archid, unsigned long impid,
-> +			      unsigned int stage);
->   void sifive_errata_patch_func(struct alt_entry *begin, struct alt_entry *end,
->   			      unsigned long archid, unsigned long impid,
->   			      unsigned int stage);
-> diff --git a/arch/riscv/include/asm/cmpxchg.h b/arch/riscv/include/asm/cmpxchg.h
-> index 0b749e7102162477432f7cf9a34768fbdf2e8cc7..80bd52363c68690f33bfd54e0cc40399cd60b57b 100644
-> --- a/arch/riscv/include/asm/cmpxchg.h
-> +++ b/arch/riscv/include/asm/cmpxchg.h
-> @@ -14,6 +14,7 @@
->   #include <asm/insn-def.h>
->   #include <asm/cpufeature-macros.h>
->   #include <asm/processor.h>
-> +#include <asm/errata_list.h>
->   
->   #define __arch_xchg_masked(sc_sfx, swap_sfx, prepend, sc_append,		\
->   			   swap_append, r, p, n)				\
-> @@ -438,7 +439,7 @@ static __always_inline void __cmpwait(volatile void *ptr,
->   	return;
->   
->   no_zawrs:
-> -	asm volatile(RISCV_PAUSE : : : "memory");
-> +	ALT_RISCV_PAUSE();
->   }
->   
->   #define __cmpwait_relaxed(ptr, val) \
-> diff --git a/arch/riscv/include/asm/errata_list.h b/arch/riscv/include/asm/errata_list.h
-> index 6e426ed7919a4acd997b60b723c0d5cfddb4cff6..618dee38d8d1347711fd46a459bfc8d2cb7bf42b 100644
-> --- a/arch/riscv/include/asm/errata_list.h
-> +++ b/arch/riscv/include/asm/errata_list.h
-> @@ -5,7 +5,6 @@
->   #ifndef ASM_ERRATA_LIST_H
->   #define ASM_ERRATA_LIST_H
->   
-> -#include <asm/alternative.h>
->   #include <asm/csr.h>
->   #include <asm/insn-def.h>
->   #include <asm/hwcap.h>
-> @@ -29,6 +28,11 @@
->   #define	ERRATA_THEAD_NUMBER 3
->   #endif
->   
-> +#ifdef CONFIG_ERRATA_MIPS
-> +#define ERRATA_MIPS_P8700_PAUSE_OPCODE 0
-> +#define ERRATA_MIPS_NUMBER 1
-> +#endif
-> +
->   #ifdef __ASSEMBLY__
->   
->   #define ALT_INSN_FAULT(x)						\
-> @@ -59,6 +63,17 @@ asm(ALTERNATIVE("sfence.vma %0, %1", "sfence.vma", SIFIVE_VENDOR_ID,	\
->   		ERRATA_SIFIVE_CIP_1200, CONFIG_ERRATA_SIFIVE_CIP_1200)	\
->   		: : "r" (addr), "r" (asid) : "memory")
->   
-> +#define ALT_RISCV_PAUSE()					\
-> +asm(ALTERNATIVE(	\
-> +		RISCV_PAUSE, /* Original RISC‑V pause insn */	\
-> +		".4byte 0x00501013", /* Replacement for MIPS P8700 */	\
+On 17.07.25 12:48, wang lian wrote:
+>> On Wed, 16 Jul 2025 20:31:26 +0800 wang lian <lianux.mm@gmail.com> wrote:
+> 
+>>> Several mm selftests use the `asm volatile("" : "+r" (variable));`
+>>> construct to force a read of a variable, preventing the compiler from
+>>> optimizing away the memory access. This idiom is cryptic and duplicated
+>>> across multiple test files.
+>>>
+>>> Following a suggestion from David[1], this patch refactors this
+>>> common pattern into a FORCE_READ() macro
+>>>
+>>>   tools/testing/selftests/mm/cow.c              | 30 +++++++++----------
+>>>   tools/testing/selftests/mm/hugetlb-madvise.c  |  5 +---
+>>>   tools/testing/selftests/mm/migration.c        | 13 ++++----
+>>>   tools/testing/selftests/mm/pagemap_ioctl.c    |  4 +--
+>>>   .../selftests/mm/split_huge_page_test.c       |  4 +--
+>>>   5 files changed, 24 insertions(+), 32 deletions(-)
+> 
+>> The patch forgot to move the FORCE_READ definition into a header?
+> 
+> Hi Andrew,
+> You are absolutely right. My apologies for the inconvenience.
+> This patch was sent standalone based on a suggestion from David during
+> the discussion of a previous, larger patch series. In that original series,
+> I had already moved the FORCE_READ() macro definition into vm_util.h.
+> 
+> You can find the original patch series and discussion at this link:
+> https://lore.kernel.org/lkml/20250714130009.14581-1-lianux.mm@gmail.com/
+> It should also be in your mailing list archive.
+> 
+> To make this easier to review and apply, I can send a new, small patch series
+> that first introduces the FORCE_READ() macro in vm_util.h and then applies this refactoring.
 
+Please simply perform the move of FORCE_READ() in this very patch where 
+you also use it elswehere.
 
-Here  you should use MIPS_PAUSE
+I missed that when skimming over this patch.
 
+-- 
+Cheers,
 
-> +		MIPS_VENDOR_ID, /* Vendor ID to match */	\
-> +		ERRATA_MIPS_P8700_PAUSE_OPCODE, /* patch_id */	\
-> +		CONFIG_ERRATA_MIPS_P8700_PAUSE_OPCODE)	\
-> +	: /* no outputs */	\
-> +	: /* no inputs */	\
-> +	: "memory")
-> +
->   /*
->    * _val is marked as "will be overwritten", so need to set it to 0
->    * in the default case.
-> diff --git a/arch/riscv/include/asm/vdso/processor.h b/arch/riscv/include/asm/vdso/processor.h
-> index 8f383f05a290f123d941226b5dd975381d7d8536..8f749552ecfe6220bbc35f1c4677c6de8f7abdec 100644
-> --- a/arch/riscv/include/asm/vdso/processor.h
-> +++ b/arch/riscv/include/asm/vdso/processor.h
-> @@ -5,6 +5,8 @@
->   #ifndef __ASSEMBLY__
->   
->   #include <asm/barrier.h>
-> +
-
-
-New line ^
-
-
-> +#include <asm/errata_list.h>
->   #include <asm/insn-def.h>
->   
->   static inline void cpu_relax(void)
-> @@ -19,7 +21,7 @@ static inline void cpu_relax(void)
->   	 * Reduce instruction retirement.
->   	 * This assumes the PC changes.
->   	 */
-> -	__asm__ __volatile__ (RISCV_PAUSE);
-> +	ALT_RISCV_PAUSE();
->   	barrier();
->   }
->   
-> diff --git a/arch/riscv/include/asm/vendorid_list.h b/arch/riscv/include/asm/vendorid_list.h
-> index a5150cdf34d87f01baf6d3ef843bc2d6d8d54095..3b09874d7a6dfb8f8aa45b0be41c20711d539e78 100644
-> --- a/arch/riscv/include/asm/vendorid_list.h
-> +++ b/arch/riscv/include/asm/vendorid_list.h
-> @@ -9,5 +9,6 @@
->   #define MICROCHIP_VENDOR_ID	0x029
->   #define SIFIVE_VENDOR_ID	0x489
->   #define THEAD_VENDOR_ID		0x5b7
-> +#define MIPS_VENDOR_ID		0x722
->   
->   #endif
-> diff --git a/arch/riscv/kernel/alternative.c b/arch/riscv/kernel/alternative.c
-> index 7eb3cb1215c62130c63a72fc650cddff6bae62af..7642704c7f1841f67fc23738063f22b4ecf58194 100644
-> --- a/arch/riscv/kernel/alternative.c
-> +++ b/arch/riscv/kernel/alternative.c
-> @@ -47,6 +47,11 @@ static void riscv_fill_cpu_mfr_info(struct cpu_manufacturer_info_t *cpu_mfr_info
->   		cpu_mfr_info->patch_func = andes_errata_patch_func;
->   		break;
->   #endif
-> +#ifdef CONFIG_ERRATA_MIPS
-> +	case MIPS_VENDOR_ID:
-> +		cpu_mfr_info->patch_func = mips_errata_patch_func;
-> +		break;
-> +#endif
->   #ifdef CONFIG_ERRATA_SIFIVE
->   	case SIFIVE_VENDOR_ID:
->   		cpu_mfr_info->patch_func = sifive_errata_patch_func;
-> diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-> index 75656afa2d6be8ca5f2c4711455567c7f8fc0b97..b18373ed23d65df0dc828246269e9039bb0b0c6b 100644
-> --- a/arch/riscv/kernel/entry.S
-> +++ b/arch/riscv/kernel/entry.S
-> @@ -15,6 +15,8 @@
->   #include <asm/thread_info.h>
->   #include <asm/asm-offsets.h>
->   #include <asm/errata_list.h>
-> +#include <asm/alternative.h>
-> +
->   #include <linux/sizes.h>
->   
->   	.section .irqentry.text, "ax"
-> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-> index 8d0374d7ce8ed72320f58e4cea212d0e2bce8fd4..7ee95ebadc258a3a46e59698cd143266f6797a0c 100644
-> --- a/arch/riscv/mm/init.c
-> +++ b/arch/riscv/mm/init.c
-> @@ -33,6 +33,7 @@
->   #include <asm/soc.h>
->   #include <asm/sparsemem.h>
->   #include <asm/tlbflush.h>
-> +#include <asm/alternative.h>
->   
->   #include "../kernel/head.h"
->   
->
-Why do you include alternative.h in both files above? That does not seem 
-needed.
-
-Other than that:
-
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-
-Thanks,
-
-Alex
+David / dhildenb
 
 
