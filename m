@@ -1,80 +1,118 @@
-Return-Path: <linux-kernel+bounces-734885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93322B087AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:12:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E651CB087B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:12:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 838EE3B21FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:11:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7572A1AA20A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:12:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E982279DAC;
-	Thu, 17 Jul 2025 08:11:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F79B279DCB;
+	Thu, 17 Jul 2025 08:12:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S1GpSsRx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YsoR6qYx"
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED1E1FBEB0;
-	Thu, 17 Jul 2025 08:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2421FBEB0;
+	Thu, 17 Jul 2025 08:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752739916; cv=none; b=t7NShJGEwiWqngITlVtVHyZAVOGqQT7wfQw2MvGp+1feqsysgid0CrTf9bW9+E5kGFKef27hhcTD+cGQHOLkMaJ8ozZmxH/kTjy/u45n8MxqPoZc2MMpGn7dxqoFENs6r+ydZG0SlKGZuqLNfQBm7MO6/OJ2JxxJHF05jNW9d+Y=
+	t=1752739952; cv=none; b=nI0aEIsDB34sK/yxr2vr0dwVfJA+G/mfNPhs+2CaBua3xUC2ITtbfhsDqbxeDFC2Z/h9wfIX4qq5/LXOmcwNGhEUf6wIpJIegDdUt1P9lnk5EKFqoM2pzaNsP89FTzEJU8kkGoPDBy+kyVDiBCNmSXWBolm5gz3zZgnD19/XmA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752739916; c=relaxed/simple;
-	bh=16FajEccwHwlnwLR3yWAQb1Zfx+vgUarz7h+/oSDnoQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=XrqOF7nEEzZV5NT9kJRb9y44xf1i1+DHC2TEPB6NO5ACSnXYIinXRjvq6hCQrHLFCu681UzidWNPPfuIDgXoMoL0z/OylWQ9SUrBZpuvMiZwrG9zUSOPeviOHkEVJtfARdH771yZeLRgmPd3BUH5vUKS9XVTey999iZH/ViAGt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S1GpSsRx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74328C4CEE3;
-	Thu, 17 Jul 2025 08:11:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752739916;
-	bh=16FajEccwHwlnwLR3yWAQb1Zfx+vgUarz7h+/oSDnoQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=S1GpSsRxrPog8XVX0/nU7q2edJ23b8gY3qafRZ0dBn7gPs87TLI4YariTDTycZazc
-	 DCEm2xODgeMU5Ygrkjp90zPbL+bNeRwJymA7TklzdFBGJtuw44S33Y2OlWAmLeyrwM
-	 P+pH2RFvC8/fci//l7LGvvXTFEvCQ54quHsa5k95wd19zKcewcV8mHsj1x2BQ32lh1
-	 tL/zQTIyBYwy/s3vKus3x+uZeof2N2rR7O76+C8eK0xs08T7bdeb2qxFITUlmXSYdD
-	 0eeuV2lts413ODzI2RtpGMIQQcglgpZDzCJRSShBj5UEexQQVj0+Hk994UkWrf9U8j
-	 adYKVQdRPHLMA==
-From: Carlos Maiolino <cem@kernel.org>
-To: linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Pranav Tyagi <pranav.tyagi03@gmail.com>
-Cc: djwong@kernel.org, skhan@linuxfoundation.org, 
- linux-kernel-mentees@lists.linux.dev
-In-Reply-To: <20250704101250.24629-1-pranav.tyagi03@gmail.com>
-References: <20250704101250.24629-1-pranav.tyagi03@gmail.com>
-Subject: Re: [PATCH v2] fs/xfs: replace strncpy with memtostr_pad()
-Message-Id: <175273991411.1798976.8807586942467091508.b4-ty@kernel.org>
-Date: Thu, 17 Jul 2025 10:11:54 +0200
+	s=arc-20240116; t=1752739952; c=relaxed/simple;
+	bh=6dzmgsXZ4ihctdNNGrst7LKfmkrzDE3GFRksTdLmYNM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XuasBPbshXUNZPHVsJQtqASytGtq50V7eJrzdzFNh5QB6WhbrOpNuV22ytcu6noT3RW9b+Ee8+L5Nqos3Y9uq9L9Z0xSYqP2ptmyOujg1gYdSFth14W3uQDhZ1a4wNY9fbySSuzGDgFCbdw+ihJt5yUc8N23eREKlGfMcN++t9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YsoR6qYx; arc=none smtp.client-ip=209.85.221.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-528ce9731dbso268308e0c.0;
+        Thu, 17 Jul 2025 01:12:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752739950; x=1753344750; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6dzmgsXZ4ihctdNNGrst7LKfmkrzDE3GFRksTdLmYNM=;
+        b=YsoR6qYx1K/tfz+HZKVbBZZ2WY3nFLo38ZJqBYdX8owPNd3iIx+2zeeFyHN/79NvTt
+         3uUfwm+FC0kQlYUb2W0nFMNupIG/eJdIdk+5mIm3oHHHeA6DH3Wf3g24UfW/FqoBbcsF
+         AgpFK9onCaRrvcARefXhHVtUT34u+ysiBVHg0xm2BIHKdj3Ntv+77iDCF6y8pCYQUm/E
+         Q3nDBPPEOtfNBLrgRfDpUW/NZXowk0r7pYuQ5jvyQsZphxyH+Qime76rhxcWlZ+jZVJc
+         uWZkONMPhIO74IfzjwMm/IynoAJr19Wfgd/wt9G5rjLwF53ijPjewEwQe/DYT3QZTu8w
+         lF5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752739950; x=1753344750;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6dzmgsXZ4ihctdNNGrst7LKfmkrzDE3GFRksTdLmYNM=;
+        b=hAgWHz1HoQEJwmjnoDuk7nYC1d5rDsnHdpGDDgPunT8wXT3ybCrcuPWvdO3RYLHr+G
+         f8OdhnQ+HX6i9zjKLwxsowX72UgeVRMbaPM6nkrK6dt1T3D7QADyeohlreWczfnTsxYC
+         dAUnHVwX7VBkmW2hCKg7lH7Gwr5LflGTndu2OekiEfEBLg/0CXEl4/ErLNMNzy3HLTc6
+         mHlJb04idyLjwU/P7KllWia2r9qQP06o49GgZek3AwYwWrzvf2plyA2xsJOqvVlbg4LG
+         qWBoW+z7e6AduuHBvvtLGppV4q6ZFZRbZOSpF0GTvI07JryqvnA0Lco0FNowMyyrw9Me
+         mOPw==
+X-Forwarded-Encrypted: i=1; AJvYcCURwIAlYjMThOQmHm5nTGjHQcW3pmKO0N5cmjC19/5XGSynjfd9VJu0aMXGymExtByge2MpwJGyyA7JU8avr2Y6AAM=@vger.kernel.org, AJvYcCW0qUsQL/mlg1icDx7Rvh5hTvju366hDNO71a9VoorkNOjn+yDgSVbd7HPduU3gG27GOVyf9gzBnBqafQlY@vger.kernel.org, AJvYcCXx5pgjLRsSgHuN0mrWtgWoEcoEx2ERG1+y4uRQbVF2YcD3k/RG7QNNbLe4psWnncmRTdDlYGRZDmaD@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/WxUmoMbP7Kgzc/FFSmSd3aoTiJmaiTEKuWm1cj9YYsBKeTN6
+	bxLWTHf2cUcYl5G5Iq5zQckRvWoYjYAS2R/pklaAi7oi2Wa/9DGfr0jo7bc8JfMXrPlpvjW3Wjk
+	dqyCTxTWnS6FVufyUHsvqV75OvfwXCL8=
+X-Gm-Gg: ASbGncsYLEnPUgHE0worfWa6a1clEKiTvSGxJ4dDAJz7D0UBqXr6jsYSnnR1uC4iitR
+	Kh7zMn0gKtTNbn8//nOQV1YukxK5z/wj6HwzYeCv+JF8GMTMOEmk+x0bgAVGzrbfhmBsNF/vCwp
+	QKEgkqlkoAa6LqpeWu+TmjXAkpPZlDHp25Cx0KgOZFRDlUuPBBXnrAAG7dHM6M6LRFR11rJvmQi
+	yWN1EI=
+X-Google-Smtp-Source: AGHT+IE4+/jyzpcJbm9kLqh319e9w2ifyYgMXgvBj1eovRPq3sGlFkHS6iaGjCao2H1GdMVdydNDXEbwn9tkBnQeCAk=
+X-Received: by 2002:a05:6122:3703:b0:537:ee0:7ccd with SMTP id
+ 71dfb90a1353d-5373fc17f24mr3472385e0c.5.1752739950040; Thu, 17 Jul 2025
+ 01:12:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+References: <20240617-starqltechn_integration_upstream-v5-0-ea1109029ba5@gmail.com>
+ <20240617-starqltechn_integration_upstream-v5-3-ea1109029ba5@gmail.com> <7bec6fc2-6643-4ddf-9475-8ead4b312912@gmail.com>
+In-Reply-To: <7bec6fc2-6643-4ddf-9475-8ead4b312912@gmail.com>
+From: Dzmitry Sankouski <dsankouski@gmail.com>
+Date: Thu, 17 Jul 2025 11:12:19 +0300
+X-Gm-Features: Ac12FXyILLppn4fNJXMt6JbXlTuHpIozeuClAX6gTrcucQbkwaV2GmN42jvBHx8
+Message-ID: <CABTCjFBTY4NV2yKyRO31MacGFAnJ4T-viDLrXkPs9z66VU6nyQ@mail.gmail.com>
+Subject: Re: [PATCH v5 3/3] regulator: add s2dos05 regulator support
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 04 Jul 2025 15:42:50 +0530, Pranav Tyagi wrote:
-> Replace the deprecated strncpy() with memtostr_pad(). This also avoids
-> the need for separate zeroing using memset(). Mark sb_fname buffer with
-> __nonstring as its size is XFSLABEL_MAX and so no terminating NULL for
-> sb_fname.
-> 
-> 
+=D1=87=D1=82, 17 =D0=B8=D1=8E=D0=BB. 2025=E2=80=AF=D0=B3. =D0=B2 10:28, Iva=
+ylo Ivanov <ivo.ivanov.ivanov1@gmail.com>:
+>
+> On 9/26/24 12:47, Dzmitry Sankouski wrote:
+> > S2DOS05 has 1 buck and 4 LDO regulators, used for powering
+> > panel/touchscreen.
+> >
+> > Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+>
+> When is this going to get merged? This patch brings the regulators
+> functionality of the pmic, so not having it merged is odd. This PMIC is
+> used on other devices too, like the Galaxy S22.
+>
+> It seems like this has been hanging for almost an year at this point.
+> If the author won't, will somebody resend it?
 
-Applied to for-next, thanks!
 
-[1/1] fs/xfs: replace strncpy with memtostr_pad()
-      commit: f161da9418910f4ab7a29099682d03e06ef2c3ef
+It's already merged, see
+https://lore.kernel.org/all/20240617-starqltechn_integration_upstream-v5-2-=
+ea1109029ba5@gmail.com/
+
+--=20
 
 Best regards,
--- 
-Carlos Maiolino <cem@kernel.org>
-
+Dzmitry
 
