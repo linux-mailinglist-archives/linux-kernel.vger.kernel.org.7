@@ -1,232 +1,294 @@
-Return-Path: <linux-kernel+bounces-735068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5A6BB08A77
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:26:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C662AB08A79
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:27:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9138A3A923E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:26:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F02D1891BDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:28:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71CB1299955;
-	Thu, 17 Jul 2025 10:26:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1FE2989BF;
+	Thu, 17 Jul 2025 10:27:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="gxj4T1YQ"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013014.outbound.protection.outlook.com [40.107.159.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ft8rGHTr"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3271C84DF;
-	Thu, 17 Jul 2025 10:26:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752747999; cv=fail; b=gXEDLtv6i8s93GaDHPuPHJYqN/QdvwjEhl2BMtwU7uEE664Rp2M2ZkoLfnvB+lgDpyOoaevWbAjOSfkUX+YNoFdl6boaatcLYDE13sjs9EizNjaZ4DjkcgVviTi/cmtRFOEdF1WzC9+1GyFHtXJfKLNmyf+HLzqVcafTYkMxels=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752747999; c=relaxed/simple;
-	bh=nvnwmT7xpIO0hWgG+MB0sEZxoKUHGN+W16x5I7LI5ww=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=m2tyLb9sSQCflA5eUzBzvkD6sIZl/UhU1JEKovUjUA0rgLQUxMMBXw74U6PkiDLWuPLhAJ5NJ43UwT+hPLvolJN0E4FiiitBzVRV/F3yM+jhIr8DRTyUVOPOipVUFIqtf/aNEaqIOkgQjUraQKRaU9BvVpQv+bvTZD55qCNFFD4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=gxj4T1YQ; arc=fail smtp.client-ip=40.107.159.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MiPO6ZCacscAtlXwnZqsJrHfED8P3tlwqGWYEhM0dPobyKJhTQYirewFUifqw/Z3C+NFSF40YtUzFa0HuVyiBYS0Pr/1NX0nbOubueU1H5Rk4LtXNoVat4E599ZYcL/fPOZffWFXSbCtnXo/MUmRCPNaQz8sKvXgDMSMgExuYRc/KaSf+KQ23KKwLe8qS+diGrcKoWhafEl+VhQV9ZA4Fwe8kiPqTyWkE+cEzbuPqX9qW+nImOcdKdNqxPMguPbSK6kPivIOig82zDVeoc3ie7UpSWDZcq44BJpZEs1Mdo5adFeknS2LIJ8VpTWNoLBTyv05jTVnXi+bgdGH4hvhZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nvnwmT7xpIO0hWgG+MB0sEZxoKUHGN+W16x5I7LI5ww=;
- b=tXKodB4fHYzo6gBGsH7uQ5utJr+Ix6lT3DDmmxRxne+7E1QsOGydsdi3dlkys6s84VnFx36hD/+aqkgTiSgkbv/8KxMV7ft/Fi965wjv6CwaerUZ83WgfzKCq+vQ4pHl5YdVkHbCquSZiXEt6SrykoDWA+ZDzWdRKL0/etD4rC6spyJovf+Yr5ysKKjiFRJkM8fejOsfkOn6Vuzo45eS2clSxygdYAbA69nd9nxJVAmbL4/v46ac2voFdAdEJoU4+NP0mvSS7nd0H9UJAaxj7Zdfg9Ny95Ins9vwe+HLA6WjkYL+jj/neBIxElpJJ0BnEETUeZJV/59W4Q82p7cG2Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nvnwmT7xpIO0hWgG+MB0sEZxoKUHGN+W16x5I7LI5ww=;
- b=gxj4T1YQvwTuLbqJUNdZofZ7xDW5dDJhY6Z5eN71YS2fnfeGAGLOt+tlBU7cQMuJPh9XcgEE14hX4GrHOml0BgidO7XMCaUSbj4G+9A8RcN6+vnbTws4W32G787ZLDf5LlbdQUB0pA0zA9uTkxTrFrBhx8LYlsI7pHIG5qRPdfnbQG9xdLccljeRC2az+JxPMGvv9SFqimF7U4NgBuUILcvTuOOTJ1B09bXGF9pdS8G2SPlqsD5sxCiKIckMKZXkDxA64j+YigopiI6rWbSveU6wBoece6cWkuhKVUeuN1Kj4rWvjVVQpUU296vYCQkwL65YJKPE4m1J0foMB0XhWQ==
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
- by AS8PR04MB7910.eurprd04.prod.outlook.com (2603:10a6:20b:288::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.36; Thu, 17 Jul
- 2025 10:26:34 +0000
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db%5]) with mapi id 15.20.8922.028; Thu, 17 Jul 2025
- 10:26:29 +0000
-From: Wei Fang <wei.fang@nxp.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"richardcochran@gmail.com" <richardcochran@gmail.com>, Claudiu Manoil
-	<claudiu.manoil@nxp.com>, Vladimir Oltean <vladimir.oltean@nxp.com>, Clark
- Wang <xiaoning.wang@nxp.com>, "andrew+netdev@lunn.ch"
-	<andrew+netdev@lunn.ch>, "davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
-	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
-	"vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>, Frank Li
-	<frank.li@nxp.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "festevam@gmail.com"
-	<festevam@gmail.com>, "F.S. Peng" <fushi.peng@nxp.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>, "kernel@pengutronix.de"
-	<kernel@pengutronix.de>
-Subject: RE: [PATCH v2 net-next 02/14] dt-bindings: net: add nxp,netc-timer
- property
-Thread-Topic: [PATCH v2 net-next 02/14] dt-bindings: net: add nxp,netc-timer
- property
-Thread-Index:
- AQHb9iZmm/EQyWHMi0uUtvbMzlnJDrQ18GUAgAAJ0BCAAA9ogIAAAdxwgAANNACAAAF4IA==
-Date: Thu, 17 Jul 2025 10:26:28 +0000
-Message-ID:
- <PAXPR04MB8510426F58E3065B22943D8C8851A@PAXPR04MB8510.eurprd04.prod.outlook.com>
-References: <20250716073111.367382-1-wei.fang@nxp.com>
- <20250716073111.367382-3-wei.fang@nxp.com>
- <20250717-sceptical-quoll-of-protection-9c2104@kuoka>
- <PAXPR04MB8510EB38C3DCF5713C6AC5C48851A@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <20250717-masterful-uppish-impala-b1d256@kuoka>
- <PAXPR04MB85109FE64C4FCAD6D46895428851A@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <af75073c-4ce8-44c1-9e48-b22902373e81@kernel.org>
-In-Reply-To: <af75073c-4ce8-44c1-9e48-b22902373e81@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|AS8PR04MB7910:EE_
-x-ms-office365-filtering-correlation-id: b6c6fe07-6dba-4caa-bcbe-08ddc51c6461
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|19092799006|376014|7416014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?NmdpcUF4NUE2bWMwRTlRUmVZVi9nVXZCcU1xeURVSlFTZDVuY051U0xuaHVw?=
- =?utf-8?B?dGpYak5GalFsM2JPVy9VVVhnTE5acG52UWJGUlc3b2labGVLTEtoZ3lkWHFZ?=
- =?utf-8?B?OUo3OStZQzZmTlkwV1V1VTI4a1pHbm5DS0pIaVY0VDhOMitJVkgwZWhmSXJU?=
- =?utf-8?B?NGZ5ZkJLVS8yZFNvbTlrTFhsNk9NKzFOQ3dXeHN4NXEzdzF6UXBkT0VSV1VI?=
- =?utf-8?B?ZFRDVnBJRE5VWlg5dTd0aGY3M2lwTVRYVlpnQXNwRytxb1NmRVQvU3NxWlJw?=
- =?utf-8?B?ZzcwSGJzQTIrWjdCUmRrTDRGbnozWld1T0JXU1Uyci81STIvWXoxNEFCYXhR?=
- =?utf-8?B?RHdJWjJTS05jOE9qMmYxTVNvWGNtRUJaeWVQdEtwQlQ1OHhJZ0hiOGtYTG8z?=
- =?utf-8?B?K1pzRks1MitHemdKRkVEcmVoaG52SVBmOGhPMXlWOWpyazRXTDRrajh3RU1p?=
- =?utf-8?B?RWlscEpvalQwd3gxcUhub0lqUzdjaGVMYkJEK0NkUXAvY2d5elhzTXRBUEhs?=
- =?utf-8?B?YUJwY09BYjVqTjNQbTdWeUYyWmV4d0hGOFBMZFNJdUtIcDBMTnk0TmdSNVVW?=
- =?utf-8?B?dUorT0lXeFlkN2tCd2IwZHVQYTY1dGRhWXlZVlMyTGFBR2tDbWJDZ3FsNjhG?=
- =?utf-8?B?d3RyTXlRRWE1cjM5aXo2dWJRQkdiMEFKYk5INkUzRlhWcTdzWkhRdUlhWlhT?=
- =?utf-8?B?ZndhcnZpM00vNjZvNzBxU2YxUys3OW9DeERlTi84Z2l3Z1JWeFh5WUtKMmxq?=
- =?utf-8?B?TDNqdTE0SXVaYW1CTnp2ZXhKWmZRV1dLRlhXRkJRemlIOFNZeGEyVlJocm54?=
- =?utf-8?B?ZFBSb09DSVd5WE16RWF5RkEyaEhLcmdCVEl2b2RpYTZTSk41WWlxdnBUNDBP?=
- =?utf-8?B?YTk3MWw0R0JBYy96M1d4WFFZTTNPNmo1Q05DSHUxZFB5RUZiRklqaUdtR0Zk?=
- =?utf-8?B?OEIvcTRXcGd3Sk81bG9FR0g1bXc5WlhKOTl6U1VVeVVhZkVCTHpGTkw2MHdX?=
- =?utf-8?B?WTQvR0gxb2RUQXpCZ3FYMG5FOWRJcGd5YWxSeC8zQjRwTlpsY3RjWDY2L1pR?=
- =?utf-8?B?Smt5bnpsNC8rVXVHYlhTL1NLcldyVE5JYURXNVZYc2ZkRWRVZUNqUk1pVGdO?=
- =?utf-8?B?aElvZFVUVG9pLzVRRjFla3VsWS92SFdmYk16ZDFsY0hwbVJEc2hpSHJsOEVa?=
- =?utf-8?B?Y29TY2xBREdacC9ZOGZ2anlqTjdPaWszdzFrL29LaEJPQzBKTmtpR1JrTEZi?=
- =?utf-8?B?NTRYaHpBbzRKaFQvQVpBK1Vpd09EYXl0QVdDSWhTcXE3OWQ5UUFwa0xnOVdl?=
- =?utf-8?B?YytmZmFnOGUwTHJVdHBzTHA5Y2ZUdDBhaldPdWlnV1lpWGlKNDV0ZlhNQ04v?=
- =?utf-8?B?c2d6VHBBanVsdSttWnR2aktJOWVWRk9kSWo2UGNzc211bXU0U0VmdHpPNW1I?=
- =?utf-8?B?SVo0SnJpRDQ4a3I3N1BHRUt3S0RpVWZQT3duZElNMHYyK2MyWmR0YW9KeFp1?=
- =?utf-8?B?WjB4MTh6bFNqZlhxOVdTT1hSRit6QlFRaTF5UDRObHFLMFd3cUtWdFlhbGVy?=
- =?utf-8?B?REV6NE1ZTmtvWWlFTVUxOWdjMkZmTEMrWndEOFU3S2g4bUdwNVpqUDJ2VWlz?=
- =?utf-8?B?UGszcTEveWlVSmpqckhIL0VUc3d4azFrWkFQN2paMUZBMEp5clpIZG13bktE?=
- =?utf-8?B?dm5aa3ROWmN3R2dyNGlOajNXN3IyYVNDczBSRFRZZ2hKcUcvYXJSQTlFTlZm?=
- =?utf-8?B?MFRCdTQwZHZkZ1UzaDRLNnBCbnVZRjkzRFJEU0R1UFRLaFRmbGpLYXFkUnkx?=
- =?utf-8?B?UWlXVUVUOUtWZ2hUeDdHdVF6bTZuNnJXc2VGNTFhWHVrSS9vS1M2bTZRNXNq?=
- =?utf-8?B?MEFualR0Q3FsNmpGdnZTckJaUVEvb2I0TkZmZVpuSEFrRnhRMlBoZDVteG55?=
- =?utf-8?B?VWlaOVhRTUgxd0VvY0FBMHprbUNwZUJEWmdXa3kyUG9WOUlweGdWL3hPSFk4?=
- =?utf-8?B?NWRxdHhzNjRnPT0=?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(19092799006)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?Njh6elU1b0ZHN0locFZUZ1Y3eXAyc2E0TndEekllMTRpUDluNlUweTV0bzNk?=
- =?utf-8?B?Ly96bDIwbW03cDNKRXdmWGJrcEpFZXBINURzREV4RTZGSGhpMEpsQnVJaEpm?=
- =?utf-8?B?ZWlmYUc4UjAzMERDbUxXTU1uOUc4eXRNMFVneG15SGZYNFd3Sm0wcWNjeWc1?=
- =?utf-8?B?cTdHUnRQNWU5N0o3aFZxNHRvRFB6Uy9wcVpKRWw0emhLbm1FMXJCWHdLZkhY?=
- =?utf-8?B?NUJPcVJxR2lUUEx6K3hobTgzMXRRS1p4V1ArUU81WW1hbjg3VENEOXdJRG5U?=
- =?utf-8?B?WkVGWmlOWGRWV3FacHJ2MElTdjBTK3YwWVc2OXVKZXdwcHJ2bW1nQ3ArakY2?=
- =?utf-8?B?NUpDNUY1R3hlOTl2NHN2RE05N0hpTlFjUFhOWTg4RUFsV21iN1JxK0JVLytY?=
- =?utf-8?B?a1FBKzJGMW10WnNWWnJBWDB5TEoxOHJLSnR2c1BpMnVONkpqZ1BYV1ZnYkxh?=
- =?utf-8?B?TDdkL2FiNXBXMnZQZ01HVExSMWpTWnI2aDZSdjFsUGREb2ZnanE3ZkNTQUJF?=
- =?utf-8?B?MkY4ZGRpRzBkSUxjeEdhL0xqVVhDb2s0ci9mN2JxNDVCVkFPSUZldmFud2dv?=
- =?utf-8?B?Tjk4MHhZaVlRREY1L0FQRlY0SWFMTENXZzdTMVJLUVJla2RMWWJqbk5ONW9Z?=
- =?utf-8?B?cjkwdTN4UW80b2puMFlLYno5dW9WQmE5N0Z3c29lUVpLMEQzaTVxcUhYRmpG?=
- =?utf-8?B?NjRCYUxOUGRmbUN2NDROWlpQVWQ3L0hiWWRrb3FlbWlpWnBPQm5sQWlFNWVw?=
- =?utf-8?B?YU1WMFl5d3dESGtqYmc4bDhQL3lhRndHU3F6Nk82MWpNTDVQS3hURUErdUE5?=
- =?utf-8?B?dDRhSXk2M1JYclBWOWRVMGpPMW1icWtOOWxxeFFlTWFqNndhVnh6VldMUzdH?=
- =?utf-8?B?d3czQ2lneUMrYmV6N25VQVRTSy9wUEpOTGRJbDlTbnBINEc1Yms4T3R6NnBu?=
- =?utf-8?B?Ulc3eUVOQ1hIVEhndGlYV3V0QlNTZStsOHFEVDdhdzlRaTBxM0F6SHdTVzlz?=
- =?utf-8?B?c29kcWtVcElKZGg5ajNuVGJYWVhFN1h4ZmZsYjgvdDkwVEJlUEFmdThjaUYx?=
- =?utf-8?B?ZTdFaW15VzN6ZjQ1NDdJSkZsdVMzeTlodXRZanJVeU1IYi9tYTlPMFZMNTFT?=
- =?utf-8?B?M3dnMCtacnNMblBnTjE2NDVCeFpCaFE3Q3BqQmdseDB6NjdNNXIvS0Q2bHBr?=
- =?utf-8?B?dEwxWDM5UjdDNzNaa1pnQkQ2b0c0TEFVMWlhY2VPT2dzTXV0YS9ndWRCb2Uw?=
- =?utf-8?B?NEl5d0R1dnpDbWlQSloxOGpINzlsYm96RzRlWFJXRVhXTmViRnhZZ1VTRldG?=
- =?utf-8?B?UWFVb1ErRzNUb3JZYzNXd1ZZZFlQSks0R1hjdU1UQkJKenYzNEdETlR6Nzhx?=
- =?utf-8?B?SnF0a2drajYvZ1ZmSURzU0IzUmk5R2t5dTNMR2Q5b3A3TFhGem9jcnFKV3pF?=
- =?utf-8?B?K1llNlZsdjdCdWFWbi9iRDJZT3FPTXY3RHFOdy95cTFCSDhLcUU5U1NvS2Nm?=
- =?utf-8?B?REtvQ1dBa0ovR3hRaU5iRm1vQXVQMGgrQklab2lOWHo2VWtXY3N0ZVlOZHJu?=
- =?utf-8?B?VGg1VXRwWTFpYmhNekxyU1U1SHF0SE1vbGhwRE1BbTR1UDgzcm5wRElocmVv?=
- =?utf-8?B?eFNIOENmNXR1eTM5RWE5Y0JPZERraGtmRzJPeXQ1eERCeGNmNmZnSWZwalRI?=
- =?utf-8?B?WVJtMWhmUjhWdU0yN2Y1WjBDbGVDTW00TXQzQjdSelE2WDZ6U0IvYXRuV09N?=
- =?utf-8?B?NXQ3OFBwdTZNVXYrWnJWSU5WTHhvWVJOMnNmSjBuaVpIbEJKTlpUWFY5OVY4?=
- =?utf-8?B?cFVxVFhvUFczUFh6ekdjRmtNNUhkODhjS01ZeE9MUXZYSm9mSDRhYWE4KzdV?=
- =?utf-8?B?U1J5anVqZHhQRFVTRVRpdWtuZ0RBdmpmYkJuenE1elBKaWYrRE1zUW9yQTEx?=
- =?utf-8?B?MG4ySDVEMnFyWmFqaUx1ZmFUY044YlVBTzhtRzVBTi84M0xXdU4wenhTRW82?=
- =?utf-8?B?ODdoOEZSZFF4Qm9jRk5hc3RJQzJFNnFqeVMwbTV0RmdDbWkzUnJaU25BcTBq?=
- =?utf-8?B?WGJpRWUzSHh4aE5FVDVpNDIxajE5Q25iMWhub1BiWkRha3V1WW9IZ2dmRnN2?=
- =?utf-8?Q?9rb4=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205762046B3
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 10:27:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752748059; cv=none; b=nXXsZ6HUgx0A0mM5vbaaGHChWljfv6fjUiDIupFUrhLFYddzg9K333hWXHTV/rDnoz3fSYKzoof4vDet7VbUCtade676uKWM6zrLLvrkjgLJRppjGQDRNBK1F5POye1AOQ1Sk7LGrrSuLSR2DhC9+MOTQWso0YmPF6T8xjqUd+w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752748059; c=relaxed/simple;
+	bh=IFQcRoS40z/KdpYplMG/Rnknz5otB91TkOE2Ys9zfIg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MhbOJquUw28WNPixyth4bS78pgXBqqWudhU+Esj8pO8mRCp6anlBhELv+eJ/Ro6Npuh+XlQX2ofOjesSf03L5FGLAtxwPYErVEccJjdByAvBPa7usTz7N600R1nV7bh+nr8Jgv64VpVdlqu3u7int7/Jh58NOSSEKvbJWBUeL2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ft8rGHTr; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3b5e6bfb427so433043f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 03:27:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1752748053; x=1753352853; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tie25ahngtfYozMeErJjzJKzu3NgX/BGsiimS9pCH3Q=;
+        b=ft8rGHTrFByIymErok0USB+V5C5afv3qpUatFsZT0NwCrAb/XwqL/jLlPExpZyaKeY
+         gwtNIjC5rKzd7/LDtChQUsU/mpjuaFGOtR+nmw7ozGwRrbJmYgC0V3KRcTB2H5061wIp
+         gz+exTOJQxoLyVIpVlQgfX9MW+waoJiGmfcYOru0mS3lL2gaTZz/lRG6Qa9a8JEC+nHW
+         +cEbQ3ZDg5r9Vgk+6NxpQams5uyRJgIqfF5jPNuy7774H/15liFLcD0f20CKvAEYmvox
+         D6Eydc4pXP7zdOWffWd737CSDD5BwP6NhaTwsQApnv8NAIxWVNXGphU4Jd24YBQENyhM
+         iIiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752748053; x=1753352853;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tie25ahngtfYozMeErJjzJKzu3NgX/BGsiimS9pCH3Q=;
+        b=C3a2OTSVR+4ZAg8HBHM97qIHrhLNeZE7IPYAHzem/ttGFZtwkcmJdjVRM7GWuGk8FA
+         qUz8SdtSX8FW+nLaUwVRlHIFf8m7QbFmnb8Cq/2uU0CdkCvxhZuwgjq1CO+AGpu6TxiY
+         j+N/bgQov4307wRSRcnnRcdWPOhJLEc7dgO/CvwD6ju7rkeYSL/viovPx5vzYmcXNRoE
+         VNCD2fgTolRb7Q/J9FwOBvW4d49JrUBDWKyixvZVHcmkEGqX0/skqIcR+jr6aOltQgkF
+         U7TVl770z3Kv9TrBQUxT1ij4VEzvsvp5AUKtRdDdUJN/Teq9BwmHA6ctE2sXSMgHt/ix
+         EyMg==
+X-Forwarded-Encrypted: i=1; AJvYcCXAV+l08sW+wcOg0fEAreGMhw6m4wh1xKvUsqq8soaNVka2takwh+xaAFTr2k+3lTCd5X5qDQP1Pgoe9f8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKg6dX54OTw9Tp6IadJn8ijkTPfhsS0r2VFUQPxd8yF7h2yRZ5
+	KwlWswPUHLXYClYYMJPCQhOup0/q0GmHnkXrHlTLQecxVIzeijjQ96GZdl6dupDpAAk=
+X-Gm-Gg: ASbGnculS8xMT2AAlhm+5IrgY8l6Hgf2qF2guxiyccEe9wIc1mp7ehIrAbZ68BnqEJh
+	0lefwWNo0EF94gmDgr7LZ1Yw7eSf8hLH7noGr3G4++jy/jgC0N8ihhyha2nDhEs81QUCAHu9Lfl
+	4bBjwn5eEkcG2Fhr6xjZZUitjSb+xdEbcu/Jt+IHlvAn/PNaciB75/9Fnty2pfToeiXkvxkFVe3
+	WxjkKRFQTyIuzTlTCNq5eNB7W9sjHz0gaHg2gOTD8+IzN6yEx1wfdt7BSQ4GdTAWTcSZpakeHNp
+	2onLQhBj14DEXu8DlVlRR/A9sb2rdVTB9xuJXy8MevPZGQTTEeLng1sXfTZtGgCXJtPY5V5k/CZ
+	Y7P/S1oRM5OpQBoXttVvypoIRyg==
+X-Google-Smtp-Source: AGHT+IERXsLgfOwcddXT3ncp4XpdwObpfPX4q7D341/fTbrh2ntUdV1/4fXpqEa2cD9tDvB0w4QSMQ==
+X-Received: by 2002:a05:6000:43d4:10b0:3a6:d7ec:c701 with SMTP id ffacd0b85a97d-3b60dd7aa83mr3719533f8f.30.1752748053321;
+        Thu, 17 Jul 2025 03:27:33 -0700 (PDT)
+Received: from [10.20.4.146] ([149.62.209.237])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-456278ab486sm61237325e9.1.2025.07.17.03.27.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Jul 2025 03:27:33 -0700 (PDT)
+Message-ID: <0b85f378-221b-408e-865b-b4eab675a351@suse.com>
+Date: Thu, 17 Jul 2025 13:27:30 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b6c6fe07-6dba-4caa-bcbe-08ddc51c6461
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jul 2025 10:26:28.9795
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Bf+YDrX3XFFdGYlOwBd0h6XwXQQrrV8XJucF9xvueofGiPPBHX1ace1KGLArtnlsrC8/fwdqQEXPLWatj4V5vA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7910
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] docs: document linked lists
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+ Jonathan Corbet <corbet@lwn.net>
+Cc: Randy Dunlap <rdunlap@infradead.org>, kernel@collabora.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250714-linked-list-docs-v3-1-56c461580866@collabora.com>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+In-Reply-To: <20250714-linked-list-docs-v3-1-56c461580866@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-PiBPbiAxNy8wNy8yMDI1IDExOjQ5LCBXZWkgRmFuZyB3cm90ZToNCj4gPj4+DQo+ID4+PiBJIGRv
-IG5vdCB0aGluayBpdCBpcyB0aW1lc3RhbXBlci4gRWFjaCBFTkVUQyBoYXMgdGhlIGFiaWxpdHkg
-dG8gcmVjb3JkDQo+ID4+PiB0aGUgc2VuZGluZy9yZWNlaXZpbmcgdGltZXN0YW1wIG9mIHRoZSBw
-YWNrZXRzIG9uIHRoZSBUeC9SeCBCRCwgYnV0DQo+ID4+PiB0aGUgdGltZXN0YW1wIGNvbWVzIGZy
-b20gdGhlIFRpbWVyLiBGb3IgcGxhdGZvcm1zIGhhdmUgbXVsdGlwbGUgVGltZXINCj4gPj4NCj4g
-Pj4gSXNuJ3QgdGhpcyBleGFjdGx5IHdoYXQgdGltZXN0YW1wZXIgaXMgc3VwcG9zZWQgdG8gZG8/
-DQo+ID4+DQo+ID4gQWNjb3JkaW5nIHRvIHRoZSBkZWZpbml0aW9uLCB0aW1lc3RhbXBlciByZXF1
-aXJlcyB0d28gcGFyYW1ldGVycywgb25lIGlzDQo+ID4gdGhlIG5vZGUgcmVmZXJlbmNlIGFuZCB0
-aGUgb3RoZXIgaXMgdGhlIHBvcnQsIGFuZCB0aGUgdGltZXN0YW1wZXIgaXMgYWRkZWQNCj4gPiB0
-byB0aGUgUEhZIG5vZGUsIGFuZCBpcyB1c2VkIGJ5IHRoZSBnZXJuZXJpYyBtZGlvIGRyaXZlci4g
-VGhlIFBUUCBkcml2ZXINCj4gDQo+IA0KPiBXZSBkbyBub3Qgc3BlYWsgYWJvdXQgZHJpdmVycy4N
-Cj4gDQo+ID4gcHJvdmlkZXMgdGhlIGludGVyZmFjZXMgb2YgbWlpX3RpbWVzdGFtcGluZ19jdHJs
-LiBTbyB0aGlzIHByb3BlcnR5IGlzIHRvDQo+ID4gcHJvdmlkZSBQVFAgc3VwcG9ydCBmb3IgUEhZ
-IGRldmljZXMuDQo+ID4NCj4gPg0KPiA+IHRpbWVzdGFtcGVyOglwcm92aWRlcyBjb250cm9sIG5v
-ZGUgcmVmZXJlbmNlIGFuZA0KPiA+IAkJCXRoZSBwb3J0IGNoYW5uZWwgd2l0aGluIHRoZSBJUCBj
-b3JlDQo+ID4NCj4gPiBUaGUgInRpbWVzdGFtcGVyIiBwcm9wZXJ0eSBsaXZlcyBpbiBhIHBoeSBu
-b2RlIGFuZCBsaW5rcyBhIHRpbWUNCj4gPiBzdGFtcGluZyBjaGFubmVsIGZyb20gdGhlIGNvbnRy
-b2xsZXIgZGV2aWNlIHRvIHRoYXQgcGh5J3MgTUlJIGJ1cy4NCj4gPg0KPiA+IEJ1dCBmb3IgTkVU
-Qywgd2Ugb25seSBuZWVkIHRoZSBub2RlIHBhcmFtZXRlciwgYW5kIHRoaXMgcHJvcGVydHkgaXMN
-Cj4gPiBhZGRlZCB0byB0aGUgTUFDIG5vZGUuDQo+IA0KPiBJIHRoaW5rIHdlIGRvIG5vdCB1bmRl
-cnN0YW5kIGVhY2ggb3RoZXIuIEkgYXNrIGlmIHRoaXMgaXMgdGhlDQo+IHRpbWVzdGFtcGVyIGFu
-ZCB5b3UgZXhwbGFpbiBhYm91dCBhcmd1bWVudHMgb2YgdGhlIHBoYW5kbGUuIFRoZQ0KPiBhcmd1
-bWVudHMgYXJlIG5vdCByZWxldmFudC4NCj4gDQo+IFdoYXQgaXMgdGhpcyBwdXJwb3NlL3JvbGUv
-ZnVuY3Rpb24gb2YgdGhlIHRpbWVyIGRldmljZT8NCg0KVGhlIHRpbWVyIGRldmljZSBwcm92aWRl
-cyBQSEMgd2l0aCBuYW5vc2Vjb25kIHJlc29sdXRpb24sIHNvIHRoZQ0KcHRwX25ldGMgZHJpdmVy
-IHByb3ZpZGVzIGludGVyZmFjZXMgdG8gYWRqdXN0IHRoZSBQSEMsIGFuZCB0aGlzIFBIQw0KaXMg
-dXNlZCBieSB0aGUgRU5FVEMgZGV2aWNlLCBzbyB0aGF0IHRoZSBFTkVDVCBjYW4gY2FwdHVyZSB0
-aGUNCnRpbWVzdGFtcCBvZiB0aGUgcGFja2V0cy4NCg0KPiANCj4gV2hhdCBpcyB0aGUgcHVycG9z
-ZSBvZiB0aGlzIG5ldyBwcm9wZXJ0eSBpbiB0aGUgYmluZGluZyBoZXJlPw0KPiANCg0KVGhpcyBw
-cm9wZXJ0eSBpcyB0byBhbGxvdyB0aGUgRU5FVEMgdG8gZmluZCB0aGUgdGltZXIgZGV2aWNlIHRo
-YXQgaXMNCnBoeXNpY2FsbHkgYm91bmQgdG8gaXQuIHNvIHRoYXQgRU5FVEMgY2FuIHBlcmZvcm0g
-UFRQIHN5bmNocm9uaXphdGlvbg0Kd2l0aCBvdGhlciBuZXR3b3JrIGRldmljZXMuDQoNCg==
+
+
+On 14.07.25 г. 11:14 ч., Nicolas Frattaroli wrote:
+<snip>
+> +In State 1, we arrive at the following situation::
+> +
+> +        .-----------------------------------------------------.
+> +        |                                                     |
+> +        v                                                     |
+> +    .--------.     .-------.     .---------.     .---------.  |
+> +    | clowns |---->| Grock |---->| Dimitri |---->| Alfredo |--'
+> +    '--------'     '-------'     '---------'     '---------'
+> +
+> +          .-------------------------------.
+> +          v                               |
+> +    .----------.     .-----.     .-----.  |
+> +    | sidewalk |---->| Pic |---->| Pio |--'
+> +    '----------'     '-----'     '-----'
+> +
+> +In State 2, after we've moved Dimitri to the tail of sidewalk, the situation
+> +changes as follows::
+> +
+> +        .-------------------------------------.
+> +        |                                     |
+> +        v                                     |
+> +    .--------.     .-------.     .---------.  |
+> +    | clowns |---->| Grock |---->| Alfredo |--'
+> +    '--------'     '-------'     '---------'
+> +
+> +          .-----------------------------------------------.
+> +          v                                               |
+> +    .----------.     .-----.     .-----.     .---------.  |
+> +    | sidewalk |---->| Pic |---->| Pio |---->| Dimitri |--'
+> +    '----------'     '-----'     '-----'     '---------'
+> +
+> +As long as the source and destination list head are part of the same list, we
+> +can also efficiently bulk move a segment of the list to the tail end of the
+> +list. We continue the previous example by adding a list_bulk_move_tail() after
+> +State 2, moving Pic and Pio to the tail end of the sidewalk list.
+> +
+> +.. code-block:: c
+> +
+> +  static void circus_clowns_exit_car(struct circus_priv *circus)
+> +  {
+> +          struct list_head sidewalk = LIST_HEAD_INIT(sidewalk);
+> +          struct clown *grock, *dimitri, *pic, *alfredo, *pio;
+> +          struct clown_car *car = &circus->car;
+> +
+> +          /* ... clown initialization, list adding ... */
+> +
+> +          /* State 0 */
+> +
+> +          list_move(&pic->node, &sidewalk);
+> +
+> +          /* State 1 */
+> +
+> +          list_move_tail(&dimitri->node, &sidewalk);
+> +
+> +          /* State 2 */
+
+Nit: I think it's unnecessary to repeat the initilization in code since 
+you've already explicitly mentioned you continue form State 2 of the 
+previous example, so the only salient information is the additional 
+list_bulk_move_tail call.
+> +
+> +          list_bulk_move_tail(&sidewalk, &pic->node, &pio->node);
+> +
+> +          /* State 3 */
+> +  }
+> +
+> +For the sake of brevity, only the altered "sidewalk" list at State 3 is depicted
+> +in the following diagram::
+> +
+> +          .-----------------------------------------------.
+> +          v                                               |
+> +    .----------.     .---------.     .-----.     .-----.  |
+> +    | sidewalk |---->| Dimitri |---->| Pic |---->| Pio |--'
+> +    '----------'     '---------'     '-----'     '-----'
+> +
+> +Do note that list_bulk_move_tail() does not do any checking as to whether all
+> +three supplied ``struct list_head *`` parameters really do belong to the same
+> +list. If you use it outside the constraints the documentation gives, then the
+> +result is a matter between you and the implementation.
+
+The last part of the sentence can be simplified to just state the result 
+is undefined.
+
+<snip>
+
+> +
+> +Splicing two lists together
+> +---------------------------
+> +
+> +Say we have two lists, in the following example one represented by a list head
+> +we call "knie" and one we call "stey". In a hypothetical circus acquisition,
+> +the two list of clowns should be spliced together. The following is our
+> +situation in "State 0"::
+> +
+> +        .-----------------------------------------.
+> +        |                                         |
+> +        v                                         |
+> +    .------.   .-------.   .---------.   .-----.  |
+> +    | knie |-->| Grock |-->| Dimitri |-->| Pic |--'
+> +    '------'   '-------'   '---------'   '-----'
+> +
+> +        .-----------------------------.
+> +        v                             |
+> +    .------.   .---------.   .-----.  |
+> +    | stey |-->| Alfredo |-->| Pio |--'
+> +    '------'   '---------'   '-----'
+> +
+> +The function to splice these two lists together is list_splice(). Our example
+> +code is as follows:
+> +
+> +.. code-block:: c
+> +
+> +  static void circus_clowns_splice(void)
+> +  {
+> +          struct clown *grock, *dimitri, *pic, *alfredo, *pio;
+> +          struct list_head knie = LIST_HEAD_INIT(knie);
+> +          struct list_head stey = LIST_HEAD_INIT(stey);
+> +
+> +          /* ... Clown allocation and initialization here ... */
+> +
+> +          list_add_tail(&grock->node, &knie);
+> +          list_add_tail(&dimitri->node, &knie);
+> +          list_add_tail(&pic->node, &knie);
+
+nit: Might add a new line to make it more visually clear that you are 
+adding nodes to different lists.
+
+> +          list_add_tail(&alfredo->node, &stey);
+> +          list_add_tail(&pio->node, &stey);
+> +
+> +          /* State 0 */
+> +
+> +          list_splice(&stey, &dimitri->node);
+> +
+> +          /* State 1 */
+> +  }
+> +
+> +The list_splice() call here adds all the entries in ``stey`` to the list
+> +``dimitri``'s ``node`` list_head is in, after the ``node`` of ``dimitri``. A
+> +somewhat surprising diagram of the resulting "State 1" follows::
+> +
+> +        .-----------------------------------------------------------------.
+> +        |                                                                 |
+> +        v                                                                 |
+> +    .------.   .-------.   .---------.   .---------.   .-----.   .-----.  |
+> +    | knie |-->| Grock |-->| Dimitri |-->| Alfredo |-->| Pio |-->| Pic |--'
+> +    '------'   '-------'   '---------'   '---------'   '-----'   '-----'
+> +                                              ^
+> +              .-------------------------------'
+> +              |
+> +    .------.  |
+> +    | stey |--'
+> +    '------'
+> +
+> +Traversing the ``stey`` list no longer results in correct behavior. A call of
+> +list_for_each() on ``stey`` results in an infinite loop, as it never returns
+> +back to the ``stey`` list head.
+> +
+> +This is because list_splice() did not reinitialize the list_head it took
+> +entries from, leaving its pointer pointing into what is now a different list.
+> +
+> +If we want to avoid this situation, list_splice_init() can be used. It does the
+> +same thing as list_splice(), except reinitalizes the donor list_head after the
+> +transplant.
+> +
+> +Concurrency considerations
+> +--------------------------
+> +
+> +Concurrent access and modification of a list needs to be protected with a lock
+> +in most cases. Alternatively and preferably, one may use the RCU primitives for
+> +lists in read-mostly use-cases, where read accesses to the list are common but
+> +modifications to the list less so. See Documentation/RCU/listRCU.rst for more
+> +details.
+> +
+> +Further reading
+> +---------------
+> +
+> +* `How does the kernel implements Linked Lists? - KernelNewbies <https://kernelnewbies.org/FAQ/LinkedLists>`_
+> +
+> +Full List API
+> +=============
+> +
+> +.. kernel-doc:: include/linux/list.h
+> +   :internal:
+> 
+> ---
+> base-commit: f55b3ca3cf1d1652c4b3481b671940461331d69f
+> change-id: 20250520-linked-list-docs-ce5b956d4602
+> 
+> Best regards,
+
+
+One suggestion, how about adding O() complexity of the documented 
+functions.
 
