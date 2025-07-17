@@ -1,105 +1,95 @@
-Return-Path: <linux-kernel+bounces-735238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21C4EB08C9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:12:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0814CB08CAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:18:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C5CD3A645C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:11:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F39DB7ABB92
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:16:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58C2B29E0F8;
-	Thu, 17 Jul 2025 12:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="2Qt6Z4X1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34A52BD004;
+	Thu, 17 Jul 2025 12:18:00 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83BB1288C12;
-	Thu, 17 Jul 2025 12:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2BDF2BD03C
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 12:17:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752754307; cv=none; b=VEeOKMwsVdO2xz/HKJykigcVoAuxuz70NbmcJud/jXAF2oRw+gtWUxgjOv3c+4Owm3DGVD34KCxdtmqzs2jCRfrRC2e7zu0d5T/fx8LC29Moq4isXQrsMkU4beiwU2srsxEsBT/lBvH393OVaXHka2ii6OcwG0B40KWzPZ8ZulU=
+	t=1752754680; cv=none; b=N7BDua3a1VrzjwI6qY5cUR1iW5cB6hUtlbiKiEAvhocLD3qCTijIBlC2/K0bfSVU/288o064lbf2kJ53IhA72xXwI3YtsuGlearZEgcb8ndcaxIhh859Cz+RFgn7b2a/0yXdQ5nqfyhesJ9fV3moB99bwU6PQUJO25yioF+9YBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752754307; c=relaxed/simple;
-	bh=u7SEQClQAB7gDVI1zZ2Aqc9od3vbr6CRMh/fPM8fFwc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ArdXTH85FX9CJ3p0BrkLjcDicb2FdcHqahZT4yKOErT6WehUUi1W8p12BNko/WzoNZoWqbS6D9eo5Ev0ZUN1sm1oypnJwGPR0bDzTOKur4PK71G9gi8/4Wm3DCGxKIluyGOCnHYxVqHal46jDhQ9XL1yDU1OrKlWJRrg9ZwrcEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=2Qt6Z4X1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 663D5C4CEEB;
-	Thu, 17 Jul 2025 12:11:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752754305;
-	bh=u7SEQClQAB7gDVI1zZ2Aqc9od3vbr6CRMh/fPM8fFwc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=2Qt6Z4X11YhogWwmPVhJNTezRMtYrXrmvZKzpaNeXXzrRKVkm27yaCiy5/7CxAvjd
-	 YkN/PYtnuacWtPoixP/hG2zdXON89AXUdXcpob0TSY8888tb0EIehkEW0RBPkmwf/I
-	 5rwizpj+UPQM+PsLiZ95EScAmEzGwG7w2hBjdInI=
-Date: Thu, 17 Jul 2025 14:11:41 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: x86@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org, linux-mips@vger.kernel.org,
-	loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
-	linux-sh@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/7] syscore: Pass context data to callbacks
-Message-ID: <2025071716-phoney-object-1648@gregkh>
-References: <20250717103241.2806798-1-thierry.reding@gmail.com>
+	s=arc-20240116; t=1752754680; c=relaxed/simple;
+	bh=ndmxXjzqfLlNN9SZH4tEsLmBgGx/xxp4Tt9LUR5ymcI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=g3J//np3jXvUvsJBIPyl0+t3NoICC56hkv/JMe3UDjnxiKNDBOCT3SnS/8JB9R9ZblnRv0L67w3GZn3dQvgsXleue3LvFWO/VK9rBfRSID3bBizQHIEyJL3vd81L5Bu/AOpuOc7Tyk9pZFqc8JHxdg+u7yzI0vLTmGL303icWpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bjWzt4C4jz2Cfsl;
+	Thu, 17 Jul 2025 20:13:46 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1A4B81400D4;
+	Thu, 17 Jul 2025 20:17:54 +0800 (CST)
+Received: from kwepemq200018.china.huawei.com (7.202.195.108) by
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 17 Jul 2025 20:17:53 +0800
+Received: from localhost.localdomain (10.50.165.33) by
+ kwepemq200018.china.huawei.com (7.202.195.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 17 Jul 2025 20:17:53 +0800
+From: Yicong Yang <yangyicong@huawei.com>
+To: <will@kernel.org>, <mark.rutland@arm.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: <hejunhao3@huawei.com>, <jonathan.cameron@huawei.com>,
+	<prime.zeng@hisilicon.com>, <linuxarm@huawei.com>,
+	<yangyicong@hisilicon.com>, <wangyushan12@huawei.com>
+Subject: [PATCH v5 0/2] drivers/perf: hisi: Add support for HiSilicon NOC and MN PMU driver
+Date: Thu, 17 Jul 2025 20:17:25 +0800
+Message-ID: <20250717121727.61057-1-yangyicong@huawei.com>
+X-Mailer: git-send-email 2.31.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250717103241.2806798-1-thierry.reding@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemq200018.china.huawei.com (7.202.195.108)
 
-On Thu, Jul 17, 2025 at 12:32:34PM +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> Hi,
-> 
-> Something that's been bugging me over the years is how some drivers have
-> had to adopt file-scoped variables to pass data into something like the
-> syscore operations. This is often harmless, but usually leads to drivers
-> not being able to deal with multiple instances, or additional frameworks
-> or data structures needing to be created to handle multiple instances.
-> 
-> This series proposes to "objectify" struct syscore_ops by passing a
-> pointer to struct syscore_ops to the syscore callbacks. Implementations
-> of these callbacks can then make use of container_of() to get access to
-> contextual data that struct syscore_ops was embedded in. This elegantly
-> avoids the need for file-scoped, singleton variables, by tying syscore
-> to individual instances.
-> 
-> Patch 1 contains the bulk of these changes. It's fairly intrusive
-> because it does the conversion of the function signature all in one
-> patch. An alternative would've been to introduce new callbacks such that
-> these changes could be staged in. However, the amount of changes here
-> are not quite numerous enough to justify that, in my opinion, and
-> syscore isn't very frequently used, so the risk of another user getting
-> added while this is merged is rather small. All in all I think merging
-> this in one go is the simplest way.
+From: Yicong Yang <yangyicong@hisilicon.com>
 
-All at once is good, I like the idea, but:
+Add support for two new Uncore PMUs to monitor the events of the system bus
+(by NoC PMU) and the DVM operations (by MN PMU).
 
-> Patches 2-7 are conversions of some existing drivers to take advantage
-> of this new parameter and tie the code to per-instance data.
+Change since v4:
+- Rename ovflow_status to .overflow_status with Jonathan's Tag, thanks!
+Link: https://lore.kernel.org/linux-arm-kernel/20250717074138.39903-1-yangyicong@huawei.com/
 
-That's great, but none of these conversions actually get rid of the
-global structure, so what actually was helped here other than the churn
-of this "potentially" allowing the global data variables from being
-removed in the future?
+Change since v3:
+- Use ACPI driver data to retrieve the hardware capabilities
+Link: https://lore.kernel.org/linux-arm-kernel/20250619125557.57372-1-yangyicong@huawei.com/
 
-So how does this actually help?
+Junhao He (1):
+  drivers/perf: hisi: Add support for HiSilicon MN PMU driver
 
-Also, small nit, make the function pointers const please :)
+Yicong Yang (1):
+  drivers/perf: hisi: Add support for HiSilicon NoC PMU
 
-thanks,
+ Documentation/admin-guide/perf/hisi-pmu.rst  |  11 +
+ drivers/perf/hisilicon/Makefile              |   3 +-
+ drivers/perf/hisilicon/hisi_uncore_mn_pmu.c  | 411 +++++++++++++++++
+ drivers/perf/hisilicon/hisi_uncore_noc_pmu.c | 443 +++++++++++++++++++
+ 4 files changed, 867 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/perf/hisilicon/hisi_uncore_mn_pmu.c
+ create mode 100644 drivers/perf/hisilicon/hisi_uncore_noc_pmu.c
 
-greg k-h
+-- 
+2.24.0
+
 
