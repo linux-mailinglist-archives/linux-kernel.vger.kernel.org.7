@@ -1,132 +1,111 @@
-Return-Path: <linux-kernel+bounces-734985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90BF0B08920
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:19:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0DD3B08928
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:21:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A06EA7A63A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:18:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50FEC1A61435
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70578288CBD;
-	Thu, 17 Jul 2025 09:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eGLqCPU7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DFFD289E1D;
+	Thu, 17 Jul 2025 09:21:07 +0000 (UTC)
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFA014503B;
-	Thu, 17 Jul 2025 09:19:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33CB34503B;
+	Thu, 17 Jul 2025 09:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752743991; cv=none; b=JcI8yv5ZsfJmZaNoiYJLV1Es5TDM7uNsYcTAqC2wgUUTNwQU8dzc6ZgGO2ebHPHqA4C0S5SzGB3PFbOHLB0U4LUyL+hmltg0m9jc+69bDGlr3gEdSSNzWFXsK6HU311K7ggskLXp8cjCvU0KVegwDlwyogLwDtj8H38n+5p/2e4=
+	t=1752744067; cv=none; b=Wx6jvuNIMw5GFm8Ju082+1auWR3jX7GCBmIN6ZxcQ5keDbinhSMvFy5X7UDDXNCHPD4XSuYI5UQHd9jsApeMyFM4LBF9Pm83vaRlwUZDCgEcLOn2zsYwE5AWVFznc0OEp9GcaYKje31+Kl1LHL4nM3tFS8uzIqhpijlHUX3M3CU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752743991; c=relaxed/simple;
-	bh=berKg2cuWH4Y7zdED4eT5oFHY1ZYlo7PAlZDh/gw2g0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=sNHiLShGJ6+jm/B6yV9cwn4qXEkaTUkoU4/rGnQNYOrD8rvRxIbufpR75yKVgOFUGexSHCZxwAw4kaFc+cDsfQw/cY5VFAVIn1YVgt4Cwk5Nc0LBO1g+jtKLoi2tJvWiCnp620VgzMPCRVIJcQEuIOVqGp6uZnV3xn/NXW+0weo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eGLqCPU7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 6552AC4CEF7;
-	Thu, 17 Jul 2025 09:19:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752743991;
-	bh=berKg2cuWH4Y7zdED4eT5oFHY1ZYlo7PAlZDh/gw2g0=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=eGLqCPU71HxltxYx+8SOmxosROA1tIcHvwXwJV2fcsf+9i5B48YzoVF/d5XKQR+9Q
-	 mQlUxTh1rfms2L3dirXmXM1a3u7OxVHzvM7sg7e2ZAtdpGPWn5CW58U19h6JW4K7aW
-	 ODpRs2RxXedlSj5+Hc79afHV219gNM3ZIDaWMU9VreFgltZ2utlnwTGAEipCfrFwFf
-	 gP1ccW5XqK2NKPcY7Lh7VPaYoiUqSOZ8tO5Stikl3iNqW15q7NWkKPdhOsRPXQzm+E
-	 P7eD/uIJV+7x9E2MS6OFh0C1c3xBMtaR/gqC26jhBpQP7TVqCkD5wuvnY5JdE4tv4t
-	 yioyvK832qNNQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54096C83F22;
-	Thu, 17 Jul 2025 09:19:51 +0000 (UTC)
-From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
-Date: Thu, 17 Jul 2025 17:19:35 +0800
-Subject: [PATCH] rtc: amlogic-a4: Optimize global variables
+	s=arc-20240116; t=1752744067; c=relaxed/simple;
+	bh=nU19RtklzUHY7WY64Ssw7G0Wx4k8Zq+35hz9TBSimKw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SbHfX7trULilgGCJXiEl0GYuBhhADVT8nWGindfXpTpDym0glCJwsBnlnjPcTf7ACGvJ7+xfYQSktIA9l9k8MOqwxnp+hFOk0Oyz9b0ZOXNH6yM+rTrNTJ5MbkGMnHBjuU6LFK8WV7b+sXZV59ePnWYhGdFU0OUAczuaYlGk46U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C455543123;
+	Thu, 17 Jul 2025 09:20:58 +0000 (UTC)
+Message-ID: <96fad5ac-3ddd-44eb-b82d-03d2ddfb978c@ghiti.fr>
+Date: Thu, 17 Jul 2025 11:20:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/7] riscv: hwprobe: Document MIPS xmipsexectl vendor
+ extension
+To: aleksa.paunovic@htecgroup.com, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Jonathan Corbet <corbet@lwn.net>
+Cc: Palmer Dabbelt <palmer@sifive.com>, Conor Dooley <conor@kernel.org>,
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20250625-p8700-pause-v4-0-6c7dd7f85756@htecgroup.com>
+ <20250625-p8700-pause-v4-5-6c7dd7f85756@htecgroup.com>
+Content-Language: en-US
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20250625-p8700-pause-v4-5-6c7dd7f85756@htecgroup.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250717-rtc-regmap-v1-1-ad19736ccb09@amlogic.com>
-X-B4-Tracking: v=1; b=H4sIACbAeGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDc0Nz3aKSZN2i1PTcxAJdQxOD1FRjiyTzpDRzJaCGgqLUtMwKsGHRsbW
- 1AOcNBfZcAAAA
-To: Yiting Deng <yiting.deng@amlogic.com>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: linux-amlogic@lists.infradead.org, linux-rtc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Xianwei Zhao <xianwei.zhao@amlogic.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752743990; l=1406;
- i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
- bh=Tn5lD1nQJpDiw1LSnQ4GALbhpMqAH3g7E7P1O0bGP2E=;
- b=6VRmWFfex68uuBzChVw66cU/9X5dt11KTQvIdrMbsj4WkyCFYWXYXIZvfZTDWe7uAJOPDLj+4
- 6ugN6hxm9PqDYRlB2eeuo2y9hMAw5x1LeQ1rHEUgcnkc7g6tRa3zkZg
-X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
- pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
-X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
- auth_id=107
-X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Reply-To: xianwei.zhao@amlogic.com
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeitddvudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnheptdfhleefjeegheevgeeljeellefgvefhkeeiffekueejteefvdevhfelvdeggeeinecukfhppedukeehrddvudefrdduheegrdduhedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudekhedrvddufedrudehgedrudehuddphhgvlhhopegluddtrddugedrtddrudefngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopedugedprhgtphhtthhopegrlhgvkhhsrgdrphgruhhnohhvihgtsehhthgvtghgrhhouhhprdgtohhmpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvl
+ hhtrdgtohhmpdhrtghpthhtoheprghouhesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopegtohhrsggvtheslhifnhdrnhgvth
+X-GND-Sasl: alex@ghiti.fr
 
-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+On 6/25/25 16:21, Aleksa Paunovic via B4 Relay wrote:
+> From: Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
+>
+> Document support for MIPS vendor extensions using the key
+> "RISCV_HWPROBE_KEY_VENDOR_EXT_MIPS_0" and xmipsexectl vendor extension
+> using the key "RISCV_HWPROBE_VENDOR_EXT_XMIPSEXECTL".
+>
+> Signed-off-by: Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
+> ---
+>   Documentation/arch/riscv/hwprobe.rst | 9 +++++++++
+>   1 file changed, 9 insertions(+)
+>
+> diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/riscv/hwprobe.rst
+> index 2aa9be272d5de1c15559a978a956bc36c34de81c..2f449c9b15bdd6b9813c9a968deca1a4c4ff9b14 100644
+> --- a/Documentation/arch/riscv/hwprobe.rst
+> +++ b/Documentation/arch/riscv/hwprobe.rst
+> @@ -327,6 +327,15 @@ The following keys are defined:
+>     * :c:macro:`RISCV_HWPROBE_MISALIGNED_VECTOR_UNSUPPORTED`: Misaligned vector accesses are
+>       not supported at all and will generate a misaligned address fault.
+>   
+> +* :c:macro:`RISCV_HWPROBE_KEY_VENDOR_EXT_MIPS_0`: A bitmask containing the
+> +  mips vendor extensions that are compatible with the
+> +  :c:macro:`RISCV_HWPROBE_BASE_BEHAVIOR_IMA`: base system behavior.
+> +
+> +  * MIPS
+> +
+> +    * :c:macro:`RISCV_HWPROBE_VENDOR_EXT_XMIPSEXECTL`: The xmipsexectl vendor
+> +        extension is supported in the MIPS ISA extensions spec.
+> +
+>   * :c:macro:`RISCV_HWPROBE_KEY_VENDOR_EXT_THEAD_0`: A bitmask containing the
+>     thead vendor extensions that are compatible with the
+>     :c:macro:`RISCV_HWPROBE_BASE_BEHAVIOR_IMA`: base system behavior.
+>
 
-Use local variables struct regmap_config instread of global
-variables. The goal of saving memory has been achieve.
+FWIW, just a note that in the documentation you mentioned in patch 1, 
+xmipsexectl extension also provides 2 barrier instructions that are not 
+implemented in this patchset.
 
-Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
----
-Use local variables struct regmap_config instread of global
-variables. 
----
- drivers/rtc/rtc-amlogic-a4.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+Anyway:
 
-diff --git a/drivers/rtc/rtc-amlogic-a4.c b/drivers/rtc/rtc-amlogic-a4.c
-index 09d78c2cc691..1928b29c1045 100644
---- a/drivers/rtc/rtc-amlogic-a4.c
-+++ b/drivers/rtc/rtc-amlogic-a4.c
-@@ -72,13 +72,6 @@ struct aml_rtc_data {
- 	const struct aml_rtc_config *config;
- };
- 
--static const struct regmap_config aml_rtc_regmap_config = {
--	.reg_bits = 32,
--	.val_bits = 32,
--	.reg_stride = 4,
--	.max_register = RTC_REAL_TIME,
--};
--
- static inline u32 gray_to_binary(u32 gray)
- {
- 	u32 bcd = gray;
-@@ -328,6 +321,13 @@ static int aml_rtc_probe(struct platform_device *pdev)
- 	void __iomem *base;
- 	int ret = 0;
- 
-+	const struct regmap_config aml_rtc_regmap_config = {
-+		.reg_bits = 32,
-+		.val_bits = 32,
-+		.reg_stride = 4,
-+		.max_register = RTC_REAL_TIME,
-+	};
-+
- 	rtc = devm_kzalloc(dev, sizeof(*rtc), GFP_KERNEL);
- 	if (!rtc)
- 		return -ENOMEM;
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 
----
-base-commit: 0bafe291cb429d39b5ff70bcf7b2f3ab026dcb02
-change-id: 20250717-rtc-regmap-140ee38b7bf7
+Thanks,
 
-Best regards,
--- 
-Xianwei Zhao <xianwei.zhao@amlogic.com>
-
+Alex
 
 
