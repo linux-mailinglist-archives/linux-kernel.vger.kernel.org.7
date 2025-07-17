@@ -1,127 +1,181 @@
-Return-Path: <linux-kernel+bounces-735052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18249B08A2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:03:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 961BDB08A35
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:03:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BCA31AA5E6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:03:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEFE91AA52CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:04:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C909D2989B3;
-	Thu, 17 Jul 2025 10:03:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808FF298CAF;
+	Thu, 17 Jul 2025 10:03:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="t7wqn1Nd"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P/MU4FY1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96A828BAB6
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 10:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06BF28BAB6;
+	Thu, 17 Jul 2025 10:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752746587; cv=none; b=OEQE4QBF1NsnsG3IuzxQ+kr8jKZ7USMaGNiE+CLjxAqCDRVf6mkwDk8/mQZfcGaad5uIkzixByFjYnGr6r4JkTuI5PAQ0FydTv9lUa6c7I9Dt1lJRe1zPzLOQUW8+eF6o42/FsQtWZg0rMdo5klG/LoMkJLMwUGMaRxaxf1T89I=
+	t=1752746624; cv=none; b=WRRg6vrbupjiqv3prteQpGXt1oOvl0inWjG6sR2X6gJcMAq4+W4ALSPgs0PFuh+TU2wl0LYQNe6IzSIU1783QsHxZ6ktvR7lFT4VpNuHeBGrPVLvekjF3bKm+6pUx7TKA0oEyVtf8THGz8/Xrt72n7nN9Rpo3SkY0tasQ4p2Utg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752746587; c=relaxed/simple;
-	bh=3Gb0H09+G7CTyHsB5SCMtnr/71Dw5X1R99dtGXyVEfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FMOZGvL74XIOOWhXSq1tdxUR1LtE+SX34CupwDp9TGsmEQ15y7MbLRjjD2jOzqdHFRQcBGjhSIvQdUtt0udH7wyg1yM6wvYitpoKnLPTG9/OczTCmlqYGo6ERX/MsbRRQvoh9tdnI/cHvY2AMbSHL06tkq+V8kJHpuUEJuWxXZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=t7wqn1Nd; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 17 Jul 2025 18:02:47 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752746581;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vG/QNYhSzyXjAfEHBH+AHpgKWHamu3HkNiSa4nselYQ=;
-	b=t7wqn1NdjP5pTYq7HdNHAN3spwlV2YrAe+YtEyw8isTBU13RAHeX5FQK7GkfUeJkwIT00J
-	zNq37fDzkdJfV9X+c8Jpi1F44Mk48g8uP4zLG4Sv4qdSt3ZOzRKzQCmZFP/WguvMdBBwze
-	fK4HwoB6oa2lvQYvxIChxjvytnQpkZQ=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Your Name <hui.zhu@linux.dev>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	bjorn3_gh@protonmail.com, Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Geliang Tang <geliang@kernel.org>, Hui Zhu <zhuhui@kylinos.cn>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 3/3] rust: add a sample allocator usage
-Message-ID: <aHjKMfPAsVeuUrlk@teawaterdeMacBook-Pro.local>
-References: <cover.1752573305.git.zhuhui@kylinos.cn>
- <ea067b4df1cef7f724a9e8ef0d345087f06ad6a7.1752573305.git.zhuhui@kylinos.cn>
- <DBCKAOSOMXHB.3IEHVGIH7ZANN@kernel.org>
+	s=arc-20240116; t=1752746624; c=relaxed/simple;
+	bh=7rOtkwR8GZNy1nCNIIUgrxN5oDXOmZQQxgq8jrIoLgQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=W1PrNpgFM1vkHWgLO5RmaOVZ36HgLoBsS02Gfe2OdTdSbec6qoZYOGmqagLp3vQuEuQxgU7Veiu4uWDRwcMs64ybCHHvVH9bdcYkm52mgcoloTkrIlIqLAWh9irG4k6uWTdiKWxXhPJ0OkN/nNxme/rbS3qorsgtPXCcjZEn2sU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P/MU4FY1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 590F5C4CEE3;
+	Thu, 17 Jul 2025 10:03:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752746624;
+	bh=7rOtkwR8GZNy1nCNIIUgrxN5oDXOmZQQxgq8jrIoLgQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=P/MU4FY1UmvdmW5yE6ynZ/DZpmn9ghWnN8roZHcUtlmsSeFgRYyKaawRRgLPByIBn
+	 9SiaEDTswtKg0dX0GsW0DVXYmNtMm+DAyAjScLI2ADdQsBQeenpruq8P5AqqvgLne+
+	 c2G2JDEmRrIVYBceQXesLY8OG4znKZiJQT6Re0aZQWOzlMQdgojWnGutLIoVut5OV7
+	 sk53YAc6dJ4gQixnaq2GPK57/iCkZNOXvymVxvisMJkJ4pF0dm2X6C/Imnc5WmEcR4
+	 0aDvtnlRJJ9kxpi9ZaV+x/mCPhLdYqDx23y45D4rXDQflNP8aY2Ahl5nLLRb2n/Act
+	 skGOO6xiRLwJg==
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-41b4bf6ead9so538894b6e.3;
+        Thu, 17 Jul 2025 03:03:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUo3wsVVrpfvEB7BZmqVbwsjv3L69GaUBWZpZ3HN4F7lZC2aTAOIeQ1HvWdCWkdLKpZeIKhhlg0c+35opU=@vger.kernel.org, AJvYcCUu+cOkfDXgQ5OYdQyrcSyBP1lFrqdAkzhHimG1QIIjK9QD3FTm6wyUXT0VNqS/yiFky43oqrEkxaI=@vger.kernel.org, AJvYcCX7KGz1LuytYPwSczC0jIxwnjzb4UYciXilez7bOrbDIJ5ZPrwAM31r63tkdKh+ya3a1V/W7EqQfRid@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6dQpi2HnqckYG2wf2MmI5jhX+KGTMm/mSyM5M/XnzlM6F4kcm
+	vrWxJeA6oFldsWGCrxLynvdaopTLwLsfcSZfNvCJ3bHnBq43TxbtfloVROoUgyxJJLy7Rc0erEd
+	PiGzXwcClqIWoJuqoh9jRFzCUiCTiFZk=
+X-Google-Smtp-Source: AGHT+IGv5pmrlERV7QI0wWb9a4bOLhsu0PihzaBebqr1DPGZ2nCMpw1rJwKBvvbnuTn3QIcBMj5O1HOOKV0twchdio0=
+X-Received: by 2002:a05:6808:2112:b0:406:3370:3bc6 with SMTP id
+ 5614622812f47-41d032fb23fmr4471962b6e.2.1752746623595; Thu, 17 Jul 2025
+ 03:03:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DBCKAOSOMXHB.3IEHVGIH7ZANN@kernel.org>
-X-Migadu-Flow: FLOW_OUT
+References: <20250717004034.2998443-1-david.e.box@linux.intel.com> <4xcwba3d4slmz5gfuwypavxqreobnigzyu4vib6powtbibytyp@mmqcns27vlyr>
+In-Reply-To: <4xcwba3d4slmz5gfuwypavxqreobnigzyu4vib6powtbibytyp@mmqcns27vlyr>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 17 Jul 2025 12:03:32 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0h+v5pUP39vTWpNNK2D8=X2UdjUTtZ7yQHCQ2k=r2kkMg@mail.gmail.com>
+X-Gm-Features: Ac12FXw0F3fW0Ni1AOjBKlz7FJyLFH9p4D5QuxV48pg-f3fFKFgAFPcHzR4KkRs
+Message-ID: <CAJZ5v0h+v5pUP39vTWpNNK2D8=X2UdjUTtZ7yQHCQ2k=r2kkMg@mail.gmail.com>
+Subject: Re: [RFC 0/2] PCI/ASPM: Allow controller-defined default link state
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: "David E. Box" <david.e.box@linux.intel.com>, rafael@kernel.org, bhelgaas@google.com, 
+	vicamo.yang@canonical.com, kenny@panix.com, ilpo.jarvinen@linux.intel.com, 
+	nirmal.patel@linux.intel.com, linux-pm@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Danilo,
-
-Thanks for your help.
-
-On Tue, Jul 15, 2025 at 12:37:52PM +0200, Danilo Krummrich wrote:
-> On Tue Jul 15, 2025 at 11:59 AM CEST, Hui Zhu wrote:
-> > +impl kernel::Module for RustAllocator {
-> > +    fn init(_module: &'static ThisModule) -> Result<Self> {
-> > +        pr_info!("Rust allocator sample (init)\n");
-> > +
-> > +        let mut vmalloc_vec = KVec::new();
-> > +        for (size, align) in VMALLOC_ARG {
-> > +            let (ptr, layout) = vmalloc_align(size, align)?;
-> 
-> Ok, I think I get the idea, you want to demonstrate how to use the Allocator
-> trait for raw memory allocations.
-> 
-> However, doing so is discouraged unless there's really no other way. One obvious
-> example are Rust's own memory allocation primitives, such as Box and Vec.
-> 
-> So, instead of this raw allocation, you can just use VBox::new() or
-> VBox::new_uninit() in the following way.
-> 
-> 	[repr(align(ALIGN))]
-> 	struct Blob([u8; SIZE]);
-> 
-> 	// Creates a vmalloc allocation of size `SIZE` with an alignment of
-> 	// `ALIGN`. The allocation is freed once `b` is dropped.
-> 	let b = VBox::<Blob>::new_uninit(GFP_KERNEL)?;
-> 
-> This way you don't have to handle the layout and the Allocator type yourself and
-> you also don't have to care about explicitly calling vfree(), VBox does all this
-> for you.
-> 
-> > +
-> > +            let (addr, is_ok) = check_ptr(ptr, size, align);
-> > +            if !is_ok {
-> > +                clear_vmalloc_vec(&vmalloc_vec);
-> > +                return Err(EINVAL);
-> > +            }
-> > +
-> > +            vmalloc_vec.push((addr, layout), GFP_KERNEL)?;
-> > +        }
-> > +
-> > +        Ok(RustAllocator { vmalloc_vec })
-> > +    }
-> > +}
+On Thu, Jul 17, 2025 at 8:55=E2=80=AFAM Manivannan Sadhasivam <mani@kernel.=
+org> wrote:
 >
+> On Wed, Jul 16, 2025 at 05:40:24PM GMT, David E. Box wrote:
+> > Hi all,
+> >
+> > This RFC series addresses a limitation in the PCIe ASPM subsystem where
+> > devices on synthetic PCIe hierarchies, such as those created by Intel=
+=E2=80=99s
+> > Volume Management Device (VMD), do not receive default ASPM settings
+> > because they are not visible to firmware. As a result, ASPM remains
+> > disabled on these devices unless explicitly enabled later by the driver=
+,
+> > contrary to platform power-saving expectations.
+> >
+> > Problem with Current Behavior
+> >
+> > Today, ASPM default policy is set in pcie_aspm_cap_init() based on valu=
+es
+> > provided by BIOS. For devices under VMD, BIOS has no visibility into th=
+e
+> > hierarchy, and therefore no ASPM defaults are applied. The VMD driver c=
+an
+> > attempt to walk the bus hierarchy and enable ASPM post-init using runti=
+me
+> > mechanisms, but this fails when aspm_disabled is set because the kernel
+> > intentionally blocks runtime ASPM changes under ACPI=E2=80=99s FADT_NO_=
+ASPM flag.
+> > However, this flag does not apply to VMD, which controls its domain
+> > independently of firmware.
+> >
+> > Goal
+> >
+> > The ideal solution is to allow VMD or any controller driver managing a
+> > synthetic hierarchy to provide a default ASPM link state at the same ti=
+me
+> > it's set for BIOS, in pcie_aspm_cap_init().
+> >
+>
+> I like the idea and would like to use it to address the similar limitatio=
+n on
+> Qcom SoCs where the BIOS doesn't configure ASPM settings for any devices =
+and
+> sometimes there is no BIOS at all (typical for SoCs used in embedded usec=
+ases).
+> So I was using pci_walk_bus() in the controller driver to enable ASPM for=
+ all
+> devices, but that obviously has issues with hotplugged devices.
+>
+> > Solution
+> >
+> > 1. A new bus flag, PCI_BUS_FLAGS_ASPM_DEFAULT_OVERRIDE, based on Rafael=
+'s
+> > suggestion, to signal that the driver intends to override the default A=
+SPM
+> > setting. 2. A new field, aspm_bus_link_state, in 'struct pci_bus' to su=
+pply
+> > the desired default link state using the existing PCIE_LINK_STATE_XXX
+> > bitmask.
+> >
+>
+> Why would you need to make it the 'bus' specific flag? It is clear that t=
+he
+> controller driver is providing the default ASPM setting. So pcie_aspm_cap=
+_init()
+> should be able to use the value provided by it for all busses.
+>
+> Like:
+>
+> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+> index 2ad1852ac9b2..830496e556af 100644
+> --- a/drivers/pci/pcie/aspm.c
+> +++ b/drivers/pci/pcie/aspm.c
+> @@ -791,6 +791,7 @@ static void aspm_l1ss_init(struct pcie_link_state *li=
+nk)
+>  static void pcie_aspm_cap_init(struct pcie_link_state *link, int blackli=
+st)
+>  {
+>         struct pci_dev *child =3D link->downstream, *parent =3D link->pde=
+v;
+> +       struct pci_host_bridge *host =3D pci_find_host_bridge(parent->bus=
+);
+>         u32 parent_lnkcap, child_lnkcap;
+>         u16 parent_lnkctl, child_lnkctl;
+>         struct pci_bus *linkbus =3D parent->subordinate;
+> @@ -866,8 +867,8 @@ static void pcie_aspm_cap_init(struct pcie_link_state=
+ *link, int blacklist)
+>         }
+>
+>         /* Save default state */
+> -       if (parent->bus->bus_flags & PCI_BUS_FLAGS_NO_ASPM_DEFAULT)
+> -               link->aspm_default =3D parent->bus->aspm_bus_link_state;
+> +       if (host && host->aspm_bus_link_state)
+> +               link->aspm_default =3D host->aspm_bus_link_state;
+>         else
+>                 link->aspm_default =3D link->aspm_enabled;
+>
+> This avoids the usage of the bus flag (which your series is not at all ma=
+king
+> use of) and allows setting the 'host_bridge::aspm_bus_link_state' easily =
+by the
+> controller drivers.
 
-I sent version v2.
-It only included the sample code and updated to use VBox according to your comments.
+This is very similar to what I have just suggested and I like this one.
 
-Best,
-Hui
+Thanks!
 
