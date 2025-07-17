@@ -1,100 +1,221 @@
-Return-Path: <linux-kernel+bounces-734807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA9AAB0868C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:25:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E2A8B0868A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:25:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 623D5A40ACF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:24:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D374D189E4E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:25:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15EF921FF40;
-	Thu, 17 Jul 2025 07:24:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B521225A4F;
+	Thu, 17 Jul 2025 07:25:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P6dfZrAV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="NOuXmQ6t"
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C4721D5B0;
-	Thu, 17 Jul 2025 07:24:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24872248BF
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 07:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752737091; cv=none; b=LHj2Re8nOrpasU2hBp7SVhbsXNplORHpVy+XrQ1G6tRcI/gGl1CgEls/dCq/ys/3hjOWxIkoBxQ2vv1P0T5hIpnjDe4rD5c8OHM2sn7y9A0yf4C6DD6qXdvz0QWwwtO8hzFsMDj+U5DFCCQyRLr72hfaQ72/HwtOJ1lqKxpzhNU=
+	t=1752737105; cv=none; b=TekNd/Q4G9aEEkwW4wUHx+uPZEv8RkHt7W4uW1uQ6yZYdI6zuOli5/dRrRTUfLdAk5P60YImP4u20HlAt7hIx2b5Ayp72+vAl9YFboY1KJFNGgJcPv9V4tcPvz/DXUbLm/lSmGX6kE4hY8ly31+tqcwKGJhgWM9K45m5MIcxnzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752737091; c=relaxed/simple;
-	bh=929KbXUPXACh93kQSzm9b1rwUVdY2PY9ZRX82BKdOQk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dvin4VNmM1S3IrgqLmv8q1rrLpCFql4l/6tKL7n40S0TN0MAm0480p7UiL+j16w/w3+upNjbowgKi5wVkhaFc4C7Da7TyQ65p1573Kw2oRsemRnWUEJZEk/lVb6pEy4wnhiP2w+7d8YJvcIjnhjwr2gftObpjOjwkVEFDRuV/Eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P6dfZrAV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A87CFC4CEE3;
-	Thu, 17 Jul 2025 07:24:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752737090;
-	bh=929KbXUPXACh93kQSzm9b1rwUVdY2PY9ZRX82BKdOQk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P6dfZrAVm08fIw62akYC5vJYeA14Ihb4Jz0enr7mbPn8ZW5B6C7maKQsJZEBAuzIt
-	 kgfSltatVsv90x5uui0a/9wPAKxyxBgbhpEQBTAiyR1CbxUB/INBoe2K+oUc3/ZpSe
-	 oDaDXhWX1Yc/Uv9wsai7/w50F1t7RhlKP7lx8LzzKiOHG1xWMqmObOeQKLe4hHNuEh
-	 SksxYLXQdl2jti9/Y1kOeVtLGy9GBZEDoL79BbJRUJ4booy1eyABOgBS1nWwaueiEp
-	 DT2jEshBz62IytD2p2zGAjyrWSapGR7zixa+36KMxFEwfI9wucr8eqxgxYMBaafDFT
-	 3XeHuWTKXqZGA==
-Date: Thu, 17 Jul 2025 00:24:47 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Jens Remus <jremus@linux.ibm.com>, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org, 
-	Steven Rostedt <rostedt@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, 
-	Vasily Gorbik <gor@linux.ibm.com>, Ilya Leoshkevich <iii@linux.ibm.com>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>, 
-	"Jose E. Marchesi" <jemarch@gnu.org>, Beau Belgrave <beaub@linux.microsoft.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>
-Subject: Re: [RFC PATCH v1 08/16] unwind_user: Enable archs that save RA/FP
- in other registers
-Message-ID: <nunn2n7geqbz7pra6x5wlpqxlqfkrolae22lqerk4klk4wfofy@wx5hquzmi527>
-References: <20250710163522.3195293-1-jremus@linux.ibm.com>
- <20250710163522.3195293-9-jremus@linux.ibm.com>
- <oasyyga72yuiad7y2nzh7wcd7t7wmxnsbo2kuvsn5xsnuypewd@ukxxgdjbvegz>
- <20250716235751.119a1273@gandalf.local.home>
+	s=arc-20240116; t=1752737105; c=relaxed/simple;
+	bh=Gyrr6czyof+CG/WoQJ4Juc3W7orjc65KwRKgFjDWelc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l6z/wF8bfGsyQ2NVxIJW2lcDNEgdrhKIvR+eSsOiraHguzHiYmVeSkF7v9CNeQtAuvM+h2p0j0vtTOM9lsZfSh0VtlSowiyJhbhS4JHl0tCjWnDJ0BMXeQDS5GSVAhX7tka1rG6MRO3D+33gX0y99oTA7saDezCFivYUeBGdh7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=NOuXmQ6t; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e8bd2eae9e0so578248276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 00:25:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1752737103; x=1753341903; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DZO3PPY2XBP748YrMIC0vrtHH5fS4RDPrIYRbHrH2g8=;
+        b=NOuXmQ6tzLP9j/BpBplCSvBlB5bZbYmSSwHIHO7XEZbfbASzDBIQyL/PEmWIBehzlx
+         l2EQw7Y15USB3bCU5OAzJTgoPbziWNB+JHNTDRmFqI92EMRCrujG7CM3IuCvCrdZFRL9
+         reBAJGff8FmgVCUBMUEtap/PMqRfcM35OTq+UIoBSws4rFPvxa9RtaHVrEwi10X19jp1
+         vIErf9iz651YmAvmcfrVKfNQpPFguFhVrMLDO839k2M3auUBE7rWweGRq+gnR3EcffTL
+         f/uktwOcZlJe7p9ny8FU1U6+fThtI3G9WKQK55pZaO9OItNtywQLoSrhcEPQPEBi6rSC
+         Jc+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752737103; x=1753341903;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DZO3PPY2XBP748YrMIC0vrtHH5fS4RDPrIYRbHrH2g8=;
+        b=lHDWi57CWNbSYOQWaDJ2ml8CsWzwXRMggx7V571XMNqnBuYOjYlMD1cMOonkggvAfo
+         Pj+XQdCUuCjzSps7IXVovjX04aPL/aQbmDl9M0tEpXJEoh1ten/M/TbwY0q+HVth9tYN
+         whQIWiigfVd9mrd0sFNfqz9zJeIiDK4QnhmMKTboGGKXJs59L01GDMJTiZEyXkd8MB9P
+         urrr1Jpf8JO2sDXgxP2R2yFa3Q4V6ctwkaSvoD8xTkrAnZ6S4V0i50cNvsHLkYnozsT5
+         6YZVrg1fS3AtT/DVBb6WbZWBqU3TEMlVEFPURhs+lO5h1sbtiQ+EEK1DuECCxqOT0HIK
+         Bp+g==
+X-Forwarded-Encrypted: i=1; AJvYcCWFdb45YbO1WPn+KNJL1rj8ct80MbZUHBzcUm6p9wwbY956MwNV8IV7cUkwxKUFDPtIYfg//iD4EOyU4x8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrEEGJcZbQj07Qey7uWzE9V6eV4DvjeE7LYqJjoPGa//+u6rzi
+	CCwNVgLFCHybvc7/sneSgohuLdPmSoq3wkwyvyWLgul1erF34O5UyFh6NFvE3autK7BdwrOCYAa
+	O9sZTbBns5mIC+vj5oXvkuhep+IuweCjHj0u/p2vHAA==
+X-Gm-Gg: ASbGncvLnB0A4NwEpwDW8Hmy3l3xcT3ZE1K0GkkBLF9/akO21QEPLojZwnxqUoaSlNr
+	GGPPpHDTX8cF8K3ux4kV6TWRpfehJx66F1xty1p9M4CJ8nVVKu9SL0gNdu6uvNzxwlASYGTS5RS
+	YSYO9LRpIqojZ5qo8ncMEYUAYegnIEZsszmzRwqBtuBGS0xKZddbKKwW3+2VCZR33GyN9ecxZj2
+	xJKasekCA==
+X-Google-Smtp-Source: AGHT+IHbHhPYYb+k831eazsYDNt1rPOncGE6SqrWC+YnWF0atILZMfYXZRzierPS88Y0Mp8rI/N8+hI6L8iMWb3zj3o=
+X-Received: by 2002:a05:6902:2b12:b0:e89:85ba:2197 with SMTP id
+ 3f1490d57ef6-e8bc246bb0fmr6368800276.19.1752737102417; Thu, 17 Jul 2025
+ 00:25:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250716235751.119a1273@gandalf.local.home>
+References: <20250709025516.28051-1-nick.hu@sifive.com> <20250709025516.28051-2-nick.hu@sifive.com>
+ <CAAhSdy2J6C8LvBCB0LKd2np47qBQ2EFXXnDvb2OjYKqSOF7EbQ@mail.gmail.com>
+In-Reply-To: <CAAhSdy2J6C8LvBCB0LKd2np47qBQ2EFXXnDvb2OjYKqSOF7EbQ@mail.gmail.com>
+From: Nick Hu <nick.hu@sifive.com>
+Date: Thu, 17 Jul 2025 15:24:51 +0800
+X-Gm-Features: Ac12FXxQ4tgNQntiZzQuZ4AONH_MLogmY5rpxtlHgkk0sUx63aRfaZn6OnTU0yk
+Message-ID: <CAKddAkAOeoKZ9A7t4eK5JPN0xaVPBojCeY0X9khu-b=irE5=JQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] irqchip/riscv-imsic: Restore the IMSIC registers
+To: Anup Patel <anup@brainfault.org>
+Cc: Alexandre Ghiti <alex@ghiti.fr>, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 16, 2025 at 11:57:51PM -0400, Steven Rostedt wrote:
-> On Wed, 16 Jul 2025 19:01:06 -0700
-> Josh Poimboeuf <jpoimboe@kernel.org> wrote:
-> 
-> > > +		if (unwind_user_get_reg(&ra, frame->ra.regnum))
-> > > +			goto done;
-> > > +		break;
-> > > +	default:
-> > > +		WARN_ON_ONCE(1);
-> > > +		goto done;  
-> > 
-> > The default case will never happen, can we make it a BUG()?
-> 
-> Is this really serious enough to crash the system? WARN_ON_ONCE() *is* for
-> things that will never happen.
-> 
-> The only time I ever use BUG() is if it's too dangerous to continue (like a
-> function graph trampoline that gets corrupted and has no place to return
-> to). In general, usage of BUG() should be avoided.
+On Thu, Jul 17, 2025 at 1:15=E2=80=AFPM Anup Patel <anup@brainfault.org> wr=
+ote:
+>
+> On Wed, Jul 9, 2025 at 8:26=E2=80=AFAM Nick Hu <nick.hu@sifive.com> wrote=
+:
+> >
+> > When the system woken up from the low power state, the IMSIC might be i=
+n
+> > the reset state. Therefore adding the CPU PM callbacks to restore the
+> > IMSIC register when the cpu resume from the low power state.
+> >
+> > Signed-off-by: Nick Hu <nick.hu@sifive.com>
+> > Reviewed-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+> > Reviewed-by: Cyan Yang <cyan.yang@sifive.com>
+> > ---
+> >  drivers/irqchip/irq-riscv-imsic-early.c | 41 ++++++++++++++++++++-----
+> >  1 file changed, 33 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/drivers/irqchip/irq-riscv-imsic-early.c b/drivers/irqchip/=
+irq-riscv-imsic-early.c
+> > index d9ae87808651..f64d9a0642bb 100644
+> > --- a/drivers/irqchip/irq-riscv-imsic-early.c
+> > +++ b/drivers/irqchip/irq-riscv-imsic-early.c
+> > @@ -7,6 +7,7 @@
+> >  #define pr_fmt(fmt) "riscv-imsic: " fmt
+> >  #include <linux/acpi.h>
+> >  #include <linux/cpu.h>
+> > +#include <linux/cpu_pm.h>
+> >  #include <linux/interrupt.h>
+> >  #include <linux/io.h>
+> >  #include <linux/irq.h>
+> > @@ -109,14 +110,8 @@ static void imsic_handle_irq(struct irq_desc *desc=
+)
+> >         chained_irq_exit(chip, desc);
+> >  }
+> >
+> > -static int imsic_starting_cpu(unsigned int cpu)
+> > +static void imsic_restore(void)
+> >  {
+> > -       /* Mark per-CPU IMSIC state as online */
+> > -       imsic_state_online();
+> > -
+> > -       /* Enable per-CPU parent interrupt */
+> > -       enable_percpu_irq(imsic_parent_irq, irq_get_trigger_type(imsic_=
+parent_irq));
+> > -
+> >         /* Setup IPIs */
+> >         imsic_ipi_starting_cpu();
+> >
+> > @@ -128,6 +123,19 @@ static int imsic_starting_cpu(unsigned int cpu)
+> >
+> >         /* Enable local interrupt delivery */
+> >         imsic_local_delivery(true);
+> > +}
+> > +
+> > +static int imsic_starting_cpu(unsigned int cpu)
+> > +{
+> > +       /* Mark per-CPU IMSIC state as online */
+> > +       imsic_state_online();
+> > +
+> > +       /* Enable per-CPU parent interrupt */
+> > +       enable_percpu_irq(imsic_parent_irq,
+> > +                         irq_get_trigger_type(imsic_parent_irq));
+> > +
+> > +       /* Restore the imsic reg */
+> > +       imsic_restore();
+> >
+> >         return 0;
+> >  }
+> > @@ -143,6 +151,23 @@ static int imsic_dying_cpu(unsigned int cpu)
+> >         return 0;
+> >  }
+> >
+> > +static int imsic_notifier(struct notifier_block *self, unsigned long c=
+md,
+> > +                         void *v)
+>
+> s/imsic_notifier/imsic_pm_notifier/
+>
+Will update it in the next version. Thanks
 
-This is an unreachable code path, but __builtin_unreachable() is crap
-due to undefined behavior.  IMO, BUG() for unreachable paths is cleaner
-than WARN_ON_ONCE(), but it doesn't matter much either way I suppose.
-
--- 
-Josh
+Regards,
+Nick
+> The "void *v" parameter can be on the same line as function declaration.
+>
+> > +{
+> > +       switch (cmd) {
+> > +       case CPU_PM_EXIT:
+> > +               /* Restore the imsic reg */
+> > +               imsic_restore();
+> > +               break;
+> > +       }
+> > +
+> > +       return NOTIFY_OK;
+> > +}
+> > +
+> > +static struct notifier_block imsic_notifier_block =3D {
+>
+> s/imsic_notifier_block/imsic_pm_notifier_block/
+>
+> > +       .notifier_call =3D imsic_notifier,
+> > +};
+> > +
+> >  static int __init imsic_early_probe(struct fwnode_handle *fwnode)
+> >  {
+> >         struct irq_domain *domain;
+> > @@ -180,7 +205,7 @@ static int __init imsic_early_probe(struct fwnode_h=
+andle *fwnode)
+> >         cpuhp_setup_state(CPUHP_AP_IRQ_RISCV_IMSIC_STARTING, "irqchip/r=
+iscv/imsic:starting",
+> >                           imsic_starting_cpu, imsic_dying_cpu);
+> >
+> > -       return 0;
+> > +       return cpu_pm_register_notifier(&imsic_notifier_block);
+> >  }
+> >
+> >  static int __init imsic_early_dt_init(struct device_node *node, struct=
+ device_node *parent)
+> > --
+> > 2.17.1
+> >
+>
+> Otherwise, this looks good to me.
+>
+> Reviewed-by: Anup Patel <anup@brainfault.org>
+>
+> Regards,
+> Anup
 
