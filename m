@@ -1,79 +1,74 @@
-Return-Path: <linux-kernel+bounces-735170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEBFBB08BB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:28:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B23D3B08BBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:29:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F21421A67AE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:28:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A7E53AB6BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFA6D29ACC6;
-	Thu, 17 Jul 2025 11:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5151829ACCB;
+	Thu, 17 Jul 2025 11:29:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Ugzp4CCh"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="lLMOqasw"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79288299A93
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 11:28:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31E428935C;
+	Thu, 17 Jul 2025 11:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752751695; cv=none; b=TCRAErB/deJuOC0FrvZhfY9CAnfbtl/wyw5h6uw8KAxP5L90of+GOaoZ7SUqfnw0Zes29HUQ5OKOhZBPu9xlnPnkd4D0iQ5Uz8e9Hv/T0cEJ/9vVnyU1X4izmF4ZVdCDlL2LiHuevqiiRk4aefTZh6IfgS1Q8M9Uwim0H0m8QyQ=
+	t=1752751743; cv=none; b=jS9nE24oHWs3NO3yxgwXdflXL8PCFqBRMLtUwxe2i1O1ivl0RVZhGieN2QQqNU+lrgnElNt/auPsTx3SL1s+3C9HAG6ZM9y+c23IcYDcVJewNHQTQCS0iIf5yb/tdngksoKX6+Es/xwGZeWr3SrIrDlcp9dbahMzDnkO+VMO4cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752751695; c=relaxed/simple;
-	bh=vPsus7n+ZehouuNJIhJaopxKH86tOGKiwPcKPd0ygOU=;
+	s=arc-20240116; t=1752751743; c=relaxed/simple;
+	bh=kzGkY7JKL+oPheWyIxkry6TqelxZeSbXNtwbYiwWVqY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GDmhCwOa1iGG/0nmVEKtd9M6SYi6HyysEBJjjNcvgaq6M3Jaoz50YM8xPo2bF3y1pnCyiIdeEcJ9ECor3zpf0jjX/n7K9tXdp3Rb4QSbOp3p/mU8SAnUq2MatdFBLUwXSd3kzVWisPSpaKaHziY3i9/6a8VAxKRXerHmoPFX51k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Ugzp4CCh; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4561607166aso6329345e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 04:28:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1752751692; x=1753356492; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=l4EyBkCfQk118hwy23YpMyJEobctr2YH/JMj7abcP1o=;
-        b=Ugzp4CChlld0bsXq1K3L0t8+UdgvAUk/ojf7/B0Hl2xQOcOcL5uAOZZGuhwPxyHn1E
-         vZVPC8jhdpVZm2mIW/vlGEglM+wi6cczcxFFTfPVPsB7ihsN7wSFk4xw0ndVRi33/vO+
-         loXpFEsNOGNHxgIXOfhSZlTAnFpD5gvwcugw+huxGlzKIfqIR2Q2CZSzGY1slmNdsMxj
-         z0keptv8RvVcuJE1trKnJ9UMTv1fjWXuFc2Cym3WaO1o4Bx1BRm216gMNWlVli1QXb9v
-         cfQB9lffuWMFfoYBxc4qAEm16iBh1jFIOardQVq15oejckLMQkXDGQtBxJNoGBVb46G2
-         R+1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752751692; x=1753356492;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l4EyBkCfQk118hwy23YpMyJEobctr2YH/JMj7abcP1o=;
-        b=i4yF6rt9xRycnUfebrD9TeKn5SZQNDIFwkLEqjftsEWCQ0IUL3Nr24IYCnFm+5aAyw
-         w5KOcl1YhYRrRfjdjbCq9KRXnCST06nIz0gevb0xORboIuY0V5Ic+U3ApE6MS1cfwPc6
-         NBCrAuTh0lH1Q5mOCXCjyLKvyaVKkJH8ekd5Ep8szDa3dUVOgUV2VyBk4339uHUtxN/M
-         knnOBNmthIC2rJZewHuh9Wl/ox0oMJFDWatfUFBUTCv0KoNANUBkCkVqftl/Z8d0jim6
-         j4xTZzcfFYR4NZeIbJxZhXp5qLJOeRubTNhyVES8DiGFz09q+qvwcdQnrrkZPecw++iA
-         nVHg==
-X-Forwarded-Encrypted: i=1; AJvYcCUXjR3MYK5SWhqOti7SS+Zcju/b2v+j8KqwlUYEChuL/SCd0iUxlf/8Ml3B2OgySAYzXchceu+QGREGL34=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpEjiuSIckpfwwDWbuJkP78NVAMqcDsJn8htiDvDZlWY7ryhNd
-	Mm1vxpo1NtIrFGqiOjvYWNBYJdI2cN5tXMk0I9sRx7+nhJY5pJFALAS+2I6vgap63VE=
-X-Gm-Gg: ASbGncvoUdEU2WNCxkWExg3Y4CORshDD2u/pruXyDQXpqzbjMCt0tH+2mMdmEj2da+s
-	IEqUS3Kol5kyefkVvHaglS4JsBUWeKcp6S9mq0oFYNQ5XqnFptStd5XKMaffLnU5YBzssfePrbc
-	81aYoqJ8P8yCFAI9+UKXWQwBJc1Q7Wey0ELx62dW+tJHUGI7lk+qkcTwvwGp9sZUlrR/R/17dvP
-	xur7EEphZ+V91dUQAZFfqH/RlB3xefvmsbCykAJr43nvl4HV0t+lXgO2lHTTPvOtTIEMODVYKK+
-	EGqAA5cRYafrWmCELDrrabzJ8O3LnbIoJ1OZ2YDHOc0cJIYGx5F+EOZu2Q0kWXSD8K2gaHQ1IY7
-	FRghgL1U6ah/xLhfUwjV/lUPRHfCIYou3c06Garu56q6jQSSi8gB7Ghp5P7W/TglzvA==
-X-Google-Smtp-Source: AGHT+IEEj/81mVMNXoPOUWUO7P/YkTI7YWJCQoKZ+jwcD015HAkVi+WItslIOuhDgRa9wqEhexgbsA==
-X-Received: by 2002:a05:600c:3545:b0:456:1a69:94fa with SMTP id 5b1f17b1804b1-4562e03e75cmr63822605e9.13.1752751691688;
-        Thu, 17 Jul 2025 04:28:11 -0700 (PDT)
-Received: from ?IPV6:2001:a61:1347:1201:4432:54ab:26c1:9ebc? ([2001:a61:1347:1201:4432:54ab:26c1:9ebc])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45634f82f29sm19552955e9.23.2025.07.17.04.28.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Jul 2025 04:28:11 -0700 (PDT)
-Message-ID: <c9d07302-37f0-4f0d-8669-094aa6fc2450@suse.com>
-Date: Thu, 17 Jul 2025 13:28:05 +0200
+	 In-Reply-To:Content-Type; b=eYutSzU73NUNx3wDHoiW+gH0QUSxDS6/YIao8xokHNrEGZu88EM9inQA7k4548RlGSwawhpIR5Us+9uwTw/sI2rhyQCsGsEiWFLkd+Mq47S78bTJCEa2IS6h4ST9CT61kcLJduoOKnu2gmdhppT/MRUfe9m03DXtGc2jOgmZByM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=lLMOqasw; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56H9HNVG027865;
+	Thu, 17 Jul 2025 11:28:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=MsiVpe
+	WOpoqOr99vGViu11zWrWDu+pDv0+cXEOGDnDA=; b=lLMOqaswnb/V6aJdecA8Y7
+	jwEAbfPK2wToS7/HnWfBtD5XklyH+rjlOLGD4ZLvQUqQ0xKNArtPchzhhbq9BAJP
+	MilY6Ii1q85bSQoI1+CDega1SA7Knn0IEPZMggBccSPhOB4vbe+bWPfr76M2nb7d
+	6hTyoOYWp1IPeEeIf1xfUCLR6EXmLQkBV5R68zCsfxSeh+HFKFVrGiAMJJ46P1Iq
+	DekgAWjLLYiOlXE84Fyc6kPS7XFbljvbyv8VIhjLff/9wvhJoNyvxNnf2XzdZmoV
+	5a0EMHd8QGQ7wVB2ktlSVxCH9xgJ4YpPIigvz5brRrCWVnmxr7mdIOIBMXJFm7bw
+	==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47vamu5v9p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Jul 2025 11:28:31 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56H819rt031903;
+	Thu, 17 Jul 2025 11:28:30 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 47v21uc4fk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Jul 2025 11:28:29 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56HBSQcK52691366
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 17 Jul 2025 11:28:26 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1735020043;
+	Thu, 17 Jul 2025 11:28:26 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A7C8120040;
+	Thu, 17 Jul 2025 11:28:25 +0000 (GMT)
+Received: from [9.152.222.105] (unknown [9.152.222.105])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 17 Jul 2025 11:28:25 +0000 (GMT)
+Message-ID: <6285a2b1-eb9b-4315-b960-cfaa99513ac1@linux.ibm.com>
+Date: Thu, 17 Jul 2025 13:28:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,44 +76,232 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: USB cdc-acm driver: break and command
-To: "H. Peter Anvin" <hpa@zytor.com>, Oliver Neukum <oneukum@suse.com>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
- gregkh@linuxfoundation.org, Jiri Slaby <jirislaby@kernel.org>,
- linux-serial@vger.kernel.org
-References: <ce54ae11-72bb-4ac7-980b-c1cbc798a209@zytor.com>
- <fa20ab91-5ebf-427d-b938-31ea6fb945cf@suse.com>
- <83B89F79-D28B-4F2C-87EA-F5078BD7ED17@zytor.com>
- <2c807a7e-d55d-4670-9a86-e3fcaa3e52ba@suse.com>
- <f979468c-434a-43e9-8c50-8e92188abc11@zytor.com>
+Subject: Re: [RFC PATCH v1 08/16] unwind_user: Enable archs that save RA/FP in
+ other registers
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+        bpf@vger.kernel.org, x86@kernel.org,
+        Steven Rostedt <rostedt@kernel.org>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Ilya Leoshkevich <iii@linux.ibm.com>,
+        Masami Hiramatsu
+ <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Indu Bhagat <indu.bhagat@oracle.com>,
+        "Jose E. Marchesi" <jemarch@gnu.org>,
+        Beau Belgrave <beaub@linux.microsoft.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
+        Sam James <sam@gentoo.org>
+References: <20250710163522.3195293-1-jremus@linux.ibm.com>
+ <20250710163522.3195293-9-jremus@linux.ibm.com>
+ <oasyyga72yuiad7y2nzh7wcd7t7wmxnsbo2kuvsn5xsnuypewd@ukxxgdjbvegz>
 Content-Language: en-US
-From: Oliver Neukum <oneukum@suse.com>
-In-Reply-To: <f979468c-434a-43e9-8c50-8e92188abc11@zytor.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Jens Remus <jremus@linux.ibm.com>
+Organization: IBM Deutschland Research & Development GmbH
+In-Reply-To: <oasyyga72yuiad7y2nzh7wcd7t7wmxnsbo2kuvsn5xsnuypewd@ukxxgdjbvegz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 9f1MEs6w3D4ZFzesLbcAi0V8sz3Q2bTy
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDA5OSBTYWx0ZWRfX39WTLE7dfTTI SZ93ysZqnVGO+28E4EPb93MAEDLhb0WhtUYgJ97KhWM3eIRzhMvSF7RrG2GRXB3s9+5Kbj6O4E1 Z0M2Z3WIYxk/9DEWaxkT6C8xCT2S0Pg1ehLXR/7ND3XE3YAC0+Isj2ozfBs65K3fUGWITW3heDU
+ s3abHg17zlWeNBYsds7reMCubFFbt7kYpxkCOCI5IHR3T9HrTjd9jpFeyUnMu2pf4Xy7mtV4gps eG30geSbXNpCCiRrtcLg2cIq0WyosTqML+wX3P4uKDj0R2rLRIc6QTS4bpm2eYI03RZoo0Ls/23 nB2amcPpD4yOB5bAqtwADY0/hPRhlnqTI39dYfM3gksaQRQ69CpS7BOpRX5cSyLOvabhFIVrAHP
+ CDPAnsQ7UqVCsDO2L/kkqHDUVN9y54y6DKThR1eNWubagUAOVtkk1lAeMLh+c3z3/S7i4MX2
+X-Proofpoint-ORIG-GUID: 9f1MEs6w3D4ZFzesLbcAi0V8sz3Q2bTy
+X-Authority-Analysis: v=2.4 cv=dNSmmPZb c=1 sm=1 tr=0 ts=6878de5f cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=o1T9f-mJ__uqyuaix_cA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-17_01,2025-07-17_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ mlxlogscore=999 bulkscore=0 lowpriorityscore=0 suspectscore=0 spamscore=0
+ clxscore=1015 phishscore=0 malwarescore=0 mlxscore=0 adultscore=0
+ impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507170099
 
-On 16.07.25 19:49, H. Peter Anvin wrote:
-> On 2025-07-16 09:17, Oliver Neukum wrote:
-
->> Understood. It still seems dirty to me. If you want to send strings to a
->> device
->> the proper way is to use a device node and write().
->>   
+On 17.07.2025 04:01, Josh Poimboeuf wrote:
+> On Thu, Jul 10, 2025 at 06:35:14PM +0200, Jens Remus wrote:
+>> +#ifndef unwind_user_get_reg
+>> +
+>> +/**
+>> + * generic_unwind_user_get_reg - Get register value.
+>> + * @val: Register value.
+>> + * @regnum: DWARF register number to obtain the value from.
+>> + *
+>> + * Returns zero if successful. Otherwise -EINVAL.
+>> + */
+>> +static inline int generic_unwind_user_get_reg(unsigned long *val, int regnum)
+>> +{
+>> +	return -EINVAL;
+>> +}
+>> +
+>> +#define unwind_user_get_reg generic_unwind_user_get_reg
+>> +
+>> +#endif /* !unwind_user_get_reg */
 > 
-> There is definitely something to be said for that; or at least a file
-> descriptor.  We do have cases in the kernel -- notably opening the pts
-> corresponding to a ptmx file descriptor -- that do that sort of
-> "auxiliary open" kind of thing.
+> I believe the traditional way to do this is to give the function the
+> same name as the define:
 > 
-> The big question is how that interacts with the rest of the ACM driver,
-> as well as all the lifetime issues you mentioned elsewhere.
+> #ifndef unwind_user_get_reg
+> static inline int unwind_user_get_reg(unsigned long *val, int regnum)
+> {
+> 	return -EINVAL;
+> }
+> #define unwind_user_get_reg unwind_user_get_reg
+> #endif
 
-It would seem to me that CDC already has something very similar in form
-of CDC-WDM. If acm_probe() can call tty_port_register_device(), it can also
-register a secondary character device. Or are you worried about how to tell
-user space which devices belong together?
+Thanks!  I will use use suggestion.
 
-	Regards
-		Oliver
+>> +/**
+>> + * generic_sframe_set_frame_reginfo - Populate info to unwind FP/RA register
+>> + * from SFrame offset.
+>> + * @reginfo: Unwind info for FP/RA register.
+>> + * @offset: SFrame offset value.
+>> + *
+>> + * A non-zero offset value denotes a stack offset from CFA and indicates
+>> + * that the register is saved on the stack. A zero offset value indicates
+>> + * that the register is not saved.
+>> + */
+>> +static inline void generic_sframe_set_frame_reginfo(
+>> +	struct unwind_user_reginfo *reginfo,
+>> +	s32 offset)
+>> +{
+>> +	if (offset) {
+>> +		reginfo->loc = UNWIND_USER_LOC_STACK;
+>> +		reginfo->frame_off = offset;
+>> +	} else {
+>> +		reginfo->loc = UNWIND_USER_LOC_NONE;
+>> +	}
+>> +}
+> 
+> This just inits the reginfo struct, can we call it sframe_init_reginfo()?
+> 
+> Also the function comment seems completely superfluous as the function
+> is completely obvious.
+> 
+> Also the signature should match kernel style, something like:
+> 
+> static inline void
+> sframe_init_reginfo(struct unwind_user_reginfo *reginfo, s32 offset)
+
+Ditto.
+
+>> @@ -98,26 +98,57 @@ static int unwind_user_next(struct unwind_user_state *state)
+>>  
+>>  
+>>  	/* Get the Return Address (RA) */
+>> -	if (frame->ra_off) {
+>> +	switch (frame->ra.loc) {
+>> +	case UNWIND_USER_LOC_NONE:
+>> +		if (!IS_ENABLED(CONFIG_HAVE_USER_RA_REG) || !topmost)
+>> +			goto done;
+>> +		ra = user_return_address(task_pt_regs(current));
+>> +		break;
+>> +	case UNWIND_USER_LOC_STACK:
+>> +		if (!frame->ra.frame_off)
+>> +			goto done;
+>>  		/* Make sure that the address is word aligned */
+>>  		shift = sizeof(long) == 4 || compat_fp_state(state) ? 2 : 3;
+>> -		if ((cfa + frame->ra_off) & ((1 << shift) - 1))
+>> +		if ((cfa + frame->ra.frame_off) & ((1 << shift) - 1))
+>>  			goto done;
+>> -		if (unwind_get_user_long(ra, cfa + frame->ra_off, state))
+>> +		if (unwind_get_user_long(ra, cfa + frame->ra.frame_off, state))
+>>  			goto done;
+>> -	} else {
+>> -		if (!IS_ENABLED(CONFIG_HAVE_USER_RA_REG) || !topmost)
+>> +		break;
+>> +	case UNWIND_USER_LOC_REG:
+>> +		if (!IS_ENABLED(CONFIG_HAVE_UNWIND_USER_LOC_REG) || !topmost)
+>>  			goto done;
+>> -		ra = user_return_address(task_pt_regs(current));
+>> +		if (unwind_user_get_reg(&ra, frame->ra.regnum))
+>> +			goto done;
+>> +		break;
+>> +	default:
+>> +		WARN_ON_ONCE(1);
+>> +		goto done;
+> 
+> The default case will never happen, can we make it a BUG()?
+
+Whatever Steve and you agree on.  I am new to Kernel development.
+
+>>  	}
+>>  
+>>  	/* Get the Frame Pointer (FP) */
+>> -	if (frame->fp_off && unwind_get_user_long(fp, cfa + frame->fp_off, state))
+>> +	switch (frame->fp.loc) {
+>> +	case UNWIND_USER_LOC_NONE:
+>> +		break;
+> 
+> The UNWIND_USER_LOC_NONE behavior is different here compared to above.
+
+See my comments below.
+
+> Do we also need UNWIND_USER_LOC_PT_REGS?
+
+Sorry, I cannot follow.  Do you suggest to rename UNWIND_USER_LOC_REG to
+UNWIND_USER_LOC_PT_REGS?
+
+>> +	case UNWIND_USER_LOC_STACK:
+>> +		if (!frame->fp.frame_off)
+>> +			goto done;
+>> +		if (unwind_get_user_long(fp, cfa + frame->fp.frame_off, state))
+>> +			goto done;
+>> +		break;
+>> +	case UNWIND_USER_LOC_REG:
+>> +		if (!IS_ENABLED(CONFIG_HAVE_UNWIND_USER_LOC_REG) || !topmost)
+>> +			goto done;
+> 
+> The topmost checking is *really* getting cumbersome, I do hope we can
+> get rid of that.
+
+Restoring from arbitrary registers is only valid in the topmost frame,
+as their values (i.e. task_pt_regs(current)) are only available there.
+For other frames only SP, FP, and RA register values are available.
+
+I think this test makes sense.  Is this test really that expensive?
+
+>> +		if (unwind_user_get_reg(&fp, frame->fp.regnum))
+>> +			goto done;
+>> +		break;
+>> +	default:
+>> +		WARN_ON_ONCE(1);
+>>  		goto done;
+>> +	}
+> 
+> BUG(1) here as well.
+
+Same as for other WARN_ON_ONCE() vs. BUG().
+
+>>  	state->ip = ra;
+>>  	state->sp = sp;
+>> -	if (frame->fp_off)
+>> +	if (frame->fp.loc != UNWIND_USER_LOC_NONE)
+>>  		state->fp = fp;
+> 
+> Instead of the extra conditional here, can fp be initialized to zero?
+> Either at the top of the function or in the RA switch statement?
+
+No.  But fp could be initialized to state->fp, so that when it is not
+saved and thus not restored it keeps it previous value.
+
+Regards,
+Jens
+-- 
+Jens Remus
+Linux on Z Development (D3303)
++49-7031-16-1128 Office
+jremus@de.ibm.com
+
+IBM
+
+IBM Deutschland Research & Development GmbH; Vorsitzender des Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
+IBM Data Privacy Statement: https://www.ibm.com/privacy/
 
 
