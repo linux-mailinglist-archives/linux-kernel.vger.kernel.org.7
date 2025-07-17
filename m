@@ -1,109 +1,183 @@
-Return-Path: <linux-kernel+bounces-734989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2DDDB0892A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:21:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70CC0B08957
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:33:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32C4F1A61508
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:21:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3DCAA482EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:33:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D516128936D;
-	Thu, 17 Jul 2025 09:21:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="KwCM4q16"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB92288526;
+	Thu, 17 Jul 2025 09:33:39 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50AEE4503B;
-	Thu, 17 Jul 2025 09:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C36289803;
+	Thu, 17 Jul 2025 09:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752744078; cv=none; b=Wd7ppCzZnad++klupTQN7vMGBzzXGqxnc1Gf3TMMaYSa7N1hSF7ZMXfD58jJh5bkNlR/N9p4aIwWGrUvirNRxGraCrDcUyiryjBACl2AaqJxQKIzoss7DiYB091uX3CpSFmVEDFnixbirzCzk7YryProI2Q1RTiIut4dsHhC2PU=
+	t=1752744818; cv=none; b=RYObf44R+3/kyk1C04zaWeuhIhz1WXqaIRRoNnIqGP+GNCJjP7wQv5GuqkLOCN4HlT6NWTCezqjTppTyR3IITJCAufHhpTV43bsnljVay6vEmWjLIBbVDAmEHm9OpBpRMGY2Fnerj1KJqtjM/3NK4/M4XmZX6ghvsuehBp1Aawk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752744078; c=relaxed/simple;
-	bh=ghYODKwRN56ZF4az5gyzpDmfGnkll1VEDNzXJkGJV08=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O1dBOyxn5MNYoUJmMkBVCTxN2TUnTD1a3g9TfxrHYratEowBnsOb62em391u3fEj7+qCSss/jsUGjTQMUfQoF7ued1V946frw8UDV7CYeh7u5epvKOisQSJaajIuHcbU0XdXo1JC0Rf4cCP+Rs5oeK5P1/ru7zJkvT5fj7ixI5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=KwCM4q16; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-23dea2e01e4so8528805ad.1;
-        Thu, 17 Jul 2025 02:21:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1752744075; x=1753348875; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ghYODKwRN56ZF4az5gyzpDmfGnkll1VEDNzXJkGJV08=;
-        b=KwCM4q16XwuaXyFI1NYXMnLcMmWSmOqNjCynEQW3mLeyuftMzeYvY1oMHMcXxO7fEd
-         UdPnJqgSz9OMWdacJEbAg6oDBfBvqbb//ZQrYF6a8ETuw9m2r7zXf4WD+s8GBanpLRZs
-         z+XZ2FJbloxKx+oI/irN+KllNpai/PDY/69xBY+sMs5OJqhPKRYr2aZvMEKOiPDQ+Ge8
-         ksdj/4aRaoK0RnZ6d5zCD8rWT3Swc8kjMl6gDdOQxS4mhd1clTxQcIwP2hRXIy2rsJCo
-         Mejbw7lrLWwZbt3DzpvakRcBVUNQ13maiNCDKp3CMLqoULD7gGTohvqJ6ikNfzML5F59
-         uYtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752744075; x=1753348875;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ghYODKwRN56ZF4az5gyzpDmfGnkll1VEDNzXJkGJV08=;
-        b=TkabxaSAgAPgSJn3JTSSIOaQWwv6VGNVqckxiNvDWHQ6xu1agS+2NDu0F01sAaY04c
-         hMZZQmXdEUIsDzLVF8xhGX05TSkMk2oOGupldVZerD+yo28iCdopLIylBhlhNOKp2yn0
-         4L5dLMZ4pEL3M/CgyeMu7rP2bj7u0EPenY5SGhOqyq6wPRf+BV4LQzmxS9Z2pLQpf2DQ
-         hZwKKkKw9+dD7+NEkfNXLwCFPsrTMBUUKupO8DgrOltQyntsTgcxvrxEJHxxIrfGB+tv
-         C/6KUJys9x4Ztd8bWzXlV5lwGNohUhkDoUViJEDFFBdZbmVCtmPIiIa/tGyt64uUYHoD
-         NDbA==
-X-Forwarded-Encrypted: i=1; AJvYcCXClinLyTEQMLY+Xb0LMM+xpfVTa8Bm0jkhAQB02rdbmtKhR7NMSs8Qd9NnjNFfCcM/BdgupZ4RJbfERDxt@vger.kernel.org, AJvYcCXXuszv+8pU71HS/oMM5lfWQNB3HGFSS3MaBtcNeY65tJOHcatnOx7Zc1NibMHRULncjzrC/HejdQzr@vger.kernel.org
-X-Gm-Message-State: AOJu0YxO3pkteZIujvHWOc3bT2PU+33M1iRMe1N6c+GAz6VHkAsvhuf6
-	1eF0lsSP7MfamKa4W3XlBpvWffOc4A+gSYZZwYraSDI7Et630pjnwodkbpNKrLWq/BTYGfTjvqF
-	aNtGvQ2okWxPiY1/2orllM3EkJzz6Bk9ZP9Ub
-X-Gm-Gg: ASbGnctKeqER/cvAxMBreHzNTLlK1VNVKZdl4B+XW/GBboTG+v7C9ydRXwnNSppyXjc
-	TexA15LDMxUZIwgEufUp7HYtCLeC4FAA5hLh/AUoP0suut/2hWutOWyq7rKs/nisYQ+i7c7Mues
-	vhvFE7vMvWIrP/lrosvfFMFwTaa5aPtelFuqivuXNPmkIHfXy0iu92gVkUPtfM6m6M6cw2O1DKW
-	bpHOVflWb/ly0WcJuv+NA==
-X-Google-Smtp-Source: AGHT+IEcw73AwQCInDdk9e0fzVxi3F3aT9Uz+CuAK+CmNG9Ean6QVZRmPBfCDgf60QUEuP6JoBidzpPFe7BSToB5Gas=
-X-Received: by 2002:a17:902:ea0c:b0:234:f580:9ed with SMTP id
- d9443c01a7336-23e256b4d4dmr80702645ad.21.1752744075391; Thu, 17 Jul 2025
- 02:21:15 -0700 (PDT)
+	s=arc-20240116; t=1752744818; c=relaxed/simple;
+	bh=Xymr8x0+bxpRrRYUErT+GgxQwogce27oY5IJBVmOVgw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c6KfdsV24XQaJfCEnTfFADv7a8e3Bnkrg7emEBsC59pVNUsYOozPWWzRIPPIrpNn9bbezasyyRo368hoJMVA8e5jxuorojgkATwNiZOkshZpZ6pQOM6Poks4T72hoKfSvrxodQWwNW182g2ScRASypRX3soyzK41FJzZggcx6PU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [10.69.1.138] (unknown [180.111.100.227])
+	by APP-05 (Coremail) with SMTP id zQCowABXr19cw3hoqajDBA--.6027S2;
+	Thu, 17 Jul 2025 17:33:17 +0800 (CST)
+Message-ID: <3950374f-8eef-447d-8c09-ae1e888ed51e@iscas.ac.cn>
+Date: Thu, 17 Jul 2025 17:21:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250717-fix-pwm-node-v1-1-45021777efa9@amlogic.com>
-In-Reply-To: <20250717-fix-pwm-node-v1-1-45021777efa9@amlogic.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Thu, 17 Jul 2025 11:21:04 +0200
-X-Gm-Features: Ac12FXwP557lN0EiWARNaS9MW00Id1I7t6G7YIjyMJYQJpebiGcfQOd7_3xIoHM
-Message-ID: <CAFBinCAs2Ra6GiF6y-EDPCZXoi6sM+wyPUWp0vE4UVbXByXa=g@mail.gmail.com>
-Subject: Re: [PATCH] dts: arm: amlogic: fix pwm node for c3
-To: xianwei.zhao@amlogic.com
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chuan Liu <chuan.liu@amlogic.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] KVM: riscv: selftests: Add common supported test
+ cases
+To: Anup Patel <anup@brainfault.org>
+Cc: ajones@ventanamicro.com, atishp@atishpatra.org, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, kvm@vger.kernel.org,
+ kvm-riscv@lists.infradead.org
+References: <cover.1749810735.git.zhouquan@iscas.ac.cn>
+ <7e8f1272337e8d03851fd3bb7f6fc739e604309e.1749810736.git.zhouquan@iscas.ac.cn>
+ <CAAhSdy3aj_x02cpgxZDfn7tNu5HRfKA8VSZHpE1xJpY_2fABUw@mail.gmail.com>
+Content-Language: en-US
+From: Quan Zhou <zhouquan@iscas.ac.cn>
+In-Reply-To: <CAAhSdy3aj_x02cpgxZDfn7tNu5HRfKA8VSZHpE1xJpY_2fABUw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowABXr19cw3hoqajDBA--.6027S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxCr1fCr4fAF1DWw17tF4fZrb_yoWrXF48p3
+	W0yFyjkF4kCF17Jw4fGrsrZFW8K39Ygr40kr1jg3yUZr1UJF4xJrn7Kay3CrnYqrs0vr13
+	Ca43WF4a93yDtw7anT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUk2b7Iv0xC_Cr1lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I
+	8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWxJVW8Jr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r1q6r43MxAI
+	w28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr
+	4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxG
+	rwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8Jw
+	CI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2
+	z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUw2NtUUUUU
+X-CM-SenderInfo: 52kr31xxdqqxpvfd2hldfou0/1tbiBgsGBmh4vScaoQAAs8
 
-Hello,
 
-On Thu, Jul 17, 2025 at 10:59=E2=80=AFAM Xianwei Zhao via B4 Relay
-<devnull+xianwei.zhao.amlogic.com@kernel.org> wrote:
->
-> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
->
-> Fix reg address for c3 pwm node.
->
-> Fixes: 431a5281e701 ("arm64: dts: amlogic: Add Amlogic C3 PWM")
-Commit 431a5281e701 is "arm64: dts: amlogic: C3: Add clk-measure
-controller node"
-I think the correct commit hash is be90cd4bd422
 
-The actual change itself is fine for me
+On 2025/7/17 14:12, Anup Patel wrote:
+> On Fri, Jun 13, 2025 at 5:08 PM <zhouquan@iscas.ac.cn> wrote:
+>>
+>> From: Quan Zhou <zhouquan@iscas.ac.cn>
+>>
+>> Some common KVM test cases are supported on riscv now as following:
+>>
+>>      access_tracking_perf_test
+>>      demand_paging_test
+>>      dirty_log_perf_test
+>>      dirty_log_test
+>>      guest_print_test
+>>      kvm_binary_stats_test
+>>      kvm_create_max_vcpus
+>>      kvm_page_table_test
+>>      memslot_modification_stress_test
+>>      memslot_perf_test
+>>      rseq_test
+>>      set_memory_region_test
+>>
+>> Add missing headers for tests and fix RISCV_FENCE redefinition
+>> in `rseq-riscv.h` by using the existing macro from <asm/fence.h>.
+>>
+>> Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
+> 
+> Please address Drew's comments and send v2 of only this patch.
+> The first patch of this series is already queued.
+> 
+> Regards,
+> Anup
+
+Okay, I'll split and modify this set of patches. Thanks.
+
+Regards,
+Quan
+
+> 
+>> ---
+>>   tools/testing/selftests/kvm/Makefile.kvm             | 12 ++++++++++++
+>>   .../testing/selftests/kvm/include/riscv/processor.h  |  2 ++
+>>   tools/testing/selftests/rseq/rseq-riscv.h            |  3 +--
+>>   3 files changed, 15 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/selftests/kvm/Makefile.kvm
+>> index 38b95998e1e6..565e191e99c8 100644
+>> --- a/tools/testing/selftests/kvm/Makefile.kvm
+>> +++ b/tools/testing/selftests/kvm/Makefile.kvm
+>> @@ -197,6 +197,18 @@ TEST_GEN_PROGS_riscv += arch_timer
+>>   TEST_GEN_PROGS_riscv += coalesced_io_test
+>>   TEST_GEN_PROGS_riscv += get-reg-list
+>>   TEST_GEN_PROGS_riscv += steal_time
+>> +TEST_GEN_PROGS_riscv += access_tracking_perf_test
+>> +TEST_GEN_PROGS_riscv += demand_paging_test
+>> +TEST_GEN_PROGS_riscv += dirty_log_perf_test
+>> +TEST_GEN_PROGS_riscv += dirty_log_test
+>> +TEST_GEN_PROGS_riscv += guest_print_test
+>> +TEST_GEN_PROGS_riscv += kvm_binary_stats_test
+>> +TEST_GEN_PROGS_riscv += kvm_create_max_vcpus
+>> +TEST_GEN_PROGS_riscv += kvm_page_table_test
+>> +TEST_GEN_PROGS_riscv += memslot_modification_stress_test
+>> +TEST_GEN_PROGS_riscv += memslot_perf_test
+>> +TEST_GEN_PROGS_riscv += rseq_test
+>> +TEST_GEN_PROGS_riscv += set_memory_region_test
+>>
+>>   TEST_GEN_PROGS_loongarch += coalesced_io_test
+>>   TEST_GEN_PROGS_loongarch += demand_paging_test
+>> diff --git a/tools/testing/selftests/kvm/include/riscv/processor.h b/tools/testing/selftests/kvm/include/riscv/processor.h
+>> index 162f303d9daa..4cf5ae11760f 100644
+>> --- a/tools/testing/selftests/kvm/include/riscv/processor.h
+>> +++ b/tools/testing/selftests/kvm/include/riscv/processor.h
+>> @@ -9,7 +9,9 @@
+>>
+>>   #include <linux/stringify.h>
+>>   #include <asm/csr.h>
+>> +#include <asm/vdso/processor.h>
+>>   #include "kvm_util.h"
+>> +#include "ucall_common.h"
+>>
+>>   #define INSN_OPCODE_MASK       0x007c
+>>   #define INSN_OPCODE_SHIFT      2
+>> diff --git a/tools/testing/selftests/rseq/rseq-riscv.h b/tools/testing/selftests/rseq/rseq-riscv.h
+>> index 67d544aaa9a3..06c840e81c8b 100644
+>> --- a/tools/testing/selftests/rseq/rseq-riscv.h
+>> +++ b/tools/testing/selftests/rseq/rseq-riscv.h
+>> @@ -8,6 +8,7 @@
+>>    * exception when executed in all modes.
+>>    */
+>>   #include <endian.h>
+>> +#include <asm/fence.h>
+>>
+>>   #if defined(__BYTE_ORDER) ? (__BYTE_ORDER == __LITTLE_ENDIAN) : defined(__LITTLE_ENDIAN)
+>>   #define RSEQ_SIG   0xf1401073  /* csrr mhartid, x0 */
+>> @@ -24,8 +25,6 @@
+>>   #define REG_L  __REG_SEL("ld ", "lw ")
+>>   #define REG_S  __REG_SEL("sd ", "sw ")
+>>
+>> -#define RISCV_FENCE(p, s) \
+>> -       __asm__ __volatile__ ("fence " #p "," #s : : : "memory")
+>>   #define rseq_smp_mb()  RISCV_FENCE(rw, rw)
+>>   #define rseq_smp_rmb() RISCV_FENCE(r, r)
+>>   #define rseq_smp_wmb() RISCV_FENCE(w, w)
+>> --
+>> 2.34.1
+>>
+
 
