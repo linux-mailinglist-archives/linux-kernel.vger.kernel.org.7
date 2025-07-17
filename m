@@ -1,163 +1,140 @@
-Return-Path: <linux-kernel+bounces-735616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 997CCB09198
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:21:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5897BB0919A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:22:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E97F189650F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:21:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E7C03B5740
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:21:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCCDA2FCE07;
-	Thu, 17 Jul 2025 16:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9112FCE00;
+	Thu, 17 Jul 2025 16:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="GYV33WQV"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862572FC019;
-	Thu, 17 Jul 2025 16:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752769283; cv=pass; b=l2ess61jVePFyFjKhuryHshLPFcYLJV9K1L2lzJF/0KaJJIvOLbDxtcrNCsZytDHhyiPL9JWPGlr3ZROUwSukrh6Qq+O4dFQUT/iUXcXmbNBPnDzRJZUaFw544VZYLQw/Ao1n1tpbr6P8ivPRmWtfPQX/vTR5K+rLX/1ISQSyLk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752769283; c=relaxed/simple;
-	bh=xxLi7VZ6XfF9oiVfbnH3WcSEfX/GBfKqxLKORZPRKCE=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=gf78NDq6ePSII3k0sSYmf7+Ae6AbpFUjtAxvdQPBqCGkq3uM0F+YQD+NhS1euvfKIrauUjSbra/grzoZ5X5AsUEjr75MWaGi4MO/Zvegea5z23zGSdk5KgRce+p6+WiA8+mWclzs3CM1W8y2PgHA8tppuf8Z3uKrLOIFoZiHfVc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=GYV33WQV; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1752769242; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=hqHJaKVpcklVJ5ujh9TyZ1C2RwXLMFcCZzuhcZDDHBJI468tyUwj269ewOZWBRbKgJKTHuyiP0P56hXruY64UjCiVMmDnqKEbNISs6hrDCXNEF8RfvKvlNDojtg3IlnW9CF8p64u5rigVKZW2UH3uM4AqMwC1lkAsWgj4H+blvU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1752769242; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=cT2kqEKsp8nlH01nlREn5zAQtGgkfbFDvedreAfAxps=; 
-	b=Hd9LoJa7pXFft2ocoaDzl+jGNFnH2nOsFCiMpfr0i3pPP1fddApqggMjKEvx3CMuqFl5Pd/6Qu1mjpiWTpycdCqx1T0sj6XQLJjgzMtKL9WUrZfH+rjFoXL+iNp+nVWv1AbNNGnFCC3LvOePt0VuwGb2jcMHyhjBa2CDLhUt5cY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752769242;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=cT2kqEKsp8nlH01nlREn5zAQtGgkfbFDvedreAfAxps=;
-	b=GYV33WQVtsv9ltqXLJYvexwmlcFEEFES7LzghTw2Qe6DI6JTfqNJOh4u1XQ9rqXt
-	igXxKt1gbYFWE/y9YrtYREOmmnqPRD/RzNuaBOkT+RyHpMArOrEJMkEi4qiZZllOXAL
-	SVmiU4w0ZVjJ3OwK+eSEc7iVQz8r7vBgmxJMvwCQ=
-Received: by mx.zohomail.com with SMTPS id 1752769238879669.4169784081596;
-	Thu, 17 Jul 2025 09:20:38 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="SzA3lFda"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED562FC3AE;
+	Thu, 17 Jul 2025 16:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752769314; cv=none; b=p0TBJDclnsUnQ/ABYANXmGGt/JqTzaauFy5JLPYgDZyxsrcGQk1Ead30UiXfsOJGRrulh9RdR2Kz5LBJn8RECeBolgnOBWBRGS5/CzCkeYmFE4OccVniJkMMTURUvtyV47oX25SIC6MRzcCrGnZdOO2JmOQRIjrq1F/TsPpriHE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752769314; c=relaxed/simple;
+	bh=2pmx4VHDOfW7yUHLn0E6vYG5Rq+jiNJpfmJJNIOrGEs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uyPNEDlqBiZmYV/BrWyXWNH0NUP0DWvP5DImJBUVQNOF1b537kQi5OJ2kVhocwRHgZL6hMQARvvcFuVoxp3zhiJ0NyO7oOTR/lb8mS7qugtJOCJwHoTE459xE1qoVXlhxK/JNa1foKvirWeUAl4lxYyKc9uyXTO7txs45E0f01o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=SzA3lFda; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.65.225.6] (unknown [20.236.10.129])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 398AE211426B;
+	Thu, 17 Jul 2025 09:21:52 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 398AE211426B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1752769312;
+	bh=7K0UPEjUxHWApQG9NiExsOn4DGOruZ9qlwBae9uaRRI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SzA3lFda7i8ZDz++gtdU8oCWjkeUmebzAW85NcfPXgGg9V1tobU3mmv7GSG/GltBg
+	 YKA0d8Y/633t0rndP/lnnadLSVU17ShO3OgTr/ZkHE6XUWV6TCHmVXguLvl4u6o9it
+	 OABs4Lg/d8kUzRrUioRJexoggIA/3gEF8k2C4qRA=
+Message-ID: <68143eb0-e6a7-4579-bedb-4c2ec5aaef6b@linux.microsoft.com>
+Date: Thu, 17 Jul 2025 09:21:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH v7 3/6] rust: irq: add support for non-threaded IRQs and
- handlers
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <202507170718.AVqYqRan-lkp@intel.com>
-Date: Thu, 17 Jul 2025 13:20:20 -0300
-Cc: Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Bjorn Helgaas <helgaas@kernel.org>,
- =?utf-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Benno Lossin <lossin@kernel.org>,
- llvm@lists.linux.dev,
- oe-kbuild-all@lists.linux.dev,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-pci@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <9834736F-F70F-4290-9DE8-755A6D0D5EB8@collabora.com>
-References: <20250715-topics-tyr-request_irq2-v7-3-d469c0f37c07@collabora.com>
- <202507170718.AVqYqRan-lkp@intel.com>
-To: kernel test robot <lkp@intel.com>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/2] Drivers: hv: Introduce mshv_vtl driver
+To: Michael Kelley <mhklinux@outlook.com>,
+ Naman Jain <namjain@linux.microsoft.com>,
+ "K . Y . Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>
+Cc: Roman Kisel <romank@linux.microsoft.com>,
+ Anirudh Rayabharam <anrayabh@linux.microsoft.com>,
+ Saurabh Sengar <ssengar@linux.microsoft.com>,
+ Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
+ ALOK TIWARI <alok.a.tiwari@oracle.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>
+References: <20250611072704.83199-1-namjain@linux.microsoft.com>
+ <20250611072704.83199-3-namjain@linux.microsoft.com>
+ <SN6PR02MB4157F9F1F8493C74C9FCC6E4D449A@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Language: en-US
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <SN6PR02MB4157F9F1F8493C74C9FCC6E4D449A@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 7/9/2025 10:19 AM, Michael Kelley wrote:
+> From: Naman Jain <namjain@linux.microsoft.com> Sent: Wednesday, June 11, 2025 12:27 AM
+>> +
+>> +union mshv_synic_overlay_page_msr {
+>> +	u64 as_uint64;
+>> +	struct {
+>> +		u64 enabled: 1;
+>> +		u64 reserved: 11;
+>> +		u64 pfn: 52;
+>> +	};
+> 
+> Since this appear to be a Hyper-V synthetic MSR, add __packed?
+> 
+>> +};
+>> +
+>> +union hv_register_vsm_capabilities {
+>> +	u64 as_uint64;
+>> +	struct {
+>> +		u64 dr6_shared: 1;
+>> +		u64 mbec_vtl_mask: 16;
+>> +		u64 deny_lower_vtl_startup: 1;
+>> +		u64 supervisor_shadow_stack: 1;
+>> +		u64 hardware_hvpt_available: 1;
+>> +		u64 software_hvpt_available: 1;
+>> +		u64 hardware_hvpt_range_bits: 6;
+>> +		u64 intercept_page_available: 1;
+>> +		u64 return_action_available: 1;
+>> +		u64 reserved: 35;
+>> +	} __packed;
+>> +};
+>> +
+>> +union hv_register_vsm_page_offsets {
+>> +	struct {
+>> +		u64 vtl_call_offset : 12;
+>> +		u64 vtl_return_offset : 12;
+>> +		u64 reserved_mbz : 40;
+>> +	};
+>> +	u64 as_uint64;
+>> +} __packed;
+> 
+> We've usually put the __packed on the struct definition.  Consistency .... :-)
+> 
+> Don't these three register definitions belong somewhere in the
+> hvhdk or hvgdk include files?
+> 
 
+I agree, hv_register_vsm_capabilities and hv_register_vsm_page_offsets
+can be moved to the appropriate include/hyperv/ header/s.
 
-> On 16 Jul 2025, at 20:45, kernel test robot <lkp@intel.com> wrote:
->=20
-> Hi Daniel,
->=20
-> kernel test robot noticed the following build errors:
->=20
-> [auto build test ERROR on 3964d07dd821efe9680e90c51c86661a98e60a0f]
->=20
-> url:    =
-https://github.com/intel-lab-lkp/linux/commits/Daniel-Almeida/rust-irq-add=
--irq-module/20250715-232121
-> base:   3964d07dd821efe9680e90c51c86661a98e60a0f
-> patch link:    =
-https://lore.kernel.org/r/20250715-topics-tyr-request_irq2-v7-3-d469c0f37c=
-07%40collabora.com
-> patch subject: [PATCH v7 3/6] rust: irq: add support for non-threaded =
-IRQs and handlers
-> config: x86_64-rhel-9.4-rust =
-(https://download.01.org/0day-ci/archive/20250717/202507170718.AVqYqRan-lk=
-p@intel.com/config)
-> compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project =
-87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-> rustc: rustc 1.88.0 (6b00bc388 2025-06-23)
-> reproduce (this is a W=3D1 build): =
-(https://download.01.org/0day-ci/archive/20250717/202507170718.AVqYqRan-lk=
-p@intel.com/reproduce)
->=20
-> If you fix the issue in a separate patch/commit (i.e. not just a new =
-version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: =
-https://lore.kernel.org/oe-kbuild-all/202507170718.AVqYqRan-lkp@intel.com/=
+Regarding mshv_synic_overlay_page_msr, it is a generic structure that
+appears to be used for several overlay page MSRs (SIMP, SIEF, etc).
 
->=20
-> All errors (new ones prefixed by >>):
->=20
->>> error[E0425]: cannot find value `SHARED` in module `flags`
->   --> rust/doctests_kernel_generated.rs:4790:58
->   |
->   4790 |     let registration =3D Registration::new(request, =
-flags::SHARED, c_str!("my_device"), handler);
->   |                                                          ^^^^^^ =
-not found in `flags`
->   |
->   help: consider importing this constant
->   |
->   3    + use kernel::mm::virt::flags::SHARED;
->   |
->   help: if you import `SHARED`, refer to it directly
->   |
->   4790 -     let registration =3D Registration::new(request, =
-flags::SHARED, c_str!("my_device"), handler);
->   4790 +     let registration =3D Registration::new(request, SHARED, =
-c_str!("my_device"), handler);
->   |
->=20
-> --=20
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
->=20
+But, the type doesn't appear in the hv*dk headers explicitly; it's just
+used internally by the hypervisor.
 
-This is a single character fix, so I am waiting for the discussion on =
-the cover
-letter [0] to advance before sending a new version.
+I think it should be renamed with a hv_ prefix to indicate it's part of
+the hypervisor ABI, and a brief comment with the provenance:
 
-[0] https://lore.kernel.org/all/DBCQKJIBVGGM.1R0QNKO3TE4N0@kernel.org/#t=
+/* SYNIC_OVERLAY_PAGE_MSR - internal, identical to hv_synic_simp */
+union hv_synic_overlay_page_msr {
+	/* <snip> */
+};
+
+And I'm fine with it staying in this file since it's only used here right
+now, and doesn't really come from the one of the hyperv headers.
+
+Nuno
 
