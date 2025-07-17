@@ -1,79 +1,130 @@
-Return-Path: <linux-kernel+bounces-734721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7ABEB0854C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:47:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9C41B08549
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:47:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52F7E1C234B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:47:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1072D582EA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B7C218AAF;
-	Thu, 17 Jul 2025 06:47:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97FA021770A;
+	Thu, 17 Jul 2025 06:47:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A2TYCJDr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N3US8j5E"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5397617B425;
-	Thu, 17 Jul 2025 06:47:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E528217B425;
+	Thu, 17 Jul 2025 06:47:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752734839; cv=none; b=sOdnO6D3Cn7st3wP2wDPVguBt2sVZON6lfRUnkCRsTE211Vy4PVgQQZO8Ctb6DwPSUF3LhF5tfi0SNJ+TBrinHDcIkppWCaEavmPW9FaQ0R7gekl6R32Vsvw/bHI2A7ebQzhS9SR6WRcdgCjry1RaNB3oytRX92e6g71ubaMFG4=
+	t=1752734834; cv=none; b=SZS7LIyPzBDuHhKNwXSE9I5yo75rtBVNgb92k+YN9hiEUoaMRQrt4iqvDqSZyBR3fGefYIv5WQ4xnc8ab4xvEKAM3GGldjgKrCh6+7YpRfi/HHGKBfZ3A2PY+IhVOTWZcpBf3ff2BWFpm0QhmxRPvw3Vu281U1uqIExrOl55FbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752734839; c=relaxed/simple;
-	bh=rv/yJSxnGvbE7b6aXpl/DVc/+KZ8gY6e2sd6AiL0MM4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BKEgUoyxR35BzEsKDOz0YaWEjElX6RKQpRROs4SqrEfv97F7U7nD6780M8ADC12Z1d6/1JG1WH4UwFsX2nGvZEMXtcIhft48XnkhuMwcojvPqA8yaC6oWbVlDOwoqKozJN3ULFtDMq3axkBbnC4IT4KtOy1hACMeffprgBbwAkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A2TYCJDr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33F8AC4CEE3;
-	Thu, 17 Jul 2025 06:47:16 +0000 (UTC)
+	s=arc-20240116; t=1752734834; c=relaxed/simple;
+	bh=rITdXP8eIE+L4glEtyPwrDAAWzE0kLhku+fP1ZruTJc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Lo+9SV8C7Gr3y2VjIu4DYKRgVT/EmjIpLyYyY3bRRDaAS+/S2GgMGugojC5NF7/Xvxhjs2axVoNrLtaAFQkoypZTTtKwLaj6MNpcE1ksPd1ZRI+AONFvpLRcigqCSaaUPV7Kb497NZyy85miEIiXENTkz92ihxJFI9ZwC8N5NAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N3US8j5E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF5EFC4CEE3;
+	Thu, 17 Jul 2025 06:47:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752734837;
-	bh=rv/yJSxnGvbE7b6aXpl/DVc/+KZ8gY6e2sd6AiL0MM4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=A2TYCJDrK3kn277cclTEqgRR+bGftZSHBI3YjFq65FYSDYQ/1pjK6CxIq1g2kLEn/
-	 oPxeInZbwQq/VkbGe7qhKHS9cFysvXf6PmrGmWakOuI49nbYmT36XovNHe48WU3qgd
-	 5agEquODytNtMpO5eMP8uljg2sZ/JcgjnYBmSRFmDbQj7DxxFhe3R2e6KgICci4i9H
-	 PbXO8SdPc1lwnDmHWHBQBhnTPr/iv12SA+0QFs0h/E4EA5ccduqlYIbifc7ViWzYX+
-	 anX35xw0mJr4xzndmhBfE2yklNlFGA5FMXC/LX6AYzvTc+E38lelkUM2ngRW8EtFYw
-	 kPb0zgWrP9OeQ==
-From: Leon Romanovsky <leon@kernel.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] Preparation to .map_page and .unmap_page removal
-Date: Thu, 17 Jul 2025 09:47:08 +0300
-Message-ID: <cover.1752734252.git.leon@kernel.org>
-X-Mailer: git-send-email 2.50.1
+	s=k20201202; t=1752734833;
+	bh=rITdXP8eIE+L4glEtyPwrDAAWzE0kLhku+fP1ZruTJc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=N3US8j5EGoufQ8hfSN6ehIWnB3RzfHxz3pwyreBId0WpWnTteOL6KeYyo5YUK2/lA
+	 TrcSvM/mtPeMg/LyI45JryUGRUlzGxr+gpADmuSUkPVO1zdgK/BzEMyQNCX0iUk2xp
+	 47IP18nfVoYHwq4PmB7Kb5Qk4NKwDSDhhxWpuJXkJuVXc7ENlndqxDDaNDK5FdoA9o
+	 bo5tnn9YplhczabBJhlm9uXrwzFisUNoXp88XNeXLAwfJwZ+Ys28qQxw+61XdYsE0I
+	 vJxn8EvWIPz0YOUtTW5tWGEgmhcqUtiB7GJ0ty8ceInG3CA3cZAUWYDYgd47v60VW4
+	 VbTO7P/96VC5w==
+Message-ID: <cd32e4f6-3f5a-457b-b4cf-3d2268180877@kernel.org>
+Date: Thu, 17 Jul 2025 08:47:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/4] dt-bindings: clock: qcom,sm4450-camcc: Reference
+ qcom,gcc.yaml
+To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jeff Hugo <jeff.hugo@oss.qualcomm.com>
+Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250717-gcc-ref-fixes-v2-0-a2a571d2be28@quicinc.com>
+ <20250717-gcc-ref-fixes-v2-3-a2a571d2be28@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250717-gcc-ref-fixes-v2-3-a2a571d2be28@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This is followup to "dma-mapping: migrate to physical address-based API"
-series https://lore.kernel.org/all/cover.1750854543.git.leon@kernel.org/
+On 17/07/2025 08:38, Satya Priya Kakitapalli wrote:
+> Reference the common qcom,gcc.yaml schema to unify the common
+> parts of the binding.
+> 
+> Suggested-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+> ---
+>  .../devicetree/bindings/clock/qcom,sm4450-camcc.yaml | 20 ++++----------------
+>  1 file changed, 4 insertions(+), 16 deletions(-)
 
-These preparation changes are limited to DMA subsystem to avoid possible
-complications with submission to multiple trees.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Thanks
-
-Leon Romanovsky (2):
-  dma-mapping: prepare dma_map_ops to conversion to physical address
-  dma-mapping: convert dummy ops to physical address mapping
-
- include/linux/dma-map-ops.h |  6 ++++++
- kernel/dma/dummy.c          | 13 ++++++-------
- kernel/dma/mapping.c        | 24 ++++++++++++++++++++----
- kernel/dma/ops_helpers.c    | 14 +++++++++++---
- 4 files changed, 43 insertions(+), 14 deletions(-)
-
--- 
-2.50.1
-
+Best regards,
+Krzysztof
 
