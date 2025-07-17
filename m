@@ -1,208 +1,255 @@
-Return-Path: <linux-kernel+bounces-735418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 897E1B08F14
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:23:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECEFAB08F15
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:23:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A09C1691E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:23:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A25D1C2792C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B867A2F7CE0;
-	Thu, 17 Jul 2025 14:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g0viwvB6"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DF5B2F7CED;
+	Thu, 17 Jul 2025 14:22:34 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A28A2F85FC;
-	Thu, 17 Jul 2025 14:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43B032F6FB6;
+	Thu, 17 Jul 2025 14:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752762132; cv=none; b=k1MvvAGBQBqPcd5mwIWKrBA8RIg1p6X9SDxSRa+M5GVx/gN3/+Xe/i85wCf40xv53KFCveLtPGnQ5Rfqci+M4LUYlIrvskzKLsma56MjsqTN5EkCqazjuC/8KMVnz9/9ND2c2zaaA5faESrcnNQgqVbtsF+PKKoi6mCkISh9GlA=
+	t=1752762153; cv=none; b=QyfRvwMYoTuEDG5tBfcEPtix/5HR49gap69Qn5etTQdxjYRckaGghk/sL7/BtzjnI4xoVSAMuAPmk1aj399ArV9ES7g3zHU7o9Xa6+N/NNxdY9AZB3rYDoOyGBWYaUZrpCn43mMywYbC+jkWTmocCV3Eqnmx0f2FdEbklHdgSjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752762132; c=relaxed/simple;
-	bh=ZNKvvXt+/bXU1LK1aGng3ojIseGctVptiaidMgbARDQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=puK8Z8sf93DDcBl2GOQO22FdKQFEScr02kifW69TYrAlpExkyGVfgQpgq5GYG+O/zd7A8Aba72SYcvILuo2H6gBeLPCshVX55dv95y7xXiq6a00+GAmmcZYZ/BQ3YW5vDKcPFYOAzgnGsJdTI5RrA9PXmq5PLvzcCGAwLrvDS+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g0viwvB6; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-553dceb342fso950138e87.0;
-        Thu, 17 Jul 2025 07:22:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752762128; x=1753366928; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4jzyEI3ac/uOo6smhtFQv3Lt7kPNZfLb7UDBGDyA0w8=;
-        b=g0viwvB6nlPIgCFsYfQA3ugBQvGNsBLHN6AOt0Qpc6GGgKEiDc2TlFskRDpvMylAe9
-         sQ6dCsyVu5r5XIzytEDZuTdjjnrEwkzeTKK8orb9Q7ukGa2a8Pcrzm9gn48T8UbbfIbi
-         chA0+A7ZhrZyK8wA+egfTjwpvX65nSW/W4hIp7TOsqd7hPv8guKS/l40gSFaVAOX9yS+
-         DPJnObbeFCSesJq/RmKgBHTSMFlMmPcfb1WDi940Ve3mkgBgK/zXZe3qIIAYS/ovOIWL
-         rNRCTJm4dYBCsYgggnWN4ebETFkVhzJLZ7yNYrC1j6AseVrtbAR7wA3pn3GSAaK7cTvH
-         WBhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752762128; x=1753366928;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4jzyEI3ac/uOo6smhtFQv3Lt7kPNZfLb7UDBGDyA0w8=;
-        b=YFY9N81467ELGCZ5jXpLZ6qcJK3xGOHzpfOZF2RxZxuS2QgkvOYGXPay07A0/U3b+3
-         mbNH5s8Ij5+Q97oove3T4EPEZO/lpgelORcYe2eq+xFZVuIlgYQw8PLp7SK1WD3BpoUX
-         /jbOWSsA8neu0o1q21B7nz1dNWBz1lZm4xE0anAM4+4eCwl/w7QqthW78shvyjugYfhi
-         QkMjWyL+IaF/8leTFvua/CBwCdEvVnwrZV8mVJQyF9lI1PeUFqCxp1qOBU1oAld5wMgt
-         +9V74XSgUN19OMa1T8tmZDcUsQ7gPtmNTL2ay7lrZhg/V4S1ex0ZUm3YStG+fgvcFfvg
-         G9OA==
-X-Forwarded-Encrypted: i=1; AJvYcCVNz5PgB/Cl3+2xImJBHznASykh/qZucLli1zu9JFMRJgClFxiz43EJGIP0OxtiM5xxPy3qR0qbd021@vger.kernel.org, AJvYcCVaNncqf/ZlFoq5lv+zq6dHe8FPxCiCKK5ge9nzphBxGtxSI9EunbJVY/pdcPQKD+u3QzzWT7CxnekMAdLM@vger.kernel.org, AJvYcCVkm6xis3cDZDNb9B9fr5PnuMFES7RHOzdxwiNTXOXLuSrYNxUeSsuEEMyfQ1uClTTe0CDEk4O3djtO@vger.kernel.org, AJvYcCXZRQ7RdJaOSYPUe8cLJ1zikJMPrbS6tIYLz9bsqSAw7j/Dkv2gaJtmih652VOqVfGMCYl5UYlYhqF9APA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxF8uD2Cvs3MoxNT1sVWCjhiwoVsLfH7+5Ied0SUxsiErIyoHlz
-	oCNvUS0CapFXF2R3wsyEovINN00iErzk8bFNnp4pomBMsZTAVq2karmG
-X-Gm-Gg: ASbGncu/c5ingS1WsqYws7Q7zsT6qhEra9ZZlvFq+3Y3SC0VP5tgTI/7mXXSHTXJJiM
-	lqaM0ptA88J0I117TuI3+WvzoeLV7asHII6uYWv+AQrq8rgNpDHq+VWcq3BuzGDrNAcYhfxUePE
-	hchhfEj4+7KDzxj5OmQWMURQ368+3NYtf0bZczqR7mqpBMzBJyO6Svu/3mWOOJgxRYXfFbzNYTQ
-	HaBWT5oF+wRENjjbXySsUsu/nhfjCdBvNOjjD578Lr8skxUxwNtE2h/5xggYV5f/O9NB6Qzq/gQ
-	WbNyTkI6L91UedA9htgloCDHz+/b0e+ZUhUk2PJAzX4rLgAWdE9Bv5CmqcyYi+BNGV0bLn/VvS/
-	A3kGoicGb+ahz4Q8XXJcJzcGA
-X-Google-Smtp-Source: AGHT+IESYH2Sz2RGJLeVpKp3IKX4ZOErGb7b+04X70EABSWL+fmITawGH+Sfa4Vm3XmfnZhj3gzEDg==
-X-Received: by 2002:a05:6512:3f25:b0:553:314e:8200 with SMTP id 2adb3069b0e04-55a2958fc8emr1141661e87.8.1752762127827;
-        Thu, 17 Jul 2025 07:22:07 -0700 (PDT)
-Received: from xeon.. ([188.163.112.60])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55943b61134sm3079983e87.162.2025.07.17.07.22.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 07:22:07 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>,
-	Dmitry Osipenko <digetx@gmail.com>
-Cc: dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v1 5/5] ARM: tegra: add MIPI calibration binding for Tegra20/Tegra30
-Date: Thu, 17 Jul 2025 17:21:39 +0300
-Message-ID: <20250717142139.57621-6-clamor95@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250717142139.57621-1-clamor95@gmail.com>
-References: <20250717142139.57621-1-clamor95@gmail.com>
+	s=arc-20240116; t=1752762153; c=relaxed/simple;
+	bh=ZqR6t4Ayf89Bkj+HVqk0//sstqsHl825u2C30HLvrYQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rpyWwOPI7kk7L3vJHygpaKswBodmtIxAyofT4ips5OQ634SxN9dYRKmg9OlBQTes6l01j+vm2LmP8SjgjVnS6PYlNzHmlEjzCQJQwZXqfE1GZxH+HIrsfnssHAFJTtcpdST/NxK9gqFmOkGgnlQWfdTQjaxrmAx5i65jKD+6oMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 56HELv4i033051;
+	Thu, 17 Jul 2025 23:21:57 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 56HELv0R033048
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Thu, 17 Jul 2025 23:21:57 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <ab0a07e8-2d24-4ca4-ab4e-0ec5b9f2087d@I-love.SAKURA.ne.jp>
+Date: Thu, 17 Jul 2025 23:21:55 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH v3] media: imon: make send_packet() more robust
+To: Alan Stern <stern@rowland.harvard.edu>, linux-media@vger.kernel.org,
+        Sean Young <sean@mess.org>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Hillf Danton <hdanton@sina.com>,
+        syzbot+592e2ab8775dbe0bf09a@syzkaller.appspotmail.com,
+        LKML <linux-kernel@vger.kernel.org>
+References: <2ac5d313-c754-4fb9-acd3-21f3b948d653@I-love.SAKURA.ne.jp>
+ <282345b9-9aff-43ed-b66d-76cf51cc0deb@I-love.SAKURA.ne.jp>
+ <20250713081148.3880-1-hdanton@sina.com>
+ <d6da6709-d799-4be3-a695-850bddd6eb24@rowland.harvard.edu>
+ <aHa3xpKfGNqAocIO@gofer.mess.org>
+ <c4e88c28-28ee-4e37-9822-8e2999d0f0ee@rowland.harvard.edu>
+ <aHdzD7EowAKT4AhQ@gofer.mess.org>
+ <a44d5568-48d6-44f7-af93-e1b966489a84@I-love.SAKURA.ne.jp>
+ <aHefSptAPBoRG_20@gofer.mess.org>
+ <c83f37f2-a0d5-4c3d-b311-a3bc8ae142c9@I-love.SAKURA.ne.jp>
+ <2c34ff38-d41a-453d-ae2e-87dc58f27a14@rowland.harvard.edu>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <2c34ff38-d41a-453d-ae2e-87dc58f27a14@rowland.harvard.edu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Virus-Status: clean
+X-Anti-Virus-Server: fsav303.rs.sakura.ne.jp
 
-Add MIPI calibration device node for Tegra20 and Tegra30.
+syzbot is reporting that imon has three problems which result in
+hung tasks due to forever holding device lock [1].
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+First problem is that when usb_rx_callback_intf0() once got -EPROTO error
+after ictx->dev_present_intf0 became true, usb_rx_callback_intf0()
+resubmits urb after printk(), and resubmitted urb causes
+usb_rx_callback_intf0() to again get -EPROTO error. This results in
+printk() flooding (RCU stalls).
+
+Alan Stern commented [2] that
+
+  In theory it's okay to resubmit _if_ the driver has a robust
+  error-recovery scheme (such as giving up after some fixed limit on the
+  number of errors or after some fixed time has elapsed, perhaps with a
+  time delay to prevent a flood of errors).  Most drivers don't bother to
+  do this; they simply give up right away.  This makes them more
+  vulnerable to short-term noise interference during USB transfers, but in
+  reality such interference is quite rare.  There's nothing really wrong
+  with giving up right away.
+
+but imon has a poor error-recovery scheme which just retries forever;
+this behavior should be fixed.
+
+Since I'm not sure whether it is safe for imon users to give up upon any
+error code, this patch takes care of only union of error codes chosen from
+modules in drivers/media/rc/ directory which handle -EPROTO error (i.e.
+ir_toy, mceusb and igorplugusb).
+
+Second problem is that when usb_rx_callback_intf0() once got -EPROTO error
+before ictx->dev_present_intf0 becomes true, usb_rx_callback_intf0() always
+resubmits urb due to commit 8791d63af0cf ("[media] imon: don't wedge
+hardware after early callbacks"). Move the ictx->dev_present_intf0 test
+introduced by commit 6f6b90c9231a ("[media] imon: don't parse scancodes
+until intf configured") to immediately before imon_incoming_packet(), or
+the first problem explained above happens without printk() flooding (i.e.
+hung task).
+
+Third problem is that when usb_rx_callback_intf0() is not called for some
+reason (e.g. flaky hardware; the reproducer for this problem sometimes
+prevents usb_rx_callback_intf0() from being called),
+wait_for_completion_interruptible() in send_packet() never returns (i.e.
+hung task). As a workaround for such situation, change send_packet() to
+wait for completion with timeout of 10 seconds.
+
+Link: https://syzkaller.appspot.com/bug?extid=592e2ab8775dbe0bf09a [1]
+Link: https://lkml.kernel.org/r/d6da6709-d799-4be3-a695-850bddd6eb24@rowland.harvard.edu [2]
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 ---
- arch/arm/boot/dts/nvidia/tegra20.dtsi | 14 ++++++++++++++
- arch/arm/boot/dts/nvidia/tegra30.dtsi | 18 ++++++++++++++++++
- 2 files changed, 32 insertions(+)
+Changes in v3:
+  Dropped usb_unlink_urb() call from  usb_rx_callback_intf{0,1}().
+  Dropped ictx->lock change for sending as a separate patch.
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra20.dtsi b/arch/arm/boot/dts/nvidia/tegra20.dtsi
-index 92d422f83ea4..521261045cc8 100644
---- a/arch/arm/boot/dts/nvidia/tegra20.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra20.dtsi
-@@ -74,6 +74,16 @@ vi@54080000 {
- 			status = "disabled";
- 		};
+Changes in v2:
+  Updated patch description.
+
+ drivers/media/rc/imon.c | 61 +++++++++++++++++++++++++----------------
+ 1 file changed, 37 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/media/rc/imon.c b/drivers/media/rc/imon.c
+index f5221b018808..b914dd39c21c 100644
+--- a/drivers/media/rc/imon.c
++++ b/drivers/media/rc/imon.c
+@@ -645,12 +645,15 @@ static int send_packet(struct imon_context *ictx)
+ 		smp_rmb(); /* ensure later readers know we're not busy */
+ 		pr_err_ratelimited("error submitting urb(%d)\n", retval);
+ 	} else {
+-		/* Wait for transmission to complete (or abort) */
+-		retval = wait_for_completion_interruptible(
+-				&ictx->tx.finished);
+-		if (retval) {
++		/* Wait for transmission to complete (or abort or timeout) */
++		retval = wait_for_completion_interruptible_timeout(&ictx->tx.finished, 10 * HZ);
++		if (retval <= 0) {
+ 			usb_kill_urb(ictx->tx_urb);
+ 			pr_err_ratelimited("task interrupted\n");
++			if (retval < 0)
++				ictx->tx.status = retval;
++			else
++				ictx->tx.status = -ETIMEDOUT;
+ 		}
  
-+		/* DSI MIPI calibration logic is a part of VI/CSI */
-+		mipi: mipi@54080220 {
-+			compatible = "nvidia,tegra20-mipi";
-+			reg = <0x54080220 0x100>;
-+			clocks = <&tegra_car TEGRA20_CLK_VI>,
-+				 <&tegra_car TEGRA20_CLK_CSI>;
-+			clock-names = "vi", "csi";
-+			#nvidia,mipi-calibrate-cells = <1>;
-+		};
-+
- 		epp@540c0000 {
- 			compatible = "nvidia,tegra20-epp";
- 			reg = <0x540c0000 0x00040000>;
-@@ -219,9 +229,13 @@ dsi@54300000 {
- 			clock-names = "dsi", "parent";
- 			resets = <&tegra_car 48>;
- 			reset-names = "dsi";
-+			nvidia,mipi-calibrate = <&mipi 0>;
- 			power-domains = <&pd_core>;
- 			operating-points-v2 = <&dsi_dvfs_opp_table>;
- 			status = "disabled";
-+
-+			#address-cells = <1>;
-+			#size-cells = <0>;
- 		};
- 	};
+ 		ictx->tx.busy = false;
+@@ -1745,14 +1748,6 @@ static void usb_rx_callback_intf0(struct urb *urb)
+ 	if (!ictx)
+ 		return;
  
-diff --git a/arch/arm/boot/dts/nvidia/tegra30.dtsi b/arch/arm/boot/dts/nvidia/tegra30.dtsi
-index 50b0446f43fc..c52ad3715505 100644
---- a/arch/arm/boot/dts/nvidia/tegra30.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra30.dtsi
-@@ -164,6 +164,16 @@ vi@54080000 {
- 			status = "disabled";
- 		};
+-	/*
+-	 * if we get a callback before we're done configuring the hardware, we
+-	 * can't yet process the data, as there's nowhere to send it, but we
+-	 * still need to submit a new rx URB to avoid wedging the hardware
+-	 */
+-	if (!ictx->dev_present_intf0)
+-		goto out;
+-
+ 	switch (urb->status) {
+ 	case -ENOENT:		/* usbcore unlink successful! */
+ 		return;
+@@ -1761,16 +1756,29 @@ static void usb_rx_callback_intf0(struct urb *urb)
+ 		break;
  
-+		/* DSI MIPI calibration logic is a part of VI/CSI */
-+		mipi: mipi@54080220 {
-+			compatible = "nvidia,tegra30-mipi";
-+			reg = <0x54080220 0x100>;
-+			clocks = <&tegra_car TEGRA30_CLK_VI>,
-+				 <&tegra_car TEGRA30_CLK_CSI>;
-+			clock-names = "vi", "csi";
-+			#nvidia,mipi-calibrate-cells = <1>;
-+		};
-+
- 		epp@540c0000 {
- 			compatible = "nvidia,tegra30-epp";
- 			reg = <0x540c0000 0x00040000>;
-@@ -321,9 +331,13 @@ dsi@54300000 {
- 			clock-names = "dsi", "parent";
- 			resets = <&tegra_car 48>;
- 			reset-names = "dsi";
-+			nvidia,mipi-calibrate = <&mipi 0>;
- 			power-domains = <&pd_core>;
- 			operating-points-v2 = <&dsia_dvfs_opp_table>;
- 			status = "disabled";
-+
-+			#address-cells = <1>;
-+			#size-cells = <0>;
- 		};
+ 	case 0:
+-		imon_incoming_packet(ictx, urb, intfnum);
++		/*
++		 * if we get a callback before we're done configuring the hardware, we
++		 * can't yet process the data, as there's nowhere to send it, but we
++		 * still need to submit a new rx URB to avoid wedging the hardware
++		 */
++		if (ictx->dev_present_intf0)
++			imon_incoming_packet(ictx, urb, intfnum);
+ 		break;
  
- 		dsi@54400000 {
-@@ -334,9 +348,13 @@ dsi@54400000 {
- 			clock-names = "dsi", "parent";
- 			resets = <&tegra_car 84>;
- 			reset-names = "dsi";
-+			nvidia,mipi-calibrate = <&mipi 0>;
- 			power-domains = <&pd_core>;
- 			operating-points-v2 = <&dsib_dvfs_opp_table>;
- 			status = "disabled";
++	case -ECONNRESET:
++	case -EILSEQ:
++	case -EPROTO:
++	case -EPIPE:
++		dev_warn(ictx->dev, "imon %s: status(%d)\n",
++			 __func__, urb->status);
++		return;
 +
-+			#address-cells = <1>;
-+			#size-cells = <0>;
- 		};
- 	};
+ 	default:
+ 		dev_warn(ictx->dev, "imon %s: status(%d): ignored\n",
+ 			 __func__, urb->status);
+ 		break;
+ 	}
+ 
+-out:
+ 	usb_submit_urb(ictx->rx_urb_intf0, GFP_ATOMIC);
+ }
+ 
+@@ -1786,14 +1794,6 @@ static void usb_rx_callback_intf1(struct urb *urb)
+ 	if (!ictx)
+ 		return;
+ 
+-	/*
+-	 * if we get a callback before we're done configuring the hardware, we
+-	 * can't yet process the data, as there's nowhere to send it, but we
+-	 * still need to submit a new rx URB to avoid wedging the hardware
+-	 */
+-	if (!ictx->dev_present_intf1)
+-		goto out;
+-
+ 	switch (urb->status) {
+ 	case -ENOENT:		/* usbcore unlink successful! */
+ 		return;
+@@ -1802,16 +1802,29 @@ static void usb_rx_callback_intf1(struct urb *urb)
+ 		break;
+ 
+ 	case 0:
+-		imon_incoming_packet(ictx, urb, intfnum);
++		/*
++		 * if we get a callback before we're done configuring the hardware, we
++		 * can't yet process the data, as there's nowhere to send it, but we
++		 * still need to submit a new rx URB to avoid wedging the hardware
++		 */
++		if (ictx->dev_present_intf1)
++			imon_incoming_packet(ictx, urb, intfnum);
+ 		break;
+ 
++	case -ECONNRESET:
++	case -EILSEQ:
++	case -EPROTO:
++	case -EPIPE:
++		dev_warn(ictx->dev, "imon %s: status(%d)\n",
++			 __func__, urb->status);
++		return;
++
+ 	default:
+ 		dev_warn(ictx->dev, "imon %s: status(%d): ignored\n",
+ 			 __func__, urb->status);
+ 		break;
+ 	}
+ 
+-out:
+ 	usb_submit_urb(ictx->rx_urb_intf1, GFP_ATOMIC);
+ }
  
 -- 
-2.48.1
+2.50.1
+
 
 
