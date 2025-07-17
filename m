@@ -1,129 +1,135 @@
-Return-Path: <linux-kernel+bounces-735222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5914B08C51
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:00:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EF69B08C59
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:02:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2A291C25098
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:00:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20C1D3A8029
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:01:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF7129C326;
-	Thu, 17 Jul 2025 11:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8370B29DB7F;
+	Thu, 17 Jul 2025 12:01:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C2c2d1UT"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="lYE8f5kU"
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1440244695;
-	Thu, 17 Jul 2025 11:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 894BB29C35A
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 12:01:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752753591; cv=none; b=X/M1XbFyqEdTJ+oDr9XrLvn0Ptv4NTixIeo1oL4wQH2FL0xCAVm2fErINONnA8sn42bjDEBpd4obp5mF+AQwRhllUAqMkiZ7Z8O6yG1c7fjDOsonZnRScI4p48z26wI3h+T9WQkWEkUq7MphxIK6QjFH90GfJDjJuHKbujqWEiM=
+	t=1752753714; cv=none; b=EAFpqUJUatVEr8SpT/we0Rn0d2i9C1oy0kHXmPqq2xrGBsSEitF/ldfWg7L0FjjTAIEKzTVEzlwqOO4ke4URyFXD9hDSj1v7yd7Bx6pxakZSqYr4NXj72GaPJQZOz/MBttU6DWloZZs8GLXY0i9JF9ah3b8ugK1wCTRIUf3nVxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752753591; c=relaxed/simple;
-	bh=nkcmylT9yipRsOBI6uhXOZOwKH5/VJoxCifVdfyQYUQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qarOlq+ZvZGuXOWyITbqLAtlgEfLiFb+kV+F6v/z9QShyRV+DToHSyKT81ibyb/ZJ8aWAyFhUHmBWRA91tMda0iu52HiIUzdnyi0PxV+3TwLE0xZ/8hxEB5dXhH/6/uUZOHYdyLhNg+XKWNatjpN8cJZyjRSyRvn/RHiOWvge6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C2c2d1UT; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2350fc2591dso8957485ad.1;
-        Thu, 17 Jul 2025 04:59:49 -0700 (PDT)
+	s=arc-20240116; t=1752753714; c=relaxed/simple;
+	bh=kjEyn7nEjF8oiVB6GgmGedSuLAr7HCIjBycrDFOZBKY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=eC5mxr6QPzod1WffFr4KPcgM0siKtouCg//+/ROh9b6IjmI6VkhfLbYsDa8DFwy2hpJ+xGl28XAIZ9Qpkpv/1wmOm21JK0UBf54PvTTp4CzgkWj4eMDSK+1OjsDrxhWUupDCs78K2A34plNQCrlGeTGJ60MmLyznWAIBnL/9cpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=lYE8f5kU; arc=none smtp.client-ip=209.85.166.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3e059b14cb1so8368775ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 05:01:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752753589; x=1753358389; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PbLRuGBCBDgfVU6yEnMIFZuymSG0mxgBMi0dHo+HMI4=;
-        b=C2c2d1UTtTht7AQKKfVt2LRi3iJuDY9IZY86Kvu0txlL57PgndO7X7AoaQT/nh/lHg
-         fiYtxytJsnK4yEheZAWdU+EE6OZlxztW0yuy0hVsgYPQJ5I7+aQSuYMSiZkhn0ErlmI4
-         /O7lFX07mZo58Mnx3G3zuwsXlgENyI/G6uN5guZEBktY9ZR8n8isxqFfpRJ35afFgUfp
-         Qw6sZnBRNdKmpQ37u9pKCtW9ivfwRGs2gCiQt95in7clSXpJv1J2ofQpm7yyRf/SOhl6
-         6HTqjC5ov7p3LEEUo4fQ3hxsW+3Qv0wnIX6vGBhoDbjWaWXkCCLlMRDi+1rqS0INLBbo
-         7s4A==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1752753712; x=1753358512; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=61ZOPEc1Npv0N7lkKyvYLgeXrgu1p1u4u8vtKljsiog=;
+        b=lYE8f5kUqvO+XsNQ/XO+6VW86/pIpFACuVd/pl7Et4Hw1+gRnpawN95JAutzedDP9O
+         nkCqB/eoIGz5n0adNm9VbJYr0k5R9L1FbylvG+rCi+niTJDUM7lCrMGzaUqROeNilr4C
+         RJNQP8zBbrPO+InZ0fQ9Lip15LzVZdQRSrgoAbAhKHUcyiKdo+jfxxadpgFP7yv7kiwr
+         nyLorzD87mtZU4OL/Yfc+WgM9G6Rw6BMZarx6Mu9CECKyxsRD6RknxcXjhKhpiIFinEU
+         Yud6DdQ4JHeztnXArJpr+sKT1mMdlIGKg6syWxrZMg7ahk6uFenscA3o8UChYh1/2zpi
+         ExAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752753589; x=1753358389;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PbLRuGBCBDgfVU6yEnMIFZuymSG0mxgBMi0dHo+HMI4=;
-        b=ni4+kQuzU4Yf9ZEx4PfW+9PeZsdHsOUv6LP4eIhnGJctsLsFaLd4BGeVb1TcKbQ5DL
-         UqK9RqYEzlKuVDzoJ0DXudJFbkW9N2BtLd2ajVTSHHcw26sGl7tHl5yfiHPgQrsYW7h5
-         FQjloKqWm8UBdPsdTMGKV9ssSQWaGwuCXIYtbtazrnVUO1b9Kv4kKV1hOsZW/qZLVYUK
-         YEdTO5AFQU/aOyhVRNEKCyMn0DHOTOwsvMUhUqQsZmLairoHtQkKtVkKvvG3WngTaTYV
-         /+BFG/EdfBPLa9dOLToyW7z1MstH7lO8QpwU4hAMtNkWnX9qsjNQ5jqq4wpuA8GqRlH/
-         nK9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVqA7pBTb6gO1we8q3g1FIRVxckvTmxffO0xt8mzOSTaB+YsZ68OlWa/4jJfZz3WOVG0W0=@vger.kernel.org, AJvYcCXIMz97rJTpodoup3UaPO7GO0FGZHUmjzev6zN94U63EfPv+KOb0lAi9OXYmhBE7RoRtyMyyylkrvu4tuzG@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSIQ3zz+ivroS9M66AR6jF31RqesdZmGkaB4ZsPal/inDE2VOj
-	OcH1o2sykdlMII36TzV9TLPsPSRnb7Q5/PO6gj+pFZDauzbafQiVAneF
-X-Gm-Gg: ASbGnctYC460TOkWwPkp78veru63ku9hw6u8FxZ744x5F91EWUWewxVuBO3Drd1FP+A
-	3saDZIV3VBtFfRzHYdPV0mcwq9/IbYSHwkEaq+i6LBx+iUovilk22AG/Ol1umzcmbMcWAaomhxl
-	Z3h25p5YRF5z7qynrPpV5BgjytaUpkiM3NLIif7uQA5LZVAWLBwLZj/ap9/ELyUGtfy3QM2eJ7o
-	ilqwOIMZONRMQbr4ebZlJ8Crgrytgo+KtfyWpHTS1YzEqSJRvfDG3bml36Mad7sgcIYNfDqE/+H
-	D0u9+xODWaeMr7JBHngbxJSyTUjK5B+L18wjREEJoEx3rq4IeomFdgUZ+5BDQFe2SckZp/9beP5
-	6s0JbtcsrKGnoDIzUZYmxWsaOHf/d+w==
-X-Google-Smtp-Source: AGHT+IE7gXMblI4F3h/n2WJ5+86/B68s1uRAd1eAVRlCcY9lkPK3X73PWe7RYmr9PH2N+slxR08t+Q==
-X-Received: by 2002:a17:902:bd4a:b0:237:e3bc:7691 with SMTP id d9443c01a7336-23e2f704bbamr31439535ad.13.1752753588815;
-        Thu, 17 Jul 2025 04:59:48 -0700 (PDT)
-Received: from archlinux ([38.188.108.234])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4322890sm146172075ad.136.2025.07.17.04.59.41
+        d=1e100.net; s=20230601; t=1752753712; x=1753358512;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=61ZOPEc1Npv0N7lkKyvYLgeXrgu1p1u4u8vtKljsiog=;
+        b=shhROl3qPwp5OLEMgYXdLTZjnOhRJpa8IRmB0lG04596G38Mfdl4+lJ2PoxV3jQgX/
+         1ZIqHPHKBCZTkK5bzCz79YDraWxhOMs1TcrVy/J+zKGYFUui5j6gqTQSL2vFE2TcfZUM
+         ywCC9jyPkrTG6eWDqfHrfBUYHxY66O7ph9mkB1G+Ob1rC2GLLu5gGyVZ7r0stQX3/TcZ
+         GOCWFQwofs7lpFA5iodXF4xAE9+GaRST8lSydCMfdrvcvfJMOztjEh5a3+Yj6KWgblmf
+         LCsjjOYuw3n09OWBd5ZEuRCrCyDjDNwKRv9L09en/t7705dOCGc7RbA2THrYw3BhL75W
+         YRdw==
+X-Forwarded-Encrypted: i=1; AJvYcCXfLmhus7BCDdf/aYvpZLluB9DQNTZFtmcWJuSNH0n+v3ZRgKALJQH2XVOr5EgSMVsK9nR6RhVTbIrxE5w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLzOSma3jly9ujJRv+PtinA3/l/dQ6VXHE2U//Gcx9pdPsg9sR
+	bzseDDKKn95KIlisrZ7G3329bO7B4xtN05ypOTtUFbc+GUwYoqSKAcKrfoZ1jEuH8CY=
+X-Gm-Gg: ASbGncsOctHnRglTEMQ+pFJiTPMbLviIs0QTGsBfR1YgW2df5wkfwvrcmSTGTABvPoY
+	EIe/Zork+hsd3SHZNissA/4YXkSgEXbwBV2LJ6XstqFyw2iQfY0mzw9aYKfmv0H9hMaNj8lt1XF
+	AVOe96CmD87brVN6THVtsGCA+t9XqddD4E0nhqapVuphjPo96SQSWjaP5phwzVSIWZRIOkrjk4v
+	99xKB2qAgDsz7sNVTuBC8r+1V8LyTSZ5cVtsdEFBCMBpCcJuOyoWNqVeNYSNroMpV7jr00Y3asK
+	NdA9SlCvYY+5n/UcHyPcOwnlHQTf3n4ducWKvH1KynS0B4qA0lAnjV5t7Q6XoIObpzlrhYqdebl
+	IQ5AbeAz+wtpkiQ==
+X-Google-Smtp-Source: AGHT+IGuqUVz1MlM22DWouaSIEqVc7JUz/swP0ZPOQK4pvQiO3B+o4V938h5qOKiQPbhSq72i+cb3A==
+X-Received: by 2002:a05:6e02:4618:b0:3df:e7d:fda8 with SMTP id e9e14a558f8ab-3e28b718bcamr29664265ab.1.1752753712400;
+        Thu, 17 Jul 2025 05:01:52 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e24611ce92sm49563745ab.6.2025.07.17.05.01.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 04:59:48 -0700 (PDT)
-From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	bpf@vger.kernel.org
-Cc: skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Suchit Karunakaran <suchitkarunakaran@gmail.com>
-Subject: [PATCH] libbpf: Replace strcpy() with memcpy() in bpf_object__new()
-Date: Thu, 17 Jul 2025 17:29:36 +0530
-Message-ID: <20250717115936.7025-1-suchitkarunakaran@gmail.com>
-X-Mailer: git-send-email 2.50.1
+        Thu, 17 Jul 2025 05:01:51 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com, 
+ song@kernel.org, yukuai3@huawei.com, hch@lst.de, nilay@linux.ibm.com, 
+ cem@kernel.org, John Garry <john.g.garry@oracle.com>
+Cc: dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ linux-raid@vger.kernel.org, linux-block@vger.kernel.org, 
+ ojaswin@linux.ibm.com, martin.petersen@oracle.com, 
+ akpm@linux-foundation.org, linux-xfs@vger.kernel.org, djwong@kernel.org, 
+ dlemoal@kernel.org
+In-Reply-To: <20250711105258.3135198-1-john.g.garry@oracle.com>
+References: <20250711105258.3135198-1-john.g.garry@oracle.com>
+Subject: Re: [PATCH v7 0/6] block/md/dm: set chunk_sectors from stacked dev
+ stripe size
+Message-Id: <175275371113.371765.7347642796595215334.b4-ty@kernel.dk>
+Date: Thu, 17 Jul 2025 06:01:51 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-2ce6c
 
-Replace the unsafe strcpy() call with memcpy() when copying the path
-into the bpf_object structure. Since the memory is pre-allocated to
-exactly strlen(path) + 1 bytes and the length is already known, memcpy()
-is safer than strcpy().
 
-Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
----
- tools/lib/bpf/libbpf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Fri, 11 Jul 2025 10:52:52 +0000, John Garry wrote:
+> This value in io_min is used to configure any atomic write limit for the
+> stacked device. The idea is that the atomic write unit max is a
+> power-of-2 factor of the stripe size, and the stripe size is available
+> in io_min.
+> 
+> Using io_min causes issues, as:
+> a. it may be mutated
+> b. the check for io_min being set for determining if we are dealing with
+> a striped device is hard to get right, as reported in [0].
+> 
+> [...]
 
-diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-index 52e353368f58..279f226dd965 100644
---- a/tools/lib/bpf/libbpf.c
-+++ b/tools/lib/bpf/libbpf.c
-@@ -1495,7 +1495,7 @@ static struct bpf_object *bpf_object__new(const char *path,
- 		return ERR_PTR(-ENOMEM);
- 	}
- 
--	strcpy(obj->path, path);
-+	memcpy(obj->path, path, strlen(path) + 1);
- 	if (obj_name) {
- 		libbpf_strlcpy(obj->name, obj_name, sizeof(obj->name));
- 	} else {
+Applied, thanks!
+
+[1/6] ilog2: add max_pow_of_two_factor()
+      commit: 6381061d82141909c382811978ccdd7566698bca
+[2/6] block: sanitize chunk_sectors for atomic write limits
+      commit: 1de67e8e28fc47d71ee06ffa0185da549b378ffb
+[3/6] md/raid0: set chunk_sectors limit
+      commit: 4b8beba60d324d259f5a1d1923aea2c205d17ebc
+[4/6] md/raid10: set chunk_sectors limit
+      commit: 7ef50c4c6a9c36fa3ea6f1681a80c0bf9a797345
+[5/6] dm-stripe: limit chunk_sectors to the stripe size
+      commit: 5fb9d4341b782a80eefa0dc1664d131ac3c8885d
+[6/6] block: use chunk_sectors when evaluating stacked atomic write limits
+      commit: 63d092d1c1b1f773232c67c87debe557aab5aca0
+
+Best regards,
 -- 
-2.50.1
+Jens Axboe
+
+
 
 
