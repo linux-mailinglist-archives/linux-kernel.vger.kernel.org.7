@@ -1,134 +1,210 @@
-Return-Path: <linux-kernel+bounces-734659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C7D1B08470
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:58:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B18F3B08474
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:00:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E2A1A41B64
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 05:58:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 172BA1A651B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:01:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DDCD19005E;
-	Thu, 17 Jul 2025 05:58:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F442204598;
+	Thu, 17 Jul 2025 06:00:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cyn8J0hM"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Uw5rHiZP"
+Received: from out199-8.us.a.mail.aliyun.com (out199-8.us.a.mail.aliyun.com [47.90.199.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5FC17263B;
-	Thu, 17 Jul 2025 05:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3881B28E7;
+	Thu, 17 Jul 2025 06:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.199.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752731905; cv=none; b=blNN5cvFZD8iVRhCy6cOZRp4u290J/1wwjsOMHNpxYsF38udoFc3zkkaizWvGuk+zswq81zVuToaUaTf3ZSM/0w9VXfKMtFxypsV07cTYVNlWJSLKrm7ouliklSnOYRW844WmlgPmmRGQ+Y51iheR3qjV0R3IZ1KRX4BvayVQx8=
+	t=1752732043; cv=none; b=IScMWWr6UOmWJ+0zqENqsCusZIbAL1TyFuHdo0/EUYSWNFxNkow1P++j+F2JGKjSux0xMXFsosxCc2fFUxWiZzShaQUaDIXyFsh4aXbAPhUt2U+oUpuXzfbo2KQsg3sa5/s2kd2vulgcVd3hFrsSGbvkBVHmqDwF2W638brDGMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752731905; c=relaxed/simple;
-	bh=GzaeNvGgBNjYJOHg+v353vPVI0VbmmbGU8uUuOb+dVI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c//FFG02JCGNEq5ua6yjVr2v97zf3cRPNBPehA55ah9a5nqip79R3FHWdogZWjpKO4eS3AaT82ybAi7bOtMNqMxbmPxyZxGIdYzWY4bpKjvkhzlGFTRcgMn9xN49S7apD7bD81WXx3P5EPQEXlF/6Za5pz8XRococp8EgAK3ArQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cyn8J0hM; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ad572ba1347so88590766b.1;
-        Wed, 16 Jul 2025 22:58:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752731902; x=1753336702; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FIRTijv9i7tleNjJH5h95nFpr27ijpYUBRAXq3DNagE=;
-        b=Cyn8J0hMxBuKHO/Ccaj8FKA/jvxZYDBNMyN5baGk9rS/U/l6L3VrZec5syPiX05ipS
-         aQuL8iJd4NjwCxutgpl4V2a//dTbZdpHhcbIQztDjInldA650NUn2IUzbJ9NfDVXBqCG
-         /862pra89Mf+Shkzxuj0z4or9RQcPAUvaPyjcxReltGs/cRyK+Yg+EpEFskf4CAI6M4F
-         34nFmLsaUUu7F+uKKC7mRWXE5vfiEtpg6jn2vC0Uwwx5UWJnuqCAYjYi45Tg/gVIVLdP
-         saVoR14J5qTIvi5YYQt/7DOIz1BWdyksjzFeyZVkW+eFgDvjQa9eyKxuEGMrT60FX1D9
-         AT0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752731902; x=1753336702;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FIRTijv9i7tleNjJH5h95nFpr27ijpYUBRAXq3DNagE=;
-        b=weNFIh7SWCyP1yxOc4VKW4OxNCY9qMLQnD8VA8F2yyFqmgG0pFjUNneicfrLj005yV
-         yuR6AWcxW/e7d2i8ZdhAGhW1OKkzMnzyOBlzbDK9+Tbr1euUjB4WFMluirw7IhfzwrN6
-         abj9XImkRqQzkTyiY6BWU9YNQgZhfxYP0WXaIK5axnrniaMJo+ZKWARaQrBfX2qN2kDu
-         xo+Ma5NurksMTViF0xUPJ3rSeTCw9mgAOSA3nyLhMwHdncsaHZoNE8ngi+Q00ZJRZiZL
-         4KABVlIgjqK2SHxAnU52LBoOn3uXyzPrm4P1mBMGeysPWAb13arr+sz9Y7SXPi5t2CK7
-         v+Hw==
-X-Forwarded-Encrypted: i=1; AJvYcCU+Qz8GP/yFvnlVTfQvWLefQ/vzRq2MeJ5m4N6uELF3XEbt8LW0/7Esqexzx4n05xlU+C6BM7riqOeF/V0=@vger.kernel.org, AJvYcCUDoD5scvh0awg88NGdtBLwtK7q98l4CUHKz8v/flaXImk8pB8XDvtPNdONADxdnqBC7s/vBURDZ1UpKa4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjDXJynj0QpvbHweLNWQBrRUxiZaiorvV3RZkVrr3G3AGPXzCY
-	epvvzGYlbpUBPWAjdnt4MIBBmkrayVCb0aAHHhivjgKd3t2ibPAP+dlaZwWpgqHrUFb6zmGnqQP
-	qr9lbcNuEAIXmjD10oDqhbGc0ZE/qXyo=
-X-Gm-Gg: ASbGncs6z0EbhyUaml5racYYc9u1clvpld0LWPpbyuVrC9/R7UGzT35IUcpfrOYi/cX
-	Y+DB+kpudyCsmawLYcMsS1yed7bwJ+cXbR0UcuRnjKXJM3xsv0Yya2Uy6L9B7F5D1rLpiEaNsF0
-	ezBIFBcxObg25dDfrJmXjkbG87KxPUv7KxHhRYQBgBCeSE4Ua5HECj5dOtP6xuD51Rg7mRbqNeb
-	ytPm+0b9A==
-X-Google-Smtp-Source: AGHT+IHI5thB/F2IFWJUiFlPA/6j+NF8ktS0u61JpA9SIcP0uSP4e1OxKm+GBgDu5WWhK82Gm1N5+7hJlRvgmyvD9u8=
-X-Received: by 2002:a17:907:1c10:b0:ae3:7c8c:351d with SMTP id
- a640c23a62f3a-ae9ce1acb18mr557820566b.56.1752731902079; Wed, 16 Jul 2025
- 22:58:22 -0700 (PDT)
+	s=arc-20240116; t=1752732043; c=relaxed/simple;
+	bh=U0T6Bu3tjl8ID5ejFptgFvM7VZPyHrQIU0QciKVcYMo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s6qsF4sBIxDeOA3H2I5jnnbhk2n46D4MsH5W8qLiBH+llxg1uH7l52dNDcNIsE/lej5HF4bcmqLS2yQK5WJpflfFt/9PlY04qR7TxPvt0hgrMEDl4Ned881ExYdFcAp9R/R8Vn4CsFJ8gb7EXSERAc0TSlT+BWdfuWEsKXTXCM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Uw5rHiZP; arc=none smtp.client-ip=47.90.199.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1752732017; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=6AjoES+phDjQlU6QcJ6LgfMU4/uIlwyP6l9QIPe7StE=;
+	b=Uw5rHiZPNgV0Zv7W1gSji8PdSiYwXz4DgOaJEOHrp3c7h1trRyg9MvbiOhOwQJb44fpw3+YDTtv1tNO4EJvl/luWSjQbjVIfLDM/eUiVNSD+Hax5CTJN7OrhWLjmfGnPcCCF9aSZuEnmolbf0HA/O1DDKTiX1Y7Skxb1Ok6P5g8=
+Received: from 30.246.162.71(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0Wj7.qAb_1752732014 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 17 Jul 2025 14:00:15 +0800
+Message-ID: <2687d27d-09ed-429d-9ec7-463c69a3fff7@linux.alibaba.com>
+Date: Thu, 17 Jul 2025 14:00:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250717013003.20936-1-abdelrahmanfekry375@gmail.com>
-In-Reply-To: <20250717013003.20936-1-abdelrahmanfekry375@gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 17 Jul 2025 08:57:45 +0300
-X-Gm-Features: Ac12FXxVS-slXnx8UX3hAelqaVMWQU1Khdwpoqjuk9lr1S5_RIlvpaD-SvuVP9A
-Message-ID: <CAHp75VdpkswJiuA9ems_7o8i9W8HWN4BredO7qsaR6HjO5TxdQ@mail.gmail.com>
-Subject: Re: [PATCH v2] staging: media: atomisp: add missing mutex lock in atomisp_s_fmt_cap
-To: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
-Cc: hansg@kernel.org, mchehab@kernel.org, sakari.ailus@linux.intel.com, 
-	andy@kernel.org, gregkh@linuxfoundation.org, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev, 
-	linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org, 
-	dan.carpenter@linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8] PCI: hotplug: Add a generic RAS tracepoint for hotplug
+ event
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: rostedt@goodmis.org, lukas@wunner.de, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bhelgaas@google.com,
+ tony.luck@intel.com, bp@alien8.de, mhiramat@kernel.org,
+ mathieu.desnoyers@efficios.com, oleg@redhat.com, naveen@kernel.org,
+ davem@davemloft.net, anil.s.keshavamurthy@intel.com, mark.rutland@arm.com,
+ peterz@infradead.org, tianruidong@linux.alibaba.com,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>
+References: <20250716222533.GA2559636@bhelgaas>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <20250716222533.GA2559636@bhelgaas>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 17, 2025 at 4:30=E2=80=AFAM Abdelrahman Fekry
-<abdelrahmanfekry375@gmail.com> wrote:
->
-> The function atomisp_set_fmt() modifies shared device state and expects
-> callers to hold the isp->mutex for synchronization. While most internal
-> callers correctly lock the mutex before invoking atomisp_set_fmt(), the
-> V4L2 ioctl handler atomisp_s_fmt_cap() does not.
->
-> This results in an unsafe execution path for VIDIOC_S_FMT ioctls
-> (e.g. via v4l2-ctl), where shared structures such as pipe->pix and
-> pipe->frame_info may be modified concurrently without proper protection.
->
-> - Fix this by explicitly locking isp->mutex in atomisp_s_fmt_cap().
 
-...
 
->  #include <linux/delay.h>
->  #include <linux/pci.h>
-> +#include <linux/cleanup.h>
+在 2025/7/17 06:25, Bjorn Helgaas 写道:
+> [+cc Ilpo, Jonathan (should have been included since the patch has his
+> Reviewed-by)]
+> 
 
-Keep it ordered.
+Thanks.
 
-...
+> Thanks for the ping; I noticed quite a bit of discussion but didn't
+> follow it myself, so didn't know it was basically all resolved.
+> 
+> On Mon, May 12, 2025 at 09:38:39AM +0800, Shuai Xue wrote:
+>> Hotplug events are critical indicators for analyzing hardware health,
+>> particularly in AI supercomputers where surprise link downs can
+>> significantly impact system performance and reliability.
+> 
+> I dropped the "particularly in AI supercomputers" part because I think
+> this is relevant in general.
+> 
+>> To this end, define a new TRACING_SYSTEM named pci, add a generic RAS
+>> tracepoint for hotplug event to help healthy check, and generate
+>> tracepoints for pcie hotplug event.
+> 
+> I'm not quite clear on the difference between "add generic RAS
+> tracepoint for hotplug event" and "generate tracepoints for pcie
+> hotplug event."  Are these two different things?
 
-> +       int ret;
->
-> -       return atomisp_set_fmt(vdev, f);
-> +       scoped_guard(mutex, &isp->mutex)
-> +       {
-> +               ret =3D atomisp_set_fmt(vdev, f);
-> +       }
-> +       return ret;
+The purpose of this patch is to address the lack of tracepoints for PCIe
+hotplug events in our production environment. In the initial RFC
+version, I defined tracepoints such as "Link Up" and "Link Down"
+specifically for PCIe hotplug. Later, Lukas suggested that these
+tracepoints could be made more generic so that other PCI hotplug drivers
+could also use them.
 
-As Dan said, this should just add a (one line) guard()() and no other
-lines being touched.
+That’s why, when defining the event, I used a "generic" pci_hotplug_event
+instead of a pcie_hotplug_event. If you're interested in more details
+about this discussion, please refer to this link[1].
 
->  }
+[1]https://erol.kernel.org/linux-pci/git/0/commit/?id=0ffd56f572f25bcd6c2265a1863848a18dce0e29
 
---=20
-With Best Regards,
-Andy Shevchenko
+However, currently only PCIe hotplug is using these tracepoints, which
+is why the CREATE_TRACE_POINTS macro is placed in
+drivers/pci/hotplug/pciehp_ctrl.c.
+
+> 
+> I see the new TRACE_EVENT(pci_hp_event, ...) definition.  Is that what
+> you mean by the "generic RAS tracepoint"?
+
+Yes.
+
+
+> 
+> And the five new trace_pci_hp_event() calls that use the TRACE_EVENT
+> are the "tracepoints for PCIe hotplug event"?
+
+Actually, the tracepoints are generic, although right now they are only
+used for PCIe hotplug.
+
+> 
+>> Add enum pci_hotplug_event in
+>> include/uapi/linux/pci.h so applications like rasdaemon can register
+>> tracepoint event handlers for it.
+>>
+>> The output like below:
+>>
+>> $ echo 1 > /sys/kernel/debug/tracing/events/pci/pci_hp_event/enable
+>> $ cat /sys/kernel/debug/tracing/trace_pipe
+>>      <...>-206     [001] .....    40.373870: pci_hp_event: 0000:00:02.0 slot:10, event:Link Down
+>>
+>>      <...>-206     [001] .....    40.374871: pci_hp_event: 0000:00:02.0 slot:10, event:Card not present
+> 
+>> +#define PCI_HOTPLUG_EVENT					\
+>> +	EM(PCI_HOTPLUG_LINK_UP,			"Link Up")	\
+>> +	EM(PCI_HOTPLUG_LINK_DOWN,		"Link Down")	\
+>> +	EM(PCI_HOTPLUG_CARD_PRESENT,		"Card present")	\
+>> +	EMe(PCI_HOTPLUG_CARD_NOT_PRESENT,	"Card not present")
+> 
+> Running this:
+> 
+>    $ git grep -E "\<(EM|EMe)\("
+> 
+> I notice that these new events don't look like the others, which
+> mostly look like "word" or "event-type" or "VERB object".
+> 
+> I'm OK with this, but just giving you a chance to consider what will
+> be the least surprise to users and easiest for grep and shell
+> scripting.
+
+I think this is also common. For example, MF_PAGE_TYPE for
+memory_failure_event uses a similar format:
+
+#define MF_PAGE_TYPE \
+	EM ( MF_MSG_KERNEL, "reserved kernel page" ) \
+	EM ( MF_MSG_KERNEL_HIGH_ORDER, "high-order kernel page" )
+
+
+and aer_uncorrectable_errors for aer_event:
+
+#define aer_uncorrectable_errors				\
+	{PCI_ERR_UNC_UND,	"Undefined"},			\
+	{PCI_ERR_UNC_DLP,	"Data Link Protocol Error"},	\
+	{PCI_ERR_UNC_SURPDN,	"Surprise Down Error"},		\
+	{PCI_ERR_UNC_POISON_TLP,"Poisoned TLP"},
+
+> 
+> I also noticed capitalization of "Up" and "Down", but not "present"
+> and "not present".
+
+Aha, this is a bit tricky:)
+
+The original kernel log messages are not consistent either:
+
+ctrl_info(ctrl, "Slot(%s): Link Down\n",
+ctrl_info(ctrl, "Slot(%s): Card not present\n",
+
+I tried to keep the output as close as possible to the existing log
+messages. If you prefer a more consistent capitalization style, I can
+send another patch to fix that.
+
+
+> 
+> "Card" is only used occasionally and informally in the PCIe spec, and
+> not at all in the context of hotplug of Slot Status (Presence Detect
+> State refers to "adapter in the slot"), but it does match the pciehp
+> dmesg text, so it probably makes sense to use that.
+> 
+> Anyway, I applied this on pci/trace for v6.17.  If there's anything
+> you want to tweak in the commit log or event text, we can still do
+> that.
+> 
+>    https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?h=trace
+> 
+> Bjorn
+
+Thank you again for applying this to pci/trace for v6.17. If there’s
+anything more to tweak in the commit log or event text, please let me
+know.
+
+Best regards,
+
+Shuai
 
