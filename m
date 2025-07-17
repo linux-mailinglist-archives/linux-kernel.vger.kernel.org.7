@@ -1,184 +1,225 @@
-Return-Path: <linux-kernel+bounces-734797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F6B3B08677
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:22:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0126CB08682
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:24:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F1461A6038A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:23:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 307437A722B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2EC221297;
-	Thu, 17 Jul 2025 07:22:20 +0000 (UTC)
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023106.outbound.protection.outlook.com [52.101.127.106])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA12421D00A;
+	Thu, 17 Jul 2025 07:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fNGXiXW2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50DA21C167;
-	Thu, 17 Jul 2025 07:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.106
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752736940; cv=fail; b=TooOzyHy0HiAWywiypbSRWQvxPJMIKRN1umzEXOH2CN7mSpHWP7hRCdAuwWT/mkwqmq+KASx66YKERk0ZpnutYQhY1fd2cUStBudAwGe218/RGRgeifT05mb5hDauu/nHK8tqzdXON6fDFcUpPghAIzV7wsqmPAHN6EtoDq4fDc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752736940; c=relaxed/simple;
-	bh=tMmOSqfNgOrSQtRP0F2jvK4f1idy+21oUbh12OoY8bs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TNpkQIM5U7bhKr5zLA5Bi7CjWJCHHoTPGqK7uS3v60oJLHtX+D4ckyjZBHX2L9pGKnzV9zSx/JBIF8EUEky/dD4YDEHNTuDOJocK3s0T36Fe3rkNIH4sTigvS8Gxu1M/snchvJm5NBssRCs35wI1JBmvcKzPyreKqMZ8xaKeg9Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=52.101.127.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WC2Wlas6ofxIiNOZ5syNirrpRdPqnlQFFNcO6vHetNyXU1rE2/gVTApGGV+Yowjdf7oNeiqjsNvXI6UoL1bBZunQFYxnJ5dDBhIdmiUZWwNB1KFP9KSV0FZcJQKKwzQMu3dGOI/SlS6FzUNnQF+wjcWpyWUeEQD5auyanlxWF1bjpQzdkDMGdpAo6WKsZQ3CN8w+e0F89hFbQgowHLLsspA4dq7SxeIhANy7/ci33eGxx0dci2DYHafAxOC8bQUAzkj0GAVbBvOw5/4apQiyu33SpDPKDgxIWQM7bAFJquoL3x6AEV7CBxZNleMQCsOdv/TDH8Rn85EZ43rXnTUu4g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zCs9a5p5Td23Mt561yilMwolyjDmNJQXYXB86a3+F0g=;
- b=fZ6xea3969gv7PFEY1YZNmMWehrH0IwgAQhBNaZb7k28mO+xwsBQ9io46q5PWUkFr582gRu+S3ndT5xKm4nVwZmJ4khP3sc+R2I5pGqEeYN0CkB/zW0oJ0okXQC+rdvVra6DRIJpxxYwj/g4eyg13/actBqL+YZENbN9DupwUsENfIFQPq8bwZjT7SHq/JNpMqdjjWyxKdm03uJNHkZd8XuJjY8fVBAXmDPCsZLvVjhj14wnkKl3fLcZvg4eLKHns1ab8LPzXZpoYQ3eYx6oRfy4MBo9qu8GhVxuGHmd6O/aFHFngV9Fv7C+SgrwND/50igxoNWU9GfjIvK4ZxdEmQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 222.71.101.198) smtp.rcpttodomain=arm.com smtp.mailfrom=cixtech.com;
- dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
- not signed); arc=none (0)
-Received: from SG2PR02CA0136.apcprd02.prod.outlook.com (2603:1096:4:188::16)
- by PS1PPF56C578557.apcprd06.prod.outlook.com (2603:1096:308::24f) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.25; Thu, 17 Jul
- 2025 07:22:13 +0000
-Received: from SG1PEPF000082E2.apcprd02.prod.outlook.com
- (2603:1096:4:188:cafe::fb) by SG2PR02CA0136.outlook.office365.com
- (2603:1096:4:188::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.21 via Frontend Transport; Thu,
- 17 Jul 2025 07:22:13 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
- smtp.mailfrom=cixtech.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
- 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
-Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- SG1PEPF000082E2.mail.protection.outlook.com (10.167.240.5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8943.21 via Frontend Transport; Thu, 17 Jul 2025 07:22:13 +0000
-Received: from localhost.localdomain (unknown [172.16.64.25])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 301EE4160508;
-	Thu, 17 Jul 2025 15:22:10 +0800 (CST)
-From: Peter Chen <peter.chen@cixtech.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	arnd@arndb.de,
-	jassisinghbrar@gmail.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	cix-kernel-upstream@cixtech.com,
-	maz@kernel.org,
-	sudeep.holla@arm.com,
-	kajetan.puchalski@arm.com,
-	eballetb@redhat.com,
-	Peter Chen <peter.chen@cixtech.com>,
-	Fugang Duan <fugang.duan@cixtech.com>
-Subject: [PATCH v10 9/9] MAINTAINERS: Add CIX SoC maintainer entry
-Date: Thu, 17 Jul 2025 15:22:09 +0800
-Message-Id: <20250717072209.176807-10-peter.chen@cixtech.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250717072209.176807-1-peter.chen@cixtech.com>
-References: <20250717072209.176807-1-peter.chen@cixtech.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E2B21C16B
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 07:22:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752736976; cv=none; b=VYZkZMIb5BxOJA9SoKwLysNSPpCkMToF9uHQS9vDvbmJI4pfDeKB0tdbRDN0cIJ+ns0aVzQGhoO78uHO2ExJW1qKqOX4ud0GceHDuFwupqAlpf7Vr98zF2NK3zaFyJsdxLYhWwSO7hjQXRhm8fg97y5tFkajnbdA/1l6TXWJhWw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752736976; c=relaxed/simple;
+	bh=z9j/kRp2E8OBtyHpf3bE3Bgh0h7FB7kKCT1IIylTnNI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z20NvpPOHHxMrNfGSpD+ooHyThM02SDVyuTibY+QLYYEoOGM445D988a0vD2r3Ek61utSAhv1Od1wVorwyfHwFfyLkfmGezACOJ8OvuM5ZC6KOtH5NeEvW23O2loDacPAMpejNh4SK9euC1se7ESgyGd3BFtCc7blOC7EW3vszo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fNGXiXW2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752736972;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JFbE7+bxkztH8ht0A9j4wnG3HbzAi42oef01y44iq/o=;
+	b=fNGXiXW2wGSrttvSWaAPoZiYG9SV1oKczlwOQPqnyBerpRGiG8VcdTPE3R6lvMoXt98Xzp
+	DFEd1morXDUf+dyvk5RGmzjRB+rsjE5aA7UZunPIoL5OIb5G5suV1t5RpVJm+8OPaCEtWV
+	Tp0MkHpOJaYLXQwcHWFvqnV2yvw8Eb0=
+Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com
+ [209.85.128.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-385-125tMJ-sPmGdB9LY6TH1bQ-1; Thu, 17 Jul 2025 03:22:51 -0400
+X-MC-Unique: 125tMJ-sPmGdB9LY6TH1bQ-1
+X-Mimecast-MFC-AGG-ID: 125tMJ-sPmGdB9LY6TH1bQ_1752736971
+Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-712be8901f6so7981857b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 00:22:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752736971; x=1753341771;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JFbE7+bxkztH8ht0A9j4wnG3HbzAi42oef01y44iq/o=;
+        b=qtoSDXes7QvcOGvHo9zVk30RuZwcDfWvx9HPo6BEYAKfYuSiMXmLFARo5R+LzO0MQP
+         3S29RR02AjiF5ldoLS+ueAHDDoo0BTTNAA41ezTExyzx0AeAbhtwVyBJshDZtiG6atci
+         ObZPKvEUzxkSwsyQ6N+P3y8z2FwBLOepnMpK4MZWXJvw6/NLgCj/7xwrgnmz3J5JojNV
+         JZtL7ELX7vFO4iJJA4gm5Awa3zu4SxcvGfk07QselwwvKcGfS0ayPWy2qVomv20FxSSU
+         sHMnnjJoeScVypfGCOOmOOgjT79RI9pzPSt7x3Oat2K630z/SvWQl9KyepleiiQfn7Gh
+         TMig==
+X-Forwarded-Encrypted: i=1; AJvYcCUWNv2f9hlxJR9ZXfkpBsYPQyyWt9XzJiMzd6DBFQ10vF4tIGXYe3SEY7UjHPDwzVnvEiESv9cXqjqEr9Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQwVs/UgV2QwiBZE4+5hLAagT9RUs+eH/D1U0I9JcdnfzcH8of
+	G67RRh2ApYvf5j2jIQdL4z/wR5AnXI2/F+gMKTFzF9sVVp9NYQPilikohFbDUOd7Lgbt6qIuocz
+	yAvLG0FH1j4IBx9XFLDc5f1qNXqfNfX3hKXiu1vnkjNnhVKGgbcWRxOM8NuUCso0GPPfP9jZJpu
+	elbj3FEf+P5pPOFdrShFH6VdNrPRvD0VjcsaVadwRJ
+X-Gm-Gg: ASbGncvxGmTMBWCrKbSXPg8LwxU9faZaDNP0koU4vManTsc4FOJHuMXGkNqilhtZUUs
+	fgyHdU6+w4Cz9rVNudMWp4ydKPFgseqO6hDpuMZxGPag/5heS0sboexQfatj5nD0nM2BjWhik8u
+	oYS0HuWttqrIoRBfWdVtZqj/s=
+X-Received: by 2002:a05:690c:350d:b0:718:2154:62df with SMTP id 00721157ae682-71837469c95mr83298147b3.35.1752736970833;
+        Thu, 17 Jul 2025 00:22:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHTEQOqXObebRqrlKJLemLbpJQWqKxX4FiFWdy7vlPZ029cLEq4+lOCKX4kkTmc9Zh7ynQj/lyoUlwrfL87Fyg=
+X-Received: by 2002:a05:690c:350d:b0:718:2154:62df with SMTP id
+ 00721157ae682-71837469c95mr83295897b3.35.1752736967211; Thu, 17 Jul 2025
+ 00:22:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG1PEPF000082E2:EE_|PS1PPF56C578557:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: fa997800-a4de-4688-62d9-08ddc502a696
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|7416014|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?JWaSrvEapbjFrPzqjCRQl1a0WGRhudoJ3NiTsY5VuBEUoKJVPmPNcpOvkD23?=
- =?us-ascii?Q?eiesT8l2ZtxcmuPd7YZZzELmdJ69aEnpSgMddWKSEeX/xXW80fIHBc1x5pew?=
- =?us-ascii?Q?6nPcdJdfYMN5a3mseJewMpCdww3pWN8mWeRZjhSAJaNRsD6rKXWKF6ttJblc?=
- =?us-ascii?Q?AlcE6MpF7/HpO/B/bGYKsSPVP6sI1ySEsvyXin29Em7dvdYErYJCOZbl1YXE?=
- =?us-ascii?Q?qzlxhCkYpMz8QTXzwJIM1p4HrnJvO8eaHr8UKf5STbqq+knrDl7JRQ+FCAGv?=
- =?us-ascii?Q?05bj+YpqL1MvNr/wdIDXJJnWf1o0W9E9hiGtpkW5j1L6Z4QFgs8qwkztkIAx?=
- =?us-ascii?Q?+2D89bKMJE+OGeAKd2apoktFpN9GfwgdVME/j3rZ/qAVX9sJ8xlL6MguVm8R?=
- =?us-ascii?Q?vitx5xd5mngA7SNHlZxQ7gyMHMsx5uucIMilTg3doLf58OJMfGKzEEyngwTy?=
- =?us-ascii?Q?V/zxe4b4AuTMuhEOLF09GcvHHCC+uD1rCKf82mMJ0hpUehpocGKufgvfc5tA?=
- =?us-ascii?Q?6zoNTg8ja4mMPHwqaz/NBRNPDYPlRlRqVaeBEWMuUQ86qCvZ92WoyJVaFbFP?=
- =?us-ascii?Q?Z6Hq1ISBPvmHjukd+LdFh1d8GXDGp07wFR6Gv2SCFcXMm7s3aMx5/LEH4FHz?=
- =?us-ascii?Q?vlm429XwYQ8uXmiw3O9jJI2ZJw+l1yjzneQ6O8NKUeb9IwaE9/wSX1tUqp5b?=
- =?us-ascii?Q?35pSIhL3JVd9vqlCiYcrPSQ+WD2UK0Wci5XWaw3PFlA2PDNQ0SpMn9R4wvXb?=
- =?us-ascii?Q?39MfjEwWIDn1FF5atBiA3iQJOvwWSPDOD98CE8w4yY0fG6J4Gm95QGCH/j3D?=
- =?us-ascii?Q?X5GNeDZ7CiI0qkbUF9UjOWBX+/C1QSIveR5thukR9GV1OYFun/PZIUUAJCGe?=
- =?us-ascii?Q?siIayOKNJsrRhV2sEywL3AuUXgFS/s0BQhaB5VU4lyT/3PxF2s3MG8BsRlnh?=
- =?us-ascii?Q?oQxEg93pGIHNq7iEe32G1DwXO93h8jvl8SZMyX/+hjerfDgqSTDOCYyzoG4F?=
- =?us-ascii?Q?2N7MylKG8a3ek3UcI5cLATyDaTCaUmCkP2jrbQHi0myu+/pKLcKcRK+N0Fug?=
- =?us-ascii?Q?NPnb8MEPn4KCEc6QRgfyvyAkrSwjw4wsGJQg9FWr4eaP4zmEk4izDNTKVe0Q?=
- =?us-ascii?Q?pa0vPJ4SpzkJUKuOldCIBPs7VWBCLg7sPNiDrNtT8dVW5n4b6A9rTjjDJbIT?=
- =?us-ascii?Q?YJUNrWnjCQ3Ku1I+blSd9jxte+U00rTjVvPgvKqI1YD1XLoPvg382AHWop7v?=
- =?us-ascii?Q?VxqY5iyoLEN5/vl+0yypjsOawc6y7SqBUZItviXECYImy6pWljt2qzpFgfb0?=
- =?us-ascii?Q?ORbnR7vGQGI5MHZ9PNYmqQ0S5/5LwZN6Iykoa3CwzcjzcN5OpHKugiLVx2/e?=
- =?us-ascii?Q?U2zaRvZ2LcFQKfs1K3Xv7Kd8tam+NLPTtLmYR6LQcnvb2twep37X40gg67Vu?=
- =?us-ascii?Q?XjEqGdgF2awig9gUuq7m1a6Svx+Lh0oZHPT/OIpkyC4tUDa8z8zXall+4VCy?=
- =?us-ascii?Q?FC6e/RAS20QvXov+RlQMtyNENIL8wH6b2J5n?=
-X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(36860700013)(82310400026);DIR:OUT;SFP:1102;
-X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2025 07:22:13.0011
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fa997800-a4de-4688-62d9-08ddc502a696
-X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SG1PEPF000082E2.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PS1PPF56C578557
+References: <20250714003207.113275-1-npache@redhat.com> <20250714003207.113275-5-npache@redhat.com>
+ <a337c251-c152-4f57-8ead-6e4419e49f0c@redhat.com>
+In-Reply-To: <a337c251-c152-4f57-8ead-6e4419e49f0c@redhat.com>
+From: Nico Pache <npache@redhat.com>
+Date: Thu, 17 Jul 2025 01:22:21 -0600
+X-Gm-Features: Ac12FXzL2cbWnmcpfj5Yy4cS_OOfF-n9brr7FXMARu3knPEuWSWCEGWa47WO3XM
+Message-ID: <CAA1CXcDmoJqt7BAnQv=AcJatZ9cvSL-=zuEppLBpYJE_rMNDdQ@mail.gmail.com>
+Subject: Re: [PATCH v9 04/14] khugepaged: generalize alloc_charge_folio()
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	ziy@nvidia.com, baolin.wang@linux.alibaba.com, lorenzo.stoakes@oracle.com, 
+	Liam.Howlett@oracle.com, ryan.roberts@arm.com, dev.jain@arm.com, 
+	corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org, 
+	mathieu.desnoyers@efficios.com, akpm@linux-foundation.org, baohua@kernel.org, 
+	willy@infradead.org, peterx@redhat.com, wangkefeng.wang@huawei.com, 
+	usamaarif642@gmail.com, sunnanyong@huawei.com, vishal.moola@gmail.com, 
+	thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com, 
+	kirill.shutemov@linux.intel.com, aarcange@redhat.com, raquini@redhat.com, 
+	anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de, 
+	will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org, 
+	jglisse@google.com, surenb@google.com, zokeefe@google.com, hannes@cmpxchg.org, 
+	rientjes@google.com, mhocko@suse.com, rdunlap@infradead.org, hughd@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Using this entry as the maintainers information for CIX SoCs.
+On Wed, Jul 16, 2025 at 7:46=E2=80=AFAM David Hildenbrand <david@redhat.com=
+> wrote:
+>
+> On 14.07.25 02:31, Nico Pache wrote:
+> > From: Dev Jain <dev.jain@arm.com>
+> >
+> > Pass order to alloc_charge_folio() and update mTHP statistics.
+> >
+> > Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> > Co-developed-by: Nico Pache <npache@redhat.com>
+> > Signed-off-by: Nico Pache <npache@redhat.com>
+> > Signed-off-by: Dev Jain <dev.jain@arm.com>
+> > ---
+> >   Documentation/admin-guide/mm/transhuge.rst |  8 ++++++++
+> >   include/linux/huge_mm.h                    |  2 ++
+> >   mm/huge_memory.c                           |  4 ++++
+> >   mm/khugepaged.c                            | 17 +++++++++++------
+> >   4 files changed, 25 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation=
+/admin-guide/mm/transhuge.rst
+> > index dff8d5985f0f..2c523dce6bc7 100644
+> > --- a/Documentation/admin-guide/mm/transhuge.rst
+> > +++ b/Documentation/admin-guide/mm/transhuge.rst
+> > @@ -583,6 +583,14 @@ anon_fault_fallback_charge
+> >       instead falls back to using huge pages with lower orders or
+> >       small pages even though the allocation was successful.
+> >
+> > +collapse_alloc
+> > +     is incremented every time a huge page is successfully allocated f=
+or a
+> > +     khugepaged collapse.
+> > +
+> > +collapse_alloc_failed
+> > +     is incremented every time a huge page allocation fails during a
+> > +     khugepaged collapse.
+> > +
+> >   zswpout
+> >       is incremented every time a huge page is swapped out to zswap in =
+one
+> >       piece without splitting.
+> > diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> > index 7748489fde1b..4042078e8cc9 100644
+> > --- a/include/linux/huge_mm.h
+> > +++ b/include/linux/huge_mm.h
+> > @@ -125,6 +125,8 @@ enum mthp_stat_item {
+> >       MTHP_STAT_ANON_FAULT_ALLOC,
+> >       MTHP_STAT_ANON_FAULT_FALLBACK,
+> >       MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
+> > +     MTHP_STAT_COLLAPSE_ALLOC,
+> > +     MTHP_STAT_COLLAPSE_ALLOC_FAILED,
+> >       MTHP_STAT_ZSWPOUT,
+> >       MTHP_STAT_SWPIN,
+> >       MTHP_STAT_SWPIN_FALLBACK,
+> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > index bd7a623d7ef8..e2ed9493df77 100644
+> > --- a/mm/huge_memory.c
+> > +++ b/mm/huge_memory.c
+> > @@ -614,6 +614,8 @@ static struct kobj_attribute _name##_attr =3D __ATT=
+R_RO(_name)
+> >   DEFINE_MTHP_STAT_ATTR(anon_fault_alloc, MTHP_STAT_ANON_FAULT_ALLOC);
+> >   DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_ANON_FAULT_FALLB=
+ACK);
+> >   DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAUL=
+T_FALLBACK_CHARGE);
+> > +DEFINE_MTHP_STAT_ATTR(collapse_alloc, MTHP_STAT_COLLAPSE_ALLOC);
+> > +DEFINE_MTHP_STAT_ATTR(collapse_alloc_failed, MTHP_STAT_COLLAPSE_ALLOC_=
+FAILED);
+> >   DEFINE_MTHP_STAT_ATTR(zswpout, MTHP_STAT_ZSWPOUT);
+> >   DEFINE_MTHP_STAT_ATTR(swpin, MTHP_STAT_SWPIN);
+> >   DEFINE_MTHP_STAT_ATTR(swpin_fallback, MTHP_STAT_SWPIN_FALLBACK);
+> > @@ -679,6 +681,8 @@ static struct attribute *any_stats_attrs[] =3D {
+> >   #endif
+> >       &split_attr.attr,
+> >       &split_failed_attr.attr,
+> > +     &collapse_alloc_attr.attr,
+> > +     &collapse_alloc_failed_attr.attr,
+> >       NULL,
+> >   };
+> >
+> > diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> > index fa0642e66790..cc9a35185604 100644
+> > --- a/mm/khugepaged.c
+> > +++ b/mm/khugepaged.c
+> > @@ -1068,21 +1068,26 @@ static int __collapse_huge_page_swapin(struct m=
+m_struct *mm,
+> >   }
+> >
+> >   static int alloc_charge_folio(struct folio **foliop, struct mm_struct=
+ *mm,
+> > -                           struct collapse_control *cc)
+> > +                           struct collapse_control *cc, u8 order)
+>
+> u8, really? :)
+At the time I knew I was going to use u8's at the bitmap level so I
+thought I should have them here too. But you are right I went through
+and cleaned up all the u8 usage with the exception of the actual
+bitmap storage.
+>
+> Just use an "unsigned int" like folio_order() would or what
+> __folio_alloc() consumes.
+>
+>
+>
+> Apart from that
+>
+> Acked-by: David Hildenbrand <david@redhat.com>
+Thank you!
 
-Acked-by: Fugang Duan <fugang.duan@cixtech.com>
-Signed-off-by: Peter Chen <peter.chen@cixtech.com>
----
-Changes for v9:
-- Add mailbox driver information
-
- MAINTAINERS | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a92290fffa16..7f8bee29bb8f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2473,6 +2473,19 @@ F:	arch/arm/boot/compressed/misc-ep93xx.h
- F:	arch/arm/mach-ep93xx/
- F:	drivers/iio/adc/ep93xx_adc.c
- 
-+ARM/CIX SOC SUPPORT
-+M:	Peter Chen <peter.chen@cixtech.com>
-+M:	Fugang Duan <fugang.duan@cixtech.com>
-+R:	CIX Linux Kernel Upstream Group <cix-kernel-upstream@cixtech.com>
-+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+S:	Maintained
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/peter.chen/cix.git
-+F:	Documentation/devicetree/bindings/arm/cix.yaml
-+F:	Documentation/devicetree/bindings/mailbox/cix,sky1-mbox.yaml
-+F:	arch/arm64/boot/dts/cix/
-+F:	drivers/mailbox/cix-mailbox.c
-+K:	\bcix\b
-+
- ARM/CLKDEV SUPPORT
- M:	Russell King <linux@armlinux.org.uk>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
--- 
-2.25.1
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
 
