@@ -1,175 +1,142 @@
-Return-Path: <linux-kernel+bounces-735188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6E3FB08BEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:47:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43AE7B08BE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:47:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8B591AA7A5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:48:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDC611AA7837
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB2D29B790;
-	Thu, 17 Jul 2025 11:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NTiH8TwV"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D5C29B227;
+	Thu, 17 Jul 2025 11:47:25 +0000 (UTC)
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962932CCC5;
-	Thu, 17 Jul 2025 11:47:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078BC2AE8E;
+	Thu, 17 Jul 2025 11:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752752845; cv=none; b=CLArFIyKM0J8WxSYvgppFdDjDzwFD+MrreZe9qNa6Jq7vh/YoQ0CEqDdmJuxIQ6+9X18WQMd1mXpMk6iFmrWtbHdMm8fa1BjgOmfnDJqWxxGxu1H2JXlK02wDRohL746AzjQgFyS/zn4KfJ+BQko/mJISC0Kr6sKQkYId8Y8vq4=
+	t=1752752845; cv=none; b=FzJIk3vxAtETzhgi1ksxBV1LDv++nTN6nBZ4DYR/saUBxo3iWcUfde+Xmkl6nxnOP2d67LVABteR5EwyZ8kSjyxJGTW79kSbdYoHEosReh6rO05YAG77FSpnfCr9FGHMr0k5mfg96scXntILQmCfL0VV/oOYQqQoFKchVU1gzXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752752845; c=relaxed/simple;
-	bh=Q1O9ujEI/+5mMPGKVIHuQmTYkvZY6/Ie/ovaWQ6LnNo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pU6unDtRsY+TZ56aeQwinpi8ARiD+WoQuqC+cMnF17hwjO+RGh/YbH1Eq43BJHaKG6n0svE2pIw1GE4vmq71m9LejmIelpJUZfAxTe7gq+qNWBEv/udkRX/KrDWrUopMZMg3iYY5wQLSxn49kSWYeaAAawCJsUfva3bTPmOjsPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NTiH8TwV; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-556fd896c99so797349e87.3;
-        Thu, 17 Jul 2025 04:47:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752752842; x=1753357642; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=hUzQnHUphnbfFgIY49ERlZzZ414PTUWI3wMK+KFf1L8=;
-        b=NTiH8TwVujpGhzNK5mZn7AYCTZsHA4NPGGRNwzhoSfLo6sHNO0t88Ot2g7dHFLXrCW
-         P3AyD+9qAVjBjyGGP6gUfe3+hS9zl5DaKKcuRbCB9XptFC65BJhIfa2cEbWJ/0cT4VX/
-         G0a/U9+K2dL9QBrXD9EZRIfTkDW0Z+IQpXkeibxdwpjRLl8PVvG1tkINH/n8SZNNbVqF
-         U/la1IgQqbJ0MrIr1X/7pqvDaNiI6yXN6C1nHHwjUcV6lAustprLtuS0q2qEJ1bWFnw2
-         0g/zuitiwC9sEde4zuBR5FVBcgw5tkM1TbyIrib1Pwy/P3UIeFYqWDqFUnPXJzOGX5tG
-         2YEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752752842; x=1753357642;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hUzQnHUphnbfFgIY49ERlZzZ414PTUWI3wMK+KFf1L8=;
-        b=Jc/xBNMSBDfWQt0PXVQsPwbfBB4wOJl/tIyaDHKH01UoPUo4KtY4lNXksH3rj4iCXf
-         sQc/vE9u5MnojZxPp3Fcrq1UPYvmTaPbI3QonjlQuFP9gFhSCW1y+sSilEGvv+ZMlZpN
-         yOHHpCT3XAOkpjuD05+H2sii38C5qvHqKJpa6AUxzKpDP/zznhqYo4DeP3XZ8PWimi0Y
-         efWMebRm5hkrqZhOrNZcyn7fyWImycNeuMyAtMgUVnnbzYiSqTONU2gxB2xAdINX3fii
-         fV/mPA/3oRt+laR/+YRnEeniUdZGxIHsExqdhJhz3bcX+hfmxamKh9YFB2Y+3JaZOboh
-         U2Lw==
-X-Forwarded-Encrypted: i=1; AJvYcCUfNOIGKPdLZARrT/Yp3/7/A17hRvYowNvyXIyI9ePDI5EfWXUkFeJmsUu/yrb6gmuMJU4692eg@vger.kernel.org, AJvYcCWB8kbizR9AqMJtdLsCXPNXbBmxSauavhKlwUowWt6dOQgiNMCVhl5DntSEXHnvaKZk8RtQz3qkhD+PTko=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiI+KNtvWq8o7dkj24QogvDVb714lzkvJye0BQO4QPFTy81pu0
-	b3dtjIvhVEtQrQmfUGRzr1us9ctBV4ZM/WldQh/4wo15NEVXHDavUA1o
-X-Gm-Gg: ASbGncvKAoyZPANEpxAoIriWazcuNIqE6qVoWew/d2cJRjy5VqA9MajUv7F4v+AzQiG
-	TVk/Q5gztzlxIeZ5NDffw7f6OFIszZKi9tpB2eLlgRJaJ/cAHvHqnjsAvk6hSk31b9Hruc1/OOw
-	aiufBgEqTAo1Ap9TxzuEpFwcB5epYs94DWyHc0N/Bl+8sleIrx03Fu9vAMpc6+aik9jYWu+ay0C
-	vJ59cm1QnqA8kZ2JKU/JbQctoAKZi8koiglJJhuBTtjgF3T7SVtYjhE/KsHbqGn8kMk/hMno6F+
-	an+WqQd9K99dMQ5tQpS6LnRu3GJBSDE+asw82BCWDwrNcjNwpAl8H27FXeKBbwO+s/nVy0EnD5U
-	wdRSMu/r3pxvh/NS72Bf9qB+sjFy/KQ==
-X-Google-Smtp-Source: AGHT+IEeUss8ZBlPkHLakvGxJF2K58yDRc8vQWOCbMdXUi501yCOkwF9vYWrYBaVVUbMnozeWCQi6Q==
-X-Received: by 2002:a05:6512:33c1:b0:553:d910:9340 with SMTP id 2adb3069b0e04-55a23f72cf3mr1951594e87.46.1752752841436;
-        Thu, 17 Jul 2025 04:47:21 -0700 (PDT)
-Received: from mobilestation ([178.176.56.174])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5593c7bca2asm3021540e87.29.2025.07.17.04.47.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 04:47:20 -0700 (PDT)
-Date: Thu, 17 Jul 2025 14:47:14 +0300
-From: Serge Semin <fancer.lancer@gmail.com>
-To: "G Thomas, Rohan" <rohan.g.thomas@altera.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Romain Gantois <romain.gantois@bootlin.com>, netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Matthew Gerlach <matthew.gerlach@altera.com>
-Subject: Re: [PATCH net-next 2/3] net: stmmac: xgmac: Correct supported speed
- modes
-Message-ID: <6fsqayppkyubkucghk5i6m7jjgytajtzm4wxhtdkh7i2v3znk5@vwqbzz5uffyy>
-References: <20250714-xgmac-minor-fixes-v1-0-c34092a88a72@altera.com>
- <20250714-xgmac-minor-fixes-v1-2-c34092a88a72@altera.com>
- <b192c96a-2989-4bdf-ba4f-8b7bcfd09cfa@lunn.ch>
- <e903cb0f-3970-4ad2-a0a2-ee58551779dc@altera.com>
+	bh=YNxhh3BEV+fqhkHcNvEA0zxqRMWqls2pc6ZMwOr3iC4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QevUWp70j/1YM48khsUoEddgjUadSLP77Usoqq8U4u2yRqyquwVIBG2e2Im44+2EBYfugV5M8L6sa7vdAocTA70He+ik8BmxkxWWeAcZ1hWbUPVbi4dk8MbPpgs8Xzw0OYMZE8ueJW7hNAqW28cChkrTNLXYq5MgLmdbmrDPPlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0913443A01;
+	Thu, 17 Jul 2025 11:47:16 +0000 (UTC)
+Message-ID: <4f552ace-5c5a-4749-8fbf-5f7a1f86562e@ghiti.fr>
+Date: Thu, 17 Jul 2025 13:47:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e903cb0f-3970-4ad2-a0a2-ee58551779dc@altera.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/7] riscv: Add support for xmipsexectl
+To: aleksa.paunovic@htecgroup.com, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Jonathan Corbet <corbet@lwn.net>
+Cc: Palmer Dabbelt <palmer@sifive.com>, Conor Dooley <conor@kernel.org>,
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ Djordje Todorovic <djordje.todorovic@htecgroup.com>,
+ Aleksandar Rikalo <arikalo@gmail.com>,
+ Raj Vishwanathan4 <rvishwanathan@mips.com>
+References: <20250625-p8700-pause-v4-0-6c7dd7f85756@htecgroup.com>
+Content-Language: en-US
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20250625-p8700-pause-v4-0-6c7dd7f85756@htecgroup.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeitdehtdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhephffhuddtveegleeggeefledtudfhudelvdetudfhgeffffeigffgkeethfejudejnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudekhedrvddufedrudehgedrudehudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedukeehrddvudefrdduheegrdduhedupdhhvghloheplgdutddrudegrddtrddufegnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepudejpdhrtghpthhtoheprghlvghkshgrrdhprghunhhovhhitgeshhhtvggtghhrohhuphdrtghomhdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdpr
+ hgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegrohhusegvvggtshdrsggvrhhkvghlvgihrdgvughupdhrtghpthhtoheptghorhgsvghtsehlfihnrdhnvght
+X-GND-Sasl: alex@ghiti.fr
 
-On Tue, Jul 15, 2025 at 07:03:58PM +0530, G Thomas, Rohan wrote:
-> Hi Andrew,
-> 
-> Thanks for reviewing the patch.
-> 
-> On 7/14/2025 7:12 PM, Andrew Lunn wrote:
-> > On Mon, Jul 14, 2025 at 03:59:18PM +0800, Rohan G Thomas via B4 Relay wrote:
-> > > From: Rohan G Thomas <rohan.g.thomas@altera.com>
-> > > 
-> > > Correct supported speed modes as per the XGMAC databook.
-> > > Commit 9cb54af214a7 ("net: stmmac: Fix IP-cores specific
-> > > MAC capabilities") removes support for 10M, 100M and
-> > > 1000HD. 1000HD is not supported by XGMAC IP, but it does
-> > > support 10M and 100M FD mode, and it also supports 10M and
-> > > 100M HD mode if the HDSEL bit is set in the MAC_HW_FEATURE0
-> > > reg. This commit adds support for 10M and 100M speed modes
-> > > for XGMAC IP.
-> > 
-> > > +++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
-> > > @@ -405,6 +405,7 @@ static int dwxgmac2_get_hw_feature(void __iomem *ioaddr,
-> > >   	dma_cap->sma_mdio = (hw_cap & XGMAC_HWFEAT_SMASEL) >> 5;
-> > >   	dma_cap->vlhash = (hw_cap & XGMAC_HWFEAT_VLHASH) >> 4;
-> > >   	dma_cap->half_duplex = (hw_cap & XGMAC_HWFEAT_HDSEL) >> 3;
-> > > +	dma_cap->mbps_10_100 = (hw_cap & XGMAC_HWFEAT_GMIISEL) >> 1;
-> > 
-> > The commit message does not mention this change.
-> 
-> Agreed. Will do in the next version.
-> 
-> > 
-> > What does XGMAC_HWFEAT_GMIISEL mean? That a SERDES style interface is
-> > not being used? Could that be why Serge removed these speeds? He was
-> > looking at systems with a SERDES, and they don't support slower
-> > speeds?
-> > 
-> > 	Andrew
-> As per the XGMAC databook ver 3.10a, GMIISEL bit of MAC_HW_Feature_0
-> register indicates whether the XGMAC IP on the SOC is synthesized with
-> DWCXG_GMII_SUPPORT. Specifically, it states:
-> "1000/100/10 Mbps Support. This bit is set to 1 when the GMII Interface
-> option is selected."
-> 
-> So yes, it’s likely that Serge was working with a SERDES interface which
-> doesn't support 10/100Mbps speeds. Do you think it would be appropriate
-> to add a check for this bit before enabling 10/100Mbps speeds?
+On 6/25/25 16:20, Aleksa Paunovic via B4 Relay wrote:
+> This patch series adds support for the xmipsexectl vendor extension.
+> A new hardware probe key has also been added to allow userspace to probe for MIPS vendor extensions.
+>
+> Additionally, since the standard Zihintpause PAUSE instruction encoding is not supported on some MIPS CPUs,
+> an errata was implemented for replacing this instruction with the xmipsexectl MIPS.PAUSE alternative encoding.
+>
+> Signed-off-by: Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
+> ---
+> This is a continuation of a previous series, which did not implement the full
+> xmipsexectl vendor extension. The title was updated accordingly.
+>
+> Changes in v4:
+> - Add support for the xmipsexectl vendor extension
+> - Remove the ifdef/else from errata_list.h
+> - Replace the ifdef/else with a hwprobe call in the userspace code.
+>
+> Link to v3:
+> https://lore.kernel.org/linux-riscv/20250129131703.733098-1-arikalo@gmail.com/
+>
+> ---
+> Aleksa Paunovic (6):
+>        dt-bindings: riscv: Add xmipsexectl ISA extension description
+>        riscv: Add xmipsexectl as a vendor extension
+>        riscv: Add xmipsexectl PAUSE instruction
+>        riscv: hwprobe: Add MIPS vendor extension probing
+>        riscv: hwprobe: Document MIPS xmipsexectl vendor extension
+>        riscv: Add tools support for xmipsexectl
+>
+> Djordje Todorovic (1):
+>        riscv: errata: Fix the PAUSE Opcode for MIPS P8700
+>
+>   Documentation/arch/riscv/hwprobe.rst               |  9 +++
+>   .../devicetree/bindings/riscv/extensions.yaml      |  6 ++
+>   arch/riscv/Kconfig.errata                          | 23 ++++++++
+>   arch/riscv/Kconfig.vendor                          | 13 +++++
+>   arch/riscv/errata/Makefile                         |  1 +
+>   arch/riscv/errata/mips/Makefile                    |  5 ++
+>   arch/riscv/errata/mips/errata.c                    | 67 ++++++++++++++++++++++
+>   arch/riscv/include/asm/alternative.h               |  3 +
+>   arch/riscv/include/asm/cmpxchg.h                   |  3 +-
+>   arch/riscv/include/asm/errata_list.h               | 17 +++++-
+>   arch/riscv/include/asm/hwprobe.h                   |  3 +-
+>   arch/riscv/include/asm/vdso/processor.h            |  4 +-
+>   arch/riscv/include/asm/vendor_extensions/mips.h    | 23 ++++++++
+>   .../include/asm/vendor_extensions/mips_hwprobe.h   | 23 ++++++++
+>   arch/riscv/include/asm/vendorid_list.h             |  1 +
+>   arch/riscv/include/uapi/asm/hwprobe.h              |  1 +
+>   arch/riscv/include/uapi/asm/vendor/mips.h          |  3 +
+>   arch/riscv/kernel/alternative.c                    |  5 ++
+>   arch/riscv/kernel/entry.S                          |  2 +
+>   arch/riscv/kernel/sys_hwprobe.c                    |  4 ++
+>   arch/riscv/kernel/vendor_extensions.c              | 10 ++++
+>   arch/riscv/kernel/vendor_extensions/Makefile       |  2 +
+>   arch/riscv/kernel/vendor_extensions/mips.c         | 22 +++++++
+>   arch/riscv/kernel/vendor_extensions/mips_hwprobe.c | 22 +++++++
+>   arch/riscv/mm/init.c                               |  1 +
+>   tools/arch/riscv/include/asm/vdso/processor.h      | 27 +++++----
+>   26 files changed, 286 insertions(+), 14 deletions(-)
+> ---
+> base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+> change-id: 20250424-p8700-pause-dcb649968e24
+>
+> Best regards,
 
-DW XGMAC IP-core of v2.x and older don't support 10/100Mbps modes
-neither in the XGMII nor in the GMII interfaces. That's why I dropped
-the 10/100Mbps link capabilities retaining 1G, 2.5G and 10G speeds
-only (the only speeds supported for DW XGMAC 1.20a/2.11a Tx in the
-MAC_Tx_Configuration.SS register field). Although I should have
-dropped the MAC_5000FD too since it has been supported since v3.0
-IP-core version. My bad.(
 
-Starting from DW XGMAC v3.00a IP-core the list of the supported speeds
-has been extended to: 10/100Mbps (MII), 1G/2.5G (GMII), 2.5G/5G/10G
-(XGMII). Thus the more appropriate fix here should take into account
-the IP-core version. Like this:
-	if (dma_cap->mbps_1000 && MAC_Version.SNPSVER >= 0x30)
-		dma_cap->mbps_10_100 = 1;
+I tried to fix all the small comments I added, but there are quite a few 
+(and using MIPS_PAUSE triggered a new header nightmare) so can you send 
+another version rebased on top of this branch 
+https://git.kernel.org/pub/scm/linux/kernel/git/alexghiti/linux.git/log/?h=alex-for-next 
+?
 
-Then you can use the mbps_1000 and mbps_10_100 flags to set the proper
-MAC-capabilities to hw->link.caps in the dwxgmac2_setup() method. I
-would have added the XGMII 2.5G/5G MAC-capabilities setting up to the
-dwxgmac2_setup() method too for the v3.x IP-cores and newer.
+Thanks,
 
--Serge(y)
+Alex
 
-> 
-> Best Regards,
-> Rohan
-> 
 
