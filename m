@@ -1,129 +1,76 @@
-Return-Path: <linux-kernel+bounces-736046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CB73B09722
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 01:21:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68F5CB09723
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 01:21:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ED07A4659C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 23:21:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 241453AA743
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 23:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE8FA241676;
-	Thu, 17 Jul 2025 23:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61CA7244663;
+	Thu, 17 Jul 2025 23:21:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VIdMjRx4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Fyef/i5f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D8C2459E5;
-	Thu, 17 Jul 2025 23:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF5C24167B
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 23:21:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752794468; cv=none; b=tCDPXC0rogvfqPMuB9zc/2jnObe8mNiIciyrenSEW4C9bzCp8dTq5XRWpElJsL8gQ80CYXbC0/oV18ofvFrX5JEcJLYmrc93gmof5zEC57X+bK7B1d9XB8UoqL+lJUGVZdMkiWcEZqZgVK2XMCJA4nHvTHuh98IA5O2tYUW0L1k=
+	t=1752794477; cv=none; b=apZuACzPMplx4TFbgw2rUK5Ibhwe4mYgK/qBkrV3srfxPnyMah8rQsVDiBKZoYg4lEw2lZtPyHz7eMdAU/DwJHJVfYbEUWRxE6KwEENK3h/l17F1RpiaC6Auza1ug3QI0WCFEwDKlkH/CimZfrPki9V1oiFjG90jmmBULkpROw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752794468; c=relaxed/simple;
-	bh=Z91spb535ClmCzUk8z8x6barffOcqj52JPK73PApQ3Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aYPcMztefuzcV3xszZY9s5v9PHdjLo4ShJ+XFhXWExw+q7anc0IceVs8JgEK7hSr8azwRzU/AStRGriWAl3kbIAHIZMe9asYF872SlSLOnKokidjAGq4ZYzzNkVp9EJhXqc+BwMm+Hn3HgSV3aUvKslNXPCt8KM8lEZSGeojr/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VIdMjRx4; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752794467; x=1784330467;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Z91spb535ClmCzUk8z8x6barffOcqj52JPK73PApQ3Q=;
-  b=VIdMjRx41I+zkB+FFhbBsRJZdz4RHaF+K8WNnsvatWc7tT6RSliYZ1cp
-   jL6Pl9ayQdiaSe6UpzfrHWR0Oxj6zTRMOcFvf89oWdkzWJSk6b7oRwfhD
-   ipv7Bo2tiw90W27korhYDDu0TTcgIVwdgvUXmM6hENaDqAT+EKLy5tXef
-   /THee+jC1Ppps75oXk63baogltbBpH5icNlgfGKSrNoIpePwqcLq1+4k9
-   jIZoylAOjLLFchQ//witrW+SLt9HaQC+4HHSp3doWBCGSahWiDGns6Wml
-   3L50fdw9+2MWmvRqVHx22UocuXNlPunnhcODiP1tHy7vk1AhLH1OjVQwi
-   g==;
-X-CSE-ConnectionGUID: tyQeKpxSQei4czD4BOxhsg==
-X-CSE-MsgGUID: CH3zP29FSTeOZw5hoSVRFA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11495"; a="54300202"
-X-IronPort-AV: E=Sophos;i="6.16,320,1744095600"; 
-   d="scan'208";a="54300202"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 16:21:06 -0700
-X-CSE-ConnectionGUID: KmB15xNWR52oofoENDVxBw==
-X-CSE-MsgGUID: OB0qRmbGSii18EWBWWt2qA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,320,1744095600"; 
-   d="scan'208";a="157994511"
-Received: from ldmartin-desk2.corp.intel.com (HELO [10.125.108.3]) ([10.125.108.3])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 16:21:06 -0700
-Message-ID: <848e0e2f-c2cf-4c07-ae48-b12cf1d0b332@intel.com>
-Date: Thu, 17 Jul 2025 16:21:04 -0700
+	s=arc-20240116; t=1752794477; c=relaxed/simple;
+	bh=zKzFdRaQIlyhe88Eg/D5+roXWbvo5RWDklptJTTE3Ew=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=b13DWpJCW9s/LjeiZxSyGqp8mKXFn2xYJCnyQ3spQOTvCLiOebNzXBpFpeAwH7p5JvMFtz42ZXv9Gf84FxAui74V13vpxKwRcW+nwUPTguO/SG5yGQF/tkYVDYC5O8C9A8CKeNKNIpRxaPOtK5DPCWqsGj3WrbBheyNGI/4aogo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Fyef/i5f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 177CEC4CEE3;
+	Thu, 17 Jul 2025 23:21:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1752794476;
+	bh=zKzFdRaQIlyhe88Eg/D5+roXWbvo5RWDklptJTTE3Ew=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Fyef/i5fIwR1T8neqERrObrA+aUiRderdCU6rZ4eGzFwtA96VKHPx5c4BLdQCbvSz
+	 ZS13d3ydnHszD3sfTgpSg01HPukaHwBdx9sBZlrdLHQlI8oF/Y2cmVSY/YIms+UN4H
+	 XzUscygiRw7ylycj9mx38wDU9O9yRuVArfXjHH9U=
+Date: Thu, 17 Jul 2025 16:21:15 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Kemeng Shi <shikemeng@huaweicloud.com>
+Cc: Kairui Song <ryncsn@gmail.com>, bhe@redhat.com, hannes@cmpxchg.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] mm: swap: correctly use maxpages in swapon syscall
+ to avoid potensial deadloop
+Message-Id: <20250717162115.18edbb2d71685482a98bcdb5@linux-foundation.org>
+In-Reply-To: <e836546e-5146-40fe-5515-0a185b72bdb2@huaweicloud.com>
+References: <20250522122554.12209-1-shikemeng@huaweicloud.com>
+	<20250522122554.12209-3-shikemeng@huaweicloud.com>
+	<CAMgjq7AcMtsS-EX0065jvucLR=YiAvPkjp+rmr=hfxyv9JVW5g@mail.gmail.com>
+	<e836546e-5146-40fe-5515-0a185b72bdb2@huaweicloud.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH for-next] cxl: Fix -Werror=return-type in
- cxl_decoder_detach()
-To: Li Zhijian <lizhijian@fujitsu.com>, linux-cxl@vger.kernel.org
-Cc: dave@stgolabs.net, jonathan.cameron@huawei.com,
- alison.schofield@intel.com, vishal.l.verma@intel.com, ira.weiny@intel.com,
- dan.j.williams@intel.com, linux-kernel@vger.kernel.org
-References: <20250717031251.1043825-1-lizhijian@fujitsu.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250717031251.1043825-1-lizhijian@fujitsu.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Wed, 11 Jun 2025 15:54:21 +0800 Kemeng Shi <shikemeng@huaweicloud.com> wrote:
 
-
-On 7/16/25 8:12 PM, Li Zhijian wrote:
-> Fix following compiling errors:
-> In file included from ../drivers/cxl/core/pmu.c:10:
-> ../drivers/cxl/core/core.h: In function ‘cxl_decoder_detach’:
-> ../drivers/cxl/core/core.h:65:1: error: no return statement in function returning non-void [-Werror=return-type]
->  }
->  ^
-> cc1: some warnings being treated as errors
->   CC [M]  drivers/nvdimm/claim.o
-> make[6]: *** [../scripts/Makefile.build:287: drivers/cxl/core/pmu.o] Error 1
-> make[6]: *** Waiting for unfinished jobs....
->   CC [M]  drivers/infiniband/core/verbs.o
 > 
-> Fixes: b3a88225519c ("cxl/region: Consolidate cxl_decoder_kill_region() and cxl_region_detach()")
-> Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
-
-Thanks! I applied to cxl/next
-
-1d0d1bc44e98dc90d478badb40de5e3adb747c2e
-
-
-> ---
-> I'm curious why the LKP robot didn't report this.
-
-Yes. Odd. I guess randconf has not turned off CONFIG_CXL_REGION
-
-DJ 
-
-> ---
->  drivers/cxl/core/core.h | 1 +
->  1 file changed, 1 insertion(+)
 > 
-> diff --git a/drivers/cxl/core/core.h b/drivers/cxl/core/core.h
-> index 705a5f09aa78..2669f251d677 100644
-> --- a/drivers/cxl/core/core.h
-> +++ b/drivers/cxl/core/core.h
-> @@ -62,6 +62,7 @@ static inline int cxl_decoder_detach(struct cxl_region *cxlr,
->  				     struct cxl_endpoint_decoder *cxled,
->  				     int pos, enum cxl_detach_mode mode)
->  {
-> +	return 0;
->  }
->  static inline int cxl_region_init(void)
->  {
+> on 5/26/2025 1:08 AM, Kairui Song wrote:
+
+Nearly two months!
+
+> Sure, will add this in next version.
+
+Do we actually need a new version?  Having rescanned the v1 review I'm
+inclined to merge this series as-is?
 
 
