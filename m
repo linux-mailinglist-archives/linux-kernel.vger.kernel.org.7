@@ -1,62 +1,59 @@
-Return-Path: <linux-kernel+bounces-735857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8293B09492
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:08:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E547B09496
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:09:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 921C9A614F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:07:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D2E61C45CD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15D242FBFEC;
-	Thu, 17 Jul 2025 19:07:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA922FCE08;
+	Thu, 17 Jul 2025 19:09:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N+igieEw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bXtshgxk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B432163BD;
-	Thu, 17 Jul 2025 19:07:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B8C2153FB;
+	Thu, 17 Jul 2025 19:09:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752779272; cv=none; b=CVAkUAw5AD5Jt+7iojLUtl+RNKT18xyJG2R2Ur/STf9mnfYYJknA6KWv5uM1X/0fZNh7dyfMOn4mJ5A5OXsk67gWiNkb7UoV+mUu8DLDQK8UyRkpx9P/qlMssPLHh4mtAayKWtWVrPmfRN+W6sE0gtdkkX4LVNfz8alYze5eoOQ=
+	t=1752779371; cv=none; b=AxYRfleMTamBe9aiLWG06zsJXaATnYwvjPnR3Y9ER3xbVdEREpjr+iwwcGx1U6wO6SD/OaFqlVrMk1HwzSA4INvLldqMQ1xfD8cZvOyCv2Hn0rjzij/sete45HM7kbLFaIAVgxnaq41FMjNm6k1Tr06jL/FKynMFr/bgVkFgRwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752779272; c=relaxed/simple;
-	bh=PKFjRqVwhUwPbYtM13D4640UBaWEd7kT1tK0lbdIN0E=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=jUs8xR4ISxZXWidPqdjsTF414mMEQgSpf+MrbNuXbZwJF3uX4ClpsTkQYr0jyRQbj6YRPdEkWvBIx9OKmyhACBlUdqhiIQ6+5CDwUSiS7lKetbgDmZ6khd5mEgVTPm3NUFqWIwf7u86i7kzsG/ZF1z4zWOlIVj2Kyp3pZu+Kqrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N+igieEw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC017C4CEE3;
-	Thu, 17 Jul 2025 19:07:51 +0000 (UTC)
+	s=arc-20240116; t=1752779371; c=relaxed/simple;
+	bh=dqjOThknCuJUZYUJdNUbL5TNDM3zO8Z9XspebF7i5gQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nt9lYWkBKzXR2/ICyrzRVdz920nlK01SfOo/RgFr+6OENll4vddUxyiQWSf85c/P+3FqTzFmHyaxYyhycUfR2xwtAhY0Po+4VeYkGrA4EliSdKt4uFkhFHDJ+9VKaQnJ0B8LTQDmgsPbHSgQGQk3Jw43ZMsCN4dqsb0Cf+NCCX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bXtshgxk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDC38C4CEE3;
+	Thu, 17 Jul 2025 19:09:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752779271;
-	bh=PKFjRqVwhUwPbYtM13D4640UBaWEd7kT1tK0lbdIN0E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=N+igieEwq4MRp14XvuTho3hv1FOnkG9+CHfPQ3Lp42p4/0JQnAVOU3aULMXucnQK5
-	 pgkBX5sZzTU6vjJp+euu0mEV8zSulxaZK2IzO7xbt+BFd6/ieB8KtWodaOYFYAoaJj
-	 UXgLfd6ECTjgXS08L9dFUWFV9YIvI7gCpENCwsPFp5lL9QirKO9foFui4k328Nb/uN
-	 mL7tIWM6aVi7zR9jKB1FnbnvQgDoXJFcHV5LqYigEIu0So10spoVAb/FHeOMYsxe+z
-	 /Dwu2jTbRceaZR6wzgFJ2CU7xZZxtFf1xMfggcqUaf9eu8qUKOjuSlP8tk3jnLQv2B
-	 YU3X/zcjsKAUg==
-Date: Thu, 17 Jul 2025 14:07:50 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Matthew W Carlis <mattc@purestorage.com>
-Cc: xueshuai@linux.alibaba.com, anil.s.keshavamurthy@intel.com,
-	bhelgaas@google.com, bp@alien8.de, davem@davemloft.net,
-	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	lukas@wunner.de, mark.rutland@arm.com,
-	mathieu.desnoyers@efficios.com, mhiramat@kernel.org,
-	naveen@kernel.org, oleg@redhat.com, peterz@infradead.org,
-	rostedt@goodmis.org, tianruidong@linux.alibaba.com,
-	tony.luck@intel.com,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v8] PCI: hotplug: Add a generic RAS tracepoint for
- hotplug event
-Message-ID: <20250717190750.GA2592519@bhelgaas>
+	s=k20201202; t=1752779371;
+	bh=dqjOThknCuJUZYUJdNUbL5TNDM3zO8Z9XspebF7i5gQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bXtshgxkYSKpOkvY0x38knUKrKqkLB/LvLT65wVgm6RcY767jnupRllHvWFhoQxaC
+	 nWQmE/L3acyRxzK1TSeOiIU3Z6RHnzqrLU1W+MU4+lH9wonwIyvWtZFDB/m/70NAMa
+	 fz5tWV6LX3L+WHiv1fA9am/foqZdgzIK1KyRsO/koRTGPirqMNXJt5eP1YSx4CPnVd
+	 AUAazmDH101ePdkgKZbUMUlkeSGEzR47SUQLlvdLoCbPgHFKeKQ4nCIJPs0qm+fc43
+	 IGYSvnuK7l9Cn+3w3lmBU1kwDVctKmY38VQlnIkHw8XRkgPrJR+n9AMaLqsZf7kRyZ
+	 grKEy+09aVczw==
+Date: Thu, 17 Jul 2025 09:09:29 -1000
+From: Tejun Heo <tj@kernel.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Chen Ridong <chenridong@huaweicloud.com>, hannes@cmpxchg.org,
+	mkoutny@suse.com, pavel@kernel.org, timvp@google.com,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, lujialin4@huawei.com,
+	chenridong@huawei.com
+Subject: Re: [PATCH v2 -next 1/2] sched,freezer: Remove unnecessary warning
+ in __thaw_task
+Message-ID: <aHlKabRMHvnSmtwg@slm.duckdns.org>
+References: <20250717085550.3828781-1-chenridong@huaweicloud.com>
+ <20250717085550.3828781-2-chenridong@huaweicloud.com>
+ <CAJZ5v0jnUQJSBbYWfmGb6wr_CY3j61TSq_cR9KBMqtvxWrmsaA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,89 +62,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250717172826.22120-1-mattc@purestorage.com>
+In-Reply-To: <CAJZ5v0jnUQJSBbYWfmGb6wr_CY3j61TSq_cR9KBMqtvxWrmsaA@mail.gmail.com>
 
-[+cc Ilpo, Jonathan]
+On Thu, Jul 17, 2025 at 08:26:26PM +0200, Rafael J. Wysocki wrote:
+> I can apply this one, but I'll need an ACK for the [2/2].
 
-On Thu, Jul 17, 2025 at 11:28:26AM -0600, Matthew W Carlis wrote:
-> A bit late to the discussion here..  Looks like "too late" in fact,
-> but I wanted to just make some comments.
+Ooh, I just applied the two patches as the original patch referenced went
+through the cgroup tree. If you'd like to route it, I'd be happy to revert
+them.
 
-Not too late, thanks for your thoughts!  When I apply things, I
-consider them a draft with intention to go upstream, but not
-immutable.  If it makes sense to revise or postpone, we can still do
-that.
+Thanks.
 
-> On Tue, 12 May 2025, Shuai Xue wrote:
-> > Hotplug events are critical indicators for analyzing hardware
-> > health,
-> 
-> In terms of a "hot plug" event I'm not actually sure what that
-> means. I mean to say that the spec has some room for different
-> implementations.  I think sometimes that means a presence detect
-> state change event, but a system is not required to implement a
-> presence pin (at least not for the Slot Status presence). Some
-> vendors support an "inband" presence which is when the LTSSM
-> essentially asserts presence if the link is active and deasserts it
-> when the link is down.
-> 
-> Appendix I in the newer PCIe specs say to use data link layer state
-> change event if presence is not implemented. It looks like this
-> tracepoint would still work, but its just something to keep in mind.
-> At the risk of including too much information I could see it also
-> being useful to put the device/vendor IDs of the DSP and the EP into
-> the trace event for link up. Perhaps even the link speed/width cap
-> for DSP/EP. The real challenge with tracking a fleet is getting all
-> the things you care about into one place.
-> 
-> On Tue, 20 May 2025, Lukas Wunner wrote:
-> > Link speed changes and device plug/unplug events are orthogonal
-> 
-> I guess what I wanted to get at here were some of the discussion
-> from Lukas & Ilpo. I think it makes sense to separate presence
-> events from link events, but I think it would make sense to have a
-> "link tracepoint" which reports previous and new speed. One of those
-> speeds being DOWN/DISABLED etc. Width could be in there as well. I
-> have seen many times now an engineer become confused about checking
-> speed because "Current Link Speed" & "Negotiated Link Width" are
-> "undefined" when "Data Link Layer Active" bit is unset. Ideally a
-> solution here would be immediately clear to the user.
-> 
-> When it comes to tracking things across a "fleet" having the slot
-> number of the device is extremely useful. We have an internal
-> specification for our slot number assignments that allows us to
-> track meaning across different generations of hardware or different
-> architectures. The BDF is often changing between generations, but
-> the meaning of the slot is not.
-
-All the tracepoints here already include:
-
-  - pci_name() (the bus/device/function)
-
-  - slot_name() (which I think comes from make_slot_name(); would you
-    want something else?)
-
-and IIUC, it would be helpful for you to add:
-
-  - DSP Vendor/Device ID (the Root Port or Switch Downstream Port,
-    which is relatively static, so seems less useful to me than the
-    USP/EP would be)
-
-  - USP/EP Vendor/Device ID
-
-And you would consider adding a new format for "Link Up" that would
-include the above plus current link speed/width?  I expect we will
-likely see new tracepoints similar to "Link Up" for link speed/width
-changes done by bwctrl, and this would definitely make sense for
-those.
-
-As a consumer of tracepoints, do you have an opinion on the event
-string?  I wonder if spaces in the strings complicate searching and
-scripting?  I don't think tracepoints necessarily need to match text
-in dmesg exactly because I suspect they're mostly processed
-mechanically.  But I'm not a tracepoint user myself (yet), and about
-20% of existing tracepoints already include spaces, so maybe it's not
-a concern.
-
-Bjorn
+-- 
+tejun
 
