@@ -1,242 +1,141 @@
-Return-Path: <linux-kernel+bounces-735278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB598B08D29
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:39:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B0679B08D2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:39:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 598BD4A57FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:39:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46B294A6153
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1DA22D4B47;
-	Thu, 17 Jul 2025 12:39:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WnPwXVvf"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A4372C08B0;
+	Thu, 17 Jul 2025 12:39:30 +0000 (UTC)
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C42D12BDC0E
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 12:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4E829ACF3;
+	Thu, 17 Jul 2025 12:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752755940; cv=none; b=Xvkq+SbpH7MsjcTRc6FbsLlCM/PIW8xRu2cwe2bXn6lwjj/tQ5cbHsQLaG+qag9q7HiQbj9GFQYLDKgd61zQGkSff1rxzTKlD7wXpnAKWN0T7U6uEYsNLxGYdCPqaatyI7jDZPzYb5tlCPxBeY9lW+5V9VCz+8jQcCJNnMRRYqo=
+	t=1752755970; cv=none; b=AMEc2cJQRlRStBs+ay4X9H0+p4IQSctzta4YJusPleP04hH7KB1HKsOJL7jPbh4ahMJ7Q22MxYa6PFlOWkb4lC7FS8XQRjLnRBFvFppgc+83or+aT9BzY982ViPU7N38Iwjj3Mon9Ngjrdxwu7QJtgl4hWU1j6apT/vDdHWCGCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752755940; c=relaxed/simple;
-	bh=RcIkhs+PWG65kpyVBx3jeSr4dOMJSG7K3RPmTlULAM8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b0pKWQREyHAQrHwdrhS/Y1IYXA/oBUG5J9PfuH93M0nkDpOn0ra3QS5eRYnECqWCqBy6CgkJf0LDPKTftLvD9guBvahhmWb67AmCO/CFNTMmUBORUsDJe4Tsh2WgnpBkHEw1xutOndeZza9QTb+q1f1MnAvqoanJh7UB2UL/Ibc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WnPwXVvf; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-606a269d440so161211a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 05:38:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752755935; x=1753360735; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=PX/ctpdQl7UzXj5LfUq23XzYmkmTNHChay0GALh9u58=;
-        b=WnPwXVvfY6h+po1aV2YFiSKx5GfcwIAw0pIAfetzWnBrdm5uQT5Q9ZtQrmNitmL8hG
-         EtawJ10RjlhMNm1LS+eW68bl6s3vhHTLJNAzgB1DUtYPQjLFmMvrFbtUXEFL/Ikhzi+5
-         JfZjqXCKpkQT4Pm92FOGWyJO8L0gQNdZ/T8xgM9KHvbbdiK/v1OkggBD4DsbXHW5AIM0
-         cpXIRW6PIqY3wnF7Xoz8e9Gez2J2UFsGPWmYditCyQwUXS62Y3geO+R/1DaGqOrtWZ8p
-         l/InhhlnyX098vjUKxcL1HgJGIRe2YsIHnJ1GqkCwPKE+wpHd7aE0P6ekCPvBYwM68yi
-         uvUA==
+	s=arc-20240116; t=1752755970; c=relaxed/simple;
+	bh=YH2pOK4vBUjN8aM5VaclvCspIE9DyGdEoB1Ya5XTqD8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QvRJdK4oCH9GetZtb6LFxhbHvbatH4jpanvtDr26vXJIC7yE0BYSUTp2aeEL8Gi/8UxfODlhDInzolyH2OYCXWXdfbd76UFNvyJPGNwXxQ/fuAznNoY6ek7DhdDbJgDK455G4CI9dm2jHCVpUI+cly/KnLReVqUCe/nIht88bdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ae3a604b43bso158962866b.0;
+        Thu, 17 Jul 2025 05:39:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752755935; x=1753360735;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PX/ctpdQl7UzXj5LfUq23XzYmkmTNHChay0GALh9u58=;
-        b=jpl/ERK2wU3MjErDXIkTMkZClptNyHgwXu45GwedSk7mfhjb+aqTFEZGVJot+F2xFi
-         7IfQQV43axJbcPLbrEBdQclSZm82vHWowG8zjTvPqcyJUsYqcwFcSMXx5zCbKhNMHZQq
-         Tt9TVmIkncKyK6lduuH9YI00ct/lN0NoHByw15DM2vvcTVw6INpVJrM5RFJm8mKjvIlU
-         f5S2u2pQ0Lli+6cc7sZ0j7tfH14qfF8dnY5hzawTSjt40zfoa9YWqJMVbfaO0hCcbW2N
-         cTy0fDoZjabEAyVPBeLx1PdkBAza2AmtV//aG1a5W9S+vBfhBygkRSeGgj/xvn9XSQT1
-         x1fQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUAF/ufcuA8OX2zy1uF9dAC/A1Duhz8iPv4ngnjbdgw3B/hmE//bvswx3rS65wk7SO6GkrPpDrgZvMBGyw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/nBSNHsCFphCejBhetGHzv7YEv+GsTgLrbSl4DLj8RDZbuq7G
-	khmSxgnNRvpoyXuk/5uYBwuolY9csojWNfZU5N8JgL/3lHGlboSkFzfKoFY7BSBLfpo=
-X-Gm-Gg: ASbGnctTU6z75hOYTILtZIfPf43lygRTtRkpnfnwWKXG+gaGgFXgHDvqWmdMivz0T9R
-	YzoFmSKK6c0a4O6/zIritKyyb1HMc5Il6rKNXJ+jA/DcMh8Lwx1w5a4OQaxp6C7OlJwp6YyvBPl
-	6X+Iu5Ce4uU14k9fsyu/9NCM9KVQ/QVRhGiEcj6x+zFXOZNoLlHVA/un1Qc/33l2TzjtfIFkcUW
-	EIGuToZhO+TmAw/k8xn10nxliavcuzCli5AQ5xUB56bSYRz962OrbaGtUCyHQxflEDsv06vVBUe
-	vfpyre5/nCesQqA6A3jDR2zNOAhYqb/hGP7Z+Tq8OBzdsNkmnlleDpzw5hKtdgZvL+zgZsBevaT
-	Kox5LtWpJB3rdw03sYYN45m5Xafb022dgKkuf8wnwlA==
-X-Google-Smtp-Source: AGHT+IHBsoW2HU+lEGBR1Fois9YmUVZiOCT0jmQwPz4gVuNgeF3eU03AINq+XO3PZqrCmU8VrnkGmw==
-X-Received: by 2002:a05:6402:270d:b0:608:c773:8b3 with SMTP id 4fb4d7f45d1cf-612823bb47amr2098900a12.7.1752755935011;
-        Thu, 17 Jul 2025 05:38:55 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.222.89])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-611e21c724csm9068233a12.61.2025.07.17.05.38.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Jul 2025 05:38:54 -0700 (PDT)
-Message-ID: <d9de2e4f-5b26-41af-bc69-327978d3d571@linaro.org>
-Date: Thu, 17 Jul 2025 14:38:52 +0200
+        d=1e100.net; s=20230601; t=1752755966; x=1753360766;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8FbVsGYaq0NyKNgSaxcwvLjtec9H1rtMkyXCq5d8Dfs=;
+        b=wl7vbN3cIgWuNXv62L9cvvyhZRLu+e2XWQkbrC2X881oUbS5EL0ss1Xfvh9Kq15g62
+         H5ikdOp0Cdp0IOSLKFjNIqzoES05pkHn6aqScK1xBGfABwLSjqcSEM9D9XPeaEXbyx4+
+         Q/9yDkyYlQvf6HK+bD/uf7j+Fhsu6kfypuyNx1wmMnxRTyZFmOBy5oUay9mvE6X7xJgW
+         QUdQbVt1+to7bZXA8iSJWU6FbiAWrnnhemAzEnfS+UQJTjIlFqMa5bM2s8dDyXzJFfzk
+         9hqonI/zpkQyd0xKUQB98GX06ol02OufZMWzGzZtJt71iYkLJRwCFH2H3A8/H9LFEtNQ
+         rn1A==
+X-Forwarded-Encrypted: i=1; AJvYcCUawH1+uOq8gbL5gCHKgBFGf/eryY4Tuo/BNYAwxaMxrQ4KG2x6RnRoAIcvQU9wF4CvC8EZFL8cn6de+A==@vger.kernel.org, AJvYcCUl0O8T5JH1VgS4K1FEr+kw9Wv1fQE8aWZFkin10FL2d/ao9BUjf7RuG5GL09J8IvNFqEE=@vger.kernel.org, AJvYcCXcNGV+8K9nxAXcliUnZUQIuE/bE1HTqnWuhaAbr6fW8A4Ft4/7s/roEHRJk96EJo5UTHaKdHg0GCY53Skt@vger.kernel.org, AJvYcCXe5KUdHzCr9HJy3j3faAa7bnvBqphtKOuvPF7OMle/l4KbjLqFiLjjw/6SsoJEzGIedIIMrp68FcPYmf7JvPZ1@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7mB4MVWxDGdewprmK00HPfhLmPcOlLyJ/xMF4AFkcXNI00SbU
+	8CvW05Dac48VlffML6Rd1Mfmyo6KTPk/iLu+fFDgYjJsbRh0YqRYCrpG
+X-Gm-Gg: ASbGncs3uPzzQv40tqChYwix8VhPreRUz7LuFotji0ywbQwnAJJSH9TyBOM3lRi8W0X
+	wcOFpk+kOLGns6mSUti52sju4fAd+IqNr0ddR630CN9k7R3UZrHRe0GEKBEbOu+BvYcJisHWOXU
+	Cspuys8O4Siv55kQvJgKhUwoksUAtgR6/qeHOa9MothV9prDw9BE4rR0fI/IwVsFi5M/B7ekfVY
+	XuhV2AeB5fWh8TtOoQcfE6pjUpkb+UCKMukqWtBHVQZG8fadcfwKVt8kYDuMv/P8YxXH9hkx1+V
+	CnhZaujFwksC4u8dG9ifNJ97Pu2mKDVlawevZQv9cRDKu3nU8dMEcCPNrOf3VZ6Cv5W19ZGXyTG
+	Eiuwx7JwkUYpWhTx4m/q3sbM=
+X-Google-Smtp-Source: AGHT+IFGMudLSa+MO2VRzIbQxkbKfo9sFMUMYLFenyZfvGkLpQS2jb+5lrL6tqgUkH/mp49v4K+DYQ==
+X-Received: by 2002:a17:907:80b:b0:aec:55c0:6d5e with SMTP id a640c23a62f3a-aec55c0765dmr171272166b.30.1752755965867;
+        Thu, 17 Jul 2025 05:39:25 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:1::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7ee471asm1374427366b.54.2025.07.17.05.39.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Jul 2025 05:39:25 -0700 (PDT)
+Date: Thu, 17 Jul 2025 05:39:22 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Lorenz Bauer <lmb@isovalent.com>, linux-arm-kernel@lists.infradead.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
+	Shuah Khan <shuah@kernel.org>, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	Alan Maguire <alan.maguire@oracle.com>
+Subject: Re: [PATCH bpf-next v5 1/3] btf: allow mmap of vmlinux btf
+Message-ID: <g2gqhkunbu43awrofzqb4cs4sxkxg2i4eud6p4qziwrdh67q4g@mtw3d3aqfgmb>
+References: <20250520-vmlinux-mmap-v5-0-e8c941acc414@isovalent.com>
+ <20250520-vmlinux-mmap-v5-1-e8c941acc414@isovalent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] media: iris: Add support for SM8750 (VPU v3.5)
-To: Vikash Garodia <quic_vgarodia@quicinc.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250714-sm8750-iris-v1-0-3006293a5bc7@linaro.org>
- <20250714-sm8750-iris-v1-3-3006293a5bc7@linaro.org>
- <7b0a984f-b62a-ac4d-74bf-a6e839c59272@quicinc.com>
- <d4c39f2c-9f95-4e65-87a3-78173b39adf1@linaro.org>
- <1c5df071-7000-ab45-dbc6-4384d883ba24@quicinc.com>
- <a6dbca7e-4d49-49a6-987c-8cd587501c98@linaro.org>
- <3a87c37b-b392-598a-736f-bb01e4c311e1@quicinc.com>
- <f6f86227-8d26-400b-9ad6-605cee966b56@linaro.org>
- <2d5edf11-2d13-bcc7-93a9-e0a223bd6eb8@quicinc.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <2d5edf11-2d13-bcc7-93a9-e0a223bd6eb8@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250520-vmlinux-mmap-v5-1-e8c941acc414@isovalent.com>
 
-On 17/07/2025 14:02, Vikash Garodia wrote:
-> 
-> On 7/17/2025 4:24 PM, Krzysztof Kozlowski wrote:
->> On 17/07/2025 12:50, Dikshita Agarwal wrote:
->>>>>>>> +	for (i = 0; i < core->iris_platform_data->num_vpp_pipe; i++) {
->>>>>>>> +		ret = readl_poll_timeout(core->reg_base + VCODEC_SS_IDLE_STATUSN + 4 * i,
->>>>>>>> +					 val, val & 0x400000, 2000, 20000);
->>>>>>>> +		if (ret)
->>>>>>>> +			goto disable_power;
->>>>>>>> +	}
->>>>>>>> +
->>>>>>>> +	ret = readl_poll_timeout(core->reg_base + AON_WRAPPER_MVP_NOC_LPI_STATUS,
->>>>>>>> +				 val, val & BIT(0), 200, 2000);
->>>>>>> what are you polling here for?
->>>>>>
->>>>>>
->>>>>> This is not different than existing code. I don't understand why you are
->>>>>> commenting on something which is already there.
->>>>>
->>>>> Which code are you referring to?
->>>>
->>>> To the existing vpu33 which had Reviewed-by: Vikash Garodia
->>>> <quic_vgarodia@quicinc.com>
->>>>
->>>> You understand that everything here is the same, everything is a copy
->>>> while adding just few more things?
->>>>
->>>> My patch is not doing in this respect anything different that what you
->>>> reviewed.
->>>>
->>>
->>> It seems to have been missed in vpu33 power off sequence as well and should
->>> be fixed.
->>>
->>> Still, as mentioned earlier as well, your reference should be
->>> HPG/downstream driver of SM8750 not the previous generation (SM8650).
->>
->> Yes and partially no, because we write upstream code matching or
->> extending existing upstream driver. As you said earlier, downstream is
->> not the truth always:
->>
->> "That shouldn’t be the case. The downstream design is different, which
->> is why the driver requires the above code to move the GDSC"
->>
->> so here I built on top of SM8650 and re-iterate whatever mistakes are
->> there. The best if someone fixes VPU33 and then I rebase on top,
->> re-using fixed code as my base.
-> 
-> You have mixed different comments made earlier.
+Hello Lorenz,
+
+On Tue, May 20, 2025 at 02:01:17PM +0100, Lorenz Bauer wrote:
+> diff --git a/kernel/bpf/sysfs_btf.c b/kernel/bpf/sysfs_btf.c
+> index 81d6cf90584a7157929c50f62a5c6862e7a3d081..941d0d2427e3a2d27e8f1cff7b6424d0d41817c1 100644
+> --- a/kernel/bpf/sysfs_btf.c
+> +++ b/kernel/bpf/sysfs_btf.c
+
+>  extern char __start_BTF[];
+>  extern char __stop_BTF[];
+
+> +static int btf_sysfs_vmlinux_mmap(struct file *filp, struct kobject *kobj,
+> +				  const struct bin_attribute *attr,
+> +				  struct vm_area_struct *vma)
+> +{
+> +	unsigned long pages = PAGE_ALIGN(attr->size) >> PAGE_SHIFT;
+> +	size_t vm_size = vma->vm_end - vma->vm_start;
+> +	phys_addr_t addr = virt_to_phys(__start_BTF);
+
+I am getting the following warning on arm64 which seems related to this
+code here. lines are based on cd031354087d8ae ("Merge branch
+'net-mlx5e-add-support-for-pcie-congestion-events') net-next branch
+
+	[   58.896157] virt_to_phys used for non-linear address: 000000009fea9737 (__start_BTF+0x0/0x685530)
+	[   23.988669] WARNING: CPU: 25 PID: 1442 at arch/arm64/mm/physaddr.c:15 __virt_to_phys (arch/arm64/mm/physaddr.c:?)
+	[   24.018136] Modules linked in: nvidia_cspmu(E) mlx5_ib(E) ipmi_ssif(E) arm_smmuv3_pmu(E) arm_cspmu_module(E) coresight_trbe(E) ib_uverbs(E) ipmi_devintf(E) ipmi_msghandler(E) coresight_stm(E) coresight_etm4x(E) coresight_tmc(E) coresight_funnel(E) stm_core(E) coresight(E) cppc_cpufreq(E) sch_fq_codel(E) drm(E) backlight(E) drm_panel_orientation_quirks(E) xhci_pci(E) xhci_hcd(E) sm3_ce(E) sha3_ce(E) sha512_ce(E) spi_tegra210_quad(E) acpi_power_meter(E) loop(E) efivarfs(E) autofs4(E)
+	[   24.075371] Tainted: [E]=UNSIGNED_MODULE, [N]=TEST
+	[   24.080276] Hardware name: Quanta S7GM 20S7GCU0010/S7G MB (CG1), BIOS 3D22 07/03/2024
+	[   24.088295] pstate: 63400009 (nZCv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+	[   24.098440] pc : __virt_to_phys (arch/arm64/mm/physaddr.c:?)
+	[   24.105398] lr : __virt_to_phys (arch/arm64/mm/physaddr.c:?)
+	[   24.112227] sp : ffff8000ba00f8e0
+	[   24.115620] x29: ffff8000ba00f8e0 x28: ffff8000ba00faf0 x27: ffff8000ba00fa88
+	[   24.122919] x26: ffff8000ba00fa40 x25: ffff800082772000 x24: 0000fffd6db70000
+	[   24.130226] x23: 0000000000685530 x22: 0000fffd6e200000 x21: ffff800081cc0000
+	[   24.140540] x20: ffff800081be02d8 x19: ffff800081cc0000 x18: 5f5f282037333739
+	[   24.150708] x17: 6165663930303030 x16: 0000000000000fc4 x15: 0000000000000003
+	[   24.160737] x14: ffff800082923398 x13: 0000000000000003 x12: 0000000000000003
+	[   24.168042] x11: 00000000fffeffff x10: ffff800082663784 x9 : cc38fcac5cdabe00
+	[   24.175348] x8 : 0001000000000000 x7 : ffff8000813dd878 x6 : 0000000000000000
+	[   24.182653] x5 : 0000000000000001 x4 : 0000000000000001 x3 : 0000000000000000
+	[   24.189959] x2 : 0000000000000000 x1 : ffff800081a3a6d0 x0 : 0000000000000055
+	[   24.197257] Call trace:
+	[   24.199761] __virt_to_phys (arch/arm64/mm/physaddr.c:?) (P)
+	[   24.206883] btf_sysfs_vmlinux_mmap (kernel/bpf/sysfs_btf.c:27)
+	[   24.214264] sysfs_kf_bin_mmap (fs/sysfs/file.c:179)
+	[   24.218536] kernfs_fop_mmap (fs/kernfs/file.c:462)
+	[   24.222461] mmap_region (./include/linux/fs.h:? mm/internal.h:167 mm/vma.c:2405 mm/vma.c:2467 mm/vma.c:2622 mm/vma.c:2692)
 
 
-I did not mix. I used them here to show how pointless arguments you keep
-making instead of focusing on technical aspects.
+Should __pa_symbol() be used instead of virt_to_phys()?
 
-Once you say that, other place you say something else.
-
-> 
-> 1. Downstream GDSCs are still in HW_CTRL mode, while upstream GDSCs are migrated
-> to HW_CTRL_TRIGGER. This does not need a fix in SM8650, but in the
-> "iris_vpu35_power_on_hw" which you have added in this patch for SM8750.
-
-No one discusses this.
-
-> 
-> 2. Register write "AON_WRAPPER_MVP_NOC_LPI_CONTROL" with 0x1 is needed on both
-> SM8650 and SM8750, before polling AON_WRAPPER_MVP_NOC_LPI_STATUS in
-> "iris_vpu35_power_off_hw" function.
-> 
-> I can soon submit a patch to fix SM8650 with the missing register write, but i
-
-Great!
-
-> do not see a need to wait for it to continue your development on SM8750.
-
-
-I am not sure if you both understand how upstream development works. We
-reduce to a reasonable minimum duplicated codes and different solutions,
-so that's why my code is a copy of existing code plus new things for SM8750.
-
-The goal of upstream is not to implement SM8750 completely different.
-Please switch downstream approach to above re-usage approach.
-
-And that's why your fix is important because I am going to copy exactly
-that part of code and I should not come with different code.
-
-
-Best regards,
-Krzysztof
+Thanks
+--breno
 
