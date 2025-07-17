@@ -1,169 +1,113 @@
-Return-Path: <linux-kernel+bounces-735908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6724EB0951C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:40:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F7B7B0951E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:41:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97EDD174535
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:40:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48DB317ADD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:41:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80522FE321;
-	Thu, 17 Jul 2025 19:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB962FCFFC;
+	Thu, 17 Jul 2025 19:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iZI7wLv5"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="Kswv4wdi"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979D02FC3D0
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 19:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D7DCA4B;
+	Thu, 17 Jul 2025 19:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752781233; cv=none; b=kk3+M2VScwWsL8BdXGkiQRWBMb+7M0zOaQrFnGRlA8dNSSGuwYK1iMMEL4NrasMl8z12Oi8Hsv2b1ehLTGErknWW+RgoUsMnpIiif5VBflYA4rP6OKKZtBRkFvL3kCP5DeboU2qe/BgFbWEwAg8b1zLxnbJbtjSu5ajQCkwiJ5Y=
+	t=1752781303; cv=none; b=cc24PRMs8tAFecty/GTOXwqbxGXamSdllLWwLq+MYHWvAKI0kyc7zEhX84E3mp43qT4q/4o/uTg4ndQBXfqsGaR/+t2/mXlKzHLiKlHN1Up5nguhMALgF0M8KVQmA/lFOXHFFLJtXjSbqCGczi02mQpb8+C5pJhFAJUOxm3a2K8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752781233; c=relaxed/simple;
-	bh=J5T522Xe3jwCY3eAP8SMXr/V7enkbaM2npbeBlIkiMc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=kPPk/P4pT7b+S2B+N1gxcxp9pQ4TSO9U806Xmd/nb5B350TtYfNhUI0X+UBWWsYJDKDkhjnz4Yaf9nxPsiuAwYIhkJzGsglAttKYyT2wdOermnGBUQLEXSffSvmjB92oy6bxXMHsFYZQvHNFzhXwcQH5wFTmbblQSArSHxaAwTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--salomondush.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iZI7wLv5; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--salomondush.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-740774348f6so1351800b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 12:40:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752781231; x=1753386031; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EabJr18a3SZdXkqRpkIMgBHho+rbTVnRfJqLTg0l/2k=;
-        b=iZI7wLv5s3zEzFg3rI1f8o+PPq7IWmE+iE0JLWfUksOJUpHOfYUiwj2RlZqjQpkrRF
-         Cd2P279rMV2jZKnk7MhL4svPmOkk+EtIlgbL+xMEVnVyEtripKQJmpUTwFMOdOEHi+HD
-         ikvMY65laYP5Z1fCNW7S0LxgvK534TBmr0yZOrKrU1oVmM3Pv79bc2SrjTNLjG/ZQSeC
-         GWx59nSGT6JSgGiVYbifVsX8wxZmqCXVMiwZw/r1/9G3redOxxMxcfVFN0jbWMop6Zfl
-         jMFSUYo4vkoW9ApTW2mrpTeCX89Qd3dopLnjVH8KBoKM7z2jSgPnZdKIP3iUgw/gABHC
-         lb/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752781231; x=1753386031;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EabJr18a3SZdXkqRpkIMgBHho+rbTVnRfJqLTg0l/2k=;
-        b=QmTcmKUWcsL3bTjpNxZ1EXmxuqxApRa/aRImkGjkk2XlYUBqAzsloy5VlIPv9dAAiv
-         2xU2hUNXzhPs4e4t5XSQL/abcTzELtRD2ir6oA1R4zVoMqPBwC6OyygNwSH4ZctgQTkH
-         TO1r7eU7ePiEjC3sd2jNXMZrmsi8jOZuHeuyO4EfHyjaqmfUe+GheQp7M+eYyQpUJH7t
-         Fr79lIRyGOe02BsTHHHurgQs9OcjI4YjPvGdSidOSyNEFcvqnXeG5jgfhn6uT7N9WHrd
-         VTuBbyneJ+//GxY5krsnIu2eNuQ307eBlZafxqpNqLyYMScfOJhMpwGIb+tAYu+Xra2F
-         Y1MQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVljP50D2OayKgiqkQ/mdQ95BGwbDlWzcru8HukVRsFqkZSzaHFoc1012fuZv/ObeZ1XxfP7ixmym2XdHw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdB0F73OeV8Th7F2YyU2aEzTtkDVd3ApEm9NLYgjEXFLUioWXy
-	bLK1gd744wnVGYEUJiNRB6T2nwPyuh+/u69eXg51CRGR+EiEpPpcVH8nO2MgdivLUy6eeP1on5r
-	sK8efWFbY4mow1HciwZj05Y0/aw==
-X-Google-Smtp-Source: AGHT+IET9IaKD5CuoVhly7YexMTdSilD1ZfKaS6gelsVj0NBUm48zNtNHHWQ7BYJMEXFZUmxjmmo3qvk/nU3bh+Ptg==
-X-Received: from pfbjw38.prod.google.com ([2002:a05:6a00:92a6:b0:748:ec4d:30ec])
- (user=salomondush job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:6a22:b0:225:7617:66ff with SMTP id adf61e73a8af0-2391c962646mr266495637.20.1752781230976;
- Thu, 17 Jul 2025 12:40:30 -0700 (PDT)
-Date: Thu, 17 Jul 2025 19:40:25 +0000
-In-Reply-To: <30f8ea8d-79c4-4e5c-b354-51ad8146a61c@acm.org>
+	s=arc-20240116; t=1752781303; c=relaxed/simple;
+	bh=KQPRLbjIIFFOLW6bfUb07pFVo+R2I5cI4/b2Zw2nJpQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=JtB7F/XsQTpb1Oy0/j5HtOXyEULfKp6PClZDl8HeFKGQGLCLc/XjGuIp3+i/E+PbHKVZLAsmuSgOSnwapw6LBvFsOEN+HJE5jQBkvsQ9kjpC5MIN76dYsxzXdD2LP/Z3ZVbevbK6Llga8nFKB+4Wk09cRbzIBjOki/Vz3S3YuJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=Kswv4wdi; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 15AF6403E1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1752781301; bh=rmvWRnG6YIOBViJ2519P+js6uMde+DaULhJoWx6eh/Y=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Kswv4wdistut/nhc8EsaxC7nydVG+Wqs6cass9aVKrs7lQnUyQxCIAThC9flJtbbN
+	 s1uSV4qmIHIf9HTwjWp8mLOncS5byP9ozLfbfhVpT4xvGODjv85crF11Ua72xIKjMZ
+	 d1ozQeORbSzl7ZyKcBs1p32iMBB8mwaO3UwoS8gkunjPnp8bIr2qZfL/cfCDzD4voU
+	 LUdj9BAlEMPq7ag+e9BYOSrcEKZORz+XIivEwjvDR9UudqloNdl3GnziuF5/8Zmabx
+	 xYs6R0bwbiXMO5cXO36rHwDwimmRsjNfFGGxDDAEdFkp19rVlG5kZwyDPVS2lJ56rk
+	 uGOvNZkmRZkdQ==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 15AF6403E1;
+	Thu, 17 Jul 2025 19:41:41 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Ignacio =?utf-8?Q?Pe=C3=B1a?= <ignacio.pena87@gmail.com>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Documentation: Add patch-validator to dev-tools
+In-Reply-To: <20250717162948.23078-1-ignacio.pena87@gmail.com>
+References: <87wmjy92r6.fsf@trenco.lwn.net>
+ <20250717162948.23078-1-ignacio.pena87@gmail.com>
+Date: Thu, 17 Jul 2025 13:41:40 -0600
+Message-ID: <875xfqbo5n.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <30f8ea8d-79c4-4e5c-b354-51ad8146a61c@acm.org>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250717194025.3218107-1-salomondush@google.com>
-Subject: [PATCH v2] scsi: mpi3mr: Emit uevent on controller diagnostic fault
-From: Salomon Dushimirimana <salomondush@google.com>
-To: bvanassche@acm.org
-Cc: James.Bottomley@HansenPartnership.com, kashyap.desai@broadcom.com, 
-	linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org, 
-	martin.petersen@oracle.com, mpi3mr-linuxdrv.pdl@broadcom.com, 
-	salomondush@google.com, sathya.prakash@broadcom.com, 
-	sreekanth.reddy@broadcom.com, sumit.saxena@broadcom.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Introduces a uevent mechanism to notify userspace when the controller
-undergoes a reset due to a diagnostic fault. A new function,
-mpi3mr_fault_event_emit(), is added and called from the reset path. This
-function filters for a diagnostic fault type
-(MPI3_SYSIF_HOST_DIAG_RESET_ACTION_DIAG_FAULT) and generates a uevent
-containing details about the event:
+Ignacio Pe=C3=B1a <ignacio.pena87@gmail.com> writes:
 
-- DRIVER: mpi3mr in this case
-- HBA_NUM: scsi host id
-- EVENT_TYPE: indicates fatal error
-- RESET_TYPE: type of reset that has occurred
-- RESET_REASON: specific reason for the reset
+> On Thu, Jul 17, 2025 at 09:38:00AM -0600, Jonathan Corbet wrote:
+>> Interesting ... overall, we don't generally have detailed documentation
+>> for out-of-tree utilities, though there isn't necessarily any reason why
+>> we couldn't.  But I'm curious as to why you haven't submitted the tool
+>> itself?
+>
+> That's a great question! I kept it external for a few reasons:
+>
+> First, I'm still pretty new to kernel development and wanted the freedom
+> to iterate quickly as I learn what checks are actually useful. Being=20
+> external means I can push updates immediately when someone points out
+> a new common mistake (like Greg just did with the date check!).
 
-This will allow userspace tools to subscribe to these events and take
-appropriate action.
+I would guess, though, that you would get more people pointing things
+out if you were to post the tool to the list and eventually get it in.
+The kernel cycle isn't *that* slow in the end...
 
-Signed-off-by: Salomon Dushimirimana <salomondush@google.com>
----
-Changes in v2:
-- Addressed feedback from Bart regarding use of __free(kfree) and more
+> Second, I wrote everything in bash for simplicity, which probably isn't
+> the best fit for the kernel's scripts/ directory. Plus, as Greg mentioned
+> in his reply, many of these checks really belong in checkpatch.pl rather
+> than a separate tool.
 
- drivers/scsi/mpi3mr/mpi3mr_fw.c | 37 +++++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+It wouldn't be the only bash script, certainly.
 
-diff --git a/drivers/scsi/mpi3mr/mpi3mr_fw.c b/drivers/scsi/mpi3mr/mpi3mr_fw.c
-index 1d7901a8f0e40..a050c4535ad82 100644
---- a/drivers/scsi/mpi3mr/mpi3mr_fw.c
-+++ b/drivers/scsi/mpi3mr/mpi3mr_fw.c
-@@ -1623,6 +1623,42 @@ static inline void mpi3mr_set_diagsave(struct mpi3mr_ioc *mrioc)
- 	writel(ioc_config, &mrioc->sysif_regs->ioc_configuration);
- }
- 
-+/**
-+ * mpi3mr_fault_uevent_emit - Emit uevent for a controller diagnostic fault
-+ * @mrioc: Pointer to the mpi3mr_ioc structure for the controller instance
-+ * @reset_type: The type of reset that has occurred
-+ * @reset_reason: The specific reason code for the reset
-+ *
-+ * This function is invoked when the controller undergoes a reset. It specifically
-+ * filters for MPI3_SYSIF_HOST_DIAG_RESET_ACTION_DIAG_FAULT and ignores other
-+ * reset types, such as soft resets.
-+ */
-+static void mpi3mr_fault_uevent_emit(struct mpi3mr_ioc *mrioc, u16 reset_type,
-+	u16 reset_reason)
-+{
-+	struct kobj_uevent_env *env __free(kfree);
-+
-+	if (reset_type != MPI3_SYSIF_HOST_DIAG_RESET_ACTION_DIAG_FAULT)
-+		return;
-+
-+	env = kzalloc(sizeof(*env), GFP_KERNEL);
-+	if (!env)
-+		return;
-+
-+	if (add_uevent_var(env, "DRIVER=%s", mrioc->driver_name))
-+		return;
-+	if (add_uevent_var(env, "HBA_NUM=%u", mrioc->id))
-+		return;
-+	if (add_uevent_var(env, "EVENT_TYPE=FATAL_ERROR"))
-+		return;
-+	if (add_uevent_var(env, "RESET_TYPE=%s", mpi3mr_reset_type_name(reset_type)))
-+		return;
-+	if (add_uevent_var(env, "RESET_REASON=%s", mpi3mr_reset_rc_name(reset_reason)))
-+		return;
-+
-+	kobject_uevent_env(&mrioc->shost->shost_gendev.kobj, KOBJ_CHANGE, env->envp);
-+}
-+
- /**
-  * mpi3mr_issue_reset - Issue reset to the controller
-  * @mrioc: Adapter reference
-@@ -1741,6 +1777,7 @@ static int mpi3mr_issue_reset(struct mpi3mr_ioc *mrioc, u16 reset_type,
- 	    ioc_config);
- 	if (retval)
- 		mrioc->unrecoverable = 1;
-+	mpi3mr_fault_uevent_emit(mrioc, reset_type, reset_reason);
- 	return retval;
- }
- 
--- 
-2.50.0.727.gbf7dc18ff4-goog
+> So my plan now is to work on patches for checkpatch.pl to add the most
+> useful checks there (where they belong), while keeping the workflow=20
+> helpers as an external toolkit.
 
+It's your tool, you should develop it as you see fit, but keeping it
+separate will make it harder to attract people to try it out.
+
+Sending improvements to checkpatch is, of course, a good thing to do.
+
+> Given this direction, would you prefer I withdraw this documentation=20
+> patch? I'm happy either way - just thought it might help other newcomers
+> in the meantime, but I totally understand if you'd rather wait until
+> the checks are properly integrated into checkpatch.pl.
+
+For now, it's probably best to keep the documentation with the tool
+itself; at least, that's how it seems to me.
+
+Thanks,
+
+jon
 
