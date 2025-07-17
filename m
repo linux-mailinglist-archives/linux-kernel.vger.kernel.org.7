@@ -1,631 +1,345 @@
-Return-Path: <linux-kernel+bounces-735020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 045BDB0898C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:43:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E14BB0898A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:43:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 460B6A41C03
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:43:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DD0C1AA5839
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:43:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA63828B7E0;
-	Thu, 17 Jul 2025 09:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="P2w9SBQE"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C2628A1CB;
+	Thu, 17 Jul 2025 09:43:19 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7B728850C;
-	Thu, 17 Jul 2025 09:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B2328850C
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 09:43:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752745408; cv=none; b=X3A9jnz0fDMP1Y8klOhUHlL944DSrxvvNKON3gt57D8XV24n6nCgf3M9hKwgTl46iyuFz8Qec9DkcZNMoBkbR4haMgUTVq6+jJO+3eCwQaNytSIRPp2hXKsokM58mpa3VsUCqYBH/reSMlAKhcKfu9/dc9T6uWMbzZRIp2iraus=
+	t=1752745398; cv=none; b=YLobH6Leespc6iEsCZwIdvFYr3o4GTb2RC+NsH4LnHjTde5psC+FErJVhsxK8P94CxY+E+9NohRIqppd4MK5ycwEb/k0i0e32yfvZtYyvVlTK31trkNvztKYJxXfnw0ICXB/oFZIJ+rq4sxWY2Frm7jGhA2n6WkDSSNyXnVPzCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752745408; c=relaxed/simple;
-	bh=G7Hb7FeOrgQ8UwCwmeyr2yC/YoZNz3jb5vCPiQH+Wok=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bMLSnS5kwk4tzFRAAjZY5DWwH9UEwVTJdPwd3BRR2UqGtxgVOpqcMCMyAL7y2Fux1OFJFi/x746GohiXrH7XS0S5VHYFgG5nbl1mW0Pb05ikJsv1jeiGyq8JUmpaouYhjT9xg85aCaovktl/c/ztifrUQMFT0qkQ//Nto3QeQOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=P2w9SBQE; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56H9h5Cv2706530;
-	Thu, 17 Jul 2025 04:43:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1752745385;
-	bh=RYJvgbfTwF+7OnJoBVTQ1flmnVbzU5fwW3fxVDxylhc=;
-	h=From:To:CC:Subject:Date;
-	b=P2w9SBQEg1vTvoUY5g1peOsDTotGmAfK04pKhrRj4d1P4T4Af3PUnv05e2PhKxX7m
-	 ve+EH+x/Hp3vJEo2mPdL4usqYc5fx+wAUaIAhU0lja3ikQwwCdQquUTbSa9K/AekR7
-	 wJNs/wF/OAa53aWULGi7Ka3nu4vjfsJlrHKS7qLE=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56H9h5RB2701297
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 17 Jul 2025 04:43:05 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 17
- Jul 2025 04:43:04 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 17 Jul 2025 04:43:04 -0500
-Received: from hm-pc.dhcp.ti.com (hm-pc.dhcp.ti.com [10.24.69.129])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56H9gx3f1639397;
-	Thu, 17 Jul 2025 04:43:00 -0500
-From: Himanshu Mittal <h-mittal1@ti.com>
-To: <horms@kernel.org>, <h-mittal1@ti.com>, <pabeni@redhat.com>,
-        <kuba@kernel.org>, <edumazet@google.com>, <davem@davemloft.net>,
-        <andrew+netdev@lunn.ch>
-CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>,
-        <m-malladi@ti.com>, <pratheesh@ti.com>, <prajith@ti.com>
-Subject: [PATCH net v3] net: ti: icssg-prueth: Fix buffer allocation for ICSSG
-Date: Thu, 17 Jul 2025 15:12:20 +0530
-Message-ID: <20250717094220.546388-1-h-mittal1@ti.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1752745398; c=relaxed/simple;
+	bh=+mA92FjzqTftsGVBO5wZq7CMWFfu4DpJmkiG1pcV3uc=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ZfJNCZRQvNKOMq60iLoYmKvIuWyTqOqDSkIDiEt67HMtvCBbHgb0ddsz2ro48ErBH/aTgOPCNSTtoAYxk0uLefj2WVmvVKlGKLjvhwEvz11WmtylZMF6LUhhk1xJ8bsWDNx6vXIiD2cZ37S3JI9/WTgFs8Ox2v7jVnsvMlThIEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bjSbd6MzHz2FbPx;
+	Thu, 17 Jul 2025 17:41:01 +0800 (CST)
+Received: from dggpemf100012.china.huawei.com (unknown [7.185.36.196])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0CB57140123;
+	Thu, 17 Jul 2025 17:43:07 +0800 (CST)
+Received: from [10.174.177.163] (10.174.177.163) by
+ dggpemf100012.china.huawei.com (7.185.36.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 17 Jul 2025 17:43:05 +0800
+Subject: Re: [PATCH] dm: introduce spinlocks to prevent concurrent usage and
+ release of device_metadata and hash
+To: Li Lingfeng <lilingfeng3@huawei.com>, <dm-devel@lists.linux.dev>
+CC: <agk@redhat.com>, <snitzer@kernel.org>, <mpatocka@redhat.com>,
+	<tusharsu@linux.microsoft.com>, <colin.i.king@gmail.com>,
+	<linux-kernel@vger.kernel.org>, <yi.zhang@huawei.com>,
+	<yangerkun@huawei.com>, <yukuai3@huawei.com>, <chengzhihao1@huawei.com>,
+	<lilingfeng@huaweicloud.com>
+References: <20250717140728.3221243-1-lilingfeng3@huawei.com>
+From: Hou Tao <houtao1@huawei.com>
+Message-ID: <5a29db22-13a9-f3ea-dbf2-13ce7f7aa649@huawei.com>
+Date: Thu, 17 Jul 2025 17:43:05 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+In-Reply-To: <20250717140728.3221243-1-lilingfeng3@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ dggpemf100012.china.huawei.com (7.185.36.196)
 
-Fixes overlapping buffer allocation for ICSSG peripheral
-used for storing packets to be received/transmitted.
-There are 3 buffers:
-1. Buffer for Locally Injected Packets
-2. Buffer for Forwarding Packets
-3. Buffer for Host Egress Packets
+Hi,
 
-In existing allocation buffers for 2. and 3. are overlapping causing
-packet corruption.
+On 7/17/2025 10:07 PM, Li Lingfeng wrote:
+> There is a window between freeing md->ima.active_table.hash and setting
+> md->ima.active_table.hash to NULL in dm_ima_measure_on_device_resume().
+> If dm_ima_measure_on_device_remove() accesses md->ima.active_table.hash
+> concurrently during this window, it could lead to a double free or UAF,
+> as shown below:
 
-Packet corruption observations:
-During tcp iperf testing, due to overlapping buffers the received ack
-packet overwrites the packet to be transmitted. So, we see packets on
-wire with the ack packet content inside the content of next TCP packet
-from sender device.
+The UAF is a problem. However, I think the order of
+dm_ima_measure_on_device_remove() and dm_ima_measure_on_device_resume is
+bigger problem. Is it possible to order these two invocations properly
+by using suspend_lock ?
+>
+> BUG: KASAN: slab-use-after-free in dm_ima_measure_on_device_remove+0x3fc/0x6c0
+> Read of size 71 at addr ffff88817bb9e220 by task dmsetup/2303
+>
+> CPU: 2 UID: 0 PID: 2303 Comm: dmsetup Not tainted 6.16.0-rc6-dirty #7 PREEMPT(none)
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-2.fc40 04/01/2014
+> Call Trace:
+>  <TASK>
+>  dump_stack_lvl+0x5b/0x80
+>  print_address_description.constprop.0+0x88/0x310
+>  print_report+0x12f/0x21d
+>  kasan_report+0xcc/0x190
+>  kasan_check_range+0x104/0x1b0
+>  __asan_memcpy+0x23/0x60
+>  dm_ima_measure_on_device_remove+0x3fc/0x6c0
+>  dev_remove+0x123/0x1e0
+>  ctl_ioctl+0x2a2/0x480
+>  dm_ctl_ioctl+0xe/0x20
+>  __x64_sys_ioctl+0xc7/0x110
+>  do_syscall_64+0x72/0x390
+>  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>
+> To reproduce this issue, add a delay between freeing
+> md->ima.active_table.hash and setting it to NULL, using the following
+> steps:
+> dmsetup create mydevice --table "0 2097152 linear /dev/sda 0"
+> dmsetup suspend mydevice
+> dmsetup reload mydevice --table "0 2097152 linear /dev/sdb 0"
+> dmsetup resume mydevice &
+> dmsetup remove mydevice
+>
+> The device_metadata also appears to have a similar issue.
+> Add spinlocks for hash and device_metadata to prevent concurrent
+> usage and release.
 
-Details for AM64x switch mode:
--> Allocation by existing driver:
-+---------+-------------------------------------------------------------+
-|         |          SLICE 0             |          SLICE 1             |
-|         +------+--------------+--------+------+--------------+--------+
-|         | Slot | Base Address | Size   | Slot | Base Address | Size   |
-|---------+------+--------------+--------+------+--------------+--------+
-|         | 0    | 70000000     | 0x2000 | 0    | 70010000     | 0x2000 |
-|         | 1    | 70002000     | 0x2000 | 1    | 70012000     | 0x2000 |
-|         | 2    | 70004000     | 0x2000 | 2    | 70014000     | 0x2000 |
-| FWD     | 3    | 70006000     | 0x2000 | 3    | 70016000     | 0x2000 |
-| Buffers | 4    | 70008000     | 0x2000 | 4    | 70018000     | 0x2000 |
-|         | 5    | 7000A000     | 0x2000 | 5    | 7001A000     | 0x2000 |
-|         | 6    | 7000C000     | 0x2000 | 6    | 7001C000     | 0x2000 |
-|         | 7    | 7000E000     | 0x2000 | 7    | 7001E000     | 0x2000 |
-+---------+------+--------------+--------+------+--------------+--------+
-|         | 8    | 70020000     | 0x1000 | 8    | 70028000     | 0x1000 |
-|         | 9    | 70021000     | 0x1000 | 9    | 70029000     | 0x1000 |
-|         | 10   | 70022000     | 0x1000 | 10   | 7002A000     | 0x1000 |
-| Our     | 11   | 70023000     | 0x1000 | 11   | 7002B000     | 0x1000 |
-| LI      | 12   | 00000000     | 0x0    | 12   | 00000000     | 0x0    |
-| Buffers | 13   | 00000000     | 0x0    | 13   | 00000000     | 0x0    |
-|         | 14   | 00000000     | 0x0    | 14   | 00000000     | 0x0    |
-|         | 15   | 00000000     | 0x0    | 15   | 00000000     | 0x0    |
-+---------+------+--------------+--------+------+--------------+--------+
-|         | 16   | 70024000     | 0x1000 | 16   | 7002C000     | 0x1000 |
-|         | 17   | 70025000     | 0x1000 | 17   | 7002D000     | 0x1000 |
-|         | 18   | 70026000     | 0x1000 | 18   | 7002E000     | 0x1000 |
-| Their   | 19   | 70027000     | 0x1000 | 19   | 7002F000     | 0x1000 |
-| LI      | 20   | 00000000     | 0x0    | 20   | 00000000     | 0x0    |
-| Buffers | 21   | 00000000     | 0x0    | 21   | 00000000     | 0x0    |
-|         | 22   | 00000000     | 0x0    | 22   | 00000000     | 0x0    |
-|         | 23   | 00000000     | 0x0    | 23   | 00000000     | 0x0    |
-+---------+------+--------------+--------+------+--------------+--------+
---> here 16, 17, 18, 19 overlapping with below express buffer
-
-+-----+-----------------------------------------------+
-|     |       SLICE 0       |        SLICE 1          |
-|     +------------+----------+------------+----------+
-|     | Start addr | End addr | Start addr | End addr |
-+-----+------------+----------+------------+----------+
-| EXP | 70024000   | 70028000 | 7002C000   | 70030000 | <-- Overlapping
-| PRE | 70030000   | 70033800 | 70034000   | 70037800 |
-+-----+------------+----------+------------+----------+
-
-+---------------------+----------+----------+
-|                     | SLICE 0  |  SLICE 1 |
-+---------------------+----------+----------+
-| Default Drop Offset | 00000000 | 00000000 |     <-- Field not configured
-+---------------------+----------+----------+
-
--> Allocation this patch brings:
-+---------+-------------------------------------------------------------+
-|         |          SLICE 0             |          SLICE 1             |
-|         +------+--------------+--------+------+--------------+--------+
-|         | Slot | Base Address | Size   | Slot | Base Address | Size   |
-|---------+------+--------------+--------+------+--------------+--------+
-|         | 0    | 70000000     | 0x2000 | 0    | 70040000     | 0x2000 |
-|         | 1    | 70002000     | 0x2000 | 1    | 70042000     | 0x2000 |
-|         | 2    | 70004000     | 0x2000 | 2    | 70044000     | 0x2000 |
-| FWD     | 3    | 70006000     | 0x2000 | 3    | 70046000     | 0x2000 |
-| Buffers | 4    | 70008000     | 0x2000 | 4    | 70048000     | 0x2000 |
-|         | 5    | 7000A000     | 0x2000 | 5    | 7004A000     | 0x2000 |
-|         | 6    | 7000C000     | 0x2000 | 6    | 7004C000     | 0x2000 |
-|         | 7    | 7000E000     | 0x2000 | 7    | 7004E000     | 0x2000 |
-+---------+------+--------------+--------+------+--------------+--------+
-|         | 8    | 70010000     | 0x1000 | 8    | 70050000     | 0x1000 |
-|         | 9    | 70011000     | 0x1000 | 9    | 70051000     | 0x1000 |
-|         | 10   | 70012000     | 0x1000 | 10   | 70052000     | 0x1000 |
-| Our     | 11   | 70013000     | 0x1000 | 11   | 70053000     | 0x1000 |
-| LI      | 12   | 00000000     | 0x0    | 12   | 00000000     | 0x0    |
-| Buffers | 13   | 00000000     | 0x0    | 13   | 00000000     | 0x0    |
-|         | 14   | 00000000     | 0x0    | 14   | 00000000     | 0x0    |
-|         | 15   | 00000000     | 0x0    | 15   | 00000000     | 0x0    |
-+---------+------+--------------+--------+------+--------------+--------+
-|         | 16   | 70014000     | 0x1000 | 16   | 70054000     | 0x1000 |
-|         | 17   | 70015000     | 0x1000 | 17   | 70055000     | 0x1000 |
-|         | 18   | 70016000     | 0x1000 | 18   | 70056000     | 0x1000 |
-| Their   | 19   | 70017000     | 0x1000 | 19   | 70057000     | 0x1000 |
-| LI      | 20   | 00000000     | 0x0    | 20   | 00000000     | 0x0    |
-| Buffers | 21   | 00000000     | 0x0    | 21   | 00000000     | 0x0    |
-|         | 22   | 00000000     | 0x0    | 22   | 00000000     | 0x0    |
-|         | 23   | 00000000     | 0x0    | 23   | 00000000     | 0x0    |
-+---------+------+--------------+--------+------+--------------+--------+
-
-+-----+-----------------------------------------------+
-|     |       SLICE 0       |        SLICE 1          |
-|     +------------+----------+------------+----------+
-|     | Start addr | End addr | Start addr | End addr |
-+-----+------------+----------+------------+----------+
-| EXP | 70018000   | 7001C000 | 70058000   | 7005C000 |
-| PRE | 7001C000   | 7001F800 | 7005C000   | 7005F800 |
-+-----+------------+----------+------------+----------+
-
-+---------------------+----------+----------+
-|                     | SLICE 0  |  SLICE 1 |
-+---------------------+----------+----------+
-| Default Drop Offset | 7001F800 | 7005F800 |
-+---------------------+----------+----------+
-
-Rootcause: missing buffer configuration for Express frames in
-function: prueth_fw_offload_buffer_setup()
-
-Details:
-Driver implements two distinct buffer configuration functions that are
-invoked based on the driver state and ICSSG firmware:-
-- prueth_fw_offload_buffer_setup()
-- prueth_emac_buffer_setup()
-
-During initialization, driver creates standard network interfaces
-(netdevs) and configures buffers via prueth_emac_buffer_setup().
-This function properly allocates and configures all required memory
-regions including:
-- LI buffers
-- Express packet buffers
-- Preemptible packet buffers
-
-However, when the driver transitions to an offload mode (switch/HSR/PRP),
-buffer reconfiguration is handled by prueth_fw_offload_buffer_setup().
-This function does not reconfigure the buffer regions required for
-Express packets, leading to incorrect buffer allocation.
-
-Fixes: abd5576b9c57 ("net: ti: icssg-prueth: Add support for ICSSG switch firmware")
-Signed-off-by: Himanshu Mittal <h-mittal1@ti.com>
----
- drivers/net/ethernet/ti/icssg/icssg_config.c  | 158 ++++++++++++------
- drivers/net/ethernet/ti/icssg/icssg_config.h  |  80 +++++++--
- drivers/net/ethernet/ti/icssg/icssg_prueth.c  |  20 ++-
- drivers/net/ethernet/ti/icssg/icssg_prueth.h  |   2 +
- .../net/ethernet/ti/icssg/icssg_switch_map.h  |   3 +
- 5 files changed, 190 insertions(+), 73 deletions(-)
-
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.c b/drivers/net/ethernet/ti/icssg/icssg_config.c
-index ddfd1c02a885..da53eb04b0a4 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_config.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_config.c
-@@ -288,8 +288,12 @@ static int prueth_fw_offload_buffer_setup(struct prueth_emac *emac)
- 	int i;
- 
- 	addr = lower_32_bits(prueth->msmcram.pa);
--	if (slice)
--		addr += PRUETH_NUM_BUF_POOLS * PRUETH_EMAC_BUF_POOL_SIZE;
-+	if (slice) {
-+		if (prueth->pdata.banked_ms_ram)
-+			addr += MSMC_RAM_BANK_SIZE;
-+		else
-+			addr += PRUETH_SW_TOTAL_BUF_SIZE_PER_SLICE;
-+	}
- 
- 	if (addr % SZ_64K) {
- 		dev_warn(prueth->dev, "buffer pool needs to be 64KB aligned\n");
-@@ -297,43 +301,66 @@ static int prueth_fw_offload_buffer_setup(struct prueth_emac *emac)
- 	}
- 
- 	bpool_cfg = emac->dram.va + BUFFER_POOL_0_ADDR_OFFSET;
--	/* workaround for f/w bug. bpool 0 needs to be initialized */
--	for (i = 0; i <  PRUETH_NUM_BUF_POOLS; i++) {
-+
-+	/* Configure buffer pools for forwarding buffers
-+	 * - used by firmware to store packets to be forwarded to other port
-+	 * - 8 total pools per slice
-+	 */
-+	for (i = 0; i <  PRUETH_NUM_FWD_BUF_POOLS_PER_SLICE; i++) {
- 		writel(addr, &bpool_cfg[i].addr);
--		writel(PRUETH_EMAC_BUF_POOL_SIZE, &bpool_cfg[i].len);
--		addr += PRUETH_EMAC_BUF_POOL_SIZE;
-+		writel(PRUETH_SW_FWD_BUF_POOL_SIZE, &bpool_cfg[i].len);
-+		addr += PRUETH_SW_FWD_BUF_POOL_SIZE;
- 	}
- 
--	if (!slice)
--		addr += PRUETH_NUM_BUF_POOLS * PRUETH_EMAC_BUF_POOL_SIZE;
--	else
--		addr += PRUETH_SW_NUM_BUF_POOLS_HOST * PRUETH_SW_BUF_POOL_SIZE_HOST;
--
--	for (i = PRUETH_NUM_BUF_POOLS;
--	     i < 2 * PRUETH_SW_NUM_BUF_POOLS_HOST + PRUETH_NUM_BUF_POOLS;
--	     i++) {
--		/* The driver only uses first 4 queues per PRU so only initialize them */
--		if (i % PRUETH_SW_NUM_BUF_POOLS_HOST < PRUETH_SW_NUM_BUF_POOLS_PER_PRU) {
--			writel(addr, &bpool_cfg[i].addr);
--			writel(PRUETH_SW_BUF_POOL_SIZE_HOST, &bpool_cfg[i].len);
--			addr += PRUETH_SW_BUF_POOL_SIZE_HOST;
-+	/* Configure buffer pools for Local Injection buffers
-+	 *  - used by firmware to store packets received from host core
-+	 *  - 16 total pools per slice
-+	 */
-+	for (i = 0; i < PRUETH_NUM_LI_BUF_POOLS_PER_SLICE; i++) {
-+		int cfg_idx = i + PRUETH_NUM_FWD_BUF_POOLS_PER_SLICE;
-+
-+		/* The driver only uses first 4 queues per PRU,
-+		 * so only initialize buffer for them
-+		 */
-+		if ((i % PRUETH_NUM_LI_BUF_POOLS_PER_PORT_PER_SLICE)
-+			 < PRUETH_SW_USED_LI_BUF_POOLS_PER_PORT_PER_SLICE) {
-+			writel(addr, &bpool_cfg[cfg_idx].addr);
-+			writel(PRUETH_SW_LI_BUF_POOL_SIZE,
-+			       &bpool_cfg[cfg_idx].len);
-+			addr += PRUETH_SW_LI_BUF_POOL_SIZE;
- 		} else {
--			writel(0, &bpool_cfg[i].addr);
--			writel(0, &bpool_cfg[i].len);
-+			writel(0, &bpool_cfg[cfg_idx].addr);
-+			writel(0, &bpool_cfg[cfg_idx].len);
- 		}
- 	}
- 
--	if (!slice)
--		addr += PRUETH_SW_NUM_BUF_POOLS_HOST * PRUETH_SW_BUF_POOL_SIZE_HOST;
--	else
--		addr += PRUETH_EMAC_RX_CTX_BUF_SIZE;
-+	/* Express RX buffer queue
-+	 *  - used by firmware to store express packets to be transmitted
-+	 *    to the host core
-+	 */
-+	rxq_ctx = emac->dram.va + HOST_RX_Q_EXP_CONTEXT_OFFSET;
-+	for (i = 0; i < 3; i++)
-+		writel(addr, &rxq_ctx->start[i]);
-+
-+	addr += PRUETH_SW_HOST_EXP_BUF_POOL_SIZE;
-+	writel(addr, &rxq_ctx->end);
- 
-+	/* Pre-emptible RX buffer queue
-+	 *  - used by firmware to store preemptible packets to be transmitted
-+	 *    to the host core
-+	 */
- 	rxq_ctx = emac->dram.va + HOST_RX_Q_PRE_CONTEXT_OFFSET;
- 	for (i = 0; i < 3; i++)
- 		writel(addr, &rxq_ctx->start[i]);
- 
--	addr += PRUETH_EMAC_RX_CTX_BUF_SIZE;
--	writel(addr - SZ_2K, &rxq_ctx->end);
-+	addr += PRUETH_SW_HOST_PRE_BUF_POOL_SIZE;
-+	writel(addr, &rxq_ctx->end);
-+
-+	/* Set pointer for default dropped packet write
-+	 *  - used by firmware to temporarily store packet to be dropped
-+	 */
-+	rxq_ctx = emac->dram.va + DEFAULT_MSMC_Q_OFFSET;
-+	writel(addr, &rxq_ctx->start[0]);
- 
- 	return 0;
- }
-@@ -347,13 +374,13 @@ static int prueth_emac_buffer_setup(struct prueth_emac *emac)
- 	u32 addr;
- 	int i;
- 
--	/* Layout to have 64KB aligned buffer pool
--	 * |BPOOL0|BPOOL1|RX_CTX0|RX_CTX1|
--	 */
--
- 	addr = lower_32_bits(prueth->msmcram.pa);
--	if (slice)
--		addr += PRUETH_NUM_BUF_POOLS * PRUETH_EMAC_BUF_POOL_SIZE;
-+	if (slice) {
-+		if (prueth->pdata.banked_ms_ram)
-+			addr += MSMC_RAM_BANK_SIZE;
-+		else
-+			addr += PRUETH_EMAC_TOTAL_BUF_SIZE_PER_SLICE;
-+	}
- 
- 	if (addr % SZ_64K) {
- 		dev_warn(prueth->dev, "buffer pool needs to be 64KB aligned\n");
-@@ -361,39 +388,66 @@ static int prueth_emac_buffer_setup(struct prueth_emac *emac)
- 	}
- 
- 	bpool_cfg = emac->dram.va + BUFFER_POOL_0_ADDR_OFFSET;
--	/* workaround for f/w bug. bpool 0 needs to be initilalized */
--	writel(addr, &bpool_cfg[0].addr);
--	writel(0, &bpool_cfg[0].len);
- 
--	for (i = PRUETH_EMAC_BUF_POOL_START;
--	     i < PRUETH_EMAC_BUF_POOL_START + PRUETH_NUM_BUF_POOLS;
--	     i++) {
--		writel(addr, &bpool_cfg[i].addr);
--		writel(PRUETH_EMAC_BUF_POOL_SIZE, &bpool_cfg[i].len);
--		addr += PRUETH_EMAC_BUF_POOL_SIZE;
-+	/* Configure buffer pools for forwarding buffers
-+	 *  - in mac mode - no forwarding so initialize all pools to 0
-+	 *  - 8 total pools per slice
-+	 */
-+	for (i = 0; i <  PRUETH_NUM_FWD_BUF_POOLS_PER_SLICE; i++) {
-+		writel(0, &bpool_cfg[i].addr);
-+		writel(0, &bpool_cfg[i].len);
- 	}
- 
--	if (!slice)
--		addr += PRUETH_NUM_BUF_POOLS * PRUETH_EMAC_BUF_POOL_SIZE;
--	else
--		addr += PRUETH_EMAC_RX_CTX_BUF_SIZE * 2;
-+	/* Configure buffer pools for Local Injection buffers
-+	 *  - used by firmware to store packets received from host core
-+	 *  - 16 total pools per slice
-+	 */
-+	bpool_cfg = emac->dram.va + BUFFER_POOL_0_ADDR_OFFSET;
-+	for (i = 0; i < PRUETH_NUM_LI_BUF_POOLS_PER_SLICE; i++) {
-+		int cfg_idx = i + PRUETH_NUM_FWD_BUF_POOLS_PER_SLICE;
-+
-+		/* In EMAC mode, only first 4 buffers are used,
-+		 * as 1 slice needs to handle only 1 port
-+		 */
-+		if (i < PRUETH_EMAC_USED_LI_BUF_POOLS_PER_PORT_PER_SLICE) {
-+			writel(addr, &bpool_cfg[cfg_idx].addr);
-+			writel(PRUETH_EMAC_LI_BUF_POOL_SIZE,
-+			       &bpool_cfg[cfg_idx].len);
-+			addr += PRUETH_EMAC_LI_BUF_POOL_SIZE;
-+		} else {
-+			writel(0, &bpool_cfg[cfg_idx].addr);
-+			writel(0, &bpool_cfg[cfg_idx].len);
-+		}
-+	}
- 
--	/* Pre-emptible RX buffer queue */
--	rxq_ctx = emac->dram.va + HOST_RX_Q_PRE_CONTEXT_OFFSET;
-+	/* Express RX buffer queue
-+	 *  - used by firmware to store express packets to be transmitted
-+	 *    to host core
-+	 */
-+	rxq_ctx = emac->dram.va + HOST_RX_Q_EXP_CONTEXT_OFFSET;
- 	for (i = 0; i < 3; i++)
- 		writel(addr, &rxq_ctx->start[i]);
- 
--	addr += PRUETH_EMAC_RX_CTX_BUF_SIZE;
-+	addr += PRUETH_EMAC_HOST_EXP_BUF_POOL_SIZE;
- 	writel(addr, &rxq_ctx->end);
- 
--	/* Express RX buffer queue */
--	rxq_ctx = emac->dram.va + HOST_RX_Q_EXP_CONTEXT_OFFSET;
-+	/* Pre-emptible RX buffer queue
-+	 *  - used by firmware to store preemptible packets to be transmitted
-+	 *    to host core
-+	 */
-+	rxq_ctx = emac->dram.va + HOST_RX_Q_PRE_CONTEXT_OFFSET;
- 	for (i = 0; i < 3; i++)
- 		writel(addr, &rxq_ctx->start[i]);
- 
--	addr += PRUETH_EMAC_RX_CTX_BUF_SIZE;
-+	addr += PRUETH_EMAC_HOST_PRE_BUF_POOL_SIZE;
- 	writel(addr, &rxq_ctx->end);
- 
-+	/* Set pointer for default dropped packet write
-+	 *  - used by firmware to temporarily store packet to be dropped
-+	 */
-+	rxq_ctx = emac->dram.va + DEFAULT_MSMC_Q_OFFSET;
-+	writel(addr, &rxq_ctx->start[0]);
-+
- 	return 0;
- }
- 
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.h b/drivers/net/ethernet/ti/icssg/icssg_config.h
-index c884e9fa099e..60d69744ffae 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_config.h
-+++ b/drivers/net/ethernet/ti/icssg/icssg_config.h
-@@ -26,21 +26,71 @@ struct icssg_flow_cfg {
- #define PRUETH_MAX_RX_FLOWS	1	/* excluding default flow */
- #define PRUETH_RX_FLOW_DATA	0
- 
--#define PRUETH_EMAC_BUF_POOL_SIZE	SZ_8K
--#define PRUETH_EMAC_POOLS_PER_SLICE	24
--#define PRUETH_EMAC_BUF_POOL_START	8
--#define PRUETH_NUM_BUF_POOLS	8
--#define PRUETH_EMAC_RX_CTX_BUF_SIZE	SZ_16K	/* per slice */
--#define MSMC_RAM_SIZE	\
--	(2 * (PRUETH_EMAC_BUF_POOL_SIZE * PRUETH_NUM_BUF_POOLS + \
--	 PRUETH_EMAC_RX_CTX_BUF_SIZE * 2))
--
--#define PRUETH_SW_BUF_POOL_SIZE_HOST	SZ_4K
--#define PRUETH_SW_NUM_BUF_POOLS_HOST	8
--#define PRUETH_SW_NUM_BUF_POOLS_PER_PRU 4
--#define MSMC_RAM_SIZE_SWITCH_MODE \
--	(MSMC_RAM_SIZE + \
--	(2 * PRUETH_SW_BUF_POOL_SIZE_HOST * PRUETH_SW_NUM_BUF_POOLS_HOST))
-+/* Defines for forwarding path buffer pools:
-+ *   - used by firmware to store packets to be forwarded to other port
-+ *   - 8 total pools per slice
-+ *   - only used in switch mode (as no forwarding in mac mode)
-+ */
-+#define PRUETH_NUM_FWD_BUF_POOLS_PER_SLICE			8
-+#define PRUETH_SW_FWD_BUF_POOL_SIZE				(SZ_8K)
-+
-+/* Defines for local injection path buffer pools:
-+ *   - used by firmware to store packets received from host core
-+ *   - 16 total pools per slice
-+ *   - 8 pools per port per slice and each slice handles both ports
-+ *   - only 4 out of 8 pools used per port (as only 4 real QoS levels in ICSSG)
-+ *   - switch mode: 8 total pools used
-+ *   - mac mode:    4 total pools used
-+ */
-+#define PRUETH_NUM_LI_BUF_POOLS_PER_SLICE			16
-+#define PRUETH_NUM_LI_BUF_POOLS_PER_PORT_PER_SLICE		8
-+#define PRUETH_SW_LI_BUF_POOL_SIZE				SZ_4K
-+#define PRUETH_SW_USED_LI_BUF_POOLS_PER_SLICE			8
-+#define PRUETH_SW_USED_LI_BUF_POOLS_PER_PORT_PER_SLICE		4
-+#define PRUETH_EMAC_LI_BUF_POOL_SIZE				SZ_8K
-+#define PRUETH_EMAC_USED_LI_BUF_POOLS_PER_SLICE			4
-+#define PRUETH_EMAC_USED_LI_BUF_POOLS_PER_PORT_PER_SLICE	4
-+
-+/* Defines for host egress path - express and preemptible buffers
-+ *   - used by firmware to store express and preemptible packets
-+ *     to be transmitted to host core
-+ *   - used by both mac/switch modes
-+ */
-+#define PRUETH_SW_HOST_EXP_BUF_POOL_SIZE	SZ_16K
-+#define PRUETH_SW_HOST_PRE_BUF_POOL_SIZE	(SZ_16K - SZ_2K)
-+#define PRUETH_EMAC_HOST_EXP_BUF_POOL_SIZE	PRUETH_SW_HOST_EXP_BUF_POOL_SIZE
-+#define PRUETH_EMAC_HOST_PRE_BUF_POOL_SIZE	PRUETH_SW_HOST_PRE_BUF_POOL_SIZE
-+
-+/* Buffer used by firmware to temporarily store packet to be dropped */
-+#define PRUETH_SW_DROP_PKT_BUF_SIZE		SZ_2K
-+#define PRUETH_EMAC_DROP_PKT_BUF_SIZE		PRUETH_SW_DROP_PKT_BUF_SIZE
-+
-+/* Total switch mode memory usage for buffers per slice */
-+#define PRUETH_SW_TOTAL_BUF_SIZE_PER_SLICE \
-+	(PRUETH_SW_FWD_BUF_POOL_SIZE * PRUETH_NUM_FWD_BUF_POOLS_PER_SLICE + \
-+	 PRUETH_SW_LI_BUF_POOL_SIZE * PRUETH_SW_USED_LI_BUF_POOLS_PER_SLICE + \
-+	 PRUETH_SW_HOST_EXP_BUF_POOL_SIZE + \
-+	 PRUETH_SW_HOST_PRE_BUF_POOL_SIZE + \
-+	 PRUETH_SW_DROP_PKT_BUF_SIZE)
-+
-+/* Total switch mode memory usage for all buffers */
-+#define PRUETH_SW_TOTAL_BUF_SIZE \
-+	(2 * PRUETH_SW_TOTAL_BUF_SIZE_PER_SLICE)
-+
-+/* Total mac mode memory usage for buffers per slice */
-+#define PRUETH_EMAC_TOTAL_BUF_SIZE_PER_SLICE \
-+	(PRUETH_EMAC_LI_BUF_POOL_SIZE * \
-+	 PRUETH_EMAC_USED_LI_BUF_POOLS_PER_SLICE + \
-+	 PRUETH_EMAC_HOST_EXP_BUF_POOL_SIZE + \
-+	 PRUETH_EMAC_HOST_PRE_BUF_POOL_SIZE + \
-+	 PRUETH_EMAC_DROP_PKT_BUF_SIZE)
-+
-+/* Total mac mode memory usage for all buffers */
-+#define PRUETH_EMAC_TOTAL_BUF_SIZE \
-+	(2 * PRUETH_EMAC_TOTAL_BUF_SIZE_PER_SLICE)
-+
-+/* Size of 1 bank of MSMC/OC_SRAM memory */
-+#define MSMC_RAM_BANK_SIZE			SZ_256K
- 
- #define PRUETH_SWITCH_FDB_MASK ((SIZE_OF_FDB / NUMBER_OF_FDB_BUCKET_ENTRIES) - 1)
- 
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-index 86fc1278127c..2f5c4335dec3 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-@@ -1764,10 +1764,15 @@ static int prueth_probe(struct platform_device *pdev)
- 		goto put_mem;
- 	}
- 
--	msmc_ram_size = MSMC_RAM_SIZE;
- 	prueth->is_switchmode_supported = prueth->pdata.switch_mode;
--	if (prueth->is_switchmode_supported)
--		msmc_ram_size = MSMC_RAM_SIZE_SWITCH_MODE;
-+	if (prueth->pdata.banked_ms_ram) {
-+		/* Reserve 2 MSMC RAM banks for buffers to avoid arbitration */
-+		msmc_ram_size = (2 * MSMC_RAM_BANK_SIZE);
-+	} else {
-+		msmc_ram_size = PRUETH_EMAC_TOTAL_BUF_SIZE;
-+		if (prueth->is_switchmode_supported)
-+			msmc_ram_size = PRUETH_SW_TOTAL_BUF_SIZE;
-+	}
- 
- 	/* NOTE: FW bug needs buffer base to be 64KB aligned */
- 	prueth->msmcram.va =
-@@ -1924,7 +1929,8 @@ static int prueth_probe(struct platform_device *pdev)
- 
- free_pool:
- 	gen_pool_free(prueth->sram_pool,
--		      (unsigned long)prueth->msmcram.va, msmc_ram_size);
-+		      (unsigned long)prueth->msmcram.va,
-+		      prueth->msmcram.size);
- 
- put_mem:
- 	pruss_release_mem_region(prueth->pruss, &prueth->shram);
-@@ -1976,8 +1982,8 @@ static void prueth_remove(struct platform_device *pdev)
- 	icss_iep_put(prueth->iep0);
- 
- 	gen_pool_free(prueth->sram_pool,
--		      (unsigned long)prueth->msmcram.va,
--		      MSMC_RAM_SIZE);
-+		(unsigned long)prueth->msmcram.va,
-+		prueth->msmcram.size);
- 
- 	pruss_release_mem_region(prueth->pruss, &prueth->shram);
- 
-@@ -1994,12 +2000,14 @@ static const struct prueth_pdata am654_icssg_pdata = {
- 	.fdqring_mode = K3_RINGACC_RING_MODE_MESSAGE,
- 	.quirk_10m_link_issue = 1,
- 	.switch_mode = 1,
-+	.banked_ms_ram = 0,
- };
- 
- static const struct prueth_pdata am64x_icssg_pdata = {
- 	.fdqring_mode = K3_RINGACC_RING_MODE_RING,
- 	.quirk_10m_link_issue = 1,
- 	.switch_mode = 1,
-+	.banked_ms_ram = 1,
- };
- 
- static const struct of_device_id prueth_dt_match[] = {
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-index 23c465f1ce7f..3bb9fd8c3804 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-@@ -251,11 +251,13 @@ struct prueth_emac {
-  * @fdqring_mode: Free desc queue mode
-  * @quirk_10m_link_issue: 10M link detect errata
-  * @switch_mode: switch firmware support
-+ * @banked_ms_ram: banked memory support
-  */
- struct prueth_pdata {
- 	enum k3_ring_mode fdqring_mode;
- 	u32	quirk_10m_link_issue:1;
- 	u32	switch_mode:1;
-+	u32	banked_ms_ram:1;
- };
- 
- struct icssg_firmwares {
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_switch_map.h b/drivers/net/ethernet/ti/icssg/icssg_switch_map.h
-index 490a9cc06fb0..7e053b8af3ec 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_switch_map.h
-+++ b/drivers/net/ethernet/ti/icssg/icssg_switch_map.h
-@@ -180,6 +180,9 @@
- /* Used to notify the FW of the current link speed */
- #define PORT_LINK_SPEED_OFFSET                             0x00A8
- 
-+/* 2k memory pointer reserved for default writes by PRU0*/
-+#define DEFAULT_MSMC_Q_OFFSET                              0x00AC
-+
- /* TAS gate mask for windows list0 */
- #define TAS_GATE_MASK_LIST0                                0x0100
- 
--- 
-2.48.1
+Instead of adding four spin-locks, how about only using one ?
+>
+> Fixes: 91ccbbac1747 ("dm ima: measure data on table load")
+> Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+> ---
+>  drivers/md/dm-ima.c | 45 +++++++++++++++++++++++++++++++++++++++++++++
+>  drivers/md/dm-ima.h |  2 ++
+>  2 files changed, 47 insertions(+)
+>
+> diff --git a/drivers/md/dm-ima.c b/drivers/md/dm-ima.c
+> index b90f34259fbb..ff2ac54addb8 100644
+> --- a/drivers/md/dm-ima.c
+> +++ b/drivers/md/dm-ima.c
+> @@ -170,6 +170,10 @@ void dm_ima_reset_data(struct mapped_device *md)
+>  {
+>  	memset(&(md->ima), 0, sizeof(md->ima));
+>  	md->ima.dm_version_str_len = strlen(DM_IMA_VERSION_STR);
+> +	spin_lock_init(&md->ima.active_table.device_metadata_lock);
+> +	spin_lock_init(&md->ima.inactive_table.device_metadata_lock);
+> +	spin_lock_init(&md->ima.active_table.hash_lock);
+> +	spin_lock_init(&md->ima.inactive_table.hash_lock);
+>  }
+>  
+>  /*
+> @@ -336,19 +340,24 @@ void dm_ima_measure_on_table_load(struct dm_table *table, unsigned int status_fl
+>  	for (i = 0; i < digest_size; i++)
+>  		snprintf((digest_buf + hash_alg_prefix_len + (i*2)), 3, "%02x", digest[i]);
+>  
+> +	spin_lock(&table->md->ima.inactive_table.hash_lock);
+>  	if (table->md->ima.active_table.hash != table->md->ima.inactive_table.hash)
+>  		kfree(table->md->ima.inactive_table.hash);
+>  
+>  	table->md->ima.inactive_table.hash = digest_buf;
+>  	table->md->ima.inactive_table.hash_len = strlen(digest_buf);
+> +	spin_unlock(&table->md->ima.inactive_table.hash_lock);
+> +
+>  	table->md->ima.inactive_table.num_targets = num_targets;
+>  
+> +	spin_lock(&table->md->ima.inactive_table.device_metadata_lock);
+>  	if (table->md->ima.active_table.device_metadata !=
+>  	    table->md->ima.inactive_table.device_metadata)
+>  		kfree(table->md->ima.inactive_table.device_metadata);
+>  
+>  	table->md->ima.inactive_table.device_metadata = device_data_buf;
+>  	table->md->ima.inactive_table.device_metadata_len = device_data_buf_len;
+> +	spin_unlock(&table->md->ima.inactive_table.device_metadata_lock);
+>  
+>  	goto exit;
+>  error:
+> @@ -388,18 +397,22 @@ void dm_ima_measure_on_device_resume(struct mapped_device *md, bool swap)
+>  	l += md->ima.dm_version_str_len;
+>  
+>  	if (swap) {
+> +		spin_lock(&md->ima.active_table.hash_lock);
+>  		if (md->ima.active_table.hash != md->ima.inactive_table.hash)
+>  			kfree(md->ima.active_table.hash);
+>  
+>  		md->ima.active_table.hash = NULL;
+>  		md->ima.active_table.hash_len = 0;
+> +		spin_unlock(&md->ima.active_table.hash_lock);
+>  
+> +		spin_lock(&md->ima.active_table.device_metadata_lock);
+>  		if (md->ima.active_table.device_metadata !=
+>  		    md->ima.inactive_table.device_metadata)
+>  			kfree(md->ima.active_table.device_metadata);
+>  
+>  		md->ima.active_table.device_metadata = NULL;
+>  		md->ima.active_table.device_metadata_len = 0;
+> +		spin_unlock(&md->ima.active_table.device_metadata_lock);
+>  		md->ima.active_table.num_targets = 0;
+>  
+>  		if (md->ima.inactive_table.hash) {
+> @@ -429,6 +442,7 @@ void dm_ima_measure_on_device_resume(struct mapped_device *md, bool swap)
+>  		nodata = false;
+>  	}
+>  
+> +	spin_lock(&md->ima.active_table.hash_lock);
+>  	if (md->ima.active_table.hash) {
+>  		memcpy(device_table_data + l, active, active_len);
+>  		l += active_len;
+> @@ -442,6 +456,7 @@ void dm_ima_measure_on_device_resume(struct mapped_device *md, bool swap)
+>  
+>  		nodata = false;
+>  	}
+> +	spin_unlock(&md->ima.active_table.hash_lock);
+>  
+>  	if (nodata) {
+>  		r = dm_ima_alloc_and_copy_name_uuid(md, &dev_name, &dev_uuid, noio);
+> @@ -503,6 +518,7 @@ void dm_ima_measure_on_device_remove(struct mapped_device *md, bool remove_all)
+>  	memcpy(device_table_data + l, DM_IMA_VERSION_STR, md->ima.dm_version_str_len);
+>  	l += md->ima.dm_version_str_len;
+>  
+> +	spin_lock(&md->ima.active_table.device_metadata_lock);
+>  	if (md->ima.active_table.device_metadata) {
+>  		memcpy(device_table_data + l, device_active_str, device_active_len);
+>  		l += device_active_len;
+> @@ -513,7 +529,9 @@ void dm_ima_measure_on_device_remove(struct mapped_device *md, bool remove_all)
+>  
+>  		nodata = false;
+>  	}
+> +	spin_unlock(&md->ima.active_table.device_metadata_lock);
+>  
+> +	spin_lock(&md->ima.inactive_table.device_metadata_lock);
+>  	if (md->ima.inactive_table.device_metadata) {
+>  		memcpy(device_table_data + l, device_inactive_str, device_inactive_len);
+>  		l += device_inactive_len;
+> @@ -524,7 +542,9 @@ void dm_ima_measure_on_device_remove(struct mapped_device *md, bool remove_all)
+>  
+>  		nodata = false;
+>  	}
+> +	spin_unlock(&md->ima.inactive_table.device_metadata_lock);
+>  
+> +	spin_lock(&md->ima.active_table.hash_lock);
+>  	if (md->ima.active_table.hash) {
+>  		memcpy(device_table_data + l, active_table_str, active_table_len);
+>  		l += active_table_len;
+> @@ -538,7 +558,9 @@ void dm_ima_measure_on_device_remove(struct mapped_device *md, bool remove_all)
+>  
+>  		nodata = false;
+>  	}
+> +	spin_unlock(&md->ima.active_table.hash_lock);
+>  
+> +	spin_lock(&md->ima.inactive_table.hash_lock);
+>  	if (md->ima.inactive_table.hash) {
+>  		memcpy(device_table_data + l, inactive_table_str, inactive_table_len);
+>  		l += inactive_table_len;
+> @@ -552,6 +574,7 @@ void dm_ima_measure_on_device_remove(struct mapped_device *md, bool remove_all)
+>  
+>  		nodata = false;
+>  	}
+> +	spin_unlock(&md->ima.inactive_table.hash_lock);
+>  	/*
+>  	 * In case both active and inactive tables, and corresponding
+>  	 * device metadata is cleared/missing - record the name and uuid
+> @@ -582,17 +605,31 @@ void dm_ima_measure_on_device_remove(struct mapped_device *md, bool remove_all)
+>  	kfree(device_table_data);
+>  	kfree(capacity_str);
+>  exit:
+> +	spin_lock(&md->ima.active_table.device_metadata_lock);
+> +	spin_lock(&md->ima.inactive_table.device_metadata_lock);
+>  	kfree(md->ima.active_table.device_metadata);
+>  
+>  	if (md->ima.active_table.device_metadata !=
+>  	    md->ima.inactive_table.device_metadata)
+>  		kfree(md->ima.inactive_table.device_metadata);
+>  
+> +	md->ima.active_table.device_metadata = NULL;
+> +	md->ima.inactive_table.device_metadata = NULL;
+> +	spin_unlock(&md->ima.inactive_table.device_metadata_lock);
+> +	spin_unlock(&md->ima.active_table.device_metadata_lock);
+> +
+> +	spin_lock(&md->ima.active_table.hash_lock);
+> +	spin_lock(&md->ima.inactive_table.hash_lock);
+>  	kfree(md->ima.active_table.hash);
+>  
+>  	if (md->ima.active_table.hash != md->ima.inactive_table.hash)
+>  		kfree(md->ima.inactive_table.hash);
+>  
+> +	md->ima.active_table.hash = NULL;
+> +	md->ima.inactive_table.hash = NULL;
+> +	spin_unlock(&md->ima.inactive_table.hash_lock);
+> +	spin_unlock(&md->ima.active_table.hash_lock);
+> +
+>  	dm_ima_reset_data(md);
+>  
+>  	kfree(dev_name);
+> @@ -623,6 +660,8 @@ void dm_ima_measure_on_table_clear(struct mapped_device *md, bool new_map)
+>  	memcpy(device_table_data + l, DM_IMA_VERSION_STR, md->ima.dm_version_str_len);
+>  	l += md->ima.dm_version_str_len;
+>  
+> +	spin_lock(&md->ima.inactive_table.hash_lock);
+> +	spin_lock(&md->ima.inactive_table.device_metadata_lock);
+>  	if (md->ima.inactive_table.device_metadata_len &&
+>  	    md->ima.inactive_table.hash_len) {
+>  		memcpy(device_table_data + l, md->ima.inactive_table.device_metadata,
+> @@ -642,6 +681,8 @@ void dm_ima_measure_on_table_clear(struct mapped_device *md, bool new_map)
+>  
+>  		nodata = false;
+>  	}
+> +	spin_unlock(&md->ima.inactive_table.device_metadata_lock);
+> +	spin_unlock(&md->ima.inactive_table.hash_lock);
+>  
+>  	if (nodata) {
+>  		if (dm_ima_alloc_and_copy_name_uuid(md, &dev_name, &dev_uuid, noio))
+> @@ -660,19 +701,23 @@ void dm_ima_measure_on_table_clear(struct mapped_device *md, bool new_map)
+>  	dm_ima_measure_data("dm_table_clear", device_table_data, l, noio);
+>  
+>  	if (new_map) {
+> +		spin_lock(&md->ima.inactive_table.hash_lock);
+>  		if (md->ima.inactive_table.hash &&
+>  		    md->ima.inactive_table.hash != md->ima.active_table.hash)
+>  			kfree(md->ima.inactive_table.hash);
+>  
+>  		md->ima.inactive_table.hash = NULL;
+>  		md->ima.inactive_table.hash_len = 0;
+> +		spin_unlock(&md->ima.inactive_table.hash_lock);
+>  
+> +		spin_lock(&md->ima.inactive_table.device_metadata_lock);
+>  		if (md->ima.inactive_table.device_metadata &&
+>  		    md->ima.inactive_table.device_metadata != md->ima.active_table.device_metadata)
+>  			kfree(md->ima.inactive_table.device_metadata);
+>  
+>  		md->ima.inactive_table.device_metadata = NULL;
+>  		md->ima.inactive_table.device_metadata_len = 0;
+> +		spin_unlock(&md->ima.inactive_table.device_metadata_lock);
+>  		md->ima.inactive_table.num_targets = 0;
+>  
+>  		if (md->ima.active_table.hash) {
+> diff --git a/drivers/md/dm-ima.h b/drivers/md/dm-ima.h
+> index 568870a1a145..a021056f4ab5 100644
+> --- a/drivers/md/dm-ima.h
+> +++ b/drivers/md/dm-ima.h
+> @@ -35,6 +35,7 @@ struct dm_ima_device_table_metadata {
+>  	 * pairs delimited by a semicolon at the end of the list.
+>  	 */
+>  	char *device_metadata;
+> +	spinlock_t device_metadata_lock;
+>  	unsigned int device_metadata_len;
+>  	unsigned int num_targets;
+>  
+> @@ -43,6 +44,7 @@ struct dm_ima_device_table_metadata {
+>  	 * attributes' key-value pairs from the active/inactive tables.
+>  	 */
+>  	char *hash;
+> +	spinlock_t hash_lock;
+>  	unsigned int hash_len;
+>  };
+>  
 
 
