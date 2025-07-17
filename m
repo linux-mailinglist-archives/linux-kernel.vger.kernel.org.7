@@ -1,125 +1,119 @@
-Return-Path: <linux-kernel+bounces-735234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55503B08C86
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:08:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0730DB08C88
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:10:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 386A0A647C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:08:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 033277BEBCF
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A26F2BCF75;
-	Thu, 17 Jul 2025 12:07:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7535C29DB71;
+	Thu, 17 Jul 2025 12:09:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="Nbg/lMwq"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e5YKgxwb"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F025A29E114;
-	Thu, 17 Jul 2025 12:07:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D26A288C12
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 12:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752754067; cv=none; b=fJ7XH+mHaUa9f4Pqy7CJKhS/PzzRb3guW5L2LINCQHzXQr3M/6/DmT2UWWIRQCVRPzgMobBXW5vXyDFJo9RaeQGlSHoa4vpGBpKEJrCQAPuKA2ZxLESFUfGVikWjmJO+bi4106C64Z0G8+a9OemmMRm3BbzhbDk3V3qgHb/EYS0=
+	t=1752754153; cv=none; b=hHg9IhDt6EOn3cyN+W9xzReq3ivSAflCgyB7ESXLnk19v3330sTtpdBwUzDkldZSNcWk2Imh13NUGrvOE6BjBfyd72RPGFyhUlCnfK0lwdwol0GVgCZK8b/iIdjBsTonuIu4uiT0f2Suq8MDusLe7tLyVLWbpTOWrjlTDskuI7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752754067; c=relaxed/simple;
-	bh=heLBpBS+UNyu400fsfQ7AHME4bX/Aw6S0dGsXsDJqx4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nKMFrsPx9xXHzjYaHYQBwhAGu7WXj199BAAB5dm8ManY8iIpzLrGcA9KMhVj1B0twUZJ/cYwY55Ij8w6wQ6t2g1uh1VgWXqSlk+S1WEDXW+m1ihRkIyuJdjc73sb+qBPbqHmer8LNxOOZ7zR6aPugK3v3ckyMzyEcaDlsm0QH3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=Nbg/lMwq; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bjWrt05HWz9spH;
-	Thu, 17 Jul 2025 14:07:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1752754062;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M2ybh1HtN61EqnwEX7w+RBXpg6drT9A8UjYiaAe7+9c=;
-	b=Nbg/lMwqYQ7RdUmujBnBs7sqvXWbAL1VjgMtWdfg6Vod71r7uQGV6MlSF1iJS3sgoYwmjC
-	ITsrV5wLVFlsVwEHveYY4MmVvDLIKioRhEbz8Tx1uqYCexUWMzJkrbSRQbEph6ZxD8YA+B
-	hLjLl4ygK/sLIQosFGBKbpTYt6J1NGRIaF1aNgau5MhKsKxBOyQqh1IYGI+WtpsgaOZQfJ
-	UNHCCsPxg+IUmX8KQLkhmEqbEAmAvHLYE3Aqfplup74bYRVuAVqE0cNHeNLx5h4GlL9Rq9
-	eMNglH3B6JzyC/mexb8GCIii/yPfEZEbFJh1lAvCLkpgVcO9j5MoY+r7/JuYVg==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
-Date: Thu, 17 Jul 2025 14:07:31 +0200
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Suren Baghdasaryan <surenb@google.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, 
-	"H . Peter Anvin" <hpa@zytor.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, 
-	Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Michal Hocko <mhocko@suse.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, 
-	willy@infradead.org, linux-mm@kvack.org, x86@kernel.org, linux-block@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org, 
-	gost.dev@samsung.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH v2 3/5] mm: add static PMD zero page
-Message-ID: <pesfhdmkz2essyfcesxqekwkxbrkw343qifwkuzrvirw6yyn4i@xjkigwtyczrh>
-References: <20250707142319.319642-1-kernel@pankajraghav.com>
- <20250707142319.319642-4-kernel@pankajraghav.com>
- <26fded53-b79d-4538-bc56-3d2055eb5d62@redhat.com>
- <fbcb6038-43a9-4d47-8cf7-f5ca32824079@redhat.com>
- <gr6zfputin56222rjxbvnsacvuhh3ghabjbk6dgf4mcvgm2bs6@w7jak5ywgskw>
- <ea55eb30-552a-4fca-83e0-342ec7c98768@redhat.com>
+	s=arc-20240116; t=1752754153; c=relaxed/simple;
+	bh=HzDrn/96Xz3SfWS8K6ZUG3MWbdMRmxWynifm9plRBB4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=mxZhpkFgJbFsj2g75Shfigh4l7eProBlDvarcykXZtF0KzlLlbTU2L3CD5SQRbcO5yYoQYDFvARCdo0feOmAnP/Uk/PXyU6/E7nlVvK8re1IzsDUf6f/fjPOwJLZnxmlsJ1aog3+2BYozuFNXrREiBOjEtLP0AF1C6ghqqJvZyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e5YKgxwb; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-748fe69a7baso842461b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 05:09:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752754152; x=1753358952; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HzDrn/96Xz3SfWS8K6ZUG3MWbdMRmxWynifm9plRBB4=;
+        b=e5YKgxwbsKQd7z3VKA/rrWcuHs+MmhZJWMaEKSvhX8kFaH1QDwk4PprwgU4/cyYE8Q
+         txsYaJVez/3FCtA6+ll5GTr4+ozRZRHxlgc5/xO6s7S39UbXvJC6fqdptKqCo9Ux1K3A
+         t8A8WF2aJwZsd/SksB71drVQ2UniBBV9SCcgjvn0/dNqPLY5EYrexHB330qw9ZcoXtHn
+         cCupybvOtGc8AHMopWReLwZ1bcoOu8LJ9zsk7RTMPVTe0wgaLina9hxQAHWLyRrGYzEC
+         vZ4FXyDnggpQl5DOndluuXJ017pkSLUGiJKdsmFWqRHosFBtujnPKprsg/mFHBIwtGKm
+         tbLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752754152; x=1753358952;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HzDrn/96Xz3SfWS8K6ZUG3MWbdMRmxWynifm9plRBB4=;
+        b=jUDvSKTs0vTEuR1My0piUzE8umZJ8qxX+rqB1VxsUH8wFVA0Mb5U+xRHp3ZW94kVAV
+         +rghcwBETv6tJ0oWlNE/0fof3p8XWpgcVblLq4GS35NyXrVfMnAkIb3fR6w4tysT6uZS
+         FRT0NfnxEOq/rBZmGDoCNqCkb/3qKhk7HUFJ53ngihV2Ok/lmPID9fI0sJgrMldwGf1M
+         Zwjat8DK5yC/k3Btv/xH3euH3j73ZQMHilTV6gl+/ownfNc7E3ntEUYZtZzKVPt7CQv0
+         zkK7bCtNNAAviIBabcfQmoKLNRk51mEmWZMPIryyZcrCweSbi76reXMQzff2oBJ17khC
+         dr1g==
+X-Forwarded-Encrypted: i=1; AJvYcCXLaR/8EWntEa4VZlLKroDfsQ5PsatJjhnwZ7lmX3G3HGvzkOGNDFE13+TahlaaX8dNg5NjOYopFH1kCvU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfYF2MD05+UjJ/uVr5C7OtoCRGTYKEOlCz00mr5QFIX5c4D8/x
+	jeba0JJ1ComcGE39SHsGd5HTkeeLqVFadBjBNd3phrZ3RhL6/BpBSwrk
+X-Gm-Gg: ASbGncvRODPZSSilLCVjrBbRLOCTmvJgx04Hg5EO2FH6InYcvLF6RUYZIOOWo2lG9bF
+	xaUmaiQXd+8RSjTnmPJYj/hBbZULppEFxewsXu/aZ3l3V2HcnE1LhliiVkDrcAOoYH5E91/8MBb
+	qS29K4tiyT/OWtblTT9WVRwOL4U1zKU9BKdpLm467lRzW/CtjOFO3EZ4qhpvh1+3uDX9mUWlU4u
+	GtlYZKcQQajSYMXg3CGdrPHOWhRq0DSTFdptmcs5s5qYRejWK00DHp4f7i3pFL6nTg7TZwiEwz3
+	gvyiEx5sL+4SGOR1bsu96xCUI0RGNTPbVx9vWl59d/TWkTBk+OTLW41orzglVQpdDWphz+RkzxT
+	UzlTiVggfI6cp/EtDSxWIc2ynLUvez/FDeVQnFO8n5iAf
+X-Google-Smtp-Source: AGHT+IFdZ2hsHTLbyceNFpEc/eEDYpok2P9OHubrByEp/yHUTbBTjmpm8kuunn4A3Hnaghr8D+C9GA==
+X-Received: by 2002:a05:6a20:938c:b0:21f:7430:148a with SMTP id adf61e73a8af0-2390dc2f772mr3608055637.28.1752754151647;
+        Thu, 17 Jul 2025 05:09:11 -0700 (PDT)
+Received: from DESKTOP-GIED850.localdomain ([114.247.113.178])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9f46a57sm15353011b3a.112.2025.07.17.05.09.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Jul 2025 05:09:11 -0700 (PDT)
+From: wang lian <lianux.mm@gmail.com>
+To: david@redhat.com
+Cc: Liam.Howlett@oracle.com,
+	akpm@linux-foundation.org,
+	brauner@kernel.org,
+	broonie@kernel.org,
+	gkwang@linx-info.com,
+	jannh@google.com,
+	lianux.mm@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	lorenzo.stoakes@oracle.com,
+	ludovico.zy.wu@gmail.com,
+	p1ucky0923@gmail.com,
+	richard.weiyang@gmail.com,
+	ryncsn@gmail.com,
+	shuah@kernel.org,
+	sj@kernel.org,
+	vbabka@suse.cz,
+	zijing.zhang@proton.me,
+	ziy@nvidia.com
+Subject: Re: [PATCH 1/2] selftests/mm: refactor common code and improve test skipping in guard_region
+Date: Thu, 17 Jul 2025 20:09:02 +0800
+Message-ID: <20250717120902.23840-1-lianux.mm@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <2fdacd57-2314-47c7-9eeb-6928221ce516@redhat.com>
+References: <2fdacd57-2314-47c7-9eeb-6928221ce516@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ea55eb30-552a-4fca-83e0-342ec7c98768@redhat.com>
-X-Rspamd-Queue-Id: 4bjWrt05HWz9spH
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 17, 2025 at 01:46:03PM +0200, David Hildenbrand wrote:
-> On 17.07.25 12:34, Pankaj Raghav (Samsung) wrote:
-> > > > Then, we'd only need a config option to allow for that to happen.
-> > > 
-> > > Something incomplete and very hacky just to give an idea. It would try allocating
-> > > it if there is actual code running that would need it, and then have it
-> > > stick around forever.
-> > > 
-> > Thanks a lot for this David :) I think this is a much better idea and
-> > reduces the amount code and reuse the existing infrastructure.
-> > 
-> > I will try this approach in the next version.
-> > 
-> > <snip>
-> > > +       /*
-> > > +        * Our raised reference will prevent the shrinker from ever having
-> > > +        * success -> static.
-> > > +        */
-> > > +       if (atomic_read(&huge_zero_folio_is_static))
-> > > +               return huge_zero_folio;
-> > > +       /* TODO: memblock allocation if buddy is not up yet? Or Reject that earlier. */
-> > 
-> > Do we need memblock allocation? At least the use cases I forsee for
-> > static pmd zero page are all after the mm is up. So I don't see why we
-> > need to allocate it via memblock.
-> 
-> Even better!
-> 
-> We might want to detect whether allocation of the huge zeropage failed a
-> couple of times and then just give up. Otherwise, each and every user of the
-> largest zero folio will keep allocating it.
+> The FORCE_READ() stuff belongs into patch #2.
 
-Yes, that makes sense. We need sort of like a global counter to count
-the nr of failures and then give up trying to allocate it if it goes
-above a threshold.
+Hi David,
 
---
-Pankaj
+I will adjust it and resend v2, thank you David.
+
+
+Best regards,
+wang lian
 
