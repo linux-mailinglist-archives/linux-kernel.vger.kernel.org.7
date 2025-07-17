@@ -1,51 +1,52 @@
-Return-Path: <linux-kernel+bounces-736010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13272B0969E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 23:58:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4C71B096A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 23:58:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 239C016C1BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:58:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32F951AA7965
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AD3F2376F7;
-	Thu, 17 Jul 2025 21:58:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A622C23E34C;
+	Thu, 17 Jul 2025 21:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="OphxI+Ei"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Op51+9z5"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1CA52C18A;
-	Thu, 17 Jul 2025 21:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 584F5239E81;
+	Thu, 17 Jul 2025 21:58:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752789496; cv=none; b=chYJkSbq8DDpBfYcCnWK/7a707tL2AqEdp2zGAYQIXiqXuK5ferqcTVBlV/hhMu5E20Pp/kIHQIr8bInKiBIn8V5d4QqPqqWaf8dWkd9F61U/2expWwl0TmqX/LtgNXIT20fkIc9nEXy3V13VG0kZp0HCxWAmHgohBQXBfyanTA=
+	t=1752789500; cv=none; b=CMLeh+ReMVzxJurNgiEvJFR/mHFC2q1HviguRYxZhUh0VxX1orYZzz3VAqFkECk6AjJSMn4bg/TvnhX8c9A5jdjBYCq+FiZjJi9P1dwIBiQAlCeE2wdkn1LQPAVsw70eXMjQ50yjNqs4Nxsfjn+YJDZiWHHNwVDzJIUev0dVHp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752789496; c=relaxed/simple;
-	bh=O/kg8t7MbHfNbrdP/cpMCUGufZfwNutHBitrbX/Jpvw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ij/H5SiP1MrSvLaUPBMOzhppHEn1KS+Cvly+84NB7h5a5fWryiI1vSOfCLJbvCVSLv5nIExJGb61/29bTtd/wXpyzP4IJfJ/TC2abskVJ9t6umsUPY/pSS+PmFXcqN3IxcEnxbM0C2QU8qiLCOBHnwy2Xkvu86fRWNKMZ44HHLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=OphxI+Ei; arc=none smtp.client-ip=148.251.105.195
+	s=arc-20240116; t=1752789500; c=relaxed/simple;
+	bh=MpnLCBk/z6fk9C4FatnsuMYJlg8KasyNf221+sK6I1c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=YJq+D4ZU9WVkJVhu3vURk0/CrkBO5IM+YHdSxRzum9wTu0pZ+Zv3JTy7xiTS0/4V9vZWbZZ5S35CEI1507weyaw6AAncJOZ7Wc83EmB0qiaYvaaJE3jRG+3pQhQT/GxxaAZwrJQZTxDc/q29H4ES6Tdu3RzLrEjJcHkdLe3C3U0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Op51+9z5; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1752789487;
-	bh=O/kg8t7MbHfNbrdP/cpMCUGufZfwNutHBitrbX/Jpvw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=OphxI+EiEn+9nNY0msGSfG6PqqLFEHg5J7zuWeL+r4TD2cnc1/PEu3GpskO+iYEVK
-	 dx0jMfMQnMGfXCW9OTXooWn0GnfFz/CB+CE3n3ajW6zgW/Xx4RfgG3fKYSJkAbAj9r
-	 cuZfKrYhSeuVQ18ZVMcvMVYmrJvlJRPLOTsj9o3jEiCkiXToIZ9ssoelcjtWnSsoHy
-	 u8wC1vxpmMzPSpMroNiHmB3N2ib9pZWsUq6Y2ffVguvhoZl1g8R0HqWQIRtnx2AZEh
-	 iiJPgCLdHUZK4eGvGsQEaQmqMtSSdv9vYlwmMBItJFPgEuXQRGBwdMVdgrhVpyJVoF
-	 ozgo5u1LhXRhw==
+	s=mail; t=1752789490;
+	bh=MpnLCBk/z6fk9C4FatnsuMYJlg8KasyNf221+sK6I1c=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Op51+9z5d5GqRGudh44ZP6IOiW0kiMFdowhA9L2S2s9wFqcvH/rp9sB6KPDJBm0U7
+	 IuHGMUnuw9GUNABGypcY1Th7fFKzgSpvinihXQteyggcZOyJg58aIJllc7NfPmc5W7
+	 P2zxmeH00tOFQkjuuQk5zf9MjCwDGciEwAriSVarS+56YpNCXjmkicpN9stVTH4t5H
+	 nhWNQfvuJMPCQCgUAuqzs1ajET7BwLxxoLtgZ+BDUIlXj3DZ9QruVv97Zzq2lhSKVe
+	 kV7aBFCpa5o6rtbruOZYzp8oQq1SA26UC2jL2KCBSwLPbkSeLQS86Egi5Kk82t8kb6
+	 2o4XXKbaeXPpg==
 Received: from trenzalore.hitronhub.home (unknown [23.233.251.139])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: detlev)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id D495D17E1324;
-	Thu, 17 Jul 2025 23:58:03 +0200 (CEST)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 68CF617E132A;
+	Thu, 17 Jul 2025 23:58:07 +0200 (CEST)
 From: Detlev Casanova <detlev.casanova@collabora.com>
 To: linux-kernel@vger.kernel.org
 Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
@@ -74,10 +75,12 @@ Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
 	dri-devel@lists.freedesktop.org,
 	linux-sound@vger.kernel.org,
 	kernel@collabora.com
-Subject: [PATCH 0/3] Clean some logs on rockchip hdmi audio
-Date: Thu, 17 Jul 2025 17:56:17 -0400
-Message-ID: <20250717215620.288651-1-detlev.casanova@collabora.com>
+Subject: [PATCH 1/3] drm/bridge: dw-hdmi-qp: Return 0 in audio prepare when disconnected
+Date: Thu, 17 Jul 2025 17:56:18 -0400
+Message-ID: <20250717215620.288651-2-detlev.casanova@collabora.com>
 X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20250717215620.288651-1-detlev.casanova@collabora.com>
+References: <20250717215620.288651-1-detlev.casanova@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,21 +89,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-HDMI audio is showing lots of logs, particularly when HDMI is
-disconnected.
+To configure audio registers, the clock of the video port in use must be
+enabled.
+As those clocks are managed by the VOP driver, they can't be enabled here
+to write the registers even when the HDMI cable is disconnected.
 
-It doubled on RK3588 with the addition of the second HDMI TX port, so
-clean it up to avoid missing important log lines.
+Furthermore, the registers values are computed from the TMDS char rate,
+which is not available when disconnected.
 
-Detlev Casanova (3):
-  drm/bridge: dw-hdmi-qp: Return 0 in audio prepare when disconnected
-  ASoC: hdac_hdmi: Use dev_info on invalid ELD version
-  drm/bridge: synopsys: Do not warn about audio params computation
+Returning -ENODEV seemed reasonable at first, but ASoC will log an error
+multiple times if dw_hdmi_qp_audio_prepare() return an error.
+Userspace might also retry multiple times, filling the kernel log with:
 
- drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c | 5 ++---
- sound/soc/codecs/hdac_hdmi.c                 | 2 +-
- 2 files changed, 3 insertions(+), 4 deletions(-)
+hdmi-audio-codec hdmi-audio-codec.0.auto: ASoC error (-19): at snd_soc_dai_prepare() on i2s-hifi
 
+This has become even worse with the support of the second HDMI TX port.
+
+Activating the clocks to write fake data (fake because the TMDS char
+rate is unavailable) would require API changes to communicate between
+VOP and HDMI, which doesn't really make sense.
+
+Using a cached regmap to be dumped when a cable is connected won't work
+because writing order is important and some data needs to be retrieved
+from registers to write others.
+
+Returning 0 to silently fail sounds like the best and simplest solution.
+
+Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+---
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c
+index 5e5f8c2f95be1..7d3d7b5084c8d 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c
+@@ -459,7 +459,7 @@ static int dw_hdmi_qp_audio_prepare(struct drm_connector *connector,
+ 	bool ref2stream = false;
+ 
+ 	if (!hdmi->tmds_char_rate)
+-		return -ENODEV;
++		return 0;
+ 
+ 	if (fmt->bit_clk_provider | fmt->frame_clk_provider) {
+ 		dev_err(hdmi->dev, "unsupported clock settings\n");
 -- 
 2.50.1
 
