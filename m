@@ -1,142 +1,211 @@
-Return-Path: <linux-kernel+bounces-735172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83A60B08BBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:29:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F41ECB08BC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:30:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8372F1C24C54
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:29:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAB213AC622
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B0B29B76B;
-	Thu, 17 Jul 2025 11:29:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78ACE29ACF0;
+	Thu, 17 Jul 2025 11:29:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mSdHVpgt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D8KeEUQX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E640029ACF3;
-	Thu, 17 Jul 2025 11:29:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC8228935C;
+	Thu, 17 Jul 2025 11:29:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752751746; cv=none; b=WH708JqcJS0Xcukvj2dTzVZMbBsMEqZW9mtxJ9xzxlZjmiSN5tHS76UJeTt5FRIpkoEe8RMAhZZbLXWrbVrE9udnmECzzv6lgYG3+TLLOMmsfe6cFkweRpZYzxI5mOgamGroyu8icF2CqY72U3JypC6VIoVJxF7wK+hb88uWuUI=
+	t=1752751794; cv=none; b=N+oh+aEd+bVHkuIQV7mnccJJNqeeBvtZdde4k4zkeuXotRiMFckj9MhE/ygs2hapYR4YKpoDChsAwj7m2VNcrDdefAKPtmZZua8Q7dTJrCdiP+6qY+y38owSBZW63O0fUljOXZDWi+G39zioVtIKWT7A40T/uFHHYLv1zi/8jRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752751746; c=relaxed/simple;
-	bh=s7qqZHElyo+o5VJEBt29CUvupnNWyLKQ59EZf+ACPhA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iA4V2ELL+rdSIYzAVRNiiIbfd64itdhtmeYsGn5vRIpWhVnYMkgQwFTWcjHDF/ewHziw4JGvljPzRjLlKcXoiPG3kbgK1KziX1bjkrBkolEesGfI2e5jOMtr+PJiy/zPF86JTTYtmoGrFv7MaBA7hHCDFPCNxSqXbVQNGP2n8u8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mSdHVpgt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46B09C4CEE3;
-	Thu, 17 Jul 2025 11:29:00 +0000 (UTC)
+	s=arc-20240116; t=1752751794; c=relaxed/simple;
+	bh=1IupY/CooA5f6pTF5w5s9P710FrsORD0Fd3kcUZOJkk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gcovE+t6sYcMCxFs/+RF/57ylfMQ0DPqg7lzWwk2m3XjPpGuEJzuRSg4FH40uQFekNaNhk6ifNN7krbDGl7XDkx7ww8VKfP7Ui68fX8JhXonBid3kaDOMM7c8Al1mRQBTyBoHSXdZ6HOH057UIv5K1HTHK2v2MeNbnMWbRT3pCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D8KeEUQX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81258C4CEE3;
+	Thu, 17 Jul 2025 11:29:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752751745;
-	bh=s7qqZHElyo+o5VJEBt29CUvupnNWyLKQ59EZf+ACPhA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mSdHVpgtREgIpKURnH/NZYbWMez7rDXbli9MStgoyie9Tzj15tUbwXQF5XejG0RA1
-	 VHZtKU7qtHP+/giPSm4o/Ed3Pf94oycXlw6IKqqKlpqmTfYRwDFxruq5d19dWTl2Ii
-	 dViGjwtwDzEq8EEKgqVGY2G1PXQVKmMC6we9nt21aiwSDmJO2K9gdbyfkHT/uy4Wg0
-	 Wqgq5eWIfWZ5EDQtLx+mvdnQrNtqnp/mq3ps8oZZgpbgrf8BoxkrSnbWfeY/owMHfX
-	 Gq43T4LsNhxAKPWLWfcMbu4Cp5cx9eYdGy8JH9XdSgEHUpvPLt7ULm5dYKVjGl+shR
-	 A0IJob2ieu8ZQ==
-Message-ID: <a43cfe4f-8ff9-4dbd-b7f4-07ccc3d8e01b@kernel.org>
-Date: Thu, 17 Jul 2025 13:28:58 +0200
+	s=k20201202; t=1752751794;
+	bh=1IupY/CooA5f6pTF5w5s9P710FrsORD0Fd3kcUZOJkk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=D8KeEUQXcg+1wnwbQNzAzQ/n9tnkOAg7Au4X3cFOHr7O4BvmKNAB/yHXs0QaRPvu9
+	 OXfKJmgdOGZeO8BnednyRslMU3sZhQdALSDu5F/k42bKOS2H+GlKvGro9zMHxbhbFs
+	 3FtlsoYJXdxINg3qjEGUcQUkqS6lpVGd/cSgFLbpSZGQJOC7i1MPrTdzsl67kHdCzs
+	 SZh2XGyU0SXLPyskQ+d2hNQs1C9xxmcHcSjFawNXYRFUFIrAjreR35aEbZpbXfCHYr
+	 O8KE5bgHoXe84Mvy38u4gaaeu2zWhiTD3uWSN28rke7U/AfOKhYZ8yELOR64NfuA73
+	 4oilaLZmvjm0A==
+Date: Thu, 17 Jul 2025 16:59:42 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
+Cc: manivannan.sadhasivam@oss.qualcomm.com, 
+	Jeff Johnson <jjohnson@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Nirmal Patel <nirmal.patel@linux.intel.com>, 
+	Jonathan Derrick <jonathan.derrick@linux.dev>, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	ath12k@lists.infradead.org, ath11k@lists.infradead.org, ath10k@lists.infradead.org, 
+	Bjorn Helgaas <helgaas@kernel.org>, ilpo.jarvinen@linux.intel.com, linux-arm-msm@vger.kernel.org, 
+	linux-pci@vger.kernel.org, Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
+	Qiang Yu <qiang.yu@oss.qualcomm.com>
+Subject: Re: [PATCH 4/6] wifi: ath12k: Use pci_{enable/disable}_link_state()
+ APIs to enable/disable ASPM states
+Message-ID: <o2gqqty6lakc4iw7vems2dejh6prjyl746gnq4gny4sxdxl65v@zmqse3244afv>
+References: <20250716-ath-aspm-fix-v1-0-dd3e62c1b692@oss.qualcomm.com>
+ <20250716-ath-aspm-fix-v1-4-dd3e62c1b692@oss.qualcomm.com>
+ <38ace6a3-d594-4438-a193-cf730a7b87d6@oss.qualcomm.com>
+ <wyqtr3tz3k2zdf62kgtcepf3sedm7z7wacv27visl2xsrqspmq@wi4fgef2mn2m>
+ <03806d02-1cfc-4db2-8b63-c1e51f5456e2@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
- ExynosAutov920 HS phy compatible
-To: Pritam Manohar Sutar <pritam.sutar@samsung.com>,
- 'Krzysztof Kozlowski' <krzysztof.kozlowski@linaro.org>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, alim.akhtar@samsung.com, andre.draszik@linaro.org,
- peter.griffin@linaro.org, neil.armstrong@linaro.org, kauschluss@disroot.org,
- ivo.ivanov.ivanov1@gmail.com, m.szyprowski@samsung.com,
- s.nawrocki@samsung.com, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- rosa.pila@samsung.com, dev.tailor@samsung.com, faraz.ata@samsung.com,
- muhammed.ali@samsung.com, selvarasu.g@samsung.com
-References: <20250701120706.2219355-1-pritam.sutar@samsung.com>
- <CGME20250701115955epcas5p320cfe73ca33522cd2f9f7970cfde1c63@epcas5p3.samsung.com>
- <20250701120706.2219355-2-pritam.sutar@samsung.com>
- <20250706-fresh-meaty-cougar-5af170@krzk-bin>
- <07d301dbf0ae$0658cbe0$130a63a0$@samsung.com>
- <9a2d0ad7-cb1f-473d-a91a-3a1b59b71280@kernel.org>
- <000c01dbf70b$ccdbf630$6693e290$@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <000c01dbf70b$ccdbf630$6693e290$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <03806d02-1cfc-4db2-8b63-c1e51f5456e2@oss.qualcomm.com>
 
-On 17/07/2025 13:13, Pritam Manohar Sutar wrote:
->>
->>
->> Nothing is explained in changelog/cover letter. You claim you only added Rb tag.
->> This is an entirely silent change while keeping the review.
+On Thu, Jul 17, 2025 at 06:46:12PM GMT, Baochen Qiang wrote:
 > 
-> Will add more explanations in cover letter/changelog why this block is added.
 > 
->> Combined with not even following DTS style!
+> On 7/17/2025 6:31 PM, Manivannan Sadhasivam wrote:
+> > On Thu, Jul 17, 2025 at 05:24:13PM GMT, Baochen Qiang wrote:
+> > 
+> > [...]
+> > 
+> >>> @@ -16,6 +16,8 @@
+> >>>  #include "mhi.h"
+> >>>  #include "debug.h"
+> >>>  
+> >>> +#include "../ath.h"
+> >>> +
+> >>>  #define ATH12K_PCI_BAR_NUM		0
+> >>>  #define ATH12K_PCI_DMA_MASK		36
+> >>>  
+> >>> @@ -928,8 +930,7 @@ static void ath12k_pci_aspm_disable(struct ath12k_pci *ab_pci)
+> >>>  		   u16_get_bits(ab_pci->link_ctl, PCI_EXP_LNKCTL_ASPM_L1));
+> >>>  
+> >>>  	/* disable L0s and L1 */
+> >>> -	pcie_capability_clear_word(ab_pci->pdev, PCI_EXP_LNKCTL,
+> >>> -				   PCI_EXP_LNKCTL_ASPMC);
+> >>> +	pci_disable_link_state(ab_pci->pdev, PCIE_LINK_STATE_L0S | PCIE_LINK_STATE_L1);
+> >>
+> >> Not always, but sometimes seems the 'disable' does not work:
+> >>
+> >> [  279.920507] ath12k_pci_power_up 1475: link_ctl 0x43 //before disable
+> >> [  279.920539] ath12k_pci_power_up 1482: link_ctl 0x43 //after disable
+> >>
+> >>
+> >>>  
+> >>>  	set_bit(ATH12K_PCI_ASPM_RESTORE, &ab_pci->flags);
+> >>>  }
+> >>> @@ -958,10 +959,7 @@ static void ath12k_pci_aspm_restore(struct ath12k_pci *ab_pci)
+> >>>  {
+> >>>  	if (ab_pci->ab->hw_params->supports_aspm &&
+> >>>  	    test_and_clear_bit(ATH12K_PCI_ASPM_RESTORE, &ab_pci->flags))
+> >>> -		pcie_capability_clear_and_set_word(ab_pci->pdev, PCI_EXP_LNKCTL,
+> >>> -						   PCI_EXP_LNKCTL_ASPMC,
+> >>> -						   ab_pci->link_ctl &
+> >>> -						   PCI_EXP_LNKCTL_ASPMC);
+> >>> +		pci_enable_link_state(ab_pci->pdev, ath_pci_aspm_state(ab_pci->link_ctl));
+> >>
+> >> always, the 'enable' is not working:
+> >>
+> >> [  280.561762] ath12k_pci_start 1180: link_ctl 0x43 //before restore
+> >> [  280.561809] ath12k_pci_start 1185: link_ctl 0x42 //after restore
+> >>
+> > 
+> > Interesting! I applied your diff and I never see this issue so far (across 10+
+> > reboots):
 > 
-> Ok got it. Will change supplies name as below 
-> avdd075_usb => avdd075-usb
-> avdd18_usb20 => avdd18-usb20
-> avdd33_usb20 => avdd33-usb20
->    
-> Confirm the above change that is meant in terms of DTS style.
-Yes. I have doubts that actual supplies have suffix usb20. Are there
-more than one avdd18 for this block?
+> I was not testing reboot. Here is what I am doing:
+> 
+> step1: rmmod ath12k
+> step2: force LinkCtrl using setpci (make sure it is 0x43, which seems more likely to see
+> the issue)
+> 
+> 	sudo setpci -s 02:00.0 0x80.B=0x43
+> 
+> step3: insmod ath12k and check linkctrl
+> 
 
-Best regards,
-Krzysztof
+So I did the same and got:
+
+[ 3283.363569] ath12k_pci_power_up 1475: link_ctl 0x43
+[ 3283.363769] ath12k_pci_power_up 1480: link_ctl 0x40
+[ 3284.007661] ath12k_pci_start 1180: link_ctl 0x40
+[ 3284.007826] ath12k_pci_start 1185: link_ctl 0x42
+
+My host machine is Qcom based Thinkpad T14s and it doesn't support L0s. So
+that's why the lnkctl value once enabled becomes 0x42. This is exactly the
+reason why the drivers should not muck around LNKCTL register manually.
+
+> > 
+> > [    3.758239] ath12k_pci_power_up 1475: link_ctl 0x42
+> > [    3.758315] ath12k_pci_power_up 1480: link_ctl 0x40
+> > [    4.383900] ath12k_pci_start 1180: link_ctl 0x40
+> > [    4.384026] ath12k_pci_start 1185: link_ctl 0x42
+> > 
+> > Are you sure that you applied all the 6 patches in the series and not just the
+> > ath patches? Because, the first 3 PCI core patches are required to make the API
+> > work as intended.
+> 
+> pretty sure all of them:
+> 
+> $ git log --oneline
+> 07387d1bc17f (HEAD -> VALIDATE-pci-enable-link-state-behavior) wifi: ath12k: dump linkctrl reg
+> dbb3e5a7828b wifi: ath10k: Use pci_{enable/disable}_link_state() APIs to enable/disable
+> ASPM states
+> 392d7b3486b3 wifi: ath11k: Use pci_{enable/disable}_link_state() APIs to enable/disable
+> ASPM states
+> f2b0685c456d wifi: ath12k: Use pci_{enable/disable}_link_state() APIs to enable/disable
+> ASPM states
+> b1c8fad998f1 PCI/ASPM: Improve the kernel-doc for pci_disable_link_state*() APIs
+> b8f5204ba4b0 PCI/ASPM: Transition the device to D0 (if required) inside
+> pci_enable_link_state_locked() API
+> 186b1bbd4c62 PCI/ASPM: Fix the behavior of pci_enable_link_state*() APIs
+> 5a1ad8faaa16 (tag: ath-202507151704, origin/master, origin/main, origin/HEAD) Add
+> localversion-wireless-testing-ath
+> 
+
+Ok!
+
+> 
+> > 
+> >>
+> >>>  }
+> >>>  
+> >>>  static void ath12k_pci_cancel_workqueue(struct ath12k_base *ab)
+> >>>
+> >>
+> >> In addition, frequently I can see below AER warnings:
+> >>
+> >> [  280.383143] aer_ratelimit: 30 callbacks suppressed
+> >> [  280.383151] pcieport 0000:00:1c.0: AER: Correctable error message received from
+> >> 0000:00:1c.0
+> >> [  280.383177] pcieport 0000:00:1c.0: PCIe Bus Error: severity=Correctable, type=Data Link
+> >> Layer, (Transmitter ID)
+> >> [  280.383184] pcieport 0000:00:1c.0:   device [8086:7ab8] error status/mask=00001000/00002000
+> >> [  280.383193] pcieport 0000:00:1c.0:    [12] Timeout
+> >>
+> > 
+> > I don't see any AER errors either.
+> 
+> My WLAN chip is attached via a PCIe-to-M.2 adapter, maybe some hardware issue? However I
+> never saw them until your changes applied.
+> 
+
+I don't think it should matter. I have an Intel NUC lying around with QCA6390
+attached via M.2. Let me test this change on that and report back the result.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
