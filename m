@@ -1,209 +1,166 @@
-Return-Path: <linux-kernel+bounces-735311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D39EFB08DA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:56:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 891B5B08DA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:56:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32AD8189F044
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:56:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79F953B133F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:56:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32CFA2D4B62;
-	Thu, 17 Jul 2025 12:56:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 611872D541B;
+	Thu, 17 Jul 2025 12:56:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RyXngj54"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="lCv/XBJ2"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819F81F92A
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 12:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 519DD1F92A;
+	Thu, 17 Jul 2025 12:56:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752756979; cv=none; b=tqI0tZAnNSCHz1iKAh+TbhFPF8JxOhJ3KwXFT/LJP8Rb5DLRe67eOWqFtE+o7OGXZCMZo8Htv94HOL5sAHCw6bG12OFYABaG61WFA3VInxfFBZ6Z74UwhdYl/7UXKFMZbpbB22qRaZqq6g//uoGQPdWms662995VCZtnry8iocY=
+	t=1752756996; cv=none; b=Y5iwQ0vnWXYBh/yS9hawU2oAksfx/gW/ujZiozzYEUV3hf66ZDOC7Z4bpIa4oEqqoXhqZMy16zVPEqJE1y0lOGJHRT+p8Sqg8xUnl2JIk5octgcNzGHUkLjL3wpU41aC1ve0B3cIuTjSlGjFOXXcBOd3KdAgbDU9G3S/JCvtcQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752756979; c=relaxed/simple;
-	bh=5C68isv16CT0CTBNXFFoBkmNFftxlWs2cMLo/GtIm0E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oAqqXtAUKCamZ6KEoKRpKZZIWD3g61WWflu/L0UfHwO8SZKEbBKf8vNfEEtB7J6/ywt5W2Yab2/Wrbl1rQrTJ2RdTOmXcW1V4j1ePXyvWUFi1dkEbGtdw3XdJGIHA7bT5TiWFXj/35ml5caWxCT0Mn0/P17APTH2gUFjpCbMMPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RyXngj54; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ae04d3d63e6so176549366b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 05:56:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1752756976; x=1753361776; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WxaYrBDTVkKxfQbbC2Gba/aI7Id05pjU0f5koQSOkMA=;
-        b=RyXngj540rAKNbNcyBykmgND9Ax+MQhbqPoAUpR8WyGpIlaAt1Ydtwr8NYdDAWbaFx
-         T1xE6Li6jwYR+aj4GS985x2+Bjkp6smr3Eavx9gvAWL8H5rimkgqjfUvAqMEzBCo5K9b
-         GFV/SW5dEJoJRAr+NBVYt0xxOOz6yDfeCZteSo7VIe5cYIa9cN0VrD1gpKrMHXyWXztG
-         lDwuJ3HwP/ZvNahNwNXuW9akJ51VPIJjzsEaVwWv+Zu9fgjhVEyWPWVN+hMGfmA7UIQg
-         sC/QP4S3Zr1yzGRSHaT2D/FsOqwZWsjcrs9vBkD/7Xlmsedtsr5KjKIg5goUmC/VbwK8
-         CtoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752756976; x=1753361776;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WxaYrBDTVkKxfQbbC2Gba/aI7Id05pjU0f5koQSOkMA=;
-        b=cq8vPrce2mhA10rqr0cZ+zCfl6dEIl76jrl7F4YxmA2njmPjdu0DtCL3h90/IzJ+z1
-         F630AbhwE0xir2pTgZswgXe6UlwI2CDdXCgcnuz9Obeh0X1P09GKyyOhls2U4vbvLSqS
-         QcZ+1jLDcVQeEQI14LNstrpaN31495Pv8/ElXFVKF+tvu1gSlSCSgS/wcCfMhPuhloE4
-         +pMoi8pbU/PhAy+4LACqq9yeC1xQrlfX4F3XdWo+59kCD5HWxsfdbOgMGYObFsF19zcz
-         PAyarCM65TJueMfIoWirZ2O885ED30HmPsVSTXoQSdsEgtGNNdfHYxaGQv0p7xHVn7Hk
-         X/2g==
-X-Gm-Message-State: AOJu0Yx1gaBI3JPzUaL7BXeIoOjEqc6qkW44favLrEQ3U0u8TH82v06H
-	8Rw46bDADRDJDJppWJjYTaodxMPDaalCsP6HhR/1WThE0QuGEWirPvL79zTMrpmwFsA=
-X-Gm-Gg: ASbGncsCtTgiFPpJHfEV9or4tBITij6puxnFjxUR+HpV5mwIUN7AZScBrIc6v8eWP8c
-	EPuyRB9czuSYw5/wuaHBiMZBE9YG4Tlg2Yvbe1RmqJk5S6fHd0xDF2S4zTdcRGCh2EuaWZoEXXT
-	YMkQoZT+q5yNgsmZIIMEIjOBos8pl6Ow3GXW2pgI3dpNVzAZ9AVKiRb8pNMAL8K+bp1ms2YLSP/
-	CBmG7p9+in9TjNsiv6wjbS4EFRY/ZFI7DihQN9hffMIDtoHnekZueMhtaS/HkAbFlWUO5SzHaB2
-	Ms+iNHT5e6j5Inyta0ryfQdThULwXsOZf3zIhPWpqcpT5DgoEXYYSsY7G+9WgpfsNd+c3Pa3HUZ
-	SulC60MwwVWa+Gf4QQJH89tjjhVuf099m7EM8kpIr7A==
-X-Google-Smtp-Source: AGHT+IGmCGE/i+JFILHa3yjqtTV+kluEfiMhkPeizaGTvt5XqMP2gjydr2tNH35RxMZLV0xAGbCITA==
-X-Received: by 2002:a17:907:3a96:b0:ae3:cb50:2c6b with SMTP id a640c23a62f3a-ae9ce0b930emr443038966b.38.1752756975732;
-        Thu, 17 Jul 2025 05:56:15 -0700 (PDT)
-Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e82e3a8csm1366209566b.154.2025.07.17.05.56.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 05:56:15 -0700 (PDT)
-Date: Thu, 17 Jul 2025 14:56:13 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Tiffany Yang <ynaffit@google.com>
-Cc: linux-kernel@vger.kernel.org, John Stultz <jstultz@google.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
-	Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
-	Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Chen Ridong <chenridong@huawei.com>, kernel-team@android.com, 
-	Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [RFC PATCH v2] cgroup: Track time in cgroup v2 freezer
-Message-ID: <5rm53pnhpdeqljxqywh26gffh6vlyb5j5s6pzxhv52odhkl4fm@o6p7daoponsn>
-References: <20250714050008.2167786-2-ynaffit@google.com>
+	s=arc-20240116; t=1752756996; c=relaxed/simple;
+	bh=4Coq8EX3mw48zTKnbBK5dkCadLXwl7Nuy6lIYp+dE6Y=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=a4elBCOYK7ONkSeT+wyVt7MOoNfASOEc81KXQaeGes8NYvqKF7YPPtiNB5Lh+P3lteLXcpbcg5uCpPxawgR0Sll4virPSoGvTaKLUgx3HqY1ia7xUqKebiPbxQ7j3N9uz/88u5XjdFnMq6AwdEA0eCb59EvAueWwx1X8iN0liuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=lCv/XBJ2; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1752756982; x=1753361782; i=markus.elfring@web.de;
+	bh=c0Dgq398SWqsv0xGVYrsHLUK2zfzUks/6cy5jNdhTwA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=lCv/XBJ2x8MA9jBzvMANgdBzpFvEqJZVEOAMYPbbv5czqaixHrqIl4mX+F7c+RE0
+	 M/Tb4gBYU0eJPCzhcBMcLArXijEDliBtqUst5qdIktM+QpCEp4xsDiUVBrEKdRB5m
+	 nqjD09AhuhzYmmTDkDOw9LYXPlng3OB3XZIGXWcHBNoj2h4UsOAvu0GXsw9MyP/lu
+	 PW0Av0vh5L8lz9Xp/YCyZ47G+BTMnZFm8dT0nZiDJ2ziyu5YsHwrMUrJcmzD/B2MR
+	 kqbS57yi5gkSLDRubTtvC43UjYcdccxnAegBcTL9eYd1H8WNU3geHGyaGfvMKvsRG
+	 QIUV21CXMbZcUGrzYQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.185]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MjxeE-1v0QIf3sG8-00bPwF; Thu, 17
+ Jul 2025 14:56:21 +0200
+Message-ID: <4c677fdb-e6d6-4961-b911-78aaa28130e6@web.de>
+Date: Thu, 17 Jul 2025 14:56:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="q6g6m5syrpxykbo6"
-Content-Disposition: inline
-In-Reply-To: <20250714050008.2167786-2-ynaffit@google.com>
-
-
---q6g6m5syrpxykbo6
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+To: Himanshu Mittal <h-mittal1@ti.com>, netdev@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, MD Danish Anwar <danishanwar@ti.com>,
+ Meghana Malladi <m-malladi@ti.com>, Paolo Abeni <pabeni@redhat.com>,
+ prajith@ti.com, Pratheesh Gangadhar <pratheesh@ti.com>,
+ Simon Horman <horms@kernel.org>, Sriramakrishnan <srk@ti.com>,
+ Roger Quadros <rogerq@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>
+References: <20250717094220.546388-1-h-mittal1@ti.com>
+Subject: Re: [PATCH net v3] net: ti: icssg-prueth: Fix buffer allocation for
+ ICSSG
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250717094220.546388-1-h-mittal1@ti.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [RFC PATCH v2] cgroup: Track time in cgroup v2 freezer
-MIME-Version: 1.0
+X-Provags-ID: V03:K1:dvFpaitgATAn9Spja7xoTYCvaq5BvkujF8BPlDw5/Gm7fRy8aiH
+ uSzSc/ZpxTMcSBrIl513g7PDjhmkSZk+GlDF3xVPz+ICNwGWe1exx79CjW0XOvT9F8UXueo
+ uUifKtgNNbxDDlLdEDlUKe4y4olEhowlpOd5HqmSop8hYvLiYpaEmcn8oXtkpLlCwbN4qG5
+ k21Z+2oTFlFmaRiKpPRsA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:I7+okI5HW0I=;KVc7WKXuK/RBHn7IP17dT5Fj5nF
+ 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
+ Swhho=
 
-Hello Tiffany.
-
-On Sun, Jul 13, 2025 at 10:00:09PM -0700, Tiffany Yang <ynaffit@google.com>=
- wrote:
-=20
-> Other sources of delay can cause similar issues, but this change focuses
-> on allowing frozen time to be accounted for in particular because of how
-> large it can grow and how unevenly it can affect applications running on
-> the system.
-
-I'd like to incorporate the reason from your other mail:
-| Since there isn't yet a clear way to identify a set of "lost" time
-| that everyone (or at least a wider group of users) cares about, it
-| seems like iterating over components of interest is the best way=20
-into this commit message (because that's a stronger ponit that your use
-case alone).
-
-
-> Any feedback would be much appreciated!
-
-I can see benefits of this new stat field conceptually, I have some
-remarks to implementation and suggestions to conventions below.
-
-> --- a/Documentation/admin-guide/cgroup-v2.rst
-> +++ b/Documentation/admin-guide/cgroup-v2.rst
-> @@ -1018,6 +1018,14 @@ All cgroup core files are prefixed with "cgroup."
->  	it's possible to delete a frozen (and empty) cgroup, as well as
->  	create new sub-cgroups.
+=E2=80=A6
+> +++ b/drivers/net/ethernet/ti/icssg/icssg_config.c
+> @@ -288,8 +288,12 @@ static int prueth_fw_offload_buffer_setup(struct pr=
+ueth_emac *emac)
+>  	int i;
 > =20
-> +  cgroup.freeze.stat
+>  	addr =3D lower_32_bits(prueth->msmcram.pa);
+> -	if (slice)
+> -		addr +=3D PRUETH_NUM_BUF_POOLS * PRUETH_EMAC_BUF_POOL_SIZE;
+> +	if (slice) {
+> +		if (prueth->pdata.banked_ms_ram)
+> +			addr +=3D MSMC_RAM_BANK_SIZE;
+> +		else
+> +			addr +=3D PRUETH_SW_TOTAL_BUF_SIZE_PER_SLICE;
+> +	}
+=E2=80=A6
 
-With the given implementation (and use scenario), this'd better exposed
-in
-  cgroup.freeze.stat.local
+Would you like to use the following code variant?
 
-I grok the hierarchical summing would make little sense and it'd make
-implementaion more complex. With that I'm thinking about formulation:
-
-	Cumulative time that cgroup has spent between freezing and
-	thawing, regardless of whether by self or ancestor cgroups. NB
-	(not) reaching "frozen" state is not accounted here.
-
-> +	A read-only flat-keyed file which exists in non-root cgroups.
-> +	The following entry is defined:
-> +
-> +	  freeze_time_total_ns
-> +		Cumulative time that this cgroup has spent in the freezing
-> +		state, regardless of whether or not it reaches "frozen".
-> +
-
-Rather use microseconds, it's the cgroup API convention and I'm not
-sure nanosecods exposed here are the needed precision.
-
-       1    _____
-frozen 0 __/     \__
-          ab    cd
-
-Yeah, I find the mesurent between a and c the sanest.
+	if (slice)
+		addr +=3D ( prueth->pdata.banked_ms_ram
+			? MSMC_RAM_BANK_SIZE
+			: PRUETH_SW_TOTAL_BUF_SIZE_PER_SLICE);
 
 
-> +static int cgroup_freeze_stat_show(struct seq_file *seq, void *v)
-> +{
-> +	struct cgroup *cgrp =3D seq_css(seq)->cgroup;
-> +	u64 freeze_time =3D 0;
-> +
-> +	spin_lock_irq(&css_set_lock);
-> +	if (test_bit(CGRP_FREEZE, &cgrp->flags))
-> +		freeze_time =3D ktime_get_ns() - cgrp->freezer.freeze_time_start_ns;
-> +
-> +	freeze_time +=3D cgrp->freezer.freeze_time_total_ns;
-> +	spin_unlock_irq(&css_set_lock);
+Can the usage of the conditional operator be extended another bit
+(also for the function =E2=80=9Cprueth_emac_buffer_setup=E2=80=9D for exam=
+ple)?
 
-I don't like taking this spinlock only for the matter of reading this
-attribute. The intention should be to keep the (un)freezeing mostly
-unaffected at the expense of these readers (seqcount or u64 stats?).
-
-Alternative approach: either there's outer watcher who can be notified
-by cgroup.events:frozen or it's an inner watcher who couldn't actively
-read the field anyway. So the field could only show completed
-freeze/thaw cycles from the past (i.e. not substitute clock_gettime(2)
-when the cgroup is frozen), which could simplify querying the flag too.
-
-> @@ -5758,6 +5780,7 @@ static struct cgroup *cgroup_create(struct cgroup *=
-parent, const char *name,
->  	 * if the parent has to be frozen, the child has too.
->  	 */
->  	cgrp->freezer.e_freeze =3D parent->freezer.e_freeze;
-> +	cgrp->freezer.freeze_time_total_ns =3D 0;
-
-struct cgroup is kzalloc'd, this is unnecessary
-
-
---q6g6m5syrpxykbo6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaHjy2wAKCRB+PQLnlNv4
-CH7EAQDY/o6R+lacKfz1+91E3EVQCP4sdVNh+dNpbxVSWafRfwEA5NxSlz0R5PDl
-pbF5wGiWALd3rY8lxnwtBYZjwJODJAY=
-=sEiS
------END PGP SIGNATURE-----
-
---q6g6m5syrpxykbo6--
+Regards,
+Markus
 
