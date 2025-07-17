@@ -1,114 +1,100 @@
-Return-Path: <linux-kernel+bounces-736025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F391CB096E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 00:28:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFE74B096EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 00:29:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4793FA60099
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 22:28:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4714D1C46171
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 22:30:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E2723D289;
-	Thu, 17 Jul 2025 22:28:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2385236A8B;
+	Thu, 17 Jul 2025 22:29:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jOPAXHma"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Z1CSoWbF"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0083023C50C;
-	Thu, 17 Jul 2025 22:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6616A94F;
+	Thu, 17 Jul 2025 22:29:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752791311; cv=none; b=lihLBwy4yYjo+RnBZYkNqIcTIN6YOPJy67TnTQg66eGgSOFuVJ+h3kvUMy5FCPAQCmSCJMKoEzX33AoEvOO9epwlmNAcf+w+3HKe88yR2jWqxvxETIjr/dpXHdp/+epBcMFFjCVzf9Ck32W8T7i4JHUgLKXaKQNQd9ud25b/GEs=
+	t=1752791384; cv=none; b=E+63y2s4aNvHMgvWxT701xsTUg5zyKil7ndjSEWdgXJJKEbjJ7CRfIjPT0ho8WNZNfBLrkAWaRvZNomCVHeEtf60MficE8+uBdCEFV8A48TQ1M80zG3Vi7ByD9uUYZDi1KwbEyvr9Zc4NuA4X7xoCIF4fpue3+wpW9Dmkyx1Rus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752791311; c=relaxed/simple;
-	bh=p0vDHWck1FU222M+GzNOyMhrIFdZ1185CKWEBiG97pw=;
-	h=From:To:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=NhxuR+I0OEIIKeksbFNxlSd0jrqQRKZNDgtNHFv7cef+3hCDAwIWnY8zLCP0/zQNdmwdB4JUO1PUqLPffsC8ctu6WKjIbfVJxYe5MdGdspqt1OdA4kLgi+jRB2ntZnjA9f/np4oNArwiIV+hplwEvqx+AiQldDD6rtnyfbayy0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jOPAXHma; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752791309; x=1784327309;
-  h=from:to:subject:references:date:in-reply-to:message-id:
-   mime-version;
-  bh=p0vDHWck1FU222M+GzNOyMhrIFdZ1185CKWEBiG97pw=;
-  b=jOPAXHmak536Ws+HNXrpOIBMpiTkCY+NtLEa/WGiBZVKXa3LP6b+U5KD
-   ofMBGz+vHrUG1z0QunH9a3LWNJkQTsMYowNSW7Yh9TYnB92yEeuqwdiae
-   xrFF2RaCBsdeaiBdMEtb2AUPisQhdp6C+46HhH+sDs2J0VRu/YJIWiQFF
-   aS0IK3t33KlQq4Pkgo8wC+etyWrbJ5OazgUKycDJIAitWoSBR8J/4WtsI
-   6dSvZ6TfHeCNJi5bt8CFyHCiSZe1c9Gtg5LQLOfSXqEr/bBFrB8FbqPsD
-   0fhp+WuxvTYSzle7C/b1V5UBx1ttdkKySGgjZKEeRbj+0H8dB5a57CucN
-   w==;
-X-CSE-ConnectionGUID: yBU33cxgTkCAHi90kuxKKg==
-X-CSE-MsgGUID: jMNWDdGmQbOWns5TpNQMFA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11495"; a="80528871"
-X-IronPort-AV: E=Sophos;i="6.16,320,1744095600"; 
-   d="scan'208";a="80528871"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 15:28:28 -0700
-X-CSE-ConnectionGUID: dnwYRp6eS9y9rqDEVZGlrw==
-X-CSE-MsgGUID: QcKNG3EqTmGXv5bavCi+QA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,320,1744095600"; 
-   d="scan'208";a="157586665"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.54.38.190])
-  by fmviesa007.fm.intel.com with ESMTP; 17 Jul 2025 15:28:28 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-	id EE97A3011B8; Thu, 17 Jul 2025 15:28:27 -0700 (PDT)
-From: Andi Kleen <ak@linux.intel.com>
-To: libaokun1@huawei.com, linux-ext4@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 01/17] ext4: add ext4_try_lock_group() to skip busy
- groups
-References: <20250714130327.1830534-1-libaokun1@huawei.com>
-	<20250714130327.1830534-2-libaokun1@huawei.com>
-Date: Thu, 17 Jul 2025 15:28:27 -0700
-In-Reply-To: <20250714130327.1830534-2-libaokun1@huawei.com> (Baokun Li's
-	message of "Mon, 14 Jul 2025 21:03:11 +0800")
-Message-ID: <87pldy78qc.fsf@linux.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1752791384; c=relaxed/simple;
+	bh=/YWz8OHO92KXvaHSQojZ69/qVFC0xP/OSTDPFfEKBZs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=XnPpXWInhdu1OHXycytxoVs6bm9U+rT++viFEbGN5O7Aa6CBQZ5QYAFGF3l3SHgqz6X17L7dMmn7m6E0YTHxBQ+Q+FJxou5pv6eIe9hvOv/KSfJ7iDHdm2TYWuLR3FfWgTYWBQGDpNOmdxa9ctfaYVMfc7T1tODJ18RhJd4VzLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Z1CSoWbF; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752791250;
+	bh=bagg6DwvFzPvgqV4M24j+KT0bzFkBH+6JVE19OCUQ1w=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Z1CSoWbFxkzK07wPeAfcQrZSUTl1SnkpxkimRj1gbx79UDXMpL7jOvUW78XtKrTaa
+	 QVMRvNP8ynOgp2j8QmjcFbHzeY2/piFkoHdo2B5InDBcZbpl+3QraLBasjSEkSH0Bt
+	 T8WhHDaT16Kh19RblNwevFpkc5oaZOCOSK7tpNbE+humGK6Ugoc2cVS4S3xCJKckW7
+	 UaO/hc4DY0p0arQImZxB1R8kCHTmSmTOduWgdWKyA2GJvZZpIWgOc/zk2Ief3Oyyka
+	 WhOOM3IB26Kkugsv/Kv7xMciTH8AUB6diqmyxVlT1OtQdhcXoOQxxdW8M9+XacDjJ0
+	 fLxeMoCQwTDsw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bjnc22PWhz4w2H;
+	Fri, 18 Jul 2025 08:27:30 +1000 (AEST)
+Date: Fri, 18 Jul 2025 08:29:36 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Jiang <dave.jiang@intel.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the cxl tree
+Message-ID: <20250718082936.40138acb@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; boundary="Sig_/nYmK6fbkLEWpFubnp0H+86f";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Baokun Li <libaokun1@huawei.com> writes:
+--Sig_/nYmK6fbkLEWpFubnp0H+86f
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> When ext4 allocates blocks, we used to just go through the block groups
-> one by one to find a good one. But when there are tons of block groups
-> (like hundreds of thousands or even millions) and not many have free space
-> (meaning they're mostly full), it takes a really long time to check them
-> all, and performance gets bad. So, we added the "mb_optimize_scan" mount
-> option (which is on by default now). It keeps track of some group lists,
-> so when we need a free block, we can just grab a likely group from the
-> right list. This saves time and makes block allocation much faster.
->
-> But when multiple processes or containers are doing similar things, like
-> constantly allocating 8k blocks, they all try to use the same block group
-> in the same list. Even just two processes doing this can cut the IOPS in
-> half. For example, one container might do 300,000 IOPS, but if you run two
-> at the same time, the total is only 150,000.
->
-> Since we can already look at block groups in a non-linear way, the first
-> and last groups in the same list are basically the same for finding a block
-> right now. Therefore, add an ext4_try_lock_group() helper function to skip
-> the current group when it is locked by another process, thereby avoiding
-> contention with other processes. This helps ext4 make better use of having
-> multiple block groups.
+Hi all,
 
-It seems this makes block allocation non deterministic, but depend on
-the system load. I can see where this could cause problems when
-reproducing bugs at least, but perhaps also in other cases.
+Commit
 
-Better perhaps just round robin the groups?
-Or at least add a way to turn it off.
+  105d55ade07f ("")
 
--Andi
+is missing a Signed-off-by from its author and committer.
+
+In fact it is missing any message and any patch! ;-)
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/nYmK6fbkLEWpFubnp0H+86f
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh5eVAACgkQAVBC80lX
+0GzEbwgAjj+sA47IcRHZI01MqL8I5zTb3hr1UmLjrPmvwb+puHvuVh1JFOeD8aX3
+bXt5Zfxn5Obku7sK9ijcN+NWdEPXgadlSMsF+G/YT8bN1HItTlVtAbeIzJFiVBRU
+X+QR5PzqdDU8SibAluMmVuRZ9/13HsOl/eMloXid7yJzY/KuJh+PYw5OZEK+Qpmo
+hj86C0sgQB1tONAqgXeJPgGKkwRw13/fp3u8rqKrHdBFpfa1wOguZ7V8m4T7A8nF
+AN2PPmHOi7rBGISnz7gXjsqS6F4P+YLDAvQK6kkrWekJTcRVY0g6/c8fIQhWMqZ0
+wbVlggzry/xaSK6gokhNrPNMz0yWNw==
+=R70T
+-----END PGP SIGNATURE-----
+
+--Sig_/nYmK6fbkLEWpFubnp0H+86f--
 
