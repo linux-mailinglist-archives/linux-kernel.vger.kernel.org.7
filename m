@@ -1,239 +1,173 @@
-Return-Path: <linux-kernel+bounces-735485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B330B08FF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:59:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E6ABB08FFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:59:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69D1BA47421
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:58:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2EC95857ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:59:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 810E92F85D5;
-	Thu, 17 Jul 2025 14:59:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74D192F8C2A;
+	Thu, 17 Jul 2025 14:59:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FhU+0qHk"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f1gcU95t"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44AF51DB375;
-	Thu, 17 Jul 2025 14:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC472F85D1;
+	Thu, 17 Jul 2025 14:59:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752764347; cv=none; b=ruVlSOw2A7JwyvLph30YSU+iCJmRkh1WAs+gyup+jVDyO00tjSdb5eawi5LcZP7AqFQwq9ziJSH8pOOM52XOAF437HbiP32hSGGjJR06yOhewTUIfrZtIt1OBpQXPH7gXLJkpD7fD1npkmpL/xhFLlgxhRhMFYAdW50DkxWEdl0=
+	t=1752764365; cv=none; b=AwQ0bLI2r3lqrMUeiVIcK4bZDjwk3snCgjebQDNL/ak9s+ak6q88T620HeOnYSvPVUBBnxAJHdRhQGRAdj3WqddQ5kUSJJ3WGAsnaMCr31gMTAC1wqc2w28Cu+6SNO0LvmN00qDfeQPbbsg99HAGwB2JQn7pWaJMrgDxF51bJMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752764347; c=relaxed/simple;
-	bh=DTo3ffJbLlUuJEP+zhqi55XqmtMADhA+yWU6G/zt2jI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R6rZcbJ+/11+Yr1HxMdQraQRCRWjR7ltvuF+K+tAK8BVQJnrGe7jvcLAcT9/FjmOYfSCCvUrEANp7JigadGDvZf6cOa3V3QDW9z5qWtKHlwbGtGjNYSu0HxHo3JBvl30eCXepxUUUDcRAP3OM74H3m0iVD4avsKbvUxWTzGQ68Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FhU+0qHk; arc=none smtp.client-ip=209.85.215.171
+	s=arc-20240116; t=1752764365; c=relaxed/simple;
+	bh=JMX/QgUhmqLWxuEkWEUiV/WuMSD4F4bRfw4zHmMzWUw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=IexqzRldm0dAeA+CQvXXEqs6AV+HktE91Hs2CzA2yJBq6sAvoXnBgqYHQdvnjcdPXCyR9VHyFmHTCOkX9j03VLdoZy8QkDgEi2cx1o/ruSqKOUxna7yFQskQIiUQ/sbxtMV+2zxT/PBKOEINxviDbQgkl67/r7R9/zdNJHstOT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f1gcU95t; arc=none smtp.client-ip=209.85.214.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b31ef5f24b7so61332a12.0;
-        Thu, 17 Jul 2025 07:59:06 -0700 (PDT)
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-23e210ebd5dso16100645ad.1;
+        Thu, 17 Jul 2025 07:59:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752764345; x=1753369145; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9Ya0Pf7GBbiFI9yCYfAdyjgFg/XCTrL1Lup/5nSkjZ4=;
-        b=FhU+0qHkHKFZTw3TRKIG+/Mi2dWmhxULIm1f8LDiQobKGMshyXO/GPBCHJy3vevj9A
-         cjFJhBzvd652dqLPgxkYiYkBHPmNwjVZSn2y81rhyrXGU+v6mQwOAmpiZUOOAA9lWfOB
-         PE6uAL63Vwg7rGBrCWgL4luudcPYW+mrAmVAzn2f/fdUTXtPhqFUjo/rbKSMXUJXpTc6
-         wKAurJQ5VLFPcPBcO9pztpkoSoqBDHhEc2RaTLhBfMEQ4z8lHeWYNYmito0tGtLn10Ch
-         WWYtz6mKJLxwOdEYl0TjW3WkToSHDn2EDrl6ug4nHeK19vFfa2+IOsKW4FP8QqfrUyAo
-         6naQ==
+        d=gmail.com; s=20230601; t=1752764363; x=1753369163; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vnmPbk+SzjnQUab3zLiOuEdr6xig/TglCXCOUdlG6xw=;
+        b=f1gcU95tNbxCA9FrYQIQkVdoIKcB1FKAj4/u9/qomR0cHXTpOm5T6Q0olzsh/kIBH4
+         T2+EvUJ4sFfIk/473icxVUGfa3W4wWcP4rbT04T6tR7f6Afuvtn/b7ZciTlE/TVP7j51
+         KkqQWOUh2OdnjZtE7+dCxKMgSLeXTqLFeCj2j7g9jB1ODb/LOuGATL9X+382DJ0DAC7b
+         eLbDLhlVc+o/HUHNOQ7r57K8F2wcFuUMBEm0Goe7XNJhfEIoXcTwlY7qTa+nL3CO85GN
+         1yHOo6RJMfBvfSebQC+9Ir6mHj/GW0GvmiAIZDjJdiLiTz3lnhGYUlpzpIb2kAy3G0+5
+         6dpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752764345; x=1753369145;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9Ya0Pf7GBbiFI9yCYfAdyjgFg/XCTrL1Lup/5nSkjZ4=;
-        b=mqnoyPLmHnwcGjg5VlePSwPY2I+2EuFXVAbdJSSavefntfP0gVodZES7OU45okZXxC
-         oAgDFiU2r8OHyQLpGhdX3FtXB8ASpaMuI+xHajVSr1KCk/sbqwoJM/2LAGl4lpb1icLU
-         0/7Rrz0Nqx7/xcIrEFujHD1uII9EoqjrBcg+hoB15Su11xNR+BX5RadnC2Rlsc+bguTv
-         pTh1OjwiaBGjcJr2zCjnWltdWxnO85eRA2KILtFEsOdmOzNsdfd8v4/+Zb+3OW6MDinx
-         2ulS4wmMz//U9/5kAbLdD+j7W7Hcaw05HqSkeTt4n7hg/GgOfSMihR++OZGE39dC8SAF
-         b+Pw==
-X-Forwarded-Encrypted: i=1; AJvYcCWV6ri8dt+vsE2Fyg4/n6ISJ5teUtw/0PbGnLsVEjhub0OmtD1axoFnawzcjlMhCneFXOCw1xnA@vger.kernel.org, AJvYcCXfABSH49f4HHHDbXDybjEnonfKDN6BnjIJUbKdxbNUJS/p6jcXPy+ZCY3o1SnM/x7+DFwu9vjut2IO7vs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx44/JCS27IlMcNfdirHeDMZ+wA9ItjPeKWzKF08OHhePRCiNdX
-	cVmuXi7woib1z7ly9V3zKYMLgOrXavlvFtYXurRn4oN4a2WsU5yozw9uuEjacaVwCi3k2O2Lacx
-	/CCsdgBnrTM+dLUa+tXe2gzJm9PaGkQaoDg==
-X-Gm-Gg: ASbGncsT8or5De2GY0/oURF10Jv8btqyV+8yRVS9siosPwJDnxRqJXMHFEu2Hcz2z1M
-	hKW9rVAYca+BnsdRdf9Fxi3AiA8vm+YP9XwoQnB3k+66LlrarE+ugH5bL08JtvbCLdOvkyZrpDI
-	KZTiYqwaK9hofiS2/DcAks0a68UVUKRMJUzq4m2XJnjENzJ4fD/ulWfIK8IU+bUbxiH8fVZ9mQp
-	pV2riBm
-X-Google-Smtp-Source: AGHT+IHHlq/nQ9G6EWKKiMZEs2wLT9KLcyNzfgfIaMgOnK9+QgUCsPjP/ogcxgDDwwAVqR5cbpqVFpHPsuJaCZ+oScY=
-X-Received: by 2002:a17:90b:4b8b:b0:311:9c9a:58e2 with SMTP id
- 98e67ed59e1d1-31c9e798695mr3931081a91.7.1752764345395; Thu, 17 Jul 2025
- 07:59:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752764363; x=1753369163;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vnmPbk+SzjnQUab3zLiOuEdr6xig/TglCXCOUdlG6xw=;
+        b=qwxpzxivG7BnSLsLZR+yR0LTVO4FnQIT+JeKbPTAIP2Nlf0d070iw7+OKCkbGshw0O
+         JCTre3UyJrgVSCspIEPG1KrC133MGKbATmBT36hYM91BpzhRsjnn6aLKHLREYBXRJVut
+         4ct7qF3XFFpZaYoOO1Sp3gOsAZDr85bdnWRbYqLjU/RJ8iF4Yt3yBmGDc2geNVpwPw9U
+         OGM9M9cJ9+Ymub8vnur9XY+1L30GN9pssX8TTVAn5q2urrgMg8GtxF87VPWuid5/M1fO
+         aH5plZr3jj9WA0ElQ8LVpwI6z4Lt2guEaLBkHpLUV6+/xDs40wmxWMC8LILdHlzMq6Kw
+         zrBg==
+X-Forwarded-Encrypted: i=1; AJvYcCUnsTJ2oLt19FqQnGPlRkjX47ciwPMmD1AlaGerbNsSZEfVs0nxKhDUrVp/ppWHc5nEOdV3+LjQ3st+09l6RRc=@vger.kernel.org, AJvYcCXFtpxcE22xKFyT7KPc54gxSplyK7IYl8M1ckKD+uBvIUkeB9Hk2rm/sfiUbpT3PLeZM4Ea/+Z2F2mNOlbh@vger.kernel.org, AJvYcCXlYJS91StJAZlC+o9/3pgQbEtnlKPE38aeFU79I6W/7RXuxJV/qYp0EhJ5iY1jqsIUxpIC2H+OwoHdUbABC8kZacg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkmTEzVpkJd82yh+CBbpZAtGPtQiTz2I4pBtjb2kAeEZk8Jb99
+	wxx/bYnsCfum3B5n7uFw0QvJ4J4n5EP/8ek6l2Xn4Js1t+FPhV3NIwdJ
+X-Gm-Gg: ASbGncu8BSgYFRBRtZ9LGvNBRcnk92HK2HoS1GwvXOznbWAgPpT6QjfcyqeQGECxakm
+	bf7y4v2gFRSYa/ZSOgE6TdhB7AXTBFA1Urv4++YNvw5dVhOsWBwyTSvwQ46zQwDDPVGNjhuSgCG
+	5dvbpHcRSK1Vo1aka+wsNU9tJwHb96NMG35BCVZDCdVRU7ztHFOdtU4iPmq5T330hCMHmTgNR4w
+	zUsV3YgMBazbN+6Di+RzkBAJZBA9mNGk9D6vcYeoNqciGJiBdPQP2sPRw3hvxg9DeOQYXQkIu1+
+	NpgP1311FzEEcNTzVDQ9CojzXmO7I6xfzmuV0p+b8bK0gA3H0NaFEl/fO0UdYvsHszhXGrKDA5R
+	hu9JiXknXKOrx58EIpOW6RlVOMWS8zTbefITZZwZ5QAGKyMxBvDWCRDUWRwF6djUzGAk=
+X-Google-Smtp-Source: AGHT+IHgkzEOYEeBylkMIDMLWlCKIz9EjBVWlMOVczHADMYS0NEj3G6AuhDKx5MYpE25LRvaHDKgNg==
+X-Received: by 2002:a17:902:d4c1:b0:234:595d:a58e with SMTP id d9443c01a7336-23e38fb11efmr1511875ad.25.1752764363108;
+        Thu, 17 Jul 2025 07:59:23 -0700 (PDT)
+Received: from [172.17.0.2] (125-227-29-20.hinet-ip.hinet.net. [125.227.29.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de42aea81sm144603915ad.82.2025.07.17.07.59.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Jul 2025 07:59:22 -0700 (PDT)
+From: Leo Wang <leo.jt.wang@gmail.com>
+X-Google-Original-From: Leo Wang <leo.jt.wang@fii-foxconn.com>
+Subject: [PATCH v8 0/2] ARM: dts: Add support for Meta Clemente BMC
+Date: Thu, 17 Jul 2025 22:58:58 +0800
+Message-Id: <20250717-add-support-for-meta-clemente-bmc-v8-0-2ff6afb36b0e@fii-foxconn.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250716161753.231145-1-bgeffon@google.com> <CADnq5_P+a2g_YzKW7S4YSF5kQgXe+PNrMKEOAHuf9yhFg98pSQ@mail.gmail.com>
- <CADyq12zB7+opz0vUgyAQSdbHcYMwbZrZp+qxKdYcqaeCeRVbCw@mail.gmail.com>
- <CADnq5_OeTJqzg0DgV06b-u_AmgaqXL5XWdQ6h40zcgGj1mCE_A@mail.gmail.com> <CADyq12ysC9C2tsQ3GrQJB3x6aZPzM1o8pyTW8z4bxjGPsfEZvw@mail.gmail.com>
-In-Reply-To: <CADyq12ysC9C2tsQ3GrQJB3x6aZPzM1o8pyTW8z4bxjGPsfEZvw@mail.gmail.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 17 Jul 2025 10:58:53 -0400
-X-Gm-Features: Ac12FXzrKvidT2q85M3LPC-hr0sTqZC7FoEbjKXO6dUbumO7fgzZhruHSNnRlGI
-Message-ID: <CADnq5_PnktmP+0Hw0T04VkrkKoF_TGz5HOzRd1UZq6XOE0Rm1g@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdgpu: Raven: don't allow mixing GTT and VRAM
-To: Brian Geffon <bgeffon@google.com>
-Cc: "Wentland, Harry" <Harry.Wentland@amd.com>, "Leo (Sunpeng) Li" <Sunpeng.Li@amd.com>, 
-	Alex Deucher <alexander.deucher@amd.com>, christian.koenig@amd.com, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, Yunxiang Li <Yunxiang.Li@amd.com>, 
-	Lijo Lazar <lijo.lazar@amd.com>, Prike Liang <Prike.Liang@amd.com>, 
-	Pratap Nirujogi <pratap.nirujogi@amd.com>, Luben Tuikov <luben.tuikov@amd.com>, 
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, Garrick Evans <garrick@google.com>, 
-	Thadeu Lima de Souza Cascardo <cascardo@igalia.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALIPeWgC/5XRTWrDMBAF4KsErauif0Vd9R6lC2k0agS1ZWTXp
+ ATfvXI2NdQFZ/mG4XsDcyMj1owjeTndSMU5j7n0LZyfTgQuvv9AmmPLRDChmeFn6mOk49cwlDr
+ RVCrtcPIUPrHDfkIaOqBOca+MC6CFJM0ZKqZ8vXe8vbd8yeNU6ve9cubr9BF95pRR1OCNcYjKh
+ teUc9u9Qun7ZygdWTtmsXEFP+KK5hrQmJh2XDnYd+XWlUdc2VwQQqYESRlI+67auvaIq1YXbUp
+ CKsNA7bv6YVc3l8kzRpM4BPfPvebXtezQ30xzbZKobYhMSrPv2o3LzRHXNjfqEKzSDrT3f91lW
+ X4A8/ldSugCAAA=
+X-Change-ID: 20250618-add-support-for-meta-clemente-bmc-941a469bc523
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+ Andrew Jeffery <andrew@codeconstruct.com.au>, Kees Cook <kees@kernel.org>, 
+ Tony Luck <tony.luck@intel.com>, 
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+ linux-hardening@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ leo.jt.wang@fii-foxconn.com, george.kw.lee@fii-foxconn.com, 
+ bruce.jy.hung@fii-foxconn.com, Leo Wang <leo.jt.wang@gmail.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752764359; l=2456;
+ i=leo.jt.wang@fii-foxconn.com; s=20250618; h=from:subject:message-id;
+ bh=JMX/QgUhmqLWxuEkWEUiV/WuMSD4F4bRfw4zHmMzWUw=;
+ b=O7FZv7SmN+3mZNqZcFF0E6+kINF6Do9tG1Je+dkH5V0XJWXbF2wApr0D+XWg6pkWRwXAS+RhJ
+ tgITsqyOYw1AMNw2JUBAAELEhjLPkzXTNYi7iabDimDhxy6AIb8bJbp
+X-Developer-Key: i=leo.jt.wang@fii-foxconn.com; a=ed25519;
+ pk=x+DKjAtU/ZbbMkkAVdwfZzKpvNUVgiV1sLJbidVIwSQ=
 
-On Wed, Jul 16, 2025 at 8:13=E2=80=AFPM Brian Geffon <bgeffon@google.com> w=
-rote:
->
-> On Wed, Jul 16, 2025 at 5:03=E2=80=AFPM Alex Deucher <alexdeucher@gmail.c=
-om> wrote:
-> >
-> > On Wed, Jul 16, 2025 at 12:40=E2=80=AFPM Brian Geffon <bgeffon@google.c=
-om> wrote:
-> > >
-> > > On Wed, Jul 16, 2025 at 12:33=E2=80=AFPM Alex Deucher <alexdeucher@gm=
-ail.com> wrote:
-> > > >
-> > > > On Wed, Jul 16, 2025 at 12:18=E2=80=AFPM Brian Geffon <bgeffon@goog=
-le.com> wrote:
-> > > > >
-> > > > > Commit 81d0bcf99009 ("drm/amdgpu: make display pinning more flexi=
-ble (v2)")
-> > > > > allowed for newer ASICs to mix GTT and VRAM, this change also not=
-ed that
-> > > > > some older boards, such as Stoney and Carrizo do not support this=
-.
-> > > > > It appears that at least one additional ASIC does not support thi=
-s which
-> > > > > is Raven.
-> > > > >
-> > > > > We observed this issue when migrating a device from a 5.4 to 6.6 =
-kernel
-> > > > > and have confirmed that Raven also needs to be excluded from mixi=
-ng GTT
-> > > > > and VRAM.
-> > > >
-> > > > Can you elaborate a bit on what the problem is?  For carrizo and
-> > > > stoney this is a hardware limitation (all display buffers need to b=
-e
-> > > > in GTT or VRAM, but not both).  Raven and newer don't have this
-> > > > limitation and we tested raven pretty extensively at the time.
-> > >
-> > > Thanks for taking the time to look. We have automated testing and a
-> > > few igt gpu tools tests failed and after debugging we found that
-> > > commit 81d0bcf99009 is what introduced the failures on this hardware
-> > > on 6.1+ kernels. The specific tests that fail are kms_async_flips and
-> > > kms_plane_alpha_blend, excluding Raven from this sharing of GTT and
-> > > VRAM buffers resolves the issue.
-> >
-> > + Harry and Leo
-> >
-> > This sounds like the memory placement issue we discussed last week.
-> > In that case, the issue is related to where the buffer ends up when we
-> > try to do an async flip.  In that case, we can't do an async flip
-> > without a full modeset if the buffers locations are different than the
-> > last modeset because we need to update more than just the buffer base
-> > addresses.  This change works around that limitation by always forcing
-> > display buffers into VRAM or GTT.  Adding raven to this case may fix
-> > those tests but will make the overall experience worse because we'll
-> > end up effectively not being able to not fully utilize both gtt and
-> > vram for display which would reintroduce all of the problems fixed by
-> > 81d0bcf99009 ("drm/amdgpu: make display pinning more flexible (v2)").
->
-> Thanks Alex, the thing is, we only observe this on Raven boards, why
-> would Raven only be impacted by this? It would seem that all devices
-> would have this issue, no? Also, I'm not familiar with how
+This series adds initial support for the Meta Clemente BMC based on the
+ASPEED AST2600 SoC.
 
-It depends on memory pressure and available memory in each pool.
-E.g., initially the display buffer is in VRAM when the initial mode
-set happens.  The watermarks, etc. are set for that scenario.  One of
-the next frames ends up in a pool different than the original.  Now
-the buffer is in GTT.  The async flip interface does a fast validation
-to try and flip as soon as possible, but that validation fails because
-the watermarks need to be updated which requires a full modeset.
+Patch 1 documents the compatible string.
+Patch 2 adds the device tree for the board.
 
-It's tricky to fix because you don't want to use the worst case
-watermarks all the time because that will limit the number available
-display options and you don't want to force everything to a particular
-memory pool because that will limit the amount of memory that can be
-used for display (which is what the patch in question fixed).  Ideally
-the caller would do a test commit before the page flip to determine
-whether or not it would succeed before issuing it and then we'd have
-some feedback mechanism to tell the caller that the commit would fail
-due to buffer placement so it would do a full modeset instead.  We
-discussed this feedback mechanism last week at the display hackfest.
+Signed-off-by: Leo Wang <leo.jt.wang@gmail.com>
+---
+Changes in v8:
+- Relocate IOBx_NICx_TEMP TMP421 sensors
+- Enable byte mode for i2c11
+- Link to v7: https://lore.kernel.org/r/20250716-add-support-for-meta-clemente-bmc-v7-0-d5bb7459c5aa@fii-foxconn.com
 
+Changes in v7:
+- Relocate CBC FRU EEPROMs from i2c13 to i2c12.
+- Link to v6: https://lore.kernel.org/r/20250708-add-support-for-meta-clemente-bmc-v6-0-7f3e57bd0336@fii-foxconn.com
 
-> kms_plane_alpha_blend works, but does this also support that test
-> failing as the cause?
+Changes in v6:
+- Correct Author email to match Signed-off-by email address.
+- Link to v5: https://lore.kernel.org/r/20250627-add-support-for-meta-clemente-bmc-v5-0-038ed6f1cb9f@fii-foxconn.com
 
-That may be related.  I'm not too familiar with that test either, but
-Leo or Harry can provide some guidance.
+Changes in v5:
+- Remove accidentally pasted texts.
+- Link to v4: https://lore.kernel.org/r/20250627-add-support-for-meta-clemente-bmc-v4-0-ce7ff23460c4@fii-foxconn.com
 
-Alex
+Changes in v4:
+- Move properties of nodes defined in the same file from label ref back to where they belong.
+- Move pinctrl default configs for ncsi3 and ncsi4 to aspeed-g6-pinctrl.dtsi.
+- Add properties to i2c10 and i2c15 to enable MCTP.
+- Link to v3: https://lore.kernel.org/r/20250623-add-support-for-meta-clemente-bmc-v3-0-c223ffcf46cf@fii-foxconn.com
 
->
-> Thanks again,
-> Brian
->
-> >
-> > Alex
-> >
-> > >
-> > > Brian
-> > >
-> > > >
-> > > >
-> > > > Alex
-> > > >
-> > > > >
-> > > > > Fixes: 81d0bcf99009 ("drm/amdgpu: make display pinning more flexi=
-ble (v2)")
-> > > > > Cc: Luben Tuikov <luben.tuikov@amd.com>
-> > > > > Cc: Christian K=C3=B6nig <christian.koenig@amd.com>
-> > > > > Cc: Alex Deucher <alexander.deucher@amd.com>
-> > > > > Cc: stable@vger.kernel.org # 6.1+
-> > > > > Tested-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-> > > > > Signed-off-by: Brian Geffon <bgeffon@google.com>
-> > > > > ---
-> > > > >  drivers/gpu/drm/amd/amdgpu/amdgpu_object.c | 3 ++-
-> > > > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > > > >
-> > > > > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c b/drivers=
-/gpu/drm/amd/amdgpu/amdgpu_object.c
-> > > > > index 73403744331a..5d7f13e25b7c 100644
-> > > > > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
-> > > > > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
-> > > > > @@ -1545,7 +1545,8 @@ uint32_t amdgpu_bo_get_preferred_domain(str=
-uct amdgpu_device *adev,
-> > > > >                                             uint32_t domain)
-> > > > >  {
-> > > > >         if ((domain =3D=3D (AMDGPU_GEM_DOMAIN_VRAM | AMDGPU_GEM_D=
-OMAIN_GTT)) &&
-> > > > > -           ((adev->asic_type =3D=3D CHIP_CARRIZO) || (adev->asic=
-_type =3D=3D CHIP_STONEY))) {
-> > > > > +           ((adev->asic_type =3D=3D CHIP_CARRIZO) || (adev->asic=
-_type =3D=3D CHIP_STONEY) ||
-> > > > > +            (adev->asic_type =3D=3D CHIP_RAVEN))) {
-> > > > >                 domain =3D AMDGPU_GEM_DOMAIN_VRAM;
-> > > > >                 if (adev->gmc.real_vram_size <=3D AMDGPU_SG_THRES=
-HOLD)
-> > > > >                         domain =3D AMDGPU_GEM_DOMAIN_GTT;
-> > > > > --
-> > > > > 2.50.0.727.gbf7dc18ff4-goog
-> > > > >
+Changes in v3:
+- Modify leakage sensor to reflect current design.
+- Link to v2: https://lore.kernel.org/r/20250621-add-support-for-meta-clemente-bmc-v2-0-6c5ef059149c@fii-foxconn.com
+
+Changes in v2:
+- Fix patch 1/2 subject line to match dt-bindings convention.
+- Reorder device tree nodes in patch 2/2 to follow upstream DTS style.
+- Link to v1: https://lore.kernel.org/r/20250618-add-support-for-meta-clemente-bmc-v1-0-e5ca669ee47b@fii-foxconn.com
+
+---
+Leo Wang (2):
+      dt-bindings: arm: aspeed: add Meta Clemente board
+      ARM: dts: aspeed: clemente: add Meta Clemente BMC
+
+ .../devicetree/bindings/arm/aspeed/aspeed.yaml     |    1 +
+ arch/arm/boot/dts/aspeed/Makefile                  |    1 +
+ .../dts/aspeed/aspeed-bmc-facebook-clemente.dts    | 1295 ++++++++++++++++++++
+ arch/arm/boot/dts/aspeed/aspeed-g6-pinctrl.dtsi    |   11 +
+ 4 files changed, 1308 insertions(+)
+---
+base-commit: 52da431bf03b5506203bca27fe14a97895c80faf
+change-id: 20250618-add-support-for-meta-clemente-bmc-941a469bc523
+
+Best regards,
+-- 
+Leo Wang <leo.jt.wang@fii-foxconn.com>
+
 
