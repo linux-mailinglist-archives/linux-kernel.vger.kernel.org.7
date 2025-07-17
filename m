@@ -1,166 +1,126 @@
-Return-Path: <linux-kernel+bounces-735658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95296B09236
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:50:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E36C9B09239
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:51:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 162D21890219
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:50:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69C024E0FA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD6E2FCFF4;
-	Thu, 17 Jul 2025 16:49:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E52742FCFDC;
+	Thu, 17 Jul 2025 16:50:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=isovalent.com header.i=@isovalent.com header.b="YwxRb+Pa"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NJ7k5MZB"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76CA42F94AA
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 16:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17CFC2F6F97;
+	Thu, 17 Jul 2025 16:50:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752770995; cv=none; b=oFet0XSjs9UGVnMbOtQceyP49uGatpfZRrBOyfuGw0JuTJRFoqEBGcA8eeIrznyfMkd2dBhhOJ9V434q3z+4m0C8QSbcQwLLL6BrRsrrJ0wDoT+6kQjtWe+vX7ZCR/mZS6imzIPHM295vp1YMdVcx8JiJ0U0OYWZXnuSmaHl868=
+	t=1752771059; cv=none; b=lNtnlzgf3BnEUhH0hETjlffeOh1bJL7xQ8IGHrvee1ehD+FQ9P29FXH6hcVo5OlTmP23mYc+rLi92cbHDlae8LEi0t14mwOQyD7VRgVVDFeXNg18q81cGgixwds0T6lzBnuYTao5th/pr9KaDr4eLUiI1RKX8VGoOaj14CBZCuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752770995; c=relaxed/simple;
-	bh=9cgB3TOPwSr1wE07CMGkQYwcs0YPQweBj451ZDmkDaA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JK3EaTa14KCDVF1bsSWR/erT1e/tsju0NXRDCQMafX5TNAU7E8j5nOF1BIOMgBUudHTvBNwyjd3cbtAcH8BZWtrxFAeGljwqwjFDejVC7i0FMNk0RZ6R/zefqScNYq/il9ZQXkE6TcVM+3wBY3UJ9+DFSap9hPmCKO8CZqGAz3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=isovalent.com; spf=pass smtp.mailfrom=isovalent.com; dkim=pass (2048-bit key) header.d=isovalent.com header.i=@isovalent.com header.b=YwxRb+Pa; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=isovalent.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=isovalent.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-455ecacfc32so5293985e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 09:49:53 -0700 (PDT)
+	s=arc-20240116; t=1752771059; c=relaxed/simple;
+	bh=Qk+otSaQ/bhrkhXBPwZilIzHHGiFeO9krGAmrxoWEBM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kd/NDpwDOzFQudR+UK65Lnc81RIAJGYQvnZApHmsQyz4BmPwqWXDd+A6Pkt6EmEwPr5ol8rIiaYynKJ0puQYyszx9YiyM/cWOHGTWZeR7SUo84QPym/+m58ObxXlgAOwHog/j/wDBLKpCvcikfdd9UO5wWqFl7oFxNoiuHAECH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NJ7k5MZB; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-235f9ea8d08so10950195ad.1;
+        Thu, 17 Jul 2025 09:50:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=isovalent.com; s=google; t=1752770992; x=1753375792; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9PpESPaqCYrYa+aak5AktG6n/gTSddz3EZjY1kdqmFI=;
-        b=YwxRb+PaZXkIWkP4OIh6TyZN34R6jt0qR7vJ/E2OJmNCi/wNpyZpO2tbaaWvgvXlcD
-         2ryWBvVM/tuEmudJFeIDPDP65Qcckt8O0eL6mkNnue2ikd9eUjxufQpdWEkkQnxeUMkB
-         LmgZ+y+2dTw8oKJ3yg1bYT5KHLFx5CJXzm7PKw2djStmtrckNQH5E9ITTu6PC0jm2cQx
-         oiGLWP39wdgLF1JaqwNUopWaoVFklATqLDwYhLzcKGhhw+5wHOS01jiYnsBwDoXXXlRh
-         oazG6bGujHWW5GpjlqVxlmG4Phm0FyciLC4jKME6OfdhEFLufIdb5dulGlCe7tVao2eq
-         ug5w==
+        d=gmail.com; s=20230601; t=1752771057; x=1753375857; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/9X3q0TtgP4k2R016QOhjy33cng8/g6IRNUqUntPpDI=;
+        b=NJ7k5MZB++1KEJGSOI4R9o6v79mCKzByKYmqucokjozNKDwvZATZ85b/UzYhidIekD
+         RXDboY/LtRJzKmT1vWGHsoQiYxyMgNBbsgKx9r5JvaI6je3dmegif0f3s1mv0Byfiplq
+         xHdkSfpkPcKWDFAZYbbDTVj3vDdL0RwgtzKTOZgeJL+LunXGObJbJHRXZvtlcve16dkS
+         ZvnKSbrY7f2c9N4/+PfkdrXCg9CnEpkfJpM5Pce9cxdiH+uEPrihFJFEzi7SUeFz9Lpj
+         8UlN6mRPtRY7leZ47lyK8GUS6ULz+f9YWYNcNESd9nL6oI7bzyuAVNhwogEXi0/Gpw/+
+         DSsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752770992; x=1753375792;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1752771057; x=1753375857;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=9PpESPaqCYrYa+aak5AktG6n/gTSddz3EZjY1kdqmFI=;
-        b=ipFL2tsFKbBsFva16flam+EUDWMKijL6qnr7TMsaqzXayAWBg8A9ECWLNHRf20uV4t
-         9UyyYMoaoQMl9Yv0t5jaaBxJJv4AlMeou6LVJ8L6rEU6bXHLUUoZvRWH+gMSdE0PF441
-         k71aZRSgcz+Xb3NmUQpzfisD1Achpx8dPN9De7LdHYqA2DcifVnhnGwnRuyHWTo87s4I
-         OAFB3HmtBrLzMXJJ5Yf2BlE1Oeok+KYak7wGzNpLjeeYpm6xIYjs4QXhdaihvd0OJEJz
-         wCYs1E5NYTZn2ih40J1E+flxcjj8uU8ea7spUvoOAZf0WItlguX4E/9BcOl3kxJlZRue
-         0LkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX6XcrJMYEbEH9jzD/iO6htvHTF+6DAZhw/dppgNiGK9IPiNNQemxeNMNikTSn+TgfXA6M3Wv6qXYp4+xk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfJ/A/2n++FPw4dpn0UySWIOdRPJ3JqzC4U9Uwe2/jRkPQtCDH
-	PZspM9y4/oUyRhQncFeLExvUksiFTlgVnPzarrfuQfMACSLzi8OhLp94l20E4XyaHFu+43vMP4P
-	HEkHN
-X-Gm-Gg: ASbGncuG8dlHOqzHdQc2o9C/Nz6CbjlZjiMWJK5R2ZLiKX5GY/zWYclY713hDVZRu/G
-	U36t3C8zivfmKZIU0a4HP1y7ZY8OCFr7bTedCV4WG5M+3jXuAkvAEOcisszwg5X3+VzrtTqaHio
-	K4vLhRCrsx44pwDTCCt2V0g1Gp9imFG02GarRdgQUvv63bMxKXJ/CnzePBvSoK2q3MoTcW9D9h+
-	cl9VdI5o7O3NezHvdH6VfFHDbXnvawJUChwlyDkWBuOYtKGIZTp8HnJArYacaqF5Tt30cu2hTlk
-	ah18Jm6M96A3BO5zQ+0y3dn3ZrdcZDktKTUSYbIRnnWroifWthTv0ohIdmT0B0OZke0R6SolQLB
-	Okr0DVKo6anK6t7tME0TT
-X-Google-Smtp-Source: AGHT+IFea0sOpyAUvZX8LvcnZK2X3TTge5McpyLZVoR/3HTrDRjXOPydKYiIP05qHr4Lz8tUaV+gsw==
-X-Received: by 2002:a05:600c:8b85:b0:456:2347:3f01 with SMTP id 5b1f17b1804b1-456355c60d3mr33071495e9.20.1752770991748;
-        Thu, 17 Jul 2025 09:49:51 -0700 (PDT)
-Received: from [172.16.82.34] ([167.98.39.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8bd15bfsm21433409f8f.19.2025.07.17.09.49.51
+        bh=/9X3q0TtgP4k2R016QOhjy33cng8/g6IRNUqUntPpDI=;
+        b=PADfxa+1/GoLSAhd/zxRMtXdhbxK2O0VGPxRiJ4JJ63UJf7kU4RSXQxvOGgVJM68cl
+         4eN1IbWj5jfMHWtU7xCUWvj49xivMGG7QfAgTL2sugBeGE4jPvpTkcX0+jIxa9WNCNmw
+         KLsS4Bh94yDAGBnkahFoachjbwLijjwv6OEHcfAXNINRJRU8VkpjHKibPe3UeHKk2uIG
+         PklSLn8ly2YhE3dSOSfsCmgtvFsgFwHPOSqfUPTvBCp69qHMCBiWmQDi8292e2ebN1NA
+         8soPUasxbyC9KVGdrFYmhi0tM4sLlxRgHIpNKWhJGTSoKuHGi2GG78cBgNgnl1LpUpKv
+         TzLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVCzmsc4hR7Cuk3rYejaOIYAapQ6VS4p7UY4JLb09v2hqDd4lSS9IDSGuejqFLgKuf/GFP3l7iw4kjT@vger.kernel.org, AJvYcCWvSmoz1LPhnBZsJNW3TbNhNpx8AY3fiqb/T3MhYXxIVGU7u2OPLpaf7MseAojP6K1G4Y3CL6Rsk1nMqtA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/Q5LUi8GlNTFePX+99sWwARxQ7+ZqcTWoFuycBw0phSmqZMuo
+	OQhPqPEOOqwVqj2IrIqo3AtFLtWB5iZpbjICpDBNI4KFu1wTAW9/fxONTEKG+g==
+X-Gm-Gg: ASbGncto1d8JFsWq5fx8h8VvVwzm3VyjooV84ffoW83B+pL/KvX4sncyHIaOJkJrxH0
+	m7SUB7B81YRZB1rCa16Xogod5f44gHFlxONFj6J+KQWHHEMjmElZL58mENr47ow3uBANtqvyreo
+	2EO5+m+tYOm7aLDZtTadFkeJEGwc+7Axx5ssInRhTXCGdOAzkabLprSbYnZWg3SoaFogua7kk4c
+	FXnoEYWFQFrmKmcuGZEg9fVBcBPrYStz444+isovtZdQI0dyKcmeiOZbCR/rINzj6Mh2UZnYpLK
+	Sg1qP2+6honK7O5qa/8rULuklzqC/hKbuyAu5i8ueMrNUIqQwslVGSpBKaUyBP15cxpp4PAFbjZ
+	xm9Y6vp/nKOJz40pLReQeQseTDQWlhDBOxp3UwNo=
+X-Google-Smtp-Source: AGHT+IGxS3bJv6ZaPpVkkTvG2nJQjNHK4/h/hcoZK+js3e5oJ2LRsbD9l1HgyOvqUM/XIXLe0FF5eg==
+X-Received: by 2002:a17:902:c943:b0:234:ba37:87a5 with SMTP id d9443c01a7336-23e24f4a7c9mr99073915ad.25.1752771057278;
+        Thu, 17 Jul 2025 09:50:57 -0700 (PDT)
+Received: from localhost ([2600:1700:22f5:908f:1457:7499:d258:358f])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de43226c3sm149787965ad.117.2025.07.17.09.50.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 09:49:51 -0700 (PDT)
-From: Lorenz Bauer <lmb@isovalent.com>
-Date: Thu, 17 Jul 2025 17:49:49 +0100
-Subject: [PATCH bpf] btf: fix virt_to_phys warning on arm64 when mmapping
- vmlinux
+        Thu, 17 Jul 2025 09:50:56 -0700 (PDT)
+From: Matthew Wood <thepacketgeek@gmail.com>
+To: "Bjorn Helgaas" <bhelgaas@google.com>
+Cc: "Mario Limonciello" <superm1@kernel.org>,
+	"Jonathan Cameron" <Jonathan.Cameron@huawei.com>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/1] PCI/sysfs: Expose PCIe device serial number
+Date: Thu, 17 Jul 2025 09:50:53 -0700
+Message-ID: <20250717165056.562728-1-thepacketgeek@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250717-vmlinux-mmap-pa-symbol-v1-1-970be6681158@isovalent.com>
-X-B4-Tracking: v=1; b=H4sIAKwpeWgC/x3MTQqDMBBA4avIrDswpoSAVyld5GeiAyaGhIoi3
- r3B5bd474LGVbjBNFxQeZcmW+4YXwP4xeaZUUI3KFKazGhwT6vk34Ep2YLFYjuT21akoLUP5N7
- KE/S4VI5yPOMPuBLhe99/oiA/Mm0AAAA=
-X-Change-ID: 20250717-vmlinux-mmap-pa-symbol-0d55cd0b32c0
-To: Breno Leitao <leitao@debian.org>, Alexei Starovoitov <ast@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Shakeel Butt <shakeel.butt@linux.dev>
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Lorenz Bauer <lmb@isovalent.com>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
 
-Breno Leitao reports that arm64 emits the following warning:
+Add a single sysfs read-only, admin-only interface for reading PCIe device
+serial numbers from userspace, using the same hexadecimal 1-byte dashed
+formatting as lspci serial number capability output:
 
-    [   58.896157] virt_to_phys used for non-linear address: 000000009fea9737
-      (__start_BTF+0x0/0x685530)
-    [   23.988669] WARNING: CPU: 25 PID: 1442 at arch/arm64/mm/physaddr.c:15
-      __virt_to_phys (arch/arm64/mm/physaddr.c:?)
+    more /sys/devices/pci0000:c0/0000:c0:01.1/0000:c1:00.0/0000:c2:1f.0/0000:ef:00.0/serial_number
+    00-80-ee-00-00-00-41-80
 
-        ...
+If a device doesn't support the serial number capability, the
+serial_number sysfs attribute will not be visible.
 
-    [   24.075371] Tainted: [E]=UNSIGNED_MODULE, [N]=TEST
-    [   24.080276] Hardware name: Quanta S7GM 20S7GCU0010/S7G MB (CG1), BIOS 3D22
-      07/03/2024
-    [   24.088295] pstate: 63400009 (nZCv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-    [   24.098440] pc : __virt_to_phys (arch/arm64/mm/physaddr.c:?)
-    [   24.105398] lr : __virt_to_phys (arch/arm64/mm/physaddr.c:?)
+Comparing serial number format to lspci output:
 
-	...
+    sudo lspci -vvv -s ef:00.0
+        ef:00.0 Serial Attached SCSI controller: Broadcom / LSI PCIe Switch management endpoint (rev b0)
+            Subsystem: Broadcom / LSI Device 0144
+            ...
+            Capabilities: [100 v1] Device Serial Number 00-80-ee-00-00-00-41-80
+            ...
 
-    [   24.197257] Call trace:
-    [   24.199761] __virt_to_phys (arch/arm64/mm/physaddr.c:?) (P)
-    [   24.206883] btf_sysfs_vmlinux_mmap (kernel/bpf/sysfs_btf.c:27)
-    [   24.214264] sysfs_kf_bin_mmap (fs/sysfs/file.c:179)
-    [   24.218536] kernfs_fop_mmap (fs/kernfs/file.c:462)
-    [   24.222461] mmap_region (./include/linux/fs.h:? mm/internal.h:167
-       mm/vma.c:2405 mm/vma.c:2467 mm/vma.c:2622 mm/vma.c:2692)
+This PCIe device sysfs attribute eliminates the need for parsing lspci
+output (e.g. regexp) for userspace applications that utilize serial
+numbers.
 
-It seems that the memory layout on arm64 maps the kernel image in vmalloc space
-which is different than x86. This makes virt_to_phys emit the warning.
 
-Fix this by translating the address using __pa_symbol as suggested by
-Breno instead.
+Matthew Wood (1):
+  PCI/sysfs: Expose PCIe device serial number
 
-Reported-by: Breno Leitao <leitao@debian.org>
-Closes: https://lore.kernel.org/bpf/g2gqhkunbu43awrofzqb4cs4sxkxg2i4eud6p4qziwrdh67q4g@mtw3d3aqfgmb/
-Signed-off-by: Lorenz Bauer <lmb@isovalent.com>
-Tested-by: Breno Leitao <leitao@debian>
-Fixes: a539e2a6d51d ("btf: Allow mmap of vmlinux btf")
----
- kernel/bpf/sysfs_btf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/ABI/testing/sysfs-bus-pci |  9 +++++++++
+ drivers/pci/pci-sysfs.c                 | 26 ++++++++++++++++++++++---
+ 2 files changed, 32 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/bpf/sysfs_btf.c b/kernel/bpf/sysfs_btf.c
-index 941d0d2427e3a2d27e8f1cff7b6424d0d41817c1..8e61dc555415aafd9e8f80a3408b668fd5057cb3 100644
---- a/kernel/bpf/sysfs_btf.c
-+++ b/kernel/bpf/sysfs_btf.c
-@@ -21,7 +21,7 @@ static int btf_sysfs_vmlinux_mmap(struct file *filp, struct kobject *kobj,
- {
- 	unsigned long pages = PAGE_ALIGN(attr->size) >> PAGE_SHIFT;
- 	size_t vm_size = vma->vm_end - vma->vm_start;
--	phys_addr_t addr = virt_to_phys(__start_BTF);
-+	phys_addr_t addr = __pa_symbol(__start_BTF);
- 	unsigned long pfn = addr >> PAGE_SHIFT;
- 
- 	if (attr->private != __start_BTF || !PAGE_ALIGNED(addr))
-
----
-base-commit: af90e85307241ec495c2de85854cd2e35a4df16b
-change-id: 20250717-vmlinux-mmap-pa-symbol-0d55cd0b32c0
-
-Best regards,
 -- 
-Lorenz Bauer <lmb@isovalent.com>
+2.50.0
 
 
