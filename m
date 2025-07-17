@@ -1,75 +1,77 @@
-Return-Path: <linux-kernel+bounces-735341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76ECDB08DFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:19:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79CE7B08DFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:19:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B70A316CFF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:19:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFCED1A671AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:20:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CE812E49A6;
-	Thu, 17 Jul 2025 13:19:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C262E49AA;
+	Thu, 17 Jul 2025 13:19:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JstZrVIe"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A+Y+E8Rm"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABF029E11A
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 13:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58D042D8DBD
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 13:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752758382; cv=none; b=hddvG3wGUrhdQKAAeYzXBK0pMMseM3ziuhDObgG3DlG2zYKn4O3p/mGwQ6Pbcui12Z2wp8bvaueQFQI3Evh4NVBbuMuBHAZ2c2TLnP2lWg+qTiu9KxhoFKcvdoTvGubH0nsJAlEvNi2YGVEYar67vZmB6fMf39jyF8intoamdwE=
+	t=1752758394; cv=none; b=jVlld+D3tbJIg7unmn+5nxd3/PRh1NQCwCn+csg9MrQqrD2ogZZYcx60zBk+6zgW9UVHys+Ra7V3JOFls1jIZocM4/1aE6XHzlGkf/yKNbsSzA2MSmyHbmUBtcnuhzMfwbRr8h4JuemzY1Dj2XLsKQQWIV9kIa5BYDqJ3Uja3vI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752758382; c=relaxed/simple;
-	bh=g0qlHCtcwrLrtJsqdofcFY/H8w0ylA7uoGP9lYh34h0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fb+mKURLJ4coftAEInk0iGqae8qEUxGY9IAOYVs8pwdxpPixbNAjPOsMjVmVR2lnLjuCWl8MdDo9/plLOvOhnoHGmPV1rDYwdqHTXx5wg0i1ARdQx7drMXXnOSRprQNL7xzQyDHB9B1T6wKVx+0rYzPHjxOZVwK7jIXRNGYFATM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JstZrVIe; arc=none smtp.client-ip=209.85.214.175
+	s=arc-20240116; t=1752758394; c=relaxed/simple;
+	bh=2Lmza6lVP/m0i/zH8gYQyhI/IUgEfBDltLTfcQxMga0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=amxunW9VFYCuc7OQ8Y4yhMcDKWpoUli+05DjCwJpRNvsJrSeM8xfSXePsKeyyOVdusI4L4JnNRbKCD9kOgdC8UMukDlflAad4jTO7EFJge0zFpIn0XGJZQ0h0W212mDAnGArfamKP48n1IdvcmydOLYkXthvdaNMLWZwdDDWBb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A+Y+E8Rm; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-237e6963f63so5311065ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 06:19:39 -0700 (PDT)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-23e210ebd5dso14646865ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 06:19:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752758379; x=1753363179; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rIfVYIOgK/QSplOCMwjyGw4nxlfPzb7fG/AtkpDzYcs=;
-        b=JstZrVIeSq4Pw8Qm5kqbeeub6hziQNPRhNisCWhNIDK7SXAhvluJ9wE0cHhsSeN2Nv
-         4pzaiV6FIMA9zHWdmEPs+5PNQErYcOXHs8MRNU1l5O/JzJ7JzAIIKTiADF6MvCvRowFl
-         K1AaRVbKW7yhYHFQJdiffWOp4yGIdmY3VRhDRXB3voFNiF3C/gxCN6pJ6D6vlu5Mj8OQ
-         Ne2PmxoG3qJUqG/8SUWMn9uhyRGQUA+NhCu1HuREuMLoI0ZCtCWPRvAzunR/P6AqfRej
-         6c/20/PqzJQ/iBGJwdPBP5XDHkUDH/2QckT0pYGPYrk4ss/J8UhFIidFH6/RkWnrY06j
-         7dcA==
+        d=gmail.com; s=20230601; t=1752758391; x=1753363191; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1786UljR40Ey8hUhV8xAFjRTVHePO6Fj+ZWLSNdNrEA=;
+        b=A+Y+E8RmvtDDCrPLJaLC3Y03ryBWuE6FXq9Bgln+wq2jz1ZZ0Cd1e/f7FlgbhdvK9O
+         hQbyzajXOjcd1ZMwPctk2i3WjGDcqhaQGc4SirP2YcsIA4+NffhWhqIDDX6XPx7EOwUY
+         9rav9zlN5opf9VN3kipOF5K0UQlhwf09bcJ9/hDft3LiB+nYoJHswq9Blcs1Zi8aMl7J
+         7car4VTCCtmwrQBFSv77amu4aZ+uNdgTRa2rdJZvbwVGNUYRl8aAkmAq2M4jUO/b0PLE
+         HXQa2H5+BNh+Fkfmeaj7TGn5DFaCkxrT8P3RmF45LNYHniVcUT1qJoVWdSuwdxZf6xKR
+         MGmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752758379; x=1753363179;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rIfVYIOgK/QSplOCMwjyGw4nxlfPzb7fG/AtkpDzYcs=;
-        b=XwCYUg37gcCM/BaDfAEF5zJ52cPqv4EXELfteQq7BiJyC3FE7ml1sMmDvNnkJ1G+z6
-         fg+tCyD6nylQBbUP5JJt5icJgXx6O9IOrrdezyBajCJNnDqEU6F6YQuSEvGtgrpWpJpJ
-         uI5/k06yZB/Rmw3Rm3nCtH6G+oNKSd7YSHyEmww+eKr3QqMPRrezC3VNbN4z60qUBwkY
-         GIaCUH+Bh6Xnpfsp8uMTvTYYfByGsKJhjTbIjZw86X+d0XJQULvIzo8olaXnIClVlMhb
-         QG7/jMKJgwvAjIPAg5VZ96XpNlA7Rj7n+KZPm/6OgE5tWt7apor1dTgW20q/FSDxl+Jp
-         fAuA==
-X-Forwarded-Encrypted: i=1; AJvYcCUBouP+3opWyKX/81iY8xu4Slpyd0EbL7JZYoT8z4YSjuCzs5cVaVe2Jo547vg3fDJlpcAMu5O1DFXi7cw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwThd2AgmFJHj2InBMS/LYvv7Zlxnrr3I//jUijGLeSFP1gWa/c
-	IM9OqwdtbT/Zi4lfhpJ1ZogZ77TD9PgwCcP5eZxGRKalgDY77adDGR3K
-X-Gm-Gg: ASbGncu1SAcRVz9aGvBzieMh+jg4/deviYVqeRXcFjjFFPd+uDwisga8l+zeRsk41Tt
-	Dx3PdoHujvUEV9HzROLX4liRg6lQx9lvzzh+l2hplAWLfKm6WFQwL9Lcf86Ya5Fzw44+nW3kjie
-	Xj8ZTUbjrb7pV5ml/bC2GzVQp5wxs+2gIIh4NiCDMaVnj+iYFT2GZ2e8bBTi0XZFNGG/HjrUW8H
-	QdwmNrLHw9vZPRNZsqc7iJosgMtpybAL+p0E6RjBDUMFF7gahlTlcVW4G0e+G0NXin+IwB2Pxqp
-	J+thA6gntQ52xZiZhFhtA//0T1ytzheVOGVI9FQH5f6j3Si7hhZGxrXFCLaxepphfFJwyW6w7NE
-	Wv0eMbO8RtSO6tkPfPG0a0INpZ5jrzGdi1rRq2U3Lywc7XImF
-X-Google-Smtp-Source: AGHT+IH/M1xyr9NkvWP5fNEyy5OCbS/XnJRQQMQoUCIx9xmo+tQ67SiYR2sumVW0GJb/vUk2nRmIvw==
-X-Received: by 2002:a17:902:f601:b0:234:cb4a:bc1b with SMTP id d9443c01a7336-23e2577851fmr103453805ad.49.1752758379105;
-        Thu, 17 Jul 2025 06:19:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752758391; x=1753363191;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1786UljR40Ey8hUhV8xAFjRTVHePO6Fj+ZWLSNdNrEA=;
+        b=X18wQ3JtBVG8kReGhBI5NsNmdQmyj2g6E3SdsYDL6w+FJpfkS/A6jh/iGCQBoinpzw
+         WrhRCTZiDwp1qMLpj8HcoPtA9IyusqtTrH0DRXHteZDE5V4Udcy0AK//mzwWmr282Gvt
+         IJ6o9Ht+eqcUfjbPVsH6xLouyfM+f9rAMFTjmXpIoebLgi23AjWn0qkPPBdwwDndVFIn
+         UGfSNEfuq0VdfN61R/bnH7eL63EBvGaeA66d/OzLb7rWApvujZ0pJcOYO5Vczu5KjuWO
+         hGbTz/BmO4Gsn7A0ls/wttNNQMOLI4vUt0zLsDydjIYDo9zNn0UH5rpk9p6IDPI630Af
+         DT+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUdr5XHT137YI5p0YcF4qwrBi9TLL9dj9N+ZQFMa1NGaKRfQiHv6adHA4kkIOhVzcOEzl9rGqLm4pzvEwg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuAuC/Q6HZIIIEDLpXvw1zKBKRhfa03mwq7R5Dc3SCFGONgwr6
+	byq1X79Ke9j1Z1x3LGYQBT2+wC4ZyVfXH1721SbsrpX0uGNv1nKBbhXR
+X-Gm-Gg: ASbGnctpN4bu/CjHrxXmANXeUFzw4XT4DuJxvDF+MPEaHfzntd5CPk6yoG3BrVZzM3o
+	Gdyi2uikqFElKU7JF7HXUqFhalR0Csk3yYFjGYhcvcJ3AgmaerGGYjbjameT1OVLV9JEjPBzPbT
+	6A2JlO4ctXYxPtpIO9L/3WuPDitDPnUoywdiAimTmg03c5t7yC+F3hZlDBf28/l0KUbqHk/CTC6
+	yYcBboXM0fWOlDKENOwAz+Rkcm4igaNkFI5cq70iFi9+HSByWuV6UACr04u15ALPxBzEbuphZkt
+	Yid5pS11CAvmjB2N/F8R87QzWFTPmTAf2fS8X52T/e9lnVkNjwKEj+CZ+UihRpDjW2Lu3W+pb6Q
+	27f1qnSeWM/8VD4VFAYM0xDgYVEp6mbzMyzAAImrs6ZTCJ2Ps
+X-Google-Smtp-Source: AGHT+IGzhSD+w6oECBIJm/zoRA+a8TQX/977OHgFJOsgHWOfj6pcUAeUpMOteR864pPF5VOP/PRPnw==
+X-Received: by 2002:a17:902:dac1:b0:23d:dd5b:886a with SMTP id d9443c01a7336-23e2f2308e3mr55707395ad.0.1752758391456;
+        Thu, 17 Jul 2025 06:19:51 -0700 (PDT)
 Received: from DESKTOP-GIED850.localdomain ([114.247.113.178])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4322e7fsm148053315ad.93.2025.07.17.06.19.31
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4322e7fsm148053315ad.93.2025.07.17.06.19.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 06:19:38 -0700 (PDT)
+        Thu, 17 Jul 2025 06:19:51 -0700 (PDT)
 From: wang lian <lianux.mm@gmail.com>
 To: akpm@linux-foundation.org,
 	broonie@kernel.org,
@@ -91,10 +93,12 @@ Cc: brauner@kernel.org,
 	shuah@kernel.org,
 	vbabka@suse.cz,
 	zijing.zhang@proton.me
-Subject: [PATCH v2 RESEND 0/2] selftests/mm: reuse FORCE_READ to replace "asm volatile("" : "+r" (XXX));" and some cleanup
-Date: Thu, 17 Jul 2025 21:18:55 +0800
-Message-ID: <20250717131857.59909-1-lianux.mm@gmail.com>
+Subject: [PATCH 1/2] selftests/mm: reuse FORCE_READ to replace "asm volatile("" : "+r" (XXX));"
+Date: Thu, 17 Jul 2025 21:18:56 +0800
+Message-ID: <20250717131857.59909-2-lianux.mm@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250717131857.59909-1-lianux.mm@gmail.com>
+References: <20250717131857.59909-1-lianux.mm@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,40 +107,257 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This series introduces a common FORCE_READ() macro to replace 
-the cryptic asm volatile("" : "+r" (variable)); 
-construct used in several mm selftests. This improves code readability and 
-maintainability by removing duplicated, hard-to-understand code.
+Several mm selftests use the `asm volatile("" : "+r" (variable));`
+construct to force a read of a variable, preventing the compiler from
+optimizing away the memory access. This idiom is cryptic and duplicated
+across multiple test files.
 
-I previously sent the refactoring patch [1] as a standalone change, following a suggestion from David. 
-As Andrew Morton and Wei Yang correctly pointed out, 
-that patch was incomplete as it was missing the macro definition itself, 
-causing build warnings. My apologies for the noise.
+Following a suggestion from David[1], this patch refactors this
+common pattern into a FORCE_READ() macro
 
-[1] https://lore.kernel.org/lkml/20250716123126.3851-1-lianux.mm@gmail.com/
+[1] https://lore.kernel.org/lkml/4a3e0759-caa1-4cfa-bc3f-402593f1eee3@redhat.com/
 
-This v2 series corrects that mistake by properly structuring the changes:
-- The first patch introduces the FORCE_READ() macro into the shared vm_util.h header 
-  and reuse this new macro to refactor the selftests.
-- The second patch guard-regions: Use SKIP() instead of ksft_exit_skip().
-
-changes to v2:
-- collected Acked-by and Reviewed-by from  David and Lorenzo Stoakes.
-
-
-wang lian (2):
-  selftests/mm: reuse FORCE_READ to replace "asm volatile("" : "+r"
-    (XXX));"
-  selftests/mm: guard-regions: Use SKIP() instead of ksft_exit_skip()
-
+Signed-off-by: wang lian <lianux.mm@gmail.com>
+Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+---
  tools/testing/selftests/mm/cow.c              | 30 +++++++++----------
- tools/testing/selftests/mm/guard-regions.c    |  9 +-----
+ tools/testing/selftests/mm/guard-regions.c    |  7 -----
  tools/testing/selftests/mm/hugetlb-madvise.c  |  5 +---
  tools/testing/selftests/mm/migration.c        | 13 ++++----
  tools/testing/selftests/mm/pagemap_ioctl.c    |  4 +--
  .../selftests/mm/split_huge_page_test.c       |  4 +--
  tools/testing/selftests/mm/vm_util.h          |  7 +++++
- 7 files changed, 32 insertions(+), 40 deletions(-)
+ 7 files changed, 31 insertions(+), 39 deletions(-)
+diff --git a/tools/testing/selftests/mm/cow.c b/tools/testing/selftests/mm/cow.c
+index 788e82b00b75..d30625c18259 100644
+--- a/tools/testing/selftests/mm/cow.c
++++ b/tools/testing/selftests/mm/cow.c
+@@ -1534,7 +1534,7 @@ static void test_ro_fast_pin(char *mem, const char *smem, size_t size)
+ 
+ static void run_with_zeropage(non_anon_test_fn fn, const char *desc)
+ {
+-	char *mem, *smem, tmp;
++	char *mem, *smem;
+ 
+ 	log_test_start("%s ... with shared zeropage", desc);
+ 
+@@ -1554,8 +1554,8 @@ static void run_with_zeropage(non_anon_test_fn fn, const char *desc)
+ 	}
+ 
+ 	/* Read from the page to populate the shared zeropage. */
+-	tmp = *mem + *smem;
+-	asm volatile("" : "+r" (tmp));
++	FORCE_READ(mem);
++	FORCE_READ(smem);
+ 
+ 	fn(mem, smem, pagesize);
+ munmap:
+@@ -1566,7 +1566,7 @@ static void run_with_zeropage(non_anon_test_fn fn, const char *desc)
+ 
+ static void run_with_huge_zeropage(non_anon_test_fn fn, const char *desc)
+ {
+-	char *mem, *smem, *mmap_mem, *mmap_smem, tmp;
++	char *mem, *smem, *mmap_mem, *mmap_smem;
+ 	size_t mmap_size;
+ 	int ret;
+ 
+@@ -1617,8 +1617,8 @@ static void run_with_huge_zeropage(non_anon_test_fn fn, const char *desc)
+ 	 * the first sub-page and test if we get another sub-page populated
+ 	 * automatically.
+ 	 */
+-	tmp = *mem + *smem;
+-	asm volatile("" : "+r" (tmp));
++	FORCE_READ(mem);
++	FORCE_READ(smem);
+ 	if (!pagemap_is_populated(pagemap_fd, mem + pagesize) ||
+ 	    !pagemap_is_populated(pagemap_fd, smem + pagesize)) {
+ 		ksft_test_result_skip("Did not get THPs populated\n");
+@@ -1634,7 +1634,7 @@ static void run_with_huge_zeropage(non_anon_test_fn fn, const char *desc)
+ 
+ static void run_with_memfd(non_anon_test_fn fn, const char *desc)
+ {
+-	char *mem, *smem, tmp;
++	char *mem, *smem;
+ 	int fd;
+ 
+ 	log_test_start("%s ... with memfd", desc);
+@@ -1668,8 +1668,8 @@ static void run_with_memfd(non_anon_test_fn fn, const char *desc)
+ 	}
+ 
+ 	/* Fault the page in. */
+-	tmp = *mem + *smem;
+-	asm volatile("" : "+r" (tmp));
++	FORCE_READ(mem);
++	FORCE_READ(smem);
+ 
+ 	fn(mem, smem, pagesize);
+ munmap:
+@@ -1682,7 +1682,7 @@ static void run_with_memfd(non_anon_test_fn fn, const char *desc)
+ 
+ static void run_with_tmpfile(non_anon_test_fn fn, const char *desc)
+ {
+-	char *mem, *smem, tmp;
++	char *mem, *smem;
+ 	FILE *file;
+ 	int fd;
+ 
+@@ -1724,8 +1724,8 @@ static void run_with_tmpfile(non_anon_test_fn fn, const char *desc)
+ 	}
+ 
+ 	/* Fault the page in. */
+-	tmp = *mem + *smem;
+-	asm volatile("" : "+r" (tmp));
++	FORCE_READ(mem);
++	FORCE_READ(smem);
+ 
+ 	fn(mem, smem, pagesize);
+ munmap:
+@@ -1740,7 +1740,7 @@ static void run_with_memfd_hugetlb(non_anon_test_fn fn, const char *desc,
+ 				   size_t hugetlbsize)
+ {
+ 	int flags = MFD_HUGETLB;
+-	char *mem, *smem, tmp;
++	char *mem, *smem;
+ 	int fd;
+ 
+ 	log_test_start("%s ... with memfd hugetlb (%zu kB)", desc,
+@@ -1778,8 +1778,8 @@ static void run_with_memfd_hugetlb(non_anon_test_fn fn, const char *desc,
+ 	}
+ 
+ 	/* Fault the page in. */
+-	tmp = *mem + *smem;
+-	asm volatile("" : "+r" (tmp));
++	FORCE_READ(mem);
++	FORCE_READ(smem);
+ 
+ 	fn(mem, smem, hugetlbsize);
+ munmap:
+diff --git a/tools/testing/selftests/mm/guard-regions.c b/tools/testing/selftests/mm/guard-regions.c
+index 93af3d3760f9..4b76e72e7053  100644
+--- a/tools/testing/selftests/mm/guard-regions.c
++++ b/tools/testing/selftests/mm/guard-regions.c
+@@ -35,13 +35,6 @@
+ static volatile sig_atomic_t signal_jump_set;
+ static sigjmp_buf signal_jmp_buf;
+ 
+-/*
+- * Ignore the checkpatch warning, we must read from x but don't want to do
+- * anything with it in order to trigger a read page fault. We therefore must use
+- * volatile to stop the compiler from optimising this away.
+- */
+-#define FORCE_READ(x) (*(volatile typeof(x) *)x)
+-
+ /*
+  * How is the test backing the mapping being tested?
+  */
+diff --git a/tools/testing/selftests/mm/hugetlb-madvise.c b/tools/testing/selftests/mm/hugetlb-madvise.c
+index e74107185324..1afe14b9dc0c 100644
+--- a/tools/testing/selftests/mm/hugetlb-madvise.c
++++ b/tools/testing/selftests/mm/hugetlb-madvise.c
+@@ -47,14 +47,11 @@ void write_fault_pages(void *addr, unsigned long nr_pages)
+ 
+ void read_fault_pages(void *addr, unsigned long nr_pages)
+ {
+-	volatile unsigned long dummy = 0;
+ 	unsigned long i;
+ 
+ 	for (i = 0; i < nr_pages; i++) {
+-		dummy += *((unsigned long *)(addr + (i * huge_page_size)));
+-
+ 		/* Prevent the compiler from optimizing out the entire loop: */
+-		asm volatile("" : "+r" (dummy));
++		FORCE_READ(((unsigned long *)(addr + (i * huge_page_size))));
+ 	}
+ }
+ 
+diff --git a/tools/testing/selftests/mm/migration.c b/tools/testing/selftests/mm/migration.c
+index a306f8bab087..c5a73617796a 100644
+--- a/tools/testing/selftests/mm/migration.c
++++ b/tools/testing/selftests/mm/migration.c
+@@ -16,6 +16,7 @@
+ #include <sys/types.h>
+ #include <signal.h>
+ #include <time.h>
++#include "vm_util.h"
+ 
+ #define TWOMEG		(2<<20)
+ #define RUNTIME		(20)
+@@ -103,15 +104,13 @@ int migrate(uint64_t *ptr, int n1, int n2)
+ 
+ void *access_mem(void *ptr)
+ {
+-	volatile uint64_t y = 0;
+-	volatile uint64_t *x = ptr;
+-
+ 	while (1) {
+ 		pthread_testcancel();
+-		y += *x;
+-
+-		/* Prevent the compiler from optimizing out the writes to y: */
+-		asm volatile("" : "+r" (y));
++		/* Force a read from the memory pointed to by ptr. This ensures
++		 * the memory access actually happens and prevents the compiler
++		 * from optimizing away this entire loop.
++		 */
++		FORCE_READ((uint64_t *)ptr);
+ 	}
+ 
+ 	return NULL;
+diff --git a/tools/testing/selftests/mm/pagemap_ioctl.c b/tools/testing/selftests/mm/pagemap_ioctl.c
+index c2dcda78ad31..0d4209eef0c3 100644
+--- a/tools/testing/selftests/mm/pagemap_ioctl.c
++++ b/tools/testing/selftests/mm/pagemap_ioctl.c
+@@ -1525,9 +1525,7 @@ void zeropfn_tests(void)
+ 
+ 	ret = madvise(mem, hpage_size, MADV_HUGEPAGE);
+ 	if (!ret) {
+-		char tmp = *mem;
+-
+-		asm volatile("" : "+r" (tmp));
++		FORCE_READ(mem);
+ 
+ 		ret = pagemap_ioctl(mem, hpage_size, &vec, 1, 0,
+ 				    0, PAGE_IS_PFNZERO, 0, 0, PAGE_IS_PFNZERO);
+diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
+index f0d9c035641d..05de1fc0005b 100644
+--- a/tools/testing/selftests/mm/split_huge_page_test.c
++++ b/tools/testing/selftests/mm/split_huge_page_test.c
+@@ -399,7 +399,6 @@ int create_pagecache_thp_and_fd(const char *testfile, size_t fd_size, int *fd,
+ 		char **addr)
+ {
+ 	size_t i;
+-	int dummy = 0;
+ 	unsigned char buf[1024];
+ 
+ 	srand(time(NULL));
+@@ -441,8 +440,7 @@ int create_pagecache_thp_and_fd(const char *testfile, size_t fd_size, int *fd,
+ 	madvise(*addr, fd_size, MADV_HUGEPAGE);
+ 
+ 	for (size_t i = 0; i < fd_size; i++)
+-		dummy += *(*addr + i);
+-	asm volatile("" : "+r" (dummy));
++		FORCE_READ((*addr + i));
+ 
+ 	if (!check_huge_file(*addr, fd_size / pmd_pagesize, pmd_pagesize)) {
+ 		ksft_print_msg("No large pagecache folio generated, please provide a filesystem supporting large folio\n");
+diff --git a/tools/testing/selftests/mm/vm_util.h b/tools/testing/selftests/mm/vm_util.h
+index 2b154c287591..c20298ae98ea  100644
+--- a/tools/testing/selftests/mm/vm_util.h
++++ b/tools/testing/selftests/mm/vm_util.h
+@@ -18,6 +18,13 @@
+ #define PM_SWAP                       BIT_ULL(62)
+ #define PM_PRESENT                    BIT_ULL(63)
+ 
++/*
++ * Ignore the checkpatch warning, we must read from x but don't want to do
++ * anything with it in order to trigger a read page fault. We therefore must use
++ * volatile to stop the compiler from optimising this away.
++ */
++#define FORCE_READ(x) (*(volatile typeof(x) *)x)
++
+ extern unsigned int __page_size;
+ extern unsigned int __page_shift;
+ 
 -- 
 2.43.0
 
