@@ -1,210 +1,363 @@
-Return-Path: <linux-kernel+bounces-734933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AED18B08877
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:53:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69554B0887C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:54:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 564134A97E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:52:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C90C1C226ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F4128A1FB;
-	Thu, 17 Jul 2025 08:51:51 +0000 (UTC)
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B773F285C8A;
+	Thu, 17 Jul 2025 08:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JoCMg+TT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC91F2874F1;
-	Thu, 17 Jul 2025 08:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC428285C83;
+	Thu, 17 Jul 2025 08:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752742310; cv=none; b=Sq2TbhU9abiABroWPM+/HLbZXFcDLZHRh/xEHKkszAt7K+Whzm+9Y82sBCRSAUy3ALJLx9nD0Zf1VgSJV3gzJaLUBNQMkwvLRp6lqayP6mA6cEDxZWqb8KQmIxHbntUDvIM1iku38Efv2/9u4YG/ilG+Pb1GrGIVTq8hTfUP94s=
+	t=1752742342; cv=none; b=uUvOIfbj+wdk+brXBo6ks36+c7p2ovCGm0e7Wcc1ZOdjxbK8QjoexV2iefyNw6IgCPlHZhtDsOUnZlEY9eAJmeR/hbJEgzFJrswXW3qbaTpnzqRauAdrXvm0WG3fCC944pLG+Jv1wY+RsWHmQhmKv/iSmOK26V4VUwulJRApH9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752742310; c=relaxed/simple;
-	bh=XVnrJrnPlbmyF5O6waoygGLEWehIpZKU6n4gcMXuS+w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T78A/BbvQ9Fva4cOBtNQJrkyyrjUFDCgKa3VD00F726c3YGWZF/akQycq97uiQovNVqu4D9XP3qzDFCEjWfeR9ZkURjWcSMXCHu/56ue3dm5nf7fTjyI/VfWor9MGNsBcUylRaoJKeuVaXmEn9+UBIO/Tr725z/a2zk1JmIvR7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5B0C2433EE;
-	Thu, 17 Jul 2025 08:51:35 +0000 (UTC)
-Message-ID: <412b2b72-093d-4d55-b012-b185a840aa7e@ghiti.fr>
-Date: Thu, 17 Jul 2025 10:51:34 +0200
+	s=arc-20240116; t=1752742342; c=relaxed/simple;
+	bh=zQ2q2p+X54vWSXTSlQEJoWNnQD11CBMqUstKSQYiAt4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=C2l7NmVYgCE0E7Vt3IvieJtEWtM8yXZ18P7p+gwnOsIHNgsnsfAvpLCNqvEPejM0tHu+/x81MqNBkJN584gxrPbq7mFXPv1q11rg/igJBEuBZ9m8JJp438w1hHxHwc/Dcs2v6/AXGEdhvRko+iR0ecacwiCBSCshdrUyh4h+WPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JoCMg+TT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D362C4CEE3;
+	Thu, 17 Jul 2025 08:52:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752742341;
+	bh=zQ2q2p+X54vWSXTSlQEJoWNnQD11CBMqUstKSQYiAt4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=JoCMg+TTtDg4BotHO9UOOsJREERXFV+0aSeXwYq7PuqT8qNWbsWkh0MqH5QXD5f2p
+	 5t3/jOx85EbSjtUnnOSAf4GGDIqG+BBjUFoqCYj9X25R/xjf9EF3mNYQzM/DJA3aWP
+	 lnwanVqpuNb78OMA7nQbS2fjhqF6EOvMewJJRqgxWCrvyhz7dz4JASsZfEGghGdvRT
+	 2hZ7GSeT+pVKke0SDsKI0NElrPNMRyJ/cRDy6YJSr8P9TOhT7+73lAxtLmsJQMBjOF
+	 0/yTNdaDflLDzXKIi65uAU6IG0Rd2sHMOBg415tcTHSMaoweMBN3kx1oVZHrffJbwX
+	 NbTxVTcu4VCDA==
+From: Kees Cook <kees@kernel.org>
+To: David Gow <davidgow@google.com>
+Cc: Kees Cook <kees@kernel.org>,
+	Rae Moar <rmoar@google.com>,
+	Tamir Duberstein <tamird@gmail.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	"Steven Rostedt (Google)" <rostedt@goodmis.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Petr Mladek <pmladek@suse.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] seq_buf: Introduce KUnit tests
+Date: Thu, 17 Jul 2025 01:52:12 -0700
+Message-Id: <20250717085156.work.363-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/7] riscv: Add xmipsexectl as a vendor extension
-To: aleksa.paunovic@htecgroup.com, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Jonathan Corbet <corbet@lwn.net>
-Cc: Palmer Dabbelt <palmer@sifive.com>, Conor Dooley <conor@kernel.org>,
- devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20250625-p8700-pause-v4-0-6c7dd7f85756@htecgroup.com>
- <20250625-p8700-pause-v4-2-6c7dd7f85756@htecgroup.com>
-Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250625-p8700-pause-v4-2-6c7dd7f85756@htecgroup.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeitdduhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnheptdfhleefjeegheevgeeljeellefgvefhkeeiffekueejteefvdevhfelvdeggeeinecukfhppedukeehrddvudefrdduheegrdduhedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudekhedrvddufedrudehgedrudehuddphhgvlhhopegluddtrddugedrtddrudefngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopedugedprhgtphhtthhopegrlhgvkhhsrgdrphgruhhnohhvihgtsehhthgvtghgrhhouhhprdgtohhmpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvl
- hhtrdgtohhmpdhrtghpthhtoheprghouhesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopegtohhrsggvtheslhifnhdrnhgvth
-X-GND-Sasl: alex@ghiti.fr
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9135; i=kees@kernel.org; h=from:subject:message-id; bh=zQ2q2p+X54vWSXTSlQEJoWNnQD11CBMqUstKSQYiAt4=; b=owGbwMvMwCVmps19z/KJym7G02pJDBkVO/cYHJqe3Jw8+2GP87n9+sInZFxXSMrdWnBmuel5X bt3MQ9/dZSyMIhxMciKKbIE2bnHuXi8bQ93n6sIM4eVCWQIAxenAEzkwVZGhr6GS6JR/IJqEl4P hJ9I35R9cVs2bknixh2L13Lw19idecLwm2X52mVGt5RXvt05L2StysZzOybtEM5VvRIybWamY+L sXm4A
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-Hi Aleksa,
+Add KUnit tests for the seq_buf API to ensure its correctness and
+prevent future regressions.
 
-On 6/25/25 16:20, Aleksa Paunovic via B4 Relay wrote:
-> From: Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
->
-> Add support for MIPS vendor extensions. Add support for the xmipsexectl
-> vendor extension.
->
-> Signed-off-by: Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
-> ---
->   arch/riscv/Kconfig.vendor                       | 13 +++++++++++++
->   arch/riscv/include/asm/vendor_extensions/mips.h | 16 ++++++++++++++++
->   arch/riscv/kernel/vendor_extensions.c           | 10 ++++++++++
->   arch/riscv/kernel/vendor_extensions/Makefile    |  1 +
->   arch/riscv/kernel/vendor_extensions/mips.c      | 22 ++++++++++++++++++++++
->   5 files changed, 62 insertions(+)
->
-> diff --git a/arch/riscv/Kconfig.vendor b/arch/riscv/Kconfig.vendor
-> index e14f26368963c178e3271e0f716b27fff7671e78..3c1f92e406c3f21481b56e61229716fd02ab81b2 100644
-> --- a/arch/riscv/Kconfig.vendor
-> +++ b/arch/riscv/Kconfig.vendor
-> @@ -16,6 +16,19 @@ config RISCV_ISA_VENDOR_EXT_ANDES
->   	  If you don't know what to do here, say Y.
->   endmenu
->   
-> +menu "MIPS"
-> +config RISCV_ISA_VENDOR_EXT_MIPS
-> +	bool "MIPS vendor extension support"
-> +	select RISCV_ISA_VENDOR_EXT
-> +	default y
-> +	help
-> +	  Say N here to disable detection of and support for all MIPS vendor
-> +	  extensions. Without this option enabled, MIPS vendor extensions will
-> +	  not be detected at boot and their presence not reported to userspace.
-> +
-> +	  If you don't know what to do here, say Y.
-> +endmenu
-> +
->   menu "SiFive"
->   config RISCV_ISA_VENDOR_EXT_SIFIVE
->   	bool "SiFive vendor extension support"
-> diff --git a/arch/riscv/include/asm/vendor_extensions/mips.h b/arch/riscv/include/asm/vendor_extensions/mips.h
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..757c941cfd86e9fced6169b1a82200e6bb5c6132
-> --- /dev/null
-> +++ b/arch/riscv/include/asm/vendor_extensions/mips.h
-> @@ -0,0 +1,16 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (C) 2025 MIPS.
-> + */
-> +
-> +#ifndef _ASM_RISCV_VENDOR_EXTENSIONS_MIPS_H
-> +#define _ASM_RISCV_VENDOR_EXTENSIONS_MIPS_H
-> +
-> +#include <asm/vendor_extensions.h>
-> +#include <linux/types.h>
-> +
-> +#define RISCV_ISA_VENDOR_EXT_XMIPSEXECTL	0
-> +
-> +extern struct riscv_isa_vendor_ext_data_list riscv_isa_vendor_ext_list_mips;
-> +
-> +#endif // _ASM_RISCV_VENDOR_EXTENSIONS_MIPS_H
-> diff --git a/arch/riscv/kernel/vendor_extensions.c b/arch/riscv/kernel/vendor_extensions.c
-> index 92d8ff81f42c9ceba63bef0170ab134564a24a4e..bb4a7592368560ebacbcd8a5ce335eea6312ea5c 100644
-> --- a/arch/riscv/kernel/vendor_extensions.c
-> +++ b/arch/riscv/kernel/vendor_extensions.c
-> @@ -6,6 +6,7 @@
->   #include <asm/vendorid_list.h>
->   #include <asm/vendor_extensions.h>
->   #include <asm/vendor_extensions/andes.h>
-> +#include <asm/vendor_extensions/mips.h>
->   #include <asm/vendor_extensions/sifive.h>
->   #include <asm/vendor_extensions/thead.h>
->   
-> @@ -16,6 +17,9 @@ struct riscv_isa_vendor_ext_data_list *riscv_isa_vendor_ext_list[] = {
->   #ifdef CONFIG_RISCV_ISA_VENDOR_EXT_ANDES
->   	&riscv_isa_vendor_ext_list_andes,
->   #endif
-> +#ifdef CONFIG_RISCV_ISA_VENDOR_EXT_MIPS
-> +	&riscv_isa_vendor_ext_list_mips,
-> +#endif
->   #ifdef CONFIG_RISCV_ISA_VENDOR_EXT_SIFIVE
->   	&riscv_isa_vendor_ext_list_sifive,
->   #endif
-> @@ -49,6 +53,12 @@ bool __riscv_isa_vendor_extension_available(int cpu, unsigned long vendor, unsig
->   		cpu_bmap = riscv_isa_vendor_ext_list_andes.per_hart_isa_bitmap;
->   		break;
->   	#endif
-> +	#ifdef CONFIG_RISCV_ISA_VENDOR_EXT_MIPS
-> +	case MIPS_VENDOR_ID:
-> +		bmap = &riscv_isa_vendor_ext_list_mips.all_harts_isa_bitmap;
-> +		cpu_bmap = riscv_isa_vendor_ext_list_mips.per_hart_isa_bitmap;
-> +		break;
-> +	#endif
->   	#ifdef CONFIG_RISCV_ISA_VENDOR_EXT_SIFIVE
->   	case SIFIVE_VENDOR_ID:
->   		bmap = &riscv_isa_vendor_ext_list_sifive.all_harts_isa_bitmap;
-> diff --git a/arch/riscv/kernel/vendor_extensions/Makefile b/arch/riscv/kernel/vendor_extensions/Makefile
-> index a4eca96d1c8a2fd165220f6439a3884cf90a9593..ccad4ebafb43412e72e654da3bdb9face53b80c6 100644
-> --- a/arch/riscv/kernel/vendor_extensions/Makefile
-> +++ b/arch/riscv/kernel/vendor_extensions/Makefile
-> @@ -1,6 +1,7 @@
->   # SPDX-License-Identifier: GPL-2.0-only
->   
->   obj-$(CONFIG_RISCV_ISA_VENDOR_EXT_ANDES)	+= andes.o
-> +obj-$(CONFIG_RISCV_ISA_VENDOR_EXT_MIPS)  	+= mips.o
->   obj-$(CONFIG_RISCV_ISA_VENDOR_EXT_SIFIVE)	+= sifive.o
->   obj-$(CONFIG_RISCV_ISA_VENDOR_EXT_SIFIVE)	+= sifive_hwprobe.o
->   obj-$(CONFIG_RISCV_ISA_VENDOR_EXT_THEAD)	+= thead.o
-> diff --git a/arch/riscv/kernel/vendor_extensions/mips.c b/arch/riscv/kernel/vendor_extensions/mips.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..f691129f96c21f2ef089124f4b64a6f0a8e6d4aa
-> --- /dev/null
-> +++ b/arch/riscv/kernel/vendor_extensions/mips.c
-> @@ -0,0 +1,22 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2025 MIPS.
-> + */
-> +
-> +#include <asm/cpufeature.h>
-> +#include <asm/vendor_extensions.h>
-> +#include <asm/vendor_extensions/mips.h>
-> +
-> +#include <linux/array_size.h>
-> +#include <linux/cpumask.h>
-> +#include <linux/types.h>
-> +
-> +/* All MIPS vendor extensions supported in Linux */
-> +static const struct riscv_isa_ext_data riscv_isa_vendor_ext_mips[] = {
-> +	__RISCV_ISA_EXT_DATA(xmipsexectl, RISCV_ISA_VENDOR_EXT_XMIPSEXECTL),
-> +};
-> +
-> +struct riscv_isa_vendor_ext_data_list riscv_isa_vendor_ext_list_mips = {
-> +	.ext_data_count = ARRAY_SIZE(riscv_isa_vendor_ext_mips),
-> +	.ext_data = riscv_isa_vendor_ext_mips,
-> +};
+The tests cover the following functions:
+- seq_buf_init()
+- DECLARE_SEQ_BUF()
+- seq_buf_clear()
+- seq_buf_puts()
+- seq_buf_putc()
+- seq_buf_printf()
+- seq_buf_get_buf()
+- seq_buf_commit()
 
+$ tools/testing/kunit/kunit.py run seq_buf
+=================== seq_buf (9 subtests) ===================
+[PASSED] seq_buf_init_test
+[PASSED] seq_buf_declare_test
+[PASSED] seq_buf_clear_test
+[PASSED] seq_buf_puts_test
+[PASSED] seq_buf_puts_overflow_test
+[PASSED] seq_buf_putc_test
+[PASSED] seq_buf_printf_test
+[PASSED] seq_buf_printf_overflow_test
+[PASSED] seq_buf_get_buf_commit_test
+===================== [PASSED] seq_buf =====================
 
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+I used an LLM to produce this; it did pretty well, but I had to help it
+get the Kconfig and make targets in the right places, and I tweaked some
+of the edge cases and added a bit more (perhaps redundant) state checking.
 
-Thanks,
+Cc: David Gow <davidgow@google.com>
+Cc: Rae Moar <rmoar@google.com>
+Cc: Tamir Duberstein <tamird@gmail.com>
+Cc: Eric Biggers <ebiggers@kernel.org>
+Cc: "Steven Rostedt (Google)" <rostedt@goodmis.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+---
+ lib/Kconfig.debug         |   9 ++
+ lib/tests/Makefile        |   1 +
+ lib/tests/seq_buf_kunit.c | 205 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 215 insertions(+)
+ create mode 100644 lib/tests/seq_buf_kunit.c
 
-Alex
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index cf05bf1df983..048efc3183d5 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -2470,6 +2470,15 @@ config SCANF_KUNIT_TEST
+ 
+ 	  If unsure, say N.
+ 
++config SEQ_BUF_KUNIT_TEST
++	tristate "KUnit test for seq_buf" if !KUNIT_ALL_TESTS
++	depends on KUNIT
++	default KUNIT_ALL_TESTS
++	help
++	  This builds unit tests for the seq_buf library.
++
++	  If unsure, say N.
++
+ config STRING_KUNIT_TEST
+ 	tristate "KUnit test string functions at runtime" if !KUNIT_ALL_TESTS
+ 	depends on KUNIT
+diff --git a/lib/tests/Makefile b/lib/tests/Makefile
+index 84b15c986b8c..fa6d728a8b5b 100644
+--- a/lib/tests/Makefile
++++ b/lib/tests/Makefile
+@@ -36,6 +36,7 @@ obj-$(CONFIG_OVERFLOW_KUNIT_TEST) += overflow_kunit.o
+ obj-$(CONFIG_PRINTF_KUNIT_TEST) += printf_kunit.o
+ obj-$(CONFIG_RANDSTRUCT_KUNIT_TEST) += randstruct_kunit.o
+ obj-$(CONFIG_SCANF_KUNIT_TEST) += scanf_kunit.o
++obj-$(CONFIG_SEQ_BUF_KUNIT_TEST) += seq_buf_kunit.o
+ obj-$(CONFIG_SIPHASH_KUNIT_TEST) += siphash_kunit.o
+ obj-$(CONFIG_SLUB_KUNIT_TEST) += slub_kunit.o
+ obj-$(CONFIG_TEST_SORT) += test_sort.o
+diff --git a/lib/tests/seq_buf_kunit.c b/lib/tests/seq_buf_kunit.c
+new file mode 100644
+index 000000000000..74648dbda13f
+--- /dev/null
++++ b/lib/tests/seq_buf_kunit.c
+@@ -0,0 +1,205 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * KUnit tests for the seq_buf API
++ *
++ * Copyright (C) 2025, Google LLC.
++ */
++
++#include <kunit/test.h>
++#include <linux/seq_buf.h>
++
++static void seq_buf_init_test(struct kunit *test)
++{
++	char buf[32];
++	struct seq_buf s;
++
++	seq_buf_init(&s, buf, sizeof(buf));
++
++	KUNIT_EXPECT_EQ(test, s.size, 32);
++	KUNIT_EXPECT_EQ(test, s.len, 0);
++	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
++	KUNIT_EXPECT_EQ(test, seq_buf_buffer_left(&s), 32);
++	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 0);
++	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "");
++}
++
++static void seq_buf_declare_test(struct kunit *test)
++{
++	DECLARE_SEQ_BUF(s, 24);
++
++	KUNIT_EXPECT_EQ(test, s.size, 24);
++	KUNIT_EXPECT_EQ(test, s.len, 0);
++	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
++	KUNIT_EXPECT_EQ(test, seq_buf_buffer_left(&s), 24);
++	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 0);
++	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "");
++}
++
++static void seq_buf_clear_test(struct kunit *test)
++{
++	DECLARE_SEQ_BUF(s, 128);
++
++	seq_buf_puts(&s, "hello");
++	KUNIT_EXPECT_EQ(test, s.len, 5);
++	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
++	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "hello");
++
++	seq_buf_clear(&s);
++
++	KUNIT_EXPECT_EQ(test, s.len, 0);
++	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
++	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "");
++}
++
++static void seq_buf_puts_test(struct kunit *test)
++{
++	DECLARE_SEQ_BUF(s, 16);
++
++	seq_buf_puts(&s, "hello");
++	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 5);
++	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
++	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "hello");
++
++	seq_buf_puts(&s, " world");
++	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 11);
++	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
++	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "hello world");
++}
++
++static void seq_buf_puts_overflow_test(struct kunit *test)
++{
++	DECLARE_SEQ_BUF(s, 10);
++
++	seq_buf_puts(&s, "123456789");
++	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
++	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 9);
++
++	seq_buf_puts(&s, "0");
++	KUNIT_EXPECT_TRUE(test, seq_buf_has_overflowed(&s));
++	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 10);
++	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "123456789");
++
++	seq_buf_clear(&s);
++	KUNIT_EXPECT_EQ(test, s.len, 0);
++	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
++	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "");
++}
++
++static void seq_buf_putc_test(struct kunit *test)
++{
++	DECLARE_SEQ_BUF(s, 4);
++
++	seq_buf_putc(&s, 'a');
++	seq_buf_putc(&s, 'b');
++	seq_buf_putc(&s, 'c');
++
++	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 3);
++	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
++	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "abc");
++
++	seq_buf_putc(&s, 'd');
++	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 4);
++	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
++	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "abc");
++
++	seq_buf_putc(&s, 'e');
++	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 4);
++	KUNIT_EXPECT_TRUE(test, seq_buf_has_overflowed(&s));
++	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "abc");
++
++	seq_buf_clear(&s);
++	KUNIT_EXPECT_EQ(test, s.len, 0);
++	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
++	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "");
++}
++
++static void seq_buf_printf_test(struct kunit *test)
++{
++	DECLARE_SEQ_BUF(s, 32);
++
++	seq_buf_printf(&s, "hello %s", "world");
++	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 11);
++	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
++	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "hello world");
++
++	seq_buf_printf(&s, " %d", 123);
++	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 15);
++	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
++	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "hello world 123");
++}
++
++static void seq_buf_printf_overflow_test(struct kunit *test)
++{
++	DECLARE_SEQ_BUF(s, 16);
++
++	seq_buf_printf(&s, "%lu", 1234567890UL);
++	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
++	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 10);
++	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "1234567890");
++
++	seq_buf_printf(&s, "%s", "abcdefghij");
++	KUNIT_EXPECT_TRUE(test, seq_buf_has_overflowed(&s));
++	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 16);
++	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "1234567890abcde");
++
++	seq_buf_clear(&s);
++	KUNIT_EXPECT_EQ(test, s.len, 0);
++	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
++	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "");
++}
++
++static void seq_buf_get_buf_commit_test(struct kunit *test)
++{
++	DECLARE_SEQ_BUF(s, 16);
++	char *buf;
++	size_t len;
++
++	len = seq_buf_get_buf(&s, &buf);
++	KUNIT_EXPECT_EQ(test, len, 16);
++	KUNIT_EXPECT_PTR_NE(test, buf, NULL);
++
++	memcpy(buf, "hello", 5);
++	seq_buf_commit(&s, 5);
++
++	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 5);
++	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
++	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "hello");
++
++	len = seq_buf_get_buf(&s, &buf);
++	KUNIT_EXPECT_EQ(test, len, 11);
++	KUNIT_EXPECT_PTR_NE(test, buf, NULL);
++
++	memcpy(buf, " worlds!", 8);
++	seq_buf_commit(&s, 6);
++
++	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 11);
++	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
++	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "hello world");
++
++	len = seq_buf_get_buf(&s, &buf);
++	KUNIT_EXPECT_EQ(test, len, 5);
++	KUNIT_EXPECT_PTR_NE(test, buf, NULL);
++
++	seq_buf_commit(&s, -1);
++	KUNIT_EXPECT_TRUE(test, seq_buf_has_overflowed(&s));
++}
++
++static struct kunit_case seq_buf_test_cases[] = {
++	KUNIT_CASE(seq_buf_init_test),
++	KUNIT_CASE(seq_buf_declare_test),
++	KUNIT_CASE(seq_buf_clear_test),
++	KUNIT_CASE(seq_buf_puts_test),
++	KUNIT_CASE(seq_buf_puts_overflow_test),
++	KUNIT_CASE(seq_buf_putc_test),
++	KUNIT_CASE(seq_buf_printf_test),
++	KUNIT_CASE(seq_buf_printf_overflow_test),
++	KUNIT_CASE(seq_buf_get_buf_commit_test),
++	{}
++};
++
++static struct kunit_suite seq_buf_test_suite = {
++	.name = "seq_buf",
++	.test_cases = seq_buf_test_cases,
++};
++
++kunit_test_suite(seq_buf_test_suite);
+-- 
+2.34.1
 
 
