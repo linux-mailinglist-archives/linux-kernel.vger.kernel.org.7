@@ -1,128 +1,135 @@
-Return-Path: <linux-kernel+bounces-735716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07750B092FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:15:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF57BB09301
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:19:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDC5D177D76
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:14:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12408581744
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:19:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05D5E2F8C58;
-	Thu, 17 Jul 2025 17:14:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D5CD2FD885;
+	Thu, 17 Jul 2025 17:19:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D+6UfiwC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PuAoSDZ9"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D402FCE3F;
-	Thu, 17 Jul 2025 17:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB04157A55;
+	Thu, 17 Jul 2025 17:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752772476; cv=none; b=j4c05+iPGvxRLTxNcbbeTFQKd4PNsBj4h4ge29oyY9mziuki0Hsqj224rZ2hq8cSnKWBLkyJZIXdgJu3Gj6BAlCjFnfSYm3mn4Q00ddVeZMLoFWeXP9oAY1xRG/KzB8kfiLNh3A4svPdclJO80TbgRQ8C3hhVRf3AGouUVyvu+k=
+	t=1752772785; cv=none; b=pohaLOaUgAzwwUUwLcWVfa4BZqw83AtGGdXz04pj4Vo0xfERDPlTUDC0KS73lf0j5aAG7KpswGyf8xnrqG4rGr3LHVC1z89qmY0ZGRpBYDDyIWNFIPnDcfpXYlUrTkVAUAUemMk8z3rMki7CGJq0p8X5zXgdo82j1T0QhkJxCPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752772476; c=relaxed/simple;
-	bh=gPsTFWPofyzeCDanP9i0nnmFrp0vvZOOv01/QAIVnao=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vBsQjjExc5LPR5RJrrsNBz4BAIkbbHjsxQy6bgoJMw2eozmjvyNCCwdt/hTNrwWPbHwVWLxByBxrnZDBLpT9dZ0m1AuDF6r0twB3Jn8k8/rydx2zrQ5PRyJ2E4Ni8qOclpPsjGEs3p8mCsYAatzwQPe1nV/aY1HZgqs/+z4lM5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D+6UfiwC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36D05C4CEE3;
-	Thu, 17 Jul 2025 17:14:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752772475;
-	bh=gPsTFWPofyzeCDanP9i0nnmFrp0vvZOOv01/QAIVnao=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D+6UfiwC32xr7W6UjsheTcLNcXAGHbCwp3l6+lTzM6Zww1FfYdYL7uY+sQhjcc1L9
-	 NRIIa9El+BxeFOgq7Yjljb8qEl87g48UFkBI4KrRtEa8Kg1WCrXZTF6hy2eSyVjP1d
-	 pt4aAn9UQp56a+3TGJDW/xHpLyP3dz4GxCXGp6o5GBr++iTNPXIemJZUngl3YK4uh2
-	 kso6S5XKOkrRvzOXq883vxyGVatzXKydybNQUyf3I/D7uS0ZxksTIzRH88LA9aJskF
-	 UqV3cuNTigZ3PGozy7vK38GoEufTd+MIAbbvL5OkQvqjlCVViGpSITztU47c41x/Kh
-	 tY2+30GyG2WDw==
-Date: Thu, 17 Jul 2025 22:44:26 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Akhil Vinod <quic_akhvin@quicinc.com>
-Cc: Sumit Kumar <quic_sumk@quicinc.com>, Alex Elder <elder@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, quic_krichai@quicinc.com, quic_skananth@quicinc.com, 
-	quic_vbadigan@quicinc.com, Sumit Kumar <sumk@qti.qualcomm.com>, stable@vger.kernel.org, 
-	Akhil Vinod <akhvin@qti.qualcomm.com>
-Subject: Re: [PATCH] bus: mhi: ep: Fix chained transfer handling in read path
-Message-ID: <5ij32zdni7pei3xfpxsq6fvaghb3pdfs2fznickutqjysip3k4@kldf7h6e3qc4>
-References: <20250709-chained_transfer-v1-1-2326a4605c9c@quicinc.com>
- <5aqtqicbtlkrqbiw2ba7kkgwrmsuqx2kjukh2tavfihm5hq5ry@gdeqegayfh77>
- <7c833565-0e7b-4004-b691-37bd07ce6abe@quicinc.com>
+	s=arc-20240116; t=1752772785; c=relaxed/simple;
+	bh=W/DhiasmwCBuFbQCyp1dQTsirgqXj/Eu5bRAkhtMAog=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eK7Seo/Lv5AboLiBTGfnG5wozUSO4OgH2QW3Lnr/DnEN9L0ub5xg4NG5X6PTtlz9/1C1CVlJRBkgpPrbB4QJkMGTh0i+BaIYk9GQ8JFgaul3JlAs0CdaEoTZ3xIZfcg7Dpjv2quNXbSe8r/fTpgYrGZOXH+ZaZWijtfx6OThulo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PuAoSDZ9; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ae0de1c378fso184392266b.3;
+        Thu, 17 Jul 2025 10:19:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752772782; x=1753377582; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v1rMoCL6Z35Q1ZU9wAKtXkSeqp3Yq+uqdhZO2nKQumQ=;
+        b=PuAoSDZ9DE3IQEvB1iVDtthOFz6uq+FC45ysyIjZHrtVCQ2PcTVDqNoeUJrw9KJF7H
+         8LIN2THFmE2TuQzELLjc9UaWCc/8vitSNhvQJyGxPpwHqGi8XyXqyJKQre95VcA8oCHq
+         Q5CUdRqoPwoUiVUCyB4qL2qpEXVLKgv7b76KJzViHZp4MwcCSiAbQxV52s4OqRLJr2nV
+         l2ktdLmoP+gtsFfZsoSQH/BXS8OlY1m+EycvTYY4SpiUGBjoamzt0NkyH3wWHGUe5tHi
+         0FFXAs1QRH/9JNP1Jei/d0tNptCHWW658Lr+JzW5qS3U78RhzrrIAz4RdFgMrxdwJQs8
+         kHwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752772782; x=1753377582;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v1rMoCL6Z35Q1ZU9wAKtXkSeqp3Yq+uqdhZO2nKQumQ=;
+        b=YskcuGvtHrKDvVYCOdizGiyMLNRG8jhnyxWzsQkLee+h+i4AHSMWm6KKR/K0Fr6Y+8
+         3xvk2xBd31k4ZLnOk29n7k+Wj02NYRrrRbjmo+gdoZ/WuguqtNt3h9n6c8PTKtAwh3pV
+         jDK42Y9qGKX4NRIdhxww0QOjbZqIC4M5Lg2FJ7TCyZC3q5KXApouWs0QI75AiA78gz2T
+         I3I6hOb2+vj+kf9BwZAqaWZx1e7s/ahkfScRwx5xVAt7pVJeCvRO2+BGCDEpBwHSbI6g
+         Js/az9XOMnlN21LN/XXs6xWBqmRfkUBEXPotbmnCwvhKXU1rBU8sjFlu9aTu6qJlwn3y
+         BomA==
+X-Forwarded-Encrypted: i=1; AJvYcCUs5fREWE962hB3pMx6zdnwNFZzLIoZUvXlQY2hAKrBqkAR11+m9D3YUCZ93ovIDEeHkwsG3u3WvSp2zsT9@vger.kernel.org, AJvYcCVHcTbF/6zhwxCYO0W3yhvIo8JI6VFdOnemh35ecxHxniN8rVu6ofeLRAARLCVhv9uEygg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJ1ZrvixubffEE9pVu08qwvrExQbwIOis4aOw4sDGEIJjE33SW
+	Y7Kb5rvCnQK3jGDMAbo13BFyckk5X9oaERSJ02n4mth2mYZ2uMlvV/hcAoPyVcmC/TDN7XIDN+R
+	qT/2D7IJWdBJUpkfjt+CCQqovBJQiHmY=
+X-Gm-Gg: ASbGncsWfCSRS2jI3fSny5khV5ghX1KyGZdyLbvp1fN4dWHnKKRJ805+csOnO/Z4Xhe
+	zHAWkqRtAIw25qstc6nRMgJ8pq/coxndFpetWSRbupNxtEQNcbnVcgclPedZkVM4dLPKnBOIVny
+	8kHfZPy9g4Qs5mv/uty0xeOlqIi+KGsQdLcdkVZjH5Rf/rENynhUDWwJyCPD+Q30dXAV4I4rF71
+	C4yMnD3XNP2U5z9ShJTQHQ=
+X-Google-Smtp-Source: AGHT+IF7yR8TLWdZv2iR76wMOEnBUAhFbb+Wlu2gwrj7g0DqD5585fO9/6fbqBQJsJwLWddBAL96wRMabRjRvTmlkwY=
+X-Received: by 2002:a17:907:7f24:b0:adb:229f:6b71 with SMTP id
+ a640c23a62f3a-ae9cddb1d86mr811165766b.5.1752772782364; Thu, 17 Jul 2025
+ 10:19:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7c833565-0e7b-4004-b691-37bd07ce6abe@quicinc.com>
+References: <20250717115936.7025-1-suchitkarunakaran@gmail.com>
+In-Reply-To: <20250717115936.7025-1-suchitkarunakaran@gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 17 Jul 2025 10:19:28 -0700
+X-Gm-Features: Ac12FXwUFRH32wJkU9vAEP0Pbh4sI4UAGAlSrErRxYicCr0UK-kVl1OC2kUKGHY
+Message-ID: <CAEf4BzZ+OTkaXmtWPbOGB0OWz5xmj-d06UWchooO+iUyDHar4g@mail.gmail.com>
+Subject: Re: [PATCH] libbpf: Replace strcpy() with memcpy() in bpf_object__new()
+To: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
+	martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
+	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
+	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org, 
+	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 17, 2025 at 10:18:54PM GMT, Akhil Vinod wrote:
-> 
-> On 7/16/2025 12:10 PM, Manivannan Sadhasivam wrote:
-> > On Wed, Jul 09, 2025 at 04:03:17PM GMT, Sumit Kumar wrote:
-> > > From: Sumit Kumar <sumk@qti.qualcomm.com>
-> > > 
-> > > The current implementation of mhi_ep_read_channel, in case of chained
-> > > transactions, assumes the End of Transfer(EOT) bit is received with the
-> > > doorbell. As a result, it may incorrectly advance mhi_chan->rd_offset
-> > > beyond wr_offset during host-to-device transfers when EOT has not yet
-> > > arrived. This can lead to access of unmapped host memory, causing
-> > > IOMMU faults and processing of stale TREs.
-> > > 
-> > > This change modifies the loop condition to ensure rd_offset remains behind
-> > > wr_offset, allowing the function to process only valid TREs up to the
-> > > current write pointer. This prevents premature reads and ensures safe
-> > > traversal of chained TREs.
-> > > 
-> > > Fixes: 5301258899773 ("bus: mhi: ep: Add support for reading from the host")
-> > > Cc: stable@vger.kernel.org
-> > > Co-developed-by: Akhil Vinod <akhvin@qti.qualcomm.com>
-> > > Signed-off-by: Akhil Vinod <akhvin@qti.qualcomm.com>
-> > > Signed-off-by: Sumit Kumar <sumk@qti.qualcomm.com>
-> > > ---
-> > >   drivers/bus/mhi/ep/main.c | 2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/bus/mhi/ep/main.c b/drivers/bus/mhi/ep/main.c
-> > > index b3eafcf2a2c50d95e3efd3afb27038ecf55552a5..2e134f44952d1070c62c24aeca9effc7fd325860 100644
-> > > --- a/drivers/bus/mhi/ep/main.c
-> > > +++ b/drivers/bus/mhi/ep/main.c
-> > > @@ -468,7 +468,7 @@ static int mhi_ep_read_channel(struct mhi_ep_cntrl *mhi_cntrl,
-> > >   			mhi_chan->rd_offset = (mhi_chan->rd_offset + 1) % ring->ring_size;
-> > >   		}
-> > > -	} while (buf_left && !tr_done);
-> > > +	} while (buf_left && !tr_done && mhi_chan->rd_offset != ring->wr_offset);
-> > You should use mhi_ep_queue_is_empty() for checking the available elements to
-> > process. And with this check in place, the existing check in
-> > mhi_ep_process_ch_ring() becomes redundant.
-> > 
-> > - Mani
-> 
-> Yes, agreed that the check can be replaced with the mhi_ep_queue_is_empty, but the existing
-> check in mhi_ep_process_ch_ring() is still necessary because there can be a case where
-> there are multiple chained transactions in the ring.
-> 
-> Example: The ring at the time mhi_ep_read_channel is executing may look like:
-> chained | chained |  EOT#1 | chained | chained | EOT#2
-> If we remove the check from mhi_ep_process_ch_ring, we bail out of the first transaction itself
-> and the remaining packets won't be processed. mhi_ep_read_channel in its current form is designed
-> for a single MHI packet only.
-> 
+On Thu, Jul 17, 2025 at 4:59=E2=80=AFAM Suchit Karunakaran
+<suchitkarunakaran@gmail.com> wrote:
+>
+> Replace the unsafe strcpy() call with memcpy() when copying the path
+> into the bpf_object structure. Since the memory is pre-allocated to
+> exactly strlen(path) + 1 bytes and the length is already known, memcpy()
+> is safer than strcpy().
+>
+> Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+> ---
+>  tools/lib/bpf/libbpf.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+> index 52e353368f58..279f226dd965 100644
+> --- a/tools/lib/bpf/libbpf.c
+> +++ b/tools/lib/bpf/libbpf.c
+> @@ -1495,7 +1495,7 @@ static struct bpf_object *bpf_object__new(const cha=
+r *path,
+>                 return ERR_PTR(-ENOMEM);
+>         }
+>
+> -       strcpy(obj->path, path);
+> +       memcpy(obj->path, path, strlen(path) + 1);
 
-Then you should ignore the EOT flag by removing '!tr_done' check and just check
-for buf_left and mhi_ep_process_ch_ring(). Having the same check in caller and
-callee doesn't make sense.
 
-- Mani
+This is user-space libbpf code, where the API contract mandates that
+the path argument is a well-formed zero-terminated C string. Plus, if
+you look at the few lines above, we allocate just enough space to fit
+the entire contents of the string without truncation.
 
--- 
-மணிவண்ணன் சதாசிவம்
+In other words, there is nothing to fix or improve here.
+
+pw-bot: cr
+
+>         if (obj_name) {
+>                 libbpf_strlcpy(obj->name, obj_name, sizeof(obj->name));
+>         } else {
+> --
+> 2.50.1
+>
 
