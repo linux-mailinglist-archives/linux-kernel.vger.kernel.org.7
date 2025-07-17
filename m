@@ -1,205 +1,141 @@
-Return-Path: <linux-kernel+bounces-735218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91BC5B08C4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:59:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1D51B08C48
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:59:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CEF2A6370C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:58:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D9861893520
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:59:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3971929B767;
-	Thu, 17 Jul 2025 11:58:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B52D29AB02;
+	Thu, 17 Jul 2025 11:59:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Hp8awFxx"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jIP3C2QI"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E9A136358
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 11:58:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB07288514
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 11:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752753516; cv=none; b=UHE82UYJ/C6gM7/GoKHl5daRsV83cq8Ckn3wbAkPcE51SDOLz41/ijYF7AaQgL8ypLl9rIeDLEcEBGdbUhF8Ae1R+A4KQDS2yyCG/8TSvHrJXlihMJRdMZ5yS7REhNu3oSDjUrEvrFdldSCU9uvrXxqe6MZgT9/VMEMjjgcM3GM=
+	t=1752753571; cv=none; b=aiSjO5MSvG267sP2lYK08mRs5T36ungTGR0BWFTGi5SOEUurdgO607BfumgwSUTM2SmoOFWM+LxIqWa+Ihd0FU8oeRmBLxeNDDmEMguJkWq+IDTa3JPxEP6Gi2uaAAycPYx47q+DKuOxEObBYycirBHYumVTBK+1JxcIONB7+b8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752753516; c=relaxed/simple;
-	bh=5U5+oKM9TS56skKvfyBUuonPmWf8aGSQ+l3JH2CKHPI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rdA5osKO/0rLRBuafWzXHNUC/y65lqv04q2mQkSNeGpw5Armg0wLyLiX+vIMcxfYfI65nmI7+9uNWbJg2k5Rj7cTV5qIAFXnbtsFHMvs1hRSDOKVe7oAKdHWcweM1+QEfvpB0srAsa7e8KhC7UtC1Awet2N+KE+GT4rdzGPpipw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Hp8awFxx; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752753501;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=xA00jKif1Xuf/U1rsSjs5Phuq/bmyeN3v9XfSiZkCX0=;
-	b=Hp8awFxxYJS44VzcWpL9s0NNCpc4wJENQzB7wswBrKcAaKncIeFm7UkWaHc97p3N9uB/XL
-	k7X+Pj7r0RD1hY/pyh2D6F+IqsJbFy2WZL6Npyl/tgVjIFK7Y1ab8xrO2ao6IE50B7vtmo
-	qtHcX7uXNdK8x7JjAvwwa/D979GnoMQ=
-From: Troy Mitchell <troy.mitchell@linux.dev>
-Date: Thu, 17 Jul 2025 19:58:01 +0800
-Subject: [PATCH v2] ASoC: rockchip: i2s: simplify clock handling and error
- cleanup in probe
+	s=arc-20240116; t=1752753571; c=relaxed/simple;
+	bh=VlfFX7mQA7obeq2af9paLgAuGzTyy1CUXFA7pbF06DQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aLH1z3be9wNQyt1NKDLxqeprYKN/PeiZWNSTlHaJECmzVKqf6y8X8Bgl5JgSDJ43M5Wy7i7c2tecXATvHSHvU1gEm4JUJyrowrLqdeIEweQHwNfzjBryqHxADcxEab3hCctGLGpMc5WU+YF1FzLGCQpbr/2z4ljGMMU8VbwxUlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jIP3C2QI; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56HBhVjj004464
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 11:59:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	RC8QbYC4Tyk41SorqPKs/ueg5eS7morHmOcMxL4tVz8=; b=jIP3C2QIXyVLjSaR
+	yX55JQ1SrF93rBkCLuiB1OXShnGwp91XaeU8spdoPkx7fYmiYJgQ4a86rNngqmM5
+	K4gzrdpDW7OrciMD8mbHg3BA9XYChHWJTby97VFNc2w1tI6O93vvoe/Brdi2d62b
+	5P3FF9jcPmcWaxkQWLi03mEMIfnEwW35GjaOb+0+B0LBG6yzWGG6YMUuzhV4pH/W
+	FmUqx5xTUlHiRsOQka1avg2rXWS3LaQhE5+Jtmb7f9s4yCt4mTyxcwVv4eEH570V
+	TghBNl7rLBX06H0OyuPPGtCH+voKX7VHG51w5cpwM3U2b21LDIbJ64a6ntwAINY8
+	ooDBbw==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47xsuksahd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 11:59:29 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6fb030f541bso3546556d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 04:59:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752753568; x=1753358368;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RC8QbYC4Tyk41SorqPKs/ueg5eS7morHmOcMxL4tVz8=;
+        b=h8oPjLcEMrosxWEXA6SE7Ht6QHqPe9Nl3AjYLPPGYzhRRQ6i0Zj/38+GTM8QeRQPuJ
+         Ky8XNGA0+mmQExRuMYQA/aHnVkoAkBzLN66w7R3d3ZNDD1aW5phsDRxfgqvfimq7RDTY
+         LAsh9sWVbLR/i/viQCTQf92TMGlscrFDeHJKl0PQV0Ceik/52RzOTuFCtXHNRF103ugh
+         wvXFuKqlpTUGkeNf9w8TA1FIlylRB/cXdK1U0pI+iJVIlbOgWhgCJSIDF9rh0JR3WW7b
+         1hH+6AeQDeMYq3h7+ZsvteCLGlgZoOlwrosW7kRuiLpG+8R0mKVKbIE6BPKiLN2ko8es
+         UkVw==
+X-Forwarded-Encrypted: i=1; AJvYcCXieHPlSH8vxG9HS3GXtRpSLxw5yBVOu4wvuh434HTMdsgnVEnh14KTIocE1pHTsuejkTjHF4yB7wC1UjE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAxhRdBugT9V4gEXP3o711x9SgtF7McBkY4ju/Moyz80izJ3bx
+	N9uHTXMN/vFN4arccZaBHwKDoq5t4EW/b/4qbJAPsiM91MM2zxFB6nmfVKCtND2d9SsDfhOnikw
+	z7MJ7AtQLNciRBUsudyYk1oO/VeeHSsYUdUyvouinX0QN6YsfuOBBNBba1K1aCxtFtJM=
+X-Gm-Gg: ASbGncuZH8ceiqiAldaICo4N4S2WvLuhjw9jnp6bwri/r7u+WJ5ak5E2ZieRX14U+Yt
+	3YRfyS+14SE/z0DrEvMWplFExtA5eG+19JGGlGFrjykyMn22qdvVTyivbSoTlV5FOpRTz7hRZkg
+	3J2Qeg/xshZi4vdb85mUVJ6UrU7aMYATizMQycwl/kdddyTCmGaDe0MjQQcKSYjNEPzDTx7PGNU
+	vUq2yylZvfybAUcuokrsNCjLTWcaXhmSc3RHdNyghjuSXLauFFM+v9o9xTdICYR8ymKmCf/HZPL
+	mbht+EcdvsEcco0rtYbyVHjdeY2RaiGSv0+K/Up+xQ758AthhOKAh8bIQw165evZIB+YjQgMM94
+	LEM80xKKGe+Ks+JF53bcr
+X-Received: by 2002:a05:6214:318c:b0:702:d3c5:2bf1 with SMTP id 6a1803df08f44-704f48364afmr47557336d6.3.1752753567853;
+        Thu, 17 Jul 2025 04:59:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGx+fJon1hM47o3ro2qoIpBT/ZwbZ2MVf5+gvcrkJWunY7L635zgL0jQnJFiBoidFlr1XdTcQ==
+X-Received: by 2002:a05:6214:318c:b0:702:d3c5:2bf1 with SMTP id 6a1803df08f44-704f48364afmr47557166d6.3.1752753567447;
+        Thu, 17 Jul 2025 04:59:27 -0700 (PDT)
+Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e8265d88sm1362294166b.94.2025.07.17.04.59.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Jul 2025 04:59:26 -0700 (PDT)
+Message-ID: <5f382858-1a43-424e-a774-00511f2e1cac@oss.qualcomm.com>
+Date: Thu, 17 Jul 2025 13:59:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: qcs6490-rb3gen2: Add missing clkreq
+ pinctrl property
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250717-clkreq-v1-1-5a82c7e8e891@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250717-clkreq-v1-1-5a82c7e8e891@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250717-rockchip-i2s-simplify-clk-v2-1-b697542a7c32@linux.dev>
-X-B4-Tracking: v=1; b=H4sIAEjleGgC/42NQQ6CMBBFr0Jm7Zh2KpK48h6EhbRTmYBAWm0gh
- LtbOYHL95L//gaRg3CEW7FB4CRRpjEDnQqw3WN8MorLDKSoVJUmDJPtbSczCkWM8poH8SvaoUd
- WlbqUlXet0ZD3c2Avy9Gum8ydxPcU1uMq6Z/9p5o0ajQtGe90a5iu90HGz3J2nKDZ9/0LrI/EU
- 8IAAAA=
-X-Change-ID: 20250712-rockchip-i2s-simplify-clk-e070457fdb31
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Heiko Stuebner <heiko@sntech.de>
-Cc: linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Troy Mitchell <troy.mitchell@linux.dev>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752753489; l=4356;
- i=troy.mitchell@linux.dev; s=20250712; h=from:subject:message-id;
- bh=5U5+oKM9TS56skKvfyBUuonPmWf8aGSQ+l3JH2CKHPI=;
- b=H3hkHMXg+LJmKavNAJi6r6t4igwPotof77JG4whPYAh5YKQkdHsjFaSDCELs6RIYLtRrQpeke
- aK/5osgdscRDVYT5GW9fb2mt9rGyqmXcehKlwzBOhMHud0Y+c6hEvEE
-X-Developer-Key: i=troy.mitchell@linux.dev; a=ed25519;
- pk=zhRP1xE0bftrurqSWI+SzcSdJGIZ0BTTY9Id0ESzqlI=
-X-Migadu-Flow: FLOW_OUT
+X-Proofpoint-ORIG-GUID: RWkwzbkf1-le5bgkPPHrNOXUbALQ_RhQ
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDEwNSBTYWx0ZWRfX6vTS9ifahBa0
+ V7tNvjNOF6YcGimWZIjTmhlUjg09cwSfXYWbHvMf3f9ZTkFLIoGoQOUD26IM/t81HnvNBkdK082
+ 0tlbwMSC3EGDRXRoqvl9tDL0nis7MFflOBhtL6wfMDFgHk7HFD8kVwSb1Dzv/1YsyvLzrI+11pL
+ Y6h1I12hOMoULnOdL612rT49ibxoRakZrAYUNdM0dzBfi4RAtsi9sY6r/QLEXfS1TUwv2CW7ww5
+ KpvzzHQYxy7NyyLeTGVXpqmbaBN1B++NplEItctLF4bOlPOVxH9hoOAatcOZIGZSViHyOhoj8TB
+ MYSgHDQqw0i5w8EZof3AKlWwI3f14Gc8pWIwABZDhLMU/odI9nlqNSgN5ykbIugawiKpuWHdBcS
+ isy2vH7U/vxkW6xLbL3iXZ8xHWXRkEjnE7psB90UN+JyL19rpv73SQOkaGJkp+JpBg2td5Bz
+X-Proofpoint-GUID: RWkwzbkf1-le5bgkPPHrNOXUbALQ_RhQ
+X-Authority-Analysis: v=2.4 cv=JJk7s9Kb c=1 sm=1 tr=0 ts=6878e5a1 cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=6pHcnep46kEejBPVP2gA:9
+ a=QEXdDO2ut3YA:10 a=OIgjcC2v60KrkQgK7BGD:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-17_01,2025-07-17_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 mlxlogscore=680 adultscore=0 clxscore=1015
+ malwarescore=0 bulkscore=0 spamscore=0 lowpriorityscore=0 priorityscore=1501
+ impostorscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507170105
 
-Replace devm_clk_get + clk_prepare_enable with devm_clk_get_enabled
-to simplify clock acquisition and enabling.
+On 7/17/25 12:40 PM, Krishna Chaitanya Chundru wrote:
+> Add the missing clkreq pinctrl entry to the PCIe1 node. This ensures proper
+> configuration of the CLKREQ# signal, which is needed for proper functioning
+> of PCIe ASPM.
+> 
+> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> ---
 
-Use dev_err_probe for concise error logging and return handling,
-reducing boilerplate code and improving readability.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Signed-off-by: Troy Mitchell <troy.mitchell@linux.dev>
----
-Changes in v2:
-- Fix return value of regmap resource(robot's warning)
-- Link to v1: https://lore.kernel.org/r/20250712-rockchip-i2s-simplify-clk-v1-1-3b23fd1b3e26@linux.dev
----
- sound/soc/rockchip/rockchip_i2s.c | 52 +++++++++++----------------------------
- 1 file changed, 15 insertions(+), 37 deletions(-)
-
-diff --git a/sound/soc/rockchip/rockchip_i2s.c b/sound/soc/rockchip/rockchip_i2s.c
-index 0a0a95b4f5204701b52ca924683d51c29992015d..1dba2d9b2241860a9d87dd4319b135dc249d8e17 100644
---- a/sound/soc/rockchip/rockchip_i2s.c
-+++ b/sound/soc/rockchip/rockchip_i2s.c
-@@ -31,7 +31,6 @@ struct rk_i2s_pins {
- struct rk_i2s_dev {
- 	struct device *dev;
- 
--	struct clk *hclk;
- 	struct clk *mclk;
- 
- 	struct snd_dmaengine_dai_dma_data capture_dma_data;
-@@ -739,6 +738,7 @@ static int rockchip_i2s_probe(struct platform_device *pdev)
- 	struct snd_soc_dai_driver *dai;
- 	struct resource *res;
- 	void __iomem *regs;
-+	struct clk *clk;
- 	int ret;
- 
- 	i2s = devm_kzalloc(&pdev->dev, sizeof(*i2s), GFP_KERNEL);
-@@ -757,38 +757,24 @@ static int rockchip_i2s_probe(struct platform_device *pdev)
- 	}
- 
- 	/* try to prepare related clocks */
--	i2s->hclk = devm_clk_get(&pdev->dev, "i2s_hclk");
--	if (IS_ERR(i2s->hclk)) {
--		dev_err(&pdev->dev, "Can't retrieve i2s bus clock\n");
--		return PTR_ERR(i2s->hclk);
--	}
--	ret = clk_prepare_enable(i2s->hclk);
--	if (ret) {
--		dev_err(i2s->dev, "hclock enable failed %d\n", ret);
--		return ret;
--	}
-+	clk = devm_clk_get_enabled(&pdev->dev, "i2s_hclk");
-+	if (IS_ERR(clk))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(clk), "hclock enable failed");
- 
- 	i2s->mclk = devm_clk_get(&pdev->dev, "i2s_clk");
--	if (IS_ERR(i2s->mclk)) {
--		dev_err(&pdev->dev, "Can't retrieve i2s master clock\n");
--		ret = PTR_ERR(i2s->mclk);
--		goto err_clk;
--	}
-+	if (IS_ERR(i2s->mclk))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(i2s->mclk),
-+				     "Can't retrieve i2s master clock");
- 
- 	regs = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
--	if (IS_ERR(regs)) {
--		ret = PTR_ERR(regs);
--		goto err_clk;
--	}
-+	if (IS_ERR(regs))
-+		dev_err_probe(&pdev->dev, PTR_ERR(regs), "Can't ioremap registers");
- 
- 	i2s->regmap = devm_regmap_init_mmio(&pdev->dev, regs,
- 					    &rockchip_i2s_regmap_config);
--	if (IS_ERR(i2s->regmap)) {
--		dev_err(&pdev->dev,
--			"Failed to initialise managed register map\n");
--		ret = PTR_ERR(i2s->regmap);
--		goto err_clk;
--	}
-+	if (IS_ERR(i2s->regmap))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(i2s->regmap),
-+				     "Failed to initialise managed register map");
- 
- 	i2s->bclk_ratio = 64;
- 	i2s->pinctrl = devm_pinctrl_get(&pdev->dev);
-@@ -796,11 +782,9 @@ static int rockchip_i2s_probe(struct platform_device *pdev)
- 		i2s->bclk_on = pinctrl_lookup_state(i2s->pinctrl, "bclk_on");
- 		if (!IS_ERR_OR_NULL(i2s->bclk_on)) {
- 			i2s->bclk_off = pinctrl_lookup_state(i2s->pinctrl, "bclk_off");
--			if (IS_ERR_OR_NULL(i2s->bclk_off)) {
--				dev_err(&pdev->dev, "failed to find i2s bclk_off\n");
--				ret = -EINVAL;
--				goto err_clk;
--			}
-+			if (IS_ERR_OR_NULL(i2s->bclk_off))
-+				return dev_err_probe(&pdev->dev, -EINVAL,
-+						     "failed to find i2s bclk_off");
- 		}
- 	} else {
- 		dev_dbg(&pdev->dev, "failed to find i2s pinctrl\n");
-@@ -843,20 +827,14 @@ static int rockchip_i2s_probe(struct platform_device *pdev)
- 		i2s_runtime_suspend(&pdev->dev);
- err_pm_disable:
- 	pm_runtime_disable(&pdev->dev);
--err_clk:
--	clk_disable_unprepare(i2s->hclk);
- 	return ret;
- }
- 
- static void rockchip_i2s_remove(struct platform_device *pdev)
- {
--	struct rk_i2s_dev *i2s = dev_get_drvdata(&pdev->dev);
--
- 	pm_runtime_disable(&pdev->dev);
- 	if (!pm_runtime_status_suspended(&pdev->dev))
- 		i2s_runtime_suspend(&pdev->dev);
--
--	clk_disable_unprepare(i2s->hclk);
- }
- 
- static const struct dev_pm_ops rockchip_i2s_pm_ops = {
-
----
-base-commit: 733923397fd95405a48f165c9b1fbc8c4b0a4681
-change-id: 20250712-rockchip-i2s-simplify-clk-e070457fdb31
-
-Best regards,
--- 
-Troy Mitchell <troy.mitchell@linux.dev>
-
+Konrad
 
