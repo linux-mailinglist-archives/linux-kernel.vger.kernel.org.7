@@ -1,86 +1,87 @@
-Return-Path: <linux-kernel+bounces-735951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D798B095BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 22:31:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EC6FB095C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 22:33:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82BE5568719
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 20:31:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF60C3BCD73
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 20:33:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1111FBCB2;
-	Thu, 17 Jul 2025 20:31:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F8822AEF5;
+	Thu, 17 Jul 2025 20:33:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iGsaZkij"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="X7tc7O3p"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29DBC6FB9
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 20:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8981F4623
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 20:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752784305; cv=none; b=PRoo4lDA2EqKAY86qQ9GjIZ/0pRjfC2BQH72oTOGZmoPs7I0HmLwU3IHF+2BecPUn1YskWmcj50zd0a3/p5KalYFhPNy0FSMzZRubOT1GD8srEmn3Tu3yUIBDcLMDaSQ0pO4DCDQf7W4LBqE6ScFEeCryHhvBE6Zh8SZU1b7PX8=
+	t=1752784408; cv=none; b=r/9XZESRGK3VVkNSbRO9OQtmLbgTTzRlZTqW0/3KSA8oQhNIxCANjPvyLbSdQ5MnEMIQgNsN2AsacQyQAp/UrPr+Wv2AYcHtS0XHD+c9Eysd3jlnAVpXpjxJ1ZJ23/hnmq8P1vuNsyRoWcC91pC42ZUZOXd0V3h6lKyF0F9Bj8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752784305; c=relaxed/simple;
-	bh=pFPFJKnPh+LxRAPYyWV0RCCGoZ/H3zxmjWKAYb/1YDg=;
+	s=arc-20240116; t=1752784408; c=relaxed/simple;
+	bh=465kQ6yQTPhCxldTUvMEum0rUEyB5JyOVUpOTCjgfok=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NwJlieSWdfD+xvpd57NMKTIsMwrkd7ZYYo5pVv//5xmo4MR1VcNR9E5TI2GEXlnzlbizpreMtO0y7xao9zf+GuGmJ7H0C2FOaZtK1HEH+/B3QeMY4kO5KZFuuwXCz5EGEtuWpiZ+F/ToXFZoFfXvfPLa/dq0Ci0IW59d7rLB2Yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iGsaZkij; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752784297;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=wdJcKQDQ4sesr9sR1PHs3Eav2q9b1afpxqhEJb8a738=;
-	b=iGsaZkijpQAbQFf8GnwmZhuBMSUdqpCO2iKmi8U4ZCrUW0/aVOPG2wRQbF4EGVJgpzCxdO
-	w9ejwDxaGXgoyC/jVwww7GPL/xlZySqkeaFlwKt/Mw4o1eajpUKeO5bDXYWD/XWgKdiaQU
-	hvOv5kLGqbH+TTekM/1WliGUUMwgyl8=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-438-_bCOtirsNi2Kw2fXFMI-5Q-1; Thu, 17 Jul 2025 16:31:36 -0400
-X-MC-Unique: _bCOtirsNi2Kw2fXFMI-5Q-1
-X-Mimecast-MFC-AGG-ID: _bCOtirsNi2Kw2fXFMI-5Q_1752784295
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3af3c860ed7so638235f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 13:31:36 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=CE+LSeKfkg1wdmKcexZBpAwzsX6CXha2oMzsjRUA+dBVNPuDEQB+3Lf9THjacX595YxvFWsbCAK46rYyXKni16KCzf1xTsIYZrnq/FYjYNPAvhEkyAe4QEaRj1K64q46I05wHZa/MOsNEAAnxye7kDsVtrex8bu+BNrE34vEvMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=X7tc7O3p; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56HCstT3021647
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 20:33:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	8nModRSVGZSsZ5DL7kr1DuhtFiXYpOSlYAQ311KsRLY=; b=X7tc7O3pUqk4qN7j
+	RfmUHeG5JwOtJOe0lIIJrPb0H6dHfDakZ9Hdx3/4GAkQ82gUPKRNh+sNOsVSiIeV
+	6IilwXAQZnW1kjMR3cm91DonN0vW7efrAlRKtYLmhSIxjYL/nVdAu72YZcZl5pb8
+	Pm3WPV246TQECUTJwiOD80QL24MkfpvfqBN30isWBTRUYRn4QGEJLQKqdZz/I3uv
+	gN322mKC/d3opYz4g6BTwlSu5E38BELG24Oh80N4LdoCm8JaYcVEi23mRGCBWoxQ
+	ncdY2SgZhChbbTk1m9zqP9I6E2cDYPknO7/6FFeaDgHmAi/2wMVeJSbd1k4Zelgv
+	jmbKyw==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ufu8gxjd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 20:33:24 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7e33e133f42so29968985a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 13:33:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752784291; x=1753389091;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=wdJcKQDQ4sesr9sR1PHs3Eav2q9b1afpxqhEJb8a738=;
-        b=dRb92pkeWHe3XHrAl0GDEg4bJmR5PcEWUoHLrygl3hCXC46MccE4OVl2QUL6XWaGS5
-         OaIfYjk1AbDqSv+jPQJ3xR6aHMutcWkM0fj6juNgrxwSW1p8/sCdBaiJLSBH1KO7F5S4
-         PYmf3xemvDgBCH8xkxOtnDOWPu4eI9VA1iEtRSD2K0LcOx1deYWseypNakXGFviEgscJ
-         2i0CCnJSK7GQSGer/lE5cKjolDFCYIkdVpSZBmipQFcjYXKgorE5w8WbPg7yck+4k158
-         tBwR4fiOi/ChUMcmBKllec8dU0Ior8wb8pJF7z1es5x+FcxBf0aSqbxKG/kfx7OYg7Cl
-         CAtw==
-X-Gm-Message-State: AOJu0Yy+DW+9k4DC60vq6ZpL2CJ1pHyuToZlOLcu8PcDOgWPpIIMQVbE
-	y60kRTrusMIxi9jkc2EaeSqnLVRsJBzwLNMeGGaTxEUhckYLddN7MZzo19oIZIx6IX8AsUuMVMD
-	C04KlEhco/VexpFUvH9s3lYaOqMZV9nUibbCXhFXD2JIcPXKCsfVQynOviVsM2EhuBw==
-X-Gm-Gg: ASbGnctMJJrTVcOugBF1FFxOiouLpfzsE2QO8HBokNxD64E8y9L0VC0Ju51wUeDfOgK
-	fNi+cEVq/c4wvk/Lh8Xwzir+2P33a67bvYlY2Oj8nhgH1r+q89WCLOR+ekYgfNga1Y6Cs0UQbNM
-	B2vIRqyPdlHvrkLP6l8m0+Q5cD1A1N3wlzdDd5WO1hy6avJ71L6A6fk8Mx8AHMQMUYKqsmPRzaO
-	gQkQ3aSX6yfhdy0VA5fGzNIgivuSLXFBPyQQC11wHVM11VYEgoDxIzI8ka0ROlTJbrmZP7vef7b
-	IgrBGo3hKPDTSuKKYMd6KLvWZ+REdnLndDjuG8fmliv9uYQxh9VH7OzI/obqDSuf2eWi9fiMJ+Y
-	ILVSA7VkElWg+NDHVYM+Zv2y2TM3dewY7gmw64aaaF8BuKCYVmkXyWfAGkDYjqULw
-X-Received: by 2002:a05:6000:490c:b0:3a4:d02e:84af with SMTP id ffacd0b85a97d-3b60e5531d6mr5324990f8f.58.1752784291431;
-        Thu, 17 Jul 2025 13:31:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFIXuB/mCdSLCE80mgA6xcOKmEIZL5NFnU1Qt11L0ORhR2cLptcTnShZQeEWrqbZqx0e0NMtA==
-X-Received: by 2002:a05:6000:490c:b0:3a4:d02e:84af with SMTP id ffacd0b85a97d-3b60e5531d6mr5324966f8f.58.1752784290908;
-        Thu, 17 Jul 2025 13:31:30 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f35:2b00:b1a5:704a:6a0c:9ae? (p200300d82f352b00b1a5704a6a0c09ae.dip0.t-ipconnect.de. [2003:d8:2f35:2b00:b1a5:704a:6a0c:9ae])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e7f4289sm60881935e9.7.2025.07.17.13.31.29
+        d=1e100.net; s=20230601; t=1752784404; x=1753389204;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8nModRSVGZSsZ5DL7kr1DuhtFiXYpOSlYAQ311KsRLY=;
+        b=qqX6024zlHVM8cExY61VXnVaSRx1djRnPs9Y4OffBQY7SN7mmpcegf9CjAH+01DNPT
+         HkHedVXSKvzkcCmmOdg6X2eqcOz8126N29GwuHSRqTvnYgLiTHkNwqfHWOCZCujM8LBH
+         ujpu5A6WdcnpyxVa72Gk09E+e5Xw+j1Qg6MNj01qv0u06PqNv1utyhopcQxuguYgQ+AI
+         qQyo70iaHu7nEqc4Uw2uylG6kqGcfXJwJWzJwoOLu5g2syFXmpwjn9gk6wDFSItF/R2z
+         U0b24+Jjv/+DZU8MrMQVGEbDSdTgb+VpROXEQuqMPC+dexoCzkJxnntJusnrL3BaMsTC
+         g02Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVHlN2IYLgQm3f7fdox+Qf38vmcK+Oc26DAmq7avCtKPUFpwXfmGfNP7oIrNBEza7hveKYY++eT6QA3QZE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwftlU7KlmXRfE/IVI/yC5wUMOR9omKLBGVByozpiVHwY22yoiN
+	j8D3CLAf3seQvtUiuob4Oll5SYD3EgNah/3Me8YgWXmuDbRDSIQB7It71wFB6iTttJ+9sOsU61a
+	3NvwJH1xvw5BvHOstSwdgZ3uQowfL545rs4Ya6K4NQs0EjuJhD9xMmfYwTwmObQXWiSk=
+X-Gm-Gg: ASbGncseIXsn8aR01YXnCJf4uuQCEN0kYTyxRn0y5oqk/qCIGSMDysDy67ogz/NzPeF
+	JkxfcBjAaTipkw2QGTKQC62LJ5uCx69KjpaBDmO6tgMWmGbp44y5AbYV1ByQh4TcmPJHXMNOQj/
+	rxXQLESgYUCaznER86NHKrjAMN8G1Pc9H1/navqdWuNIIwuG4uYIX/Sqs0SrOxxf4aCWo4c0Vrp
+	1UU/sblyMH8n4GgdxUmE1hOVEHnWF7+arGruI/v9C3O6pA2RUSMg1DM/mlbydKawhT6bUdyCGmZ
+	d95DCNLmBCjVFEP+H5jmS+LWWP+/TrOdp5dpr72uAa2RVKEH8yVAleaMVV8m/ETvWxEebzMY8aE
+	k/oYot8xWpUSEzeMCFS5T
+X-Received: by 2002:a05:620a:2697:b0:7e0:2b47:bd68 with SMTP id af79cd13be357-7e342ad5730mr507121085a.6.1752784403726;
+        Thu, 17 Jul 2025 13:33:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHq7ne2sTqDVyAUeSU+0dYOV0hFl3hEPNgP0CsgwNgE6XNHuWeZQZvq7BCuCRpH3GkUIIYwqQ==
+X-Received: by 2002:a05:620a:2697:b0:7e0:2b47:bd68 with SMTP id af79cd13be357-7e342ad5730mr507117485a.6.1752784402906;
+        Thu, 17 Jul 2025 13:33:22 -0700 (PDT)
+Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e82dee16sm1424518666b.152.2025.07.17.13.33.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Jul 2025 13:31:30 -0700 (PDT)
-Message-ID: <7701f2e8-ae17-4367-b260-925d1d3cd4df@redhat.com>
-Date: Thu, 17 Jul 2025 22:31:28 +0200
+        Thu, 17 Jul 2025 13:33:21 -0700 (PDT)
+Message-ID: <37932b96-fc4d-4321-8986-8f975b0c1350@oss.qualcomm.com>
+Date: Thu, 17 Jul 2025 22:33:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,244 +89,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/9] mm/huge_memory: mark PMD mappings of the huge zero
- folio special
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- xen-devel@lists.xenproject.org, linux-fsdevel@vger.kernel.org,
- nvdimm@lists.linux.dev, Andrew Morton <akpm@linux-foundation.org>,
- Juergen Gross <jgross@suse.com>, Stefano Stabellini
- <sstabellini@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox
- <willy@infradead.org>, Jan Kara <jack@suse.cz>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Zi Yan <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
- Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
- Hugh Dickins <hughd@google.com>, Oscar Salvador <osalvador@suse.de>,
- Lance Yang <lance.yang@linux.dev>
-References: <20250717115212.1825089-1-david@redhat.com>
- <20250717115212.1825089-6-david@redhat.com>
- <46c9a90c-46b8-4136-9890-b9b2b97ee1bb@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH 2/2] interconnect: qcom: add glymur interconnect provider
+ driver
+To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>, djakov@kernel.org,
+        lumag@kernel.org, a39.skl@gmail.com, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, quic_rjendra@quicinc.com,
+        raviteja.laggyshetty@oss.qualcomm.com
+Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250716151535.4054172-1-pankaj.patil@oss.qualcomm.com>
+ <20250716151535.4054172-3-pankaj.patil@oss.qualcomm.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <46c9a90c-46b8-4136-9890-b9b2b97ee1bb@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250716151535.4054172-3-pankaj.patil@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDE4MSBTYWx0ZWRfXzbN/MkQiqcPQ
+ 6xx1g/KzLNDT0j5qSrffCZadD0c8EEQQkWKVKV87gNBZciVbgkWef+qpTsrVsP8bbVZCeA6VGtx
+ 8cuO6b1lhZdGwF9giusULAy8hJPtyKZyDGF34IyQXo+/NE6JlBul08cSmECrqwCakY6elPMhiAg
+ tfasXvc0MBadfyn29BvYX/YL8Z+qo23TeE7EQhAQEaelF1rdxgNImQEM1hC4t+7Bz/URd8iv7nN
+ IPDWidpd4hlvC7/8xI283R3YN9Dq8fW6BpjJzXcpk9e4d2bQqg97bSPVD/s4NNudmp3qLLGQGye
+ uS+8KSydX0uRhZvALTCYsrClvPwocMmb3LiHwrFiLWPd5dWRyM6zW4immyg4HFoB5l31mThic9B
+ rhH2ZKzfeF0KGy2BzCli/EGElpc9SR83iB7y1Uu31wTUhlS7PJWydZH2uKWwa3csM0gDOcyN
+X-Proofpoint-ORIG-GUID: ao74z32WgfVmdSbLpngvAt0b558Y4S3T
+X-Proofpoint-GUID: ao74z32WgfVmdSbLpngvAt0b558Y4S3T
+X-Authority-Analysis: v=2.4 cv=f59IBPyM c=1 sm=1 tr=0 ts=68795e14 cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=2uCcKERadT1UtqjeBP8A:9
+ a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-17_03,2025-07-17_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 lowpriorityscore=0 malwarescore=0 spamscore=0 mlxscore=0
+ bulkscore=0 suspectscore=0 impostorscore=0 adultscore=0 priorityscore=1501
+ mlxlogscore=999 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507170181
 
-On 17.07.25 20:29, Lorenzo Stoakes wrote:
-> On Thu, Jul 17, 2025 at 01:52:08PM +0200, David Hildenbrand wrote:
->> The huge zero folio is refcounted (+mapcounted -- is that a word?)
->> differently than "normal" folios, similarly (but different) to the ordinary
->> shared zeropage.
+On 7/16/25 5:15 PM, Pankaj Patil wrote:
+> From: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
 > 
-> Yeah, I sort of wonder if we shouldn't just _not_ do any of that with zero
-> pages?
-
-I wish we could get rid of the weird refcounting of the huge zero folio 
-and get rid of the shrinker. But as long as the shrinker exists, I'm 
-afraid that weird per-process refcounting must stay.
-
+> Add driver for the Qualcomm interconnect buses found in glymur
+> based platforms. The topology consists of several NoCs that are
+> controlled by a remote processor that collects the aggregated
+> bandwidth for each master-slave pairs.
 > 
-> But for some reason the huge zero page wants to exist or not exist based on
-> usage for one. Which is stupid to me.
+> Signed-off-by: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
+> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+> ---
 
-Yes, I will try at some point (once we have the static huge zero folio) 
-to remove the shrinker part and make it always static. Well, at least 
-for reasonable architectures.
+[...]
 
-> 
->>
->> For this reason, we special-case these pages in
->> vm_normal_page*/vm_normal_folio*, and only allow selected callers to
->> still use them (e.g., GUP can still take a reference on them).
->>
->> vm_normal_page_pmd() already filters out the huge zero folio. However,
->> so far we are not marking it as special like we do with the ordinary
->> shared zeropage. Let's mark it as special, so we can further refactor
->> vm_normal_page_pmd() and vm_normal_page().
->>
->> While at it, update the doc regarding the shared zero folios.
-> 
-> Hmm I wonder how this will interact with the static PMD series at [0]?
+> +static const struct of_device_id qnoc_of_match[] = {
+> +	{ .compatible = "qcom,glymur-aggre1-noc",
+> +	  .data = &glymur_aggre1_noc},
+> +	{ .compatible = "qcom,glymur-aggre2-noc",
 
-No, it shouldn't.
+Please unwrap these lines, i.e.:
 
-> 
-> I wonder if more use of that might result in some weirdness with refcounting
-> etc.?
+{ .compatible = "qcom,glymur-aggre2-noc", .data = &glymur_aggre2_noc },
 
-I don't think so.
+I'd also request you work with the author to provide the ICC QoS settings
+for this platform (which would be good to see as part of the introductory
+commit).
 
-> 
-> Also, that series was (though I reviewed against it) moving stuff that
-> references the huge zero folio out of there, but also generally allows
-> access and mapping of this folio via largest_zero_folio() so not only via
-> insert_pmd().
-> 
-> So we're going to end up with mappings of this that are not marked special
-> that are potentially going to have refcount/mapcount manipulation that
-> contradict what you're doing here perhaps?
-
-I don't think so. It's just like having the existing static (small) 
-shared zeropage where the same rules about refcounting+mapcounting apply.
-
-> 
-> [0]: https://lore.kernel.org/all/20250707142319.319642-1-kernel@pankajraghav.com/
-> 
->>
->> Reviewed-by: Oscar Salvador <osalvador@suse.de>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
-> 
-> I looked thorugh places that use vm_normal_page_pm() (other than decl of
-> function):
-> 
-> fs/proc/task_mmu.c - seems to handle NULL page correctly + still undertsands zero page
-> mm/pagewalk.c - correctly handles NULL page + huge zero page
-> mm/huge_memory.c - can_change_pmd_writable() correctly returns false.
-> 
-> And all seems to work wtih this change.
-> 
-> Overall, other than concerns above + nits below LGTM, we should treat all
-> the zero folios the same in this regard, so:
-> 
-> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-
-Thanks!
-
-> 
->> ---
->>   mm/huge_memory.c |  5 ++++-
->>   mm/memory.c      | 14 +++++++++-----
->>   2 files changed, 13 insertions(+), 6 deletions(-)
->>
->> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> index db08c37b87077..3f9a27812a590 100644
->> --- a/mm/huge_memory.c
->> +++ b/mm/huge_memory.c
->> @@ -1320,6 +1320,7 @@ static void set_huge_zero_folio(pgtable_t pgtable, struct mm_struct *mm,
->>   {
->>   	pmd_t entry;
->>   	entry = folio_mk_pmd(zero_folio, vma->vm_page_prot);
->> +	entry = pmd_mkspecial(entry);
->>   	pgtable_trans_huge_deposit(mm, pmd, pgtable);
->>   	set_pmd_at(mm, haddr, pmd, entry);
->>   	mm_inc_nr_ptes(mm);
->> @@ -1429,7 +1430,9 @@ static vm_fault_t insert_pmd(struct vm_area_struct *vma, unsigned long addr,
->>   	if (fop.is_folio) {
->>   		entry = folio_mk_pmd(fop.folio, vma->vm_page_prot);
->>
->> -		if (!is_huge_zero_folio(fop.folio)) {
->> +		if (is_huge_zero_folio(fop.folio)) {
->> +			entry = pmd_mkspecial(entry);
->> +		} else {
->>   			folio_get(fop.folio);
->>   			folio_add_file_rmap_pmd(fop.folio, &fop.folio->page, vma);
->>   			add_mm_counter(mm, mm_counter_file(fop.folio), HPAGE_PMD_NR);
->> diff --git a/mm/memory.c b/mm/memory.c
->> index 92fd18a5d8d1f..173eb6267e0ac 100644
->> --- a/mm/memory.c
->> +++ b/mm/memory.c
->> @@ -537,7 +537,13 @@ static void print_bad_pte(struct vm_area_struct *vma, unsigned long addr,
->>    *
->>    * "Special" mappings do not wish to be associated with a "struct page" (either
->>    * it doesn't exist, or it exists but they don't want to touch it). In this
->> - * case, NULL is returned here. "Normal" mappings do have a struct page.
->> + * case, NULL is returned here. "Normal" mappings do have a struct page and
->> + * are ordinarily refcounted.
->> + *
->> + * Page mappings of the shared zero folios are always considered "special", as
->> + * they are not ordinarily refcounted. However, selected page table walkers
->> + * (such as GUP) can still identify these mappings and work with the
->> + * underlying "struct page".
-> 
-> I feel like we need more detail or something more explicit about what 'not
-> ordinary' refcounting constitutes. This is a bit vague.
-
-Hm, I am not sure this is the correct place to document that. But let me 
-see if I can come up with something reasonable
-
-(like, the refcount and mapcount of these folios is never adjusted when 
-mapping them into page tables)
-
-> 
->>    *
->>    * There are 2 broad cases. Firstly, an architecture may define a pte_special()
->>    * pte bit, in which case this function is trivial. Secondly, an architecture
->> @@ -567,9 +573,8 @@ static void print_bad_pte(struct vm_area_struct *vma, unsigned long addr,
->>    *
->>    * VM_MIXEDMAP mappings can likewise contain memory with or without "struct
->>    * page" backing, however the difference is that _all_ pages with a struct
->> - * page (that is, those where pfn_valid is true) are refcounted and considered
->> - * normal pages by the VM. The only exception are zeropages, which are
->> - * *never* refcounted.
->> + * page (that is, those where pfn_valid is true, except the shared zero
->> + * folios) are refcounted and considered normal pages by the VM.
->>    *
->>    * The disadvantage is that pages are refcounted (which can be slower and
->>    * simply not an option for some PFNMAP users). The advantage is that we
->> @@ -649,7 +654,6 @@ struct page *vm_normal_page_pmd(struct vm_area_struct *vma, unsigned long addr,
-> 
-> You know I"m semi-ashamed to admit I didn't even know this function
-> exists. But yikes that we have a separate function like this just for PMDs.
-
-It's a bit new-ish :)
-
-
--- 
-Cheers,
-
-David / dhildenb
-
+Konrad
 
