@@ -1,164 +1,236 @@
-Return-Path: <linux-kernel+bounces-734664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13317B08481
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:04:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B074EB08488
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:05:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F6411A65F76
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:05:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C4623AB88E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA73C2036F3;
-	Thu, 17 Jul 2025 06:04:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6484200112;
+	Thu, 17 Jul 2025 06:04:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JXSP8YNo"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZLV2ZRl3"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB3628E7
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 06:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818D91FE45A
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 06:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752732280; cv=none; b=DEag3a8jE62DNpQApTfZoK7rKmvSm3v2Q/k9j+uIX6GVw71FWmybKiMzQtQtF8SSY3QbUQgkIm/MNl8VeOdiEnbHPJUQ/MNB/zrBhvGN/25mKXdWfQOXgvvl0RiCj8A6pxM1B+Jn5RY593iuWobcJJaH1xuShxEAAy8Wh8M1UPw=
+	t=1752732292; cv=none; b=aAzeDSm2/P4YgvRLxe9au+f4UPTSShddaHQyBen7jC+Dz3lruTQCNZ3TbudK4+VTt4anNMSPsxEQ+XxZDqyPvwvc80kEda++ooWL0z2LT9ohTt+YzOZBrBke1abrBgGM+mP/uQGnXQi+wfoYEsa95K0bD1nKFkUjWJSgw3NRaUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752732280; c=relaxed/simple;
-	bh=P3S2zvRoo7lQJ0ChcHfU5Ea5iDRhwpVODl4UsA4zdsc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DVfgcebTkTymgVH3HtbV5U87pBSsM42xIGUymGtOUUlqvcJHlYde6jkQVcI2/h37IQBp/A2sO/2uMQTJmAfz45NfBDr+lxupYr7Z+rvQ6W6M4+8x6C+9CoIbMEEYp4LL3lBxZ++eM2SwY8yPBtygRapUzXeRty4CA3Io+BYg0L0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JXSP8YNo; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752732277;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tUkb4nCGAHcNyByaHU5iCpVWleaJyNw90ZAtHNo4HkE=;
-	b=JXSP8YNo+m+8ITdVBAnBAa6UYBcS6tBAsn1hFa5PjIq2PsdPVmS3FuPRzCYinuj+biQ2P7
-	O7N2WxA8y6SBRa23a95nCwz5q465KEzGNRDKr/GwV5BYDYeqmgnm9/1HMdarGF2dUoSgPX
-	hd/EKrpK6NuYmXVMlsUG4sfowDS7sTM=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-352-uH4f_Nq8NvCskeVoS4Rk5w-1; Thu, 17 Jul 2025 02:04:36 -0400
-X-MC-Unique: uH4f_Nq8NvCskeVoS4Rk5w-1
-X-Mimecast-MFC-AGG-ID: uH4f_Nq8NvCskeVoS4Rk5w_1752732275
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-455f79a2a16so5254035e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 23:04:35 -0700 (PDT)
+	s=arc-20240116; t=1752732292; c=relaxed/simple;
+	bh=/eI8FTCpncUNzSRdBop7/8qiRihLxNb69wVgieMvvy4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pmAJso3B3EXKwGoUMQ2g2y8ZzHWhQm11JlEwlK2S/6I1jCvnsr6R7fN5WSHHjLWpVI6gGZLtdTnVJbCagJQD98jI9fEWNhKg6P761QS4L5GPGG4vPAeotbQdqOdE3zObGQICKQYBcL49fzK0vZ9HqStxUcV8dXx8ky1qqtidruU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZLV2ZRl3; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56H40Ju4028099
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 06:04:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ectNLSsr0geVGNTSYPuw96/Hkm3S5cAjwHokocTaqA8=; b=ZLV2ZRl3Rg7wgDRP
+	QHagA1gAAS0/iFZO9Pv79mBwHopjmEYU0EToYHuzp8p1PzSAidNDCf+daY/1orXP
+	JeuHLrQ2nzP7Rpax4gt0jUBmdfykWeQhIqslBIaugLjmfkJcKgCMoo6r1NJhtw5z
+	nTUm90E1rgRpXDRchNCkFkmSDv4kXGiYAWDas9VRLAS4OGFe5AI7G7/aZk1V9i6I
+	TyixfZRUj/uJgX8ocsO2BXwG6sfFQT4pe4kQNOFclCgkwQVSQUJ4YMH4Yh/EgPlL
+	MscWNr3p1StnFBB6AD2afK2e1e/JpqFQaVaWYAnV4aeGoFq4m/ly29TS5/zjvZqY
+	JClcIA==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47wnh5xqdh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 06:04:49 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-7492da755a1so584095b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 23:04:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752732275; x=1753337075;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tUkb4nCGAHcNyByaHU5iCpVWleaJyNw90ZAtHNo4HkE=;
-        b=rf1zTlLJhA/5ntintMhuBC+tAbkqyJzPQS7wwtLcB2/e3WOxaK5QcCIXownB4Puk/w
-         ezvnW2DGTKoDBJUo/3UyK9dF916ekbxwToAVuzqu/uIAKWh32Y1hARB4iJ79uLJfUMtF
-         HYsW/KCzTqD6DCXR4O/Ylh8Y11y0GtSNBGeeQ6YjJxzHKvGoR2ugREbrl/u+IF4UchHE
-         /kf3ewjimOrcfoblNYWz9WT20jS3dFoo7O+gzj5Cv3nJoXI0Jb8nFRPcAI/ACK93tBBg
-         y/238nIpjLVE9qjJv5RXZ1E6NJUPAnNRRQxIiatXXTKsPXauVZXL/XGfc0AycTMIn0m1
-         1REg==
-X-Forwarded-Encrypted: i=1; AJvYcCUng4rRD9klqlz2NsKTN6lZP6iZFlv7Iskrr/w2seht3Sc6l1d/7MMQqIYQHCvlWWnkGSQkEme1GqqybXA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFjNfRJGn7+ngqs+fNktX1Dg6vnCvlTRTqGcjwv3H8d723dsw7
-	2y9gTgBaLQpxfLNjKucwaosqtL8y9K0k25eiIs1EJzhHmUn/RrSW5UaN3wKd78dYwzWzAkgZXTr
-	bS4fvUEhmkCWyl9KlvkKPbb9gTx8ESHeV3JRmScykvUlRM9g0fv8lCtew0rUfzQu6AA==
-X-Gm-Gg: ASbGncsch9K/m3LuCDov3SMAzh+HrHiAMCpF1tqlAcaHTsO0fhALfsD38twVBVo08p3
-	bWO4Kcny/cZmQOc7T9y0X5QS0FtVBl4dMEpor0L0tne4d065sEFyuifFg6h0QdDTiNh0UCJBJDQ
-	rqBQuhL3Ji2f9A2A/z0PE9z1od5LeKwjpw8aPNvObT7ovQ7mt8ARpSS0lsW/i0/unPOlTJtKwUE
-	6NCjIBKurAWQXDvZMPj03jKCRSSKPkgagUxFx33ziifc5I60+ExO+z+1J5HvraBxBTwE7OMcOPY
-	h6MhskIVQ+NSDU3wTA+DcJL3hcgbOCw4
-X-Received: by 2002:a05:600c:a55:b0:456:1442:854 with SMTP id 5b1f17b1804b1-4562e28616amr46679075e9.24.1752732274621;
-        Wed, 16 Jul 2025 23:04:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGjrUfFCvAdm/MUeAz0hpuBCDwLEyQ3RVRuTxAsQFHlPQhXRkgs7ZoZlJruFXtXCDIWxuHA8Q==
-X-Received: by 2002:a05:600c:a55:b0:456:1442:854 with SMTP id 5b1f17b1804b1-4562e28616amr46678735e9.24.1752732274082;
-        Wed, 16 Jul 2025 23:04:34 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:150d:fc00:de3:4725:47c6:6809])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45634f5ea01sm11589685e9.14.2025.07.16.23.04.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 23:04:33 -0700 (PDT)
-Date: Thu, 17 Jul 2025 02:04:30 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: jiang.peng9@zte.com.cn
-Cc: jasowang@redhat.com, xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
-	sumit.semwal@linaro.org, christian.koenig@amd.com,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	xu.xin16@zte.com.cn, yang.yang29@zte.com.cn
-Subject: Re: [PATCH v3] virtio: Update kerneldoc in
- drivers/virtio/virtio_dma_buf.c
-Message-ID: <20250717015524-mutt-send-email-mst@kernel.org>
-References: <202507171041593886W7pGra5n2hPMaT1j17NV@zte.com.cn>
+        d=1e100.net; s=20230601; t=1752732288; x=1753337088;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ectNLSsr0geVGNTSYPuw96/Hkm3S5cAjwHokocTaqA8=;
+        b=C8iM+cBA1hy5JPWOpokJ/h2U/Z3KaChvAivwEcyiJ6HNfV5GyGmawZddK1H9CT6i4T
+         JuzNSH3+dZeI2+4Xq1F8ZiZh0cg+f1xvPr+1VadG8wzoCLXd+8fNxCIl0bufaCJZPJhS
+         OGTZMjE0Ylle0HPOuQHknjcaVR7CbktrQtYk5JS75RRbsO9jdoD8XR52WT62N5mTouvn
+         ormu4Z5sl3cnnzeV58UpEs/8Ut23KfHvqQP+9aMHEc9N8CDztLesReSuHthPfC19O0Qt
+         kb9hapNKLdISJljsXia3eX8dEeqOmD2922NffHlV3hUhN+du7txmHs3K9dNfiMbnbAt9
+         6UvA==
+X-Forwarded-Encrypted: i=1; AJvYcCVA+t1ZzpZryBylxbZmD52fP6sN/cphZopKVypUGK/YiAYh5c75nWmRF3VhH339AYuBifa++Pvh/yVhbm4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFcklSsV+PiPgiMR5Ks1ntCDhE+nbDSGYqn3C6iuszLxTQ2Rn2
+	VpjA3k/Y/6wrKHnVidCfiXnNN5IAKwoChXLRuue38WHTB9mymykQTQ1NurfErJibd4qt3K3uBtW
+	pIkS0cvuqVMFCowijw75/1hPumBHXesXIQnUoEvUoZV7JvtVRwB2G8iZTLxLS7Crc04Q=
+X-Gm-Gg: ASbGncsLheQpDQoGxui8mT7DXjAHZWteN7PiiYtMnmcEjCMsO7vKtfNlI+NNGlBIBJT
+	ITnGd91EbltX3KuxlyW1ADCqWwE3MYgpMFhaCcOgc1OWtQfBSrOgXiXriZQJZmLe8mn8Q/I75JV
+	n2kmIdbf7tvWlPtedQHX4ag0nJYUEr4n/V29oftE30J0KQxW3YS4gAfZtWgK5GsRbhkCk18PrLS
+	0/faRwlS4pTv8Pe+E9LNhmx6Vyw2+v6IAl4tD8G47FH4YUJ9XZhFX602dghDpKBwMYwPXEJ4Gp8
+	KSDmyyWOTx5XLpPPFc8+/+jjZVBVYf5iz76maTbw8MR7SgXCjIqiGgX4yhnY
+X-Received: by 2002:a05:6a00:1945:b0:736:5f75:4a3b with SMTP id d2e1a72fcca58-75722869626mr7421091b3a.7.1752732288337;
+        Wed, 16 Jul 2025 23:04:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFyCadxiKqAnRGrg3kJEgXbKAZ6HS0QuHqlNsqoAGcHtBpNmUUMpDgDD0/MOYYxsR7Y2b2Q5w==
+X-Received: by 2002:a05:6a00:1945:b0:736:5f75:4a3b with SMTP id d2e1a72fcca58-75722869626mr7421020b3a.7.1752732287518;
+        Wed, 16 Jul 2025 23:04:47 -0700 (PDT)
+Received: from [10.216.10.110] ([202.46.23.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9dd73c3sm14960668b3a.7.2025.07.16.23.04.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Jul 2025 23:04:47 -0700 (PDT)
+Message-ID: <617d207c-995a-4375-bd5d-2e1e5c459bba@oss.qualcomm.com>
+Date: Thu, 17 Jul 2025 11:34:34 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202507171041593886W7pGra5n2hPMaT1j17NV@zte.com.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V6 4/5] iio: adc: Add support for QCOM PMIC5 Gen3 ADC
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: robh@kernel.org, krzysztof.kozlowski@linaro.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, agross@kernel.org, andersson@kernel.org,
+        lumag@kernel.org, dmitry.baryshkov@oss.qualcomm.com,
+        konradybcio@kernel.org, daniel.lezcano@linaro.org, sboyd@kernel.org,
+        amitk@kernel.org, thara.gopinath@gmail.com, lee@kernel.org,
+        rafael@kernel.org, subbaraman.narayanamurthy@oss.qualcomm.com,
+        david.collins@oss.qualcomm.com, anjelique.melendez@oss.qualcomm.com,
+        quic_kamalw@quicinc.com, rui.zhang@intel.com, lukasz.luba@arm.com,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, cros-qcom-dts-watchers@chromium.org,
+        quic_skakitap@quicinc.com, neil.armstrong@linaro.org,
+        stephan.gerhold@linaro.org
+References: <20250509110959.3384306-1-jishnu.prakash@oss.qualcomm.com>
+ <20250509110959.3384306-5-jishnu.prakash@oss.qualcomm.com>
+ <20250511140418.33171ca3@jic23-huawei>
+ <ff19780e-5bbd-4074-9db3-b4f27922a093@oss.qualcomm.com>
+ <20250628173112.63d9334e@jic23-huawei>
+ <5b55acbf-065d-4383-a816-82561bf91273@oss.qualcomm.com>
+ <20250713143149.60763b52@jic23-huawei>
+Content-Language: en-US
+From: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+In-Reply-To: <20250713143149.60763b52@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=dKimmPZb c=1 sm=1 tr=0 ts=68789281 cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=rjtObUXQbTieMrY6Fj4A:9
+ a=QEXdDO2ut3YA:10 a=zc0IvFSfCIW2DFIPzwfm:22
+X-Proofpoint-GUID: 6v7vYGYC1Bf52Doqt99ROke8RSU7HFAc
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDA1MCBTYWx0ZWRfX+8si6YBGfp2+
+ ShxBCHqp5XwQlszUi7baxLd5tQtlDmknB4ZUV2/hI0KUirp1fhVw1pV0zT7a/SCWaytW6+7yEhM
+ 4Gy/cZDXsrsyFbp/gck4c9v2UwRJvQAWSGzTB0EqhMdLKTk/vTbYeCMmSs1plLN9DhMXEu/td65
+ ZI+UfbFjBiJZR0sigMV6biau5zkD7HtfepdwzTafUYRj/NCKPgsQackrpHdg2OQnlBEGzSb98vj
+ KDnMMaZULvIbT0TT2X+HfFrwRzzCfepGB1bJKqS4PcZpuA4+1Pil60Ee3e8mI591NjyDPWDpfNt
+ 6/Wy5fcTPpvc/LvkSvmtHBiV1/yvLN3WSl8SmE1+oUsgLaDuxV36wkvAao4RUfwJ5W0iipns2K7
+ 4DGQKdSbPk7i9G+ugK+QE5pxgPo2swWGV16vXXnBSAX2Q5QFoaSurGPwqZN8uqXWXiB7VnLN
+X-Proofpoint-ORIG-GUID: 6v7vYGYC1Bf52Doqt99ROke8RSU7HFAc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-17_01,2025-07-16_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 clxscore=1011 mlxlogscore=766 mlxscore=0 spamscore=0
+ adultscore=0 impostorscore=0 priorityscore=1501 suspectscore=0 bulkscore=0
+ phishscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507170050
 
-On Thu, Jul 17, 2025 at 10:41:59AM +0800, jiang.peng9@zte.com.cn wrote:
-> From: Peng Jiang <jiang.peng9@zte.com.cn>
+Hi Jonathan,
+
+On 7/13/2025 7:01 PM, Jonathan Cameron wrote:
+> On Thu, 10 Jul 2025 12:14:13 +0530
+> Jishnu Prakash <jishnu.prakash@oss.qualcomm.com> wrote:
 > 
-> Fix kernel-doc descriptions in virtio_dma_buf.c to fix W=1 warnings:
+>> Hi Jonathan,
+>>
+>> On 6/28/2025 10:01 PM, Jonathan Cameron wrote:
+>>>
+>>>   
+>>>>>> +	.hw_settle_1 = (unsigned int [VADC_HW_SETTLE_SAMPLES_MAX])
+>>>>>> +				{ 15, 100, 200, 300, 400, 500, 600, 700,
+>>>>>> +				  1000, 2000, 4000, 8000, 16000, 32000,
+>>>>>> +				  64000, 128000 },    
+>>>>> Andy often points this out, but I'll do it this time. Fixed numbers (typically power of 2)
+>>>>> elements per line make it much easier to see which element is which in these arrays.
+>>>>> Reduce the indent a little to allow that here.    
+>>
+>> ...
+>>
+>>>>>
+>>>>> It was never worth bothering with release until we had devm managed form but
+>>>>> now we do the code complexity cost is low enough to make it reasonable.
+>>>>>     
+>>>>>> +	indio_dev->name = pdev->name;    
+>>>>>
+>>>>> Just to check.  Does that end up as a part number or similar?    
+>>>>
+>>>> I printed this name and it appeared like this:
+>>>>
+>>>> indio_dev->name: c426000.spmi:pmic@0:adc@9000
+>>>>
+>>>> It only gets the DT node names, which are generic, there are 
+>>>> no part numbers in this name.  
+>>> I thought it might be something along those lines.
+>>>
+>>> indio_dev->name should be the part number so hard code it rather than
+>>> getting it from the pdev->name
+>>>   
+>>
+>> Actually there would be more than one PMIC which can function as the master PMIC
+>> for Gen3 ADC functionality, so I don't think I can simply hard code a name here
+>> based on PMK8550, if we want to keep the part number correct.
+>>
+>> Since we can't get the part number directly from the DT node names, we
+>> could try one of the following ways to add it:
+>>
+>> 1. Add a devicetree property for the part number
+>>    This would be simple, but I'm not sure if this is the best way, 
+>>    if the below method looks good.
+> Nope as if you need a part number, that's should be via the compatible.
+>>
+>> 2. Add a string in the compatible property for the part number.
+>>    This means updating the compatible from "qcom,spmi-adc5-gen3"
+>>    to something like this for PMK8550:
+>>
+>>    compatible = "qcom,pmk8550-adc5-gen3", "qcom,spmi-adc5-gen3";
+>>
+>>    and then extracting the part number from the first string.
 > 
-> drivers/virtio/virtio_dma_buf.c:41 function parameter 'dma_buf' not described in 'virtio_dma_buf_attach'
-> drivers/virtio/virtio_dma_buf.c:41 function parameter 'attach' not described in 'virtio_dma_buf_attach'
+> Do it via a compatible lookup + data in relevant tables rather
+> than messing with string break up.  Sometimes we'll get the
+> part number of the fallback compatible but I don't really care.
+> However, see below - I think spmi-adc5-gen3 is effectively the
+> part number for the IP. It just happens to be inside a PMIC
+> that has another name.
 > 
-> Signed-off-by: Peng Jiang <jiang.peng9@zte.com.cn>
-> ---
->  drivers/virtio/virtio_dma_buf.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+>>
+>> Please let me know which method you would prefer.
+>>
+>> In addition, does the below string look fine, to assign to
+>> indio_dev->name for PMK8550?
+>>
+>> pmk8550_adc
 > 
-> diff --git a/drivers/virtio/virtio_dma_buf.c b/drivers/virtio/virtio_dma_buf.c
-> index 3fe1d03b0645..986cc73c503f 100644
-> --- a/drivers/virtio/virtio_dma_buf.c
-> +++ b/drivers/virtio/virtio_dma_buf.c
-> @@ -16,6 +16,8 @@
->   * This wraps dma_buf_export() to allow virtio drivers to create a dma-buf
->   * for an virtio exported object that can be queried by other virtio drivers
->   * for the object's UUID.
-> + *
-> + * Returns: dma-buf pointer on success, ERR_PTR on failure.
-
-Most people write "dmabuf".
-
-
->   */
->  struct dma_buf *virtio_dma_buf_export
->         (const struct dma_buf_export_info *exp_info)
-> @@ -36,6 +38,14 @@ EXPORT_SYMBOL(virtio_dma_buf_export);
+> That's ok, though given it's an ADC anyway, pmk8550 should be sufficient
+> for this IIO specific name.
+> If it makes no practical difference what PMIC it is for this driver
+> then simply use spmi-adc5-gem3 or something along those lines.
+> So kind of a generic part number for the IP rather than specifics of
+> which PMIC it is implemented in.
 > 
->  /**
->   * virtio_dma_buf_attach - mandatory attach callback for virtio dma-bufs
-> + * @dma_buf: DMA buffer being attached to a device
 
-And here it's different for some reason.
+Thanks for your confirmation. Your above statement is true here, the
+exact PMIC used here does not make any practical difference for the driver's
+functionality, so I'll use the generic part name "spmi-adc5-gen3" for this IP.
 
-> + * @attach: Attachment metadata for the device-dma_buf association
+Thanks,
+Jishnu
 
-and here in a third form.
-
-> + *
-> + * Allows virtio devices to perform device-specific setup when a DMA buffer
-> + * is attached to a device. This is part of the DMA-BUF sharing mechanism
-> + * that enables virtio devices to interoperate with other subsystems.
-
-I'm sorry this is just empty of content.
-I can not shake the feeling this is AI written.
-If we wanted AI to document all APIs in this way, I'd just script it.
-
-> + *
-> + * Returns: 0 on success, negative on failure.
-
-This one is ok.
-
->   */
->  int virtio_dma_buf_attach(struct dma_buf *dma_buf,
->                           struct dma_buf_attachment *attach)
-> -- 
-> 2.25.1
+> Jonathan
+> 
+> 
 
 
