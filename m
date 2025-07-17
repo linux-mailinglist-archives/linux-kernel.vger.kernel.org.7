@@ -1,64 +1,82 @@
-Return-Path: <linux-kernel+bounces-734419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48A41B0815E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:25:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71129B08160
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:25:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B3974A74D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:25:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A49724A792C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:25:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F05A6A33B;
-	Thu, 17 Jul 2025 00:24:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9731339FF3;
+	Thu, 17 Jul 2025 00:25:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fe3DokBH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LnLpXSi+"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0231A288;
-	Thu, 17 Jul 2025 00:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208001799F;
+	Thu, 17 Jul 2025 00:24:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752711889; cv=none; b=WG4u2eiGHTLCyWMGjGrs6PcBM1b7IvVQbIeWdoGBeIeQjPm8xp5AdoCzRiVd3I7HX5c2kXAIBYzOzzdSqljTcrIEuR6lCxEDtEiE4off4r575Bkav+UdbnOf3dfYT7Jl2C7q38E1dfFNovnVAwgkTMYNM+/AAI1bgavkgCphN7s=
+	t=1752711899; cv=none; b=ME2GdWLH8amqW7TKzNgrkvxqw+9iO6NcD7cdWjfmFK8/pOkmpZ4T3T5EeKuAy+LY/HZOUoBNp5ueeRPIvRNNS/lO4ja/nO+c0y+ZVXC76CimKGewXtriUdZAj/wdIoSAkxRqiBQKCfnXRm/aqpW3aaeT96xhPZCcw3qZnUTOwC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752711889; c=relaxed/simple;
-	bh=5gJmgbTRrQMfVWOy1sX72w6ivNAjJeQUJjNgPHr1Dck=;
+	s=arc-20240116; t=1752711899; c=relaxed/simple;
+	bh=LuKolpuRHUSfSWdVW11ldVecIX7BnRkJQDxMDYB1ukM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hR1iOC7tkftsAe9KnCgCd06qHFPZY7Sy2Vz9uwjfaf7PcfaPIAFpg6ct+S0o7SKsfwwJsmKvyxNjoiblkcJzdF2uiSQQRWuHl2H9wxpAmuaQTb0OPJ0yJ4xf4Bhk5oFdaBeVUMOyCdiycuioQG+FttiAwMYqpNiFY/fFoysu398=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fe3DokBH; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752711887; x=1784247887;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=5gJmgbTRrQMfVWOy1sX72w6ivNAjJeQUJjNgPHr1Dck=;
-  b=fe3DokBHYcocJ9s14QzsMHKIU6c/0FV1pX20ZnnoYV8+nE8SWJY2MexL
-   WGBA32C/sQcrklEJfJ7tlQ3F+u3eyRi/iAiPPPKWK7BH1bWnEB1x+Rp0n
-   hvovFKc3kgEFcekcMa0wlai/vBA+PF9l/TFsTUmKqR4gb2dqUMYw/3Dk7
-   DgZz1eltlMfXkVsikvwUvOm6ECBm597jgxc8QrVWHI1i5YrbiQOY8huIA
-   yJxpk+CukM2NuXPv3JnKSdvxRQzYBGZJJfOI2q/XktSAlucOqWpcEYMHn
-   9L7Cs02nbs50lmqjjg0NfQlPT1uJmsWgYkD9PnOGfstRJ5G1KJl9/S9Cm
-   Q==;
-X-CSE-ConnectionGUID: W/2UIa+yQK6fh1LGEud3ww==
-X-CSE-MsgGUID: 0f/tOMzkSgOOU2dU63MIuQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="54911304"
-X-IronPort-AV: E=Sophos;i="6.16,317,1744095600"; 
-   d="scan'208";a="54911304"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 17:24:46 -0700
-X-CSE-ConnectionGUID: EZpvW2tBQRSPAf8btuT1fw==
-X-CSE-MsgGUID: oz9icJBnQB+Fr7++Lp2gSw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,317,1744095600"; 
-   d="scan'208";a="188593018"
-Received: from puneetse-mobl.amr.corp.intel.com (HELO [10.125.111.193]) ([10.125.111.193])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 17:24:44 -0700
-Message-ID: <f4ec25ff-9f7e-464e-ae39-924e810b74c8@intel.com>
-Date: Wed, 16 Jul 2025 17:24:41 -0700
+	 In-Reply-To:Content-Type; b=Ym8zcdPAau4HRkJ+BOz2N6ZrJTsS/KSodvaK860giRUrRry1JvS6E15+Z3+IU83+wSN9rzaorcsTi5QxhW7hYnsb5q60ldN5ga3893VrbnvESaZ/9aowzie1A5cuTYrBGbCIwUrF9X+EpPqLqBYZqSzKdJ6lD1wYRw5Xyk3vSA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LnLpXSi+; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-234bfe37cccso3053265ad.0;
+        Wed, 16 Jul 2025 17:24:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752711897; x=1753316697; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=D33PJ1weY8/mdLQW1iw5tG9vj4+pyB4UQgnzZxRMDKU=;
+        b=LnLpXSi+WXVO8/P1KcpjdX+12LkxuW3AIu4/iy+KInzT2LVcUaHo+iHQopmXl0dYLP
+         R+YiEy6RrhgJ4MI3ZtV6Vd89VJWmue9cb7IrpiFPxFWQ/Abv84/v1DgRRcEZvdNJMhVX
+         9nTnjEJDZM0AY/tVRduxCpOK8sD484Af6KJ8URvtmhkN+5vxQGseBSrVMA4GxPu94kJt
+         VtyQl00AkTpd11bIyopYwV06UoC5UnkV21vQGbGezAuaVxBD1YC1nlfa56GUW8kQxoPI
+         Vnkdh2WcZ2lHIx2kJZVUfDMkBoZnyvUS2jd37Cd5iT9eC+MO2mLPtpQBqA/50gsa/2fj
+         6Mrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752711897; x=1753316697;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D33PJ1weY8/mdLQW1iw5tG9vj4+pyB4UQgnzZxRMDKU=;
+        b=WQZqyUR1C1TeDHar/3xfDcgyvp+Sarl6bAcGTCpngqOCTegRP01ctgsThXnf01sqve
+         gWv6XI/f7mLVfhAp6LavBxpQviTruEAbY5NxmLstCQVAkymiJ/0PWTySpGJ2duAnWwQD
+         kC+nOrZNQME9gEpvV0qcEzwZT/sm8BW1cTCatlTmAnrXBTwJBZY2hFBNDQIziqIqR7VF
+         Tfz5ejohACN7Ml/aooyADQx8ojyOqeB+TQvJ6sq0zOksRM5i7f4AEaYq6z7wmtqJdMUR
+         NNxj3mpHyXyGBoWridVLeoOCE6xQqsYoAiAaCMNduNmdhQ8LjlfS/1mbZbSOg1ciYMrU
+         /8Tw==
+X-Forwarded-Encrypted: i=1; AJvYcCU43T7ebtJ00bTIrI+NAkuNRQpS6UhC2WgdSZS6Yvr7OapIMvmrB4mTQnUOeFrwQLIRnUFWnch+ky66hhSOZxQ=@vger.kernel.org, AJvYcCVjqoy1Af+yXrjMpnLYVpxhYOP6rd8+rxV5GqaPi+PLRMvYBr82rBEO9Gvh674VjgFGQKaYMTuJCVTsFrg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymSTgruTTycgVg0yXNJb/URIzcxYd+4sqlO6ROEzsr+bu27S8u
+	ZAaYhSOD1urjWDZTbga7xGLxKVBqjxUWeF3vRzdaYgj5mhgCh5yu4ZLI6i/JgQ==
+X-Gm-Gg: ASbGnctdNLLmPFi7hLLlz4bNIk0L7eH3xcQtQyKuYqvnt9OJ6v0/nu0Ikbc8M5SVRHX
+	ptkkhdQJ3rfAHQjsOgs/lo2phV7Glcw2PN+zchqzmeTBZ8AAQ12K74+zYfoJjrSltC8n+kAbuvx
+	olHiecavBbCZ5P8zwuyAvDNnirO0gAbA35Qc4u51sbVwmiZU1xBr+vaOSlik2GFxlmZ4w+pNrnl
+	sVCm89reAu4s5rkTiDex4WGRjCHjoPEpFGimH7eLJL1fQUptn3qaa8JNY2XbIzrKHo9lN0t2H65
+	O7GRYXIjc5ndFepXS1JAoXmVYv2znCY7jTT50IWukCQ6whdRBOqVjsGj2y+o664D2Vr6Y7SLRgA
+	CWZW4vY2IgWB2xdM7017KV/k7pFTizQ4Ns3obSos+ytC0zwufj9yKdrr7Xcrk1Ijgz1MzHkwd2T
+	P4NQi+hg==
+X-Google-Smtp-Source: AGHT+IHW7YoB0xH+rq7y1zz+Rwcz3jA2fFUCSkGgO0qKiFCzP4VkW7EQGgZEktifvFnfgJ2Mq0SQ6Q==
+X-Received: by 2002:a17:902:dac7:b0:235:e1e4:ec5e with SMTP id d9443c01a7336-23e24f70854mr74300635ad.49.1752711897210;
+        Wed, 16 Jul 2025 17:24:57 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e31027f80sm1978905ad.123.2025.07.16.17.24.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Jul 2025 17:24:56 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <5e471ef4-5303-4c7f-a7fa-e19f8fea0f8f@roeck-us.net>
+Date: Wed, 16 Jul 2025 17:24:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,168 +84,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/7] cxl/acpi: Add background worker to coordinate with
- cxl_mem probe completion
-To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
- linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
- linux-pm@vger.kernel.org
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox
- <willy@infradead.org>, Jan Kara <jack@suse.cz>,
- "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>,
- Pavel Machek <pavel@kernel.org>, Li Ming <ming.li@zohomail.com>,
- Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
- Ying Huang <huang.ying.caritas@gmail.com>,
- Yao Xingtao <yaoxt.fnst@fujitsu.com>, Peter Zijlstra <peterz@infradead.org>,
- Greg KH <gregkh@linuxfoundation.org>,
- Nathan Fontenot <nathan.fontenot@amd.com>,
- Terry Bowman <terry.bowman@amd.com>, Robert Richter <rrichter@amd.com>,
- Benjamin Cheatham <benjamin.cheatham@amd.com>,
- PradeepVineshReddy Kodamati <PradeepVineshReddy.Kodamati@amd.com>,
- Zhijian Li <lizhijian@fujitsu.com>
-References: <20250715180407.47426-1-Smita.KoralahalliChannabasappa@amd.com>
- <20250715180407.47426-4-Smita.KoralahalliChannabasappa@amd.com>
+Subject: Re: [PATCH v3 1/2] watchdog: it87_wdt: Don't use "proxy" headers
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ James Hilliard <james.hilliard1@gmail.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>
+References: <20250708133646.70384-1-andriy.shevchenko@linux.intel.com>
+ <20250708133646.70384-2-andriy.shevchenko@linux.intel.com>
 Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250715180407.47426-4-Smita.KoralahalliChannabasappa@amd.com>
-Content-Type: text/plain; charset=UTF-8
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <20250708133646.70384-2-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
+On 7/8/25 06:33, Andy Shevchenko wrote:
+> Update header inclusions to follow IWYU (Include What You Use)
+> principle.
+> 
+> Note that kernel.h is discouraged to be included as it's written
+> at the top of that file.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-On 7/15/25 11:04 AM, Smita Koralahalli wrote:
-> Introduce a background worker in cxl_acpi to delay SOFT RESERVE handling
-> until the cxl_mem driver has probed at least one device. This coordination
-> ensures that DAX registration or fallback handling for soft-reserved
-> regions is not triggered prematurely.
-> 
-> The worker waits on cxl_wait_queue, which is signaled via
-> cxl_mem_active_inc() during cxl_mem_probe(). Once at least one memory
-> device probe is confirmed, the worker invokes wait_for_device_probe()
-> to allow the rest of the CXL device hierarchy to complete initialization.
-> 
-> Additionally, it also handles initialization order issues where
-> cxl_acpi_probe() may complete before other drivers such as cxl_port or
-> cxl_mem have loaded, especially when cxl_acpi and cxl_port are built-in
-> and cxl_mem is a loadable module. In such cases, using only
-> wait_for_device_probe() is insufficient, as it may return before all
-> relevant probes are registered.
-> 
-> While region creation happens in cxl_port_probe(), waiting on
-> cxl_mem_active() would be sufficient as cxl_mem_probe() can only succeed
-> after the port hierarchy is in place. Furthermore, since cxl_mem depends
-> on cxl_pci, this also guarantees that cxl_pci has loaded by the time the
-> wait completes.
-> 
-> As cxl_mem_active() infrastructure already exists for tracking probe
-> activity, cxl_acpi can use it without introducing new coordination
-> mechanisms.
-> 
-> Co-developed-by: Nathan Fontenot <Nathan.Fontenot@amd.com>
-> Signed-off-by: Nathan Fontenot <Nathan.Fontenot@amd.com>
-> Co-developed-by: Terry Bowman <terry.bowman@amd.com>
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
 > ---
->  drivers/cxl/acpi.c             | 18 ++++++++++++++++++
->  drivers/cxl/core/probe_state.c |  5 +++++
->  drivers/cxl/cxl.h              |  2 ++
->  3 files changed, 25 insertions(+)
+>   drivers/watchdog/it87_wdt.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
-> index ca06d5acdf8f..3a27289e669b 100644
-> --- a/drivers/cxl/acpi.c
-> +++ b/drivers/cxl/acpi.c
-> @@ -823,6 +823,20 @@ static int pair_cxl_resource(struct device *dev, void *data)
->  	return 0;
->  }
->  
-> +static void cxl_softreserv_mem_work_fn(struct work_struct *work)
-> +{
-> +	if (!wait_event_timeout(cxl_wait_queue, cxl_mem_active(), 30 * HZ))
-> +		pr_debug("Timeout waiting for cxl_mem probing");
-> +
-> +	wait_for_device_probe();
-> +}
-> +static DECLARE_WORK(cxl_sr_work, cxl_softreserv_mem_work_fn);
-> +
-> +static void cxl_softreserv_mem_update(void)
-> +{
-> +	schedule_work(&cxl_sr_work);
-> +}
-> +
->  static int cxl_acpi_probe(struct platform_device *pdev)
->  {
->  	int rc = 0;
-> @@ -903,6 +917,9 @@ static int cxl_acpi_probe(struct platform_device *pdev)
->  	cxl_bus_rescan();
->  
->  out:
-> +	/* Update SOFT RESERVE resources that intersect with CXL regions */
-> +	cxl_softreserv_mem_update();
-
-Can you please squash 1/7 with this patch since both are fairly small? Otherwise it leaves the reviewer wonder what the changes in 1/7 would result in.
-
-DJ
-
-> +
->  	return rc;
->  }
->  
-> @@ -934,6 +951,7 @@ static int __init cxl_acpi_init(void)
->  
->  static void __exit cxl_acpi_exit(void)
->  {
-> +	cancel_work_sync(&cxl_sr_work);
->  	platform_driver_unregister(&cxl_acpi_driver);
->  	cxl_bus_drain();
->  }
-> diff --git a/drivers/cxl/core/probe_state.c b/drivers/cxl/core/probe_state.c
-> index 5ba4b4de0e33..3089b2698b32 100644
-> --- a/drivers/cxl/core/probe_state.c
-> +++ b/drivers/cxl/core/probe_state.c
-> @@ -2,9 +2,12 @@
->  /* Copyright(c) 2022 Intel Corporation. All rights reserved. */
->  #include <linux/atomic.h>
->  #include <linux/export.h>
-> +#include <linux/wait.h>
->  #include "cxlmem.h"
->  
->  static atomic_t mem_active;
-> +DECLARE_WAIT_QUEUE_HEAD(cxl_wait_queue);
-> +EXPORT_SYMBOL_NS_GPL(cxl_wait_queue, "CXL");
->  
->  bool cxl_mem_active(void)
->  {
-> @@ -13,10 +16,12 @@ bool cxl_mem_active(void)
->  
->  	return false;
->  }
-> +EXPORT_SYMBOL_NS_GPL(cxl_mem_active, "CXL");
->  
->  void cxl_mem_active_inc(void)
->  {
->  	atomic_inc(&mem_active);
-> +	wake_up(&cxl_wait_queue);
->  }
->  EXPORT_SYMBOL_NS_GPL(cxl_mem_active_inc, "CXL");
->  
-> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
-> index 3f1695c96abc..3117136f0208 100644
-> --- a/drivers/cxl/cxl.h
-> +++ b/drivers/cxl/cxl.h
-> @@ -903,6 +903,8 @@ void cxl_coordinates_combine(struct access_coordinate *out,
->  
->  bool cxl_endpoint_decoder_reset_detected(struct cxl_port *port);
->  
-> +extern wait_queue_head_t cxl_wait_queue;
-> +
->  /*
->   * Unit test builds overrides this to __weak, find the 'strong' version
->   * of these symbols in tools/testing/cxl/.
+> diff --git a/drivers/watchdog/it87_wdt.c b/drivers/watchdog/it87_wdt.c
+> index a1e23dce8810..3b8488c86a2f 100644
+> --- a/drivers/watchdog/it87_wdt.c
+> +++ b/drivers/watchdog/it87_wdt.c
+> @@ -22,11 +22,13 @@
+>   
+>   #include <linux/bits.h>
+>   #include <linux/dmi.h>
+> +#include <linux/errno.h>
+>   #include <linux/init.h>
+>   #include <linux/io.h>
+> -#include <linux/kernel.h>
+> +#include <linux/ioport.h>
+>   #include <linux/module.h>
+>   #include <linux/moduleparam.h>
+> +#include <linux/printk.h>
+>   #include <linux/types.h>
+>   #include <linux/watchdog.h>
+>   
 
 
