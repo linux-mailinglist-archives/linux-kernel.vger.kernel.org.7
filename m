@@ -1,278 +1,196 @@
-Return-Path: <linux-kernel+bounces-734676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A18BB084B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:15:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 699A2B084B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:16:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 053053BC3AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:15:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1746A46DED
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:15:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54B12144D2;
-	Thu, 17 Jul 2025 06:15:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41EF621507F;
+	Thu, 17 Jul 2025 06:15:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fHiJW8bA"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="V8+TY+rG"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455EE86348;
-	Thu, 17 Jul 2025 06:15:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39ED86348;
+	Thu, 17 Jul 2025 06:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752732940; cv=none; b=U+jHcIex43EBEcOB0RU1HpPYk6E9cw4vAEtds5CMW6XSYZcTUYGBDYE5776+Cl/RakHEpz7XpMOHfGcyg6pWc9RBf8xJEdiDDQapSZOEd+sTCyhktLBIGdxsxzf38l/C0dbq8r3GppodhuTYTYooxW1vSGHYP1wkXDdl+MaCeJ0=
+	t=1752732955; cv=none; b=cp6g2h/3FQ9R0IOrjVM6acbCuOr0UnOMQ+tUjPmMIkb+Kvy9/WCNUorhmrY+2C9lH9PgmWYJiRibF8jRttRSj/pYRSWxX0Uum/G/AiElZm0jAQLG+KPaBpE5DFSmcAoyM3Rk14nu3vvNVsv7t7gRoDRlANMXDOYlrdq6gfvm2uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752732940; c=relaxed/simple;
-	bh=J7HZAi4MxMctytbEEW6jtB54JzLRiv6fOuFT8HQ+un0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UXWMLa7C4ur9gOybKN5tsdFR1SMqL4b3mLlD9so0MO9Hrpf/xNn8EwFD4wSpYJvYbZXl+tC8rYBAxnRX1feSiPMMHpga+z4Qpam111VbNF/tjz5hchJsrk81EHG+Lhgebe34wbBceRJjQLNDq5BAh2sFoN7FFQ5HQ8dH4rf6hVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fHiJW8bA; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ae9be1697easo306454666b.1;
-        Wed, 16 Jul 2025 23:15:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752732936; x=1753337736; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NWK9T7uxShveKv2OINKVI60wo/1EKz/74tfEQ+WLpxE=;
-        b=fHiJW8bA3I3lBZCul9JdKXl1FvT8kQhc0f4qDM4qBncQbL0ZHTPT5N8FGltxfFgnj/
-         vMFViAZnKIL3PccM9HXSVhnnQPoJLz4J10rCRzHGcq6Pzh0SqwW/edJW622oVnySkcyR
-         AT2YtI8/5bjzyJXiYZjjz4lBIx9wJolDgyiWiKUKSc3D1oV99/dsDCVbtqZV54Y1BnMR
-         MhQw+eMK3sxmwHbbYZ4OCCAIzeR9LOcVWmJCBcXWCSMWlbgqOXWG1xGbS5t36xTXE7PJ
-         vmeoDSUmucA5vU+CJDgJuuWLw/exuTON8DOFCsqW7ctlcZNzf0NcWa6Nzlljyi9fN0Ac
-         xUdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752732936; x=1753337736;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NWK9T7uxShveKv2OINKVI60wo/1EKz/74tfEQ+WLpxE=;
-        b=IF+RLJViSEjdPpSHF6h2dFuxZsj7SaCWQYHsrlX7eSxzqJrbnZLkDKiAvZ40DSeHW6
-         L3wyzwPwlRTX/q2OBaABwuLqw4+3W69GQw526qc/V7OgIUpci7DByEFXeD74XeVYBewS
-         wX9+wEkkkPPpPH2aOvGZ0hpnyk2avOZUAihlgiBZKESh8dIbK8Jg+/HRSDJtAS6jqiQg
-         tG7WsBp2At2JNp+xZJl/NbQVJ9V9jfyUr7Ubcy8B+fcLGhc+a74f7XRKm4wVAZrw7I2m
-         5pJ6ikvl4KmLpvKurOSzcejqgk3Jq2MAtLW1EQD7pfANkkIupGNf86gDExaomy4Wiwl3
-         czJw==
-X-Forwarded-Encrypted: i=1; AJvYcCVsPFEbWJoFEd3SkVPeq8iA6h43T+xTdfiZJjmAKL+TgvQ5Lf8zA3KFPD+WIbEXwQDPK6pdoQfAJwSQpL7Z@vger.kernel.org, AJvYcCXxP3VznvpyafIo9TWSfPvnBF6gMBcETQp9fJj4qSHayd+ACcTMo7gsWlxejfR2oouqCO3Y+lNLgU+QZDOi@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiDb4jBr14C+rTpEWKeJMyBa7U86sw8t26wNWiAOR3ofKi5PgI
-	+Fe14H7d6+UbiJvyC5gMDhrjthz5IHu886qBptYMTsoT09MfOrqlqiQcmA70hLOdoxPzovtmS/G
-	Dg/b00zbXKE//ueIu2Zgf9KXFEKQBmek=
-X-Gm-Gg: ASbGncu+IlrTQNPHPe1pgvtdXtp043zLSavGXATGf3yGNpg3vb0sDSmO07tGbkkGgyc
-	AfhTHgLZZNOfu6GhvPyIALnOCRzRUEJyij9ejG6haE7JBzLbr0cia2dkX1l8St4h+Cfa8Il/uRN
-	X+BBnt9jAQtzOxLvbvxk9DJOGB+GiwMNPv8iZzlQlFrBNrHxJ+oZxFzWDQUvZMGZgdFGlaYDLGH
-	o5+qRs=
-X-Google-Smtp-Source: AGHT+IEW1vd2j6/7Kl2E5AW+wNro2cyziOYCTWtBurrcxAOB5KKMqMZ9JVpsaZqw0H9v+74oRVg6qyHDJqRbvVns/F0=
-X-Received: by 2002:a17:906:cad6:b0:ae8:8d00:76c3 with SMTP id
- a640c23a62f3a-aec4df557cbmr164793466b.29.1752732935897; Wed, 16 Jul 2025
- 23:15:35 -0700 (PDT)
+	s=arc-20240116; t=1752732955; c=relaxed/simple;
+	bh=Rs3PQs9UhDCFrFotyWbNQEWehdMmELxoeAVZOl53eXo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=eW4sDUFr3xs5eNkmqbTumG2IFGWY57XrL3OmqfIqnlQe8aeTmSpyO1UUJeTdAm81p5LBytU/w2jNsjXV6MltSNXAxHf0oycuUoTPle0+coQp7ZS17gfdtpxJ7c2iuGEAoOYKI0Yf03YZGqnggUj4A6ezhX8stflPAhQ660BQ188=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=V8+TY+rG; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752732826;
+	bh=K3xgEak+/uBJv4EPnVQgmEJ/TuEh2d0PsQc0FFVJjB8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=V8+TY+rGeaATwRvwoGurD6pIyTJV2WDsUDY2Dd52xhR6Qbs5wK7neR5emKTUYOfAs
+	 luKckmAryvJ0GJ+oWHDwfEO+UpT+F2wMZx7CodgmglfxuI7sRYu5SBcrab6xIdwPcH
+	 o8edBDW29NGWvTNck6i6mBYjrWpctsCuIWC4aKIbu+IIRpP7x10JoVkKeNRqY6ldl/
+	 uUsBbuKcj2Imh36XqeaugNwu6yVbXZsb/ga4jdm8vh8lNE00Je3vvyE7QBRi8cSZ5s
+	 Zq2fnmEVkMJGLOQ6B32Odpn4ulVhQNLGKbDQia2YsTOG7r3QPvxafaO5QYjnReymH0
+	 4CaTXICuKZM1w==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bjN0T2LH2z4xPd;
+	Thu, 17 Jul 2025 16:13:45 +1000 (AEST)
+Date: Thu, 17 Jul 2025 16:15:46 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: "Michael S. Tsirkin" <mst@redhat.com>, David Miller
+ <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>
+Cc: Cindy Lu <lulu@redhat.com>, Jason Wang <jasowang@redhat.com>, Networking
+ <netdev@vger.kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the vhost tree with the net-next tree
+Message-ID: <20250717161546.52ab1a3c@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250716121036.250841-1-hanqi@vivo.com> <CAOQ4uxi5gwzkEYqpd+Bb825jwWME_AE0BNykZcownSz6OZjFWQ@mail.gmail.com>
- <aa24548c220134377b2c8a3d2d47620b9e492db1.camel@mediatek.com>
-In-Reply-To: <aa24548c220134377b2c8a3d2d47620b9e492db1.camel@mediatek.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 17 Jul 2025 08:15:23 +0200
-X-Gm-Features: Ac12FXwB1dfmkKHsC-8JhflLsZOybY0_pCAs9gjMvcn3Qh9JKagxp4AzGm-RlxI
-Message-ID: <CAOQ4uxgMiQaMDOifxCuv1Vd=0gsWLjFj0h3t8W-yWB++4ftP0g@mail.gmail.com>
-Subject: Re: [RFC PATCH] fuse: modification of FUSE passthrough call sequence
-To: =?UTF-8?B?RWQgVHNhaSAo6JSh5a6X6LuSKQ==?= <Ed.Tsai@mediatek.com>
-Cc: "hanqi@vivo.com" <hanqi@vivo.com>, "miklos@szeredi.hu" <miklos@szeredi.hu>, 
-	"liulei.rjpt@vivo.com" <liulei.rjpt@vivo.com>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	=?UTF-8?B?Q2h1bi1IdW5nIFd1ICjlt6vpp7/lro8p?= <Chun-hung.Wu@mediatek.com>, 
-	Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/K1gPLhNMBx1BU9YXcX/evGE";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/K1gPLhNMBx1BU9YXcX/evGE
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 17, 2025 at 3:35=E2=80=AFAM Ed Tsai (=E8=94=A1=E5=AE=97=E8=BB=
-=92) <Ed.Tsai@mediatek.com> wrote:
->
-> On Wed, 2025-07-16 at 14:14 +0200, Amir Goldstein wrote:
-> >
-> > External email : Please do not click links or open attachments until
-> > you have verified the sender or the content.
-> >
-> >
-> > On Wed, Jul 16, 2025 at 1:49=E2=80=AFPM Qi Han <hanqi@vivo.com> wrote:
-> > >
-> > > Hi, Amir
-> >
-> > Hi Qi,
-> >
-> > > In the commit [1], performing read/write operations with DIRECT_IO
-> > > on
-> > > a FUSE file path does not trigger FUSE passthrough. I am unclear
-> > > about
-> > > the reason behind this behavior. Is it possible to modify the call
-> > > sequence to support passthrough for files opened with DIRECT_IO?
-> >
-> > Are you talking about files opened by user with O_DIRECT or
-> > files open by server with FOPEN_DIRECT_IO?
-> >
-> > Those are two different things.
-> > IIRC, O_DIRECT to a backing passthrough file should be possible.
-> >
-> > > Thank you!
-> > >
-> > > [1]
-> > > https://lore.kernel.org/all/20240206142453.1906268-7-amir73il@gmail.c=
-om/
-> > >
-> > > Reported-by: Lei Liu <liulei.rjpt@vivo.com>
-> > > Signed-off-by: Qi Han <hanqi@vivo.com>
-> > > ---
-> > >  fs/fuse/file.c | 15 +++++++--------
-> > >  1 file changed, 7 insertions(+), 8 deletions(-)
-> > >
-> > > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> > > index 2ddfb3bb6483..689f9ee938f1 100644
-> > > --- a/fs/fuse/file.c
-> > > +++ b/fs/fuse/file.c
-> > > @@ -1711,11 +1711,11 @@ static ssize_t fuse_file_read_iter(struct
-> > > kiocb *iocb, struct iov_iter *to)
-> > >         if (FUSE_IS_DAX(inode))
-> > >                 return fuse_dax_read_iter(iocb, to);
-> > >
-> > > -       /* FOPEN_DIRECT_IO overrides FOPEN_PASSTHROUGH */
-> > > -       if (ff->open_flags & FOPEN_DIRECT_IO)
-> > > -               return fuse_direct_read_iter(iocb, to);
-> > > -       else if (fuse_file_passthrough(ff))
-> > > +
-> > > +       if (fuse_file_passthrough(ff))
-> > >                 return fuse_passthrough_read_iter(iocb, to);
-> > > +       else if (ff->open_flags & FOPEN_DIRECT_IO)
-> > > +               return fuse_direct_read_iter(iocb, to);
-> > >         else
-> > >                 return fuse_cache_read_iter(iocb, to);
-> > >  }
-> > > @@ -1732,11 +1732,10 @@ static ssize_t fuse_file_write_iter(struct
-> > > kiocb *iocb, struct iov_iter *from)
-> > >         if (FUSE_IS_DAX(inode))
-> > >                 return fuse_dax_write_iter(iocb, from);
-> > >
-> > > -       /* FOPEN_DIRECT_IO overrides FOPEN_PASSTHROUGH */
-> > > -       if (ff->open_flags & FOPEN_DIRECT_IO)
-> > > -               return fuse_direct_write_iter(iocb, from);
-> > > -       else if (fuse_file_passthrough(ff))
-> > > +       if (fuse_file_passthrough(ff))
-> > >                 return fuse_passthrough_write_iter(iocb, from);
-> > > +       else if (ff->open_flags & FOPEN_DIRECT_IO)
-> > > +               return fuse_direct_write_iter(iocb, from);
-> > >         else
-> > >                 return fuse_cache_write_iter(iocb, from);
-> > >  }
-> > > --
-> >
-> > When server requests to open a file with FOPEN_DIRECT_IO,
-> > it affects how FUSE_READ/FUSE_WRITE requests are made.
-> >
-> > When server requests to open a file with FOPEN_PASSTHROUGH,
-> > it means that FUSE_READ/FUSE_WRITE requests are not to be
-> > expected at all, so these two options are somewhat conflicting.
-> >
-> > Therefore, I do not know what you aim to achieve by your patch.
-> >
-> > However, please note this comment in iomode.c:
-> >  * A combination of FOPEN_PASSTHROUGH and FOPEN_DIRECT_IO
-> >    means that read/write
-> >  * operations go directly to the server, but mmap is done on the
-> > backing file.
-> >
-> > So this is a special mode that the server can request in order to do
-> > passthrough mmap but still send FUSE_READ/FUSE_WRITE requests
-> > to the server.
->
-> Hi Amir,
->
-> In most cases, when using passthrough, the server shouldn't set
-> FOPEN_DIRECT_IO, since these two options are conceptually conflicting,
-> unless the server specifically wants this special mode (passthrough
-> mmap but still send r/w requests). Is that correct?
->
+Hi all,
 
-Yes, correct.
+Today's linux-next merge of the vhost tree got conflicts in:
 
-See this fix in libfuse for a similar confusion:
-https://github.com/libfuse/libfuse/pull/1031
+  drivers/vhost/net.c
+  include/uapi/linux/vhost.h
 
-> It can be confusing. Maybe the documentation could clarify this special
-> case,
+between commits:
 
-Any documentation would be great.
-Documentation patches are most welcome.
+  333c515d1896 ("vhost-net: allow configuring extended features")
+  bbca931fce26 ("vhost/net: enable gso over UDP tunnel support.")
 
-> or the passthrough flags for mmap and r/w could be separate...
->
+from the net-next tree and commits:
 
-I don't think that's the solution, but it's too hard to explain why
-(read fs/fuse/iomode.c to get the idea)
+  3206300e7af0 ("vhost: Reintroduce kthread API and add mode selection")
+  3f466fdc0b91 ("vhost_net: basic in_order support")
 
-direct_io mode is the mode for doing read/write to the server
-without using page cache, so by definition it is not applicable
-to mmap().
-OTOH, passthrough mode is applicable to read/write/mmap
+from the vhost tree.
 
-direct_io mode can be requested EITHER by user (O_DIRECT)
-OR by server (FOPEN_DIRECT_IO), therefore setting
-FOPEN_DIRECT_IO in server upon user request of O_DIRECT
-is somewhat redundant.
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-However, it is a reason in the libfuse passthrough examples -
-Unlike O_DIRECT, which the user can recall after open,
-FOPEN_DIRECT_IO is sticky and cannot be changed on an
-open file, so that's a way for the server to express, if a user
-requested open O_DIRECT, the user cannot back down from this
-request, which can be useful for enabling kernel features as parallel DIO.
+--=20
+Cheers,
+Stephen Rothwell
 
-> >
-> > What is your use case? What are you trying to achieve that is not
-> > currently possible?
-> >
-> > Thanks,
-> > Amir.
-> >
->
-> Hi Qi,
->
-> I just notice that Android's FuseDaemon doesn't seem to recognize this
-> special mode. It sets both FOPEN_DIRECT_IO and FOPEN_PASSTHROUGH when
-> the user sets O_DIRECT and the server has passthrough enabled.
->
-> If that's your case, I think Android FuseDaemon may need some fixes.
->
+diff --cc drivers/vhost/net.c
+index bfb774c273ea,8ac994b3228a..6edac0c1ba9b
+--- a/drivers/vhost/net.c
++++ b/drivers/vhost/net.c
+@@@ -69,14 -69,13 +69,15 @@@ MODULE_PARM_DESC(experimental_zcopytx,=20
+ =20
+  #define VHOST_DMA_IS_DONE(len) ((__force u32)(len) >=3D (__force u32)VHOS=
+T_DMA_DONE_LEN)
+ =20
+ -enum {
+ -	VHOST_NET_FEATURES =3D VHOST_FEATURES |
+ -			 (1ULL << VHOST_NET_F_VIRTIO_NET_HDR) |
+ -			 (1ULL << VIRTIO_NET_F_MRG_RXBUF) |
+ -			 (1ULL << VIRTIO_F_ACCESS_PLATFORM) |
+ -			 (1ULL << VIRTIO_F_RING_RESET) |
+ -			 (1ULL << VIRTIO_F_IN_ORDER)
+ +static const u64 vhost_net_features[VIRTIO_FEATURES_DWORDS] =3D {
+ +	VHOST_FEATURES |
+ +	(1ULL << VHOST_NET_F_VIRTIO_NET_HDR) |
+ +	(1ULL << VIRTIO_NET_F_MRG_RXBUF) |
+ +	(1ULL << VIRTIO_F_ACCESS_PLATFORM) |
+- 	(1ULL << VIRTIO_F_RING_RESET),
+++	(1ULL << VIRTIO_F_RING_RESET) |
+++	(1ULL << VIRTIO_F_IN_ORDER),
+ +	VIRTIO_BIT(VIRTIO_NET_F_GUEST_UDP_TUNNEL_GSO) |
+ +	VIRTIO_BIT(VIRTIO_NET_F_HOST_UDP_TUNNEL_GSO),
+  };
+ =20
+  enum {
+diff --cc include/uapi/linux/vhost.h
+index d6ad01fbb8d2,e72f2655459e..c57674a6aa0d
+--- a/include/uapi/linux/vhost.h
++++ b/include/uapi/linux/vhost.h
+@@@ -236,10 -236,32 +236,38 @@@
+  #define VHOST_VDPA_GET_VRING_SIZE	_IOWR(VHOST_VIRTIO, 0x82,	\
+  					      struct vhost_vring_state)
+ =20
+ +/* Extended features manipulation */
+ +#define VHOST_GET_FEATURES_ARRAY _IOR(VHOST_VIRTIO, 0x83, \
+ +				       struct vhost_features_array)
+ +#define VHOST_SET_FEATURES_ARRAY _IOW(VHOST_VIRTIO, 0x83, \
+ +				       struct vhost_features_array)
+ +
++ /* fork_owner values for vhost */
++ #define VHOST_FORK_OWNER_KTHREAD 0
++ #define VHOST_FORK_OWNER_TASK 1
++=20
++ /**
++  * VHOST_SET_FORK_FROM_OWNER - Set the fork_owner flag for the vhost devi=
+ce,
++  * This ioctl must called before VHOST_SET_OWNER.
++  * Only available when CONFIG_VHOST_ENABLE_FORK_OWNER_CONTROL=3Dy
++  *
++  * @param fork_owner: An 8-bit value that determines the vhost thread mode
++  *
++  * When fork_owner is set to VHOST_FORK_OWNER_TASK(default value):
++  *   - Vhost will create vhost worker as tasks forked from the owner,
++  *     inheriting all of the owner's attributes.
++  *
++  * When fork_owner is set to VHOST_FORK_OWNER_KTHREAD:
++  *   - Vhost will create vhost workers as kernel threads.
++  */
+ -#define VHOST_SET_FORK_FROM_OWNER _IOW(VHOST_VIRTIO, 0x83, __u8)
+++#define VHOST_SET_FORK_FROM_OWNER _IOW(VHOST_VIRTIO, 0x84, __u8)
++=20
++ /**
++  * VHOST_GET_FORK_OWNER - Get the current fork_owner flag for the vhost d=
+evice.
++  * Only available when CONFIG_VHOST_ENABLE_FORK_OWNER_CONTROL=3Dy
++  *
++  * @return: An 8-bit value indicating the current thread mode.
++  */
+ -#define VHOST_GET_FORK_FROM_OWNER _IOR(VHOST_VIRTIO, 0x84, __u8)
+++#define VHOST_GET_FORK_FROM_OWNER _IOR(VHOST_VIRTIO, 0x85, __u8)
++=20
+  #endif
 
-Because there is no proper documentation for the interdependencies
-of these two modes, let me just say when a server might need to set both fl=
-ags.
+--Sig_/K1gPLhNMBx1BU9YXcX/evGE
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-If a server's decision to passthrough io is not always consistent for the s=
-ame
-inode, for example, server wants to passthrough opens for read and not
-passthrough open for writes.
+-----BEGIN PGP SIGNATURE-----
 
-This situation is not allowed by kernel iomode restrictions if both
-files are open at the same time in conflicting modes.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh4lRIACgkQAVBC80lX
+0GyKwgf7BygJxuuUgUzyl5GogIMXHVgZArO64PurUH7IJEE8ZQ4zRZ7/88n/tQSm
+/udTpezjmA/F5Jy9sKsCvKPc2ivEU6wQppo7ki+Q9AtGgU9LDe6srp4ea/mCG2bg
+bDOd+JR5kzVZHdjP0KSri+JRuqCUbC37hEmhRXr3fgX+toD7iuHEAOLksxAMZfCg
+zfSznaGe9aUCLetwITuuwgPOW9KjQL2N1O3ttl8fNDXbeZUfRid1VROugESTEduE
+PP+6npFcQ6MXd00nfnHFhtBfnHBKzwOvut7DmooTiMxkh5jAdQH7dtpt1+N2TT0E
+K03LE5/DdY++guCqKjtzFY6FODmq9A==
+=ctr3
+-----END PGP SIGNATURE-----
 
-Unless, the non-passthrough files (e.g. open for write) are open with
-FOPEN_DIRECT_IO | FOPEN_PASSTHROUGH.
-This mode will not passthrough read/write on this file, but it does not
-conflict with other files open (e.g. for read) in passthrough mode.
-
-I know, it's confusing.
-The way to think about it is that a passthrough-mostly server
-should set FOPEN_PASSTHROUGH for all opens, but it can opt-out
-of passthrough read/write on individual files with FOPEN_DIRECT_IO.
-
-And none of this has any relation to O_DIRECT.
-
-Thanks,
-Amir.
+--Sig_/K1gPLhNMBx1BU9YXcX/evGE--
 
