@@ -1,137 +1,359 @@
-Return-Path: <linux-kernel+bounces-735024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F635B08996
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:45:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F0C6B0898F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:44:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77F0717BAE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:45:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFAEB1AA595B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:44:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B906728A702;
-	Thu, 17 Jul 2025 09:45:01 +0000 (UTC)
-Received: from baidu.com (mx22.baidu.com [220.181.50.185])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A98E828B417;
+	Thu, 17 Jul 2025 09:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uAf0gpVz"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625C228A3FC
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 09:44:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74A133086
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 09:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752745501; cv=none; b=WfkOY2TKojqYWcMdnJRP04kQwbQYcFbDWzZRdAW0ZbYMcUOdVFRt7qeXgdmP18ol8lIQechjaaFssejdcibWuSCa7oLmV12SbUKK1EGFjBSZVb7L7IDpyKpeJ5Ib5lGoREAj2bhOK6zEs+dbPceNfqIew/FbaRv+UQ+NRVH3Smg=
+	t=1752745433; cv=none; b=h2KcaxIE/ImZB1lMNpZ1naPRU1ngqOci24jImMtyPAv3rHQeLv49KS2DYvUA9ekwMQUVTy1vj28dN63vawTRT2TCVti0B4RzHLeykhyMcj51U2yUVIDdNe2n9fqziGsIHXmpFwQLtGhPPiFwB+HLSV9PqP4rxgDJNXsJXqzW44A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752745501; c=relaxed/simple;
-	bh=CKWUAx3I1kSr/hGyutDFcPettfcApk3ft9EYC5zonDg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XRa3d3A5xigm/c32a5V/aqQvNSGZQhAHdHk0g9lQHgvAJvHpKWybaY+w+ZMJSw595OI+I5RIC+HLiIia9IDJOrzPu22XfO6ljwhi8Od6xSwNxi+Lq6bVy+J+BTPn2R+h6jxUjG04x+zLAvRtgxXA2HnZeCRjc52Rm9yHwxPcSHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
-From: Fushuai Wang <wangfushuai@baidu.com>
-To: <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <hpa@zytor.com>,
-	<chang.seok.bae@intel.com>, <sohil.mehta@intel.com>, <peterz@infradead.org>,
-	<vigbalas@amd.com>, <aruna.ramakrishna@oracle.com>, <seanjc@google.com>
-CC: <linux-kernel@vger.kernel.org>, Fushuai Wang <wangfushuai@baidu.com>
-Subject: [PATCH] x86/fpu: Fix potential NULL dereference in avx512_status()
-Date: Thu, 17 Jul 2025 17:43:08 +0800
-Message-ID: <20250717094308.94450-1-wangfushuai@baidu.com>
-X-Mailer: git-send-email 2.39.2 (Apple Git-143)
+	s=arc-20240116; t=1752745433; c=relaxed/simple;
+	bh=eRJZpSbYvKgupe+T1SU+IZZyns2Revzb8XX/zXaFhlM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hBamunEgKYXah8CL+5eI3sCljAJ+o9JTmVkBWZxm3i6N/0KrxQm+G6t82WepPCYZhAOCkhGnWag9DGuVFPwtp4YkDIK6MxB1jE1GJ5xDebxi7B1a6sR3OoLd1kU4RnlBeId4x0G9Vy92JlrY2SJUl7gYycOFN8t84/mUXW7N1Fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uAf0gpVz; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4561607166aso5519655e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 02:43:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752745430; x=1753350230; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5NGgb3DcA15w098paJT2GnEVS25q5aKdVuuE1uihlhU=;
+        b=uAf0gpVzBpZap4Y9G+UWnOqDpyzIkHOjJiV1u1rRs39oxi2Mv2CiPqVKFp2quh1Ivy
+         DPZsCxUbx6fGTBs8+n0IV5hpXON1LFPSP+9YXsg9qwGvlby5J8QXucIJwp/YiomL5ku+
+         0N5hPH1AW+QT1MgREvB5myw36RK2jNoKW80lSO3QHSdUI8XIg85KrayfB+4xGowzPe/o
+         8hIxcb7QXCQEUzNcxE92EVS+SjL7pkHi0PYtCcNm39bKEdeno7Prn/SBSmB2yhhZ7T5C
+         4/TjAR2pMvvfVqo7CAh9UDS2sMOmdeDNTEfvn5dJFs0XSbEI95xffhUUznV9ZFu5+i/A
+         dSAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752745430; x=1753350230;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5NGgb3DcA15w098paJT2GnEVS25q5aKdVuuE1uihlhU=;
+        b=tyRUHLSyo6qNSW2b4aoO/UkCODKvbCV7B1Scn7ScBcoTPXqHzz1tUlBEv5aVwsycQl
+         fD4t4sRLxe01ffBysOtkryq8XjzLGUyAlm0OKTp0RXyme7P03rsrq+c9UCQxCwLYxVpg
+         ArLmfTDJSMFC0YrWBZkKeK8zihJpt9e/b4PVDnF7i3CZEgH6flhquYsnfaglaGXOhulV
+         jBW3kDssvNnf4zHL1tokx4r5bq7/Ji/fF5nixSD49JoyT00aW58jKSupO32t4aXcdFSG
+         rGmLDXWW08pLU2l0A1+9ckEEY3HmcMjUhWapmPBm9/vUco9sb67Pz7eVhlfMWBoYSDCj
+         mmvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUCD6LLq9gsidWkxsdne7OuKdphkStaWsgcMTrT2TkESLQnXmv9X3zVOpauqHFGBtFKXX5ad606rwAgEKw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUyuYFFIQDDj+Kzc0jnZgWxtXtQX4od/QzXtF0j0Eeg7G5dn6f
+	SHD/RZp7QpESf/RBaKJ+DBiy6k68po7VsuaNTY3lfWGWRGQyK+1T2Fr04CNTfJHjLzw=
+X-Gm-Gg: ASbGncvpd7v7P0uMQN5ayIA3L9PprXgUd9Y4BiCgaZNsBGeN6jfA/Wtj21eUf6aTRNL
+	wmSjhIdgj0kagQ1MzhIvmwVLkHh/FCri9p/7eBF97t2LEfZSzCGpcKsNMVi3pJpv2ltW/iD6HlG
+	dqvwodLh3dMg9DhsjqnXHFShQnGTTuFa1N8b6Yqf429/oZDMqwbsRvMGYMFqF7e3Zmh4QnOFTR6
+	hd5gJEHoUolfnk9hOET6ZSUEes29E2ocLhqZ2hwk9mSNi1SIz5ou/SwTbSu7CkUZnrsUVBfngI2
+	40kI3ALw3fcdeezXVV5dGHbeweszXS1SyRzIaaX1B+ZjsL/ddK+aCwMuTBXUu3K3YdGtMHu7QqE
+	7WoNoTveug/+0YlqVW4rc+ufe9HVc+mWpPVQ1enx3rBD73nDlBjuSgyTBb9MUmWc=
+X-Google-Smtp-Source: AGHT+IGoO3nrN5aiR8KKGhctKRP1P15C3fJWOm2uSdmC5FXGBrIhMKTBv1htTrvHdpEgWyxlqT2x4A==
+X-Received: by 2002:a05:600c:1c82:b0:456:2ac6:ccc3 with SMTP id 5b1f17b1804b1-4562e28367emr47165115e9.25.1752745429897;
+        Thu, 17 Jul 2025 02:43:49 -0700 (PDT)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e8860cdsm46325905e9.20.2025.07.17.02.43.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Jul 2025 02:43:49 -0700 (PDT)
+Message-ID: <b8b80bfd-0927-4c4f-96fd-6ad1e94d3666@linaro.org>
+Date: Thu, 17 Jul 2025 10:43:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: bjhj-exc7.internal.baidu.com (172.31.3.17) To
- bjhj-exc17.internal.baidu.com (172.31.4.15)
-X-FEAS-Client-IP: 172.31.4.15
-X-FE-Policy-ID: 52:10:53:SYSTEM
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 4/7] media: venus: hfi_plat_v4: Add capabilities for
+ the 4XX lite core
+To: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>,
+ quic_vgarodia@quicinc.com, quic_dikshita@quicinc.com, krzk+dt@kernel.org,
+ konradybcio@kernel.org, mchehab@kernel.org, andersson@kernel.org,
+ conor+dt@kernel.org, amit.kucheria@oss.qualcomm.com
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250715204749.2189875-1-jorge.ramirez@oss.qualcomm.com>
+ <20250715204749.2189875-5-jorge.ramirez@oss.qualcomm.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20250715204749.2189875-5-jorge.ramirez@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-When CONFIG_X86_DEBUG_FPU=y is set, x86_task_fpu() returns NULL for
-kernel threads. The avx512_status() function would then dereference this
-NULL pointer via READ_ONCE(x86_task_fpu(task)->avx512_timestamp).
-when reading /proc/*/arch_status, causing a kernel NULL pointer dereference
-and system will crash.
+On 15/07/2025 21:47, Jorge Ramirez-Ortiz wrote:
+> Populate the HFI v4 lite capability set used by the AR50_LITE video
+> core.
+> 
+> These capabilities define the supported codec formats and operational
+> limits specific to this streamlined VPU variant.
+> 
+> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
+> ---
+>   .../platform/qcom/venus/hfi_platform_v4.c     | 164 +++++++++++++++---
+>   1 file changed, 143 insertions(+), 21 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/venus/hfi_platform_v4.c b/drivers/media/platform/qcom/venus/hfi_platform_v4.c
+> index 4ae7ed476c48..23ed5e689f5a 100644
+> --- a/drivers/media/platform/qcom/venus/hfi_platform_v4.c
+> +++ b/drivers/media/platform/qcom/venus/hfi_platform_v4.c
+> @@ -245,25 +245,145 @@ static const struct hfi_plat_caps caps[] = {
+>   	.num_fmts = 4,
+>   } };
+>   
+> +static const struct hfi_plat_caps caps_lite[] = {
+> +{
+> +	.codec = HFI_VIDEO_CODEC_H264,
+> +	.domain = VIDC_SESSION_TYPE_DEC,
+> +	.caps[0] = {HFI_CAPABILITY_FRAME_WIDTH, 128, 1920, 1},
+> +	.caps[1] = {HFI_CAPABILITY_FRAME_HEIGHT, 128, 1920, 1},
+> +	.caps[2] = {HFI_CAPABILITY_MBS_PER_FRAME, 64, 8160, 1},
+> +	.caps[3] = {HFI_CAPABILITY_BITRATE, 1, 60000000, 1 },
+> +	.caps[4] = {HFI_CAPABILITY_MBS_PER_SECOND, 64, 244800, 1},
+> +	.caps[5] = {HFI_CAPABILITY_FRAMERATE, 1, 120, 1},
+> +	.caps[6] = {HFI_CAPABILITY_MAX_VIDEOCORES, 0, 1, 1},
+> +	.num_caps = 7,
+> +	.pl[0] = { HFI_H264_PROFILE_BASELINE, HFI_H264_LEVEL_5},
+> +	.pl[1] = {HFI_H264_PROFILE_MAIN, HFI_H264_LEVEL_5},
+> +	.pl[2] = {HFI_H264_PROFILE_HIGH, HFI_H264_LEVEL_5},
+> +	.pl[3] = {HFI_H264_PROFILE_CONSTRAINED_BASE, HFI_H264_LEVEL_5},
+> +	.pl[4] = {HFI_H264_PROFILE_CONSTRAINED_HIGH, HFI_H264_LEVEL_5},
+> +	.num_pl = 5,
+> +	.fmts[0] = {HFI_BUFFER_OUTPUT, HFI_COLOR_FORMAT_NV12_UBWC},
+> +	.fmts[1] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV12_UBWC},
+> +	.fmts[2] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV12},
+> +	.fmts[3] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV21},
+> +	.num_fmts = 4,
+> +}, {
+> +	.codec = HFI_VIDEO_CODEC_HEVC,
+> +	.domain = VIDC_SESSION_TYPE_DEC,
+> +	.caps[0] = {HFI_CAPABILITY_FRAME_WIDTH, 128, 1920, 1},
+> +	.caps[1] = {HFI_CAPABILITY_FRAME_HEIGHT, 128, 1920, 1},
+> +	.caps[2] = {HFI_CAPABILITY_MBS_PER_FRAME, 64, 8160, 1},
+> +	.caps[3] = {HFI_CAPABILITY_BITRATE, 1, 60000000, 1 },
+> +	.caps[4] = {HFI_CAPABILITY_MBS_PER_SECOND, 64, 244800, 1},
+> +	.caps[5] = {HFI_CAPABILITY_FRAMERATE, 1, 120, 1},
+> +	.caps[6] = {HFI_CAPABILITY_MAX_VIDEOCORES, 0, 1, 1},
+> +	.num_caps = 7,
+> +	.pl[0] = {HFI_HEVC_PROFILE_MAIN, HFI_HEVC_LEVEL_5 | HFI_HEVC_TIER_HIGH0 << 28 },
+> +	.pl[1] = {HFI_HEVC_PROFILE_MAIN10, HFI_HEVC_LEVEL_5 | HFI_HEVC_TIER_HIGH0 << 28 },
+> +	.num_pl = 2,
+> +	.fmts[0] = {HFI_BUFFER_OUTPUT, HFI_COLOR_FORMAT_NV12_UBWC},
+> +	.fmts[1] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV12_UBWC},
+> +	.fmts[2] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV12},
+> +	.fmts[3] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV21},
+> +	.num_fmts = 4,
+> +}, {
+> +	.codec = HFI_VIDEO_CODEC_VP9,
+> +	.domain = VIDC_SESSION_TYPE_DEC,
+> +	.caps[0] = {HFI_CAPABILITY_FRAME_WIDTH, 128, 1920, 1},
+> +	.caps[1] = {HFI_CAPABILITY_FRAME_HEIGHT, 128, 1920, 1},
+> +	.caps[2] = {HFI_CAPABILITY_MBS_PER_FRAME, 64, 8160, 1},
+> +	.caps[3] = {HFI_CAPABILITY_BITRATE, 1, 60000000, 1 },
+> +	.caps[4] = {HFI_CAPABILITY_MBS_PER_SECOND, 64, 244800, 1},
+> +	.caps[5] = {HFI_CAPABILITY_FRAMERATE, 1, 120, 1},
+> +	.caps[6] = {HFI_CAPABILITY_MAX_VIDEOCORES, 0, 1, 1},
+> +	.num_caps = 7,
+> +	.pl[0] = {HFI_VP9_PROFILE_P0, 200},
+> +	.pl[1] = {HFI_VP9_PROFILE_P2_10B, 200},
+> +	.num_pl = 2,
+> +	.fmts[0] = {HFI_BUFFER_OUTPUT, HFI_COLOR_FORMAT_NV12_UBWC},
+> +	.fmts[1] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV12_UBWC},
+> +	.fmts[2] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV12},
+> +	.fmts[3] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV21},
+> +	.num_fmts = 4,
+> +}, {
+> +	.codec = HFI_VIDEO_CODEC_H264,
+> +	.domain = VIDC_SESSION_TYPE_ENC,
+> +	.caps[0] = {HFI_CAPABILITY_FRAME_WIDTH, 128, 1920, 1},
+> +	.caps[1] = {HFI_CAPABILITY_FRAME_HEIGHT, 128, 1920, 1},
+> +	.caps[2] = {HFI_CAPABILITY_MBS_PER_FRAME, 64, 8160, 1},
+> +	.caps[3] = {HFI_CAPABILITY_BITRATE, 1, 60000000, 1 },
+> +	.caps[4] = {HFI_CAPABILITY_MBS_PER_SECOND, 64, 244800, 1},
+> +	.caps[5] = {HFI_CAPABILITY_FRAMERATE, 1, 120, 1},
+> +	.caps[6] = {HFI_CAPABILITY_MAX_VIDEOCORES, 0, 1, 1},
+> +	.caps[7] = {HFI_CAPABILITY_HIER_P_NUM_ENH_LAYERS, 0, 6, 1},
+> +	.caps[8] = {HFI_CAPABILITY_ENC_LTR_COUNT, 0, 4, 1},
+> +	.caps[9] = {HFI_CAPABILITY_MBS_PER_SECOND_POWERSAVE, 0, 244800, 1},
+> +	.caps[10] = {HFI_CAPABILITY_I_FRAME_QP, 0, 51, 1},
+> +	.caps[11] = {HFI_CAPABILITY_P_FRAME_QP, 0, 51, 1},
+> +	.caps[12] = {HFI_CAPABILITY_B_FRAME_QP, 0, 51, 1},
+> +	.caps[13] = {HFI_CAPABILITY_SLICE_BYTE, 1, 10, 1},
+> +	.caps[14] = {HFI_CAPABILITY_SLICE_MB, 1, 10, 1},
+> +	.num_caps = 15,
+> +	.pl[0] = {HFI_H264_PROFILE_BASELINE, HFI_H264_LEVEL_5},
+> +	.pl[1] = {HFI_H264_PROFILE_MAIN, HFI_H264_LEVEL_5},
+> +	.pl[2] = {HFI_H264_PROFILE_HIGH, HFI_H264_LEVEL_5},
+> +	.pl[3] = {HFI_H264_PROFILE_CONSTRAINED_BASE, HFI_H264_LEVEL_5},
+> +	.pl[4] = {HFI_H264_PROFILE_CONSTRAINED_HIGH, HFI_H264_LEVEL_5},
+> +	.num_pl = 5,
+> +	.fmts[0] = {HFI_BUFFER_INPUT, HFI_COLOR_FORMAT_NV12},
+> +	.fmts[1] = {HFI_BUFFER_INPUT, HFI_COLOR_FORMAT_NV12_UBWC},
+> +	.num_fmts = 2,
+> +}, {
+> +	.codec = HFI_VIDEO_CODEC_HEVC,
+> +	.domain = VIDC_SESSION_TYPE_ENC,
+> +	.caps[0] = {HFI_CAPABILITY_FRAME_WIDTH, 128, 1920, 1},
+> +	.caps[1] = {HFI_CAPABILITY_FRAME_HEIGHT, 128, 1920, 1},
+> +	.caps[2] = {HFI_CAPABILITY_MBS_PER_FRAME, 64, 8160, 1},
+> +	.caps[3] = {HFI_CAPABILITY_BITRATE, 1, 60000000, 1 },
+> +	.caps[4] = {HFI_CAPABILITY_MBS_PER_SECOND, 64, 244800, 1},
+> +	.caps[5] = {HFI_CAPABILITY_FRAMERATE, 1, 120, 1},
+> +	.caps[6] = {HFI_CAPABILITY_MAX_VIDEOCORES, 0, 1, 1},
+> +	.caps[7] = {HFI_CAPABILITY_HIER_P_NUM_ENH_LAYERS, 0, 6, 1},
+> +	.caps[8] = {HFI_CAPABILITY_ENC_LTR_COUNT, 0, 4, 1},
+> +	.caps[9] = {HFI_CAPABILITY_MBS_PER_SECOND_POWERSAVE, 0, 244800, 1},
+> +	.caps[10] = {HFI_CAPABILITY_I_FRAME_QP, 0, 51, 1},
+> +	.caps[11] = {HFI_CAPABILITY_P_FRAME_QP, 0, 51, 1},
+> +	.caps[12] = {HFI_CAPABILITY_B_FRAME_QP, 0, 51, 1},
+> +	.caps[13] = {HFI_CAPABILITY_SLICE_BYTE, 1, 10, 1},
+> +	.caps[14] = {HFI_CAPABILITY_SLICE_MB, 1, 10, 1},
+> +	.num_caps = 15,
+> +	.pl[0] = {HFI_HEVC_PROFILE_MAIN, HFI_HEVC_LEVEL_5 | HFI_HEVC_TIER_HIGH0},
+> +	.pl[1] = {HFI_HEVC_PROFILE_MAIN10, HFI_HEVC_LEVEL_5 | HFI_HEVC_TIER_HIGH0},
+> +	.num_pl = 2,
+> +	.fmts[0] = {HFI_BUFFER_INPUT, HFI_COLOR_FORMAT_NV12},
+> +	.fmts[1] = {HFI_BUFFER_INPUT, HFI_COLOR_FORMAT_NV12_UBWC},
+> +	.num_fmts = 2,
+> +} };
+> +
+>   static const struct hfi_plat_caps *get_capabilities(unsigned int *entries,
+>   						    bool lite)
+>   {
+> -	WARN_ON(lite);
+> +	*entries = lite ? ARRAY_SIZE(caps_lite) : ARRAY_SIZE(caps);
+>   
+> -	*entries = ARRAY_SIZE(caps);
+> -	return caps;
+> +	return lite ? caps_lite : caps;
+>   }
+>   
+>   static void get_codecs(u32 *enc_codecs, u32 *dec_codecs, u32 *count, bool lite)
+>   {
+> -	WARN_ON(lite);
+> -
+> -	*enc_codecs = HFI_VIDEO_CODEC_H264 | HFI_VIDEO_CODEC_HEVC |
+> -		      HFI_VIDEO_CODEC_VP8;
+> -	*dec_codecs = HFI_VIDEO_CODEC_H264 | HFI_VIDEO_CODEC_HEVC |
+> -		      HFI_VIDEO_CODEC_VP8 | HFI_VIDEO_CODEC_VP9 |
+> -		      HFI_VIDEO_CODEC_MPEG2;
+> -	*count = 8;
+> +	if (lite) {
 
-[ 8215.540977] Oops: general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] SMP KASAN NOPTI
-[ 8215.542290] CPU: 3 UID: 0 PID: 9285 Comm: cat Kdump: loaded Tainted: G        W           6.16.0-rc1 #4 PREEMPT(full)
-[ 8215.543000] Tainted: [W]=WARN
-[ 8215.544481] RIP: 0010:proc_pid_arch_status+0x30/0xe0
-[ 8215.545408] Code: 1f 44 00 00 55 48 89 fd 48 89 cf 53 48 83 ec 08 e8 e5 64 ff ff 48 ba 00 00 00 00 00 fc ff df 48 8d 78 08 48 8
-9 f9 48 c1 e9 03 <80> 3c 11 00 75 7d 48 8b 58 08 48 c7 c2 ff ff ff ff 48 85 db 74 3d
-[ 8215.548456] RSP: 0018:ff11000194107b08 EFLAGS: 00010202
-[ 8215.549443] RAX: 0000000000000000 RBX: ff11000211a9c9a0 RCX: 0000000000000001
-[ 8215.550581] RDX: dffffc0000000000 RSI: ffffffff96d0d020 RDI: 0000000000000008
-[ 8215.551740] RBP: ff11000111792490 R08: 0000000000000001 R09: ffe21c002117d61d
-[ 8215.552917] R10: ff11000108beb0eb R11: 0000000000000000 R12: ff11000108a80b80
-[ 8215.554111] R13: ff11000108beb0e8 R14: ffffffff96d0d020 R15: 0000000000000001
-[ 8215.555323] FS:  00007f75c18ad740(0000) GS:ff11000e266d1000(0000) knlGS:0000000000000000
-[ 8215.556629] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 8215.557880] CR2: 00005605184020f8 CR3: 0000000164499005 CR4: 0000000000771ef0
-[ 8215.559553] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[ 8215.560882] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[ 8215.562205] PKRU: 55555554
-[ 8215.563277] Call Trace:
-[ 8215.564338]  <TASK>
-[ 8215.565383]  proc_single_show+0x10c/0x1c0
-[ 8215.566568]  seq_read_iter+0x3e5/0x1050
-[ 8215.567787]  seq_read+0x24b/0x3b0
-[ 8215.569305]  ? __pfx_seq_read+0x10/0x10
-[ 8215.570509]  ? __pfx_handle_pte_fault+0x10/0x10
-[ 8215.571782]  ? __pfx_arch_get_unmapped_area_topdown+0x10/0x10
-[ 8215.573142]  ? __pfx_cp_new_stat+0x10/0x10
-[ 8215.574417]  vfs_read+0x186/0xad0
-[ 8215.575657]  ? __pfx_mas_prev+0x10/0x10
-[ 8215.576947]  ? __pfx_vfs_read+0x10/0x10
-[ 8215.578234]  ? count_memcg_events+0x1ce/0x410
-[ 8215.579523]  ? fdget_pos+0x1c9/0x4c0
-[ 8215.580737]  ksys_read+0xef/0x1c0
-[ 8215.581896]  ? __pfx_ksys_read+0x10/0x10
-[ 8215.583265]  ? do_user_addr_fault+0x4c6/0xb50
-[ 8215.584633]  do_syscall_64+0x73/0x330
-[ 8215.585773]  ? irqentry_exit_to_user_mode+0x32/0x210
-[ 8215.586967]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[ 8215.588137] RIP: 0033:0x7f75c17147e2
-[ 8215.589209] Code: c0 e9 b2 fe ff ff 50 48 8d 3d 8a b4 0c 00 e8 a5 1d 02 00 0f 1f 44 00 00 f3 0f 1e fa 64 8b 04 25 18 00 00 00 8
-5 c0 75 10 0f 05 <48> 3d 00 f0 ff ff 77 56 c3 0f 1f 44 00 00 48 83 ec 28 48 89 54 24
-[ 8215.592896] RSP: 002b:00007fffd6935ef8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-[ 8215.594238] RAX: ffffffffffffffda RBX: 0000000000020000 RCX: 00007f75c17147e2
-[ 8215.595551] RDX: 0000000000020000 RSI: 00005605183e2000 RDI: 0000000000000003
-[ 8215.596876] RBP: 00005605183e2000 R08: 0000000000000000 R09: 00005605183e10f0
-[ 8215.598187] R10: 00005605183fe000 R11: 0000000000000246 R12: 0000000000000000
-[ 8215.599494] R13: 0000000000000003 R14: 0000000000020000 R15: 0000000000020000
-[ 8215.600807]  </TASK>
+Ok, now the WARN_ON() makes more sense, its a progressive.
 
-Fixes: 22aafe3bcb67 ("x86/fpu: Remove init_task FPU state dependencies, add debugging warning for PF_KTHREAD tasks")
-Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
+> +		*enc_codecs = HFI_VIDEO_CODEC_H264 | HFI_VIDEO_CODEC_HEVC;
+> +		*dec_codecs = HFI_VIDEO_CODEC_H264 | HFI_VIDEO_CODEC_HEVC |
+> +			      HFI_VIDEO_CODEC_VP9;
+> +		*count = 5;
+> +	} else {
+> +		*enc_codecs = HFI_VIDEO_CODEC_H264 | HFI_VIDEO_CODEC_HEVC |
+> +			      HFI_VIDEO_CODEC_VP8;
+> +		*dec_codecs = HFI_VIDEO_CODEC_H264 | HFI_VIDEO_CODEC_HEVC |
+> +			      HFI_VIDEO_CODEC_VP8 | HFI_VIDEO_CODEC_VP9 |
+> +			      HFI_VIDEO_CODEC_MPEG2;
+> +		*count = 8;
+> +	}
+
+I don't much like setting hard-coded values in functions.
+
+It must be possible to pass these as parameters. We have all of these 
+enumeration structures - it seems a shame to move some specific 
+enumerations to hard-coding.
+
+Please consider if there is a way to bury this into one of the 
+enumeration params.
+
+>   }
+>   
+>   static const struct hfi_platform_codec_freq_data codec_freq_data[] =  {
+> @@ -277,15 +397,23 @@ static const struct hfi_platform_codec_freq_data codec_freq_data[] =  {
+>   	{ V4L2_PIX_FMT_VP9, VIDC_SESSION_TYPE_DEC, 200, 10, 200 },
+>   };
+>   
+> +static const struct hfi_platform_codec_freq_data codec_freq_data_lite[] = {
+> +	{ V4L2_PIX_FMT_H264, VIDC_SESSION_TYPE_DEC, 440, 0, 440 },
+> +	{ V4L2_PIX_FMT_HEVC, VIDC_SESSION_TYPE_DEC, 440, 0, 440 },
+> +	{ V4L2_PIX_FMT_VP9, VIDC_SESSION_TYPE_DEC, 440, 0, 440 },
+> +	{ V4L2_PIX_FMT_H264, VIDC_SESSION_TYPE_ENC, 675, 0, 675 },
+> +	{ V4L2_PIX_FMT_HEVC, VIDC_SESSION_TYPE_ENC, 675, 0, 675 },
+> +};
+> +
+>   static const struct hfi_platform_codec_freq_data *
+>   get_codec_freq_data(u32 session_type, u32 pixfmt, bool lite)
+>   {
+> -	const struct hfi_platform_codec_freq_data *data = codec_freq_data;
+> -	unsigned int i, data_size = ARRAY_SIZE(codec_freq_data);
+> +	const struct hfi_platform_codec_freq_data *data = lite ?
+> +					codec_freq_data_lite : codec_freq_data;
+> +	unsigned int i, data_size = lite ? ARRAY_SIZE(codec_freq_data_lite) :
+> +				    ARRAY_SIZE(codec_freq_data);
+
+I'm not a big fan anymore of ternary nor of declaring multiple things on 
+one line.
+
+And I'll preempt Konrad, reverse Christmas tree in the declaration where 
+possible for preference.
+
+>   	const struct hfi_platform_codec_freq_data *found = NULL;
+>   
+> -	WARN_ON(lite);
+> -
+>   	for (i = 0; i < data_size; i++) {
+>   		if (data[i].pixfmt == pixfmt && data[i].session_type == session_type) {
+>   			found = &data[i];
+> @@ -300,8 +428,6 @@ static unsigned long codec_vpp_freq(u32 session_type, u32 codec, bool lite)
+>   {
+>   	const struct hfi_platform_codec_freq_data *data;
+>   
+> -	WARN_ON(lite);
+> -
+>   	data = get_codec_freq_data(session_type, codec, lite);
+>   	if (data)
+>   		return data->vpp_freq;
+> @@ -313,8 +439,6 @@ static unsigned long codec_vsp_freq(u32 session_type, u32 codec, bool lite)
+>   {
+>   	const struct hfi_platform_codec_freq_data *data;
+>   
+> -	WARN_ON(lite);
+> -
+>   	data = get_codec_freq_data(session_type, codec, lite);
+>   	if (data)
+>   		return data->vsp_freq;
+> @@ -326,8 +450,6 @@ static unsigned long codec_lp_freq(u32 session_type, u32 codec, bool lite)
+>   {
+>   	const struct hfi_platform_codec_freq_data *data;
+>   
+> -	WARN_ON(lite);
+> -
+>   	data = get_codec_freq_data(session_type, codec, lite);
+>   	if (data)
+>   		return data->low_power_freq;
+
+I suppose the hard-coded *val = 5 || *val = 8; isn't important but it 
+would be _nice_ to not hard-code, up to you how much you want to 
+implement for the next version.
+
+This code all looks reasonably correct/consistent with antecedents.
+
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+
 ---
- arch/x86/kernel/fpu/xstate.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-index 9aa9ac8399ae..16f813a42f42 100644
---- a/arch/x86/kernel/fpu/xstate.c
-+++ b/arch/x86/kernel/fpu/xstate.c
-@@ -1859,9 +1859,14 @@ long fpu_xstate_prctl(int option, unsigned long arg2)
-  */
- static void avx512_status(struct seq_file *m, struct task_struct *task)
- {
--	unsigned long timestamp = READ_ONCE(x86_task_fpu(task)->avx512_timestamp);
-+	unsigned long timestamp = 0;
- 	long delta;
- 
-+#ifdef CONFIG_X86_DEBUG_FPU
-+	if (!(task->flags & PF_KTHREAD))
-+#endif
-+		timestamp = READ_ONCE(x86_task_fpu(task)->avx512_timestamp);
-+
- 	if (!timestamp) {
- 		/*
- 		 * Report -1 if no AVX512 usage
--- 
-2.36.1
-
+bod
 
