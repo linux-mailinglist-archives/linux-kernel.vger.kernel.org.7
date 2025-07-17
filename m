@@ -1,109 +1,151 @@
-Return-Path: <linux-kernel+bounces-735995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C28DB09673
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 23:42:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02903B09663
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 23:34:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA8B17B2467
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:41:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 462E65A11A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:34:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEEF22367A9;
-	Thu, 17 Jul 2025 21:42:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6CA62253EE;
+	Thu, 17 Jul 2025 21:34:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="ZMloYR0N";
-	dkim=pass (2048-bit key) header.d=medip.dev header.i=@medip.dev header.b="CgH16fxR"
-Received: from e3i314.smtp2go.com (e3i314.smtp2go.com [158.120.85.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WTjd4VKQ"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C23923535E
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 21:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.120.85.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD8717E0;
+	Thu, 17 Jul 2025 21:34:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752788562; cv=none; b=onH5dho78hf1kRksTwLYB5kSwjzg1ibItb9oQmMNE/dCz9yk8pp6fcT4LxrtoN8FFD6PmLOCIRP4flfm/rD2JEx7QVQXNlrM4BDZTvirqT6kc0i1OEgnbeM0gadS/PA84JmPeRTYrDTpDZnLsVzn4fn9rCknZRvWg2H5fsHgeGo=
+	t=1752788090; cv=none; b=cv/CyF8pZ5Ws6J+Y/dRSy7bT92rchr5w4LFFkfA2NJW0LDHkQMSBeRD2Y//KZRlKUC267WE+D7Q5f+YHuPtDJA0UMg/VUE/VWog1hY5HdLAd63Nx3pSeuBpkh3Rq+vE8SW4GESykpRiFjnlmZwml1m9zCnm2y4hcS5OloTqZ+6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752788562; c=relaxed/simple;
-	bh=mrddjCmvTYA6t5LbBy2FRPclddGvQ0AOTV6IHAyiYqo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VGU9rWwNtbO3XizPTBbXXCC9YfBTl2ThMJ9WMP6m3ViirL/fx1ti4FeN+8QAifbZ3B2jSHCfP6n87ndeABijYos30HMF3WBygNBZX7Tv1V9TgCZA1AWGPgeIWXCcNC0XV9qa1/s732vm2N1RiBdsX9a5VPMeo7IjpQkJ67HG/0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=medip.dev; spf=pass smtp.mailfrom=em1255854.medip.dev; dkim=pass (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=ZMloYR0N; dkim=pass (2048-bit key) header.d=medip.dev header.i=@medip.dev header.b=CgH16fxR; arc=none smtp.client-ip=158.120.85.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=medip.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em1255854.medip.dev
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smtpservice.net;
- i=@smtpservice.net; q=dns/txt; s=a1-4; t=1752787647; h=feedback-id :
- x-smtpcorp-track : date : message-id : to : subject : from : reply-to
- : sender : list-unsubscribe : list-unsubscribe-post;
- bh=Gfv0VoGpjGNOQhpz6loWxFeC3SOK7lyMb9kShZPEDbc=;
- b=ZMloYR0NJgwzRiWzZByVAILH0oyjxCk3q5mlbs9bZY4+b3w1HCUDy2PSMqyeMZtbgphRe
- HjrJRPixVztBUBUHDePu3H+grbpWa12ZlBar13jIlkjqEfjyX8g6QMhi8VbX/nkJdozkcue
- MWaTzWKa0iiGlu65iH5fm9RdjLu3uNhN9uait5IqCO7bxjkuHFDwGODOBQo7b4a0SRQ4cdO
- m514Hv9cz4jr/CHcS5Z6JbAwkrIocRGz0xy0uN2o+niBx3BVHQjI2NqJT7O5xAUyi929Vcl
- rH3r/9yr7+Qq2Q7zRMV/f/KdwxmZpKGMOC1TJZh3FDF/InKp4alw9a39Sgmw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=medip.dev;
- i=@medip.dev; q=dns/txt; s=s1255854; t=1752787647; h=from : subject :
- to : message-id : date;
- bh=Gfv0VoGpjGNOQhpz6loWxFeC3SOK7lyMb9kShZPEDbc=;
- b=CgH16fxRrgOpz0kKHagiy7bYJ6tYMU9GBLS+dEqe5Rku9R8rN8TX4uJGz++GSMa2cqHUj
- ebUqOnI8JjSxRoM5y3lEQ007sW/Aq4t+A1R04Cr0eW2lP4Rm/1Gv6hEp3SeC0GyXLv98jYP
- v2Gdk5KBJ7tohFMuv6JyR4dJ//op1WebGjiINtf0rBzYb0P+gcRgD7HB7Kein8yszjWXt1h
- pSO/mYFoiG6wh1Y0C/QGfYGMVL+K/GNTwutRMa6ZGA+SGLOb7OWbz51yHGuvdVMkGudWA06
- TUOwtmeRoVvPIX2m17utCp5g4fKpcSnd2jUybsr36aY3sv0nRhuukLnlj9lQ==
-Received: from [10.152.250.198] (helo=vilez)
-	by smtpcorp.com with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.1-S2G)
-	(envelope-from <edip@medip.dev>)
-	id 1ucW8O-FnQW0hPoI3G-gXXB;
-	Thu, 17 Jul 2025 21:27:20 +0000
-From: edip@medip.dev
-To: perex@perex.cz,
-	tiwai@suse.com
-Cc: linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Edip Hazuri <edip@medip.dev>,
-	stable@vger.kernel.org
-Subject: [PATCH] ALSA: hda/realtek - Add mute LED support for HP Victus 15-fa0xxx
-Date: Fri, 18 Jul 2025 00:26:26 +0300
-Message-ID: <20250717212625.366026-2-edip@medip.dev>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1752788090; c=relaxed/simple;
+	bh=RZ5LCj78Lyclzd69cYMhCDdSFiwmonnYvLEWvFmsqc8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MHAN/SoWlL0CKZF85tksZ7J1dwckRAii2J0B3gpOFvR2HE+Nii/V4hcgKLzooyTipaq4bvPahLcZmqOYLaTt7vCYfg3XpfrgCGHbE7d+mH1+tTZxiwIa3s+e5GP+BCncv0UK0tVyoagrDMRYRmLMyYmAlDOQzmW6leI80SxIQFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WTjd4VKQ; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45555e3317aso9101595e9.3;
+        Thu, 17 Jul 2025 14:34:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752788087; x=1753392887; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4kUb9sx3TgEhRQfOmqwV/GlUdwT7le0YBTWtsC9eCWk=;
+        b=WTjd4VKQGtvEGEpKeLQOVngDALhqe4kgiu3MkM3LZOpdySH4vXUmgAVjSq61RLvLIU
+         ny9yvqJ4ZWZmAUuPAlGZQp5gBzWr1uAnmNFiq4uy4O/v/yN2wl6dSQOr7LsQYmTIUOfO
+         KjsC7E+05Yc9MdNTUu6ExdWd/2ckzgUaJQRFDN14N3Ep9rnavLm2TvvAoo+qEWIYFvHZ
+         50a6n5Lu81WhkZ6Bs/TFZGcr9TvBPJBjPhv7Cy8ha5fT6NcGLOiBiXkpf922UJ92p//y
+         EqfQP1Rzg/+UcvXe+SsgYl+IFzLgxDCKIPp3fo8rSu8gCQ+NJiMkc2AhCinVmC/9tvRC
+         IYSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752788087; x=1753392887;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4kUb9sx3TgEhRQfOmqwV/GlUdwT7le0YBTWtsC9eCWk=;
+        b=QUxszR0NapdDshDbT5KzmWE+NEBnFT1RRNLXXI9/wyFJrIS6ZDoiPwAtl4x9k/eKKl
+         fGD2B6FTCm63Zb9o5Y9q99sCpBxSJPIFoRKFqdhTjNStJSN1SiO1Zl3a/2fQ4jN7PLlo
+         uIip1tLXiFuV+vxwHeUuiZakJT3bsoORYFpWOWTa6+/aW/jzhRr1rqkN2ulYy3kx/cJv
+         3h6cyzcT1iiuk2Zb+EAWurAzPi7CbZqb0Gqdhl0RTigoxwxRjtlaeLeCvy0lRXkPpAvS
+         tbVa/8wmkJ82ZHDJek9Y6Azjq9Kk4nFe/Fe83e7oPVQfC6o32m9ICNKBOB5DMNrUFqCP
+         M7SQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVng9dOixb2ZJ91dI9kFzE7AX6LphCt+3ue5oaIv6oIoTd8++092jMTxS2I1EVLr5Ocu4NGLDj/@vger.kernel.org, AJvYcCXpCcEbcJR3U6njG8TtG3XTwGZO/A1AN/MfkoAmFaB3TH+UkAxSh1GdvVlxL97Yxg12IlOYJnH+VrTOLMQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6QVQMavgCOHoykEL2Eq5esPlFzEe6CIx+WvhJG1hikn9xgbBN
+	h0zQUpitcuk6MBjhzv+gPf/pJu6NHiOARSw4uqg+0Tbf+tjVT1byeyMG
+X-Gm-Gg: ASbGncsb9zBc6mOeOEaQC0c7An7ECXJdBmFiJJc+jx0rgV1+3LfXMePrdj+7m+Qx92Y
+	p7ajzNcIY1zH8mHnCTvpkyzKYx1gVMsKf3Q8YVaR/fWOTUY7Pj730Qd+Comagd6gEHwD1BqIBe/
+	kbe0dHsAmc1UUORLNsYq8aHt/hEqoHPy0JOZgaggAp/wQcwe3tp0j+8v9ctAgrr6Qr1pQ+3fQAs
+	yCpG3F+tFXct17TGuix9JPM6NDABBUbYwdvWC7oLHnDtlXppj2zqcX8Z3QVSv7n7zp791Rzantp
+	0VIOf1HQwpchk0ZisdJfukpwlZ022UGWXJxR4VDI7ZOoshlY0bkDl7gSYcbVAvgbF1ggMnHYAan
+	OLaGL+NsyZL1Otb1kc+jye2pGLqRXgNHS/0kltmO3Y85ALc8GFx4dtt1sgYoedJ5KLY9LIrI=
+X-Google-Smtp-Source: AGHT+IHm8FDJfA/A0rgo1t7ybSLh0izLhUn28eqZq/uWQgZMWeQ+vwxuuQPRIAX7Jj/iGvhRFd4OIQ==
+X-Received: by 2002:a05:600d:1b:b0:456:3b21:ad1e with SMTP id 5b1f17b1804b1-4563b21b300mr5349835e9.17.1752788086660;
+        Thu, 17 Jul 2025 14:34:46 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc9298sm21746316f8f.44.2025.07.17.14.34.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Jul 2025 14:34:46 -0700 (PDT)
+Date: Thu, 17 Jul 2025 22:34:32 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Jiri Slaby <jirislaby@kernel.org>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>, sashal@kernel.org,
+ linux-kernel@vger.kernel.org, frederic@kernel.org, david@redhat.com,
+ viro@zeniv.linux.org.uk, paulmck@kernel.org, stable@vger.kernel.org, Tejun
+ Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, "Luis R .
+ Rodriguez" <mcgrof@kernel.org>
+Subject: Re: [PATCH v2] kernel/fork: Increase minimum number of allowed
+ threads
+Message-ID: <20250717223432.2a74e870@pumpkin>
+In-Reply-To: <48e6e92d-6b6a-4850-9396-f3afa327ca3a@kernel.org>
+References: <20250711230829.214773-1-hauke@hauke-m.de>
+	<48e6e92d-6b6a-4850-9396-f3afa327ca3a@kernel.org>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Report-Abuse: Please forward a copy of this message, including all headers, to <abuse-report@smtp2go.com>
-Feedback-ID: 1255854m:1255854ay30w_v:1255854supEO3aMoK
-X-smtpcorp-track: ed6yWxVlTNe8.1xL5TN1lHHom.Q88ZNw-l6Mi
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Edip Hazuri <edip@medip.dev>
+On Thu, 17 Jul 2025 07:26:59 +0200
+Jiri Slaby <jirislaby@kernel.org> wrote:
 
-The mute led on this laptop is using ALC245 but requires a quirk to work
-This patch enables the existing quirk for the device.
+> Cc wqueue & umode helper folks
+> 
+> On 12. 07. 25, 1:08, Hauke Mehrtens wrote:
+> > A modern Linux system creates much more than 20 threads at bootup.
+> > When I booted up OpenWrt in qemu the system sometimes failed to boot up
+> > when it wanted to create the 419th thread. The VM had 128MB RAM and the
+> > calculation in set_max_threads() calculated that max_threads should be
+> > set to 419. When the system booted up it tried to notify the user space
+> > about every device it created because CONFIG_UEVENT_HELPER was set and
+> > used. I counted 1299 calls to call_usermodehelper_setup(), all of
+> > them try to create a new thread and call the userspace hotplug script in
+> > it.
+> > 
+> > This fixes bootup of Linux on systems with low memory.
+> > 
+> > I saw the problem with qemu 10.0.2 using these commands:
+> > qemu-system-aarch64 -machine virt -cpu cortex-a57 -nographic
+> > 
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+> > ---
+> >   kernel/fork.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/kernel/fork.c b/kernel/fork.c
+> > index 7966c9a1c163..388299525f3c 100644
+> > --- a/kernel/fork.c
+> > +++ b/kernel/fork.c
+> > @@ -115,7 +115,7 @@
+> >   /*
+> >    * Minimum number of threads to boot the kernel
+> >    */
+> > -#define MIN_THREADS 20
+> > +#define MIN_THREADS 600  
+> 
+> As David noted, this is not the proper fix. It appears that usermode 
+> helper should use limited thread pool. I.e. instead of 
+> system_unbound_wq, alloc_workqueue("", WQ_UNBOUND, max_active) with 
+> max_active set to max_threads divided by some arbitrary constant (3? 4?)?
 
-Tested on my Victus 15-fa0xxx Laptop. The LED behaviour works
-as intended.
+Or maybe just 1 ?
+I'd guess all the threads either block in the same place or just block
+each other??
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Edip Hazuri <edip@medip.dev>
----
- sound/pci/hda/patch_realtek.c | 1 +
- 1 file changed, 1 insertion(+)
+	David
 
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index 060db37ea..5cac18cff 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -10769,6 +10769,7 @@ static const struct hda_quirk alc269_fixup_tbl[] = {
- 	SND_PCI_QUIRK(0x103c, 0x8a2e, "HP Envy 16", ALC287_FIXUP_CS35L41_I2C_2),
- 	SND_PCI_QUIRK(0x103c, 0x8a30, "HP Envy 17", ALC287_FIXUP_CS35L41_I2C_2),
- 	SND_PCI_QUIRK(0x103c, 0x8a31, "HP Envy 15", ALC287_FIXUP_CS35L41_I2C_2),
-+	SND_PCI_QUIRK(0x103c, 0x8a4f, "HP Victus 15-fa0xxx (MB 8A4F)", ALC245_FIXUP_HP_MUTE_LED_COEFBIT),
- 	SND_PCI_QUIRK(0x103c, 0x8a6e, "HP EDNA 360", ALC287_FIXUP_CS35L41_I2C_4),
- 	SND_PCI_QUIRK(0x103c, 0x8a74, "HP ProBook 440 G8 Notebook PC", ALC236_FIXUP_HP_GPIO_LED),
- 	SND_PCI_QUIRK(0x103c, 0x8a78, "HP Dev One", ALC285_FIXUP_HP_LIMIT_INT_MIC_BOOST),
--- 
-2.50.1
+> 
+> regards,
 
 
