@@ -1,85 +1,127 @@
-Return-Path: <linux-kernel+bounces-735397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4F54B08EC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:03:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12D53B08EC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:04:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 097FAA45FC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:02:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F505A64CB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A8922F85E7;
-	Thu, 17 Jul 2025 14:02:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C411D63D3;
+	Thu, 17 Jul 2025 14:02:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZmtHm77u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sOudqMFQ"
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22731DE894;
-	Thu, 17 Jul 2025 14:02:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12E481DE894
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 14:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752760926; cv=none; b=HIbXqTX2F+3SLuPE53vVe7abpXckTyBj47jgiZue2swa+rV/dQwPT9gjTQgMS5vFobTYxIc5t6oOfLYerAXH8Qxe9Cf7wi0e3FtQOB6VR93tAGBHl7fCZtOcakflJSR2i/6OMO+hvIY+EUxlrSJ1JlIaVgaM+uqTUhToVTQGKf8=
+	t=1752760957; cv=none; b=SVxdmVgAh5Pkm0dHjL6NscV0ehPqh4dpnBoVX38+JZiKPNC9jx1OC+O7L1BdBRrcTSwaeB+oLJX8gJOE2LeeoNvr01DuX9VGVFVRDMLl/BAa6xx0UEQyIxfeo29TgMHKcR+36kHxySx2YZjSrscLiaxNcACiuexhy68cgPXx7II=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752760926; c=relaxed/simple;
-	bh=KVyD7lFOvqRuleMrpnlzsXkDQLyNjWkA4eJ+WSGLfM4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WLu+NTgaWq8Mzm93gd4jwpRClDTObT6/95uyo+DnAyyRFEtOtWtV/APXTuioLGy9R3uztlYqHoWvUCnRDimAQ6L2wPSZwK2Wg04bQBHzLihZzTRHW4Ith5vFZbyA809H/hA7WHqkcszp2/Z/ZfVnODr8eF7XWE9JPr+g16JRYco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZmtHm77u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADFEEC4CEE3;
-	Thu, 17 Jul 2025 14:02:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752760926;
-	bh=KVyD7lFOvqRuleMrpnlzsXkDQLyNjWkA4eJ+WSGLfM4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZmtHm77uIqjEh59AdgGwDJEJaViM6/f/YJFwK9E6S0h9Jb+XTbD2nn+cBLESgGHZQ
-	 omlIP7Xe9cSwaYxSoQsMHKbiAd6hkGVfcndXC/En/OWCAyWb/A0Wagx4KFMj2SQ2Ik
-	 p1yl8sXB2Rj4ZRagval+STgnQDrvGomb4jyw9d2PS+ym0A7UcrNFLX4h2QbMRxSqoG
-	 VoXEI8xMv532qlMB4fDRCL2mVA4L0na3En5rKaxLfunh9WginRpyv4gIUZExr51dXn
-	 O6WcCGjQHPvqrRgcTum2IPACtAg8SYiQm41myJMz4XvBHXr6X1eCDcn3U2Tm+rMv6W
-	 f/ItZzHvIOzog==
-Date: Thu, 17 Jul 2025 07:02:04 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Primoz Fiser <primoz.fiser@norik.com>
-Cc: Wei Fang <wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>, Clark
- Wang <xiaoning.wang@nxp.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- davem@davemloft.net, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre
- Torgue <alexandre.torgue@foss.st.com>, imx@lists.linux.dev,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, upstream@lists.phytec.de
-Subject: Re: [PATCH 0/2] Populate of_node for i.MX netdevs
-Message-ID: <20250717070204.66e34588@kernel.org>
-In-Reply-To: <20250717090037.4097520-1-primoz.fiser@norik.com>
-References: <20250717090037.4097520-1-primoz.fiser@norik.com>
+	s=arc-20240116; t=1752760957; c=relaxed/simple;
+	bh=jvjvNJ9/Hi0d0NH4OHDfhDk41aQZnW4W5eEeryeEQCo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g9K0DRTSMWza4mGqTKlN69xhvzkamZp/1aseZIjKwefxdRgynIEBdsZ/n5HWzT2uh+rM+ZQUSgV1+Yrme2J3O+frE0nENkTOWj6Sgo6OJssbgQRt1t3KoGpHopFM2nPPGAPQPPMXSCEG+0MyowKRQ/nR/hSBEkVne3Li/yCMXC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sOudqMFQ; arc=none smtp.client-ip=209.85.160.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2eb5cbe41e1so662131fac.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 07:02:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752760955; x=1753365755; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=b/lGwtVvChzSLtqkQCS9MrMJ9VNP21TZnjqYYKZiq4I=;
+        b=sOudqMFQBI/K4o1vSwg0X2pqwEsWMmd+/3Wi8Hjk5j3/K9e8EBJmHtqH+61PVlT7p7
+         O0ZeTI1n/M+MJL3wJvdhs71Jue5nMHDIrNUBkeAEJGoPYslYU25nheq6XC8r6Tpfq5Sa
+         5Iwze7XczfLS+IJdtTL81vVrrLH8OOEk8QsUJBxCoeT0mnXx1abeQkmDHNs2nbd72j9+
+         R7benStUo2EgF8dj+/Yf0NlL0It0t675cpavNLmx4dWz8sxGF9h/2K4+BjijCHXwuX+s
+         bbW/HaIfoFgZ1k9TT/giC6SAUAof9X/fGHth7LygBVPbfpmNPrrHJkCQbkJTRX6agmBQ
+         jk4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752760955; x=1753365755;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b/lGwtVvChzSLtqkQCS9MrMJ9VNP21TZnjqYYKZiq4I=;
+        b=LBrya+bUYBQKyvCyLf/uQqg7gTtbo4+ur4l3adAStHuNUJpbxyOAIp+5S/tIv6QXoS
+         mvkkjUYrsuXsh7iysJmx4P5v/rIXoFQYq6WUMFcVzDpH5i3NxqrR70e6uDT3sV20w2/C
+         mHWmRzp63eqrQQHi0MujtE1cQ84YcZtqwcWuMa1ueP9RHeefbfzNd1A6DQ9XubWmROad
+         qYzi54YWkij601f5gQ/K28vtP+kgjRY0jcEBstskgwwObwBKa1eGoEYZqF3+Pjyww4DN
+         y+y6sMcdeHJix1Ysiz3u32xD64DkcP4PYeP9VeU+/TM3w7rMnxMLEEh6mbotjx+xwgGY
+         Tuxw==
+X-Forwarded-Encrypted: i=1; AJvYcCXhEdPs4zKtzQSToTdOMPK8/UE5jDDoz9OUc2MBhp5eeZn9//Jhw/+YbwdZyK6/YhgafaAhC32ys5T2Rfk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxynfTflDcKy8d6T/ARtYYLNb0V29q34fW1gDYb4ssqIfaI4evp
+	ywq5P5PlZcGzhrFT/Xam5JeW856dWi22f87jOREmme6nWJnDwOWM0VwDWqR46pZo8fk=
+X-Gm-Gg: ASbGncvV98Ab/VXPAuSH8+ELaBjhoLsw3GfoIKGVWgtxZY3IzvLI/NgMtrTHyj7BpK0
+	nrlHOGg2ozyhJdtZ92Ee56paO6GcFf7yl9Rny6ghoA841/Q63P1lUikwE317WGf0zU3/slY6OCc
+	HBeJpcJQVMLI3BeYNVohIAx6wL/URRyZNES3iUqAx4ee2skM9w4JzOqWVJoKj/xRYrU66IMVWZE
+	3UOxMWiFsy0R0SbuX33P3LYwQjNjdMaWUH1MlH3D17d5EYcSUNWe0dt7lBqUHhvcITJWWjkD2Lh
+	+PJHYIhzIcRbq+AUjRLRYB5st7hJhvPjRBEW2k1eGmYEvdkQ+keZzjTTtRZlbIQw0AE1dSwKQGO
+	ER1Ge8X+sD5hK2+jXT7TZvqSbtxRy
+X-Google-Smtp-Source: AGHT+IFLK3PoG0Ry9cupN+1Gy4j1J9SSXaeHm73Z+F4q8Igvf8Tt9wX4mzY9/+JFGf1Gd8BqtKEL3g==
+X-Received: by 2002:a05:6871:7b0a:b0:2d5:b7b7:2d6e with SMTP id 586e51a60fabf-2ffd2abcf70mr2255355fac.38.1752760954743;
+        Thu, 17 Jul 2025 07:02:34 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:2c38:70d4:43e:b901])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73e7b586ba3sm275626a34.40.2025.07.17.07.02.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Jul 2025 07:02:34 -0700 (PDT)
+Date: Thu, 17 Jul 2025 17:02:32 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Antonio Quartulli <antonio@mandelbit.com>
+Cc: Sergey Bashirov <sergeybashirov@gmail.com>, linux-nfs@vger.kernel.org,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Konstantin Evtushenko <koevtushenko@yandex.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pNFS: fix uninitialized pointer access
+Message-ID: <90cddfa9-2d0c-4806-b3df-6a5ddd13c97f@suswa.mountain>
+References: <20250716143848.14713-1-antonio@mandelbit.com>
+ <h4ydkt7c23ha46j33i42wh2ecdwtcrgxnvfb6c7mo3dqc7l2kz@ng7fev5rbqmi>
+ <b927d3dd-a4ed-46d7-b129-59eaf60305c7@suswa.mountain>
+ <d9b026f1-6ed3-41ca-8699-914c45b0339b@mandelbit.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d9b026f1-6ed3-41ca-8699-914c45b0339b@mandelbit.com>
 
-On Thu, 17 Jul 2025 11:00:35 +0200 Primoz Fiser wrote:
-> Recently when working on predictable network names for i.MX SoCs, it
-> was discovered that of_node sysfs properties are missing for FEC and
-> EQOS interfaces.
+On Thu, Jul 17, 2025 at 10:01:42AM +0200, Antonio Quartulli wrote:
 > 
-> Without this, udev is unable to expose the OF_* properties (OF_NAME,
-> OF_FULLNAME, OF_COMPATIBLE, OF_ALIAS, etc.) and thus we cannot identify
-> interface based on those properties.
+> I agree a comment would help.
 > 
-> Fix this by populating netdev of_node in respective drivers.
+> > Another option would be to initialize the be_prev to NULL.  This will
+> > silence the uninitialized variable warning.
+> 
+> But will likely trigger a potential NULL-ptr-deref, because the static
+> analyzer believes we can get there with count==0.
+> 
 
-Seems legit, but would be good to CC Open Firmware maintainers.
+I don't know how Coverity does this.  In my experience, writing Smatch
+I had to treat initializations to NULL as "ignore this variable".  We
+used to have an uninitialized_var() macro to silence uninitialized
+variables.  It did an assignment to itself something like:
 
-If we want to make propagating the OF linkage a think I think we should
-add a flavor of SET_NETDEV_DEV() which does that for the caller.
-SET_NETDEV_DEV_OF() ?
--- 
-pw-bot: cr
+#define uninitialized_var(x) x = x
+
+But we removed it and changed all those places to just initialize the
+variables to zero.
+
+Even before, initializing things to zero was the standard way to silence
+GCC uninitialized variable warnings, so warning about NULL pointer
+dereferences tended to be prone to false positives and the worst kind of
+really complicated false positives too.
+
+regards,
+dan carpenter
+
 
