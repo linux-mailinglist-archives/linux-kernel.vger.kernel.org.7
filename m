@@ -1,136 +1,194 @@
-Return-Path: <linux-kernel+bounces-735730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7E7DB09326
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:25:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 866A4B09327
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:26:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92E7A1886D6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:25:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D03F7188690C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:26:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A2F2FD88F;
-	Thu, 17 Jul 2025 17:25:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A701D2FD5B8;
+	Thu, 17 Jul 2025 17:25:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RZADCi0J"
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g2Xj4Gp2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 371FC2904;
-	Thu, 17 Jul 2025 17:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2A9298CCD
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 17:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752773133; cv=none; b=vBwLeBFB46uBXjWMSDST1UuKQwrWTuWPCUo8A4SKdLVRIaTC9GZbZ5nN+R2HORt5FOxQxKKZEdfzGvKsW/pBDGzzt/S72+ccQ9SybrSZtE4zn/3rrpsyX4MODup3v1UTAt63sxbMF4Hg/T1D76lnYaUI6MR42Y3R7qSTBApCSmU=
+	t=1752773155; cv=none; b=IbkU8JUe/sIlFjHPT7e3Z/kuJqaRmotDzt8nWkOTMK3e6k4Y7Q2UpefhcU0d4HG6dfrUMMk2YiCOQHyLCugndaiQ94Or2KICEOfwPgwhRQSflXs14NEo3m+Bc4x2zvVuQ9KpMzUEeqowT1nXyC7gOppL3jVyx61K9s/U+3GdlJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752773133; c=relaxed/simple;
-	bh=FHZgRD2EXHypECk3pwgEZ8+Bh5htm8l/IdmFuPwgm6Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jN2M7PT1P9GJc0ox8NLcMfcRqQoBNE69kh7lCqXMILBn728OzT6ef1FNBL3HXg06NTTMXCmkbbAjYSv2bOn8C6717Y0qoTzdOKs45Y47gYDL2/qNcUQFnoVMR7nTNMB1mf4hKhKGTucOqm1Fp8SjqAovoZYAA/AEq+NblDSaIXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RZADCi0J; arc=none smtp.client-ip=209.85.160.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2ea08399ec8so890926fac.1;
-        Thu, 17 Jul 2025 10:25:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752773131; x=1753377931; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IKUAsFn+BYvl4QRv6W+0B4YT2et3vNZIFHPMajMeuYM=;
-        b=RZADCi0JCYpgUyWDx6SMWdFgIWfXRfVTpq6x/1tQ2ga5jHE19zVmOlyQQT16WucWEU
-         koFO5sVTFNHVhCLLv4QOH9fBoheuC2yOhcUVMb/CA799w/p6k8UnkFFeficRmLFOPwdv
-         cubLOl2ZLb1+Vo1ESYPhdPVrwubGyiSubtvVVr6cOBkp7FWW75SE+2MVBTfVoUBKEDgS
-         jsJRGbNgdTcjgRPFBc/Qa4//tVN7ms8+GTXoWDKlp687cDJUzVHcKsJJuYyE17SRmuW+
-         48/arYiV216WLgBIjFV4nCJOouSv029HrNABHM2Xsx3khARKQutBjrHPHrEqvbPbRzR1
-         ITPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752773131; x=1753377931;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IKUAsFn+BYvl4QRv6W+0B4YT2et3vNZIFHPMajMeuYM=;
-        b=MOxG38eBlMWreaUrW0YamLzmb/vyE3PW1Uq/XzuniwxBNdgmPZEUtK8Gy2TjqhgpMH
-         T0XJtLtY8qbTUcxbY1Odwp47Tv3b4A63BLYTAn3IBxvKGJC8+x/ZpvpBjQYfCCRp0JxY
-         1lAKNncqmMt1ifzHBaXRsscckm6Q8rmEBbYtdxeNjCJByKubURFYgwJTgQMbW4ptCeLq
-         U5E3blp0aNeYkHJ2Wu9+XtqWIBdkjLyiYVqoNFIz4UGbD9UDHQ+RPTHm0VG6vgwWjIyi
-         lfHZkdwTFNxTTzUNhr9/qfeqKD3rIr2evSbtdpsjHUj5D88mrVYToKSEiQkYZSffV8WO
-         hatg==
-X-Forwarded-Encrypted: i=1; AJvYcCVTdaT8vzOvOWj/cRn+8kXfw1gyUzZXpE6GcEkrUm/YywdKV8RV5L6u8cy7/58Y5lBA7sQygrHO9+O59WmJ@vger.kernel.org, AJvYcCXZ+hSA52tl/sty1tzHMHZW/1z4aMQGA7aXzZqrJda2Bik6eS/AQu//mUwQITwS9FaitDg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZiLLsXNVz9wbKWbbBf8TLfWmLh7tQEg7+EDkDgW1w6NNMwgiL
-	xecykbJqMh7enqINF6xpG/irvxigY8eTmKsxulXouydX8CYnoiuCPbcRUFdQLWuQTIwq9WaWoyG
-	tmK9DYcap2rW1f4AjSeGo9G9L7OSAqHQ=
-X-Gm-Gg: ASbGncvjglwIuwiBm9+6jcV5KnQ7P6GVVsxEZYlLCsUbXhISfe4XvnbdLowFR3FKjMl
-	jfNIermrZiVkU88zlyohVPRACmVkYrFlJKdHDSfa/khTo3nWZ4xqoRgl4npUjHwbsrpnf/M6TMk
-	ahLF0JyT4KKzJ32KUoy1aHuZEzelqHaAsQMRGXxRiJ0iKh9DN9TVdI2i5kCn09InqN7/EvDkT0q
-	gHtTUmChlc3PiwRxC8=
-X-Google-Smtp-Source: AGHT+IFV3LJemzAq2naa5xnK/QNurVq5M/iO8tvRMpRLLz6WN5u9FanyUc/XuoKYnP3llvLeMkfTFWXDD3gwJGr/r1M=
-X-Received: by 2002:a05:6870:71ce:b0:2e9:95cc:b855 with SMTP id
- 586e51a60fabf-2ffaf5a15d7mr6374088fac.34.1752773131235; Thu, 17 Jul 2025
- 10:25:31 -0700 (PDT)
+	s=arc-20240116; t=1752773155; c=relaxed/simple;
+	bh=DcIQuHxu0i2k57jdIJDNAgyMTwSmY7zezV/b+J5o1iQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vp0cyFh+XQRZP5WVau7TOyf3Ni0pXW8S6UC05PAQcUzPdUI0lCDJXXnr/TBIhh+QaBSdM1q5q8nkRkH8+Gm64Zi+wgUfI4HEFkChJ71SR0nLyvPDFF3xqeWe7Vhkd3ILUb58yNRkqGXhZZn1yiETJGTpqOQbhWJEBHd4xwzWwLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g2Xj4Gp2; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752773151;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ApiiZ3duCsvIzxhkjNLnbbPC/uKcbN4pVUtEXFJ0jH8=;
+	b=g2Xj4Gp2Kraod7fk2ep2PTTzyL3IE1WymQSph5oV44YvNonG+ie4qmw/ikdZbpnr5pWLq1
+	ZJoWPtjfl0pCGkVX3tyhr8sTQ4EgyuSILIq1JVcjH+yaiJnL5E6eGjdnoqr3eNPeRu8iWY
+	tT5FeZnjq3t3MnNn5iPA6GZdQObOrAs=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-464-fRwBhvh-MfmZHIbqa0Z_dA-1; Thu,
+ 17 Jul 2025 13:25:48 -0400
+X-MC-Unique: fRwBhvh-MfmZHIbqa0Z_dA-1
+X-Mimecast-MFC-AGG-ID: fRwBhvh-MfmZHIbqa0Z_dA_1752773147
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B80A519560AA;
+	Thu, 17 Jul 2025 17:25:46 +0000 (UTC)
+Received: from pauld.westford.csb (unknown [10.22.64.206])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B1C6F196664F;
+	Thu, 17 Jul 2025 17:25:43 +0000 (UTC)
+Date: Thu, 17 Jul 2025 13:25:41 -0400
+From: Phil Auld <pauld@redhat.com>
+To: Shrikanth Hegde <sshegde@linux.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+	mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, clm@meta.com
+Subject: Re: [PATCH v2 00/12] sched: Address schbench regression
+Message-ID: <20250717172541.GB94018@pauld.westford.csb>
+References: <20250702114924.091581796@infradead.org>
+ <132949bc-f901-40e6-a34c-d1d67d03d8b6@linux.ibm.com>
+ <20250707091136.GB1099709@noisy.programming.kicks-ass.net>
+ <49a9e43b-7ca5-4c90-a8b2-c43a84c34aeb@linux.ibm.com>
+ <20250716134640.GA20846@pauld.westford.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250717115936.7025-1-suchitkarunakaran@gmail.com> <CAEf4BzZ+OTkaXmtWPbOGB0OWz5xmj-d06UWchooO+iUyDHar4g@mail.gmail.com>
-In-Reply-To: <CAEf4BzZ+OTkaXmtWPbOGB0OWz5xmj-d06UWchooO+iUyDHar4g@mail.gmail.com>
-From: Suchit K <suchitkarunakaran@gmail.com>
-Date: Thu, 17 Jul 2025 22:55:20 +0530
-X-Gm-Features: Ac12FXzHUYvB11EN96RJ87w4mJ-AVBHzefF2DLUAQSIjyLEeP8_edkErqdrKA6Y
-Message-ID: <CAO9wTFjZwOcpaSSJJu_khQ=hCdiiQwuVm-=zOAdTr04gbaa45w@mail.gmail.com>
-Subject: Re: [PATCH] libbpf: Replace strcpy() with memcpy() in bpf_object__new()
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
-	martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
-	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
-	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org, 
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250716134640.GA20846@pauld.westford.csb>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Thu, 17 Jul 2025 at 22:49, Andrii Nakryiko <andrii.nakryiko@gmail.com> w=
-rote:
->
-> On Thu, Jul 17, 2025 at 4:59=E2=80=AFAM Suchit Karunakaran
-> <suchitkarunakaran@gmail.com> wrote:
-> >
-> > Replace the unsafe strcpy() call with memcpy() when copying the path
-> > into the bpf_object structure. Since the memory is pre-allocated to
-> > exactly strlen(path) + 1 bytes and the length is already known, memcpy(=
-)
-> > is safer than strcpy().
-> >
-> > Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
-> > ---
-> >  tools/lib/bpf/libbpf.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-> > index 52e353368f58..279f226dd965 100644
-> > --- a/tools/lib/bpf/libbpf.c
-> > +++ b/tools/lib/bpf/libbpf.c
-> > @@ -1495,7 +1495,7 @@ static struct bpf_object *bpf_object__new(const c=
-har *path,
-> >                 return ERR_PTR(-ENOMEM);
-> >         }
-> >
-> > -       strcpy(obj->path, path);
-> > +       memcpy(obj->path, path, strlen(path) + 1);
->
->
-> This is user-space libbpf code, where the API contract mandates that
-> the path argument is a well-formed zero-terminated C string. Plus, if
-> you look at the few lines above, we allocate just enough space to fit
-> the entire contents of the string without truncation.
->
-> In other words, there is nothing to fix or improve here.
->
-> pw-bot: cr
+On Wed, Jul 16, 2025 at 09:46:40AM -0400 Phil Auld wrote:
+> 
+> Hi Peter,
+> 
+> On Mon, Jul 07, 2025 at 03:08:08PM +0530 Shrikanth Hegde wrote:
+> > 
+> > 
+> > On 7/7/25 14:41, Peter Zijlstra wrote:
+> > > On Mon, Jul 07, 2025 at 02:35:38PM +0530, Shrikanth Hegde wrote:
+> > > > 
+> > > > 
+> > > > On 7/2/25 17:19, Peter Zijlstra wrote:
+> > > > > Hi!
+> > > > > 
+> > > > > Previous version:
+> > > > > 
+> > > > >     https://lkml.kernel.org/r/20250520094538.086709102@infradead.org
+> > > > > 
+> > > > > 
+> > > > > Changes:
+> > > > >    - keep dl_server_stop(), just remove the 'normal' usage of it (juril)
+> > > > >    - have the sched_delayed wake list IPIs do select_task_rq() (vingu)
+> > > > >    - fixed lockdep splat (dietmar)
+> > > > >    - added a few preperatory patches
+> > > > > 
+> > > > > 
+> > > > > Patches apply on top of tip/master (which includes the disabling of private futex)
+> > > > > and clm's newidle balance patch (which I'm awaiting vingu's ack on).
+> > > > > 
+> > > > > Performance is similar to the last version; as tested on my SPR on v6.15 base:
+> > > > > 
+> > > > 
+> > > > 
+> > > > Hi Peter,
+> > > > Gave this a spin on a machine with 5 cores (SMT8) PowerPC system.
+> > > > 
+> > > > I see significant regression in schbench. let me know if i have to test different
+> > > > number of threads based on the system size.
+> > > > Will go through the series and will try a bisect meanwhile.
+> > > 
+> > > Urgh, those are terrible numbers :/
+> > > 
+> > > What do the caches look like on that setup? Obviously all the 8 SMT
+> > > (is this the supercore that glues two SMT4 things together for backwards
+> > > compat?) share some cache, but is there some shared cache between the
+> > > cores?
+> > 
+> > It is a supercore(we call it as bigcore) which glues two SMT4 cores. LLC is
+> > per SMT4 core. So from scheduler perspective system is 10 cores (SMT4)
+> > 
+> 
+> We've confirmed the issue with schbench on EPYC hardware. It's not limited
+> to PPC systems, although this system may also have interesting caching. 
+> We don't see issues with our other tests.
+> 
+> ---------------
+> 
+> Here are the latency reports from schbench on a single-socket AMD EPYC
+> 9655P server with 96 cores and 192 CPUs.
+> 
+> Results for this test:
+> ./schbench/schbench -L -m 4 -t 192 -i 30 -r 30
+> 
+> 6.15.0-rc6  baseline
+> threads  wakeup_99_usec  request_99_usec
+> 1        5               3180
+> 16       5               3996
+> 64       3452            14256
+> 128      7112            32960
+> 192      11536           46016
+> 
+> 6.15.0-rc6.pz_fixes2 (with 12 part series))
+> threads  wakeup_99_usec  request_99_usec
+> 1        5               3172
+> 16       5               3844
+> 64       3348            17376
+> 128      21024           100480
+> 192      44224           176384
+> 
+> For 128 and 192 threads, Wakeup and Request latencies increased by a factor of
+> 3x.
+> 
+> We're testing now with NO_TTWU_QUEUE_DELAYED and I'll try to report on
+> that when we have results. 
 >
 
-That makes sense, strcpy() is indeed safe here. Thanks for the clarificatio=
-n.
+To follow up on this: With NO_TTWU_QUEUE_DELAYED the above latency issues
+with schbench go away.
+
+In addition, the randwrite regression we were having with delayed tasks
+remains resolved.  And the assorted small gains here and there are still
+present. 
+
+Overall with NO_TTWU_QUEUE_DELAYED this series is helpful. We'd probably
+make that the default if it got merged as is.  But maybe there is no
+need for that part of the code.  
+
+
+Thanks,
+Phil
+
+> Cheers,
+> Phil
+> -- 
+> 
+> 
+
+-- 
+
 
