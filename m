@@ -1,159 +1,141 @@
-Return-Path: <linux-kernel+bounces-735331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 765DAB08DDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:07:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C282AB08DE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:11:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71FB13A6F56
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:06:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1434217D32B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:11:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FDDE2D77F3;
-	Thu, 17 Jul 2025 13:07:06 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8848A2BE039;
-	Thu, 17 Jul 2025 13:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496782D6419;
+	Thu, 17 Jul 2025 13:11:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="kHccs5KP"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4127628C013
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 13:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752757626; cv=none; b=SKDX2m/bVIwMpvHKsX/m+aCTBItOBHh12KiKsroufCQ6g6JkabltTTHpEbNubELakI5r1lY0fPTJTWVQy0oq1XZ326J/ve+bMY1Ez35bq8LxdkJXvCoYSD8FG+br88d05njLxZdu64x/vAUPgCBUHc0mHdgPfcvz49jZWnnmVXw=
+	t=1752757889; cv=none; b=ZbPRjurjR/WPKXxpkalpA4FXNJyYxtG5tZwZN/sE1VF6oJjDk2bz9FxoXxq6m3so04rjY+q9x5oGrzIy1AMXlSYaTSL9IFIXBBy+c4DPJDN9p9CrJDkxC8qamKIeS5xWtNanhCHd/AkrwdVIvexWv9aQnqFMDQG03uhhguqKmCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752757626; c=relaxed/simple;
-	bh=+mdSUauFoa7LJWHMtcUbmWqau1vup40k6C8xVcHdD/w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UDQGbdsNhjgeRckCCCf51K6SgrHbnseCYm4FxqFX80groW3ld5PuDYa50fK9qsaOPzjo2C94LuNbgzRYVuq9VOF62K/7vzGk9NntrvfLjvnZ4KYq3/A/Mmv/O88Pprph6M+v4mYimbEoiQITkxx1xChHzp3OB6Hdtz9y1yxu+VA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0F67B1596;
-	Thu, 17 Jul 2025 06:06:56 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CB6613F694;
-	Thu, 17 Jul 2025 06:07:01 -0700 (PDT)
-Date: Thu, 17 Jul 2025 14:06:56 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: =?utf-8?B?5YiY5rW354eVIChIYWl5YW4gTGl1KQ==?= <haiyan.liu@unisoc.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
-	=?utf-8?B?5Luj5a2Q5Li6IChaaXdlaSBEYWkp?= <Ziwei.Dai@unisoc.com>,
-	=?utf-8?B?5ZGo5bmzIChQaW5nIFpob3UvOTAzMik=?= <Ping.Zhou1@unisoc.com>,
-	=?utf-8?B?5p2o5Li95aicIChMaW5hIFlhbmcp?= <lina.yang@unisoc.com>,
-	=?utf-8?B?546L5Y+MIChTaHVhbmcgV2FuZyk=?= <shuang.wang@unisoc.com>,
-	Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Matthew Maurer <mmaurer@google.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>
-Subject: Re: Meet compiled kernel binaray abnormal issue while enabling
- generic kasan in kernel 6.12 with some default KBUILD_RUSTFLAGS on
-Message-ID: <aHj1cKzCaDDsHLHe@J2N7QTR9R3>
-References: <3655537d80024fc8bccb7874dfed4c73@BJMBX01.spreadtrum.com>
+	s=arc-20240116; t=1752757889; c=relaxed/simple;
+	bh=labfS1Gx2nRwHraou1bq+cAgZKWRTyU0IEkUZGJs+zo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R2FBXXUIT+CC+BUEHbtSU/CUgcMvBt0YtwSiyMDeW/IYYvzbxZsJtbu2avTStVkZWJeRBdG0gyh3SKokZnWpdEWE5I6rgQxFDaeTgtpB9O1QTRUWJVL8G8zf1pD67CS5RG549pqCOHM1bwqSXQfNC3x3wRXWW1c4lsMKfEStDpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=kHccs5KP; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a4f72cba73so1256569f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 06:11:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1752757887; x=1753362687; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=83jCr416azYCn7ZWfoPtR/8LxsJq3XFvpEtFQFTIDfk=;
+        b=kHccs5KPJ+vzt3U+IergzpTqZ7du+wiT7QAyjjlz6XvIbKa8kGDG8G393LqfKrpmcn
+         MYP3rK3ZPK7/AIbynMncosU4aUmQPysiEGGKls+FxRQu1Cj3Tb3wmWPP5OURNjQfWmf+
+         UpqrzMA1972YXLizVi8gtT2l+lokBFL4FNIVceQvrFcjehQ4RdxTMvHD5iciGtwvJ3su
+         WCSbpw/lmDInk5+R7cCsljo+zsnf6ku699BD2l6SOehaYZdQazdAVAmUg9bfuUSbc9iH
+         9dxEQi1eGyLdy0F4C5t348t6RhtNr8p16EojvcGagu/zOIOe5NJUwQ5k1+uvJYEQg0x6
+         t3VQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752757887; x=1753362687;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=83jCr416azYCn7ZWfoPtR/8LxsJq3XFvpEtFQFTIDfk=;
+        b=eWge0fdQha7qIziGKxp0zOVLPn7ccO2Pk0tvBbArBuqWr2zlhKhViqdrXCABVUrEKb
+         VlDxF7yPeq1pLFUqW8C2LBDDAGAuqZvqIv0C7Iw/WR2sr9jNPa5JgCCdIPckjgpqCfO6
+         qTDPqXpIti3EXtwBLYPkwnq2BTHNvK7tobbCRKhvR1S9IgWFP/kfWEo/BtqPs5A9Aw2v
+         EFCO23aAK8IvSAJV5pxH3ChVxl+mCEEJcnScTFY5RzyhMxvLsJ2d7yKtkfaoNfh+5oeh
+         uz0J9WelSaBrasTazqGstkfFqzd1d4UaKJ+oD+awdjbBDCmGnsylVc+kzur249Q4YWnz
+         rFIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWCzmuwaHCARPsLVMi1UvyBjpkAah+RxGQcoMoThwKib9uI0lfrGb7Jp4CIMjklnU/2kdNsOk4HIVBYyaw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yznn0djFB3LeCGOsemWEeRiLkHHqlbgvnOFl77Bu3jOt2+yKQdA
+	tsoEkL0aU+vtKeyF/PlP5wtLcCbdeEIoDmFTDxQNDC6qb27guYe39DFR4vfPw96Iwc4=
+X-Gm-Gg: ASbGnct5AhKZCEdJW5IMPlvfStCSfHATCAOgwQuBJbCL2oiuYZNoe6LxJW1LpBsb7Bv
+	qZVXAMieOJ+YGhtuFoVrKdW7lOJI05PQ13ybtx3v3XTR8Zww/P//5no00FUq7JqZZVTc8aNGSxB
+	xSPkQcgZGukYRObTL1+zvJOz9hRO+QIqUW5S8Y36arn77zpDcSy94cUMR5CFcwE/Aozoqksxb/9
+	VvXLuGrygMiKoA4hFcYCrv2BJ+NK+VARx3bt6HGHgpA0QI4w9loie7qzZ1BQzOdnR47Nf8jQd9z
+	WQrf5OnVjZGokg4MuAZREBOrK+BTF+kCt1AczDD0mJ4gx7SpT9hSNS2VMaOg/VADTxDvevoE/ef
+	CslmkIN3Rw3TmNO4io2lusGQ=
+X-Google-Smtp-Source: AGHT+IF4aBEVNkpFE5pxCAK/kMqSx3h6NcRIudrOPp6QMPOhm1KlysOl7H2KIJzmTsnV6O11EnwLsw==
+X-Received: by 2002:a5d:64cf:0:b0:3a5:8977:e0fd with SMTP id ffacd0b85a97d-3b61395ca72mr2800801f8f.0.1752757886272;
+        Thu, 17 Jul 2025 06:11:26 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:9e61:4694:c621:5693])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc201asm20560565f8f.22.2025.07.17.06.11.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Jul 2025 06:11:25 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+	Srinivas Neeli <srinivas.neeli@amd.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] gpio: xilinx: convert set_multiple() to the new API as well
+Date: Thu, 17 Jul 2025 15:11:15 +0200
+Message-ID: <20250717131116.53878-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <3655537d80024fc8bccb7874dfed4c73@BJMBX01.spreadtrum.com>
 
-On Thu, Jul 17, 2025 at 11:25:00AM +0000, 刘海燕 (Haiyan Liu) wrote:
-> > -----邮件原件-----
-> > 发件人: Mark Rutland <mark.rutland@arm.com>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-> > From a quick scan, I think this might have something to do with UNWIND_PATCH_PAC_INTO_SCS, notes below.
-> > 
-> > On Mon, Jul 14, 2025 at 03:12:33AM +0000, 刘海燕 (Haiyan Liu) wrote:
-> > > I am enabling generic kasan feature in kernel 6.12, and met kernel boot crash.
-> > > Unable to handle kernel NULL pointer dereference at virtual address
-> > > 0000000000000008 pc : do_basic_setup+0x6c/0xac lr :
-> > > do_basic_setup+0x88/0xac sp : ffffffc080087e40
+The patch converting the driver to using new GPIO line value setters
+only converted the set() callback and missed set_multiple(). Fix it now.
 
-> > Here you evidently have shadow call stack enabled...
-> > 
-> > > NSX:FFFFFFC0800A8478|D503233F  asan.module_ctor:    paciasp
-> > > NSX:FFFFFFC0800A847C|A9BF7BFD                       stp     x29,x30,[sp,#-0x10]!   ; x29,x30,[sp,#-16]!
-> > > NSX:FFFFFFC0800A8480|910003FD                       mov     x29,sp
-> > > NSX:FFFFFFC0800A8484|B0023420                       adrp    x0,0xFFFFFFC08472D000
-> > > NSX:FFFFFFC0800A8488|913E0000                       add     x0,x0,#0xF80     ; x0,x0,#3968
-> > > NSX:FFFFFFC0800A848C|52800021                       mov     w1,#0x1          ; w1,#1
-> > > NSX:FFFFFFC0800A8490|9422AF35                       bl      0xFFFFFFC080954164   ; __asan_register_globals
-> > > NSX:FFFFFFC0800A8494|A8C17BFD                       ldp     x29,x30,[sp],#0x10   ; x29,x30,[sp],#16
-> > > NSX:FFFFFFC0800A8498|D50323BF                       autiasp
-> > > NSX:FFFFFFC0800A849C|D65F03C0                       ret
-> > 
-> > ... but here you evidently don't, and have PAC instead.
+Fixes: 1919ea19a4ff ("gpio: xilinx: use new GPIO line value setter callbacks")
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/gpio/gpio-xilinx.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-> > Are these decoded from the static kernel binary, or are these dumps
-> > from memory once a kernel has booted (or is in the process of
-> > booting)?
-> 
->  These are dumped from memory during the kernel booted by trace32.
+diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
+index aaaa74117980..36d91cacc2d9 100644
+--- a/drivers/gpio/gpio-xilinx.c
++++ b/drivers/gpio/gpio-xilinx.c
+@@ -175,8 +175,8 @@ static int xgpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
+  * This function writes the specified values into the specified signals of the
+  * GPIO devices.
+  */
+-static void xgpio_set_multiple(struct gpio_chip *gc, unsigned long *mask,
+-			       unsigned long *bits)
++static int xgpio_set_multiple(struct gpio_chip *gc, unsigned long *mask,
++			      unsigned long *bits)
+ {
+ 	DECLARE_BITMAP(hw_mask, 64);
+ 	DECLARE_BITMAP(hw_bits, 64);
+@@ -196,6 +196,8 @@ static void xgpio_set_multiple(struct gpio_chip *gc, unsigned long *mask,
+ 	bitmap_copy(chip->state, state, 64);
+ 
+ 	raw_spin_unlock_irqrestore(&chip->gpio_lock, flags);
++
++	return 0;
+ }
+ 
+ /**
+@@ -605,7 +607,7 @@ static int xgpio_probe(struct platform_device *pdev)
+ 	chip->gc.set_rv = xgpio_set;
+ 	chip->gc.request = xgpio_request;
+ 	chip->gc.free = xgpio_free;
+-	chip->gc.set_multiple = xgpio_set_multiple;
++	chip->gc.set_multiple_rv = xgpio_set_multiple;
+ 
+ 	chip->gc.label = dev_name(dev);
+ 
+-- 
+2.48.1
 
-At which point have you dumped the memory contents? e.g. has the kernel
-booted to a prompt before you make the dump, or have you stopped the
-kernel early during the boot process?
-
-Are you certain this is dumped *after* scs_patch() has run?
-
-> > > But actually, in two asan.module_ctor functions, there is only autiasp  instruction inserted before return, for validation of return address,
-> > while paciasp instruction is missing before.
-> > > NSX:FFFFFFC0800A72D8|F800865E  asan.module_ctor:    str     x30,[x18],#0x8   ; x30,[x18],#8
-> > > NSX:FFFFFFC0800A72DC|F81F0FFE                       str     x30,[sp,#-0x10]!   ; x30,[sp,#-16]!
-> > > NSX:FFFFFFC0800A72E0|B00233C0                       adrp    x0,0xFFFFFFC084720000
-> > > NSX:FFFFFFC0800A72E4|91350000                       add     x0,x0,#0xD40     ; x0,x0,#3392
-> > > NSX:FFFFFFC0800A72E8|52803D61                       mov     w1,#0x1EB        ; w1,#491
-> > > NSX:FFFFFFC0800A72EC|9422B39E                       bl      0xFFFFFFC080954164   ; __asan_register_globals
-> > > NSX:FFFFFFC0800A72F0|F84107FE                       ldr     x30,[sp],#0x10   ; x30,[sp],#16
-> > > NSX:FFFFFFC0800A72F4|D50323BF                       autiasp
-> > > NSX:FFFFFFC0800A72F8|D65F03C0                       ret
-> > 
-> > Thas has a mixture of SCS and PAC; there's a shadow call stack prologue but a PAC epilogue:
-> > 
-> >         str     x30, [x18], #8  // SCS
-> >         ...
-> >         autiasp                 // PAC
-> 
-> Yes, this is my issue and I wanted to resolve.
-> 
-> > ... so I'll hazard a guess that these are dumps from memory, 
-
-This was confirmed above...
-
-> > and you have UNWIND_PATCH_PAC_INTO_SCS selected.
-
-... can you please confirm this? i.e. does your config have
-CONFIG_UNWIND_PATCH_PAC_INTO_SCS selected?
-
-> > Assuming that is the case, either this dump has been made
-> > mid-patching, or the patching has gone wrong somehow and left the
-> > prologues/epilogues in an inconsistent state (and the NULL
-> > dereference could be a secondary effect of that).
-> >
-> > Ard, does that sound plausible to you?
-> >
-> > I can't see why that would depend on KBUILD_RUSTFLAGS, but maybe the DWARF generated by rustc has confused the patching code
-> > somehow, or the linker has aggregated that in a suprising way.
-> > Mark.
-> 
->   Yes, Thank you. What can cause this issue? Can you give some
->   directions so that we can gradually investigate.
-
-Find out specifically where the affected asan.module_ctor functions are
-from, i.e. whether they're generated by rustc or the C compiler that
-you're using.
-
-Go and read scs_patch(), see what it does, and check the data it
-consumes.
-
-See if rustc is generating DWARF as we expect or not.
-
-See if the linker is combining that correctly into the resulting
-vmlinux, and that this correctly propagates into the resulting Image.
-
-Mark.
 
