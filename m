@@ -1,253 +1,139 @@
-Return-Path: <linux-kernel+bounces-734842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B35C0B08700
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:38:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82002B0871B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:40:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26CCC1882D17
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:37:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC50D3A7D09
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:37:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BF272690C4;
-	Thu, 17 Jul 2025 07:35:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7BC277CA0;
+	Thu, 17 Jul 2025 07:36:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="If+ElQ16"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JY6/41s4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49122550D2
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 07:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361E224A076;
+	Thu, 17 Jul 2025 07:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752737709; cv=none; b=PwMYPjwjDVkcKGChYEX/taHTQn+VqUXDAnBCo3tYYGkdq6OO/B74S88ZB2uP6dif45bgKMx5mqkP477rgN797GC0gduPBeVcDjCo09IfYe8CmEmYcyrjEfZ0oZL9d1o5XFlh+mx+jxG5vO3uOEXwcHhie+xPY5cb+WgZ/H9zXTo=
+	t=1752737779; cv=none; b=KAJf49kgVWanDk9XRXPq4NoyjaPezuUVDZujEzr0t9VcgOp1HgyKgby0DfmFEsY6wfLK4UjwpJflwRPOpauw1rs0/CJ3pLYSQ5bLyQXDYHpv2EfH+zjESBBH+w00e8HTTr1pIEBplgrhe8nyhl9gC74bowvTPH1CQObxesRa7io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752737709; c=relaxed/simple;
-	bh=+PQqRj/+APqDPfJKyjrfclx/vTYwfsNsxaUV9DAeknA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uFIiLHP5N277D11pZFXxCMpoEm3zIM7dm1uNiBPoer5CeEijtrn7YfS4NDwmswna+GdlbJ8uWssGD2abAXa6O54CB2JfoYM1Tcd5TwG2B+7s/uKu1x6Yxi9ZTI43KfIRK4wqO5R+LxEX2O/0Sna75HaEAv6WrZKgjRKCM0pXbhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=If+ElQ16; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752737706;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=dujvEOHGoGkKIbh2VcvWWUHTqJBgDW3Vgo4cGXVPWNY=;
-	b=If+ElQ16GalXdMYvqQgQWxUcnUYTmHP8pkM2iSnPGze89/riUnVDuCf+stownz4XvAm/Ul
-	Cv6ZiXcrZfvVxbKuz9i54/mpyVZbjY71mDlcc9fo/qWcjo0qbMYFmIsIiUQVBD6q1Uf2yj
-	Y8k+0jdfFpe6G0XlYPVY21KzWB10p9M=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-647-yY7aGrPrNCK50qLh_CAXzg-1; Thu, 17 Jul 2025 03:35:05 -0400
-X-MC-Unique: yY7aGrPrNCK50qLh_CAXzg-1
-X-Mimecast-MFC-AGG-ID: yY7aGrPrNCK50qLh_CAXzg_1752737704
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4538f375e86so6193955e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 00:35:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752737704; x=1753342504;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=dujvEOHGoGkKIbh2VcvWWUHTqJBgDW3Vgo4cGXVPWNY=;
-        b=RUWQ+V+URU11o7IQExkT2KBLhCwiAr4TaI8bsEoUcQX6kxUAR8ZSrcsUpbDfCtqUZE
-         QETaQ2Njf0K0PiEJjktx9xQL8gq0UxehdtlC/nbXWdigouYox8PCk5sOkjrenhvfzq1l
-         BjxmjiaD+97KnIZgJqoGww4I8cnMOtvDbNXRJtXYRGtA8ttwfz6hwRI6OyTWugnxLe0W
-         mUBoFGgGJjVqdQ6q9xIDEcn1ONrc9EZO7PQKCO4GJtRNaEtCY+JSJa+Mwkgq1rf+YI8+
-         UKaRmM7NvQy4KLSOPm8O8VTY63/12mMWi9ckGGSVJSKlwH/V5vUzTVb53M1P5UE/+ntn
-         MuyQ==
-X-Gm-Message-State: AOJu0YxecNrAuXgRRWZuGjkv4+hBR98rtdvZm8lsE3zOOdFmuvoY6eNw
-	q9AiLqg8n95ug/yJXZnHLWlFtiG2wZ1X6bXaGUDcewa4JMFzdcXwNwvdCpxzfhnm5UQqe2v2o6M
-	rhlioi6EaRXTa4Xke+sycYLocLW8xIhdN5MC3YTqXDmruzbw+mNMj3LpZbAcgr1TjiQ==
-X-Gm-Gg: ASbGncsZcd2VmDHhtd4iZo7RUq5+mKFUwZI2NAkvGK1x7Vtth+Dzc/nu9o7G04Uc7Jp
-	g7KvQsupc2E2CGLLH8inzXxpBgRjI8M0HbxWSnTp7lkZmubuDOjLoetYiwfVAIkfCPll1Tx8MjK
-	RJRq8Ji6aMsM5+iS9OQslafDEahUPuHo44TIAV8fC6chtetLRj7T2dSpxGapVGE0GSpJ23qXnyi
-	+aXJr0BlilOAAHuGUqUm/Dn0Upp6hbzTGyCMVA4upmHnsV3b04EQZjoCwchOiFMfzTVGXbFNXYd
-	BlxwqKWoCC1K7UuLHqFrcfgLgFor9qcr6g5B2Y7ZO+RfHVO1QnF9Kq6P7BU8hirQytIUPHDjJt9
-	Dk/LW0NZ9dlPbYRAAUYc4fCUiwqj0Ci9xpiAE/QuH3I9RtlGVLYncNzkkK3cBDkh3
-X-Received: by 2002:a05:600c:820f:b0:43c:ec0a:ddfd with SMTP id 5b1f17b1804b1-4562ed57638mr48600715e9.6.1752737703925;
-        Thu, 17 Jul 2025 00:35:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEtTyLPcaxAHqteD7RhIpkLjY6DinVSnPGFlCTrTsNMCpipiqNTjkckjgG4pKMNN42D/qwMTg==
-X-Received: by 2002:a05:600c:820f:b0:43c:ec0a:ddfd with SMTP id 5b1f17b1804b1-4562ed57638mr48600205e9.6.1752737703460;
-        Thu, 17 Jul 2025 00:35:03 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f1f:3600:dc8:26ee:9aa9:fdc7? (p200300d82f1f36000dc826ee9aa9fdc7.dip0.t-ipconnect.de. [2003:d8:2f1f:3600:dc8:26ee:9aa9:fdc7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e7f2d4fsm43469055e9.4.2025.07.17.00.35.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Jul 2025 00:35:02 -0700 (PDT)
-Message-ID: <336b1801-869d-47ff-a942-c100e0d07d75@redhat.com>
-Date: Thu, 17 Jul 2025 09:35:01 +0200
+	s=arc-20240116; t=1752737779; c=relaxed/simple;
+	bh=hhhU4e4aqKE8PpZkiDXzguQPAKgEofaDpsLTegsHWz8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eVGtywtgVUPykX/gGDKhu47bJ2TgF2OWwA1p1hdHCn1Mk/lXpFYoIGAftUkuGhdBtBPwHp4KbAvi7nzfZNxaiKuTotox58HOFuovquSX5TtW50LglqL9APFDAuqilcDbcNExc/ytl+lU2EwFuYilDJiTd11jl1itybFTUyASvIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JY6/41s4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5176C4CEE3;
+	Thu, 17 Jul 2025 07:36:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752737777;
+	bh=hhhU4e4aqKE8PpZkiDXzguQPAKgEofaDpsLTegsHWz8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JY6/41s4bMy5D4wwJjhvJZzgFBcooHC/UdvQVnxZHAwfUwdEjNWYkekFrsuR8xAb9
+	 F3YhWBbgeP9ssrmp8DnS4maFzQ5Npt5gl9LFbvwkQF3YqHy+dbrKSLyxOJiejJmkol
+	 FWy+Yaf3a/rialpN/MtQfwHiucFCVWo2BqdXGE3ZtTwOcjc8ptpWg9X3wI4ToSHEXW
+	 pGaPbkxgv4T7L1Go7BuyB0MnqXPeR2H9L1vuppR6bNwg4goK+Ugx47k8pw2lbBNo4i
+	 Jqedvh/Xon9tIqaDxtDBPsRsLxQECHWy+X3K6Ch5INn4tPAs1HO1Kal10ynNriUlMs
+	 33amfuvbQ7hNA==
+Date: Thu, 17 Jul 2025 13:06:05 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: manivannan.sadhasivam@oss.qualcomm.com, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Jeff Johnson <jjohnson@kernel.org>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Nirmal Patel <nirmal.patel@linux.intel.com>, Jonathan Derrick <jonathan.derrick@linux.dev>, 
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, ath12k@lists.infradead.org, 
+	ath11k@lists.infradead.org, ath10k@lists.infradead.org, ilpo.jarvinen@linux.intel.com, 
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, 
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Subject: Re: [PATCH 2/6] PCI/ASPM: Transition the device to D0 (if required)
+ inside pci_enable_link_state_locked() API
+Message-ID: <7o23kvvetjcohrucjhgkonrkkunykybce7q6tlfycbb6pafg4y@lpxvbepupemp>
+References: <20250716-ath-aspm-fix-v1-2-dd3e62c1b692@oss.qualcomm.com>
+ <20250716205601.GA2555277@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/9] mm: vm_normal_page*() improvements
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- xen-devel@lists.xenproject.org, linux-fsdevel@vger.kernel.org,
- nvdimm@lists.linux.dev, Juergen Gross <jgross@suse.com>,
- Stefano Stabellini <sstabellini@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox
- <willy@infradead.org>, Jan Kara <jack@suse.cz>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Zi Yan <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
- Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
- Hugh Dickins <hughd@google.com>, Oscar Salvador <osalvador@suse.de>,
- Lance Yang <lance.yang@linux.dev>
-References: <20250715132350.2448901-1-david@redhat.com>
- <20250715163126.7bcaca25364dd68835bd9c8b@linux-foundation.org>
- <17a539fa-977c-4f3f-bedf-badd1fc1287a@redhat.com>
- <20250716152710.59e09fe5056010322de2a1a3@linux-foundation.org>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <20250716152710.59e09fe5056010322de2a1a3@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250716205601.GA2555277@bhelgaas>
 
-On 17.07.25 00:27, Andrew Morton wrote:
-> On Wed, 16 Jul 2025 10:47:29 +0200 David Hildenbrand <david@redhat.com> wrote:
+On Wed, Jul 16, 2025 at 03:56:01PM GMT, Bjorn Helgaas wrote:
+> On Wed, Jul 16, 2025 at 06:26:21PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> > From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> > 
+> > Both of the current callers of the pci_enable_link_state_locked() API
+> > transition the device to D0 before calling. This aligns with the PCIe spec
+> > r6.0, sec 5.5.4:
+> > 
+> > "If setting either or both of the enable bits for PCI-PM L1 PM Substates,
+> > both ports must be configured as described in this section while in D0."
+> > 
+> > But it looks redundant to let the callers transition the device to D0. So
+> > move the logic inside the API and perform D0 transition only if the PCI-PM
+> > L1 Substates are getting enabled.
 > 
->>>
->>> However the series rejects due to the is_huge_zero_pmd ->
->>> is_huge_zero_pfn changes in Luiz's "mm: introduce snapshot_page() v3"
->>> series, so could we please have a redo against present mm-new?
->>
->> I'm confused: mm-new *still* contains the patch from Luiz series that
->> was originally part of the RFC here.
->>
->> commit 791cb64cd7f8c2314c65d1dd5cb9e05e51c4cd70
->> Author: David Hildenbrand <david@redhat.com>
->> Date:   Mon Jul 14 09:16:51 2025 -0400
->>
->>       mm/memory: introduce is_huge_zero_pfn() and use it in vm_normal_page_pmd()
->>
->> If you want to put this series here before Luiz', you'll have to move that
->> single patch as well.
->>
->> But probably this series should be done on top of Luiz work, because Luiz
->> fixes something.
+> > +++ b/drivers/pci/pcie/aspm.c
+> > @@ -1474,13 +1474,20 @@ static int __pci_enable_link_state(struct pci_dev *pdev, int state, bool locked)
+> >   * Note that if the BIOS didn't grant ASPM control to the OS, this does
+> >   * nothing because we can't touch the LNKCTL register.
+> >   *
+> > - * Note: Ensure devices are in D0 before enabling PCI-PM L1 PM Substates, per
+> > - * PCIe r6.0, sec 5.5.4.
+> > + * Note: The device will be transitioned to D0 state if the PCI-PM L1 Substates
+> > + * are getting enabled.
+> >   *
+> >   * Return: 0 on success, a negative errno otherwise.
+> >   */
+> >  int pci_enable_link_state(struct pci_dev *pdev, int state)
+> >  {
+> > +	/*
+> > +	 * Ensure the device is in D0 before enabling PCI-PM L1 PM Substates, per
+> > +	 * PCIe r6.0, sec 5.5.4.
+> > +	 */
+> > +	if (FIELD_GET(PCIE_LINK_STATE_L1_SS_PCIPM, state))
+> > +		pci_set_power_state(pdev, PCI_D0);
 > 
-> I'm confused at your confused.  mm-new presently contains Luiz's latest
-> v3 series "mm: introduce snapshot_page()" which includes a copy of your
-> "mm/memory: introduce is_huge_zero_pfn() and use it in
-> vm_normal_page_pmd()".
+> This is really just a move, not new code, but this niggles at me a
+> little bit because my impression is that pci_set_power_state() doesn't
+> guarantee that the device *stays* in the given state.
+> 
+> Rafael, is there a get/put interface we should be wrapping this with
+> instead?
+> 
 
-Let's recap: you said "the series rejects due to the is_huge_zero_pmd ->
-is_huge_zero_pfn changes in Luiz's "mm: introduce snapshot_page() v3"
-series"
+I don't quite understand this statement. A device cannot transition itself to
+any D-states without host software intervention. So only host software should
+intiate the transition. So are you saying that this API could be used by other
+entities to change the device state? So you want to use some lock to prevent
+callers from racing aganist each other?
 
-$ git checkout mm/mm-new -b tmp
-branch 'tmp' set up to track 'mm/mm-new'.
-Switched to a new branch 'tmp'
-$ b4 shazam 20250715132350.2448901-1-david@redhat.com
-Grabbing thread from lore.kernel.org/all/20250715132350.2448901-1-david@redhat.com/t.mbox.gz
-Checking for newer revisions
-Grabbing search results from lore.kernel.org
-Analyzing 17 messages in the thread
-Looking for additional code-review trailers on lore.kernel.org
-Analyzing 65 code-review messages
-Checking attestation on all messages, may take a moment...
----
-   ✓ [PATCH v1 1/9] mm/huge_memory: move more common code into insert_pmd()
-   ✓ [PATCH v1 2/9] mm/huge_memory: move more common code into insert_pud()
-   ✓ [PATCH v1 3/9] mm/huge_memory: support huge zero folio in vmf_insert_folio_pmd()
-   ✓ [PATCH v1 4/9] fs/dax: use vmf_insert_folio_pmd() to insert the huge zero folio
-   ✓ [PATCH v1 5/9] mm/huge_memory: mark PMD mappings of the huge zero folio special
-   ✓ [PATCH v1 6/9] mm/memory: convert print_bad_pte() to print_bad_page_map()
-   ✓ [PATCH v1 7/9] mm/memory: factor out common code from vm_normal_page_*()
-     + Reviewed-by: Oscar Salvador <osalvador@suse.de> (✓ DKIM/suse.de)
-   ✓ [PATCH v1 8/9] mm: introduce and use vm_normal_page_pud()
-     + Reviewed-by: Oscar Salvador <osalvador@suse.de> (✓ DKIM/suse.de)
-   ✓ [PATCH v1 9/9] mm: rename vm_ops->find_special_page() to vm_ops->find_normal_page()
-     + Reviewed-by: Oscar Salvador <osalvador@suse.de> (✓ DKIM/suse.de)
-   ---
-   ✓ Signed: DKIM/redhat.com
----
-Total patches: 9
----
-  Base: using specified base-commit 64d19a2cdb7b62bcea83d9309d83e06d7aff4722
-Applying: mm/huge_memory: move more common code into insert_pmd()
-Applying: mm/huge_memory: move more common code into insert_pud()
-Applying: mm/huge_memory: support huge zero folio in vmf_insert_folio_pmd()
-Applying: fs/dax: use vmf_insert_folio_pmd() to insert the huge zero folio
-Applying: mm/huge_memory: mark PMD mappings of the huge zero folio special
-Applying: mm/memory: convert print_bad_pte() to print_bad_page_map()
-Applying: mm/memory: factor out common code from vm_normal_page_*()
-Applying: mm: introduce and use vm_normal_page_pud()
-Applying: mm: rename vm_ops->find_special_page() to vm_ops->find_normal_page()
-$ make mm/memory.o
-...
-   CC      mm/memory.o
+I believe the current users of this API doesn't use any locks and just go by the
+fact that the device stays in the give state. It does look racy, but seems to be
+working fine so far. Obviously, the client driver need to ensure that it doesn't
+create any race within itself. But the race could exist between the PCI core and
+the driver theoretically.
 
-I know that a tree from yesterday temporarily didn't have Luiz patches, so
-maybe that's what you ran into.
+> I'm also not sure it's worth the FIELD_GET().  This should be a
+> low-frequency operation and making the power state dependent on the
+> exact "state" makes more paths to worry about.
+> 
 
-*anyhow*, I will resend to work around that arm pgdp_get() issue.
+Are you worrying about the usage of FIELD_GET() to check the ASPM state or the
+existence of the check itself?
 
+- Mani
 
 -- 
-Cheers,
-
-David / dhildenb
-
+மணிவண்ணன் சதாசிவம்
 
