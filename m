@@ -1,131 +1,126 @@
-Return-Path: <linux-kernel+bounces-734930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D38E1B0886C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:52:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FDD9B08871
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:52:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E5973B0761
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:51:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C31E4A894A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:52:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E506A2882BD;
-	Thu, 17 Jul 2025 08:49:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD70289362;
+	Thu, 17 Jul 2025 08:50:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lOSFBXon"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ctk6BJua"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A5C2853E3;
-	Thu, 17 Jul 2025 08:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524FF28724A;
+	Thu, 17 Jul 2025 08:50:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752742186; cv=none; b=Uul8sWlVTomaex982JqSC8EbBKpVxEX5L2kKwhkJ6Hpav+q2z9xZWvmEYcAuamGBRoT1haz8PgvlWlpoV2ckRKH9CkMJfdcGe8yjupa6HX1wARcDSO9QMX06P1/4uXOtHdGF5ZS7a4blva+xD93Pcnlze5bel0KXAu+dzuM3b4U=
+	t=1752742242; cv=none; b=fKuJa8idKyMLKPriH7o/a19ITLOJ8+IaEy78+RyKwziLEHDL5euO/f9UFP+YxL/A+V5K7e7p7FfkjA/vgR78RPSmtjPyIhsJspA2S+0YVfY36qimbzD1mAUP2wWl1MGZnq+QEaQQjECTlUX3V33fZ1jmWg5mNHMp00nYLWpxPSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752742186; c=relaxed/simple;
-	bh=1LaZMmufVKTiGZ1B+WdO3aR89rghURP6uEd2rsuld3s=;
+	s=arc-20240116; t=1752742242; c=relaxed/simple;
+	bh=hSUwB2Rkn6GwUnqElF3ycdaKapO5eQPIfHXpVmKmQJQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bL9e5oKlUjS9ucQ5mjvUh0BU+g6Brv0/KYcuskKS5IiJ5gO/O9ejZfHvaT7wdQQxAbncbTszZJ6Ar3tQUoqCR1qXM1h/GqGkV6bE0/KFYryhjpPIDQC9eTIi1vqTSivu0pVsN5eDbZZLv4Z5Vihy50P8PEbKVnJNvUyU327jMSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lOSFBXon; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08DE7C4CEED;
-	Thu, 17 Jul 2025 08:49:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752742185;
-	bh=1LaZMmufVKTiGZ1B+WdO3aR89rghURP6uEd2rsuld3s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lOSFBXonALTq4dkOywT4xN2hhzCqX0iqVkTVuJJXa9C+H+FN9PkqbyO++9Mocnm5o
-	 TlSekzaBH6Pn6oaDakF4NIRz9K9B0pwRmhyf+81WMF80SRwwOorv57DUCjzoItdwyd
-	 fdIzVUxI4Yl0bgZ+BGfo5jzvRmFTSlYhMP3KZDlQmlmYMRbLb8vbR96EOxqttldm3L
-	 CFoa7CpqGqfB6RZzgn4zJcdDjgdvfFCG1ShybgH1FM1Ka+fDvFUC076bL5DklbnXZE
-	 fOQ+SImE0z8OiZQtbxTElodRLlanUXmH1gehrnxsHT95TTc4+Ty6LK1an5NU6FSeg6
-	 vSiIYpw/35h/g==
-Date: Thu, 17 Jul 2025 09:49:37 +0100
-From: Will Deacon <will@kernel.org>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net,
-	bagasdotme@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
-	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
-	shuah@kernel.org, jsnitsel@redhat.com, nathan@kernel.org,
-	peterz@infradead.org, yi.l.liu@intel.com, mshavit@google.com,
-	praan@google.com, zhangzekun11@huawei.com, iommu@lists.linux.dev,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, patches@lists.linux.dev,
-	mochs@nvidia.com, alok.a.tiwari@oracle.com, vasant.hegde@amd.com,
-	dwmw2@infradead.org, baolu.lu@linux.intel.com
-Subject: Re: [PATCH v9 23/29] iommu/arm-smmu-v3-iommufd: Add vsmmu_size/type
- and vsmmu_init impl ops
-Message-ID: <aHi5IUXqHJZGB67M@willie-the-truck>
-References: <cover.1752126748.git.nicolinc@nvidia.com>
- <375ac2b056764534bb7c10ecc4f34a0bae82b108.1752126748.git.nicolinc@nvidia.com>
- <aHE4Y-fbucm-j-yi@willie-the-truck>
- <aHahEP0+LKmeA/Tf@Asurada-Nvidia>
+	 Content-Type:Content-Disposition:In-Reply-To; b=J0IKHopZNMtZrjTwdeUCo4+sFlBiNssTO0PjAMpaVC1Qazelmj75uOM79dleNNI5EnghM1tOLH4sce+2MO29XYjqmuLPV31eaHZo0aypE8vOoGT8Yxk9ZOvcB0m+30lI52B6wr9X4WMIKwrp6/b3h0uZz6nIAwTiqtA71vT7IJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ctk6BJua; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-555024588b1so781185e87.1;
+        Thu, 17 Jul 2025 01:50:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752742238; x=1753347038; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a2lx5iA902TzGSJo4q8BNEZwisigf9Cj6fV1YQOnO5U=;
+        b=ctk6BJuadoHhwsmyITDLRX/55UrO2Wr+/xFfIp1kMrPnhkJPUVq88/C8K3NphQc2CD
+         97UQYtg9VEz7vdNYG7qn2x+1YY6Kohr4NxX1K0EXJgIJdF960ZvchatGyZQ189g5dnj9
+         6ynTAJ4bP72DQ/cqPgSgTel1NheZH9ldJL2j0792CV+oVvJM1HV9pnMHVL+skisLhVO2
+         /b6HbJIxT/RCaSips/NNaaiW6wvbQ/M84hXukgop0GDPCvBGjNWLJl75gnUm1eKgVjAb
+         h513PqVh2xBBc1OG3Rhkp4pXR17CpAl399njfczNwbdTRhgXnd8W+6KQpDDx6/C5Tt0B
+         +MQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752742238; x=1753347038;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a2lx5iA902TzGSJo4q8BNEZwisigf9Cj6fV1YQOnO5U=;
+        b=ImgfZDA1uM5b5afRZ+nf5XAD/iGQdy542mebzAfUajApbn4T1yaXwmgaxQgQGEPdc5
+         X8lATYmt7b1brdk/HxBOba1hgYTBA6xh0TlVnwenZkgStsgOf3GqSiia1FG2smPFlD4P
+         Z9aB9g1kS0L6Dp5pR6/sw700YQR/C3EGJHBOnItIOYIM99zfGoGES6gh/BM9vd6+BRxw
+         jil0bjlUe9n0g3R8IkWipFCbnIJEeo6tKDTdvNrxZLZXlSBp0Vq122GfZI3L+IV3NTmd
+         lNxbG4Q0Se5nIqqyhx/KB87y8h2yEiZ+DAPj6284yDgIXM8RUwpClUNFiEIb5HP0kaIB
+         dJGg==
+X-Forwarded-Encrypted: i=1; AJvYcCVWbGbjdiTK98Z0+n0wWL32pcDJTKB2X3ZIuUzxonmxm+qvCfqIALhSjxu1y4Sc5zkYFMTdAulTfmqUKVs=@vger.kernel.org, AJvYcCW8jXFJnPdZw94HZAo4tRWttL8hMXrgsw1NPCXPQSatfUW7W8REXQp7Cz/eUFQ5PG5lnb36jCHWL0cI@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2k4T24YAGzoDrWUhr+yFsXn2Kw/uKylLqOM+8jEr5YiWzYSRB
+	nuwcQ+WdyY8ipfbazBHQ92g3/+ojUPWmHQNBUvmBv40UHvzgViQKaYXx
+X-Gm-Gg: ASbGncsx98XwhvychSev9B3uRFL9HFBgsSL5Q83ls6fgxKk6wld+mB18UNgQfMdJA/X
+	+CY58FHRa8tEfpoJUGuMaT0uH8rYprSfPbe2R+ta6Zj+YiNRYzrkLhmOgFWIVDjEtxY0045ZIVH
+	qSUyD7GZ1P3HINNQ/ccdKJGA06utbP6QC4VWPjSR5z9pzhGWsBXb6iCHXpcdF8DzDOXB2uyyrNd
+	yuq4jjTu6DfiKrJVZgO3J7b/lEyAqRD+ZTM1YVSrFkG7dmHKansTXe0RWzcPbiIyKvoYDFSRXLG
+	yKcQem+0RmONHupoFzVe1PKf7NJaKqIumzy7uh/ssQmggsrokc3KVnOyuQNk9AriQCp6u54AmUY
+	9SMvXMUTT4AUQU9X5xb5zGDQco0dC8W/Ao79n/TOspxeBNv7ZgnU=
+X-Google-Smtp-Source: AGHT+IGSxV413k604UJGtlq7ScVSWLRihC73xMIQWa9p1uSC0wY+k6OBC7dQeJxyoKd3yhuZShec6g==
+X-Received: by 2002:a05:6512:ac8:b0:553:aa60:faff with SMTP id 2adb3069b0e04-55a23f0e640mr1656819e87.23.1752742237872;
+        Thu, 17 Jul 2025 01:50:37 -0700 (PDT)
+Received: from SC-WS-02452.corp.sbercloud.ru ([85.174.192.104])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5593c9d08f3sm2941950e87.103.2025.07.17.01.50.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Jul 2025 01:50:37 -0700 (PDT)
+Date: Thu, 17 Jul 2025 11:50:36 +0300
+From: Sergey Bashirov <sergeybashirov@gmail.com>
+To: Antonio Quartulli <antonio@mandelbit.com>, 
+	Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+	Konstantin Evtushenko <koevtushenko@yandex.com>, Sergey Bashirov <sergeybashirov@gmail.com>, 
+	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pNFS: fix uninitialized pointer access
+Message-ID: <gveqi6a4a7zt2v3iytoold5y2fevhzm5vaokelfpwkdzbiuwed@edr7ruel66ga>
+References: <20250716143848.14713-1-antonio@mandelbit.com>
+ <h4ydkt7c23ha46j33i42wh2ecdwtcrgxnvfb6c7mo3dqc7l2kz@ng7fev5rbqmi>
+ <b927d3dd-a4ed-46d7-b129-59eaf60305c7@suswa.mountain>
+ <d9b026f1-6ed3-41ca-8699-914c45b0339b@mandelbit.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aHahEP0+LKmeA/Tf@Asurada-Nvidia>
+In-Reply-To: <d9b026f1-6ed3-41ca-8699-914c45b0339b@mandelbit.com>
+User-Agent: NeoMutt/20231103
 
-Hi Nicolin,
+Hi Antonio, Dan,
 
-On Tue, Jul 15, 2025 at 11:42:24AM -0700, Nicolin Chen wrote:
-> Sorry for the late response.
+I have an idea how to refactor the code a little to make the static
+analyzer happy. Will send a patch soon, but first I want to check
+that it won't affect functionality.
 
-No problem at all.
+On Thu, Jul 17, 2025 at 10:01:42AM +0200, Antonio Quartulli wrote:
+> On 17/07/2025 06:56, Dan Carpenter wrote:
+> > No, it won't.  I feel like the code is confusing enough that maybe a
+> > comment is warranted.  /* We always iterate through the loop at least
+> > once so be_prev is correct. */
+> >
+>
+> I agree a comment would help.
 
-> On Fri, Jul 11, 2025 at 05:14:27PM +0100, Will Deacon wrote:
-> > >  /* MMIO registers */
-> > >  #define ARM_SMMU_IDR0			0x0
-> > > @@ -720,6 +721,10 @@ struct arm_smmu_impl_ops {
-> > >  	int (*init_structures)(struct arm_smmu_device *smmu);
-> > >  	struct arm_smmu_cmdq *(*get_secondary_cmdq)(
-> > >  		struct arm_smmu_device *smmu, struct arm_smmu_cmdq_ent *ent);
-> > > +	const size_t vsmmu_size;
-> > > +	const enum iommu_viommu_type vsmmu_type;
-> > > +	int (*vsmmu_init)(struct arm_vsmmu *vsmmu,
-> > > +			  const struct iommu_user_data *user_data);
-> > 
-> > It would be nice to avoid adding data members to the ops structure, if
-> 
-> You mean the "vsmmu_size" and "vsmmu_type" right?
+I see, will add a comment.
 
-Yup.
+> > Another option would be to initialize the be_prev to NULL.  This will
+> > silence the uninitialized variable warning.
+>
+> But will likely trigger a potential NULL-ptr-deref, because the static
+> analyzer believes we can get there with count==0.
 
-> So you want them to be removed, by having two impl_ops:
-> 	size_t get_vsmmu_size(enum iommu_viommu_type vsmmu_type);
-> 	int (*vsmmu_init)(struct arm_vsmmu *vsmmu,
-> 			  const struct iommu_user_data *user_data);
-> 
-> right?
+I agree, this will most likely result in another warning.
 
-Yes, please.
-
-> > at all possible. The easiest thing would probably be to add a function
-> > for getting the vsmmu size and then pushing the two checks against
-> > 'vsmmu_type' down into the impl_ops callbacks so that:
-> > 
-> >   1. If the type is IOMMU_VIOMMU_TYPE_ARM_SMMUV3, we don't bother with
-> >      the impl_ops at all in arm_vsmmu_init() and arm_smmu_get_viommu_size()
-> 
-> Hmm, I was hoping for an implementation could support the default
-> IOMMU_VIOMMU_TYPE_ARM_SMMUV3 while having its own viommu_ops or so.
-> But I think your suggestion is fine since there is no such a use
-> case at this moment :)
-> 
-> >   2. Otherwise, we pass the type into the impl_ops and they can check it
-> > 
-> > Of course, that can be a patch on top of the series as there's no point
-> > respinning the whole just for this.
-> 
-> Thanks for that! I can draft a patch to send later this week once
-> the requirements are confirmed.
-
-Thank you!
-
-Will
+--
+Sergey Bashirov
 
