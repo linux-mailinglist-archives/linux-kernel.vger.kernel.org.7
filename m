@@ -1,92 +1,49 @@
-Return-Path: <linux-kernel+bounces-734492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9516B0826C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 03:33:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 686DDB0825E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 03:32:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3AD31A62AFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 01:33:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 601321A62257
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 01:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 541922116F4;
-	Thu, 17 Jul 2025 01:30:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C3F1DB54C;
+	Thu, 17 Jul 2025 01:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WxhDSEf/"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YjhE2soT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 033951D7995;
-	Thu, 17 Jul 2025 01:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE9C1DC9B5;
+	Thu, 17 Jul 2025 01:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752715847; cv=none; b=JXSSRqNmtfiJ4UzmFDMMF4nl9AUi2hrKcbpw9YiBcCyDWgXWwUoC9hMhSbWq8MQVP70n0dp9qWP8IHBeBfKobgD9GWiezTOhIkv0PRWoQnIqZAbe0U9h01mRhl7m6daApn97dggVeg4HSIxf3a/r1Y/RTUXIpc7QZLsKVSKTs6E=
+	t=1752715789; cv=none; b=n57hZDJ53QgY2fjbDhwnkUt9rOpxq8s/praM8c2JNOabu80AJNIyTyHbOAdrlPFKYPq6FVpG1OK5ulynL1kAc397Xa2ZglbIbxudyAfQjg7UQMl/bORd+0D0dsdRWYMFMuEA7uwbELxULJIJY+yUyl4TLeMO9GNJKvf0OUg/fmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752715847; c=relaxed/simple;
-	bh=t51vLpvwGCji3WfHfop/1c3FGfyG9mabn/HIMUh4ovQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dIDG3eB3F+7m6h5yIspOSWG01pS9wKoifQEbK1fvPaa4q9ZAj9cRqZ9SjM4mFT+VJDOksfpAaHQBuI72scX5ndhQO5Wm9XL1FjFYHYvvMHrRwlTp/cavt9ntKz2MUc1UdJh9NQxYf9MOXxLYhya0teR0a/Kz/l9K7jcA7DQND1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WxhDSEf/; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a4eed70f24so67719f8f.0;
-        Wed, 16 Jul 2025 18:30:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752715844; x=1753320644; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=H+kklIjjiVUrQ0AXButuBYND4S6p/85t9mFfj0+LcY4=;
-        b=WxhDSEf/8QtWC+VTFqiGykBn/XwlKQszYzFcx8spZob4uw2fHLlOYhhikT8OzqwYS2
-         QZNANG9hZUJCJZMS4X7VXD1n1jbe8aivkjn93LYDJvIV1Oq/CY43Xm+kvS58ytFz7hR5
-         kqvD2/b3g0tq1LXIUR1reC/TLCSGCzGrSUSfIK3pfXBuZZIdrwHbt0SqxAcxrUPyoZWN
-         U+IB1xzMLGAREyz0eEFFLRUHX8ZceGsgqd1YDbQfDE8tq/i5imyteYfr4Navg8Qf6YqR
-         us9JEhCCpHkk367IhlBpPCOX+nhkrUZ+c4cTBZCKh13bI4LwwNTRMJFfJpG6Lxt+LNlK
-         zQCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752715844; x=1753320644;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=H+kklIjjiVUrQ0AXButuBYND4S6p/85t9mFfj0+LcY4=;
-        b=N1XL5irKXgYpn2PZ4p8DdEjPmHU4SP5GQCmJQNLMgojYfweKuLkjP62mxnJV6Zt5SZ
-         roP3f8FIRFAoeTbURsWaRf0+JrOF7AH1BwHvgBMr83sz1m82ihRqgl3VtFShA6kkJXn4
-         R191JO5Tekqj/+nOyoG7KtweFFxTrKFc6PLnX9OPfKA8kbGMqPBpymaL9L+cXjm0Kse8
-         bm/60004sskO2xfR5lfl/l9VqRk1MR+CyYLdDm6iblOMyNp/aYO6VxW8Ba6wJIaydNaX
-         59Q5DY+Prt0hEZljEeZRdb0C0nFSahJZx/YtUssj/7+FkYXsPtjmzjAg9d/v6RXGEgMP
-         cfVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWUV6CgUVeSbAxx7kX4odexZ04+ghGdMy8Mdq4pkYYWufehh5kPy/tO7J+Ga8OPLXgFMch5qm4vLxla2Ug=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRGiUkAOZleuSoim7tyB/SxYiM38EYlIbHlQq/pusylspqGSR5
-	CNWtt6cl+LW5+oaRtp3XoGCumYmCkjF4AzdjEz/oe1VBMMDSiSQuhVQr
-X-Gm-Gg: ASbGncsPepXUeNrLtLYMzVEV6D+l7mGlDPn+NH7uYv1QYqrZL2Lf/AHhczd0YKEV3sP
-	hX63kJo33I3Gr8FA67tDsDs+tJ9IBKNR/iuMw8wZ3ILjdUZjI2NtoYGJ25ZonL2drQeUhG1EFCc
-	w0ENqMc+uxmrvqpoU7rkw1yF3+fyVfNgDJ8+NwYh86IWjaan+CRMRMUKFNyJu+UGlT+r1YaSkS3
-	DxrUOjivp+goaf7cmLMUWFGC4fRCB3Xz+2kY7gLEf6ZwyU4MtAsZL5ElzaU0nwTlVmjp0oTnUjE
-	fPo+z6EpeNZ8967QDDB7Vh3DdtulUGwWeHzynvmtyhTgLckXGj6eBCqWxsUaqwW3pFV8jTXY72c
-	xHbYmiNSJC+7rYSyOGnPEJwRjVtLZ7H1q4v5t560qUXI7D6ODX2+fv3ESDVzL
-X-Google-Smtp-Source: AGHT+IGuAQHAVt+Ejfc6IMxLjZrv3iHwTroSL4krgJeFWI/p8To0LpPVCPV4Mn1dJ4YTjmmAm1Gn9A==
-X-Received: by 2002:a05:600c:530f:b0:456:2137:5662 with SMTP id 5b1f17b1804b1-456338a25f4mr8234185e9.7.1752715844013;
-        Wed, 16 Jul 2025 18:30:44 -0700 (PDT)
-Received: from localhost.localdomain ([154.182.204.213])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45634f6bc51sm7204555e9.17.2025.07.16.18.30.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 18:30:43 -0700 (PDT)
-From: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
-To: hansg@kernel.org,
-	mchehab@kernel.org,
-	sakari.ailus@linux.intel.com,
-	andy@kernel.org,
-	gregkh@linuxfoundation.org
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel-mentees@lists.linux.dev,
-	skhan@linuxfoundation.org,
-	dan.carpenter@linaro.org,
-	Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
-Subject: [PATCH v2] staging: media: atomisp: add missing mutex lock in atomisp_s_fmt_cap
-Date: Thu, 17 Jul 2025 04:30:03 +0300
-Message-Id: <20250717013003.20936-1-abdelrahmanfekry375@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1752715789; c=relaxed/simple;
+	bh=4ZNCZwXvNH9vuMgkk/NS1R5HXJ7/MpNDC0QStIdElmA=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Vy638lK21nY6fWEAgC02WiN8xdnrO/Ug05k6P3JMTdlMqmREfkYoKpf/fCr3kcPxoEbS/uriBmTNZR+sWLLn8Czg7ZXFaKffnN5kO03DD40o5fR+4erciyRcDMZuKvovgHKbjiNuijsIfkKEda7kCjrOzF+1LJ3d2pbpk5Mqq98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YjhE2soT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE572C4CEE7;
+	Thu, 17 Jul 2025 01:29:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752715789;
+	bh=4ZNCZwXvNH9vuMgkk/NS1R5HXJ7/MpNDC0QStIdElmA=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=YjhE2soT7mhlqrz+/hkv3UjIrd5XJxlzIWKRy4zyAirX+U4A0rLCOdVJwIcMAKtkF
+	 EhftIpSOliE6OCY8gTiRvb2rYVSFqA+VyPfVRzBwB7Ae9Ii2EdpNA47RpiuSpQiSym
+	 PVgiVPuUPCqNbS3LUCrQEP4AFeqqYfkB1N06MBSOQCcLjm/q7jEGCYNJssogem0mRK
+	 rQ799N8bkepZb/UQ6iPmhDA1sD9VyJfvMMBha52u1ql5LGmVsyKmSiAhpUn89fw1iG
+	 /PDFnM3DngrNaJY6ET5b5fAAzinjgQLualv6oSvVbESwkarCId05yWhVkQk6cWYVVc
+	 CcPguFCGX43ng==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 593D0383BA38;
+	Thu, 17 Jul 2025 01:30:10 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,59 +51,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 0/2] bpf, arm64: relax constraint in BPF JIT compiler
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175271580926.1388574.2871718742808894447.git-patchwork-notify@kernel.org>
+Date: Thu, 17 Jul 2025 01:30:09 +0000
+References: <20250709-arm64_relax_jit_comp-v1-0-3850fe189092@bootlin.com>
+In-Reply-To: <20250709-arm64_relax_jit_comp-v1-0-3850fe189092@bootlin.com>
+To: =?utf-8?q?Alexis_Lothor=C3=A9_=3Calexis=2Elothore=40bootlin=2Ecom=3E?=@codeaurora.org
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, puranjay@kernel.org,
+ xukuohai@huaweicloud.com, catalin.marinas@arm.com, will@kernel.org,
+ mykolal@fb.com, shuah@kernel.org, ebpf@linuxfoundation.org,
+ thomas.petazzoni@bootlin.com, bastien.curutchet@bootlin.com,
+ ihor.solodrai@linux.dev, bpf@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
 
-The function atomisp_set_fmt() modifies shared device state and expects
-callers to hold the isp->mutex for synchronization. While most internal
-callers correctly lock the mutex before invoking atomisp_set_fmt(), the
-V4L2 ioctl handler atomisp_s_fmt_cap() does not.
+Hello:
 
-This results in an unsafe execution path for VIDIOC_S_FMT ioctls
-(e.g. via v4l2-ctl), where shared structures such as pipe->pix and
-pipe->frame_info may be modified concurrently without proper protection.
+This series was applied to bpf/bpf-next.git (master)
+by Alexei Starovoitov <ast@kernel.org>:
 
-- Fix this by explicitly locking isp->mutex in atomisp_s_fmt_cap().
+On Wed, 09 Jul 2025 10:36:54 +0200 you wrote:
+> Hello,
+> this series follows up on the one introducing 9+ args for tracing
+> programs [1]. It has been observed with this series that there are cases
+> for which we can not identify accurately the location of the target
+> function arguments to prepare correctly the corresponding BPF
+> trampoline. This is the case for example if:
+> - the function consumes a struct variable _by value_
+> - it is passed on the stack (no more register available for it)
+> - it has some __packed__ or __aligned(X)__ attribute
+> 
+> [...]
 
-Fixes: 4bdab80981ca ("media: atomisp: Make it possible to call atomisp_set_fmt() without a file handle")
-Signed-off-by: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
----
-v2:
-- Add Fixes tag
-- use cleanup.h micros instead of explicitly calling mutex_lock/unlock
+Here is the summary with links:
+  - [1/2] bpf, arm64: remove structs on stack constraint
+    https://git.kernel.org/bpf/bpf-next/c/dc704d0cfa43
+  - [2/2] selftests/bpf: enable tracing_struct tests for arm64
+    https://git.kernel.org/bpf/bpf-next/c/4a760d2d7aa6
 
-v1: https://lore.kernel.org/all/20250716014225.15279-1-abdelrahmanfekry375@gmail.com/
- drivers/staging/media/atomisp/pci/atomisp_ioctl.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/staging/media/atomisp/pci/atomisp_ioctl.c b/drivers/staging/media/atomisp/pci/atomisp_ioctl.c
-index bb8b2f2213b0..d3b8e480065e 100644
---- a/drivers/staging/media/atomisp/pci/atomisp_ioctl.c
-+++ b/drivers/staging/media/atomisp/pci/atomisp_ioctl.c
-@@ -9,6 +9,7 @@
- 
- #include <linux/delay.h>
- #include <linux/pci.h>
-+#include <linux/cleanup.h>
- 
- #include <media/v4l2-ioctl.h>
- #include <media/v4l2-event.h>
-@@ -416,8 +417,15 @@ static int atomisp_s_fmt_cap(struct file *file, void *fh,
- 			     struct v4l2_format *f)
- {
- 	struct video_device *vdev = video_devdata(file);
-+	struct atomisp_device *isp = video_get_drvdata(vdev);
-+
-+	int ret;
- 
--	return atomisp_set_fmt(vdev, f);
-+	scoped_guard(mutex, &isp->mutex)
-+	{
-+		ret = atomisp_set_fmt(vdev, f);
-+	}
-+	return ret;
- }
- 
- /*
+You are awesome, thank you!
 -- 
-2.25.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
