@@ -1,151 +1,233 @@
-Return-Path: <linux-kernel+bounces-735991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02903B09663
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 23:34:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C81DB09666
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 23:37:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 462E65A11A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:34:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E73A14E2623
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6CA62253EE;
-	Thu, 17 Jul 2025 21:34:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20863231839;
+	Thu, 17 Jul 2025 21:37:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WTjd4VKQ"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="endpx1zJ"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD8717E0;
-	Thu, 17 Jul 2025 21:34:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F58013B58A;
+	Thu, 17 Jul 2025 21:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752788090; cv=none; b=cv/CyF8pZ5Ws6J+Y/dRSy7bT92rchr5w4LFFkfA2NJW0LDHkQMSBeRD2Y//KZRlKUC267WE+D7Q5f+YHuPtDJA0UMg/VUE/VWog1hY5HdLAd63Nx3pSeuBpkh3Rq+vE8SW4GESykpRiFjnlmZwml1m9zCnm2y4hcS5OloTqZ+6I=
+	t=1752788238; cv=none; b=Tz7nNlcfER/k7mqPOHN1xHMAJXcC13XkebbefTylUNfb0wiagup2ilPdHp6cqpCXr8m5lrgRowRPOs02ApzZXb6W6ATWlILrrbnbMOkRHZS1gZZgTnrvYj8dFSMm2t1V+T9ZPy4ix9nQgmgGjva/ZTu1bVj4KaGZccAn7Q27zRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752788090; c=relaxed/simple;
-	bh=RZ5LCj78Lyclzd69cYMhCDdSFiwmonnYvLEWvFmsqc8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MHAN/SoWlL0CKZF85tksZ7J1dwckRAii2J0B3gpOFvR2HE+Nii/V4hcgKLzooyTipaq4bvPahLcZmqOYLaTt7vCYfg3XpfrgCGHbE7d+mH1+tTZxiwIa3s+e5GP+BCncv0UK0tVyoagrDMRYRmLMyYmAlDOQzmW6leI80SxIQFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WTjd4VKQ; arc=none smtp.client-ip=209.85.128.50
+	s=arc-20240116; t=1752788238; c=relaxed/simple;
+	bh=Vt0eyJA3FmaRCjFqmL01QcwdudmtM4ZMzbFSb8wQFDs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ki9kWd5atvHOaZtXbAPTSraLV7nhDDVWUo6zSaOcx2pxC/+NGwSLuhubs+a20H4s5Ut+4KuV8CqyzyrtnigpfUKzsIHinXLJxhgJnnz+m55cqeISAY9PXvgPldWNusN9PgXuZ8HQ19WHNCuxy2+Adze9hEdhHT434MQnQXPWMJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=endpx1zJ; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45555e3317aso9101595e9.3;
-        Thu, 17 Jul 2025 14:34:48 -0700 (PDT)
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-60867565fb5so2357135a12.3;
+        Thu, 17 Jul 2025 14:37:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752788087; x=1753392887; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1752788235; x=1753393035; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4kUb9sx3TgEhRQfOmqwV/GlUdwT7le0YBTWtsC9eCWk=;
-        b=WTjd4VKQGtvEGEpKeLQOVngDALhqe4kgiu3MkM3LZOpdySH4vXUmgAVjSq61RLvLIU
-         ny9yvqJ4ZWZmAUuPAlGZQp5gBzWr1uAnmNFiq4uy4O/v/yN2wl6dSQOr7LsQYmTIUOfO
-         KjsC7E+05Yc9MdNTUu6ExdWd/2ckzgUaJQRFDN14N3Ep9rnavLm2TvvAoo+qEWIYFvHZ
-         50a6n5Lu81WhkZ6Bs/TFZGcr9TvBPJBjPhv7Cy8ha5fT6NcGLOiBiXkpf922UJ92p//y
-         EqfQP1Rzg/+UcvXe+SsgYl+IFzLgxDCKIPp3fo8rSu8gCQ+NJiMkc2AhCinVmC/9tvRC
-         IYSw==
+        bh=DrtASW4nJI5s0TcFU7BZl03KBcG7L4TmJyfK+6pQD+I=;
+        b=endpx1zJrg1PxosKB/VE4fg7lX70Hb+MKoIpg4alOZ6/jQ852FXKhrEwa9pQNvhVcA
+         mS0df1XQ37WvQUHVqtDbw9osNLEPWv/mP2EJZwaQPINCnMOS1K5wI+ur1qBfO4Ug6f6l
+         wc07RJd0vlqO409FqWyPC5ilw5Ty7HfNrY1EMJ0TxtanVezPJmX92b9QmpQ/F46HFuot
+         Bjr/W9LA8aV5Jg0Oj5W5t6u3RJZKAcUopIJPydndTV/gzQBb9uHesKp1fPGfQk3xVFOf
+         v8vOrGdxNpygnGtnki6AjopZ/Cpl4lrF0PuBeQLmq9nqB8+KhDJM3MX5fG84XvIX4ptH
+         jsrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752788087; x=1753392887;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1752788235; x=1753393035;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=4kUb9sx3TgEhRQfOmqwV/GlUdwT7le0YBTWtsC9eCWk=;
-        b=QUxszR0NapdDshDbT5KzmWE+NEBnFT1RRNLXXI9/wyFJrIS6ZDoiPwAtl4x9k/eKKl
-         fGD2B6FTCm63Zb9o5Y9q99sCpBxSJPIFoRKFqdhTjNStJSN1SiO1Zl3a/2fQ4jN7PLlo
-         uIip1tLXiFuV+vxwHeUuiZakJT3bsoORYFpWOWTa6+/aW/jzhRr1rqkN2ulYy3kx/cJv
-         3h6cyzcT1iiuk2Zb+EAWurAzPi7CbZqb0Gqdhl0RTigoxwxRjtlaeLeCvy0lRXkPpAvS
-         tbVa/8wmkJ82ZHDJek9Y6Azjq9Kk4nFe/Fe83e7oPVQfC6o32m9ICNKBOB5DMNrUFqCP
-         M7SQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVng9dOixb2ZJ91dI9kFzE7AX6LphCt+3ue5oaIv6oIoTd8++092jMTxS2I1EVLr5Ocu4NGLDj/@vger.kernel.org, AJvYcCXpCcEbcJR3U6njG8TtG3XTwGZO/A1AN/MfkoAmFaB3TH+UkAxSh1GdvVlxL97Yxg12IlOYJnH+VrTOLMQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6QVQMavgCOHoykEL2Eq5esPlFzEe6CIx+WvhJG1hikn9xgbBN
-	h0zQUpitcuk6MBjhzv+gPf/pJu6NHiOARSw4uqg+0Tbf+tjVT1byeyMG
-X-Gm-Gg: ASbGncsb9zBc6mOeOEaQC0c7An7ECXJdBmFiJJc+jx0rgV1+3LfXMePrdj+7m+Qx92Y
-	p7ajzNcIY1zH8mHnCTvpkyzKYx1gVMsKf3Q8YVaR/fWOTUY7Pj730Qd+Comagd6gEHwD1BqIBe/
-	kbe0dHsAmc1UUORLNsYq8aHt/hEqoHPy0JOZgaggAp/wQcwe3tp0j+8v9ctAgrr6Qr1pQ+3fQAs
-	yCpG3F+tFXct17TGuix9JPM6NDABBUbYwdvWC7oLHnDtlXppj2zqcX8Z3QVSv7n7zp791Rzantp
-	0VIOf1HQwpchk0ZisdJfukpwlZ022UGWXJxR4VDI7ZOoshlY0bkDl7gSYcbVAvgbF1ggMnHYAan
-	OLaGL+NsyZL1Otb1kc+jye2pGLqRXgNHS/0kltmO3Y85ALc8GFx4dtt1sgYoedJ5KLY9LIrI=
-X-Google-Smtp-Source: AGHT+IHm8FDJfA/A0rgo1t7ybSLh0izLhUn28eqZq/uWQgZMWeQ+vwxuuQPRIAX7Jj/iGvhRFd4OIQ==
-X-Received: by 2002:a05:600d:1b:b0:456:3b21:ad1e with SMTP id 5b1f17b1804b1-4563b21b300mr5349835e9.17.1752788086660;
-        Thu, 17 Jul 2025 14:34:46 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc9298sm21746316f8f.44.2025.07.17.14.34.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 14:34:46 -0700 (PDT)
-Date: Thu, 17 Jul 2025 22:34:32 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>, sashal@kernel.org,
- linux-kernel@vger.kernel.org, frederic@kernel.org, david@redhat.com,
- viro@zeniv.linux.org.uk, paulmck@kernel.org, stable@vger.kernel.org, Tejun
- Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, "Luis R .
- Rodriguez" <mcgrof@kernel.org>
-Subject: Re: [PATCH v2] kernel/fork: Increase minimum number of allowed
- threads
-Message-ID: <20250717223432.2a74e870@pumpkin>
-In-Reply-To: <48e6e92d-6b6a-4850-9396-f3afa327ca3a@kernel.org>
-References: <20250711230829.214773-1-hauke@hauke-m.de>
-	<48e6e92d-6b6a-4850-9396-f3afa327ca3a@kernel.org>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        bh=DrtASW4nJI5s0TcFU7BZl03KBcG7L4TmJyfK+6pQD+I=;
+        b=QF4K+An/OeD1NDsO2R1Yku2d8rFbREJQ3KQbwNxHggSa7MPDppHAT+fVnJlgmIB88b
+         fLbwExCveHJZZC3KerIVvcSWqVhUduxjMPpQuyYmzfzIK4a4HxSQtc0+uCDSitblqn4m
+         4GclscPlHsZ9piX21j2ZQ1GewX7kCTm0CfxXb7TmVE8LdnNgD7oeKDgrjF9P80BWHmDn
+         nXqyfAUxTU6w5Tr7PiHj6wdQoBGTqdH49m7wQYpjLhABj30KRGm66VfkFTTgCJBL+kvJ
+         ZViJjPXA7wNNwKMbYlwYOYTE/y+X6aH5KB4WO9fIkhezbSYrXDqGllBpcgJ7lg5L2ve2
+         SEnA==
+X-Forwarded-Encrypted: i=1; AJvYcCX054ZbGsR+82+Ruyu+Y5Wd3JDFNJPYV7zciKnRLiqiEmq7Uga+C0vYV2lAeZraQVMX543CJZ+6gbAlG2ob@vger.kernel.org, AJvYcCXPx/5sqmUMMrOpOHvAfsc+vsOkagj4mnADcL5SQbrQBTjDa/Gy0Mz1Oz3JMs1txQyrDsRcZAX5LsW2WEk4@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3aLA1o94j7f1h6WGND2BcpLNagQfzUFtxAEw0LHz1Yc6ZQyoJ
+	TXOT14RUOY/0EKK/YiK5sSbvNxhWKVRWpnSpz6j73P0wKeZszBWg/7Eq4rd2R/gzBJRpV8K2FdP
+	G4S6aD4g7Q31zprJYbkEhENCnZG2ltw==
+X-Gm-Gg: ASbGncsqVJlnXeDaz/nssDnnTt20pBhkZiA3BWre4K1jDSrI/GFDIoXQXZcFQ3Hn6qf
+	I9Y88yHe/cug+OkIembw8p4SqXUaaKmgKFXNVvQJCwVkxKH/IbZYyVTNWHQwU93ssQZTWS20k7R
+	yhxQn9XQ5NiRf08s3LoARaRKvJ+FLAeBLZ5JrVRX9NB7pfdnEXYDLv604318fxDwfYoel1vH/QS
+	XsbBKaqv5HA8uBOUmICBjraMfVyQ2WxeAzTX94=
+X-Google-Smtp-Source: AGHT+IFVlRN4WGIlFsUPwjfESSFGLiHpyki75MoVraFsVt7ReruuctGVWu4zLsO1ep8kuBhcM77A+tPIk089SPdJwm0=
+X-Received: by 2002:a05:6402:2685:b0:611:d497:e8a8 with SMTP id
+ 4fb4d7f45d1cf-612823da4c1mr8091202a12.27.1752788234592; Thu, 17 Jul 2025
+ 14:37:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250714173554.14223-1-daleyo@gmail.com> <20250714173554.14223-7-daleyo@gmail.com>
+ <A9DB4AE061FD8BB9+3519a519-1a29-49c1-a07d-28a0577677cc@radxa.com>
+ <CA+kEDGGaKrYO9Pu3un_Nq_6AOZC5L9sG+CEwh2ZEzWFeHGqtEA@mail.gmail.com> <eb0f5be5-3a6f-4969-affd-c01a6216ad0c@oss.qualcomm.com>
+In-Reply-To: <eb0f5be5-3a6f-4969-affd-c01a6216ad0c@oss.qualcomm.com>
+From: =?UTF-8?B?SsOpcsO0bWUgZGUgQnJldGFnbmU=?= <jerome.debretagne@gmail.com>
+Date: Thu, 17 Jul 2025 23:36:38 +0200
+X-Gm-Features: Ac12FXyoN-ygLAdINlTQHq9O6GwthS9JPnfwymokk-OCpRjxgsVHQiOVjtDhOY4
+Message-ID: <CA+kEDGE1kb12pW_OH1n4LmB9PVtgEsft563p9Cx_Mxev9Em3Ow@mail.gmail.com>
+Subject: Re: [PATCH 6/9] drm/msm/dp: Work around bogus maximum link rate
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Xilin Wu <sophon@radxa.com>, Dale Whinham <daleyo@gmail.com>, Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <lumag@kernel.org>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 17 Jul 2025 07:26:59 +0200
-Jiri Slaby <jirislaby@kernel.org> wrote:
+Le jeu. 17 juil. 2025 =C3=A0 23:10, Konrad Dybcio
+<konrad.dybcio@oss.qualcomm.com> a =C3=A9crit :
+>
+> On 7/17/25 10:27 PM, J=C3=A9r=C3=B4me de Bretagne wrote:
+> > On 2025/7/17 04:21, Xilin Wu <sophon@radxa.com> wrote :
+> >>
+> >> On 2025/7/15 01:35:42, Dale Whinham wrote:
+> >>> From: J=C3=A9r=C3=B4me de Bretagne <jerome.debretagne@gmail.com>
+> >>>
+> >>> The OLED display in the Surface Pro 11 reports a maximum link rate of
+> >>> zero in its DPCD, causing it to fail to probe correctly.
+> >>>
+> >>> The Surface Pro 11's DSDT table contains some XML with an
+> >>> "EDPOverrideDPCDCaps" block that defines the max link rate as 0x1E
+> >>> (8.1Gbps/HBR3).
+> >>>
+> >>> Add a quirk to conditionally override the max link rate if its value
+> >>> is zero specifically for this model.
+> >>>
+> >>> Signed-off-by: J=C3=A9r=C3=B4me de Bretagne <jerome.debretagne@gmail.=
+com>
+> >>> Signed-off-by: Dale Whinham <daleyo@gmail.com>
+> >>> ---
+> >>>   drivers/gpu/drm/msm/dp/dp_panel.c | 13 +++++++++++++
+> >>>   1 file changed, 13 insertions(+)
+> >>>
+> >>> diff --git a/drivers/gpu/drm/msm/dp/dp_panel.c b/drivers/gpu/drm/msm/=
+dp/dp_panel.c
+> >>> index 4e8ab75c771b..b2e65b987c05 100644
+> >>> --- a/drivers/gpu/drm/msm/dp/dp_panel.c
+> >>> +++ b/drivers/gpu/drm/msm/dp/dp_panel.c
+> >>> @@ -11,6 +11,8 @@
+> >>>   #include <drm/drm_of.h>
+> >>>   #include <drm/drm_print.h>
+> >>>
+> >>> +#include <linux/dmi.h>
+> >>> +
+> >>>   #define DP_MAX_NUM_DP_LANES 4
+> >>>   #define DP_LINK_RATE_HBR2   540000 /* kbytes */
+> >>>
+> >>> @@ -58,6 +60,17 @@ static int msm_dp_panel_read_dpcd(struct msm_dp_pa=
+nel *msm_dp_panel)
+> >>>       if (rc)
+> >>>               return rc;
+> >>>
+> >>> +     /*
+> >>> +      * for some reason the ATNA30DW01-1 OLED panel in the Surface P=
+ro 11
+> >>> +      * reports a max link rate of 0 in the DPCD. Fix it to match th=
+e
+> >>> +      * EDPOverrideDPCDCaps string found in the ACPI DSDT
+> >>> +      */
+> >>> +     if (dpcd[DP_MAX_LINK_RATE] =3D=3D 0 &&
+> >>> +         dmi_match(DMI_SYS_VENDOR, "Microsoft Corporation") &&
+> >>> +         dmi_match(DMI_PRODUCT_NAME, "Microsoft Surface Pro, 11th Ed=
+ition")) {
+> >>> +             dpcd[1] =3D DP_LINK_BW_8_1;
+> >>> +     }
+> >>> +
+> >>
+> >> My Galaxy Book4 Edge with the ATNA60CL07-0 panel also reports a max li=
+nk
+> >> rate of 0. But I think eDP v1.4 panels need a different way to retriev=
+e
+> >> supported links rates, which could be found in the amdgpu [1], i915 [2=
+]
+> >> and nouveau [3] drivers.
+> >
+> > Thanks Xilin for the sharing and pointers into 3 other drivers, that
+> > would explain the current limitation for Adreno GPUs. Fixing it would
+> > require a big contribution independent of the actual SP11 enablement.
+>
+> FWIW Adreno is a wholly separate (from DPU - the display engine) block
 
-> Cc wqueue & umode helper folks
-> 
-> On 12. 07. 25, 1:08, Hauke Mehrtens wrote:
-> > A modern Linux system creates much more than 20 threads at bootup.
-> > When I booted up OpenWrt in qemu the system sometimes failed to boot up
-> > when it wanted to create the 419th thread. The VM had 128MB RAM and the
-> > calculation in set_max_threads() calculated that max_threads should be
-> > set to 419. When the system booted up it tried to notify the user space
-> > about every device it created because CONFIG_UEVENT_HELPER was set and
-> > used. I counted 1299 calls to call_usermodehelper_setup(), all of
-> > them try to create a new thread and call the userspace hotplug script in
-> > it.
-> > 
-> > This fixes bootup of Linux on systems with low memory.
-> > 
-> > I saw the problem with qemu 10.0.2 using these commands:
-> > qemu-system-aarch64 -machine virt -cpu cortex-a57 -nographic
-> > 
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
-> > ---
-> >   kernel/fork.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/kernel/fork.c b/kernel/fork.c
-> > index 7966c9a1c163..388299525f3c 100644
-> > --- a/kernel/fork.c
-> > +++ b/kernel/fork.c
-> > @@ -115,7 +115,7 @@
-> >   /*
-> >    * Minimum number of threads to boot the kernel
-> >    */
-> > -#define MIN_THREADS 20
-> > +#define MIN_THREADS 600  
-> 
-> As David noted, this is not the proper fix. It appears that usermode 
-> helper should use limited thread pool. I.e. instead of 
-> system_unbound_wq, alloc_workqueue("", WQ_UNBOUND, max_active) with 
-> max_active set to max_threads divided by some arbitrary constant (3? 4?)?
+Thanks Konrad, indeed I should have referred to the display engine.
 
-Or maybe just 1 ?
-I'd guess all the threads either block in the same place or just block
-each other??
+> >
+> > Is it a feature planned in the short-medium term within the MSM driver?
+> > If not, would a quirk like [4] be acceptable upstream in the meanwhile?
+>
+> I'm not a display guy, but this looks like yet another block of code
+> begging to be commonized across DP drivers,
 
-	David
+I agree 100% in principle, but the 3 implementations are different today.
 
-> 
-> regards,
+> so I wouldn't expect it to be a big blocker.
 
+Well, it is for me :)
+
+> Adding a panel quirk doesn't seem in order, as the panel is /probably/
+> very much in spec, and it's the driver bit that's missing.
+
+I agree that a quirk shouldn't be needed. I guess we'll work on
+upstreaming everything else and keep an out-of-tree patch for this
+issue for the moment That's a bit sad as this will block regular
+users from easily installing / testing via the Ubuntu Concept ISO
+for instance.
+
+Or could the quirk be accepted temporarily with good comments
+then reverted when the driver adds the missing support? I guess
+it would depend on the time scale of this support landing.
+
+Cheers,
+J=C3=A9r=C3=B4me
+
+> Konrad
+>
+> >
+> > [4] https://github.com/JeromeDeBretagne/linux-surface-pro-11/commit/d26=
+5cfb
+> >
+> > Thanks a lot,
+> > J=C3=A9r=C3=B4me
+> >
+> >
+> >
+> >> [1]:
+> >> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tr=
+ee/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_capability.c#n2098
+> >> [2]:
+> >> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tr=
+ee/drivers/gpu/drm/i915/display/intel_dp.c#n4281
+> >> [3]:
+> >> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tr=
+ee/drivers/gpu/drm/nouveau/nouveau_dp.c#n101
+> >>
+> >>
+> >>>       msm_dp_panel->vsc_sdp_supported =3D drm_dp_vsc_sdp_supported(pa=
+nel->aux, dpcd);
+> >>>       link_info =3D &msm_dp_panel->link_info;
+> >>>       link_info->revision =3D dpcd[DP_DPCD_REV];
+> >>
+> >>
+> >> --
+> >> Best regards,
+> >> Xilin Wu <sophon@radxa.com>
+> >
 
