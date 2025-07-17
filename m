@@ -1,195 +1,294 @@
-Return-Path: <linux-kernel+bounces-734548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F093BB08302
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 04:37:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23E7DB08306
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 04:39:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C53AF3B7DB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:36:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57FBE4A2767
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53B271D86D6;
-	Thu, 17 Jul 2025 02:37:04 +0000 (UTC)
-Received: from out198-45.us.a.mail.aliyun.com (out198-45.us.a.mail.aliyun.com [47.90.198.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A5981DF968;
+	Thu, 17 Jul 2025 02:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tbDn+RFm"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 367E1186A;
-	Thu, 17 Jul 2025 02:36:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.198.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9244A186A
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 02:39:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752719823; cv=none; b=h3RikvcnVs7cuJj5rBKk3zKt71bZ1yy0VUU1YJAnGP3n9Ru1Uw9JfCLc0l/pAZ2xLYKUV48hrg6on/efgbbVzeXjEywEFoeFov6eR5YsklbLKvyCR+J63rzUk13wHv40TFBiOu6goii7MS9sp7wUQHPo7DDMpl/QHxU//u4Rh58=
+	t=1752719943; cv=none; b=BMtCr1l5+6ORlMymc/nICupE3GquBegMEq1qmiLyLaWMrhA7h3IuQjBYy6UnyDxXIYCtck6E/FLmPXGs82+9UG3Oat04JcRWysIQxnuMqEgHeNQwpCMfU9lPKrGibP0J8kvhOHElhrLyCAGZqEkh6eTPynRoURJWIAKijVNoUfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752719823; c=relaxed/simple;
-	bh=TvBIM9RgfYY66Wno3tb8EgVILatgCJ8UVDXKvUrHH/I=;
-	h=Date:From:To:Cc:Message-ID:Subject:MIME-Version:References:
-	 In-Reply-To:Content-Type; b=DXicKFTg1I2S00N9xkKMHpBeEQUIEx5WayQq0ZTZTRkYEJzo1/SXBRGdkLL1Kd1fhoxrWSIDrLXCkB0P4Vcpx0PUun3/JQqvTnh1Mc430mjFBWVxJU8jlfmnL13W+ldkUZ3R8Xr2Iq+vwd9FXW2iD4aYcSqyrvuq0e20zcU7ZZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bosc.ac.cn; spf=pass smtp.mailfrom=bosc.ac.cn; arc=none smtp.client-ip=47.90.198.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bosc.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bosc.ac.cn
-X-Alimail-AntiSpam:AC=CONTINUE;BC=0.07386655|-1;BR=01201311R141S38rulernew998_84748_2000303;CH=blue;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.403409-7.27482e-05-0.596519;FP=7386943584611378810|0|0|0|0|-1|-1|-1;HT=maildocker-contentspam033037006239;MF=qinshaoqing@bosc.ac.cn;NM=1;PH=DW;RN=10;RT=10;SR=0;TI=W4_0.2.3_v5ForWebDing_214754DF_1752719799417_o7001c29i;
-Received: from WS-web (qinshaoqing@bosc.ac.cn[W4_0.2.3_v5ForWebDing_214754DF_1752719799417_o7001c29i] cluster:ay29) at Thu, 17 Jul 2025 10:36:39 +0800
-Date: Thu, 17 Jul 2025 10:36:39 +0800
-From: "=?UTF-8?B?56em5bCR6Z2S?=" <qinshaoqing@bosc.ac.cn>
-To: "paul.walmsley" <paul.walmsley@sifive.com>,
-  "palmer" <palmer@dabbelt.com>,
-  "aou" <aou@eecs.berkeley.edu>,
-  "robh" <robh@kernel.org>,
-  "krzk+dt" <krzk+dt@kernel.org>,
-  "conor+dt" <conor+dt@kernel.org>
-Cc: "linux-riscv" <linux-riscv@lists.infradead.org>,
-  "linux-kernel" <linux-kernel@vger.kernel.org>,
-  "devicetree" <devicetree@vger.kernel.org>,
-  "=?UTF-8?B?546L54S2?=" <wangran@bosc.ac.cn>
-Reply-To: "=?UTF-8?B?56em5bCR6Z2S?=" <qinshaoqing@bosc.ac.cn>
-Message-ID: <17ab3ebb-2f46-4c61-a194-57d72f382517.qinshaoqing@bosc.ac.cn>
-Subject: =?UTF-8?B?W1BBVENIXSByaXNjdjogZHRzOiBBZGQgdGhlIGRldmljZSB0cmVlIG9mIHRoZSBYaWFuZ1No?=
-  =?UTF-8?B?YW4gcGxhdGZvcm0ncyBuYW5odSBzb2M=?=
-X-Mailer: [Alimail-Mailagent revision 3][W4_0.2.3][v5ForWebDing][Chrome]
+	s=arc-20240116; t=1752719943; c=relaxed/simple;
+	bh=X7EU9oEee9oD4miJuStT9hSRTZ4i2ynWyxm3zI8D50c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UoKqIrHmDYd+QMELSI8+BzFVx5TIpxQOqBM5Q1bT9mWIFfq1nAXjikfDbG0+gxkdIN+On5CBkoyWrt2Gfbdn8kAM2kzgskSqWvV/ihHlvtSXPX/Xky2yeGOMQNcEzx3GMOM84cS1H2puqb4jP7w6BzxtW489H1lGkfLjAWEi0sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tbDn+RFm; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752719929;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RY0ytnIDZuO0Ep0XUcgWNN7p8LAkaHqP1azq5AefPSA=;
+	b=tbDn+RFmzLUpmv3Q1dhNH2K3g66MNrivL4joRJCVSBziuhYHuHWEgXG8VUxrRCn/mMyPUu
+	LSOw702iIe00IAAlnPYCgXiblRtwBmZAX00yiToAEDQYRRXoCvqrT0wKuniIHRt8BOpz9R
+	XojfCI4iISnHR4N4fH/bMs/dByoVNh4=
+From: Menglong Dong <menglong.dong@linux.dev>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
+ Menglong Dong <menglong8.dong@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>, bpf <bpf@vger.kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>,
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Network Development <netdev@vger.kernel.org>
+Subject:
+ Re: multi-fentry proposal. Was: [PATCH bpf-next v2 02/18] x86,bpf: add
+ bpf_global_caller for global trampoline
+Date: Thu, 17 Jul 2025 10:37:41 +0800
+Message-ID: <3643244.iIbC2pHGDl@7940hx>
+In-Reply-To:
+ <CAADnVQLpAmZG_1827HS1dDaWBGraxY6UO92=tCX6eM9ZbqEBKQ@mail.gmail.com>
+References:
+ <20250703121521.1874196-1-dongml2@chinatelecom.cn>
+ <3364591.aeNJFYEL58@7940hx>
+ <CAADnVQLpAmZG_1827HS1dDaWBGraxY6UO92=tCX6eM9ZbqEBKQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-x-aliyun-im-through: {"version":"v1.0"}
-References: <20250103063040.10817-1-qshaoqing926@163.com>,<2c75df56-fb55-4dd3-ac63-518233e61c8f.qinshaoqing@bosc.ac.cn>
-x-aliyun-mail-creator: W4_0.2.3_v5ForWebDing_M3LTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzEzOC4wLjAuMCBTYWZhcmkvNTM3LjM2vN
-In-Reply-To: <2c75df56-fb55-4dd3-ac63-518233e61c8f.qinshaoqing@bosc.ac.cn>
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+X-Migadu-Flow: FLOW_OUT
 
-CgpUaGlzIHBhdGNoIGFkZHMgdGhlIGRldmljZSB0cmVlIHN1cHBvcnQgZm9yIHRoZSBYaWFuZ1No
-YW4gcGxhdGZvcm0ncyBuYW5odSBzb2MKClNpZ25lZC1vZmYtYnk6IHFpbnNoYW9xaW5nIDxxaW5z
-aGFvcWluZ0Bib3NjLmFjLmNuPgotLS0KIGFyY2gvcmlzY3YvS2NvbmZpZy5zb2NzIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIHwgwqAgNSArCiBhcmNoL3Jpc2N2L2Jvb3QvZHRzL01ha2Vm
-aWxlwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgfCDCoCAxICsKIGFyY2gvcmlzY3YvYm9vdC9kdHMv
-eGlhbmdzaGFuL01ha2VmaWxlwqAgwqAgwqAgfCDCoCAyICsKIGFyY2gvcmlzY3YvYm9vdC9kdHMv
-eGlhbmdzaGFuL25hbmh1LXYzYS5kdHMgfCAyMjYgKysrKysrKysrKysrKysrKysrKysKIDQgZmls
-ZXMgY2hhbmdlZCwgMjM0IGluc2VydGlvbnMoKykKIGNyZWF0ZSBtb2RlIDEwMDY0NCBhcmNoL3Jp
-c2N2L2Jvb3QvZHRzL3hpYW5nc2hhbi9NYWtlZmlsZQogY3JlYXRlIG1vZGUgMTAwNjQ0IGFyY2gv
-cmlzY3YvYm9vdC9kdHMveGlhbmdzaGFuL25hbmh1LXYzYS5kdHMKCmRpZmYgLS1naXQgYS9hcmNo
-L3Jpc2N2L0tjb25maWcuc29jcyBiL2FyY2gvcmlzY3YvS2NvbmZpZy5zb2NzCmluZGV4IGY1MWJi
-MjRiYzg0Yy4uODljODBmZDQ5M2ZiIDEwMDY0NAotLS0gYS9hcmNoL3Jpc2N2L0tjb25maWcuc29j
-cworKysgYi9hcmNoL3Jpc2N2L0tjb25maWcuc29jcwpAQCAtODAsNCArODAsOSBAQCBjb25maWcg
-U09DX0NBTkFBTl9LMjEwCsKgIGhlbHAKwqAgwqAgVGhpcyBlbmFibGVzIHN1cHBvcnQgZm9yIENh
-bmFhbiBLZW5kcnl0ZSBLMjEwIFNvQyBwbGF0Zm9ybSBoYXJkd2FyZS4KCitjb25maWcgU09DX1hJ
-QU5HU0hBTgorwqAgwqAgwqAgwqAgYm9vbCAiWGlhbmdTaGFuIFNvQ3MiCivCoCDCoCDCoCDCoCBo
-ZWxwCivCoCDCoCDCoCDCoCDCoCBUaGlzIGVuYWJsZXMgc3VwcG9ydCBmb3IgWGlhbmdTaGFuIFNv
-QyBwbGF0Zm9ybSBoYXJkd2FyZQorCiBlbmRtZW51ICMgIlNvQyBzZWxlY3Rpb24iCmRpZmYgLS1n
-aXQgYS9hcmNoL3Jpc2N2L2Jvb3QvZHRzL01ha2VmaWxlIGIvYXJjaC9yaXNjdi9ib290L2R0cy9N
-YWtlZmlsZQppbmRleCBmZGFlMDViYmY1NTYuLjQzYTc5Y2M5ZGQ3YyAxMDA2NDQKLS0tIGEvYXJj
-aC9yaXNjdi9ib290L2R0cy9NYWtlZmlsZQorKysgYi9hcmNoL3Jpc2N2L2Jvb3QvZHRzL01ha2Vm
-aWxlCkBAIC03LDUgKzcsNiBAQCBzdWJkaXIteSArPSBzaWZpdmUKIHN1YmRpci15ICs9IHNvcGhn
-bwogc3ViZGlyLXkgKz0gc3RhcmZpdmUKIHN1YmRpci15ICs9IHRoZWFkCitzdWJkaXIteSArPSB4
-aWFuZ3NoYW4KCiBvYmotJChDT05GSUdfQlVJTFRJTl9EVEIpIDo9ICQoYWRkc3VmZml4IC5kdGIu
-bywgJChDT05GSUdfQlVJTFRJTl9EVEJfU09VUkNFKSkKZGlmZiAtLWdpdCBhL2FyY2gvcmlzY3Yv
-Ym9vdC9kdHMveGlhbmdzaGFuL01ha2VmaWxlIGIvYXJjaC9yaXNjdi9ib290L2R0cy94aWFuZ3No
-YW4vTWFrZWZpbGUKbmV3IGZpbGUgbW9kZSAxMDA2NDQKaW5kZXggMDAwMDAwMDAwMDAwLi40MWU1
-ODU0OTBhOTcKLS0tIC9kZXYvbnVsbAorKysgYi9hcmNoL3Jpc2N2L2Jvb3QvZHRzL3hpYW5nc2hh
-bi9NYWtlZmlsZQpAQCAtMCwwICsxLDIgQEAKKyMgU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQ
-TC0yLjAKK2R0Yi0kKENPTkZJR19TT0NfWElBTkdTSEFOKSArPSBuYW5odS12M2EuZHRiCmRpZmYg
-LS1naXQgYS9hcmNoL3Jpc2N2L2Jvb3QvZHRzL3hpYW5nc2hhbi9uYW5odS12M2EuZHRzIGIvYXJj
-aC9yaXNjdi9ib290L2R0cy94aWFuZ3NoYW4vbmFuaHUtdjNhLmR0cwpuZXcgZmlsZSBtb2RlIDEw
-MDY0NAppbmRleCAwMDAwMDAwMDAwMDAuLjU2MGRlN2M3ZjIyZQotLS0gL2Rldi9udWxsCisrKyBi
-L2FyY2gvcmlzY3YvYm9vdC9kdHMveGlhbmdzaGFuL25hbmh1LXYzYS5kdHMKQEAgLTAsMCArMSwy
-MjYgQEAKKy8vIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiAoR1BMLTIuMCBPUiBNSVQpCisvKiBD
-b3B5cmlnaHQgKGMpIDIwMjQtMjAyNSBCT1NDICovCisKKy9kdHMtdjEvOworCisvIHsKKyAjYWRk
-cmVzcy1jZWxscyA9IDwyPjsKKyAjc2l6ZS1jZWxscyA9IDwyPjsKKyBjb21wYXRpYmxlID0gImJv
-c2MsbmFuaHUtdjNhIjsKKworIGNwdXMgeworwqAgI2FkZHJlc3MtY2VsbHMgPSA8MT47CivCoCAj
-c2l6ZS1jZWxscyA9IDwwPjsKK8KgIHRpbWViYXNlLWZyZXF1ZW5jeSA9IDwyNDAwMDAwMD47CisK
-K8KgIGNwdTA6IGNwdUAwIHsKKyDCoCBjb21wYXRpYmxlID0gImJvc2MsbmFuaHUtdjNhIiwgInJp
-c2N2IjsKKyDCoCBkZXZpY2VfdHlwZSA9ICJjcHUiOworIMKgIHJpc2N2LGlzYSA9ICJydjY0aW1h
-ZmRjdiI7CisgwqAgZC1jYWNoZS1ibG9jay1zaXplID0gPDY0PjsKKyDCoCBkLWNhY2hlLXNldHMg
-PSA8NjQ+OworIMKgIGQtY2FjaGUtc2l6ZSA9IDwxNjM4ND47CisgwqAgZC10bGItc2V0cyA9IDwx
-PjsKKyDCoCBkLXRsYi1zaXplID0gPDMyPjsKKyDCoCBpLWNhY2hlLWJsb2NrLXNpemUgPSA8NjQ+
-OworIMKgIGktY2FjaGUtc2V0cyA9IDw2ND47CisgwqAgaS1jYWNoZS1zaXplID0gPDE2Mzg0PjsK
-KyDCoCBpLXRsYi1zZXRzID0gPDE+OworIMKgIGktdGxiLXNpemUgPSA8MzI+OworIMKgIG1tdS10
-eXBlID0gInJpc2N2LHN2MzkiOworIMKgIHJlZyA9IDwweDA+OworCisgwqAgY3B1MF9pbnRjOiBp
-bnRlcnJ1cHQtY29udHJvbGxlciB7CivCoCDCoCAjaW50ZXJydXB0LWNlbGxzID0gPDE+OworwqAg
-wqAgY29tcGF0aWJsZSA9ICJyaXNjdixjcHUtaW50YyI7CivCoCDCoCBpbnRlcnJ1cHQtY29udHJv
-bGxlcjsKKyDCoCB9OworwqAgfTsKKworwqAgY3B1MTogY3B1QDEgeworIMKgIGNvbXBhdGlibGUg
-PSAiYm9zYyxuYW5odS12M2EiLCAicmlzY3YiOworIMKgIGRldmljZV90eXBlID0gImNwdSI7Cisg
-wqAgcmlzY3YsaXNhID0gInJ2NjRpbWFmZGN2IjsKKyDCoCBkLWNhY2hlLWJsb2NrLXNpemUgPSA8
-NjQ+OworIMKgIGQtY2FjaGUtc2V0cyA9IDw2ND47CisgwqAgZC1jYWNoZS1zaXplID0gPDE2Mzg0
-PjsKKyDCoCBkLXRsYi1zZXRzID0gPDE+OworIMKgIGQtdGxiLXNpemUgPSA8MzI+OworIMKgIGkt
-Y2FjaGUtYmxvY2stc2l6ZSA9IDw2ND47CisgwqAgaS1jYWNoZS1zZXRzID0gPDY0PjsKKyDCoCBp
-LWNhY2hlLXNpemUgPSA8MTYzODQ+OworIMKgIGktdGxiLXNldHMgPSA8MT47CisgwqAgaS10bGIt
-c2l6ZSA9IDwzMj47CisgwqAgbW11LXR5cGUgPSAicmlzY3Ysc3YzOSI7CisgwqAgcmVnID0gPDB4
-MT47CisKKyDCoCBjcHUxX2ludGM6IGludGVycnVwdC1jb250cm9sbGVyIHsKK8KgIMKgICNpbnRl
-cnJ1cHQtY2VsbHMgPSA8MT47CivCoCDCoCBjb21wYXRpYmxlID0gInJpc2N2LGNwdS1pbnRjIjsK
-K8KgIMKgIGludGVycnVwdC1jb250cm9sbGVyOworIMKgIH07CivCoCB9OworIH07CisKKyBjbGtj
-OiBtaXNjX2NsayB7CivCoCBjb21wYXRpYmxlID0gImZpeGVkLWNsb2NrIjsKK8KgICNjbG9jay1j
-ZWxscyA9IDwwPjsKK8KgIGNsb2NrLW91dHB1dC1uYW1lcyA9ICJjbGtjIjsKK8KgIGNsb2NrLWZy
-ZXF1ZW5jeSA9IDwxMDAwMDAwMDA+OworIH07CisKKyBzZGhjaV9jbG9jazogc2RoY2lfY2xjayB7
-CivCoCBjb21wYXRpYmxlID0gImZpeGVkLWNsb2NrIjsKK8KgICNjbG9jay1jZWxscyA9IDwwPjsK
-K8KgIGNsb2NrLW91dHB1dC1uYW1lcyA9ICJzZGhjaV9jbG9jayI7CivCoCBjbG9jay1mcmVxdWVu
-Y3kgPSA8MjUwMDAwMDA+OworIH07CisKKyBpMmMwX2Nsb2NrOiBpMmMwX2NsY2sgeworwqAgY29t
-cGF0aWJsZSA9ICJmaXhlZC1jbG9jayI7CivCoCAjY2xvY2stY2VsbHMgPSA8MD47CivCoCBjbG9j
-ay1vdXRwdXQtbmFtZXMgPSAiaTJjMF9jbG9jayI7CivCoCBjbG9jay1mcmVxdWVuY3kgPSA8MTAw
-MDAwMDAwPjsKKyB9OworCisgc29jIHsKK8KgICNhZGRyZXNzLWNlbGxzID0gPDI+OworwqAgI3Np
-emUtY2VsbHMgPSA8Mj47CivCoCBjb21wYXRpYmxlID0gImJvc2MsbmFuaHUtdjNhLXNvYyIsICJz
-aW1wbGUtYnVzIjsKK8KgIHJhbmdlczsKKworwqAgY2xpbnQwOiBjbGludEAzODAwMDAwMCB7Cisg
-wqAgY29tcGF0aWJsZSA9ICJyaXNjdixjbGludDAiOworIMKgIGludGVycnVwdHMtZXh0ZW5kZWQg
-PSA8JmNwdTBfaW50YyAzICZjcHUwX2ludGMgNyAmY3B1MV9pbnRjIDMgJmNwdTFfaW50YyA3PjsK
-KyDCoCByZWcgPSA8MHgwIDB4MzgwMDAwMDAgMHgwIDB4MTAwMDA+OworIMKgIHJlZy1uYW1lcyA9
-ICJjb250cm9sIjsKKyDCoCBjbG9jay1mcmVxdWVuY3ktbWh6ID0gPDEwPjsKK8KgIH07CisKK8Kg
-IHBsaWM6IGludGVycnVwdC1jb250cm9sbGVyQDNjMDAwMDAwIHsKKyDCoCAjaW50ZXJydXB0LWNl
-bGxzID0gPDE+OworIMKgIGNvbXBhdGlibGUgPSAicmlzY3YscGxpYzAiOworIMKgIGludGVycnVw
-dC1jb250cm9sbGVyOworIMKgIGludGVycnVwdHMtZXh0ZW5kZWQgPSA8JmNwdTBfaW50YyAweGIg
-JmNwdTBfaW50YyAweDkgJmNwdTFfaW50YyAweGIgJmNwdTFfaW50YyAweDk+OworIMKgIHJlZyA9
-IDwwIDB4M2MwMDAwMDAgMCAweDQwMDAwMDA+OworIMKgIHJlZy1uYW1lcyA9ICJjb250cm9sIjsK
-KyDCoCByaXNjdixtYXgtcHJpb3JpdHkgPSA8Nz47CisgwqAgcmlzY3YsbmRldiA9IDwxMjg+Owor
-wqAgfTsKKworwqAgZXRoZXJuZXQwOiBldGhlcm5ldEAxOTAwMDAgeworIMKgIGNvbXBhdGlibGUg
-PSAic3Qsc3RtMzItZHdtYWMiLCAic25wcyxkd21hYy0zLjUwYSI7CisgwqAgcmVnID0gPDAgMHgx
-OTAwMDAgMCAweDEwMDAwPjsKKyDCoCByZWctbmFtZXMgPSAic3RtbWFjZXRoIjsKKyDCoCBpbnRl
-cnJ1cHQtcGFyZW50ID0gPCZwbGljPjsKKyDCoCBpbnRlcnJ1cHRzID0gPDc2IDc1IDc0PjsKKyDC
-oCBpbnRlcnJ1cHQtbmFtZXMgPSAiZXRoX2xwaSIsICJtYWNpcnEiLCAiZXRoX3dha2VfaXJxIjsK
-KyDCoCBjbG9jay1uYW1lcyA9ICJzdG1tYWNldGgiOworIMKgIGNsb2NrcyA9IDwmY2xrYz47Cisg
-wqAgc25wcyxwYmwgPSA8Mj47CisgwqAgc25wcyxtaXhlZC1idXJzdDsKKyDCoCBwaHktbW9kZSA9
-ICJyZ21paSI7CisgwqAgcGh5LWhhbmRsZSA9IDwmcGh5MD47CisgwqAgbWRpbzA6IG1kaW8gewor
-wqAgwqAgI2FkZHJlc3MtY2VsbHMgPSA8MHgxPjsKK8KgIMKgICNzaXplLWNlbGxzID0gPDB4MD47
-CivCoCDCoCBjb21wYXRpYmxlID0gInNucHMsZHdtYWMtbWRpbyI7CivCoCDCoCBwaHkwOiBwaHlA
-MCB7CisgwqAgwqAgcGh5YWRkciA9IDwweDA+OworIMKgIMKgIGNvbXBhdGlibGUgPSAibWFydmVs
-bCw4OEUxNTEwIjsKKyDCoCDCoCBkZXZpY2VfdHlwZSA9ICJldGhlcm5ldC1waHkiOworIMKgIMKg
-IHJlZyA9IDwweDA+OworwqAgwqAgfTsKK8KgIMKgIHBoeTE6IHBoeUAxIHsKKyDCoCDCoCBwaHlh
-ZGRyID0gPDB4MT47CisgwqAgwqAgY29tcGF0aWJsZSA9ICJtYXJ2ZWxsLDg4RTE1MTAiOworIMKg
-IMKgIGRldmljZV90eXBlID0gImV0aGVybmV0LXBoeSI7CisgwqAgwqAgcmVnID0gPDB4MT47CivC
-oCDCoCB9OworIMKgIH07CivCoCB9OworCivCoCBldGhlcm5ldDE6IGV0aGVybmV0QDFhMDAwMCB7
-CisgwqAgY29tcGF0aWJsZSA9ICJzdCxzdG0zMi1kd21hYyIsICJzbnBzLGR3bWFjLTMuNTBhIjsK
-KyDCoCByZWcgPSA8MCAweDFhMDAwMCAwIDB4MTAwMDA+OworIMKgIHJlZy1uYW1lcyA9ICJzdG1t
-YWNldGgxIjsKKyDCoCBpbnRlcnJ1cHQtcGFyZW50ID0gPCZwbGljPjsKKyDCoCBpbnRlcnJ1cHRz
-ID0gPDczIDcyIDcxPjsKKyDCoCBpbnRlcnJ1cHQtbmFtZXMgPSAiZXRoX2xwaSIsICJtYWNpcnEi
-LCAiZXRoX3dha2VfaXJxIjsKKyDCoCBjbG9jay1uYW1lcyA9ICJzdG1tYWNldGgiOworIMKgIGNs
-b2NrcyA9IDwmY2xrYz47CisgwqAgc25wcyxwYmwgPSA8Mj47CisgwqAgc25wcyxtaXhlZC1idXJz
-dDsKKyDCoCBwaHktbW9kZSA9ICJyZ21paSI7CisgwqAgZml4ZWQtbGlua3sKK8KgIMKgIHNwZWVk
-ID3CoCA8MTAwMD47CivCoCDCoCBmdWxsLWR1cGxleDsKK8KgIMKgIHBhdXNlOworwqAgwqAgYXN5
-bS1wYXVzZTsKKyDCoCB9OworwqAgfTsKKworwqAgc2RoY2kyOiBzZGhjaUAxMjAwMDAwIHsKKyDC
-oCBjb21wYXRpYmxlID0gInNucHMsZHdjbXNoYy1zZGhjaSI7CisgwqAgcmVnID0gPDAgMHgxMjAw
-MDAwIDAgMHgyMDAwMD47CisgwqAgaW50ZXJydXB0LXBhcmVudCA9IDwmcGxpYz47CisgwqAgaW50
-ZXJydXB0cyA9IDw3NyA3OD47CisgwqAgY2xvY2tzID0gPCZzZGhjaV9jbG9jaz47CisgwqAgY2xv
-Y2stbmFtZXMgPSAiY29yZSI7CisgwqAgbm8tMS04LXY7CisgwqAgZGlzYWJsZS13cDsKKyDCoCBi
-dXMtd2lkdGggPSA8ND47CisgwqAgbWF4X3JlcV9zaXplID0gPDQwOTY+OworIMKgIHN0YXR1cyA9
-ICJva2F5IjsKK8KgIH07CisKK8KgIGkyY0A3MDAwMCB7CisgwqAgY29tcGF0aWJsZSA9ICJzbnBz
-LGRlc2lnbndhcmUtaTJjIjsKKyDCoCAjYWRkcmVzcy1jZWxscyA9IDwxPjsKKyDCoCAjc2l6ZS1j
-ZWxscyA9IDwwPjsKKyDCoCByZWcgPSA8MHgwIDB4NzAwMDAgMHgwIDB4MTAwMDA+OworIMKgIGlu
-dGVycnVwdHMgPSA8NjY+OworIMKgIGludGVycnVwdC1wYXJlbnQgPSA8JnBsaWM+OworIMKgIGNs
-b2NrLWZyZXF1ZW5jeSA9IDwxMDAwMDA+OworIMKgIGNsb2NrcyA9IDwmaTJjMF9jbG9jaz47Cisg
-wqAgc3RhdHVzID0gIm9rYXkiOworwqAgfTsKKworwqAgaTJjQDgwMDAwIHsKKyDCoCBjb21wYXRp
-YmxlID0gInNucHMsZGVzaWdud2FyZS1pMmMiOworIMKgICNhZGRyZXNzLWNlbGxzID0gPDE+Owor
-IMKgICNzaXplLWNlbGxzID0gPDA+OworIMKgIHJlZyA9IDwweDAgMHg4MDAwMCAweDAgMHgxMDAw
-MD47CisgwqAgaW50ZXJydXB0cyA9IDw2NT47CisgwqAgaW50ZXJydXB0LXBhcmVudCA9IDwmcGxp
-Yz47CisgwqAgY2xvY2stZnJlcXVlbmN5ID0gPDEwMDAwMD47CisgwqAgY2xvY2tzID0gPCZpMmMw
-X2Nsb2NrPjsKKyDCoCBzdGF0dXMgPSAib2theSI7CivCoCB9OworCivCoCB1YXJ0MDogc2VyaWFs
-QDUwMDAwIHsKKyDCoCBjb21wYXRpYmxlID0gIm5zMTY1NTBhIjsKKyDCoCByZWcgPSA8MHgwIDB4
-NTAwMDAgMHgwIDB4MTAwMDA+OworIMKgIHJlZy1zaGlmdCA9IDwweDAyPjsKKyDCoCByZWctaW8t
-d2lkdGggPSA8MHgwND47CisgwqAgaW50ZXJydXB0LXBhcmVudCA9IDwmcGxpYz47CisgwqAgaW50
-ZXJydXB0cyA9IDw2OD47CisgwqAgY2xvY2stZnJlcXVlbmN5ID0gPDEwMDAwMDAwMD47CisgwqAg
-c3RhdHVzID0gIm9rYXkiOworwqAgfTsKKyB9OworCisgbWVtb3J5OiBtZW1vcnlAMTAwMDAwMDAw
-IHsKK8KgIGRldmljZV90eXBlID0gIm1lbW9yeSI7CivCoCByZWcgPSA8MHgwIDB4ODAwMDAwMDAg
-MHgyIDB4MDAwMDAwMDA+OworIH07CisKKyBhbGlhc2VzIHsKK8KgIHNlcmlhbDAgPSAmdWFydDA7
-CisgfTsKKworIGNob3NlbiB7CivCoCBib290YXJncyA9ICJjb25zb2xlPXR0eVMwLDExNTIwMCBl
-YXJseWNvbiI7CivCoCBzdGRvdXQtcGF0aCA9ICJzZXJpYWwwOjExNTIwMG44IjsKKyB9OworfTsK
-LS0KMi40My4wCgoK
+On Thursday, July 17, 2025 10:13 AM Alexei Starovoitov <alexei.starovoitov@=
+gmail.com> write:
+> On Wed, Jul 16, 2025 at 6:51=E2=80=AFPM Menglong Dong <menglong.dong@linu=
+x.dev> wrote:
+> >
+> > On Thursday, July 17, 2025 8:59 AM Alexei Starovoitov <alexei.starovoit=
+ov@gmail.com> write:
+> > > On Wed, Jul 16, 2025 at 6:06=E2=80=AFAM Menglong Dong <menglong.dong@=
+linux.dev> wrote:
+> > > >
+> > > > On Wednesday, July 16, 2025 12:35 AM Alexei Starovoitov <alexei.sta=
+rovoitov@gmail.com> write:
+> > > > > On Tue, Jul 15, 2025 at 1:37=E2=80=AFAM Menglong Dong <menglong.d=
+ong@linux.dev> wrote:
+> > > > > >
+> > > > > >
+> > > > > > On 7/15/25 10:25, Alexei Starovoitov wrote:
+> > > > [......]
+> > > > > >
+> > > > > > According to my benchmark, it has ~5% overhead to save/restore
+> > > > > > *5* variants when compared with *0* variant. The save/restore o=
+f regs
+> > > > > > is fast, but it still need 12 insn, which can produce ~6% overh=
+ead.
+> > > > >
+> > > > > I think it's an ok trade off, because with one global trampoline
+> > > > > we do not need to call rhashtable lookup before entering bpf prog.
+> > > > > bpf prog will do it on demand if/when it needs to access argument=
+s.
+> > > > > This will compensate for a bit of lost performance due to extra s=
+ave/restore.
+> > > >
+> > > > I don't understand here :/
+> > > >
+> > > > The rhashtable lookup is done at the beginning of the global trampo=
+line,
+> > > > which is called before we enter bpf prog. The bpf progs is stored i=
+n the
+> > > > kfunc_md, and we need get them from the hash table.
+> > >
+> > > Ahh. Right.
+> > >
+> > > Looking at the existing bpf trampoline... It has complicated logic
+> > > to handle livepatching and tailcalls. Your global trampoline
+> > > doesn't, and once that is added it's starting to feel that it will
+> > > look just as complex as the current one.
+> > > So I think we better repurpose what we have.
+> > > Maybe we can rewrite the existing one in C too.
+> >
+> > You are right, the tailcalls is not handled yet. But for the livepatchi=
+ng,
+> > it is already handled, as we always get the origin ip from the stack
+> > and call it, just like how the bpf trampoline handle the livepatching.
+> > So no addition handling is needed here.
+> >
+> > >
+> > > How about the following approach.
+> > > I think we discussed something like this in the past
+> > > and Jiri tried to implement something like this.
+> > > Andrii reminded me recently about it.
+> > >
+> > > Say, we need to attach prog A to 30k functions.
+> > > 10k with 2 args, 10k with 3 args, and 10k with 7 args.
+> > > We can generate 3 _existing_ bpf trampolines for 2,3,7 args
+> > > with hard coded prog A in there (the cookies would need to be
+> > > fetched via binary search similar to kprobe-multi).
+> > > The arch_prepare_bpf_trampoline() supports BPF_TRAMP_F_ORIG_STACK.
+> > > So one 2-arg trampoline will work to invoke prog A in all 10k 2-arg f=
+unctions.
+> > > We don't need to match types, but have to compare that btf_func_model=
+=2Ds
+> > > are the same.
+> > >
+> > > Menglong, your global trampoline for 0,1,..6 args works only for x86,
+> > > because btf_func_model doesn't care about sizes of args,
+> > > but it's not the correct mental model to use.
+> > >
+> > > The above "10k with 2 args" is a simplified example.
+> > > We will need an arch specific callback is_btf_func_model_equal()
+> > > that will compare func models in arch specific ways.
+> > > For x86-64 the number of args is all it needs.
+> > > For other archs it will compare sizes and flags too.
+> > > So 30k functions will be sorted into
+> > > 10k with btf_func_model_1, 10k with btf_func_model_2 and so on.
+> > > And the corresponding number of equivalent trampolines will be genera=
+ted.
+> > >
+> > > Note there will be no actual BTF types. All args will be untyped and
+> > > untrusted unlike current fentry.
+> > > We can go further and sort 30k functions by comparing BTFs
+> > > instead of btf_func_model-s, but I suspect 30k funcs will be split
+> > > into several thousands of exact BTFs. At that point multi-fentry
+> > > benefits are diminishing and we might as well generate 30k unique
+> > > bpf trampolines for 30k functions and avoid all the complexity.
+> > > So I would sort by btf_func_model compared by arch specific comparato=
+r.
+> > >
+> > > Now say prog B needs to be attached to another 30k functions.
+> > > If all 30k+30k functions are different then it's the same as
+> > > the previous step.
+> > > Say, prog A is attached to 10k funcs with btf_func_model_1.
+> > > If prog B wants to attach to the exact same func set then we
+> > > just regenerate bpf trampoline with hard coded progs A and B
+> > > and reattach.
+> > > If not then we need to split the set into up to 3 sets.
+> > > Say, prog B wants 5k funcs, but only 1k func are common:
+> > > (prog_A, 9k func with btf_func_model_1) -> bpf trampoline X
+> > > (prog_A, prog_B, 1k funcs with btf_func_model_1) -> bpf trampoline Y
+> > > (prog_B, 4k funcs with btf_func_model_1) -> bpf trampoline Z
+> > >
+> > > And so on when prog C needs to be attached.
+> > > At detach time we can merge sets/trampolines,
+> > > but for now we can leave it all fragmented.
+> > > Unlike regular fentry progs the multi-fentry progs are not going to
+> > > be attached for long time. So we can reduce the detach complexity.
+> > >
+> > > The nice part of the algorithm is that coexistence of fentry
+> > > and multi-fentry is easy.
+> > > If fentry is already attached to some function we just
+> > > attach multi-fentry prog to that bpf trampoline.
+> > > If multi-fentry was attached first and fentry needs to be attached,
+> > > we create a regular bpf trampoline and add both progs there.
+> >
+> > This seems not easy, and it is exactly how I handle the
+> > coexistence now:
+> >
+> >   https://lore.kernel.org/bpf/20250528034712.138701-16-dongml2@chinatel=
+ecom.cn/
+> >   https://lore.kernel.org/bpf/20250528034712.138701-17-dongml2@chinatel=
+ecom.cn/
+> >   https://lore.kernel.org/bpf/20250528034712.138701-18-dongml2@chinatel=
+ecom.cn/
+>=20
+> hmm. exactly? That's very different.
+> You're relying on kfunc_md for prog list.
+> The above proposal doesn't need kfunc_md in the critical path.
+> All progs are built into the trampolines.
+>=20
+> > The most difficult part is that we need a way to replace the the
+> > multi-fentry with fentry for the function in the ftrace atomically. Of
+> > course, we can remove the global trampoline first, and then attach
+> > the bpf trampoline, which will make things much easier. But a
+> > short suspend will happen for the progs in fentry-multi.
+>=20
+> I don't follow.
+> In the above proposal fentry attach/detach is atomic.
+> Prepare a new trampoline, single call to ftrace to modify_fentry().
+
+modify_fentry() is used to operate on the same ftrace_ops. For
+example, we have the bpf trampoline A, and its corresponding
+ftrace_ops is opsA. Now, the image of the trampolineA is updated,
+we call modify_fentry() for opsA to update the direct call of it.
+
+When we talk about the coexistence, it means the functionA is
+attached with the global trampoline B, whose ftrace_ops is
+opsB. We can't call modify_fentry(trampolineA, new_addr) here,
+as the opsA is not register yet. And we can't call register_fentry
+too, as the functionA is already in the direct_functions when we
+register opsB.
+
+So we need a way to do such transition.
+
+>=20
+> > >
+> > > The intersect and sorting by btf_func_model is not trivial,
+> > > but we can hold global trampoline_mutex, so no concerns of races.
+> > >
+> > > Example:
+> > > bpf_link_A is a set of:
+> > > (prog_A, funcs X,Y with btf_func_model_1)
+> > > (prog_A, funcs N,M with btf_func_model_2)
+> > >
+> > > To attach prog B via bpf_link_B that wants:
+> > > (prog_B, funcs Y,Z with btf_func_model_1)
+> > > (prog_B, funcs P,Q with btf_func_model_3)
+> > >
+> > > walk all existing links, intersect and split, and update the links.
+> > > At the end:
+> > >
+> > > bpf_link_A:
+> > > (prog_A, funcs X with btf_func_model_1)
+> > > (prog_A, prog_B funcs Y with btf_func_model_1)
+> > > (prog_A, funcs N,M with btf_func_model_2)
+> > >
+> > > bpf_link_B:
+> > > (prog_A, prog_B funcs Y with btf_func_model_1)
+> > > (prog_B, funcs Z with btf_func_model_1)
+> > > (prog_B, funcs P,Q with btf_func_model_3)
+> > >
+> > > When link is detached: walk its own tuples, remove the prog,
+> > > if nr_progs =3D=3D 0 -> detach corresponding trampoline,
+> > > if nr_progs > 0 -> remove prog and regenerate trampoline.
+> > >
+> > > If fentry prog C needs to be attached to N it might split bpf_link_A:
+> > > (prog_A, funcs X with btf_func_model_1)
+> > > (prog_A, prog_B funcs Y with btf_func_model_1)
+> > > (prog_A, funcs M with btf_func_model_2)
+> > > (prog_A, prog_C funcs N with _fentry_)
+> > >
+> > > Last time we gave up on it because we discovered that
+> > > overlap support was too complicated, but I cannot recall now
+> > > what it was :)
+> > > Maybe all of the above repeating some old mistakes.
+> >
+> > In my impression, this is exactly the solution of Jiri's, and this is
+> > part of the discussion that I know:
+> >
+> >   https://lore.kernel.org/bpf/ZfKY6E8xhSgzYL1I@krava/
+>=20
+> Yes. It's similar, but somehow it feels simple enough now.
+> The algorithms for both detach and attach fit on one page,
+> and everything is uniform. There are no spaghetty of corner cases.
+>=20
+
+
+
+
 
