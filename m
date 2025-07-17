@@ -1,238 +1,196 @@
-Return-Path: <linux-kernel+bounces-735075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4456B08A8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:31:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 950D6B08A89
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:30:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 294D81A62787
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:30:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 508ED1883141
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D258A29A9FE;
-	Thu, 17 Jul 2025 10:30:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4D729992E;
+	Thu, 17 Jul 2025 10:30:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="igu40ym/"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="mIynV+0U"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0DD299A8E;
-	Thu, 17 Jul 2025 10:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C29528B41E
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 10:30:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752748214; cv=none; b=CsYPDLM0l52jcG1d7FLpPpsPRDTiCGXlTPROPGRtJRVOmf5febm1rHpDuQTb1T568/8EtpJ3Ou8R84A9hCfyYdY3SN5n4g5LGlEBPU57APDmgfDVPEqhcKByCh5zEUz1Vn7CBZ7iHofEvxGqWllQQz0/EzJP84s2VtsX8tzXC1M=
+	t=1752748202; cv=none; b=psoNw95bIZjcBslb4sOhSJUug3TYxIXOmNwZIUISq2EHAu5uDsqpx2hJQ3rUZJaYNk5SiTPwPZbE8bI0tcsgoM8yGX/2jJTcOhNn1KJynQNrY9hO3W/e0Edm1g9TUq0T5HMXQOKusfRg773pvO7sOKczZm+gXsYuPVQEEUYGQPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752748214; c=relaxed/simple;
-	bh=PF8hynOMolcglnafslbmqSGN5JRS9OFzi3kNiS4aNdg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mI9samLgqTSUCqmDHeBIRgh32Sk/im/pGgSTPD8w/V/EYdw0qhLbMC3VaZL8oVTUvDSsDVjdnKPut2PaS/tC5/Q4R38BnQOiEEF+ttQIy4oVwW0FKSj8nf98lMqWmdeiUpw5mm7B2y5f1ubL6e48YqD8PS5rveNbf5aiNdipsjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=igu40ym/; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56H26K2I031328;
-	Thu, 17 Jul 2025 10:29:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=xuCiFHTfULOxLAhaq2IdmuafyFyXtP
-	zi/TpTO2v1iBo=; b=igu40ym/2BCsW5Z1VOD778cW7QF6RkKasaH06a1ZkNRNAw
-	jPWpgUIYqm3SaSZk2iTAhBLSQ24kpleCmOMayeMgmACwilRkTDwmgTQN6yWYr6Z2
-	t57WgGFqnE1jiXeIJMUVVG72+Phn2Z64hjQQj/PfSKGQe36ZzpazvN0Dzy9I9uNB
-	CylJsudc9IjhmzotUH2ydvZsI5fwQUmZQq0thlcBOje9UouoCkrJRynpGKti9TFT
-	9o52ZECrBcxMPsHJdWM/+IfKl6nKBTI8o6pIuH+BKcB0hLuTE9eDzVcT0nSbmHFg
-	M+XlwtEhQak3TipiowXrOXKiMfso0x9tS5q84w1w==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47uf7dadhh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Jul 2025 10:29:52 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56HA1J3S000722;
-	Thu, 17 Jul 2025 10:29:51 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 47v48mbg14-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Jul 2025 10:29:50 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56HATnEZ53019048
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 17 Jul 2025 10:29:49 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3CDFC2004E;
-	Thu, 17 Jul 2025 10:29:49 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F2F152004B;
-	Thu, 17 Jul 2025 10:29:46 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.17.40])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 17 Jul 2025 10:29:46 +0000 (GMT)
-Date: Thu, 17 Jul 2025 15:59:44 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: Baokun Li <libaokun1@huawei.com>
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-        jack@suse.cz, linux-kernel@vger.kernel.org, julia.lawall@inria.fr,
-        yi.zhang@huawei.com, yangerkun@huawei.com, libaokun@huaweicloud.com
-Subject: Re: [PATCH v3 02/17] ext4: separate stream goal hits from
- s_bal_goals for better tracking
-Message-ID: <aHjQmHgSYmjwI6g8@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <20250714130327.1830534-1-libaokun1@huawei.com>
- <20250714130327.1830534-3-libaokun1@huawei.com>
+	s=arc-20240116; t=1752748202; c=relaxed/simple;
+	bh=vdLYDH/0FP+BqD0OZjHgZRlz3qLb2TjSX75DQnNBPOw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dz5yarVebNs6CCT+f6qQ8N1T7/IFuvvIrj11eB5EIb3H8UbDVhVwePclG9Feuj1zFXAbnP5XUcWyLcTN4VWjNzRq1OHM2lSEFITjnzf0GsMovNRSA9mfnMgfYjrh4gKaK1m57d4MuXx3SrrxElBS5RVMk8pv2gBy1myksuxRMHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=mIynV+0U; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5742DE92;
+	Thu, 17 Jul 2025 12:29:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1752748164;
+	bh=vdLYDH/0FP+BqD0OZjHgZRlz3qLb2TjSX75DQnNBPOw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mIynV+0Up6dKjNsz70e+5XjvSmImQe7bp80kQCu/wpkU4H1DwJAXYdVyJspOGpcu2
+	 hTeQkVmJeztY1KhicnOZvd6pMobTA6KuqpVV73MvEk9/8nTs9tiEtyeAdKItxTETca
+	 lCZl9oqPlBAdrksbOfMvLeCFcWnR7H0aKHr6fWRM=
+Message-ID: <5377d377-2822-4d35-981e-45e7352ade17@ideasonboard.com>
+Date: Thu, 17 Jul 2025 13:29:52 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250714130327.1830534-3-libaokun1@huawei.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: mmxE7gUjD-dt3QDqSV-AJ4iu_gS0kIoK
-X-Authority-Analysis: v=2.4 cv=LoGSymdc c=1 sm=1 tr=0 ts=6878d0a0 cx=c_pps a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=i0EeH86SAAAA:8 a=zWkni7x_GnGFfIkcl88A:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: mmxE7gUjD-dt3QDqSV-AJ4iu_gS0kIoK
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDA5MCBTYWx0ZWRfX270mT3gPKqzF 2Orjb4kkjDkMscnkcWrj8s0ozExjp7d521u94cQgosNsSMe2mf6EzXSUOIy0BlP92US4pTRIpPa cao9sfa6EhqFZaeGIcjF/VhtZiaQiHqbknRwZ1Rsq5HBBDXtpFLuABXjOY0rHscSRC80a7X5Xpa
- +1m3J+z93o6ZMrPyM+mJKw9j1C5Sn9y3gLwDj2PQZjoRqiPhiRVSL8nYZ+ggOEIzGBM7Ayrr106 H/nnH2/LHgLP+7f5xUe2povv+FWu6dEi6m25o/gSNA2GBXrJa52+uipxHYlRhBRcaOsTp86d40c 6ziUf7jJnSY30sYYENkj7cSqpsbJltgJmvu1a4Err8PkgJy8lDPc6jkTNBATWJW8PMDMp1D/YVj
- l2J93IrhFcU4EbbPAT65bU7I5zV4qsC1RZB31z4zzYNhlskZKDbTqsSdh5TACxDTpQZJktBX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-17_01,2025-07-16_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- lowpriorityscore=0 spamscore=0 malwarescore=0 impostorscore=0
- clxscore=1015 phishscore=0 mlxlogscore=999 priorityscore=1501
- suspectscore=0 mlxscore=0 adultscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507170090
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 17/17] drm/bridge: cdns-dsi: Don't fail on
+ MIPI_DSI_MODE_VIDEO_BURST
+To: Devarsh Thakkar <devarsht@ti.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-phy@lists.infradead.org, Francesco Dolcini <francesco@dolcini.it>,
+ Aradhya Bhatia <aradhya.bhatia@linux.dev>,
+ Parth Pancholi <parth.pancholi@toradex.com>, Jyri Sarha <jyri.sarha@iki.fi>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Jayesh Choudhary <j-choudhary@ti.com>, Dmitry Baryshkov <lumag@kernel.org>
+References: <20250618-cdns-dsi-impro-v4-0-862c841dbe02@ideasonboard.com>
+ <20250618-cdns-dsi-impro-v4-17-862c841dbe02@ideasonboard.com>
+ <8728de80-f154-46fa-a8a6-da40cb5fdc65@ti.com>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <8728de80-f154-46fa-a8a6-da40cb5fdc65@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 14, 2025 at 09:03:12PM +0800, Baokun Li wrote:
-> In ext4_mb_regular_allocator(), after the call to ext4_mb_find_by_goal()
-> fails to achieve the inode goal, allocation continues with the stream
-> allocation global goal. Currently, hits for both are combined in
-> sbi->s_bal_goals, hindering accurate optimization.
-> 
-> This commit separates global goal hits into sbi->s_bal_stream_goals. Since
-> stream allocation doesn't use ac->ac_g_ex.fe_start, set fe_start to -1.
-> This prevents stream allocations from being counted in s_bal_goals. Also
-> clear EXT4_MB_HINT_TRY_GOAL to avoid calling ext4_mb_find_by_goal again.
-> 
-> After adding `stream_goal_hits`, `/proc/fs/ext4/sdx/mb_stats` will show:
-> 
-> mballoc:
-> 	reqs: 840347
-> 	success: 750992
-> 	groups_scanned: 1230506
-> 	cr_p2_aligned_stats:
-> 		hits: 21531
-> 		groups_considered: 411664
-> 		extents_scanned: 21531
-> 		useless_loops: 0
-> 		bad_suggestions: 6
-> 	cr_goal_fast_stats:
-> 		hits: 111222
-> 		groups_considered: 1806728
-> 		extents_scanned: 467908
-> 		useless_loops: 0
-> 		bad_suggestions: 13
-> 	cr_best_avail_stats:
-> 		hits: 36267
-> 		groups_considered: 1817631
-> 		extents_scanned: 156143
-> 		useless_loops: 0
-> 		bad_suggestions: 204
-> 	cr_goal_slow_stats:
-> 		hits: 106396
-> 		groups_considered: 5671710
-> 		extents_scanned: 22540056
-> 		useless_loops: 123747
-> 	cr_any_free_stats:
-> 		hits: 138071
-> 		groups_considered: 724692
-> 		extents_scanned: 23615593
-> 		useless_loops: 585
-> 	extents_scanned: 46804261
-> 		goal_hits: 1307
-> 		stream_goal_hits: 236317
-> 		len_goal_hits: 155549
-> 		2^n_hits: 21531
-> 		breaks: 225096
-> 		lost: 35062
-> 	buddies_generated: 40/40
-> 	buddies_time_used: 48004
-> 	preallocated: 5962467
-> 	discarded: 4847560
-> 
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> ---
->  fs/ext4/ext4.h    |  1 +
->  fs/ext4/mballoc.c | 11 +++++++++--
->  2 files changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index 9df74123e7e6..8750ace12935 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -1646,6 +1646,7 @@ struct ext4_sb_info {
->  	atomic_t s_bal_cX_ex_scanned[EXT4_MB_NUM_CRS];	/* total extents scanned */
->  	atomic_t s_bal_groups_scanned;	/* number of groups scanned */
->  	atomic_t s_bal_goals;	/* goal hits */
-> +	atomic_t s_bal_stream_goals;	/* stream allocation global goal hits */
->  	atomic_t s_bal_len_goals;	/* len goal hits */
->  	atomic_t s_bal_breaks;	/* too long searches */
->  	atomic_t s_bal_2orders;	/* 2^order hits */
-> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-> index 336d65c4f6a2..f56ac477c464 100644
-> --- a/fs/ext4/mballoc.c
-> +++ b/fs/ext4/mballoc.c
-> @@ -2849,8 +2849,9 @@ ext4_mb_regular_allocator(struct ext4_allocation_context *ac)
->  		/* TBD: may be hot point */
->  		spin_lock(&sbi->s_md_lock);
->  		ac->ac_g_ex.fe_group = sbi->s_mb_last_group;
-> -		ac->ac_g_ex.fe_start = sbi->s_mb_last_start;
->  		spin_unlock(&sbi->s_md_lock);
-> +		ac->ac_g_ex.fe_start = -1;
-> +		ac->ac_flags &= ~EXT4_MB_HINT_TRY_GOAL;
+Hi,
 
-Hey Baokun, I was a bit late to review this in v2 so I'll add the
-comment here:
-
-So this is mostly to account for retires right? Maybe rather than
-disabling goal allocation a better way to do this is resetting the
-original goal group and goal start in the retry logic of
-ext4_mb_new_blocks()? Since we drop preallocations before retrying, this
-way we might actually find our goal during the retry. Its a slim chance
-though but still feels like the right way to do it.
-
-Thoughts?
-
-Regards,
-ojaswin
-
->  	}
->  
->  	/*
-> @@ -3000,8 +3001,12 @@ ext4_mb_regular_allocator(struct ext4_allocation_context *ac)
->  		}
->  	}
->  
-> -	if (sbi->s_mb_stats && ac->ac_status == AC_STATUS_FOUND)
-> +	if (sbi->s_mb_stats && ac->ac_status == AC_STATUS_FOUND) {
->  		atomic64_inc(&sbi->s_bal_cX_hits[ac->ac_criteria]);
-> +		if (ac->ac_flags & EXT4_MB_STREAM_ALLOC &&
-> +		    ac->ac_b_ex.fe_group == ac->ac_g_ex.fe_group)
-> +			atomic_inc(&sbi->s_bal_stream_goals);
-> +	}
->  out:
->  	if (!err && ac->ac_status != AC_STATUS_FOUND && first_err)
->  		err = first_err;
-> @@ -3194,6 +3199,8 @@ int ext4_seq_mb_stats_show(struct seq_file *seq, void *offset)
->  	seq_printf(seq, "\textents_scanned: %u\n",
->  		   atomic_read(&sbi->s_bal_ex_scanned));
->  	seq_printf(seq, "\t\tgoal_hits: %u\n", atomic_read(&sbi->s_bal_goals));
-> +	seq_printf(seq, "\t\tstream_goal_hits: %u\n",
-> +		   atomic_read(&sbi->s_bal_stream_goals));
->  	seq_printf(seq, "\t\tlen_goal_hits: %u\n",
->  		   atomic_read(&sbi->s_bal_len_goals));
->  	seq_printf(seq, "\t\t2^n_hits: %u\n", atomic_read(&sbi->s_bal_2orders));
-> -- 
-> 2.46.1
+On 17/07/2025 12:36, Devarsh Thakkar wrote:
+> Hi Tomi
 > 
+> Thanks for the patch.
+> 
+> On 18/06/25 15:29, Tomi Valkeinen wrote:
+>> While the cdns-dsi does not support DSI burst mode, the burst mode is
+>> essentially DSI event mode with more versatile clocking and timings.
+> I don't fully agree with this statement, DSI burst mode and DSI event
+> mode are two different things having separate requirements. DSI burst
+> mode maps to MIPI_DSI_MODE_VIDEO_BURST. I don't see a separate flag for
+> event mode but I guess,
+
+Well, what does DSI burst mode mean? Signal-wise it's the same as DSI
+event mode. "burst" just means that the DSI TX is allowed to send the
+data much faster than the pixel clock. But there's no strict requirement
+that it _must_ be faster.
+
+So, DSI burst mode is basically DSI event mode with more freedom on the
+timings. Thus, afaics, DSI TX in DSI event mode should always work if
+the DSI RX expects DSI burst mode.
+
+ Tomi
+
+>> Thus cdns-dsi doesn't need to fail if the DSI peripheral driver requests
+>> MIPI_DSI_MODE_VIDEO_BURST.
+> 
+> MIPI_DSI_MODE_VIDEO_BURST is currently not supported by the cadence DSI
+> host driver, so only if DSI peripheral driver is saying that burst mode
+> is the only one it supports in that case only we should fail.
+> 
+>>
+>> In my particular use case, this allows the use of ti-sn65dsi83 driver.
+>>
+>> Tested-by: Parth Pancholi <parth.pancholi@toradex.com>
+>> Tested-by: Jayesh Choudhary <j-choudhary@ti.com>
+>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+>> ---
+>>   drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c | 4 ----
+>>   1 file changed, 4 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c b/drivers/
+>> gpu/drm/bridge/cadence/cdns-dsi-core.c
+>> index 114d883c65dc..09b289f0fcbf 100644
+>> --- a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
+>> +++ b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
+>> @@ -1052,10 +1052,6 @@ static int cdns_dsi_attach(struct mipi_dsi_host
+>> *host,
+>>       if (output->dev)
+>>           return -EBUSY;
+>>   -    /* We do not support burst mode yet. */
+>> -    if (dev->mode_flags & MIPI_DSI_MODE_VIDEO_BURST)
+>> -        return -ENOTSUPP;
+>> -
+> 
+> Removing this check also gives a false impression that burst mode is
+> supported by the driver and can also lead to failures too in case device
+> is only supporting burst mode.
+> 
+> I think it makes sense to fail only if burst mode is the only one being
+> supported by the device, something like below should work I believe,
+> 
+> if (dev->mode_flags & MIPI_DSI_MODE_VIDEO_BURST ==
+> MIPI_DSI_MODE_VIDEO_BURST)
+>         return -ENOTSUPP;
+> 
+> Regards
+> Devarsh
+> 
+>>       /*
+>>        * The host <-> device link might be described using an OF-graph
+>>        * representation, in this case we extract the device of_node from
+>>
+
 
