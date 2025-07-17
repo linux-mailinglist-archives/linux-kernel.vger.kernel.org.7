@@ -1,149 +1,308 @@
-Return-Path: <linux-kernel+bounces-735948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C20BB095B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 22:29:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A0053B095B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 22:30:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 367351C27FC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 20:30:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23D9F1C27355
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 20:30:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D04225A5B;
-	Thu, 17 Jul 2025 20:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34BA622616C;
+	Thu, 17 Jul 2025 20:29:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cSCdpR1r"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d+i09C/R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE84A224AEF;
-	Thu, 17 Jul 2025 20:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C1CD2253E4;
+	Thu, 17 Jul 2025 20:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752784175; cv=none; b=PunlUcR4E8Q19j7JE5WLoIahLHAl4SJsRnL0+1DVp1t8MgmWjRWyVCWZDGTuI6Wd5GSrtxsWC2v2jkd3kBrQlz6NIq4fOQer+bdLza9hsImyS9S71RYcp+xCKgU7XVcjsU52c61RFQvRCPIO7UfvpcAlykwKx0pVJMUEyxt4Qvo=
+	t=1752784193; cv=none; b=AbEXOZMScrrLZMliIZM7yajKeTT1hC4CPLn8aGlsS8jBRBazEUwbaTg0CBNCUzeCXKuQ8Mg/Mn0kZxQdVx2Cmx8rs6cW0fLRj5jzDvAvR2A1NjzjYldtRzNKfM6jhh59OHy+cFXoGhB00uOHRjtwe7NEtThobYpDS807S1ff44s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752784175; c=relaxed/simple;
-	bh=C6FdhU3UGgV2AuO9mM334Y3xFvIMzWgfEMGceIlV6tA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=olcUJqGDnuzEGKFvGTTAgHH09gybscj6FUunHgas8+HQ+O09kG4kqGPNXYP/GZC0Xd25WrTlifURzV2h0MK7by1iiEk5Jw2tH40TU3+W5We9Eua/zpApuvPNvOo+p7MnbmusZvLQEiZP3Wdn+7lz0r8YeepjqOPqWfz9PiP6wT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cSCdpR1r; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752784174; x=1784320174;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=C6FdhU3UGgV2AuO9mM334Y3xFvIMzWgfEMGceIlV6tA=;
-  b=cSCdpR1rEH9bSy/InHfjYL9uOBIgC5UQcub9nvFn5e+/VrjC4XN5cymc
-   WOBjIjvvlp+3maGdXkS9UI16SqdWL7MHUH9DetGjXqRrk9KWl95PEN7bW
-   bykPLxAp/3LF8krmYoM9DDx4u71RjBYmnPc6yrkN0Mptzdn+Yvv+0SovS
-   hWLWpE/xB7/AO3xtduiUIMJHI09cMxSAieIHF0DXjd5MTetj9fhHo2gk6
-   DfwwEYGGz1h0KSyXwlFj8q18vYHnrLZG00HiJT2mvaLcCZJqYfFxGdH7g
-   O0ZAcgKsjR3FryLoWBamNIgeA46cQAKo2SP0XpxAssU5HpBjzeJs/GsdT
-   w==;
-X-CSE-ConnectionGUID: XdmtMpemTM2xFbrJiSY2uw==
-X-CSE-MsgGUID: Thg42MaRT6CpzAAMmn7WXQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11495"; a="55199020"
-X-IronPort-AV: E=Sophos;i="6.16,319,1744095600"; 
-   d="scan'208";a="55199020"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 13:29:33 -0700
-X-CSE-ConnectionGUID: IRcuRXtURFCGgyf33KkCAg==
-X-CSE-MsgGUID: TM9lQl1yQcCDNX9X15Gm1A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,319,1744095600"; 
-   d="scan'208";a="158583072"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 17 Jul 2025 13:29:28 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ucVEM-000E03-0r;
-	Thu, 17 Jul 2025 20:29:26 +0000
-Date: Fri, 18 Jul 2025 04:29:11 +0800
-From: kernel test robot <lkp@intel.com>
-To: Cosmin Tanislav <demonsingur@gmail.com>,
-	Cosmin Tanislav <cosmin.tanislav@analog.com>,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
-	Julien Massot <julien.massot@collabora.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Cc: Paul Gazzillo <paul@pgazz.com>,
-	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
-	oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v6 18/24] media: i2c: maxim-serdes: add MAX96717 driver
-Message-ID: <202507180404.Rvs0GsdN-lkp@intel.com>
-References: <20250716193111.942217-19-demonsingur@gmail.com>
+	s=arc-20240116; t=1752784193; c=relaxed/simple;
+	bh=q8eKevXXi+UQ1OwFBOXGgOAL2sn/edb+P2x0UDs5fKY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=c8to3We2VtsNpuTWHJB4yplQvl9xbxUwR9Nvl7LZ9/sA51l5dauHuCmqLGgPEOKf6buXVmhyry2t+KRA3M3rGu0sh8PbImvp0zvLM8m2RWFGu5DR39YW5mJzNDht+PkDv2jFbd1eDOYoBOYu/QTw76ZeKFEHNMgpxY1xBS314uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d+i09C/R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E24BC4CEE3;
+	Thu, 17 Jul 2025 20:29:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752784192;
+	bh=q8eKevXXi+UQ1OwFBOXGgOAL2sn/edb+P2x0UDs5fKY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=d+i09C/R+8o4J/2j6CW0+DVpc4NDnNYt9863nRnffuBeGEbkm0Nwgci/v2axWWwP7
+	 SJfAy/K4l24Jn6St9TtdI8/oceR54KczEnj4PnFLJCy4sDmthCrmEqUL/0sIs0EYUu
+	 At6Q8YR40GX+fiJ8Qb+AR4mw9bKqZXhiUl9KaalHsplkEd/cmkt2Ep7OIfsGBbUPrp
+	 WZn5yoGN7Qf/4QZj8OcCg3EKwThrmkeYDOyWxbUMa5Accj2YDD1V/DdJXzo26e79Sr
+	 +0HjXM2J6vGd+MHb4j8Zpc0v1Ye0CZ+LEkKcPgYGbQkKAZQlDkqX+epPYYpdIV5DEl
+	 1HZ08FQCQSWsA==
+From: Puranjay Mohan <puranjay@kernel.org>
+To: Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Hari Bathini <hbathini@linux.ibm.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Puranjay Mohan <puranjay@kernel.org>,
+	Peilin Ye <yepeilin@google.com>,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Cc: linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	lkmm@lists.linux.dev
+Subject: [PATCH RESEND bpf-next 1/1] powerpc64/bpf: Add jit support for load_acquire and store_release
+Date: Thu, 17 Jul 2025 20:29:17 +0000
+Message-ID: <20250717202935.29018-2-puranjay@kernel.org>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20250717202935.29018-1-puranjay@kernel.org>
+References: <20250717202935.29018-1-puranjay@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250716193111.942217-19-demonsingur@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Cosmin,
+Add JIT support for the load_acquire and store_release instructions. The
+implementation is similar to the kernel where:
 
-kernel test robot noticed the following build warnings:
+        load_acquire  => plain load -> lwsync
+        store_release => lwsync -> plain store
 
-[auto build test WARNING on next-20250716]
-[also build test WARNING on v6.16-rc6]
-[cannot apply to robh/for-next staging/staging-testing staging/staging-next staging/staging-linus arm64/for-next/core linus/master v6.16-rc6 v6.16-rc5 v6.16-rc4]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+To test the correctness of the implementation, following selftests were
+run:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Cosmin-Tanislav/media-mc-Add-INTERNAL-pad-flag/20250717-033901
-base:   next-20250716
-patch link:    https://lore.kernel.org/r/20250716193111.942217-19-demonsingur%40gmail.com
-patch subject: [PATCH v6 18/24] media: i2c: maxim-serdes: add MAX96717 driver
-config: nios2-kismet-CONFIG_GENERIC_PINCONF-CONFIG_VIDEO_MAX96717-0-0 (https://download.01.org/0day-ci/archive/20250718/202507180404.Rvs0GsdN-lkp@intel.com/config)
-reproduce: (https://download.01.org/0day-ci/archive/20250718/202507180404.Rvs0GsdN-lkp@intel.com/reproduce)
+  [fedora@linux-kernel bpf]$ sudo ./test_progs -a \
+  verifier_load_acquire,verifier_store_release,atomics
+  #11/1    atomics/add:OK
+  #11/2    atomics/sub:OK
+  #11/3    atomics/and:OK
+  #11/4    atomics/or:OK
+  #11/5    atomics/xor:OK
+  #11/6    atomics/cmpxchg:OK
+  #11/7    atomics/xchg:OK
+  #11      atomics:OK
+  #519/1   verifier_load_acquire/load-acquire, 8-bit:OK
+  #519/2   verifier_load_acquire/load-acquire, 8-bit @unpriv:OK
+  #519/3   verifier_load_acquire/load-acquire, 16-bit:OK
+  #519/4   verifier_load_acquire/load-acquire, 16-bit @unpriv:OK
+  #519/5   verifier_load_acquire/load-acquire, 32-bit:OK
+  #519/6   verifier_load_acquire/load-acquire, 32-bit @unpriv:OK
+  #519/7   verifier_load_acquire/load-acquire, 64-bit:OK
+  #519/8   verifier_load_acquire/load-acquire, 64-bit @unpriv:OK
+  #519/9   verifier_load_acquire/load-acquire with uninitialized
+  src_reg:OK
+  #519/10  verifier_load_acquire/load-acquire with uninitialized src_reg
+  @unpriv:OK
+  #519/11  verifier_load_acquire/load-acquire with non-pointer src_reg:OK
+  #519/12  verifier_load_acquire/load-acquire with non-pointer src_reg
+  @unpriv:OK
+  #519/13  verifier_load_acquire/misaligned load-acquire:OK
+  #519/14  verifier_load_acquire/misaligned load-acquire @unpriv:OK
+  #519/15  verifier_load_acquire/load-acquire from ctx pointer:OK
+  #519/16  verifier_load_acquire/load-acquire from ctx pointer @unpriv:OK
+  #519/17  verifier_load_acquire/load-acquire with invalid register R15:OK
+  #519/18  verifier_load_acquire/load-acquire with invalid register R15
+  @unpriv:OK
+  #519/19  verifier_load_acquire/load-acquire from pkt pointer:OK
+  #519/20  verifier_load_acquire/load-acquire from flow_keys pointer:OK
+  #519/21  verifier_load_acquire/load-acquire from sock pointer:OK
+  #519     verifier_load_acquire:OK
+  #556/1   verifier_store_release/store-release, 8-bit:OK
+  #556/2   verifier_store_release/store-release, 8-bit @unpriv:OK
+  #556/3   verifier_store_release/store-release, 16-bit:OK
+  #556/4   verifier_store_release/store-release, 16-bit @unpriv:OK
+  #556/5   verifier_store_release/store-release, 32-bit:OK
+  #556/6   verifier_store_release/store-release, 32-bit @unpriv:OK
+  #556/7   verifier_store_release/store-release, 64-bit:OK
+  #556/8   verifier_store_release/store-release, 64-bit @unpriv:OK
+  #556/9   verifier_store_release/store-release with uninitialized
+  src_reg:OK
+  #556/10  verifier_store_release/store-release with uninitialized src_reg
+  @unpriv:OK
+  #556/11  verifier_store_release/store-release with uninitialized
+  dst_reg:OK
+  #556/12  verifier_store_release/store-release with uninitialized dst_reg
+  @unpriv:OK
+  #556/13  verifier_store_release/store-release with non-pointer
+  dst_reg:OK
+  #556/14  verifier_store_release/store-release with non-pointer dst_reg
+  @unpriv:OK
+  #556/15  verifier_store_release/misaligned store-release:OK
+  #556/16  verifier_store_release/misaligned store-release @unpriv:OK
+  #556/17  verifier_store_release/store-release to ctx pointer:OK
+  #556/18  verifier_store_release/store-release to ctx pointer @unpriv:OK
+  #556/19  verifier_store_release/store-release, leak pointer to stack:OK
+  #556/20  verifier_store_release/store-release, leak pointer to stack
+  @unpriv:OK
+  #556/21  verifier_store_release/store-release, leak pointer to map:OK
+  #556/22  verifier_store_release/store-release, leak pointer to map
+  @unpriv:OK
+  #556/23  verifier_store_release/store-release with invalid register
+  R15:OK
+  #556/24  verifier_store_release/store-release with invalid register R15
+  @unpriv:OK
+  #556/25  verifier_store_release/store-release to pkt pointer:OK
+  #556/26  verifier_store_release/store-release to flow_keys pointer:OK
+  #556/27  verifier_store_release/store-release to sock pointer:OK
+  #556     verifier_store_release:OK
+  Summary: 3/55 PASSED, 0 SKIPPED, 0 FAILED
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507180404.Rvs0GsdN-lkp@intel.com/
+Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
+---
+ arch/powerpc/include/asm/ppc-opcode.h        |  1 +
+ arch/powerpc/net/bpf_jit_comp64.c            | 82 ++++++++++++++++++++
+ tools/testing/selftests/bpf/progs/bpf_misc.h |  3 +-
+ 3 files changed, 85 insertions(+), 1 deletion(-)
 
-kismet warnings: (new ones prefixed by >>)
->> kismet: WARNING: unmet direct dependencies detected for GENERIC_PINCONF when selected by VIDEO_MAX96717
-   WARNING: unmet direct dependencies detected for I2C_MUX
-     Depends on [n]: I2C [=n]
-     Selected by [y]:
-     - VIDEO_MAXIM_SERDES [=y] && MEDIA_SUPPORT [=y] && VIDEO_DEV [=y]
-   
-   WARNING: unmet direct dependencies detected for GENERIC_PINCONF
-     Depends on [n]: PINCTRL [=n]
-     Selected by [y]:
-     - VIDEO_MAX96717 [=y] && MEDIA_SUPPORT [=y] && VIDEO_DEV [=y] && COMMON_CLK [=y]
-   
-   WARNING: unmet direct dependencies detected for GENERIC_PINMUX_FUNCTIONS
-     Depends on [n]: PINCTRL [=n]
-     Selected by [y]:
-     - VIDEO_MAX96717 [=y] && MEDIA_SUPPORT [=y] && VIDEO_DEV [=y] && COMMON_CLK [=y]
-   
-   WARNING: unmet direct dependencies detected for GENERIC_PINCTRL_GROUPS
-     Depends on [n]: PINCTRL [=n]
-     Selected by [y]:
-     - VIDEO_MAX96717 [=y] && MEDIA_SUPPORT [=y] && VIDEO_DEV [=y] && COMMON_CLK [=y]
-   
-   WARNING: unmet direct dependencies detected for I2C_ATR
-     Depends on [n]: I2C [=n]
-     Selected by [y]:
-     - VIDEO_MAXIM_SERDES [=y] && MEDIA_SUPPORT [=y] && VIDEO_DEV [=y]
-
+diff --git a/arch/powerpc/include/asm/ppc-opcode.h b/arch/powerpc/include/asm/ppc-opcode.h
+index 4312bcb913a42..8053b24afc395 100644
+--- a/arch/powerpc/include/asm/ppc-opcode.h
++++ b/arch/powerpc/include/asm/ppc-opcode.h
+@@ -425,6 +425,7 @@
+ #define PPC_RAW_SC()			(0x44000002)
+ #define PPC_RAW_SYNC()			(0x7c0004ac)
+ #define PPC_RAW_ISYNC()			(0x4c00012c)
++#define PPC_RAW_LWSYNC()		(0x7c2004ac)
+ 
+ /*
+  * Define what the VSX XX1 form instructions will look like, then add
+diff --git a/arch/powerpc/net/bpf_jit_comp64.c b/arch/powerpc/net/bpf_jit_comp64.c
+index a25a6ffe7d7cc..025524378443e 100644
+--- a/arch/powerpc/net/bpf_jit_comp64.c
++++ b/arch/powerpc/net/bpf_jit_comp64.c
+@@ -409,6 +409,71 @@ asm (
+ "		blr				;"
+ );
+ 
++static int emit_atomic_ld_st(const struct bpf_insn insn, struct codegen_context *ctx, u32 *image)
++{
++	u32 code = insn.code;
++	u32 dst_reg = bpf_to_ppc(insn.dst_reg);
++	u32 src_reg = bpf_to_ppc(insn.src_reg);
++	u32 size = BPF_SIZE(code);
++	u32 tmp1_reg = bpf_to_ppc(TMP_REG_1);
++	u32 tmp2_reg = bpf_to_ppc(TMP_REG_2);
++	s16 off = insn.off;
++	s32 imm = insn.imm;
++
++	switch (imm) {
++	case BPF_LOAD_ACQ:
++		switch (size) {
++		case BPF_B:
++			EMIT(PPC_RAW_LBZ(dst_reg, src_reg, off));
++			break;
++		case BPF_H:
++			EMIT(PPC_RAW_LHZ(dst_reg, src_reg, off));
++			break;
++		case BPF_W:
++			EMIT(PPC_RAW_LWZ(dst_reg, src_reg, off));
++			break;
++		case BPF_DW:
++			if (off % 4) {
++				EMIT(PPC_RAW_LI(tmp1_reg, off));
++				EMIT(PPC_RAW_LDX(dst_reg, src_reg, tmp1_reg));
++			} else {
++				EMIT(PPC_RAW_LD(dst_reg, src_reg, off));
++			}
++			break;
++		}
++		EMIT(PPC_RAW_LWSYNC());
++		break;
++	case BPF_STORE_REL:
++		EMIT(PPC_RAW_LWSYNC());
++		switch (size) {
++		case BPF_B:
++			EMIT(PPC_RAW_STB(src_reg, dst_reg, off));
++			break;
++		case BPF_H:
++			EMIT(PPC_RAW_STH(src_reg, dst_reg, off));
++			break;
++		case BPF_W:
++			EMIT(PPC_RAW_STW(src_reg, dst_reg, off));
++			break;
++		case BPF_DW:
++			if (off % 4) {
++				EMIT(PPC_RAW_LI(tmp2_reg, off));
++				EMIT(PPC_RAW_STDX(src_reg, dst_reg, tmp2_reg));
++			} else {
++				EMIT(PPC_RAW_STD(src_reg, dst_reg, off));
++			}
++			break;
++		}
++		break;
++	default:
++		pr_err_ratelimited("unexpected atomic load/store op code %02x\n",
++				   imm);
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
+ /* Assemble the body code between the prologue & epilogue */
+ int bpf_jit_build_body(struct bpf_prog *fp, u32 *image, u32 *fimage, struct codegen_context *ctx,
+ 		       u32 *addrs, int pass, bool extra_pass)
+@@ -898,8 +963,25 @@ int bpf_jit_build_body(struct bpf_prog *fp, u32 *image, u32 *fimage, struct code
+ 		/*
+ 		 * BPF_STX ATOMIC (atomic ops)
+ 		 */
++		case BPF_STX | BPF_ATOMIC | BPF_B:
++		case BPF_STX | BPF_ATOMIC | BPF_H:
+ 		case BPF_STX | BPF_ATOMIC | BPF_W:
+ 		case BPF_STX | BPF_ATOMIC | BPF_DW:
++			if (bpf_atomic_is_load_store(&insn[i])) {
++				ret = emit_atomic_ld_st(insn[i], ctx, image);
++				if (ret)
++					return ret;
++
++				if (size != BPF_DW && insn_is_zext(&insn[i + 1]))
++					addrs[++i] = ctx->idx * 4;
++				break;
++			} else if (size == BPF_B || size == BPF_H) {
++				pr_err_ratelimited(
++					"eBPF filter atomic op code %02x (@%d) unsupported\n",
++					code, i);
++				return -EOPNOTSUPP;
++			}
++
+ 			save_reg = tmp2_reg;
+ 			ret_reg = src_reg;
+ 
+diff --git a/tools/testing/selftests/bpf/progs/bpf_misc.h b/tools/testing/selftests/bpf/progs/bpf_misc.h
+index 530752ddde8e4..c1cfd297aabf1 100644
+--- a/tools/testing/selftests/bpf/progs/bpf_misc.h
++++ b/tools/testing/selftests/bpf/progs/bpf_misc.h
+@@ -229,7 +229,8 @@
+ 
+ #if __clang_major__ >= 18 && defined(ENABLE_ATOMICS_TESTS) &&		\
+ 	(defined(__TARGET_ARCH_arm64) || defined(__TARGET_ARCH_x86) ||	\
+-	 (defined(__TARGET_ARCH_riscv) && __riscv_xlen == 64))
++	 (defined(__TARGET_ARCH_riscv) && __riscv_xlen == 64)) || \
++	  (defined(__TARGET_ARCH_powerpc))
+ #define CAN_USE_LOAD_ACQ_STORE_REL
+ #endif
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.47.1
+
 
