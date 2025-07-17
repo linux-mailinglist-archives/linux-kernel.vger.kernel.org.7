@@ -1,148 +1,174 @@
-Return-Path: <linux-kernel+bounces-735465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCD9FB08FB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:41:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93548B08FB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:41:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E3163B5F31
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:40:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E93CB1C41C50
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:41:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827252F85D2;
-	Thu, 17 Jul 2025 14:41:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3E202F7D0A;
+	Thu, 17 Jul 2025 14:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GP448qg6"
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KbIs/ANW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D05B2F7CFF
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4230D2F7CEF
 	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 14:41:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752763272; cv=none; b=Mh1HLWhnfFb/O7NlRWQdwzXPmhDmIoeJlOjl4MSq1VFScpsG+WlQirSOpxIHjEmKRnfTXeV0FoExhQ73TW+r1djesss9QSWmSFaTsO7KDm7w74PfwK0JOvb5FB0UKqJXkKiD/+M7tsjqd6tVfz2Kj5p2atBmxDhowI0Hrff/H1A=
+	t=1752763270; cv=none; b=Qu+AJpc4rX+KCHCkryur6LK8wkHtF+mntJlfkRyf/YJ1VC3ho1shwRyTg6uT6HSsuaLCkTNnjqna8+2k6faN7+usxnXp7iWWBdTijE7Y/hKa92u8SzGbGyqd3KBvFGWfaxnx//q/uMboDMiDiOFFoWzT2s5lOnLhtyGWr/RyibU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752763272; c=relaxed/simple;
-	bh=labVMQqdJyvR5/jdB07TNWqq4YEJd5WCdpHU0L+bS5o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NP7hbhKwTiLrhhxc3sVHX9MKPcTVEbnOVe1v1/XfrhXGltxdvF5LVrSjIB4q/TloHuh/IbSQrRJoqrQypdrU+anb0oyWgKgRh1uruRtlupDbJCNTkE+g3XQ3BN58UCTRRK5Fp9oPIB198YjN6Axwfy/9nXouPT8VOWJ6lDry4ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GP448qg6; arc=none smtp.client-ip=209.85.210.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-72c09f8369cso362758a34.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 07:41:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752763269; x=1753368069; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KOLlzqOvF05B7j1/cu0Mg0IOPy7P+W/8Ezls8+sFmRc=;
-        b=GP448qg6hgmMNFqEA3GIdZ5r8Vz6milupeD3S3rNz82MuyLRdsGxrtYSQfGS8Ra0bM
-         EvmMzDemtK3w1ry6N5Kll4Ra59bkqaE/XC5c4jVe32k9FUlX1R43bDAmATohadKMsgnu
-         iSklSxqB/cdOovmJh2Ca0andhd6KdaNxmRwB8tGFQusIiwTIenEQJAHZAbmWpkBl+WWO
-         E2sJ0hQmetRzZUaJOFNp6qFB3NVjDGioMFJJ5PPlMTkcMTbkJhAIDe+3ZTtEtgTWzgpl
-         VAcSG6HA0xoJqaccYStxve5x3W6idT7Cjf81W+qT7EGgCZ62BP9ipg3d/fSQFfO1rPZE
-         wQ8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752763269; x=1753368069;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KOLlzqOvF05B7j1/cu0Mg0IOPy7P+W/8Ezls8+sFmRc=;
-        b=qISmFezrtO9bzHa8EjS3mI7HoZXhHYnsBFjJd0HrVNFVDI6pgmSiN9xh6iPUY0ofKq
-         jDwSHiMbXffIfZ7ANC68ilrLvC2bNCAC2wTa17cJo/d3FQ8RI6tAjXQbj/gp0ybUoxkQ
-         BMSQBFbm1tXWPhgA3FgyFG7YZbP2jmcrezSD/BFi0zVtTjOPSaukPkNDkyL6pq8Xok/S
-         3vrT0EyM5P5WVGghKrKW10/Pj6AnsWZlf/+8qw+vQPXvgaxqDbv27z/vKUREgpOJzQ9i
-         V//N7B1VKOdLtWz2huCwdRi/t33G+AB4HvfLO0BmpBdOo6c9VjopiOZREM9fH8PLzq/P
-         wcUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVneRi6XsYFfU2dTrtthojKpI892WDOG8daH3wdZZN3fkNPQSLvO7mAfdpDEtVdMcIomTvBVJOXT4xIBBI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBpMV0y//zzi4zmT8hzEAQI/XAgMU+KWj90XKnDkJy54zdSzIj
-	L5cQ6jjGj82FYm4L+lDjwd54H1NM2IPJQk1T/Pm2Gs9fSzjv5QaViSFRVfDq8XgKiePH29qErqK
-	DVbKb
-X-Gm-Gg: ASbGncs+JkphksvZq9+0M58hIBOqcPiZT/MlbO/5kOOHMdaSv0RKIvNHaY6Yjnh5A40
-	DjY8X0gOVTrFl+gWiSVq8J1nVQAROeHLoanHOIUWNxm6/uNhUVllmvvpy6E8q13VtfYRiFSNAeT
-	YWaaMaJkpI7sPbAas71iU/AnP+TySYv/0mY+hqYkX9xZ9CqSku6AYW4CZFr35ZwHtb583yK5bhC
-	Nni5Hk+bkFfRI0dRXgHyJEagTrazA06OlWcPBxFXUwLp3YcXtgHgaCzA32/AH4746i+gBXzgCpF
-	cFYyRK7DmRbQsesXAmK6dQaAwZWWMO+pjMdRyh/OBKmo5DdDRSGVK8y/pBHukwMc/2T4B5MtlIr
-	WFo44JkbltcYkxLUjaUMO2OH2NLAx
-X-Google-Smtp-Source: AGHT+IHY11r3be2AgKsKzf76injlnJw53F2oFbGYqPw0mSWwU9m3Yv2l9kEZegI+e2J/7Nm8/oQtQQ==
-X-Received: by 2002:a05:6830:7202:b0:73d:baa3:82cc with SMTP id 46e09a7af769-73e64aa353bmr4811092a34.19.1752763269281;
-        Thu, 17 Jul 2025 07:41:09 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:2c38:70d4:43e:b901])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2ff8ede965fsm2575267fac.40.2025.07.17.07.41.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 07:41:08 -0700 (PDT)
-Date: Thu, 17 Jul 2025 17:41:06 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Timothy Hayes <timothy.hayes@arm.com>,
-	Sascha Bischoff <sascha.bischoff@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] irqchip/gic-v5: Fix error handling in
- gicv5_its_irq_domain_alloc()
-Message-ID: <5c22b679-853d-410c-973a-ba3c91a54b84@suswa.mountain>
-References: <cover.1752693640.git.dan.carpenter@linaro.org>
- <4787a3c4-9713-4b99-9b8a-7ba227e91d02@sabinyo.mountain>
- <aHjBe9k2Igl2iopq@lpieralisi>
+	s=arc-20240116; t=1752763270; c=relaxed/simple;
+	bh=M70QIvwCfbnbEpWkxSiHmZ2BYCo7iAMYI+jBZj5rYts=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=BniA0kCZj2kUn1RBjQ3wnXHWTuDSg3+MtAV/4UzTNKmo1s6n+Mv+MwFR1+XBQZG5pSMV8XI4EFb2Hd0nCnXL/unUiwkgrNmLR0laat5tQqJ4/hYUprTAQNUdKT81Ln3WgWZ4rlpWBpAeD7UpKt+oYgU7jC4RmXuVW08h1p6k3Pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KbIs/ANW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4B99C4CEE3;
+	Thu, 17 Jul 2025 14:41:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752763270;
+	bh=M70QIvwCfbnbEpWkxSiHmZ2BYCo7iAMYI+jBZj5rYts=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=KbIs/ANWbf1XfFagsM6aLVq6l8otMp+q9GnmZEG+yzX5HecqdxatObz364V6ftU9K
+	 3LUntmGowRR9ClduIJE06EYupXRkp/rK72oJXvrScrNUXOC0X4TD5CA6pTqgc7ncWN
+	 FHqXrWVHnols08q4jmIP7aU+ldfDlA7wyiqhUYM31UCeOgNJzZt7Nwt/emooNsX3Ed
+	 6jraMC9pe3sFzS7WT+1rze4hcux7/dqe/vPZeqd7CdNipZK3BqZdjG558wutrPufVE
+	 cCpS9urkZGz2lZjPe3q9bDVGNwIzedHbcM1qTjtGx4faE0lIyg13uLv0pWWxTMHSjb
+	 9yTnOrzdHbqSg==
+Message-ID: <1dd13d22-b8c5-42af-8584-f123bd43db6c@kernel.org>
+Date: Thu, 17 Jul 2025 16:41:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aHjBe9k2Igl2iopq@lpieralisi>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] regulator: rt5133: Add RT5133 PMIC regulator Support
+To: jeff_chang@richtek.com, lgirdwood@gmail.com, broonie@kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250717081623.2674579-1-jeff_chang@richtek.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250717081623.2674579-1-jeff_chang@richtek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 17, 2025 at 11:25:15AM +0200, Lorenzo Pieralisi wrote:
-> On Wed, Jul 16, 2025 at 02:38:22PM -0500, Dan Carpenter wrote:
-> > There are two issues to fix in this code:
-> > 1) If gicv5_alloc_lpi() fails the original code was checking the wrong
-> > variable.  Fix the mixup between "ret" and "lpi".
-> > 2) If irq_domain_alloc_irqs_parent() fails, then clean up all the loop
-> > iterations instead of just the current iteration.
-> > 
-> > Fixes: 57d72196dfc8 ("irqchip/gic-v5: Add GICv5 ITS support")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> >  drivers/irqchip/irq-gic-v5-its.c | 14 +++++++++++---
-> >  1 file changed, 11 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/irqchip/irq-gic-v5-its.c b/drivers/irqchip/irq-gic-v5-its.c
-> > index 55360ae9f1f6..8cc8563e27d5 100644
-> > --- a/drivers/irqchip/irq-gic-v5-its.c
-> > +++ b/drivers/irqchip/irq-gic-v5-its.c
-> > @@ -949,15 +949,18 @@ static int gicv5_its_irq_domain_alloc(struct irq_domain *domain, unsigned int vi
-> >  	device_id = its_dev->device_id;
-> >  
-> >  	for (i = 0; i < nr_irqs; i++) {
-> > -		lpi = gicv5_alloc_lpi();
-> > +		ret = gicv5_alloc_lpi();
-> >  		if (ret < 0) {
-> >  			pr_debug("Failed to find free LPI!\n");
-> >  			goto out_eventid;
+On 17/07/2025 10:16, jeff_chang@richtek.com wrote:
+> From: Jeff Chang <jeff_chang@richtek.com>
 > 
-> This should be:
+> RT5133 is an intefrated chip. It includes 8 LDOs and 3 GPOs that
+> can be used to drive output high/low purpose. The dependency of the
+> GPO block is internally LDO1 Voltage. If LDO1 voltage output disabled,
+> GPO cannot be used to drive output high. It need to pay more attention
+> on the usage.
 > 
-> goto out_free_lpi;
-> 
+> Signed-off-by: Jeff Chang <jeff_chang@richtek.com>
+> ---
+>  .../bindings/regulator/richtek,rt5133.yaml    | 164 +++++
 
-Yes, you're right.
+Please run scripts/checkpatch.pl on the patches and fix reported
+warnings. After that, run also 'scripts/checkpatch.pl --strict' on the
+patches and (probably) fix more warnings. Some warnings can be ignored,
+especially from --strict run, but the code here looks like it needs a
+fix. Feel free to get in touch if the warning is not clear.
 
-> otherwise we miss cleaning up for [0, i - 1] on LPI alloc failure.
-> 
-> I can fix it up - not sure it is worth splitting it into two patches,
-> just let me know please how you want me to handle it.
+<form letter>
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC. It might happen, that command when run on an older
+kernel, gives you outdated entries. Therefore please be sure you base
+your patches on recent Linux kernel.
 
-I don't think it should be split up.  As a reviewer I would be annoyed
-by a split up version of this.
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline) or work on fork of kernel
+(don't, instead use mainline). Just use b4 and everything should be
+fine, although remember about `b4 prep --auto-to-cc` if you added new
+patches to the patchset.
 
-I'm a little bit surprised by the offer to fix it up for me...  Is this
-going through your tree?  It's probably easiest if I just send a v2...
-Let me do that.
+You missed at least devicetree list (maybe more), so this won't be
+tested by automated tooling. Performing review on untested code might be
+a waste of time.
 
-regards,
-dan carpenter
+Please kindly resend and include all necessary To/Cc entries.
+</form letter>
 
+
+...
+
+> +
+> +static const struct of_device_id __maybe_unused rt5133_ofid_tbls[] = {
+> +	{ .compatible = "richtek,rt5133", },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, rt5133_ofid_tbls);
+> +
+> +static struct i2c_driver rt5133_driver = {
+> +	.driver = {
+> +		.name = "rt5133",
+> +		.owner = THIS_MODULE,
+
+That's old template (like 12 yo one) you are using.
+
+Maybe below will be helpful to find more of such artifacts:
+
+Please run standard kernel tools for static analysis, like coccinelle,
+smatch and sparse, and fix reported warnings. Also please check for
+warnings when building with W=1. Most of these commands (checks or W=1
+build) can build specific targets, like some directory, to narrow the
+scope to only your code. The code here looks like it needs a fix. Feel
+free to get in touch if the warning is not clear.
+
+
+
+Best regards,
+Krzysztof
 
