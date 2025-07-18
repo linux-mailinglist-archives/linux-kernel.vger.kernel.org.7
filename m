@@ -1,175 +1,142 @@
-Return-Path: <linux-kernel+bounces-736884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C711CB0A49B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:58:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27B8BB0A4AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:00:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10B6A16D9CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:58:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 280F01AA8020
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA352DC329;
-	Fri, 18 Jul 2025 12:57:35 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFDFB2DC32B;
+	Fri, 18 Jul 2025 13:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="OHanrKrF"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D1F72DCBEB
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 12:57:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0AF52248AE;
+	Fri, 18 Jul 2025 13:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752843454; cv=none; b=m+nh7Xr95Xbs3eZ/z4GIlOWHi0Hu9a9TQWr2ewACarBjdo2ZEHw/xtxV904cGKcM0jq7CpzXHcWFfMrOCFRgt1rJtj3VugXt4U5JHSL70uAkDHirFsaAOyQErcD5Sunh2EK0nsZX3DZYJGXYTlNgWnY/7+5XcwFDZ5uXofWpFZU=
+	t=1752843611; cv=none; b=mgkEbYxemDKKoMM7IOOYYo/6vpg7XAG5DdH3QK8mbc/WDpSO3cDfDgp1hDdUyY75+NsFY9Nr3Y11CKvaiELCGJhFJbySN+1Sbf8tyn9K1yNdaXWCaVsKwbF3kFRqjDAKaf57gOcL9iTIjyW8J0thAMs3AIFW0R3afZLa2gXANYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752843454; c=relaxed/simple;
-	bh=9QI9gQvGz2O+aUigmCxNyZWiqdHDygWWz2gSYH1jmZI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=HeBW5S3X8RbJ7ekxKat5ILdlDVgGofw80B4rn63/YFkEgxh3cFhCcybvXHSfZ9N3Hq4LYR6J6ntdME6kKRbA5Fw9sHa3LSkjlJucTl9J9nxxjGSCKmedEnMquMIsB7RYgasoS5JYwM8uOi7ZPwCTko8UsnlRJ5nwfdBVJdd/hZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-86cff1087deso388121239f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 05:57:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752843452; x=1753448252;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IafqCpVzHsvptLgcHZRUUTrHcF1qc7C+r1Ulg9r4YvM=;
-        b=j+fSzuPP1a+s6EV/biA9pV1a63reTeDCHyZV4irR9D1GJqVIK68odu86mHwdhcJt7T
-         W2g8pZKBj5B+wpglWUNIPbc1tfyQuy2ewszfmHMrsIAKtDOi9A6cZzjp/RVj79ZoDBU+
-         wcoMxJ/cK5jNGWqRlWhTK/7AkEuwbay72PUI6/8gXpyjhflfob0c5/vKq6/QcILYt2d9
-         qzTHEE1yRQglweSVhX8rI+qjKk2iE+yDtSZDvkT5NWgrpAzcmR5mso0E6oYFJzHT11hY
-         5XTWsKAKozL9eQOsKpxmP9R7NJqrGw9Q4NZTo4+fPpiqMe21Q+6t7dh6LA+Q+vcbwQ47
-         AdxA==
-X-Gm-Message-State: AOJu0YzLYUrJZwyR8050Q2F56UbwApHEzyXy4/nFcSN4gvdNkdpByqqy
-	u8mFdDIRYdgZdghDSW0MVK/xe/VQHjJghqJkQg4MHuYGlN3KahD+m9jeQWgjrRf7AscO4q9QyQW
-	YIztxWvTg6hl7K7yiIj609+f+Hoqzqlg0ErDmtBQjWffCdokxZE5Cjt7I2iU=
-X-Google-Smtp-Source: AGHT+IHk3+82OUR+Aq3whAaUzx2H+NeNcJbWQiXuebr7PrPb4pwMLgudcKm69doo2Pn7w1ILye6ppKNlqScLScM+d0rWhQdcSmfi
+	s=arc-20240116; t=1752843611; c=relaxed/simple;
+	bh=IZbkQ3xfBnJRR8mLGXwqgyZgLY0IodQhcv+PYEmI1VU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k2wPUhTXXpzvuFtt2FHcSOCjocNGNl0fvCMzEAjREQN74WTimqtGeRHwrLyCQeKkiuSa20ApsfrE6UgmuEGVZF/0r4HkdIlCg3N8Aomrr6e1tuW8zW7KvT5o/RWUMeavxjcm+vgoJPPaLC+gWzQgup5vScS4+rOSBVMyhkX3Xp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=OHanrKrF; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56ICwse5714132;
+	Fri, 18 Jul 2025 07:58:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1752843534;
+	bh=yUsTOiGa3kRqTBNBK7IpA6+SLe5En1zTCsg3sQMTpbs=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=OHanrKrF/DefV8Mrb2bedfmKNAHbxsndAxEdnsJc3QfgJwi0t0OhX/DoJ34XNSKbE
+	 QG4IiVhyMWz1oJ7LSIU8MRdFM2mHXgWlPXYYQt+M5v29Vs42rIAhwdGHdOc+Yq+x8h
+	 k4rmecN1GBT/hi5iA7VJxtc+syPyT8ExdGH5x+s4=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56ICwsg43508025
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 18 Jul 2025 07:58:54 -0500
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 18
+ Jul 2025 07:58:53 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 18 Jul 2025 07:58:53 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56ICwraF3541832;
+	Fri, 18 Jul 2025 07:58:53 -0500
+Date: Fri, 18 Jul 2025 07:58:53 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Kees Cook <kees@kernel.org>
+CC: Arnd Bergmann <arnd@arndb.de>, Russell King <linux@armlinux.org.uk>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner
+	<tglx@linutronix.de>,
+        Santosh Shilimkar <ssantosh@kernel.org>, Lee Jones
+	<lee@kernel.org>,
+        Allison Randal <allison@lohutok.net>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Ingo
+ Molnar <mingo@kernel.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Andrey Konovalov <andreyknvl@gmail.com>,
+        Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Nathan Chancellor
+	<nathan@kernel.org>,
+        Nicolas Schier <nicolas.schier@linux.dev>,
+        Nick
+ Desaulniers <nick.desaulniers+lkml@gmail.com>,
+        Bill Wendling
+	<morbo@google.com>,
+        Justin Stitt <justinstitt@google.com>, <linux-kernel@vger.kernel.org>,
+        <x86@kernel.org>, <kasan-dev@googlegroups.com>,
+        <linux-doc@vger.kernel.org>, <kvmarm@lists.linux.dev>,
+        <linux-riscv@lists.infradead.org>, <linux-s390@vger.kernel.org>,
+        <linux-efi@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+        <linux-kbuild@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kselftest@vger.kernel.org>, <sparclinux@vger.kernel.org>,
+        <llvm@lists.linux.dev>
+Subject: Re: [PATCH v3 05/13] arm: Handle KCOV __init vs inline mismatches
+Message-ID: <20250718125853.75g4nv2dnbkklud6@leggings>
+References: <20250717231756.make.423-kees@kernel.org>
+ <20250717232519.2984886-5-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:15ca:b0:875:d450:9297 with SMTP id
- ca18e2360f4ac-879c2917a4bmr1191173839f.5.1752843452190; Fri, 18 Jul 2025
- 05:57:32 -0700 (PDT)
-Date: Fri, 18 Jul 2025 05:57:32 -0700
-In-Reply-To: <68794b99.a70a0220.693ce.0052.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <687a44bc.a70a0220.693ce.0064.GAE@google.com>
-Subject: Forwarded: Private message regarding: [syzbot] [fs?] KASAN:
- use-after-free Read in hpfs_get_ea
-From: syzbot <syzbot+fa88eb476e42878f2844@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250717232519.2984886-5-kees@kernel.org>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On 16:25-20250717, Kees Cook wrote:
+> When KCOV is enabled all functions get instrumented, unless
+> the __no_sanitize_coverage attribute is used. To prepare for
+> __no_sanitize_coverage being applied to __init functions, we have to
+> handle differences in how GCC's inline optimizations get resolved. For
+> arm this exposed several places where __init annotations were missing
+> but ended up being "accidentally correct". Fix these cases and force
+> several functions to be inline with __always_inline.
+> 
 
-***
+[..]
 
-Subject: Private message regarding: [syzbot] [fs?] KASAN: use-after-free Read in hpfs_get_ea
-Author: kapoorarnav43@gmail.com
+> diff --git a/drivers/soc/ti/pm33xx.c b/drivers/soc/ti/pm33xx.c
+> index dfdff186c805..dc52a2197d24 100644
+> --- a/drivers/soc/ti/pm33xx.c
+> +++ b/drivers/soc/ti/pm33xx.c
+> @@ -145,7 +145,7 @@ static int am33xx_do_sram_idle(u32 wfi_flags)
+>  	return pm_ops->cpu_suspend(am33xx_do_wfi_sram, wfi_flags);
+>  }
+>  
+> -static int __init am43xx_map_gic(void)
+> +static int am43xx_map_gic(void)
+>  {
+>  	gic_dist_base = ioremap(AM43XX_GIC_DIST_BASE, SZ_4K);
 
-#syz test 
+Reviewed-by: Nishanth Menon <nm@ti.com>
 
-From: Arnav Kapoor <kapoorarnav43@gmail.com>
-Date: Fri, 18 Jul 2025 12:00:00 +0000
-Subject: [PATCH] hpfs: fix use-after-free in hpfs_get_ea
-
-Fix a use-after-free vulnerability in hpfs_get_ea() where corrupted
-extended attribute data could cause strcmp() to access freed memory.
-
-The issue occurs in the EA iteration loop where next_ea() can produce
-invalid pointers due to insufficient validation of ea->namelen and
-the calculated next EA position. This can lead to accessing memory
-that has been freed or is outside valid boundaries.
-
-Add proper bounds checking to ensure:
-1. EA namelen is reasonable (< 256)
-2. EA structure doesn't exceed the EA area bounds  
-3. next_ea() result stays within valid EA boundaries
-
-Reported-by: syzbot+fa88eb476e42878f2844@syzkaller.appspotmail.com
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Cc: stable@vger.kernel.org
-Signed-off-by: Arnav Kapoor <kapoorarnav43@gmail.com>
----
- fs/hpfs/ea.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
-
-diff --git a/fs/hpfs/ea.c b/fs/hpfs/ea.c
-index 102ba18e561f..7e6e43010fec 100644
---- a/fs/hpfs/ea.c
-+++ b/fs/hpfs/ea.c
-@@ -135,7 +135,31 @@ char *hpfs_get_ea(struct super_block *s, struct fnode 
-*fnode, char *key, int *si
-  secno a;
-  struct extended_attribute *ea;
-  struct extended_attribute *ea_end = fnode_end_ea(fnode);
-- for (ea = fnode_ea(fnode); ea < ea_end; ea = next_ea(ea))
-+ for (ea = fnode_ea(fnode); ea < ea_end; ea = next_ea(ea)) {
-+ /* Validate EA structure bounds */
-+ if ((char *)ea + sizeof(*ea) > (char *)ea_end) {
-+ hpfs_error(s, "EA structure exceeds bounds");
-+ return NULL;
-+ }
-+ 
-+ /* Validate namelen to prevent overflow */
-+ if (ea->namelen >= 256) {
-+ hpfs_error(s, "EA namelen too large: %d", ea->namelen);
-+ return NULL;
-+ }
-+ 
-+ /* Ensure name field is within bounds */
-+ if ((char *)ea + 5 + ea->namelen > (char *)ea_end) {
-+ hpfs_error(s, "EA name field exceeds bounds");
-+ return NULL;
-+ }
-+ 
-+ /* Validate next_ea() result will be within bounds */
-+ if (next_ea(ea) > ea_end) {
-+ hpfs_error(s, "next EA exceeds bounds");
-+ return NULL;
-+ }
-+ 
-  if (!strcmp(ea->name, key)) {
-  if (ea_indirect(ea))
-  return get_indirect_ea(s, ea_in_anode(ea), ea_sec(ea), *size = 
-ea_len(ea));
-@@ -147,6 +171,7 @@ char *hpfs_get_ea(struct super_block *s, struct fnode 
-*fnode, char *key, int *si
-  ret[ea_valuelen(ea)] = 0;
-  return ret;
-  }
-+ }
-  a = le32_to_cpu(fnode->ea_secno);
-  len = le32_to_cpu(fnode->ea_size_l);
-  ano = fnode_in_anode(fnode);
-
-
-On Friday, 18 July 2025 at 18:10:08 UTC+5:30 syzbot wrote:
-
-Hello, 
-
-syzbot tried to test the proposed patch but the build/boot failed: 
-
-failed to apply patch: 
-checking file fs/hpfs/ea.c 
-patch: **** malformed patch at line 36: if (ea_indirect(ea)) 
-
-
-
-
-Tested on: 
-
-commit: 6832a931 Merge tag 'net-6.16-rc7' of git://git.kernel... 
-git tree: upstream 
-kernel config: https://syzkaller.appspot.com/x/.config?x=f09d04131ef56b22 
-dashboard link: https://syzkaller.appspot.com/bug?extid=fa88eb476e42878f2844 
-compiler: 
-patch: https://syzkaller.appspot.com/x/patch.diff?x=129db382580000 
-
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+https://ti.com/opensource
 
