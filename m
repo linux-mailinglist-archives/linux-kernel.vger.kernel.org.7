@@ -1,116 +1,154 @@
-Return-Path: <linux-kernel+bounces-737126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A275B0A813
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:59:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBBBEB0A819
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 18:06:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A43093B5FE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:59:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DB181C45FA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 16:06:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2321D2E5B15;
-	Fri, 18 Jul 2025 15:59:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16CB12E5B25;
+	Fri, 18 Jul 2025 16:06:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JnNlQPtK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E7OBtMK2"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DFE526ADD;
-	Fri, 18 Jul 2025 15:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257F729ACC8;
+	Fri, 18 Jul 2025 16:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752854392; cv=none; b=n0D7pz6+tSNAqB3gZkt240P7spmxpuUzx5JZTtx+JWERlvbryuF5cfWKMhlU54ykF2qimILPNYAcGbXnmIiMfXtk+MjNnM2asrhaG+EYbm31+m9z7LsDaLXl6m4Hecqt64aOOFxGn0QYqLt4g1z4P+tJ3mrw5UAYssOBpErOq9w=
+	t=1752854761; cv=none; b=Nh3zOPtQmJ+ZPVKprFyFJzkE9//LfNobgaOrYhKHaTwPNxDYT54/aaw2YtNxhpiwQFUSnuhUpbsG1EOjPjf06WPzgXuRQOaMqLlPOSBzqiGYZzTVvqfzQN4wicHQApTTxQOedJNJIwGdom3WZh58hyhPvCi/iBPPyMYlzSIrbbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752854392; c=relaxed/simple;
-	bh=P4hev8OlYY0l7LuAM/+Fw7Y+n28sL4Q39Z9vhY1xmq8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=oCS8PHqiTpoQ8L3aGtJv8iHNbpJPGsqoLaJR7ZrVoQpjkXAQPuRfgJpz3+SSov8WKpUurQS1irn8YazclSzwBV7psCpbdrXlUBWhhIulEjX1w3JftSIwPsn41WWIPubjTr0RYIYi4k2U+JIDzVYvyu/hmVswbG0rKvN8mfTO4kE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JnNlQPtK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3A34C4CEEB;
-	Fri, 18 Jul 2025 15:59:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752854391;
-	bh=P4hev8OlYY0l7LuAM/+Fw7Y+n28sL4Q39Z9vhY1xmq8=;
-	h=Date:From:To:Cc:Subject:From;
-	b=JnNlQPtKr5vNgAnqqAZn8qe9w+d0v2EGt8pYuY/QlPc6fWsrZMrXD8iDhm21GFU2j
-	 WPfLgHwBqPQMULxAZIsLcU7XEz/NmjJa/LviMGiQzUmTx2BLc+xqpRll/iKf75ZD9F
-	 xtr6HP18MPPMzEsUs2HgflhfKQLMpqRTFUWHFrQ7XYgSZPOaNxQF0fy7OmLRDF4P2Q
-	 auzUrDbOPpclU7VKA5QD6OCx82Wqvs6tYEX/Mg4qccUNR4MUhTIxg0U2YXQazq2nfu
-	 EuLgK9tApeASInxfXf2JqWQOA4jQ+Wlrz9c6zinkfNxMH8lkD/pEMkn9SCcj20o+7K
-	 GE61pXqD4d9bg==
-Date: Fri, 18 Jul 2025 17:59:45 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: lkml <linux-kernel@vger.kernel.org>, 
-	linux-i2c <linux-i2c@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>
-Subject: [GIT PULL] i2c-host-fixes for v6.16-rc7
-Message-ID: <2lbfr4r4icozrhnh5vgitzc6dylnxvh7x6fkdytacsy3oncsfe@7usj2u6nbk45>
+	s=arc-20240116; t=1752854761; c=relaxed/simple;
+	bh=vxm02IW1/ASeT4iqjTX4eDaRWpQq90ZfLrekUxRBiLE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MGdBYlB6tBT73LnBq4T8K6zY0nuHBvXR+tI9OxKoBu4eGva4r3ZZM1g0CQo7UyO6MjbaE/G1J4C9TTqpwUyDWY1yeYFAu+mU1Qq48pke25RUodRmgcRexdB1qvH9Yp1Jywpt66jJ7ocnBmePnc0Mnyzkr14FrTSr8NxBH88TonE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E7OBtMK2; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-32b435ef653so17577361fa.2;
+        Fri, 18 Jul 2025 09:05:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752854754; x=1753459554; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MZ5QYrkKInHvp97NzNL9SSqlxHA7zeGJnZfWs7bkBf0=;
+        b=E7OBtMK2ytwRb2pQ2OIgoxhBT/4IbZ7AJL6cU+uOEQjmuUhwAzdd4K4mn6oDDpKGCh
+         iH5CMA56Zd9+KQRicnfiwMdY+s63D/VUvX2bH0drsMx13qOiA10SP3TVsWOVyNRKaSLL
+         QmdDitLw1mIXxzB7+bShkRowhRRa3qNXdzfB4RYB8aTVvSc/yqUOF724a33IoPGhn+eI
+         bAwvrlH6RrZ8+aV7tgLChJEfxWAaCY1K6bsf7GGNJI1EO7i3x+cX1ZItIHjQO1cnYXzu
+         Osjs8h5KL+LVEUZwpWjt1xD03LdbEZXLeUYEvXjpU9LBTRwfoFbBnotbo4KkshNi+Jvx
+         r0pQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752854754; x=1753459554;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MZ5QYrkKInHvp97NzNL9SSqlxHA7zeGJnZfWs7bkBf0=;
+        b=C6+pCHCh6h9+lBm/DKJXBh4g2GyEYGvoya/Ov7OoP6Rb6Gsu6NcA7bk2SF8xFQnotA
+         XQLB/YMZ6lnRxwHgREj9VYnnn3QpuFQRoYJZHI1bu0kag4Z6p0qClytDvxxDFfWhqIST
+         COzVQIMuhpwk+rI0w8sTDLZYuy1r9yt6mWhtxZVVhCRTts5W4T8eIo8Bxmo+rq1oowXM
+         iI+Y5jLVXnXY8b2PM647sw4TLTDC49G9lm/3gEM32d1l32Q5Csku34y3uYucH9SIsQWP
+         9d6xeVGzftq4ugOdg2HipNWs6xMB7JjlKfOMMt6dQP0MZYU2nNzgYBui2Gjh1COIS5WM
+         EMqw==
+X-Forwarded-Encrypted: i=1; AJvYcCU9Ep5TO8YfqG8pmTjqrQOmRhgfbdplN5dIaCL5N1DhwPSFs+s8aMyOJdsvyRjvpm2fH6T0r/VtBYliM1U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyL1JP+Iltufa4ZGuwANPsnnfpKnskp3AtLTlzE/jVNLFTcuNAi
+	cnKqIsVYL4VxmVY8padwtr79dYVmz4KBliPCfGoutxjqp5sLEAPjY/0VOnnJU2dw2CIt3HRNHVq
+	7+a5Mon8ZJD+FxtLsmFy3+jyfFnR0xTk=
+X-Gm-Gg: ASbGncuz88ORyhMeiw/tNk05HRExxHExqruwG3EMcoVZkwIIMVV/JfkXo6KIwyCDPM5
+	lyozOC2JtoOidRvAyxN3AeU+SJGMiKrfmTwj45ELZRxoh3BFwjWaI4yhU/C4uWIbbxAXE71Xlw5
+	SJxef1pVYzc/JvyHeoZCKLexS97tLmhGkYt5YaFbQNZ4BRBBrg2nGdC9YcCFenByqxt3uv42llw
+	4asaA==
+X-Google-Smtp-Source: AGHT+IHFX/iGitJSLJpKfzphir8WBXsEvpHgjepqiDLNytF+5Uc8m78PwyljNSeFTaOC1LDcJ5QvQjcTK5VMoAZgno0=
+X-Received: by 2002:a05:651c:b21:b0:319:d856:c2f3 with SMTP id
+ 38308e7fff4ca-3309a4a9296mr21751821fa.10.1752854753834; Fri, 18 Jul 2025
+ 09:05:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+References: <aHfd_H6c9MheDoQP@chrisdown.name> <CABBYNZJo48983SWhxcB7UzWXPeUofRCMhQ8mJjih-rJoTET3_Q@mail.gmail.com>
+ <aHoCQ_RfBl5Zm4oQ@chrisdown.name>
+In-Reply-To: <aHoCQ_RfBl5Zm4oQ@chrisdown.name>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Fri, 18 Jul 2025 12:05:41 -0400
+X-Gm-Features: Ac12FXzr7Eg2f3B19KfNkWyDPbZJF1EOXEReVru_gzfVS_fuQMotq15wl6tTitc
+Message-ID: <CABBYNZJ60JUyz30u8QXvv6OO5dAu1A5-JDB_jJ=H_yR6+WYfng@mail.gmail.com>
+Subject: Re: [PATCH] Bluetooth: hci_event: Mask data status from LE ext adv reports
+To: Chris Down <chris@chrisdown.name>
+Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-team@fb.com, Jaganath Kanakkassery <jaganath.k.os@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Wolfram,
+Hi Chris,
 
-in this pull request you have included also the previous week's
-patches. Everything is rebased on top of rc6.
+On Fri, Jul 18, 2025 at 4:13=E2=80=AFAM Chris Down <chris@chrisdown.name> w=
+rote:
+>
+> Hi Luiz,
+>
+> Thanks for the review!
+>
+> Luiz Augusto von Dentz writes:
+> >Can you include a sample trace of the above?
+>
+> Is that with btmon or similar? Sorry, I'm not a regular contributor to th=
+is
+> subsystem :-)
+>
+> I mostly have a personal desire to get this merged because it's a particu=
+larly
+> noisy case where I happen to live :-) These are all with 0x40:
+>
+>    % dmesg | wc -l
+>    3815
+>    % dmesg | grep -c 'Unknown advertising'
+>    3227
 
-I wish you a great weekend,
-Andi
+Try to capture one of them using btmon and then add to the patch descriptio=
+n.
 
-The following changes since commit 347e9f5043c89695b01e66b3ed111755afcf1911:
+> >Also it would be great to  have a mgmt-tester for example that attempts =
+to
+> >generate an advertisement like that to exercise such change.
+>
+> Looks like that's in Bluez userspace code right, so what's the order of d=
+oing
+> these things?
+>
+> >> -       if (evt_type =3D=3D LE_EXT_ADV_NON_CONN_IND ||
+> >> -           evt_type & LE_EXT_ADV_DIRECT_IND)
+> >> +       if (pdu_type =3D=3D LE_EXT_ADV_NON_CONN_IND ||
+> >
+> >I'm not sure I would keep checking for  LE_EXT_ADV_NON_CONN_IND, maybe
+> >just return LE_ADV_NONCONN_IND, LE_EXT_ADV_NON_CONN_IND is not
+> >actually a bit it is the absence of any bits being set, so I guess the
+> >only invalid adv are the ones for legacy which seem to require a bit
+> >to be set.
+>
+> So are you thinking of doing this?
+>
+>    if (!(pdu_type & ~(LE_EXT_ADV_DIRECT_IND)))
+>            return LE_ADV_NONCONN_IND;
 
-  Linux 6.16-rc6 (2025-07-13 14:25:58 -0700)
+We can probably return early on if (!evt_type) return
+LE_ADV_NONCONN_IND since there is no point in evaluating it if it is
+zero.
 
-are available in the Git repository at:
+> Thanks for your help!
+>
+> Chris
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags/i2c-host-fixes-6.16-rc7
 
-for you to fetch changes up to c39101198e733cacb03fbaa6fcefa15b9c04361c:
 
-  i2c: qup: jump out of the loop in case of timeout (2025-07-17 00:57:13 +0200)
-
-----------------------------------------------------------------
-i2c-host-fixes for v6.16-rc7
-
-- omap: add missing error check and fix PM disable in probe
-  failure path
-- qup: avoid potential hang when waiting for bus idle
-- stm32: unmap DMA buffer on xfer failure and fix device
-  reference
-- tegra: improve ACPI reset error handling
-- virtio: use interruptible wait to prevent hang during transfer
-
-----------------------------------------------------------------
-Akhil R (1):
-      i2c: tegra: Fix reset error handling with ACPI
-
-Christophe JAILLET (2):
-      i2c: omap: Handle omap_i2c_init() errors in omap_i2c_probe()
-      i2c: omap: Fix an error handling path in omap_i2c_probe()
-
-Clément Le Goffic (2):
-      i2c: stm32: fix the device used for the DMA map
-      i2c: stm32f7: unmap DMA mapped buffer
-
-Viresh Kumar (1):
-      i2c: virtio: Avoid hang by using interruptible completion wait
-
-Yang Xiwen (1):
-      i2c: qup: jump out of the loop in case of timeout
-
- drivers/i2c/busses/i2c-omap.c    |  7 +++++--
- drivers/i2c/busses/i2c-qup.c     |  4 +++-
- drivers/i2c/busses/i2c-stm32.c   |  8 +++-----
- drivers/i2c/busses/i2c-stm32f7.c | 24 +++++++++---------------
- drivers/i2c/busses/i2c-tegra.c   | 24 +-----------------------
- drivers/i2c/busses/i2c-virtio.c  | 15 ++++++++-------
- 6 files changed, 29 insertions(+), 53 deletions(-)
+--=20
+Luiz Augusto von Dentz
 
