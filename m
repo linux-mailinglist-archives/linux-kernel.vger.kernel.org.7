@@ -1,123 +1,164 @@
-Return-Path: <linux-kernel+bounces-737330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C77AFB0AB05
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 22:18:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4242B0AAF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 22:06:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA4995A8383
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 20:18:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CCC01C48272
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 20:06:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C41C721ABBB;
-	Fri, 18 Jul 2025 20:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4AF1FE45D;
+	Fri, 18 Jul 2025 20:06:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b="ebVMBZ+m"
-Received: from mace.gateworks.com (mace.gateworks.com [174.136.5.171])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y9sovkPL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A9A11712;
-	Fri, 18 Jul 2025 20:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=174.136.5.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F8DBD517;
+	Fri, 18 Jul 2025 20:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752869928; cv=none; b=DyaJ9+g7r4FMWivugbeWzCsFCVem2E5dF+5bUEr14QVdIrZycQNQ8yH2EiGFVXoqZSqNopKrn/T81h3p8h+d/Wcf/ODJjIDjsxux4FfvH9K2Jq1CaPvz8okLEbv6b3RqfYwEg0hyWJ7jZDbwCdG8I/Mh0KfVN1f3NCeRbWyDgg0=
+	t=1752869167; cv=none; b=M63oaJxmDmm38IG8BLhsMximjJwDIaFDZUvguU4vtT+tCHO//CRq97TLH6akv/EZ9jlutw/F5shNlXH/fP9ro/5UMfZYIZEVZXrGReEomnbGPQuF5l75Tl1q8iivJprwLI2tKaCvIiZW3W6WrhWXmU+8Ihp8ayasVvAQuq0v6Tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752869928; c=relaxed/simple;
-	bh=33/BNh7Nc4NFJrUbX8P6X/yoW8tk1NwIk2hOUkZN2lw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QJiFUNBbWAiYCjNOtb8qv5AMcVcAVWCypY4h3MOCxqLE5Mfj4BBe146895HakOnKTwDOYfudZT1S2tFzlToyCS4vt9xfW3arupfYq74uW0eJ+f+dk2NZWHJKCq9PlaEmlVNiQwif95P33kwGdfgH6pOn6HVFBdGdwZ+Snmd03Ds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com; spf=pass smtp.mailfrom=gateworks.com; dkim=pass (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b=ebVMBZ+m; arc=none smtp.client-ip=174.136.5.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gateworks.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=gateworks.com; s=gwtrack; h=Content-Transfer-Encoding:MIME-Version:
-	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=txiNjIfadBZ8TvDS8U+kB99ooME0U4CCdiENzeCPlpg=; b=ebVMBZ+mymU4AKD70hv2nRPdib
-	0VBt2A8pQrGvQ2gESj9c8/FN5/DKo1Rfj9uVfXwDJUZzA5lwRQcFiLtkLteOwiwKc0lRblLyDvmuN
-	N/WDycYr0giAqOb9nfWz6Q3hPzh3zDG+ZhO97yX+Fkxtt/rkviyTZ02uSWBJGWHQGzz2ZhU83CP3T
-	7LcieoCqIV0dcENA5JGQZPqa97heZiduOOIrAkASGfX7NPC7xnwXT2Crq3heXm2FZIYcHPTewzuID
-	c8YXeeEs8o1U16FcBXD7e1t+3Wlhn2QOb55nPaxCdVASWtn73AOAWU5My7IyXbl2jr2P2HLBTG1Fx
-	BsjTs74Q==;
-Received: from syn-068-189-091-139.biz.spectrum.com ([68.189.91.139] helo=chewbacca.pdc.gateworks.com)
-	by mace.gateworks.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <tharvey@gateworks.com>)
-	id 1ucrIK-00Gddx-Sw;
-	Fri, 18 Jul 2025 20:03:01 +0000
-Received: by chewbacca.pdc.gateworks.com (Postfix, from userid 1154)
-	id AF1953083874; Fri, 18 Jul 2025 13:03:00 -0700 (PDT)
-From: Tim Harvey <tharvey@gateworks.com>
-To: Guenter Roeck <linux@roeck-us.net>,
-	Jean Delvare <jdelvare@suse.com>
-Cc: linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Tim Harvey <tharvey@gateworks.com>
-Subject: [PATCH] hwmon: (gsc-hwmon) fix fan pwm setpoint show functions
-Date: Fri, 18 Jul 2025 13:02:59 -0700
-Message-Id: <20250718200259.1840792-1-tharvey@gateworks.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1752869167; c=relaxed/simple;
+	bh=iM/cBfn6qf7kJPZApTF05wjQcPVP4ARh8oIYFBvOnbQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WLhTAetYpHUz7WNX7PMiox39tNGeWcHFPWgqmCStllmv1jypGATXt5Z8zwEEdGMoFpW4IoYaBkRO8QUcEOoV7kzRwlgRFjNh1RqPJEwiK20T2GlBGxM3rauY2HWNcpQim9XMC1rO7/r/JjZxlT5/mCxP6/fQR9pK3ATc28mHxM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y9sovkPL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A2DFC4CEEB;
+	Fri, 18 Jul 2025 20:06:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752869167;
+	bh=iM/cBfn6qf7kJPZApTF05wjQcPVP4ARh8oIYFBvOnbQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Y9sovkPL7D4ADsST94stWH0zK+qSnkGSP7rTG4uGBOET4Estd53I+YmUj05eVidQY
+	 Z+vhivYCZzdG4JK+0+6+msMFyJNHK0jd9mJWkgZjsA0rWpbTLQod7CrLL/6t4CGjlg
+	 WrBVfNMJ/dnR3gXbbikXOA620EjvAhW2I3S8j55lPP9Ac0ModgGoAYg7tSOm+89kbx
+	 8KW1iUdiwkv/vYGZ5+SIlNRxNvKXtkEX/dfo3XC8eIJM7pp91a1JUHBYV38eZXUUdO
+	 wRgL1XMesXepYg8WKV12cra7adqTbHIwuMPNInU5hpbA2zD1TOoriaAY73a9RXqiGl
+	 MGp/HZUCpQj3w==
+Date: Fri, 18 Jul 2025 21:06:02 +0100
+From: Simon Horman <horms@kernel.org>
+To: "G Thomas, Rohan" <rohan.g.thomas@altera.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Romain Gantois <romain.gantois@bootlin.com>, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Matthew Gerlach <matthew.gerlach@altera.com>
+Subject: Re: [PATCH net-next 3/3] net: stmmac: Set CIC bit only for TX queues
+ with COE
+Message-ID: <20250718200602.GM2459@horms.kernel.org>
+References: <20250714-xgmac-minor-fixes-v1-0-c34092a88a72@altera.com>
+ <20250714-xgmac-minor-fixes-v1-3-c34092a88a72@altera.com>
+ <20250714134012.GN721198@horms.kernel.org>
+ <9f4acd69-12ff-4b2f-bb3a-e8d401b23238@altera.com>
+ <20250716082209.GH721198@horms.kernel.org>
+ <38d05790-eb4a-482a-89ec-8c17cf2e9680@altera.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <38d05790-eb4a-482a-89ec-8c17cf2e9680@altera.com>
 
-The Linux hwmon sysfs API values for pwmX_auto_pointY_pwm represent an
-integer value between 0 (0%) to 255 (100%) and the pwmX_auto_pointY_temp
-represent millidegrees Celcius.
+On Thu, Jul 17, 2025 at 11:50:06AM +0530, G Thomas, Rohan wrote:
+> Hi Simon,
+> 
+> On 7/16/2025 1:52 PM, Simon Horman wrote:
+> > On Tue, Jul 15, 2025 at 07:14:21PM +0530, G Thomas, Rohan wrote:
+> > > Hi Simon,
+> > > 
+> > > Thanks for reviewing the patch.
+> > > 
+> > > On 7/14/2025 7:10 PM, Simon Horman wrote:
+> > > > On Mon, Jul 14, 2025 at 03:59:19PM +0800, Rohan G Thomas via B4 Relay wrote:
+> > > > > From: Rohan G Thomas <rohan.g.thomas@altera.com>
+> > > > > 
+> > > > > Currently, in the AF_XDP transmit paths, the CIC bit of
+> > > > > TX Desc3 is set for all packets. Setting this bit for
+> > > > > packets transmitting through queues that don't support
+> > > > > checksum offloading causes the TX DMA to get stuck after
+> > > > > transmitting some packets. This patch ensures the CIC bit
+> > > > > of TX Desc3 is set only if the TX queue supports checksum
+> > > > > offloading.
+> > > > > 
+> > > > > Signed-off-by: Rohan G Thomas <rohan.g.thomas@altera.com>
+> > > > > Reviewed-by: Matthew Gerlach <matthew.gerlach@altera.com>
+> > > > 
+> > > > Hi Rohan,
+> > > > 
+> > > > I notice that stmmac_xmit() handles a few other cases where
+> > > > checksum offload should not be requested via stmmac_prepare_tx_desc:
+> > > > 
+> > > >           csum_insertion = (skb->ip_summed == CHECKSUM_PARTIAL);
+> > > >           /* DWMAC IPs can be synthesized to support tx coe only for a few tx
+> > > >            * queues. In that case, checksum offloading for those queues that don't
+> > > >            * support tx coe needs to fallback to software checksum calculation.
+> > > >            *
+> > > >            * Packets that won't trigger the COE e.g. most DSA-tagged packets will
+> > > >            * also have to be checksummed in software.
+> > > >            */
+> > > >           if (csum_insertion &&
+> > > >               (priv->plat->tx_queues_cfg[queue].coe_unsupported ||
+> > > >                !stmmac_has_ip_ethertype(skb))) {
+> > > >                   if (unlikely(skb_checksum_help(skb)))
+> > > >                           goto dma_map_err;
+> > > >                   csum_insertion = !csum_insertion;
+> > > >           }
+> > > > 
+> > > > Do we need to care about them in stmmac_xdp_xmit_zc()
+> > > > and stmmac_xdp_xmit_xdpf() too?
+> > > 
+> > > This patch only addresses avoiding the TX DMA hang by ensuring the CIC
+> > > bit is only set when the queue supports checksum offload. For DSA tagged
+> > > packets checksum offloading is not supported by the DWMAC IPs but no TX
+> > > DMA hang. AFAIK, currently AF_XDP paths don't have equivalent handling
+> > > like skb_checksum_help(), since they operate on xdp buffers. So this
+> > > patch doesn't attempt to implement a sw fallback but just avoids DMA
+> > > stall.
+> > 
+> > Ok, fair enough.
+> > 
+> > As per Andrew's advice elsewhere in this thread.
+> > This patch also looks like it should be a fix for net,
+> > and should have a Fixes tag.
+> 
+> Thanks for your comments.
+> 
+> You're right—this patch is a fix for the TX DMA hang issue caused by
+> setting the CIC bit on queues that don't support checksum offload. But
+> I couldn’t pinpoint a specific commit that introduced this behavior in
+> the AF_XDP path. Initially, there was no support for DWMAC IPs with COE
+> enabled only on specific queues, even though there can be IPs with such
+> configuration. Commit 8452a05b2c63 ("net: stmmac: Tx coe sw fallback")
+> added software fallback support for the AF_PACKET path. But the AF_XDP
+> path has always enabled COE unconditionally even before that. So, do you
+> think referencing the commit 8452a05b2c63 in the Fixes tag is
+> appropriate and sufficient?
 
-Commit a6d80df47ee2 ("hwmon: (gsc-hwmon) fix fan pwm temperature
-scaling") properly addressed the incorrect scaling in the
-pwm_auto_point_temp_store implementation but erroneously scaled
-the pwm_auto_point_pwm_show (pwm value) instead of the
-pwm_auto_point_temp_show (temp value) resulting in:
- # cat /sys/class/hwmon/hwmon0/pwm1_auto_point6_pwm
- 25500
- # cat /sys/class/hwmon/hwmon0/pwm1_auto_point6_temp
- 4500
+Hi Rohan,
 
-Fix the scaling of these attributes:
- # cat /sys/class/hwmon/hwmon0/pwm1_auto_point6_pwm
- 255
- # cat /sys/class/hwmon/hwmon0/pwm1_auto_point6_temp
- 45000
+Perhaps I'm missing the point, but my thinking is as follows:
 
-Fixes: a6d80df47ee2 ("hwmon: (gsc-hwmon) fix fan pwm temperature scaling")
-Cc: stable@vger.kernel.org
-Signed-off-by: Tim Harvey <tharvey@gateworks.com>
----
- drivers/hwmon/gsc-hwmon.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+As this patch only addresses the AF_XDP path I think we can take the
+approach of asking "in which patch would a user of AF_XDP with this stmmac
+observe this bug". (Or some variant thereof.) And I think the answer to
+that question is the patch that added AF_XDP support to stmmac driver.
 
-diff --git a/drivers/hwmon/gsc-hwmon.c b/drivers/hwmon/gsc-hwmon.c
-index 0f9af82cebec..105b9f9dbec3 100644
---- a/drivers/hwmon/gsc-hwmon.c
-+++ b/drivers/hwmon/gsc-hwmon.c
-@@ -64,7 +64,7 @@ static ssize_t pwm_auto_point_temp_show(struct device *dev,
- 		return ret;
- 
- 	ret = regs[0] | regs[1] << 8;
--	return sprintf(buf, "%d\n", ret * 10);
-+	return sprintf(buf, "%d\n", ret * 100);
- }
- 
- static ssize_t pwm_auto_point_temp_store(struct device *dev,
-@@ -99,7 +99,7 @@ static ssize_t pwm_auto_point_pwm_show(struct device *dev,
- {
- 	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
- 
--	return sprintf(buf, "%d\n", 255 * (50 + (attr->index * 10)));
-+	return sprintf(buf, "%d\n", 255 * (50 + (attr->index * 10)) / 100);
- }
- 
- static SENSOR_DEVICE_ATTR_RO(pwm1_auto_point1_pwm, pwm_auto_point_pwm, 0);
--- 
-2.34.1
+So I think we can use:
 
+Fixes: 132c32ee5bc0 ("net: stmmac: Add TX via XDP zero-copy socket")
 
