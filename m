@@ -1,125 +1,115 @@
-Return-Path: <linux-kernel+bounces-736321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90203B09B82
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:38:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99A96B09B8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:38:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB6305A14E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:38:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EA747BC8FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:37:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE99520B7F4;
-	Fri, 18 Jul 2025 06:37:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 163681FBEB0;
+	Fri, 18 Jul 2025 06:38:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RKi/tRqn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AQlDcrd3"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D2941DDC37;
-	Fri, 18 Jul 2025 06:37:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17BEF19E97C
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 06:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752820663; cv=none; b=dYwXjrP1YIsnjugQ/NpRCFzObKD3yQQPWf4VCQcdpfzVKpLGnyKV23GW33M4F/ZzhMwaV+LWv8KiAudn0xGYlziP4GW/Zl1E3E2nSxleJqbOqSAc/xrq7LFWopaB/fMVIP3IjmLZA1HwZZQdj64U7JzunUPYYykMll32A1YNWFs=
+	t=1752820706; cv=none; b=J8wvEbt4NPR/BC+ggXU8tKyoavYaVWZFx40LnXQrZ8EaSI8V1kEDN/heY8CdE6RbUvy++lCVx7tSgq/78+XLjZSkTBMb6OwdkW9MybL0uH/jxu7egs698lMnzwyD6AWkNW8hFYTel8SglkrgcyFzfbGIxPJAdHI5RfCl+USUn28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752820663; c=relaxed/simple;
-	bh=Vg/Qxml+vCOWtwi27g4HsyyOYy1gOhqTGm45155VutI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Pvnzs/tx2bpEgpE+g/icGnn+VaA4lkIRV1fSD2QsFlKd2c/dPnHCq7u9eNZHmYZidk/tfxJRsVXDXaK595evpGPSaIghvGcjIrf1QcHTsmjEnYCNsSTvk6Wujh8oxcMLNNXn60r57WWIdb4DKvsQN6huwRAvWRd+Fv/1i7wJxt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RKi/tRqn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B6296C4CEF5;
-	Fri, 18 Jul 2025 06:37:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752820662;
-	bh=Vg/Qxml+vCOWtwi27g4HsyyOYy1gOhqTGm45155VutI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=RKi/tRqnJbZLGLSOWIEaui7ZZ4H5r7Z6HkMGueXQOKAn1EMtAKt+AXCQ0tn5c3duV
-	 fmGfub+iVN9LqkTwXCfvaj7JaQTwprkvyZyaUPtSuKPUy4URG0634UdKbV8f14YxMM
-	 vuNph1+sf2bKI246Q9nMVT4XDrxZsuOqg5LYrR8QMZGF5UdYi1ttduvfodrI4rfvFe
-	 ef3D611H6MAJ6UKKr1vbSphdVAobgoV4BOjhpqieMBmSVObPCpiJtjSxpTNMcrHhr8
-	 7Cznuaj53YsTbVDhRONyWNtsdhcw9ATUiNEWL2PwNaLgSucXRqdnUjtyAlt4YzLax2
-	 nr3PowNkt9KgA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8F27C83F17;
-	Fri, 18 Jul 2025 06:37:42 +0000 (UTC)
-From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
-Date: Fri, 18 Jul 2025 14:37:43 +0800
-Subject: [PATCH 3/3] arm64: dts: amlogic: c3: Add tempsensor controller
- node
+	s=arc-20240116; t=1752820706; c=relaxed/simple;
+	bh=75PHuRvJ7DY/suTDA5uC8Ijj5Mt9JPobnVNsKDAVtMI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=oUz6Oo6rMrUAkFn8Tp3zQiBK4X6QIjDRUDMA/Or67f5ALj4u6/6yHqb/CC+LUscqpP4cMvWRZg69Mz2WH+WYk/hfh6lG+zLtNM7noTmviqY2UcE3JkWP0D93lWnsvMkFW57cuUH5IG0rFvj4cupZX+PVEEzPIk+9z9taXvDfUXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AQlDcrd3; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-74931666cbcso1618173b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 23:38:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752820704; x=1753425504; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BwdSPh4JvmFHd+Iv/wF6gcUfSJNt2xnQHwuiHcjJGJA=;
+        b=AQlDcrd3iC3eb3ANJgzSrOf23mLpGU26pfP0DylB6ZTE4DMGCgVKmzdEgsnh2Tgmqc
+         8XnLaaKt771xe1DbRMn2W41w0N2CFi4s+ZeDJH5QQuz+1T8Xp2YkWuJk2zyF0sOPe+aJ
+         HmA38zHIIvH37B0Gf9rAn2kCB5hphYcEfF/FoYg7EAkRphaWZPZFtK7cZjsbGEI/6loc
+         m2xpn8W6Uwi/ByqB7EYBvYHo3fwXhBHUYSaofbRNsmkDuQIuVVca0fIaicWiVmG1t8f4
+         VhG3gtnRohE2VRWGVObNsQGsMBhgR9OpyPxr12ngeFhSsDpwOd3DUk5/21FmkDAdtCkA
+         mEiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752820704; x=1753425504;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BwdSPh4JvmFHd+Iv/wF6gcUfSJNt2xnQHwuiHcjJGJA=;
+        b=n5l9YxiIJxXO3q3FGJXYBzbx/U1UT42tXhLQtnsf3qVmh9+5KkLGOpG0TlD1Funn/f
+         bPcZQmDLqDHkRUlOYNhEU2xqXGdDERsafXAwRSL75mi+4MoFlFbIW+AsL8xPr3VB5xxJ
+         7hYSGXaIYbD2Dz5VpGRLIJU2Pdo9aGIBzew1w0KW0F2s9EZVEPOoYRZldzvcBFlJll1l
+         Te4nAaa314lAer6eneCs/Y7eOLaL+NO3CHo/mTa0vGIF8jTX//6NRTSH2UnVl33VT/NS
+         KYioi8TNwvII3v2txDGzGZhsOfumrITgPMFXJyEXzqZmkFYzJdAlHzWsDFQ0J1vrmyho
+         3skw==
+X-Forwarded-Encrypted: i=1; AJvYcCWBaNS9V0U4MV7BIuCuBw32cQduiIlhF4dnHSvCVz2pC+GEVSY/GMCOJXZqyPVBV21fqz7EYLKOoNssPNE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyY5dSDSGvM8QQgoDkyYBwrHC5YdLEu5iJs4dhcnsVkm3sstN/s
+	/bz3APERH5joGBTNP0EdgOzXXmdXzlBXHZksxn5HDTZL9FUQk6XPFJKz
+X-Gm-Gg: ASbGncvO0/fVRRTt57ACB8uG8TSVAxhiFiiisAj2v4tA+dDynG0pk7Hr2JqcK6wn8IA
+	hfGElgoflopOA2qRGOyVvclUUmNdSi284+O7Z6oXRfluJX1eMUIl/MWA4YFBM00NxgLaXPi1VSi
+	wmgO5INjsUb+ZPypGy7OGonevi2Ymwh5pGsYEnS/rfkRfSiuOHTHVOnOiJV5U4wIMikE5msTutb
+	7/O0P4odEdy5lUz6B5t6S1ph10tC5uPw9Pw3TEqyJMLenSeHk3C+cbIwVxMKWH2KtsH+xorAgIQ
+	JHP22rEKEky33lMvA+zHkoRiuBjptwPgE9RvprQDjgkoueNfKCuYwshU6TTlKFYdm2YxLfE/94u
+	38XkKF0MJ2EJhZl6etCduy2fSBwEFfy4hdK3qYW2XDUrUDQWBQTWKtjpG
+X-Google-Smtp-Source: AGHT+IEZ1zQnWI3otwhr8y5LlqoEUCJegDnSK/x/zcL8x+MwvxlKyS+ojAWhWHoDTHssrGqPUTARzQ==
+X-Received: by 2002:a05:6a21:1709:b0:1f5:79c4:5da6 with SMTP id adf61e73a8af0-2390da529b1mr9223362637.5.1752820704230;
+        Thu, 17 Jul 2025 23:38:24 -0700 (PDT)
+Received: from localhost (212.18.125.34.bc.googleusercontent.com. [34.125.18.212])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-759cb155d77sm576969b3a.78.2025.07.17.23.38.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Jul 2025 23:38:23 -0700 (PDT)
+From: Chia-I Wu <olvaffe@gmail.com>
+To: Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/3] panthor: print task pid and comm on gpu errors
+Date: Thu, 17 Jul 2025 23:38:13 -0700
+Message-ID: <20250718063816.1452123-1-olvaffe@gmail.com>
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250718-c3-thermal-v1-3-674f9a991690@amlogic.com>
-References: <20250718-c3-thermal-v1-0-674f9a991690@amlogic.com>
-In-Reply-To: <20250718-c3-thermal-v1-0-674f9a991690@amlogic.com>
-To: Guillaume La Roque <glaroque@baylibre.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-pm@vger.kernel.org, linux-amlogic@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- Xianwei Zhao <xianwei.zhao@amlogic.com>, 
- Liming Xue <liming.xue@amlogic.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752820661; l=1117;
- i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
- bh=vWhNDYyE9xSECm6+/EYb548/qKTRV6MGziQpMJtR/5A=;
- b=GfoyeV+CAv/f/E7OEN1Tz3QApTOrFtWdFN5Z5fCvJjhDvbhe1bPYlFP48Z45K0KrxlaDpsS2P
- Ibg/ocitfAYCay1tzVjxBphiYRlbiSXlUKkB0nSscl7y3h139ZVkMri
-X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
- pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
-X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
- auth_id=107
-X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Reply-To: xianwei.zhao@amlogic.com
+Content-Transfer-Encoding: 8bit
 
-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+This series saves task pid and comm in panthor_group and prints task pid and
+comm on gpu errors.
 
-Add the Tempsensor controller node for C3 SoC family.
+v3: fix new kerneldoc warnings
+v2: save the task info in panthor_group on panthor_group_create, rather than
+    in panthor_file on panthor_open, because, when the two differ, we are more
+    interested in the task that created the group.
 
-Signed-off-by: Liming Xue <liming.xue@amlogic.com>
-Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
----
- arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Chia-I Wu (3):
+  panthor: set owner field for driver fops
+  panthor: save task pid and comm in panthor_group
+  panthor: dump task pid and comm on gpu errors
 
-diff --git a/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
-index cb9ea3ca6ee0..c853390eca6c 100644
---- a/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
-@@ -727,6 +727,17 @@ clkc_pll: clock-controller@8000 {
- 					      "fix";
- 			};
- 
-+			temperature-sensor@20000 {
-+				compatible = "amlogic,c3-cpu-thermal";
-+				reg = <0x0 0x20000 0x0 0x50>;
-+				interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clkc_periphs CLKID_TS>;
-+				assigned-clocks = <&clkc_periphs CLKID_TS>;
-+				assigned-clock-rates = <500000>;
-+				amlogic,ao-secure = <&sec_ao>;
-+				#thermal-sensor-cells = <0>;
-+			};
-+
- 			eth_phy: mdio-multiplexer@28000 {
- 				compatible = "amlogic,g12a-mdio-mux";
- 				reg = <0x0 0x28000 0x0 0xa4>;
+ drivers/gpu/drm/panthor/panthor_drv.c   | 14 ++------
+ drivers/gpu/drm/panthor/panthor_sched.c | 43 ++++++++++++++++++++++---
+ 2 files changed, 41 insertions(+), 16 deletions(-)
 
 -- 
-2.37.1
-
+2.50.0.727.gbf7dc18ff4-goog
 
 
