@@ -1,262 +1,390 @@
-Return-Path: <linux-kernel+bounces-736949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13004B0A598
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:51:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E6FAB0A599
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:52:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E23D5A34CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:51:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBD515A37E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D88CF29CB40;
-	Fri, 18 Jul 2025 13:51:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4D592BDC1D;
+	Fri, 18 Jul 2025 13:52:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="SDHQy7LN"
-Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ksFS0xyd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C617415E5C2;
-	Fri, 18 Jul 2025 13:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA80E15E5C2;
+	Fri, 18 Jul 2025 13:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752846677; cv=none; b=kMxYIDWsHMy+IajfjpCHL9FEEJ1o7evySqUtySdLApT06SWIPeqen3kEE7ucy+tBLwANVbMPoYnano/ZjKmsGdkwuweZidMXzGE0sFTwyoIQ2bFUPwZByckpJ5/TkAmyO0mXPjm7xperNRNXmRsE5zcGRIezCmJFHz13/qR49Mg=
+	t=1752846772; cv=none; b=QeClece6oD/CShu4VDg5wA/kinTlGkFn1xney6hVFxqWRVY+HKJKK+0zHR98j2KWCLxkwB0VLyBxaah0XkKizDVmHB8+8+9l+05FrLbw5pEiUSdXldoVLaTjssjCAoRII5eYyVbsSMOwJ0ewo5G9r/Vz7m3+7xRLVB4t2DZmGdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752846677; c=relaxed/simple;
-	bh=491v+R/9aAalxlW2/npiuH6ZX5WxUuvvz8p2ygbC/U8=;
+	s=arc-20240116; t=1752846772; c=relaxed/simple;
+	bh=CSEJD8D3oT43XCl/3u8vFt7jei+0Iru4A9uRkvyZIxQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ng3aEtNEy9dmvftr71RQwL+kIrgp0fTcMBgtV///QIS7rhJhdLJ383KgdA/jBqv04fNZuKtyOBtsM/+/XavXa/BsYwecly3Bmttr7xMJNljQlt/6dRZ+4M/WzZSG2qnj2wAMWHJbpLzlTy1AgjUUTbUptrqzJtBG4QZKjot0ONA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=SDHQy7LN; arc=none smtp.client-ip=54.207.19.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1752846589;
-	bh=cJqeSBMSX2nzmX5QN44zXeJEkxmT125WTWJpHT1Zyw8=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=SDHQy7LNirlcyBl2/LU5gjmY4hyBiiQSm0E3ZK+seN6fcJxLfvsTKpbQJh3ai7m+1
-	 584UogP/RsOPts67d3Tx3m2gAGYbBm9+l2a2+V5/QLVs4U4CjANO23i3qXJ+FMdymy
-	 hBgYFax4neAM8mFOrdCA1/QJbSnAc+LBzYbIswK0=
-X-QQ-mid: zesmtpip4t1752846587t0ae73125
-X-QQ-Originating-IP: AOdaLkoW5D0ShAIDYcZ6Iul4+7LzVVGChRqIFZVoWd8=
-Received: from = ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 18 Jul 2025 21:49:46 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 2453416834159754480
-EX-QQ-RecipientCnt: 8
-Date: Fri, 18 Jul 2025 21:49:40 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Yixun Lan <dlan@gentoo.org>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: spacemit: fix sspax_clk
-Message-ID: <B4EF5817ECF41CE8+aHpQ9FFEoJj7EIwU@troy-wujie14pro-arch>
-References: <20250718-k1-clk-i2s-v1-1-e92c10fd0f60@linux.spacemit.com>
- <20250718105120-GYB695709@gentoo>
- <CBB594905CF0674E+aHpLqh2vVhTdzbEc@troy-wujie14pro-arch>
+	 Content-Type:Content-Disposition:In-Reply-To; b=O4V7F32bdvj6loKLc3v4zKThZ4P8vK06c/koewEH185s+Ap0JbZh8kpqWNEO81hLZ7TlV1W3QJPfk2aaICjB2oWIgBnfn0WINSXAR9stg3WMA1aFhOfJIu4BlyTTNVZNPfu98H6w0zA6mcYlnu8RejNG+D3abvpQli9oJo5QIzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ksFS0xyd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97D17C4CEEB;
+	Fri, 18 Jul 2025 13:52:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752846772;
+	bh=CSEJD8D3oT43XCl/3u8vFt7jei+0Iru4A9uRkvyZIxQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ksFS0xydz9uZ//hk/ReloPIYjNruOr7BcXQBDgkPT4ujIK1wX7nB6Q3hMHhMTKVGf
+	 CO+yqbOZ0txZ3JJROJpUZJ5C8+02Hl/AGA+LLeJsuzWD19LO960PJjytZJVblKUZNx
+	 DVWscoTSebbXyva8jgvmzu1N7IlYt6YXuHs+ZPVB8ozVpqn+j47I5J3UR1iyYKTt1N
+	 Hm48VwGxzzVu2/e6R51toLkuyJC8AN0YilVL0R85C1OnXjCwQ+xFr/xs1psairoRnf
+	 gzQW3L3agv5+ijTxr6o6n88epcATNIz1ScXuF34V1+sqR3Vgy2E/oCvfpiLwVJrGox
+	 7TvYYqAz47cgg==
+Date: Fri, 18 Jul 2025 14:52:46 +0100
+From: Lee Jones <lee@kernel.org>
+To: Binbin Zhou <zhoubb.aaron@gmail.com>
+Cc: Binbin Zhou <zhoubinbin@loongson.cn>,
+	Huacai Chen <chenhuacai@loongson.cn>,
+	Corey Minyard <minyard@acm.org>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Xuerui Wang <kernel@xen0n.name>, loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	openipmi-developer@lists.sourceforge.net, jeffbai@aosc.io,
+	kexybiscuit@aosc.io, wangyao@lemote.com,
+	Chong Qiao <qiaochong@loongson.cn>,
+	Corey Minyard <corey@minyard.net>
+Subject: Re: [PATCH v7 2/3] mfd: ls2kbmc: Add Loongson-2K BMC reset function
+ support
+Message-ID: <20250718135246.GH11056@google.com>
+References: <cover.1751617911.git.zhoubinbin@loongson.cn>
+ <f4c546b0160294296c98b6b12b0ab1d2000dd44c.1751617911.git.zhoubinbin@loongson.cn>
+ <20250710100323.GI1431498@google.com>
+ <CAMpQs4LQME7oO8i2FWgUsAQqwThcp=R3jubPGqZ1Vr-pvEHvoA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CBB594905CF0674E+aHpLqh2vVhTdzbEc@troy-wujie14pro-arch>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: NJYnAvh5o174gPg+hTQYBiJcWDJZTPbcqhUntfhb2hByC0PO7WvfbRxZ
-	K+Za2YC+J8b4Bl9nd8Yd5K3XAmSS2txmVSMURNuTmdTPFQNarSWWfwTqgBu6FUiBBvdevtY
-	thLFN9Jr+3fGe4/6f68X1OhyN4jtgL8/XrVBllewsDavIzFfSpVHWlXcXj1x7P7KGyhxo80
-	ra6amV1PURdFb7ZboywjvwUCjYLmNhewUR6S4DdTAXQGxkFmVxYALJ3SFP6ebQ76EsQzIIy
-	RFCc6CR8q3CGE+1opZnwoGVujky2UORSwwdKYzXV7hYc/dRGNd/x96QrUY8TT8EiOPgWXI8
-	NfpC52wjpdsc2jfmQsXQAb4zyUtjLxl8Z/Mrn9iZvkqQZ8xokIuVXobYk0Rx/G1C3vgarhx
-	o7mZWNr7o1wJwdTKKdtQMHYR6x2fNqJs8HlrVDsBE4/G3rwIilgoBdEaIqcxqUWIIMgbzil
-	ww/a/uMElW5NtLk5Guuw0cSmfQIJUGM4RU/qhmwQkZPrmMZIcd+JN9LfKkwC9n+2DUVkib+
-	3UPyvDdJXxHYHgjPLgV/S+sr5L5LCXmO4t14JusQMTbAN8CMUVjVtI6fPC1jPtDQvq3T3Ii
-	TLrn0vcfy/tmVJFe70/vL+s4qUpFT3Z/iTLQ4bZ3y6Yyz36Q4tjjHsU5nt9Ic2hZfY1WRUH
-	6WTjAPs5zKf5TV8gb9QrlU60bBn75j9BCcUir9nNo3n//LDgIPB988lkGGVQ+61fnYJgKs2
-	tT16xkjsEgEzkErr78mSyaAMiCuUqasGcDG/A7iIyAF5456/Fhcut6M7F6HIBMEEcmVVMD8
-	GqU3rtqxshvXWHFk+3psWNwTz0H6+dFdRVSBfsSsKtlQqS2L5/UmpSH2RN6IliYqye6WaYd
-	36KNCh4F8DB0SdsoWg6NRQqsVgKx6+pB8ptUj+JS7LgP7rrRqM1s53Rs6A1HK85z3SSGnBU
-	vLvVYj41ivfgS058rhtdHYSqTGWx1Xnke7QiKLM0ez3CXwhyo4VbyNkzMAQUf4TunEWsqyJ
-	EGQok36hWYv1/aa7sVRvdvSwnewkNu4d6K7Bamv6QsX9c3rPYEosvxx0CyXGo=
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMpQs4LQME7oO8i2FWgUsAQqwThcp=R3jubPGqZ1Vr-pvEHvoA@mail.gmail.com>
 
-On Fri, Jul 18, 2025 at 09:27:06PM +0800, Troy Mitchell wrote:
-> On Fri, Jul 18, 2025 at 06:51:20PM +0800, Yixun Lan wrote:
-> > Hi Troy,
-> > 
-> > On 09:54 Fri 18 Jul     , Troy Mitchell wrote:
-> > > In the SpacemiT public document, when the FNCLKSEL field of
-> > > the APBC_SSPAX_CLK_RST register is 7 (3'b111),
-> > > which is a reserved value. And BIT3 of the same register is
-> > > a reserved bit.
-> > > 
-> > so, if I parse above correctly, it describe current public document?
-> > which value 7 of FNCLKSEL and BIT3 is wrongly marked as reserved.
-> > 
-> > https://developer.spacemit.com/documentation?token=LCrKwWDasiJuROkVNusc2pWTnEb#10.2.3.2-resource-reset-schemes
-> > 10.2.4.3.16 SSPAX CLOCK RESET CONTROL REGISTER (APBC_SSPAX_CLK_RST)
-> > 
-> yes, correct summary
+On Fri, 11 Jul 2025, Binbin Zhou wrote:
+
+> Hi Lee:
 > 
-> > > But the document is wrong, the actual situation is:
-> > > when FNCLKSEL is 7 (3'b111), and the purpose of bit 3 is
-> > > if to select i2s_bclk as the parent clock.
-> > > 
-> > > And only when FNCLKSEL is 7 (3'b111), The bit 3 is not a reserved bit.
-> > > 
-> > so what's the difference of value 7 from other 0-6? has additional ops to
-> > select i2s_bclk as parent? otherwise just say they are not reserved
-> > 
-> > please have more explanation for BIT3, it's quite obscure and unclear
-> Bit 3 is only valid when FNCLKSEL is 7,
-> indicating whether i2s_bclk is selected as the clock source.
-> And when FNCLKSEL is 7, bit 3 must be 1, otherwise it will cause unknown errors.
-> When FNCLKSEL is other values, bit 3 has no effect
+> Thanks for your review.
 > 
-> I'll explain more in the next version
-> 
-> > 
-> > anyway, can you coordinate with SpacemiT internal to update the docs?
-> > 
-> I have already told them. I think the document will be updated ASAP.
-> 
-> > > Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+> On Thu, Jul 10, 2025 at 6:03 PM Lee Jones <lee@kernel.org> wrote:
+> >
+> > On Fri, 04 Jul 2025, Binbin Zhou wrote:
+> >
+> > > Since the display is a sub-function of the Loongson-2K BMC, when the
+> > > BMC reset, the entire BMC PCIe is disconnected, including the display
+> > > which is interrupted.
+> > >
+> > > Quick overview of the entire LS2K BMC reset process:
+> > >
+> > > There are two types of reset methods: soft reset (BMC-initiated reboot
+> > > of IPMI reset command) and BMC watchdog reset (watchdog timeout).
+> > >
+> > > First, regardless of the method, an interrupt is generated (PCIe interrupt
+> > > for soft reset/GPIO interrupt for watchdog reset);
+> > >
+> > > Second, during the interrupt process, the system enters bmc_reset_work,
+> > > clears the bus/IO/mem resources of the LS7A PCI-E bridge, waits for the BMC
+> > > reset to begin, then restores the parent device's PCI configuration space,
+> > > waits for the BMC reset to complete, and finally restores the BMC PCI
+> > > configuration space.
+> > >
+> > > Display restoration occurs last.
+> > >
+> > > Co-developed-by: Chong Qiao <qiaochong@loongson.cn>
+> > > Signed-off-by: Chong Qiao <qiaochong@loongson.cn>
+> > > Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
+> > > Acked-by: Corey Minyard <corey@minyard.net>
+> > > Signed-off-by: Binbin Zhou <zhoubinbin@loongson.cn>
 > > > ---
-> > >  drivers/clk/spacemit/ccu-k1.c  |  4 ++--
-> > >  drivers/clk/spacemit/ccu_mix.c | 29 +++++++++++++++++++++++++++++
-> > >  drivers/clk/spacemit/ccu_mix.h | 14 ++++++++++++++
-> > >  3 files changed, 45 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
-> > > index cdde37a0523537c2f436e481ae8d6ec5a581b87e..0e22f6fb2c45b68ab20a9b1563a1a6dec1a7e16c 100644
-> > > --- a/drivers/clk/spacemit/ccu-k1.c
-> > > +++ b/drivers/clk/spacemit/ccu-k1.c
-> > > @@ -359,8 +359,8 @@ static const struct clk_parent_data sspa_parents[] = {
-> > >  	CCU_PARENT_HW(pll1_d3072_0p8),
-> > >  	CCU_PARENT_HW(i2s_bclk),
+> > >  drivers/mfd/ls2k-bmc-core.c | 328 ++++++++++++++++++++++++++++++++++++
+> > >  1 file changed, 328 insertions(+)
+> > >
+> > > diff --git a/drivers/mfd/ls2k-bmc-core.c b/drivers/mfd/ls2k-bmc-core.c
+> > > index 50d560a4611c..1ae673f6a196 100644
+> > > --- a/drivers/mfd/ls2k-bmc-core.c
+> > > +++ b/drivers/mfd/ls2k-bmc-core.c
+> > > @@ -10,8 +10,12 @@
+> > >   */
+> > >
+> > >  #include <linux/aperture.h>
+> > > +#include <linux/bitfield.h>
+> > > +#include <linux/delay.h>
+> > >  #include <linux/errno.h>
+> > >  #include <linux/init.h>
+> > > +#include <linux/iopoll.h>
+> > > +#include <linux/kbd_kern.h>
+> > >  #include <linux/kernel.h>
+> > >  #include <linux/mfd/core.h>
+> > >  #include <linux/module.h>
+> > > @@ -19,6 +23,8 @@
+> > >  #include <linux/pci_ids.h>
+> > >  #include <linux/platform_data/simplefb.h>
+> > >  #include <linux/platform_device.h>
+> > > +#include <linux/stop_machine.h>
+> > > +#include <linux/vt_kern.h>
+> > >
+> > >  /* LS2K BMC resources */
+> > >  #define LS2K_DISPLAY_RES_START               (SZ_16M + SZ_2M)
+> > > @@ -29,6 +35,48 @@
+> > >  #define LS2K_IPMI3_RES_START         (LS2K_IPMI2_RES_START + LS2K_IPMI_RES_SIZE)
+> > >  #define LS2K_IPMI4_RES_START         (LS2K_IPMI3_RES_START + LS2K_IPMI_RES_SIZE)
+> > >
+> > > +#define LS7A_PCI_CFG_SIZE            0x100
+> > > +
+> > > +/* LS7A bridge registers */
+> > > +#define LS7A_PCIE_PORT_CTL0          0x0
+> > > +#define LS7A_PCIE_PORT_STS1          0xC
+> > > +#define LS7A_GEN2_CTL                        0x80C
+> > > +#define LS7A_SYMBOL_TIMER            0x71C
+> > > +
+> > > +/* Bits of LS7A_PCIE_PORT_CTL0 */
+> > > +#define LS2K_BMC_PCIE_LTSSM_ENABLE   BIT(3)
+> > > +
+> > > +/* Bits of LS7A_PCIE_PORT_STS1 */
+> > > +#define LS2K_BMC_PCIE_LTSSM_STS              GENMASK(5, 0)
+> > > +#define LS2K_BMC_PCIE_CONNECTED              0x11
+> > > +
+> > > +#define LS2K_BMC_PCIE_DELAY_US               1000
+> > > +#define LS2K_BMC_PCIE_TIMEOUT_US     1000000
+> > > +
+> > > +/* Bits of LS7A_GEN2_CTL */
+> > > +#define LS7A_GEN2_SPEED_CHANG                BIT(17)
+> > > +#define LS7A_CONF_PHY_TX             BIT(18)
+> > > +
+> > > +/* Bits of LS7A_SYMBOL_TIMER */
+> > > +#define LS7A_MASK_LEN_MATCH          BIT(26)
+> > > +
+> > > +/* Interval between interruptions */
+> > > +#define LS2K_BMC_INT_INTERVAL                (60 * HZ)
+> > > +
+> > > +/* Maximum time to wait for U-Boot and DDR to be ready with ms. */
+> > > +#define LS2K_BMC_RESET_WAIT_TIME     10000
+> > > +
+> > > +/* It's an experience value */
+> > > +#define LS7A_BAR0_CHECK_MAX_TIMES    2000
+> > > +
+> > > +#define LS2K_BMC_RESET_GPIO          14
+> > > +#define LOONGSON_GPIO_REG_BASE               0x1FE00500
+> > > +#define LOONGSON_GPIO_REG_SIZE               0x18
+> > > +#define LOONGSON_GPIO_OEN            0x0
+> > > +#define LOONGSON_GPIO_FUNC           0x4
+> > > +#define LOONGSON_GPIO_INTPOL         0x10
+> > > +#define LOONGSON_GPIO_INTEN          0x14
+> > > +
+> > >  static struct resource ls2k_display_resources[] = {
+> > >       DEFINE_RES_MEM_NAMED(LS2K_DISPLAY_RES_START, SZ_4M, "simpledrm-res"),
 > > >  };
-> > > -CCU_MUX_GATE_DEFINE(sspa0_clk, sspa_parents, APBC_SSPA0_CLK_RST, 4, 3, BIT(1), 0);
-> > > -CCU_MUX_GATE_DEFINE(sspa1_clk, sspa_parents, APBC_SSPA1_CLK_RST, 4, 3, BIT(1), 0);
-> > > +CCU_SSPA_MUX_GATE_DEFINE(sspa0_clk, sspa_parents, APBC_SSPA0_CLK_RST, 4, 3, BIT(1), 0);
-> > > +CCU_SSPA_MUX_GATE_DEFINE(sspa1_clk, sspa_parents, APBC_SSPA1_CLK_RST, 4, 3, BIT(1), 0);
-> > >  CCU_GATE_DEFINE(dro_clk, CCU_PARENT_HW(apb_clk), APBC_DRO_CLK_RST, BIT(1), 0);
-> > >  CCU_GATE_DEFINE(ir_clk, CCU_PARENT_HW(apb_clk), APBC_IR_CLK_RST, BIT(1), 0);
-> > >  CCU_GATE_DEFINE(tsen_clk, CCU_PARENT_HW(apb_clk), APBC_TSEN_CLK_RST, BIT(1), 0);
-> > > diff --git a/drivers/clk/spacemit/ccu_mix.c b/drivers/clk/spacemit/ccu_mix.c
-> > > index 9b852aa61f78aed5256bfe6fc3b01932d6db6256..bfc65fc00df67299523eb5d1d2ed479c61fc6141 100644
-> > > --- a/drivers/clk/spacemit/ccu_mix.c
-> > > +++ b/drivers/clk/spacemit/ccu_mix.c
-> > > @@ -191,6 +191,25 @@ static int ccu_mux_set_parent(struct clk_hw *hw, u8 index)
-> > >  	return ccu_mix_trigger_fc(hw);
-> > >  }
-> > >  
-> > > +static int ccu_mux_set_sspa_parent(struct clk_hw *hw, u8 index)
-> > > +{
-> > > +	struct ccu_mix *mix = hw_to_ccu_mix(hw);
-> > > +	struct ccu_mux_config *mux = &mix->mux;
-> > > +	u32 mask, val;
-> > > +
-> > > +	mask = GENMASK(mux->width + mux->shift - 1, mux->shift);
-> > > +	val = index << mux->shift;
-> > > +
-> > > +	if (index == 7) {
-> > > +		mask |= BIT(3);
-> > > +		val |= BIT(3);
-> > > +	}
-> > it occur to me, BIT(3) is kind of a conditional BIT..
-> > 
-> > what's the behavior of reading/writing to BIT3 when index != 7?
-> > write value will be ignored, read will return zero?
-> I don't know. I haven't tested it, and I don't think it's worth testing.
-> I've written a function to set the parent using BIT(3) and an index.
-> Therefore, when the caller invokes get_parent, BIT(3) is not considered; only the index is.
->
-Sry, Yixun, We really need to test it!
-If BIT(3) has no effct when FNCLKSEL is set to other values,
-then we can avoid introducing a new function.
-> 
->                 - Troy
-> 
-> > 
-> > > +
-> > > +	ccu_update(&mix->common, ctrl, mask, val);
-> > > +
-> > > +	return ccu_mix_trigger_fc(hw);
-> > > +}
-> > > +
-> > >  const struct clk_ops spacemit_ccu_gate_ops = {
-> > >  	.disable	= ccu_gate_disable,
-> > >  	.enable		= ccu_gate_enable,
-> > > @@ -235,6 +254,16 @@ const struct clk_ops spacemit_ccu_mux_gate_ops = {
-> > >  	.set_parent	= ccu_mux_set_parent,
+> > > @@ -62,6 +110,273 @@ static struct mfd_cell ls2k_bmc_cells[] = {
+> > >       MFD_CELL_RES("ls2k-ipmi-si", ls2k_ipmi4_resources),
 > > >  };
-> > >  
-> > > +const struct clk_ops spacemit_ccu_sspa_mux_gate_ops = {
-> > > +	.disable	= ccu_gate_disable,
-> > > +	.enable		= ccu_gate_enable,
-> > > +	.is_enabled	= ccu_gate_is_enabled,
-> > > +
-> > > +	.determine_rate = ccu_mix_determine_rate,
-> > > +	.get_parent	= ccu_mux_get_parent,
-> > > +	.set_parent	= ccu_mux_set_sspa_parent,
+> > >
+> > > +/* Index of the BMC PCI configuration space to be restored at BMC reset. */
+> > > +struct ls2k_bmc_pci_data {
+> > > +     u32 pci_command;
+> > > +     u32 base_address0;
+> > > +     u32 interrupt_line;
 > > > +};
 > > > +
-> > >  const struct clk_ops spacemit_ccu_div_gate_ops = {
-> > >  	.disable	= ccu_gate_disable,
-> > >  	.enable		= ccu_gate_enable,
-> > > diff --git a/drivers/clk/spacemit/ccu_mix.h b/drivers/clk/spacemit/ccu_mix.h
-> > > index 51d19f5d6aacb7203d1eddf96047cf3174533601..7753446386353bf849787ed4ec7c85c298238ab5 100644
-> > > --- a/drivers/clk/spacemit/ccu_mix.h
-> > > +++ b/drivers/clk/spacemit/ccu_mix.h
-> > > @@ -124,6 +124,19 @@ static struct ccu_mix _name = {							\
-> > >  	}									\
-> > >  }
-> > >  
-> > > +#define CCU_SSPA_MUX_GATE_DEFINE(_name, _parents, _reg_ctrl,			\
-> > > +				     _shift, _width, _mask_gate, _flags)	\
-> > > +static struct ccu_mix _name = {							\
-> > > +	.gate	= CCU_GATE_INIT(_mask_gate),					\
-> > > +	.mux	= CCU_MUX_INIT(_shift, _width),					\
-> > > +	.common = {								\
-> > > +		.reg_ctrl	= _reg_ctrl,					\
-> > > +		CCU_MIX_INITHW_PARENTS(_name, _parents,				\
-> > > +				       spacemit_ccu_sspa_mux_gate_ops,		\
-> > > +				       _flags),					\
-> > > +	}									\
+> > > +/* Index of the parent PCI configuration space to be restored at BMC reset. */
+> > > +struct ls2k_bmc_bridge_pci_data {
+> > > +     u32 pci_command;
+> > > +     u32 base_address[6];
+> > > +     u32 rom_addreess;
+> > > +     u32 interrupt_line;
+> > > +     u32 msi_hi;
+> > > +     u32 msi_lo;
+> > > +     u32 devctl;
+> > > +     u32 linkcap;
+> > > +     u32 linkctl_sts;
+> > > +     u32 symbol_timer;
+> > > +     u32 gen2_ctrl;
+> > > +};
+> > > +
+> > > +struct ls2k_bmc_pdata {
+> > > +     struct device *dev;
+> > > +     struct work_struct bmc_reset_work;
+> > > +     struct ls2k_bmc_pci_data bmc_pci_data;
+> > > +     struct ls2k_bmc_bridge_pci_data bridge_pci_data;
+> > > +};
+> > > +
+> > > +static bool ls2k_bmc_bar0_addr_is_set(struct pci_dev *ppdev)
+> >
+> > Nit: This is usually called pdev.
+> 
+> OK.
+
+Snip things you agree with please.
+
+[...]
+
+> > > +static void ls2k_bmc_events_fn(struct work_struct *work)
+> > > +{
+> > > +     struct ls2k_bmc_pdata *priv = container_of(work, struct ls2k_bmc_pdata, bmc_reset_work);
+> > > +
+> > > +     /*
+> > > +      * The PCI-E is lost when the BMC resets, at which point access to the PCI-E
+> > > +      * from other CPUs is suspended to prevent a crash.
+> > > +      */
+> > > +     stop_machine(ls2k_bmc_recover_pci_data, priv, NULL);
+> > > +
+> > > +#ifdef CONFIG_VT
+> >
+> > #ifery in C-files is generally frowned upon.
+> >
+> > Is the any pieces of run-time data you can use instead?
+> >
+> > Or a stub which culminated in a no-op if !CONFIG_VT?
+> 
+> Emm, I'm not sure if I understand correctly, but is the following way suitable?
+> 
+>         if (IS_ENABLED(CONFIG_VT))
+
+It's better than #if, but even better would be a stub in a header file.
+
+>                 /* Re-push the display due to previous PCI-E loss. */
+>                 set_console(vt_move_to_console(MAX_NR_CONSOLES - 1, 1));
+> 
+> >
+> > > +     /* Re-push the display due to previous PCI-E loss. */
+> > > +     set_console(vt_move_to_console(MAX_NR_CONSOLES - 1, 1));
+> > > +#endif
 > > > +}
 > > > +
-> > >  #define CCU_DIV_GATE_DEFINE(_name, _parent, _reg_ctrl, _shift, _width,		\
-> > >  			    _mask_gate,	_flags)					\
-> > >  static struct ccu_mix _name = {							\
-> > > @@ -213,6 +226,7 @@ extern const struct clk_ops spacemit_ccu_div_ops;
-> > >  extern const struct clk_ops spacemit_ccu_factor_gate_ops;
-> > >  extern const struct clk_ops spacemit_ccu_div_gate_ops;
-> > >  extern const struct clk_ops spacemit_ccu_mux_gate_ops;
-> > > +extern const struct clk_ops spacemit_ccu_sspa_mux_gate_ops;
-> > >  extern const struct clk_ops spacemit_ccu_mux_div_ops;
-> > >  extern const struct clk_ops spacemit_ccu_mux_div_gate_ops;
-> > >  #endif /* _CCU_DIV_H_ */
-> > > 
-> > > ---
-> > > base-commit: 733923397fd95405a48f165c9b1fbc8c4b0a4681
-> > > change-id: 20250717-k1-clk-i2s-e4272f1f915b
-> > > 
-> > > Best regards,
-> > > -- 
-> > > Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> > > 
-> > > 
-> > 
-> > -- 
-> > Yixun Lan (dlan)
-> > 
+> > > +static irqreturn_t ls2k_bmc_interrupt(int irq, void *arg)
+> > > +{
+> > > +     struct ls2k_bmc_pdata *priv = arg;
+> > > +     static unsigned long last_jiffies;
+> > > +
+> > > +     if (system_state != SYSTEM_RUNNING)
+> > > +             return IRQ_HANDLED;
+> > > +
+> > > +     /* Skip interrupt in LS2K_BMC_INT_INTERVAL */
+> > > +     if (time_after(jiffies, last_jiffies + LS2K_BMC_INT_INTERVAL)) {
+> > > +             schedule_work(&priv->bmc_reset_work);
+> > > +             last_jiffies = jiffies;
+> > > +     }
+> > > +
+> > > +     return IRQ_HANDLED;
+> > > +}
+> > > +
+> > > +/*
+> > > + * Saves the BMC parent device (LS7A) and its own PCI configuration space registers
+> > > + * that need to be restored after BMC reset.
+> > > + */
+> > > +static void ls2k_bmc_save_pci_data(struct pci_dev *pdev, struct ls2k_bmc_pdata *priv)
+> > > +{
+> > > +     struct pci_dev *parent = pdev->bus->self;
+> > > +     int base, i = 0;
+> > > +
+> > > +     pci_read_config_dword(parent, PCI_COMMAND, &priv->bridge_pci_data.pci_command);
+> > > +
+> > > +     for (base = PCI_BASE_ADDRESS_0; base <= PCI_BASE_ADDRESS_5; base += 4, i++)
+> > > +             pci_read_config_dword(parent, base, &priv->bridge_pci_data.base_address[i]);
+> > > +
+> > > +     pci_read_config_dword(parent, PCI_ROM_ADDRESS, &priv->bridge_pci_data.rom_addreess);
+> > > +     pci_read_config_dword(parent, PCI_INTERRUPT_LINE, &priv->bridge_pci_data.interrupt_line);
+> > > +
+> > > +     pci_read_config_dword(parent, parent->msi_cap + PCI_MSI_ADDRESS_LO,
+> > > +                           &priv->bridge_pci_data.msi_lo);
+> > > +     pci_read_config_dword(parent, parent->msi_cap + PCI_MSI_ADDRESS_HI,
+> > > +                           &priv->bridge_pci_data.msi_hi);
+> > > +
+> > > +     pci_read_config_dword(parent, parent->pcie_cap + PCI_EXP_DEVCTL,
+> > > +                           &priv->bridge_pci_data.devctl);
+> > > +     pci_read_config_dword(parent, parent->pcie_cap + PCI_EXP_LNKCAP,
+> > > +                           &priv->bridge_pci_data.linkcap);
+> > > +     pci_read_config_dword(parent, parent->pcie_cap + PCI_EXP_LNKCTL,
+> > > +                           &priv->bridge_pci_data.linkctl_sts);
+> > > +
+> > > +     pci_read_config_dword(parent, LS7A_GEN2_CTL, &priv->bridge_pci_data.gen2_ctrl);
+> > > +     priv->bridge_pci_data.gen2_ctrl |= FIELD_PREP(LS7A_GEN2_SPEED_CHANG, 0x1)
+> > > +                                     | FIELD_PREP(LS7A_CONF_PHY_TX, 0x0);
+> > > +
+> > > +     pci_read_config_dword(parent, LS7A_SYMBOL_TIMER, &priv->bridge_pci_data.symbol_timer);
+> > > +     priv->bridge_pci_data.symbol_timer |= LS7A_MASK_LEN_MATCH;
+> > > +
+> > > +     pci_read_config_dword(pdev, PCI_COMMAND, &priv->bmc_pci_data.pci_command);
+> > > +     pci_read_config_dword(pdev, PCI_BASE_ADDRESS_0, &priv->bmc_pci_data.base_address0);
+> > > +     pci_read_config_dword(pdev, PCI_INTERRUPT_LINE, &priv->bmc_pci_data.interrupt_line);
+> > > +}
+> > > +
+> > > +static int ls2k_bmc_pdata_initial(struct pci_dev *pdev, struct ls2k_bmc_pdata *priv)
+> > > +{
+> > > +     int gsi = 16 + (LS2K_BMC_RESET_GPIO & 7);
+> > > +     void __iomem *gpio_base;
+> > > +     int irq, ret;
+> > > +
+> > > +     ls2k_bmc_save_pci_data(pdev, priv);
+> > > +
+> > > +     INIT_WORK(&priv->bmc_reset_work, ls2k_bmc_events_fn);
+> > > +
+> > > +     ret = devm_request_irq(&pdev->dev, pdev->irq, ls2k_bmc_interrupt,
+> > > +                            IRQF_SHARED | IRQF_TRIGGER_FALLING, "ls2kbmc pcie", priv);
+> > > +     if (ret) {
+> > > +             dev_err(priv->dev, "LS2KBMC PCI-E request_irq(%d) failed\n", pdev->irq);
+> >
+> > Please don't use function names in error messages.
+> >
+> > Make them human readable inclusive of non-kernel engineers.
+> 
+> How about:
+> 
+> dev_err(ddata->dev, "Failed to request LS2KBMC PCI-E IRQ %d.\n", pdev->irq);
+> 
+> also, the error message regarding GPIO IRQ is as follows:
+> 
+> dev_err(ddata->dev, "Failed to request LS2KBMC GPIO IRQ %d.\n", irq);
+
+Yes, much better.
+
+[...]
+
+> > > +     priv = devm_kzalloc(&dev->dev, sizeof(*priv), GFP_KERNEL);
+> > > +     if (IS_ERR(priv)) {
+> > > +             ret = -ENOMEM;
+> > > +             goto disable_pci;
+> > > +     }
+> > > +
+> > > +     priv->dev = &dev->dev;
+> > > +
+> > > +     ret = ls2k_bmc_pdata_initial(dev, priv);
+> >
+> > priv (ddata) already contains dev - you don't need both.
+> 
+> Yes, we just pass priv(ddata), and
+> 
+> struct pci_dev *pdev = to_pci_dev(ddata->dev);
+
+I would pass dev ... hold on, where do you store priv for reuse?
+
+> > > +     if (ret)
+> > > +             goto disable_pci;
+> > > +
+> > >       ret = ls2k_bmc_parse_mode(dev, &pd);
+> > >       if (ret)
+> > >               goto disable_pci;
+> > > --
+> > > 2.47.1
+> > >
+> >
+> > --
+> > Lee Jones [李琼斯]
+> 
+> --
+> Thanks.
+> Binbin
+
+-- 
+Lee Jones [李琼斯]
 
