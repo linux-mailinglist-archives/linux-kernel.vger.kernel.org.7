@@ -1,103 +1,160 @@
-Return-Path: <linux-kernel+bounces-736247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB2EBB09A6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:08:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1399B09A3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 05:40:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E822E174329
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 04:08:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E5BB1C28069
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:40:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127061C863B;
-	Fri, 18 Jul 2025 04:08:14 +0000 (UTC)
-Received: from mail-vip.corpemail.net (mail-vip.corpemail.net [162.243.126.186])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25261C861A;
+	Fri, 18 Jul 2025 03:40:02 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195BB12B94
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 04:08:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.126.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ACA84A33;
+	Fri, 18 Jul 2025 03:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752811693; cv=none; b=YFzVMk7SFzgEjYj6GH/sgnq8T4CZf39h7Urk0iYAAwax1cFuQaf+nrRQoOq8ERJroSfVAx2aSoJBXdHpHUpLPv4v4si7uiwLHRqApYXX6J6aS+ogpfmemgykpnAgFtJ7sOOYgv3JJ3VKo8dBgp62tWAoWfsmbg6/zVOZElaBBt0=
+	t=1752810002; cv=none; b=Jg6sahH8ijfJSZzzGy/SH+NyqE83zsAg+HlK1KSw6XNv4jWzU0OGtth3BuuGyr992kNNi+C9J3IOhH4OrsL6Yg3f4i2ABeyLd3pHPDxQVNYUDtnyi+Rn5b50HhSnxurGE8ZwVorkl2YaEB5Dw68VSH2l48NCKvCpwPM3d/Xcvqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752811693; c=relaxed/simple;
-	bh=5ocPqVVmNAjlt1qfDrxniMvfXeB/L0qwoadv+AhZkhQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=I5KBxGYIEUqDGAnLdUpIhJVhWkzRgNyE2GIESdkclst2eVCcgsBJJNPvJSJ0X2S3ZF+8HSSja5qlb5cwc5QkO3cmZdPy5eZS2DhadWtN+z/WltwdBIPfxm5OKQsjczy7DSxyeauWlFuvUKXu73ZKzTy++DsB00G9+70vHvTzq+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=162.243.126.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from jtjnmail201622.home.langchao.com
-        by unicom146.biz-email.net ((D)) with ASMTP (SSL) id 202507181130422850;
-        Fri, 18 Jul 2025 11:30:42 +0800
-Received: from localhost.localdomain (10.94.18.81) by
- jtjnmail201622.home.langchao.com (10.100.2.22) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.57; Fri, 18 Jul 2025 11:30:43 +0800
-From: Bo Liu <liubo03@inspur.com>
-To: <xiang@kernel.org>, <chao@kernel.org>
-CC: <linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>, Bo Liu
-	<liubo03@inspur.com>
-Subject: [PATCH v4] erofs: fix build error with CONFIG_EROFS_FS_ZIP_ACCEL=y
-Date: Thu, 17 Jul 2025 23:30:39 -0400
-Message-ID: <20250718033039.3609-1-liubo03@inspur.com>
-X-Mailer: git-send-email 2.18.2
+	s=arc-20240116; t=1752810002; c=relaxed/simple;
+	bh=4Al64Mz9tQLlIK/bnrwE/T/sj32RszCoH4fQ1R70p2U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pj2KALjvCcCmqGuKbOxgWmrkPvnuNKC5+ZnhWYJ8vwM5r8FaVkEyAH63dYVLeuuB36lZZKu5214Dh8PwlUOiYApCv3I2KyCEKlgE+p/CqOxFrsN/w0QrNvyrEe95wTQWmZ5Omw4/R8gsF2E0EZlQRWZ/5HkA/SqSRNOg0o7WGV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [211.71.28.34])
+	by APP-01 (Coremail) with SMTP id qwCowACnl6tLwHloCD0OBQ--.25172S2;
+	Fri, 18 Jul 2025 11:32:36 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: chunkuang.hu@kernel.org,
+	p.zabel@pengutronix.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	nancy.lin@mediatek.com
+Cc: akpm@linux-foundation.org,
+	dri-devel@lists.freedesktop.org,
+	linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] drm/mediatek: Fix device/node reference count leaks in mtk_drm_get_all_drm_priv
+Date: Fri, 18 Jul 2025 11:32:26 +0800
+Message-Id: <20250718033226.3390054-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: Jtjnmail201617.home.langchao.com (10.100.2.17) To
- jtjnmail201622.home.langchao.com (10.100.2.22)
-tUid: 20257181130422c6370c10a21dd3e58b20e7c397c0a3b
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowACnl6tLwHloCD0OBQ--.25172S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7uF1rZFykAFyruw4fGFyDZFb_yoW5JFW7pF
+	4UGFWFvrW8KF4UKwn5tFW8AF15CF1Iya1fWFyIq343Cw1rZryYk34rt34avrykArWkAF1f
+	JwnxtFy8ur4jkFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUP014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
+	0_GcWlnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
+	648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK67
+	AK6r48MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAF
+	wI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc4
+	0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AK
+	xVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr
+	1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUjg4S5UU
+	UUU==
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-fix build err:
- ld.lld: error: undefined symbol: crypto_req_done
-   referenced by decompressor_crypto.c
-       fs/erofs/decompressor_crypto.o:(z_erofs_crypto_decompress) in archive vmlinux.a
-   referenced by decompressor_crypto.c
-       fs/erofs/decompressor_crypto.o:(z_erofs_crypto_decompress) in archive vmlinux.a
+Using device_find_child() and of_find_device_by_node() to locate
+devices could cause an imbalance in the device's reference count.
+device_find_child() and of_find_device_by_node() both call
+get_device() to increment the reference count of the found device
+before returning the pointer. In mtk_drm_get_all_drm_priv(), these
+references are never released through put_device(), resulting in
+permanent reference count increments. Additionally, the
+for_each_child_of_node() iterator fails to release node references in
+all code paths. This leaks device node references when loop
+termination occurs before reaching MAX_CRTC. These reference count
+leaks may prevent device/node resources from being properly released
+during driver unbind operations.
 
- ld.lld: error: undefined symbol: crypto_acomp_decompress
-   referenced by decompressor_crypto.c
-       fs/erofs/decompressor_crypto.o:(z_erofs_crypto_decompress) in archive vmlinux.a
+As comment of device_find_child() says, 'NOTE: you will need to drop
+the reference with put_device() after use'.
 
- ld.lld: error: undefined symbol: crypto_alloc_acomp
-   referenced by decompressor_crypto.c
-       fs/erofs/decompressor_crypto.o:(z_erofs_crypto_enable_engine) in archive vmlinux.a
+Found by code review.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202507161032.QholMPtn-lkp@intel.com/
-Fixes: b4a29efc5146 ("erofs: support DEFLATE decompression by using Intel QAT")
-Signed-off-by: Bo Liu <liubo03@inspur.com>
-
-change since v3:
-- change Kconfg to select CRYPTO and CRYPTO_DEFLATE
-
+Cc: stable@vger.kernel.org
+Fixes: 1ef7ed48356c ("drm/mediatek: Modify mediatek-drm for mt8195 multi mmsys support")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 ---
- fs/erofs/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c | 27 +++++++++++++++++---------
+ 1 file changed, 18 insertions(+), 9 deletions(-)
 
-diff --git a/fs/erofs/Kconfig b/fs/erofs/Kconfig
-index 6beeb7063871..7b26efc271ee 100644
---- a/fs/erofs/Kconfig
-+++ b/fs/erofs/Kconfig
-@@ -147,6 +147,8 @@ config EROFS_FS_ZIP_ZSTD
- config EROFS_FS_ZIP_ACCEL
- 	bool "EROFS hardware decompression support"
- 	depends on EROFS_FS_ZIP
-+	select CRYPTO
-+	select CRYPTO_DEFLATE
- 	help
- 	  Saying Y here includes hardware accelerator support for reading
- 	  EROFS file systems containing compressed data.  It gives better
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+index 7c0c12dde488..c78186debd3e 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+@@ -388,19 +388,24 @@ static bool mtk_drm_get_all_drm_priv(struct device *dev)
+ 
+ 		of_id = of_match_node(mtk_drm_of_ids, node);
+ 		if (!of_id)
+-			continue;
++			goto next;
+ 
+ 		pdev = of_find_device_by_node(node);
+ 		if (!pdev)
+-			continue;
++			goto next;
+ 
+ 		drm_dev = device_find_child(&pdev->dev, NULL, mtk_drm_match);
+-		if (!drm_dev)
+-			continue;
++		if (!drm_dev) {
++			put_device(&pdev->dev);
++			goto next;
++		}
+ 
+ 		temp_drm_priv = dev_get_drvdata(drm_dev);
+-		if (!temp_drm_priv)
+-			continue;
++		if (!temp_drm_priv) {
++			put_device(drm_dev);
++			put_device(&pdev->dev);
++			goto next;
++		}
+ 
+ 		if (temp_drm_priv->data->main_len)
+ 			all_drm_priv[CRTC_MAIN] = temp_drm_priv;
+@@ -412,10 +417,14 @@ static bool mtk_drm_get_all_drm_priv(struct device *dev)
+ 		if (temp_drm_priv->mtk_drm_bound)
+ 			cnt++;
+ 
+-		if (cnt == MAX_CRTC) {
+-			of_node_put(node);
++		put_device(drm_dev);
++		put_device(&pdev->dev);
++
++next:
++		of_node_put(node);
++
++		if (cnt == MAX_CRTC)
+ 			break;
+-		}
+ 	}
+ 
+ 	if (drm_priv->data->mmsys_dev_num == cnt) {
 -- 
-2.31.1
+2.25.1
 
 
