@@ -1,150 +1,188 @@
-Return-Path: <linux-kernel+bounces-736116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FA81B09902
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 02:56:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B4B9EB09904
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 02:56:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5E00564AF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 00:56:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF15B5651A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 00:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60B4629405;
-	Fri, 18 Jul 2025 00:56:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6049191;
+	Fri, 18 Jul 2025 00:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ffav9r9d"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZcIWXRcn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51823191
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 00:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC03128816;
+	Fri, 18 Jul 2025 00:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752800162; cv=none; b=WgdhqE/8rLpMNnEaoCR5qikVsGq5W2fBYC2sD4ArZ6KjkYNxOJP0aCaQzbAXGIkdS13LPMehvU+3+VjUDaeyeHIAD640ijx+61lWWzrUr5n0BdHVx4mCFO5KdEVzVUcLU4RqCWHuhyrSTW0i8vF26/m07w9xMRI6xjDf0d03q8s=
+	t=1752800187; cv=none; b=tRIH+JKHikbIQz4M9TRkc5d/LTJhqhClxwR06F4EAEcFySZahzF4NpDlwEdOvPfTVzqFWObRoJtiT8wSrD6+77VWm5loAmmDIjqjezZwfjgk9a68n0wbNe33USvu1t/GGQeQvJ7h1+ovvZAg6oOrDvJrZ80q6DK6uq5ThqISLsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752800162; c=relaxed/simple;
-	bh=8sEFwIfaLas9h20Ro7TWFWnsgpYwuPC1TpV16qGyanU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=poQLVpRcKDa+4jFirMWotqI6iMxI9cYGkvPDtON4HOqFatSYaX4pfUaGybUQJXUP6lOjyppS05CXvdVzU7TIcgRse3srQaV4rITZGx+aoBXohnmIbh7+NClh+jRL9nLDJGSBQm6f0b+kRUywsDoohy52gVTf4fMmkVG1kr3mDkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ffav9r9d; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4ab82eb33f9so25945631cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 17:56:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752800160; x=1753404960; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5y7rYvuoQbC5fB9jD5hc2/oRm7S44nHPBSjuUalivDQ=;
-        b=Ffav9r9dDUH9Ol/gHfvFIbCDdidSUS6BFso0/m/livGd5WvNyW5Kies9xshvFsjM/x
-         fAzV8NWZZzRBU8xrVJUwAs91d06Up6Pd2PxWsbMFiyJnIc3RwTosE42TDvzfR+BplZV+
-         Yqy9W9EpA6Gx4MjeZTqiR5OLAPMGWSEXwWUgaZIftu+FaKHTU6XeCCtPBFiqbaa9VlpX
-         S2Rsc+CyUfWZjT6wbfCEQx08fRmR++uVRGYoSrLGLlNoarRq7v34Hqr8aOLvHUMXJ/ja
-         mPPAJHi1O37gP7MCsnB1AM7m4dK5qzUImvUqjSScKDgAxm+cFhCqMK2AsecwCC9Qp0eD
-         lL6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752800160; x=1753404960;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5y7rYvuoQbC5fB9jD5hc2/oRm7S44nHPBSjuUalivDQ=;
-        b=Jk0pwHKxzLLFQdu4kGqC3kj12xrlpPNKbuX8jAXnyzSt4F6OJOFEweuLPTDxhhu8cG
-         w6j0vs86VCWHFkyXTXWpQMbUGJn5VnIoPBMVB6rXxVATX6MKYxj6TKIijeedOkpIm2CK
-         AzWDZ6L+gNOIysnbzBLKDeY8hgoVk8lnD2fshncNPs6MejEiJJs6osAy/A0/LReoRJGI
-         3akTOVOLvPUy5EGTjjXCM30RJMlUFM8QVBrjwsQqzib8Jd1IwkbwDyA+Y2HIhzPPAhlk
-         00+P9jbsZJ5BV77drY+sqVrbcpnT4jRvBN0ojKC+jNxIh9/ok9p88VSFuvAJvLHEpsAL
-         CJag==
-X-Forwarded-Encrypted: i=1; AJvYcCXfav9D9pDvGtEN49Ej7Kvrdi/S2YD1eTedb6EGpPlFZR5NuqCB37q8rmrJeP2bl5bLRIj4lQ9IFXL8gsI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzF7s/1pvhst/91VsK5OCMPfyhZy5MP82FdENORiYt3qcRIXqPx
-	sltfGnoyxnA+x7NaZ8Qz9Y6qT8aXUhHwS0cS9OVTpfnndAwv90aqCqdFRcBMBg==
-X-Gm-Gg: ASbGnctBcczcXwEiiFjQV/WMu0CitpGkPGsCqnnyFFTHZh5AtDr6HZsTWu2fcwZ1Hf+
-	DBSfD76CH2OFArW0FrPCX92Cr2RROc9neP75f3bpG+5DV31NebBH5uQzBgGm8SNXrrCVZwP0U1D
-	Qen+4E7qf7iMOeBK40rYtz6NCGexDnsQp3B79+SRUZ3+uCfQ2aD91qMkMKDU2w8lLdkTZGXEb5O
-	0PK+G1kzbiW6VsTspBm6tZY3EDG5Ej7LoGb+P6DTrec/ieAFmmSaUAK2YQnDr3qLr22rHctGyz8
-	6vIxSNLuZdwUxO0eDA46OTnsPYEDYhEvcHY65l7euGhnJ/EjrrmrK/znB4XiKyLHqul1erWBckA
-	UE6Mngs8Pau8=
-X-Google-Smtp-Source: AGHT+IFXZDliFQ2bb16oj9g66fwylVoMivg8Sj7LGmOA/tKGoFMCG7aCUcuLYBfhbXqSaz95bIBV/A==
-X-Received: by 2002:a05:622a:1e14:b0:4a3:398d:825c with SMTP id d75a77b69052e-4ab93dca61amr136098231cf.48.1752800160112;
-        Thu, 17 Jul 2025 17:56:00 -0700 (PDT)
-Received: from pc ([165.51.18.150])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4abb4b4caf5sm1455011cf.71.2025.07.17.17.55.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 17:55:59 -0700 (PDT)
-Date: Fri, 18 Jul 2025 01:55:56 +0100
-From: Salah Triki <salah.triki@gmail.com>
-To: Eli Billauer <eli.billauer@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org
-Cc: salah.triki@gmail.com
-Subject: [PATCH v3] char: xillybus: Replace deprecated MSI API
-Message-ID: <aHmbnFJXWMWgS5Lk@pc>
+	s=arc-20240116; t=1752800187; c=relaxed/simple;
+	bh=SY6veYEenY3ETaNp90Fgi3oqpoAKdNxhIi+bTZtizDM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qZeK0S6gjgQbQN4waDGHoi/Rgorgt+1hjov90woc0VbTe5VE9hLsPJusqTxYrtDb6usiGHFK4ff1qHr9fuZ6q9cF3jK2REcF4wXeIU04JxDY3L/kmd8/3VU5SS3D2fBBKZJ+SVmnebOYVwr2EtWbIWqyxJRounVyoBcZxHH+S0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZcIWXRcn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23233C4CEE3;
+	Fri, 18 Jul 2025 00:56:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752800186;
+	bh=SY6veYEenY3ETaNp90Fgi3oqpoAKdNxhIi+bTZtizDM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZcIWXRcnolHN2gWY2+iymLVYl3JeOO7lUYBB1V/8/qccbb7Cs1UveUcs6vLq4s+kH
+	 JVddSr4+Aeyg/mmnDdBJhhZc2vxv81Drd97qre9tgQtxP2GDXen0YXRnY5AmXBD4ap
+	 9hf0RAvYDwH9mz9feeH7pB87wljMljAvVtB6hUZ2QNAe0P6aT0jyStJfcTNzMWVxir
+	 2yIQEL1k2Wv5SNrhLDFPaDk0sT78S40EhHJD/6y2fjzhEQzipxERScHsd/77irjhK9
+	 QNRiD3LCHw29wcKAkxTe977EJSX8EHSjeII0tlPeJKhZnqIh1eK/Yi+oXXqwXQRP2k
+	 w7SnrRkqiZAqQ==
+Date: Fri, 18 Jul 2025 02:56:19 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Kees Cook <kees@kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>
+Cc: David Laight <david.laight.linux@gmail.com>, 
+	Martin Uecker <ma.uecker@gmail.com>, linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
+	Christopher Bazley <chris.bazley.wg14@gmail.com>, shadow <~hallyn/shadow@lists.sr.ht>, 
+	linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
+	kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
+	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
+	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
+	Andrew Clayton <andrew@digital-domain.net>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Michal Hocko <mhocko@suse.com>, Al Viro <viro@zeniv.linux.org.uk>, Sam James <sam@gentoo.org>, 
+	Andrew Pinski <pinskia@gmail.com>
+Subject: Re: [RFC v5 6/7] sprintf: Add [v]sprintf_array()
+Message-ID: <p2gl2w7gntydz4lpoyrazha2hqswwoggykdxo2un7us5wsc3lp@ij5my4epi3ot>
+References: <cover.1751823326.git.alx@kernel.org>
+ <cover.1752182685.git.alx@kernel.org>
+ <04c1e026a67f1609167e834471d0f2fe977d9cb0.1752182685.git.alx@kernel.org>
+ <CAHk-=wiNJQ6dVU8t7oM0sFpSqxyK8JZQXV5NGx7h+AE0PY4kag@mail.gmail.com>
+ <28c8689c7976b4755c0b5c2937326b0a3627ebf6.camel@gmail.com>
+ <20250711184541.68d770b9@pumpkin>
+ <CAHk-=wjC0pAFfMBHKtCLOAcUvLs30PpjKoMfN9aP1-YwD0MZ5Q@mail.gmail.com>
+ <202507142211.F1E0730A@keescook>
+ <3o3ra7vjn44iey2dosunsm3wa4kagfeas2o4yzsl34girgn2eb@6rnktm2dmwul>
+ <202507171644.7FB3379@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="k63pphsxoo2hl7dh"
 Content-Disposition: inline
-In-Reply-To: <aHkkU-BHX2Zn0SWY@pc>
+In-Reply-To: <202507171644.7FB3379@keescook>
 
-Replace deprecated pci_enable_msi() with pci_alloc_irq_vectors(). And
-add devm action to free irq vectors.
 
-Signed-off-by: Salah Triki <salah.triki@gmail.com>
----
-Changes in v3:
-    - Some checkpatch cleanups
+--k63pphsxoo2hl7dh
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Kees Cook <kees@kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>
+Cc: David Laight <david.laight.linux@gmail.com>, 
+	Martin Uecker <ma.uecker@gmail.com>, linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
+	Christopher Bazley <chris.bazley.wg14@gmail.com>, shadow <~hallyn/shadow@lists.sr.ht>, 
+	linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
+	kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
+	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
+	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
+	Andrew Clayton <andrew@digital-domain.net>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Michal Hocko <mhocko@suse.com>, Al Viro <viro@zeniv.linux.org.uk>, Sam James <sam@gentoo.org>, 
+	Andrew Pinski <pinskia@gmail.com>
+Subject: Re: [RFC v5 6/7] sprintf: Add [v]sprintf_array()
+References: <cover.1751823326.git.alx@kernel.org>
+ <cover.1752182685.git.alx@kernel.org>
+ <04c1e026a67f1609167e834471d0f2fe977d9cb0.1752182685.git.alx@kernel.org>
+ <CAHk-=wiNJQ6dVU8t7oM0sFpSqxyK8JZQXV5NGx7h+AE0PY4kag@mail.gmail.com>
+ <28c8689c7976b4755c0b5c2937326b0a3627ebf6.camel@gmail.com>
+ <20250711184541.68d770b9@pumpkin>
+ <CAHk-=wjC0pAFfMBHKtCLOAcUvLs30PpjKoMfN9aP1-YwD0MZ5Q@mail.gmail.com>
+ <202507142211.F1E0730A@keescook>
+ <3o3ra7vjn44iey2dosunsm3wa4kagfeas2o4yzsl34girgn2eb@6rnktm2dmwul>
+ <202507171644.7FB3379@keescook>
+MIME-Version: 1.0
+In-Reply-To: <202507171644.7FB3379@keescook>
 
-Changes in v2:
-    - Replace PCI_IRQ_ALL_TYPES with PCI_IRQ_MSI
-    - Delete pci_free_irq_vectors(pdev) in remove function
-    - Add devm action that calls pci_free_irq_vectors(pdev)
+Hi Kees,
 
- drivers/char/xillybus/xillybus_pcie.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+On Thu, Jul 17, 2025 at 04:47:04PM -0700, Kees Cook wrote:
+> On Tue, Jul 15, 2025 at 09:08:14AM +0200, Alejandro Colomar wrote:
+> > Hi Kees,
+> >=20
+> > On Mon, Jul 14, 2025 at 10:19:39PM -0700, Kees Cook wrote:
+> > > On Fri, Jul 11, 2025 at 10:58:56AM -0700, Linus Torvalds wrote:
+> > > >         struct seq_buf s;
+> > > >         seq_buf_init(&s, buf, szie);
+> > >=20
+> > > And because some folks didn't like this "declaration that requires a
+> > > function call", we even added:
+> > >=20
+> > > 	DECLARE_SEQ_BUF(s, 32);
+> > >=20
+> > > to do it in 1 line. :P
+> > >=20
+> > > I would love to see more string handling replaced with seq_buf.
+> >=20
+> > The thing is, it's not as easy as the fixes I'm proposing, and
+> > sprintf_end() solves a lot of UB in a minimal diff that you can dumbly
+> > apply.
+>=20
+> Note that I'm not arguing against your idea -- I just think it's not
+> going to be likely to end up in Linux soon given Linus's objections.
 
-diff --git a/drivers/char/xillybus/xillybus_pcie.c b/drivers/char/xillybus/xillybus_pcie.c
-index 9858711e3e79..373b3ccd2e8f 100644
---- a/drivers/char/xillybus/xillybus_pcie.c
-+++ b/drivers/char/xillybus/xillybus_pcie.c
-@@ -32,6 +32,11 @@ static const struct pci_device_id xillyids[] = {
- 	{ /* End: all zeroes */ }
- };
- 
-+static void xilly_pci_free_irq_vectors(void *data)
-+{
-+	pci_free_irq_vectors(data);
-+}
-+
- static int xilly_probe(struct pci_dev *pdev,
- 		       const struct pci_device_id *ent)
- {
-@@ -76,11 +81,21 @@ static int xilly_probe(struct pci_dev *pdev,
- 	pci_set_master(pdev);
- 
- 	/* Set up a single MSI interrupt */
--	if (pci_enable_msi(pdev)) {
-+	rc = pci_alloc_irq_vectors(pdev, 1, 1, PCI_IRQ_MSI);
-+	if (rc < 0) {
- 		dev_err(endpoint->dev,
- 			"Failed to enable MSI interrupts. Aborting.\n");
- 		return -ENODEV;
- 	}
-+
-+	rc = devm_add_action(&pdev->dev, xilly_pci_free_irq_vectors, pdev);
-+	if (rc) {
-+		dev_err(endpoint->dev,
-+			"Failed to add devm action. Aborting.\n");
-+		pci_free_irq_vectors(pdev);
-+		return -ENODEV;
-+	}
-+
- 	rc = devm_request_irq(&pdev->dev, pdev->irq, xillybus_isr, 0,
- 			      xillyname, endpoint);
- 	if (rc) {
--- 
-2.43.0
+It would be interesting to hear if Linus holds his objections on v6.
 
+> My
+> perspective is mainly one of pragmatic damage control: what *can* we do
+> in Linux that would make things better? Currently, seq_buf is better
+> than raw C strings...
+
+TBH, I'm not fully convinced.  While it may look simpler at first
+glance, I'm worried that it might bite in the details.  I default to not
+trusting APIs that hide the complexity in hidden state.  On the other
+hand, I agree that almost anything is safer than snprintf(3).
+
+But one good thing of snprintf(3) is that it's simple, and thus
+relatively obvious to see that it's wrong, so it's easy to fix (it's
+easy to transition from snprintf(3) to sprintf_end()).  So, maybe
+keeping it bogus until it's replaced by sprintf_end() is a better
+approach than using seq_buf.  (Unless the current code is found
+exploitable, but I assume not.)
+
+
+Have a lovely night!
+Alex
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--k63pphsxoo2hl7dh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmh5m60ACgkQ64mZXMKQ
+wqkLwBAAhgrJrpnkhBACfYY0eDqJcZh5qz8L/7W6xPGCf46NZSmjG/xJiYD2Ystf
+j2+6m1UM6ynUzTMKK0hUo2nMhmBqqd3mmgFpTgWO6iwOt+Am5C7+RuLtBhCNrAh+
+kYBPjichLntIH4Di6kHYlGevuH2NCR5zh5ImDK/fbBl56V6p0YTJCFGKqqWeiKo6
+UI/SXQgqL1leL6clVP18x0WTaPfslnoZ9SlbGT2FpVIkhs/fLzcfJm+sXDQTzGff
+1ccwyUPLGSJoiAD8jlrAxPson+KND8FtjU582aK/JwX05VVZSPzcKJLHm3Vu36j0
+ye+DL97kD00ebWjS+w2u9F2Xfl5mc1cNqGJUHhmaK2jJV1JTlus1HhWgQp9rNe/K
+49FWUIhnfqG2rz1kFzpGyTJY0zEXRmctcmm35K+qiGKnFHpO3DikvtBbgTPlOO2/
++8ODvnlfr0ffTLHZ3Zh0x+vvKqCXm/OI7Wm9H3utA9X3GvSeDIYHfYjtTuJFyO8F
+Hw82ItMzcbi9h2mOgUQtVliLtxskzOxt+1jN+QgUfcRRQbV4K21MTQ/HzBioIKk1
+JUQZbyYIaXqS1RsJ308A4fuDA+XR5zah2Zn7WiIbVmnU7/xt72UQ3Jrq/jr3f0aW
+pXJ8aI2ggPuQXwUaF1pN3yHwlAXdAVziskVxXFiOXPTp7WXtC/c=
+=mSgQ
+-----END PGP SIGNATURE-----
+
+--k63pphsxoo2hl7dh--
 
