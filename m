@@ -1,107 +1,136 @@
-Return-Path: <linux-kernel+bounces-736694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99ED1B0A0A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:28:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28D6BB0A0A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:28:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 996A0A449B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:27:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43E5CA83962
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:27:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F6D2BCF4B;
-	Fri, 18 Jul 2025 10:27:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE64E2BD015;
+	Fri, 18 Jul 2025 10:27:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LDTUrCz5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cfzLOpU7"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84DEFBA27;
-	Fri, 18 Jul 2025 10:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B3C2BD012;
+	Fri, 18 Jul 2025 10:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752834438; cv=none; b=TuWrMAg3zYReAxUtB0hFnWgrz0wcslUcUOTLcTWLU9Gy/FC5OpartMiGf2f9IgkC9h7gkjSzC13o8ftB5E6zDeYwav2K0J3harvZ7GbIpGUkGYJJ64FBt06EUbhwb0Pql29Rn597OTPPE+fp/ATbE7n7j2zmWhTy0XWAcSgX0wI=
+	t=1752834454; cv=none; b=KqqhWbmC+n+JKtoRF/WPnNNXKnAD7gcEo+dmTWRh7Xv8SZpP6hl4bxXWhvtmAvuwvViJ55fI7FxEei78yqljIbEaaYPcqP3tRCIohyz1vFrBdtcrEYKH8d6Kkhbz98Xt+6+FcWxdk4g6fioY8j2pJKwB4zV0hkg59OFMb3fZhVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752834438; c=relaxed/simple;
-	bh=RSLPZfhWxQYnSXaCJXfPgeIgZNT7vJZLbF48MWYtaNU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MTHPS0Oq8e+mHDLuuAzQ11N+WLTyi5N5dMZBYBtbh6AmGNBtiiuZOIlbRUR22ic0+Po341TJ2EKtz4H4xiunMFOQiB9wCNhGyYedkaCYkPDyXW2uXYShEFg1FTT87FEkxsoRNAgjCP9CscQRFZRyRTe1PVpPrQm70s9v2Vx+CmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LDTUrCz5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAE4FC4CEEB;
-	Fri, 18 Jul 2025 10:27:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752834438;
-	bh=RSLPZfhWxQYnSXaCJXfPgeIgZNT7vJZLbF48MWYtaNU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LDTUrCz5NxGOn4y5Ve3I/7yNBxscqW5Lgjiypa0IeUjDjyXq14HMmTry8p3Auu5E7
-	 ZMeX0Lt/jCbdrN28fAj5RQcU+Ntwcku1HpPblnXgC8gC/wvGK6WjkwVc5Ljbx84+iv
-	 icW4Wr9FHXSEneCTD86/B69kZT4Zne8q03jdyu3g=
-Date: Fri, 18 Jul 2025 12:27:14 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Nam Cao <namcao@linutronix.de>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Gabriele Monaco <gmonaco@redhat.com>,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] rv: Ensure containers are registered first
-Message-ID: <2025071835-enjoying-darn-f5d8@gregkh>
-References: <20250718091850.2057864-1-namcao@linutronix.de>
+	s=arc-20240116; t=1752834454; c=relaxed/simple;
+	bh=34kp88JqtvOHUN1Ruw4Qwe4Ve5+ySa4ozJpDYO/g4bQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ifByyIpR+CFjY+fqWQEhJdwyDFzsBbNp6rfON3vgTnw+yZaGyF7e8sLarl7+nNxaxvWda+v8kmEP6R9IPjKCcFpsIPP/+Nv2uvCTXKJKEayvfsO8tQ77ThkRhfwlEHtwrbgBufTOj6HQgnb+ACW1HHLKuMcFDyLdJzKZPrhuSOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cfzLOpU7; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e8d713e64c5so1472799276.0;
+        Fri, 18 Jul 2025 03:27:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752834452; x=1753439252; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1x8KYMoPHOU/KGMTKlJp4QdTDljWUFg5i2cxTvc6SMc=;
+        b=cfzLOpU74Dq10upz+KeaYP0VDlMNDoxA83YT81l1mgT/GLtTmWcQLyhOUq51j+RQA4
+         l1E0sXvYe8DZL6A3rCMuHfteaLDUtOcbho+LN3QQzbKuh/06VT5DR6tFqJSnsvBZAcrd
+         9jPFUrtOc2JmjSnFDkBQ0YiwBBxrYLJNFGCLbf6TuQnrY+V8EP3jQzPM4fS9+L/xfX3V
+         AzqRO5OPLdMPpfTI1npKZuwZbjBa05y32EUd1Og/PjyuTVfS2bapZBcIeWELJ0ORYcmK
+         LIs1KizX3kmAzTsn7BAqJkYfqAnv9fQEhP+4ySAZ07uNvcM0Jdq60osmsX+oVqwGxt+E
+         XmGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752834452; x=1753439252;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1x8KYMoPHOU/KGMTKlJp4QdTDljWUFg5i2cxTvc6SMc=;
+        b=ooZ+PGSwBA14vNJ7mitj61CTyvUnvQTKFzmhpNxHlFY/o4oQHOpYxo1Ir4tYcjGLvd
+         GMndvFMjMogpgyrxPdd6FDceIXzOvNxJsPfvrxhXyUL9s27HIRYIW0RUg6nwvtwxg3m4
+         YMV9uUUgQPhTm8r1IdAPp15F2HAJndsSOG/pd82RQXwtzjwY37Nj2zOyeJGb1LkXlZuU
+         jYJJp2V2eKs1gAmoRn5XAh3212K8gyCHVvZs0Ne4p0o3ulWbs0cv7WvmGFMSdPSk4ZfZ
+         90TNTUeodeWeHjd1Ksyo39knP55a0tSTcQ6euI4OOUavCfau1P8a3S9jXqPgF0V+ftQt
+         mKrA==
+X-Forwarded-Encrypted: i=1; AJvYcCWnc8FmStaV8rM/RFZ3/9otO2R0GST60zWsd4JQd4/qyWtKIgizutxaieoyCzNUhaKs3MAamVcdWDkrqK4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzpfu3fP8wrM4N/Q/QEqCg/TBfDpl1dsHZ3SLRW1aTXnnDLUOjQ
+	Nm8E19WEaxkF5MjtHZdlY74EJCCsRe7DQbjHDxgJHsc0zHPVTKm0t5QRA6Ps9tKO1x1DKdPaZu1
+	Z2n6w/7zZp3k3xf7LAwqMrwpSs1bnJ8Yc6w==
+X-Gm-Gg: ASbGnct9L8pdn+POCz+KrGBtpTrMEHMyfOGk5nf6QUDdW01Ez7Iw6DC8Opv1Ph5HwtS
+	xoRYPzF0vNPPO1bxYXn+pYjgoO/gdJa4powM87LA1Wzo/qx3pTi+VtuEsE1SFpv9Ui+Drq80e7e
+	1qH2pHF8N8xGplHLXNjDrTJlIukn9ZjHJDmhpx7/wfzCl6I7kGahyE9fdvIEeeGGVgpmGGGBGIy
+	OHG8fIU
+X-Google-Smtp-Source: AGHT+IHbR0TgrZnHWoh6mc9uul5rXSlPg9jvMrr3O/Uj9MClMiXC9JDrYVKVApD3TRnHdcHCmHq6uDJ+bvpNQuMqzr4=
+X-Received: by 2002:a05:690c:38b:b0:708:cd31:88a9 with SMTP id
+ 00721157ae682-71952350c3amr27819927b3.37.1752834451459; Fri, 18 Jul 2025
+ 03:27:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250718091850.2057864-1-namcao@linutronix.de>
+References: <aGjUpI1yNjEhSiAq@brak3rDesk>
+In-Reply-To: <aGjUpI1yNjEhSiAq@brak3rDesk>
+From: Rujra Bhatt <braker.noob.kernel@gmail.com>
+Date: Fri, 18 Jul 2025 15:57:20 +0530
+X-Gm-Features: Ac12FXxoU6aFudyIJiyv4FHEoGIyv9QfAgoxU9dgMhQNxFSC-pmiUNMnb69ONhU
+Message-ID: <CAG+54DZQC+-6E-P3D4BUtVujNegL1qKpcB5SGh28+rX5hrHFiw@mail.gmail.com>
+Subject: Re: [PATCH] arc:kernel:perf_event.c : replaced sprintf with sysfs_emit()
+To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
+	namhyung@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com, 
+	kan.liang@linux.intel.com, vgupta@kernel.org
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-snps-arc@lists.infradead.org, skhan@linuxfoundation.org, 
+	linux-kernel-mentees@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 18, 2025 at 11:18:50AM +0200, Nam Cao wrote:
-> If rv_register_monitor() is called with a non-NULL parent pointer (i.e. by
-> monitors inside a container), it is expected that the parent (a.k.a
-> container) is already registered.
-> 
-> The containers seem to always be registered first. I suspect because of the
-> order in Makefile. But nothing guarantees this.
+Hi,
 
-Yes, linking order matters, and it does guarantee this.  We rely on
-linking order in the kernel in many places.
-
-> If this registering order is changed, "strange" things happen. For example,
-> if the container is registered last, rv_is_container_monitor() incorrectly
-> says this is NOT a container. .enable() is then called, which is NULL for
-> container, thus we have a NULL pointer deref crash.
-> 
-> Guarantee that containers are registered first.
-> 
-> Fixes: cb85c660fcd4 ("rv: Add option for nested monitors and include sched")
-> Signed-off-by: Nam Cao <namcao@linutronix.de>
-> Cc: stable@vger.kernel.org
+On Sat, Jul 5, 2025 at 1:00=E2=80=AFPM Rujra Bhatt <braker.noob.kernel@gmai=
+l.com> wrote:
+>
+> Replaced sprintf() with sysfs_emit() in sysfs*_show() function in
+> perf_event.c file to follow the kernel's guidelines from
+> documentation/filesystems/sysfs.rst
+> This will improve consistency, safety, and makes it easier to maintain
+> and update in future.
+>
+> Signed-off-by: Rujra Bhatt <braker.noob.kernel@gmail.com>
 > ---
->  include/linux/rv.h                                        | 5 +++++
->  kernel/trace/rv/monitors/pagefault/pagefault.c            | 4 ++--
->  kernel/trace/rv/monitors/rtapp/rtapp.c                    | 4 ++--
->  kernel/trace/rv/monitors/sched/sched.c                    | 4 ++--
->  kernel/trace/rv/monitors/sco/sco.c                        | 4 ++--
->  kernel/trace/rv/monitors/scpd/scpd.c                      | 4 ++--
->  kernel/trace/rv/monitors/sleep/sleep.c                    | 4 ++--
->  kernel/trace/rv/monitors/sncid/sncid.c                    | 4 ++--
->  kernel/trace/rv/monitors/snep/snep.c                      | 4 ++--
->  kernel/trace/rv/monitors/snroc/snroc.c                    | 4 ++--
->  kernel/trace/rv/monitors/tss/tss.c                        | 4 ++--
->  kernel/trace/rv/monitors/wip/wip.c                        | 4 ++--
->  kernel/trace/rv/monitors/wwnr/wwnr.c                      | 4 ++--
->  tools/verification/rvgen/rvgen/templates/container/main.c | 4 ++--
->  tools/verification/rvgen/rvgen/templates/dot2k/main.c     | 4 ++--
->  tools/verification/rvgen/rvgen/templates/ltl2k/main.c     | 4 ++--
->  16 files changed, 35 insertions(+), 30 deletions(-)
+>  arch/arc/kernel/perf_event.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/arc/kernel/perf_event.c b/arch/arc/kernel/perf_event.c
+> index ed6d4f0cd621..424ec072c441 100644
+> --- a/arch/arc/kernel/perf_event.c
+> +++ b/arch/arc/kernel/perf_event.c
+> @@ -648,7 +648,7 @@ static ssize_t arc_pmu_events_sysfs_show(struct devic=
+e *dev,
+>         struct perf_pmu_events_attr *pmu_attr;
+>
+>         pmu_attr =3D container_of(attr, struct perf_pmu_events_attr, attr=
+);
+> -       return sprintf(page, "event=3D0x%04llx\n", pmu_attr->id);
+> +       return sysfs_emit(page, "event=3D0x%04llx\n", pmu_attr->id);
+>  }
+>
+>  /*
+> --
+> 2.43.0
+>
 
-As there is no bug now, why is this a cc: stable patch?
+Gentle reminder for the replacement of sprintf() with the sysfs_emit(), kin=
+dly
+review it.
 
-thanks,
-
-greg k-h
+Thanking you,
+regards,
+Rujra Bhatt
 
