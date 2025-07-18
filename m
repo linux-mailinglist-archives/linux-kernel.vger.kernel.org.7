@@ -1,158 +1,162 @@
-Return-Path: <linux-kernel+bounces-737231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2967AB0A98A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 19:30:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F262B0A978
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 19:28:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED88E581AAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:30:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1873958360D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:28:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F052E7BBE;
-	Fri, 18 Jul 2025 17:30:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED342E716C;
+	Fri, 18 Jul 2025 17:28:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="k0GOq3HM"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hL3fYOQC"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0BBB2E7658
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 17:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC262DEA74
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 17:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752859819; cv=none; b=iOuZLs9OqDr9l+3T7Y0qkQTP5daN0d2DNW+PjEPt2j1mSQzlrKpeOzCtSTLQLZii/D7+5YiLA2JMwNFUTLuXbWAGe0Wo0cZeFnnrwzXYPjgYemDUjMX0dxCaoKVcSs25A1TvdzaLvxndQt5Vb7XH8stYZ8S7im3c08zjpskEB24=
+	t=1752859709; cv=none; b=uMhDpM4u5AtKE/4zYO6MbTiIam2IkzC8qgtWvAvG2BIHxXtjzdsQW113u1BWGRSDA9o5JDRi1gZKS8IzdG5D6dm9d4cONTFt9fLK3qt5fdtfhEZYp5hv29aPXE1OuMimWbGQ7NuVlRWWhT5jlREE0LWPLOh8cZKcwbm5XufPS/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752859819; c=relaxed/simple;
-	bh=GQJLQRp6wR0E+oqpeGWe0eJScNcdbrpnD/j+pa2qtoQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PTBL9L3RzjZSIYOXc3ObIQRcFEa/fGO7MVnse1Q28StuETF1T/gzf9i0q4rQ31ULczrN2g10nGpfbY8R8IRGqPA4VqgVLFeFQymALYDe1jV/FsGIOC2N33+H64bzeQestUhLV3wAHi4cdsjSy5C1On5gnHWcuy993c+prSwsUEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=k0GOq3HM; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752859805;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=1qNW6csArfqmL300w4UUL/cdLHtMm0ChRs8zkgA/5EY=;
-	b=k0GOq3HMzK2rMNk0WPSsnkw0v6KgzeZJpVIY0KFoItiQFHfyO2gYKKzUrOBTSi/1qAB4n0
-	06nZbzAWABvX058GHIhY9OSBAraTDmur1xnU8V/YVlCydg+d57fA0TYHfXcwc0QnRicM45
-	XirXGlR2J6/vWK55FY2fyCvxfmyTNBg=
-From: Tao Chen <chen.dylane@linux.dev>
-To: pablo@netfilter.org,
-	kadlec@netfilter.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	ast@kernel.org,
-	fw@strlen.de
-Cc: netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	Tao Chen <chen.dylane@linux.dev>,
-	syzbot+92c5daf9a23f04ccfc99@syzkaller.appspotmail.com
-Subject: [PATCH bpf-next] netfilter: bpf: Disable migrate before bpf_prog run
-Date: Sat, 19 Jul 2025 01:27:46 +0800
-Message-ID: <20250718172746.1268813-1-chen.dylane@linux.dev>
+	s=arc-20240116; t=1752859709; c=relaxed/simple;
+	bh=90B31psnyuDI6zcbsl6GMlpN4O29mgnxLtJPusFpi1I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xz+LBP5fxXzq2fAYUsorm6VFhcNCGoNQl2TaMoIeTsXHK/lOwenZSfM5e+ixDE3geeHDhdXOdnEzjYVZVZGFhQhfbDyS69t/3NBnjsxLf7VyUubyJag2dealCN0oqkNg+ey9DMQ3nJLbMs9KmERoUDnm3DdDu57jDfYFEWUFs5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hL3fYOQC; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56IGbMcL016545
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 17:28:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	m3LoWx9DJ0TyeqCc/zXgNGefaOcySK/itM7vHhC503E=; b=hL3fYOQCMSzfdzZe
+	ARYdewThhNQpHTxU9N5K5FEGaVx+b6EyURyjSKgeEY05Surk9walCPC6uH3da5kM
+	moiRe8ECpMYOhbwKNv2N5EZQP99VZA8OMHEFDTFQkoM6/eThJPecHLpCq6DZWWt7
+	zLe7E9CkPzejy4CdqKdIifKZEA6CUdob6+dbeWyHbNUXJyxyzuRpmYtrYWX8XYnx
+	Jmv9Zq/6pNmnNLa2Tug6NgWZTA+7oXWZn90cUMOOkoFhaz8iYAL1xILGlbSG6zMQ
+	vjuQwEXALfkTvBftllkkaBt9BreiI61wcEFH6BvwLbyNUl7JPgYwRBEnUJgifCGx
+	XJbQ8g==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47w5dyyc6s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 17:28:27 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7da0850c9e5so353367885a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 10:28:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752859706; x=1753464506;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=m3LoWx9DJ0TyeqCc/zXgNGefaOcySK/itM7vHhC503E=;
+        b=hcqGZ5kbH7zLFlxTTxmP1ODsSKQw1FA3r0QnNViaK9yYB+EpkMfymtPmNPkvpUvNXh
+         lBaEwjuYDtXU9rFP3i2FoQSuVAmH4jd9Bg7qy9+J4luXI/L5zPSu+nkkzOsehUSkwYIx
+         qpinV6X6SnflgxZWIo8Wvr+kqmEYnjk3SVWpY1OpO9hSWpQCPUokHm0wxW2+SIK1a0eW
+         M0keML7nyL5jzbcZytFANSFqd1IMTx5YA5+8KmVDUncgaEeP1LCtrRZs2fid8YZE02lg
+         3TSXGqBd06K6ORKWu5JUo1GKP5AVyP8kg0vOOFLppMAeKfHbLCwKPg/S2ZTEAbkniFHN
+         +M6g==
+X-Forwarded-Encrypted: i=1; AJvYcCUiugiWjteYuOGNIQFReSDeSPJcqsOqPaI6tMTk2zPYqqMEENqlj12i7JiR0GZ3YjF2qhAq879yT4v9Rz8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfVTeQ35NPimzW6OAG5/mkuJbMHWh7elj0iG8Mmb6eqpFWZu0B
+	5uHZmJx9sO7+bHpOSzA7nUiy+wlFv/ju5rMkQ7QSjsnVWpGSoukj547byVWN7CGr9OSBG0yqu47
+	6zNzL/95jiDJt0UoOixigBZncdXw/NaJpKRVF7gYtg4/sJg8cnL6Xh5GwnFMtbnQ+AJc=
+X-Gm-Gg: ASbGncsukG6P2Nkx6rpfV4O9YBJ/s3JDV5kbhrLgjPhsfqkdvQWKqOtSXLXSbbDu2UC
+	hcBIszz3unxI5eYizrQ4jeYf4V/0Dzi/8uEKPrnV8cw0HX8D5gCJ4/mSg9Si3eOQWGgoa251eF4
+	SBh8Fg3LajuOO8RCnfqfZ3N8sQq6VsFPvTW5JBw3agrqwfOsd6kwf4pqR11KidLAafGTVy2Vfpc
+	kKV3y7y78fOjxp/Nofwg0YysAKuiVqN7yhjDU+S+ac+xLy3Bf5Y8p2bHnrp9AFvUaOBZUhVSSFg
+	jjqXuVTBCfojiCQ5djLhHyVLLc7CWv619M0gcTAw7FP9Ez8ZoYSQRbAB38SsVllvoBCLDmUsbxJ
+	Sd6tP0gwfO5LYjRDmoxcoduR4vm9knO1yA6l1ZGDUXmiYDMSoH5Zx
+X-Received: by 2002:a05:620a:31a2:b0:7e1:ef9c:551b with SMTP id af79cd13be357-7e342aaa43cmr1705214585a.14.1752859704716;
+        Fri, 18 Jul 2025 10:28:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHi1fx7XAxIa0TvF/aFCXfwm8ex0+eb4Ytu8ukrsy0ujfZiAFNB/UKSTVvQ3I4n6jhoSky01Q==
+X-Received: by 2002:a05:620a:31a2:b0:7e1:ef9c:551b with SMTP id af79cd13be357-7e342aaa43cmr1705206985a.14.1752859703989;
+        Fri, 18 Jul 2025 10:28:23 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55a31a9b71esm334910e87.30.2025.07.18.10.28.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Jul 2025 10:28:23 -0700 (PDT)
+Date: Fri, 18 Jul 2025 20:28:21 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] drm/msm: Don't use %pK through printk
+Message-ID: <kb7m3ybmvpt6ywbzawjeqzzxpinc2k7b5hgm5333gay557hxrv@swg4dz4sh7ft>
+References: <20250718-restricted-pointers-drm-v2-1-3d9f8566f927@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20250718-restricted-pointers-drm-v2-1-3d9f8566f927@linutronix.de>
+X-Proofpoint-ORIG-GUID: CAlX2st0ThPCj_SRIG-TGceIsh8JgW2f
+X-Authority-Analysis: v=2.4 cv=RtXFLDmK c=1 sm=1 tr=0 ts=687a843b cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10
+ a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=FzZ3ZiyTMWqXPo3om_sA:9
+ a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10 a=NFOGd7dJGGMPyQGDc5-O:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE4MDEzOCBTYWx0ZWRfXwFPNuKFvvxlB
+ x5/4s2Nj4Ud9B//XJYdm4v0pvSg2XjtTic+K7s1BW1Me+KknNcdLY4H+RToCGdRuSAzGHuVHfY5
+ lG/El52LRLyTtGRFDBzCS3dS4vAhDVKV1uDiGY4B87LxGfnD/G9wVcQ2LCMKF5fIA+zlv2tlOJb
+ bWKIQ/5vI21JdoWycp2MaXaHez7UkfqREGPqDG7GPfK7sgQTelTmFs1TZIyFAQnpGioEeCPxNGq
+ 4fYjG0u8YSmJBOyT5ByR3Um/jFzq3H1pIehxEImGCS6z7SmedpKQaNQzG+fXDextWgS760YvCkL
+ 3hqnFRF85l9xo/WqaEcieGxD+mZRnoH3ilex2RdIcWtz0dpf1ROCnAiuCcK2tPdm4XshmwC/jne
+ T3SkVxnNU8JD3mSp1Htxu6PsX645nFEEBecIhBQe+n/7wvK0df5xAy1TkTYVUpCZMZGtpzvD
+X-Proofpoint-GUID: CAlX2st0ThPCj_SRIG-TGceIsh8JgW2f
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-18_04,2025-07-17_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 mlxscore=0 bulkscore=0 suspectscore=0 lowpriorityscore=0
+ impostorscore=0 malwarescore=0 clxscore=1015 mlxlogscore=947
+ priorityscore=1501 phishscore=0 spamscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507180138
 
-syzkaller reported an issue:
+On Fri, Jul 18, 2025 at 03:27:37PM +0200, Thomas Weiﬂschuh wrote:
+> In the past %pK was preferable to %p as it would not leak raw pointer
+> values into the kernel log.
+> Since commit ad67b74d2469 ("printk: hash addresses printed with %p")
+> the regular %p has been improved to avoid this issue.
+> Furthermore, restricted pointers ("%pK") were never meant to be used
+> through printk(). They can still unintentionally leak raw pointers or
+> acquire sleeping locks in atomic contexts.
+> 
+> Switch to the regular pointer formatting which is safer and
+> easier to reason about.
+> 
+> Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+> ---
+> Changes in v2:
+> - Drop already applied patches
+> - Link to v1: https://lore.kernel.org/r/20250618-restricted-pointers-drm-v1-0-781e0d88cd92@linutronix.de
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    | 2 +-
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c | 4 ++--
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c     | 4 ++--
+>  drivers/gpu/drm/msm/msm_mdss.c              | 2 +-
+>  4 files changed, 6 insertions(+), 6 deletions(-)
+> 
 
-BUG: assuming non migratable context at ./include/linux/filter.h:703
-in_atomic(): 0, irqs_disabled(): 0, migration_disabled() 0 pid: 5829, name: sshd-session
-3 locks held by sshd-session/5829:
- #0: ffff88807b4e4218 (sk_lock-AF_INET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1667 [inline]
- #0: ffff88807b4e4218 (sk_lock-AF_INET){+.+.}-{0:0}, at: tcp_sendmsg+0x20/0x50 net/ipv4/tcp.c:1395
- #1: ffffffff8e5c4e00 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #1: ffffffff8e5c4e00 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
- #1: ffffffff8e5c4e00 (rcu_read_lock){....}-{1:3}, at: __ip_queue_xmit+0x69/0x26c0 net/ipv4/ip_output.c:470
- #2: ffffffff8e5c4e00 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #2: ffffffff8e5c4e00 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
- #2: ffffffff8e5c4e00 (rcu_read_lock){....}-{1:3}, at: nf_hook+0xb2/0x680 include/linux/netfilter.h:241
-CPU: 0 UID: 0 PID: 5829 Comm: sshd-session Not tainted 6.16.0-rc6-syzkaller-00002-g155a3c003e55 #0 PREEMPT(full)
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x16c/0x1f0 lib/dump_stack.c:120
- __cant_migrate kernel/sched/core.c:8860 [inline]
- __cant_migrate+0x1c7/0x250 kernel/sched/core.c:8834
- __bpf_prog_run include/linux/filter.h:703 [inline]
- bpf_prog_run include/linux/filter.h:725 [inline]
- nf_hook_run_bpf+0x83/0x1e0 net/netfilter/nf_bpf_link.c:20
- nf_hook_entry_hookfn include/linux/netfilter.h:157 [inline]
- nf_hook_slow+0xbb/0x200 net/netfilter/core.c:623
- nf_hook+0x370/0x680 include/linux/netfilter.h:272
- NF_HOOK_COND include/linux/netfilter.h:305 [inline]
- ip_output+0x1bc/0x2a0 net/ipv4/ip_output.c:433
- dst_output include/net/dst.h:459 [inline]
- ip_local_out net/ipv4/ip_output.c:129 [inline]
- __ip_queue_xmit+0x1d7d/0x26c0 net/ipv4/ip_output.c:527
- __tcp_transmit_skb+0x2686/0x3e90 net/ipv4/tcp_output.c:1479
- tcp_transmit_skb net/ipv4/tcp_output.c:1497 [inline]
- tcp_write_xmit+0x1274/0x84e0 net/ipv4/tcp_output.c:2838
- __tcp_push_pending_frames+0xaf/0x390 net/ipv4/tcp_output.c:3021
- tcp_push+0x225/0x700 net/ipv4/tcp.c:759
- tcp_sendmsg_locked+0x1870/0x42b0 net/ipv4/tcp.c:1359
- tcp_sendmsg+0x2e/0x50 net/ipv4/tcp.c:1396
- inet_sendmsg+0xb9/0x140 net/ipv4/af_inet.c:851
- sock_sendmsg_nosec net/socket.c:712 [inline]
- __sock_sendmsg net/socket.c:727 [inline]
- sock_write_iter+0x4aa/0x5b0 net/socket.c:1131
- new_sync_write fs/read_write.c:593 [inline]
- vfs_write+0x6c7/0x1150 fs/read_write.c:686
- ksys_write+0x1f8/0x250 fs/read_write.c:738
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-The cant_migrate() check in __bpf_prog_run requires to disable
-migrate before running the bpf_prog, it seems that migrate is
-not disabled in the above execution path.
 
-Fixes: fd9c663b9ad6 ("bpf: minimal support for programs hooked into netfilter framework")
-Reported-by: syzbot+92c5daf9a23f04ccfc99@syzkaller.appspotmail.com
-Signed-off-by: Tao Chen <chen.dylane@linux.dev>
----
- net/netfilter/nf_bpf_link.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/net/netfilter/nf_bpf_link.c b/net/netfilter/nf_bpf_link.c
-index a054d3b216d..b6ed1b844cc 100644
---- a/net/netfilter/nf_bpf_link.c
-+++ b/net/netfilter/nf_bpf_link.c
-@@ -11,13 +11,18 @@
- static unsigned int nf_hook_run_bpf(void *bpf_prog, struct sk_buff *skb,
- 				    const struct nf_hook_state *s)
- {
-+	u32 ret;
- 	const struct bpf_prog *prog = bpf_prog;
- 	struct bpf_nf_ctx ctx = {
- 		.state = s,
- 		.skb = skb,
- 	};
- 
--	return bpf_prog_run(prog, &ctx);
-+	migrate_disable();
-+	ret = bpf_prog_run(prog, &ctx);
-+	migrate_enable();
-+
-+	return ret;
- }
- 
- struct bpf_nf_link {
 -- 
-2.48.1
-
+With best wishes
+Dmitry
 
