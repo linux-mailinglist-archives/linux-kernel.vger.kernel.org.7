@@ -1,66 +1,54 @@
-Return-Path: <linux-kernel+bounces-736654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3B4AB0A011
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:50:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B8D8B0A00C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:49:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10680586055
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:50:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7A77188A76B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2832529B767;
-	Fri, 18 Jul 2025 09:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="K57P4x+p"
-Received: from forwardcorp1a.mail.yandex.net (forwardcorp1a.mail.yandex.net [178.154.239.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D90529A9F9;
+	Fri, 18 Jul 2025 09:49:00 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0B329994E;
-	Fri, 18 Jul 2025 09:50:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF763C01;
+	Fri, 18 Jul 2025 09:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752832216; cv=none; b=BeighGT3NxvOUsHRuBUHPo8Vxm6lUJC1Zq1ZHhGZZAmq6tlTFYTMssPb79uPsQ0G/u6lwpmyUnxKf8M0DhCYb9DhbdNQZXjSvq/kvsvYlwAghHAlbLoCwkNybrFW4PNLwIkJ5eAKotkkMJrqxc8HfonuWB7dybi+Nwr6OFA88oY=
+	t=1752832140; cv=none; b=InD5I8R3I5mJqodSrszkKvN9oxgsjfUePIrfhTBeRScZsPRojqXiRJkwrafIH6rbLu6EGsLBFieu6UuR5WmoW0asElNgUaCKgKsJBwGUbvzHvvSwYBz8Y01gi7aQGGa6cjBfLPTK0PzIgS3vmeW57KIKIyAc0jVt+2wFk3JmCjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752832216; c=relaxed/simple;
-	bh=FSDkz9ufGd6JFNDDBz8LCXm3t9keeU/OAbDamo4Homw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=E6Pb1Q1B+6RsZbU7YbRYmMQ4XEH8jwqTPmaZj9mOAuLe495cJis0qWHVPuzO2dBSPVxFmrmwkYJ5VN3k4W5s53QFHH06EU7mnMYkKnYpPs+AB6IAJlFe2GaRxNhckKhblvFi3AYC0VktzobcW/q+DBS0ABp8hyrMlcyw7kggTnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=K57P4x+p; arc=none smtp.client-ip=178.154.239.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
-Received: from mail-nwsmtp-smtp-corp-main-83.vla.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-83.vla.yp-c.yandex.net [IPv6:2a02:6b8:c0f:4291:0:640:5ba1:0])
-	by forwardcorp1a.mail.yandex.net (Yandex) with ESMTPS id BF8F9C12E5;
-	Fri, 18 Jul 2025 12:48:58 +0300 (MSK)
-Received: from kniv-nix.yandex-team.ru (unknown [2a02:6bf:8080:56e::1:20])
-	by mail-nwsmtp-smtp-corp-main-83.vla.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id amKOpm1GwW20-X0xCTLjP;
-	Fri, 18 Jul 2025 12:48:58 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
-	s=default; t=1752832138;
-	bh=FSDkz9ufGd6JFNDDBz8LCXm3t9keeU/OAbDamo4Homw=;
-	h=Message-Id:Date:In-Reply-To:Cc:Subject:References:To:From;
-	b=K57P4x+p2x0RkZTlbxzz0TZ3i4PfsYj+na/7loFsqMsJWry33+KJ/MdJ6uzE5FhJY
-	 LfvAQH/8rPN0i8Xg81PXiRsxWLE4MjFN0yTK1o3OdiL+gHWhhP8wRnlJtkpJwN3eAa
-	 fNgLBLzdLPnZ64Ernjib2XJZcp3KEmo6XfKLESu8=
-Authentication-Results: mail-nwsmtp-smtp-corp-main-83.vla.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
-From: Nikolay Kuratov <kniv@yandex-team.ru>
-To: linux-kernel@vger.kernel.org
-Cc: netdev@vger.kernel.org,
-	virtualization@lists.linux.dev,
-	kvm@vger.kernel.org,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-	Lei Yang <leiyang@redhat.com>,
-	Hillf Danton <hdanton@sina.com>
-Subject: Re: [PATCH] vhost/net: Replace wait_queue with completion in ubufs reference
-Date: Fri, 18 Jul 2025 12:48:36 +0300
-Message-Id: <20250718094836.1538136-1-kniv@yandex-team.ru>
+	s=arc-20240116; t=1752832140; c=relaxed/simple;
+	bh=mvLX7J2fJUv9irR0mGQwaL/gbW7N9hqowlHbHSKrSAk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mSLcBIS3l+Ed7fN+PXoXuodiUFtO4uZ52SrllHZuyfCH0pbv9pesns5h1QxfjWex0ts4jZ4NnKAnvBSnyK+bxdFKmXA2jXdS0rLy0cHmpxsqIdt64hwfIhrulcxb7J1b3A29kr94NgjqCRmbyL0nfUMrBQK7dtOaURWFLAuTZZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bk4hh0HRnz6M4gR;
+	Fri, 18 Jul 2025 17:47:32 +0800 (CST)
+Received: from frapeml500003.china.huawei.com (unknown [7.182.85.28])
+	by mail.maildlp.com (Postfix) with ESMTPS id 41E581402F6;
+	Fri, 18 Jul 2025 17:48:50 +0800 (CST)
+Received: from a2303103017.china.huawei.com (10.203.177.99) by
+ frapeml500003.china.huawei.com (7.182.85.28) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 18 Jul 2025 11:48:49 +0200
+From: Alireza Sanaee <alireza.sanaee@huawei.com>
+To: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <jonathan.cameron@huawei.com>, <coresight@lists.linaro.org>,
+	<dianders@chromium.org>, <james.clark@linaro.org>, <krzk@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-perf-users@vger.kernel.org>,
+	<linuxarm@huawei.com>, <mark.rutland@arm.com>, <mike.leach@linaro.org>,
+	<robh@kernel.org>, <ruanjinjie@huawei.com>, <saravanak@google.com>,
+	<shameerali.kolothum.thodi@huawei.com>, <suzuki.poulose@arm.com>
+Subject: [PATCH v3 0/6] Refactoring finding CPU phandles in DT
+Date: Fri, 18 Jul 2025 10:48:42 +0100
+Message-ID: <20250718094848.587-1-alireza.sanaee@huawei.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250718090725.2352-1-hdanton@sina.com>
-References: <20250718090725.2352-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,18 +56,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
+ frapeml500003.china.huawei.com (7.182.85.28)
 
-Yes, if multiple waiters call vhost_net_ubuf_put_and_wait() concurrently we
-are screwed. Furthermore, it was not the case before this patch. While it
-was explicitly mentioned in the commit message, now I changed my mind,
-because amount of vhost_net_ubuf_put_and_wait() users may change when this
-patch will be backported to older LTSes. In 6.6+ kernels there are
-only two put_and_wait() callers, both are ensuring that there
-is only one thread calling put_and_wait() at a time.
+This series refactor the way CPU IDs are retrieved from the device
+tree.
 
-I think its better to preserve thread-safety of vhost_net_ubuf_put_and_wait()
-and move reinit_completion() call to vhost_net_flush(). We don't need
-reinit on free'ing path anyway.
+Usually, there is a for loop that goes over every single CPU that can be
+avoided. This also reduces the amount of NULL pointer checks in drivers.
+I have abstracted away that loop and introduced a new function
+(of_cpu_node_to_id) for this.
 
-I will send v2 with the fix. Thank you for noticing this.
+This patchset is a subset of [1], where I removed content and patches
+relevant to hyper-threaded cores for DT. Based on the discussion, the
+code refactor is still useful, hence this patchset.
+
+[1]
+https://lore.kernel.org/all/20250512080715.82-1-alireza.sanaee@huawei.co
+
+Changes since v2:
+    - Addressed Jonathan Cameron's comments.
+    - Added reviewed-by tags.
+    - Added a new commit where I suggest simplfing the code in
+      arch_topology.c to remove the use of cpu_node on failure path.
+    - Improve documentation.
+    - Caught a bug in patch 1.
+    - Commit message fixed for patch 2.
+
+Changes since v1:
+    - Rebased on top of the latest mainline.
+    - Addressed Krzysztof Kozlowski's comments -- Hopefully :-)
+    - Addressed Jonathan Cameron's comments.
+
+Alireza Sanaee (6):
+  of: add infra for finding CPU id from phandle
+  arch_topology: drop the use of cpu_node in the pr_info
+  arch_topology: update CPU map to use of_cpu_phandle_to_id
+  coresight: cti: Use of_cpu_phandle_to_id for grabbing CPU id
+  coresight: Use of_cpu_phandle_to_id for grabbing CPU ID
+  perf/arm-dsu: refactor cpu id retrieval via new API
+    of_cpu_phandle_to_id
+
+ drivers/base/arch_topology.c                  | 22 ++++-----
+ .../coresight/coresight-cti-platform.c        | 13 +----
+ .../hwtracing/coresight/coresight-platform.c  | 15 +-----
+ drivers/of/cpu.c                              | 49 +++++++++++++++++++
+ drivers/perf/arm_dsu_pmu.c                    |  7 +--
+ include/linux/of.h                            |  9 ++++
+ 6 files changed, 72 insertions(+), 43 deletions(-)
+
+-- 
+2.43.0
+
 
