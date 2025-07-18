@@ -1,926 +1,465 @@
-Return-Path: <linux-kernel+bounces-736221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2606B09A34
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 05:34:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AFFBB09A37
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 05:38:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D4713BB806
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:34:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E5A858693B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:38:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2092E1C7017;
-	Fri, 18 Jul 2025 03:34:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 218871C861A;
+	Fri, 18 Jul 2025 03:38:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="TBI3D++p"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ufg+YgGf"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506CC2E3701
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 03:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752809688; cv=pass; b=d7iNTkNw2hz0CyzNxBEyIC4PQ6qQNmigqdppujdbhqnzelLiZDYLBdhmlZ/Rr2ET4hF6N1V24kBqSUceNorUthnF0p8vtZemW9Um7dj0iwTC8cEKUPVOGbyM5fG3BonuxWT7YXOc3tmcWlKr8l9b2wb2uEiM9dZBVIxtWO4aOhw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752809688; c=relaxed/simple;
-	bh=lSZ11RYhQjlfc8AFji+N7nZ+AsqBp3T2EZDjkv6kedE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jdOKBU7C7CA9bwK+ZPCDa6Rw498ha1J06cB5tEgr59Mumy9bWJQvpd3kYOOI1mywgY9wXjk+N7HLFE6mIs2ChkbWoPHNdEbOdqvEIrKXF6tSj6ey1k146l/38+NKdcQNI9ZCHMt2KXqxgbl1IEpRBIQtYMbb7gnvGjMh9J/8Vhw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=TBI3D++p; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1752809672; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=dKXxVyGIENjmXYyTMXqiUSo/DK+ixSJCs0rrlFxveaTD9k7MZQp0M6T5Wfk4FUX4w7JvR2mdPZLx1pPmvlw1X+B79dUIpzvlQwwT8tRG1P+GMUWLSVQDZFV2hpBP6wdLbt8AwQ1t+txoqP0ejcP21T+jvXY8RcZ1mGb/ffgp8FE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1752809672; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=QFVsvXQkIU11HcEaRW2vwOxC3TZ6nLCIuUkIqSb61pM=; 
-	b=grGfzCXqS5DsVUJ9KyNf42CLqWmaC0+6AFgZe4q++HHKLAyGxAe8tTfV4Uhl3w6X4cQQ528C12gNYC2Dw7gS3HrP3yJDPS+QVK0/DXoMFpB08qGdp2wzcmdIRQTtO7bC05t+QJIPIGys9yrgqSIbX2ZD3eozBYNt6Z5XIQFAVpM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
-	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752809672;
-	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=QFVsvXQkIU11HcEaRW2vwOxC3TZ6nLCIuUkIqSb61pM=;
-	b=TBI3D++pHEA9drcqIPhp21zfh20c/QHiswltAKzyANrzmnP6BkJwzhEq1loMnmsT
-	3nu9QWAL2azF/BoXUwzt9K5dZt9ceQOgEZSnDp4ZbErw6qwVDrln6IkiLdh5G9AX0dF
-	wW0pUkN/bh3hozrNCjni4KoNxV5KgL2q4xdcA88k=
-Received: by mx.zohomail.com with SMTPS id 1752809670154481.5733886832204;
-	Thu, 17 Jul 2025 20:34:30 -0700 (PDT)
-Date: Fri, 18 Jul 2025 04:34:25 +0100
-From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
-To: Lukas Zapolskas <lukas.zapolskas@arm.com>
-Cc: Boris Brezillon <boris.brezillon@collabora.com>, 
-	Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 4/7] drm/panthor: Introduce sampling sessions to
- handle userspace clients
-Message-ID: <xxzoh644c5rpaxnfxjwzjclokj6c2xbccqrfrh4bkixsdiklbo@qle75rimzy2k>
-References: <cover.1747148172.git.lukas.zapolskas@arm.com>
- <0319137f966f2dbffc54e51f7a2a3cbac837507b.1747148172.git.lukas.zapolskas@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4633C38;
+	Fri, 18 Jul 2025 03:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752809920; cv=none; b=DMf4r0Wsp0NLGhNtV95qGlWJ81peVxrzb2NLWJkqO2KGs4L5K7fNrSOKwvyGWA31vYerOR5DaM4jTm/zja1KZT4igloHl6Fn3OmoJYWGDyb5uZJa6ANBSzfUzvqRNy+jCtizhDbUndVxfUdaRLf2iWS1rXjROlGhRkABmvGs/xY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752809920; c=relaxed/simple;
+	bh=XZSner3yVbM32DUEJkj9xjJcA8O/x7Q+Prb0damfS6I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qHBgIohI2HRhnaPlQhk5aLuNxScp/sLxqrHuXDCLoGBLZ28ifLSFkMXuW/Vm30vuv5z5jHiQ3/Fzu/rNLlLcVHpk3sBmhRauhNLe9Rsn1nUeZ/cPa2H2p1hb05TBZeVY7XzLb7WlSe6mqebIzyvwnJTj2ZYOOC8yXSEuZ0aDiis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ufg+YgGf; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45618ddd62fso17619745e9.3;
+        Thu, 17 Jul 2025 20:38:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752809915; x=1753414715; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8kVjnu4ZRPVskrhklztcS1q/76OOQ5xKy8zMuiq2fhc=;
+        b=Ufg+YgGfyK/5s1Sj3/m+Tg7FPcy0ClNFtabevaHP1QxddDH606zR/N7Pg6eXFTu2+f
+         fwqmovkICIlTbdF/3QU06ikqcudOdyeFpSua0BKFh0VnTFn6QoM227lOkw6pb3sp9KrJ
+         WlL6itTw1hxrYz6IabBbKLDtomNQyIlxKO0IXABaCEQCHVDNsiS38+0gmJflU60UDgpL
+         h0EQWTXJOYyEP4VyXSo+iWWKde66e55a/pbWxWxhtiyt4RMeSXaLAN/MAqdtwFymcyQJ
+         rqGAiw38ER2J1WocuX8/W85dOvniInMCntQtuZSzU5qobyoVnjsyMW5V2MCV5iXdTD0P
+         j4Yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752809915; x=1753414715;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8kVjnu4ZRPVskrhklztcS1q/76OOQ5xKy8zMuiq2fhc=;
+        b=gCTsYedibDnj68jGP/QvECOT2I5NOFYMz5eUcE/cYxuUOfcpsQ2ilrxtwo4t4fEkeU
+         LiWduVGJZfqOSjzouz6svRN6fuSYY7Ockjbc+7gR/o8OVZulWSJjc+DIXE32Wmkm7toc
+         aogXh2zuUC4M92kkXiydDTnhLwMM8FkcAeODRAeggGXg/KiOUrYgioMEcOmIR7pOl4DM
+         lcCB9AfEooeBGsgG5XoEIpGp9SWRPqCu7tn8djMuaRMW6LCjMb/b4WVR0hb5FHJ7lKyk
+         u+Wb6vsZxJUDOZfkBqO0TjTCCsshelslPnj7f2hg11Ecs9mZr5ilBUs9bpnH8ZbSGJxK
+         yK/g==
+X-Forwarded-Encrypted: i=1; AJvYcCV7ikxDDcjjj31x/L1hxOCokhZh1ZMFGPdujoq5H4Dpevm94mXsn5RDaj0jvq6PV9gfsof31DupwGA=@vger.kernel.org, AJvYcCVPY8kUqMQ0st3nJY9u8WYSzWIu/OXXpv7boVFl9a9eBSaH4JO6QNoslZ46VnvR/2JxuI8arOvKetCEJxPg@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrebREyfgCYUKFZOyF7gT6xcQfHl08BNv9hZO9M6/fVowzEH2g
+	gljFHe9VaOFFz+BMZXytMElOrWjnHgzqDDZJBePuEG7xsYj5OWa66XcOKxH+z459MqnJkFygYpU
+	YtC/qmX/sDmOacGmLtQIA/HG3DOOl42FaaNNw
+X-Gm-Gg: ASbGncvW/CR5m2o2lw2Wmo0R54ebxTata1EDGSFmUFIvoO/lpntJtMcKT3npKjeErIe
+	Zeowwu2vhcxZHGuWuOz21tiNKlgTgmeTpk6KnN+WyKxpxT3h1FwyfHzWKCsiACsit8VsyNnT/Wd
+	jENyk23Ydlb6yd8ZYE960wi8SP0alE5XQd5EBaJaRwYxPImkyV8SQn3x9XRvAYW/1/zf6uKBlJG
+	TYjv0Zd
+X-Google-Smtp-Source: AGHT+IELv6Eaj7bGZf5I98pEzsmbm6s1vyuZK2HmDfNsscBzikAW0+BcPmINlO4LtIhh/nN1Iyn6Ts9tnAFZv7DRzcg=
+X-Received: by 2002:a05:600c:450f:b0:453:1e14:6387 with SMTP id
+ 5b1f17b1804b1-4562e3cad06mr78336625e9.32.1752809914957; Thu, 17 Jul 2025
+ 20:38:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <0319137f966f2dbffc54e51f7a2a3cbac837507b.1747148172.git.lukas.zapolskas@arm.com>
+References: <20250718-k1-i2c-ilcr-v2-1-b4c68f13dcb1@linux.spacemit.com>
+In-Reply-To: <20250718-k1-i2c-ilcr-v2-1-b4c68f13dcb1@linux.spacemit.com>
+From: Jesse T <mr.bossman075@gmail.com>
+Date: Thu, 17 Jul 2025 23:37:59 -0400
+X-Gm-Features: Ac12FXw3tcLluwuU4fs6VIlHtZDcSRFnzMMvxMtn1S4JkspGxTu1GcRKTEH9Nr8
+Message-ID: <CAJFTR8RGT0JFcsSODEgyWgJYKj6QhWa7=5Tm9_6U4Pkv56X=-g@mail.gmail.com>
+Subject: Re: [PATCH v2] i2c: spacemit: configure ILCR for accurate SCL frequency
+To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Cc: Andi Shyti <andi.shyti@kernel.org>, Yixun Lan <dlan@gentoo.org>, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	spacemit@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 16.05.2025 16:49, Lukas Zapolskas wrote:
-> To allow for combining the requests from multiple userspace clients, an
-> intermediary layer between the HW/FW interfaces and userspace is
-> created, containing the information for the counter requests and
-> tracking of insert and extract indices. Each session starts inactive and
-> must be explicitly activated via PERF_CONTROL.START, and explicitly
-> stopped via PERF_CONTROL.STOP. Userspace identifies a single client with
-> its session ID and the panthor file it is associated with.
+On Thu, Jul 17, 2025 at 9:08=E2=80=AFPM Troy Mitchell
+<troy.mitchell@linux.spacemit.com> wrote:
 >
-> The SAMPLE and STOP commands both produce a single sample when called,
-> and these samples can be disambiguated via the opaque user data field
-> passed in the PERF_CONTROL uAPI. If this functionality is not desired,
-> these fields can be kept as zero, as the kernel copies this value into
-> the corresponding sample without attempting to interpret it.
+> The SpacemiT I2C controller's SCL (Serial Clock Line) frequency for
+> master mode operations is determined by the ILCR (I2C Load Count Register=
+).
+> Previously, the driver relied on the hardware's reset default
+> values for this register.
 >
-> Currently, only manual sampling sessions are supported, providing
-> samples when userspace calls PERF_CONTROL.SAMPLE, and only a single
-> session is allowed at a time. Multiple sessions and periodic sampling
-> will be enabled in following patches.
+> The hardware's default ILCR values (SLV=3D0x156, FLV=3D0x5d) yield SCL
+> frequencies lower than intended. For example, with the default
+> 31.5 MHz input clock, these default settings result in an SCL
+> frequency of approximately 93 kHz (standard mode) when targeting 100 kHz,
+> and approximately 338 kHz (fast mode) when targeting 400 kHz.
+> These frequencies are below the 100 kHz/400 kHz nominal speeds.
 >
-> No protection is provided against the 32-bit hardware counter overflows,
-> so for the moment it is up to userspace to ensure that the counters are
-> sampled at a reasonable frequency.
+> This patch integrates the SCL frequency management into
+> the Common Clock Framework (CCF). Specifically, the ILCR register,
+> which acts as a frequency divider for the SCL clock, is now registered
+> as a managed clock (scl_clk) within the CCF.
 >
-> The counter set enum is added to the uapi to clarify the restrictions on
-> calling the interface.
+> This patch also cleans up unnecessary whitespace
+> in the included header files.
 >
-> Signed-off-by: Lukas Zapolskas <lukas.zapolskas@arm.com>
+> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
 > ---
->  drivers/gpu/drm/panthor/panthor_device.h |   3 +
->  drivers/gpu/drm/panthor/panthor_drv.c    |   1 +
->  drivers/gpu/drm/panthor/panthor_perf.c   | 694 ++++++++++++++++++++++-
->  drivers/gpu/drm/panthor/panthor_perf.h   |  16 +
->  4 files changed, 713 insertions(+), 1 deletion(-)
+> Changelog in v2:
+> - Align line breaks.
+> - Check `lv` in `clk_set_rate` function.
+> - Force fast mode when SCL frequency is illegal or unavailable.
+> - Change "linux/bits.h" to <linux/bits.h>
+> - Kconfig: Add dependency on CCF.
+> ---
+>  drivers/i2c/busses/Kconfig  |   2 +-
+>  drivers/i2c/busses/i2c-k1.c | 180 ++++++++++++++++++++++++++++++++++++++=
+++----
+>  2 files changed, 167 insertions(+), 15 deletions(-)
 >
-> diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/panthor/panthor_device.h
-> index 818c4d96d448..3fa0882fe81b 100644
-> --- a/drivers/gpu/drm/panthor/panthor_device.h
-> +++ b/drivers/gpu/drm/panthor/panthor_device.h
-> @@ -225,6 +225,9 @@ struct panthor_file {
->  	/** @ptdev: Device attached to this file. */
->  	struct panthor_device *ptdev;
+> diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+> index c8d115b58e449b59a38339b439190dcb0e332965..1382b6c257fa4ba4cf5098d68=
+4c1bbd5e2636fd4 100644
+> --- a/drivers/i2c/busses/Kconfig
+> +++ b/drivers/i2c/busses/Kconfig
+> @@ -797,7 +797,7 @@ config I2C_JZ4780
+>  config I2C_K1
+>         tristate "SpacemiT K1 I2C adapter"
+>         depends on ARCH_SPACEMIT || COMPILE_TEST
+> -       depends on OF
+> +       depends on OF && COMMON_CLK
+>         help
+>           This option enables support for the I2C interface on the Spacem=
+iT K1
+>           platform.
+> diff --git a/drivers/i2c/busses/i2c-k1.c b/drivers/i2c/busses/i2c-k1.c
+> index b68a21fff0b56b59fe2032ccb7ca6953423aad32..3a6aeea245b56a3c3e63bb67b=
+623495a6bec848b 100644
+> --- a/drivers/i2c/busses/i2c-k1.c
+> +++ b/drivers/i2c/busses/i2c-k1.c
+> @@ -3,17 +3,20 @@
+>   * Copyright (C) 2024-2025 Troy Mitchell <troymitchell988@gmail.com>
+>   */
 >
-> +	/** @drm_file: Corresponding drm_file */
-
-> +	struct drm_file *drm_file;
-
-I'm sceptical about adding this here, and suspect we don't need it. I mentioned why in the
-review for the next patch.
-
+> - #include <linux/clk.h>
+> - #include <linux/i2c.h>
+> - #include <linux/iopoll.h>
+> - #include <linux/module.h>
+> - #include <linux/of_address.h>
+> - #include <linux/platform_device.h>
+> +#include <linux/bits.h>
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/i2c.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/module.h>
+> +#include <linux/of_address.h>
+> +#include <linux/platform_device.h>
+>
+>  /* spacemit i2c registers */
+>  #define SPACEMIT_ICR            0x0            /* Control register */
+>  #define SPACEMIT_ISR            0x4            /* Status register */
+>  #define SPACEMIT_IDBR           0xc            /* Data buffer register *=
+/
+> +#define SPACEMIT_ILCR           0x10           /* Load Count Register */
+>  #define SPACEMIT_IBMR           0x1c           /* Bus monitor register *=
+/
+>
+>  /* SPACEMIT_ICR register fields */
+> @@ -80,6 +83,19 @@
+>  #define SPACEMIT_BMR_SDA         BIT(0)                /* SDA line level=
+ */
+>  #define SPACEMIT_BMR_SCL         BIT(1)                /* SCL line level=
+ */
+>
+> +#define SPACEMIT_LCR_LV_STANDARD_SHIFT         0
+> +#define SPACEMIT_LCR_LV_FAST_SHIFT             9
+> +#define SPACEMIT_LCR_LV_STANDARD_WIDTH         9
+> +#define SPACEMIT_LCR_LV_FAST_WIDTH             9
+> +#define SPACEMIT_LCR_LV_STANDARD_MAX_VALUE     GENMASK(SPACEMIT_LCR_LV_S=
+TANDARD_WIDTH - 1, 0)
+> +#define SPACEMIT_LCR_LV_FAST_MAX_VALUE         GENMASK(SPACEMIT_LCR_LV_F=
+AST_WIDTH - 1, 0)
+> +#define SPACEMIT_LCR_LV_STANDARD_MASK          GENMASK(SPACEMIT_LCR_LV_S=
+TANDARD_SHIFT +\
+> +                                               SPACEMIT_LCR_LV_STANDARD_=
+WIDTH - 1,\
+> +                                               SPACEMIT_LCR_LV_STANDARD_=
+SHIFT)
+> +#define SPACEMIT_LCR_LV_FAST_MASK              GENMASK(SPACEMIT_LCR_LV_F=
+AST_SHIFT +\
+> +                                               SPACEMIT_LCR_LV_FAST_WIDT=
+H - 1,\
+> +                                               SPACEMIT_LCR_LV_FAST_SHIF=
+T)
 > +
->  	/** @vms: VM pool attached to this file. */
->  	struct panthor_vm_pool *vms;
+>  /* i2c bus recover timeout: us */
+>  #define SPACEMIT_I2C_BUS_BUSY_TIMEOUT          100000
 >
-> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
-> index 9d2b716cca45..4c1381320859 100644
-> --- a/drivers/gpu/drm/panthor/panthor_drv.c
-> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
-> @@ -1356,6 +1356,7 @@ panthor_open(struct drm_device *ddev, struct drm_file *file)
->  	}
+> @@ -95,11 +111,20 @@ enum spacemit_i2c_state {
+>         SPACEMIT_STATE_WRITE,
+>  };
 >
->  	pfile->ptdev = ptdev;
-> +	pfile->drm_file = file;
->
->  	ret = panthor_vm_pool_create(pfile);
->  	if (ret)
-> diff --git a/drivers/gpu/drm/panthor/panthor_perf.c b/drivers/gpu/drm/panthor/panthor_perf.c
-> index 9365ce9fed04..15fa533731f3 100644
-> --- a/drivers/gpu/drm/panthor/panthor_perf.c
-> +++ b/drivers/gpu/drm/panthor/panthor_perf.c
-> @@ -2,13 +2,177 @@
->  /* Copyright 2023 Collabora Ltd */
->  /* Copyright 2025 Arm ltd. */
->
-> -#include <linux/bitops.h>
-> +#include <drm/drm_gem.h>
->  #include <drm/panthor_drm.h>
-> +#include <linux/bitops.h>
-> +#include <linux/circ_buf.h>
->
->  #include "panthor_device.h"
->  #include "panthor_fw.h"
->  #include "panthor_perf.h"
->
-> +/**
-> + * PANTHOR_PERF_EM_BITS - Number of bits in a user-facing enable mask. This must correspond
-> + *                        to the maximum number of counters available for selection on the newest
-> + *                        Mali GPUs (128 as of the Mali-Gx15).
-> + */
-> +#define PANTHOR_PERF_EM_BITS (BITS_PER_TYPE(u64) * 2)
-> +
-> +enum panthor_perf_session_state {
-> +	/** @PANTHOR_PERF_SESSION_ACTIVE: The session is active and can be used for sampling. */
-> +	PANTHOR_PERF_SESSION_ACTIVE = 0,
-> +
-> +	/**
-> +	 * @PANTHOR_PERF_SESSION_OVERFLOW: The session encountered an overflow in one of the
-> +	 *                                 counters during the last sampling period. This flag
-> +	 *                                 gets propagated as part of samples emitted for this
-> +	 *                                 session, to ensure the userspace client can gracefully
-> +	 *                                 handle this data corruption.
-> +	 */
-> +	PANTHOR_PERF_SESSION_OVERFLOW,
-> +
-> +	/* Must be last */
-> +	PANTHOR_PERF_SESSION_MAX,
+> +enum spacemit_i2c_mode {
+> +       SPACEMIT_MODE_STANDARD,
+> +       SPACEMIT_MODE_FAST
 > +};
 > +
-> +struct panthor_perf_enable_masks {
-> +	/**
-> +	 * @mask: Array of bitmasks indicating the counters userspace requested, where
-> +	 *        one bit represents a single counter. Used to build the firmware configuration
-> +	 *        and ensure that userspace clients obtain only the counters they requested.
-> +	 */
-> +	unsigned long mask[DRM_PANTHOR_PERF_BLOCK_MAX][BITS_TO_LONGS(PANTHOR_PERF_EM_BITS)];
-> +};
+>  /* i2c-spacemit driver's main struct */
+>  struct spacemit_i2c_dev {
+>         struct device *dev;
+>         struct i2c_adapter adapt;
+>
+> +       struct clk_hw scl_clk_hw;
+> +       struct clk *scl_clk;
+> +       enum spacemit_i2c_mode mode;
 > +
-> +struct panthor_perf_counter_block {
-> +	struct drm_panthor_perf_block_header header;
-> +	u64 counters[];
-> +};
+>         /* hardware resources */
+>         void __iomem *base;
+>         int irq;
+> @@ -120,6 +145,88 @@ struct spacemit_i2c_dev {
+>         u32 status;
+>  };
+>
+> +static void spacemit_i2c_scl_clk_disable_unprepare(void *data)
+> +{
+> +       struct spacemit_i2c_dev *i2c =3D data;
+> +
+> +       clk_disable_unprepare(i2c->scl_clk);
+> +}
+> +
+> +static void spacemit_i2c_scl_clk_exclusive_put(void *data)
+> +{
+> +       struct spacemit_i2c_dev *i2c =3D data;
+> +
+> +       clk_rate_exclusive_put(i2c->scl_clk);
+> +}
+> +
+> +static int spacemit_i2c_clk_set_rate(struct clk_hw *hw, unsigned long ra=
+te,
+> +                                    unsigned long parent_rate)
+> +{
+> +       struct spacemit_i2c_dev *i2c =3D container_of(hw, struct spacemit=
+_i2c_dev, scl_clk_hw);
+> +       u32 lv, lcr, mask, shift, max_lv;
+> +
+> +       lv =3D DIV_ROUND_UP(parent_rate, rate);
+> +
+> +       if (i2c->mode =3D=3D SPACEMIT_MODE_STANDARD) {
+> +               mask =3D SPACEMIT_LCR_LV_STANDARD_MASK;
+> +               shift =3D SPACEMIT_LCR_LV_STANDARD_SHIFT;
+> +               max_lv =3D SPACEMIT_LCR_LV_STANDARD_MAX_VALUE;
+> +       } else if (i2c->mode =3D=3D SPACEMIT_MODE_FAST) {
+> +               mask =3D SPACEMIT_LCR_LV_FAST_MASK;
+> +               shift =3D SPACEMIT_LCR_LV_FAST_SHIFT;
+> +               max_lv =3D SPACEMIT_LCR_LV_FAST_MAX_VALUE;
+> +       }
+> +
+> +       if (!lv || lv > max_lv) {
+> +               dev_err(i2c->dev, "set scl clock failed: lv 0x%x", lv);
+> +               return -EINVAL;
+> +       }
+> +
+> +       lcr =3D readl(i2c->base + SPACEMIT_ILCR);
+> +       lcr &=3D ~mask;
+> +       lcr |=3D lv << shift;
+> +       writel(lcr, i2c->base + SPACEMIT_ILCR);
+> +
+> +       return 0;
+> +}
+> +
+> +static long spacemit_i2c_clk_round_rate(struct clk_hw *hw, unsigned long=
+ rate,
+> +                                       unsigned long *parent_rate)
+> +{
+> +       u32 lv, freq;
+> +
+> +       lv =3D DIV_ROUND_UP(*parent_rate, rate);
+> +       freq =3D DIV_ROUND_UP(*parent_rate, lv);
+> +
+> +       return freq;
+> +}
+> +
+> +static unsigned long spacemit_i2c_clk_recalc_rate(struct clk_hw *hw,
+> +                                                 unsigned long parent_ra=
+te)
+> +{
+> +       struct spacemit_i2c_dev *i2c =3D container_of(hw, struct spacemit=
+_i2c_dev, scl_clk_hw);
+> +       u32 lcr, lv =3D 0;
+> +
+> +       lcr =3D readl(i2c->base + SPACEMIT_ILCR);
+> +
+> +       if (i2c->mode =3D=3D SPACEMIT_MODE_STANDARD)
+> +               lv =3D (lcr >> SPACEMIT_LCR_LV_STANDARD_SHIFT) &
+> +                    GENMASK(SPACEMIT_LCR_LV_STANDARD_WIDTH - 1, 0);
+> +       else if (i2c->mode =3D=3D SPACEMIT_MODE_FAST)
+> +               lv =3D (lcr >> SPACEMIT_LCR_LV_FAST_SHIFT) &
+> +                    GENMASK(SPACEMIT_LCR_LV_FAST_WIDTH - 1, 0);
 
-This is a redefinition.
+GENMASK(SPACEMIT_LCR_LV_FAST_WIDTH - 1, 0); and  SPACEMIT_LCR_LV_FAST_MAX_V=
+ALUE
+happen to be the same value; can we use that and rename it to MASK? Or
+better yet, use FIELD_GET here.
 
-> +/**
-> + * enum session_sample_type - Enum of the types of samples a session can request.
-> + */
-> +enum session_sample_type {
-> +	/** @SAMPLE_TYPE_NONE: A sample has not been requested by this session. */
-> +	SAMPLE_TYPE_NONE,
+> +       else
+> +               return 0;
 > +
-> +	/** @SAMPLE_TYPE_INITIAL: An initial sample has been requested by this session. */
-> +	SAMPLE_TYPE_INITIAL,
+> +       return DIV_ROUND_UP(parent_rate, lv);
+> +}
 > +
-> +	/** @SAMPLE_TYPE_REGULAR: A regular sample has been requested by this session. */
-> +	SAMPLE_TYPE_REGULAR,
+> +static const struct clk_ops spacemit_i2c_clk_ops =3D {
+> +       .set_rate =3D spacemit_i2c_clk_set_rate,
+> +       .round_rate =3D spacemit_i2c_clk_round_rate,
+> +       .recalc_rate =3D spacemit_i2c_clk_recalc_rate,
 > +};
 > +
-> +struct panthor_perf_session {
-> +	DECLARE_BITMAP(state, PANTHOR_PERF_SESSION_MAX);
-> +
-> +	/**
-> +	 * @pending_sample_request: The type of sample request that is currently pending:
-> +	 *                          - when a sample is not requested, the data should be accumulated
-> +	 *                            into the next slot of its ring buffer, but the extract index
-> +	 *                            should not be updated, and the user-space session must
-> +	 *                            not be signaled.
-> +	 *                          - when an initial sample is requested, the data must not be
-> +	 *                            emitted into the target ring buffer and the userspace client
-> +	 *                            must not be notified.
-> +	 *                          - when a regular sample is requested, the data must be emitted
-> +	 *                            into the target ring buffer, and the userspace client must
-> +	 *                            be signalled.
-> +	 */
-> +	enum session_sample_type pending_sample_request;
-> +
-> +	/**
-> +	 * @user_sample_size: The size of a single sample as exposed to userspace. For the sake of
-> +	 *                    simplicity, the current implementation exposes the same structure
-> +	 *                    as provided by firmware, after annotating the sample and the blocks,
-> +	 *                    and zero-extending the counters themselves (to account for in-kernel
-> +	 *                    accumulation).
-> +	 *
-> +	 *                    This may also allow further memory-optimizations of compressing the
-> +	 *                    sample to provide only requested blocks, if deemed to be worth the
-> +	 *                    additional complexity.
-> +	 */
-> +	size_t user_sample_size;
-> +
-> +	/**
-> +	 * @accum_idx: The last insert index indicates whether the current sample
-> +	 *                   needs zeroing before accumulation. This is used to disambiguate
-> +	 *                   between accumulating into an intermediate slot in the user ring buffer
-> +	 *                   and zero-ing the buffer before copying data over.
-> +	 */
-> +	u32 accum_idx;
-> +
-> +	/**
-> +	 * @sample_freq_ns: Period between subsequent sample requests. Zero indicates that
-> +	 *                  userspace will be responsible for requesting samples.
-> +	 */
-> +	u64 sample_freq_ns;
-> +
-> +	/** @sample_start_ns: Sample request time, obtained from a monotonic raw clock. */
-> +	u64 sample_start_ns;
-> +
-> +	/**
-> +	 * @user_data: Opaque handle passed in when starting a session, requesting a sample (for
-> +	 *             manual sampling sessions only) and when stopping a session. This handle
-> +	 *             allows the disambiguation of a sample in the ringbuffer.
-> +	 */
-> +	u64 user_data;
-> +
-> +	/**
-> +	 * @eventfd: Event file descriptor context used to signal userspace of a new sample
-> +	 *           being emitted.
-> +	 */
-> +	struct eventfd_ctx *eventfd;
-> +
-> +	/**
-> +	 * @enabled_counters: This session's requested counters. Note that these cannot change
-> +	 *                    for the lifetime of the session.
-> +	 */
-> +	struct panthor_perf_enable_masks *enabled_counters;
-> +
-> +	/** @ringbuf_slots: Slots in the user-facing ringbuffer. */
-> +	size_t ringbuf_slots;
-> +
-> +	/** @ring_buf: BO for the userspace ringbuffer. */
-> +	struct drm_gem_object *ring_buf;
-> +
-> +	/**
-> +	 * @control_buf: BO for the insert and extract indices.
-> +	 */
-> +	struct drm_gem_object *control_buf;
-> +
-> +	/** @control: The mapped insert and extract indices. */
-> +	struct drm_panthor_perf_ringbuf_control *control;
-> +
-> +	/** @samples: The mapping of the @ring_buf into the kernel's VA space. */
-> +	u8 *samples;
-> +
-> +	/**
-> +	 * @pending: The list node used by the sampler to track the sessions that have not yet
-> +	 *           received a sample.
-> +	 */
-> +	struct list_head pending;
-> +
-> +	/**
-> +	 * @sessions: The list node used by the sampler to track the sessions waiting for a sample.
-> +	 */
-> +	struct list_head sessions;
-> +
-> +	/**
-> +	 * @pfile: The panthor file which was used to create a session, used for the postclose
-> +	 *         handling and to prevent a misconfigured userspace from closing unrelated
-> +	 *         sessions.
-> +	 */
-> +	struct panthor_file *pfile;
-> +
-> +	/**
-> +	 * @ref: Session reference count. The sample delivery to userspace is asynchronous, meaning
-> +	 *       the lifetime of the session must extend at least until the sample is exposed to
-> +	 *       userspace.
-> +	 */
-> +	struct kref ref;
-> +};
-> +
->  struct panthor_perf {
->  	/** @next_session: The ID of the next session. */
->  	u32 next_session;
-> @@ -72,6 +236,122 @@ static void panthor_perf_info_init(struct panthor_device *ptdev)
->  	perf_info->sample_size = session_get_user_sample_size(perf_info);
+>  static void spacemit_i2c_enable(struct spacemit_i2c_dev *i2c)
+>  {
+>         u32 val;
+> @@ -138,6 +245,27 @@ static void spacemit_i2c_disable(struct spacemit_i2c=
+_dev *i2c)
+>         writel(val, i2c->base + SPACEMIT_ICR);
 >  }
 >
-> +static struct panthor_perf_enable_masks *panthor_perf_create_em(struct drm_panthor_perf_cmd_setup
-> +		*setup_args)
+> +static struct clk *spacemit_i2c_register_scl_clk(struct spacemit_i2c_dev=
+ *i2c,
+> +                                                struct clk *parent)
 > +{
-> +	struct panthor_perf_enable_masks *em = kmalloc(sizeof(*em), GFP_KERNEL);
-> +	if (IS_ERR_OR_NULL(em))
-> +		return em;
+> +       struct clk_init_data init;
+> +       char name[32];
 > +
-> +	bitmap_from_arr64(em->mask[DRM_PANTHOR_PERF_BLOCK_FW],
-> +			setup_args->fw_enable_mask, PANTHOR_PERF_EM_BITS);
-> +	bitmap_from_arr64(em->mask[DRM_PANTHOR_PERF_BLOCK_CSHW],
-> +			setup_args->cshw_enable_mask, PANTHOR_PERF_EM_BITS);
-> +	bitmap_from_arr64(em->mask[DRM_PANTHOR_PERF_BLOCK_TILER],
-> +			setup_args->tiler_enable_mask, PANTHOR_PERF_EM_BITS);
-> +	bitmap_from_arr64(em->mask[DRM_PANTHOR_PERF_BLOCK_MEMSYS],
-> +			setup_args->memsys_enable_mask, PANTHOR_PERF_EM_BITS);
-> +	bitmap_from_arr64(em->mask[DRM_PANTHOR_PERF_BLOCK_SHADER],
-> +			setup_args->shader_enable_mask, PANTHOR_PERF_EM_BITS);
+> +       snprintf(name, sizeof(name), "%s_scl_clk", dev_name(i2c->dev));
 > +
-> +	return em;
-> +}
-> +
-> +static u64 session_read_extract_idx(struct panthor_perf_session *session)
-> +{
-> +	const u64 slots = session->ringbuf_slots;
-> +
-> +	/* Userspace will update their own extract index to indicate that a sample is consumed
-> +	 * from the ringbuffer, and we must ensure we read the latest value.
-> +	 */
-> +	return smp_load_acquire(&session->control->extract_idx) % slots;
-> +}
-> +
-> +static u64 session_read_insert_idx(struct panthor_perf_session *session)
-> +{
-> +	const u64 slots = session->ringbuf_slots;
-> +
-> +	/*
-> +	 * Userspace is able to write to the insert index, since it is mapped
-> +	 * on the same page as the extract index. This should not happen
-> +	 * in regular operation.
+> +       init.name =3D name;
+> +       init.ops =3D &spacemit_i2c_clk_ops;
+> +       init.parent_data =3D (struct clk_parent_data[]) {
+> +               { .fw_name =3D "func" },
 
-Why would userspace be able to write into the insert index? I guess in a
-ringbuffer setup, UM updates the extract index when it consumes a
-sample, and the kernel increases the insert index when it writes a new
-sample into the user-facing ringbuffer.
+Is "func" a placeholder? Can we name it i2c_scl_clk?
 
-> +	 */
-> +	return smp_load_acquire(&session->control->insert_idx) % slots;
-> +}
-> +
-> +static void session_get(struct panthor_perf_session *session)
-> +{
-> +	kref_get(&session->ref);
-> +}
-> +
-> +static void session_free(struct kref *ref)
-> +{
-> +	struct panthor_perf_session *session = container_of(ref, typeof(*session), ref);
-> +
-> +	if (session->samples && session->ring_buf) {
-> +		struct iosys_map map = IOSYS_MAP_INIT_VADDR(session->samples);
-> +
-> +		drm_gem_vunmap_unlocked(session->ring_buf, &map);
+Thanks,
+Jesse Taube
 
-drm_gem_vunmap_unlocked() isn't declared in drm_gem.h  when I rebase the patch series onto drm-misc. I guess it means either you're basing this patch series on a previous WIP branch or else it's misspelt?
-
-> +		drm_gem_object_put(session->ring_buf);
-> +	}
+> +       };
+> +       init.num_parents =3D 1;
+> +       init.flags =3D 0;
 > +
-> +	if (session->control && session->control_buf) {
-> +		struct iosys_map map = IOSYS_MAP_INIT_VADDR(session->control);
+> +       i2c->scl_clk_hw.init =3D &init;
 > +
-> +		drm_gem_vunmap_unlocked(session->control_buf, &map);
-> +		drm_gem_object_put(session->control_buf);
-> +	}
-> +
-> +	eventfd_ctx_put(session->eventfd);
-> +
-> +	kfree(session);
+> +       return devm_clk_register(i2c->dev, &i2c->scl_clk_hw);
 > +}
 > +
-> +static void session_put(struct panthor_perf_session *session)
-> +{
-> +	kref_put(&session->ref, session_free);
-> +}
-> +
-> +/**
-> + * session_find - Find a session associated with the given session ID and
-> + *                panthor_file.
-> + * @pfile: Panthor file.
-> + * @perf: Panthor perf.
-> + * @sid: Session ID.
-> + *
-> + * The reference count of a valid session is increased to ensure it does not disappear
-> + * in the window between the XA lock being dropped and the internal session functions
-> + * being called.
-> + *
-> + * Return: valid session pointer or an ERR_PTR.
-> + */
-> +static struct panthor_perf_session *session_find(struct panthor_file *pfile,
-> +		struct panthor_perf *perf, u32 sid)
-> +{
-> +	struct panthor_perf_session *session;
-> +
-> +	if (!perf)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	xa_lock(&perf->sessions);
-> +	session = xa_load(&perf->sessions, sid);
-> +
-> +	if (!session || xa_is_err(session)) {
-> +		xa_unlock(&perf->sessions);
-> +		return ERR_PTR(-EBADF);
-> +	}
-> +
-> +	if (session->pfile != pfile) {
-> +		xa_unlock(&perf->sessions);
-> +		return ERR_PTR(-EINVAL);
-> +	}
-> +
-> +	session_get(session);
-> +	xa_unlock(&perf->sessions);
-> +
-> +	return session;
-> +}
-> +
->  /**
->   * panthor_perf_init - Initialize the performance counter subsystem.
->   * @ptdev: Panthor device
-> @@ -109,6 +389,412 @@ int panthor_perf_init(struct panthor_device *ptdev)
->  	return ret;
->  }
+>  static void spacemit_i2c_reset(struct spacemit_i2c_dev *i2c)
+>  {
+>         writel(SPACEMIT_CR_UR, i2c->base + SPACEMIT_ICR);
+> @@ -224,7 +352,7 @@ static void spacemit_i2c_init(struct spacemit_i2c_dev=
+ *i2c)
+>          */
+>         val |=3D SPACEMIT_CR_DRFIE;
 >
-> +static int session_validate_set(u8 set)
-> +{
-> +	if (set > DRM_PANTHOR_PERF_SET_TERTIARY)
-> +		return -EINVAL;
-> +
-> +	if (set == DRM_PANTHOR_PERF_SET_PRIMARY)
-> +		return 0;
-> +
-> +	if (set > DRM_PANTHOR_PERF_SET_PRIMARY)
-> +		return capable(CAP_PERFMON) ? 0 : -EACCES;
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +/**
-> + * panthor_perf_session_setup - Create a user-visible session.
-> + *
-> + * @ptdev: Handle to the panthor device.
-> + * @perf: Handle to the perf control structure.
-> + * @setup_args: Setup arguments passed in via ioctl.
-> + * @pfile: Panthor file associated with the request.
-> + *
-> + * Creates a new session associated with the session ID returned. When initialized, the
-> + * session must explicitly request sampling to start with a successive call to PERF_CONTROL.START.
-> + *
-> + * Return: non-negative session identifier on success or negative error code on failure.
-> + */
-> +int panthor_perf_session_setup(struct panthor_device *ptdev, struct panthor_perf *perf,
-> +		struct drm_panthor_perf_cmd_setup *setup_args,
-> +		struct panthor_file *pfile)
-> +{
-> +	struct panthor_perf_session *session;
-> +	struct drm_gem_object *ringbuffer;
-> +	struct drm_gem_object *control;
-> +	const size_t slots = setup_args->sample_slots;
-> +	struct panthor_perf_enable_masks *em;
-> +	struct iosys_map rb_map, ctrl_map;
-> +	size_t user_sample_size;
-> +	int session_id;
-> +	int ret;
-> +
-> +	ret = session_validate_set(setup_args->block_set);
-> +	if (ret) {
-> +		drm_err(&ptdev->base, "Did not meet requirements for set %d\n",
-> +				setup_args->block_set);
-> +		return ret;
-> +	}
-> +
-> +	session = kzalloc(sizeof(*session), GFP_KERNEL);
-> +	if (ZERO_OR_NULL_PTR(session))
-> +		return -ENOMEM;
-> +
-> +	ringbuffer = drm_gem_object_lookup(pfile->drm_file, setup_args->ringbuf_handle);
-> +	if (!ringbuffer) {
-> +		drm_err(&ptdev->base, "Could not find handle %d!\n", setup_args->ringbuf_handle);
-> +		ret = -EINVAL;
-> +		goto cleanup_session;
-> +	}
-> +
-> +	control = drm_gem_object_lookup(pfile->drm_file, setup_args->control_handle);
-> +	if (!control) {
-> +		drm_err(&ptdev->base, "Could not find handle %d!\n", setup_args->control_handle);
-> +		ret = -EINVAL;
-> +		goto cleanup_ringbuf;
-> +	}
-> +
-> +	user_sample_size = session_get_user_sample_size(&ptdev->perf_info) * slots;
-> +
-> +	if (ringbuffer->size != PFN_ALIGN(user_sample_size)) {
-> +		drm_err(&ptdev->base, "Incorrect ringbuffer size from userspace: user %zu vs kernel %lu\n",
-> +				ringbuffer->size, PFN_ALIGN(user_sample_size));
-> +		ret = -ENOMEM;
-> +		goto cleanup_control;
-> +	}
-> +
-> +	ret = drm_gem_vmap_unlocked(ringbuffer, &rb_map);
-
-Same here, drm_gem_vmap_unlocked() isn't declared in any header files.
-
-> +	if (ret)
-> +		goto cleanup_control;
-> +
-> +	ret = drm_gem_vmap_unlocked(control, &ctrl_map);
-> +	if (ret)
-> +		goto cleanup_ring_map;
-> +
-> +	session->eventfd = eventfd_ctx_fdget(setup_args->fd);
-> +	if (IS_ERR(session->eventfd)) {
-> +		drm_err(&ptdev->base, "Invalid eventfd %d!\n", setup_args->fd);
-> +		ret = PTR_ERR_OR_ZERO(session->eventfd) ?: -EINVAL;
-> +		goto cleanup_control_map;
-> +	}
-> +
-> +	em = panthor_perf_create_em(setup_args);
-> +	if (IS_ERR_OR_NULL(em)) {
-> +		ret = -ENOMEM;
-> +		goto cleanup_eventfd;
-> +	}
-> +
-> +	INIT_LIST_HEAD(&session->sessions);
-> +	INIT_LIST_HEAD(&session->pending);
-> +
-> +	session->control = ctrl_map.vaddr;
-> +	*session->control = (struct drm_panthor_perf_ringbuf_control) { 0 };
-> +
-> +	session->samples = rb_map.vaddr;
-> +
-> +	/* TODO This will need validation when we support periodic sampling sessions */
-> +	if (setup_args->sample_freq_ns) {
-> +		ret = -EOPNOTSUPP;
-> +		goto cleanup_em;
-> +	}
-> +
-> +	ret = xa_alloc_cyclic(&perf->sessions, &session_id, session, perf->session_range,
-> +			&perf->next_session, GFP_KERNEL);
-> +	if (ret < 0) {
-> +		drm_err(&ptdev->base, "System session limit exceeded.\n");
-> +		ret = -EBUSY;
-> +		goto cleanup_em;
-> +	}
-> +
-> +	kref_init(&session->ref);
-> +	session->enabled_counters = em;
-> +
-> +	session->sample_freq_ns = setup_args->sample_freq_ns;
-> +	session->user_sample_size = user_sample_size;
-> +	session->ring_buf = ringbuffer;
-> +	session->ringbuf_slots = slots;
-> +	session->control_buf = control;
-> +	session->pfile = pfile;
-> +	session->accum_idx = U32_MAX;
-> +
-> +	return session_id;
-> +
-> +cleanup_em:
-> +	kfree(em);
-> +
-> +cleanup_eventfd:
-> +	eventfd_ctx_put(session->eventfd);
-> +
-> +cleanup_control_map:
-> +	drm_gem_vunmap_unlocked(control, &ctrl_map);
-> +
-> +cleanup_ring_map:
-> +	drm_gem_vunmap_unlocked(ringbuffer, &rb_map);
-> +
-> +cleanup_control:
-> +	drm_gem_object_put(control);
-> +
-> +cleanup_ringbuf:
-> +	drm_gem_object_put(ringbuffer);
-> +
-> +cleanup_session:
-> +	kfree(session);
-> +
-> +	return ret;
-> +}
-> +
-> +static int session_stop(struct panthor_perf *perf, struct panthor_perf_session *session,
-> +		u64 user_data)
-> +{
-> +	if (!test_bit(PANTHOR_PERF_SESSION_ACTIVE, session->state))
-> +		return 0;
-> +
-> +	const u64 extract_idx = session_read_extract_idx(session);
-> +	const u64 insert_idx = session_read_insert_idx(session);
-> +
-> +	/* Must have at least one slot remaining in the ringbuffer to sample. */
-> +	if (WARN_ON_ONCE(!CIRC_SPACE_TO_END(insert_idx, extract_idx, session->ringbuf_slots)))
-> +		return -EBUSY;
-> +
-> +	session->user_data = user_data;
-> +
-> +	clear_bit(PANTHOR_PERF_SESSION_ACTIVE, session->state);
-> +
-> +	/* TODO Calls to the FW interface will go here in later patches. */
-> +	return 0;
-> +}
-> +
-> +static int session_start(struct panthor_perf *perf, struct panthor_perf_session *session,
-> +		u64 user_data)
-> +{
-> +	if (test_bit(PANTHOR_PERF_SESSION_ACTIVE, session->state))
-> +		return 0;
-> +
-> +	set_bit(PANTHOR_PERF_SESSION_ACTIVE, session->state);
-> +
-> +	/*
-> +	 * For manual sampling sessions, a start command does not correspond to a sample,
-> +	 * and so the user data gets discarded.
-> +	 */
-> +	if (session->sample_freq_ns)
-> +		session->user_data = user_data;
-> +
-> +	/* TODO Calls to the FW interface will go here in later patches. */
-> +	return 0;
-> +}
-> +
-> +static int session_sample(struct panthor_perf *perf, struct panthor_perf_session *session,
-> +		u64 user_data)
-> +{
-> +	if (!test_bit(PANTHOR_PERF_SESSION_ACTIVE, session->state))
-> +		return 0;
-> +
-> +	const u64 extract_idx = session_read_extract_idx(session);
-> +	const u64 insert_idx = session_read_insert_idx(session);
-> +
-> +	/* Manual sampling for periodic sessions is forbidden. */
-> +	if (session->sample_freq_ns)
-> +		return -EINVAL;
-> +
-> +	/*
-> +	 * Must have at least two slots remaining in the ringbuffer to sample: one for
-> +	 * the current sample, and one for a stop sample, since a stop command should
-> +	 * always be acknowledged by taking a final sample and stopping the session.
-> +	 */
-> +	if (CIRC_SPACE_TO_END(insert_idx, extract_idx, session->ringbuf_slots) < 2)
-> +		return -EBUSY;
-> +
-> +	session->sample_start_ns = ktime_get_raw_ns();
-> +	session->user_data = user_data;
-> +
-> +	return 0;
-> +}
-> +
-> +static int session_destroy(struct panthor_perf *perf, struct panthor_perf_session *session)
-> +{
-> +	session_put(session);
-> +
-> +	return 0;
-> +}
-> +
-> +static int session_teardown(struct panthor_perf *perf, struct panthor_perf_session *session)
-> +{
-> +	if (test_bit(PANTHOR_PERF_SESSION_ACTIVE, session->state))
-> +		return -EINVAL;
-> +
-> +	if (READ_ONCE(session->pending_sample_request) == SAMPLE_TYPE_NONE)
-> +		return -EBUSY;
-> +
-> +	return session_destroy(perf, session);
-> +}
-> +
-> +/**
-> + * panthor_perf_session_teardown - Teardown the session associated with the @sid.
-> + * @pfile: Open panthor file.
-> + * @perf: Handle to the perf control structure.
-> + * @sid: Session identifier.
-> + *
-> + * Destroys a stopped session where the last sample has been explicitly consumed
-> + * or discarded. Active sessions will be ignored.
-> + *
-> + * Return: 0 on success, negative error code on failure.
-> + */
-> +int panthor_perf_session_teardown(struct panthor_file *pfile, struct panthor_perf *perf, u32 sid)
-> +{
-> +	int err;
-> +	struct panthor_perf_session *session;
-> +
-> +	xa_lock(&perf->sessions);
-> +	session = __xa_store(&perf->sessions, sid, NULL, GFP_KERNEL);
-> +
-> +	if (xa_is_err(session)) {
-> +		err = xa_err(session);
-> +		goto restore;
-> +	}
-> +
-> +	if (session->pfile != pfile) {
-> +		err = -EINVAL;
-> +		goto restore;
-> +	}
-> +
-> +	session_get(session);
-> +	xa_unlock(&perf->sessions);
-> +
-> +	err = session_teardown(perf, session);
-> +
-> +	session_put(session);
-> +
-> +	return err;
-> +
-> +restore:
-> +	__xa_store(&perf->sessions, sid, session, GFP_KERNEL);
-> +	xa_unlock(&perf->sessions);
-> +
-> +	return err;
-> +}
-> +
-> +/**
-> + * panthor_perf_session_start - Start sampling on a stopped session.
-> + * @pfile: Open panthor file.
-> + * @perf: Handle to the panthor perf control structure.
-> + * @sid: Session identifier for the desired session.
-> + * @user_data: An opaque value passed in from userspace.
-> + *
-> + * A session counts as stopped when it is created or when it is explicitly stopped after being
-> + * started. Starting an active session is treated as a no-op.
-> + *
-> + * The @user_data parameter will be associated with all subsequent samples for a periodic
-> + * sampling session and will be ignored for manual sampling ones in favor of the user data
-> + * passed in the PERF_CONTROL.SAMPLE ioctl call.
-> + *
-> + * Return: 0 on success, negative error code on failure.
-> + */
-> +int panthor_perf_session_start(struct panthor_file *pfile, struct panthor_perf *perf,
-> +		u32 sid, u64 user_data)
-> +{
-> +	struct panthor_perf_session *session = session_find(pfile, perf, sid);
-> +	int err;
-> +
-> +	if (IS_ERR_OR_NULL(session))
-> +		return IS_ERR(session) ? PTR_ERR(session) : -EINVAL;
-> +
-> +	err = session_start(perf, session, user_data);
-> +
-> +	session_put(session);
-> +
-> +	return err;
-> +}
-> +
-> +/**
-> + * panthor_perf_session_stop - Stop sampling on an active session.
-> + * @pfile: Open panthor file.
-> + * @perf: Handle to the panthor perf control structure.
-> + * @sid: Session identifier for the desired session.
-> + * @user_data: An opaque value passed in from userspace.
-> + *
-> + * A session counts as active when it has been explicitly started via the PERF_CONTROL.START
-> + * ioctl. Stopping a stopped session is treated as a no-op.
-> + *
-> + * To ensure data is not lost when sampling is stopping, there must always be at least one slot
-> + * available for the final automatic sample, and the stop command will be rejected if there is not.
-> + *
-> + * The @user_data will always be associated with the final sample.
-> + *
-> + * Return: 0 on success, negative error code on failure.
-> + */
-> +int panthor_perf_session_stop(struct panthor_file *pfile, struct panthor_perf *perf,
-> +		u32 sid, u64 user_data)
-> +{
-> +	struct panthor_perf_session *session = session_find(pfile, perf, sid);
-> +	int err;
-> +
-> +	if (IS_ERR_OR_NULL(session))
-> +		return IS_ERR(session) ? PTR_ERR(session) : -EINVAL;
-> +
-> +	err = session_stop(perf, session, user_data);
-> +
-> +	session_put(session);
-> +
-> +	return err;
-> +}
-> +
-> +/**
-> + * panthor_perf_session_sample - Request a sample on a manual sampling session.
-> + * @pfile: Open panthor file.
-> + * @perf: Handle to the panthor perf control structure.
-> + * @sid: Session identifier for the desired session.
-> + * @user_data: An opaque value passed in from userspace.
-> + *
-> + * Only an active manual sampler is permitted to request samples directly. Failing to meet either
-> + * of these conditions will cause the sampling request to be rejected. Requesting a manual sample
-> + * with a full ringbuffer will see the request being rejected.
-> + *
-> + * The @user_data will always be unambiguously associated one-to-one with the resultant sample.
-> + *
-> + * Return: 0 on success, negative error code on failure.
-> + */
-> +int panthor_perf_session_sample(struct panthor_file *pfile, struct panthor_perf *perf,
-> +		u32 sid, u64 user_data)
-> +{
-> +	struct panthor_perf_session *session = session_find(pfile, perf, sid);
-> +	int err;
-> +
-> +	if (IS_ERR_OR_NULL(session))
-> +		return IS_ERR(session) ? PTR_ERR(session) : -EINVAL;
-> +
-> +	err = session_sample(perf, session, user_data);
-> +
-> +	session_put(session);
-> +
-> +	return err;
-> +}
-> +
-> +/**
-> + * panthor_perf_session_destroy - Destroy a sampling session associated with the @pfile.
-> + * @perf: Handle to the panthor perf control structure.
-> + * @pfile: The file being closed.
-> + *
-> + * Must be called when the corresponding userspace process is destroyed and cannot close its
-> + * own sessions. As such, we offer no guarantees about data delivery.
-> + */
-> +void panthor_perf_session_destroy(struct panthor_file *pfile, struct panthor_perf *perf)
-> +{
-> +	unsigned long sid;
-> +	struct panthor_perf_session *session;
-> +
-> +	if (!pfile || !perf)
-> +		return;
-> +
-> +	xa_for_each(&perf->sessions, sid, session)
-> +	{
-> +		if (session->pfile == pfile) {
-> +			session_destroy(perf, session);
-> +			xa_erase(&perf->sessions, sid);
-> +		}
-> +	}
-> +}
-> +
->  /**
->   * panthor_perf_unplug - Terminate the performance counter subsystem.
->   * @ptdev: Panthor device.
-> @@ -124,8 +810,14 @@ void panthor_perf_unplug(struct panthor_device *ptdev)
->  		return;
+> -       if (i2c->clock_freq =3D=3D SPACEMIT_I2C_MAX_FAST_MODE_FREQ)
+> +       if (i2c->mode =3D=3D SPACEMIT_MODE_FAST)
+>                 val |=3D SPACEMIT_CR_MODE_FAST;
 >
->  	if (!xa_empty(&perf->sessions)) {
-> +		unsigned long sid;
-> +		struct panthor_perf_session *session;
+>         /* disable response to general call */
+> @@ -519,14 +647,15 @@ static int spacemit_i2c_probe(struct platform_devic=
+e *pdev)
+>                 dev_warn(dev, "failed to read clock-frequency property: %=
+d\n", ret);
+>
+>         /* For now, this driver doesn't support high-speed. */
+> -       if (!i2c->clock_freq || i2c->clock_freq > SPACEMIT_I2C_MAX_FAST_M=
+ODE_FREQ) {
+> -               dev_warn(dev, "unsupported clock frequency %u; using %u\n=
+",
+> -                        i2c->clock_freq, SPACEMIT_I2C_MAX_FAST_MODE_FREQ=
+);
+> +       if (i2c->clock_freq > SPACEMIT_I2C_MAX_STANDARD_MODE_FREQ &&
+> +           i2c->clock_freq <=3D SPACEMIT_I2C_MAX_FAST_MODE_FREQ) {
+> +               i2c->mode =3D SPACEMIT_MODE_FAST;
+> +       } else if (i2c->clock_freq && i2c->clock_freq <=3D SPACEMIT_I2C_M=
+AX_STANDARD_MODE_FREQ) {
+> +               i2c->mode =3D SPACEMIT_MODE_STANDARD;
+> +       } else {
+> +               dev_warn(i2c->dev, "invalid clock-frequency, using fast m=
+ode");
+> +               i2c->mode =3D SPACEMIT_MODE_FAST;
+>                 i2c->clock_freq =3D SPACEMIT_I2C_MAX_FAST_MODE_FREQ;
+> -       } else if (i2c->clock_freq < SPACEMIT_I2C_MAX_STANDARD_MODE_FREQ)=
+ {
+> -               dev_warn(dev, "unsupported clock frequency %u; using %u\n=
+",
+> -                        i2c->clock_freq,  SPACEMIT_I2C_MAX_STANDARD_MODE=
+_FREQ);
+> -               i2c->clock_freq =3D SPACEMIT_I2C_MAX_STANDARD_MODE_FREQ;
+>         }
+>
+>         i2c->dev =3D &pdev->dev;
+> @@ -548,10 +677,33 @@ static int spacemit_i2c_probe(struct platform_devic=
+e *pdev)
+>         if (IS_ERR(clk))
+>                 return dev_err_probe(dev, PTR_ERR(clk), "failed to enable=
+ func clock");
+>
+> +       i2c->scl_clk =3D spacemit_i2c_register_scl_clk(i2c, clk);
+> +       if (IS_ERR(i2c->scl_clk))
+> +               return dev_err_probe(&pdev->dev, PTR_ERR(i2c->scl_clk),
+> +                                    "failed to register scl clock\n");
 > +
->  		drm_err(&ptdev->base,
->  			"Performance counter sessions active when unplugging the driver!");
+>         clk =3D devm_clk_get_enabled(dev, "bus");
+>         if (IS_ERR(clk))
+>                 return dev_err_probe(dev, PTR_ERR(clk), "failed to enable=
+ bus clock");
+>
+> +       ret =3D clk_set_rate_exclusive(i2c->scl_clk, i2c->clock_freq);
+> +       if (ret)
+> +               return dev_err_probe(&pdev->dev, ret, "failed to set excl=
+usive rate for SCL clock");
 > +
-> +		xa_for_each(&perf->sessions, sid, session)
-> +			session_destroy(perf, session);
->  	}
->
->  	xa_destroy(&perf->sessions);
-> diff --git a/drivers/gpu/drm/panthor/panthor_perf.h b/drivers/gpu/drm/panthor/panthor_perf.h
-> index e4805727b9e7..89d61cd1f017 100644
-> --- a/drivers/gpu/drm/panthor/panthor_perf.h
-> +++ b/drivers/gpu/drm/panthor/panthor_perf.h
-> @@ -7,10 +7,26 @@
->
->  #include <linux/types.h>
->
-> +struct drm_panthor_perf_cmd_setup;
->  struct panthor_device;
-> +struct panthor_file;
-> +struct panthor_perf;
->
->  int panthor_perf_init(struct panthor_device *ptdev);
->  void panthor_perf_unplug(struct panthor_device *ptdev);
->
-> +int panthor_perf_session_setup(struct panthor_device *ptdev, struct panthor_perf *perf,
-> +		struct drm_panthor_perf_cmd_setup *setup_args,
-> +		struct panthor_file *pfile);
-> +int panthor_perf_session_teardown(struct panthor_file *pfile, struct panthor_perf *perf,
-> +		u32 sid);
-> +int panthor_perf_session_start(struct panthor_file *pfile, struct panthor_perf *perf,
-> +		u32 sid, u64 user_data);
-> +int panthor_perf_session_stop(struct panthor_file *pfile, struct panthor_perf *perf,
-> +		u32 sid, u64 user_data);
-> +int panthor_perf_session_sample(struct panthor_file *pfile, struct panthor_perf *perf,
-> +		u32 sid, u64 user_data);
-> +void panthor_perf_session_destroy(struct panthor_file *pfile, struct panthor_perf *perf);
+> +       ret =3D devm_add_action_or_reset(dev, spacemit_i2c_scl_clk_exclus=
+ive_put, i2c);
+> +       if (ret)
+> +               return dev_err_probe(&pdev->dev, ret,
+> +                               "failed to register cleanup action for ex=
+clusive SCL clock rate");
 > +
->  #endif /* __PANTHOR_PERF_H__ */
+> +       ret =3D clk_prepare_enable(i2c->scl_clk);
+> +       if (ret)
+> +               return dev_err_probe(&pdev->dev, ret, "failed to prepare =
+and enable clock");
+> +
+> +       ret =3D devm_add_action_or_reset(dev, spacemit_i2c_scl_clk_disabl=
+e_unprepare, i2c);
+> +       if (ret)
+> +               return dev_err_probe(&pdev->dev, ret,
+> +                               "failed to register cleanup action for cl=
+k disable and unprepare");
+> +
+>         spacemit_i2c_reset(i2c);
 >
+>         i2c_set_adapdata(&i2c->adapt, i2c);
+>
+> ---
+> base-commit: 733923397fd95405a48f165c9b1fbc8c4b0a4681
+> change-id: 20250709-k1-i2c-ilcr-ea347e0850a4
+>
+> Best regards,
 > --
-> 2.33.0.dirty
-
-
-Adrian Larumbe
+> Troy Mitchell <troy.mitchell@linux.spacemit.com>
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
