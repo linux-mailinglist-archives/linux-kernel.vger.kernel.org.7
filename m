@@ -1,113 +1,210 @@
-Return-Path: <linux-kernel+bounces-736194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95EB6B099F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 04:47:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F354B099FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 04:58:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A21F4A2EE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 02:47:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ECB24A420D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 02:57:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C731C6FE8;
-	Fri, 18 Jul 2025 02:47:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36AE61C862C;
+	Fri, 18 Jul 2025 02:58:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Dt2z+WPG"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dQ/UCmcM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27E851624E9;
-	Fri, 18 Jul 2025 02:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98542A923;
+	Fri, 18 Jul 2025 02:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752806861; cv=none; b=mGqig+WSVT9pK+r4fkJhi3VgF+nvnwW1J40oA/+Fx37IWOm2gsk90L8BY0XeAgQpS7fmSefQkW4gHdM1aOaMlsSlx4tOigQcB1It18+u+u2KQM1SkAQUonNy4W/X3COIfXtBjKuiHLXyuBGTzequxdAhcJY2pyTmTw06yYOuEUY=
+	t=1752807480; cv=none; b=h9PbJZKC0wtdqkWBeYg1fmIW/VYb4/8rIFnTVTuL2UTdtWKZj5UK48dudhTvjUlQJr+f172tA36jy5wSISiD7XWffzZf84tOxvEUgV1EcqHNnp2Udvz6ek+j70CYJXhDCwxOSXvmAcKEWGn1kyagLAk0BJFm8DAsS9BhFeMPwNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752806861; c=relaxed/simple;
-	bh=+ZIPuIVWERMMIbt9faPU/ftVC8NhccyG1uiTnRBmWAs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dJ6Ej3D+N96EPPbrr+qu0X67vICz8ZkrgboF7PfulXeWAiIPn18SCGHfCQX3lrXE6ao4oX8DguCkfNNKm2wXStVwCDhWvtKJ7cCjKnF2+FiLogJVgiFC/wTEWDrV2dg2WvT+sW5elIA9VhgtjoB0lR52LmIooOmoSNLQSZ4qj3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Dt2z+WPG; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=pfZwVa2e7UfuhqUN30vyyRTLr8+UwpV2ju413mc37x8=; b=Dt2z+WPGwrQW0UXgseLDi/rX7E
-	M1Y8g2NCXC1iD2Q+FNUnbH6FI0nOn8sK0VlEQ46KXcRrYWZxU8P029deBnAWZDsuuL047ktNS2d2t
-	NmXCsNJZmQc0GXma71DP2dk6Vgp6GefPYF1lSJqTODnBUaC5IeSpBuOM7f8I1tvv6ITCcSznbuys8
-	Mb6pCgY6otjw+akEdGFX/hPa4ORr/pKpXuDwvcm5TsRD8GAd0XZMbkzd296HyPur2YosR+32WgC4T
-	Swtf/pY3jEQLkDVNrUm8OZDTeB+O00UuwpqT1EoqB7//XEqdzFtC/GwEgnN+It7uiHvYLAyuXZmMP
-	aasjA4Og==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ucb8L-0000000BYrd-0TuG;
-	Fri, 18 Jul 2025 02:47:37 +0000
-Message-ID: <d39116ce-164c-4bf6-80af-ba63ccfb96d4@infradead.org>
-Date: Thu, 17 Jul 2025 19:47:35 -0700
+	s=arc-20240116; t=1752807480; c=relaxed/simple;
+	bh=yQspi0IdSkvFDWpvj8rAaHUF0Fjkr1+s0cusMb2OIWk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i4WQPt1jAE/HznI3ZjA4ylbyycm2RoNwB4g9fGQ5mF7vL5FmIfTMJFWp35TIQMbMxl9dTNCBUDLIm5H3RbUp1g/NC4tWFPfP8AOvGmJ7ArgpeQ1oCDYc6dRX1Ot5ZPTperMJXRHFUMcz2Bv8hEKOzYOyfUGmg0fAf2mRgkWUp0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dQ/UCmcM; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752807478; x=1784343478;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=yQspi0IdSkvFDWpvj8rAaHUF0Fjkr1+s0cusMb2OIWk=;
+  b=dQ/UCmcMoQfCS98G2OHdhzJDOU1BJdgwN+WtE9U1y9aYGS6zryYmrHbw
+   HLFIOjckHOBXwgqEtC0UWCEgHKTPTddg6pjqMQ3NTArrhW8VME4cgVRQB
+   W6DS23Va2Go+uvY3a9na/zxP8jyHRTE/DZHl9ukGH6vbpzMPDkJ84AzoV
+   F860TogUyTdpP1fH0j3bg5A31M0+owbOPOAibsyr35PsoXGaq4sfDjK/c
+   s7c4jIoVTUjzzGCVvVcPut/feDkRO+vI96AglO1Y3MnxXi5X/+iflnROW
+   dlwmBRdNLOpQxvY0njZ1pvvsT0uoE11PBX5tpaE98pifhQzeSLN2Rmjob
+   A==;
+X-CSE-ConnectionGUID: +ILYYvB1RoGqZSmDqdGVcQ==
+X-CSE-MsgGUID: TtZ+iYjQR6+15HkFbLp+Yw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11495"; a="72666003"
+X-IronPort-AV: E=Sophos;i="6.16,320,1744095600"; 
+   d="scan'208";a="72666003"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 19:57:57 -0700
+X-CSE-ConnectionGUID: a1mpQy6NQsSBicOKr/urXQ==
+X-CSE-MsgGUID: 4L4luONoSeyCt8ddAZZX9A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,320,1744095600"; 
+   d="scan'208";a="158033113"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by orviesa007.jf.intel.com with ESMTP; 17 Jul 2025 19:57:38 -0700
+Date: Fri, 18 Jul 2025 10:48:55 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Ackerley Tng <ackerleytng@google.com>
+Cc: Yan Zhao <yan.y.zhao@intel.com>,
+	Vishal Annapurve <vannapurve@google.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Alexey Kardashevskiy <aik@amd.com>,
+	Fuad Tabba <tabba@google.com>, kvm@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, x86@kernel.org,
+	linux-fsdevel@vger.kernel.org, ajones@ventanamicro.com,
+	akpm@linux-foundation.org, amoorthy@google.com,
+	anthony.yznaga@oracle.com, anup@brainfault.org,
+	aou@eecs.berkeley.edu, bfoster@redhat.com,
+	binbin.wu@linux.intel.com, brauner@kernel.org,
+	catalin.marinas@arm.com, chao.p.peng@intel.com,
+	chenhuacai@kernel.org, dave.hansen@intel.com, david@redhat.com,
+	dmatlack@google.com, dwmw@amazon.co.uk, erdemaktas@google.com,
+	fan.du@intel.com, fvdl@google.com, graf@amazon.com,
+	haibo1.xu@intel.com, hch@infradead.org, hughd@google.com,
+	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz,
+	james.morse@arm.com, jarkko@kernel.org, jgowans@amazon.com,
+	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com,
+	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com,
+	kent.overstreet@linux.dev, kirill.shutemov@intel.com,
+	liam.merwick@oracle.com, maciej.wieczor-retman@intel.com,
+	mail@maciej.szmigiero.name, maz@kernel.org, mic@digikod.net,
+	michael.roth@amd.com, mpe@ellerman.id.au, muchun.song@linux.dev,
+	nikunj@amd.com, nsaenz@amazon.es, oliver.upton@linux.dev,
+	palmer@dabbelt.com, pankaj.gupta@amd.com, paul.walmsley@sifive.com,
+	pbonzini@redhat.com, pdurrant@amazon.co.uk, peterx@redhat.com,
+	pgonda@google.com, pvorel@suse.cz, qperret@google.com,
+	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com,
+	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com,
+	quic_pheragu@quicinc.com, quic_svaddagi@quicinc.com,
+	quic_tsoni@quicinc.com, richard.weiyang@gmail.com,
+	rick.p.edgecombe@intel.com, rientjes@google.com,
+	roypat@amazon.co.uk, rppt@kernel.org, seanjc@google.com,
+	shuah@kernel.org, steven.price@arm.com, steven.sistare@oracle.com,
+	suzuki.poulose@arm.com, thomas.lendacky@amd.com,
+	usama.arif@bytedance.com, vbabka@suse.cz, viro@zeniv.linux.org.uk,
+	vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org,
+	willy@infradead.org, xiaoyao.li@intel.com, yilun.xu@intel.com,
+	yuzenghui@huawei.com, zhiquan1.li@intel.com
+Subject: Re: [RFC PATCH v2 04/51] KVM: guest_memfd: Introduce
+ KVM_GMEM_CONVERT_SHARED/PRIVATE ioctls
+Message-ID: <aHm2F95XwzdD7nod@yilunxu-OptiPlex-7050>
+References: <CAGtprH8eR_S50xDnnMLHNCuXrN2Lv_0mBRzA_pcTtNbnVvdv2A@mail.gmail.com>
+ <CA+EHjTwjKVkw2_AK0Y0-eth1dVW7ZW2Sk=73LL9NeQYAPpxPiw@mail.gmail.com>
+ <CAGtprH_Evyc7tLhDB0t0fN+BUx5qeqWq8A2yZ5-ijbJ5UJ5f-g@mail.gmail.com>
+ <9502503f-e0c2-489e-99b0-94146f9b6f85@amd.com>
+ <20250624130811.GB72557@ziepe.ca>
+ <CAGtprH_qh8sEY3s-JucW3n1Wvoq7jdVZDDokvG5HzPf0HV2=pg@mail.gmail.com>
+ <aGTvTbPHuXbvj59t@yzhao56-desk.sh.intel.com>
+ <diqz8qknhj3l.fsf@ackerleytng-ctop.c.googlers.com>
+ <aHjDIxxbv0DnqI6S@yilunxu-OptiPlex-7050>
+ <diqzqzyeg3j2.fsf@ackerleytng-ctop.c.googlers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cleanup: Fix documentation build error for ACQUIRE
- updates
-To: Dan Williams <dan.j.williams@intel.com>, dave.jiang@intel.com
-Cc: linux-kernel@vger.kernel.org, peterz@infradead.org,
- linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
-References: <20250717173354.34375751@canb.auug.org.au>
- <20250717163036.1275791-1-dan.j.williams@intel.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250717163036.1275791-1-dan.j.williams@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <diqzqzyeg3j2.fsf@ackerleytng-ctop.c.googlers.com>
 
-
-
-On 7/17/25 9:30 AM, Dan Williams wrote:
-> Stephen reports:
+On Thu, Jul 17, 2025 at 09:56:01AM -0700, Ackerley Tng wrote:
+> Xu Yilun <yilun.xu@linux.intel.com> writes:
 > 
-> Documentation/core-api/cleanup:7: include/linux/cleanup.h:73: ERROR: Unexpected indentation. [docutils]
-> Documentation/core-api/cleanup:7: include/linux/cleanup.h:74: WARNING: Block quote ends without a blank line; unexpected unindent. [docutils]
+> > On Wed, Jul 16, 2025 at 03:22:06PM -0700, Ackerley Tng wrote:
+> >> Yan Zhao <yan.y.zhao@intel.com> writes:
+> >> 
+> >> > On Tue, Jun 24, 2025 at 07:10:38AM -0700, Vishal Annapurve wrote:
+> >> >> On Tue, Jun 24, 2025 at 6:08 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> >> >> >
+> >> >> > On Tue, Jun 24, 2025 at 06:23:54PM +1000, Alexey Kardashevskiy wrote:
+> >> >> >
+> >> >> > > Now, I am rebasing my RFC on top of this patchset and it fails in
+> >> >> > > kvm_gmem_has_safe_refcount() as IOMMU holds references to all these
+> >> >> > > folios in my RFC.
+> >> >> > >
+> >> >> > > So what is the expected sequence here? The userspace unmaps a DMA
+> >> >> > > page and maps it back right away, all from the userspace? The end
+> >> >> > > result will be the exactly same which seems useless. And IOMMU TLB
+> >> >> 
+> >> >>  As Jason described, ideally IOMMU just like KVM, should just:
+> >> >> 1) Directly rely on guest_memfd for pinning -> no page refcounts taken
+> >> >> by IOMMU stack
+> >> > In TDX connect, TDX module and TDs do not trust VMM. So, it's the TDs to inform
+> >> > TDX module about which pages are used by it for DMAs purposes.
+> >> > So, if a page is regarded as pinned by TDs for DMA, the TDX module will fail the
+> >> > unmap of the pages from S-EPT.
+> >> >
+> >> > If IOMMU side does not increase refcount, IMHO, some way to indicate that
+> >> > certain PFNs are used by TDs for DMA is still required, so guest_memfd can
+> >> > reject the request before attempting the actual unmap.
+> >> > Otherwise, the unmap of TD-DMA-pinned pages will fail.
+> >> >
+> >> > Upon this kind of unmapping failure, it also doesn't help for host to retry
+> >> > unmapping without unpinning from TD.
+> >> >
+> >> >
+> >> 
+> >> Yan, Yilun, would it work if, on conversion,
+> >> 
+> >> 1. guest_memfd notifies IOMMU that a conversion is about to happen for a
+> >>    PFN range
+> >
+> > It is the Guest fw call to release the pinning.
 > 
-> Which points out that the ACQUIRE() example in cleanup.h missed the "::"
-> suffix to mark the following text as a code-block.
+> I see, thanks for explaining.
 > 
-> Fixes: 857d18f23ab1 ("cleanup: Introduce ACQUIRE() and ACQUIRE_ERR() for conditional locks")
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Closes: http://lore.kernel.org/20250717173354.34375751@canb.auug.org.au
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thanks.
-
-> ---
->  include/linux/cleanup.h | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+> > By the time VMM get the
+> > conversion requirement, the page is already physically unpinned. So I
+> > agree with Jason the pinning doesn't have to reach to iommu from SW POV.
+> >
 > 
-> diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
-> index 4eb83dd71cfe..0fb796db4811 100644
-> --- a/include/linux/cleanup.h
-> +++ b/include/linux/cleanup.h
-> @@ -64,8 +64,7 @@
->   * the remainder of "func()".
->   *
->   * The ACQUIRE() macro can be used in all places that guard() can be
-> - * used and additionally support conditional locks
-> - *
-> + * used and additionally support conditional locks::
->   *
->   *	DEFINE_GUARD_COND(pci_dev, _try, pci_dev_trylock(_T))
->   *	...
-> 
-> base-commit: 857d18f23ab17284d1b6de6f61f4e74958596376
+> If by the time KVM gets the conversion request, the page is unpinned,
+> then we're all good, right?
 
--- 
-~Randy
+Yes, unless guest doesn't unpin the page first by mistake. Guest would
+invoke a fw call tdg.mem.page.release to unpin the page before
+KVM_HC_MAP_GPA_RANGE.
+
+> 
+> When guest_memfd gets the conversion request, as part of conversion
+> handling it will request to zap the page from stage-2 page tables. TDX
+> module would see that the page is unpinned and the unmapping will
+> proceed fine. Is that understanding correct?
+
+Yes, again unless guess doesn't unpin.
+
+> 
+> >> 2. IOMMU forwards the notification to TDX code in the kernel
+> >> 3. TDX code in kernel tells TDX module to stop thinking of any PFNs in
+> >>    the range as pinned for DMA?
+> >
+> > TDX host can't stop the pinning. Actually this mechanism is to prevent
+> > host from unpin/unmap the DMA out of Guest expectation.
+> >
+> 
+> On this note, I'd also like to check something else. Putting TDX connect
+> and IOMMUs aside, if the host unmaps a guest private page today without
+> the guest requesting it, the unmapping will work and the guest will be
+> broken, right?
+
+Correct. The unmapping will work, the guest can't continue anymore.
+
+Thanks,
+Yilun
 
