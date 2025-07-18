@@ -1,154 +1,260 @@
-Return-Path: <linux-kernel+bounces-737155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25FC7B0A88A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 18:35:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23E68B0A86F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 18:30:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E98D7B6547
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 16:34:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 924231C44063
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 16:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85B72E62B9;
-	Fri, 18 Jul 2025 16:35:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 620A02E62B1;
+	Fri, 18 Jul 2025 16:30:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K3D9Ba47"
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="GVWuR/is"
+Received: from AS8PR03CU001.outbound.protection.outlook.com (mail-westeuropeazon11012032.outbound.protection.outlook.com [52.101.71.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA80F1DED53;
-	Fri, 18 Jul 2025 16:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752856531; cv=none; b=i9bnUxyo9GF5folLFEiCgd84Y0YAZJHTgggp/R13J29QrsSjSY+Gg3GVVhSMSb3+zbGtycp3ZTl1ci9ZrHzJXUmHCaAfI1BwlCIwTbGX7IkDTEEXJ0jKWfBf79M7ucWLSwR7PMsXymKt4XO9bSfggeXb70BGZuZVu9HJH30hxsA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752856531; c=relaxed/simple;
-	bh=UDmAfnjy8pkg9BvFAmQ9gslBsr+Ob5O2A4EwZnWz7Bg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XQKrDbA0V4OixlCmjlLCDodrkC68yes4a8mESkz6JaYyfoeXkf3KGPm5uBK3sS8EGmG1ok6OMfhry45G1Ba0c6lvED4Kfk51kD1LPfht3m5spcJDAz6NZJg1UUMTMFNJMb/fXrvhO2pdWGRbt7ObLHuR3tI804oo41JlYH9io8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K3D9Ba47; arc=none smtp.client-ip=209.85.160.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-2e9a38d2a3aso2125862fac.3;
-        Fri, 18 Jul 2025 09:35:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752856529; x=1753461329; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S5fMBTsrhrDDK6xtK7LtgX4Zw2zx9+Mn87A7RF2ITBk=;
-        b=K3D9Ba47ZcRHqFv5hoBf/PZyk2IqUflpJIzmbJtLXy7V86gDdLIigOoXdLcUL+S2kT
-         Sz0B7NEezbaMf9/+ax4rikbIAdyJagRutel0FSmH8g6hCA2lBDfjQlnjMMyyBB+ra2L4
-         2B8J5KOGz3QeYo29QxrBcZbTtAGDst9zT/gZ9XAwq/nYLUYzvIKYeqAFl1m4k1jp40V/
-         NRh78rxqo5hiZ7pHLjfors9yhUpf96qHuiwc8J00Iu70Ul4j+SXpMSo2pXuOJka259ZF
-         KNrEewVOXXBDCIiAJj0ibrczdIo1KajANAav6L5JEjtOS9gx6LJVqGxwkL9swRV9xXyk
-         vsCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752856529; x=1753461329;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S5fMBTsrhrDDK6xtK7LtgX4Zw2zx9+Mn87A7RF2ITBk=;
-        b=up4HuyILC9rmLB38TdVgmcZLs8xZ2OQbifCSxnmZlC6lLpGYTqEB7OmHmRU1+YYxwT
-         bva3jcgSXuHCS9b21Htu0XqPKaE4RAISnSPE12P+YHWSkZ2uWAszxUL6+EWtI6Xuhp5n
-         jXfEseS/V79eFQ28KuASuYkQyBkc1/84WwHEMO+jlWforcX+CKIOp+DUvfH+Im67QJfN
-         gDpFIKroRRNLEQylearjK5V5NpO2T59cqOdE8vr+/Pu0p4AE4kbnGjD8/Uv8sCJDTmKr
-         qmkkLDmUHLP6KToL4/HO1hkVXf1wn6tBe77PYFm12M36mF+xkosZRyOL7z0JIeiFD0z+
-         GZsA==
-X-Forwarded-Encrypted: i=1; AJvYcCUvKxHpA4/DEVkKkNb/thg5+B3UhpKx/p00OoZ7yr5kylldgrbDwd5v/QQkrbWvUawfOb653PGWXLx+@vger.kernel.org, AJvYcCWglKENiuUXuB/ziEcbhbPLKfxzNZ5SByaK7sIN/NwOXHzUZe20LEE1E92uY/71O+fJ2xll7T+HKCjXJwI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHXb1/X28fxaO+u/NxonvGBnKD4hQGW3rWaF0zaw6DCtldp828
-	9lHeM3xMyjmsb44EV14jhu0YhAd7k+VqHe2V6MR2BmVCNJyS26bbrYAA44a9c5sy4HdPXDYVx8S
-	ptemQUIy+Q1kKMPY1NXvlqDkSUwR9GZeP2w==
-X-Gm-Gg: ASbGnctBL1o2Han0w6gchtwbvoL+t8t7mZbdJCoL+Ij0AJdt7TJk3wau+g9uTxPo8sj
-	wBQgq3bdxQNb3dLvB5PO3Piw4CcbICBd2SVcyoLSrwwvvetSWj6Y8XPfzmn3eYSapocrtEShH6E
-	zIi+Qu7WlHyypt6IIfrB35laYPKdgRx3yq3YzEJtSAAA/PmJ3+V8Dr/FBS61sG4IZEODOWtfzIi
-	fxSobqLC5UaA1+x/Ie9KaA=
-X-Google-Smtp-Source: AGHT+IELLiAsxvKTUzSoPTZZRRusNn9I6JdMO0/hSrsDIrFm2f2dPHV082nEnE44/odp5xiA8nVTltUi6hVD+2JPvo8=
-X-Received: by 2002:ac8:5a91:0:b0:4ab:9551:476 with SMTP id
- d75a77b69052e-4abbf5574d4mr7492541cf.53.1752856040946; Fri, 18 Jul 2025
- 09:27:20 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3561EB5B;
+	Fri, 18 Jul 2025 16:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.71.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752856220; cv=fail; b=O+q/FmfaeX+BHc6KN8I6kaOz7IQSw1fiK6SAP23GNW/aehVuv/Kkc/pzBIB/Pln1lhKdKT3I1nAT8drHndys+I2o9lUW/B9oxw1BWxjQ8gOCAvla08FhhXXcA2JIVaCZBguw3cymWUtTjnMzSUxX82VEKlwbiyAtjmU3q3AavCo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752856220; c=relaxed/simple;
+	bh=gEM/1IUZjhn4pUT8N+sLoLAAEIARwauarSsZs0fHYXk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=N65J7UfjM1Iu2dmjgyyi1cBq1WHXiRJD0xB6+scRpeZyeLtv6a2sQXgDdktxgul2FoMG3f3qhqGoDSte1UNo1NdBynec36GTEttM4/xFeg+PR3GxNdyuI09cfxj3LYod/kn+IyRwW4cgXFPowCXKqOGMcvKJq0MZ69Tvlzro0Rg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=GVWuR/is; arc=fail smtp.client-ip=52.101.71.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gw+GuXmdOG41PzzmMkxElxYT5O2D8NJQDhNmsqKzFo/MFaPyme9Kb16mZa7gYzf0wd1+1xvRVrE1q5gGpPYv+UWMloZ65R8PqHj4Mii/NeE5yhMiLTSYHw20U81RKaw2QGrjF08qMkt1Xqw49dkae7KhCTM7/nspEp4LCMAIWRfvpmDfVL403R9dZKKlOYRZXbIHdlV2iesVlFVuIGGpWdQkfcs5ZdlBOJ00lUCnLV3yV14H5zpUGUE5GcUX9CsKsOiTFQUsKvCxVMf3Zk5ywgQ5qzETOIgx3bNx+5pT7Q2GMsEWpFzFCpjQL26ovcQiqJFqPouol9/xK4vFRaplmw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mvXe1yKDpr756NGxJ95GZ0REAUOznDvcHRtIaSZeNFE=;
+ b=ZwfdpI+EIbRfMfShG9sH3u+AAnejt2ec3rdwVmBo8UBxpmhcjt8/RMp465Zt12nAWJIEE3urjrsLYGhCkeRLA2bXEbQJOp2N7HwgwltQ1WT8656BCvEyOe83mRdf7lxXSh5oOVwrt+utt6teXzs/l4I2EZVqywRZB4MsneJrum5oCKcYz9fTq/8ZnLtR37VKabLvdWBPPfz72FngdA/AYrTLsZVLNwcsk0ZrAXriP/KH/KILL3+Q7fsKQdZw0O+MU+oBRq/SehHgGS+2CTeyG13xlfsGsVFeq1j80MYXDY5RLMClr6OsOzoJDMK6SP3pO6YFZd8UrlEmGBxDYtfjbw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mvXe1yKDpr756NGxJ95GZ0REAUOznDvcHRtIaSZeNFE=;
+ b=GVWuR/ispjaifhKYPjgxz/cq7zfx2Iph+U3rIFQdMeg/uVxpiQm2jz5wdUmFgv8EOlNCUc7bYYcbWAD29IoP2qSDEyqZKz7InDwRFHjZREPXljmXtX78yQ0vkbFnc9TEeITemZmWiUaAKE4Tvr47bkAq8mqvEofPOiDKXU1z7673kbRFLb8CxMrBnPIxejFphMzCExXpAo2YqhLJ5OnC3qzH6OZSGIEI4p4L+r/Fd6rpiLC3CjllOmiuWgb2Ge+lN5iPAz+7yFodHPNQT6YH+kIm3surfssULBtt52CMQAYgan/PNTLHhC41k4Di3sGMUn4rnAtMDsKoVHwMaPxW9A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by DBBPR04MB7580.eurprd04.prod.outlook.com (2603:10a6:10:1f7::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.26; Fri, 18 Jul
+ 2025 16:30:15 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8922.037; Fri, 18 Jul 2025
+ 16:30:15 +0000
+Date: Fri, 18 Jul 2025 12:30:07 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+	jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+	simona@ffwll.ch, lumag@kernel.org, dianders@chromium.org,
+	cristian.ciocaltea@collabora.com, luca.ceresoli@bootlin.com,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	victor.liu@nxp.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de,
+	devicetree@vger.kernel.org, l.stach@pengutronix.de,
+	shengjiu.wang@gmail.com
+Subject: Re: [PATCH 4/4] arm64: dts: imx8mp: Add hdmi parallel audio
+ interface node
+Message-ID: <aHp2jxNRPfYGUiUY@lizhi-Precision-Tower-5810>
+References: <20250718101150.3681002-1-shengjiu.wang@nxp.com>
+ <20250718101150.3681002-5-shengjiu.wang@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250718101150.3681002-5-shengjiu.wang@nxp.com>
+X-ClientProxiedBy: AS4P192CA0029.EURP192.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5e1::14) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250717165056.562728-1-thepacketgeek@gmail.com>
- <20250717165056.562728-2-thepacketgeek@gmail.com> <20250718113611.00003c78@huawei.com>
- <20250718125935-75fa0343-af78-42be-bc3f-e8f806a4aee5@linutronix.de>
-In-Reply-To: <20250718125935-75fa0343-af78-42be-bc3f-e8f806a4aee5@linutronix.de>
-From: Matthew Wood <thepacketgeek@gmail.com>
-Date: Fri, 18 Jul 2025 09:27:10 -0700
-X-Gm-Features: Ac12FXzeo9T-VEnjAi37swPr2fGHGP7zpQWlL-WrRlJfLia2ykFnSljiRcOLxgI
-Message-ID: <CADvopvapHnuxztum4fPsZU5h3=977Y=h6xOVhyWfKU8tQ0wxeQ@mail.gmail.com>
-Subject: Re: [PATCH v5 1/1] PCI/sysfs: Expose PCIe device serial number
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Mario Limonciello <superm1@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DBBPR04MB7580:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1315cf79-7910-43a2-86b2-08ddc6186023
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|52116014|7416014|376014|1800799024|366016|19092799006|38350700014;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?xwLXG4QYr9Gbl8LVTGYB1YlsyX20E+piEsfgt1QHtA1+ShHHZZK1eOVQAsz2?=
+ =?us-ascii?Q?aHVzRM15f4Zzi6j8gxq11JhzfS3pZie3ePvZScOOKUHu1pqEvKnP6XZHUq+7?=
+ =?us-ascii?Q?PzYFDpIZg9xudqJl9VEUUPPdX3XsiTNZbbjkU1ZNkLUOTXIPqfEo621S7K5l?=
+ =?us-ascii?Q?q6GMOeZ93rkEqHeQVFITtRdNXf1ovCQBRJcLAvXGjzRnt64F/EC5d3T6QSUJ?=
+ =?us-ascii?Q?qzlCyUlAfh8HR3MRBMEoGoSTptePQ8lKr3gpuYbeEWj1KjJeZQa/bC7rT+Pt?=
+ =?us-ascii?Q?jpobPQ4wsmiJqN57bYqaV8Z+VmPIwGDQ+qRVBXsmqnDvlIbYL49Zvy+UCPYJ?=
+ =?us-ascii?Q?zU+10WiA14a78ShWVlm15wmjN9UH19NialVDEjoTx9EWYr/PLvgUzx8eRVxM?=
+ =?us-ascii?Q?hrqW5K2V76oSuTOGfMdbH7SCrcyj0qGpE0ECGdmwPY7lvgE5pE+vSSb22v1l?=
+ =?us-ascii?Q?80hu/N4ca8GC8FfqNZzo4o3jemWNZIqIF92vZU+3T9U5zseultq6cqGkPkQ0?=
+ =?us-ascii?Q?x6d8yqlrd4JgPBNYn7nfNJKBAep4oqHx7wqerRKFvpTkS1Wst3SmZ9O7ppTd?=
+ =?us-ascii?Q?Kae2b9WYdCueRttPqVKwGdQ/6etp1XS257Gt7FYtM8rRc0u/RH+yQtnhgttS?=
+ =?us-ascii?Q?hVNONMxpZJQ0QoCQufzbanWDRBCWqjkp7tnIuzCXyFsADojmma5a7tiw+r7y?=
+ =?us-ascii?Q?29IvJC7dCS94U0MaHjn9lK8I/oMkH+lmL3InVjHdsv7OXQoA0cXRtofHUcoW?=
+ =?us-ascii?Q?FIeUBj0ohXv7HlWOg5BpEdK5xm7y3MP2fbZRiQgIdlYuHynD3Y/00nm2FwZa?=
+ =?us-ascii?Q?jdSEwdaOin7oJAsNFgA8O3PTD6GgJG9Zs+diYj6OawYZ+IWA6TNKXwkIrXbX?=
+ =?us-ascii?Q?PAGqOC5esld4Xxv3S0B6Vg0V5COCi7yepmuTuRSen7BDRZplD5sWW26bQgDm?=
+ =?us-ascii?Q?o/in+4tc1PCJxyPy9qN6wCo0EIeTgeB/R63VHuQlgy9qeZdcZB5gmCbXz//4?=
+ =?us-ascii?Q?YJjO0bE9+t42JTFHP9NA7EeVqTsSpMvkFBy1KaED9oYTmjn5bhUGradJvA8o?=
+ =?us-ascii?Q?ZZ2kBeql03iUIHfMDN+7aFTa73Y1GIJttg1PEWUPJiM82BRnvKmN07uANqMO?=
+ =?us-ascii?Q?EG1a4zhp6DTbuAiinMxvKE9B2W1DiQ6fQj5cUOyEilxdAxw3HrdK3r0pd08u?=
+ =?us-ascii?Q?4OO0XliNlgnUSWivgDYX+xZKo4C02UdS6mBMgH9vO7+GhXYoZ56wCZCV3oFw?=
+ =?us-ascii?Q?nHiudA4D/GHMYkeTuH6rCJ4S9GuhsHpiRfd9FjIVxI1ZpQ5RZfD6ncEoiS94?=
+ =?us-ascii?Q?tbYsFR3OJZCVwzGuPlOeg4gPX+Tm97U5jIiygu4kmtNRMek6whh1Vyi+BMLQ?=
+ =?us-ascii?Q?Ivhlwr0f86Fu+OxhxBrdvZsuXxBzZI1vl9eFWa1jdNoZj+TkLAXy5ABN+XN4?=
+ =?us-ascii?Q?VqrwIJx2ZcNOO1lYxKjhy2rt4w7s9BtfPotlsd4vFm/8cF3xn9DbJg=3D=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(1800799024)(366016)(19092799006)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?tMlLRX/jqGM4MuNybhPROqt8Sm8BSAgr+4xQlrSXFCSbCH4+pRmWcjQhhTzO?=
+ =?us-ascii?Q?GBCBbVcix34DFUqBW+CmZuF1wH47A3Dfrcd7gFZcyMpgXpd7yk/uRQBUJQ3B?=
+ =?us-ascii?Q?DhY73Qw4NLsHY2/HIRK0hZFh/dKLdAqEDo7LAwujfuEVEwfBaeCsrYOXmld3?=
+ =?us-ascii?Q?C3J3mrVMiGMYjkPtiz5Yj7SYXYfQofoDm7hgWkRx3AL4mpASJbHOyCbX7Fsw?=
+ =?us-ascii?Q?OXCpKMycVFJAmV+zQYAZA0HUECJBY8gBhUVvg7m/My0W1U+KOpgzMYud/uyv?=
+ =?us-ascii?Q?PCqkX/fhiR2bH/GCpGcWPGKyq+EJfGhSlzawwc/b4Vdvc9cZ1TxZ9NfKfxlf?=
+ =?us-ascii?Q?7MH93lufDgdxUk+bw1E12vN4nrXqBB+awYG1XlpPpTXbNUZ4VgUOHpOBlqqf?=
+ =?us-ascii?Q?7ybMoAKUWj9hg60GOkOjmJIoGEMv0yl/VKLCVx5nTu7IzyiYHGvIpPJvPHgH?=
+ =?us-ascii?Q?4fZXR48DLIfx+UyjmlBclZv6u6oBc49P/a/aiN76nNRq4WuSxDap+0HKTMNd?=
+ =?us-ascii?Q?BUc5pKOchm/DIq5BRkE4YWVDi7H6IzZ2mv/a0eB8cA1hBggfMP3AX+366Vt1?=
+ =?us-ascii?Q?3enzfSMskuMxJJBviFRvgIpvtGjXI9gET8jyVsNsUHHCkZTSPRrql10nU9Xg?=
+ =?us-ascii?Q?yPDqArgDoNObbeOXRiVW8AfJHT1U4/FzgilFlSeJYDFaBC7+KdZe9FhfiYNs?=
+ =?us-ascii?Q?Eh3i0I5NWaIybsJPkge/tHhuwh/V0lIX/m/XVx8RhRxZr9AxGLMJ3215GSLR?=
+ =?us-ascii?Q?V6XZuogJ1NNjfubjgi4yYe1QzyC7LKGuMOHEpw821v5cZfm6kWa9VME8EBzV?=
+ =?us-ascii?Q?sNduTY0AEFmV2M9iX/220+Z7DZI3CDDsh/v/DFmPtbzH+BDIwmptKqZKF5WJ?=
+ =?us-ascii?Q?VeY6ss/oApVE07SQpUl50NAIpRf7yfOi3eVgbC6o3rBJkZeoAv7JjfzhJ3Vn?=
+ =?us-ascii?Q?RrCAo1UbslbH2QmuIXn7QFmOYNogZ0M64Rl8oz3Hkvm8pTo5EzqjRrAr3lDy?=
+ =?us-ascii?Q?5MH4Jt81s6yuDn1KnOJ97uRpVpBC9uBM1VRmDSbkD2cFehGG1sAerTcNLpGE?=
+ =?us-ascii?Q?IYtFrNahAF9dWXY1vKlr4aFUYSqjVmOAIXmZ5l38N5G5CEKE356kuPj93Oc7?=
+ =?us-ascii?Q?i9LDX0eDZmQTZOGQXixsEd29fb3m2eQuVGGDBJssfV4pvz/yobeEevp1Qpu4?=
+ =?us-ascii?Q?11W/SK8yabWSU0H2Q2cEUY5e2esJh9Yh2b5NB1Yac25++Mu8lLAi8bPGGw/K?=
+ =?us-ascii?Q?EkYJz637RAopcsQaENCDY23Yj/JA17lSjTsSFTLx6VfTMU3ffYWuDYHzJ0oa?=
+ =?us-ascii?Q?eb0XYr2b89dWXADIlerQmTUiBuleAPkgg+dikZxp+6rxZqrFfRf2LF9N1k+N?=
+ =?us-ascii?Q?4LPKgUlQlSZAr6zMW6Amq+rkVzB/hqgtTX3PG2I0k+ZwYUBWUveoNKBkWV0p?=
+ =?us-ascii?Q?3CltsfmIHn4Z0iS3Qv0eBkzXJC3EGYuRimNXHkWezHfohKmOUYgw023M19ve?=
+ =?us-ascii?Q?NklX6w6M4RJV+9+3TfTJ56AvjkTXE+yeRId0HsBYrpn5t1JQFYA8K5uob1pU?=
+ =?us-ascii?Q?2Cfi0761davdqXrt/ISpc/6yNtdCeoZXqUVP7Psy?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1315cf79-7910-43a2-86b2-08ddc6186023
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2025 16:30:15.2611
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: v9bkn8q9ZDR7DJWPb3AJg4fnW1aPT0cMI8YXfh+RHHOofDMZvKbeOQUz9LMOfWZbj4MvzfomR7zmo+cbVldbrA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7580
 
-On Fri, Jul 18, 2025 at 4:02=E2=80=AFAM Thomas Wei=C3=9Fschuh
-<thomas.weissschuh@linutronix.de> wrote:
->
-> On Fri, Jul 18, 2025 at 11:36:11AM +0100, Jonathan Cameron wrote:
-> > On Thu, 17 Jul 2025 09:50:54 -0700
-> > Matthew Wood <thepacketgeek@gmail.com> wrote:
->
-> (...)
->
-> > > diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-> > > index 268c69daa4d5..bc0e0add15d1 100644
-> > > --- a/drivers/pci/pci-sysfs.c
-> > > +++ b/drivers/pci/pci-sysfs.c
-> > > @@ -239,6 +239,22 @@ static ssize_t current_link_width_show(struct de=
-vice *dev,
-> > >  }
-> > >  static DEVICE_ATTR_RO(current_link_width);
-> > >
-> > > +static ssize_t serial_number_show(struct device *dev,
-> > > +                                  struct device_attribute *attr, cha=
-r *buf)
-> > > +{
-> > > +   struct pci_dev *pci_dev =3D to_pci_dev(dev);
-> > > +   u64 dsn;
-> > > +
-> > > +   dsn =3D pci_get_dsn(pci_dev);
-> > > +   if (!dsn)
-> > > +           return -EIO;
-> > > +
-> > > +   return sysfs_emit(buf, "%02llx-%02llx-%02llx-%02llx-%02llx-%02llx=
--%02llx-%02llx\n",
-> > > +           dsn >> 56, (dsn >> 48) & 0xff, (dsn >> 40) & 0xff, (dsn >=
-> 32) & 0xff,
-> > > +           (dsn >> 24) & 0xff, (dsn >> 16) & 0xff, (dsn >> 8) & 0xff=
-, dsn & 0xff);
-> >
-> > I wonder if doing the following i too esoteric. Eyeballing those shifts=
- is painful.
-> >
-> >       u8 bytewise[8]; /* naming hard... */
-> >
-> >       put_unaligned_u64(dsn, bytewise);
-> >
-> >       return sysfs_emit(buf, "%02x-%02x-%02x-%02x-%02x-%02x-%02x-%02x\n=
-",
-> >               bytewise[0], bytewise[1], bytewise[2], bytewise[3],
-> >               bytewise[4], bytewise[5], bytewise[6], bytewise[7]);
->
-> This looks endianess-unsafe.
->
-> Maybe just do what some drivers are doing:
->
->         u8 bytes[8];
->
->         put_unaligned_be64(dsn, bytes);
->
->         return sysfs_emit(buf, "%8phD");
+On Fri, Jul 18, 2025 at 06:11:50PM +0800, Shengjiu Wang wrote:
+> The HDMI TX Parallel Audio Interface (HTX_PAI) is a digital module that
+> acts as the bridge between the Audio Subsystem to the HDMI TX Controller.
 
-Thank you both for your continued review! That reads much nicer, I
-should've known to look at how others were doing this formatting. I'll
-have a new patch later today.
+Remove " a digital module that acts as the" is more straightforward.
+
+>
+> Correct the register map of hdmi_pvi, which is overlapped with the
+> hdmi_pai device.
+
+Shrink register map size of hdmi_pvi to avoid overlapped hdmi_pai device.
+
+>
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/imx8mp-evk.dts |  4 +++
+>  arch/arm64/boot/dts/freescale/imx8mp.dtsi    | 26 +++++++++++++++++++-
+>  2 files changed, 29 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
+> index c0cc5611048e..cc9351a5bd65 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
+> @@ -442,6 +442,10 @@ &flexcan2 {
+>  	status = "disabled";/* can2 pin conflict with pdm */
+>  };
+>
+> +&hdmi_pai {
+> +	status = "okay";
+> +};
+> +
+>  &hdmi_pvi {
+>  	status = "okay";
+>  };
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> index bb24dba7338e..6e5a41f46309 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> @@ -2063,7 +2063,7 @@ irqsteer_hdmi: interrupt-controller@32fc2000 {
+>
+>  			hdmi_pvi: display-bridge@32fc4000 {
+>  				compatible = "fsl,imx8mp-hdmi-pvi";
+> -				reg = <0x32fc4000 0x1000>;
+> +				reg = <0x32fc4000 0x800>;
+>  				interrupt-parent = <&irqsteer_hdmi>;
+>  				interrupts = <12>;
+>  				power-domains = <&hdmi_blk_ctrl IMX8MP_HDMIBLK_PD_PVI>;
+> @@ -2089,6 +2089,22 @@ pvi_to_hdmi_tx: endpoint {
+>  				};
+>  			};
+>
+> +			hdmi_pai: hdmi@32fc4800 {
+
+commit message it is bridge device, maybe audio-bridge is good node name
+
+Frank
+> +				compatible = "fsl,imx8mp-hdmi-pai";
+> +				reg = <0x32fc4800 0x800>;
+> +				interrupt-parent = <&irqsteer_hdmi>;
+> +				interrupts = <14>;
+> +				power-domains = <&hdmi_blk_ctrl IMX8MP_HDMIBLK_PD_PAI>;
+> +				status = "disabled";
+> +
+> +				port {
+> +
+> +					pai_to_hdmi_tx: endpoint {
+> +						remote-endpoint = <&hdmi_tx_from_pai>;
+> +					};
+> +				};
+> +			};
+> +
+>  			lcdif3: display-controller@32fc6000 {
+>  				compatible = "fsl,imx8mp-lcdif";
+>  				reg = <0x32fc6000 0x1000>;
+> @@ -2140,6 +2156,14 @@ port@1 {
+>  						reg = <1>;
+>  						/* Point endpoint to the HDMI connector */
+>  					};
+> +
+> +					port@2 {
+> +						reg = <2>;
+> +
+> +						hdmi_tx_from_pai: endpoint {
+> +							remote-endpoint = <&pai_to_hdmi_tx>;
+> +						};
+> +					};
+>  				};
+>  			};
+>
+> --
+> 2.34.1
+>
 
