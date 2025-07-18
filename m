@@ -1,137 +1,126 @@
-Return-Path: <linux-kernel+bounces-736302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A82FB09B48
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:22:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72974B09B4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:25:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 661DB7B8449
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:21:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 427943AE3D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:24:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4BF1F866A;
-	Fri, 18 Jul 2025 06:22:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1884D1F463E;
+	Fri, 18 Jul 2025 06:25:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pgW4XT1V";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="26bpvT2r"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DscvzNLS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5041C861E;
-	Fri, 18 Jul 2025 06:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C43519E97C
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 06:25:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752819755; cv=none; b=TEYlTWNw/MSndhzyqyFLx3OspW4DaW0wZI7b6NIbOPx9n9U85GnUvg800nZuNSSNeG+s9bJ8KFXCbVC4yR59cafXe4+2aMCp5JuJT6eYqXIj12GsyiIPnFW+oRTTdKzjb5gGxVkkFQmAql7omjP2+5fjaRY8XkHMKiQ9gUBsx9g=
+	t=1752819921; cv=none; b=GQqrGomxOu16C8YMlBTuTf+g71d0JRye+zCM8CO52Z9D7RywtGl2nICZ3ZQli0MbFAYw23ubVHO9EBx+657k2wwHzgxpd3v7iTbqhhhktOvDuEELuoWOcVfKI4zt57l4VX/XHDPbFimg5MZ1YR9nxLzRfvxzGaVbQyZc4M3Vinw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752819755; c=relaxed/simple;
-	bh=ICoPDyL2R75Iu7QQ1/kG+OuXPgtdLyK2qH53nhmr100=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c+aLMJSEDfoE0g66/IkrwI7h2EJ3jBkoH4BfbwKVlv/CqejLAGtsVKsL4kQKYUJmkOihXg6CH655E2e1Paao+8a9b2Qs7dqvQD4/vFxraalyLoPPPE4q68+wF32NK7PAJgJNunkG6U3FFy+JnKscYrDlBXYSeZzX62evraFC8Po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pgW4XT1V; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=26bpvT2r; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 18 Jul 2025 08:22:26 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752819750;
+	s=arc-20240116; t=1752819921; c=relaxed/simple;
+	bh=Js+lVIECA+MlpwBwikv6Sh9BN+SgNuc+l3FHZUeQABg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=kGneOvlMidUdxm5TfGuXu5APSIDbIe3bJVnFMsjS/eTHy4MnI/Lwgy7UODqIXXFpI6zUKH6nf5QmhQQgqoHsMEU1RagXG3ll0MSM9FsxTIT25yz3QWgEV7OhLMDFnxtlmurCTrSp3iJaFsj3e/piRQUQoyFRSujoe+iooR68PBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DscvzNLS; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752819914;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r15MXxvdvuJjkg2dcxT5OmMbq5ijcwE+26Y6C9Smhh8=;
-	b=pgW4XT1VmFV5nWy0E58ydruyYpt1gnI1VRPiYxoBNM5pJxEII+vO0ZJSLj31AAOU1a0V4X
-	hC2kuGioG9WquczLzyVQ34xvvyXs3bZX4pyvei4WuKKFlqjb6F5MhZiAQrBxJ3iEm+rjzR
-	E2dpnPABOqx7JndQXnwJPDbRJxDedZD7dUjeEJh3/ipMh/jjvHA/xsg8PWyBEmgntKsrQH
-	LIwRN1hsH27w4Qyz5OkkWzPxepT0Df3WbRpAVMNLvzJWeGyiEaGCdKfUvctio5K2p/w1lF
-	5Lv7lQTkeYARXuEWZ7ytGwdxzHbG8nYF/X73l3B1wu2SljbX7Dwt8WFmW0m8Nw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752819750;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r15MXxvdvuJjkg2dcxT5OmMbq5ijcwE+26Y6C9Smhh8=;
-	b=26bpvT2r5Gg6wqblcqwvNsj8QyQRBJSt2YcdRWznzsotPK6Oh5ANbFa38/u4eDdO80CSXT
-	9372IrTxpC1ydzAg==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Willy Tarreau <w@1wt.eu>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
-	Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Nicolas Schier <nicolas.schier@linux.dev>, Kees Cook <kees@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, linux-doc@vger.kernel.org, workflows@vger.kernel.org, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v5 00/15] kunit: Introduce UAPI testing framework
-Message-ID: <20250718073743-d4a1f713-f81b-4e89-b3f8-7eed838798e6@linutronix.de>
-References: <20250717-kunit-kselftests-v5-0-442b711cde2e@linutronix.de>
- <20250717132259.GA25835@lst.de>
+	 to:to:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=a7673uBYPxlpUD9zTGRiH5JAVGUBZV+mL2ewwlCRHbA=;
+	b=DscvzNLS0dGYfYnA/uRPB7aEqatRHRjdExEpId5fmEux8pT9Oinm6PHvkMMufX8xBjeyhq
+	2nxMGOW/hlO/0yjGk+or586I1y6Vb7QZVmS+Y0pk2ANUTiyEtDPaHTSDZuzqpXh/yt5PxV
+	WKcFdg6ZV7aQ/sAgxYymMOfFchRMxU0=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-444-sUPP16efOQKmySaaf90OyQ-1; Fri,
+ 18 Jul 2025 02:25:09 -0400
+X-MC-Unique: sUPP16efOQKmySaaf90OyQ-1
+X-Mimecast-MFC-AGG-ID: sUPP16efOQKmySaaf90OyQ_1752819907
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A71AB1800165;
+	Fri, 18 Jul 2025 06:24:59 +0000 (UTC)
+Received: from server.redhat.com (unknown [10.72.112.34])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id AB44E195608D;
+	Fri, 18 Jul 2025 06:24:50 +0000 (UTC)
+From: Cindy Lu <lulu@redhat.com>
+To: Paolo Bonzini <pbonzini@redhat.com>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	"Kirill A. Shutemov" <kas@kernel.org>,
+	"Xin Li (Intel)" <xin@zytor.com>,
+	Rik van Riel <riel@surriel.com>,
+	Jason Wang <jasowang@redhat.com>,
+	"Ahmed S. Darwish" <darwi@linutronix.de>,
+	kvm@vger.kernel.org (open list:KVM PARAVIRT (KVM/paravirt)),
+	linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
+	lulu@redhat.com
+Subject: [PATCH v1] kvm: x86: implement PV send_IPI method
+Date: Fri, 18 Jul 2025 14:24:00 +0800
+Message-ID: <20250718062429.238723-1-lulu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250717132259.GA25835@lst.de>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Thu, Jul 17, 2025 at 03:23:00PM +0200, Christoph Hellwig wrote:
-> On Thu, Jul 17, 2025 at 10:48:02AM +0200, Thomas Weiﬂschuh wrote:
+From: Jason Wang <jasowang@redhat.com>
 
-(...)
+We used to have PV version of send_IPI_mask and
+send_IPI_mask_allbutself. This patch implements PV send_IPI method to
+reduce the number of vmexits.
 
-> > This series aims to combine kselftests and kunit, avoiding both their
-> > limitations. It works by compiling the userspace kselftests as part of
-> > the regular kernel build, embedding them into the kunit kernel or module
-> > and executing them from there.
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+Tested-by: Cindy Lu <lulu@redhat.com>
+---
+ arch/x86/kernel/kvm.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-(...)
+diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+index 921c1c783bc1..b920cfd10441 100644
+--- a/arch/x86/kernel/kvm.c
++++ b/arch/x86/kernel/kvm.c
+@@ -557,6 +557,11 @@ static void __send_ipi_mask(const struct cpumask *mask, int vector)
+ 	local_irq_restore(flags);
+ }
+ 
++static void kvm_send_ipi(int cpu, int vector)
++{
++	__send_ipi_mask(cpumask_of(cpu), vector);
++}
++
+ static void kvm_send_ipi_mask(const struct cpumask *mask, int vector)
+ {
+ 	__send_ipi_mask(mask, vector);
+@@ -628,6 +633,7 @@ late_initcall(setup_efi_kvm_sev_migration);
+  */
+ static __init void kvm_setup_pv_ipi(void)
+ {
++	apic_update_callback(send_IPI, kvm_send_ipi);
+ 	apic_update_callback(send_IPI_mask, kvm_send_ipi_mask);
+ 	apic_update_callback(send_IPI_mask_allbutself, kvm_send_ipi_mask_allbutself);
+ 	pr_info("setup PV IPIs\n");
+-- 
+2.45.0
 
-> I had my own fair share of problems with kselftests,
-> mostly because of the lack of structure and automated way to run them,
-
-How did you overcome these issues? Why does everbody need to reinvent the
-wheel here? KUnit already exists and provides a lot of structure and tooling.
-
-> but adding them to the kernel (or a module) is overshooting the target
-> by far.
-
-That's a subjective statement without any reasoning I can engange with.
-I would be happy to do so, but for now I can only say that I disagree.
-The patches have been on the testing-related lists for
-some time and so far nobody had an issue with this aspect.
-
-> > If the kernel toolchain is not fit to
-> > produce userspace because of a missing libc, the kernel's own nolibc can
-> > be used instead.
-> 
-> Is nolibc enough to run all the selftests?
-
-It is not and most probably won't ever be. The maintainers of each testcase
-will decide which libc to use. Like it is in tools/testing/selftests/ today.
-Some use glibc, some nolibc and some can do both.
-
-> If so we should just do it unconditionally, but linking to different
-> libraries by availability seems a bit problematic.
-
-Agreed. But as mentioned above it will be the maintainers decision.
-
-Only the preinit executable will need to support all configurations so needs
-the availability check. For the framework selftest it also makes sense to
-support as many configurations as possible. For the example test, any
-configuration is fine. 
-
-(...)
-
-While having this discussion, can we also work on dealing with the symbol
-exports, as discussed before?
-
-
-Thomas
 
