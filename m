@@ -1,165 +1,118 @@
-Return-Path: <linux-kernel+bounces-737103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7C13B0A7C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:41:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23664B0A7D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:43:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BFE33BC780
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:38:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B8DF16A343
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96662DEA71;
-	Fri, 18 Jul 2025 15:35:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA682E03FD;
+	Fri, 18 Jul 2025 15:35:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="IHK8cY5/"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3DBC1865EE;
-	Fri, 18 Jul 2025 15:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yGnP67TA"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A3D82DCF64
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 15:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752852907; cv=none; b=I/VPbFjMhc9AuFX4NngDgrE76tuXYuA/+8EMpsLZuJzY/af2GgSKafh28UJMgeXE+Rq43MJRHRO9vUtP+Dt3ju5drCwv8lW5KM7M15PkhwNequUrqFfG8OPNr7bYrQSEpNoE1Rv92klEPda8QGIfoQ3Dmc3UK6YF+n7/cU6/sGI=
+	t=1752852946; cv=none; b=Ju41VtwrIG5nyVOJo+l/CtpH7p68Pu91/mEgzoGsbxjWY/bGSIWZ/UdUQF6dJoMebMv+kPJ0jLPXz8MN9bBjVAVjeOh3J/O6RU8eBhZjCwLYRKeciZHv3TQcJ2PFzY4oi7S8n4B2399QzR+6Rl/W5kJeMWyC522ZzEuseBBS38c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752852907; c=relaxed/simple;
-	bh=FxcvYdQRY3DcBanF32X4QBOp7OCa18HAxUo7EjU1yqk=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=T26W0m1bc+NH04suj5cGXbnU5eRRKKMS+hzV+XcGGckLitOSwtXxpskQhzDfZ1NqNenBj3/i/j0/W/peO9xAIsBxDNJuEJjR0qSGs5ihGqXWSfJSyu10PI8G29RzMapb98Z3pYh0BQTrLuTIn7aWuXRUOOaZlmrEq772aoz/mrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=IHK8cY5/; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from narnia (unknown [40.78.13.147])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 04C33211FEB6;
-	Fri, 18 Jul 2025 08:35:03 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 04C33211FEB6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1752852905;
-	bh=laEB97ogdr442ty4J3QQO87ShWSCdclOdA+Q3Ik/eFw=;
-	h=From:To:Subject:In-Reply-To:References:Date:From;
-	b=IHK8cY5/lSxxbodzOTpipcidTjQMMy8rPm8E6SOR/VtgYTbdq9p+VnU2shW4cq/I/
-	 /J+K1bw0suszJuKinQS4P9SfgkKHSGTkpMiZ9VPvrk3cFAAl73qeavYt63B5GGTpOJ
-	 67vIjk6zBJxDgSvijyMM9PZ2EwNOtuwT7WljerpE=
-From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-To: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley
- <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>,
- Casey Schaufler <casey@schaufler-ca.com>, John Johansen
- <john.johansen@canonical.com>, Christian =?utf-8?Q?G=C3=B6ttsche?=
- <cgzones@googlemail.com>, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org, selinux@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH] lsm,selinux: Add LSM blob support for BPF objects
-In-Reply-To: <941986e9f4f295f247e5982002e16fe9@paul-moore.com>
-References: <20250715222655.705241-1-bboscaccy@linux.microsoft.com>
- <941986e9f4f295f247e5982002e16fe9@paul-moore.com>
-Date: Fri, 18 Jul 2025 08:35:02 -0700
-Message-ID: <875xfp4imx.fsf@microsoft.com>
+	s=arc-20240116; t=1752852946; c=relaxed/simple;
+	bh=4Vfku2YS9tu3aYWTykK4Ku/U89qRWW3/HUMuhIP/xd8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=lvQpWZYFiDKK50KEJtUFrwvihoY9tFoZi0r6QKd53CtxoV1cfymln47fMHuNX2ABrPbZ10ALllqtDY+6dWvHIqGD/Z7OSAD3H4vvXy08BXElonWd6uox5J+lT62P1FMLc8BiTT8vTdsfuODSyUSSUgtcwIcx9ji0YdnXHJFvXjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yGnP67TA; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3122368d82bso2876127a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 08:35:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752852944; x=1753457744; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FMufa9slHHq3UhWrTz98ZkkB+x6OEpY7SyDzwmKTqZs=;
+        b=yGnP67TA1aeUipLt1QKuhLpnCnv+D1az3GIpyyaq6m2Hbf5N8KDI8i0jrTuThQlJTC
+         zhhNcq0qMC+fj9tw+dmryilRVfbQJbAgqOtzjse4pdWN4l/WqzXl3IGkWcBaAQjXGBgU
+         S84omCGltJrEy1FcJvSHroMAzIzeeDguDVSCde6cKCL8wo6ROLojATx0rS6pLajgr5vY
+         OfB2ZKpXpajdmeOGZlpb45BQF+1RuoKQlOuzeJTYpJX3k5hh1BEG3dMH83ZM2JjB4qOl
+         loGpmqD2uBFii+zb0rTcZvyOEh4osNQeRSWnD1FngsX3X05sL8xkNA38XaPDkbrMQUea
+         V0ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752852944; x=1753457744;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FMufa9slHHq3UhWrTz98ZkkB+x6OEpY7SyDzwmKTqZs=;
+        b=FBjnye0pBNkAz1np74xZ5G/xyE1Xqh8pBUN3T5MtPCQa531Qz05sFQUwHtm848ZiSb
+         X7LqhbampqRlJZCQa3yv5ZWK6R/dLM3d6wciCaWtVMjWne/pZDBRKRqjOCVI33Oz2kEV
+         i1MWw2KEOThmrivp0j/BlPcj22LedoSyDE1LMD8sX1gcOvFQq02nVzklnWZ+/r7ExWrl
+         QxqjcWcmsKz11V+7Pu9vLQbl7I8DpGXR1OkxE7J8V7LMgkJItUJP4DgL0BmyD42blU9o
+         yzAmXXgPGXmSNlsuGnReLXEvnDOrS+RS1OjgvbegEjpjQnH0fV9ejQNjpi/2GArCwBcB
+         KzaA==
+X-Forwarded-Encrypted: i=1; AJvYcCUsJ1i7OVqkkhXbJDqLBqoW9RHc2izmEyIWz+qTVFoeIDG+BWBj4BV63u7i0xNvra97x5dIdVFfc7o4/3U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy20UZa7Hgu7sPvLfuXjfHIkTdE5gNGUGxkDK4Lv+HSc3Zsz28h
+	VmITfZ0jS+zMezJBjO910XPFQvYTE4KBj4VpHg7NFqfTzMf59CWY5SHYmzXfKGrhScCg008TxeR
+	uqbRm4g==
+X-Google-Smtp-Source: AGHT+IH/1HWlOEGTinigbtGS/fI4pZaE0lBuxsB7y4G9gSRNWOYWs+b2FnDCG8rAn4n/EHZZ46lLEQTU4do=
+X-Received: from pjbqa6.prod.google.com ([2002:a17:90b:4fc6:b0:315:f140:91a5])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3511:b0:312:ea46:3e66
+ with SMTP id 98e67ed59e1d1-31c9f45e1c5mr12926141a91.21.1752852944417; Fri, 18
+ Jul 2025 08:35:44 -0700 (PDT)
+Date: Fri, 18 Jul 2025 08:35:42 -0700
+In-Reply-To: <930ca39f-41a6-44d4-85b1-552c56a417e8@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+References: <20250611095158.19398-1-adrian.hunter@intel.com>
+ <175088949072.720373.4112758062004721516.b4-ty@google.com>
+ <aF1uNonhK1rQ8ViZ@google.com> <7103b312-b02d-440e-9fa6-ba219a510c2d@intel.com>
+ <aHEMBuVieGioMVaT@google.com> <3989f123-6888-459b-bb65-4571f5cad8ce@intel.com>
+ <aHEdg0jQp7xkOJp5@google.com> <930ca39f-41a6-44d4-85b1-552c56a417e8@intel.com>
+Message-ID: <aHppzp0WIbLZfVqu@google.com>
+Subject: Re: [PATCH V4 0/1] KVM: TDX: Decrease TDX VM shutdown time
+From: Sean Christopherson <seanjc@google.com>
+To: Xiaoyao Li <xiaoyao.li@intel.com>
+Cc: pbonzini@redhat.com, Adrian Hunter <adrian.hunter@intel.com>, kvm@vger.kernel.org, 
+	rick.p.edgecombe@intel.com, kirill.shutemov@linux.intel.com, 
+	kai.huang@intel.com, reinette.chatre@intel.com, tony.lindgren@linux.intel.com, 
+	binbin.wu@linux.intel.com, isaku.yamahata@intel.com, 
+	linux-kernel@vger.kernel.org, yan.y.zhao@intel.com, chao.gao@intel.com
+Content-Type: text/plain; charset="us-ascii"
 
-Paul Moore <paul@paul-moore.com> writes:
-
-> On Jul 15, 2025 Blaise Boscaccy <bboscaccy@linux.microsoft.com> wrote:
->> 
->> This patch introduces LSM blob support for BPF maps, programs, and
->> tokens to enable LSM stacking and multiplexing of LSM modules that
->> govern BPF objects. Additionally, the existing BPF hooks used by
->> SELinux have been updated to utilize the new blob infrastructure,
->> removing the assumption of exclusive ownership of the security
->> pointer.
->> 
->> Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
->> ---
->>  include/linux/lsm_hooks.h         |   3 +
->>  security/security.c               | 120 +++++++++++++++++++++++++++++-
->>  security/selinux/hooks.c          |  56 +++-----------
->>  security/selinux/include/objsec.h |  17 +++++
->>  4 files changed, 147 insertions(+), 49 deletions(-)
->
+On Wed, Jul 16, 2025, Xiaoyao Li wrote:
+> On 7/11/2025 10:19 PM, Sean Christopherson wrote:
+> > On Fri, Jul 11, 2025, Xiaoyao Li wrote:
 > ...
->
->> @@ -835,6 +841,72 @@ static int lsm_bdev_alloc(struct block_device *bdev)
->>  	return 0;
->>  }
->>  
->> +/**
->> + * lsm_bpf_map_alloc - allocate a composite bpf_map blob
->> + * @map: the bpf_map that needs a blob
->> + *
->> + * Allocate the bpf_map blob for all the modules
->> + *
->> + * Returns 0, or -ENOMEM if memory can't be allocated.
->> + */
->> +static int lsm_bpf_map_alloc(struct bpf_map *map)
->> +{
->> +	if (blob_sizes.lbs_bpf_map == 0) {
->> +		map->security = NULL;
->> +		return 0;
->> +	}
->> +
->> +	map->security = kzalloc(blob_sizes.lbs_bpf_map, GFP_KERNEL);
->> +	if (!map->security)
->> +		return -ENOMEM;
->> +
->> +	return 0;
->> +}
->
-> Casey suggested considering kmem_cache for the different BPF objects,
-> but my gut feeling is that none ofthe BPF objects are going to be
-> allocated with either enough frequency, or enough quantity, where a
-> simple kzalloc() wouldn't be sufficient, at least for now.  Thoughts
-> on this Blaise?
+> > > 
+> > > I'm wondering if we need a TDX centralized enumeration interface, e.g., new
+> > > field in struct kvm_tdx_capabilities. I believe there will be more and more
+> > > TDX new features, and assigning each a KVM_CAP seems wasteful.
+> > 
+> > Oh, yeah, that's a much better idea.  In addition to not polluting KVM_CAP,
+> > 
+> > LOL, and we certainly have the capacity in the structure:
+> > 
+> > 	__u64 reserved[250];
+> > 
+> > Sans documentation, something like so?
+> 
+> I suppose it will be squashed into the original patch,
 
-Yeah, I agree, the number of allocations should be very low in
-comparision to something like inodes. We are probably okay using kzalloc
-forf the time being. 
+I dropped the commit from kvm-x86/vmx, and will send a full v5.  There's enough
+moving parts that I don't want to risk going 'round in circles trying to squash
+fixes :-)
 
->
-> Assuming we stick with kazlloc() based allocation, please look at using
-> the lsm_blob_alloc() helper function as Song mentioned  As I'm writing
-> this I'm realizing there are a few allocatiors that aren't using the
-> helper, I need to fix those up ...
+> so just gave
+> 
+> Tested-by: Xiaoyao Li <xiaoyao.li@intel.com>
 
-Will do.
-
->
-> It's worth mentioning that the allocation scheme is an internal LSM
-> implementation detail, something we can change at any time with a small
-> patch, so I wouldn't stress too much about "Getting it Right" at this
-> point in time.
->
->> @@ -5763,7 +5862,12 @@ int security_bpf_token_capable(const struct bpf_token *token, int cap)
->>   */
->>  void security_bpf_map_free(struct bpf_map *map)
->>  {
->> +	if (!map->security)
->> +		return;
->> +
->
-> We don't currently check if map->security is NULL in the current hook,
-> or the SELinux callback (it's not a common pattern for the LSM blobs),
-> did you run into a problem where the blob pointer was NULL?
->
-> The same comment applies to all three blob types.
-
-No real issues that I ran into. I was cribbing off the pattern used in
-block devices. After taking a second look, it looks safe to remove that
-check. I'll get that fixed in v2.
-
--blaise
-
->
->>  	call_void_hook(bpf_map_free, map);
->> +	kfree(map->security);
->> +	map->security = NULL;
->>  }
->>  
->>  /**
->
-> --
-> paul-moore.com
+Thanks! 
 
