@@ -1,183 +1,101 @@
-Return-Path: <linux-kernel+bounces-736571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E89FFB09E9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:05:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C787EB09E96
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:03:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6B3E5A16F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:04:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B541317369E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:03:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D752980DD;
-	Fri, 18 Jul 2025 09:04:03 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 736B22951C9
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 09:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F6C2957C6;
+	Fri, 18 Jul 2025 09:03:07 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447CD29552B;
+	Fri, 18 Jul 2025 09:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752829442; cv=none; b=gpKNGdy0/Opy+iMAh2lFLwZY/wSUv5di2zjyjKfFprexbL0XXPAiSKPwZwygcM73SQRDtjqOpaV/7QKe1Mr/HnaYB5wnmJtxkQAYpUIlQLhgAarTxGeawX/cxa4GbvUAXRZ2TE6GaKIbYn6K/8g3rZsUpCdyEVOXtNTNB9EMsog=
+	t=1752829387; cv=none; b=LOV4vG748jEz3f54zFD774EDh0nVAw3ROL0x4ZB7azM9xypft+0ZDmLNJ70rKq+RwdlRZfrMUnZnWHrAYHS2TpTYQr7sTTbYmffvbmHM8+WdrUSyeDfomxo74zhYzVU4uikr8ZpidE2f3eyc8u5TmGqdHWC9NB4jDPKoMG1hxFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752829442; c=relaxed/simple;
-	bh=Lhj/0djTDWSJf1Z6VuMaPZsg4fHZNRtnhEy6yyfSKEo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=eQ1Fg1JJnD/2WU8gy8znj+gFoJ0lj4jvPcAf61wQ2pooxK6F7j6MOqENMexeNwpA4MRGpBJJBfkoDdvaf+fGNIXfyl7ooAQ3o6LE9Fl8xq4lQVMRkumnnv207G4xnju6WyiVJIlPimPk37HPCLBeeQqW3aM3qLPAnvX742RqFao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5FAF325DE;
-	Fri, 18 Jul 2025 02:03:53 -0700 (PDT)
-Received: from MacBook-Pro.blr.arm.com (unknown [10.164.18.51])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AF5A63F66E;
-	Fri, 18 Jul 2025 02:03:52 -0700 (PDT)
-From: Dev Jain <dev.jain@arm.com>
-To: akpm@linux-foundation.org
-Cc: ryan.roberts@arm.com,
-	david@redhat.com,
-	willy@infradead.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	Liam.Howlett@oracle.com,
-	lorenzo.stoakes@oracle.com,
-	vbabka@suse.cz,
-	jannh@google.com,
-	anshuman.khandual@arm.com,
-	peterx@redhat.com,
-	joey.gouly@arm.com,
-	ioworker0@gmail.com,
-	baohua@kernel.org,
-	kevin.brodsky@arm.com,
-	quic_zhenhuah@quicinc.com,
-	christophe.leroy@csgroup.eu,
-	yangyicong@hisilicon.com,
-	linux-arm-kernel@lists.infradead.org,
-	hughd@google.com,
-	yang@os.amperecomputing.com,
-	ziy@nvidia.com,
-	Dev Jain <dev.jain@arm.com>
-Subject: [PATCH v5 7/7] arm64: Add batched versions of ptep_modify_prot_start/commit
-Date: Fri, 18 Jul 2025 14:32:44 +0530
-Message-Id: <20250718090244.21092-8-dev.jain@arm.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250718090244.21092-1-dev.jain@arm.com>
-References: <20250718090244.21092-1-dev.jain@arm.com>
+	s=arc-20240116; t=1752829387; c=relaxed/simple;
+	bh=fkFTFGJf8jIkEGGq7S1TnG5/NxabZMAmvVfJR0zbBxE=;
+	h=Date:Message-ID:References:Mime-Version:From:To:Cc:Subject:
+	 Content-Type; b=aLijSAv/9P3ADOVN/JkBqevz/tSunw2YymS0slvI22CtzSAlKwJNUmxnalF4sFmx/ozEJXYNh/eyCflxAE12OTsa2GZN7KQf5w7uTn4cu3AN+22mdr21PXqTOnIghOvzcaOFd7eyS3xPiGAHj220CbQpC6g7U9ZoYBJxiGhCxkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4bk3jH3Gm1z8Xs72;
+	Fri, 18 Jul 2025 17:02:59 +0800 (CST)
+Received: from xaxapp04.zte.com.cn ([10.99.98.157])
+	by mse-fl2.zte.com.cn with SMTP id 56I92ojh088959;
+	Fri, 18 Jul 2025 17:02:50 +0800 (+08)
+	(envelope-from shao.mingyin@zte.com.cn)
+Received: from mapi (xaxapp04[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Fri, 18 Jul 2025 17:02:52 +0800 (CST)
+Date: Fri, 18 Jul 2025 17:02:52 +0800 (CST)
+X-Zmail-TransId: 2afb687a0dbcffffffff8b3-cf244
+X-Mailer: Zmail v1.0
+Message-ID: <20250718170252644KCodnbedh8sY1HAK2znBA@zte.com.cn>
+References: 20250718164409239V6nK4AbfOlggzTHSQMeIT@zte.com.cn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+From: <shao.mingyin@zte.com.cn>
+To: <alexs@kernel.org>
+Cc: <si.yanteng@linux.dev>, <dzm91@hust.edu.cn>, <corbet@lwn.net>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <yang.yang29@zte.com.cn>, <xu.xin16@zte.com.cn>,
+        <yang.tao172@zte.com.cn>, <shao.mingyin@zte.com.cn>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCAwLzRdIERvY3MvemhfQ046IFRyYW5zbGF0ZcKgZmlsZXN5c3RlbXMgZG9jcyB0byBTaW1wbGlmaWVkIENoaW5lc2U=?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 56I92ojh088959
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.133 unknown Fri, 18 Jul 2025 17:02:59 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 687A0DC3.001/4bk3jH3Gm1z8Xs72
 
-Override the generic definition of modify_prot_start_ptes() to use
-get_and_clear_full_ptes(). This helper does a TLBI only for the starting
-and ending contpte block of the range, whereas the current implementation
-will call ptep_get_and_clear() for every contpte block, thus doing a
-TLBI on every contpte block. Therefore, we have a performance win.
-
-The arm64 definition of pte_accessible() allows us to batch in the
-errata specific case:
-
-#define pte_accessible(mm, pte)	\
-	(mm_tlb_flush_pending(mm) ? pte_present(pte) : pte_valid(pte))
-
-All ptes are obviously present in the folio batch, and they are also valid.
-
-Override the generic definition of modify_prot_commit_ptes() to simply
-use set_ptes() to map the new ptes into the pagetable.
-
-Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
-Signed-off-by: Dev Jain <dev.jain@arm.com>
----
- arch/arm64/include/asm/pgtable.h | 10 ++++++++++
- arch/arm64/mm/mmu.c              | 28 +++++++++++++++++++++++-----
- 2 files changed, 33 insertions(+), 5 deletions(-)
-
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index ba63c8736666..abd2dee416b3 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -1643,6 +1643,16 @@ extern void ptep_modify_prot_commit(struct vm_area_struct *vma,
- 				    unsigned long addr, pte_t *ptep,
- 				    pte_t old_pte, pte_t new_pte);
- 
-+#define modify_prot_start_ptes modify_prot_start_ptes
-+extern pte_t modify_prot_start_ptes(struct vm_area_struct *vma,
-+				    unsigned long addr, pte_t *ptep,
-+				    unsigned int nr);
-+
-+#define modify_prot_commit_ptes modify_prot_commit_ptes
-+extern void modify_prot_commit_ptes(struct vm_area_struct *vma, unsigned long addr,
-+				    pte_t *ptep, pte_t old_pte, pte_t pte,
-+				    unsigned int nr);
-+
- #ifdef CONFIG_ARM64_CONTPTE
- 
- /*
-diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index 3d5fb37424ab..abd9725796e9 100644
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -26,6 +26,7 @@
- #include <linux/set_memory.h>
- #include <linux/kfence.h>
- #include <linux/pkeys.h>
-+#include <linux/mm_inline.h>
- 
- #include <asm/barrier.h>
- #include <asm/cputype.h>
-@@ -1524,24 +1525,41 @@ static int __init prevent_bootmem_remove_init(void)
- early_initcall(prevent_bootmem_remove_init);
- #endif
- 
--pte_t ptep_modify_prot_start(struct vm_area_struct *vma, unsigned long addr, pte_t *ptep)
-+pte_t modify_prot_start_ptes(struct vm_area_struct *vma, unsigned long addr,
-+			     pte_t *ptep, unsigned int nr)
- {
-+	pte_t pte = get_and_clear_full_ptes(vma->vm_mm, addr, ptep, nr, /* full = */ 0);
-+
- 	if (alternative_has_cap_unlikely(ARM64_WORKAROUND_2645198)) {
- 		/*
- 		 * Break-before-make (BBM) is required for all user space mappings
- 		 * when the permission changes from executable to non-executable
- 		 * in cases where cpu is affected with errata #2645198.
- 		 */
--		if (pte_user_exec(ptep_get(ptep)))
--			return ptep_clear_flush(vma, addr, ptep);
-+		if (pte_accessible(vma->vm_mm, pte) && pte_user_exec(pte))
-+			__flush_tlb_range(vma, addr, nr * PAGE_SIZE,
-+					  PAGE_SIZE, true, 3);
- 	}
--	return ptep_get_and_clear(vma->vm_mm, addr, ptep);
-+
-+	return pte;
-+}
-+
-+pte_t ptep_modify_prot_start(struct vm_area_struct *vma, unsigned long addr, pte_t *ptep)
-+{
-+	return modify_prot_start_ptes(vma, addr, ptep, 1);
-+}
-+
-+void modify_prot_commit_ptes(struct vm_area_struct *vma, unsigned long addr,
-+			     pte_t *ptep, pte_t old_pte, pte_t pte,
-+			     unsigned int nr)
-+{
-+	set_ptes(vma->vm_mm, addr, ptep, pte, nr);
- }
- 
- void ptep_modify_prot_commit(struct vm_area_struct *vma, unsigned long addr, pte_t *ptep,
- 			     pte_t old_pte, pte_t pte)
- {
--	set_pte_at(vma->vm_mm, addr, ptep, pte);
-+	modify_prot_commit_ptes(vma, addr, ptep, old_pte, pte, 1);
- }
- 
- /*
--- 
-2.30.2
-
+>From: Shao Mingyin <shao.mingyin@zte.com.cn>
+>
+In the title of this patch, I mistakenly wrote "0/4" instead of "0/5".
+I have resent the correct patch.
+>translate filesystems docs to Simplified Chinese
+>
+>Shao Mingyin (5):
+>Docs/zh_CN: Translate ubifs.rst to Simplified Chinese
+>Docs/zh_CN: Translate ubifs-authentication.rst to Simplified Chinese
+>Docs/zh_CN: Translate gfs2.rst to Simplified Chinese
+>Docs/zh_CN: Translate gfs2-uevents.rst to Simplified Chinese
+>Docs/zh_CN: Translate gfs2-glocks.rst to Simplified Chinese
+>
+>.../zh_CN/filesystems/gfs2-glocks.rst | 199 ++++++++++
+>.../zh_CN/filesystems/gfs2-uevents.rst | 97 +++++
+>.../translations/zh_CN/filesystems/gfs2.rst | 57 +++
+>.../translations/zh_CN/filesystems/index.rst | 5 +
+>.../filesystems/ubifs-authentication.rst | 354 ++++++++++++++++++
+>.../translations/zh_CN/filesystems/ubifs.rst | 114 ++++++
+>6 files changed, 826 insertions(+)
+>create mode 100644 Documentation/translations/zh_CN/filesystems/gfs2-glocks.rst
+>create mode 100644 Documentation/translations/zh_CN/filesystems/gfs2-uevents.rst
+>create mode 100644 Documentation/translations/zh_CN/filesystems/gfs2.rst
+>create mode 100644 Documentation/translations/zh_CN/filesystems/ubifs-authentication.rst
+>create mode 100644 Documentation/translations/zh_CN/filesystems/ubifs.rst
+>
+>--
+>2.25.1
 
