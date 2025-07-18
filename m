@@ -1,126 +1,65 @@
-Return-Path: <linux-kernel+bounces-737307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17E51B0AA8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 21:11:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CC51B0AA92
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 21:12:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A08157BAE54
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 19:09:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 654A57BB26A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 19:11:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F7AD2E719E;
-	Fri, 18 Jul 2025 19:10:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA362E7F19;
+	Fri, 18 Jul 2025 19:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aN4GnqDG"
-Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BLP1CKiL"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384712E7F19;
-	Fri, 18 Jul 2025 19:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26FB2E36EE
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 19:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752865853; cv=none; b=OPyTb4AuBav3URqymSrbiIfoivbebs0gkAh0iSQv2KeC7z8mvPARblvPCneTJgJ9HkGQtsiAlI8Ka0m00BVxkW5p3aMf25yn8ZvavkIPuI4tZMWRvTBAuVoYkzyjeR56T9I1vUuH52GsJFte+kwe6LZ45s87S3yMCpnxFvjFbr8=
+	t=1752865947; cv=none; b=nd8T5Pv+TY7YmhrqWP0Fi0Rg3r8DOHB7Bc0mPnvjix25XVgYLvnEmmyE4l3uO/Vqy9f2xrYX2EHwAxGh54nzXc7C+yzlQuTNztn2a3vyT9usPYubAGbiqgwysUHLFs4QfgJbGa/2ncsbo3m05CoWgUY6nbgIytYGdlBARBa4wLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752865853; c=relaxed/simple;
-	bh=NBeZpzm7GJCFLtcVOkWgo1+H9JM9w028NRbEWcA1PWU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d+sX1rKyfA1cGK9Kr4wdu2alm7Vs+BeLwqTya/gOAODbRncFpfJ4Iw1s0Exad+Bjem8C6cCbl45ocAYoF6UVxbydbno/ivlvIYxn0rQYPTTfnECSOiZCp7dSappmXqAq5Onwzf0J2tdk1XRpzzpBDeTqoDGpBcjDeuASuC3pBEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aN4GnqDG; arc=none smtp.client-ip=209.85.161.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-615a02ebcc7so746511eaf.3;
-        Fri, 18 Jul 2025 12:10:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752865851; x=1753470651; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NBeZpzm7GJCFLtcVOkWgo1+H9JM9w028NRbEWcA1PWU=;
-        b=aN4GnqDGXZ8rVwgHKb+lESvEoZmEA+aUwgrFpB7BShCTn+pK6JxyuwkhkpL0t6YgxM
-         LATiNz9A/36FVZPLqPXoooyG4tdncCvM1AwVk5qN6M+D7ZJ/gqOLasPkF+DFP3VRJs0H
-         YDwrCeIeCzpwxTlBBgEJJ7RSr6kx7pki7b3vTxqWcwiyNGwN1hL9k1/iIz0uMrA+GN++
-         rOnvB7290jRYIJ64gCu7UeJ8vqrEXoO222KSWeDA56Xlp1RtCK+cdtQF0u3WQFPQpodz
-         vQHzATvNdogX8oVms6vqVK4z4irHQGU/vNDiDf3PPByTKyOOoqhaQ4yrYwZhciwV0und
-         cN/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752865851; x=1753470651;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NBeZpzm7GJCFLtcVOkWgo1+H9JM9w028NRbEWcA1PWU=;
-        b=tnQumjnE9mO9lGvkJCDNjFEE3XFNBXi4gUg5BSgcM+Fw/zcZnd6mvE7NotFN30c3L+
-         mOvLki28QoUf+sJYhmSERO53R34JqAe/rAna/7FfRDOyymf8G8GPPc/6xpHFlX4gW9H+
-         4/ldrL01PU8o1bTFNnXUrGd/ehy294H87dnoMdqYN+xyI+nErtBLcPdljKH9nozB1HwV
-         n7Qd/VjC9YdVIohta2wYoBBeZJ4MuHWs+TJNJPYMCJWirlEIek5BoHiXAqiahJHtDcSA
-         A8/0Bk7+5/keHWDIFz8/RVENYDJwWy5P/0w/g/KUfBozugEU3F2BwVbclzEm+yvW69hZ
-         eDTw==
-X-Forwarded-Encrypted: i=1; AJvYcCVzUVIUH94UQ25n4kgRdFptEyZYiKgpYTuTR1WBI6UyXP84Qi7v/UzUmRCSN9ReLM7wYuSb98uqSo+cliM=@vger.kernel.org, AJvYcCXhqCS2I5/iFtjgxb0mn1j92up35qca0JqNT+RdUn7Sky+ylYsWn9p6Det8zeLJBdVQRgifp1TvTOsk@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsqPVBy512RZHuc/vKrp4JV6k4DUu0XKy7PqF7ZCUY0ZLyr80h
-	I6Kxerc4wbRY7+4AjoZEhOFbJ36SV5pkiTDGyLyhN5cm5I9Uznh13B60K4aXsS9jl5o2dekSgn1
-	Xi7ozlkGPyHW7H4nSirjye/+E1OodW88=
-X-Gm-Gg: ASbGncvEHKB/xlPmyhnDSSLLGS6UlYyFXrXe2VHeHjLb4z0EM9lfOlZueYFlvEoxkS/
-	+dX4bjUAR8UDQHAHTlNYPBtbWjcTZS51WW9AdOuAv1oMOYDMR5TCXQZsuzasMCpy4WdA70it5bF
-	MTChpVpw2YyjhtjXDb3RMQ/eCSqfnrVsqvjihQKVL50tbG0jQbScHk6d428xSVuEhotrlyK1DpV
-	BvjsGhVGNaj2nFyd0E=
-X-Google-Smtp-Source: AGHT+IFvT9uZeX9R+yE8NA4HuE9JOuCVycgp4n4KGotR19hAge+18sehg3O/ostkpGjx7rtjx/On6spc1kzGGj+W8SM=
-X-Received: by 2002:a05:6820:1b0a:b0:613:cd27:2fe0 with SMTP id
- 006d021491bc7-615bbb1d011mr2697179eaf.1.1752865851181; Fri, 18 Jul 2025
- 12:10:51 -0700 (PDT)
+	s=arc-20240116; t=1752865947; c=relaxed/simple;
+	bh=bKnN9RrMlAtIOWt48FIcqVDHN3u1j94bB/HjQ6R1QFU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C2FleOBUMicv11vIYlk+5GihmHdR/B9+Jy1iSL9zpzMijcn/SqWOsMTipvKZAD7MzybwCGPO2fwljzWPtC25ZNODRg825EWok9ONsb/ch6jFz48W/X/lbX2zCuIiX3DuMdeTbKmz1C1lT25c1BhGgHqBwAVwKUmnM9/+7kLrqec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BLP1CKiL; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 18 Jul 2025 15:12:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752865942;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bKnN9RrMlAtIOWt48FIcqVDHN3u1j94bB/HjQ6R1QFU=;
+	b=BLP1CKiLJLda/C2n+z8YOT9NtrEaUpb6zao3AxXxnITmaPxnvaPNlHWY8DktTB9JQ0TRUJ
+	u7kd41P1I8bhUTQrprzvvDT6RO7y8pFsrCWE8TpOcKHI5T0FLhLSIfs/z2zlLEqv0zxbWR
+	gmgdjUa/OuVd1g5xCHjTXwphDnCEhOM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: syzbot <syzbot+6d52ee9afea131b36348@syzkaller.appspotmail.com>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bcachefs?] WARNING in bch2_dev_free (2)
+Message-ID: <aqrnbpyywgfg7t4mq5mfzwfgh3lgzsrzc27mlvgenf3swszkdz@2aj37hqzkbp3>
+References: <68794b5d.a70a0220.693ce.0051.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250716182220.203631-1-marcelomoreira1905@gmail.com>
- <aHg7JOY5UrOck9ck@dread.disaster.area> <CAPZ3m_gL-K1d2r1YSZhFXmy4v3xHs5uigGOmC2TdsAAoZx+Tyg@mail.gmail.com>
- <aHos-A3d0T6qcL0o@dread.disaster.area>
-In-Reply-To: <aHos-A3d0T6qcL0o@dread.disaster.area>
-From: Marcelo Moreira <marcelomoreira1905@gmail.com>
-Date: Fri, 18 Jul 2025 16:10:39 -0300
-X-Gm-Features: Ac12FXyZ6w5FS6LO45cJmpbQwjoFWm7SdiNSX09zxUTjp_5jnU0jujAIHAJKXV0
-Message-ID: <CAPZ3m_iwS6EOogN0gN51JcweYH0zuHmrgVvD7yTXTi1AoDA7hQ@mail.gmail.com>
-Subject: Re: [PATCH] xfs: Replace strncpy with strscpy
-To: Dave Chinner <david@fromorbit.com>
-Cc: cem@kernel.org, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <68794b5d.a70a0220.693ce.0051.GAE@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-Em sex., 18 de jul. de 2025 =C3=A0s 08:16, Dave Chinner
-<david@fromorbit.com> escreveu:
->
-> On Thu, Jul 17, 2025 at 02:34:25PM -0300, Marcelo Moreira wrote:
-> > Given that the original `strncpy()` is safe and correctly implemented
-> > for this context, and understanding that `memcpy()` would be the
-> > correct replacement if a change were deemed necessary for
-> > non-NUL-terminated raw data, I have a question:
-> >
-> > Do you still think a replacement is necessary here, or would you
-> > prefer to keep the existing `strncpy()` given its correct and safe
-> > usage in this context? If a replacement is preferred, I will resubmit
-> > a V2 using `memcpy()` instead.
->
-> IMO: if it isn't broken, don't try to fix it. Hence I -personally-
-> wouldn't change it.
->
-> However, modernisation and cleaning up of the code base to be
-> consistent is a useful endeavour. So from this perspective replacing
-> strncpy with memcpy() would be something I'd consider an acceptible
-> change.
->
-> Largely it is up to the maintainer to decide.....
+Fixed version is now in linux-next...
 
-Hmm ok, thanks for the teaching :)
-
-So, I'll prepare v2 replacing `strncpy` with `memcpy` aiming for that
-modernization and cleanup you mentioned, but it's clear that the
-intention is to focus on changes that cause real bugs.
-Thanks!
-
---=20
-Cheers,
-Marcelo Moreira
+#syz fix: bcachefs: Fix __bch2_fs_read_write() error path
 
