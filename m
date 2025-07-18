@@ -1,232 +1,244 @@
-Return-Path: <linux-kernel+bounces-736208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A495B09A15
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 05:10:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1039B09A17
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 05:11:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06B077B778C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:08:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D456D7B7807
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A68E1CD1E4;
-	Fri, 18 Jul 2025 03:10:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95331B4257;
+	Fri, 18 Jul 2025 03:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g1rfweFK"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="gRGWM4x3"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 920B717A2E3
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 03:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752808212; cv=none; b=sFGbq/ujY0j0fc4M28MFHH/SEPZFQovu7PMlDBr55mEggAjXYMdi3ojUd5A8riNnMhIHE9cFmpvAIbff9aheqMn6/4YK2Uy4W1iYHg/xO5b/CzqQoFkUnzmRB3DYQCkF+5cY8zagioC6drqseSFlOa+Z01cRroFSOeAyUUwRBCo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752808212; c=relaxed/simple;
-	bh=aeguEGMV5/fMC2F0m7bY27BDa9psRNUeE9WLxrQ/MzY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PgeqSUSicMJ1lld9DdTgrkvhEJuXc752+pRMpomktYeIaGIo24Oux2Oq+IvoOcgF8kIB00kMcrTCGbMhVfcM7SDWRwiYi7HbV0LbLwFhGuApMRHDOmZcWZppscnKFjch9AcnkOrHEnP5LTIZ5e5GxRr7CcIJY1GLy6ufHn7YsCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=g1rfweFK; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4ab60e97cf8so22013721cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 20:10:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752808209; x=1753413009; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nUnATQmYYobkr0MYgQIyd52OrRVnu3RfjT3lUto82y4=;
-        b=g1rfweFKrNVeXNg8H5JNZvAzlOeOJ381Z9dmY3KFtftE3S5Nuhx5yRsHzPIsm10rDK
-         44bYQca1n3XC0hTTrEuEEvcGYpS9WVl7v9TW9M4IcpjYVRifz087Lftzgi9TX5O5Zh+X
-         FDDwLtwuC/AOObN8+MO2J1BM0hcnqie7u3RgT68ScFMnwh+zRQcBo3szUA+RqAhc9axp
-         OO8/w8CQh5YTWMpjSkFdbVT5pU/SDlA6IZ3hCi4ScG1mV1h4vRERRBc9MutORhj7IK1Q
-         YyZhN9LG/IZMs7nYMsHPzEN1ZjjHkm7zRGCJC/BL3aL5qCU9vrrGSD8MrCTim2tm7Hkt
-         t99Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752808209; x=1753413009;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nUnATQmYYobkr0MYgQIyd52OrRVnu3RfjT3lUto82y4=;
-        b=ertjmxjKgdx8/1nHSoFU2TMEyXVSwOcV7bsvko4mcRXirqJLazbqqaQM/lIJ33SkmT
-         BkIp2nSeMn/jzTglHpmwysxtHVgRlH5surgM3nYZICK8wWAvk2IhA6kDSaF2qChMalB5
-         Weh5+Mb+yKHH9Djp/dPcQ4mR/NyvP1T/cgUfDISKuDl3c7xtmDC2NupnSmtbGbyjC0NN
-         ZmbEANN+DTqNNPVRoAk9CnlRsP7qpZRgHcBHIAgupTy0nhis42YxOR0VbvudCoHo6kn5
-         h/oYxzWYKr+0wZv3nu3bhOR+unoh7Q1RH0SKm61gyJ1MoXg7goE+iBQgB2k+WC9t86BU
-         3hEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX6URzGY5YNYdbGm9bISN6u5D0oTVqJnWkXfkwE19cTTZP+BRtJsg9PEzdpyHiqPcyVFBeAgnSPxkv9uF8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywp+QqD1QLOZrcFzoB6E3Atnmvd+8O5GmHlhYp1LH6al7dc05m4
-	o/sDPd3by9kNu0PSO4SKw+5IbPa4r2Af+ZMP56hsZ94CN2P/juzrD5A6nhgI1P4JJO5+XijIZVD
-	r3dD++CIZRI28Mh8+bkM9AU287UBy58MghqPxhJo9
-X-Gm-Gg: ASbGncsGHHaTdAOQMXeU/pKKVFEvVJlZxdzeVzkeQ+b85EN6/7PmbqMR70NxH7vmtpJ
-	z6mYBU+j8O5Ijfplq9LPZKYCs+NA/2rMFefJvkwiPWUku6xLSqJsAryiGLPsgr/Tocqg4da7+aA
-	iy7dvY2sJ4j9n4JtsEojmBuUyRIVV/Itqa0lhWb8kGVMt/u0tueO3RaccHxbxM15IvvHjvQcakC
-	/lw69oG2RqSgy48UIWC9tssl6JMdtdaADxnZQ==
-X-Google-Smtp-Source: AGHT+IEmizUZ5l+X4YotPR6ok+VsIV/wa/slge+11mb+u0FG6qNFqzkdn9s7tPa2hSXOaJivzvOLCrTQRm0bXPo7Ck0=
-X-Received: by 2002:a05:622a:a547:b0:4ab:9586:386b with SMTP id
- d75a77b69052e-4ab958658c3mr105183021cf.53.1752808209144; Thu, 17 Jul 2025
- 20:10:09 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA701400C
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 03:11:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752808270; cv=pass; b=akv3+AaO8AA14KDRZDOsTehuJpEr6xGtAVTw2MqIjq5f5L6qWJutp+aK4a+RetMQchYbwE754jA7H9ClXeX3YFKKijKXpWLeDNNaGGd3EsmE/ZLb35q2Jbt48d7DQgrcMABQ0o1fBZMMDcyqI5Fw+9WvQbKLthswjwUFUKHg2eA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752808270; c=relaxed/simple;
+	bh=hG0RDXF60yYjxl8pqljyiEuNg4VZM0Vzu79gV5TgBfY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JwrXPduQKCAm4bV/ZFFOrHJbhgTRyC9nCANn45IriOoE22kgKuUSJIRIJBpYi6z2jxkCSgzN9twAscEoPiGiPRQEZhIA625vFLQs+UAlktLyLSwt61R7/mkVL9fjb6865CYAJDpWvXdPJJZhpRXbIF6M3Aq6WRJK7MjSLhIWrnU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=gRGWM4x3; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1752808254; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=F6rsgXt1OFhK9xRWuMcbNlzC/xqrVBmAfa1YMezQAptTkNW96s+mX6RAt28drazGmehiYR7+ePPpVnzRsQU+QFTVzmIUcL/G6KTIIopFZr/lbtIrxq8JRBu6aSXaaBOHyhCv3It37uiUS//FCrsw20ajdhMfjbq/LB6oiIeFqdw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1752808254; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=cCkGUyMFbvVF1lv3gMiBz+wBa3g8+jZyUZVPLa5Dzl8=; 
+	b=GksfS6gHZvmkS7dw76Xq602RJQK8f6y3qWXXdZsUVicCvmQQrzUveHZQqmKr8GUnLj0GGdxlRr+5GsghpNFWMi1NT6UDipFLGIoNuc1Y5wueQhQY1A8WMFsRJxyGlwPWJQ0tAnWjnFII/5iTwvnn0W6BuKHkO5osloxBQPBOrXI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752808254;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=cCkGUyMFbvVF1lv3gMiBz+wBa3g8+jZyUZVPLa5Dzl8=;
+	b=gRGWM4x36z26U2GkzQB+JzKCsAFbc9gfbAu19naEIVFplqtrpXH8NxAxSz90dNV4
+	71j0zfe5zERcSgnq/xISj6wwmzAegCB7T6VYZkWTz/hxnfSoB0tnpK1BKu0wkx58o2P
+	F0IWlLdeCFxE9SvOZbj/fjZHpFXuUbZgvqZs0Vuw=
+Received: by mx.zohomail.com with SMTPS id 1752808252721460.2044643663314;
+	Thu, 17 Jul 2025 20:10:52 -0700 (PDT)
+Date: Fri, 18 Jul 2025 04:10:47 +0100
+From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
+To: Lukas Zapolskas <lukas.zapolskas@arm.com>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>, 
+	Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/7] drm/panthor: Add panthor perf initialization and
+ termination
+Message-ID: <i2hdrxnd4whzpfzjsmx4mmcvghqu5t6rzki2tnsrarxewnr76j@clmkf6zyiy4p>
+References: <cover.1747148172.git.lukas.zapolskas@arm.com>
+ <c53f9e012e148329a437013a812fc688e797a26b.1747148172.git.lukas.zapolskas@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250714033649.4024311-1-suleiman@google.com> <20250714033649.4024311-2-suleiman@google.com>
- <CANDhNCp5ovDmFg-DWpDPNYBg-rMYBr0MBhHBaeH1HOiWF+3Cuw@mail.gmail.com>
-In-Reply-To: <CANDhNCp5ovDmFg-DWpDPNYBg-rMYBr0MBhHBaeH1HOiWF+3Cuw@mail.gmail.com>
-From: Suleiman Souhlal <suleiman@google.com>
-Date: Fri, 18 Jul 2025 12:09:57 +0900
-X-Gm-Features: Ac12FXxgIX2gIfvs_OEi98e62tPYyZVdmSz4mRKC4cKNxbv4NqXYv_JMmjQZeZc
-Message-ID: <CABCjUKAT03ficWMg+mkDWev15x+E3YDin1_9VkJBgb4g-F4UmA@mail.gmail.com>
-Subject: Re: [PATCH v7 1/3] KVM: x86: Advance guest TSC after deep suspend.
-To: John Stultz <jstultz@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Chao Gao <chao.gao@intel.com>, 
-	David Woodhouse <dwmw2@infradead.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Tzung-Bi Shih <tzungbi@kernel.org>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, ssouhlal@freebsd.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <c53f9e012e148329a437013a812fc688e797a26b.1747148172.git.lukas.zapolskas@arm.com>
 
-On Fri, Jul 18, 2025 at 5:43=E2=80=AFAM John Stultz <jstultz@google.com> wr=
-ote:
+On 16.05.2025 16:49, Lukas Zapolskas wrote:
+> Added the panthor_perf system initialization and unplug code to allow
+> for the handling of userspace sessions to be added in follow-up
+> patches.
 >
-> On Sun, Jul 13, 2025 at 8:37=E2=80=AFPM Suleiman Souhlal <suleiman@google=
-.com> wrote:
-> >
-> > Try to advance guest TSC to current time after suspend when the host
-> > TSCs went backwards.
-> >
-> > This makes the behavior consistent between suspends where host TSC
-> > resets and suspends where it doesn't, such as suspend-to-idle, where
-> > in the former case if the host TSC resets, the guests' would
-> > previously be "frozen" due to KVM's backwards TSC prevention, while
-> > in the latter case they would advance.
-> >
-> > Suggested-by: Sean Christopherson <seanjc@google.com>
-> > Signed-off-by: Suleiman Souhlal <suleiman@google.com>
-> > ---
-> >  arch/x86/include/asm/kvm_host.h |  3 +++
-> >  arch/x86/kvm/x86.c              | 32 ++++++++++++++++++++++++++++++++
-> >  2 files changed, 35 insertions(+)
-> >
-> > diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm=
-_host.h
-> > index 7b9ccdd99f32..3650a513ba19 100644
-> > --- a/arch/x86/include/asm/kvm_host.h
-> > +++ b/arch/x86/include/asm/kvm_host.h
-> > @@ -1414,6 +1414,9 @@ struct kvm_arch {
-> >         u64 cur_tsc_offset;
-> >         u64 cur_tsc_generation;
-> >         int nr_vcpus_matched_tsc;
-> > +#ifdef CONFIG_X86_64
-> > +       bool host_was_suspended;
-> > +#endif
-> >
-> >         u32 default_tsc_khz;
-> >         bool user_set_tsc;
-> > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> > index e21f5f2fe059..6539af701016 100644
-> > --- a/arch/x86/kvm/x86.c
-> > +++ b/arch/x86/kvm/x86.c
-> > @@ -5035,7 +5035,36 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, i=
-nt cpu)
-> >
-> >         /* Apply any externally detected TSC adjustments (due to suspen=
-d) */
-> >         if (unlikely(vcpu->arch.tsc_offset_adjustment)) {
-> > +#ifdef CONFIG_X86_64
-> > +               unsigned long flags;
-> > +               struct kvm *kvm;
-> > +               bool advance;
-> > +               u64 kernel_ns, l1_tsc, offset, tsc_now;
-> > +
-> > +               kvm =3D vcpu->kvm;
-> > +               advance =3D kvm_get_time_and_clockread(&kernel_ns, &tsc=
-_now);
-> > +               raw_spin_lock_irqsave(&kvm->arch.tsc_write_lock, flags)=
-;
-> > +               /*
-> > +                * Advance the guest's TSC to current time instead of o=
-nly
-> > +                * preventing it from going backwards, while making sur=
-e
-> > +                * all the vCPUs use the same offset.
-> > +                */
-> > +               if (kvm->arch.host_was_suspended && advance) {
-> > +                       l1_tsc =3D nsec_to_cycles(vcpu,
-> > +                                               kvm->arch.kvmclock_offs=
-et + kernel_ns);
-> > +                       offset =3D kvm_compute_l1_tsc_offset(vcpu, l1_t=
-sc);
-> > +                       kvm->arch.cur_tsc_offset =3D offset;
-> > +                       kvm_vcpu_write_tsc_offset(vcpu, offset);
-> > +               } else if (advance) {
-> > +                       kvm_vcpu_write_tsc_offset(vcpu, kvm->arch.cur_t=
-sc_offset);
-> > +               } else {
-> > +                       adjust_tsc_offset_host(vcpu, vcpu->arch.tsc_off=
-set_adjustment);
-> > +               }
-> > +               kvm->arch.host_was_suspended =3D false;
-> > +               raw_spin_unlock_irqrestore(&kvm->arch.tsc_write_lock, f=
-lags);
-> > +#else
-> >                 adjust_tsc_offset_host(vcpu, vcpu->arch.tsc_offset_adju=
-stment);
-> > +#endif /* CONFIG_X86_64 */
+> Signed-off-by: Lukas Zapolskas <lukas.zapolskas@arm.com>
+> ---
+>  drivers/gpu/drm/panthor/panthor_device.c |  2 +
+>  drivers/gpu/drm/panthor/panthor_device.h |  5 +-
+>  drivers/gpu/drm/panthor/panthor_perf.c   | 62 +++++++++++++++++++++++-
+>  drivers/gpu/drm/panthor/panthor_perf.h   |  1 +
+>  4 files changed, 68 insertions(+), 2 deletions(-)
 >
-> Just style wise, it seems like renaming adjust_tsc_offset_host() to
-> __adjust_tsc_offset_host(), and then moving the ifdefed logic into a
-> new adjust_tsc_offset_host() implementation might be cleaner?
-> Then you could have:
+> diff --git a/drivers/gpu/drm/panthor/panthor_device.c b/drivers/gpu/drm/panthor/panthor_device.c
+> index 76b4cf3dc391..7ac985d44655 100644
+> --- a/drivers/gpu/drm/panthor/panthor_device.c
+> +++ b/drivers/gpu/drm/panthor/panthor_device.c
+> @@ -98,6 +98,7 @@ void panthor_device_unplug(struct panthor_device *ptdev)
+>  	/* Now, try to cleanly shutdown the GPU before the device resources
+>  	 * get reclaimed.
+>  	 */
+> +	panthor_perf_unplug(ptdev);
+>  	panthor_sched_unplug(ptdev);
+>  	panthor_fw_unplug(ptdev);
+>  	panthor_mmu_unplug(ptdev);
+> @@ -277,6 +278,7 @@ int panthor_device_init(struct panthor_device *ptdev)
 >
-> #ifdef COFNIG_X86_64
-> static inline void adjust_tsc_offset_host(...)
-> {
-> /* added logic above */
-> }
-> #else
-> static inline void adjust_tsc_offset_host(...)
-> {
->     __adjust_tsc_offset_host(...);
-> }
-> #endif
+>  err_disable_autosuspend:
+>  	pm_runtime_dont_use_autosuspend(ptdev->base.dev);
+> +	panthor_perf_unplug(ptdev);
+>  	panthor_sched_unplug(ptdev);
 >
-> >                 vcpu->arch.tsc_offset_adjustment =3D 0;
-> >                 kvm_make_request(KVM_REQ_CLOCK_UPDATE, vcpu);
-> >         }
-> > @@ -12729,6 +12758,9 @@ int kvm_arch_enable_virtualization_cpu(void)
-> >                                 kvm_make_request(KVM_REQ_MASTERCLOCK_UP=
-DATE, vcpu);
-> >                         }
-> >
-> > +#ifdef CONFIG_X86_64
-> > +                       kvm->arch.host_was_suspended =3D true;
-> > +#endif
+>  err_unplug_fw:
+> diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/panthor/panthor_device.h
+> index 657ccc39568c..818c4d96d448 100644
+> --- a/drivers/gpu/drm/panthor/panthor_device.h
+> +++ b/drivers/gpu/drm/panthor/panthor_device.h
+> @@ -27,7 +27,7 @@ struct panthor_heap_pool;
+>  struct panthor_job;
+>  struct panthor_mmu;
+>  struct panthor_fw;
+> -struct panthor_perfcnt;
+> +struct panthor_perf;
+>  struct panthor_vm;
+>  struct panthor_vm_pool;
 >
-> Similarly I'd wrap this in a:
+> @@ -138,6 +138,9 @@ struct panthor_device {
+>  	/** @devfreq: Device frequency scaling management data. */
+>  	struct panthor_devfreq *devfreq;
 >
-> #ifdef CONFIG_x86_64
-> static inline void kvm_set_host_was_suspended(*kvm)
-> {
->     kvm->arch.host_was_suspended =3D true;
-> }
-> #else
-> static inline void kvm_set_host_was_suspended(*kvm)
-> {
-> }
-> #endif
->
-> then call kvm_set_host_was_suspended(kvm) unconditionally in the logic ab=
-ove.
+> +	/** @perf: Performance counter management data. */
+> +	struct panthor_perf *perf;
+> +
+>  	/** @unplug: Device unplug related fields. */
+>  	struct {
+>  		/** @lock: Lock used to serialize unplug operations. */
+> diff --git a/drivers/gpu/drm/panthor/panthor_perf.c b/drivers/gpu/drm/panthor/panthor_perf.c
+> index 66e9a197ac1f..9365ce9fed04 100644
+> --- a/drivers/gpu/drm/panthor/panthor_perf.c
+> +++ b/drivers/gpu/drm/panthor/panthor_perf.c
+> @@ -9,6 +9,19 @@
+>  #include "panthor_fw.h"
+>  #include "panthor_perf.h"
 
-Thanks for the good suggestions. I'll incorporate them into v8.
+You must include "panthor_regs.h" here or else GPU_MEM_FEATURES_L2_SLICES() won't be available.
+However, it seems this is something that should be done in the previous patch.
 
--- Suleiman
+>
+> +struct panthor_perf {
+> +	/** @next_session: The ID of the next session. */
+> +	u32 next_session;
+> +
+> +	/** @session_range: The number of sessions supported at a time. */
+> +	struct xa_limit session_range;
+> +
+> +	/**
+> +	 * @sessions: Global map of sessions, accessed by their ID.
+> +	 */
+> +	struct xarray sessions;
+> +};
+> +
+>  struct panthor_perf_counter_block {
+>  	struct drm_panthor_perf_block_header header;
+>  	u64 counters[];
+> @@ -63,14 +76,61 @@ static void panthor_perf_info_init(struct panthor_device *ptdev)
+>   * panthor_perf_init - Initialize the performance counter subsystem.
+>   * @ptdev: Panthor device
+>   *
+> + * The performance counters require the FW interface to be available to setup the
+> + * sampling ringbuffers, so this must be called only after FW is initialized.
+> + *
+>   * Return: 0 on success, negative error code on failure.
+>   */
+>  int panthor_perf_init(struct panthor_device *ptdev)
+>  {
+> +	struct panthor_perf *perf __free(kfree) = NULL;
+> +	int ret = 0;
+> +
+>  	if (!ptdev)
+>  		return -EINVAL;
+>
+>  	panthor_perf_info_init(ptdev);
+>
+> -	return 0;
+> +	perf = kzalloc(sizeof(*perf), GFP_KERNEL);
+> +	if (ZERO_OR_NULL_PTR(perf))
+> +		return -ENOMEM;
+> +
+> +	xa_init_flags(&perf->sessions, XA_FLAGS_ALLOC);
+> +
+> +	perf->session_range = (struct xa_limit) {
+> +		.min = 0,
+> +		.max = 1,
+> +	};
+> +
+> +	drm_info(&ptdev->base, "Performance counter subsystem initialized");
+> +
+> +	ptdev->perf = no_free_ptr(perf);
+> +
+> +	return ret;
+> +}
+> +
+> +/**
+> + * panthor_perf_unplug - Terminate the performance counter subsystem.
+> + * @ptdev: Panthor device.
+> + *
+> + * This function will terminate the performance counter control structures and any remaining
+> + * sessions, after waiting for any pending interrupts.
+> + */
+> +void panthor_perf_unplug(struct panthor_device *ptdev)
+> +{
+> +	struct panthor_perf *perf = ptdev->perf;
+> +
+> +	if (!perf)
+> +		return;
+> +
+> +	if (!xa_empty(&perf->sessions)) {
+> +		drm_err(&ptdev->base,
+> +			"Performance counter sessions active when unplugging the driver!");
+> +	}
+
+I think this could only happen if someone forces module unload, even
+though there might still be processes which haven't yet closed the DRM
+file?
+
+> +
+> +	xa_destroy(&perf->sessions);
+> +
+> +	kfree(ptdev->perf);
+> +
+> +	ptdev->perf = NULL;
+>  }
+> diff --git a/drivers/gpu/drm/panthor/panthor_perf.h b/drivers/gpu/drm/panthor/panthor_perf.h
+> index 3c32c24c164c..e4805727b9e7 100644
+> --- a/drivers/gpu/drm/panthor/panthor_perf.h
+> +++ b/drivers/gpu/drm/panthor/panthor_perf.h
+> @@ -10,6 +10,7 @@
+>  struct panthor_device;
+>
+>  int panthor_perf_init(struct panthor_device *ptdev);
+> +void panthor_perf_unplug(struct panthor_device *ptdev);
+>
+>  #endif /* __PANTHOR_PERF_H__ */
+>
+> --
+> 2.33.0.dirty
+
+Adrian Larumbe
 
