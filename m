@@ -1,155 +1,193 @@
-Return-Path: <linux-kernel+bounces-736974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 252BAB0A5F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 16:16:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5A30B0A5FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 16:16:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8C873BB472
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:15:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF27E17A44F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81FED2D8388;
-	Fri, 18 Jul 2025 14:16:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A79A82253A1;
+	Fri, 18 Jul 2025 14:16:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="mjuTHAEj"
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hEHLV3k5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761D41419A9
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 14:16:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717F42AE7F
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 14:16:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752848163; cv=none; b=luHkGXgwjBsvVD4IVdu9m5PN3aTE5xoVIMKCkISXQ/ZsZV9XolI2oNxRagn0iHEZuFwbtQA9HXZpB0FUg8BF0g0W2ukecYGtg2XPwQ+X3nRLZe0z3YHJ8UCI3xWbJonfA3lnLUEQGoWlYj3617f9KRZev/AyE34KckKWuhMnwsE=
+	t=1752848203; cv=none; b=GMzy91GIYyCS+ZW+H+3H6xdER1NMe2Z+g8Xbb3FRN5Bbm4jxgvY9XfkiLk6/gIzH5riWmkO5ckZBC2UA5HZEKvu0/tBAT3c1lM8ok7WuGXIra8jCguL7afJeLTb4ZABZ9llQcjpD3oLZE5FH1tcV0D9LEKezn3rdS0TtOBNXWKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752848163; c=relaxed/simple;
-	bh=5XaE7447C9RAX+GCeN/Jf+zei+sDppnkuDDAOZmhiks=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MKQKEuuiCYERnVi/zfxET6zHvo0WEVkTv3AEeZSl+lZXOMxiCfsYiJcXEYa2vWGz7iN8d6RpFIfL5VCHNEQ+1M1rwbPukG7ySTSd3U56iHquMVsqaDqGY2KqZjdLAI6aN6QOQ9IN0OZaWo8mXKJx/5g4bwNqNb+YYl/0JD3yNNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=mjuTHAEj; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7e346ab52e9so265534585a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 07:16:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1752848161; x=1753452961; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hJjLE0UVkZ2mMP5n5MQpEv3lHcI2vw7mI8TTF/9jzI8=;
-        b=mjuTHAEjVq9p5tT8aL15EowHfiE0HRBl1kHUhR4vjvid5WGvdE1A4t0A5Z8qr6I6QW
-         /z/f7E3OQ32u+SyRmENMHHZzyOTH7GxekIJw3eirlyDwQEPXOFZ6qJFrSddBUIxLNOyM
-         +vZpu1BZ/94olJTltKu1beswOjBohsX3XseZnNgakttKudd1QONXGAwPoc4sVMsh12qy
-         lfoQeA67xQlCaOJboBLwqomDfcqvggK31eJGO1RKMlCd5WA0UNbLZ8rcLmVhYXE6ivU1
-         bEz518hj1PxuEOCjb9CZe4MvyWIrsNgzCQ6gQPaTrglgCIVPIAAbQQIQaWoAutow7MPV
-         hfFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752848161; x=1753452961;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hJjLE0UVkZ2mMP5n5MQpEv3lHcI2vw7mI8TTF/9jzI8=;
-        b=ecjFoAQEPyGrBVtTKZahtcudz9ciNZsawM9UPxUIZDUxqxg/kf8bv9ZXqGBCYqC1Bp
-         asg+Y1XqsAXpymP7/r/CDh91hPi81J6YptbSVnEPtS6qeJy6jpWEegFN/Nf2aso6UcTy
-         Ih9KhOqoIxEDHnw+KA5LMxq4rcjf5TQXWW0Y/cFVUUq4nz8PhMKdvT4VGqYo+A1OKefS
-         23T+ko980uv/Bu6P+RvNVDdIS6GnjBzaxTFtYRLpr3XhcYaLPyXD4eY4YPur01lY6sRg
-         dWqWAFqs2Rt4mV3/PFgpqP4WV8QUup1hD/MDDlIBAGCCmLlNQ+FGKP9FcLud3JyOhK1c
-         ChNg==
-X-Forwarded-Encrypted: i=1; AJvYcCVORRC8hO3mp5Suhl/dF3pwW4G5s0jSKGIXwaFHriDH14dbtrjdMyomeYKEPxjSelmkR0Z8bgQfgknUT0g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4uWp3So/aSPvHHVAE32IDeAUHjJuQgWawM2RtVUrMX0yXxJRN
-	1JQO0u11r2yRQKE+0zqxy9MXSAMt/mczOV8tCih9KmGD75DsON0eq8/33I7j9j3rBc0=
-X-Gm-Gg: ASbGnctskKIlHwcfYbcP4T0CCCItvdwtsdF/Axx0RIdVgbHsKftf9RjZqLZA5HuWPUc
-	nlZu6A5qXwI609RTjzqB3hhlUNFbTbmpqThLRxFF8G8p/n3AuzFi4aTWW0qRcxc35cNqcCtwmI3
-	HCvoHCcgdzxA3eJRf5CA1/5Y8wKSKlrFR6qO2HFvv1sCi6kA/ZTLtUmEhirGAztlorgn/omxABX
-	8oEOmubvfHORTm4SUUPJpLBTlhS8VNcOBibY5y02+dqYPUnYSCXpxbSoeD5gkFCegKmjCHuMUOo
-	OoI7oQs0oq+q5TJDbQVhb74T2D+FsFY4/1EgiwPGA+vXTYXyo1V8AijjVKAbQXeZi0C5Ervl2aJ
-	dMlEJP87YKWjTgv1ZPZSS5ZQx5TyQze0yRG41hCwFUQre6zI5sSaa4A5tg6ppoJGc+FA2ysR7LA
-	==
-X-Google-Smtp-Source: AGHT+IH83itoUa8qKHB+I069li42G5fh0+8tV6hdT0Ya4bqMV1JxQTP8HGjKpE/oLQZTw/kkZxIAXw==
-X-Received: by 2002:a05:620a:4410:b0:7e1:9769:97c4 with SMTP id af79cd13be357-7e343613265mr1502291985a.47.1752848160939;
-        Fri, 18 Jul 2025 07:16:00 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-167-56-70.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.56.70])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e356c649c0sm91045985a.73.2025.07.18.07.16.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jul 2025 07:16:00 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1uclsV-00000009zBs-2Dun;
-	Fri, 18 Jul 2025 11:15:59 -0300
-Date: Fri, 18 Jul 2025 11:15:59 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Xu Yilun <yilun.xu@linux.intel.com>
-Cc: Ackerley Tng <ackerleytng@google.com>, Yan Zhao <yan.y.zhao@intel.com>,
-	Vishal Annapurve <vannapurve@google.com>,
-	Alexey Kardashevskiy <aik@amd.com>, Fuad Tabba <tabba@google.com>,
-	kvm@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	linux-fsdevel@vger.kernel.org, ajones@ventanamicro.com,
-	akpm@linux-foundation.org, amoorthy@google.com,
-	anthony.yznaga@oracle.com, anup@brainfault.org,
-	aou@eecs.berkeley.edu, bfoster@redhat.com,
-	binbin.wu@linux.intel.com, brauner@kernel.org,
-	catalin.marinas@arm.com, chao.p.peng@intel.com,
-	chenhuacai@kernel.org, dave.hansen@intel.com, david@redhat.com,
-	dmatlack@google.com, dwmw@amazon.co.uk, erdemaktas@google.com,
-	fan.du@intel.com, fvdl@google.com, graf@amazon.com,
-	haibo1.xu@intel.com, hch@infradead.org, hughd@google.com,
-	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz,
-	james.morse@arm.com, jarkko@kernel.org, jgowans@amazon.com,
-	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com,
-	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com,
-	kent.overstreet@linux.dev, kirill.shutemov@intel.com,
-	liam.merwick@oracle.com, maciej.wieczor-retman@intel.com,
-	mail@maciej.szmigiero.name, maz@kernel.org, mic@digikod.net,
-	michael.roth@amd.com, mpe@ellerman.id.au, muchun.song@linux.dev,
-	nikunj@amd.com, nsaenz@amazon.es, oliver.upton@linux.dev,
-	palmer@dabbelt.com, pankaj.gupta@amd.com, paul.walmsley@sifive.com,
-	pbonzini@redhat.com, pdurrant@amazon.co.uk, peterx@redhat.com,
-	pgonda@google.com, pvorel@suse.cz, qperret@google.com,
-	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com,
-	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com,
-	quic_pheragu@quicinc.com, quic_svaddagi@quicinc.com,
-	quic_tsoni@quicinc.com, richard.weiyang@gmail.com,
-	rick.p.edgecombe@intel.com, rientjes@google.com,
-	roypat@amazon.co.uk, rppt@kernel.org, seanjc@google.com,
-	shuah@kernel.org, steven.price@arm.com, steven.sistare@oracle.com,
-	suzuki.poulose@arm.com, thomas.lendacky@amd.com,
-	usama.arif@bytedance.com, vbabka@suse.cz, viro@zeniv.linux.org.uk,
-	vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org,
-	willy@infradead.org, xiaoyao.li@intel.com, yilun.xu@intel.com,
-	yuzenghui@huawei.com, zhiquan1.li@intel.com
-Subject: Re: [RFC PATCH v2 04/51] KVM: guest_memfd: Introduce
- KVM_GMEM_CONVERT_SHARED/PRIVATE ioctls
-Message-ID: <20250718141559.GF2206214@ziepe.ca>
-References: <CA+EHjTwjKVkw2_AK0Y0-eth1dVW7ZW2Sk=73LL9NeQYAPpxPiw@mail.gmail.com>
- <CAGtprH_Evyc7tLhDB0t0fN+BUx5qeqWq8A2yZ5-ijbJ5UJ5f-g@mail.gmail.com>
- <9502503f-e0c2-489e-99b0-94146f9b6f85@amd.com>
- <20250624130811.GB72557@ziepe.ca>
- <CAGtprH_qh8sEY3s-JucW3n1Wvoq7jdVZDDokvG5HzPf0HV2=pg@mail.gmail.com>
- <aGTvTbPHuXbvj59t@yzhao56-desk.sh.intel.com>
- <diqz8qknhj3l.fsf@ackerleytng-ctop.c.googlers.com>
- <aHjDIxxbv0DnqI6S@yilunxu-OptiPlex-7050>
- <diqzqzyeg3j2.fsf@ackerleytng-ctop.c.googlers.com>
- <aHm2F95XwzdD7nod@yilunxu-OptiPlex-7050>
+	s=arc-20240116; t=1752848203; c=relaxed/simple;
+	bh=IEpz5MuPybctEE6oMtgWNR5YKWeY5hFOXCAWZ+aBtvA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E0itUlXtYm3h7EKVu33CvuDKGLtZ5sdyZQGZUO6yLmYVsefSOGMKDdshfBR4AAtaEP5C7N2awKlXF7IS//tv5h5SemKDWuG0z6E2v3p+z7lY96i+KHOu2FuCG3ixK5WMFqWQxUsBbAqUEv9JbLsjIOBZr9EqjZeyLLZ6QStLMVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hEHLV3k5; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752848200;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=jTEbkRUl2wcpnkebbyZvnRyOtKvRlXMkLNOPG34fi+M=;
+	b=hEHLV3k5LKcMH4rIABQ72YgyhSzPRGjEvuPlvd9t64vkazeSMPdrRSHWrXkXGzAySaKh66
+	SKuogrcKLz7hOw/sFRJR78WJXXGKyMZZsegINkWAZgCJFq0xFOwQ0XT7mwiVD6GvACjeFO
+	nj4trZnFbVixmgUm+lcRKR7rQwmr9RU=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-220-QqyLjZqaO86O4eA9wIyn-w-1; Fri,
+ 18 Jul 2025 10:16:37 -0400
+X-MC-Unique: QqyLjZqaO86O4eA9wIyn-w-1
+X-Mimecast-MFC-AGG-ID: QqyLjZqaO86O4eA9wIyn-w_1752848195
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0B12B1800291;
+	Fri, 18 Jul 2025 14:16:35 +0000 (UTC)
+Received: from redhat.com (unknown [10.72.116.131])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 68DEE18016F9;
+	Fri, 18 Jul 2025 14:16:27 +0000 (UTC)
+From: shuali@redhat.com
+To: "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Shuah Khan <shuah@kernel.org>
+Cc: Simon Horman <horms@kernel.org>,
+	Xin Long <lucien.xin@gmail.com>,
+	xiyou.wangcong@gmail.com,
+	netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] selftests: tc: Add generic erspan_opts matching support for tc-flower
+Date: Fri, 18 Jul 2025 22:16:12 +0800
+Message-ID: <1f354a1afd60f29bbbf02bd60cb52ecfc0b6bd17.1752848172.git.shuali@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aHm2F95XwzdD7nod@yilunxu-OptiPlex-7050>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Fri, Jul 18, 2025 at 10:48:55AM +0800, Xu Yilun wrote:
-> > If by the time KVM gets the conversion request, the page is unpinned,
-> > then we're all good, right?
-> 
-> Yes, unless guest doesn't unpin the page first by mistake. Guest would
-> invoke a fw call tdg.mem.page.release to unpin the page before
-> KVM_HC_MAP_GPA_RANGE.
+From: Li Shuang <shuali@redhat.com>
 
-What does guest pinning mean?
+Add test cases to tc_flower.sh to validate generic matching on ERSPAN
+options. Both ERSPAN Type II and Type III are covered.
 
-Jason
+Also add check_tc_erspan_support() to verify whether tc supports
+erspan_opts.
+
+Signed-off-by: Li Shuang <shuali@redhat.com>
+---
+ tools/testing/selftests/net/forwarding/lib.sh | 14 +++++
+ .../selftests/net/forwarding/tc_flower.sh     | 52 ++++++++++++++++++-
+ 2 files changed, 65 insertions(+), 1 deletion(-)
+
+diff --git a/tools/testing/selftests/net/forwarding/lib.sh b/tools/testing/selftests/net/forwarding/lib.sh
+index 9308b2f77fed..890b3374dacd 100644
+--- a/tools/testing/selftests/net/forwarding/lib.sh
++++ b/tools/testing/selftests/net/forwarding/lib.sh
+@@ -142,6 +142,20 @@ check_tc_version()
+ 	fi
+ }
+ 
++check_tc_erspan_support()
++{
++	local dev=$1; shift
++
++	tc filter add dev $dev ingress pref 1 handle 1 flower \
++		erspan_opts 1:0:0:0 &> /dev/null
++	if [[ $? -ne 0 ]]; then
++		echo "SKIP: iproute2 too old; tc is missing erspan support"
++		return $ksft_skip
++	fi
++	tc filter del dev $dev ingress pref 1 handle 1 flower \
++		erspan_opts 1:0:0:0 &> /dev/null
++}
++
+ # Old versions of tc don't understand "mpls_uc"
+ check_tc_mpls_support()
+ {
+diff --git a/tools/testing/selftests/net/forwarding/tc_flower.sh b/tools/testing/selftests/net/forwarding/tc_flower.sh
+index b1daad19b01e..b58909a93112 100755
+--- a/tools/testing/selftests/net/forwarding/tc_flower.sh
++++ b/tools/testing/selftests/net/forwarding/tc_flower.sh
+@@ -6,7 +6,7 @@ ALL_TESTS="match_dst_mac_test match_src_mac_test match_dst_ip_test \
+ 	match_ip_tos_test match_indev_test match_ip_ttl_test
+ 	match_mpls_label_test \
+ 	match_mpls_tc_test match_mpls_bos_test match_mpls_ttl_test \
+-	match_mpls_lse_test"
++	match_mpls_lse_test match_erspan_opts_test"
+ NUM_NETIFS=2
+ source tc_common.sh
+ source lib.sh
+@@ -676,6 +676,56 @@ match_mpls_lse_test()
+ 	log_test "mpls lse match ($tcflags)"
+ }
+ 
++match_erspan_opts_test()
++{
++	RET=0
++
++	check_tc_erspan_support $h2 || return 0
++
++	# h1 erspan setup
++	tunnel_create erspan1 erspan 192.0.2.1 192.0.2.2 dev $h1 seq key 1001 \
++		tos C ttl 64 erspan_ver 1 erspan 6789 # ERSPAN Type II
++	tunnel_create erspan2 erspan 192.0.2.1 192.0.2.2 dev $h1 seq key 1002 \
++		tos C ttl 64 erspan_ver 2 erspan_dir egress erspan_hwid 63 \
++		# ERSPAN Type III
++	ip link set dev erspan1 master v$h1
++	ip link set dev erspan2 master v$h1
++	# h2 erspan setup
++	ip link add ep-ex type erspan ttl 64 external # To collect tunnel info
++	ip link set ep-ex up
++	ip link set dev ep-ex master v$h2
++	tc qdisc add dev ep-ex clsact
++
++	# ERSPAN Type II [decap direction]
++	tc filter add dev ep-ex ingress protocol ip  handle 101 flower \
++		$tcflags enc_src_ip 192.0.2.1 enc_dst_ip 192.0.2.2 \
++		enc_key_id 1001 erspan_opts 1:6789:0:0 \
++		action drop
++	# ERSPAN Type III [decap direction]
++	tc filter add dev ep-ex ingress protocol ip  handle 102 flower \
++		$tcflags enc_src_ip 192.0.2.1 enc_dst_ip 192.0.2.2 \
++		enc_key_id 1002 erspan_opts 2:0:1:63 action drop
++
++	ep1mac=$(mac_get erspan1)
++	$MZ erspan1 -c 1 -p 64 -a $ep1mac -b $h2mac -t ip -q
++	tc_check_packets "dev ep-ex ingress" 101 1
++	check_err $? "ERSPAN Type II"
++
++	ep2mac=$(mac_get erspan2)
++	$MZ erspan2 -c 1 -p 64 -a $ep1mac -b $h2mac -t ip -q
++	tc_check_packets "dev ep-ex ingress" 102 1
++	check_err $? "ERSPAN Type III"
++
++	# h2 erspan cleanup
++	tc qdisc del dev ep-ex clsact
++	tunnel_destroy ep-ex
++	# h1 erspan cleanup
++	tunnel_destroy erspan2 # ERSPAN Type III
++	tunnel_destroy erspan1 # ERSPAN Type II
++
++	log_test "erspan_opts match ($tcflags)"
++}
++
+ setup_prepare()
+ {
+ 	h1=${NETIFS[p1]}
+-- 
+2.50.1
+
 
