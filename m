@@ -1,103 +1,95 @@
-Return-Path: <linux-kernel+bounces-736983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67E65B0A655
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 16:26:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48E59B0A64E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 16:25:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51A76A87224
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:23:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 759161C819B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614A32E03E4;
-	Fri, 18 Jul 2025 14:21:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1342E2DCF73;
+	Fri, 18 Jul 2025 14:21:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b="ZoHjNa8u";
-	dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b="rDew+xoa"
-Received: from gofer.mess.org (gofer.mess.org [88.97.38.141])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R5JKeeZX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C1A2DD5F0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62C0C189905;
 	Fri, 18 Jul 2025 14:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.97.38.141
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752848504; cv=none; b=SjTnIRbE6ESxOHAzspEuHyD4PvrZAx/sUVv3FqiDwNh/DKP2t2CUXWSNEhd8MJ71HPuQP+hl9EwFf9+ouPrzK31clWBu5xcCVY6IUPt3kvyWDrEk5M0R5VDxyGh+F/ZGXh+AppG/Dt+R3kSfwPAr71pjKplkG0ajQCOI7Koa4ow=
+	t=1752848501; cv=none; b=JhU1r0sGBNJPRTxHlz3gaxsurr03C4lvrmgl6fd2bTFub5rGIrAX9dpxNUjE2nfYozq0rYUnGfvFc/2ryOZSG1bjoZnQta8JGe7Nt5rdv8NWgDasiV4KcsgyStizc9b4cLlZpMJpuMh0fVZuozHE3Vu2agiiiYwVU3FmkWxNXl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752848504; c=relaxed/simple;
-	bh=P8mJGbBCa9KRO31+2BUNcwNUmqvqJRefNVwpQ/WC+rU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fjmcJ3ETW+EpauwmOEZRYb/bJeAhwej2531S8lkUNPVrMBBKVeWJUOjCpvFQZZIGYbBoyaSxsERUTRs+tZJKIJXda2iiGWNKZCBmG+W1RdiaCa51GWA/cmYH591nt/h/NVrf1mr+I4wfaVNziSxX9VPWD58RDFARruflWUav93s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org; spf=pass smtp.mailfrom=mess.org; dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b=ZoHjNa8u; dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b=rDew+xoa; arc=none smtp.client-ip=88.97.38.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mess.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mess.org; s=2020;
-	t=1752848493; bh=P8mJGbBCa9KRO31+2BUNcwNUmqvqJRefNVwpQ/WC+rU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ZoHjNa8uKXfSBxNCAZzQoUEqe6XvWTjGIFjfeUm4Bkbdfydc7VzNVDYFzYvGbCpGm
-	 WvlaqMr/13PHmwehYQWScymSxFYxVJzA2D6RfgEOTsD5jBQvlkh+M+7g22m9idqSZR
-	 zno/7gcKdeKTnDKgmQnv3qZooUGZ0hkCO+y+XOnspLqBt3g8aiHCRHUzDk5m9Nms3+
-	 Sgx7iCs9lfDIO4F1bipnkv68u/6oYO28+puW6at/AKsWtWe26TLaPUOVbVFrKsZxU+
-	 ZSzG3f2GRifXwhCowfqdyBCI4EUyA8jls6wOj8lFkYtYr4uAEcriaKHGu5Zjkilf2Z
-	 fVLj0LyUGohtg==
-Received: by gofer.mess.org (Postfix, from userid 501)
-	id C530B1000D3; Fri, 18 Jul 2025 15:21:33 +0100 (BST)
-X-Spam-Level: 
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mess.org; s=2020;
-	t=1752848492; bh=P8mJGbBCa9KRO31+2BUNcwNUmqvqJRefNVwpQ/WC+rU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=rDew+xoaqU+wrQ0YcEXZ597NksDv79w/g6i8/CPfPHtS8o1O2xHBTPucySMUWCnlz
-	 7Ff5eVmJLN+5qI2SlcjMOEFVQ2x4TUdj4PvfnSLrAuRIJbqb7q4Imvcgagdv73EzEO
-	 FkqHC/YlSu+7EFcxHfPBKx809ua3H7PADn/k4SEDuw5O4e3LntUPh2Zt88p03D7z/m
-	 IsmWgkj8E/9SYUkvhwzB99MHigEjTT/7dUC2Z9hu2J5HnkyLV+CqxHhmD/PDO1/g41
-	 QIzQsYcpu70QyLBMMwup1DOe+ZXzCN6XnFZV+BJkjBzyDcW5icbnfhA5/GjoCtdpuj
-	 W4xtMb0oW0wYA==
-Received: from bigcore.mess.org (bigcore.local [IPv6:2a02:8011:d000:212:18e9:4540:7989:d247])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by gofer.mess.org (Postfix) with ESMTPSA id DED081000AC;
-	Fri, 18 Jul 2025 15:21:32 +0100 (BST)
-From: Sean Young <sean@mess.org>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] media: imon: Remove unused defines
-Date: Fri, 18 Jul 2025 15:21:22 +0100
-Message-ID: <20250718142122.7572-1-sean@mess.org>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1752848501; c=relaxed/simple;
+	bh=sCBjjY7QqodoG86EUqmrVeqEu70zeo1YRvyYt2qvWdo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EuRTmYtqYt4aTbLguKY36KqbNSD6T/ZEnAWKNc/mlZUy1P8cAtLVBunki4P9CMJBH4NSudidXJYFaX0nso4sdXA2bFqPus9W6mFR7BKqEM4Jq+A+NNJHfKPnyIZbSACDNozseMjPPfhujrQgM7sQBsyoPzGXeRZWq0xbcIRBNTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R5JKeeZX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C43EC4CEEB;
+	Fri, 18 Jul 2025 14:21:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752848500;
+	bh=sCBjjY7QqodoG86EUqmrVeqEu70zeo1YRvyYt2qvWdo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=R5JKeeZXnKMkJKRBZu0wGhAWp80H45DXTFWxI/X5AEY9IK68WzHjIcT9Q19DFOwrM
+	 kL96WmTqk3UNCsfKspEIf33lu0LBUPU1o57091Lb+DtILnXNljhmewVUO+e2mMzpS8
+	 kjymR0lc3BHjL8yQro79Z8yfvgiDeblPLu/oDNsX34bB4F6CWww8KwD4Thwfxan5uz
+	 Z4FiKmma7FbHxwIS0IMHLdQMrrIjQAnWaVHVqKEH5T8f+i0OEy30mu259Q0fx6Kuwd
+	 R0e7/5bFiT3ktpjFESdVt3BNNLkRL0wu5wX5DGO0Pq/Kdf7n9BrjZmUkHOCbcHAENF
+	 ytihmdWQielzA==
+From: Chuck Lever <cel@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>,
+	NeilBrown <neil@brown.name>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Sergey Bashirov <sergeybashirov@gmail.com>
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+	linux-nfs@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: Re: [PATCH v2] sunrpc: Change ret code of xdr_stream_decode_opaque_fixed
+Date: Fri, 18 Jul 2025 10:21:36 -0400
+Message-ID: <175284845618.1668826.1570213345042161150.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.50.0
+In-Reply-To: <20250718080958.71913-1-sergeybashirov@gmail.com>
+References: <20250718080958.71913-1-sergeybashirov@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-These defines were used for devices now supported by the imon_raw
-driver.
+From: Chuck Lever <chuck.lever@oracle.com>
 
-Signed-off-by: Sean Young <sean@mess.org>
----
- drivers/media/rc/imon.c | 5 -----
- 1 file changed, 5 deletions(-)
+On Fri, 18 Jul 2025 11:09:56 +0300, Sergey Bashirov wrote:
+> Since the XDR field is fixed in size, the caller already knows how many
+> bytes were decoded, on success. Thus, xdr_stream_decode_opaque_fixed()
+> doesn't need to return that value. And, xdr_stream_decode_u32 and _u64
+> both return zero on success.
+> 
+> 
 
-diff --git a/drivers/media/rc/imon.c b/drivers/media/rc/imon.c
-index f5221b0188081..f4366c8e44e32 100644
---- a/drivers/media/rc/imon.c
-+++ b/drivers/media/rc/imon.c
-@@ -39,11 +39,6 @@
- #define DISPLAY_MINOR_BASE	144
- #define DEVICE_NAME	"lcd%d"
- 
--#define BUF_CHUNK_SIZE	8
--#define BUF_SIZE	128
--
--#define BIT_DURATION	250	/* each bit received is 250us */
--
- #define IMON_CLOCK_ENABLE_PACKETS	2
- 
- /*** P R O T O T Y P E S ***/
--- 
-2.50.1
+Applied to nfsd-testing, thanks!
+
+[1/1] sunrpc: Change ret code of xdr_stream_decode_opaque_fixed
+      commit: 4f48fa0301a4eceee070baa5ca0f0bb470a2a54e
+
+--
+Chuck Lever
 
 
