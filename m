@@ -1,173 +1,141 @@
-Return-Path: <linux-kernel+bounces-736372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F09ADB09C16
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:12:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2195AB09C08
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:12:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78A824E19C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 07:12:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 640D85803C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 07:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5D821CA1C;
-	Fri, 18 Jul 2025 07:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76E4C215798;
+	Fri, 18 Jul 2025 07:12:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LH/dj1xr"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d+ngxBmR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D66A215773;
-	Fri, 18 Jul 2025 07:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3A8D517
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 07:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752822747; cv=none; b=gnf/8/Lr04lAMgWWb5gT6wjP5oHHtozko9jhnV+2Az07y71dDUMWKTDiIlX45lsieu+m6cCFUDztOOfoBkbm39BrVQFhpZYcaXps1fUrBKXPH1r9LiilUBS7q6Ao+agi+pkAUOoArH+D6rWDKVgczJzgpoFercnzWmNb1twHl0k=
+	t=1752822730; cv=none; b=Ze7x4CdwOnwN3s7Xigl2/u2x4xBOfq/ouT+TSNIYdb0gTlQsEaP4F1xpCFLGIO4Dlro+VIWRYR3kd/W4WXGhK+rWK0F9zuvFMaLjHp9J0zVGDeVAZD0n2SoEszaHFDtZQjouLOF58XN/a9EfsO3SwVJTkGy2bfompNAfMcKF5A8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752822747; c=relaxed/simple;
-	bh=0K4SPuuIcngGAFPRvbGGNcGdo9ZYodG/HB4xyll+vhg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=oD6jR9v/d/GOV363bxzBSwpvZpTz6aXIQFrquA68CKZQK9Btjz94JOwlZmH6D810heIzVu+mEm+MUcFJ/CfrY3QGBu+IdgyY2i22LMvuKLjzee1/9rdzj3xmiwPJj0yOdDnNssCjbjDZmtRaW3EJZ53mvG8RsvARUSir8Kkh2Us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LH/dj1xr; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56I669X2022240;
-	Fri, 18 Jul 2025 07:12:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=zVcXn+xouwm
-	9M08R+gXXqzI0UC+BcJoS5cp4Pak5RCg=; b=LH/dj1xrEt38k7RrIWwclrbklPu
-	Dh+hCfBGof3RDjcEb4O7eBy0c6LtS1kjaranW9rv1+DWs+J/MnczEvtfkyl7Qdx/
-	nGcsKFkIbvzfNsKXcpZmGsyF54T3nAJoFVw4CM+JnH2Z0m5moYIFSTx4S26YFjN5
-	j+GShp4kcGIlMOBhrGMqcRE8m9Tk3Zmxp/Xv9lUyijo8/vfqM9XCJ+jTS8wTwYv2
-	hAqib8hv16zq2bAnYezEmxuX+/bv839BlAZtMJn8v8ANxrC9bBJ7xCS5e3oY282M
-	/gBZBbPdI+OCX6kxybao7K1rb/d2xVi2dAALSVznoxLpSZornzdWzWydyWA==
-Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47wqsyagj3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Jul 2025 07:12:14 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 56I7CC3v023132;
-	Fri, 18 Jul 2025 07:12:12 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 47ugsn0pq5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Jul 2025 07:12:12 +0000
-Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56I7CCVV023123;
-	Fri, 18 Jul 2025 07:12:12 GMT
-Received: from cse-cd01-lnx.ap.qualcomm.com (cse-cd01-lnx.qualcomm.com [10.64.75.209])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 56I7CBb4023115
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Jul 2025 07:12:12 +0000
-Received: by cse-cd01-lnx.ap.qualcomm.com (Postfix, from userid 4438065)
-	id 0035020F1D; Fri, 18 Jul 2025 15:12:09 +0800 (CST)
-From: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
-To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
-        mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
-        bhelgaas@google.com, johan+linaro@kernel.org, vkoul@kernel.org,
-        kishon@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
-        kw@linux.com
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-phy@lists.infradead.org, qiang.yu@oss.qualcomm.com,
-        quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
-        Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
-Subject: [PATCH v4 2/4] dt-bindings: PCI: qcom,pcie-sa8775p: document link_down reset
-Date: Fri, 18 Jul 2025 15:12:05 +0800
-Message-Id: <20250718071207.160988-3-ziyue.zhang@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250718071207.160988-1-ziyue.zhang@oss.qualcomm.com>
-References: <20250718071207.160988-1-ziyue.zhang@oss.qualcomm.com>
+	s=arc-20240116; t=1752822730; c=relaxed/simple;
+	bh=j2ivfdeZrdVbGY3pzMRN0XewXSeaCCvqhCtAd6Ds8Tw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=JKA2gBEZMcsQIuKetoBNczyhnqv8v8rgX3LE4QQCbCVEImhFjoE8wj3xly4S/QUPD88i78JYvLaSrGfTwgX3mZgqQUsAiCjI26Ijf31KmIhp2/gCtgwdaqSIvkQO2cYEwFaWkb2j+b/JrgCYHzCWOlKXFlxUgL8Nz+M+zuuhSZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d+ngxBmR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C05A0C4CEED;
+	Fri, 18 Jul 2025 07:12:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752822730;
+	bh=j2ivfdeZrdVbGY3pzMRN0XewXSeaCCvqhCtAd6Ds8Tw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=d+ngxBmRbn/7EhhkU2rQPyyVCS/V9U9sf+xyy3IwdREaOsqLkJsDko0KO0pz2xDA1
+	 AeonJquJCgyAD8YcUeR1HSxUFuMYhLyfrFk8Z29LUbM4JAzUY3GAFk9PGSlglbyv5/
+	 +PzT8oVul5NUeWJK6TSXfUGxmB49GGfZoh/13rZRnIAHyW3xAsrIfIomP3+b1cHnM1
+	 WJh0aAHcNIfvbFd0RaNh9KuIyCheapmc7W/MVGLLq2HHue+3ZQF0ylQI6j7st7cTSn
+	 xwGBDw62Dqizq0qWqg8azPq8wQpCgPM8C8Y1tFynmAEH1l6r8aSJRIiIEorSBMpDk5
+	 LGTscGAz4xyNw==
+Date: Fri, 18 Jul 2025 12:42:06 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL]: Generic phy fixes for v6.16
+Message-ID: <aHnzxqKFj1jgxG_v@vaman>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE4MDA1NSBTYWx0ZWRfX9ICvh5VfJcgM
- 7gJRT/ZaSHPUvNsxiNrGD0Nm8ky6+52l18noIws6SB9aTBYbXDG1C+1ysxEnJKoUqSXq/sE/14g
- SV3qvzw/eMXd1lTNnzCmmaQnuh7qUn+n44qGWrYxnI8nOv/sa9uVq8jI1MCrBiCWG3odOiRsW99
- /lkhdXX8p5i0FDaq0YiUncl1q1KUgQ6i9eux5i1gwKsxWuE8GTDFo44gzlzxJmp+R5hUhrW6xaL
- KrCFmtvuCV3rza0iZpwdVQmS7TL73csZI6X4i1wHVkHvXaJ+fHmIni91ftNeelA0JTEO+nJz34b
- BEVSU7eKemhvnnM/d8Ha7hNx4xBp3wM5JB6XkPaHjtgusVRkk67XI1ZNJt+xw5CDEoWPXTexgYc
- HsUTXsF7gX549v1oFdicllxm2v5CaUKjXqlZVbxWUoAT3ugUEzBdOFJ6ooOePYVchWgwMxto
-X-Proofpoint-GUID: VVjllUy0HmZqRksZg4edSU1KiWeF0kZC
-X-Proofpoint-ORIG-GUID: VVjllUy0HmZqRksZg4edSU1KiWeF0kZC
-X-Authority-Analysis: v=2.4 cv=McZsu4/f c=1 sm=1 tr=0 ts=6879f3ce cx=c_pps
- a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=pGOvZgHL2iAvQvMqjSkA:9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-18_01,2025-07-17_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 mlxlogscore=999 impostorscore=0 mlxscore=0 phishscore=0
- adultscore=0 lowpriorityscore=0 bulkscore=0 clxscore=1015 suspectscore=0
- spamscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507180055
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="eV90A6LMnpFovRAy"
+Content-Disposition: inline
 
-Each PCIe controller on SA8775P includes a 'link_down' reset line in
-hardware. This patch documents the reset in the device tree binding.
 
-The 'link_down' reset is used to forcefully bring down the PCIe link
-layer, which is useful in scenarios such as link recovery after errors,
-power management transitions, and hotplug events. Including this reset
-line improves robustness and provides finer control over PCIe controller
-behavior.
+--eV90A6LMnpFovRAy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-As the 'link_down' reset was omitted in the initial submission, it is now
-being documented. While this reset is not required for most of the block's
-basic functionality, and device trees lacking it will continue to function
-correctly in most cases, it is necessary to ensure maximum robustness when
-shutting down or recovering the PCIe core. Therefore, its inclusion is
-justified despite the minor ABI change.
+Hello Linus,
 
-Signed-off-by: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
----
- .../devicetree/bindings/pci/qcom,pcie-sa8775p.yaml    | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+Please pull for generic phy subsystem fixes for v6.16 which contain core
+lockdep fix and couple of tegra driver fixes and a qualcomm driver fix
 
-diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-sa8775p.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-sa8775p.yaml
-index 4b91b5608013..19afe2a03409 100644
---- a/Documentation/devicetree/bindings/pci/qcom,pcie-sa8775p.yaml
-+++ b/Documentation/devicetree/bindings/pci/qcom,pcie-sa8775p.yaml
-@@ -66,11 +66,14 @@ properties:
-       - const: global
- 
-   resets:
--    maxItems: 1
-+    items:
-+      - description: PCIe controller reset
-+      - description: PCIe link down reset
- 
-   reset-names:
-     items:
-       - const: pci
-+      - const: link_down
- 
- required:
-   - interconnects
-@@ -166,8 +169,10 @@ examples:
- 
-             power-domains = <&gcc PCIE_0_GDSC>;
- 
--            resets = <&gcc GCC_PCIE_0_BCR>;
--            reset-names = "pci";
-+            resets = <&gcc GCC_PCIE_0_BCR>,
-+                     <&gcc GCC_PCIE_0_LINK_DOWN_BCR>;
-+            reset-names = "pci",
-+                          "link_down";
- 
-             perst-gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
-             wake-gpios = <&tlmm 0 GPIO_ACTIVE_HIGH>;
--- 
-2.34.1
+The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
 
+  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy.git tags/phy-=
+fix-6.16
+
+for you to fetch changes up to b7acfeab8af9ee661c933522132f3d1d92ed12d6:
+
+  phy: qcom: fix error code in snps_eusb2_hsphy_probe() (2025-07-15 20:36:4=
+7 +0530)
+
+----------------------------------------------------------------
+Generic phy fixes for 6.16
+
+- Core: use per-PHY lockdep keys, this was required to fix a phy
+  using internal phys
+- Drivers:
+	- tegra - fixes for unbalanced regulator, decouple pad
+	calibration fix, and disabling periodic updates
+	- qualcomm - error code fix for driver probe
+
+----------------------------------------------------------------
+Dmitry Baryshkov (1):
+      phy: use per-PHY lockdep keys
+
+Haotien Hsu (1):
+      phy: tegra: xusb: Disable periodic tracking on Tegra234
+
+Harshit Mogalapalli (1):
+      phy: qcom: fix error code in snps_eusb2_hsphy_probe()
+
+Wayne Chang (2):
+      phy: tegra: xusb: Decouple CYA_TRK_CODE_UPDATE_ON_IDLE from trk_hw_mo=
+de
+      phy: tegra: xusb: Fix unbalanced regulator disable in UTMI PHY mode
+
+ drivers/phy/phy-core.c            |  5 ++-
+ drivers/phy/phy-snps-eusb2.c      |  6 ++-
+ drivers/phy/tegra/xusb-tegra186.c | 77 ++++++++++++++++++++++++-----------=
+----
+ drivers/phy/tegra/xusb.h          |  1 +
+ include/linux/phy/phy.h           |  2 +
+ 5 files changed, 58 insertions(+), 33 deletions(-)
+
+--=20
+~Vinod
+
+--eV90A6LMnpFovRAy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE+vs47OPLdNbVcHzyfBQHDyUjg0cFAmh588YACgkQfBQHDyUj
+g0ezbw//V3u/pWgWfnTnC8uKN3nLU1lZUwwM1wya3jP5xktHaYPJjnC7SGUYPg+t
+dtSdgPQJLdvA5U2DlVkIwxzB8IQc3ORXL9hZergZ2/1QMVWX75JMxC+D0pvYBDxG
+v4SBENDXPc1dgT4DT3I5qgOw9/K6NCGtK5+7T+v8vD87+BOj1AGicvKyJ8TQf+UQ
+MRrbjb2me7sPrFuT41NGSnAWHqza04Lu3R6ik3dgVbXFwVE4xIKwNaCAlbkRmj9B
+eM9r7P+HfB1MYphVxNF6wlUF7WH+lZFVtdsAPvu0n1YsEsDznV6WGYLL3/QYx882
+oQmIlYt9gc39rxu0Lpd1Nrew52Ejm2O50txbqX/cBY8PfnAIyG3ikGpcEYkvXeuK
+80Ghl3Mjp9GdkdU+bvy5u0HT0J6OE7lfH2/WKIZjM8Dj+ZdqZT67q+3MCNZmY1i1
+ZQHNXOMKqk3b/JnE6nvot0BWVT9KBzp3SY4xAIwZ6GwL9M+88MxV18ECDqWj4c0Z
+uC2Oc2Q3QUdl63OJF05TVBt0ZCMcK32/JoqvPrINFbFAwvfipDWQSl10PlvJUa3p
+OsJu+DdotoNnEUEB5YpIEcAiyQKZ6E8qOfNuQWOpbHH71v3QyH3zKykkVo04MUFY
+9KXbddOpersu9P2SH0vV38Ct+N+0VpZtkl5644I/WQ7YBjd037U=
+=TBGB
+-----END PGP SIGNATURE-----
+
+--eV90A6LMnpFovRAy--
 
