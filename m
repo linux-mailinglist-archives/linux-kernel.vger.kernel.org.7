@@ -1,135 +1,168 @@
-Return-Path: <linux-kernel+bounces-737087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 048C4B0A78A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:35:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EC32B0A78E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:35:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F7791886EC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:34:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E01237BE7D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:33:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8CBD2DE713;
-	Fri, 18 Jul 2025 15:27:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABEB92E0413;
+	Fri, 18 Jul 2025 15:29:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aJqqp9Rj"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eTPUcOZ3"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3AA2DE213
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 15:27:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B67B1411EB
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 15:29:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752852449; cv=none; b=WJzsQErrkvuHAnFr3+saCPAFpmXeKva4v+QDpvSaAg6IaoTRsLZ1qaM500FQjUP/mt7dQv6aWcjqtz+Eqh6EFsEfeiySoxdqBlSHtiZuf5ZhgkkAb5/slaxvD1QSBjiTd1zpT9c2cbL0dlFZ9fDTu9q4u9+k1pLlXRcJxc7i+IE=
+	t=1752852556; cv=none; b=obbvICVLy1xflJHPUyaPki6SWtzuFxqZ8lBfiw32kswdvlklgL1OAe6/PKzDwwhQVhYkBgXL+tFHtVSua6+hbE0QOqRx7jy/s0XGTX2DSd+HdX9GbGFfkcQwriX4S9FEfVtzfsyI3PwVVr3D2EyTLCJwO29jzJmMIMgAWWeVJUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752852449; c=relaxed/simple;
-	bh=ok3ivDYRuNQPcJYkzQ/LOj7nL7uE52sAZj+wDl34c+M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YXJqaAk1kvj4SqGKvrR9NwAsaKGHVHo0NzLqYz6DoJDLnvY4FFUJMtdhDuPxsj5eaRYUxKt9Lcf2hkpLE/RMuRqnTwNpOm6DJ/Vs961r7wbZJ4oUZBmvWvXlw9gFT2CwKeR36uRQJtCgnMEo0VScwUByy0d4PJWkBSozZ+ehex4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aJqqp9Rj; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-714067ecea3so17322477b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 08:27:27 -0700 (PDT)
+	s=arc-20240116; t=1752852556; c=relaxed/simple;
+	bh=uxVn8z5vNh8b0EqiZQiCnQQE1xnoXDxMYQl0MrMLYTg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=usfbTHe03HozXxdg+V+WyOqDlBCtyVLgsXPuWz7t4/tYniAx6IfHGe+a0iAR6sJYW3Ol7/XBlCCdIRViMfvbUD1VPg2h89xEiEDLluqQGzt11LCfJvAexivTXp6ntclNHfWLERV+y/NiRG4fOsNckxaaV6YmGOS1VFXZvI+CxuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=eTPUcOZ3; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-32f1df5b089so21495771fa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 08:29:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752852446; x=1753457246; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F66N0wil7J+HbPwMNjuizTeNTbRlp/Sh4yJnp4lMFrY=;
-        b=aJqqp9Rj7xGinlrj9gtL5LBL70DNEP1pWn8NHIff+eNXvB0U1N5VtRs9cVhfRVEb7N
-         mvnLqmlXENecI9aKNJjrcpcow0OOU5vgwU9S/M7a3+mddGqpKKUF/t2huyKa8tFntIu4
-         9k1AzsEAR4BwMOiH2GE/puENN9o3PgDitCs31LRI78q96DSkYd1A1OVEhUkJd4jmkZew
-         jhTP68f4c/1pBYNcRVGqbIW43UPaBlXFs5mroPGpTArzCgDbv/O8VVMV2NyygHwJY91/
-         JGYY63j/R6RS6cSjYOGR9M8iFZKwV88wV1cYGm4MNdTcJ6/gJcG3EN9Xa/k7fQA8V9XP
-         tvRg==
+        d=chromium.org; s=google; t=1752852553; x=1753457353; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rpDHWMEfaZbT1j+vHvp6fYznBSkyjPMp+OhgKVI7GZI=;
+        b=eTPUcOZ3ciPt0mrZ413bHiuaJmr3ydTd+HzDitI1AKvXznxqPY06Lc0os1FlBofQzm
+         VqJrsipXemmiSDsKQP3xIZMlwIm7Q+p6kbKRFZ5+dNlCxAOX2Pi7AKT6IHhhSO13uAkL
+         Hl5aTUvzRQqwl7ib04IjVMZ1fWTbyS27RCO9w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752852446; x=1753457246;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F66N0wil7J+HbPwMNjuizTeNTbRlp/Sh4yJnp4lMFrY=;
-        b=gJ36GjTguJLiiIPNaRK9kzpl65lEt2ZUSqcBCnvuwWc0HegnesbZyEBqyqQiMRZPgc
-         dgMVTSQuy0372EwlEDVUn1Pufpeau7v0Tfk2+NVMERDRIE6qcq+HKHB5TId7jZ3YFoX/
-         3aOPDvfMTHkJSGS7qltZ6GD1sxB8yv/hsdrwcTFdLMmIChpAKw7eOZpU941hlKo3fh9Q
-         9cvl9DkYOwLGWUgO4y3afCXO+zo1Wuu3iRt4VHiFbielDr4dGr6Eg+gKqSae3PYvJrYK
-         JxZL3Eyn3tU4XU3em+lsS5DmRuUipT9/c6NeKdFggoumu0ttpBimaQvVE7oRQ50syrk3
-         T99w==
-X-Forwarded-Encrypted: i=1; AJvYcCUVVDbvdVR9z1LI1+hRiEGHEh2UJQGSpyw1VRESOJ6tNAWboG0TuIODTHP2mExr3RsjOJID88yk1BBE0fw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypVG6cb9pR8oWlgpzhtJarfcbfCCzm3fZLQVP4ZMG1e0+SXGrU
-	Ym1/6YPlqrzsToCUrzq4qa904nep6mTfmdvBkUew47+aR/nonzCowOs2
-X-Gm-Gg: ASbGncsXOO83UssPv0prVXFidWPrIMoShlCNg1dADoskoYJ5Jx4tOZcp+ZY53KgDzhW
-	J491w+zEUQb2Mkpl9UpXK9Ri44H9FQiFBKiCwT5NlaWOHFUN87+svDipj6K7GJ6G1oHsZCeeqAB
-	xgYL2sJ64TcKz1ZO9UK+bsccUyQLZozaRAkKjACki11MDqPh7osfgXuit/AU4iZmeKy0lXA5id3
-	kRRHsf7g6AhIhAZVa4JqPfL2t7OdIVkKoMmtmVaLU+yqqSgxYeHw/UCzV9bbyOO3tFVCHCWGGh4
-	UDv14a+vISFl5mx1OJRdH2J4DI/EAvE7Hx+N5fQhCRZrcu/Yrh8sHLwEcfOxRHoeX7Z8Juw2LeX
-	zAoJBydTSW+W4mW1TuBuf0g==
-X-Google-Smtp-Source: AGHT+IEHt3k5CxyEPCwLRVQs6pZJ7u5eFljYq50VtW2JoGNL1uq6TN77Q4wUo1jx7bSmHFInqIZlnQ==
-X-Received: by 2002:a05:690c:9a0c:b0:712:e2b5:e61b with SMTP id 00721157ae682-71836ca03bbmr155585107b3.13.1752852446394;
-        Fri, 18 Jul 2025 08:27:26 -0700 (PDT)
-Received: from localhost ([2a03:2880:25ff:5f::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-719532c7e9bsm3683787b3.61.2025.07.18.08.27.25
+        d=1e100.net; s=20230601; t=1752852553; x=1753457353;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rpDHWMEfaZbT1j+vHvp6fYznBSkyjPMp+OhgKVI7GZI=;
+        b=bCDBywIL57jw5UmtzZXyfzfB4WnOdwm9kgidhfIflqTXQKEm0GYhdcHtj3paPvLcF7
+         dV74rWwl8A6mcQ9Y458Tlh6QUtskZ07ZqJmjhdLzP2qjLfSGN/bV32ruRJRnc36hAhn4
+         Q+wc0un6J0qHhHEUuinpbUw7ErXMwiB4rnuVnMgvoJVes6ctC42uf8QjQVJOyEJObakX
+         KbSfkqpZl56juv79LK/iUcuxHkj3GsEzlIbbkJ4HefkmKuYMsyhNSRms17JYCCZ7gKDe
+         /xoAxS9xIQMYh9fi8wt7M+Z27phwIX0kF+FEfHIhnKEKZs8sgzBKDyxDrjOQUCdx/6dg
+         QRnw==
+X-Gm-Message-State: AOJu0YzoSoZ0gphU3ZY73PStrnKp6aWIE2dss1OxpfcS6/Eh0j65T2mu
+	o4t8fkeFYLxcPo5thcs/O+hFPq9CT3AnFIw4Bt5lPEJfJRnW4XloIIR217ruAU0kTQ==
+X-Gm-Gg: ASbGncuqUVsNlFbIBiKbJwrQlP3o+boFdL5hcio3AFyCxOxxkjTdztlwF1Hik9IUR1+
+	i9RcKYyuTsIaroCESiZavhJivmh+FoiCl9R2yZciBmavAvqJT3qZ0l7qC5lRLYPsSrQqWLns1dF
+	0M8t7xjtOXhp92GrIzy0Wifc71OPZFNj6rGM+oG6idDAvnOhG0pPUfLuTwYBxBJPXea13CFFuQQ
+	8X+8dM7Vb/e6lBLuIvnR0Cy1Cdo1snDpMEGNJSf75dM7buQs/yHYK2+bW554pBqDKNKR+O7hJwy
+	4dOO7eIwG2zmGoDmJoAPBljChyD0Fl3jby0kB8NINY0H8lOzowIjVNBdCHDI/qbWwv5k+mSAhnG
+	SfDY7MqiqEWjycVs+YpCo1YoxIfvVU/8R1grd/JYu8a9BcW68Om2tqkbvLq9BlyVO8yLNOYRTh+
+	jeOQ==
+X-Google-Smtp-Source: AGHT+IHCWWFRndQq5TQ10sqZoNxAVRRJdBRC8Iz2chXxrbesJiaBnj6t6V30lxJSk7p201wqjG9aTA==
+X-Received: by 2002:a2e:be12:0:b0:32a:c14b:7db9 with SMTP id 38308e7fff4ca-330a7ae47d7mr9316611fa.7.1752852552744;
+        Fri, 18 Jul 2025 08:29:12 -0700 (PDT)
+Received: from ribalda.c.googlers.com (166.141.88.34.bc.googleusercontent.com. [34.88.141.166])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-330a91d9d6dsm2268601fa.83.2025.07.18.08.29.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jul 2025 08:27:25 -0700 (PDT)
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-To: kernel test robot <lkp@intel.com>
-Cc: Xiu Jianfeng <xiujianfeng@huawei.com>,
-	oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>
-Subject: Re: mm/hugetlb_cgroup.c:829:44: warning: '%s' directive output may be truncated writing up to 1623 bytes into a region of size between 32 and 63
-Date: Fri, 18 Jul 2025 08:27:23 -0700
-Message-ID: <20250718152724.1206447-1-joshua.hahnjy@gmail.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <202507181808.mpbc1F0r-lkp@intel.com>
-References: 
+        Fri, 18 Jul 2025 08:29:12 -0700 (PDT)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Subject: [PATCH v5 0/5] media: uvcvideo: Implement the Privacy GPIO as a
+ evdev
+Date: Fri, 18 Jul 2025 15:29:09 +0000
+Message-Id: <20250718-uvc-subdev-v5-0-a5869b071b0d@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEVoemgC/23MSw6CMBSF4a2Yjq25tw8ojtyHcVDpRTpQTCuNx
+ rB3C4kRDMNzku9/s0jBU2T7zZsFSj767paH3m5Y3drbhbh3eTMBQiFI4H2qeezPjhI3VaNUUVq
+ As2YZ3AM1/jnFjqe8Wx8fXXhN7YTj+83gPJOQA7eFkRJrcq4Uh7oN3dX3110XLmwsJfHTCGahR
+ dZGO2NBo5VOrmg50ygWWmYNZHUpnUKLZkWrmRZ6oVXWGgkU6Kpq0P7pYRg+AhwQAmEBAAA=
+X-Change-ID: 20241030-uvc-subdev-89f4467a00b5
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Hans de Goede <hansg@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+ Yunke Cao <yunkec@chromium.org>, linux-gpio@vger.kernel.org, 
+ linux-usb@vger.kernel.org, Ricardo Ribalda <ribalda@chromium.org>, 
+ Hans Verkuil <hverkuil@kernel.org>, Hans de Goede <hansg@kernel.org>
+X-Mailer: b4 0.14.2
 
-On Fri, 18 Jul 2025 16:39:59 +0800 kernel test robot <lkp@intel.com> wrote:
+Some notebooks have a button to disable the camera (not to be mistaken
+with the mechanical cover). This is a standard GPIO linked to the
+camera via the ACPI table.
 
->    mm/hugetlb_cgroup.c: In function 'hugetlb_cgroup_file_init':
-> >> mm/hugetlb_cgroup.c:829:44: warning: '%s' directive output may be truncated writing up to 1623 bytes into a region of size between 32 and 63 [-Wformat-truncation=]
->      829 |   snprintf(cft->name, MAX_CFTYPE_NAME, "%s.%s", buf, tmpl->name);
->          |                                            ^~
->    mm/hugetlb_cgroup.c:829:3: note: 'snprintf' output between 2 and 1656 bytes into a destination of size 64
->      829 |   snprintf(cft->name, MAX_CFTYPE_NAME, "%s.%s", buf, tmpl->name);
->          |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->    mm/hugetlb_cgroup.c:829:44: warning: '%s' directive output may be truncated writing up to 2087 bytes into a region of size between 32 and 63 [-Wformat-truncation=]
->      829 |   snprintf(cft->name, MAX_CFTYPE_NAME, "%s.%s", buf, tmpl->name);
->          |                                            ^~
->    mm/hugetlb_cgroup.c:829:3: note: 'snprintf' output between 2 and 2120 bytes into a destination of size 64
->      829 |   snprintf(cft->name, MAX_CFTYPE_NAME, "%s.%s", buf, tmpl->name);
->          |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+4 years ago we added support for this button in UVC via the Privacy control.
+This has three issues:
+- If the camera has its own privacy control, it will be masked.
+- We need to power-up the camera to read the privacy control gpio.
+- Other drivers have not followed this approach and have used evdev.
 
-In theory,
+We fixed the power-up isses with "granular power saving", but the other
+issues are still open.
 
-#define MAX_CFTYPE_NAME = 64
-sizeof(cft->name) = MAX_CFTYPE_NAME
-sizeof(buf) = 32
-sizeof(tmpl->name) = MAX_CFTYPE_NAME
+This patchset implements the Privacy GPIO as a evdev.
 
-But in practice there should never really be an overflow, since the longest
-name so far "rsvd.max_usage_in_bytes" is 23 characters long and the longest
-hugepage size string is "64KB" or "32MB"...
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+Changes in v5:
+- Drop UVC_GUID_EXT_GPIO_CONTROLLER
+- Remove merged patches and patches that will conflict with uvc-rotation
+- Rebase
+- Link to v4: https://lore.kernel.org/r/20241125-uvc-subdev-v4-0-51e040599f1a@chromium.org
 
-Unless someone makes a horrendously long name, I think we should be good.
-With that said, char *mem_fmt only returns strings of up to 4 characters long.
-Maybe we can shrink sizeof(buf) to be 4 and explicitly truncate the last
-5 bytes (account for '.') of tmpl->name? I can spin something up.
+Changes in v4:
+- Remove gpio entity, it is not needed.
+- Use unit->gpio.irq in free_irq to make smatch happy.
+- Link to v3: https://lore.kernel.org/r/20241112-uvc-subdev-v3-0-0ea573d41a18@chromium.org
 
-Curious what others think though. Is this fix necessary? We really should
-never overflow anyways.
+Changes in v3:
+- CodeStyle (Thanks Sakari)
+- Re-implement as input device
+- Make the code depend on UVC_INPUT_EVDEV
+- Link to v2: https://lore.kernel.org/r/20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org
 
-Thank you Kernel Test Robot!
-Joshua
+Changes in v2:
+- Rebase on top of https://patchwork.linuxtv.org/project/linux-media/patch/20241106-uvc-crashrmmod-v6-1-fbf9781c6e83@chromium.org/
+- Create uvc_gpio_cleanup and uvc_gpio_deinit
+- Refactor quirk: do not disable irq
+- Change define number for MEDIA_ENT_F_GPIO
+- Link to v1: https://lore.kernel.org/r/20241031-uvc-subdev-v1-0-a68331cedd72@chromium.org
 
-Sent using hkml (https://github.com/sjp38/hackermail)
+---
+Ricardo Ribalda (5):
+      media: uvcvideo: Factor out gpio functions to its own file
+      media: uvcvideo: Re-implement privacy GPIO as an input device
+      media: uvcvideo: Introduce UVC_QUIRK_PRIVACY_DURING_STREAM
+      media: uvcvideo: Make gpio_unit entity-less
+      media: uvcvideo: Remove UVC_EXT_GPIO entity
+
+ drivers/media/usb/uvc/Kconfig      |   2 +-
+ drivers/media/usb/uvc/Makefile     |   3 +
+ drivers/media/usb/uvc/uvc_ctrl.c   |  20 ------
+ drivers/media/usb/uvc/uvc_driver.c | 135 ++---------------------------------
+ drivers/media/usb/uvc/uvc_entity.c |   1 -
+ drivers/media/usb/uvc/uvc_gpio.c   | 139 +++++++++++++++++++++++++++++++++++++
+ drivers/media/usb/uvc/uvc_status.c |  13 +++-
+ drivers/media/usb/uvc/uvc_video.c  |   4 ++
+ drivers/media/usb/uvc/uvcvideo.h   |  38 ++++++----
+ include/linux/usb/uvc.h            |   3 -
+ 10 files changed, 185 insertions(+), 173 deletions(-)
+---
+base-commit: d968e50b5c26642754492dea23cbd3592bde62d8
+change-id: 20241030-uvc-subdev-89f4467a00b5
+
+Best regards,
+-- 
+Ricardo Ribalda <ribalda@chromium.org>
+
 
