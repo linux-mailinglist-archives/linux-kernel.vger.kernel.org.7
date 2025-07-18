@@ -1,160 +1,138 @@
-Return-Path: <linux-kernel+bounces-737023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 266A2B0A6B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 16:58:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89F54B0A6BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:00:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBF9017CB71
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:58:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B04B177D41
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D89F2DD5E0;
-	Fri, 18 Jul 2025 14:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C5F82DCF71;
+	Fri, 18 Jul 2025 15:00:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="P5M6zAxh";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="V7rfwEYr"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DStL56Kj"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2651186284;
-	Fri, 18 Jul 2025 14:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF1714D283
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 15:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752850701; cv=none; b=KXugm9Li6kvy1Evmf9M0mS3TY438QsUO9GaZXu1LLBl7oDzAjcsBNOUYFfU2lCIlDhHQbxbKNlaMXcigE6MVgXKQ9xjFRyOnxBgBxWBBPdpPnqxQN/Da/Wioni2LJ1TysCBIZe1nEytDqz+GmDJwn5a1UcWrywXG/niyEVvd9c8=
+	t=1752850821; cv=none; b=CpBP31deQRt/rlf+r1TFXIIeT0n344EpRt0YCOZUEYck+6e8VlaSCRElv2yn8cK2rOhIWxlHKF+qkcmEHs2knXETBCVCHmZGXFiwU70j8yKqn4MGj5bW9UhIW9dP0O7TeT6GD6BoyDR7WBbck1xZqU/qflxFIh2FJ2awULXv+7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752850701; c=relaxed/simple;
-	bh=xVMfBgl1l3GHsKKQVU8yKnQCBPFluy2E1a7pDYpZ2ok=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=KQQ3GjsO23OzwcUudAPxwFer/mAxBdWXCSyEKovINXaeZtgudG1CrSdhpBc94//MtIJIQpa0oEhtaKnlpGTC6etPANFli8qU1MsphaM94XCdOiMeDq2fMwvg6AeNQE+FVZkAIWa4KwuOJcFes0Jn4+sLRA1Dp8aW3X+j3gDUkzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=P5M6zAxh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=V7rfwEYr; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752850698;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OYKTQi7OGOSXX22a4In+1PmPa1DfLGyOjSg+4bTlG50=;
-	b=P5M6zAxhLcfQMlUW3I05OZ+NvjToiLLyfeSlKCsY4Gr4KPOHr6zJzK0wktDKpVjJ67//ns
-	+9MuFPOU/oZhpbNSaEHbQ4Yg/9jJYGmqWM9/KdA/avDNTInn6U2FAXjK5MWukksPA7q5gv
-	gNBJDFp9L1LAO9MT4NtS87KfrrqPsnMMGetsdkYiAra6zTl6UOdrqn+kok/p88NZFWH4l5
-	uptjOJcvbUqGM0mvMjU35ge+ry7CY83uOjzvLtwyInpk8kbjfoP0F8w82FbPP0pzkhvdRJ
-	jc+/1i65b0ijqhgdnqv1oEFU7vkhFUHAxE5pvRxWtcMx2tkTMfmy3LgX/uy4tQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752850698;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OYKTQi7OGOSXX22a4In+1PmPa1DfLGyOjSg+4bTlG50=;
-	b=V7rfwEYreWuuiv1/eKSw45w4yn+UKBjxr36pto18piKULXM7ErzkFmZfHvUgxocW7MUEFZ
-	e0BRu5heCfvyJyCg==
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Gabriele Monaco <gmonaco@redhat.com>,
-	linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Nam Cao <namcao@linutronix.de>
-Subject: [PATCH 2/2] verification/rvgen: Do not generate unused variables
-Date: Fri, 18 Jul 2025 16:58:11 +0200
-Message-Id: <636b2b2d99a9bd46a9f77a078d44ebd7ffc7508c.1752850449.git.namcao@linutronix.de>
-In-Reply-To: <cover.1752850449.git.namcao@linutronix.de>
-References: <cover.1752850449.git.namcao@linutronix.de>
+	s=arc-20240116; t=1752850821; c=relaxed/simple;
+	bh=u5Uimzpn68rKoDXEiNCN9Z2LTkmsdzYhRRN6TNmd3tE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=e9JiwfMXRhYEKWP8134VreHfbNHgBOib1dfTdJjleLmCFPWtnV/mW1v2P0VEW0pGN/VSpkiG1ltqgGC913RTP4CaG3UNcnVoCR8mUIQBQNuOgjOgYfNUnZwcQwXIhs75Hf5XaQRS6CEvroDlmjjzSo3/3riGDyI+LHHsw2P2H6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DStL56Kj; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-31cb5cc3edcso1605915a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 08:00:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752850819; x=1753455619; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vupMdWkKONZrvWZyxZjI9RuKIWcmnqNg++2GIJkgpb8=;
+        b=DStL56KjvtxW57lZb2jud+rfwtIYn9rkOcGnpzQgoCP7Q670+y8Yu6yDMr4MbPcw0y
+         jNe6AYRmAuVFQuwL2CSgmXXpxarawumEaaSdhQrO6QQ6prTcWYT+8zSzbxJp8+m1+8uo
+         K8NirltQceb+sEYaahB/7N6QenvQ0jhRlGuLkcKK/sURs4OH/gnJWxjEayA0LGO6cKfn
+         LevCU9hT9EtV7XeuS306s3VnIrHVclbAGR4qjzEXBKG6cuVJjEbEoXHO0OayYQi2BTVm
+         wv7g8YqnB+EZNrAcnb8Q8S9ZsRj/u0F3YUHdVIT1oDsJlSjyMR5OssLtjtl4e/kO1I0U
+         5ESA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752850820; x=1753455620;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vupMdWkKONZrvWZyxZjI9RuKIWcmnqNg++2GIJkgpb8=;
+        b=OHBOiXgPo9yra2mGqpqxzaD+gSnGvq2CelOd0Z6pTkjrcJRE/4wJd+EQi/z04pxZ3j
+         heHWCpYJg/vTD17xe1p9Q4jpIJje88vn0bGJe0nOC4iLxifdAakg8Go3S+nHYPR7+sKg
+         9X6OoUYnLd8t+la73ELlkCurGR4fer2y6lIEz/Xx1KiY3rTbk/ibb3rJHb4NoVyaYs4H
+         Uv0P4AQ9vW6EjJOJ8S1BgG3AWY1ihk4O+ZWqms2aYwm2nlpu24uG/P0F6Y1l0B8MusC3
+         Xbruap232zzmO9/zl23wraO512Z2b5AUPe/rJgx5efauDOh1bPeLvHduicGxYLIrE+be
+         Ssgg==
+X-Forwarded-Encrypted: i=1; AJvYcCW5V81UpEvWSbrye87DJ3q7j2NQUA1/sYQPlXRmwc6qWJReEgwcoQfKxMRvnYLrmcfYT4pS+7bskL5Sos0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2D6/PtkijZuF3ssNJSei01PjnOo3q3wlL3PLvjPa0fG0KtrE2
+	foi8iGUe/6u75znInkhu5ihV7qBCsu9YZz3oZ3FlGsxsEzM2U7woKvA1rTmKrW4XFNS3fbYWzZ4
+	d04IYGw==
+X-Google-Smtp-Source: AGHT+IFjxELA0BNq1G4E0QijL5FN9/8iFWVvHq5YSj689yONqS6ui827UBJhsYL4QvQGyIsYC6a3QGkZb5I=
+X-Received: from pjee13.prod.google.com ([2002:a17:90b:578d:b0:311:f699:df0a])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2e46:b0:313:2754:5910
+ with SMTP id 98e67ed59e1d1-31c9f3eea5amr15965053a91.15.1752850819578; Fri, 18
+ Jul 2025 08:00:19 -0700 (PDT)
+Date: Fri, 18 Jul 2025 08:00:17 -0700
+In-Reply-To: <kb7nwrco6s7e6catcareyic72pxvx52jbqbfc5gbqb5zu434kg@w3rrzbut3h34>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20250716110737.2513665-1-keirf@google.com> <20250716110737.2513665-3-keirf@google.com>
+ <kb7nwrco6s7e6catcareyic72pxvx52jbqbfc5gbqb5zu434kg@w3rrzbut3h34>
+Message-ID: <aHphgd0fOjHXjPCI@google.com>
+Subject: Re: [PATCH v2 2/4] KVM: arm64: vgic: Explicitly implement
+ vgic_dist::ready ordering
+From: Sean Christopherson <seanjc@google.com>
+To: Yao Yuan <yaoyuan@linux.alibaba.com>
+Cc: Keir Fraser <keirf@google.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	Eric Auger <eric.auger@redhat.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
 
-ltl2k generates all variable definition in both ltl_start() and
-ltl_possible_next_states(). However, these two functions may not use all
-the variables, causing "unused variable" compiler warning.
+On Thu, Jul 17, 2025, Yao Yuan wrote:
+> On Wed, Jul 16, 2025 at 11:07:35AM +0800, Keir Fraser wrote:
+> > In preparation to remove synchronize_srcu() from MMIO registration,
+> > remove the distributor's dependency on this implicit barrier by
+> > direct acquire-release synchronization on the flag write and its
+> > lock-free check.
+> >
+> > Signed-off-by: Keir Fraser <keirf@google.com>
+> > ---
+> >  arch/arm64/kvm/vgic/vgic-init.c | 11 ++---------
+> >  1 file changed, 2 insertions(+), 9 deletions(-)
+> >
+> > diff --git a/arch/arm64/kvm/vgic/vgic-init.c b/arch/arm64/kvm/vgic/vgic-init.c
+> > index 502b65049703..bc83672e461b 100644
+> > --- a/arch/arm64/kvm/vgic/vgic-init.c
+> > +++ b/arch/arm64/kvm/vgic/vgic-init.c
+> > @@ -567,7 +567,7 @@ int kvm_vgic_map_resources(struct kvm *kvm)
+> >  	gpa_t dist_base;
+> >  	int ret = 0;
+> >
+> > -	if (likely(dist->ready))
+> > +	if (likely(smp_load_acquire(&dist->ready)))
+> >  		return 0;
+> >
+> >  	mutex_lock(&kvm->slots_lock);
+> > @@ -598,14 +598,7 @@ int kvm_vgic_map_resources(struct kvm *kvm)
+> >  		goto out_slots;
+> >  	}
+> >
+> > -	/*
+> > -	 * kvm_io_bus_register_dev() guarantees all readers see the new MMIO
+> > -	 * registration before returning through synchronize_srcu(), which also
+> > -	 * implies a full memory barrier. As such, marking the distributor as
+> > -	 * 'ready' here is guaranteed to be ordered after all vCPUs having seen
+> > -	 * a completely configured distributor.
+> > -	 */
+> > -	dist->ready = true;
+> > +	smp_store_release(&dist->ready, true);
+> 
+> No need the store-release and load-acquire for replacing
+> synchronize_srcu_expedited() w/ call_srcu() IIUC:
 
-Change the script to only generate used variables.
+This isn't about using call_srcu(), because it's not actually about kvm->buses.
+This code is concerned with ensuring that all stores to kvm->arch.vgic are ordered
+before the store to set kvm->arch.vgic.ready, so that vCPUs never see "ready==true"
+with a half-baked distributor.
 
-Signed-off-by: Nam Cao <namcao@linutronix.de>
----
- tools/verification/rvgen/rvgen/ltl2k.py | 25 +++++++++++++++++++++----
- 1 file changed, 21 insertions(+), 4 deletions(-)
-
-diff --git a/tools/verification/rvgen/rvgen/ltl2k.py b/tools/verification/r=
-vgen/rvgen/ltl2k.py
-index 59da351792ec..b075f98d50c4 100644
---- a/tools/verification/rvgen/rvgen/ltl2k.py
-+++ b/tools/verification/rvgen/rvgen/ltl2k.py
-@@ -106,20 +106,25 @@ class ltl2k(generator.Monitor):
-         ])
-         return buf
-=20
--    def _fill_atom_values(self):
-+    def _fill_atom_values(self, required_values):
-         buf =3D []
-         for node in self.ltl:
--            if node.op.is_temporal():
-+            if str(node) not in required_values:
-                 continue
-=20
-             if isinstance(node.op, ltl2ba.AndOp):
-                 buf.append("\tbool %s =3D %s && %s;" % (node, node.op.left=
-, node.op.right))
-+                required_values |=3D {str(node.op.left), str(node.op.right=
-)}
-             elif isinstance(node.op, ltl2ba.OrOp):
-                 buf.append("\tbool %s =3D %s || %s;" % (node, node.op.left=
-, node.op.right))
-+                required_values |=3D {str(node.op.left), str(node.op.right=
-)}
-             elif isinstance(node.op, ltl2ba.NotOp):
-                 buf.append("\tbool %s =3D !%s;" % (node, node.op.child))
-+                required_values.add(str(node.op.child))
-=20
-         for atom in self.atoms:
-+            if atom.lower() not in required_values:
-+                continue
-             buf.append("\tbool %s =3D test_bit(LTL_%s, mon->atoms);" % (at=
-om.lower(), atom))
-=20
-         buf.reverse()
-@@ -135,7 +140,13 @@ class ltl2k(generator.Monitor):
-             "ltl_possible_next_states(struct ltl_monitor *mon, unsigned in=
-t state, unsigned long *next)",
-             "{"
-         ]
--        buf.extend(self._fill_atom_values())
-+
-+        required_values =3D set()
-+        for node in self.ba:
-+            for o in sorted(node.outgoing):
-+                required_values |=3D o.labels
-+
-+        buf.extend(self._fill_atom_values(required_values))
-         buf.extend([
-             "",
-             "\tswitch (state) {"
-@@ -166,7 +177,13 @@ class ltl2k(generator.Monitor):
-             "static void ltl_start(struct task_struct *task, struct ltl_mo=
-nitor *mon)",
-             "{"
-         ]
--        buf.extend(self._fill_atom_values())
-+
-+        required_values =3D set()
-+        for node in self.ba:
-+            if node.init:
-+                required_values |=3D node.labels
-+
-+        buf.extend(self._fill_atom_values(required_values))
-         buf.append("")
-=20
-         for node in self.ba:
---=20
-2.39.5
-
+In the current code, kvm_vgic_map_resources() relies on the synchronize_srcu() in
+kvm_io_bus_register_dev() to provide the ordering guarantees.  Switching to
+smp_store_release() + smp_load_acquire() removes the dependency on the
+synchronize_srcu() so that the synchronize_srcu() call can be safely removed.
 
