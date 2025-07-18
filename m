@@ -1,180 +1,128 @@
-Return-Path: <linux-kernel+bounces-737345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CFCFB0AB2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 22:46:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84887B0AB2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 22:48:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA8325A094C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 20:46:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A5F97B2E93
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 20:47:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D01B121CA0E;
-	Fri, 18 Jul 2025 20:46:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE95321C19E;
+	Fri, 18 Jul 2025 20:48:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T+BRTgRM"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hk66aEtO"
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A971E0DCB;
-	Fri, 18 Jul 2025 20:46:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A891990A7
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 20:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752871566; cv=none; b=t7TXZH8yKRT2uiE1UXQHOYB8AqKf1/n5rh7GeCiCML1ym0lDOTtLkwbBJo+wjpXD3QM3yj+G13kEfDC60bvGnVtC6agRp8TrcWAMR+U+rGi45YKEt4+Xn7WJjt4Ced5I5iOTGxivme/O0jErMSI2a0MAh3l+aJvTXPbQPQwEA+U=
+	t=1752871708; cv=none; b=OMiizeaeb4i/L3ytE1vxxtQ1KBxncFBIchlljDlPvlcrjGlkgqwEwFEALYSvo7NOiCnoV31KS2poe7Fgzf7AMh9y2tNP0xmZzMFNdWJD4UUXLIcPjAX+hdpjzG3zQGdiAjOKWq3sh/RCgAGWqOSygAZ8IG9CU4uTyhgeSfyw+qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752871566; c=relaxed/simple;
-	bh=uXAK2LcN+D1aB2LwqkwZRyXZHRbBhvjT7o6KbAa+ppk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GY0HganyK4cEcXLq2FdEuR7eixw3bjYmgA844XVYm6ec74kzw4nYnyFscPiKq/i5T6ZOE9du3yVrU/0yhsTWtbXDIdvm5jbIUFZkRoZVGnKvqzE2oDtEKv/A+o8xbW2WQvdMIOZjY4TK7fcv957vyQlCf2QDUT6fcUg3NpExBx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T+BRTgRM; arc=none smtp.client-ip=209.85.214.179
+	s=arc-20240116; t=1752871708; c=relaxed/simple;
+	bh=E938gfSru+guvf0sXkbNi6ybcJ95VMcvY+J4V1M/20Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ohfTkhp80fVJF1A5hzIhbmneZ2ITMaII+a2WlCgRUEAz6hYI79EC1B5JofJljwECzXvJyuDMg15mBMH17Rf7G44urxrbUHsaYd8gx9J1pj1y3hxac5vS1foYdzkIC46WSa6FWTrvuEAhEvMKkfFdkrCzL/SW4f+zQWq6R4bnysI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hk66aEtO; arc=none smtp.client-ip=209.85.161.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2352400344aso23545195ad.2;
-        Fri, 18 Jul 2025 13:46:04 -0700 (PDT)
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-615a80bb75cso738621eaf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 13:48:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752871564; x=1753476364; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uXAK2LcN+D1aB2LwqkwZRyXZHRbBhvjT7o6KbAa+ppk=;
-        b=T+BRTgRMn94IrvUTdoX2H+Zsu1XQkEFi6rSIwZ6rU+JiM9vcQLljDWtHcaTLLTOKls
-         PDUEdU++7SSgjtuKHXEFLMt//1HsQiUNqc88lsqDZtHF+FLGRxXGJ9i577a+TuuIp9fi
-         CpmpOPvnIgoix1wXHtnZFz2Y2+r+GAz8YGDIX3Nz1WptJ7S9jeIae3M9jcAx8v9tyHHE
-         UvP5mk6qZNhZxOgvjsXtcllri0rn2se4dt3qr3+n0mfCKB9EdW69rHBHuuPnNaEd7XsD
-         asEwNy7Uiq9hqNK8Zyo/5rLGnQGSqrnRa821MfVujRUvBUm6HTf9JbcF55t5FJv0aNdk
-         o7JA==
+        d=gmail.com; s=20230601; t=1752871706; x=1753476506; darn=vger.kernel.org;
+        h=user-agent:content-transfer-encoding:content-disposition
+         :mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=9oIVrVDDd270NCSeXL22MIJ9Y/QmfkZjZzqk8mfVCgM=;
+        b=Hk66aEtO2DxY/gU2nmvbUMao/QY8vK4cea7BzpRJgbHAMQJr1jqHx8kaw0EfkzcYMY
+         25doQI72Mfi0ISmPXOYmpG+fuSp94GqJxQHnStHJ658sF8oQhlFykJnuDPxdT+52yGCr
+         vn9lRM/FvsaTnmgLCbCNFkj+S7vf8MMQX1y8qIeApzim6JNTrl6vIx27paoPWM90Q5MO
+         5YC8FVWeuvPR87VlxICz7pRrj4mdqET11DoZ1yfXEZ5tzoRcSleBCnsjiJiRdm6fB6LX
+         Yi/g0vI2LI9Jt3i+xJ+7DlfV5A1VINn3HhOMh7rYHysbfbqshZtcIPGNyxC7hSjnq7HH
+         ttmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752871564; x=1753476364;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uXAK2LcN+D1aB2LwqkwZRyXZHRbBhvjT7o6KbAa+ppk=;
-        b=PdxzQV+GFaeYr2z2JZh7WuufzJUVXyatnEZQymqXDNM1vGFxKQrylQW7gpQlRoXw9T
-         HBptBdRgDVfVEt9YHYg8D7sKqjZgQtEnolemC1SqP1PFBXaAbro20Qh/6cpdklN/Uczr
-         M/EFzqorR3WgwLdNTqJrmQC6GNDKgQpKxRwtwsL8USXEtnmeXBwqo0/dzBCsneGw96ep
-         mzdKwG74EhcFc4mQnfGajFfeMzZA7Dy9Gd38bAZeVtN5hzD7/Q35uJvSkYLKRmJFNhvW
-         xotSBv2KVSJ8pI9eUcBUNXMIOqguMVAshTgPFvertHV4rueAG+T7GoOYKqq9TyKrLOX6
-         EHPw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/jFb385JOhFAR+OxIQDe6IaEM7lM1pzS8n4TmHTgg8slO+sjPvJAvEzvhPwzpLUQ2luRgLSj5yf71ojE9@vger.kernel.org, AJvYcCXKV0MUkMFWqvJYJeY3udCWl3Fqg59ttzAF6NgAOhOnGzjONFkfD4Oyaa5u0s0zLLKugwV8d2LfCqDp@vger.kernel.org, AJvYcCXxXD6z0lHert2a+IyreLLixvGuiF0UKX2JxMCnuY/2tsfwrVffeSbXiwy8sOyS75isDEOJLz1HrVWO8uEf8Sd26w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFKhUtJJIkL7AA5rHufSmstDOpwe5GSF4XEHj+lk9puyrWqkIE
-	b+TX7ga/q6WGCq1hCFHYL3Qu6nMVbl7HKBzpp/7VOx/IwNeGEdC3TYGr
-X-Gm-Gg: ASbGncsK2TYXSmUhd8g58u72nCGWUhn8/KGzj+6vZrVlc0K5AiwFNMTyY8/z8MMtmGF
-	Ky78VRduDTyUT3AE7/dUfMuSHOoqMY5kcrQBDus5RBRm1u3CdE+iFLXeU5tZcjWWV9REQDtp/xs
-	K6XHgNCj3HZLKQsq/I7Yj/4sOmMIL/FbRsKTdeeu81Ka1XEAFani1DXSTZwufdwNmqNUwHiPWBa
-	jXSkntJHQVJP1NjTHFJ6Nnw1WMEui/p6mkb94/G4P18+2x3K5VkroW6FMXy5YYAFoZcHytVjHj7
-	WmUqdnlA6M70guXFzIU/shFtKTjRMiijTFJiMsn9yWXTorQNpIi5/Bg5GhpGsnN8PLa5wjgoDhx
-	P3GuQtIRoAJ6Xpe3aZpnpnqDW+TRAv8ErTqmxZ6iMbCHYnbUN59CUOVVAHe1fpYE=
-X-Google-Smtp-Source: AGHT+IFfAzmfpnYky0WJeFj+PkACVQRkUKSaLnIxhEt/NV8Uzws4ecq5iTsonExxyL5PHW/z3ZTr5A==
-X-Received: by 2002:a17:90b:3cc6:b0:30a:4874:5397 with SMTP id 98e67ed59e1d1-31c9e6fbb09mr17031670a91.9.1752871563843;
-        Fri, 18 Jul 2025 13:46:03 -0700 (PDT)
-Received: from [192.168.0.109] (061092221177.ctinets.com. [61.92.221.177])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b61566bsm17746325ad.81.2025.07.18.13.46.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Jul 2025 13:46:03 -0700 (PDT)
-Message-ID: <2b69fbd1-067e-4ff4-8ea4-88e32763209a@gmail.com>
-Date: Sat, 19 Jul 2025 04:45:58 +0800
+        d=1e100.net; s=20230601; t=1752871706; x=1753476506;
+        h=user-agent:content-transfer-encoding:content-disposition
+         :mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9oIVrVDDd270NCSeXL22MIJ9Y/QmfkZjZzqk8mfVCgM=;
+        b=mchlKDHkFmxJB3sm2Cj33WBu9ncmHOoCs/8oxAyBDb/uMyStcScwrL0kFrD+NR/u+L
+         zzBe3TJUrjPOYRGjNjoDOIwpWrtzko+4/ZOna7HFbPXNcfi762NZnWa9q+EopOBt3R3X
+         SFpaL2Pvv4/Avtzhi0/5GSclqQLscHKa2L/Vbb8HtHufXOEbZbfjtmlvwuLCFQN1UslT
+         R1/Cjh5qRseTNWeT7dOruiq+9QTphprC8plmkqteULxOxrQ7hl31T8mcQFnohhOQFm4R
+         yzuSGdU68BwUHRx+uzgDZ4+bMjPnKCwqYCh9gGNNqoNfxUT3lSGBBRSMC07KZQVWWY6L
+         wIoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXcM6bN739ZnHl/88x5ULp5BmchdkoO+/HKPHETrNCegodYn7wyREmep8fS+xuKTquC+HBknrPhEPyelUc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPaPwS0h+36pHsRXgLzbI1xI3DQifLdZAa75tbjVKOby1L5SzM
+	0Q00EkjyeaGMDJmBGZufXWKcsNBpx2jwlZn6paDqSoxOHRBgbOr9S4OhlobYMZIBzcY=
+X-Gm-Gg: ASbGnct84nUsXe2GFjnKebsnaljyDlX33P0exzRhYBtaj/FU/i8O9ckuPKXz4e6w2dX
+	xeHNTOxF7009CeayYkgpS1WQCW+mQ1Yfq0OJYFlwHDGYfBREAYVjqjlK+2wi6KaVdRNKtDp6aJw
+	KmI3jRnleVxiSBal+GN2wLLc0Q9lD08G8fokcWJeeVTJOt7FGuRe3sRYhpsozfbMdCqG3xyFd+c
+	3jeBZFcSTbr6uKdJmBhwKRNCR7jQMJhp5WWCKene0IYt2xOvfWF+Vcrd75o3v36Rhxo+NI8GtWb
+	YD+xl2x0wrBEQ/Vvfr2KjNpYbC2FGwjwpHz5tMq3C01Bg+ZjkFczoS6jd/D4k+a8SngcepA947E
+	iJGSGLMG2Gg/tJ+ETNxKTp506Xc+du2NdKYsfKK/zT8ANRgP3zA0KFs4+j5xBsQ==
+X-Google-Smtp-Source: AGHT+IGdmIPKvJ3cwCYg1hwJE7y2soAfHO512/2kvqH54mi4z8iHRVaBPxk26jyH7Nwi/zKBe6S2zw==
+X-Received: by 2002:a05:6820:2010:b0:615:ae24:916c with SMTP id 006d021491bc7-615bbc0563dmr2656824eaf.4.1752871705970;
+        Fri, 18 Jul 2025 13:48:25 -0700 (PDT)
+Received: from MacBook-Pro-de-Ignacio.local ([181.161.11.224])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-615bcc8c2dbsm528180eaf.20.2025.07.18.13.48.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Jul 2025 13:48:25 -0700 (PDT)
+Date: Fri, 18 Jul 2025 16:48:22 -0400
+From: Ignacio =?utf-8?B?UGXDsWE=?= <ignacio.pena87@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: [PATCH v3] staging: sm750fb: make fixId array static const char *
+ const
+Message-ID: <aHqzFn6CfgWLNa0A@MacBook-Pro-de-Ignacio.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v7 00/21] drivers/perf: apple_m1: Add Apple A7-A11,
- T2 SoC support
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Will Deacon <will@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
- Neal Gompa <neal@gompa.dev>, Sven Peter <sven@kernel.org>,
- Marc Zyngier <maz@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org,
- asahi@lists.linux.dev, linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20250616-apple-cpmu-v7-0-df2778a44d5c@gmail.com>
- <aHUeUMmn_19EayL1@willie-the-truck>
- <be327242-ad55-476a-bed4-44c33c263962@gmail.com>
- <aHkRJdAuvhS2mNQj@J2N7QTR9R3>
- <705f1dfb-7e1b-4930-a1a9-c763299a4305@gmail.com>
- <aHph5u4-b6mfggPv@J2N7QTR9R3>
-Content-Language: en-US
-From: Nick Chan <towinchenmi@gmail.com>
-In-Reply-To: <aHph5u4-b6mfggPv@J2N7QTR9R3>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.x.x (Linux)
 
+Fix checkpatch warning for the fixId array only:
+"WARNING: static const char * array should probably be
+ static const char * const"
 
-Mark Rutland 於 2025/7/18 夜晚11:01 寫道:
-> On Fri, Jul 18, 2025 at 01:00:45AM +0800, Nick Chan wrote:
->> On 17/7/2025 23:05, Mark Rutland wrote:
->>> On Mon, Jul 14, 2025 at 11:59:36PM +0800, Nick Chan wrote:
->>>> Will Deacon 於 2025/7/14 夜晚11:12 寫道:
->>>>> On Mon, Jun 16, 2025 at 09:31:49AM +0800, Nick Chan wrote:
->>>>>> Patch 8-12 adds support for the older SoCs.
->>>>> ... but I'm not sure if anybody actually cares about these older SoCs
->>>>> and, even if they do, what the state of the rest of Linux is on those
->>>>> parts. I recall horror stories about the OS being quietly migrated
->>>>> between CPUs with incompatible features, at which point I think we have
->>>>> to question whether we actually care about supporting this hardware.
->>>> The "horror" story you mentioned is about Apple A10/A10X/T2, which
->>>> has a big little switcher integrated into the cpufreq block, so when the
->>>> cpufreq driver switch between states in the same way as on other
->>>> SoCs, on these SoCs that would silently cause a CPU migration. There
->>>> is only one incompatible feature that I am aware of which is 32-bit EL0
->>>> support.
->>> Surely the MIDR/REVIDR/AIDR also change?
->> They do not change. ID_AA64PFR0_EL1 also does not change (fixed 0x12).
->> What *does* change however is MPIDR. (P-cores has bit 16 set while
->> E-cores do not)
-> The MPIDR changing isn't ok either. You might get away with that today,
-> but that's not supposed to change behind the back of the kernel.
->
-> Is there anything else that can change, or are we absolutley certain
-> that *only* MPIDR changes?
+The g_fbmode array cannot be made const as it is modified at runtime
+in lynxfb_setup() and lynx_alloc().
 
-Only MPIDR changes, and the state of bit 16 in MPIDR is consistent across all PEs. (At any
-given moment, either all PEs are backed by efficiency cores, or all backed by performance
-cores)
+Signed-off-by: Ignacio Peña <ignacio.pena87@gmail.com>
+---
+v3: Apologies for the confusion. v2 accidentally included changes to 
+    g_fbmode which breaks the build. This version ONLY changes fixId
+    which is never modified.
 
->
->>>> As mentioned above, it does all work fine when CONFIG_EXPERT is not
->>>> enabled, and if it is enabled, then 32-bit process may crash with illegal
->>>> instruction but everything else will still works fine.
->>> I don't think that's quite true, unless these parts are also violating
->>> the architecture.
->>>
->>> If the CPU doesn't implement AArch32, then an ERET to AArch32 is
->>> illegal. The way illegal exception returns are handled means that this
->>> will result in a (fatal) illegal execution state exception being taken
->>> from the exception return code in the kernel, not an UNDEF being taken
->>> from userspace that would result in a SIGILL.
->> Speaking from experience, when testing with the userspace cpufreq governor,
->> trying to run AArch32 code on the ecores really does result in illegal
->> instruction for that process while everything else remains fine.
->>
->> Referencing ID_AA64PFR0_EL1, the E-cores does claim to support
->> AArch32 EL0, even though they could not execute it for real.
-> Ok, so that's a clear violation of the architecture, and doesn't fill me
-> with confidence about anything else.
+v2: Only change fixId array. The g_fbmode array is modified at
+    runtime (lines 786, 788, 949, 953) and cannot be const.
 
-Regarding this, the hardware also needs to handle the case where the PE is already in AArch32
-EL0 and migration to E-cores is attempted. In this case there is no exception return happening so
-the behavior of the hardware is not as bad as it sounds.
+ drivers/staging/sm750fb/sm750.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
->
->>> I do not think that we should pretend to support hardware with silent
->>> microarchitectural migration. So at the very least, we do not care about
->>> A10/A10X/T2.
->> As explained above, what actually happens on the hardware is different
->> from what you believed, so please do reconsider.
-> Different certainly, but still problematic.
->
-> I maintain that we should not pretend to support this hardware.
->
-> Mark.
->
-Nick Chan
+diff --git a/drivers/staging/sm750fb/sm750.c b/drivers/staging/sm750fb/sm750.c
+index 039e6875c894..c237a8f8eb59 100644
+--- a/drivers/staging/sm750fb/sm750.c
++++ b/drivers/staging/sm750fb/sm750.c
+@@ -730,7 +730,7 @@ static int lynxfb_set_fbinfo(struct fb_info *info, int index)
+ 		"kernel HELPERS prepared vesa_modes",
+ 	};
+ 
+-	static const char *fixId[2] = {
++	static const char * const fixId[2] = {
+ 		"sm750_fb1", "sm750_fb2",
+ 	};
+ 
+-- 
+2.39.5 (Apple Git-154)
 
