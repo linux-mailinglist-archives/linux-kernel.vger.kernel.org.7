@@ -1,528 +1,926 @@
-Return-Path: <linux-kernel+bounces-736219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2679AB09A2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 05:32:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2606B09A34
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 05:34:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DC077B9F7F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:30:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D4713BB806
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:34:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC65A1BD9CE;
-	Fri, 18 Jul 2025 03:32:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2092E1C7017;
+	Fri, 18 Jul 2025 03:34:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YxpgrU+0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="TBI3D++p"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 379E62E3701
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 03:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506CC2E3701
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 03:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752809519; cv=fail; b=KkOINdEsoiveQQhXTTe3P8yQ8mFvR6dsGpCoIix6CsXZGLlyWsYmTjNX2yjnWHnP5bXhJNHoAFyCOmi32VO0hlGpvFHg9fUNtOwgESP7T8QXV2vHF+BRqkwsmOEgPJo79pCGGc4Iz9hCvu15IGBQxWkUfeijGDqxnS03YfAfs0s=
+	t=1752809688; cv=pass; b=d7iNTkNw2hz0CyzNxBEyIC4PQ6qQNmigqdppujdbhqnzelLiZDYLBdhmlZ/Rr2ET4hF6N1V24kBqSUceNorUthnF0p8vtZemW9Um7dj0iwTC8cEKUPVOGbyM5fG3BonuxWT7YXOc3tmcWlKr8l9b2wb2uEiM9dZBVIxtWO4aOhw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752809519; c=relaxed/simple;
-	bh=sAj50p2VYVPtmP8oXkJibEiXejwHKa1KH+iQ8k1JQug=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=WYHd3NG0lXxQyVEP/AlJbIR+Am+vSb/k2/gIM6zYYyMaiqQUxQGMRwvov92LLuVRHIT0aR8uTtBUiFfs1ML42N6G14zBnc80GrN5EwxMMhRS4pWrXuypZCxCobXWCco734d1vAlXdntsELKrKNv4vUqAs9sp2izQcjPWeEr6vJ8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YxpgrU+0; arc=fail smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752809517; x=1784345517;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=sAj50p2VYVPtmP8oXkJibEiXejwHKa1KH+iQ8k1JQug=;
-  b=YxpgrU+0NWoDeFC/uybO6LURKTlkxL+/F2jDiTL/60AHBwGMOHBcIpfN
-   gW45PrCabyxX01AGPdoFNgFeP8I0I9Ve77m8jqUMXKCH38TV9X6x0PwBT
-   jbUeEwDu8IUAN6SpGiFDlkoL6/pxlO/WUGzuP7gwDwHx1Qy6sYDQ43iij
-   JTZO8xqGwlI11ZaOAJ/ncl6QG2Gf0HIHMnt01FRY1i36jIc02d9em+iCm
-   32Dj1ghkSZYjj6WZa4brxc0Kkkkb7bJjYoFolOkkdo17qPAiAlfQ9FInO
-   9I8HFNw7vdzXHZb+k24+sMlL3/7K63VGHMNs2XMXK/9XjrwqSOkaIWBjF
-   Q==;
-X-CSE-ConnectionGUID: bvHSrquwSfKdcdQspONiHQ==
-X-CSE-MsgGUID: Nf4NJCZRTpG4ICEkzAl3Fw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11495"; a="54811672"
-X-IronPort-AV: E=Sophos;i="6.16,320,1744095600"; 
-   d="scan'208";a="54811672"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 20:31:57 -0700
-X-CSE-ConnectionGUID: qLYUekBTTNSxsD32q3orHg==
-X-CSE-MsgGUID: +xpCc67QQxuUMDMwlsnaDw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,320,1744095600"; 
-   d="scan'208";a="163590572"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 20:31:56 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Thu, 17 Jul 2025 20:31:55 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Thu, 17 Jul 2025 20:31:55 -0700
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (40.107.102.74)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Thu, 17 Jul 2025 20:31:54 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ypd2E019HHnBgZ+bqXeRTPbGiuIaLGkoPyJpadpPna8w+hi9rj7kYU7RanBaULY/j4LUxOj4U777Ohf71IN55qXt0C0N6iEu9fyCugDecxYKX3du0oh0J+I4VFLEaNTGfArOZBRaUKzrFW8DFR5prmFuq1fidm6nZW0L0MX48+/++IfKohrGeJ9vj7JZruWt1UFu70QHg/ElkAykiqAZgX6X74Du/h6mVkJ8gN2rj7iGY8z/22qdKPVYRF1E8fmOyNAnjSSpSx27Il9tQwPPVhI1S9oH6UTtY3gTOOltdVyXAEFsp+OybuulzXXAf32nzqqKHIR/0q9jpo8sw04Z/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=M0JP6l97QYQtcHZAAz90N6vHuWJx893v5oFEIOWSwXw=;
- b=BYXqoho/0BfpYa0ZwYjE2LEWi+gkDn31Kp4y8Mw89d8zNV3/GowkwxHxeI/yI3yvwebtquDHX68KcQMPAgNJQHlo0zPK2hvBtYbzV9RXl7RgKUiM1qH8NtqXJV9EbSPdrOEL9C4LIDxFEUIw0DWSOClcAt2GZDyZm9ZTzapKl1IMVwVbpe9mnCC15DLVVA9tT7L9DuyIrs4VTdmlCZBye6Un8Oj0ZEccBQiAy3QX3ZydnN8edCz59QqAUEsNAq3wSRNkI0vwWMYVJL+w3wIcQN3XCi43bktscUDJ3OYfonJ4dSswCf5NTpV8uzuJ9w0X8SkS/V7gCxUYitxV5Bkkog==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BL3PR11MB6508.namprd11.prod.outlook.com (2603:10b6:208:38f::5)
- by DM4PR11MB7760.namprd11.prod.outlook.com (2603:10b6:8:100::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.39; Fri, 18 Jul
- 2025 03:31:38 +0000
-Received: from BL3PR11MB6508.namprd11.prod.outlook.com
- ([fe80::1a0f:84e3:d6cd:e51]) by BL3PR11MB6508.namprd11.prod.outlook.com
- ([fe80::1a0f:84e3:d6cd:e51%7]) with mapi id 15.20.8880.021; Fri, 18 Jul 2025
- 03:31:38 +0000
-Date: Thu, 17 Jul 2025 20:33:22 -0700
-From: Matthew Brost <matthew.brost@intel.com>
-To: Zi Yan <ziy@nvidia.com>
-CC: Balbir Singh <balbirs@nvidia.com>, <linux-mm@kvack.org>,
-	<akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>, Karol Herbst
-	<kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>, Danilo Krummrich
-	<dakr@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter
-	<simona@ffwll.ch>, =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-	Shuah Khan <shuah@kernel.org>, David Hildenbrand <david@redhat.com>, "Barry
- Song" <baohua@kernel.org>, Baolin Wang <baolin.wang@linux.alibaba.com>, "Ryan
- Roberts" <ryan.roberts@arm.com>, Matthew Wilcox <willy@infradead.org>, "Peter
- Xu" <peterx@redhat.com>, Kefeng Wang <wangkefeng.wang@huawei.com>, Jane Chu
-	<jane.chu@oracle.com>, Alistair Popple <apopple@nvidia.com>, Donet Tom
-	<donettom@linux.ibm.com>
-Subject: Re: [v1 resend 08/12] mm/thp: add split during migration support
-Message-ID: <aHnAgjaJeyKM+Osm@lstrano-desk.jf.intel.com>
-References: <906590D4-04E2-40CB-A853-25FE6212700C@nvidia.com>
- <eab52820-813f-4137-b664-c79ba8b453b7@nvidia.com>
- <aHc5/pmNLf4e9brJ@lstrano-desk.jf.intel.com>
- <1DD0079E-0AF6-49F5-9CB3-E440F36D2D9B@nvidia.com>
- <aHfSTdoi/M9ORrXE@lstrano-desk.jf.intel.com>
- <a7e8485f-e9da-4edb-a809-a014517f26eb@nvidia.com>
- <aHl4IuMlE9D6yaET@lstrano-desk.jf.intel.com>
- <9E024BB0-7365-4A81-81E1-72CB44A07775@nvidia.com>
- <aHmYVkNDRjz5JwNf@lstrano-desk.jf.intel.com>
- <9F4425D6-609F-40C8-BF24-2455F15234A7@nvidia.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9F4425D6-609F-40C8-BF24-2455F15234A7@nvidia.com>
-X-ClientProxiedBy: BYAPR11CA0082.namprd11.prod.outlook.com
- (2603:10b6:a03:f4::23) To BL3PR11MB6508.namprd11.prod.outlook.com
- (2603:10b6:208:38f::5)
+	s=arc-20240116; t=1752809688; c=relaxed/simple;
+	bh=lSZ11RYhQjlfc8AFji+N7nZ+AsqBp3T2EZDjkv6kedE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jdOKBU7C7CA9bwK+ZPCDa6Rw498ha1J06cB5tEgr59Mumy9bWJQvpd3kYOOI1mywgY9wXjk+N7HLFE6mIs2ChkbWoPHNdEbOdqvEIrKXF6tSj6ey1k146l/38+NKdcQNI9ZCHMt2KXqxgbl1IEpRBIQtYMbb7gnvGjMh9J/8Vhw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=TBI3D++p; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1752809672; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=dKXxVyGIENjmXYyTMXqiUSo/DK+ixSJCs0rrlFxveaTD9k7MZQp0M6T5Wfk4FUX4w7JvR2mdPZLx1pPmvlw1X+B79dUIpzvlQwwT8tRG1P+GMUWLSVQDZFV2hpBP6wdLbt8AwQ1t+txoqP0ejcP21T+jvXY8RcZ1mGb/ffgp8FE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1752809672; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=QFVsvXQkIU11HcEaRW2vwOxC3TZ6nLCIuUkIqSb61pM=; 
+	b=grGfzCXqS5DsVUJ9KyNf42CLqWmaC0+6AFgZe4q++HHKLAyGxAe8tTfV4Uhl3w6X4cQQ528C12gNYC2Dw7gS3HrP3yJDPS+QVK0/DXoMFpB08qGdp2wzcmdIRQTtO7bC05t+QJIPIGys9yrgqSIbX2ZD3eozBYNt6Z5XIQFAVpM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752809672;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=QFVsvXQkIU11HcEaRW2vwOxC3TZ6nLCIuUkIqSb61pM=;
+	b=TBI3D++pHEA9drcqIPhp21zfh20c/QHiswltAKzyANrzmnP6BkJwzhEq1loMnmsT
+	3nu9QWAL2azF/BoXUwzt9K5dZt9ceQOgEZSnDp4ZbErw6qwVDrln6IkiLdh5G9AX0dF
+	wW0pUkN/bh3hozrNCjni4KoNxV5KgL2q4xdcA88k=
+Received: by mx.zohomail.com with SMTPS id 1752809670154481.5733886832204;
+	Thu, 17 Jul 2025 20:34:30 -0700 (PDT)
+Date: Fri, 18 Jul 2025 04:34:25 +0100
+From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
+To: Lukas Zapolskas <lukas.zapolskas@arm.com>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>, 
+	Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 4/7] drm/panthor: Introduce sampling sessions to
+ handle userspace clients
+Message-ID: <xxzoh644c5rpaxnfxjwzjclokj6c2xbccqrfrh4bkixsdiklbo@qle75rimzy2k>
+References: <cover.1747148172.git.lukas.zapolskas@arm.com>
+ <0319137f966f2dbffc54e51f7a2a3cbac837507b.1747148172.git.lukas.zapolskas@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL3PR11MB6508:EE_|DM4PR11MB7760:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4d86dca2-56a0-4af0-9348-08ddc5ab9ad5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?UG1UVWxTenFkZFc3dGpESlFHVW1yVWUxVCtaeHNSQnhheE1SSUlvbm8xa3hv?=
- =?utf-8?B?dTJ2TzZsTXJWZHZSSjNNNGNSZWsrWHlEcTVlQ285M1VLRUI4aFdkWEdXRE5i?=
- =?utf-8?B?WmtrVEN6R2V2akFvK2NmOFpLcjFUUzdQcFRaQWdOY05xTTdvbDJFWlJCVHor?=
- =?utf-8?B?TFpSdEF5dEdmbUxOd1Y4blJnZHJ0N0ZtNnBQREJqNi9WUTdBbncyVFk5TkFq?=
- =?utf-8?B?L25mSG4rU3RhTE1hc21HK2Z0R1VFYm00Z21aVVF2M0NrRFp4NCtSM0JkeFhw?=
- =?utf-8?B?VmdzRnJ3RE5ROFBrUGJRc1lNMFRSZHhZRC9FU3R1Q3dKR2cxNkxSY2hwdnhs?=
- =?utf-8?B?dml4amxmVEdOUzdQMjJ1TmRSOGlMdDlDZUJZZ0JMb1FNeHZZZ1ZnN2RtWmpU?=
- =?utf-8?B?Sm16dmk2VGgvUUNTMWZ1NGhFSmp1S3RXS1hCcy9tcUNPY1hCVlNabU9uNzJ6?=
- =?utf-8?B?ODhZcmJZQ2x6YnEyN2hDL1pocDZPR0RlRXJabGhVV0M3bm96ZnVrbmszbkJQ?=
- =?utf-8?B?VitGM0pjclhHR3BMSC9SOTZrL1NSQ3NIcG9WTVVnQ1pGWWNFdS9vWVFNRFJl?=
- =?utf-8?B?d3RBcSsra3oxMUlVbnhaRVBGVFV1cUliV3EyQWN6R3BEWjE1d1FJczFKeTNE?=
- =?utf-8?B?blN2OEtOT0JkQnN6RmZBNmV6UU5idFp1VmlxRmdQRGE4bmxxUE04Ly9zQzJI?=
- =?utf-8?B?OGdlQWdNTTQvUnZxRnd4TFBHOC9oYUo0WDBGR2xJbzAyM1phajY1cUpES0hG?=
- =?utf-8?B?dDRocW1UZlJ1VmlOdy9kUTVHbitnVU1ldFJaazMzVmhTczFRbWVTSEhKT2ly?=
- =?utf-8?B?b1Z6UW5ydkQzSU11K2RhUXJiTlpXbnlEWXVBNGtSNlZZT2VnN3EvUGdqMWNC?=
- =?utf-8?B?Z09tV3JyLzk2bCtJZ092a3U4dUozTkhIRk1PNTEzRk1nYUNycEtvRjBROTNX?=
- =?utf-8?B?ZEVzd0tKNWtBNWUrQ3ZtTjVROVZ5bkxhOE9EcHV6QkQ1UFNJNWdvWkpxQk9i?=
- =?utf-8?B?VzIwd3BJd0NYQVVnVHFoeEVFWUNiR2ZWVFlQbWhTRTZxU1NGK08zYUR6VmV4?=
- =?utf-8?B?Nm5rOFd2V3dwUWJyRjdKRC9UbkdDTzVzM0ZoU1FYNWpyWFAvVms3a1F2MytF?=
- =?utf-8?B?azVTK1FFMmhUTW45bTVVVGsrUFpNakN2THlna0ltdnZDZ3g2eWd0WDZzczE3?=
- =?utf-8?B?STdISUtLVW9DQkN0S0k0U2x3T0VObWFzU00yTmdxZEhWN1huVWhpVFVQeG5h?=
- =?utf-8?B?OHZINnFVVVl0cHpKc0xSaGxDRzQyMjJoSjQxM2lwQUNjWHNwRmQ2SUMwc1hU?=
- =?utf-8?B?eWc2eERWMGNMUDZ1K2l1RE9JakQ0VzJTQ2w0bXpSVXV4aGNVazdiNHpFTnBY?=
- =?utf-8?B?OHNUd2d2QlNLS0ZLVGljeW0yUytESmhZNVZDdVBLUXN3eTEwSzFIZEVQTnow?=
- =?utf-8?B?UkdPUURsbGZCR0NxMHBpVVA3YSsrYkdtQlVSUkpvSmNjWWRpaURTNDNEL3dS?=
- =?utf-8?B?djRiN3p0anloc0lzWVh2cDIrWk8yU0x2R2V3RE9kTkFsa05UR1NuSTBnazkv?=
- =?utf-8?B?Tm14S214cDhLRlhTaWszNlZJTVB6bytrVnYzckpybk5lS0l2bzRmdlowZXA4?=
- =?utf-8?B?eGE3SHB3UEQ4VlVvME9OOGFRWUI1c0FmVWJpTzNvK3NBT0NjVUwvTW93VEY1?=
- =?utf-8?B?ayszK0RqcUFwZkRBU015UkNkam9BTldwSGd0QjYzNUJybFdHR3RsT0dwQVhH?=
- =?utf-8?B?NFd4Qll0a2NIM1RJTjYwaG9VbjRwdTNZMHgxRFRmL0xqQzI5dVk5SmZKTkxw?=
- =?utf-8?B?ZzFSN3RZNExwMTJ6VUtFYnpUQVV0RlpPcm9hVncwQzNvNXVFWjRXU1FLVjI0?=
- =?utf-8?B?N2JqRjE5ODlSRUplNG43aXIxdnRWOFA5cktPdEpINnk2NHlyUFdzOFlnSkFO?=
- =?utf-8?Q?A9+4qt2z7Gk=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR11MB6508.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Q3pta1lmKys1cW9XSDhXSXFETUtXclVBRVpqUTFiWlNXb2MrUG5MNWdyRHV6?=
- =?utf-8?B?L1NBY2dFUmlkSmlnUVJsRUFZdWRneVZvTTlyQnpVaW1adWJTdGlaQjRxeXVr?=
- =?utf-8?B?bDJsN2hlNjlIR2NwWlhqRkFQZjNMVGt6VUlSS1NBU2V5V1VVT29Pd0ZCQnFu?=
- =?utf-8?B?ZWtucjlPSStqM1BlUVgwd3k1bW1lQldGZHRKVjY2czFKWUNsOTlyekVIeU1h?=
- =?utf-8?B?bktna1ZXK2pqVWxpWWZIRHM0Q3ppTmZTYXVmbUpoVDQ3aDFOcDkrcC9abHhC?=
- =?utf-8?B?VmptVlIwZ05mWWZmZG9Ia3k0bTE2eVpHVWRCT1cvUC9BYU01aWs2V05JcFZa?=
- =?utf-8?B?LzdUWlIvR1g4N2pyU0VUM3pzaTdRNDVrVk9nNm41eVMzN2ErODZnc2NHaStq?=
- =?utf-8?B?WDI5OVVrQlBzaTlwSktKbWx5dENPU3JpUzNMOW1GaVJGNHA5RloxcXM0WHZS?=
- =?utf-8?B?QmhQV2UvWjVqbjQ4dkJBTUE5bThFQkNrVUhWdXBQdjA4RVFLbXc0Y0dpNTc4?=
- =?utf-8?B?UmxubERWd3Vrbm1rbmNtRS8vUWxuM2phWjhEUXlQZmVCNEJzRTE1b3BrQVpr?=
- =?utf-8?B?cXlmT3I3QVlZZkJNUVdrbzFTRVh5eU9iNEpRTDVvUDhLcDFWd3VMTVFEcnpD?=
- =?utf-8?B?MG1pcDA2cUJuSzBBOFZWWjE4RW5aaG9aa0d2dy95SktWdGZsZnlpZWdscmhy?=
- =?utf-8?B?UWd0Sk8rNG9MeHpoNkpMcm9xWHVFOU94WGJRaGtucnZyM2JWS1ZqY3IvN1g0?=
- =?utf-8?B?RmMrd09xZlpBMm1LK2xuTXQzeFhKSFJwaVZoTS9HZ3BZQkE1UzF1Y2hudGFv?=
- =?utf-8?B?L2Z6bm5zdjVKQkwwVGNZTndnMkRHZnFCNkxyd0gzcU5BeW5QVmxSSHE1dGdT?=
- =?utf-8?B?MG5VeVB0cWtKK3lJQTlOdld1WDRRQmsrQTJZeTNsNUVWWS9SQVVMK3cxaTNP?=
- =?utf-8?B?TW9YRTk0WnNOS1gxUWIwekc1bk9QNDM2TUtzL1o5ak85N1BJNENYSGhaT2FN?=
- =?utf-8?B?NDV3U1VJVHNFVk53RVJtTkFJVkRiY1Z6RDJVbU5RWTk3eDhCdTQxM0xaS0lz?=
- =?utf-8?B?TVZEUmFsbGR5bHZWZmVBc3JNT1poOFBPZ0RFQlBQdUxhUlBKeEFMbFdjV0Vy?=
- =?utf-8?B?cUNMWmdyN3NLMFV1QUgzcDlvSGJaYlN2QlkyU25NUTRzeXZVaEhITEo0a2dN?=
- =?utf-8?B?cjB4OHk3MmdmblhKejkwYnErMmZqRmsrUmV2QkdPZFowYS9VTEtIVEhESFJS?=
- =?utf-8?B?ZGtaSEM1TU01UE1xK3ZYSnNhcksrTElsN0hhZnJLT0tST2pCckt5WDB0OGZ0?=
- =?utf-8?B?UXZ6WXZjU0pBb2VDZGEwTHZxTnA4di9IRDF0UjU5V1B0c0lyWTRLMlppYS9j?=
- =?utf-8?B?bGVqV2FtanpwY081WVM4dlpoM3JuM2dRS0c1MmlMb2dVYmYxSng3MWRUbHl2?=
- =?utf-8?B?cUtrbFBiRUlWZ1ZtZ3dKTlM3SkpJK2JzWEFCSllnQm1RbnZoSEtQSEo1WTNR?=
- =?utf-8?B?dWlBbStyejFjSkhmTVVsem9EVDMvWVBLaXVvTE9RR2dwS0NobW95SVM5RnBH?=
- =?utf-8?B?S2JrbHZlUHM0VzVNaTdoUlp1bStEWFZzeFB2SGszMEZqUnVva1BkQklRZ0Ro?=
- =?utf-8?B?OWh5MXhvT2pqMExKakZqOUU4WDlOODVtcllHbXZEYklId3JvWUFpYmRHUUdz?=
- =?utf-8?B?bXp4dHFaWERlVkxsaVZvdWxaOTlDRVdPRWtJQ0ZjYWYwc0tiQVZoWTNXY2xE?=
- =?utf-8?B?UmRmVHd3UndiKzcvOXFFeEUxb3NuS2E0LzE5WVdkTXBuQkxxREc2VE1jYmNy?=
- =?utf-8?B?bU9oa2F6eFdsTnUzWXZNYjZMVE1rVEV6SDJSVVBudWo3SDFrY0EyQXBkUTc1?=
- =?utf-8?B?THQ4RCtzcEhBSDNZQzE4SEp0YXNXVnFzeWxHdGVuSDdwaGtzR3dkL2trd3Fi?=
- =?utf-8?B?UHN0ZHN4eWY4K2ZrSDN1d04xWTQ4bFp4c1g0cWw0Ukw5WFdXMFpnckdzNDA0?=
- =?utf-8?B?cHVqSVlocFZMK3VnUmp2TCtjMmE0VXRSTEU1Ry9OeWVxcHdGQ3JSZlJ1ekpx?=
- =?utf-8?B?OG4zcmhrbGpzSkM4aFJ2KzlhZ0IxN0Jqc2NlZmluOUxxTDlVNVlFY1dTS0pK?=
- =?utf-8?B?MS9xb3pvOEFobmlpY0g3aTdFN1QvU0Q4aTZva0xBMXVqSUl4cHZOeHg2OWt0?=
- =?utf-8?B?ZlE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4d86dca2-56a0-4af0-9348-08ddc5ab9ad5
-X-MS-Exchange-CrossTenant-AuthSource: BL3PR11MB6508.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2025 03:31:38.7080
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: t12XhJ2KmpbJL3z+59DrPS63QMOxBAnf/hMUXcELUCmPKFmpUpkNpR82khcaunzGkBfv/dQAjp5aU2pkHt2H5w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB7760
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <0319137f966f2dbffc54e51f7a2a3cbac837507b.1747148172.git.lukas.zapolskas@arm.com>
 
-On Thu, Jul 17, 2025 at 09:25:02PM -0400, Zi Yan wrote:
-> On 17 Jul 2025, at 20:41, Matthew Brost wrote:
-> 
-> > On Thu, Jul 17, 2025 at 07:04:48PM -0400, Zi Yan wrote:
-> >> On 17 Jul 2025, at 18:24, Matthew Brost wrote:
-> >>
-> >>> On Thu, Jul 17, 2025 at 07:53:40AM +1000, Balbir Singh wrote:
-> >>>> On 7/17/25 02:24, Matthew Brost wrote:
-> >>>>> On Wed, Jul 16, 2025 at 07:19:10AM -0400, Zi Yan wrote:
-> >>>>>> On 16 Jul 2025, at 1:34, Matthew Brost wrote:
-> >>>>>>
-> >>>>>>> On Sun, Jul 06, 2025 at 11:47:10AM +1000, Balbir Singh wrote:
-> >>>>>>>> On 7/6/25 11:34, Zi Yan wrote:
-> >>>>>>>>> On 5 Jul 2025, at 21:15, Balbir Singh wrote:
-> >>>>>>>>>
-> >>>>>>>>>> On 7/5/25 11:55, Zi Yan wrote:
-> >>>>>>>>>>> On 4 Jul 2025, at 20:58, Balbir Singh wrote:
-> >>>>>>>>>>>
-> >>>>>>>>>>>> On 7/4/25 21:24, Zi Yan wrote:
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>> s/pages/folio
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> Thanks, will make the changes
-> >>>>>>>>>>>>
-> >>>>>>>>>>>>> Why name it isolated if the folio is unmapped? Isolated folios often mean
-> >>>>>>>>>>>>> they are removed from LRU lists. isolated here causes confusion.
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> Ack, will change the name
-> >>>>>>>>>>>>
-> >>>>>>>>>>>>
-> >>>>>>>>>>>>>>   *
-> >>>>>>>>>>>>>>   * It calls __split_unmapped_folio() to perform uniform and non-uniform split.
-> >>>>>>>>>>>>>>   * It is in charge of checking whether the split is supported or not and
-> >>>>>>>>>>>>>> @@ -3800,7 +3799,7 @@ bool uniform_split_supported(struct folio *folio, unsigned int new_order,
-> >>>>>>>>>>>>>>   */
-> >>>>>>>>>>>>>>  static int __folio_split(struct folio *folio, unsigned int new_order,
-> >>>>>>>>>>>>>>  		struct page *split_at, struct page *lock_at,
-> >>>>>>>>>>>>>> -		struct list_head *list, bool uniform_split)
-> >>>>>>>>>>>>>> +		struct list_head *list, bool uniform_split, bool isolated)
-> >>>>>>>>>>>>>>  {
-> >>>>>>>>>>>>>>  	struct deferred_split *ds_queue = get_deferred_split_queue(folio);
-> >>>>>>>>>>>>>>  	XA_STATE(xas, &folio->mapping->i_pages, folio->index);
-> >>>>>>>>>>>>>> @@ -3846,14 +3845,16 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
-> >>>>>>>>>>>>>>  		 * is taken to serialise against parallel split or collapse
-> >>>>>>>>>>>>>>  		 * operations.
-> >>>>>>>>>>>>>>  		 */
-> >>>>>>>>>>>>>> -		anon_vma = folio_get_anon_vma(folio);
-> >>>>>>>>>>>>>> -		if (!anon_vma) {
-> >>>>>>>>>>>>>> -			ret = -EBUSY;
-> >>>>>>>>>>>>>> -			goto out;
-> >>>>>>>>>>>>>> +		if (!isolated) {
-> >>>>>>>>>>>>>> +			anon_vma = folio_get_anon_vma(folio);
-> >>>>>>>>>>>>>> +			if (!anon_vma) {
-> >>>>>>>>>>>>>> +				ret = -EBUSY;
-> >>>>>>>>>>>>>> +				goto out;
-> >>>>>>>>>>>>>> +			}
-> >>>>>>>>>>>>>> +			anon_vma_lock_write(anon_vma);
-> >>>>>>>>>>>>>>  		}
-> >>>>>>>>>>>>>>  		end = -1;
-> >>>>>>>>>>>>>>  		mapping = NULL;
-> >>>>>>>>>>>>>> -		anon_vma_lock_write(anon_vma);
-> >>>>>>>>>>>>>>  	} else {
-> >>>>>>>>>>>>>>  		unsigned int min_order;
-> >>>>>>>>>>>>>>  		gfp_t gfp;
-> >>>>>>>>>>>>>> @@ -3920,7 +3921,8 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
-> >>>>>>>>>>>>>>  		goto out_unlock;
-> >>>>>>>>>>>>>>  	}
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> -	unmap_folio(folio);
-> >>>>>>>>>>>>>> +	if (!isolated)
-> >>>>>>>>>>>>>> +		unmap_folio(folio);
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>  	/* block interrupt reentry in xa_lock and spinlock */
-> >>>>>>>>>>>>>>  	local_irq_disable();
-> >>>>>>>>>>>>>> @@ -3973,14 +3975,15 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>  		ret = __split_unmapped_folio(folio, new_order,
-> >>>>>>>>>>>>>>  				split_at, lock_at, list, end, &xas, mapping,
-> >>>>>>>>>>>>>> -				uniform_split);
-> >>>>>>>>>>>>>> +				uniform_split, isolated);
-> >>>>>>>>>>>>>>  	} else {
-> >>>>>>>>>>>>>>  		spin_unlock(&ds_queue->split_queue_lock);
-> >>>>>>>>>>>>>>  fail:
-> >>>>>>>>>>>>>>  		if (mapping)
-> >>>>>>>>>>>>>>  			xas_unlock(&xas);
-> >>>>>>>>>>>>>>  		local_irq_enable();
-> >>>>>>>>>>>>>> -		remap_page(folio, folio_nr_pages(folio), 0);
-> >>>>>>>>>>>>>> +		if (!isolated)
-> >>>>>>>>>>>>>> +			remap_page(folio, folio_nr_pages(folio), 0);
-> >>>>>>>>>>>>>>  		ret = -EAGAIN;
-> >>>>>>>>>>>>>>  	}
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>> These "isolated" special handlings does not look good, I wonder if there
-> >>>>>>>>>>>>> is a way of letting split code handle device private folios more gracefully.
-> >>>>>>>>>>>>> It also causes confusions, since why does "isolated/unmapped" folios
-> >>>>>>>>>>>>> not need to unmap_page(), remap_page(), or unlock?
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> There are two reasons for going down the current code path
-> >>>>>>>>>>>
-> >>>>>>>>>>> After thinking more, I think adding isolated/unmapped is not the right
-> >>>>>>>>>>> way, since unmapped folio is a very generic concept. If you add it,
-> >>>>>>>>>>> one can easily misuse the folio split code by first unmapping a folio
-> >>>>>>>>>>> and trying to split it with unmapped = true. I do not think that is
-> >>>>>>>>>>> supported and your patch does not prevent that from happening in the future.
-> >>>>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>> I don't understand the misuse case you mention, I assume you mean someone can
-> >>>>>>>>>> get the usage wrong? The responsibility is on the caller to do the right thing
-> >>>>>>>>>> if calling the API with unmapped
-> >>>>>>>>>
-> >>>>>>>>> Before your patch, there is no use case of splitting unmapped folios.
-> >>>>>>>>> Your patch only adds support for device private page split, not any unmapped
-> >>>>>>>>> folio split. So using a generic isolated/unmapped parameter is not OK.
-> >>>>>>>>>
-> >>>>>>>>
-> >>>>>>>> There is a use for splitting unmapped folios (see below)
-> >>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>>> You should teach different parts of folio split code path to handle
-> >>>>>>>>>>> device private folios properly. Details are below.
-> >>>>>>>>>>>
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> 1. if the isolated check is not present, folio_get_anon_vma will fail and cause
-> >>>>>>>>>>>>    the split routine to return with -EBUSY
-> >>>>>>>>>>>
-> >>>>>>>>>>> You do something below instead.
-> >>>>>>>>>>>
-> >>>>>>>>>>> if (!anon_vma && !folio_is_device_private(folio)) {
-> >>>>>>>>>>> 	ret = -EBUSY;
-> >>>>>>>>>>> 	goto out;
-> >>>>>>>>>>> } else if (anon_vma) {
-> >>>>>>>>>>> 	anon_vma_lock_write(anon_vma);
-> >>>>>>>>>>> }
-> >>>>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>> folio_get_anon() cannot be called for unmapped folios. In our case the page has
-> >>>>>>>>>> already been unmapped. Is there a reason why you mix anon_vma_lock_write with
-> >>>>>>>>>> the check for device private folios?
-> >>>>>>>>>
-> >>>>>>>>> Oh, I did not notice that anon_vma = folio_get_anon_vma(folio) is also
-> >>>>>>>>> in if (!isolated) branch. In that case, just do
-> >>>>>>>>>
-> >>>>>>>>> if (folio_is_device_private(folio) {
-> >>>>>>>>> ...
-> >>>>>>>>> } else if (is_anon) {
-> >>>>>>>>> ...
-> >>>>>>>>> } else {
-> >>>>>>>>> ...
-> >>>>>>>>> }
-> >>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>>> People can know device private folio split needs a special handling.
-> >>>>>>>>>>>
-> >>>>>>>>>>> BTW, why a device private folio can also be anonymous? Does it mean
-> >>>>>>>>>>> if a page cache folio is migrated to device private, kernel also
-> >>>>>>>>>>> sees it as both device private and file-backed?
-> >>>>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>> FYI: device private folios only work with anonymous private pages, hence
-> >>>>>>>>>> the name device private.
-> >>>>>>>>>
-> >>>>>>>>> OK.
-> >>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>>>
-> >>>>>>>>>>>> 2. Going through unmap_page(), remap_page() causes a full page table walk, which
-> >>>>>>>>>>>>    the migrate_device API has already just done as a part of the migration. The
-> >>>>>>>>>>>>    entries under consideration are already migration entries in this case.
-> >>>>>>>>>>>>    This is wasteful and in some case unexpected.
-> >>>>>>>>>>>
-> >>>>>>>>>>> unmap_folio() already adds TTU_SPLIT_HUGE_PMD to try to split
-> >>>>>>>>>>> PMD mapping, which you did in migrate_vma_split_pages(). You probably
-> >>>>>>>>>>> can teach either try_to_migrate() or try_to_unmap() to just split
-> >>>>>>>>>>> device private PMD mapping. Or if that is not preferred,
-> >>>>>>>>>>> you can simply call split_huge_pmd_address() when unmap_folio()
-> >>>>>>>>>>> sees a device private folio.
-> >>>>>>>>>>>
-> >>>>>>>>>>> For remap_page(), you can simply return for device private folios
-> >>>>>>>>>>> like it is currently doing for non anonymous folios.
-> >>>>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>> Doing a full rmap walk does not make sense with unmap_folio() and
-> >>>>>>>>>> remap_folio(), because
-> >>>>>>>>>>
-> >>>>>>>>>> 1. We need to do a page table walk/rmap walk again
-> >>>>>>>>>> 2. We'll need special handling of migration <-> migration entries
-> >>>>>>>>>>    in the rmap handling (set/remove migration ptes)
-> >>>>>>>>>> 3. In this context, the code is already in the middle of migration,
-> >>>>>>>>>>    so trying to do that again does not make sense.
-> >>>>>>>>>
-> >>>>>>>>> Why doing split in the middle of migration? Existing split code
-> >>>>>>>>> assumes to-be-split folios are mapped.
-> >>>>>>>>>
-> >>>>>>>>> What prevents doing split before migration?
-> >>>>>>>>>
-> >>>>>>>>
-> >>>>>>>> The code does do a split prior to migration if THP selection fails
-> >>>>>>>>
-> >>>>>>>> Please see https://lore.kernel.org/lkml/20250703233511.2028395-5-balbirs@nvidia.com/
-> >>>>>>>> and the fallback part which calls split_folio()
-> >>>>>>>>
-> >>>>>>>> But the case under consideration is special since the device needs to allocate
-> >>>>>>>> corresponding pfn's as well. The changelog mentions it:
-> >>>>>>>>
-> >>>>>>>> "The common case that arises is that after setup, during migrate
-> >>>>>>>> the destination might not be able to allocate MIGRATE_PFN_COMPOUND
-> >>>>>>>> pages."
-> >>>>>>>>
-> >>>>>>>> I can expand on it, because migrate_vma() is a multi-phase operation
-> >>>>>>>>
-> >>>>>>>> 1. migrate_vma_setup()
-> >>>>>>>> 2. migrate_vma_pages()
-> >>>>>>>> 3. migrate_vma_finalize()
-> >>>>>>>>
-> >>>>>>>> It can so happen that when we get the destination pfn's allocated the destination
-> >>>>>>>> might not be able to allocate a large page, so we do the split in migrate_vma_pages().
-> >>>>>>>>
-> >>>>>>>> The pages have been unmapped and collected in migrate_vma_setup()
-> >>>>>>>>
-> >>>>>>>> The next patch in the series 9/12 (https://lore.kernel.org/lkml/20250703233511.2028395-10-balbirs@nvidia.com/)
-> >>>>>>>> tests the split and emulates a failure on the device side to allocate large pages
-> >>>>>>>> and tests it in 10/12 (https://lore.kernel.org/lkml/20250703233511.2028395-11-balbirs@nvidia.com/)
-> >>>>>>>>
-> >>>>>>>
-> >>>>>>> Another use case I’ve seen is when a previously allocated high-order
-> >>>>>>> folio, now in the free memory pool, is reallocated as a lower-order
-> >>>>>>> page. For example, a 2MB fault allocates a folio, the memory is later
-> >>>>>>
-> >>>>>> That is different. If the high-order folio is free, it should be split
-> >>>>>> using split_page() from mm/page_alloc.c.
-> >>>>>>
-> >>>>>
-> >>>>> Ah, ok. Let me see if that works - it would easier.
-> >>>>>
-> >>>
-> >>> This suggestion quickly blows up as PageCompound is true and page_count
-> >>> here is zero.
-> >>
-> >> OK, your folio has PageCompound set. Then you will need __split_unmapped_foio().
-> >>
-> >>>
-> >>>>>>> freed, and then a 4KB fault reuses a page from that previously allocated
-> >>>>>>> folio. This will be actually quite common in Xe / GPU SVM. In such
-> >>>>>>> cases, the folio in an unmapped state needs to be split. I’d suggest a
-> >>>>>>
-> >>>>>> This folio is unused, so ->flags, ->mapping, and etc. are not set,
-> >>>>>> __split_unmapped_folio() is not for it, unless you mean free folio
-> >>>>>> differently.
-> >>>>>>
-> >>>>>
-> >>>>> This is right, those fields should be clear.
-> >>>>>
-> >>>>> Thanks for the tip.
-> >>>>>
-> >>>> I was hoping to reuse __split_folio_to_order() at some point in the future
-> >>>> to split the backing pages in the driver, but it is not an immediate priority
-> >>>>
-> >>>
-> >>> I think we need something for the scenario I describe here. I was to
-> >>> make __split_huge_page_to_list_to_order with a couple of hacks but it
-> >>> almostly certainig not right as Zi pointed out.
-> >>>
-> >>> New to the MM stuff, but play around with this a bit and see if I can
-> >>> come up with something that will work here.
-> >>
-> >> Can you try to write a new split_page function with __split_unmapped_folio()?
-> >> Since based on your description, your folio is not mapped.
-> >>
-> >
-> > Yes, page->mapping is NULL in this case - that was part of the hacks to
-> > __split_huge_page_to_list_to_order (more specially __folio_split) I had
-> > to make in order to get something working for this case.
-> >
-> > I can try out something based on __split_unmapped_folio and report back.
-> 
-> mm-new tree has an updated __split_unmapped_folio() version, it moves
-> all unmap irrelevant code out of __split_unmaped_folio(). You might find
-> it easier to reuse.
-> 
-> See: https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/tree/mm/huge_memory.c?h=mm-new#n3430
-> 
-
-Will take a look. It is possible some of the issues we are hitting are
-due to working on drm-tip + pulling in core MM patches in this series on
-top of that branch then missing some other patches in mm-new. I'll see
-if ww can figure out a work flow to have the latest and greatest from
-both drm-tip and the MM branches.
-
-Will these changes be in 6.17?
-
-> I am about to update the code with v4 patches. I will cc you, so that
-> you can get the updated __split_unmaped_folio().
-> 
-> Feel free to ask questions on folio split code.
+On 16.05.2025 16:49, Lukas Zapolskas wrote:
+> To allow for combining the requests from multiple userspace clients, an
+> intermediary layer between the HW/FW interfaces and userspace is
+> created, containing the information for the counter requests and
+> tracking of insert and extract indices. Each session starts inactive and
+> must be explicitly activated via PERF_CONTROL.START, and explicitly
+> stopped via PERF_CONTROL.STOP. Userspace identifies a single client with
+> its session ID and the panthor file it is associated with.
 >
+> The SAMPLE and STOP commands both produce a single sample when called,
+> and these samples can be disambiguated via the opaque user data field
+> passed in the PERF_CONTROL uAPI. If this functionality is not desired,
+> these fields can be kept as zero, as the kernel copies this value into
+> the corresponding sample without attempting to interpret it.
+>
+> Currently, only manual sampling sessions are supported, providing
+> samples when userspace calls PERF_CONTROL.SAMPLE, and only a single
+> session is allowed at a time. Multiple sessions and periodic sampling
+> will be enabled in following patches.
+>
+> No protection is provided against the 32-bit hardware counter overflows,
+> so for the moment it is up to userspace to ensure that the counters are
+> sampled at a reasonable frequency.
+>
+> The counter set enum is added to the uapi to clarify the restrictions on
+> calling the interface.
+>
+> Signed-off-by: Lukas Zapolskas <lukas.zapolskas@arm.com>
+> ---
+>  drivers/gpu/drm/panthor/panthor_device.h |   3 +
+>  drivers/gpu/drm/panthor/panthor_drv.c    |   1 +
+>  drivers/gpu/drm/panthor/panthor_perf.c   | 694 ++++++++++++++++++++++-
+>  drivers/gpu/drm/panthor/panthor_perf.h   |  16 +
+>  4 files changed, 713 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/panthor/panthor_device.h
+> index 818c4d96d448..3fa0882fe81b 100644
+> --- a/drivers/gpu/drm/panthor/panthor_device.h
+> +++ b/drivers/gpu/drm/panthor/panthor_device.h
+> @@ -225,6 +225,9 @@ struct panthor_file {
+>  	/** @ptdev: Device attached to this file. */
+>  	struct panthor_device *ptdev;
+>
+> +	/** @drm_file: Corresponding drm_file */
 
-Thanks.
+> +	struct drm_file *drm_file;
 
-Matt
- 
-> Best Regards,
-> Yan, Zi
+I'm sceptical about adding this here, and suspect we don't need it. I mentioned why in the
+review for the next patch.
+
+> +
+>  	/** @vms: VM pool attached to this file. */
+>  	struct panthor_vm_pool *vms;
+>
+> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
+> index 9d2b716cca45..4c1381320859 100644
+> --- a/drivers/gpu/drm/panthor/panthor_drv.c
+> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
+> @@ -1356,6 +1356,7 @@ panthor_open(struct drm_device *ddev, struct drm_file *file)
+>  	}
+>
+>  	pfile->ptdev = ptdev;
+> +	pfile->drm_file = file;
+>
+>  	ret = panthor_vm_pool_create(pfile);
+>  	if (ret)
+> diff --git a/drivers/gpu/drm/panthor/panthor_perf.c b/drivers/gpu/drm/panthor/panthor_perf.c
+> index 9365ce9fed04..15fa533731f3 100644
+> --- a/drivers/gpu/drm/panthor/panthor_perf.c
+> +++ b/drivers/gpu/drm/panthor/panthor_perf.c
+> @@ -2,13 +2,177 @@
+>  /* Copyright 2023 Collabora Ltd */
+>  /* Copyright 2025 Arm ltd. */
+>
+> -#include <linux/bitops.h>
+> +#include <drm/drm_gem.h>
+>  #include <drm/panthor_drm.h>
+> +#include <linux/bitops.h>
+> +#include <linux/circ_buf.h>
+>
+>  #include "panthor_device.h"
+>  #include "panthor_fw.h"
+>  #include "panthor_perf.h"
+>
+> +/**
+> + * PANTHOR_PERF_EM_BITS - Number of bits in a user-facing enable mask. This must correspond
+> + *                        to the maximum number of counters available for selection on the newest
+> + *                        Mali GPUs (128 as of the Mali-Gx15).
+> + */
+> +#define PANTHOR_PERF_EM_BITS (BITS_PER_TYPE(u64) * 2)
+> +
+> +enum panthor_perf_session_state {
+> +	/** @PANTHOR_PERF_SESSION_ACTIVE: The session is active and can be used for sampling. */
+> +	PANTHOR_PERF_SESSION_ACTIVE = 0,
+> +
+> +	/**
+> +	 * @PANTHOR_PERF_SESSION_OVERFLOW: The session encountered an overflow in one of the
+> +	 *                                 counters during the last sampling period. This flag
+> +	 *                                 gets propagated as part of samples emitted for this
+> +	 *                                 session, to ensure the userspace client can gracefully
+> +	 *                                 handle this data corruption.
+> +	 */
+> +	PANTHOR_PERF_SESSION_OVERFLOW,
+> +
+> +	/* Must be last */
+> +	PANTHOR_PERF_SESSION_MAX,
+> +};
+> +
+> +struct panthor_perf_enable_masks {
+> +	/**
+> +	 * @mask: Array of bitmasks indicating the counters userspace requested, where
+> +	 *        one bit represents a single counter. Used to build the firmware configuration
+> +	 *        and ensure that userspace clients obtain only the counters they requested.
+> +	 */
+> +	unsigned long mask[DRM_PANTHOR_PERF_BLOCK_MAX][BITS_TO_LONGS(PANTHOR_PERF_EM_BITS)];
+> +};
+> +
+> +struct panthor_perf_counter_block {
+> +	struct drm_panthor_perf_block_header header;
+> +	u64 counters[];
+> +};
+
+This is a redefinition.
+
+> +/**
+> + * enum session_sample_type - Enum of the types of samples a session can request.
+> + */
+> +enum session_sample_type {
+> +	/** @SAMPLE_TYPE_NONE: A sample has not been requested by this session. */
+> +	SAMPLE_TYPE_NONE,
+> +
+> +	/** @SAMPLE_TYPE_INITIAL: An initial sample has been requested by this session. */
+> +	SAMPLE_TYPE_INITIAL,
+> +
+> +	/** @SAMPLE_TYPE_REGULAR: A regular sample has been requested by this session. */
+> +	SAMPLE_TYPE_REGULAR,
+> +};
+> +
+> +struct panthor_perf_session {
+> +	DECLARE_BITMAP(state, PANTHOR_PERF_SESSION_MAX);
+> +
+> +	/**
+> +	 * @pending_sample_request: The type of sample request that is currently pending:
+> +	 *                          - when a sample is not requested, the data should be accumulated
+> +	 *                            into the next slot of its ring buffer, but the extract index
+> +	 *                            should not be updated, and the user-space session must
+> +	 *                            not be signaled.
+> +	 *                          - when an initial sample is requested, the data must not be
+> +	 *                            emitted into the target ring buffer and the userspace client
+> +	 *                            must not be notified.
+> +	 *                          - when a regular sample is requested, the data must be emitted
+> +	 *                            into the target ring buffer, and the userspace client must
+> +	 *                            be signalled.
+> +	 */
+> +	enum session_sample_type pending_sample_request;
+> +
+> +	/**
+> +	 * @user_sample_size: The size of a single sample as exposed to userspace. For the sake of
+> +	 *                    simplicity, the current implementation exposes the same structure
+> +	 *                    as provided by firmware, after annotating the sample and the blocks,
+> +	 *                    and zero-extending the counters themselves (to account for in-kernel
+> +	 *                    accumulation).
+> +	 *
+> +	 *                    This may also allow further memory-optimizations of compressing the
+> +	 *                    sample to provide only requested blocks, if deemed to be worth the
+> +	 *                    additional complexity.
+> +	 */
+> +	size_t user_sample_size;
+> +
+> +	/**
+> +	 * @accum_idx: The last insert index indicates whether the current sample
+> +	 *                   needs zeroing before accumulation. This is used to disambiguate
+> +	 *                   between accumulating into an intermediate slot in the user ring buffer
+> +	 *                   and zero-ing the buffer before copying data over.
+> +	 */
+> +	u32 accum_idx;
+> +
+> +	/**
+> +	 * @sample_freq_ns: Period between subsequent sample requests. Zero indicates that
+> +	 *                  userspace will be responsible for requesting samples.
+> +	 */
+> +	u64 sample_freq_ns;
+> +
+> +	/** @sample_start_ns: Sample request time, obtained from a monotonic raw clock. */
+> +	u64 sample_start_ns;
+> +
+> +	/**
+> +	 * @user_data: Opaque handle passed in when starting a session, requesting a sample (for
+> +	 *             manual sampling sessions only) and when stopping a session. This handle
+> +	 *             allows the disambiguation of a sample in the ringbuffer.
+> +	 */
+> +	u64 user_data;
+> +
+> +	/**
+> +	 * @eventfd: Event file descriptor context used to signal userspace of a new sample
+> +	 *           being emitted.
+> +	 */
+> +	struct eventfd_ctx *eventfd;
+> +
+> +	/**
+> +	 * @enabled_counters: This session's requested counters. Note that these cannot change
+> +	 *                    for the lifetime of the session.
+> +	 */
+> +	struct panthor_perf_enable_masks *enabled_counters;
+> +
+> +	/** @ringbuf_slots: Slots in the user-facing ringbuffer. */
+> +	size_t ringbuf_slots;
+> +
+> +	/** @ring_buf: BO for the userspace ringbuffer. */
+> +	struct drm_gem_object *ring_buf;
+> +
+> +	/**
+> +	 * @control_buf: BO for the insert and extract indices.
+> +	 */
+> +	struct drm_gem_object *control_buf;
+> +
+> +	/** @control: The mapped insert and extract indices. */
+> +	struct drm_panthor_perf_ringbuf_control *control;
+> +
+> +	/** @samples: The mapping of the @ring_buf into the kernel's VA space. */
+> +	u8 *samples;
+> +
+> +	/**
+> +	 * @pending: The list node used by the sampler to track the sessions that have not yet
+> +	 *           received a sample.
+> +	 */
+> +	struct list_head pending;
+> +
+> +	/**
+> +	 * @sessions: The list node used by the sampler to track the sessions waiting for a sample.
+> +	 */
+> +	struct list_head sessions;
+> +
+> +	/**
+> +	 * @pfile: The panthor file which was used to create a session, used for the postclose
+> +	 *         handling and to prevent a misconfigured userspace from closing unrelated
+> +	 *         sessions.
+> +	 */
+> +	struct panthor_file *pfile;
+> +
+> +	/**
+> +	 * @ref: Session reference count. The sample delivery to userspace is asynchronous, meaning
+> +	 *       the lifetime of the session must extend at least until the sample is exposed to
+> +	 *       userspace.
+> +	 */
+> +	struct kref ref;
+> +};
+> +
+>  struct panthor_perf {
+>  	/** @next_session: The ID of the next session. */
+>  	u32 next_session;
+> @@ -72,6 +236,122 @@ static void panthor_perf_info_init(struct panthor_device *ptdev)
+>  	perf_info->sample_size = session_get_user_sample_size(perf_info);
+>  }
+>
+> +static struct panthor_perf_enable_masks *panthor_perf_create_em(struct drm_panthor_perf_cmd_setup
+> +		*setup_args)
+> +{
+> +	struct panthor_perf_enable_masks *em = kmalloc(sizeof(*em), GFP_KERNEL);
+> +	if (IS_ERR_OR_NULL(em))
+> +		return em;
+> +
+> +	bitmap_from_arr64(em->mask[DRM_PANTHOR_PERF_BLOCK_FW],
+> +			setup_args->fw_enable_mask, PANTHOR_PERF_EM_BITS);
+> +	bitmap_from_arr64(em->mask[DRM_PANTHOR_PERF_BLOCK_CSHW],
+> +			setup_args->cshw_enable_mask, PANTHOR_PERF_EM_BITS);
+> +	bitmap_from_arr64(em->mask[DRM_PANTHOR_PERF_BLOCK_TILER],
+> +			setup_args->tiler_enable_mask, PANTHOR_PERF_EM_BITS);
+> +	bitmap_from_arr64(em->mask[DRM_PANTHOR_PERF_BLOCK_MEMSYS],
+> +			setup_args->memsys_enable_mask, PANTHOR_PERF_EM_BITS);
+> +	bitmap_from_arr64(em->mask[DRM_PANTHOR_PERF_BLOCK_SHADER],
+> +			setup_args->shader_enable_mask, PANTHOR_PERF_EM_BITS);
+> +
+> +	return em;
+> +}
+> +
+> +static u64 session_read_extract_idx(struct panthor_perf_session *session)
+> +{
+> +	const u64 slots = session->ringbuf_slots;
+> +
+> +	/* Userspace will update their own extract index to indicate that a sample is consumed
+> +	 * from the ringbuffer, and we must ensure we read the latest value.
+> +	 */
+> +	return smp_load_acquire(&session->control->extract_idx) % slots;
+> +}
+> +
+> +static u64 session_read_insert_idx(struct panthor_perf_session *session)
+> +{
+> +	const u64 slots = session->ringbuf_slots;
+> +
+> +	/*
+> +	 * Userspace is able to write to the insert index, since it is mapped
+> +	 * on the same page as the extract index. This should not happen
+> +	 * in regular operation.
+
+Why would userspace be able to write into the insert index? I guess in a
+ringbuffer setup, UM updates the extract index when it consumes a
+sample, and the kernel increases the insert index when it writes a new
+sample into the user-facing ringbuffer.
+
+> +	 */
+> +	return smp_load_acquire(&session->control->insert_idx) % slots;
+> +}
+> +
+> +static void session_get(struct panthor_perf_session *session)
+> +{
+> +	kref_get(&session->ref);
+> +}
+> +
+> +static void session_free(struct kref *ref)
+> +{
+> +	struct panthor_perf_session *session = container_of(ref, typeof(*session), ref);
+> +
+> +	if (session->samples && session->ring_buf) {
+> +		struct iosys_map map = IOSYS_MAP_INIT_VADDR(session->samples);
+> +
+> +		drm_gem_vunmap_unlocked(session->ring_buf, &map);
+
+drm_gem_vunmap_unlocked() isn't declared in drm_gem.h  when I rebase the patch series onto drm-misc. I guess it means either you're basing this patch series on a previous WIP branch or else it's misspelt?
+
+> +		drm_gem_object_put(session->ring_buf);
+> +	}
+> +
+> +	if (session->control && session->control_buf) {
+> +		struct iosys_map map = IOSYS_MAP_INIT_VADDR(session->control);
+> +
+> +		drm_gem_vunmap_unlocked(session->control_buf, &map);
+> +		drm_gem_object_put(session->control_buf);
+> +	}
+> +
+> +	eventfd_ctx_put(session->eventfd);
+> +
+> +	kfree(session);
+> +}
+> +
+> +static void session_put(struct panthor_perf_session *session)
+> +{
+> +	kref_put(&session->ref, session_free);
+> +}
+> +
+> +/**
+> + * session_find - Find a session associated with the given session ID and
+> + *                panthor_file.
+> + * @pfile: Panthor file.
+> + * @perf: Panthor perf.
+> + * @sid: Session ID.
+> + *
+> + * The reference count of a valid session is increased to ensure it does not disappear
+> + * in the window between the XA lock being dropped and the internal session functions
+> + * being called.
+> + *
+> + * Return: valid session pointer or an ERR_PTR.
+> + */
+> +static struct panthor_perf_session *session_find(struct panthor_file *pfile,
+> +		struct panthor_perf *perf, u32 sid)
+> +{
+> +	struct panthor_perf_session *session;
+> +
+> +	if (!perf)
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	xa_lock(&perf->sessions);
+> +	session = xa_load(&perf->sessions, sid);
+> +
+> +	if (!session || xa_is_err(session)) {
+> +		xa_unlock(&perf->sessions);
+> +		return ERR_PTR(-EBADF);
+> +	}
+> +
+> +	if (session->pfile != pfile) {
+> +		xa_unlock(&perf->sessions);
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+> +	session_get(session);
+> +	xa_unlock(&perf->sessions);
+> +
+> +	return session;
+> +}
+> +
+>  /**
+>   * panthor_perf_init - Initialize the performance counter subsystem.
+>   * @ptdev: Panthor device
+> @@ -109,6 +389,412 @@ int panthor_perf_init(struct panthor_device *ptdev)
+>  	return ret;
+>  }
+>
+> +static int session_validate_set(u8 set)
+> +{
+> +	if (set > DRM_PANTHOR_PERF_SET_TERTIARY)
+> +		return -EINVAL;
+> +
+> +	if (set == DRM_PANTHOR_PERF_SET_PRIMARY)
+> +		return 0;
+> +
+> +	if (set > DRM_PANTHOR_PERF_SET_PRIMARY)
+> +		return capable(CAP_PERFMON) ? 0 : -EACCES;
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +/**
+> + * panthor_perf_session_setup - Create a user-visible session.
+> + *
+> + * @ptdev: Handle to the panthor device.
+> + * @perf: Handle to the perf control structure.
+> + * @setup_args: Setup arguments passed in via ioctl.
+> + * @pfile: Panthor file associated with the request.
+> + *
+> + * Creates a new session associated with the session ID returned. When initialized, the
+> + * session must explicitly request sampling to start with a successive call to PERF_CONTROL.START.
+> + *
+> + * Return: non-negative session identifier on success or negative error code on failure.
+> + */
+> +int panthor_perf_session_setup(struct panthor_device *ptdev, struct panthor_perf *perf,
+> +		struct drm_panthor_perf_cmd_setup *setup_args,
+> +		struct panthor_file *pfile)
+> +{
+> +	struct panthor_perf_session *session;
+> +	struct drm_gem_object *ringbuffer;
+> +	struct drm_gem_object *control;
+> +	const size_t slots = setup_args->sample_slots;
+> +	struct panthor_perf_enable_masks *em;
+> +	struct iosys_map rb_map, ctrl_map;
+> +	size_t user_sample_size;
+> +	int session_id;
+> +	int ret;
+> +
+> +	ret = session_validate_set(setup_args->block_set);
+> +	if (ret) {
+> +		drm_err(&ptdev->base, "Did not meet requirements for set %d\n",
+> +				setup_args->block_set);
+> +		return ret;
+> +	}
+> +
+> +	session = kzalloc(sizeof(*session), GFP_KERNEL);
+> +	if (ZERO_OR_NULL_PTR(session))
+> +		return -ENOMEM;
+> +
+> +	ringbuffer = drm_gem_object_lookup(pfile->drm_file, setup_args->ringbuf_handle);
+> +	if (!ringbuffer) {
+> +		drm_err(&ptdev->base, "Could not find handle %d!\n", setup_args->ringbuf_handle);
+> +		ret = -EINVAL;
+> +		goto cleanup_session;
+> +	}
+> +
+> +	control = drm_gem_object_lookup(pfile->drm_file, setup_args->control_handle);
+> +	if (!control) {
+> +		drm_err(&ptdev->base, "Could not find handle %d!\n", setup_args->control_handle);
+> +		ret = -EINVAL;
+> +		goto cleanup_ringbuf;
+> +	}
+> +
+> +	user_sample_size = session_get_user_sample_size(&ptdev->perf_info) * slots;
+> +
+> +	if (ringbuffer->size != PFN_ALIGN(user_sample_size)) {
+> +		drm_err(&ptdev->base, "Incorrect ringbuffer size from userspace: user %zu vs kernel %lu\n",
+> +				ringbuffer->size, PFN_ALIGN(user_sample_size));
+> +		ret = -ENOMEM;
+> +		goto cleanup_control;
+> +	}
+> +
+> +	ret = drm_gem_vmap_unlocked(ringbuffer, &rb_map);
+
+Same here, drm_gem_vmap_unlocked() isn't declared in any header files.
+
+> +	if (ret)
+> +		goto cleanup_control;
+> +
+> +	ret = drm_gem_vmap_unlocked(control, &ctrl_map);
+> +	if (ret)
+> +		goto cleanup_ring_map;
+> +
+> +	session->eventfd = eventfd_ctx_fdget(setup_args->fd);
+> +	if (IS_ERR(session->eventfd)) {
+> +		drm_err(&ptdev->base, "Invalid eventfd %d!\n", setup_args->fd);
+> +		ret = PTR_ERR_OR_ZERO(session->eventfd) ?: -EINVAL;
+> +		goto cleanup_control_map;
+> +	}
+> +
+> +	em = panthor_perf_create_em(setup_args);
+> +	if (IS_ERR_OR_NULL(em)) {
+> +		ret = -ENOMEM;
+> +		goto cleanup_eventfd;
+> +	}
+> +
+> +	INIT_LIST_HEAD(&session->sessions);
+> +	INIT_LIST_HEAD(&session->pending);
+> +
+> +	session->control = ctrl_map.vaddr;
+> +	*session->control = (struct drm_panthor_perf_ringbuf_control) { 0 };
+> +
+> +	session->samples = rb_map.vaddr;
+> +
+> +	/* TODO This will need validation when we support periodic sampling sessions */
+> +	if (setup_args->sample_freq_ns) {
+> +		ret = -EOPNOTSUPP;
+> +		goto cleanup_em;
+> +	}
+> +
+> +	ret = xa_alloc_cyclic(&perf->sessions, &session_id, session, perf->session_range,
+> +			&perf->next_session, GFP_KERNEL);
+> +	if (ret < 0) {
+> +		drm_err(&ptdev->base, "System session limit exceeded.\n");
+> +		ret = -EBUSY;
+> +		goto cleanup_em;
+> +	}
+> +
+> +	kref_init(&session->ref);
+> +	session->enabled_counters = em;
+> +
+> +	session->sample_freq_ns = setup_args->sample_freq_ns;
+> +	session->user_sample_size = user_sample_size;
+> +	session->ring_buf = ringbuffer;
+> +	session->ringbuf_slots = slots;
+> +	session->control_buf = control;
+> +	session->pfile = pfile;
+> +	session->accum_idx = U32_MAX;
+> +
+> +	return session_id;
+> +
+> +cleanup_em:
+> +	kfree(em);
+> +
+> +cleanup_eventfd:
+> +	eventfd_ctx_put(session->eventfd);
+> +
+> +cleanup_control_map:
+> +	drm_gem_vunmap_unlocked(control, &ctrl_map);
+> +
+> +cleanup_ring_map:
+> +	drm_gem_vunmap_unlocked(ringbuffer, &rb_map);
+> +
+> +cleanup_control:
+> +	drm_gem_object_put(control);
+> +
+> +cleanup_ringbuf:
+> +	drm_gem_object_put(ringbuffer);
+> +
+> +cleanup_session:
+> +	kfree(session);
+> +
+> +	return ret;
+> +}
+> +
+> +static int session_stop(struct panthor_perf *perf, struct panthor_perf_session *session,
+> +		u64 user_data)
+> +{
+> +	if (!test_bit(PANTHOR_PERF_SESSION_ACTIVE, session->state))
+> +		return 0;
+> +
+> +	const u64 extract_idx = session_read_extract_idx(session);
+> +	const u64 insert_idx = session_read_insert_idx(session);
+> +
+> +	/* Must have at least one slot remaining in the ringbuffer to sample. */
+> +	if (WARN_ON_ONCE(!CIRC_SPACE_TO_END(insert_idx, extract_idx, session->ringbuf_slots)))
+> +		return -EBUSY;
+> +
+> +	session->user_data = user_data;
+> +
+> +	clear_bit(PANTHOR_PERF_SESSION_ACTIVE, session->state);
+> +
+> +	/* TODO Calls to the FW interface will go here in later patches. */
+> +	return 0;
+> +}
+> +
+> +static int session_start(struct panthor_perf *perf, struct panthor_perf_session *session,
+> +		u64 user_data)
+> +{
+> +	if (test_bit(PANTHOR_PERF_SESSION_ACTIVE, session->state))
+> +		return 0;
+> +
+> +	set_bit(PANTHOR_PERF_SESSION_ACTIVE, session->state);
+> +
+> +	/*
+> +	 * For manual sampling sessions, a start command does not correspond to a sample,
+> +	 * and so the user data gets discarded.
+> +	 */
+> +	if (session->sample_freq_ns)
+> +		session->user_data = user_data;
+> +
+> +	/* TODO Calls to the FW interface will go here in later patches. */
+> +	return 0;
+> +}
+> +
+> +static int session_sample(struct panthor_perf *perf, struct panthor_perf_session *session,
+> +		u64 user_data)
+> +{
+> +	if (!test_bit(PANTHOR_PERF_SESSION_ACTIVE, session->state))
+> +		return 0;
+> +
+> +	const u64 extract_idx = session_read_extract_idx(session);
+> +	const u64 insert_idx = session_read_insert_idx(session);
+> +
+> +	/* Manual sampling for periodic sessions is forbidden. */
+> +	if (session->sample_freq_ns)
+> +		return -EINVAL;
+> +
+> +	/*
+> +	 * Must have at least two slots remaining in the ringbuffer to sample: one for
+> +	 * the current sample, and one for a stop sample, since a stop command should
+> +	 * always be acknowledged by taking a final sample and stopping the session.
+> +	 */
+> +	if (CIRC_SPACE_TO_END(insert_idx, extract_idx, session->ringbuf_slots) < 2)
+> +		return -EBUSY;
+> +
+> +	session->sample_start_ns = ktime_get_raw_ns();
+> +	session->user_data = user_data;
+> +
+> +	return 0;
+> +}
+> +
+> +static int session_destroy(struct panthor_perf *perf, struct panthor_perf_session *session)
+> +{
+> +	session_put(session);
+> +
+> +	return 0;
+> +}
+> +
+> +static int session_teardown(struct panthor_perf *perf, struct panthor_perf_session *session)
+> +{
+> +	if (test_bit(PANTHOR_PERF_SESSION_ACTIVE, session->state))
+> +		return -EINVAL;
+> +
+> +	if (READ_ONCE(session->pending_sample_request) == SAMPLE_TYPE_NONE)
+> +		return -EBUSY;
+> +
+> +	return session_destroy(perf, session);
+> +}
+> +
+> +/**
+> + * panthor_perf_session_teardown - Teardown the session associated with the @sid.
+> + * @pfile: Open panthor file.
+> + * @perf: Handle to the perf control structure.
+> + * @sid: Session identifier.
+> + *
+> + * Destroys a stopped session where the last sample has been explicitly consumed
+> + * or discarded. Active sessions will be ignored.
+> + *
+> + * Return: 0 on success, negative error code on failure.
+> + */
+> +int panthor_perf_session_teardown(struct panthor_file *pfile, struct panthor_perf *perf, u32 sid)
+> +{
+> +	int err;
+> +	struct panthor_perf_session *session;
+> +
+> +	xa_lock(&perf->sessions);
+> +	session = __xa_store(&perf->sessions, sid, NULL, GFP_KERNEL);
+> +
+> +	if (xa_is_err(session)) {
+> +		err = xa_err(session);
+> +		goto restore;
+> +	}
+> +
+> +	if (session->pfile != pfile) {
+> +		err = -EINVAL;
+> +		goto restore;
+> +	}
+> +
+> +	session_get(session);
+> +	xa_unlock(&perf->sessions);
+> +
+> +	err = session_teardown(perf, session);
+> +
+> +	session_put(session);
+> +
+> +	return err;
+> +
+> +restore:
+> +	__xa_store(&perf->sessions, sid, session, GFP_KERNEL);
+> +	xa_unlock(&perf->sessions);
+> +
+> +	return err;
+> +}
+> +
+> +/**
+> + * panthor_perf_session_start - Start sampling on a stopped session.
+> + * @pfile: Open panthor file.
+> + * @perf: Handle to the panthor perf control structure.
+> + * @sid: Session identifier for the desired session.
+> + * @user_data: An opaque value passed in from userspace.
+> + *
+> + * A session counts as stopped when it is created or when it is explicitly stopped after being
+> + * started. Starting an active session is treated as a no-op.
+> + *
+> + * The @user_data parameter will be associated with all subsequent samples for a periodic
+> + * sampling session and will be ignored for manual sampling ones in favor of the user data
+> + * passed in the PERF_CONTROL.SAMPLE ioctl call.
+> + *
+> + * Return: 0 on success, negative error code on failure.
+> + */
+> +int panthor_perf_session_start(struct panthor_file *pfile, struct panthor_perf *perf,
+> +		u32 sid, u64 user_data)
+> +{
+> +	struct panthor_perf_session *session = session_find(pfile, perf, sid);
+> +	int err;
+> +
+> +	if (IS_ERR_OR_NULL(session))
+> +		return IS_ERR(session) ? PTR_ERR(session) : -EINVAL;
+> +
+> +	err = session_start(perf, session, user_data);
+> +
+> +	session_put(session);
+> +
+> +	return err;
+> +}
+> +
+> +/**
+> + * panthor_perf_session_stop - Stop sampling on an active session.
+> + * @pfile: Open panthor file.
+> + * @perf: Handle to the panthor perf control structure.
+> + * @sid: Session identifier for the desired session.
+> + * @user_data: An opaque value passed in from userspace.
+> + *
+> + * A session counts as active when it has been explicitly started via the PERF_CONTROL.START
+> + * ioctl. Stopping a stopped session is treated as a no-op.
+> + *
+> + * To ensure data is not lost when sampling is stopping, there must always be at least one slot
+> + * available for the final automatic sample, and the stop command will be rejected if there is not.
+> + *
+> + * The @user_data will always be associated with the final sample.
+> + *
+> + * Return: 0 on success, negative error code on failure.
+> + */
+> +int panthor_perf_session_stop(struct panthor_file *pfile, struct panthor_perf *perf,
+> +		u32 sid, u64 user_data)
+> +{
+> +	struct panthor_perf_session *session = session_find(pfile, perf, sid);
+> +	int err;
+> +
+> +	if (IS_ERR_OR_NULL(session))
+> +		return IS_ERR(session) ? PTR_ERR(session) : -EINVAL;
+> +
+> +	err = session_stop(perf, session, user_data);
+> +
+> +	session_put(session);
+> +
+> +	return err;
+> +}
+> +
+> +/**
+> + * panthor_perf_session_sample - Request a sample on a manual sampling session.
+> + * @pfile: Open panthor file.
+> + * @perf: Handle to the panthor perf control structure.
+> + * @sid: Session identifier for the desired session.
+> + * @user_data: An opaque value passed in from userspace.
+> + *
+> + * Only an active manual sampler is permitted to request samples directly. Failing to meet either
+> + * of these conditions will cause the sampling request to be rejected. Requesting a manual sample
+> + * with a full ringbuffer will see the request being rejected.
+> + *
+> + * The @user_data will always be unambiguously associated one-to-one with the resultant sample.
+> + *
+> + * Return: 0 on success, negative error code on failure.
+> + */
+> +int panthor_perf_session_sample(struct panthor_file *pfile, struct panthor_perf *perf,
+> +		u32 sid, u64 user_data)
+> +{
+> +	struct panthor_perf_session *session = session_find(pfile, perf, sid);
+> +	int err;
+> +
+> +	if (IS_ERR_OR_NULL(session))
+> +		return IS_ERR(session) ? PTR_ERR(session) : -EINVAL;
+> +
+> +	err = session_sample(perf, session, user_data);
+> +
+> +	session_put(session);
+> +
+> +	return err;
+> +}
+> +
+> +/**
+> + * panthor_perf_session_destroy - Destroy a sampling session associated with the @pfile.
+> + * @perf: Handle to the panthor perf control structure.
+> + * @pfile: The file being closed.
+> + *
+> + * Must be called when the corresponding userspace process is destroyed and cannot close its
+> + * own sessions. As such, we offer no guarantees about data delivery.
+> + */
+> +void panthor_perf_session_destroy(struct panthor_file *pfile, struct panthor_perf *perf)
+> +{
+> +	unsigned long sid;
+> +	struct panthor_perf_session *session;
+> +
+> +	if (!pfile || !perf)
+> +		return;
+> +
+> +	xa_for_each(&perf->sessions, sid, session)
+> +	{
+> +		if (session->pfile == pfile) {
+> +			session_destroy(perf, session);
+> +			xa_erase(&perf->sessions, sid);
+> +		}
+> +	}
+> +}
+> +
+>  /**
+>   * panthor_perf_unplug - Terminate the performance counter subsystem.
+>   * @ptdev: Panthor device.
+> @@ -124,8 +810,14 @@ void panthor_perf_unplug(struct panthor_device *ptdev)
+>  		return;
+>
+>  	if (!xa_empty(&perf->sessions)) {
+> +		unsigned long sid;
+> +		struct panthor_perf_session *session;
+> +
+>  		drm_err(&ptdev->base,
+>  			"Performance counter sessions active when unplugging the driver!");
+> +
+> +		xa_for_each(&perf->sessions, sid, session)
+> +			session_destroy(perf, session);
+>  	}
+>
+>  	xa_destroy(&perf->sessions);
+> diff --git a/drivers/gpu/drm/panthor/panthor_perf.h b/drivers/gpu/drm/panthor/panthor_perf.h
+> index e4805727b9e7..89d61cd1f017 100644
+> --- a/drivers/gpu/drm/panthor/panthor_perf.h
+> +++ b/drivers/gpu/drm/panthor/panthor_perf.h
+> @@ -7,10 +7,26 @@
+>
+>  #include <linux/types.h>
+>
+> +struct drm_panthor_perf_cmd_setup;
+>  struct panthor_device;
+> +struct panthor_file;
+> +struct panthor_perf;
+>
+>  int panthor_perf_init(struct panthor_device *ptdev);
+>  void panthor_perf_unplug(struct panthor_device *ptdev);
+>
+> +int panthor_perf_session_setup(struct panthor_device *ptdev, struct panthor_perf *perf,
+> +		struct drm_panthor_perf_cmd_setup *setup_args,
+> +		struct panthor_file *pfile);
+> +int panthor_perf_session_teardown(struct panthor_file *pfile, struct panthor_perf *perf,
+> +		u32 sid);
+> +int panthor_perf_session_start(struct panthor_file *pfile, struct panthor_perf *perf,
+> +		u32 sid, u64 user_data);
+> +int panthor_perf_session_stop(struct panthor_file *pfile, struct panthor_perf *perf,
+> +		u32 sid, u64 user_data);
+> +int panthor_perf_session_sample(struct panthor_file *pfile, struct panthor_perf *perf,
+> +		u32 sid, u64 user_data);
+> +void panthor_perf_session_destroy(struct panthor_file *pfile, struct panthor_perf *perf);
+> +
+>  #endif /* __PANTHOR_PERF_H__ */
+>
+> --
+> 2.33.0.dirty
+
+
+Adrian Larumbe
 
