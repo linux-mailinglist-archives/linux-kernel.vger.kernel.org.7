@@ -1,152 +1,165 @@
-Return-Path: <linux-kernel+bounces-737102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 371A3B0A7CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:43:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7C13B0A7C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:41:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1F9016466A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:38:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BFE33BC780
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:38:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136C72E54A9;
-	Fri, 18 Jul 2025 15:34:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96662DEA71;
+	Fri, 18 Jul 2025 15:35:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="opQKPy6/"
-Received: from mail-wr1-f65.google.com (mail-wr1-f65.google.com [209.85.221.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCEC22DFA40
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 15:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.65
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="IHK8cY5/"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3DBC1865EE;
+	Fri, 18 Jul 2025 15:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752852861; cv=none; b=VXa2FGGQ52X+XkIfbl3NSul5u5b3Q8fwQ9Lb3FWmljxQ9SIZXJIMcvPuNjxqCc/EY5otptStlg6KwxkMwAayvM0cxnKyMrnNF0a1c4hppDN9uqQatID6xm6HaUKprTQV5rA5frg0Fd6KSHdBNwz/nvGWkhbUdyx3sZAXwnU18OM=
+	t=1752852907; cv=none; b=I/VPbFjMhc9AuFX4NngDgrE76tuXYuA/+8EMpsLZuJzY/af2GgSKafh28UJMgeXE+Rq43MJRHRO9vUtP+Dt3ju5drCwv8lW5KM7M15PkhwNequUrqFfG8OPNr7bYrQSEpNoE1Rv92klEPda8QGIfoQ3Dmc3UK6YF+n7/cU6/sGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752852861; c=relaxed/simple;
-	bh=K3NQjhgoiNm8lMx4+MVnvFPTPl3eulyzeXdbVgmruJ8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=QsoTZEJCNzkaF9WU752c6Q8zbRTbY0ByrCJGql2MuKP6+SPz4QTEsjiFyU7j3YMxtW1wIimq6iutzz4HUcKpMMkSDd5x/5dwmHIGKppTqRm0nfsJQ3+vMqI9T1irl0eEZA3lkREX/HI61VQBojhd3mEA1119ZsGs9a5fRTxaHSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=opQKPy6/; arc=none smtp.client-ip=209.85.221.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f65.google.com with SMTP id ffacd0b85a97d-3a4fb9c2436so1299124f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 08:34:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752852858; x=1753457658; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3iipV5xdsK0MwvbEtYksPewl9/0L6LIT/vf6062yUSs=;
-        b=opQKPy6/1Sg/7T9T2uE7VpEsHkjKMWB8ZKXe7//kx/8OGUU5oae4h6x499khiOfzlR
-         Yy57NKNEuo3vyZyzZ0sYUFGMb7dXvlfCR+o1S4sWf2ZOOtcrV73SMCrZnt7PFgdSt2Z3
-         1sj3KjT4Flr73vYMadNEwvQnSqQKugB/gxFN681HT9NjOkXl9ee8LNlQs22LHD0Uk4Nn
-         7hD+gLt2oR3ZvtONrTBZbtJ9ZueG4Ld5V0Qo0CmQN4wOXwleiJvk48lBM8TaEqB/TN+O
-         VVrhiqkynlDDV31j/Hca+oz7xXIv3AANfAvfn5GHXjKLtrHd/63gBOn0Q1vYc79EgJpz
-         3Tmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752852858; x=1753457658;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3iipV5xdsK0MwvbEtYksPewl9/0L6LIT/vf6062yUSs=;
-        b=RjxXX5HOX4orFYCPQ460BX2EGfRmjBYQxNgdC8sb5fJjUA/I0cY3ND8dDvTS6NBEbt
-         Q72w4KRsZ+2sr9uoxcl6GXo/OSX+7jt3rpp3wievhheHrovG85Y7/Ci2a+tSlPP5jbRo
-         l1vSiiSO2U6cWjIQ4NuP0r7VurzMMCfajp9NBulsVNuZR21kPRPbree5owjrzOf0H0NK
-         dkkew+h+v0m0EEz/hg0BnTUMunBpFB3ZqPlRcD20zHXYmsI3KCtUcybgaNrBw/iw+ywU
-         /ae8mW9RdxVQnirhk1yfrUB+p4iTtJgcnh9F3F/wLKR2effGUOPQCqKKke5dBTLdSc+r
-         Wkdw==
-X-Forwarded-Encrypted: i=1; AJvYcCXn/QrrYgGuAJnqK7ZewkHEdp2z+hnqIepkEIDexX9KtdyxrmarLJ4gaJgA4z1c8mPKN42K5FnRxp10kNU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnpQYWJchzgAl3949VJbQsc3C648L3jY/QF/pQWItXLEuURekg
-	lSluDy9UY9bbrPWLIggTEjcGFGtkQkzbxet0FLgdJw2GfJEq61lAdZgQiQQDO0l9mzw=
-X-Gm-Gg: ASbGncuhfRMWPZdCfT8AjziQLrxFTWRlR+E5eqTt6q1iluQybfL0UcYl0GhqJdKsegB
-	ws8QfcJoKowgbK7KpyodhL0MMmlSBD12qB0JVNTbqeO1a9USu1C/vC1CBfaHxCEKrX3kh4V6VJ0
-	EsckwWbvCBAaiGOuKoqaiE3j59TPRIfxSJXr/+hJ6AF/kFf5qonG2R2xpZFUcKdevZQFzuPSy4C
-	ZHndt8MJBsjPt87dlB4sDCAHLD63a0cAtjLwzB5d3SxhzaJQN1d7+aqLztmaxSF/DkwsI/v5T/2
-	hu3wDzICFQH7603+YyPtaQQ8kQ79QfSXw6YDMXWUD3HS6g0qF+TOUJtXSm7ELL7+HB1Yd2n4A1U
-	QAXZAfEbaOJh4SEGRxETdimkbtF/TN2fTWAhSaouIlqOcOD3AJ3Ro5ogs2uCczmM=
-X-Google-Smtp-Source: AGHT+IEKZu1u8s2VVWUMdCPz30xTR8FlRWALcZqZAODUU/SIzT3B274xFGen3mJx9foyZcEa07s/qg==
-X-Received: by 2002:a05:6000:4109:b0:391:3aaf:1d5f with SMTP id ffacd0b85a97d-3b61b22e416mr2221624f8f.52.1752852857943;
-        Fri, 18 Jul 2025 08:34:17 -0700 (PDT)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca5c5e3sm2213659f8f.78.2025.07.18.08.34.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Jul 2025 08:34:17 -0700 (PDT)
-Message-ID: <2c5b3ddb-d171-4b30-9b64-def913ca5af2@linaro.org>
-Date: Fri, 18 Jul 2025 16:34:15 +0100
+	s=arc-20240116; t=1752852907; c=relaxed/simple;
+	bh=FxcvYdQRY3DcBanF32X4QBOp7OCa18HAxUo7EjU1yqk=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=T26W0m1bc+NH04suj5cGXbnU5eRRKKMS+hzV+XcGGckLitOSwtXxpskQhzDfZ1NqNenBj3/i/j0/W/peO9xAIsBxDNJuEJjR0qSGs5ihGqXWSfJSyu10PI8G29RzMapb98Z3pYh0BQTrLuTIn7aWuXRUOOaZlmrEq772aoz/mrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=IHK8cY5/; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from narnia (unknown [40.78.13.147])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 04C33211FEB6;
+	Fri, 18 Jul 2025 08:35:03 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 04C33211FEB6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1752852905;
+	bh=laEB97ogdr442ty4J3QQO87ShWSCdclOdA+Q3Ik/eFw=;
+	h=From:To:Subject:In-Reply-To:References:Date:From;
+	b=IHK8cY5/lSxxbodzOTpipcidTjQMMy8rPm8E6SOR/VtgYTbdq9p+VnU2shW4cq/I/
+	 /J+K1bw0suszJuKinQS4P9SfgkKHSGTkpMiZ9VPvrk3cFAAl73qeavYt63B5GGTpOJ
+	 67vIjk6zBJxDgSvijyMM9PZ2EwNOtuwT7WljerpE=
+From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+To: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley
+ <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>,
+ Casey Schaufler <casey@schaufler-ca.com>, John Johansen
+ <john.johansen@canonical.com>, Christian =?utf-8?Q?G=C3=B6ttsche?=
+ <cgzones@googlemail.com>, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org, selinux@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH] lsm,selinux: Add LSM blob support for BPF objects
+In-Reply-To: <941986e9f4f295f247e5982002e16fe9@paul-moore.com>
+References: <20250715222655.705241-1-bboscaccy@linux.microsoft.com>
+ <941986e9f4f295f247e5982002e16fe9@paul-moore.com>
+Date: Fri, 18 Jul 2025 08:35:02 -0700
+Message-ID: <875xfp4imx.fsf@microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/4] Add Dell Inspiron 7441 / Latitude 7455
- (X1E-80-100)
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-To: Val Packett <val@packett.cool>
-Cc: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250716003139.18543-1-val@packett.cool>
- <a2681844-a96a-465a-a48d-49e1ede526c6@linaro.org>
- <316007b6-6e24-4095-be24-fbd4ae7d425c@linaro.org>
-Content-Language: en-US
-In-Reply-To: <316007b6-6e24-4095-be24-fbd4ae7d425c@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 18/07/2025 16:33, Bryan O'Donoghue wrote:
-> On 16/07/2025 11:53, Bryan O'Donoghue wrote:
->> On 16/07/2025 01:26, Val Packett wrote:
->>> Since v3[1]:
->>>
->>> - Applied R-b tags
->>> - Skipping the eDP panel ID patch now since it's been applied
->>> - Fixed the last remaining '-names before -0' order issue
->>> - Changed usb_mp: keep the unused PHYs enabled in the DT
->>>    (to let them go to sleep), like how it is done for the XPS
->>>
->>> [1]: https://lore.kernel.org/all/20250706205723.9790-2-val@packett.cool/
->>>
->>> Bryan O'Donoghue (2):
->>>    dt-bindings: arm: qcom: Add Dell Inspiron 14 Plus 7441
->>>    arm64: dts: qcom: Add support for Dell Inspiron 7441 / Latitude 7455
->>>
->>> Val Packett (2):
->>>    dt-bindings: arm: qcom: Add Dell Latitude 7455
->>>    firmware: qcom: scm: Allow QSEECOM on Dell Inspiron 7441 / Latitude
->>>      7455
->>>
->>>   .../devicetree/bindings/arm/qcom.yaml         |    2 +
->>>   arch/arm64/boot/dts/qcom/Makefile             |    4 +
->>>   arch/arm64/boot/dts/qcom/x1-dell-thena.dtsi   | 1666 +++++++++++++++++
->>>   .../x1e80100-dell-inspiron-14-plus-7441.dts   |   52 +
->>>   .../dts/qcom/x1e80100-dell-latitude-7455.dts  |   53 +
->>>   drivers/firmware/qcom/qcom_scm.c              |    2 +
->>>   6 files changed, 1779 insertions(+)
->>>   create mode 100644 arch/arm64/boot/dts/qcom/x1-dell-thena.dtsi
->>>   create mode 100644 arch/arm64/boot/dts/qcom/x1e80100-dell- 
->>> inspiron-14-plus-7441.dts
->>>   create mode 100644 arch/arm64/boot/dts/qcom/x1e80100-dell- 
->>> latitude-7455.dts
->>>
->>
->> Just tested on the 14p this updated version seems to work just about 
->> fine - or no worse than previous.
->>
->> Tested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> 
-> Ah I was booting my old dts with the spelling mistake "inspir I on" 
-> booting the insprion.dtb here is a no-boot for me.
-> 
-> Please hold off on applying this, until its root-caused.
-> 
-> ---
-> bod
+Paul Moore <paul@paul-moore.com> writes:
 
-[sic] inspiron.dtb
+> On Jul 15, 2025 Blaise Boscaccy <bboscaccy@linux.microsoft.com> wrote:
+>> 
+>> This patch introduces LSM blob support for BPF maps, programs, and
+>> tokens to enable LSM stacking and multiplexing of LSM modules that
+>> govern BPF objects. Additionally, the existing BPF hooks used by
+>> SELinux have been updated to utilize the new blob infrastructure,
+>> removing the assumption of exclusive ownership of the security
+>> pointer.
+>> 
+>> Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+>> ---
+>>  include/linux/lsm_hooks.h         |   3 +
+>>  security/security.c               | 120 +++++++++++++++++++++++++++++-
+>>  security/selinux/hooks.c          |  56 +++-----------
+>>  security/selinux/include/objsec.h |  17 +++++
+>>  4 files changed, 147 insertions(+), 49 deletions(-)
+>
+> ...
+>
+>> @@ -835,6 +841,72 @@ static int lsm_bdev_alloc(struct block_device *bdev)
+>>  	return 0;
+>>  }
+>>  
+>> +/**
+>> + * lsm_bpf_map_alloc - allocate a composite bpf_map blob
+>> + * @map: the bpf_map that needs a blob
+>> + *
+>> + * Allocate the bpf_map blob for all the modules
+>> + *
+>> + * Returns 0, or -ENOMEM if memory can't be allocated.
+>> + */
+>> +static int lsm_bpf_map_alloc(struct bpf_map *map)
+>> +{
+>> +	if (blob_sizes.lbs_bpf_map == 0) {
+>> +		map->security = NULL;
+>> +		return 0;
+>> +	}
+>> +
+>> +	map->security = kzalloc(blob_sizes.lbs_bpf_map, GFP_KERNEL);
+>> +	if (!map->security)
+>> +		return -ENOMEM;
+>> +
+>> +	return 0;
+>> +}
+>
+> Casey suggested considering kmem_cache for the different BPF objects,
+> but my gut feeling is that none ofthe BPF objects are going to be
+> allocated with either enough frequency, or enough quantity, where a
+> simple kzalloc() wouldn't be sufficient, at least for now.  Thoughts
+> on this Blaise?
+
+Yeah, I agree, the number of allocations should be very low in
+comparision to something like inodes. We are probably okay using kzalloc
+forf the time being. 
+
+>
+> Assuming we stick with kazlloc() based allocation, please look at using
+> the lsm_blob_alloc() helper function as Song mentioned  As I'm writing
+> this I'm realizing there are a few allocatiors that aren't using the
+> helper, I need to fix those up ...
+
+Will do.
+
+>
+> It's worth mentioning that the allocation scheme is an internal LSM
+> implementation detail, something we can change at any time with a small
+> patch, so I wouldn't stress too much about "Getting it Right" at this
+> point in time.
+>
+>> @@ -5763,7 +5862,12 @@ int security_bpf_token_capable(const struct bpf_token *token, int cap)
+>>   */
+>>  void security_bpf_map_free(struct bpf_map *map)
+>>  {
+>> +	if (!map->security)
+>> +		return;
+>> +
+>
+> We don't currently check if map->security is NULL in the current hook,
+> or the SELinux callback (it's not a common pattern for the LSM blobs),
+> did you run into a problem where the blob pointer was NULL?
+>
+> The same comment applies to all three blob types.
+
+No real issues that I ran into. I was cribbing off the pattern used in
+block devices. After taking a second look, it looks safe to remove that
+check. I'll get that fixed in v2.
+
+-blaise
+
+>
+>>  	call_void_hook(bpf_map_free, map);
+>> +	kfree(map->security);
+>> +	map->security = NULL;
+>>  }
+>>  
+>>  /**
+>
+> --
+> paul-moore.com
 
