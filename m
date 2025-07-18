@@ -1,173 +1,182 @@
-Return-Path: <linux-kernel+bounces-736517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48584B09DF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:29:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 305BAB09DF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8EBB177AA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:29:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 010A4178F6D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:29:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43CB9291C2B;
-	Fri, 18 Jul 2025 08:29:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 343C62459D1;
+	Fri, 18 Jul 2025 08:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="GVpca6Hp"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NKPJcX9J"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5432253A1;
-	Fri, 18 Jul 2025 08:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195C9224891
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 08:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752827342; cv=none; b=XjzyHfpCqy07RjU0/tfydaZq3QpAzTOlI1kXEfQzZ077hdsWNIImxzj2fPvyHfnu+FVu4dr1v1Btq+My218IMuivdZT62COtrfY1im6tQ2xK8WLyY5yHlLAdNXcNAnnuGFN6EhBSoDPZ8PUNb6NkQDfR1t6OVcBk3EbrfxEer2w=
+	t=1752827374; cv=none; b=kjUvYRD36vJaIrBgo3Lex/DMLZsDEzTa4rZKdtGOmLIsXmLSVrTUns+Vyd5CGAIQl7tlkwDIpWAPJcPtAdN8DobslbTpSPlOoKlSCOss1WZ8izd8WQNc+6FSWS9mYZ7ftg/lJTUpxXtR+c4F3TtYJ2x8OuGels/xEeJUyBBMIU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752827342; c=relaxed/simple;
-	bh=An+QLoB26vrwmylv7R5nbNxLfWknzHLJzo8x0RFfRj0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=tfKsoEtIyZ6r6hAzTdKaMa4NdkyhyT0AnlXM7hSW37iylamVYfBFsVYbp7PL8Ah/EdCSFI78mae+bqL9D+Z04kqD+QNlBBUJfZMbh0QH3D3RzOoP/7gUQ+4kXSIjF8iCSJaa0peK6wtwgBAqVT6hppezmRNjwWCTRwutqaVUMug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=GVpca6Hp; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56I7AXiX016701;
-	Fri, 18 Jul 2025 08:28:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=P7zv2f
-	2/pQ2JjPIX25pzVf7Fi9ExE+OaUp8IOBF1wYk=; b=GVpca6HpyCTHbO5QzbbcH1
-	Hza8zv+C6i44zb0E3HS4ZVHe+QAjdM75aBs9kMvmA7Ka7NgzX7jgiUus4GTFMYH7
-	SUsmdiodPaV2QS+YXVzhoJD6mkK5dCXeAxF6yH0I0m8zGGbmcRhqPOemSbpMI3zb
-	gDGQY7OQNlwFcubh5Qdpfvwdj1t7Z68bbcUj6nBqv+zA2cfQR52QQavkUNmNbGPY
-	qg84iZ9/4LvunHQTZjAOP+Qws/SCCxo3En/6+MF+TvlZYyM8RZjLt9UTTsQlkP3K
-	9IqdnndnjrXWGLWRPdClZlq9kPoEvTfh1rRWDjqWXS1aiZ/osNy9ndSDupu8nP9Q
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47vamub9nj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Jul 2025 08:28:38 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56I4kGYP008154;
-	Fri, 18 Jul 2025 08:28:38 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 47v2e10hfy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Jul 2025 08:28:38 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56I8SYGI52232472
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 18 Jul 2025 08:28:34 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E58B32004D;
-	Fri, 18 Jul 2025 08:28:33 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A44F620040;
-	Fri, 18 Jul 2025 08:28:32 +0000 (GMT)
-Received: from [9.111.132.145] (unknown [9.111.132.145])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 18 Jul 2025 08:28:32 +0000 (GMT)
-Message-ID: <fb9ee560-d449-4d46-9fb1-19780ff28e65@linux.ibm.com>
-Date: Fri, 18 Jul 2025 10:28:32 +0200
+	s=arc-20240116; t=1752827374; c=relaxed/simple;
+	bh=2yMZxEoMhzHBRLhDU4mMOZCbhsreVPW3r72uSlrVzME=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=CMlL4AxWRIQAXD2Wy6ebw27rZ2u/UHZXCOvw3u7MrDVm35Wpg8mLlwb5vyiE/JOAmffn2iffNL73pCBVpLFBknVqCq/66huH65YjkfDJo5sZjdCqWVz/4uzRmh3d5YndnW5L04jwiTDDiSEObwClOJHNlipMVlUIOsWZ4dBhek8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NKPJcX9J; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752827372;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=tLxIgdhHiCoIgPGgPwU9stKbvRQ2I1q76Ap/zfjhcII=;
+	b=NKPJcX9JUlNF3MpnAebcOSVPHnOPXUXuXh/UNeT+nOsgmkf24CXmB/GXWD3s+0L03HZiPS
+	lmfprn13yIHR837FaIsHvnKT8hH/Z7gLBwurHBlKJIlh2MHf04M0hmRL4JiWHWXfFvRdXM
+	N8QqncFiPnhJbhYQ7acJ5VhWfFBISxw=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-564-Hq1APPNbMhy3c5iZgPPmNA-1; Fri,
+ 18 Jul 2025 04:29:28 -0400
+X-MC-Unique: Hq1APPNbMhy3c5iZgPPmNA-1
+X-Mimecast-MFC-AGG-ID: Hq1APPNbMhy3c5iZgPPmNA_1752827365
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 575D119560B6;
+	Fri, 18 Jul 2025 08:29:25 +0000 (UTC)
+Received: from server.redhat.com (unknown [10.72.112.34])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id AA4E830001B9;
+	Fri, 18 Jul 2025 08:29:14 +0000 (UTC)
+From: Cindy Lu <lulu@redhat.com>
+To: "K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>,
+	Dexuan Cui <decui@microsoft.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Michael Kelley <mhklinux@outlook.com>,
+	Shradha Gupta <shradhagupta@linux.microsoft.com>,
+	Kees Cook <kees@kernel.org>,
+	Saurabh Sengar <ssengar@linux.microsoft.com>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Guillaume Nault <gnault@redhat.com>,
+	Joe Damato <jdamato@fastly.com>,
+	Ahmed Zaki <ahmed.zaki@intel.com>,
+	linux-hyperv@vger.kernel.org (open list:Hyper-V/Azure CORE AND DRIVERS),
+	netdev@vger.kernel.org (open list:NETWORKING DRIVERS),
+	linux-kernel@vger.kernel.org (open list),
+	lulu@redhat.com,
+	jasowang@redhat.com
+Subject: [PATCH v2] netvsc: transfer lower device max tso size
+Date: Fri, 18 Jul 2025 16:28:44 +0800
+Message-ID: <20250718082909.243488-1-lulu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 07/16] unwind_user: Enable archs that do not
- necessarily save RA
-From: Jens Remus <jremus@linux.ibm.com>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-        bpf@vger.kernel.org, x86@kernel.org,
-        Steven Rostedt <rostedt@kernel.org>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Ilya Leoshkevich <iii@linux.ibm.com>,
-        Masami Hiramatsu
- <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Indu Bhagat <indu.bhagat@oracle.com>,
-        "Jose E. Marchesi" <jemarch@gnu.org>,
-        Beau Belgrave <beaub@linux.microsoft.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
-        Sam James <sam@gentoo.org>
-References: <20250710163522.3195293-1-jremus@linux.ibm.com>
- <20250710163522.3195293-8-jremus@linux.ibm.com>
- <xgbpe46th7rbpslybo5xdt57ushlgwr5xyrq4epuft5nfrqms3@izeojto3wzu4>
- <b5121d71-f916-45ea-9e6c-b74a27f90dcd@linux.ibm.com>
-Content-Language: en-US
-Organization: IBM Deutschland Research & Development GmbH
-In-Reply-To: <b5121d71-f916-45ea-9e6c-b74a27f90dcd@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: lyAFuwjgrMh-HnhCNOaWMxfetyzxvEaR
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE4MDA2NCBTYWx0ZWRfX4VemN82g5i3Q 6Si28PDiYEycUkdY/Ocy02ALDx2nMJRqExPdL+wYLjxTVRCZIxU6wrJmfS+gRHHCNy/J7m0M5hP C8ot0n6ST50PUHYFYkOiYBK6VYmHajP5+rPCD5gq0YcCmDxmWwmAWgvETgVbBUvm2l/foWLIcWG
- r/jDHcjgtSr85ROj3GfUFCo6GFpF8b0h+lsQYYFS6/1+lhbiNW+mQeFgDhbY76G/iuEKmfjSBVS 03S8+2b71+o7gP8AftOJ1Qf9bnxObS61VrUJiokLdxyldD/ZLezU1pXs/A4Bi8V6u3He8vK31th 36iyzY56tQ3IHkCKTV2yDDC1bQ/081XwBwl4RUaoQE5qCPtSvOzm2xAp8P7g7b/qPgz7aGFDWM3
- lQxqseKFSVXGvJvHJyVIPSfy84Ik4b94Ch0enLMAYjvCYlzaFMehWp0Wd2w9qJx9QEPs1q2P
-X-Proofpoint-ORIG-GUID: lyAFuwjgrMh-HnhCNOaWMxfetyzxvEaR
-X-Authority-Analysis: v=2.4 cv=dNSmmPZb c=1 sm=1 tr=0 ts=687a05b7 cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=edDyEtEh5DHdOHvQ2iMA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-18_01,2025-07-17_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=999 bulkscore=0 lowpriorityscore=0 suspectscore=0 spamscore=0
- clxscore=1015 phishscore=0 malwarescore=0 mlxscore=0 adultscore=0
- impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507180064
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 17.07.2025 13:09, Jens Remus wrote:
-> On 17.07.2025 01:01, Josh Poimboeuf wrote:
->> On Thu, Jul 10, 2025 at 06:35:13PM +0200, Jens Remus wrote:
->>> +++ b/arch/Kconfig
->>> @@ -450,6 +450,11 @@ config HAVE_UNWIND_USER_SFRAME
->>>  	bool
->>>  	select UNWIND_USER
->>>  
->>> +config HAVE_USER_RA_REG
->>> +	bool
->>> +	help
->>> +	  The arch passes the return address (RA) in user space in a register.
->>
->> How about "HAVE_UNWIND_USER_RA_REG" so it matches the existing
->> namespace?
-> 
-> Ok.  I am open to any improvements.
+From: Jason Wang <jasowang@redhat.com>
 
-Thinking about this again I realized that the config option actually
-serves two purposes:
+When netvsc is accelerated by the lower device, we can advertise the
+lower device max tso size in order to get better performance.
 
-1. Enable code (e.g. unwind user) to determine the presence of the new
-   user_return_address().  That is where I derived the name from.
-2. Enable unwind user (sframe) to behave differently, if an architecture
-   has/uses a RA register (unlike x86, which solely uses the stack).
+One example is that when 802.3ad encap is enabled by netvsc, it has a
+lower max tso size than 64K. This will lead to software segmentation
+of forwarding GSO packet (e.g the one from VM/tap).
 
-I think the primary notion is that an architecture has/uses a register
-for the return address and thus provides user_return_address().  What
-consumers such as unwind user do with that info is secondary.
+This patch help to recover the performance.
 
-Thoughts?
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+Tested-by: Cindy Lu <lulu@redhat.com>
+Signed-off-by: Cindy Lu <lulu@redhat.com>
+---
+ drivers/net/hyperv/netvsc_drv.c |  2 +-
+ include/linux/netdevice.h       |  4 ++++
+ net/core/dev.c                  | 18 ++++++++++++++++++
+ 3 files changed, 23 insertions(+), 1 deletion(-)
 
-Thanks and regards,
-Jens
+diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
+index c41a025c66f0..7af4aa4f4abe 100644
+--- a/drivers/net/hyperv/netvsc_drv.c
++++ b/drivers/net/hyperv/netvsc_drv.c
+@@ -2440,7 +2440,7 @@ static int netvsc_vf_changed(struct net_device *vf_netdev, unsigned long event)
+ 		 * switched over to the VF
+ 		 */
+ 		if (vf_is_up)
+-			netif_set_tso_max_size(ndev, vf_netdev->tso_max_size);
++			netif_stacked_transfer_tso_max_size(vf_netdev, ndev);
+ 		else
+ 			netif_set_tso_max_size(ndev, netvsc_dev->netvsc_gso_max_size);
+ 	}
+diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+index adb14db25798..c695a3ffecd8 100644
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -5275,6 +5275,9 @@ void netdev_change_features(struct net_device *dev);
+ void netif_stacked_transfer_operstate(const struct net_device *rootdev,
+ 					struct net_device *dev);
+ 
++void netif_stacked_transfer_tso_max_size(const struct net_device *rootdev,
++					 struct net_device *dev);
++
+ netdev_features_t passthru_features_check(struct sk_buff *skb,
+ 					  struct net_device *dev,
+ 					  netdev_features_t features);
+@@ -5326,6 +5329,7 @@ static inline bool netif_needs_gso(struct sk_buff *skb,
+ }
+ 
+ void netif_set_tso_max_size(struct net_device *dev, unsigned int size);
++
+ void netif_set_tso_max_segs(struct net_device *dev, unsigned int segs);
+ void netif_inherit_tso_max(struct net_device *to,
+ 			   const struct net_device *from);
+diff --git a/net/core/dev.c b/net/core/dev.c
+index be97c440ecd5..3bec4284adff 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -3306,6 +3306,24 @@ void netif_set_tso_max_size(struct net_device *dev, unsigned int size)
+ }
+ EXPORT_SYMBOL(netif_set_tso_max_size);
+ 
++/**
++ *	netif_stacked_transfer_tso_max_size - transfer tso max size
++ *	@rootdev: the root or lower level device to transfer tso max size from
++ *	@dev: the device to transfer operstate to
++ *
++ *	Transfer tso max size from root to device. This is normally
++ *	called when a stacking relationship exists between the root
++ *	device and the device(a leaf device).
++ */
++void netif_stacked_transfer_tso_max_size(const struct net_device *rootdev,
++					 struct net_device *dev)
++{
++	dev->tso_max_size = rootdev->tso_max_size;
++	netif_set_gso_max_size(dev, READ_ONCE(rootdev->gso_max_size));
++	netif_set_gso_ipv4_max_size(dev, READ_ONCE(rootdev->gso_ipv4_max_size));
++}
++EXPORT_SYMBOL(netif_stacked_transfer_tso_max_size);
++
+ /**
+  * netif_set_tso_max_segs() - set the max number of segs supported for TSO
+  * @dev:	netdev to update
 -- 
-Jens Remus
-Linux on Z Development (D3303)
-+49-7031-16-1128 Office
-jremus@de.ibm.com
-
-IBM
-
-IBM Deutschland Research & Development GmbH; Vorsitzender des Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
-IBM Data Privacy Statement: https://www.ibm.com/privacy/
+2.45.0
 
 
