@@ -1,189 +1,138 @@
-Return-Path: <linux-kernel+bounces-737240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55ADEB0A9A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 19:39:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6929DB0A9AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 19:40:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B65891C269E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:39:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 667B61C423E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703292E7643;
-	Fri, 18 Jul 2025 17:39:14 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C672E7BBE;
+	Fri, 18 Jul 2025 17:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="CVdRvKlI"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA28156678;
-	Fri, 18 Jul 2025 17:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78DEC156678;
+	Fri, 18 Jul 2025 17:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752860354; cv=none; b=WsZQgv0yCTf9q6h+UXRkS1ZR5kj6LiOkLTNFmA430/NJI9TC4ZW+qXdjSq0nSQO9cybLbLmZCCj0t0QO0BmYFHD39lbk8+YGutzY33qe0uTT87IffAWzReiTPHjX+nQ2AcCV6UzxxQJ8PtaZO2O9N07uXxMUHd52JeYTXDS7oNg=
+	t=1752860435; cv=none; b=GrB33lmUKdeePFRF1dt2hg0F4wNZetDQiEaplHutuTqX/g3IpD4whRpoy0aIJnwpvGIDUhuO2JReknQenlsy+4MbUVEv2TO6xZ8JkVz/JeZwt4/cVFBTDCR4WmxBRxAN5QkmupMn3lMRkmR9XlK+VZBESuBr7VLvc3N452tD91w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752860354; c=relaxed/simple;
-	bh=5Rk/G7wsR0SP1jYxjf6PluXIyHe7/NFMk+1LySyLWSM=;
+	s=arc-20240116; t=1752860435; c=relaxed/simple;
+	bh=mQMolIgpTH7FjE+3w+cIHxeevW8RkXD0lhrk1Zqnq1U=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MIpzY7IySin0H5JH+D7v01Ihj3DwEcRpc81s9YJw+hZOa3bbcDEWUtjq2xyydVDyjH4AI6w6pSdvWniFCqyhGr4nEKBwz6FNNc1IrE6zsVwUac2dIOdjlVx/Spc8o1xfpru9QZWk2meL9+1Z4mnoojJj5um7pqP6dDXxZ3wweGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf01.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay10.hostedemail.com (Postfix) with ESMTP id E3703C016F;
-	Fri, 18 Jul 2025 17:39:09 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf01.hostedemail.com (Postfix) with ESMTPA id 4002C6000F;
-	Fri, 18 Jul 2025 17:39:08 +0000 (UTC)
-Date: Fri, 18 Jul 2025 13:39:07 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/5] tracing: fprobe-event: Allocate string buffers from
- heap
-Message-ID: <20250718133907.6e56a3fa@batman.local.home>
-In-Reply-To: <175283845881.343578.10010946807218897188.stgit@devnote2>
-References: <175283843771.343578.8524137568048302760.stgit@devnote2>
-	<175283845881.343578.10010946807218897188.stgit@devnote2>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	 MIME-Version:Content-Type; b=o4O/+O6Sr/SwKfuJUYlZnJN4mUnzTo/GZQtaiq63ZZxSwYCWEVgd9LWVjLE5B1J/aJqxbU3W55tXJNC8FPrWX45XSFTsvaioOIO3PqrTEFAHvk5dGGz8zrsYOcnjuTzkg4Srj3ONPVOgxf/PEBb5Odjad204KIj6bxU4vddNlk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=CVdRvKlI; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5FD8E443B3;
+	Fri, 18 Jul 2025 17:40:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1752860425;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fQqUsJ+Qb6MnonChra2CtKhIIlviGmLlJPe1nhDRgAA=;
+	b=CVdRvKlIHFHsWfAgRCHtzqd+wMzGyGeJV7woFCUMSefTHo6gS4gAbmWGFLMC+KtyhK8Sep
+	7mSo0vOFEg1xkQv2/aKJ8M1I+NOfJbKxBXNwO/iXiopx9mRRBngl1EYJMtucYoz3/Ckc3e
+	qGdMo6s7sj/FPzERN7FrV5S5pNO//q3meaQqQ4YyAf0x/K3K4I2X4TjryooGndNCD1CXog
+	wSAvnuP9QxJZ5z/3+UOpSAyL8PV7vbx23Nn7aboo5j8HvfRiFRj1M3/zSF92soI9YTFFo8
+	msJwRCY5Tbz/C9eqdCnQPrhN76K1qnNze4lKNr1tJe5RxthKM4S6M5wfXQE4jw==
+Date: Fri, 18 Jul 2025 19:40:22 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
+ <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
+ Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>, Marek
+ =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>, Oleksij Rempel
+ <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
+ <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
+ mwojtas@chromium.org, Antoine Tenart <atenart@kernel.org>,
+ devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Romain
+ Gantois <romain.gantois@bootlin.com>, Daniel Golle <daniel@makrotopia.org>,
+ Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+Subject: Re: [PATCH net-next v9 02/15] net: ethtool: common: Indicate that
+ BaseT works on up to 4 lanes
+Message-ID: <20250718194022.4d01088e@kmaincent-XPS-13-7390>
+In-Reply-To: <20250717073020.154010-3-maxime.chevallier@bootlin.com>
+References: <20250717073020.154010-1-maxime.chevallier@bootlin.com>
+	<20250717073020.154010-3-maxime.chevallier@bootlin.com>
+Organization: bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 4002C6000F
-X-Stat-Signature: pqz9gbzk837n1g88pn1xbtzzf6kkkzm3
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19Oaf5WJqTst86BCkvqjzIGjaQw+0fUXAw=
-X-HE-Tag: 1752860348-939073
-X-HE-Meta: U2FsdGVkX1/c/3+Ayp0hT81n12/xrsmZzRdOGAxjRULOdE2aRkfXQMZCWe5aqOdSHM7RTFmxgahPAbiMO4VPVVDVseffe4rSRQNULKBXrOy7CjQgzzM7QiqLhHZ9Izw1wYDOxWixL6T4IV0IK639xa/sB3Xwx3StXpN4p0mLn4D9H9ouhwU8siNZpU9bavK9uA739nGXhdsaIMOKquIMZHe3qDpphEvnTTbZP/VQmL3SlJhMLuIzJwBKHAbhFkW1aFbCxwhhGPx7JwjoDkfKP/ZJhYO8i8EHfJg4t573iuX3APyGzyCthqGX9czORRhgg12+VB59RND5p7v0/a5E53kXPObQI0G5eU0XQqIOD+pgSl7Je+GVpw==
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeigedtkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthhqredtredtjeenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefguddtfeevtddugeevgfevtdfgvdfhtdeuleetffefffffhffgteekvdefudeiieenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgduheemfegvgeemtgehtddtmeekvddttgemiegvtddumeejkegrtgemvdgtugefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduheemfegvgeemtgehtddtmeekvddttgemiegvtddumeejkegrtgemvdgtugefpdhhvghlohepkhhmrghinhgtvghnthdqigfrufdqudefqdejfeeltddpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeefuddprhgtphhtthhopehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtp
+ hhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhmshhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrgh
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On Fri, 18 Jul 2025 20:34:19 +0900
-"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+Le Thu, 17 Jul 2025 09:30:06 +0200,
+Maxime Chevallier <maxime.chevallier@bootlin.com> a =C3=A9crit :
 
-> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> 
-> Allocate temporary string buffers for fprobe-event from heap
-> instead of stack. This fixes the stack frame exceed limit error.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202506240416.nZIhDXoO-lkp@intel.com/
-> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> ---
->  kernel/trace/trace_fprobe.c |   39 ++++++++++++++++++++++++++-------------
->  1 file changed, 26 insertions(+), 13 deletions(-)
-> 
-> diff --git a/kernel/trace/trace_fprobe.c b/kernel/trace/trace_fprobe.c
-> index 264cf7fc9a1d..fd1036e27309 100644
-> --- a/kernel/trace/trace_fprobe.c
-> +++ b/kernel/trace/trace_fprobe.c
-> @@ -1234,18 +1234,18 @@ static int trace_fprobe_create_internal(int argc, const char *argv[],
->  	 *  FETCHARG:TYPE : use TYPE instead of unsigned long.
->  	 */
->  	struct trace_fprobe *tf __free(free_trace_fprobe) = NULL;
-> -	struct module *mod __free(module_put) = NULL;
-> -	int i, new_argc = 0, ret = 0;
-> -	bool is_return = false;
-> -	char *symbol __free(kfree) = NULL;
->  	const char *event = NULL, *group = FPROBE_EVENT_SYSTEM;
-> +	struct module *mod __free(module_put) = NULL;
->  	const char **new_argv __free(kfree) = NULL;
-> -	char buf[MAX_EVENT_NAME_LEN];
-> -	char gbuf[MAX_EVENT_NAME_LEN];
-> -	char sbuf[KSYM_NAME_LEN];
-> -	char abuf[MAX_BTF_ARGS_LEN];
-> +	char *symbol __free(kfree) = NULL;
-> +	char *ebuf __free(kfree) = NULL;
-> +	char *gbuf __free(kfree) = NULL;
-> +	char *sbuf __free(kfree) = NULL;
-> +	char *abuf __free(kfree) = NULL;
->  	char *dbuf __free(kfree) = NULL;
-> +	int i, new_argc = 0, ret = 0;
->  	bool is_tracepoint = false;
-> +	bool is_return = false;
->  
->  	if ((argv[0][0] != 'f' && argv[0][0] != 't') || argc < 2)
->  		return -ECANCELED;
-> @@ -1273,6 +1273,9 @@ static int trace_fprobe_create_internal(int argc, const char *argv[],
->  
->  	trace_probe_log_set_index(0);
->  	if (event) {
-> +		gbuf = kmalloc(MAX_EVENT_NAME_LEN, GFP_KERNEL);
-> +		if (!gbuf)
-> +			return -ENOMEM;
->  		ret = traceprobe_parse_event_name(&event, &group, gbuf,
->  						  event - argv[0]);
->  		if (ret)
-> @@ -1280,15 +1283,18 @@ static int trace_fprobe_create_internal(int argc, const char *argv[],
->  	}
->  
->  	if (!event) {
-> +		ebuf = kmalloc(MAX_EVENT_NAME_LEN, GFP_KERNEL);
+> The way BaseT modes (Ethernet over twisted copper pairs) are represented
+> in the kernel are through the following modes :
+>=20
+>   ETHTOOL_LINK_MODE_10baseT_Half
+>   ETHTOOL_LINK_MODE_10baseT_Full
+>   ETHTOOL_LINK_MODE_100baseT_Half
+>   ETHTOOL_LINK_MODE_100baseT_Full
+>   ETHTOOL_LINK_MODE_1000baseT_Half
+>   ETHTOOL_LINK_MODE_1000baseT_Full
+>   ETHTOOL_LINK_MODE_2500baseT_Full
+>   ETHTOOL_LINK_MODE_5000baseT_Full
+>   ETHTOOL_LINK_MODE_10000baseT_Full
+>   ETHTOOL_LINK_MODE_100baseT1_Full
+>   ETHTOOL_LINK_MODE_1000baseT1_Full
+>   ETHTOOL_LINK_MODE_10baseT1L_Full
+>   ETHTOOL_LINK_MODE_10baseT1S_Full
+>   ETHTOOL_LINK_MODE_10baseT1S_Half
+>   ETHTOOL_LINK_MODE_10baseT1S_P2MP_Half
+>   ETHTOOL_LINK_MODE_10baseT1BRR_Full
+>=20
+> The baseT1* modes explicitly specify that they work on a single,
+> unshielded twister copper pair.
+>=20
+> However, the other modes do not state the number of pairs that are used
+> to carry the link. 10 and 100BaseT use 2 twisted copper pairs, while
+> 1GBaseT and higher use 4 pairs.
+>=20
+> although 10 and 100BaseT use 2 pairs, they can work on a Cat3/4/5+
+> cables that contain 4 pairs.
+>=20
+> Change the number of pairs associated to BaseT modes to indicate the
+> allowable number of pairs for BaseT. Further commits will then refine
+> the minimum number of pairs required for the linkmode to work.
+>=20
+> BaseT1 modes aren't affected by this commit.
+>=20
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
-ebuf and gbuf are used with the same length. Why not just keep them
-using the same buffer? It worked before this patch, it should work
-after too.
+Reviewed-by: Kory Maincent <kory.maincent@bootlin.com>
 
-	buf = kmalloc(MAX_EVENT_NAME_LEN, GFP_KERNEL);
-	if (!buf)
-		return -ENOMEM;
+Thank you!
 
-	if (event) {
-		[..]
-	}
-
-	if (!event) {
-		[..]
-	}
-
-And not require two different variables that will add two exit codes
-when one would do.
-
--- Steve
-
-
-> +		if (!ebuf)
-> +			return -ENOMEM;
->  		/* Make a new event name */
->  		if (is_tracepoint)
-> -			snprintf(buf, MAX_EVENT_NAME_LEN, "%s%s",
-> +			snprintf(ebuf, MAX_EVENT_NAME_LEN, "%s%s",
->  				 isdigit(*symbol) ? "_" : "", symbol);
->  		else
-> -			snprintf(buf, MAX_EVENT_NAME_LEN, "%s__%s", symbol,
-> +			snprintf(ebuf, MAX_EVENT_NAME_LEN, "%s__%s", symbol,
->  				 is_return ? "exit" : "entry");
-> -		sanitize_event_name(buf);
-> -		event = buf;
-> +		sanitize_event_name(ebuf);
-> +		event = ebuf;
->  	}
->  
->  	if (is_return)
-> @@ -1304,13 +1310,20 @@ static int trace_fprobe_create_internal(int argc, const char *argv[],
->  		ctx->flags |= TPARG_FL_TPOINT;
->  		mod = NULL;
->  		tpoint = find_tracepoint(symbol, &mod);
-> -		if (tpoint)
-> +		if (tpoint) {
-> +			sbuf = kmalloc(KSYM_NAME_LEN, GFP_KERNEL);
-> +			if (!sbuf)
-> +				return -ENOMEM;
->  			ctx->funcname = kallsyms_lookup((unsigned long)tpoint->probestub,
->  							NULL, NULL, NULL, sbuf);
-> +		}
->  	}
->  	if (!ctx->funcname)
->  		ctx->funcname = symbol;
->  
-> +	abuf = kmalloc(MAX_BTF_ARGS_LEN, GFP_KERNEL);
-> +	if (!abuf)
-> +		return -ENOMEM;
->  	argc -= 2; argv += 2;
->  	new_argv = traceprobe_expand_meta_args(argc, argv, &new_argc,
->  					       abuf, MAX_BTF_ARGS_LEN, ctx);
-
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
