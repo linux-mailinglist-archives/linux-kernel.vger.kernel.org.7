@@ -1,129 +1,258 @@
-Return-Path: <linux-kernel+bounces-737251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDA16B0A9DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 19:56:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B41EB0A9E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 19:57:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34A441C83041
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:56:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF535AA5AF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:56:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F1CF2E7F10;
-	Fri, 18 Jul 2025 17:56:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A972E7BD9;
+	Fri, 18 Jul 2025 17:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lAxoaibF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k7AK+VWw"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA0C02E7BDF;
-	Fri, 18 Jul 2025 17:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBFAD2E7654
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 17:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752861375; cv=none; b=k+qytx2KoiLud+gannpEJ5xiFMxJqBG8ym7jukQ7pz+Xog9lllUb2ssOPcbKfA5GDNRi/+0yhjTWf59D2gvqj7S5DWY0ydWJzPrlbSYfSZM0OH+gtF0EAwM/NwowzE0FPZeAe9QXnEeblBgpUMg9kkICFV03J+qLfwpI/EzYLFg=
+	t=1752861441; cv=none; b=ULIeMOQp4TBzY+LQ4Rt+3N6NkV2ekedAu92MUHIaKy+ZrCTbk2DVUho0CGBjzghNklNGcZyxDpJ0dS8W4tUCQRAT04xYGZyNfGMBX9OVjsvYwsLiVmOYG2GyTKQq7s8rdYe6AWkC0UM7NCqRsaew/ahfspxGoqfiubVUC0IqWrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752861375; c=relaxed/simple;
-	bh=SIhuYAbebjIRlKdk0fXIb0gSs/RnIfG2FTSjuQACq9o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MJOY3R97+Zwiarzsr2e+ySJXr8udPYuGaZbrnCiDFmwKxrz9AzHl4+P71aYXVkJo4WhyCQaz548m/UdkIaqKd6WZyDQwNMSOfD/2oYjxYYZW0dxelBxqeicRWftJJR2cnWiHVVAJpL4aemC0BnBHhFplCiF+gs+3Nqs+OABTDLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lAxoaibF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67ACFC4CEEB;
-	Fri, 18 Jul 2025 17:56:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752861374;
-	bh=SIhuYAbebjIRlKdk0fXIb0gSs/RnIfG2FTSjuQACq9o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lAxoaibF6tAT6iz+jMvoDgKa6KdBcWA8OcyANDjTJv7ZcyBJ6T4/7TUHPdSAgqS5k
-	 LUUjNOFdy2eC93njSITMPgRmsN+qQ0dYZZqTe8eKkCZ2K6YaBsEPTpB7iaMPf3wJx7
-	 rL9MC27n17/qPTtmW8mpYVAvrrCA/Rh3oL0QCNmuuri81bsqjNIOFgO0lNuVU4ZGiV
-	 zqynZ4X4gw+eS2rFHvUdYdUtz/TSYE/9ZvVjPTTR8UNvCouJfH2ZWVrJnrly9DsvgD
-	 mshNDh8VMqjrQqsQin3qKE25Eve7sE7IKeIuPTYpSkjmGlr+PYp57+2poJS+wKuoyL
-	 MDMcGs63hpOYQ==
-Date: Fri, 18 Jul 2025 10:56:12 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Thomas Falcon <thomas.falcon@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Ben Gainey <ben.gainey@arm.com>,
-	James Clark <james.clark@linaro.org>,
-	Howard Chu <howardchu95@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>, Levi Yun <yeoreum.yun@arm.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Zhongqiu Han <quic_zhonhan@quicinc.com>,
-	Blake Jones <blakejones@google.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Anubhav Shelat <ashelat@redhat.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Jean-Philippe Romain <jean-philippe.romain@foss.st.com>,
-	Song Liu <song@kernel.org>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 04/12] perf parse-events: Allow the cpu term to be a
- PMU
-Message-ID: <aHqKvOfY2QQOEcjB@google.com>
-References: <20250627192417.1157736-1-irogers@google.com>
- <20250627192417.1157736-5-irogers@google.com>
- <aHgG-9iuoj4B72SU@google.com>
- <CAP-5=fVt4Nu3ZtKD+DWn9iT1XRzbbzvE3WXaO51V+8UGCE56cg@mail.gmail.com>
+	s=arc-20240116; t=1752861441; c=relaxed/simple;
+	bh=nbvkHt3uE4eO7FmXN1/1RHQn9I1L6FYQQdpaLHTDloE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sfBoi/UQOMtVJ//JrLSwjy/n0hLM5wfohJODDwgAT0QM1Gnzlyyn5cH/CyXizHBfalgqjuVgWlSQdQEaPme5svYf5pWIBrZM8SBls60X9eoDMRmRC8Xr1S/uXRTuJaH17ZEg127ult1zfGQ7sG4kMmRVw39IqkV+RBUnCE3k0io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=k7AK+VWw; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-235e389599fso22075ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 10:57:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752861439; x=1753466239; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fQwq6XL4XMMDUVPyAAts9uHNc3Wh3Ah7TMpl+x8VXU4=;
+        b=k7AK+VWwlkjJYWvtRzV3Dm1HDuoPjPy2UhKO6YulMrTQSj3ifC8KyPAE4+fkuE1+qC
+         nF8cQfCWrQTSlkRX+2T5SkEtgxZ8yNYRn2ZXOoumS4j/ppCui6cP00UZGqFMsYIFgZfR
+         58kS6HSzF35ecFdicdMXyN8w/KVnnlWPAtpfHku441DqcOh3vjhGRu4LYgUrlDK/AUGs
+         SxolIvh+xUjCXvAlMC4Eid4Uo9BAvwScgQ/dHZC1eAp1q70chBmsBpE0TnwXHHJl8L76
+         VZc31a9rz5F5fNQfkl7hagSlnB+6fevO1Ov04f91tHegGLMkE7s2JTo4SA+aIHegjeBl
+         8mjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752861439; x=1753466239;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fQwq6XL4XMMDUVPyAAts9uHNc3Wh3Ah7TMpl+x8VXU4=;
+        b=VM7RhooBkeT9xgOPl9k7Dvu9aQYKNOz+fxM5ypKYD40ZNpUocs0YOO8/IgGlt0n8Q2
+         wAAYRQuUtmu1oJRmwQNn9TF1DvPslzBbyHTlj4PG4QdmfvdJR4m2W0WwOPqdOvC2xq6w
+         OBw08xDeAUkCH6aJfcqMKPeOBPnld6iJlnDF4M3wxgKZSu8uqUqZECfJlamBZBJ/+/oO
+         uR7NfmE8F0l65J9+eAZ6Sywy/NoWeAaz5bLrQ9MHnCkWLQ0xwCFvRsVjC3IO9L8AWAeq
+         ZwM5++Qt89LL5Fs+Smbg5oFLhsAfH8JjLV1QIorQn1/WO0GZ87CiNCVA0YDtiCba2ejL
+         2D8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUGYYe7U5p5ePsbIcu2rTDrsQjhjAm945dRxcBSlWfSS/zKTy1xtI2CNLB/0FBqr3q/2K3+NohZFjDi/44=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwABeZv3l3stZPFFCbjXr22nNsQOysWCOCJ4jgHi2NHa42+6HPU
+	XU9ZdnUNK2+5vOqImsQXIalUSt0aDSxUGD43o55ZcjHd1O8CQ4tTFYbWa3AJ+PCld1ooELeSNXg
+	SieGQ3Q7cml8+RAfeb/eClpksDHzwhR3BUwLDXSoEwnNLjgvJRchtIUyk
+X-Gm-Gg: ASbGnctEYX7bS0czyZ1rMk5cdkps+LYMJEmVLSP+ae9xVIdZzPiroHfh2ltSpmTUDkE
+	odUc4skbxH9EQoyHXNiCSpKb9XxPxrS5XKnMFv/p6W/VXPAqjAM90CdYMwIrd3+thci0FKk6djF
+	jSJaC6QdNOWxCNyjBhhdz71NjVOQCeWtrcW0t602xYoV0x+ETE/8z+migm770j/IGBhB49V5UTJ
+	tMObw==
+X-Google-Smtp-Source: AGHT+IFB7mRsL16wpHPWottVi1OKrwf75zBs0DCPDQD+QRajm4wHJjRQeKVuBUPTfJF/u36oAJXSpzv3mDvRuLFSvUg=
+X-Received: by 2002:a17:902:e845:b0:231:d0ef:e8ff with SMTP id
+ d9443c01a7336-23f71cf6272mr147495ad.8.1752861438668; Fri, 18 Jul 2025
+ 10:57:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fVt4Nu3ZtKD+DWn9iT1XRzbbzvE3WXaO51V+8UGCE56cg@mail.gmail.com>
+References: <20250716161753.231145-1-bgeffon@google.com> <CADnq5_P+a2g_YzKW7S4YSF5kQgXe+PNrMKEOAHuf9yhFg98pSQ@mail.gmail.com>
+ <CADyq12zB7+opz0vUgyAQSdbHcYMwbZrZp+qxKdYcqaeCeRVbCw@mail.gmail.com>
+ <CADnq5_OeTJqzg0DgV06b-u_AmgaqXL5XWdQ6h40zcgGj1mCE_A@mail.gmail.com>
+ <CADyq12ysC9C2tsQ3GrQJB3x6aZPzM1o8pyTW8z4bxjGPsfEZvw@mail.gmail.com> <CADnq5_PnktmP+0Hw0T04VkrkKoF_TGz5HOzRd1UZq6XOE0Rm1g@mail.gmail.com>
+In-Reply-To: <CADnq5_PnktmP+0Hw0T04VkrkKoF_TGz5HOzRd1UZq6XOE0Rm1g@mail.gmail.com>
+From: Brian Geffon <bgeffon@google.com>
+Date: Fri, 18 Jul 2025 13:56:42 -0400
+X-Gm-Features: Ac12FXy1d35S96EobB812Shedx-VhbSYaFw_UhX7goQUz4ANBgmd9GU0nbH0gb8
+Message-ID: <CADyq12x1f0VLjHKWEmfmis8oLncqSWxeTGs5wL0Xj2hua+onOQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu: Raven: don't allow mixing GTT and VRAM
+To: Alex Deucher <alexdeucher@gmail.com>
+Cc: "Wentland, Harry" <Harry.Wentland@amd.com>, "Leo (Sunpeng) Li" <Sunpeng.Li@amd.com>, 
+	Alex Deucher <alexander.deucher@amd.com>, christian.koenig@amd.com, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, Yunxiang Li <Yunxiang.Li@amd.com>, 
+	Lijo Lazar <lijo.lazar@amd.com>, Prike Liang <Prike.Liang@amd.com>, 
+	Pratap Nirujogi <pratap.nirujogi@amd.com>, Luben Tuikov <luben.tuikov@amd.com>, 
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Garrick Evans <garrick@google.com>, 
+	Thadeu Lima de Souza Cascardo <cascardo@igalia.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ian,
-
-On Wed, Jul 16, 2025 at 01:25:17PM -0700, Ian Rogers wrote:
-> On Wed, Jul 16, 2025 at 1:09 PM Namhyung Kim <namhyung@kernel.org> wrote:
+On Thu, Jul 17, 2025 at 10:59=E2=80=AFAM Alex Deucher <alexdeucher@gmail.co=
+m> wrote:
+>
+> On Wed, Jul 16, 2025 at 8:13=E2=80=AFPM Brian Geffon <bgeffon@google.com>=
+ wrote:
 > >
-> > On Fri, Jun 27, 2025 at 12:24:09PM -0700, Ian Rogers wrote:
-> > > On hybrid systems, events like msr/tsc/ will aggregate counts across
-> > > all CPUs. Often metrics only want a value like msr/tsc/ for the cores
-> > > on which the metric is being computed. Listing each CPU with terms
-> > > cpu=0,cpu=1.. is laborious and would need to be encoded for all
-> > > variations of a CPU model.
+> > On Wed, Jul 16, 2025 at 5:03=E2=80=AFPM Alex Deucher <alexdeucher@gmail=
+.com> wrote:
 > > >
-> > > Allow the cpumask from a PMU to be an argument to the cpu term. For
-> > > example in the following the cpumask of the cstate_pkg PMU selects the
-> > > CPUs to count msr/tsc/ counter upon:
-> > > ```
-> > > $ cat /sys/bus/event_source/devices/cstate_pkg/cpumask
-> > > 0
-> > > $ perf stat -A -e 'msr/tsc,cpu=cstate_pkg/' -a sleep 0.1
+> > > On Wed, Jul 16, 2025 at 12:40=E2=80=AFPM Brian Geffon <bgeffon@google=
+.com> wrote:
+> > > >
+> > > > On Wed, Jul 16, 2025 at 12:33=E2=80=AFPM Alex Deucher <alexdeucher@=
+gmail.com> wrote:
+> > > > >
+> > > > > On Wed, Jul 16, 2025 at 12:18=E2=80=AFPM Brian Geffon <bgeffon@go=
+ogle.com> wrote:
+> > > > > >
+> > > > > > Commit 81d0bcf99009 ("drm/amdgpu: make display pinning more fle=
+xible (v2)")
+> > > > > > allowed for newer ASICs to mix GTT and VRAM, this change also n=
+oted that
+> > > > > > some older boards, such as Stoney and Carrizo do not support th=
+is.
+> > > > > > It appears that at least one additional ASIC does not support t=
+his which
+> > > > > > is Raven.
+> > > > > >
+> > > > > > We observed this issue when migrating a device from a 5.4 to 6.=
+6 kernel
+> > > > > > and have confirmed that Raven also needs to be excluded from mi=
+xing GTT
+> > > > > > and VRAM.
+> > > > >
+> > > > > Can you elaborate a bit on what the problem is?  For carrizo and
+> > > > > stoney this is a hardware limitation (all display buffers need to=
+ be
+> > > > > in GTT or VRAM, but not both).  Raven and newer don't have this
+> > > > > limitation and we tested raven pretty extensively at the time.
+> > > >
+> > > > Thanks for taking the time to look. We have automated testing and a
+> > > > few igt gpu tools tests failed and after debugging we found that
+> > > > commit 81d0bcf99009 is what introduced the failures on this hardwar=
+e
+> > > > on 6.1+ kernels. The specific tests that fail are kms_async_flips a=
+nd
+> > > > kms_plane_alpha_blend, excluding Raven from this sharing of GTT and
+> > > > VRAM buffers resolves the issue.
+> > >
+> > > + Harry and Leo
+> > >
+> > > This sounds like the memory placement issue we discussed last week.
+> > > In that case, the issue is related to where the buffer ends up when w=
+e
+> > > try to do an async flip.  In that case, we can't do an async flip
+> > > without a full modeset if the buffers locations are different than th=
+e
+> > > last modeset because we need to update more than just the buffer base
+> > > addresses.  This change works around that limitation by always forcin=
+g
+> > > display buffers into VRAM or GTT.  Adding raven to this case may fix
+> > > those tests but will make the overall experience worse because we'll
+> > > end up effectively not being able to not fully utilize both gtt and
+> > > vram for display which would reintroduce all of the problems fixed by
+> > > 81d0bcf99009 ("drm/amdgpu: make display pinning more flexible (v2)").
 > >
-> > It can be confusing if 'cpu' takes a number or a PMU name.  What about
-> > adding a new term (maybe 'cpu_from') to handle this case?
-> 
-> So it is possible for terms to be defined in sysfs in the 'format/' folder:
-> ```
-> $ ls /sys/bus/event_source/devices/cpu_core/format/
-> cmask  edge  event  frontend  inv  ldlat  offcore_rsp  pc  umask
-> ```
-> By not introducing a new term we leave 'cpu_from' open for use in this
-> way. When I spoke to Kan we thought using the existing term made sense
-> and fits the idea of leaving things open for the kernel/drivers to
-> use. It is possible to add a new term though. Let me know and I can
-> update the patch and documentation accordingly.
+> > Thanks Alex, the thing is, we only observe this on Raven boards, why
+> > would Raven only be impacted by this? It would seem that all devices
+> > would have this issue, no? Also, I'm not familiar with how
+>
+> It depends on memory pressure and available memory in each pool.
+> E.g., initially the display buffer is in VRAM when the initial mode
+> set happens.  The watermarks, etc. are set for that scenario.  One of
+> the next frames ends up in a pool different than the original.  Now
+> the buffer is in GTT.  The async flip interface does a fast validation
+> to try and flip as soon as possible, but that validation fails because
+> the watermarks need to be updated which requires a full modeset.
+>
+> It's tricky to fix because you don't want to use the worst case
+> watermarks all the time because that will limit the number available
+> display options and you don't want to force everything to a particular
+> memory pool because that will limit the amount of memory that can be
+> used for display (which is what the patch in question fixed).  Ideally
+> the caller would do a test commit before the page flip to determine
+> whether or not it would succeed before issuing it and then we'd have
+> some feedback mechanism to tell the caller that the commit would fail
+> due to buffer placement so it would do a full modeset instead.  We
+> discussed this feedback mechanism last week at the display hackfest.
+>
+>
+> > kms_plane_alpha_blend works, but does this also support that test
+> > failing as the cause?
+>
+> That may be related.  I'm not too familiar with that test either, but
+> Leo or Harry can provide some guidance.
+>
+> Alex
 
-Oh, you thought about this already.  It's true that it's possible to
-clash with PMU formats in sysfs unless we have a separate namespace for
-tools somehow.  But that would add (maybe unnecessary) complexity.
+Thanks everyone for the input so far. I have a question for the
+maintainers, given that it seems that this is functionally broken for
+ASICs which are iGPUs, and there does not seem to be an easy fix, does
+it make sense to extend this proposed patch to all iGPUs until a more
+permanent fix can be identified? At the end of the day I'll take
+functional correctness over performance.
 
-So I'm not against with this change.  I just wanted to ring an alarm for
-potential issues.  Up to you. :)
+Brian
 
-Thanks,
-Namhyung
+>
+> >
+> > Thanks again,
+> > Brian
+> >
+> > >
+> > > Alex
+> > >
+> > > >
+> > > > Brian
+> > > >
+> > > > >
+> > > > >
+> > > > > Alex
+> > > > >
+> > > > > >
+> > > > > > Fixes: 81d0bcf99009 ("drm/amdgpu: make display pinning more fle=
+xible (v2)")
+> > > > > > Cc: Luben Tuikov <luben.tuikov@amd.com>
+> > > > > > Cc: Christian K=C3=B6nig <christian.koenig@amd.com>
+> > > > > > Cc: Alex Deucher <alexander.deucher@amd.com>
+> > > > > > Cc: stable@vger.kernel.org # 6.1+
+> > > > > > Tested-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+> > > > > > Signed-off-by: Brian Geffon <bgeffon@google.com>
+> > > > > > ---
+> > > > > >  drivers/gpu/drm/amd/amdgpu/amdgpu_object.c | 3 ++-
+> > > > > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > > > > >
+> > > > > > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c b/drive=
+rs/gpu/drm/amd/amdgpu/amdgpu_object.c
+> > > > > > index 73403744331a..5d7f13e25b7c 100644
+> > > > > > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
+> > > > > > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
+> > > > > > @@ -1545,7 +1545,8 @@ uint32_t amdgpu_bo_get_preferred_domain(s=
+truct amdgpu_device *adev,
+> > > > > >                                             uint32_t domain)
+> > > > > >  {
+> > > > > >         if ((domain =3D=3D (AMDGPU_GEM_DOMAIN_VRAM | AMDGPU_GEM=
+_DOMAIN_GTT)) &&
+> > > > > > -           ((adev->asic_type =3D=3D CHIP_CARRIZO) || (adev->as=
+ic_type =3D=3D CHIP_STONEY))) {
+> > > > > > +           ((adev->asic_type =3D=3D CHIP_CARRIZO) || (adev->as=
+ic_type =3D=3D CHIP_STONEY) ||
+> > > > > > +            (adev->asic_type =3D=3D CHIP_RAVEN))) {
+> > > > > >                 domain =3D AMDGPU_GEM_DOMAIN_VRAM;
+> > > > > >                 if (adev->gmc.real_vram_size <=3D AMDGPU_SG_THR=
+ESHOLD)
+> > > > > >                         domain =3D AMDGPU_GEM_DOMAIN_GTT;
+> > > > > > --
+> > > > > > 2.50.0.727.gbf7dc18ff4-goog
+> > > > > >
 
