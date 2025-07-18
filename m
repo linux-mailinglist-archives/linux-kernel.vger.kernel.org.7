@@ -1,67 +1,68 @@
-Return-Path: <linux-kernel+bounces-736708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A04F9B0A0D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:40:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CBAAB0A0D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:40:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AAC13B28F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:39:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19C281C43CE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:40:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB51E2BCF4D;
-	Fri, 18 Jul 2025 10:39:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50F42BD012;
+	Fri, 18 Jul 2025 10:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IPlrFQBt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ySj7+q5o";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ikBbKC7O"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D3F9198A2F;
-	Fri, 18 Jul 2025 10:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D01629B218;
+	Fri, 18 Jul 2025 10:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752835197; cv=none; b=gPmiGg6xZaWx2b9pJbsu6kHGD5FvsRs3ITF8b/QUVWpWhxUr0gddADlzy752LVySrV8lmiB/+CNMOX07re9hBfgbYAvf5bxJgG9TmUyzy4hScaiwkebRlEIGb01t5eA0zPWxipDfP5Ra/w4jU3d7rvhBTRoxHP32yG0x+b4qqlY=
+	t=1752835224; cv=none; b=VvKjXI2BVsBWJZ780zgpD76QdrR4zygWtxddUHtPCFRviNeh4Bi9AwI/Z8X8hsRZz++690nADntCSrpKYsK+RQ7LXgn9pF9EGitZ9FVtjfRzFODwjqhcFVLBEFcY4zgfo101NOiwTiu7hpdv9U98pnPCbaffDCqV+ITXaDu6g98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752835197; c=relaxed/simple;
-	bh=J3EdFx6SeghEC/3QrFs16mdw3ziovg04wubMBc5qbUM=;
+	s=arc-20240116; t=1752835224; c=relaxed/simple;
+	bh=EfctGBqA+tFsqy1MQgf/QW8ed9cdtao3pVhWdvVteAg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IO7uBRlIOX5+Sy7vZJ7ojmlePILZYHYxuhtFhWAk9SDmrUlcmhXSoXW+ejCzRglDIv/2UiNRTcQsOarzcD9h3gk4sj1k85jKod1yqM0VQ+xoYDT7uviEcF1tNC+WzzT0e1k4YIPnNYKqgub2iNI/AVNB9KENfZtoQuNwRgYYFY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IPlrFQBt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 161EFC4CEF0;
-	Fri, 18 Jul 2025 10:39:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752835197;
-	bh=J3EdFx6SeghEC/3QrFs16mdw3ziovg04wubMBc5qbUM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IPlrFQBtvUlZfA7a+pVin1pFTP7wye2etea45L0KxgzvuN5VA5/XYu1MyW3Xtw9BX
-	 cXL2kXR7CiYeUQP0DsONWFLp7zbJ9zl7KUXlq5LI945F+NGunAFWedcpd57Nt4nS+B
-	 DO/r/Cx19XXM7KfS03jieyFoNUBzNpU8bbxrw2L511QVxGAr98ZXWB2uYjftwZ5dnD
-	 4YDpEFwUNh03TE5Ar8Vq6XqGAlWb5aflWRTH/TOH7rLvuWOPgTv+CLF6liQVsvP2ah
-	 yveNKo3QRKnzR2f/ScmBsawG2qE80GXNLSf3orq5fHbG8Mrq+dAmRyfBuGAtgXeiOq
-	 s1uZKCsgGIvXg==
-Date: Fri, 18 Jul 2025 12:39:50 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: manivannan.sadhasivam@oss.qualcomm.com
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
-	Oliver O'Halloran <oohall@gmail.com>, Will Deacon <will@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Wilfred Mallawa <wilfred.mallawa@wdc.com>,
-	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-	Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCH v6 0/4] PCI: Add support for resetting the Root Ports in
- a platform specific way
-Message-ID: <aHokdhpJUhSZ5FSp@ryzen>
-References: <20250715-pci-port-reset-v6-0-6f9cce94e7bb@oss.qualcomm.com>
- <aHoh1XfhR8EB_5yY@ryzen>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tMRDlLI5B0C43//a6l2WcQv4i47FxQAiDocEBJe+WAm40OrRh2F3aCemhzRWS8gxGrHBJejb+eN97pceBrUoR/6r5TQdPTWeHiB3YNebRm3rsa8H+ACEetE4ylS+nI496Ar7rz7F+WBkURM9qVh0AtXd2o71qKQ7xoYmMstaGHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ySj7+q5o; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ikBbKC7O; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 18 Jul 2025 12:40:18 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752835219;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PDMVrdweoF/EUIrbyPjq3jBCHKVn3HSx2l+SgvFzmxQ=;
+	b=ySj7+q5ow5+w92BYYOB2ovSU4z0PU2DZ20fHF1fAgSnBLoj7qbPWlWXo8/O/QoKrPaEJdj
+	NjRYz1nat+RUFP6Cj1wDKO9LHzeusqkqmh0jrQMso4PI95dwonefBsDOF20+ni3wShxLgg
+	Z5FdOdjSdj2U8+d5BtfYQUxjYLwLQZRQeGDfMShbnQbkIxpz8v6NWWIWMxIX+RH73/7qhf
+	CMXDUnQtj0KJsCXpeZ+Qrq5bJHyfH+5vUunJUctYSUmm+Cgv10hvpbIDSJHOznRPlCQg/F
+	4cjwv0qpEwe/KfXwdl8BLtcoKXN+mjt+D9ddaYRGvid7y3D+AuY/zNw2MUXIxw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752835219;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PDMVrdweoF/EUIrbyPjq3jBCHKVn3HSx2l+SgvFzmxQ=;
+	b=ikBbKC7OOeVaD8woVi3vZXQH7tbu4GqgUCWyWXVQF05wLLF1e9ujZB1g/AZfF2OLWbUPNZ
+	jY/lWNj6vio0XwBw==
+From: Nam Cao <namcao@linutronix.de>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Gabriele Monaco <gmonaco@redhat.com>,
+	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] rv: Ensure containers are registered first
+Message-ID: <20250718104018.lyupqBnR@linutronix.de>
+References: <20250718091850.2057864-1-namcao@linutronix.de>
+ <2025071835-enjoying-darn-f5d8@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,53 +71,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aHoh1XfhR8EB_5yY@ryzen>
+In-Reply-To: <2025071835-enjoying-darn-f5d8@gregkh>
 
-On Fri, Jul 18, 2025 at 12:28:44PM +0200, Niklas Cassel wrote:
-> On Tue, Jul 15, 2025 at 07:51:03PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
-> 2) Testing link down reset:
+On Fri, Jul 18, 2025 at 12:27:14PM +0200, Greg KH wrote:
+> On Fri, Jul 18, 2025 at 11:18:50AM +0200, Nam Cao wrote:
+> > If rv_register_monitor() is called with a non-NULL parent pointer (i.e. by
+> > monitors inside a container), it is expected that the parent (a.k.a
+> > container) is already registered.
+> > 
+> > The containers seem to always be registered first. I suspect because of the
+> > order in Makefile. But nothing guarantees this.
 > 
-> selftests before link down reset:
-> # FAILED: 14 / 16 tests passed.
-> 
-> ## On EP side:
-> # echo 0 > /sys/kernel/config/pci_ep/controllers/a40000000.pcie-ep/start && \
->   sleep 0.1 && echo 1 > /sys/kernel/config/pci_ep/controllers/a40000000.pcie-ep/start
-> 
-> 
-> [  111.137162] rockchip-dw-pcie a40000000.pcie: PCIE_CLIENT_INTR_STATUS_MISC: 0x4
-> [  111.137881] rockchip-dw-pcie a40000000.pcie: LTSSM_STATUS: 0x0
-> [  111.138432] rockchip-dw-pcie a40000000.pcie: hot reset or link-down reset
-> [  111.139067] pcieport 0000:00:00.0: Recovering Root Port due to Link Down
-> [  111.139686] pci-endpoint-test 0000:01:00.0: AER: can't recover (no error_detected callback)
-> [  111.255407] rockchip-dw-pcie a40000000.pcie: PCIe Gen.3 x4 link up
-> [  111.256019] rockchip-dw-pcie a40000000.pcie: Root Port reset completed
-> [  111.383401] pcieport 0000:00:00.0: Root Port has been reset
-> [  111.384060] pcieport 0000:00:00.0: AER: device recovery failed
-> [  111.384582] rockchip-dw-pcie a40000000.pcie: PCIE_CLIENT_INTR_STATUS_MISC: 0x3
-> [  111.385218] rockchip-dw-pcie a40000000.pcie: LTSSM_STATUS: 0x230011
-> [  111.385771] rockchip-dw-pcie a40000000.pcie: Received Link up event. Starting enumeration!
-> [  111.390866] pcieport 0000:00:00.0: bridge configuration invalid ([bus 00-00]), reconfiguring
-> [  111.391650] pci_bus 0000:01: busn_res: [bus 01-ff] end is updated to 01
-> 
-> Basically all tests timeout
-> # FAILED: 1 / 16 tests passed.
-> 
-> Which is the same as before this patch series.
+> Yes, linking order matters, and it does guarantee this.  We rely on
+> linking order in the kernel in many places.
 
-The above was with CONFIG_PCIEAER=y
+Hmm, I thought this is just how the linker happens to behave, but not a
+guarantee.
 
-Wilfred suggested that I tried without this config set.
+Let's discard this patch then.
 
-However, doing so, I got the exact same result:
-# FAILED: 1 / 16 tests passed.
-
-
-For the record, the test that passes is not actually passing either,
-it is the BAR4 test, which is skipped, since BAR4 is reserved on rock5b:
-ok 5 pci_ep_bar.BAR4.BAR_TEST # SKIP BAR is disabled
-
-
-Kind regards,
-Niklas
+Nam
 
