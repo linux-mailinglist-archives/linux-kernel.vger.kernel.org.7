@@ -1,94 +1,103 @@
-Return-Path: <linux-kernel+bounces-736710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CBAAB0A0D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:40:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53E0CB0A0D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:40:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19C281C43CE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:40:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17A4AA85804
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:40:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50F42BD012;
-	Fri, 18 Jul 2025 10:40:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA032BCF4C;
+	Fri, 18 Jul 2025 10:40:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ySj7+q5o";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ikBbKC7O"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="bwRnyabK"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D01629B218;
-	Fri, 18 Jul 2025 10:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C5E929E102;
+	Fri, 18 Jul 2025 10:40:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752835224; cv=none; b=VvKjXI2BVsBWJZ780zgpD76QdrR4zygWtxddUHtPCFRviNeh4Bi9AwI/Z8X8hsRZz++690nADntCSrpKYsK+RQ7LXgn9pF9EGitZ9FVtjfRzFODwjqhcFVLBEFcY4zgfo101NOiwTiu7hpdv9U98pnPCbaffDCqV+ITXaDu6g98=
+	t=1752835243; cv=none; b=IqlhV/w44CcGKPx1hyVKwZpoS76T6qLyXJGgPDleU6+eyPugyRl3lfl4I9dKts4YpmLZGn5jFHxVNx1/dXC3AVeLozL2O2HtvfyIcdX69iee3fFubq3WOC/vG0dwop9j/UN9rzPqqKUOD3XRW1UZV9wnYeoStF2eVYRy25bciDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752835224; c=relaxed/simple;
-	bh=EfctGBqA+tFsqy1MQgf/QW8ed9cdtao3pVhWdvVteAg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tMRDlLI5B0C43//a6l2WcQv4i47FxQAiDocEBJe+WAm40OrRh2F3aCemhzRWS8gxGrHBJejb+eN97pceBrUoR/6r5TQdPTWeHiB3YNebRm3rsa8H+ACEetE4ylS+nI496Ar7rz7F+WBkURM9qVh0AtXd2o71qKQ7xoYmMstaGHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ySj7+q5o; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ikBbKC7O; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 18 Jul 2025 12:40:18 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752835219;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PDMVrdweoF/EUIrbyPjq3jBCHKVn3HSx2l+SgvFzmxQ=;
-	b=ySj7+q5ow5+w92BYYOB2ovSU4z0PU2DZ20fHF1fAgSnBLoj7qbPWlWXo8/O/QoKrPaEJdj
-	NjRYz1nat+RUFP6Cj1wDKO9LHzeusqkqmh0jrQMso4PI95dwonefBsDOF20+ni3wShxLgg
-	Z5FdOdjSdj2U8+d5BtfYQUxjYLwLQZRQeGDfMShbnQbkIxpz8v6NWWIWMxIX+RH73/7qhf
-	CMXDUnQtj0KJsCXpeZ+Qrq5bJHyfH+5vUunJUctYSUmm+Cgv10hvpbIDSJHOznRPlCQg/F
-	4cjwv0qpEwe/KfXwdl8BLtcoKXN+mjt+D9ddaYRGvid7y3D+AuY/zNw2MUXIxw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752835219;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PDMVrdweoF/EUIrbyPjq3jBCHKVn3HSx2l+SgvFzmxQ=;
-	b=ikBbKC7OOeVaD8woVi3vZXQH7tbu4GqgUCWyWXVQF05wLLF1e9ujZB1g/AZfF2OLWbUPNZ
-	jY/lWNj6vio0XwBw==
-From: Nam Cao <namcao@linutronix.de>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Gabriele Monaco <gmonaco@redhat.com>,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] rv: Ensure containers are registered first
-Message-ID: <20250718104018.lyupqBnR@linutronix.de>
-References: <20250718091850.2057864-1-namcao@linutronix.de>
- <2025071835-enjoying-darn-f5d8@gregkh>
+	s=arc-20240116; t=1752835243; c=relaxed/simple;
+	bh=aNR9VrvNvc/EWkYq40mJQ90mCtW183eVKRo338MiMb0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=MF1/LvuB3vKKMii9VlzAkBORXzrwLrmSwoiDD/NJNW45LwZUR2OakPhd/OToSryeRrC8sIjycLaRPUmj+T3VejxRZ1TT6qZChUTkAltRzEp41O3oh2bwB2w72V4jttufPkziWgqf6hg4evTgvB4UY1uX17oyQ4Cq8axLF0VfN70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=bwRnyabK; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752835109;
+	bh=Z2xH8+rn0TpeH8jLjt5ONu6z/lUqHwgSjSbFZxxkXpY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=bwRnyabKEXzyKCq26cgHl+R35dKGXX8g3HNyHLXFfKi+wH7DYEyGJ4B+zy7AqCQaR
+	 FfB8IjJd27OuRx0Up8AGk7yqsSKV3I1fCx5EvPn43BBjG4FmKIGq73AQiVesNBw2sM
+	 5FHVrEFgVlcxQhaTswIprVuELAL20PRQkuJe2rdkbxD08T4OF473EtRnAR5fywS3Xm
+	 WhuwQ41a9Pur3cbdvl6r6qZBjb8nB/lMrrjHccj7JE0kYt3NwY7LVh6A26/22ZUBkI
+	 blnkzcp3OTRrLFBHdOeexZBWakdBVBB8W//FjHUBRH371ID4p4G6QHM2XErCXtiWPq
+	 sEPCZm2O3TQIw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bk5qS6Tftz4x5Z;
+	Fri, 18 Jul 2025 20:38:28 +1000 (AEST)
+Date: Fri, 18 Jul 2025 20:40:39 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Kees Cook <kees@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the kspp tree
+Message-ID: <20250718204039.5a3c3bfa@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2025071835-enjoying-darn-f5d8@gregkh>
+Content-Type: multipart/signed; boundary="Sig_/8R3VYDbYG0Ef7ic1+HOAT9C";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Fri, Jul 18, 2025 at 12:27:14PM +0200, Greg KH wrote:
-> On Fri, Jul 18, 2025 at 11:18:50AM +0200, Nam Cao wrote:
-> > If rv_register_monitor() is called with a non-NULL parent pointer (i.e. by
-> > monitors inside a container), it is expected that the parent (a.k.a
-> > container) is already registered.
-> > 
-> > The containers seem to always be registered first. I suspect because of the
-> > order in Makefile. But nothing guarantees this.
-> 
-> Yes, linking order matters, and it does guarantee this.  We rely on
-> linking order in the kernel in many places.
+--Sig_/8R3VYDbYG0Ef7ic1+HOAT9C
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hmm, I thought this is just how the linker happens to behave, but not a
-guarantee.
+Hi all,
 
-Let's discard this patch then.
+After merging the kspp tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Nam
+ERROR: modpost: missing MODULE_LICENSE() in lib/tests/seq_buf_kunit.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/tests/seq_buf_kunit.o
+
+Caused by commit
+
+  0ba92e11052f ("seq_buf: Introduce KUnit tests")
+
+I have used the kspp tree from next-20250717 for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/8R3VYDbYG0Ef7ic1+HOAT9C
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh6JKcACgkQAVBC80lX
+0GwaOgf/ZYOipzV4qsv3Xz9HEzgkgh58duppjdxIfO5K7kVGTfsBTBkwjoSjNIWz
+Nx12Z62RdoqCAzWXguCk9GfTdkx4+6mfd8uoEv/aHWM4M3HjT1lCvGMgwjoWgn87
+R3N9M/cquhfhMgx5NjpYognyTQln8OdJwePZZNVHqi7BKcHgqEtQOwAp42nCF9s4
+fc7ypqWZSQ+joct2lbbQSDvJ0O1qwFk/ocl8oUyQDHfnDhM63wDgzfIC5zQAoK1d
+3aHnMeVFbdKR2LIueuolW1PRCzZSwnFJIUHLPEmHnceqljnQC+AL7MPtpcyVUI7u
+0WKOTUi79H1NP5fTqvnSTuXOCFxj+g==
+=W9Bg
+-----END PGP SIGNATURE-----
+
+--Sig_/8R3VYDbYG0Ef7ic1+HOAT9C--
 
