@@ -1,245 +1,160 @@
-Return-Path: <linux-kernel+bounces-736580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1056B09EB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:11:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9AFAB09EBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:11:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 813105A6F0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:11:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 117DF5A722F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:12:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75563220F30;
-	Fri, 18 Jul 2025 09:11:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02AE29552B;
+	Fri, 18 Jul 2025 09:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rdKHvUbM"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2057.outbound.protection.outlook.com [40.107.237.57])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b="K4dIjt2q"
+Received: from pf-012.whm.fr-par.scw.cloud (pf-012.whm.fr-par.scw.cloud [51.159.173.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB3629550F;
-	Fri, 18 Jul 2025 09:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752829878; cv=fail; b=JNY/yyVVUUk+KLdkppzTRV7GMx5VGrnl+/elvszt0+kf1MVG5A/n3zv38UuqMVeVqNL/fN67CP+oF1QxsTDLz//DRBhUV0JBkh7h5594jnq3FsDraj5mw5VZsqHTFYCAo4oHL6QGnV4sWpR1GrrFLyH6gF2ZwOs2w5xc8BK6cuE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752829878; c=relaxed/simple;
-	bh=wXONEv7IYTAYjS9GLafm64rJCTmF26+GWSZ+nhC8tUA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=F2NqPK27ayM92JMRxt/ZbXRwnHt+Uc/o2EibS8vG4hFNwkwyaTEqsEs44VhlCz/7Kele5t2Z+XbLLnfCNP5kCB4K8hPc7/371//es1kzl1GJMuxw0vD07LMlU8Z09z64E1MoVjim2Jbf9HbfmZQ549Gs4puE2OJX4+rmft2uK6k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rdKHvUbM; arc=fail smtp.client-ip=40.107.237.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=D5s3z5oofIo3pSvlgZLiIo5Tlx+cNFUteOPa01FeSaoMeT61OnatkuJ2rE9M9OD5hPrusUDjMsDVDqnH/ZeXCIkf/lVC26xXjxs8qz2fVTzkiS7AZWFoL0v2z+NgAclSPN4hBhRQvh8tYx29Hz8OYYtOd5Mi1T0uqwGiDqCy+0VfFw5TjKXUFTBJ7GlnNt95JT75CCUaxODesPBy2rn8RWs0CRoJtHHijpivmwLChLBfx2YL/Asigv7WTUiTUvjZN4YZgUVAjcyat3a0R6PQEY1oQm54qNBQ9poyGdEYeD0Dkb3PapMycCemDdeLcjrvoN+cEURMKvgxdGZns0LBhA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DYRAq1QYwxbVIhEjqwnRfOLMGPgjTNbkIwx0OIBrsGQ=;
- b=lGlDWl5KBM8lJ4Ttq3tvR0eGtQCDdFRgtQDpIUbnIpC4PQrnetpDVZ8dZcYopHPAZnyVUnid4vha8srZCvqJ10FTBdgkBCCafcG0MXUrWsKtz/iteCnSj3EVlWn/xUR7SkzZQ9sPcfjASpYSO6KITlZLI49DvOa4dqILaRRZNNA+ldSv2nzKztGetrP90ojaig/wpEEVkfJr5BeXAepQ9FuWG9ys3mhID5DWzN6vUL082uGcrgwC8TQ1PKn65CvwSq0T5pK9JgyN27OxF3J/PI2onzIjyHcSMy7C9jFDrKkP/tyiGSVnhDHiXEFQC8AyVo5VQc0mVHxFi4JlgrLmxQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DYRAq1QYwxbVIhEjqwnRfOLMGPgjTNbkIwx0OIBrsGQ=;
- b=rdKHvUbMEWvPM02b3zqNW8c9vfitcdaVReHVaFA9hYh9I9LblXsLg8qVKtWrtP8cPKlVyiAjSNueYsMoDDwMBWUxQ4gcqR9Noll1bXmRqwgdA1Ds5stEJidLN5ZTfJpLm2NHLslh3e3YgxtibQCaRyfJgtAPiLxGfbHt+h2ZzP4rrsRiBshJcpsjCtMuV7vsuNtMT4qggu7oy8nyjt+N2VEHemOLQRLQ+WnsE5RxpDHWgSEEIEDBe8ynuN9cXVNCg9/JoLCQ1Cvuu2sY+YKt9cD3AkDRqC9XpSqQKhM5BkS7kilo61f3GJuTTaJAWyV3nDJb6iiYiWEaREm0GQoRNw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY5PR12MB6478.namprd12.prod.outlook.com (2603:10b6:930:35::19)
- by MW4PR12MB7261.namprd12.prod.outlook.com (2603:10b6:303:229::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.23; Fri, 18 Jul
- 2025 09:11:12 +0000
-Received: from CY5PR12MB6478.namprd12.prod.outlook.com
- ([fe80::35dd:2a5e:d28d:55e7]) by CY5PR12MB6478.namprd12.prod.outlook.com
- ([fe80::35dd:2a5e:d28d:55e7%4]) with mapi id 15.20.8922.028; Fri, 18 Jul 2025
- 09:11:12 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Svyatoslav Ryhel <clamor95@gmail.com>, Dmitry Osipenko <digetx@gmail.com>,
- Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-Subject:
- Re: [PATCH v1 3/5] gpu/drm: host1x: mipi: add Tegra20/Tegra30 MIPI
- calibration logic
-Date: Fri, 18 Jul 2025 18:11:07 +0900
-Message-ID: <5474709.5fSG56mABF@senjougahara>
-In-Reply-To: <20250717142139.57621-4-clamor95@gmail.com>
-References:
- <20250717142139.57621-1-clamor95@gmail.com>
- <20250717142139.57621-4-clamor95@gmail.com>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: SG2PR02CA0126.apcprd02.prod.outlook.com
- (2603:1096:4:188::11) To CY5PR12MB6478.namprd12.prod.outlook.com
- (2603:10b6:930:35::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51374221F04;
+	Fri, 18 Jul 2025 09:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.173.17
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752829913; cv=none; b=hI+nr5To7s2XNrMQ1cnF4jLNVgW7uRrNlITTU7KbnKer/u8l5fpg1RI7MksgkIKZwvaBmzqrBk9i1yC0unEQPoOd+hub2b7lBAfzCbb1JrW/iNw+up/yCZFD99ySmn/1H8R6ohjaJ+OfnAxeBLR7jXcaBkERax+O7R2nUhQpBE4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752829913; c=relaxed/simple;
+	bh=DqvbrXMz4qPH25izBAOoE+tg01crtThvN9qYeSNBET8=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=RsehWKBviHz+iy+Abk4UeU3OJhyXxqK7yazHq+5ZYkryrD2l+4DJXKS/4iM1Rf9s1OLFz50UUEZFba5Jj/86XkdTTqlAgGhMlqLYR6SOHWBdQagsEwAFqkw6kR1Cy+fhcLSi0hAjXnjvlfUgaTQICURc/LjS3z1+AjQy/hrryTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr; spf=pass smtp.mailfrom=oss.cyber.gouv.fr; dkim=pass (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b=K4dIjt2q; arc=none smtp.client-ip=51.159.173.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.cyber.gouv.fr
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=oss.cyber.gouv.fr; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:References:Cc:To:From:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=9PapmoOxKFgC+jrWSEIuR/hzimXtYSXZjnqcfACEJjg=; b=K4dIjt2qvuHzCc3AAGvu2ksdDU
+	nsIMnsBgQggHezz8URH2//dLZLDBFILIGDVEHjLuxOLRCIQedofIwe1m/XB1HkpaqlZ3Q3b/NZgSZ
+	HKsYaeWZ8oALtn0GAJUcsdQqAllbKSV1LTa3zPetjmUajWqi1fhQ6/0p1bkva6ctJaFSui0DVTjc4
+	1pQ79ZCwjfIvpySj3cp7PM9pqzAnUB1H23tk/yr9etW5n/F5rHQugzecyb7P4O8GZX1Kn414LrsM3
+	l7CK5qk65fD807T7OLsmXpUMq8eaKONIEjgYwBn2/8ZI97cSYKGZc4hmeUku76f+jobtNUoDjXlc5
+	eUtXQ8/w==;
+Received: from laubervilliers-658-1-215-187.w90-63.abo.wanadoo.fr ([90.63.246.187]:36235 helo=[10.224.8.110])
+	by pf-012.whm.fr-par.scw.cloud with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
+	(Exim 4.98.2)
+	(envelope-from <nicolas.bouchinet@oss.cyber.gouv.fr>)
+	id 1uch89-0000000AEBa-0dSo;
+	Fri, 18 Jul 2025 11:11:49 +0200
+Message-ID: <cf43bc15-e42d-4fde-a2b7-4fe832e177a8@oss.cyber.gouv.fr>
+Date: Fri, 18 Jul 2025 11:11:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6478:EE_|MW4PR12MB7261:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6ebf8b30-2573-4428-d06e-08ddc5db0abd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|10070799003|376014|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cmtOaUsvVEtXZUx0VWpLekRUSEJuZ28zalJ5V2Y1OTcxNXBjTUdnYnVJSm00?=
- =?utf-8?B?dEIyYWxtM0lad1drWExJS1BGUWZSSjhsL09DMGQrTnZFcjdpTmVWNGh5d1dR?=
- =?utf-8?B?d3FZOG1Bdms3Y0oybFJnQjhjeTVId3hCc3dBeVhCOVQ2QUh4dzlFTS9HQ2tq?=
- =?utf-8?B?U1o2RGFlckEzbHZ2Wk9RUUVkV3ZRN2ltRG1ZVFBYZyswYmxPQnNabVBPZ2V6?=
- =?utf-8?B?QjViWnZQYml5cVBkUmc3TDhDdmFSSk5SNUxRNEdLZWkveW5CTmhiM25XYU56?=
- =?utf-8?B?dUNpUTRtczMybjk1cGR2N3Nab3hxOGxpZEY3NlRuY1djbXZYRnAxSld0N0NS?=
- =?utf-8?B?Y2lSM2pDTHoxOXhqQXdVdnovblRwaG1zeUYyZ295QldrbHpLcmRMbHFkN1Na?=
- =?utf-8?B?RTRZR252eThJMVhRajJxMkRIbGJIdVhFQmxUQmhuYUJTR0lFeFR0MjJWd0h4?=
- =?utf-8?B?Rm1Hd0d5M3Uzbll5QXJZWHRleGo2akFIbjVJc1B0ZzFoK1R4NTIrZXFSbHRh?=
- =?utf-8?B?OEZnTi9reVB6Nm5xaERJOEVXaWVWbWMwelZkR053dnBQZkNQc29vM0o2blp5?=
- =?utf-8?B?V001T0p5LzY0T3JOTzlaVno4MmxnYVBDNjVGYmZWdEMxTllzaEt0MGVreEE2?=
- =?utf-8?B?TFJmSVhISk9Pb0J3YTNkZGJvaVMxNURQU256ZkxFQVBwM015VlEzRS93Vk9F?=
- =?utf-8?B?VE1Xdnhyd1JkV2hvd243aEMrdGwxVUNrczY0RmxMR2FINVpvUEdHVU5LODRG?=
- =?utf-8?B?VG11SkJGUGhBNGp6ZVBIeEg2U01STkNqWElrSXVmT3RCa1RBOHVrTk1EZGpn?=
- =?utf-8?B?Lzdwd2pVeGlFVzEzcjdjM2tEVS9NOTBQeGVMcmlxenkzdVd2R2lFdDFGbnh3?=
- =?utf-8?B?aldpWGRwemdsdFpLQVNYTzhEOEI2MWl5enJacWlqQ3VIZG0vY2RySDYzbWsz?=
- =?utf-8?B?b2NzYVUzMVQ2VGl6MWJ3TVc2c2ZEUTFUNjBrdjBhejJSTmRqbUVzOStEbXJM?=
- =?utf-8?B?R1BINFVvejF1cUgyS3UwSmNDYWxoOHVGTmVtek93eUVJQW52ZUVPSml2Sm8y?=
- =?utf-8?B?SS9QekMwTHdLRHRpbTJUbGJWaGlMRUJEcXgvTjVrQm90V2RmVUFkQjVtRUVO?=
- =?utf-8?B?ZkIxMTJZWDZMQWZTYmxFUkl1c01vamxuLzg1Qjg0QUlqaTBTalJWajhYazRs?=
- =?utf-8?B?dWlJbHRRV1FjaG9xdVhCRGVnZXVYTjJUSytnZUl5ZWVFcjJhRUJLcEhoUTVO?=
- =?utf-8?B?Wm9PUjN5U05ySFNTcTRMR1FDNnpUK2dmenBTdnZWejc3V0JncjJBRmtrZGpk?=
- =?utf-8?B?eFY4TXZEQUhKaHNXSXRTRktPdTlFcytOWHdHVGVrZW1TTXVpazRwNWplL3hE?=
- =?utf-8?B?a04wWnBBeGhzT0xJcng4OVhnc3lVSlpFd3VVa0E1clhBbVlmaGRMZ05JZ2pn?=
- =?utf-8?B?K2V5OGU4Zi9sQlQ1b1hlbnkwQUtoK09sTHJ6WnlRMEMzUUZqNWhtZmJyOGxO?=
- =?utf-8?B?UWtyc1h0ZXBWUmJIdWZqUDdkTm5DK0ZCTGNvOGtBZVgwSDZ2VytRV2FXVFA2?=
- =?utf-8?B?WGVkNFJseWdWeWVBcG1LYW8wY05HZnhodEpRdjdhSURoWnRLM2owZ2RvZnEw?=
- =?utf-8?B?WGtDbTRmVFJqekQvOWZSOUQ3VEEvTFk1d2QxaSs0T1ZvK0xHKzVQcDE2Smdi?=
- =?utf-8?B?SUdUcDBpTU4vSUtaTVVZc0NzQ2tjRGRJNG1qMDcvTk5ZRWhrL0xmL29ZV3pu?=
- =?utf-8?B?QkxvZUYrZUc2bXlwRFk0NjErRXhWYUE1TC8yVEZWakJZbUx0UC81ZklyWktt?=
- =?utf-8?B?TVF6M0ZwL2xZRk1NcjJid2YzbVNvdFFKbzZ1VXU4T0pPN2xTVUZLdHhRZnA0?=
- =?utf-8?B?MThwelVFU0ppUGhTczVMa095YWs0UmhOeFhnYWtZMVJMM0o2RHEyVzQzcE94?=
- =?utf-8?B?K3NVbUJpb0RlUHRxdmh0d1lzNjJ4ZTg2TTdnaE9QSlhXRUlGcC9pV1FFSDJ0?=
- =?utf-8?B?WHJhV3l6OUJRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6478.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(10070799003)(376014)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bFArd0QwTmFqNmNMbGVPVDlGTEhySENjSXAxRU1NQjdZOVU5TTYwZ0VPQXM3?=
- =?utf-8?B?UkRBWnQ1QXdRa21pMzN3dnp4ZTV3R1Eva0MyMnB1N1hBblFuVnNSZlQzLzJ1?=
- =?utf-8?B?R1RudTFyVHhRRER4bHFrVkJTUmR6VklFWmFXZUorZnFKSnE3YzVWNWwvN01L?=
- =?utf-8?B?Vlg3RkRUU1NFMzFQTzg1VjY1TjkvWUZPTTJ4dzkvZ1g2TkJTdmxKYlRzZnVP?=
- =?utf-8?B?NE84VWQ4S0l1VUI5NlFpUlB0TDZjTi9MRWJuTnF5OVIvR0tpbGxVZVhlK3Vp?=
- =?utf-8?B?c1Yrb29MM29nQXR5bFJ1eFJCWitnb2c1YXhkcnBuZS8yUjExVFU3U0dYTGpL?=
- =?utf-8?B?bmtUNytHRkFRWFBYN3o4Y0dQdU15QmcwYmdQVUZHNEZrNkw4cE1CeHIycG9v?=
- =?utf-8?B?M1gyandPekFpRTc2MDNHdWMwVGVEaWdsRWNGTm5LaU1ZNDdwQ0FXQlNscXox?=
- =?utf-8?B?ZEwyMGJubSt5RjJZSHVGSUMxWW5QZnlyTklCMWpSTjlPdFM5YnJHZHpYRHBD?=
- =?utf-8?B?dHJFeHprUWRLQy9SdnJTT0ljV3hacnJBYzZoK2ZoSjJEMjJQYmdmajh3aW5T?=
- =?utf-8?B?UzFUeFhvZVhlNmZFRGR0cUcwblJ3TTF2MThLaW1HRzBpL3BPRFcxWjdsSm9N?=
- =?utf-8?B?UEM2NTJNSVkxVWZ5QWh6T1hYVHcrM1JJSGUwMWxza2lBWUhaMWNuMldncXBZ?=
- =?utf-8?B?SjdpVHhKdE96WVViTExhaWpQU1hZY3psSUxieHZjVERLYXdUelpTdnF4c1pJ?=
- =?utf-8?B?eVVCVWhqVExyMllrakZwamM2OWxjT092T1dWQ0FOMU5rNkZJODBWRUQxeWFX?=
- =?utf-8?B?NitZT3owbEZUcXlleGpKMDFaK3NCdzVFS1F2bGl4ZWRpMmJ0cVhBalNPaGRk?=
- =?utf-8?B?amphWGk0dm9GUTRTWVpqelBvRjErMThEODlUSGZLOVhLdkt4b29oRlFEdUJj?=
- =?utf-8?B?T2VUZTgxL3pkdTg3bnlySWdiUWFMbHRzQTNyd3lKTlB4ZURTSjJlckNVOE41?=
- =?utf-8?B?Z3RKazE4VlVEY2QyNnNmV3ZLUVI2WlVwZDlZODAxVTZ4UWdWQzF6VTc0WXZR?=
- =?utf-8?B?V2FOVEVpUmF1THF0MjJLa1dkejhqWDFvMldDTWFIdmwyenNLWUx5UnJLOWJr?=
- =?utf-8?B?eHU5bmlEQk9qMENPcEFaWXRaWXgzNWdjSDMvWHo2NWtnMlpmcjhWNG1rNXhS?=
- =?utf-8?B?anRsVHNYL1lKeTBZc0VaeGtyMmx4Y3JuNWV0NTZsdFJVZzhHeGhEdmtZRS82?=
- =?utf-8?B?RnlwODFNSXBOQzN0U1crZWcrZkYwcEhRYXFkMU92YUpXTTVhL3BSRjVzOGJS?=
- =?utf-8?B?c0taa255ZkNObHB0cVMvb05jSEtvTzZHb214NTBEdHVQQThxK1hoTDdxWFhh?=
- =?utf-8?B?Ly9PZjBTemhNL0E1REhYWXZVc0E1WDJjS0dyYmxidWljMURpQ2NKcmNqMXJI?=
- =?utf-8?B?VUduSW1LbWVlNmxDd2licXpPbzBBa0QyTitXNCtaRUdFUERpYlNMZVdCN2VV?=
- =?utf-8?B?NzcvV29YdUt2TUtSbUlPMExHNHlON3VTZVZ6QjNjZmYwVUNORkZBUDVqcVJB?=
- =?utf-8?B?S0c4VHFGZ3NrTkp0Nkw2cUZYNGFuWXFsbklva2xYYkVFdEwzQUpUVTZPM1hQ?=
- =?utf-8?B?VndlbGdpa0RwZjNyMWdrNWF2YXNWbkMrb3JVaTVvTWQ1aVE3RVBmMlZrdTNO?=
- =?utf-8?B?amwvdldFa0M3bUFuWmg5VFExZ0d3QjAvM0VteVBSNTZ4eDQ5L24yMW51QWkw?=
- =?utf-8?B?dlQ4bjJaMUVrR3Vva2JZdmFnZDZSVXUxLy9VdWs1ZHVlOVdxczM0d2gyV242?=
- =?utf-8?B?TG9xVkUvV2hrMlduWm8wVVdWemtNR0Zub1crSEgxaFdLRDZiVWN4WUtWNlBX?=
- =?utf-8?B?K0VBL0ZSOEJkcDArMUQ4NnBoZ25qbUh5NHFDVU9WVUh0RUhISkRoN2VZNnVz?=
- =?utf-8?B?dHNzKzRzVGhtcytySWhwM2NaQXE2WGw4b3V3V0ZCTnFXYkpiV0ZXaHVRY203?=
- =?utf-8?B?L3hiTmJ0N1hVOGNqZDRnMkliaFNJTVZWR3h2YnhnWWdrbkdQdkc0YXlIWDdk?=
- =?utf-8?B?bHVyWHN5R3Vpc1VUV3ArYUlkUXA0TmxSa3FaYnNSQ0dGWWo0aUJNcVR2UWM1?=
- =?utf-8?B?eFA4MW9QM2lGMndHaW4vQjduSWdmNVp0S1RQM1MxMzV3STdNcStuT3lRZ0U5?=
- =?utf-8?B?azFtUS8yYmZyS3poYzBoWUYrV2IxSkk4S21oU3QvQlUxQ015VHY4ajc2WlRw?=
- =?utf-8?B?N1g5d0FGR2JpM05UV1NHV1ltQmNnPT0=?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6ebf8b30-2573-4428-d06e-08ddc5db0abd
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6478.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2025 09:11:12.6449
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uMOUm+fMJHh80loptxg5cJPMcEe5Q2uCfDMKPP3IV8fVkcd4ioCiG3cvi4VMn5vRazpM5NLx0HL4uFZQ/RSA3A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7261
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] lsm: yama: Check for PTRACE_MODE_READ_FSCREDS access
+From: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
+To: Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Olivier Bal-Petre <olivier.bal-petre@oss.cyber.gouv.fr>,
+ Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+References: <20250718-yama_fix-v1-1-a51455359e67@ssi.gouv.fr>
+Content-Language: en-US
+In-Reply-To: <20250718-yama_fix-v1-1-a51455359e67@ssi.gouv.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - pf-012.whm.fr-par.scw.cloud
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - oss.cyber.gouv.fr
+X-Get-Message-Sender-Via: pf-012.whm.fr-par.scw.cloud: authenticated_id: nicolas.bouchinet@oss.cyber.gouv.fr
+X-Authenticated-Sender: pf-012.whm.fr-par.scw.cloud: nicolas.bouchinet@oss.cyber.gouv.fr
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On Thursday, July 17, 2025 11:21=E2=80=AFPM Svyatoslav Ryhel wrote:
-> ...
-> @@ -311,6 +330,43 @@ int tegra_mipi_finish_calibration(struct
-> tegra_mipi_device *device) }
->  EXPORT_SYMBOL(tegra_mipi_finish_calibration);
->=20
-> +static int tegra20_mipi_calibration(struct tegra_mipi_device *device)
-> +{
-> +	struct tegra_mipi *mipi =3D device->mipi;
-> +	const struct tegra_mipi_soc *soc =3D mipi->soc;
-> +	u32 value;
-> +	int err;
-> +
-> +	err =3D clk_enable(mipi->csi_clk);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	mutex_lock(&mipi->lock);
-> +
-> +	value =3D MIPI_CAL_CONFIG_TERMOS(soc->termos);
-> +	tegra_mipi_writel(mipi, value, CSI_CILA_MIPI_CAL_CONFIG);
-> +
-> +	value =3D MIPI_CAL_CONFIG_TERMOS(soc->termos);
-> +	tegra_mipi_writel(mipi, value, CSI_CILB_MIPI_CAL_CONFIG);
-> +
-> +	value =3D MIPI_CAL_CONFIG_HSPDOS(soc->hspdos) |
-> +		MIPI_CAL_CONFIG_HSPUOS(soc->hspuos);
-> +	tegra_mipi_writel(mipi, value, CSI_DSI_MIPI_CAL_CONFIG);
-> +
-> +	value =3D MIPI_CAL_BIAS_PAD_DRV_DN_REF(soc->pad_drive_down_ref) |
-> +		MIPI_CAL_BIAS_PAD_DRV_UP_REF(soc->pad_drive_up_ref);
-> +	tegra_mipi_writel(mipi, value, CSI_MIPIBIAS_PAD_CONFIG);
-> +
-> +	tegra_mipi_writel(mipi, 0x0, CSI_CIL_PAD_CONFIG);
-> +
-> +	mutex_unlock(&mipi->lock);
-> +
-> +	clk_disable(mipi->csi_clk);
-> +	clk_disable(mipi->clk);
-> +
-> +	return 0;
-> +}
-> +
+Note that a hidepid patch has also been sent [1].
 
-Where does this sequence come from? It looks a bit strange to me, since it=
-=20
-doesn't trigger calibration at all. It would be useful to mention the sourc=
-e=20
-in the commit message.
+[1]: https://lore.kernel.org/all/20250718-hidepid_fix-v1-1-3fd5566980bc@ssi.gouv.fr/
 
-Mikko
+Best regards,
 
+Nicolas
 
-
+On 7/18/25 10:47, nicolas.bouchinet@oss.cyber.gouv.fr wrote:
+> From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+>
+> Currently, yama only checks if the `PTRACE_MODE_ATTACH` mode is set
+> during the `yama_ptrace_access_check()` LSM hook implementation.
+>
+> In cases of call with the `PTRACE_MODE_READ_FSCREDS` mode, nothing
+> happens. Thus, yama does not interact properly with the
+> "hidepid=ptraceable" option.
+>
+> hidepid's "ptraceable" option being documented as follow :
+>
+> - hidepid=ptraceable or hidepid=4 means that procfs should only contain
+>    `/proc/<pid>/` directories that the caller can ptrace.
+>
+> This patch simply add yama a `PTRACE_MODE_READ_FSCREDS` mode check to
+> enable an interaction with "hidepid=ptraceable".
+>
+> Combined with hidepid=ptraceable, the following behaviors will then
+> happen while reading in `/proc/<pid>`:
+>
+> - "restricted": A process that has a predefined relationship with the
+>    inferior will see the inferior process in `/proc`.
+>
+> - "admin-only": A process that has the CAP_SYS_PTRACE will be able to
+>    see every processes in `/proc`.
+>
+> - "no attach": A process will not see anything but itself in
+>    `/proc/<pid>/`.
+>
+> It is important to note that the combination of "hidepid=ptraceable" and
+> yama "no attach" also makes PIDs invisible to root.
+>
+> No access reports are logged in case of denied access with
+> `PTRACE_MODE_READ_FSCREDS` to avoid flooding kernel logs.
+>
+> Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+> ---
+>   security/yama/yama_lsm.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
+> index 3d064dd4e03f9eaaf5258b37ad05641b35967995..63b589850a88d35dd6a08b23c14ba1a660e6f1b3 100644
+> --- a/security/yama/yama_lsm.c
+> +++ b/security/yama/yama_lsm.c
+> @@ -352,7 +352,7 @@ static int yama_ptrace_access_check(struct task_struct *child,
+>   	int rc = 0;
+>   
+>   	/* require ptrace target be a child of ptracer on attach */
+> -	if (mode & PTRACE_MODE_ATTACH) {
+> +	if (mode & (PTRACE_MODE_ATTACH | PTRACE_MODE_READ_FSCREDS)) {
+>   		switch (ptrace_scope) {
+>   		case YAMA_SCOPE_DISABLED:
+>   			/* No additional restrictions. */
+> @@ -380,7 +380,7 @@ static int yama_ptrace_access_check(struct task_struct *child,
+>   		}
+>   	}
+>   
+> -	if (rc && (mode & PTRACE_MODE_NOAUDIT) == 0)
+> +	if (rc && (mode & PTRACE_MODE_NOAUDIT) == 0 && (mode & PTRACE_MODE_ATTACH))
+>   		report_access("attach", child, current);
+>   
+>   	return rc;
+>
+> ---
+> base-commit: 5d8b97c946777118930e1cfb075cab59a139ca7c
+> change-id: 20250718-yama_fix-ea5c2c4b2fbe
+>
+> Best regards,
 
