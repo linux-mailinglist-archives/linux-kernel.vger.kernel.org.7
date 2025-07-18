@@ -1,135 +1,145 @@
-Return-Path: <linux-kernel+bounces-736501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1465B09DB5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:20:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 478B2B09DB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:20:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A91923B724B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:19:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20DC716A801
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:20:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ABE621FF49;
-	Fri, 18 Jul 2025 08:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA1C1F55F8;
+	Fri, 18 Jul 2025 08:20:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gbgwDoye"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ayLmZxUC"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077261CA84;
-	Fri, 18 Jul 2025 08:20:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5C01CA84
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 08:20:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752826807; cv=none; b=O2y+Khj8vZXV5Hg9TRryDSX+fs/qWknJf0HT07AMsHor5pEJV9OFLqKxP6gfd8MYS7+m9u6o7rH4xzfM6woJpb81ImLRk+Xu4NIY9WvVB0yKDUo9Q3SoeNARXWEmGiBcrpQJ5/eF6m850/QsunIKVeNmnjy+gaH51MBTpSD9A4U=
+	t=1752826825; cv=none; b=bRJpBMDggdo2iiRlgLBhEL81Zb76LVoAk3YGyxOgxHW02AzmLvPfo+3d4J0iFsUBzDfoHg+MLmm+mASaUF8sbTVK+vlkbPjGV59uImLh/o/XsQxNhxxCW1YXClksKqL/yEBDMiiBjDTU3aDXhW3E/uTgr8xfko8PTD8Yz+kzV+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752826807; c=relaxed/simple;
-	bh=qAd8ycMee6hRlVYzCSY9mkp/JvxOmUrSY+m6h+PqfWo=;
+	s=arc-20240116; t=1752826825; c=relaxed/simple;
+	bh=dGKkJmaxhFVHM8HKQXN+ruzKyau0iJTAr3sXMaXEuLs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dqXvr56UhkOi2Qjl4Vx/+B98geWYIDnIKygxhEEbxL2ryE9FOo2f/WbUKaRdHs5mTyeDoaf98kxNc2SLkMtUgkJygp9Pp1GNKlNlRGFdXJGy8MCeOEys6di/TCoSSDs95vBrUwEQxmH2HvYFdHh7hb21pW28MQw6+acd610aviU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gbgwDoye; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DDD6C4CEEB;
-	Fri, 18 Jul 2025 08:20:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752826806;
-	bh=qAd8ycMee6hRlVYzCSY9mkp/JvxOmUrSY+m6h+PqfWo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gbgwDoye8TT//6qusPYwaUNopxEwBE+zptzh6ApWcWFDXYwAYLvV11xaHil2tpvRL
-	 Xk+Z1A1fSc5vtUFvn7efYpmxYvhhkbNXUOoTcNHqBOpGDxNCEqJpEq2ho+chQmtEH2
-	 ZSOaI7FFLiVxqov0VypsHbclg5Awdmzn5O7+qhXj1hmho7RydueCp76X2tp4fKqjhA
-	 ld7K9T9DWFICKZrSFIG0/ZTPfhC7/jqdLiREvDK3QSUTPajAMjhQAq+VTDSR9HG2Bw
-	 078/gZPndBG2rKtmW3rIhSxy7b5WTsC/hQXdzQf+gfDzvinn42f/ZvnDLOOsY3BREo
-	 F6n2dX1W6yx7g==
-Date: Fri, 18 Jul 2025 13:49:45 +0530
-From: Naveen N Rao <naveen@kernel.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: mlevitsk@redhat.com, Paolo Bonzini <pbonzini@redhat.com>, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Vasant Hegde <vasant.hegde@amd.com>, Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Subject: Re: [EARLY RFC] KVM: SVM: Enable AVIC by default from Zen 4
-Message-ID: <3xpfs5m5q6o74z5lx3aujdqub6ref2yypwcbz55ec5iefyqoy7@42g5nbgom637>
-References: <20250626145122.2228258-1-naveen@kernel.org>
- <66bab47847aa378216c39f46e072d1b2039c3e0e.camel@redhat.com>
- <aF2VCQyeXULVEl7b@google.com>
- <4ae9c25e0ef8ce3fdd993a9b396183f3953c3de7.camel@redhat.com>
- <bp7gjrbq2xzgirehv6emtst2kywjgmcee5ktvpiooffhl36stx@bemru6qqrnsf>
- <aGxWkVu5qnWkZxqz@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pv1GAMue/GVg0rqMqOwOfzio1bKzp+mnD+a3Rw347icLW+pNqnA6Fz6XyEeQIFGNah8Fb4gj4yeJQZjMhefQK4OOlzcJpOkhSH/W6xvlbynkZ8oMz86S2L5NBBJnCPDUdorComTFc+FCcJGK7+rAO3OiV8psSKabQkLCzxvSY5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ayLmZxUC; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-60700a745e5so3298306a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 01:20:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1752826821; x=1753431621; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ab4gQxsYWdk9x2tiurNH/DMpPwSVpR7XnZUZ/FhW6Xk=;
+        b=ayLmZxUCnph7495FpfHRz5Julx3f4QFzSnlSJwHwgCKdyt80FAp94RXJWhdmj3ev0O
+         bIa23o/5fsUJ5dVLEcqMdI1xLzx3OvW7aCnD5cOYiyg2U19Apmpg1EeJGkkbFzO91UCa
+         33j7s25W7RheXYPljNKyrLORs9xWl3NXxDgH0SyqQ1muLRtDQ9GWLEd4Cw+T58xKFtxK
+         SNrlh3Xh+ryC69zE6p0wfcpruiOaUzRrQLG2Np2GS1bY3jjTaa/0DK175CBNJwTbudhf
+         iJ4Ulm/2Gsg7unpiRXCNsVmUcYdmmB8TZfhK9hgYwe4eTNCQc2oaA+vZ8Ia67JNe977u
+         XnFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752826821; x=1753431621;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ab4gQxsYWdk9x2tiurNH/DMpPwSVpR7XnZUZ/FhW6Xk=;
+        b=vvdOWeeGO8QKXaNMcKKhLugAu2YOY7ep8u3hwOxH4Fpklg7qQ2MBa38TA8LoUvGELW
+         pa4NhCvsm0mqWiAIhxXRsXNT6J07npMaPnUShP8AHzDxixHDA/2H/J2QrmngyCVEIAqZ
+         G+5Tuyt5guV5/90N7vMGs+1RGPNUWhXrhN7mRU9qsg2SPuHH3lq8fCfzW+nGL4eqUOSA
+         jhcp0MBgY3R3FaCwVcreEZHGT2QpCEJXPCybdFM0m/GseMypMH5sy9B+pAY5KnKWs1wk
+         uvEkL0VYcr9uf/4HO3ezZ35M4Rc4Znk/NghRXTFFRnztGBlQrrf3jE4r0ZX0hagq9JwB
+         QNnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWPW2bKYaqclXPDItD02TzjHLHq3IgwwFr0FvWeIPEd7HFsjeWo3oOJdwzNCC/4fZnllmvqbo2nDzM/G/c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+ElKxT7c3kp/oQKIPGuVj1Y99n+iU9xnrtVImDe7YdEt7tIn6
+	8uUCx4q+lQEssKYjtmVwS4aLQ/a8cq78ElX9DPlg/H4beQX31YBrpQ+tidfhlg+NNwA=
+X-Gm-Gg: ASbGnct+surL0370qgD2x975i8HDEEoxlOIlNisknBaXO9ZyYksicaSfmeoafeSxhww
+	qI+BL8O1AVyPXvklKNd2SQgZcEYiLtt19dxYU+fo3yNOYopgTeObcBm1qV7dOa7WNKVD1a1CBZ+
+	S43ZFbPMJiMO9u0tUQxDXhK7vdh2wn9YDg/Wn8VNwGfPW5qpiNBw9ww43kmU0cPChNi+w6+UerY
+	YmedSnn/iDLlrJL69/fyBs/RpDOGr1u2ztmeWxaZ4LRI01RUA05c64FUIJw73xSaFB2psHu2Xcd
+	EMGlyR7ATleVJ9QC7XasuqTtRjgY3DN2NY80q7L/xX6gHhHRfFHdJL64+LomGLt9gsWJrPjFDnO
+	1PnrHreR6aMFdoJa+qH4jNYenxfot6Hryt4wcvWn4Ng==
+X-Google-Smtp-Source: AGHT+IFlFmeWi6E0SMdOYun34OYAUB6SXhFoP9bJcXLK1nm2xdgsaBjOm4t+cnMR1jx+yUkBsFJYSA==
+X-Received: by 2002:a05:6402:268c:b0:609:aa85:8d78 with SMTP id 4fb4d7f45d1cf-61285923522mr8734807a12.8.1752826821337;
+        Fri, 18 Jul 2025 01:20:21 -0700 (PDT)
+Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-612c8f07e0fsm635217a12.13.2025.07.18.01.20.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Jul 2025 01:20:20 -0700 (PDT)
+Date: Fri, 18 Jul 2025 10:20:18 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: Tiffany Yang <ynaffit@google.com>, linux-kernel@vger.kernel.org, 
+	John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Stephen Boyd <sboyd@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+	Frederic Weisbecker <frederic@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Chen Ridong <chenridong@huawei.com>, kernel-team@android.com, 
+	Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [RFC PATCH v2] cgroup: Track time in cgroup v2 freezer
+Message-ID: <mknvbcalyaheobnfeeyyldytcoyturmeuq3twcrri5gaxtjojs@bbyqhshtjfab>
+References: <20250714050008.2167786-2-ynaffit@google.com>
+ <5rm53pnhpdeqljxqywh26gffh6vlyb5j5s6pzxhv52odhkl4fm@o6p7daoponsn>
+ <aHktSgmh-9dyB7bz@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="jv5tpzpajmrvvmyk"
 Content-Disposition: inline
-In-Reply-To: <aGxWkVu5qnWkZxqz@google.com>
-
-On Mon, Jul 07, 2025 at 04:21:53PM -0700, Sean Christopherson wrote:
-> On Fri, Jun 27, 2025, Naveen N Rao wrote:
-> > > Back when I implemented this, I just wanted to be a bit safer, a bit more explicit that
-> > > this uses an undocumented feature.
-> > > 
-> > > It doesn't matter much though.
-> > > 
-> > > > 
-> > > > I don't see any reason to do major surgery, just give "avic" auto -1/0/1 behavior:
-> > 
-> > I am wary of breaking existing users/deployments on Zen4/Zen5 enabling 
-> > AVIC by specifying avic=on, or avic=true today. That's primarily the 
-> > reason I chose not to change 'avic' into an integer. Also, post module 
-> > load, sysfs reports the value for 'avic' as a 'Y' or 'N' today. So if 
-> > there are scripts relying on that, those will break if we change 'avic' 
-> > into an integer.
-> 
-> That's easy enough to handle, e.g. see nx_huge_pages_ops for a very similar case
-> where KVM has "auto" behavior (and a "never" case too), but otherwise treats the
-> param like a bool.
-
-Nice! Looks like I can re-use existing callbacks for this too:
-    static const struct kernel_param_ops avic_ops = {
-	    .flags = KERNEL_PARAM_OPS_FL_NOARG,
-	    .set = param_set_bint,
-	    .get = param_get_bool,
-    };
-
-    /* enable/disable AVIC (-1 = auto) */
-    int avic = -1;
-    module_param_cb(avic, &avic_ops, &avic, 0444);
-    __MODULE_PARM_TYPE(avic, "bool");
-
-> 
-> > For Zen1/Zen2, as I mentioned, it is unlikely that anyone today is 
-> > enabling AVIC and expecting it to work since the workaround is only just 
-> > hitting upstream. So, I'm hoping requiring force_avic=1 should be ok 
-> > with the taint removed.
-> 
-> But if that's the motivation, changing the semantics of force_avic doesn't make
-> any sense.  Once the workaround lands, the only reason for force_avic to exist
-> is to allow forcing KVM to enable AVIC even when it's not supported.
-
-Indeed.
-
-> 
-> > Longer term, once we get wider testing with the workaround on Zen1/Zen2, 
-> > we can consider relaxing the need for force_avic, at which point AVIC 
-> > can be default enabled
-> 
-> I don't see why the default value for "avic" needs to be tied to force_avic.
-> If we're not confident that AVIC is 100% functional and a net positive for the
-> vast majority of setups/workloads on Zen1/Zen2, then simply leave "avic" off by
-> default for those CPUs.  If we ever want to enable AVIC by default across the
-> board, we can simply change the default value of "avic".
-> 
-> But to be honest, I don't see any reason to bother trying to enable AVIC by default
-> for Zen1/Zen2.  There's a very real risk that doing so would regress existing users
-> that have been running setups for ~6 years, and we can't fudge around AVIC being
-> hidden on Zen3 (and the IOMMU not supporting it at all), i.e. enabling AVIC by
-> default only for Zen4+ provides a cleaner story for end users.
-
-Works for me. I completely agree with that.
+In-Reply-To: <aHktSgmh-9dyB7bz@slm.duckdns.org>
 
 
-Thanks,
-Naveen
+--jv5tpzpajmrvvmyk
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [RFC PATCH v2] cgroup: Track time in cgroup v2 freezer
+MIME-Version: 1.0
 
+On Thu, Jul 17, 2025 at 07:05:14AM -1000, Tejun Heo <tj@kernel.org> wrote:
+> I wonder what hierarchical summing would look like for this.
+
+So do I.
+Thus I meant to expose this only in a *.local file not the hierarchical
+one.
+
+But I realize it should [1] match cpu.stat[.local]:thottled_usec
+since they're similar quantities in principle.
+- cpu.stat:thottled_usec
+  - sums the time the cgroup's quota was in effect
+  - not hierarchical (:-/)
+- cpu.stat.local:thottled_usec
+  - not hierarchical
+  - sums the time cgroup's or ancestor's quota was in effect
+    -> IIUC this is what's the motivation of the original patch
+
+HTH,
+Michal
+
+[1] I'd find it more logical if
+cpu.stat:thottled_usec were cpu.stat.local:thottling_usec and
+cpu.stat.local:thottled_usec were cpu.stat.local:throttled_usec.
+Only to illustrate my understanding of hierarchy in cpu.stat, it doesn't
+matter since it's what it is now.
+
+--jv5tpzpajmrvvmyk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaHoDwAAKCRB+PQLnlNv4
+CBlXAQCByFJfBP7Jk7Z1s3RPv9V0QeD7jkoLucvvfVRWjUYuhgEA4pHMWxkdHUIl
+LfzPAnEZM/k+NpkUWf+uTYbOtaMqcAE=
+=lUcY
+-----END PGP SIGNATURE-----
+
+--jv5tpzpajmrvvmyk--
 
