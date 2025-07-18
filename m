@@ -1,296 +1,163 @@
-Return-Path: <linux-kernel+bounces-736210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0300B09A19
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 05:13:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA96EB09A1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 05:17:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 092B71C80336
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:13:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E37A3B92C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:16:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD63B19E806;
-	Fri, 18 Jul 2025 03:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7C61B0F33;
+	Fri, 18 Jul 2025 03:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T+K46F+I"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cSkxrrwF"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ACB8EEBB
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 03:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752808412; cv=fail; b=CAbFUGHIejjXpiZpbjIWhs53HkkBlnDaL6a2WuTZVq8zOsD1vJiCZXzAAXlODHU3uNSk14juneX1pitU+dZDLthEBOP3LHEBPKU6xpeXJMbaKlr3IsOtbz9FA69lfb6BmfL4ego9J3mgu0z/46ep869QDDbhqLaEK1vghMIO7Xc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752808412; c=relaxed/simple;
-	bh=A3J3aHClyRejz3nDEmys1uaPYh/nEObXco/VER7rQu8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=gyxAsHckeQ/Zi1C7QwkFNoIUUzV9W/nBn5vIq/n+Ocr4Aq7JfD4vh94nlKB5n9v49gCkV/4lhBRIDJ2vX3VcbiKdrWEhijyEJ9RONSOD0ALvNmVgGOYCis20v4Ub0M/Q73ihrLNdXeLEHimg5cG2tfokJfGE4Qd0qwBr53RKKNo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T+K46F+I; arc=fail smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752808411; x=1784344411;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=A3J3aHClyRejz3nDEmys1uaPYh/nEObXco/VER7rQu8=;
-  b=T+K46F+Igp4xd5AsZI1j+d/1FBvaV6rvDzUS5HiERDVT7Ekn8huTqWJs
-   7URciZgpCuP/tqofIWUb1Ly9yU+igzZ/8tpBFHEE7xU7gV04jxnYie251
-   YkGwRhWqXrADIVmw/IEwcH0DrtirNKIXYI6b3pN9BJ6VqVgS8er+EHU7E
-   TtcG4ijgSNtg2TrfTw1bHrjSiaMb9p4XytA2lh9sR/46dpmywZ1pA5bVl
-   440UEHfOOtVjD0l1H36A72zQxlEtWkRtlfxji13TswpK1LjrxrwEo9WeY
-   oU5O9nm4+unDQH5X4y4pq9ZiTPK+xKEhxZeGRFHgHFVs3FPbu8ZX7gjL/
-   g==;
-X-CSE-ConnectionGUID: mNNycOrISLqSQzimAANpLw==
-X-CSE-MsgGUID: 6nKs1+vkQjCmwAqULb8vww==
-X-IronPort-AV: E=McAfee;i="6800,10657,11495"; a="65671076"
-X-IronPort-AV: E=Sophos;i="6.16,320,1744095600"; 
-   d="scan'208";a="65671076"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 20:13:30 -0700
-X-CSE-ConnectionGUID: EACEIc8ESdO+Egfs/K7Dzw==
-X-CSE-MsgGUID: 7PRvpdXqQZ+DFr6TBXGGHQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,320,1744095600"; 
-   d="scan'208";a="181665200"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 20:13:30 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Thu, 17 Jul 2025 20:13:29 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Thu, 17 Jul 2025 20:13:29 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (40.107.236.71)
- by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Thu, 17 Jul 2025 20:13:28 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Zxp2i7S1xaHdkKGpK465B4N7HW+DTp2tpbExF1zMPX4ScQHUIY+WqbTNufiSdIUodzqauiqU20JhBfyp6cLjuQgbcbsO/QMVCPbfVnyoQW696oq6poI9lrphP2N8FFfy8r0Cbj2FN0EnitTO1HhvyiFRfrXko9iSaaFHc1KmKsHppmVILe3iXKZWvxq+oFTn9+JJ6gSoAEngbpPnogP0Or/EgLJwapeAHt9bRde23go9r8aaDsay+PDYWPuXozPSpJISmPreQcydjKwK/e7Yg+I8Lo10u9Tr58tY912ZfvZZHkTrKEQ+7Z3OXDDSryt2184WrKDALySwUqr9g6GhBw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0Zh1MBCC2Gk38HMrJPfkPrzzLDx5g2kiK4YGKjujovI=;
- b=Yv2ViZQ0efp/4U1rxdD9HXAfxkKCYvVkYFONsOHKL+IZzRrD6CXWKQcSEecq8e82drHwfQRDk06pCHTg4+Gja+oJLNGeBh8IDmyAyDcxtwMrmpiY52Vu6G2jGEvQk2pjKZUkYqVKA2jhAPpZfR6P1ouOlX/vGC8g9tfQlBqUoo4OkwVY9bExI8vb4K0lOPCxo/MM689JfwfGdHd0P/RWH8uhOmX9JS8MrFTrt/jVKzxen/VvSNLGpQ8IS4OPkZy+O5sRWJTYNvYJ5BY9h//cuh6iyWBarWib2pJXz8OJVQ42mEJeelBH7MvGosETQW0P0uoSnpUZwHOoPHluJLbFUw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BL3PR11MB6508.namprd11.prod.outlook.com (2603:10b6:208:38f::5)
- by IA4PR11MB9204.namprd11.prod.outlook.com (2603:10b6:208:56d::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.25; Fri, 18 Jul
- 2025 03:13:21 +0000
-Received: from BL3PR11MB6508.namprd11.prod.outlook.com
- ([fe80::1a0f:84e3:d6cd:e51]) by BL3PR11MB6508.namprd11.prod.outlook.com
- ([fe80::1a0f:84e3:d6cd:e51%7]) with mapi id 15.20.8880.021; Fri, 18 Jul 2025
- 03:13:21 +0000
-Date: Thu, 17 Jul 2025 20:15:04 -0700
-From: Matthew Brost <matthew.brost@intel.com>
-To: Balbir Singh <balbirs@nvidia.com>
-CC: <linux-mm@kvack.org>, <akpm@linux-foundation.org>,
-	<linux-kernel@vger.kernel.org>, Karol Herbst <kherbst@redhat.com>, Lyude Paul
-	<lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>, Shuah Khan
-	<shuah@kernel.org>, David Hildenbrand <david@redhat.com>, Barry Song
-	<baohua@kernel.org>, Baolin Wang <baolin.wang@linux.alibaba.com>, "Ryan
- Roberts" <ryan.roberts@arm.com>, Matthew Wilcox <willy@infradead.org>, "Peter
- Xu" <peterx@redhat.com>, Zi Yan <ziy@nvidia.com>, Kefeng Wang
-	<wangkefeng.wang@huawei.com>, Jane Chu <jane.chu@oracle.com>, Alistair Popple
-	<apopple@nvidia.com>, Donet Tom <donettom@linux.ibm.com>
-Subject: Re: [v1 resend 02/12] mm/migrate_device: flags for selecting device
- private THP pages
-Message-ID: <aHm8OJPDLd3muPC+@lstrano-desk.jf.intel.com>
-References: <20250703233511.2028395-1-balbirs@nvidia.com>
- <20250703233511.2028395-3-balbirs@nvidia.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250703233511.2028395-3-balbirs@nvidia.com>
-X-ClientProxiedBy: SJ0PR05CA0162.namprd05.prod.outlook.com
- (2603:10b6:a03:339::17) To BL3PR11MB6508.namprd11.prod.outlook.com
- (2603:10b6:208:38f::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A70BA27;
+	Fri, 18 Jul 2025 03:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752808616; cv=none; b=INX5/N0Q360leiQwHSyO3WfsyfAThK4aZIgCFyTpII/eG3EprRNW4SGg85cjCgA7Y3fEPIwC/4R5WlDqGGwZsq6PFnxN3GS3NiZ/HXKx2flNeymFdIVBRdZ67Fxh1oY0uV8on/GGH4Z2IR+GF1ZIQVzyCj8adha4Y+EwvlQIrwg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752808616; c=relaxed/simple;
+	bh=BHE/f2XhvtPalYNkrnzjR50K/1vVTxvfy4teDpHZYx0=;
+	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
+	 Cc:In-Reply-To:To; b=V/C3VT4rSK/d3hO0LCVZpOe1Z6IIAIuWvEnZi3F44B6buS6iZRMS/rHjaqi14d4BuHIyrLOYBIjrjj5TVUFQ47tY3dtdali7BP3UrXHy/MZ2OGvgkCEHHwAyDCDcf0p5ZcrKFBVURw3GG/be4Twt9v9bb/+1eF9rv/HI/bkID+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cSkxrrwF; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b34a71d9208so1148329a12.3;
+        Thu, 17 Jul 2025 20:16:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752808614; x=1753413414; darn=vger.kernel.org;
+        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
+         :from:content-transfer-encoding:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7hWo3MjRjElSlM+vr74dLYKzPASj9Y2C0vM0sDb1jyM=;
+        b=cSkxrrwF2zhafS/4jw8Wq36QrdS4UAYhqwgcUGo0lyD7M5aocKH4stFwa7z6okdjav
+         n0lrizuUEmI0l7YXL2W7fLd8eCdP+Hu5tA7Z1FsinkiIQL6LguXJX+blZCNKZjjk70pj
+         L9eDb3KiLaK6Inr4WP+0mrYS1hCjuw2hFiEUTOwJe1VDOg46IQZpOd5q+/wTIO70CozG
+         VUsInF/8mNcbH5ufR9sJl3JS3Y7/qAmT7tzoFraIEWeRQMlBzvW/1chFyIrMOznLLnhy
+         oLRsFa8YEqjYaA2tdDhrfUiabB7CPQz7an/+nU2v7WlM1Bfw/51Vg8sUhVen6j5R6UNo
+         XsNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752808614; x=1753413414;
+        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
+         :from:content-transfer-encoding:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7hWo3MjRjElSlM+vr74dLYKzPASj9Y2C0vM0sDb1jyM=;
+        b=OO5/TPwWBVBhm4D5L17r6tVDE02h2E9N3FaY38H4YVJoY8uvhA3qR8kkQj34ojCdHt
+         AvkggLmIa6y8kjFBORQMSQLStJAhTTbwbee1gEKhkM+gEtKnEzCIga9DjIscjYI4nYwY
+         CEKwWtP0XS1mB3TTtQxPKwWEn6E+CksRUmf7wdsypt2ZhDHCHYFBwEzdPc52u4+oMIAa
+         Jt3s1UbScZeGwYYLJrKRJXm0/dRHYobmFuNZvsOAOBcUMZfH0LzRKlBu8sExNN3KUtxL
+         BrRpy7TLn4PCK+wCV6GNaPbKIRBQlVbhhB9B+mAJDOSZZahILpRftEFsxf++H0/HwwKo
+         Y3FA==
+X-Forwarded-Encrypted: i=1; AJvYcCUEkdSm6fyFaHt5U4rKNxC+rJApGej3/ERJX2pF0C2VtwNnaP2e3AXIKCCrbwq26eqwOifvwb/qqR0nqw==@vger.kernel.org, AJvYcCWuT4AoTyfBriFrz2/yNnQ49EMCEI92auWs+UKfzhVFRxTIku15qBSOjnhGiVxo5qF9J0SsOvAM1nIikGxu@vger.kernel.org, AJvYcCXWZMMeLdzhAO1BMJQNaXI8NX/vd5Ln4smqACT6Mz58GQ3pKot1G5iB9ef60VxABsSzl3EJMBpA@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBzOW6N+t1AfIObjdw77NmyFoDm0H4qE/1r6i3B/WGl7RCo7V9
+	XbXO7jSJt8jwEZsZVOWDtq3btRPKM/3+88gFGM+TlRzceQpKibNWZdeeBz9UUQ==
+X-Gm-Gg: ASbGnctoMn+TijlSfLZUPxOSOYgeWzVJIIHxgmQc/OkZuoYvICYzQe5NZfaIgJK25N/
+	MnlT6vh231zVaW9JTLgCH+vhtI259pqfYSbW7k6MEoGKRfd4eA2hBs3EAPqD3QbvSzrXwOO/zsC
+	Soef4KdfePC2PIqDxz710b+Y6eRRO0mKmmB8qKF5OA5+yaSoV9Vjp1DHGkqCxXu38fw0Opxdqdo
+	uZukbaQo/6EUlcmt/YDF+YUSyEqDWDwq4cg7Dje76ymR+Su+a5aBUjoz6HX9OhKrK476R82cgE6
+	a9SJRcrAY7CR7mSnQRh/NoBpFvI4krcQfuf12+a9MZBS0inUvpizP4teusArtnToktHIlbC8XGm
+	jrDRTObeaVZcbiZZOFHxHjh7n6sWDgDxg2oudBAELOW9IISgncDYmhMw+UvNi0XMu6Ov8VDanqt
+	ruMu6YHuU1vmkV
+X-Google-Smtp-Source: AGHT+IF5VQDbZ+QqzLcQV5X7C1m3C1oQGwCBnO6TLpGH4bUjsW0xcL1s9B2UZhZYWOMpD8bRAGEOXQ==
+X-Received: by 2002:a17:90b:2788:b0:311:e8cc:4255 with SMTP id 98e67ed59e1d1-31c9f4dfa9amr11377244a91.31.1752808614088;
+        Thu, 17 Jul 2025 20:16:54 -0700 (PDT)
+Received: from smtpclient.apple (pa49-199-174-195.pa.vic.optusnet.com.au. [49.199.174.195])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c9f1e6a8bsm4203212a91.18.2025.07.17.20.16.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Jul 2025 20:16:53 -0700 (PDT)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From: Orlando Chamberlain <orlandoch.dev@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL3PR11MB6508:EE_|IA4PR11MB9204:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6c7b4763-b248-4d9a-9a7d-08ddc5a90d08
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?THJQZHh3dklKVXRLdzc5alJRRlhEOFBqRXB3WjNkVTBqZjAzVG1NQ3hnd3N1?=
- =?utf-8?B?V1RnTXB4bFZBeVZJQ3lialc2aGZnU25yRzRHdU9kNXNqUSswcUhOQUNXQ3dl?=
- =?utf-8?B?c3ZwRFRXT0ppd3RkbFFnMHlxN0tEMGkwT2V2V2txV2JOcWI0bXZZQWt4dnZU?=
- =?utf-8?B?M2pjTDFmOG11TThlVEdhakJUSnQ1RDNnTmJKMjBGTkwwU3RwU2hqUmJoRTM4?=
- =?utf-8?B?UGZ3YlVBOE1pa2Qvb0NuY1J1Smx1OXc4dEhmeEhWc0FWTEFZdEwxQmJqRk1h?=
- =?utf-8?B?STI2Q2JTbE5aQmtLNjU1R21iRE45MzNOUHV1TWlWUWRPYzlZbjBQMDZQZ3c2?=
- =?utf-8?B?VzlNcUFkaG1EWmVsYW14TjRLWHdsN1JERnFPTEw4VUhtVnVPOHNOdE5MbGNY?=
- =?utf-8?B?d1VTRzhuOXZmb2lheCtKKzdIL0Q0Yzc2NStHejQyNEkyZjNtYjNnKzJWR1Fj?=
- =?utf-8?B?bEE2bFVoK1VlUHlnd0p1MllOOWpIR0hnak1sbjZzWmxQS1RVT2IvT20yUWkx?=
- =?utf-8?B?ZUcwbWxRODhTTytjVG1IOWhJZkNGSVc2aE9IRXBJdjg4YUx6R1hyQlVGbUpK?=
- =?utf-8?B?d0Y5cVhmTzluYVhvaHR1SUFxeWZESmhYdG5BTFVKUDNEYmxjbVFSTzRUL2dI?=
- =?utf-8?B?ekg3Y0srdElJVHdhaXpaQmNCNCs2ZDFPRTlDUGNrdHp6VmxxeUpKOG5ZY2Fj?=
- =?utf-8?B?dWpEbnNjSDdYczVieDlXczdUeUJzT3JtcFd5TWZxUlJlWitRQ0Q1V3l1Q3J1?=
- =?utf-8?B?bENmekI1UmZKYmdpc1pHR3kxcUl3cnZjalF2ZU80eXk4cUtoa0lkZTcvcjhs?=
- =?utf-8?B?U2pGS0NlN0hDS3Y3bzZBdGNFZFVBNFg4VDdyQjhlallNSDBIelF3Zzd1K0pR?=
- =?utf-8?B?STI4Mjg3RzdGaFYyanFtVEJVNUJwb1h3NUpsM2tFamxGcFNHdFhTQXQ3cTNl?=
- =?utf-8?B?NktwQm5iNVNmMXNxS0gwOE1LUjZRcTVLVXRHTVRQNEU2ZFhSdG81b1VQSkpW?=
- =?utf-8?B?eXpIMEk5Y0xCLzA4NFdFOStPaUE1K2prUUNmNkE4U1VRcmhzZjJQREVMeTVL?=
- =?utf-8?B?MTNPQnRLckFQNUtRa21DVVNRM3VwcEVBZ0FCWTlTY3E3STBOT0ZUVWZTNlh4?=
- =?utf-8?B?TWxuUnViVGxsMk1yejNyU3hZelgzZEtnOWxEZVQvU2MxclhOTTYwU3NXekN2?=
- =?utf-8?B?NW1PSy9SenlCakN5cDNPWVM0b1ZXWSs4ZjkwYnBJZ0tka1B6REhiclZYbVBa?=
- =?utf-8?B?YTdsT0FoNUpVR2MwWjB1d1QycGx3OWVObzljSUFPb1R3ZVpvNGNlaXJ2aW83?=
- =?utf-8?B?MXZ5S3hzKzB4aGlDT3ZsSDdGdGZBOVBvdzY3RVp4YTNuelZ1N2hyWHhVdnVV?=
- =?utf-8?B?dFBTSWowQVUxWFZIdnZRYUNKUkd1OFhhY2hTbWg2VjBUMk1Vc0NvbmU2ZWFL?=
- =?utf-8?B?Ky9SSWYrMjIvQjlWKzl1MTlGN1E0ejN1S1NQemNnZU14dGNFdGhFU1ZrTk9n?=
- =?utf-8?B?cGw4NDIrcWpndUVQRzVPVjJ6YjJvS04zR1g4REdBOWR5YXM4WCtOOWVtK1dG?=
- =?utf-8?B?OTN5NEZzaFJ6NEliSmxUT3IyRFp2empDY1VFNEQyVG5VZG93SzFJYkFadFBE?=
- =?utf-8?B?Q3JPdGdMMW9OM0RmTEoxaW44WjAvZWM0OWZzYnpxNFJaOERIVVVBaGliZWVX?=
- =?utf-8?B?SG52a0hxWVplcDN0dEk1K0xOR0wwWWZXYlZEMEJrSE43R0VhVDIxaDhKQ1BE?=
- =?utf-8?B?cS9UbG9ST2hyN1RDRm1MOFBGemlDd0dYYWxDY0hndmdBWWxpZkJtdWtLdHlS?=
- =?utf-8?B?Qk1YNTB0SThNMTcrVXNpL0ZIOVNiUWJ1ckZhbXhhdG1iVGFSRW9TVUFJblZY?=
- =?utf-8?B?Q1lodnpkWERzOXY4TVVhZzkzT0FhZGVqQmxUbmVIYWFwYnRWMFkyTlVKc3d3?=
- =?utf-8?Q?YVEiGS78I5s=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR11MB6508.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?OExUZHI3N01VZEZybng4NExpNVRQalI0bmxxc1dWbzN3TzVoRXVqVmFwbFBQ?=
- =?utf-8?B?bnlaNEtwY2o4N3lKWTFOTUdkWGhxMGNsWXhydm0wWEdLWmp6RGlhY3NaSGRZ?=
- =?utf-8?B?WVozNVB3U0FQYlpaTFBMUUhlR21YQmp1YWZqTDg4U2ZtbW9WWTZCQTZYaXRW?=
- =?utf-8?B?U2p0M1o4b3dzZXJKVFYzYXJPODZzYUtKaFRRNXZrOTNMandoc0pHNU54WTNR?=
- =?utf-8?B?V25IREdxemZVczdRQTVVRVBWTjVpN0Y1YkZzUGdtWXNlVzE0cUxLNnNDRm5K?=
- =?utf-8?B?OEpWaFltV3drNFlESEYyWkNZam1jRGNhR25Fdmw0eFN0Q0JoUVYvQ2RQL1VN?=
- =?utf-8?B?eU1MRlZkM3F4MDZQbU96WGJ0R1BCUjEwSnZCTWVCOUVUb0tNbFhuMlZXK3VV?=
- =?utf-8?B?L05SdTdqeCszM09yRlBUWjNnVjErSkhCVFRPODhmUjVuU2NPdC9DUDJJVEhm?=
- =?utf-8?B?bnlmeEhJSVVLcGhzQnpoRWVhZnl2OTVta3AyYitLSG1SWFliektXdnBjeTd0?=
- =?utf-8?B?S3RtR2NEa0l6ck4yMGk2Zmh2a3dlbGJUVnN0ZnZrYWRLbUpZMVhFNzFLMWVW?=
- =?utf-8?B?TXZ4dUhaTnN2Q0E0TnplMVBHaW8zNlBOeFR2L0gxM1hBTGdvSVNBSVJTeVRJ?=
- =?utf-8?B?VURJOS9LRjFkcXR2WnZPK0FmVkRSUnd3TTNoSzY5VE91dVFnRWkrbEtiYVFp?=
- =?utf-8?B?R3pVQzBmWFdtcGR5ODUwbC9sYm1tK3RrNkw5aUVlQklXT1dxUW1yY1V6M3Ur?=
- =?utf-8?B?RVlOK3Q3VTRzb0pDVnB0VG45eHFHamkwOGNqb2krWVZ1Y1NWUGQ2dlFpTThw?=
- =?utf-8?B?WnR1NmZHM1A1QVZIaSt6R1VCNzB0OUVRbFpxWTZiRHFaZHJnWVpVRmhWQmxx?=
- =?utf-8?B?VnBPMTQzUktnaUlPM2wrTlVVOFBkNkk4ZFBjamR3KzNYRUx5QjNWSElDV1Jl?=
- =?utf-8?B?ZGgxdTFJcVhqOG1EaGFSS1d4UDJFR0czRTNETGQ4dVE3NFQyNFNhV0pGeDZN?=
- =?utf-8?B?SktMSmJEdEZVYlh5czJxcjBoS1FYK2VtMVJxamhTR3AzamVMQzZTSTBoNzJK?=
- =?utf-8?B?VFhsbE9RK0ZJd1J6a0Y4L21kNTlwMklFQUF0eTVoaGYzc29sYjMzWHZSS05V?=
- =?utf-8?B?SzdFTit5UVJlcGxMLzZpZWw4azJkaHlndkJ6S3M4RlVqSGVjNVU5a2FKNGw2?=
- =?utf-8?B?VmhIQWtXWEhFaUJIQ2dMeEFxSDZIajZUU3ZoUlZENk9paGZ6d1p6VlZJVk1k?=
- =?utf-8?B?TE14MU03cGFROEVMY1R3R2d2cXk3OTlUZDVYdXk5Ti9Mb2hIeTVIVnFMb1c2?=
- =?utf-8?B?VGNRVlJOcWhCVmdpbDhTQmU3WlVCWm44cEwxOXU4QTJuT084N2pKM0hhSHVP?=
- =?utf-8?B?UVp3TUhLRkVmZkJLTmg2aktQT2MyVFlyWkhYV1F4bVd1cW15ZE83MWdDK1FZ?=
- =?utf-8?B?NlBKVWpGbHplK2t3RmdkMUlXOEF5Q21ybTd0WHVlUUNtcW4xR1VJQmVsalJt?=
- =?utf-8?B?ZXYyVmR2eURxMDdqc1BKbEdmR01qTkRlUE9SY0FaSHIxejR0SCtYYnNzcXFh?=
- =?utf-8?B?azczMXJXL1FzK3lOK0FWV2Jkem1OWWFtYVczdXFJR0x6QTZIUi9xa0dDaUpQ?=
- =?utf-8?B?WkhFeFlRV3A2RTR6R3cyckVEUHlMRFNveGRNZ3ppMmpGb2lETnEzdmlzczZY?=
- =?utf-8?B?eDlPNlBGRktaa3FIaUJ3WDliQW5FTmdaVGZ4M1ZKYmV4dk16MUhwK0tMYzBV?=
- =?utf-8?B?c1E5QkNpeWJJWE5uaTZWRE1XUG5zNW1rRnJOU09HUHN2Y3UvdTBySWdkOXZI?=
- =?utf-8?B?OERocEh5eEtDS3FUZXBGcGk1MWVmYk9uc3hEejJ1VkxKSlNDeWhXbi9NK0N0?=
- =?utf-8?B?N1krNTR3K0xIUW9sTlNPdlkvYW40dS9yeTlrRzRYZHdDNmtqZzN3ZjcrVkdx?=
- =?utf-8?B?SUk4aTg4aUlTYXRQd3pwTVFxMmorSC9McEJPWS9KVEdRWTZjb0J5WXV2dDF4?=
- =?utf-8?B?VjdBMHphdkhPdFFkOXNoTGxqdzhYcmVLdnFXUU83bFRCY0JQZGdFNHkzdEk0?=
- =?utf-8?B?YmdrTnBnSzhYck14bUJlODhaL3VzdEdFaFZuU2JKQjd6cWwvSUNJTVNKbE1O?=
- =?utf-8?B?SktiLzdYVnhvdzY4TjMvL1JFaHY4UjBHKzh4Q3lTTGtsNGZWOEpjWEV4Y3FH?=
- =?utf-8?B?Z3c9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6c7b4763-b248-4d9a-9a7d-08ddc5a90d08
-X-MS-Exchange-CrossTenant-AuthSource: BL3PR11MB6508.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2025 03:13:21.8118
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ESyGE18SpDfXEFsJzudTlT1b/4MbyCLCKYgxaYj3QmVN5gJ2KRJv+HKVqIYvG5YM1jIROyArIYbSYswBEv+tPg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA4PR11MB9204
-X-OriginatorOrg: intel.com
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH] HID: apple: validate feature-report field count to prevent NULL pointer dereference
+Date: Fri, 18 Jul 2025 13:16:41 +1000
+Message-Id: <68CBB472-565A-4CA8-9ECF-E0F278B10F19@gmail.com>
+References: <20250713233008.15131-1-qasdev00@gmail.com>
+Cc: jikos@kernel.org, bentiss@kernel.org, gargaditya08@live.com,
+ linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+In-Reply-To: <20250713233008.15131-1-qasdev00@gmail.com>
+To: Qasim Ijaz <qasdev00@gmail.com>
+X-Mailer: iPhone Mail (22F76)
 
-On Fri, Jul 04, 2025 at 09:35:01AM +1000, Balbir Singh wrote:
-> Add flags to mark zone device migration pages.
-> 
-> MIGRATE_VMA_SELECT_COMPOUND will be used to select THP pages during
-> migrate_vma_setup() and MIGRATE_PFN_COMPOUND will make migrating
-> device pages as compound pages during device pfn migration.
-> 
-> Cc: Karol Herbst <kherbst@redhat.com>
-> Cc: Lyude Paul <lyude@redhat.com>
-> Cc: Danilo Krummrich <dakr@kernel.org>
-> Cc: David Airlie <airlied@gmail.com>
-> Cc: Simona Vetter <simona@ffwll.ch>
-> Cc: "Jérôme Glisse" <jglisse@redhat.com>
-> Cc: Shuah Khan <shuah@kernel.org>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Barry Song <baohua@kernel.org>
-> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Peter Xu <peterx@redhat.com>
-> Cc: Zi Yan <ziy@nvidia.com>
-> Cc: Kefeng Wang <wangkefeng.wang@huawei.com>
-> Cc: Jane Chu <jane.chu@oracle.com>
-> Cc: Alistair Popple <apopple@nvidia.com>
-> Cc: Donet Tom <donettom@linux.ibm.com>
-> 
-> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
+Hi Qasim,
+
+> On 14 Jul 2025, at 9:31=E2=80=AFam, Qasim Ijaz <qasdev00@gmail.com> wrote:=
+
+> ...
+>  [   15.164723] Oops: general protection fault, probably for non-canonical=
+ address 0xdffffc0000000006: 0000 [#1] SMP KASAN NOPTI
+>  [   15.165691] KASAN: null-ptr-deref in range [0x0000000000000030-0x00000=
+00000000037]
+>  [   15.165691] CPU: 0 UID: 0 PID: 10 Comm: kworker/0:1 Not tainted 6.15.0=
+ #31 PREEMPT(voluntary)
+>  [   15.165691] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIO=
+S 1.16.2-debian-1.16.2-1 04/01/2014
+>  [   15.165691] RIP: 0010:apple_magic_backlight_report_set+0xbf/0x210
+>  [   15.165691] Call Trace:
+>  [   15.165691]  <TASK>
+>  [   15.165691]  apple_probe+0x571/0xa20
+>  [   15.165691]  hid_device_probe+0x2e2/0x6f0
+>  [   15.165691]  really_probe+0x1ca/0x5c0
+>  [   15.165691]  __driver_probe_device+0x24f/0x310
+>  [   15.165691]  driver_probe_device+0x4a/0xd0
+>  [   15.165691]  __device_attach_driver+0x169/0x220
+>  [   15.165691]  bus_for_each_drv+0x118/0x1b0
+>  [   15.165691]  __device_attach+0x1d5/0x380
+>  [   15.165691]  device_initial_probe+0x12/0x20
+>  [   15.165691]  bus_probe_device+0x13d/0x180
+>  [   15.165691]  device_add+0xd87/0x1510
+>  [...]
+>=20
+> To fix this issue we should validate the number of fields that the
+> backlight and power reports have and if they do not have the required
+> number of fields then bail.
+>=20
+> Fixes: 394ba612f941 ("HID: apple: Add support for magic keyboard backlight=
+ on T2 Macs")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
+
+I haven't had a chance to test this on my laptop but Aditya has the same Mac=
+book model anyway. As long as this fixes the null deref you got with the spo=
+ofed hid device in qemu, this seems fine.
+
+Reviewed-by: Orlando Chamberlain <orlandoch.dev@gmail.com>
 > ---
->  include/linux/migrate.h | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/include/linux/migrate.h b/include/linux/migrate.h
-> index aaa2114498d6..1661e2d5479a 100644
-> --- a/include/linux/migrate.h
-> +++ b/include/linux/migrate.h
-> @@ -167,6 +167,7 @@ static inline int migrate_misplaced_folio(struct folio *folio, int node)
->  #define MIGRATE_PFN_VALID	(1UL << 0)
->  #define MIGRATE_PFN_MIGRATE	(1UL << 1)
->  #define MIGRATE_PFN_WRITE	(1UL << 3)
-> +#define MIGRATE_PFN_COMPOUND	(1UL << 4)
-
-Can some documentation be added around the usage of MIGRATE_PFN_COMPOUND?
-
-In particular, how the field is used in relation to the migrate_vma_* functions?
-
-For example, when MIGRATE_PFN_COMPOUND is set in a returned mpfn, the caller
-should check the order of the folio associated with that mpfn, and then expect
-the next 1 << order entries in the source array to be unpopulated.
-
-Likewise, when a caller populates an mpfn with MIGRATE_PFN_COMPOUND, the next 1
-<< order entries should also be unpopulated.
-
-This behavior wasn’t immediately obvious, so I think it would be helpful to
-document it to avoid requiring readers to reverse-engineer the code.
-
->  #define MIGRATE_PFN_SHIFT	6
->  
->  static inline struct page *migrate_pfn_to_page(unsigned long mpfn)
-> @@ -185,6 +186,7 @@ enum migrate_vma_direction {
-
-Maybe out of scope, but migrate_vma_direction is not a great name. While
-we are here, it could be cleaned up.
-
->  	MIGRATE_VMA_SELECT_SYSTEM = 1 << 0,
->  	MIGRATE_VMA_SELECT_DEVICE_PRIVATE = 1 << 1,
->  	MIGRATE_VMA_SELECT_DEVICE_COHERENT = 1 << 2,
-> +	MIGRATE_VMA_SELECT_COMPOUND = 1 << 3,
-
-Same here.
-
-For example, what happens if MIGRATE_VMA_SELECT_COMPOUND is select vs unselected
-when higher order folio is found.
-
-Matt
-
->  };
->  
->  struct migrate_vma {
-> -- 
-> 2.49.0
-> 
+> drivers/hid/hid-apple.c | 3 ++-
+> 1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/hid/hid-apple.c b/drivers/hid/hid-apple.c
+> index ed34f5cd5a91..183229ae5f02 100644
+> --- a/drivers/hid/hid-apple.c
+> +++ b/drivers/hid/hid-apple.c
+> @@ -890,7 +890,8 @@ static int apple_magic_backlight_init(struct hid_devic=
+e *hdev)
+>    backlight->brightness =3D report_enum->report_id_hash[APPLE_MAGIC_REPOR=
+T_ID_BRIGHTNESS];
+>    backlight->power =3D report_enum->report_id_hash[APPLE_MAGIC_REPORT_ID_=
+POWER];
+>=20
+> -    if (!backlight->brightness || !backlight->power)
+> +    if (!backlight->brightness || backlight->brightness->maxfield < 2 ||
+> +        !backlight->power || backlight->power->maxfield < 2)
+>        return -ENODEV;
+>=20
+>    backlight->cdev.name =3D ":white:" LED_FUNCTION_KBD_BACKLIGHT;
+> --
+> 2.39.5
+>=20
 
