@@ -1,83 +1,81 @@
-Return-Path: <linux-kernel+bounces-736141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C871B09956
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:42:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D8CAB0995B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:43:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40B167B9C5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 01:40:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FFC11C4875E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 01:44:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 379FE1F1315;
-	Fri, 18 Jul 2025 01:40:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EBE718CC1C;
+	Fri, 18 Jul 2025 01:43:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HPA4GaZ9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RhGv5knX"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19DE61EDA03;
-	Fri, 18 Jul 2025 01:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53EA411712
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 01:43:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752802820; cv=none; b=UugzM6zK4NVpOHXzXDvA04UXcraV3/Mt8K5KNSZWaxNGoCfyVYxRATi7aQqhoVtx8WnxFIy+/VSnAZ1MxcOMPTmpI0n17WnMtIma+oHrrnEeXu22kYSTrqagJom6OjPuF96zQcroJZii6+N2ENzCM4/eNhZHMET0R5y5wQbpYiQ=
+	t=1752803018; cv=none; b=fug5DALO/hnc3GMOer4pr4ArG+xXze6VJLws/or4ig5hG/Cq/ucB6zeur3+X0ct1sr31k8lzgMvtwwnKZlRY2/d5mnc1S/xU59i/g37YND/QT7FFZDqdNSgEKJHRhHSODgS8Nnv0oS+O6bWDjh68s7rneU+B4uS7Vhm6JsWVA78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752802820; c=relaxed/simple;
-	bh=0hNsv9KESme0CC07v7qNNGShOQXUwWV1Ff+LbnZiLcI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ku+YRdyd6/VRwfbQBZTzlrYalP6uuYYA9BJHyZo5cjH14582sAATQhYVbftsttcKsVOLm/sEOwmFz8Cb02WXdHrlWFmwqL90YNYNyHSJxUa0iUgheu3lOG1K1v5wEhzZcXnfcOr1s+5ONDN++5pyxrVGLcGXtzMG0zuRKFQ8Jgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HPA4GaZ9; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752802820; x=1784338820;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=0hNsv9KESme0CC07v7qNNGShOQXUwWV1Ff+LbnZiLcI=;
-  b=HPA4GaZ9bcleXb/R66S5GTCzhyMb9E5d7FhU8XJLd0dcxmmzHmHfzGbp
-   vLk3R0YMhMaTnkUQY2NZ7mLWuuG8m9kLQEsWhz2/DLdu5Ff3ORGlYdF5/
-   UXE22qwpP7MAdCBXzgGC2vGoWNQB4TVXJ048Px9zkuwyPGH+CSd5w4laL
-   9MUFC+ewIdhbEtMXcd9M//x4XP9fJEh6lGkuq54thQr27vnQutJcnI/W2
-   XvvUT3lljFepVFe1yzTr5JJYwpOp42Ol8GuVFHgavqQtX+E7+/Uu18H8W
-   K/4GCsK7ug7O+aLIyPZSnQGDOlBOJXyD+O8Q/Cc8mHUKTGNIZSxb7M+5o
-   A==;
-X-CSE-ConnectionGUID: FUGX8D11SY2EXSzZUcbJDA==
-X-CSE-MsgGUID: lezntrBPQE+ZYAVEqxaeew==
-X-IronPort-AV: E=McAfee;i="6800,10657,11495"; a="54951531"
-X-IronPort-AV: E=Sophos;i="6.16,320,1744095600"; 
-   d="scan'208";a="54951531"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 18:40:19 -0700
-X-CSE-ConnectionGUID: GuyVw/LERkaYaxvH1lFrmQ==
-X-CSE-MsgGUID: c4oOsBp/Tm6eklQ9uvmY+Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,320,1744095600"; 
-   d="scan'208";a="188918429"
-Received: from spr.sh.intel.com ([10.112.229.196])
-  by fmviesa001.fm.intel.com with ESMTP; 17 Jul 2025 18:40:15 -0700
-From: Dapeng Mi <dapeng1.mi@linux.intel.com>
-To: Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jim Mattson <jmattson@google.com>,
-	Mingwei Zhang <mizhang@google.com>,
-	Zide Chen <zide.chen@intel.com>,
-	Das Sandipan <Sandipan.Das@amd.com>,
-	Shukla Manali <Manali.Shukla@amd.com>,
-	Yi Lai <yi1.lai@intel.com>,
-	Xiaoyao Li <xiaoyao.li@intel.com>,
-	Dapeng Mi <dapeng1.mi@intel.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Subject: [kvm-unit-tests patch v2 7/7] x86: pmu_pebs: Support to validate timed PEBS record on GNR/SRF
-Date: Fri, 18 Jul 2025 09:39:15 +0800
-Message-Id: <20250718013915.227452-8-dapeng1.mi@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250718013915.227452-1-dapeng1.mi@linux.intel.com>
-References: <20250718013915.227452-1-dapeng1.mi@linux.intel.com>
+	s=arc-20240116; t=1752803018; c=relaxed/simple;
+	bh=sSF6GjXghc1GV1WEXBlQMli6JYp8FQUjuhEGOK+jmV0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OJ2uxbHbVppzlqBQlBRVo1zoeqLw5Ah2yH+8CE+pQ8EsR22yV6NxKNN4z7o4rgJN2r5riMMC5JD6W2+NLp9yqYLBq4+pXTzw32eyh5uenwMrGmjSERBNcH/dwNn19kccL8AuWV2qxHt+jYFLJO8oh5WKwQkdgQUgboUiCD1nPl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RhGv5knX; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7d3f192a64eso160737385a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 18:43:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752803015; x=1753407815; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=s9E48+RSFL0xRXR+VqTC2UOx+PBaYVhWXemQV/BSEEc=;
+        b=RhGv5knXUhvBSrAka1mMb9pB/bQuU/KvZtkCw+/yuc+01CvSc9nDJ7bTOCukIZo/Gr
+         NUa1TTs97zG8O/SIXm7mAYJfh42U9ypSyd9btqclFzvehXKFIHzw7WoLHWIDejx4WMlT
+         IH/j3UPt506UZINICZBupiktyyO5iN70kHC1mMPnulnRErMZxFOsGDCncQMPncYCK+tO
+         xrJ61US5MMobMFQZr8VA2RvleGC7tmbn/8ep913X5TqJGCx6pq3hug6v6lEjVERWe3c/
+         WV7irolUIJH8PGkqGAowENJQtWf+IY8HNjJr+O+Q3qxYvbYQW+6BdaOo/69YRnOQlSCm
+         rJUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752803015; x=1753407815;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=s9E48+RSFL0xRXR+VqTC2UOx+PBaYVhWXemQV/BSEEc=;
+        b=cYcNV+DanmTye/9ZlMKDXSgx2/HDLqsJU1au0SUme68Mc1OPSOODyd7NThay/qy7f3
+         cg0FIHZ58QM/A09dTFDFZoGTzm4B2Lcw7QMKBz6j2tjpA707Z1BwYZjARUIUJwCrPTvz
+         QlK1ZIt+g1z2cfCmxFMxg1PIMFduxiCRp8yy1dq51VLXPC9ZfxLaivml42y4IoRaUROc
+         G+WnNeOT2R5QqCwXYanUrjyp1ytFB3drVp+HoPHpuYNjv00tRr2NisU0wQmueP1RMkTn
+         E3Nsw9htWxs6H0cbsMiBJJV22i1XgXYMRfdjpawlTbqCQZkRDAakK4VfZVidtJu4D42W
+         PvfQ==
+X-Gm-Message-State: AOJu0YyZ+TPon3Kmgp+V4j+o7pV4a7ESTyXlW6pASU0pyTJ/g8Du6mj3
+	BFhfFfeyXQ9MiSFwlny4qWad7WyKHKOzPEhplleYCHnvmO9O/+869wYTOc6U7GZH
+X-Gm-Gg: ASbGnct9vlXrWJnpMQWsa9PxjcYRVG/HjPK9XcxlVJc4ipCO47A7SF9UuboRPpUwpOf
+	mGM8DnMzT5kfgLvDF3KokU7JZp0HsjsAAfHjrvJ8LnakUILkb1aVzl0jVeXAsOivuDhbl5Mjx4I
+	t2seLzDCZ+kVRsU6meXRGxhIcy89hKDTOCLbGy6ODnuZkqnEcE7Swaqjcj/Qfyhz1d6TgNyunbf
+	LBBQfPmyoWLaTyf9K4xqF+fSehimD1FufxrL8nRsWvee54CGBjk27MK1TvGyKm3KobuaJcc/vLx
+	GvR4xdwcb/S+O0sTIoJainRHP5Ve7J07parldaia9w139bYP96/uClyZJcDSxjOyvUp1FVRpB3I
+	pDX95/mxjeMUVmmInFQByoYERIpN2D+IgYZCLDo2+oBIIrNJPwpzHBNvQ5Ww86w==
+X-Google-Smtp-Source: AGHT+IHvq2Jn74ZmTRcmHxloJ7o3ORCbDMig4qzYyh80VGhjs3oZzWsO2bJqlaYbqgKj1aOCYDEcOw==
+X-Received: by 2002:a05:620a:5ac9:b0:7e0:f0bb:b1a4 with SMTP id af79cd13be357-7e34d91e4bdmr568679885a.27.1752803014554;
+        Thu, 17 Jul 2025 18:43:34 -0700 (PDT)
+Received: from linux-kernel-dev-start.. ([159.203.26.228])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e356b6042esm33129485a.43.2025.07.17.18.43.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Jul 2025 18:43:34 -0700 (PDT)
+From: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+Subject: [PATCH] staging: rtl8192u: Rename ChannelPlan to channel_plan and fix index name
+Date: Fri, 18 Jul 2025 01:43:08 +0000
+Message-Id: <20250718014308.162275-1-vivek.balachandhar@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,93 +84,94 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Intel GNR/SRF platform, timed PEBS is introduced. Timed PEBS adds
-a new "retired latency" field in basic info group to show the timing
-info. IA32_PERF_CAPABILITIES.PEBS_TIMING_INFO[bit 17] is introduced to
-indicate whether timed PEBS is supported.
+This patch renames the global array ChannelPlan to channel_plan
+to follow Linux kernel coding style. Also renamed the index
+variable from channel_plan to chan_plan_idx to avoid
+shadowing and improve readability.
 
-After introducing timed PEBS, the PEBS record format field shrinks to
-bits[31:0] and  the bits[47:32] is used to record retired latency.
-
-Thus shrink the record format to bits[31:0] accordingly and avoid the
-retired latency field is recognized a part of record format to compare
-and cause failure on GNR/SRF.
-
-Please find detailed information about timed PEBS in section 8.4.1
-"Timed Processor Event Based Sampling" of "Intel Architecture
-Instruction Set Extensions and Future Features".
-
-Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
-Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Tested-by: Yi Lai <yi1.lai@intel.com>
+Signed-off-by: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
 ---
- lib/x86/pmu.h  | 6 ++++++
- x86/pmu_pebs.c | 8 +++++---
- 2 files changed, 11 insertions(+), 3 deletions(-)
+ Makefile                               |  2 +-
+ drivers/staging/rtl8192u/r8192U_core.c | 16 +++++++++-------
+ init/main.c                            |  1 +
+ 3 files changed, 11 insertions(+), 8 deletions(-)
 
-diff --git a/lib/x86/pmu.h b/lib/x86/pmu.h
-index c7dc68c1..86a7a05f 100644
---- a/lib/x86/pmu.h
-+++ b/lib/x86/pmu.h
-@@ -20,6 +20,7 @@
- #define PMU_CAP_LBR_FMT	  0x3f
- #define PMU_CAP_FW_WRITES	(1ULL << 13)
- #define PMU_CAP_PEBS_BASELINE	(1ULL << 14)
-+#define PMU_CAP_PEBS_TIMING_INFO	(1ULL << 17)
- #define PERF_CAP_PEBS_FORMAT           0xf00
+diff --git a/Makefile b/Makefile
+index 997b67722..93b6fa091 100644
+--- a/Makefile
++++ b/Makefile
+@@ -2,7 +2,7 @@
+ VERSION = 6
+ PATCHLEVEL = 1
+ SUBLEVEL = 0
+-EXTRAVERSION =
++EXTRAVERSION = -vivek
+ NAME = Hurr durr I'ma ninja sloth
  
- #define EVNSEL_EVENT_SHIFT	0
-@@ -188,4 +189,9 @@ static inline bool pmu_has_pebs_baseline(void)
- 	return pmu.perf_cap & PMU_CAP_PEBS_BASELINE;
- }
+ # *DOCUMENTATION*
+diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
+index 0a60ef201..b449d0d96 100644
+--- a/drivers/staging/rtl8192u/r8192U_core.c
++++ b/drivers/staging/rtl8192u/r8192U_core.c
+@@ -120,7 +120,7 @@ struct CHANNEL_LIST {
+ 	u8	Len;
+ };
  
-+static inline bool pmu_has_pebs_timing_info(void)
-+{
-+	return pmu.perf_cap & PMU_CAP_PEBS_TIMING_INFO;
-+}
+-static struct CHANNEL_LIST ChannelPlan[] = {
++static struct CHANNEL_LIST channel_plan[] = {
+ 	/* FCC */
+ 	{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 36, 40, 44, 48, 52, 56, 60, 64, 149, 153, 157, 161, 165}, 24},
+ 	/* IC */
+@@ -145,12 +145,12 @@ static struct CHANNEL_LIST ChannelPlan[] = {
+ 	{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}, 14}
+ };
+ 
+-static void rtl819x_set_channel_map(u8 channel_plan, struct r8192_priv *priv)
++static void rtl819x_set_channel_map(u8 chan_plan_idx, struct r8192_priv *priv)
+ {
+ 	int i, max_chan = -1, min_chan = -1;
+ 	struct ieee80211_device *ieee = priv->ieee80211;
+ 
+-	switch (channel_plan) {
++	switch (chan_plan_idx) {
+ 	case COUNTRY_CODE_FCC:
+ 	case COUNTRY_CODE_IC:
+ 	case COUNTRY_CODE_ETSI:
+@@ -172,15 +172,17 @@ static void rtl819x_set_channel_map(u8 channel_plan, struct r8192_priv *priv)
+ 				 "unknown rf chip, can't set channel map in function:%s()\n",
+ 				 __func__);
+ 		}
+-		if (ChannelPlan[channel_plan].Len != 0) {
++		if (channel_plan[chan_plan_idx].Len != 0) {
+ 			/* Clear old channel map */
+ 			memset(GET_DOT11D_INFO(ieee)->channel_map, 0,
+ 			       sizeof(GET_DOT11D_INFO(ieee)->channel_map));
+ 			/* Set new channel map */
+-			for (i = 0; i < ChannelPlan[channel_plan].Len; i++) {
+-				if (ChannelPlan[channel_plan].Channel[i] < min_chan || ChannelPlan[channel_plan].Channel[i] > max_chan)
++			for (i = 0; i < channel_plan[chan_plan_idx].Len; i++) {
++				if (channel_plan[chan_plan_idx].Channel[i] < min_chan ||
++					channel_plan[chan_plan_idx].Channel[i] > max_chan)
+ 					break;
+-				GET_DOT11D_INFO(ieee)->channel_map[ChannelPlan[channel_plan].Channel[i]] = 1;
++				GET_DOT11D_INFO(ieee)->channel_map
++					[channel_plan[chan_plan_idx].Channel[i]] = 1;
+ 			}
+ 		}
+ 		break;
+diff --git a/init/main.c b/init/main.c
+index aa21add5f..648589720 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -680,6 +680,7 @@ static void __init setup_command_line(char *command_line)
+ 
+ static __initdata DECLARE_COMPLETION(kthreadd_done);
+ 
 +
- #endif /* _X86_PMU_H_ */
-diff --git a/x86/pmu_pebs.c b/x86/pmu_pebs.c
-index 2848cc1e..bc37e8e3 100644
---- a/x86/pmu_pebs.c
-+++ b/x86/pmu_pebs.c
-@@ -277,6 +277,7 @@ static void check_pebs_records(u64 bitmask, u64 pebs_data_cfg, bool use_adaptive
- 	unsigned int count = 0;
- 	bool expected, pebs_idx_match, pebs_size_match, data_cfg_match;
- 	void *cur_record;
-+	u64 format_mask;
- 
- 	expected = (ds->pebs_index == ds->pebs_buffer_base) && !pebs_rec->format_size;
- 	if (!(rdmsr(MSR_CORE_PERF_GLOBAL_STATUS) & GLOBAL_STATUS_BUFFER_OVF)) {
-@@ -289,6 +290,8 @@ static void check_pebs_records(u64 bitmask, u64 pebs_data_cfg, bool use_adaptive
- 		return;
- 	}
- 
-+	/* Record format shrinks to bits[31:0] after timed PEBS is introduced. */
-+	format_mask = pmu_has_pebs_timing_info() ? GENMASK_ULL(31, 0) : GENMASK_ULL(47, 0);
- 	expected = ds->pebs_index >= ds->pebs_interrupt_threshold;
- 	cur_record = (void *)pebs_buffer;
- 	do {
-@@ -296,8 +299,7 @@ static void check_pebs_records(u64 bitmask, u64 pebs_data_cfg, bool use_adaptive
- 		pebs_record_size = pebs_rec->format_size >> RECORD_SIZE_OFFSET;
- 		pebs_idx_match = pebs_rec->applicable_counters & bitmask;
- 		pebs_size_match = pebs_record_size == get_pebs_record_size(pebs_data_cfg, use_adaptive);
--		data_cfg_match = (pebs_rec->format_size & GENMASK_ULL(47, 0)) ==
--				 (use_adaptive ? pebs_data_cfg : 0);
-+		data_cfg_match = (pebs_rec->format_size & format_mask) == (use_adaptive ? pebs_data_cfg : 0);
- 		expected = pebs_idx_match && pebs_size_match && data_cfg_match;
- 		report(expected,
- 		       "PEBS record (written seq %d) is verified (including size, counters and cfg).", count);
-@@ -327,7 +329,7 @@ static void check_pebs_records(u64 bitmask, u64 pebs_data_cfg, bool use_adaptive
- 			       pebs_record_size, get_pebs_record_size(pebs_data_cfg, use_adaptive));
- 		if (!data_cfg_match)
- 			printf("FAIL: The pebs_data_cfg (0x%lx) doesn't match with the effective MSR_PEBS_DATA_CFG (0x%lx).\n",
--			       pebs_rec->format_size & 0xffffffffffff, use_adaptive ? pebs_data_cfg : 0);
-+			       pebs_rec->format_size & format_mask, use_adaptive ? pebs_data_cfg : 0);
- 	}
- }
- 
+ noinline void __ref rest_init(void)
+ {
+ 	struct task_struct *tsk;
 -- 
-2.34.1
+2.39.5
 
 
