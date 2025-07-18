@@ -1,179 +1,135 @@
-Return-Path: <linux-kernel+bounces-736145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A711B09960
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:50:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F400FB0996B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:52:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDAFE4A4535
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 01:50:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D66D24A7194
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 01:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48751191F89;
-	Fri, 18 Jul 2025 01:50:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB4081A5BBC;
+	Fri, 18 Jul 2025 01:52:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FX6pw7b2"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J4vIJ27u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D80A52F88
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 01:50:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AFD5191F89;
+	Fri, 18 Jul 2025 01:52:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752803429; cv=none; b=m+O6EWZrh7MefIVjTwrLiALt4qTBYvTf+HXz7YQpEm2KeeFCWs42Q4ilgJxv3ah6pBkNH2EmXhWroF4pF4IMNCVuFYN6gO2qWYetoQ0uTgRDJFYpILSHVxiSZjYH4pKy0RXNIJ8HLy5QyUZw8kg2Ioz9/JSDoZ3pZ820a8dF8dM=
+	t=1752803540; cv=none; b=fr8xac2AMcXvqDOLpZw1GLwXainuzzNccE4G15y1SSHl2t9oYWBW4bJK/9EQ+4GwfQV6jxOuJsZomKKioHwDEbeQEiPXwmL/YVg8+F46D/giNpgoE8sRU+aozyna2Ve/xjdP5yA/L5XtqU5vuQ71Q/gyPgJ7f1qHQ9Vmff/+M8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752803429; c=relaxed/simple;
-	bh=sSF6GjXghc1GV1WEXBlQMli6JYp8FQUjuhEGOK+jmV0=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=L+ajxNQLk17o2hybyDEArjQie+XO9Zrxo5bFp5Dkwj1KGHcMhSWZY41AOeWIWtvrgDms7B8ma2WH/GHXBOfwbmYZp+caABHmPnyrgkB/rakJDMB0NDK8DMlwtuK4LO1D/yNJOnlgHcZPLwmMU85digAjlvgZsfPhGl36Zaak31w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FX6pw7b2; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-7050bc6bea9so10397986d6.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 18:50:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752803427; x=1753408227; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=s9E48+RSFL0xRXR+VqTC2UOx+PBaYVhWXemQV/BSEEc=;
-        b=FX6pw7b2nTTuHoB2XmuzDGKCTF8iuduF+mLhEjJw5olcwYb1MNqWfGpNY75X+VeIXM
-         DnpHq6H0R+rQ9ipmfUDPK89hvmp7lWWtVNlU8JO/JrxHOKmVfDdmYEUeLdtNgFUJhIe8
-         pui8kvqf6ZAM9Wzl1BrlXNSfTyU3vJZ9nf+wHOkWajZbIWDZBc4a1IIO+IsJ71PiZOCv
-         lnUAZPV8vMPnv/g8JU4Rp8en+XcLOjD1haUCClTAdjimFDp1500iQ4GmyXrA2x1ZC1EF
-         l5tQNfxwBN09VTx1EUgXS401Z5ZgxePh0RhSeM+xNCfZIjzZiphd6zGKKdYaLsH6B2nS
-         3w2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752803427; x=1753408227;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=s9E48+RSFL0xRXR+VqTC2UOx+PBaYVhWXemQV/BSEEc=;
-        b=owbFpN9s+q8pw9agH0pf24cT6qY+1UtkH60CU49xjsq2MuxAOG+oqSWlQjLjiyC47r
-         zm0nwP3LXDm8AXPeX7YWeAgU47qPa9TNooghE5CUPhkcX8U+TNGxAqvKCIj1hQy0vhKq
-         25PT13VW07Lnii82tIoMEHO5V5PduHC2LW2LbNR1OT/vJXu6dTaige2WKRg2U3cJBVky
-         gYO4ksBFKwWdmO+yhPjcsGR7RqZzRQybPr6m71C6bDLl3HiverjL4DSHaaGVDEQDaa5z
-         JF3HiQbRb7QvnLC4Dau76UMUJW7hdWTcXTqOox4R0djrkw5U3KthfuXRWkeiuVNu/1ad
-         h1sg==
-X-Forwarded-Encrypted: i=1; AJvYcCU2fET+U65LzjeaIDk1r71FEiyGhseSTAMsReJbb+amUuzOEHUtI5dLevd1PnF7PGjSfM5+mLHNb/ZmhCg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0b7zpFtqFPZMxQYhm1SqdJWzS565pz/YvZp9erD+TAuKj6HpJ
-	3glSzPIsWAfxqM03INmDSWnolYmz1bjJi2P9mE/jdKfzEsZ9z/uoT2kQ
-X-Gm-Gg: ASbGncvpy01qLcsaMc/pKR4CcnhnFZhRroud1kJBz+eIitdWDqLTiLeUtaydvNU32AP
-	SUFN22HhoHIOubFIAvtbK0POsXY7xYuWAKFN92bn6WvIY30L7dqC/2tH0TCCuZ0PIllN8v2UvO1
-	PmrVaycICd8vv2cTxjq/LnpKpkFoyWe/be1mZapA4kxw4WgbTO2Gd6yd1+koL+bmhEb7tfpuucs
-	ZG4rYU1js2jyT7bN1VJPlQaQ+7gqbouigPBs4l+4UWNhUo9+/6GMcn60dKQhaA1yLpFyK0Aao54
-	qhNcWXT7qSLvEXHvbH4qhRAZ1/3VGSN2I1D7UQmu+OCYv83oos1FVv7C3Th6r7yk6lxxTHpqbfe
-	OTMVhWrutLlFdzsz32BDKXY4Xbd2vBxpi+Iuv6f8qiRXN7tM5pG0=
-X-Google-Smtp-Source: AGHT+IH55WzzyvdjqHRW4WZoHyOXVFM7C0T9IzB9E+IGDC1bOrHif/PaQbxEfy9s6FhjkBb17LmKsw==
-X-Received: by 2002:ad4:5d4c:0:b0:6fb:43d:65b7 with SMTP id 6a1803df08f44-704f6b46a96mr159069076d6.36.1752803426925;
-        Thu, 17 Jul 2025 18:50:26 -0700 (PDT)
-Received: from linux-kernel-dev-start.. ([159.203.26.228])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7051b907181sm2372176d6.36.2025.07.17.18.50.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 18:50:26 -0700 (PDT)
-From: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
-To: gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	vivek.balachandhar@gmail.com
-Subject: [PATCH v2] staging: rtl8192u: Rename ChannelPlan to channel_plan and fix index name
-Date: Fri, 18 Jul 2025 01:49:47 +0000
-Message-Id: <20250718014947.162423-1-vivek.balachandhar@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1752803540; c=relaxed/simple;
+	bh=T8ojarsyUU3VdRkPNIjPH+hMXuJfPiLhUJlGAKELHag=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fMFr8hpMHz6mZ7iyqR5j54F08kxHCdgzUIbTynv1H6Udy3HR8S866mEzIQl80n0YKwP1ZJUQewf7MkEskdfVdXorIYVBzZrpwLqyRCZs49htMzU0Nvt+ee8Rd2Fkf772TfaRY0R1sZBVWnS2bgnjUovC6KSsZrExWrTaAgobtbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J4vIJ27u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9F330C4CEE3;
+	Fri, 18 Jul 2025 01:52:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752803539;
+	bh=T8ojarsyUU3VdRkPNIjPH+hMXuJfPiLhUJlGAKELHag=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=J4vIJ27ucyYSoQEfQeynNX2zuRsnmDUzQBbU0pxzcm08a0xg6CLc5OOV3MzCIpmPn
+	 RMvTMDB/zDPPXrlsgpwFXxe+LASf1DF4xJlwQmL53fV/HIWww2E9DufdYileRAjDaI
+	 KNljkw0hU8axRLMr1r51PBiNu0xAMNEGX6XSUDoS6L8qVkOiVecBEuGDFmt9BjxgT2
+	 WFxupPiuLmHCf4/POeaL0aTSjbsEyzZKKaXxWT7Y2yEXXu7IkgkxjwGqmzGtXIP6FB
+	 3d2SDBhzFlSkEesBz6fHNDt5AzVjv2ncP5ee6+0c0apoRpe4jt/hkEwSYue2XncKdW
+	 9NRRYyYg0fjJw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B1ECC83F22;
+	Fri, 18 Jul 2025 01:52:19 +0000 (UTC)
+From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
+Subject: [PATCH v5 0/3] support for amlogic the new SPI IP
+Date: Fri, 18 Jul 2025 09:52:15 +0800
+Message-Id: <20250718-spisg-v5-0-b8f0f1eb93a2@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAM+oeWgC/2XOyQrCMBSF4VeRrI1kaIa68j3ERYbbNqCmNBIU6
+ bubFouVLk/I93PfKMEQIKHj7o0GyCGFeC9D7HfIdebeAg6+bMQIE0QSjlMfUouVbhiVmoE1DpW
+ //QBNeM6d86XsLqRHHF5zNtPpdSlU30KmmGCha+4t1L4W/GRu19gGd3DxhqZGZitH1eLY5KiRR
+ BhdWS+2jq8cWy7OvDinOG2EAqZrt3XVz6nfnVVx0hboGwuSkn83juMHG2hVM0QBAAA=
+To: Sunny Luo <sunny.luo@amlogic.com>, Mark Brown <broonie@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-amlogic@lists.infradead.org, linux-spi@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Xianwei Zhao <xianwei.zhao@amlogic.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752803537; l=2119;
+ i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
+ bh=T8ojarsyUU3VdRkPNIjPH+hMXuJfPiLhUJlGAKELHag=;
+ b=Hw+zDiRsCmR+NB0r3zy0ptubSX5gfKCJ+VfAzYdlVxGanxFEZQbe9kezOWqTaE13KNUo+5uq3
+ T2KAn61MQ+3BmQgtZcypOcX9fJNXM/+80R+skSaIE4pZxgg4iERjMrO
+X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
+ pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
+X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
+ auth_id=107
+X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Reply-To: xianwei.zhao@amlogic.com
 
-This patch renames the global array ChannelPlan to channel_plan
-to follow Linux kernel coding style. Also renamed the index
-variable from channel_plan to chan_plan_idx to avoid
-shadowing and improve readability.
+Introduced support for the new SPI IP (SPISG). The SPISG is
+a communication-oriented SPI controller from Amlogic,supporting
+three operation modes: PIO, block DMA, and scatter-gather DMA.
 
-Signed-off-by: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+Add the drivers and device tree bindings corresponding to the SPISG.
+
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 ---
- Makefile                               |  2 +-
- drivers/staging/rtl8192u/r8192U_core.c | 16 +++++++++-------
- init/main.c                            |  1 +
- 3 files changed, 11 insertions(+), 8 deletions(-)
+Changes in v5:
+- The location for interrupting registration has been adjusted.
+- Unexpected interrupt return IRQ_NONE.
+- Modify div clk register and process reset_dev return value.
+- Link to v4: https://lore.kernel.org/r/20250704-spisg-v4-0-6b731dfbe610@amlogic.com
 
-diff --git a/Makefile b/Makefile
-index 997b67722..93b6fa091 100644
---- a/Makefile
-+++ b/Makefile
-@@ -2,7 +2,7 @@
- VERSION = 6
- PATCHLEVEL = 1
- SUBLEVEL = 0
--EXTRAVERSION =
-+EXTRAVERSION = -vivek
- NAME = Hurr durr I'ma ninja sloth
- 
- # *DOCUMENTATION*
-diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
-index 0a60ef201..b449d0d96 100644
---- a/drivers/staging/rtl8192u/r8192U_core.c
-+++ b/drivers/staging/rtl8192u/r8192U_core.c
-@@ -120,7 +120,7 @@ struct CHANNEL_LIST {
- 	u8	Len;
- };
- 
--static struct CHANNEL_LIST ChannelPlan[] = {
-+static struct CHANNEL_LIST channel_plan[] = {
- 	/* FCC */
- 	{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 36, 40, 44, 48, 52, 56, 60, 64, 149, 153, 157, 161, 165}, 24},
- 	/* IC */
-@@ -145,12 +145,12 @@ static struct CHANNEL_LIST ChannelPlan[] = {
- 	{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}, 14}
- };
- 
--static void rtl819x_set_channel_map(u8 channel_plan, struct r8192_priv *priv)
-+static void rtl819x_set_channel_map(u8 chan_plan_idx, struct r8192_priv *priv)
- {
- 	int i, max_chan = -1, min_chan = -1;
- 	struct ieee80211_device *ieee = priv->ieee80211;
- 
--	switch (channel_plan) {
-+	switch (chan_plan_idx) {
- 	case COUNTRY_CODE_FCC:
- 	case COUNTRY_CODE_IC:
- 	case COUNTRY_CODE_ETSI:
-@@ -172,15 +172,17 @@ static void rtl819x_set_channel_map(u8 channel_plan, struct r8192_priv *priv)
- 				 "unknown rf chip, can't set channel map in function:%s()\n",
- 				 __func__);
- 		}
--		if (ChannelPlan[channel_plan].Len != 0) {
-+		if (channel_plan[chan_plan_idx].Len != 0) {
- 			/* Clear old channel map */
- 			memset(GET_DOT11D_INFO(ieee)->channel_map, 0,
- 			       sizeof(GET_DOT11D_INFO(ieee)->channel_map));
- 			/* Set new channel map */
--			for (i = 0; i < ChannelPlan[channel_plan].Len; i++) {
--				if (ChannelPlan[channel_plan].Channel[i] < min_chan || ChannelPlan[channel_plan].Channel[i] > max_chan)
-+			for (i = 0; i < channel_plan[chan_plan_idx].Len; i++) {
-+				if (channel_plan[chan_plan_idx].Channel[i] < min_chan ||
-+					channel_plan[chan_plan_idx].Channel[i] > max_chan)
- 					break;
--				GET_DOT11D_INFO(ieee)->channel_map[ChannelPlan[channel_plan].Channel[i]] = 1;
-+				GET_DOT11D_INFO(ieee)->channel_map
-+					[channel_plan[chan_plan_idx].Channel[i]] = 1;
- 			}
- 		}
- 		break;
-diff --git a/init/main.c b/init/main.c
-index aa21add5f..648589720 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -680,6 +680,7 @@ static void __init setup_command_line(char *command_line)
- 
- static __initdata DECLARE_COMPLETION(kthreadd_done);
- 
-+
- noinline void __ref rest_init(void)
- {
- 	struct task_struct *tsk;
+Changes in v4:
+- Add resets prop and modify some formats for bindings.
+- Remove irrelevant headers files and fix some issues.
+- Link to v3: https://lore.kernel.org/r/20250623-spisg-v3-0-c731f57e289c@amlogic.com
+
+Changes in v3:
+- Rename of bit definition and fix some issues.
+- Enable runtime_suspend function.
+- Link to v2: https://lore.kernel.org/r/20250617-spisg-v2-0-51a605a84bd5@amlogic.com
+
+Changes in v2:
+- Use regmap to operation register and drop bitfied define.
+- Use "SPISG" prefix intead of "SPICC", and declare clock div table in the spisg_device. 
+- Delete other power operation functions except for runtime_supspend and runtime_resume.
+- Fix some format corrections.
+- Link to v1: https://lore.kernel.org/r/20250604-spisg-v1-0-5893dbe9d953@amlogic.com
+
+---
+Sunny Luo (2):
+      spi: dt-bindings: Add binding document of Amlogic SPISG controller
+      spi: Add Amlogic SPISG driver
+
+Xianwei Zhao (1):
+      MAINTAINERS: Add an entry for Amlogic spi driver
+
+ .../devicetree/bindings/spi/amlogic,a4-spisg.yaml  |  59 ++
+ MAINTAINERS                                        |   9 +
+ drivers/spi/Kconfig                                |   9 +
+ drivers/spi/Makefile                               |   1 +
+ drivers/spi/spi-amlogic-spisg.c                    | 888 +++++++++++++++++++++
+ 5 files changed, 966 insertions(+)
+---
+base-commit: bd30b995df8fd053e13d10f78dbc7b2fa5ed1aae
+change-id: 20250603-spisg-78f21682ebac
+
+Best regards,
 -- 
-2.39.5
+Xianwei Zhao <xianwei.zhao@amlogic.com>
+
 
 
