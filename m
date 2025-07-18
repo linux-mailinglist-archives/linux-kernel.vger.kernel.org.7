@@ -1,104 +1,123 @@
-Return-Path: <linux-kernel+bounces-737327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99BBFB0AAF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 22:03:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C77AFB0AB05
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 22:18:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22376A47DD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 20:03:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA4995A8383
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 20:18:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96ADE1DEFD2;
-	Fri, 18 Jul 2025 20:03:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C41C721ABBB;
+	Fri, 18 Jul 2025 20:18:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uik6Y9Cw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b="ebVMBZ+m"
+Received: from mace.gateworks.com (mace.gateworks.com [174.136.5.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC4FD517
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 20:03:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A9A11712;
+	Fri, 18 Jul 2025 20:18:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=174.136.5.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752869029; cv=none; b=SqWQCMJPOBughzLhWPvFY2u/mbBZL3h0PZhWB/MaGQ2Msw9Yi9ETCwKtTYRyLK2vDdz6eFYBovOV34d2648DvnFX89U0n9lj4FU8Y8y2fFfMvksg5WAyR07Z73/LJtho4c0r/SXFxtt15JahkHLTRwlylrxY5oS2j4mh2mEn/B8=
+	t=1752869928; cv=none; b=DyaJ9+g7r4FMWivugbeWzCsFCVem2E5dF+5bUEr14QVdIrZycQNQ8yH2EiGFVXoqZSqNopKrn/T81h3p8h+d/Wcf/ODJjIDjsxux4FfvH9K2Jq1CaPvz8okLEbv6b3RqfYwEg0hyWJ7jZDbwCdG8I/Mh0KfVN1f3NCeRbWyDgg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752869029; c=relaxed/simple;
-	bh=ZpLPqVwT5wlxVe7X2IE9j+q8fi3x5iPHAomAG1wm2mE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=QWlNvD1TR1Ga2BSLNyvEvluoO0H9MTS2e55nfNgtUjirK+kYuivb/aNAKBOYZhi3/C94nuSLgH2tpQ/Vlyo3tcTUpaYsiPRRVhJJMyxj49iNeWqvreE8BXlYMjI+KkvXJxJylvzA4SnvuwSlZO2Wpdr2/CiIgr231DNRw2CplC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uik6Y9Cw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6302C4CEF1;
-	Fri, 18 Jul 2025 20:03:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752869028;
-	bh=ZpLPqVwT5wlxVe7X2IE9j+q8fi3x5iPHAomAG1wm2mE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=uik6Y9CwjgiBNFtjtcWAYF9j76VEn3roFYFagl+WvKw7pIC/X6+StJeTF4RThk7kp
-	 KZJKzqvqTHDbOQp2pQoNx0jpikjOs5yx3il/u5JUa0YT+nB1q2McGW+zPhIcD07HoD
-	 J3d/JzjBkrdvAFz/3V4nM2iX/8c5YR+0nhoiIfFE379MNnlDwwshgt3qKOTrns2NVG
-	 Xe7RFs9RNNuTFWTivEqhUBVbITjmjdT+J5/P+0RIwJ1Vfs9n8y68ym+hlqfmt5Hjrf
-	 97n1o66NeZTPbI0Gmf/paTXAn1IgfrZqI6PPCRieO4beFWZiMNgHuPqJFC9ciFyRul
-	 p+/hep9Nbz7Zg==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, 
- Romain Gantois <romain.gantois@bootlin.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250718-regulator-stepping-v2-1-e28c9ac5d54a@bootlin.com>
-References: <20250718-regulator-stepping-v2-1-e28c9ac5d54a@bootlin.com>
-Subject: Re: [PATCH v2] regulator: core: repeat voltage setting request for
- stepped regulators
-Message-Id: <175286902743.1108772.4362873620041124201.b4-ty@kernel.org>
-Date: Fri, 18 Jul 2025 21:03:47 +0100
+	s=arc-20240116; t=1752869928; c=relaxed/simple;
+	bh=33/BNh7Nc4NFJrUbX8P6X/yoW8tk1NwIk2hOUkZN2lw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QJiFUNBbWAiYCjNOtb8qv5AMcVcAVWCypY4h3MOCxqLE5Mfj4BBe146895HakOnKTwDOYfudZT1S2tFzlToyCS4vt9xfW3arupfYq74uW0eJ+f+dk2NZWHJKCq9PlaEmlVNiQwif95P33kwGdfgH6pOn6HVFBdGdwZ+Snmd03Ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com; spf=pass smtp.mailfrom=gateworks.com; dkim=pass (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b=ebVMBZ+m; arc=none smtp.client-ip=174.136.5.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gateworks.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=gateworks.com; s=gwtrack; h=Content-Transfer-Encoding:MIME-Version:
+	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=txiNjIfadBZ8TvDS8U+kB99ooME0U4CCdiENzeCPlpg=; b=ebVMBZ+mymU4AKD70hv2nRPdib
+	0VBt2A8pQrGvQ2gESj9c8/FN5/DKo1Rfj9uVfXwDJUZzA5lwRQcFiLtkLteOwiwKc0lRblLyDvmuN
+	N/WDycYr0giAqOb9nfWz6Q3hPzh3zDG+ZhO97yX+Fkxtt/rkviyTZ02uSWBJGWHQGzz2ZhU83CP3T
+	7LcieoCqIV0dcENA5JGQZPqa97heZiduOOIrAkASGfX7NPC7xnwXT2Crq3heXm2FZIYcHPTewzuID
+	c8YXeeEs8o1U16FcBXD7e1t+3Wlhn2QOb55nPaxCdVASWtn73AOAWU5My7IyXbl2jr2P2HLBTG1Fx
+	BsjTs74Q==;
+Received: from syn-068-189-091-139.biz.spectrum.com ([68.189.91.139] helo=chewbacca.pdc.gateworks.com)
+	by mace.gateworks.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <tharvey@gateworks.com>)
+	id 1ucrIK-00Gddx-Sw;
+	Fri, 18 Jul 2025 20:03:01 +0000
+Received: by chewbacca.pdc.gateworks.com (Postfix, from userid 1154)
+	id AF1953083874; Fri, 18 Jul 2025 13:03:00 -0700 (PDT)
+From: Tim Harvey <tharvey@gateworks.com>
+To: Guenter Roeck <linux@roeck-us.net>,
+	Jean Delvare <jdelvare@suse.com>
+Cc: linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Tim Harvey <tharvey@gateworks.com>
+Subject: [PATCH] hwmon: (gsc-hwmon) fix fan pwm setpoint show functions
+Date: Fri, 18 Jul 2025 13:02:59 -0700
+Message-Id: <20250718200259.1840792-1-tharvey@gateworks.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-cff91
+Content-Transfer-Encoding: 8bit
 
-On Fri, 18 Jul 2025 16:11:36 +0200, Romain Gantois wrote:
-> The regulator_set_voltage() function may exhibit unexpected behavior if the
-> target regulator has a maximum voltage step constraint. With such a
-> constraint, the regulator core may clamp the requested voltage to a lesser
-> value, to ensure that the voltage delta stays under the specified limit.
-> 
-> This means that the resulting regulator voltage depends on the current
-> voltage, as well as the requested range, which invalidates the assumption
-> that a repeated request for a specific voltage range will amount to a noop.
-> 
-> [...]
+The Linux hwmon sysfs API values for pwmX_auto_pointY_pwm represent an
+integer value between 0 (0%) to 255 (100%) and the pwmX_auto_pointY_temp
+represent millidegrees Celcius.
 
-Applied to
+Commit a6d80df47ee2 ("hwmon: (gsc-hwmon) fix fan pwm temperature
+scaling") properly addressed the incorrect scaling in the
+pwm_auto_point_temp_store implementation but erroneously scaled
+the pwm_auto_point_pwm_show (pwm value) instead of the
+pwm_auto_point_temp_show (temp value) resulting in:
+ # cat /sys/class/hwmon/hwmon0/pwm1_auto_point6_pwm
+ 25500
+ # cat /sys/class/hwmon/hwmon0/pwm1_auto_point6_temp
+ 4500
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+Fix the scaling of these attributes:
+ # cat /sys/class/hwmon/hwmon0/pwm1_auto_point6_pwm
+ 255
+ # cat /sys/class/hwmon/hwmon0/pwm1_auto_point6_temp
+ 45000
 
-Thanks!
+Fixes: a6d80df47ee2 ("hwmon: (gsc-hwmon) fix fan pwm temperature scaling")
+Cc: stable@vger.kernel.org
+Signed-off-by: Tim Harvey <tharvey@gateworks.com>
+---
+ drivers/hwmon/gsc-hwmon.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-[1/1] regulator: core: repeat voltage setting request for stepped regulators
-      commit: d511206dc7443120637efd9cfa3ab06a26da33dd
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/hwmon/gsc-hwmon.c b/drivers/hwmon/gsc-hwmon.c
+index 0f9af82cebec..105b9f9dbec3 100644
+--- a/drivers/hwmon/gsc-hwmon.c
++++ b/drivers/hwmon/gsc-hwmon.c
+@@ -64,7 +64,7 @@ static ssize_t pwm_auto_point_temp_show(struct device *dev,
+ 		return ret;
+ 
+ 	ret = regs[0] | regs[1] << 8;
+-	return sprintf(buf, "%d\n", ret * 10);
++	return sprintf(buf, "%d\n", ret * 100);
+ }
+ 
+ static ssize_t pwm_auto_point_temp_store(struct device *dev,
+@@ -99,7 +99,7 @@ static ssize_t pwm_auto_point_pwm_show(struct device *dev,
+ {
+ 	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
+ 
+-	return sprintf(buf, "%d\n", 255 * (50 + (attr->index * 10)));
++	return sprintf(buf, "%d\n", 255 * (50 + (attr->index * 10)) / 100);
+ }
+ 
+ static SENSOR_DEVICE_ATTR_RO(pwm1_auto_point1_pwm, pwm_auto_point_pwm, 0);
+-- 
+2.34.1
 
 
