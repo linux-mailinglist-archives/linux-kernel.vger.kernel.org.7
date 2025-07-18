@@ -1,104 +1,162 @@
-Return-Path: <linux-kernel+bounces-736100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B40DB098D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 02:17:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AB9AB098DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 02:20:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAE773B3C89
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 00:17:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F10603B458F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 00:19:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 771E1BA36;
-	Fri, 18 Jul 2025 00:17:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E374022F01;
+	Fri, 18 Jul 2025 00:19:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="D1ljpPBF"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KKtgBOzC"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A825D29B0
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 00:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 299E24C6E;
+	Fri, 18 Jul 2025 00:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752797842; cv=none; b=mrgikaZYvb2xgqNETfG7B8mrQYl4xfR+BRccUTxHuI3Kxqv6UK9ZMOkC7m7AWTaIKb9+tMttpfmDoqTawba5LLazGgeWDFiwEc9SjvPCD0Pv1MhR8LIiGASeVUFscKwmEGpNdBLa6W5GFmDOvsH77GKh4gVUET5sMAl29Ii06cw=
+	t=1752797997; cv=none; b=VaGKIdreS0Qgpistf6NTypggIGV4NP+sms8zlbF/tP5um4Ikgs0Kag/pRGCvEsnpklQ3izx8k5fAZYHYr+ZojoiDicbc1LY0WwWRbyxnY+10x325t9H8fwWlJqYjAlBzKBn/Pr0GC3kRkOPYT6kQSn9XIBrMzzvGw219gKtRyPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752797842; c=relaxed/simple;
-	bh=MulHt93po9KU9ptIhTSP6zEBJFinv7DKZJo9vM6F87M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oyp7OEYWpzqz0oQh2EUEWdxOO5NuHEvJvCQKcVRVRN/fsMmyu2Np2jjWNNy6r9dVldVkGqH6SdOJ21dpTd2wCVHjw+8xFjTDkS7R9JomLj1aEN75x+GnYaPciHdDQxtDkXv6vNPR8Tl6gXhWj7eDpQzzYqe9AODyRpHPAKH8qJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=D1ljpPBF; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 17 Jul 2025 17:17:11 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752797838;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HPThvsGTU9AmYUXc5iZse47Q32vjXDXF/k19b8GxfmQ=;
-	b=D1ljpPBFzcIGTjSTyt78lBLe1cFIZB5a1PZkFZRbxnIm0M4yAK1vRgGaZxZaCOy2N1AvOt
-	ML+DGmr6+9XCZR3IMaPtO/DmSACXf76xsBXvxAM4lxGe148xSysG9iLtEaqc2L+YSFmHxO
-	ARz7pho++7j0USrX5UupFOMTG41s8+g=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>, mhocko@kernel.org, 
-	hannes@cmpxchg.org, roman.gushchin@linux.dev, yosryahmed@google.com, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] mm/memcg: make memory.reclaim interface generic
-Message-ID: <kmf75c5gibjaf6ezziksqegko53bxf2ju5hfir364frt4rxhda@brojj36vx5cf>
-References: <20250623185851.830632-1-dave@stgolabs.net>
- <20250623185851.830632-3-dave@stgolabs.net>
- <ggavn7jgnti6uhdwlbgmuz4miplyh5zzixgmlye53qmaoh7tkp@3srwgtxrhtld>
- <20250717155246.1f2a90c76d71b401255f11b9@linux-foundation.org>
- <20250717235604.2atyx2aobwowpge3@offworld>
+	s=arc-20240116; t=1752797997; c=relaxed/simple;
+	bh=wXuVBFO/hHuSYPGU3psgtXtd9650vEzC7CPCy/E1+F8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jJwEoc8G+LBxYja8sANB6ocKUPWU1EQWF2JLSRH2N/PaPtLy1l8sc0OSbw0vxVqyX0j0QHX4bk0OoEUOb93A908io0KPQBJ1s/vSOhU92+iSvpUHY7LHIJxFr2ovsnJMkoRoJtlVa7qPchE5zW5y1FuTu3Xe2WixqE20X7DwHxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KKtgBOzC; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752797996; x=1784333996;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=wXuVBFO/hHuSYPGU3psgtXtd9650vEzC7CPCy/E1+F8=;
+  b=KKtgBOzC1C2IY1B2r3ktL76MjrKt/9QkYuJJt6cJxA4vsfAuLVrXHZFd
+   J8/R4DVg5elB4xiDIq6Io/4Coi8mFBTAUI4AsQJBZefGoSLB7L+0c8h+P
+   fgu8ur277F5/kC/z5TrFyfsAk1YXwY75AgdwtPC57+vYQKdnIhqom+3Iq
+   YyOLdbSnhk8/51ebZ2UJtQA7iugIgDcVgLm3YOiZnQOuVRrgzXDSfB2UQ
+   Hfg3STl1WCr4/CeLp44zxzzSytO+6Wl1+AdCXrjUI2E6irdgOfUzFxkSR
+   N8fDuV4eu7buWZE9sCBZyivKs0mKOBAIDlBgSerUUyUo9ryVlsteVD392
+   Q==;
+X-CSE-ConnectionGUID: hmJ5PqTOQWybeAOg/c7XDQ==
+X-CSE-MsgGUID: 3J9v6v9JTQS21W/+j6RKtQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11495"; a="65780084"
+X-IronPort-AV: E=Sophos;i="6.16,320,1744095600"; 
+   d="scan'208";a="65780084"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 17:19:55 -0700
+X-CSE-ConnectionGUID: wYJVFfPjQnOyuiZYib+N6A==
+X-CSE-MsgGUID: X8I7RK5+QHWzJNJztQvFtw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,320,1744095600"; 
+   d="scan'208";a="157322769"
+Received: from spr.sh.intel.com ([10.112.229.196])
+  by orviesa010.jf.intel.com with ESMTP; 17 Jul 2025 17:19:50 -0700
+From: Dapeng Mi <dapeng1.mi@linux.intel.com>
+To: Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jim Mattson <jmattson@google.com>,
+	Mingwei Zhang <mizhang@google.com>,
+	Zide Chen <zide.chen@intel.com>,
+	Das Sandipan <Sandipan.Das@amd.com>,
+	Shukla Manali <Manali.Shukla@amd.com>,
+	Yi Lai <yi1.lai@intel.com>,
+	Dapeng Mi <dapeng1.mi@intel.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Subject: [PATCH v2 0/5] Fix PMU kselftests errors on GNR/SRF/CWF
+Date: Fri, 18 Jul 2025 08:19:00 +0800
+Message-Id: <20250718001905.196989-1-dapeng1.mi@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250717235604.2atyx2aobwowpge3@offworld>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 17, 2025 at 04:56:04PM -0700, Davidlohr Bueso wrote:
-> On Thu, 17 Jul 2025, Andrew Morton wrote:
-> 
-> > On Thu, 17 Jul 2025 15:17:09 -0700 Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> > 
-> > > On Mon, Jun 23, 2025 at 11:58:49AM -0700, Davidlohr Bueso wrote:
-> > > > +
-> > > > +int user_proactive_reclaim(char *buf, struct mem_cgroup *memcg, pg_data_t *pgdat)
-> > > > +{
-> > > > +	unsigned int nr_retries = MAX_RECLAIM_RETRIES;
-> > > > +	unsigned long nr_to_reclaim, nr_reclaimed = 0;
-> > > > +	int swappiness = -1;
-> > > > +	char *old_buf, *start;
-> > > > +	substring_t args[MAX_OPT_ARGS];
-> > > > +
-> > > > +	if (!buf || (!memcg && !pgdat))
-> > > 
-> > > I don't think this series is adding a use-case where both memcg and
-> > > pgdat are non-NULL, so let's error out on that as well.
-> > 
-> > As a followup, please.  This has been in -next for four weeks and I'd
-> > prefer not to have to route around it (again).
-> > 
-> 
-> From: Davidlohr Bueso <dave@stgolabs.net>
-> Date: Thu, 17 Jul 2025 16:53:24 -0700
-> Subject: [PATCH] mm-introduce-per-node-proactive-reclaim-interface-fix
-> 
-> Both memcg and node is also a bogus case, per Shakeel.
-> 
-> Signed-off-by: Davidlohr Bueso <dave@stgolabs.net>
+This patch series fixes KVM PMU kselftests errors encountered on Granite
+Rapids (GNR), Sierra Forest (SRF) and Clearwater Forest (CWF).
 
-With this, I think we are good. We can always refactor and move code
-around to our taste but interface and functionality wise this is fine.
+GNR and SRF starts to support the timed PEBS. Timed PEBS adds a new
+"retired latency" field in basic info group to show the timing info and
+the PERF_CAPABILITIES[17] called "PEBS_TIMING_INFO" bit is added
+to indicated whether timed PEBS is supported. KVM module doesn't need to
+do any specific change to support timed PEBS except a perf change adding
+PERF_CAP_PEBS_TIMING_INFO flag into PERF_CAP_PEBS_MASK[1]. The patch 2/5
+adds timed PEBS support in vmx_pmu_caps_test and fix the error as the
+PEBS caps field mismatch.
 
-Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+CWF introduces 5 new architectural events (4 level-1 topdown metrics
+events and LBR inserts event). The patch 3/5 adds support for these 5
+arch-events and fixes the error that caused by mismatch between HW real
+supported arch-events number with NR_INTEL_ARCH_EVENTS.
+
+On Intel Atom platforms, the PMU events "Instruction Retired" or
+"Branch Instruction Retired" may be overcounted for some certain
+instructions, like FAR CALL/JMP, RETF, IRET, VMENTRY/VMEXIT/VMPTRLD
+and complex SGX/SMX/CSTATE instructions/flows[2].
+
+In details, for the Atom platforms before Sierra Forest (including
+Sierra Forest), Both 2 events "Instruction Retired" and
+"Branch Instruction Retired" would be overcounted on these certain
+instructions, but for Clearwater Forest only "Instruction Retired" event
+is overcounted on these instructions.
+
+As this overcount issue, pmu_counters_test and pmu_event_filter_test
+would fail on the precise event count validation for these 2 events on
+Atom platforms.
+
+To work around this Atom platform overcount issue, Patches 4-5/5 looses
+the precise count validation separately for pmu_counters_test and
+pmu_event_filter_test.
+
+BTW, this patch series doesn't depend on the mediated vPMU support.
+
+Changes:
+  * Add error fix for vmx_pmu_caps_test on GNR/SRF (patch 2/5).
+  * Opportunistically fix a typo (patch 1/5).
+
+Tests:
+  * PMU kselftests (pmu_counters_test/pmu_event_filter_test/
+    vmx_pmu_caps_test) passed on Intel SPR/GNR/SRF/CWF platforms.
+
+History:
+  * v1: https://lore.kernel.org/all/20250712172522.187414-1-dapeng1.mi@linux.intel.com/
+
+Ref:
+  [1] https://lore.kernel.org/all/20250717090302.11316-1-dapeng1.mi@linux.intel.com/
+  [2] https://edc.intel.com/content/www/us/en/design/products-and-solutions/processors-and-chipsets/sierra-forest/xeon-6700-series-processor-with-e-cores-specification-update/errata-details
+
+Dapeng Mi (4):
+  KVM: x86/pmu: Correct typo "_COUTNERS" to "_COUNTERS"
+  KVM: selftests: Add timing_info bit support in vmx_pmu_caps_test
+  KVM: Selftests: Validate more arch-events in pmu_counters_test
+  KVM: selftests: Relax branches event count check for event_filter test
+
+dongsheng (1):
+  KVM: selftests: Relax precise event count validation as overcount
+    issue
+
+ arch/x86/include/asm/kvm_host.h               |  8 ++--
+ arch/x86/kvm/vmx/pmu_intel.c                  |  6 +--
+ tools/testing/selftests/kvm/include/x86/pmu.h | 19 ++++++++
+ .../selftests/kvm/include/x86/processor.h     |  7 ++-
+ tools/testing/selftests/kvm/lib/x86/pmu.c     | 43 +++++++++++++++++++
+ .../selftests/kvm/x86/pmu_counters_test.c     | 39 ++++++++++++++---
+ .../selftests/kvm/x86/pmu_event_filter_test.c |  9 +++-
+ .../selftests/kvm/x86/vmx_pmu_caps_test.c     |  3 +-
+ 8 files changed, 117 insertions(+), 17 deletions(-)
+
+
+base-commit: 772d50d9b87bec08b56ecee0a880d6b2ee5c7da5
+-- 
+2.34.1
 
 
