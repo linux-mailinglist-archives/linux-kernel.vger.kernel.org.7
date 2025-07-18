@@ -1,115 +1,117 @@
-Return-Path: <linux-kernel+bounces-736804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98B8AB0A2B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:43:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79037B0A2B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:45:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87024566CE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:43:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DB9DA84739
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:44:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE6F2D9789;
-	Fri, 18 Jul 2025 11:43:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C0D2D9ECD;
+	Fri, 18 Jul 2025 11:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wit5SPbm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u7c14dnP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D87BC21B9C6;
-	Fri, 18 Jul 2025 11:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383382D97A5;
+	Fri, 18 Jul 2025 11:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752838979; cv=none; b=nM7MyNtI6D1H6wgbXq/j37Tk5GK+Tpaywj2DBq5QAQHfxSr0ogRMlij6tibsk9XYAYBOjFB/X1fZ3Ek2NpH82ptgOM4USm9oopiHdwqEjS3DOvpVoMZDDgmmp6cqfra4hyKWzshvilYWO/YC0P4AaZanb7pw5kSTwL3jTQsA95k=
+	t=1752839110; cv=none; b=AE93Uh7716B99SV0ioHvbkAUFTmHnwVyHhSwVNDRZKeJEd6CZX1yBmrKl67JvcikEP7jfIiZw+twQbVUVN9nc4VB34fx/wRjMq6ktWUmYO1ijmLQyiood2lW1dDQdNcaBfotiuvn/03JbVhTkzykOtH3xaPnGf7yj3fX4vtSfkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752838979; c=relaxed/simple;
-	bh=c1aJonaSn7m5jpxkZVQAbObN+591/3gbJ6vAeHNRkOE=;
+	s=arc-20240116; t=1752839110; c=relaxed/simple;
+	bh=HbxsrY6f+PgZxKEKxckwhH+ILsDOG7Ptpr1hT4rRhik=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ah+o5EzWG/0koCw/2fHmInngkZqac6JBT5Q55FAla6CHRR7dm8pQ2BThkxvZ3LFJQ7WAgp0XqY5yEyebfMThz9yN/sxbKeMifQ92dkelvSAViyTQj60u89RnFGRxeJi9gi/TPkiyt1ZNFEE5DedwAHM0yhi8Qp75Xb2qsOynOYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wit5SPbm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27582C4CEEB;
-	Fri, 18 Jul 2025 11:42:56 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=EOtyKuO2MT4jj7kmg5a4JolqpxiKV1KBd5Q7FBUhM+BqixuiLGu1EJwpVIj7gxVTpDKatoiBVU9u7YLyEo1mi2aAGf4epHkyaa8VdcV/XuJvC1j1VWXuKoy1V1xBAgaTiEQXvgg/NommAhUKeacxvLeNPnHe40W6vegcEdE9Res=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u7c14dnP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EFE5C4CEEB;
+	Fri, 18 Jul 2025 11:45:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752838979;
-	bh=c1aJonaSn7m5jpxkZVQAbObN+591/3gbJ6vAeHNRkOE=;
+	s=k20201202; t=1752839109;
+	bh=HbxsrY6f+PgZxKEKxckwhH+ILsDOG7Ptpr1hT4rRhik=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wit5SPbmg2PXTNyuXevhjnuEUrLjnleqAlzHzBm8sweT1IhJutppROwa55ClUnAne
-	 ctEekz23EnBWWnlt39mCkEpBNMJct3yoFW4SNPgPETdE2gdb1xPplkazMfFuwv6l+s
-	 UhLelyFejw/O2WRCuMJYEYv1Bp4wkGL3+Gyih0+MndeCWZT5w7CfdDaqSzRY1qcR6V
-	 NsBylB7FXKSmxqwYeyWjpTrxue8gGFP434e30I8XoUCdP+uR/wwK754BLYCL7i3GB8
-	 hz91wLv9mLBAc1e889aUWhEVTixS5SaSO8wyQcRS90DaKOeRhOelb1KsmPRlKnT7ox
-	 tQZDkGi32WX5w==
-Date: Fri, 18 Jul 2025 12:42:54 +0100
+	b=u7c14dnPqFzEHprwuqRuqBH4A31YK/vjPD7bg/OgG//kFji0cP6j8P7cMAKbndDRF
+	 rKsWOgE2CfDrLtQzTg9Tqqos4qKLP4KHp+l2i6KDmrO8WOEDsr24ZXCsleC0qc1HET
+	 knrWhdx+ShuOrfaAN8nP0tV+cc11BduoFFOf1gd/nFT4eR1Rs/cR3Jru23P5g6gzZX
+	 lc+rDf4K7Z86NG2LZ5LjBIs1Pv4IzC9cOC5SIL8PswY0FDgm3nOMYK+iKOjuIRvH7R
+	 V0dC2kC+lfW2D2JfJthyTEEuwFcYXw8oyqAqWrViF0bK9rjv86EgfM6yQLYTUjTLLG
+	 82pD9rTZr27Eg==
+Date: Fri, 18 Jul 2025 12:45:03 +0100
 From: Will Deacon <will@kernel.org>
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: bpf@vger.kernel.org, Puranjay Mohan <puranjay@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Maxwell Bland <mbland@motorola.com>,
-	Puranjay Mohan <puranjay12@gmail.com>,
-	Dao Huang <huangdao1@oppo.com>
-Subject: Re: [PATCH bpf-next v10 3/3] arm64/cfi,bpf: Support kCFI + BPF on
- arm64
-Message-ID: <aHozPj7NIudHmmgM@willie-the-truck>
-References: <20250715225733.3921432-5-samitolvanen@google.com>
- <20250715225733.3921432-8-samitolvanen@google.com>
+To: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+Cc: joro@8bytes.org, robin.murphy@arm.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de,
+	nicolas.dufresne@collabora.com, jgg@ziepe.ca, iommu@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, kernel@collabora.com
+Subject: Re: [PATCH v6 3/5] iommu: Add verisilicon IOMMU driver
+Message-ID: <aHozv0NG1OBlAH6c@willie-the-truck>
+References: <20250710082450.125585-1-benjamin.gaignard@collabora.com>
+ <20250710082450.125585-4-benjamin.gaignard@collabora.com>
+ <aHTzPwTob8_5rtBS@willie-the-truck>
+ <baa1fcde-f167-4a1b-afca-0a2957a688cc@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250715225733.3921432-8-samitolvanen@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <baa1fcde-f167-4a1b-afca-0a2957a688cc@collabora.com>
 
-On Tue, Jul 15, 2025 at 10:57:37PM +0000, Sami Tolvanen wrote:
-> From: Puranjay Mohan <puranjay12@gmail.com>
+On Mon, Jul 14, 2025 at 04:56:53PM +0200, Benjamin Gaignard wrote:
+> Le 14/07/2025 à 14:08, Will Deacon a écrit :
+> > On Thu, Jul 10, 2025 at 10:24:44AM +0200, Benjamin Gaignard wrote:
+> > > +/* vsi iommu regs address */
+> > > +#define VSI_MMU_CONFIG1_BASE			0x1ac
+> > > +#define VSI_MMU_AHB_EXCEPTION_BASE		0x380
+> > > +#define VSI_MMU_AHB_CONTROL_BASE		0x388
+> > > +#define VSI_MMU_AHB_TLB_ARRAY_BASE_L_BASE	0x38C
+> > > +
+> > > +/* MMU register offsets */
+> > > +#define VSI_MMU_FLUSH_BASE		0x184
+> > > +#define VSI_MMU_BIT_FLUSH		BIT(4)
+> > > +
+> > > +#define VSI_MMU_PAGE_FAULT_ADDR		0x380
+> > > +#define VSI_MMU_STATUS_BASE		0x384	/* IRQ status */
+> > > +
+> > > +#define VSI_MMU_BIT_ENABLE		BIT(0)
+> > > +
+> > > +#define VSI_MMU_OUT_OF_BOUND		BIT(28)
+> > > +/* Irq mask */
+> > > +#define VSI_MMU_IRQ_MASK		0x7
+> > > +
+> > > +#define VSI_DTE_PT_ADDRESS_MASK		0xffffffc0
+> > > +#define VSI_DTE_PT_VALID		BIT(0)
+> > > +
+> > > +#define VSI_PAGE_DESC_LO_MASK		0xfffff000
+> > > +#define VSI_PAGE_DESC_HI_MASK		GENMASK_ULL(39, 32)
+> > > +#define VSI_PAGE_DESC_HI_SHIFT		(32 - 4)
+> > How does this page-table format relate to the one supported already by
+> > rockchip-iommu.c? From a quick glance, I suspect this is a derivative
+> > and so ideally we'd be able to have a common implementation of the
+> > page-table code which can be used by both of the drivers.
+> > 
+> > Similarly:
 > 
-> Currently, bpf_dispatcher_*_func() is marked with `__nocfi` therefore
-> calling BPF programs from this interface doesn't cause CFI warnings.
-> 
-> When BPF programs are called directly from C: from BPF helpers or
-> struct_ops, CFI warnings are generated.
-> 
-> Implement proper CFI prologues for the BPF programs and callbacks and
-> drop __nocfi for arm64. Fix the trampoline generation code to emit kCFI
-> prologue when a struct_ops trampoline is being prepared.
-> 
-> Signed-off-by: Puranjay Mohan <puranjay12@gmail.com>
-> Co-developed-by: Maxwell Bland <mbland@motorola.com>
-> Signed-off-by: Maxwell Bland <mbland@motorola.com>
-> Co-developed-by: Sami Tolvanen <samitolvanen@google.com>
-> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-> Tested-by: Dao Huang <huangdao1@oppo.com>
-> ---
->  arch/arm64/include/asm/cfi.h  |  7 +++++++
->  arch/arm64/net/bpf_jit_comp.c | 22 +++++++++++++++++++---
->  2 files changed, 26 insertions(+), 3 deletions(-)
->  create mode 100644 arch/arm64/include/asm/cfi.h
+> No they comes from different IP providers, this one is from Verisilicon.
+> I agree they looks very similar and my first attempt was to add it into
+> rockchip-iommu code but when doing it I realize that registers addresses
+> where all different so I had to code all the functions twice.
 
-> diff --git a/arch/arm64/include/asm/cfi.h b/arch/arm64/include/asm/cfi.h
-> new file mode 100644
-> index 000000000000..ab90f0351b7a
-> --- /dev/null
-> +++ b/arch/arm64/include/asm/cfi.h
-> @@ -0,0 +1,7 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _ASM_ARM64_CFI_H
-> +#define _ASM_ARM64_CFI_H
-> +
-> +#define __bpfcall
-> +
-> +#endif /* _ASM_ARM64_CFI_H */
-
-So close to not needing the arch header at all!
-
-Acked-by: Will Deacon <will@kernel.org>
+Understood, and I'm not suggesting to merge the drivers or try to
+consolidate the register layouts. What I _am_ saying is that the
+in-memory page-table format should be factored out in a way that can
+be reused by the two drivers and also that some of the logic (as highlighted
+by vsi_iommu_domain_free()) is practically identical between the drivers
+and should also be shared.
 
 Will
 
