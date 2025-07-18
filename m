@@ -1,300 +1,242 @@
-Return-Path: <linux-kernel+bounces-736283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1E27B09AFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 07:39:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ED8FB09AFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 07:44:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16F5A586A8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 05:39:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 875451C2716B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 05:44:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A496E1E5B78;
-	Fri, 18 Jul 2025 05:39:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B44601DDC37;
+	Fri, 18 Jul 2025 05:44:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lzShy1Of"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="OzZnqVp6"
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284EA3C1F
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 05:39:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D8FF3C1F
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 05:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752817147; cv=none; b=RX2IcEnStJb2uVZWWOHunmcG/DjSxrMvYpQ4y7vONhh1pP8dX5gasdWk7gPF3QP27pltd8C3iRwlZJjuz6Zeptw61KamGBXQ0tFygoqRsmdiJyo54iFddvsDGWy7I6RyKnT10sQeshz5wz7QiPuoWhcHsCWYDpQo9+M/osX2OVE=
+	t=1752817476; cv=none; b=oWsw5YHdYiH/fJCkS570Zohfyb3ncRl29aHuzAHi2XFmviBBd71YtH/IPnPd/PuQ/oYzBv1hOn4jz7t5IxirUX801tC1H1UDBr0HXOwJ+PccT9Uz/q2+NrzH9i1By99r04qXMIxBN3ONrWCUp5BxW9eWX/ywWOlT4MsB6fL221k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752817147; c=relaxed/simple;
-	bh=3VRHSLbfFMV30+oHmvvg99voIwMBnQiupyrlI5aH2h8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hbpZE+q0pQLDfOhmHgnt8P5y3G2Z4g0TmtMqAFDO82o+cvu6BYi+GfziKDG7duHpB8H/b5c3TdtsV/Dv2zYykPwrUuDF/yoCk3OS2I5FDPOQqu6Gf5ABeFxWo+GXPVu7fqPiCLKt2ySxIwWlpiE0X0GGGlNPaUR4GbolsEELD6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lzShy1Of; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56I04QPo016007
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 05:39:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=G1mpECc2DWmohZNB1xSF+YezHshSuAdDAe7
-	QU653A4c=; b=lzShy1OfI7f6bvyZxXjSUWvF1eokn40YLVl3C86E2clgV7gAHQT
-	Dv6IpcCLteB9ENMYBuOg/qczLMFwcqxSbJzigv+8j/pK6qZnRrHPgzE1WC7okr23
-	MeQDPcRmIaiPYCmHpcLvlfN9uhDOv1X+7mpoFHypF4y0OnAo93/e9KdA1jLNtdYL
-	PzJbHm39fudUBlF/ouwhHyReJ+BEre1UVRbCqIoWFS44e4kIwp7sWn3TCWQ2O57l
-	rnn/z79Bk9QODlm3AYiGIVkmhX89YAVWcOVX7dQFzMwYFxNwmTCDtMwmKXIdtbHY
-	G1eqE4pJzLG2IJQfx9j9Ebc7WCUhQ58VdTw==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47y3tc24fx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 05:39:05 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2365ab89b52so16212395ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 22:39:05 -0700 (PDT)
+	s=arc-20240116; t=1752817476; c=relaxed/simple;
+	bh=uOfllG7doj7a1aHdRHQDBCELugIwaJECvLRp7gS+K1U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hsCCH3VQdhcG+1D9+RwqCnPM7Xoh6FdCV+kcbjYtergdcsMOJ4SfwmXPQ4zPNpDRv7S81KbSsNKROpWzTG1zw447rExv1nfE9HJ1W0pC3b5oeRO287apAt4fTKL3+A7YUdHUvlIyWMDhvK2l3FpP1dMPhwnwV7ZJZBUYpITlXJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=OzZnqVp6; arc=none smtp.client-ip=209.85.166.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-876231b81d5so123213839f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 22:44:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1752817473; x=1753422273; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UbgPp2KhOfq0y4Sok/APrDX9m8Fb2lQ6Dd/Lb1wol6E=;
+        b=OzZnqVp6gjnorGvETkBollneFqqWmu1MSW5+CNV8NhutJSgPq0pY7p8CcxzWzK/aO1
+         H6ZCI1pz1NwsFLnTelx4tJq0OE4aIqyZNztWsl6mW2kPoLVWCY1SmZDsXtMk8aTFb0tH
+         YO6h8XOAFs6gNc0GzGPORadOGtzS3XotODbEhSztYn9vwBGZt6TunbK43ehP6xHFXllK
+         /UbrWmlL2eLSpf3yXpKFor0piZn5j2gDZcEEhC1pTXEvf4f5t10yN1KpwXBIpl+6e/Rk
+         JTW/k1mnh4qTVoLajqZrEBUqW17bxZzf4qNaX5zlLBRYIDcgUG9zNlEnmsZ41AFhcfRO
+         Ueqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752817144; x=1753421944;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=G1mpECc2DWmohZNB1xSF+YezHshSuAdDAe7QU653A4c=;
-        b=ErN5DvdWwshh/HfkBhlPtlDCSFwJNY0S7e2GDoW3oEMLSH+i+LHIsS5ffWUCFYwvhy
-         leMLlTHsy4cWusPQe8rqfl5jmYGgYNohDgeghP4uaO95pVe9YVrobA20iJfutMGK9EnI
-         RwQwwdpTQ60y98+UgRl+7m+RnlUKMH6JxeY7+FCEEwiRYkRgD/r8uu554N8fZhH2U6hE
-         778m/DeRYvkiMmcML1lx0DggASxmFvx2NjkznRNBjAw2PRjldkX8pmUbvBfEp5bKlnr0
-         SbtJVVkUgfACWQDkcshgSYzsLWvkGQ3DgEeXBoLaX6cJWe2jVeC9nt09aMAn+Lt8XrSg
-         jAWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWVleYW3OccMhWQqihj23hm8banZQRwdovhftyMGPpSk9Dt2dzaaQo5sLwCbRHt2fFyEiOxIxMi1YbElwg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhlZ+9nrhZNmpHlYqthHLrzfQriU7xh9ow84vxAcBrvCRVxaQw
-	4hzlqzQvVORJaSxv2zeS7/tbx0YpE/gQd2IAXF+PVEQGTV6w+I6ZPN0jQtNGpEPFtrKYjWKIZK2
-	7EjUYvgITWTGXeUT5LgGgq6hgma7nf/Vuteri0T6tY3rkZFbz6rTp6dNY/QKP5IpwONo=
-X-Gm-Gg: ASbGncuP6CAhVKwtxIYDTxyPQ03puGdl1UzTxv2cRZD5XA6gJ3BjDAWEvKosc6WtRYo
-	86Hi1fkZTrVR5nRJt/qK90z8Lk8w+8g8Kf078ks8RZJfXvShWYGbjfMTJ+doUsnISFRxAHai3yF
-	0zIlj+F6UsYJu9WLYeGG9il2CaRZnLAbUAe+yRFSPDr4+U8/gcKHBTd5A+N2mu+XKEnXteGjLN7
-	DneE8UzF1nubrK/udtdUv0taCBd/5LzoiNCUxi80Cd0mpffDC04DqWkFJXjvqeK6+/ZODNFYj5t
-	r6kjZ2fDplonHrC8Jm/NzYnD8klASPbbhb7DtTVHvJugZj/UI9zfdJogz4ALSR0MHwIPMQe796I
-	nHQ==
-X-Received: by 2002:a17:903:3d0d:b0:234:f4da:7eed with SMTP id d9443c01a7336-23e3b84f72emr25656825ad.44.1752817144254;
-        Thu, 17 Jul 2025 22:39:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEUgIQzh7Rce+Nz24SOwgDJNcyIJqreqf4m/9u80kOmZepuCO5O32Z9VbH3vpFrqTpTRPzxAg==
-X-Received: by 2002:a17:903:3d0d:b0:234:f4da:7eed with SMTP id d9443c01a7336-23e3b84f72emr25656475ad.44.1752817143782;
-        Thu, 17 Jul 2025 22:39:03 -0700 (PDT)
-Received: from hu-kriskura-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3f2fe67f96sm536916a12.13.2025.07.17.22.39.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 22:39:03 -0700 (PDT)
-From: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-Subject: [PATCH v4] usb: dwc3: qcom: Remove extcon functionality from glue
-Date: Fri, 18 Jul 2025 11:08:56 +0530
-Message-Id: <20250718053856.2859946-1-krishna.kurapati@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1752817473; x=1753422273;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UbgPp2KhOfq0y4Sok/APrDX9m8Fb2lQ6Dd/Lb1wol6E=;
+        b=hfHRCegGFEIrcYliJ+vg2djDrHGHaDkHnYap7FUSeT2tirjgqU4wjXWu4jve486WtJ
+         aBmGd38Rq2b+7MxiZcj3qS9zXfYR+7SUQlEa3wTBseTMlh0L3JZBaomFHdwhosM8C/1g
+         J84bdjZLkl739MK09X5WD92Yiz8oAD3CjMrtvo3Wy8r6kJeScHF71YxTZ5h82YvZHzO2
+         h+bjkIF0aREgTGojVu2CTGllwKuU/+wxpmmPTaeRE5vLwUZGgrNpUD58SSNnhxNexnsz
+         XxM3RsiJIB+wUgm5uBXIV1ZQnvKHcBbbf+jzI2a8BjFt9TUPGrRbeC0rBUgw0HxAWMFV
+         lktA==
+X-Forwarded-Encrypted: i=1; AJvYcCUz7jLIHl9Mxq/QRak+Qx3OfoDPF2j/goXSGmfpcmXHIHiCpBpoE/nMcX36l56TIQFc1PyWUkrC3Imtk1M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkLU9rZRDcQPTwSod9QcaXsK4EG+qIWSgr7Qc9OUKXJ4KMe/mt
+	AZRvV6Ghm7BC6QzG+lLJYaTpQU9bRo5bpWXu+5XYMGFvqdCjmR/VNautAIcuV7QZqwVZghucUGI
+	UrEONr+rVDW39BQgau+UoLU75pCZ8IlGUryoikv6sYA==
+X-Gm-Gg: ASbGncskjDDKyzxc+702G282vSJSk3Cx1LNPubbFNwOsGrv2o6DWmefIuVmh/n1rHad
+	wgNtePuppXjZELWpls2ktrnOJ1LV3wcm9Xy+MPywAswUxyPd7OvDNgiUH61b0QoKe5ad9gCmsee
+	/INNJeKtjdf7wmzF4zcupMWC7zuE9nIyLITdjZYxdB0j4G9qFxyD8yvcEAsmji4TEzLBH+/GSnl
+	84K4EO1
+X-Google-Smtp-Source: AGHT+IHDgWzcXCwj/DOJpP3ymIG8gmYK7y1xVWQRaZZ4+bN0CjPQTQhbKC7oNlsGD5d5wHcvIALI0L6dBMD+3efHuLc=
+X-Received: by 2002:a05:6602:140e:b0:86a:256e:12df with SMTP id
+ ca18e2360f4ac-879c08918d9mr1244420739f.2.1752817473316; Thu, 17 Jul 2025
+ 22:44:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=Z5PsHGRA c=1 sm=1 tr=0 ts=6879ddf9 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=HsaRtseu1FE5unmruSMA:9
- a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-ORIG-GUID: N7zT0Qw1vXZ5NeOBlpnPmqPWLcQA-mcH
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE4MDA0MiBTYWx0ZWRfX890/Zw96uxf0
- buwfPo7XET1SUzDwj2IS6gR4HLSpF1guJnk0J5W4PszdRb82mJk89pcsjxCHb66gmqzmQC0YASN
- ODtYdw8xUHUkSDKDcc42YAiGwV2dOeHSmRtnVCigRnxG+VJoOZ2AbsKXHBQ8rXO4Y0aLNFJ33Vj
- VSy6zav1ug2upBx4UAHIQ6g82hjHtfvfeSEIn0BSUagSP8V6RTZ1iK/6gsIs/G27u/uMkk+1D8z
- 30eTvJua3kLkxm86FS+m/YAMkyGqB3jDenn/q0uO6qBW0MpHACoW60wUdP+QPtsMpVT0jk0cwNR
- BEHTwfDNKdpb+rUBRNosG2+EmUZGJcYEAFRZWGEOl/pbxDJQZPjrfRfgOtvwIBPDLGKSRwHUi43
- AvAAZgl7gpDDCBeNAoZ6kEb27tmazR3HXXVHuknexrKY8xJmNU/VToRcXUUXBrZGoFsmXGe2
-X-Proofpoint-GUID: N7zT0Qw1vXZ5NeOBlpnPmqPWLcQA-mcH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-18_01,2025-07-17_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 mlxlogscore=999 suspectscore=0 spamscore=0 clxscore=1015
- mlxscore=0 malwarescore=0 phishscore=0 lowpriorityscore=0 adultscore=0
- priorityscore=1501 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507180042
+References: <20250522-pmu_event_info-v3-0-f7bba7fd9cfe@rivosinc.com> <20250522-pmu_event_info-v3-8-f7bba7fd9cfe@rivosinc.com>
+In-Reply-To: <20250522-pmu_event_info-v3-8-f7bba7fd9cfe@rivosinc.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Fri, 18 Jul 2025 11:14:21 +0530
+X-Gm-Features: Ac12FXyXbFx3oQHSVcqGrTUnY6wqlJWgBpkN376n7_oc300BjXLNazpUiw8OmFU
+Message-ID: <CAAhSdy1Ca4pYDjTPz2YfgWx2R-N3GPdEGjoqksJi1Bc_xRdF-w@mail.gmail.com>
+Subject: Re: [PATCH v3 8/9] RISC-V: KVM: Implement get event info function
+To: Atish Patra <atishp@rivosinc.com>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Mayuresh Chitale <mchitale@ventanamicro.com>, linux-riscv@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Palmer Dabbelt <palmer@rivosinc.com>, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Deprecate usage of extcon functionality from the glue driver. Now
-that the glue driver is a flattened implementation, all existing
-DTs would eventually move to new bindings. While doing so let them
-make use of role-switch/ typec frameworks to provide role data
-rather than using extcon. None of the existing in-kernel extcon users
-have moved to using new bindings yet, so this change doesn't affect
-any existing users.
+On Fri, May 23, 2025 at 12:33=E2=80=AFAM Atish Patra <atishp@rivosinc.com> =
+wrote:
+>
+> The new get_event_info funciton allows the guest to query the presence
+> of multiple events with single SBI call. Currently, the perf driver
+> in linux guest invokes it for all the standard SBI PMU events. Support
+> the SBI function implementation in KVM as well.
+>
+> Signed-off-by: Atish Patra <atishp@rivosinc.com>
 
-On upstream, summary of targets/platforms using extcon is as follows:
+LGTM.
 
-1. MSM8916 and MSM8939 use Chipidea controller, hence the changes have no
-effect on them.
+Reviewed-by: Anup Patel <anup@brainfault.org>
 
-2. Of the other extcon users, most of them use "linux,extcon-usb-gpio"
-driver which relies on id/vbus gpios to inform role changes. This can be
-transitioned to role switch based driver (usb-conn-gpio) while flattening
-those platforms to move away from extcon and rely on role switching.
+Regards,
+Anup
 
-3. The one target that uses dwc3 controller and extcon and is not based
-on reading gpios is "arch/arm64/boot/dts/qcom/msm8996-xiaomi-common.dtsi".
-This platform uses TI's Type-C Port controller chip to provide extcon. If
-usb on this platform is being flattened, then effort should be put in to
-define a usb-c-connector device in DT and make use of role switch in
-TUSB320L driver.
-
-Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
----
-Changes in v4:
-Updated commit text to reflect the patch doesn't affect in-kernel users.
-Removed RB tags from v3 since commit text is changed.
-
-Link to v3:
-https://lore.kernel.org/all/20250714044703.2091075-1-krishna.kurapati@oss.qualcomm.com/
-
- drivers/usb/dwc3/dwc3-qcom.c | 90 +-----------------------------------
- 1 file changed, 1 insertion(+), 89 deletions(-)
-
-diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
-index ca7e1c02773a..a7eaefaeec4d 100644
---- a/drivers/usb/dwc3/dwc3-qcom.c
-+++ b/drivers/usb/dwc3/dwc3-qcom.c
-@@ -11,7 +11,6 @@
- #include <linux/of_clk.h>
- #include <linux/module.h>
- #include <linux/kernel.h>
--#include <linux/extcon.h>
- #include <linux/interconnect.h>
- #include <linux/platform_device.h>
- #include <linux/phy/phy.h>
-@@ -79,11 +78,6 @@ struct dwc3_qcom {
- 	struct dwc3_qcom_port	ports[DWC3_QCOM_MAX_PORTS];
- 	u8			num_ports;
- 
--	struct extcon_dev	*edev;
--	struct extcon_dev	*host_edev;
--	struct notifier_block	vbus_nb;
--	struct notifier_block	host_nb;
--
- 	enum usb_dr_mode	mode;
- 	bool			is_suspended;
- 	bool			pm_suspended;
-@@ -119,8 +113,7 @@ static inline void dwc3_qcom_clrbits(void __iomem *base, u32 offset, u32 val)
- 
- /*
-  * TODO: Make the in-core role switching code invoke dwc3_qcom_vbus_override_enable(),
-- * validate that the in-core extcon support is functional, and drop extcon
-- * handling from the glue
-+ * validate that the in-core extcon support is functional
-  */
- static void dwc3_qcom_vbus_override_enable(struct dwc3_qcom *qcom, bool enable)
- {
-@@ -137,80 +130,6 @@ static void dwc3_qcom_vbus_override_enable(struct dwc3_qcom *qcom, bool enable)
- 	}
- }
- 
--static int dwc3_qcom_vbus_notifier(struct notifier_block *nb,
--				   unsigned long event, void *ptr)
--{
--	struct dwc3_qcom *qcom = container_of(nb, struct dwc3_qcom, vbus_nb);
--
--	/* enable vbus override for device mode */
--	dwc3_qcom_vbus_override_enable(qcom, event);
--	qcom->mode = event ? USB_DR_MODE_PERIPHERAL : USB_DR_MODE_HOST;
--
--	return NOTIFY_DONE;
--}
--
--static int dwc3_qcom_host_notifier(struct notifier_block *nb,
--				   unsigned long event, void *ptr)
--{
--	struct dwc3_qcom *qcom = container_of(nb, struct dwc3_qcom, host_nb);
--
--	/* disable vbus override in host mode */
--	dwc3_qcom_vbus_override_enable(qcom, !event);
--	qcom->mode = event ? USB_DR_MODE_HOST : USB_DR_MODE_PERIPHERAL;
--
--	return NOTIFY_DONE;
--}
--
--static int dwc3_qcom_register_extcon(struct dwc3_qcom *qcom)
--{
--	struct device		*dev = qcom->dev;
--	struct extcon_dev	*host_edev;
--	int			ret;
--
--	if (!of_property_present(dev->of_node, "extcon"))
--		return 0;
--
--	qcom->edev = extcon_get_edev_by_phandle(dev, 0);
--	if (IS_ERR(qcom->edev))
--		return dev_err_probe(dev, PTR_ERR(qcom->edev),
--				     "Failed to get extcon\n");
--
--	qcom->vbus_nb.notifier_call = dwc3_qcom_vbus_notifier;
--
--	qcom->host_edev = extcon_get_edev_by_phandle(dev, 1);
--	if (IS_ERR(qcom->host_edev))
--		qcom->host_edev = NULL;
--
--	ret = devm_extcon_register_notifier(dev, qcom->edev, EXTCON_USB,
--					    &qcom->vbus_nb);
--	if (ret < 0) {
--		dev_err(dev, "VBUS notifier register failed\n");
--		return ret;
--	}
--
--	if (qcom->host_edev)
--		host_edev = qcom->host_edev;
--	else
--		host_edev = qcom->edev;
--
--	qcom->host_nb.notifier_call = dwc3_qcom_host_notifier;
--	ret = devm_extcon_register_notifier(dev, host_edev, EXTCON_USB_HOST,
--					    &qcom->host_nb);
--	if (ret < 0) {
--		dev_err(dev, "Host notifier register failed\n");
--		return ret;
--	}
--
--	/* Update initial VBUS override based on extcon state */
--	if (extcon_get_state(qcom->edev, EXTCON_USB) ||
--	    !extcon_get_state(host_edev, EXTCON_USB_HOST))
--		dwc3_qcom_vbus_notifier(&qcom->vbus_nb, true, qcom->edev);
--	else
--		dwc3_qcom_vbus_notifier(&qcom->vbus_nb, false, qcom->edev);
--
--	return 0;
--}
--
- static int dwc3_qcom_interconnect_enable(struct dwc3_qcom *qcom)
- {
- 	int ret;
-@@ -737,11 +656,6 @@ static int dwc3_qcom_probe(struct platform_device *pdev)
- 	if (qcom->mode != USB_DR_MODE_HOST)
- 		dwc3_qcom_vbus_override_enable(qcom, true);
- 
--	/* register extcon to override sw_vbus on Vbus change later */
--	ret = dwc3_qcom_register_extcon(qcom);
--	if (ret)
--		goto interconnect_exit;
--
- 	wakeup_source = of_property_read_bool(dev->of_node, "wakeup-source");
- 	device_init_wakeup(&pdev->dev, wakeup_source);
- 
-@@ -749,8 +663,6 @@ static int dwc3_qcom_probe(struct platform_device *pdev)
- 
- 	return 0;
- 
--interconnect_exit:
--	dwc3_qcom_interconnect_exit(qcom);
- remove_core:
- 	dwc3_core_remove(&qcom->dwc);
- clk_disable:
--- 
-2.34.1
-
+> ---
+>  arch/riscv/include/asm/kvm_vcpu_pmu.h |  3 ++
+>  arch/riscv/kvm/vcpu_pmu.c             | 66 +++++++++++++++++++++++++++++=
+++++++
+>  arch/riscv/kvm/vcpu_sbi_pmu.c         |  3 ++
+>  3 files changed, 72 insertions(+)
+>
+> diff --git a/arch/riscv/include/asm/kvm_vcpu_pmu.h b/arch/riscv/include/a=
+sm/kvm_vcpu_pmu.h
+> index 1d85b6617508..9a930afc8f57 100644
+> --- a/arch/riscv/include/asm/kvm_vcpu_pmu.h
+> +++ b/arch/riscv/include/asm/kvm_vcpu_pmu.h
+> @@ -98,6 +98,9 @@ void kvm_riscv_vcpu_pmu_init(struct kvm_vcpu *vcpu);
+>  int kvm_riscv_vcpu_pmu_snapshot_set_shmem(struct kvm_vcpu *vcpu, unsigne=
+d long saddr_low,
+>                                       unsigned long saddr_high, unsigned =
+long flags,
+>                                       struct kvm_vcpu_sbi_return *retdata=
+);
+> +int kvm_riscv_vcpu_pmu_event_info(struct kvm_vcpu *vcpu, unsigned long s=
+addr_low,
+> +                                 unsigned long saddr_high, unsigned long=
+ num_events,
+> +                                 unsigned long flags, struct kvm_vcpu_sb=
+i_return *retdata);
+>  void kvm_riscv_vcpu_pmu_deinit(struct kvm_vcpu *vcpu);
+>  void kvm_riscv_vcpu_pmu_reset(struct kvm_vcpu *vcpu);
+>
+> diff --git a/arch/riscv/kvm/vcpu_pmu.c b/arch/riscv/kvm/vcpu_pmu.c
+> index 163bd4403fd0..70a6bdfc42f5 100644
+> --- a/arch/riscv/kvm/vcpu_pmu.c
+> +++ b/arch/riscv/kvm/vcpu_pmu.c
+> @@ -453,6 +453,72 @@ int kvm_riscv_vcpu_pmu_snapshot_set_shmem(struct kvm=
+_vcpu *vcpu, unsigned long s
+>         return 0;
+>  }
+>
+> +int kvm_riscv_vcpu_pmu_event_info(struct kvm_vcpu *vcpu, unsigned long s=
+addr_low,
+> +                                 unsigned long saddr_high, unsigned long=
+ num_events,
+> +                                 unsigned long flags, struct kvm_vcpu_sb=
+i_return *retdata)
+> +{
+> +       struct riscv_pmu_event_info *einfo;
+> +       int shmem_size =3D num_events * sizeof(*einfo);
+> +       gpa_t shmem;
+> +       u32 eidx, etype;
+> +       u64 econfig;
+> +       int ret;
+> +
+> +       if (flags !=3D 0 || (saddr_low & (SZ_16 - 1))) {
+> +               ret =3D SBI_ERR_INVALID_PARAM;
+> +               goto out;
+> +       }
+> +
+> +       shmem =3D saddr_low;
+> +       if (saddr_high !=3D 0) {
+> +               if (IS_ENABLED(CONFIG_32BIT)) {
+> +                       shmem |=3D ((gpa_t)saddr_high << 32);
+> +               } else {
+> +                       ret =3D SBI_ERR_INVALID_ADDRESS;
+> +                       goto out;
+> +               }
+> +       }
+> +
+> +       if (kvm_vcpu_validate_gpa_range(vcpu, shmem, shmem_size, true)) {
+> +               ret =3D SBI_ERR_INVALID_ADDRESS;
+> +               goto out;
+> +       }
+> +
+> +       einfo =3D kzalloc(shmem_size, GFP_KERNEL);
+> +       if (!einfo)
+> +               return -ENOMEM;
+> +
+> +       ret =3D kvm_vcpu_read_guest(vcpu, shmem, einfo, shmem_size);
+> +       if (ret) {
+> +               ret =3D SBI_ERR_FAILURE;
+> +               goto free_mem;
+> +       }
+> +
+> +       for (int i =3D 0; i < num_events; i++) {
+> +               eidx =3D einfo[i].event_idx;
+> +               etype =3D kvm_pmu_get_perf_event_type(eidx);
+> +               econfig =3D kvm_pmu_get_perf_event_config(eidx, einfo[i].=
+event_data);
+> +               ret =3D riscv_pmu_get_event_info(etype, econfig, NULL);
+> +               if (ret > 0)
+> +                       einfo[i].output =3D 1;
+> +               else
+> +                       einfo[i].output =3D 0;
+> +       }
+> +
+> +       kvm_vcpu_write_guest(vcpu, shmem, einfo, shmem_size);
+> +       if (ret) {
+> +               ret =3D SBI_ERR_FAILURE;
+> +               goto free_mem;
+> +       }
+> +
+> +free_mem:
+> +       kfree(einfo);
+> +out:
+> +       retdata->err_val =3D ret;
+> +
+> +       return 0;
+> +}
+> +
+>  int kvm_riscv_vcpu_pmu_num_ctrs(struct kvm_vcpu *vcpu,
+>                                 struct kvm_vcpu_sbi_return *retdata)
+>  {
+> diff --git a/arch/riscv/kvm/vcpu_sbi_pmu.c b/arch/riscv/kvm/vcpu_sbi_pmu.=
+c
+> index e4be34e03e83..a020d979d179 100644
+> --- a/arch/riscv/kvm/vcpu_sbi_pmu.c
+> +++ b/arch/riscv/kvm/vcpu_sbi_pmu.c
+> @@ -73,6 +73,9 @@ static int kvm_sbi_ext_pmu_handler(struct kvm_vcpu *vcp=
+u, struct kvm_run *run,
+>         case SBI_EXT_PMU_SNAPSHOT_SET_SHMEM:
+>                 ret =3D kvm_riscv_vcpu_pmu_snapshot_set_shmem(vcpu, cp->a=
+0, cp->a1, cp->a2, retdata);
+>                 break;
+> +       case SBI_EXT_PMU_EVENT_GET_INFO:
+> +               ret =3D kvm_riscv_vcpu_pmu_event_info(vcpu, cp->a0, cp->a=
+1, cp->a2, cp->a3, retdata);
+> +               break;
+>         default:
+>                 retdata->err_val =3D SBI_ERR_NOT_SUPPORTED;
+>         }
+>
+> --
+> 2.43.0
+>
 
