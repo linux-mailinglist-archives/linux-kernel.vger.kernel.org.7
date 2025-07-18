@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-736298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AB64B09B30
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:14:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CC5CB09B3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:17:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21A791899DCC
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:15:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D6C37B3E48
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F8C1E8322;
-	Fri, 18 Jul 2025 06:14:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89EB1E521B;
+	Fri, 18 Jul 2025 06:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uLCQ4BrE"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FOGhYs8z"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF1271E98FB
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 06:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7535D1552FD
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 06:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752819279; cv=none; b=VYiTan+vhP2j+ohsI1oYGMbKOKgWEJYsEt9JbIROfCZI9kNWiP+7RSHG8PRfeWZ5moD0uFWvuNZJL9mlImI8bWbKrysl7NQIIktJw8Q2Xj9h6y+QLzzYL/1Gx8TpN+Wu2SjvQOqsSezuxqcnxyxHgwtVtjQrwqb4dvwRnHZyts4=
+	t=1752819417; cv=none; b=VfDblCylpgeuvC6gtbVYJU1SWGrr7N+buT7CwhHtCghOmVF43Ie3rjzaU0g2IcozL+koSl8dqZy3JtLEIlXm8DZXuwW4GjMs6G07megMDSh9kumO6XX0CY/2NUFgAFbRgqaMDuAvg1D8sYQzkQNYFEH8qOxS9XkJeE9sq/67oGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752819279; c=relaxed/simple;
-	bh=6S+y/P+II8gQtXm108YJxIXK9ZODMt2aLQR6rh2xuDk=;
+	s=arc-20240116; t=1752819417; c=relaxed/simple;
+	bh=I8UNMCDFBAAb+YBj8JFoJcvOE7xS5z4swcVBq99wvHs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bJ4ntTyoGZ3fODU342lLD8/SeM8q3MeISxRKm3Vr+DjmbydXJzLhQ3DC84U0h1Sfu67p6OG502wW2Pw34C6PWWnOJicosk8cgbYA7fI7yYRDlRbj4XxSMGHet2LrTg5FxaUgf7l1zi9K4xwUgsb5VfJKcHpgGHx3J2qXgAgdhsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uLCQ4BrE; arc=none smtp.client-ip=209.85.208.46
+	 In-Reply-To:Content-Type; b=PHvudjOK3Xi/tHVkO7P6wR+wzwR9CstOHWMA/tSjnIijCpgSC8BcwkD4eVdecEe7ahXkCzdn85QjK2cfCF6vryAwohwKbJOrmIxzGFYdwTUUmWLcmIl8oz3ZwDhpFrqTKuMqvtKGwvBpBqiZskbSMs+70mqg6ZxRET3VsCGgE+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FOGhYs8z; arc=none smtp.client-ip=209.85.208.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-606a269d440so336427a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 23:14:37 -0700 (PDT)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-612a45284e1so217249a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 23:16:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752819276; x=1753424076; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1752819414; x=1753424214; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=VWiqtcrm3UpqYWicE+Qr3IVBY26YZu591zaNb17vRzc=;
-        b=uLCQ4BrESZ6PeJl5DQAjQIaXCqA+aHYlodIv8+NadCem61jzJtZDaceTsT3JbHS51o
-         KyyNInTcanBz4r5KQS2aRwzcgPibyBHo3t3w8xOjKh4pxVEFPuYLbUKvAkwis77wYppa
-         pp/ulwup/BMf65VIfX3v+F+mXqr2sDb38J7mtt59O2LslUsdkGyQb0gdev5A6dWwoCGM
-         B6c3eTwqIRIlUxW1xsxzMdTdETaYPXUJQqvYBEGsIIkzCvCgxl2oVJV2w2Iy4RdjhqvU
-         5pve0eGUW26QEuuufCmoTi+S0ZKRzoR889Xf/hXVkTX3zmhwHpYPfphaexljmLPqh4HK
-         Lygg==
+        bh=z1JxVJ0cGy/4vRl8q2hnJqL2Htk4WJ35GqE3f6gUHZE=;
+        b=FOGhYs8zqqnQFV2xhcyXfdbwKe8YM0Az1gJs7235ZwYECWiDSdsvbKBjjZ7rDqOSm3
+         8X+mC6eAkbso/TcZ3GQPAPmD0WQLoY0jDfCEEJbhhOaQsTBfbsBVXaqCjEqCJaIIdqCe
+         9ijA2P7u/tWEH7Z1JZ5NsweZhNIfi6VarD3Ms7JxssnH/Keuk1cOMm38+yDxXTxB2hl2
+         GARU34bZ1ophaVAv4fSEwpPmWuNfYCh/MU27/abeFQg1EeljLC/IrHaxpIbVCGOBhdRu
+         BA05hrL3kXO6JDMkmKmwtxuKgZc6eRzCJBrDhRxXQM/kMYOeRvXf3q0kN6b75V19XzEO
+         SeRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752819276; x=1753424076;
+        d=1e100.net; s=20230601; t=1752819414; x=1753424214;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=VWiqtcrm3UpqYWicE+Qr3IVBY26YZu591zaNb17vRzc=;
-        b=rBLn+DAtFM0bjUcL/uQ9Ergsad209t0LscKVg2i3qB5pitO/ogFKKGloPKjqgwh6xi
-         HR+nggzYMRJN85DUHh5X6brSsOUFl6S3ava88zL3+VAnSe/22rX8WUhbCWiiHVYfegnj
-         rqyQu6Q5M2f0iRjR/qV6ei5GQ/rososaV3chNe7cVkRiE8S4tTLs3q63Sm7j5txICkbL
-         7zIs4WUxxeN95j/mY9SIrqcz7Z/iJaHnyrdIxIctYaqG4WY+b+T992PBp599vPQLrlbr
-         Wbo5OwC/T7X8vf7bHnxNMWgq+ifCN+wqguXtS88MwtY0bhjBWWuM5cchHnydwouIHv7K
-         R06A==
-X-Forwarded-Encrypted: i=1; AJvYcCXULNB7slSQpfKDtVF2FV4py8K6H5hIzzW0a+PF+7IdluP85Qo2kxBV/Wu0s4ag/MGy8BjRylaa2Xvl8Os=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywy7RgedRHhkjPsbGme460w0HqgYcoQeEyVoyg0mY6+35ru1xeP
-	Bd87OGkIz9hmw4qF06uOfitn3IGJmgtIAvDuDNFmiJO7+XcF2LnZ9DmGKtK17CEXkO4=
-X-Gm-Gg: ASbGncuLcYC8NTw3ksblFj1ZDpsXPailsUWsT3ajNpXQ553ySO+lWIniTWqE6Wmnj0V
-	6ppD5+1pxNSCi7KgMMSdCM1Qp9u+jesu8iaSaA2seJThPVjXK6PgGhKauLs0G9DRS4ug2aEpAK7
-	LErbkgIH3xW1XwfmQdBkDgzUQDaww4EbuZnI+z3zjslfTBAtEXLl3/f/wzLru2kKyJRCwdTPjap
-	N+JEJP1/ghf0xeZ5eMhD+QnuvJwODvIOl354wIh9bLV1doSjVGnmjSHumHFynoy6H+1+1LaHMUr
-	tbuUUhz/kOIHwipKsLEvyXpYO9GynkGJ65SZmrgKkmv3mavlF2Ppzlfw1fpUINCo7/AEA+jK3/l
-	vWg/PMRtpDDJKljF0oxVLvuSeRVNweaHGyUx3YmbjiF8pjj8/yyMa
-X-Google-Smtp-Source: AGHT+IE9LoG3p8nLyIseKLpQcssOqg7w3tMU8M2AmWdPDwMRm5y5MbuuS+ZNv4TcdwiluHmo/FRJ9Q==
-X-Received: by 2002:a05:6402:4019:b0:612:bd30:d320 with SMTP id 4fb4d7f45d1cf-612bd30d674mr1047426a12.6.1752819276028;
-        Thu, 17 Jul 2025 23:14:36 -0700 (PDT)
+        bh=z1JxVJ0cGy/4vRl8q2hnJqL2Htk4WJ35GqE3f6gUHZE=;
+        b=ucb0FjSgFCvCDrH51vqHzv/G66wMqJUIskkD2l+lbG/nxPWZ0CMMGcbWMvbaYS0kPw
+         pQA0K8htczdfB6FK049H1p24NqkREFFWdl5LabTHdRuibsuP/gJ6XIGzwC7WHF6axpSH
+         dXG8jVkVr5UcY+Ys/De6S6V5ONB7ZLhHDIpbDmhlfQ+jlrbtUp6rd+11E/VdpSWCO4sj
+         qEY3V8USPae+yZew8Cku10FwMNxZP8dru3kSImXuWuuE4ieqdMr+lsv2tC8h7rzDG03o
+         W7lOPLXdpYEkSW7Pzw6M7Wg1pUB61gBvQNUpw7JyuIV8NXtow/UFyUK8QotWP9281Gqa
+         S25Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWkPl+n3AzBYDAEUn1csmdL0XR/H00ibaXHLzaBVU63wtSslvvwVzYg9RpYscHsRK0roSaBGnia8derM+c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzw10EM7QVDeDDNpx/ze5IBUAGZEPhJiVxGONfx5hDy/OFc/zHW
+	INSKcJzK1oXndmB0ZC601yZlHNfJmwGLyUdIAkq7xVfw4shJsukoIJmTXfZV0DY0r/E=
+X-Gm-Gg: ASbGncutW0EechOgoUzBLh8AjsCj147eai+tKA6tkAwCY8Y9u142mhhsD+QL5eL0vMS
+	QuICXes9PgqnC6jbmX9JBzxxTN6pkSrkKxkp9d1rXZcC/MyVet1KgYnkVvMJ7IYph/JUODMKHDS
+	khh61D/Vity+OZcDKG0zRYZtpYbGFMc6pBkiWbLSt0/RguwicGaiIwPGjEYeOKvzXMbcxcUDLKW
+	ZsfRHL6OdJivDAZ4zpjagFG3Mp5E/n10MpxGm24ZPWw0PHUGxaueh899MgdrSpSNKOgSfn3V2z6
+	SEzMMqYTFmSaDoBCLuu2QnG9KqWI4SW48cTDD5p/5joJp7q4iKC9iKmpjM5zYEjDEMjvVZzP6vS
+	NyJyD1b+oNzqQG2nEG22o4Wjw0EnOp/KjahPA7lB06Q==
+X-Google-Smtp-Source: AGHT+IEw3Mcsz89XFSoarNt5H3TImNWXTbq78NJurRa8he4GJCSKW9GRBJizI3fHv5QihPCFF6p8UA==
+X-Received: by 2002:a05:6402:13cb:b0:612:ce8b:8e2b with SMTP id 4fb4d7f45d1cf-612ce8b9481mr223054a12.7.1752819413593;
+        Thu, 17 Jul 2025 23:16:53 -0700 (PDT)
 Received: from [192.168.1.29] ([178.197.222.89])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-612c90d671bsm476342a12.73.2025.07.17.23.14.34
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-612c8f335e9sm489075a12.17.2025.07.17.23.16.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Jul 2025 23:14:35 -0700 (PDT)
-Message-ID: <e461e5ed-f512-4d3b-9903-8092dab7f81d@linaro.org>
-Date: Fri, 18 Jul 2025 08:14:33 +0200
+        Thu, 17 Jul 2025 23:16:52 -0700 (PDT)
+Message-ID: <b8d6edef-6809-4166-b936-fd000513df90@linaro.org>
+Date: Fri, 18 Jul 2025 08:16:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,27 +82,31 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 00/10] Axiado AX3000 SoC and Evaluation Board Support
-To: Harshit Shah <hshah@axiado.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Arnd Bergmann <arnd@arndb.de>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Jan Kotas <jank@cadence.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>,
- Michal Simek <michal.simek@amd.com>, =?UTF-8?Q?Przemys=C5=82aw_Gaj?=
- <pgaj@cadence.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Frank Li <Frank.Li@nxp.com>, Boris Brezillon <bbrezillon@kernel.org>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
- "soc@lists.linux.dev" <soc@lists.linux.dev>,
- "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
- "linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>
-References: <20250703-axiado-ax3000-soc-and-evaluation-board-support-v6-0-cebd810e7e26@axiado.com>
- <b7322d03-2ff9-48a3-bdc6-0e95382ed83f@axiado.com>
+Subject: Re: [PATCH v3 1/5] dt-bindings: Fixup x1e80100 to add DP MST support
+To: Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <lumag@kernel.org>, Sean Paul <sean@poorly.run>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>,
+ Abel Vesa <abel.vesa@linaro.org>, Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Mahadevan <quic_mahap@quicinc.com>,
+ Krishna Manikandan <quic_mkrishn@quicinc.com>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Rob Clark <robin.clark@oss.qualcomm.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>, Danila Tikhonov
+ <danila@jiaxyga.com>, cros-qcom-dts-watchers@chromium.org
+Cc: Abhinav Kumar <abhinav.kumar@oss.qualcomm.com>,
+ linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ Yongxing Mou <quic_yongmou@quicinc.com>
+References: <20250717-dp_mst_bindings-v3-0-72ce08285703@oss.qualcomm.com>
+ <20250717-dp_mst_bindings-v3-1-72ce08285703@oss.qualcomm.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -149,46 +153,24 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  h0At/TN/618e/QVlZPbMeNSp3S3ieMP9Q6y4gw5CfgiDRJ2K9g99m6Rvlx1qwom6QbU06ltb
  vJE2K9oKd9nPp1NrBfBdEhX8oOwdCLJXEq83vdtOEqE42RxfYta4P3by0BHpcwzYbmi/Et7T
  2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <b7322d03-2ff9-48a3-bdc6-0e95382ed83f@axiado.com>
+In-Reply-To: <20250717-dp_mst_bindings-v3-1-72ce08285703@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 18/07/2025 01:48, Harshit Shah wrote:
-> On 7/3/2025 11:20 AM, Harshit Shah wrote:
->> CAUTION: This email originated from outside of the organization. Do not click links or open attachments unless you recognize the sender and know the content is safe.
->>
->>
->> This patch series adds initial support for the Axiado AX3000 SoC and its
->> evaluation board.
->>
->> The AX3000 is a multi-core system-on-chip featuring four ARM Cortex-A53
->> cores, secure vault, hardware firewall, and AI acceleration engines. This
->> initial support enables basic bring-up of the SoC and evaluation platform
->> with CPU, timer, UART, and I3C functionality.
->>
->> The series begins by adding the "axiado" vendor prefix and compatible
->> strings for the SoC and board. It then introduces the device tree files
->> and minimal ARCH_AXIADO platform support in arm64.
->>
->> Patch breakdown:
->>    - Patch 1 add the vendor prefix entry
->>    - Patch 2 document the SoC and board bindings
->>    - Patch 3 convert cdns,gpio.txt to gpio-cdns.yaml
->>    - Patch 4 add binding for ax3000 gpio controller
->>    - Patch 5 add binding for ax3000 uart controller
->>    - Patch 6 add binding for ax3000 i3c controller
->>    - Patch 7 add Axiado SoC family
->>    - Patch 8 add device tree for the ax3000 & ax3000-evk
->>    - Patch 9 add ARCH_AXIADO in defconfig
->>    - Patch 10 update MAINTAINERS file
+On 18/07/2025 01:28, Jessica Zhang wrote:
+> From: Abhinav Kumar <quic_abhinavk@quicinc.com>
 > 
-> Hi all,
+> Add x1e80100 to the dp-controller bindings, fix the
+> displayport-controller reg bindings, and drop
+> assigned-clock-parents/assigned-clocks
 > 
-> This patch series was reviewed by Krzysztof, and I am wondering if it’s 
-> queued for the next merge window. Thanks in advance!
+> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> Reviewed-by: "Rob Herring (Arm)" <robh@kernel.org>
 
-It's not, unless you received clear notice about it. Please read
-maintainer soc profile how to send patches for merging.
+
+That's not a correct tag really - drop the quotes. If this was added by
+b4, I think you might be using an older version.
+
 
 Best regards,
 Krzysztof
