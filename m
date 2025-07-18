@@ -1,102 +1,160 @@
-Return-Path: <linux-kernel+bounces-736956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6783B0A5BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:59:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED116B0A5BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:59:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 619CE587A52
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:59:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B65F0A461F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA2512DCF43;
-	Fri, 18 Jul 2025 13:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="IUiiHLhp"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A552DCBF4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D2332417F0;
 	Fri, 18 Jul 2025 13:59:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RNa5fV1F"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895A52D9ECB
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 13:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752847147; cv=none; b=Pg7o0b7aPV8OqvRERhle6An4+Br3YtrvzatC3nNpPtqKn+CP4rCCROQrYhzfB87uvKZOQTynV0J5ZAqADKchdcS7D/e9ERoZTesnCGeiiajoHjh+VlxS+8OxQjnm7079iYgk/3jCLGtuJGWnRev7VDSDWWv2HuJjfZTGOZjynfU=
+	t=1752847144; cv=none; b=lfBFf9tux4v3oZDHeGtrcixUkoaS5ccu7yxpD6Uc1wSF9V1Kyg/TCllCnvK6XlUZct7UJ3xtcS4nPMHsF9x6hclYB3WB7oDRuSLWb/dM2i8qnKL/77Z/TzkewG/rBdB37S+KUVUcA0zyNIUn5JWPGj5k4uFfAFfigt2wAySBXtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752847147; c=relaxed/simple;
-	bh=SO1Cr+JxrwDRiS2YlUtLUAroPiRof0FTOjcUxa99jXk=;
+	s=arc-20240116; t=1752847144; c=relaxed/simple;
+	bh=dBAySTjZLDSr5IuXrPz25bJ1X/90AQ9ByyWDnzZ80rk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oj3Yq4EXjwECUwgRv7BfXSJ7IpVaVxyjibQaiyG06OYx2TNnySJ8gPTAUO97iD9pcnNCb+9NbRdTR4Nop1tWEIgRPKA1/KUS/WOMici2bw1I2SA8TM4MtreCj424r+u18PniiRXO4WeAv5n+Uehpd/VGHRPPumSit5YOLUhL/GU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=IUiiHLhp; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=FQcWQcpCN3Y38GiMafZhnaGAa0aOJeciEQGMTqzhgqA=; b=IUiiHLhpgrjin89G6aItM/YNWq
-	XGLY+ySPIaUr1cTGwXlZc3vZv2Jy9bCtH7sIy+BaxVL2lhaMnfJEC4W8wJzLfwWDleO0tQKGDd3bK
-	TOD7mVUqHdxNIKz4q1V/GVhsmTJgQ+hEgHvkWODkFHVW3+6C8l+klvmfwCkH8v6Z0hko=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uclc0-001zmJ-FE; Fri, 18 Jul 2025 15:58:56 +0200
-Date: Fri, 18 Jul 2025 15:58:56 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-	Andre Edich <andre.edich@microchip.com>,
-	Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCH net v4 0/3] net: phy: smsc: use IRQ + relaxed polling to
- fix missed link-up
-Message-ID: <657997b5-1c20-4008-8b70-dc7a7f56c352@lunn.ch>
-References: <20250714095240.2807202-1-o.rempel@pengutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=R7ugTxMRYYLs8RNzFdi5Y5id4jWrDiGwBd0USOuxbY9dKMn4fx2bXA3s6vX4GrkVs4LU5WWl53ZmC3ItYadTE99MNYhyD6/7zWSmQOntzPxFGpTeZex3lH2x+DevE+14kT73PWpRVn+/ldBwI/0Q1JWVABZ9jKiFHfIV+mgdwm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RNa5fV1F; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ad56cbc7b07so349828066b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 06:59:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1752847141; x=1753451941; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dBAySTjZLDSr5IuXrPz25bJ1X/90AQ9ByyWDnzZ80rk=;
+        b=RNa5fV1FleX/9xFN6NOgEtOQWtl7cCr+mwBNSV43QMl+O0YyvGLdDocyLoFM4so9Qx
+         FwXF8WwqBTIxI65aOSCjeyhU5acr+FO+YPSnoQt1v/Gi+FYvr6ZrWgaMYdI16IM36o9f
+         p4MGkdmIpwyIwIEioVT7ZjXMoueya46GTK+flnBCe/IgdMKTWOch4eg5houdD4QMAUlw
+         sM+1J96HEdA1seOA1HBqbsokkh0DURSgKlQ5lvHfPZBvCqqSOTiubaKkRNMvcu6/ITUT
+         KNxb7CR92H+fWqUE9VtoDapLcIKa0HeNrR4StVF06AQmpWgn69v0E+oNUMTQBh20LGSV
+         kbCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752847141; x=1753451941;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dBAySTjZLDSr5IuXrPz25bJ1X/90AQ9ByyWDnzZ80rk=;
+        b=M/zPv4OzFCSOYBW0XW4L4V/2CZOYi+avGZwW4uAoCiRjdtUOqCCi705IUFFZj6sZRZ
+         rPmUwJBRqnPJ78vCv0dYQRQQuK//M6RWhPl19T6ENRiRRM/bwLyuKjG5NWrNEZWJhQiE
+         DKQpN06zfNdfpaYuURBp6l+TkM8CVzIs6B5ECoE6cboVi1DA2MbIctuL0IkveX5ZcX+w
+         fNSpgyvYbqPQsVQ3p270+JnMdYn2/P/RYsF7+wE3mhHM6yezwQ2Tc9GLKPuIhHRgDd36
+         dpWATClO16N8YeQ6K7WIKfrbHdRuFaSZ8Ao1AIpbn0sGn6rhziNKLhpZEjRtlpaj5jQf
+         Iy8g==
+X-Forwarded-Encrypted: i=1; AJvYcCVMVgfxcny8K8iEZZivxXIficBsybFBCBN1BhxVGKil9DzgiZKqK0HM1nzfyVaUjr/kc1XIIbXLkmVWheI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7I8EHIdRYn4QSisu4YfYZ1x20G24zeyYovC/E8d4oggBBxrBF
+	iX2x+BgN5FILknYzE333bqyaAPlq4045Y5y4oLsC3DJ17H/smfC/LVsSEY+MaYUUm0U=
+X-Gm-Gg: ASbGncuBKx/vEL2cwdW6w2S1UVDzLA/IwGyoHjLRGN59K2Ox9bBzVcKbOCX2Iad02ES
+	y7vrhn+Ezgbc9DNxXLNnfUBPhVSbHE/gBMn1feoHjJBQwIpYeFsp+2RUM7vsEf02TsE6shI53o6
+	5vLhGyKjwRCe418xqW5e/f4Leh3lMQoCxsEzwjiIrpfHY1ePEmb90TD957fQGh9X+KGMSj1+chS
+	prnSwvgoeITEcqgAAXAopi7JhyRsfHTHBealkgnW5bssaIMvf2Mcc+Xg3mZCzsv6XTvDZ90OK0T
+	FzpWDsgCEM7JVbMVSRHJncgEWB6CXYAii8ns+DYT/lyDty0G+8gfB4pKYd/rIfHMRxslpbpmEyF
+	6IzG5tmStUoES2ccINoW37zjMbhRemED8o3iQUzedJigA5TE8WMZq
+X-Google-Smtp-Source: AGHT+IH+sgJFyUyQKgY2XKEhVrbznW4wwWr0AO9ynVBplbDQ+J/igjMzNMWoDYMl7tWlzO6whvyMQw==
+X-Received: by 2002:a17:907:f1ea:b0:add:fe17:e970 with SMTP id a640c23a62f3a-ae9cddfe2e8mr1062342266b.14.1752847140692;
+        Fri, 18 Jul 2025 06:59:00 -0700 (PDT)
+Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6ca7e090sm128196066b.115.2025.07.18.06.58.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Jul 2025 06:59:00 -0700 (PDT)
+Date: Fri, 18 Jul 2025 15:58:58 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Chen Ridong <chenridong@huaweicloud.com>
+Cc: Tejun Heo <tj@kernel.org>, Tiffany Yang <ynaffit@google.com>, 
+	linux-kernel@vger.kernel.org, John Stultz <jstultz@google.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
+	Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Pavel Machek <pavel@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Chen Ridong <chenridong@huawei.com>, kernel-team@android.com, Jonathan Corbet <corbet@lwn.net>, 
+	cgroups@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: cpu.stat in core or cpu controller (was Re: [RFC PATCH v2] cgroup:
+ Track time in cgroup v2 freezer)
+Message-ID: <jyvlpm6whamo5ge533xdsvqnsjsxdonpvdjbtt5gqvcw5fjp56@q4ej7gy5frj7>
+References: <20250714050008.2167786-2-ynaffit@google.com>
+ <5rm53pnhpdeqljxqywh26gffh6vlyb5j5s6pzxhv52odhkl4fm@o6p7daoponsn>
+ <aHktSgmh-9dyB7bz@slm.duckdns.org>
+ <mknvbcalyaheobnfeeyyldytcoyturmeuq3twcrri5gaxtjojs@bbyqhshtjfab>
+ <180b4c3f-9ea2-4124-b014-226ff8a97877@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pcvygoatcygfglbi"
 Content-Disposition: inline
-In-Reply-To: <20250714095240.2807202-1-o.rempel@pengutronix.de>
+In-Reply-To: <180b4c3f-9ea2-4124-b014-226ff8a97877@huaweicloud.com>
 
-On Mon, Jul 14, 2025 at 11:52:37AM +0200, Oleksij Rempel wrote:
-> This series makes the SMSC LAN8700 (as used in LAN9512 and similar USB
-> adapters) reliable again in configurations where it is forced to 10 Mb/s
-> and the link partner still advertises autonegotiation.
 
-I've seen a comment from another Maintainer that thinks this is rather
-hackish. I tend to agree, you are adding complexity to the core to
-handle one broken PHY, and a corner case in that PHY. It would be
-better to hide as much of this in the PHY driver.
+--pcvygoatcygfglbi
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: cpu.stat in core or cpu controller (was Re: [RFC PATCH v2] cgroup:
+ Track time in cgroup v2 freezer)
+MIME-Version: 1.0
 
-I'm wondering if there is a much simpler solution, which does not need
-the core changing. Have the driver dynamically flip between interrupts
-and polling, depending on the link mode.
+On Fri, Jul 18, 2025 at 05:26:54PM +0800, Chen Ridong <chenridong@huaweicloud.com> wrote:
+> With the recent merge of the series "cgroup: separate rstat trees," the rstat are not bound to CPU
+> system. This makes me wonder: should we consider moving the cpu.stat and cpu.stat.local interfaces
+> to the CPU subsystem?
 
-Start up in the usual way. If the platform supports interrupts, let
-the core get the interrupt, install the handler and use
-interrupts. Otherwise do polling.
+Note that fields printed in cpu.stat are combination of "core" and cpu
+controller values.
 
-If .config_aneg() puts the PHY into the broken state, forced to 10
-Mb/s, and interrupts are used, set phydev->irq = PHY_POLL, and call
-phy_trigger_machine() to kick off polling.
+> The CPU subsystem could then align more closely with other resource controllers like memory or I/O
+> subsystems. By decoupling these CPU-specific statistics from the cgroup core, it could help keep
+> both cgroup and rstat implementations more focused.
 
-If .config_aneg() is called to take it out of the broken state,
-restore phydev->irq. An additional poll up to one second later should
-not cause any issues.
+In my eyes, cpu controller is stuff encapsulated by cpu_cgrp_subsys. I'm
+not sure I understand what you refer to as the CPU subsystem.
 
-I don't think this needs any core code changes.
+One thing is how it is presented to users (filenames and content)
+another one is how it is implemented. The latter surely can be
+refactored but it's not obvious to me from the short description, sorry.
 
-Maybe there is an issue with phy_free_interrupt() being called while
-irq has been set to polling? You might be able to use the
-phy_driver.remove() to handle that?
+> Is there any particular reason why the CPU subsystem must remain bound
+> to the cgroup core?
 
-	Andrew
+The stuff that's bound to the core is essentially not "control" but only
+accounting, so with this association, the accounting can have fine
+granularity while control (which incurs higher overhead in principle)
+may remain coarse. I find it thus quite fitting that CPU stats build on
+top of rstat.
+(Naturally, my previous claim about overhead is only rough and it's the
+reason for existence of adjustments like in the commit 34f26a15611af
+("sched/psi: Per-cgroup PSI accounting disable/re-enable interface").)
+
+Thats how I see it, happy to discuss possible problems you see with
+this.
+
+Michal
+
+--pcvygoatcygfglbi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaHpTHwAKCRB+PQLnlNv4
+COgNAQDrEy0E9hAGbZwxjNSPxRuYduBTsT6UA7HhF5QZiq6d+QEAxP7kauFGRgUt
+42uZq96E29hzx+xTrawPXSvIvUmjIAk=
+=cdEY
+-----END PGP SIGNATURE-----
+
+--pcvygoatcygfglbi--
 
