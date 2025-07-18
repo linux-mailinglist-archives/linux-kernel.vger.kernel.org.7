@@ -1,152 +1,65 @@
-Return-Path: <linux-kernel+bounces-737097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C54BB0A7C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:41:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CFB5B0A7C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:42:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B649A5C50C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:37:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36933161450
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003FC2E3B0C;
-	Fri, 18 Jul 2025 15:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="WwunbJb/"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027CB2DFA22;
-	Fri, 18 Jul 2025 15:32:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3FE02E540D;
+	Fri, 18 Jul 2025 15:34:04 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 523492DFA5B;
+	Fri, 18 Jul 2025 15:34:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752852744; cv=none; b=j3pz9YlM+74UDm8bvQQZm8uEjUzaCBLgIGcBcWm+dlrASFsBAS7LdS6e6XzBmLtMOLsnZt1SZN6oCWfhtq809EjaateHX2HPZ8/V04VaEBLhaD+wqoGeJvg+n0x7YPPp4GcUGqkWcavUB11uEFjISMC7U01SsoJsBQPN7qJTqg0=
+	t=1752852844; cv=none; b=uyDx60x/s6u3pfoHiyf5PZw4nVoELoiFcVVOT03hEwfj3p5d+z4o9ieeOkh7ZJaqFBt6IbhVTm06VKp3OVHvfi3PechDwb7E7nn24EzTUBqHTTu076MdNMTTDEnJ8PvDQCQOqEK4nPgU4rVuIPVlYyTOc0cfuXzkMh1SFxNCmQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752852744; c=relaxed/simple;
-	bh=IfXYazO8MYngKiT6clRs5Ye9Jvm86BEkHdyjgYMD/Ro=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Mo9B56bIndViBcDquZw9NxTBwqMHh7nQkCMnk2Ma0c/Qr/0LA4kYkfxT3CsyLiYYDfBt3dHzo5q7jgP0gC2djMjUVAyNSJMOup5TLLD9i3cg4C03Mvh4PjxOaKWulxdSlMG4jrFpqWzlQB3PbGH3Ohu0ZysYUR/2IOo7/dN4Zco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=WwunbJb/; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from narnia (unknown [40.78.13.147])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 77419211FEB6;
-	Fri, 18 Jul 2025 08:32:21 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 77419211FEB6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1752852742;
-	bh=oaxnkh80pZIn881aHd/5LYCJu4VLzaMbwjcsJ/LtHk4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=WwunbJb/iCyVuzlPFGttLFI0s3i9lX6BIiPySY7K+CkC2kQ9nW8nkth9fhwj1U0R+
-	 YGWrwuODPnVGd6wXzxlX8DqL20iVH1RUEZ8SYELyANzCyDe7Wf3eRyoeuvLAkRJPrt
-	 aZDeBy2pkPjKXbAQwPLXYqV3th4eecNRnUzo664c=
-From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-To: Song Liu <song@kernel.org>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley
- <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>,
- Casey Schaufler <casey@schaufler-ca.com>, John Johansen
- <john.johansen@canonical.com>, Christian =?utf-8?Q?G=C3=B6ttsche?=
- <cgzones@googlemail.com>, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org, selinux@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH] lsm,selinux: Add LSM blob support for BPF objects
-In-Reply-To: <CAPhsuW6K95bnGvRVOKj-qBJT7DX8JsaO6WZMNauMi1GEqVT1FA@mail.gmail.com>
-References: <20250715222655.705241-1-bboscaccy@linux.microsoft.com>
- <CAPhsuW6K95bnGvRVOKj-qBJT7DX8JsaO6WZMNauMi1GEqVT1FA@mail.gmail.com>
-Date: Fri, 18 Jul 2025 08:32:20 -0700
-Message-ID: <878qkl4irf.fsf@microsoft.com>
+	s=arc-20240116; t=1752852844; c=relaxed/simple;
+	bh=bMAYp832eJRbFhvQyNN9lKM9IWpAlp4UHAZ5J01nJso=;
+	h=From:Subject:Date:Message-ID:To; b=SbjrItJnE9LzoGBtNfJ4xrVlPMiIMzwZFWBT6aegwnrgIBxusQhdNdRQuquoesKXnHczq0wtC2f93vzcwcPhcMLhqT0YZS+ryjfEPXAAnwsH0gmslIYdJlOhmfYpfatloe68YvYforEPtv3Qf0+SzTeuXoJV0ptQ8uJRkZQ5puQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C33C3C4CEEB;
+	Fri, 18 Jul 2025 15:34:03 +0000 (UTC)
+From: Joseph Salisbury <joseph.salisbury@oracle.com>
+Subject: [ANNOUNCE] 5.15.189-rt87
+Date: Fri, 18 Jul 2025 15:33:18 -0000
+Message-ID: <175285279834.432835.7598065816181540951@jupiter>
+To: LKML <linux-kernel@vger.kernel.org>,linux-rt-users <linux-rt-users@vger.kernel.org>,Steven Rostedt <rostedt@goodmis.org>,Thomas Gleixner <tglx@linutronix.de>,Carsten Emde <C.Emde@osadl.org>,John Kacur <jkacur@redhat.com>,Sebastian Andrzej Siewior <bigeasy@linutronix.de>,Daniel Wagner <daniel.wagner@suse.com>,Clark Williams <williams@redhat.com>,Pavel Machek <pavel@denx.de>,Joseph Salisbury <josephtsalisbury@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
 
-Song Liu <song@kernel.org> writes:
+Hello RT-list!
 
-> On Tue, Jul 15, 2025 at 3:27=E2=80=AFPM Blaise Boscaccy
-> <bboscaccy@linux.microsoft.com> wrote:
-> [...]
->> +/**
->> + * lsm_bpf_map_alloc - allocate a composite bpf_map blob
->> + * @map: the bpf_map that needs a blob
->> + *
->> + * Allocate the bpf_map blob for all the modules
->> + *
->> + * Returns 0, or -ENOMEM if memory can't be allocated.
->> + */
->> +static int lsm_bpf_map_alloc(struct bpf_map *map)
->> +{
->> +       if (blob_sizes.lbs_bpf_map =3D=3D 0) {
->> +               map->security =3D NULL;
->> +               return 0;
->> +       }
->> +
->> +       map->security =3D kzalloc(blob_sizes.lbs_bpf_map, GFP_KERNEL);
->> +       if (!map->security)
->> +               return -ENOMEM;
->> +
->> +       return 0;
->> +}
->> +
->> +/**
->> + * lsm_bpf_prog_alloc - allocate a composite bpf_prog blob
->> + * @prog: the bpf_prog that needs a blob
->> + *
->> + * Allocate the bpf_prog blob for all the modules
->> + *
->> + * Returns 0, or -ENOMEM if memory can't be allocated.
->> + */
->> +static int lsm_bpf_prog_alloc(struct bpf_prog *prog)
->> +{
->> +       if (blob_sizes.lbs_bpf_prog =3D=3D 0) {
->> +               prog->aux->security =3D NULL;
->> +               return 0;
->> +       }
->> +
->> +       prog->aux->security =3D kzalloc(blob_sizes.lbs_bpf_prog, GFP_KER=
-NEL);
->> +       if (!prog->aux->security)
->> +               return -ENOMEM;
->> +
->> +       return 0;
->> +}
->> +
->> +/**
->> + * lsm_bpf_token_alloc - allocate a composite bpf_token blob
->> + * @token: the bpf_token that needs a blob
->> + *
->> + * Allocate the bpf_token blob for all the modules
->> + *
->> + * Returns 0, or -ENOMEM if memory can't be allocated.
->> + */
->> +static int lsm_bpf_token_alloc(struct bpf_token *token)
->> +{
->> +       if (blob_sizes.lbs_bpf_token =3D=3D 0) {
->> +               token->security =3D NULL;
->> +               return 0;
->> +       }
->> +
->> +       token->security =3D kzalloc(blob_sizes.lbs_bpf_token, GFP_KERNEL=
-);
->> +       if (!token->security)
->> +               return -ENOMEM;
->> +
->> +       return 0;
->> +}
->
-> We need the above 3 functions inside #ifdef CONFIG_BPF_SYSCALL.
->
-> Also, can we use lsm_blob_alloc() in these functions?
->
-> Thanks,
-> Song
+I'm pleased to announce the 5.15.189-rt87 stable release.
 
-Sure, I'll get that fixed in V2. Thanks
+You can get this release via the git tree at:
 
--blaise
+  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
 
->
-> [...]
+  branch: v5.15-rt
+  Head SHA1: c3e1fdf3f5e8407ab50b9dc1ac0d346dcd1a5ed9
+
+Or to build 5.15.189-rt87 directly, the following patches should be applied:
+
+  https://www.kernel.org/pub/linux/kernel/projects/rt/5.15
+
+  https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.15.tar.xz
+
+  https://www.kernel.org/pub/linux/kernel/v5.x/patch-5.15.189.xz
+
+  https://www.kernel.org/pub/linux/kernel/projects/rt/5.15/patch-5.15.189-rt87.patch.xz
+
+
+Enjoy!
+Joseph Salisbury
 
