@@ -1,128 +1,219 @@
-Return-Path: <linux-kernel+bounces-736987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A165B0A659
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 16:27:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D61FB0A65C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 16:28:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9F24AA0582
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:24:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80D093A43EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:27:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF5A42DCC1B;
-	Fri, 18 Jul 2025 14:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 920B72DCBF5;
+	Fri, 18 Jul 2025 14:27:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cG+t1gbV"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kpqpYlSK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C162DC32A
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 14:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03513398B;
+	Fri, 18 Jul 2025 14:27:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752848659; cv=none; b=Imy3/Xn7pKAKwYJr/nQ+ZxMYLiK+fZTo9cLfurv74NAurl163cK6DMeqGfxM7S89KjOKW0UcpWbjvFM5wRKHjsNxuv+PHmmwSfSZC2wZarpsRZ1oxDYbmsyIh02YRJaRKtKoOYP6XzTItVfNyaPfbVpOSy0JYfULfr327DAASzQ=
+	t=1752848864; cv=none; b=jg3w8d0Inu4wJ3qc5LgJpHZjQGl98u1oAFQKKtVcwU/0AhZDwr1oqHs39PTaK+vp3ZHjjJ7rFhTT633bHIO+FSWPxolVjCb06Lh6mcEwY0hPmACHtV0pj3/SeEe4Fej9UO1HplMUROQGe3knqtUDit4mI0QAKZ/uvJ1ythfNF3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752848659; c=relaxed/simple;
-	bh=FFrCa5VooVpyL6t+rp9PLQD687b0bErglenPWh/5Hpk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=qUXkqXR1hFa7ICawGCmmnqoC8ZD/f7EdR538MHwvUTSAvKspo3iRdfBifsUXShPIb3+vu6WT8BAr9sHp38wmZrH0C4ejPnQu7GvjKJdR1WAjTm16hOngYlY2jrnjnb3KXYpGFdjRJojkvnhH6hyNBSUFJVwMxrsw8/ePAfJOuDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cG+t1gbV; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-31215090074so3335582a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 07:24:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752848657; x=1753453457; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bXQCgpJ3ALeYg67rn3jChwNusOdYOZpmwsnTvicwZkE=;
-        b=cG+t1gbViyhf00qEwo9DyL3lrmLpbopjT17JddZ/k5QsbUCEtr1UeIJMkFcsuumZV/
-         zxEILHayN1tQoYztkpj9hbw2/KA6IYdsQA5mBSUIJ5Yvgwe8ntzfqerG/BHfgswx7XcA
-         sRPuDzqb03mWS14XusiXt1WFW2jnhGHlh77dK+E4WD/xZnB29bXYGaqcVu9HxR5EraWB
-         GpwcWLJRmfJQydqkKjXrPzEwdKMF1Ctvt05fxQ3+gcXa/bPo0s2edOt30XX1PNorK8HV
-         1B/FMSlgd4nNaN19xkYJc43OHChRxmBLK7zjWT3ATVoso7G7mihfgIElafMJyQvdSUsR
-         UpPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752848657; x=1753453457;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bXQCgpJ3ALeYg67rn3jChwNusOdYOZpmwsnTvicwZkE=;
-        b=cFCIMznLbl1n0Q+3efLdGkGJksOs2tM51l9S3d2PIs1yEMyqhoHK6c4G1/gsJMtMCe
-         2cqYMXC9rCCzwwRwbe90SnAOIJ2Th3QhSFZboxPdwpPruTFBlPkLdhfKC053uPB04Cou
-         ThRVmVuEZskngv3SkKFHf7Ih2eUmG7COrT9u1AUkt/fN5IW1p9PifJv6h6xcTP8Gt8DG
-         xJeXVg1/gWOIjPeijrhxsIynAQ4uGa3jUhzPTicsk5g0WqpVW4Yx3DeqpIfCtcCODvpZ
-         ouh+mo495yYYqw90zs1csD42X6xxb9obUt84jNdRcP9DDiISh0i53vcaaRkjID7DJ00I
-         hh1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCULITtbkh4QcRBKr32ePo8plxVDmJ1smDCw85QH8giK5LbmO2c5fOlkmI1sR927o57a3q7aSAIHXHHp3Z8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyXLRkjypNdFOkzX/YeLe1IM38Vibb5Mu31FYecHOJbCLdMWdy
-	nMFERhyeC0XKbo5unIL2Y5ND3Bhm+CJ4u88pnTVYLE+2jSIIgKFCUxk+6D8e8G5e3+xEKHFy1bm
-	JJraYSw==
-X-Google-Smtp-Source: AGHT+IFMA48gA7eMpiESjVXmxC6/DuagpArlIqkPqyhV38yWM3iTowC/OPY61++IJe7i6kOBC6fMAdYeZUg=
-X-Received: from pjee6.prod.google.com ([2002:a17:90b:5786:b0:312:18d4:6d5e])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5604:b0:31c:38f8:7efb
- with SMTP id 98e67ed59e1d1-31c9f424137mr17837688a91.18.1752848657252; Fri, 18
- Jul 2025 07:24:17 -0700 (PDT)
-Date: Fri, 18 Jul 2025 07:24:15 -0700
-In-Reply-To: <6dl4vsf3k7qhx2aunc5vdhvtxpnwqp45lilpdsp4jksxtgdu6t@kubfenz4bdey>
+	s=arc-20240116; t=1752848864; c=relaxed/simple;
+	bh=OnxfV2yPEQVTv3ciBTrkkEXKVRS4lJt/Hwo5k2TvS+w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nGb/I9/Fu3htTARrlXXOiWPn8FmJv6FOIx1IZebeK6hA0hHKX/L6x0ZvHmaV6c+4f3bp8Eed149WjxqdI6HClhJhENP1EJ7IBRhl/cuGTNWgZm6bNih8z5FIhBoz3M1LAP5Q/LDJIIRM8Q4BSKXgNtH4Hr0GuPNijamDQd40BHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kpqpYlSK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F856C4CEEB;
+	Fri, 18 Jul 2025 14:27:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752848864;
+	bh=OnxfV2yPEQVTv3ciBTrkkEXKVRS4lJt/Hwo5k2TvS+w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kpqpYlSKyInOvbiMDs64WIZazYcsXfGEF5wAu3XhfYchOKHJ2U2M0wtuP86c4aFvG
+	 nrUlAcH5WpOlDuZGAK0+iBwCYanToDXMxe0khgDz/PW72ZnJC4TAo5li5LAiZ+HQrO
+	 QnvXSgQms2eMnTdzs4TLlc5rsZjbZp1anpZ6mqUjbwqKSZKj/aEc8b/zt4Z1Vvbuxv
+	 Hb6snd5Mkh0365llavrBzHGuAxohxjZ4EfdMrqXwW4DJAYGaFcc/aGCajJOSZ/3WBq
+	 gSWFlGCdagzcUnz909IN35j7TiqN/iNPLvepKR3xzK4bvVcid9+BZneRwyNBtrnIE4
+	 0yJ76B4jfOvjg==
+Date: Fri, 18 Jul 2025 15:27:39 +0100
+From: Simon Horman <horms@kernel.org>
+To: Himanshu Mittal <h-mittal1@ti.com>
+Cc: pabeni@redhat.com, kuba@kernel.org, edumazet@google.com,
+	davem@davemloft.net, andrew+netdev@lunn.ch,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, srk@ti.com,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Roger Quadros <rogerq@kernel.org>, danishanwar@ti.com,
+	m-malladi@ti.com, pratheesh@ti.com, prajith@ti.com
+Subject: Re: [PATCH net v3] net: ti: icssg-prueth: Fix buffer allocation for
+ ICSSG
+Message-ID: <20250718142739.GD2459@horms.kernel.org>
+References: <20250717094220.546388-1-h-mittal1@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1740036492.git.naveen@kernel.org> <330d10700c1172982bcb7947a37c0351f7b50958.1740036492.git.naveen@kernel.org>
- <aFngeQ5x6QiP7SsK@google.com> <6dl4vsf3k7qhx2aunc5vdhvtxpnwqp45lilpdsp4jksxtgdu6t@kubfenz4bdey>
-Message-ID: <aHpZD6sKamnPv9BG@google.com>
-Subject: Re: [PATCH v3 1/2] KVM: SVM: Increase X2AVIC limit to 4096 vcpus
-From: Sean Christopherson <seanjc@google.com>
-To: Naveen N Rao <naveen@kernel.org>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>, 
-	Vasant Hegde <vasant.hegde@amd.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250717094220.546388-1-h-mittal1@ti.com>
 
-On Fri, Jul 18, 2025, Naveen N Rao wrote:
-> On Mon, Jun 23, 2025 at 04:17:13PM -0700, Sean Christopherson wrote:
-> > On Thu, Feb 20, 2025, Naveen N Rao (AMD) wrote:
-> > > +		if (x2avic_4k_vcpu_supported) {
-> > > +			x2avic_max_physical_id = X2AVIC_MAX_PHYSICAL_ID_4K;
-> > > +			avic_physical_max_index_mask = AVIC_PHYSICAL_MAX_INDEX_4K_MASK;
-> > > +		} else {
-> > > +			x2avic_max_physical_id = X2AVIC_MAX_PHYSICAL_ID;
-> > > +			avic_physical_max_index_mask = AVIC_PHYSICAL_MAX_INDEX_MASK;
-> > > +		}
-> > > +
-> > > +		pr_info("x2AVIC enabled%s\n",
-> > > +			x2avic_4k_vcpu_supported ? " (w/ 4K-vcpu)" : "");
-> > 
-> > Maybe print the max number of vCPUs that are supported?  That way there is clear
-> > signal when 4k *isn't* supported (and communicating the max number of vCPUs in
-> > the !4k case would be helpful too).
+On Thu, Jul 17, 2025 at 03:12:20PM +0530, Himanshu Mittal wrote:
+> Fixes overlapping buffer allocation for ICSSG peripheral
+> used for storing packets to be received/transmitted.
+> There are 3 buffers:
+> 1. Buffer for Locally Injected Packets
+> 2. Buffer for Forwarding Packets
+> 3. Buffer for Host Egress Packets
 > 
-> I'm tempted to go the opposite way and not print that 4k vCPUs are 
-> supported by x2AVIC. As it is, there are many reasons AVIC may be 
-> inhibited and lack of 4k vCPU support is just one other reason, but only
-> for large VMs.
+> In existing allocation buffers for 2. and 3. are overlapping causing
+> packet corruption.
+> 
+> Packet corruption observations:
+> During tcp iperf testing, due to overlapping buffers the received ack
+> packet overwrites the packet to be transmitted. So, we see packets on
+> wire with the ack packet content inside the content of next TCP packet
+> from sender device.
+> 
+> Details for AM64x switch mode:
+> -> Allocation by existing driver:
+> +---------+-------------------------------------------------------------+
+> |         |          SLICE 0             |          SLICE 1             |
+> |         +------+--------------+--------+------+--------------+--------+
+> |         | Slot | Base Address | Size   | Slot | Base Address | Size   |
+> |---------+------+--------------+--------+------+--------------+--------+
+> |         | 0    | 70000000     | 0x2000 | 0    | 70010000     | 0x2000 |
+> |         | 1    | 70002000     | 0x2000 | 1    | 70012000     | 0x2000 |
+> |         | 2    | 70004000     | 0x2000 | 2    | 70014000     | 0x2000 |
+> | FWD     | 3    | 70006000     | 0x2000 | 3    | 70016000     | 0x2000 |
+> | Buffers | 4    | 70008000     | 0x2000 | 4    | 70018000     | 0x2000 |
+> |         | 5    | 7000A000     | 0x2000 | 5    | 7001A000     | 0x2000 |
+> |         | 6    | 7000C000     | 0x2000 | 6    | 7001C000     | 0x2000 |
+> |         | 7    | 7000E000     | 0x2000 | 7    | 7001E000     | 0x2000 |
+> +---------+------+--------------+--------+------+--------------+--------+
+> |         | 8    | 70020000     | 0x1000 | 8    | 70028000     | 0x1000 |
+> |         | 9    | 70021000     | 0x1000 | 9    | 70029000     | 0x1000 |
+> |         | 10   | 70022000     | 0x1000 | 10   | 7002A000     | 0x1000 |
+> | Our     | 11   | 70023000     | 0x1000 | 11   | 7002B000     | 0x1000 |
+> | LI      | 12   | 00000000     | 0x0    | 12   | 00000000     | 0x0    |
+> | Buffers | 13   | 00000000     | 0x0    | 13   | 00000000     | 0x0    |
+> |         | 14   | 00000000     | 0x0    | 14   | 00000000     | 0x0    |
+> |         | 15   | 00000000     | 0x0    | 15   | 00000000     | 0x0    |
+> +---------+------+--------------+--------+------+--------------+--------+
+> |         | 16   | 70024000     | 0x1000 | 16   | 7002C000     | 0x1000 |
+> |         | 17   | 70025000     | 0x1000 | 17   | 7002D000     | 0x1000 |
+> |         | 18   | 70026000     | 0x1000 | 18   | 7002E000     | 0x1000 |
+> | Their   | 19   | 70027000     | 0x1000 | 19   | 7002F000     | 0x1000 |
+> | LI      | 20   | 00000000     | 0x0    | 20   | 00000000     | 0x0    |
+> | Buffers | 21   | 00000000     | 0x0    | 21   | 00000000     | 0x0    |
+> |         | 22   | 00000000     | 0x0    | 22   | 00000000     | 0x0    |
+> |         | 23   | 00000000     | 0x0    | 23   | 00000000     | 0x0    |
+> +---------+------+--------------+--------+------+--------------+--------+
+> --> here 16, 17, 18, 19 overlapping with below express buffer
+> 
+> +-----+-----------------------------------------------+
+> |     |       SLICE 0       |        SLICE 1          |
+> |     +------------+----------+------------+----------+
+> |     | Start addr | End addr | Start addr | End addr |
+> +-----+------------+----------+------------+----------+
+> | EXP | 70024000   | 70028000 | 7002C000   | 70030000 | <-- Overlapping
+> | PRE | 70030000   | 70033800 | 70034000   | 70037800 |
+> +-----+------------+----------+------------+----------+
+> 
+> +---------------------+----------+----------+
+> |                     | SLICE 0  |  SLICE 1 |
+> +---------------------+----------+----------+
+> | Default Drop Offset | 00000000 | 00000000 |     <-- Field not configured
+> +---------------------+----------+----------+
+> 
+> -> Allocation this patch brings:
+> +---------+-------------------------------------------------------------+
+> |         |          SLICE 0             |          SLICE 1             |
+> |         +------+--------------+--------+------+--------------+--------+
+> |         | Slot | Base Address | Size   | Slot | Base Address | Size   |
+> |---------+------+--------------+--------+------+--------------+--------+
+> |         | 0    | 70000000     | 0x2000 | 0    | 70040000     | 0x2000 |
+> |         | 1    | 70002000     | 0x2000 | 1    | 70042000     | 0x2000 |
+> |         | 2    | 70004000     | 0x2000 | 2    | 70044000     | 0x2000 |
+> | FWD     | 3    | 70006000     | 0x2000 | 3    | 70046000     | 0x2000 |
+> | Buffers | 4    | 70008000     | 0x2000 | 4    | 70048000     | 0x2000 |
+> |         | 5    | 7000A000     | 0x2000 | 5    | 7004A000     | 0x2000 |
+> |         | 6    | 7000C000     | 0x2000 | 6    | 7004C000     | 0x2000 |
+> |         | 7    | 7000E000     | 0x2000 | 7    | 7004E000     | 0x2000 |
+> +---------+------+--------------+--------+------+--------------+--------+
+> |         | 8    | 70010000     | 0x1000 | 8    | 70050000     | 0x1000 |
+> |         | 9    | 70011000     | 0x1000 | 9    | 70051000     | 0x1000 |
+> |         | 10   | 70012000     | 0x1000 | 10   | 70052000     | 0x1000 |
+> | Our     | 11   | 70013000     | 0x1000 | 11   | 70053000     | 0x1000 |
+> | LI      | 12   | 00000000     | 0x0    | 12   | 00000000     | 0x0    |
+> | Buffers | 13   | 00000000     | 0x0    | 13   | 00000000     | 0x0    |
+> |         | 14   | 00000000     | 0x0    | 14   | 00000000     | 0x0    |
+> |         | 15   | 00000000     | 0x0    | 15   | 00000000     | 0x0    |
+> +---------+------+--------------+--------+------+--------------+--------+
+> |         | 16   | 70014000     | 0x1000 | 16   | 70054000     | 0x1000 |
+> |         | 17   | 70015000     | 0x1000 | 17   | 70055000     | 0x1000 |
+> |         | 18   | 70016000     | 0x1000 | 18   | 70056000     | 0x1000 |
+> | Their   | 19   | 70017000     | 0x1000 | 19   | 70057000     | 0x1000 |
+> | LI      | 20   | 00000000     | 0x0    | 20   | 00000000     | 0x0    |
+> | Buffers | 21   | 00000000     | 0x0    | 21   | 00000000     | 0x0    |
+> |         | 22   | 00000000     | 0x0    | 22   | 00000000     | 0x0    |
+> |         | 23   | 00000000     | 0x0    | 23   | 00000000     | 0x0    |
+> +---------+------+--------------+--------+------+--------------+--------+
+> 
+> +-----+-----------------------------------------------+
+> |     |       SLICE 0       |        SLICE 1          |
+> |     +------------+----------+------------+----------+
+> |     | Start addr | End addr | Start addr | End addr |
+> +-----+------------+----------+------------+----------+
+> | EXP | 70018000   | 7001C000 | 70058000   | 7005C000 |
+> | PRE | 7001C000   | 7001F800 | 7005C000   | 7005F800 |
+> +-----+------------+----------+------------+----------+
+> 
+> +---------------------+----------+----------+
+> |                     | SLICE 0  |  SLICE 1 |
+> +---------------------+----------+----------+
+> | Default Drop Offset | 7001F800 | 7005F800 |
+> +---------------------+----------+----------+
+> 
+> Rootcause: missing buffer configuration for Express frames in
+> function: prueth_fw_offload_buffer_setup()
+> 
+> Details:
+> Driver implements two distinct buffer configuration functions that are
+> invoked based on the driver state and ICSSG firmware:-
+> - prueth_fw_offload_buffer_setup()
+> - prueth_emac_buffer_setup()
+> 
+> During initialization, driver creates standard network interfaces
+> (netdevs) and configures buffers via prueth_emac_buffer_setup().
+> This function properly allocates and configures all required memory
+> regions including:
+> - LI buffers
+> - Express packet buffers
+> - Preemptible packet buffers
+> 
+> However, when the driver transitions to an offload mode (switch/HSR/PRP),
+> buffer reconfiguration is handled by prueth_fw_offload_buffer_setup().
+> This function does not reconfigure the buffer regions required for
+> Express packets, leading to incorrect buffer allocation.
+> 
+> Fixes: abd5576b9c57 ("net: ti: icssg-prueth: Add support for ICSSG switch firmware")
+> Signed-off-by: Himanshu Mittal <h-mittal1@ti.com>
 
-This isn't just about AVIC being inhibited though, it's about communicating
-hardware support to the admin/user.  While I usually advocate *against* using
-printk to log information, I find SVM's pr_info()s about what is/isn't enabled
-during module load to be extremely useful, e.g. as sanity checks.  I (re)load
-kvm-amd.ko on various hardware configurations on a regular basis, and more than
-once the prints have helped me "remember" which platforms do/don't have SEV-ES,
-AVIC, etc, and/or detect that I loaded kvm-amd.ko with the wrong overrides.
+Thanks for the updated patch description.
 
-> Most users shouldn't have to care: where possible, AVIC will be enabled 
-> by default (once that patch series lands). Users who truly care about 
-> AVIC will anyway need to confirm AVIC isn't inhibited since looking at 
-> the kernel log won't be sufficient. Those users can very well use cpuid 
-> to figure out if 4k vCPU support is present.
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-If there wasn't already an "x2AVIC enabled" print, I would probably lean toward
-doing nothing.  But since pr_info("x2AVIC enabled\n") already exists, and has
-plently of free space for adding extra information, there's basically zero downside
-to printing out the number of supported CPUs.  And it's not just a binary yes/no,
-e.g. I would wager most people couldn't state the number of vCPUs supported by
-the "old" x2AVIC.
+FTR, I did spend some time looking over the mappings described
+above and correlating them with both the code and the "Details" above.
+I agree with the analysis above and that the patchset addresses
+the problem as described.
+
+...
 
