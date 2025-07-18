@@ -1,150 +1,171 @@
-Return-Path: <linux-kernel+bounces-737399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B656B0AC00
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 00:12:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FBDDB0AC09
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 00:13:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB17516D93D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 22:12:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B74CB7B704D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 22:11:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53EA2206B1;
-	Fri, 18 Jul 2025 22:12:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aKX3zY8I"
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A18221F1A;
+	Fri, 18 Jul 2025 22:13:07 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B3DF211460
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 22:12:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC2F2206B1
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 22:13:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752876758; cv=none; b=ocDu0sonxaAdeSTIDc/Q14tNB2/DvXS+x3eYCwDVY3oiKR187AnhU64NBLbz0oaejCDL60U8/OR/olcf0UeMnxoKKeNWEDsRh08AkpBqRfueP+PQWmMjoBtgsZWSXBIzxjjFtx23rji3AwEcQUtmfZoAL/1OcAH5S8sIBx3oYxI=
+	t=1752876786; cv=none; b=GT0dAo4hwnhUChsRhWbPOBVF8IWd+T/qDwwq3HsFwrphxyFkBhjqLClT2fNKlBkSqyrB+z8QpZClV0O8fruru7RER9MQkdmMTj7WJu77nmvWMeM9jycTYOrsgfLjhYJofrQkSNMQM9mHXSa/d81KXkwc22AyauBwuUhee62oVyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752876758; c=relaxed/simple;
-	bh=s2LRce76CJwiXLOU9vnxXVPe7lpgVvqpKmVUxNBAKA8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MV78eAcNkP+Z2Izk9wlJSXpREIHijF7Ofb2otKKDCalKs8Jd6CvPkQ+UxyOZurfwuube1/sWwIRx/dQulIxUYDIRlEtfqGsdg29PxUzCKgQPT8yZWzHTYcTJpGTDy4d7tfnUiYBYvaqpfOzq+idq4DaDslJrdDe2N35hl8ddYqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aKX3zY8I; arc=none smtp.client-ip=209.85.222.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-87ec5e1cd4aso1367558241.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 15:12:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752876755; x=1753481555; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jIrNkVkuP3tAwP6xtLC+nJ+0yeYDuWdBnWckVwi1yf8=;
-        b=aKX3zY8IyhRL5ygkxH4rzsPpph1pnfHYjFBztqojBNBHMxIpuNJHJTUfkBNk/FduzB
-         N7Zzi3CmVBKhUFakBScu8qNqkY+h9IDacmtk4Fc8RIDk/MaqyUa4XbhlKaqyITwKDKvE
-         QXqmd3aLT+ZVytWlg7l+yNHWd6RzhgngE8zrnDSAyClY6GXNPEEwko21JL10llyWKS73
-         1I27MtLopbktErWvWz2X4zdlm0em6QmGmGGtG3fRDuJGx+Rs6F5jfvAXoPoEJ07DWrZ8
-         4AuRpSdo65WvAzl1weiRk8V98PA6jE0Amf2tYT2QsTgQ3fj9H3BO1yb0DFU0XIU0TgcD
-         NCHQ==
+	s=arc-20240116; t=1752876786; c=relaxed/simple;
+	bh=Md2GEhQKKoSiTiXgdl9/yCbGDs012KyERSRTD2DEi1I=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=TSyQhPIqdkhyfOwbeqTS8q1Sqz+FULoXeNLkI2A/G2FMvcp4GWiZseHEVN3igU52+79vezzOzOmhzOK5Vbc71wphT+/IWYGMEt1mpEnXq9M5m/X0G7dlf2ULvnjqSI9HYofCpaa+PC7723N5DzkKCNZ9cVR272+ephvX8S6LL8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-87b89891d5dso397205439f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 15:13:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752876755; x=1753481555;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jIrNkVkuP3tAwP6xtLC+nJ+0yeYDuWdBnWckVwi1yf8=;
-        b=QC3Fs59RsqfxATbsGY37/8J5fhgq8yr2vnesV6nu47oJYnGW8yVt/hRpQaNX2Jnxo3
-         6kOPfbHqx2WYteUXPVpnU/7lsDhbhSqiqIVw/tP2Bk7+pbDLNzWsfrGleRR/ZSM9pztr
-         AwDUymQje1LvXgYYvcxXxZdzg16jg3XXPLQQNJQohIWUjaiF93Y1ieheBfgNaLw4BYU+
-         xG60FQ9PShopAypz7dEPVXHwlpCk5dVnH9E2BSpnrEnfXh639qlA8TFP90E8rLcRI4e3
-         MPTWDvCV7u6o30Acg6Q67mPhyWCF0KYk1VT2jv5LZcBPWkRvllGDZp0RQE8vaujrezQn
-         geQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUjSqkhNdceqYjjKEulwsipAPAw06kLpfBIfKkPZU+9qefOcnmB78X6BRWWhe9RHMr+XOXd6MuoiUV3jw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+RlIIB4rRwHs6WRJ/I9MBb0AyaRAGjFliIpMYkRLgdEx1oNjI
-	1xl7gFsawkumpXA6enxvWLyiGgY51kJT07e3iVOFVPWJVxq1ytap7oMGzFgszekJC93KWO1R3+e
-	ud442yCl/lDB2r04LmBmleJmEvJEoceV044r4WNCF
-X-Gm-Gg: ASbGncvqjHGUvG19qbPcXN5ml4TnNX9gtebrsDfMMmqMXHP2R48dPsqg1Z7yJHlIsR1
-	QbTeRUw1TJWn66vQG+n06ajHXnjwV9c44vxma/N9nZVRywEtwYpjT15S4ql+0tbENiXiFirz79A
-	EJxkie/0mzpD981K5s+iAxcosQvTNKs0aODQzx8G3qR2eq8Sy1ek8Dbc1Jr+9PuDIGLAtqRnQ71
-	R8uHw==
-X-Google-Smtp-Source: AGHT+IHqzXLJx75F2qb9KYvvxpmMgwH/YmcBnQgwUFOH7sTlkDIVL8YHbPz1GDBuXdA7F8h/Zam9hm0TzgDZoiYbtXE=
-X-Received: by 2002:a05:6102:5804:b0:4e7:bf31:2f68 with SMTP id
- ada2fe7eead31-4f95f57dc6bmr6312022137.25.1752876755166; Fri, 18 Jul 2025
- 15:12:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752876784; x=1753481584;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=f6vM/WsIdrpLc11NRZhoJURG2Gp8OgVmC50TnPUYXMQ=;
+        b=rkHHiFGLo1wwGg/ZRLBPQLm9cfIVMhS8ohian+UYnqEFJ89wh3KVt/xF7mNWoMTvxR
+         6bIDJM4sSaYaVn8bYZA0w8qYILqUjCkiIFMzLwoIKL4QAjPVluf82l7PGckaD3m3BvJj
+         0mtN/2aN3CFKZTnXz9jdgxvuUo/DHiAK/Sft5ggJxilEp+27GX3FbxWzpDNcabAzbf0J
+         rM2oFVsPndc60DOscBVaKGBg40eua4pZ9GXzFXOdyTSoPKn1j+a9DXu1e/ZFtVeZJYIb
+         pkmJbAkhV1tn2oCdRg9JXED37Zd6lu06IR5wJr3hL1eXUyhVUMBdAHgBInEh4GGhrdDy
+         cXZw==
+X-Forwarded-Encrypted: i=1; AJvYcCXFzIKjILEegrQywa86SPj191SJn9a4WofdtHfMolnwWeE4SS70okbFog8h9BFgNQPA12UA2vZvEkMhEOg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSIa/5dgcWyu+xWFIzlV6MYWRdO073UTqabPqMy+ibakfntPd0
+	UhaG4Sx9KzF53Uiz2zcBNSNl/fvCj358mrROuELPuxupmTOnO0jpa4r8bqXQe3kdHjPxc0dG39D
+	BQmHIgWMRAzL+p/CQ0Y+6/dJRSZ6O6MEXucaXpqYybX6zSrO76w5zmMHAhPU=
+X-Google-Smtp-Source: AGHT+IF9ZMY8S101zfCsauPh8KYQDANhBrefVYiO+R15tbg54Ik++d5KsJX1Vvv3IdgQgTKjUtxmpOlB5q6MetEqW8awM/jZd8LY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250718071842.2483378-1-saravanak@google.com>
-In-Reply-To: <20250718071842.2483378-1-saravanak@google.com>
-From: Saravana Kannan <saravanak@google.com>
-Date: Fri, 18 Jul 2025 15:11:58 -0700
-X-Gm-Features: Ac12FXxTzaU3RgPlAaabBlkH1dGpCrRFrIZWUl1Wv2VlvLbK_ZMRbxI2isfJol8
-Message-ID: <CAGETcx86B52TLxR4=UHYfG3ZeOBa6_UV9b_b4zzbf=SbS5BPjA@mail.gmail.com>
-Subject: Re: [RFC PATCH v1] PM: wakeup: Provide interface for userspace to
- abort suspend
-To: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>, 
-	Pavel Machek <pavel@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Danilo Krummrich <dakr@kernel.org>
-Cc: kernel-team@android.com, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+X-Received: by 2002:a05:6602:1691:b0:876:c8e9:8b11 with SMTP id
+ ca18e2360f4ac-879c08c3de2mr1533833439f.8.1752876784225; Fri, 18 Jul 2025
+ 15:13:04 -0700 (PDT)
+Date: Fri, 18 Jul 2025 15:13:04 -0700
+In-Reply-To: <ci6d4nck2pydr7gprqmv5v5rudgx5wrt5xumkzrewnwol2p2z7@t6ksfe4l3ayu>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <687ac6f0.a70a0220.693ce.0070.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] KASAN: slab-use-after-free Write in bch2_get_next_dev
+From: syzbot <syzbot+2b98caf09c41174a9697@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 18, 2025 at 12:18=E2=80=AFAM Saravana Kannan <saravanak@google.=
-com> wrote:
->
-> Once suspend starts, it can take a while before file system sync
-> finishes and all the userspace threads are frozen. During this time,
-> there can be events that originate in userspace that would require the
-> suspend to be aborted.
->
-> The only way to abort suspend from userspace as of today is to grab
-> and release a kernel wakelock using the /sys/power/wake_lock and
-> /sys/power/wake_unlock files. This has the disadvantage of:
->
-> * Doing the useless work of creating and destroying wakelocks.
-> * If the userspace entity crashes after the wake lock is created, we
->   get a wake lock/memory leak.
->
-> To avoid all this and simplify the interface, this patch allows
-> canceling a suspend by writing UINT_MAX value to the
-> /sys/power/wakeup_count that is meant for tracking wakeup events.
->
-> Signed-off-by: Saravana Kannan <saravanak@google.com>
-> ---
->
-> Rafael,
->
-> If the idea looks good to you, I can also update Documentation and sent
-> it as a non-RFC patch. I'm not too tied on what file we use to trigger
-> an abort from userspace as long as it's possible.
->
-> Thanks,
-> Saravana
->
->  drivers/base/power/wakeup.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
-> index d1283ff1080b..9316de561bcc 100644
-> --- a/drivers/base/power/wakeup.c
-> +++ b/drivers/base/power/wakeup.c
-> @@ -1008,6 +1008,8 @@ bool pm_save_wakeup_count(unsigned int count)
->         if (cnt =3D=3D count && inpr =3D=3D 0) {
->                 saved_count =3D count;
->                 events_check_enabled =3D true;
-> +       } else if (cnt =3D=3D UINT_MAX) {
+Hello,
 
-Sorry, to match what I said in the commit text, this should be count
-=3D=3D UINT_MAX.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+general protection fault in seq_buf_puts
 
--Saravana
+shmem_inode_cache total: 7.91 MiB active: 7.89 MiB
+kmalloc-8k        total: 5.63 MiB active: 5.48 MiB
+Shrinkers:
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+CPU: 1 UID: 0 PID: 6968 Comm: syz.4.25 Not tainted 6.16.0-rc6-syzkaller-gca12b17b7ceb #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+RIP: 0010:strlen+0x29/0x70 lib/string.c:420
+Code: 90 f3 0f 1e fa 41 57 41 56 41 54 53 48 c7 c0 ff ff ff ff 49 be 00 00 00 00 00 fc ff df 48 89 fb 49 89 c7 48 89 d8 48 c1 e8 03 <42> 0f b6 04 30 84 c0 75 11 48 ff c3 49 8d 47 01 42 80 7c 3f 01 00
+RSP: 0018:ffffc90003dde7a0 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff88802c468000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90003dde8f0 R08: ffff8880357dead7 R09: 1ffff11006afbd5a
+R10: dffffc0000000000 R11: ffffed1006afbd5b R12: ffffc90003dde860
+R13: dffffc0000000000 R14: dffffc0000000000 R15: ffffffffffffffff
+FS:  00007fb031fe66c0(0000) GS:ffff888125d2a000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fe025a39e9c CR3: 0000000034726000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ __fortify_strlen include/linux/fortify-string.h:268 [inline]
+ seq_buf_puts+0x34/0x1a0 lib/seq_buf.c:184
+ shrinker_to_text+0x115/0x3c0 mm/shrinker.c:836
+ shrinkers_to_text+0x840/0x960 mm/shrinker.c:911
+ __show_mem+0x242b/0x24d0 mm/show_mem.c:496
+ warn_alloc_show_mem mm/page_alloc.c:3719 [inline]
+ warn_alloc+0x2dd/0x310 mm/page_alloc.c:3744
+ __vmalloc_area_node mm/vmalloc.c:3702 [inline]
+ __vmalloc_node_range_noprof+0x67e/0x12f0 mm/vmalloc.c:3893
+ __kvmalloc_node_noprof+0x3b8/0x5f0 mm/slub.c:5037
+ bch2_fs_journal_start+0x2b4/0x12b0 fs/bcachefs/journal.c:1484
+ bch2_fs_recovery+0x1fbe/0x3860 fs/bcachefs/recovery.c:975
+ bch2_fs_start+0x957/0xbf0 fs/bcachefs/super.c:1216
+ bch2_fs_get_tree+0xb39/0x1540 fs/bcachefs/fs.c:2462
+ vfs_get_tree+0x92/0x2b0 fs/super.c:1804
+ do_new_mount+0x24a/0xa40 fs/namespace.c:3902
+ do_mount fs/namespace.c:4239 [inline]
+ __do_sys_mount fs/namespace.c:4450 [inline]
+ __se_sys_mount+0x317/0x410 fs/namespace.c:4427
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fb0311900ca
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fb031fe5e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007fb031fe5ef0 RCX: 00007fb0311900ca
+RDX: 000020000000fec0 RSI: 000020000000ff00 RDI: 00007fb031fe5eb0
+RBP: 000020000000fec0 R08: 00007fb031fe5ef0 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 000020000000ff00
+R13: 00007fb031fe5eb0 R14: 000000000000fe88 R15: 000020000000ff40
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:strlen+0x29/0x70 lib/string.c:420
+Code: 90 f3 0f 1e fa 41 57 41 56 41 54 53 48 c7 c0 ff ff ff ff 49 be 00 00 00 00 00 fc ff df 48 89 fb 49 89 c7 48 89 d8 48 c1 e8 03 <42> 0f b6 04 30 84 c0 75 11 48 ff c3 49 8d 47 01 42 80 7c 3f 01 00
+RSP: 0018:ffffc90003dde7a0 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff88802c468000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90003dde8f0 R08: ffff8880357dead7 R09: 1ffff11006afbd5a
+R10: dffffc0000000000 R11: ffffed1006afbd5b R12: ffffc90003dde860
+R13: dffffc0000000000 R14: dffffc0000000000 R15: ffffffffffffffff
+FS:  00007fb031fe66c0(0000) GS:ffff888125d2a000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005578d9f91950 CR3: 0000000034726000 CR4: 00000000003526f0
+----------------
+Code disassembly (best guess):
+   0:	90                   	nop
+   1:	f3 0f 1e fa          	endbr64
+   5:	41 57                	push   %r15
+   7:	41 56                	push   %r14
+   9:	41 54                	push   %r12
+   b:	53                   	push   %rbx
+   c:	48 c7 c0 ff ff ff ff 	mov    $0xffffffffffffffff,%rax
+  13:	49 be 00 00 00 00 00 	movabs $0xdffffc0000000000,%r14
+  1a:	fc ff df
+  1d:	48 89 fb             	mov    %rdi,%rbx
+  20:	49 89 c7             	mov    %rax,%r15
+  23:	48 89 d8             	mov    %rbx,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 0f b6 04 30       	movzbl (%rax,%r14,1),%eax <-- trapping instruction
+  2f:	84 c0                	test   %al,%al
+  31:	75 11                	jne    0x44
+  33:	48 ff c3             	inc    %rbx
+  36:	49 8d 47 01          	lea    0x1(%r15),%rax
+  3a:	42 80 7c 3f 01 00    	cmpb   $0x0,0x1(%rdi,%r15,1)
 
-> +               pm_system_wakeup();
->         }
->         raw_spin_unlock_irqrestore(&events_lock, flags);
->         return events_check_enabled;
-> --
-> 2.50.0.727.gbf7dc18ff4-goog
->
+
+Tested on:
+
+commit:         ca12b17b bcachefs: fix check_extent_overbig() call
+git tree:       git://evilpiepirate.org/bcachefs.git bcachefs-testing
+console output: https://syzkaller.appspot.com/x/log.txt?x=1752038c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=37de60b3108b6d8f
+dashboard link: https://syzkaller.appspot.com/bug?extid=2b98caf09c41174a9697
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+
+Note: no patches were applied.
 
