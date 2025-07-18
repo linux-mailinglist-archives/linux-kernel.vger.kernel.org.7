@@ -1,104 +1,112 @@
-Return-Path: <linux-kernel+bounces-736753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87CB1B0A165
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:59:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D5C7B0A168
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:59:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E30C177A79
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:59:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7242416507F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:59:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677462BD030;
-	Fri, 18 Jul 2025 10:59:05 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D6E22BD5AD;
+	Fri, 18 Jul 2025 10:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="HEAgY0Rl"
+Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 963B9249F9
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 10:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 480D12EAE3;
+	Fri, 18 Jul 2025 10:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752836345; cv=none; b=PvixaSGqq+5wj2WLHEALmsGmRnM4QvR334BEUMFMIWxz3vwuG3IOf9z+/jBjvmNWgYfUtFG/36hXCciqTZ6uTdqDFHAgq+GhgXMSMA04nlFtG6HEJWjEJoiwiOdJrpwnz4uX3g503RXO8/k44X+r2fGP6XH9+FKvt4HQVTODjSM=
+	t=1752836375; cv=none; b=Xz2ivfncc4ap5bLDC6bKnY0WSYCC2ivSbY6fPwrno6N5vOFf/Fx8iNJTeZ4SBJx+TfH8cuPPVnKH1S29ZRYyQNGJblYbzl6ls8JnGAcVcApeQXCsgBlRSdeMsuWt376Zyej45Dgf/BS3j43FebHpjsHp+XFwJV5hscDZBmTI9Pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752836345; c=relaxed/simple;
-	bh=8GNVxd4El3vltPK1OzAaGFMk/YkynjhYBs/lKmanauE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=BGetyv21b9OFMzGCmrOz/VmxEDDUl2QIBD8cHIx40bgqLt4TVTIiluu9lE0NebbxyvscxybtX/tGg2cSDz4PLdOkDSMRLd1ThS8pVNwruZz2JXmVl6k8qKBXJD+sCx0TezTvpc1GyxNmJOhT/q1NW6VRnnnSVukwOFkuITn3ljA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-869e9667f58so382596939f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 03:59:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752836342; x=1753441142;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8Hle3V98MR0nEl01QFI9n0l/uijLXyWAeDaxEk7ayo0=;
-        b=HTjh53Y/k5yNYEiw6yOduhNsW3tArUopOUGWcF6r1rEwyhC2s86Cd5x1/97Ij4vyZY
-         ClVQWCZo4iIaiPXSWkdZ6A4brVwirWVUEgUSm0jLCtQWq0yZEvoYuoOrSqbxD26xupgp
-         JeVM7EzaxtgONGZPbaxyQslcIETGQEgP0nwt6rEqjwsAbGOdM5iLgrZnMlIe63zeXvdS
-         jea+drrikl5DKk78kUC6lQeCc9odrzw/x/BCa2r7Vyk0g8O8GUzW0lcFs/IIqjDZhUpE
-         jjILfoXR9Fv5GfK0EPJjn4UplECJOnXilgH9f3JccWoTAUcd/N/ygHDuN8vrGZKXpRYh
-         gsQA==
-X-Gm-Message-State: AOJu0YyDyf0Hc258lVPuL4tg1U6gCexxKzLDvW91eAqqFpj2q9ZUDH/Y
-	XkxHaGWPiku+gxCNZa6pfdVdbGEKZQTIicIIN/kOD050UXFpj+9AMXzC3Kvxa5p+JuW+0gaV+aB
-	l3QtrwhFZ2hJxNly2dRUYDG5JyJ89S8zC5yNwIBYIBKox3FPJwnQLg3i6Hoc=
-X-Google-Smtp-Source: AGHT+IENzoR0JBuoZqkQ/XOnSMf8+yyzalRzem902hfta7V+MCetpgFGO2MsFocqu4+HnWpRjOZ4ypo/wvbZT39l2vn4cQTpYTe5
+	s=arc-20240116; t=1752836375; c=relaxed/simple;
+	bh=6ktc/3FSkqoCokBOcKM439kKpoMqoxB/l7mvYMJLEuo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=riaOHrT8sE71dp63RAKlpVzPzL/ZXFOvY9LNBHV8okG6b6hIwhH4+OtIpdSOaRBqQQsn8V94fQxOiyGactFXsVpuBexFwULg6tyaJC5rM4nRRzEsPYnebofiiJkXa3zfDte2xgGoiwQYNytP+I0HkSq7RshpSuve4hjt3oyAJeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=HEAgY0Rl; arc=none smtp.client-ip=180.181.231.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=rHrqihAXBWbkD+hNJe9QmyuvcRfGQMrrS8l0OHyFvmc=; b=HEAgY0Rlaa4bpR/jWfqfLLuZn3
+	M2+ATfYOBUC9Ml8x5+NSI5LHinIZtAv/YyP3GyUr/pOSmosNGnR1JThvkVtFGQfjiKKLURBEW+JIm
+	L0MKAZAtatL8cHfZSG43b+5SniVMEkXM36/5qvmdxvQKi3DtPHb5FzvW7sdITUeHv2qf4xZQ6Qyy/
+	70TQrd1VfRUzKR87JxKnzAhJYnp/nW1hqytsA9KTVfp3J2BlNrca/+M0JCDyHpGvaD/JfyizW+Vp8
+	qIyf9XJ07SECEpAO+WPd2aO7SnUNFBboMMnAODtKUX2GRwAleVuu7M9CPtBqyibSMeX+E8Sv3v646
+	FEmmY7Uw==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1uciYX-007yZy-0x;
+	Fri, 18 Jul 2025 18:59:06 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 18 Jul 2025 20:59:05 +1000
+Date: Fri, 18 Jul 2025 20:59:05 +1000
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Gilad Ben-Yossef <gilad@benyossef.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Weili Qian <qianweili@huawei.com>,
+	Zhou Wang <wangzhou1@hisilicon.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Eric Biggers <ebiggers@google.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 08/80] crypto: Remove redundant
+ pm_runtime_mark_last_busy() calls
+Message-ID: <aHoo-dQpHxX-Lqbf@gondor.apana.org.au>
+References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
+ <20250704075402.3217279-1-sakari.ailus@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6d0f:b0:879:c790:3ea2 with SMTP id
- ca18e2360f4ac-879c7904115mr1219166439f.4.1752836342720; Fri, 18 Jul 2025
- 03:59:02 -0700 (PDT)
-Date: Fri, 18 Jul 2025 03:59:02 -0700
-In-Reply-To: <685ada22.a00a0220.2e5631.0089.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <687a28f6.a70a0220.693ce.0060.GAE@google.com>
-Subject: Forwarded: Re: [syzbot] [fs?] WARNING in minix_rename
-From: syzbot <syzbot+a65e824272c5f741247d@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250704075402.3217279-1-sakari.ailus@linux.intel.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Fri, Jul 04, 2025 at 10:54:02AM +0300, Sakari Ailus wrote:
+> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
+> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
+> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
+> pm_runtime_mark_last_busy().
+> 
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> ---
+> The cover letter of the set can be found here
+> <URL:https://lore.kernel.org/linux-pm/20250704075225.3212486-1-sakari.ailus@linux.intel.com>.
+> 
+> In brief, this patch depends on PM runtime patches adding marking the last
+> busy timestamp in autosuspend related functions. The patches are here, on
+> rc2:
+> 
+>         git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+>                 pm-runtime-6.17-rc1
+> 
+>  drivers/crypto/ccree/cc_pm.c      | 1 -
+>  drivers/crypto/hisilicon/qm.c     | 1 -
+>  drivers/crypto/omap-aes-gcm.c     | 1 -
+>  drivers/crypto/omap-aes.c         | 1 -
+>  drivers/crypto/omap-des.c         | 1 -
+>  drivers/crypto/omap-sham.c        | 1 -
+>  drivers/crypto/stm32/stm32-cryp.c | 1 -
+>  drivers/crypto/stm32/stm32-hash.c | 1 -
+>  8 files changed, 8 deletions(-)
 
-***
-
-Subject: Re: [syzbot] [fs?] WARNING in minix_rename
-Author: richard120310@gmail.com
-
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 78f4e737a53e
-
-Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
----
- fs/minix/namei.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/fs/minix/namei.c b/fs/minix/namei.c
-index 8938536d8d3c..4dfbbfd905d8 100644
---- a/fs/minix/namei.c
-+++ b/fs/minix/namei.c
-@@ -217,8 +217,13 @@ static int minix_rename(struct mnt_idmap *idmap,
- 		if (err)
- 			goto out_dir;
- 		inode_set_ctime_current(new_inode);
--		if (dir_de)
-+		if (dir_de) {
- 			drop_nlink(new_inode);
-+			if (new_inode->i_nlink == 0) {
-+				err = -ESTALE;
-+				goto out_dir;
-+			}
-+		}
- 		inode_dec_link_count(new_inode);
- 	} else {
- 		err = minix_add_link(new_dentry, old_inode);
+Patch applied.  Thanks.
 -- 
-2.43.0
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
