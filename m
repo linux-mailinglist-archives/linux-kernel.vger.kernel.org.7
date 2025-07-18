@@ -1,126 +1,78 @@
-Return-Path: <linux-kernel+bounces-736524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47D73B09E0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:32:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E76BB09E1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:34:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07AF85A3099
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:32:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D1C21C47145
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:34:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EBC42951C8;
-	Fri, 18 Jul 2025 08:32:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DDD293C41;
+	Fri, 18 Jul 2025 08:33:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Pt57KYSV"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OKgUOx7x"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB03292B30;
-	Fri, 18 Jul 2025 08:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C81820E71D;
+	Fri, 18 Jul 2025 08:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752827540; cv=none; b=ek14BadPNPHqVrQp42h0skInfoLNw7LXd5YuoLEa2wczV1HdSrMo1jmaFIZxgmgYmQEHtEjYyeUIVgIqFNgL77e4xeIxmpTtebmZ02evWeT0oskhrcliV2gu0eFEZuLT2r0hpCX20Y2isYHL/tt1z6QwcM/28YOn/f/a/4Sev7U=
+	t=1752827601; cv=none; b=LnwfAdJlauGdaZlW57FB5P5X1AeRgYzT3cKw5RrQAHK/VNcuHnCyHVrJAPk31pL1wTtb0VC4CVGuHx4UiUb2SZ+x+2vL1kGml0zWHlpbM7ZC8401yEhT7FnLHSg5/4Os6WtYbSQGM7UZ1JCXV4+LxYVaYHPV0Z1i9f+W0bKPTyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752827540; c=relaxed/simple;
-	bh=8mI/CryjuPW53XG2803NV0fHo7AQCd/bUli3ZC81q1c=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K9ik3CaFzhzhkwZ3NQXXV0A9XEZHRN6sjS/m7mHkK7o5uSyQsrrx7RhOBc4spi4YyEggPkzqKq4btw4i9mS5kamaj/KMddXPF7da4DKOLUFZhalSymPTqeXQJoPaZt8Ff/nsZsdt3nhTr7Mrmz9Pbes6+yDptxVaubT1u+CdEcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Pt57KYSV; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: b4936da263b111f0b33aeb1e7f16c2b6-20250718
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=bWPvaQQMd5CLHEhX9CTA9EMlFSg+oaAeIgUHdvoTJg8=;
-	b=Pt57KYSVNWGSYHHbBtvprelHId5flsfP8Lr2NVamWPz5hft9yXCPn9EKdJJl2JZuDBrZse2gQ9eNA7VmpAeu6r9RoRzYr6MwXlzRGQo7sqWRnTcIqChjcTltkBDadJ1F+W0cE3W5OGHuas49mk8AyQlNzahDC+yONq95V+rmr0c=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.2,REQID:f2473818-d145-4f75-b242-e301ffeb6fd9,IP:0,UR
-	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:-5
-X-CID-META: VersionHash:9eb4ff7,CLOUDID:a786049a-32fc-44a3-90ac-aa371853f23f,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:-3
-	,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV
-	:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: b4936da263b111f0b33aeb1e7f16c2b6-20250718
-Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw02.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 677885912; Fri, 18 Jul 2025 16:32:13 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- MTKMBS09N1.mediatek.inc (172.21.101.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Fri, 18 Jul 2025 16:32:12 +0800
-Received: from mtksitap99.mediatek.inc (10.233.130.16) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Fri, 18 Jul 2025 16:32:12 +0800
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Catalin Marinas
-	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Sean Wang
-	<sean.wang@mediatek.com>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>,
-	<openembedded-core@lists.openembedded.org>, <patches@lists.linux.dev>,
-	<stable@vger.kernel.org>
-CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
-	Ramax Lo <ramax.lo@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>,
-	Macpaul Lin <macpaul@gmail.com>, MediaTek Chromebook Upstream
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>
-Subject: [PATCH 4/4] arm64: defconfig: Enable UFS support for MediaTek Genio 1200 EVK UFS board
-Date: Fri, 18 Jul 2025 16:32:02 +0800
-Message-ID: <20250718083202.654568-4-macpaul.lin@mediatek.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250718083202.654568-1-macpaul.lin@mediatek.com>
-References: <20250718083202.654568-1-macpaul.lin@mediatek.com>
+	s=arc-20240116; t=1752827601; c=relaxed/simple;
+	bh=J0la2E51liPRAU72Jdnl5lCR48J9xdBV8TdPsieZgXc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SwrBIfqzO6sPHCSL+rV1VfMaURf6jqIsthx4DNQDLE9HsxstNoOmmSCBPjyEQwitJ5y5YytoOhbw2HkbahjpxvNhJTLz25Pss1lgnlW4a/xa5gs3zt1E+LMf+Ym0OlA0+DeIvgXSwK1ENd8p3Q7jjSQoxNCOp38kvGNzKCXzIts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OKgUOx7x; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=J0la2E51liPRAU72Jdnl5lCR48J9xdBV8TdPsieZgXc=; b=OKgUOx7x/Q074rsbXBD/OJgSLn
+	jWLaEbbtzAtmSmuwTAEDa/dzYbAwFSFwhdcUYBYTSjPUDfXF/LStMPeRe6jiEGQ2Kr0g8AmbZJzPw
+	oUrZDFYdSxd+Ne6FbbhHc1mWskeK400gL4nXujWLHrclp2jzlIrnE8K8TE6MPYA6+A246y2P9Toku
+	sgiD363eAczJ6qNAo7CZ9yiFygZJngOF30gSHUvDxe5schUrkbbpFrnsgaQTUcv9fTeOOmq2qnV+8
+	E7JgioGrJRm89tgNO90Zye+U+5W3BTWuYyfnOUPzMp3PLkwZ6y4pSyoC9SVAGM/MRkLtbgiIen5Yj
+	BzxZ0Gng==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ucgWt-0000000C3Wi-00S1;
+	Fri, 18 Jul 2025 08:33:19 +0000
+Date: Fri, 18 Jul 2025 01:33:18 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Carlos Maiolino <cem@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	David Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the xfs tree
+Message-ID: <aHoGzku_ey2ClrzD@infradead.org>
+References: <jZld0KWAlgFM0KGNf6_lm-4ZXRf4uFdfuPXGopJi8jUD3StPMObAqCIaJUvNZvyoyxrWEJus6A_a0yxRt7X0Eg==@protonmail.internalid>
+ <20250718100836.06da20b3@canb.auug.org.au>
+ <hmc6flnzhy3fvryk5c4bjgo7qehhnfpecm2w6wfyz7q7wly3a4@nvo6ow5j3ffl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <hmc6flnzhy3fvryk5c4bjgo7qehhnfpecm2w6wfyz7q7wly3a4@nvo6ow5j3ffl>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Enable the UFS related settings to support Genio 1200 EVK UFS board.
-This board uses UFS as the boot device and also the main storage.
-This includes support for:
- - CONFIG_PHY_MTK_UFS
- - CONFIG_SCSI_UFS_MEDIATEK
+On Fri, Jul 18, 2025 at 10:30:56AM +0200, Carlos Maiolino wrote:
+> Thanks for the heads up Stephen. I didn't catch those errors while build
+> testing here. Could you please share with me the build options you usually
+> use so I can tweak my system to catch those errors before pushing them to
+> linux-next?
 
-Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
----
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 7e04a2905ce4..c7ca08ed1bf1 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1208,6 +1208,7 @@ CONFIG_SCSI_UFS_BSG=y
- CONFIG_SCSI_UFSHCD_PLATFORM=y
- CONFIG_SCSI_UFS_CDNS_PLATFORM=m
- CONFIG_SCSI_UFS_QCOM=m
-+CONFIG_SCSI_UFS_MEDIATEK=m
- CONFIG_SCSI_UFS_HISI=y
- CONFIG_SCSI_UFS_RENESAS=m
- CONFIG_SCSI_UFS_TI_J721E=m
-@@ -1591,6 +1592,7 @@ CONFIG_PHY_HISI_INNO_USB2=y
- CONFIG_PHY_MVEBU_CP110_COMPHY=y
- CONFIG_PHY_MTK_PCIE=m
- CONFIG_PHY_MTK_TPHY=y
-+CONFIG_PHY_MTK_UFS=m
- CONFIG_PHY_MTK_HDMI=m
- CONFIG_PHY_MTK_MIPI_DSI=m
- CONFIG_PHY_MTK_DP=m
--- 
-2.45.2
+You'll need CONFIG_MEMORY_FAILURE and CONFIG_FS_DAX to trigger this.
+All my test setups seem to lack the former.
 
 
