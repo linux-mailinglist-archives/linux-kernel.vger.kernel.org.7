@@ -1,123 +1,225 @@
-Return-Path: <linux-kernel+bounces-737342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12211B0AB24
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 22:32:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 81CDCB0AB27
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 22:32:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA9EF3B46A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 20:32:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31E303BD40F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 20:32:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA6D421170D;
-	Fri, 18 Jul 2025 20:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1843421ABC8;
+	Fri, 18 Jul 2025 20:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hj6PGs2O"
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="I8itxYzV"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE4181DED70
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 20:32:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8CED20FAB6
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 20:32:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752870743; cv=none; b=fkrS4CYE6xhrTCVuFixM+7V2CoZHHvR59qvqIaJF845B4mUdP2UNxr2pej7ZHEgB1BSPiDLxxhVHNL833KnCKkHqQTL4+KsKHwh1YdHXzD9kD9iFBVOveSMjgdWzEfANXUTS3Dwlqi3sTOVJ5UyzOhgB/lzE/RysZnQ2JmYSA9s=
+	t=1752870766; cv=none; b=HOhflxBPT5Jl0PxTT1uYhlziF5KOw4oJcJkyCTVrD99A5qh+wmy7aSZ/N87yNrb5bbaEyI7mDSfH1VQRDsjpHCBr0zI9YbeasHGisYOvXafSCFItXx7Hd1oSJOwCCcmbvF0wuPBTeEhjMdj9HQ250urz2HieM11dyah5qgasK1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752870743; c=relaxed/simple;
-	bh=4Tw9BC7cQxs05B9tUg+PvNdlupf5tPIdaQ9IfTgq4DI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=LYw0CtjMExfoBNYfwD692u5QuhQNt04bPlXISboAgVg5/n6MH2teAR1HNfHJuYiwbfCB4/BaP6+B59p0AXedhcvsZ9whNByFGGyiqGlrdnPweJ+SNtqx3ic2gnB6eMkhcaapzvF5ei1OAAMp/YsaIQL/eIN/57GxRq556hF2Tmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hj6PGs2O; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-2fef7f6d776so801392fac.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 13:32:21 -0700 (PDT)
+	s=arc-20240116; t=1752870766; c=relaxed/simple;
+	bh=VYLFPInX5wYDsdSBLHlW5bQbgZ8bMLX6OLJt3sa/vVE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NvJbioF2fZcoRlbaGYf0TJFKVBqLSnRhAI27/5y/U+79XrhQOd36ttajBByrlgVwIIWbhh9/gvkXc5sEYffcaKMwypLcdfjZfVWzgpnZKGS+0hJ1PKSy1CgMexMalQpWq3cbJcOB642ULLBqRSiE33SdUSOz4h74Gg+3i32P/Q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=I8itxYzV; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-234f17910d8so23302635ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 13:32:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752870741; x=1753475541; darn=vger.kernel.org;
-        h=user-agent:content-transfer-encoding:content-disposition
-         :mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=VsTMl5ayNgd8StI3u0W+gqGFg6Ns2EA4dxNGyic4NMU=;
-        b=Hj6PGs2OiYsxqWijydW1IDabHKsKSMJsZX+RuE/JRRAvVgDjE2hyhYCSqKFYK1dG8z
-         x7WiUpblnKg+hs1TWBs72qcycZ2mgge4g5VT+VMuf1Lma1iKhDl2fdkgrxwWtdhp7Z3M
-         wXZbqTaC6dX3eTDZjJy+K77NNFombk/aHxqF6dx8LM5w1VlX7WAuHOc+LmhFN/Pjp4An
-         8qufjMN0VxMoQij8PxWcc2qnJqS0Mme6R1bZODwqebP6Qi8zmFECoKNwzANJ5jDNQ3/P
-         T225zZ3A5+GLrVQq9YHe7C3oDIX5sZFGkD0ofiQENycl2/ALMP5o4jsd5/BdXxPrJ0oy
-         4hYg==
+        d=chromium.org; s=google; t=1752870761; x=1753475561; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TKZtbK4lVu+Fa2vzfgm/vl63kukiWlzYzbXwLbRXVPM=;
+        b=I8itxYzVHzQwdBhRTNS4RfpHY4+ttbKbzKb38RDKuY3Y20TX4vEZ6t/1aDuWrtjxzu
+         tpa9TZucOQGRzGaEpVHdmNf7Y+/8wj3H72Hkm9mfXX+786li/DoNHO7ig/bracc+1VDx
+         DRRg4VWA0zCJtVmU6IaazxwosUEgpHqq5GGAc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752870741; x=1753475541;
-        h=user-agent:content-transfer-encoding:content-disposition
-         :mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VsTMl5ayNgd8StI3u0W+gqGFg6Ns2EA4dxNGyic4NMU=;
-        b=qY0fg+hL99xaE8eFWNTgFeT2eG1aSkjNw1jazIzK9fDlL4sHXI1kxQm9fdnXwffZFn
-         uMlMFYvuEn+87UGMbe68fqLZKnFeMze7daZtkx4Zev3I31d0fK6ZUMgsgnB8slcDnBOn
-         TD0n+eAIwNi/WRn4JBHwgs9szwMqBr65ks4VmV2hfMr3HK5mFX/KDBKgUd+av8WlAjLP
-         ATIjLrBGy2xWP0bB+7HBiXOfIhbcKNd8OOeU2x7j1x+XBgZFExguvy1sha0NzDR8YWJc
-         doNuECqQtAtjm0P9ecPUqYNn2e1xmod2vWFfmoWKAU3JCgJKbmYHbrSXfiw80JArt2qx
-         yo4w==
-X-Forwarded-Encrypted: i=1; AJvYcCVdMC3/W1PJ+jSrrHAO5Fd87ZtuPqapBzX0nssnwuSy1x9oFejohy1TfNKrH1wtt722FrBocK6IJwXF5Ms=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyc3l37SlCCR1MmVEiNyysY+CApSJm3NQJSVzGYC9FdHOYtJhO5
-	Q7G5jZrmr+sdLpRLk9ABkhwFRwehYQtKJtua1M4+F7MvqdmfyHNvP/P++CFthBCd
-X-Gm-Gg: ASbGncuBxhSuWWzPGeakWW+bTc3wrk8AdteWCWwCeO2XizKbtnAmH4T8BWGZ90GAiRx
-	WP6rFws7vaBtTzt+4K6ItzG8MsFgmaF/HLQKxNahpXd2hDiLExy3KzQbFM/qkuD88rpkvoLSVIC
-	DavBTbe78rNhQoICUJUqXE0T9TBhJzGtqQItBCtj6siFh2dO2mG3AhvYBrzvXwRoxz9lVMVeyiL
-	GZsizd8UWQLCkW/Qbx6JuxF8rtXWlvVubkpl50KfjXjaIYUZ5vTFPoJTx7b/P6I92BaEkc+sCvI
-	zKwHrDQPPJd84bbLq5YXTumbJIvjHGDHyFm2ZAOhUDPUeNc9uM99IEKUbwasBQ1eaoQluPyWkYC
-	yv/vUl+7w6HeqmmnRVCl5zUp6sVH+5F5YlqOh9rk6hsaVcUl6r+ayfn0xoeRK4g==
-X-Google-Smtp-Source: AGHT+IGXpIp1fjCASD0DU5rL5C2avlfFVXZ0tAQWGosKnkzFmyhma1UEPPGPttyumt8CkMZPNplhnA==
-X-Received: by 2002:a05:6871:3685:b0:2ff:a814:dfdf with SMTP id 586e51a60fabf-300e9dcc04dmr3148383fac.20.1752870740749;
-        Fri, 18 Jul 2025 13:32:20 -0700 (PDT)
-Received: from MacBook-Pro-de-Ignacio.local ([181.161.11.224])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73e8354df9csm885664a34.12.2025.07.18.13.32.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jul 2025 13:32:20 -0700 (PDT)
-Date: Fri, 18 Jul 2025 16:32:18 -0400
-From: Ignacio =?utf-8?B?UGXDsWE=?= <ignacio.pena87@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] staging: sm750fb: make fixId array static const char *
- const
-Message-ID: <aHqvUrXtxwf_k9sI@MacBook-Pro-de-Ignacio.local>
+        d=1e100.net; s=20230601; t=1752870761; x=1753475561;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TKZtbK4lVu+Fa2vzfgm/vl63kukiWlzYzbXwLbRXVPM=;
+        b=aDKc7/pDblFgBWcRcNzz/aPIEeHf8gQa33LRG+UlA1P0MhUiB3OB0bO55tKAqOQJ+6
+         +reu05Lt8aiKG1EEPhIQaWutFN7jiLYqlWhw//sXZc0mPsm2pLmOc/tMu044Jiq0TgxA
+         wfNoHz6QUuu2LJ/r60eP32uf0caFZ5G9N7gLxtUPjvBpihB39m75zqFB+8VNCXncb2aN
+         aPAbZoExO1oQxXTztQkdwW2mJEajehIXPEGdDWhYiFulHem+7zfp05UMmcCkKs7/28CB
+         I1/5cLWkAKkgL/b+JbHJM6HpzTBDftjRA9FrKF9aa/9gfKxxY8I9buSWqzSd39xajbb7
+         C9PQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8ExTBohVAn03UtgvtNE2G/aMkbz4CWUdNAa8ZzVKWiKLJe99oYGu9S1QyU5L1abqjXdVq/kwMYe8x0s0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGQmxYPuxtwJy7XtWBKQ7JIr11RPg3lhSiLK6Iy6Jz6hvCf6PL
+	O6D5PC358VxX7r3q5L3rTLn89/rLWalX/TY7oEUjtlEB1jR6M9A1gpBJ+FwDcT178vSsK40DA+U
+	SeNs=
+X-Gm-Gg: ASbGnculY4GPfLXtWuFDwzj535zVj5gDd6UjEA37oTk1YO5cPyP/tlWQmfDDaa9Ghml
+	QLA1JOV0aDStWOC9u3sF4MwjJh5qST+V4WCWpb/cFAqTd938chtj8o3kuJMPsI2KphU0YJzD3fd
+	v1JVUM+JfFHsPG+CJ8irT2hjr6zJ45kFtkSiZRiVtxFONPnSrEYHb4lAEdTMtO4/GPoMOWA6HEE
+	9p6bZZ1I+XMU328Zbi13v+fAH4dCuw15dv8nW+zKUfq9mgjIX7lFA0xbNw/92DvJfj6xoYUfHbh
+	8Zi2x6xNllI9lQkS4zTuz9NUsxoP4kh9p0MAUCop86YXa6GVCdC77uWwIImhulgHkAFEHN36YiF
+	j5h458fYiNgPbnmL4SD1bk3EH5gw2P7+R08DN45mjcg5m1mIGPgqR5Nu/xIwyYFX5Fg==
+X-Google-Smtp-Source: AGHT+IEQrerjd8Hmd+opRclE8M36glh82PHWhRHyvW+fPCAUDAtdDw5sJ44pUAkh0psLhWxuFLIYGg==
+X-Received: by 2002:a17:902:e852:b0:234:f15b:f158 with SMTP id d9443c01a7336-23e3b78d404mr50540735ad.13.1752870761508;
+        Fri, 18 Jul 2025 13:32:41 -0700 (PDT)
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com. [209.85.215.169])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b6b4addsm17647415ad.128.2025.07.18.13.32.39
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Jul 2025 13:32:40 -0700 (PDT)
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b3508961d43so2282541a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 13:32:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWBpaL3w+gPAqRAKJa1KbFKGSqD15pZ4fB+f3NTGvNfJe1DG2xuT1yvNYyUPAKZl955XQp+2NXc93JPlVA=@vger.kernel.org
+X-Received: by 2002:a17:90b:2e06:b0:312:e49b:c972 with SMTP id
+ 98e67ed59e1d1-31cc256fb86mr7355028a91.15.1752870759183; Fri, 18 Jul 2025
+ 13:32:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.x.x (Linux)
+References: <20250717164053.284969-1-me@brighamcampbell.com>
+ <20250717164053.284969-2-me@brighamcampbell.com> <CAD=FV=WYBFrm-J55BTEJ7s=Jk4EFuMVAkahVZfdzW6V8mxE7Tg@mail.gmail.com>
+ <DBFCOJFGI5HB.1RNJBDPNTEL2U@brighamcampbell.com>
+In-Reply-To: <DBFCOJFGI5HB.1RNJBDPNTEL2U@brighamcampbell.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Fri, 18 Jul 2025 13:32:27 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VZUr=cwAQyPFWVDXg4pRavLWChpR4dOOyUywQN4GdE-w@mail.gmail.com>
+X-Gm-Features: Ac12FXzSqdFPsH4TrONq3wFHu-HzqqxZ5pwzD4g92X8kRwKlib7OsOrk_7f6tnM
+Message-ID: <CAD=FV=VZUr=cwAQyPFWVDXg4pRavLWChpR4dOOyUywQN4GdE-w@mail.gmail.com>
+Subject: Re: [PATCH v4 1/4] drm: Create mipi_dsi_dual macro
+To: Brigham Campbell <me@brighamcampbell.com>
+Cc: tejasvipin76@gmail.com, diogo.ivo@tecnico.ulisboa.pt, 
+	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev, 
+	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fix checkpatch warning for the fixId array only:
-"WARNING: static const char * array should probably be
- static const char * const"
+Hi,
 
-The g_fbmode array cannot be made const as it is modified at runtime
-in lynxfb_setup() and lynx_alloc().
+On Fri, Jul 18, 2025 at 10:17=E2=80=AFAM Brigham Campbell
+<me@brighamcampbell.com> wrote:
+>
+> On Fri Jul 18, 2025 at 10:10 AM MDT, Doug Anderson wrote:
+> >> +#define mipi_dsi_dual(_func, _dsi1, _dsi2, _ctx, ...)           \
+> >> +       _mipi_dsi_dual(_func, _dsi1, _dsi2, _ctx, ##__VA_ARGS__)
+> >> +
+> >> +#define _mipi_dsi_dual(_func, _dsi1, _dsi2, _ctx, ...) \
+> >> +       do {                                           \
+> >> +               (_ctx)->dsi =3D (_dsi1);                 \
+> >> +               _func((_ctx), ##__VA_ARGS__);          \
+> >
+> > nit: shouldn't func be in parenthesis for safety? It's unlikely to
+> > really matter, but just in case it's somehow a calculated value that
+> > would make it safe from an order-of-operations point of view.
+>
+> My assumption is that wrapping _func in parenthesis would cause a
+> compilation error in the case of _func being a macro (more on that
+> later...). I'll test that later today.
 
-Signed-off-by: Ignacio Peña <ignacio.pena87@gmail.com>
----
-v2: Only change fixId array. The g_fbmode array is modified at
-    runtime (lines 786, 788, 949, 953) and cannot be const.
+Huh, OK. If that's the case then no need to do it.
 
- drivers/staging/sm750fb/sm750.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/sm750fb/sm750.c b/drivers/staging/sm750fb/sm750.c
-index 039e6875c894..c237a8f8eb59 100644
---- a/drivers/staging/sm750fb/sm750.c
-+++ b/drivers/staging/sm750fb/sm750.c
-@@ -730,7 +730,7 @@ static int lynxfb_set_fbinfo(struct fb_info *info, int index)
- 		"kernel HELPERS prepared vesa_modes",
- 	};
- 
--	static const char *fixId[2] = {
-+	static const char * const fixId[2] = {
- 		"sm750_fb1", "sm750_fb2",
- 	};
- 
--- 
-2.39.5 (Apple Git-154)
+> >> +               (_ctx)->dsi =3D (_dsi2);                 \
+> >> +               _func((_ctx), ##__VA_ARGS__);          \
+> >> +       } while (0)
+> >
+> > Can you explain why you need the extra level of indirection here (in
+> > other words, why do you need to define _mipi_dsi_dual() and then use
+> > it in mipi_dsi_dual())? I don't see it buying anything, but maybe it's
+> > performing some magic trick I'm not aware of?
+>
+> I mentioned this in v3 after the changelog and prompty forgot to include
+> that information in v4: The extra indirection between mipi_dsi_dual()
+> and _mipi_dsi_dual() is to allow for the expansion of _func in the case
+> that _func is also a macro (as is the case with
+> mipi_dsi_generic_write_seq_multi, i believe). Compilation fails after
+> removing the indirection.
+>
+> There may very well be a better solution to this problem. I'd appreciate
+> your thoughts.
+
+Wow, crazy. I think the C preprocessor is one step away from magic.
+While I know there are rules for it, I often find the way that it
+behaves to be counter-intuitive. I can't say I've followed exactly how
+your solution is working, but if it works and is needed then it's OK
+w/ me. It might be worth promoting the note to be in the commit
+message itself (or even a code comment?) so future people trying to
+understand the code will have some chance of stumbling across it...
+
+You might hate this, but one possible other solution would be to make
+a custom `mipi_dsi_dual_dcs_write_seq_multi` (lifting it out of the
+novatek driver) and then say that the "_func" parameter can't be a
+macro. If you did it correctly, it would be a pretty big space savings
+too. Unlike how we did it in the novatek driver, I think a proper way
+to do it that would save the most space would be:
+
+#define mipi_dsi_dual_dcs_write_seq_multi(ctx, dsi0, dsi1, cmd, seq...) \
+  do { \
+  static const u8 d[] =3D { cmd, seq }; \
+  mipi_dsi_dual_dcs_write_buffer_multi(ctx, dsi0, dsi1, \
+                             d, ARRAY_SIZE(d)); \
+  } while (0)
+
+...and then mipi_dsi_dual_dcs_write_buffer_multi() would be
+implemented in drm_mipi_dsi.c.
+
+With the above implementation, you only have one "static const" buffer
+(maybe the compiler is smart enough to combine w/ the novatek code,
+but  it might not be) and also only have a single function call taking
+up space in the panel driver. You'd only have the "custom" dual
+implementation for the "write_seq" stuff since that appears to be the
+most common. All the other DSI calls could use the normal
+mipi_dsi_dual() macro...
+
+I was thinking of suggesting that as an optional followup to your
+series anyway (for the space savings), but it could also solve some of
+the preprocessor woes. :-P
+
+I'm certainly not dead-set on this, so if you want to just keep
+something like your current solution that's OK w/ me too.
+
+
+> > Reading this with a fresh set of eyes, I also realize that this macro
+> > is probably vulnerable to issues where arguments have side effects
+> > since we have to repeat them. I don't think there's a way around this
+> > and I think the macro is still worthwhile, but something to go into
+> > with open eyes. Possibly worth noting in the macro description? We
+> > could probably at least eliminate the need to reference "_ctx" more
+> > than once by assigning it to a local variable. I think referencing
+> > "_func" and "__VA_ARGS__" more than once is unavoidable...
+>
+> I'm using _func, _ctx, and __VA_ARGS__ more than once in this macro and
+> I don't expect the indirection to fix the potential issue of unintended
+> side effects. I believe we can use GNU extensions to eliminate side
+> effects to _ctx,
+
+I wasn't thinking of any GNU extensions. Just using a scope-defined
+local variable...
+
+#define _mipi_dsi_dual(_func, _dsi1, _dsi2, _ctx, ...) \
+  do { \
+    struct mipi_dsi_multi_context *__ctx =3D (_ctx); \
+    __ctx->dsi =3D (_dsi1); \
+    ...
+
+> but especially since _func can be a macro, I don't
+> think there's much to be done about it. Not sure about __VA_ARGS__.
+>
+> I fear my inexperience is made sorely manifest here.
+
+I think it's a rare person who fully understands the dirty corners of
+the C preprocessor and I wouldn't count myself as one of them. I can
+sometimes make it do what I want, but I think we're up against my
+limits too...
+
+-Doug
 
