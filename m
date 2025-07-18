@@ -1,101 +1,166 @@
-Return-Path: <linux-kernel+bounces-737247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98F84B0A9D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 19:50:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57CC0B0A8FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 19:00:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 691C31C821B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:51:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2B3E1C80955
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:00:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89252E7BD6;
-	Fri, 18 Jul 2025 17:50:38 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB3A2BDC2D;
-	Fri, 18 Jul 2025 17:50:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB30F2E7184;
+	Fri, 18 Jul 2025 17:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nyjyMO/U"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EB042E6D0C;
+	Fri, 18 Jul 2025 17:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752861038; cv=none; b=gowPbDiQrCqfmka8D/oqkAmD+wfx/BpqUd1tDYx3O0jfBDuNc8aywgwCJ1egJEu084G8PLw/TQfCzKrYPsMmf2jlLiIJ59LBBJJnKt66JV/bv+D1ryoZ0OhJ5Rm7qbfYaiJtHi7MRBbffGSNbuHZ+kIP6c6IUVwLLIYFZmEkLBw=
+	t=1752858003; cv=none; b=DF3woJ6mIphPxRG1go2X7eW2X2zKlPYcUI+MyYfKLrOPtKEGydDKrtabP3/SUW1FiZOciQY7Igk1ysqf4YsqYNbeA025JxvRtgrKfMOyz206NS/V6MewpA2iXY3QvOA6/eVoCT6QIDaGxYMr2tVxDxEaCPC6kits5ykXQkwgTz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752861038; c=relaxed/simple;
-	bh=yeCLiP6QiJxcQgcWHbouvhYw26w7TdYdA/38lgxBvQE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V0M2Yyps94kbFZkzRzNeka/aW+DRIRlOK5UvPdDiU3Q+6TnYoyzrf7ft6Orv/jbpw70eJRkayyOamUP7OoqEU0svymQFwl0ubTykWkK7s3+z0o9P7exELTDX5dCkAAiwJRmDK+ZvfTS66XTlso3fQHnecSkbRX5DmFqc4XEqB44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4bkGGQ3NFGz9sgJ;
-	Fri, 18 Jul 2025 18:58:54 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id CSuC_jtzI8aT; Fri, 18 Jul 2025 18:58:54 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4bkGGQ2THLz9sWb;
-	Fri, 18 Jul 2025 18:58:54 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 4B1DF8B783;
-	Fri, 18 Jul 2025 18:58:54 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id zcviEiDUcLOa; Fri, 18 Jul 2025 18:58:54 +0200 (CEST)
-Received: from [192.168.202.221] (unknown [192.168.202.221])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id A03A78B77B;
-	Fri, 18 Jul 2025 18:58:51 +0200 (CEST)
-Message-ID: <2d25448c-2409-4bfb-b900-6f96851df14e@csgroup.eu>
-Date: Fri, 18 Jul 2025 18:58:44 +0200
+	s=arc-20240116; t=1752858003; c=relaxed/simple;
+	bh=W8t2koyJaLZ0JVX3vE0SM1n+BlRW5WXxbRMRDeUKeho=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mnBr5giqlFNla9STzXeQ6fGrP3GRTZAf+MWIrgYtDRpDnT8NOhpNkWJqeEhL2ebnzEfe6XQDQxfKeXZ1jsJRRVMn7LMAsE+ujbHQz8QTkl9HdixBbHXU0/Zfz4bqPpATI/t7SO+BW7gGGb9TBb4t2xPoX7DbYx9q3UYAMKCLa6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nyjyMO/U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DAAEC4CEEB;
+	Fri, 18 Jul 2025 17:00:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752858003;
+	bh=W8t2koyJaLZ0JVX3vE0SM1n+BlRW5WXxbRMRDeUKeho=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nyjyMO/U4AOcZ5FiPo2kAvehkOrhceb+dLNPToeAHAtFe+iWzwTApDQs+rMZYLlwt
+	 YulTf7jRbvvH/SloIfDPEyzq9xidtthHrwngAZWUzKqZMut9rslgyZohR1OEfV7Ru9
+	 OirTfvVGP9FY/b4iGd96Me65dtz2huk0t+3dGW09oLgZ2EyrVsV1EUh8e72AA2kOy7
+	 YuerM2aadCH4ms8HYKmqWPoVLwoJXS+mtdyki/s3YRn4z1OG2W9NAtUXup6A2O5W/m
+	 XEIKLoSfUPQxY18ygr3FpHdq6YtdbrJHkQFfKi10rGUtYCPGDer6rK2TxfAL84Xkdj
+	 tDg6FIppgcy8g==
+Date: Fri, 18 Jul 2025 09:59:59 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Jens Remus <jremus@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org, x86@kernel.org, Steven Rostedt <rostedt@kernel.org>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Ilya Leoshkevich <iii@linux.ibm.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, 
+	Indu Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, 
+	Beau Belgrave <beaub@linux.microsoft.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, 
+	Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>
+Subject: Re: [RFC PATCH v1 07/16] unwind_user: Enable archs that do not
+ necessarily save RA
+Message-ID: <v6gwx63cd5divimoadofeuz2vn72uw7zrlcjacufaedeuxbvjc@qmobatrxo66u>
+References: <20250710163522.3195293-1-jremus@linux.ibm.com>
+ <20250710163522.3195293-8-jremus@linux.ibm.com>
+ <xgbpe46th7rbpslybo5xdt57ushlgwr5xyrq4epuft5nfrqms3@izeojto3wzu4>
+ <b5121d71-f916-45ea-9e6c-b74a27f90dcd@linux.ibm.com>
+ <fb9ee560-d449-4d46-9fb1-19780ff28e65@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v9 00/15] net: phy: Introduce PHY ports
- representation
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, thomas.petazzoni@bootlin.com,
- Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org,
- Herve Codina <herve.codina@bootlin.com>,
- Florian Fainelli <f.fainelli@gmail.com>,
- Heiner Kallweit <hkallweit1@gmail.com>,
- Vladimir Oltean <vladimir.oltean@nxp.com>,
- =?UTF-8?Q?K=C3=B6ry_Maincent?= <kory.maincent@bootlin.com>,
- =?UTF-8?Q?Marek_Beh=C3=BAn?= <kabel@kernel.org>,
- Oleksij Rempel <o.rempel@pengutronix.de>,
- =?UTF-8?Q?Nicol=C3=B2_Veronese?= <nicveronese@gmail.com>,
- Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
- Antoine Tenart <atenart@kernel.org>, devicetree@vger.kernel.org,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Romain Gantois <romain.gantois@bootlin.com>,
- Daniel Golle <daniel@makrotopia.org>,
- Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-References: <20250717073020.154010-1-maxime.chevallier@bootlin.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20250717073020.154010-1-maxime.chevallier@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <fb9ee560-d449-4d46-9fb1-19780ff28e65@linux.ibm.com>
 
-
-
-Le 17/07/2025 à 09:30, Maxime Chevallier a écrit :
-> Hi everyone,
+On Fri, Jul 18, 2025 at 10:28:32AM +0200, Jens Remus wrote:
+> On 17.07.2025 13:09, Jens Remus wrote:
+> > On 17.07.2025 01:01, Josh Poimboeuf wrote:
+> >> On Thu, Jul 10, 2025 at 06:35:13PM +0200, Jens Remus wrote:
+> >>> +++ b/arch/Kconfig
+> >>> @@ -450,6 +450,11 @@ config HAVE_UNWIND_USER_SFRAME
+> >>>  	bool
+> >>>  	select UNWIND_USER
+> >>>  
+> >>> +config HAVE_USER_RA_REG
+> >>> +	bool
+> >>> +	help
+> >>> +	  The arch passes the return address (RA) in user space in a register.
+> >>
+> >> How about "HAVE_UNWIND_USER_RA_REG" so it matches the existing
+> >> namespace?
+> > 
+> > Ok.  I am open to any improvements.
 > 
-> Here's a V9 for the phy port work, that includes some fixes from Rob's
-> reviews, by addressing a typo and the mediums item list.
+> Thinking about this again I realized that the config option actually
+> serves two purposes:
+> 
+> 1. Enable code (e.g. unwind user) to determine the presence of the new
+>    user_return_address().  That is where I derived the name from.
+> 2. Enable unwind user (sframe) to behave differently, if an architecture
+>    has/uses a RA register (unlike x86, which solely uses the stack).
 
-For the series:
+The sframe CONFIG_HAVE_USER_RA_REG check is redundant with the
+unwind_user one, no?  I'm thinking it's better for sframe to just decode
+the entry as it is, and then let unwind_user validate things.
 
-Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> I think the primary notion is that an architecture has/uses a register
+> for the return address and thus provides user_return_address().  What
+> consumers such as unwind user do with that info is secondary.
+> 
+> Thoughts?
 
-Christophe
+user_return_address() only has the single user, and is not all that
+generically useful anyway (e.g., it warns on x86), so let's keep it
+encapsulated in include/linux/unwind_user.h and give it the
+"unwind_user" prefix.
+
+Also, "RA_REG" is a bit ambiguous, it sounds almost like that other
+option which spills RA to another register.  Conceptually, it's a link
+register, so can we rename that to CONFIG_HAVE_UNWIND_USER_LINK_REG and
+unwind_user_get_link_reg() or so?
+
+Similarly, CONFIG_HAVE_UNWIND_USER_LOC_REG isn't that descriptive, how
+about CONFIG_HAVE_UNWIND_USER_LINK_REG_SPILL?
+
+Also we can get rid of the '#define func_name func_name' things and just
+guard those functions with their corresponding CONFIG options in
+inclide/linux/unwind_user.h.
+
+Also those two functions should have similar naming and prototypes.
+
+For example, in include/linux/unwind_user.h:
+
+#ifndef CONFIG_HAVE_UNWIND_USER_LINK_REG
+int unwind_user_get_link_reg(unsigned long *val)
+{
+	WARN_ON_ONCE(1);
+	return -EINVAL;
+}
+#endif
+
+#ifndef CONFIG_HAVE_UNWIND_USER_LINK_REG_SPILL
+int unwind_user_get_reg(unsigned long *val, unsigned int regnum)
+{
+	WARN_ON_ONCE(1);
+	return -EINVAL;
+}
+#endif
+
+Then the code can be simplified (assuming no topmost checks):
+
+	/* Get the Return Address (RA) */
+	switch (frame->ra.loc) {
+	case UNWIND_USER_LOC_NONE:
+		if (unwind_user_get_link_reg(&ra))
+			goto done;
+		break;
+	...
+	case UNWIND_USER_LOC_REG:
+		if (unwind_user_get_reg(&ra, frame->ra.regnum))
+			goto done;
+		break;
+	...
+
+-- 
+Josh
 
