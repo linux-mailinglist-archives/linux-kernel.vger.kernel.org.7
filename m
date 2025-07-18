@@ -1,63 +1,55 @@
-Return-Path: <linux-kernel+bounces-736359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99A9BB09BEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:03:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10D4CB09BBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:51:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8B64AA1A91
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 07:02:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45BA65A58B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BCB7221F1F;
-	Fri, 18 Jul 2025 07:01:32 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B8161FDA7B;
+	Fri, 18 Jul 2025 06:51:49 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBCE021ABB1
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 07:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DD284689
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 06:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752822091; cv=none; b=HFVILnDr/W3YVNX4qa8qzY1TZkXk7cobOlqHFEfMiNzJIAiJfGmnf88lbtRBBJzy/vltD2l+JCgwo7SWLNTlibRsrNqMbPFakAwH3TFXRikuN5monC70yUv+Xw6p3o3wcKCP+OzXZBCgK4uJC209oGrtbOSYHYZJsiqLETgubBo=
+	t=1752821509; cv=none; b=eHXBWx3N9g2uwtFSxYJdj9hCu1ejFzjwApZvdfwBMLcgMjmursDWkmmjXheNYxy80hquQghyRR7ZlhfCeT7OsNo5jqW7ggAd+dtahCIOhZNZig0o8AJkYzYp/3QLKj+zJykQC1QGvSNXV2hu1yHliEGmfBzO+LoN/i1LVGwAnM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752822091; c=relaxed/simple;
-	bh=NB/R6FfpGSSrjbWfvpEbofTnyAXmCPxGh1OKedYUwrA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mjcw6k2Kbtx7w3CoXjxwPFveENMNez56/7S66T/bMhDYg/PpDo2FFYJ8YJ/xznK0u+4BzH0r4K9Hoj3A4mgiwgJWMPBPMd7FH0Dj9NFG9bHchy0entMg8t7M+Z4Cja/ZIAWnV3N87Xu61BASRXrkLWA/7lGRKnYdZOrWd9Lx7TQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bk0wH55Q0z2Cfvh;
-	Fri, 18 Jul 2025 14:57:19 +0800 (CST)
-Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8C6A018005F;
-	Fri, 18 Jul 2025 15:01:27 +0800 (CST)
-Received: from kwepemq100007.china.huawei.com (7.202.195.175) by
- dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 18 Jul 2025 15:01:27 +0800
-Received: from localhost.huawei.com (10.169.71.169) by
- kwepemq100007.china.huawei.com (7.202.195.175) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 18 Jul 2025 15:01:26 +0800
-From: Yongbang Shi <shiyongbang@huawei.com>
-To: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<kong.kongxinwei@hisilicon.com>, <dmitry.baryshkov@oss.qualcomm.com>
-CC: <liangjian010@huawei.com>, <chenjianmin@huawei.com>,
-	<fengsheng5@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
-	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
-	<jani.nikula@linux.intel.com>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 drm-dp 11/11] drm/hisilicon/hibmc: modification for the former commit
-Date: Fri, 18 Jul 2025 14:51:25 +0800
-Message-ID: <20250718065125.2892404-12-shiyongbang@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250718065125.2892404-1-shiyongbang@huawei.com>
-References: <20250718065125.2892404-1-shiyongbang@huawei.com>
+	s=arc-20240116; t=1752821509; c=relaxed/simple;
+	bh=eRN9ploC6vX6SGE4XnCvVUDHpyOKD4RWrlIvw8xGzCA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qbQyxr7q3ZvQt085I/kXXl+gIVqovfD5h581fL7f/LX4Y4U66vaSN/LGtsKM4U/K/eBvRPzO8ZkRapP50cAe05bTyj/Jqq6DIRMk/TNfPHAVNgaBXo3j2Boe3/nq/5/HL+Bextv1dw1PEqbwDAnaG43JOuYfln+zJDdD1acvO5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bk0nr07przYQtpg
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 14:51:44 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id BCFB81A0EBC
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 14:51:42 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.166.178.91])
+	by APP3 (Coremail) with SMTP id _Ch0CgA3sdv87nloC4iRAg--.35938S2;
+	Fri, 18 Jul 2025 14:51:41 +0800 (CST)
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+To: akpm@linux-foundation.org,
+	kasong@tencent.com,
+	nphamcs@gmail.com,
+	bhe@redhat.com,
+	baohua@kernel.org,
+	chrisl@kernel.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Kemeng Shi <shikemeng@huaweicloud.com>
+Subject: [PATCH] mm: swap: correctly use maxpages in swapon syscall to avoid potential deadloop
+Date: Fri, 18 Jul 2025 14:51:39 +0800
+Message-Id: <20250718065139.61989-1-shikemeng@huaweicloud.com>
+X-Mailer: git-send-email 2.36.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,49 +57,189 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemq100007.china.huawei.com (7.202.195.175)
+X-CM-TRANSID:_Ch0CgA3sdv87nloC4iRAg--.35938S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3Ww13Kw4rKF4rWFykWr1UAwb_yoW7tF1xpF
+	W3WFn0kr4kJrn2kw17Aa1DCry3Cr1fCa17ta13JFySv3WDXrySgr97trn5ZrySgFn5JFyq
+	qrs7t34Uu3WYqa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
+	Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
+	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
+	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
+	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
+	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUoWlkDU
+	UUU
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-From: Baihan Li <libaihan@huawei.com>
+We use maxpages from read_swap_header() to initialize swap_info_struct,
+however the maxpages might be reduced in setup_swap_extents() and the
+si->max is assigned with the reduced maxpages from the
+setup_swap_extents().
 
-The DP reset was adding in the former commit, and move HDCP cfg after DP
-controller deresets, so that configuration takes effect.
+Obviously, this could lead to memory waste as we allocated memory based on
+larger maxpages, besides, this could lead to a potential deadloop as
+following:
 
-Fixes: 3c7623fb5bb6 ("drm/hisilicon/hibmc: Enable this hot plug detect of irq feature")
-Signed-off-by: Baihan Li <libaihan@huawei.com>
-Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
+1) When calling setup_clusters() with larger maxpages, unavailable
+   pages within range [si->max, larger maxpages) are not accounted with
+   inc_cluster_info_page().  As a result, these pages are assumed
+   available but can not be allocated.  The cluster contains these pages
+   can be moved to frag_clusters list after it's all available pages were
+   allocated.
+
+2) When the cluster mentioned in 1) is the only cluster in
+   frag_clusters list, cluster_alloc_swap_entry() assume order 0
+   allocation will never failed and will enter a deadloop by keep trying
+   to allocate page from the only cluster in frag_clusters which contains
+   no actually available page.
+
+Call setup_swap_extents() to get the final maxpages before
+swap_info_struct initialization to fix the issue.
+
+After this change, span will include badblocks and will become large
+value which I think is correct value:
+In summary, there are two kinds of swapfile_activate operations.
+1. Filesystem style: Treat all blocks logical continuity and find
+usable physical extents in logical range. In this way, si->pages
+will be actual usable physical blocks and span will be "1 +
+highest_block - lowest_block".
+2. Block device style: Treat all blocks physically continue and
+only one single extent is added. In this way, si->pages will be
+si->max and span will be "si->pages - 1".
+Actually, si->pages and si->max is only used in block device style
+and span value is set with si->pages. As a result, span value in
+block device style will become a larger value as you mentioned.
+
+I think larger value is correct based on:
+1. Span value in filesystem style is "1 + highest_block -
+lowest_block" which is the range cover all possible phisical blocks
+including the badblocks.
+2. For block device style, si->pages is the actual usable block
+number and is already in pr_info. The original span value before
+this patch is also refer to usable block number which is redundant
+in pr_info.
+
+Link: https://lkml.kernel.org/r/20250522122554.12209-3-shikemeng@huaweicloud.com
+Fixes: 661383c6111a ("mm: swap: relaim the cached parts that got scanned")
+Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+Reviewed-by: Baoquan He <bhe@redhat.com>
 ---
-ChangeLog:
-v2 -> v3:
-  - split into 2 commits, suggested by Dmitry Baryshkov.
----
- drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+v1->v2:
+-Fix typo
+-Add description of behavior change of "span" in git log
+-Ensure si->pages == si->max - 1 after setup_swap_extents()
 
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
-index 85499f1ace8b..7ba01e7901d3 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
-+++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
-@@ -175,8 +175,6 @@ int hibmc_dp_hw_init(struct hibmc_dp *dp)
- 	dp_dev->link.cap.lanes = 0x2;
- 	dp_dev->link.cap.link_rate = DP_LINK_BW_8_1;
+ mm/swapfile.c | 53 +++++++++++++++++++++++++--------------------------
+ 1 file changed, 26 insertions(+), 27 deletions(-)
+
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index 68ce283e84be..57397434929e 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -3141,43 +3141,30 @@ static unsigned long read_swap_header(struct swap_info_struct *si,
+ 	return maxpages;
+ }
  
--	/* hdcp data */
--	writel(HIBMC_DP_HDCP, dp_dev->base + HIBMC_DP_HDCP_CFG);
- 	/* int init */
- 	writel(0, dp_dev->base + HIBMC_DP_INTR_ENABLE);
- 	writel(HIBMC_DP_INT_RST, dp_dev->base + HIBMC_DP_INTR_ORIGINAL_STATUS);
-@@ -186,6 +184,8 @@ int hibmc_dp_hw_init(struct hibmc_dp *dp)
- 	writel(0, dp_dev->base + HIBMC_DP_DPTX_RST_CTRL);
- 	usleep_range(30, 50);
- 	writel(HIBMC_DP_DPTX_RST, dp_dev->base + HIBMC_DP_DPTX_RST_CTRL);
-+	/* hdcp data */
-+	writel(HIBMC_DP_HDCP, dp_dev->base + HIBMC_DP_HDCP_CFG);
- 	/* clock enable */
- 	writel(HIBMC_DP_CLK_EN, dp_dev->base + HIBMC_DP_DPTX_CLK_CTRL);
+-static int setup_swap_map_and_extents(struct swap_info_struct *si,
+-					union swap_header *swap_header,
+-					unsigned char *swap_map,
+-					unsigned long maxpages,
+-					sector_t *span)
++static int setup_swap_map(struct swap_info_struct *si,
++			  union swap_header *swap_header,
++			  unsigned char *swap_map,
++			  unsigned long maxpages)
+ {
+-	unsigned int nr_good_pages;
+ 	unsigned long i;
+-	int nr_extents;
+-
+-	nr_good_pages = maxpages - 1;	/* omit header page */
  
++	swap_map[0] = SWAP_MAP_BAD; /* omit header page */
+ 	for (i = 0; i < swap_header->info.nr_badpages; i++) {
+ 		unsigned int page_nr = swap_header->info.badpages[i];
+ 		if (page_nr == 0 || page_nr > swap_header->info.last_page)
+ 			return -EINVAL;
+ 		if (page_nr < maxpages) {
+ 			swap_map[page_nr] = SWAP_MAP_BAD;
+-			nr_good_pages--;
++			si->pages--;
+ 		}
+ 	}
+ 
+-	if (nr_good_pages) {
+-		swap_map[0] = SWAP_MAP_BAD;
+-		si->max = maxpages;
+-		si->pages = nr_good_pages;
+-		nr_extents = setup_swap_extents(si, span);
+-		if (nr_extents < 0)
+-			return nr_extents;
+-		nr_good_pages = si->pages;
+-	}
+-	if (!nr_good_pages) {
++	if (!si->pages) {
+ 		pr_warn("Empty swap-file\n");
+ 		return -EINVAL;
+ 	}
+ 
+-	return nr_extents;
++	return 0;
+ }
+ 
+ #define SWAP_CLUSTER_INFO_COLS						\
+@@ -3217,7 +3204,7 @@ static struct swap_cluster_info *setup_clusters(struct swap_info_struct *si,
+ 	 * Mark unusable pages as unavailable. The clusters aren't
+ 	 * marked free yet, so no list operations are involved yet.
+ 	 *
+-	 * See setup_swap_map_and_extents(): header page, bad pages,
++	 * See setup_swap_map(): header page, bad pages,
+ 	 * and the EOF part of the last cluster.
+ 	 */
+ 	inc_cluster_info_page(si, cluster_info, 0);
+@@ -3363,6 +3350,21 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
+ 		goto bad_swap_unlock_inode;
+ 	}
+ 
++	si->max = maxpages;
++	si->pages = maxpages - 1;
++	nr_extents = setup_swap_extents(si, &span);
++	if (nr_extents < 0) {
++		error = nr_extents;
++		goto bad_swap_unlock_inode;
++	}
++	if (si->pages != si->max - 1) {
++		pr_err("swap:%u != (max:%u - 1)\n", si->pages, si->max);
++		error = -EINVAL;
++		goto bad_swap_unlock_inode;
++	}
++
++	maxpages = si->max;
++
+ 	/* OK, set up the swap map and apply the bad block list */
+ 	swap_map = vzalloc(maxpages);
+ 	if (!swap_map) {
+@@ -3374,12 +3376,9 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
+ 	if (error)
+ 		goto bad_swap_unlock_inode;
+ 
+-	nr_extents = setup_swap_map_and_extents(si, swap_header, swap_map,
+-						maxpages, &span);
+-	if (unlikely(nr_extents < 0)) {
+-		error = nr_extents;
++	error = setup_swap_map(si, swap_header, swap_map, maxpages);
++	if (error)
+ 		goto bad_swap_unlock_inode;
+-	}
+ 
+ 	/*
+ 	 * Use kvmalloc_array instead of bitmap_zalloc as the allocation order might
 -- 
-2.33.0
+2.36.1
 
 
