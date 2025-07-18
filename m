@@ -1,147 +1,115 @@
-Return-Path: <linux-kernel+bounces-737352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 597F0B0AB42
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 23:03:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3111B0AB43
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 23:07:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECB021C48548
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 21:04:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59F301AA6F05
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 21:07:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A5CF21C9E5;
-	Fri, 18 Jul 2025 21:03:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE5A21C9E5;
+	Fri, 18 Jul 2025 21:07:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="X5DFOfRg"
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RPPOW+KQ"
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 250C71F8EFF
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 21:03:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01EA821018A
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 21:07:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752872628; cv=none; b=CirY2IzyC2l26ErkXP4YmVySFccUk8uHIA9yZOaGcGz4ikfF3Nt7yAZpgQVcfvMVaJ97HsTDwGSkFdg+PtaTkEAf2CS392w6jLdwTeL904vR/6sSPb1hByoIIjDa3ZxRTVo4Kmxqfg+b2huhN0XJ4cUQJUHLfx6JNQzUfQqEj6I=
+	t=1752872826; cv=none; b=nASnMhI5UCdjE7oQnCjOVJzIe2mCnLIgV5ubBZ/OVlNCKqELFUfx2fyJxJczqYyAISEVJxTOnfM4sbPfRFz6RBq8Iq6IxulpylPRoidpAJuoCGseWdg9V2UTkDMb2KmaBa5GiscQcMdIvYbgPkgBIU7SmR9kOYJYYQNsQ/8o9Bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752872628; c=relaxed/simple;
-	bh=zzDMsAr4GKtcuWrnhtEidzhWRDh+qnVii9IM37m6u1s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mDVE4sWy/S2qJG5xWa/uNg9MLWgmVOWRE5Pm/DRnqDlP7JIYiyKoLgCRDlbKSRqt13vspkHewNWwolhpmf2z2dYg/6Ea6eSZQFY4WAzvVV3XxS5t0ujAkwHzUda37CqDj1Xq5TBV+T1zOcklNMuiWOI8AbjmeoltPa6dLhMsoAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=X5DFOfRg; arc=none smtp.client-ip=209.85.166.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-87c124eb056so76027839f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 14:03:45 -0700 (PDT)
+	s=arc-20240116; t=1752872826; c=relaxed/simple;
+	bh=5TwKigiH08MXi3g8F9YV0r2S2yH4dRD08h/ffr23QEs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rtGkK2ztbRiDi4IlPHUyEkWy8g47mThO/hq9WgFhEHJKTOypOo0pJHsBB6XGnJe1s2jg0P9evwN6DkkzoycdsJ60MfcdOHpJOlVfVP1KUR/4qCz/rPMA0oT/EmyjpQsF3ZpH6FpKGuu0qI12kKsPceT69l7ueWwngR2ANSE/9hA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RPPOW+KQ; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-73e58d51060so650576a34.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 14:07:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1752872625; x=1753477425; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=L5QtuVUnIsXqjvxXCcqU+T0dmbm8qNp5jDvLDftyQas=;
-        b=X5DFOfRg8vBu012kibh3JARLtXO/R3QgTDdtxxkTxkSvhqx4SFq4zu0qlvqKGj2RER
-         HcoJvk0x6RelKuqnLdRrkf8AbnPRifbhY/kgbYzTz/XJsV/B38c+s+8yOXlQ/Lg8oqey
-         E/vKKvrtaA+cXXWlbNw7tpM8axAnblhDHefD0=
+        d=linaro.org; s=google; t=1752872824; x=1753477624; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=IDq7oOQ52kdbaZwGEtTLrjH3q1ZZE7Dja6w1bzcer4A=;
+        b=RPPOW+KQSsKktMhjnf8XFz/9iHhlzqwvDCe45/SKJ6bqajLWu3nugWKRK/vHiz3XWY
+         IPHFRG98zPANFjYrTNwpoPJhTy92ZYpjpCQrCHZvCzq63CMkU6FUcvPRZ09c94Jt3M9M
+         /VYYFBTFueh0phEM5PdlFDKSF3SW/LfHtNL1B1uBpGShQsn72JSUmMRHaFNKc30bixMD
+         wWOLSknFxE6RFEKPo7tK1051q7DAvm8zAnn+OmwLeGuLfhdZ5Ed5LgF32Vqoa+205ViI
+         mpeBrjtrP3NgFr9lhODY4Y376Kji93LxSMD3dRJxEkHHllL/TrAEYo6LQIkFbyui+Wag
+         MWFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752872625; x=1753477425;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1752872824; x=1753477624;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L5QtuVUnIsXqjvxXCcqU+T0dmbm8qNp5jDvLDftyQas=;
-        b=XldilX0dHTIBSxeYsjeO6zTH1ZrCCgmRxWLH0/O/JDyo2/BLfi9QTComTQw//PB4e/
-         A4hp2G54dalsw6FwzbiUO1gNw8ZXcq5R1c3238iOJ77g9RBzyC+oM5eBsW2drM88qRLk
-         Yh+DuPnjT5cMR+QiX9TmeFwFKYCLbcwVcwBK33W0eGX+JrmR15dSiWJ2r6U4wh+l1GfG
-         F5McTEqnavXVraQ7EYGk5H3xQqLcxZk5cU53q+AMAEkwFkG/+8mudLak4Adg7QlZXUgY
-         XYOLfW14vosrmwhQHPnb5icl8dYYJdKokiF0BvKM9QujkezU+ef9mzhmDOB/POMEkWcP
-         HFbA==
-X-Gm-Message-State: AOJu0YyUE09prpqdMyghAjfqY449hiDsvJII6BbuQKEEWZ0x2kHkSf9o
-	QiBF+QMX1kYNlLOfcXgxoPO+o9HXl3eRAOLaBDCK2D4z68ScXjlY+h1AJB/8kj+zDZg=
-X-Gm-Gg: ASbGncv60t0N1RHjybAOixCHz/Vvu2PBd5T5pw3G9l6Adq+7MaJv4YrQLtP7RuOCf0g
-	3ELRQr95CHTYcEDOnP6yvZ5bv9AW2Oj6E/AQIAtOkacbs5iEtP289op4Y8pXtpeyLZReNE/SR6j
-	hBK5vBPxemtN7NFmwcjf4Q0S6C9hWmQFfkMO3E72jI5Litd6VcTKQxFcp1doUSMk85A2O4aaM+A
-	GZNngNcAEO7AiHvl7gpYem0V4x/nLobWwuZ/kh0ExahM04XnFxHSK1IPjamRd2irLXo8JYu3Ioa
-	8XjercraMBJ02Rf5wjdxKGFexChMwok/RTtUR9qod/yhYwISTomXe2gJ0D8AZtWPEW0fNuNi6zl
-	9yHTrxB1F3EcmwNLw8mfKNzu2GRwVGI4m3g==
-X-Google-Smtp-Source: AGHT+IEOA9GEgGphdbPmdovYsa3GM3V4jtxaUIbKpm4MtRPTor5ojw9boEjHzikfUxMJUDj+Bfs+yQ==
-X-Received: by 2002:a05:6e02:12eb:b0:3e2:a139:9489 with SMTP id e9e14a558f8ab-3e2a1399731mr2045355ab.11.1752872625057;
-        Fri, 18 Jul 2025 14:03:45 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e2982c9ab1sm6371975ab.57.2025.07.18.14.03.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Jul 2025 14:03:44 -0700 (PDT)
-Message-ID: <f82e3092-31ab-4ceb-a51f-208d13e7b2ec@linuxfoundation.org>
-Date: Fri, 18 Jul 2025 15:03:43 -0600
+        bh=IDq7oOQ52kdbaZwGEtTLrjH3q1ZZE7Dja6w1bzcer4A=;
+        b=v584gESXTD4BSUUW4C+fjKSLhRzMLXlf/nTZmhLplKHK7Sfwa8+EuVrUhaJwPqxMSY
+         TzJIwhiAsfA8JR2EaeGdcfSpPiUPzwB0GIsJg7WNigF7Z5S3lwsuG5VI6IfOtu6lGxR2
+         GY8LyX9teAjUtCOp2VxLGs4mTm2L9J4K3MQqFc+KSEGZwjZgxvnysZtJNxC8acRpTBoJ
+         5ggFZlY+MjMVCY+5ugakXp4Ajw9vI6a8gWIZgHBrh2n0S+08mQsXmv+4bOhbrcd/QLYl
+         qlb2qIwlM6yJsJrbj30RN2y+AV+dDRuPAHHstpXVcSzubl588fsELs1ZNDcRSK2SLshK
+         RDNw==
+X-Forwarded-Encrypted: i=1; AJvYcCX3EhiJzjqQrJnOHXk+D0SANjs3sreTAegokCD6hgrvjYuEtzsDGunGMhowA7LU0VuZhQJ5LIjAlvK9juI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxI8e+W4LJziqf/IG/eSWXIG/+h/Jk43g9bFPVKIzUE47vCKOxa
+	OC7/xZIuehJI9C98raSd+mXUKvOOPA5fKs2TN6gijZrNB5Qh74xswldLpjg5J2AE2HY=
+X-Gm-Gg: ASbGncuoe04c2pqEtl7nPpUDCKkszvqRNLk5wVHzyok+JQYLGTDy2WobprzolvA5PRV
+	1C9MBGw8MOwf5PBukvGZ9o3WlFaQvlLBvxtmWI6Ss8DF8P8B3GP6GILTjT5PGzzLell801esxWS
+	XMZEtqF7sJHRNZvKHZ1joZNVCa0WVn0lNN8LXXBpJvnVrTAMR1GccibhyAdiqTVjmCHwSMjfjff
+	2o7Rj+Tx/q7wnSTYo9nGaq3xp6kYh+zE5UAZhryQ7ETxQOW/lf5aXM6vE+zQM+7elyQMG+7RHGZ
+	IwuFhKEZc4iVFcbjmWJZl6ABI/90nDlswrrow1A1uBth/Q8CNI51ljt1Ppm7rxybIyR5NjHJAaB
+	G3LKwZtdc6hSWV1ZZT9UCb1B/7yQUoA==
+X-Google-Smtp-Source: AGHT+IEj/fNcFQQTUD8tJFDiwFrmLtonsc1w1R/cHms01UPIzSBjuIHwW08BPvsQyp9RY0wnRv1veQ==
+X-Received: by 2002:a05:6808:2e45:b0:41e:a422:390 with SMTP id 5614622812f47-41f99941b7amr2869684b6e.38.1752872823962;
+        Fri, 18 Jul 2025 14:07:03 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:e5d3:a824:1a57:fcaf])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-41fd10c22a3sm698017b6e.8.2025.07.18.14.07.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Jul 2025 14:07:03 -0700 (PDT)
+Date: Sat, 19 Jul 2025 00:07:02 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Ignacio =?iso-8859-1?Q?Pe=F1a?= <ignacio.pena87@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] staging: sm750fb: make fixId array static const char
+ * const
+Message-ID: <01f7bfc2-284a-479b-b73e-40907dfba387@suswa.mountain>
+References: <aHqvUrXtxwf_k9sI@MacBook-Pro-de-Ignacio.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] selftests/pidfd: Fix duplicate-symbol warnings for
- SCHED_ CPP symbols
-To: paulmck@kernel.org, Christian Brauner <brauner@kernel.org>,
- Shuah Khan <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <5b53702c-0dab-46c4-9cb0-448b4da36c2e@paulmck-laptop>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <5b53702c-0dab-46c4-9cb0-448b4da36c2e@paulmck-laptop>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aHqvUrXtxwf_k9sI@MacBook-Pro-de-Ignacio.local>
 
-On 7/14/25 17:01, Paul E. McKenney wrote:
-> The pidfd selftests run in userspace and include both userspace and kernel
-> header files.  On some distros (for example, CentOS), this results in
-> duplicate-symbol warnings in allmodconfig builds, while on other distros
-> (for example, Ubuntu) it does not.  (This happens in recent -next trees,
-> including next-20250714.)
+On Fri, Jul 18, 2025 at 04:32:18PM -0400, Ignacio Peña wrote:
+> Fix checkpatch warning for the fixId array only:
+> "WARNING: static const char * array should probably be
+>  static const char * const"
 > 
-> Therefore, use #undef to get rid of the userspace definitions in favor
-> of the kernel definitions.
+> The g_fbmode array cannot be made const as it is modified at runtime
+> in lynxfb_setup() and lynx_alloc().
 > 
-> Other ways of handling this include splitting up the selftest code so
-> that the userspace definitions go into one translation unit and the
-> kernel definitions into another (which might or might not be feasible)
-> or to adjust compiler command-line options to suppress the warnings
-> (which might or might not be desirable).
-> 
-> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Shuah Khan <shuah@kernel.org>
-> Cc: <linux-kselftest@vger.kernel.org>
-> 
+> Signed-off-by: Ignacio Peña <ignacio.pena87@gmail.com>
 > ---
->   pidfd.h |    4 ++++
->   1 file changed, 4 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/pidfd/pidfd.h b/tools/testing/selftests/pidfd/pidfd.h
-> index efd74063126eb..6ff495398e872 100644
-> --- a/tools/testing/selftests/pidfd/pidfd.h
-> +++ b/tools/testing/selftests/pidfd/pidfd.h
-> @@ -16,6 +16,10 @@
->   #include <sys/types.h>
->   #include <sys/wait.h>
->   
+> v2: Only change fixId array. The g_fbmode array is modified at
+>     runtime (lines 786, 788, 949, 953) and cannot be const.
 
-Please add comments here about why we are adding this so there
-won't be any confusion later.
+There you go.  That works.
 
-> +#undef SCHED_NORMAL
-> +#undef SCHED_FLAG_KEEP_ALL
-> +#undef SCHED_FLAG_UTIL_CLAMP
-> +
->   #include "../kselftest.h"
->   #include "../clone3/clone3_selftests.h"
->   
+Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-With that change:
+regards,
+dan carpenter
 
-Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
-
-I am assuming this will go through Christian's tree. If not I can
-take it through mine.
-
-thanks,
--- Shuah
 
