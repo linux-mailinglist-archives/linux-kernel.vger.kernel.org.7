@@ -1,336 +1,276 @@
-Return-Path: <linux-kernel+bounces-736271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FAC2B09AC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:58:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1292B09AC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:58:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 948684E2657
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 04:57:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAD92A43F0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 04:57:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9131F4C85;
-	Fri, 18 Jul 2025 04:56:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EDBD1E25E3;
+	Fri, 18 Jul 2025 04:56:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MAD+mSg2"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ggSMKtNo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92F220B7FE;
-	Fri, 18 Jul 2025 04:56:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752814568; cv=none; b=lLDi36uChCUbsvoZA0us8ymCkdrtnoKJg3O3KMmLZh4juJAY4zpIZOjiWqFXNrsAj8qGFy7srMRBS6SKKJN7UQQ+hAJ6RRTnrrFvRQ6rqYqn/aaRmsdAd0HhZSKkIF3sj5X0DoKn6z2YfpQ1HqyS3IajILPrphFl4PH34QsIRCA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752814568; c=relaxed/simple;
-	bh=qWNTk3s5NMApXRRxOjCX+WO/fKr3OFV7Wg0UAiRzQiU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TijvBLiyoaGSeqhXJnX4ks7MxSIV2KygQ9mbqsUOoNQoiPEPBaxrbY7FTLsMtkAJp9EQebaypr+WS4zHqfRTqsh1jhtpnKHJrEXYzU66ftalbyTqE5oatlNRUfg3FsxfZuR8jrP5H22mQuEWLxQy0YzYRqYdryudrWvF7eVqHzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MAD+mSg2; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b3be5c0eb99so1326313a12.1;
-        Thu, 17 Jul 2025 21:56:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752814566; x=1753419366; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=aiqelOOvokSP2vkZ7DaRUC0h4xNTtXyC0hk2XiiiVRw=;
-        b=MAD+mSg2VvMCII/xudgNR6JWR843jI3mrEswkr4fKeKlCzTBO2oqaF5Zonti+y3kiY
-         j1Xv/drxuxV3Ro0xhgd8CXwzQgWApJWRkaRNkll7iXl6Kvl70eY+6PdXzazGKFOs3Ey0
-         9Tu5cxamq4KHD8SDKnGh7dUME50St60fKRjRQbfiRggv5WXZmFtp1DAglh9N3UjTkiYM
-         /VqAZJQdkHYHakllpFB5GCg5Eb+ciAuIyhgHixMdSg8YN440zNLa72cEvIKSxEJ5u68e
-         C1/bW6YL15a6V8Bi89CYIGyyBYGl/QWCGEb6uegIDAMZKr1r1NUiwizWFr2x8aPP8DsG
-         YsyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752814566; x=1753419366;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aiqelOOvokSP2vkZ7DaRUC0h4xNTtXyC0hk2XiiiVRw=;
-        b=R93ZyAbwI7ApNDSiouC9hIhnDgH039V5ojHCfWyfJFRWMmXouLxFmPldx4JwWHoQCA
-         KyFl6gTAb/ZeEKCo5hhyTFIxr81YViHsrI9kYLGNgJGsJsxDTmkNrPyudU6rp1ZGlcbE
-         dlpRYBFPaXf9Ce1zoBfrlas/soZiVqNA3J/kI73AfqVRurdIXoeBCTq5HQ6b0Vs2JqO2
-         Bc0VpNp50U7vvTxE5ni9aDuwh+cGXkSZe4WJLkeJwrQUga9bqWtey8LIt3w0QCcpE1xZ
-         S2ijgZtcVIcEmC1LBVoZQRrCgQlM7iVsjkQ+gZdqHKU/hrc+BpHjlO2Klvxblgcjkc46
-         xauQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU5s91JZou9XBQZZWNb/RBOZnP34/qnqkmJjXdHs01b/lmRdPxBWeVOpcdLqTjpk91PVGByTmq+RcDfhngU@vger.kernel.org, AJvYcCUkpNH5zlLk8BoLE+F1k5fjAa3PAADBzEt0+N9NOgTTQy8tGhlK5W96YCe4khp/q2BT6CmHT8NMtXBG@vger.kernel.org, AJvYcCWPYyGkgxOfNaWGz2STsV6fq/++BZhrdXEov3qFs73lgDsph5sgBz4M2VxGRWXkq9K2FmHqHJOGAftQ@vger.kernel.org, AJvYcCXwPxzvD6m4AanXXsDtsCnPr5MzrMfHabiiiwktDsHYKn76rAZRP9gZ24JBlP0KYbyBym84H76SFhcle0hE@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnQZfiGZ/SszFY2aab+2XKNzAmz1uegYFEtde8enHbcGAYtQQR
-	37W9h5s0IljjafJ/lg8cVCvNa3+Erh5vad/UKLxCLsWgvw8lmBho3eQU
-X-Gm-Gg: ASbGncuLAggrKN/Wr4I67IX0CURDOpVgZ23nLVst3znuxfsp4bj7ECOPbfKdvnVgVyi
-	6LCVjG1Cw52dXYPpYLu2CAM715CCauFy045kLtJ1L+59IIoi1msdrwa5axJLcLy0epMnJSmZsGV
-	Vr8plqYqnBmkcwrojdcHcyRmV+2U4LJ30p5nM3iKbm9HNAXbRT41tQrVB1Z8L82Wsb3whWpbQP7
-	TkfPdOxL4hlgQ3v9sP4JFcc06AO47cL0cAMwUfmC/8u3DGCr3+hjsQbXoiREKbgGX8LgnWP7X9u
-	eilirqMimr+7iq6GGYJ42G0u0NnoiUVLGV8DlZa8MT0cVc5NWCKHAOi95e3ikU0kDzMn91pclXa
-	UER2U+ykLKtRRehraICAV/nMwD6ZwnBHoKdWk/Qq7DguZkU7BLikNZATXfW21I47fhTGdAuGjrN
-	CSUQ==
-X-Google-Smtp-Source: AGHT+IGDjq2DhqSuXgN/POALmXPVtNVWI+Et+6g2VTK4Goj/AQzWa3UeW+fqHh7e9/h5vhGmctCDVQ==
-X-Received: by 2002:a17:90b:1c04:b0:312:e9bd:5d37 with SMTP id 98e67ed59e1d1-31cc2515a29mr2420920a91.6.1752814565898;
-        Thu, 17 Jul 2025 21:56:05 -0700 (PDT)
-Received: from localhost.localdomain (c-67-160-120-253.hsd1.wa.comcast.net. [67.160.120.253])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31cc33715b2sm476907a91.24.2025.07.17.21.56.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 21:56:05 -0700 (PDT)
-From: mhkelley58@gmail.com
-X-Google-Original-From: mhklinux@outlook.com
-To: kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	hpa@zytor.com,
-	lpieralisi@kernel.org,
-	kw@linux.com,
-	mani@kernel.org,
-	robh@kernel.org,
-	bhelgaas@google.com,
-	arnd@arndb.de
-Cc: x86@kernel.org,
-	linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-arch@vger.kernel.org
-Subject: [PATCH v4 7/7] Drivers: hv: Replace hyperv_pcpu_input/output_arg with hyperv_pcpu_arg
-Date: Thu, 17 Jul 2025 21:55:45 -0700
-Message-Id: <20250718045545.517620-8-mhklinux@outlook.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250718045545.517620-1-mhklinux@outlook.com>
-References: <20250718045545.517620-1-mhklinux@outlook.com>
-Reply-To: mhklinux@outlook.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2EA11DFE26
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 04:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752814583; cv=fail; b=IiRp2IHkvDUzLbGLHBSOkBqjpsdGL6nK8QOYlC6iBqp0zFFcLijrLO6DiXHWctXQ5akUqWF+fayP6Ndo2hMR96BIDkepFekwMCOerqDVOdJmdwBKxlyxezQDjZbSb0vY9gEeMUsRUHqubmfhSuMhVcwd9V+plZJyqDjlTWLFuIc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752814583; c=relaxed/simple;
+	bh=t5N3aEJ3BOdt4ZoTqCIIwQeWc4cYyfpBX+CeaUIx+Ds=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=JcqlYtOd8bGXq3BQt8O88nU60chH22MMT2ijLbMcSQGNJBLA05n6LuLN+tIDU7mHz77MTqnlJuqr9dOrhtxKXPhfzs1BeolVFni/otJrZ26KSvwKD/qeLkVR5qfM0j2git47AVftNLhhAr3BU1MBoAJPylY/mwsoqdCgw8TkVHM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ggSMKtNo; arc=fail smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752814582; x=1784350582;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=t5N3aEJ3BOdt4ZoTqCIIwQeWc4cYyfpBX+CeaUIx+Ds=;
+  b=ggSMKtNobzzl4lpZ/QI7nlcV/wq2Gl/nOBsRjrYLnU6JKmBsWqmypjKk
+   GZbWEOO5dyGAe/+9qZRXTM5OOXw3syfwt89bao1gyasvCiRytdOoBRk7N
+   BJfEJ5IWbW0KO+sm3vrNNJixhgvbGat1cqxzAnRKuwJOgkI0dEcOuOCWQ
+   P1u8lSfIV2Fsf19UNiFa864MGqqACG3VcXuTaq0kfFC0T5WTQhBSsdBwR
+   Qyp+wF1QE3p+HSUy//N/Uh3BffHNGDhPN8oa1BjykDRMB5IVPALFz4DNu
+   SwPRQ893L+WruXLu689u7Cwgm+Xyrkespoj17AglGUVJwy2SPqVAMpxaS
+   A==;
+X-CSE-ConnectionGUID: z9rK5h2wRmen+/+Gskz0lQ==
+X-CSE-MsgGUID: cp/Jtq10S/OTPSAl7JUHfw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11495"; a="55249412"
+X-IronPort-AV: E=Sophos;i="6.16,320,1744095600"; 
+   d="scan'208";a="55249412"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 21:56:21 -0700
+X-CSE-ConnectionGUID: zFnV3YVyRFGz7YJBWN3xgg==
+X-CSE-MsgGUID: nS58fzVTRrCOvOBwYufZqw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,320,1744095600"; 
+   d="scan'208";a="158321340"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 21:56:20 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Thu, 17 Jul 2025 21:56:19 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Thu, 17 Jul 2025 21:56:19 -0700
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (40.107.102.86)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Thu, 17 Jul 2025 21:56:19 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KKO1Y4zFz/2G2XTtQu3SkCgrsYnRpHbyYv53YF/tpC1rMNJsunsBOj2lJCzpC5cmnd2uWj8q6okysvVmvWQaRXeia6nhUIgTDEcmKjCHr/i5eQzW049IzVQPjJB6nG7EcXMx+Il2F6t9DISVcrdigNxTAEgOQ7tPI2o6qCKkTXYhvr0GRlHxQFqEbF3STEM6edXNBAXdI1vVgeS20XIqH7S3egjiUAnvUo8YOOO4IiLSK8N+EPsoH3kPBTm/LN+osyQXi6ev8aNPwiJRW/kaQsvcIbdtcGdc9huJqHGs6dcQioDafeAUlBr9bBD/AG1zR/pnC5nlIeiizA04U010Aw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=B3lqWM/xXS/tAKAiCnijNvFwEMRwTgd8H8+uGZJCOe8=;
+ b=R8A9bed+tk34e8mF9MnjZYJoJH1m1sT8IO00bSAVdH8aw+aYbWulhcBIohbSo1Z8wCtcsxw9wBx7tjNY687tC8TSW7LbRumfVrzIy1GoqaENPoYGWj04cIL9c1e/PvGcVWHZCfTsnlBlvnHtPS0mKDLOOX+exaQQtdBvmM3y7FthHPyGBfxOdvy4oZUNvf/BEM9+jHEbXhzqoAi7U/j6w7YacTJwPtg4gheGWqzXkTql9bE3cQYUGsE1XRrAq5UIGbGW6Sot/OOC8sDKMNIg3O0dVlmE8yob3Laeog4prQjUqWrzPGieycZyeg3CcNi3hWLVFl2KcvK5PopC0WXmmA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BL3PR11MB6508.namprd11.prod.outlook.com (2603:10b6:208:38f::5)
+ by DS7PR11MB7931.namprd11.prod.outlook.com (2603:10b6:8:e5::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.17; Fri, 18 Jul
+ 2025 04:55:37 +0000
+Received: from BL3PR11MB6508.namprd11.prod.outlook.com
+ ([fe80::1a0f:84e3:d6cd:e51]) by BL3PR11MB6508.namprd11.prod.outlook.com
+ ([fe80::1a0f:84e3:d6cd:e51%7]) with mapi id 15.20.8880.021; Fri, 18 Jul 2025
+ 04:55:37 +0000
+Date: Thu, 17 Jul 2025 21:57:21 -0700
+From: Matthew Brost <matthew.brost@intel.com>
+To: Balbir Singh <balbirs@nvidia.com>
+CC: <linux-mm@kvack.org>, <akpm@linux-foundation.org>,
+	<linux-kernel@vger.kernel.org>, Karol Herbst <kherbst@redhat.com>, Lyude Paul
+	<lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>, Shuah Khan
+	<shuah@kernel.org>, David Hildenbrand <david@redhat.com>, Barry Song
+	<baohua@kernel.org>, Baolin Wang <baolin.wang@linux.alibaba.com>, "Ryan
+ Roberts" <ryan.roberts@arm.com>, Matthew Wilcox <willy@infradead.org>, "Peter
+ Xu" <peterx@redhat.com>, Zi Yan <ziy@nvidia.com>, Kefeng Wang
+	<wangkefeng.wang@huawei.com>, Jane Chu <jane.chu@oracle.com>, Alistair Popple
+	<apopple@nvidia.com>, Donet Tom <donettom@linux.ibm.com>
+Subject: Re: [v1 resend 00/12] THP support for zone device page migration
+Message-ID: <aHnUMTly7pOywJKg@lstrano-desk.jf.intel.com>
+References: <20250703233511.2028395-1-balbirs@nvidia.com>
+ <aHmJ+L3fCc0tju7A@lstrano-desk.jf.intel.com>
+ <09c5ce76-f7c1-41c7-97e1-74448e6143f7@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <09c5ce76-f7c1-41c7-97e1-74448e6143f7@nvidia.com>
+X-ClientProxiedBy: SJ0PR03CA0135.namprd03.prod.outlook.com
+ (2603:10b6:a03:33c::20) To BL3PR11MB6508.namprd11.prod.outlook.com
+ (2603:10b6:208:38f::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL3PR11MB6508:EE_|DS7PR11MB7931:EE_
+X-MS-Office365-Filtering-Correlation-Id: b81c9a24-938e-474e-5621-08ddc5b75620
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?RG43UUhPa2tFazVRNnpLQWlCWkJXMXFsZW51V283bms3OTNtVDltK1EzcWIx?=
+ =?utf-8?B?bUNIRjJYSjVIcW5QK3lkR25HOWplVHhFM3NBcSs1Mi9Jck8xQWE5YlBaODdm?=
+ =?utf-8?B?c0hUQWs4R1RHb1lkbGpDOHl6UEk5dGU3TGRPZ1JXVk1XRzNlK1dLWW1qTkl3?=
+ =?utf-8?B?QmxjN3YveDNCVWZGZFgvRkhxUU82dHZTN1FpWDYrdTJlN3gveGhQNW9ZYnJ2?=
+ =?utf-8?B?Mk1HRXFFMUlRUXBvajlWTncrRmJBODd5cmRBaVhSL3FVdkJKM1QreTg4NjV3?=
+ =?utf-8?B?Y3J0am15R2FkcVBJMWhVbDg4Z3lLMERlMEw0ckE3OElFQm0rSkxXZml5ZldL?=
+ =?utf-8?B?amQ2NklCY2NQd2xFTE9JazRZblY4ZE95WEFZaksweFdFRi95eE05Y2c3UFB6?=
+ =?utf-8?B?S3YranhKcktoZkpIajJwb3p2NG01SVRvdCtldUZzUllpNDRuUktyalVTZWxl?=
+ =?utf-8?B?MEZObHE0ekRlU2hOSyt3elZWb216bWxUdEtaVExIRzZMVENHM1BZUTM5YkFu?=
+ =?utf-8?B?V01Ha3lNblFvTGZock83SjdxSzRSWk1FRk9PRFpwQkFxa3VzZ3hDOUQwQk9B?=
+ =?utf-8?B?Z2MwL0Q2OUdWVkhEN1hjRy9hM2JuTm5DUFFJS0xjWHVjRzVwWU9vVjE3OVRU?=
+ =?utf-8?B?SWN5N2psbW5JUjZJUkFvckF6TlhEK2ZPQ3F5OVNnaDVrS2I5eFVkYXFwTU5Y?=
+ =?utf-8?B?bW8ybDVSdVA4L2FCZEFxRHRiajgxS0RaTSt5TkJTRzlpdE8zN3VFdG1PYjFW?=
+ =?utf-8?B?cEtJQTI3ZFpnMkZxNVZkZGJyRnhUNng0N1FEMGFENVVVSDJsdWNhajM4c2tE?=
+ =?utf-8?B?bUwvVG1waW9LSFJPalVxbmR3Y0NyMlpqSk01K0VGakZ5M3RFNnRyT1NIWFhx?=
+ =?utf-8?B?YW12OHRUVEpQL1A0MGQ2M3pPQkt6bG0rall1VGI1dXdycEd6NCtxQ2twOThq?=
+ =?utf-8?B?Vko1enArOHowb2pHbjk4bDFKTDA3R3hpcGQweVU3MUFYaldob2NQbXROcVZO?=
+ =?utf-8?B?czY5VG1LU3FjNGZ0aWhkVGs0eUdsL2NhWHhiT3dhenFYVEN1UWtLejBRWWpk?=
+ =?utf-8?B?SnIyL0xQRmx6NnJGM0ZBNnFnYlRkWWNCUVRwQ1VEWStEZVVvZXV0dStHNzJK?=
+ =?utf-8?B?MkgxQmh3eXowUUxodUMwZFlJNGhRbURzV3VrUTVaZWJZWFlkOEg3b3FuTDFY?=
+ =?utf-8?B?YXgwWmdxVW1YSWFSV1VzVG1NbHNhWUY3NjVRRU9hOUp4SUZoRXdIeFlsaEVQ?=
+ =?utf-8?B?aHdKQ0RTTGgvd1d1aEQ1cjFBYm5EOXBKa1QwMkx4eU93N1lqbUdPM1I4RnFJ?=
+ =?utf-8?B?UGM0dFlHb0RUYXpBSWw3R2tzdFp6d2UzVFJhWnpSYS91aUo5N0xuTlROZ0tx?=
+ =?utf-8?B?djU4RnBJUHc0dWJMeWNuMytMVGV3U09wQUptRGgwWWQwL0RrbjVMT1ZuOWdz?=
+ =?utf-8?B?MExNV2JLQ0tCSUdhYnNuSnA1enVJN1lGUGlVMmx1RDV2eW1qTW9pS1d3VFgv?=
+ =?utf-8?B?M0hVamhQbld0aWVHSmVXdUVJbUZPaFRXY3kya1g4R3M5QW1McHJLalBJb2Qx?=
+ =?utf-8?B?Njh1endjQnFUQ1FxVEpGb3FJcXRrYU5kL2wrYXA1eThEWTNkYWhYRzRGZzMz?=
+ =?utf-8?B?eFlFd2tZdEUzK0hMeUUwSTZTRzdpUFJkYzZjNzEwZ1c5dUt1eVhYeXdmSnVv?=
+ =?utf-8?B?QWkycksrRDB5cy9GbDBuWmZCRmVIRlNPYXpaaXBZbUM2a1k4UllOWi9MS0pp?=
+ =?utf-8?B?RCtpWTdkVVhzWHU4TTZUSFE5MnpWamFuRGhFK1pGWUQzTjNMVDQ2S3ZHbklB?=
+ =?utf-8?B?U29XNTZIRW54ZmFuK2tSK0hxMHdkNThQQjRkMkxEWlprZ1lqblVUYWJEMkNS?=
+ =?utf-8?B?OVQ4UjY0aU9zOEZicDJDaTAvdTRlMWhRclNYRklKZDJCRlk1OFFHK0k2aC9j?=
+ =?utf-8?Q?NQNLghvKzcY=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR11MB6508.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NUxEM3Q4RUc4dGxyRk0yRzUvYUtUNjVRRDRXZHF2Wm85VWpVVkltYnZ0MVg5?=
+ =?utf-8?B?dXNhYVpHOWQyTUNPb1Mya2o1a1FOTFVEUWtWUkliZE5paUR1NUpWTUZ5VjNw?=
+ =?utf-8?B?OTB4bW5DaTlUOXZnK1FuRmxpREt5SUtCUGptWkt4T0hQRFpZVzFLci9EV3Nh?=
+ =?utf-8?B?Y0wvOUF0OE5aUldrZU1WV0IzMExQWmxRVnYzRVdMVjBUWmMvbytMT3F1YnNT?=
+ =?utf-8?B?dm92N3BiQ3Y5WXU5SzgrQWpGV0hZNklFM2R3c2wyUFl4Ukc5MG1uUDVRMTll?=
+ =?utf-8?B?V2NtQmxyWWdscE01T1ZuMGFEeXpiRXJ2b1Uya051NE9OQkhnUkhTdmg0WE5V?=
+ =?utf-8?B?aVNQV05KVFE0TEhXa0cwL0hCbnYzcGFoUW5rbWt0VUc2V0hJSDd0Nlc0VTM2?=
+ =?utf-8?B?dVk2QjhZZ0tBRDNYdWZTb3hwMTAxSFlCYlhQdEpTU0E0c2ZiV1V4M3lGV1Fo?=
+ =?utf-8?B?MG5lQjNUZEhOMnR0cjNpYUVKZkx5NmI4U0ptZGx0VGtVMUl1Zk1ZZmhpYllm?=
+ =?utf-8?B?MlhXVkowM1VxSzFWMUNFekVMdDZ5SVpUZ0Mya1FnakRUQWJKOUhWcERJTS9Z?=
+ =?utf-8?B?Qmt0YXFPQWxvSFhqWnF6MDE3bUZiVnl1ZHVUKzFhWGtjbnY5OVlQYStGK1FF?=
+ =?utf-8?B?a0JSdkk5WWlaVDFjRFVOVksxMFdyZjY5dXFLcjlnUWxGZHFMbnJXc3FHYVRI?=
+ =?utf-8?B?S2JJSWd1ejNuSzloWHZXTlZQRDEvZndCSGN6QUlEU0xWbVVMazdZNFFCaFJH?=
+ =?utf-8?B?QU5PQ0lIaVUrbmlNRyt0MCtsK25IUlYxTk9rd2VCdFdwYmt0RE5jWUNyWHNq?=
+ =?utf-8?B?VG1jNGRlSW9ycE1IWldHbGozbEVaT3hQVGlIV2tmaXdwK3FWd0EzVkVoNGdK?=
+ =?utf-8?B?azZ3RXI0SmpzSlpoVlhTVmFkaW0wU0srUmJWUEdBMTRVZ2NoWHUwNVRPdS9N?=
+ =?utf-8?B?cm42NHo2bGtJMXB2QXpuWGpWcnBlS0xWYjRzcEVLMGNXd0E0aWdvWHhCOFJT?=
+ =?utf-8?B?ZzI2dnFCemMwaXArZGhYOG45OXVXOGtRajNRRWxpeXFMNUZsU0RCVmhHdWtF?=
+ =?utf-8?B?WVE5a1RWY3d4U21Nd2s4dFQ4Zkh1TnY4RnhNaXBJSkVWKzB5S0w2VGc5ZDNW?=
+ =?utf-8?B?ZGFaZmEwQkhBK0Zjb1NxMXVEaWs5YTljZXNvQjFmSTBYS3VycGFUUVlCOHh0?=
+ =?utf-8?B?dXpuaUFaTkZGbThTdXBoa0N0NjdpU2FzcWsrd2tCa2U1bFN5K1NRWk1Qd1pt?=
+ =?utf-8?B?LzFuRlk2SWQ3WXBsSGdQMjNHWlpWUGJHZzAvdldJdC83cHdJS1I1OWVJdDlv?=
+ =?utf-8?B?TGdZM1dNV2lzdVhDdFhrMlp5R0NKM1dRdng4eGtRYkJ4WmRpYTZOMFAxVmJS?=
+ =?utf-8?B?RWxFQVVXL1JUeUl0UjA1UmVXbko4Y00zWC9oL1Q4bGhtdWRyOHkwak9raDNa?=
+ =?utf-8?B?VGYxUk5aQkdrdXNsVzNqS01GYWRaeFJlNHBlWkVOVFBib1BCNTZldVlnbWRx?=
+ =?utf-8?B?eEYvdUF0bW1SdzdtNlFiZTFEbUFjRUNLc3RFV1lWdHJnNUVQYms1em1mSGxx?=
+ =?utf-8?B?d0hBK1E2U3I1c2NQZEppdGhZbE9KQ2E1VndsdjJEaG1DcEJENU1LT0dXZEk1?=
+ =?utf-8?B?b0VMWG1wQldENFhvZDE2dEhyZS9YMjFyQk12blAxMDh5YWNhcDFrdjJlYTNJ?=
+ =?utf-8?B?WnMxcjJiQXhHSUtwUFh6ZmdKUDJlYkZkSC8yTjQ3bm5pQ1ZENnJUTzlseUM0?=
+ =?utf-8?B?ci8vUWJrS0lsMUc2cGtNdnljaDdmZFZzNXRKb2R6d3ZwNUNPM1Noc0ZrUEJj?=
+ =?utf-8?B?M3BOUTdhVFJTbUxTZE9lSGF1dkRldTF1Nno1NllISG1NS3lIRFZYQXBjRlM2?=
+ =?utf-8?B?Q29kZXFPb1Nma1NoRjFqMlhtSnRSbDkwakdiS3EzNzBtYWFQc1BmZVBSckYz?=
+ =?utf-8?B?SE45SXNGdElXTW4zQ2Z0allNZWo2VUlTN1NRWUIwd3hicitRRG9KQUZpK25O?=
+ =?utf-8?B?OWpCRFVlb281QVJFeE84aUY0Sjg5V3JtdnplTWhNUVFjaFZPaWt1eXh6ZVZ5?=
+ =?utf-8?B?bllSbVRtVDdadlFtN0FSNVdRWVJ6UVI3Qk5sSmdrOXl2N3dpYXplVmlVWVRo?=
+ =?utf-8?B?SkNxNVRWODNJMDdiaGltWGlIWCtKWkFFNmZNR3ZWbnF5Nlh6U3YyeWdWdytj?=
+ =?utf-8?B?U1E9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: b81c9a24-938e-474e-5621-08ddc5b75620
+X-MS-Exchange-CrossTenant-AuthSource: BL3PR11MB6508.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2025 04:55:37.3312
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mNH4S3Vkb1xCTv16ngCr2J3ZeGDEfOjiuZ8JU3SNt3ybeqdFS698kTd7laZXmiqjey5GuIlP4Se+E92nh3aJPw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB7931
+X-OriginatorOrg: intel.com
 
-From: Michael Kelley <mhklinux@outlook.com>
+On Fri, Jul 18, 2025 at 01:57:13PM +1000, Balbir Singh wrote:
+> On 7/18/25 09:40, Matthew Brost wrote:
+> > On Fri, Jul 04, 2025 at 09:34:59AM +1000, Balbir Singh wrote:
+> ...
+> >>
+> >> The nouveau dmem code has been enhanced to use the new THP migration
+> >> capability.
+> >>
+> >> Feedback from the RFC [2]:
+> >>
+> > 
+> > Thanks for the patches, results look very promising. I wanted to give
+> > some quick feedback:
+> > 
+> 
+> Are you seeing improvements with the patchset?
+> 
 
-All open coded uses of hyperv_pcpu_input_arg and hyperv_pcpu_ouput_arg
-have been replaced by hv_setup_*() functions. So combine
-hyperv_pcpu_input_arg and hyperv_pcpu_output_arg in a single
-hyperv_pcpu_arg. Remove logic for managing a separate output arg. Fixup
-comment references to the old variable names.
+We're nowhere near stable yet, but basic testing shows that CPU time
+from the start of migrate_vma_* to the end drops from ~300µs to ~6µs on
+a 2MB GPU fault. A lot of this improvement is dma-mapping at 2M
+grainularity for the CPU<->GPU copy rather than mapping 512 4k pages
+too.
 
-Signed-off-by: Michael Kelley <mhklinux@outlook.com>
----
- arch/x86/hyperv/hv_init.c      |  6 ++--
- drivers/hv/hv.c                |  2 +-
- drivers/hv/hv_common.c         | 55 ++++++++++------------------------
- drivers/hv/hyperv_vmbus.h      |  2 +-
- include/asm-generic/mshyperv.h |  6 +---
- 5 files changed, 22 insertions(+), 49 deletions(-)
+> > - You appear to have missed updating hmm_range_fault, specifically
+> > hmm_vma_handle_pmd, to check for device-private entries and populate the
+> > HMM PFNs accordingly. My colleague François has a fix for this if you're
+> > interested.
+> > 
+> 
+> Sure, please feel free to post them. 
+> 
+> > - I believe copy_huge_pmd also needs to be updated to avoid installing a
+> > migration entry if the swap entry is device-private. I don't have an
+> > exact fix yet due to my limited experience with core MM. The test case
+> > that triggers this is fairly simple: fault in a 2MB device page on the
+> > GPU, then fork a process that reads the page — the kernel crashes in
+> > this scenario.
+> > 
+> 
+> I'd be happy to look at any traces you have or post any fixes you have
+> 
 
-diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
-index b7a2877c2a92..2979d15223cf 100644
---- a/arch/x86/hyperv/hv_init.c
-+++ b/arch/x86/hyperv/hv_init.c
-@@ -453,16 +453,16 @@ void __init hyperv_init(void)
- 	 * A TDX VM with no paravisor only uses TDX GHCI rather than hv_hypercall_pg:
- 	 * when the hypercall input is a page, such a VM must pass a decrypted
- 	 * page to Hyper-V, e.g. hv_post_message() uses the per-CPU page
--	 * hyperv_pcpu_input_arg, which is decrypted if no paravisor is present.
-+	 * hyperv_pcpu_arg, which is decrypted if no paravisor is present.
- 	 *
- 	 * A TDX VM with the paravisor uses hv_hypercall_pg for most hypercalls,
- 	 * which are handled by the paravisor and the VM must use an encrypted
--	 * input page: in such a VM, the hyperv_pcpu_input_arg is encrypted and
-+	 * input page: in such a VM, the hyperv_pcpu_arg is encrypted and
- 	 * used in the hypercalls, e.g. see hv_mark_gpa_visibility() and
- 	 * hv_arch_irq_unmask(). Such a VM uses TDX GHCI for two hypercalls:
- 	 * 1. HVCALL_SIGNAL_EVENT: see vmbus_set_event() and _hv_do_fast_hypercall8().
- 	 * 2. HVCALL_POST_MESSAGE: the input page must be a decrypted page, i.e.
--	 * hv_post_message() in such a VM can't use the encrypted hyperv_pcpu_input_arg;
-+	 * hv_post_message() in such a VM can't use the encrypted hyperv_pcpu_arg;
- 	 * instead, hv_post_message() uses the post_msg_page, which is decrypted
- 	 * in such a VM and is only used in such a VM.
- 	 */
-diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
-index ad063f535f95..3b5dfdecdfe7 100644
---- a/drivers/hv/hv.c
-+++ b/drivers/hv/hv.c
-@@ -60,7 +60,7 @@ int hv_post_message(union hv_connection_id connection_id,
- 	/*
- 	 * A TDX VM with the paravisor must use the decrypted post_msg_page: see
- 	 * the comment in struct hv_per_cpu_context. A SNP VM with the paravisor
--	 * can use the encrypted hyperv_pcpu_input_arg because it copies the
-+	 * can use the encrypted hyperv_pcpu_arg because it copies the
- 	 * input into the GHCB page, which has been decrypted by the paravisor.
- 	 */
- 	if (hv_isolation_type_tdx() && ms_hyperv.paravisor_present)
-diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
-index ae56397af1ed..cbe4a954ad46 100644
---- a/drivers/hv/hv_common.c
-+++ b/drivers/hv/hv_common.c
-@@ -58,11 +58,8 @@ EXPORT_SYMBOL_GPL(hv_vp_index);
- u32 hv_max_vp_index;
- EXPORT_SYMBOL_GPL(hv_max_vp_index);
- 
--void * __percpu *hyperv_pcpu_input_arg;
--EXPORT_SYMBOL_GPL(hyperv_pcpu_input_arg);
--
--void * __percpu *hyperv_pcpu_output_arg;
--EXPORT_SYMBOL_GPL(hyperv_pcpu_output_arg);
-+void * __percpu *hyperv_pcpu_arg;
-+EXPORT_SYMBOL_GPL(hyperv_pcpu_arg);
- 
- static void hv_kmsg_dump_unregister(void);
- 
-@@ -95,11 +92,8 @@ void __init hv_common_free(void)
- 	kfree(hv_vp_index);
- 	hv_vp_index = NULL;
- 
--	free_percpu(hyperv_pcpu_output_arg);
--	hyperv_pcpu_output_arg = NULL;
--
--	free_percpu(hyperv_pcpu_input_arg);
--	hyperv_pcpu_input_arg = NULL;
-+	free_percpu(hyperv_pcpu_arg);
-+	hyperv_pcpu_arg = NULL;
- 
- 	free_percpu(hv_synic_eventring_tail);
- 	hv_synic_eventring_tail = NULL;
-@@ -255,11 +249,6 @@ static void hv_kmsg_dump_register(void)
- 	}
- }
- 
--static inline bool hv_output_page_exists(void)
--{
--	return hv_root_partition() || IS_ENABLED(CONFIG_HYPERV_VTL_MODE);
--}
--
- void __init hv_get_partition_id(void)
- {
- 	struct hv_output_get_partition_id *output;
-@@ -365,14 +354,8 @@ int __init hv_common_init(void)
- 	 * (per-CPU) hypercall input page and thus this failure is
- 	 * fatal on Hyper-V.
- 	 */
--	hyperv_pcpu_input_arg = alloc_percpu(void  *);
--	BUG_ON(!hyperv_pcpu_input_arg);
--
--	/* Allocate the per-CPU state for output arg for root */
--	if (hv_output_page_exists()) {
--		hyperv_pcpu_output_arg = alloc_percpu(void *);
--		BUG_ON(!hyperv_pcpu_output_arg);
--	}
-+	hyperv_pcpu_arg = alloc_percpu(void  *);
-+	BUG_ON(!hyperv_pcpu_arg);
- 
- 	if (hv_root_partition()) {
- 		hv_synic_eventring_tail = alloc_percpu(u8 *);
-@@ -466,33 +449,28 @@ void __init ms_hyperv_late_init(void)
- 
- int hv_common_cpu_init(unsigned int cpu)
- {
--	void **inputarg, **outputarg;
-+	void **inputarg;
- 	u8 **synic_eventring_tail;
- 	u64 msr_vp_index;
- 	gfp_t flags;
--	const int pgcount = hv_output_page_exists() ? 2 : 1;
-+	const int pgcount = HV_HVCALL_ARG_PAGES;
- 	void *mem;
- 	int ret = 0;
- 
- 	/* hv_cpu_init() can be called with IRQs disabled from hv_resume() */
- 	flags = irqs_disabled() ? GFP_ATOMIC : GFP_KERNEL;
- 
--	inputarg = (void **)this_cpu_ptr(hyperv_pcpu_input_arg);
-+	inputarg = (void **)this_cpu_ptr(hyperv_pcpu_arg);
- 
- 	/*
--	 * The per-cpu memory is already allocated if this CPU was previously
--	 * online and then taken offline
-+	 * hyperv_pcpu_arg memory is already allocated if this CPU was
-+	 * previously online and then taken offline
- 	 */
- 	if (!*inputarg) {
- 		mem = kmalloc(pgcount * HV_HYP_PAGE_SIZE, flags);
- 		if (!mem)
- 			return -ENOMEM;
- 
--		if (hv_output_page_exists()) {
--			outputarg = (void **)this_cpu_ptr(hyperv_pcpu_output_arg);
--			*outputarg = (char *)mem + HV_HYP_PAGE_SIZE;
--		}
--
- 		if (!ms_hyperv.paravisor_present &&
- 		    (hv_isolation_type_snp() || hv_isolation_type_tdx())) {
- 			ret = set_memory_decrypted((unsigned long)mem, pgcount);
-@@ -506,13 +484,13 @@ int hv_common_cpu_init(unsigned int cpu)
- 
- 		/*
- 		 * In a fully enlightened TDX/SNP VM with more than 64 VPs, if
--		 * hyperv_pcpu_input_arg is not NULL, set_memory_decrypted() ->
-+		 * hyperv_pcpu_arg is not NULL, set_memory_decrypted() ->
- 		 * ... -> cpa_flush()-> ... -> __send_ipi_mask_ex() tries to
--		 * use hyperv_pcpu_input_arg as the hypercall input page, which
-+		 * use hyperv_pcpu_arg as the hypercall input page, which
- 		 * must be a decrypted page in such a VM, but the page is still
- 		 * encrypted before set_memory_decrypted() returns. Fix this by
- 		 * setting *inputarg after the above set_memory_decrypted(): if
--		 * hyperv_pcpu_input_arg is NULL, __send_ipi_mask_ex() returns
-+		 * hyperv_pcpu_arg is NULL, __send_ipi_mask_ex() returns
- 		 * HV_STATUS_INVALID_PARAMETER immediately, and the function
- 		 * hv_send_ipi_mask() falls back to orig_apic.send_IPI_mask(),
- 		 * which may be slightly slower than the hypercall, but still
-@@ -544,9 +522,8 @@ int hv_common_cpu_die(unsigned int cpu)
- {
- 	u8 **synic_eventring_tail;
- 	/*
--	 * The hyperv_pcpu_input_arg and hyperv_pcpu_output_arg memory
--	 * is not freed when the CPU goes offline as the hyperv_pcpu_input_arg
--	 * may be used by the Hyper-V vPCI driver in reassigning interrupts
-+	 * The hyperv_pcpu_arg memory is not freed when the CPU goes offline as
-+	 * it may be used by the Hyper-V vPCI driver in reassigning interrupts
- 	 * as part of the offlining process.  The interrupt reassignment
- 	 * happens *after* the CPUHP_AP_HYPERV_ONLINE state has run and
- 	 * called this function.
-diff --git a/drivers/hv/hyperv_vmbus.h b/drivers/hv/hyperv_vmbus.h
-index 0b450e53161e..bef8a57100ec 100644
---- a/drivers/hv/hyperv_vmbus.h
-+++ b/drivers/hv/hyperv_vmbus.h
-@@ -126,7 +126,7 @@ struct hv_per_cpu_context {
- 	/*
- 	 * The page is only used in hv_post_message() for a TDX VM (with the
- 	 * paravisor) to post a messages to Hyper-V: when such a VM calls
--	 * HVCALL_POST_MESSAGE, it can't use the hyperv_pcpu_input_arg (which
-+	 * HVCALL_POST_MESSAGE, it can't use the hyperv_pcpu_arg (which
- 	 * is encrypted in such a VM) as the hypercall input page, because
- 	 * the input page for HVCALL_POST_MESSAGE must be decrypted in such a
- 	 * VM, so post_msg_page (which is decrypted in hv_synic_alloc()) is
-diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyperv.h
-index 040c4650f411..3ce5b94ad41e 100644
---- a/include/asm-generic/mshyperv.h
-+++ b/include/asm-generic/mshyperv.h
-@@ -67,8 +67,7 @@ extern bool hv_nested;
- extern u64 hv_current_partition_id;
- extern enum hv_partition_type hv_curr_partition_type;
- 
--extern void * __percpu *hyperv_pcpu_input_arg;
--extern void * __percpu *hyperv_pcpu_output_arg;
-+extern void * __percpu *hyperv_pcpu_arg;
- 
- u64 hv_do_hypercall(u64 control, void *inputaddr, void *outputaddr);
- u64 hv_do_fast_hypercall8(u16 control, u64 input8);
-@@ -155,9 +154,6 @@ static inline u64 hv_do_rep_hypercall(u16 code, u16 rep_count, u16 varhead_size,
-  * Hypercall input and output argument setup
-  */
- 
--/* Temporary mapping to be removed at the end of the patch series */
--#define hyperv_pcpu_arg hyperv_pcpu_input_arg
--
- /*
-  * Allocate one page that is shared between input and output args, which is
-  * sufficient for all current hypercalls. If a future hypercall requires
--- 
-2.25.1
+I've got it so the kernel doesn't explode but still get warnings like:
 
+[ 3564.850036] mm/pgtable-generic.c:54: bad pmd ffff8881290408e0(efffff80042bfe00)
+[ 3565.298186] BUG: Bad rss-counter state mm:ffff88810a100c40 type:MM_ANONPAGES val:114688
+[ 3565.306108] BUG: non-zero pgtables_bytes on freeing mm: 917504
+
+I'm basically just skip is_swap_pmd clause if the entry is device
+private, and let the rest of the function execute. This avoids
+installing a migration entry—which isn't required and cause the
+crash—and allows the rmap code to run, which flips the pages to not
+anonymous exclusive (effectively making them copy-on-write (?), though
+that doesn't fully apply to device pages). It's not 100% correct yet,
+but it's a step in the right direction.
+
+Matt
+
+> Thanks for the feedback
+> Balbir Singh
 
