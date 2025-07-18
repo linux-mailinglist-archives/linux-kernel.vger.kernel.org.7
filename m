@@ -1,155 +1,99 @@
-Return-Path: <linux-kernel+bounces-736484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C994DB09D72
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:12:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0215AB09D66
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:11:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46A8B1AA7499
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:12:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AC4C5A0387
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E036529346F;
-	Fri, 18 Jul 2025 08:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 123D6246BD5;
+	Fri, 18 Jul 2025 08:10:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CCTci22U"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qhKKMwFU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93CB1220F34;
-	Fri, 18 Jul 2025 08:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EFE6AD21;
+	Fri, 18 Jul 2025 08:10:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752826309; cv=none; b=MBiwiIbHtSmMIRC9CE8yHd/ViTy7iDMI7wabbP0jNsCy/hmkspWJzSezYSGE9FNtQR5UvYKdQF8Tk6tZ54uRdcH83VVD6iIRXzRuC7AD2FOZsSeOSLDtCacTd33u519q2ntdL8grkebyUgOZQMDsdheVdLOnbhVg6BFhyr/6wgc=
+	t=1752826212; cv=none; b=CkMhM1hqIUUhqgjTQcOPG4CLDFNCLt9TqVCduSWazVW+YYX3p+K0ZcqE2E5LyROutcH0CZinTfkSYT6501mo3oSHtucS32EPCNHZA95Objco5K3So45mFPFpCbbsSezLmvB82bif45oDAmTmxZ5lrlU+Xr+ssbRAy3bJwUOM67k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752826309; c=relaxed/simple;
-	bh=PeDcfKo7iOlIJb8z5qC+XxMNWd437UxeKUOi7eOo66U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KgTjgBof096rmZiVJUGmG0iAtfldMDw3QMV4WoQAzo0ZUFcYb9azOWdQ7xvB9BK5BxYULow0NBwXSpyrBjYOOt7/rGvO5fdE1Fyd6MztS4bf+cPH9FF11t7bPw/6tMT8LZCXhqTSyXd0sH112YZoH0+byP/IbbEfG6xyQ7tOm/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CCTci22U; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5561c20e2d5so2389633e87.0;
-        Fri, 18 Jul 2025 01:11:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752826305; x=1753431105; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ySl4FDqEuj9CvHJtrc+pdmsbYRO+Kl0sE4pvpggh83k=;
-        b=CCTci22UajDkqbiqofai46tOB2UdU0IxmRfytJE7WvmYPxqyyf6+YzBBveid6cN1eM
-         +u7fzKH9HjeFVcr0R+9Oj7B055Wu9mp/BWvSVY30C3PJ2rdu28j5Zbw1TlbNBKE5XT5m
-         iz9/LDmOSF1ggaDjLxhGRudo5cXc0Ro2SHsxo8sAV+1yUxzfQkUoMioG5PCt/YsirNPb
-         VRnRmFrXhwFRpMl4eXE4uPc21gQA68U+Uq9orhpZ5pmZb7vxTgD1vdcnA65h7dco2DMA
-         Y/5QfA0onFDeef8avpxE80wez+4r28JK8zGLJucVLM1TxR/ltRcwza7QSFQTLHumXUuj
-         4MWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752826305; x=1753431105;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ySl4FDqEuj9CvHJtrc+pdmsbYRO+Kl0sE4pvpggh83k=;
-        b=usmlNJvN9C2SKOrQmQW61SppId0fXp0p+kKkA6/+LGcJkTiVU9VfKSK07cl4TYMQ6w
-         Jb2UApBDZ4uVT//1Ev4Q5/8LO15l+bVO5sw2Ndue6k8IeOKMa+gBMRpFB0D6zHlBassG
-         aSnkSkZN1CbaO7VhKoZXWtpJOZD1mp1gwadt84O7ZF4w5tP9QOW/WmlWinQQOe8aRq9R
-         4u0vhBBIAU4r0DFQhITUjHnh+D9NmIHILR8/kXhLQg+2QInV6AKVHvj/x0VtZYbqz1wM
-         11AnmQBwcSQh0CCzDTrxa1K0yRaLUUGehbdv9WP+VK6lLAwDd1rrOr2OIrCYXSke0Z6c
-         Lh9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWco/BLmh0JNJ3d1oMzosSfloSPuXwKqsqfUPEBuGCwbnksIIiNXjLFdAU6IdsyeKexDqjQ6itQ@vger.kernel.org, AJvYcCXdFmKxPIANdRkhDo63o+vD0Wpk9fyQf/y6hcC9A1dw5GPVR0+tdQ8q+PFY41JE8/sm2ccLdRt7DY64dzc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyd+PWA3cLzjcpKMAq5+DalO80C1zgGxf2KqXbTKqzDhQ4L5gAZ
-	LzocOA5NE4QZSoHGrcfVMQnvu8PmBjip+cGHCsYRYm0V0qgU1e1tmYES
-X-Gm-Gg: ASbGncv0SAOPkOrYw4wfK9qlpa0r/efxS4PZ6q52WG9VdYG0uxObkiSJPWXBF14Xzi8
-	1fwMEAJhXrhrda0NpEuHV31a8iniKsT3P9VO7WOUVWm2xxywIwEAeEqu0oAqugTPi0rd0GBJxyt
-	79hVxGkogzP2WBJYnop8tn1eLFBqbmzZwkv0dn6J4RXESBmyvtZYMMLO8VFHaFgxaQgg3eZuUJH
-	eEABC8gx8d8/SdUNx6GWbU2rQ6lw7EZQhTbmW2Yt08Knc/njtaeUxtM5zak94ReOTIUBTm/zuV2
-	gwiPX4ElNMoo3GC2YR0F1Z/+fvLt4hYngjxKv42l/rCl5eVxGvfNmlUtTDtRvECp71CzjVxfONr
-	x9CGG94R258OcbC1V+HkiWle0+xix7lWI2eGSd3HXz2JRBeoX
-X-Google-Smtp-Source: AGHT+IHgl/+8J3hm2QQjzTMqEUs3tG2qz4i0TsZtDxOTygUv08KcdIxik0KFZaTGm9O9R4HvAv7Otw==
-X-Received: by 2002:a05:6512:3e26:b0:553:accf:d75 with SMTP id 2adb3069b0e04-55a3188f059mr408409e87.26.1752826304334;
-        Fri, 18 Jul 2025 01:11:44 -0700 (PDT)
-Received: from SC-WS-02452.corp.sbercloud.ru ([37.78.122.38])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55a31a9b1dfsm169921e87.43.2025.07.18.01.11.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jul 2025 01:11:43 -0700 (PDT)
-From: Sergey Bashirov <sergeybashirov@gmail.com>
-To: Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	NeilBrown <neil@brown.name>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>
-Cc: linux-nfs@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Sergey Bashirov <sergeybashirov@gmail.com>
-Subject: [PATCH v2] sunrpc: Change ret code of xdr_stream_decode_opaque_fixed
-Date: Fri, 18 Jul 2025 11:09:56 +0300
-Message-ID: <20250718080958.71913-1-sergeybashirov@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1752826212; c=relaxed/simple;
+	bh=pYKJJ2hQUpdG2dVQ13Xx5f+NtvuXuDTByPwbcBUy+ao=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lPYiC6XfwoVChu21FzmeMIVwwuvA0MLPX4yiXQcq+zJUK86li/MH4F3I2R10sh1B94xY0pwqwMywM7wKeMMwffTSEz9Er55j8OTAz4XsQsQs5bv4QlZL3pd4AOGDjsvQvZrFKC+18KSpULSwG8kZsFtNh8Ts+B6z0Bn+JBDap8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qhKKMwFU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 719E1C4CEEB;
+	Fri, 18 Jul 2025 08:10:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752826212;
+	bh=pYKJJ2hQUpdG2dVQ13Xx5f+NtvuXuDTByPwbcBUy+ao=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qhKKMwFU7zuaBUi4JjVCyKOTLven1T/f3a8B6gZ+ti4Ac0/5uaHiXKYRdjUuz5R8q
+	 FVep+nERjFceG9fK8v6gAZYFXdfix9YEmlIlfo1+3Sk9Ivro9aDG/boJh6UbFBr+mV
+	 f01GQ8YGzYPvh7ZP2c6mx+CzPlqCrRq1m3fmBV5qzHoMoJY3scMszEhYD2RQzzK+NE
+	 xeitHBg5OWV5ZXrYnEGIkqZlvxHBL9CQoNJp9fvaozaZN4zW1tdNynssq9DUuIGXn8
+	 oxDiTm1Id5woKqn8v1cT1OLl45daF+yZXV5Bz1goNQyl1rJvNHV/MJY6gRmAhhKRzV
+	 yhsxyywjg6bFg==
+Date: Fri, 18 Jul 2025 10:10:09 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Chaoyi Chen <kernel@airkyi.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>, 
+	Andy Yan <andy.yan@rock-chips.com>, Yubing Zhang <yubing.zhang@rock-chips.com>, 
+	Frank Wang <frank.wang@rock-chips.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Amit Sunil Dhamne <amitsd@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Chaoyi Chen <chaoyi.chen@rock-chips.com>, Dragan Simic <dsimic@manjaro.org>, 
+	Johan Jonker <jbx6244@gmail.com>, Diederik de Haas <didi.debian@cknow.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v2 1/5] dt-bindings: phy: rockchip: rk3399-typec-phy:
+ Support mode-switch
+Message-ID: <20250718-psychedelic-panda-of-defiance-ef6aac@kuoka>
+References: <20250718062619.99-1-kernel@airkyi.com>
+ <20250718062619.99-2-kernel@airkyi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250718062619.99-2-kernel@airkyi.com>
 
-Since the XDR field is fixed in size, the caller already knows how many
-bytes were decoded, on success. Thus, xdr_stream_decode_opaque_fixed()
-doesn't need to return that value. And, xdr_stream_decode_u32 and _u64
-both return zero on success.
+On Fri, Jul 18, 2025 at 02:26:15PM +0800, Chaoyi Chen wrote:
+> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+> 
+> The RK3399 has two USB/DP combo PHY. With the help of external Type-C
+> controller, the PHY can switch altmode between USB and DP.
+> 
+> Their connection diagram is shown below:
+> 
+> external Type-C Chip0 ---> USB/DP PHY0 ---+
+>                                           | <----> CDN-DP controller
+> external Type-C Chip1 ---> USB/DP PHY1 ---+
 
-Signed-off-by: Sergey Bashirov <sergeybashirov@gmail.com>
----
-Changes in v2:
- - Rebased on nfsd-next
- - Checks for negative return values are not touched
+It looks like your "external" controller is not described. Look at your
+port property - "Connection to USB Type-C connector". Lack of proper
+hardware description leads you to claim that the PHY is the mode switch.
+I have doubts on that.
 
- include/linux/sunrpc/xdr.h                                    | 4 ++--
- .../xdrgen/templates/C/typedef/decoder/fixed_length_opaque.j2 | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+You already received the comments that you need to come with rationale
+why making PHY a USB switch is correct. I don't see the arguments for
+that.
 
-diff --git a/include/linux/sunrpc/xdr.h b/include/linux/sunrpc/xdr.h
-index e3358c630ba18..ffb699a02b17d 100644
---- a/include/linux/sunrpc/xdr.h
-+++ b/include/linux/sunrpc/xdr.h
-@@ -730,7 +730,7 @@ xdr_stream_decode_u64(struct xdr_stream *xdr, __u64 *ptr)
-  * @len: size of buffer pointed to by @ptr
-  *
-  * Return values:
-- *   On success, returns size of object stored in @ptr
-+ *   %0 on success
-  *   %-EBADMSG on XDR buffer overflow
-  */
- static inline ssize_t
-@@ -741,7 +741,7 @@ xdr_stream_decode_opaque_fixed(struct xdr_stream *xdr, void *ptr, size_t len)
- 	if (unlikely(!p))
- 		return -EBADMSG;
- 	xdr_decode_opaque_fixed(p, ptr, len);
--	return len;
-+	return 0;
- }
- 
- /**
-diff --git a/tools/net/sunrpc/xdrgen/templates/C/typedef/decoder/fixed_length_opaque.j2 b/tools/net/sunrpc/xdrgen/templates/C/typedef/decoder/fixed_length_opaque.j2
-index 8b4ff08c49e5e..bdc7bd24ffb13 100644
---- a/tools/net/sunrpc/xdrgen/templates/C/typedef/decoder/fixed_length_opaque.j2
-+++ b/tools/net/sunrpc/xdrgen/templates/C/typedef/decoder/fixed_length_opaque.j2
-@@ -13,5 +13,5 @@ xdrgen_decode_{{ name }}(struct xdr_stream *xdr, {{ classifier }}{{ name }} *ptr
- {% if annotate %}
- 	/* (fixed-length opaque) */
- {% endif %}
--	return xdr_stream_decode_opaque_fixed(xdr, ptr, {{ size }}) >= 0;
-+	return xdr_stream_decode_opaque_fixed(xdr, ptr, {{ size }}) == 0;
- };
--- 
-2.43.0
+Best regards,
+Krzysztof
 
 
