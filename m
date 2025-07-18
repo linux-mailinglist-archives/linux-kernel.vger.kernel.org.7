@@ -1,300 +1,174 @@
-Return-Path: <linux-kernel+bounces-737649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DA0DB0AEE6
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 10:52:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60B3EB0AF5A
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 12:34:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D00F31C223C8
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 08:52:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0484E3A90D0
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 10:34:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57BAD2264AE;
-	Sat, 19 Jul 2025 08:52:01 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4656E23536B;
+	Sat, 19 Jul 2025 10:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XtT8k3yz"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00C791C84A8
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 08:51:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A2F148838
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 10:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752915120; cv=none; b=vBTdv9Us7tjL09dcP4YOJDpoFtllpzGdc3assoKTmpU63vT6+VMbAHwR65gd6VANXeqZuXa2A5hV9DyXakjcqvQbQHZKTJ0SymyUua4kC7uRWhv+aZiUgmzQnbJyR96yM1VT/GKGfDP/wTrnaO4f5mJb3aH5R97FQ5AHsat0CtI=
+	t=1752921285; cv=none; b=F8Til67C8wq9m057DNN7DFgL7rq6y6BL+VQxkPAEVbBG6yvGVg1BIWyFdkEgg2i4U0rKkHYFu29J343Qzosn9boctU/tqEeIGmd2BoBxjekdF4757tnrfXQA8GcoSAEfyMmFC6sVlRnuqOZMApSzk/fJM8eFKwgKweKbhx+5Iq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752915120; c=relaxed/simple;
-	bh=dEHXewK1RjZAahZSQ4R5blOdtQXZizUQp293eJH+Om8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MZI2XFrok7Z/4YDDGKfGlu7EN30hGkXx7NtOdtKqKtPw7/3Ke2Ta97YKXLrY0Lt7aZVxhXSCKOfcrkd4KLHllUG5YKcEaRUWHlifm3cYiw1hOXmwQbyrgm7g9LHicWUhWXpqN+Pbdv8PmpmSiJ6PiWG27G/Ib1pUojJlgNUGrGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bkgJV5MHjz14Lnm;
-	Sat, 19 Jul 2025 16:47:06 +0800 (CST)
-Received: from kwepemg500017.china.huawei.com (unknown [7.202.181.81])
-	by mail.maildlp.com (Postfix) with ESMTPS id D64C918006C;
-	Sat, 19 Jul 2025 16:51:54 +0800 (CST)
-Received: from huawei.com (10.175.112.188) by kwepemg500017.china.huawei.com
- (7.202.181.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 19 Jul
- 2025 16:51:53 +0800
-From: Li Lingfeng <lilingfeng3@huawei.com>
-To: <dm-devel@lists.linux.dev>
-CC: <agk@redhat.com>, <snitzer@kernel.org>, <mpatocka@redhat.com>,
-	<colin.i.king@gmail.com>, <linux-kernel@vger.kernel.org>,
-	<houtao1@huawei.com>, <yi.zhang@huawei.com>, <yangerkun@huawei.com>,
-	<yukuai3@huawei.com>, <chengzhihao1@huawei.com>, <lilingfeng3@huawei.com>,
-	<lilingfeng@huaweicloud.com>
-Subject: [PATCH] dm: introduce ima_lock to prevent concurrent calls to dm_ima_measure_* functions
-Date: Sun, 20 Jul 2025 00:47:01 +0800
-Message-ID: <20250719164701.3147592-1-lilingfeng3@huawei.com>
-X-Mailer: git-send-email 2.46.1
+	s=arc-20240116; t=1752921285; c=relaxed/simple;
+	bh=a/IXCcrwkfXluSvxApQiWCEVGvpphN1skM0BVfiGI20=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=HBAd13nbnSR2MEfq9r2MS2aWvkPhxm9zQ1317mK0KpUQTWUuUCGLAt6czq54dulKDlKi6gkNxX8rQa2Jrgf/4JYVhMjgdqb6lxkK9skG3Z/OT2CebVWaiZRMNpuQpccKRyOPoRHnc0WHBi6F6R5peb197SWBfWhXxbw7Hx31NHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XtT8k3yz; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a531fcaa05so1280035f8f.3
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 03:34:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1752921281; x=1753526081; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YLPSgROEAhCnKRwI31RE1TO5M8HQINGoz4GugGu3XKg=;
+        b=XtT8k3yzuwx8+WjWCtv5ajJ2jiIpfTCwSDiMyZIeQ8AJYzFwlwMlGPoYye/6p9sfjt
+         lniGfEz6GzABT579AvUxdiJ98IoM/6lbhaElFyF81Bn/IR0KLwxqGqXC9fIUErctNm2D
+         PbLLjHU++zgmuVOHXnqbomaj1cKd5ekaUjRe8LQgVQX2A6V1/EY8HQ6aYXMqn37GvRei
+         PKziszGp9Exv/7Mwob2wB4fYeVjyv2xT28C9YuabkbNFlFNAms21DZ6jyPP4PPB3kzGx
+         lj2o7QJ2lm8Bnj0ql7M6jUj6rzhFfo7gwgaRhgkim1pF89Z7B1H7o0yaMW4sU4/2031p
+         qQeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752921281; x=1753526081;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=YLPSgROEAhCnKRwI31RE1TO5M8HQINGoz4GugGu3XKg=;
+        b=sNnftqi9W0XQTzcM0vAEr1phcjElugSCVOz95ywbl3pvBx7EtB8My5PhVwjkkBey2G
+         NqNKUinex5VwuIEUXpsud9J5LVh9Z1lt+uxyHWZZTSiWmCGQqH47dRuO5iIfhJv94eYB
+         hOafR3AkBzF1CM2hjZ56WRzeUEx7NAKrT78EGGb4MgxtpbAjFsGN6fY/7cMwer24JI2k
+         NE+PL/+W5tQvze97FBg5pbRw7/tZzxJLuoZ6AXkkIOA0T9dJxispHtXoZ22EaPF1Xrej
+         AMU4hA2QSbVcr8cDl8nxmGJL7Bhh8s9GkasvvMuNGv8dJLb47VefgLfdoopImac2wRP0
+         /YHg==
+X-Forwarded-Encrypted: i=1; AJvYcCW363vFbuVVWF+PYtiu/0XTjon24siFEWpGwMtOR63+SXzzTQyJPyF/+LaDNTZ8zqId+brzhOuyYSUhIfM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywyb4kX3w6dms2ABtUD/cKPRr01jpCyesk8DlyCg2qHMN7WRDXm
+	oWrUp1Vfv+fNCjlFncNDwQD7bVI7sHxX+eUeH+pB9Qq/KdEgkLtU529sd+mFr4+JCf+C4DdzuA2
+	DOmX2Rm8++g==
+X-Gm-Gg: ASbGnctxu0pfyuAbw5OqmgWAA9RIhv5TgzfH0tlxb93NV+Ai5fNWv473kQm/sSqW2AS
+	bNZryY2ZUZssaDRh3Oy0BVS20r2DBHfwmZLTS+HhpaLH86CmgfmO4Zo45SwahFsAmS7qE/ZFFrv
+	JnW4V+f2wTbtFzr75nntCnJ6UCtxR81ppfO3nyy3ypTA7Xv8gOAY4s5+LGWuZ1d47Vzdd8ss6RM
+	hFYdn9UWHzV5mqfy8M2Ul5+dutuXFp6lkL/ri/CQugNdB51rnUPG+yV4j8Ja6UwXY3NVMR71Sya
+	KY+CINWS10OpJ8i9Y7ZMbFTMrI5asE+muSEbuJixkpUsfAchYBz0sQ44IpQbs4OtyoxyYEDP1f8
+	KJFx/IHEjk4yV9p8UNAI=
+X-Google-Smtp-Source: AGHT+IGjz3rNU3dd+9li05K6Tq18JANydrGITOOvXwZniSAWqrMVuX0mS/Ho0NHEf170VZRNEMycHA==
+X-Received: by 2002:a05:6000:26c7:b0:3b5:e29c:190 with SMTP id ffacd0b85a97d-3b60e5134e6mr10245430f8f.29.1752921281247;
+        Sat, 19 Jul 2025 03:34:41 -0700 (PDT)
+Received: from [10.211.55.30] ([103.172.41.197])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b5e9efbsm27098825ad.5.2025.07.19.03.34.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 19 Jul 2025 03:34:40 -0700 (PDT)
+Message-ID: <f28a81ba-615c-481e-86fb-c0bf4115ec89@suse.com>
+Date: Sat, 19 Jul 2025 06:06:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemg500017.china.huawei.com (7.202.181.81)
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+From: Yadan Fan <ydfan@suse.com>
+Subject: [PATCH v2] mm: mempool: fix wake-up edge case bug for zero-minimum
+ pools
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-There is a window between freeing md->ima.active_table.hash and setting
-md->ima.active_table.hash to NULL in dm_ima_measure_on_device_resume().
-If dm_ima_measure_on_device_remove() accesses md->ima.active_table.hash
-concurrently during this window, it could lead to a double free or UAF,
-as shown below:
+The mempool wake-up path has a edge case bug that affects pools created
+with min_nr=0. When a thread blocks waiting for memory from an empty
+pool (curr_nr == 0), subsequent mempool_free() calls fail to wake
+the waiting thread because the condition "curr_nr < min_nr" evaluates
+to "0 < 0" which is false, this can cause threads to sleep indefinitely
+according to the code logic.
 
-BUG: KASAN: slab-use-after-free in dm_ima_measure_on_device_remove...
-Read of size 71 at addr ffff88817bb9e220 by task dmsetup/2303
+There is at least 2 places where the mempool created with min_nr=0:
 
-CPU: 2 UID: 0 PID: 2303 Comm: dmsetup Not tainted 6.16.0-rc6-dirty...
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3...
-Call Trace:
- <TASK>
- dump_stack_lvl+0x5b/0x80
- print_address_description.constprop.0+0x88/0x310
- print_report+0x12f/0x21d
- kasan_report+0xcc/0x190
- kasan_check_range+0x104/0x1b0
- __asan_memcpy+0x23/0x60
- dm_ima_measure_on_device_remove+0x3fc/0x6c0
- dev_remove+0x123/0x1e0
- ctl_ioctl+0x2a2/0x480
- dm_ctl_ioctl+0xe/0x20
- __x64_sys_ioctl+0xc7/0x110
- do_syscall_64+0x72/0x390
- entry_SYSCALL_64_after_hwframe+0x76/0x7e
+1. lib/btree.c:191: mempool_create(0, btree_alloc, btree_free, NULL)
+2. drivers/md/dm-verity-fec.c:791:
+ mempool_init_slab_pool(&f->extra_pool, 0, f->cache)
 
-To reproduce this issue, add a delay between freeing
-md->ima.active_table.hash and setting it to NULL, using the following
-steps:
-dmsetup create mydevice --table "0 2097152 linear /dev/sda 0"
-dmsetup suspend mydevice
-dmsetup reload mydevice --table "0 2097152 linear /dev/sdb 0"
-dmsetup resume mydevice &
-dmsetup remove mydevice
+Add an explicit check in mempool_free() to handle the min_nr=0 case:
+when the pool has zero minimum reserves, is currently empty, and has
+active waiters, allocate the element then wake up the sleeper.
 
-Introduce ima_lock to prevent concurrent calls to dm_ima_measure_*
-functions to fix it.
+Changes in v2:
+- Inline the same logic from previous test for zero min_nr pool to return
+  an element to the pool
+- Inline the necessary parts of add_element() to avoid the BUG_ON which
+  refuses the scenario of curr_nr == min_nr
+- Use wq_has_sleeper() instead of unconditional wake_up() calls for better
+  performance when no waiters are present
 
-Fixes: 91ccbbac1747 ("dm ima: measure data on table load")
-Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+Signed-off-by: Yadan Fan <ydfan@suse.com>
 ---
- drivers/md/dm-core.h |  1 +
- drivers/md/dm-ima.c  | 38 +++++++++++++++++++++++++++++++++-----
- drivers/md/dm-ima.h  |  4 ++++
- drivers/md/dm.c      |  3 ++-
- 4 files changed, 40 insertions(+), 6 deletions(-)
+ mm/mempool.c | 34 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 33 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/md/dm-core.h b/drivers/md/dm-core.h
-index c889332e533b..24f321b2c2c4 100644
---- a/drivers/md/dm-core.h
-+++ b/drivers/md/dm-core.h
-@@ -145,6 +145,7 @@ struct mapped_device {
- #endif
- 
- #ifdef CONFIG_IMA
-+	struct mutex ima_lock;
- 	struct dm_ima_measurements ima;
- #endif
- };
-diff --git a/drivers/md/dm-ima.c b/drivers/md/dm-ima.c
-index b90f34259fbb..0fefad6fbb9f 100644
---- a/drivers/md/dm-ima.c
-+++ b/drivers/md/dm-ima.c
-@@ -164,7 +164,7 @@ static int dm_ima_alloc_and_copy_capacity_str(struct mapped_device *md, char **c
- }
- 
- /*
-- * Initialize/reset the dm ima related data structure variables.
-+ * Reset the dm ima related data structure variables.
-  */
- void dm_ima_reset_data(struct mapped_device *md)
- {
-@@ -172,6 +172,23 @@ void dm_ima_reset_data(struct mapped_device *md)
- 	md->ima.dm_version_str_len = strlen(DM_IMA_VERSION_STR);
- }
- 
-+/*
-+ * Initialize the dm ima.
-+ */
-+void dm_ima_init(struct mapped_device *md)
-+{
-+	dm_ima_reset_data(md);
-+	mutex_init(&md->ima_lock);
-+}
+diff --git a/mm/mempool.c b/mm/mempool.c
+index 3223337135d0..204a216b6418 100644
+--- a/mm/mempool.c
++++ b/mm/mempool.c
+@@ -540,11 +540,43 @@ void mempool_free(void *element, mempool_t *pool)
+ 		if (likely(pool->curr_nr < pool->min_nr)) {
+ 			add_element(pool, element);
+ 			spin_unlock_irqrestore(&pool->lock, flags);
+-			wake_up(&pool->wait);
++			if (wq_has_sleeper(&pool->wait))
++				wake_up(&pool->wait);
+ 			return;
+ 		}
+ 		spin_unlock_irqrestore(&pool->lock, flags);
+ 	}
 +
-+/*
-+ * Destroy the dm ima related data structure.
-+ */
-+void dm_ima_destroy(struct mapped_device *md)
-+{
-+	mutex_destroy(&md->ima_lock);
-+}
++	/*
++	 * Handle the min_nr = 0 edge case:
++	 *
++	 * For zero-minimum pools, curr_nr < min_nr (0 < 0) never succeeds,
++	 * so waiters sleeping on pool->wait would never be woken by the
++	 * wake-up path of previous test. This explicit check ensures the
++	 * allocation of element when both min_nr and curr_nr are 0, and
++	 * any active waiters are properly awakened.
++	 *
++	 * Inline the same logic as previous test, add_element() cannot be
++	 * directly used here since it has BUG_ON to deny if min_nr equals
++	 * curr_nr, so here picked rest of add_element() to use without
++	 * BUG_ON check.
++	 */
++	if (unlikely(pool->min_nr == 0 &&
++		     READ_ONCE(pool->curr_nr) == 0)) {
++		spin_lock_irqsave(&pool->lock, flags);
++		if (likely(pool->curr_nr == 0)) {
++			/* Inline the logic of add_element() */
++			poison_element(pool, element);
++			if (kasan_poison_element(pool, element))
++				pool->elements[pool->curr_nr++] = element;
++			spin_unlock_irqrestore(&pool->lock, flags);
++			if (wq_has_sleeper(&pool->wait))
++				wake_up(&pool->wait);
++			return;
++		}
++		spin_unlock_irqrestore(&pool->lock, flags);
++	}
 +
- /*
-  * Build up the IMA data for each target, and finally measure.
-  */
-@@ -195,9 +212,10 @@ void dm_ima_measure_on_table_load(struct dm_table *table, unsigned int status_fl
- 	const size_t hash_alg_prefix_len = strlen(DM_IMA_TABLE_HASH_ALG) + 1;
- 	char table_load_event_name[] = "dm_table_load";
- 
-+	mutex_lock(&table->md->ima_lock);
- 	ima_buf = dm_ima_alloc(DM_IMA_MEASUREMENT_BUF_LEN, GFP_KERNEL, noio);
- 	if (!ima_buf)
--		return;
-+		goto error;
- 
- 	target_metadata_buf = dm_ima_alloc(DM_IMA_TARGET_METADATA_BUF_LEN, GFP_KERNEL, noio);
- 	if (!target_metadata_buf)
-@@ -361,6 +379,7 @@ void dm_ima_measure_on_table_load(struct dm_table *table, unsigned int status_fl
- 	kfree(ima_buf);
- 	kfree(target_metadata_buf);
- 	kfree(target_data_buf);
-+	mutex_unlock(&table->md->ima_lock);
+ 	pool->free(element, pool->pool_data);
  }
- 
- /*
-@@ -376,9 +395,10 @@ void dm_ima_measure_on_device_resume(struct mapped_device *md, bool swap)
- 	bool nodata = true;
- 	int r;
- 
-+	mutex_lock(&md->ima_lock);
- 	device_table_data = dm_ima_alloc(DM_IMA_DEVICE_BUF_LEN, GFP_KERNEL, noio);
- 	if (!device_table_data)
--		return;
-+		goto error;
- 
- 	r = dm_ima_alloc_and_copy_capacity_str(md, &capacity_str, noio);
- 	if (r)
-@@ -466,6 +486,7 @@ void dm_ima_measure_on_device_resume(struct mapped_device *md, bool swap)
- error:
- 	kfree(capacity_str);
- 	kfree(device_table_data);
-+	mutex_unlock(&md->ima_lock);
- }
- 
- /*
-@@ -490,6 +511,7 @@ void dm_ima_measure_on_device_remove(struct mapped_device *md, bool remove_all)
- 	bool nodata = true;
- 	int r;
- 
-+	mutex_lock(&md->ima_lock);
- 	device_table_data = dm_ima_alloc(DM_IMA_DEVICE_BUF_LEN*2, GFP_KERNEL, noio);
- 	if (!device_table_data)
- 		goto exit;
-@@ -597,6 +619,7 @@ void dm_ima_measure_on_device_remove(struct mapped_device *md, bool remove_all)
- 
- 	kfree(dev_name);
- 	kfree(dev_uuid);
-+	mutex_unlock(&md->ima_lock);
- }
- 
- /*
-@@ -612,9 +635,10 @@ void dm_ima_measure_on_table_clear(struct mapped_device *md, bool new_map)
- 	bool nodata = true;
- 	int r;
- 
-+	mutex_lock(&md->ima_lock);
- 	device_table_data = dm_ima_alloc(DM_IMA_DEVICE_BUF_LEN, GFP_KERNEL, noio);
- 	if (!device_table_data)
--		return;
-+		goto error;
- 
- 	r = dm_ima_alloc_and_copy_capacity_str(md, &capacity_str, noio);
- 	if (r)
-@@ -696,6 +720,8 @@ void dm_ima_measure_on_table_clear(struct mapped_device *md, bool new_map)
- 	kfree(capacity_str);
- error1:
- 	kfree(device_table_data);
-+error:
-+	mutex_unlock(&md->ima_lock);
- }
- 
- /*
-@@ -708,9 +734,10 @@ void dm_ima_measure_on_device_rename(struct mapped_device *md)
- 	bool noio = true;
- 	int r;
- 
-+	mutex_lock(&md->ima_lock);
- 	if (dm_ima_alloc_and_copy_device_data(md, &new_device_data,
- 					      md->ima.active_table.num_targets, noio))
--		return;
-+		goto error;
- 
- 	if (dm_ima_alloc_and_copy_name_uuid(md, &new_dev_name, &new_dev_uuid, noio))
- 		goto error;
-@@ -745,4 +772,5 @@ void dm_ima_measure_on_device_rename(struct mapped_device *md)
- 	kfree(old_device_data);
- 	kfree(new_dev_name);
- 	kfree(new_dev_uuid);
-+	mutex_unlock(&md->ima_lock);
- }
-diff --git a/drivers/md/dm-ima.h b/drivers/md/dm-ima.h
-index 568870a1a145..36bbcf1b25a0 100644
---- a/drivers/md/dm-ima.h
-+++ b/drivers/md/dm-ima.h
-@@ -57,6 +57,8 @@ struct dm_ima_measurements {
- };
- 
- void dm_ima_reset_data(struct mapped_device *md);
-+void dm_ima_init(struct mapped_device *md);
-+void dm_ima_destroy(struct mapped_device *md);
- void dm_ima_measure_on_table_load(struct dm_table *table, unsigned int status_flags);
- void dm_ima_measure_on_device_resume(struct mapped_device *md, bool swap);
- void dm_ima_measure_on_device_remove(struct mapped_device *md, bool remove_all);
-@@ -66,6 +68,8 @@ void dm_ima_measure_on_device_rename(struct mapped_device *md);
- #else
- 
- static inline void dm_ima_reset_data(struct mapped_device *md) {}
-+static inline void dm_ima_init(struct mapped_device *md) {}
-+static inline void dm_ima_destroy(struct mapped_device *md) {}
- static inline void dm_ima_measure_on_table_load(struct dm_table *table, unsigned int status_flags) {}
- static inline void dm_ima_measure_on_device_resume(struct mapped_device *md, bool swap) {}
- static inline void dm_ima_measure_on_device_remove(struct mapped_device *md, bool remove_all) {}
-diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-index 1726f0f828cc..b7eab324804c 100644
---- a/drivers/md/dm.c
-+++ b/drivers/md/dm.c
-@@ -2371,6 +2371,7 @@ static void free_dev(struct mapped_device *md)
- 	unlock_fs(md);
- 
- 	cleanup_mapped_device(md);
-+	dm_ima_destroy(md);
- 
- 	WARN_ON_ONCE(!list_empty(&md->table_devices));
- 	dm_stats_cleanup(&md->stats);
-@@ -2506,7 +2507,7 @@ int dm_create(int minor, struct mapped_device **result)
- 	if (!md)
- 		return -ENXIO;
- 
--	dm_ima_reset_data(md);
-+	dm_ima_init(md);
- 
- 	*result = md;
- 	return 0;
+ EXPORT_SYMBOL(mempool_free);
 -- 
-2.46.1
-
+2.50.1
 
