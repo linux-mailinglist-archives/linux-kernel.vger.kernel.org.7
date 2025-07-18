@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-737332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00A5BB0AB0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 22:20:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D2A8B0AB0D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 22:20:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A4481C239CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 20:20:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86E171C24673
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 20:21:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE50F21B9CD;
-	Fri, 18 Jul 2025 20:20:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E5421CC4D;
+	Fri, 18 Jul 2025 20:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jikutjqy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lw9fJl3N"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5853B11712
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE49D21A92F
 	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 20:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752870029; cv=none; b=ed11NIikucZC9TFb8J4S/lspWWW/EDGR2qr17dZva9QIlOOXnzEYEEZdU0vj+bT3EiwAMBsNuTVof6qmKlCmcwRAM5plHOC2S6P5YK9ilR5/Nl0Dyq3ggqBDdVL0TPfqr6N/Uk+UEe8t92pe5rlR6yB2YvEbAcykrf80pSPX87E=
+	t=1752870029; cv=none; b=R74eBz+QfHcjcatiNN9MpvuHhLkvL5wMpZoVA2hKzZlUmO6Pby86kz23WatIPBqcxEUNg6IHq59x//XGsFjUrTBaO+SAmmf3cwf2r7s1/FHLHIxYGTTUZZflpJ0J3cU2zeekryCnPrWc5wrk+ayD9t/fxdBespcOv23PAeNYcwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752870029; c=relaxed/simple;
-	bh=/R2ql7W1+e3579dR27SG6VrGFvEoDyaZ+gKAlEYsEcg=;
+	bh=rRg0o+hItQud96owWCmMg3FvtAzGw1eqcD4S/uWJRss=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=U/4fZKXdbJpWUHIVBTGImVht4BtABCUoxzf0O2/jpJNjVJBysu8NYyBCt29Mgoa3o0ABADmJiFIdhJ/1WZxx1mH6HC7x/LsZJO1bGQGtTQc6zETadHfLMtaTa5KZTHfBcLp9DuqtxzMGXSdziP0+Bm9+tNztk8SSZyCqhOZEmg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jikutjqy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F198C4CEF5;
+	 Content-Type; b=a1eLLWxHP/eZ6NGgACj/EKC7bIHHg8pAuyZUw98gQNjTiTYMHVlP6W7qYKz7GhSs87Js0ZA9e/rsVJZXeiqdqxJoainxams5e94BylrjfcjYdN7xs0NnOVXb6v1GknZ1vWP+w9VHcYyA11hCbNEbF8Bhd4Xk1AJNpau9ADM5cuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lw9fJl3N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35999C4CEF6;
 	Fri, 18 Jul 2025 20:20:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1752870029;
-	bh=/R2ql7W1+e3579dR27SG6VrGFvEoDyaZ+gKAlEYsEcg=;
+	bh=rRg0o+hItQud96owWCmMg3FvtAzGw1eqcD4S/uWJRss=;
 	h=Date:From:To:Cc:Subject:References:From;
-	b=jikutjqyllPOAfUiHlM/jboq1tzn9Dva6oMgos0vwD6FHZHxqV7CSml+hueF2XKem
-	 FHncWyy3D6BEi0riH5NsaPV4faCP9cIFmym1VQ1Oc0a+i0C/PzRakb87WG3J2/gf8s
-	 UvcIGSV7SS0Utr1AUL6olAprx9uNXLHeFNMhktWV+Dx7ugtMyF4uVTz5/vSt1Ll/ej
-	 9aYTXx3cpsBs0pb3L/RE7Iizyj09GcxheDkwmAlh0cUD4dJZyG7lqAExru6hfTb8DU
-	 EI+TjZkbddc/I5yAtStzqgM0RIcIhes16h78aEMRFf7qdABI9wDC1UI0Gmq8xtynxs
-	 NzfQEA8KQtoDA==
+	b=lw9fJl3Nu/ci5avNIubJzOTo0Plk3taRi+X7Go0041EdppoORSIthviROERD7Dvu6
+	 lv0uYYJNJr8BLStDf8e6EMDB6iok2N2iEVFj1wTge+rLKUXZmXyNxmrxBSaSZHZRzD
+	 St7po6YrlwCFgUAmhYE9L5vrkkvFW77r09Jly33EXTT3KQ1zisOUkIAJldeTd/kLq/
+	 YVEdwAvAF7q7PmPAt4yM0P8fzLJ30sMKhIR7MI/MLEy6ew94DwpDgjJH9hiUl1NqI8
+	 n04bKxIRy28umCSp9ORaTJCXBBCE0tj2ubOvmjNZCQGEcwZr7mk+MAfZ8KcHUNT5fm
+	 HNn6yWnD5ZujA==
 Received: from rostedt by gandalf with local (Exim 4.98.2)
 	(envelope-from <rostedt@kernel.org>)
-	id 1ucrZd-00000007Qcc-1amE;
+	id 1ucrZd-00000007Qd6-2I7F;
 	Fri, 18 Jul 2025 16:20:53 -0400
-Message-ID: <20250718202053.231478909@kernel.org>
+Message-ID: <20250718202053.399653933@kernel.org>
 User-Agent: quilt/0.68
-Date: Fri, 18 Jul 2025 16:18:41 -0400
+Date: Fri, 18 Jul 2025 16:18:42 -0400
 From: Steven Rostedt <rostedt@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: "John Warthog9 Hawley" <warthog9@kernel.org>,
  Dhaval Giani <dhaval.giani@gmail.com>,
  Greg KH <gregkh@linuxfoundation.org>
-Subject: [PATCH 1/5] ktest.pl: Add -D option to override options
+Subject: [PATCH 2/5] ktest.pl: Allow command option -D to override temp variables
 References: <20250718201840.714067501@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -64,100 +64,78 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Steven Rostedt <rostedt@goodmis.org>
 
-Add -D option that lets the user override options in the config.
+Currently -D only updates the persistent options that are defined with
+"=". Allow it to also override all temp variables that are defined with
+":=".
 
-For instance, if the config has: BUILD_NOCLEAN=1 which prevents mrproper
-from being called before builds, and the user wants to call it once. The
-user can run:
-
-  ktest -D BUILD_NOCLEAN=0 config
-
-And the default "BUILD_NOCLEAN" options will be disabled.
-
-If the user wants to change the second test to do a build and not boot,
-the user can run:
-
-  ktest -D 'TEST_TYPE[2]=build' config
-
-Where the '[#]' is for the test to assign the variable for. In the above
-example, it will happen on test 2.
+ ktest.pl -D 'USE_TEMP_DIR:=1' -D 'TEST_TYPE[2]=build' config
 
 Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
 ---
- tools/testing/ktest/ktest.pl | 45 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 44 insertions(+), 1 deletion(-)
+ tools/testing/ktest/ktest.pl | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
 diff --git a/tools/testing/ktest/ktest.pl b/tools/testing/ktest/ktest.pl
-index a5f7fdd0c1fb..8fcc09893986 100755
+index 8fcc09893986..c441934f1def 100755
 --- a/tools/testing/ktest/ktest.pl
 +++ b/tools/testing/ktest/ktest.pl
-@@ -21,6 +21,7 @@ my %opt;
- my %repeat_tests;
+@@ -22,6 +22,7 @@ my %repeat_tests;
  my %repeats;
  my %evals;
-+my @command_vars;
+ my @command_vars;
++my %command_tmp_vars;
  
  #default opts
  my %default = (
-@@ -1286,6 +1287,19 @@ sub read_config {
- 
-     $test_case = __read_config $config, \$test_num;
- 
-+    foreach my $val (@command_vars) {
-+	chomp $val;
-+	my %command_overrides;
-+	if ($val =~ m/^\s*([A-Z_\[\]\d]+)\s*=\s*(.*?)\s*$/) {
-+	    my $lvalue = $1;
-+	    my $rvalue = $2;
-+
-+	    set_value($lvalue, $rvalue, 1, \%command_overrides, "COMMAND LINE");
-+	} else {
-+	    die "Invalid option definition '$val'\n";
-+	}
-+    }
-+
-     # make sure we have all mandatory configs
-     get_mandatory_configs;
- 
-@@ -4242,8 +4256,37 @@ sub cancel_test {
-     die "\nCaught Sig Int, test interrupted: $!\n"
+@@ -901,14 +902,22 @@ sub set_eval {
  }
  
--$#ARGV < 1 or die "ktest.pl version: $VERSION\n   usage: ktest.pl [config-file]\n";
-+sub die_usage {
-+    die << "EOF"
-+ktest.pl version: $VERSION
-+   usage: ktest.pl [options] [config-file]
-+    [options]:
-+       -D value: Where value can act as an option override.
-+                -D BUILD_NOCLEAN=1
-+                    Sets global BUILD_NOCLEAN to 1
-+                -D TEST_TYPE[2]=build
-+                    Sets TEST_TYPE of test 2 to "build"
-+
-+EOF
-+;
-+}
-+
-+while ( $#ARGV >= 0 ) {
-+    if ( $ARGV[0] eq "-D" ) {
-+	shift;
-+	die_usage if ($#ARGV < 1);
-+	my $val = shift;
-+
-+	$command_vars[$#command_vars + 1] = $val;
-+
-+    } elsif ( $ARGV[0] eq "-h" ) {
-+	die_usage;
-+    } else {
-+	last;
-+    }
-+}
+ sub set_variable {
+-    my ($lvalue, $rvalue) = @_;
++    my ($lvalue, $rvalue, $command) = @_;
  
-+$#ARGV < 1 or die_usage;
- if ($#ARGV == 0) {
-     $ktest_config = $ARGV[0];
-     if (! -f $ktest_config) {
++    # Command line variables override all others
++    if (defined($command_tmp_vars{$lvalue})) {
++	return;
++    }
+     if ($rvalue =~ /^\s*$/) {
+ 	delete $variable{$lvalue};
+     } else {
+ 	$rvalue = process_variables($rvalue);
+ 	$variable{$lvalue} = $rvalue;
+     }
++
++    if (defined($command)) {
++	$command_tmp_vars{$lvalue} = 1;
++    }
+ }
+ 
+ sub process_compare {
+@@ -4267,6 +4276,11 @@ ktest.pl version: $VERSION
+                 -D TEST_TYPE[2]=build
+                     Sets TEST_TYPE of test 2 to "build"
+ 
++	        It can also override all temp variables.
++                 -D USE_TEMP_DIR:=1
++                    Will override all variables that use
++                    "USE_TEMP_DIR="
++
+ EOF
+ ;
+ }
+@@ -4277,7 +4291,11 @@ while ( $#ARGV >= 0 ) {
+ 	die_usage if ($#ARGV < 1);
+ 	my $val = shift;
+ 
+-	$command_vars[$#command_vars + 1] = $val;
++	if ($val =~ m/(.*?):=(.*)$/) {
++	    set_variable($1, $2, 1);
++	} else {
++	    $command_vars[$#command_vars + 1] = $val;
++	}
+ 
+     } elsif ( $ARGV[0] eq "-h" ) {
+ 	die_usage;
 -- 
 2.47.2
 
