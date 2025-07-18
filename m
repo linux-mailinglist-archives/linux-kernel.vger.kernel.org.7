@@ -1,132 +1,158 @@
-Return-Path: <linux-kernel+bounces-736368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 724E3B09C00
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:10:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 201F3B09C1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:13:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36913AA11B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 07:09:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 283991C40AC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 07:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F32215043;
-	Fri, 18 Jul 2025 07:10:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0760D21FF51;
+	Fri, 18 Jul 2025 07:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ox5vPWEh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eXN34sMF"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A47ED517
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 07:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B986D218821;
+	Fri, 18 Jul 2025 07:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752822611; cv=none; b=J/XrR2RpNZSjbreacHz86gXG39CldStNgL5UUe+2VcP8HfJrtv6P4F/31vEJX+zp/ZW9eG4vNHmz/Cf6R9SAJek95C4DTBoerwsw+/QaxIjkKnei6gPBmrCJl9zRlGYT0T2cHfQIJgi85v3wc2WbDt0pY4M8+4JnT8/rDbUUpkg=
+	t=1752822748; cv=none; b=JhK8y8cU4hN7F9rj2f3XZL9NlIDp6eU9weQZyv16uHGq+wwwbznTHi/d6x2ogIzW7HFZb1GYOGbfGa3kye086D6uo4iOduGom1Yaf7aMXa6pqGrHjNmhqAQs/X0WhNptilj9ELhBK4zjo+yM+NGJe+f0puei88LYhCBohs3WVag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752822611; c=relaxed/simple;
-	bh=kbN0F0OWDcFkoeEYXmh7ETjat0hD1UCnG+I2D+LMyjE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=jAlgb6BxTOVu00sclCi2vUP+N4VeqI7Nf0w7kuPuWjwaPR6gmyFeCdWWDglB19n8A1LeXOURPl7wvlg55qa9O+tJ80lx/r51jAO5tGwtVz++fHEGevjMX+/6/bDCP5ECBBMPtlrKo1pK8OQpgCum/aSOjArjM1TblHsAc0e93fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ox5vPWEh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1345C4CEF0;
-	Fri, 18 Jul 2025 07:10:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752822610;
-	bh=kbN0F0OWDcFkoeEYXmh7ETjat0hD1UCnG+I2D+LMyjE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ox5vPWEhcp2Z7ShOjJknHsXAkuxBrDVD69XfuQZXPt2hKG4Knbx2+Ko9VdRbfllPy
-	 SeVYkEdcQICWhel2rUyZDFWKVtOyJ1fmuwDEqiN+4v6gIEd8U/hOOLCWXAl9Wnfxfn
-	 CyUL1mfFqDFcXpNOLpyEsHEyRETLrRcZmEU8gQJoviYgXNx7fMn9Soib5QD52y2wk2
-	 W9Ydo6kZJ8XSMJy715ohbam+3KUQfCBEFCv2MIVRR5BDdkng4DT32Cnlo9Pcr4TFsW
-	 Lz6+6lhilQsRElY2s5a+fDHBis9ZTvL8DELJFE+H1w2qrLepVvsM5LkufH75IYiclF
-	 Ek4VzjiUKFwlw==
-Date: Fri, 18 Jul 2025 12:40:06 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL]: dmaengine fixes for v6.16
-Message-ID: <aHnzTit-z6NErlsL@vaman>
+	s=arc-20240116; t=1752822748; c=relaxed/simple;
+	bh=J9TTthri3P5Pz7rfBBtf0OP6gtbV/9IVRyhGQaWg3Xs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YrqyFKlewUuLoF1T2jxUmuAtWBB9OVmd6Su5k3CBIMaY0Ap2CgU0mrBlbRz3OoFmSh+WQcZg5Jw8t/8XQ39OKcrjMcFY1yjVvnTExHwKdEPryfKqPR02Y92VmZ+P4OYz/BjgR//Ijk/ZmerDO/cPYvoDd2xjDl1zQtkfw35TCqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eXN34sMF; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56HLuJkE020761;
+	Fri, 18 Jul 2025 07:12:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=uAaPth0hkPo6/ZzqXgJcYrwqJuiYcbVXjFG
+	EZRTPClo=; b=eXN34sMFBGX/ilvQjTWWk6RuhVtZ7gSOr6ZID3tylIEO7QsMAkg
+	p/SiY3Z9RYnMfB1nSAqX2x3ZW6vsCxXhnAQDjaCJcatcY44gM/9mWhWpbUBtJWVp
+	SHxSKrdLFFshiyh/76/kbKUgW4RIaMwwXJPz2zRVKy9Hq2RmY19OzUnF6ENph5rG
+	K1ELBMq7q204/xXbqmnPIgfZclVVTFOZhL18WzimDQOa7mkMZQT+2KLIYUcmQ+Me
+	sxl1SoUYBC48LuqIk4rTY5ACjvUr72pIHoDkwcf6Qj04MzyLuK6zpHfee6RvAj2k
+	qn5g2VF4gjC2+nhWwIsqDIywDqKWVyf9HfA==
+Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47w5dpnjyu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 18 Jul 2025 07:12:15 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 56I7CCZn006329;
+	Fri, 18 Jul 2025 07:12:12 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 47ugsn143w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 18 Jul 2025 07:12:12 +0000
+Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56I7CC9a006313;
+	Fri, 18 Jul 2025 07:12:12 GMT
+Received: from cse-cd01-lnx.ap.qualcomm.com (cse-cd01-lnx.qualcomm.com [10.64.75.209])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 56I7CB4r006305
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 18 Jul 2025 07:12:12 +0000
+Received: by cse-cd01-lnx.ap.qualcomm.com (Postfix, from userid 4438065)
+	id EEC9220EEE; Fri, 18 Jul 2025 15:12:09 +0800 (CST)
+From: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
+        mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
+        bhelgaas@google.com, johan+linaro@kernel.org, vkoul@kernel.org,
+        kishon@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
+        kw@linux.com
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-phy@lists.infradead.org, qiang.yu@oss.qualcomm.com,
+        quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
+        Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>,
+        Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+Subject: [PATCH v4 0/4] pci: qcom: drop unrelated clock and add link_down reset for sa8775p
+Date: Fri, 18 Jul 2025 15:12:03 +0800
+Message-Id: <20250718071207.160988-1-ziyue.zhang@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="CRJV3rwhctnAK5UQ"
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE4MDA1NSBTYWx0ZWRfX+shTJ+F296sO
+ bMEqUUxzbseWnGE050Zq15kIrk4/LmziW+FmrneC8/U7Yri5E2zVk1JP2AabF4yZ1yEm9FX7QwF
+ OIfTR2r/OCCMuxotCbjXA62aWEY09HtQ5NZEOYCLBHI5mgKPXcui1bXVuZCEV8VB9ArW/ObL86s
+ XRq43kPdZRhoSy+Rb5jTVWSE9w4Y3sPUa2XxdkhVFFIIZXgSRqdmqMeLeyzUaWZWLUfOA1ckZUs
+ L++Qrj1wIgdmcBQP0wOEr+FhbsGn6PaZKjkUgvp4pQHrwI1wybFgVn54Wvg8sgxpEW8LbnDJhXq
+ Y3OWSuv28gTHD++hMz19wipkMyDlAWoCj4cwIhgK9nHdSYs/LQjqk5ytxhE13itcNrHCbsLkwpz
+ jVwCESj4hk8m7r9BtEgBS66VnTryguSznP60tSMfQLDCi/6TJqcJGlGj8fxjeU8xENeDLDmQ
+X-Proofpoint-GUID: U2UcHfxo6cv8KRxzo4n0HBW0JlWbMhU4
+X-Proofpoint-ORIG-GUID: U2UcHfxo6cv8KRxzo4n0HBW0JlWbMhU4
+X-Authority-Analysis: v=2.4 cv=Y+r4sgeN c=1 sm=1 tr=0 ts=6879f3cf cx=c_pps
+ a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=5rr6ixAOVb5IYiBHoQ4A:9
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-18_01,2025-07-17_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 mlxlogscore=999 phishscore=0 malwarescore=0 priorityscore=1501
+ adultscore=0 impostorscore=0 mlxscore=0 suspectscore=0 lowpriorityscore=0
+ bulkscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507180055
+
+This series drop gcc_aux_clock in pcie phy, the pcie aux clock should 
+be gcc_phy_aux_clock. And sa8775p platform support link_down reset in
+hardware, so add it for both pcie0 and pcie1 to provide a better user
+experience.
+
+Have follwing changes:
+  - Update pcie phy bindings for sa8775p.
+  - Document link_down reset.
+  - Remove aux clock from pcie phy.
+  - Add link_down reset for pcie.
+
+Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+
+Changes in v4:
+- Update phy bindings, and commit msg(Johan)
+- Add ABI break commit msg
+- Link to v3: https://lore.kernel.org/linux-arm-msm/20250625090048.624399-1-quic_ziyuzhan@quicinc.com/
+
+Changes in v3:
+- Update phy bindings, remove phy_aux clock (Johan)
+- Update DT binding's description (Johan)
+- Link to v2: https://lore.kernel.org/all/20250617021617.2793902-1-quic_ziyuzhan@quicinc.com/
+
+Changes in v2:
+- Change link_down reset from optional to mandatory(Konrad)
+- Link to v1: https://lore.kernel.org/all/20250529035416.4159963-1-quic_ziyuzhan@quicinc.com/
+
+Ziyue Zhang (4):
+  dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Update pcie phy bindings
+  dt-bindings: PCI: qcom,pcie-sa8775p: document link_down reset
+  arm64: dts: qcom: sa8775p: remove aux clock from pcie phy
+  arm64: dts: qcom: sa8775p: add link_down reset for pcie
+
+ .../bindings/pci/qcom,pcie-sa8775p.yaml       | 11 +++--
+ .../phy/qcom,sc8280xp-qmp-pcie-phy.yaml       |  5 +--
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi         | 42 ++++++++++++-------
+ 3 files changed, 36 insertions(+), 22 deletions(-)
 
 
---CRJV3rwhctnAK5UQ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+base-commit: b551c4e2a98a177a06148cf16505643cd2108386
+-- 
+2.34.1
 
-Hello Linus,
-
-Please pull couple of driver fixes for dmaengine subsystem for v6.16.
-This one contains fixes for mediatex, nbpfaxi and edma driver fixes.
-
-The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
-
-  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git tags/dm=
-aengine-fix-6.16
-
-for you to fetch changes up to 3df63fa8f2afd051848e37ef1b8299dee28d4f87:
-
-  dma: dw-edma: Fix build warning in dw_edma_pcie_probe() (2025-07-15 20:41=
-:49 +0530)
-
-----------------------------------------------------------------
-dmaengine fixes for v6.16
-
-Couple of driver fixes for:
- - Mediatek flag reuse error fix
- - Array overbound fix for nbpfaxi
- - Frame size warning in driver probe
-
-----------------------------------------------------------------
-Abinash Singh (1):
-      dma: dw-edma: Fix build warning in dw_edma_pcie_probe()
-
-Dan Carpenter (1):
-      dmaengine: nbpfaxi: Fix memory corruption in probe()
-
-Qiu-ji Chen (1):
-      dmaengine: mediatek: Fix a flag reuse error in mtk_cqdma_tx_status()
-
- drivers/dma/dw-edma/dw-edma-pcie.c | 60 ++++++++++++++++++++--------------=
-----
- drivers/dma/mediatek/mtk-cqdma.c   |  4 +--
- drivers/dma/nbpfaxi.c              | 11 ++++---
- 3 files changed, 39 insertions(+), 36 deletions(-)
-
---=20
-~Vinod
-
---CRJV3rwhctnAK5UQ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE+vs47OPLdNbVcHzyfBQHDyUjg0cFAmh5804ACgkQfBQHDyUj
-g0e6CxAA1gOH0bY6P1yF+7Y2Z3lEKXTSS7sNZ39wLuWiZf2w7hdS9TddWQRDsPFP
-C5aZLO8Ilfk3e5C0hjkM5kw142WYzl3VcHrjzLo23o1u3tjW1+Oicm0hfSMZ1sUF
-SrMSpHVgD5MLPz8ktXGIufi0nYkA5vFfWtSuHd4/uA5z8jeNLP1kc0FdRprPEibC
-1SPAK5gl/JcrHXkkYrg2WeD+2t9iDsaPSmHASUHpq5a8FZoV6K0Ds2xvCnwdkAxs
-XzPZY4pM8nmDv6dfhjUzRBVBB0gGCN6affaUmxUnovZ/jDavMtgorjU1Tz2CeF4n
-k8faAdOeQ3HgyURHxLzCIrgiK0TlzPgGwQUV39/edTTgJiMTGm9833g2PBlWL1O7
-jMKHmuFPTj5NWUApae267I7r+6ytAkxqmjVUr2sSRo0HMaL2TYHkjpwHF1k04dRx
-fl5J+hJ10qnZINU5MMos0wMzx7nqXeEA0lHp9JYQh5viSEXS31Vh5GWsPD4kMhq0
-4SSt/0aYbw+O+abR2Q9xdHOQwB1+TZPX24YkMZ8nN1FQV+pfjb5zPENjTsiGswGM
-6EtNhCnRu8jms9TTCiT2PmB8Hdb93FkyPSpjdclZ/vc7BNgnUCJiE5dsSGXv3c9n
-pBKAuBV1QveiehYU5oSbdAlyzlEv32J8YcYI38rHKTIomXyeZ24=
-=sjB7
------END PGP SIGNATURE-----
-
---CRJV3rwhctnAK5UQ--
 
