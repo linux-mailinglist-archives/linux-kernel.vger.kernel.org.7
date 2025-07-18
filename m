@@ -1,279 +1,150 @@
-Return-Path: <linux-kernel+bounces-737114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39256B0A7E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:47:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A745B0A7D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:44:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF5C716395A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:43:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E1CD18837BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:44:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E792E040C;
-	Fri, 18 Jul 2025 15:43:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9A82E041C;
+	Fri, 18 Jul 2025 15:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="OwTPUH+t"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ia6fB74B"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA472DFA2F
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 15:43:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FED62DECC4;
+	Fri, 18 Jul 2025 15:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752853424; cv=none; b=BcRaG4GvrRe4LON2Es4fmpGRXzF9UAa3F/cqvRUMzW+4UeJlpjyXJpg90dGdGAOGyp0mEL34HbIChn6MnyI/k81DmFWsD1BZRlPkOE/GuWQZ6X8bCxiJ+3r1qZPQi3hIGJC7uCGaOElzb4R+hbVby6ilyvnGa8qQOaqq7EO3Sdo=
+	t=1752853440; cv=none; b=Jdz1Gc5GwLTJRWu1Xxu3KKJkuymU4JD0dOcQwfm3oLlzH7Tj8Q+Mwess19zUrxzB6yxozDIUq42pEKNzePIWe1Fd+qZtCyFDuHl+4uh4CQ14Uqr18ZUB/obB+cCAAz/yFEtCTEceKPTwHfnazj+UoA7HErVp5ME35+U5+3od600=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752853424; c=relaxed/simple;
-	bh=tPfDEV+Q7YmZAdxMNvCRZ+CP4E7i3vKD9TPOat0ihsc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ag/gCWB26NjT4BEPeQw0ruG7xu5gs/P/4UQn/hDQ6XkPTxEBbihF0SGysJl6ny5rpXFlkRi3fAbpmTXr7ugYKmdUpC9CuUO4Tuze+TxCchzq+69PE7WfTJrExkjj2wMMNjHciRj2gCs4l782OYAvnLwPvgOMM7vHA9htWOaHvT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=OwTPUH+t; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-55502821bd2so2810740e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 08:43:42 -0700 (PDT)
+	s=arc-20240116; t=1752853440; c=relaxed/simple;
+	bh=mJCwGeAMlBeq7zLQGnl6f/i475VDz879qhHSIBsABO0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q76usBNa3m93ycuAleBVcwHljKs7jU7g6dEMOx9zL3yFTulihJl7gqwUSNLlqoYQF9XHEXLEMsI9NtMP5N4ztWX1KLWSK6fJya+Nm8W2S6YqMrPWjWjT38BmuVYfTqyH+P9gRWa698P+L9sAvFIgh13aR5/9rnhBRlNeBhr9cec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ia6fB74B; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-32f18065b70so2333761fa.1;
+        Fri, 18 Jul 2025 08:43:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1752853421; x=1753458221; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=JS97sz2wL9u2i+EDaIvTynPiwOYKWzaKZAuqd+bzw54=;
-        b=OwTPUH+tcmifSP/bs8ya1baElm1+CQ7STR0r2wxk77bjHEbzAnvXw8Wizv7vGlyxbp
-         3+coAudmcsFTG3ay4pg+hk6CZ1TwrETFKDo6E5Ou8AT4SDHRKdWedvh9gpK8iiaQ5qKk
-         Zkr8nlmYO5k2lH8UubYvwHSJzcJxN4pmstUAc=
+        d=gmail.com; s=20230601; t=1752853437; x=1753458237; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hJ3ROjwqD3CLXG2IiheiI0iDXPqsbWX3BCQXRvH9p54=;
+        b=Ia6fB74Bx/VPtiP+dIWPBfa7q2GLjEcU4nX8AtWjveovRIsv+Qe4UApA81kbNEWclJ
+         2Kwj8rHvxrd2NXeZZIYc2r01at4DXZnOWXh5cyO+0pMJpOOI+CQ/yb8a+2l1uQlBtbVV
+         6nFT4qAj8MmMmDbmFoXBHBXXlcWCj6MNFvhA6Qdc6o9gF+GfCO5R9SsiyaG0lIExk87U
+         4y8I7u6yBtJL3KBmDc4Jb1rgFQK7ugaINhRwHELMaBDMWVXL50m2tdbp6WbaqUhhssmX
+         og3pPDw9qTqP0jLZygZbGfaO5xO1ciJVmJLpScQVd+l3TYiQKCev9R7rqp5S1n3FDk3g
+         uXLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752853421; x=1753458221;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JS97sz2wL9u2i+EDaIvTynPiwOYKWzaKZAuqd+bzw54=;
-        b=dl9b6YcaYfmR2Es4YEbrJ3tDTMZYU3aucG5iRWJ5BfFJ1emWOqpTmiCvVvDajUma8o
-         32xyMZnRjML/66vo8yi+klernYOL3ORIOWSgLh8xI1xDEWKXnV9mwdMGPx7dtz/1yK+d
-         qADb1BTMUCIq7kqGxK7AmB3n3+/CFraszL/KmSryMcCl4757A+8QdP+M+Um9lox1i9Kc
-         tOVE6PEf0SNwE02Ftf6KimzA20W8BTDvynpH4whrUGuVdakNt719eUgMhqc6rMTrym1u
-         qteuZozm9Gt73dkAEZ5mbmA/+6dhNlII7HpEZNFmYvj2y0pRjarYdGx2I9/Qaoq0sAsw
-         SNeg==
-X-Forwarded-Encrypted: i=1; AJvYcCW2x0yt9YAh8AtrhS0MAqJUP1vpHIjfJo/WHEzXa9keRdIEowf9oMpX1+tG2SQJxA+f9SvWBQcoEI0a1Do=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9+W4tsW0Kfcrp4qQQiA+FCBtqarSzAR7FCswWKOv5sJsqStO1
-	cqX+ceZsY4fGnksy+Mpt5yIkvTVdPipAD8DSYiRFZfKZVUClaatVo78ND6G5o0s8KcMXcn8UkRP
-	TW389ySSUeTwwd/KtyOf51Mf/snINFd2kOLaQjjA=
-X-Gm-Gg: ASbGncvXfSx/0TIe8DtP1aMOa7AwGyyJS15/YSXCpYg+aH5a1JunzZXSCYGGoG+bi5X
-	82qMYi2cLtwx3dsGurDLbJnu5UJ5UoWjIpz8bFeiAsrB7EUzRRQTHt/j/1oaEl8uEtt0fO+iNNl
-	/Wblur+lXfaBRdYESLxALpFA03rfh+rGBFftqx0qand+my3ajo3vnFZqr/6stYcKmeLim1PnbT1
-	P2O62I=
-X-Google-Smtp-Source: AGHT+IHuOgFMY2TZUhDndmyZAaY+FIpinJdCwehxGuKF/DE97OGi8th6y+FAu9LbmquoJ9bjHgHxHGmQhYhsYDpWZDo=
-X-Received: by 2002:a05:6512:6ca:b0:553:297b:3d4e with SMTP id
- 2adb3069b0e04-55a23f9d33fmr3029332e87.52.1752853420970; Fri, 18 Jul 2025
- 08:43:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752853437; x=1753458237;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hJ3ROjwqD3CLXG2IiheiI0iDXPqsbWX3BCQXRvH9p54=;
+        b=VhCRwNAfJcOJXSFbHschGEU8c+aYmezGdgj4GwM0NzgvqmrXueLrLwBeOLczVRu5KH
+         wpTeaxfx96ycbMDg6HtvunGO5AEzGd0eSetlrbx1y+1E8oiMEPq6KZDQ1QJdRwNhoVYW
+         oLz7rRDhghjILUMrl2tNeB1mV0Zcbg/LDyCc5hHJqESFpzwbpOfoaqSOTPK4ZuA5n8Kp
+         UR7aO6KkWrAaCF4cM5rJRswTVi6ogiz+ucVeS/Us3Nv0P68u6BQ2oAbTJ90KM6ZVEZsf
+         zq+ohbIgXJ9Ev8pheAxnwDDOT664/wFFuN7HcqlDKapT9VWlKhqJN5vuhpynvZW2Lg3u
+         yq/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUD5otqcl2595UESCpTtxU5w3CHS82YSk2ABDjVEnnoe7IluQvpKwCJedhYrbMN1eN3MfwwhoBrxheMW+0=@vger.kernel.org, AJvYcCW89V7QGFELbuAmzOhiG4qE72okLHMkYbidkkiTvWryAaZcegivIGGHKgSQVSmn0b9ZUk+2076U@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNBydb4c15jgQbg5hEp8hiJU7tNdE+QQXB4h2kzlgp3WSy0Usk
+	0Ng7mJ/hXWXdgLhOtPkTqBuyO2WLwo//cBE5j6QS5ZUoXjwWLY4kF5q8
+X-Gm-Gg: ASbGncsnsv2icwSR0uQ8CVXHDH4qgTCDxSpLTi9HQQvue9cbxQVKu6HQ3Hy20AsRZbA
+	LOtgwU3kMf9IFy1JsDgPSs5gbgUiDPTUmDD6+TpZf/K6jgbjvtoUr01GaJmLnPrjvojLmf1Egws
+	ERwqZa0vYpE33wlUNtMYeqQbYMo8EJIbcayxunubOVbIitTRNdTCYg+eug7SA/OXhPFsEcs9n4S
+	1yuC4qkE1ZiT9ftSmPXl81A0qdTB4HDd1/msABFoS9YpIDVMgZg1TsOpPJuHnx7XxdRglAk0NJX
+	vwvZjewMh+a78qFfgPPeOmcE7RIvNcAkZf3J8TfKEXn9Lb7N7omRQoSGFggjXyOBB/3sQTVEBbV
+	n0YS0vii05jCOtOqwwx/h+JRnU01F
+X-Google-Smtp-Source: AGHT+IHuDciecE4/7Mw37ftoaXpLaruOdcnYTZ+5ZmmnuTgI8TgOpSp8IT4jSI8HtwvRnaLKI1Zjpg==
+X-Received: by 2002:a05:6512:128a:b0:545:ece:82d5 with SMTP id 2adb3069b0e04-55a233a28b1mr1360799e87.13.1752853436956;
+        Fri, 18 Jul 2025 08:43:56 -0700 (PDT)
+Received: from [10.214.35.248] ([80.93.240.68])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55a31d7c777sm299394e87.116.2025.07.18.08.43.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Jul 2025 08:43:55 -0700 (PDT)
+Message-ID: <0004f2ed-ac2b-4d93-8a4d-d01cbede94a2@gmail.com>
+Date: Fri, 18 Jul 2025 17:43:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <30f8ea8d-79c4-4e5c-b354-51ad8146a61c@acm.org> <20250717194025.3218107-1-salomondush@google.com>
-In-Reply-To: <20250717194025.3218107-1-salomondush@google.com>
-From: Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>
-Date: Fri, 18 Jul 2025 09:43:23 -0600
-X-Gm-Features: Ac12FXy-sTcVsKKpjOxr1yC-VpNPTOXl0Qp8qEdzlFX7gJL9eKzfRJGnc7Y9eyQ
-Message-ID: <CAFdVvOx-xegmdGO8xgwpE3i0BvgXD0C1jKjNWKNjTFuifWmuxg@mail.gmail.com>
-Subject: Re: [PATCH v2] scsi: mpi3mr: Emit uevent on controller diagnostic fault
-To: Salomon Dushimirimana <salomondush@google.com>
-Cc: bvanassche@acm.org, James.Bottomley@hansenpartnership.com, 
-	kashyap.desai@broadcom.com, linux-kernel@vger.kernel.org, 
-	linux-scsi@vger.kernel.org, martin.petersen@oracle.com, 
-	mpi3mr-linuxdrv.pdl@broadcom.com, sreekanth.reddy@broadcom.com, 
-	sumit.saxena@broadcom.com
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="00000000000088ebbb063a35fd47"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] kasan: use vmalloc_dump_obj() for vmalloc error reports
+To: Marco Elver <elver@google.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Alexander Potapenko <glider@google.com>,
+ Dmitry Vyukov <dvyukov@google.com>, Andrey Konovalov <andreyknvl@gmail.com>,
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, kasan-dev@googlegroups.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Uladzislau Rezki <urezki@gmail.com>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Yeoreum Yun <yeoreum.yun@arm.com>, Yunseong Kim <ysk@kzalloc.com>,
+ stable@vger.kernel.org
+References: <20250716152448.3877201-1-elver@google.com>
+Content-Language: en-US
+From: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+In-Reply-To: <20250716152448.3877201-1-elver@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---00000000000088ebbb063a35fd47
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 17, 2025 at 1:40=E2=80=AFPM Salomon Dushimirimana
-<salomondush@google.com> wrote:
->
-> Introduces a uevent mechanism to notify userspace when the controller
-> undergoes a reset due to a diagnostic fault. A new function,
-> mpi3mr_fault_event_emit(), is added and called from the reset path. This
-> function filters for a diagnostic fault type
-> (MPI3_SYSIF_HOST_DIAG_RESET_ACTION_DIAG_FAULT) and generates a uevent
-> containing details about the event:
->
-> - DRIVER: mpi3mr in this case
-> - HBA_NUM: scsi host id
-> - EVENT_TYPE: indicates fatal error
-> - RESET_TYPE: type of reset that has occurred
-> - RESET_REASON: specific reason for the reset
->
-> This will allow userspace tools to subscribe to these events and take
-> appropriate action.
-What is the reason for userpace tools to know these events and what
-user space tools we are talking about here?  Also, on what basis it is
-decided only diag fault reset is considered as FATAL.  I would prefer
-to understand the actual requirement before ACKing this patch.  If we
-need this kind of user space notification then it would be better to
-make it generic and let the notification sent for all firmware fault
-codes.
 
->
-> Signed-off-by: Salomon Dushimirimana <salomondush@google.com>
-> ---
-> Changes in v2:
-> - Addressed feedback from Bart regarding use of __free(kfree) and more
->
->  drivers/scsi/mpi3mr/mpi3mr_fw.c | 37 +++++++++++++++++++++++++++++++++
->  1 file changed, 37 insertions(+)
->
-> diff --git a/drivers/scsi/mpi3mr/mpi3mr_fw.c b/drivers/scsi/mpi3mr/mpi3mr=
-_fw.c
-> index 1d7901a8f0e40..a050c4535ad82 100644
-> --- a/drivers/scsi/mpi3mr/mpi3mr_fw.c
-> +++ b/drivers/scsi/mpi3mr/mpi3mr_fw.c
-> @@ -1623,6 +1623,42 @@ static inline void mpi3mr_set_diagsave(struct mpi3=
-mr_ioc *mrioc)
->         writel(ioc_config, &mrioc->sysif_regs->ioc_configuration);
->  }
->
-> +/**
-> + * mpi3mr_fault_uevent_emit - Emit uevent for a controller diagnostic fa=
-ult
-> + * @mrioc: Pointer to the mpi3mr_ioc structure for the controller instan=
-ce
-> + * @reset_type: The type of reset that has occurred
-> + * @reset_reason: The specific reason code for the reset
-> + *
-> + * This function is invoked when the controller undergoes a reset. It sp=
-ecifically
-> + * filters for MPI3_SYSIF_HOST_DIAG_RESET_ACTION_DIAG_FAULT and ignores =
-other
-> + * reset types, such as soft resets.
-> + */
-> +static void mpi3mr_fault_uevent_emit(struct mpi3mr_ioc *mrioc, u16 reset=
-_type,
-> +       u16 reset_reason)
-> +{
-> +       struct kobj_uevent_env *env __free(kfree);
-> +
-> +       if (reset_type !=3D MPI3_SYSIF_HOST_DIAG_RESET_ACTION_DIAG_FAULT)
-> +               return;
-> +
-> +       env =3D kzalloc(sizeof(*env), GFP_KERNEL);
-> +       if (!env)
-> +               return;
-> +
-> +       if (add_uevent_var(env, "DRIVER=3D%s", mrioc->driver_name))
-> +               return;
-> +       if (add_uevent_var(env, "HBA_NUM=3D%u", mrioc->id))
-> +               return;
-> +       if (add_uevent_var(env, "EVENT_TYPE=3DFATAL_ERROR"))
-> +               return;
-> +       if (add_uevent_var(env, "RESET_TYPE=3D%s", mpi3mr_reset_type_name=
-(reset_type)))
-> +               return;
-> +       if (add_uevent_var(env, "RESET_REASON=3D%s", mpi3mr_reset_rc_name=
-(reset_reason)))
-> +               return;
-> +
-> +       kobject_uevent_env(&mrioc->shost->shost_gendev.kobj, KOBJ_CHANGE,=
- env->envp);
-> +}
-> +
->  /**
->   * mpi3mr_issue_reset - Issue reset to the controller
->   * @mrioc: Adapter reference
-> @@ -1741,6 +1777,7 @@ static int mpi3mr_issue_reset(struct mpi3mr_ioc *mr=
-ioc, u16 reset_type,
->             ioc_config);
->         if (retval)
->                 mrioc->unrecoverable =3D 1;
-> +       mpi3mr_fault_uevent_emit(mrioc, reset_type, reset_reason);
->         return retval;
->  }
->
-> --
-> 2.50.0.727.gbf7dc18ff4-goog
->
+On 7/16/25 5:23 PM, Marco Elver wrote:
+> Since 6ee9b3d84775 ("kasan: remove kasan_find_vm_area() to prevent
+> possible deadlock"), more detailed info about the vmalloc mapping and
+> the origin was dropped due to potential deadlocks.
+> 
+> While fixing the deadlock is necessary, that patch was too quick in
+> killing an otherwise useful feature, and did no due-diligence in
+> understanding if an alternative option is available.
+> 
+> Restore printing more helpful vmalloc allocation info in KASAN reports
+> with the help of vmalloc_dump_obj(). Example report:
+> 
+> | BUG: KASAN: vmalloc-out-of-bounds in vmalloc_oob+0x4c9/0x610
+> | Read of size 1 at addr ffffc900002fd7f3 by task kunit_try_catch/493
+> |
+> | CPU: [...]
+> | Call Trace:
+> |  <TASK>
+> |  dump_stack_lvl+0xa8/0xf0
+> |  print_report+0x17e/0x810
+> |  kasan_report+0x155/0x190
+> |  vmalloc_oob+0x4c9/0x610
+> |  [...]
+> |
+> | The buggy address belongs to a 1-page vmalloc region starting at 0xffffc900002fd000 allocated at vmalloc_oob+0x36/0x610
+> | The buggy address belongs to the physical page:
+> | page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x126364
+> | flags: 0x200000000000000(node=0|zone=2)
+> | raw: 0200000000000000 0000000000000000 dead000000000122 0000000000000000
+> | raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
+> | page dumped because: kasan: bad access detected
+> |
+> | [..]
+> 
+> Fixes: 6ee9b3d84775 ("kasan: remove kasan_find_vm_area() to prevent possible deadlock")
+> Suggested-by: Uladzislau Rezki <urezki@gmail.com>
+> Cc: Alexander Potapenko <glider@google.com>
+> Cc: Andrey Konovalov <andreyknvl@gmail.com>
+> Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+> Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> Cc: Yeoreum Yun <yeoreum.yun@arm.com>
+> Cc: Yunseong Kim <ysk@kzalloc.com>
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Marco Elver <elver@google.com>
 
---00000000000088ebbb063a35fd47
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
 
-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
-v82E+npLwqC8bSHh1m6BJewfpawx72uKM9aFs6SVpLPtN6a5369OCwVeEwkk2FeFU9tZXWBnI4Wu
-d1Q4a3vhOColD6PdTWv74Ez2I3ahCkmpeEQ1YMt61TUH3W8NUJJeYN2xkR6OGsA1AgMBAAGjggHc
-MIIB2DAOBgNVHQ8BAf8EBAMCBaAwgaMGCCsGAQUFBwEBBIGWMIGTME4GCCsGAQUFBzAChkJodHRw
-Oi8vc2VjdXJlLmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAy
-MC5jcnQwQQYIKwYBBQUHMAGGNWh0dHA6Ly9vY3NwLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJz
-b25hbHNpZ24yY2EyMDIwME0GA1UdIARGMEQwQgYKKwYBBAGgMgEoCjA0MDIGCCsGAQUFBwIBFiZo
-dHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAJBgNVHRMEAjAAMEkGA1UdHwRC
-MEAwPqA8oDqGOGh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJj
-YTIwMjAuY3JsMCYGA1UdEQQfMB2BG3NhdGh5YS5wcmFrYXNoQGJyb2FkY29tLmNvbTATBgNVHSUE
-DDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQU
-VyBc/F5XGkYNCP9Rb96mru8lU4AwDQYJKoZIhvcNAQELBQADggEBACiysbqj0ggjcc9uzOpBkt1Q
-nGtvHhd9pbNmshJRUoNL11pQEzupSsUkDoAa6hPrOaJVobIO+yC84D4GXQc13Jk0QZQhRJJRYLwk
-vdq704JPh4ULIwofTWqwsiZ1OvINzX9h9KEw/+h+Mc3YUCO7tvKBGLJTUaUhrjxyjLQdEK1Xp/8B
-kYd5quZssxYPJ3nl37Moy/U9ZM2F0Ivv4U3wyP5y5cdmBUBAGOd94rH60fVDVogEo5F9gXrZhT/4
-jKzCG3LclOOzLinCkK2J5GYngIUHSmnqk909QPG6jkx5RJWwkpTzm+AAVbJ9a+1F/8iR3FiDddEK
-8wQJuWG84jqd/9wxggJgMIICXAIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxT
-aWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAy
-MDIwAgx2rp2oPFt1hdtt8l8wDQYJYIZIAWUDBAIBBQCggccwLwYJKoZIhvcNAQkEMSIEIFgDt0UP
-54zD0WzEbxit0IE6IMKg3GJ1MzCMPeS7+3ZaMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJ
-KoZIhvcNAQkFMQ8XDTI1MDcxODE1NDM0MVowXAYJKoZIhvcNAQkPMU8wTTALBglghkgBZQMEASow
-CwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQcwCwYJYIZI
-AWUDBAIBMA0GCSqGSIb3DQEBAQUABIIBAB7yTa+YOBqAgP8rsXG5xw/dKvpyOrWb3o/bLAAWpbpq
-k5U9fqGZXrxRXzYIXnf78HvtrrXfMNTld0vpvzNKDUTSFbYt5G7hkKaa6r4s/kLsyqN7R14eUiLM
-CadYAUEqimPHMYX7CK2ugBqwvVa8G1q0j8gTQ1nyfUdHasI+tj97d4ETYXf7QxnuK1RvyQfWVKA0
-7OiNeJ57nRy3NhZPRdQT1afRytgE0sTuMHyezyA2y+ykZNgAU/kY0jyg1fldv+fpr89o5087AtNp
-xoJdPeO4S42LMLK3ctxwflgqgBAoEANiNO5GXaZCuNz4nS+jInSoP9Z4lz1jwBUN4Yncjp8=
---00000000000088ebbb063a35fd47--
+Acked-by: Andrey Ryabinin <ryabinin.a.a@gmail.com>
 
