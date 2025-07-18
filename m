@@ -1,121 +1,105 @@
-Return-Path: <linux-kernel+bounces-736887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6746B0A4A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:59:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4757BB0A4B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:02:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 558CB1AA7DE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:59:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 064534E7D69
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:02:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112A12DC32B;
-	Fri, 18 Jul 2025 12:59:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8E12DBF4B;
+	Fri, 18 Jul 2025 13:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LlvUP31U";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="opeOZi1A"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uFL57H/H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAADC2DC321;
-	Fri, 18 Jul 2025 12:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90AC01F949;
+	Fri, 18 Jul 2025 13:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752843561; cv=none; b=qsP3iYAVq4l2NGuUhRh9+taCz8P/KZx7l2RijnVDoBTQIT46lDZ4HOGsefvl89lA/gnE7IiXYPxMn/Z87Fc/myFeEc6UXYm8Nbl8sZBExbFH8pq4YUUpjs3jpJoLB50rKwQev9bjb+NGb5m7RrxK8aGvx2+mUxVBgLm6ZrBYVg8=
+	t=1752843766; cv=none; b=V0AEAV1mtnaI0wXpMf7RGoYez5i+WJzYx7Y7haSRMBMYFFtX4y2I7gFUKMNNDm6tGMTGF3MhbM4MD919F58us0jVqCS+WQHK2ylW8z5Kuh9IWofBVpc4yG0rJaOtTjfZI03DV8is7Mh1w5LoHOg8czwsQxYFESr12c3FoizD/v4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752843561; c=relaxed/simple;
-	bh=s/0v2H8me2bDi5zhVbb7OvddlJpAbs6UDK6v/74Lenw=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=M2mha9OpuYnYUcP9I5KXt1aJZE+hOsWNut7FuZh6Xham5rckKU/mx/HFQVi1sOFu3d/cXUwaGYbYY05GnrBv/6J1xKlpZ4hlRukPAvZMdCzGrNAmty80epw0PlORoJGDtfIuptaa0Xfn/uJR5d6dAfKxYdPuk4rlJHVv5gSWSRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LlvUP31U; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=opeOZi1A; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 18 Jul 2025 12:59:14 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752843555;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BOxx3n4BHi5iPsjReqauCghraVkUYfW9DiU/tvlBDJw=;
-	b=LlvUP31U3Qvz8ARKNPVlvDSKMgkdOXLKzAyt22FhfDYmMXYwI+V8GjhT2uhNAtEUPVohvq
-	889pRMjZiyQftJBk17l9IUjovfyNUZPaRqaLmHpInWxg2y1xUHVICnuCloOeydl0b3+waa
-	5R/rGLRlGWBKlnGdu8gdjhZ/oalNjjsc4FytjQIaEhMmKgCXNiq98FbfIGjhRLtUk1g9Nz
-	SmRe7P9StIrinnKFpEDIHHnI1tz7AoSkEKL4aEbeL6+5IC8EtWBYtAwqHnJbJWxeSFJKyA
-	XRWpPEFyCHL3Bsl3DMO6YJyDC2DMFYx4/zrPS6yKfCpQOUoetVQGBgR4uec5fg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752843555;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BOxx3n4BHi5iPsjReqauCghraVkUYfW9DiU/tvlBDJw=;
-	b=opeOZi1Ax+3vCCpkBmdMeGwWD/LeC0H0Os7l0qk6VnJz7GkbyPiyI9FizkoS9eG050uDHJ
-	w1MgvlNUDOQSJ3DQ==
-From: "tip-bot2 for Dan Carpenter" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/drivers] irqchip/ls-scfg-msi: Fix NULL dereference in error
- handling
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>, Nam Cao <namcao@linutronix.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <15059507-6422-4333-94ca-e8e8840bd289@sabinyo.mountain>
-References: <15059507-6422-4333-94ca-e8e8840bd289@sabinyo.mountain>
+	s=arc-20240116; t=1752843766; c=relaxed/simple;
+	bh=sXNq1bFtt6n/EjmTrldQ4J1q1HjTGDuyYRitu4iBT10=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g05dJp26txKJ1+whmPUjY2AmuIPYCJWoAsQ8/BD3lmoAJRu7VvnU6FAq5de8gRjOHi+D+ije1ndwGW8PclBGWlXVYx7tVWGNt0sVVE2GQ27BA6JS15hdHWJhoJdChfr8V6FDyJKCsYI22FFFrUQISA5S6IhKPeWOOZWhBTNUiS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uFL57H/H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2BF4C4CEEB;
+	Fri, 18 Jul 2025 13:02:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752843766;
+	bh=sXNq1bFtt6n/EjmTrldQ4J1q1HjTGDuyYRitu4iBT10=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uFL57H/HNH4ozOjuQ1klXPKhzrXEgVqolxkPT8DDte2qLpBEAmAolGQjUXqQmpSBY
+	 jgNQPv4Hc2i7ZdM0exiAcduFAUXfY3JnwoFQS1pikf6irRnth4d5Z681WaRw9xhQ/M
+	 09hGa2HmhGump2XdneUOpUe+ZkKYJ015GjlnZ/pyVYZOGjjUyUfxgTV8HC7imGxy//
+	 rHMUYWrWsGxpo2e36kZcmEUtkhQin9o67aKofN7zKayr54F51h3v7hmolSD4GhG/ss
+	 xa6jY183wnEFo8WKqHZMS3lGtd1zK1vlw5WWjGlvGqjuVGpcvgDJCPBPRhq3ApSoj+
+	 ogJs44azHONbw==
+Date: Fri, 18 Jul 2025 15:02:41 +0200
+From: Carlos Maiolino <cem@kernel.org>
+To: or10n-cli <muhammad.ahmed.27@hotmail.com>
+Cc: djwong@kernel.org, linux-xfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] agheader: remove inappropriate use of -ENOSYS
+Message-ID: <rypeauv2sg6iljvklmsgmir6g242btpqv6l7yidvmyenptdsf3@cnumxkzug2mp>
+References: <alkfwOHITuxAoSIlg-ZgfhzBV_BrXj2oC7-6qD_gksbVxsIsw9472FpW3FySIh9byZcQQUmcdojisYFr9gRuOg==@protonmail.internalid>
+ <DB6PR07MB314253A24F94DAA65E0CD5D9BB50A@DB6PR07MB3142.eurprd07.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175284355454.406.2721767581082329657.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <DB6PR07MB314253A24F94DAA65E0CD5D9BB50A@DB6PR07MB3142.eurprd07.prod.outlook.com>
 
-The following commit has been merged into the irq/drivers branch of tip:
+On Fri, Jul 18, 2025 at 05:43:24PM +0500, or10n-cli wrote:
+>  From 8b4f1f86101f2bf47a90a56321259d32d7fe55eb Mon Sep 17 00:00:00 2001
+> From: or10n-cli <muhammad.ahmed.27@hotmail.com>
+> Date: Fri, 18 Jul 2025 16:24:10 +0500
+> Subject: [PATCH] agheader: remove inappropriate use of -ENOSYS
+> 
+> The ENOSYS error code should only be used to indicate an invalid
+> system call number. Its usage in this context is misleading and
+> has been removed to align with kernel error code semantics.
+> 
+> Signed-off-by: my.user <my.mail@hotmail.com>
+> ---
+>   fs/xfs/scrub/agheader.c | 1 -
+>   1 file changed, 1 deletion(-)
+> 
+> diff --git a/fs/xfs/scrub/agheader.c b/fs/xfs/scrub/agheader.c
+> index 303374df44bd..743e0584b75d 100644
+> --- a/fs/xfs/scrub/agheader.c
+> +++ b/fs/xfs/scrub/agheader.c
+> @@ -134,7 +134,6 @@ xchk_superblock(
+>           */
+>          switch (error) {
+>          case -EINVAL:   /* also -EWRONGFS */
+> -       case -ENOSYS:
+>          case -EFBIG:
+>                  error = -EFSCORRUPTED;
+>                  fallthrough;
+> --
 
-Commit-ID:     aabf4ff06b9789f3cd167bf9e2eb25f1fdb5541a
-Gitweb:        https://git.kernel.org/tip/aabf4ff06b9789f3cd167bf9e2eb25f1fdb5541a
-Author:        Dan Carpenter <dan.carpenter@linaro.org>
-AuthorDate:    Wed, 16 Jul 2025 14:43:45 -05:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Fri, 18 Jul 2025 14:54:45 +02:00
+The comment right above what you changed says:
 
-irqchip/ls-scfg-msi: Fix NULL dereference in error handling
+/*
+ * The superblock verifier can return several different error codes
+ * if it thinks the superblock doesn't look right.
+.
+.
+*/
 
-The call to irq_domain_remove(msi_data->parent); was accidentally left
-behind during a code refactor.  It's not necessary to free
-"msi_data->parent" because it is NULL and, in fact, trying to free it
-will lead to a NULL pointer dereference.  Delete the unnecessary code.
+What you did is basically skipping superblock inode size validation,
+now scrub will assume it's consistent even if it's corrupted.
 
-Fixes: 94b59d5f567a ("irqchip/ls-scfg-msi: Switch to use msi_create_parent_irq_domain()")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Nam Cao <namcao@linutronix.de>
-Link: https://lore.kernel.org/all/15059507-6422-4333-94ca-e8e8840bd289@sabinyo.mountain
-
----
- drivers/irqchip/irq-ls-scfg-msi.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/irqchip/irq-ls-scfg-msi.c b/drivers/irqchip/irq-ls-scfg-msi.c
-index 7eca751..4910f36 100644
---- a/drivers/irqchip/irq-ls-scfg-msi.c
-+++ b/drivers/irqchip/irq-ls-scfg-msi.c
-@@ -226,7 +226,6 @@ static int ls_scfg_msi_domains_init(struct ls_scfg_msi *msi_data)
- 	msi_data->parent = msi_create_parent_irq_domain(&info, &ls_scfg_msi_parent_ops);
- 	if (!msi_data->parent) {
- 		dev_err(&msi_data->pdev->dev, "failed to create MSI domain\n");
--		irq_domain_remove(msi_data->parent);
- 		return -ENOMEM;
- 	}
- 
+Also. Please, go read Documentation/process/submitting-patches.rst
 
