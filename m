@@ -1,154 +1,185 @@
-Return-Path: <linux-kernel+bounces-737242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20DEDB0A9BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 19:44:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96393B0A9C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 19:46:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B0321AA32FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:44:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 092FD1C45C64
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:47:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A4E2E7BC1;
-	Fri, 18 Jul 2025 17:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z245fCB9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60E5C2E7194;
+	Fri, 18 Jul 2025 17:46:39 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA5671ACEDD;
-	Fri, 18 Jul 2025 17:44:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3B017A2F5;
+	Fri, 18 Jul 2025 17:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752860656; cv=none; b=XA0m8cUtk/cudo9FqiTICRqhuP0lRotEF0L5Bk7nfHya6lugjQcteQxRPVTxqgJbFD0+EKcQhYTk8/2Wh4AWefysWos5B0FH+5k+sc0OxnuvAWIP3nYkm496lqUBPwoaF7G9Jnpsq8kSJ8PRyPfSwVBurwhArG69129/JBOQmQQ=
+	t=1752860799; cv=none; b=dxqUsU1Mx9RbQBzGMpUm4rqqYHp1U43yo1OhEuzThSiyrbYRvhIwnXP95dCJUm5Uy+74Nlu9bxAqb5YAsjBD59B5Bf/AA4Q8+oW53tqOeBEN7ZFV75FGzH3XSEX+LLc+7R8Nj572D2c1YnGqsPVQ/xPY83BXE7f2WcTBy+tRGZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752860656; c=relaxed/simple;
-	bh=r7jzzhhlqvE5ku5kcAd5OqB3Um/2DvWTLMCOzwioi2M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nKu6GW/qBWAvOpBL/bgMq14INw0+7Xbfq6p8mEOlilhH+PGjI2RsSiAvAFd2KAd433tYaIdKZsTkH/x4AZmejOMZIG7samsLuiQhrQlS9y1xx/gFoBnxEQF2w79N97gb0C/ur7b6auUJAg8RX1Zog5SPjxy/SsK9rRuJLgOldNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z245fCB9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD085C4CEEB;
-	Fri, 18 Jul 2025 17:44:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752860655;
-	bh=r7jzzhhlqvE5ku5kcAd5OqB3Um/2DvWTLMCOzwioi2M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Z245fCB9/rRmVPyLP3CMTiyxp/kG4PUS/3ZaQvUeMnPl90TQbxHR9ZNMC9q2nF9V0
-	 +h0ytwAO4Ap8NxHPSh1gEmY5tK9vY0pmmKZFkzFyp0EuCx3ZhhSHPfNo89NV16949g
-	 EZ3ZaEEKCQ/nYQ7pvRhJZBe4AhYIfX38YVClKddAmxi+k23nvQ6li+93+BHGh3ADsl
-	 4S1dslmUTDXqJ5gGTNmFT0/e3y8hKxPUiQ4T0+aWiy9TXJkDivZq/G7HMeef8cPPG5
-	 ENBTaAtIZQ3xxgwwWPSDdzVN+EQIFkgCmJQurv/GU6ZzB3mByqkYwOHbgvERWMxm4W
-	 dxVhSgHUVmFkA==
-Message-ID: <c7c8b0bf-8602-4030-acbe-ac56678b633c@kernel.org>
-Date: Fri, 18 Jul 2025 12:44:11 -0500
+	s=arc-20240116; t=1752860799; c=relaxed/simple;
+	bh=oBz/Fp1EodKwOhBcnhDmslhGP47e5o6kukJjwTdnwmk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TSFukugVH8oGmycVvoiyWoh+opvCtkQKqyrdEcJTBWAS6QExRIYrePIxJL3mflSPruTkY3Bp9V1GlXZDni66kcd0k8ixwZ4s8wlrwz2JtCAKS6lR6p0u3aAVU5R9IGzNbk9Zo4m3Ai2MNmesNMI0OixStAtMT3uA6nUwFzUheOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf04.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay03.hostedemail.com (Postfix) with ESMTP id 29497B6582;
+	Fri, 18 Jul 2025 17:46:30 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf04.hostedemail.com (Postfix) with ESMTPA id 799EF2002B;
+	Fri, 18 Jul 2025 17:46:28 +0000 (UTC)
+Date: Fri, 18 Jul 2025 13:46:27 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5] tracing: kprobe-event: Allocate string buffers from
+ heap
+Message-ID: <20250718134627.5d483ca4@batman.local.home>
+In-Reply-To: <175283846936.343578.3747359008449354291.stgit@devnote2>
+References: <175283843771.343578.8524137568048302760.stgit@devnote2>
+	<175283846936.343578.3747359008449354291.stgit@devnote2>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 9/9] PCI: Add a new 'boot_display' attribute
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: David Airlie <airlied@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Simona Vetter <simona@ffwll.ch>, Lukas Wunner <lukas@wunner.de>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>,
- Alex Williamson <alex.williamson@redhat.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:INTEL IOMMU (VT-d)" <iommu@lists.linux.dev>,
- "open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
- "open list:VFIO DRIVER" <kvm@vger.kernel.org>,
- "open list:SOUND" <linux-sound@vger.kernel.org>,
- Daniel Dadap <ddadap@nvidia.com>,
- Mario Limonciello <mario.limonciello@amd.com>
-References: <20250718173648.GA2704349@bhelgaas>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <20250718173648.GA2704349@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 799EF2002B
+X-Stat-Signature: pjxx5y3m8aq9wx17o1mkubzcpyzcshwa
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18zFTNJoWRCnrYe1mzILyAs45AHpmpIQJM=
+X-HE-Tag: 1752860788-768703
+X-HE-Meta: U2FsdGVkX1983FXNaEcUe10BALS9kFAXrTbh2q/p/7XpZPwlKHaAButfT8iJhMWfJJcBwTo6L0gpfT54as+VIVNglLtiQ3twha0cJtGStmBhj956TZ/vmKp9pneeqj3gzmEbb1oJtMGN8l5UrZfB1wgzDdSp5Usv8ONuIuqTWAYnfpGa9atRlU0dMRsz2krTUtnB6lrq/cOaj8MqcX64x/NQUKDmIzZmQ+p40w/hnu7U9r5Td8EotEVKc6G7wLmx6TUSQIaPOY0VPmGO54XMUUteDEhjOhdZ2geqXG9/rRhBGKf40gOjLy1+6lrOqjDaFEIbLAPOqKM9akCePkBHC4d1ttQwWgsyNgA7nie9jO67X9HK/32VzC7i0ZLQp/psHqNns//CDX8iCp1Qp/MHcw==
 
-On 7/18/2025 12:36 PM, Bjorn Helgaas wrote:
-> On Fri, Jul 18, 2025 at 12:29:05PM -0500, Mario Limonciello wrote:
->> On 7/18/2025 12:25 PM, Bjorn Helgaas wrote:
->>> On Thu, Jul 17, 2025 at 12:38:12PM -0500, Mario Limonciello wrote:
->>>> From: Mario Limonciello <mario.limonciello@amd.com>
->>>>
->>>> On systems with multiple GPUs there can be uncertainty which GPU is the
->>>> primary one used to drive the display at bootup. In some desktop
->>>> environments this can lead to increased power consumption because
->>>> secondary GPUs may be used for rendering and never go to a low power
->>>> state. In order to disambiguate this add a new sysfs attribute
->>>> 'boot_display' that uses the output of video_is_primary_device() to
->>>> populate whether a PCI device was used for driving the display.
->>>
->>>> +What:		/sys/bus/pci/devices/.../boot_display
->>>> +Date:		October 2025
->>>> +Contact:	Linux PCI developers <linux-pci@vger.kernel.org>
->>>> +Description:
->>>> +		This file indicates that displays connected to the device were
->>>> +		used to display the boot sequence.  If a display connected to
->>>> +		the device was used to display the boot sequence the file will
->>>> +		be present and contain "1".
->>>
->>>>    int __must_check pci_create_sysfs_dev_files(struct pci_dev *pdev)
->>>>    {
->>>> +	int retval;
->>>> +
->>>>    	if (!sysfs_initialized)
->>>>    		return -EACCES;
->>>> +	retval = pci_create_boot_display_file(pdev);
->>>
->>> In addition to Mani's question about whether /sys/bus/pci/ is the
->>> right place for this (which is a very good question), it's also been
->>> pointed out to me that we've been trying to get rid of
->>> pci_create_sysfs_dev_files() for years.
->>>
->>> If it's possible to make this a static attribute that would be much,
->>> much cleaner.
->>
->> Right - I tried to do this, but the problem is at the time the PCI device is
->> created the information needed to make the judgement isn't ready.  The
->> options end up being:
->> * a sysfs file for every display device with 0/1
->> * a sysfs file that is not accurate until later in the boot
+On Fri, 18 Jul 2025 20:34:29 +0900
+"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+
+> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 > 
-> What's missing?  The specifics might be helpful if someone has another
-> crack at getting rid of pci_create_sysfs_dev_files() in the future.
-
-The underlying SCREEN_INFO code tries to walk through all the PCI 
-devices in a loop, but at the time all the devices are walked the memory 
-regions associated with the device weren't populated.
-
-So my earlier hack was to re-run the screen info check, and it was awful.
-
+> Allocate temporary string buffers for parsing kprobe-events
+> from heap instead of stack.
 > 
->> So IMO it /needs/ to come later.
->>
->>>
->>>> +	if (retval)
->>>> +		return retval;
->>>> +
->>>>    	return pci_create_resource_files(pdev);
->>>>    }
->>>> @@ -1671,6 +1716,7 @@ void pci_remove_sysfs_dev_files(struct pci_dev *pdev)
->>>>    	if (!sysfs_initialized)
->>>>    		return;
->>>> +	pci_remove_boot_display_file(pdev);
->>>>    	pci_remove_resource_files(pdev);
->>>>    }
->>>> -- 
->>>> 2.43.0
->>>>
->>
+> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> ---
+>  kernel/trace/trace_kprobe.c |   39 +++++++++++++++++++++++++--------------
+>  1 file changed, 25 insertions(+), 14 deletions(-)
+> 
+> diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+> index 15d7a381a128..793af6000f16 100644
+> --- a/kernel/trace/trace_kprobe.c
+> +++ b/kernel/trace/trace_kprobe.c
+> @@ -861,20 +861,20 @@ static int trace_kprobe_create_internal(int argc, const char *argv[],
+>  	 *  FETCHARG:TYPE : use TYPE instead of unsigned long.
+>  	 */
+>  	struct trace_kprobe *tk __free(free_trace_kprobe) = NULL;
+> +	const char *event = NULL, *group = KPROBE_EVENT_SYSTEM;
+> +	const char **new_argv __free(kfree) = NULL;
+>  	int i, len, new_argc = 0, ret = 0;
+> -	bool is_return = false;
+>  	char *symbol __free(kfree) = NULL;
+> -	char *tmp = NULL;
+> -	const char **new_argv __free(kfree) = NULL;
+> -	const char *event = NULL, *group = KPROBE_EVENT_SYSTEM;
+> +	char *ebuf __free(kfree) = NULL;
+> +	char *gbuf __free(kfree) = NULL;
+> +	char *abuf __free(kfree) = NULL;
+> +	char *dbuf __free(kfree) = NULL;
+>  	enum probe_print_type ptype;
+> +	bool is_return = false;
+>  	int maxactive = 0;
+> -	long offset = 0;
+>  	void *addr = NULL;
+> -	char buf[MAX_EVENT_NAME_LEN];
+> -	char gbuf[MAX_EVENT_NAME_LEN];
+> -	char abuf[MAX_BTF_ARGS_LEN];
+> -	char *dbuf __free(kfree) = NULL;
+> +	char *tmp = NULL;
+> +	long offset = 0;
+>  
+>  	switch (argv[0][0]) {
+>  	case 'r':
+> @@ -893,6 +893,8 @@ static int trace_kprobe_create_internal(int argc, const char *argv[],
+>  		event++;
+>  
+>  	if (isdigit(argv[0][1])) {
+> +		char *buf __free(kfree) = NULL;
+
+So this gets freed when this if block ends, right?
+
+> +
+>  		if (!is_return) {
+>  			trace_probe_log_err(1, BAD_MAXACT_TYPE);
+>  			return -EINVAL;
+> @@ -905,7 +907,7 @@ static int trace_kprobe_create_internal(int argc, const char *argv[],
+>  			trace_probe_log_err(1, BAD_MAXACT);
+>  			return -EINVAL;
+>  		}
+> -		memcpy(buf, &argv[0][1], len);
+> +		buf = kmemdup(&argv[0][1], len + 1, GFP_KERNEL);
+>  		buf[len] = '\0';
+>  		ret = kstrtouint(buf, 0, &maxactive);
+>  		if (ret || !maxactive) {
+> @@ -973,6 +975,9 @@ static int trace_kprobe_create_internal(int argc, const char *argv[],
+>  
+>  	trace_probe_log_set_index(0);
+>  	if (event) {
+> +		gbuf = kmalloc(MAX_EVENT_NAME_LEN, GFP_KERNEL);
+> +		if (!gbuf)
+> +			return -ENOMEM;
+>  		ret = traceprobe_parse_event_name(&event, &group, gbuf,
+>  						  event - argv[0]);
+
+And you can't use the same trick here because
+traceprobe_parse_event_name() assigns "group" to gbuf and is used
+outside this if block.
+
+I notice there's no comment that states this. At the very minimum,
+traceprobe_parse_event_name() should have a kerneldoc comment above its
+definition and state this. But that's not an issue with this patch
+series. Just an observation. Thus...
+
+Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+
+-- Steve
+
+
+>  		if (ret)
+> @@ -981,16 +986,22 @@ static int trace_kprobe_create_internal(int argc, const char *argv[],
+>  
+>  	if (!event) {
+>  		/* Make a new event name */
+> +		ebuf = kmalloc(MAX_EVENT_NAME_LEN, GFP_KERNEL);
+> +		if (!ebuf)
+> +			return -ENOMEM;
+>  		if (symbol)
+> -			snprintf(buf, MAX_EVENT_NAME_LEN, "%c_%s_%ld",
+> +			snprintf(ebuf, MAX_EVENT_NAME_LEN, "%c_%s_%ld",
+>  				 is_return ? 'r' : 'p', symbol, offset);
+>  		else
+> -			snprintf(buf, MAX_EVENT_NAME_LEN, "%c_0x%p",
+> +			snprintf(ebuf, MAX_EVENT_NAME_LEN, "%c_0x%p",
+>  				 is_return ? 'r' : 'p', addr);
+> -		sanitize_event_name(buf);
+> -		event = buf;
+> +		sanitize_event_name(ebuf);
+> +		event = ebuf;
+>  	}
+>  
+> +	abuf = kmalloc(MAX_BTF_ARGS_LEN, GFP_KERNEL);
+> +	if (!abuf)
+> +		return -ENOMEM;
+>  	argc -= 2; argv += 2;
+>  	ctx->funcname = symbol;
+>  	new_argv = traceprobe_expand_meta_args(argc, argv, &new_argc,
 
 
