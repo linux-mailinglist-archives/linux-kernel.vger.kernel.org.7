@@ -1,124 +1,114 @@
-Return-Path: <linux-kernel+bounces-737030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD90DB0A6C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:03:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E7CDB0A6CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:05:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E1FB3B9EFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:03:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 558DDA4260C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:04:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7AE22DCC02;
-	Fri, 18 Jul 2025 15:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SkUwnIJ6"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9892DCF60;
+	Fri, 18 Jul 2025 15:05:15 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2E918024;
-	Fri, 18 Jul 2025 15:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5C018024;
+	Fri, 18 Jul 2025 15:05:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752851013; cv=none; b=evZX3rhkBaj2Ev2FBuO0YD8tRTGesvrmrKgDwZcMeXqUSff7RtBNXTlWToKUqzhO8zTxwT32jZYhtR7TAZIJi1gjW72aeGnWDEkJ0qfb06kRoXbd3dMWIZ8m/RZhNxz7W/9fS1vBSUiZoscYCSgffUColpIRsEdREGP4rsi91Qs=
+	t=1752851115; cv=none; b=NCXogkD4cFMUpo3SoB8PpZmUdD/jnyPOehviGh5NRndBGAtYQTi/kO4uVmpybD0uBqAHHLiO0ay9hBQm6ZkI793YDaWqM2IYmAqzT8tkMUkvG64fMfATn6oKA7i/haBzpDrvVaWAVXOQudQeidaBVnqTDhAxWRmF1GZjDDdkR4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752851013; c=relaxed/simple;
-	bh=IaPqhmr8I8MG3sHhnHr618dEFB92sPQdSnz5qoyYh/o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JpMNZpsGWfyKmzBzff4PKGfVZy86B7ewaoatvimv5TPZ4O/bNYQ5+MtesFAA6+B5sWu64GPXaano5qBf2TZipkuQxxQYgEQNPVr343ZxCk7NzR1HbMSsGywAZbgWQJqK/ooxeV7FlWgX2r5uugqIminqvBWxzAgc9xrMQ8osuSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SkUwnIJ6; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4ab3fb340e7so38968791cf.1;
-        Fri, 18 Jul 2025 08:03:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752851010; x=1753455810; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IaPqhmr8I8MG3sHhnHr618dEFB92sPQdSnz5qoyYh/o=;
-        b=SkUwnIJ6Zed8ZmjO1XS4sB40Mhl7pJnrZWp7Q56pYp7LXqXca3GNEHPP30TcVuQY3X
-         2clBdKsQC1vlEEw/wdAkGoHsos6ZJaM9lqTfYoKzrr4w/RbohLGVT8Mjnhlf3EW3fto7
-         atJL1DHT0EAvBKoKpmKBTroouSd6UHbWBWmLqTdY8W50MpeCS0MM3doZhenEU8j1gJwu
-         9HVnXPUsUTNlPh2u8txxFWPbEIorIc0M8QTlueGoo9Qaec3ksj0bdB8Vpt2Mk4j+UP4d
-         hIX9lqr/DwcztKVueOGPBXCAQvOuArY1PcD/InJHiDFOgPe+Jrmd9XkC/5WCraGk0Gxi
-         JYdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752851010; x=1753455810;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IaPqhmr8I8MG3sHhnHr618dEFB92sPQdSnz5qoyYh/o=;
-        b=mWSqov9qKxADHVIHiuYqyXc5P1kf1U1Z3xl0NebZlAsFDGHXRMR8Tu99RUBIRd6eiM
-         OnTmnQ2zGJZA5S0FWtCTm105WEhSwQoq0sQ9wmbumacS43wzrK5z3iE28AfGUxItZJHm
-         mWPcwElUkAF59uPrBkqnKGRfiUKaj9EIspxIvR5JejWQVS/VVDbdwSNcDhoopO2+bois
-         iU/AMeWPSj4TXOkDaH6xQlCOYID4LNeVIWiMTbD09Gon/YbLn7/3kmz7eIdM2nRm50FT
-         rKxcmCouGhxlYdlxhVcx7Zr4tQzW58aLlLdKMyR6NrRDFge56w5zA9HvDRkz5P4C696T
-         OHQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVmFWFczKuaWpV/Vu5vH5e3ETCiwcQ3dbQZU7PG0RMq+4xiFVYGKeSLumXFg9vdpr3FUxOqBrT+a7vF@vger.kernel.org, AJvYcCWoNTsPFt3l/DR05TqmL+UVKnj8w5E83jreIS4v3rQT+h0FuYHd1PELbdO7Z//65B1lOOi/rMbuTHTra7aT@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDJcg5+G30YsPXG6MUJ8uy6tZ6ZS4DzVQLSEHUIGmW6Q7qcRdP
-	zeGRFCIzVKANU6riJDh/W9tohPWt3e2mMST3JadfQxOO/8ftFntbHiNiKbtSX0umo4WAT4fOwyr
-	pFcpr8zSELtunnGHA3Dqb3flxdOjIIuu4nfg8
-X-Gm-Gg: ASbGnctxxnctRmq1FrSPCGATVjOP6j9Js+zWP2RE0yXeKIAsvdiy/iTep2ZRaZ65q4x
-	apkluYR5+nh01shfKhE882bSQuqlDdFCDlTATF1hfH+/udbMPMaQd+ELnrCLHFK3JFOxkSIizBD
-	a4Ruz8XHQDMFoyS9kvmhZLxywVemrqcsiv9b0XRwVMzgwXQmTcvCy8mWJ0MN3aqqd/t3bvy6KGf
-	xaNmoTS
-X-Google-Smtp-Source: AGHT+IGa8swPXXVAGbewHZ/SdoCPvBaIYn9opH5hqxkroYSjw7vm/HyHQEtmf/m9BpPT+G/u/pQ40OxmjrLtqI9uzx4=
-X-Received: by 2002:a05:622a:648:b0:4aa:df09:133f with SMTP id
- d75a77b69052e-4abb4578b0dmr39626691cf.50.1752851008967; Fri, 18 Jul 2025
- 08:03:28 -0700 (PDT)
+	s=arc-20240116; t=1752851115; c=relaxed/simple;
+	bh=z5nzeOJWQR/Lo0Neg/++bHT0b0RJvmY2gZnAWASGbw8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BscTXKVCRBHTBgheVbk+Bso38iH5BTKs10TydMoLz14cSTIZLI6AlBCFayXpSICuEfpEoXqDPPrFdkpNc42pJwKLm0eglIhURcjLLpiIHLktgh7fnRCwWa4NvDtEghTVFMRmxrl4UGe+SDadZHbvvg8k2EpQhcjovRLAJ7YUSy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from [127.0.0.1] (unknown [116.232.48.207])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 39350335DBA;
+	Fri, 18 Jul 2025 15:05:08 +0000 (UTC)
+From: Yixun Lan <dlan@gentoo.org>
+Date: Fri, 18 Jul 2025 23:04:37 +0800
+Subject: [PATCH] dt-bindings: serial: 8250: spacemit: set clocks property
+ as required
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABjd4Yxz=mrNpqgnHSgD0tr4ALH3YW9MvLULES568yHNFiPB_w@mail.gmail.com>
- <20250718140110.308996-1-amadeus@jmu.edu.cn>
-In-Reply-To: <20250718140110.308996-1-amadeus@jmu.edu.cn>
-From: Alexey Charkov <alchark@gmail.com>
-Date: Fri, 18 Jul 2025 19:03:17 +0400
-X-Gm-Features: Ac12FXy8oFQyajABj_LuZ7IBJacD8iw-8MfdCYFevfgzhAwQT7Tsgn3fiksLCw8
-Message-ID: <CABjd4YzLaAgd-5Cg9fMSAgCS6Wt6=uC8K3WRhcAtnjjg1je87Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] arm64: dts: rockchip: rk3528: Add CPU frequency
- scaling support
-To: Chukun Pan <amadeus@jmu.edu.cn>
-Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, heiko@sntech.de, 
-	jonas@kwiboo.se, krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	ziyao@disroot.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250718-01-k1-uart-binding-v1-1-a92e1e14c836@gentoo.org>
+X-B4-Tracking: v=1; b=H4sIAIViemgC/x3MTQqAIBBA4avIrBtQIfu5SrSwHGsILLQiCO+et
+ PwW772QKDIl6MULkW5OvIcCVQmYVxsWQnbFoKWuZaNalAo3hZeNJ04cHIcFje06MxnS3mso4RH
+ J8/NPhzHnD4xyaCxkAAAA
+X-Change-ID: 20250718-01-k1-uart-binding-6a996b6e2ff2
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>, 
+ devicetree@vger.kernel.org, Alex Elder <elder@riscstar.com>
+Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+ Yixun Lan <dlan@gentoo.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1081; i=dlan@gentoo.org;
+ h=from:subject:message-id; bh=z5nzeOJWQR/Lo0Neg/++bHT0b0RJvmY2gZnAWASGbw8=;
+ b=owEBzQIy/ZANAwAKATGq6kdZTbvtAcsmYgBoemKhu7vmN4TWmEvIpf6rS0cOUqAVIxlZjiV1l
+ Iw/+y0hGlOJApMEAAEKAH0WIQS1urjJwxtxFWcCI9wxqupHWU277QUCaHpioV8UgAAAAAAuAChp
+ c3N1ZXItZnByQG5vdGF0aW9ucy5vcGVucGdwLmZpZnRoaG9yc2VtYW4ubmV0QjVCQUI4QzlDMzF
+ CNzExNTY3MDIyM0RDMzFBQUVBNDc1OTREQkJFRAAKCRAxqupHWU277QwxD/9nW529zHpmqRW9pt
+ C8kft28pmDPm5VspeYejobS1RqEXsDQxqc5lX2lYd77tX3pz1vD3t2PZWYrrOS3IRS7xad7xD6P
+ y+8yj7TgnW9cRG3H4sQGE6wwI0bUycxeI9gUU314ZkuoESGJoEFOrS6BwrTGsuk6xSwv+SLPU5o
+ fok2lvIPkefdL4y/RpxX9u7vQhrvyiwJxRrzNweXr2SztBhjMRlHf5JwwsbVmXByO8r/pm1FcRh
+ nlWFXJyqPsaz7cIrewKxC2Qk/ph+CttRfEKpzU+3K2Ow9SghxklmESkSCHBM8lGSLnorzdqC8N7
+ qZaxsI2hXgcWDuK4oX7+3co+EF6wrX/KIxcgk7Gr6drYLnnORKHesrq0eGaxS4Zup3DTOfIibtE
+ waVgE9N15C3OMIbrDcx2Wbl9AVuaRfaSxoggmyWqfbbgre/t5/a6k5pgBsiyYh2JjhL4Q5YqDXX
+ Y/vrtIMI30iYAcJBHrxNTzxeR6lK6bY4lg9cQsfh9Ch/yP81UPv8KICTo0ahjZxCkEyViM3NiIo
+ AeIuFv/DKl1BMTRCF7SC1wYsrGS1rgtLQbddCyFicnCGB9X/jDjI/ihfJhX4H9zjcTo2CmyBSU8
+ ZBx/ZWllNfCXF/jBInW7eMRnBAS12FyQa1c/iAC+DIJJsqIm9f1wTC5t/NH1lTneJMCQ==
+X-Developer-Key: i=dlan@gentoo.org; a=openpgp;
+ fpr=50B03A1A5CBCD33576EF8CD7920C0DBCAABEFD55
 
-On Fri, Jul 18, 2025 at 6:01=E2=80=AFPM Chukun Pan <amadeus@jmu.edu.cn> wro=
-te:
->
-> Hi,
->
-> > > Alexey suggested that we remove 408MHz, 600MHz and 816MHz from the
-> > > opp-table. Do you think it is acceptable to use 850mV for 1008MHz?
-> >
-> > But why 850 mV? Vendor .dtsi [1] implies that chips with leakage
-> > values of L0..L4 might be unstable at this frequency with a 850 mV
-> > supply and need 875 mV instead.
->
-> Because the actual frequency generated by 850mV is closer to 1008MHz.
+In SpacemiT's K1 SoC, the clocks for UART are mandatory needed, so
+for DT, both clocks and clock-names property should be set as required.
 
-Which likely means that you have an -L5 chip. It will be different on
-other chips - it's a lottery of silicon quality.
+Fixes: 2c0594f9f062 ("dt-bindings: serial: 8250: support an optional second clock")
+Signed-off-by: Yixun Lan <dlan@gentoo.org>
+---
+ Documentation/devicetree/bindings/serial/8250.yaml | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-> Since we removed frequencies below 1GHz, all remaining frequencies are
-> generated by PVTPLL. I think it may not be necessary to use the maximum
-> values of opp-microvolt* ?
+diff --git a/Documentation/devicetree/bindings/serial/8250.yaml b/Documentation/devicetree/bindings/serial/8250.yaml
+index 33d2016b65090d0df257f9780ad8d5e05f7ce798..2c7604ed2a41d029276d3ebe9a3960a8dd44a9d9 100644
+--- a/Documentation/devicetree/bindings/serial/8250.yaml
++++ b/Documentation/devicetree/bindings/serial/8250.yaml
+@@ -239,7 +239,9 @@ if:
+       contains:
+         const: spacemit,k1-uart
+ then:
+-  required: [clock-names]
++  required:
++    - clocks
++    - clock-names
+   properties:
+     clocks:
+       minItems: 2
 
-Only if we deliberately ignore the unlucky users who got lower quality
-silicon (-L0 to -L4). They might have problems if we run 1008 MHz at
-850 mV, which PVTPLL may or may not be able to make up for (depends on
-which ring length gets applied for this frequency by bl31). If those
-chips didn't need higher voltage to run stable at 1008 MHz then I
-doubt Rockchip engineers would have put 875 mV in their .dtsi
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250718-01-k1-uart-binding-6a996b6e2ff2
 
 Best regards,
-Alexey
+-- 
+Yixun Lan
+
 
