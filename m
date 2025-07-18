@@ -1,256 +1,140 @@
-Return-Path: <linux-kernel+bounces-737191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55279B0A8E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 18:50:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8629B0A8E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 18:50:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC652A877D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 16:49:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B0573B6EF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 16:49:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261962E716F;
-	Fri, 18 Jul 2025 16:49:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB81F2E612B;
+	Fri, 18 Jul 2025 16:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u+W/nr57"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J14utVha"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C732E5B1A
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 16:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9EC2E5B1A
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 16:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752857377; cv=none; b=CxeL/2qwa3I/pNDsU6MxMcG5awL60Ow7vGQcjNussQjMqpYOMBsIfZ6diILXhmP8DDtmZGsAsaNfE9BoAA6jJ49sWM0hGSpa+37l3Hy39/n0hpLjdb56H1Z5feiRCORF/PJ9mPgiadK3LdxN7wzJuBWOiLDkICQhLw++kXGaipQ=
+	t=1752857371; cv=none; b=azL5Nnufxc8bP6q4giJsZeO0Vdw5O0Eorg+gJpGKxIcrNtsdEflRMrb1U1sDCLnTJeO+EJ3I1qrvubkgPCDbncSV1CvcSEoObJy3Ye/Eh9aYeZg9o6xft2AzfvBg8Pc0/vBb6YUHfEfjhCGUeaMtVpk1OX0KD8VKNuzPluCaMyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752857377; c=relaxed/simple;
-	bh=YYkFrLXQNcF/LRzXFAq83sA1w2G3tvd/U+OLCef/WXk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mWU8Ooh2Rn1SuLsvH/0ulBXxM3VBglOtkyqf5eUgXLQDsxV8lWFamJj24kqVN0/iYQEA99nq75OOlJ/qTVQ64yn/ni+93+JSXxQeyHhj6qKQqXbLTMeD2filxGapbF6YCWhDYk/yS113Qqv8dqlXIefB9ymaEm0eUr2I+ITO+z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u+W/nr57; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-609b169834cso334a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 09:49:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752857373; x=1753462173; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zdFQmiTCtyQu/zHhNrg0B+XyPur8yXji78Rwk2BnkTc=;
-        b=u+W/nr57xhl4EAMpI6TI3EPf3o5EmZ8fgwdYJE04bYn5u+AzZp461xOy0L6yjK5Gce
-         qLULE633lfJ6+hvmykx8450F2seG/XokGLBaqG/k3OpvLzLXA1dHbE011rKTwTqmChQm
-         k/RPcUd85W2HOAn47qokuXm+YP/Iv6kkWBIDBkXo8yT9ebeKnU3essR1cNOThMLAOKbp
-         7JgSQGLhERjQfjE9kFoBlSNbsMrdI1kCxeWtt/m167xZrO4RN/XALFyDfwPgr9liRQJo
-         boDU6avQ5GtuEXLNQ0KpZUi54fup4QZq7SgZPM8Hmwrr9pY3BMdhW9Ssi1LXp1kXMoof
-         WydA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752857373; x=1753462173;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zdFQmiTCtyQu/zHhNrg0B+XyPur8yXji78Rwk2BnkTc=;
-        b=fv5fGCGb2iGxrWpTloCtisaeSe6pzrjLLHzD3AppruP0zHjdjTnQULxnUoVM0VOfcb
-         WEPdKZfEMSuAu2uPGujytZ4gQEFgVLkkMvYN40Kd/0vWXqIVwtSYI/abhgcOQumci6Zf
-         tOUkLfcMHZz5Wd27cDR/w/KdulJb3JqiIjAw4mn0ZRQukn6ZdacnJZOuBsC6LY/8FAP3
-         1aFwQyB4a0geIltFMdciJ9Agba7yLN9vNomSXfZR7eQ04StWYDEmkCKMHPufBSiqVTfL
-         pdRsc/+m3X6IAckPadFLyo1XlJrYa+wbt6Z1GBO3t7lGNel+6x0W5QSa1UVROulGepO1
-         NCxg==
-X-Forwarded-Encrypted: i=1; AJvYcCWCPXrxJTTC/UUPQfPg9SR0SFLfpx7MNstTGhIZWlV/ALNrZgJjP2toKKwp6BMVvlrFfT5MW+zFCbPQ/vE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2sEO/oOcROGzFV3hMl9yoxwgJLz9omtZ2jjnkV7QbbeUbTcp4
-	b5LB/k5W2vnLXja0dMgDnpvrnWrOihO3J8Dz0q/ERxQKRlZ9smFcqf54dBzSgBGVREHUP65FAaf
-	TuJq++Km0oPjO/gjlJXTly4uTRHYqQqF/tobKELJ/
-X-Gm-Gg: ASbGncsKxwz7+FrWfo1L6LMOCRLQ6AAbfjbSgAfGrZONDgkcJTnTVEi74zOnvcPyjC+
-	Nx+v+nFfyrezIkn+jXnwf/2Mh3Pd6zs9E9ywjtHMK7OpGoyj0d0BTrAOJYN4K1KWJJ3pm9OcuQ6
-	jwU0AlKwtHdjRnphbz7jNaEhf8sshpXblxo8PbXtkuu+kFJPAO4sGMHUWZNK/h1Ex8kO7pbmugS
-	PazcTGB19L1IOSC8OHAmDN/5pfk4dWh/Rg=
-X-Google-Smtp-Source: AGHT+IEKipZ75dFcHQSQPERCSjZrzcx9z2eXpEQd6YxCy6qM2F3cG0oanco6kN4MAL7MZ/V/SEtL/XNR5ChXhILWj8A=
-X-Received: by 2002:a50:d6c6:0:b0:612:bec2:cf22 with SMTP id
- 4fb4d7f45d1cf-612c2317b32mr104875a12.4.1752857372727; Fri, 18 Jul 2025
- 09:49:32 -0700 (PDT)
+	s=arc-20240116; t=1752857371; c=relaxed/simple;
+	bh=4uoXBBfWbqYL3O4e8u7GIuSRK9OMIEk0Tri9CKXPXgo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=YZOIAyc7GW5cOcI6grt1fLNIEMKaU2gTjy1Yzqdsb9frmTUQMpS0l6NpsImsL+S/v9MtZ4h/1oobgRWwlCjHR7NLpOGgPyV1WWO9KoACXX96sFSqCPF+UZ37Rtl/dLaaT4AD1/WnujW7eMa/h80UFSHTlZcQsHkze4Nn6FWa8eM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J14utVha; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752857368;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aZcCp9t+rgA1nQ2OVuDyJEw0PACPvSc+gXRhn6+fay0=;
+	b=J14utVhaOHdKtRu8wCqU87YJR/ZaR9REAm3d+HnwH6aNL4YC+ERFxWMBuFbzGm71IC8sPg
+	c5cTyw6tzkqXax/uhcx7Fht76h4s8mbvDqi+NHEeD9JdOuztezp3W2mkOUaEhkcyjEiQ1Z
+	JTIdtNwsRnLxIikFRSKhBimiDzj5MDE=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-628-ep-vzKe8N7ei0CH1Pn3d3A-1; Fri,
+ 18 Jul 2025 12:49:25 -0400
+X-MC-Unique: ep-vzKe8N7ei0CH1Pn3d3A-1
+X-Mimecast-MFC-AGG-ID: ep-vzKe8N7ei0CH1Pn3d3A_1752857363
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F280C180034E;
+	Fri, 18 Jul 2025 16:49:22 +0000 (UTC)
+Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.90.55])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C6F78180049D;
+	Fri, 18 Jul 2025 16:49:19 +0000 (UTC)
+From: Waiman Long <longman@redhat.com>
+To: Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	Chen Ridong <chenridong@huaweicloud.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+	Waiman Long <longman@redhat.com>
+Subject: [PATCH v3] sched/core: Skip user_cpus_ptr masking if no online CPU left
+Date: Fri, 18 Jul 2025 12:48:56 -0400
+Message-ID: <20250718164857.31963-1-longman@redhat.com>
+In-Reply-To: <20250718164143.31338-1-longman@redhat.com>
+References: <20250718164143.31338-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250718-hidepid_fix-v1-1-3fd5566980bc@ssi.gouv.fr>
- <CAG48ez3u09TK=Ju3xdEKzKuM_-sO_y9150NBx3Drs8T1G-V9AQ@mail.gmail.com> <s7no7daeq6nmkwrf5w63srpmxzzqk5uor2kxdvrvrskoahh7un@h6kubn7qxli2>
-In-Reply-To: <s7no7daeq6nmkwrf5w63srpmxzzqk5uor2kxdvrvrskoahh7un@h6kubn7qxli2>
-From: Jann Horn <jannh@google.com>
-Date: Fri, 18 Jul 2025 18:48:54 +0200
-X-Gm-Features: Ac12FXwHhnJM27H3F2j0R9jH8PM46wRLA_SIP9MxHGaFT7dpoUWY-oXaYWfBUR4
-Message-ID: <CAG48ez1ERkkwd+cJPmLmVj4JKpj5Uq=LaUEpb6_TgC4PRXosUw@mail.gmail.com>
-Subject: Re: [PATCH] fs: hidepid: Fixes hidepid non dumpable behavior
-To: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Olivier Bal-Petre <olivier.bal-petre@oss.cyber.gouv.fr>, 
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Fri, Jul 18, 2025 at 5:47=E2=80=AFPM Nicolas Bouchinet
-<nicolas.bouchinet@oss.cyber.gouv.fr> wrote:
-> Hi Jann, thanks for your review !
->
-> On Fri, Jul 18, 2025 at 04:45:15PM +0200, Jann Horn wrote:
-> > On Fri, Jul 18, 2025 at 10:47=E2=80=AFAM <nicolas.bouchinet@oss.cyber.g=
-ouv.fr> wrote:
-> > > The hidepid mount option documentation defines the following modes:
-> > >
-> > > - "noaccess": user may not access any `/proc/<pid>/ directories but
-> > >   their own.
-> > > - "invisible": all `/proc/<pid>/` will be fully invisible to other us=
-ers.
-> > > - "ptraceable": means that procfs should only contain `/proc/<pid>/`
-> > >   directories that the caller can ptrace.
-> > >
-> > > We thus expect that with "noaccess" and "invisible" users would be ab=
-le to
-> > > see their own processes in `/proc/<pid>/`.
-> >
-> > "their own" is very fuzzy and could be interpreted many ways.
-> >
-> > > The implementation of hidepid however control accesses using the
-> > > `ptrace_may_access()` function in any cases. Thus, if a process set
-> > > itself as non-dumpable using the `prctl(PR_SET_DUMPABLE,
-> > > SUID_DUMP_DISABLE)` it becomes invisible to the user.
-> >
-> > As Aleksa said, a non-dumpable processes is essentially like a setuid
-> > process (even if its UIDs match yours, it may have some remaining
-> > special privileges you don't have), so it's not really "your own".
-> >
->
-> Also replying to  :
->
-> > What's the background here - do you have a specific usecase that
-> > motivated this patch?
->
-> The case I encountered is using the zathura-sandbox pdf viewer which
-> sandboxes itself with Landlock and set itself as non-dumpable.
+Chen Ridong reported that cpuset could report a kernel warning for a task
+due to set_cpus_allowed_ptr() returning failure in the corner case that:
 
-It kind of sounds like an issue with your PDF viewer if that just sets
-the non-dumpable flag for no reason...
+1) the task used sched_setaffinity(2) to set its CPU affinity mask to
+   be the same as the cpuset.cpus of its cpuset,
+2) all the CPUs assigned to that cpuset were taken offline, and
+3) cpuset v1 is in use and the task had to be migrated to the top cpuset.
 
-> If my PDF viewer freezes and I want to kill it as an unprivileged user,
-> I'm not able to get its PID from `/proc` since its fully invisible to my
-> user.
->
-> > > This patch fixes the `has_pid_permissions()` function in order to mak=
-e
-> > > its behavior to match the documentation.
-> >
-> > I don't think "it doesn't match the documentation" is good enough
-> > reason to change how the kernel works.
-> >
-> > > Note that since `ptrace_may_access()` is not called anymore with
-> > > "noaccess" and "invisible", the `security_ptrace_access_check()` will=
- no
-> > > longer be called either.
-> > >
-> > > Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
-> > > ---
-> > >  fs/proc/base.c | 27 ++++++++++++++++++++++++---
-> > >  1 file changed, 24 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/fs/proc/base.c b/fs/proc/base.c
-> > > index c667702dc69b8ca2531e88e12ed7a18533f294dd..fb128cb5f95fe65016fce=
-96c75aee18c762a30f2 100644
-> > > --- a/fs/proc/base.c
-> > > +++ b/fs/proc/base.c
-> > > @@ -746,9 +746,12 @@ static bool has_pid_permissions(struct proc_fs_i=
-nfo *fs_info,
-> > >                                  struct task_struct *task,
-> > >                                  enum proc_hidepid hide_pid_min)
-> > >  {
-> > > +       const struct cred *cred =3D current_cred(), *tcred;
-> > > +       kuid_t caller_uid;
-> > > +       kgid_t caller_gid;
-> > >         /*
-> > > -        * If 'hidpid' mount option is set force a ptrace check,
-> > > -        * we indicate that we are using a filesystem syscall
-> > > +        * If 'hidepid=3Dptraceable' mount option is set, force a ptr=
-ace check.
-> > > +        * We indicate that we are using a filesystem syscall
-> > >          * by passing PTRACE_MODE_READ_FSCREDS
-> > >          */
-> > >         if (fs_info->hide_pid =3D=3D HIDEPID_NOT_PTRACEABLE)
-> > > @@ -758,7 +761,25 @@ static bool has_pid_permissions(struct proc_fs_i=
-nfo *fs_info,
-> > >                 return true;
-> > >         if (in_group_p(fs_info->pid_gid))
-> > >                 return true;
-> > > -       return ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS);
-> > > +
-> > > +       task_lock(task);
-> > > +       rcu_read_lock();
-> > > +       caller_uid =3D cred->fsuid;
-> > > +       caller_gid =3D cred->fsgid;
-> > > +       tcred =3D __task_cred(task);
-> > > +       if (uid_eq(caller_uid, tcred->euid) &&
-> > > +           uid_eq(caller_uid, tcred->suid) &&
-> > > +           uid_eq(caller_uid, tcred->uid)  &&
-> > > +           gid_eq(caller_gid, tcred->egid) &&
-> > > +           gid_eq(caller_gid, tcred->sgid) &&
-> > > +           gid_eq(caller_gid, tcred->gid)) {
-> > > +               rcu_read_unlock();
-> > > +               task_unlock(task);
-> > > +               return true;
-> > > +       }
-> > > +       rcu_read_unlock();
-> > > +       task_unlock(task);
-> > > +       return false;
-> > >  }
-> >
-> > I think this is a bad idea for several reasons:
-> >
-> > 1. It duplicates existing logic.
-> I open to work on that.
->
-> > 2. I think it prevents a process with euid!=3Druid from introspecting
-> > itself through procfs.
-> Great question, I'll test that and write some hidepid tests to check that=
-.
->
-> > 3. I think it prevents root from viewing all processes through procfs.
-> Yes only if combined with yama=3D"no attach", and IMHO, that would make s=
-ense.
+Due to the fact that CPU affinity of the tasks in the top cpuset are
+not updated when a CPU hotplug online/offline event happens, offline
+CPUs are included in CPU affinity of those tasks. It is possible
+that further masking with user_cpus_ptr set by sched_setaffinity(2)
+in __set_cpus_allowed_ptr() will leave only offline CPUs in the new
+mask causing the subsequent call to __set_cpus_allowed_ptr_locked()
+to return failure with an empty CPU affinity.
 
-Why only if combined with yama? Doesn't your code always "return
-false" on a UID/GID mismatch?
+Fix this failure by skipping user_cpus_ptr masking if there is no online
+CPU left.
 
-> > 4. It allows processes to view metadata about each other when that was
-> > previously blocked by the combination of hidepid and an LSM such as
-> > Landlock or SELinux.
-> Arf, you're absolutely right about this, my bad.
->
-> > 5. It ignores capabilities held by the introspected process but not
-> > the process doing the introspection (which is currently checked by
-> > cap_ptrace_access_check()).
-> As suggested by Aleksa, I can add some capabilities checks here.
->
-> >
-> > What's the background here - do you have a specific usecase that
-> > motivated this patch?
->
-> The second motivation is that the "ptraceable" mode didn't worked with
-> the yama LSM, which doesn't care about `PTRACE_MODE_READ_FSCREDS` trace
-> mode. Thus, using hidepid "ptraceable" mode with yama "restricted",
-> "admin-only" or "no attach" modes doesn't do much.
->
-> As you have seen, I also have submited a fix to yama in order to make it
-> take into account `PTRACE_MODE_READ_FSCREDS` traces.
+Reported-by: Chen Ridong <chenridong@huaweicloud.com>
+Closes: https://lore.kernel.org/lkml/20250714032311.3570157-1-chenridong@huaweicloud.com/
+Fixes: da019032819a ("sched: Enforce user requested affinity")
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ kernel/sched/core.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-I don't think that's really a fix - that's more of a new feature
-you're proposing. Yama currently explicitly only restricts ATTACH-mode
-ptrace access (which can read all process memory or modify the state
-of a process), and it doesn't restrict less invasive introspection
-that uses READ-mode ptrace checks.
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 81c6df746df1..208f8af73134 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -3170,12 +3170,13 @@ int __set_cpus_allowed_ptr(struct task_struct *p, struct affinity_context *ctx)
+ 
+ 	rq = task_rq_lock(p, &rf);
+ 	/*
+-	 * Masking should be skipped if SCA_USER or any of the SCA_MIGRATE_*
+-	 * flags are set.
++	 * Masking should be skipped if SCA_USER, any of the SCA_MIGRATE_*
++	 * flags are set or no online CPU left.
+ 	 */
+ 	if (p->user_cpus_ptr &&
+ 	    !(ctx->flags & (SCA_USER | SCA_MIGRATE_ENABLE | SCA_MIGRATE_DISABLE)) &&
+-	    cpumask_and(rq->scratch_mask, ctx->new_mask, p->user_cpus_ptr))
++	    cpumask_and(rq->scratch_mask, ctx->new_mask, p->user_cpus_ptr) &&
++	    cpumask_intersects(rq->scratch_mask, cpu_active_mask))
+ 		ctx->new_mask = rq->scratch_mask;
+ 
+ 	return __set_cpus_allowed_ptr_locked(p, ctx, rq, &rf);
+-- 
+2.50.0
 
-> I have to admit I'm not really found of the fact that those two patch
-> are so tightly linked.
->
-> Thanks again for your review,
->
-> Nicolas
 
