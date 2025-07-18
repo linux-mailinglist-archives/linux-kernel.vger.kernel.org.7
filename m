@@ -1,100 +1,125 @@
-Return-Path: <linux-kernel+bounces-737370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35C86B0AB77
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 23:30:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F429B0AB60
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 23:23:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 727CAAA492D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 21:30:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9454AA861C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 21:22:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3471B1FFC6D;
-	Fri, 18 Jul 2025 21:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D0DA21D3FB;
+	Fri, 18 Jul 2025 21:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="LSDA1gWD"
-Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.166.228])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nc7FoqsW"
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485166FB9;
-	Fri, 18 Jul 2025 21:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.166.228
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B7F21CC74
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 21:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752874224; cv=none; b=FFcTYma0YkAnUlbLPUc3kATZBLB8lR1gnFMmFXjhq/Q4Bwpv3v/M+u7cqprBBLHli9iJamhP/cAPXPk+AQkYl5tm/RNaiQCTbS0EYP2k4XF2J/Vg0bei46IzXLYyRGvw5rENqdzbS+u/fakH3GSczYtB0M4z1sf2Ie+pwagkWE4=
+	t=1752873790; cv=none; b=Se/uWse5xfyzhsVLLMUoyN0jLzjTAnUXKDhGgdmhCElhL8iUBVhF+mji4btZNUcrb95CXj7wc5qQtOuakym0A8PBDc92M+GXac2JCU3T+FCCcFEI7vLzhXh511Ia6Vapd0ovB1qVwnrqUHsmiZ0hDocIBoG5AMRi6SPzUYCVTxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752874224; c=relaxed/simple;
-	bh=mqWabgWm8Cy32bd1/YW4dX3KfS7ZP3kyX7IQfeJKs+g=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=U58FYznPg38DzYGLbqkbvw//DIduUbAj11mknlcb5xAvjU07epvk180sG/GINI8gCKmyLZCgPLVi428fopOycTTX9a8er5TFNyt+QdSNDA2p/IkVG8LrNCErjVeWNugsx2qsS+mNU4+yLE0yLh+eFtCcnlLZuUIGjvsx9UBvpZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=LSDA1gWD; arc=none smtp.client-ip=192.19.166.228
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: from mail-lvn-it-01.broadcom.com (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
-	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id CF208C0047DD;
-	Fri, 18 Jul 2025 14:22:49 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com CF208C0047DD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-	s=dkimrelay; t=1752873769;
-	bh=mqWabgWm8Cy32bd1/YW4dX3KfS7ZP3kyX7IQfeJKs+g=;
-	h=From:To:Cc:Subject:Date:From;
-	b=LSDA1gWDekNQrvuwoK1ZM3BXVvroaaMdjCDn8ZrQgveC9AU5FgbHYajNafWUKiZM8
-	 opLTI57rNmmYJ+UQ/Cf2gWbFuhTcoKxJl4NU31nuGRbkVVQ3ycMtbvnk6mVE3Kn1cw
-	 WfS6cCF0YWrDG1XD8UJ32XByz47Pt+DaAXxixTm8=
-Received: from stbirv-lnx-1.igp.broadcom.net (stbirv-lnx-1.igp.broadcom.net [10.67.48.32])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-lvn-it-01.broadcom.com (Postfix) with ESMTPSA id 9DE9E18000530;
-	Fri, 18 Jul 2025 14:22:44 -0700 (PDT)
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-To: netdev@vger.kernel.org
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Justin Chen <justin.chen@broadcom.com>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net] net: bcmasp: Restore programming of TX map vector register
-Date: Fri, 18 Jul 2025 14:22:42 -0700
-Message-Id: <20250718212242.3447751-1-florian.fainelli@broadcom.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1752873790; c=relaxed/simple;
+	bh=DG9sa2v1F0UPXK2JNXm5sOExvIo23mu31aj3632NTWg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ebJaJkt2Q/SBom7Bca+3BbcYmYKxEeEc3wnp+QPdqNYBRaT11UNqnBQDduy2+gBlGkNHxg6P3OhHhUWIltbCYrM1uJog3lUaZfDP9sshfsEEbxPBHodRjSktlnmVOONitYK57dKsaYRyrX2cL+9fFPuEmJd9TxIcjscHL3ZUBAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nc7FoqsW; arc=none smtp.client-ip=209.85.210.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-72c172f1de1so1535189a34.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 14:23:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752873788; x=1753478588; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tK+4glzE3WnB4vC6DvcGs4atxT+1n6gCTpv11Qz3u6E=;
+        b=nc7FoqsWukwv521uGwMoSFpApLqh6K3t6qB5jPJyTI3qDsdbyzWezP5VIHZi9E+frG
+         X2be89/k0vCAdjSh6zCMqoe5dZ2x9XS/PG7kuPSbdgYJp2E9j7lV438xOvR3DeG3kTLD
+         TwwUbbgoyDB7gq+1rb9/AMCnDwuGknlj1BKI8d8UJCyyctNwRA87cVp6jpo8tZjQne+3
+         D2h8V/bwAgiq4e/l2Nx2vc5RGpnqxuiLLTZqY7DZrgJe/EUxOXggSEMqRbBOBUEUf/YJ
+         p2nMyoj0NedIXC2l2ouHIzodTh8qIs3wru/3jwtt06kHYfyeQE0o4gPAMNmr6FN2DAOU
+         D+MQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752873788; x=1753478588;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tK+4glzE3WnB4vC6DvcGs4atxT+1n6gCTpv11Qz3u6E=;
+        b=TSLNSdYMC3jieSrwbPIE+eSgM9h3f7JAEMm9a/AeTNkgZql9JSMmoN9VH2LT7i/rO3
+         8eAwXY+tjSZjFzbU/YzXoLZfoWUJ9iSaAn16koyCl+0rLA1mZbt2Mxzn8auTN08c2BTs
+         QBSvT163IuRbNSnLOpImyUoVQg//prUe5rUXN20Oo7Ab2o6hyYl0Doj/sY1plzREzklW
+         EFc2nt8WXyUSsqtYu2GQMEzBwzej8J2IFEUG+2HMUCTGaFhlHJM5TnH9pKA9GuKKKeO0
+         yYIbrUCifm1ZwSvTdDl5b0gmDA1vNj8NaF4UAx6u4EFl8S2TmyP5vDm3yU4d1HgRiZQt
+         eNEg==
+X-Forwarded-Encrypted: i=1; AJvYcCXHQnCx1/NpWc5meX3Mb3xzCQ9jd+U07anKjShTtPE3+vmiB+J1uidpyl/M9MKSpm4nNm2Nhw/X1MRUH8U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQF27mXYosLA8uA+o3E5K/cc50iTvzt2gfqqNbqS4zmdzow8Sp
+	Zy5yWM00qgPKQeQHmKT3oKDKrxQxS5Lqi75lUkg/xPM36Cr57ejG4AK8zWF1J2TpLrDYuV0M4wz
+	fbgGI
+X-Gm-Gg: ASbGnctf9yWYP1IQSrG2M0woeXBDPXIEoOCVPAv/w7CZvZmPU8wh6PrXtVPD3sqVzcr
+	g8nk2KhYtnLMPiEXVZUBPZLYtAtm/C5mb/wv1yLWDRBqG8hn30Nnju2u7x9M/HrHbI39qS0HjHl
+	OhhTsSvf86PV0De+jxsd/GbnmWGywQEUqoqVPA/1DCpF2acTO4gdhxe2VzvCBOyx+UWIcI28zvX
+	8+Xb6SJ4HjWD4DAktlc/VTRTolvIn97fpzc+IVQn7Rp/1nMGr/x+3h5nQ4Cv+kRb0HsABZzHrkT
+	/LKwPMLdtWsbhoDY7awut0pxtoBafr+ECA5/TrwEvFIU0rqj0nuhMR69dg0O4AZwxb9G7qh/tpU
+	/Bi05bm6kXEs=
+X-Google-Smtp-Source: AGHT+IF9VLx8mE8trvjMG7+MlGusZoBXTEIHkS13K0W7mcIBsGRVkXXT81gfglD97zg1dabcDIqGHA==
+X-Received: by 2002:a05:6830:8008:b0:73c:fb75:cee5 with SMTP id 46e09a7af769-73e65f33953mr8211210a34.0.1752873787612;
+        Fri, 18 Jul 2025 14:23:07 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700::1fec])
+        by smtp.gmail.com with UTF8SMTPSA id 46e09a7af769-73e83560306sm949902a34.13.2025.07.18.14.23.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Jul 2025 14:23:07 -0700 (PDT)
+Date: Fri, 18 Jul 2025 16:23:05 -0500
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Piotr =?iso-8859-1?Q?Pi=F3rkowski?= <piotr.piorkowski@intel.com>
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Matthew Auld <matthew.auld@intel.com>,
+	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] drm/xe: Fix an IS_ERR() vs NULL bug in
+ xe_tile_alloc_vram()
+Message-ID: <5449065e-9758-4711-b706-78771c0753c4@sabinyo.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On ASP versions v2.x we need to program the TX map vector register to
-properly exercise end-to-end flow control, otherwise the TX engine can
-either lock-up, or cause the hardware calculated checksum to be
-wrong/corrupted when multiple back to back packets are being submitted
-for transmission. This register defaults to 0, which means no flow
-control being applied.
+The xe_vram_region_alloc() function returns NULL on error.  It never
+returns error pointers.  Update the error checking to match.
 
-Fixes: e9f31435ee7d ("net: bcmasp: Add support for asp-v3.0")
-Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
+Fixes: 4b0a5f5ce784 ("drm/xe: Unify the initialization of VRAM regions")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/net/ethernet/broadcom/asp2/bcmasp_intf.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/xe/xe_tile.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/broadcom/asp2/bcmasp_intf.c b/drivers/net/ethernet/broadcom/asp2/bcmasp_intf.c
-index 0d61b8580d72..f832562bd7a3 100644
---- a/drivers/net/ethernet/broadcom/asp2/bcmasp_intf.c
-+++ b/drivers/net/ethernet/broadcom/asp2/bcmasp_intf.c
-@@ -818,6 +818,9 @@ static void bcmasp_init_tx(struct bcmasp_intf *intf)
- 	/* Tx SPB */
- 	tx_spb_ctrl_wl(intf, ((intf->channel + 8) << TX_SPB_CTRL_XF_BID_SHIFT),
- 		       TX_SPB_CTRL_XF_CTRL2);
-+
-+	if (intf->parent->tx_chan_offset)
-+		tx_pause_ctrl_wl(intf, (1 << (intf->channel + 8)), TX_PAUSE_MAP_VECTOR);
- 	tx_spb_top_wl(intf, 0x1e, TX_SPB_TOP_BLKOUT);
+diff --git a/drivers/gpu/drm/xe/xe_tile.c b/drivers/gpu/drm/xe/xe_tile.c
+index 0be0a5c57ef4..d49ba3401963 100644
+--- a/drivers/gpu/drm/xe/xe_tile.c
++++ b/drivers/gpu/drm/xe/xe_tile.c
+@@ -120,8 +120,8 @@ int xe_tile_alloc_vram(struct xe_tile *tile)
+ 		return 0;
  
- 	tx_spb_dma_wq(intf, intf->tx_spb_dma_addr, TX_SPB_DMA_READ);
+ 	vram = xe_vram_region_alloc(xe, tile->id, XE_PL_VRAM0 + tile->id);
+-	if (IS_ERR(vram))
+-		return PTR_ERR(vram);
++	if (!vram)
++		return -ENOMEM;
+ 	tile->mem.vram = vram;
+ 
+ 	return 0;
 -- 
-2.34.1
+2.47.2
 
 
