@@ -1,547 +1,134 @@
-Return-Path: <linux-kernel+bounces-737202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E077DB0A91A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 19:10:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C96FFB0A955
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 19:24:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32E7E3A5229
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:09:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C28FA41DFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:24:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A712E62DD;
-	Fri, 18 Jul 2025 17:09:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3902E716A;
+	Fri, 18 Jul 2025 17:24:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j4wkBgcN"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earthlink.net header.i=@earthlink.net header.b="amSJp3bZ"
+Received: from mta-201a.earthlink-vadesecure.net (mta-201b.earthlink-vadesecure.net [51.81.229.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C5DB2E62B8;
-	Fri, 18 Jul 2025 17:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D54924503B;
+	Fri, 18 Jul 2025 17:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.81.229.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752858586; cv=none; b=AH6elLXmo3kITsFepjRI1FxQkXEqnp3oh6rK9G+EXCX79tptCnwd1mezDhW4dNC5ftUKK7idleY15a154rmeI8Vga75u3QkNGa3WwgddxIPH7KL1f6OLMG5FWvO9vDJ51dCGPIUmRITyBJhdZRc7RrErAExR932x0BuGZp0JtXU=
+	t=1752859465; cv=none; b=FqbBD240OE2Yrjr7nqZhiHWGYbi+3wZXJ+JR1u310KXk4Ilnx1nWilC3NqD4FW7xyE+PILHjpzKcxModvwRpFO8y/RPJTs2gKkJsR+xo8aUJuXQFlSdOdjgoXT2NfIBHDdap9SOue7nbkC480RyF8jFwzKt8tRtpWQHbePiks20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752858586; c=relaxed/simple;
-	bh=ooxJn1LruN/YvEQn9D12u6VstnqMl47g6HfhdNYMq3Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=udJqeItC9CdBzi7CvVr2vkTGNGAfNByjuUrXozO4UOQn0QZWXUtbbjKNVjeHeeyVgoMUqwYJwHpRGJMkZUAsfJfUmf6iZ3YTYppgekPvoIu8C0HHei9Bc21bxVQdcC5VQ6R4sSjPyCstWWrH9CN5qWcDVeaWs8RXSpRLOkruFyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j4wkBgcN; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752858584; x=1784394584;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ooxJn1LruN/YvEQn9D12u6VstnqMl47g6HfhdNYMq3Y=;
-  b=j4wkBgcNqayFwKLxZO0t4gdu+DbjhrNDT1R19Py3/sw+mzbm/g7cXEZr
-   bRaRJrnX8LpPwde4teIU0I8460BHBAItxN9Ydjm81ZlJk+lofxNvIFT6J
-   bVFtaDwtHte60eXtff58uSrNXzEEeow+HO3/xsT80k+8ZlN0z0X4wKeon
-   V0NI/X3I14AmZr5JRQz4TMex7VkPV1iDMdSMLueBSb9B+PhoTYpveGPYa
-   BXNEGnPG/YiCBCzuDA1ho9J91jXlJW9dSQPVSirLCdz0ZACoZ7XLZ24Cy
-   C6QAKJKqJXHkL8IJDPw9XvADpCmBB9PyMZ2EnfoLOsT3OZcTSwdpwTyyA
-   Q==;
-X-CSE-ConnectionGUID: Ps/oUl1YSyWNlnuSz05KIA==
-X-CSE-MsgGUID: Ll/6XQCQQGSDhIj6vZWlHQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11496"; a="55314253"
-X-IronPort-AV: E=Sophos;i="6.16,322,1744095600"; 
-   d="scan'208";a="55314253"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2025 10:09:43 -0700
-X-CSE-ConnectionGUID: Ene6RaO6QquDZSHnOFG6jA==
-X-CSE-MsgGUID: EVNguCNxQU2ugcLqigJ96w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,322,1744095600"; 
-   d="scan'208";a="163735712"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 18 Jul 2025 10:09:38 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ucoaV-000EuZ-0P;
-	Fri, 18 Jul 2025 17:09:35 +0000
-Date: Sat, 19 Jul 2025 01:08:46 +0800
-From: kernel test robot <lkp@intel.com>
-To: Youngjun Park <youngjun.park@lge.com>, akpm@linux-foundation.org,
-	hannes@cmpxchg.org
-Cc: oe-kbuild-all@lists.linux.dev, mhocko@kernel.org,
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
-	muchun.song@linux.dev, shikemeng@huaweicloud.com,
-	kasong@tencent.com, nphamcs@gmail.com, bhe@redhat.com,
-	baohua@kernel.org, chrisl@kernel.org, cgroups@vger.kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, gunho.lee@lge.com,
-	iamjoonsoo.kim@lge.com, taejoon.song@lge.com,
-	Youngjun Park <youngjun.park@lge.com>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-Subject: Re: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for
- cgroup-based swap priority
-Message-ID: <202507190037.RCDNmMsJ-lkp@intel.com>
-References: <20250716202006.3640584-2-youngjun.park@lge.com>
+	s=arc-20240116; t=1752859465; c=relaxed/simple;
+	bh=otYy1UEiVgHf4LIkzboerdXtBrlHV0PWRH/XrvpCLFo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DwWN+51JtdtvKdQPWWccqkO0cTBVDL3+/LJOHdRX3+bjHFePynEBp8Bq0aoG5tNzuEBpO6motDkIUd6fN0n71cJmWFZtQe4O8a4hIiJ9LBet7Vq5zQIC4TvE9NPecc2pSKLyAcB7Fof/120Svsanax6riOfjMM3oC/Usv7g/ke8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=onemain.com; spf=pass smtp.mailfrom=onemain.com; dkim=pass (2048-bit key) header.d=earthlink.net header.i=@earthlink.net header.b=amSJp3bZ; arc=none smtp.client-ip=51.81.229.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=onemain.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onemain.com
+Authentication-Results: earthlink-vadesecure.net;
+ auth=pass smtp.auth=svnelson@teleport.com smtp.mailfrom=sln@onemain.com;
+DKIM-Signature: v=1; a=rsa-sha256; bh=twYr9tRj/eoAzQJKd8YiYgLFQ6ZpKavDsDx8C+
+ bNt9Q=; c=relaxed/relaxed; d=earthlink.net; h=from:reply-to:subject:
+ date:to:cc:resent-date:resent-from:resent-to:resent-cc:in-reply-to:
+ references:list-id:list-help:list-unsubscribe:list-unsubscribe-post:
+ list-subscribe:list-post:list-owner:list-archive; q=dns/txt;
+ s=dk12062016; t=1752858544; x=1753463344; b=amSJp3bZhnpUrxsHCIE2Of8bWii
+ iepbZSqOgSjEHmCTNufrZfF7HYidLklFsMupwh/EkpJzHU9GkMNEdgBN4rT4MpQvFHOViBD
+ PdxxAQqH3E71xYna3cYlwOqqNbWP4/fAukXQyAwU0MOwUkNYSpUs5aPZWL0iuOaFaEwd2DB
+ IUkgc0pFZOiS63+geH1aD6prX82xve801DNK8MBJhRW/yWK/sTWWMCRYub7r92iEOsf6jdl
+ L1ppyRm6aAsp/mnkiv+weKovir8wZdzbzAZg+OFsOJD3vgRs/karzoPpsoM9Lxu/JlixrCw
+ ko0GHzAqPSN23clwg0KmV98KxJR0oAw==
+Received: from [192.168.0.23] ([50.47.159.51])
+ by vsel2nmtao01p.internal.vadesecure.com with ngmta
+ id 1028f515-1853678ea2cc4994; Fri, 18 Jul 2025 17:09:04 +0000
+Message-ID: <20af2368-beb4-4b99-bf53-a773aee92744@onemain.com>
+Date: Fri, 18 Jul 2025 10:09:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250716202006.3640584-2-youngjun.park@lge.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sunvdc: Balance device refcount in vdc_port_mpgroup_check
+To: Ma Ke <make24@iscas.ac.cn>, axboe@kernel.dk, Jim.Quigley@oracle.com,
+ liam.merwick@oracle.com, aaron.young@oracle.com, alexandre.chartre@oracle.com
+Cc: akpm@linux-foundation.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20250718082236.3400483-1-make24@iscas.ac.cn>
+Content-Language: en-US
+From: Shannon Nelson <sln@onemain.com>
+In-Reply-To: <20250718082236.3400483-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Youngjun,
+On 7/18/25 1:22 AM, Ma Ke wrote:
+> Using device_find_child() to locate a probed virtual-device-port node
+> causes a device refcount imbalance, as device_find_child() internally
+> calls get_device() to increment the device’s reference count before
+> returning its pointer. vdc_port_mpgroup_check() directly returns true
+> upon finding a matching device without releasing the reference via
+> put_device(). We should call put_device() to decrement refcount.
+>
+> As comment of device_find_child() says, 'NOTE: you will need to drop
+> the reference with put_device() after use'.
+>
+> Found by code review.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 3ee70591d6c4 ("sunvdc: prevent sunvdc panic when mpgroup disk added to guest domain")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> ---
+>   drivers/block/sunvdc.c | 9 ++++++---
+>   1 file changed, 6 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/block/sunvdc.c b/drivers/block/sunvdc.c
+> index b5727dea15bd..b6dbd5dd2723 100644
+> --- a/drivers/block/sunvdc.c
+> +++ b/drivers/block/sunvdc.c
+> @@ -950,6 +950,7 @@ static bool vdc_port_mpgroup_check(struct vio_dev *vdev)
+>   {
+>   	struct vdc_check_port_data port_data;
+>   	struct device *dev;
+> +	bool found = false;
+>   
+>   	port_data.dev_no = vdev->dev_no;
+>   	port_data.type = (char *)&vdev->type;
+> @@ -957,10 +958,12 @@ static bool vdc_port_mpgroup_check(struct vio_dev *vdev)
+>   	dev = device_find_child(vdev->dev.parent, &port_data,
+>   				vdc_device_probed);
+>   
+> -	if (dev)
+> -		return true;
+> +	if (dev) {
+> +		found = true;
+> +		put_device(dev);
+> +	}
+>   
+> -	return false;
+> +	return found;
 
-kernel test robot noticed the following build errors:
+Don't bother with adding the extra bits just to get a single point of 
+exit: keep with the existing style and keep the change simple.
 
-[auto build test ERROR on 347e9f5043c89695b01e66b3ed111755afcf1911]
+if (dev) {
+     put_device(dev);
+     return true;
+}
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Youngjun-Park/mm-swap-memcg-Introduce-infrastructure-for-cgroup-based-swap-priority/20250717-042648
-base:   347e9f5043c89695b01e66b3ed111755afcf1911
-patch link:    https://lore.kernel.org/r/20250716202006.3640584-2-youngjun.park%40lge.com
-patch subject: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for cgroup-based swap priority
-config: sparc64-randconfig-r054-20250718 (https://download.01.org/0day-ci/archive/20250719/202507190037.RCDNmMsJ-lkp@intel.com/config)
-compiler: sparc64-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250719/202507190037.RCDNmMsJ-lkp@intel.com/reproduce)
+(and why am I getting copied on a block device change?)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507190037.RCDNmMsJ-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from include/linux/rbtree.h:24,
-                    from include/linux/mm_types.h:11,
-                    from include/linux/mmzone.h:22,
-                    from include/linux/swap.h:7,
-                    from mm/swap_cgroup_priority.c:16:
-   mm/swap_cgroup_priority.c: In function 'get_swap_cgroup_priority':
->> mm/swap_cgroup_priority.c:115:37: error: invalid use of undefined type 'struct mem_cgroup'
-     115 |         return rcu_dereference(memcg->swap_priority);
-         |                                     ^~
-   include/linux/rcupdate.h:532:17: note: in definition of macro '__rcu_dereference_check'
-     532 |         typeof(*p) *local = (typeof(*p) *__force)READ_ONCE(p); \
-         |                 ^
-   include/linux/rcupdate.h:752:28: note: in expansion of macro 'rcu_dereference_check'
-     752 | #define rcu_dereference(p) rcu_dereference_check(p, 0)
-         |                            ^~~~~~~~~~~~~~~~~~~~~
-   mm/swap_cgroup_priority.c:115:16: note: in expansion of macro 'rcu_dereference'
-     115 |         return rcu_dereference(memcg->swap_priority);
-         |                ^~~~~~~~~~~~~~~
->> mm/swap_cgroup_priority.c:115:37: error: invalid use of undefined type 'struct mem_cgroup'
-     115 |         return rcu_dereference(memcg->swap_priority);
-         |                                     ^~
-   include/linux/rcupdate.h:532:38: note: in definition of macro '__rcu_dereference_check'
-     532 |         typeof(*p) *local = (typeof(*p) *__force)READ_ONCE(p); \
-         |                                      ^
-   include/linux/rcupdate.h:752:28: note: in expansion of macro 'rcu_dereference_check'
-     752 | #define rcu_dereference(p) rcu_dereference_check(p, 0)
-         |                            ^~~~~~~~~~~~~~~~~~~~~
-   mm/swap_cgroup_priority.c:115:16: note: in expansion of macro 'rcu_dereference'
-     115 |         return rcu_dereference(memcg->swap_priority);
-         |                ^~~~~~~~~~~~~~~
-   In file included from <command-line>:
->> mm/swap_cgroup_priority.c:115:37: error: invalid use of undefined type 'struct mem_cgroup'
-     115 |         return rcu_dereference(memcg->swap_priority);
-         |                                     ^~
-   include/linux/compiler_types.h:548:23: note: in definition of macro '__compiletime_assert'
-     548 |                 if (!(condition))                                       \
-         |                       ^~~~~~~~~
-   include/linux/compiler_types.h:568:9: note: in expansion of macro '_compiletime_assert'
-     568 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:9: note: in expansion of macro 'compiletime_assert'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |         ^~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:28: note: in expansion of macro '__native_word'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |                            ^~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:49:9: note: in expansion of macro 'compiletime_assert_rwonce_type'
-      49 |         compiletime_assert_rwonce_type(x);                              \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/rcupdate.h:532:50: note: in expansion of macro 'READ_ONCE'
-     532 |         typeof(*p) *local = (typeof(*p) *__force)READ_ONCE(p); \
-         |                                                  ^~~~~~~~~
-   include/linux/rcupdate.h:680:9: note: in expansion of macro '__rcu_dereference_check'
-     680 |         __rcu_dereference_check((p), __UNIQUE_ID(rcu), \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/rcupdate.h:752:28: note: in expansion of macro 'rcu_dereference_check'
-     752 | #define rcu_dereference(p) rcu_dereference_check(p, 0)
-         |                            ^~~~~~~~~~~~~~~~~~~~~
-   mm/swap_cgroup_priority.c:115:16: note: in expansion of macro 'rcu_dereference'
-     115 |         return rcu_dereference(memcg->swap_priority);
-         |                ^~~~~~~~~~~~~~~
->> mm/swap_cgroup_priority.c:115:37: error: invalid use of undefined type 'struct mem_cgroup'
-     115 |         return rcu_dereference(memcg->swap_priority);
-         |                                     ^~
-   include/linux/compiler_types.h:548:23: note: in definition of macro '__compiletime_assert'
-     548 |                 if (!(condition))                                       \
-         |                       ^~~~~~~~~
-   include/linux/compiler_types.h:568:9: note: in expansion of macro '_compiletime_assert'
-     568 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:9: note: in expansion of macro 'compiletime_assert'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |         ^~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:28: note: in expansion of macro '__native_word'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |                            ^~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:49:9: note: in expansion of macro 'compiletime_assert_rwonce_type'
-      49 |         compiletime_assert_rwonce_type(x);                              \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/rcupdate.h:532:50: note: in expansion of macro 'READ_ONCE'
-     532 |         typeof(*p) *local = (typeof(*p) *__force)READ_ONCE(p); \
-         |                                                  ^~~~~~~~~
-   include/linux/rcupdate.h:680:9: note: in expansion of macro '__rcu_dereference_check'
-     680 |         __rcu_dereference_check((p), __UNIQUE_ID(rcu), \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/rcupdate.h:752:28: note: in expansion of macro 'rcu_dereference_check'
-     752 | #define rcu_dereference(p) rcu_dereference_check(p, 0)
-         |                            ^~~~~~~~~~~~~~~~~~~~~
-   mm/swap_cgroup_priority.c:115:16: note: in expansion of macro 'rcu_dereference'
-     115 |         return rcu_dereference(memcg->swap_priority);
-         |                ^~~~~~~~~~~~~~~
->> mm/swap_cgroup_priority.c:115:37: error: invalid use of undefined type 'struct mem_cgroup'
-     115 |         return rcu_dereference(memcg->swap_priority);
-         |                                     ^~
-   include/linux/compiler_types.h:548:23: note: in definition of macro '__compiletime_assert'
-     548 |                 if (!(condition))                                       \
-         |                       ^~~~~~~~~
-   include/linux/compiler_types.h:568:9: note: in expansion of macro '_compiletime_assert'
-     568 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:9: note: in expansion of macro 'compiletime_assert'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |         ^~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:28: note: in expansion of macro '__native_word'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |                            ^~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:49:9: note: in expansion of macro 'compiletime_assert_rwonce_type'
-      49 |         compiletime_assert_rwonce_type(x);                              \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/rcupdate.h:532:50: note: in expansion of macro 'READ_ONCE'
-     532 |         typeof(*p) *local = (typeof(*p) *__force)READ_ONCE(p); \
-         |                                                  ^~~~~~~~~
-   include/linux/rcupdate.h:680:9: note: in expansion of macro '__rcu_dereference_check'
-     680 |         __rcu_dereference_check((p), __UNIQUE_ID(rcu), \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/rcupdate.h:752:28: note: in expansion of macro 'rcu_dereference_check'
-     752 | #define rcu_dereference(p) rcu_dereference_check(p, 0)
-         |                            ^~~~~~~~~~~~~~~~~~~~~
-   mm/swap_cgroup_priority.c:115:16: note: in expansion of macro 'rcu_dereference'
-     115 |         return rcu_dereference(memcg->swap_priority);
-         |                ^~~~~~~~~~~~~~~
->> mm/swap_cgroup_priority.c:115:37: error: invalid use of undefined type 'struct mem_cgroup'
-     115 |         return rcu_dereference(memcg->swap_priority);
-         |                                     ^~
-   include/linux/compiler_types.h:548:23: note: in definition of macro '__compiletime_assert'
-     548 |                 if (!(condition))                                       \
-         |                       ^~~~~~~~~
-   include/linux/compiler_types.h:568:9: note: in expansion of macro '_compiletime_assert'
-     568 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:9: note: in expansion of macro 'compiletime_assert'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |         ^~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:28: note: in expansion of macro '__native_word'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |                            ^~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:49:9: note: in expansion of macro 'compiletime_assert_rwonce_type'
-      49 |         compiletime_assert_rwonce_type(x);                              \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/rcupdate.h:532:50: note: in expansion of macro 'READ_ONCE'
-     532 |         typeof(*p) *local = (typeof(*p) *__force)READ_ONCE(p); \
-         |                                                  ^~~~~~~~~
-   include/linux/rcupdate.h:680:9: note: in expansion of macro '__rcu_dereference_check'
-     680 |         __rcu_dereference_check((p), __UNIQUE_ID(rcu), \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/rcupdate.h:752:28: note: in expansion of macro 'rcu_dereference_check'
-     752 | #define rcu_dereference(p) rcu_dereference_check(p, 0)
-         |                            ^~~~~~~~~~~~~~~~~~~~~
-   mm/swap_cgroup_priority.c:115:16: note: in expansion of macro 'rcu_dereference'
-     115 |         return rcu_dereference(memcg->swap_priority);
-         |                ^~~~~~~~~~~~~~~
->> mm/swap_cgroup_priority.c:115:37: error: invalid use of undefined type 'struct mem_cgroup'
-     115 |         return rcu_dereference(memcg->swap_priority);
-         |                                     ^~
-   include/linux/compiler_types.h:548:23: note: in definition of macro '__compiletime_assert'
-     548 |                 if (!(condition))                                       \
-         |                       ^~~~~~~~~
-   include/linux/compiler_types.h:568:9: note: in expansion of macro '_compiletime_assert'
-     568 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:9: note: in expansion of macro 'compiletime_assert'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |         ^~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:49:9: note: in expansion of macro 'compiletime_assert_rwonce_type'
-      49 |         compiletime_assert_rwonce_type(x);                              \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/rcupdate.h:532:50: note: in expansion of macro 'READ_ONCE'
-     532 |         typeof(*p) *local = (typeof(*p) *__force)READ_ONCE(p); \
-         |                                                  ^~~~~~~~~
-   include/linux/rcupdate.h:680:9: note: in expansion of macro '__rcu_dereference_check'
-     680 |         __rcu_dereference_check((p), __UNIQUE_ID(rcu), \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/rcupdate.h:752:28: note: in expansion of macro 'rcu_dereference_check'
-     752 | #define rcu_dereference(p) rcu_dereference_check(p, 0)
-         |                            ^~~~~~~~~~~~~~~~~~~~~
-   mm/swap_cgroup_priority.c:115:16: note: in expansion of macro 'rcu_dereference'
-     115 |         return rcu_dereference(memcg->swap_priority);
-         |                ^~~~~~~~~~~~~~~
->> mm/swap_cgroup_priority.c:115:37: error: invalid use of undefined type 'struct mem_cgroup'
-     115 |         return rcu_dereference(memcg->swap_priority);
-         |                                     ^~
-   include/linux/compiler_types.h:518:27: note: in definition of macro '__unqual_scalar_typeof'
-     518 |                 _Generic((x),                                           \
-         |                           ^
-   include/asm-generic/rwonce.h:50:9: note: in expansion of macro '__READ_ONCE'
-      50 |         __READ_ONCE(x);                                                 \
-         |         ^~~~~~~~~~~
-   include/linux/rcupdate.h:532:50: note: in expansion of macro 'READ_ONCE'
-     532 |         typeof(*p) *local = (typeof(*p) *__force)READ_ONCE(p); \
-         |                                                  ^~~~~~~~~
-   include/linux/rcupdate.h:680:9: note: in expansion of macro '__rcu_dereference_check'
-     680 |         __rcu_dereference_check((p), __UNIQUE_ID(rcu), \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/rcupdate.h:752:28: note: in expansion of macro 'rcu_dereference_check'
-     752 | #define rcu_dereference(p) rcu_dereference_check(p, 0)
-         |                            ^~~~~~~~~~~~~~~~~~~~~
-   mm/swap_cgroup_priority.c:115:16: note: in expansion of macro 'rcu_dereference'
-     115 |         return rcu_dereference(memcg->swap_priority);
-         |                ^~~~~~~~~~~~~~~
-   In file included from ./arch/sparc/include/generated/asm/rwonce.h:1,
-                    from include/linux/compiler.h:390,
-                    from include/linux/export.h:5,
-                    from include/linux/linkage.h:7,
-                    from include/linux/preempt.h:10,
-                    from include/linux/spinlock.h:56,
-                    from include/linux/swap.h:5:
->> mm/swap_cgroup_priority.c:115:37: error: invalid use of undefined type 'struct mem_cgroup'
-     115 |         return rcu_dereference(memcg->swap_priority);
-         |                                     ^~
-   include/asm-generic/rwonce.h:44:73: note: in definition of macro '__READ_ONCE'
-      44 | #define __READ_ONCE(x)  (*(const volatile __unqual_scalar_typeof(x) *)&(x))
-         |                                                                         ^
-   include/linux/rcupdate.h:532:50: note: in expansion of macro 'READ_ONCE'
-     532 |         typeof(*p) *local = (typeof(*p) *__force)READ_ONCE(p); \
-         |                                                  ^~~~~~~~~
-   include/linux/rcupdate.h:680:9: note: in expansion of macro '__rcu_dereference_check'
-     680 |         __rcu_dereference_check((p), __UNIQUE_ID(rcu), \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/rcupdate.h:752:28: note: in expansion of macro 'rcu_dereference_check'
-     752 | #define rcu_dereference(p) rcu_dereference_check(p, 0)
-         |                            ^~~~~~~~~~~~~~~~~~~~~
-   mm/swap_cgroup_priority.c:115:16: note: in expansion of macro 'rcu_dereference'
-     115 |         return rcu_dereference(memcg->swap_priority);
-         |                ^~~~~~~~~~~~~~~
->> mm/swap_cgroup_priority.c:115:37: error: invalid use of undefined type 'struct mem_cgroup'
-     115 |         return rcu_dereference(memcg->swap_priority);
-         |                                     ^~
-   include/linux/rcupdate.h:535:19: note: in definition of macro '__rcu_dereference_check'
-     535 |         ((typeof(*p) __force __kernel *)(local)); \
-         |                   ^
-   include/linux/rcupdate.h:752:28: note: in expansion of macro 'rcu_dereference_check'
-     752 | #define rcu_dereference(p) rcu_dereference_check(p, 0)
-         |                            ^~~~~~~~~~~~~~~~~~~~~
-   mm/swap_cgroup_priority.c:115:16: note: in expansion of macro 'rcu_dereference'
-     115 |         return rcu_dereference(memcg->swap_priority);
-         |                ^~~~~~~~~~~~~~~
-   mm/swap_cgroup_priority.c: In function 'show_swap_cgroup_priority':
-   mm/swap_cgroup_priority.c:186:30: error: invalid use of undefined type 'struct mem_cgroup'
-     186 |         swap_priority = memcg->swap_priority;
-         |                              ^~
-   mm/swap_cgroup_priority.c: In function 'swap_alloc_cgroup_priority':
-   mm/swap_cgroup_priority.c:285:26: error: invalid use of undefined type 'struct mem_cgroup'
-     285 |                 if (memcg->swap_priority != swap_priority)
-         |                          ^~
-   mm/swap_cgroup_priority.c: In function 'apply_swap_cgroup_priority':
-   mm/swap_cgroup_priority.c:638:46: error: invalid use of undefined type 'struct mem_cgroup'
-     638 |         swap_priority = rcu_dereference(memcg->swap_priority);
-         |                                              ^~
-   include/linux/rcupdate.h:532:17: note: in definition of macro '__rcu_dereference_check'
-     532 |         typeof(*p) *local = (typeof(*p) *__force)READ_ONCE(p); \
-         |                 ^
-   include/linux/rcupdate.h:752:28: note: in expansion of macro 'rcu_dereference_check'
-     752 | #define rcu_dereference(p) rcu_dereference_check(p, 0)
-         |                            ^~~~~~~~~~~~~~~~~~~~~
-   mm/swap_cgroup_priority.c:638:25: note: in expansion of macro 'rcu_dereference'
-     638 |         swap_priority = rcu_dereference(memcg->swap_priority);
-         |                         ^~~~~~~~~~~~~~~
-   mm/swap_cgroup_priority.c:638:46: error: invalid use of undefined type 'struct mem_cgroup'
-     638 |         swap_priority = rcu_dereference(memcg->swap_priority);
-         |                                              ^~
-   include/linux/rcupdate.h:532:38: note: in definition of macro '__rcu_dereference_check'
-     532 |         typeof(*p) *local = (typeof(*p) *__force)READ_ONCE(p); \
-         |                                      ^
-   include/linux/rcupdate.h:752:28: note: in expansion of macro 'rcu_dereference_check'
-     752 | #define rcu_dereference(p) rcu_dereference_check(p, 0)
-         |                            ^~~~~~~~~~~~~~~~~~~~~
-   mm/swap_cgroup_priority.c:638:25: note: in expansion of macro 'rcu_dereference'
-     638 |         swap_priority = rcu_dereference(memcg->swap_priority);
-         |                         ^~~~~~~~~~~~~~~
-   mm/swap_cgroup_priority.c:638:46: error: invalid use of undefined type 'struct mem_cgroup'
-     638 |         swap_priority = rcu_dereference(memcg->swap_priority);
-         |                                              ^~
-   include/linux/compiler_types.h:548:23: note: in definition of macro '__compiletime_assert'
-     548 |                 if (!(condition))                                       \
-         |                       ^~~~~~~~~
-   include/linux/compiler_types.h:568:9: note: in expansion of macro '_compiletime_assert'
-     568 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:9: note: in expansion of macro 'compiletime_assert'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |         ^~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:28: note: in expansion of macro '__native_word'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |                            ^~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:49:9: note: in expansion of macro 'compiletime_assert_rwonce_type'
-      49 |         compiletime_assert_rwonce_type(x);                              \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/rcupdate.h:532:50: note: in expansion of macro 'READ_ONCE'
-     532 |         typeof(*p) *local = (typeof(*p) *__force)READ_ONCE(p); \
-         |                                                  ^~~~~~~~~
-   include/linux/rcupdate.h:680:9: note: in expansion of macro '__rcu_dereference_check'
-     680 |         __rcu_dereference_check((p), __UNIQUE_ID(rcu), \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/rcupdate.h:752:28: note: in expansion of macro 'rcu_dereference_check'
-     752 | #define rcu_dereference(p) rcu_dereference_check(p, 0)
-         |                            ^~~~~~~~~~~~~~~~~~~~~
-   mm/swap_cgroup_priority.c:638:25: note: in expansion of macro 'rcu_dereference'
-     638 |         swap_priority = rcu_dereference(memcg->swap_priority);
-         |                         ^~~~~~~~~~~~~~~
-   mm/swap_cgroup_priority.c:638:46: error: invalid use of undefined type 'struct mem_cgroup'
-     638 |         swap_priority = rcu_dereference(memcg->swap_priority);
-         |                                              ^~
-   include/linux/compiler_types.h:548:23: note: in definition of macro '__compiletime_assert'
-     548 |                 if (!(condition))                                       \
-         |                       ^~~~~~~~~
-   include/linux/compiler_types.h:568:9: note: in expansion of macro '_compiletime_assert'
-     568 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:9: note: in expansion of macro 'compiletime_assert'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |         ^~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:28: note: in expansion of macro '__native_word'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |                            ^~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:49:9: note: in expansion of macro 'compiletime_assert_rwonce_type'
-      49 |         compiletime_assert_rwonce_type(x);                              \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/rcupdate.h:532:50: note: in expansion of macro 'READ_ONCE'
-     532 |         typeof(*p) *local = (typeof(*p) *__force)READ_ONCE(p); \
-         |                                                  ^~~~~~~~~
-   include/linux/rcupdate.h:680:9: note: in expansion of macro '__rcu_dereference_check'
-     680 |         __rcu_dereference_check((p), __UNIQUE_ID(rcu), \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/rcupdate.h:752:28: note: in expansion of macro 'rcu_dereference_check'
-     752 | #define rcu_dereference(p) rcu_dereference_check(p, 0)
+sln
 
 
-vim +115 mm/swap_cgroup_priority.c
 
-  > 16	#include <linux/swap.h>
-    17	#include <linux/rcupdate.h>
-    18	#include <linux/memcontrol.h>
-    19	#include <linux/plist.h>
-    20	#include "swap.h"
-    21	#include "swap_cgroup_priority.h"
-    22	#include "memcontrol-v1.h"
-    23	
-    24	static LIST_HEAD(swap_cgroup_priority_list);
-    25	
-    26	/*
-    27	 * struct swap_cgroup_priority
-    28	 *
-    29	 * This structure is RCU protected. Its lifecycle is determined by its
-    30	 * owning memcg or when its 'distance' reaches zero. The 'distance' field
-    31	 * tracks priority differences from global swap. If zero, and its default_prio
-    32	 * follows global swap priority(SWAP_PRIORITY_GLOBAL), the object is destroyed.
-    33	 *
-    34	 * pnode - Array of pointers to swap device priority nodes.
-    35	 * owner - The owning memory cgroup.
-    36	 * rcu - RCU free callback.
-    37	 * link - Global linked list entry.
-    38	 * least_priority - Current lowest priority.
-    39	 * distance - Priority differences from global swap priority.
-    40	 * default_prio - Default priority for this cgroup.
-    41	 * plist - Priority list head.
-    42	 */
-    43	struct swap_cgroup_priority {
-    44		struct swap_cgroup_priority_pnode *pnode[MAX_SWAPFILES];
-    45		struct mem_cgroup *owner;
-    46	
-    47		union {
-    48			struct rcu_head rcu;
-    49			struct list_head link;
-    50		};
-    51	
-    52		int least_priority;
-    53		s8 distance;
-    54		int default_prio;
-    55		struct plist_head plist[];
-    56	};
-    57	
-    58	/*
-    59	 * struct swap_cgroup_priority_pnode
-    60	 *
-    61	 * This structure represents a priority node for a specific swap device
-    62	 * within a cgroup.
-    63	 *
-    64	 * swap - Pointer to the associated swap device.
-    65	 * id - Unique identifier for the swap device.
-    66	 * prio - Configured priority for this device.
-    67	 * avail_lists - Connections to various priority lists.
-    68	 */
-    69	struct swap_cgroup_priority_pnode {
-    70		struct swap_info_struct *swap;
-    71		u64 id;
-    72		signed short prio;
-    73		struct plist_node avail_lists[];
-    74	};
-    75	
-    76	/*
-    77	 * Even with a zero distance, a swap device isn't assigned if it doesn't
-    78	 * meet global swap priority conditions; thus, we don't clear it.
-    79	 */
-    80	static bool should_clear_swap_cgroup_priority(
-    81		struct swap_cgroup_priority *swap_priority)
-    82	{
-    83		WARN_ON_ONCE(swap_priority->distance < 0 ||
-    84			swap_priority->distance > MAX_SWAPFILES);
-    85	
-    86		if (swap_priority->distance == 0 &&
-    87		    swap_priority->default_prio == SWAP_PRIORITY_GLOBAL)
-    88			return true;
-    89	
-    90		return false;
-    91	}
-    92	
-    93	/*
-    94	 * swapdev_id
-    95	 *
-    96	 * A unique identifier for a swap device.
-    97	 *
-    98	 * This ID ensures stable identification for users and crucial synchronization
-    99	 * for swap cgroup priority settings. It provides a reliable reference even if
-   100	 * device paths or numbers change.
-   101	 */
-   102	static atomic64_t swapdev_id_counter;
-   103	
-   104	void get_swapdev_id(struct swap_info_struct *si)
-   105	{
-   106		si->id = atomic64_inc_return(&swapdev_id_counter);
-   107	}
-   108	
-   109	static struct swap_cgroup_priority *get_swap_cgroup_priority(
-   110		struct mem_cgroup *memcg)
-   111	{
-   112		if (!memcg)
-   113			return NULL;
-   114	
- > 115		return rcu_dereference(memcg->swap_priority);
-   116	}
-   117	
+>   }
+>   
+>   static int vdc_port_probe(struct vio_dev *vdev, const struct vio_device_id *id)
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
