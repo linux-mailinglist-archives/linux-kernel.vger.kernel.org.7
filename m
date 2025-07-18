@@ -1,149 +1,175 @@
-Return-Path: <linux-kernel+bounces-736885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0CBFB0A49D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:58:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C711CB0A49B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:58:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7C20AA04BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:58:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10B6A16D9CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A5322DC32E;
-	Fri, 18 Jul 2025 12:58:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zXJMzzal"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA352DC329;
+	Fri, 18 Jul 2025 12:57:35 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0A22DAFD5
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 12:57:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D1F72DCBEB
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 12:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752843479; cv=none; b=lqeRpzDnZf0vwlhTstax/9Hq0ZNoETdRd04S7kk+Y/F5ZxHd493e4LgHgqItG8kSF5ojs6gm/XIOCIWrtZzhdYcF7u21vmmm/jNSN3SMM3o0cDU8457Z1WtxvAFQ/RqHrlx0Yeki7G2en9oQOCJthVrqGXteoIfWo5l1AwfUcak=
+	t=1752843454; cv=none; b=m+nh7Xr95Xbs3eZ/z4GIlOWHi0Hu9a9TQWr2ewACarBjdo2ZEHw/xtxV904cGKcM0jq7CpzXHcWFfMrOCFRgt1rJtj3VugXt4U5JHSL70uAkDHirFsaAOyQErcD5Sunh2EK0nsZX3DZYJGXYTlNgWnY/7+5XcwFDZ5uXofWpFZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752843479; c=relaxed/simple;
-	bh=2oVBNLLjRvI/epA6VfcF0SznFLcvvWnbecTGR/uJYlY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UZhpot47r4o9R/9FLVDt//AiM7+twld9d2TKsjtW3ngJcnkQaKdCUPMLBFaK/mwD+B51b1Nut1rvF4CCjYh/xRS+lM/THMT3DFScUFEtxq8LhOtx28u3c/vf38ncTKoePQs0lgZWep9NiuvL/Vxjf+HzxKc/9g/VTHw3GoKvX7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zXJMzzal; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e8986a25cbfso1570613276.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 05:57:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752843477; x=1753448277; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=2oVBNLLjRvI/epA6VfcF0SznFLcvvWnbecTGR/uJYlY=;
-        b=zXJMzzalaAoPcKA+89aZpl0UashlLYsa0MR/RDy6zqcDmK4fLyf8JCLNEzL3tD2Lcc
-         KILWK54tiV8Qd5gykDDMuefBGu0ZTSOpi7gXxNS0to95Gx/+gWHiTJBCcTcMkJc9gwhJ
-         vVbpQ0KM64EHUnBq44XmkVAKLwXKZ1zL35MeN+b12laD+dXfNxYDRgIfPUdpj9h98FMu
-         eu7zTiSbN2PXg6xpKfuUwdrs/24HkA/fMgZ8s2Gb3NTEyEzTz96gSIPTx8nbSPV3Cl95
-         Baven60FkdLZNDgZF+AQpyf8qv3jiRs/ci8uTOUAmRwY2KW+VJ6ZM47xYhYVvzTqKbmb
-         AXmA==
+	s=arc-20240116; t=1752843454; c=relaxed/simple;
+	bh=9QI9gQvGz2O+aUigmCxNyZWiqdHDygWWz2gSYH1jmZI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=HeBW5S3X8RbJ7ekxKat5ILdlDVgGofw80B4rn63/YFkEgxh3cFhCcybvXHSfZ9N3Hq4LYR6J6ntdME6kKRbA5Fw9sHa3LSkjlJucTl9J9nxxjGSCKmedEnMquMIsB7RYgasoS5JYwM8uOi7ZPwCTko8UsnlRJ5nwfdBVJdd/hZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-86cff1087deso388121239f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 05:57:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752843477; x=1753448277;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2oVBNLLjRvI/epA6VfcF0SznFLcvvWnbecTGR/uJYlY=;
-        b=og/0kNnpoloP7RHmVaHGMrb4RNN1RNoERbF7s/9ogodslorCblHnXgWJ01Ipqe6y2U
-         QykpyiOXZQYHFQqPoLa8CvFNsAOMLMRHf2h3secxq5CIqXesO1Z/1GBPuLZQsbkiyvI6
-         zUEKjCjbJpdft94b7Xkb3zLHuZHv4xVffb51HLVSq/A+DVdEBV3DYqO3LuATZYDHWU3d
-         f7rwA9kpv7qG9AO7QbrF3VeRow4xS/w1xX8PZWPVv2ROQAjxZ4L+Mk4IGZSeSDlw3zT8
-         ng2VyyCH9DS1Z872t79aWYTBBFOQfG6/WHSNWrNUdc6tSaGWJfifCnW2gNo1GCrLbv/+
-         UHAg==
-X-Forwarded-Encrypted: i=1; AJvYcCWroUflKQYOTMHTF3Mb5BpS7wMClLnZESi50qkT1vdcZxU68S5UEY+u2D3cUlWBlfu1m7wUQshivDoE7B8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmFX6PxDDQq64vrsQ5/738oIuvXLFrS5A/DoGe5F6CFyH+tTJY
-	As2cRwcMBLNcAzsfwS2KKu7l/2HdnTZqnp8Esj101wApz5zu3xK0MjD85m2kVze+a9Q0mqHn4wH
-	urvX40gP78OAoSup7+kRMAAZgr+Y1rGQRHK/z7QQKqA==
-X-Gm-Gg: ASbGncuWklQbBeeGbOPRTOCX0xB2bvbQgSR1/u3Di4UdOZas2VHjzSjR4tNpUCbrIi9
-	mi2OTeRVURDJbVbzRHQqPPtdC9JB4y2+s9WxRn0Mhp53PtuhUxXdGTNT8+j4ZraYKdmXQfLRFBm
-	KzTgwByHeAXlF5BeTGtYdx9EUPJCobmp4yUUVHCYq6YCy66mwpEn62qKkl9a3LY+8VRcv0nRNeu
-	fPGuqPZ
-X-Google-Smtp-Source: AGHT+IGL8vq79uRPv+7EgtB0w1khGf/ZZ/t0fKcCIca47IxCbP1gdAWP0LAznLmxVN6tPjXDjywCkYz53fSv6LPH66I=
-X-Received: by 2002:a05:690c:fcc:b0:719:5337:59ef with SMTP id
- 00721157ae682-71953378ed6mr28884307b3.27.1752843476741; Fri, 18 Jul 2025
- 05:57:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752843452; x=1753448252;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IafqCpVzHsvptLgcHZRUUTrHcF1qc7C+r1Ulg9r4YvM=;
+        b=j+fSzuPP1a+s6EV/biA9pV1a63reTeDCHyZV4irR9D1GJqVIK68odu86mHwdhcJt7T
+         W2g8pZKBj5B+wpglWUNIPbc1tfyQuy2ewszfmHMrsIAKtDOi9A6cZzjp/RVj79ZoDBU+
+         wcoMxJ/cK5jNGWqRlWhTK/7AkEuwbay72PUI6/8gXpyjhflfob0c5/vKq6/QcILYt2d9
+         qzTHEE1yRQglweSVhX8rI+qjKk2iE+yDtSZDvkT5NWgrpAzcmR5mso0E6oYFJzHT11hY
+         5XTWsKAKozL9eQOsKpxmP9R7NJqrGw9Q4NZTo4+fPpiqMe21Q+6t7dh6LA+Q+vcbwQ47
+         AdxA==
+X-Gm-Message-State: AOJu0YzLYUrJZwyR8050Q2F56UbwApHEzyXy4/nFcSN4gvdNkdpByqqy
+	u8mFdDIRYdgZdghDSW0MVK/xe/VQHjJghqJkQg4MHuYGlN3KahD+m9jeQWgjrRf7AscO4q9QyQW
+	YIztxWvTg6hl7K7yiIj609+f+Hoqzqlg0ErDmtBQjWffCdokxZE5Cjt7I2iU=
+X-Google-Smtp-Source: AGHT+IHk3+82OUR+Aq3whAaUzx2H+NeNcJbWQiXuebr7PrPb4pwMLgudcKm69doo2Pn7w1ILye6ppKNlqScLScM+d0rWhQdcSmfi
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250718110217.1929526-1-quic_dmukhopa@quicinc.com> <a569a2c3-2fb2-4a40-8d54-898e7c36f4b3@oss.qualcomm.com>
-In-Reply-To: <a569a2c3-2fb2-4a40-8d54-898e7c36f4b3@oss.qualcomm.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 18 Jul 2025 14:57:21 +0200
-X-Gm-Features: Ac12FXwr-Fm6lencmYiNXXyaB3FhAUaboLaEzLqBOtQ2Ce15n_VvqzG4MtGWFZw
-Message-ID: <CAPDyKFqgo4ewJxPOUmY-GE+CG2XUVGQvEqgTQnvo0MfryMemGw@mail.gmail.com>
-Subject: Re: [PATCH v3] mmc: Avoid reprogram all keys to Inline Crypto Engine
- for MMC runtime suspend resume
-To: Debraj Mukhopadhyay <quic_dmukhopa@quicinc.com>, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Eric Biggers <ebiggers@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, kernel@quicinc.com, 
-	Neeraj Soni <quic_neersoni@quicinc.com>, Ram Prakash Gupta <quic_rampraka@quicinc.com>, 
-	Nitin Rawat <quic_nitirawa@quicinc.com>, Sachin Gupta <quic_sachgupt@quicinc.com>, 
-	Bhaskar Valaboju <quic_bhaskarv@quicinc.com>, Gaurav Kashyap <quic_gaurkash@quicinc.com>, 
-	Sarthak Garg <quic_sartgarg@quicinc.com>
+X-Received: by 2002:a05:6602:15ca:b0:875:d450:9297 with SMTP id
+ ca18e2360f4ac-879c2917a4bmr1191173839f.5.1752843452190; Fri, 18 Jul 2025
+ 05:57:32 -0700 (PDT)
+Date: Fri, 18 Jul 2025 05:57:32 -0700
+In-Reply-To: <68794b99.a70a0220.693ce.0052.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <687a44bc.a70a0220.693ce.0064.GAE@google.com>
+Subject: Forwarded: Private message regarding: [syzbot] [fs?] KASAN:
+ use-after-free Read in hpfs_get_ea
+From: syzbot <syzbot+fa88eb476e42878f2844@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 18 Jul 2025 at 14:05, Konrad Dybcio
-<konrad.dybcio@oss.qualcomm.com> wrote:
->
-> On 7/18/25 1:02 PM, Debraj Mukhopadhyay wrote:
-> > Crypto reprogram all keys is called for each MMC runtime
-> > suspend/resume in current upstream design. If this is implemented
-> > as a non-interruptible call to TEE for security, the cpu core is
-> > blocked for execution while this call executes although the crypto
-> > engine already has the keys. For example, glitches in audio/video
-> > streaming applications have been observed due to this. Add the flag
-> > MMC_CAP2_CRYPTO_NO_REPROG as part of host->caps2 to control reprogramming
-> > keys to crypto engine for socs which dont require this feature.
-> >
-> > Signed-off-by: Seshu Madhavi Puppala <quic_spuppala@quicinc.com>
-> > Co-developed-by: Ram Prakash Gupta <quic_rampraka@quicinc.com>
-> > Signed-off-by: Ram Prakash Gupta <quic_rampraka@quicinc.com>
-> > Co-developed-by: Sarthak Garg <quic_sartgarg@quicinc.com>
-> > Signed-off-by: Sarthak Garg <quic_sartgarg@quicinc.com>
-> > Signed-off-by: Debraj Mukhopadhyay <quic_dmukhopa@quicinc.com>
-> >
-> > ---
->
-> Let's take a step back - do we need to ever program this more than
-> once on QC? What about other devices (e.g. the generic cqhci-crypto)?
-> Do they also lose the crypto context over a runtime pm cycle?
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-I agree!
+***
 
-I also think it's important to also understand what runtime PM cycle
-we are discussing here. It's a bit blurry for me currently, can we
-please clarify this.
+Subject: Private message regarding: [syzbot] [fs?] KASAN: use-after-free Read in hpfs_get_ea
+Author: kapoorarnav43@gmail.com
 
-A runtime PM cycle of the card, means that the eMMC card is
-power-cycled and re-initialized (assuming MMC_CAP_AGGRESSIVE_PM is
-set, which I guess is a downstream patch as the upstream sdhci-msm
-driver doesn't have this bit set, at least not yet). The mmc host is
-probably also runtime PM power-cycled when the card is, but it's
-orthogonal to the runtime PM cycle of the card - that's a really
-important point here, I think.
+#syz test 
 
-As I understand it, the crypto context is not tied to the card, but to
-the mmc host. What happens with the crypto context when the mmc host
-is runtime PM cycled? Is the context preserved? I assume so, or?
+From: Arnav Kapoor <kapoorarnav43@gmail.com>
+Date: Fri, 18 Jul 2025 12:00:00 +0000
+Subject: [PATCH] hpfs: fix use-after-free in hpfs_get_ea
 
->
-> If our hardware is fine with set-it-and-forget-it approach, maybe
-> we could limit this to a small if-condition sdhci-msm.c
+Fix a use-after-free vulnerability in hpfs_get_ea() where corrupted
+extended attribute data could cause strcmp() to access freed memory.
 
-Yes, maybe. Let's see.
+The issue occurs in the EA iteration loop where next_ea() can produce
+invalid pointers due to insufficient validation of ea->namelen and
+the calculated next EA position. This can lead to accessing memory
+that has been freed or is outside valid boundaries.
 
-[...]
+Add proper bounds checking to ensure:
+1. EA namelen is reasonable (< 256)
+2. EA structure doesn't exceed the EA area bounds  
+3. next_ea() result stays within valid EA boundaries
 
-Kind regards
-Uffe
+Reported-by: syzbot+fa88eb476e42878f2844@syzkaller.appspotmail.com
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Cc: stable@vger.kernel.org
+Signed-off-by: Arnav Kapoor <kapoorarnav43@gmail.com>
+---
+ fs/hpfs/ea.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+
+diff --git a/fs/hpfs/ea.c b/fs/hpfs/ea.c
+index 102ba18e561f..7e6e43010fec 100644
+--- a/fs/hpfs/ea.c
++++ b/fs/hpfs/ea.c
+@@ -135,7 +135,31 @@ char *hpfs_get_ea(struct super_block *s, struct fnode 
+*fnode, char *key, int *si
+  secno a;
+  struct extended_attribute *ea;
+  struct extended_attribute *ea_end = fnode_end_ea(fnode);
+- for (ea = fnode_ea(fnode); ea < ea_end; ea = next_ea(ea))
++ for (ea = fnode_ea(fnode); ea < ea_end; ea = next_ea(ea)) {
++ /* Validate EA structure bounds */
++ if ((char *)ea + sizeof(*ea) > (char *)ea_end) {
++ hpfs_error(s, "EA structure exceeds bounds");
++ return NULL;
++ }
++ 
++ /* Validate namelen to prevent overflow */
++ if (ea->namelen >= 256) {
++ hpfs_error(s, "EA namelen too large: %d", ea->namelen);
++ return NULL;
++ }
++ 
++ /* Ensure name field is within bounds */
++ if ((char *)ea + 5 + ea->namelen > (char *)ea_end) {
++ hpfs_error(s, "EA name field exceeds bounds");
++ return NULL;
++ }
++ 
++ /* Validate next_ea() result will be within bounds */
++ if (next_ea(ea) > ea_end) {
++ hpfs_error(s, "next EA exceeds bounds");
++ return NULL;
++ }
++ 
+  if (!strcmp(ea->name, key)) {
+  if (ea_indirect(ea))
+  return get_indirect_ea(s, ea_in_anode(ea), ea_sec(ea), *size = 
+ea_len(ea));
+@@ -147,6 +171,7 @@ char *hpfs_get_ea(struct super_block *s, struct fnode 
+*fnode, char *key, int *si
+  ret[ea_valuelen(ea)] = 0;
+  return ret;
+  }
++ }
+  a = le32_to_cpu(fnode->ea_secno);
+  len = le32_to_cpu(fnode->ea_size_l);
+  ano = fnode_in_anode(fnode);
+
+
+On Friday, 18 July 2025 at 18:10:08 UTC+5:30 syzbot wrote:
+
+Hello, 
+
+syzbot tried to test the proposed patch but the build/boot failed: 
+
+failed to apply patch: 
+checking file fs/hpfs/ea.c 
+patch: **** malformed patch at line 36: if (ea_indirect(ea)) 
+
+
+
+
+Tested on: 
+
+commit: 6832a931 Merge tag 'net-6.16-rc7' of git://git.kernel... 
+git tree: upstream 
+kernel config: https://syzkaller.appspot.com/x/.config?x=f09d04131ef56b22 
+dashboard link: https://syzkaller.appspot.com/bug?extid=fa88eb476e42878f2844 
+compiler: 
+patch: https://syzkaller.appspot.com/x/patch.diff?x=129db382580000 
+
 
