@@ -1,86 +1,166 @@
-Return-Path: <linux-kernel+bounces-736958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD741B0A5C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 16:01:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C212EB0A5C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 16:02:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B527F5A5996
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:01:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5766B3B0857
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C032D1922F5;
-	Fri, 18 Jul 2025 14:01:29 +0000 (UTC)
-Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E718D2DC327;
+	Fri, 18 Jul 2025 14:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qW0ZRugA"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F943398B;
-	Fri, 18 Jul 2025 14:01:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6EFB2D97A8
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 14:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752847289; cv=none; b=q8ofvIi3lBsQclpSwhshqUDMi2wr9Mgl98H+tzbR9T85kuIRUf/3Izui2diwWvvDmwb/a/C40b8kQE0FE4taytqqSrBNW08WizQFVryyvgNZSFJroB9ASR1qVvZfLaXb5YvGDh9mqmuER9tYSEccE9ZuHtpvT9kKOnFjlcbdprQ=
+	t=1752847292; cv=none; b=RClvaatv0VoH45pcECSRypDj7foNghVKiHGO0bz0ZfyBjMcbu4DxJe6HGXnUk0VauYLuJnVIzLIKZphuxwcvnftzXjsHvjW+BOAusf0SjSWf7KGdUwouKwgx3J9Zr6lH51pJIhEHpkKqTNEJ9UiN/j8pay02/MOQekQ0u7K4yJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752847289; c=relaxed/simple;
-	bh=DyuxpNUL4xgUnJwP+uRxB8mktXU+l1QCYKIzstnbAPA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hHjUN+c8kDliwunPukEJDQcxyzYqdBB8AIU6gJccZWl0X23R2yEfNMQa6n8gNyWxtzInNK4Nemh8/L4TUJmH+Cs5AajJiQ3EGE6YlPdyElXDw/8sfc8xDkmTlQwLLt2coXGpe0LPKgjCSX64YMv6uaZ0EybhkR+A7mU059PLheU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
-Received: from localhost.localdomain (unknown [119.122.214.181])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1c823ab2f;
-	Fri, 18 Jul 2025 22:01:14 +0800 (GMT+08:00)
-From: Chukun Pan <amadeus@jmu.edu.cn>
-To: alchark@gmail.com
-Cc: amadeus@jmu.edu.cn,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	heiko@sntech.de,
-	jonas@kwiboo.se,
-	krzk+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	ziyao@disroot.org
-Subject: Re: [PATCH v2 1/1] arm64: dts: rockchip: rk3528: Add CPU frequency scaling support
-Date: Fri, 18 Jul 2025 22:01:10 +0800
-Message-Id: <20250718140110.308996-1-amadeus@jmu.edu.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <CABjd4Yxz=mrNpqgnHSgD0tr4ALH3YW9MvLULES568yHNFiPB_w@mail.gmail.com>
-References: <CABjd4Yxz=mrNpqgnHSgD0tr4ALH3YW9MvLULES568yHNFiPB_w@mail.gmail.com>
+	s=arc-20240116; t=1752847292; c=relaxed/simple;
+	bh=6qUNR7GXVCYo+1bPYXlhFU/JJDnvM1+CbJ56g/528IA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=A26p6R2bR4RAspHz7u8nhhFR82DfTMLwt86M6ppHkqXfeb4nnJ3EXgwIUE1dtZLb80kEdvAOon9UlXhvDHi9+lsEFWJ1BIpjiRN6Rngaoa9mo2eCx29hgPeUksAW2IhSjkkC5xPLpIgIgNeznxJLMj8mS/LYD8JYHwysCCyF8ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qW0ZRugA; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2369dd58602so16911275ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 07:01:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752847290; x=1753452090; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Lih3tMFn734cUO8oMeOE2pBVAMcrztqc4UNLK1aIv7M=;
+        b=qW0ZRugAw/KwiXrfCi0mPFoQbjjcPAruyJ7Q3FaendrNz7uXXByrfOE6CAdDOf0D0B
+         8f8+kuQYvLtZloF1x/yW67NahUz/+ECovnyZFsGO9HHNRtNyjvYgGkyTsT06987NEHtm
+         jPQks+zUvxwiFQxLN7dee7jMUx4XtPkoUT19mDt0dGjZnpC07ONKPQVVuyrdncCUkJt4
+         8PvApOy42KLsSqqHyahqSjjLK97duwNHPX2lZUYUBEGRSicwf5YqzeK4PP8JdB7uexSq
+         h+OOPL07MylGENyaEvBr4UkCirdsLKcIa2+muqMMDznqGmUBn6Q9TUllxuplcnoF/sRT
+         +cWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752847290; x=1753452090;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Lih3tMFn734cUO8oMeOE2pBVAMcrztqc4UNLK1aIv7M=;
+        b=k4knJUhnV1+3fEyoAeH90VO//mB8h9kbkuBE1I6AeA3vRgn5ZU4r9mqCHBTEX82FmO
+         PaHwzS5MSvThYX0mLCHcQfejFHlSHyMMd2gRVP8NqmlkwyGl/dFc5rJETRyTK3OcGVTi
+         KsFX0cA9g7lYHKw3YMIQe4Fv40dOXTfMzL/uLjHuu7v1sODarsn/86AhdznDcQQ2bRQS
+         OkudZeZov3vHLwpJgn/BzBuoC7brrg/WTtFcME/Latdy3nCERGnWeJuUbt5jyu43cE+x
+         EEqrGI9AHJM3ROYmvrhQStyI2drqnTbsgE/hqkuIiUzcrSJ027MgCRu5+F3TkAFymRIe
+         NYFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUz3eZwyvVmfzhr/vvLXTUlANDfkKawuYzwRIoOLhoBT1N4S+jNJb73WnRBd6eZDgA29DkdiJRVE5zxnbY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoCfQK+hHxDIc9TZV8Fa7sR4svoZCNSvz2ORpy1wNuqVzTntxS
+	lMsWLKmK1EAQUOPOFsre5wn0y52yZdQ/o2NrS0yZHoSdbE8ouL3hDiXbNHE6b8V/+SvhBcGi2QW
+	HnKix1Q==
+X-Google-Smtp-Source: AGHT+IHP07AjLXzCOdd3HKA4TPbL/Fpp7KeEDJaInxBKjZEon2PeEt9DRu0eo8YWnQ8vO58ZnOMfDZCgpqc=
+X-Received: from plbkp8.prod.google.com ([2002:a17:903:2808:b0:235:ed02:286a])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ea04:b0:234:c8ec:51b5
+ with SMTP id d9443c01a7336-23e2578f517mr170318515ad.53.1752847290227; Fri, 18
+ Jul 2025 07:01:30 -0700 (PDT)
+Date: Fri, 18 Jul 2025 07:01:28 -0700
+In-Reply-To: <aHo7vRrul0aQqrpK@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a981dd6d34f03a2kunm16f712c5ce93
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDTUNKVhhKGRhIShlPHxgZQlYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlKSkJVSklJVUlKT1VKQ0pZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0tVSktLVU
-	tZBg++
+Mime-Version: 1.0
+References: <20250718062429.238723-1-lulu@redhat.com> <CACGkMEv0yHC7P1CLeB8A1VumWtTF4Bw4eY2_njnPMwT75-EJkg@mail.gmail.com>
+ <aHopXN73dHW/uKaT@intel.com> <CACGkMEvNaKgF7bOPUahaYMi6n2vijAXwFvAhQ22LecZGSC-_bg@mail.gmail.com>
+ <aHo7vRrul0aQqrpK@intel.com>
+Message-ID: <aHpTuFweA5YFskuC@google.com>
+Subject: Re: [PATCH v1] kvm: x86: implement PV send_IPI method
+From: Sean Christopherson <seanjc@google.com>
+To: Chao Gao <chao.gao@intel.com>
+Cc: Jason Wang <jasowang@redhat.com>, Cindy Lu <lulu@redhat.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, 
+	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, 
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>, "Kirill A. Shutemov" <kas@kernel.org>, "Xin Li (Intel)" <xin@zytor.com>, 
+	Rik van Riel <riel@surriel.com>, "Ahmed S. Darwish" <darwi@linutronix.de>, 
+	"open list:KVM PARAVIRT (KVM/paravirt)" <kvm@vger.kernel.org>, 
+	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Fri, Jul 18, 2025, Chao Gao wrote:
+> On Fri, Jul 18, 2025 at 07:15:37PM +0800, Jason Wang wrote:
+> >On Fri, Jul 18, 2025 at 7:01=E2=80=AFPM Chao Gao <chao.gao@intel.com> wr=
+ote:
+> >>
+> >> On Fri, Jul 18, 2025 at 03:52:30PM +0800, Jason Wang wrote:
+> >> >On Fri, Jul 18, 2025 at 2:25=E2=80=AFPM Cindy Lu <lulu@redhat.com> wr=
+ote:
+> >> >>
+> >> >> From: Jason Wang <jasowang@redhat.com>
+> >> >>
+> >> >> We used to have PV version of send_IPI_mask and
+> >> >> send_IPI_mask_allbutself. This patch implements PV send_IPI method =
+to
+> >> >> reduce the number of vmexits.
+> >>
+> >> It won't reduce the number of VM-exits; in fact, it may increase them =
+on CPUs
+> >> that support IPI virtualization.
+> >
+> >Sure, but I wonder if it reduces the vmexits when there's no APICV or
+> >L2 VM. I thought it can reduce the 2 vmexits to 1?
+>=20
+> Even without APICv, there is just 1 vmexit due to APIC write (xAPIC mode)
+> or MSR write (x2APIC mode).
 
-> > Alexey suggested that we remove 408MHz, 600MHz and 816MHz from the
-> > opp-table. Do you think it is acceptable to use 850mV for 1008MHz?
->
-> But why 850 mV? Vendor .dtsi [1] implies that chips with leakage
-> values of L0..L4 might be unstable at this frequency with a 850 mV
-> supply and need 875 mV instead.
+xAPIC will have two exits: ICR2 and then ICR.  If xAPIC vs. x2APIC is stabl=
+e when
+kvm_setup_pv_ipi() runs, maybe key off of that?
 
-Because the actual frequency generated by 850mV is closer to 1008MHz.
-Since we removed frequencies below 1GHz, all remaining frequencies are
-generated by PVTPLL. I think it may not be necessary to use the maximum
-values of opp-microvolt* ?
+> >> With IPI virtualization enabled, *unicast* and physical-addressing IPI=
+s won't
+> >> cause a VM-exit.
+> >
+> >Right.
+> >
+> >> Instead, the microcode posts interrupts directly to the target
+> >> vCPU. The PV version always causes a VM-exit.
+> >
+> >Yes, but it applies to all PV IPI I think.
+>=20
+> For multi-cast IPIs, a single hypercall (PV IPI) outperforms multiple ICR
+> writes, even when IPI virtualization is enabled.
 
-Thanks,
-Chukun
+FWIW, I doubt _all_ multi-cast IPIs outperform IPI virtualization.  My gues=
+s is
+there's a threshold in the number of targets where the cost of sending mult=
+iple
+virtual IPIs becomes more expensive than the VM-Exit and software processin=
+g,
+and I assume/hope that threshold isn't '2'.
 
---
-2.25.1
+> >> >> Signed-off-by: Jason Wang <jasowang@redhat.com>
+> >> >> Tested-by: Cindy Lu <lulu@redhat.com>
+> >> >
+> >> >I think a question here is are we able to see performance improvement
+> >> >in any kind of setup?
+> >>
+> >> It may result in a negative performance impact.
+> >
+> >Userspace can check and enable PV IPI for the case where it suits.
+>=20
+> Yeah, we need to identify the cases. One example may be for TDX guests, u=
+sing
+> a PV approach (TDVMCALL) can avoid the #VE cost.
 
+TDX doesn't need a PV approach.  Or rather, TDX already has an "architectur=
+al"
+PV approach.  Make a TDVMCALL to request emulation of WRMSR(ICR).  Don't pl=
+umb
+more KVM logic into it.
 
