@@ -1,125 +1,143 @@
-Return-Path: <linux-kernel+bounces-737233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27BFBB0A990
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 19:35:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77BAEB0A993
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 19:37:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0E97A46AB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:34:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12FF11AA868C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED2E2E7651;
-	Fri, 18 Jul 2025 17:35:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE792E765C;
+	Fri, 18 Jul 2025 17:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UmYIc2eg"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Du+zVQmT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF8D80C1C;
-	Fri, 18 Jul 2025 17:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C39A315E5C2;
+	Fri, 18 Jul 2025 17:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752860103; cv=none; b=D8WBm1ARlDS81/Huy+KF/UO9eGhjCKE3/pcgSGtFCuwK7ZzAGjhckOD5lKW3T36udzkvfO5PKe9anuAe4r9RQ2DnIv14mhKL3aIR6CHIlAJBPbvu+HPfMOkkk2bxHPj8lotVpRX7PdgBSeYvQjnCMmG9u1P8B1PbOlxXc1UOpiA=
+	t=1752860211; cv=none; b=VjoNzuBPywtmxVu7xbG9SFTDvkoy+TjGYxJKv3sGC8tjAzgbAUNjX2qbCe2VmcFZlJN+MeVuYCl4sLj7LO1Rfx4ffyZV68PbLElL2Z/TN1306GqAxKYENwxQ/rgJ1C9Qm+S2hI/1078CK18OZ5G+nYXMJUmizSFp2/M2WP4+vZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752860103; c=relaxed/simple;
-	bh=5H3s41WG2tVQpIk2QxusXyG4JN7gcoy1GFgeMIst1OY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nbN5+ptsjJ8XG+9vwVOdtN8bzuOUZJZMSNcoX0YKqYYChsFwwNOY5llFy53ZfxlGbJlDBLp7bEewVz3JuiGhv3jWSfWHOvn+BT9E5EtSBoe/LJ3TlShlwpwO1t0pissy3hWIP/MRjuw4/BJEYChlMBXlzExs1zJxE6+lNMsGdpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UmYIc2eg; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id C6525444F8;
-	Fri, 18 Jul 2025 17:34:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1752860091;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nfdQECwsAKd69oCQQPZXeJ3b8ObsrMbJL3v2gq4m8TM=;
-	b=UmYIc2egaj26juBgJQR+c78DD5Csk9bBatZYAbTD3lMAHKw5HZFfAtWRzUVmfDvMUbyMKC
-	tBn0jwwRswN43TxOcV3Gwgb548OHovR98Ju2XQFHASM/IOugi5oBAh3SNQGXr8YCG1SKah
-	gnSSvFhz9xkVzCWeMh3COa/bcI3MWTS18v9ARc8qGNQKyYq+9YsNQ/UZosBqXlJQO6PQwA
-	Uq5DG0mFC6xY0Boy7Rub7tgkBERWRL1swV8grxzHQZ+G3Fjz5jfR84JOn2svm1FIurvXQt
-	EnuS4WcXvI+jnn+HrG7BNUjCzJ0WVnmH5VwSI1+RvtP/CpF0K6HpGHPWv7OwNg==
-Date: Fri, 18 Jul 2025 19:34:46 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
- <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
- linux-arm-kernel@lists.infradead.org, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
- Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit
- <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>, Marek
- =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>, Oleksij Rempel
- <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
- <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
- mwojtas@chromium.org, Antoine Tenart <atenart@kernel.org>,
- devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Romain
- Gantois <romain.gantois@bootlin.com>, Daniel Golle <daniel@makrotopia.org>,
- Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-Subject: Re: [PATCH net-next v9 01/15] dt-bindings: net: Introduce the
- ethernet-connector description
-Message-ID: <20250718193431.147df503@kmaincent-XPS-13-7390>
-In-Reply-To: <20250717073020.154010-2-maxime.chevallier@bootlin.com>
-References: <20250717073020.154010-1-maxime.chevallier@bootlin.com>
-	<20250717073020.154010-2-maxime.chevallier@bootlin.com>
-Organization: bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752860211; c=relaxed/simple;
+	bh=3G0DSuma9EoRh+0cSstUnb2PnhnazXDdqCX1tROd9/U=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=iraxiyvqFVihwFW27b2hPZYtFrSOa1BL2/SzhZ00+lK3+YZWbYdW3ZN2abbOALjWj4BvDxbPrWgA4NrbEQzS6lAhQiI4iRjNJT8V7gIqaX2inQv/Dvk20O87FwLN1S7rhvKi0IuSnUUVhwJJsOCTqPsFdf4/Q0ox9x3BzTnkyCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Du+zVQmT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC6A1C4CEEB;
+	Fri, 18 Jul 2025 17:36:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752860211;
+	bh=3G0DSuma9EoRh+0cSstUnb2PnhnazXDdqCX1tROd9/U=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=Du+zVQmTS6WbjJUtbJ4BCs7wJ7Vipjf6ogBECh36POXjccz9iROAlMR7PehrAUOiP
+	 eVkeyvrSjIhjjbd+vd1bsEgxzVIKFbXJhaPm7jyVOe7gnFzcZlyz0wC9mGHiNkRcgM
+	 pW9QfY3xN91fwSPtH8yqODM5gx3tbtx7fgwS4ffpfn8AwH0/+zmtm5FD7ZmkO3UOOw
+	 PTdLfHWigxSTSEvaIjtNSLB56K+cdYqaCKn1ifaTBkUR3uAwbanh2N2gKthfdinxDS
+	 +UJV7jMcdbpnhcgYdYJI4RaKTCffE6arC9BxWTu+zbHNkROo2TvEeEEzpb1CvlerOI
+	 Ju8fURhBaz5wA==
+Date: Fri, 18 Jul 2025 12:36:48 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Mario Limonciello <superm1@kernel.org>
+Cc: David Airlie <airlied@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	Simona Vetter <simona@ffwll.ch>, Lukas Wunner <lukas@wunner.de>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:INTEL IOMMU (VT-d)" <iommu@lists.linux.dev>,
+	"open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+	"open list:VFIO DRIVER" <kvm@vger.kernel.org>,
+	"open list:SOUND" <linux-sound@vger.kernel.org>,
+	Daniel Dadap <ddadap@nvidia.com>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH v9 9/9] PCI: Add a new 'boot_display' attribute
+Message-ID: <20250718173648.GA2704349@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeigedtjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthhqredtredtjeenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefguddtfeevtddugeevgfevtdfgvdfhtdeuleetffefffffhffgteekvdefudeiieenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgduheemfegvgeemtgehtddtmeekvddttgemiegvtddumeejkegrtgemvdgtugefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduheemfegvgeemtgehtddtmeekvddttgemiegvtddumeejkegrtgemvdgtugefpdhhvghlohepkhhmrghinhgtvghnthdqigfrufdqudefqdejfeeltddpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeefuddprhgtphhtthhopehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtp
- hhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhmshhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrgh
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ee2907ba-bcda-4e60-a764-078c59b463a8@kernel.org>
 
-Le Thu, 17 Jul 2025 09:30:05 +0200,
-Maxime Chevallier <maxime.chevallier@bootlin.com> a =C3=A9crit :
+On Fri, Jul 18, 2025 at 12:29:05PM -0500, Mario Limonciello wrote:
+> On 7/18/2025 12:25 PM, Bjorn Helgaas wrote:
+> > On Thu, Jul 17, 2025 at 12:38:12PM -0500, Mario Limonciello wrote:
+> > > From: Mario Limonciello <mario.limonciello@amd.com>
+> > > 
+> > > On systems with multiple GPUs there can be uncertainty which GPU is the
+> > > primary one used to drive the display at bootup. In some desktop
+> > > environments this can lead to increased power consumption because
+> > > secondary GPUs may be used for rendering and never go to a low power
+> > > state. In order to disambiguate this add a new sysfs attribute
+> > > 'boot_display' that uses the output of video_is_primary_device() to
+> > > populate whether a PCI device was used for driving the display.
+> > 
+> > > +What:		/sys/bus/pci/devices/.../boot_display
+> > > +Date:		October 2025
+> > > +Contact:	Linux PCI developers <linux-pci@vger.kernel.org>
+> > > +Description:
+> > > +		This file indicates that displays connected to the device were
+> > > +		used to display the boot sequence.  If a display connected to
+> > > +		the device was used to display the boot sequence the file will
+> > > +		be present and contain "1".
+> > 
+> > >   int __must_check pci_create_sysfs_dev_files(struct pci_dev *pdev)
+> > >   {
+> > > +	int retval;
+> > > +
+> > >   	if (!sysfs_initialized)
+> > >   		return -EACCES;
+> > > +	retval = pci_create_boot_display_file(pdev);
+> > 
+> > In addition to Mani's question about whether /sys/bus/pci/ is the
+> > right place for this (which is a very good question), it's also been
+> > pointed out to me that we've been trying to get rid of
+> > pci_create_sysfs_dev_files() for years.
+> > 
+> > If it's possible to make this a static attribute that would be much,
+> > much cleaner.
+> 
+> Right - I tried to do this, but the problem is at the time the PCI device is
+> created the information needed to make the judgement isn't ready.  The
+> options end up being:
+> * a sysfs file for every display device with 0/1
+> * a sysfs file that is not accurate until later in the boot
 
-> The ability to describe the physical ports of Ethernet devices is useful
-> to describe multi-port devices, as well as to remove any ambiguity with
-> regard to the nature of the port.
->=20
-> Moreover, describing ports allows for a better description of features
-> that are tied to connectors, such as PoE through the PSE-PD devices.
->=20
-> Introduce a binding to allow describing the ports, for now with 2
-> attributes :
->=20
->  - The number of lanes, which is a quite generic property that allows
->    differentating between multiple similar technologies such as BaseT1
->    and "regular" BaseT (which usually means BaseT4).
->=20
->  - The media that can be used on that port, such as BaseT for Twisted
->    Copper, BaseC for coax copper, BaseS/L for Fiber, BaseK for backplane
->    ethernet, etc. This allows defining the nature of the port, and
->    therefore avoids the need for vendor-specific properties such as
->    "micrel,fiber-mode" or "ti,fiber-mode".
->=20
-> The port description lives in its own file, as it is intended in the
-> future to allow describing the ports for phy-less devices.
->=20
-> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+What's missing?  The specifics might be helpful if someone has another
+crack at getting rid of pci_create_sysfs_dev_files() in the future.
 
-Reviewed-by: Kory Maincent <kory.maincent@bootlin.com>
-
-Thank you!
-
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+> So IMO it /needs/ to come later.
+> 
+> > 
+> > > +	if (retval)
+> > > +		return retval;
+> > > +
+> > >   	return pci_create_resource_files(pdev);
+> > >   }
+> > > @@ -1671,6 +1716,7 @@ void pci_remove_sysfs_dev_files(struct pci_dev *pdev)
+> > >   	if (!sysfs_initialized)
+> > >   		return;
+> > > +	pci_remove_boot_display_file(pdev);
+> > >   	pci_remove_resource_files(pdev);
+> > >   }
+> > > -- 
+> > > 2.43.0
+> > > 
+> 
 
