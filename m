@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-736347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37517B09BCD
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:55:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 76EADB09BD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:58:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE14A3AFEA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:55:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3793FA4033C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:58:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D07AD20FAB6;
-	Fri, 18 Jul 2025 06:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E21B920E70B;
+	Fri, 18 Jul 2025 06:58:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p3IOen/I"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N4etpxKs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E35B191F91;
-	Fri, 18 Jul 2025 06:55:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40356191F91;
+	Fri, 18 Jul 2025 06:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752821732; cv=none; b=MnqOncmcU/G5odb59tt+lHtnFE2n9wu4iuV+fTesLfgGxZ3oJMus5J6zHXCieGLq734F7hYoE+KB3VHq7JvvaKy81Lb+tRe54GICcNrb+dtGEvgJsAm8CWQTNtv/C9oRzyFuz3HgNhVLIEgVpMV/XD6Aej/mdNK/bXKjSh5JnyM=
+	t=1752821905; cv=none; b=lEYb6Wsx/8BRxIa/98iUEhjQCtvaQmmj1vBfsq/NJX+bgghdG1U0zRLOCi8BFNKvaxPkHAhCYI5gQ82wuxZE4sImLoOir5mFl/pQFW2H6Y817cLx5BC93qDe4pdI3jD4kd8iceSkF/5Rkc445/LBpyTflF2gVVEC9bmAidsEz9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752821732; c=relaxed/simple;
-	bh=zC5sbJLaBPq7+QLSjaWrQxbXPqynzgfL5jF7j3Gn6Xo=;
+	s=arc-20240116; t=1752821905; c=relaxed/simple;
+	bh=T5uSaa59ZcpxKsSpCtMW9Kqg9CzSkSltBAd6eZ7yKzk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pD09WYd7Js9PN0dXNcWnP4JRfDVr8rMrSkJOvIZdKFtxZ8stAhnDAdmX2uJe5izonl/7yg17ZOR0iUZjDfo6t81LqRKrhepVWj7zlzsFFBHpwUc1YFDAnANhnD82AO8SYGvaY5h/NY3CtkP4ja8Tx32pqRWxe0xjS5BHjr+38NY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p3IOen/I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD96BC4CEED;
-	Fri, 18 Jul 2025 06:55:28 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=u+FM9RwYY6+8Kt1KFLQOXcchcJ7l/FYDHF8yVD5qHxpyPxNkxGSETs7ZZJ3PkQVJ/aeoQzJ9J1fNr8/N5cm9dCK7kHUGE2XeFjfgNErpapOEwN3pWUrFDkkZ7QYlFDU3GK4By0qwvms+GUx0YsGilRsP+xtEmPp7GuJKhweOUt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N4etpxKs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E0C7C4CEED;
+	Fri, 18 Jul 2025 06:58:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752821731;
-	bh=zC5sbJLaBPq7+QLSjaWrQxbXPqynzgfL5jF7j3Gn6Xo=;
+	s=k20201202; t=1752821904;
+	bh=T5uSaa59ZcpxKsSpCtMW9Kqg9CzSkSltBAd6eZ7yKzk=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=p3IOen/IJytT9Fg3awcd+OyXVXniQPakbCYfsO06jkdhEkbHEADHV6Ht4HaJDydUX
-	 i7cgDxttc+HfNbScUfSXjibwDLdSzxUP2sDgln8ve7lGkGtkibRmb86GPvXsJmEO8e
-	 eO1bJ8Mj7fqIKBZaZyOQpzzb6kz9khFzHppKcgJJr9RdCZD0yRBqGeyVHxoLs4GCeU
-	 d6KslBsh+Wi8zafYNhAvLRTxHMAadVvL4HSxbVkn+n4lBv27MpZy15e/HPEXoezD84
-	 omIb7yd9U6fJLse4R5F1PN2XP/T0uBPVrIv15YY5Ko8Ops82YqgbhNWe3MTEZNTj4W
-	 602x5x3NZs8JA==
-Message-ID: <5ff2bb3e-789e-4543-a951-e7f2c0cde80d@kernel.org>
-Date: Fri, 18 Jul 2025 08:55:27 +0200
+	b=N4etpxKsapQJmAfKa0yqNoo3v3Q4I5eTGkUtgELe6/VKbo9KdTdvg+ODQmmXZIuR1
+	 4eEqWE4a1mPv1K/H/Wg66+ZgzoqtsXmnV/+62phLdnu/VScJLRroQD3YwFTfoKgG8K
+	 1+LCkvlltMT2HQ7j5BCHDUryaFi3r5P9HVLYg4R/LzD3JniII+fK5L1UjQnA0Wa8ip
+	 ssrilNxGvor+u21xXf6NqlGxVlrP5c2pgtO+18hnaerBU0JGK0nU43WKn2t2nNVUdP
+	 rFfIVj62ZKD7mx7cD9sVyO33ZB9CmoXzp3iYwpbEyPUteW5a/IbYHDQFWRRZiASRTT
+	 9slZ1HNJ3rj+w==
+Message-ID: <95b3a17e-a5a2-4d84-960c-2539af9d5450@kernel.org>
+Date: Fri, 18 Jul 2025 08:58:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 1/2] dt-bindings: dpll: Add clock ID property
-To: Ivan Vecera <ivecera@redhat.com>, netdev@vger.kernel.org
-Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>,
- Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
- Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH 2/3] arm64: dts: s32g3: Fix whitespace issue in device
+ tree
+To: Dan Carpenter <dan.carpenter@linaro.org>, Xu Yang <xu.yang_2@nxp.com>
+Cc: Chester Lin <chester62515@gmail.com>, Matthias Brugger
+ <mbrugger@suse.com>, Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
+ NXP S32 Linux Team <s32@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Prathosh Satish <Prathosh.Satish@microchip.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Michal Schmidt <mschmidt@redhat.com>, Petr Oros <poros@redhat.com>
-References: <20250717171100.2245998-1-ivecera@redhat.com>
- <20250717171100.2245998-2-ivecera@redhat.com>
+ <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ imx@lists.linux.dev, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1752703107.git.dan.carpenter@linaro.org>
+ <52960eb1-4432-436b-89aa-d50fc7da2c3a@sabinyo.mountain>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,25 +108,22 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250717171100.2245998-2-ivecera@redhat.com>
+In-Reply-To: <52960eb1-4432-436b-89aa-d50fc7da2c3a@sabinyo.mountain>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 17/07/2025 19:10, Ivan Vecera wrote:
-> Add property to specify the ID of the clock that the DPLL device
-> drives. The ID value represents Unique Clock Identified (EUI-64)
-> defined by IEEE 1588 standard.
+On 17/07/2025 00:46, Dan Carpenter wrote:
+> Checkpatch points out that this should use spaces instead of tabs.
+> "ERROR: code indent should use tabs where possible".
+> 
+> Reported-by: Xu Yang <xu.yang_2@nxp.com>
+> Closes: https://lore.kernel.org/all/u7glt7mn33lbdeskbr4ily6tjjifvffy64llwpi5b2rrhx5tnv@y2h2y3oz3xc4/
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
 
-With the exception of clock-output-names and gpio-hogs, we do not define
-how the output looks like in the provider bindings.
-
-I also don't understand how this maps to channels and what "device
-drives a clock" means. Plus how this is not deducible from the compatible...
-
-So many questions.
-
-And your driver code confirms that this looks like misrepresenting
-consumer properties.
+Patches were not merged, so this should be squashed there... or you
+meant they went with Greg USB? Then no, that's dissapointing, you are
+not supposed to send DTS patches to Greg's subsystem.
 
 Best regards,
 Krzysztof
