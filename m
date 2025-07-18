@@ -1,229 +1,140 @@
-Return-Path: <linux-kernel+bounces-736752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B9AAB0A164
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:58:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9329B0A172
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:00:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 820733BF0A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:57:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B0971693CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C4312BDC32;
-	Fri, 18 Jul 2025 10:58:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFE092BDC11;
+	Fri, 18 Jul 2025 11:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CqzGjynK"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="VPZjAuiC"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4FE2BDC02;
-	Fri, 18 Jul 2025 10:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DDD02376F7
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 11:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752836280; cv=none; b=tpQUqkm6PljuyYeIkf+pLE3XJyqOWIxqU2+Zyit6wM7GPI4J0NVJPRttk1hlSytw6VtbZuDcbEbwOLDUVVy+kXmSTOUZ6NmrQUSt06CevI9y0F00QPkBu0X/M4qTaKhzIqOAQzp374qFeYOoJEU9Jt7gYdPw70MksfYDLzdgtqY=
+	t=1752836427; cv=none; b=FxfpylpTuFGzMVDIXragcEIIaSFSQga2qV6DSvkAzJ1Mm52Hsr7t06+d3wtcfmVahwveB73Mf35gPxL7F/iV/tkLPdBQEuHDvbYqekXEdnLBGbDCl0jflLY2evrQuiAmy+6mux4cr/9gVnRA+pjT/YhrQuTN4Oy/C1jNobNqQL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752836280; c=relaxed/simple;
-	bh=n56fvNCbZYpjA+6v2NlTwoRSF0+TcObwWezUlSX3UEo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rAmDIlU6aaFTkAzRiPrXND+U0lzC11vORBU6kUuFFXd3mi5fYWTF+ixyN1rjgEPa8BKdmzL4gw5m7nzqPCBUgbO/F3MHge+GDG2+WTtcZpZ3+OKL+k6Ioih1Q5lcTA9P9rur4Y0Mw9bFME2GDGsvGrYWfAhF4ut5+jngo6qsVQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CqzGjynK; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b170c99aa49so1385837a12.1;
-        Fri, 18 Jul 2025 03:57:59 -0700 (PDT)
+	s=arc-20240116; t=1752836427; c=relaxed/simple;
+	bh=QshWU78gg8gxdee5BtQnCbEaY6Tmctropapxb3/nbNQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kQcDPLtF/V0F04S/WY2QuaBuZQtBmHoTmM957ydd2RYI+ESfY8Sd+S4yv94/gl4Tuht0LTG4AH/2NYYTvPa3zrsiloCKGsSzYDxy+WnQo8hztAp1sMejD/6zVpH5pb6lILk9NLBLx9g8vRv8yZiHChP+fh/EtExqDGVPWLYGELg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=VPZjAuiC; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-60c9d8a169bso3415420a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 04:00:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752836279; x=1753441079; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=crJfUyaZFUd3zm6f6eWNF5fFGcJayPgP/WBKMvt7miw=;
-        b=CqzGjynKdOKP+xXfcfqluy4WqJdDcA3qbEMbVzJ3s5Up90FnrmS7VCT4fjY2uHgy6J
-         YUPAcbFSjbgunpbDFuUA+Y/BESXI/3/gQQQ1/3t5pDzC1HLkf0b41G0ZSX8A7kt79wjJ
-         jjDLIdp/nha45tlM0lcQHY43CYi+eT68+xO2v+pXje2w634vauptOUkYXt7FszFXA6IO
-         2ybP9Nzwd9ZzKxUntBzHG6c85acA+YpsNK4Y7Ui+aQSEIKAMIaxSiiDs8/GlQCFX0NAn
-         KAc9jq9bnyLvn90rl7B0xnDxswpU0ByMtqK+P+ss/2SAkWEizQV1Jly2TxBbwfYOsiQd
-         Sjig==
+        d=tuxon.dev; s=google; t=1752836423; x=1753441223; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8G9viKp190Snv9/y4e9WNoJDJ/21KIBMuhohTjZv+R8=;
+        b=VPZjAuiCRDQlyRZXUbdEEgMkAx5+kvoVXSSkuu5glSS53EFs40C1HE/ejxlVaAFtAZ
+         unrnZOdLNWlPwWdARAxip2qPmmeTfAEwsqresnVKND+NazfMPVsVTWdnX+zxlB390ivo
+         pSu1na3DUHlh2eHQtZ79blm2qo1Nm59CkEqEJvxdqNBjupm5B6yuahdIXKnadPWWTuUL
+         lTpM7/wJucUe7U8qhJMIdDCINh2gXnPEY5spnjCS186c0HC44UMJipjj6HTa7TucSfSK
+         8QCABujtK8GVluGDcIC0vhJmwnDQfhn6Tk/PAsuJL6xWNi6gWxLLy1Zsi/yetlioBARl
+         nWFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752836279; x=1753441079;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=crJfUyaZFUd3zm6f6eWNF5fFGcJayPgP/WBKMvt7miw=;
-        b=ONf8OBY3wgDFB23gR/lHZrm9L4m+ZllNXuJGEJCGDfYz6ddI40BWJC+aRPryMFD+8D
-         Phx24IUAyFAyPtIZdTqKBV0Vn90+sX2Eot5NGMiiiuCFlYe79z3sLteJp4Ha08AzuB+i
-         bdfeld77UyslPAVliP5zdsFfFamVJHaJrORTwlZpmt3x60RTW5os9YV05gdCTjtANfKu
-         Ey727gOSIVqaepg+8+uJXJacYgdcebpwaiLvGFmzsCiNnR10qPGHRS3ZHsBkX8kFyuRG
-         wAj72XLNeCAPIWI8tuBSFyW/0jc36SgSyPVfHb6sbVCYJj2wppW9mXy71IADREm8xiNy
-         sqVw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1KgAtMq/4Wemmg08J4eIquEpM6U378hq+1Xw7gLlQksm5G+rHlqRn1hd5gLX3F3mcJwPQKrl8OHk5lmCJkenV9A==@vger.kernel.org, AJvYcCVDbqXknISNJ5HC3LWQAmSlv4fQMDX9c3uFCHgkiDNBxYe3z9O22gKJPmOApKKyXaQWp2oaVRScHsvv8IA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzBbjAcEfADWekC4HQIcWiw9nAcrLYQNZgngOdfQkgAXcAd/KT
-	fP1az9BrprpsS45wK3sB/0K/JnFARBIYxqOHzxs7jk+mwe/7uoULGbijdtTHinOUcz68/Njt7Wk
-	jzzwAXNFcgPbcVaiC4RwmipL6s+E+b2KZuXXe
-X-Gm-Gg: ASbGncsWmyUkT+NGIhLVkntW0cjsqBAaVAff7kbNsJJWKOkVZofl7GuF0sJS6WHXw09
-	EtA/nCnre4MoYRQzS2Kxz5TR2Auq9XM4mrLS0Vfm0Z2meuXaQowDoeicz0Iol5b5+Igp5zzvXs3
-	Vx0J/EafLmLPJpcsHVxP1JkuhzD/uXdfeVSzu+f1UyCOYvEVNPGFiZIsH96LHqizkp+JmZNfdVB
-	YCN
-X-Google-Smtp-Source: AGHT+IG3K+OJchpvRdKs3tFgBFIPgoho17ujC5cDtqCUPyeRXXDSSMCfEs84NE1rrM2vaVhaZ1ZL/UjRgJAtRS/XdRE=
-X-Received: by 2002:a17:90b:57c7:b0:311:eb85:96df with SMTP id
- 98e67ed59e1d1-31c9e75b966mr17155358a91.17.1752836278553; Fri, 18 Jul 2025
- 03:57:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752836423; x=1753441223;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8G9viKp190Snv9/y4e9WNoJDJ/21KIBMuhohTjZv+R8=;
+        b=vagQ5M3w/hDTE+yYjuAbeaagK/xwoyIT+WbLV1RHbgBmXH9DDuFwVFOcTss0vLrC0Y
+         BnopVvD3jS20DwGURTNWtjtS058V5FUZH2Rnyaqa+I5qIwjla73SiE9h9N0znIrumzF5
+         X6TsqwoAeWsARYS40RmV1qp7laJY0Ac5cirY+LF2UVRgPzk+AAdtnShaCQHiOvtDAPGW
+         DsqQbvtkyuAxOjWyz1MRhYUtSDGpsnZEGfmpFna7MFqkEhMHK1Q1+xSC7VyrCGAl707b
+         oPom0F3eUoYsOH1t01qwbME9MiV7KHzPhUtY5Tu7jRP3fdmOjFS5H6KVmZdkLHAfaQhA
+         HcVg==
+X-Forwarded-Encrypted: i=1; AJvYcCV4D7EEmQ6ZFb8t6X6m4QZ4XusDevnpMBWbvrinklwDbVgW6DjuUXZgSjAbBoC8WizDhSO+oQqdo4BBRj8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIhAUeU6TMsuBgchKqWWZJKJrfe4ksTQ+Wsr3kazH2iB7iclbM
+	lhVkAf0KL8G0FrDGrhyxhKuqbsPIj6iWTZoxQWuVkFd3rS7hbNjzaNe1zguNBdGnAC8=
+X-Gm-Gg: ASbGncv+sFO8ALtUjcLrp6WWS4h/hKZqPCoNUOQxprNEwXBjCco60AFTNXXZ95symIi
+	9w3m0DVqPDB290/TqgPwj4jcwzt2briWkvNwzOIXHryQQ8/oCoa7CZZqORiS8TiWo1Ugv/Pn0QG
+	HHSy0dWAcCES7mJ2VA8yGQm7/vjbPfp7ce6T7x9jB5Y1C70wU5fnLzrYXTjMFH14gcGon7rO8z2
+	TZTcLC42voLM8ck3ghiYYPlW9X42Sy/aSHz0OWLfolgnGpW50c+6u/1fE44wpUru1EU6bhltZFJ
+	NnxLMq8qHgWJJekS2Ugqg0o0h6DW8Nj9b33nR/CskH86Xzb6645vWDqB67TmKgZYm6FmjyL7/aS
+	xxSSTJz+FvQIL577XME+8Djp/iQK7fg==
+X-Google-Smtp-Source: AGHT+IEWR5nv/oQJzwgF0qcajAF2Z8LBQapmjvceGu3HRHJPS7XWZrDCVWw4hyx2KUGl8xQpn1ru3A==
+X-Received: by 2002:a17:907:c5cd:b0:ae3:6744:3661 with SMTP id a640c23a62f3a-ae9ce10c4f9mr786897166b.44.1752836422360;
+        Fri, 18 Jul 2025 04:00:22 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.30])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6c79c6a7sm101144766b.26.2025.07.18.04.00.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Jul 2025 04:00:21 -0700 (PDT)
+Message-ID: <fe20bc48-8532-441d-bc40-e80dd6d30ee0@tuxon.dev>
+Date: Fri, 18 Jul 2025 14:00:20 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250704052529.1040602-1-shengjiu.wang@nxp.com> <20250704052529.1040602-2-shengjiu.wang@nxp.com>
-In-Reply-To: <20250704052529.1040602-2-shengjiu.wang@nxp.com>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Fri, 18 Jul 2025 14:00:03 +0300
-X-Gm-Features: Ac12FXyvAM2zuSZO19tjGTn3I8j6ZBYP1ezDycsLSWPMXkx77mmnhd_OLQ_GFhA
-Message-ID: <CAEnQRZDeXrhHaU-tiAizXL3cNK-6rpbACx9QGNVpV8GBEKAPYQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] remoteproc: imx_dsp_rproc: Add support of recovery process
-To: Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: andersson@kernel.org, mathieu.poirier@linaro.org, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/5] net: cadence: macb: sama7g5_emac: Remove USARIO
+ CLKEN flag
+To: Ryan.Wanner@microchip.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, nicolas.ferre@microchip.com,
+ alexandre.belloni@bootlin.com
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <cover.1752510727.git.Ryan.Wanner@microchip.com>
+ <1e7a8c324526f631f279925aa8a6aa937d55c796.1752510727.git.Ryan.Wanner@microchip.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <1e7a8c324526f631f279925aa8a6aa937d55c796.1752510727.git.Ryan.Wanner@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 4, 2025 at 8:29=E2=80=AFAM Shengjiu Wang <shengjiu.wang@nxp.com=
-> wrote:
->
-> When recovery is triggered, rproc_stop() is called first then
-> rproc_start(), but there is no rproc_unprepare_device() and
-> rproc_prepare_device() in the flow. As the software reset is needed
-> before DSP starts, so move software reset from imx_dsp_runtime_resume()
-> to .load() to make the recovery work. And make sure memory is cleared
-> before loading firmware.
+Hi, Ryan,
 
-Hello Shengjiu,
+On 14.07.2025 19:37, Ryan.Wanner@microchip.com wrote:
+> From: Ryan Wanner <Ryan.Wanner@microchip.com>
+> 
+> Remove USARIO_CLKEN flag since this is now a device tree argument and
 
-Commit mostly looking good but the key point when writing a commit
-is to explain why the commit is needed and less about what the
-commit does (this should be obvious from the source code).
+s/USARIO_CLKEN/USRIO_HAS_CLKEN here and in title as well.
 
-
-So, I would start with the context and that is:
-
-Following commit: 6eed169c7fefd9cdbbccb5ba7a98470cc0c09c63
-    remoteproc: imx_rproc: Enable attach recovery for i.MX8QM/QXP
-
-enabled FW recovery, but is broken because <and here explain the reason tha=
-t
-you mostly described in the original commit>.
-
-Then at the end add the Fixes tag.
-
-Also, allow me on more day on Monday to test this patch.
-
-Thanks,
-Daniel.
-
->
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> not fixed to the SoC.
+> 
+> This will instead be selected by the "cdns,refclk-ext"
+> device tree property.
+> 
+> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
 > ---
->  drivers/remoteproc/imx_dsp_rproc.c | 43 +++++++++++++++++++-----------
->  1 file changed, 27 insertions(+), 16 deletions(-)
->
-> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_=
-dsp_rproc.c
-> index 5ee622bf5352..ba764fc55686 100644
-> --- a/drivers/remoteproc/imx_dsp_rproc.c
-> +++ b/drivers/remoteproc/imx_dsp_rproc.c
-> @@ -774,7 +774,6 @@ static int imx_dsp_rproc_prepare(struct rproc *rproc)
->  {
->         struct imx_dsp_rproc *priv =3D rproc->priv;
->         struct device *dev =3D rproc->dev.parent;
-> -       struct rproc_mem_entry *carveout;
->         int ret;
->
->         ret =3D imx_dsp_rproc_add_carveout(priv);
-> @@ -785,15 +784,6 @@ static int imx_dsp_rproc_prepare(struct rproc *rproc=
-)
->
->         pm_runtime_get_sync(dev);
->
-> -       /*
-> -        * Clear buffers after pm rumtime for internal ocram is not
-> -        * accessible if power and clock are not enabled.
-> -        */
-> -       list_for_each_entry(carveout, &rproc->carveouts, node) {
-> -               if (carveout->va)
-> -                       memset(carveout->va, 0, carveout->len);
-> -       }
-> -
->         return  0;
->  }
->
-> @@ -1022,13 +1012,39 @@ static int imx_dsp_rproc_parse_fw(struct rproc *r=
-proc, const struct firmware *fw
->         return 0;
->  }
->
-> +static int imx_dsp_rproc_load(struct rproc *rproc, const struct firmware=
- *fw)
-> +{
-> +       struct imx_dsp_rproc *priv =3D rproc->priv;
-> +       const struct imx_dsp_rproc_dcfg *dsp_dcfg =3D priv->dsp_dcfg;
-> +       struct rproc_mem_entry *carveout;
-> +       int ret;
-> +
-> +       /* Reset DSP if needed */
-> +       if (dsp_dcfg->reset)
-> +               dsp_dcfg->reset(priv);
-> +       /*
-> +        * Clear buffers after pm rumtime for internal ocram is not
-> +        * accessible if power and clock are not enabled.
-> +        */
-> +       list_for_each_entry(carveout, &rproc->carveouts, node) {
-> +               if (carveout->va)
-> +                       memset(carveout->va, 0, carveout->len);
-> +       }
-> +
-> +       ret =3D imx_dsp_rproc_elf_load_segments(rproc, fw);
-> +       if (ret)
-> +               return ret;
-> +
-> +       return 0;
-> +}
-> +
->  static const struct rproc_ops imx_dsp_rproc_ops =3D {
->         .prepare        =3D imx_dsp_rproc_prepare,
->         .unprepare      =3D imx_dsp_rproc_unprepare,
->         .start          =3D imx_dsp_rproc_start,
->         .stop           =3D imx_dsp_rproc_stop,
->         .kick           =3D imx_dsp_rproc_kick,
-> -       .load           =3D imx_dsp_rproc_elf_load_segments,
-> +       .load           =3D imx_dsp_rproc_load,
->         .parse_fw       =3D imx_dsp_rproc_parse_fw,
->         .handle_rsc     =3D imx_dsp_rproc_handle_rsc,
->         .find_loaded_rsc_table =3D rproc_elf_find_loaded_rsc_table,
-> @@ -1214,7 +1230,6 @@ static int imx_dsp_runtime_resume(struct device *de=
-v)
->  {
->         struct rproc *rproc =3D dev_get_drvdata(dev);
->         struct imx_dsp_rproc *priv =3D rproc->priv;
-> -       const struct imx_dsp_rproc_dcfg *dsp_dcfg =3D priv->dsp_dcfg;
->         int ret;
->
->         /*
-> @@ -1235,10 +1250,6 @@ static int imx_dsp_runtime_resume(struct device *d=
-ev)
->                 return ret;
->         }
->
-> -       /* Reset DSP if needed */
-> -       if (dsp_dcfg->reset)
-> -               dsp_dcfg->reset(priv);
-> -
->         return 0;
->  }
->
-> --
-> 2.34.1
->
->
+>  drivers/net/ethernet/cadence/macb_main.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+> index 51667263c01d..cd54e4065690 100644
+> --- a/drivers/net/ethernet/cadence/macb_main.c
+> +++ b/drivers/net/ethernet/cadence/macb_main.c
+> @@ -5113,8 +5113,7 @@ static const struct macb_config sama7g5_gem_config = {
+>  
+>  static const struct macb_config sama7g5_emac_config = {
+>  	.caps = MACB_CAPS_USRIO_DEFAULT_IS_MII_GMII |
+> -		MACB_CAPS_USRIO_HAS_CLKEN | MACB_CAPS_MIIONRGMII |
+
+Will old DTBs still work with new kernels with this change?
+
+Thank you,
+Claudiu
+
+> -		MACB_CAPS_GEM_HAS_PTP,
+> +		MACB_CAPS_MIIONRGMII | MACB_CAPS_GEM_HAS_PTP,
+>  	.dma_burst_length = 16,
+>  	.clk_init = macb_clk_init,
+>  	.init = macb_init,
+
 
