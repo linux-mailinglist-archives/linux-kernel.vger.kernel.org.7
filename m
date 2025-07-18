@@ -1,101 +1,138 @@
-Return-Path: <linux-kernel+bounces-736997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 875CDB0A676
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 16:38:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8012B0A678
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 16:39:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C25DB56568B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:38:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 101CF5826A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA5E2DCBE3;
-	Fri, 18 Jul 2025 14:38:43 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA07B299957;
-	Fri, 18 Jul 2025 14:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8822DCF4A;
+	Fri, 18 Jul 2025 14:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZlyUV3CB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45602BD590;
+	Fri, 18 Jul 2025 14:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752849523; cv=none; b=iiQIUHzsJ70jKadpjdAcdo3r3RPOGE7xq9uZdh0WEikMoyWPbkzLoPaacECU1CtwB7RfBfsWruAg7rJ6DLMp6QPgaHkQsBtVFeai5wHjS7Xm3NgDPUfwkPRkie/dHBGTfq2bvrGoueTpk5MowOwOwKuL4RfTSwM6otxnaU4Z3kc=
+	t=1752849568; cv=none; b=p2XwGdI7cmwRVdeafr16O+lGKXvhjBGvSNnsdO3vzO0FEDUfcass3mZODUldH4xlE4pA/jXAmdOEwzSbpT+A9ee2BSWJd06W7Pu5wCcqKwTFHhFCMwODSlffN+ouruXFGaEs2rzJ/u7XWgCZRTY/933et+Lu/9lGMhVo5xHGFbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752849523; c=relaxed/simple;
-	bh=M2Rs9nEmlRwQkjguAbsBhJKM8UD3vMaQsOUjtvpGNmo=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=KVkbLcnrqDK0l3enPQ+ULrku4QFXqgDg7SHPqeKs0Cqs+NKmu0AQjQnmr/lm0RJ7ynk9nLWOYui1Y2pZQosdTluNHJ3bj6oQDQAuLQHXE5Z5IvfBAw12hTFodCak4Op+OkyUaf+vpzahf+6ylzZJqDZpUc+/jzHIwBpQ9hrRsNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 3E02192009C; Fri, 18 Jul 2025 16:38:39 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 3986A92009B;
-	Fri, 18 Jul 2025 15:38:39 +0100 (BST)
-Date: Fri, 18 Jul 2025 15:38:39 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-cc: WangYuli <wangyuli@uniontech.com>, linux-mips@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, zhanjun@uniontech.com, 
-    niecheng1@uniontech.com, guanwentao@uniontech.com
-Subject: Re: Gentle ping: [PATCH v2 0/6] MIPS: Resolve build problems on
- decstation_64
-In-Reply-To: <aHf8Uo2FEcRqus9T@alpha.franken.de>
-Message-ID: <alpine.DEB.2.21.2507181530310.21783@angie.orcam.me.uk>
-References: <24EC7D2CA58B25F5+20250422101855.136675-1-wangyuli@uniontech.com> <9ED003291C66C906+94d03a66-3573-4e3f-aaac-d7c55f750776@uniontech.com> <alpine.DEB.2.21.2507071545400.56608@angie.orcam.me.uk> <aHf8Uo2FEcRqus9T@alpha.franken.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1752849568; c=relaxed/simple;
+	bh=eSe3PaphIUbFUY2NxCmQgAMvVeWuC8wFj75ybbFp9e8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OchWp75O16ie8NeOl4xmapPPzzPyFNSQoL0ZhKeVMrTGwl3rWvpSk0e2kyP3gLogvd7CLa+XmzmlVL3iGiUhpriJ230YJmQwXgEcoNTC01nlHUYebthVcuT/beVDzO6bhb7aBa8epojkxyWUFaDLu97bMa6s1TXRoiN6cWIu778=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZlyUV3CB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0593CC4CEEB;
+	Fri, 18 Jul 2025 14:39:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752849568;
+	bh=eSe3PaphIUbFUY2NxCmQgAMvVeWuC8wFj75ybbFp9e8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZlyUV3CBq0Hchso6K0ioH3KWGr8XLmM91ibw6mAxKgRJNwP+sKkTfFWkeVP6XRudq
+	 qp5+KckZBfOin2SvKAI/Q2oOTRT0kqkrAH04Y3aTDwNfMzqi7kc/oGBMGSKtudWPYJ
+	 z7E832cCR3shkTWk7Rz6uL+abokA3dC6E/J3Q3OFEdMaYGmhBgS0DXaQCCUtjW0zyx
+	 fJbY+dmvqlExOvXWMIcoFkk1RPFdKn1umivUYqpXN/ASrjUnc6kAaAOvb4H+cMxssC
+	 fte4Q2/2ebiibde8AYF72AF/iw+4WOMttr+tmGVail7ncX3+Hx6G+v5vizc6cmLT4f
+	 qzYqeEPzXw31A==
+Date: Fri, 18 Jul 2025 15:39:23 +0100
+From: Simon Horman <horms@kernel.org>
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: ioana.ciornei@nxp.com, davem@davemloft.net, andrew+netdev@lunn.ch,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org, stable@vger.kernel.org,
+	Laurentiu Tudor <laurentiu.tudor@nxp.com>
+Subject: Re: [PATCH net v2 1/3] bus: fsl-mc: Fix potential double device
+ reference in fsl_mc_get_endpoint()
+Message-ID: <20250718143923.GF2459@horms.kernel.org>
+References: <20250717022309.3339976-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250717022309.3339976-1-make24@iscas.ac.cn>
 
-On Wed, 16 Jul 2025, Thomas Bogendoerfer wrote:
+On Thu, Jul 17, 2025 at 10:23:07AM +0800, Ma Ke wrote:
+> The fsl_mc_get_endpoint() function may call fsl_mc_device_lookup() 
+> twice, which would increment the device's reference count twice if 
+> both lookups find a device. This could lead to a reference count leak.
+> 
+> Found by code review.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 1ac210d128ef ("bus: fsl-mc: add the fsl_mc_get_endpoint function")
 
-> >  I've tried to verify your changes at run time and it's turned out that a 
-> > generic change to the serial communication subsystem made a while ago has 
-> > caused the port to become unbootable, and it now crashes early on in port 
-> > registration.
+I think this should be:
+
+Fixes: 8567494cebe5 ("bus: fsl-mc: rescan devices if endpoint not found")
+
+I've CCed Laurentiu, the author of that commit.
+
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+
+Suggested-by: Simon Horman <horms@kernel.org>
+Reviewed-by: Simon Horman <horms@kernel.org>
+
+> ---
+>  drivers/bus/fsl-mc/fsl-mc-bus.c | 19 +++++++++----------
+>  1 file changed, 9 insertions(+), 10 deletions(-)
 > 
-> I'm hitting the same issue for IP22, my dirty hack to get serial console
-> back is
-> 
-> diff --git a/drivers/tty/serial/serial_base_bus.c b/drivers/tty/serial/serial_base_bus.c
-> index 5d1677f1b651..fccb0f1c3cc5 100644
-> --- a/drivers/tty/serial/serial_base_bus.c
-> +++ b/drivers/tty/serial/serial_base_bus.c
-> @@ -78,12 +78,14 @@ static int serial_base_device_init(struct uart_port *port,
->  		return -EPROBE_DEFER;
+> diff --git a/drivers/bus/fsl-mc/fsl-mc-bus.c b/drivers/bus/fsl-mc/fsl-mc-bus.c
+> index 7671bd158545..c1c0a4759c7e 100644
+> --- a/drivers/bus/fsl-mc/fsl-mc-bus.c
+> +++ b/drivers/bus/fsl-mc/fsl-mc-bus.c
+> @@ -943,6 +943,7 @@ struct fsl_mc_device *fsl_mc_get_endpoint(struct fsl_mc_device *mc_dev,
+>  	struct fsl_mc_obj_desc endpoint_desc = {{ 0 }};
+>  	struct dprc_endpoint endpoint1 = {{ 0 }};
+>  	struct dprc_endpoint endpoint2 = {{ 0 }};
+> +	struct fsl_mc_bus *mc_bus;
+>  	int state, err;
+>  
+>  	mc_bus_dev = to_fsl_mc_device(mc_dev->dev.parent);
+> @@ -966,6 +967,8 @@ struct fsl_mc_device *fsl_mc_get_endpoint(struct fsl_mc_device *mc_dev,
+>  	strcpy(endpoint_desc.type, endpoint2.type);
+>  	endpoint_desc.id = endpoint2.id;
+>  	endpoint = fsl_mc_device_lookup(&endpoint_desc, mc_bus_dev);
+> +	if (endpoint)
+> +		return endpoint;
+>  
+>  	/*
+>  	 * We know that the device has an endpoint because we verified by
+> @@ -973,17 +976,13 @@ struct fsl_mc_device *fsl_mc_get_endpoint(struct fsl_mc_device *mc_dev,
+>  	 * yet discovered by the fsl-mc bus, thus the lookup returned NULL.
+>  	 * Force a rescan of the devices in this container and retry the lookup.
+>  	 */
+> -	if (!endpoint) {
+> -		struct fsl_mc_bus *mc_bus = to_fsl_mc_bus(mc_bus_dev);
+> -
+> -		if (mutex_trylock(&mc_bus->scan_mutex)) {
+> -			err = dprc_scan_objects(mc_bus_dev, true);
+> -			mutex_unlock(&mc_bus->scan_mutex);
+> -		}
+> -
+> -		if (err < 0)
+> -			return ERR_PTR(err);
+> +	mc_bus = to_fsl_mc_bus(mc_bus_dev);
+> +	if (mutex_trylock(&mc_bus->scan_mutex)) {
+> +		err = dprc_scan_objects(mc_bus_dev, true);
+> +		mutex_unlock(&mc_bus->scan_mutex);
 >  	}
+> +	if (err < 0)
+> +		return ERR_PTR(err);
 >  
-> +#if 0
->  	if (type == &serial_ctrl_type)
->  		return dev_set_name(dev, "%s:%d", dev_name(port->dev), ctrl_id);
->  
->  	if (type == &serial_port_type)
->  		return dev_set_name(dev, "%s:%d.%d", dev_name(port->dev),
->  				    ctrl_id, port_id);
-> +#endif
->  
->  	return -EINVAL;
->  }
+>  	endpoint = fsl_mc_device_lookup(&endpoint_desc, mc_bus_dev);
+>  	/*
+> -- 
+> 2.25.1
 > 
-> I'm not sure, if port->dev needs to be populated now for every serial
-> port or if there should be a check for port->dev == NULL in the code above...
-
- Thanks for your report.  I don't know what the exact root cause is with 
-IP22, but with the DECstation configurations it's clearly a technical debt 
-that needs to be paid now, by switching the respective core drivers to use 
-platform devices for probing.
-
- We've had basic infrastructure for a while already, so I just need to 
-fill the gaps there.  This will help the reuse of zs.c for the Alpha port 
-as well (and dz.c could be reused for the VAX port this way, but I guess 
-that won't ever happen as there's too much effort needed and too little 
-manpower available to revive it).
-
- I'm off for a week now and will look into it sometime once I'm back.
-
-  Maciej
 
