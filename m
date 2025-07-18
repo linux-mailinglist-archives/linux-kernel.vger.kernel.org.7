@@ -1,138 +1,172 @@
-Return-Path: <linux-kernel+bounces-736293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE5FFB09B17
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:04:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDE25B09B1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:06:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5CC41AA1385
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:04:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21F02585239
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:07:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 237591E98E3;
-	Fri, 18 Jul 2025 06:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B82891E8322;
+	Fri, 18 Jul 2025 06:06:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="CqD0dyvi"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fJwpnpFA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D7317578;
-	Fri, 18 Jul 2025 06:04:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378D317578
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 06:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752818662; cv=none; b=n0pU9WDkj630IwAVf3LJAiPd4CYGnXukm2TYZrHnQHvv79QN8TlQDQOFDcODwMod/LzRXffHF8ijGciD054EuoNsvtvEO5U7SFrrtBlMWOqpvFqLHhMG+ey7VQMsI5f3h5/Sk6klziNKrhprkttFHX8hySnu8uIXoRIroY5nsrE=
+	t=1752818814; cv=none; b=YLstXUQJ9WBPjbnF8OdVggY0/I/FBDni/fDIYx/GdUkeZT+gg+w35zo4Bt3oiArRkKSRaF2/7kJys1I4Zd5yj0aguhDeffyckz8zGysMlbV4mo6lEHaIVwjXJT7atAYljs/Ku/lm3SLbcoXM+PsSZPXk/2mzKPCa3DRfTbxNA/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752818662; c=relaxed/simple;
-	bh=wf/hravHlEJOVBzGs8JdFGSe+OuIMU8btgpx5fHC1wU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=nfsua8+UoNT5PmY3irLBzaAkLLYZ3RYqz2nuoBnG/+iA4KeK+k2nGuB6frxvB1o5oORmmSN/8OaWc0XyCyZlYLAmqv1eb5Id8J3HrD8SEyeU5mz2PxTI7kOuE40JJRw99PcVDgngGvojcQojtXAyX45fbtpSx2v3K4qs2CZMjqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=CqD0dyvi; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1752818521;
-	bh=vZ0caIWbcYMSdzQC0YG3LfOTL45OUgfdaAhdU+gMsxk=;
-	h=Date:From:To:Cc:Subject:From;
-	b=CqD0dyviOLOmh/m4kyAikCVokip5XsUkA1rnH+gDpR58iyu7XEFtWUzmzvQ2uykdf
-	 JfqLp0VSapmdKLbIZnlEavLV1irjUwXMPauisGonwd54fRU7NFJMxavCQ6Co1r8goO
-	 UBPAkNOYLo5bG3blAbEXL53TWfNgX7qM5nBNwPiSx9K7WdwgdJ7h4lkqK/hW4jJ37R
-	 EU4CjoMB4NaaArIxreLIswEtMm/oqktkrBMqugElETUaFjzLOMgwb5yXf4/Dt87RPG
-	 GYNXK2xC/hm9/Hy6bnYCEJMTaUUTJ/jRv5FNUprZjHcBNHVVpEyehXObDy8Jftcfe4
-	 E9+s7PQDaJ9NQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	s=arc-20240116; t=1752818814; c=relaxed/simple;
+	bh=AoH2pIUWrD5MbUepOmIQK6BEXrzdiV0jm/OvN5qurII=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=BVDlmLkj8M7eBumSImYSM5c0itqHyOZ0jLEBJ5Yp1jE+fUNTg4skPmu05nRhJk/0jmnIGKlfadoPaB2BPPmcQ9WLhgA8Gz66QaSfjkPFe9Zb8IoL8Ljiq/a/yPNkgkFJhjM5Ikyj67Yx2V/9Z1N1b6/j+bfG26HT1i1AwE077NQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fJwpnpFA; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752818811;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=2I8jDNCG0L+52nyGGUbEIAwL2BkN8wDU3xL1GQ5jtVg=;
+	b=fJwpnpFAGkpyUOgjTWuLsBbrygFgEIV8QNvSiy8FSk5rN55oivGLRzQS7oiTOlco+0DAW4
+	fXLPt+mvil90fDDnYsCCN1z8cBMY9FB3Ld+xDbxquNB8g1BNFk/jTVkR2LTjrKaLegNSW8
+	n/S3KUA15JDwhN+LUPVfWlgfp3Ijf8k=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-556-PuYEbrd0MPGTriYeRTD4gQ-1; Fri,
+ 18 Jul 2025 02:06:48 -0400
+X-MC-Unique: PuYEbrd0MPGTriYeRTD4gQ-1
+X-Mimecast-MFC-AGG-ID: PuYEbrd0MPGTriYeRTD4gQ_1752818806
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bjzhS3XL8z4xPd;
-	Fri, 18 Jul 2025 16:02:00 +1000 (AEST)
-Date: Fri, 18 Jul 2025 16:04:07 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Rob Herring <robh@kernel.org>, Lee Jones <lee@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: linux-next: manual merge of the devicetree tree with the mfd tree
-Message-ID: <20250718160407.011e2389@canb.auug.org.au>
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A614819560B3;
+	Fri, 18 Jul 2025 06:06:45 +0000 (UTC)
+Received: from server.redhat.com (unknown [10.72.112.34])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7B5D4180045B;
+	Fri, 18 Jul 2025 06:06:37 +0000 (UTC)
+From: Cindy Lu <lulu@redhat.com>
+To: Paolo Bonzini <pbonzini@redhat.com>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	"Kirill A. Shutemov" <kas@kernel.org>,
+	"Xin Li (Intel)" <xin@zytor.com>,
+	Rik van Riel <riel@surriel.com>,
+	"Ahmed S. Darwish" <darwi@linutronix.de>,
+	kvm@vger.kernel.org (open list:KVM PARAVIRT (KVM/paravirt)),
+	linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
+	lulu@redhat.com
+Subject: [PATCH] netvsc: transfer lower device max tso size
+Date: Fri, 18 Jul 2025 14:06:15 +0800
+Message-ID: <20250718060615.237986-1-lulu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/8jIM0Qb_UxlxYVxUMHGFqOS";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
---Sig_/8jIM0Qb_UxlxYVxUMHGFqOS
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Jason Wang <jasowang@redhat.com>
 
-Hi all,
+When netvsc is accelerated by the lower device, we can advertise the
+lower device max tso size in order to get better performance.
 
-Today's linux-next merge of the devicetree tree got a conflict in:
+One example is that when 802.3ad encap is enabled by netvsc, it has a
+lower max tso size than 64K. This will lead to software segmentation
+of forwarding GSO packet (e.g the one from VM/tap).
 
-  Documentation/devicetree/bindings/trivial-devices.yaml
+This patch help to recover the performance.
 
-between commit:
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+Tested-by: Cindy Lu <lulu@redhat.com>
+---
+ drivers/net/hyperv/netvsc_drv.c |  2 +-
+ include/linux/netdevice.h       |  4 ++++
+ net/core/dev.c                  | 18 ++++++++++++++++++
+ 3 files changed, 23 insertions(+), 1 deletion(-)
 
-  e65e2b0d0f7e ("dt-bindings: mfd: adp5585: document adp5589 I/O expander")
+diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
+index c41a025c66f0..7af4aa4f4abe 100644
+--- a/drivers/net/hyperv/netvsc_drv.c
++++ b/drivers/net/hyperv/netvsc_drv.c
+@@ -2440,7 +2440,7 @@ static int netvsc_vf_changed(struct net_device *vf_netdev, unsigned long event)
+ 		 * switched over to the VF
+ 		 */
+ 		if (vf_is_up)
+-			netif_set_tso_max_size(ndev, vf_netdev->tso_max_size);
++			netif_stacked_transfer_tso_max_size(vf_netdev, ndev);
+ 		else
+ 			netif_set_tso_max_size(ndev, netvsc_dev->netvsc_gso_max_size);
+ 	}
+diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+index adb14db25798..c695a3ffecd8 100644
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -5275,6 +5275,9 @@ void netdev_change_features(struct net_device *dev);
+ void netif_stacked_transfer_operstate(const struct net_device *rootdev,
+ 					struct net_device *dev);
+ 
++void netif_stacked_transfer_tso_max_size(const struct net_device *rootdev,
++					 struct net_device *dev);
++
+ netdev_features_t passthru_features_check(struct sk_buff *skb,
+ 					  struct net_device *dev,
+ 					  netdev_features_t features);
+@@ -5326,6 +5329,7 @@ static inline bool netif_needs_gso(struct sk_buff *skb,
+ }
+ 
+ void netif_set_tso_max_size(struct net_device *dev, unsigned int size);
++
+ void netif_set_tso_max_segs(struct net_device *dev, unsigned int segs);
+ void netif_inherit_tso_max(struct net_device *to,
+ 			   const struct net_device *from);
+diff --git a/net/core/dev.c b/net/core/dev.c
+index be97c440ecd5..3bec4284adff 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -3306,6 +3306,24 @@ void netif_set_tso_max_size(struct net_device *dev, unsigned int size)
+ }
+ EXPORT_SYMBOL(netif_set_tso_max_size);
+ 
++/**
++ *	netif_stacked_transfer_tso_max_size - transfer tso max size
++ *	@rootdev: the root or lower level device to transfer tso max size from
++ *	@dev: the device to transfer operstate to
++ *
++ *	Transfer tso max size from root to device. This is normally
++ *	called when a stacking relationship exists between the root
++ *	device and the device(a leaf device).
++ */
++void netif_stacked_transfer_tso_max_size(const struct net_device *rootdev,
++					 struct net_device *dev)
++{
++	dev->tso_max_size = rootdev->tso_max_size;
++	netif_set_gso_max_size(dev, READ_ONCE(rootdev->gso_max_size));
++	netif_set_gso_ipv4_max_size(dev, READ_ONCE(rootdev->gso_ipv4_max_size));
++}
++EXPORT_SYMBOL(netif_stacked_transfer_tso_max_size);
++
+ /**
+  * netif_set_tso_max_segs() - set the max number of segs supported for TSO
+  * @dev:	netdev to update
+-- 
+2.45.0
 
-from the mfd tree and commits:
-
-  4fb2210866f7 ("dt-bindings: trivial-devices: Add Analog Devices ADT7411")
-  828e50188de5 ("dt-bindings: trivial-devices: Add undocumented hwmon devic=
-es")
-
-from the devicetree tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc Documentation/devicetree/bindings/trivial-devices.yaml
-index dd6297392f72,95c9bd36cc63..000000000000
---- a/Documentation/devicetree/bindings/trivial-devices.yaml
-+++ b/Documentation/devicetree/bindings/trivial-devices.yaml
-@@@ -39,6 -39,16 +39,14 @@@ properties
-            - ad,adm9240
-              # AD5110 - Nonvolatile Digital Potentiometer
-            - adi,ad5110
-+             # Temperature sensor with integrated fan control
-+           - adi,adm1027
- -            # Analog Devices ADP5589 Keypad Decoder and I/O Expansion
- -          - adi,adp5589
-+             # Analog Devices ADT7411 Temperature Sensor and 8-channel ADC
-+           - adi,adt7411
-+             # Temperature sensor with integrated fan control
-+           - adi,adt7463
-+             # Temperature sensor with integrated fan control
-+           - adi,adt7468
-              # Analog Devices LT7182S Dual Channel 6A, 20V PolyPhase Step-=
-Down Silent Switcher
-            - adi,lt7182s
-              # AMS iAQ-Core VOC Sensor
-
---Sig_/8jIM0Qb_UxlxYVxUMHGFqOS
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh549cACgkQAVBC80lX
-0Gzp7Af+JrxtmVBDAwpaOhQmTo7VnyEoYtrGSX+26JEVsNl6ZDT4jJvyFKAXd0vF
-oO344cIvtoFDaCpRU4tn1i7kps3uYYjO8UY52dgImW22HwBbD4ihzGyEXp5tV1aw
-I/LPKqt/n+hYMU3RcIum+cAifO5i0n3Q2uQ14Sdf+Durfg5aU+3eu6ml8K/UUxqA
-oqDlPj0sgaEomWEBZjXizbG45+u66VLIsO0FgBrjjjz82Ku4vV+sRTx96AHHe2ZV
-64EC3beMNDspPywC0Heho9JY4zR6Zm3vGrpsJ6FEN/FTMY0n6Od0+YK+4i8aARUd
-Aapn+MoGGGMqbzihxMgacdKfELO7gw==
-=SwO5
------END PGP SIGNATURE-----
-
---Sig_/8jIM0Qb_UxlxYVxUMHGFqOS--
 
