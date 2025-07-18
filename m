@@ -1,161 +1,104 @@
-Return-Path: <linux-kernel+bounces-736497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 449F1B09DAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:18:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C0D5B09DAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:19:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C82C16C81E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:18:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1D381C466C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:19:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED560294A10;
-	Fri, 18 Jul 2025 08:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1663221FD8;
+	Fri, 18 Jul 2025 08:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="K5Ctw+Qd"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="lA6uPFVv"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050B81F8AC5;
-	Fri, 18 Jul 2025 08:17:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FB3219E975;
+	Fri, 18 Jul 2025 08:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752826659; cv=none; b=dc3A3k6CvHOfgWSVmphe0K6wh9Iz0qt/q2/1xo9y98acE7/2CCrESD+Sv4IpDw9QzrUFZrgSuPyBb3vPCiIg9fBBVtKXd1d0+1Q0YGLw8Ho9stpDgE2qlUXiV41u9SOapUBmXNxNWPKoXoaxEtvNa8Oq8i6RBM1tObOz9E4VTjU=
+	t=1752826666; cv=none; b=pSLtzr3zScODY3ZfpHp38Umd1wvHkXI7Y5WaSlgktp6uaLRJ3eA4FszNbJjiZUwz+RDz1MPa9p/gwoFbXgWiNhXDoq0HaPKGCPU+wYGguapkqH49ZNe6mxFZ2mObExISsi6s23wWEhLw982CBf9srnEMvyqVDhpz10J+7zggBKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752826659; c=relaxed/simple;
-	bh=hBC0QLD0d5YhLBibiZKhrzdUFllASy4vdlwVKsE8aXQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FaMvQQFJYVfaJg2aQE0GzG0WnBYWLnzy9CWG9KjCPA72QsIUZO5PD28ySU6m8OQP2DuaUo6jQO2xLEI9j8+2pcRSb0HcmKY7MdE8To0a/R/jecoEKsCMfk5Fb3duFTIpmyVUDhzzJ1G0a/OGCtUthGoYGwm9AlhaAZA5i1qagJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=K5Ctw+Qd; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56I7crL9032408;
-	Fri, 18 Jul 2025 08:17:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=r1sqdo9BRCR
-	2sQEamMdCjHsX1DdbqHtCQfOOpdOX890=; b=K5Ctw+QdpQpuqf61s96BhwuLOff
-	tPP4al23kz+W3zAyOz1sgsAMItDzl+Du+/fdcV+iVjfbjHCElSsoo7KosgLhm+IA
-	vwzsWJFcyKL7spma+aZ5F5rM6JrOewIWfJr1k8l7JdVfIwYGcLH17BOvLtpAP7Ty
-	5yh51UOvxnZAIGF/5s7d4xT3X70BNfX7ebXeEiw/t2OIdUk9zarFJW27a49HG0av
-	0GuoD9IUziQzRV/fed44VOEZC4XG7SPBufdTin4jKiy65yRiCPMnw5gAoEkZ7hn8
-	GFepFLlYYqpoNk3+Z23/a1i/fuw3XyWfVZZSM4US6Bamm798kigajClRA7w==
-Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ug38avm5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Jul 2025 08:17:24 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 56I8HMhI009039;
-	Fri, 18 Jul 2025 08:17:22 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 47ugsn1e3m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Jul 2025 08:17:22 +0000
-Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56I8HLKX009025;
-	Fri, 18 Jul 2025 08:17:21 GMT
-Received: from cse-cd01-lnx.ap.qualcomm.com (cse-cd01-lnx.qualcomm.com [10.64.75.209])
-	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 56I8HLVN009019
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Jul 2025 08:17:21 +0000
-Received: by cse-cd01-lnx.ap.qualcomm.com (Postfix, from userid 4438065)
-	id CE6BD20F21; Fri, 18 Jul 2025 16:17:19 +0800 (CST)
-From: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
-To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
-        mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
-        bhelgaas@google.com, johan+linaro@kernel.org, vkoul@kernel.org,
-        kishon@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
-        kw@linux.com
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-phy@lists.infradead.org, qiang.yu@oss.qualcomm.com,
-        quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
-        Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: [PATCH v5 4/4] arm64: dts: qcom: sa8775p: add link_down reset for pcie
-Date: Fri, 18 Jul 2025 16:17:18 +0800
-Message-Id: <20250718081718.390790-5-ziyue.zhang@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250718081718.390790-1-ziyue.zhang@oss.qualcomm.com>
-References: <20250718081718.390790-1-ziyue.zhang@oss.qualcomm.com>
+	s=arc-20240116; t=1752826666; c=relaxed/simple;
+	bh=lHcSyiRIMLiIxySb7kPEVYUOSRAPQet3kxOWKTLW1p0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SEfSFNQAb/O7sCXwsllJhsUz8pe6gUqR+mnzahTMLWqrK7gKKOn/k06WxRuerVQB/LPu1RNmfvONNMX2xrVGJ1fYuT1uEVnMsiBl0vy1tdRjHVhAj4wbfbnEoRkGMp9HSwat4+mVoQ64Ix1diOQGN7h6c7Q1IFkGFshGaqojkQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=lA6uPFVv; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=E/IoN6/9dGODDuVI2rSc4k7x3nu31cjT2mdu1L1DJnM=; b=lA6uPFVvrNauB5Ehu6I3leHi+w
+	5g5KEE6vEsuCfboaDpFH73Et1kwDAKfx03ol0gpG56TF8tLy0EEPU9osFd3wJv4CaEpubTOUxkTkn
+	J5JEAEHsmfS2nyA50skGHEqMJh0nb1gbEX2HgzBZ+9ueIJOTa5wdHP3CdjlFvUpfpERkPD4ZmfGuW
+	XefJ4WVqhANfSAV1G9ovoHNsORs/wSqX3iym5IOluj0RzqVfw/hwBltkrXm+pL0UyTBFKo4TiWI7e
+	Sr3PMDPWXwxzvoaLqlwzet22pBMehs+/fQ0u/gMNVGCIv5jrAl0FJFLM3LLUlgCWoheh1cnOJ+jRS
+	J8pL1kqw==;
+Date: Fri, 18 Jul 2025 10:17:27 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: vigneshr@ti.com, aaro.koskinen@iki.fi, khilman@baylibre.com,
+ rogerq@kernel.org, tony@atomide.com, jmkrzyszt@gmail.com,
+ andi.shyti@kernel.org, miaoqinglang@huawei.com, grygorii.strashko@ti.com,
+ wsa@kernel.org, linux-omap@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 2/2] i2c: omap: Fix an error handling path in
+ omap_i2c_probe()
+Message-ID: <20250718101727.776611a0@akair>
+In-Reply-To: <af8a9b62996bebbaaa7c02986aa2a8325ef11596.1751701715.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1751701715.git.christophe.jaillet@wanadoo.fr>
+	<af8a9b62996bebbaaa7c02986aa2a8325ef11596.1751701715.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE4MDA2NCBTYWx0ZWRfX556J9A2iHR0E
- PRWGf60HqHjQi6X20AIKPRGWKTFcy9v04n15ckbsFZ0M1ufmJIY6VULWaOvMFY3fSFve7ztoLDc
- KIEVMF+midS3QT2l7A59Wm/Ax+HyLXxDxR/CyOPWm3mC5vGwUmCwFuMBToceAQvQhTiv0zd8r4V
- bOgQ+G4uy2CQ9/Q+3ZCyKDumLnQ4CVrJkTEB9kIlGKKkBr8IF1JQ6ublKztu8eFW+ZXaVRtgSgz
- lzHF4Gle1IxbD4g5jNDAWOmuTdUo9FAlBZ98/cMURjF7T6iaRTGVASb2tKEgB+5U9Z+x+qMmfIb
- MdtomrDl8fDB87L2nMZqvE6zYA/6BEz/UI5yGMN95vQp4iWpPzbaV8ThIbKjgH1cI2JP+Ye+VXF
- k4qGqlWuUkisn862tzcnb/Qbn3ginHLXjz3NyEgea8xg1JXCkGu1qXHBM5VidSEbx2k7S8lf
-X-Proofpoint-GUID: LHGcv2tjgp2uiEj88sgslubYgOoDwszm
-X-Authority-Analysis: v=2.4 cv=SZT3duRu c=1 sm=1 tr=0 ts=687a0314 cx=c_pps
- a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=UMluCPnEzjiUAf4N7sYA:9
-X-Proofpoint-ORIG-GUID: LHGcv2tjgp2uiEj88sgslubYgOoDwszm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-18_01,2025-07-17_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 mlxlogscore=999 mlxscore=0 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 adultscore=0 impostorscore=0 malwarescore=0
- phishscore=0 spamscore=0 suspectscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507180064
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-SA8775p supports 'link_down' reset on hardware, so add it for both pcie0
-and pcie1, which can provide a better user experience.
+Am Sat,  5 Jul 2025 09:57:38 +0200
+schrieb Christophe JAILLET <christophe.jaillet@wanadoo.fr>:
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/sa8775p.dtsi | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+> If an error occurs after pm_runtime_use_autosuspend(), a corresponding
+> pm_runtime_dont_use_autosuspend() should be called.
+> 
+> In case of error in pm_runtime_resume_and_get(), it is not the case because
+> the error handling path is wrongly ordered.
+> Fix it.
+> 
+> Fixes: 780f62974125 ("i2c: omap: fix reference leak when pm_runtime_get_sync fails")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-index 39a4f59d8925..76bced68a2d2 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-@@ -7635,8 +7635,11 @@ pcie0: pcie@1c00000 {
- 		iommu-map = <0x0 &pcie_smmu 0x0000 0x1>,
- 			    <0x100 &pcie_smmu 0x0001 0x1>;
- 
--		resets = <&gcc GCC_PCIE_0_BCR>;
--		reset-names = "pci";
-+		resets = <&gcc GCC_PCIE_0_BCR>,
-+			 <&gcc GCC_PCIE_0_LINK_DOWN_BCR>;
-+		reset-names = "pci",
-+			      "link_down";
-+
- 		power-domains = <&gcc PCIE_0_GDSC>;
- 
- 		phys = <&pcie0_phy>;
-@@ -7803,8 +7806,11 @@ pcie1: pcie@1c10000 {
- 		iommu-map = <0x0 &pcie_smmu 0x0080 0x1>,
- 			    <0x100 &pcie_smmu 0x0081 0x1>;
- 
--		resets = <&gcc GCC_PCIE_1_BCR>;
--		reset-names = "pci";
-+		resets = <&gcc GCC_PCIE_1_BCR>,
-+			 <&gcc GCC_PCIE_1_LINK_DOWN_BCR>;
-+		reset-names = "pci",
-+			      "link_down";
-+
- 		power-domains = <&gcc PCIE_1_GDSC>;
- 
- 		phys = <&pcie1_phy>;
--- 
-2.34.1
+Reviewed-by: Andreas Kemnade <andreas@kemnade.info>
+
+> ---
+> Compile tested only.
+> ---
+>  drivers/i2c/busses/i2c-omap.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-omap.c b/drivers/i2c/busses/i2c-omap.c
+> index 485313d872e5..ef1193e0e62d 100644
+> --- a/drivers/i2c/busses/i2c-omap.c
+> +++ b/drivers/i2c/busses/i2c-omap.c
+> @@ -1523,9 +1523,9 @@ omap_i2c_probe(struct platform_device *pdev)
+>  	if (omap->mux_state)
+>  		mux_state_deselect(omap->mux_state);
+>  err_put_pm:
+> -	pm_runtime_dont_use_autosuspend(omap->dev);
+>  	pm_runtime_put_sync(omap->dev);
+>  err_disable_pm:
+> +	pm_runtime_dont_use_autosuspend(omap->dev);
+>  	pm_runtime_disable(&pdev->dev);
+>  
+>  	return r;
 
 
