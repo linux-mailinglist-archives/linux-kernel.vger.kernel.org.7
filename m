@@ -1,92 +1,99 @@
-Return-Path: <linux-kernel+bounces-736333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C602B09B9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:43:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 974D9B09BAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:50:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46B96A63B1E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:42:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60A38A64FAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:49:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC8F21FE45D;
-	Fri, 18 Jul 2025 06:43:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 607EA1FF5E3;
+	Fri, 18 Jul 2025 06:50:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="YlNFCiHS"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aWPBmRcU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23B01A315C;
-	Fri, 18 Jul 2025 06:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3114689;
+	Fri, 18 Jul 2025 06:50:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752820986; cv=none; b=GeFAX77MWYze157ja6lfHhOgTlZaHTdH+RKentvIYTpBEo+sAoXjm7CAxpABaG98u9pee5n6DVMZ/oqFrQpnpJvCSwQFLutlzRBa9KcCQWJg/RcVFoMrOdf0Zx0FMOU0ybRuSfixkLSRGmY/MnuQ0w/EGB8ijri4Rh3RdZ5E50M=
+	t=1752821406; cv=none; b=LyJrPEO6iRCEy7qTF0SaCOzEwugdeHTXe4biWvmkHsq6oH8cOVwoSmeAyu+16SAkXOmhkN/l2juDWzmvMrT+5vYMGdQ7gFD8HcGWnDCoCWpOIxVo3AUhLBQPGNfwyTH6KsR+sJY9AyhAhbJ08cmeKcx6kgmZuMpZcsUbzm5jr2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752820986; c=relaxed/simple;
-	bh=pvj22hJnIB1p4D0t04zThvjjdencLqZJzyAOMzd0ctQ=;
-	h=From:To:Subject:In-Reply-To:References:MIME-Version:Content-Type:
-	 Message-ID:Date; b=s2y6/JlY64RmALL273NIdROWfEABcwAdppAvk9eMP/6jrIf/toCmyeTwFEAhd2UCaLo1ppqW7wjnl4Krjt1lY5ZYOqCHnsP+7MEZUZUQ8UlX3AZw2B4sakZYQeFlHmp4R6U0wyZA/qp/4+t2ArfE9PrNOYRb2JHI70duz7lZiyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=YlNFCiHS; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 56I6gq6sB1154915, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1752820973; bh=4/2QoFgFJq1oKmZJAASPxr826x8ISG7bFQQmb4NeVNU=;
-	h=From:To:Subject:In-Reply-To:References:MIME-Version:Content-Type:
-	 Message-ID:Date;
-	b=YlNFCiHSCL4f4j6hts83yPhP/rMGsQj25addBoPCl+jHm8xOv6MbDJiZvTCNAwNBY
-	 KMCsAENpn6JiCXGh0kgHE1pZRbl72XXaklTFWWbZvxHkHsakgn6juboY2sKX2W3iOm
-	 Y+dLqlZRmOaf/xjqThAi6I/O0ubP/mfJLpSuyAAEeXhXfoSsdgpoJxLilo9mVpl5VV
-	 09Wb5zPkiUlwtXSsLgyMI+PgPoq6T1DWOibNZ4WV61tJfa65o3/vsI8VKcwOL5HyZn
-	 xiOdAgx8LdABKOocztnmt8/jpFhnAhsjhfgwEtqEsGz7jFhPuoasL6Eis1mdmkniB3
-	 FqLRmbVpsGsag==
-Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 56I6gq6sB1154915
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 18 Jul 2025 14:42:53 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 18 Jul 2025 14:42:53 +0800
-Received: from [127.0.1.1] (172.21.69.94) by RTEXMBS04.realtek.com.tw
- (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Fri, 18 Jul
- 2025 14:42:52 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Qianfeng Rong <rongqianfeng@vivo.com>, Ping-Ke Shih <pkshih@realtek.com>,
-        Arnd Bergmann <arnd@arndb.de>, Qianfeng Rong <rongqianfeng@vivo.com>,
-        "open
- list:REALTEK WIRELESS DRIVER (rtlwifi family)"
-	<linux-wireless@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 7/7] wifi: rtlwifi: Use min()/max() to improve code
-In-Reply-To: <20250715121721.266713-8-rongqianfeng@vivo.com>
-References: <20250715121721.266713-1-rongqianfeng@vivo.com> <20250715121721.266713-8-rongqianfeng@vivo.com>
+	s=arc-20240116; t=1752821406; c=relaxed/simple;
+	bh=dNjvBvVDoDotAFqXuu1WvpTaH3Qa0mGPmPm5pFh2/Ak=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NOH0sKb073NFsli47l2TxO4Ow+J3Xpa2EfU2Nh2EXfmAl6Ep0IJ5oub69PiGMjiJgQJzW32vPIfjTvxzSrpr34hHtG8jILzjhX7h0J+6h6IS+8teFUA+qFHBQltL5TO/VoclrL3HZpLIDANMqTHQlYu0ct+kktpTqVKBSdcsnQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aWPBmRcU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4763C4CEED;
+	Fri, 18 Jul 2025 06:50:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752821406;
+	bh=dNjvBvVDoDotAFqXuu1WvpTaH3Qa0mGPmPm5pFh2/Ak=;
+	h=From:To:Cc:Subject:Date:From;
+	b=aWPBmRcUizrhKxkHZiMJZ3hKRzdlzmVExliBwBmN6rVqFApnfeGNczbG5HjX8GI6T
+	 ubaZAxeKcp/0J3y7q54A34FztCVsI/4wF+WhOX8ar4mf33eG/52eY1LHNJEAjgye3v
+	 8NaEVpVjSydhJ4UaO39nUGiWDcKXeqKesLoxOzqR6ng8Ah3pF8fFPDyO8ExNsUO5RA
+	 XA6zpWqpQIz/7dJBSnvd0X8SznnO4z2jO/QjVd2UDZ0SaiQ7M+a5MlE9DvsYJg/ZAJ
+	 PjET131RzaxjSbiId9I/ICd+DbtyUmKg9xMM6cTQnarS/58VhzT2S/jHqxeqy03v2g
+	 rJ2BheY0edfNA==
+From: "Naveen N Rao (AMD)" <naveen@kernel.org>
+To: Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>
+Cc: <kvm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>,
+	Maxim Levitsky <mlevitsk@redhat.com>,
+	Vasant Hegde <vasant.hegde@amd.com>,
+	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Subject: [RFC PATCH 0/3] KVM: SVM: Fix IRQ window inhibit handling
+Date: Fri, 18 Jul 2025 12:13:33 +0530
+Message-ID: <cover.1752819570.git.naveen@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Message-ID: <e8052803-fcc6-4ed5-a8b6-78fb02883eb7@RTEXMBS04.realtek.com.tw>
-Date: Fri, 18 Jul 2025 14:42:52 +0800
-X-ClientProxiedBy: RTEXMBS02.realtek.com.tw (172.21.6.95) To
- RTEXMBS04.realtek.com.tw (172.21.6.97)
+Content-Transfer-Encoding: 8bit
 
-Qianfeng Rong <rongqianfeng@vivo.com> wrote:
+Sean, Paolo,
+I have attempted to take the changes discussed in the below thread and 
+to convert them into a patch series:
+http://lkml.kernel.org/r/Z6JoInXNntIoHLQ8@google.com
 
-> Use min()/max() to reduce the code and improve its readability.
-> 
-> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
-> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+I have tried to describe the changes, but the nested aspects would 
+definitely need a review to ensure correctness and that all aspects are 
+covered there.
 
-1 patch(es) applied to rtw-next branch of rtw.git, thanks.
+None of these patches include patch tags since none were provided in the 
+discussion. I have proposed patch trailers on the individual patches.  
+Please take a look and let me know if that's fine.
 
-94cd0ba1842e wifi: rtlwifi: Use min()/max() to improve code
+I tested this lightly with nested guests as well and it is working fine 
+for me.
 
----
-https://github.com/pkshih/rtw.git
+
+Thanks,
+Naveen
+
+
+Naveen N Rao (AMD) (3):
+  KVM: SVM: Fix clearing IRQ window inhibit with nested guests
+  KVM: SVM: Fix IRQ window inhibit handling across multiple vCPUs
+  KVM: SVM: Optimize IRQ window inhibit handling
+
+ arch/x86/include/asm/kvm_host.h | 16 +++++++++
+ arch/x86/kvm/svm/svm.h          |  1 +
+ arch/x86/kvm/svm/svm.c          | 60 ++++++++++++++++++++-------------
+ arch/x86/kvm/x86.c              | 45 ++++++++++++++++++++++++-
+ 4 files changed, 98 insertions(+), 24 deletions(-)
+
+
+base-commit: 87198fb0208a774d0cb8844744c67ee8680eafab
+-- 
+2.50.1
 
 
