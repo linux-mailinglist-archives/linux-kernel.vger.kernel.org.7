@@ -1,124 +1,92 @@
-Return-Path: <linux-kernel+bounces-736951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B7BEB0A59A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:53:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9327B0A59D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:54:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24A9A1C42782
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:53:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CF79A44FE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:54:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01FF92D97A0;
-	Fri, 18 Jul 2025 13:53:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NlGGxUof"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D53C2299927;
+	Fri, 18 Jul 2025 13:54:50 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD6C22D79F;
-	Fri, 18 Jul 2025 13:53:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA8AB130A54
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 13:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752846787; cv=none; b=rNIqp67FiG01mxCOAOxaXVBPyZ4Lx/DAhdXTT+oPNUzXDOMEpVsqr3PljiUaPif9Ae/Tu4AqDTv5bkGKqbh2o7XypyHB/dCLXVrt2ZudB4wYNJMimEkNWHD7yf4DlaGtZ1P48aGdqmXnmkdgsE6Gs/ovoew91F9UwIZTO60xpPA=
+	t=1752846890; cv=none; b=AzTKieDusm+h8ylE95mPnFUfNNq1UF3Aa/PMslhekakmTlzz/MMtsw+GhV/wErjjqFzgVnHNzqXlJfdjjoDyQ+IgA34NarbfgZfVj1pZ/5Sqlb8dsHMEbV8hXsEdeYqW6M/aEBmhC2XktLiBWsjsDZB13D0UMaoEmSTkW+/P47A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752846787; c=relaxed/simple;
-	bh=B4SnE+zQQYrXoOXSH3uh52tXSCyHrejJfwt5H9FxdM8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GG/lMV+a2XlIeGS8ZRlKbBjXxDqYc3eiNtzZJbylaT7+rVX9SQgXFFd8ERHLAA/3/WgL3Nra3bFtgMcmCpcjlgj3HZEPso2uOpr9pMRUz6Q/vcs9yCviNCD4e5HVDRGybkvOO/ihStLB31NnqTeJdsOHOj1uAEzxfyxd2ZFLvF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NlGGxUof; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3169C4CEEB;
-	Fri, 18 Jul 2025 13:53:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752846786;
-	bh=B4SnE+zQQYrXoOXSH3uh52tXSCyHrejJfwt5H9FxdM8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NlGGxUof11Zehi8WBXyY/8GR05FhcOVGptIke0qiu0pQfbjWDF4kH235O8293aR2d
-	 YvWNzcgzpoYL1rmqDAQ3XTk5/0gadDntr+1tTU1Z7YMmwlmqqe/K/vPbLQIMGcg6NQ
-	 wZMibR8oYCiKzHRN1TwApjuzcj+ry5jE4DvLD/aQMtQdhO9lbq5DOiQvdFOwiq5J9+
-	 /9QbvorA4qw/MObr/WO8ycsIoxPnGfDOnk8M6XCCgPvZDpkNJjlXMTuS2UH8XU/sTm
-	 JIpt36PkfH6ZQOjQsmN8OnDI24KpPaYKKVfouIPA7lqNgK3GRNm7Nhg9VvowAU7lnN
-	 dC4BzIdNfmnZQ==
-Date: Fri, 18 Jul 2025 14:53:00 +0100
-From: Will Deacon <will@kernel.org>
-To: perlarsen@google.com
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, ahomescu@google.com,
-	armellel@google.com, arve@android.com, ayrton@google.com,
-	qperret@google.com, sebastianene@google.com, qwandor@google.com
-Subject: Re: [PATCH v7 5/5] KVM: arm64: Support FFA_MSG_SEND_DIRECT_REQ2 in
- host handler
-Message-ID: <aHpRvBO864x1vvqP@willie-the-truck>
-References: <20250701-virtio-msg-ffa-v7-0-995afc3d385e@google.com>
- <20250701-virtio-msg-ffa-v7-5-995afc3d385e@google.com>
+	s=arc-20240116; t=1752846890; c=relaxed/simple;
+	bh=MsPSlzRRWS8Xh46eLLLIXmFa2M88MKKvTyEFzIVA95o=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=jtFCUOlS+kwJ/lQD0cP0IWtJj9mcFD170KioKXtfMXGD72z97Kkmx1IvrrY7nojzJ4Je6OZnLjRyWPS509/vo8m1v24fPThKN5Up2Abq2hi6DgrldPy/y1wX0TfW0OBbsI1KhddBmdLXZUnv+oI+/f9HvoDXwE6FmF5Ci1+nWIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 56IDsFQF032692;
+	Fri, 18 Jul 2025 22:54:15 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 56IDsFxI032687
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Fri, 18 Jul 2025 22:54:15 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <6e49d04a-4069-4cce-9f49-fd63983ae658@I-love.SAKURA.ne.jp>
+Date: Fri, 18 Jul 2025 22:54:15 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250701-virtio-msg-ffa-v7-5-995afc3d385e@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ocfs2: fix lock acquisition order in refcounttree
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To: Diogo Jahchan Koike <djahchankoike@gmail.com>,
+        Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+Cc: syzbot+1fed2de07d8e11a3ec1b@syzkaller.appspotmail.com,
+        ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250714221552.4853-1-djahchankoike@gmail.com>
+ <5957f94d-2521-43d4-ba0b-7b98576167a4@I-love.SAKURA.ne.jp>
+Content-Language: en-US
+In-Reply-To: <5957f94d-2521-43d4-ba0b-7b98576167a4@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav102.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-On Tue, Jul 01, 2025 at 10:06:38PM +0000, Per Larsen via B4 Relay wrote:
-> From: Per Larsen <perlarsen@google.com>
+On 2025/07/15 11:51, Tetsuo Handa wrote:
+> On 2025/07/15 7:15, Diogo Jahchan Koike wrote:
+>> Acquiring the locks in refcounttree should follow
+>> the ip_alloc --> ip_xattr ordering, as done by multiple
+>> code paths in ocfs2; otherwise, we risk an ABBA deadlock
+>> (i.e in the start transaction path).
 > 
-> FF-A 1.2 adds the DIRECT_REQ2 messaging interface which is similar to
-> the existing FFA_MSG_SEND_DIRECT_{REQ,RESP} functions except that it
-> uses the SMC calling convention v1.2 which allows calls to use x4-x17 as
-> argument and return registers. Add support for FFA_MSG_SEND_DIRECT_REQ2
-> in the host ffa handler.
+> I noticed that ocfs2_reflink() in the same file wants similar change.
 > 
-> Signed-off-by: Per Larsen <perlarsen@google.com>
-> ---
->  arch/arm64/kvm/hyp/nvhe/ffa.c | 24 +++++++++++++++++++++++-
->  include/linux/arm_ffa.h       |  2 ++
->  2 files changed, 25 insertions(+), 1 deletion(-)
+> 	down_write(&OCFS2_I(inode)->ip_xattr_sem);
+> 	down_write(&OCFS2_I(inode)->ip_alloc_sem);
+> 	error = __ocfs2_reflink(old_dentry, old_bh,
+> 				new_orphan_inode, preserve);
+> 	up_write(&OCFS2_I(inode)->ip_alloc_sem);
+> 	up_write(&OCFS2_I(inode)->ip_xattr_sem);
 > 
-> diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> index 79d834120a3f3d26e17e9170c60012b60c6f5a5e..21225988a9365219ccfd69e8e599d7403b5cdf05 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> @@ -679,7 +679,6 @@ static bool ffa_call_supported(u64 func_id)
->  	case FFA_NOTIFICATION_GET:
->  	case FFA_NOTIFICATION_INFO_GET:
->  	/* Optional interfaces added in FF-A 1.2 */
-> -	case FFA_MSG_SEND_DIRECT_REQ2:		/* Optional per 7.5.1 */
 
-I think that's the only change needed. In fact, maybe just don't add it
-in the earlier patch?
+Moreover, I noticed that e.g. ocfs2_xattr_set_handle() firstly acquires
+ip_xatr_sem and then ocfs2_xattr_ibody_find() might acquire ip_alloc_sem.
 
->  	case FFA_MSG_SEND_DIRECT_RESP2:		/* Optional per 7.5.1 */
->  	case FFA_CONSOLE_LOG:			/* Optional per 13.1: not in Table 13.1 */
->  	case FFA_PARTITION_INFO_GET_REGS:	/* Optional for virtual instances per 13.1 */
-> @@ -862,6 +861,22 @@ static void do_ffa_part_get(struct arm_smccc_1_2_regs *res,
->  	hyp_spin_unlock(&host_buffers.lock);
->  }
->  
-> +static void do_ffa_direct_msg2(struct arm_smccc_1_2_regs *regs,
-> +			       struct kvm_cpu_context *ctxt,
-> +			       u64 vm_handle)
-> +{
-> +	DECLARE_REG(u32, endp, ctxt, 1);
-> +
-> +	struct arm_smccc_1_2_regs *args = (void *)&ctxt->regs.regs[0];
-> +
-> +	if (FIELD_GET(FFA_SRC_ENDPOINT_MASK, endp) != vm_handle) {
-> +		ffa_to_smccc_error(regs, FFA_RET_INVALID_PARAMETERS);
-> +		return;
-> +	}
+Diogo, where do you see the ip_alloc --> ip_xattr ordering?
 
-Why do we care about checking the src id? We don't check that for
-FFA_MSG_SEND_DIRECT_REQ and I don't think we need to care about it here
-either.
+Unless we unify to either ip_alloc --> ip_xattr ordering or
+ip_xattr --> ip_alloc ordering (or replace ip_xattr with ip_alloc),
+this patch simply changes the location of lockdep warning?
 
-Will
 
