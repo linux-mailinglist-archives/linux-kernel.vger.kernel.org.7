@@ -1,125 +1,105 @@
-Return-Path: <linux-kernel+bounces-737395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82538B0ABF9
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 00:09:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00609B0ABFA
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 00:09:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A99A317B897
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 22:08:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49066188D8EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 22:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C2DF221FD0;
-	Fri, 18 Jul 2025 22:07:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 993D3221F02;
+	Fri, 18 Jul 2025 22:09:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oJXjgCpI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="oJ4QEcw8"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B7EC2C9;
-	Fri, 18 Jul 2025 22:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F212211460;
+	Fri, 18 Jul 2025 22:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752876469; cv=none; b=XhkdyO1e4z9PRmZHF5kHjsmc2lwgUseo2nI9Or2omUNfWy4GDISKRhwNa34/xR9VrBeASUR/MKqBUatm0AhVG0+xfJ9MHg+bptVfxcQeBPPH9NWDr077zgyeM1bE0VnW/V1jNXPRrDklnH+3IT/xXvozmNDEVUYArKxhlP6vd6c=
+	t=1752876543; cv=none; b=uiIPTkoIYu1lWYMFQTKnRqmnxlVzcezcP+ZN41aLxvQOJVfPZHERq3ZBzz0DNGJxhvNsYK+aCxU8R/3vnbnru+E6/nakT2xif6e2eKUg62eSdjRWJ9NCy12Lu/vVgdnix9Bcmr5JTL5SbnDc4/I6dBhI6OIDxwCyEKLP+BPJROk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752876469; c=relaxed/simple;
-	bh=1CE6FSqwkeWvryzNivZ1ka0SgHoOi98KjNNJNBegE/Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qqj7zdVFyZoN/22jwaQJGD9csSLHjRXsH1TOJhAtswrt12HEM/cW+2Lrop4NWZrrlF3EDeNoUGumJE+sJaHNP4yq7LS9SRm1ODPC1LsmAsGcfQOPW0zPt2YRxpkp+wVfRHAFwW2fnSsHjVi9NLQlKv+AI3+i9XItRwyLUF0uCHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oJXjgCpI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 554CDC4CEEB;
-	Fri, 18 Jul 2025 22:07:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752876468;
-	bh=1CE6FSqwkeWvryzNivZ1ka0SgHoOi98KjNNJNBegE/Y=;
-	h=From:To:Cc:Subject:Date:From;
-	b=oJXjgCpIbic7ke/hk0PngNCG3uWEkILJVcf3B8OTheyN/vITGcfIDSj0j6uwd/w2l
-	 DLz/SKzg7ImZa9o6BUT+8nkEG80zaHlefp70h6u2C8YyqjO2xCM5hn2+DlWFd0WyxB
-	 dUSrTpB3cjJi7jZslFL6oDkl6CEMhYJWsHe8Hdd9Ntb0EguzT672XvJu8hLLDmWorD
-	 DDxMFMJMtLKjXHHUThNUzbWTpMALLo/GUIXlEBEhPsNr4HxMA9ImT+L9Da+KS0dm3F
-	 qA8/vh7HgEAQTyql2wZhOQsOxEMyoKMMKFY2shgz91if348VRs4YSXwl1zVLo87iFT
-	 kWc2P8YpH0JFQ==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-crypto@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>,
-	Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH] lib/crypto: arm64/sha512-ce: Drop compatibility macros for older binutils
-Date: Fri, 18 Jul 2025 15:07:06 -0700
-Message-ID: <20250718220706.475240-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1752876543; c=relaxed/simple;
+	bh=DxpaXYd0x2WTnenk/a/Q9cGK0IY2RfScwM25UrFk94w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IxOFGcs1SrGw+xYkJUNX+zvMCHE8avc6zZCwd380ckYJirrN00CZ+7ZARNRCAAG2Lv5W97fy5TXtNLjTcHHiCWMkZGfkDYCgH4XDeA95DOovRCiHmYOgpO7ahemYu6+nfeimVu/TwIOhHlpftZWM/1PxpevLUEp0W780LHfzcto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=oJ4QEcw8; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752876402;
+	bh=DxpaXYd0x2WTnenk/a/Q9cGK0IY2RfScwM25UrFk94w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=oJ4QEcw8Q1RqPSrGD/T36nzYcrIEgoQYHkomHnRiq4Itkhs/tVjGkH2Y6aiVm44di
+	 /v2+/BTXRi+TAtc6ncjCNx+foQW0rpu0+UK+WdTiHJQjOG5gKD3JvzIforahZx38sB
+	 XUq1bd3ycs7Y/HeqNqOrmz7XqdJ9xbQlqEWDN1bVVYk7JjUfw0RVOfAg2iRv8IdrfT
+	 wqFAqqgwFjeTznGbB+6LdJrX6LmnOuPWLlBzWarbQODzehXNxPs8jnjkgfLJytKxSf
+	 U8H6R4ZgoxMRofxtMfZlNmtpNL1sgTK6zrryo3KI5pXNY2PeFq+p5QfpCLd4590wwN
+	 pkhVeDpO2Tyuw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bkP5Y5dhYz4xQZ;
+	Sat, 19 Jul 2025 08:06:41 +1000 (AEST)
+Date: Sat, 19 Jul 2025 08:08:53 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Donghoon Yu <hoony.yu@samsung.com>, Will McVicker
+ <willmcvicker@google.com>, Youngmin Nam <youngmin.nam@samsung.com>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the clockevents tree
+Message-ID: <20250719080853.583fc406@canb.auug.org.au>
+In-Reply-To: <CAKnoXLynCY8dAe8k+ttTVpN2U49_-DyQFU7t1BRk-x74tfJ78Q@mail.gmail.com>
+References: <20250716160809.30045a56@canb.auug.org.au>
+	<CAKnoXLynCY8dAe8k+ttTVpN2U49_-DyQFU7t1BRk-x74tfJ78Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/Id1.TseJi6WIsko6gx.zF93";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Now that the oldest supported binutils version is 2.30, the macros that
-emit the SHA-512 instructions as '.inst' words are no longer needed.  So
-drop them.  No change in the generated machine code.
+--Sig_/Id1.TseJi6WIsko6gx.zF93
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Changed from the original patch by Ard Biesheuvel:
-(https://lore.kernel.org/r/20250515142702.2592942-2-ardb+git@google.com):
- - Reduced scope to just SHA-512
- - Added comment that explains why "sha3" is used instead of "sha2"
+Hi Daniel,
 
-Signed-off-by: Eric Biggers <ebiggers@kernel.org>
----
+On Wed, 16 Jul 2025 11:26:15 +0200 Daniel Lezcano <daniel.lezcano@linaro.or=
+g> wrote:
+>
 
-This patch is targeting libcrypto-next
+> Right. Shall I fold the fix with the commit ?
 
- lib/crypto/arm64/sha512-ce-core.S | 27 +++++++--------------------
- 1 file changed, 7 insertions(+), 20 deletions(-)
+That would be up to you.
 
-diff --git a/lib/crypto/arm64/sha512-ce-core.S b/lib/crypto/arm64/sha512-ce-core.S
-index 7d870a435ea38..eaa485244af52 100644
---- a/lib/crypto/arm64/sha512-ce-core.S
-+++ b/lib/crypto/arm64/sha512-ce-core.S
-@@ -10,30 +10,17 @@
-  */
- 
- #include <linux/linkage.h>
- #include <asm/assembler.h>
- 
--	.irp		b,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19
--	.set		.Lq\b, \b
--	.set		.Lv\b\().2d, \b
--	.endr
--
--	.macro		sha512h, rd, rn, rm
--	.inst		0xce608000 | .L\rd | (.L\rn << 5) | (.L\rm << 16)
--	.endm
--
--	.macro		sha512h2, rd, rn, rm
--	.inst		0xce608400 | .L\rd | (.L\rn << 5) | (.L\rm << 16)
--	.endm
--
--	.macro		sha512su0, rd, rn
--	.inst		0xcec08000 | .L\rd | (.L\rn << 5)
--	.endm
--
--	.macro		sha512su1, rd, rn, rm
--	.inst		0xce608800 | .L\rd | (.L\rn << 5) | (.L\rm << 16)
--	.endm
-+	/*
-+	 * While SHA-512 is part of the SHA-2 family of algorithms, the
-+	 * corresponding arm64 instructions are actually part of the "sha3" CPU
-+	 * feature.  (Except in binutils 2.30 through 2.42, which used "sha2".
-+	 * But "sha3" implies "sha2", so "sha3" still works in those versions.)
-+	 */
-+	.arch		armv8-a+sha3
- 
- 	/*
- 	 * The SHA-512 round constants
- 	 */
- 	.section	".rodata", "a"
+--=20
+Cheers,
+Stephen Rothwell
 
-base-commit: 66be847cc4c2e82fb50190b52b05b3bb0ef57999
--- 
-2.50.1
+--Sig_/Id1.TseJi6WIsko6gx.zF93
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh6xfUACgkQAVBC80lX
+0Gy9UQf8CLMshvs3eszT971rQV7WXp4s+d5Cb5OEf14o7m9oOczKlKhpEyRScLu3
+N3HbTX9cfTeyUUwz8CwgzVxhB9uA6Hgour6wJGYeXzSmKNYM6BygfFkaQ/o/Mjvp
+6ADWsfwSU96nQRymHP1hpQkotA54AfY9z6dGGoUR5G+XaxICPr2CYA232h/RJo4x
+gpWp7b8QEFSTQZb3SwekGHgz4+qvMvZOTGuFoaLnrBwnMAXsmFCY/WsNksCKGJRZ
+OYfMN+7hpitNofubODP3AcNgi0k+bA2M4Uq1v6PkwJD94ZtijKQ/sJYjgJoZd+dH
+rkWzm0OYKJMYB1+2uhk7LPBYamyqKQ==
+=voVw
+-----END PGP SIGNATURE-----
+
+--Sig_/Id1.TseJi6WIsko6gx.zF93--
 
