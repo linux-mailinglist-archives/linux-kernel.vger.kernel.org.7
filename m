@@ -1,122 +1,110 @@
-Return-Path: <linux-kernel+bounces-736378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA32AB09C2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:14:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A37AB09C25
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:14:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E9BAA80011
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 07:13:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A24865A3D65
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 07:13:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A18218AC4;
-	Fri, 18 Jul 2025 07:14:19 +0000 (UTC)
-Received: from baidu.com (mx22.baidu.com [220.181.50.185])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4488C219A9E;
+	Fri, 18 Jul 2025 07:13:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XsSSbfl0"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C0D215043
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 07:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B85215043
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 07:13:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752822859; cv=none; b=N7ASUtQzQorZhX/zQRqlurqJmxj5UZj51PIkUye3xOuZYKAoqIO5uiQ2ZUonJwCxow/XcGP7zG3O18sjylugsvP0tvKg6rNdzi6DTuQpsZvjCfxx9pvlv42KdLHpExsfXcPxJNy6rpDSf7tfmY8KaEWEYcSp/x/ckbjdc0Tnq9k=
+	t=1752822820; cv=none; b=WyrK5rAoEb0dFxYtRU2ynfU1OfZyGUkTmzm0mS07mRr7q9U8yckehtwNLUXx9oOP011HJF88CgJoNcavfPIWeBMBecgYMkdqgZY3Nw/IZHgtNovonmO6qfGjPxff3TNo5H0ajwMoaLhXvHLyqaXyeQaUvW7mmJ1/z2Kn0ouFpZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752822859; c=relaxed/simple;
-	bh=UkY8E80JqoRe54HrCdpYzLB8WKG3Ltq7hxZXSW87Tkg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=efdcOd0gTUHzUCY/TYWJUPH/Bo2b9Pqn0wOaC4CIO5QWn9T2w3YGqtZ+tRJ2aT6fxrg2oDTaIRV/93r5iZll00bsdfLJTlQjnrI1W0XaTwuV5w+TplxVwlOIF+AppsoqT7yaLFPwpToYt/9HZQSSbbsLPxTPfaDFqMIjLRoWSeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
-From: Fushuai Wang <wangfushuai@baidu.com>
-To: <sohil.mehta@intel.com>
-CC: <aruna.ramakrishna@oracle.com>, <aubrey.li@intel.com>, <bp@alien8.de>,
-	<brgerst@gmail.com>, <chang.seok.bae@intel.com>,
-	<dave.hansen@linux.intel.com>, <hpa@zytor.com>,
-	<linux-kernel@vger.kernel.org>, <mingo@redhat.com>, <oleg@redhat.com>,
-	<peterz@infradead.org>, <rick.p.edgecombe@intel.com>, <seanjc@google.com>,
-	<tglx@linutronix.de>, <vigbalas@amd.com>, <wangfushuai@baidu.com>,
-	<x86@kernel.org>
-Subject: Re: [PATCH] x86/fpu: Fix potential NULL dereference in avx512_status()
-Date: Fri, 18 Jul 2025 15:12:50 +0800
-Message-ID: <20250718071250.36019-1-wangfushuai@baidu.com>
-X-Mailer: git-send-email 2.39.2 (Apple Git-143)
-In-Reply-To: <89987231-37ce-4d49-a1d7-6e699e8ab0d2@intel.com>
-References: <89987231-37ce-4d49-a1d7-6e699e8ab0d2@intel.com>
+	s=arc-20240116; t=1752822820; c=relaxed/simple;
+	bh=XnntMU/9g1qIHQUyx4VOpPDXVeVre57QdmM2tkazN7c=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=c7PVyDKu/1zvAtn4/GTxVWFtg/1PXT82xRCfDBg/BaNer6YkopwEBuc4iP2j8/iij1XE56SRcUKfiQZkI10SIle09V6XeoVSdt3rRidxknVKZExH4J8Ua9WZ9UvA57x4WRIt7oJFVM0uZa9T+kFk2/JfteZwtsk3odAkPtUAF1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XsSSbfl0; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6fb1be9ba89so16649566d6.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 00:13:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752822818; x=1753427618; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XnntMU/9g1qIHQUyx4VOpPDXVeVre57QdmM2tkazN7c=;
+        b=XsSSbfl053VVFId2mFPnVVw8F5mUPsPOgrVEleLGBgPA6zBZPddBANGYQtXTUu1Iq2
+         vAGM/GZV4pySMLxch5rpUAQPA/BenvacCljVlfGkcaLkg3Xtkf+eEnboytWmV20HuMw+
+         TYgOmhv2klkxOClxkPuBiU+c0YOoqp2W03+I51Nu7sNealNVrieuRI5VdNOd3w1inFYx
+         DXOsDAD/BqhB4ZkexHbCfxTRI3AM8ljyhCL5mFGkFrOPlKO8fZnuS0dFCFqQrqSbPyZY
+         5n/OMQf4ku3BILw4IR1iejMgYbQDo1sI8YTxnWJTsaDbZCOuLwza/2f5gU7y9QjiSF+c
+         7DXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752822818; x=1753427618;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XnntMU/9g1qIHQUyx4VOpPDXVeVre57QdmM2tkazN7c=;
+        b=oaroMTntP/Jl8K2jYRx2AmDJjRHkqTyYS7SHXeKjzWQe4x8SGK9oOGmlQzCknAiYVl
+         f8TgAp6i6Tp7RdHiF7g9vI/Ag81w+PYzaKaNwqcZFyDzHU5SAxyyf3+nGOMgw9cMzzQf
+         9UBjaVwLrAWql1pJ7/tMdHe3j60Gve76XalRGih9C9whTzvBWDDrYhHL431cdXWPBKkP
+         5Xfrcw7lDc1/Xt3xOB5dhqwveD88EvNxyScgBWZ4Kb3dFoAVNxCr+n7hazrzLslIWq5E
+         dOv717zLPtd4cCyx34603kl20sAKd/Gyxr5gT9hOmGyv6OgTUU5FiJlptDR6EkArWzJw
+         zD9A==
+X-Forwarded-Encrypted: i=1; AJvYcCXiNwOM83r1020NWYlSHjWC0FYc9O/Ll10Ne/x1/Mvru0+HHLpWzZ7oqWC/1jPAf2kahw2JsolIlwsmoro=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxa0fNufVCCLD9FUaGFdkbBG58wzOez1rxvdiAMiS88bPK9NpR9
+	N1hLHC1Sr21wVSDsfUDD1YVI1NMB2CfTEPbJ1n4H0kFnOyJuLXA+PjWJ
+X-Gm-Gg: ASbGncsrfF7KouwutzY+PG3rce/dBhEneOenH8B8Uw5Atb3Zyk7ZZwvrHbFxBX3mvpT
+	xFkNSwaAyNUMAK/zgaQXIOxx4p7HnxIVpGO3aaykNwEADJQAEN9wT+LJIJRiE5qTCGgix34hh1u
+	GczlBjuCDim9TUoOcgWPffrNU4vROqbQknAQLE4UvQUwLox2zgMicaqeXSfBqGDN9cczlECy4GT
+	cHr5cuyFkyeSJNP7v3P2fhR4Pm4DFT0Qp3a4wWKW6paCboBXjyPD2yjaJ9sW1II6MWqc3GjhFC4
+	ATW6jdC591wY5T+QM8O3/xL4E6RPp7ovsD3CYm9dESLoMrD0qTIFhwsPPf468K1p0QeF6tRhMq1
+	T69IQt6HWp4TVFXME4A+osWvroSTbDHal+OBhDfaS3aR52a78cJY=
+X-Google-Smtp-Source: AGHT+IFhkrR53gkL3P1emJDb/E/P+tL6SbS2YoE/IDUeCu6sTTfHt6LMTdvRIeYSmfCufo8sH6UZ0g==
+X-Received: by 2002:a05:6214:3bc2:b0:6ff:16da:af20 with SMTP id 6a1803df08f44-704f6a57203mr124872746d6.14.1752822817693;
+        Fri, 18 Jul 2025 00:13:37 -0700 (PDT)
+Received: from linux-kernel-dev-start.. ([159.203.26.228])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7051ba6b760sm4397356d6.62.2025.07.18.00.13.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Jul 2025 00:13:37 -0700 (PDT)
+From: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+To: vivek.balachandhar@gmail.com
+Cc: gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: Re: [PATCH v4] staging: rtl8192u: Rename ChannelPlan to channel_plan
+Date: Fri, 18 Jul 2025 07:13:22 +0000
+Message-Id: <20250718071322.174671-1-vivek.balachandhar@gmail.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250718015925.162713-1-vivek.balachandhar@gmail.com>
+References: <20250718015925.162713-1-vivek.balachandhar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: bjkjy-exc12.internal.baidu.com (172.31.51.12) To
- bjhj-exc17.internal.baidu.com (172.31.4.15)
-X-FEAS-Client-IP: 172.31.4.15
-X-FE-Policy-ID: 52:10:53:SYSTEM
 
->> Can you please share any other warnings that were triggered before this
->> Oops message? Also, I'll try to generate this locally. Any specific
->> configuration needed for reproducing this apart from CONFIG_X86_DEBUG_FPU?
->
->I was able to reproduce this on a system with X86_FEATURE_AVX512F. The
->issue only happens while reading arch_status on a kthread.
->
->$cat /proc/[kthread]/arch_status     => NULL pointer exception
->$cat /proc/[user thread]/arch_status => No issue seen
->
->Can you confirm that you are seeing the same behavior?
+Hi Greg,
 
-Confirmed, same issue here.
+Thanks for the review and guidance.
 
->Unfortunately, avx512_timestamp resides within struct fpu. So getting
->that value for a kthread would mean going through x86_task_fpu().
->
->I am wondering if we ever need to expose the AVX512 usage for kernel
->threads? If not, then we can do what you currently have but without the
->CONFIG_X86_DEBUG_FPU restriction. All kernel threads would always print
->the AVX512_elapsed_ms as -1.
->
->However, this would be a user visible change so we should probably get
->more inputs. I tried this experiment on an older kernel without the
->above issue. Among all the active kthreads on my system a handful of
->them show a valid value for AVX512 usage. The rest of them all show -1.
->
->PID: 2594
->CMD: avahi-daemon: running [SAP.local]
->  /proc/2594/arch_status content:
->AVX512_elapsed_ms:      46032
->
->PID: 2729
->CMD: sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 startups
->  /proc/2729/arch_status content:
->AVX512_elapsed_ms:      396656
->
->To keep the older behavior, we might need to consider moving
->avx512_timestamp out of struct fpu. Though, I am uncertain about its
->implication.
+Apologies for the earlier mistakes. I’ve addressed your comments in v5:
+- Dropped unrelated changes to Makefile and init/main.c
 
-I think avx512_elapsed_ms should logically belong in the FPU structure,
-as it's a field inherently tied to FPU operations? To keep the older
-behavior, we can set CONFIG_X86_DEBUG_FPU=n, maybe?
-Is there a better approach to ensure kernel threads always correctly output
-avx512_elapsed_ms. Directly get FPU struct pointer without using x86_task_fpu()?
+v5 has been posted here:
+https://lore.kernel.org/all/20250718025206.171361-1-vivek.balachandhar@gmail.com/ (cover letter)
+https://lore.kernel.org/all/20250718025206.171361-2-vivek.balachandhar@gmail.com/ (actual patch)
 
-diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-index 9aa9ac8399ae..f989bc125e9b 100644
---- a/arch/x86/kernel/fpu/xstate.c
-+++ b/arch/x86/kernel/fpu/xstate.c
-@@ -1859,9 +1859,10 @@ long fpu_xstate_prctl(int option, unsigned long arg2)
-  */
- static void avx512_status(struct seq_file *m, struct task_struct *task)
- {
--       unsigned long timestamp = READ_ONCE(x86_task_fpu(task)->avx512_timestamp);
-+       unsigned long timestamp;
-        long delta;
+Thanks again for your time and feedback!
 
-+       timestamp = READ_ONCE((struct fpu *)((void *)(task) + sizeof(*(task)))->avx512_timestamp);
-        if (!timestamp) {
-                /*
-                 * Report -1 if no AVX512 usage
+Best regards,
+Vivek BalachandharTN
 
