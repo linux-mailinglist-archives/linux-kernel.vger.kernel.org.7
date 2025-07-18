@@ -1,139 +1,247 @@
-Return-Path: <linux-kernel+bounces-736616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA5C9B09F8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:27:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CC2AB09F93
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:27:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBDCF5A2BB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:27:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6960C1C47A73
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:28:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9222989B4;
-	Fri, 18 Jul 2025 09:27:07 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D5832989B4;
+	Fri, 18 Jul 2025 09:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="c0LA6yVy"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E164296163;
-	Fri, 18 Jul 2025 09:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5241F296163
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 09:27:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752830826; cv=none; b=f9g/c8xujZMRIqdB0sPtzFTF5eG54f04MY55ouU2wbWFOCRWwDBg+BzyNpc/awysEfWLkGnuhmDKn+53yh9q/6yvy5Hi7CNxDoBah0mS2ppQwuu30acC0SGvIH2jyfUwQt/V3BaKYo3ZkvkYVpXkQfJiEjYbEnRAwmA076qocaI=
+	t=1752830862; cv=none; b=KlJmRodE9hD7/5dHYx0G8zU71O/0qIBXpHNlXqihiTAsp5q+hIEsi23ST2zKAHi8P149t3TkhR2W4JiDUfuakaEWrQ0cnBCNdnb1hDpwCFqE9e8lZX1esFBvbi6b89N7d9RO/dO4H4rcl93GtVnZVpuYIQ6Bhy96ghj8j7Ywb8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752830826; c=relaxed/simple;
-	bh=HUhy81ZaP0p0/423HH16uiwt9y5XJBXuD6+67+pGmRs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dv/BzeMH+3Eb42B49PJVFLIfXahGah1SUzdyVLsE+n5Q3uOrgEtwO6JhZ0WhWBz2xoMXLXtPLW5t/Fsoam5FZnjuNmgiVHGw0PcvRF/njMnAMu48Jtr6j+LHF5Vz1BD6rmfLwbtco9/8yYf5o45AKkrpWC/CiYuj+ixJK9CVq3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bk4Dw6xv6zKHN3X;
-	Fri, 18 Jul 2025 17:26:56 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 93C491A1355;
-	Fri, 18 Jul 2025 17:26:55 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP1 (Coremail) with SMTP id cCh0CgBXFLBeE3po8Z6eAg--.17315S2;
-	Fri, 18 Jul 2025 17:26:55 +0800 (CST)
-Message-ID: <180b4c3f-9ea2-4124-b014-226ff8a97877@huaweicloud.com>
-Date: Fri, 18 Jul 2025 17:26:54 +0800
+	s=arc-20240116; t=1752830862; c=relaxed/simple;
+	bh=FGPREmcEPnOwK5l5AewGV5z4NawSGFEuuZib4LYJ1z4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rhEeld0+MTHKMMZxQls1tq027VXshJR+eimXJ4/AE2SKz+eGawnAn0VmcFcTKDIm4hZcePNe+UrHU4g+sJP5/mEL8tpuuLLSJSd+HzkWKjCKr/LjJZmAVa2ol44eXIIT7ZSRtcXyF0HUtxEZ+qvkbHuGlEZaBdD9tBjlUz32hkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=c0LA6yVy; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56I7BQCr016170
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 09:27:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=2LrGVanutbs4/9+mngI5KLF5
+	t6u0n34A7dypspT6PBY=; b=c0LA6yVyWaaIvWWQZhTZSgtA6vDYf/XrxMWyqiEx
+	RitzYSlSINExQqM+6E5i4yG2SVHd5DGStSgZ9zo6ZcY/vgc5o8vDB7L8T8xKo8De
+	WBY3xggBpB09L12FU/luRCf/rT30x89FmFh558y+7dhSdoJ8Weg0x31WfGvwk3vr
+	sYinDpN/gmY/+L0EOH/VJdJd3XVBUU7rW9+MZ2FkzmgDz6JV/A153YCjL/bmBP2R
+	d7A9SaFBid83QhMz9JPYOYr+CTr5ZrAxrwTbf9OpCF289Uwufp3xHVD/Gyo+1C9+
+	azMpocOEr2fJmqrySpSIWl3kvkTVn+8w4zA4X7AjJZGC3w==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47w5dywwkg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 09:27:39 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c5bb68b386so483037885a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 02:27:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752830858; x=1753435658;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2LrGVanutbs4/9+mngI5KLF5t6u0n34A7dypspT6PBY=;
+        b=evnoF0gD2gog2cc2N2zeC+c3GHvhz7+bNxcxEHo37XSMYPJaW6OnJ1J8IEfs5HHyhj
+         LmskvoBp/4a3YP4kSmovcjkOLdCPbFG+mSrn6JtkJoVki0NdDYPzHUyVBFK2vDdbIEef
+         /S8e170LOYdYexFVI4aQAnOKAVnukuAJ5RzIg4GmD4PpoM+73jqSTx4UuGnvNkZdeaPG
+         b4mBzs0PgYKRRYTOEwR/9ezVHd13KksUTo4+/4RtBaLHCM49lpObGMcI/z7Sd0zHiCPF
+         N7nK50vsCQxa4DBjNRhKwQrh55BTQU+pTyYY5HLZMaL7KRwXKUVQIcL2q8XNlLHEImHL
+         pHXA==
+X-Forwarded-Encrypted: i=1; AJvYcCWthHVGMU9YtQ8yyoj0sCxooUgJbbOJPjFSaxfKUy6I+iMxxcrbAShZEiPV1pefXktkuimBpe2xlwzvO/8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0F7vKS5A81Uc0RIDw4qjBbGUsUABF4g10JJWpYuB64JXDlyKV
+	ngH/gUb60AKTzCJgGmqhcafGCMadzWa1+Y1cf6neU1JrTxjXiEUhWpNa5dMfLSl3+gNDKr5VjKl
+	V1VDajzUrr4BdvdfOjW7IsMF2CKu3+mr6hIfwbcRXe8s26wU0ekACWivcgsr2uOQ7BnI=
+X-Gm-Gg: ASbGncu5Z8ASdZKLzLCHoYHBS/pP20ubEeVb04s7zsYj+SR4aYGRBLJuU84mnWYyS+0
+	mDbWL4ukvCOB+xD7jvSY60JZ4JJXZCvzJiNfmW92phXiKhqX77wIHd7YEyux/TVDM0DSIqfHuE9
+	gBdCrdgHCD13chso8FvbB/LHCZb8AHyRdbkiLLp2L217I9+vpqXBwpyFZzpiHextdJCbyrRYNBz
+	SrbjZDnmu533FZTUqgVC801do7q/cXbkWAlVl0sNQNKeS49KA2AZS1fpZx6HeAXVEjbSftpPG/n
+	BemnavxUVTHI38NzLQPZP0rkPAQiVaSoicgSIIq8FIN813WVqo76BRJz1vL8AVh3dsYheVprBOF
+	7Keb0Xj2o7VqcVy5EgvdOtvjjiEWBPuwk7PF9/DUQApajbYvYLcyY
+X-Received: by 2002:a05:620a:7112:b0:7d4:57b7:bc12 with SMTP id af79cd13be357-7e356a248demr336203385a.10.1752830857851;
+        Fri, 18 Jul 2025 02:27:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFRPTaLxKWC/RL7n39Kl8/6M0XWNZ+Lf77HUcHwzll4t6nXZKM+vIee/jhv/vO0jbOVdQCyeQ==
+X-Received: by 2002:a05:620a:7112:b0:7d4:57b7:bc12 with SMTP id af79cd13be357-7e356a248demr336198985a.10.1752830857235;
+        Fri, 18 Jul 2025 02:27:37 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55a31dadf33sm183041e87.214.2025.07.18.02.27.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Jul 2025 02:27:36 -0700 (PDT)
+Date: Fri, 18 Jul 2025 12:27:34 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Yijie Yang <yijie.yang@oss.qualcomm.com>
+Cc: Stephan Gerhold <stephan.gerhold@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] arm64: dts: qcom: Add base HAMOA-IOT-EVK board
+Message-ID: <ng7koaqz6s4cslugrujklsrprsl7v7wijtserr6edvsvbeqfkv@pldexeryni7h>
+References: <20250716-hamoa_initial-v1-0-f6f5d0f9a163@oss.qualcomm.com>
+ <20250716-hamoa_initial-v1-4-f6f5d0f9a163@oss.qualcomm.com>
+ <aHkm4qjgSaklHGp0@linaro.org>
+ <4363f117-cc25-4904-84cf-4b3779797223@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2] cgroup: Track time in cgroup v2 freezer
-To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- Tejun Heo <tj@kernel.org>
-Cc: Tiffany Yang <ynaffit@google.com>, linux-kernel@vger.kernel.org,
- John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>,
- Stephen Boyd <sboyd@kernel.org>,
- Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Chen Ridong <chenridong@huawei.com>, kernel-team@android.com,
- Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org,
- linux-doc@vger.kernel.org
-References: <20250714050008.2167786-2-ynaffit@google.com>
- <5rm53pnhpdeqljxqywh26gffh6vlyb5j5s6pzxhv52odhkl4fm@o6p7daoponsn>
- <aHktSgmh-9dyB7bz@slm.duckdns.org>
- <mknvbcalyaheobnfeeyyldytcoyturmeuq3twcrri5gaxtjojs@bbyqhshtjfab>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <mknvbcalyaheobnfeeyyldytcoyturmeuq3twcrri5gaxtjojs@bbyqhshtjfab>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgBXFLBeE3po8Z6eAg--.17315S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr4kJrWfZF4DKr15CF1rWFg_yoW8Ar13p3
-	yYy34fJa98JFW0yFs293Z8WF1Fv348Can8XF9xuw18JF1UXryj93yftayYva4akFZagw1U
-	ArWa9wn7ua9FyFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
-	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
-	s2-5UUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4363f117-cc25-4904-84cf-4b3779797223@oss.qualcomm.com>
+X-Proofpoint-ORIG-GUID: G0vffyOaS5mNvtq0AnCNF1VaUtny6Mn9
+X-Authority-Analysis: v=2.4 cv=RtXFLDmK c=1 sm=1 tr=0 ts=687a138b cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=LY8-0S5nuflZfSqsnlMA:9 a=CjuIK1q_8ugA:10
+ a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE4MDA3NCBTYWx0ZWRfXwcdQfPrqaaOV
+ ednlaJ+S0np3gv1ag09Dvu3sxPfdE8KMXuJBi5bazB5NurQoZUXNgOB9nshuWy27baJ+PSHaY+A
+ gOaoNL4eaP1JyI0+oZR68/zV/SkfhBXUhP/iMfCqKw+JQ8SKTCcEOMzoKy58gaPQOQ2p6TPvKtk
+ zoZnvixi1UjNUtNk4LuI4w4HOIxLeFEJB4YCEtG75XGHOyybV+Ow5lUSNgqF0zdiYxrE83jgxVT
+ /z+TX7oegJqnSwCsSSJNOqF+pnkeMtukLcWPGGoVV2f+4IrkBlhTXVax23RivfkaOmbIS9MbEXc
+ G0g9OyBpe1BqCQTnRWe2trjMcJbS1Pc2X9vP02VAKPNjfNQxNxvPQ/tbRhz5HpedbwTfz0h4kjB
+ /eULuc9zMoloXesi344RhvK8g8odJoLUnbrnz+Jq7GlmBiWAF654dFW+2ngd9lYpgkpU25pq
+X-Proofpoint-GUID: G0vffyOaS5mNvtq0AnCNF1VaUtny6Mn9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-18_02,2025-07-17_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 mlxscore=0 bulkscore=0 suspectscore=0 lowpriorityscore=0
+ impostorscore=0 malwarescore=0 clxscore=1015 mlxlogscore=999
+ priorityscore=1501 phishscore=0 spamscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507180074
 
-
-
-On 2025/7/18 16:20, Michal Koutný wrote:
-> On Thu, Jul 17, 2025 at 07:05:14AM -1000, Tejun Heo <tj@kernel.org> wrote:
->> I wonder what hierarchical summing would look like for this.
+On Fri, Jul 18, 2025 at 04:19:13PM +0800, Yijie Yang wrote:
 > 
-> So do I.
-> Thus I meant to expose this only in a *.local file not the hierarchical
-> one.
 > 
-> But I realize it should [1] match cpu.stat[.local]:thottled_usec
-> since they're similar quantities in principle.
-> - cpu.stat:thottled_usec
->   - sums the time the cgroup's quota was in effect
->   - not hierarchical (:-/)
-> - cpu.stat.local:thottled_usec
->   - not hierarchical
->   - sums the time cgroup's or ancestor's quota was in effect
->     -> IIUC this is what's the motivation of the original patch
+> On 2025-07-18 00:37, Stephan Gerhold wrote:
+> > On Wed, Jul 16, 2025 at 05:08:42PM +0800, Yijie Yang wrote:
+> > > The HAMOA-IOT-EVK is an evaluation platform for IoT products, composed of
+> > > the Hamoa IoT SoM and a carrier board. Together, they form a complete
+> > > embedded system capable of booting to UART.
+> > > 
+> > > This change enables and overlays the following peripherals on the carrier
+> > > board:
+> > > - UART
+> > > - On-board regulators
+> > > - USB Type-C mux
+> > > - Pinctrl
+> > > - Embedded USB (EUSB) repeaters
+> > > - NVMe
+> > > - pmic-glink
+> > > 
+> > > Written with contributions from Shuai Zhang (added Bluetooth).
+> > > 
+> > > Signed-off-by: Yijie Yang <yijie.yang@oss.qualcomm.com>
+> > > ---
+> > >   arch/arm64/boot/dts/qcom/Makefile          |   1 +
+> > >   arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts | 835 +++++++++++++++++++++++++++++
+> > >   2 files changed, 836 insertions(+)
+> > > 
+> > > diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+> > > index 4bfa926b6a0850c3c459bcba28129c559d50a7cf..c5994b75d3e56e74ffb64b2389ee1bcc086f3065 100644
+> > > --- a/arch/arm64/boot/dts/qcom/Makefile
+> > > +++ b/arch/arm64/boot/dts/qcom/Makefile
+> > > @@ -13,6 +13,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= apq8039-t2.dtb
+> > >   dtb-$(CONFIG_ARCH_QCOM)	+= apq8094-sony-xperia-kitakami-karin_windy.dtb
+> > >   dtb-$(CONFIG_ARCH_QCOM)	+= apq8096-db820c.dtb
+> > >   dtb-$(CONFIG_ARCH_QCOM)	+= apq8096-ifc6640.dtb
+> > > +dtb-$(CONFIG_ARCH_QCOM)	+= hamoa-iot-evk.dtb
+> > >   dtb-$(CONFIG_ARCH_QCOM)	+= ipq5018-rdp432-c2.dtb
+> > >   dtb-$(CONFIG_ARCH_QCOM)	+= ipq5018-tplink-archer-ax55-v1.dtb
+> > >   dtb-$(CONFIG_ARCH_QCOM)	+= ipq5332-rdp441.dtb
+> > > diff --git a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
+> > > new file mode 100644
+> > > index 0000000000000000000000000000000000000000..843f39c9d59286a9303a545411b2518d7649a059
+> > > --- /dev/null
+> > > +++ b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
+> > > [...]
+> > > +	vreg_wcn_3p3: regulator-wcn-3p3 {
+> > > +		compatible = "regulator-fixed";
+> > > +
+> > > +		regulator-name = "VREG_WCN_3P3";
+> > > +		regulator-min-microvolt = <3300000>;
+> > > +		regulator-max-microvolt = <3300000>;
+> > > +
+> > > +		gpio = <&tlmm 214 GPIO_ACTIVE_HIGH>;
+> > > +		enable-active-high;
+> > > +
+> > > +		pinctrl-0 = <&wcn_sw_en>;
+> > > +		pinctrl-names = "default";
+> > > +
+> > > +		regulator-boot-on;
+> > > +	};
+> > > +
+> > > +	/*
+> > > +	 * TODO: These two regulators are actually part of the removable M.2
+> > > +	 * card and not the CRD mainboard. Need to describe this differently.
+> > > +	 * Functionally it works correctly, because all we need to do is to
+> > > +	 * turn on the actual 3.3V supply above.
+> > > +	 */
+> > > +	vreg_wcn_0p95: regulator-wcn-0p95 {
+> > > +		compatible = "regulator-fixed";
+> > > +
+> > > +		regulator-name = "VREG_WCN_0P95";
+> > > +		regulator-min-microvolt = <950000>;
+> > > +		regulator-max-microvolt = <950000>;
+> > > +
+> > > +		vin-supply = <&vreg_wcn_3p3>;
+> > > +	};
+> > > +
+> > > +	vreg_wcn_1p9: regulator-wcn-1p9 {
+> > > +		compatible = "regulator-fixed";
+> > > +
+> > > +		regulator-name = "VREG_WCN_1P9";
+> > > +		regulator-min-microvolt = <1900000>;
+> > > +		regulator-max-microvolt = <1900000>;
+> > > +
+> > > +		vin-supply = <&vreg_wcn_3p3>;
+> > > +	};
+> > 
+> > Like the TODO comment already says, regulators located on a M.2 card
+> > shouldn't be described as part of the device DT. We need a proper
+> > solution for modelling the M.2 slots together with the standard power
+> > supplies (3.3V and 1.8V) and hook this up to the pwrseq subsystem. This
+> > is also the reason why the CRD does not have Bluetooth enabled upstream
+> > yet, this needs to be solved first.
+> > 
+> > As far as I know, there is no one actively working on addressing this at
+> > the moment. Perhaps you can assign someone at QC to work on solving this
+> > upstream.
 > 
-> HTH,
-> Michal
+> This power section is now managed by UEFI, rendering these regulator nodes
+> unnecessary. Therefore, I will remove them in the next version.
+
+No. The regulators for the M.2 slot should be present here so that Linux
+doesn't disable them. Which triggers a question: how are they
+controlled? I don't see a GPIO line there.
+
 > 
-> [1] I'd find it more logical if
-> cpu.stat:thottled_usec were cpu.stat.local:thottling_usec and
-> cpu.stat.local:thottled_usec were cpu.stat.local:throttled_usec.
-> Only to illustrate my understanding of hierarchy in cpu.stat, it doesn't
-> matter since it's what it is now.
+> > 
+> > Thanks,
+> > Stephan
+> 
+> -- 
+> Best Regards,
+> Yijie
+> 
 
-Hi Michal and TJ,
-
-I'd like to raise a separate thought unrelated to the current discussion.:)
-
-With the recent merge of the series "cgroup: separate rstat trees," the rstat are not bound to CPU
-system. This makes me wonder: should we consider moving the cpu.stat and cpu.stat.local interfaces
-to the CPU subsystem?
-
-The CPU subsystem could then align more closely with other resource controllers like memory or I/O
-subsystems. By decoupling these CPU-specific statistics from the cgroup core, it could help keep
-both cgroup and rstat implementations more focused.
-
-Is there any particular reason why the CPU subsystem must remain bound to the cgroup core?
-
-Looking forward to your insights.
-
-Best regards,
-Ridong
-
+-- 
+With best wishes
+Dmitry
 
