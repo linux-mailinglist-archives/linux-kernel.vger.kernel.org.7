@@ -1,269 +1,136 @@
-Return-Path: <linux-kernel+bounces-736489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1D4EB09D80
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:14:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD145B09D7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:14:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20D5B16CEF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:14:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 596E0A8655A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:13:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0142291C2B;
-	Fri, 18 Jul 2025 08:14:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F9DA291C2B;
+	Fri, 18 Jul 2025 08:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="2sQvOxxX"
-Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chrisdown.name header.i=@chrisdown.name header.b="SwrTJZYp"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE8E1D7E42;
-	Fri, 18 Jul 2025 08:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503F91D7E42
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 08:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752826450; cv=none; b=G3OAH6yAf8xS6O+z2dQ6qiWChf3pbBBwUNUXISges6PKS9pEinOcg3hlpT3tfq+ilQaEIFO9pUz3MLFRm1Bi9cZyAFagQH5Uo+U8Ef/WCRLDhozkvEx/Izxc62nDRvQOcSIAo2Rx+ds4TcmY50otO1bEG07zLc6NO4XEyrSdq7k=
+	t=1752826439; cv=none; b=ZObuAKF0FZYJOKlGefpEnkHB4kdR3pD/WHbyFffvbX4J3cpkz5PNIrnddGeuNfjFDXMBZM7PWPx5HGs5DKEce1M7is1Slmwesqcsr9uiVIxKsWKwtdX/CPsXGny8wkvlVCuzYucrSjw+gMAUBPG1qWlx+egFuXionGwtmjEDszM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752826450; c=relaxed/simple;
-	bh=yD5dXNNrxvSpbvCEQDy0BBoUH7XPShILrR+qIEUqrGk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B56+FpDetIE6Rr566UMZTXkBi5Zr0ZRqOl6CkOlX5hEZb5F9hkdtqFwmkjSgX8m+0CZQy+bu3vrKbAfmEyPlXyZXnokSQlbEm8CyTqMnQ/FmfRs/EZLwzEhi++NVVEZyopsywd71uprbwl8tdXQVO9u5QJRC5Mo1QR8ATn3wM0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=2sQvOxxX; arc=none smtp.client-ip=220.130.44.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
-X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
-	s=richtek; t=1752826445;
-	bh=5ak1btSav96wItCN+ZEpZS4jbXXwfD2DGQFYOMoDV0M=; l=4833;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=2sQvOxxX3wt8EebU2Ex1S97hsdJFsiMJZwIMf0g3BBHmBBBfjYxarafYIMCRPKmCz
-	 oqUTo8FvrQy3K5AdEgMtclNa70cEA4PTYcrMLjv10fNSu10y6NEQ8yrd+GDohpdtUg
-	 Xv7q5ZMJHiv3EswUiXiuq9YyaSahe7S8iaGZMsUvvKiXEfj5QULdoMxMNi8xy3X2fm
-	 YTKI79VRUr3NoAOgoa+s46OEhs2rAo+QvrD5OyDY4wH3GhrtRJinG3s4x0NuFWJZCX
-	 ecJAD4Dbx2yUqvCwjU1Maq5rFtozYR883M4ekgTwgsjB67zWRqi3aA0UX5RSlRYaaB
-	 ur260nAG6lrgg==
-Received: from 192.168.10.46
-	by mg.richtek.com with MailGates ESMTPS Server V6.0(244574:0:AUTH_RELAY)
-	(envelope-from <jeff_chang@richtek.com>)
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Fri, 18 Jul 2025 16:13:56 +0800 (CST)
-Received: from ex4.rt.l (192.168.10.47) by ex3.rt.l (192.168.10.46) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 18 Jul
- 2025 16:13:56 +0800
-Received: from git-send.richtek.com (192.168.10.154) by ex4.rt.l
- (192.168.10.45) with Microsoft SMTP Server id 15.2.1544.11 via Frontend
- Transport; Fri, 18 Jul 2025 16:13:56 +0800
-From: <jeff_chang@richtek.com>
-To: <lgirdwood@gmail.com>, <broonie@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-CC: <jeff_chang@richtek.com>
-Subject: [PATCH] regulator: rt5133: Add DT binding document for Richtek RT5133
-Date: Fri, 18 Jul 2025 16:12:57 +0800
-Message-ID: <20250718081432.2685902-1-jeff_chang@richtek.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1752826439; c=relaxed/simple;
+	bh=2XxJMxqvE/Cjfusd0XxjbthJPfpvtef/UFrkblBe79c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gaug8ay69fd7Ry/MpQbqHy/eTDjXEBnLmE74pFvDNIQpVbSfzEd3FvC3FoJy89X0nr2hbpbi/VfFM+Lu8m2wPbK8p6inDMB5WUw+VVgyY6sm7Ke1K1SiDCaJqQ7oGv+C8fgUmE71l1Q+w6mcAcO7T/uusX5Nl8G6zoA8fMRfMyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chrisdown.name; spf=pass smtp.mailfrom=chrisdown.name; dkim=pass (1024-bit key) header.d=chrisdown.name header.i=@chrisdown.name header.b=SwrTJZYp; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chrisdown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chrisdown.name
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-747c2cc3419so1594740b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 01:13:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chrisdown.name; s=google; t=1752826437; x=1753431237; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qMPeAL07/lZrKnUkmH8nVJ8wh1GwyumIputOyztfgS4=;
+        b=SwrTJZYpL9BW/5AE1sgr1NXM8fBoz3t/1IYRep4VjasHeMWV8VuVpZ8M/zqGANLyDB
+         oSGqJJMkt4QM82e7f5zleJCHzPLjQyShvTC6XZ7YX8gJ8uG1kdBLOXK0C3l4XMYxl0Ej
+         Ml15xPwaO0fq05wz2sbC34Kn9xNDfrYLOpX/8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752826437; x=1753431237;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qMPeAL07/lZrKnUkmH8nVJ8wh1GwyumIputOyztfgS4=;
+        b=N5NPhNsU1vnTIbOAVBgkBVet4LZ2FPdpuxgnSmQglLezCInm356qWUMYpGOd7mTlAK
+         Vwt2eBl5kgt1JuGD4DGClHhdZkBfMfK2q+fUrPWIrWpDBi6ZpcU5TRcjYZ8ddN8/pEEA
+         t1nAPkHpA471GOhkM3fXriJe8kpPKp5nXepfcxVb/o49RuPTQzTHpWYMwlMSCWUc4JBZ
+         w3lWm5EAVg3ltAy+51rVmtnx/O6TF7OJHamWssj8TAFwgkQVWRXVAVDeUxCmgAaO+7ez
+         NZrDWChAA8BupxdZ1loK0VbBiP4E9hxmyIZpyyScj9W2e9z+52vNCxfyVHPeMinG+Xle
+         +s7w==
+X-Forwarded-Encrypted: i=1; AJvYcCW/qvwASw38fHVsd25XV/rAzZeuMKdPOcC8cQk6lARFPcgluDsMmBKD32NawGzbc9wUfuH6196gsIFF658=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGfgVQiA1s1l1riCR0r5upS+KTlcfgN5ZPHgod0NrJIJIqtvli
+	y27UUrk5EtF08RscWdgj63N8wm0uPs9zn6DuhQnU7hqILV0jsLDycIbGeVi356f+NZRKMR6+uH/
+	5qJx83WM=
+X-Gm-Gg: ASbGnctK9frUuGjGjn5bYBr1dhDGoumjPe6bVXNOtEtXmyWCcLGIkZYlRGxSOn1wUyU
+	Ic0ZIIAxKPBr/BmDGTCFsf6EQmvolnALZFxJhu4cio10ardlSe8LNE86JfJo55ly4vtv/9797oK
+	0Ihn6gZNmSbXo2hgyF1cINp+rZz6L2WtoNw+3jk0tv3LZHYn7yDfmVm/Se6DHZBChYfGb1tDZoV
+	3OXbIYH8jnPsgXW4zHv42Da7HkSHBsr1xQzcTMiQWqo61+3/eE3d/ben0ciciSE6LEx+dd+CkGP
+	xeqTTPJfLU6M6/7Pu3R1qeWPbIHz7anbsibve/CczlSBTcVouHCOG9GNVFbojIw+sY37YscxsVK
+	RXuYyoIHWLipXs8A3kLX/00U3P0Gw2g==
+X-Google-Smtp-Source: AGHT+IG73zCnFU9COboaEFW/fs2gtFK6dqDUiJYlBGv5r2t2tuOfTRYElrNJO1jXi74JhoPkFbTRRw==
+X-Received: by 2002:a05:6a00:23d5:b0:748:323f:ba21 with SMTP id d2e1a72fcca58-759ab639668mr2324482b3a.1.1752826437509;
+        Fri, 18 Jul 2025 01:13:57 -0700 (PDT)
+Received: from localhost ([116.86.186.54])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-759c8eb0e98sm763432b3a.66.2025.07.18.01.13.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Jul 2025 01:13:56 -0700 (PDT)
+Date: Fri, 18 Jul 2025 16:13:55 +0800
+From: Chris Down <chris@chrisdown.name>
+To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-team@fb.com, Jaganath Kanakkassery <jaganath.k.os@gmail.com>
+Subject: Re: [PATCH] Bluetooth: hci_event: Mask data status from LE ext adv
+ reports
+Message-ID: <aHoCQ_RfBl5Zm4oQ@chrisdown.name>
+References: <aHfd_H6c9MheDoQP@chrisdown.name>
+ <CABBYNZJo48983SWhxcB7UzWXPeUofRCMhQ8mJjih-rJoTET3_Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CABBYNZJo48983SWhxcB7UzWXPeUofRCMhQ8mJjih-rJoTET3_Q@mail.gmail.com>
+User-Agent: Mutt/2.2.14 (516568dc) (2025-02-20)
 
-From: Jeff Chang <jeff_chang@richtek.com>
+Hi Luiz,
 
-Add DT binding document for Richtek RT5133 voltage regulator.
+Thanks for the review!
 
-Signed-off-by: Jeff Chang <jeff_chang@richtek.com>
----
- .../bindings/regulator/richtek,rt5133.yaml    | 178 ++++++++++++++++++
- 1 file changed, 178 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/regulator/richtek,rt5133.yaml
+Luiz Augusto von Dentz writes:
+>Can you include a sample trace of the above?
 
-diff --git a/Documentation/devicetree/bindings/regulator/richtek,rt5133.yaml b/Documentation/devicetree/bindings/regulator/richtek,rt5133.yaml
-new file mode 100644
-index 000000000000..c1ba2d9d83c6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/richtek,rt5133.yaml
-@@ -0,0 +1,178 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/regulator/richtek,rt5133.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Richtek RT5133 PMIC Regulator
-+
-+maintainers:
-+  - ShihChia Chang <jeff_chang@richtek.com>
-+
-+description: |
-+  RT5133 is an integrated chip. It includes 8 LDOs and 3 GPOs that can be
-+  used to drive output high/low purpose. The dependency of the GPO block
-+  is internally LDO1 Voltage. If LDO1 voltage output disabled, GPO cannot
-+  be used to drive output high. It need to pay more attention on the usage.
-+
-+allOf:
-+  - $ref: regulator.yaml#
-+
-+properties:
-+  compatible:
-+    enum:
-+      - richtek,rt5133
-+
-+  reg:
-+    maxItems: 1
-+
-+  enable-gpios:
-+    description: A connection of the 'enable' gpio line.
-+    maxItems: 1
-+
-+  wakeup-source: true
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  gpio-controller: true
-+
-+  "#gpio-cells":
-+    const: 2
-+
-+  regulators:
-+    type: object
-+
-+  BASE:
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    description:
-+      Properties for base regulator which for force-off base circuit
-+
-+    properties:
-+      oc-shutdown-all:
-+        type: object
-+        description: |
-+          Anyone of LDO OC state
-+            0: LDO OC only shut down itself
-+            1: LDO OC shut down all channels
-+
-+      pgb-shutdown-all:
-+        type: object
-+        description: |
-+          Anyone of PGB OC state
-+          0: LDO PGB only shut down itself
-+          1: LDO PGB shut down all channels
-+
-+    required:
-+      - regulator-name
-+
-+patternProperties:
-+  "^LDO([1-6])$":
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    description:
-+      Properties for single LDO regulator
-+
-+    required:
-+      - regulator-name
-+
-+  "^LDO([7-8])$":
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    description:
-+      Properties for single LDO regulator
-+
-+    properties:
-+      rt5133-ldo1-supply:
-+        description: |
-+          Only for LDO7 LDO8, pvin7 and pvin8 reference design are RT5133 LDO1.
-+          If not connect to LDO1 vout, this property for pvin7 and pvin8 is necessary.
-+
-+    required:
-+      - regulator-name
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts-extended
-+  - wakeup-source
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      rt5133: rt5133@18 {
-+        compatible = "richtek,rt5133";
-+        reg = <0x18>;
-+        wakeup-source;
-+        interrupts-extended = <&pio 187 0x0>;
-+        enable-gpios = <&pio 186 0x0>;
-+        gpio-controller;
-+        #gpio-cells = <2>;
-+        regulators {
-+          BASE {
-+            regulator-name = "rt5133,base";
-+            oc-shutdown-all = <0>;
-+            pgb-shutdown-all = <0>;
-+          };
-+          rt5133_ldo1: LDO1 {
-+            regulator-name = "rt5133-ldo1";
-+            regulator-min-microvolt = <1800000>;
-+            regulator-max-microvolt = <3199998>;
-+            regulator-active-discharge;
-+          };
-+          rt5133_ldo2: LDO2 {
-+            regulator-name = "rt5133-ldo2";
-+            regulator-min-microvolt = <1800000>;
-+            regulator-max-microvolt = <3200000>;
-+            regulator-active-discharge;
-+          };
-+          rt5133_ldo3: LDO3 {
-+            regulator-name = "rt5133-ldo3";
-+            regulator-min-microvolt = <1700000>;
-+            regulator-max-microvolt = <3000000>;
-+            regulator-active-discharge;
-+          };
-+          rt5133_ldo4: LDO4 {
-+            regulator-name = "rt5133-ldo4";
-+            regulator-min-microvolt = <1700000>;
-+            regulator-max-microvolt = <3000000>;
-+            regulator-active-discharge;
-+          };
-+          rt5133_ldo5: LDO5 {
-+            regulator-name = "rt5133-ldo5";
-+            regulator-min-microvolt = <1700000>;
-+            regulator-max-microvolt = <3000000>;
-+            regulator-active-discharge;
-+          };
-+          rt5133_ldo6: LDO6 {
-+            regulator-name = "rt5133-ldo6";
-+            regulator-min-microvolt = <1700000>;
-+            regulator-max-microvolt = <3000000>;
-+            regulator-active-discharge;
-+          };
-+          rt5133_ldo7: LDO7 {
-+            regulator-name = "rt5133-ldo7";
-+            regulator-min-microvolt = <900000>;
-+            regulator-max-microvolt = <1200000>;
-+            regulator-active-discharge;
-+            rt5133-ldo1-supply = <&rt5133_ldo1>;
-+          };
-+          rt5133_ldo8: LDO8 {
-+            regulator-name = "rt5133-ldo8";
-+            regulator-min-microvolt = <855000>;
-+            regulator-max-microvolt = <1200000>;
-+            regulator-active-discharge;
-+            rt5133-ldo1-supply = <&rt5133_ldo1>;
-+          };
-+        };
-+      };
-+    };
--- 
-2.43.0
+Is that with btmon or similar? Sorry, I'm not a regular contributor to this 
+subsystem :-)
 
+I mostly have a personal desire to get this merged because it's a particularly 
+noisy case where I happen to live :-) These are all with 0x40:
+
+   % dmesg | wc -l
+   3815
+   % dmesg | grep -c 'Unknown advertising'
+   3227
+
+>Also it would be great to  have a mgmt-tester for example that attempts to 
+>generate an advertisement like that to exercise such change.
+
+Looks like that's in Bluez userspace code right, so what's the order of doing 
+these things?
+
+>> -       if (evt_type == LE_EXT_ADV_NON_CONN_IND ||
+>> -           evt_type & LE_EXT_ADV_DIRECT_IND)
+>> +       if (pdu_type == LE_EXT_ADV_NON_CONN_IND ||
+>
+>I'm not sure I would keep checking for  LE_EXT_ADV_NON_CONN_IND, maybe
+>just return LE_ADV_NONCONN_IND, LE_EXT_ADV_NON_CONN_IND is not
+>actually a bit it is the absence of any bits being set, so I guess the
+>only invalid adv are the ones for legacy which seem to require a bit
+>to be set.
+
+So are you thinking of doing this?
+
+   if (!(pdu_type & ~(LE_EXT_ADV_DIRECT_IND)))
+           return LE_ADV_NONCONN_IND;
+
+Thanks for your help!
+
+Chris
 
