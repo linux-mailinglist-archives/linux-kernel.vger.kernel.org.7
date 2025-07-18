@@ -1,100 +1,101 @@
-Return-Path: <linux-kernel+bounces-736855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D0F9B0A430
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:26:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 868C4B0A436
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:28:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0A88189721F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:26:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35A074E1368
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:27:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4AB2D979E;
-	Fri, 18 Jul 2025 12:26:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B11A2D97B6;
+	Fri, 18 Jul 2025 12:28:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="l5MTkyHz";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vHUQ1FCT";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="l5MTkyHz";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vHUQ1FCT"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hsbaPKHy";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="h6KDn2y9";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hsbaPKHy";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="h6KDn2y9"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E68F246761
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 12:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34EE229B78E
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 12:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752841581; cv=none; b=aDZfuuVhIEJsz/NqIOB3szV4bCpS/T1flECzhJYhhutzoavCwBgRmTsxsEDGBYl2XxgXBfI0zgjMVjZfIaWI0qkO3cj+/YCUqGSWHaB9KmutizSl7I1fPZ1A49LDoSWMzmhvpB+J7TcTm1Ygz42xH3c89YModoy+gSccWQT568o=
+	t=1752841691; cv=none; b=Wz4ZCKByjifrCKNH2U35VS9bqJRslIgpqa/vAxgcw2GFpQIgYFgl0VjCcKDUhjClxDUW94MfOggpcLuGnt+N3VP7zjXnQi1khMhMGY7MOT3DZHVCcBlj1xC9j2yuRDljuboKoKrawBvXfDzql1WeprEY7h6pZk4J+XYmYiboxQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752841581; c=relaxed/simple;
-	bh=YLn6T50KiE45tD6SvH/SyM++ZqJcGh7d7SQC7KFT0Sk=;
+	s=arc-20240116; t=1752841691; c=relaxed/simple;
+	bh=tyW74RQHI+ZbJsfVCapdeM+wqGS/p8JfNEiP5o9Oqp4=;
 	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UFYBxgEPpeO74oeBXYwh9WXHC8+RLv9gmYZXqvANydQUUxZXD7oqDAexWzKXSxPdniOSVAXF4ZonNd8kWDqpTYQCJUHHuiGMHL+ichFIMgVaaAxE8LV8AE2lrCXzTqQPAV5MevT+mvfIDYTr63d3DK7xZOdh0641CEcMLXqWogs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=l5MTkyHz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vHUQ1FCT; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=l5MTkyHz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vHUQ1FCT; arc=none smtp.client-ip=195.135.223.130
+	 MIME-Version:Content-Type; b=bWuo1MHFd476xDdsyWfiZkUeAjyI5wXoawYtQf4h/g2iP1jNilYNygL3I4UbMvSQut1KGBWaylkTuBwKfgH8yi6SG5P3cr11Pj2Fi83S+/5GK3vwOK0MB8u2VFoDGW9EZNZERCxWNHg4OHna+gU/hK81E+bzZUez1OVq3P5wHT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hsbaPKHy; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=h6KDn2y9; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hsbaPKHy; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=h6KDn2y9; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 6DFE721195;
-	Fri, 18 Jul 2025 12:26:18 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5ABE51F394;
+	Fri, 18 Jul 2025 12:28:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1752841578; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1752841686; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=SVU9IqAsOg6Uq7TzXhNz3Dmp4GgffUcuOtJokXy/GM4=;
-	b=l5MTkyHzbzdKn8xky2D6mY8mU67ur/68aWYiiZaUFb5ciH6NjXO3LlqdGurq+xaaCXis4e
-	nw6M58AN4wpIfmxoSgnEqHPkkPbjznVKH+tYb7AYO6+PYJ+UGH3TlM6XG1UWu1Zb5gV+sW
-	6gMdBBN72jc0rzkU2tj07sUG0dun4HY=
+	bh=gTORYoyYHw8Obet7y+W8jwmU4dnA/tse77/zbHKQwW8=;
+	b=hsbaPKHyYwi/8yQUyELRdMcRWiQJhkBf5w2IxpP+L+yLpJXxi+/izKlcD8XCQIW2Xt1RVs
+	u9HRu+NkQcrS2s7+nmvmqDPM+QlBBx9pxn9F9SOjLPov6B+fo2PWZDyRMHxNWYvvekNuab
+	+2YvwuXaKmM1k0VNSUBTNqK+MJKcl0A=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1752841578;
+	s=susede2_ed25519; t=1752841686;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=SVU9IqAsOg6Uq7TzXhNz3Dmp4GgffUcuOtJokXy/GM4=;
-	b=vHUQ1FCTu5wAjpgDOt5ZU5LslkI8I/vKbonJFc56CAWy2DnpoPYxowZGo9CFEs8LsccBkc
-	h1jir+vjF2wobIDg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=l5MTkyHz;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=vHUQ1FCT
+	bh=gTORYoyYHw8Obet7y+W8jwmU4dnA/tse77/zbHKQwW8=;
+	b=h6KDn2y9e64ba0wTIAznJpO0V2Sns083TkpvNB9vLFz1Fg95WKnZXKlFwEwx7sTYfJbu5w
+	pO9tuSHqq0kcLEDA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=hsbaPKHy;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=h6KDn2y9
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1752841578; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1752841686; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=SVU9IqAsOg6Uq7TzXhNz3Dmp4GgffUcuOtJokXy/GM4=;
-	b=l5MTkyHzbzdKn8xky2D6mY8mU67ur/68aWYiiZaUFb5ciH6NjXO3LlqdGurq+xaaCXis4e
-	nw6M58AN4wpIfmxoSgnEqHPkkPbjznVKH+tYb7AYO6+PYJ+UGH3TlM6XG1UWu1Zb5gV+sW
-	6gMdBBN72jc0rzkU2tj07sUG0dun4HY=
+	bh=gTORYoyYHw8Obet7y+W8jwmU4dnA/tse77/zbHKQwW8=;
+	b=hsbaPKHyYwi/8yQUyELRdMcRWiQJhkBf5w2IxpP+L+yLpJXxi+/izKlcD8XCQIW2Xt1RVs
+	u9HRu+NkQcrS2s7+nmvmqDPM+QlBBx9pxn9F9SOjLPov6B+fo2PWZDyRMHxNWYvvekNuab
+	+2YvwuXaKmM1k0VNSUBTNqK+MJKcl0A=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1752841578;
+	s=susede2_ed25519; t=1752841686;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=SVU9IqAsOg6Uq7TzXhNz3Dmp4GgffUcuOtJokXy/GM4=;
-	b=vHUQ1FCTu5wAjpgDOt5ZU5LslkI8I/vKbonJFc56CAWy2DnpoPYxowZGo9CFEs8LsccBkc
-	h1jir+vjF2wobIDg==
+	bh=gTORYoyYHw8Obet7y+W8jwmU4dnA/tse77/zbHKQwW8=;
+	b=h6KDn2y9e64ba0wTIAznJpO0V2Sns083TkpvNB9vLFz1Fg95WKnZXKlFwEwx7sTYfJbu5w
+	pO9tuSHqq0kcLEDA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4285113A52;
-	Fri, 18 Jul 2025 12:26:18 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2511313A52;
+	Fri, 18 Jul 2025 12:28:06 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id qgXuDmo9emgUEgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 18 Jul 2025 12:26:18 +0000
-Date: Fri, 18 Jul 2025 14:26:17 +0200
-Message-ID: <87pldx7kie.wl-tiwai@suse.de>
+	id 3sRqB9Y9emiZEgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Fri, 18 Jul 2025 12:28:06 +0000
+Date: Fri, 18 Jul 2025 14:28:05 +0200
+Message-ID: <87o6th7kfe.wl-tiwai@suse.de>
 From: Takashi Iwai <tiwai@suse.de>
-To: Erick Karanja <karanja99erick@gmail.com>
+To: edip@medip.dev
 Cc: perex@perex.cz,
 	tiwai@suse.com,
 	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] ALSA: usb: qcom: Adjust mutex unlock order
-In-Reply-To: <20250718070309.441282-1-karanja99erick@gmail.com>
-References: <20250718070309.441282-1-karanja99erick@gmail.com>
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] ALSA: hda/realtek - Add mute LED support for HP Victus 15-fa0xxx
+In-Reply-To: <20250717212625.366026-2-edip@medip.dev>
+References: <20250717212625.366026-2-edip@medip.dev>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -112,51 +113,44 @@ X-Spamd-Result: default: False [-3.51 / 50.00];
 	MIME_GOOD(-0.10)[text/plain];
 	MX_GOOD(-0.01)[];
 	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_COUNT_TWO(0.00)[2];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:mid,suse.de:dkim];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
 	FROM_EQ_ENVFROM(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_NONE(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
 X-Spam-Flag: NO
 X-Spam-Level: 
-X-Rspamd-Queue-Id: 6DFE721195
+X-Rspamd-Queue-Id: 5ABE51F394
 X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
 X-Rspamd-Action: no action
 X-Spam-Score: -3.51
 
-On Fri, 18 Jul 2025 09:03:08 +0200,
-Erick Karanja wrote:
+On Thu, 17 Jul 2025 23:26:26 +0200,
+edip@medip.dev wrote:
 > 
-> The mutexes qdev_mutex and chip->mutex are acquired in that order
-> throughout the driver. To preserve proper lock hierarchy and avoid
-> potential deadlocks, they must be released in the reverse
-> order of acquisition.
+> From: Edip Hazuri <edip@medip.dev>
 > 
-> This change reorders the unlock sequence to first release chip->mutex
-> followed by qdev_mutex, ensuring consistency with the locking pattern.
+> The mute led on this laptop is using ALC245 but requires a quirk to work
+> This patch enables the existing quirk for the device.
 > 
-> Fixes: e2710ea98124 ("staging: sound: Adjust mutex unlock order")
+> Tested on my Victus 15-fa0xxx Laptop. The LED behaviour works
+> as intended.
+> 
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Edip Hazuri <edip@medip.dev>
 
-This commit ID doesn't exist, and the commit summary doesn't sound
-right.  You need to put the commit to be fixed with the commit summary
-of that commit instead of your own.
+Thanks, applied now.
 
-Please resubmit with the proper Fixes tag.
-
-
-thanks,
 
 Takashi
 
