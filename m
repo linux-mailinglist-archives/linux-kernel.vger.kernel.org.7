@@ -1,147 +1,173 @@
-Return-Path: <linux-kernel+bounces-736516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C50EB09DF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:28:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48584B09DF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:29:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3DE5566E5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:28:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8EBB177AA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:29:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B09F7293C72;
-	Fri, 18 Jul 2025 08:28:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43CB9291C2B;
+	Fri, 18 Jul 2025 08:29:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="qRIAxUZR"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="GVpca6Hp"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E851B224244;
-	Fri, 18 Jul 2025 08:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5432253A1;
+	Fri, 18 Jul 2025 08:29:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752827302; cv=none; b=pZUragNjUeIwds5VkK/TjaG++N8/NZ3dhuDT2seiOIuTbUsp6eouYc6gtgjgvewZPkC30vUQaMp9OK1ksEaB1HMQ69nHG8Fo6Oh3DcHTHJDT1omSA0L3CyfSO6UEJuAhF2vZBTvSwW9sa8amfNgxbGQBPy6/wKwrjqUCuyaNzIQ=
+	t=1752827342; cv=none; b=XjzyHfpCqy07RjU0/tfydaZq3QpAzTOlI1kXEfQzZ077hdsWNIImxzj2fPvyHfnu+FVu4dr1v1Btq+My218IMuivdZT62COtrfY1im6tQ2xK8WLyY5yHlLAdNXcNAnnuGFN6EhBSoDPZ8PUNb6NkQDfR1t6OVcBk3EbrfxEer2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752827302; c=relaxed/simple;
-	bh=/DR9yS+KLp30aqF0cUnSG3uJhf2+LBf/ATFKS9NeWrU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=D6EybGW4m57O7DB4hfNpt43Kp42wJAGjnlflnpZoZIt7jfO12RH0jJMxJWR3DXzC8065+iGBAYGDhwIZ6N1lhf+76suEnnF89IL5rLk9mf+4lsKGenRmYaah4VtQ3AO1ih2N0lqIjjsu+6qDjQkrQpJgzkr+GRh/7zAJvCSXDbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=qRIAxUZR; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 25205f7c63b111f0b33aeb1e7f16c2b6-20250718
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=i1serjV4kH1/wTwHKRcE1GEbwr2ev0ug7m/0IdNMSBs=;
-	b=qRIAxUZRgwMG/qwDw7fSuP+FjMoebPX2eyVxaCFURXMBUdtQIzo7ENZdg9QyDFeD4Ocgm3cQGjj5olzjx//m40/6PdB/ttmy377qzconSAy2OL5grCUdXbZ6vEGT2TiZAp81v5CcyfUdOCrgytYrx8m0Rj/e0w2/QV7hvIO6Byc=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.2,REQID:643bbc30-2fd2-4eb2-ab57-4dfb01c200cb,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:9eb4ff7,CLOUDID:5cf89484-a7ec-4748-8ac1-dca5703e241f,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:-3
-	,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV
-	:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 25205f7c63b111f0b33aeb1e7f16c2b6-20250718
-Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1599903196; Fri, 18 Jul 2025 16:28:13 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Fri, 18 Jul 2025 16:28:11 +0800
-Received: from mtksitap99.mediatek.inc (10.233.130.16) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Fri, 18 Jul 2025 16:28:11 +0800
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-To: Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
-	Bart Van Assche <bvanassche@acm.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Peter Wang
-	<peter.wang@mediatek.com>, Stanley Jhu <chu.stanley@gmail.com>, "James E . J
- . Bottomley" <James.Bottomley@HansenPartnership.com>, "Martin K . Petersen"
-	<martin.petersen@oracle.com>, <linux-scsi@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<openembedded-core@lists.openembedded.org>, <patches@lists.linux.dev>,
-	<stable@vger.kernel.org>
-CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
-	Ramax Lo <ramax.lo@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>,
-	Macpaul Lin <macpaul@gmail.com>, MediaTek Chromebook Upstream
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Rice Lee
-	<ot_riceyj.lee@mediatek.com>, Eric Lin <ht.lin@mediatek.com>
-Subject: [PATCH 3/3] arm64: dts: mediatek: mt8195: add UFSHCI node
-Date: Fri, 18 Jul 2025 16:27:18 +0800
-Message-ID: <20250718082719.653228-3-macpaul.lin@mediatek.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250718082719.653228-1-macpaul.lin@mediatek.com>
-References: <20250718082719.653228-1-macpaul.lin@mediatek.com>
+	s=arc-20240116; t=1752827342; c=relaxed/simple;
+	bh=An+QLoB26vrwmylv7R5nbNxLfWknzHLJzo8x0RFfRj0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=tfKsoEtIyZ6r6hAzTdKaMa4NdkyhyT0AnlXM7hSW37iylamVYfBFsVYbp7PL8Ah/EdCSFI78mae+bqL9D+Z04kqD+QNlBBUJfZMbh0QH3D3RzOoP/7gUQ+4kXSIjF8iCSJaa0peK6wtwgBAqVT6hppezmRNjwWCTRwutqaVUMug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=GVpca6Hp; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56I7AXiX016701;
+	Fri, 18 Jul 2025 08:28:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=P7zv2f
+	2/pQ2JjPIX25pzVf7Fi9ExE+OaUp8IOBF1wYk=; b=GVpca6HpyCTHbO5QzbbcH1
+	Hza8zv+C6i44zb0E3HS4ZVHe+QAjdM75aBs9kMvmA7Ka7NgzX7jgiUus4GTFMYH7
+	SUsmdiodPaV2QS+YXVzhoJD6mkK5dCXeAxF6yH0I0m8zGGbmcRhqPOemSbpMI3zb
+	gDGQY7OQNlwFcubh5Qdpfvwdj1t7Z68bbcUj6nBqv+zA2cfQR52QQavkUNmNbGPY
+	qg84iZ9/4LvunHQTZjAOP+Qws/SCCxo3En/6+MF+TvlZYyM8RZjLt9UTTsQlkP3K
+	9IqdnndnjrXWGLWRPdClZlq9kPoEvTfh1rRWDjqWXS1aiZ/osNy9ndSDupu8nP9Q
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47vamub9nj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 18 Jul 2025 08:28:38 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56I4kGYP008154;
+	Fri, 18 Jul 2025 08:28:38 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 47v2e10hfy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 18 Jul 2025 08:28:38 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56I8SYGI52232472
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 18 Jul 2025 08:28:34 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E58B32004D;
+	Fri, 18 Jul 2025 08:28:33 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A44F620040;
+	Fri, 18 Jul 2025 08:28:32 +0000 (GMT)
+Received: from [9.111.132.145] (unknown [9.111.132.145])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 18 Jul 2025 08:28:32 +0000 (GMT)
+Message-ID: <fb9ee560-d449-4d46-9fb1-19780ff28e65@linux.ibm.com>
+Date: Fri, 18 Jul 2025 10:28:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 07/16] unwind_user: Enable archs that do not
+ necessarily save RA
+From: Jens Remus <jremus@linux.ibm.com>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+        bpf@vger.kernel.org, x86@kernel.org,
+        Steven Rostedt <rostedt@kernel.org>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Ilya Leoshkevich <iii@linux.ibm.com>,
+        Masami Hiramatsu
+ <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Indu Bhagat <indu.bhagat@oracle.com>,
+        "Jose E. Marchesi" <jemarch@gnu.org>,
+        Beau Belgrave <beaub@linux.microsoft.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
+        Sam James <sam@gentoo.org>
+References: <20250710163522.3195293-1-jremus@linux.ibm.com>
+ <20250710163522.3195293-8-jremus@linux.ibm.com>
+ <xgbpe46th7rbpslybo5xdt57ushlgwr5xyrq4epuft5nfrqms3@izeojto3wzu4>
+ <b5121d71-f916-45ea-9e6c-b74a27f90dcd@linux.ibm.com>
+Content-Language: en-US
+Organization: IBM Deutschland Research & Development GmbH
+In-Reply-To: <b5121d71-f916-45ea-9e6c-b74a27f90dcd@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: lyAFuwjgrMh-HnhCNOaWMxfetyzxvEaR
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE4MDA2NCBTYWx0ZWRfX4VemN82g5i3Q 6Si28PDiYEycUkdY/Ocy02ALDx2nMJRqExPdL+wYLjxTVRCZIxU6wrJmfS+gRHHCNy/J7m0M5hP C8ot0n6ST50PUHYFYkOiYBK6VYmHajP5+rPCD5gq0YcCmDxmWwmAWgvETgVbBUvm2l/foWLIcWG
+ r/jDHcjgtSr85ROj3GfUFCo6GFpF8b0h+lsQYYFS6/1+lhbiNW+mQeFgDhbY76G/iuEKmfjSBVS 03S8+2b71+o7gP8AftOJ1Qf9bnxObS61VrUJiokLdxyldD/ZLezU1pXs/A4Bi8V6u3He8vK31th 36iyzY56tQ3IHkCKTV2yDDC1bQ/081XwBwl4RUaoQE5qCPtSvOzm2xAp8P7g7b/qPgz7aGFDWM3
+ lQxqseKFSVXGvJvHJyVIPSfy84Ik4b94Ch0enLMAYjvCYlzaFMehWp0Wd2w9qJx9QEPs1q2P
+X-Proofpoint-ORIG-GUID: lyAFuwjgrMh-HnhCNOaWMxfetyzxvEaR
+X-Authority-Analysis: v=2.4 cv=dNSmmPZb c=1 sm=1 tr=0 ts=687a05b7 cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=edDyEtEh5DHdOHvQ2iMA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-18_01,2025-07-17_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ mlxlogscore=999 bulkscore=0 lowpriorityscore=0 suspectscore=0 spamscore=0
+ clxscore=1015 phishscore=0 malwarescore=0 mlxscore=0 adultscore=0
+ impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507180064
 
-From: Rice Lee <ot_riceyj.lee@mediatek.com>
+On 17.07.2025 13:09, Jens Remus wrote:
+> On 17.07.2025 01:01, Josh Poimboeuf wrote:
+>> On Thu, Jul 10, 2025 at 06:35:13PM +0200, Jens Remus wrote:
+>>> +++ b/arch/Kconfig
+>>> @@ -450,6 +450,11 @@ config HAVE_UNWIND_USER_SFRAME
+>>>  	bool
+>>>  	select UNWIND_USER
+>>>  
+>>> +config HAVE_USER_RA_REG
+>>> +	bool
+>>> +	help
+>>> +	  The arch passes the return address (RA) in user space in a register.
+>>
+>> How about "HAVE_UNWIND_USER_RA_REG" so it matches the existing
+>> namespace?
+> 
+> Ok.  I am open to any improvements.
 
-Add a UFS host controller interface (UFSHCI) node to mt8195.dtsi.
-Introduce the 'mediatek,ufs-disable-mcq' property to allow disabling
-Multiple Circular Queue (MCQ) support.
+Thinking about this again I realized that the config option actually
+serves two purposes:
 
-Signed-off-by: Rice Lee <ot_riceyj.lee@mediatek.com>
-Signed-off-by: Eric Lin <ht.lin@mediatek.com>
-Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
----
- arch/arm64/boot/dts/mediatek/mt8195.dtsi | 25 ++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+1. Enable code (e.g. unwind user) to determine the presence of the new
+   user_return_address().  That is where I derived the name from.
+2. Enable unwind user (sframe) to behave differently, if an architecture
+   has/uses a RA register (unlike x86, which solely uses the stack).
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-index dd065b1bf94a..8877953ce292 100644
---- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-@@ -1430,6 +1430,31 @@ mmc2: mmc@11250000 {
- 			status = "disabled";
- 		};
- 
-+		ufshci: ufshci@11270000 {
-+			compatible = "mediatek,mt8195-ufshci";
-+			reg = <0 0x11270000 0 0x2300>;
-+			interrupts = <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH 0>;
-+			phys = <&ufsphy>;
-+			clocks = <&infracfg_ao CLK_INFRA_AO_AES_UFSFDE>,
-+				 <&infracfg_ao CLK_INFRA_AO_AES>,
-+				 <&infracfg_ao CLK_INFRA_AO_UFS_TICK>,
-+				 <&infracfg_ao CLK_INFRA_AO_UNIPRO_SYS>,
-+				 <&infracfg_ao CLK_INFRA_AO_UNIPRO_TICK>,
-+				 <&infracfg_ao CLK_INFRA_AO_UFS_MP_SAP_B>,
-+				 <&infracfg_ao CLK_INFRA_AO_UFS_TX_SYMBOL>,
-+				 <&infracfg_ao CLK_INFRA_AO_PERI_UFS_MEM_SUB>;
-+			clock-names = "ufs", "ufs_aes", "ufs_tick",
-+					"unipro_sysclk", "unipro_tick",
-+					"unipro_mp_bclk", "ufs_tx_symbol",
-+					"ufs_mem_sub";
-+			freq-table-hz = <0 0>, <0 0>, <0 0>,
-+					<0 0>, <0 0>, <0 0>,
-+					<0 0>, <0 0>;
-+
-+			mediatek,ufs-disable-mcq;
-+			status = "disabled";
-+		};
-+
- 		lvts_mcu: thermal-sensor@11278000 {
- 			compatible = "mediatek,mt8195-lvts-mcu";
- 			reg = <0 0x11278000 0 0x1000>;
+I think the primary notion is that an architecture has/uses a register
+for the return address and thus provides user_return_address().  What
+consumers such as unwind user do with that info is secondary.
+
+Thoughts?
+
+Thanks and regards,
+Jens
 -- 
-2.45.2
+Jens Remus
+Linux on Z Development (D3303)
++49-7031-16-1128 Office
+jremus@de.ibm.com
+
+IBM
+
+IBM Deutschland Research & Development GmbH; Vorsitzender des Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
+IBM Data Privacy Statement: https://www.ibm.com/privacy/
 
 
