@@ -1,167 +1,263 @@
-Return-Path: <linux-kernel+bounces-736714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E35EBB0A0DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:43:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9C97B0A0E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:45:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B17F5A65DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:43:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31C495A62A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 531B82BCF47;
-	Fri, 18 Jul 2025 10:43:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2AF433AD;
+	Fri, 18 Jul 2025 10:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="Vzdy5jYC"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PIkpWlvs"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E566313C695
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 10:43:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D981B21BD
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 10:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752835432; cv=none; b=fGcN2FPfEYClzCSLITAO8Kb7ntYVHCNUUmzAFOLpkt53/tojw7/dC16jIFV4RMeQsnBGaP3WB9DXdHDZUpxYVUXXVIJS2koKMCNz4nUHQ9zn2Dna2CUlSBVdJqvvFdGO8+D8vv/8qTDBrLt94MV2Njn48LnGskawM9O8h0vPS8w=
+	t=1752835508; cv=none; b=luuEMxxxUkTSb9kQ6cW9Yb9dIMjB45o/PjMMpf6QgeFVo9Pz8/cZl0cYkduU9So1MDz8sd4HZXNMufnSnl8IsvawALYiAZOzP98fGqTM8qEVKhKb5eP5kvhCYLjRbUC/Jzyq0rJK8x+ADlGN0suo3g38IRicTtDTHEBVdWxjZKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752835432; c=relaxed/simple;
-	bh=48ZlNe4Xa5JgXaUkkACsp+Yzyve3KK7S+ogavvf74Lg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t4IAAfHSn9sBc9PKYJ3rG5ggxFupf9Z4b5UhgMZQKY4A533B6RRF/h/vFKK7+G53/DYlpewG7Yh9Qq+KSRtebS5ZXCYFyuU/ErKTU57L3rv2na5VyJWqBwT4SEqouVlOa2Zzlnl93tLv0sqIAMmDAri5coVwQj6EdVx1ELlHZkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=Vzdy5jYC; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45610582d07so15196925e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 03:43:50 -0700 (PDT)
+	s=arc-20240116; t=1752835508; c=relaxed/simple;
+	bh=rUWr73j1f8m00qKKyCmRslv5muc4NtxmmGcWkGS4euQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Yt0AH4rmcFwHmgHdqDAJSG08J4Bya35/caAN88VPCbGfkl808OmGQGYof9xhmULQACcU8N09vCp/lrFnalJjHobFjFdE1U5uDK25Z+hOTneVtHzmw+x/yRYnx6DlDs++GlQ32dHg+6WMa0unzpxH7r2ZpCBtQJ3SoV6zaYt0rJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PIkpWlvs; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-711756ae8c9so13428487b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 03:45:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1752835429; x=1753440229; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=48ZlNe4Xa5JgXaUkkACsp+Yzyve3KK7S+ogavvf74Lg=;
-        b=Vzdy5jYCDUjzIA/Zc5SspgdWTz6KrX/O+PrBEpEaQ7iEnTkHIQggSXC921ekQA36Oy
-         rEu7ejNbIfM7AS+mRqPaSGkx0w687uXGOb4RtWXMBedVt0Kytb6ah7LH2pnSaxY16+qj
-         /gjrR+85SFwOvQ7u24FG5XEpQvB01cARRR6+k=
+        d=linaro.org; s=google; t=1752835506; x=1753440306; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=eL4ot+dqM/gHvOleLPQUu1Tr2WKMQ0Kb3pxoJXxeucY=;
+        b=PIkpWlvsJwiPLOgRJdRZk+21phKj3erHrICSx8TZzMCTVkI2Y7aMV1IUZ8AcHPWNvC
+         reKdicQUtldqNl76Nfd0xENJ/vL1ixXSvMOfKTHC6RvadB/QJl/GSI6JRvyiqAkQl5jb
+         qe/vYjb+5vOLmGaVjhgiHq+arUzyUuCXlH6Cv2Rn0nSwyAXtrtkhrtQu3mn2ThNeOBsH
+         GSEA4OBQaHHf80WKq2k3KTCk6spFyscmTbwcAmKYgcZGrtmbIxqWWhValcRWYEQn/2VE
+         0M5Lq8FYZzZGmZAO+JU02JJonyRktrxXTZDd/rZDtIvBXL/k9VT0id4KuoT598f6mA9L
+         U+bQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752835429; x=1753440229;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=48ZlNe4Xa5JgXaUkkACsp+Yzyve3KK7S+ogavvf74Lg=;
-        b=VyF4/AzRFyVl1pmq3Memh4ch6fM9Zu9QoI6ht8DUmpeMPO0EtD+vhsRFzkF8YM7ZYP
-         MwCGEcrTR9gYEzvOX7iKjcZyrHPO51nNn4dOd3kToXaYy41FXOaV/Khou7xKmDfXW+sT
-         oVFt9k47ihjBNg3P+MXAg2oAqlKRGnqCkN5WCdBtEFPm2WXuMJ3oDge0VTSjPfFRpUAU
-         gMjYZk/PSQ/0P2+spMimPQ5PVEY1RWjGoNKpVRhK2Xdwm/8X5NnHbHBzSY2Ow19022Hk
-         Nrxa5IAo244LInRwlbnACLvtKMGrUm3zFp4+U6lgm3ndQ39AQ165IMMaha3wzhoO2idm
-         szXw==
-X-Forwarded-Encrypted: i=1; AJvYcCXgkcTngJMc6LH9o/QzXqXPsw7aVaL8JuMJUPj0DcOCpnd2mOF6pEbmrFrJMB/iDcx0LsbQp9zuqaeWkfI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycvNV/ClLNqBHBLWrkJctDOctDAflr90R/F2AbLZQmY/xaiJ+9
-	5jl26nnxKaqAgwNf4GcP/hVxB8Vmpf1KbZxCP74cCZmMqKKMKEqgPuKkgihf8B+LwRc=
-X-Gm-Gg: ASbGncsvZ/V1aM5n0uUjoEDpu6LHUsFlsVhw9dzhmTTqK8RxIeOhcfS1rqDSrz43k+J
-	uWxAv30IvJ1nSXh74ubDkmbvxBES+/j9kQfJ5FwPRTZ8DDT1ZmMitCNh6H7Gq5OcEnLTD+Df0LO
-	2Ztlxb0qCm9pmsQTepXWnyyaKeRqM3X95vtz9vP62PcxeardEIrJJrxzjpcSM+NGUVcxU2soAZ6
-	YdQQ0B1EaAwF7PcpvwFqEUbjn0fgw511+YxL81wABm9Cq+/OCHge0KfK3NDVndFp1UDIakjCRJr
-	5+8kbfVR/5j2u+U8hOX97E0k/0dM1hXnStzw37fnLmq3W8nEjF+O6WdSXh0dbH26XGlFtewz1+s
-	yYcSj3wQrF/AiPectlXIJQfRwiOOEav+UEnF5xk5uBGTXEMDnWdj8jvLpH37YmpsVCGdP
-X-Google-Smtp-Source: AGHT+IE2LaEpkXTf9HVR7hepOBi7Bbf9OVRrYRXo7Rjn9IaKV65KTHgEwUXgg84M+d9yQW69Qa5epQ==
-X-Received: by 2002:a05:600c:4689:b0:453:6424:48a2 with SMTP id 5b1f17b1804b1-456352e7a28mr71806215e9.10.1752835429106;
-        Fri, 18 Jul 2025 03:43:49 -0700 (PDT)
-Received: from [192.168.1.183] (host-195-149-20-212.as13285.net. [195.149.20.212])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4563b76148asm16486245e9.35.2025.07.18.03.43.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Jul 2025 03:43:48 -0700 (PDT)
-Message-ID: <a6d7becc-9971-4e35-982a-3e35af4c4666@citrix.com>
-Date: Fri, 18 Jul 2025 11:43:47 +0100
+        d=1e100.net; s=20230601; t=1752835506; x=1753440306;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eL4ot+dqM/gHvOleLPQUu1Tr2WKMQ0Kb3pxoJXxeucY=;
+        b=CBoDRoZmYK2z8me7MOa1V3EQOZr1firVU8Wi9RMU45gQALGXnL9MgN5oLAH8mdoZVK
+         D7JJv618sPS2zb4EsLzA3o8HnW38XVTsFe98TUXOkE5IiOlAn+ijML6ewELMxiXeBzRy
+         FJLmAEOLzhdfQsJUprjifw/jBL7C82mjaRpsp02cmZvGXpTpO/QZsLiBcWPCgaQcIQgv
+         XnYAuKMeDtSQPPsSm70QS6r+fNORnmuOpAAbHoR0x+nvKa/GwzwmAZJ/XxQwRXWcqsCt
+         7vZ3EX+L8iY/e1tYprFZdggHFOv/Tl28g1smbXv0T8f8tGMqDnFiqagB7y2pBJ5Gv7ic
+         gTNA==
+X-Forwarded-Encrypted: i=1; AJvYcCVsOdu987GIfSewhnUgvh9KY68U4me1KKAjbagsOsTrLGlDscdCJW2WobqS6ieUEyxZco+6rqpNYY8qqTY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjC9BHRkGRSMPiC4d5meQerBWn6Bs8Diz5AFmRwdIRSCGCWArH
+	+9ZMgwN+F+eavduPXqBkYHZYFyoYmEdqtF8gRcljikkdudoluDgfQ1tNTJRWYSvRPFceILxxa7r
+	NNNmfOAMKbnGXHCQP0SmoIoL87BNg3yV0VC+1EXVU0Q==
+X-Gm-Gg: ASbGnctbfYrADUZNq37uY0RLOfWHJh67q06/Bt/b9OhuNK00ATg3amC6kKHdg2+OZaf
+	Fk/CIa+URX3scbKMs4U4tUuwO4IvZnkdJWv8JLtEp4ejvztrSgMJ6X/n6k9dQ17txFSGv3LZu0R
+	Zi1yYnd9c2vSxn3Wxw3hlPCrJZeWw1zJJOVN8BHpCzeE9M1kiXmCdO9ef3ov26EK8vi8Yi7y6iU
+	jeNLQ7v
+X-Google-Smtp-Source: AGHT+IFQ1mnk1ZgI1gkcyMhNGTwcwNL/MUejQfWzddIamhebdceSEWNxbqRvh2fYEhcrWIWkwSIrRt9TLlwJqykznrc=
+X-Received: by 2002:a05:690c:25c3:b0:70e:7706:824e with SMTP id
+ 00721157ae682-718a332563dmr82661557b3.6.1752835505656; Fri, 18 Jul 2025
+ 03:45:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: x86/apic: Drop useless CXL/CPX row from the TSC deadline errata
- table
-To: Sohil Mehta <sohil.mehta@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- Peter Zijlstra <peterz@infradead.org>, Yuntao Wang <yuntao.wang@linux.dev>,
- Zhang Rui <rui.zhang@intel.com>, LKML <linux-kernel@vger.kernel.org>
-References: <20250716160824.2167709-1-andrew.cooper3@citrix.com>
- <7fcede81-902c-4eaf-82be-cfaf3154bce9@intel.com>
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- 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
- 6+ahAA==
-In-Reply-To: <7fcede81-902c-4eaf-82be-cfaf3154bce9@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250716194638.113115-1-hiagofranco@gmail.com>
+In-Reply-To: <20250716194638.113115-1-hiagofranco@gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 18 Jul 2025 12:44:28 +0200
+X-Gm-Features: Ac12FXz3wdFyhRFKPg_XEl0cRf6bRNkkouJRpcUk47StJD9WCjNNZdufcqO3Rys
+Message-ID: <CAPDyKFqWkWSahkGkap8SUiuYvmtk_b4OgN-bSyB-H519wf=eBw@mail.gmail.com>
+Subject: Re: [PATCH v8] remoteproc: imx_rproc: detect and attach to pre-booted
+ remote cores
+To: Hiago De Franco <hiagofranco@gmail.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, linux-remoteproc@vger.kernel.org, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Bjorn Andersson <andersson@kernel.org>, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	daniel.baluta@nxp.com, iuliana.prodan@oss.nxp.com, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Hiago De Franco <hiago.franco@toradex.com>, 
+	Peng Fan <peng.fan@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 17/07/2025 9:25 pm, Sohil Mehta wrote:
-> On 7/16/2025 9:08 AM, Andrew Cooper wrote:
->> A microcode revision of 0 is guaranteed to exit apic_validate_deadline_timer()
->> early, but a better way is with no row at all.
->>
-> Yeah, not having an entry is much better. "exit" can be a bit ambiguous.
-> Should we be slightly more precise?
-
-It's "exit $foo early", although this is slightly hidden by the linebreak.
-
-Alternatively, it could be phrased as "exit early from $foo" if you
-think that's clearer?
-
+On Wed, 16 Jul 2025 at 21:47, Hiago De Franco <hiagofranco@gmail.com> wrote:
 >
-> A microcode revision of 0 is guaranteed to return true for
-> apic_validate_deadline_timer(), but a better way is with no row at all.
+> From: Hiago De Franco <hiago.franco@toradex.com>
 >
->> No functional change.
->>
->> Signed-off-by: Andrew Cooper <andrew.cooper3@citrix.com>
->> ---
-> Reviewed-by: Sohil Mehta <sohil.mehta@intel.com>
+> When the Cortex-M remote core is started and already running before
+> Linux boots (typically by the Cortex-A bootloader using a command like
+> bootaux), the current driver is unable to attach to it. This is because
+> the driver only checks for remote cores running in different SCU
+> partitions. However in this case, the M-core is in the same partition as
+> Linux and is already powered up and running by the bootloader.
+>
+> This patch adds a check using dev_pm_genpd_is_on() to verify whether the
+> M-core's power domains are already on. If all power domain devices are
+> on, the driver assumes the M-core is running and proceed to attach to
+> it.
+>
+> To accomplish this, we need to avoid passing any attach_data or flags to
+> dev_pm_domain_attach_list(), allowing the platform device become a
+> consumer of the power domain provider without changing its current
+> state.
+>
+> During probe, also enable and sync the device runtime PM to make sure
+> the power domains are correctly managed when the core is controlled by
+> the kernel.
+>
+> Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
 
-Thanks.
+Applied for next, thanks!
 
-~Andrew
+Kind regards
+Uffe
+
+> ---
+> Hi Mathieu, Ulf,
+>
+> This is the v8 of patch3 from the patch series:
+> https://lore.kernel.org/all/20250629172512.14857-1-hiagofranco@gmail.com/
+>
+> As patches 1 and 2 are already applied on Ulf's next branch, as
+> requested I am sending now only the v8 of patch 3.
+>
+> I made a small correction into the commit description, s/SCFW
+> partitions/SCU partitions/g and updated with the check for the return
+> value.
+>
+> I hope this is ok.
+>
+> Thanks!
+>
+> Hiago.
+>
+> v7 -> v8:
+>     - Added return error check for dev_pm_domain_attach_list().
+>     - Commit description: changed to use "SCU partitions" instead of
+>       "SCFW partitions". This is more accurate since these are hardware
+>       enforced partitions.
+> v6 -> v7:
+>  - Added Peng reviewed-by.
+> v5 -> v6:
+>  - Commit description improved, as suggested. Added Ulf Hansson reviewed
+>    by. Comment on imx-rproc.c improved.
+> v4 -> v5:
+>  - pm_runtime_get_sync() removed in favor of
+>    pm_runtime_resume_and_get(). Now it also checks the return value of
+>    this function.
+>  - Added pm_runtime_disable() and pm_runtime_put() to imx_rproc_remove()
+>    function.
+> v3 -> v4:
+>  - Changed to use the new dev_pm_genpd_is_on() function instead, as
+>    suggested by Ulf. This will now get the power status of the two
+>    remote cores power domains to decided if imx_rpoc needs to attach or
+>    not. In order to do that, pm_runtime_enable() and
+>    pm_runtime_get_sync() were introduced and pd_data was removed.
+> v2 -> v3:
+>  - Unchanged.
+> v1 -> v2:
+>  - Dropped unecessary include. Removed the imx_rproc_is_on function, as
+>    suggested.
+> ---
+> ---
+>  drivers/remoteproc/imx_rproc.c | 41 +++++++++++++++++++++++++++++-----
+>  1 file changed, 35 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> index 627e57a88db2..a6eef0080ca9 100644
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/of_reserved_mem.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_domain.h>
+> +#include <linux/pm_runtime.h>
+>  #include <linux/reboot.h>
+>  #include <linux/regmap.h>
+>  #include <linux/remoteproc.h>
+> @@ -890,10 +891,8 @@ static int imx_rproc_partition_notify(struct notifier_block *nb,
+>  static int imx_rproc_attach_pd(struct imx_rproc *priv)
+>  {
+>         struct device *dev = priv->dev;
+> -       int ret;
+> -       struct dev_pm_domain_attach_data pd_data = {
+> -               .pd_flags = PD_FLAG_DEV_LINK_ON,
+> -       };
+> +       int ret, i;
+> +       bool detached = true;
+>
+>         /*
+>          * If there is only one power-domain entry, the platform driver framework
+> @@ -902,8 +901,25 @@ static int imx_rproc_attach_pd(struct imx_rproc *priv)
+>         if (dev->pm_domain)
+>                 return 0;
+>
+> -       ret = dev_pm_domain_attach_list(dev, &pd_data, &priv->pd_list);
+> -       return ret < 0 ? ret : 0;
+> +       ret = dev_pm_domain_attach_list(dev, NULL, &priv->pd_list);
+> +       if (ret < 0)
+> +               return ret;
+> +       /*
+> +        * If all the power domain devices are already turned on, the remote
+> +        * core is already powered up and running when the kernel booted (e.g.,
+> +        * started by U-Boot's bootaux command). In this case attach to it.
+> +        */
+> +       for (i = 0; i < ret; i++) {
+> +               if (!dev_pm_genpd_is_on(priv->pd_list->pd_devs[i])) {
+> +                       detached = false;
+> +                       break;
+> +               }
+> +       }
+> +
+> +       if (detached)
+> +               priv->rproc->state = RPROC_DETACHED;
+> +
+> +       return 0;
+>  }
+>
+>  static int imx_rproc_detect_mode(struct imx_rproc *priv)
+> @@ -1146,6 +1162,15 @@ static int imx_rproc_probe(struct platform_device *pdev)
+>                 }
+>         }
+>
+> +       if (dcfg->method == IMX_RPROC_SCU_API) {
+> +               pm_runtime_enable(dev);
+> +               ret = pm_runtime_resume_and_get(dev);
+> +               if (ret) {
+> +                       dev_err(dev, "pm_runtime get failed: %d\n", ret);
+> +                       goto err_put_clk;
+> +               }
+> +       }
+> +
+>         ret = rproc_add(rproc);
+>         if (ret) {
+>                 dev_err(dev, "rproc_add failed\n");
+> @@ -1171,6 +1196,10 @@ static void imx_rproc_remove(struct platform_device *pdev)
+>         struct rproc *rproc = platform_get_drvdata(pdev);
+>         struct imx_rproc *priv = rproc->priv;
+>
+> +       if (priv->dcfg->method == IMX_RPROC_SCU_API) {
+> +               pm_runtime_disable(priv->dev);
+> +               pm_runtime_put(priv->dev);
+> +       }
+>         clk_disable_unprepare(priv->clk);
+>         rproc_del(rproc);
+>         imx_rproc_put_scu(rproc);
+> --
+> 2.39.5
+>
 
