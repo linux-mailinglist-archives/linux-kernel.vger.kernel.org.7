@@ -1,111 +1,125 @@
-Return-Path: <linux-kernel+bounces-737394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D21B4B0ABF4
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 00:08:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82538B0ABF9
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 00:09:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CC97AC28C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 22:08:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A99A317B897
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 22:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F1C226541;
-	Fri, 18 Jul 2025 22:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C2DF221FD0;
+	Fri, 18 Jul 2025 22:07:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rFQbtlrK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oJXjgCpI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9D92264B8;
-	Fri, 18 Jul 2025 22:07:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B7EC2C9;
+	Fri, 18 Jul 2025 22:07:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752876453; cv=none; b=pmP7E2n0V2pcqGAtbHZ0Ex++PEpmsXf032dDof0y+d05PQkGk//cT/G36FlGHe6uWs8dd0+XWqbqx8n5/IH7Ta5WlQCvsLmmnt21LQWB0pqTr/i5wzG4wyqc0JlA314yNFCExW7Yj+5kIsrW4LrAODjWLCJaiajgWvovkm99I+Y=
+	t=1752876469; cv=none; b=XhkdyO1e4z9PRmZHF5kHjsmc2lwgUseo2nI9Or2omUNfWy4GDISKRhwNa34/xR9VrBeASUR/MKqBUatm0AhVG0+xfJ9MHg+bptVfxcQeBPPH9NWDr077zgyeM1bE0VnW/V1jNXPRrDklnH+3IT/xXvozmNDEVUYArKxhlP6vd6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752876453; c=relaxed/simple;
-	bh=VFHMq/5snyRulbgLVAfNm9sRY7pyS+dRYaYaXX8B1VU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZixMP0psDCYRNxR8qrsncVCuAQmJFGjIksEGwbBR02ZtcuTUHle8mNbCcR5ikHBo+OAZTH/GRrT+QUYX/7uUpMJfO2zE+V8863dIvU7G0rg4CSrO3b3/WHYY9V9yxmhv6MCrkXOhy7B1y+/8Ym63GvEcNjqfJO/klx9MovNvk9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rFQbtlrK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74ACFC4CEF6;
-	Fri, 18 Jul 2025 22:07:30 +0000 (UTC)
+	s=arc-20240116; t=1752876469; c=relaxed/simple;
+	bh=1CE6FSqwkeWvryzNivZ1ka0SgHoOi98KjNNJNBegE/Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qqj7zdVFyZoN/22jwaQJGD9csSLHjRXsH1TOJhAtswrt12HEM/cW+2Lrop4NWZrrlF3EDeNoUGumJE+sJaHNP4yq7LS9SRm1ODPC1LsmAsGcfQOPW0zPt2YRxpkp+wVfRHAFwW2fnSsHjVi9NLQlKv+AI3+i9XItRwyLUF0uCHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oJXjgCpI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 554CDC4CEEB;
+	Fri, 18 Jul 2025 22:07:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752876453;
-	bh=VFHMq/5snyRulbgLVAfNm9sRY7pyS+dRYaYaXX8B1VU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=rFQbtlrKbOtJ78EDhQc926qkTbp64JUNdYHEi4WL2T1s8rjzJgROQKTQtUYPp2rV4
-	 mJ6m6YzLLhTEVnvtG8CIS2Sui8zEhw2lBTWe9rdlzLiql0I1sLxxhTQ2UzgFt5kx5e
-	 HVU4tC7OctOdM3y3U/7k4hg7ePFKturK3bYME0G501AlaIdvB6QXPMGWdTn3s8sMtT
-	 5zEp/9ZMlXwPV985ZvgebYJyMGyqY27WhQ8IffS2iWP2lVKbdFYJcRP5mQMtYqSTIo
-	 NLT7F1vrx6iDiMfIjUYp6fPTy/AGsQIoD2M9mPKe6tUpMrmPz0Ghs1xRpkJZCB/W1S
-	 tKlUdBNmecAiw==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Sat, 19 Jul 2025 00:06:59 +0200
-Subject: [PATCH net-next v2 4/4] mptcp: fix typo in a comment
+	s=k20201202; t=1752876468;
+	bh=1CE6FSqwkeWvryzNivZ1ka0SgHoOi98KjNNJNBegE/Y=;
+	h=From:To:Cc:Subject:Date:From;
+	b=oJXjgCpIbic7ke/hk0PngNCG3uWEkILJVcf3B8OTheyN/vITGcfIDSj0j6uwd/w2l
+	 DLz/SKzg7ImZa9o6BUT+8nkEG80zaHlefp70h6u2C8YyqjO2xCM5hn2+DlWFd0WyxB
+	 dUSrTpB3cjJi7jZslFL6oDkl6CEMhYJWsHe8Hdd9Ntb0EguzT672XvJu8hLLDmWorD
+	 DDxMFMJMtLKjXHHUThNUzbWTpMALLo/GUIXlEBEhPsNr4HxMA9ImT+L9Da+KS0dm3F
+	 qA8/vh7HgEAQTyql2wZhOQsOxEMyoKMMKFY2shgz91if348VRs4YSXwl1zVLo87iFT
+	 kWc2P8YpH0JFQ==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH] lib/crypto: arm64/sha512-ce: Drop compatibility macros for older binutils
+Date: Fri, 18 Jul 2025 15:07:06 -0700
+Message-ID: <20250718220706.475240-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250719-net-next-mptcp-tcp_maxseg-v2-4-8c910fbc5307@kernel.org>
-References: <20250719-net-next-mptcp-tcp_maxseg-v2-0-8c910fbc5307@kernel.org>
-In-Reply-To: <20250719-net-next-mptcp-tcp_maxseg-v2-0-8c910fbc5307@kernel.org>
-To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
- Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- Neal Cardwell <ncardwell@google.com>, Kuniyuki Iwashima <kuniyu@google.com>, 
- David Ahern <dsahern@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, 
- moyuanhao <moyuanhao3676@163.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1302; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=kXxCpxBoe193+fin7GD8gP/kJaiRnrkRTpUKWV/Vk6Y=;
- b=owGbwMvMwCVWo/Th0Gd3rumMp9WSGDKqjk59pfNNaHJe4KUHRdycUrZyrdWXO/s8vpSucd10/
- eAsHTOHjlIWBjEuBlkxRRbptsj8mc+reEu8/Cxg5rAygQxh4OIUgIlclWT4Z/N+dk3j9F69/xsq
- jy08s2ZFyOOoT7ERBpvmzxS+xC3Ebc3wT93yodOmrSZ7DTLm9L9x+XqDPXVLzsvJNdPt3pxPLEk
- yZwIA
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+Content-Transfer-Encoding: 8bit
 
-From: moyuanhao <moyuanhao3676@163.com>
+Now that the oldest supported binutils version is 2.30, the macros that
+emit the SHA-512 instructions as '.inst' words are no longer needed.  So
+drop them.  No change in the generated machine code.
 
-This patch fixes the follow spelling mistake in a comment:
+Changed from the original patch by Ard Biesheuvel:
+(https://lore.kernel.org/r/20250515142702.2592942-2-ardb+git@google.com):
+ - Reduced scope to just SHA-512
+ - Added comment that explains why "sha3" is used instead of "sha2"
 
-  greter -> greater
-
-Signed-off-by: moyuanhao <moyuanhao3676@163.com>
-Reviewed-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+Signed-off-by: Eric Biggers <ebiggers@kernel.org>
 ---
-Notes:
- - The same patch has already been sent to the netdev ML, but when
-   net-next was closed:
-   https://lore.kernel.org/20250530181004.261417-1-moyuanhao3676@163.com
----
- net/mptcp/protocol.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/mptcp/protocol.c b/net/mptcp/protocol.c
-index 2ad1c41e963ec30cccd8387201f622c4f4d4c471..6c448a0be9495b22ced4a2b51da2f80831040aba 100644
---- a/net/mptcp/protocol.c
-+++ b/net/mptcp/protocol.c
-@@ -1387,7 +1387,7 @@ struct sock *mptcp_subflow_get_send(struct mptcp_sock *msk)
- 	 * - estimate the faster flow linger time
- 	 * - use the above to estimate the amount of byte transferred
- 	 *   by the faster flow
--	 * - check that the amount of queued data is greter than the above,
-+	 * - check that the amount of queued data is greater than the above,
- 	 *   otherwise do not use the picked, slower, subflow
- 	 * We select the subflow with the shorter estimated time to flush
- 	 * the queued mem, which basically ensure the above. We just need
+This patch is targeting libcrypto-next
 
+ lib/crypto/arm64/sha512-ce-core.S | 27 +++++++--------------------
+ 1 file changed, 7 insertions(+), 20 deletions(-)
+
+diff --git a/lib/crypto/arm64/sha512-ce-core.S b/lib/crypto/arm64/sha512-ce-core.S
+index 7d870a435ea38..eaa485244af52 100644
+--- a/lib/crypto/arm64/sha512-ce-core.S
++++ b/lib/crypto/arm64/sha512-ce-core.S
+@@ -10,30 +10,17 @@
+  */
+ 
+ #include <linux/linkage.h>
+ #include <asm/assembler.h>
+ 
+-	.irp		b,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19
+-	.set		.Lq\b, \b
+-	.set		.Lv\b\().2d, \b
+-	.endr
+-
+-	.macro		sha512h, rd, rn, rm
+-	.inst		0xce608000 | .L\rd | (.L\rn << 5) | (.L\rm << 16)
+-	.endm
+-
+-	.macro		sha512h2, rd, rn, rm
+-	.inst		0xce608400 | .L\rd | (.L\rn << 5) | (.L\rm << 16)
+-	.endm
+-
+-	.macro		sha512su0, rd, rn
+-	.inst		0xcec08000 | .L\rd | (.L\rn << 5)
+-	.endm
+-
+-	.macro		sha512su1, rd, rn, rm
+-	.inst		0xce608800 | .L\rd | (.L\rn << 5) | (.L\rm << 16)
+-	.endm
++	/*
++	 * While SHA-512 is part of the SHA-2 family of algorithms, the
++	 * corresponding arm64 instructions are actually part of the "sha3" CPU
++	 * feature.  (Except in binutils 2.30 through 2.42, which used "sha2".
++	 * But "sha3" implies "sha2", so "sha3" still works in those versions.)
++	 */
++	.arch		armv8-a+sha3
+ 
+ 	/*
+ 	 * The SHA-512 round constants
+ 	 */
+ 	.section	".rodata", "a"
+
+base-commit: 66be847cc4c2e82fb50190b52b05b3bb0ef57999
 -- 
-2.50.0
+2.50.1
 
 
