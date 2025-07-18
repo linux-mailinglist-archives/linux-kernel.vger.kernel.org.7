@@ -1,237 +1,132 @@
-Return-Path: <linux-kernel+bounces-736366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D808B09BFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:08:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 724E3B09C00
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:10:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7BE3582206
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 07:08:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36913AA11B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 07:09:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B62DB2192FA;
-	Fri, 18 Jul 2025 07:08:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F32215043;
+	Fri, 18 Jul 2025 07:10:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HfKqmL8h"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ox5vPWEh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EADDF15A85A;
-	Fri, 18 Jul 2025 07:08:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A47ED517
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 07:10:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752822522; cv=none; b=WZ68pJt8yeCFm3XmNm+9RaIQj0ktX9GIFPcNK06dNdcjuPdpQDAl0Lh15SAm4cgzz6cY476gkW8Eq3ZM/Oe7GLDsooJa0V+GTSYoSm9nwmmdZoQTqEvNQVKhp8CNyMGvNVZVFLY0vgJcojwvC0AVvT2aJK4GLP9eawNUqw1PgO0=
+	t=1752822611; cv=none; b=J/XrR2RpNZSjbreacHz86gXG39CldStNgL5UUe+2VcP8HfJrtv6P4F/31vEJX+zp/ZW9eG4vNHmz/Cf6R9SAJek95C4DTBoerwsw+/QaxIjkKnei6gPBmrCJl9zRlGYT0T2cHfQIJgi85v3wc2WbDt0pY4M8+4JnT8/rDbUUpkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752822522; c=relaxed/simple;
-	bh=C8E0uDImntC8ZDMsx2mtlEatX02FshEAzSNvDp0Q14c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=l8OKnqjYVx4XGJVheo0gy+Z4iBA8DNt7DkvNF5KtwlFEyQZnIXbxrcMR30HBCKuxWbedF7eisoSf+pYxPhW3tyvZZqllEoYnyOmPwLPpsMJQPwqL3yM2jmZv26ef24K3EFbra9xDrMkImI3shzWwfK6DzMVOL1fDAs0JqbCQS8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HfKqmL8h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 97D0DC4CEF1;
-	Fri, 18 Jul 2025 07:08:41 +0000 (UTC)
+	s=arc-20240116; t=1752822611; c=relaxed/simple;
+	bh=kbN0F0OWDcFkoeEYXmh7ETjat0hD1UCnG+I2D+LMyjE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jAlgb6BxTOVu00sclCi2vUP+N4VeqI7Nf0w7kuPuWjwaPR6gmyFeCdWWDglB19n8A1LeXOURPl7wvlg55qa9O+tJ80lx/r51jAO5tGwtVz++fHEGevjMX+/6/bDCP5ECBBMPtlrKo1pK8OQpgCum/aSOjArjM1TblHsAc0e93fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ox5vPWEh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1345C4CEF0;
+	Fri, 18 Jul 2025 07:10:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752822521;
-	bh=C8E0uDImntC8ZDMsx2mtlEatX02FshEAzSNvDp0Q14c=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=HfKqmL8hmgmwH6GkbKNc/1KCMTGuDffRwBtoDcWqeI0zfbAiSSNgvZmb4qyB2LTFH
-	 Sp04DzqgU4JOgOsqn2GzXqo0hr6b0dYKE8mYlOBcXSHH5MkW7Xee194eHuOarcv4J1
-	 IDD9yYMUib5M73C9CdbYKjSclAU1xD15UDQdUXYXVHsIxcUeuIj4gDulbOmENx2YRi
-	 xk/Dq0jH6g2UZ9T41cqCCyt7tOmIqmtqEAp6STd+WcSN04jHA2LzB+zZKGzCOvEbOO
-	 ct11qkbEcPagj1GwFOQOxA31ZwfThNsC2y5RWUp2jbW5/q9OR7HEGyEFHMHIcG2Ius
-	 gxkQZ7+ITPKHw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8987BC83F3B;
-	Fri, 18 Jul 2025 07:08:41 +0000 (UTC)
-From: Sung-Chi Li via B4 Relay <devnull+lschyi.chromium.org@kernel.org>
-Date: Fri, 18 Jul 2025 15:08:30 +0800
-Subject: [PATCH v6 2/2] hwmon: (cros_ec) register fans into thermal
- framework cooling devices
+	s=k20201202; t=1752822610;
+	bh=kbN0F0OWDcFkoeEYXmh7ETjat0hD1UCnG+I2D+LMyjE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ox5vPWEhcp2Z7ShOjJknHsXAkuxBrDVD69XfuQZXPt2hKG4Knbx2+Ko9VdRbfllPy
+	 SeVYkEdcQICWhel2rUyZDFWKVtOyJ1fmuwDEqiN+4v6gIEd8U/hOOLCWXAl9Wnfxfn
+	 CyUL1mfFqDFcXpNOLpyEsHEyRETLrRcZmEU8gQJoviYgXNx7fMn9Soib5QD52y2wk2
+	 W9Ydo6kZJ8XSMJy715ohbam+3KUQfCBEFCv2MIVRR5BDdkng4DT32Cnlo9Pcr4TFsW
+	 Lz6+6lhilQsRElY2s5a+fDHBis9ZTvL8DELJFE+H1w2qrLepVvsM5LkufH75IYiclF
+	 Ek4VzjiUKFwlw==
+Date: Fri, 18 Jul 2025 12:40:06 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL]: dmaengine fixes for v6.16
+Message-ID: <aHnzTit-z6NErlsL@vaman>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250718-cros_ec_fan-v6-2-8df018396b56@chromium.org>
-References: <20250718-cros_ec_fan-v6-0-8df018396b56@chromium.org>
-In-Reply-To: <20250718-cros_ec_fan-v6-0-8df018396b56@chromium.org>
-To: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
- Jonathan Corbet <corbet@lwn.net>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas@weissschuh.net>
-Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
- linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org, 
- Sung-Chi Li <lschyi@google.com>, Sung-Chi Li <lschyi@chromium.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752822520; l=5416;
- i=lschyi@chromium.org; s=20250429; h=from:subject:message-id;
- bh=ebXzdzrR+9v4KuMLHkRLhFzvjXfeCjhNw2fJoDUwDj8=;
- b=y9b1tu2szOoWNlVC2BSLI7h7wZuj4QbwndMAAV8LG3l9+7PhoiltbtwWFm4GHgSrdwrAn/4JF
- Uvz3wRI0VFCDi5QnUUKYfHW2hRQN5A4hjd9FCAEgDO3fj3jNBx9Fnln
-X-Developer-Key: i=lschyi@chromium.org; a=ed25519;
- pk=9gCZPRJmYyHDt6VN9FV2UreFcUr73JFrwYvmsltW9Y8=
-X-Endpoint-Received: by B4 Relay for lschyi@chromium.org/20250429 with
- auth_id=392
-X-Original-From: Sung-Chi Li <lschyi@chromium.org>
-Reply-To: lschyi@chromium.org
-
-From: Sung-Chi Li <lschyi@chromium.org>
-
-Register fans connected under EC as thermal cooling devices as well, so
-these fans can then work with the thermal framework.
-
-During the driver probing phase, we will also try to register each fan
-as a thermal cooling device based on previous probe result (whether the
-there are fans connected on that channel, and whether EC supports fan
-control). The basic get max state, get current state, and set current
-state methods are then implemented as well.
-
-Signed-off-by: Sung-Chi Li <lschyi@chromium.org>
-Acked-by: Thomas Weißschuh <linux@weissschuh.net>
----
- Documentation/hwmon/cros_ec_hwmon.rst |  2 +
- drivers/hwmon/cros_ec_hwmon.c         | 83 +++++++++++++++++++++++++++++++++++
- 2 files changed, 85 insertions(+)
-
-diff --git a/Documentation/hwmon/cros_ec_hwmon.rst b/Documentation/hwmon/cros_ec_hwmon.rst
-index 355557a08c9a54b4c177bafde3743e7dc02218be..6db812708325f7abb6d319af3312b4079e6923c6 100644
---- a/Documentation/hwmon/cros_ec_hwmon.rst
-+++ b/Documentation/hwmon/cros_ec_hwmon.rst
-@@ -27,3 +27,5 @@ Fan and temperature readings are supported. PWM fan control is also supported if
- the EC also supports setting fan PWM values and fan mode. Note that EC will
- switch fan control mode back to auto when suspended. This driver will restore
- the fan state to what they were before suspended when resumed.
-+If a fan is controllable, this driver will register that fan as a cooling device
-+in the thermal framework as well.
-diff --git a/drivers/hwmon/cros_ec_hwmon.c b/drivers/hwmon/cros_ec_hwmon.c
-index 9eddc554ddefde42f70c09689b64ad9e636a3020..48331703f2f50decf245805d735de39105e5f39f 100644
---- a/drivers/hwmon/cros_ec_hwmon.c
-+++ b/drivers/hwmon/cros_ec_hwmon.c
-@@ -13,6 +13,7 @@
- #include <linux/platform_device.h>
- #include <linux/platform_data/cros_ec_commands.h>
- #include <linux/platform_data/cros_ec_proto.h>
-+#include <linux/thermal.h>
- #include <linux/types.h>
- #include <linux/units.h>
- 
-@@ -31,6 +32,11 @@ struct cros_ec_hwmon_priv {
- 	u8 manual_fan_pwm[EC_FAN_SPEED_ENTRIES];
- };
- 
-+struct cros_ec_hwmon_cooling_priv {
-+	struct cros_ec_hwmon_priv *hwmon_priv;
-+	u8 index;
-+};
-+
- static int cros_ec_hwmon_read_fan_speed(struct cros_ec_device *cros_ec, u8 index, u16 *speed)
- {
- 	int ret;
-@@ -308,6 +314,42 @@ static const struct hwmon_channel_info * const cros_ec_hwmon_info[] = {
- 	NULL
- };
- 
-+static int cros_ec_hwmon_cooling_get_max_state(struct thermal_cooling_device *cdev,
-+					       unsigned long *val)
-+{
-+	*val = 255;
-+	return 0;
-+}
-+
-+static int cros_ec_hwmon_cooling_get_cur_state(struct thermal_cooling_device *cdev,
-+					       unsigned long *val)
-+{
-+	const struct cros_ec_hwmon_cooling_priv *priv = cdev->devdata;
-+	u8 read_val;
-+	int ret;
-+
-+	ret = cros_ec_hwmon_read_pwm_value(priv->hwmon_priv->cros_ec, priv->index, &read_val);
-+	if (ret)
-+		return ret;
-+
-+	*val = read_val;
-+	return 0;
-+}
-+
-+static int cros_ec_hwmon_cooling_set_cur_state(struct thermal_cooling_device *cdev,
-+					       unsigned long val)
-+{
-+	const struct cros_ec_hwmon_cooling_priv *priv = cdev->devdata;
-+
-+	return cros_ec_hwmon_write_pwm_input(priv->hwmon_priv->cros_ec, priv->index, val);
-+}
-+
-+static const struct thermal_cooling_device_ops cros_ec_thermal_cooling_ops = {
-+	.get_max_state = cros_ec_hwmon_cooling_get_max_state,
-+	.get_cur_state = cros_ec_hwmon_cooling_get_cur_state,
-+	.set_cur_state = cros_ec_hwmon_cooling_set_cur_state,
-+};
-+
- static const struct hwmon_ops cros_ec_hwmon_ops = {
- 	.read = cros_ec_hwmon_read,
- 	.read_string = cros_ec_hwmon_read_string,
-@@ -386,6 +428,46 @@ static bool cros_ec_hwmon_probe_fan_control_supported(struct cros_ec_device *cro
- 					CROS_EC_HWMON_THERMAL_AUTO_FAN_CTRL_CMD_VERSION);
- }
- 
-+static void cros_ec_hwmon_register_fan_cooling_devices(struct device *dev,
-+						       struct cros_ec_hwmon_priv *priv)
-+{
-+	struct cros_ec_hwmon_cooling_priv *cpriv;
-+	struct thermal_cooling_device *cdev;
-+	const char *type;
-+	size_t i;
-+
-+	if (!IS_ENABLED(CONFIG_THERMAL))
-+		return;
-+
-+	if (!priv->fan_control_supported)
-+		return;
-+
-+	for (i = 0; i < EC_FAN_SPEED_ENTRIES; i++) {
-+		if (!(priv->usable_fans & BIT(i)))
-+			continue;
-+
-+		cpriv = devm_kzalloc(dev, sizeof(*cpriv), GFP_KERNEL);
-+		if (!cpriv)
-+			continue;
-+
-+		type = devm_kasprintf(dev, GFP_KERNEL, "%s-fan%zu", dev_name(dev), i);
-+		if (!type) {
-+			dev_warn(dev, "no memory to compose cooling device type for fan %zu\n", i);
-+			continue;
-+		}
-+
-+		cpriv->hwmon_priv = priv;
-+		cpriv->index = i;
-+		cdev = devm_thermal_of_cooling_device_register(dev, NULL, type, cpriv,
-+							       &cros_ec_thermal_cooling_ops);
-+		if (IS_ERR(cdev)) {
-+			dev_warn(dev, "failed to register fan %zu as a cooling device: %pe\n", i,
-+				 cdev);
-+			continue;
-+		}
-+	}
-+}
-+
- static int cros_ec_hwmon_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -413,6 +495,7 @@ static int cros_ec_hwmon_probe(struct platform_device *pdev)
- 	cros_ec_hwmon_probe_temp_sensors(dev, priv, thermal_version);
- 	cros_ec_hwmon_probe_fans(priv);
- 	priv->fan_control_supported = cros_ec_hwmon_probe_fan_control_supported(priv->cros_ec);
-+	cros_ec_hwmon_register_fan_cooling_devices(dev, priv);
- 
- 	hwmon_dev = devm_hwmon_device_register_with_info(dev, "cros_ec", priv,
- 							 &cros_ec_hwmon_chip_info, NULL);
-
--- 
-2.50.0.727.gbf7dc18ff4-goog
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="CRJV3rwhctnAK5UQ"
+Content-Disposition: inline
 
 
+--CRJV3rwhctnAK5UQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hello Linus,
+
+Please pull couple of driver fixes for dmaengine subsystem for v6.16.
+This one contains fixes for mediatex, nbpfaxi and edma driver fixes.
+
+The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
+
+  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git tags/dm=
+aengine-fix-6.16
+
+for you to fetch changes up to 3df63fa8f2afd051848e37ef1b8299dee28d4f87:
+
+  dma: dw-edma: Fix build warning in dw_edma_pcie_probe() (2025-07-15 20:41=
+:49 +0530)
+
+----------------------------------------------------------------
+dmaengine fixes for v6.16
+
+Couple of driver fixes for:
+ - Mediatek flag reuse error fix
+ - Array overbound fix for nbpfaxi
+ - Frame size warning in driver probe
+
+----------------------------------------------------------------
+Abinash Singh (1):
+      dma: dw-edma: Fix build warning in dw_edma_pcie_probe()
+
+Dan Carpenter (1):
+      dmaengine: nbpfaxi: Fix memory corruption in probe()
+
+Qiu-ji Chen (1):
+      dmaengine: mediatek: Fix a flag reuse error in mtk_cqdma_tx_status()
+
+ drivers/dma/dw-edma/dw-edma-pcie.c | 60 ++++++++++++++++++++--------------=
+----
+ drivers/dma/mediatek/mtk-cqdma.c   |  4 +--
+ drivers/dma/nbpfaxi.c              | 11 ++++---
+ 3 files changed, 39 insertions(+), 36 deletions(-)
+
+--=20
+~Vinod
+
+--CRJV3rwhctnAK5UQ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE+vs47OPLdNbVcHzyfBQHDyUjg0cFAmh5804ACgkQfBQHDyUj
+g0e6CxAA1gOH0bY6P1yF+7Y2Z3lEKXTSS7sNZ39wLuWiZf2w7hdS9TddWQRDsPFP
+C5aZLO8Ilfk3e5C0hjkM5kw142WYzl3VcHrjzLo23o1u3tjW1+Oicm0hfSMZ1sUF
+SrMSpHVgD5MLPz8ktXGIufi0nYkA5vFfWtSuHd4/uA5z8jeNLP1kc0FdRprPEibC
+1SPAK5gl/JcrHXkkYrg2WeD+2t9iDsaPSmHASUHpq5a8FZoV6K0Ds2xvCnwdkAxs
+XzPZY4pM8nmDv6dfhjUzRBVBB0gGCN6affaUmxUnovZ/jDavMtgorjU1Tz2CeF4n
+k8faAdOeQ3HgyURHxLzCIrgiK0TlzPgGwQUV39/edTTgJiMTGm9833g2PBlWL1O7
+jMKHmuFPTj5NWUApae267I7r+6ytAkxqmjVUr2sSRo0HMaL2TYHkjpwHF1k04dRx
+fl5J+hJ10qnZINU5MMos0wMzx7nqXeEA0lHp9JYQh5viSEXS31Vh5GWsPD4kMhq0
+4SSt/0aYbw+O+abR2Q9xdHOQwB1+TZPX24YkMZ8nN1FQV+pfjb5zPENjTsiGswGM
+6EtNhCnRu8jms9TTCiT2PmB8Hdb93FkyPSpjdclZ/vc7BNgnUCJiE5dsSGXv3c9n
+pBKAuBV1QveiehYU5oSbdAlyzlEv32J8YcYI38rHKTIomXyeZ24=
+=sjB7
+-----END PGP SIGNATURE-----
+
+--CRJV3rwhctnAK5UQ--
 
