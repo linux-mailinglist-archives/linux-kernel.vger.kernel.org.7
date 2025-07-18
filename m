@@ -1,62 +1,54 @@
-Return-Path: <linux-kernel+bounces-737119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76132B0A7EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:52:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B58A0B0A7F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:52:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE2A5189FB33
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:52:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFFDC3B1B47
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E842E5B31;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE8872E5B3A;
 	Fri, 18 Jul 2025 15:52:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hvjsz9KN"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RWlyf6cd"
+Received: from mslow3.mail.gandi.net (mslow3.mail.gandi.net [217.70.178.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0122E54DD;
-	Fri, 18 Jul 2025 15:51:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 308F82E54C2
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 15:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752853919; cv=none; b=HJSTGyaA7+GHmY0Vxwu0Yvcvl5LGNMMsWKTU193z/QaxAMEJAqcwamGCQnDpH77/hG2f3xzN5hAWX+dhEecYFt6/bs0bPqe5/YwWxAPA3A1CU2dj6YHOaaAA9iBgltU+6t+/t0v3nsfNFTC//6HSy8YXXKQa1swC5EnfoUqyIH0=
+	t=1752853919; cv=none; b=FT+tbVMpwGsUy+XywXcU43tRLTOcVAh7252TyACxE2pUttrHVEITHCuBUSgPNqT7pjeGBEh+lN8nC4iM7xJXkB6C72IM4k7P1EL7jyyvz0BCrPejM+4RK8gLqvHWtf9eq4z2RO/NcF71CJNH31pYiLrlYMMxK1ScHpi2SSMVDNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752853919; c=relaxed/simple;
-	bh=ZmLI6Lb1LvfHG6SCEsSJziJG2r4OiqLyWXnZcvnsj28=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=W0OmovBniFlw7NmjORxyTaw9B+ATjT+xDtGQaPyUOp1FoB65MoFsHY10RLnSpqnw23evcqBD3VW/zvhJcySzIVXRtSrUnFxVD1NhLbZZdOqiwp4HeLt4a7JMPDYvBrfzyuLQbS1DlJ/gdDDv64yIWvN4SGdzefVfxiRlCr1P8lU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hvjsz9KN; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56I82XQK008788;
-	Fri, 18 Jul 2025 15:51:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2MwpE18oEWe1TtY+7fRTUbZYuWq3/eUiaszGmutvhXc=; b=hvjsz9KNImQc69k6
-	B57Q7A/nEjvt48CWpwZOfm0hPQ6V41r5vWikejleKnXpg7quK0qRrugRZYX7t/VT
-	YipSPxQb8X3wzXbw1Z2RMLqqeIq1r0+7D6WvUVKcLmxrz1zH/qL7FwV7g+Wbb6lL
-	RyA+iYmOUet4bnUj2j86ChPl5sV7FRN1mvFoMHgmwuLSFFsmiVDQk7YfMWvx/QxM
-	3qdcM0dUOiOFMxHlhRgfrDQ75jpD/HUvA10d5oNPrhmpxtFb0u2cj3+qdNC8VVCv
-	1z/RLHC73W+V+TxpyKchtkyuAB7cL4Foe+76fhBCO++r/KNvgR4sGvkDEfpfixX+
-	Oh0m8w==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ufxbc5tc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Jul 2025 15:51:44 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56IFphaO006119
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Jul 2025 15:51:43 GMT
-Received: from [10.253.76.178] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Fri, 18 Jul
- 2025 08:51:36 -0700
-Message-ID: <830f3989-d1ac-4b7c-8888-397452fe0abe@quicinc.com>
-Date: Fri, 18 Jul 2025 23:51:34 +0800
+	bh=MblLE8/t3WRqu36KWqwo9OSv2OWsIAPdN/jai8IzN+4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jDrz8Ks0+dxo0SOjOEKazgnmobKqd/rOYrvnnA/GZNSswZve1X6pnGfh8LnIxPi976av5agUICfSTSq4XcNS/jxuFTuL2qhbOp0mxiUkM6JWmp6VLA4uhu616lyySAk3qynwxmbZadY2TWwJzXD59th9LM++b5u+mSKCfbCAZQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RWlyf6cd; arc=none smtp.client-ip=217.70.178.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	by mslow3.mail.gandi.net (Postfix) with ESMTP id 8D6EF591D97
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 15:51:49 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id DC22143370;
+	Fri, 18 Jul 2025 15:51:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1752853902;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=gDZdKx+VEWMEY5yqee1h5FxpYUrowarpeNmT55PDBwA=;
+	b=RWlyf6cdpN32uikdhn7wKFZaX8fHMFWqzsRBhig6I1KpJ+Ij9LNxQE73TMu38ZA/1w9Gzw
+	RRH/DBw9TPNuAOBdtqz8KYj7OsnuxR0Nbvv+frm94tu3rrRcXi7q3jRCC2SoOdQqM1OkZT
+	6MwcMAD7kM42VqCGowd9MEnt58CCh9o+wtv8YlOmX0pG1bvHk2L+WpboZgGSnrbV1q7GzQ
+	9Vr6UmNkEhZHgabOT0ZBfJGz5yCPokqgDzovWXsDm43A3vZyr4Peqg4rGuLWw367ksjh8f
+	C6k3X75Z4Y/l/dS1ERLi6wP6hmDKbNxyeMy/vfdrzVaysWtFGNJB7wJoGvBNqw==
+Message-ID: <bc0d775e-21dc-4cb7-a905-06b81028267b@bootlin.com>
+Date: Fri, 18 Jul 2025 17:51:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,156 +56,268 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 05/10] dt-bindings: clock: ipq9574: Rename NSS CC
- source clocks to drop rate
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Rob Herring
-	<robh@kernel.org>
-CC: Georgi Djakov <djakov@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>,
-        Anusha Rao <quic_anusha@quicinc.com>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Richard
- Cochran" <richardcochran@gmail.com>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <quic_kkumarcs@quicinc.com>, <quic_linchen@quicinc.com>,
-        <quic_leiwei@quicinc.com>, <quic_pavir@quicinc.com>,
-        <quic_suruchia@quicinc.com>
-References: <20250710-qcom_ipq5424_nsscc-v3-0-f149dc461212@quicinc.com>
- <20250710-qcom_ipq5424_nsscc-v3-5-f149dc461212@quicinc.com>
- <20250710225412.GA25762-robh@kernel.org>
- <93082ccd-40d2-4a6b-a526-c118c1730a45@oss.qualcomm.com>
- <2f37c7e7-b07b-47c7-904b-5756c4cf5887@quicinc.com>
- <a383041e-7b70-4ffd-ae15-2412b2f83770@oss.qualcomm.com>
+Subject: Re: [PATCH v5 00/16] drm/vkms: Add configfs support
+To: Marius Vlad <marius.vlad@collabora.com>
+Cc: =?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>,
+ tzimmermann@suse.de, mripard@kernel.org, simona@ffwll.ch,
+ sebastian.wick@redhat.com, victoria@system76.com,
+ Mark Yacoub <markyacoub@google.com>, xaver.hugl@kde.org,
+ hamohammed.sa@gmail.com, melissa.srw@gmail.com,
+ maarten.lankhorst@linux.intel.com, airlied@gmail.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250507135431.53907-1-jose.exposito89@gmail.com>
+ <57e425ff-2731-47d7-b5ce-c34f5baf71b4@bootlin.com>
+ <aHpGGxZyimpJ8Ehz@xpredator>
 Content-Language: en-US
-From: Luo Jie <quic_luoj@quicinc.com>
-In-Reply-To: <a383041e-7b70-4ffd-ae15-2412b2f83770@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: swRjQQ_PQW7tkbAY8VLMWgv-9_THV1oX
-X-Proofpoint-ORIG-GUID: swRjQQ_PQW7tkbAY8VLMWgv-9_THV1oX
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE4MDEyMyBTYWx0ZWRfX0rs5m2C5d6kq
- iOCt6fzRXoqLcO+VZqKrhn2T/n1JPvh4kMObWVCir6flsG/WvmGHPln2rTlPSXVuOyF3ZNR/vLK
- 1ttQGcOS9Rqp3T1GHWxOvLKIuBDylXWTI4ncoRtx4LDI360HJfLrE4ojeSKSj87AREHUW0nsMzN
- a1omT0z7UCJSmgVJtCX+N0KF03kHaRsTIzh9F0XWokoN1Sjt66NUf1dVyjdg/jwhTgiqH7P1mKS
- cULx+yur6mxu0VcaqFU/RqQAnYnVGWxGWjCZ+flHvRE9pYmFex3mibflqi/bnou4zQ1bSdulCac
- r3qnCNZZckY4F1mLL32IuuVswoNuCwO2is3/Hccc1wlFtt5o0KDcuxV+qlSQn0Npxwi8fPO0Yvy
- prHagNyramkTOU7PfvfJjv33Eb9E77R2ZeuAImyTIGm0jJzEDoxhsq+rG+1BrBmP6FncA+5R
-X-Authority-Analysis: v=2.4 cv=Xc2JzJ55 c=1 sm=1 tr=0 ts=687a6d90 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8
- a=an1i8R5mwEVpawc4EucA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-18_03,2025-07-17_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 mlxscore=0 priorityscore=1501 adultscore=0 mlxlogscore=999
- phishscore=0 suspectscore=0 spamscore=0 lowpriorityscore=0 impostorscore=0
- clxscore=1015 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507180123
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
+ 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
+In-Reply-To: <aHpGGxZyimpJ8Ehz@xpredator>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeifeekiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpefnohhuihhsucevhhgruhhvvghtuceolhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepleegieeggeffjeegudefuefffeelleffieeigfefudevjeeuhffgvdefjeefgeeknecuffhomhgrihhnpegsohhothhlihhnrdgtohhmpdhgnhhomhgvrdhorhhgpdhgihhthhhusgdrtghomhdpfhhrvggvuggvshhkthhophdrohhrghdpkhgvrhhnvghlrdhorhhgnecukfhppedvtddtudemkeeiudemgedugedtmegtkeeitdemheguiedumeeifeefleemieeirgeimegvtdejheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemgedugedtmegtkeeitdemheguiedumeeifeefleemieeirgeimegvtdejhedphhgvlhhopeglkffrggeimedvtddtudemkeeiudemgedugedtmegtkeeitdemheguiedumeeifeefleemieeirgeimegvtdejhegnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhto
+ hepudehpdhrtghpthhtohepmhgrrhhiuhhsrdhvlhgrugestgholhhlrggsohhrrgdrtghomhdprhgtphhtthhopehjohhsvgdrvgigphhoshhithhokeelsehgmhgrihhlrdgtohhmpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtohepshgvsggrshhtihgrnhdrfihitghksehrvgguhhgrthdrtghomhdprhgtphhtthhopehvihgtthhorhhirgesshihshhtvghmjeeirdgtohhmpdhrtghpthhtohepmhgrrhhkhigrtghouhgssehgohhoghhlvgdrtghomh
+X-GND-Sasl: louis.chauvet@bootlin.com
 
 
 
-On 7/18/2025 5:28 PM, Konrad Dybcio wrote:
-> On 7/18/25 11:12 AM, Luo Jie wrote:
+Le 18/07/2025 à 15:03, Marius Vlad a écrit :
+> Hi,
+> 
+> FWIW, we (Weston) also use vkms in CI and we have in plan to make use of
+> these changes to exercise some internal code paths and enhance our tests.
+> Look forward to getting these into the tree and have it a in release. We
+> tend to follow with a branch/stable release so I suppose that's going be
+> a while. Just wanted to also say thanks a lot for driving this.
+
+Hi,
+
+Thanks a lot for this positive feedback!
+
+> Just curios, in the current form would it be possible to configure the
+> plane's zpos position? Apart from testing underlay/overlay in the same
+> time, some drivers today allows the primary to be independently
+> positioned. Simulating these type of configurations would allow see what
+> architectural changes we might need to do to transition towards a place
+> where we can use any other plane as a (fallback) compositing one like we
+> do today with the primary one.
+
+Currently nothing is done to do a proper z-pos managment, and even 
+worse: the z-order is not really predictable (order of creation in 
+configfs, so if userspace creates cursor-primary, the cursor will be 
+behind the primary plane).
+
+We need to change this before merging ConfigFS. Fir the first iteration, 
+we can simply: make primary plane always at the back (zpos=0), overlay 
+with undefined ordering (zpos=1), cursor on top (zpos=2) directly in 
+vkms_plane_init. I need to check if this will be a uAPI break if we add 
+later some configfs attributes like default_zpos / zpos_min / zpos_max.
+
+Even with this, we need to fix [1] to compose planes in the correct 
+order (I don't think this is broken right now because we create primary 
+then overlays then cursor, so the composition order will be correct).
+
+[1]:https://elixir.bootlin.com/linux/v6.15.6/source/drivers/gpu/drm/vkms/vkms_composer.c#L392-L394
+
+@José, I will fix the vkms_composer to use plane->state->zpos or 
+normalized_zpos.
+
+Thanks a lot for this suggestion which showed a flaw in the current 
+implementation!
+
+Louis Chauvet
+
+> On Thu, Jul 17, 2025 at 06:37:17PM +0200, Louis Chauvet wrote:
+>> +CC: Mark (Google), Sebastian (Mutter), Xaver (KWin), Victoria (Cosmic)
+>>
+>> Hi everyone,
+>>
+>> Last week, I presented this work at the Display Next Hackfest, and the
+>> feedback from compositors was very positive. At least KWin, Mutter, and
+>> Cosmic are interested in integrating it into their tests, so it would be
+>> great if someone could review it.
+>>
+>> Sebastian quickly tested this work (using [2] for full features) with their
+>> existing VKMS tests [1], and it worked. From what I understand, the tests
+>> are quite basic —just sanity checks— but we were able to reproduce the
+>> default vkms device using ConfigFS.
+>>
+>> If another compositor wants to test the ConfigFS interface (I will try to
+>> keep [2] updated), that would be amazing. Feel free to send feedback!
+>>
+>> A small note: This series has a minor conflict since the conversion to the
+>> faux device, but it can be applied using `b4 am -3 ... && git am -3 ...`.
+>> @josé, if you send a new iteration, can you add markyacoub@google.com in
+>> copy, and maybe Sebastian, Xaver, Victoria if they want to follow the
+>> upstreaming?
+>>
+>> Thank you,
+>> Louis Chauvet
+>>
+>> [1]:https://gitlab.gnome.org/swick/mutter/-/commit/88a7354942d9728dae06fb83cc4f2d2c7b08b694
+>> [2]:https://github.com/Fomys/linux/tree/configfs-everything
 >>
 >>
->> On 7/11/2025 8:15 PM, Konrad Dybcio wrote:
->>> On 7/11/25 12:54 AM, Rob Herring wrote:
->>>> On Thu, Jul 10, 2025 at 08:28:13PM +0800, Luo Jie wrote:
->>>>> Drop the clock rate suffix from the NSS Clock Controller clock names for
->>>>> PPE and NSS clocks. A generic name allows for easier extension of support
->>>>> to additional SoCs that utilize same hardware design.
->>>>
->>>> This is an ABI change. You must state that here and provide a reason the
->>>> change is okay (assuming it is). Otherwise, you are stuck with the name
->>>> even if not optimal.
+>>
+>> Le 07/05/2025 à 15:54, José Expósito a écrit :
+>>> Hi everyone,
 >>>
->>> The reason here seems to be simplifying the YAML.. which is not a good
->>> reason really..
+>>> This series allow to configure one or more VKMS instances without having
+>>> to reload the driver using configfs.
 >>>
->>> I would instead suggest keeping the clocks list as-is for ipq9574 (this
->>> existing case), whereas improving it for any new additions
+>>> The series is structured in 3 blocks:
 >>>
->>> Konrad
+>>>     - Patches 1..11: Basic device configuration. For simplicity, I kept the
+>>>       available options as minimal as possible.
+>>>
+>>>     - Patches 12 and 13: New option to skip the default device creation and to-do
+>>>       cleanup.
+>>>
+>>>     - Patches 14, 15 and 16: Allow to hot-plug and unplug connectors. This is not
+>>>       part of the minimal set of options, but I included in this series so it can
+>>>       be used as a template/example of how new configurations can be added.
+>>>
+>>> The process of configuring a VKMS device is documented in "vkms.rst".
+>>>
+>>> Finally, the code is thoroughly tested by a collection of IGT tests [1].
+>>>
+>>> Best wishes,
+>>> José Expósito
+>>>
+>>> [1] https://lists.freedesktop.org/archives/igt-dev/2025-February/086071.html
+>>>
+>>> Changes in v5:
+>>>
+>>>     - Added Reviewed-by tags, thanks Louis!
+>>>     - Rebased on top of drm-misc-next
+>>>     - Link to v4: https://lore.kernel.org/dri-devel/20250407081425.6420-1-jose.exposito89@gmail.com/
+>>>
+>>> Changes in v4:
+>>>
+>>>     - Since Louis and I worked on this together, set him as the author of some of
+>>>       the patches and me as co-developed-by to reflect this joint effort.
+>>>     - Rebased on top of drm-misc-next
+>>>     - Link to v3: https://lore.kernel.org/all/20250307163353.5896-1-jose.exposito89@gmail.com/
+>>>
+>>> Changes in v3:
+>>>
+>>>     - Applied review comments by Louis Chauvet: (thanks!!)
+>>>       - Use scoped_guard() instead of guard(mutex)(...)
+>>>       - Fix a use-after-free error in the connector hot-plug code
+>>>     - Rebased on top of drm-misc-next
+>>>     - Link to v2: https://lore.kernel.org/all/20250225175936.7223-1-jose.exposito89@gmail.com/
+>>>
+>>> Changes in v2:
+>>>
+>>>     - Applied review comments by Louis Chauvet:
+>>>       - Use guard(mutex)(...) instead of lock/unlock
+>>>       - Return -EBUSY when trying to modify a enabled device
+>>>       - Move the connector hot-plug related patches to the end
+>>>     - Rebased on top of drm-misc-next
+>>>     - Link to v1: https://lore.kernel.org/dri-devel/20250218170808.9507-1-jose.exposito89@gmail.com/T/
+>>>
+>>> José Expósito (6):
+>>>     drm/vkms: Expose device creation and destruction
+>>>     drm/vkms: Allow to configure the default device creation
+>>>     drm/vkms: Remove completed task from the TODO list
+>>>     drm/vkms: Allow to configure connector status
+>>>     drm/vkms: Allow to update the connector status
+>>>     drm/vkms: Allow to configure connector status via configfs
+>>>
+>>> Louis Chauvet (10):
+>>>     drm/vkms: Add and remove VKMS instances via configfs
+>>>     drm/vkms: Allow to configure multiple planes via configfs
+>>>     drm/vkms: Allow to configure the plane type via configfs
+>>>     drm/vkms: Allow to configure multiple CRTCs via configfs
+>>>     drm/vkms: Allow to configure CRTC writeback support via configfs
+>>>     drm/vkms: Allow to attach planes and CRTCs via configfs
+>>>     drm/vkms: Allow to configure multiple encoders via configfs
+>>>     drm/vkms: Allow to attach encoders and CRTCs via configfs
+>>>     drm/vkms: Allow to configure multiple connectors via configfs
+>>>     drm/vkms: Allow to attach connectors and encoders via configfs
+>>>
+>>>    Documentation/gpu/vkms.rst                    | 100 ++-
+>>>    drivers/gpu/drm/vkms/Kconfig                  |   1 +
+>>>    drivers/gpu/drm/vkms/Makefile                 |   3 +-
+>>>    drivers/gpu/drm/vkms/tests/vkms_config_test.c |  24 +
+>>>    drivers/gpu/drm/vkms/vkms_config.c            |   8 +-
+>>>    drivers/gpu/drm/vkms/vkms_config.h            |  26 +
+>>>    drivers/gpu/drm/vkms/vkms_configfs.c          | 833 ++++++++++++++++++
+>>>    drivers/gpu/drm/vkms/vkms_configfs.h          |   8 +
+>>>    drivers/gpu/drm/vkms/vkms_connector.c         |  35 +
+>>>    drivers/gpu/drm/vkms/vkms_connector.h         |   9 +
+>>>    drivers/gpu/drm/vkms/vkms_drv.c               |  18 +-
+>>>    drivers/gpu/drm/vkms/vkms_drv.h               |  20 +
+>>>    12 files changed, 1072 insertions(+), 13 deletions(-)
+>>>    create mode 100644 drivers/gpu/drm/vkms/vkms_configfs.c
+>>>    create mode 100644 drivers/gpu/drm/vkms/vkms_configfs.h
+>>>
+>>>
+>>> base-commit: a6c0a91ccb257eaec2aee080df06863ce7601315
 >>
->> Thanks Rob and Konrad for the comments.
+>> -- 
+>> Louis Chauvet, Bootlin
+>> Embedded Linux and Kernel engineering
+>> https://bootlin.com
 >>
->> "nss_1200" and "nss" refer to the same clock pin on different SoC.
->> As per Krzystof's previous comment on V2, including the frequency
->> as a suffix in the clock name is not required, since only the
->> frequencies vary across different IPQ SoCs, while the source clock
->> pins for 'PPE' and 'NSS' clocks are the same. Hence this ABI change
->> was deemed necessary.
->>
->> By removing the frequency suffix, the device tree bindings becomes
->> more flexible and easier to extend for supporting new hardware
->> variants in the future.
->>
->> Impact due to this ABI change: The NSS clock controller node is only
->> enabled for the IPQ9574 DTS. In this patch series, the corresponding
->> DTS changes for IPQ9574 are also included to align with this ABI
->> change.
-> 
-> The point of an ABI is to keep exposing the same interface without
-> any change requirements, i.e. if a customer ships the DT from
-> torvalds/master in firmware and is not willing to update it, they
-> can no longer update the kernel without a workaround.
-> 
->> Please let me know if further clarification or adjustments are needed.
-> 
-> What we're asking for is that you don't alter the name on the
-> existing platform, but use a no-suffix version for the ones you
-> introduce going forward
-> 
-> i.e. (pseudo-YAML)
-> 
-> if:
->    properties:
->      compatible:
->        - const: qcom,ipq9574-nsscc
-> then:
->    properties:
->      clock-names:
->        items:
->          - clockname_1200
-> else:
->    properties:
->      clock-names:
->        items:
->          - clockname # no suffix
-> 
-> Konrad
 
-We had adopted this proposal in version 2 previously, but as noted in
-the discussion linked below, Krzysztof had suggested to avoid using the
-clock rate in the clock names when defining the constraints for them.
-However I do agree that we should keep the interface for IPQ9574
-unchanged and instead use a generic clock name to support the newer
-SoCs.
-
-https://lore.kernel.org/all/20250701-optimistic-esoteric-swallow-d93fc6@krzk-bin/
-
-Request Krzysztof to provide his comments as well, on whether we can
-follow your suggested approach to avoid breaking ABI for IPQ9574.
+-- 
+Louis Chauvet, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
