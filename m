@@ -1,300 +1,129 @@
-Return-Path: <linux-kernel+bounces-736972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EAF4B0A5F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 16:14:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E9FBB0A5F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 16:14:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FA45A83CEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:13:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C4CC566C36
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765092DCF55;
-	Fri, 18 Jul 2025 14:13:11 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75FB22D8388;
+	Fri, 18 Jul 2025 14:14:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="mcR5J18U"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFA9F15E5C2
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 14:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68F30199931
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 14:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752847990; cv=none; b=phe/YRtAKuIJW5pdQTjR4GGmor2H/dipb2I4CyTs6U8gyy/PgOiUgp013Mc2N8ENmrKqU50qsvpfrEkyA1rQ0QVASmvUqs80IK2m/28SCV4WkCDCEJcrntm3Fnf27dqgmtMPIRK9/rvqtt46KfPiB1c7V3JFYZWaKvWLFXsIWA0=
+	t=1752848045; cv=none; b=s1dGGmqJ2kn8lc1im4GF9ALqNYNa/nOtJeDp7dVfwo3ai7hMmA5x3q0guN4/zyjoWBFnWopo3miCYGt9K63eSq1EqfA8/K4Z0XGFHUQ0Sr0cx3ChGwz/61LUDE96VNqr0CY7JSn0Fk8e8IIHlHS+43m7ne0nPI0vX4BA8sp+UVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752847990; c=relaxed/simple;
-	bh=xj6S3M8xJY8PbtvB49mSf5ejLhiwBMln/kdBPNm/grU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bJcg5vzIOmL2G2jWADjX+Bm4QcyNLXjqWxfnu0mX0J9ekb5iKlQuXeFlFVWiZmiUCKFvKsbyN8B0Oirn6SyYWyzFVReZzga5vyL2S/cO7+rjr6ZNlhhq6Glk7iXTQJBB0wPdvDhorhb1Rb8RE1DuA0N8HTMrL1mGYU3siVqZ/Bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <jre@pengutronix.de>)
-	id 1uclpT-00065i-No; Fri, 18 Jul 2025 16:12:51 +0200
-From: Jonas Rebmann <jre@pengutronix.de>
-Date: Fri, 18 Jul 2025 16:12:50 +0200
-Subject: [PATCH v2 3/3] hwmon: ina238: Add support for INA228
+	s=arc-20240116; t=1752848045; c=relaxed/simple;
+	bh=X2kw8wKIFchN7U6f3WRj7akA9iZyWVrco2+eQsNCM5c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=algV06uxxRVswsJUZHHq5gi01moR52zYn/3/CdJBLSW9E4w80hTnKADcIgo7DefJw09b11vkZeLFzQc/4zmywT2J27sd915jyM38X3s9etzFjGcH0kmRWTQvx1Wxc3JjztdE/IXia0xoDL/G8HRhxC8ozpQJunfn5AKIUbRNVLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=mcR5J18U; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4ab6646476aso13974831cf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 07:14:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1752848043; x=1753452843; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=X2kw8wKIFchN7U6f3WRj7akA9iZyWVrco2+eQsNCM5c=;
+        b=mcR5J18UiXbFtZPsBh36vbt1p4TFaxBPZQHTdf1PtyUw6+c/o9e7VNwra7F0sOfXhX
+         nWDXEEUbNHtgLL3BM/NEGfXu3RnC13L94JH1WBazj0ZQA9keGTXYu/CZai+wZAhDp2cG
+         vvg22R/c4aM6JMqlxxAPzUfqjO+uUM4iKi+sdXToBwRNvvxwF3IpiDQuMQdO+P44k29A
+         pnWvbExuMvqaRurdc4s4jLq5g9G9RhK4arfrTPwzeKlp9E/A5+yQgk1Hofbfp0j5Qtzz
+         WG1Gr3CRjLKnwQ1sM2syCWX6miSuifccY/PYA7SDraA+w5huMwMXzb67FfHs7C08Xf+o
+         GaFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752848043; x=1753452843;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X2kw8wKIFchN7U6f3WRj7akA9iZyWVrco2+eQsNCM5c=;
+        b=sZRipAMwE3TWBNyxx0uJj2SCiaDVQE+U3QegX36xCQLY/szzxueaOTKmUoVNdEJfhN
+         iIbvYM5Kx6eYTD0xKEKTao2gasns9mCjrC1GUrnlRzQSNnXJ4RMU/8pxwOZIUJnvsKBq
+         JKL1EK03aWsYAlzbQYRlnntiadO0YhjorsWp9iUs+8D1/XjH3bJsy3Us4LiJwf/hr+B4
+         /bdLPL/20fC6Al/TrfV6Ns4sSlJYGuhK8yVxIjEryCKzCK2qq3W/sRj7nyJsnRpsbK3y
+         LYz+v/sB3ppPaqMQxzbtHhvY1/85f9t+3csu/v9Y4pYy4lhF80A3t1HwSSk9g38mzYs6
+         hDLA==
+X-Forwarded-Encrypted: i=1; AJvYcCUv4KlMPLfR599LSOug5Vy6YsOmdiZaa/yBB9+if3F99l8q8Qsmf8LIKpZGcIuXUA1A3tL2ukB1r5bLe0E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgpeddETBPkn+YBgxY+xITYLBmjSs3PXTimrCKgL+J2Wm1M19S
+	4j6+CP3YqK8cSunUOeqbSIq5Ehn9YuhjyJS8ZImHCJ+Vm1arjMfHRwFZaCFqU/z27L0=
+X-Gm-Gg: ASbGncu3hgq0pfs1ohT3XUshtd1uIAXK9To4yQoJ+MYx3gd+UjTM57yrPWTV22ygJOx
+	9d6YsA81QH+CSC4U/chj6x0tbLi6cfuJiSTtKG3ka1YY5jhmPChd4KNA25JmIqyR7bOl+epYV4/
+	5SfMk8BxTtVmVQPCk2UdiE/TRRCUOhWZRIr+pk75DsAcRquJynBZNmULPWbN8v0Lo30NT1J3RCG
+	Mn+8vNSsujJq4os/Ya3LKLizLU6ItDisAOz/9d+p6BNNNdzwWTwu49QP0NflVhoIhwDQIvbaCsp
+	aOXjgjqGoHvhZ4HIaOvqamyjaW/FIOQe24jdtzXMpql1PyUm7eEr/FHH/7AU5bSZ1WcRwo86IUW
+	XKUHXL31o5iNcZAf/Dov6HjgSZymbTWpEheAPMSlMDcPyvJWSRVI48P5TRfph12XFA5DQnVITBA
+	==
+X-Google-Smtp-Source: AGHT+IFxlNjnByJpGTyiiwdZo9i9Kku+QZgJ0vVJieheNkgXzQ9j9lwkrn0QWQUloNoVgHfjwg2tvg==
+X-Received: by 2002:a05:622a:1a10:b0:4ab:95a7:71d5 with SMTP id d75a77b69052e-4aba3e9064amr110581641cf.55.1752848042697;
+        Fri, 18 Jul 2025 07:14:02 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-167-56-70.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.56.70])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4abb49a0046sm7659811cf.25.2025.07.18.07.14.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Jul 2025 07:14:01 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1uclqb-00000009zAp-11e0;
+	Fri, 18 Jul 2025 11:14:01 -0300
+Date: Fri, 18 Jul 2025 11:14:01 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Will Deacon <will@kernel.org>
+Cc: Robin Murphy <robin.murphy@arm.com>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	joro@8bytes.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, heiko@sntech.de,
+	nicolas.dufresne@collabora.com, iommu@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, kernel@collabora.com
+Subject: Re: [PATCH v6 3/5] iommu: Add verisilicon IOMMU driver
+Message-ID: <20250718141401.GD2206214@ziepe.ca>
+References: <20250710082450.125585-1-benjamin.gaignard@collabora.com>
+ <20250710082450.125585-4-benjamin.gaignard@collabora.com>
+ <aHTzPwTob8_5rtBS@willie-the-truck>
+ <baa1fcde-f167-4a1b-afca-0a2957a688cc@collabora.com>
+ <aHozv0NG1OBlAH6c@willie-the-truck>
+ <b4169471-fcd0-4415-8281-c5bd722e5f2b@arm.com>
+ <aHpQXy-bnwW56rCn@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250718-ina228-v2-3-227feb62f709@pengutronix.de>
-References: <20250718-ina228-v2-0-227feb62f709@pengutronix.de>
-In-Reply-To: <20250718-ina228-v2-0-227feb62f709@pengutronix.de>
-To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
- kernel@pengutronix.de, Jonas Rebmann <jre@pengutronix.de>
-X-Mailer: b4 0.15-dev-19c33
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7291; i=jre@pengutronix.de;
- h=from:subject:message-id; bh=xj6S3M8xJY8PbtvB49mSf5ejLhiwBMln/kdBPNm/grU=;
- b=owGbwMvMwCF2ZcYT3onnbjcwnlZLYsioCkviqXp19aZqZ9HjvpbtUxaf05/csmf1/tOcyxKaK
- za9WBe8rqOUhUGMg0FWTJElVk1OQcjY/7pZpV0szBxWJpAhDFycAjAR1UiGv1IWdmqLzyluUXz5
- IJZf5Mzl2lXi7pF7mtMWvDB5HTznfizDf09nlow1yztnutt8eLb/UYT0tEWsBo2ruZriFr1fpf7
- 9FCMA
-X-Developer-Key: i=jre@pengutronix.de; a=openpgp;
- fpr=0B7B750D5D3CD21B3B130DE8B61515E135CD49B5
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::ac
-X-SA-Exim-Mail-From: jre@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aHpQXy-bnwW56rCn@willie-the-truck>
 
-Add support for the Texas Instruments INA228 Ultra-Precise
-Power/Energy/Charge Monitor.
+On Fri, Jul 18, 2025 at 02:47:11PM +0100, Will Deacon wrote:
 
-The INA228 is very similar to the INA238 but offers four bits of extra
-precision in the temperature, voltage and current measurement fields.
-It also supports energy and charge monitoring, the latter of which is
-not supported through this patch.
+> Just because the existing drivers are a mess doesn't mean we should
+> proliferate it!
 
-While it seems in the datasheet that some constants such as LSB values
-differ between the 228 and the 238, they differ only for those registers
-where four bits of precision have been added and they differ by a factor
-of 16 (VBUS, VSHUNT, DIETEMP, CURRENT).
+If you want to insist on something here it should be for this driver
+to use the new generic page table code I've written.
 
-Therefore, the INA238 constants are still applicable with regard
-to the bit of the same significance.
+Otherwise I don't see the point in trying to improve this in some
+lesser way.
 
-Signed-off-by: Jonas Rebmann <jre@pengutronix.de>
----
- drivers/hwmon/ina238.c | 106 ++++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 101 insertions(+), 5 deletions(-)
+If this had come in a years time I would probably insist on that, but
+right now it isn't merged yet and it will still be a little bit before
+people have time to review it.
 
-diff --git a/drivers/hwmon/ina238.c b/drivers/hwmon/ina238.c
-index 5e43bbe8817d..5a394eeff676 100644
---- a/drivers/hwmon/ina238.c
-+++ b/drivers/hwmon/ina238.c
-@@ -6,6 +6,7 @@
-  * Copyright (C) 2021 Nathan Rossi <nathan.rossi@digi.com>
-  */
- 
-+#include <linux/bitops.h>
- #include <linux/err.h>
- #include <linux/hwmon.h>
- #include <linux/i2c.h>
-@@ -107,6 +108,7 @@
- #define INA238_DIE_TEMP_LSB		1250000 /* 125.0000 mC/lsb */
- #define SQ52206_BUS_VOLTAGE_LSB		3750 /* 3.75 mV/lsb */
- #define SQ52206_DIE_TEMP_LSB		78125 /* 7.8125 mC/lsb */
-+#define INA228_DIE_TEMP_LSB		78125 /* 7.8125 mC/lsb */
- 
- static const struct regmap_config ina238_regmap_config = {
- 	.max_register = INA238_REGISTERS,
-@@ -114,9 +116,10 @@ static const struct regmap_config ina238_regmap_config = {
- 	.val_bits = 16,
- };
- 
--enum ina238_ids { ina238, ina237, sq52206 };
-+enum ina238_ids { ina238, ina237, sq52206, ina228 };
- 
- struct ina238_config {
-+	bool has_20bit_voltage_current; /* vshunt, vbus and current are 20-bit fields */
- 	bool has_power_highest;		/* chip detection power peak */
- 	bool has_energy;		/* chip detection energy */
- 	u8 temp_shift;			/* fixed parameters for temp calculate */
-@@ -137,6 +140,7 @@ struct ina238_data {
- 
- static const struct ina238_config ina238_config[] = {
- 	[ina238] = {
-+		.has_20bit_voltage_current = false,
- 		.has_energy = false,
- 		.has_power_highest = false,
- 		.temp_shift = 4,
-@@ -146,6 +150,7 @@ static const struct ina238_config ina238_config[] = {
- 		.temp_lsb = INA238_DIE_TEMP_LSB,
- 	},
- 	[ina237] = {
-+		.has_20bit_voltage_current = false,
- 		.has_energy = false,
- 		.has_power_highest = false,
- 		.temp_shift = 4,
-@@ -155,6 +160,7 @@ static const struct ina238_config ina238_config[] = {
- 		.temp_lsb = INA238_DIE_TEMP_LSB,
- 	},
- 	[sq52206] = {
-+		.has_20bit_voltage_current = false,
- 		.has_energy = true,
- 		.has_power_highest = true,
- 		.temp_shift = 0,
-@@ -163,6 +169,16 @@ static const struct ina238_config ina238_config[] = {
- 		.bus_voltage_lsb = SQ52206_BUS_VOLTAGE_LSB,
- 		.temp_lsb = SQ52206_DIE_TEMP_LSB,
- 	},
-+	[ina228] = {
-+		.has_20bit_voltage_current = true,
-+		.has_energy = true,
-+		.has_power_highest = false,
-+		.temp_shift = 0,
-+		.power_calculate_factor = 20,
-+		.config_default = INA238_CONFIG_DEFAULT,
-+		.bus_voltage_lsb = INA238_BUS_VOLTAGE_LSB,
-+		.temp_lsb = INA228_DIE_TEMP_LSB,
-+	},
- };
- 
- static int ina238_read_reg24(const struct i2c_client *client, u8 reg, u32 *val)
-@@ -199,6 +215,65 @@ static int ina238_read_reg40(const struct i2c_client *client, u8 reg, u64 *val)
- 	return 0;
- }
- 
-+static int ina238_read_field_s20(const struct i2c_client *client, u8 reg, s32 *val)
-+{
-+	u32 regval;
-+	int err;
-+
-+	err = ina238_read_reg24(client, reg, &regval);
-+	if (err)
-+		return err;
-+
-+	/* bits 3-0 Reserved, always zero */
-+	regval >>= 4;
-+
-+	*val = sign_extend32(regval, 19);
-+
-+	return 0;
-+}
-+
-+static int ina228_read_shunt_voltage(struct device *dev, u32 attr, int channel,
-+				     long *val)
-+{
-+	struct ina238_data *data = dev_get_drvdata(dev);
-+	int regval;
-+	int err;
-+
-+	err = ina238_read_field_s20(data->client, INA238_SHUNT_VOLTAGE, &regval);
-+	if (err)
-+		return err;
-+
-+	/*
-+	 * gain of 1 -> LSB / 4
-+	 * This field has 16 bit on ina238. ina228 adds another 4 bits of
-+	 * precision. ina238 conversion factors can still be applied when
-+	 * dividing by 16.
-+	 */
-+	*val = (regval * INA238_SHUNT_VOLTAGE_LSB) * data->gain / (1000 * 4) / 16;
-+	return 0;
-+}
-+
-+static int ina228_read_bus_voltage(struct device *dev, u32 attr, int channel,
-+				   long *val)
-+{
-+	struct ina238_data *data = dev_get_drvdata(dev);
-+	int regval;
-+	int err;
-+
-+	err = ina238_read_field_s20(data->client, INA238_BUS_VOLTAGE, &regval);
-+	if (err)
-+		return err;
-+
-+	/*
-+	 * gain of 1 -> LSB / 4
-+	 * This field has 16 bit on ina238. ina228 adds another 4 bits of
-+	 * precision. ina238 conversion factors can still be applied when
-+	 * dividing by 16.
-+	 */
-+	*val = (regval * data->config->bus_voltage_lsb) / 1000 / 16;
-+	return 0;
-+}
-+
- static int ina238_read_in(struct device *dev, u32 attr, int channel,
- 			  long *val)
- {
-@@ -211,6 +286,8 @@ static int ina238_read_in(struct device *dev, u32 attr, int channel,
- 	case 0:
- 		switch (attr) {
- 		case hwmon_in_input:
-+			if (data->config->has_20bit_voltage_current)
-+				return ina228_read_shunt_voltage(dev, attr, channel, val);
- 			reg = INA238_SHUNT_VOLTAGE;
- 			break;
- 		case hwmon_in_max:
-@@ -234,6 +311,8 @@ static int ina238_read_in(struct device *dev, u32 attr, int channel,
- 	case 1:
- 		switch (attr) {
- 		case hwmon_in_input:
-+			if (data->config->has_20bit_voltage_current)
-+				return ina228_read_bus_voltage(dev, attr, channel, val);
- 			reg = INA238_BUS_VOLTAGE;
- 			break;
- 		case hwmon_in_max:
-@@ -341,13 +420,25 @@ static int ina238_read_current(struct device *dev, u32 attr, long *val)
- 
- 	switch (attr) {
- 	case hwmon_curr_input:
--		err = regmap_read(data->regmap, INA238_CURRENT, &regval);
--		if (err < 0)
--			return err;
-+		if (data->config->has_20bit_voltage_current) {
-+			err = ina238_read_field_s20(data->client, INA238_CURRENT, &regval);
-+			if (err)
-+				return err;
-+		} else {
-+			err = regmap_read(data->regmap, INA238_CURRENT, &regval);
-+			if (err < 0)
-+				return err;
-+			/* sign-extend */
-+			regval = (s16)regval;
-+		}
- 
- 		/* Signed register, fixed 1mA current lsb. result in mA */
--		*val = div_s64((s16)regval * INA238_FIXED_SHUNT * data->gain,
-+		*val = div_s64((s64)regval * INA238_FIXED_SHUNT * data->gain,
- 			       data->rshunt * 4);
-+
-+		/* Account for 4 bit offset */
-+		if (data->config->has_20bit_voltage_current)
-+			*val /= 16;
- 		break;
- 	default:
- 		return -EOPNOTSUPP;
-@@ -750,6 +841,7 @@ static int ina238_probe(struct i2c_client *client)
- }
- 
- static const struct i2c_device_id ina238_id[] = {
-+	{ "ina228", ina228 },
- 	{ "ina237", ina237 },
- 	{ "ina238", ina238 },
- 	{ "sq52206", sq52206 },
-@@ -758,6 +850,10 @@ static const struct i2c_device_id ina238_id[] = {
- MODULE_DEVICE_TABLE(i2c, ina238_id);
- 
- static const struct of_device_id __maybe_unused ina238_of_match[] = {
-+	{
-+		.compatible = "ti,ina228",
-+		.data = (void *)ina228
-+	},
- 	{
- 		.compatible = "ti,ina237",
- 		.data = (void *)ina237
+Perhaps a compromise where Benjamin comes with an iommupt format
+header that works for this and we can progress this series and be
+ready to swap it out down the road?
 
--- 
-2.50.1.319.g90c0775e97
-
+Jason
 
