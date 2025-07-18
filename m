@@ -1,127 +1,231 @@
-Return-Path: <linux-kernel+bounces-736433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ED21B09CC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:39:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77B4DB09CC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:38:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 462B65A6C3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 07:39:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24CF31C427EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 07:38:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9AC2690DB;
-	Fri, 18 Jul 2025 07:39:00 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D35826B759;
+	Fri, 18 Jul 2025 07:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B1hFQj3F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9E422A4F6
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 07:38:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA7D269AFB;
+	Fri, 18 Jul 2025 07:38:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752824339; cv=none; b=SsDNFvuaIMgTKWdRJocorCJMiBim0afpCjXo5vPPdMRR80wEoWYDcSwRMPy6qIFL5XrwXT33W3ELWQAbTE4GKXHE4OaEGP+0oMkR/0Dg4Ch8Tk/egUgJVcK+gAZ4IGJWknkcKIjcCmPCyWYogwywcdY2kZ0UuyaUsTZi3CMrjIA=
+	t=1752824293; cv=none; b=DnNlZLCCVquMY1TVWgU9y//u8Jb3tpCjnHooHDEJjjx+Zp9OMTMhK4M085m4Sv8ZvlV6DzNFe3ezcm5Prcx2cyHN89UlnAx9rzCmeF3uhsD3nQqTcYPKT6/N49m7ROQTvUUH8L1cDiZi/K6EgDeLAVdkC0Zqns4JfRGTNgtAWWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752824339; c=relaxed/simple;
-	bh=kZ0savlK8hmTukJ61RLvHvHkzYy+aZT8mFDG44NLLIs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h+FD+gYEYpK/bC28KNjalLmL4OKrxfrM2KBqZGQdA3bX9rLGHdzvC63D9yeYA/WT+A4iWIbmDZQSJmPvMIXz1PQao6hhKUN7nF+p8QEkFn2/ujc3S1gVDO8aRw3EwAdPK4D+kr+zIej/C24KeCFhGUYeRBZDEX2O2hDFf7z572s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1ucffU-0005ix-MH; Fri, 18 Jul 2025 09:38:08 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1ucffP-0092TR-0n;
-	Fri, 18 Jul 2025 09:38:03 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1ucffP-008KaQ-0N;
-	Fri, 18 Jul 2025 09:38:03 +0200
-Date: Fri, 18 Jul 2025 09:38:03 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Lukasz Majewski <lukma@denx.de>, Jonathan Corbet <corbet@lwn.net>,
-	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, Divya.Koppera@microchip.com
-Subject: Re: [PATCH net-next v1 1/1] Documentation: networking: add detailed
- guide on Ethernet flow control configuration
-Message-ID: <aHn526JuMBpUB_T8@pengutronix.de>
-References: <20250717103702.2112988-1-o.rempel@pengutronix.de>
- <aHkzEalj6tjhQX8N@shell.armlinux.org.uk>
+	s=arc-20240116; t=1752824293; c=relaxed/simple;
+	bh=WjY6IyydNi+5JB/lny8B6ZDF5HeAFvckyWItEo3hAt0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=E4jTJbRfJomxeS+X2FN3Fo+dS89A/KLP2MRxkzqpsk2rlHgBac4oBxMPncy0GqgfFUIWpo6NdHCZ9GVKpYxZmjzSC+fsuG9uDySDdm42N4944cqSNJS8jhf6AfwTtF0xjHyG2LqkIY1H8ggonYPTbbyuReKP+ptohryrMCYiNpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B1hFQj3F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 27B5FC4CEF5;
+	Fri, 18 Jul 2025 07:38:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752824293;
+	bh=WjY6IyydNi+5JB/lny8B6ZDF5HeAFvckyWItEo3hAt0=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=B1hFQj3FW4AkwlgzDbSNMX8u4nwhmy/GjOMvmzQPf8olo5KgMHyXkDVrzTN1xjtGQ
+	 b5wSyvARaa1/zvFhgHJVy8XDwc1AHePwWDyXwnoUSKOSZSMvl1s+3xfM+QycnVf0tN
+	 IAjbblhXUi/mj7ADBNjcv4WCosdez+jdxjZ9kUlxMxLYpDLs4gShOeHMUgDvIIPEqx
+	 ow+bGnMLPSIpOd4ys9gvRpyPg8HL8UfSxYFuZWvOu7nhcyK+OFNNc+HrNKZkmWk2jT
+	 4w6kfQq4M7Sbhym6EHNurbX5iQYlXbgsezWVLjQCtMg7JAdjodOFnwn23VPodfLVqH
+	 B397Si4KDodoQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17682C83F1A;
+	Fri, 18 Jul 2025 07:38:13 +0000 (UTC)
+From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
+Date: Fri, 18 Jul 2025 11:38:04 +0400
+Subject: [PATCH v14 2/2] arm64: dts: qcom: ipq5018: Update tsens node and
+ thermal zones
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aHkzEalj6tjhQX8N@shell.armlinux.org.uk>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250718-ipq5018-tsens-v14-2-28d8a2472418@outlook.com>
+References: <20250718-ipq5018-tsens-v14-0-28d8a2472418@outlook.com>
+In-Reply-To: <20250718-ipq5018-tsens-v14-0-28d8a2472418@outlook.com>
+To: Amit Kucheria <amitk@kernel.org>, 
+ Thara Gopinath <thara.gopinath@gmail.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
+ George Moussalem <george.moussalem@outlook.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752824290; l=3848;
+ i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
+ bh=SwJcY4cCvc+nIankAMt5+SCPwBFBGOQVItGhlf/eWGU=;
+ b=GTCG1e6Toew3AUfHJHm9fwJ3pdtIkfCn7Hc6H/MDUo7DhW7lN6TNtlWiBmnIszihuvS55+XRT
+ QC8elkaStAMAQ2KryJ8HLRI+nrydf4RXeSzSECjxfKU9qW6V/ucn/9q
+X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
+ pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
+X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
+ with auth_id=364
+X-Original-From: George Moussalem <george.moussalem@outlook.com>
+Reply-To: george.moussalem@outlook.com
 
-On Thu, Jul 17, 2025 at 06:29:53PM +0100, Russell King (Oracle) wrote:
-> On Thu, Jul 17, 2025 at 12:37:02PM +0200, Oleksij Rempel wrote:
-> > +Changing the Settings
-> > +---------------------
-> > +Use `ethtool -A <interface>` to change the settings.
-> > +
-> > +.. code-block:: bash
-> > +
-> > +  # Enable RX and TX pause, with autonegotiation
-> > +  ethtool -A eth0 autoneg on rx on tx on
-> > +
-> > +  # Force RX pause on, TX pause off, without autonegotiation
-> > +  ethtool -A eth0 autoneg off rx on tx off
-> > +
-> > +**Key Configuration Concepts**:
-> > +
-> > +* **Autonegotiation Mode**: The recommended mode. The driver programs the PHY
-> > +    to *advertise* the `rx` and `tx` capabilities. The final active state is
-> > +    determined by what both sides of the link agree on.
-> 
-> I'm not sure one cal call this "recommended mode", because it doesn't.
-> If one specifies tx=0 rx=1, one would expect that the "recommend mode"
-> would be tx=0 and rx=1, but if the link partner supports symmetric
-> pause, you actually end up with tx=1 and rx=1. If the link partner
-> supports only asymmetric, then you end up with tx=0 rx=1 as requested.
-> 
-> Perversely, if you specify tx=1 rx=1, then if the remote supports only
-> asymmetric, you end up with everything disabled. Only tx=1 rx=1 is
-> supported in this configuration, you can't end up with anything else.
-> 
-> Basically, I don't think calling it "recommended" works.
+From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
 
-Ack, I'll drop "recommended".
+Remove qcom,tsens-v1 as fallback since this IP has no RPM and, as such,
+must use its own init routine available in the driver.
+Also adding a cooling device to the CPU thermal zone which uses CPU
+frequency scaling.
+In addition, remove superfluous polling-delay properties for which the
+default is already set to zero, correctly set hysteresis properties
+measured in milli Celsius as opposed to Celsius, and replace an
+underscore in an alias with a hyphen to align with device tree coding
+guidelines.
 
-Would it make sense to also add a short note about the limitations of
-link-level flow control? For example, how pause frames can interfere
-with traffic prioritization and QoS mechanisms.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+---
+ arch/arm64/boot/dts/qcom/ipq5018.dtsi | 41 +++++++++++++++++++++--------------
+ 1 file changed, 25 insertions(+), 16 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/ipq5018.dtsi b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
+index ee0001741d211b187e89a39a3caaa576251aff03..1b33ccf1a1b1af721b9690ae2c35eb82985205f5 100644
+--- a/arch/arm64/boot/dts/qcom/ipq5018.dtsi
++++ b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
+@@ -9,6 +9,7 @@
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/clock/qcom,gcc-ipq5018.h>
+ #include <dt-bindings/reset/qcom,gcc-ipq5018.h>
++#include <dt-bindings/thermal/thermal.h>
+ 
+ / {
+ 	interrupt-parent = <&intc>;
+@@ -39,6 +40,7 @@ cpu0: cpu@0 {
+ 			next-level-cache = <&l2_0>;
+ 			clocks = <&apcs_glb APCS_ALIAS0_CORE_CLK>;
+ 			operating-points-v2 = <&cpu_opp_table>;
++			#cooling-cells = <2>;
+ 		};
+ 
+ 		cpu1: cpu@1 {
+@@ -49,6 +51,7 @@ cpu1: cpu@1 {
+ 			next-level-cache = <&l2_0>;
+ 			clocks = <&apcs_glb APCS_ALIAS0_CORE_CLK>;
+ 			operating-points-v2 = <&cpu_opp_table>;
++			#cooling-cells = <2>;
+ 		};
+ 
+ 		l2_0: l2-cache {
+@@ -255,9 +258,9 @@ tsens_s4_p2: s4-p2@254 {
+ 		};
+ 
+ 		tsens: thermal-sensor@4a9000 {
+-			compatible = "qcom,ipq5018-tsens", "qcom,tsens-v1";
+-			reg = <0x004a9000 0x1000>, /* TM */
+-			      <0x004a8000 0x1000>; /* SROT */
++			compatible = "qcom,ipq5018-tsens";
++			reg = <0x004a9000 0x1000>,
++			      <0x004a8000 0x1000>;
+ 
+ 			nvmem-cells = <&tsens_mode>,
+ 				      <&tsens_base1>,
+@@ -744,56 +747,62 @@ pcie@0 {
+ 
+ 	thermal-zones {
+ 		cpu-thermal {
+-			polling-delay-passive = <0>;
+-			polling-delay = <0>;
+ 			thermal-sensors = <&tsens 2>;
+ 
+ 			trips {
+ 				cpu-critical {
+ 					temperature = <120000>;
+-					hysteresis = <2>;
++					hysteresis = <1000>;
+ 					type = "critical";
+ 				};
++
++				cpu_alert: cpu-passive {
++					temperature = <100000>;
++					hysteresis = <1000>;
++					type = "passive";
++				};
++			};
++
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert>;
++					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++				};
+ 			};
+ 		};
+ 
+ 		gephy-thermal {
+-			polling-delay-passive = <0>;
+-			polling-delay = <0>;
+ 			thermal-sensors = <&tsens 4>;
+ 
+ 			trips {
+ 				gephy-critical {
+ 					temperature = <120000>;
+-					hysteresis = <2>;
++					hysteresis = <1000>;
+ 					type = "critical";
+ 				};
+ 			};
+ 		};
+ 
+ 		top-glue-thermal {
+-			polling-delay-passive = <0>;
+-			polling-delay = <0>;
+ 			thermal-sensors = <&tsens 3>;
+ 
+ 			trips {
+-				top_glue-critical {
++				top-glue-critical {
+ 					temperature = <120000>;
+-					hysteresis = <2>;
++					hysteresis = <1000>;
+ 					type = "critical";
+ 				};
+ 			};
+ 		};
+ 
+ 		ubi32-thermal {
+-			polling-delay-passive = <0>;
+-			polling-delay = <0>;
+ 			thermal-sensors = <&tsens 1>;
+ 
+ 			trips {
+ 				ubi32-critical {
+ 					temperature = <120000>;
+-					hysteresis = <2>;
++					hysteresis = <1000>;
+ 					type = "critical";
+ 				};
+ 			};
 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.50.1
+
+
 
