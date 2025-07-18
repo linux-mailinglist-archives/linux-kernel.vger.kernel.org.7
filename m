@@ -1,159 +1,135 @@
-Return-Path: <linux-kernel+bounces-737361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 518EDB0AB57
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 23:19:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40424B0AB5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 23:22:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A37E5A5739
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 21:19:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFB551C279FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 21:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D2CC2153D8;
-	Fri, 18 Jul 2025 21:18:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B6621D3EF;
+	Fri, 18 Jul 2025 21:22:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gAVdk8dE"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ueVioxyj"
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1D5C2C9;
-	Fri, 18 Jul 2025 21:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28CC9213E89
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 21:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752873535; cv=none; b=c/1BqxydOGX650IPBEIJek0YXRWZ52P0JoxxadX8uTQStCurb85dTE8jGJvAjzd2v09vZQ3Q6DorCG+6vlG/CSa5/3BWE/YUfzQ3GcmdP4bxFXPV6BkfkmJ93rDTx3vQtr11Z+QlYqNjwXb+92bXFF1FKzB7uvuaVq+nMBoyBC8=
+	t=1752873741; cv=none; b=IFcpfH9gXdqYH/fcGH5ccRn9XN+uI94Jj5bM+MfnRh62rwAl7m4nEcYZOnJs6p217GbM2oe/R4zFT2uH2C2qAXmPT5m2J9tEljWXk22LHOF/iPYY50xHwJ5Q4UR0y5MP4Zfhf3yT3gn9G6yfu3MyA748YT5UNXapeOh1rJcXX9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752873535; c=relaxed/simple;
-	bh=fWPyLr2u0e/upu/Qc98ELRPuwmvoHvniezdOE0ovjOQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DQk0eeNEZQdn1kHa20DuWnc3Hfr7qgraN5iqvfNvTE7mMu3kmj1S/ZWSY8U+FVOFdY9SBTIo0+biDrLwdczSH+v37dqIM7UmVrHGYowXZ1DAwPywzlcKV1n7zHbYLaph2W3Can7PBKk+X8FtbFZ8/wRcUerOK85mOgat5K61GMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gAVdk8dE; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-455b00339c8so19040435e9.3;
-        Fri, 18 Jul 2025 14:18:53 -0700 (PDT)
+	s=arc-20240116; t=1752873741; c=relaxed/simple;
+	bh=N9uR98yXNs5KB5/f4ZmeEMdWhEPvJSr4tS8Zew8+sSw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Wo96Jh7co0s9S5S+8B50GUYehHYiD3iMlRp9d4QxvCDqLyN8S6BdNYGbT8djkzj37evQ2tKdbHidxoog76SPewbTbaM+uEygH1Jx1CpUp+l5G+FnN6B8EnBMsCPD5TXXXe0ZscCFUgdtO5ail9HzrUTv+aYqRcnzA31mJVPTMLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ueVioxyj; arc=none smtp.client-ip=209.85.167.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-41b4bf6ead9so1528208b6e.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 14:22:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752873532; x=1753478332; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lv8zMOirvwvGeIIrS8G65KegHf3y7D5W5iCC493QCh0=;
-        b=gAVdk8dEoch/mt2Uu8eyZFa+lgKEOqo6h6Q/Lmzt2KYSV1TNsHSGMaPdzZ4SGKNJbL
-         rf+FpHyXM6r5lDoVAzjmpsWZ2d7fFtu6QSVqgYoY1WxXIOQXy69aIAuhEnJkVv9YJ0ma
-         Lw8x69cDcBwV1b0ZkaObcjNmgW6B2zTX3V0l7WAFrIIgX67Pn9tjIrLyVwsOYHcZU/E3
-         6UPSNJx8U2mgnsajI0O1PniULMhuncIRiJl7UBrK3pKkcd7f4M9t9xRzPOTqDkeR+15M
-         cDRrDendnfpX6DH/3kU1Y7h9U6iITTx3MNmZPoNUYn0baYPTRvekPgpxjs3GTrPDsJL0
-         Pmvg==
+        d=linaro.org; s=google; t=1752873738; x=1753478538; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JXAPwF0LYL0fWlGzUDFZv1Tx2pY7hr+gzK8mcCbzuRg=;
+        b=ueVioxyjGAOPCIwOwj5y9z/kd7eXUAw8rlqr0u+KSSFPkYKKLTsz8AR0UbeEYKX8Xu
+         Y9MMiz0nn9cm2G3d/qEuudy1ocND0a57kgwmNOaC5zZtaDx1HkOGSgGHPZN4VS7f/LMo
+         Q2ckyyZmPEC0yBSeky5o7wJtGOX+y47ARuwIyFkbmtxJlZ6NKbUbxJChLICHs2H4LZ6E
+         XRdmmdgEau16gywm08Q6YbszcnBLViXt8VWmoUbeH27LEaVEfyncpl7WB7GYCZJ4DLjh
+         42/9ox8fU2Oq/JNcDiiHTXS5dIz8QOInxpTPsd9Q1/6GFV1E0eEITB04HoBo1+c3nUa4
+         HsXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752873532; x=1753478332;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lv8zMOirvwvGeIIrS8G65KegHf3y7D5W5iCC493QCh0=;
-        b=hJzyTmVBpoTkuqHA48PFxcg7kVYyAXkCNsD+IQWRH3MqQR0blgOv7K8QtoktFFw09A
-         8+9Dt2Fmk1gP8HXKUn0BwInWXA9O+NEal78UTOxZvrpXzUStocAEfn9FYnryMp2p5Cwt
-         OziY5VxWncmOWQndWIHMIYPuz8D4P9+/fqsM0ky1jstnQeBWpVb8XtnbRximK1O8uztQ
-         8jgxvcMqHYoyraT82vxF6RUIz5uZhL/KlZclK5sLo08C5/gapeyP+ToDxmKWcdleGje/
-         M2eRjrHvysRvaPaVPH2NEIEZkSyvQBbuRW1xdIh4cMhuBL9CuILsaZ3Owa5YOOzFLqiM
-         TU7g==
-X-Forwarded-Encrypted: i=1; AJvYcCXFx5htwTk9f+P9OGKbl/reSAhEpm5K7xBgj5HxTOuQV+LaqCIybkx0e+vsVDEunUQp7CCBYlarwno=@vger.kernel.org, AJvYcCXgYJbPRCGptMRdrYvUT21C4exN5q6UBXNxaKpBa+uwlUhJoC3q6hCxZt4oUcQhG88vYFsBUp9ard9lyyiA@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAoz96nk4VNcHfBsByQAWhq3d/mr1riy9uS7CCwbRePTKOmkTl
-	88uJqgkJ975K0mF58rR4qqN0Vk3LbOUHjJTs56aacyQTQWCr/lCjuWfB
-X-Gm-Gg: ASbGncttCjH1lVbABOETt9CTLiY3xSS4jxzcmYzDPfMWHcCjkZEUlxf9CQ1K94Hshw8
-	g/+o4PJZQ4JveQ9y8y9cBz9NWg/sh1V/A+zS9klnJHaSQm+/HP9QN7nO8Y1fFFWWgZmITK4yL9C
-	YT/O+QWT2CZbsLiRv2MOoeS9tMm+Hy83+jZ0Eeh6E/Rb/0BnLhg2c4XR0ZjpOXTsqBzS2HtZl8R
-	5Xe+/L41iiwylBHYjyxyiIDN6JlRuZjm5SupZcNv8tC3pthaNaRpBJd/cYajnBesE+S1hFBVlVA
-	tB4OCK46WZ8uaR6nJqztx8J6xxEvDYVSGUnITgDvSbVwoc0FV/mDAQd6ZxXwpu9uOHj8GeQwTaK
-	4ESWxLLpemHD++/bYAHt8PYIs7lSGxfJZTA73Pk3mrz7HfxKfbFpQAulJ9VAwCgXRfQNRgK8=
-X-Google-Smtp-Source: AGHT+IHLW11lHbgsOO5isXja+wIRHQxH3gL8kHNDXGYklnoRUieezkTgOpouBBwFNC5AerCk31FDzA==
-X-Received: by 2002:a05:600c:a316:b0:456:2066:5747 with SMTP id 5b1f17b1804b1-4562e3411b3mr117824475e9.10.1752873532053;
-        Fri, 18 Jul 2025 14:18:52 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e89c308sm88278035e9.30.2025.07.18.14.18.51
+        d=1e100.net; s=20230601; t=1752873738; x=1753478538;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JXAPwF0LYL0fWlGzUDFZv1Tx2pY7hr+gzK8mcCbzuRg=;
+        b=WdJMFKPGN46yWjQ9nbBhlY5ohMXZ5UT/bItWI5iAJrBjzerd2AkxgHX913yKJcd5fJ
+         mO+9nUmqCibD6awQFLOpTPwZzCbE3u8kMuGgbwUYtdZd5y1G2dINF7P5yc5rEe454qK/
+         X0WdWZ7djs96svBxohOUNWvTG7+Vj+nDuGwlB6dFHcqTCPSo0mE+BstWVADKHMIAVu0z
+         fokWgsW0ZMTZ6/tCtWJ2moMUg/HYDLtVqPUPAsP7Vvfvk9br06Pq4WqXBUf3JOM+nFSW
+         zUHw722IT519R5ojFk7vDAsKxEipZk9KbmRCenr9rlhTP2kwpYu3R8MP2F41mGidqgv5
+         K8Vg==
+X-Forwarded-Encrypted: i=1; AJvYcCWrCz1iZx5Lsv27S6Isqjf9FDdQZ90sSURlQ5fywsK1veBx6ViZB9ccEaJABaZVGymKB3dXJzKRAAs5wc8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyy7lke5sVzr0UZ9RxptgCIF5QFIKGam8hXVXNIbf5w25fwM0/i
+	zdz59JI9aT3JTjwMeUjAxKNIGvTapxA/9ydyeREYPW3mGnsifj7djsa5tInbY68u2YudXLW0lmg
+	uK+pI
+X-Gm-Gg: ASbGncvSNsM+iGPM7dv0oMxM+RDsa+L+dWmqsFBZeW3iRm3KHgQvrC23cuPg6AVHX2x
+	AwC3c9cxQYL/26ZdqY+MT9dHaMRV1N8JWBWT2UzjCS8cyLmk/cErCYsKjmh3NqjBYqR02A54l/N
+	Uzw4Y+/BtUIKZiumEkZ/kjityXMTuuSZsGkl9m2g4BpdZBY7OwCecxLHrzfonT7VgbU2CgNh9fx
+	WRx/5yu0DH5H8g5ct3zWNkYrVH2owY0SUgkfL685G6GjTUngLAgqIFSqWIp1os1SQ9D2AUXdWcF
+	xFydoC9cnwq66Gq9tLN/cwG9Srzy4SPDGPnz4M4LdAXXo9wt82YLy9EC8xHmABsBRC0j7IR5htl
+	cNxo8LIGQW04=
+X-Google-Smtp-Source: AGHT+IEndzum4VB8B8UC3k1gRZhi4Ec/gRg44iqGZ2544M+GbzncYZLEIkBlxtCSHtft8KG6Ia8oYw==
+X-Received: by 2002:a05:6808:6a82:b0:40d:f3d:cef7 with SMTP id 5614622812f47-41d032fb39cmr10072122b6e.4.1752873738224;
+        Fri, 18 Jul 2025 14:22:18 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700::1fec])
+        by smtp.gmail.com with UTF8SMTPSA id 5614622812f47-41fd5465431sm749285b6e.37.2025.07.18.14.22.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jul 2025 14:18:51 -0700 (PDT)
-Date: Fri, 18 Jul 2025 22:18:50 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: proximity: isl29501: use scan struct instead of
- array
-Message-ID: <20250718221850.614d05b3@pumpkin>
-In-Reply-To: <20250713150445.3965931c@jic23-huawei>
-References: <20250711-iio-use-more-iio_declare_buffer_with_ts-7-v1-1-a3f253ac2e4a@baylibre.com>
-	<20250713150445.3965931c@jic23-huawei>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        Fri, 18 Jul 2025 14:22:17 -0700 (PDT)
+Date: Fri, 18 Jul 2025 16:22:15 -0500
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] gpio: sysfs: Fix an end of loop test in gpiod_unexport()
+Message-ID: <747545bf-05f0-4f89-ba77-cb96bf9041f1@sabinyo.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On Sun, 13 Jul 2025 15:04:45 +0100
-Jonathan Cameron <jic23@kernel.org> wrote:
+The test for "if (!desc_data)" does not work correctly because the list
+iterator in a list_for_each_entry() loop is always non-NULL. If we don't
+exit via a break, then it points to invalid memory.  Instead, use a tmp
+variable for the list iterator and only set the "desc_data" when we have
+found a match.
 
-> On Fri, 11 Jul 2025 11:18:13 -0500
-> David Lechner <dlechner@baylibre.com> wrote:
-> 
-> > Replace the scan buffer array with a struct that contains a single u32
-> > for the data and an aligned_s64 for the timestamp. This makes it easier
-> > to see the intended layout of the buffer and avoids the need to manually
-> > calculate the number of extra elements needed for an aligned timestamp.
-> > 
-> > Signed-off-by: David Lechner <dlechner@baylibre.com>  
-> Why are we using a u32 here?  It's a 16 bit
-> read in that isl29501_register_read() call
-> and storagebits = 16 in the chan spec.
-> 
-> So to me looks like you found a bug for big endian platforms.
+Fixes: 1cd53df733c2 ("gpio: sysfs: don't look up exported lines as class devices")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/gpio/gpiolib-sysfs.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-Maybe not - it looks like there is a read on one place and write in another.
-Both are passed the same address.
-The interface looks very strange though.
-
-But the updated code is writing uninitialised stack.
-
-	David
+diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
+index f31adc56bef1..b64106f1cb7b 100644
+--- a/drivers/gpio/gpiolib-sysfs.c
++++ b/drivers/gpio/gpiolib-sysfs.c
+@@ -927,7 +927,7 @@ EXPORT_SYMBOL_GPL(gpiod_export_link);
+  */
+ void gpiod_unexport(struct gpio_desc *desc)
+ {
+-	struct gpiod_data *desc_data = NULL;
++	struct gpiod_data *tmp, *desc_data = NULL;
+ 	struct gpiodev_data *gdev_data;
+ 	struct gpio_device *gdev;
  
-> > ---
-> >  drivers/iio/proximity/isl29501.c | 9 ++++++---
-> >  1 file changed, 6 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/iio/proximity/isl29501.c b/drivers/iio/proximity/isl29501.c
-> > index d1510fe2405088adc0998e28aa9f36e0186fafae..0eed14f66ab700473af10414b25a56458335b381 100644
-> > --- a/drivers/iio/proximity/isl29501.c
-> > +++ b/drivers/iio/proximity/isl29501.c
-> > @@ -938,12 +938,15 @@ static irqreturn_t isl29501_trigger_handler(int irq, void *p)
-> >  	struct iio_dev *indio_dev = pf->indio_dev;
-> >  	struct isl29501_private *isl29501 = iio_priv(indio_dev);
-> >  	const unsigned long *active_mask = indio_dev->active_scan_mask;
-> > -	u32 buffer[4] __aligned(8) = {}; /* 1x16-bit + naturally aligned ts */
-> > +	struct {
-> > +		u32 data;
-> > +		aligned_s64 ts;
-> > +	} scan;
-> >  
-> >  	if (test_bit(ISL29501_DISTANCE_SCAN_INDEX, active_mask))
-> > -		isl29501_register_read(isl29501, REG_DISTANCE, buffer);
-> > +		isl29501_register_read(isl29501, REG_DISTANCE, &scan.data);
-> >  
-> > -	iio_push_to_buffers_with_timestamp(indio_dev, buffer, pf->timestamp);
-> > +	iio_push_to_buffers_with_timestamp(indio_dev, &scan, pf->timestamp);
-> >  	iio_trigger_notify_done(indio_dev->trig);
-> >  
-> >  	return IRQ_HANDLED;
-> > 
-> > ---
-> > base-commit: f8f559752d573a051a984adda8d2d1464f92f954
-> > change-id: 20250711-iio-use-more-iio_declare_buffer_with_ts-7-880ddf1d3070
-> > 
-> > Best regards,  
-> 
-> 
+@@ -945,9 +945,12 @@ void gpiod_unexport(struct gpio_desc *desc)
+ 		if (!gdev_data)
+ 			return;
+ 
+-		list_for_each_entry(desc_data, &gdev_data->exported_lines, list)
+-			if (gpiod_is_equal(desc, desc_data->desc))
++		list_for_each_entry(tmp, &gdev_data->exported_lines, list) {
++			if (gpiod_is_equal(desc, tmp->desc)) {
++				desc_data = tmp;
+ 				break;
++			}
++		}
+ 
+ 		if (!desc_data)
+ 			return;
+-- 
+2.47.2
 
 
