@@ -1,105 +1,83 @@
-Return-Path: <linux-kernel+bounces-736889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4757BB0A4B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:02:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5014FB0A4B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:04:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 064534E7D69
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:02:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3BB67BA0D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8E12DBF4B;
-	Fri, 18 Jul 2025 13:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A07EA2DC333;
+	Fri, 18 Jul 2025 13:03:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uFL57H/H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="0QR/I1lx"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90AC01F949;
-	Fri, 18 Jul 2025 13:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4582DC32A;
+	Fri, 18 Jul 2025 13:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752843766; cv=none; b=V0AEAV1mtnaI0wXpMf7RGoYez5i+WJzYx7Y7haSRMBMYFFtX4y2I7gFUKMNNDm6tGMTGF3MhbM4MD919F58us0jVqCS+WQHK2ylW8z5Kuh9IWofBVpc4yG0rJaOtTjfZI03DV8is7Mh1w5LoHOg8czwsQxYFESr12c3FoizD/v4=
+	t=1752843814; cv=none; b=kLEngAH+Zkk37qewlKyhCc6U0nsuWpRCD3eEiyiTKZfsM/9WNtm2LfPV/hH0hTBwZMXRqMTxTHsUUndgf8aBL18PZ0mcuLnhuTjMV9pgT09y17Ajj/cv90VrQHBu1kqKaa4eCUxEnImoqTUHUkL0weevzN2nN8VBbwXS3nYF5cE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752843766; c=relaxed/simple;
-	bh=sXNq1bFtt6n/EjmTrldQ4J1q1HjTGDuyYRitu4iBT10=;
+	s=arc-20240116; t=1752843814; c=relaxed/simple;
+	bh=5ayYB4lf8WYc5q2/lWQPGTHFYjF+7Uui7cSz39xP6dg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g05dJp26txKJ1+whmPUjY2AmuIPYCJWoAsQ8/BD3lmoAJRu7VvnU6FAq5de8gRjOHi+D+ije1ndwGW8PclBGWlXVYx7tVWGNt0sVVE2GQ27BA6JS15hdHWJhoJdChfr8V6FDyJKCsYI22FFFrUQISA5S6IhKPeWOOZWhBTNUiS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uFL57H/H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2BF4C4CEEB;
-	Fri, 18 Jul 2025 13:02:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752843766;
-	bh=sXNq1bFtt6n/EjmTrldQ4J1q1HjTGDuyYRitu4iBT10=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uFL57H/HNH4ozOjuQ1klXPKhzrXEgVqolxkPT8DDte2qLpBEAmAolGQjUXqQmpSBY
-	 jgNQPv4Hc2i7ZdM0exiAcduFAUXfY3JnwoFQS1pikf6irRnth4d5Z681WaRw9xhQ/M
-	 09hGa2HmhGump2XdneUOpUe+ZkKYJ015GjlnZ/pyVYZOGjjUyUfxgTV8HC7imGxy//
-	 rHMUYWrWsGxpo2e36kZcmEUtkhQin9o67aKofN7zKayr54F51h3v7hmolSD4GhG/ss
-	 xa6jY183wnEFo8WKqHZMS3lGtd1zK1vlw5WWjGlvGqjuVGpcvgDJCPBPRhq3ApSoj+
-	 ogJs44azHONbw==
-Date: Fri, 18 Jul 2025 15:02:41 +0200
-From: Carlos Maiolino <cem@kernel.org>
-To: or10n-cli <muhammad.ahmed.27@hotmail.com>
-Cc: djwong@kernel.org, linux-xfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] agheader: remove inappropriate use of -ENOSYS
-Message-ID: <rypeauv2sg6iljvklmsgmir6g242btpqv6l7yidvmyenptdsf3@cnumxkzug2mp>
-References: <alkfwOHITuxAoSIlg-ZgfhzBV_BrXj2oC7-6qD_gksbVxsIsw9472FpW3FySIh9byZcQQUmcdojisYFr9gRuOg==@protonmail.internalid>
- <DB6PR07MB314253A24F94DAA65E0CD5D9BB50A@DB6PR07MB3142.eurprd07.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dR5WBbjNk/L3oSGObXSrKjA7E/5rmFAlr60EEKIONVvrglfm50PWW0ZckkfxqunlZ/b86QPZPIMWv01RPhRLIetnbCUscwEaERN4nTeruxxxRz7ouiswklJoSeD9WnvLq108XuqCLjeSUnSB44cH37qxRJNArppWmuvnefrAtiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=0QR/I1lx; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=NfDSDunZnUOAV0VPZMBtehP13sl6rzJgwVyI/4SEuS4=; b=0QR/I1lxy3aWu5Z3G3nCiY7D17
+	SgVLxMvMMpwPvD9wl1xKrBPuOHCkHkjteNCW7CBHDEg2ln+BY+lUt3RO0v2gC6TMaSl5rV6IZB4uW
+	1JHUIrf8V+xL+DirPeUmWIZQah03K2/blqyDK5hV6LKnF584SFCUYBUt38RmRGPtoL54=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uckkD-001zYe-9H; Fri, 18 Jul 2025 15:03:21 +0200
+Date: Fri, 18 Jul 2025 15:03:21 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Steve Glendinning <steve.glendinning@shawell.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, UNGLinuxDriver@microchip.com
+Subject: Re: [PATCH net-next v1 1/1] net: usb: smsc95xx: add support for
+ ethtool pause parameters
+Message-ID: <d451fa3b-e97d-4b01-a0bc-1a296777f004@lunn.ch>
+References: <20250718075157.297923-1-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <DB6PR07MB314253A24F94DAA65E0CD5D9BB50A@DB6PR07MB3142.eurprd07.prod.outlook.com>
+In-Reply-To: <20250718075157.297923-1-o.rempel@pengutronix.de>
 
-On Fri, Jul 18, 2025 at 05:43:24PM +0500, or10n-cli wrote:
->  From 8b4f1f86101f2bf47a90a56321259d32d7fe55eb Mon Sep 17 00:00:00 2001
-> From: or10n-cli <muhammad.ahmed.27@hotmail.com>
-> Date: Fri, 18 Jul 2025 16:24:10 +0500
-> Subject: [PATCH] agheader: remove inappropriate use of -ENOSYS
+On Fri, Jul 18, 2025 at 09:51:56AM +0200, Oleksij Rempel wrote:
+> Implement ethtool .get_pauseparam and .set_pauseparam handlers for
+> configuring flow control on smsc95xx. The driver now supports enabling
+> or disabling transmit and receive pause frames, with or without
+> autonegotiation. Pause settings are applied during link-up based on
+> current PHY state and user configuration.
 > 
-> The ENOSYS error code should only be used to indicate an invalid
-> system call number. Its usage in this context is misleading and
-> has been removed to align with kernel error code semantics.
+> Previously, the driver used phy_get_pause() during link-up handling,
+> but lacked initialization and an ethtool interface to configure pause
+> modes. As a result, flow control support was effectively non-functional.
 > 
-> Signed-off-by: my.user <my.mail@hotmail.com>
-> ---
->   fs/xfs/scrub/agheader.c | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/fs/xfs/scrub/agheader.c b/fs/xfs/scrub/agheader.c
-> index 303374df44bd..743e0584b75d 100644
-> --- a/fs/xfs/scrub/agheader.c
-> +++ b/fs/xfs/scrub/agheader.c
-> @@ -134,7 +134,6 @@ xchk_superblock(
->           */
->          switch (error) {
->          case -EINVAL:   /* also -EWRONGFS */
-> -       case -ENOSYS:
->          case -EFBIG:
->                  error = -EFSCORRUPTED;
->                  fallthrough;
-> --
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-The comment right above what you changed says:
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-/*
- * The superblock verifier can return several different error codes
- * if it thinks the superblock doesn't look right.
-.
-.
-*/
-
-What you did is basically skipping superblock inode size validation,
-now scrub will assume it's consistent even if it's corrupted.
-
-Also. Please, go read Documentation/process/submitting-patches.rst
+    Andrew
 
