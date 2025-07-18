@@ -1,110 +1,124 @@
-Return-Path: <linux-kernel+bounces-736376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A37AB09C25
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:14:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F4C3B09C27
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:14:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A24865A3D65
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 07:13:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1047A45633
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 07:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4488C219A9E;
-	Fri, 18 Jul 2025 07:13:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DDA1213E74;
+	Fri, 18 Jul 2025 07:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XsSSbfl0"
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ePewANYk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B85215043
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 07:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10DD217F26;
+	Fri, 18 Jul 2025 07:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752822820; cv=none; b=WyrK5rAoEb0dFxYtRU2ynfU1OfZyGUkTmzm0mS07mRr7q9U8yckehtwNLUXx9oOP011HJF88CgJoNcavfPIWeBMBecgYMkdqgZY3Nw/IZHgtNovonmO6qfGjPxff3TNo5H0ajwMoaLhXvHLyqaXyeQaUvW7mmJ1/z2Kn0ouFpZA=
+	t=1752822830; cv=none; b=PHWWj8pqpG+Nn3uUERvkNh3AUC8tbK1rk9im2K4zdsjG81JIqpf9YuZaG4eC6b/kE9jWn+DjDLH3QxSOQ6mwf8YIlHatO3WXAT5c6eVNFqD5qWYcdFJondHRniu2wSrEd9/+u8W2PyAmoHKg7D5xEcgcs2tSFrolegRh5bCY1tM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752822820; c=relaxed/simple;
-	bh=XnntMU/9g1qIHQUyx4VOpPDXVeVre57QdmM2tkazN7c=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c7PVyDKu/1zvAtn4/GTxVWFtg/1PXT82xRCfDBg/BaNer6YkopwEBuc4iP2j8/iij1XE56SRcUKfiQZkI10SIle09V6XeoVSdt3rRidxknVKZExH4J8Ua9WZ9UvA57x4WRIt7oJFVM0uZa9T+kFk2/JfteZwtsk3odAkPtUAF1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XsSSbfl0; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6fb1be9ba89so16649566d6.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 00:13:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752822818; x=1753427618; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XnntMU/9g1qIHQUyx4VOpPDXVeVre57QdmM2tkazN7c=;
-        b=XsSSbfl053VVFId2mFPnVVw8F5mUPsPOgrVEleLGBgPA6zBZPddBANGYQtXTUu1Iq2
-         vAGM/GZV4pySMLxch5rpUAQPA/BenvacCljVlfGkcaLkg3Xtkf+eEnboytWmV20HuMw+
-         TYgOmhv2klkxOClxkPuBiU+c0YOoqp2W03+I51Nu7sNealNVrieuRI5VdNOd3w1inFYx
-         DXOsDAD/BqhB4ZkexHbCfxTRI3AM8ljyhCL5mFGkFrOPlKO8fZnuS0dFCFqQrqSbPyZY
-         5n/OMQf4ku3BILw4IR1iejMgYbQDo1sI8YTxnWJTsaDbZCOuLwza/2f5gU7y9QjiSF+c
-         7DXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752822818; x=1753427618;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XnntMU/9g1qIHQUyx4VOpPDXVeVre57QdmM2tkazN7c=;
-        b=oaroMTntP/Jl8K2jYRx2AmDJjRHkqTyYS7SHXeKjzWQe4x8SGK9oOGmlQzCknAiYVl
-         f8TgAp6i6Tp7RdHiF7g9vI/Ag81w+PYzaKaNwqcZFyDzHU5SAxyyf3+nGOMgw9cMzzQf
-         9UBjaVwLrAWql1pJ7/tMdHe3j60Gve76XalRGih9C9whTzvBWDDrYhHL431cdXWPBKkP
-         5Xfrcw7lDc1/Xt3xOB5dhqwveD88EvNxyScgBWZ4Kb3dFoAVNxCr+n7hazrzLslIWq5E
-         dOv717zLPtd4cCyx34603kl20sAKd/Gyxr5gT9hOmGyv6OgTUU5FiJlptDR6EkArWzJw
-         zD9A==
-X-Forwarded-Encrypted: i=1; AJvYcCXiNwOM83r1020NWYlSHjWC0FYc9O/Ll10Ne/x1/Mvru0+HHLpWzZ7oqWC/1jPAf2kahw2JsolIlwsmoro=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxa0fNufVCCLD9FUaGFdkbBG58wzOez1rxvdiAMiS88bPK9NpR9
-	N1hLHC1Sr21wVSDsfUDD1YVI1NMB2CfTEPbJ1n4H0kFnOyJuLXA+PjWJ
-X-Gm-Gg: ASbGncsrfF7KouwutzY+PG3rce/dBhEneOenH8B8Uw5Atb3Zyk7ZZwvrHbFxBX3mvpT
-	xFkNSwaAyNUMAK/zgaQXIOxx4p7HnxIVpGO3aaykNwEADJQAEN9wT+LJIJRiE5qTCGgix34hh1u
-	GczlBjuCDim9TUoOcgWPffrNU4vROqbQknAQLE4UvQUwLox2zgMicaqeXSfBqGDN9cczlECy4GT
-	cHr5cuyFkyeSJNP7v3P2fhR4Pm4DFT0Qp3a4wWKW6paCboBXjyPD2yjaJ9sW1II6MWqc3GjhFC4
-	ATW6jdC591wY5T+QM8O3/xL4E6RPp7ovsD3CYm9dESLoMrD0qTIFhwsPPf468K1p0QeF6tRhMq1
-	T69IQt6HWp4TVFXME4A+osWvroSTbDHal+OBhDfaS3aR52a78cJY=
-X-Google-Smtp-Source: AGHT+IFhkrR53gkL3P1emJDb/E/P+tL6SbS2YoE/IDUeCu6sTTfHt6LMTdvRIeYSmfCufo8sH6UZ0g==
-X-Received: by 2002:a05:6214:3bc2:b0:6ff:16da:af20 with SMTP id 6a1803df08f44-704f6a57203mr124872746d6.14.1752822817693;
-        Fri, 18 Jul 2025 00:13:37 -0700 (PDT)
-Received: from linux-kernel-dev-start.. ([159.203.26.228])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7051ba6b760sm4397356d6.62.2025.07.18.00.13.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jul 2025 00:13:37 -0700 (PDT)
-From: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
-To: vivek.balachandhar@gmail.com
-Cc: gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Subject: Re: [PATCH v4] staging: rtl8192u: Rename ChannelPlan to channel_plan
-Date: Fri, 18 Jul 2025 07:13:22 +0000
-Message-Id: <20250718071322.174671-1-vivek.balachandhar@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250718015925.162713-1-vivek.balachandhar@gmail.com>
-References: <20250718015925.162713-1-vivek.balachandhar@gmail.com>
+	s=arc-20240116; t=1752822830; c=relaxed/simple;
+	bh=OdMtW5lc/8Syc5fXGf6jT6SkSmBc/+J9IqjG6QyQdco=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bycZgQ0oNJK3Gm4ORjB6nRm4w1k82EOWCNiuRvgmryX5gkX/1yWAnVtVn8IbJZf++3F17KpyVDgH3mfF/NxalpyU+rfdoeHRKDKtoxJyPv3OypP5RVEOsCERTnguZi3jSDxNgCyCVR/ZCOx9ihbHMEF9lFIToWTdlskaR7cdT2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ePewANYk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5025FC4CEED;
+	Fri, 18 Jul 2025 07:13:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752822830;
+	bh=OdMtW5lc/8Syc5fXGf6jT6SkSmBc/+J9IqjG6QyQdco=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ePewANYkgnoEx2ygQsQvJACtYlUxJX7ZPXEaGZx4yZPWGwfwv36vcFSEXPy2sVVTJ
+	 Ad7oPxtO4whFPSp2Zmsy23uRQj76Mr12mFlgsKxjiyUh+xIvle7Wct3hdHe4MRPS5v
+	 JJZnZURuQV0mBzHFwgpbpBoXYFVBrxcK04ob2HdCGV40fXTJFxHpE6/bwSDFmZ0g7o
+	 sofviehkHfxQ41ppbdE9cygODg9jMlrigX4Pln0QjicFxQFe4qLMZuEpR4lpZEx7XK
+	 62g5cyqgkSih8R2S3pgc0TApOd0F/AO6Gai0iIlrZ5yB6Hu3cGbg015Kvt45yYQxtm
+	 pKeYehf9WSnwA==
+Date: Fri, 18 Jul 2025 08:13:44 +0100
+From: Lee Jones <lee@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Michael Walle <mwalle@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Julien Panis <jpanis@baylibre.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [GIT PULL] Immutable branch between MFD, Misc and Pinctrl due
+ for the v6.17 merge window
+Message-ID: <20250718071344.GA11056@google.com>
+References: <20250613114518.1772109-1-mwalle@kernel.org>
+ <20250710094906.GG1431498@google.com>
+ <aG-OmSNn-oULfEuB@finisterre.sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <aG-OmSNn-oULfEuB@finisterre.sirena.org.uk>
 
-Hi Greg,
+On Thu, 10 Jul 2025, Mark Brown wrote:
 
-Thanks for the review and guidance.
+> On Thu, Jul 10, 2025 at 10:49:06AM +0100, Lee Jones wrote:
+> > Enjoy!
+> > 
+> > The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
+> > 
+> >   Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
+> > 
+> > are available in the Git repository at:
+> > 
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-misc-pinctrl-v6.17
+> > 
+> > for you to fetch changes up to d90171bc2e5f69c038d1807e6f64fba3d1ad6bee:
+> > 
+> >   dt-bindings: mfd: ti,tps6594: Add TI TPS652G1 PMIC (2025-07-10 10:40:21 +0100)
+> > 
+> > ----------------------------------------------------------------
+> > Immutable branch between MFD, Misc and Pinctrl due for the v6.17 merge window
+> 
+> Is there some reason you didn't also pick up the regulator patches?
 
-Apologies for the earlier mistakes. I’ve addressed your comments in v5:
-- Dropped unrelated changes to Makefile and init/main.c
+Is that a joke?  I'm going to assume that you're not serious!
 
-v5 has been posted here:
-https://lore.kernel.org/all/20250718025206.171361-1-vivek.balachandhar@gmail.com/ (cover letter)
-https://lore.kernel.org/all/20250718025206.171361-2-vivek.balachandhar@gmail.com/ (actual patch)
+https://lore.kernel.org/all/aCWfre2-n_PSuhxR@finisterre.sirena.org.uk/
 
-Thanks again for your time and feedback!
+  ">   1. Apply this now and merge the dependents next cycle
+   >   2. Apply this now and provide an IB
+   >   3. Wait for all Acks and apply as a unified set
+   >
+   > We usually choose 3, hence my assumptions above.
 
-Best regards,
-Vivek BalachandharTN
+   Well, you choose 3 - I do think it'd be a lot easier to go with option
+   2, or with applying the rest to your tree as acks come in.  There seemed
+   to still be a reasonable amount of discussion on the MFD bits (eg,
+   there's some formatting comments still) so I was expecting this series
+   to churn some more and was waiting for a resend."
+
+https://lore.kernel.org/all/601dd4c7-0940-498b-815e-99e570e732d2@sirena.org.uk/
+
+  "So not apply the first two patches and share a branch like you said
+   above...  TBH these serieses would probably be a bit more legible if
+   the branch were created with just the MFD patches, that'd also mean
+   smaller cross merges."
+
+IRC:
+
+  "<b*****e> Probably the easiest thing is a tag with the MFD bits and then I can apply the regulator patches?"
+
+Etc ...
+
+-- 
+Lee Jones [李琼斯]
 
