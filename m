@@ -1,277 +1,227 @@
-Return-Path: <linux-kernel+bounces-736764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75980B0A18C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:05:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA70EB0A18F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:05:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04DEFA8132C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:04:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 642603AFA4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:05:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AAF72BEC30;
-	Fri, 18 Jul 2025 11:05:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C382BE7B5;
+	Fri, 18 Jul 2025 11:05:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="STGkbIFq"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="ZEmPttAC"
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022117.outbound.protection.outlook.com [40.107.75.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3F02BE637
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 11:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752836714; cv=none; b=DU1UmC4l1EQ4XB+YeUj0N7heV3X+uy/RxRN9foX/SQQdqOQ78GBkjd9GHjRR34cumUmGeQAFCS1/936KcefzHibBKfdnf6+zg7Dea7/dOZa423ozcLCIV4X9oLTtv20hslC8BpT8OtYJLyl+bFya/M/e/5QXk8z6NNT6LBrqTtY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752836714; c=relaxed/simple;
-	bh=dMtuoxGSdjumZV+lLK49yZ9rk8j5SdmiUjAmrg9aJuo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RV/CabOIzGcISYN8ZsCnsBo/YtAQfW2S6Qb1gjcyv71+rkvbqD00u4BS9jh8acL8EUKsvlWWdO1vGrV728kG12yjPuJJi/WFX9mpO8sUGLHq48ClGPU4lrmNYltx6mQakB5i+spxiRb+5tuCm4GVz9QH7ePYwGHIOTcEEebYPLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=STGkbIFq; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56I7hWj3021258
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 11:05:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	F31vlSMyXbjYusWa7M3cQemIFdIPlrkmW7eRg+7tqFY=; b=STGkbIFqpf7zTrXV
-	3k9c8VBN2Vxpfg90hCJg59eGHhVaQ2irgJ+ndSuWZq9yR+qNUbRvlCDC+4s+Q31q
-	33sK8izSNBd4tA5Q3Wu9+36EF4Halh8iT1Db5PSAScGolBt03WyZ/qgDpd2AWueA
-	rcRComGwDeP6rEaYJBbebtHZhzSK9gCIa7g95XGtA+uwDSXU6LC4rUN2FovrrTp8
-	BzenXqoi256UGUUL8Kj6W3nfVxgUa6UNQH5DUcg5ixhMi8SK0kVnrlTViFts1N3f
-	yIjk+OVswiyY6fgYbs3j1L8Q6cC3gQ1FAHDqDo9g8Bq7AQ/18af1Z0Vt9S8MF7O+
-	Szj//Q==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47w5dppaqh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 11:05:11 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2356ce66d7cso29530225ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 04:05:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752836710; x=1753441510;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=F31vlSMyXbjYusWa7M3cQemIFdIPlrkmW7eRg+7tqFY=;
-        b=e1zfk6yLfgoljXF6dOogQvcPJxLc2603+g6MDaDlrs02l4efihaJdXZ3fxjn02nO/o
-         OlnXlziOe7XdwO5S2tYcdo87ju372IQJ+9bnC0VbxoKSq6ESgWE26rgVQFCCVYD1wYUf
-         aehfprrFJBY4EZJslXacJG3A4iNH6Q5WA62lCDh2ywejUk/aksOWivUVbNFTtvTAddox
-         jEM0ZJsCtVHwXMrc0nSN72HfBRr9yq6C05P2U2ryZBv3EBiClXI2q9ZWoG9tiFtNLSlt
-         7TwG81MT1ocGqELhxCVLsiHhd91Vhsrtyy2hEdTRatPIEGVu1fUzih5W3V41pNMRDVt7
-         zzxw==
-X-Forwarded-Encrypted: i=1; AJvYcCUPg49l/YOPwF+El2vt/xn8FqrmaVbnNKaOV/H6+y/334Y1eH+DjUHlvC8NotBAD9XM5SxEU0dt/pVg5y8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfQ9zg+BdIPF2GQKgQW8JF+tONcRB49jQ0csiE0hl/zdw6TOxP
-	dH73vD3OUSX0EF0obx4VKBCiJ0rJuJpkqLvJ9XtKFP7cu8plTBOFMZ/4QqHe8wUMuEr456jzuLq
-	xbrQ/LH/PfFvnJ1rf0DPlodUvhXpQZIfLrOduj+bqZioQbpNG5nCbSS4w8KhLoiZ5nuE=
-X-Gm-Gg: ASbGncsofc8TPZZXEZVEpI5pnGK8RRcn9BKw1GbA4sIuCaS3bEFCFSc0eS+pJgZNkV0
-	/7obgUYqufi4pFikAukGBmSc+RNPeWnp/sx1I7+AVqZJeomSc90BWd+E+3BwQcNIkiVq04NVzcY
-	QB2MSqgqPx2CWuHLqswt0D6vPxKGlZRYF+2jE3r8RW43ZYoXbz1Omefmq33Ea3nP9eWwhVF9Fnt
-	N6r4MpMWx8d39rTL9esmrLi+MuRRTnqv+wLklEt933cFFLFrfE7bHpiYs/L3UQmFvp9LkxXCv0h
-	Qujra9nYU6VfeCgc5KnKDa0aOPJEDdYOYxwUN855dIQDbBa1eyy0Q+jWwKOul+tDa0RLfM12hqq
-	1NqffcKKUfSOq7R2UZFlAugodCoTuYmLT
-X-Received: by 2002:a17:903:320b:b0:234:d292:be83 with SMTP id d9443c01a7336-23e25693897mr152371745ad.10.1752836710180;
-        Fri, 18 Jul 2025 04:05:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHrxaqDfHtW8KZ3Yog7NNdzKoptJfo76jyLrkhxmzJHeTOo+hCR8UOXByV7C/6RTEySc+0X7Q==
-X-Received: by 2002:a17:903:320b:b0:234:d292:be83 with SMTP id d9443c01a7336-23e25693897mr152370645ad.10.1752836709041;
-        Fri, 18 Jul 2025 04:05:09 -0700 (PDT)
-Received: from [10.133.33.245] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b6cfe05sm11056385ad.143.2025.07.18.04.05.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Jul 2025 04:05:08 -0700 (PDT)
-Message-ID: <30fe1325-16d6-4621-a7d2-811d9c958e04@oss.qualcomm.com>
-Date: Fri, 18 Jul 2025 19:05:03 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8CA33985;
+	Fri, 18 Jul 2025 11:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.117
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752836733; cv=fail; b=BXEcOw8rh6L1nMcWX1g8t9tq8WnAWA3mdW2biw59LwB26muWZK5mYtXyJNC649wmyS54y4ouKOjwEz2JbnOqLCM0JFeg24bH9/lWPremvE4fGMguE57SmkMkbqhnZwfvgZzeAPauY7v0YVx/72uZvv4sirZ7OGwqG6eEPYuPc+o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752836733; c=relaxed/simple;
+	bh=nolBXnIQuPKkwhcygEkicZycVCbSs0/y8UbrF2n53UY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=IWjlrVmb21VasfX5BH7arQE9evK4qSzBtiXoD8sSafjVLoYlccTYT1P27qzvD75189f3OShQVJBN7TOnwv+s+biFK0/K9NrxL/FY5nl1GObfOFlTtEu2Jphh0A5sVlVgtiK2U8nK71qTSgSCrWHGbK3z0NnLMl4c77UsP+uDmpc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=ZEmPttAC; arc=fail smtp.client-ip=40.107.75.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AsPUtTVsac1plDHIbEK4WshgQTidio98LgTMasDjvhQK9sANwi3JEqe292bUvfJcOpgUqFBU4IIeARN6XymS3t6cDa4UtZlCkN3QU53QnW/shf758oN1jq0Zcoj64VWIi5SlkKh/iFSbqr7adowT/Yx+L3UAXFJj6BVy8x/hU5HowHOwbLS7P4/FCwUm3a+CIjk+Mx/d+jebuc3uQmLW6T0E+tZCKwhY5lfhPn2BREaDDkeJXtpF/f9Sq2jC4p27U0pllSIigI3wDcStN3DXK00Gf9NumPPgwoD1ZL5KzTEpjJRsIgjXWBNT5s+YExa9LorzmLr1hhI0kUiaeOW88A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=umBTQoUjDR0l2BqfmGb0wAk213imEZSwMgPyN3bI2RI=;
+ b=k3JDY7Mx5JqCKxZKVs/jgB5eFF7jJqrRCC0g1MunkYH2iplXM7/pEAMBfaevdZgq3S2qGhMg3iy7V9xBuaj79zMzrKH3Gw4EiJSEKxWzD86Xd2BV91ZXdvf7K2sUxgRTr7kk0t9HQy0P8FdeNUI5iKbTzGh0fBTrzvEZ/bIT4KrCm0bcAKFVHAIyPytaN2tnq0DTYzbV5v2YAO8efLFYTMV4NwEcJHxR+IyOGbIvt5ImrZoZ/EnQM8/dgFYpIYeF99OPtjz0JCrpTta/f8hAF3oP28wZWia+xe4gQBVV3wlX4KEvLsNZG3r16RZ9q8CRX46MQALpXdh33NpMTZEu9w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
+ header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=umBTQoUjDR0l2BqfmGb0wAk213imEZSwMgPyN3bI2RI=;
+ b=ZEmPttACCn/QkJQ0Kploo7hHCdcp/VtA5FjFZiIUYvMXL9Lq2/eec13/xAagt6RTB3q4EOMNVYIxpNLkJaQJEt/JppcwmRLCn5FAWDTbkiIfLpxegAXlqR9gTwBrSALcvmvWpUCaiWtQhpJjT9q5mz2kEpu7yhlDHQOnUt5CTTmn8w6z+tjYxE8mpebUs6/6PjjHEXDES0Gt8YC5yT0MaUK41F2rORNSrML3aw24xauXCv5+qaDypHVnvdir19sUCD0Wq0/1gbTLmiP3cTTCnadxs7nKZvyVH66dmL0cTLLMpJfbthWIqBFJjzqaWdDggbX/TVcieI6XRmT8aN7Zmw==
+Received: from SEZPR06MB5763.apcprd06.prod.outlook.com (2603:1096:101:ab::9)
+ by KL1PR06MB6961.apcprd06.prod.outlook.com (2603:1096:820:120::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.39; Fri, 18 Jul
+ 2025 11:05:23 +0000
+Received: from SEZPR06MB5763.apcprd06.prod.outlook.com
+ ([fe80::ba6c:3fc5:c2b5:ee71]) by SEZPR06MB5763.apcprd06.prod.outlook.com
+ ([fe80::ba6c:3fc5:c2b5:ee71%4]) with mapi id 15.20.8943.024; Fri, 18 Jul 2025
+ 11:05:22 +0000
+From: YH Chung <yh_chung@aspeedtech.com>
+To: Jeremy Kerr <jk@codeconstruct.com.au>, Khang D Nguyen
+	<khangng@amperemail.onmicrosoft.com>, "matt@codeconstruct.com.au"
+	<matt@codeconstruct.com.au>, "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+	"davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com"
+	<edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, BMC-SW <BMC-SW@aspeedtech.com>
+CC: Hieu Le <lhieu@os.amperecomputing.com>
+Subject: RE: [PATCH] net: mctp: Add MCTP PCIe VDM transport driver
+Thread-Topic: [PATCH] net: mctp: Add MCTP PCIe VDM transport driver
+Thread-Index:
+ AQHb9Igk7vn3xpIukEauwkU1/K0+nrQxUL6AgAACe7CAAQ2aAIAAWoUggAMVaICAAZVdAIAABFIAgAA3uJA=
+Date: Fri, 18 Jul 2025 11:05:22 +0000
+Message-ID:
+ <SEZPR06MB576396B0430AE23A03450ED39050A@SEZPR06MB5763.apcprd06.prod.outlook.com>
+References: <20250714062544.2612693-1-yh_chung@aspeedtech.com>
+	 <a01f2ed55c69fc22dac9c8e5c2e84b557346aa4d.camel@codeconstruct.com.au>
+	 <SEZPR06MB57635C8B59C4B0C6053BC1C99054A@SEZPR06MB5763.apcprd06.prod.outlook.com>
+	 <27c18b26e7de5e184245e610b456a497e717365d.camel@codeconstruct.com.au>
+	 <SEZPR06MB5763AD0FC90DD6AF334555DA9051A@SEZPR06MB5763.apcprd06.prod.outlook.com>
+	 <7e8f741b24b1426ae71171dff253921315668bf1.camel@codeconstruct.com.au>
+	 <5182407d-c252-403a-bb62-ebd11b0f126a@amperemail.onmicrosoft.com>
+ <59d6a0ee7f47346d8beb0283ee79a493c76dbb45.camel@codeconstruct.com.au>
+In-Reply-To:
+ <59d6a0ee7f47346d8beb0283ee79a493c76dbb45.camel@codeconstruct.com.au>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=aspeedtech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SEZPR06MB5763:EE_|KL1PR06MB6961:EE_
+x-ms-office365-filtering-correlation-id: 95d19da6-96f9-40bb-d133-08ddc5eafdc7
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|7416014|366016|42112799006|376014|921020|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?ZzQMKzoF2wRqqEUrhmT0GCeSc6eZKRmyHVtgCB1H0zC5TtLit4MHaoXvTJ/X?=
+ =?us-ascii?Q?fZcgiBgns96ZLnJ77DDutObH20xWmbmPINPsilBXrBWKapWD11Eoc/2rWVyM?=
+ =?us-ascii?Q?ynNd1Sa2nj7uPf7QKP+Y5vIJJLMBGut0NwRr0Zw4QZ874HPr12USeP6nKv5Y?=
+ =?us-ascii?Q?QwlN9A0/UUiGI/kP03b2T5nTt/yFCzs27wg1lZcSLbWfCsakKmkTEbXi1hD+?=
+ =?us-ascii?Q?W6QAhR5njBLnNYkcE8IAlE+uQ+LtXUOfC53UEaVh46uBOqDNA8b6hw87QGLH?=
+ =?us-ascii?Q?KdYXpyjuG3IbEfKUbMKAKRjeBk5CQEsa+EJ0fbaiZUX+kiem+WQ1BwCD0gEL?=
+ =?us-ascii?Q?I9VbM3ruiS+XLvGHLYdFgGhQDZZfoD3QAQq1HZ433H0cJCstJuzJvVgMGSuu?=
+ =?us-ascii?Q?w9GcDvvv3aW+Cl1mxSct7h9YObXGhtTayH2ojj8Xjhtc+8y9diN2nv3DCDEy?=
+ =?us-ascii?Q?8n+hl1URnqHaq7MJi2/Sh96i2Z49Mt2IgJY0gCSDPGTPiNK31uJlXiVZsuGh?=
+ =?us-ascii?Q?+ISPFZ/+qrAKFwR+Dbzicu13ZTIY85JsY+OXJggEEZenrKOZr2X9dV4z63NN?=
+ =?us-ascii?Q?UPa4fAo1AczYc3FeSMXImF2z1V9LiEzyLuwDipmQlHHh6mZBFwxxzVQ7iE6J?=
+ =?us-ascii?Q?e990A/h8T8dYSGTflgsKDTPIJjnhrCaE9XJtGYgWttUWwAcslr9/FoHxVdya?=
+ =?us-ascii?Q?nRVDPUPzAZ+/q1CR3IwY5JhxtgkqSBvCMbuxbSOrM32Ad8IUj4qhltzDsVr1?=
+ =?us-ascii?Q?hegPv8MTtH5kTX+CMdlsgEHcm6yQGfFz+BnG2abGdNJpJY/exhS0dQnN8M3x?=
+ =?us-ascii?Q?rUq8Ma1xDXWC+mfAA7A9sUZbiWN8EevaO8jvFEKWLV+4ixY06nDe/1u+45Rg?=
+ =?us-ascii?Q?79M2S/+QaMaqek7MkbAw/II/JNmtlisp0A4RKtTLBsSrN6iAL+FOXJFlfoaH?=
+ =?us-ascii?Q?EsTairPmTN0EEpjiue7//BVR9o2Ay9g3dLVqZIGsxow/0wZasOS7+MOqLe8/?=
+ =?us-ascii?Q?OEYF6v3j9bwSc5KdDdkpGr9B94Qh3gMY+KBV81fwYPdsG7W+XRjlGXxuUWBS?=
+ =?us-ascii?Q?Iy22guQAIeBlWVUO8MFymyuendi3GTXBStFEp98AlYuJhrtoAe7YZU2+mUdo?=
+ =?us-ascii?Q?VBUih+tUDLVQF+MugRMprB4lcENdoH25ykn3dX0C7ykeEnXMCQPxqDwJrURZ?=
+ =?us-ascii?Q?g7t24tAi2FWt9J2TP/PExv735CFKw2dRwialAOSKX+MJTXCycRft/Xf0vnDS?=
+ =?us-ascii?Q?qQsoiIu7K6Oof6Wqz11IQIsyuMv+B2A4zPZVNVmT3hhcQktccLF5v1U12Q+H?=
+ =?us-ascii?Q?0IU8aRXzfLSPM7JQovfzC3rV7uaiPU+T6GLPV3+6Ldrydsn6nY60HOdcIG1Q?=
+ =?us-ascii?Q?rP36hNjsz2ApHl/F6B2JKIVckUuv6XO2VlerFs0Jrqp9I6kKPoBypwRBXYcY?=
+ =?us-ascii?Q?K2KYx6VZ+xvkwARCnBo2lK1UWzlRsG2VixHggQUKFFbyPRm6IhqPT/OM45Hu?=
+ =?us-ascii?Q?f5GqgBCPQNvIRi4=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5763.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(42112799006)(376014)(921020)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?bGtBMsRfX0q+WAwU9hOyi1nfD3dvdLELGM2l/dPSZO0f5vI+Bjl/s6nPthSg?=
+ =?us-ascii?Q?ChKRUDjUXvtkwPUeJYw/cxrZFmJPq4fBHu29U3zbSY2XO/kTnxNfkOCcFAC1?=
+ =?us-ascii?Q?OL5tFsqpd3DHwcn7YwaCwN/TKAm8QPHX6VxfISvgc2afqAeMVLHNUi4VAcdA?=
+ =?us-ascii?Q?M4l+B36r33sOvgElImDwYUQALo8JCEkrtCIcbmJDwuZxpTZfM5beNAEbg60W?=
+ =?us-ascii?Q?Wh4UNA2PW+Sf17GmHt6gc/FIer/ziZ75vmVtLLPxjIhMjY+bX8lBkrUQcWv1?=
+ =?us-ascii?Q?/3GFzWb7eRQUg9BEku76S2tlTvktRHNK2+zIrMcPL3eNl8xtyvhjJunnzm6n?=
+ =?us-ascii?Q?PJ1M/k4wwLpGnvSKcQ7nkaWwKLKrfb3fwxDiYzcvJvxuGBBjBmPLw42ixgTD?=
+ =?us-ascii?Q?7pKGd6TRDjhkyUjjSjFV+3oAijKpaWx0DrRlrDYMbd41kNfPHJy1flhOeGLY?=
+ =?us-ascii?Q?ET5K8meckcmzfdKGsXXlYL2D1MjehzQtRvBg1h9lVFeZSj3OBlPk9+AEmiLO?=
+ =?us-ascii?Q?PMlM5M/zL8iKCnn0FBtxWoEln22DyLKJaH9pKfbDNGVRUEPGAvaBg7Oc3KlA?=
+ =?us-ascii?Q?UjlqLUrfOOmM/F6JRJpjMZBqkz6mYc4cpkr48TaEn+6cRPlPQ72liD1CwkGI?=
+ =?us-ascii?Q?tXdkr6w+sO8VVSIQXWZxjP8/XmgUNAYIqZpGuwubfer6G42rWHaY1je/VdAZ?=
+ =?us-ascii?Q?2Tx1lr+mcXwUfzWNStm8v+MYVR84T5GplMROmLT8Jfbo5IbNZvZs1yaiJO25?=
+ =?us-ascii?Q?qlGHQZjY1XbFdztxkZZjuKFUt0mH+3KLy6dUYZSwdnSiNZhJO/x0zB+7tfyP?=
+ =?us-ascii?Q?pQSLAh25jyjzBDcXp22cJ024gomJQFqo2AAqlm9YltxUVtJbVqlN2AYN0AaT?=
+ =?us-ascii?Q?1ltnB5saGUzBC/MY86PCGSatzvNbfmi2S2ck2lPl2H8TrMKAANMYDkyCkdJ6?=
+ =?us-ascii?Q?jfABZu2HPe885g7KoVMlyEmDEZrvI7HtqdgNugdvxetCwsgJxgXpy9WgPaCk?=
+ =?us-ascii?Q?yG9qV+fxxkBVG2NQWZZ+wDn/lnbIpiQTiTAczVk8dDxmQnmBKdnIxd5+YOam?=
+ =?us-ascii?Q?ctMMEWZyklk6nB+Qb9JlK8kL18RMdzBT1jnVprruBwj+kZYLxyf3iKNQiKFh?=
+ =?us-ascii?Q?tJiDo+sldzxp5MZWUXn2+hMVGe1M+7TG80FGbsSDu6xJXdrIIvmzA2H3Ca96?=
+ =?us-ascii?Q?zz5qjUKJX1PkgCdEVJ8VPrGW5oTVjHpUac2ScawT2dTg/6T5OYKEiPgTFLl2?=
+ =?us-ascii?Q?QiJ5U1HP4KPjWUGa/5J/t+jMe0fElQvms2Wsf4Q0skgysRnmXS8jjLrRzfLH?=
+ =?us-ascii?Q?wXVrIlM64mv4vyAR+8v1SEJnPfgSltNskeEgo49LQWzOLgqfgZk3D7acVQJu?=
+ =?us-ascii?Q?jao97B2aP3olVqP3dhaGyweNRQcoJO8uhdkqKKmg8imOaaGN1zIZG2nEUWOc?=
+ =?us-ascii?Q?SjU/2/y4LOnkfLdBab/vt2GTfekz9IlmYjR6KNBzaKKTEVa3w5oDWF+mJIeU?=
+ =?us-ascii?Q?cEJX77CjQwwS/mLtNIYYZUxQxTqs1kn0lNqkitgzAQc609TGCITvKTQvrNhr?=
+ =?us-ascii?Q?eg6MOnW77YA+pHV453uA7/HNACS3FaWWk7AFnLRK?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/6] wifi: ath12k: Use pci_{enable/disable}_link_state()
- APIs to enable/disable ASPM states
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: manivannan.sadhasivam@oss.qualcomm.com,
-        Jeff Johnson
- <jjohnson@kernel.org>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-        Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-        Nirmal Patel <nirmal.patel@linux.intel.com>,
-        Jonathan Derrick <jonathan.derrick@linux.dev>,
-        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ath12k@lists.infradead.org, ath11k@lists.infradead.org,
-        ath10k@lists.infradead.org, Bjorn Helgaas <helgaas@kernel.org>,
-        ilpo.jarvinen@linux.intel.com, linux-arm-msm@vger.kernel.org,
-        linux-pci@vger.kernel.org,
-        Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-        Qiang Yu <qiang.yu@oss.qualcomm.com>
-References: <20250716-ath-aspm-fix-v1-0-dd3e62c1b692@oss.qualcomm.com>
- <20250716-ath-aspm-fix-v1-4-dd3e62c1b692@oss.qualcomm.com>
- <38ace6a3-d594-4438-a193-cf730a7b87d6@oss.qualcomm.com>
- <wyqtr3tz3k2zdf62kgtcepf3sedm7z7wacv27visl2xsrqspmq@wi4fgef2mn2m>
- <03806d02-1cfc-4db2-8b63-c1e51f5456e2@oss.qualcomm.com>
- <o2gqqty6lakc4iw7vems2dejh6prjyl746gnq4gny4sxdxl65v@zmqse3244afv>
- <1db7c119-882f-4184-9ca4-9dbe5a49cb16@oss.qualcomm.com>
- <gx5gruyhrhwhvwkiqlkp2bggqd4oqe4quvqiiphfzolhjtzun6@okogvabkqah3>
- <otdgyzdymraa3f33vyb445kmssi3mqf5z2mw7w5pib4q4sb7vz@qbrzvrojqji3>
-Content-Language: en-US
-From: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
-In-Reply-To: <otdgyzdymraa3f33vyb445kmssi3mqf5z2mw7w5pib4q4sb7vz@qbrzvrojqji3>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE4MDA4NiBTYWx0ZWRfX5vJgbd9E/enm
- nbKV88dvJWSgRVGb7mepju6Gvs3bVxV3UoquAsrRYijvHLCznTkhdDd3MiPh0HhBUAxeMi/SfY2
- D3IEXDKIqbF9UbWVTBg/3s5Mjea6KWINfi1N7Knx1KW1NQVSqKfw1i+y+CBP4i2FZsgBlBI8VDU
- ucrEwCR7NhrY5M6YvNIvXjTLhvAnStYFhkfNvrJx8stQwP7pJ4rj490kTeMix4aV00L374/JLDY
- CnT7+Ng1z2FB24V7W7I2zZoScBNOBVQxg1TDfdKbXAA8JzQNMXc12jILtjKnyvJVuPYc4SM0fG+
- igZu3o0AN/caDBqI7Da96P37sQajgub10mogfrfyy8rwShPhHyFJXyxl/j5Rc0OGXLFYSghKgev
- R8moUjWQKGgdv2Zfj/kpY3Kk3Df/VCQdIwUwVNU5NFxbfyHKSUCGKys3YftyUxj+vWZEO4rE
-X-Proofpoint-GUID: XRZeXrCLYxIhchgMkdk85Mr1f-um-UeM
-X-Proofpoint-ORIG-GUID: XRZeXrCLYxIhchgMkdk85Mr1f-um-UeM
-X-Authority-Analysis: v=2.4 cv=Y+r4sgeN c=1 sm=1 tr=0 ts=687a2a67 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=_ABfaSfIuMkMDhf_T8wA:9
- a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-18_02,2025-07-17_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 mlxlogscore=999 phishscore=0 malwarescore=0 priorityscore=1501
- adultscore=0 impostorscore=0 mlxscore=0 suspectscore=0 lowpriorityscore=0
- bulkscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507180086
+X-OriginatorOrg: aspeedtech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5763.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 95d19da6-96f9-40bb-d133-08ddc5eafdc7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jul 2025 11:05:22.6703
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: +QYM20pQ6CfcBkOeXdokuSJ9KGIB5/AamMXeyJvdxl0q7KQD1yz8OgBvf/6LUHMi2jVn7PrEyGmIWY7qy4GIOQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6961
+
+Hi Jeremy,
+
+>Just put them in the top-level at drivers/net/mctp/ for now. There's not m=
+uch in
+>there at present, so will be simple to keep organised. If you end up with =
+two
+>drivers and a common set of utils between the two, that's a total of four =
+files,
+>which I think we can manage.
+
+Understood, thanks for the guidance!
+We plan to start with the AST2700 driver in the next submission, along with=
+ the shared utility code.
+
+>YH: so we would just have the three-byte format for your proposed
+>driver:
+>
+>   [0]: routing type (bits 0:2, others reserved)
+>   [1]: bus
+>   [2]: device / function
+>
+>- assuming you're only handling non-flit mode for now.
+>
+Sounds good-We'll apply this format in the next patch.
 
 
+Hi Adam,
 
-On 7/18/2025 6:20 PM, Manivannan Sadhasivam wrote:
-> On Fri, Jul 18, 2025 at 01:27:27PM GMT, Manivannan Sadhasivam wrote:
->> On Fri, Jul 18, 2025 at 10:05:02AM GMT, Baochen Qiang wrote:
->>>
->>>
->>> On 7/17/2025 7:29 PM, Manivannan Sadhasivam wrote:
->>>> On Thu, Jul 17, 2025 at 06:46:12PM GMT, Baochen Qiang wrote:
->>>>>
->>>>>
->>>>> On 7/17/2025 6:31 PM, Manivannan Sadhasivam wrote:
->>>>>> On Thu, Jul 17, 2025 at 05:24:13PM GMT, Baochen Qiang wrote:
->>>>>>
->>>>>> [...]
->>>>>>
->>>>>>>> @@ -16,6 +16,8 @@
->>>>>>>>  #include "mhi.h"
->>>>>>>>  #include "debug.h"
->>>>>>>>  
->>>>>>>> +#include "../ath.h"
->>>>>>>> +
->>>>>>>>  #define ATH12K_PCI_BAR_NUM		0
->>>>>>>>  #define ATH12K_PCI_DMA_MASK		36
->>>>>>>>  
->>>>>>>> @@ -928,8 +930,7 @@ static void ath12k_pci_aspm_disable(struct ath12k_pci *ab_pci)
->>>>>>>>  		   u16_get_bits(ab_pci->link_ctl, PCI_EXP_LNKCTL_ASPM_L1));
->>>>>>>>  
->>>>>>>>  	/* disable L0s and L1 */
->>>>>>>> -	pcie_capability_clear_word(ab_pci->pdev, PCI_EXP_LNKCTL,
->>>>>>>> -				   PCI_EXP_LNKCTL_ASPMC);
->>>>>>>> +	pci_disable_link_state(ab_pci->pdev, PCIE_LINK_STATE_L0S | PCIE_LINK_STATE_L1);
->>>>>>>
->>>>>>> Not always, but sometimes seems the 'disable' does not work:
->>>>>>>
->>>>>>> [  279.920507] ath12k_pci_power_up 1475: link_ctl 0x43 //before disable
->>>>>>> [  279.920539] ath12k_pci_power_up 1482: link_ctl 0x43 //after disable
->>>>>>>
->>>>>>>
->>>>>>>>  
->>>>>>>>  	set_bit(ATH12K_PCI_ASPM_RESTORE, &ab_pci->flags);
->>>>>>>>  }
->>>>>>>> @@ -958,10 +959,7 @@ static void ath12k_pci_aspm_restore(struct ath12k_pci *ab_pci)
->>>>>>>>  {
->>>>>>>>  	if (ab_pci->ab->hw_params->supports_aspm &&
->>>>>>>>  	    test_and_clear_bit(ATH12K_PCI_ASPM_RESTORE, &ab_pci->flags))
->>>>>>>> -		pcie_capability_clear_and_set_word(ab_pci->pdev, PCI_EXP_LNKCTL,
->>>>>>>> -						   PCI_EXP_LNKCTL_ASPMC,
->>>>>>>> -						   ab_pci->link_ctl &
->>>>>>>> -						   PCI_EXP_LNKCTL_ASPMC);
->>>>>>>> +		pci_enable_link_state(ab_pci->pdev, ath_pci_aspm_state(ab_pci->link_ctl));
->>>>>>>
->>>>>>> always, the 'enable' is not working:
->>>>>>>
->>>>>>> [  280.561762] ath12k_pci_start 1180: link_ctl 0x43 //before restore
->>>>>>> [  280.561809] ath12k_pci_start 1185: link_ctl 0x42 //after restore
->>>>>>>
->>>>>>
->>>>>> Interesting! I applied your diff and I never see this issue so far (across 10+
->>>>>> reboots):
->>>>>
->>>>> I was not testing reboot. Here is what I am doing:
->>>>>
->>>>> step1: rmmod ath12k
->>>>> step2: force LinkCtrl using setpci (make sure it is 0x43, which seems more likely to see
->>>>> the issue)
->>>>>
->>>>> 	sudo setpci -s 02:00.0 0x80.B=0x43
->>>>>
->>>>> step3: insmod ath12k and check linkctrl
->>>>>
->>>>
->>>> So I did the same and got:
->>>>
->>>> [ 3283.363569] ath12k_pci_power_up 1475: link_ctl 0x43
->>>> [ 3283.363769] ath12k_pci_power_up 1480: link_ctl 0x40
->>>> [ 3284.007661] ath12k_pci_start 1180: link_ctl 0x40
->>>> [ 3284.007826] ath12k_pci_start 1185: link_ctl 0x42
->>>>
->>>> My host machine is Qcom based Thinkpad T14s and it doesn't support L0s. So
->>>> that's why the lnkctl value once enabled becomes 0x42. This is exactly the
->>>> reason why the drivers should not muck around LNKCTL register manually.
->>>
->>> Thanks, then the 0x43 -> 0x40 -> 0x40 -> 0x42 sequence should not be a concern. But still
->>> the random 0x43 -> 0x43 -> 0x43 -> 0x42 sequence seems problematic.
->>>
->>> How many iterations have you done with above steps? From my side it seems random so better
->>> to do some stress test.
->>>
->>
->> So I ran the modprobe for about 50 times on the Intel NUC that has QCA6390, but
->> didn't spot the disparity. This is the script I used:
->>
->> for i in {1..50} ;do echo "Loop $i"; sudo setpci -s 01:00.0 0x80.B=0x43;\
->> sudo modprobe -r ath11k_pci; sleep 1; sudo modprobe ath11k_pci; sleep 1;done
->>
->> And I always got:
->>
->> [ 5862.388083] ath11k_pci_aspm_disable: 609 lnkctrl: 0x43
->> [ 5862.388124] ath11k_pci_aspm_disable: 614 lnkctrl: 0x40
->> [ 5862.876291] ath11k_pci_start: 880 lnkctrl: 0x40
->> [ 5862.876346] ath11k_pci_start: 886 lnkctrl: 0x42
->>
->> Also no AER messages. TBH, I'm not sure how you were able to see the random
->> issues with these APIs. That looks like a race, which is scary.
->>
->> I do not want to ignore your scenario, but would like to reproduce and get to
->> the bottom of it.
->>
-> 
-> I synced with Baochen internally and able to repro the issue. Ths issue is due
-> to hand modifying the LNKCTL register from userspace. The PCI core maintains
-> the ASPM state internally and uses it to change the state when the
-> pci_{enable/disable}_link_state*() APIs are called.
-> 
-> So if the userspace or a client driver modifies the LNKCTL register manually, it
-> makes the PCI cached ASPM states invalid. So while this series fixes the driver
-> from doing that, nothing prevents userspace from doing so using 'setpci' and
-> other tools. Userspace should only use sysfs attributes to change the state and
-> avoid modifying the PCI registers when the PCI core is controlling the device.
-> So this is the reason behind the errantic behavior of the API and it is not due
-> to the issue with the API or the PCI core.
+> Would the mailbox abstraction work for this?  It is what I am using in th=
+e MCTP over PCC code.  Perhaps a PCIe VDM mailbox implementation will have =
+a wider use  than just MCTP.
+>
+Thanks a lot for the suggestion! For now, we're planning to remove the curr=
+ent abstraction and use a set of common utility functions shared between th=
+e AST2600 and AST2700 drivers.
+As Jeremy mentioned, we'd prefer to hold off on introducing a PCIe VDM abst=
+raction layer until there are more concrete use cases that would benefit fr=
+om it.
 
-IMO we can not rely on userspace doing what or not doing what, or on how it is doing,
-right? So can we fix PCI core to avoid this?
+>My suggestiong  is: Keep it simple.  There are only a handful of mctp devi=
+ce
+>drivers thus far, and there seems to be little justification for a deeper =
+hierarchy.
+>
+>Just focus on the cleanest implementation.  Having two drivers plus a sing=
+le
+>common source code for each in drivers/net/mctp seems to be easier to
+>manage for now.
 
-> 
-> - Mani
-> 
-
+Appreciate the guidance!
+We'll proceed as you and Jeremy suggested and keep everything under drivers=
+/net/mctp for now.
 
