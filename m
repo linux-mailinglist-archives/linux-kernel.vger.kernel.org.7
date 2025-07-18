@@ -1,132 +1,134 @@
-Return-Path: <linux-kernel+bounces-736791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ABAFB0A1F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:33:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA103B0A1F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:33:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C7277B3074
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:32:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A452F1793BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:33:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C41472D949B;
-	Fri, 18 Jul 2025 11:33:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC1FD2BD585;
+	Fri, 18 Jul 2025 11:33:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XFwPSbbk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pr5yb86B"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4A3221F04;
-	Fri, 18 Jul 2025 11:33:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA2F221F04
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 11:33:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752838401; cv=none; b=oUO4gwPq94zceEdH+3BoI1ZNlu+h7Hq81S1UNOEDxZx5s7tdQPayjXsoCaPZCgiTEYkKhCRD1POaqVZw4qF7ysU8bUdeM1dg9rk+tkVTZ5qVJnYqsR6zpbs/tknhgzSc9z1J/OhqPCPjyDNL984xcD/HWl2pBiEuYOeCt1SZ7b4=
+	t=1752838432; cv=none; b=UiamiBBHXOiyWPc8JFbj6uQc/2AUJdKaRIPC9QQ1PFqndM46LKEctlVrRKWXvH2f/dXkrKqf5o7x2HRhkhP8fYAiznofbp97rATPAmWGm9TTJlB7iFgFEkjXQHrioveUazFhxw3EBQLaHGHzlFevLljvwdoHOg+2fZBgSgWIZkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752838401; c=relaxed/simple;
-	bh=92arq/Wo1/KhOpoRdEXUKIc1y6xuILihx9THlijFiR0=;
+	s=arc-20240116; t=1752838432; c=relaxed/simple;
+	bh=ss4gbTsOaXhi72j0lyuVqUWKJ1y9ouYj/VwkNqG/yFc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TjVq/qbyBJH2d4hikvH2BzQDi89E4Xcwz0ZTFoky4OJZgw16320d+xBZ+VtnY3sIDIzePfoqqOvQsGPGCBmskCoVw7J2wPtkXWgRQCQ+pnmNUXgQQW6whr84oeU/n5DLGFHbb2vND/yyK+wVfhSTZ7PQAME0i1dfgHaqd86WJes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XFwPSbbk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A11AC4CEEB;
-	Fri, 18 Jul 2025 11:33:18 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zs0oXlpOYKNTiHoGggQVbgmkLpBZRAQWmPSTateZWp0E7Hp+pvz/f+3BrH2eBR+EvE1p7AE6dJ5tx7hrGfW1eW1yw5WeCI+aq1MxhyGwoseePau4wSOyi4K2v+84H081p6/u7ygikxmmgMFdD70yFO8bXN+LhBXaz5T+SVNznNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pr5yb86B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60E2AC4CEEB;
+	Fri, 18 Jul 2025 11:33:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752838400;
-	bh=92arq/Wo1/KhOpoRdEXUKIc1y6xuILihx9THlijFiR0=;
+	s=k20201202; t=1752838431;
+	bh=ss4gbTsOaXhi72j0lyuVqUWKJ1y9ouYj/VwkNqG/yFc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XFwPSbbkzFb40PzhDQ/wJAwKW3YmtkzoutTGTkV/zX1+GLT4rYBnnKNNYzGDui87P
-	 Yi7IOtoXvaRhL5fa1rWumqqxtuAhQae5fbYevDcyF+Lxo0ccUSuMoguYPO/egRL/Qm
-	 EQeCo/h2G3/kiEcq4oJQnk+8G+3ev4ZIRyyke8n1bh/8qHk9kyldId2MUKh5ePVkjP
-	 lcCkEdu1CxQu9uFDq34mw7pvxII3CRaE2y464pDItUdJhiCri28vwejHJU0WqreC7G
-	 7BXZuGgFrCPbtERV8zuJ/vRXT1P1j0zzRzJhZ+1NFvXe3udHk/iOi+ANqxnMqWa2ud
-	 2yZwCecPVUMaw==
-Date: Fri, 18 Jul 2025 12:33:15 +0100
-From: Will Deacon <will@kernel.org>
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: bpf@vger.kernel.org, Puranjay Mohan <puranjay@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Maxwell Bland <mbland@motorola.com>, Dao Huang <huangdao1@oppo.com>
-Subject: Re: [PATCH bpf-next v10 1/3] cfi: add C CFI type macro
-Message-ID: <aHow-yVsJCO2AJsn@willie-the-truck>
-References: <20250715225733.3921432-5-samitolvanen@google.com>
- <20250715225733.3921432-6-samitolvanen@google.com>
+	b=pr5yb86BsBIJl0B7TbnBxNd+/lG2uDdwzKLGVWcSqLbrb+3t/G2itvDOIM5H0u0v/
+	 fmbSJ/mowIj33aEKKlAf7xIhgBtmgOnDV1Iu6q577QxF7bQEy1VqwlMZKx5kstH/um
+	 OqWdTNwkm1hMDsLVfVYJuv5SrVY26Y+Hvv9xzEg94BKQXPyWCifEfQMYDPtcfBwteD
+	 6gWI476NY/87puMX2k3DTCF2IBK0LNk4XlMFMbyydsPPjrcYTPdJ4ElbMh5TXlKar7
+	 jeTjpukFzkTs2HtnrRKwAoqUt/f196DVdVDCo5wmN6H40zM/APglsdBmHf6ER3dP+H
+	 nMaLagxZ9oq8Q==
+Date: Fri, 18 Jul 2025 13:33:34 +0200
+From: Joel Granados <joel.granados@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+	Sagi Grimberg <sagi@grimberg.me>, Klaus Jensen <k.jensen@samsung.com>, 
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 0/8] nvme: Add Controller Data Queue to the nvme
+ driver
+Message-ID: <fjnpyvjn2kqlmlzagvuy43numc7u44ylls3nqxay4sh5qjayv5@xq2ty7wipbg5>
+References: <20250714-jag-cdq-v1-0-01e027d256d5@kernel.org>
+ <20250714130230.GA7752@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bytbhyrsj7nnxlk3"
+Content-Disposition: inline
+In-Reply-To: <20250714130230.GA7752@lst.de>
+
+
+--bytbhyrsj7nnxlk3
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250715225733.3921432-6-samitolvanen@google.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 15, 2025 at 10:57:35PM +0000, Sami Tolvanen wrote:
-> From: Mark Rutland <mark.rutland@arm.com>
-> 
-> Currently x86 and riscv open-code 4 instances of the same logic to
-> define a u32 variable with the KCFI typeid of a given function.
-> 
-> Replace the duplicate logic with a common macro.
-> 
-> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> Co-developed-by: Maxwell Bland <mbland@motorola.com>
-> Signed-off-by: Maxwell Bland <mbland@motorola.com>
-> Co-developed-by: Sami Tolvanen <samitolvanen@google.com>
-> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-> Tested-by: Dao Huang <huangdao1@oppo.com>
-> ---
->  arch/riscv/kernel/cfi.c       | 35 +++--------------------------------
->  arch/x86/kernel/alternative.c | 31 +++----------------------------
->  include/linux/cfi_types.h     | 23 +++++++++++++++++++++++
->  3 files changed, 29 insertions(+), 60 deletions(-)
+On Mon, Jul 14, 2025 at 03:02:31PM +0200, Christoph Hellwig wrote:
+> On Mon, Jul 14, 2025 at 11:15:31AM +0200, Joel Granados wrote:
+> > Motivation
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > The main motivation is to enable Controller Data Queues as described in
+> > the 2.2 revision of the NVME base specification. This series places the
+> > kernel as an intermediary between the NVME controller producing CDQ
+> > entries and the user space process consuming them. It is general enough
+> > to encompass different use cases that require controller initiated
+> > communication delivered outside the regular I/O traffic streams (like
+> > LBA tracking for example).
 
-[...]
+Thx for the feedback. Much appreciated.
 
-> diff --git a/include/linux/cfi_types.h b/include/linux/cfi_types.h
-> index 6b8713675765..e5567c0fd0b3 100644
-> --- a/include/linux/cfi_types.h
-> +++ b/include/linux/cfi_types.h
-> @@ -41,5 +41,28 @@
->  	SYM_TYPED_START(name, SYM_L_GLOBAL, SYM_A_ALIGN)
->  #endif
->  
-> +#else /* __ASSEMBLY__ */
-> +
-> +#ifdef CONFIG_CFI_CLANG
-> +#define DEFINE_CFI_TYPE(name, func)						\
-> +	/*									\
-> +	 * Force a reference to the function so the compiler generates		\
-> +	 * __kcfi_typeid_<func>.						\
-> +	 */									\
-> +	__ADDRESSABLE(func);							\
-> +	/* u32 name __ro_after_init = __kcfi_typeid_<func> */			\
-> +	extern u32 name;							\
-> +	asm (									\
-> +	"	.pushsection	.data..ro_after_init,\"aw\",@progbits	\n"	\
-> +	"	.type	" #name ",@object				\n"	\
-> +	"	.globl	" #name "					\n"	\
-> +	"	.p2align	2, 0x0					\n"	\
-> +	#name ":							\n"	\
-> +	"	.4byte	__kcfi_typeid_" #func "				\n"	\
-> +	"	.size	" #name ", 4					\n"	\
-> +	"	.popsection						\n"	\
-> +	);
-> +#endif
+>=20
+> That's rather blurbish.  The only use case for CDQs in NVMe 2.2 is
+> tracking of dirty LBAs for live migration, and the live migration
+Yes, that is my understanding of nvme 2.2 as well.
 
-This looks good to me. I was initially a bit worried about the portability
-of the '.4byte' directive, but it seems that cfi_types.h is already using
-that for the __CFI_TYPE() macro so I'm assuming it's not an issue.
+> feature in 2.2 is completely broken because the hyperscalers wanted
+> to win a point.  So for CDQs to be useful in Linux we'll need the
+> proper live migration still under heavy development.  With that I'd
+Do you mean in the specification body or patch series in the mailing
+lists?
 
-In which case:
+> very much expect the kernel to manage the CDQs just like any other
+> queue, and not a random user ioctl.
+This is a great segue to a question: If CDQ is like any other queue,
+what is the best way of handling the lack of CDQ submission queues?
+Something like snooping all submissions for these CDQs and triggering a
+CDQ consume on every submission?
 
-Acked-by: Will Deacon <will@kernel.org>
+I went with the ioctl as the faster way to get it to work; I might
+explore what having it as just another queue would look like.
 
-Thanks for cleaning it up.
+> So what would be the use case for a user controlled CDQ?
+Do you mean a hypothetical list besides LM in NVME 2.2?
 
-Will
+Best
+
+--=20
+
+Joel Granados
+
+--bytbhyrsj7nnxlk3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmh6MP8ACgkQupfNUreW
+QU8hMgwAgBytHdz5pT7HLF0dvl1/Vh/v44hch5bV2NWwqeQWLoEHhrQuP0UEViGv
+S1BMHYMIske+GAtL+AKRdNL/2LpuzQP4YSftL+fGtNxlPfOq4ehoNMeSVWxHuJa+
+XnyJomh527pzEK9RkwMKa1R/9OXjZo4aHluV0jUAeGwtD012iXG2cVa2ADac3u0b
+G7r+MkrJ8iA92QGjae+YThqq8qau7AfKIYLfzDRCtdBtkJA7wKSXY+2fe8HqZmmk
+ODmdSY8QhyXs7dltzHbSCzuGuU8PTNIs8Ko9V7u/Jqwj0MZ/2YWkcFpLQ0ZWQ503
+/CQoS44IQw9WXPnGwmtTBeBUUHAar0QXCUQAquWIjDcHFeH9F+J6/9rAmwzJ9FeH
+UkQ72DNt+ebsMmsGOdlNVYQOhnXeH6ZPPkX74bSxVrpb1fJx0OWJFgNSfWb8X47E
+AOSONgnQWaHd+Pz7QOl18tqyscX/RnOK1ylei0mqbpenj4bCwi+x7LK/R0TrCM9p
+DP4izM1j
+=agQF
+-----END PGP SIGNATURE-----
+
+--bytbhyrsj7nnxlk3--
 
