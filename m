@@ -1,264 +1,251 @@
-Return-Path: <linux-kernel+bounces-736701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CBF2B0A0C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:34:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6ED8B0A0D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:40:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D43743A4613
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:33:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAE653B7EB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:39:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D3EC29E101;
-	Fri, 18 Jul 2025 10:34:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797A72BCF4B;
+	Fri, 18 Jul 2025 10:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="adrGEnPX"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZUo3qd1J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C623198A2F
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 10:34:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA96629B218;
+	Fri, 18 Jul 2025 10:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752834845; cv=none; b=eWi9XCdk8fhYg0HPQI/IrBoHuWHLuNa4SWHyzbEZjPSg4CqesMs6kkHI1NrsfqD2xsipWL06dReRbIpakGohT2+Q8DLYcn2/OmR8yQFec7rZfwWvJE4mjFVgr+/UKTttEGWzGr38eYS5psXCJt0lVZGxpW7ZDnkHnwYU47hVrV4=
+	t=1752835206; cv=none; b=Mrnd792VH9n/NUD/zaPKFwqZKRYi9bIzS9aRt/mpfob40OeLJQcyNK45+Tsj0OnpvitqtnaXV9oBxHgL6zBh6G8MvBLjZ0SDv/wtCS4anPTgPVmegpUmNt08VWxtfr/Y664RVYeHDX5XCD31aIu53ZrBADkezDCaDaiJ7bh8sL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752834845; c=relaxed/simple;
-	bh=jfhIWJJcVzr4ySSMl+IA99FXWWWI1LaROD0wLAlGR0Y=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Yg9j5hIRnxMRa/HvuBoa/XmVlM1RlluHfTHvfSzc2oh5c2neXmGYz+aSwNfRJ5ytLzJpgrrQtMN30t4WsfVnaeEX2IZJgb1k4GNIaqzkqmyoD/cVSRJcO0g3gdStXmDdwn0Jtbg0TeCy/bHLqYJHMbaBxVa7FStyreifenfEv+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=adrGEnPX; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-60780d74c8cso3380396a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 03:34:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752834841; x=1753439641; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=2qBzQmRBIh3BDUW1vW6d6WLsqLJRkox9K+h2IOJ36Pw=;
-        b=adrGEnPXdJW8C6mBYe6Olg81faCpk/mNTcJ36msj4NFe4Lb3Ar2LXKOhSZ60FzmeuG
-         OZbhrrL5txB/8LYlrUwfh3kIA4Z7l+QTDqdbcvXu5bmEIfWqDi6u/zXgwtd9EKf7kabm
-         Wk8/6MGf68kx9Ju6/NSZ9b6XzOnUaSCopO2KMjCrTrYUMvV/MAVuLnAVyKV26Ufx4P9c
-         11EFoPOLlXQ7wxEs49kaw7Rk7lbU5JYGu31bW+PoqWMFt7vK9AdKO6dXlZVg3OOwmVRj
-         Ip35hDbJDoUgsKBIe+s380J9xYGYg4gQro0IpPyiS4CO3QdJTGj/NxCVS+o6A2ypA5C5
-         ZZCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752834841; x=1753439641;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2qBzQmRBIh3BDUW1vW6d6WLsqLJRkox9K+h2IOJ36Pw=;
-        b=LRFbu/tAbrlyAMTLZ+bNHggCUGarM8zEp02lTAYl1bMpj6siG3tf8fMRGMldf+Ynft
-         LgukpbFKMz8nVgo9iR3mMK+YvpzZOxsK1bpOstHoFsksxVy9E80IsPJ5/VSP8nxN1l3s
-         qIVQpuRl9duzy0pQYOsR+j+obs3ZI1hk0FSHW8X9Z4zGVvCWTX6h8jgRKarFPWgsOK9/
-         QmnuYP0oOwOoFsC1UjRHBGeOfZNiQkwHvXv1L+3t1YSIO7a8RRWLJqpqMXLEhQkVW+Yq
-         Q5Y6EFZrIHG4cDr8bnXhFi3yboiEnw/fWeohx8VVZDD6OD981iRhY0pBQ5r4lxXrnH+4
-         vzqA==
-X-Forwarded-Encrypted: i=1; AJvYcCVxYLJdo+g61w5BGt9wlVX6gd5vaFVJi3XvhfXf2xY8N9yrFBxu1vq5MLi24WbUOb+YmO054kKygCF5nPY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGQITZ2ZbCWEWdE4PjbLLKvLoK1TZEs9/wauspSdZT/5xm2CZ2
-	QWTa+koAbylxsnOnsAq2uxt50JZkZKB7HBy0NphNqN7LFvS48FOH8MTtSWu1LtfmBBhRvBTdQyA
-	rn8lEJBuzWsYJW4xSly+gyrQMIq9a5x0kwReaYr8=
-X-Gm-Gg: ASbGncs/bz+FlhxZXyISXhBtjJx2M3Bv6ugHnwWhSzmjsFXKHdnMHsHKX2o39CubN1W
-	F/mjiZigCUUqOo9NxSbCAmysAgrLF5genxGXwDjdcu37+CjmJBJ23VQ7JkrsXJnF81myBpmy7Bk
-	f3p2fCU2UGpLSKLrqpmdinRR4YFAdTcxnAfRJ10Hhf2CnKB48SZnYMs+7Z4HT7NfOLtoc9UYnYq
-	glTBQ==
-X-Google-Smtp-Source: AGHT+IG2UzroybGbjxMAlDl+usjSPFuJ7OORDuvOW1+VPzbf93etkJSI7Wt8vOuBB4n18PT3HeNRfnA/8mQpbZ7TJ1A=
-X-Received: by 2002:a17:907:3e9c:b0:ae3:c968:370 with SMTP id
- a640c23a62f3a-ae9ce1e8c11mr801676266b.59.1752834841039; Fri, 18 Jul 2025
- 03:34:01 -0700 (PDT)
+	s=arc-20240116; t=1752835206; c=relaxed/simple;
+	bh=XGz8ZhzbTwznyHWED45VJOm5rJlDzZ3hdJbtYJAImLM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qRQbBcidU7h8igOByDWC7mu0JhyTzzyj7mCM3JLI5zqiiiuKG4YqEzOKG0ahrgn+pTPiYmSW+yncDJ/SyOfwaP6P01FNVIxJrKrT0Vn6irAM3rc6now+vCMX9UsPPR2pxPhFqTROg3xt1a+RRsKR3nDTwn26MiRaj8e6+jtIGI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZUo3qd1J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7656C4CEEB;
+	Fri, 18 Jul 2025 10:40:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752835206;
+	bh=XGz8ZhzbTwznyHWED45VJOm5rJlDzZ3hdJbtYJAImLM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZUo3qd1JztJCCHJFWaXXROHmddmYV1qxfrYVoyzrOagEdm1GMDGKvuRTxevbmf9lP
+	 86f448eq14ml1Qc2prQO2rBZYbZNktJQRxE5tjAd20xj/bHmajArx0QJFfgcxrRTr6
+	 SiqGC9Tn7X3V39pu2V/bx+h7klvwZY7MVNAfLeJcBv0Np7hXch7OpcbC8u3M/R5Ktt
+	 2iALltoPay27sGDsGpVR+5yrNoepamigRdZfrlU10ZmeTrNFpk4Rx9vA/r1bBKj3FQ
+	 fyOLfFixxFtdbIh5cezlGP3nnaFc1pSVmqn49npdSSnUgkq/8wFv7jeNKvVKhnRJIp
+	 p5GIMf8UZkLUA==
+Date: Fri, 18 Jul 2025 16:04:35 +0530
+From: Naveen N Rao <naveen@kernel.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Paolo Bonzini <pbonzini@redhat.com>, Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>, 
+	Vasant Hegde <vasant.hegde@amd.com>
+Subject: Re: [PATCH v3 2/2] KVM: SVM: Limit AVIC physical max index based on
+ configured max_vcpu_ids
+Message-ID: <xojzhg3e6czqg6zqyt3wbnzfafwy7bd7fq43b3ttkhfcw3svot@rakzaalsslfz>
+References: <cover.1740036492.git.naveen@kernel.org>
+ <f4c832aef2f1bfb0eae314380171ece4693a67b2.1740036492.git.naveen@kernel.org>
+ <aFnzf4SQqc9a2KcK@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Dave Airlie <airlied@gmail.com>
-Date: Fri, 18 Jul 2025 20:33:49 +1000
-X-Gm-Features: Ac12FXxPoz0a_9s4aNvXMBUDtxzj332uUJx2lcLhSuVeOysV_Ak0Yc-0WKNLnIg
-Message-ID: <CAPM=9tzJPpV89V934YdOO=i1gEVwx9NOMV+w8+hqRgDLk+6L+A@mail.gmail.com>
-Subject: [git pull] drm fixes for 6.16-rc7
-To: Linus Torvalds <torvalds@linux-foundation.org>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aFnzf4SQqc9a2KcK@google.com>
 
-Hi Linus,
+On Mon, Jun 23, 2025 at 05:38:23PM -0700, Sean Christopherson wrote:
+> On Thu, Feb 20, 2025, Naveen N Rao (AMD) wrote:
+> > KVM allows VMMs to specify the maximum possible APIC ID for a virtual
+> > machine through KVM_CAP_MAX_VCPU_ID capability so as to limit data
+> > structures related to APIC/x2APIC. Utilize the same to set the AVIC
+> > physical max index in the VMCB, similar to VMX. This helps hardware
+> > limit the number of entries to be scanned in the physical APIC ID table
+> > speeding up IPI broadcasts for virtual machines with smaller number of
+> > vcpus.
+> > 
+> > The minimum allocation required for the Physical APIC ID table is one 4k
+> > page supporting up to 512 entries. With AVIC support for 4096 vcpus
+> > though, it is sufficient to only allocate memory to accommodate the
+> > AVIC physical max index that will be programmed into the VMCB. Limit
+> > memory allocated for the Physical APIC ID table accordingly.
+> 
+> Can you flip the order of the patches?  This seems like an easy "win" for
+> performance, and so I can see people wanting to backport this to random kernels
+> even if they don't care about running 4k vCPUs.
+> 
+> Speaking of which, is there a measurable performance win?
 
-Thanks to Simona for taking over the fixes duties last week, it seems
-like I missed a fun week of regression hunting!
+That was my first thought. But for VMs upto 512 vCPUs, I didn't see much 
+of a performance difference with broadcast IPIs at all. But, I guess it 
+shouldn't hurt, so I will prep a smaller patch that can go before the 4k 
+vCPU support patch.
 
-Seems like a quiet enough week, xe/amdgpu being the usual suspects,
-then mediatek with a few fixes, and otherwise just misc other bits.
+With 4k vCPU support enabled, yes, this makes a lot of difference. IIRC, 
+ipi-bench for broadcast IPIs went from ~10-15 seconds down to 3 seconds.
 
-Dave.
+> 
+> > Signed-off-by: Naveen N Rao (AMD) <naveen@kernel.org>
+> > ---
+> >  arch/x86/kvm/svm/avic.c | 53 ++++++++++++++++++++++++++++++-----------
+> >  arch/x86/kvm/svm/svm.c  |  6 +++++
+> >  arch/x86/kvm/svm/svm.h  |  1 +
+> >  3 files changed, 46 insertions(+), 14 deletions(-)
+> > 
+> > diff --git a/arch/x86/kvm/svm/avic.c b/arch/x86/kvm/svm/avic.c
+> > index 1fb322d2ac18..dac4a6648919 100644
+> > --- a/arch/x86/kvm/svm/avic.c
+> > +++ b/arch/x86/kvm/svm/avic.c
+> > @@ -85,6 +85,17 @@ struct amd_svm_iommu_ir {
+> >  	void *data;		/* Storing pointer to struct amd_ir_data */
+> >  };
+> >  
+> > +static inline u32 avic_get_max_physical_id(struct kvm *kvm, bool is_x2apic)
+> 
+> Formletter incoming...
+> 
+> Do not use "inline" for functions that are visible only to the local compilation
+> unit.  "inline" is just a hint, and modern compilers are smart enough to inline
+> functions when appropriate without a hint.
+> 
+> A longer explanation/rant here: https://lore.kernel.org/all/ZAdfX+S323JVWNZC@google.com
 
-drm-fixes-2025-07-18-1:
-drm fixes for 6.16-rc7
+Ack.
 
-dp:
-- aux dpcd address fix
+> 
+> > +{
+> > +	u32 avic_max_physical_id = is_x2apic ? x2avic_max_physical_id : AVIC_MAX_PHYSICAL_ID;
+> 
+> Don't use a super long local variable.  For a helper like this, it's unnecessary,
+> e.g. if the reader can't understand what arch_max or max_id is, then spelling it
+> out entirely probably won't help them.
+> 
+> And practically, there's a danger to using long names like this: you're much more
+> likely to unintentionally "shadow" a global variable.  Functionally, it won't be
+> a problem, but it can create confusion.  E.g. if we ever added a global
+> avic_max_physical_id, then this code would get rather confusing.
 
-xe:
-- SR-IOV fixes for GT reset and TLB invalidation
-- Fix memory copy direction during migration
-- Fix alignment check on migration
-- Fix MOCS and page fault init order to correctly
-  account for topology
+Sure, makes sense.
 
-amdgpu:
-- Fix a DC memory leak
-- DCN 4.0.1 degamma LUT fix
-- Fix reset counter handling for soft recovery
-- GC 8 fix
+> 
+> > +
+> > +	/*
+> > +	 * Assume vcpu_id is the same as APIC ID. Per KVM_CAP_MAX_VCPU_ID, max_vcpu_ids
+> > +	 * represents the max APIC ID for this vm, rather than the max vcpus.
+> > +	 */
+> > +	return min(kvm->arch.max_vcpu_ids - 1, avic_max_physical_id);
+> > +}
+> > +
+> >  static void avic_activate_vmcb(struct vcpu_svm *svm)
+> >  {
+> >  	struct vmcb *vmcb = svm->vmcb01.ptr;
+> > @@ -103,7 +114,7 @@ static void avic_activate_vmcb(struct vcpu_svm *svm)
+> >  	 */
+> >  	if (x2avic_enabled && apic_x2apic_mode(svm->vcpu.arch.apic)) {
+> >  		vmcb->control.int_ctl |= X2APIC_MODE_MASK;
+> > -		vmcb->control.avic_physical_id |= x2avic_max_physical_id;
+> > +		vmcb->control.avic_physical_id |= avic_get_max_physical_id(svm->vcpu.kvm, true);
+> 
+> Don't pass hardcoded booleans when it is at all possible to do something else.
+> For this case, I would either do:
+> 
+>   static u32 avic_get_max_physical_id(struct kvm_vcpu *vcpu)
+>   {
+> 	u32 arch_max;
+> 	
+> 	if (x2avic_enabled && apic_x2apic_mode(vcpu->arch.apic))
 
-radeon:
-- Drop console locks when suspending/resuming
+This won't work since we want to use this during vCPU init and at that 
+point, I don't think we can rely on the vCPU x2APIC mode to decide the 
+size of the AVIC physical ID table.
 
-nouveau:
-- ioctl validation fix
+> 		arch_max = x2avic_max_physical_id;
+> 	else
+> 		arch_max = AVIC_MAX_PHYSICAL_ID;
+> 
+> 	return min(kvm->arch.max_vcpu_ids - 1, arch_max);
+>   }
+>
 
-panfrost:
-- scheduler bug fix
+<snip>
 
-mediatek:
-- Add wait_event_timeout when disabling plane
-- only announce AFBC if really supported
-- mtk_dpi: Reorder output formats on MT8195/88
-The following changes since commit 347e9f5043c89695b01e66b3ed111755afcf1911:
+> 
+>   static u32 avic_get_max_physical_id(struct kvm_vcpu *vcpu, u32 arch_max)
+>   {
+> 	return min(kvm->arch.max_vcpu_ids - 1, arch_max);
+>   }
+> 
+>   static void avic_activate_vmcb(struct vcpu_svm *svm)
+>   {
+> 	struct vmcb *vmcb = svm->vmcb01.ptr;
+> 	struct kvm_vcpu *vcpu = &svm->vcpu;
+> 	u32 max_id;
+> 
+> 	vmcb->control.int_ctl &= ~(AVIC_ENABLE_MASK | X2APIC_MODE_MASK);
+> 	vmcb->control.int_ctl |= AVIC_ENABLE_MASK;
+> 
+> 	/*
+> 	 * Note: KVM supports hybrid-AVIC mode, where KVM emulates x2APIC MSR
+> 	 * accesses, while interrupt injection to a running vCPU can be
+> 	 * achieved using AVIC doorbell.  KVM disables the APIC access page
+> 	 * (deletes the memslot) if any vCPU has x2APIC enabled, thus 
+> 	 enabling
+> 	 * AVIC in hybrid mode activates only the doorbell mechanism.
+> 	 */
+> 	if (x2avic_enabled && apic_x2apic_mode(vcpu->arch.apic)) {
+> 		vmcb->control.int_ctl |= X2APIC_MODE_MASK;
+> 		max_id = avic_get_max_physical_id(vcpu, x2avic_max_physical_id);
+> 
+> 		/* Disabling MSR intercept for x2APIC registers */
+> 		svm_set_x2apic_msr_interception(svm, false);
+> 	} else {
+> 		max_id = avic_get_max_physical_id(vcpu, 
+> 		AVIC_MAX_PHYSICAL_ID);
+> 		/*
+> 		 * Flush the TLB, the guest may have inserted a non-APIC
+> 		 * mapping into the TLB while AVIC was disabled.
+> 		 */
+> 		kvm_make_request(KVM_REQ_TLB_FLUSH_CURRENT, vcpu);
+> 
+> 		/* Enabling MSR intercept for x2APIC registers */
+> 		svm_set_x2apic_msr_interception(svm, true);
+> 	}
+> 
+> 	vmcb->control.avic_physical_id &= ~AVIC_PHYSICAL_MAX_INDEX_MASK;
+> 	vmcb->control.avic_physical_id |= max_id;
+>   }
+> 
+> 
+> I don't think I have a preference between the two?
 
-  Linux 6.16-rc6 (2025-07-13 14:25:58 -0700)
+I'm thinking of limiting the helper to just x2AVIC mode, since the 
+x1AVIC use is limited to a single place. Let me see what I can come up 
+with.
 
-are available in the Git repository at:
+> > +static int svm_vcpu_precreate(struct kvm *kvm)
+> > +{
+> > +	return avic_alloc_physical_id_table(kvm);
+> 
+> Why is allocation being moved to svm_vcpu_precreate()?
 
-  https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2025-07-18-1
+This is because we want KVM_CAP_MAX_VCPU_ID to have been invoked by the 
+VMM, and that is guaranteed to be set by the time the first vCPU is 
+created. We restrict the AVIC physical ID table based on the maximum 
+number of vCPUs set by the VMM.
 
-for you to fetch changes up to 4d33ed640ffc06734271cebda5ac2e3b5a79f453:
+This mirrors how Intel VMX uses this capability. I will call this out 
+explicitly in the commit log.
 
-  Merge tag 'drm-xe-fixes-2025-07-17' of
-https://gitlab.freedesktop.org/drm/xe/kernel into drm-fixes
-(2025-07-18 14:04:06 +1000)
 
-----------------------------------------------------------------
-drm fixes for 6.16-rc7
+Thanks,
+Naveen
 
-dp:
-- aux dpcd address fix
-
-xe:
-- SR-IOV fixes for GT reset and TLB invalidation
-- Fix memory copy direction during migration
-- Fix alignment check on migration
-- Fix MOCS and page fault init order to correctly
-  account for topology
-
-amdgpu:
-- Fix a DC memory leak
-- DCN 4.0.1 degamma LUT fix
-- Fix reset counter handling for soft recovery
-- GC 8 fix
-
-radeon:
-- Drop console locks when suspending/resuming
-
-nouveau:
-- ioctl validation fix
-
-panfrost:
-- scheduler bug fix
-
-mediatek:
-- Add wait_event_timeout when disabling plane
-- only announce AFBC if really supported
-- mtk_dpi: Reorder output formats on MT8195/88
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      drm/nouveau: check ioctl command codes better
-
-Balasubramani Vivekanandan (1):
-      drm/xe/mocs: Initialize MOCS index early
-
-Clayton King (1):
-      drm/amd/display: Free memory allocation
-
-Dave Airlie (5):
-      Merge tag 'drm-misc-fixes-2025-07-16' of
-https://gitlab.freedesktop.org/drm/misc/kernel into drm-fixes
-      Merge tag 'drm-intel-fixes-2025-07-17' of
-https://gitlab.freedesktop.org/drm/i915/kernel into drm-fixes
-      Merge tag 'amd-drm-fixes-6.16-2025-07-17' of
-https://gitlab.freedesktop.org/agd5f/linux into drm-fixes
-      Merge tag 'mediatek-drm-fixes-20250718' of
-https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux
-into drm-fixes
-      Merge tag 'drm-xe-fixes-2025-07-17' of
-https://gitlab.freedesktop.org/drm/xe/kernel into drm-fixes
-
-Eeli Haapalainen (1):
-      drm/amdgpu/gfx8: reset compute ring wptr on the GPU on resume
-
-Icenowy Zheng (1):
-      drm/mediatek: only announce AFBC if really supported
-
-Imre Deak (1):
-      drm/dp: Change AUX DPCD probe address from LANE0_1_STATUS to
-TRAINING_PATTERN_SET
-
-Jason-JH Lin (1):
-      drm/mediatek: Add wait_event_timeout when disabling plane
-
-Lijo Lazar (1):
-      drm/amdgpu: Increase reset counter only on success
-
-Louis-Alexis Eyraud (1):
-      drm/mediatek: mtk_dpi: Reorder output formats on MT8195/88
-
-Lucas De Marchi (1):
-      drm/xe/migrate: Fix alignment check
-
-Matthew Auld (1):
-      drm/xe/migrate: fix copy direction in access_memory
-
-Matthew Brost (1):
-      drm/xe: Move page fault init after topology init
-
-Melissa Wen (1):
-      drm/amd/display: Disable CRTC degamma LUT for DCN401
-
-Michal Wajdeczko (2):
-      drm/xe/pf: Prepare to stop SR-IOV support prior GT reset
-      drm/xe/pf: Resend PF provisioning after GT reset
-
-Philipp Stanner (1):
-      drm/panfrost: Fix scheduler workqueue bug
-
-Tejas Upadhyay (1):
-      drm/xe: Dont skip TLB invalidations on VF
-
-Thomas Zimmermann (2):
-      drm/radeon: Do not hold console lock while suspending clients
-      drm/radeon: Do not hold console lock during resume
-
- drivers/gpu/drm/amd/amdgpu/amdgpu_ring.c           |  9 ++++--
- drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c              |  1 +
- .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c | 11 ++++++-
- .../amd/display/dc/clk_mgr/dcn401/dcn401_clk_mgr.c |  3 +-
- drivers/gpu/drm/display/drm_dp_helper.c            |  2 +-
- drivers/gpu/drm/mediatek/mtk_crtc.c                | 36 +++++++++++++++++++++-
- drivers/gpu/drm/mediatek/mtk_crtc.h                |  1 +
- drivers/gpu/drm/mediatek/mtk_ddp_comp.c            |  1 +
- drivers/gpu/drm/mediatek/mtk_ddp_comp.h            |  9 ++++++
- drivers/gpu/drm/mediatek/mtk_disp_drv.h            |  1 +
- drivers/gpu/drm/mediatek/mtk_disp_ovl.c            |  7 +++++
- drivers/gpu/drm/mediatek/mtk_dpi.c                 |  4 +--
- drivers/gpu/drm/mediatek/mtk_plane.c               | 12 ++++++--
- drivers/gpu/drm/mediatek/mtk_plane.h               |  3 +-
- drivers/gpu/drm/nouveau/nouveau_drm.c              | 11 +++----
- drivers/gpu/drm/panfrost/panfrost_job.c            |  2 +-
- drivers/gpu/drm/radeon/radeon_device.c             | 23 ++++----------
- drivers/gpu/drm/xe/xe_gt.c                         | 15 +++++----
- drivers/gpu/drm/xe/xe_gt_sriov_pf.c                | 19 ++++++++++++
- drivers/gpu/drm/xe/xe_gt_sriov_pf.h                |  5 +++
- drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c         | 27 ++++++++++++++++
- drivers/gpu/drm/xe/xe_migrate.c                    |  6 ++--
- drivers/gpu/drm/xe/xe_ring_ops.c                   | 22 ++++++-------
- 23 files changed, 174 insertions(+), 56 deletions(-)
 
