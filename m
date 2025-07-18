@@ -1,178 +1,138 @@
-Return-Path: <linux-kernel+bounces-736995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA7F8B0A66A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 16:34:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E525B0A671
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 16:37:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F5C77BB378
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:33:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 222F61C811C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CEEB2DCBF7;
-	Fri, 18 Jul 2025 14:34:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC312DCBF8;
+	Fri, 18 Jul 2025 14:36:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a3XCVo89"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fHfMt9D9"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D452DAFD4;
-	Fri, 18 Jul 2025 14:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384332D9ECB
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 14:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752849271; cv=none; b=TkZch/onPjDM/VOZXISE4yNedO4yG4fJYBgSjf+CeXRCNb+KJRw6eS0hrEROJEfAk09/ITLdMqROO7pi4hoABwF+vG8Koo30j1tdLwvYkcMtl1LsGHXSUJ5sRzmiM1YPZvOP7ia3p0LXwE1Cl9PhYT7UlQ/th9jr/xJHbah1lmg=
+	t=1752849417; cv=none; b=h8iTFPCZ5yy58JWnUmjiOubPzxMVntE6oRYdRLOndkZGxJfWlCfQnB14/uEWz3QWd7RsL0pVV/k48/jo7A6Y7SvUZATLc3N6u0THowDHQSwK08WgItOLYrpXgmB/qyL7IsXy7tc0FwJdA0nlMiTU0VRpwkvTWDL+GKe4s+Ae1Gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752849271; c=relaxed/simple;
-	bh=13JiryTUqvHobefpOGHqTVk5FnzqxAodhM9uj0YvSPA=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=XCruJGpSQv2v9dS9irFILpQ0/OluNWjcpRzpc1h5Xvk24+5OKkOrvgsRqcfi1A8L65tm5oCNrBjRZ5jHmdHO7EfxOmuRAspQfYiFuJ8OGRRILeCYuTOdk3KpBJz/bMCZjEwajzJ/4SfKDAraS4w8LmMzN8Kvp0Ie0H/wZBEN+gU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a3XCVo89; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7490cb9a892so1504930b3a.0;
-        Fri, 18 Jul 2025 07:34:30 -0700 (PDT)
+	s=arc-20240116; t=1752849417; c=relaxed/simple;
+	bh=3QPhCm1sC1C6ig0Iw4HK9wtVB3WXrHJKElM+ObxU4mI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=CTXaeI7DeBHm59gmeJGgRHOkrR0k8PpkLOMLTzekV1fVNtA8mYVhA2GqW6JGzPtZdiWOw8cKnhRb6AJcONx8LRf1nbJpvhbhWX7VANhRvgPevqM/4RM7gTsleo11XWXDGJWXubYFaH7059ufAIK8D5UNi/t3GOW2gAmrkT7oPPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fHfMt9D9; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-315af0857f2so2173136a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 07:36:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752849270; x=1753454070; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dc4RmbubOACKDopQNCQandB/1PMGeDeSvCmTVZVuJ74=;
-        b=a3XCVo89ANIFqG8owJXYGAakgOmTIJMZQx59FZ/SHwLfXez6V8iujZanPdWC+PMdty
-         Pjsaj0D3uj14JecGOkYfY+54M/50qG+3UyFW7Hp2TunioVHggsJsCe+MsunibK2nXH/V
-         dtuiLnql+uDBCjzP+wUV5dBdpYlEvI1Jmh0giO6D/5fmttXnRmv7LrZG0uqb3FRb6RTe
-         aWvfHFZFDg+FAN2b1WfzubdwqPqs4lt9C+7DuSNHI5xul5IVHnZ1k5YEvbZxURy/nb8H
-         iCwLaX04OI8d8lNNIkftnyOsSlfEvAPdJISPPDMCl2u1fdFQCf/GXgsIFL4tcsnKmH9f
-         3JBA==
+        d=google.com; s=20230601; t=1752849415; x=1753454215; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=L4B72Imjuaymxf5ffOiaUn+eLcRTliNp0eW0wBJCGUQ=;
+        b=fHfMt9D9JHvvGuoU9ojC5r7kVOKutE+V8nBnhSdrLkL99yHuDEkbz/P8+vkCLb3NuW
+         rDRoOYZOHctAJrpHFsnKnUtsaCw3qwOf+XDflSdHJqwdbuv+Qq9mvTzQBrNphwCdHb2S
+         0XhFP6jUcz/1E/p873TTTzS+PvyLiGpeJlp5llKA+KVaroB1tG1vyY64UOiHsQGi+V9W
+         V633z60UMXSMERSmCTHV+ZXU6RZ7fb00Bxd1DSd+EvKWxhfyYSOWxTmLQ7XeIm3HVr21
+         Zon10Gis8xKVhdaUwdWfxLd4Lly03NfceJdoyHsLlcs3u8tXmRQdW5RiXiwd5QQAXkiY
+         YGpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752849270; x=1753454070;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dc4RmbubOACKDopQNCQandB/1PMGeDeSvCmTVZVuJ74=;
-        b=TqutTx6brIcJpYRZLQGVmzn1yeL/GkdJqXC9dKj6BOhK9LYon+R/xMVNYH1Is5j99+
-         Yk+/bIPD6yuHKxQtSS6zPAYTfClItGN9WCefFqjkd7n1k4hJ1+m8kFuVI8jomws5GovH
-         J1o1pLO67yvjLype6Q4d4Ngk5ckgOCZhk9FuitkFcm/97lX31q+u2KYLdP3bBGPCyA2P
-         9m0l5K2qhQm/Ro/tUVJN6EOJz8uNYZpE1mmW1TX/dylJ4A6iwsR3YUgect7yUZCUR1ra
-         d5dNg+9nGVIaTyEHSxbFvJRHyFfpemJjWdRtUmZz3HrAScB1FaEO9elNlZT4YPCHfhnu
-         y04g==
-X-Forwarded-Encrypted: i=1; AJvYcCWHKLF2xamvIM1IEEY8o+csdohSgXJxDB0ObIEKmmRu1qzs6uc2p+TbjjmjutjasX+QEsDwAKU0LEqZy54=@vger.kernel.org, AJvYcCWkvK8DC7aEzJ39L9EZjrBiM2d0PmKNFbbvZVRJT52vqeiJ2UaZSL3lvb663aIrVgMrj8h1ym3ryh2xBFc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2Yr2XB61i+8rTa1ywvB0mjCE2OL4+M2TegfdJAkOuuPydJT7u
-	QnWF4OF2g0MTlkqKD4fb6Gp9RpltMUxvqYKzFy/D1chbl1R92qKMHbuW
-X-Gm-Gg: ASbGncvPo5UdNqhlC+rms59nYXCV++J5dtNEMwPYut5zrmfrbTn56DvhK3LBt4Bo2A6
-	qR3a3xRacI9tZSIRsn0Z6E/dL0V9WOTJcpEdsLmdNPtyIMx4lPV5ii9Bk+DuJsRnpG9iUqxPzy/
-	dtPY0Gl/OOBF0c29x8CyJWH72YKdcPtplHxSF/W3DM8nlvf9ZsPbFC0jv3hsH+isKp9RFd1tvSM
-	k8aXQ7VS+Yy7dAUV1j8v2MC8MfgIb4XrEnqKr7CBBtz2pUABIyl7p3zix/9w1Yq5S8BCEkXJzyu
-	0/+A+M16EQC40sVkpi54g5bow+EQ/CpjGBlwJJ1ngtxCe0OMX34hBgp2euLV5b/xs7D2BbpxR5g
-	qBTskvav9IenhgT8CeyX9IiwiyPk9GF5krZe60b29q6Zd7IhQ2OCUZ/tEmNmklmoRikdQYGvL1c
-	U=
-X-Google-Smtp-Source: AGHT+IHIjbZRs8M6aJo8lmvlsW5wDpBjayivkW7Y0yOv0ghLZuE4hUj3gKo2FHaxEbQIZzzQ4ZKD+w==
-X-Received: by 2002:a05:6a21:329d:b0:234:28d7:b8fa with SMTP id adf61e73a8af0-2391ca91791mr5369708637.40.1752849269470;
-        Fri, 18 Jul 2025 07:34:29 -0700 (PDT)
-Received: from SIQOL-WIN-0002-DARSHAN.localdomain ([27.57.176.233])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759cb152227sm1351774b3a.79.2025.07.18.07.34.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jul 2025 07:34:29 -0700 (PDT)
-From: Darshan Rathod <darshanrathod475@gmail.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Darshan Rathod <darshanrathod475@gmail.com>,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] media: b2c2: flexcop: Fix coding style issues
-Date: Fri, 18 Jul 2025 14:34:20 +0000
-Message-ID: <20250718143423.2798-1-darshanrathod475@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1752849415; x=1753454215;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=L4B72Imjuaymxf5ffOiaUn+eLcRTliNp0eW0wBJCGUQ=;
+        b=YPesKb0UfnPYOhvb9BsB9Qm++Ab5ItnqaA1XN4Is0+SdgVoY0njaUQ4+XwFikrxN+O
+         zimf6o0boR1YH5SPlqJc5vXP1Z1ruJgBY4e8V/Q7rvfMUicOHIKW3alzfsotgB2bl5yf
+         p3m43XsR+fJTQhomfIgcJDOaEx8/pWAPKpjVm8zXlMvV97KUCfbaypoVfk5GxkNmDq/d
+         LPB9yPGjMakSPGK8/WJ1LkDOR0tuvBWqRED3zdpJIy1qVy17RgoUkpU7oCUthvavXFBb
+         5T5Q0NbvOxHhzfBSYxVzuZfPE1K2u8Nsbp9xXhwShXg2nZQi37ukdhX2q27P22masnfX
+         A+sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUkp5FgCOjiE6+xUWUtxFDgRVjpdF9q5buKh3yZrAnYUKwqsnpeFMadym3d9koC3dOpA5aqvw3Uh+tcAZI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybPpGCdMV5t0dioVpraJnvYnFL+CuZSRJwGewOshiXE0tFMZLL
+	ITTIM1GmC7e5V7oaKKfmf/yuClOoowbzltzKzpjfXwuRz3Ce1CEinMstRA3cBY1nWDrKM9tzQyv
+	h4Cy07g==
+X-Google-Smtp-Source: AGHT+IF4Yl8Dc5A2WffN2qGYpDxuj7spPBIOKATA0701jf+XNLG/uY9qWbBOxGQCfP/tnJZ9i37+DEhUc0c=
+X-Received: from pjh6.prod.google.com ([2002:a17:90b:3f86:b0:314:29b4:453])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5385:b0:313:d343:4e09
+ with SMTP id 98e67ed59e1d1-31c9f45e1a3mr13104244a91.3.1752849415579; Fri, 18
+ Jul 2025 07:36:55 -0700 (PDT)
+Date: Fri, 18 Jul 2025 07:36:53 -0700
+In-Reply-To: <60d4e55c-2a4f-44b4-9c93-fab97938a19c@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250611095158.19398-1-adrian.hunter@intel.com>
+ <175088949072.720373.4112758062004721516.b4-ty@google.com>
+ <aF1uNonhK1rQ8ViZ@google.com> <7103b312-b02d-440e-9fa6-ba219a510c2d@intel.com>
+ <aHEMBuVieGioMVaT@google.com> <3989f123-6888-459b-bb65-4571f5cad8ce@intel.com>
+ <aHEdg0jQp7xkOJp5@google.com> <60d4e55c-2a4f-44b4-9c93-fab97938a19c@suse.com>
+Message-ID: <aHpcBYwqhcw14iR1@google.com>
+Subject: Re: [PATCH V4 0/1] KVM: TDX: Decrease TDX VM shutdown time
+From: Sean Christopherson <seanjc@google.com>
+To: Nikolay Borisov <nik.borisov@suse.com>
+Cc: Xiaoyao Li <xiaoyao.li@intel.com>, pbonzini@redhat.com, 
+	Adrian Hunter <adrian.hunter@intel.com>, kvm@vger.kernel.org, rick.p.edgecombe@intel.com, 
+	kirill.shutemov@linux.intel.com, kai.huang@intel.com, 
+	reinette.chatre@intel.com, tony.lindgren@linux.intel.com, 
+	binbin.wu@linux.intel.com, isaku.yamahata@intel.com, 
+	linux-kernel@vger.kernel.org, yan.y.zhao@intel.com, chao.gao@intel.com
+Content-Type: text/plain; charset="us-ascii"
 
-The code in flexcop.c has several instances where spaces are missing
-after commas in function call arguments. This violates the Linux
-kernel coding style guidelines.
+On Thu, Jul 17, 2025, Nikolay Borisov wrote:
+> > diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> > index f4d4fd5cc6e8..783b1046f6c1 100644
+> > --- a/arch/x86/kvm/vmx/tdx.c
+> > +++ b/arch/x86/kvm/vmx/tdx.c
+> > @@ -189,6 +189,8 @@ static int init_kvm_tdx_caps(const struct tdx_sys_info_td_conf *td_conf,
+> >          if (!caps->supported_xfam)
+> >                  return -EIO;
+> > +       caps->supported_caps = KVM_TDX_CAP_TERMINATE_VM;
+> 
+> nit: For the sake of consistency make that a |= so that all subsequent
+> additions to it will be uniform with the first.
 
-This patch cleans up these minor style issues by adding the required
-spaces. This is a purely stylistic change with no functional impact
-and improves overall code readability and consistency.
+Objection, speculation, your honor.  :-D
 
-Signed-off-by: Darshan Rathod <darshanrathod475@gmail.com>
----
- drivers/media/common/b2c2/flexcop.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+That assumes that the predominate pattern will be "|=".  But if we end up with a
+collection of capabilities that are unconditionally enumerated by KVM, then I
+definitely want to express that as:
 
-diff --git a/drivers/media/common/b2c2/flexcop.c b/drivers/media/common/b2c2/flexcop.c
-index e7a88a2d248c..8506de48ba45 100644
---- a/drivers/media/common/b2c2/flexcop.c
-+++ b/drivers/media/common/b2c2/flexcop.c
-@@ -170,7 +170,7 @@ static void flexcop_reset(struct flexcop_device *fc)
- 	flexcop_ibi_value v210, v204;
- 
- 	/* reset the flexcop itself */
--	fc->write_ibi_reg(fc,ctrl_208,ibi_zero);
-+	fc->write_ibi_reg(fc, ctrl_208, ibi_zero);
- 
- 	v210.raw = 0;
- 	v210.sw_reset_210.reset_block_000 = 1;
-@@ -183,17 +183,17 @@ static void flexcop_reset(struct flexcop_device *fc)
- 	v210.sw_reset_210.reset_block_700 = 1;
- 	v210.sw_reset_210.Block_reset_enable = 0xb2;
- 	v210.sw_reset_210.Special_controls = 0xc259;
--	fc->write_ibi_reg(fc,sw_reset_210,v210);
-+	fc->write_ibi_reg(fc, sw_reset_210, v210);
- 	msleep(1);
- 
- 	/* reset the periphical devices */
- 
--	v204 = fc->read_ibi_reg(fc,misc_204);
-+	v204 = fc->read_ibi_reg(fc, misc_204);
- 	v204.misc_204.Per_reset_sig = 0;
--	fc->write_ibi_reg(fc,misc_204,v204);
-+	fc->write_ibi_reg(fc, misc_204, v204);
- 	msleep(1);
- 	v204.misc_204.Per_reset_sig = 1;
--	fc->write_ibi_reg(fc,misc_204,v204);
-+	fc->write_ibi_reg(fc, misc_204, v204);
- }
- 
- void flexcop_reset_block_300(struct flexcop_device *fc)
-@@ -202,13 +202,13 @@ void flexcop_reset_block_300(struct flexcop_device *fc)
- 			  v210 = fc->read_ibi_reg(fc, sw_reset_210);
- 
- 	deb_rdump("208: %08x, 210: %08x\n", v208_save.raw, v210.raw);
--	fc->write_ibi_reg(fc,ctrl_208,ibi_zero);
-+	fc->write_ibi_reg(fc, ctrl_208, ibi_zero);
- 
- 	v210.sw_reset_210.reset_block_300 = 1;
- 	v210.sw_reset_210.Block_reset_enable = 0xb2;
- 
--	fc->write_ibi_reg(fc,sw_reset_210,v210);
--	fc->write_ibi_reg(fc,ctrl_208,v208_save);
-+	fc->write_ibi_reg(fc, sw_reset_210, v210);
-+	fc->write_ibi_reg(fc, ctrl_208, v208_save);
- }
- 
- struct flexcop_device *flexcop_device_kmalloc(size_t bus_specific_len)
-@@ -266,8 +266,8 @@ int flexcop_device_initialize(struct flexcop_device *fc)
- 	if (fc->get_mac_addr(fc, 0) == 0) {
- 		u8 *b = fc->dvb_adapter.proposed_mac;
- 		info("MAC address = %pM", b);
--		flexcop_set_mac_filter(fc,b);
--		flexcop_mac_filter_ctrl(fc,1);
-+		flexcop_set_mac_filter(fc, b);
-+		flexcop_mac_filter_ctrl(fc, 1);
- 	} else
- 		warn("reading of MAC address failed.\n");
- 
-@@ -275,7 +275,7 @@ int flexcop_device_initialize(struct flexcop_device *fc)
- 	if (ret)
- 		goto error;
- 
--	flexcop_device_name(fc,"initialization of","complete");
-+	flexcop_device_name(fc, "initialization of", "complete");
- 	return 0;
- 
- error:
--- 
-2.43.0
+	caps->supported_caps = KVM_TDX_CAP_TERMINATE_VM |
+			       KVM_TDX_CAP_FANCY_THING_1 |
+			       KVM_TDX_CAP_FANCY_THING_2 |
+			       KVM_TDX_CAP_FANCY_THING_3;
 
+not as
+
+	caps->supported_caps |= KVM_TDX_CAP_TERMINATE_VM;
+	caps->supported_caps |= KVM_TDX_CAP_FANCY_THING1;
+	caps->supported_caps |= KVM_TDX_CAP_FANCY_THING2;
+	caps->supported_caps |= KVM_TDX_CAP_FANCY_THING3;
+
+I find the former to be much easier to read, and it provides some amount of
+defense-in-depth against uninitialized data.  The downside is that if there are
+conditional capabilities, then we need to ensure that they are added after the
+unconditional set is initialized.  But we absolutely should be able to detect
+such bugs via selftests.  And again, I find that this:
+
+	caps->supported_caps = KVM_TDX_CAP_TERMINATE_VM |
+			       KVM_TDX_CAP_FANCY_THING_1 |
+			       KVM_TDX_CAP_FANCY_THING_2 |
+			       KVM_TDX_CAP_FANCY_THING_3;
+
+	if (i_can_has_cheezburger())
+		caps->supported_caps |= KVM_TDX_CAP_CHEEZBURGER;
+
+makes it easy to identify which capabilities are unconditional versus those that
+are dependent on something else.
 
