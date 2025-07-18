@@ -1,214 +1,119 @@
-Return-Path: <linux-kernel+bounces-737093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57C10B0A796
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:36:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B682CB0A797
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:37:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 447BF188FAA5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:36:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B263188801B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AF882E2666;
-	Fri, 18 Jul 2025 15:29:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B962DECB2;
+	Fri, 18 Jul 2025 15:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dQEKioxu"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="lev25uV9"
+Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638A22E0402
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 15:29:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D522DECC0
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 15:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752852561; cv=none; b=neKeg+NzIO2xOZ4lZfZJlMjM0jz50D+LFs1pA4UMGo+QS4pJWFrh6pDukc0KX6A9sAwxnn71r/AdjFom56iYMbeQizcUtsQAhKcTpQJIha2lHvImZ9jWw0B5nWgfb4ypwCYcwzCmHX1L5xofyupWOktMotsSEi5LxMQ1pX43Wro=
+	t=1752852633; cv=none; b=o24UaowLMC9KkA1bbFUccndJyySQDyws1HZLZELAaIQQp6jQ04yjqK9dZU6CyI/WtfPK+X89RVqaN41FZfU0dsfuVBeX5dW5RFsWdVnjx4QReKxrrH1rStyvymhQz+L7MaZXC+VLi2PYniBPjIjmhyU8MsbcML4Br6JPeapqz5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752852561; c=relaxed/simple;
-	bh=SILD7FqXDKzPN+v5mJfgmM2lCLPnFDjcKYYpG/ct3s0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UMnjFLSVty+Uv/L4sZgu2l27qVZcN91W1iOiH0Z6ebVERGWNQ/UKcGdRRxF0ZnB0YPgslMHX0wHBj5hYeHffzcS6o+tEjK20SHGEefB0MkP68MsaIT/Ja5f1rKZ9x6HWvwpwhes6O9k9szJrsjSCLNTx/YcPJtdnrrQy58/YM2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dQEKioxu; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-553b5165cf5so2642644e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 08:29:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1752852555; x=1753457355; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VW6jrFQzXbLcjEcOPYhLhert2s0KBo9YRnvAtQmafP0=;
-        b=dQEKioxuMUhEVjxMKVd1pE1pf6VdIUG+LptdSUJX2R9XvqQgtRoAk43/8eYaUsrzU/
-         0wYiBYvDQDPo0pI9Qy7xkEtH8Sthbqe3mUDcda040WmzjrSQ0jJ4jweJXJ6xJAQ8lzrP
-         qo4yYrfeBvnD82w5MK1xQQtqcR5vbPYe68Hj8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752852555; x=1753457355;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VW6jrFQzXbLcjEcOPYhLhert2s0KBo9YRnvAtQmafP0=;
-        b=P5BnhggdVRllRMRZcYvEmE7JG9/2X5YW6amCzxJKEOFR1Dov7K0hkQWNyQ8mMCQXFt
-         dpiwfsfmu79YsUNtB7rdZFdee32QQaAGr1aDBAQtUNLY7jGCV4shfjrQZHW7tSvDsnZt
-         eV8WVWEovDQ9uUUO1ahwq8L1bPeD+ASW2lwJlAEkUWR0ZY6Ch7HTZ+sY9buu1EgL2X8S
-         GBTEXzgquDL0h+bsKW1+PHtzfnDzGQXffzY8uAUjv3NLX/Iz+5CRrkDJXOT6gRom5DrZ
-         rjCNP64px7ZHt4n6A7LCatsuWrCWJe6uSDfBYwnZn+EMUIRX+hGjTTtqG184UlmTTFEA
-         pLPA==
-X-Gm-Message-State: AOJu0YzW92zt+Eb/fj3KKso8IlBiY983vtNahyqoyKj2nTGrDtUJpbb9
-	5vnjWyqw++9JzjDOe9C7FmX6foi88UzOszl/m++td5RKDLDt4qjUbZvGFZxuLXHkrg==
-X-Gm-Gg: ASbGncu/RSR2kIyMlmlTgxAGGaPQoENzcrZhUrI20oocmRRbhZ49xyvuyfOEFwpSCfv
-	OlS2A6GjKOvSouEdfOigOENCwrzz/AWGnagzXgmXXDqsnInba4MPf9/VhtErB0eVZO0ArAHKDrH
-	tMdv/GfIC7oOYA0bVXtF7o9KV1f4XG4d65V8gc9PrnBhoUaUDb1jOMCGBfRZRr0BDrk7t3NkJST
-	rZwdLxaCyb1FtVpoT6jezHjybxhDCXb/LodEuNVEw5Cy0p6NIkyLaraJaiLvaLogoAh+kJp8HU+
-	x4/WVihfnKxbjsaW96L3Fv5dk5BWBX4R2g18jDPla2x5AyfK1YGt9MFyJlDpzbxPNVv5YCIvhYq
-	e1w6c7VRM/nFSyvZEmZ8drOlT+TWimqO9XKqXNnH2sJ63wtnNN4D0QsF5MmTu1qsUfrNaXtvN5u
-	qIPA==
-X-Google-Smtp-Source: AGHT+IFzEZudqyc1gvkTsADJ1J0J6zl9peQTdQgm9si/Z20OV6QzPGlTr3dUVncj75ikKEgrskz53A==
-X-Received: by 2002:a05:651c:2149:b0:32b:2fba:8b90 with SMTP id 38308e7fff4ca-3308e37166fmr22654361fa.14.1752852555208;
-        Fri, 18 Jul 2025 08:29:15 -0700 (PDT)
-Received: from ribalda.c.googlers.com (166.141.88.34.bc.googleusercontent.com. [34.88.141.166])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-330a91d9d6dsm2268601fa.83.2025.07.18.08.29.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jul 2025 08:29:14 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Fri, 18 Jul 2025 15:29:14 +0000
-Subject: [PATCH v5 5/5] media: uvcvideo: Remove UVC_EXT_GPIO entity
+	s=arc-20240116; t=1752852633; c=relaxed/simple;
+	bh=f3LSdoYYmURS1rjz0097H7ejp033uVg7byHFkNuPVVE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ldgGzCAm2exGu+edVxA+eF0hVM9UzVNxaHybTJN5eMtVdtzTOZgxpJfOkigVEiqi+/5Qy+NguMfGuPbtyMtV8rxv+NZkzAWW7BojKSpJDaUs4vjPdpVuLeGkIKEFTcVn3R9CoUQ59NpPFa86K7td/AR7AOdZmlQHEZzC4zVFUOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=lev25uV9; arc=none smtp.client-ip=103.21.126.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
+Received: from ldns2.iitb.ac.in (ldns2.iitb.ac.in [10.200.12.2])
+	by smtp1.iitb.ac.in (Postfix) with SMTP id F2A63101193C
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 21:00:23 +0530 (IST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in F2A63101193C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
+	t=1752852623; bh=f3LSdoYYmURS1rjz0097H7ejp033uVg7byHFkNuPVVE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=lev25uV9L6S8T9uZxe+yu2+fKUbS2pCyuZfta79tZWvM3/B4GvdekxUth7VnAvNWr
+	 aMIAw/s3/QoWvXFMbkk+EUPzxeztrG8NF2+Izz06vCRTDoBe7GBY8eOufwx2hTtAsJ
+	 EsVzUpmG3bAuaScxO8wjZBMiB1Zt6z72WMGMDWVc=
+Received: (qmail 13141 invoked by uid 510); 18 Jul 2025 21:00:23 +0530
+X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns2 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
+ spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.100.0/26337} 
+ Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 4.023033 secs; 18 Jul 2025 21:00:23 +0530
+X-Spam-Level: 
+X-Spam-Pyzor: Reported 0 times.
+X-Envelope-From: akhilesh@ee.iitb.ac.in
+X-Qmail-Scanner-Mime-Attachments: |
+X-Qmail-Scanner-Zip-Files: |
+Received: from unknown (HELO ldns2.iitb.ac.in) (10.200.1.25)
+  by ldns2.iitb.ac.in with SMTP; 18 Jul 2025 21:00:19 +0530
+Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	by ldns2.iitb.ac.in (Postfix) with ESMTP id 84B093414EF;
+	Fri, 18 Jul 2025 21:00:19 +0530 (IST)
+Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	(Authenticated sender: akhilesh)
+	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id 5DFEA1E814D3;
+	Fri, 18 Jul 2025 21:00:19 +0530 (IST)
+Date: Fri, 18 Jul 2025 21:00:13 +0530
+From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+To: jens.wiklander@linaro.org, sumit.garg@kernel.org
+Cc: op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org,
+	akhileshpatilvnit@gmail.com, skhan@linuxfoundation.org
+Subject: [PATCH] drivers: tee: improve sysfs interface by using sysfs_emit()
+Message-ID: <aHpohUxxSH42w16U@bhairav-test.ee.iitb.ac.in>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250718-uvc-subdev-v5-5-a5869b071b0d@chromium.org>
-References: <20250718-uvc-subdev-v5-0-a5869b071b0d@chromium.org>
-In-Reply-To: <20250718-uvc-subdev-v5-0-a5869b071b0d@chromium.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Hans de Goede <hansg@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
- Yunke Cao <yunkec@chromium.org>, linux-gpio@vger.kernel.org, 
- linux-usb@vger.kernel.org, Ricardo Ribalda <ribalda@chromium.org>, 
- Hans Verkuil <hverkuil@kernel.org>, Hans de Goede <hansg@kernel.org>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The only implementation of this entity was the external privacy gpio,
-which now does not require to emulate an entity.
-Remove all the dead code.
+Replace scnprintf() with sysfs_emit() while formatting buffer that is
+passed to userspace as per the recommendation in
+Documentation/filesystems/sysfs.rst. sysfs _show() callbacks should use
+sysfs_emit() or sysfs_emit_at() while returning values to the userspace.
+This change does not impact functionality, but aligns with sysfs
+interface usage guidelines for the tee driver.
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
 ---
- drivers/media/usb/uvc/uvc_driver.c |  4 ----
- drivers/media/usb/uvc/uvc_entity.c |  1 -
- drivers/media/usb/uvc/uvcvideo.h   | 20 +++++++-------------
- include/linux/usb/uvc.h            |  3 ---
- 4 files changed, 7 insertions(+), 21 deletions(-)
+ drivers/tee/optee/core.c | 2 +-
+ drivers/tee/tee_core.c   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index b79d276732bc80ef175ffdbaa73b6395585ff07b..d19b5a200971654161267dc755aec2a06b5fdc9e 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -789,7 +789,6 @@ static int uvc_parse_streaming(struct uvc_device *dev,
+diff --git a/drivers/tee/optee/core.c b/drivers/tee/optee/core.c
+index c75fddc83576..ce44e3498d37 100644
+--- a/drivers/tee/optee/core.c
++++ b/drivers/tee/optee/core.c
+@@ -72,7 +72,7 @@ static ssize_t rpmb_routing_model_show(struct device *dev,
+ 	else
+ 		s = "user";
+ 
+-	return scnprintf(buf, PAGE_SIZE, "%s\n", s);
++	return sysfs_emit(buf, "%s\n", s);
  }
+ static DEVICE_ATTR_RO(rpmb_routing_model);
  
- static const u8 uvc_camera_guid[16] = UVC_GUID_UVC_CAMERA;
--static const u8 uvc_gpio_guid[16] = UVC_GUID_EXT_GPIO_CONTROLLER;
- static const u8 uvc_media_transport_input_guid[16] =
- 	UVC_GUID_UVC_MEDIA_TRANSPORT_INPUT;
- static const u8 uvc_processing_guid[16] = UVC_GUID_UVC_PROCESSING;
-@@ -821,9 +820,6 @@ struct uvc_entity *uvc_alloc_entity(u16 type, u16 id, unsigned int num_pads,
- 	 * is initialized by the caller.
- 	 */
- 	switch (type) {
--	case UVC_EXT_GPIO_UNIT:
--		memcpy(entity->guid, uvc_gpio_guid, 16);
--		break;
- 	case UVC_ITT_CAMERA:
- 		memcpy(entity->guid, uvc_camera_guid, 16);
- 		break;
-diff --git a/drivers/media/usb/uvc/uvc_entity.c b/drivers/media/usb/uvc/uvc_entity.c
-index cc68dd24eb42dce5b2846ca52a8dfa499c8aed96..94e0119746e4689a45960955a35be93a25bc16c4 100644
---- a/drivers/media/usb/uvc/uvc_entity.c
-+++ b/drivers/media/usb/uvc/uvc_entity.c
-@@ -105,7 +105,6 @@ static int uvc_mc_init_entity(struct uvc_video_chain *chain,
- 		case UVC_OTT_DISPLAY:
- 		case UVC_OTT_MEDIA_TRANSPORT_OUTPUT:
- 		case UVC_EXTERNAL_VENDOR_SPECIFIC:
--		case UVC_EXT_GPIO_UNIT:
- 		default:
- 			function = MEDIA_ENT_F_V4L2_SUBDEV_UNKNOWN;
- 			break;
-diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-index c098f30b07797281576d7ff533cde25309be8b61..b4eaca187d61b2e9f8a4af6ac6ac071145b48df2 100644
---- a/drivers/media/usb/uvc/uvcvideo.h
-+++ b/drivers/media/usb/uvc/uvcvideo.h
-@@ -39,9 +39,6 @@
- 	(UVC_ENTITY_IS_TERM(entity) && \
- 	((entity)->type & 0x8000) == UVC_TERM_OUTPUT)
+diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
+index acc7998758ad..944f913f8592 100644
+--- a/drivers/tee/tee_core.c
++++ b/drivers/tee/tee_core.c
+@@ -977,7 +977,7 @@ static ssize_t implementation_id_show(struct device *dev,
+ 	struct tee_ioctl_version_data vers;
  
--#define UVC_EXT_GPIO_UNIT		0x7ffe
--#define UVC_EXT_GPIO_UNIT_ID		0x100
--
- /* ------------------------------------------------------------------------
-  * Driver specific constants.
-  */
-@@ -189,8 +186,7 @@ struct uvc_entity {
+ 	teedev->desc->ops->get_version(teedev, &vers);
+-	return scnprintf(buf, PAGE_SIZE, "%d\n", vers.impl_id);
++	return sysfs_emit(buf, "%d\n", vers.impl_id);
+ }
+ static DEVICE_ATTR_RO(implementation_id);
  
- 	/*
- 	 * Entities exposed by the UVC device use IDs 0-255, extra entities
--	 * implemented by the driver (such as the GPIO entity) use IDs 256 and
--	 * up.
-+	 * implemented by the driver use IDs 256 and up.
- 	 */
- 	u16 id;
- 	u16 type;
-@@ -239,13 +235,6 @@ struct uvc_entity {
- 			u8  *bmControls;
- 			u8  *bmControlsType;
- 		} extension;
--
--		struct uvc_gpio {
--			int irq;
--			bool initialized;
--			bool gpio_ready;
--			struct gpio_desc *gpio_privacy;
--		} gpio;
- 	};
- 
- 	u8 bNrInPins;
-@@ -628,7 +617,12 @@ struct uvc_device {
- 		const void *data;
- 	} async_ctrl;
- 
--	struct uvc_gpio gpio_unit;
-+	struct uvc_gpio {
-+		int irq;
-+		bool initialized;
-+		bool gpio_ready;
-+		struct gpio_desc *gpio_privacy;
-+	} gpio_unit;
- };
- 
- struct uvc_fh {
-diff --git a/include/linux/usb/uvc.h b/include/linux/usb/uvc.h
-index ee19e9f915b8370c333c426dc1ee4202c7b75c5b..6858675ce70dc0a872edd47531682bc415f83bd9 100644
---- a/include/linux/usb/uvc.h
-+++ b/include/linux/usb/uvc.h
-@@ -26,9 +26,6 @@
- #define UVC_GUID_UVC_SELECTOR \
- 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, \
- 	 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x02}
--#define UVC_GUID_EXT_GPIO_CONTROLLER \
--	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, \
--	 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x03}
- #define UVC_GUID_MSXU_1_5 \
- 	{0xdc, 0x95, 0x3f, 0x0f, 0x32, 0x26, 0x4e, 0x4c, \
- 	 0x92, 0xc9, 0xa0, 0x47, 0x82, 0xf4, 0x3b, 0xc8}
-
 -- 
-2.50.0.727.gbf7dc18ff4-goog
+2.34.1
 
 
