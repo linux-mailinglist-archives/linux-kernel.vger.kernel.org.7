@@ -1,184 +1,227 @@
-Return-Path: <linux-kernel+bounces-736152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69075B09972
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:56:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9AC1B099AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 04:11:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30197A4049F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 01:55:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72BEF7AA006
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 02:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3548F191F89;
-	Fri, 18 Jul 2025 01:55:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196C2194A59;
+	Fri, 18 Jul 2025 02:11:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VJD4Iw9j"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="i6J9wKv2"
+Received: from mail-m49224.qiye.163.com (mail-m49224.qiye.163.com [45.254.49.224])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A74145A1F
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 01:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1BEF1BC2A;
+	Fri, 18 Jul 2025 02:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.224
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752803754; cv=none; b=n4XumF6s10E8ZM2l5rUjzEJ8GXGFQgppzz7IUCv8d/2MLQx0+PZ32zwT2TD3KejDo7aWYsYBH6qy1LumOJR778wd/YUZSAXSwOHMFR6DrYhYncetVtPbs+MeJhoDmMI/QBTiRz8DL1SzO8jhQ5mD1FS5cMjToK6S6hK4COS6ZDs=
+	t=1752804674; cv=none; b=ukIwMTAnFUSh7Oe5R2+Ynl02ksnxdt1/Zdt9/TtKBZ3pEWoQyN2ANL1Gbkps21uUTe8tGIvgumZ3wCon9ZtmtxGdKba2A/9nbSKZOipwcl3bjWIC6vkjyEr+WH3Rc9VuLFBkS6zGQ9Gsf9oFRAvIWUf8y/jO1cmTsaJd9lDGerE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752803754; c=relaxed/simple;
-	bh=20DCxdKAsTeDjS+r8T+9Ikr6q/ALKVAVb135jUfAnEA=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=kZiMM7OHQte1Q/1I2nwv4xCLrJvydSWpzb40jZ2RQd07bZPdC+HqVYRHb/6oyHIrPvIp8CeFcSqzvZmKXa/nYo4KKHyglkf7XuSws2gIKB/6T83O1bsDk9tkv5/Qe1ag9Zcdss20sH8eOp07giYHU7jxJEx8nrtdFV7AlW39lrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VJD4Iw9j; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7e278d8345aso157681985a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 18:55:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752803752; x=1753408552; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PtFfofjayrjeKW0qhDCX7H6D6mu8v6iNbOK27WV8o6I=;
-        b=VJD4Iw9jhgswt+8iM+9+e0naeuXwXOWuVwAu31abJFUlg6Z6zSzDtvjsE1Xsyp/UnS
-         pif3A1PCCKWgIP817XP+/nrA8qHF+hWLZ842WNJhfPZ+JS0WU64uJ6zrqyC6ZqeL9AFF
-         LZDq6rvRIrrN8Xl98R0QdOnezThB09xl8fOfwhV2TA3601Yo8ithn0F1zB0waqcKoPiA
-         2Rh+dZuKQbnGgyajUj7ZQaDQRLxpGtm1HK3N2AAE1lxn3rM4AR9TkdYB5Hi9XFSuC5bP
-         C6JmrhBAPZwM8VRsnB9fGOKbxl87yvfKhHrEpmE6zBMV0fHVkLirSwq+a7KFKFEXjU4f
-         XsNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752803752; x=1753408552;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PtFfofjayrjeKW0qhDCX7H6D6mu8v6iNbOK27WV8o6I=;
-        b=DMmE2ArRbfcfDqjJ+fTUrdHe/Oewqd5IKjXzaBnffHUBQolxxWkjTgjYN8edKMY133
-         2rsrOomox/ZU+ZKRoP+0xF/Cd02YRwl66ZvAMUInNwH91t0WFxwq5x3beB6dBYEzlMQb
-         0+NC/iUnmOQAfWsI1q5yDxbCmynKfYEGjgVhcCEt7GRKZ2nSuvC4sryjyBKwiB16Piu4
-         wCqzH109aTgmDt1YtB2prntS+HzxMXf3ypJg5wLRy2uaSCRlNzoVoLA+c902KRMbnFlM
-         zuk9NzBaLaotsD/0A/+jA8t+yuUCbeYryzTrGW5zz+AVXdn1R0jzBAC1y0PD5CFoeTj0
-         1ekw==
-X-Forwarded-Encrypted: i=1; AJvYcCUhSpqKOclKq0M1aKXrKVzrUusALtKOtsKcODTlhUsbn5Nvipnk4SqjvjC86dWv7q9b7/fjeKEKuIo9yCo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQT15GACzZkhsBhbmQsKkODTt8XiNn/gRHWeEPIwTgspsjgPr9
-	3gH269h0+ErTJgtZCdFEd0895AA/54jsK4vpbPSjKuPPuq6l/u6FDia+J4M8J6zb
-X-Gm-Gg: ASbGnctGQn4m9YwzSctdjytxEcw5j4TuGG5OZL5yE3usA9nPnqvfGbQFX7Tmg2UEBC4
-	fA3TEX9FM4Ol3HnXr6iU/63A45a0c7lTr4HbcO5jZnRM82tnc0M0dgodG+h6fg30T6Oa4NpAHAZ
-	WUeR3fBQ76gEg3b+BDOP4ENVQsLAdGBQj8fxY5o/93keyOaRwowE7Po4zU9MirUrxq8eqzD3CDW
-	CaUHY21PwhZxY95lzRlzzs0vRgEHjbtBmcvN+X+l7nhttIeKcPlM8vD8ur1PTmGLdje9m+Xq/c8
-	+UZm8C0PiSbW9L8mXbvqDcQ1q2yKmQHZehqi9L2l8wc3ZB6BmbPIjOT0hb9mYs9RiA44KERmaA3
-	Tp9qrpAhe1kKfVt4xX4UcnJ2j0mKevEGobszzBiJDIu4Bwkn42wE=
-X-Google-Smtp-Source: AGHT+IGlnfcl2f5QuL0UPlHYoxnPncK/CJRs0DM1FsmO46euhoYOdzFtKOhBp++MjORv8Dvtbxekcg==
-X-Received: by 2002:a05:620a:2915:b0:7e3:3699:f3fa with SMTP id af79cd13be357-7e343658639mr1369121885a.58.1752803751815;
-        Thu, 17 Jul 2025 18:55:51 -0700 (PDT)
-Received: from linux-kernel-dev-start.. ([159.203.26.228])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e356c3e32fsm32479985a.52.2025.07.17.18.55.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 18:55:51 -0700 (PDT)
-From: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
-To: gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	vivek.balachandhar@gmail.com
-Subject: [PATCH v3] staging: rtl8192u: Rename ChannelPlan to channel_plan and fix index name
-Date: Fri, 18 Jul 2025 01:55:25 +0000
-Message-Id: <20250718015525.162561-1-vivek.balachandhar@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1752804674; c=relaxed/simple;
+	bh=1N7ytZis29CPZTGf/iePZSRhIyuhTGoGr3mV+MXU8UQ=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=FxHStpou4pTBgv5r30fiu5/pJHdSLRCDvFm+Qn9xuUWLyypSw3Q0qmKJ/db3aVQucCw5f7yh915+5qQpH3EriJU9hGFt0Sml0Wu2gSBS8GGZb29Upl0+PfZ4Tu+Mmske0gua5pjyEcAYCs5Oq5Ni0XwnqDMK0Uz3/MN0R5z4oMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=i6J9wKv2; arc=none smtp.client-ip=45.254.49.224
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.129] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1c6a85541;
+	Fri, 18 Jul 2025 09:55:50 +0800 (GMT+08:00)
+Message-ID: <ac48d142-7aec-4fdd-92a4-6f9bc10a7928@rock-chips.com>
+Date: Fri, 18 Jul 2025 09:55:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Cc: shawn.lin@rock-chips.com, Hugh Cole-Baker <sigmaris@gmail.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org
+Subject: Re: [RFC PATCH v3 2/3] PCI: rockchip-host: Retry link training on
+ failure without PERST#
+To: Geraldo Nascimento <geraldogabriel@gmail.com>
+References: <cover.1749582046.git.geraldogabriel@gmail.com>
+ <b7c09279b4a7dbdba92543db9b9af169776bd90c.1749582046.git.geraldogabriel@gmail.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+In-Reply-To: <b7c09279b4a7dbdba92543db9b9af169776bd90c.1749582046.git.geraldogabriel@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGh9MTFYZQxgYGB1CTE5MSkJWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+X-HM-Tid: 0a981b3eb22b09cckunm9ba9285b1f9de7b
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PS46MSo4AzE3P1ZNATguNxEY
+	TQJPCzNVSlVKTE5JQ0tITE5JS09JVTMWGhIXVQgTGgwVVRcSFTsJFBgQVhgTEgsIVRgUFkVZV1kS
+	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQU1DS0g3Bg++
+DKIM-Signature:a=rsa-sha256;
+	b=i6J9wKv2sF8hty+9HcYY7Grx2KFg7v7tdWpFM6j9VKKFMuYavSInJCeIrPUv3bfq9gU0krIP8YR6oB3JncO+CDd/Q55N7THricQKXBdmc+SZmxD/2LnpW/U9kJDPnyAwOwoPH7+gpU2c5Zgu8QcWkSAyv/TCol6SpwigDy7FZB0=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=XT+RZ7WEBbWIWW/Jed62+BDDdP8o1iduIJiqKrv6b/A=;
+	h=date:mime-version:subject:message-id:from;
 
-This patch renames the global array ChannelPlan to channel_plan
-to follow Linux kernel coding style. Also renamed the index
-variable from channel_plan to chan_plan_idx to avoid
-shadowing and improve readability.
+Hi Geraldo,
 
-v2:
-- Fixed Cc list to include Greg and staging list
+在 2025/06/11 星期三 3:05, Geraldo Nascimento 写道:
+> After almost 30 days of battling with RK3399 buggy PCIe on my Rock Pi
+> N10 through trial-and-error debugging, I finally got positive results
+> with enumeration on the PCI bus for both a Realtek 8111E NIC and a
+> Samsung PM981a SSD.
+> 
+> The NIC was connected to a M.2->PCIe x4 riser card and it would get
+> stuck on Polling.Compliance, without breaking electrical idle on the
+> Host RX side. The Samsung PM981a SSD is directly connected to M.2
+> connector and that SSD is known to be quirky (OEM... no support)
+> and non-functional on the RK3399 platform.
+> 
+> The Samsung SSD was even worse than the NIC - it would get stuck on
+> Detect.Active like a bricked card, even though it was fully functional
+> via USB adapter.
+> 
+> It seems both devices benefit from retrying Link Training if - big if
+> here - PERST# is not toggled during retry.
+> 
 
-v3:
-- Removed EXTRAVERSION = -vivek from Makefile.
-Signed-off-by: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
----
- Makefile                               |  2 +-
- drivers/staging/rtl8192u/r8192U_core.c | 16 +++++++++-------
- init/main.c                            |  1 +
- 3 files changed, 11 insertions(+), 8 deletions(-)
+I didn't see this error before especially given RTL8111 NIC is widelly
+used by customers.
 
-diff --git a/Makefile b/Makefile
-index 997b67722..93b6fa091 100644
---- a/Makefile
-+++ b/Makefile
-@@ -2,7 +2,7 @@
- VERSION = 6
- PATCHLEVEL = 1
- SUBLEVEL = 0
--EXTRAVERSION =
-+EXTRAVERSION = -vivek
- NAME = Hurr durr I'ma ninja sloth
- 
- # *DOCUMENTATION*
-diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
-index 0a60ef201..b449d0d96 100644
---- a/drivers/staging/rtl8192u/r8192U_core.c
-+++ b/drivers/staging/rtl8192u/r8192U_core.c
-@@ -120,7 +120,7 @@ struct CHANNEL_LIST {
- 	u8	Len;
- };
- 
--static struct CHANNEL_LIST ChannelPlan[] = {
-+static struct CHANNEL_LIST channel_plan[] = {
- 	/* FCC */
- 	{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 36, 40, 44, 48, 52, 56, 60, 64, 149, 153, 157, 161, 165}, 24},
- 	/* IC */
-@@ -145,12 +145,12 @@ static struct CHANNEL_LIST ChannelPlan[] = {
- 	{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}, 14}
- };
- 
--static void rtl819x_set_channel_map(u8 channel_plan, struct r8192_priv *priv)
-+static void rtl819x_set_channel_map(u8 chan_plan_idx, struct r8192_priv *priv)
- {
- 	int i, max_chan = -1, min_chan = -1;
- 	struct ieee80211_device *ieee = priv->ieee80211;
- 
--	switch (channel_plan) {
-+	switch (chan_plan_idx) {
- 	case COUNTRY_CODE_FCC:
- 	case COUNTRY_CODE_IC:
- 	case COUNTRY_CODE_ETSI:
-@@ -172,15 +172,17 @@ static void rtl819x_set_channel_map(u8 channel_plan, struct r8192_priv *priv)
- 				 "unknown rf chip, can't set channel map in function:%s()\n",
- 				 __func__);
- 		}
--		if (ChannelPlan[channel_plan].Len != 0) {
-+		if (channel_plan[chan_plan_idx].Len != 0) {
- 			/* Clear old channel map */
- 			memset(GET_DOT11D_INFO(ieee)->channel_map, 0,
- 			       sizeof(GET_DOT11D_INFO(ieee)->channel_map));
- 			/* Set new channel map */
--			for (i = 0; i < ChannelPlan[channel_plan].Len; i++) {
--				if (ChannelPlan[channel_plan].Channel[i] < min_chan || ChannelPlan[channel_plan].Channel[i] > max_chan)
-+			for (i = 0; i < channel_plan[chan_plan_idx].Len; i++) {
-+				if (channel_plan[chan_plan_idx].Channel[i] < min_chan ||
-+					channel_plan[chan_plan_idx].Channel[i] > max_chan)
- 					break;
--				GET_DOT11D_INFO(ieee)->channel_map[ChannelPlan[channel_plan].Channel[i]] = 1;
-+				GET_DOT11D_INFO(ieee)->channel_map
-+					[channel_plan[chan_plan_idx].Channel[i]] = 1;
- 			}
- 		}
- 		break;
-diff --git a/init/main.c b/init/main.c
-index aa21add5f..648589720 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -680,6 +680,7 @@ static void __init setup_command_line(char *command_line)
- 
- static __initdata DECLARE_COMPLETION(kthreadd_done);
- 
+Could you help tried this?
+[1] apply your patch 3 first
+[2] apply below changes
+
+--- a/drivers/pci/controller/pcie-rockchip-host.c
++++ b/drivers/pci/controller/pcie-rockchip-host.c
+@@ -314,7 +314,7 @@ static int rockchip_pcie_host_init_port(struct 
+rockchip_pcie *rockchip)
+         rockchip_pcie_write(rockchip, PCIE_CLIENT_LINK_TRAIN_ENABLE,
+                             PCIE_CLIENT_CONFIG);
+
+-       msleep(PCIE_T_PVPERL_MS);
++       msleep(500);
+         gpiod_set_value_cansleep(rockchip->perst_gpio, 1);
+
+         msleep(PCIE_RESET_CONFIG_WAIT_MS);
+@@ -322,7 +322,7 @@ static int rockchip_pcie_host_init_port(struct 
+rockchip_pcie *rockchip)
+         /* 500ms timeout value should be enough for Gen1/2 training */
+         err = readl_poll_timeout(rockchip->apb_base + 
+PCIE_CLIENT_BASIC_STATUS1,
+                                  status, PCIE_LINK_UP(status), 20,
+-                                500 * USEC_PER_MSEC);
++                                5000 * USEC_PER_MSEC);
+         if (err) {
+                 dev_err(dev, "PCIe link training gen1 timeout!\n");
+                 goto err_power_off_phy;
+@@ -951,6 +951,8 @@ static int rockchip_pcie_probe(struct 
+platform_device *pdev)
+         if (err)
+                 return err;
+
++       gpiod_set_value_cansleep(rockchip->perst_gpio, 0);
 +
- noinline void __ref rest_init(void)
- {
- 	struct task_struct *tsk;
--- 
-2.39.5
+         err = rockchip_pcie_set_vpcie(rockchip);
+         if (err) {
+                 dev_err(dev, "failed to set vpcie regulator\n");
+
+
+> For retry to work, flow must be exactly as handled by present patch,
+> that is, we must cut power, disable the clocks, then re-enable
+> both clocks and power regulators and go through initialization
+> without touching PERST#. Then quirky devices are able to sucessfully
+> enumerate.
+> 
+> No functional change intended for already working devices.
+> 
+> Signed-off-by: Geraldo Nascimento <geraldogabriel@gmail.com>
+> ---
+>   drivers/pci/controller/pcie-rockchip-host.c | 47 ++++++++++++++++++---
+>   1 file changed, 40 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-rockchip-host.c b/drivers/pci/controller/pcie-rockchip-host.c
+> index 2a1071cd3241..67b3b379d277 100644
+> --- a/drivers/pci/controller/pcie-rockchip-host.c
+> +++ b/drivers/pci/controller/pcie-rockchip-host.c
+> @@ -338,11 +338,14 @@ static int rockchip_pcie_set_vpcie(struct rockchip_pcie *rockchip)
+>   static int rockchip_pcie_host_init_port(struct rockchip_pcie *rockchip)
+>   {
+>   	struct device *dev = rockchip->dev;
+> -	int err, i = MAX_LANE_NUM;
+> +	int err, i = MAX_LANE_NUM, is_reinit = 0;
+>   	u32 status;
+>   
+> -	gpiod_set_value_cansleep(rockchip->perst_gpio, 0);
+> +	if (!is_reinit) {
+> +		gpiod_set_value_cansleep(rockchip->perst_gpio, 0);
+> +	}
+>   
+> +reinit:
+>   	err = rockchip_pcie_init_port(rockchip);
+>   	if (err)
+>   		return err;
+> @@ -369,16 +372,46 @@ static int rockchip_pcie_host_init_port(struct rockchip_pcie *rockchip)
+>   	rockchip_pcie_write(rockchip, PCIE_CLIENT_LINK_TRAIN_ENABLE,
+>   			    PCIE_CLIENT_CONFIG);
+>   
+> -	msleep(PCIE_T_PVPERL_MS);
+> -	gpiod_set_value_cansleep(rockchip->perst_gpio, 1);
+> -
+> -	msleep(PCIE_T_RRS_READY_MS);
+> +	if (!is_reinit) {
+> +		msleep(PCIE_T_PVPERL_MS);
+> +		gpiod_set_value_cansleep(rockchip->perst_gpio, 1);
+> +		msleep(PCIE_T_RRS_READY_MS);
+> +	}
+>   
+>   	/* 500ms timeout value should be enough for Gen1/2 training */
+>   	err = readl_poll_timeout(rockchip->apb_base + PCIE_CLIENT_BASIC_STATUS1,
+>   				 status, PCIE_LINK_UP(status), 20,
+>   				 500 * USEC_PER_MSEC);
+> -	if (err) {
+> +
+> +	if (err && !is_reinit) {
+> +		while (i--)
+> +			phy_power_off(rockchip->phys[i]);
+> +		i = MAX_LANE_NUM;
+> +		while (i--)
+> +			phy_exit(rockchip->phys[i]);
+> +		i = MAX_LANE_NUM;
+> +		is_reinit = 1;
+> +		dev_dbg(dev, "Will reinit PCIe without toggling PERST#");
+> +		if (!IS_ERR(rockchip->vpcie12v))
+> +			regulator_disable(rockchip->vpcie12v);
+> +		if (!IS_ERR(rockchip->vpcie3v3))
+> +			regulator_disable(rockchip->vpcie3v3);
+> +		regulator_disable(rockchip->vpcie1v8);
+> +		regulator_disable(rockchip->vpcie0v9);
+> +		rockchip_pcie_disable_clocks(rockchip);
+> +		err = rockchip_pcie_enable_clocks(rockchip);
+> +		if (err)
+> +			return err;
+> +		err = rockchip_pcie_set_vpcie(rockchip);
+> +		if (err) {
+> +			dev_err(dev, "failed to set vpcie regulator\n");
+> +			rockchip_pcie_disable_clocks(rockchip);
+> +			return err;
+> +		}
+> +		goto reinit;
+> +	}
+> +
+> +	else if (err) {
+>   		dev_err(dev, "PCIe link training gen1 timeout!\n");
+>   		goto err_power_off_phy;
+>   	}
 
 
