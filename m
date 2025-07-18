@@ -1,109 +1,123 @@
-Return-Path: <linux-kernel+bounces-737272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73031B0AA2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 20:35:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CC0EB0AA2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 20:36:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D3591C80944
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 18:36:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADEC25A23FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 18:36:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 869E52E7F13;
-	Fri, 18 Jul 2025 18:35:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D74162E7F0A;
+	Fri, 18 Jul 2025 18:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oZYjaIcP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="oUK3fxHj"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99481F7575;
-	Fri, 18 Jul 2025 18:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A447F2E7F06
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 18:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752863746; cv=none; b=ho6iPOqGauDByA6NRXW3P/GrEXuEDYxqC8ThyhPz6sbFXsBQ4mvjqOAYcvUOuPyfS90Jd3fNWg7J5FZkEFEgB5CQX8sHyJZ82aX8T82mEu4e8y3i3nScHjqXPcWvA+d/WbYyQAq2oS0aCWn7xlqXXEOqOJ9eQWmwWK/to1dNC2g=
+	t=1752863773; cv=none; b=cZjmEJkSNIybQ2k5dTdxkiU1capGQQOeHxFZDctnTDPK30tPSRHav9DyqLw1Wi3HswJe7mWtbSftIENjNKMa15gMZ2orHTsVE3KSZ5n+jd7Q0gP4mJJmPJyq8BTzib9BI3hFuwYk+GqsS+IZ/GsW9WwQjkapqfLZxboObCOu3es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752863746; c=relaxed/simple;
-	bh=d2q2TbdCVeqS5rqu/bLRgCJKo3NrsSwrZ6A3XKOfT0g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=lTdG+25ZjJYWlDHxAGyMdhjabLPimxqOjWPsSwSCNSIGDxoGsaVwo2EoxbeOgfTn8EL5Wt3IHbyLj35GB9tACTP8HLe1qj5iF4D9tLLoJGPfTIOuXAagWscA/lDU+o5UbK2sx/TRBTY6FY2xCFy4/KJfZjUVEyhfoNDfcaduKRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oZYjaIcP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2EBFC4CEEB;
-	Fri, 18 Jul 2025 18:35:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752863745;
-	bh=d2q2TbdCVeqS5rqu/bLRgCJKo3NrsSwrZ6A3XKOfT0g=;
-	h=From:Date:Subject:To:Cc:From;
-	b=oZYjaIcP9cMmKu60dpbyg4SCH49W2emFlditUGxphisynp/39CgbKo/N28bH7JCKp
-	 EdscLKZaZQ7G8HD58Yx/7QLjK6gqdIV5Uz/D9FEgr4lx90Tmo9UaKd0VIaWCYD99f6
-	 wDt63Al9vbWz+H51YkmVGl/u0c8VMQbmNUkcmq6iUPspSbt41znioz2PQ1wBgDB5+/
-	 CBaU7Tj7xDu7TBOXZ8aNLO8/Xr2C3QcaOgujf4E6odoL9ee4cKeyaeVlPk1H4TGwOC
-	 bP4NSrxIuuWk+If0kHeUrBU1hOhN9F9qVOcj7YL7BWurVpnUfbOHycouLohVv3U/Z9
-	 V0NOFeaoIRCvA==
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 18 Jul 2025 19:33:16 +0100
-Subject: [PATCH] kselftest/arm64: Allow sve-ptrace to run on SME only
- systems
+	s=arc-20240116; t=1752863773; c=relaxed/simple;
+	bh=5qlQ+761hn6OrnIDwaSrOkWt9c8/47BkXB3UXwRLQss=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G5SIdIZCKjo26PBNCELFI6AJx0ZkT+1m0BhhKOUIK2WygfavRlP5aKg1yw8F55OKgVR0+R+Bo3m0oKwn3OYO/ZOQiO7+rDaf9UfjcnAFl7nhjg427OCoXRL2Vy16YYO8qCfWvVdHpLWCA7fu8lACZvtRloGI4leoMctvzXyYsB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=oUK3fxHj; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-311bd8ce7e4so2109135a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 11:36:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1752863770; x=1753468570; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7YHZSIH4QXyQQjmvIqyrjSbplelhoOzEiXOXvbUIHNY=;
+        b=oUK3fxHjQrvNljhNQYlMGlMMbdSzoi0ax3lVkfmRynN9oXzvbwYfsc70R4z/4MJowO
+         JC4lXcIu5NMSmmiosi7y4hiEguGlxoQTSn85CuMp0MUtG2Kb8lgcEEvTGxXVzpLSTtbw
+         2obSk6KPuB8Rl12vbo+hu59JlxZbSpZnaxkwzBzdq+JXkNQ7iF6tS5vosuWBjDduf5xB
+         95X8YKpvwhbr7S4rZD9OxTopoPu4/MuL86tlcs41v5KxgPHaCaag1GM8HeODko46NWhF
+         f1WsOC22pGhwwQEZPCIT0uB91WXVA6emw9brkaqG7w8wBg8A0QotfLmINl61CrctcmCx
+         wEUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752863770; x=1753468570;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7YHZSIH4QXyQQjmvIqyrjSbplelhoOzEiXOXvbUIHNY=;
+        b=DNfuUjq25RntQf5otiK3CPaMpmOtCnqq836OKxANGaFxUSql2vF5ppiajqJ4DCjR3z
+         wsg6XVm1A6Qzx/aronBuN9zjWW/krDPilvD0gsRQPeYRcDmH/9/RishAdEx35Mwtfvv5
+         jUMBwLxysAF2XiBR0uduTrxx00ZtezeoKJF9psMwed7TWJLSwpwEivtKBSeGhrXeLx9+
+         VYxnzND0Kc8fzNt6XKX/Gj28PcCKHh6uF++sAQ1UMbSI2YK5FsG+zfmZygaDQ6SfPwrT
+         ZSot0QOnIsGhCCgRLbhbA0z1Zxe7DlplSho6ZZno1zxsMIDBR4NOa0o+LxATiXE53PKk
+         tI1A==
+X-Forwarded-Encrypted: i=1; AJvYcCVL5MZy+z6RIrx3oQEPgoK2GYh88ydRwypquGTs7Opg9JzMXqlDzVy9UWawLRoqWTqhO260pc9Z/dDcm5E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdSnM38q9LSC1axgr0wQ240NQD2mPcOMWSdogxyv8ZFU5FgRh/
+	9f38Z0EAjTpMUBTVDkjcUSZrhLcXLc229SDxfPPkm00VKApwrF7h2lt1+ZM+/mLbrMC4L51yY1o
+	/Ws0B
+X-Gm-Gg: ASbGnctUyKqkwc815be3Mhdovd3+pDrTJf+Hsm21SfL4opfOrGVsyZWL65dkWkr5t6d
+	VuW4P8JTAQOIW3N6ymLcMVlcsqAxBFm2CWZi25H4F8NpRQ25LGen1wmOtcbJKvotjX56dzlHJrJ
+	bpzVt6X3fDbMO3qYGfKZhQLgu2TXlW6VnWGCAktr1XmpnkHHPgIEO6Hq3IVdM2+d7IJxK07Ofry
+	ENfYaU42rEBB47rMyhF3XxoRqfg6xTdPXZM7w4OujDXSjA0xnvD+Ts3nh8Y4COJY0mDLkVjYzaI
+	WlYuXj08/OA0s44xLFkTxC0iK8mkfPnuoY2U8FJO3H/B2qEE4/pnPZPwT9SNqoEDDP4+FpmLIZ4
+	Se9N/uvsH8i1sTUa7C6q2CVFoHmycDqNL06Q4y2PiCzoji3KH83IudgCRnowL8Y4QBCo=
+X-Google-Smtp-Source: AGHT+IHNjCZ1lF5IxEcSK7Q336xvA2JqN/FhLb91/xqIHcN1SLy4r5JEGGmXyt2l3qmS+/4JJPp6Gw==
+X-Received: by 2002:a17:90a:d88c:b0:312:25dd:1c86 with SMTP id 98e67ed59e1d1-31cc25c5ab0mr6395789a91.18.1752863769794;
+        Fri, 18 Jul 2025 11:36:09 -0700 (PDT)
+Received: from [172.20.8.9] (syn-071-095-160-189.biz.spectrum.com. [71.95.160.189])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31cc3e5b404sm1687820a91.12.2025.07.18.11.36.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Jul 2025 11:36:08 -0700 (PDT)
+Message-ID: <72eeb282-2e9a-4c06-ac5c-54f226a8500d@kernel.dk>
+Date: Fri, 18 Jul 2025 12:36:07 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/4] io_uring/btrfs: remove struct io_uring_cmd_data
+To: dsterba@suse.cz
+Cc: Caleb Sander Mateos <csander@purestorage.com>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+ Mark Harmstone <maharmstone@fb.com>, linux-btrfs@vger.kernel.org,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250708202212.2851548-1-csander@purestorage.com>
+ <CADUfDZr6d_EV6sek0K1ULpg2T862PsnnFT08PhoX9WjHGBA=0w@mail.gmail.com>
+ <bb01752a-0a36-4e30-bf26-273c9017ffc0@kernel.dk>
+ <20250718172648.GA6704@suse.cz>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20250718172648.GA6704@suse.cz>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250718-arm64-sve-ptrace-sme-only-v1-1-2a1121e51b1d@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAGuTemgC/x3MQQqDMBBA0auEWXcgxqi1VxEXUcd2oMYwI6KId
- 2/o8i3+v0BJmBRe5gKhnZXXmFE8DIyfEN+EPGWDs66yTfHEIEvtUXfCtEkYCXUhXOP3RB8G306
- 2bFxbQe6T0MzH/9319/0D8agvyWsAAAA=
-X-Change-ID: 20250718-arm64-sve-ptrace-sme-only-4ab49d037295
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Shuah Khan <shuah@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-cff91
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1112; i=broonie@kernel.org;
- h=from:subject:message-id; bh=d2q2TbdCVeqS5rqu/bLRgCJKo3NrsSwrZ6A3XKOfT0g=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBoepP9gEyjTyb6/d1rD8yLE7mUsNFe6A0KL+VEw
- 8JodIcKEwmJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaHqT/QAKCRAk1otyXVSH
- 0CmpB/9AawBTVxco1Vojwq8+KB6lhkWcokuOiooTXWM7NUIUtYQESNsIcYGllucQn+TMGkUYvVZ
- ldDNU8grNvIL/v3PtBl9MS4zsOlABSgf2jkuGB3UTSzMA6h+X0xp6F2f026TBv7U1xSyRhmZZe/
- 1KjdyW6m1MWH1W0hRravq+l92o7q+0DN//lW+LWTQF85G/Trp8UU+oh5jSapRzzjEZbDHiiBqpq
- k+mDVjF1sSJQVwQdw/eYb6Mqeiv7GUCF/XIm9EecYyhe2a+8KyCOTVXjdPr8N/iijDiacBd6yUk
- 2lTXIu6A0Gk198jFPlr38GQGx2EaoWAUQckLqIzpZB6ji0jw
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-Currently the sve-ptrace test program only runs if the system supports
-SVE but since SME includes streaming SVE the tests it offers are valid
-even on a system that only supports SME. Since the tests already have
-individual hwcap checks just remove the top level test and rely on those.
+On 7/18/25 11:26 AM, David Sterba wrote:
+> On Fri, Jul 18, 2025 at 10:58:07AM -0600, Jens Axboe wrote:
+>> On 7/17/25 2:04 PM, Caleb Sander Mateos wrote:
+>>> Hi Jens,
+>>> Are you satisfied with the updated version of this series? Let me know
+>>> if there's anything else you'd like to see.
+>>
+>> I'm fine with it, was hoping some of the CC'ed btrfs folks would ack or
+>> review the btrfs bits. OOO until late sunday, if I hear nothing else by
+>> then, I'll just tentatively stage it in a separate branch for 6.17.
+> 
+> I've taken the first patch to btrfs' for-next but if you want to add it
+> to your queue then git will deal with that too. For the btrfs changes
+> 
+> Acked-by: David Sterba <dsterba@suse.com>
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/arm64/fp/sve-ptrace.c | 3 ---
- 1 file changed, 3 deletions(-)
+Thanks! I guess that works fine, it can go in separately. I've queued
+up the rest.
 
-diff --git a/tools/testing/selftests/arm64/fp/sve-ptrace.c b/tools/testing/selftests/arm64/fp/sve-ptrace.c
-index 7f9b6a61d369..b22303778fb0 100644
---- a/tools/testing/selftests/arm64/fp/sve-ptrace.c
-+++ b/tools/testing/selftests/arm64/fp/sve-ptrace.c
-@@ -753,9 +753,6 @@ int main(void)
- 	ksft_print_header();
- 	ksft_set_plan(EXPECTED_TESTS);
- 
--	if (!(getauxval(AT_HWCAP) & HWCAP_SVE))
--		ksft_exit_skip("SVE not available\n");
--
- 	child = fork();
- 	if (!child)
- 		return do_child();
-
----
-base-commit: 9e8ebfe677f9101bbfe1f75d548a5aec581e8213
-change-id: 20250718-arm64-sve-ptrace-sme-only-4ab49d037295
-
-Best regards,
---  
-Mark Brown <broonie@kernel.org>
+-- 
+Jens Axboe
 
 
