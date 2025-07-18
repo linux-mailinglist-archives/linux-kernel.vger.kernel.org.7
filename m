@@ -1,111 +1,94 @@
-Return-Path: <linux-kernel+bounces-736202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2892B09A05
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 04:59:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14E85B09A03
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 04:59:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9EF5189E41E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 02:59:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D84BC4A832B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 02:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C04641C7017;
-	Fri, 18 Jul 2025 02:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3545E1C5D4B;
+	Fri, 18 Jul 2025 02:59:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EnOZvIho"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ei9zX+H0"
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6E0A923;
-	Fri, 18 Jul 2025 02:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A37CA923
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 02:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752807561; cv=none; b=OHmlIql/WnC5g+yS42lmRfnaA9ato7VGaabEZ2gjrPHB7LBLjvBrgO89k3fB+pDqlafKObRiBHROhi/tBNJJI0MX3MxliTyJG0BZoeIY+PwI2D/9KMVVcfbwaAXnaFEfcMA3wmkyIfYuAnPWc/smCR9Tn7FXeXQk8Zt+TXnnU4E=
+	t=1752807551; cv=none; b=LPVyF4t7G+CDENDW6rvDz9wkWTFCDH16rom7G5BqHvC31vbU/IMNtTmJ0b3M/cH5SJ1s4bh6FAOUhAoLGgtrZoDnoEXuP8euftKken06f0w4eYD1Xgg2J+oolgWEc7x+KrG9OnZwZT2Cyz2zuHRC/+fXbATX8w2yuLw5cspOd70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752807561; c=relaxed/simple;
-	bh=VZxxef9Q71ysTUH2iir4q27phsjEY4lVarflfhDZ5lc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eXVLfoeJFXP315xFJy3b/gpOLYu61EUYwNnmiI8ZaZXu1vjR/horUbD6aUOx83IH+xDhxZclK1+Ouwh33vcbciUltE8XxJn5eS+RIw8UlvTqfAj6Ow8CNHSK2mr5LAe9tPJRZ2zIeKKBhsO5P0gk1maG9/WTKQGI6DfBs9kaybQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EnOZvIho; arc=none smtp.client-ip=209.85.216.42
+	s=arc-20240116; t=1752807551; c=relaxed/simple;
+	bh=vjjF7HZgZmTzE5QaUT0K8dC1GXXNAEcvJ0+57MBGKsw=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=dggg3J7oizd1GB4lxR2BwkUSTbgia7/0WsxD92koPfclZyQr7CotKko2qXJJeXLZ9U7lgta9gpm3VThhsyDIyGrOT7mWY3Xuec9tSxQ9ghZWAU036z3DbIzaBWIw/uM2cHjdegwFRjWAYfPPcHqeIFD9+pGKP2CquQj+dP4Mr50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ei9zX+H0; arc=none smtp.client-ip=209.85.219.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-312e747d2d8so1845732a91.0;
-        Thu, 17 Jul 2025 19:59:19 -0700 (PDT)
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e8d70c65abcso1074874276.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 19:59:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752807559; x=1753412359; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oupdmlmk0FI5rpfXjKWTslxf0TZVNi83420nETYfUK0=;
-        b=EnOZvIhodWJNfCRUwD+LNhkgOhYZHhbnYty8ELCjPaEPHXxOfKQSVi1XuGljRttOp8
-         HIKJpgHWNpY23xYqpNavBlYmz0JYLTvLRKCDCCgEM7iLA/YTXETIU5ZwP5OB1VEU6juB
-         O1ALy2ymlHBNKOyhfopTmaUxpRHrcEHJMFRlAyDvhQN6mkBQOHJSJb0JdysgyLfoZkul
-         QuEH4/tQmkLTSn5UI96MQrZA9OKXIcouuvB9+l93eVJKuG476z98EuvsZ7lrGbe7en76
-         tiEaV3o7yff4hmKmDrKxHeY3+ZJQeGwhQ4toF+9z6uZ4h8hwbUNEQXNKDU97gihe/8hR
-         dpSQ==
+        d=gmail.com; s=20230601; t=1752807549; x=1753412349; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=G4QEueiv/uKqTFrnIsLY/SjTQWW9tYevlmkSRo2zTLo=;
+        b=Ei9zX+H0B48fbDE5MTh+rrZcGq+qgw1zrG7W+emOr8HK2AqHTuvVGQr/YdUSY9lq4C
+         /V31ZkX+v4aitmwjae9oP+8s35p+pTg3RWi66pZwnJuQdMNxMzSf66ElBvtjwYO63dGz
+         0TyYiptd2z5L2HAbuXM4FreVctZdAiy9sz3AQzV7l+hDwZA2qohq/IysulhgBhWItQwU
+         XhIgcIYW2rzZmmh9jUBKQ6PqtQpAAUmeYRzuX2fipfPT446eeuPL7e1votOfECd1nNDR
+         4o79EXKNKwW82PQttQuRI2W1YE30ZSHwrnD4QX638G9uqByVnwndB+9++xNbKDbEqCum
+         kfqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752807559; x=1753412359;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oupdmlmk0FI5rpfXjKWTslxf0TZVNi83420nETYfUK0=;
-        b=f1H0pEyVoKrNlL7jFR6BmwaeX51rGeWbpes+VMxSym/wYqrsTEhN2+rrLXJGmLUdrH
-         3Gt1Kqm3WBpOc6cUK0jf6uyptUB8LavOg2odQ/BuumDv0/4cZKnGTcEkpWz7DcfjvsOD
-         dIFgwxFGJenxr8rwrxrBFvKatdAKKiW+rGEiqYXvHto49u1DuJt/ZmCxj5v9QHNeuw1E
-         QUGrxTOlBrs287QNWOMLpIdxtseCxdJQlejyd3snl3ATY6ZAvZ+FXTtR5Al23V96EYz0
-         dcpAA6IQi3OsuN9TcGLMaeWivJcTmzcuG0Ok4p2EOP/W341EgHe+urlfKbkce9rYSTHb
-         bUug==
-X-Forwarded-Encrypted: i=1; AJvYcCVOXSbkBLohJ9h2+RzGHUCsOth1+NT2IAFvB3e7kqHZZR0fveeWaVYIjGnfdKBbvgZNuh0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGe7KhTzU7Tm18/pTrimjkH7UofTPvE3G1Pp/HjVB8+sxmo9kK
-	C5GjDJve6h8UMMNBYmBIP3s5+EHVahPkygYHYhAeRtuscIeeyg+6KWAgkoOcL7exaFn9A7pOFbb
-	WiZhWa7is0Dmmupe2R0UEuhTG3Dl3NXI=
-X-Gm-Gg: ASbGnctXHty+bcm32pc+A7aQUbI5ehIL8Ny8hhUeqTMDbb+jFgGuG2J0N/Te/AGHA1T
-	ZJ29UoAU8YMWenkhf4rpVstpT6vFjMI0G3eeOy+LAlOr5Hilsv6wJQZbq6dHHWhg/RcG4AnKkSK
-	14pEPSy/7j8RAuA7z+R8wvc1dkVYLLAe9e7MJNSO5JefKXPnBuOmpCoFnKpZPJ5X3bENi6i48sY
-	MMZ
-X-Google-Smtp-Source: AGHT+IESvilf6Yuz3Lhp5nEZTCBHxbO0uRB1bYIPhR90eGgE/0ztvDI7U3X9dcbiKa8BRuxBwqaa6cV9GiztsPzCdqM=
-X-Received: by 2002:a17:90b:35c9:b0:311:be43:f09a with SMTP id
- 98e67ed59e1d1-31caeb94323mr7049348a91.9.1752807559041; Thu, 17 Jul 2025
- 19:59:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752807549; x=1753412349;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=G4QEueiv/uKqTFrnIsLY/SjTQWW9tYevlmkSRo2zTLo=;
+        b=ISWGASHCOeBSVrbilArRq5Ejnq8mctEYGJcvzZhilhQNjNAiuN8/kJl3GpduF+Be81
+         KhdHLokRmqMefTCNcr1HCofWcU9zt3VCMVkEeZ/SucOTiiN6qC23lQCvIoD+K/myxDsO
+         C5OnNT6tTtbxdo+lNv1ZmH3IsusF3DuNxrqbqyiRdNydOlTkFrqJtJ/u95yXRnxi0LgP
+         8omQO/PxRisQhyKRVcOAoEjBqhdLj+Le690czP1KgpTlXWVhUunhWMFzFn32NAI9RrEe
+         3y4z9hDWavhK1D1C0lJBZuZV4awFiqU43eCsYkEmv09YY/FwOTrY/FGm4o9RDKL0Fc4v
+         jyRg==
+X-Gm-Message-State: AOJu0YxoJHy1m4w4DKD6JxNZLR3h+12i1QfnjeOLCmu1nYn/z/Any1Ht
+	msk/jU+mym/0Aovv9w0RcD114EBcPpU6A+LuHRj6sProHQE3EesmKtivlABxreGcgJKYO2jIAej
+	O2kUpOrCH7pCJg0KpSIHRrz5aCMRrsXbxwn2He3g=
+X-Gm-Gg: ASbGnctj7mjQF2+ssbbe1IOM5ZRYhkAhxnRK5eK5c6QHzX62HTNkezUV158S0CkFmKA
+	fVcrmZqeLu3zoAhZZLI4KK9VNGk+qkj8F8Iztep+Ed4kaO7pLo8Bq2f0TUudCGm+H3q5JGkCCv0
+	i6C0JV2nnJ3M9uHk41P1cB2h9+U1o7xnyac20W6vVWFDzt66tFKxueoi3DGHS+0ThZrBZRsPKzY
+	fduemff
+X-Google-Smtp-Source: AGHT+IFQJ6o5fIZXX+jpOeO4DzV0fmixu5GMuZZmECyrKxj3+KDfzWJ2aE+h5Or9aUiKDCnUOk+Ltya92aTnBpVmW00=
+X-Received: by 2002:a05:690c:6302:b0:70d:ed5d:b4da with SMTP id
+ 00721157ae682-71834f36332mr138334597b3.8.1752807548227; Thu, 17 Jul 2025
+ 19:59:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709033242.267892-1-Neeraj.Upadhyay@amd.com> <20250709033242.267892-29-Neeraj.Upadhyay@amd.com>
-In-Reply-To: <20250709033242.267892-29-Neeraj.Upadhyay@amd.com>
-From: Tianyu Lan <ltykernel@gmail.com>
-Date: Fri, 18 Jul 2025 10:58:43 +0800
-X-Gm-Features: Ac12FXyDD-dejhj5z5YYTvyfd37K6QEwfQ9IjxfRg7i_jXHUhB57KNogCeoD6xQ
-Message-ID: <CAMvTesCUCs0G17yvi6FQiLAo4uY-h624BZB3opRaH9jakf0Jqw@mail.gmail.com>
-Subject: Re: [RFC PATCH v8 28/35] x86/apic: Allow NMI to be injected from
- hypervisor for Secure AVIC
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Cc: linux-kernel@vger.kernel.org, bp@alien8.de, tglx@linutronix.de, 
-	mingo@redhat.com, dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com, 
-	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com, 
-	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org, 
-	hpa@zytor.com, peterz@infradead.org, seanjc@google.com, pbonzini@redhat.com, 
-	kvm@vger.kernel.org, kirill.shutemov@linux.intel.com, huibo.wang@amd.com, 
-	naveen.rao@amd.com, kai.huang@intel.com
+From: Aaron Gray <aaronngray.lists@gmail.com>
+Date: Fri, 18 Jul 2025 03:58:51 +0100
+X-Gm-Features: Ac12FXz4FzD8whub4E7UDxXojkh0Iuxe-H1Cs1s44oC98K1mQ4tfau7ZjoRGWtM
+Message-ID: <CANkmNDf1FkXbPP=btJyU8p_Znwmn+sBRDL6fzJ323bu7iEOFbg@mail.gmail.com>
+Subject: [6.12.32|rockchip64|rk3588] Display failure issue
+To: linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 9, 2025 at 11:43=E2=80=AFAM Neeraj Upadhyay <Neeraj.Upadhyay@am=
-d.com> wrote:
->
-> Secure AVIC requires "AllowedNmi" bit in the Secure AVIC Control MSR
-> to be set for NMI to be injected from hypervisor. Set "AllowedNmi"
-> bit in Secure AVIC Control MSR to allow NMI interrupts to be injected
-> from hypervisor.
->
-> Signed-off-by: Kishon Vijay Abraham I <kvijayab@amd.com>
-> Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-> ---
-> Changes since v7:
->  - No change.
+I am using a rk3588 based device.
 
-Reviewed-by: Tianyu Lan <tiala@microsoft.com>
+I have four kernels, two older ones the display works 6.12.17, and
+6.12.22, but on 6.12.32, and 6.12.39 the display fails to work.
+
+-- 
+Aaron Gray - https://bsky.app/profile/aaronngray.bsky.social |
+@AaronNGray@fosstodon.org | @AaronNGray@Twitter.com
+
+Meta-Mathematician, Independent Open Source Software Engineer,
+Computer Language Researcher and Designer, Type Theorist, Computer
+Scientist, Environmentalist and Climate Science Researcher and
+Disseminator.
 
