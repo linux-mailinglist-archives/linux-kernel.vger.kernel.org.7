@@ -1,170 +1,110 @@
-Return-Path: <linux-kernel+bounces-737266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E423B0AA12
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 20:19:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63793B0AA1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 20:26:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE3C11C825C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 18:20:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B67E1AA4857
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 18:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A8C2E6D09;
-	Fri, 18 Jul 2025 18:19:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546582E7F35;
+	Fri, 18 Jul 2025 18:25:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bHQCfGiE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eWap06Kh"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8AC917A2F5;
-	Fri, 18 Jul 2025 18:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3796C1E0DD8;
+	Fri, 18 Jul 2025 18:25:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752862790; cv=none; b=kuK2GDHaNTZbMO5cYf27P3ll6tvDrdVaAKUgn4Hzzp/oQom+aX5vd9PdfzrvyY5DleFgg6AnqgcZNt/D08t66W9umS71KkebFEGYz5J9UNNF2+5FLvYFon84+E4iXNKIH1L0enp+t+i7c8Ae5A8aaCaJz0RzsXMUbexWKUDZGEI=
+	t=1752863149; cv=none; b=aAoZTSKvpdSo+f+KF27GJCnIVpTeLH8SU+ahZYGXa8UdZ9mrO1kSoIWCHi1oRG1jinhlstzv9rMyytZ0qdLgdQUuWjVQ1kiU5y/+kXdCyEkgrrc3HvWB+2b8af3KX/4O3JMbaRG2bckZAUv3alLHZ4HJGiyguaL+HRP9WF/Gyh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752862790; c=relaxed/simple;
-	bh=HgkDBG2XvoXIvMmiMWL1rH9r2SAWb6qGh6b36D70yEs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c9nKojdgTZb5gKrc9VjbYPHmOnGpPTfokaLCFcmXzbGMohdiwY6sVClaH5L5/L0obvp/dFmDkp2LNRelTt5OS42enqktXZE/GFYZfDM/1BSnoEr7U6rNu075pu0D2VThF2qUrHCq4wiB6WKcxdu+9g9+pmcAHOLmTDxB9mW5RdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bHQCfGiE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D8AEC4CEEB;
-	Fri, 18 Jul 2025 18:19:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752862790;
-	bh=HgkDBG2XvoXIvMmiMWL1rH9r2SAWb6qGh6b36D70yEs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bHQCfGiE5Hp6bDoHI5f/9MEvzbAH3TJeLPDZLa9kcIhKRWlLDUsyTueMJ5A6d5iVH
-	 LQAnYNmaqVrxvWaJBBmnCm3U5zknZzY3AsfLRSR1KARPuFLWPWHS3KKxJEqPTAkks5
-	 uGsaeLgR1dmPd5ILao3EeYPLY987GLIvGNthe5p5DhXXEo5cKNHMJhAt2uMitAwXI6
-	 f9ekxHBOQlziZuO0EB5yYzUhNMpdLtmOLNjCY5ONGDd3ASHxGz3mTFnklkaM5pr7s5
-	 JAqYW3saQfp3J+w97gDlPsKQmDfCPXppMiUmITwPaNST7EHKuT5KuouanNcH3LlMux
-	 kc0NCQ04qZ/BQ==
-Date: Fri, 18 Jul 2025 11:19:47 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Thomas Falcon <thomas.falcon@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Ben Gainey <ben.gainey@arm.com>,
-	James Clark <james.clark@linaro.org>,
-	Howard Chu <howardchu95@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>, Levi Yun <yeoreum.yun@arm.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Zhongqiu Han <quic_zhonhan@quicinc.com>,
-	Blake Jones <blakejones@google.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Anubhav Shelat <ashelat@redhat.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Jean-Philippe Romain <jean-philippe.romain@foss.st.com>,
-	Song Liu <song@kernel.org>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/12] CPU mask improvements/fixes particularly for
- hybrid
-Message-ID: <aHqQQwI0MckHdBlY@google.com>
-References: <20250717210233.1143622-1-irogers@google.com>
+	s=arc-20240116; t=1752863149; c=relaxed/simple;
+	bh=7rQ/ySqdp7CI20/9emKDXbsHMq5q6rgQBXDslMGiurw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TDSgY2btbYxTbFpLM9yWvCR5GGH04upuTjTNjlvEiSA8dQypRLL02VzloOw9l7hQ8QfRij53OlAlhGXmyFkOB5amT+huCsjjwBB7/iLiCRRXkH8GmtIpQgtZ+uDUusbWZKBXf0quWRI/UI8KEGqTb0NXr2CJsZfr+wJDBXECJz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eWap06Kh; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4561607166aso18865325e9.2;
+        Fri, 18 Jul 2025 11:25:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752863146; x=1753467946; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7rQ/ySqdp7CI20/9emKDXbsHMq5q6rgQBXDslMGiurw=;
+        b=eWap06KhZPKQ1mQLri3yo3sI5wZzoAdh3WJzo9ZCUujR5w5Ga8TTcSyaCRvdpsh2q1
+         S2PAhEdqNE0ty6O1yzQmbU9PPQXyXgFQk/z0otb4xrSTGR7uPN6iPspaa7nWm2dOEXxp
+         4JbRD728FmJdbGvXivAO06GhjlWgEabIl5os1mEAJC2SQDcwcaHxUZcj5JXFqjU9WvxW
+         JNxuNwC9cANbHlL/e01S7aRSFVaOCcg/eOlVWiI+DBtaAVa8kUhaHNT0+74JT7VkHVsf
+         ILSpUCRR0LBbQ7GRZ6EjIqs8IzByg37bGNLoYUwDU0JRWycm+JzXviOU+JRSpQsxtWrz
+         CYXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752863146; x=1753467946;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7rQ/ySqdp7CI20/9emKDXbsHMq5q6rgQBXDslMGiurw=;
+        b=W8jYsMlKyEZNjelYQqmvRqS/mjerCpnbpUsvsFQnSsUTQfFmNH8QeNdHJLZX9km2Q1
+         06LBmIEl+yMAuj8covXQjW3VBvs/sCk7gm+AfgYd8kzwTau17wysmPQhbvwZcOFdTSjs
+         uKjzsgti4Zh50y8yCDVwV2jsK1MRFukoDraHx7By/kWJczwVsrRN8eDghW01NJXxyy0J
+         ZDQfx5HCkUSQ9WgOLAfn1sUMMSnkA5fhJwXvDXz/OpX2IvpPiD+t69dkc7O98ghzJIiF
+         CHL43ig7JBzbKIjrvbsbDr6JYFJLAs2M2op1h6u2OFvDUUT2QGyKOtspsLP0JCm94YSG
+         NztA==
+X-Forwarded-Encrypted: i=1; AJvYcCV7XPc8plBkiyVSn436SP5HhW69WzWa1Atw/HvkpMPj6NT/8wEYzaD2ohQTlxeJuXRVzTSmC+ae++o1g1xB1d82@vger.kernel.org, AJvYcCVEyOMK9+GoUEizE6xvuQ/wsps50Muxcduh05Hh22shMNfChUCFbtvg0Y9KIrT3hp0+7b0=@vger.kernel.org, AJvYcCVtppmJLVrhaxNwzUHJcBu76K9szBkLNzsiaub1KqPQ7wQvN1RX9hB1HOm6r5Qws5gSWkr7L5qa9kEDgIdV@vger.kernel.org, AJvYcCWOGAG5FrLiNpNchPKKPL7cIc38luZgvZnc+nl9A6J3505KUu+W++9DfFbZ3u1eKekG9IGOewAB@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzp6xL5sct5nnGw6rL/4g4J4OEpGKwe8CXMq+KFzcmF9D6BU7hg
+	GnJjVsr27wAKGsxsevdSuJ1+Bqct03nnECiD2wMqEsMIt3pislRrV5Tfn4fSSLrSZoUqzQZ5gY8
+	mffIstVxgA7fATHlr1q+BgRLOiAtYXBc=
+X-Gm-Gg: ASbGncvSuYGtz7aA01NDqO1vTchQE7BHZj7eXAGitrIM64f0Oxlx+XAKENm0XO7bKyE
+	h6A+BA0fA7+w+Z9YOdGCQDVt4FbDc/uFWgHxxXNOvmTz7ggOvuRyG/q6wRjmk4uNtBj1kk+i0Di
+	yRU4sbnHmNlUcRGlreTNELZC0oL31cO9VKsoXFi+Zlwqei/Vu93Lq6wBrnTqdHLDQ7xdp7Zf3Mm
+	cGGGRA+xWPhK1BxuwYyilkoJuZNklH8LfFp
+X-Google-Smtp-Source: AGHT+IEe4rj1cW9cX4tVDm5QTOkimSR766TO9ryjwmojDYGSFepqUgth1+KYXDyOSr1QiZC81Iruk3BcAZ5BEq/lmlY=
+X-Received: by 2002:a05:600c:699a:b0:43c:ec4c:25b4 with SMTP id
+ 5b1f17b1804b1-45636ba6679mr91367775e9.10.1752863146237; Fri, 18 Jul 2025
+ 11:25:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250717210233.1143622-1-irogers@google.com>
+References: <20250718172746.1268813-1-chen.dylane@linux.dev>
+In-Reply-To: <20250718172746.1268813-1-chen.dylane@linux.dev>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Fri, 18 Jul 2025 11:25:35 -0700
+X-Gm-Features: Ac12FXyHvw3SskVaxW4s7-ZTUmg2xXrOApp_s7xLqMkcj0CshSbgMR2_GlhJyOk
+Message-ID: <CAADnVQKMVJ_2SMcm0hvg2GDc-RPVU7GVAWRqbSdGn2ZtwUbUng@mail.gmail.com>
+Subject: Re: [PATCH bpf-next] netfilter: bpf: Disable migrate before bpf_prog run
+To: Tao Chen <chen.dylane@linux.dev>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@netfilter.org>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Florian Westphal <fw@strlen.de>, 
+	netfilter-devel <netfilter-devel@vger.kernel.org>, coreteam@netfilter.org, 
+	Network Development <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	bpf <bpf@vger.kernel.org>, syzbot+92c5daf9a23f04ccfc99@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 17, 2025 at 02:02:21PM -0700, Ian Rogers wrote:
-> On hybrid systems some PMUs apply to all core types, particularly for
-> metrics the msr PMU and the tsc event. The metrics often only want the
-> values of the counter for their specific core type. These patches
-> allow the cpu term in an event to give a PMU name to take the cpumask
-> from. For example:
-> 
->   $ perf stat -e msr/tsc,cpu=cpu_atom/ ...
-> 
-> will aggregate the msr/tsc/ value but only for atom cores. In doing
-> this problems were identified in how cpumasks are handled by parsing
-> and event setup when cpumasks are specified along with a task to
-> profile. The event parsing, cpumask evlist propagation code and perf
-> stat code are updated accordingly.
-> 
-> The final result of the patch series is to be able to run:
-> ```
-> $ perf stat --no-scale -e 'msr/tsc/,msr/tsc,cpu=cpu_core/,msr/tsc,cpu=cpu_atom/' perf test -F 10
->  10.1: Basic parsing test                                            : Ok
->  10.2: Parsing without PMU name                                      : Ok
->  10.3: Parsing with PMU name                                         : Ok
-> 
->  Performance counter stats for 'perf test -F 10':
-> 
->         63,704,975      msr/tsc/
->         47,060,704      msr/tsc,cpu=cpu_core/                        (4.62%)
->         16,640,591      msr/tsc,cpu=cpu_atom/                        (2.18%)
-> ```
-> 
-> This has (further) identified a kernel bug for task events around the
-> enabled time being too large leading to invalid scaling (hence the
->  --no-scale in the command line above).
-> 
-> v2: Add additional documentation of the cpu term to `perf list`
->     (Namhyung), extend the term to also allow CPU ranges. Add Thomas
->     Falcon's reviewed-by. Still open for discussion whether the term
->     cpu should have >1 variant for PMUs, etc. or whether the single
->     term is okay. We could refactor later and add a term, but that
->     would break existing users, but they are most likely to be metrics
->     so probably not a huge issue.
+On Fri, Jul 18, 2025 at 10:30=E2=80=AFAM Tao Chen <chen.dylane@linux.dev> w=
+rote:
+>
+>
+> The cant_migrate() check in __bpf_prog_run requires to disable
+> migrate before running the bpf_prog, it seems that migrate is
+> not disabled in the above execution path.
 
-I slightly prefer a new term to minimize the possible confusion.  But
-it's not strong and I'm open to other opinion.
+bpf@vger mailing list exists, so that developers
+read it and participate in the community.
 
-On the other hand, the 'cpu' term is new and I don't think it has many
-users outside.  So probably we can change it later.
+https://lore.kernel.org/bpf/20250717185837.1073456-1-kuniyu@google.com/
 
-Thanks,
-Namhyung
-
-> 
-> Ian Rogers (12):
->   perf parse-events: Warn if a cpu term is unsupported by a CPU
->   perf stat: Avoid buffer overflow to the aggregation map
->   perf stat: Don't size aggregation ids from user_requested_cpus
->   perf parse-events: Allow the cpu term to be a PMU or CPU range
->   perf tool_pmu: Allow num_cpus(_online) to be specific to a cpumask
->   libperf evsel: Rename own_cpus to pmu_cpus
->   libperf evsel: Factor perf_evsel__exit out of perf_evsel__delete
->   perf evsel: Use libperf perf_evsel__exit
->   perf pmus: Factor perf_pmus__find_by_attr out of evsel__find_pmu
->   perf parse-events: Minor __add_event refactoring
->   perf evsel: Add evsel__open_per_cpu_and_thread
->   perf parse-events: Support user CPUs mixed with threads/processes
-> 
->  tools/lib/perf/evlist.c                 | 118 ++++++++++++++++--------
->  tools/lib/perf/evsel.c                  |   9 +-
->  tools/lib/perf/include/internal/evsel.h |   3 +-
->  tools/perf/Documentation/perf-list.txt  |  25 +++--
->  tools/perf/builtin-stat.c               |   9 +-
->  tools/perf/tests/event_update.c         |   4 +-
->  tools/perf/util/evlist.c                |  15 +--
->  tools/perf/util/evsel.c                 |  55 +++++++++--
->  tools/perf/util/evsel.h                 |   5 +
->  tools/perf/util/expr.c                  |   2 +-
->  tools/perf/util/header.c                |   4 +-
->  tools/perf/util/parse-events.c          | 112 ++++++++++++++++------
->  tools/perf/util/pmus.c                  |  29 +++---
->  tools/perf/util/pmus.h                  |   2 +
->  tools/perf/util/stat.c                  |   6 +-
->  tools/perf/util/synthetic-events.c      |   4 +-
->  tools/perf/util/tool_pmu.c              |  56 +++++++++--
->  tools/perf/util/tool_pmu.h              |   2 +-
->  18 files changed, 323 insertions(+), 137 deletions(-)
-> 
-> -- 
-> 2.50.0.727.gbf7dc18ff4-goog
-> 
+--
+pw-bot: cr
 
