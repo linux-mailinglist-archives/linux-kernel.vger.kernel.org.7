@@ -1,108 +1,165 @@
-Return-Path: <linux-kernel+bounces-736773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEFB7B0A1AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:13:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49D53B0A1B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:13:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A767E587E86
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:13:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DE57165021
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:13:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA072BFC7B;
-	Fri, 18 Jul 2025 11:12:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6B62BEC44;
+	Fri, 18 Jul 2025 11:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="Yg66yAmq"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qlEtODsg"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD052BEC24;
-	Fri, 18 Jul 2025 11:12:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F54299950
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 11:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752837165; cv=none; b=gns7SIXpSvnssQT8DILZ+G6HVJuX6mDn7HA36qvD5/3RVZYiXiVgwKSCTJ4QSUYjg99OsT5d32OBNorMStUb1C4wM5E/KJ/M7g2aRIPJRbqhLlaFqW44Z5sCG/efKYizPPjY8G6pZ9zvqiiD6UGSQfV2u+4+YQLtUn03Y1D3V4k=
+	t=1752837190; cv=none; b=X2uwSi6lulSUQ6Iqph7O/mavhr7Hu1Y6NViM8hY18h1KEE+MLsGSNTeC7qVrepzG9/3LTjDImrH1m5W3J1ownDocInNrwkOgNdzLytCP1T/TJoBOehMLcS7K6ziMOXVMbBs9ALXY2UwCr4V8brohIK+lvZ2pxdkV9mrD1lHCJxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752837165; c=relaxed/simple;
-	bh=pN7nMJzYWuyor/OgGpD7F0YeaFDp1vibzzy5pYJe6lI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KD94M9iz49XL5JTngyfJ7jv4itB2tmtYj2JZSGNcCXQmIPYU/NK/FVobU6KsEHeMxc2qbjKc+m0bUfssa1qK5jz7CmNo21avDPvUsES64ghE+3zwblr6hC/VzS1lqpcFaxASDo9RBbUH9U15qEAvAxDTVTKaZ1SA2KDx9f9JgZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=Yg66yAmq; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=BvTCZ51d3XXJlGmGkI41GCgkn6QO1Hi7Y8wl9qsGLf8=; b=Yg66yAmqWi4oGtG2EA6VsBfKtr
-	3GjI9+T/5LKrkpwDeyqYB1cqKNa18OVTyY8joaNOG0ZPUtE4NIWprAWCWiwvJI36alsLCBeMA5nax
-	760R6euyUnZ+x3BFN7ziO45hUSebyYR3GQYADhAaKRFNKVoOWzqIqZE0lwzN4DqKt4ejn7cAoRjFp
-	D12SFtaAU3fHYOvO+LV64Sx5KWTyNWCz+ND+A8FMc7zDRha/tW1WEyWy8V3TGBEMF9HxUw450uGMO
-	FgqszKkU+EcjQzrlnHTP3BlZVUbi+FSn8rKgtzO2WxHlCX/fBpvi8e8oULQdLYvZbIlsEaMzq05sC
-	ubsBt86Q==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1ucilf-007ymj-0N;
-	Fri, 18 Jul 2025 19:12:40 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 18 Jul 2025 21:12:39 +1000
-Date: Fri, 18 Jul 2025 21:12:39 +1000
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Chenghai Huang <huangchenghai2@huawei.com>
-Cc: davem@davemloft.net, linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org, liulongfang@huawei.com,
-	qianweili@huawei.com, linwenkai6@hisilicon.com,
-	wangzhou1@hisilicon.com
-Subject: Re: [PATCH] crypto: hisilicon/sec2 - implement full backlog mode for
- sec
-Message-ID: <aHosJ8XZ-SbcAxtf@gondor.apana.org.au>
-References: <20250710122457.2295119-1-huangchenghai2@huawei.com>
+	s=arc-20240116; t=1752837190; c=relaxed/simple;
+	bh=zcc1FsJKCdLkZjwtdLWh1p8vAM2cAkcsK47dlKLomTQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LQBBBxMqFx2Kr5HqUVutatVg4SoilqMGMe3oNBmVjFzD7/Kj/5WwRaxO/x6Uz0PanptUlGzGXMLhj62B+LWngqFn27t6qpYqnRQE6WG3wpkYlz9Uaj4RtL5q/bcLG24cWPQxeQ4oXVggxPO87r1Di0qBgGaLx6ShgPwrp2pN0Jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=qlEtODsg; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id AB60D6F2;
+	Fri, 18 Jul 2025 13:12:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1752837152;
+	bh=zcc1FsJKCdLkZjwtdLWh1p8vAM2cAkcsK47dlKLomTQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qlEtODsg6FyI/I4r/cIIXSb6NhEBA/ujQg3FOR0EoTJkm1y2pm52SkRrLXuLqJfWe
+	 qz6+HMHJdeD8Utq72px4X09T5zqlcyIHm5GOKwcBoT3DY1MbW6+PMZMeRL2cKodGjg
+	 KccU0KMSk4sleHrB+4Tjog7IK16PV4q8Xyev/Ycc=
+Message-ID: <93ab2ae3-46f4-4245-8d2b-e87700372ba6@ideasonboard.com>
+Date: Fri, 18 Jul 2025 14:13:03 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250710122457.2295119-1-huangchenghai2@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/tidss: encoder: convert to devm_drm_bridge_alloc()
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Michael Walle <mwalle@kernel.org>, Jyri Sarha <jyri.sarha@iki.fi>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250716134107.4084945-1-mwalle@kernel.org>
+ <20250717094153.35f854b7@booty> <DBE5Z1SRJ086.NA0KUAWX1MS3@kernel.org>
+ <20250717155659.000eb000@booty>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20250717155659.000eb000@booty>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 10, 2025 at 08:24:57PM +0800, Chenghai Huang wrote:
-> From: Wenkai Lin <linwenkai6@hisilicon.com>
-> 
-> This patch introduces a hierarchical backlog mechanism to cache
-> user data in high-throughput encryption/decryption scenarios,
-> the implementation addresses packet loss issues when hardware
-> queues overflow during peak loads.
-> 
-> First, we use sec_alloc_req_id to obtain an exclusive resource
-> from the pre-allocated resource pool of each queue, if no resource
-> is allocated, perform the DMA map operation on the request memory.
-> 
-> When the task is ready, we will attempt to send it to the hardware,
-> if the hardware queue is already full, we cache the request into
-> the backlog list, then return an EBUSY status to the upper layer
-> and instruct the packet-sending thread to pause transmission.
-> Simultaneously, when the hardware completes a task, it triggers
-> the sec callback function, within this function, reattempt to send
-> the requests from the backlog list and wake up the sending thread
-> until the hardware queue becomes fully occupied again.
-> 
-> In addition, it handles such exceptions like the hardware is reset
-> when packets are sent, it will switch to the software computing
-> and release occupied resources.
-> 
-> Signed-off-by: Wenkai Lin <linwenkai6@hisilicon.com>
-> Signed-off-by: Chenghai Huang <huangchenghai2@huawei.com>
-> ---
->  drivers/crypto/hisilicon/sec2/sec.h        |  63 ++-
->  drivers/crypto/hisilicon/sec2/sec_crypto.c | 574 ++++++++++++++-------
->  2 files changed, 457 insertions(+), 180 deletions(-)
+Hi,
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+On 17/07/2025 16:56, Luca Ceresoli wrote:
+> Hello Jyri, Tomi, Michael,
+> 
+> On Thu, 17 Jul 2025 09:49:44 +0200
+> "Michael Walle" <mwalle@kernel.org> wrote:
+> 
+>> Hi,
+>>
+>> thanks for taking a look!
+>>
+>>> However allocating an encoder using a bridge alloc function (while we
+>>> used to call an encoder allocation function) looks counter-intuitive.
+>>>
+>>> We had discussed on IRC a different idea, adding a wrapper structure
+>>> around the bridge. Quoting your proposal:
+>>>
+>>>   struct tidss_encoder_bridge {
+>>>     struct drm_bridge bridge;
+>>>     struct tidss_encoder *encoder
+>>>   }
+>>>
+>>> and then in the bridge funcs go from drm_bridge to tidss_encoder_brigde
+>>> and use the pointer to get the original private struct.  
+>>
+>> I was doing that until I've realized that meson/meson_encoder_* is
+>> doing it the way this patch does it.
+> 
+> Which was done by, er, myself. O:-)
+> 
+> To my excuse, meson was using *_encoder_alloc() but rather
+> devm_kzalloc() + drm_simple_encoder_init(), and the change was
+> semi-automated via a coccinelle script, so I didn't fully realize that.
+> 
+>>> That would be cleaner and more intuitive, but use a bit more memory and
+>>> have an additional pointer deref, thus I think we can live with the
+>>> patch you just sent, at least for now.  
+>>
+>> I'm fine with changing it to the wrapper struct. It's your/the
+>> maintainers call :)
+> 
+> I think the driver maintainers opinion is more relevant, but in lack of
+> one I think we can take the patch as is, given it's already written.
+> 
+> Jyri, Tomi?
+
+I think this is fine, even though I do agree the tidss_encoder.c is very
+confusing.
+
+I'll pick this up. I think drm-misc-next-fixes is the correct branch here.
+
+ Tomi
+
 
