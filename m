@@ -1,146 +1,139 @@
-Return-Path: <linux-kernel+bounces-737003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90104B0A686
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 16:44:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B71BAB0A688
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 16:45:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D998916F887
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:44:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4B5F1793E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CCE2DCC03;
-	Fri, 18 Jul 2025 14:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C932DD60F;
+	Fri, 18 Jul 2025 14:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="EUNfaqc3"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="pPPMGymw"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25AE486352
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 14:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2042DCF64
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 14:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752849883; cv=none; b=jfoDfRf7hKhKCicA0vVxqbV0isRXuHtNZf/pqhtxaVxkAXP6iQtXnaI99HxLEAEJI+mSVWHbtH5QpFj4LbCk6+FI9gzo53+9gcukPqjpkeLw9dwYpoECuJnPUCPK7+BSU7ab12N6n8dMya43SaXf0LEdINhak65okfZWsMUULm8=
+	t=1752849886; cv=none; b=ChGzTswCGEFOz6zSbWs3lNjMhAbnZk91ZQ86vtObkHOfQRqPnuNYajJv92Dx+MPmRE9LOKgfQejTELmUrPx792UhuxrjYjGUABEI0TBclKc/NpyU7ZM7oAQNv5hhH72BMFXo/0vvFicEpxgaUJc1U/8uUsanltouAk+KWSIFG7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752849883; c=relaxed/simple;
-	bh=JMSkxfrVGFdcMNDQRBcg4B7Mttz9XM7i8ZNBw0tEhaw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=a8VJEg/2VOxv/DuccNQ65aU/rPCotuJ6rRboXArpWNd1QbF9L25vj75DBjbvz8sbTdZWSmiGP2KwdIquhOZXhvvDpZ08HLXMMYFcgWjVihUQP1hJigBjd5t8nre2VWI9rZyXwgn7Uo+xsSsWXUX27wBEi7xsmcqHSPIi+9Orqrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=EUNfaqc3; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 4E91544318;
-	Fri, 18 Jul 2025 14:44:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1752849872;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XPoXDQSyaVU8ZBQ/QdzHcX0KKdp3rlumZBvZA08cAv0=;
-	b=EUNfaqc3sMuZx4jtogKN1gtnWpL4SOkr5pkGQ+gT63f5PrD8EtFWnbaQS6wjx3s0lCRFSw
-	D+PLPPHwABPgM5YJX5VxgcQqgvUCqgg76vnVa7DDjDcdcC7DkAL45jEEQsxJPLMGVXwCCf
-	HXl3C06posjdxbC+cWdLQTRWzbdrVOB+DFyFGSLAoHY8ElplxfxEAkyYYkxmgIM5DvqxgF
-	awqKL+FOj7Vud2z54G/EAGRdd1a8naQOxgqLvjtzoI8E3XZsVN9rq7mdEADfRH/4cUolzX
-	4wWFtmlUjvr3F8Y3P6yac1UYN/reYTi/c6VkZk5tLO/VSAFhpt7NchXAd1g9Tw==
-Date: Fri, 18 Jul 2025 16:44:29 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Michael Walle <mwalle@kernel.org>, Jyri Sarha <jyri.sarha@iki.fi>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/tidss: encoder: convert to devm_drm_bridge_alloc()
-Message-ID: <20250718164429.090a4712@booty>
-In-Reply-To: <93ab2ae3-46f4-4245-8d2b-e87700372ba6@ideasonboard.com>
-References: <20250716134107.4084945-1-mwalle@kernel.org>
-	<20250717094153.35f854b7@booty>
-	<DBE5Z1SRJ086.NA0KUAWX1MS3@kernel.org>
-	<20250717155659.000eb000@booty>
-	<93ab2ae3-46f4-4245-8d2b-e87700372ba6@ideasonboard.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1752849886; c=relaxed/simple;
+	bh=57t08D0XBLsuBYTQTILMObpKWZEYbrXmLfmK6g9BlPE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cEQoO2G817Jqofo/ys5C/YqMKinIEvEqHcB07lcgaDw21l30c64C4DiWdiCC8bvgoag/wLs/StDImW7smu9LiqX4NHiLBWfyqItzMkCfcbbx2AwKGCXea2cZPkE33CiYMRU0AYFRHfnsYe3h7bg3X8J6J+lOLWCHTVzodldqq8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=pPPMGymw; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4ab61ecc1e8so16374871cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 07:44:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1752849884; x=1753454684; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/JlY6wrS7xoiZAd1n9VylKL/5klHKuhmeV2q/x+jhjE=;
+        b=pPPMGymwc8e4r7k4uixWz7VYtNrmEiCVnyG+fczy3nEPwPa/qOXlkLt1SNpG94Gjw4
+         GGRWX426hSxyxk7uP/DtWeLq0YBRuh+poB84TDeqcJp6JNFIxfjkTuUNIPsobxuBEIzy
+         3EG/5cxeXjT+xQyrNgXDpn2oczMq7CfP37DF/bHViZXVSEsaSjAwQPmvDLaPUr2N+xsi
+         eIHgsBzfm7MpIas9e2ZlIUKXkOIRL1O0X+k5EehkQSlKSVN4KBJJc6X00/aSDWoivsvV
+         /mGt5nGl8fH+jCLJ7dCBt+06AuVwFXJ4Y87uYG1VuhNRuqHZLVWOOGXxQEeyFLwHZB/c
+         hCVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752849884; x=1753454684;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/JlY6wrS7xoiZAd1n9VylKL/5klHKuhmeV2q/x+jhjE=;
+        b=RGS/R8wiCBH3XVgapcZJygMFz9276rFKAcyZvWJ1pBXDouPrZG9vimP9ctXHZ2OxG2
+         fcF16StidKH/r/g1D5TpC5q/AToA0TFWb+9Gf0pshsLQ2PcXflIvMdYy1vMabauMLy6y
+         TRig8zyAs+DIPJNtxeFsDzWU5nsL9mo4BPKg/kSC8Zr/WR2HsBTU104zNR/mZFj9uXUa
+         ClxVKKWuwQGrD5X0lTUnAY0Cn62/oxUuUyavvQ9kbmZIvyiJkqlIqPErOcGrGovyR7xa
+         MCk6CTMXaqpvn047gD71bqFgeRkxSyaGUE/VVn98rWnbFqdnPkzvkT0ziQAy7U8Gdggf
+         +EgA==
+X-Forwarded-Encrypted: i=1; AJvYcCVX3EZM0pQYzjOHdKF53q4dl0PXgQ0t22829SJUPsdNURRAguouVTxUbQABQ0rkTFW9/qZ/vUA1AHArayc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3ZE7VHki6RphKeWMSHqvFUAmsBYa/md6st7MNo2SYw3tagVkb
+	7NcrbWSi/gZZxunr76Ga3dKmyoYn9BR4ZCu6jLj6MylF9Qk0KVU6HEqlkHXiqYgjWwI=
+X-Gm-Gg: ASbGncsXXv6d+/fZl30oGR4enoiwqtoXARy4ejpd9v45hfGzOJwmD3Ndy0OJ8u4lAuG
+	DsNQi6RRIVtR0wiw/9gD2a9wW7ROCxUMwiKuVWNX6Dodu5gGgdyzhCytdSJVdl0o+wWsaQE2aEQ
+	7uHSFXjo9RsNpLH9bYxnlRAUh1BETcl3sz30dCqHyp2BC3BX40n5FnCq7xs/L5HLAo2B2FbN4IU
+	zyAMt7pBeRZ2xECU0joidKfj+zKWHjQkW6zKhOt34D4gM6n2F73PCeZYTOIkSUZbvxXCmKGSaMS
+	pTTMnPnEkzFjxo1U/fo9QD0o/hjLrbw/0HcmZfO9PZ83pCIk4zGZGrBh2fJ7xfieYhVS3NZWbCa
+	2HkM6wkIUimTWv4p+iXJhLiZ9wrfn0LpS7UNqYujhJSCF3EPaAzNOHidII0n4xFv083gmqnsp8k
+	ZGkK65mCWD
+X-Google-Smtp-Source: AGHT+IEYd5qGIZ9KDhfEstxE616f9xXLY8QoZsrjUpURE5IRjE2GiKRGVckhayOKGta9pjoTuDB7PQ==
+X-Received: by 2002:a05:622a:1448:b0:4a9:cff3:68a2 with SMTP id d75a77b69052e-4ab93d88915mr157868681cf.37.1752849883674;
+        Fri, 18 Jul 2025 07:44:43 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-167-56-70.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.56.70])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7051b8c04fdsm8211446d6.15.2025.07.18.07.44.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Jul 2025 07:44:43 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1ucmKI-00000009zcK-2UVK;
+	Fri, 18 Jul 2025 11:44:42 -0300
+Date: Fri, 18 Jul 2025 11:44:42 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Yonatan Maman <ymaman@nvidia.com>,
+	=?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Leon Romanovsky <leon@kernel.org>, Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Alistair Popple <apopple@nvidia.com>,
+	Ben Skeggs <bskeggs@nvidia.com>,
+	Michael Guralnik <michaelgur@nvidia.com>,
+	Or Har-Toov <ohartoov@nvidia.com>,
+	Daisuke Matsuda <dskmtsd@gmail.com>, Shay Drory <shayd@nvidia.com>,
+	linux-mm@kvack.org, linux-rdma@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, Gal Shalom <GalShalom@nvidia.com>
+Subject: Re: [PATCH v2 1/5] mm/hmm: HMM API to enable P2P DMA for device
+ private pages
+Message-ID: <20250718144442.GG2206214@ziepe.ca>
+References: <20250718115112.3881129-1-ymaman@nvidia.com>
+ <20250718115112.3881129-2-ymaman@nvidia.com>
+ <aHpXXKTaqp8FUhmq@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeifeejfecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeglefffefghefhtddvfeeufeeiveekgffgleekieduteekkeetvdehudekgfdvvdenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghlohepsghoohhthidpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehtohhmihdrvhgrlhhkvghinhgvnhesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtohepmhifrghllhgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjhihrihdrshgrrhhhrgesihhki
- hdrfhhipdhrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehtiihimhhmvghrmhgrnhhnsehsuhhsvgdruggvpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomhdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghh
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aHpXXKTaqp8FUhmq@casper.infradead.org>
 
-Hello Tomi,
-
-On Fri, 18 Jul 2025 14:13:03 +0300
-Tomi Valkeinen <tomi.valkeinen@ideasonboard.com> wrote:
-
-> Hi,
+On Fri, Jul 18, 2025 at 03:17:00PM +0100, Matthew Wilcox wrote:
+> On Fri, Jul 18, 2025 at 02:51:08PM +0300, Yonatan Maman wrote:
+> > +++ b/include/linux/memremap.h
+> > @@ -89,6 +89,14 @@ struct dev_pagemap_ops {
+> >  	 */
+> >  	vm_fault_t (*migrate_to_ram)(struct vm_fault *vmf);
+> >  
+> > +	/*
+> > +	 * Used for private (un-addressable) device memory only. Return a
+> > +	 * corresponding PFN for a page that can be mapped to device
+> > +	 * (e.g using dma_map_page)
+> > +	 */
+> > +	int (*get_dma_pfn_for_device)(struct page *private_page,
+> > +				      unsigned long *dma_pfn);
 > 
-> On 17/07/2025 16:56, Luca Ceresoli wrote:
-> > Hello Jyri, Tomi, Michael,
-> > 
-> > On Thu, 17 Jul 2025 09:49:44 +0200
-> > "Michael Walle" <mwalle@kernel.org> wrote:
-> >   
-> >> Hi,
-> >>
-> >> thanks for taking a look!
-> >>  
-> >>> However allocating an encoder using a bridge alloc function (while we
-> >>> used to call an encoder allocation function) looks counter-intuitive.
-> >>>
-> >>> We had discussed on IRC a different idea, adding a wrapper structure
-> >>> around the bridge. Quoting your proposal:
-> >>>
-> >>>   struct tidss_encoder_bridge {
-> >>>     struct drm_bridge bridge;
-> >>>     struct tidss_encoder *encoder
-> >>>   }
-> >>>
-> >>> and then in the bridge funcs go from drm_bridge to tidss_encoder_brigde
-> >>> and use the pointer to get the original private struct.    
-> >>
-> >> I was doing that until I've realized that meson/meson_encoder_* is
-> >> doing it the way this patch does it.  
-> > 
-> > Which was done by, er, myself. O:-)
-> > 
-> > To my excuse, meson was using *_encoder_alloc() but rather
-> > devm_kzalloc() + drm_simple_encoder_init(), and the change was
-> > semi-automated via a coccinelle script, so I didn't fully realize that.
-> >   
-> >>> That would be cleaner and more intuitive, but use a bit more memory and
-> >>> have an additional pointer deref, thus I think we can live with the
-> >>> patch you just sent, at least for now.    
-> >>
-> >> I'm fine with changing it to the wrapper struct. It's your/the
-> >> maintainers call :)  
-> > 
-> > I think the driver maintainers opinion is more relevant, but in lack of
-> > one I think we can take the patch as is, given it's already written.
-> > 
-> > Jyri, Tomi?  
-> 
-> I think this is fine, even though I do agree the tidss_encoder.c is very
-> confusing.
-> 
-> I'll pick this up. I think drm-misc-next-fixes is the correct branch here.
+> This makes no sense.  If a page is addressable then it has a PFN.
+> If a page is not addressable then it doesn't have a PFN.
 
-Looks like to correct branch to me.
+The DEVICE_PRIVATE pages have a PFN, but it is not usable for
+anything.
 
-Thanks for handling this!
+This is effectively converting from a DEVICE_PRIVATE page to an actual
+DMA'able address of some kind. The DEVICE_PRIVATE is just a non-usable
+proxy, like a swap entry, for where the real data is sitting.
 
-Luca
+Jason
 
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
 
