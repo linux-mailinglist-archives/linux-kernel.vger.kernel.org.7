@@ -1,309 +1,447 @@
-Return-Path: <linux-kernel+bounces-736639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53B8DB09FE9
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:36:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B298B09FE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:36:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91E4DA45359
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:34:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE59C1C81EE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3A1B29B23F;
-	Fri, 18 Jul 2025 09:35:00 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E99298CB0;
+	Fri, 18 Jul 2025 09:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O0THrh55"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43FF0298CD7
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 09:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B33921D5BF
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 09:35:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752831300; cv=none; b=kFqA0Gy1oLVouvx7rLKQvyKdtP+V9SovZH0iiBzQ4PilWNDoOcjTtWvHx86ribpjXTIWbs6CoJ4e9Izkf14hlxS5hb1P0OD/cVMSqXY3LEETE5bhkbqc7k3YTaYvH+e5rpAtP3zEkJuZbuhKUhu8UOVpJJ53KD7tYhPIp2jtrkQ=
+	t=1752831337; cv=none; b=nm3iqSdQpJ8bvlvXsBJ66l3JK+LHFzmhf1XbT8HT6b1buy5R78/F/G3uvX0ZORsD3cwsmp25J9jZU33F9j5swpEWnHLvyhDj7dLzjdKUuA1BIq+haQ4nbDpHk8nTNTgB3h2JV3v2xp4iNQGeJ4fe6fyTuuAsHxRTaLCyDEKRJjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752831300; c=relaxed/simple;
-	bh=oJPNvUEXdxCTEiTHsIL00kvucGoxpvtYlL1SfUh7O64=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=qZtYHlb9TwAtkwjDtbMb42t0/2MUcNJzhRcDJ3od0ifaSI5ZcL+HkJlJJo8I62ChsQr0MO0kMB8QTgjJSYOi/GKd9XLyS72I0sZ37b5zYJcxAaJ6Mr+6g0XbYmojlbGct4PcVvw9oi9SyT6TzMiNj35Qw7VWLHGDbsEraFVcmHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3e28caacea2so42195875ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 02:34:58 -0700 (PDT)
+	s=arc-20240116; t=1752831337; c=relaxed/simple;
+	bh=1sSYsSdaeQ2eydjqXCYfur/xtbgP3F8lST/RyTQk/tY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=sIG6+nPX5PHfzK4TeG56vzm9l2KPZ59/GA7mYGJAlnWJq1uwpb2895VyiObq1+nAQnXwNNbLkwi1cMklPsiywfvq2hIZ/nz7U+eAqU+iRL4sfch3T+bEiQRN0H5un/NemqbtzxFyLFp2R/z2uWoAkfG8Jik9cbAZBB74n5MQqVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O0THrh55; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752831333;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=iTF6vz15x5rsg8l38DnxKYnwMg1qcWf6xTcMKtsaUCM=;
+	b=O0THrh557CHU5hy4VFaV2PPMsdbs4FScj9YDCf3LNahGA7UzVbDguqzvwe9/0RwCUudjbw
+	tDGoVMQUkoB/9SLPk7Oec3nUE/3yMBwt07Lmwa1cMiofK7CsKvmL86kda82RcROK9qRyo8
+	/59Ots1EJk8ROPEVWOmOVhouNCNGr/A=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-48-NlT-a7m2PMSZ1_IkvDHDrg-1; Fri, 18 Jul 2025 05:35:31 -0400
+X-MC-Unique: NlT-a7m2PMSZ1_IkvDHDrg-1
+X-Mimecast-MFC-AGG-ID: NlT-a7m2PMSZ1_IkvDHDrg_1752831330
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4538f375e86so17422165e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 02:35:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752831297; x=1753436097;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gO9o/XxraTkT/9LIwD/pek5Hnwy9BztHyrfR/OPQXjE=;
-        b=UDLI7WvQDIWb7/WxkqsPQjchoIvcIgiZRwdp6HncV1hifbUeL76eM6YIloTFJBVixm
-         OBdcn/up/3iWM5jZobCBt3r4nKhHkJljV3xKuvXw2vxVomvZ0wwIhE46iV5q2HLCMcam
-         hvb9rVqsN2Avn2lKo1zehaS7bGkwAu/YDKRjHajLVbfh3ZldrgVcv/V9I2JnqGp7M0fH
-         6jjZJVvs32LiUK2qq3xSl1F3nOExsazBIQ/ozuOjHM7WvyxdFZWQP94mgHGjAIt7rkkL
-         MLn2u5T8KYRT5dKULI4skHlP5p53H2NpD++6U2PsjgtCe6VFgIHInoN3yG94l5Rsw/Lq
-         UiVg==
-X-Forwarded-Encrypted: i=1; AJvYcCWOofP+DytG8S7rwU4h71kTIpjRD2Y5qNUI+tS/KlfrltwdS5oam5XK9OgmOY5mBLBfAvA9Ps5zlXa9uzI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywanx+V1oVtmBOmKl1WbuSnlD5lnQD4UBxgkUI7taA0rOU68lXB
-	1mcvbqD+EZjAODJQw/c+njfxocVTp0Yqhh+fg6YSgJ6UICMxpWF4ayIJIC1uqOwZKoAnT91mFUv
-	4QD+pQhlFQIsgBjRAHMwrRg92oM/JyuAIt4fpvKfj6DGU2eqmUZYU2gtu3eI=
-X-Google-Smtp-Source: AGHT+IGtPlpwQ2r8/YVYVukRZN/tbtDovLy9KxRauxmGhRQl7yNQDy9W+EZDJxzPYjZIMaKKHrZrxJ3gloWPM/kvhLB+dDeRvDhs
+        d=1e100.net; s=20230601; t=1752831330; x=1753436130;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iTF6vz15x5rsg8l38DnxKYnwMg1qcWf6xTcMKtsaUCM=;
+        b=t09DfIihOZ/Bpbp67B+clLn1+HcH388MqyTN81nX4UrB0LRS76nERWmPyMVXlnbzz7
+         qgX+aNFeKegv4cnH/FJlLpL8JvTxKIlKsPXWKv7eF+v2t7vnol7xPpPjqrhyUQe3Qbh+
+         VF94nY+HWzgu6pp/8Qqt9vtSBtl5zKFaYhFjiAnKALmMKoiC05uOtp6nzUwPC+2hMiLR
+         U2tiCphO4Z0ir6wS1i3V1n3GcXIR70lYAu3Uwjbm9RzX6MJU+K/Q6BqSOm8VYLVr+nuo
+         93nHIr08MU3aVNr8BF9j1yp/F3XoZ6eq5DvhL5PNOTpJAxo9s/AJWGCPn3KcuIuPHu2/
+         E8gw==
+X-Forwarded-Encrypted: i=1; AJvYcCXFqXN8KHPlyTOnGPuRYCLQPAb6WePTXtsAwKX6vgO1/xHTzgw5/HfnlFzNHfowjx4fUcuOz+lynVpW+SA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7BoxMnZtNkbFZerYhAg0od6HFmKCWYQL0n+Zfc+Pjx1c48BQC
+	oj6FDoXgqstEAdWCaUBwZfIHCqXXC1l+cOTL2dc9QSfeKLZY3ZzJcAaasf/PFniJeN+BCYti3BU
+	evb+JqfKtkrFkv3exkMZpU1Zweiu5viavAJi6Zy6wZTGcHCeA5TEKXYosaWXImxNZsg==
+X-Gm-Gg: ASbGncs7kz4e/Xm3jcAQb8hr0PZ33dYpf0Q93HF8b7Us5PHO5Y8lxoM9bY9iDN94Vs5
+	hNF27vfL0gaDht6vfH0XIDdnUVkrNfBNpbmT14lMnan4Qe9lnyEwjnheaMi/1dJPTPCNfl0xMBX
+	WhOJH7SzCLT3iH3ORYNtu+ltm2ovKa+0Ca6bSRdJ7ylCqFDAFpLtAO0iV/w7v5+/5dHT6Ru36GI
+	hveHs/+OB3bUS1LSRFa9V+E4bq169T1YDIdpglW1k8iMH42lDadt1bj92A121RBLA89Sm9y0knJ
+	CsKtRlLhqG2VrAun0JUfzH/bU/ADnL8o630FmQ4yr/0aCWoytWbezoT6wyb+L56BRA==
+X-Received: by 2002:a05:600c:3491:b0:439:9b2a:1b2f with SMTP id 5b1f17b1804b1-4562e039d93mr105237645e9.3.1752831329885;
+        Fri, 18 Jul 2025 02:35:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGGQ7ZA5e7DAm4x7neiy2lZh2cXrvrJW8tFpyTLTBIoUHtoh3gHTEOBzZXNrp024CiQjWToSA==
+X-Received: by 2002:a05:600c:3491:b0:439:9b2a:1b2f with SMTP id 5b1f17b1804b1-4562e039d93mr105237345e9.3.1752831329405;
+        Fri, 18 Jul 2025 02:35:29 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.30])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca2bf4bsm1317245f8f.31.2025.07.18.02.35.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Jul 2025 02:35:28 -0700 (PDT)
+Message-ID: <57b1e83ede5ef8f5b2d661b3326374d82da0bd1a.camel@redhat.com>
+Subject: Re: [PATCH] rv: Ensure containers are registered first
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Nam Cao <namcao@linutronix.de>, Steven Rostedt <rostedt@goodmis.org>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, 	linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+Date: Fri, 18 Jul 2025 11:35:27 +0200
+In-Reply-To: <20250718091850.2057864-1-namcao@linutronix.de>
+References: <20250718091850.2057864-1-namcao@linutronix.de>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
+ xyhmqeUWOzFx5P43S1E1dhsrLWgP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:330a:b0:3df:3ee6:6973 with SMTP id
- e9e14a558f8ab-3e282d629demr108063155ab.1.1752831297323; Fri, 18 Jul 2025
- 02:34:57 -0700 (PDT)
-Date: Fri, 18 Jul 2025 02:34:57 -0700
-In-Reply-To: <CANp29Y4Y=az02pTZpCRVbz-d2v3cebwfm6V_MitKWgeZxxZwwQ@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <687a1541.a00a0220.3af5df.0026.GAE@google.com>
-Subject: Re: [syzbot] [netfilter?] KASAN: slab-out-of-bounds Read in nfacct_mt_checkentry
-From: syzbot <syzbot+4ff165b9251e4d295690@syzkaller.appspotmail.com>
-To: nogikh@google.com
-Cc: coreteam@netfilter.org, davem@davemloft.net, edumazet@google.com, 
-	fw@strlen.de, horms@kernel.org, kadlec@netfilter.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, nogikh@google.com, pabeni@redhat.com, 
-	pablo@netfilter.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-> #syz upstream
+On Fri, 2025-07-18 at 11:18 +0200, Nam Cao wrote:
+> If rv_register_monitor() is called with a non-NULL parent pointer
+> (i.e. by
+> monitors inside a container), it is expected that the parent (a.k.a
+> container) is already registered.
+>=20
+> The containers seem to always be registered first. I suspect because
+> of the order in Makefile. But nothing guarantees this.
 
-Can't upstream, this is final destination.
+Yes, the linking order does guarantee this.
+But I guess it doesn't hurt enforcing it.
 
->
-> On Fri, Jul 18, 2025 at 3:06=E2=80=AFAM syzbot
-> <syzbot+4ff165b9251e4d295690@syzkaller.appspotmail.com> wrote:
->>
->> Hello,
->>
->> syzbot found the following issue on:
->>
->> HEAD commit:    5d5d62298b8b Merge tag 'x86_urgent_for_v6.16_rc6' of git=
-:/..
->> git tree:       upstream
->> console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D1655418c5800=
-00
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Db309c907eaab=
-29da
->> dashboard link: https://syzkaller.appspot.com/bug?extid=3D4ff165b9251e4d=
-295690
->> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f60=
-49-1~exp1~20250616065826.132), Debian LLD 20.1.7
->> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D156787d458=
-0000
->> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D136787d45800=
-00
->>
->> Downloadable assets:
->> disk image: https://storage.googleapis.com/syzbot-assets/621a2e2bbe6e/di=
-sk-5d5d6229.raw.xz
->> vmlinux: https://storage.googleapis.com/syzbot-assets/1822022cd8cb/vmlin=
-ux-5d5d6229.xz
->> kernel image: https://storage.googleapis.com/syzbot-assets/10cee653a6cd/=
-bzImage-5d5d6229.xz
->>
->> The issue was bisected to:
->>
->> commit 6001a930ce0378b62210d4f83583fc88a903d89d
->> Author: Pablo Neira Ayuso <pablo@netfilter.org>
->> Date:   Mon Feb 15 11:28:07 2021 +0000
->>
->>     netfilter: nftables: introduce table ownership
->>
->> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D133e518c5=
-80000
->> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D10be518c5=
-80000
->> console output: https://syzkaller.appspot.com/x/log.txt?x=3D173e518c5800=
-00
->>
->> IMPORTANT: if you fix the issue, please add the following tag to the com=
-mit:
->> Reported-by: syzbot+4ff165b9251e4d295690@syzkaller.appspotmail.com
->> Fixes: 6001a930ce03 ("netfilter: nftables: introduce table ownership")
->>
->> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->> BUG: KASAN: slab-out-of-bounds in string_nocheck lib/vsprintf.c:639 [inl=
-ine]
->> BUG: KASAN: slab-out-of-bounds in string+0x231/0x2b0 lib/vsprintf.c:721
->> Read of size 1 at addr ffff88801eac95c8 by task syz-executor183/5851
->>
->> CPU: 0 UID: 0 PID: 5851 Comm: syz-executor183 Not tainted 6.16.0-rc5-syz=
-kaller-00276-g5d5d62298b8b #0 PREEMPT(full)
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS =
-Google 05/07/2025
->> Call Trace:
->>  <TASK>
->>  dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
->>  print_address_description mm/kasan/report.c:378 [inline]
->>  print_report+0xca/0x230 mm/kasan/report.c:480
->>  kasan_report+0x118/0x150 mm/kasan/report.c:593
->>  string_nocheck lib/vsprintf.c:639 [inline]
->>  string+0x231/0x2b0 lib/vsprintf.c:721
->>  vsnprintf+0x739/0xf00 lib/vsprintf.c:2874
->>  vprintk_store+0x3c7/0xd00 kernel/printk/printk.c:2279
->>  vprintk_emit+0x21e/0x7a0 kernel/printk/printk.c:2426
->>  _printk+0xcf/0x120 kernel/printk/printk.c:2475
->>  nfacct_mt_checkentry+0xd2/0xe0 net/netfilter/xt_nfacct.c:41
->>  xt_check_match+0x3d1/0xab0 net/netfilter/x_tables.c:523
->>  __nft_match_init+0x63a/0x840 net/netfilter/nft_compat.c:520
->>  nf_tables_newexpr net/netfilter/nf_tables_api.c:3493 [inline]
->>  nf_tables_newrule+0x178c/0x2890 net/netfilter/nf_tables_api.c:4324
->>  nfnetlink_rcv_batch net/netfilter/nfnetlink.c:525 [inline]
->>  nfnetlink_rcv_skb_batch net/netfilter/nfnetlink.c:648 [inline]
->>  nfnetlink_rcv+0x1132/0x2520 net/netfilter/nfnetlink.c:666
->>  netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
->>  netlink_unicast+0x759/0x8e0 net/netlink/af_netlink.c:1346
->>  netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
->>  sock_sendmsg_nosec net/socket.c:712 [inline]
->>  __sock_sendmsg+0x219/0x270 net/socket.c:727
->>  ____sys_sendmsg+0x505/0x830 net/socket.c:2566
->>  ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
->>  __sys_sendmsg net/socket.c:2652 [inline]
->>  __do_sys_sendmsg net/socket.c:2657 [inline]
->>  __se_sys_sendmsg net/socket.c:2655 [inline]
->>  __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2655
->>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->>  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
->>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->> RIP: 0033:0x7fa7bbf1c6a9
->> Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 =
-f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 f=
-f ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
->> RSP: 002b:00007fff7139c908 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
->> RAX: ffffffffffffffda RBX: 00007fff7139cad8 RCX: 00007fa7bbf1c6a9
->> RDX: 0000000000000000 RSI: 0000200000000000 RDI: 0000000000000003
->> RBP: 00007fa7bbf8f610 R08: 0000000000000002 R09: 00007fff7139cad8
->> R10: 0000000000000009 R11: 0000000000000246 R12: 0000000000000001
->> R13: 00007fff7139cac8 R14: 0000000000000001 R15: 0000000000000001
->>  </TASK>
->>
->> Allocated by task 5851:
->>  kasan_save_stack mm/kasan/common.c:47 [inline]
->>  kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
->>  poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
->>  __kasan_kmalloc+0x93/0xb0 mm/kasan/common.c:394
->>  kasan_kmalloc include/linux/kasan.h:260 [inline]
->>  __do_kmalloc_node mm/slub.c:4328 [inline]
->>  __kmalloc_noprof+0x27a/0x4f0 mm/slub.c:4340
->>  kmalloc_noprof include/linux/slab.h:909 [inline]
->>  kzalloc_noprof include/linux/slab.h:1039 [inline]
->>  nf_tables_newrule+0x1506/0x2890 net/netfilter/nf_tables_api.c:4306
->>  nfnetlink_rcv_batch net/netfilter/nfnetlink.c:525 [inline]
->>  nfnetlink_rcv_skb_batch net/netfilter/nfnetlink.c:648 [inline]
->>  nfnetlink_rcv+0x1132/0x2520 net/netfilter/nfnetlink.c:666
->>  netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
->>  netlink_unicast+0x759/0x8e0 net/netlink/af_netlink.c:1346
->>  netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
->>  sock_sendmsg_nosec net/socket.c:712 [inline]
->>  __sock_sendmsg+0x219/0x270 net/socket.c:727
->>  ____sys_sendmsg+0x505/0x830 net/socket.c:2566
->>  ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
->>  __sys_sendmsg net/socket.c:2652 [inline]
->>  __do_sys_sendmsg net/socket.c:2657 [inline]
->>  __se_sys_sendmsg net/socket.c:2655 [inline]
->>  __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2655
->>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->>  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
->>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->>
->> The buggy address belongs to the object at ffff88801eac9580
->>  which belongs to the cache kmalloc-cg-96 of size 96
->> The buggy address is located 0 bytes to the right of
->>  allocated 72-byte region [ffff88801eac9580, ffff88801eac95c8)
->>
->> The buggy address belongs to the physical page:
->> page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1ea=
-c9
->> flags: 0xfff00000000000(node=3D0|zone=3D1|lastcpupid=3D0x7ff)
->> page_type: f5(slab)
->> raw: 00fff00000000000 ffff88801a449640 dead000000000122 0000000000000000
->> raw: 0000000000000000 0000000080200020 00000000f5000000 0000000000000000
->> page dumped because: kasan: bad access detected
->> page_owner tracks the page as allocated
->> page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52cc0=
-(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 1, tgid 1 (swapper/=
-0), ts 2776913905, free_ts 0
->>  set_page_owner include/linux/page_owner.h:32 [inline]
->>  post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1704
->>  prep_new_page mm/page_alloc.c:1712 [inline]
->>  get_page_from_freelist+0x21e4/0x22c0 mm/page_alloc.c:3669
->>  __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:4959
->>  alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2419
->>  alloc_slab_page mm/slub.c:2451 [inline]
->>  allocate_slab+0x8a/0x3b0 mm/slub.c:2619
->>  new_slab mm/slub.c:2673 [inline]
->>  ___slab_alloc+0xbfc/0x1480 mm/slub.c:3859
->>  __slab_alloc mm/slub.c:3949 [inline]
->>  __slab_alloc_node mm/slub.c:4024 [inline]
->>  slab_alloc_node mm/slub.c:4185 [inline]
->>  __do_kmalloc_node mm/slub.c:4327 [inline]
->>  __kmalloc_noprof+0x305/0x4f0 mm/slub.c:4340
->>  kmalloc_noprof include/linux/slab.h:909 [inline]
->>  kzalloc_noprof include/linux/slab.h:1039 [inline]
->>  __register_sysctl_table+0x72/0x1340 fs/proc/proc_sysctl.c:1380
->>  user_namespace_sysctl_init+0x25/0x150 kernel/ucount.c:355
->>  do_one_initcall+0x233/0x820 init/main.c:1274
->>  do_initcall_level+0x137/0x1f0 init/main.c:1336
->>  do_initcalls+0x69/0xd0 init/main.c:1352
->>  kernel_init_freeable+0x3d9/0x570 init/main.c:1584
->>  kernel_init+0x1d/0x1d0 init/main.c:1474
->>  ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
->>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
->> page_owner free stack trace missing
->>
->> Memory state around the buggy address:
->>  ffff88801eac9480: 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc
->>  ffff88801eac9500: 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc
->> >ffff88801eac9580: 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc
->>                                               ^
->>  ffff88801eac9600: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->>  ffff88801eac9680: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>
->>
->> ---
->> This report is generated by a bot. It may contain errors.
->> See https://goo.gl/tpsmEJ for more information about syzbot.
->> syzbot engineers can be reached at syzkaller@googlegroups.com.
->>
->> syzbot will keep track of this issue. See:
->> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->> For information about bisection process see: https://goo.gl/tpsmEJ#bisec=
-tion
->>
->> If the report is already addressed, let syzbot know by replying with:
->> #syz fix: exact-commit-title
->>
->> If you want syzbot to run the reproducer, reply with:
->> #syz test: git://repo/address.git branch-or-commit-hash
->> If you attach or paste a git patch, syzbot will apply it before testing.
->>
->> If you want to overwrite report's subsystems, reply with:
->> #syz set subsystems: new-subsystem
->> (See the list of subsystem names on the web dashboard)
->>
->> If the report is a duplicate of another one, reply with:
->> #syz dup: exact-subject-of-another-report
->>
->> If you want to undo deduplication, reply with:
->> #syz undup
->>
->> --
->> You received this message because you are subscribed to the Google Group=
-s "syzkaller-bugs" group.
->> To unsubscribe from this group and stop receiving emails from it, send a=
-n email to syzkaller-bugs+unsubscribe@googlegroups.com.
->> To view this discussion visit https://groups.google.com/d/msgid/syzkalle=
-r-bugs/68799e14.a00a0220.3af5df.0025.GAE%40google.com.
+Anyway do you have a good reason for using device_initcall/__exitcall
+instead of module_init/module_exit?
+Keeping those might save a bit of ifdeffery if (when) we decide to
+fully support RV monitors as kernel modules.
+
+Thanks,
+Gabriele
+
+>=20
+> If this registering order is changed, "strange" things happen. For
+> example,
+> if the container is registered last, rv_is_container_monitor()
+> incorrectly
+> says this is NOT a container. .enable() is then called, which is NULL
+> for
+> container, thus we have a NULL pointer deref crash.
+>=20
+> Guarantee that containers are registered first.
+>=20
+> Fixes: cb85c660fcd4 ("rv: Add option for nested monitors and include
+> sched")
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
+> Cc: stable@vger.kernel.org
+> ---
+> =C2=A0include/linux/rv.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 5 +++++
+> =C2=A0kernel/trace/rv/monitors/pagefault/pagefault.c=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 4 ++--
+> =C2=A0kernel/trace/rv/monitors/rtapp/rtapp.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 | 4 ++--
+> =C2=A0kernel/trace/rv/monitors/sched/sched.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 | 4 ++--
+> =C2=A0kernel/trace/rv/monitors/sco/sco.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 4 ++--
+> =C2=A0kernel/trace/rv/monitors/scpd/scpd.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 | 4 ++--
+> =C2=A0kernel/trace/rv/monitors/sleep/sleep.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 | 4 ++--
+> =C2=A0kernel/trace/rv/monitors/sncid/sncid.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 | 4 ++--
+> =C2=A0kernel/trace/rv/monitors/snep/snep.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 | 4 ++--
+> =C2=A0kernel/trace/rv/monitors/snroc/snroc.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 | 4 ++--
+> =C2=A0kernel/trace/rv/monitors/tss/tss.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 4 ++--
+> =C2=A0kernel/trace/rv/monitors/wip/wip.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 4 ++--
+> =C2=A0kernel/trace/rv/monitors/wwnr/wwnr.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 | 4 ++--
+> =C2=A0tools/verification/rvgen/rvgen/templates/container/main.c | 4 ++--
+> =C2=A0tools/verification/rvgen/rvgen/templates/dot2k/main.c=C2=A0=C2=A0=
+=C2=A0=C2=A0 | 4 ++--
+> =C2=A0tools/verification/rvgen/rvgen/templates/ltl2k/main.c=C2=A0=C2=A0=
+=C2=A0=C2=A0 | 4 ++--
+> =C2=A016 files changed, 35 insertions(+), 30 deletions(-)
+>=20
+> diff --git a/include/linux/rv.h b/include/linux/rv.h
+> index 97baf58d88b2..094c9f62389c 100644
+> --- a/include/linux/rv.h
+> +++ b/include/linux/rv.h
+> @@ -119,5 +119,10 @@ static inline bool rv_reacting_on(void)
+> =C2=A0}
+> =C2=A0#endif /* CONFIG_RV_REACTORS */
+> =C2=A0
+> +#define rv_container_init device_initcall
+> +#define rv_container_exit __exitcall
+> +#define rv_monitor_init late_initcall
+> +#define rv_monitor_exit __exitcall
+> +
+> =C2=A0#endif /* CONFIG_RV */
+> =C2=A0#endif /* _LINUX_RV_H */
+> diff --git a/kernel/trace/rv/monitors/pagefault/pagefault.c
+> b/kernel/trace/rv/monitors/pagefault/pagefault.c
+> index 9fe6123b2200..2b226d27ddff 100644
+> --- a/kernel/trace/rv/monitors/pagefault/pagefault.c
+> +++ b/kernel/trace/rv/monitors/pagefault/pagefault.c
+> @@ -80,8 +80,8 @@ static void __exit unregister_pagefault(void)
+> =C2=A0	rv_unregister_monitor(&rv_pagefault);
+> =C2=A0}
+> =C2=A0
+> -module_init(register_pagefault);
+> -module_exit(unregister_pagefault);
+> +rv_monitor_init(register_pagefault);
+> +rv_monitor_exit(unregister_pagefault);
+> =C2=A0
+> =C2=A0MODULE_LICENSE("GPL");
+> =C2=A0MODULE_AUTHOR("Nam Cao <namcao@linutronix.de>");
+> diff --git a/kernel/trace/rv/monitors/rtapp/rtapp.c
+> b/kernel/trace/rv/monitors/rtapp/rtapp.c
+> index fd75fc927d65..b078327e71bf 100644
+> --- a/kernel/trace/rv/monitors/rtapp/rtapp.c
+> +++ b/kernel/trace/rv/monitors/rtapp/rtapp.c
+> @@ -25,8 +25,8 @@ static void __exit unregister_rtapp(void)
+> =C2=A0	rv_unregister_monitor(&rv_rtapp);
+> =C2=A0}
+> =C2=A0
+> -module_init(register_rtapp);
+> -module_exit(unregister_rtapp);
+> +rv_container_init(register_rtapp);
+> +rv_container_exit(unregister_rtapp);
+> =C2=A0
+> =C2=A0MODULE_LICENSE("GPL");
+> =C2=A0MODULE_AUTHOR("Nam Cao <namcao@linutronix.de>");
+> diff --git a/kernel/trace/rv/monitors/sched/sched.c
+> b/kernel/trace/rv/monitors/sched/sched.c
+> index 905e03c3c934..e89e193bd8e0 100644
+> --- a/kernel/trace/rv/monitors/sched/sched.c
+> +++ b/kernel/trace/rv/monitors/sched/sched.c
+> @@ -30,8 +30,8 @@ static void __exit unregister_sched(void)
+> =C2=A0	rv_unregister_monitor(&rv_sched);
+> =C2=A0}
+> =C2=A0
+> -module_init(register_sched);
+> -module_exit(unregister_sched);
+> +rv_container_init(register_sched);
+> +rv_container_exit(unregister_sched);
+> =C2=A0
+> =C2=A0MODULE_LICENSE("GPL");
+> =C2=A0MODULE_AUTHOR("Gabriele Monaco <gmonaco@redhat.com>");
+> diff --git a/kernel/trace/rv/monitors/sco/sco.c
+> b/kernel/trace/rv/monitors/sco/sco.c
+> index 4cff59220bfc..b96e09e64a2f 100644
+> --- a/kernel/trace/rv/monitors/sco/sco.c
+> +++ b/kernel/trace/rv/monitors/sco/sco.c
+> @@ -80,8 +80,8 @@ static void __exit unregister_sco(void)
+> =C2=A0	rv_unregister_monitor(&rv_sco);
+> =C2=A0}
+> =C2=A0
+> -module_init(register_sco);
+> -module_exit(unregister_sco);
+> +rv_monitor_init(register_sco);
+> +rv_monitor_exit(unregister_sco);
+> =C2=A0
+> =C2=A0MODULE_LICENSE("GPL");
+> =C2=A0MODULE_AUTHOR("Gabriele Monaco <gmonaco@redhat.com>");
+> diff --git a/kernel/trace/rv/monitors/scpd/scpd.c
+> b/kernel/trace/rv/monitors/scpd/scpd.c
+> index cbdd6a5f8d7f..a4c8e78fa768 100644
+> --- a/kernel/trace/rv/monitors/scpd/scpd.c
+> +++ b/kernel/trace/rv/monitors/scpd/scpd.c
+> @@ -88,8 +88,8 @@ static void __exit unregister_scpd(void)
+> =C2=A0	rv_unregister_monitor(&rv_scpd);
+> =C2=A0}
+> =C2=A0
+> -module_init(register_scpd);
+> -module_exit(unregister_scpd);
+> +rv_monitor_init(register_scpd);
+> +rv_monitor_exit(unregister_scpd);
+> =C2=A0
+> =C2=A0MODULE_LICENSE("GPL");
+> =C2=A0MODULE_AUTHOR("Gabriele Monaco <gmonaco@redhat.com>");
+> diff --git a/kernel/trace/rv/monitors/sleep/sleep.c
+> b/kernel/trace/rv/monitors/sleep/sleep.c
+> index eea447b06907..6980f8de725d 100644
+> --- a/kernel/trace/rv/monitors/sleep/sleep.c
+> +++ b/kernel/trace/rv/monitors/sleep/sleep.c
+> @@ -229,8 +229,8 @@ static void __exit unregister_sleep(void)
+> =C2=A0	rv_unregister_monitor(&rv_sleep);
+> =C2=A0}
+> =C2=A0
+> -module_init(register_sleep);
+> -module_exit(unregister_sleep);
+> +rv_monitor_init(register_sleep);
+> +rv_monitor_exit(unregister_sleep);
+> =C2=A0
+> =C2=A0MODULE_LICENSE("GPL");
+> =C2=A0MODULE_AUTHOR("Nam Cao <namcao@linutronix.de>");
+> diff --git a/kernel/trace/rv/monitors/sncid/sncid.c
+> b/kernel/trace/rv/monitors/sncid/sncid.c
+> index f5037cd6214c..97a126c6083a 100644
+> --- a/kernel/trace/rv/monitors/sncid/sncid.c
+> +++ b/kernel/trace/rv/monitors/sncid/sncid.c
+> @@ -88,8 +88,8 @@ static void __exit unregister_sncid(void)
+> =C2=A0	rv_unregister_monitor(&rv_sncid);
+> =C2=A0}
+> =C2=A0
+> -module_init(register_sncid);
+> -module_exit(unregister_sncid);
+> +rv_monitor_init(register_sncid);
+> +rv_monitor_exit(unregister_sncid);
+> =C2=A0
+> =C2=A0MODULE_LICENSE("GPL");
+> =C2=A0MODULE_AUTHOR("Gabriele Monaco <gmonaco@redhat.com>");
+> diff --git a/kernel/trace/rv/monitors/snep/snep.c
+> b/kernel/trace/rv/monitors/snep/snep.c
+> index 0076ba6d7ea4..376a856ebffa 100644
+> --- a/kernel/trace/rv/monitors/snep/snep.c
+> +++ b/kernel/trace/rv/monitors/snep/snep.c
+> @@ -88,8 +88,8 @@ static void __exit unregister_snep(void)
+> =C2=A0	rv_unregister_monitor(&rv_snep);
+> =C2=A0}
+> =C2=A0
+> -module_init(register_snep);
+> -module_exit(unregister_snep);
+> +rv_monitor_init(register_snep);
+> +rv_monitor_exit(unregister_snep);
+> =C2=A0
+> =C2=A0MODULE_LICENSE("GPL");
+> =C2=A0MODULE_AUTHOR("Gabriele Monaco <gmonaco@redhat.com>");
+> diff --git a/kernel/trace/rv/monitors/snroc/snroc.c
+> b/kernel/trace/rv/monitors/snroc/snroc.c
+> index bb1f60d55296..e4439605b4b6 100644
+> --- a/kernel/trace/rv/monitors/snroc/snroc.c
+> +++ b/kernel/trace/rv/monitors/snroc/snroc.c
+> @@ -77,8 +77,8 @@ static void __exit unregister_snroc(void)
+> =C2=A0	rv_unregister_monitor(&rv_snroc);
+> =C2=A0}
+> =C2=A0
+> -module_init(register_snroc);
+> -module_exit(unregister_snroc);
+> +rv_monitor_init(register_snroc);
+> +rv_monitor_exit(unregister_snroc);
+> =C2=A0
+> =C2=A0MODULE_LICENSE("GPL");
+> =C2=A0MODULE_AUTHOR("Gabriele Monaco <gmonaco@redhat.com>");
+> diff --git a/kernel/trace/rv/monitors/tss/tss.c
+> b/kernel/trace/rv/monitors/tss/tss.c
+> index 542787e6524f..8f960c9fe0ff 100644
+> --- a/kernel/trace/rv/monitors/tss/tss.c
+> +++ b/kernel/trace/rv/monitors/tss/tss.c
+> @@ -83,8 +83,8 @@ static void __exit unregister_tss(void)
+> =C2=A0	rv_unregister_monitor(&rv_tss);
+> =C2=A0}
+> =C2=A0
+> -module_init(register_tss);
+> -module_exit(unregister_tss);
+> +rv_monitor_init(register_tss);
+> +rv_monitor_exit(unregister_tss);
+> =C2=A0
+> =C2=A0MODULE_LICENSE("GPL");
+> =C2=A0MODULE_AUTHOR("Gabriele Monaco <gmonaco@redhat.com>");
+> diff --git a/kernel/trace/rv/monitors/wip/wip.c
+> b/kernel/trace/rv/monitors/wip/wip.c
+> index ed758fec8608..5c39c6074bd3 100644
+> --- a/kernel/trace/rv/monitors/wip/wip.c
+> +++ b/kernel/trace/rv/monitors/wip/wip.c
+> @@ -80,8 +80,8 @@ static void __exit unregister_wip(void)
+> =C2=A0	rv_unregister_monitor(&rv_wip);
+> =C2=A0}
+> =C2=A0
+> -module_init(register_wip);
+> -module_exit(unregister_wip);
+> +rv_monitor_init(register_wip);
+> +rv_monitor_exit(unregister_wip);
+> =C2=A0
+> =C2=A0MODULE_LICENSE("GPL");
+> =C2=A0MODULE_AUTHOR("Daniel Bristot de Oliveira <bristot@kernel.org>");
+> diff --git a/kernel/trace/rv/monitors/wwnr/wwnr.c
+> b/kernel/trace/rv/monitors/wwnr/wwnr.c
+> index 172f31c4b0f3..ec671546f571 100644
+> --- a/kernel/trace/rv/monitors/wwnr/wwnr.c
+> +++ b/kernel/trace/rv/monitors/wwnr/wwnr.c
+> @@ -79,8 +79,8 @@ static void __exit unregister_wwnr(void)
+> =C2=A0	rv_unregister_monitor(&rv_wwnr);
+> =C2=A0}
+> =C2=A0
+> -module_init(register_wwnr);
+> -module_exit(unregister_wwnr);
+> +rv_monitor_init(register_wwnr);
+> +rv_monitor_exit(unregister_wwnr);
+> =C2=A0
+> =C2=A0MODULE_LICENSE("GPL");
+> =C2=A0MODULE_AUTHOR("Daniel Bristot de Oliveira <bristot@kernel.org>");
+> diff --git
+> a/tools/verification/rvgen/rvgen/templates/container/main.c
+> b/tools/verification/rvgen/rvgen/templates/container/main.c
+> index 89fc17cf8958..5820c9705d0f 100644
+> --- a/tools/verification/rvgen/rvgen/templates/container/main.c
+> +++ b/tools/verification/rvgen/rvgen/templates/container/main.c
+> @@ -30,8 +30,8 @@ static void __exit unregister_%%MODEL_NAME%%(void)
+> =C2=A0	rv_unregister_monitor(&rv_%%MODEL_NAME%%);
+> =C2=A0}
+> =C2=A0
+> -module_init(register_%%MODEL_NAME%%);
+> -module_exit(unregister_%%MODEL_NAME%%);
+> +rv_container_init(register_%%MODEL_NAME%%);
+> +rv_container_exit(unregister_%%MODEL_NAME%%);
+> =C2=A0
+> =C2=A0MODULE_LICENSE("GPL");
+> =C2=A0MODULE_AUTHOR("dot2k: auto-generated");
+> diff --git a/tools/verification/rvgen/rvgen/templates/dot2k/main.c
+> b/tools/verification/rvgen/rvgen/templates/dot2k/main.c
+> index 83044a20c89a..d6bd248aba9c 100644
+> --- a/tools/verification/rvgen/rvgen/templates/dot2k/main.c
+> +++ b/tools/verification/rvgen/rvgen/templates/dot2k/main.c
+> @@ -83,8 +83,8 @@ static void __exit unregister_%%MODEL_NAME%%(void)
+> =C2=A0	rv_unregister_monitor(&rv_%%MODEL_NAME%%);
+> =C2=A0}
+> =C2=A0
+> -module_init(register_%%MODEL_NAME%%);
+> -module_exit(unregister_%%MODEL_NAME%%);
+> +rv_monitor_init(register_%%MODEL_NAME%%);
+> +rv_monitor_exit(unregister_%%MODEL_NAME%%);
+> =C2=A0
+> =C2=A0MODULE_LICENSE("GPL");
+> =C2=A0MODULE_AUTHOR("dot2k: auto-generated");
+> diff --git a/tools/verification/rvgen/rvgen/templates/ltl2k/main.c
+> b/tools/verification/rvgen/rvgen/templates/ltl2k/main.c
+> index f85d076fbf78..2069a7a0f1ae 100644
+> --- a/tools/verification/rvgen/rvgen/templates/ltl2k/main.c
+> +++ b/tools/verification/rvgen/rvgen/templates/ltl2k/main.c
+> @@ -94,8 +94,8 @@ static void __exit unregister_%%MODEL_NAME%%(void)
+> =C2=A0	rv_unregister_monitor(&rv_%%MODEL_NAME%%);
+> =C2=A0}
+> =C2=A0
+> -module_init(register_%%MODEL_NAME%%);
+> -module_exit(unregister_%%MODEL_NAME%%);
+> +rv_monitor_init(register_%%MODEL_NAME%%);
+> +rv_monitor_exit(unregister_%%MODEL_NAME%%);
+> =C2=A0
+> =C2=A0MODULE_LICENSE("GPL");
+> =C2=A0MODULE_AUTHOR(/* TODO */);
+
 
