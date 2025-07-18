@@ -1,138 +1,118 @@
-Return-Path: <linux-kernel+bounces-737340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A310B0AB1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 22:25:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9D7AB0AB1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 22:25:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8BF31C807C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 20:25:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05A6916C864
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 20:25:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF93F21A436;
-	Fri, 18 Jul 2025 20:25:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0497421B9C0;
+	Fri, 18 Jul 2025 20:25:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JNCa3p9O";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+RnNcx8+"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D510D3597E
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 20:25:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="GwlPHPU6"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F31A1E98F3;
+	Fri, 18 Jul 2025 20:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752870317; cv=none; b=LHBMx3dN1k+7b4Osg0m7tXkuJzMBvlG1bLc9O/+5okhNzLs9r1d8bPuxgYovoE/7/i0Cpu/eKxytZOWMEV6z0KRpmwd0AjY0ny872S5hmlmpzDnyLWM7ppgE/UJtAGoKLL+85cAfAJmVnGHIPkmfOnJCkgXx79m/SCN1XR8c7sE=
+	t=1752870330; cv=none; b=ikonoS593H02WKfSfhbwHF5gsKBBMAchfLP6A/J2/tYP1QTPMkg59URpdejYOT8sPEKeRNKhjLkqpheyWQo35yDYoQljtiP3ByIJj7JvkAgo5RWNf7oQ0Ciy+ea9NvOvqhF80RqcMhpBXjBp9hDhkn+b/1G+WJ9VGJTmJYZbYuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752870317; c=relaxed/simple;
-	bh=FIJnaiLJ7/jMTBjTat+x4rEXmus+Fr275rfKBD7bnDE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=YT4kqfS93X86aqOKnrFVbtWNwZ+8cEkDTzpz+s28FFSDHzyK6tm1xg7Sw8zmiqRiuC2JuFcPn57HJGE3uu4GB2xCdE3V/NeVqXnH9MCqI04+CDxfwgGiO42Yv3AU+KYHg2YxrXwcqEBDZLuxwKGS68U6zVJoyYmjDvuLQzI5XSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JNCa3p9O; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+RnNcx8+; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752870314;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TVS4zSK+i2h9K8I4Xk0uOTcJW+Rkh1rnWs37pjnV/m0=;
-	b=JNCa3p9O7DDgmABD5dazRknv9MDly+o/ddHOj3An8ImwTVuYYg75p/atGkQWhbE1QWx3Uk
-	NsgOWenGOIwFPlDFqpOhhTn4RZm9Jd4TfMKrZ2VHbUT/NZSF0LpF8B/QnknKWDoBOQmpaY
-	AkXtgq57sbuLDF5DHPgknxiCXhQ6KZdh/yH1kaEHbxMT25MqACLCFK9U1v4m2z5qvAWyaW
-	UxZDcSxqXDXgJXEtSABjysY8RK7j3KjIBu6/dycdajm/pFsyUR0iJ2fE0O2uJIpGetjV/Q
-	8wMcCtMeO4Umx85TG48JhFEapo5VC/k8NrV6qYl5Lzu5JVKk92ld98oh77ZQ+A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752870314;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TVS4zSK+i2h9K8I4Xk0uOTcJW+Rkh1rnWs37pjnV/m0=;
-	b=+RnNcx8+UxJU1wrTF+ZyZ6qmZplLO04UAmqIR8+WjVX4WERmfIeaDrAOWjVbrfLppL+kyK
-	kkMhn04RixCN2VCA==
-To: Markus =?utf-8?Q?Bl=C3=B6chl?= <Markus.Bloechl@ipetronik.com>, John
- Stultz
- <jstultz@google.com>
-Cc: "Christopher S. Hall" <christopher.s.hall@intel.com>, Lakshmi Sowjanya D
- <lakshmi.sowjanya.d@intel.com>, Stephen Boyd <sboyd@kernel.org>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] timekeeping: Always initialize use_nsecs when querying
- time from phc drivers
-In-Reply-To: <6rweov4mf5z7sy4k3sfhktko3qt2cj5jgo3y4hvexjtykdlgj7@7tomywnjtlio>
-References: <txyrr26hxe3xpq3ebqb5ewkgvhvp7xalotaouwludjtjifnah2@7tmgczln4aoo>
- <CANDhNCoRZOs0qNdJqUF=5RBWP0MCCC_4zbvvftzNWwvuX087xA@mail.gmail.com>
- <6rweov4mf5z7sy4k3sfhktko3qt2cj5jgo3y4hvexjtykdlgj7@7tomywnjtlio>
-Date: Fri, 18 Jul 2025 22:25:12 +0200
-Message-ID: <87a551w8k7.ffs@tglx>
+	s=arc-20240116; t=1752870330; c=relaxed/simple;
+	bh=/LuV1kI0Iyd+FCiRuNAtsdvbp0nKZH03Cc+yGiEhT7o=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=KgyZdJR1V4VJV5ug7ZdaxhVNpZaEXvNqpfGhW4iMLM4wL3UG9K2eZcHHn5VdS+aaqS2oOkl1WW6Jztxa47GXayNmvSotHpytkNqJoivEW7RxYIMgfoGtp9B9D6XU3x1remmMKYku/RdxaxGYM77Ow235D8ZPfSLZImftFpBF4Rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=GwlPHPU6; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.64.208.217] (unknown [52.148.140.42])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 2570C211FECC;
+	Fri, 18 Jul 2025 13:25:28 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2570C211FECC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1752870328;
+	bh=K/40819+E+k+K58haOlYWaAdi71u2Yjg3RszMLQnf+k=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=GwlPHPU6r/9jOGjP2StGyvwqILNLzFMl0UpAGDze2sULGhbFA6StheBjyTafNgAVm
+	 muArOCcrTyP5+qiCwniNL9GZlpVuUP/lVHdBJF1vWpcNnXM+bT6e/ZhFqV79H4yRY5
+	 18ipulGp/ZNioluseGtaYCShh8MsmJqYe4yUWLJE=
+Message-ID: <43f8be57-a330-455f-8f9e-f5718ff1aa1a@linux.microsoft.com>
+Date: Fri, 18 Jul 2025 13:25:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Cc: eahariha@linux.microsoft.com, "kys@microsoft.com" <kys@microsoft.com>,
+ "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>,
+ "decui@microsoft.com" <decui@microsoft.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "hpa@zytor.com" <hpa@zytor.com>,
+ "lpieralisi@kernel.org" <lpieralisi@kernel.org>, "kw@linux.com"
+ <kw@linux.com>, "mani@kernel.org" <mani@kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>,
+ "bhelgaas@google.com" <bhelgaas@google.com>, "arnd@arndb.de"
+ <arnd@arndb.de>, "x86@kernel.org" <x86@kernel.org>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+ "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+Subject: Re: [PATCH v4 0/7] hyperv: Introduce new way to manage hypercall args
+To: Michael Kelley <mhklinux@outlook.com>,
+ Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+ Naman Jain <namjain@linux.microsoft.com>,
+ Roman Kisel <romank@linux.microsoft.com>
+References: <20250718045545.517620-1-mhklinux@outlook.com>
+ <c5d4d351-a7ff-4762-8bb3-61554d4f9731@linux.microsoft.com>
+ <SN6PR02MB41570625E2F061C5E494C7F4D450A@SN6PR02MB4157.namprd02.prod.outlook.com>
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+Content-Language: en-US
+In-Reply-To: <SN6PR02MB41570625E2F061C5E494C7F4D450A@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 09 2025 at 10:32, Markus Bl=C3=B6chl wrote:
-> On Tue, Jul 08, 2025 at 12:09:40PM -0700, John Stultz wrote:
->> On Tue, Jul 8, 2025 at 9:46=E2=80=AFAM Markus Bl=C3=B6chl
->> <markus.bloechl@ipetronik.com> wrote:
->> >
->> > diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
->> > index a009c91f7b05..be0da807329f 100644
->> > --- a/kernel/time/timekeeping.c
->> > +++ b/kernel/time/timekeeping.c
->> > @@ -1269,6 +1269,8 @@ int get_device_system_crosststamp(int (*get_time=
-_fn)
->> >
->> >         do {
->> >                 seq =3D read_seqcount_begin(&tk_core.seq);
->> > +               system_counterval.use_nsecs =3D false;
->> > +
+On 7/18/2025 10:13 AM, Michael Kelley wrote:
+> From: Easwar Hariharan <eahariha@linux.microsoft.com> Sent: Friday, July 18, 2025 9:33 AM
 >>
->> So if the argument is the local system_counterval structure isn't
->> being fully initialized by the get_time_fn() functions it is passed
->> to, it seems like it would be better to do so at the top of
->> get_device_system_crosststamp(), and not inside the seqloop.
->
-> Probably, I was just afraid of the case where get_time_fn() would take
-> like *very* different paths during different iterations.
-> But that seems really unlikely, indeed.
+>> On 7/17/2025 9:55 PM, mhkelley58@gmail.com wrote:
+>>> From: Michael Kelley <mhklinux@outlook.com>
+>>>
+> 
+> [snip]
+> 
+>>>
+>>> The new code compiles and runs successfully on x86 and arm64. However,
+>>> basic smoke tests cover only a limited number of hypercall call sites
+>>> that have been modified. I don't have the hardware or Hyper-V
+>>> configurations needed to test running in the Hyper-V root partition
+>>> or running in a VTL other than VTL 0. The related hypercall call sites
+>>> still need to be tested to make sure I didn't break anything. Hopefully
+>>> someone with the necessary configurations and Hyper-V versions can
+>>> help with that testing.
+> 
+> Easwar -- 
+> 
+> Thanks for reviewing.
+> 
+> Any chance you (or someone else) could do a quick smoke test of this
+> patch set when running in the Hyper-V root partition, and separately,
+> when running in VTL2?  Some hypercall call sites are modified that
+> don't get called in normal VTL0 execution. It just needs a quick
+> verification that nothing is obviously broken for the root partition and
+> VTL2 cases.
+> 
+> Michael
+> 
 
-It's impossible. xtstamp->device and the related get_time_fn() are
-immutable during the call.
+I'm working almost entirely in VTL0, so I'd call on Nuno, Naman, and Roman (cc'ed) to help.
 
->> But having the responsibility to initialize/fill in the structure
->> being split across the core and the implementation logic (leaving some
->> of the fields as optional) feels prone to mistakes, so it makes me
->> wonder if those drivers implementing the get_time_fn() really ought to
->> fully fill out the structure, and thus the fix would be better done in
->> those drivers.
->
-> Yes, they should.
-
-No, they should not.
-
-The data structure is instantiated in get_device_system_crosststamp()
-and then handed in un-initialized to get_time_fn(), which is wrong to
-begin with. Why?
-
-That means if the structure is ever expanded, then you'd have to fix up
-all of the get_time_fn() implementations.
-
-Seriously?
-
-The obviously correct and future proof thing to do is:
-
--	struct system_counterval_t system_counterval;
-+	struct system_counterval_t system_counterval =3D { };
-
-Which fixes the problem you discovered once and forever, no?
-
-Thanks,
-
-        tglx
+- Easwar
 
