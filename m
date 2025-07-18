@@ -1,160 +1,122 @@
-Return-Path: <linux-kernel+bounces-736592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10D4AB09F07
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:18:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 219E0B09F0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:18:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C7B916CEF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:18:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1777F7AA0CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:17:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D064829617D;
-	Fri, 18 Jul 2025 09:18:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D28429616A;
+	Fri, 18 Jul 2025 09:18:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J562/NZZ"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="upUCLIdr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264F61E5B78;
-	Fri, 18 Jul 2025 09:18:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A111E5B78;
+	Fri, 18 Jul 2025 09:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752830290; cv=none; b=BHULgEoM1vZoMxgiwaYMy3rfVrY30+wCBFY9onTBRH93lmCPTVezinfjvvaS9FJUSrJc4mXTVKXvcM0dN1sKYFsNISIbidHWWpv79L5Ff8v9i17KdAPHeSSB8yfJLOTVtxPW4Dq+oDcJ/i5boCQj6mO5DdHJ2EY8xa7UgAU67lE=
+	t=1752830296; cv=none; b=ueIBKhxETet13/O0JaXx4rHoN6bhxSBHQeuE1fVw2qkgikiwlL7Zp3UQHUdjnHzgSaGDaXmWDBQ+N9p9EAEnDKE4/ikJS/sekO3Iybw2GnNJjnch8DEE5fvCCuId1nbxhv8mIja29JFJ4s1q+NkBDHLxjrLEeG2IZ72W+3AdZ3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752830290; c=relaxed/simple;
-	bh=P3ZbYFiMmEF+RkmwjaVtahoeFJtX/k+oqwr7ySQJAIs=;
+	s=arc-20240116; t=1752830296; c=relaxed/simple;
+	bh=iN0MjV8lG6vlPY6QKWEDWqXP3y58juMGr+peNv9I/+Y=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PTy1wt/q/GGIE6NKlS9QBKFIeQ00jr0EmHXdjtnTFwuR1plPRmtTMSnULJzWOAg8k777QFtJ7Jlk/kFJZUL+bfjyu+iuYP4wBQhsb8zKm5juj2T6M6z2BZUQi3udl25tc2RpIUHWYW2ctS7jzQkTRubxnFYEsEI5sfi0KPPE9EE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J562/NZZ; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-451d3f72391so17948055e9.3;
-        Fri, 18 Jul 2025 02:18:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752830286; x=1753435086; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=txHiNEgzLT/qSl4OZgY8NqRe0t4qidcOPq+VdRZOPkE=;
-        b=J562/NZZSwnC8liKrVf2GPVKOuw9dI62pN5qUIrKi3pYk4T8ytNWz7bb5Tjd4NjBmy
-         6TT/d3rJLTL0ReUWrEi7/hpuh44/vO8utseOR9cFmx+ZZ4+lMbpdqdmDzwPNPu5THLiV
-         JZ3ybNWj8m7HSAcDVJSkzn/Slk9LeRkfRoF+1ILsTa2eqKhGMQS8ponlRFRLjGcliAKD
-         vy88TjPz4TOWGKPokDgG23MG2Ck5/rw5rUlswgxGt4tqP2P3Yn12L/5LFV/oUiZ9UZRQ
-         9/HFb5r8lldr3LWbDOK9l5N1x1Z7UHNCF/USolPY4cyHz9PTGXXEJ62fYTWQ5OLooRjZ
-         qE3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752830286; x=1753435086;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=txHiNEgzLT/qSl4OZgY8NqRe0t4qidcOPq+VdRZOPkE=;
-        b=KsoAh5oUgFKV+jW/pNvfhrhTk+uLiwfsqVYjMwDl+VEjl5/RzApbsSf81MF4I/GmFO
-         q0coPrphdzaOlG0BxwYwwrUVgWfdFm1goVjpUQjEDCpSPm00qVxJp4KhWOKHTIbw4BYC
-         kwBdMJrgjd8EDqjQlId11uMgEdz3ll9+xBNwWR9R5dY16yxMkDcYMVSL51gvgvNTe5RX
-         jhOaDakdXg1AgRoC6BZVd/2g4g0heFw/KtMBqsTR9PxGOdDrd9L65DCYl+F3dvEcerYV
-         MPQNQS8OE9ICfPwg7mavRM353rvsngIRNUNc1b2Wi8Si9K8XTYC+GJChgefrBDqm+TZN
-         mU0g==
-X-Forwarded-Encrypted: i=1; AJvYcCU+4DJo4RHs1r2kH2oPtzHVE72xO2lhv0uVfXkdhAc8PB/iJJguvfmjVNp9u65DHyFHfcK1wOsSFxQR@vger.kernel.org, AJvYcCUXq0GLYRU0HvvQXeo5MRmhrsZTtC87PyuXLl/pIJZfTFd66oLRdq6AQ9Mu8VUSxsUgBkC3OWmUpTZJLdQ=@vger.kernel.org, AJvYcCWJEo/S64AxqVcNXgKLFKRg1S7N0/bzYFqd8d7vBlpBCJAv/mzRt3j9u429VyQLamdtf1ioOYstKpD6+1I6@vger.kernel.org, AJvYcCWh0rtNAaepKEZAVzjuryXRf+5mIl75hhKZUgosECb/Igm2CGgKs7X68w46ECUSrTj/adjBVwLn61ng@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxesg/eA7eepubFw60l5hC78Pv04blT9z8avsUXxCGYAp+DKY6t
-	i6uOIfRx3WTxGB3KEsb1CcYqhmmwDqhiM9xSCtPdZ0vnx6vyhr6QAIoWn8UVt0CP+3FYzlvue5v
-	bTynvXUctA8ZXZbGClAfswgabvMgEp1E=
-X-Gm-Gg: ASbGncvKtNLyrgzuFrjaMS67bVxabqG8FBoTLmg3i1qq1wpbl4MpcgNNeMy3riLCSvU
-	HmDL+KD7TrwVIvTx1yMel0On8IItvztFnVpCup60TFUDpW/tS7xkF0eX0/J9wQXv/VEiSqdPJRx
-	/OZl6yseya3XQDWOB33qCYpN9DFFqKJu2vIKIpBtOAMWQcuhv7/Z1wTx1ZxpcxcbgaoQeOqfRYl
-	S2Yt2R7
-X-Google-Smtp-Source: AGHT+IFZ8wMKIx/E8isGBLpDzTPqGmr8RwNbZDlMMF40PNFijmWy4bBhyf8VmTn9JDl/xhNB1IGk3vhk8pOYlQo2rAs=
-X-Received: by 2002:a05:600c:4f85:b0:44a:b478:1387 with SMTP id
- 5b1f17b1804b1-4562e39b996mr115055915e9.17.1752830285977; Fri, 18 Jul 2025
- 02:18:05 -0700 (PDT)
+	 To:Cc:Content-Type; b=AYWM+8wuerHdH4uclnn1P1V5B4lZzQfsfVzWPL2PAAUp0bevycDJ0BfbUxPdhLOH2vsQY9xeX3tR5m4Fu9z+H+Lv+GF9K3uWkRaULer50Q9VxA97mpxISj78zZsqA1VxBaZJlx+hY5d9f9Z/2Lgbw+1REBz49VboqjwgiFtneMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=upUCLIdr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 191D5C4CEF0;
+	Fri, 18 Jul 2025 09:18:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752830296;
+	bh=iN0MjV8lG6vlPY6QKWEDWqXP3y58juMGr+peNv9I/+Y=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=upUCLIdrbbvEbKjUsZgTdUEGyRbXXPVKgUMJXI8oVEu7IuCo+NlAr8pZ3hP/3OpCS
+	 z+m8WoLkMvYdx42mseDFgent82TIUAOPaXDuO0MHrSBPWaortApspXcggf+7lhNmY8
+	 tOaGg0j7eaXiZqMy8OhhL3BAvuI4qqptGCOW5qdmQyljlx4c3DuNukqLAdC4airAsq
+	 nJKi0Be3SrrR2xHh9RGmjhMqPl6sRDW75QEF/7Lu21+PwIinNh5ZPzzmyUHWJMe6cp
+	 dzghcLYsnfaa3tVtbk0VeArOxbSMW6EX7TzfWbBD0ifZlVbF7q2+xGG6ugEJd7zFXx
+	 5DD1NmgbOVSgg==
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-60c4521ae2cso3330368a12.0;
+        Fri, 18 Jul 2025 02:18:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV0AKoUIuonJeWHXWR2Cf7jQZCRjErGiIBNVCjuW0tpqJD3VWWQANTownXAYV244/9x+GvGSnXz7RM=@vger.kernel.org, AJvYcCV1TzUiHaDkQFdVridp0GhxD2QtBGx6xg0Lr3SAHadBj8NveE8r0J+4KYw8N9NpbhNp0K9s8iPNyi/xFTtJ@vger.kernel.org, AJvYcCV2RECSTJAxpYbYkY1rF1Lmt4kB3iosuDgXE19K1ASc8SE6fNRcv92tm/AHUzPKsA8+5FB65qL3NxnsoeKoZUx8@vger.kernel.org, AJvYcCV2fhkW998v5WZH4nLwEFwnzJO9W7r645GdDIgGB3cHzpXmDvZBGe03Upj0r4vlUbk44Oh0fDx97PlMAQ==@vger.kernel.org, AJvYcCVHdEZ8u7svwgKUodrkLtM/yJIIvU6xWOJc2TZJBZxyOX9PxZcyAJ0FmM5nCiAGOa7F1nRqPsmDjedv@vger.kernel.org, AJvYcCW4IDaSJazeWSwFFgACWN7b69epSroBWv2UjtCV4FoSmmVDdLNrz0ZML2pgVp0fPyOFulXTEhsYGbk7yA==@vger.kernel.org, AJvYcCX54pACOS+AT+fpvWNPmgl03ntroAgVDVSeFEZLJCxJoA7bevDnRDhIiCiI4qh+bhZoOHbq223hNnGkOq8KPjz3@vger.kernel.org, AJvYcCXI1xdPeZEbwcZTymERqI5WYVZVnRug5O0uQP3+54Ly+XPRoFapANuj6cb7nMIR75kkF9JyOiLz3rlpclN5@vger.kernel.org, AJvYcCXWHCcRsafKEhSZun1fPA+F8bDs0z7gysLDMQj5i4bfYF4K6fFmjSEG068g/vYSBMUDDLQC77HKfITkIj956HRV8Rob5ZLW@vger.kernel.org, AJvY
+ cCXqNg6XyAk9/D4vsEBX1q7rzepaXITLUvpATBsxMYuqEQPgjantjzmPcNjOZr6xYNATsfGYAM5TpRD2rQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKJwdOXXj+QpoI1AL07zJBq6cn8RioZhFakuWRHcCYSS299SHg
+	B6dE6nWhyVZBwFGCBr4SkKevZyzO9uT19Cf5S5TC1wdpfbrwO03biextpt0qsRIGo2Dz+QevQ2k
+	y2LtfM2znofuQa60xHNXrOK5iQYEJz44=
+X-Google-Smtp-Source: AGHT+IH+CR6kK9khsoUi4kQxVa0vWTn3qqM4Z4G6WAw+0g0YyuRvDHP3ooIXGfMWBaXJUiPtMEtFUptkHeWtXN/zID4=
+X-Received: by 2002:a05:6402:26d5:b0:60c:6a48:8047 with SMTP id
+ 4fb4d7f45d1cf-612d456bb15mr803449a12.11.1752830294637; Fri, 18 Jul 2025
+ 02:18:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250717142139.57621-1-clamor95@gmail.com> <20250717142139.57621-4-clamor95@gmail.com>
- <5474709.5fSG56mABF@senjougahara>
-In-Reply-To: <5474709.5fSG56mABF@senjougahara>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Fri, 18 Jul 2025 12:17:54 +0300
-X-Gm-Features: Ac12FXwkiKFiGNrvrcZRa65PO2Me53wmAzQtfzYTCB6B1QYpAjOt5b9oveZCdW0
-Message-ID: <CAPVz0n1TxOb_hKgKYTdeJ=Ka0STqfiHLtwAv+Ws=vtq=G-MAow@mail.gmail.com>
-Subject: Re: [PATCH v1 3/5] gpu/drm: host1x: mipi: add Tegra20/Tegra30 MIPI
- calibration logic
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Dmitry Osipenko <digetx@gmail.com>, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20250717231756.make.423-kees@kernel.org> <20250717232519.2984886-9-kees@kernel.org>
+In-Reply-To: <20250717232519.2984886-9-kees@kernel.org>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Fri, 18 Jul 2025 17:18:03 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4RyZQTak5AgYj6TaXHyEefgw+wmXs9Gi8jUJWrUV5HQw@mail.gmail.com>
+X-Gm-Features: Ac12FXyrA9A9-rpLV3MB79YH2kXhj6f2Fk9F6HAlk-0emUPTHthuyPP3lR9zQXg
+Message-ID: <CAAhV-H4RyZQTak5AgYj6TaXHyEefgw+wmXs9Gi8jUJWrUV5HQw@mail.gmail.com>
+Subject: Re: [PATCH v3 09/13] mips: Handle KCOV __init vs inline mismatch
+To: Kees Cook <kees@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, linux-mips@vger.kernel.org, 
+	Ingo Molnar <mingo@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, Christoph Hellwig <hch@lst.de>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
+	Ard Biesheuvel <ardb@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	kasan-dev@googlegroups.com, linux-doc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
+	linux-efi@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, sparclinux@vger.kernel.org, 
+	llvm@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-=D0=BF=D1=82, 18 =D0=BB=D0=B8=D0=BF. 2025=E2=80=AF=D1=80. =D0=BE 12:11 Mikk=
-o Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Thursday, July 17, 2025 11:21=E2=80=AFPM Svyatoslav Ryhel wrote:
-> > ...
-> > @@ -311,6 +330,43 @@ int tegra_mipi_finish_calibration(struct
-> > tegra_mipi_device *device) }
-> >  EXPORT_SYMBOL(tegra_mipi_finish_calibration);
-> >
-> > +static int tegra20_mipi_calibration(struct tegra_mipi_device *device)
-> > +{
-> > +     struct tegra_mipi *mipi =3D device->mipi;
-> > +     const struct tegra_mipi_soc *soc =3D mipi->soc;
-> > +     u32 value;
-> > +     int err;
-> > +
-> > +     err =3D clk_enable(mipi->csi_clk);
-> > +     if (err < 0)
-> > +             return err;
-> > +
-> > +     mutex_lock(&mipi->lock);
-> > +
-> > +     value =3D MIPI_CAL_CONFIG_TERMOS(soc->termos);
-> > +     tegra_mipi_writel(mipi, value, CSI_CILA_MIPI_CAL_CONFIG);
-> > +
-> > +     value =3D MIPI_CAL_CONFIG_TERMOS(soc->termos);
-> > +     tegra_mipi_writel(mipi, value, CSI_CILB_MIPI_CAL_CONFIG);
-> > +
-> > +     value =3D MIPI_CAL_CONFIG_HSPDOS(soc->hspdos) |
-> > +             MIPI_CAL_CONFIG_HSPUOS(soc->hspuos);
-> > +     tegra_mipi_writel(mipi, value, CSI_DSI_MIPI_CAL_CONFIG);
-> > +
-> > +     value =3D MIPI_CAL_BIAS_PAD_DRV_DN_REF(soc->pad_drive_down_ref) |
-> > +             MIPI_CAL_BIAS_PAD_DRV_UP_REF(soc->pad_drive_up_ref);
-> > +     tegra_mipi_writel(mipi, value, CSI_MIPIBIAS_PAD_CONFIG);
-> > +
-> > +     tegra_mipi_writel(mipi, 0x0, CSI_CIL_PAD_CONFIG);
-> > +
-> > +     mutex_unlock(&mipi->lock);
-> > +
-> > +     clk_disable(mipi->csi_clk);
-> > +     clk_disable(mipi->clk);
-> > +
-> > +     return 0;
-> > +}
-> > +
->
-> Where does this sequence come from? It looks a bit strange to me, since i=
-t
-> doesn't trigger calibration at all. It would be useful to mention the sou=
-rce
-> in the commit message.
->
-> Mikko
+Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
 
-Downstream nvidia sources, 3.1.10 and 3.4, dsi driver, function
-tegra_dsi_pad_calibration
-
+On Fri, Jul 18, 2025 at 7:26=E2=80=AFAM Kees Cook <kees@kernel.org> wrote:
 >
+> When KCOV is enabled all functions get instrumented, unless
+> the __no_sanitize_coverage attribute is used. To prepare for
+> __no_sanitize_coverage being applied to __init functions, we
+> have to handle differences in how GCC's inline optimizations get
+> resolved. For mips this requires adding the __init annotation on
+> init_mips_clocksource().
+>
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+> Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+> Cc: <linux-mips@vger.kernel.org>
+> ---
+>  arch/mips/include/asm/time.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/mips/include/asm/time.h b/arch/mips/include/asm/time.h
+> index e855a3611d92..5e7193b759f3 100644
+> --- a/arch/mips/include/asm/time.h
+> +++ b/arch/mips/include/asm/time.h
+> @@ -55,7 +55,7 @@ static inline int mips_clockevent_init(void)
+>   */
+>  extern int init_r4k_clocksource(void);
+>
+> -static inline int init_mips_clocksource(void)
+> +static inline __init int init_mips_clocksource(void)
+>  {
+>  #ifdef CONFIG_CSRC_R4K
+>         return init_r4k_clocksource();
+> --
+> 2.34.1
 >
 >
 
