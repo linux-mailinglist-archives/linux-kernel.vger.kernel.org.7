@@ -1,268 +1,104 @@
-Return-Path: <linux-kernel+bounces-737326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CED25B0AAE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 21:58:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99BBFB0AAF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 22:03:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39417AA0144
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 19:57:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22376A47DD0
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 20:03:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81152211460;
-	Fri, 18 Jul 2025 19:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96ADE1DEFD2;
+	Fri, 18 Jul 2025 20:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FCUv/1BJ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BvfVgMR/"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uik6Y9Cw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A0E820101D;
-	Fri, 18 Jul 2025 19:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC4FD517
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 20:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752868693; cv=none; b=uKMcZRpcsdkXmc0NI/72Rr6JiPbgYy8NBf2YM0GklGpop+meWDBcLCV+oz+MCFQbZtjteRxwF6k0QVCv50ykMff2ZGCZqjoq4tEq+Kgoh+MR8ZwsQduApdeBpBt352WJDYO+Mcp9SKSrUMoLEcfl+qu4oMnTlDdMeKt+Rr/cdsw=
+	t=1752869029; cv=none; b=SqWQCMJPOBughzLhWPvFY2u/mbBZL3h0PZhWB/MaGQ2Msw9Yi9ETCwKtTYRyLK2vDdz6eFYBovOV34d2648DvnFX89U0n9lj4FU8Y8y2fFfMvksg5WAyR07Z73/LJtho4c0r/SXFxtt15JahkHLTRwlylrxY5oS2j4mh2mEn/B8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752868693; c=relaxed/simple;
-	bh=j+x01lZeY33lylpNUBKrXmr5DViprZvLIHdaHIKojVM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Hlg18dNHIMLhOtiS0HULh4LwhSR7SQHuV/jiA6sOfB37BuV7lUtoFQjnq5kS0fEImRxvswAm6JpoptfCO3G3Ta/+tEgI5+/ztJToudW6/guYcKq4hNPuLFB5uxQcoh4LYytjSdl4Pq8RIRR14iMmByMaOFJDIsYTC/+kulDszU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FCUv/1BJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BvfVgMR/; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752868690;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=b7QAwdVL+79NV9ecblpnNODvIuZUoG5ItDj3RISptN8=;
-	b=FCUv/1BJzik77ZgYSENKhWjjzDWpjZidM48i2+7KwRtlplGXfAGK9OgVikH+P+vLva+VNL
-	WUdcrleEE4nxn5fiAl2ZqVd9M42+BUIMQXRnlrl48791Le/4nFgWCCmAo8xExr4z338AwM
-	jYOcofC2pUMZIiApuOgVeWelN8M0M46L3Q5jNN2WBMGRdi6eELC7rXyQ2tNziVxfxrqrSu
-	iFsoYh0v1wQXgR//rZ56sLasdfiziL1Q1gge3ZFspW4u+KDz3+19lLrDX4yDW0AH4Eu31k
-	dpvde5DoFILPIOktzyIKqajaeFlmYErDcjSZZ+7agAF9MmImgWkERaM3T33rew==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752868690;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=b7QAwdVL+79NV9ecblpnNODvIuZUoG5ItDj3RISptN8=;
-	b=BvfVgMR/o44YuDoCHXcyUJKzcgvJjS7OBmfK7XDmGwo4SnsfWNmV+h74dU2YHGsuxys4nQ
-	eIfwrpLLm8PlkYAg==
-To: "K . Y . Srinivasan" <kys@microsoft.com>,
-	Nuno Das Neves <nunodasneves@linux.microsoft.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Nam Cao <namcao@linutronix.de>
-Subject: [PATCH v3 1/1] x86/hyperv: Switch to msi_create_parent_irq_domain()
-Date: Fri, 18 Jul 2025 21:57:50 +0200
-Message-Id: <45df1cc0088057cbf60cb84d8e9f9ff09f12f670.1752868165.git.namcao@linutronix.de>
-In-Reply-To: <cover.1752868165.git.namcao@linutronix.de>
-References: <cover.1752868165.git.namcao@linutronix.de>
+	s=arc-20240116; t=1752869029; c=relaxed/simple;
+	bh=ZpLPqVwT5wlxVe7X2IE9j+q8fi3x5iPHAomAG1wm2mE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=QWlNvD1TR1Ga2BSLNyvEvluoO0H9MTS2e55nfNgtUjirK+kYuivb/aNAKBOYZhi3/C94nuSLgH2tpQ/Vlyo3tcTUpaYsiPRRVhJJMyxj49iNeWqvreE8BXlYMjI+KkvXJxJylvzA4SnvuwSlZO2Wpdr2/CiIgr231DNRw2CplC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uik6Y9Cw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6302C4CEF1;
+	Fri, 18 Jul 2025 20:03:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752869028;
+	bh=ZpLPqVwT5wlxVe7X2IE9j+q8fi3x5iPHAomAG1wm2mE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=uik6Y9CwjgiBNFtjtcWAYF9j76VEn3roFYFagl+WvKw7pIC/X6+StJeTF4RThk7kp
+	 KZJKzqvqTHDbOQp2pQoNx0jpikjOs5yx3il/u5JUa0YT+nB1q2McGW+zPhIcD07HoD
+	 J3d/JzjBkrdvAFz/3V4nM2iX/8c5YR+0nhoiIfFE379MNnlDwwshgt3qKOTrns2NVG
+	 Xe7RFs9RNNuTFWTivEqhUBVbITjmjdT+J5/P+0RIwJ1Vfs9n8y68ym+hlqfmt5Hjrf
+	 97n1o66NeZTPbI0Gmf/paTXAn1IgfrZqI6PPCRieO4beFWZiMNgHuPqJFC9ciFyRul
+	 p+/hep9Nbz7Zg==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, 
+ Romain Gantois <romain.gantois@bootlin.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250718-regulator-stepping-v2-1-e28c9ac5d54a@bootlin.com>
+References: <20250718-regulator-stepping-v2-1-e28c9ac5d54a@bootlin.com>
+Subject: Re: [PATCH v2] regulator: core: repeat voltage setting request for
+ stepped regulators
+Message-Id: <175286902743.1108772.4362873620041124201.b4-ty@kernel.org>
+Date: Fri, 18 Jul 2025 21:03:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-cff91
 
-Move away from the legacy MSI domain setup, switch to use
-msi_create_parent_irq_domain().
+On Fri, 18 Jul 2025 16:11:36 +0200, Romain Gantois wrote:
+> The regulator_set_voltage() function may exhibit unexpected behavior if the
+> target regulator has a maximum voltage step constraint. With such a
+> constraint, the regulator core may clamp the requested voltage to a lesser
+> value, to ensure that the voltage delta stays under the specified limit.
+> 
+> This means that the resulting regulator voltage depends on the current
+> voltage, as well as the requested range, which invalidates the assumption
+> that a repeated request for a specific voltage range will amount to a noop.
+> 
+> [...]
 
-While doing the conversion, I noticed that hv_irq_compose_msi_msg() is
-doing more than it is supposed to (composing message content). The
-interrupt allocation bits should be moved into hv_msi_domain_alloc().
-However, I have no hardware to test this change, therefore I leave a TODO
-note.
+Applied to
 
-Signed-off-by: Nam Cao <namcao@linutronix.de>
----
- arch/x86/hyperv/irqdomain.c | 111 ++++++++++++++++++++++++------------
- drivers/hv/Kconfig          |   1 +
- 2 files changed, 77 insertions(+), 35 deletions(-)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
-diff --git a/arch/x86/hyperv/irqdomain.c b/arch/x86/hyperv/irqdomain.c
-index 090f5ac9f492..c3ba12b1bc07 100644
---- a/arch/x86/hyperv/irqdomain.c
-+++ b/arch/x86/hyperv/irqdomain.c
-@@ -11,6 +11,7 @@
- #include <linux/pci.h>
- #include <linux/irq.h>
- #include <linux/export.h>
-+#include <linux/irqchip/irq-msi-lib.h>
- #include <asm/mshyperv.h>
-=20
- static int hv_map_interrupt(union hv_device_id device_id, bool level,
-@@ -289,59 +290,99 @@ static void hv_teardown_msi_irq(struct pci_dev *dev, =
-struct irq_data *irqd)
- 	(void)hv_unmap_msi_interrupt(dev, &old_entry);
- }
-=20
--static void hv_msi_free_irq(struct irq_domain *domain,
--			    struct msi_domain_info *info, unsigned int virq)
--{
--	struct irq_data *irqd =3D irq_get_irq_data(virq);
--	struct msi_desc *desc;
--
--	if (!irqd)
--		return;
--
--	desc =3D irq_data_get_msi_desc(irqd);
--	if (!desc || !desc->irq || WARN_ON_ONCE(!dev_is_pci(desc->dev)))
--		return;
--
--	hv_teardown_msi_irq(to_pci_dev(desc->dev), irqd);
--}
--
- /*
-  * IRQ Chip for MSI PCI/PCI-X/PCI-Express Devices,
-  * which implement the MSI or MSI-X Capability Structure.
-  */
- static struct irq_chip hv_pci_msi_controller =3D {
- 	.name			=3D "HV-PCI-MSI",
--	.irq_unmask		=3D pci_msi_unmask_irq,
--	.irq_mask		=3D pci_msi_mask_irq,
- 	.irq_ack		=3D irq_chip_ack_parent,
--	.irq_retrigger		=3D irq_chip_retrigger_hierarchy,
- 	.irq_compose_msi_msg	=3D hv_irq_compose_msi_msg,
--	.irq_set_affinity	=3D msi_domain_set_affinity,
--	.flags			=3D IRQCHIP_SKIP_SET_WAKE | IRQCHIP_MOVE_DEFERRED,
-+	.irq_set_affinity	=3D irq_chip_set_affinity_parent,
- };
-=20
--static struct msi_domain_ops pci_msi_domain_ops =3D {
--	.msi_free		=3D hv_msi_free_irq,
--	.msi_prepare		=3D pci_msi_prepare,
-+static bool hv_init_dev_msi_info(struct device *dev, struct irq_domain *do=
-main,
-+				 struct irq_domain *real_parent, struct msi_domain_info *info)
-+{
-+	struct irq_chip *chip =3D info->chip;
-+
-+	if (!msi_lib_init_dev_msi_info(dev, domain, real_parent, info))
-+		return false;
-+
-+	chip->flags |=3D IRQCHIP_SKIP_SET_WAKE | IRQCHIP_MOVE_DEFERRED;
-+
-+	info->ops->msi_prepare =3D pci_msi_prepare;
-+
-+	return true;
-+}
-+
-+#define HV_MSI_FLAGS_SUPPORTED	(MSI_GENERIC_FLAGS_MASK | MSI_FLAG_PCI_MSIX)
-+#define HV_MSI_FLAGS_REQUIRED	(MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF=
-_CHIP_OPS)
-+
-+static struct msi_parent_ops hv_msi_parent_ops =3D {
-+	.supported_flags	=3D HV_MSI_FLAGS_SUPPORTED,
-+	.required_flags		=3D HV_MSI_FLAGS_REQUIRED,
-+	.bus_select_token	=3D DOMAIN_BUS_NEXUS,
-+	.bus_select_mask	=3D MATCH_PCI_MSI,
-+	.chip_flags		=3D MSI_CHIP_FLAG_SET_ACK,
-+	.prefix			=3D "HV-",
-+	.init_dev_msi_info	=3D hv_init_dev_msi_info,
- };
-=20
--static struct msi_domain_info hv_pci_msi_domain_info =3D {
--	.flags		=3D MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS |
--			  MSI_FLAG_PCI_MSIX,
--	.ops		=3D &pci_msi_domain_ops,
--	.chip		=3D &hv_pci_msi_controller,
--	.handler	=3D handle_edge_irq,
--	.handler_name	=3D "edge",
-+static int hv_msi_domain_alloc(struct irq_domain *d, unsigned int virq, un=
-signed int nr_irqs,
-+			       void *arg)
-+{
-+	/*
-+	 * TODO: The allocation bits of hv_irq_compose_msi_msg(), i.e. everything=
- except
-+	 * entry_to_msi_msg() should be in here.
-+	 */
-+
-+	int ret;
-+
-+	ret =3D irq_domain_alloc_irqs_parent(d, virq, nr_irqs, arg);
-+	if (ret)
-+		return ret;
-+
-+	for (int i =3D 0; i < nr_irqs; ++i) {
-+		irq_domain_set_info(d, virq + i, 0, &hv_pci_msi_controller, NULL,
-+				    handle_edge_irq, NULL, "edge");
-+	}
-+	return 0;
-+}
-+
-+static void hv_msi_domain_free(struct irq_domain *d, unsigned int virq, un=
-signed int nr_irqs)
-+{
-+	for (int i =3D 0; i < nr_irqs; ++i) {
-+		struct irq_data *irqd =3D irq_domain_get_irq_data(d, virq);
-+		struct msi_desc *desc;
-+
-+		desc =3D irq_data_get_msi_desc(irqd);
-+		if (!desc || !desc->irq || WARN_ON_ONCE(!dev_is_pci(desc->dev)))
-+			continue;
-+
-+		hv_teardown_msi_irq(to_pci_dev(desc->dev), irqd);
-+	}
-+	irq_domain_free_irqs_top(d, virq, nr_irqs);
-+}
-+
-+static const struct irq_domain_ops hv_msi_domain_ops =3D {
-+	.select	=3D msi_lib_irq_domain_select,
-+	.alloc	=3D hv_msi_domain_alloc,
-+	.free	=3D hv_msi_domain_free,
- };
-=20
- struct irq_domain * __init hv_create_pci_msi_domain(void)
- {
- 	struct irq_domain *d =3D NULL;
--	struct fwnode_handle *fn;
-=20
--	fn =3D irq_domain_alloc_named_fwnode("HV-PCI-MSI");
--	if (fn)
--		d =3D pci_msi_create_irq_domain(fn, &hv_pci_msi_domain_info, x86_vector_=
-domain);
-+	struct irq_domain_info info =3D {
-+		.fwnode		=3D irq_domain_alloc_named_fwnode("HV-PCI-MSI"),
-+		.ops		=3D &hv_msi_domain_ops,
-+		.parent		=3D x86_vector_domain,
-+	};
-+
-+	if (info.fwnode)
-+		d =3D msi_create_parent_irq_domain(&info, &hv_msi_parent_ops);
-=20
- 	/* No point in going further if we can't get an irq domain */
- 	BUG_ON(!d);
-diff --git a/drivers/hv/Kconfig b/drivers/hv/Kconfig
-index 57623ca7f350..9afffedce290 100644
---- a/drivers/hv/Kconfig
-+++ b/drivers/hv/Kconfig
-@@ -10,6 +10,7 @@ config HYPERV
- 	select X86_HV_CALLBACK_VECTOR if X86
- 	select OF_EARLY_FLATTREE if OF
- 	select SYSFB if EFI && !HYPERV_VTL_MODE
-+	select IRQ_MSI_LIB if X86
- 	help
- 	  Select this option to run Linux as a Hyper-V client operating
- 	  system.
---=20
-2.49.0
+Thanks!
+
+[1/1] regulator: core: repeat voltage setting request for stepped regulators
+      commit: d511206dc7443120637efd9cfa3ab06a26da33dd
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
