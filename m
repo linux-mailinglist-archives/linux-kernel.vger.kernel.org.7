@@ -1,237 +1,459 @@
-Return-Path: <linux-kernel+bounces-736550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18190B09E62
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:53:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13716B09E64
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:53:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC73516C82C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:53:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C59E417AED4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D900291C0F;
-	Fri, 18 Jul 2025 08:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="B0md6Ee+"
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011000.outbound.protection.outlook.com [40.107.130.0])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15426293B7E;
+	Fri, 18 Jul 2025 08:53:47 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41286291C3A;
-	Fri, 18 Jul 2025 08:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.0
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752828804; cv=fail; b=oOF2psmNSm7jzoNUCBPG520XrDa07+Jv7anUvgcuIMJ3IHsLxtn85A7ROob+SbAYyGhTG28uqRPNp38KqxRKL7TrWY7vD+4ad/sMUds1LkO4OUFs1bxlESQq1rga3N9aYpFV55U3I3LVCxhPalBiMGXHT3eRK4x9UgE8HrGZviw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752828804; c=relaxed/simple;
-	bh=mGi/QgYd8bcBFiO/qbwsApfHrPEtWHrzi1I1Gdop83U=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=e4i3lilICDOSmyNKxrrjsWaX53zsNSO4OtX/zrpoKyRb8j+ecpR37n24lDGd/wa0Fd2IfVWVALP+gtdMW5nnesE3fxy/V6D9T7YeyvnBEAEjP1pEB9VBC17uPZpPBfS2wRGAW6xRZU2iVNS7+0Gy677QGKMAoZy1O3pUlWey6OA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=B0md6Ee+; arc=fail smtp.client-ip=40.107.130.0
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NihJon6FHQlxYHziZIwYdXV/IWoz539FKh9f8JnOMb3q1e8e5qoDw4EJAwuD7FOPfiu3RVuvakHESIcfF3mjLnfmljp/pW1fMHoB0s9Ln4fkRa4xqrqnnaqkfJT9FKph47ZZcwunbgVk5f2MiFStMQ4WuZkrHFbU9lmnH1pidZ0tjZLRedfsV7Qex5StvzBd/n74KOKjXstzEA89McKIC9I1XNLdRvCrVnVtiZbkgNPEUVoH3TuI8hUDji7kLnnEoSdj6y3elO1RHTdRn4r3pwZ6jjTUERKaBWyvdIo4MS8ewofmdyWCe+dzK/8UJ5wt6QPN/l5POiVPBolQEK6Osw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mGi/QgYd8bcBFiO/qbwsApfHrPEtWHrzi1I1Gdop83U=;
- b=a3K1bESP+xOLGnRMzy34YgUiOOefDyPo8GAJRzG7BYbe0x0GsJewUHFDw5hQHoLvcS5JmRSMx7pYwp9POQgPu+VlG98tphpVurNwQ3RckSZKV2Voo+V65g9eAcFWk8SZOO8AI9liMS9uWY9FsOZPHDBGpgRaFnvhsBwqgn0w9i8Rzxb739yhPeL2a+IJP3b8H1k66LcaU9/HhFRrmAw1KAatf66pogXEHowD9OL0QvAWydqKfKzps/FCblui/2GtUf1n7wEH03tYn8RSlW+K8NacvOaP4vrOALzXXpDBDa4sc7UrxEad+r6k626SLZqtz4ne6vIUv/J/cmpLok7jXA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mGi/QgYd8bcBFiO/qbwsApfHrPEtWHrzi1I1Gdop83U=;
- b=B0md6Ee+WTmnvjrqTeDTNxlQhwbt+DmS1ZrK+yjKndpz4otuf8hNcdsl1CFNYmmBC/OXw61ZlStWT9CsrIzTlwkswIGAe0BpOO7HlAUvbGeK1B2Cf0BWAtedKpXHdIY8UAZZJINNdhInpPBBrFQ3fAoKQdEGWa4dhAzW4a+DmXp8B4pQvMSIB6vIztpW1tS5oiEyM6KPh1uMNjNHFt6uFa7HnFdRUKGGFsb+2flaqmFmAUGWVJvDI1YJ+HRxFSqPGkLL2KojsFSrNcMprjqGGPUK9w+VDWvfHw5q4wok4m43+R1p2/NDFDL/yh8wFLf+6QRh/1eXZd+0HxMvVjon+g==
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by VI0PR04MB10638.eurprd04.prod.outlook.com (2603:10a6:800:268::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.39; Fri, 18 Jul
- 2025 08:53:19 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%7]) with mapi id 15.20.8922.037; Fri, 18 Jul 2025
- 08:53:19 +0000
-From: Peng Fan <peng.fan@nxp.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, "Peng Fan (OSS)"
-	<peng.fan@oss.nxp.com>, Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>
-CC: "Rob Herring (Arm)" <robh@kernel.org>, Sascha Hauer
-	<s.hauer@pengutronix.de>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, Frank Li <frank.li@nxp.com>, Bjorn Andersson
-	<andersson@kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Shawn Guo
-	<shawnguo@kernel.org>, Iuliana Prodan <iuliana.prodan@nxp.com>, Fabio Estevam
-	<festevam@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, "linux-remoteproc@vger.kernel.org"
-	<linux-remoteproc@vger.kernel.org>, Pengutronix Kernel Team
-	<kernel@pengutronix.de>, Daniel Baluta <daniel.baluta@nxp.com>
-Subject: RE: [PATCH v4 0/5] remoteproc: imx_rproc: Support i.MX95
-Thread-Topic: [PATCH v4 0/5] remoteproc: imx_rproc: Support i.MX95
-Thread-Index:
- AQHb8ZOOjNSVtKFE+EOehjF4qQ8e2rQs/usAgASI8CCABOjGgIABJeIAgAAAOoCAAAOmAA==
-Date: Fri, 18 Jul 2025 08:53:19 +0000
-Message-ID:
- <PAXPR04MB8459A0F330554EB69E990E048850A@PAXPR04MB8459.eurprd04.prod.outlook.com>
-References: <20250710-imx95-rproc-1-v4-0-a7123e857dfb@nxp.com>
- <175224423523.783161.17907302929832941912.robh@kernel.org>
- <PAXPR04MB845959EF2767C96794EAE6DD8854A@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <aHkNS51jgV5ulsNB@p14s> <20250718082033.GA25126@nxa18884-linux>
- <0e72dd5c-c633-4265-a6a9-ed8ef7dbf67c@linaro.org>
-In-Reply-To: <0e72dd5c-c633-4265-a6a9-ed8ef7dbf67c@linaro.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|VI0PR04MB10638:EE_
-x-ms-office365-filtering-correlation-id: 6afa947b-3b0b-4962-09c9-08ddc5d88afb
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|19092799006|7416014|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?UENqYk1wb0tHdlVuYmJXaDZ1K0pGYnFCQklZOVo5NjdoaVU1YmlnQ2xiYWV3?=
- =?utf-8?B?SUtMV2ZvOENJdlBIMHZGTlZWb3lHcE1idUx2NEI3T0hVdnBQZ2w5a3c4S0Yx?=
- =?utf-8?B?aXJ1b1FhVmw1cVlUTS94QzFXT0xiWGFnSmt0ZWxWOS9sRDRWV2ZnTW9sL0dx?=
- =?utf-8?B?MlJQZ3V1U0p6aTl2aUVnRnRubEVOSGVTU2RPQUYzakVVWENoRVQvUlVkS1J1?=
- =?utf-8?B?ckIxbWt0dWs2cHVhR2ZacTJhaS9QQy9PdzF2K1g4OU1jQ0s3MkZmWVRQbmZv?=
- =?utf-8?B?L1B0eXI2L0QxK2RoOHNSL3V1RjV1RUhFRUJVU1k2RG9jZGp2d1BRVVdnRlA4?=
- =?utf-8?B?dStZdUhMU280Slk4QXgyZ2lmaXBIQlBJWDVmTGl3NS9nTUVlU3M2WmV1QjYx?=
- =?utf-8?B?a1ZaSHM0eFpYTlFxQUdleC9XY0RrQlc1QmIzS1h3TjNrUDZjRnd3RHRKMU1o?=
- =?utf-8?B?TzNUZXorSW9xNkd5V241YVN3YmZPK0lRZ0tPdG04bTlPUWdkaTBZcHpNUWZp?=
- =?utf-8?B?TDlvQWV6VEV1VS9XTnJnVjZzRmhiVFM4Sy9iS01UZ1M5elloVWcyTTdxOXNP?=
- =?utf-8?B?a3lla3dVZ0VmOTU1ZHRRMkFQN1ZWOHdIZm1BcDdqaWRvZVdaOHpaWk4vZzJT?=
- =?utf-8?B?a1ovbk1CK0pEVjZoWFdqbVBOaWVGSXRxckozcXZoeWlpN1FKUXdtZHJsNHk3?=
- =?utf-8?B?alVmdmU3aWhlV09EYkxSWWZHNDdSdHZiQ1NiY2kvVnRLOUxDdlBYVDhobjc3?=
- =?utf-8?B?UGJtaytaMGgySGNBL0s1d2lwSUFWQVlVTWpnRUMxMnlNUVUyN3NVNzhyREFU?=
- =?utf-8?B?OWxYSWo5RlRZK1lEcWNlZTJsSVpPeHFENm04SmVHMHBFUGowcG5pU21NcmNm?=
- =?utf-8?B?anR5Mkd2OU1DZkRDQWttZkVRK1N5TnBQb2NlMUxLSjBEUytzNENDVE04SlZJ?=
- =?utf-8?B?RC9jWmZRZi93RHBIUUVnUkFXZkZRVEVsUEMwRHJkUUZnSXlFSXRldmozalI5?=
- =?utf-8?B?U1dzQUVNVjEzQ2JXV1RMZXM3cmJFVnVoSVlvaU1qTVRXL2ptcHNNU0RFeC9H?=
- =?utf-8?B?enhCN29COTQ1Nkw5a215ZTh1R2R6TGFIbS9UM2IrVkRsaW5uY2dNNm8vVXhX?=
- =?utf-8?B?V2RCTFpDNmNrZUc2VnR4WFBVbVY5ZEtWVGxHRHJjb0lCUUc1TXBFVFoyYStr?=
- =?utf-8?B?bEVNRUVEZ25LZm9keDZ2R3hCU05KcWo4Qkh2SEprVk1naG1tRDFxSDd6bkZl?=
- =?utf-8?B?OTBxTEVFa3RlYk03QkhvNFJwdzJJd3RCNnRNY2VPSFJrZS9MSGgra2E2QlFS?=
- =?utf-8?B?NEpGV1UxQmVOeXBpYXpyUEJQdFJPUCs4Q2tqSkJPZzhrVXNiaUh3ZWhsMzg2?=
- =?utf-8?B?Uml1dkQxUXZvM1c1U0RYM01GcW0zOGxFNVVsQ0h4MTRxMW9QNVJpb2JVTmlU?=
- =?utf-8?B?Q0lrNlN5Q0hPRjZIb3BSTndRODBiT1ozczEwL2cvRjRKT3p2YVdXbmxIU3dM?=
- =?utf-8?B?ZXRFTjlkb0YxWFVoZzNlYXpCQ3pRMEgwT28vc2pYd2lLcm9lcGRIMS9HNG03?=
- =?utf-8?B?NTFWZmJRYnExYk01RXhHUjhHaGsyekgyMnJKK1laQzd5MUswNThucmxZWjIy?=
- =?utf-8?B?dDZxVlhJNFJRb1YwNk9kMGlHU1VpSVJQQURFbmIySjhGQ3V4V2VONjVObmcx?=
- =?utf-8?B?ZW1RaHRROVY2OEpKNHZLYWxLREUvNnl3NFZJZUhMQnMvUUJXSEJ0VVFtVEEz?=
- =?utf-8?B?TjZHS25Fb2Jlby9sbWE4K21jeUpDTmNSV1Z0emR5UStQYTM3WnFuY1FTMmtK?=
- =?utf-8?B?VjBITC8wOCtzRlZWRUViMVRob1ErM2xZTHljU1dBajNqTEVGenJCK3h2akdz?=
- =?utf-8?B?bUpRMEJWZDlFck1NRGhIdVJGQlg1SXZyOXJ0YTdyc0tzU2laYzNuQXhZNngr?=
- =?utf-8?B?OVo3aG5tOTZHUnlaYTdhNml1T2dOZDVPUUdxWnRNN2lVc21UVmRIMUVWUzFO?=
- =?utf-8?B?N3BoT2NSQ0hRPT0=?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(7416014)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?bnk4UW1JYktBdnd0RTliQzVOME9ZWHRaTG03R3BCY0UvYm5uaGJ0N3JaWUh5?=
- =?utf-8?B?OUR5U2kxMWRLQjd3TXFHdjcrM3ZmSXBpK2J0QXNURThNQTJ4cHZaRmxRZXE0?=
- =?utf-8?B?c3hxdDVxT3FacXZwSWpCRml0bnFVbFVKVHF3S3JPK3ZHY2J2V3Z5Z1JWOFRy?=
- =?utf-8?B?ZEpBOXF2YU1tWlhVa2dPNllTa1ZzZEk5bDgzclVGcXgwdGxySVJyMUYzRWxS?=
- =?utf-8?B?VmoyVVhVRTU1aFp5Rm4rMVNxbWFPTm1PN3ZwQlBsSWFsNXN1THo0dGg5d3No?=
- =?utf-8?B?S20xcitQbDhRSHVNcHArZE80LzlTZlU4T1lLZlVWZVR4TFY4Vm5wKzZnN1B2?=
- =?utf-8?B?d3BhdzJ4aktBV1B1WEk2eWt5eTlxTmliV1lvSnRod2I2RlMyNTZWWGJQaFFP?=
- =?utf-8?B?VDNtWEs3L1NsWU1ZTUQ5dkF1bVdMNCtSamNHRW1KaUdwVW5zSi9hQkhQb25N?=
- =?utf-8?B?MjhBeEJsbU80bUF0NzRxMHlONVZDa09WbldvaUJocFFzRGlaeGszTWZUWUli?=
- =?utf-8?B?QmpiMkl2bjlYcitpeFBVZnJSVkEyckJBVkZCeHd5Qytyc1Z3ejhscVByZG1Y?=
- =?utf-8?B?L3RTYkdtL21mTkNyV3NpNCs0T3Y1YnBnd0RQZGEzRmg2TzlhVTcyb3l5Rjky?=
- =?utf-8?B?OUJ6N0NVUFRBd09wSDJtaVRnelN5ZXZ0anJ4cmI1UGFPT2Z0NzZZZ2ptVWMw?=
- =?utf-8?B?SmVNaVJybG1ldWlRdFlsVTFXcGYydDZHK3J6d1NHMFB5cElscC9heEUzdmVO?=
- =?utf-8?B?Z1E2bGxwZ29ucDV3aGkyKzA3THNpa2dCaWloL1ZWVUZNd0NQRkZaZ3l5ZVA4?=
- =?utf-8?B?dEIxYldZU2NjWnRzdVNwelZlUEoyeWZ3NTNaQllHaGtZbXhFSGVUNkhLalpj?=
- =?utf-8?B?dlpCR2ZGa2lyajJoNWJRY0orSFprODh6Vm1ldmJMVlZwSHBYcUdJUE1SVldI?=
- =?utf-8?B?Q2UybGFNWUJSaGkyQjZLa1hxU0NiMkhBT3B3cTFxbnNKRlh1MHlKbDAwT1Zq?=
- =?utf-8?B?WTJWOUxVSWZLLzc5TnFxNXk1UzdpYUFBTUpvMDFTOWpKM2FqYXlzTXE0dDRQ?=
- =?utf-8?B?UVIzcE85TC8reGVJTHQ5MEdRVlJHSmorcUd1a1MxUFMvb3k5bjFDU1RKUkZS?=
- =?utf-8?B?MDNxRUR0Rnd5cDQ3L3BTWnk0T3V2R2RLVmxpYkxxemswd2tCWXVyZmpmazkx?=
- =?utf-8?B?UlFBaHJHT2hPM3RXUGYrVjhsWU5FcERuRzdML1FNOFAwbVc3ZWRidEZwZ3pF?=
- =?utf-8?B?YzBES3JSaXRFVnZ0dGFyM1EzejIzbXhmdlFQWmhuRDlFcHpJVXlWeG1OVkNE?=
- =?utf-8?B?N0NaS1p6S2dPVDJRUFNtWmVBTEhTNmE5ZTAxdElaZFZ3bU0vRmtodjZPQTd2?=
- =?utf-8?B?dnNXVm45bnZQTEZZYUJxWDZ0QkZKcWZMVXZLdzJWQ0twRkNlSzFtSnJ2T1RW?=
- =?utf-8?B?VkVMaHQyTXl0MEEvRjFCa1JTcGRsaWZ4OFFiSEI3ZllIb3lVQWdNOUFzWmRo?=
- =?utf-8?B?cWh2QzJXMUZPcFQ5cWxod0lSTDk1TDFzRVdOaEpHU3hUYWYyNDI5VWdnem55?=
- =?utf-8?B?aFlvMEplemZTQ0tkRkNRVjNCb0hnQWhFczM0dHVGVXF1QUlBUnFGMURUcXRS?=
- =?utf-8?B?YnpQQnFSbll5T1BLenBoTWNiM0R0QXh6cWFrcXpwWHJNdm1WUHBEaXd5aHhK?=
- =?utf-8?B?RHpaKzJhd1pJNkt6eUlVaFBFOEJRSzc1QjVJdjV1STVSNVRMaGNpejQ0ZSt5?=
- =?utf-8?B?cVd1WGNMbHRqMkNRelI4UENPZlk3ZDRJYmFTMVdtMTcvWWNEWGZXZW5hRHdv?=
- =?utf-8?B?T1JGUG5QYVpiZnBRbDRHOXNXc25RWlFsanFjOVlDT2pMcFdqM0JxSXF1Uzhv?=
- =?utf-8?B?VjRGWjNUVU1zZTdMamtabEt2L2xoTmVmOG9rTlM3bFFSc2xXM25MMUQvZExh?=
- =?utf-8?B?WG9xbE53YysycW4vOEVVVmluOU1STDQ3Qm5ld2IxNzhrOTF6cmpGeFhrcDJY?=
- =?utf-8?B?VVc1UGl4ajVpYTRUemxjcWhUVE5DTVY1c0xMVWpENmQ4MXdabDNabkYyQzh2?=
- =?utf-8?B?ejRqbXZPMUo3SUFDWEEwV29sZitTbWM4TWVkVVpyZnlMVFpDSUpwSFhFMzFK?=
- =?utf-8?Q?U1pw=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690FF293443;
+	Fri, 18 Jul 2025 08:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752828826; cv=none; b=BR1wyx5oTzCqgAHXKsblbTY27IDM6pd0ME9vjhIR6IHQbLv9gaM0CwPKhSxXgVxv5uO/fv8M7pf2mYnQbKFIvuSXaHhEJJF5cfg6P9aSFgMo/bWPdkVndF7Fii3adATeLO6N/ULFsAbXA0uZGnye63jPDSfy9txJdZvZwe49E8g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752828826; c=relaxed/simple;
+	bh=jYxDEvevWvUFBxHs/UiwVMVWp5e5zbPaDeAmGm3Ff7g=;
+	h=Date:Message-ID:References:Mime-Version:From:To:Cc:Subject:
+	 Content-Type; b=OUmYsweGMo/LBymQSfEwQbRBIjTXoflYhWi61M5oN5iQLkZ8AmwcLuzVLAhzpz0H/y4+V2xxf+1v6ZgFW0/eQPMq9Wo5VyOqrGdePSTVY+tFyAC5G0W1smB6okxNpv7cUgojM7uF8GkAWth7w0EhMcOsJj9sKam2goyc2vDNWIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4bk3VY2DQPz6G42Y;
+	Fri, 18 Jul 2025 16:53:41 +0800 (CST)
+Received: from xaxapp04.zte.com.cn ([10.99.98.157])
+	by mse-fl2.zte.com.cn with SMTP id 56I8rPhU073581;
+	Fri, 18 Jul 2025 16:53:25 +0800 (+08)
+	(envelope-from shao.mingyin@zte.com.cn)
+Received: from mapi (xaxapp05[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Fri, 18 Jul 2025 16:53:27 +0800 (CST)
+Date: Fri, 18 Jul 2025 16:53:27 +0800 (CST)
+X-Zmail-TransId: 2afc687a0b874fa-b8ea1
+X-Mailer: Zmail v1.0
+Message-ID: <20250718165327644wT54xAeByO_X1pWdScPny@zte.com.cn>
+References: 202507181649341810Ko3RM5-OgAx9p_La6NlZ@zte.com.cn,20250718165146589nw7ReAlsBvkwAr57nH5pr@zte.com.cn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6afa947b-3b0b-4962-09c9-08ddc5d88afb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jul 2025 08:53:19.1474
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: +ivydQZbqrWWSUHLc4/EF0dLu9eA7PmhEG1dvcIf283YOrcRTlzHwFggyWLS3EnLUngvt7/9A8vX5v4v+NTSJQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10638
+Mime-Version: 1.0
+From: <shao.mingyin@zte.com.cn>
+To: <alexs@kernel.org>
+Cc: <si.yanteng@linux.dev>, <dzm91@hust.edu.cn>, <corbet@lwn.net>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <yang.yang29@zte.com.cn>, <xu.xin16@zte.com.cn>,
+        <yang.tao172@zte.com.cn>, <shao.mingyin@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIIDIvNV0gRG9jcy96aF9DTjogVHJhbnNsYXRlIHViaWZzLWF1dGhlbnRpY2F0aW9uLnJzdCB0b8KgU2ltcGxpZmllZCBDaGluZXNl?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 56I8rPhU073581
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.133 unknown Fri, 18 Jul 2025 16:53:41 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 687A0B95.000/4bk3VY2DQPz6G42Y
 
-PiBTdWJqZWN0OiBSZTogW1BBVENIIHY0IDAvNV0gcmVtb3RlcHJvYzogaW14X3Jwcm9jOiBTdXBw
-b3J0IGkuTVg5NQ0KPiANCj4gT24gMTgvMDcvMjAyNSAxMDoyMCwgUGVuZyBGYW4gd3JvdGU6DQo+
-ID4gT24gVGh1LCBKdWwgMTcsIDIwMjUgYXQgMDg6NDg6NDNBTSAtMDYwMCwgTWF0aGlldSBQb2ly
-aWVyIHdyb3RlOg0KPiA+PiBPbiBNb24sIEp1bCAxNCwgMjAyNSBhdCAxMTo1MjowNUFNICswMDAw
-LCBQZW5nIEZhbiB3cm90ZToNCj4gPj4+PiBTdWJqZWN0OiBSZTogW1BBVENIIHY0IDAvNV0gcmVt
-b3RlcHJvYzogaW14X3Jwcm9jOiBTdXBwb3J0DQo+IGkuTVg5NQ0KPiA+Pj4+DQo+ID4+PiBbLi4u
-XQ0KPiA+Pj4+IE5ldyB3YXJuaW5ncyBydW5uaW5nICdtYWtlIENIRUNLX0RUQlM9eSBmb3INCj4g
-Pj4+PiBhcmNoL2FybTY0L2Jvb3QvZHRzL2ZyZWVzY2FsZS8nIGZvciAyMDI1MDcxMC1pbXg5NS1y
-cHJvYy0xLXY0LQ0KPiAwLQ0KPiA+Pj4+IGE3MTIzZTg1N2RmYkBueHAuY29tOg0KPiA+Pj4+DQo+
-ID4+Pj4gYXJjaC9hcm02NC9ib290L2R0cy9mcmVlc2NhbGUvaW14OTUtdHFtYTk1OTZzYS1tYi1z
-bWFyYy0NCj4gMi5kdGI6DQo+ID4+Pj4gc2NtaSAoYXJtLHNjbWkpOiBVbmV2YWx1YXRlZCBwcm9w
-ZXJ0aWVzIGFyZSBub3QgYWxsb3dlZA0KPiA+Pj4+ICgncHJvdG9jb2xAODAnLCAncHJvdG9jb2xA
-ODEnLCAncHJvdG9jb2xAODInLCAncHJvdG9jb2xAODQnDQo+IHdlcmUNCj4gPj4+PiB1bmV4cGVj
-dGVkKQ0KPiA+Pj4NCj4gPj4+IFNhbWUgYXMgcmVwbGllZCBpbiB2My4NCj4gPj4+IFRoaXMgaXMg
-YmVjYXVzZSBbMV0gaXMgc3RpbGwgbm90IHBpY2tlZCwgbm90IGJlY2F1c2Ugb2YgbXkgcGF0Y2hz
-ZXQuDQo+ID4+DQo+ID4+IEkgd29uJ3QgbW92ZSBvbiB0aGlzIHBhdGNoc2V0IHVudGlsIHRoaXMg
-aXMgcmVzb2x2ZWQuDQo+ID4+DQo+ID4NCj4gPiBOb3QgdW5kZXJzdGFuZCB3aHkgaG9sZCBvbiB0
-aGlzIHBhdGNoc2V0LiBJIHN1cHBvc2UgeW91IG1heSBub3QNCj4gPiB1bmRlcnN0YW5kIHdoYXQg
-dGhlIGVycm9yIG1lYW5zLiBUaGUgd2FybmluZyBpcyB0b3RhbGx5IGlycmVsZXZhbnQgdG8NCj4g
-PiB0aGlzIHBhdGNoc2V0LCB0aGVyZSBpcyBubyBkZXBlbmRlbmN5Lg0KPiA+DQo+ID4gT3RoZXJz
-IGFkZGVkIGEgcHJvcGVydHkgdG8NCj4gPiBhcmNoL2FybTY0L2Jvb3QvZHRzL2ZyZWVzY2FsZS9p
-bXg5NS10cW1hOTU5NnNhLmR0c2kNCj4gPiAmc2NtaV9iYm0gew0KPiA+ICAgICAgICAgbGludXgs
-Y29kZSA9IDxLRVlfUE9XRVI+Ow0KPiA+IH07DQo+ID4gQnV0IHRoaXMgImxpbnV4LGNvZGUiIHBy
-b3BlcnR5IG5vdCBsYW5kZWQobWlzc2VkIHRvIGJlIHBpY2tlZCB1cCkgdG8NCj4gRFQgYmluZGlu
-Zy4NCj4gPg0KPiA+IFRoaXMgcGF0Y2hzZXQgZG9lcyBub3QgdG91Y2ggc2NtaV9iYm0uIEkgY291
-bGQgaGVscCBhZGRyZXNzIHRoZQ0KPiA+IHdhcm5pbmcgaW4gdGhlIG90aGVyIHBhdGNoLCBidXQg
-SSBkbyBub3Qgc2VlIHdoeSAibGludXgsY29kZSIgdW5kZXINCj4gPiBzY21pX2JibSBub2RlIGNv
-dWxkIGJsb2NrIHRoaXMgcGF0Y2hzZXQuDQo+IA0KPiANCj4gTGFjayBvZiBwcm9wZXIgYmluZGlu
-ZyBmb3IgdGhhdCBwcm9wZXJ0eSBtaWdodCBoaWRlIG90aGVyIGlzc3VlcyB3aXRoDQo+IHRoaXMg
-cGF0Y2hzZXQsIGJlY2F1c2Ugc2NoZW1hIGlzIG5vdCBldmFsdWF0ZWQuIE1ha2UgeW91ciBEVFMg
-YW5kDQo+IGJpbmRpbmdzIGNvcnJlY3QsIHRoZW4gc3RhcnQgZ3Jvd2luZyB0aGUgZGV2aWNlIG5v
-ZGVzLg0KDQpOb3QgTlhQIGJvYXJkLCBJIGNvdWxkIGhlbHAgZml4LCBidXQgdGhhdCBzaG91bGQg
-bm90IGJsb2NrIHRoaXMgcGF0Y2hzZXQuDQoNClRoZXJlIGlzIG5vIGhpZGRlbiBpc3N1ZS4gSSBy
-ZW1vdmVkICJsaW51eCxjb2RlIiBmcm9tIHRoZSB0cW1hOTU5NnNhDQpib2FyZCBkdHMsIGFuZCBu
-byB3YXJuaW5nIHdpdGggQ0hFQ0tfRFRCUy4NCg0KTW9yZSBpbmZvOg0KVGhpcyBwYXRjaHNldCBk
-b2VzIG5vdGhpbmcgd2l0aCBzY21pX2JibSBub2RlcyBhbmQgYmluZGluZ3MuDQpUaGUgd2Fybmlu
-ZyB0cmlnZ2VyZWQgYnkgdGhlIGJvYXJkIHdoaWNoIGlzIG5vdCBOWFANCmJvYXJkKGFyY2gvYXJt
-NjQvYm9vdC9kdHMvZnJlZXNjYWxlL2lteDk1LXRxbWE5NTk2c2EuZHRzaSkuDQpUaGlzIHBhdGNo
-c2V0IGRvZXMgbm90IHRvdWNoIHRoYXQgYm9hcmQgZHRzLg0KDQpXaGF0IHRoaXMgcGF0Y2hzZXQg
-YWRkZWQgaXMgc2NtaV9jcHUgYW5kIHNjbWlfbG1tIG5vZGVzIGluDQppbXg5NS5kdHNpLiBUaGUg
-YmluZGluZyBjaGVjayBhbHJlYWR5IHBhc3Mgd2hlbiBJIHdvcmtlZA0Kb24gdGhlIHNjbWkgbG1t
-L2NwdSBwcm90b2NvbCBwYXRjaHNldC4NCg0KQmFjayB0byBEVEIgY2hlY2ssIGJ5IHJlbW92aW5n
-DQpsaW51eCxjb2RlID0gPEtFWV9CQUNLPiBmcm9tIA0KYXJjaC9hcm02NC9ib290L2R0cy9mcmVl
-c2NhbGUvaW14OTUtdHFtYTk1OTZzYS5kdHNpLA0KdGhlcmUgaXMgbm8gd2FybmluZy4NCg0KUmVn
-YXJkcywNClBlbmcuDQoNCj4gDQo+IEJlc3QgcmVnYXJkcywNCj4gS3J6eXN6dG9mDQo=
+From: Shao Mingyin <shao.mingyin@zte.com.cn>
+
+translate the "ubifs-authentication.rst" into Simplified Chinese.
+
+Update to commit d56b699d76d1("Documentation: Fix typos")
+
+Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
+Signed-off-by: yang tao <yang.tao172@zte.com.cn>
+---
+ .../translations/zh_CN/filesystems/index.rst  |   1 +
+ .../filesystems/ubifs-authentication.rst      | 354 ++++++++++++++++++
+ 2 files changed, 355 insertions(+)
+ create mode 100644 Documentation/translations/zh_CN/filesystems/ubifs-authentication.rst
+
+diff --git a/Documentation/translations/zh_CN/filesystems/index.rst b/Documentation/translations/zh_CN/filesystems/index.rst
+index faaa0f097223..3c25b39739db 100644
+--- a/Documentation/translations/zh_CN/filesystems/index.rst
++++ b/Documentation/translations/zh_CN/filesystems/index.rst
+@@ -27,4 +27,5 @@ Linux Kernel中的文件系统
+    debugfs
+    tmpfs
+    ubifs
++   ubifs-authentication
+
+diff --git a/Documentation/translations/zh_CN/filesystems/ubifs-authentication.rst b/Documentation/translations/zh_CN/filesystems/ubifs-authentication.rst
+new file mode 100644
+index 000000000000..aebd6a8e4b7c
+--- /dev/null
++++ b/Documentation/translations/zh_CN/filesystems/ubifs-authentication.rst
+@@ -0,0 +1,354 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++.. include:: ../disclaimer-zh_CN.rst
++
++:Original: Documentation/filesystems/ubifs-authentication.rst
++
++:翻译:
++
++   邵明寅 Shao Mingyin <shao.mingyin@zte.com.cn>
++
++:校译:
++
++   - 杨涛 yang tao <yang.tao172@zte.com.cn>
++
++=============
++UBIFS认证支持
++=============
++
++引言
++====
++UBIFS 利用 fscrypt 框架为文件内容及文件名提供保密性。这能防止攻击者在单一
++时间点读取文件系统内容的攻击行为。典型案例是智能手机丢失时，攻击者若没有文件
++系统解密密钥则无法读取设备上的个人数据。
++
++在现阶段，UBIFS 加密尚不能防止攻击者篡改文件系统内容后用户继续使用设备的攻
++击场景。这种情况下，攻击者可任意修改文件系统内容而不被用户察觉。例如修改二
++进制文件使其执行时触发恶意行为 [DMC-CBC-ATTACK]。由于 UBIFS 大部分文件
++系统元数据以明文存储，使得文件替换和内容篡改变得相当容易。
++
++其他全盘加密系统（如 dm-crypt）可以覆盖所有文件系统元数据，这类系统虽然能
++增加这种攻击的难度，但特别是当攻击者能多次访问设备时，也有可能实现攻击。对于
++基于 Linux 块 IO 层的 dm-crypt 等文件系统，可通过 dm-integrity 或
++dm-verity 子系统[DM-INTEGRITY, DM-VERITY]在块层实现完整数据认证，这些
++功能也可与 dm-crypt 结合使用[CRYPTSETUP2]。
++
++本文描述一种为 UBIFS 实现文件内容认证和完整元数据认证的方法。由于 UBIFS
++使用 fscrypt 进行文件内容和文件名加密，认证系统可与 fscrypt 集成以利用密
++钥派生等现有功能。但系统同时也应支持在不启用加密的情况下使用 UBIFS 认证。
++
++
++MTD, UBI & UBIFS
++----------------
++在 Linux 中，MTD（内存技术设备）子系统提供访问裸闪存设备的统一接口。运行于
++MTD 之上的重要子系统是 UBI（无序块映像），它为闪存设备提供卷管理功能，类似
++于块设备的 LVM。此外，UBI 还处理闪存特有的磨损均衡和透明 I/O 错误处理。
++UBI 向上层提供逻辑擦除块(LEB)，并透明地映射到闪存的物理擦除块(PEB)。
++
++UBIFS 是运行于 UBI 之上的裸闪存文件系统。因此 UBI 处理磨损均衡和部分闪存
++特性，而 UBIFS专注于可扩展性、性能和可恢复性。
++
++::
++
++	+------------+ +*******+ +-----------+ +-----+
++	|            | * UBIFS * | UBI-BLOCK | | ... |
++	| JFFS/JFFS2 | +*******+ +-----------+ +-----+
++	|            | +-----------------------------+ +-----------+ +-----+
++	|            | |              UBI            | | MTD-BLOCK | | ... |
++	+------------+ +-----------------------------+ +-----------+ +-----+
++	+------------------------------------------------------------------+
++	|                  MEMORY TECHNOLOGY DEVICES (MTD)                 |
++	+------------------------------------------------------------------+
++	+-----------------------------+ +--------------------------+ +-----+
++	|         NAND DRIVERS        | |        NOR DRIVERS       | | ... |
++	+-----------------------------+ +--------------------------+ +-----+
++
++            图1：处理裸闪存的 Linux 内核子系统
++
++
++
++UBIFS 内部维护多个持久化在闪存上的数据结构：
++
++- *索引*：存储在闪存上的 B+ 树，叶节点包含文件系统数据
++- *日志*：在更新闪存索引前收集文件系统变更的辅助数据结构，可减少闪存磨损
++- *树节点缓存(TNC)*：反映当前文件系统状态的内存 B+ 树，避免频繁读取闪存。
++  本质上是索引的内存表示，但包含额外属性
++- *LEB属性树(LPT)*：用于统计每个 UBI LEB 空闲空间的闪存B+树
++
++本节后续将详细讨论UBIFS的闪存数据结构。因为 TNC 不直接持久化到闪存，其在此
++处的重要性较低。更多 UBIFS 细节详见[UBIFS-WP]。
++
++
++UBIFS 索引与树节点缓存
++~~~~~~~~~~~~~~~~~~~~~~
++
++UBIFS 在闪存上的基础实体称为 *节点* ，包含多种类型。如存储文件内容块的数据
++节点
++( ``struct ubifs_data_node`` )，或表示 VFS 索引节点的 inode 节点
++( ``struct ubifs_ino_node`` )。几乎所有节点共享包含节点类型、长度、序列
++号等基础信息的通用头
++( ``ubifs_ch`` )（见内核源码 ``fs/ubifs/ubifs-media.h`` ）。LPT条目
++和填充节点（用于填充 LEB
++尾部不可用空间）等次要节点类型除外。
++
++为避免每次变更重写整个 B+ 树，UBIFS 采用 *wandering tree* 实现：仅重写
++变更节点，旧版本被标记废弃而非立即擦除。因此索引不固定存储于闪存某处，而是在
++闪存上 *wanders* ，在 LEB 被 UBIFS 重用前，闪存上会存在废弃部分。为定位
++最新索引，UBIFS 在 UBI LEB 1 存储称为 *主节点* 的特殊节点，始终指向最新
++UBIFS 索引根节点。为增强可恢复性，主节点还备份到 LEB 2。因此挂载 UBIFS 只
++需读取 LEB 1 和 2 获取当前主节点，进而定位最新闪存索引。
++
++TNC 是闪存索引的内存表示，包含未持久化的运行时属性（如脏标记）。TNC 作为回
++写式缓存，所有闪存索引修改都通过 TNC 完成。与其他缓存类似，TNC 无需将完整
++索引全部加载到内存中，需要时从闪存读取部分内容。 *提交* 是更新闪存文件系统
++结构（如索引）的 UBIFS 操作。每次提交时，标记为脏的 TNC 节点被写入闪存以更
++新持久化索引。
++
++
++日志
++~~~~
++
++为避免闪存磨损，索引仅在满足特定条件（如 ``fsync(2)`` ）时才持久化（提交）。
++日志用于记录索引提交之间的所有变更（以 inode 节点、数据节点等形式）。挂载时
++从闪存读取日志并重放到 TNC（此时 TNC 按需从闪存索引创建）。
++
++UBIFS 保留一组专用于日志的 LEB（称为 *日志区* ）。日志区 LEB 数量在文件系
++统创建时配置（使用 ``mkfs.ubifs`` ）并存储于超级块节点。日志区仅含两类节
++点： *引用节点* 和 *提交起始节点* 。执行索引提交时写入提交起始节点，每次日
++志更新时写入引用节点。每个引用节点指向构成日志条目的其他节点（ inode 节点、
++数据节点等）在闪存上的位置，这些节点称为 *bud* ，描述包含数据的实际文件系
++统变更。
++
++日志区以环形缓冲区维护。当日志将满时触发提交操作，同时写入提交起始节点。因此
++挂载时 UBIFS 查找最新提交起始节点，仅重放其后的引用节点。提交起始节点前的引
++用节点将被忽略（因其已属于闪存索引）。
++
++写入日志条目时，UBIFS 首先确保有足够空间写入引用节点和该条目的 bud。然后先
++写引用节点，再写描述文件变更的 bud。在日志重放阶段，UBIFS 会记录每个参考节
++点，并检查其引用的 LEB位置以定位 buds。若这些数据损坏或丢失，UBIFS 会尝试
++通过重新读取 LEB 来恢复，但仅针对日志中最后引用的 LEB，因为只有它可能因断
++电而损坏。若恢复失败，UBIFS 将拒绝挂载。对于其他 LEB 的错误，UBIFS 会直接
++终止挂载操作。
++
++::
++
++       | ----    LOG AREA     ---- | ----------    MAIN AREA    ------------ |
++
++        -----+------+-----+--------+----   ------+-----+-----+---------------
++        \    |      |     |        |   /  /      |     |     |               \
++        / CS |  REF | REF |        |   \  \ DENT | INO | INO |               /
++        \    |      |     |        |   /  /      |     |     |               \
++         ----+------+-----+--------+---   -------+-----+-----+----------------
++                 |     |                  ^            ^
++                 |     |                  |            |
++                 +------------------------+            |
++                       |                               |
++                       +-------------------------------+
++
++
++                图2：包含提交起始节点(CS)和引用节点(REF)的日志区闪存布局，引用节点指向含
++                    bud 的主区
++
++
++LEB属性树/表
++~~~~~~~~~~~~
++
++LEB 属性树用于存储每个 LEB 的信息，包括 LEB 类型、LEB 上的空闲空间和
++*脏空间* （旧空间，废弃内容） [1]_ 的数量。因为 UBIFS 从不在单个 LEB 混
++合存储索引节点和数据节点，所以 LEB 的类型至关重要，每个 LEB 都有特定用途，
++这对空闲空间计算非常有帮助。详见[UBIFS-WP]。
++
++LEB 属性树也是 B+ 树，但远小于索引。因为其体积小，所以每次提交时都整块写入，
++保存 LPT 是原子操作。
++
++
++.. [1] 由于LEB只能追加写入不能覆盖，空闲空间（即 LEB 剩余可写空间）与废弃
++   内容（先前写入但未擦除前不能覆盖）存在区别。
++
++
++UBIFS认证
++=========
++
++本章介绍UBIFS认证，使UBIFS能验证闪存上元数据和文件内容的真实性与完整性。
++
++
++威胁模型
++--------
++
++UBIFS 认证可检测离线数据篡改。虽然不能防止篡改，但是能让（可信）代码检查闪
++存文件内容和文件系统元数据的完整性与真实性，也能检查文件内容被替换的攻击。
++
++UBIFS 认证不防护全闪存内容回滚（攻击者可转储闪存内容并在后期还原）。也不防护
++单个索引提交的部分回滚（攻击者能部分撤销变更）。这是因为 UBIFS 不立即覆盖索
++引树或日志的旧版本，而是标记为废弃，稍后由垃圾回收擦除。攻击者可擦除当前树部
++分内容并还原闪存上尚未擦除的旧版本。因每次提交总会写入索引根节点和主节点的新
++版本而不覆盖旧版本，UBI 的磨损均衡操作（将内容从物理擦除块复制到另一擦除块
++且非原子擦除原块）进一步助长此问题。
++
++UBIFS 认证不覆盖认证密钥提供后攻击者在设备执行代码的攻击，需结合安全启动和
++可信启动等措施确保设备仅执行可信代码。
++
++
++认证
++----
++
++为完全信任从闪存读取的数据，所有存储在闪存的 UBIFS 数据结构均需认证：
++- 包含文件内容、扩展属性、文件长度等元数据的索引
++- 通过记录文件系统变更来包含文件内容和元数据的日志
++- 存储 UBIFS 用于空闲空间统计的 UBI LEB 元数据的 LPT
++
++
++索引认证
++~~~~~~~~
++
++借助 *wandering tree* 概念，UBIFS 仅更新和持久化从叶节点到根节点的变更
++部分。这允许用子节点哈希增强索引树节点。最终索引基本成为 Merkle 树：因索引
++叶节点含实际文件系统数据，其父索引节点的哈希覆盖所有文件内容和元数据。文件
++变更时，UBIFS 索引从叶节点到根节点（含主节点）相应更新，此过程可挂钩以同步
++重新计算各变更节点的哈希。读取文件时，UBIFS 可从叶节点到根节点逐级验证哈希
++确保节点完整性。
++
++为确保整个索引真实性，UBIFS 主节点存储基于密钥的哈希(HMAC)，覆盖自身内容及
++索引树根节点哈希。如前所述，主节点在索引持久化时（即索引提交时）总会写入闪存。
++
++此方法仅修改 UBIFS 索引节点和主节点以包含哈希，其他类型节点保持不变，减少了
++对 UBIFS 用户（如嵌入式设备）宝贵的存储开销。
++
++::
++
++                             +---------------+
++                             |  Master Node  |
++                             |    (hash)     |
++                             +---------------+
++                                     |
++                                     v
++                            +-------------------+
++                            |  Index Node #1    |
++                            |                   |
++                            | branch0   branchn |
++                            | (hash)    (hash)  |
++                            +-------------------+
++                               |    ...   |  (fanout: 8)
++                               |          |
++                       +-------+          +------+
++                       |                         |
++                       v                         v
++            +-------------------+       +-------------------+
++            |  Index Node #2    |       |  Index Node #3    |
++            |                   |       |                   |
++            | branch0   branchn |       | branch0   branchn |
++            | (hash)    (hash)  |       | (hash)    (hash)  |
++            +-------------------+       +-------------------+
++                 |   ...                     |   ...   |
++                 v                           v         v
++               +-----------+         +----------+  +-----------+
++               | Data Node |         | INO Node |  | DENT Node |
++               +-----------+         +----------+  +-----------+
++
++
++           图3：索引节点哈希与主节点 HMAC 的覆盖范围
++
++
++
++健壮性性和断电安全性的关键在于以原子操作持久化哈希值与文件内容。UBIFS 现有
++的变更节点持久化机制专为此设计，能够确保断电时安全恢复。为索引节点添加哈希值
++不会改变该机制，因为每个哈希值都与其对应节点以原子操作同步持久化。
++
++
++日志认证
++~~~~~~~~
++
++日志也需要认证。因为日志持续写入，必须频繁地添加认证信息以确保断电时未认证数
++据量可控。方法是从提交起始节点开始，对先前引用节点、当前引用节点和 bud 节点
++创建连续哈希链。适时地在bud节点间插入认证节点，这种新节点类型包含哈希链当前
++状态的 HMAC。因此日志可认证至最后一个认证节点。日志尾部无认证节点的部分无法
++认证，在日志重放时跳过。
++
++日志认证示意图如下::
++
++    ,,,,,,,,
++    ,......,...........................................
++    ,. CS  ,               hash1.----.           hash2.----.
++    ,.  |  ,                    .    |hmac            .    |hmac
++    ,.  v  ,                    .    v                .    v
++    ,.REF#0,-> bud -> bud -> bud.-> auth -> bud -> bud.-> auth ...
++    ,..|...,...........................................
++    ,  |   ,
++    ,  |   ,,,,,,,,,,,,,,,
++    .  |            hash3,----.
++    ,  |                 ,    |hmac
++    ,  v                 ,    v
++    , REF#1 -> bud -> bud,-> auth ...
++    ,,,|,,,,,,,,,,,,,,,,,,
++       v
++      REF#2 -> ...
++       |
++       V
++      ...
++
++因为哈希值包含引用节点，攻击者无法重排或跳过日志头重放，仅能移除日志尾部的
++bud 节点或引用节点，最大限度将文件系统回退至上次提交。
++
++日志区位置存储于主节点。因为主节点通过 HMAC 认证，所以未经检测无法篡改。日
++志区大小在文件系统创建时由 `mkfs.ubifs` 指定并存储于超级块节点。为避免篡
++改此值及其他参数，超级块结构添加 HMAC。超级块节点存储在 LEB 0，仅在功能标
++志等变更时修改，文件变更时不修改。
++
++
++LPT认证
++~~~~~~~
++
++LPT 根节点在闪存上的位置存储于 UBIFS 主节点。因为 LPT 每次提交时都以原子
++操作写入和读取，无需单独认证树节点。通过主节点存储的简单哈希保护完整 LPT
++即可。因为主节点自身已认证，通过验证主节点真实性并比对存储的 LTP 哈希与读
++取的闪存 LPT 计算哈希值，即可验证 LPT 真实性。
++
++
++密钥管理
++--------
++
++为了简化实现，UBIFS 认证使用单一密钥计算超级块、主节点、提交起始节点和引用
++节点的 HMAC。创建文件系统(`mkfs.ubifs`) 时需提供此密钥以认证超级块节点。
++挂载文件系统时也需此密钥验证认证节点并为变更生成新 HMAC。
++
++UBIFS 认证旨在与 UBIFS 加密(fscrypt)协同工作以提供保密性和真实性。因为
++UBIFS 加密采用基于目录的差异化加密策略，可能存在多个 fscrypt 主密钥甚至未
++加密目录。而 UBIFS 认证采用全有或全无方式，要么认证整个文件系统要么完全不
++认证。基于此特性，且为确保认证机制可独立于加密功能使用，UBIFS 认证不与
++fscrypt 共享主密钥，而是维护独立的认证专用密钥。
++
++提供认证密钥的API尚未定义，但可通过类似 fscrypt 的用户空间密钥环提供。需注
++意当前 fscrypt 方案存在缺陷，用户空间 API 终将变更[FSCRYPT-POLICY2]。
++
++用户仍可通过用户空间提供单一口令或密钥覆盖 UBIFS 认证与加密。相应用户空间工
++具可解决此问题：除派生的 fscrypt 加密主密钥外，额外派生认证密钥。
++
++为检查挂载时密钥可用性，UBIFS 超级块节点将额外存储认证密钥的哈希。此方法类
++似 fscrypt 加密策略 v2 提出的方法[FSCRYPT-POLICY2]。
++
++
++未来扩展
++========
++
++特定场景下，若供应商需要向客户提供认证文件系统镜像，应该能在不共享 UBIFS 认
++证密钥的前提下实现。方法是在每个 HMAC 外额外存储数字签名，供应商随文件系统
++镜像分发公钥。若该文件系统后续需要修改，若后续需修改该文件系统，UBIFS 可在
++首次挂载时将全部数字签名替换为 HMAC，其处理逻辑与 IMA/EVM 子系统应对此类情
++况的方式类似。此时，HMAC 密钥需按常规方式预先提供。
++
++
++参考
++====
++
++[CRYPTSETUP2]        https://www.saout.de/pipermail/dm-crypt/2017-November/005745.html
++
++[DMC-CBC-ATTACK]     https://www.jakoblell.com/blog/2013/12/22/practical-malleability-attack-against-cbc-en
++crypted-luks-partitions/
++
++[DM-INTEGRITY]       https://www.kernel.org/doc/Documentation/device-mapper/dm-integrity.rst
++
++[DM-VERITY]          https://www.kernel.org/doc/Documentation/device-mapper/verity.rst
++
++[FSCRYPT-POLICY2]    https://www.spinics.net/lists/linux-ext4/msg58710.html
++
++[UBIFS-WP]           http://www.linux-mtd.infradead.org/doc/ubifs_whitepaper.pdf
+-- 
+2.25.1
 
