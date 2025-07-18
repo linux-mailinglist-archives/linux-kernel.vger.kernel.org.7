@@ -1,141 +1,100 @@
-Return-Path: <linux-kernel+bounces-736553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2178BB09E7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:56:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2673B09E7E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:57:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 632D116C035
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:56:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 818BC1C461F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F57B2949F4;
-	Fri, 18 Jul 2025 08:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="q4DL7C65"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515C72951BA;
+	Fri, 18 Jul 2025 08:57:27 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6464C10A1E;
-	Fri, 18 Jul 2025 08:56:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD04293C71;
+	Fri, 18 Jul 2025 08:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752829008; cv=none; b=cI2XzJan5DzgNm4EOGorxKdN1p1vkjKkBJRJHPH3icod65qaERQZtG7sKtvQytNbzowOoND7WcA0muSKNoDRDbb+YCUWfUwLUnpnwxA0+lGK5D39SwIq20i1GiXSjpV3N7KDTn8qvoMwKjEcP/Ap6mu0Tw7PryuM5Hier9Gth2g=
+	t=1752829047; cv=none; b=QIH7dsRjBCNT2U8ebYrmIkHMBzJc83mG4YS7vLULS1Rcta3yS0fPJfOcYBimliMoASrM2GG9oWEW3pzsikUvTIA5HNYDjDgnSZoTNvBmAKhBwpYpDp0lm3vWMLgfLJTg/6wbORX4l2C2Wj95BZUnA2a5rzxzPTkBNAdT/Kws6as=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752829008; c=relaxed/simple;
-	bh=tA751oUn0QCmzGYuUMd4G3yz2atQVheo7Oq7M7dpNwk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m9MJVpQhBf8z8Z7ikhADzk1zLjnvLyJVI6ndQHP/Mp1RcYXPuR3lDJ6bqqq3SgupvUyKzDhb/k91UGH/Po1MQtHBiVabHXimBGAgayjZnToVZfoV5E5FWXx9lWXH0DgvroaqrGnsjrRimDB4OgoXaG1KjH8jhrwdVWdf1YHjU+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=q4DL7C65; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1752828874;
-	bh=sSu1rK0EwPxo96HAdz1xd+xYWqUDA7zI0vpuwA14i/E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=q4DL7C65SRH8gE1slBw35tvQ2s5UeCgdvqvISUAKRMs9tiXvkkD+/VbJ89nFHHIQ+
-	 z+2oMMbMAcO1UMFCpwsbIsXXzGoC/s6J6pvjR/uHrlw9xGHpzWGhhnaKi7xuhGDmB5
-	 WF7oScyYQDn7RJKcBwIpkLePEbcUuO15YqFFfy8dwvLTCvi/gYklNFT+C6WU+Y/Tz2
-	 /oIZUvx3iCk+VHqyERLCb+QZ2e2KmKW4toHg11Y5HTfQZrOVpgJrYiQNTqxqHoDaGn
-	 bvYnZoD5Rg0CGTENfv7yj7ZnvIu8u5RtwZIe82z2TQV2DeQWiku7sDLs0GrNKt+cnO
-	 yTK4fnP1jMM+A==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	s=arc-20240116; t=1752829047; c=relaxed/simple;
+	bh=BFY+IxRuBFr/iFz/G4FLwSrMJiiq+y6V9xbm3Y51T3c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BgAnA/FGzr/2TgTEsj8QprD7h8dW45fYQNp9NoHS5/wABDag0JFZ9eYGdFVS8gyozTIemvIgFkkehUSrJD6Magvl0TPyFpclCpAx9eUOfCpcUL93K5HzlAJiJCgvWODtbhInfkBz3Q02k5g1jxh/lO5DMOlpOtkzi6UzFHjBFng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.48.207])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bk3WX6mBCz4x5Z;
-	Fri, 18 Jul 2025 18:54:32 +1000 (AEST)
-Date: Fri, 18 Jul 2025 18:56:42 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
- Jens Axboe <axboe@kernel.dk>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Mikulas Patocka <mpatocka@redhat.com>
-Subject: Re: linux-next: manual merge of the device-mapper tree with the
- block tree
-Message-ID: <20250718185642.0f2454c3@canb.auug.org.au>
-In-Reply-To: <e08722e5-d5b8-41d5-92a2-f985a875c24b@oracle.com>
-References: <20250718151045.2c5bfe6b@canb.auug.org.au>
-	<e08722e5-d5b8-41d5-92a2-f985a875c24b@oracle.com>
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id C9436340EF5;
+	Fri, 18 Jul 2025 08:57:23 +0000 (UTC)
+Date: Fri, 18 Jul 2025 16:57:18 +0800
+From: Yixun Lan <dlan@gentoo.org>
+To: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	paul.walmsley@sifive.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+	palmer@dabbelt.com, skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] riscv: dts: spacemit: Add initial support for
+ OrangePi RV2
+Message-ID: <20250718085718-GYA695709@gentoo>
+References: <20250718084339.471449-1-hendrik.hamerlinck@hammernet.be>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/2ZKS9r5fyrSuLX3=G_5SSEk";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250718084339.471449-1-hendrik.hamerlinck@hammernet.be>
 
---Sig_/2ZKS9r5fyrSuLX3=G_5SSEk
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Hendrik,
 
-Hi John,
+On 10:43 Fri 18 Jul     , Hendrik Hamerlinck wrote:
+> This patchset adds initial device tree support for the OrangePi RV2 board.
+> 
+> The OrangePi RV2 [1] is marketed as using the Ky X1 SoC.
+> However, after research and testing, it is in fact identical to the 
+> SpacemiT K1 [2]. This is supported by the following:
+> 
+> - Similar integration in the Banana Pi kernel tree [3], which uses the 
+>   OrangePi RV2 and identifies it as the SpacemiT K1.
+> - Comparison of the device tree code showing a match to the OrangePi RV2 
+>   Linux tree [4].
+> - Locally tested the OrangePi RV2 with the SpacemiT K1 device tree, 
+>   confirming it boots and operates correctly.
+> 
+> Patch #1 documents the compatible string for the OrangePi RV2, and 
+> patch #2 adds its minimal device tree. This enables booting to a serial
+> console with UART output and blinking a LED, similar to other K1-based 
+> boards such as the Banana Pi BPI-F3 or the Milk-V Jupiter.
+> 
+> Link: http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-RV2.html [1]
+> Link: https://www.spacemit.com/en/key-stone-k1 [2]
+> Link: https://github.com/BPI-SINOVOIP/pi-linux/blob/linux-6.6.63-k1/arch/riscv/boot/dts/spacemit/k1-x_orangepi-rv2.dts [3]
+> Link: https://github.com/orangepi-xunlong/linux-orangepi/tree/orange-pi-6.6-ky [4]
+> 
+> Changes in v2:
+> Patch 1: no changes.
+> Patch 2:
+> - Added aliases section to the device tree.
+> - Removed the memory section, as it is populated by the bootloader.
+> - Updated copyright header.
+> 
+Looks good
 
-On Fri, 18 Jul 2025 09:26:57 +0100 John Garry <john.g.garry@oracle.com> wro=
-te:
->
-> I think that this is the proper merge resolution:
->=20
-> static void stripe_io_hints(struct dm_target *ti,
->      struct queue_limits *limits)
-> {
-> 	struct stripe_c *sc =3D ti->private;
-> 	unsigned int io_min, io_opt;
->=20
-> 	if (!check_shl_overflow(sc->chunk_size, SECTOR_SHIFT, &io_min) && !check=
-_mul_overflow(io_min, sc->stripes, &io_opt)) {
-> 		limits->io_min =3D io_min;
-> 		limits->io_opt =3D io_opt;
-> 	}
-> 	limits->chunk_sectors =3D sc->chunk_size;
-> }
->=20
->=20
-> For purpose of atomic writes, we should always set chunk_sectors.
+Reviewed-by: Yixun Lan <dlan@gentoo.org>
 
-OK, I have changed my resolution to that starting from Monday.
-
-> BTW, I tried to apply the conflicting patches from the block tree on -nex=
-t from 17 July, and I was getting strange behaviour:
->=20
-> # vgcreate vg00 /dev/sda /dev/sdb /dev/sdc /dev/sdd
->   WARNING: Unknown logical_block_size for device /dev/sda.
->   WARNING: Unknown logical_block_size for device /dev/sdb.
->   WARNING: Unknown logical_block_size for device /dev/sdc.
->   WARNING: Unknown logical_block_size for device /dev/sdd.
->   Physical volume "/dev/sda" successfully created.
->   Physical volume "/dev/sdb" successfully created.
->   Physical volume "/dev/sdc" successfully created.
->   Physical volume "/dev/sdd" successfully created.
->   Volume group "vg00" successfully created
-> #
->=20
-> I had no such problem on Jens' block for-6.17 tree.
-
-I have no idea what caused that, sorry.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/2ZKS9r5fyrSuLX3=G_5SSEk
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh6DEoACgkQAVBC80lX
-0GwQ1Af/RMr1BzAkjy0r848TWxaB05nzwAMM49gWAsb6OqfIdFyT4f27Jvu3FIpT
-CPvWm+IQ1eIFlRghJ+hlTvy0Hg8dslBRIps+GQPOAQky3Plm88tOG3lzoE72ZiFB
-DbSqcuD+Sni4P9UYBZWtzbrd9Ee/US6WpCSliRgvgHSajTU4tiNNvftcfpTVs8W4
-UpOTZIw9w8Wvlrrjf/aYUUsEv+dMYN4K0mkJRW5ZrnUHHzdog4NSGp0XXBVkV8Ub
-aAmEPH+qGD2yT1OjGdOvsfTR0bUxoc1pIb3KxEIxbn9xFT5ryB4RCEYX+d7mbFgg
-CYilRMx8PvnoORwfxQ67GAS89Dxy0A==
-=oFB0
------END PGP SIGNATURE-----
-
---Sig_/2ZKS9r5fyrSuLX3=G_5SSEk--
+-- 
+Yixun Lan (dlan)
 
