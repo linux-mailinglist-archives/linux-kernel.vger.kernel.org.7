@@ -1,163 +1,111 @@
-Return-Path: <linux-kernel+bounces-736129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9698B0992D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:34:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20FA1B0992A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:33:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 073AA16C33B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 01:33:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 749F51C455DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 01:33:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DD333398B;
-	Fri, 18 Jul 2025 01:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="wUKZNIye"
-Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD89153BD9;
+	Fri, 18 Jul 2025 01:33:31 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE59C13DDAE;
-	Fri, 18 Jul 2025 01:33:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E387208A7;
+	Fri, 18 Jul 2025 01:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752802425; cv=none; b=Kj0VhkWXo7xHQ4X+c6BvfnV69j0q+jVpnt2QKEA+lH6o65XOu1DB5QysJZu7gRjKTYOr4EqCbUwiuDFKawjt9ozxfQ4xwYJwoUIXckWSA4Fc2KuJhF43afe/vIouw6vbSbgeHiLHPO9u8hfxGuDXwUY2c/W8vls3pmFlRWxFF1Q=
+	t=1752802410; cv=none; b=jI88tInI9XDHcuz2KWQlX14hu1hriNu76a+F8ZeUoiuSKKUcgdP/yyd3ocGAgwKrAY3Tks7RT1E8HIa4oo9vxdKuMUoiJVmhZuH2kta5nwuk3qtyK3HoZtbBsqEIOayyJZFEtCouI2A5hZ4ONN/DTjydNr2+DXjpsFZt2Pgi1Rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752802425; c=relaxed/simple;
-	bh=fSv2wrh0fgJV3Ivb9jHZuVJNMai581B9bX+/SqV79ic=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VXO8l5K+gSajtJ+Hd0ckI8po1L40aD0egvCfFUmSS0PRVxnNZZe0UmmcIgpO70pT0Jt4ZiZs7bfQQRfu/1M3vtKP8anUIYyxSV3d/hCRMKI5nMsEnqJZ+jZRvfn9TewdSlUjtM/OEt5wZKhavCnP0EwVjEPYtyWu1hZsRZXUrb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=wUKZNIye; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
-	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56HM4sxV022146;
-	Thu, 17 Jul 2025 21:33:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=DKIM; bh=J+1RzevwhFWai0XmrCjYTDx3Pr2
-	oDhOBIvFzkIJa8fg=; b=wUKZNIyeFkiViZDU2KEWVsIiI4QXlpWTp+CkZ1j4g3d
-	e1Us+gadbGD9mnnw0VwAot2zSsihtaMnJ876E1CenibeNCu3V2uJLRROW0JG+moR
-	B5kgxWkYi9FynuCFuZAM6hMpBGxJx0hOU8FRn7pDZ2/lGaLJO1ObCZhGHy5V3Jub
-	fvqmWTNQFCs2cW84sFb3Hs6AWQInInIlg3yy02+jjJvxfEM8JQh7aF4yoNiUv8Ha
-	eFWSsRkPJCQ8Kmtlfvm32RmC1EUVjJCzjKSo6imXrcLm2vChENYqhFJMBN2bJw0x
-	Q914YWWm3YMh5dkHvu5wRttKGMB6aTLcvNlp0YerRpQ==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 47xxuyv3gu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Jul 2025 21:33:27 -0400 (EDT)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 56I1XPwY007517
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 17 Jul 2025 21:33:25 -0400
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 17 Jul
- 2025 21:33:25 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Thu, 17 Jul 2025 21:33:25 -0400
-Received: from JSANTO12-L01.ad.analog.com ([10.65.60.206])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 56I1XAlq008897;
-	Thu, 17 Jul 2025 21:33:12 -0400
-From: Jonathan Santos <Jonathan.Santos@analog.com>
-To: <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Jonathan Santos <Jonathan.Santos@analog.com>, <lars@metafoo.de>,
-        <Michael.Hennerich@analog.com>, <jic23@kernel.org>,
-        <dlechner@baylibre.com>, <nuno.sa@analog.com>, <andy@kernel.org>,
-        <jonath4nns@gmail.com>
-Subject: [PATCH] iio: adc: ad7768-1: disable IRQ autoenable
-Date: Thu, 17 Jul 2025 22:33:07 -0300
-Message-ID: <20250718013307.153281-1-Jonathan.Santos@analog.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1752802410; c=relaxed/simple;
+	bh=7Q5fO1jqokwVGteCeI378rmLEpn8TEGfBuai5VF3SC4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UWXuewXr+2J633OgqpYrAQMssO1Pr87HwFWe07Pkl+O7VWSx84VWdtx8X0gvdTW8sWeSmWb9rh52Ug4knm3QUY2yziMtEzdG/QGntnZUf8N/im96sGXisFDwMIQPxSQn/7tC926ZP4qW7MEhYiZMHz6uGONARlsUivZqa0x7yaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4bjslh463Bz27j27;
+	Fri, 18 Jul 2025 09:34:24 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4B336140295;
+	Fri, 18 Jul 2025 09:33:25 +0800 (CST)
+Received: from [10.174.179.113] (10.174.179.113) by
+ dggpemf500002.china.huawei.com (7.185.36.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 18 Jul 2025 09:33:24 +0800
+Message-ID: <f332bc85-4220-4285-9c26-b053bcac5f02@huawei.com>
+Date: Fri, 18 Jul 2025 09:33:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE4MDAxMCBTYWx0ZWRfX5uQwG+DMjCwy
- Xb4uC3WsHLVh8O7+PQPK6rywVacT3pDu0+eBEB5fasmkERQw13FkJ91b2uh4hT1lpVpEpiFu4ud
- eA0x6bhczm8ZzNtsUD1pc1hi4W6gaKe6STujzpoutZHAqwZdY3RyjjeHPpkqFoRKXXDOZ55ZGSN
- xVLVjQcFQAjG+L0QY7bZiA2CLwAnHp7wM7SgEtvGZvPLwbkHdAfdFM/nWzDRAkwCA3f1sFNZA+Z
- evFX2BFlEruaic2yF04umymDcKD/RMrK+g+C6Yve1SUMa/Pjljye+zHPQPZJnIAXERYx58yXGKN
- Hgkz/LLei+VSjb1HFyVLt0PIbQT4MPEZAccOqlyczih428TfDs3kZYiJeb1+V5MFd2FWsHhx6NY
- y11STbjdR36OOj7OH2TMjWO0StHprNdKmpL/4Hl2WR8562BK4UUX9f+0vdwvQZ75TZi2INBc
-X-Proofpoint-GUID: mO6xstIdxHvuC1mh10ZOFWm1bNu38tpf
-X-Proofpoint-ORIG-GUID: mO6xstIdxHvuC1mh10ZOFWm1bNu38tpf
-X-Authority-Analysis: v=2.4 cv=ROyzH5i+ c=1 sm=1 tr=0 ts=6879a467 cx=c_pps
- a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17
- a=Wb1JkmetP80A:10 a=gAnH3GRIAAAA:8 a=HQyUy-T_lNtrtNsvsjUA:9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-17_05,2025-07-17_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 mlxscore=0 lowpriorityscore=0 mlxlogscore=999 spamscore=0
- adultscore=0 clxscore=1015 malwarescore=0 bulkscore=0 priorityscore=1501
- suspectscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507180010
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] ipv6: mcast: Delay put pmc->idev in mld_del_delrec():
+ manual merge
+To: Matthieu Baerts <matttbe@kernel.org>, <pabeni@redhat.com>,
+	<kuba@kernel.org>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
+	<horms@kernel.org>, <ap420073@gmail.com>, Stephen Rothwell
+	<sfr@canb.auug.org.au>
+References: <20250714141957.3301871-1-yuehaibing@huawei.com>
+ <8cc52891-3653-4b03-a45e-05464fe495cf@kernel.org>
+Content-Language: en-US
+From: Yue Haibing <yuehaibing@huawei.com>
+In-Reply-To: <8cc52891-3653-4b03-a45e-05464fe495cf@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-The device continuously converts data while powered up, generating
-interrupts in the background. Configure the IRQ to be enabled and
-disabled manually as needed to avoid unnecessary CPU load.
+On 2025/7/17 22:41, Matthieu Baerts wrote:
+> Hi Yue, Paolo, Jakub,
+> 
+> On 14/07/2025 16:19, Yue Haibing wrote:
+>> pmc->idev is still used in ip6_mc_clear_src(), so as mld_clear_delrec()
+>> does, the reference should be put after ip6_mc_clear_src() return.
+> 
+> FYI, I got a small conflict when merging 'net' in 'net-next' in the
+> MPTCP tree due to this patch applied in 'net':
+> 
+>   ae3264a25a46 ("ipv6: mcast: Delay put pmc->idev in mld_del_delrec()")
+> 
+> and this one from 'net-next':
+> 
+>   a8594c956cc9 ("ipv6: mcast: Avoid a duplicate pointer check in
+> mld_del_delrec()")
+> 
+> ----- Generic Message -----
+> The best is to avoid conflicts between 'net' and 'net-next' trees but if
+> they cannot be avoided when preparing patches, a note about how to fix
+> them is much appreciated.
 
-Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
----
- drivers/iio/adc/ad7768-1.c | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+Sorry for the inconvenience.
+> 
+> The conflict has been resolved on our side[1] and the resolution we
+> suggest is attached to this email. Please report any issues linked to
+> this conflict resolution as it might be used by others. If you worked on
+> the mentioned patches, don't hesitate to ACK this conflict resolution.
+> ---------------------------
+> 
+> Regarding this conflict, the patch from net has been applied at a
+> slightly different place after the code refactoring from net-next.
+> 
 
-diff --git a/drivers/iio/adc/ad7768-1.c b/drivers/iio/adc/ad7768-1.c
-index a2e061f0cb08..3eea03c004c3 100644
---- a/drivers/iio/adc/ad7768-1.c
-+++ b/drivers/iio/adc/ad7768-1.c
-@@ -395,8 +395,10 @@ static int ad7768_scan_direct(struct iio_dev *indio_dev)
- 	if (ret < 0)
- 		return ret;
- 
-+	enable_irq(st->spi->irq);
- 	ret = wait_for_completion_timeout(&st->completion,
- 					  msecs_to_jiffies(1000));
-+	disable_irq(st->spi->irq);
- 	if (!ret)
- 		return -ETIMEDOUT;
- 
-@@ -1130,7 +1132,21 @@ static const struct iio_buffer_setup_ops ad7768_buffer_ops = {
- 	.predisable = &ad7768_buffer_predisable,
- };
- 
-+static int ad7768_set_trigger_state(struct iio_trigger *trig, bool enable)
-+{
-+	struct iio_dev *indio_dev = iio_trigger_get_drvdata(trig);
-+	struct ad7768_state *st = iio_priv(indio_dev);
-+
-+	if (enable)
-+		enable_irq(st->spi->irq);
-+	else
-+		disable_irq(st->spi->irq);
-+
-+	return 0;
-+}
-+
- static const struct iio_trigger_ops ad7768_trigger_ops = {
-+	.set_trigger_state = ad7768_set_trigger_state,
- 	.validate_device = iio_trigger_validate_own_device,
- };
- 
-@@ -1417,7 +1433,7 @@ static int ad7768_probe(struct spi_device *spi)
- 
- 	ret = devm_request_irq(&spi->dev, spi->irq,
- 			       &ad7768_interrupt,
--			       IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-+			       IRQF_TRIGGER_RISING | IRQF_NO_AUTOEN,
- 			       indio_dev->name, indio_dev);
- 	if (ret)
- 		return ret;
+This resolution looks good to me.
 
-base-commit: 0a686b9c4f847dc21346df8e56d5b119918fefef
--- 
-2.34.1
-
+> Rerere cache is available in [2].
+> 
+> [1] https://github.com/multipath-tcp/mptcp_net-next/commit/ec9d9e40de20
+> [2] https://github.com/multipath-tcp/mptcp-upstream-rr-cache/commit/fe71
+> 
+> Cheers,
+> Matt
 
