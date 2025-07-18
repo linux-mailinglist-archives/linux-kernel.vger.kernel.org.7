@@ -1,180 +1,207 @@
-Return-Path: <linux-kernel+bounces-736529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA804B09E2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:38:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A54EB09E31
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:39:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 567AF160B22
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:38:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5008E7AE721
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:37:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5818813FEE;
-	Fri, 18 Jul 2025 08:38:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCFA8293C5D;
+	Fri, 18 Jul 2025 08:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sSotEowd"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Hqz89RGu"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48CE229290A
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 08:38:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7401C292B4F
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 08:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752827882; cv=none; b=WGC2RexGfhIlIfBPV71yOnRHxv5wTNbXrR+xujeE4BJ4C8wssTW7OQkYTzrsfvMneQUOvi3HLDP3tfP+apqywCkR743dDuDvWWRMGeVIqQU6EUWRv8Ebaa0QiLUHk8F9NVr81qbL32ieUi8yJPzEPCez+KFzFgutbvvS7CYVFBI=
+	t=1752827948; cv=none; b=fZSik9S9wjlXk5BrhG/ak4h4gCEWdR5fGAlUJuTr2IpgfC2hPqQEe8/xfI/UqZQid7wMDrkSQTcVMzWxQNLxm33F2EJXjRlgjsoB+qjQ1JmO2NixWS+1r3TqvLL+s1Uxz8Wdyo5iCKI46ugTm9bXfIUSMINelrF1rL/MXE+20fA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752827882; c=relaxed/simple;
-	bh=xkrVlFl++yjki3bmgqZOv3E+MHiM7DAo5a8dlrBWSxw=;
+	s=arc-20240116; t=1752827948; c=relaxed/simple;
+	bh=HV3mPl6MSYbW9XmYhqL0JUwYQluuDEhKVGZbLd7tbSg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cOnv6pu5RFiNIEHF69h1lYziPALxXL/JThxxhuo4XGAP8YQ1ktnYb9dpFdJ4HC+pW6Zfn7DsijgftM4GjhUfsikWvYb2aQRMPNlw+7zFiL4NZJR+IvH3F/Leb5wmhlVeeKPLLT8+q2/SzwJMS0EHAsKxZiVMVmcy2+3B7i8I+a0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sSotEowd; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7481600130eso2433965b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 01:38:01 -0700 (PDT)
+	 To:Cc:Content-Type; b=LYjckQ7PKELfCEcrzUxf5koIhnr4jj7biK2YO9vFVLgdwouO5Bt14vAxl8qF6XceWJVPGnA6jln87VnykTPuTef1R5igu24dOE1NHSzNJskPpsIFQGJg+8I13p6LQ7aRH0R0YC34G10zM2CTHiwzxfanzejjariWcmgEauV8YI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Hqz89RGu; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4ab3ad4c61fso383291cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 01:39:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752827880; x=1753432680; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=T5DKf/JSZuAS6z2Xq7nrToIfpwa9ePTbW/i2x4sP8aQ=;
-        b=sSotEowd9H5Ak/Q5YVL95C9Gl1h+0+YLlofTzc6tL38O9vn+CiooSTzRRQ6tZdzP36
-         xsDNFDH6VIaVpmFUprpIkS0+WaBO3ML0827EC4vkRolSR5gFo3tilHN/dCOsxfoNyPH8
-         qpWSJrg8oTXmd2chzQdgen5xunNyFcj/T+Cs0AmM4t6IwdmTn9BWIP1ZjdW2i4SWw+wE
-         ueHRjMp0oJZvDE+Q9qu/n1N+0eQUr2pktqSlEfPWiNDLgA1okXzL1q07R1iA3ttlShXb
-         hGzVGcoYyG9Y6+q28ODMvp+chWH9TF9/P4ikjslQSIBUQbN3zm/oiYYO4JxriAvCQVjx
-         T9HQ==
+        d=google.com; s=20230601; t=1752827945; x=1753432745; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=udrYzqsG6zKD6Rhq5jUrYPXE4BiEAdJOTycG7GhLQII=;
+        b=Hqz89RGuZzHtgoSGE0C2o/r7a2QPvNrH6QeHhYgAoP0xAud5ybplO1qSUCxNLBalwQ
+         pg8E+JD4/inzjLF2C/sRb6U1b/ddTXvrc93Lw5x1E8eDdOXb06wFdLtdIlq/W9yLUJos
+         On4JrQVSwo+kOmPrygJSvfCTmpRIE2u989OVoR51KICPlJ7qFHjHL5mHbIDFpmOMcRBN
+         iVJMDp4uzg9rQoFNoILxflbqh2y1mq4/RLnphtiu+24tNYVvJhObmzPXRO7cMJR2aP/R
+         mSx9IY/m3LBl95Si9EGoU/YfV/SjPPTC1VZ+P1nztduAgqfMJ+31NccE2K/JraxGsvnN
+         0UeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752827880; x=1753432680;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=T5DKf/JSZuAS6z2Xq7nrToIfpwa9ePTbW/i2x4sP8aQ=;
-        b=LpTlDcmbI7dJEC3GoaVtJvzE+fu0Z5WRCmL2DPtNC6XTbYXEzt4iTTPOqq8PpXGm+q
-         B1rvnMwafre1TmP1T9YcVer/Q3FUBCIO3owa9GSqGhE3qQgyJ9yo7SRA+VmMBnj+n4Sa
-         7jarHQsTnD+2kIT4qrfFVk9G2SqHWFFWBVYQN1pUydriO3scuiatpORgvSoJJbVh+pWU
-         FXc1CxVOdisMt0jOaLL6QlEks+NUcc3C5aHAFBio0ph3M5zYl4dm9kgge0Nw5tjiC8L4
-         mDAA5rgKDvCyFWVbD1RoLX8QxbIQQQ2KDNeGI3TY6h/0gMbFT2A5wFm91VwzMkSW24FA
-         Y2Ng==
-X-Forwarded-Encrypted: i=1; AJvYcCW8A6HF+mRgd6Af0rd+G4cEkEjMSCvuNREqU472mGFmsGKyrRtncmNqtQSKVZEtXuVpwnki+9EzurJ/3Po=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6LMpG5EMMJ34wZVZYENn/2r6G1a+1GuXuC1hZoL+4E4e/f6di
-	P+bA+XPkRZtUpxkN6CXkIYbzx++1PkpomSSr/LhgdFf+pnYYQNkU0FPcuq7MhAvKN6jVfTaJxcV
-	YOaPAG5OXAHJvhN0aOtdK1SW8BECBsRQdQSR7C7s17Q==
-X-Gm-Gg: ASbGncuIbJnzpQoP9z50Tssq3JKI7/M753m64FawY6RJty0jx4Ldbck7Gt4iFDDOf6A
-	RbR63zhjuDexcTMyK7Zan41MdWH+6hK3VCT6eu8m+ik+CZMqLQ2nG3Nqx2txXjxNw2y7RObaL6N
-	Y4GYyJm1+PC5OICtcBhMzoQxRZoprFQvoCvo6tXTKyssHC6fVe1l698HfWjX167ppZwvZLdAYnJ
-	mNShfLO
-X-Google-Smtp-Source: AGHT+IFqh+j+6EUjya6/Rjc1r8NT0FseuVGCh1Ka+tsqzW1wYMCTrimcXhsVexvinaMtnBJgBfcFHLy00MJtnLuDPNY=
-X-Received: by 2002:a05:6a00:1883:b0:736:5664:53f3 with SMTP id
- d2e1a72fcca58-7572427b03amr12830626b3a.15.1752827880483; Fri, 18 Jul 2025
- 01:38:00 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752827945; x=1753432745;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=udrYzqsG6zKD6Rhq5jUrYPXE4BiEAdJOTycG7GhLQII=;
+        b=uGTDaEivqigOhS5VQ9L1lcGdVP94AC/xM75D8Bzre6WHAzt6lYwUvlXtxKnESRmxpG
+         jMXaWlJa/IfwFHSrQaCAOo/bBk3G4/XkQ4ICVBdCRmyYOirV0+6+7ZLhyhDWG/1YjBF/
+         /e3UZzCwBDqi/TglgLucmYc3i8cpHCF4fdcuCZ35j91An49FjPAwYwbPVxeLbk+9ZA0l
+         OKW1455nw7VXnkkYq4Y4s+kPcc/ThvBL4JAgijYaxH+3MvkgAfirPxFf5JwajcqgwgGD
+         +jiiQokBT5dMq09/wGSvjxaEPa4FTDkhi+MryEM0VJCUTT6IcHUu4++feh/KRJ+rzH66
+         Fxpw==
+X-Forwarded-Encrypted: i=1; AJvYcCVFTjvz6ro4eEZhakBHUvV/pH8Es2ai7Fm88UaTl3tyPrTjoL7ZByCgCc7r0QqcQA84eamOa8cW8rx26UY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxrmn/CeDxVRhfkr07AmTI+ICxtWUxThhGyLurkVTQH6CHfEH4H
+	nmDRpdns+Cawhb181quCaoZHhWkbMS8qAVHNgpF8dRKxVuUo2OjB+hqWY7oFReXK5GrdnZ7hb/R
+	x27dNHWahxiG3gbirrQry62JPTRuZBlRCQ7AngOOp
+X-Gm-Gg: ASbGncs0tojrCiF7sdGQYhN4DXOgx2/axjHYpWc1lwy6pI/EK6MuG5f1RG+IdcD+tCe
+	lVqeAHh0DI4+UjPA48HqmoVrnZmc8Vl839VqyJXrOAHrERZhWJY0lNVCTvvqXG2oh5TqRtzCO5f
+	4t7kWO5GyNt9NZBlguntLHNYHBaqdWGHA27fbTj7zmz98L/jiKS/Z+tldSQGokzEMZOOjxcKPBW
+	YtVwYVjUkgvhwq+KM+nvZYp+JLvOJhZKuBHEA==
+X-Google-Smtp-Source: AGHT+IFZWhzx20M9Gw8trywQy21X6aj6Ujnf+GXyOsXwiCt5Tl0RmCoH6sEvHzscHL3TaCOr5PVWkjpGBEYykqUGK0g=
+X-Received: by 2002:a05:622a:4a87:b0:4a8:19d5:e9bb with SMTP id
+ d75a77b69052e-4abb13dfdf4mr4200641cf.13.1752827944683; Fri, 18 Jul 2025
+ 01:39:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250714063109.591-1-jie.gan@oss.qualcomm.com> <20250714063109.591-3-jie.gan@oss.qualcomm.com>
-In-Reply-To: <20250714063109.591-3-jie.gan@oss.qualcomm.com>
-From: Mike Leach <mike.leach@linaro.org>
-Date: Fri, 18 Jul 2025 09:37:46 +0100
-X-Gm-Features: Ac12FXzbwn7h5sLCdV0XEMivqozSxEu3_Wm23VZ6koC6hPisQ9WkjxcqJkjzS7w
-Message-ID: <CAJ9a7VikU9UktC-fpLfR5EdpGupHHor2GaDGAujBnQJky=W17w@mail.gmail.com>
-Subject: Re: [PATCH v3 RESEND 02/10] coresight: core: add a new API to
- retrieve the helper device
-To: Jie Gan <jie.gan@oss.qualcomm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark <james.clark@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Tingwei Zhang <quic_tingweiz@quicinc.com>, Yuanfang Zhang <quic_yuanfang@quicinc.com>, 
-	Mao Jinlong <quic_jinlmao@quicinc.com>, Jie Gan <quic_jiegan@quicinc.com>, 
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org
+References: <cover.1752824628.git.namcao@linutronix.de> <43d64ad765e2c47e958f01246320359b11379466.1752824628.git.namcao@linutronix.de>
+In-Reply-To: <43d64ad765e2c47e958f01246320359b11379466.1752824628.git.namcao@linutronix.de>
+From: Soheil Hassas Yeganeh <soheil@google.com>
+Date: Fri, 18 Jul 2025 09:38:27 +0100
+X-Gm-Features: Ac12FXzgn06jDeUNMyDy69uNTY69aPVmkscuVzoPHZoBvxff8P-gX2NCfWFyWn0
+Message-ID: <CACSApvZT5F4F36jLWEc5v_AbqZVQpmH1W7UK21tB9nPu=OtmBA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] eventpoll: Fix epoll_wait() report false negative
+To: Nam Cao <namcao@linutronix.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Shuah Khan <shuah@kernel.org>, Davidlohr Bueso <dave@stgolabs.net>, 
+	Khazhismel Kumykov <khazhy@google.com>, Willem de Bruijn <willemb@google.com>, 
+	Eric Dumazet <edumazet@google.com>, Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Fri, Jul 18, 2025 at 8:52=E2=80=AFAM Nam Cao <namcao@linutronix.de> wrot=
+e:
+>
+> ep_events_available() checks for available events by looking at ep->rdlli=
+st
+> and ep->ovflist. However, this is done without a lock, therefore the
+> returned value is not reliable. Because it is possible that both checks o=
+n
+> ep->rdllist and ep->ovflist are false while ep_start_scan() or
+> ep_done_scan() is being executed on other CPUs, despite events are
+> available.
+>
+> This bug can be observed by:
+>
+>   1. Create an eventpoll with at least one ready level-triggered event
+>
+>   2. Create multiple threads who do epoll_wait() with zero timeout. The
+>      threads do not consume the events, therefore all epoll_wait() should
+>      return at least one event.
+>
+> If one thread is executing ep_events_available() while another thread is
+> executing ep_start_scan() or ep_done_scan(), epoll_wait() may wrongly
+> return no event for the former thread.
 
-On Mon, 14 Jul 2025 at 07:31, Jie Gan <jie.gan@oss.qualcomm.com> wrote:
+That is the whole point of epoll_wait with a zero timeout.  We would want t=
+o
+opportunistically poll without much overhead, which will have more
+false positives.
+A caller that calls with a zero timeout should retry later, and will
+at some point
+observe the event.
+
+I'm not sure if we would want to add much more overheads, for higher precis=
+ion.
+
+Thanks,
+Soheil
+
+> This reproducer is implemented as TEST(epoll65) in
+> tools/testing/selftests/filesystems/epoll/epoll_wakeup_test.c
 >
-> Retrieving the helper device of the specific coresight device based on
-> its helper_subtype because a single coresight device may has multiple types
-> of the helper devices.
+> Fix it by skipping ep_events_available(), just call ep_try_send_events()
+> directly.
 >
-> Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
+> epoll_sendevents() (io_uring) suffers the same problem, fix that as well.
+>
+> There is still ep_busy_loop() who uses ep_events_available() without lock=
+,
+> but it is probably okay (?) for busy-polling.
+>
+> Fixes: c5a282e9635e ("fs/epoll: reduce the scope of wq lock in epoll_wait=
+()")
+> Fixes: e59d3c64cba6 ("epoll: eliminate unnecessary lock for zero timeout"=
+)
+> Fixes: ae3a4f1fdc2c ("eventpoll: add epoll_sendevents() helper")
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
+> Cc: stable@vger.kernel.org
 > ---
->  drivers/hwtracing/coresight/coresight-core.c | 30 ++++++++++++++++++++
->  drivers/hwtracing/coresight/coresight-priv.h |  2 ++
->  2 files changed, 32 insertions(+)
+>  fs/eventpoll.c | 16 ++--------------
+>  1 file changed, 2 insertions(+), 14 deletions(-)
 >
-> diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
-> index 5297a5ff7921..76e10c36a8a1 100644
-> --- a/drivers/hwtracing/coresight/coresight-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-core.c
-> @@ -580,6 +580,36 @@ struct coresight_device *coresight_get_sink(struct coresight_path *path)
+> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+> index 0fbf5dfedb24..541481eafc20 100644
+> --- a/fs/eventpoll.c
+> +++ b/fs/eventpoll.c
+> @@ -2022,7 +2022,7 @@ static int ep_schedule_timeout(ktime_t *to)
+>  static int ep_poll(struct eventpoll *ep, struct epoll_event __user *even=
+ts,
+>                    int maxevents, struct timespec64 *timeout)
+>  {
+> -       int res, eavail, timed_out =3D 0;
+> +       int res, eavail =3D 1, timed_out =3D 0;
+>         u64 slack =3D 0;
+>         wait_queue_entry_t wait;
+>         ktime_t expires, *to =3D NULL;
+> @@ -2041,16 +2041,6 @@ static int ep_poll(struct eventpoll *ep, struct ep=
+oll_event __user *events,
+>                 timed_out =3D 1;
+>         }
+>
+> -       /*
+> -        * This call is racy: We may or may not see events that are being=
+ added
+> -        * to the ready list under the lock (e.g., in IRQ callbacks). For=
+ cases
+> -        * with a non-zero timeout, this thread will check the ready list=
+ under
+> -        * lock and will add to the wait queue.  For cases with a zero
+> -        * timeout, the user by definition should not care and will have =
+to
+> -        * recheck again.
+> -        */
+> -       eavail =3D ep_events_available(ep);
+> -
+>         while (1) {
+>                 if (eavail) {
+>                         res =3D ep_try_send_events(ep, events, maxevents)=
+;
+> @@ -2496,9 +2486,7 @@ int epoll_sendevents(struct file *file, struct epol=
+l_event __user *events,
+>          * Racy call, but that's ok - it should get retried based on
+>          * poll readiness anyway.
+>          */
+> -       if (ep_events_available(ep))
+> -               return ep_try_send_events(ep, events, maxevents);
+> -       return 0;
+> +       return ep_try_send_events(ep, events, maxevents);
 >  }
->  EXPORT_SYMBOL_GPL(coresight_get_sink);
 >
-> +/**
-> + * coresight_get_helper: find the helper device of the assigned csdev.
-> + *
-> + * @csdev: The csdev the helper device is conntected to.
-> + * @type:  helper_subtype of the expected helper device.
-> + *
-> + * Retrieve the helper device for the specific csdev based on its
-> + * helper_subtype.
-> + *
-> + * Return: the helper's csdev upon success or NULL for fail.
-> + */
-> +struct coresight_device *coresight_get_helper(struct coresight_device *csdev,
-> +                                             int type)
-> +{
-> +       int i;
-> +       struct coresight_device *helper;
-> +
-> +       for (i = 0; i < csdev->pdata->nr_outconns; ++i) {
-> +               helper = csdev->pdata->out_conns[i]->dest_dev;
-> +               if (!helper || !coresight_is_helper(helper))
-> +                       continue;
-> +
-
-Manipulating the connections list almost certainly requires some
-locking. See other functions in this file
-
-Mike
-
-
-> +               if (helper->subtype.helper_subtype == type)
-> +                       return helper;
-> +       }
-> +
-> +       return NULL;
-> +}
-> +EXPORT_SYMBOL_GPL(coresight_get_helper);
-> +
->  /**
->   * coresight_get_port_helper: get the in-port number of the helper device
->   * that is connected to the csdev.
-> diff --git a/drivers/hwtracing/coresight/coresight-priv.h b/drivers/hwtracing/coresight/coresight-priv.h
-> index 07a5f03de81d..5b912eb60401 100644
-> --- a/drivers/hwtracing/coresight/coresight-priv.h
-> +++ b/drivers/hwtracing/coresight/coresight-priv.h
-> @@ -158,6 +158,8 @@ void coresight_path_assign_trace_id(struct coresight_path *path,
->                                    enum cs_mode mode);
->  int coresight_get_port_helper(struct coresight_device *csdev,
->                               struct coresight_device *helper);
-> +struct coresight_device *coresight_get_helper(struct coresight_device *csdev,
-> +                                             int type);
->
->  #if IS_ENABLED(CONFIG_CORESIGHT_SOURCE_ETM3X)
->  int etm_readl_cp14(u32 off, unsigned int *val);
+>  /*
 > --
-> 2.34.1
+> 2.39.5
 >
-
-
--- 
-Mike Leach
-Principal Engineer, ARM Ltd.
-Manchester Design Centre. UK
 
