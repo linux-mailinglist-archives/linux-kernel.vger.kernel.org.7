@@ -1,335 +1,233 @@
-Return-Path: <linux-kernel+bounces-736834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A220B0A3B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:58:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5034EB0A3BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:00:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30DFFA8509B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:57:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E57743A54D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:00:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073D62DBF49;
-	Fri, 18 Jul 2025 11:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D47BB2BD00C;
+	Fri, 18 Jul 2025 12:00:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="T9yjM41d";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3HR6F910"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="AW4t1ESf";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="JoWzKV9X";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="AW4t1ESf";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="JoWzKV9X"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89B692DA75A;
-	Fri, 18 Jul 2025 11:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8DC52571B8
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 12:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752839792; cv=none; b=I3D087aLFF56XxZKrIGeFhg3POZWiv8TV6WxkSkOcX1X/F+ECjMFqj7KV+bmObZEvUk5UcmtU188CzmsdahbZwYCi8idLD1Eza552Pj3EP6uto4ewoVXenD2CU2Sgw3VUzacoK4ao8GAGYe78Jg7eRYU6zaFaf3xZB3SBP2wQr4=
+	t=1752840026; cv=none; b=W/DyFQNJJDNkmxqbyiMOzHQVVslo8Iao20+qXoA4IBkHRB3G0yrxev/GhxEjvznTY+3iYCzZij/1RH9jkkCGWM/XhnDpZLHuPi7Rz60ywY1avjTLlp9Lz8+Wvrr5d4QXeM6jT9SLfXB4YPsjUK6TdNQAaE4vBXXMi62PKehSfMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752839792; c=relaxed/simple;
-	bh=It1Ki4FObESZFpw9TEgujvAV+nC2iTRe/sFyznnm1IE=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=n32AOpU/cGkfPN1fZGKXxbPdpNNVoSV/GLwDQjU2icm3Qc8erBI2xL8Kcm+Z+D9D2BKp+xtxZaGzFJI8kM6s+Ii0zamll357Sbx8tyYtv/0CnDhbGhSvykjcYhFj+Jx5orBdBR+dmvn3l+v5p62AS2QN8+zUS77aVJ7RGTYYv6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=T9yjM41d; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3HR6F910; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 18 Jul 2025 11:56:28 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752839789;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
+	s=arc-20240116; t=1752840026; c=relaxed/simple;
+	bh=fcbSAGJNj3PFIaaHCuUH76YEPhoKCKl3LQhsJdnp6iA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bA+d3PhQw1EZ1+c+0SeoMtMx7xAaSjGiPgRRBLVa3QvtNquosmh3Z4l4tfpT7eMGzVPQP7zTk808Vw1WgTjS8V03pCuqjpgqK17oSnWGIpEcgRnLdZd6T0gfZGgXm15sSl6yXar7iDvWZGaMJLGiKXYEHcfA+RVihefBoz4G5XA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=AW4t1ESf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=JoWzKV9X; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=AW4t1ESf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=JoWzKV9X; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 24AC8211BA;
+	Fri, 18 Jul 2025 12:00:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1752840016; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iVUBJkaNUcgifuFyqFH+pro3OeNd3uzWntX2NfcvZmQ=;
-	b=T9yjM41dqOKQdVNuxbXIOeHg2Pr87HH95aEx/2fViOo2mylz2oA1qdXvot32ZOKKJg1z8Q
-	LRUXoKNzjcC5zUababsnYcprhupaMrtDLW90DWsjSYih/SU4GxNcXUBPRNpHOiDZKoRqR8
-	NesewvwZhE83yocpr2mbil3Z0pG7q4fQhut3wXP7GIQrkoXWhHXZHVVkKK988pRqEZTe+Q
-	p9yrQZCkYeo0eD/m+C2qUyBOv0I9+Zw4EZbDaygiFlRz2fh69rrlaSNNZFWnjfaIQn5BNN
-	ws5Zg/Acg8fgctRvzXUepdCUhTaQmowCiJrEPqFEgVpCvZ2TaenmolXVPhCZwg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752839789;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/oJfLE2RimQsDx7Kxa2gwaUv8iRBLCnqa5J0JlzZEpw=;
+	b=AW4t1ESfHA7AKc2lbTC+3fgONl+JK3a3YqejRR8LAzfSn2/usiLzOMbdWfJEObJHE0vcBh
+	+bFsjOD1tk+Q7fp1/dYN/mm5JEsEdip/uUwZj4baAHqHswnRpk8aOiDZcU32e3d3RPvcOX
+	vejzuFhQkOkZ4OAlUMOzKTMKTF7hjTE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1752840016;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iVUBJkaNUcgifuFyqFH+pro3OeNd3uzWntX2NfcvZmQ=;
-	b=3HR6F910MBGBN6QlFY/qdV/M+8noeWt+ohi4a9wlfJQeU1d/jNjm6iImYXKB28h5+AuNqZ
-	Ygr34K5UEE9PuNAQ==
-From:
- tip-bot2 for Thomas =?utf-8?q?Wei=C3=9Fschuh?= <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: timers/ptp] vdso/gettimeofday: Return bool from clock_gettime() helpers
-Cc: thomas.weissschuh@linutronix.de, Thomas Gleixner <tglx@linutronix.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250701-vdso-auxclock-v1-6-df7d9f87b9b8@linutronix.de>
-References: <20250701-vdso-auxclock-v1-6-df7d9f87b9b8@linutronix.de>
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/oJfLE2RimQsDx7Kxa2gwaUv8iRBLCnqa5J0JlzZEpw=;
+	b=JoWzKV9XahOb3PtuJkt+NcqpySz0mBXvlR1Sp9EMHrqQRpxI2HXb23pfyvhTzzS0Ye8vex
+	i2qG3J7wZ54dezCQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=AW4t1ESf;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=JoWzKV9X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1752840016; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/oJfLE2RimQsDx7Kxa2gwaUv8iRBLCnqa5J0JlzZEpw=;
+	b=AW4t1ESfHA7AKc2lbTC+3fgONl+JK3a3YqejRR8LAzfSn2/usiLzOMbdWfJEObJHE0vcBh
+	+bFsjOD1tk+Q7fp1/dYN/mm5JEsEdip/uUwZj4baAHqHswnRpk8aOiDZcU32e3d3RPvcOX
+	vejzuFhQkOkZ4OAlUMOzKTMKTF7hjTE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1752840016;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/oJfLE2RimQsDx7Kxa2gwaUv8iRBLCnqa5J0JlzZEpw=;
+	b=JoWzKV9XahOb3PtuJkt+NcqpySz0mBXvlR1Sp9EMHrqQRpxI2HXb23pfyvhTzzS0Ye8vex
+	i2qG3J7wZ54dezCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D7B7F13A52;
+	Fri, 18 Jul 2025 12:00:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id jcozM083emj7CQAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Fri, 18 Jul 2025 12:00:15 +0000
+Message-ID: <fbb77c0f-2bc1-45b4-9475-d2b17c9bcf8b@suse.de>
+Date: Fri, 18 Jul 2025 14:00:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175283978816.406.14623316563816036229.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/sitronix/st7571-i2c: Make st7571_panel_data to be
+ static variables
+To: Javier Martinez Canillas <javierm@redhat.com>,
+ linux-kernel@vger.kernel.org
+Cc: kernel test robot <lkp@intel.com>, David Airlie <airlied@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Marcus Folkesson <marcus.folkesson@gmail.com>,
+ Maxime Ripard <mripard@kernel.org>, Simona Vetter <simona@ffwll.ch>,
+ dri-devel@lists.freedesktop.org
+References: <20250718072541.686759-1-javierm@redhat.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20250718072541.686759-1-javierm@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 24AC8211BA
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[intel.com,gmail.com,linux.intel.com,kernel.org,ffwll.ch,lists.freedesktop.org];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid]
+X-Spam-Score: -3.01
 
-The following commit has been merged into the timers/ptp branch of tip:
+Hi Javier
 
-Commit-ID:     fb61bdb27fd730c393a8bddbda2401c37a919667
-Gitweb:        https://git.kernel.org/tip/fb61bdb27fd730c393a8bddbda2401c37a9=
-19667
-Author:        Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-AuthorDate:    Tue, 01 Jul 2025 10:58:00 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Fri, 18 Jul 2025 13:45:32 +02:00
+Am 18.07.25 um 09:25 schrieb Javier Martinez Canillas:
+> The kernel test robot reported that sparse gives the following warnings:
+>
+> make C=2 M=drivers/gpu/drm/sitronix/
+>    CC [M]  st7571-i2c.o
+>    CHECK   st7571-i2c.c
+> st7571-i2c.c:1027:26: warning: symbol 'st7567_config' was not declared. Should it be static?
+> st7571-i2c.c:1039:26: warning: symbol 'st7571_config' was not declared. Should it be static?
+>    MODPOST Module.symvers
+>    LD [M]  st7571-i2c.ko
+>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202507180503.nfyD9uRv-lkp@intel.com
+> Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+> ---
+>
+>   drivers/gpu/drm/sitronix/st7571-i2c.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/sitronix/st7571-i2c.c b/drivers/gpu/drm/sitronix/st7571-i2c.c
+> index 453eb7e045e5..7fe5b69e6f2f 100644
+> --- a/drivers/gpu/drm/sitronix/st7571-i2c.c
+> +++ b/drivers/gpu/drm/sitronix/st7571-i2c.c
+> @@ -1024,7 +1024,7 @@ static void st7571_remove(struct i2c_client *client)
+>   	drm_dev_unplug(&st7571->dev);
+>   }
+>   
+> -struct st7571_panel_data st7567_config = {
+> +static struct st7571_panel_data st7567_config = {
 
-vdso/gettimeofday: Return bool from clock_gettime() helpers
+Make it 'static const' please. Here and below.
 
-The internal helpers are effectively using boolean results,
-while pretending to use error numbers.
+Best regards
+Thomas
 
-Switch the return type to bool for more clarity.
+>   	.init = st7567_lcd_init,
+>   	.parse_dt = st7567_parse_dt,
+>   	.constraints = {
+> @@ -1036,7 +1036,7 @@ struct st7571_panel_data st7567_config = {
+>   	},
+>   };
+>   
+> -struct st7571_panel_data st7571_config = {
+> +static struct st7571_panel_data st7571_config = {
+>   	.init = st7571_lcd_init,
+>   	.parse_dt = st7571_parse_dt,
+>   	.constraints = {
 
-Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250701-vdso-auxclock-v1-6-df7d9f87b9b8@li=
-nutronix.de
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
----
- lib/vdso/gettimeofday.c | 70 ++++++++++++++++++++--------------------
- 1 file changed, 36 insertions(+), 34 deletions(-)
-
-diff --git a/lib/vdso/gettimeofday.c b/lib/vdso/gettimeofday.c
-index 9b77f23..32e568d 100644
---- a/lib/vdso/gettimeofday.c
-+++ b/lib/vdso/gettimeofday.c
-@@ -82,8 +82,8 @@ const struct vdso_time_data *__arch_get_vdso_u_timens_data(=
-const struct vdso_tim
- #endif /* CONFIG_GENERIC_VDSO_DATA_STORE */
-=20
- static __always_inline
--int do_hres_timens(const struct vdso_time_data *vdns, const struct vdso_cloc=
-k *vcns,
--		   clockid_t clk, struct __kernel_timespec *ts)
-+bool do_hres_timens(const struct vdso_time_data *vdns, const struct vdso_clo=
-ck *vcns,
-+		    clockid_t clk, struct __kernel_timespec *ts)
- {
- 	const struct vdso_time_data *vd =3D __arch_get_vdso_u_timens_data(vdns);
- 	const struct timens_offset *offs =3D &vcns->offset[clk];
-@@ -103,11 +103,11 @@ int do_hres_timens(const struct vdso_time_data *vdns, c=
-onst struct vdso_clock *v
- 		seq =3D vdso_read_begin(vc);
-=20
- 		if (unlikely(!vdso_clocksource_ok(vc)))
--			return -1;
-+			return false;
-=20
- 		cycles =3D __arch_get_hw_counter(vc->clock_mode, vd);
- 		if (unlikely(!vdso_cycles_ok(cycles)))
--			return -1;
-+			return false;
- 		ns =3D vdso_calc_ns(vc, cycles, vdso_ts->nsec);
- 		sec =3D vdso_ts->sec;
- 	} while (unlikely(vdso_read_retry(vc, seq)));
-@@ -123,7 +123,7 @@ int do_hres_timens(const struct vdso_time_data *vdns, con=
-st struct vdso_clock *v
- 	ts->tv_sec =3D sec + __iter_div_u64_rem(ns, NSEC_PER_SEC, &ns);
- 	ts->tv_nsec =3D ns;
-=20
--	return 0;
-+	return true;
- }
- #else
- static __always_inline
-@@ -133,16 +133,16 @@ const struct vdso_time_data *__arch_get_vdso_u_timens_d=
-ata(const struct vdso_tim
- }
-=20
- static __always_inline
--int do_hres_timens(const struct vdso_time_data *vdns, const struct vdso_cloc=
-k *vcns,
--		   clockid_t clk, struct __kernel_timespec *ts)
-+bool do_hres_timens(const struct vdso_time_data *vdns, const struct vdso_clo=
-ck *vcns,
-+		    clockid_t clk, struct __kernel_timespec *ts)
- {
--	return -EINVAL;
-+	return false;
- }
- #endif
-=20
- static __always_inline
--int do_hres(const struct vdso_time_data *vd, const struct vdso_clock *vc,
--	    clockid_t clk, struct __kernel_timespec *ts)
-+bool do_hres(const struct vdso_time_data *vd, const struct vdso_clock *vc,
-+	     clockid_t clk, struct __kernel_timespec *ts)
- {
- 	const struct vdso_timestamp *vdso_ts =3D &vc->basetime[clk];
- 	u64 cycles, sec, ns;
-@@ -150,7 +150,7 @@ int do_hres(const struct vdso_time_data *vd, const struct=
- vdso_clock *vc,
-=20
- 	/* Allows to compile the high resolution parts out */
- 	if (!__arch_vdso_hres_capable())
--		return -1;
-+		return false;
-=20
- 	do {
- 		/*
-@@ -173,11 +173,11 @@ int do_hres(const struct vdso_time_data *vd, const stru=
-ct vdso_clock *vc,
- 		smp_rmb();
-=20
- 		if (unlikely(!vdso_clocksource_ok(vc)))
--			return -1;
-+			return false;
-=20
- 		cycles =3D __arch_get_hw_counter(vc->clock_mode, vd);
- 		if (unlikely(!vdso_cycles_ok(cycles)))
--			return -1;
-+			return false;
- 		ns =3D vdso_calc_ns(vc, cycles, vdso_ts->nsec);
- 		sec =3D vdso_ts->sec;
- 	} while (unlikely(vdso_read_retry(vc, seq)));
-@@ -189,13 +189,13 @@ int do_hres(const struct vdso_time_data *vd, const stru=
-ct vdso_clock *vc,
- 	ts->tv_sec =3D sec + __iter_div_u64_rem(ns, NSEC_PER_SEC, &ns);
- 	ts->tv_nsec =3D ns;
-=20
--	return 0;
-+	return true;
- }
-=20
- #ifdef CONFIG_TIME_NS
- static __always_inline
--int do_coarse_timens(const struct vdso_time_data *vdns, const struct vdso_cl=
-ock *vcns,
--		     clockid_t clk, struct __kernel_timespec *ts)
-+bool do_coarse_timens(const struct vdso_time_data *vdns, const struct vdso_c=
-lock *vcns,
-+		      clockid_t clk, struct __kernel_timespec *ts)
- {
- 	const struct vdso_time_data *vd =3D __arch_get_vdso_u_timens_data(vdns);
- 	const struct timens_offset *offs =3D &vcns->offset[clk];
-@@ -223,20 +223,20 @@ int do_coarse_timens(const struct vdso_time_data *vdns,=
- const struct vdso_clock=20
- 	 */
- 	ts->tv_sec =3D sec + __iter_div_u64_rem(nsec, NSEC_PER_SEC, &nsec);
- 	ts->tv_nsec =3D nsec;
--	return 0;
-+	return true;
- }
- #else
- static __always_inline
--int do_coarse_timens(const struct vdso_time_data *vdns, const struct vdso_cl=
-ock *vcns,
--		     clockid_t clk, struct __kernel_timespec *ts)
-+bool do_coarse_timens(const struct vdso_time_data *vdns, const struct vdso_c=
-lock *vcns,
-+		      clockid_t clk, struct __kernel_timespec *ts)
- {
--	return -1;
-+	return false;
- }
- #endif
-=20
- static __always_inline
--int do_coarse(const struct vdso_time_data *vd, const struct vdso_clock *vc,
--	      clockid_t clk, struct __kernel_timespec *ts)
-+bool do_coarse(const struct vdso_time_data *vd, const struct vdso_clock *vc,
-+	       clockid_t clk, struct __kernel_timespec *ts)
- {
- 	const struct vdso_timestamp *vdso_ts =3D &vc->basetime[clk];
- 	u32 seq;
-@@ -258,10 +258,10 @@ int do_coarse(const struct vdso_time_data *vd, const st=
-ruct vdso_clock *vc,
- 		ts->tv_nsec =3D vdso_ts->nsec;
- 	} while (unlikely(vdso_read_retry(vc, seq)));
-=20
--	return 0;
-+	return true;
- }
-=20
--static __always_inline int
-+static __always_inline bool
- __cvdso_clock_gettime_common(const struct vdso_time_data *vd, clockid_t cloc=
-k,
- 			     struct __kernel_timespec *ts)
- {
-@@ -270,7 +270,7 @@ __cvdso_clock_gettime_common(const struct vdso_time_data =
-*vd, clockid_t clock,
-=20
- 	/* Check for negative values or invalid clocks */
- 	if (unlikely((u32) clock >=3D MAX_CLOCKS))
--		return -1;
-+		return false;
-=20
- 	/*
- 	 * Convert the clockid to a bitmask and use it to check which
-@@ -284,7 +284,7 @@ __cvdso_clock_gettime_common(const struct vdso_time_data =
-*vd, clockid_t clock,
- 	else if (msk & VDSO_RAW)
- 		vc =3D &vc[CS_RAW];
- 	else
--		return -1;
-+		return false;
-=20
- 	return do_hres(vd, vc, clock, ts);
- }
-@@ -293,9 +293,11 @@ static __maybe_unused int
- __cvdso_clock_gettime_data(const struct vdso_time_data *vd, clockid_t clock,
- 			   struct __kernel_timespec *ts)
- {
--	int ret =3D __cvdso_clock_gettime_common(vd, clock, ts);
-+	bool ok;
-+
-+	ok =3D __cvdso_clock_gettime_common(vd, clock, ts);
-=20
--	if (unlikely(ret))
-+	if (unlikely(!ok))
- 		return clock_gettime_fallback(clock, ts);
- 	return 0;
- }
-@@ -312,18 +314,18 @@ __cvdso_clock_gettime32_data(const struct vdso_time_dat=
-a *vd, clockid_t clock,
- 			     struct old_timespec32 *res)
- {
- 	struct __kernel_timespec ts;
--	int ret;
-+	bool ok;
-=20
--	ret =3D __cvdso_clock_gettime_common(vd, clock, &ts);
-+	ok =3D __cvdso_clock_gettime_common(vd, clock, &ts);
-=20
--	if (unlikely(ret))
-+	if (unlikely(!ok))
- 		return clock_gettime32_fallback(clock, res);
-=20
--	/* For ret =3D=3D 0 */
-+	/* For ok =3D=3D true */
- 	res->tv_sec =3D ts.tv_sec;
- 	res->tv_nsec =3D ts.tv_nsec;
-=20
--	return ret;
-+	return 0;
- }
-=20
- static __maybe_unused int
-@@ -342,7 +344,7 @@ __cvdso_gettimeofday_data(const struct vdso_time_data *vd,
- 	if (likely(tv !=3D NULL)) {
- 		struct __kernel_timespec ts;
-=20
--		if (do_hres(vd, &vc[CS_HRES_COARSE], CLOCK_REALTIME, &ts))
-+		if (!do_hres(vd, &vc[CS_HRES_COARSE], CLOCK_REALTIME, &ts))
- 			return gettimeofday_fallback(tv, tz);
-=20
- 		tv->tv_sec =3D ts.tv_sec;
 
