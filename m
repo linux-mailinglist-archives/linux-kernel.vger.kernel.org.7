@@ -1,145 +1,140 @@
-Return-Path: <linux-kernel+bounces-736162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 147B3B09992
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 04:02:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 261EEB09994
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 04:03:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A52301C46277
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 02:03:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA11E1C461B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 02:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7192435959;
-	Fri, 18 Jul 2025 02:02:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qEWkBpxi"
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479C342049;
+	Fri, 18 Jul 2025 02:03:47 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44CA6BA27
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 02:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1268DBA27;
+	Fri, 18 Jul 2025 02:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752804167; cv=none; b=laFX7feTxKemO+x+yEX3jQnU1bKz9XmogzkhoLK8WFSMjFrg6hmAmoxmxLQ1Gn/7M2rxGygR6MgiOt7gI9qzIr3p1VLFHOPZAF0Duk8q+jIJ9Y8QIoikcwtgrxvu0K/+8hCVrXe/T2k9lOLLCdeAGKpMy3//8Ox9xu//wWgUb1M=
+	t=1752804226; cv=none; b=AKuwkdHpC0jajBB/rD9I84OVx10Wk9rCToYVEGXT65N6XosbB7czFMQ6Ivu5o7YZiIJM2KJ4+p0XATMJ6JDnpnhzroekdoBRhpx9xlMS15x2UxzwKTKnt23tjXoGdU6Zy3ToyEQlOQ88sPFQGC0D1/s3oRXrR+mpfRNzIk+gRFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752804167; c=relaxed/simple;
-	bh=tItl6Xkm0myXhSrQP9N9X6CM9SpkzyyAffNHX9OFsgM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KsjwqAfm8T3qJuHHcClL/JXVt3lGosiFoYx7r+IdXQ6QTFrAfz7/6CYT40ozGFOgnPrQ/4vfQpCxzTdAaJLQxZ3e5adUWW8anPmSdYHHb0i7ezMOsFE/XWbjW7eDlAbgezxLZZ5A5Sevfxuaax40oYQcGOhyT7fcoub9/ScH3Fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qEWkBpxi; arc=none smtp.client-ip=209.85.210.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-73e810dc22dso338444a34.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 19:02:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752804165; x=1753408965; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mQIQyKdRFgYCxy5HSe3Ua2IVeutNacTw7X3cVK/drF8=;
-        b=qEWkBpximHG68cQpgnHdGbpMPHmBCTFCh8BRX6gSffbfpU55ps/tHsZ7ft0ry9o1Hl
-         IQ7Fen4ynmLzwe1ORYlUiCuup11QqSHvl4eVRP/xJNhX0RevkhsBdQltmg4oSCxgu/QY
-         ooFNF7Ysz3B3gG4PNcSiRcHA3HchH8GWVFr01TDwz2up1qUq2us3WKMXkSHOUsiiFsQn
-         yCeXjCiS6LVP+1fuoBs0gRctY/7Yv21XfO3slCIKXCjFfcF3Klt72vqfmHZiJBYkZzwG
-         4ZovJfM6yA039RZJ9BnV/OVmreN/BOGO0AHBYDjhjCX4MSOYNdSwbizuTw4D34lRRBin
-         WToQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752804165; x=1753408965;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mQIQyKdRFgYCxy5HSe3Ua2IVeutNacTw7X3cVK/drF8=;
-        b=sAa6zGmZvQEEuNqswHFJfECPUxGNbb8HCKu+kv9lgSh3m5PSA4Vq4sZN/YWrUGq85c
-         +DyvIbwcSldHaUhhbTi0D9gG8gQhbNa5IjP7k0BlPLhZjKB8Jh153LnS0Dyq1xUotdW8
-         niuk0IVl0eiYz4Mdo6B10PM2eMWa1dKEG0KUsGjiDy535NcGmCGKtHEXT36bL7L6n6PO
-         J3gFjxT3Lr5ryoCK2uZISl3u2E5lzo5DjKRB9Zt3vhrQ/kFpTsj3sPEpa3eV79hv67l5
-         LQMyXMB+hFhyRJfo34rqfG/baOFKRODPMotSl2PqdDIvm0Tr8k/Ywcy9erzFtXiXSKnV
-         wR/g==
-X-Forwarded-Encrypted: i=1; AJvYcCVITjOUOlFpfXZ+I45XHL9WsDBY+7Gh/3bLtJ7f6LzgRoqgRrdw2RPRoAtgTfeq4OCUdxAyegCvWmkGAJk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwL7qMCAlE4O+KkNcpaZAtDXKUWviM1V9bfry5ZWAT0nBqrPTRR
-	7wJ/rNUmguXaZi3mcbTIjb7cfK7Uz9Kwf1COWJebJhTP+X+lW7Yn02R/Tw6GkU8qlbY=
-X-Gm-Gg: ASbGncuuXsHLCkXCmh2FLcs4zOTUlRN7Bq0Dd7EL06RdcgEf7LmnZMGQKoiy6QWPjv6
-	905MESGzfmjWNGJiz+98cJ6iZkZCYXHHEDSKoWGCS8Q4vva0/WNKv32xHEBHkjjwROqS9WTAe3P
-	+KRQyLEUJ0LRn75RemJglPWoyqjJ5P+OiDCLLLqGSY+Kz//+Mrb954XR/f1NqgAuF5bLCmwNhNk
-	s/UMkBRZKGtRzCvOdIfVDha+6a4pyLkO8fcruuX/c7ZHz0hDrR7ZSqReXkTcehgsIaBQUm/g/qL
-	Z1jKX4WnQHGk+IDYT41CWfwsB4/eWNjQ7lguJPxa1De410+umeA8Djlm5VExlGCiUP725nnnouR
-	FyHSr+PQkeQk7xLc6NnbCI8sk57R1
-X-Google-Smtp-Source: AGHT+IEI8sBMyOgnw6y2eCUr5fjpT0b/Hn5vFbc1u562p9vD1WxLFCBfM5OhNgbekGnp7NVxtkJ2pQ==
-X-Received: by 2002:a05:6830:8104:b0:73b:1efa:5f6d with SMTP id 46e09a7af769-73e661974a1mr5923482a34.16.1752804165130;
-        Thu, 17 Jul 2025 19:02:45 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:2c38:70d4:43e:b901])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73e8367f410sm249912a34.24.2025.07.17.19.02.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 19:02:44 -0700 (PDT)
-Date: Fri, 18 Jul 2025 05:02:42 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Subject: Re: [PATCH v3] staging: rtl8192u: Rename ChannelPlan to channel_plan
- and fix index name
-Message-ID: <6c0d6a6e-4b47-48c9-acbd-b5dd33fd0001@suswa.mountain>
-References: <20250718015525.162561-1-vivek.balachandhar@gmail.com>
+	s=arc-20240116; t=1752804226; c=relaxed/simple;
+	bh=BmKnnJRbIQkqJJ5Kx45jIKsoMmB6S9pt2bchQhRVHNM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JiLdqRHA125vbG9tVKRGS2LztX5dE9jAikOPfndxxl4zRpmT+XOz2XpROWQBY+QxmMRZ4G7DPMbplKyKZ4njLsAc1/Ftkc5vJZazW2Zd6cagdqGyBpFaZYXUChcNy62brChdNW5CJFwj4Z6Z7lK5nuTpFlnJBV+iVOGjpYW+fGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 6907ed76637b11f0b29709d653e92f7d-20250718
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:e5d48ba0-025e-4c6c-8c43-47f6c8fffe1f,IP:0,U
+	RL:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:-25
+X-CID-META: VersionHash:6493067,CLOUDID:c9b547adcdada4cf4fc791b41f9c8bb1,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:nil,UR
+	L:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
+	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 6907ed76637b11f0b29709d653e92f7d-20250718
+Received: from node4.com.cn [(10.44.16.170)] by mailgw.kylinos.cn
+	(envelope-from <lijiayi@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 253580924; Fri, 18 Jul 2025 10:03:34 +0800
+Received: from node4.com.cn (localhost [127.0.0.1])
+	by node4.com.cn (NSMail) with SMTP id 1441816004286;
+	Fri, 18 Jul 2025 10:03:34 +0800 (CST)
+X-ns-mid: postfix-6879AB75-915581443
+Received: from kylin-pc.. (unknown [172.25.130.133])
+	by node4.com.cn (NSMail) with ESMTPA id 7858416004283;
+	Fri, 18 Jul 2025 02:03:33 +0000 (UTC)
+From: Jiayi Li <lijiayi@kylinos.cn>
+To: rafael@kernel.org,
+	lenb@kernel.org
+Cc: linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jiayi_dec@163.com,
+	Jiayi Li <lijiayi@kylinos.cn>
+Subject: [PATCH] ACPI: Fix initial QoS constraint application order in PPC initialization
+Date: Fri, 18 Jul 2025 10:03:12 +0800
+Message-ID: <20250718020312.856168-1-lijiayi@kylinos.cn>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250718015525.162561-1-vivek.balachandhar@gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-The rtl8192u driver was removed.  Work against the current code.  (Just
-use linux-next probably).
+The original initialization sequence was:
 
-On Fri, Jul 18, 2025 at 01:55:25AM +0000, Vivek BalachandharTN wrote:
-> This patch renames the global array ChannelPlan to channel_plan
-> to follow Linux kernel coding style. Also renamed the index
-> variable from channel_plan to chan_plan_idx to avoid
-> shadowing and improve readability.
-> 
-> v2:
-> - Fixed Cc list to include Greg and staging list
-> 
-> v3:
-> - Removed EXTRAVERSION = -vivek from Makefile.
+cpufreq_policy_online()
+    acpi_cpufreq_cpu_init()
+        acpi_processor_get_platform_limit()
+            freq_qos_update_request(&perflib_req)
+    blocking_notifier_call_chain(...)
+        acpi_processor_ppc_init()
+            freq_qos_add_request(&perflib_req)
 
-Heh.  No.  Still there.  Slow down, there is no rush.  Let people
-review the rest and see if there is anything else to change.
+This caused a race condition where the QoS request was added after the
+initial platform limit update. The new sequence explicitly ensures:
 
-> @@ -145,12 +145,12 @@ static struct CHANNEL_LIST ChannelPlan[] = {
->  	{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}, 14}
->  };
->  
-> -static void rtl819x_set_channel_map(u8 channel_plan, struct r8192_priv *priv)
-> +static void rtl819x_set_channel_map(u8 chan_plan_idx, struct r8192_priv *priv)
+cpufreq_policy_online()
+    acpi_cpufreq_cpu_init()
+        acpi_processor_get_platform_limit()
+            freq_qos_update_request(&perflib_req)
+    blocking_notifier_call_chain(...)
+        acpi_processor_ppc_init()
+            freq_qos_add_request(&perflib_req)
++           acpi_processor_get_platform_limit()
++               freq_qos_update_request(&perflib_req)
 
-I hate the name chan_plan_idx.  Probably "chan" would have been a better
-name.
+The critical change adds an immediate platform limit update after the
+QoS request is registered. This guarantees that the initial P-state
+constraint is applied before any subsequent updates, resolving the window
+where constraints could be applied out-of-order.
 
->  {
->  	int i, max_chan = -1, min_chan = -1;
->  	struct ieee80211_device *ieee = priv->ieee80211;
->  
-> -	switch (channel_plan) {
-> +	switch (chan_plan_idx) {
-> diff --git a/init/main.c b/init/main.c
-> index aa21add5f..648589720 100644
-> --- a/init/main.c
-> +++ b/init/main.c
-> @@ -680,6 +680,7 @@ static void __init setup_command_line(char *command_line)
->  
->  static __initdata DECLARE_COMPLETION(kthreadd_done);
->  
-> +
+Fixes: d15ce412737a ("ACPI: cpufreq: Switch to QoS requests instead of cp=
+ufreq notifier")
+Signed-off-by: Jiayi Li <lijiayi@kylinos.cn>
+---
+ drivers/acpi/processor_perflib.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-This change is a mistake as well.
+diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor_pe=
+rflib.c
+index 64b8d1e19594..3e7fe95c21d1 100644
+--- a/drivers/acpi/processor_perflib.c
++++ b/drivers/acpi/processor_perflib.c
+@@ -173,6 +173,9 @@ void acpi_processor_ppc_init(struct cpufreq_policy *p=
+olicy)
+ {
+ 	unsigned int cpu;
+=20
++	if (ignore_ppc =3D=3D 1)
++		return;
++
+ 	for_each_cpu(cpu, policy->related_cpus) {
+ 		struct acpi_processor *pr =3D per_cpu(processors, cpu);
+ 		int ret;
+@@ -193,6 +196,11 @@ void acpi_processor_ppc_init(struct cpufreq_policy *=
+policy)
+ 		if (ret < 0)
+ 			pr_err("Failed to add freq constraint for CPU%d (%d)\n",
+ 			       cpu, ret);
++
++		ret =3D acpi_processor_get_platform_limit(pr);
++		if (ret)
++			pr_err("Failed to update freq constraint for CPU%d (%d)\n",
++			       cpu, ret);
+ 	}
+ }
+=20
+--=20
+2.47.1
 
->  noinline void __ref rest_init(void)
->  {
->  	struct task_struct *tsk;
-
-regards,
-dan carpenter
 
