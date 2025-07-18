@@ -1,213 +1,223 @@
-Return-Path: <linux-kernel+bounces-736846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AC73B0A3EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:14:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36FAEB0A3F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:15:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E96F1188BCF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:15:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A694171072
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:15:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2D42D9EC6;
-	Fri, 18 Jul 2025 12:14:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0788B2D97A1;
+	Fri, 18 Jul 2025 12:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="yymPqLNw"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2083.outbound.protection.outlook.com [40.107.243.83])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3H6TUOjc";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2opALZXn"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B862D948C;
-	Fri, 18 Jul 2025 12:14:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.83
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752840884; cv=fail; b=ExN5Jcf3VDSzsAs1lreuN74D7waX17nL8sa/n7NWCRfuwECZtExSgRHioWLjedctjhTxWpGQCiCS3gXz8z6pgryivdqddQ3OHmqNMDkU8Gc+wIgpTk6evndLFXY8je/oCmjpWc5d8I+qBPj+ECwBcLPvMEOI0Gdv5L18JODrlbU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752840884; c=relaxed/simple;
-	bh=RSLe4B1k96W8iHJEtHUlUJZv5Fp12xv3rZ59FwESoNE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=UEDje0N40rnPR9Od2mfSwvsXE0SBMDH3f10Feisph1LSb4vQm3leCB/RzHTRJcl4TAWg7UPjG1xXPAKkRHV0VUq4+iYjcxPNpuDqdWD2EN8hs78WOaRrZLOrBg3QIyD53O7WrSzxgWxwuHlczmR0F3Iy6d61k87/lFfJsv/n4Y0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=yymPqLNw; arc=fail smtp.client-ip=40.107.243.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=X0Ao2euqWFSFtXJ9l0P+BVmaV3pfhAUcaB+ZCGFxf/sbZ0+rL8SsJeOQ9BrJGbazQMFHkbyVXACcXy8DtlxPE52jPo8IcaiHl1xIFKq6OyUUvPaZOPD/LQVwJHHGPuyO0IMdohk98vqY+dTGrnV7XUk80Aj9hz7+8QqKGfskK+5ctiisqBRKi4RC9BUZApbFYv0EyhDg58QCdInMpnkdZoIHGAJGZ2wCHH4HN0/Dw2TY3E67Rc7fj9Ae7rE/JHkesqsIehuI9lhlfzx8f0doL7SiyauK8m4+PWpgSXhYTAGEj3nCi/e4zE8ljjMbwknKMN1Nu1OUozladosBrFl8Ww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=70bMX9fbXRvKBkCldTfz+bwsCAAtxPyXLBbQuDR4F7U=;
- b=PE17/Lk9Bv7MwcET/1kTII4cjubzBmsa2rftnxV/C5eBCZKmPphrQsL9H7xpIBYxx0HdsGyyu1k7juKc7zGx5qrB8+PfZT60VuWtHOFWSPCrWxlyMPfoYNNbu0jwFLHZmhDzYw4Z06EirwTux/VzFdUFBUoFDg5R0UFflocWk3ladxmByhRCr6aMb5wWXWGmVeeloCnlUp/9pY9cyDMJC+WS6w65+CABNqo4edKImafBhKrnsDpgPYSFvf//E9HtVMpdMXQIvxepmFQXK6qzCEkdxjm7HbRjjADH5QTuR2ZCmYX2Ux/RtwT/NYXgYfW/R4FT6eTiG4YgRx5oWmtFuA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=70bMX9fbXRvKBkCldTfz+bwsCAAtxPyXLBbQuDR4F7U=;
- b=yymPqLNwVgxJlrFQkUEtujjx03slGg0QFAiaPhGGYIhvYi0RrC7h3dppAtMJanzydW0kAvg4GdB8KcrXpYd8y4l+KITfuv78zo+qCsvCeLNxDrbFIwojQzrVdiClWVR5Sn8NH3BvARVvzH5vrzB7hEcAEIJdzKW2M2Dk2VveQTQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CYYPR12MB8750.namprd12.prod.outlook.com (2603:10b6:930:be::18)
- by DS5PPFFF21E27DC.namprd12.prod.outlook.com (2603:10b6:f:fc00::66b) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.29; Fri, 18 Jul
- 2025 12:14:39 +0000
-Received: from CYYPR12MB8750.namprd12.prod.outlook.com
- ([fe80::b965:1501:b970:e60a]) by CYYPR12MB8750.namprd12.prod.outlook.com
- ([fe80::b965:1501:b970:e60a%5]) with mapi id 15.20.8922.037; Fri, 18 Jul 2025
- 12:14:39 +0000
-Date: Fri, 18 Jul 2025 14:14:33 +0200
-From: Robert Richter <rrichter@amd.com>
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	alison.schofield@intel.com, vishal.l.verma@intel.com,
-	ira.weiny@intel.com, dan.j.williams@intel.com, ming.li@zohomail.com,
-	bwidawsk@kernel.org, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] cxl/region: Fix potential double free of region device
- in delete_region_store
-Message-ID: <aHo6qXHUubfq9vKL@rric.localdomain>
-References: <20250718022940.3387882-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250718022940.3387882-1-make24@iscas.ac.cn>
-X-ClientProxiedBy: FR4P281CA0442.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:c6::14) To CYYPR12MB8750.namprd12.prod.outlook.com
- (2603:10b6:930:be::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEAAD2DAFA2;
+	Fri, 18 Jul 2025 12:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752840901; cv=none; b=YmE5U6H0WCyz0cFSIesdBm1o0fqGOcdqZYaXuTgfiEwcC3CZ9B0eAbiVr2JPOSoCTtV7dkOPP1R9Rr6zM0XHjcnt9HWrKG5qfPeYOeLRpQvGYJAvU8yWjmu/D6hBx1MZVxEl1QVxWrUt8Ulk2FCtMw+nHy/gpPabMToHhHGEDJA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752840901; c=relaxed/simple;
+	bh=TSYiSO8r4c5WmUfByCEQhsPiKEIL0TxRhKdgbNCvcRo=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=hBUk9AisVyntrdCYrPk9du6/Y7SFVT/xrDzRuDx5FxovXIXW5ovTkYZbvr8VS5725hnUEWGmDtheEoa5VF+cMl9ABITuIMYKTM+s6UPHkFUCReTnrb6TdJPlXJyniVbSFsBRUrnkH2y4isZu25Ao2LwiJZvJn07O8JD3yBctSgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3H6TUOjc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2opALZXn; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 18 Jul 2025 12:14:56 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752840898;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=b7OopTW2FBKXZXWmLcMTRfHnljcUIE99sGe3shDneI4=;
+	b=3H6TUOjceaq9w3OdEuz7a8uUj7tl1Q6F0tT5L6ug0pV6dOxY2bHYvtuqYw0I8P3kkYerj9
+	S5qjVOvm6DH5TbQ1pvG5Ml/IoJKKqUdqgUahzB6ZYlRKnNf6QCqjjtlUzy5cGEhh1SvDyu
+	OSOIaCTAZ0krbmBgZBCJyEXq2lGs+N7BmsCE1BEhOMgr/nJTEVgS9tWxUaISXLijI/xrEo
+	kwNoU/q/LAnO6iQ3TfBQArZoLT44IAQZ4XqnX0SgjkoJCrsxj6Y/+YRkkWM8TabK5+aQ8l
+	1xoSvFcaqW43VfQmjCd9+AYkdjPDHi32Gk9gXwPy7ic8czqO9b5/ln0H1moI4w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752840898;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=b7OopTW2FBKXZXWmLcMTRfHnljcUIE99sGe3shDneI4=;
+	b=2opALZXnrE2L9qZCJu1tlPxorhvuORzzDDTF8vxIwgwV2ID3MnIBzsSbFBEpNGiTZ3zbYk
+	8/PO0KyY6DYXapAw==
+From:
+ tip-bot2 for Thomas =?utf-8?q?Wei=C3=9Fschuh?= <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/ptp] vdso/gettimeofday: Add support for auxiliary clocks
+Cc: thomas.weissschuh@linutronix.de, Thomas Gleixner <tglx@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250701-vdso-auxclock-v1-12-df7d9f87b9b8@linutronix.de>
+References: <20250701-vdso-auxclock-v1-12-df7d9f87b9b8@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CYYPR12MB8750:EE_|DS5PPFFF21E27DC:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8dff22bb-3d19-499f-389a-08ddc5f4ab1a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?510CmSkJu6SldPH+VzVr5UkJYPIEpqRjn/3Ie7vBOPhEPXtlRjwkppVQsaVB?=
- =?us-ascii?Q?B4scdOBDaDDbo143heeWV1NIPZFOonF0OiObOEPjAyOwNtv8h2gVZ2+PEQHj?=
- =?us-ascii?Q?ozXCcWV9hp10MALeOsFwXHp/q4X/uVIq0jGu5MjPQHZF9SxHZtqamb3dSiSJ?=
- =?us-ascii?Q?i5Ei3gtjsoEZ30vWFIDIXFRNsLTaHN/HKEsoB1t4XjN/mkyl+feJr45x37Za?=
- =?us-ascii?Q?2cCnIiuhfwJ56hc+5c9jxY1OjTB7sq63bKx/g4Ufo1AfXYor323mP2mOkgEe?=
- =?us-ascii?Q?q+btzI0Q03h/yCBWhETznXK70AbMOYQjfGb8Cxfmw+uByQfF9uZQ94o91pXh?=
- =?us-ascii?Q?BARjZ3rFHxViKIXjt8vnBvWHyYxXcQELFF0HnSA0qD2mi7aSQIOtFM4C0+7h?=
- =?us-ascii?Q?NHZgn3yRSltI0x6PgJC9SODVjD6gwrZnyn2HRDwL0EKF0VfSLN5VtlqnQdwz?=
- =?us-ascii?Q?zSwNj5IGgI1aULfItQWJnGwzIbMqRX/qh4tk9NihvTujgIlURSoT0Taip3bH?=
- =?us-ascii?Q?xr0ADyx7n+BXoskMoWl0xVeRurSxS5wDfNuQ514MxSxuNqzNUYwzEOy6XLcH?=
- =?us-ascii?Q?YQ7/0XzYHLfwO6hnacl5F+Xir8epal6lvtGQyCnr/CC+MiiClWt61TmvK64A?=
- =?us-ascii?Q?TtXsl7I1rg88n2LfPYKGq9KuUSH5CPQZgD9ZV5ddt0ksxs4XXLZHanAlLzYK?=
- =?us-ascii?Q?BVvLH4N+bbNvB1QrJRASpH66Jy+Pqs6D3BuCNMdttaGE80uwSGKL/tjuFosD?=
- =?us-ascii?Q?Q/g9tFgkoDSD2qEpVsYng40DADlhdqEYI4FZhsGRuyJJYvMsCBJEk7b3s3Fh?=
- =?us-ascii?Q?W29yUcOnxtUCeeqeJt1woXuCRfT65gO/Yf/13UFbnp5myRGyLdEdyKl0JgUJ?=
- =?us-ascii?Q?+h87Eo8/QYL3j0P5I2AZE4SeyX7ReZd3/j31P49Tugf4wy1tqPJQlJ+vYV1D?=
- =?us-ascii?Q?/xDJRCCoS9iMB+o3HObNLV/hajxKrUfz2hNUPXMFkBhJI3URdUKiNTlUWD0Z?=
- =?us-ascii?Q?+qUjvGbVCj5E2Uvs+voOVFN7FxWdNX6Vcq4BeOiR6JccpI3TCT9ceRq/XUuC?=
- =?us-ascii?Q?Ez1YuoqhtESLRctPNg0bPt0VYxDPzG85eoLxGUl6YWEZp0lwAInoLHWQDLtN?=
- =?us-ascii?Q?SVTXgqs0Xd0noBLCpD+1tv+2yWT8ZYmzilbYfyNdQiZ4s6yr+ZcYZp4IDhqw?=
- =?us-ascii?Q?ZPeNL3Isa0GYb65Y7tbbfUmMP1diBEV+KA7zinpgPKXT7vz4vrIXcZz72m95?=
- =?us-ascii?Q?qVrn2W/M4DJXX/5bx1NGmCTiX8Im1rVGx9Xh/GeX+b2x7o4n2VUfookNlveD?=
- =?us-ascii?Q?EdSyEyOpXEExTxO4tab4PrpqtMyrn9H7Llm9uMtnZ+qJKvmUa+ye/tCbb5f5?=
- =?us-ascii?Q?Vr+fZ5jFvUUXG1ngOPWJHn9fHbtxtvelATOhLOMntOyrrdWt/2hMskdy4b79?=
- =?us-ascii?Q?LS/aMasnZq0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR12MB8750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?kshuPw3tS0cqKB140ztmSCs5RxO21Ei92X7VolBtVybVaGAYv+akn1ADoB8m?=
- =?us-ascii?Q?cDTWJK62x1BofUUKzbxr4mXtWHRzampdFKaJXEVXugn7odWwaBHLH9jya21m?=
- =?us-ascii?Q?Hv2/1WIjHqJtqJ9SGMXsZ/YItf23wvD3nGJV3aBhp2pEr8n3qWcUks83IDfP?=
- =?us-ascii?Q?vS92Ho+mQWZTi4m0PM15PUnuTS2GBLfZ5EDkvyl7INKUu7EmGK588r41aKzk?=
- =?us-ascii?Q?QwownWqmNgcx9oUX++X73qpKxmSAC4/B7RFOxOkYeU5l5Kn4XdQE11TAbrla?=
- =?us-ascii?Q?6TA4jIPYI+PhzNbCaeJQm/7s82iLzFlPaNQqEvoqKx+GX0e+cWX8MT6Rh+nF?=
- =?us-ascii?Q?L1xzvu+adodLKmMZDq2J97USxNE1tmP3Dc2idBYtu+lFxGLJQo2u9mpcmE7x?=
- =?us-ascii?Q?7yCFntbOOAnl8D1N4U+DbJ+jKptit5HZdtnVVChwUCYtPem9xpef3wvWQXXD?=
- =?us-ascii?Q?p4CD88sHcj5tlaw4SiXEQ8UH51F2VzzgSr2Lmu7NIJ+2KbobNUmQC74iC91I?=
- =?us-ascii?Q?wEHVT4q+1kCIdVGNQFIPpaOosCtTvOVjZZne6uEEGJDvENasIBB1QeX1jVe6?=
- =?us-ascii?Q?C7a5NItS5srmC5Dm5rsFTxOfppif69U7SIAb0GTajGWOdKPLFSe1SzrJUKWL?=
- =?us-ascii?Q?kSf3OQJITi9TcdVS1KhMZdTwzGSGrHkaEsb3Ko38FzF8FQSd4zzF5fNt6Xqw?=
- =?us-ascii?Q?uLZYHXV7DNrGCr9et72H9kxY3J2e3f2taDdWNf2Pe59HdRthpjltxFx+zID5?=
- =?us-ascii?Q?V3dwsJfJVQBytqrxZFTPSB94nDAGYXADzC7/BkSb7jTJsluiK17scRVwl1TP?=
- =?us-ascii?Q?3SJqlv39ZJGrDTB45JBBcqC++qt/pTVkrab8fX4vKCSZge2FFNA/Md0R0r+j?=
- =?us-ascii?Q?Z1CRGRGM+zl3w6KKuT0cDnYaoV/UUanPj9nAEP283GtEvObBbpm4RHIKvz3I?=
- =?us-ascii?Q?/o0JbraorV9fc8SeQS0u1xgy3BS9qQ/J4lq6XTX/G7EMXoWdbgWm8KiA85gU?=
- =?us-ascii?Q?gek2GIzRaibrBUDTNZ0OsrwSPk+ZlHcl11xoDHTF0ahSZOiWNN2wxGhVpk3/?=
- =?us-ascii?Q?au3mgZq7Ial+Q12RkGTvx4api7cZwUsddXJX5BUYSlOsZglBDKq+qx5xiWds?=
- =?us-ascii?Q?n0STUMMJpFmBWK6JOoE2kOm/8PycstTA/HcGY/ZfoVfuZYHMNvv6hyZdR2LF?=
- =?us-ascii?Q?jjJv7/RxZ8kbVooE41gx2wDLKRDyv7i0n9AjjpF1WXs4EUOh8qtxmY3z4KQe?=
- =?us-ascii?Q?/XgY4xNBuBOwXmOj3yVHi9rKb9mga2khlXYiLWH5a6dOL3+gtw0+fuqDGhoW?=
- =?us-ascii?Q?y6AUsZeYTW2hkOd9fp/mhG7NhMk+THXtDliZHQ8maNEHblJHbwX6cm4KqV/F?=
- =?us-ascii?Q?xy+ojQjIP/tqiECCLahpk3o0O6wwYXOZyXK89HPA8yBuzeVmSlo1ro2zhqKY?=
- =?us-ascii?Q?5F5ReqXtGfYkem9XZDpg48KNsAmK87RbkfdM7dx4Tl3vQ62uYrRporvoX4Y6?=
- =?us-ascii?Q?dRm8kfMt5T7E3S4DdvRvzj5IWQKLtmu089TUWMf/I5srD2VG7jw8092/piXV?=
- =?us-ascii?Q?i5IbYeOeHoJNnwBTrxZRvp7uV7s1sT+XksRWn+KY?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8dff22bb-3d19-499f-389a-08ddc5f4ab1a
-X-MS-Exchange-CrossTenant-AuthSource: CYYPR12MB8750.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2025 12:14:39.2891
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 44CNVHcvqtkbUBdmmkHtMowP1VBZzrpScyrQjDwOQlGRFRzxaLnst4WxxSJgUKxkuY93xc4yWahX8qaA1ehLkQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS5PPFFF21E27DC
+Message-ID: <175284089685.406.9045125439099481095.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 18.07.25 10:29:40, Ma Ke wrote:
-> cxl_find_region_by_name() uses device_find_child_by_name() to locate a
-> region device by name. This function implicitly increments the
-> device's reference count before returning the pointer by calling
-> device_find_child(). However, in delete_region_store(), after calling
-> devm_release_action() which synchronously executes
-> unregister_region(), an additional explicit put_device() is invoked.
-> The unregister_region() callback already contains a put_device() call
-> to decrement the reference count. This results in two consecutive
-> decrements of the same device's reference count. First decrement
-> occurs in unregister_region() via its put_device() call. Second
-> decrement occurs in delete_region_store() via the explicit
-> put_device(). We should remove the additional put_device().
-> 
-> As comment of device_find_child() says, 'NOTE: you will need to drop
-> the reference with put_device() after use'.
-> 
-> Found by code review.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 779dd20cfb56 ("cxl/region: Add region creation support")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
->  drivers/cxl/core/region.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index 6e5e1460068d..eacf726cf463 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -2672,7 +2672,6 @@ static ssize_t delete_region_store(struct device *dev,
->  		return PTR_ERR(cxlr);
->  
->  	devm_release_action(port->uport_dev, unregister_region, cxlr);
-> -	put_device(&cxlr->dev);
+The following commit has been merged into the timers/ptp branch of tip:
 
-cxl_find_region_by_name() increments the ref count in addition. So the
-ref count could be e.g. 2. This put_device() here only decrements it
-once to have the same ref count as it was before calling the find. The
-put_device() in unregister_region clears the ref count, which causes
-the release function to be called.
+Commit-ID:     cd3557a7618bf5c1935e9f66b58a329f1f1f4b27
+Gitweb:        https://git.kernel.org/tip/cd3557a7618bf5c1935e9f66b58a329f1f1=
+f4b27
+Author:        Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+AuthorDate:    Tue, 01 Jul 2025 10:58:06 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Fri, 18 Jul 2025 14:09:39 +02:00
 
-So, no, we need both and we may not change the code.
+vdso/gettimeofday: Add support for auxiliary clocks
 
-Thanks,
+Expose the auxiliary clocks through the vDSO.
 
--Robert
+Architectures not using the generic vDSO time framework,
+namely SPARC64, are not supported.
 
->  
->  	return len;
->  }
-> -- 
-> 2.25.1
-> 
+Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20250701-vdso-auxclock-v1-12-df7d9f87b9b8@l=
+inutronix.de
+
+---
+ include/vdso/datapage.h |  2 ++-
+ lib/vdso/gettimeofday.c | 49 +++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 50 insertions(+), 1 deletion(-)
+
+diff --git a/include/vdso/datapage.h b/include/vdso/datapage.h
+index f4c96d9..0253303 100644
+--- a/include/vdso/datapage.h
++++ b/include/vdso/datapage.h
+@@ -5,6 +5,7 @@
+ #ifndef __ASSEMBLY__
+=20
+ #include <linux/compiler.h>
++#include <uapi/linux/bits.h>
+ #include <uapi/linux/time.h>
+ #include <uapi/linux/types.h>
+ #include <uapi/asm-generic/errno-base.h>
+@@ -46,6 +47,7 @@ struct vdso_arch_data {
+ #define VDSO_COARSE	(BIT(CLOCK_REALTIME_COARSE)	| \
+ 			 BIT(CLOCK_MONOTONIC_COARSE))
+ #define VDSO_RAW	(BIT(CLOCK_MONOTONIC_RAW))
++#define VDSO_AUX	__GENMASK(CLOCK_AUX_LAST, CLOCK_AUX)
+=20
+ #define CS_HRES_COARSE	0
+ #define CS_RAW		1
+diff --git a/lib/vdso/gettimeofday.c b/lib/vdso/gettimeofday.c
+index fc0038e..02ea19f 100644
+--- a/lib/vdso/gettimeofday.c
++++ b/lib/vdso/gettimeofday.c
+@@ -2,6 +2,7 @@
+ /*
+  * Generic userspace implementations of gettimeofday() and similar.
+  */
++#include <vdso/auxclock.h>
+ #include <vdso/datapage.h>
+ #include <vdso/helpers.h>
+=20
+@@ -74,7 +75,7 @@ static inline bool vdso_cycles_ok(u64 cycles)
+ static __always_inline bool vdso_clockid_valid(clockid_t clock)
+ {
+ 	/* Check for negative values or invalid clocks */
+-	return likely((u32) clock < MAX_CLOCKS);
++	return likely((u32) clock <=3D CLOCK_AUX_LAST);
+ }
+=20
+ /*
+@@ -268,6 +269,48 @@ bool do_coarse(const struct vdso_time_data *vd, const st=
+ruct vdso_clock *vc,
+ 	return true;
+ }
+=20
++static __always_inline
++bool do_aux(const struct vdso_time_data *vd, clockid_t clock, struct __kerne=
+l_timespec *ts)
++{
++	const struct vdso_clock *vc;
++	u32 seq, idx;
++	u64 sec, ns;
++
++	if (!IS_ENABLED(CONFIG_POSIX_AUX_CLOCKS))
++		return false;
++
++	idx =3D clock - CLOCK_AUX;
++	vc =3D &vd->aux_clock_data[idx];
++
++	do {
++		/*
++		 * Open coded function vdso_read_begin() to handle
++		 * VDSO_CLOCK_TIMENS. See comment in do_hres().
++		 */
++		while ((seq =3D READ_ONCE(vc->seq)) & 1) {
++			if (IS_ENABLED(CONFIG_TIME_NS) && vc->clock_mode =3D=3D VDSO_CLOCKMODE_TI=
+MENS) {
++				vd =3D __arch_get_vdso_u_timens_data(vd);
++				vc =3D &vd->aux_clock_data[idx];
++				/* Re-read from the real time data page */
++				continue;
++			}
++			cpu_relax();
++		}
++		smp_rmb();
++
++		/* Auxclock disabled? */
++		if (vc->clock_mode =3D=3D VDSO_CLOCKMODE_NONE)
++			return false;
++
++		if (!vdso_get_timestamp(vd, vc, VDSO_BASE_AUX, &sec, &ns))
++			return false;
++	} while (unlikely(vdso_read_retry(vc, seq)));
++
++	vdso_set_timespec(ts, sec, ns);
++
++	return true;
++}
++
+ static __always_inline bool
+ __cvdso_clock_gettime_common(const struct vdso_time_data *vd, clockid_t cloc=
+k,
+ 			     struct __kernel_timespec *ts)
+@@ -289,6 +332,8 @@ __cvdso_clock_gettime_common(const struct vdso_time_data =
+*vd, clockid_t clock,
+ 		return do_coarse(vd, &vc[CS_HRES_COARSE], clock, ts);
+ 	else if (msk & VDSO_RAW)
+ 		vc =3D &vc[CS_RAW];
++	else if (msk & VDSO_AUX)
++		return do_aux(vd, clock, ts);
+ 	else
+ 		return false;
+=20
+@@ -433,6 +478,8 @@ bool __cvdso_clock_getres_common(const struct vdso_time_d=
+ata *vd, clockid_t cloc
+ 		 * Preserves the behaviour of posix_get_coarse_res().
+ 		 */
+ 		ns =3D LOW_RES_NSEC;
++	} else if (msk & VDSO_AUX) {
++		ns =3D aux_clock_resolution_ns();
+ 	} else {
+ 		return false;
+ 	}
 
