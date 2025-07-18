@@ -1,223 +1,130 @@
-Return-Path: <linux-kernel+bounces-736847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36FAEB0A3F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:15:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A636B0A3F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:17:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A694171072
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:15:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D0D23AD6CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:16:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0788B2D97A1;
-	Fri, 18 Jul 2025 12:15:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD4E29CB40;
+	Fri, 18 Jul 2025 12:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3H6TUOjc";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2opALZXn"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VEUqkmmO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEAAD2DAFA2;
-	Fri, 18 Jul 2025 12:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD1B17BB6
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 12:16:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752840901; cv=none; b=YmE5U6H0WCyz0cFSIesdBm1o0fqGOcdqZYaXuTgfiEwcC3CZ9B0eAbiVr2JPOSoCTtV7dkOPP1R9Rr6zM0XHjcnt9HWrKG5qfPeYOeLRpQvGYJAvU8yWjmu/D6hBx1MZVxEl1QVxWrUt8Ulk2FCtMw+nHy/gpPabMToHhHGEDJA=
+	t=1752841016; cv=none; b=p1D2CrttUIMJMt2xbb3ENQqVi1PDSjuSLtVgeOCDd2CRxBeR54oZPytvc/Isu5T+y27t+Gd95Qugf7mr9CQpE0YTZmPyX8FVLO/PVoF7dCvxHglB++aicujrutElZqnAdDzE/qXyvxyDjuImFd49p2kuDGLDZB8I2Hoxsq0uGiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752840901; c=relaxed/simple;
-	bh=TSYiSO8r4c5WmUfByCEQhsPiKEIL0TxRhKdgbNCvcRo=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=hBUk9AisVyntrdCYrPk9du6/Y7SFVT/xrDzRuDx5FxovXIXW5ovTkYZbvr8VS5725hnUEWGmDtheEoa5VF+cMl9ABITuIMYKTM+s6UPHkFUCReTnrb6TdJPlXJyniVbSFsBRUrnkH2y4isZu25Ao2LwiJZvJn07O8JD3yBctSgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3H6TUOjc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2opALZXn; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 18 Jul 2025 12:14:56 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752840898;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
+	s=arc-20240116; t=1752841016; c=relaxed/simple;
+	bh=ssCJnZiVU0NS5C2CWr681wCS6S2+9KNs1VykMx9TTKc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZDpm1EKCRyE8lpQucTsbANSxDqcHfAwL2Y38K9lKuPYd6WVlOa1DIgm7lm1WXRDJ2ouG0IvWiq0i2UrBvHAHVvU2iPmVqgTDMUb/I4ZrFM2flyJSZ63VDnS2pDp5wyMmkcdPO2u14z9D0b714IBP27324uP0+7aaTE5cTv81My0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VEUqkmmO; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752841014;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=b7OopTW2FBKXZXWmLcMTRfHnljcUIE99sGe3shDneI4=;
-	b=3H6TUOjceaq9w3OdEuz7a8uUj7tl1Q6F0tT5L6ug0pV6dOxY2bHYvtuqYw0I8P3kkYerj9
-	S5qjVOvm6DH5TbQ1pvG5Ml/IoJKKqUdqgUahzB6ZYlRKnNf6QCqjjtlUzy5cGEhh1SvDyu
-	OSOIaCTAZ0krbmBgZBCJyEXq2lGs+N7BmsCE1BEhOMgr/nJTEVgS9tWxUaISXLijI/xrEo
-	kwNoU/q/LAnO6iQ3TfBQArZoLT44IAQZ4XqnX0SgjkoJCrsxj6Y/+YRkkWM8TabK5+aQ8l
-	1xoSvFcaqW43VfQmjCd9+AYkdjPDHi32Gk9gXwPy7ic8czqO9b5/ln0H1moI4w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752840898;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=b7OopTW2FBKXZXWmLcMTRfHnljcUIE99sGe3shDneI4=;
-	b=2opALZXnrE2L9qZCJu1tlPxorhvuORzzDDTF8vxIwgwV2ID3MnIBzsSbFBEpNGiTZ3zbYk
-	8/PO0KyY6DYXapAw==
-From:
- tip-bot2 for Thomas =?utf-8?q?Wei=C3=9Fschuh?= <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/ptp] vdso/gettimeofday: Add support for auxiliary clocks
-Cc: thomas.weissschuh@linutronix.de, Thomas Gleixner <tglx@linutronix.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250701-vdso-auxclock-v1-12-df7d9f87b9b8@linutronix.de>
-References: <20250701-vdso-auxclock-v1-12-df7d9f87b9b8@linutronix.de>
+	bh=StQAxm1RKG6Tk+bIyXR+UyKD+w6FfQFmbkQV3JFNsg4=;
+	b=VEUqkmmOviFG/LUcUpPSPfICbnaunKmrJ/oXsg2kiFk2gyGuFBG6W9eGnd837p10dpZQ8E
+	xkuSm9k/fFY0pJYk2tVvnXlLer4gsdROHvKkpr6dRRRGWBOZT5JjLho00aY+o9sQn8rOm1
+	odsB+3nG5wi6eMpXrl3tGmWTAvL5xp0=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-391-mWhcBiItOvupwHuYwYGOrg-1; Fri,
+ 18 Jul 2025 08:16:49 -0400
+X-MC-Unique: mWhcBiItOvupwHuYwYGOrg-1
+X-Mimecast-MFC-AGG-ID: mWhcBiItOvupwHuYwYGOrg_1752841007
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F08CB19560A2;
+	Fri, 18 Jul 2025 12:16:46 +0000 (UTC)
+Received: from [10.44.33.77] (unknown [10.44.33.77])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EFE33196664F;
+	Fri, 18 Jul 2025 12:16:42 +0000 (UTC)
+Message-ID: <6937b833-4f3b-46cc-84a6-d259c5dc842a@redhat.com>
+Date: Fri, 18 Jul 2025 14:16:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175284089685.406.9045125439099481095.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 1/2] dt-bindings: dpll: Add clock ID property
+To: Krzysztof Kozlowski <krzk@kernel.org>, netdev@vger.kernel.org
+Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+ Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+ Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Prathosh Satish <Prathosh.Satish@microchip.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Michal Schmidt <mschmidt@redhat.com>, Petr Oros <poros@redhat.com>
+References: <20250717171100.2245998-1-ivecera@redhat.com>
+ <20250717171100.2245998-2-ivecera@redhat.com>
+ <5ff2bb3e-789e-4543-a951-e7f2c0cde80d@kernel.org>
+Content-Language: en-US
+From: Ivan Vecera <ivecera@redhat.com>
+In-Reply-To: <5ff2bb3e-789e-4543-a951-e7f2c0cde80d@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-The following commit has been merged into the timers/ptp branch of tip:
+Hi Krzysztof,
 
-Commit-ID:     cd3557a7618bf5c1935e9f66b58a329f1f1f4b27
-Gitweb:        https://git.kernel.org/tip/cd3557a7618bf5c1935e9f66b58a329f1f1=
-f4b27
-Author:        Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-AuthorDate:    Tue, 01 Jul 2025 10:58:06 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Fri, 18 Jul 2025 14:09:39 +02:00
+On 18. 07. 25 8:55 dop., Krzysztof Kozlowski wrote:
+> On 17/07/2025 19:10, Ivan Vecera wrote:
+>> Add property to specify the ID of the clock that the DPLL device
+>> drives. The ID value represents Unique Clock Identified (EUI-64)
+>> defined by IEEE 1588 standard.
+> 
+> With the exception of clock-output-names and gpio-hogs, we do not define
+> how the output looks like in the provider bindings.
+> 
+> I also don't understand how this maps to channels and what "device
+> drives a clock" means. Plus how this is not deducible from the compatible...
 
-vdso/gettimeofday: Add support for auxiliary clocks
+The clock-id property name may have been poorly chosen. This ID is used 
+by the DPLL subsystem during the registration of a DPLL channel, along 
+with its channel ID. A driver that provides DPLL functionality can 
+compute this clock-id from any unique chip information, such as a serial 
+number.
 
-Expose the auxiliary clocks through the vDSO.
+Currently, other drivers that implement DPLL functionality are network 
+drivers, and they generate the clock-id from one of their MAC addresses 
+by extending it to an EUI-64.
 
-Architectures not using the generic vDSO time framework,
-namely SPARC64, are not supported.
+A standalone DPLL device, like the zl3073x, could use a unique property 
+such as its serial number, but the zl3073x does not have one. This 
+patch-set is motivated by the need to support such devices by allowing 
+the DPLL device ID to be passed via the Device Tree (DT), which is 
+similar to how NICs without an assigned MAC address are handled.
 
-Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250701-vdso-auxclock-v1-12-df7d9f87b9b8@l=
-inutronix.de
+Suggestions:
+1. Use the dpll-id property in dpll-device with the description:
+    "Specifies the unique ID of the DPLL device if it is not retrievable
+     from the hardware."
+-or-
+2. Use microchip,id or microchip,dpll-id with a similar description, as
+    this issue is specific to this hardware, which does not provide such
+    information.
 
----
- include/vdso/datapage.h |  2 ++-
- lib/vdso/gettimeofday.c | 49 +++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 50 insertions(+), 1 deletion(-)
+Thanks for the advice.
 
-diff --git a/include/vdso/datapage.h b/include/vdso/datapage.h
-index f4c96d9..0253303 100644
---- a/include/vdso/datapage.h
-+++ b/include/vdso/datapage.h
-@@ -5,6 +5,7 @@
- #ifndef __ASSEMBLY__
-=20
- #include <linux/compiler.h>
-+#include <uapi/linux/bits.h>
- #include <uapi/linux/time.h>
- #include <uapi/linux/types.h>
- #include <uapi/asm-generic/errno-base.h>
-@@ -46,6 +47,7 @@ struct vdso_arch_data {
- #define VDSO_COARSE	(BIT(CLOCK_REALTIME_COARSE)	| \
- 			 BIT(CLOCK_MONOTONIC_COARSE))
- #define VDSO_RAW	(BIT(CLOCK_MONOTONIC_RAW))
-+#define VDSO_AUX	__GENMASK(CLOCK_AUX_LAST, CLOCK_AUX)
-=20
- #define CS_HRES_COARSE	0
- #define CS_RAW		1
-diff --git a/lib/vdso/gettimeofday.c b/lib/vdso/gettimeofday.c
-index fc0038e..02ea19f 100644
---- a/lib/vdso/gettimeofday.c
-+++ b/lib/vdso/gettimeofday.c
-@@ -2,6 +2,7 @@
- /*
-  * Generic userspace implementations of gettimeofday() and similar.
-  */
-+#include <vdso/auxclock.h>
- #include <vdso/datapage.h>
- #include <vdso/helpers.h>
-=20
-@@ -74,7 +75,7 @@ static inline bool vdso_cycles_ok(u64 cycles)
- static __always_inline bool vdso_clockid_valid(clockid_t clock)
- {
- 	/* Check for negative values or invalid clocks */
--	return likely((u32) clock < MAX_CLOCKS);
-+	return likely((u32) clock <=3D CLOCK_AUX_LAST);
- }
-=20
- /*
-@@ -268,6 +269,48 @@ bool do_coarse(const struct vdso_time_data *vd, const st=
-ruct vdso_clock *vc,
- 	return true;
- }
-=20
-+static __always_inline
-+bool do_aux(const struct vdso_time_data *vd, clockid_t clock, struct __kerne=
-l_timespec *ts)
-+{
-+	const struct vdso_clock *vc;
-+	u32 seq, idx;
-+	u64 sec, ns;
-+
-+	if (!IS_ENABLED(CONFIG_POSIX_AUX_CLOCKS))
-+		return false;
-+
-+	idx =3D clock - CLOCK_AUX;
-+	vc =3D &vd->aux_clock_data[idx];
-+
-+	do {
-+		/*
-+		 * Open coded function vdso_read_begin() to handle
-+		 * VDSO_CLOCK_TIMENS. See comment in do_hres().
-+		 */
-+		while ((seq =3D READ_ONCE(vc->seq)) & 1) {
-+			if (IS_ENABLED(CONFIG_TIME_NS) && vc->clock_mode =3D=3D VDSO_CLOCKMODE_TI=
-MENS) {
-+				vd =3D __arch_get_vdso_u_timens_data(vd);
-+				vc =3D &vd->aux_clock_data[idx];
-+				/* Re-read from the real time data page */
-+				continue;
-+			}
-+			cpu_relax();
-+		}
-+		smp_rmb();
-+
-+		/* Auxclock disabled? */
-+		if (vc->clock_mode =3D=3D VDSO_CLOCKMODE_NONE)
-+			return false;
-+
-+		if (!vdso_get_timestamp(vd, vc, VDSO_BASE_AUX, &sec, &ns))
-+			return false;
-+	} while (unlikely(vdso_read_retry(vc, seq)));
-+
-+	vdso_set_timespec(ts, sec, ns);
-+
-+	return true;
-+}
-+
- static __always_inline bool
- __cvdso_clock_gettime_common(const struct vdso_time_data *vd, clockid_t cloc=
-k,
- 			     struct __kernel_timespec *ts)
-@@ -289,6 +332,8 @@ __cvdso_clock_gettime_common(const struct vdso_time_data =
-*vd, clockid_t clock,
- 		return do_coarse(vd, &vc[CS_HRES_COARSE], clock, ts);
- 	else if (msk & VDSO_RAW)
- 		vc =3D &vc[CS_RAW];
-+	else if (msk & VDSO_AUX)
-+		return do_aux(vd, clock, ts);
- 	else
- 		return false;
-=20
-@@ -433,6 +478,8 @@ bool __cvdso_clock_getres_common(const struct vdso_time_d=
-ata *vd, clockid_t cloc
- 		 * Preserves the behaviour of posix_get_coarse_res().
- 		 */
- 		ns =3D LOW_RES_NSEC;
-+	} else if (msk & VDSO_AUX) {
-+		ns =3D aux_clock_resolution_ns();
- 	} else {
- 		return false;
- 	}
+Ivan
+
 
