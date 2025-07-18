@@ -1,235 +1,633 @@
-Return-Path: <linux-kernel+bounces-736241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A0DAB09A5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 05:58:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55557B09A63
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:01:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ECD4169BDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:58:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86B6316A85E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 04:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DAEC1D516F;
-	Fri, 18 Jul 2025 03:58:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761061C863B;
+	Fri, 18 Jul 2025 04:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dzb3E4JE"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GckH0c0W"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EC761C84DD
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 03:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752811098; cv=none; b=QFhy6w9yi1DYeSrxcN2M4Q4eqzYLYS+Dmp4ved4xNuyS2r79fhyZCAl0ZfEEZnuyO27bTaSBHQSMOmRvDZmsFHLt/Fean8jn0NyoE14u5g9LohCveEUsOlVxz5g/6TLewVbrBocVAiNa+Yq0j0/orRGZokGcDBIlIOHkKQV3w1s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752811098; c=relaxed/simple;
-	bh=sm+jWDnfxeWgNRZKuAlyvmBE2WBzV4iscOdM0AwUrsM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZD4PV7IqMIlelCKpjApDZ3qUtHkYsXHYQEAuT+pVMHUoFePFfagFl/RMNNIEwgSB21aFThENjSmakFP1/TMwTDoSx5z53EzTGwZfIxhdPSwiklcEmrzeNMw/ZA1osEFDnPzAOP9Leg+gC7MNq4CerYcs+zqpsAzEmgJAjPkLApI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dzb3E4JE; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56HNkII4016011
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 03:58:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	NcFADHJWzB581dh8lwli3gFNI4IvnV9oOCXkZgldaGM=; b=dzb3E4JEm2fSjErJ
-	SDM/OAoLmVVepywEJLhoRxEWaQh8/wshfZmR6DBfTiD4rv9PX6yWmMTZ1pu4mxA2
-	6h9GFaM4lszHT/Ynd7EeZxM3fv3FHW6thYKbpcD+lboRWolfGZvmQxwdi8TJqYdH
-	pGPjKQ5wJWDOkEKFloViBha4ndDGidP/VqryASpHnPPtWRBGrqKOhqWl49NJ/Ryx
-	1n9+3i/GhD8S88H1K4gfIDc9lXzuB28wtN27uJKaku23MWCcOSM4/Mw1/meg5XLj
-	PDAQNcjLay1jjYViys+C2NQIuylm+CYrDJvEqj924rdXVCHqwHArQpmeVW9rymV6
-	qyeGPA==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47y3tc1wf7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 03:58:15 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-23824a9bc29so23934885ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 20:58:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752811094; x=1753415894;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NcFADHJWzB581dh8lwli3gFNI4IvnV9oOCXkZgldaGM=;
-        b=YSotobSXCGOYcM7CNhQtoxmzr2K+JWJEBRS0iiotlBGYHj3KT9f/fc7lhbWGxBfOrj
-         BdBUFDZyqn9I7cI0zzrQOmsn/UAzZJ6N4Ayxa3VTpBTpdE9hIn/6Tf6erPVIbggFOkiv
-         0KUKhlrvn/D6U4r5RRlGjhOrmJfAlvlkI87gp9aVPiwwCn/59jeBGQkjniv5uIgIGrLn
-         NvXzroh1oWjpw5JVph7pAsam47Nlo48hXRiSf/UqPNk1NKW7mw8gPuDszkiPDbnewjpt
-         WI6cm3mH55x/1Ci0bcRmzna43UVEBeJZIgHSZnzPq3U03GF0S+60ife2ghzuYezSPIk7
-         QNrw==
-X-Forwarded-Encrypted: i=1; AJvYcCWeIMG3JcSFfXNe9ulDNAuCue+I0Y5JXYPJXIWQrmlrnAOaKPtJS1X1Ojpq6LJTjk7HF4Wk7LPmYhiWoL4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxCYGX/1fsdtcAUPPB8LliT8YcWtlaS4gn46lF/nYONKZcm6q/
-	z33qUR80Z+m3yx1e4/LvEKKrqlFbNLMIN/n4DSvnrljLIjd6VUxi5XIXAFNMn34NOPovYBtfr9D
-	iw80rFjqrx2C3Jp4/PJOjCrsHXnJvV3lOqQoh+yWV9XxhF+8i+6ArCYzfIwuFSqfajfs=
-X-Gm-Gg: ASbGnct8bFACSpNSZJvmxMKiwfY7R+mxqqn/O7nOSrPiH4v+esPZnPccr/qHzRXczSJ
-	49uBMebSTXRuM9j3dyirOac6Qo7SCyJNt7IiHQfvfApqoB0RCF7U5U3Dg0yVZXoo5X5Klp5mMmV
-	ostzLNkxPxaGScasnZcZN2xNZHvHqSUeeB9QHBDjidYSeV1f3vXzSAmjUczL/dYF5hLx4vt9/xC
-	B+c8nre7o/4EkCy4oGT/Ujg+cRiBw30It59az6ssrLiib77jdCMgQ8oqPknhTsAc1EH/fos6GRU
-	u5ASngIohwJP3/t+xNtMntV7nvD1RQSLscmFQsYevK1h+0ZHNXlsDMc5xhHavXmqnK3mhw==
-X-Received: by 2002:a17:902:f68a:b0:234:ba75:836 with SMTP id d9443c01a7336-23e25693676mr111436055ad.7.1752811094383;
-        Thu, 17 Jul 2025 20:58:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGpJu0g9KYlPsWpo+xmLRTgKz+e8QQUO94ua3L9oR8C4BqJw408SODGzFFKZ0NCX4WD20R5fw==
-X-Received: by 2002:a17:902:f68a:b0:234:ba75:836 with SMTP id d9443c01a7336-23e25693676mr111435915ad.7.1752811093906;
-        Thu, 17 Jul 2025 20:58:13 -0700 (PDT)
-Received: from [192.168.29.92] ([49.43.226.29])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b6ef9aesm4165815ad.211.2025.07.17.20.58.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Jul 2025 20:58:13 -0700 (PDT)
-Message-ID: <b6883420-96aa-432b-9d33-5e7c0e4fb8a7@oss.qualcomm.com>
-Date: Fri, 18 Jul 2025 09:28:06 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F63012B94;
+	Fri, 18 Jul 2025 04:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752811303; cv=fail; b=PU+qzR8fSFcQyC3hnBgD5GZIl2DpFraYCmkPxvyEKCDJqta8xvGlJP0l96bZphHvprCpfOuaWNJpu2HoqObzMoEupsIrdJddq9dL3buPOETJrAv+WNLhDtscgnwmLSI0K7qpJls1go98oRpCXA5JDgxsrLU1DPei+nGmp1d24Ck=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752811303; c=relaxed/simple;
+	bh=gP763rvDZU+yT1Fh414Q2j5Yb4mVP8WDX3UAkhMwCio=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=jNBzz/+JgVwblCOudk73IK5F5fXSOjOBcFd/DcsLRATpNnuhYAf1pyOgwMcQbzR6s8LbdoGkvTklfJHpa3GGX/X6XZJubdctwE6QNp2DK3EbfmDEz8Tp7n7FHqry+OXYm3bV64aEW48mmglXTexDuWi0ukfbdkajrnR7kC7Tz+4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GckH0c0W; arc=fail smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752811302; x=1784347302;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=gP763rvDZU+yT1Fh414Q2j5Yb4mVP8WDX3UAkhMwCio=;
+  b=GckH0c0WxS6TmrwAsc1qdlzgVrhz76T3MITXxu3sym5jLNMIS6z82XYJ
+   0Cb8vU4a0xdH7EiOE5H6FVYvblQ+UJM7hAdfxBE8/ojZQ5Pqf/RlFTy82
+   J5/oFwrcfJEEw/alyGS2ddCyrlcilISwgwtxlawL170MWkOwbB78hI4Ba
+   vgpaDy9RSiiohOwrID892asRD1lOcx/GQvadwzGFMMPhPM2geD9rYXVJl
+   7SSsLjDuFg4ybjUuH94xx3JvZxSVkwW5tpFienxeQJkSjrP/O63typvqS
+   1ObiWVDtNw2WjZDrk43Wx/0OWiQaPZQUK1wOLMcG58f9AdNltFTZ3m89+
+   w==;
+X-CSE-ConnectionGUID: q+KczdRXRJO02JfYbbTqqA==
+X-CSE-MsgGUID: OJnQThPxQOC40oXZ30yI1Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11495"; a="58880348"
+X-IronPort-AV: E=Sophos;i="6.16,320,1744095600"; 
+   d="scan'208";a="58880348"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 21:01:40 -0700
+X-CSE-ConnectionGUID: /C4haXnNSQ6N79n/aMGp1A==
+X-CSE-MsgGUID: ya+m4vB9TK+Hv01/9eS5Rg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,320,1744095600"; 
+   d="scan'208";a="157636992"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 21:01:39 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Thu, 17 Jul 2025 21:01:37 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Thu, 17 Jul 2025 21:01:37 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (40.107.94.89) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Thu, 17 Jul 2025 21:01:36 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=skVocA/19l9pw1dGnbuAaUn9gPQ+e67ZzdX3qqDnmVKpoFR1sGVjX2yGNA4hG2hJ1qfLMqKMadSADk60zf2VTvsAnnQw2Ff2ltxwCbF/Isifa2QxAcYU3Oubhchxhakr6Jtt/gASmfBIkMJxLv+kSsjYkPEzxem+5IRAfiO87QqJ574gZVpgbq/hbK3MUUoZ3TS/DTikwD0F7A5kgR47a178jI2LYZf+SohbDwk1+u+an9xAlvemGLLllKZZPeIi0KlLGO2UgVoyg8GO7bY+fEhTfDD9o3q9Pjsg8wPKmHzFDA60Dc5PsfaZRa209yv8AHSKt808sbym+ML3r+4Ncg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5gpOJxz7d5Wfh8IDqjxQYoroK+ACYUWGe2AE0yl4H60=;
+ b=r11Ve1f7zwhiklSch9rk/31A/1ojTC5mD1Cn0QsXECB5jU3RMcLLFdjeLGzfCjCQNgjxZYrQaYy2oGooAwoD+zGu4SSE1UA0NOW6SxX6JfIrjOL7uFmBSqM+DgEIKGGHD6dp43ES2jwdkax8iVIHP+RPqemRBcWaCw0/JUrCPUbyAy5/Id/jLdjH6DjvEPgZ0gwAahrmgoD98l+c3yvjuz+eKE1KH/BJf36/WuC3HNbQDFDos83vEHvd9DLoOH8WyM4d9vwQn58NGlphH3TAeuDGXKgPrwbwaTtQL+RunMxSiGi7niSmeIsiFmmJowNdayq0FyF/X8V0nPvzfJD7zw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by SJ0PR11MB5135.namprd11.prod.outlook.com (2603:10b6:a03:2db::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.40; Fri, 18 Jul
+ 2025 04:01:21 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%4]) with mapi id 15.20.8922.037; Fri, 18 Jul 2025
+ 04:01:21 +0000
+Message-ID: <de20ecd6-8cb2-4b3b-ba5f-b38f33fe128b@intel.com>
+Date: Thu, 17 Jul 2025 21:01:16 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 31/34] fs/resctrl: Introduce the interface to modify
+ assignments in a group
+To: Babu Moger <babu.moger@amd.com>, <corbet@lwn.net>, <tony.luck@intel.com>,
+	<james.morse@arm.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
+	<bp@alien8.de>, <dave.hansen@linux.intel.com>
+CC: <Dave.Martin@arm.com>, <x86@kernel.org>, <hpa@zytor.com>,
+	<akpm@linux-foundation.org>, <paulmck@kernel.org>, <rostedt@goodmis.org>,
+	<Neeraj.Upadhyay@amd.com>, <david@redhat.com>, <arnd@arndb.de>,
+	<fvdl@google.com>, <seanjc@google.com>, <jpoimboe@kernel.org>,
+	<pawan.kumar.gupta@linux.intel.com>, <xin@zytor.com>,
+	<manali.shukla@amd.com>, <tao1.su@linux.intel.com>, <sohil.mehta@intel.com>,
+	<kai.huang@intel.com>, <xiaoyao.li@intel.com>, <peterz@infradead.org>,
+	<xin3.li@intel.com>, <kan.liang@linux.intel.com>,
+	<mario.limonciello@amd.com>, <thomas.lendacky@amd.com>, <perry.yuan@amd.com>,
+	<gautham.shenoy@amd.com>, <chang.seok.bae@intel.com>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<peternewman@google.com>, <eranian@google.com>
+References: <cover.1752013061.git.babu.moger@amd.com>
+ <0a646cf184a9113c54518b14a5c94984b36cee2a.1752013061.git.babu.moger@amd.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <0a646cf184a9113c54518b14a5c94984b36cee2a.1752013061.git.babu.moger@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR03CA0192.namprd03.prod.outlook.com
+ (2603:10b6:303:b8::17) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/4] PCI: Add support for resetting the Root Ports in a
- platform specific way
-To: manivannan.sadhasivam@oss.qualcomm.com,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
-        Oliver O'Halloran <oohall@gmail.com>, Will Deacon <will@kernel.org>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        Niklas Cassel <cassel@kernel.org>,
-        Wilfred Mallawa
- <wilfred.mallawa@wdc.com>,
-        Lukas Wunner <lukas@wunner.de>
-References: <20250715-pci-port-reset-v6-0-6f9cce94e7bb@oss.qualcomm.com>
-Content-Language: en-US
-From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-In-Reply-To: <20250715-pci-port-reset-v6-0-6f9cce94e7bb@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=Z5PsHGRA c=1 sm=1 tr=0 ts=6879c657 cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=lM2dtDSGyl0QT0dfkTfTzg==:17
- a=lJ8DZ0MjVbnDIa4D:21 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8
- a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=ImqNvw3yTObJCdT6Mg8A:9 a=QEXdDO2ut3YA:10
- a=324X-CrmTo6CU4MGRt3R:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: BynZK5N4IkSzeHx-uWNDbHQHNnEQ5yzP
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE4MDAyOCBTYWx0ZWRfXwtHoiL115Sht
- UervouQf0gmMRSivoqdKd2EcdSs4FXnIPWGkE2sTrsoyicAXY434lFmIE9FG+k5QAHzicjAHC6R
- ZIoqZXQTwrnfBOxkFt6+Eq+8+eC40xmiLbO2Ry1Lqo1o6oXG9E6VajUskKsGA+yq8Or/V9csM0z
- 4KM6NMXKL3k8T8UYInBX9GS7u7cljycb/h6do8lNQ3ryA/p17ofTwq74M/HnnQYO2O0Om93eAcd
- 7wt3la2XFivyOz1bUScPG3NBhY1uB0BOeG+4/BPSljwMaHxjomFans1wHiIk3Rrz6m349tdxexU
- ZtgfiMV1r4EQoJy1mr8m/kGCr0OhrI0CXlGkY+fQwUvvhUp1NoknldtndPXtusBRHQUQSNpRfqX
- FYTS5j7pjg+9iscg2198zZkRplDB3cMKGR6mdZJIrAHnGqmXoY6T7uWXQWTTjkJpJfknbL0A
-X-Proofpoint-GUID: BynZK5N4IkSzeHx-uWNDbHQHNnEQ5yzP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-18_01,2025-07-17_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 mlxlogscore=999 suspectscore=0 spamscore=0 clxscore=1015
- mlxscore=0 malwarescore=0 phishscore=0 lowpriorityscore=0 adultscore=0
- priorityscore=1501 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507180028
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|SJ0PR11MB5135:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6a38f9ca-6b33-4f70-d8d3-08ddc5afc14b
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?QXh2MEdtWDlwQzNORTgzckF4blJvTWJlU3Y1aDQrMmlLb1Fmb0lIQ0N4QUM0?=
+ =?utf-8?B?OFdkUDVQUkVqTzY4VHZSZ29INU5kUzdLZEVGQTdPaFhzMkJaVjJ0djY0d1Vk?=
+ =?utf-8?B?dCtKRk5LajllblZwK3c1MEtqc0NNQWxDR0lYM2tsUFlSLzdIbjNSWlJPZEpW?=
+ =?utf-8?B?UkZlQyt0ZE9vT2tGMHJqN3FrUFBVOVVCcGhQMHMybFYvYzI0VmtTL0pDM1FP?=
+ =?utf-8?B?Nkx4RWJTb1VaeEpGK0U5ODJpYW0yOU04ekcrS0JoMWwzMDZYbE1Iam5adHla?=
+ =?utf-8?B?QUhCTkhLNFRURytJaUx1bjlBQktpM1FvSkZSYmdUU2ZKOTc0K2JyRkJFVk8v?=
+ =?utf-8?B?dWh6eUZNV0NnWXhFMGhwVTdsUHdoSjdYYytKSEdtVjVvL05DMkY5WHZJWjVD?=
+ =?utf-8?B?VlUwTERZcERzWU1BMlI2L0xYcVRmY1JHQmVHWk11OURlRVpTZE5nK0dGR2lC?=
+ =?utf-8?B?cmhmKzhPSUZKdnJtTmU2YS8ydWFOaXhiaktjL2l6TTZtcHJDU3lLdmNTandF?=
+ =?utf-8?B?RjV0WWxtVEJJRmtpUlgvRXhwRUNGTEVqdVpzeXFrdEdhT2x4bnZRYlJ6eHBw?=
+ =?utf-8?B?SHNBNTVoUUZyNXVXODE3b25XZ3lJYkxTNmdwbEZZR0xtSlRLbnNTM1NkcXMx?=
+ =?utf-8?B?V0JiZzJDSTRRQlJrV3pBRDVvNFk1NGFMbklJUkl2a2I1djcvcG9GbjVXdU1W?=
+ =?utf-8?B?b3g0Z1ZJRmJzcnNjM3FaZEYzUVpWK3czZEZZWkRBbVVwMXkxS0I3dlhxYnRs?=
+ =?utf-8?B?clRPR2doYWpkTXVxODFidnhLUS9QMGxNcXpVY0loTDVieHhZbDRobk5kdWt6?=
+ =?utf-8?B?cnpUeEE4YnJ3cERxYXY3VUhnWFJpV3JNRHgreEVvbzk5MzM5bEkxWEVNUDR3?=
+ =?utf-8?B?b1VjVWRYSlVidEEybk1sWXVJWlA4RnNCSHZ3NC9rc1grM1k5M3VVd3RONHlI?=
+ =?utf-8?B?VHo4ZkgrdXd6NDh6cmFGZGV2TzZrb28vOWd6YmpLV2VqQkVJVld6Y0REWE1y?=
+ =?utf-8?B?M0luQ01wT2FpaG1MTlNqaGpJZ1JnSUlEUDVhUVhSeFpqUXBENFpNVEJndkdQ?=
+ =?utf-8?B?aTFPWXZTdkpjVTdlWWw1eFJmc0c1VmtwaitWa3FlSVFaQ0tkaVF5WGRLTExD?=
+ =?utf-8?B?d3YyeUU2d1NhQ2hkVjBGVG54QURqcFNkdWR4VWc2RFpSck92UGlvRHRuR3k3?=
+ =?utf-8?B?dDBCUHZOUFZVQ01rb1FMRjlpT2dDYytyR3IzSlpPY3c5OW1nTG1EUlcxNXEv?=
+ =?utf-8?B?VDFoTVhLeit0V3JSanZxemdtaVBBYU1hRXJROFZ1QTdRSnVwdEtXQ01GOURM?=
+ =?utf-8?B?Nk55QzVQSHJHWTVuQmZqMUcxWURpNXhjcnUyS214aDMrSXhZM1NTenNmRFhP?=
+ =?utf-8?B?eHd6VzhYN0diZTNnSnZaUlNua2Vsa2RFUTA4dHQwdzN4YmNaM29JLzBKcUpG?=
+ =?utf-8?B?dHBJMnEra3kvaU9STnBiNmJYYnRlQU01YnZDSVczSHlzZmhaR1BYTVQ0bERS?=
+ =?utf-8?B?ek9HSjJwQXlsWWlzM2FEUU5hOEJzVVRaT1FiY3Y4anZ6MjFYMkE5ZG41MUk5?=
+ =?utf-8?B?MlNiaDVMc1VuUGdUcTdpTVF1cEZrVW9UWGd4MHJLaVl2Q0dmaXVCc3FNMFJS?=
+ =?utf-8?B?SHdVcVVCZERvUW9UbUlEQzBjRzNtRUd6elNVWEt4WW94Q3FTVk1wSVhFLzRv?=
+ =?utf-8?B?V2VjZndRM2VYOEdzZTJsQ1gvT1VCQkNPaGsrWmVZSlhsSzBqV092MDIvR3Vi?=
+ =?utf-8?B?a0dZQkZUL2NIY3phSW4vL2FpRWVwUzB5azIzTlVsQmphODFqd0dITzdnNEFx?=
+ =?utf-8?B?QmRSTnR5REtMMDZYdVpDYkRHZWpnMGxjeE45Uzl5ZW1ZLzZkeC9hL1B2VWx0?=
+ =?utf-8?B?WjJIYmZFL0FyWjJralpoV240bTM5N0Q3YlFiWktNaGZ5QjI3NHVURFQzbmx0?=
+ =?utf-8?Q?5dAwnaC7Iyw=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?V2dPRHowc0psUzRxOGlrZlhmMCtLNUhDZmJrTU0ySnBQWExoMHZLc255SW1R?=
+ =?utf-8?B?UlJCRmxlVjU1cmxYTXFQL25XVWcyYW1EVVNEcEhnMkdlZHpGa3YvVVQyeWdz?=
+ =?utf-8?B?Unp3eDhLdmx0WVFyeXhKbEh6Rnd5SHplaFMrRVdBQ1VMUVZ3WU13aVVpbHZS?=
+ =?utf-8?B?WlA1VTZBaEZtay90dEQvZTF1UWw4K2RiTVBJOXdRMUtETExPS2hYYWg4dU1K?=
+ =?utf-8?B?dE9xRXRrK1FUU1pUMGc2NXp3UjdXQnpobGxvcWtadmtUMEMxVWI5NVZsbUh5?=
+ =?utf-8?B?SWp3MzNYNTV2d3M1TmxHSUF2dVlFK1FyeVRIdFpXUnhveXBhVmptRW9jd3Vo?=
+ =?utf-8?B?UDI5QjN0cWhkNkZRdjQwLzZtRTZsa1NyNzRuTytqMG05QWJ3c2JjNlhKQWJi?=
+ =?utf-8?B?ZDF1NUVXZWp5WFhKYW8ycE9TM095cHI1Mlc5aFh0cENqV2RyNnJjZVdQNlgr?=
+ =?utf-8?B?YlNhUEFaU3IwVDcycHF2N1Fpem5TaWRKaTZYSEUrNUVtZXhJa1B2QmhYVWh2?=
+ =?utf-8?B?dEhWSnlOWE5YY05WMlIvTk9Pb0VuSGx0UlNKa0twOWpPRzdRRllkWUVWd2dk?=
+ =?utf-8?B?a09IN1ZsS1IvYlVSVngwbGR6RkRjMkZVbGl5YjArRUNCVDU5d0prZGtjeldG?=
+ =?utf-8?B?RkU5RW9qSXJEajQ1bVZQaGVackhldUxpQ1RaM0FuL3VEekRVd2JNcmRxcmVp?=
+ =?utf-8?B?a2FrV2pTb1U4UUFaVWRlTjQwWUoyQUFzU0FtVjhMMElOV3ZKM2JzSFJuWnFN?=
+ =?utf-8?B?NkVNK1RReU1PQkJWUEZZbWxjZzQ2MFgrczNxSGxHbDlGWnk1QXc4SFZGcDlv?=
+ =?utf-8?B?T045cUNReFpkRU1NbThZSHJtaFE0YUhKZzN6VlAzOTR2SUZhRG05WkFHTDFW?=
+ =?utf-8?B?MVI3SGlObVpNOXpXVnY4M0NZK2JQNVpZY2xlTGQybW4wbGNQaktvUllWUHRa?=
+ =?utf-8?B?SG8wd3pDSVpGT0dyQmpDSmlsQmJHaG13TldjTlFIY3JwTFVjVENraGJUbjd6?=
+ =?utf-8?B?RHJ3TkNHUWxMZC9Vb2ZkdUh0Z3BvREp4K3RHOHJhVGlPRnVXTTVidEV1YnEw?=
+ =?utf-8?B?TEZoSmJRVTcrazFUUEpydzdJak1MN255dVNKS09lMUxtN2RRdythZFhCSXJZ?=
+ =?utf-8?B?RDFQTFpFQkVsQ0p3TCtFM2N6YjNIM2xHZ1RCT0xWMzZyWnUrSmNpUGtoaXlj?=
+ =?utf-8?B?Tmp3ZDBOQ1Z4TDFQYi81RGlYUER4cUQ2MS9pRDEzMkRSdXh5dTNiWVJWVEU0?=
+ =?utf-8?B?U1dCZFdTY1J1RzBCSDJud29TZnJLR3pkTmZZOHRXMHEwNUhpY2h4RXl4MjRr?=
+ =?utf-8?B?UTBCa3FVNkJYUGQ4N0lRTDFaNGo0Y2g0SFZKcCtiVlZ4VVEzV3QrT2s0cHhK?=
+ =?utf-8?B?cmwxQmdXMjdmaGdZakVlNmdNbElhT1haRjFBWmhLY2dPZ29RQTlzWGc5a0Ux?=
+ =?utf-8?B?N0lVSTR3bStzNVVZZHZETzlaekJIWWdOL2FVWlJ5TXNtVTNYTEliVDJRcUVn?=
+ =?utf-8?B?Q1BUOWRrRTVmMGdrUjVHelhCWE1aZ2ltdW1JQm5xUjlLTkhra01CSFd5bzli?=
+ =?utf-8?B?V3RvY2w3amh2TCtwTkJ0ZzMzUWs5bGR0R1hhQkUvSnlwWXd3OXJOeUJVYmJ2?=
+ =?utf-8?B?ckpTSTdpL0xvWVRzcjJvWERvVFhHejl4RjcyVkJkQzJDdUFCNUNiNlRvamFQ?=
+ =?utf-8?B?UlFHUjVIZUJ0S2FNTExVMHJCNzRmci9kYVU2TkEvK0FIdU15d3hQTzlnNjJK?=
+ =?utf-8?B?TElDTWRGMVZjZEJtRlRaV0FEMklaNCtPTjlEV0w1bXRpM2dFT2xad0EySzda?=
+ =?utf-8?B?MXVraGUzemhmbVM3WXdwN1E5RC9UQ09yaXBBS0U5M2tXMzVKc1k5NGZaSTVI?=
+ =?utf-8?B?ZEhDTGwwOVhEeFFvc3E0bTU0aUdLWUhReE1MSXlZTXRlclplZmVDYUdTeExp?=
+ =?utf-8?B?dGtqOVVwbWhxbFlzQzhyWUpabDdqUWFLNjlMZ0pjbC9Jb2lhUjhVY0srd2dC?=
+ =?utf-8?B?TVBFYTZyajZDaUhxN0lBclB0cVJGTk1YMkI4YzR0c3BwRmM1TkVoWWpIbnVU?=
+ =?utf-8?B?dzVvNmNDcVBmQ05KbUFzMW8vem83SGFiaHpvUWpsLzZML3BQWFROLzBGVU1C?=
+ =?utf-8?B?K2QwcWFpSmRjbTdONHJxeHc5NmMzdWV0OE5HRkdYcHZGR0o0STNiTmJPang5?=
+ =?utf-8?B?ZWc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6a38f9ca-6b33-4f70-d8d3-08ddc5afc14b
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2025 04:01:21.1793
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: J7kzc6Ev/yQgenWwagaGN4Qc7+PNUbj5cLG/JD7w4irmD9z3WSTvC/CLlN9fhazW2+ebW3mFyZeQGmQEFL37S32FNGbhieJVm4wGM796qYo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5135
+X-OriginatorOrg: intel.com
 
+Hi Babu,
 
+On 7/8/25 3:17 PM, Babu Moger wrote:
+> Enable the mbm_l3_assignments resctrl file to be used to modify counter
+> assignments of CTRL_MON and MON groups when the "mbm_event" counter
+> assignment mode is enabled.
+> 
+> The assignment modifications are done in the following format:
+> <Event>:<Domain id>=<Assignment state>
+> 
+> Event: A valid MBM event in the
+>        /sys/fs/resctrl/info/L3_MON/event_configs directory.
+> 
+> Domain ID: A valid domain ID. When writing, '*' applies the changes
+> 	   to all domains.
+> 
+> Assignment states:
+> 
+>     _ : Unassign the counter.
 
-On 7/15/2025 7:51 PM, Manivannan Sadhasivam via B4 Relay wrote:
-> Hi,
-> 
-> Currently, in the event of AER/DPC, PCI core will try to reset the slot (Root
-> Port) and its subordinate devices by invoking bridge control reset and FLR. But
-> in some cases like AER Fatal error, it might be necessary to reset the Root
-> Ports using the PCI host bridge drivers in a platform specific way (as indicated
-> by the TODO in the pcie_do_recovery() function in drivers/pci/pcie/err.c).
-> Otherwise, the PCI link won't be recovered successfully.
-> 
-> So this series adds a new callback 'pci_host_bridge::reset_root_port' for the
-> host bridge drivers to reset the Root Port when a fatal error happens.
-> 
-> Also, this series allows the host bridge drivers to handle PCI link down event
-> by resetting the Root Ports and recovering the bus. This is accomplished by the
-> help of the new 'pci_host_handle_link_down()' API. Host bridge drivers are
-> expected to call this API (preferrably from a threaded IRQ handler) with
-> relevant Root Port 'pci_dev' when a link down event is detected for the port.
-> The API will reuse the pcie_do_recovery() function to recover the link if AER
-> support is enabled, otherwise it will directly call the reset_root_port()
-> callback of the host bridge driver (if exists).
-> 
-> For reference, I've modified the pcie-qcom driver to call
-> pci_host_handle_link_down() API with Root Port 'pci_dev' after receiving the
-> LINK_DOWN global_irq event and populated 'pci_host_bridge::reset_root_port()'
-> callback to reset the Root Port. Since the Qcom PCIe controllers support only
-> a single Root Port (slot) per controller instance, the API is going to be
-> invoked only once. For multi Root Port controllers, the controller driver is
-> expected to detect the Root Port that received the link down event and call
-> the pci_host_handle_link_down() API with 'pci_dev' of that Root Port.
-> 
-> Testing
-> -------
-> 
-> I've lost access to my test setup now. So Krishna (Cced) will help with testing
-> on the Qcom platform and Wilfred or Niklas should be able to test it on Rockchip
-> platform. For the moment, this series is compile tested only.
-Tested on QCOM platform rb3gen2.
-> 
-> Changes in v6:
-> - Incorporated the patch: https://lore.kernel.org/all/20250524185304.26698-2-manivannan.sadhasivam@linaro.org/
-> - Link to v5: https://lore.kernel.org/r/20250715-pci-port-reset-v5-0-26a5d278db40@oss.qualcomm.com
-> 
-> Changes in v5:
-> * Reworked the pci_host_handle_link_down() to accept Root Port instead of
->    resetting all Root Ports in the event of link down.
-> * Renamed 'reset_slot' to 'reset_root_port' to avoid confusion as both terms
->    were used interchangibly and the series is intended to reset Root Port only.
-> * Added the Rockchip driver change to this series.
-> * Dropped the applied patches and review/tested tags due to rework.
-> * Rebased on top of v6.16-rc1.
-> 
-> Changes in v4:
-> - Handled link down first in the irq handler
-> - Updated ICC & OPP bandwidth after link up in reset_slot() callback
-> - Link to v3: https://lore.kernel.org/r/20250417-pcie-reset-slot-v3-0-59a10811c962@linaro.org
-> 
-> Changes in v3:
-> - Made the pci-host-common driver as a common library for host controller
->    drivers
-> - Moved the reset slot code to pci-host-common library
-> - Link to v2: https://lore.kernel.org/r/20250416-pcie-reset-slot-v2-0-efe76b278c10@linaro.org
-> 
-> Changes in v2:
-> - Moved calling reset_slot() callback from pcie_do_recovery() to pcibios_reset_secondary_bus()
-> - Link to v1: https://lore.kernel.org/r/20250404-pcie-reset-slot-v1-0-98952918bf90@linaro.org
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-Tested-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+"the counter" -> "a counter" (user cannot control which counter is assigned)
 
-- Krishna Chaitanya.
+> 
+>     e : Assign the counter exclusively.
+
+"the counter" -> "a counter"
+
+> 
+> Examples:
+> 
+> $ cd /sys/fs/resctrl
+> $ cat /sys/fs/resctrl/mbm_L3_assignments
+>   mbm_total_bytes:0=e;1=e
+>   mbm_local_bytes:0=e;1=e
+> 
+> To unassign the counter associated with the mbm_total_bytes event on
+> domain 0:
+> 
+> $ echo "mbm_total_bytes:0=_" > mbm_L3_assignments
+> $ cat /sys/fs/resctrl/mbm_L3_assignments
+>   mbm_total_bytes:0=_;1=e
+>   mbm_local_bytes:0=e;1=e
+> 
+> To unassign the counter associated with the mbm_total_bytes event on
+> all the domains:
+> 
+> $ echo "mbm_total_bytes:*=_" > mbm_L3_assignments
+> $ cat /sys/fs/resctrl/mbm_L3_assignments
+>   mbm_total_bytes:0=_;1=_
+>   mbm_local_bytes:0=e;1=e
+> 
+> Signed-off-by: Babu Moger <babu.moger@amd.com>
 > ---
-> Manivannan Sadhasivam (3):
->        PCI/ERR: Add support for resetting the Root Ports in a platform specific way
->        PCI: host-common: Add link down handling for Root Ports
->        PCI: qcom: Add support for resetting the Root Port due to link down event
-> 
-> Wilfred Mallawa (1):
->        PCI: dw-rockchip: Add support to reset Root Port upon link down event
-> 
->   drivers/pci/controller/dwc/Kconfig            |   2 +
->   drivers/pci/controller/dwc/pcie-dw-rockchip.c |  91 ++++++++++++++++++-
->   drivers/pci/controller/dwc/pcie-qcom.c        | 120 ++++++++++++++++++++++++--
->   drivers/pci/controller/pci-host-common.c      |  33 +++++++
->   drivers/pci/controller/pci-host-common.h      |   1 +
->   drivers/pci/pci.c                             |  21 +++++
->   drivers/pci/pcie/err.c                        |   6 +-
->   include/linux/pci.h                           |   1 +
->   8 files changed, 260 insertions(+), 15 deletions(-)
+
+...
+
 > ---
-> base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
-> change-id: 20250715-pci-port-reset-4d9519570123
+>  Documentation/filesystems/resctrl.rst | 146 +++++++++++++++++++++++++-
+>  fs/resctrl/internal.h                 |   2 +
+>  fs/resctrl/monitor.c                  |  18 ++++
+>  fs/resctrl/rdtgroup.c                 | 123 +++++++++++++++++++++-
+>  4 files changed, 287 insertions(+), 2 deletions(-)
 > 
-> Best regards,
+> diff --git a/Documentation/filesystems/resctrl.rst b/Documentation/filesystems/resctrl.rst
+> index 4dd1d605d6ad..2b2acb55d8b1 100644
+> --- a/Documentation/filesystems/resctrl.rst
+> +++ b/Documentation/filesystems/resctrl.rst
+> @@ -527,7 +527,8 @@ When the "mba_MBps" mount option is used all CTRL_MON groups will also contain:
+>  	Event: A valid MBM event in the
+>  	       /sys/fs/resctrl/info/L3_MON/event_configs directory.
+>  
+> -	Domain ID: A valid domain ID.
+> +	Domain ID: A valid domain ID. When writing, '*' applies the changes
+> +		   to all the domains.
+>  
+>  	Assignment states:
+>  
+> @@ -544,6 +545,34 @@ When the "mba_MBps" mount option is used all CTRL_MON groups will also contain:
+>  	   mbm_total_bytes:0=e;1=e
+>  	   mbm_local_bytes:0=e;1=e
+>  
+> +	Assignments can be modified by writing to the interface.
+> +
+> +	Example:
+> +	To unassign the counter associated with the mbm_total_bytes event on domain 0:
+> +	::
+> +
+> +	 # echo "mbm_total_bytes:0=_" > /sys/fs/resctrl/mbm_L3_assignments
+> +	 # cat /sys/fs/resctrl/mbm_L3_assignments
+> +	   mbm_total_bytes:0=_;1=e
+> +	   mbm_local_bytes:0=e;1=e
+> +
+> +	To unassign the counter associated with the mbm_total_bytes event on all the domains:
+> +	::
+> +
+> +	 # echo "mbm_total_bytes:*=_" > /sys/fs/resctrl/mbm_L3_assignments
+> +	 # cat /sys/fs/resctrl/mbm_L3_assignments
+> +	   mbm_total_bytes:0=_;1=_
+> +	   mbm_local_bytes:0=e;1=e
+> +
+> +	To assign the counter associated with the mbm_total_bytes event on all domains in
+
+"the counter" -> "a counter" (motivation: user space cannot control which counter is assigned)
+
+> +	exclusive mode:
+> +	::
+> +
+> +	 # echo "mbm_total_bytes:*=e" > /sys/fs/resctrl/mbm_L3_assignments
+> +	 # cat /sys/fs/resctrl/mbm_L3_assignments
+> +	   mbm_total_bytes:0=e;1=e
+> +	   mbm_local_bytes:0=e;1=e
+> +
+>  Resource allocation rules
+>  -------------------------
+>  
+> @@ -1579,6 +1608,121 @@ View the llc occupancy snapshot::
+>    # cat /sys/fs/resctrl/p1/mon_data/mon_L3_00/llc_occupancy
+>    11234000
+>  
+> +
+> +Examples on working with mbm_assign_mode
+> +========================================
+> +
+> +a. Check if MBM counter assignment mode is supported.
+> +::
+> +
+> +  #mount -t resctrl resctrl /sys/fs/resctrl/
+
+"#mount" -> "# mount" (please build htmldocs to confirm everything
+looks consistent)
+
+> +
+> +  # cat /sys/fs/resctrl/info/L3_MON/mbm_assign_mode
+> +  [mbm_event]
+> +  default
+> +
+> +The "mbm_event" mode is detected and enabled.
+> +
+> +b. Check how many assignable counters are supported.
+> +::
+> +
+> +  # cat /sys/fs/resctrl/info/L3_MON/num_mbm_cntrs
+> +  0=32;1=32
+> +
+> +c. Check how many assignable counters are available for assignment in each domain.
+> +::
+> +
+> +  # cat /sys/fs/resctrl/info/L3_MON/available_mbm_cntrs
+> +  0=30;1=30
+> +
+> +d. To list the default group's assign states:
+
+Please note that these steps are inconsistent. Some end with "." and some end with ":"
+
+> +::
+> +
+> +  # cat /sys/fs/resctrl/mbm_L3_assignments
+> +  mbm_total_bytes:0=e;1=e
+> +  mbm_local_bytes:0=e;1=e
+> +
+> +e.  To unassign the counter associated with the mbm_total_bytes event on domain 0:
+> +::
+> +
+> +  # echo "mbm_total_bytes:0=_" > /sys/fs/resctrl/mbm_L3_assignments
+> +  # cat /sys/fs/resctrl/mbm_L3_assignments
+> +  mbm_total_bytes:0=_;1=e
+> +  mbm_local_bytes:0=e;1=e
+> +
+> +f. To unassign the counter associated with the mbm_total_bytes event on all domains:
+> +::
+> +
+> +  # echo "mbm_total_bytes:*=_" > /sys/fs/resctrl/mbm_L3_assignments
+> +  # cat /sys/fs/resctrl/mbm_L3_assignment
+> +  mbm_total_bytes:0=_;1=_
+> +  mbm_local_bytes:0=e;1=e
+> +
+> +g. To assign a counter associated with the mbm_total_bytes event on all domains in
+
+ah ... here "a counter" is used.
+
+> +exclusive mode:
+> +::
+> +
+> +  # echo "mbm_total_bytes:*=e" > /sys/fs/resctrl/mbm_L3_assignments
+> +  # cat /sys/fs/resctrl/mbm_L3_assignments
+> +  mbm_total_bytes:0=e;1=e
+> +  mbm_local_bytes:0=e;1=e
+> +
+> +h. Read the events mbm_total_bytes and mbm_local_bytes of the default group. There is
+> +no change in reading the events with the assignment.  If the event is unassigned when
+> +reading, then the read will come back as "Unassigned".
+
+Since returning "Unassigned" can be complicated, the associated description should
+probably just be done once in the doc. I expect this will be in the "mon_data" section.
+
+> +::
+> +
+> +  # cat /sys/fs/resctrl/mon_data/mon_L3_00/mbm_total_bytes
+> +  779247936
+> +  # cat /sys/fs/resctrl/mon_data/mon_L3_00/mbm_local_bytes
+> +  765207488
+> +
+> +i. Check the default event configurations.
+
+Drop "default" (there are only these event configurations)
+
+> +::
+> +
+> +  # cat /sys/fs/resctrl/info/L3_MON/event_configs/mbm_total_bytes/event_filter
+> +  local_reads,remote_reads,local_non_temporal_writes,remote_non_temporal_writes,
+> +  local_reads_slow_memory,remote_reads_slow_memory,dirty_victim_writes_all
+> +
+> +  # cat /sys/fs/resctrl/info/L3_MON/event_configs/mbm_local_bytes/event_filter
+> +  local_reads,local_non_temporal_writes,local_reads_slow_memory
+> +
+> +j. Change the event configuration for mbm_local_bytes.
+> +::
+> +
+> +  # echo "local_reads, local_non_temporal_writes, local_reads_slow_memory, remote_reads" >
+> +  /sys/fs/resctrl/info/L3_MON/counter_configs/mbm_local_bytes/event_filter
+
+"counter_configs" -> "event_configs" (this was also an issue in previous series, please
+use grep to ensure all are fixed)
+
+> +
+> +  # cat /sys/fs/resctrl/info/L3_MON/counter_configs/mbm_local_bytes/event_filter
+
+"counter_configs" -> "event_configs"
+
+> +  local_reads,local_non_temporal_writes,local_reads_slow_memory,remote_reads
+> +
+> +This will update all (across all domains of all monitor groups) counter assignments
+> +associated with the mbm_local_bytes event.
+> +
+> +k. Now read the local event again. The first read may come back with "Unavailable"
+> +status. The subsequent read of mbm_local_bytes will display the current value.
+> +::
+> +
+> +  # cat /sys/fs/resctrl/mon_data/mon_L3_00/mbm_local_bytes
+> +  Unavailable
+> +  # cat /sys/fs/resctrl/mon_data/mon_L3_00/mbm_local_bytes
+> +  314101
+> +
+> +l. Users have the option to go back to 'default' mbm_assign_mode if required. This can be
+> +done using the following command. Note that switching the mbm_assign_mode may reset all
+> +the MBM counters (and thus all MBM events) of all the resctrl groups.
+> +::
+> +
+> +  # echo "default" > /sys/fs/resctrl/info/L3_MON/mbm_assign_mode
+> +  # cat /sys/fs/resctrl/info/L3_MON/mbm_assign_mode
+> +  mbm_event
+> +  [default]
+> +
+> +m. Unmount the resctrl
+
+"Unmount the resctrl" -> "Unmount resctrl" or "Unmount the resctrl filesystem"?
+
+> +::
+> +
+> +  #umount /sys/fs/resctrl/
+
+"#umount" -> "# umount"
+
+> +
+>  Intel RDT Errata
+>  ================
+>  
+> diff --git a/fs/resctrl/internal.h b/fs/resctrl/internal.h
+> index b42890fd937a..9881674909f2 100644
+> --- a/fs/resctrl/internal.h
+> +++ b/fs/resctrl/internal.h
+> @@ -403,6 +403,8 @@ bool closid_allocated(unsigned int closid);
+>  
+>  int resctrl_find_cleanest_closid(void);
+>  
+> +struct mon_evt *mbm_get_mon_event_by_name(struct rdt_resource *r, char *name);
+> +
+>  int rdtgroup_assign_cntr_event(struct rdt_mon_domain *d, struct rdtgroup *rdtgrp,
+>  			       struct mon_evt *mevt);
+>  void rdtgroup_unassign_cntr_event(struct rdt_mon_domain *d, struct rdtgroup *rdtgrp,
+> diff --git a/fs/resctrl/monitor.c b/fs/resctrl/monitor.c
+> index e30a867c00bb..61419849b257 100644
+> --- a/fs/resctrl/monitor.c
+> +++ b/fs/resctrl/monitor.c
+> @@ -1220,3 +1220,21 @@ void resctrl_update_cntr_allrdtgrp(struct mon_evt *mevt)
+>  			rdtgroup_update_cntr_event(r, crgrp, mevt->evtid);
+>  	}
+>  }
+> +
+> +/*
+> + * mbm_get_mon_event_by_name() - Return the mon_evt entry for the matching
+> + * event name.
+> + */
+> +struct mon_evt *mbm_get_mon_event_by_name(struct rdt_resource *r, char *name)
+> +{
+> +	struct mon_evt *mevt;
+> +
+> +	for_each_mon_event(mevt) {
+> +		if (mevt->rid == r->rid && mevt->enabled &&
+> +		    resctrl_is_mbm_event(mevt->evtid) &&
+> +		    !strcmp(mevt->name, name))
+> +			return mevt;
+> +	}
+> +
+> +	return NULL;
+> +}
+> diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
+> index dc108c5db298..b26baca389bb 100644
+> --- a/fs/resctrl/rdtgroup.c
+> +++ b/fs/resctrl/rdtgroup.c
+> @@ -2071,6 +2071,126 @@ static int mbm_L3_assignments_show(struct kernfs_open_file *of, struct seq_file
+>  	return ret;
+>  }
+>  
+> +static int rdtgroup_modify_assign_state(char *assign, struct rdt_mon_domain *d,
+
+Please move to monitor.c
+
+> +					struct rdtgroup *rdtgrp, struct mon_evt *mevt)
+> +{
+> +	int ret = 0;
+> +
+> +	if (!assign || strlen(assign) != 1)
+> +		return -EINVAL;
+> +
+> +	switch (*assign) {
+> +	case 'e':
+> +		ret = rdtgroup_assign_cntr_event(d, rdtgrp, mevt);
+
+This patch enables the user to assign counters to multiple events in a
+single write. Looking at this flow:
+rdtgroup_assign_cntr_event()->rdtgroup_alloc_config_cntr() may thus
+be called on the same domain but for different events in a single write from
+user space.
+I thus think that the error message in rdtgroup_alloc_config_cntr()
+should not just contain the domain ID, but also the event *name*
+(not the ID since user space cannot be expect to understand if).
+considering this it seems that @mevt can be passed through
+to rdtgroup_alloc_config_cntr() instead of just the event ID to support
+this?
+
+> +		break;
+> +	case '_':
+> +		rdtgroup_unassign_cntr_event(d, rdtgrp, mevt);
+> +		break;
+> +	default:
+> +		ret = -EINVAL;
+
+Please add a "break".
+
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static int resctrl_process_assign(struct rdt_resource *r, struct rdtgroup *rdtgrp,
+
+Please move to monitor.c and rename to be more specific. For example, 
+resctrl_parse_mbm_assignment()? Open to ideas.
+
+> +				  char *event, char *tok)
+> +{
+> +	struct rdt_mon_domain *d;
+> +	unsigned long dom_id = 0;
+> +	char *dom_str, *id_str;
+> +	struct mon_evt *mevt;
+> +	int ret;
+> +
+> +	mevt = mbm_get_mon_event_by_name(r, event);
+> +	if (!mevt) {
+> +		rdt_last_cmd_printf("Invalid event %s\n", event);
+> +		return  -ENOENT;
+> +	}
+> +
+> +next:
+> +	if (!tok || tok[0] == '\0')
+> +		return 0;
+> +
+> +	/* Start processing the strings for each domain */
+> +	dom_str = strim(strsep(&tok, ";"));
+> +
+> +	id_str = strsep(&dom_str, "=");
+> +
+> +	/* Check for domain id '*' which means all domains */
+> +	if (id_str && *id_str == '*') {
+> +		ret = rdtgroup_modify_assign_state(dom_str, NULL, rdtgrp, mevt);
+> +		if (ret)
+> +			rdt_last_cmd_printf("Assign operation '%s:*=%s' failed\n",
+> +					    event, dom_str);
+> +		return ret;
+> +	} else if (!id_str || kstrtoul(id_str, 10, &dom_id)) {
+> +		rdt_last_cmd_puts("Missing domain id\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* Verify if the dom_id is valid */
+> +	list_for_each_entry(d, &r->mon_domains, hdr.list) {
+> +		if (d->hdr.id == dom_id) {
+> +			ret = rdtgroup_modify_assign_state(dom_str, d, rdtgrp, mevt);
+> +			if (ret) {
+> +				rdt_last_cmd_printf("Assign operation '%s:%ld=%s' failed\n",
+> +						    event, dom_id, dom_str);
+> +				return ret;
+> +			}
+> +			goto next;
+> +		}
+> +	}
+> +
+> +	rdt_last_cmd_printf("Invalid domain id %ld\n", dom_id);
+> +	return -EINVAL;
+> +}
+> +
+Reinette
 
