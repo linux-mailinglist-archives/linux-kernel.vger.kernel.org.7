@@ -1,135 +1,160 @@
-Return-Path: <linux-kernel+bounces-736133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7C71B09941
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:38:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 968FAB0993B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:38:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 729CB4A654F
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8C1C561C0D
 	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 01:38:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447CB1A2643;
-	Fri, 18 Jul 2025 01:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GFSBLDIT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211CF14A0BC;
+	Fri, 18 Jul 2025 01:37:55 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D41192D68;
-	Fri, 18 Jul 2025 01:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C159137E
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 01:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752802687; cv=none; b=md28EvsIoTUd05WvWT3xwtf5hsuXZLfrfbFLcFAKJOTwPGxUPCHUuiVNs5mWOS4WD2o6Ge2tWsunBv0CBbfID/MZE13oyDZz1Cfs/80EmD5+/omf45gNOe+p2BA/Iu7kqwU6aJtrKnbGqMhnbD1w3sPiBXjs3NFMan+i93QJ3bg=
+	t=1752802674; cv=none; b=goaGlq8ujla8fkQTAUqlDKdF8YOZMBs4I3RW15VMv/lq50g237DEPJtwrUrnspLxZdFhHT4E5U2y73PHyMfPMkCVX8+pQ54E2uspIoGvuPslZjbDggnw6ZjunHvQV5OUbeAJaPgngIlXYt8RqE3dDxLmr4z41VL5z38QuGt1BY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752802687; c=relaxed/simple;
-	bh=Gxsb4twQZ7MutHEiCFwLHr/tvz7swWwvohxSb9zPqnI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X+svdXMtQbTGTo5RSg+ysn4z9OLHsGS2udfsfoK7oct2FylmsYwj0PjCnW9Iq2/Y53hs74g1ztVnO4jHmG2qtu8Zy4T9/dQIbgkckJQBrcZPTfLwU4YCumJdLrHMjSnFhWAYZ8xSDGR98g4bb56UFSlcJup8euefPhpq0MxpG/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GFSBLDIT; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752802686; x=1784338686;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Gxsb4twQZ7MutHEiCFwLHr/tvz7swWwvohxSb9zPqnI=;
-  b=GFSBLDITQ+l58IoZ9XTMrSx8ZlUcrziKWd2vxr63qEyF1U+Z+fVXZjae
-   M2k496EkQHtulhi9cdcNcv7JUM32DQPB1Sr7jgDKYncnxcJg8mmbnn+62
-   h5Ln8HueQ4q7q47ropDSYls6to9xNFUEgyJ/ALPNw1SjMDvW/cZOivF95
-   tuhUSCetGQS8SQ/2XbWktUyNYDLmKi2A4HDrk0UofvQxnnzdE6QergkMP
-   hclqe/ZNRadxnK/LAQr/xzljISRXWKLYDBAJ5gNWROPRJ2ajx8r/Yji7W
-   X7d4HqMcrmqS+76KzFq8ogmWZ0wJ5s1ZMWo7YoFo3rv1JySiIIVuOezmF
-   w==;
-X-CSE-ConnectionGUID: eFpetS8qQYmExQAtivm0nA==
-X-CSE-MsgGUID: YV+dlN8xS1Gjls+VcNuHYw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11495"; a="72661797"
-X-IronPort-AV: E=Sophos;i="6.16,320,1744095600"; 
-   d="scan'208";a="72661797"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 18:38:03 -0700
-X-CSE-ConnectionGUID: Z2UUVbOuQFuAmZyMGnYsEA==
-X-CSE-MsgGUID: 5uXw69UySuOliODhA/VrLw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,320,1744095600"; 
-   d="scan'208";a="162216196"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 17 Jul 2025 18:37:59 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uca2u-000ECp-2C;
-	Fri, 18 Jul 2025 01:37:56 +0000
-Date: Fri, 18 Jul 2025 09:37:14 +0800
-From: kernel test robot <lkp@intel.com>
-To: Cosmin Tanislav <demonsingur@gmail.com>,
-	Cosmin Tanislav <cosmin.tanislav@analog.com>,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
-	Julien Massot <julien.massot@collabora.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Cc: Paul Gazzillo <paul@pgazz.com>,
-	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
-	oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v6 15/24] media: i2c: add Maxim GMSL2/3 serializer and
- deserializer framework
-Message-ID: <202507180909.8Mnk3jkp-lkp@intel.com>
-References: <20250716193111.942217-16-demonsingur@gmail.com>
+	s=arc-20240116; t=1752802674; c=relaxed/simple;
+	bh=HjXSsauJZqFLcl7USIHO95W9ZqmoOlf/nTrHHv1ZGFg=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Z2/RfKVeVZxLhF2gLRrsUqxuEy2W1QeYlK3msk3bp5kFzURlOzkyMQ7RXcSflG8WdnIO0O6cez9L3L20w9sxOPRY2/yL9wE+z7Dfdu5rb9Q6ihUDClKCSi2AyJ7QrZd/pk6MgwfUwmeX6Fx2EDG0+xcUCaYQtAXUA7v1PTcbsgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bjspN3JfqztSbx;
+	Fri, 18 Jul 2025 09:36:44 +0800 (CST)
+Received: from kwepemg100017.china.huawei.com (unknown [7.202.181.58])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6A62C180486;
+	Fri, 18 Jul 2025 09:37:49 +0800 (CST)
+Received: from [10.174.178.114] (10.174.178.114) by
+ kwepemg100017.china.huawei.com (7.202.181.58) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 18 Jul 2025 09:37:48 +0800
+Message-ID: <8d604308-36d3-4b55-8ddb-b33f8b586c1a@huawei.com>
+Date: Fri, 18 Jul 2025 09:37:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250716193111.942217-16-demonsingur@gmail.com>
+User-Agent: Mozilla Thunderbird
+CC: <mawupeng1@huawei.com>, <akpm@linux-foundation.org>, <ardb@kernel.org>,
+	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm: ignore nomap memory during mirror init
+To: <rppt@kernel.org>
+References: <20250717085723.1875462-1-mawupeng1@huawei.com>
+ <aHjQp9zPVPuPyP3B@kernel.org>
+ <9688e968-e9af-4143-b550-16c02a0b4ceb@huawei.com>
+ <aHj8mfecDhJJZW1Y@kernel.org>
+From: mawupeng <mawupeng1@huawei.com>
+In-Reply-To: <aHj8mfecDhJJZW1Y@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemg100017.china.huawei.com (7.202.181.58)
 
-Hi Cosmin,
 
-kernel test robot noticed the following build warnings:
 
-[auto build test WARNING on next-20250716]
-[also build test WARNING on v6.16-rc6]
-[cannot apply to robh/for-next staging/staging-testing staging/staging-next staging/staging-linus arm64/for-next/core linus/master v6.16-rc6 v6.16-rc5 v6.16-rc4]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+On 2025/7/17 21:37, Mike Rapoport wrote:
+> On Thu, Jul 17, 2025 at 07:06:52PM +0800, mawupeng wrote:
+>>
+>> On 2025/7/17 18:29, Mike Rapoport wrote:
+>>> On Thu, Jul 17, 2025 at 04:57:23PM +0800, Wupeng Ma wrote:
+>>>> When memory mirroring is enabled, the BIOS may reserve memory regions
+>>>> at the start of the physical address space without the MR flag. This will
+>>>> lead to zone_movable_pfn to be updated to the start of these reserved
+>>>> regions, resulting in subsequent mirrored memory being ignored.
+>>>>
+>>>> Here is the log with efi=debug enabled:
+>>>>   efi:   0x084004000000-0x0842bf37ffff [Conventional|   |  |MR|...|WB|WT|WC|  ]
+>>>>   efi:   0x0842bf380000-0x0842c21effff [Loader Code |   |  |MR|...|WB|WT|WC|  ]
+>>>>   efi:   0x0842c21f0000-0x0847ffffffff [Conventional|   |  |MR|...|WB|WT|WC|  ]
+>>>>   efi:   0x085000000000-0x085fffffffff [Conventional|   |  |  |...|WB|WT|WC|  ]
+>>>> ...
+>>>>   efi:   0x084000000000-0x084003ffffff [Reserved    |   |  |  |...|WB|WT|WC|  ]
+>>>>
+>>>> Since this kind of memory can not be used by kernel. ignore nomap memory to fix
+>>>> this issue.
+>>
+>> Since the first non-mirror pfn of this node is 0x084000000000, then zone_movable_pfn 
+>> for this node will be updated to this. This will lead to Mirror Region 
+>>   - 0x084004000000-0x0842bf37ffff
+>>   - 0x0842bf380000-0x0842c21effff 
+>>   - 0x0842c21f0000-0x0847ffffffff
+>> be seen as non-mirror memory since zone_movable_pfn will be the start_pfn of this node
+>> in adjust_zone_range_for_zone_movable().
+> 
+> What do you mean by "seen as non-mirror memory"?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Cosmin-Tanislav/media-mc-Add-INTERNAL-pad-flag/20250717-033901
-base:   next-20250716
-patch link:    https://lore.kernel.org/r/20250716193111.942217-16-demonsingur%40gmail.com
-patch subject: [PATCH v6 15/24] media: i2c: add Maxim GMSL2/3 serializer and deserializer framework
-config: nios2-kismet-CONFIG_I2C_MUX-CONFIG_VIDEO_MAXIM_SERDES-0-0 (https://download.01.org/0day-ci/archive/20250718/202507180909.8Mnk3jkp-lkp@intel.com/config)
-reproduce: (https://download.01.org/0day-ci/archive/20250718/202507180909.8Mnk3jkp-lkp@intel.com/reproduce)
+It mean these memory range will be add to movable zone.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507180909.8Mnk3jkp-lkp@intel.com/
+> 
+> What is the problem with having movable zone on that node start at
+> 0x084000000000?
+> 
+> Can you post the kernel log up to "Memory: nK/mK available" line for more
+> context?
 
-kismet warnings: (new ones prefixed by >>)
->> kismet: WARNING: unmet direct dependencies detected for I2C_MUX when selected by VIDEO_MAXIM_SERDES
-   WARNING: unmet direct dependencies detected for I2C_MUX
-     Depends on [n]: I2C [=n]
-     Selected by [y]:
-     - VIDEO_MAXIM_SERDES [=y] && MEDIA_SUPPORT [=y] && VIDEO_DEV [=y]
-   
-   WARNING: unmet direct dependencies detected for I2C_ATR
-     Depends on [n]: I2C [=n]
-     Selected by [y]:
-     - VIDEO_MAXIM_SERDES [=y] && MEDIA_SUPPORT [=y] && VIDEO_DEV [=y]
+Memory: nK/mK available can not see be problem here, since there is nothing wrong
+with the total memory. However this problem can be shown via lsmem --output-all
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+w/o this patch
+[root@localhost ~]# lsmem --output-all
+RANGE                                  SIZE  STATE REMOVABLE         BLOCK NODE   ZONES
+0x0000084000000000-0x00000847ffffffff   32G online       yes   67584-67839    0 Movable
+0x0000085000000000-0x0000085fffffffff   64G online       yes   68096-68607    0 Movable
+
+w/ this patch
+[root@localhost ~]# lsmem --output-all
+RANGE                                  SIZE  STATE REMOVABLE         BLOCK NODE   ZONES
+0x0000084000000000-0x00000847ffffffff   32G online       yes   8448-8479    0  Normal
+0x0000085000000000-0x0000085fffffffff   64G online       yes   8512-8575    0 Movable
+
+
+As shown above, All memory in this node is added to Zone Movable even some range of the memory
+is mirror memory. With this patch, 0x0000084000000000-0x00000847ffffffff will be added to
+zone normal as expected since the MR attribute.
+
+
+>  
+>> So igore nomap memory to fix this problem.
+>>
+>>>
+>>> If the memory is nomap it won't be used by the kernel anyway.
+>>> What's the actual issue you are trying to fix?
+>>>  
+>>>> Signed-off-by: Wupeng Ma <mawupeng1@huawei.com>
+>>>> ---
+>>>>  mm/mm_init.c | 2 +-
+>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/mm/mm_init.c b/mm/mm_init.c
+>>>> index f2944748f526..1c36518f0fe4 100644
+>>>> --- a/mm/mm_init.c
+>>>> +++ b/mm/mm_init.c
+>>>> @@ -405,7 +405,7 @@ static void __init find_zone_movable_pfns_for_nodes(void)
+>>>>  		}
+>>>>  
+>>>>  		for_each_mem_region(r) {
+>>>> -			if (memblock_is_mirror(r))
+>>>> +			if (memblock_is_mirror(r) || memblock_is_nomap(r))
+>>>>  				continue;
+>>>>  
+>>>>  			nid = memblock_get_region_node(r);
+>>>> -- 
+>>>> 2.43.0
+>>>>
+>>>
+>>
+> 
+
 
