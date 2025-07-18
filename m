@@ -1,210 +1,114 @@
-Return-Path: <linux-kernel+bounces-736198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F354B099FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 04:58:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A35FB099F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 04:52:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ECB24A420D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 02:57:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EB185A0D12
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 02:52:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36AE61C862C;
-	Fri, 18 Jul 2025 02:58:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119D41C5F14;
+	Fri, 18 Jul 2025 02:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dQ/UCmcM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DQDiBNiY"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98542A923;
-	Fri, 18 Jul 2025 02:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12FF21A23A0
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 02:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752807480; cv=none; b=h9PbJZKC0wtdqkWBeYg1fmIW/VYb4/8rIFnTVTuL2UTdtWKZj5UK48dudhTvjUlQJr+f172tA36jy5wSISiD7XWffzZf84tOxvEUgV1EcqHNnp2Udvz6ek+j70CYJXhDCwxOSXvmAcKEWGn1kyagLAk0BJFm8DAsS9BhFeMPwNw=
+	t=1752807141; cv=none; b=IkN27X4aysannWHSU64I4EBTJA/09LrTQG4Rekxhlg8pN8k/1gT5RAzBhqc+UPZQ+dzskvO/RXiVROgnkXNe0PSkjMLCS+3X/AaXZVnTvYMtCCpuj8glOH7i+ReZK9Us/MsqfsFWgrmVF++OcWVHdNYvlKORRQQpHkLUTKKse8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752807480; c=relaxed/simple;
-	bh=yQspi0IdSkvFDWpvj8rAaHUF0Fjkr1+s0cusMb2OIWk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i4WQPt1jAE/HznI3ZjA4ylbyycm2RoNwB4g9fGQ5mF7vL5FmIfTMJFWp35TIQMbMxl9dTNCBUDLIm5H3RbUp1g/NC4tWFPfP8AOvGmJ7ArgpeQ1oCDYc6dRX1Ot5ZPTperMJXRHFUMcz2Bv8hEKOzYOyfUGmg0fAf2mRgkWUp0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dQ/UCmcM; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752807478; x=1784343478;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=yQspi0IdSkvFDWpvj8rAaHUF0Fjkr1+s0cusMb2OIWk=;
-  b=dQ/UCmcMoQfCS98G2OHdhzJDOU1BJdgwN+WtE9U1y9aYGS6zryYmrHbw
-   HLFIOjckHOBXwgqEtC0UWCEgHKTPTddg6pjqMQ3NTArrhW8VME4cgVRQB
-   W6DS23Va2Go+uvY3a9na/zxP8jyHRTE/DZHl9ukGH6vbpzMPDkJ84AzoV
-   F860TogUyTdpP1fH0j3bg5A31M0+owbOPOAibsyr35PsoXGaq4sfDjK/c
-   s7c4jIoVTUjzzGCVvVcPut/feDkRO+vI96AglO1Y3MnxXi5X/+iflnROW
-   dlwmBRdNLOpQxvY0njZ1pvvsT0uoE11PBX5tpaE98pifhQzeSLN2Rmjob
-   A==;
-X-CSE-ConnectionGUID: +ILYYvB1RoGqZSmDqdGVcQ==
-X-CSE-MsgGUID: TtZ+iYjQR6+15HkFbLp+Yw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11495"; a="72666003"
-X-IronPort-AV: E=Sophos;i="6.16,320,1744095600"; 
-   d="scan'208";a="72666003"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 19:57:57 -0700
-X-CSE-ConnectionGUID: a1mpQy6NQsSBicOKr/urXQ==
-X-CSE-MsgGUID: 4L4luONoSeyCt8ddAZZX9A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,320,1744095600"; 
-   d="scan'208";a="158033113"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by orviesa007.jf.intel.com with ESMTP; 17 Jul 2025 19:57:38 -0700
-Date: Fri, 18 Jul 2025 10:48:55 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Ackerley Tng <ackerleytng@google.com>
-Cc: Yan Zhao <yan.y.zhao@intel.com>,
-	Vishal Annapurve <vannapurve@google.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Alexey Kardashevskiy <aik@amd.com>,
-	Fuad Tabba <tabba@google.com>, kvm@vger.kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, x86@kernel.org,
-	linux-fsdevel@vger.kernel.org, ajones@ventanamicro.com,
-	akpm@linux-foundation.org, amoorthy@google.com,
-	anthony.yznaga@oracle.com, anup@brainfault.org,
-	aou@eecs.berkeley.edu, bfoster@redhat.com,
-	binbin.wu@linux.intel.com, brauner@kernel.org,
-	catalin.marinas@arm.com, chao.p.peng@intel.com,
-	chenhuacai@kernel.org, dave.hansen@intel.com, david@redhat.com,
-	dmatlack@google.com, dwmw@amazon.co.uk, erdemaktas@google.com,
-	fan.du@intel.com, fvdl@google.com, graf@amazon.com,
-	haibo1.xu@intel.com, hch@infradead.org, hughd@google.com,
-	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz,
-	james.morse@arm.com, jarkko@kernel.org, jgowans@amazon.com,
-	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com,
-	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com,
-	kent.overstreet@linux.dev, kirill.shutemov@intel.com,
-	liam.merwick@oracle.com, maciej.wieczor-retman@intel.com,
-	mail@maciej.szmigiero.name, maz@kernel.org, mic@digikod.net,
-	michael.roth@amd.com, mpe@ellerman.id.au, muchun.song@linux.dev,
-	nikunj@amd.com, nsaenz@amazon.es, oliver.upton@linux.dev,
-	palmer@dabbelt.com, pankaj.gupta@amd.com, paul.walmsley@sifive.com,
-	pbonzini@redhat.com, pdurrant@amazon.co.uk, peterx@redhat.com,
-	pgonda@google.com, pvorel@suse.cz, qperret@google.com,
-	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com,
-	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com,
-	quic_pheragu@quicinc.com, quic_svaddagi@quicinc.com,
-	quic_tsoni@quicinc.com, richard.weiyang@gmail.com,
-	rick.p.edgecombe@intel.com, rientjes@google.com,
-	roypat@amazon.co.uk, rppt@kernel.org, seanjc@google.com,
-	shuah@kernel.org, steven.price@arm.com, steven.sistare@oracle.com,
-	suzuki.poulose@arm.com, thomas.lendacky@amd.com,
-	usama.arif@bytedance.com, vbabka@suse.cz, viro@zeniv.linux.org.uk,
-	vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org,
-	willy@infradead.org, xiaoyao.li@intel.com, yilun.xu@intel.com,
-	yuzenghui@huawei.com, zhiquan1.li@intel.com
-Subject: Re: [RFC PATCH v2 04/51] KVM: guest_memfd: Introduce
- KVM_GMEM_CONVERT_SHARED/PRIVATE ioctls
-Message-ID: <aHm2F95XwzdD7nod@yilunxu-OptiPlex-7050>
-References: <CAGtprH8eR_S50xDnnMLHNCuXrN2Lv_0mBRzA_pcTtNbnVvdv2A@mail.gmail.com>
- <CA+EHjTwjKVkw2_AK0Y0-eth1dVW7ZW2Sk=73LL9NeQYAPpxPiw@mail.gmail.com>
- <CAGtprH_Evyc7tLhDB0t0fN+BUx5qeqWq8A2yZ5-ijbJ5UJ5f-g@mail.gmail.com>
- <9502503f-e0c2-489e-99b0-94146f9b6f85@amd.com>
- <20250624130811.GB72557@ziepe.ca>
- <CAGtprH_qh8sEY3s-JucW3n1Wvoq7jdVZDDokvG5HzPf0HV2=pg@mail.gmail.com>
- <aGTvTbPHuXbvj59t@yzhao56-desk.sh.intel.com>
- <diqz8qknhj3l.fsf@ackerleytng-ctop.c.googlers.com>
- <aHjDIxxbv0DnqI6S@yilunxu-OptiPlex-7050>
- <diqzqzyeg3j2.fsf@ackerleytng-ctop.c.googlers.com>
+	s=arc-20240116; t=1752807141; c=relaxed/simple;
+	bh=uO/aLk34PxK6RuOp80mrh8FbIyan0m1N7A2QsZ13ks0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Fk7lMbrEZKv0tXnwRitbmf2rreMLX0hJdkvu4DSq7XhckX2DqU39eHCQ3p5XxxT3V8/xYd3cSmBFuHr+vMHkm1X6bT6wFHGsL6+jf+LtJrlHShNL0TVfEqx8lRDmO548qnpzlTZkmd2K6UiR/npKvTBf8fZeJGFgWiKkVzu5kSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DQDiBNiY; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6fadb9a0325so16090136d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 19:52:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752807138; x=1753411938; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pGG0XVFo2FBP426ZvN01QcnEm/j5L0pLYY1EkcsyU/w=;
+        b=DQDiBNiYMIEPu9MQMZhKxfirfJ9+LzXGk+WzoNmnQPaatVgukSGbeANupB8xx+Q8vS
+         NOlty20FH7bWbuxa1VwUzA6hMYeZYXy9MvrVpX/pYhSikEOUo05FIYCS4nNpXIvSG5Wt
+         seTWbbS6z0CeLOPQMp8RF5piZOzgHf9J3+6Upn2bAI2mpQZUIl6VV4No6oPziWxBx9/N
+         umwurhiH0MTzXMxJ2uvFe5a9ioPzbSF8Cfr/PFRKXwV6z7opw7WccWvzNYGexS4ePLmA
+         0CalIYiHaz5Lb4ISfSFr7cFa/Tx3PSzRmstnHflpVF9GqsyrhcgjoYgYZ4RPw78aAgT3
+         BD8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752807138; x=1753411938;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pGG0XVFo2FBP426ZvN01QcnEm/j5L0pLYY1EkcsyU/w=;
+        b=S0u6fHrw5+KrYG2HiswyJy3V2E232kW9CzrGnzZGGfZ4+vC0tbjj6zjyn1qYrp3vFF
+         5ILyWT/MYen9CEYhxWNK7OYFY96GWqyoVhDxjkwJ0XjGgnV2Au9wp4hiam292UsG7FCf
+         sxLiPE1ks5Z2G/8CKtHK7nVPsJmrkB7hh4lUXOvkqYzAHVLJG1/I3OziDyf4ewofCRqA
+         oxWrQ01gsAt6P2Hdhk9m/Dc0KLUlaH96GjlmjoxZ3VdMn3K+iPWOmaKRLpABQ+PbXZ72
+         C/ub3n0bGGRgFwW9nGOFfX/b7h4Oq0Scct9jQlgC3gOLmOTm36qGL4USuiC516IEeFdm
+         yUlw==
+X-Forwarded-Encrypted: i=1; AJvYcCXf3wN5gZUW0nfdvPrGLvsw/axHI68z6utUsyWOURwpvWQ6xt+WbO4dR35HHLrnIVzCeLOmH2KXf8Kba7M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYJ/y6KXWqnTovZPpdIIk478xOOWtEO+LeqK4Mfl/zbP8+RtDy
+	t0/i7omnFmLZ8lNWYNn5q1ga2t0JUFoHuiGEV3gBJlTDKqomtfK4EWGe
+X-Gm-Gg: ASbGnctulsX4eg+yJIroP2z51Ey9TkjJX8X+Ux1ktnqkXufRQysevI5ziDbrwGRCEp6
+	vZY593maSqwIkks+mKy08/aEYdODXTfMmTmo98hrG4UYS+YFx2Sf/UgM9PdIbLYpphRKyzk+8In
+	ETQj2XDPhzMT24MQKvZz4OEWFd6ceR9kFNBnzMoOj3dJfA23P4huw54wYt4DTCXq7zsZKQGpRTc
+	ukVUnHjqcQSXFOH4ft8GrqeB/+XosDcmm5ZEe/HkKNjGv/oR+1AUSJH3ELIHHA6lUi7630hVfqa
+	df4WAcxZ8dJVVL99PDpBq4YmpUubTKh6HXKS6nnJycIDrSThyASiSKcDEPun4WU3TsSlVhcaxIn
+	fOWjdqKtr1Qi7g7LpJ2cCRh8NtPsnwKqZqN85suK71ujXVKw53wM=
+X-Google-Smtp-Source: AGHT+IGGEdFMjsd5e7qbjSVwxJTb2UjsHp4FrYMeWQlkHqMQHmF2eQ2SMeO6q6aDdnjwpskl4Cod9A==
+X-Received: by 2002:a05:6214:5f0e:b0:704:93e8:5e5a with SMTP id 6a1803df08f44-704f6ac6425mr143547526d6.28.1752807137919;
+        Thu, 17 Jul 2025 19:52:17 -0700 (PDT)
+Received: from linux-kernel-dev-start.. ([159.203.26.228])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7051ba9d63asm2710226d6.89.2025.07.17.19.52.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Jul 2025 19:52:17 -0700 (PDT)
+From: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+Subject: [PATCH v5 0/1] staging: rtl8192u: Rename ChannelPlan to channel_plan and fix shadowed index
+Date: Fri, 18 Jul 2025 02:52:05 +0000
+Message-Id: <20250718025206.171361-1-vivek.balachandhar@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <diqzqzyeg3j2.fsf@ackerleytng-ctop.c.googlers.com>
 
-On Thu, Jul 17, 2025 at 09:56:01AM -0700, Ackerley Tng wrote:
-> Xu Yilun <yilun.xu@linux.intel.com> writes:
-> 
-> > On Wed, Jul 16, 2025 at 03:22:06PM -0700, Ackerley Tng wrote:
-> >> Yan Zhao <yan.y.zhao@intel.com> writes:
-> >> 
-> >> > On Tue, Jun 24, 2025 at 07:10:38AM -0700, Vishal Annapurve wrote:
-> >> >> On Tue, Jun 24, 2025 at 6:08 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> >> >> >
-> >> >> > On Tue, Jun 24, 2025 at 06:23:54PM +1000, Alexey Kardashevskiy wrote:
-> >> >> >
-> >> >> > > Now, I am rebasing my RFC on top of this patchset and it fails in
-> >> >> > > kvm_gmem_has_safe_refcount() as IOMMU holds references to all these
-> >> >> > > folios in my RFC.
-> >> >> > >
-> >> >> > > So what is the expected sequence here? The userspace unmaps a DMA
-> >> >> > > page and maps it back right away, all from the userspace? The end
-> >> >> > > result will be the exactly same which seems useless. And IOMMU TLB
-> >> >> 
-> >> >>  As Jason described, ideally IOMMU just like KVM, should just:
-> >> >> 1) Directly rely on guest_memfd for pinning -> no page refcounts taken
-> >> >> by IOMMU stack
-> >> > In TDX connect, TDX module and TDs do not trust VMM. So, it's the TDs to inform
-> >> > TDX module about which pages are used by it for DMAs purposes.
-> >> > So, if a page is regarded as pinned by TDs for DMA, the TDX module will fail the
-> >> > unmap of the pages from S-EPT.
-> >> >
-> >> > If IOMMU side does not increase refcount, IMHO, some way to indicate that
-> >> > certain PFNs are used by TDs for DMA is still required, so guest_memfd can
-> >> > reject the request before attempting the actual unmap.
-> >> > Otherwise, the unmap of TD-DMA-pinned pages will fail.
-> >> >
-> >> > Upon this kind of unmapping failure, it also doesn't help for host to retry
-> >> > unmapping without unpinning from TD.
-> >> >
-> >> >
-> >> 
-> >> Yan, Yilun, would it work if, on conversion,
-> >> 
-> >> 1. guest_memfd notifies IOMMU that a conversion is about to happen for a
-> >>    PFN range
-> >
-> > It is the Guest fw call to release the pinning.
-> 
-> I see, thanks for explaining.
-> 
-> > By the time VMM get the
-> > conversion requirement, the page is already physically unpinned. So I
-> > agree with Jason the pinning doesn't have to reach to iommu from SW POV.
-> >
-> 
-> If by the time KVM gets the conversion request, the page is unpinned,
-> then we're all good, right?
+This is my first contribution to Linux Kernel. 
+This patch addresses a naming inconsistency in the rtl8192u driver.
 
-Yes, unless guest doesn't unpin the page first by mistake. Guest would
-invoke a fw call tdg.mem.page.release to unpin the page before
-KVM_HC_MAP_GPA_RANGE.
+- The global array `ChannelPlan` has been renamed to `channel_plan` to follow Linux kernel naming conventions.
+- The local variable used as an index into this array was also named `channel_plan`, which caused shadowing. It has been renamed to `chan` for clarity and to avoid confusion.
 
-> 
-> When guest_memfd gets the conversion request, as part of conversion
-> handling it will request to zap the page from stage-2 page tables. TDX
-> module would see that the page is unpinned and the unmapping will
-> proceed fine. Is that understanding correct?
+Changes since v4:
+- Renamed `chan_plan_idx` to `chan` per Dan Carpenter’s suggestion.
+- Removed unrelated and accidental changes to `Makefile` and `init/main.c`.
 
-Yes, again unless guess doesn't unpin.
+This change improves code readability and compliance with kernel coding style.
 
-> 
-> >> 2. IOMMU forwards the notification to TDX code in the kernel
-> >> 3. TDX code in kernel tells TDX module to stop thinking of any PFNs in
-> >>    the range as pinned for DMA?
-> >
-> > TDX host can't stop the pinning. Actually this mechanism is to prevent
-> > host from unpin/unmap the DMA out of Guest expectation.
-> >
-> 
-> On this note, I'd also like to check something else. Putting TDX connect
-> and IOMMUs aside, if the host unmaps a guest private page today without
-> the guest requesting it, the unmapping will work and the guest will be
-> broken, right?
+---
 
-Correct. The unmapping will work, the guest can't continue anymore.
+Vivek BalachandharTN (1):
+  staging: rtl8192u: Rename ChannelPlan to channel_plan and fix index
+    name
 
-Thanks,
-Yilun
+ drivers/staging/rtl8192u/r8192U_core.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
+
+-- 
+2.39.5
 
