@@ -1,225 +1,157 @@
-Return-Path: <linux-kernel+bounces-736260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BF42B09AA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:50:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4152DB09AA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:51:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A2715A6538
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 04:50:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 946744E834B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 04:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 651D51C8629;
-	Fri, 18 Jul 2025 04:50:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F851C2335;
+	Fri, 18 Jul 2025 04:51:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rq+JLa9k"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UhGOvFzb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A29D53214;
-	Fri, 18 Jul 2025 04:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752814236; cv=fail; b=Tmt+HmJlwg/K7TkSeUwYfsUDzXowG2y5+p34hpKwx8Wvpb+IPkVXE6YygUNEPqbPtJI8/phNsUGYtFkDtVBrB/Sf9TN3dj2TV5Z5k0zEhsQWyF09QTm2x0lLtWKl3ABxpI5HBMnbe+LYKYvJkUPCX7e2Nr+nduQlZyvuIu+EQG8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752814236; c=relaxed/simple;
-	bh=vATF7o46zw0xy173VWrmffiH8oHNNx0N+5eYeh440so=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=RihBkFgs3YhjwdhtxAl6d4eYQ50FNLAJG6Z050tbnyQHw44P9QzX07SZ0GtrV1RVvGIINiC29LISfPECSZVmoHYAwfHOKT+l6syrAiIwC/2XiEwPDQmkIc+4kLxILYWWInu91JP6F15qqgf3ZH+wXHZquUfyibEXlDSWrMEJTYo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rq+JLa9k; arc=fail smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752814235; x=1784350235;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=vATF7o46zw0xy173VWrmffiH8oHNNx0N+5eYeh440so=;
-  b=Rq+JLa9kzDZL9Hcwv4Z15+O+ua/LjIjbqllpOYvkhghy7v8sl92iEb02
-   Uac5on8t5FGNyFVKx/tGoYbvTACPa2ndnfHIbVVHZ2EYTWnWT4ijdJ3Lu
-   attVl3gISe9N1MZOlvm6hsFFshRvMt2bbclROPULRxqDy1PLPpIVIfcye
-   lCkHadypmGXQFy+qhxPV9I66j8H4/2JxgQ87jFE/HatNEViRLk1tGqThP
-   ADvntL1SlQwKGAAIpBSVhc/dUyQl8PHCOjz848/3E+eO/Jwxv+kpNpRF7
-   Vr2nrnsrdhjA5zuBeMyDCD0g+D4710sVznJlwhlg6xggTYXjoCE8JxDbC
-   w==;
-X-CSE-ConnectionGUID: 2Uabj/JSToCVpB8hkbx3jQ==
-X-CSE-MsgGUID: OmE7GGvMS/OmvvX6Y9ej9g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11495"; a="66551338"
-X-IronPort-AV: E=Sophos;i="6.16,320,1744095600"; 
-   d="scan'208";a="66551338"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 21:50:34 -0700
-X-CSE-ConnectionGUID: HX5aAQUAR3ijlmKmiXbCrQ==
-X-CSE-MsgGUID: 4jNQJZRlSOGtaHjt3yr0pQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,320,1744095600"; 
-   d="scan'208";a="162243135"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 21:50:35 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Thu, 17 Jul 2025 21:50:33 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Thu, 17 Jul 2025 21:50:33 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (40.107.93.58) by
- edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 17 Jul 2025 21:50:33 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tl8+a60By9z/yZ+6RmXES8MZDiMwyScsQo1TF6S1dU1IITxEJlUnhDdV7mAaC33dr3PuE6Ktk4+RRrmiuiuJO2o5VPpM1xizk/dIQs+BCn6mUcwKC2F1aSvemRnQJ0K1gP1deBw+YqL17yw0fp7j3liXwGd872ISI+5HyCuejHDu4PI+W8ibkx3JruPqO/nVt2fXhdcBrh75gMz4h8YqOdX9yu/KDMb+bGxkv8+hwBLUeriUHqtIHujaq739JbU3D9KZZEVONXVk5xKTW4SZhYeTaJG5DbI6YairGhs9tjqqyt5kc8ndcFPuKQRmIzBRpg00PySn589kyDu0AQ/Xnw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vATF7o46zw0xy173VWrmffiH8oHNNx0N+5eYeh440so=;
- b=WZkBOOXcKb5BWmeO8OSsmmtmwVI6DxSZkpcwDf8W6acgTf+e2gONgLzFrkYPIIh2WYZvVnTBf5+e2C3aEZI8AK8inetUXYtb+CPN3pVd3ANysVyE3I6YSka0D6RjXLXNgwMBlR48Sk7HHv921njhF6T2fxv4l7txsXyEEp2bNkRWH/3Kn+ChhNTe6RTBC0CqaJNSYLpqyf9/gJMy2snWup4lmSdSUHyc4VllUTcY4Fkhfm8zPTWU71wc7VSb2V85pXxHkh0K3V488FNHK0aCXl8xRlPTxEAG1kn/iI6aO54/BOAfNgq2nXM0IPZ2lslaNvfIkamtmqT1vliMPSd2uA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BL1PR11MB5525.namprd11.prod.outlook.com (2603:10b6:208:31f::10)
- by MW4PR11MB6861.namprd11.prod.outlook.com (2603:10b6:303:213::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.39; Fri, 18 Jul
- 2025 04:50:29 +0000
-Received: from BL1PR11MB5525.namprd11.prod.outlook.com
- ([fe80::1a2f:c489:24a5:da66]) by BL1PR11MB5525.namprd11.prod.outlook.com
- ([fe80::1a2f:c489:24a5:da66%4]) with mapi id 15.20.8922.037; Fri, 18 Jul 2025
- 04:50:29 +0000
-From: "Huang, Kai" <kai.huang@intel.com>
-To: "Reshetova, Elena" <elena.reshetova@intel.com>, "Hansen, Dave"
-	<dave.hansen@intel.com>
-CC: "seanjc@google.com" <seanjc@google.com>, "mingo@kernel.org"
-	<mingo@kernel.org>, "Scarlata, Vincent R" <vincent.r.scarlata@intel.com>,
-	"x86@kernel.org" <x86@kernel.org>, "jarkko@kernel.org" <jarkko@kernel.org>,
-	"Annapurve, Vishal" <vannapurve@google.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Mallick, Asit K" <asit.k.mallick@intel.com>,
-	"Aktas, Erdem" <erdemaktas@google.com>, "Cai, Chong" <chongc@google.com>,
-	"Bondarevska, Nataliia" <bondarn@google.com>, "linux-sgx@vger.kernel.org"
-	<linux-sgx@vger.kernel.org>, "Raynor, Scott" <scott.raynor@intel.com>
-Subject: Re: [PATCH v8 0/5] Enable automatic SVN updates for SGX enclaves
-Thread-Topic: [PATCH v8 0/5] Enable automatic SVN updates for SGX enclaves
-Thread-Index: AQHb9YXMsc49bXAwiU2d4YSgiPCJTrQ3U+gA
-Date: Fri, 18 Jul 2025 04:50:28 +0000
-Message-ID: <0dcb59cb4ccc186209ae90ea49611a37c6008fc3.camel@intel.com>
-References: <20250715124109.1711717-1-elena.reshetova@intel.com>
-In-Reply-To: <20250715124109.1711717-1-elena.reshetova@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.56.2 (3.56.2-1.fc42) 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BL1PR11MB5525:EE_|MW4PR11MB6861:EE_
-x-ms-office365-filtering-correlation-id: a7a85aaa-cbc6-4323-ef86-08ddc5b69e80
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?emRweWFONEsyc0JuWGYwOC9WOXR1NGw4YzRpdzl2RGxTVkZiMDc2TXhvWHZq?=
- =?utf-8?B?dU0xdy9kaW1YeWdkalBOeVFmOTBqbU80cE5KV2xDYmRtWkRJV2Z1OUJ2RDdh?=
- =?utf-8?B?MURsNWVrVExTaXFvSUwzeVlnRkZMTDdEL3BzY0Y2bE1TKzRqVWZ1bTAzd2VE?=
- =?utf-8?B?YWJZaS9BT2N2aS9KZ1NYWDBzTHhZeWZsdVBzSmZVd0VkZnVLOUllL2M1TkRK?=
- =?utf-8?B?ekQ2ck04Mk5KY3ZtcE1PTWRmREVxeEhneWthbEY2am5WODJBUCtvOHF1QjB4?=
- =?utf-8?B?OEJXZHY0YllXSFJXZzhxaUk0czFCVjRiYXZONFZpMjZ5K0taL3ZjYjNMQ3p2?=
- =?utf-8?B?ZS95dERGUURhTytaN0UySjExSlNIdWhTMmZqRGhxekhiVGU5QnhTRG9pemFW?=
- =?utf-8?B?aWJjWFFlK05HSzJrSENwTURMekZ1ckczdmRvVjdOYTNMdW5WNXlvbVduK0RL?=
- =?utf-8?B?T0hKejA1czZiMUs0SkpRK092N1ZoZGdRL0RPVVNhcHFVZ2RzR3owZlBBWjlY?=
- =?utf-8?B?Zll0VmZTU0NaTGFpejVNSGZXR3UvNWk4NW1yRE5FSTQrMTZlbmEvOUVLMExk?=
- =?utf-8?B?dXhJdTk3YTdlRXJQSnBTcCs5VUV4UG9uOEpWdmIzRGdJVWtoN3psYUI4M05j?=
- =?utf-8?B?VUJpa3RJdXhZMDRPV0dlTWJaSDB2SFpJUXBpRlIrOXEvZmIxR2xLTXE0dEth?=
- =?utf-8?B?Y3FKVFF3QmxGdGtXK3lsR1NBZWpMcVB0S2duTWlodWR2TUxkcElDUkZxWUw1?=
- =?utf-8?B?aVY2UHBiMEt6Y3NJZ2pFMUtXKzQ5dzlqcWI4MDBYMlFrTzJrcnlDK1NaWk1j?=
- =?utf-8?B?eFJtTjFSaXUxbENSTVVVQ2s0V294VFFhTGo1ZFN2ajd1ZFYxYUhUdEErTG9U?=
- =?utf-8?B?cHJPTUk4UlE0Tm9DODJXMUsrd1pzbWFCRnQ2ZHg0STVLVEdISVZzcnR3aEky?=
- =?utf-8?B?WHkvdXlHVmQ4MCtwSExJZWxUaWxWV1BKeFJ2bkgwNVhuUXQ4MHp5NFQ1dENy?=
- =?utf-8?B?QUExTVloMXh2dUVYTkRVbkNDdDdxZmZoQnpscXBwNE4reU1pQU9yYStqbEFN?=
- =?utf-8?B?eEJvZi92QW1ibEROcFU1bFZOVkZWOFY5N1Ywcjd3clVLMEg1empEWlNiaXBP?=
- =?utf-8?B?emdOcDNhdkRkOWtGOFBCdmV0NmNlYnhJeHlJeVdCdzBiaFNGYnphQXJPSWh2?=
- =?utf-8?B?L0Nyb0FpZ21xK2dmd05KVTVLTjNib2d5c2JaQjdvY1cxRkZGRFpDRVc5S3lX?=
- =?utf-8?B?MmV4dzlucGliL2sxVktNWTFseHlTZEhEWWE4YVlteXdRTk1KNXB6d1pOVDlU?=
- =?utf-8?B?N2ExaXdYcE5ZRzVCYjJGQXVrSWVEeUdqRWZiNzBFdHphS0FNNGpCalFJamVz?=
- =?utf-8?B?N09FOFJtNTFaMkJuVkNXbVowTkkvVDFnb0pUUjZ2VllHWXZnNERNdHpycmZV?=
- =?utf-8?B?ZmNyWDNyQVFXaHNlVldldzhrQjhjdHRkOVZGNlN0R2RjTU9FQWhScGtqZlI2?=
- =?utf-8?B?ZmxuSVJpVVJ3WURjTWtnaVRzRURFZXRLQTB1MXBaZ29RcEdsVy9hUHVCYkNh?=
- =?utf-8?B?MjZnL2cwbXd1ZTRBcE40YXNKZXlNODkzRGozUWVFTm1ucGR6Q0JFOU5ERkNp?=
- =?utf-8?B?KzhCNXZOc2JlSGllWXdjS0NvUzUxdEF0M0x3U2w0RlZYS1d1UWhwQVB2NGtv?=
- =?utf-8?B?YmlwUGZWZWhZZmhJNXpocENSazdmdnBZV1h2REVXUWdvSVRINTlZQW5CTVNr?=
- =?utf-8?B?NkFYVlU4dU9tY3NYckxaTm9ualVDb05sOElBNWV3WFl2UnA2dXlLemxRZXlR?=
- =?utf-8?B?clYzNWFQZDNIMjErNHpEaGRrMTZiVlE5VDVGZ0VOWXBWM3k5MjA0V0J0WU80?=
- =?utf-8?B?YW5VYkovV1BvVHZnS1hUSnpCcm9tUDM4M3h4NnRwM01xbGQ4MnB5UXh5QTgy?=
- =?utf-8?B?QUM3VGRoR2VyZWM5NGsxMUMwL3hQTW0xY3YwVVBCcDk3M0VlL0kxKzEvV1Mr?=
- =?utf-8?Q?tyo2S+D2IvYFOGMk+7P0D+o8OSeAvU=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5525.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?SkNGMk9rb0JNVkY0Q1N6b1p2ZVhyeHhTR3oyYjdHcmlaT0owSTlORGF0OWpK?=
- =?utf-8?B?bllrUEpNeWQvbDRHVDlVL0JnNDlrUSttREk0aTk3di9hbTF5bWJPWVozeE9a?=
- =?utf-8?B?K2FqZXd2K3ZMTysvSmtsR1d6VDFMNjBycGdxSVNpN1RTb3dleXVWYTUycTJY?=
- =?utf-8?B?M211OEpBQXJrRGx6V25YY3FodGdBR1lVSkdrYkNrUFpTQXkweFp2cGJBWWNE?=
- =?utf-8?B?Wjk4NTdFdExhU081WkJyRFdheU1ycGZGbnhUMFJSSmZoOXlENFlZOU9xbzF5?=
- =?utf-8?B?dHpUbXZPQ1Q2U2VHN2doYktGdGRaeFJpVVQ3bnZpMENaejBWUWlnOUw1SnQ2?=
- =?utf-8?B?amN6OThBbTZYd3Z5Ty9GSUVpTGdhS0llVWgvMDU4bDZpdDdEaFZlRzBkZHRv?=
- =?utf-8?B?eXBVcW85R084M3VzaFBudkdyU2N1Z3RQT0ZUNlhCc3pJamZaelZhaHZIT3RR?=
- =?utf-8?B?ai9NcExHeUpZV0M3NWZZTEM1NjJ5elJtaGpybldRcFVod1pZcy9RdXVrSEFO?=
- =?utf-8?B?cjdOV2ljeDlkKzJrRkpVWXZ1SmdHWmJyZGpkS0V3aDNiSHd1S0VvRkhGTW9i?=
- =?utf-8?B?U1l1ZHp5b3l6eHY0dHBRS2o3SHhMS1FwRENKSkwrNnV0R3JPZmZOZDdhQzZR?=
- =?utf-8?B?cHZZOUp6VDQ1MC95TVFqWVhIMkd1RmJlNndaNzVvWWpTU3MwcEFwdHg5a2xZ?=
- =?utf-8?B?MUE5aHpZM2l4cUxNTzVUR1FyUStKd2V2QTVjZ1ZCTzhiTEFsY3dJTU9qaC9n?=
- =?utf-8?B?Zmw0bTRsTDZKMzdYQkRuc2xmdzhndElrMHBYeHdsRWF0YkxBdVY3YUR4SlRo?=
- =?utf-8?B?TDduQVA5aktsdFdjeVIzSTZWcktQL3J1NUIyWjhlNmxQcE5ad1UvZ2xaZ2JD?=
- =?utf-8?B?Z1Q1TUNyc1VxZmVqcEVkcGEvSXBuL0ljMlVVYXBWSUhVRVVQdHpNQnZBTVk5?=
- =?utf-8?B?aDJramFYcGs0ZEcwazdEeWdKbEE5ZGV1aG9CbjdIbytGNzJVYTd3ek1DNTVx?=
- =?utf-8?B?My9RK05GZC9yS1JELytXWmVWYmp2d0E2RmlPRkJBV2t3aS9ZR0x0QnRrYktK?=
- =?utf-8?B?Szdub3NYVzRRaG5ZSzJ6K0l2d2NhZW1RSXgxS05EajVPblNpeGs1Z1lpU3dI?=
- =?utf-8?B?Ly9wTVUxTE1qSk5XVnprOG9VUE1ocmFWQXJ1bnpLOE41Z0ZIY3RibFVRbWxh?=
- =?utf-8?B?b3lpS2RSci9CN1BhN3NqM3I1K0dCTWVTUTNuMXU1aUZNTnhjZU5vTWRtRGZj?=
- =?utf-8?B?K2hLWW9EcTArWGJ5OFlqdW9qS0xZSHZ3L1pkeXA3WTB1SW40T2F3eWlrN1pn?=
- =?utf-8?B?Q2JzRTkxNXF2ZVR2Z2dRRVRML29FV0syVEdpc0paZWhqODJKb25mRHpVd1Y1?=
- =?utf-8?B?aGpiVjN2MEtjUitWWHpUdlRLYlNYaDc5b3hEWUdBeWVjV3MrODR0dnMyQzFY?=
- =?utf-8?B?dzByM2NSUUxiOEdXVk90UnRwVHFGamYyWmlza3NjejZPTDJTL0xJaWh2V2FJ?=
- =?utf-8?B?eHd4NElqcHRPeVBOL3U4OW1vcDJPd1p6TkhHRi9nY2FCYm9JQTJkN25iSW5x?=
- =?utf-8?B?aUF0Sy85SlJhdmJ1WENjbHVJM21jSFBFSUVDS1kwTEt6SW95aUNsZTY5U0Q0?=
- =?utf-8?B?bmF0b0FIWHZGYStMNkpvQXYycFgwY08zaW51NHVOdFJrZ2Zna2QyeUc1cmtN?=
- =?utf-8?B?K1JUK0VYb1ZXWTc0eEdBRFFveWJ6MnZ2VEJmY0tCNHI1L1ZMeVpsd1Z0d0NG?=
- =?utf-8?B?VmVoMjR4VkpFejZFV2pEMS9pSWZYeWtYaU1DdjA2YlQrVGthekd0WFY0STVi?=
- =?utf-8?B?N3F2K0pZY2paUXo1ZUF3UXlzM21TMkRHaEdOSzluV2trNDNDMFo4T1NIRlA3?=
- =?utf-8?B?Q29VUiswQlcxZEdkTW9xVndYQkpqVjNkM1IxbkJ1TXIzWFNlWGNhMDZtSExi?=
- =?utf-8?B?RXMxL0xNRE8zdU9IcXczOGVXN1JlbUIvTlhQOGgwVnh6YVpGbWQyRm81aElP?=
- =?utf-8?B?R29ja1lmeEt6VkxGdHVNRVAzbUNFQXUxOG92U0YxYUREUnAzZ3ZDN0NLV2Uy?=
- =?utf-8?B?UUdmaXVkaytOYUNkVk5MY0tOczVEY1RUUEhjTjFqRStCcUl6RWZ3amNlYkJx?=
- =?utf-8?Q?3PtcPygaWR/c6s8JJUZ7ehIGr?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <5099D4B20BE5154CA69072D250B17323@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7081317BBF;
+	Fri, 18 Jul 2025 04:51:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752814265; cv=none; b=bCVRQ+sY/KN34EqsQ0hOSNm9P+GJxih4iRLEC4aiKlz9ndpGyTt+wrplJhn0Dtvrl/G5xJS6U9j1whYMLq0fXX5EvFbXMH4sSWrSDBhMncCSUxWYs6X2+LQxsHY8H5+/ms1RJeN2QX/h322CsDB8ZtE7cOSsV8iyt0FBBzvkXDk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752814265; c=relaxed/simple;
+	bh=WvOO/fsDfLtx7+vDyzxC+q0rPMbrzC09rOCjnUbd6gw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=InXufYlpdqX7v71C/YUYoL6Qqb4bEUh8mw1uAxBDaGSS5LsT7FzDqr2vTwn54ojwwohxOnQlJnyjAUXwRxcJvslCUK79aRM/QsH8ialBGqcsoE3RxDuDd7xlw9B0HAtj9jTf3EXUQjNT42+Cjn0z8LC0WuPV6SaOuVp/1+Mzy4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UhGOvFzb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30FADC4CEED;
+	Fri, 18 Jul 2025 04:51:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752814264;
+	bh=WvOO/fsDfLtx7+vDyzxC+q0rPMbrzC09rOCjnUbd6gw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UhGOvFzbr5xEoM+yH1C3g5f6bSiZthJtVwSfnqmbdxldgbmqMrG3XyYjbszvjEDQ3
+	 NczbV8Zy3/PPSw76+zeKhK4TbK82UeMbg+hMBMTfimLavxUW148bvwtwJxZTzYk28e
+	 if2ms+e61O0t9hXd9wozYhsVmgY1mY2RzH5EvRaoZiRoDMOXyuTPnz4hF/EmEvg/Ue
+	 kv+ibgb4hU0w7obxZ6MJNMVqZZ/eC+NaVcezGR8ImMrvwlv+G+BrQEGrpT+zVOz+bQ
+	 aco28xSgELEu5GDQlj6y+26TWjb5qD9T1jvFSQPoAxho+kwqb4Zj/oyfJD9QZNe+tX
+	 StXhonthzV7yw==
+Date: Thu, 17 Jul 2025 21:51:01 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Jens Remus <jremus@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org, x86@kernel.org, Steven Rostedt <rostedt@kernel.org>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Ilya Leoshkevich <iii@linux.ibm.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, 
+	Indu Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, 
+	Beau Belgrave <beaub@linux.microsoft.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, 
+	Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>
+Subject: Re: [RFC PATCH v1 06/16] unwind_user: Enable archs that define CFA =
+ SP_callsite + offset
+Message-ID: <sotffno5desd3ajyjd42rq52yrtztddwjbbh3xpa6v7fb63v36@bwoq4s7j5why>
+References: <20250710163522.3195293-1-jremus@linux.ibm.com>
+ <20250710163522.3195293-7-jremus@linux.ibm.com>
+ <qoiocmdhuuaox5v5ig2ui67qbuxkvzl4z3ft4gdp7p3c4b4zfq@trjthmmculkf>
+ <ae46c02a-d871-4b26-97f4-bd82361ab8bc@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5525.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a7a85aaa-cbc6-4323-ef86-08ddc5b69e80
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jul 2025 04:50:29.0037
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: BplZhgyib98KsspjYWfpQ3hEckMMVcVDEDGlr8ZEzTho1HzHoc6YTOAa2mHkaAa2J/8GQbirCa+t267adNDDsQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB6861
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ae46c02a-d871-4b26-97f4-bd82361ab8bc@linux.ibm.com>
 
-T24gVHVlLCAyMDI1LTA3LTE1IGF0IDE1OjQwICswMzAwLCBFbGVuYSBSZXNoZXRvdmEgd3JvdGU6
-DQo+IENoYW5nZXMgc2luY2UgdjcgZm9sbG93aW5nIHJldmlld3MgYnkgRGF2ZToNCj4gDQo+ICAt
-IGNoYW5nZSBzZ3hfdXNhZ2VfY291bnQgdG8gYmUgYSBub3JtYWwgaW50IHR5cGUNCj4gIGFuZCBn
-cmVhdGx5IHNpbXBsaWZ5IHRoZSBzZ3hfaW5jX3VzYWdlX2NvdW50IGZ1bmMuDQo+ICBUaGlzIHJl
-c3VsdHMgaW4gcmVxdWlyaW5nIGEgbXV0ZXggZm9yIGVhY2ggc2d4Xyh2ZXBjXylvcGVuDQo+ICBi
-dXQgZ2l2ZW4gdGhhdCB0aGUgbXV0ZXggaXMgaGVsZCBhIHNob3J0IGFtb3VudCBvZg0KPiAgdGlt
-ZSBpdCBzaG91bGQgYmUgb2sgcGVyZi13aXNlLg0KPiANCj4gDQoNCkZvciB0aGlzIHNlcmllczoN
-Cg0KQWNrZWQtYnk6IEthaSBIdWFuZyA8a2FpLmh1YW5nQGludGVsLmNvbT4NCg==
+On Thu, Jul 17, 2025 at 11:27:45AM +0200, Jens Remus wrote:
+> On 16.07.2025 23:32, Josh Poimboeuf wrote:
+> > On Thu, Jul 10, 2025 at 06:35:12PM +0200, Jens Remus wrote:
+> >> Most architectures define their CFA as the value of the stack pointer
+> >> (SP) at the call site in the previous frame, as suggested by the DWARF
+> >> standard:
+> >>
+> >>   CFA = <SP at call site>
+> >>
+> >> Enable unwinding of user space for architectures, such as s390, which
+> >> define their CFA as the value of the SP at the call site in the previous
+> >> frame with an offset:
+> >>
+> >>   CFA = <SP at call site> + offset
+> > 
+> > This is a bit confusing, as the comment and code define it as
+> > 
+> >     SP = CFA + offset
+> > 
+> > Should the commit log be updated to match that?
+> 
+> I agree that the commit message is confusing. Would it help if I replace
+> it with the following:
+> 
+> Most architectures define their CFA as the value of the stack pointer
+> (SP) at the call site in the previous frame, as suggested by the DWARF
+> standard.  Therefore the SP at call site can be unwound using an
+> implicitly assumed value offset from CFA rule with an offset of zero:
+> 
+>   .cfi_val_offset <SP>, 0
+> 
+> As a result the SP at call site computes as follows:
+> 
+>   SP = CFA
+> 
+> Enable unwinding of user space for architectures, such as s390, which
+> define their CFA as the value of the SP at the call site in the previous
+> frame with an offset.  Do so by enabling architectures to override the
+> default SP value offset from CFA of zero with an architecture-specific
+> one:
+> 
+>   .cfi_val_offset <SP>, offset
+>   
+> So that the SP at call site computes as follows:
+> 
+>   SP = CFA + offset
+
+Looks good to me, thanks!
+
+> >> +++ b/arch/x86/include/asm/unwind_user.h
+> >> @@ -8,6 +8,7 @@
+> >>  	.cfa_off	= (s32)sizeof(long) *  2,				\
+> >>  	.ra_off		= (s32)sizeof(long) * -1,				\
+> >>  	.fp_off		= (s32)sizeof(long) * -2,				\
+> >> +	.sp_val_off	= (s32)0,						\
+> > 
+> > IIUC, this is similar to ra_off and fp_off in that its an offset from
+> > the CFA.  Can we call it "sp_off"?
+> 
+> My intent was to use the terminology from DWARF CFI (i.e. "offset(N)"
+> and "val_offset(N)") and the related assembler CFI directives:
+> 
+>   .cfi_offset register, offset:  Previous value of register is saved at
+>                                  offset from CFA.
+> 
+>   .cfi_val_offset register, offset:  Previous value of register is
+>                                      CFA + offset. 
+
+The distinction between "cfi_offset" and "cfi_val_offset" is confusing,
+unless one already happens to know CFI syntax (not likely for us kernel
+developers).
+
+We don't need to match the DWARF CFI directive naming.  Let's instead
+optimize for readability.
+
+I think "sp_off" is fine here, its semantics are similar to the existing
+cfa_off field.
+
+The semantics of ra_off and fp_off are different, but those are getting
+removed in favor of nested structs in a later patch anyway.
+
+-- 
+Josh
 
