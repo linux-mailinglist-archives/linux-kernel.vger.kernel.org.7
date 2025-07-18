@@ -1,149 +1,120 @@
-Return-Path: <linux-kernel+bounces-736176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E82BB099BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 04:27:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6485B099C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 04:30:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE080567DAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 02:27:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01DC14E16D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 02:29:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D263194A60;
-	Fri, 18 Jul 2025 02:27:31 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DAF04C9D;
-	Fri, 18 Jul 2025 02:27:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F57D1AC88B;
+	Fri, 18 Jul 2025 02:30:13 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D3223B7A8;
+	Fri, 18 Jul 2025 02:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752805651; cv=none; b=UEE8lScVCRQlNwDPkBHCgS4i+rdWxsqJUUe1G/olnoyaEzxIMJ4u0VwnJXe+OlWeztG/X9jQP/3i6JM99fWbIzpHOAjC5vV2djZxHag7/mJT2H4WIyP+jtAZz3me/fSZh/PfgPT2Q40FL+upd0AD494DoDCswxQcvkIN30imBgg=
+	t=1752805812; cv=none; b=Gmg5cpNHv8mhCEhiOU3DAlB8aPCzElBsD0KmJ/7PbM7G9c6EH2r2MuzFFIrnNM/Z2DWQIog8ADHqEGPj+zVP6VFyGCdWv8FP4zN/zgLxPbkKSp3TEXevszCk8duQJRzCact1C+7k2bxxYSkfwEh016UyngfIC2QzFDKqOUuaoyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752805651; c=relaxed/simple;
-	bh=ftURKMxGNqYyR2he5weADE6SNvzMQrh7e4/H/8Bxh0Y=;
-	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=hqRGyhXg7bJwDfWcK6i0R69CyWWIuznQNHj8Wm1IcL1C2L62Qi6l4W60jTxVIh/8cgUP7Z2mwrQoBznstVT3d8hvPKFKNFB9nACmaTxDtqd4SH5knVUrTAGwxlRFzcSNqu11guFydNof/f79Dl9RNxkuOjd6CV3rEoWBYrKpbtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8Cx_eIMsXloNJ0sAQ--.51531S3;
-	Fri, 18 Jul 2025 10:27:24 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowJCxdOQKsXloJcEbAA--.17119S3;
-	Fri, 18 Jul 2025 10:27:24 +0800 (CST)
-Subject: Re: [PATCH 1/2] LoongArch: KVM: rework kvm_send_pv_ipi()
-To: Yury Norov <yury.norov@gmail.com>, Tianrui Zhao
- <zhaotianrui@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
- WANG Xuerui <kernel@xen0n.name>, kvm@vger.kernel.org,
- loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250716165929.22386-1-yury.norov@gmail.com>
- <20250716165929.22386-2-yury.norov@gmail.com>
-From: Bibo Mao <maobibo@loongson.cn>
-Message-ID: <a70dba22-c18e-3b28-6d2e-1eb7a4688a1d@loongson.cn>
-Date: Fri, 18 Jul 2025 10:25:43 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1752805812; c=relaxed/simple;
+	bh=HOMcPasnzSidNrBnIyvuMBKorMhvBQvbHP88kZYZI54=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LO28IWDC+5LwJZlIh1hfUh75COa1hvORIwtTQn58dcyWYWI17wkyUAJ+PH+eiAKbDClaxvPjYtu/S/OOFNWj9yQprEdcJcCWC8weAP3/xFobmYhhPbkueHPQMpxxV8QfrssviKTsVWkAb6JJr+cZRgCf80TRFul1wUbGtLfaq/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [211.71.28.34])
+	by APP-05 (Coremail) with SMTP id zQCowACHGVqVsXloxIL+BA--.29413S2;
+	Fri, 18 Jul 2025 10:29:53 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: dave@stgolabs.net,
+	jonathan.cameron@huawei.com,
+	dave.jiang@intel.com,
+	alison.schofield@intel.com,
+	vishal.l.verma@intel.com,
+	ira.weiny@intel.com,
+	dan.j.williams@intel.com,
+	rrichter@amd.com,
+	ming.li@zohomail.com,
+	bwidawsk@kernel.org
+Cc: linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] cxl/region: Fix potential double free of region device in delete_region_store
+Date: Fri, 18 Jul 2025 10:29:40 +0800
+Message-Id: <20250718022940.3387882-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250716165929.22386-2-yury.norov@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJCxdOQKsXloJcEbAA--.17119S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7CFWUZw1UWF4kJr1xKF4UAwc_yoW8Kry8pw
-	4fCw4agr45GF13Gwn0qayvqF47XF4kKFn3ZrZ7Ja95Wrn0qFn5Xr40kF95Ja4fKa4rAF4S
-	vFy5t3sI9a1DJ3cCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
-	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv
-	67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07
-	AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
-	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw
-	1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
-	xVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
-	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8xu
-	ctUUUUU==
+X-CM-TRANSID:zQCowACHGVqVsXloxIL+BA--.29413S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7tw4xJryxXFWrWr4ktr4DXFb_yoW8Wry7p3
+	yUCa4aqrWrG34I9rn8ZrWkZr98uF4qy34rCrs7Gw10krs5XryFyrW8ta4UtFy5A3s7Ar1U
+	X343trWrCay5A3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUP014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
+	0_GcWlnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
+	648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK67
+	AK6r4UMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAF
+	wI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc4
+	0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AK
+	xVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr
+	1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VU1FAp5UU
+	UUU==
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
+cxl_find_region_by_name() uses device_find_child_by_name() to locate a
+region device by name. This function implicitly increments the
+device's reference count before returning the pointer by calling
+device_find_child(). However, in delete_region_store(), after calling
+devm_release_action() which synchronously executes
+unregister_region(), an additional explicit put_device() is invoked.
+The unregister_region() callback already contains a put_device() call
+to decrement the reference count. This results in two consecutive
+decrements of the same device's reference count. First decrement
+occurs in unregister_region() via its put_device() call. Second
+decrement occurs in delete_region_store() via the explicit
+put_device(). We should remove the additional put_device().
 
+As comment of device_find_child() says, 'NOTE: you will need to drop
+the reference with put_device() after use'.
 
-On 2025/7/17 上午12:59, Yury Norov wrote:
-> From: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
-> 
-> The function in fact traverses a "bitmap" stored in GPR regs A1 and A2,
-> but does it in a non-obvious way by creating a single-word bitmap twice.
-> 
-> This patch switches the function to create a single 2-word bitmap, and
-> also employs for_each_set_bit() macro, as it helps to drop most of
-> housekeeping code.
-> 
-> While there, convert the function to return void to not confuse readers
-> with unchecked result.
-> 
-> Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
-> ---
->   arch/loongarch/kvm/exit.c | 31 ++++++++++++-------------------
->   1 file changed, 12 insertions(+), 19 deletions(-)
-> 
-> diff --git a/arch/loongarch/kvm/exit.c b/arch/loongarch/kvm/exit.c
-> index fa52251b3bf1..359afa909cee 100644
-> --- a/arch/loongarch/kvm/exit.c
-> +++ b/arch/loongarch/kvm/exit.c
-> @@ -821,32 +821,25 @@ static int kvm_handle_lbt_disabled(struct kvm_vcpu *vcpu, int ecode)
->   	return RESUME_GUEST;
->   }
->   
-> -static int kvm_send_pv_ipi(struct kvm_vcpu *vcpu)
-> +static void kvm_send_pv_ipi(struct kvm_vcpu *vcpu)
->   {
-> -	unsigned int min, cpu, i;
-> -	unsigned long ipi_bitmap;
-> +	DECLARE_BITMAP(ipi_bitmap, BITS_PER_LONG * 2) = {
-> +		kvm_read_reg(vcpu, LOONGARCH_GPR_A1),
-> +		kvm_read_reg(vcpu, LOONGARCH_GPR_A2)
-> +	};
-> +	unsigned int min, cpu;
->   	struct kvm_vcpu *dest;
->   
->   	min = kvm_read_reg(vcpu, LOONGARCH_GPR_A3);
-> -	for (i = 0; i < 2; i++, min += BITS_PER_LONG) {
-> -		ipi_bitmap = kvm_read_reg(vcpu, LOONGARCH_GPR_A1 + i);
-> -		if (!ipi_bitmap)
-> +	for_each_set_bit(cpu, ipi_bitmap, BITS_PER_LONG * 2) {
-> +		dest = kvm_get_vcpu_by_cpuid(vcpu->kvm, cpu + min);
-> +		if (!dest)
->   			continue;
->   
-> -		cpu = find_first_bit((void *)&ipi_bitmap, BITS_PER_LONG);
-> -		while (cpu < BITS_PER_LONG) {
-> -			dest = kvm_get_vcpu_by_cpuid(vcpu->kvm, cpu + min);
-> -			cpu = find_next_bit((void *)&ipi_bitmap, BITS_PER_LONG, cpu + 1);
-> -			if (!dest)
-> -				continue;
-> -
-> -			/* Send SWI0 to dest vcpu to emulate IPI interrupt */
-> -			kvm_queue_irq(dest, INT_SWI0);
-> -			kvm_vcpu_kick(dest);
-> -		}
-> +		/* Send SWI0 to dest vcpu to emulate IPI interrupt */
-> +		kvm_queue_irq(dest, INT_SWI0);
-> +		kvm_vcpu_kick(dest);
->   	}
-> -
-> -	return 0;
->   }
->   
->   /*
-> 
-Reviewed-by: Bibo Mao <maobibo@loongson.cn>
+Found by code review.
+
+Cc: stable@vger.kernel.org
+Fixes: 779dd20cfb56 ("cxl/region: Add region creation support")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+ drivers/cxl/core/region.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+index 6e5e1460068d..eacf726cf463 100644
+--- a/drivers/cxl/core/region.c
++++ b/drivers/cxl/core/region.c
+@@ -2672,7 +2672,6 @@ static ssize_t delete_region_store(struct device *dev,
+ 		return PTR_ERR(cxlr);
+ 
+ 	devm_release_action(port->uport_dev, unregister_region, cxlr);
+-	put_device(&cxlr->dev);
+ 
+ 	return len;
+ }
+-- 
+2.25.1
 
 
