@@ -1,141 +1,182 @@
-Return-Path: <linux-kernel+bounces-736370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2195AB09C08
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:12:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3554B09C17
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:12:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 640D85803C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 07:12:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CDC61895AFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 07:13:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76E4C215798;
-	Fri, 18 Jul 2025 07:12:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371BF21CFFA;
+	Fri, 18 Jul 2025 07:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d+ngxBmR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FROyRLz4"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3A8D517
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 07:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A2C215798;
+	Fri, 18 Jul 2025 07:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752822730; cv=none; b=Ze7x4CdwOnwN3s7Xigl2/u2x4xBOfq/ouT+TSNIYdb0gTlQsEaP4F1xpCFLGIO4Dlro+VIWRYR3kd/W4WXGhK+rWK0F9zuvFMaLjHp9J0zVGDeVAZD0n2SoEszaHFDtZQjouLOF58XN/a9EfsO3SwVJTkGy2bfompNAfMcKF5A8=
+	t=1752822747; cv=none; b=gEKGoI5GqAhcXghb9R0gcv884i+Z2mMzvK0wHxgECaoYNJYrGOmavIMGWB5Q4rNeGQZ2zXb8awXQxbdvjazZbveTp8QsRUEFohoExeWJlMjyTE8moHnRnbJVaHv79yQKoiCCO+WvTbfXtgmRcD39zJr+4LnGCO7c9AJcXnnY8zE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752822730; c=relaxed/simple;
-	bh=j2ivfdeZrdVbGY3pzMRN0XewXSeaCCvqhCtAd6Ds8Tw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=JKA2gBEZMcsQIuKetoBNczyhnqv8v8rgX3LE4QQCbCVEImhFjoE8wj3xly4S/QUPD88i78JYvLaSrGfTwgX3mZgqQUsAiCjI26Ijf31KmIhp2/gCtgwdaqSIvkQO2cYEwFaWkb2j+b/JrgCYHzCWOlKXFlxUgL8Nz+M+zuuhSZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d+ngxBmR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C05A0C4CEED;
-	Fri, 18 Jul 2025 07:12:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752822730;
-	bh=j2ivfdeZrdVbGY3pzMRN0XewXSeaCCvqhCtAd6Ds8Tw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=d+ngxBmRbn/7EhhkU2rQPyyVCS/V9U9sf+xyy3IwdREaOsqLkJsDko0KO0pz2xDA1
-	 AeonJquJCgyAD8YcUeR1HSxUFuMYhLyfrFk8Z29LUbM4JAzUY3GAFk9PGSlglbyv5/
-	 +PzT8oVul5NUeWJK6TSXfUGxmB49GGfZoh/13rZRnIAHyW3xAsrIfIomP3+b1cHnM1
-	 WJh0aAHcNIfvbFd0RaNh9KuIyCheapmc7W/MVGLLq2HHue+3ZQF0ylQI6j7st7cTSn
-	 xwGBDw62Dqizq0qWqg8azPq8wQpCgPM8C8Y1tFynmAEH1l6r8aSJRIiIEorSBMpDk5
-	 LGTscGAz4xyNw==
-Date: Fri, 18 Jul 2025 12:42:06 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL]: Generic phy fixes for v6.16
-Message-ID: <aHnzxqKFj1jgxG_v@vaman>
+	s=arc-20240116; t=1752822747; c=relaxed/simple;
+	bh=HAChrOgzOomkOdo2FEodeftDtgKui4UaPtjQB3kpMZE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=BzAwiQKvWdD/7pTauPF90FsrDOetWttWHK9f33oXuc2J4YO/mJNxR5Avo1pQvIoCOrQ5qNzAJJLT62aqUArkPpQ7frlkh/cKErRrALV5dM0pFDdnKhydgTihEVL/p0GFOO3hS8MNanK7LrzolKrBtR5ZYQqCRy8TQis7C5j4+0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FROyRLz4; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56HLJsMl000541;
+	Fri, 18 Jul 2025 07:12:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=qcppdkim1; bh=dRkjvxrc3B9
+	bvJ6VHAlTz9JiC1xgOL6/rZ9b1nna4y0=; b=FROyRLz4wStyRQOjwfXsTSAzWU4
+	zmxmTs20xnn7pw5T5+5Mr7J0s5Meq1xtUBIsMAUY/3qcNsY4N1xZ3rpRRLlpqpFv
+	cqeHWe2QDMow+swdemOaMabBll181a6txGq/9Hi9dkuBOSfiS2eLcScnpjeJOiN5
+	2eXaOfdamkjwKjCRhcJ+DzthWb2b0quq7SXED1E9Q9TN60q3uEchMHGGNgzDpiJb
+	AIB2LDNoG3qjmX01rkqGEOE50nBoiuF6S9kqNcH0avA9918mMPrzBrGka/ruPuIm
+	ApE7XfknwFno0lZ7sHS+aLa9l5v4R/5vG6i9nYbi7Q7XK00/32CYWetbZug==
+Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47w5drwjqw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 18 Jul 2025 07:12:15 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 56I7CCxT006327;
+	Fri, 18 Jul 2025 07:12:12 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 47ugsn143y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 18 Jul 2025 07:12:12 +0000
+Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56I7CCp2006312;
+	Fri, 18 Jul 2025 07:12:12 GMT
+Received: from cse-cd01-lnx.ap.qualcomm.com (cse-cd01-lnx.qualcomm.com [10.64.75.209])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 56I7CBZV006303
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 18 Jul 2025 07:12:12 +0000
+Received: by cse-cd01-lnx.ap.qualcomm.com (Postfix, from userid 4438065)
+	id 0373A20F21; Fri, 18 Jul 2025 15:12:10 +0800 (CST)
+From: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
+        mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
+        bhelgaas@google.com, johan+linaro@kernel.org, vkoul@kernel.org,
+        kishon@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
+        kw@linux.com
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-phy@lists.infradead.org, qiang.yu@oss.qualcomm.com,
+        quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
+        Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+Subject: [PATCH v4 3/4] arm64: dts: qcom: sa8775p: remove aux clock from pcie phy
+Date: Fri, 18 Jul 2025 15:12:06 +0800
+Message-Id: <20250718071207.160988-4-ziyue.zhang@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250718071207.160988-1-ziyue.zhang@oss.qualcomm.com>
+References: <20250718071207.160988-1-ziyue.zhang@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="eV90A6LMnpFovRAy"
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: OjA6fzZncFmMqbGae6NVhX4R2Gm9KHNL
+X-Authority-Analysis: v=2.4 cv=D4xHKuRj c=1 sm=1 tr=0 ts=6879f3cf cx=c_pps
+ a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=9zbhvFfKP0O2o0OFYOYA:9
+X-Proofpoint-GUID: OjA6fzZncFmMqbGae6NVhX4R2Gm9KHNL
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE4MDA1NCBTYWx0ZWRfX/pXx46BvXh5B
+ 02PHqW9kepuDVqi++GGUKf7eAaPiLUZgnoLtyA34bE9Vv/pAz07qZ3ie7RzZLvcTUkfA7sQQ7A+
+ miPf9BdLdyd2maWIUnCxITQxEbP4luQckhAgz7S6iATpUGZu9ocjsZ3rIubby1xeGh9ZMNqWZ00
+ r/Cnl9jcKyj8O9+km9fXpt2MvgOamTTYrAQlbxZ0pBfPo6zlRz/vGE8D3iQ/xF7CdLaBvxbPWFJ
+ ZPRytcCAOp4NzLlTt47j1HVQUJDufXnwmFLVdut6TU3o+0xX0yk9Lkm9jm6tHgmQBEpsb/9Qit0
+ CGSUMgn/cYFNF6F14N8XYsYSHZyu3DfBliBQ44GOHZwOdQmZlSZ87+w3fFCIXvwfrPq2SfqUWO7
+ yyt36xsKW/jJ0uLagqXUOl7rmNUugAgMR03mjHI2wTbKcaJ6sYFwASxtcMJOVNNnf7Xguygx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-18_01,2025-07-17_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 mlxlogscore=999 impostorscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 malwarescore=0 suspectscore=0 bulkscore=0 mlxscore=0
+ priorityscore=1501 phishscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507180054
 
+gcc_aux_clk is used in PCIe RC and it is not required in pcie phy, in
+pcie phy it should be gcc_phy_aux_clk, so remove gcc_aux_clk and
+replace it with gcc_phy_aux_clk.
 
---eV90A6LMnpFovRAy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+---
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi | 28 +++++++++++++++------------
+ 1 file changed, 16 insertions(+), 12 deletions(-)
 
-Hello Linus,
+diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+index fed34717460f..731bd80fc806 100644
+--- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
++++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+@@ -7707,16 +7707,18 @@ pcie0_phy: phy@1c04000 {
+ 		compatible = "qcom,sa8775p-qmp-gen4x2-pcie-phy";
+ 		reg = <0x0 0x1c04000 0x0 0x2000>;
+ 
+-		clocks = <&gcc GCC_PCIE_0_AUX_CLK>,
++		clocks = <&gcc GCC_PCIE_0_PHY_AUX_CLK>,
+ 			 <&gcc GCC_PCIE_0_CFG_AHB_CLK>,
+ 			 <&gcc GCC_PCIE_CLKREF_EN>,
+ 			 <&gcc GCC_PCIE_0_PHY_RCHNG_CLK>,
+ 			 <&gcc GCC_PCIE_0_PIPE_CLK>,
+-			 <&gcc GCC_PCIE_0_PIPEDIV2_CLK>,
+-			 <&gcc GCC_PCIE_0_PHY_AUX_CLK>;
+-
+-		clock-names = "aux", "cfg_ahb", "ref", "rchng", "pipe",
+-			      "pipediv2", "phy_aux";
++			 <&gcc GCC_PCIE_0_PIPEDIV2_CLK>;
++		clock-names = "aux",
++			      "cfg_ahb",
++			      "ref",
++			      "rchng",
++			      "pipe",
++			      "pipediv2";
+ 
+ 		assigned-clocks = <&gcc GCC_PCIE_0_PHY_RCHNG_CLK>;
+ 		assigned-clock-rates = <100000000>;
+@@ -7873,16 +7875,18 @@ pcie1_phy: phy@1c14000 {
+ 		compatible = "qcom,sa8775p-qmp-gen4x4-pcie-phy";
+ 		reg = <0x0 0x1c14000 0x0 0x4000>;
+ 
+-		clocks = <&gcc GCC_PCIE_1_AUX_CLK>,
++		clocks = <&gcc GCC_PCIE_1_PHY_AUX_CLK>,
+ 			 <&gcc GCC_PCIE_1_CFG_AHB_CLK>,
+ 			 <&gcc GCC_PCIE_CLKREF_EN>,
+ 			 <&gcc GCC_PCIE_1_PHY_RCHNG_CLK>,
+ 			 <&gcc GCC_PCIE_1_PIPE_CLK>,
+-			 <&gcc GCC_PCIE_1_PIPEDIV2_CLK>,
+-			 <&gcc GCC_PCIE_1_PHY_AUX_CLK>;
+-
+-		clock-names = "aux", "cfg_ahb", "ref", "rchng", "pipe",
+-			      "pipediv2", "phy_aux";
++			 <&gcc GCC_PCIE_1_PIPEDIV2_CLK>;
++		clock-names = "aux",
++			      "cfg_ahb",
++			      "ref",
++			      "rchng",
++			      "pipe",
++			      "pipediv2";
+ 
+ 		assigned-clocks = <&gcc GCC_PCIE_1_PHY_RCHNG_CLK>;
+ 		assigned-clock-rates = <100000000>;
+-- 
+2.34.1
 
-Please pull for generic phy subsystem fixes for v6.16 which contain core
-lockdep fix and couple of tegra driver fixes and a qualcomm driver fix
-
-The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
-
-  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy.git tags/phy-=
-fix-6.16
-
-for you to fetch changes up to b7acfeab8af9ee661c933522132f3d1d92ed12d6:
-
-  phy: qcom: fix error code in snps_eusb2_hsphy_probe() (2025-07-15 20:36:4=
-7 +0530)
-
-----------------------------------------------------------------
-Generic phy fixes for 6.16
-
-- Core: use per-PHY lockdep keys, this was required to fix a phy
-  using internal phys
-- Drivers:
-	- tegra - fixes for unbalanced regulator, decouple pad
-	calibration fix, and disabling periodic updates
-	- qualcomm - error code fix for driver probe
-
-----------------------------------------------------------------
-Dmitry Baryshkov (1):
-      phy: use per-PHY lockdep keys
-
-Haotien Hsu (1):
-      phy: tegra: xusb: Disable periodic tracking on Tegra234
-
-Harshit Mogalapalli (1):
-      phy: qcom: fix error code in snps_eusb2_hsphy_probe()
-
-Wayne Chang (2):
-      phy: tegra: xusb: Decouple CYA_TRK_CODE_UPDATE_ON_IDLE from trk_hw_mo=
-de
-      phy: tegra: xusb: Fix unbalanced regulator disable in UTMI PHY mode
-
- drivers/phy/phy-core.c            |  5 ++-
- drivers/phy/phy-snps-eusb2.c      |  6 ++-
- drivers/phy/tegra/xusb-tegra186.c | 77 ++++++++++++++++++++++++-----------=
-----
- drivers/phy/tegra/xusb.h          |  1 +
- include/linux/phy/phy.h           |  2 +
- 5 files changed, 58 insertions(+), 33 deletions(-)
-
---=20
-~Vinod
-
---eV90A6LMnpFovRAy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE+vs47OPLdNbVcHzyfBQHDyUjg0cFAmh588YACgkQfBQHDyUj
-g0ezbw//V3u/pWgWfnTnC8uKN3nLU1lZUwwM1wya3jP5xktHaYPJjnC7SGUYPg+t
-dtSdgPQJLdvA5U2DlVkIwxzB8IQc3ORXL9hZergZ2/1QMVWX75JMxC+D0pvYBDxG
-v4SBENDXPc1dgT4DT3I5qgOw9/K6NCGtK5+7T+v8vD87+BOj1AGicvKyJ8TQf+UQ
-MRrbjb2me7sPrFuT41NGSnAWHqza04Lu3R6ik3dgVbXFwVE4xIKwNaCAlbkRmj9B
-eM9r7P+HfB1MYphVxNF6wlUF7WH+lZFVtdsAPvu0n1YsEsDznV6WGYLL3/QYx882
-oQmIlYt9gc39rxu0Lpd1Nrew52Ejm2O50txbqX/cBY8PfnAIyG3ikGpcEYkvXeuK
-80Ghl3Mjp9GdkdU+bvy5u0HT0J6OE7lfH2/WKIZjM8Dj+ZdqZT67q+3MCNZmY1i1
-ZQHNXOMKqk3b/JnE6nvot0BWVT9KBzp3SY4xAIwZ6GwL9M+88MxV18ECDqWj4c0Z
-uC2Oc2Q3QUdl63OJF05TVBt0ZCMcK32/JoqvPrINFbFAwvfipDWQSl10PlvJUa3p
-OsJu+DdotoNnEUEB5YpIEcAiyQKZ6E8qOfNuQWOpbHH71v3QyH3zKykkVo04MUFY
-9KXbddOpersu9P2SH0vV38Ct+N+0VpZtkl5644I/WQ7YBjd037U=
-=TBGB
------END PGP SIGNATURE-----
-
---eV90A6LMnpFovRAy--
 
