@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-736464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36B23B09D39
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:59:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1502B09D2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:59:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06559A8589D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 07:58:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5851A1C285FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 07:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E1729E0E0;
-	Fri, 18 Jul 2025 07:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7174293C40;
+	Fri, 18 Jul 2025 07:56:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="taz8uFfl"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="LF+KcaSa"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3312629CB5A
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 07:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896B429C33A
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 07:56:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752825393; cv=none; b=OhuXPajjGoAO2DWoGyjYx4dMx3r30s5o+6hpQ7Ri0pfxvMZh9y7TEv9DNmx4U4vimNMBiefFvzlo7Tm4yu1KnhMtej0F4l52n7zEgMOLxryxNfQME4v4lpwRtgW4xr7XSUPVRwYyM/RCAnDnU2pL1qvBdd8dxAnvRXZvdFgtaCE=
+	t=1752825395; cv=none; b=b3hfGcGBMcr1c+9pqaijtaOoWmCTngJUVnF6tIy8Nim732C9jc+h1LCgzazIAvRYqRZoH0GmC24TXQVaEBoD3HkzU1s4zNfzoEoDmMoQp8YVXf+khgY+Bivn2s8reKM4s+v38IBtUomlQB2hrWCz5iF8nLIjMNIRy0LirSooCCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752825393; c=relaxed/simple;
-	bh=/IfDGxxWwH9C3Ri8YFjSmKzSi0znt79eWoGTibw5i+A=;
+	s=arc-20240116; t=1752825395; c=relaxed/simple;
+	bh=9ojAwmVyzkyjw/JHV/oncADnzoHfQo87GI9xPiP44Ys=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=j3HypNYT/M1Z3WRKCgddwYPS5KLypD1pZXEpWduOWy+4u02A5yfrXmwmaXdQbuICLnQAwQdh9sPany9Z6iTFuVNomMJ43YIIwSPwHrxuefrYfpcMfpKtghoBUIfwoW5StLiWil+6GlG4Cy6gtGmyXe/gFqAZ1q0MPmrJtJzIX3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=taz8uFfl; arc=none smtp.client-ip=209.85.221.54
+	 MIME-Version:Content-Type; b=I+gSJMsSR6THJgU9ooXKQEzbakJjiM2yN9IN2aDDKVJhVr/aBergH4u//M3CgmlM36ShVdzeKJYnNMX1ErLbIzF37GX2MRxco5wio6g/GdR+LNQjh/W9K8qdMhwp+avQJRNBPoKaWcKBdPIA07xlSk5ObRAzW6vJDrPUAdqrrxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=LF+KcaSa; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a5257748e1so1076663f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 00:56:31 -0700 (PDT)
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a57c8e247cso1607435f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 00:56:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1752825390; x=1753430190; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1752825391; x=1753430191; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JCaZ+WKPsEn8tCTv6g/PRmp1aflmC3F0blXp5umhp8k=;
-        b=taz8uFfllFf8x8IBig0/UiL1bVdrxm+3PaIha/L47PkZVuqcen5pZFOnllSWw96UZ0
-         +AaU3a7lUo4M/UIL/hV4ea954vwL/wlLZm9+lL/hOh0I47c2+Iqy565zxbIKDSyAmn0j
-         RBsNgVgVM+zSyHgz86xvhqnd9c8avYqXIAf8AwwOJZnXiUFmFFt+nPbokZQ8l6pVkLCF
-         5GV0aGq9vzL0QgIlAzbjWWt/fbTBP7Y87nQiyhfSKtg+kcs42EDACcRF+8FkeootCbOb
-         ZWALbKVl1OeVYN5uoKK7I43IemlHGxoCwB+M0AQtmhZ9w+lJ4DpogSvHUgEEePByI7Rs
-         ORAw==
+        bh=ckV+jtDuK4a1URfzEn0Dotj11VNsvgXwo2gZXZRoU4Y=;
+        b=LF+KcaSaky8plZ9KXwProCpxRm0KFClyIE+rAaT6EzT8VnnLRnhBFu52Jza2oxZOzf
+         oH4S2uSbC1HGRygvc7VYgRpkT/JNumOBpxsp6R5fdH1gmN+MlcfJaf93K9nI9ijRvucg
+         Y580faLAgpUfaJoM6KIZKyWQ7wRvdL70QQTbHU58rsmsIlIUbwr5oyZTpUN9L/xIDpHS
+         dComYsGF0qH4Knz5RtkGH/z3H8EbqdHDIffm52sxxjjrR/niY2+iruY1T2JSb48mSFf4
+         WXsahzJVuIl5uKRZ7/qkH6g8gYm3xopbweGGWzLcASdOUYTUYjhfLZcmStYue72rxBiL
+         h1Rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752825390; x=1753430190;
+        d=1e100.net; s=20230601; t=1752825391; x=1753430191;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JCaZ+WKPsEn8tCTv6g/PRmp1aflmC3F0blXp5umhp8k=;
-        b=FWv20g4acuXCUYguANz00tlfZuISTbuRZ7eCIus95aTYrLZo5sv75bsMv+3GQxVv1e
-         dKec+Bo4H6XAH8rttUGDn6jOKb/oHASFNKxx2oA+D2+rZaj/asnoa6Gt1Pi/FuOFalqv
-         IabIrL8BhbHfudAnwwqLal1J1dyujNtVqyNeldH3yEz7R9PBaK528bNh8kXN8fLVT0mP
-         xkklwPc5xrj8l44CPNBOUXujBCs2Ys/VxTeaguM4W3jk9PHOIauCQ4M6aG1oN7QTwiYz
-         g93nPBbHn5gd9j6IyBG5lNpYNA9K5PVyBflyFG3JMM9XTIVFjTgzkeA65ES7TNkEujiK
-         O7AA==
-X-Forwarded-Encrypted: i=1; AJvYcCWZLLeishDdWmoBKw54Wu0PHGfy6EiPv3UYd9w/bs1pWT/U12fmiOsFtw8NtuJOMQHLguehDECLVK3VCUg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw20NjJ0iAjq5mB2uGf60FLZls+lOyySzKzqaLNsGcL7r0/n2oL
-	mYYGXGGfxH6YAwKxKtOK3qegKZmQpxKQzfxS4LqC1PRFhH60CVM/Lj6QnyLABiGzRWM=
-X-Gm-Gg: ASbGnctJYrwaxCqtdDCVU5tBYmQKdJ2faDyfSywuq9qv1MdFm1PAn8N7LYqTUDo5/vZ
-	6gPJ0LWsyO6pwceg/zQnAWKbefQ9ZyYKsiXhp1yhq9n2HZOtrwQtwdlFJ9sDOLMySgMPf8y+9Yj
-	U+YsKYNhGFoY49C0aZOQDd7pwGk6C84wOeWhMCWh9R874GcWYlA0GqEIRnwecBrdKAgN7YyWp3t
-	mYlz3fs1aZsMvTA97RX7N2WkxbtmlN7zbRUmOWAzcxH2q+NaoP/WjSC/AltTOU+zE05m4FEUspd
-	RSHUXofV9u4Bqpv5ZWF83EzDECf98oFVVWiE6K1gG+mNXP62Dk9Rl35dU7ii1I4bUBaUF/xoiTK
-	Nz1kYcjlTNhbhLIZr4Y3D
-X-Google-Smtp-Source: AGHT+IE5asmOHY9ijht3WIRY02R518XDUE2Kx8RGeuGf24vxDpkdK3gfoDUp+3MG8ORx/gDQZyYPAQ==
-X-Received: by 2002:a05:6000:2d0e:b0:3b6:164e:a059 with SMTP id ffacd0b85a97d-3b6164ea1cdmr2649609f8f.17.1752825390520;
-        Fri, 18 Jul 2025 00:56:30 -0700 (PDT)
+        bh=ckV+jtDuK4a1URfzEn0Dotj11VNsvgXwo2gZXZRoU4Y=;
+        b=rHmulN4xnEjgZ15QwShhPdkvwnNvSurxx5LDuqyfV5XeCSorX5gJtYtZM5jqaLzuoO
+         072x0RNOXEEtIy/8VapV+ny8tFOk0ddVaR3knlrjEF3FSFq+TZ+ZdIe4i/rV9JHOKsdt
+         GEqzNsarsG0AvzwYCM1sWfyiiytI2AiLHOffyizdkpPNb0/xkymEjkJuNE3bKitD8g80
+         QAwMGB3FDhucF5ehuKcOr6FtlPx7ikILwRaMrJPCo2cxvmDTEiSBchyjLiD0rlAU4Ns1
+         X1kcYC5gKUXmWKUf0u04N5q+b3j7uhPr943vf/eKwqrlZ2BIgOwLFDJllsu4LEmQ/RjN
+         APYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVQtZ4ZuZb40zH3H745Whx6S6Uii4oLxQvWk7JuSwym5yHQWADOP2cZHR38goiSMD3qZGO95JJPFaI7Doo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwznTJ5Rkk0QNYwtpmGAYx6n/gEpoO1H+Am7pytf1cU0npHiUBy
+	yVC6YJ1qI26hxR025tdHPgqNyHnMe1CMX3NhTJR0dfaCH9amvoAXRWlByDD9SwP41uA=
+X-Gm-Gg: ASbGncsQtiJj3wIHXw5E4zDjH5K83l6HWeKto3ynK57TQoPHYgEIaYjzbhGz4BoKlp2
+	9OvXo1qM0WWn7xlyrm/ShZ8DRpxADQ1d/Yj+/9BSDOFq8oRzWT62KwJ6MlpG2MxR5s4O6du6wU5
+	SfA+JMcFDcnmu9TwK3NMgbxUV7aw0IIn3xblrqLRz4sEKkK9P0VmM8e2yyCw0AlcozQoDQgXuHz
+	O6n2ZI3fHm6oFNVvW4GmjUwrXWr4CuN76EhBQXDRaq3I2E+xPGLPPOMAoECHCUcF7uMPmeOKstt
+	WmZRP0roYA4LeNIBgce+7TLGFyWuyTrnpfPJ7WbSoTno0Uuy6tg6rHBGz5Hhf371clOOOQQz4PL
+	CT8EBh4hbb8FCjOHluIuD
+X-Google-Smtp-Source: AGHT+IHHfzVdB75isJbxOE4IprChk5aDxsZwB9rMG28675J8E1GR5pJQu+Z+X8Cs4aMgYfRSrfTMdw==
+X-Received: by 2002:a05:6000:2484:b0:3b5:f8d5:5dba with SMTP id ffacd0b85a97d-3b60e51c90emr6903564f8f.30.1752825391521;
+        Fri, 18 Jul 2025 00:56:31 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:be63:a233:df8:a223])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca48a23sm1080851f8f.54.2025.07.18.00.56.29
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca48a23sm1080851f8f.54.2025.07.18.00.56.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 18 Jul 2025 00:56:30 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
@@ -77,22 +77,18 @@ To: Linus Walleij <linus.walleij@linaro.org>,
 	Bartosz Golaszewski <brgl@bgdev.pl>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Roger Quadros <rogerq@kernel.org>,
-	Tony Lindgren <tony@atomide.com>,
+	Frank Li <Frank.Li@nxp.com>,
 	"Rob Herring (Arm)" <robh@kernel.org>
 Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
 	linux-gpio@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: gpio: Convert ti,twl4030-gpio to DT schema
-Date: Fri, 18 Jul 2025 09:55:59 +0200
-Message-ID: <175282531514.45055.3441491568286298987.b4-ty@linaro.org>
+Subject: Re: [PATCH] dt-bindings: gpio: fsl,qoriq-gpio: Add missing mpc8xxx compatibles
+Date: Fri, 18 Jul 2025 09:56:00 +0200
+Message-ID: <175282531517.45055.4508674496903135144.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250714202829.3011298-1-robh@kernel.org>
-References: <20250714202829.3011298-1-robh@kernel.org>
+In-Reply-To: <20250714202941.3013390-1-robh@kernel.org>
+References: <20250714202941.3013390-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,17 +101,18 @@ Content-Transfer-Encoding: 8bit
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
-On Mon, 14 Jul 2025 15:28:28 -0500, Rob Herring (Arm) wrote:
-> Convert the TI TWL4030 PMIC GPIO binding to DT schema format. The number
-> of #interrupt-cells was wrong compared to what is in use. Correct it to
-> be 1.
+On Mon, 14 Jul 2025 15:29:40 -0500, Rob Herring (Arm) wrote:
+> The fsl,mpc8349-gpio, fsl,mpc8572-gpio, and fsl,mpc8610-gpio compatibles
+> are already documented in fsl,qoriq-gpio.yaml. Add the additional
+> compatibles that use fsl,mpc8349-gpio as a fallback. With that,
+> the 8xxx_gpio.txt binding document is redundant and can be removed.
 > 
 > 
 
 Applied, thanks!
 
-[1/1] dt-bindings: gpio: Convert ti,twl4030-gpio to DT schema
-      https://git.kernel.org/brgl/linux/c/a12b566ba571aab82f969bc3b137487e61afc976
+[1/1] dt-bindings: gpio: fsl,qoriq-gpio: Add missing mpc8xxx compatibles
+      https://git.kernel.org/brgl/linux/c/1a17da5b6bcab1d46aeb83a3e6f3904b1b1940a2
 
 Best regards,
 -- 
