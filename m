@@ -1,346 +1,929 @@
-Return-Path: <linux-kernel+bounces-736813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2350BB0A37C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:51:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01AD2B0A3BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:01:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B1BC1C2517F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:51:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F1993A6778
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:00:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA8A2D979C;
-	Fri, 18 Jul 2025 11:51:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCFF62D8375;
+	Fri, 18 Jul 2025 12:00:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="jscVnwo8";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="cruOnt7n"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=tahomasoft.com header.i=@tahomasoft.com header.b="GeGmB1ll"
+Received: from chumsalmon.baetis.net (chumsalmon.baetis.net [209.222.21.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 117531DED49;
-	Fri, 18 Jul 2025 11:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0554425C810;
+	Fri, 18 Jul 2025 12:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.222.21.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752839471; cv=none; b=klG5zZd5gChrnv95UTcxkEqDVGbGRmEf1j8g9JrwgU0A0J3i6ZqT6ITPDx9lBX0CmufqMe6dbhY8O/bnLPRizm3biExpz4ZYUjco3BDcjegpQMdcXBYbC0o6//dvuaNQ3wNm9OhT0FnGDUna54zOIrvbKjxonoHpzJlaGwHsJIg=
+	t=1752840055; cv=none; b=t/vKzT6eqeroj1uZOzBllKcr9tBb9d2sWL/yAWckfIhrtNJAuiIzUoo/n/NDjuznWO2Hd0IssciXK5p4CswXgYpt9GcRFVif6WDwPVidJsQCjN1QR1e8TnV087kVkNwKeSUfDspEN5+xtpL/jsnSn1DLtolbGe6xmcNEZFWo4YQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752839471; c=relaxed/simple;
-	bh=EwYMJbmQAXP2+4cI5JeSoIMrYgAUUDWp0kAccywPNdY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FEFTP2j4SDg8VJKQkgm9mSRQolCM2NI6b/skxdFDcIz9CRXdX9hCtFYLCRDbeQUDBNtZFS2EZ8mJ7EWsUOgr3S54PMG1laRVO9ZyG4wM3/HCau3dbmFBknJK9sBY97E+wr2n7FX9vHnXrAAkhK/lFXTKze6tfjz+FgLIeb/KjKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=jscVnwo8; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=cruOnt7n reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1752839468; x=1784375468;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=2Bv0FKU0AFfIw7QT77LKmorlBooIjyGyTgpW0y6qE4g=;
-  b=jscVnwo80T71fgU098N9hwCNqGlqkYM/UUzvrgUUCTGEYeB5p4zB2wLy
-   vcSGnptmr0+0RZ2mc/RBfIrVAdeO816HXhmdbNWqBWddaqwLflcNL7Tl6
-   MiySiferjPV60R2JLlYK1zOJOwaYiVUwkIc+4LhTyi4c+dW7V7wkc6mhK
-   2tTnWAyU8+dPfbxh9higxuwwXOd35fo+TpsIdCbogJRJrQmdcDm+AbCSq
-   On58FpATSYaZ5hrLrJHalsrtl6Dagu4mCFzRP3XPLdqvT1ccq4dq7aFMb
-   mfV6cwRWZMdge9YItnUhBOVqcYS5w/NZnPRerosb0Ldys7kBMMD4cUjoo
-   A==;
-X-CSE-ConnectionGUID: VvKxd26RTx2rVNs7A20qNQ==
-X-CSE-MsgGUID: 2gSUfdVMRiuC4WhWOeoO4A==
-X-IronPort-AV: E=Sophos;i="6.16,321,1744063200"; 
-   d="scan'208";a="45292812"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 18 Jul 2025 13:50:58 +0200
-X-CheckPoint: {687A3522-31-B791C630-E7A1546C}
-X-MAIL-CPID: 1ED35FAB929331D10C9F702485E0BB3A_2
-X-Control-Analysis: str=0001.0A002109.687A34DD.008C,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7773F160039;
-	Fri, 18 Jul 2025 13:50:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1752839454;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2Bv0FKU0AFfIw7QT77LKmorlBooIjyGyTgpW0y6qE4g=;
-	b=cruOnt7nOfu9W7DGM8mT9yJ5KtIgFAS2iXHiSBqPa7JOQlKSYtsXvf1MQuX8H2RQVlsDX9
-	9LNGS2rDhJBJP9B3lOcCsWrOVw2pMpQxbtiidclKvlj3IUwLerOvZmuMtjuxUQKsfGUlQp
-	6zi7T62zhWeL4t4PS9NxoaeqFfRyP+tEqAZVX2TnZXSioT7KRzHJMbYg1tOg0EFAP2z1VV
-	7W9RFzTt747twqcv/tpdcLB8wNzO6A49goa/qoovwpweKeZVlurXgMhpuVXChBtjAuo80x
-	3FdMtjjhrnod6vwroj/D940CpzBIbdZPZC4iF6wAYS7JIZg1xLq5GFjFf0gkTg==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, simona@ffwll.ch, lumag@kernel.org, dianders@chromium.org,
- cristian.ciocaltea@collabora.com, luca.ceresoli@bootlin.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- victor.liu@nxp.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
- kernel@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, p.zabel@pengutronix.de, devicetree@vger.kernel.org,
- l.stach@pengutronix.de, shengjiu.wang@gmail.com
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>
-Subject:
- Re: [PATCH 2/4] drm/bridge: imx: add driver for HDMI TX Parallel Audio
- Interface
-Date: Fri, 18 Jul 2025 13:50:49 +0200
-Message-ID: <4668607.LvFx2qVVIh@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20250718101150.3681002-3-shengjiu.wang@nxp.com>
-References:
- <20250718101150.3681002-1-shengjiu.wang@nxp.com>
- <20250718101150.3681002-3-shengjiu.wang@nxp.com>
+	s=arc-20240116; t=1752840055; c=relaxed/simple;
+	bh=ktECcEkqDIsB4rOIy9abe/XcCS/qQdj3NFkSR2xSDzQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=PF8qlZDL3enQn710tyLqUWdWaiXK5Vj/XUXCM/m7S3VgNbwMoKYZ997+Tm4heWPbP8mHdLd/3UxE4tdxU3U4kqc2WGhOqFoqC9T5lsVrtcrQFn2SbO1XTzl6dfz0bLXKkG4nZa+edgToIjSYudIDeIMsFtwDYgHbZsXWQFnsh6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tahomasoft.com; spf=pass smtp.mailfrom=tahomasoft.com; dkim=fail (0-bit key) header.d=tahomasoft.com header.i=@tahomasoft.com header.b=GeGmB1ll reason="key not found in DNS"; arc=none smtp.client-ip=209.222.21.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tahomasoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tahomasoft.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tahomasoft.com;
+	s=default; t=1752839459;
+	bh=ktECcEkqDIsB4rOIy9abe/XcCS/qQdj3NFkSR2xSDzQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=GeGmB1llNufkPA2rUlN27j1RdtpBw52kM+5YtNTv7XK8S3CrPAE4MUNosy34W1jtP
+	 QOr+flgNkHzkiodtF5jQcQvOdRJWsX+xrqN8Tw7y4YsqhS0lcwJYB18u9FW+/LXBu3
+	 2LGnx+Z/11xfYnNclKEVlsAFaFRYG7fDYhgfISgP0wltlNvX9YUJiQRspP2WpgVR5G
+	 Pf2gWlVGlNilZ9N0RJiJ/wR7xtTCgVutgCE2ubjqNjgq1f6YsyPdY9uKV6Y/X3svNm
+	 k6faoBXCg3axhKqm5t0Pw9wYS14kJlHf8pDx8ygt7imTgSMc1wOzAqctXBz91poZfA
+	 3nwYMcY2wSIDg==
+Received: from WahpenayoPeak.tahoma.link (unknown [IPv6:2600:4040:50b7:b604:3b13:d53e:3e62:ce43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by chumsalmon.baetis.net (Postfix) with ESMTPSA id AB80C27E434;
+	Fri, 18 Jul 2025 11:50:59 +0000 (UTC)
+Date: Fri, 18 Jul 2025 07:50:58 -0400
+From: Erik Beck <xunil@tahomasoft.com>
+To: linux-rockchip@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, soc@lists.linux.dev
+Cc: heiko@sntech.de
+Subject: [PATCH 1/1] arm: dts: rockchip: Add initial support for LinkStar
+ H68K-1432v1 Board with RK3568 SoC
+Message-ID: <20250718075058.243a5619.xunil@tahomasoft.com>
+Organization: Tahoma Soft
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi,
+Hello,
 
-thanks for sending this path.
+Below please find a patch to three files to provide initial support for
+the LinkStar H68K-1432v1 board with Rockchip rk3568 SOC. 
 
-Am Freitag, 18. Juli 2025, 12:11:48 CEST schrieb Shengjiu Wang:
-> The HDMI TX Parallel Audio Interface (HTX_PAI) is a digital module that
-> acts as the bridge between the Audio Subsystem to the HDMI TX Controller.
-> This IP block is found in the HDMI subsystem of the i.MX8MP SoC.
->=20
-> Data received from the audio subsystem can have an arbitrary component
-> ordering. The HTX_PAI block has integrated muxing options to select which
-> sections of the 32-bit input data word will be mapped to each IEC60958
-> field. The HTX_PAI_FIELD_CTRL register contains mux selects to
-> individually select P,C,U,V,Data, and Preamble.
->=20
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> ---
->  drivers/gpu/drm/bridge/imx/Kconfig           |   7 +
->  drivers/gpu/drm/bridge/imx/Makefile          |   1 +
->  drivers/gpu/drm/bridge/imx/imx8mp-hdmi-pai.c | 134 +++++++++++++++++++
->  include/drm/bridge/dw_hdmi.h                 |   6 +
->  4 files changed, 148 insertions(+)
->  create mode 100644 drivers/gpu/drm/bridge/imx/imx8mp-hdmi-pai.c
->=20
-> diff --git a/drivers/gpu/drm/bridge/imx/Kconfig b/drivers/gpu/drm/bridge/=
-imx/Kconfig
-> index 9a480c6abb85..d95fa84a8dcd 100644
-> --- a/drivers/gpu/drm/bridge/imx/Kconfig
-> +++ b/drivers/gpu/drm/bridge/imx/Kconfig
-> @@ -24,6 +24,13 @@ config DRM_IMX8MP_DW_HDMI_BRIDGE
->  	  Choose this to enable support for the internal HDMI encoder found
->  	  on the i.MX8MP SoC.
-> =20
-> +config DRM_IMX8MP_HDMI_PAI
-> +	tristate "Freescale i.MX8MP HDMI PAI bridge support"
-> +	depends on OF
-> +	help
-> +	  Choose this to enable support for the internal HDMI TX Parallel
-> +	  Audio Interface found on the Freescale i.MX8MP SoC.
-> +
->  config DRM_IMX8MP_HDMI_PVI
->  	tristate "Freescale i.MX8MP HDMI PVI bridge support"
->  	depends on OF
-> diff --git a/drivers/gpu/drm/bridge/imx/Makefile b/drivers/gpu/drm/bridge=
-/imx/Makefile
-> index dd5d48584806..8d01fda25451 100644
-> --- a/drivers/gpu/drm/bridge/imx/Makefile
-> +++ b/drivers/gpu/drm/bridge/imx/Makefile
-> @@ -1,6 +1,7 @@
->  obj-$(CONFIG_DRM_IMX_LDB_HELPER) +=3D imx-ldb-helper.o
->  obj-$(CONFIG_DRM_IMX_LEGACY_BRIDGE) +=3D imx-legacy-bridge.o
->  obj-$(CONFIG_DRM_IMX8MP_DW_HDMI_BRIDGE) +=3D imx8mp-hdmi-tx.o
-> +obj-$(CONFIG_DRM_IMX8MP_HDMI_PAI) +=3D imx8mp-hdmi-pai.o
->  obj-$(CONFIG_DRM_IMX8MP_HDMI_PVI) +=3D imx8mp-hdmi-pvi.o
->  obj-$(CONFIG_DRM_IMX8QM_LDB) +=3D imx8qm-ldb.o
->  obj-$(CONFIG_DRM_IMX8QXP_LDB) +=3D imx8qxp-ldb.o
-> diff --git a/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-pai.c b/drivers/gpu/d=
-rm/bridge/imx/imx8mp-hdmi-pai.c
-> new file mode 100644
-> index 000000000000..f09ee2622e57
-> --- /dev/null
-> +++ b/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-pai.c
-> @@ -0,0 +1,134 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Copyright 2025 NXP
-> + */
-> +
-> +#include <drm/bridge/dw_hdmi.h>
-> +#include <linux/module.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/platform_device.h>
-> +
-> +#define HTX_PAI_CTRL                   0x00
-> +#define HTX_PAI_CTRL_EXT               0x04
-> +#define HTX_PAI_FIELD_CTRL             0x08
-> +#define HTX_PAI_STAT                   0x0c
-> +#define HTX_PAI_IRQ_NOMASK             0x10
-> +#define HTX_PAI_IRQ_MASKED             0x14
-> +#define HTX_PAI_IRQ_MASK               0x18
-> +
-> +#define CTRL_ENABLE                    BIT(0)
-> +
-> +#define CTRL_EXT_WTMK_HIGH_MASK                GENMASK(31, 24)
-> +#define CTRL_EXT_WTMK_HIGH             (0x3 << 24)
-> +#define CTRL_EXT_WTMK_LOW_MASK         GENMASK(23, 16)
-> +#define CTRL_EXT_WTMK_LOW              (0x3 << 16)
-> +#define CTRL_EXT_NUM_CH_MASK           GENMASK(10, 8)
-> +#define CTRL_EXT_NUM_CH_SHIFT          8
-> +
-> +#define FIELD_CTRL_B_FILT              BIT(31)
-> +#define FIELD_CTRL_PARITY_EN           BIT(30)
-> +#define FIELD_CTRL_END_SEL             BIT(29)
-> +#define FIELD_CTRL_PRE_SEL             GENMASK(28, 24)
-> +#define FIELD_CTRL_PRE_SEL_SHIFT       24
-> +#define FIELD_CTRL_D_SEL               GENMASK(23, 20)
-> +#define FIELD_CTRL_D_SEL_SHIFT         20
-> +#define FIELD_CTRL_V_SEL               GENMASK(19, 15)
-> +#define FIELD_CTRL_V_SEL_SHIFT         15
-> +#define FIELD_CTRL_U_SEL               GENMASK(14, 10)
-> +#define FIELD_CTRL_U_SEL_SHIFT         10
-> +#define FIELD_CTRL_C_SEL               GENMASK(9, 5)
-> +#define FIELD_CTRL_C_SEL_SHIFT         5
-> +#define FIELD_CTRL_P_SEL               GENMASK(4, 0)
-> +#define FIELD_CTRL_P_SEL_SHIFT         0
-> +
-> +struct imx8mp_hdmi_pai {
-> +	struct device	*dev;
-> +	void __iomem	*base;
-> +};
-> +
-> +static void imx8mp_hdmi_pai_enable(struct dw_hdmi *dw_hdmi, int channel,
-> +				   int width, int rate, int non_pcm)
-> +{
-> +	const struct dw_hdmi_plat_data *pdata =3D dw_hdmi_to_plat_data(dw_hdmi);
-> +	struct imx8mp_hdmi_pai *hdmi_pai =3D (struct imx8mp_hdmi_pai *)pdata->p=
-riv_audio;
-> +	int val;
-> +
-> +	/* PAI set */
-> +	val =3D CTRL_EXT_WTMK_HIGH | CTRL_EXT_WTMK_LOW;
-> +	val |=3D ((channel - 1) << CTRL_EXT_NUM_CH_SHIFT);
-> +	writel(val, hdmi_pai->base + HTX_PAI_CTRL_EXT);
-> +
-> +	/* IEC60958 format */
-> +	val =3D 31 << FIELD_CTRL_P_SEL_SHIFT;
-> +	val |=3D 30 << FIELD_CTRL_C_SEL_SHIFT;
-> +	val |=3D 29 << FIELD_CTRL_U_SEL_SHIFT;
-> +	val |=3D 28 << FIELD_CTRL_V_SEL_SHIFT;
-> +	val |=3D 4 << FIELD_CTRL_D_SEL_SHIFT;
-> +	val |=3D 0 << FIELD_CTRL_PRE_SEL_SHIFT;
+This has been tested on the hardware and works well in support of
+router features. Namely, it supports:
 
-You can use FIELD_PREP_CONST() for these shifts as the GENMASK are
-already available.
-But where do these numbers come from? I can see that downstream kernel
-sets these bits depending on audio config being passed.
+* Two 1 Gbs Ethernet ports
+* Two 2.5 Gbs Ethernet ports
+* Two USB 3.0 Type A sockets
+* One USB 3.0 Type C socket
+* One USB 2.0 Type A socket
+* WiFi
+* LED
+* Debug console
 
-> +
-> +	writel(val, hdmi_pai->base + HTX_PAI_FIELD_CTRL);
-> +	/* PAI start running */
-> +	writel(CTRL_ENABLE, hdmi_pai->base + HTX_PAI_CTRL);
-> +}
-> +
-> +static void imx8mp_hdmi_pai_disable(struct dw_hdmi *dw_hdmi)
-> +{
-> +	const struct dw_hdmi_plat_data *pdata =3D dw_hdmi_to_plat_data(dw_hdmi);
-> +	struct imx8mp_hdmi_pai *hdmi_pai =3D (struct imx8mp_hdmi_pai *)pdata->p=
-riv_audio;
-> +
-> +	/* Stop PAI */
-> +	writel(0, hdmi_pai->base + HTX_PAI_CTRL);
-> +}
-> +
-> +static int imx8mp_hdmi_pai_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev =3D &pdev->dev;
-> +	struct dw_hdmi_plat_data *plat_data;
-> +	struct imx8mp_hdmi_pai *hdmi_pai;
-> +	struct device_node *remote;
-> +	struct platform_device *hdmi_tx;
-> +	struct resource *res;
-> +
-> +	hdmi_pai =3D devm_kzalloc(dev, sizeof(*hdmi_pai), GFP_KERNEL);
-> +	if (!hdmi_pai)
-> +		return -ENOMEM;
-> +
-> +	hdmi_pai->base =3D devm_platform_get_and_ioremap_resource(pdev, 0, &res=
-);
-> +	if (IS_ERR(hdmi_pai->base))
-> +		return PTR_ERR(hdmi_pai->base);
-> +
-> +	hdmi_pai->dev =3D dev;
-> +
-> +	remote =3D of_graph_get_remote_node(pdev->dev.of_node, 0, -1);
-> +	if (!remote)
-> +		return -EINVAL;
-> +
-> +	hdmi_tx =3D of_find_device_by_node(remote);
-> +	if (!hdmi_tx)
-> +		return -EINVAL;
-> +
-> +	plat_data =3D platform_get_drvdata(hdmi_tx);
+I look forward to receiving and responding to questions, comments,
+concerns, and critiques.
 
-How do you ensure hdmi_tx has been probed so that drvdata is set?
-Also hdmi_tx needs to be dropped.
+Thank you for your reviews.
 
-> +	plat_data->enable_audio =3D imx8mp_hdmi_pai_enable;
-> +	plat_data->disable_audio =3D imx8mp_hdmi_pai_disable;
-> +	plat_data->priv_audio =3D hdmi_pai;
+Regards,
 
-How do you connect this device to aud2htx?
-
-Best regards,
-Alexander
-
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id imx8mp_hdmi_pai_of_table[] =3D {
-> +	{ .compatible =3D "fsl,imx8mp-hdmi-pai" },
-> +	{ /* Sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, imx8mp_hdmi_pai_of_table);
-> +
-> +static struct platform_driver imx8mp_hdmi_pai_platform_driver =3D {
-> +	.probe		=3D imx8mp_hdmi_pai_probe,
-> +	.driver		=3D {
-> +		.name	=3D "imx8mp-hdmi-pai",
-> +		.of_match_table =3D imx8mp_hdmi_pai_of_table,
-> +	},
-> +};
-> +module_platform_driver(imx8mp_hdmi_pai_platform_driver);
-> +
-> +MODULE_DESCRIPTION("i.MX8MP HDMI PAI driver");
-> +MODULE_LICENSE("GPL");
-> diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
-> index a56a3519a22a..9ca70ce80cc5 100644
-> --- a/include/drm/bridge/dw_hdmi.h
-> +++ b/include/drm/bridge/dw_hdmi.h
-> @@ -143,6 +143,12 @@ struct dw_hdmi_plat_data {
->  					   const struct drm_display_info *info,
->  					   const struct drm_display_mode *mode);
-> =20
-> +	/*
-> +	 * priv_audio is specially used for additional audio device to get
-> +	 * driver data through this dw_hdmi_plat_data.
-> +	 */
-> +	void *priv_audio;
-> +
->  	/* Platform-specific audio enable/disable (optional) */
->  	void (*enable_audio)(struct dw_hdmi *hdmi, int channel,
->  			     int width, int rate, int non_pcm);
->=20
+Erik
 
 
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
+Signed-off-by: Erik Beck <xunil@tahomasoft.com>
+Tested-by: Erik Beck <xunil@tahomasoft.com>
+
+ .../devicetree/bindings/arm/rockchip.yaml          |   5 +
+ arch/arm64/boot/dts/rockchip/Makefile              |   1 +
+ .../dts/rockchip/rk3568-linkstar-h68k-1432v1.dts   | 777
+ +++++++++++++++++++++ 3 files changed, 783 insertions(+)
 
 
+diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml
+b/Documentation/devicetree/bindings/arm/rockchip.yaml index
+28db6bd6aa5b..e48b168cfffe 100644 ---
+a/Documentation/devicetree/bindings/arm/rockchip.yaml +++
+b/Documentation/devicetree/bindings/arm/rockchip.yaml @@ -1137,6
++1137,11 @@ properties:
+           - const: sakurapi,rk3308-sakurapi-rk3308b
+           - const: rockchip,rk3308
+ 
++      - description: Seeed LinkStar H68K-1432v1 RK3568
++        items:
++          - const: seeed,rk3568-linkstar-h68k-1432v1
++          - const: rockchip,rk3568
++
+       - description: Sinovoip RK3308 Banana Pi P2 Pro
+         items:
+           - const: sinovoip,rk3308-bpi-p2pro
+
+diff --git a/arch/arm64/boot/dts/rockchip/Makefile
+b/arch/arm64/boot/dts/rockchip/Makefile index
+099520962ffb..00a38d085998 100644 ---
+a/arch/arm64/boot/dts/rockchip/Makefile +++
+b/arch/arm64/boot/dts/rockchip/Makefile @@ -130,6 +130,7 @@
+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-bpi-r2-pro.dtb
+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-evb1-v10.dtb
+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-fastrhino-r66s.dtb
+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-fastrhino-r68s.dtb
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-linkstar-h68k-1432v1.dtb
+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-lubancat-2.dtb
+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-mecsbc.dtb
+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-nanopi-r5c.dtb 
+
+diff --git
+a/arch/arm64/boot/dts/rockchip/rk3568-linkstar-h68k-1432v1.dts
+b/arch/arm64/boot/dts/rockchip/rk3568-linkstar-h68k-1432v1.dts new file
+mode 100644 index 000000000000..f8f80c7616cd --- /dev/null +++
+b/arch/arm64/boot/dts/rockchip/rk3568-linkstar-h68k-1432v1.dts @@ -0,0
++1,777 @@ +// SPDX-License-Identifier: (GPL-2.0+ OR MIT) +// Copyright
+(c) 2022 AmadeusGhost <amadeus@jmu.edu.cn> +//
++// Copyright (c) 2025 TahomaSoft xunil@tahomasoft.com
++//
++// Support for Seeed LinkStar H68K-1432v1
++// Also likely supports LinkStar H68K-1432v2
++// NB: Hinlink H68K is same or very similar under different trade name
++
++/dts-v1/;
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/leds/common.h>
++#include <dt-bindings/input/input.h>
++#include <dt-bindings/pinctrl/rockchip.h>
++#include <dt-bindings/soc/rockchip,vop2.h>
++#include "rk3568.dtsi"
++
++
++/ {
++        model = "Seeed LinkStar H68K-1432V1 (RK3568) DDR4 Board";
++        compatible = "seeed,rk3568-linkstar-h68k-1432v1",
+"rockchip,rk3568"; +
++        aliases {
++                ethernet0 = &gmac0;
++                ethernet1 = &gmac1;
++
++                /* fixed eMMC */
++                mmc0 = &sdhci;  /* sdhci:= @fe310000 */ /* mmcblk0...
+*/ +
++                /* removable uSD/TF Card */
++                mmc1 = &sdmmc0; /* sdmmc0:= @fe2b0000 */ /* mmcblk1...
+*/ +
++                rtc0 = &rk809;
++
++               led-boot = &led_one; /* status LED, green */
++               led-failsafe = &led_three; /* heartbeat LED */
++               led-running = &led_one; /* status LED, green */
++               led-upgrade = &led_two; /* function LED, amber */
++
++        };
++
++        chosen {
++                stdout-path = "serial2:1500000n8";
++        };
++
++        hdmi-con {
++                compatible = "hdmi-connector";
++                type = "a";
++
++                port {
++                        hdmi_con_in: endpoint {
++                                remote-endpoint = <&hdmi_out_con>;
++                        };
++                };
++        };
++
++        gpio-keys {
++                compatible = "gpio-keys";
++                pinctrl-0 = <&reset_button_pin>;
++                pinctrl-names = "default";
++
++        /* Middle inset/recessed button,
++                  marked by clockwise arrow/circle */
++
++                button-reset { /* gpiochip=0, line=0 */
++                        label = "button:system:reset";
++                        gpios = <&gpio0 RK_PA0 GPIO_ACTIVE_LOW>;
++                        linux,code = <KEY_RESTART>;
++                        debounce-interval = <50>;
++                };
++
++        };
++
++ /* gpio chip 0, line 24 responds to console key press */
++
++        gpio-leds {
++                compatible = "gpio-leds";
++                pinctrl-names = "default";
++                pinctrl-0 = <&led_white_pin>, <&led_green_pin>,
++                         <&led_amber_pin>, <&led_blue_pin>;
++
++                /* White LED inset in power button */
++
++                led_zero: led_white   { /* gpiochip=0, line=14 */
++                        color = <LED_COLOR_ID_WHITE>;
++                        default-state = "on";
++                        function = LED_FUNCTION_POWER;
++                        gpios = <&gpio0 RK_PB6 GPIO_ACTIVE_HIGH>;
++                        label = "power_button_led:white_led";
++                        linux,default-trigger = "default-on";
++
++                };
++
++                led_one: led_green { /* gpiochip=3, line=8 */
++                        default-state = "off";
++                        color = <LED_COLOR_ID_GREEN>;
++                        function = LED_FUNCTION_STATUS;
++                        gpios = <&gpio3 RK_PB0 GPIO_ACTIVE_HIGH>;
++                        label = "status_led:green_led";
++                };
++
++                led_two: led_amber {   /* gpiochip=3, line=7 */
++                        default-state = "off";
++                        color = <LED_COLOR_ID_AMBER>;
++                        function = LED_FUNCTION_INDICATOR;
++                        gpios = <&gpio3 RK_PA7 GPIO_ACTIVE_HIGH>;
++                        label = "function_led:amber_led";
++                };
++
++                led_three: led_blue { /* gpiochip=3, line=5 */
++                        color = <LED_COLOR_ID_BLUE>;
++                        gpios = <&gpio3 RK_PA5 GPIO_ACTIVE_HIGH>;
++                        default-state = "off";
++                        function = LED_FUNCTION_HEARTBEAT;
++                        label = "heartbeat_led:blue_led";
++                };
++        };
++
++        vcc12v_dcin: vcc12v-dcin {
++                compatible = "regulator-fixed";
++                regulator-always-on;
++                regulator-boot-on;
++                regulator-min-microvolt = <12000000>;
++                regulator-max-microvolt = <12000000>;
++                regulator-name = "vcc12v_dcin";
++        };
++
++        vcc3v3_sys: vcc3v3-sys {
++                compatible = "regulator-fixed";
++                regulator-always-on;
++                regulator-boot-on;
++                regulator-min-microvolt = <3300000>;
++                regulator-max-microvolt = <3300000>;
++                regulator-name = "vcc3v3_sys";
++                vin-supply = <&vcc12v_dcin>;
++        };
++
++        vcc5v0_sys: vcc5v0-sys {
++                compatible = "regulator-fixed";
++                regulator-always-on;
++                regulator-boot-on;
++                regulator-min-microvolt = <5000000>;
++                regulator-max-microvolt = <5000000>;
++                regulator-name = "vcc5v0_sys";
++                vin-supply = <&vcc12v_dcin>;
++        };
++
++        vcc5v0_usb: vcc5v0-usb {
++                compatible = "regulator-fixed";
++                regulator-always-on;
++                regulator-boot-on;
++                regulator-min-microvolt = <5000000>;
++                regulator-max-microvolt = <5000000>;
++                regulator-name = "vcc5v0_usb";
++                vin-supply = <&vcc12v_dcin>;
++        };
++
++        vcc5v0_usb_host: vcc5v0-usb-host {
++                compatible = "regulator-fixed";
++                enable-active-high;
++                gpio = <&gpio0 RK_PA5 GPIO_ACTIVE_HIGH>;
++                pinctrl-names = "default";
++                pinctrl-0 = <&vcc5v0_usb_host_en>;
++                regulator-min-microvolt = <5000000>;
++                regulator-max-microvolt = <5000000>;
++                regulator-name = "vcc5v0_usb_host";
++                vin-supply = <&vcc5v0_usb>;
++        };
++
++        vcc3v3_pcie: vcc3v3-pcie {
++                compatible = "regulator-fixed";
++                enable-active-high;
++                regulator-min-microvolt = <3300000>;
++                regulator-max-microvolt = <3300000>;
++                regulator-name = "vcc3v3_pcie";
++                startup-delay-us = <5000>;
++                vin-supply = <&vcc5v0_sys>;
++        };
++
++        rk809-sound {
++                compatible = "simple-audio-card";
++                simple-audio-card,format = "i2s";
++                simple-audio-card,name = "Analog RK809";
++                simple-audio-card,mclk-fs = <256>;
++
++                simple-audio-card,cpu {
++                        sound-dai = <&i2s1_8ch>;
++                };
++                simple-audio-card,codec {
++                        sound-dai = <&rk809>;
++                };
++        };
++
++};
++
++&gmac0 {
++        assigned-clocks = <&cru SCLK_GMAC0_RX_TX>, <&cru SCLK_GMAC0>;
++        assigned-clock-parents = <&cru SCLK_GMAC0_RGMII_SPEED>;
++        assigned-clock-rates = <0>, <125000000>;
++        clock_in_out = "output";
++        phy-mode = "rgmii-id";
++        pinctrl-names = "default";
++        pinctrl-0 = <&gmac0_miim
++                     &gmac0_tx_bus2
++                     &gmac0_rx_bus2
++                     &gmac0_rgmii_clk
++                     &gmac0_rgmii_bus>;
++        snps,reset-gpio = <&gpio2 RK_PD3 GPIO_ACTIVE_LOW>;
++        snps,reset-active-low;
++        snps,reset-delays-us = <0 20000 100000>;
++        tx_delay = <0x3c>;
++        rx_delay = <0x2f>;
++        phy-handle = <&rgmii_phy0>;
++        status = "okay";
++};
++
++&gmac1 {
++        assigned-clocks = <&cru SCLK_GMAC1_RX_TX>, <&cru SCLK_GMAC1>;
++        assigned-clock-parents = <&cru SCLK_GMAC1_RGMII_SPEED>;
++        assigned-clock-rates = <0>, <125000000>;
++        clock_in_out = "output";
++        phy-mode = "rgmii-id";
++        pinctrl-names = "default";
++        pinctrl-0 = <&gmac1m1_miim
++                     &gmac1m1_tx_bus2
++                     &gmac1m1_rx_bus2
++                     &gmac1m1_rgmii_clk
++                     &gmac1m1_rgmii_bus>;
++        snps,reset-gpio = <&gpio1 RK_PB0 GPIO_ACTIVE_LOW>;
++        snps,reset-active-low;
++        snps,reset-delays-us = <0 20000 100000>;
++        tx_delay = <0x4f>;
++        rx_delay = <0x26>;
++        phy-handle = <&rgmii_phy1>;
++        status = "okay";
++};
++
++ /* combphy0/multi-phy0 supports one of: usb3.0 otg, sata0 */
++
++&combphy0 {
++        status = "okay";
++
++};
++
++ /* combphy1/multi-phy1 supports one of:
++                         - usb3.0 host
++                         - sata1
++                         - qsgmii/sgmii
++ */
++
++&combphy1 {
++        status = "okay";
++};
++
++ /* combphy2/multi-phy2 supports one of:
++                         - pcie2.1
++                         - sata2
++                         - qsgmii/sgmii
++ */
++
++&combphy2 {
++        status = "okay";
++};
++
++&cpu0 {
++        cpu-supply = <&vdd_cpu>;
++};
++
++&cpu1 {
++        cpu-supply = <&vdd_cpu>;
++};
++
++&cpu2 {
++        cpu-supply = <&vdd_cpu>;
++};
++
++&cpu3 {
++        cpu-supply = <&vdd_cpu>;
++};
++
++&gpu {
++        mali-supply = <&vdd_gpu>;
++        status = "okay";
++};
++
++&hdmi {
++        avdd-0v9-supply = <&vdda0v9_image>;
++        avdd-1v8-supply = <&vcca1v8_image>;
++        status = "okay";
++};
++
++&hdmi_in {
++        hdmi_in_vp0: endpoint {
++                remote-endpoint = <&vp0_out_hdmi>;
++        };
++};
++
++&hdmi_out {
++        hdmi_out_con: endpoint {
++                remote-endpoint = <&hdmi_con_in>;
++        };
++};
++
++&hdmi_sound {
++        status = "okay";
++};
++
++&i2c0 {
++        status = "okay";
++
++        vdd_cpu: regulator@1c {
++                compatible = "tcs,tcs4525";
++                reg = <0x1c>;
++                fcs,suspend-voltage-selector = <1>;
++                regulator-name = "vdd_cpu";
++                regulator-always-on;
++                regulator-boot-on;
++                regulator-min-microvolt = <800000>;
++                regulator-max-microvolt = <1150000>;
++                regulator-ramp-delay = <2300>;
++                vin-supply = <&vcc5v0_sys>;
++
++                regulator-state-mem {
++                        regulator-off-in-suspend;
++                };
++        };
++
++        rk809: pmic@20 {
++                compatible = "rockchip,rk809";
++                reg = <0x20>;
++                interrupt-parent = <&gpio0>;
++                interrupts = <RK_PA3 IRQ_TYPE_LEVEL_LOW>;
++                assigned-clocks = <&cru I2S1_MCLKOUT_TX>;
++                assigned-clock-parents = <&cru CLK_I2S1_8CH_TX>;
++                #clock-cells = <1>;
++                clock-names = "mclk";
++                clocks = <&cru I2S1_MCLKOUT_TX>;
++                pinctrl-names = "default";
++                pinctrl-0 = <&pmic_int>, <&i2s1m0_mclk>;
++                rockchip,system-power-controller;
++                #sound-dai-cells = <0>;
++                wakeup-source;
++
++                vcc1-supply = <&vcc3v3_sys>;
++                vcc2-supply = <&vcc3v3_sys>;
++                vcc3-supply = <&vcc3v3_sys>;
++                vcc4-supply = <&vcc3v3_sys>;
++                vcc5-supply = <&vcc3v3_sys>;
++                vcc6-supply = <&vcc3v3_sys>;
++                vcc7-supply = <&vcc3v3_sys>;
++                vcc8-supply = <&vcc3v3_sys>;
++                vcc9-supply = <&vcc3v3_sys>;
++
++                regulators {
++                        vdd_logic: DCDC_REG1 {
++                                regulator-always-on;
++                                regulator-boot-on;
++                                regulator-initial-mode = <0x2>;
++                                regulator-min-microvolt = <500000>;
++                                regulator-max-microvolt = <1350000>;
++                                regulator-name = "vdd_logic";
++                                regulator-ramp-delay = <6001>;
++
++                                regulator-state-mem {
++                                        regulator-off-in-suspend;
++                                };
++                        };
++
++                        vdd_gpu: DCDC_REG2 {
++                                regulator-always-on;
++                                regulator-initial-mode = <0x2>;
++                                regulator-min-microvolt = <500000>;
++                                regulator-max-microvolt = <1350000>;
++                                regulator-name = "vdd_gpu";
++                                regulator-ramp-delay = <6001>;
++
++                                regulator-state-mem {
++                                        regulator-off-in-suspend;
++                                };
++                        };
++
++                        vcc_ddr: DCDC_REG3 {
++                                regulator-always-on;
++                                regulator-boot-on;
++                                regulator-initial-mode = <0x2>;
++                                regulator-name = "vcc_ddr";
++
++                                regulator-state-mem {
++                                        regulator-on-in-suspend;
++                                };
++                        };
++
++                        vdd_npu: DCDC_REG4 {
++                                regulator-initial-mode = <0x2>;
++                                regulator-min-microvolt = <500000>;
++                                regulator-max-microvolt = <1350000>;
++                                regulator-name = "vdd_npu";
++                                regulator-ramp-delay = <6001>;
++
++                                regulator-state-mem {
++                                        regulator-off-in-suspend;
++                                };
++                        };
++
++                        vcc_1v8: DCDC_REG5 {
++                                regulator-always-on;
++                                regulator-boot-on;
++                                regulator-min-microvolt = <1800000>;
++                                regulator-max-microvolt = <1800000>;
++                                regulator-name = "vcc_1v8";
++
++                                regulator-state-mem {
++                                        regulator-off-in-suspend;
++                                };
++                        };
++
++                        vdda0v9_image: LDO_REG1 {
++                                regulator-name = "vdda0v9_image";
++                                regulator-min-microvolt = <900000>;
++                                regulator-max-microvolt = <900000>;
++
++                                regulator-state-mem {
++                                        regulator-off-in-suspend;
++                                };
++                        };
++
++                        vdda_0v9: LDO_REG2 {
++                                regulator-always-on;
++                                regulator-boot-on;
++                                regulator-min-microvolt = <900000>;
++                                regulator-max-microvolt = <900000>;
++                                regulator-name = "vdda_0v9";
++
++                                regulator-state-mem {
++                                        regulator-off-in-suspend;
++                                };
++                        };
++
++                        vdda0v9_pmu: LDO_REG3 {
++                                regulator-always-on;
++                                regulator-boot-on;
++                                regulator-min-microvolt = <900000>;
++                                regulator-max-microvolt = <900000>;
++                                regulator-name = "vdda0v9_pmu";
++
++                                regulator-state-mem {
++                                        regulator-on-in-suspend;
++                                        regulator-suspend-microvolt =
+<900000>;
++                                };
++                        };
++
++                        vccio_acodec: LDO_REG4 {
++                                regulator-always-on;
++                                regulator-min-microvolt = <3300000>;
++                                regulator-max-microvolt = <3300000>;
++                                regulator-name = "vccio_acodec";
++
++                                regulator-state-mem {
++                                        regulator-off-in-suspend;
++                                };
++                        };
++
++                        vccio_sd: LDO_REG5 {
++                                regulator-min-microvolt = <1800000>;
++                                regulator-max-microvolt = <3300000>;
++                                regulator-name = "vccio_sd";
++
++                                regulator-state-mem {
++                                        regulator-off-in-suspend;
++                                };
++                        };
++
++                        vcc3v3_pmu: LDO_REG6 {
++                                regulator-always-on;
++                                regulator-boot-on;
++                                regulator-min-microvolt = <3300000>;
++                                regulator-max-microvolt = <3300000>;
++                                regulator-name = "vcc3v3_pmu";
++
++                                regulator-state-mem {
++                                        regulator-on-in-suspend;
++                                        regulator-suspend-microvolt =
+<3300000>;
++                                };
++                        };
++
++                        vcca_1v8: LDO_REG7 {
++                                regulator-always-on;
++                                regulator-boot-on;
++                                regulator-min-microvolt = <1800000>;
++                                regulator-max-microvolt = <1800000>;
++                                regulator-name = "vcca_1v8";
++
++                                regulator-state-mem {
++                                        regulator-off-in-suspend;
++                                };
++                        };
++
++                        vcca1v8_pmu: LDO_REG8 {
++                                regulator-always-on;
++                                regulator-boot-on;
++                                regulator-min-microvolt = <1800000>;
++                                regulator-max-microvolt = <1800000>;
++                                regulator-name = "vcca1v8_pmu";
++
++                                regulator-state-mem {
++                                        regulator-on-in-suspend;
++                                        regulator-suspend-microvolt =
+<1800000>;
++                                };
++                        };
++
++                        vcca1v8_image: LDO_REG9 {
++                                regulator-min-microvolt = <1800000>;
++                                regulator-max-microvolt = <1800000>;
++                                regulator-name = "vcca1v8_image";
++
++                                regulator-state-mem {
++                                        regulator-off-in-suspend;
++                                };
++                        };
++
++                        vcc_3v3: SWITCH_REG1 {
++                                regulator-name = "vcc_3v3";
++                                regulator-always-on;
++                                regulator-boot-on;
++
++                                regulator-state-mem {
++                                        regulator-off-in-suspend;
++                                };
++                        };
++
++                        vcc3v3_sd: SWITCH_REG2 {
++                                regulator-name = "vcc3v3_sd";
++
++                                regulator-state-mem {
++                                        regulator-off-in-suspend;
++                                };
++                        };
++                };
++
++                codec {
++                        rockchip,mic-in-differential;
++                };
++        };
++};
++
++&i2s0_8ch {
++        status = "okay";
++};
++
++&i2s1_8ch {
++        rockchip,trcm-sync-tx-only;
++        status = "okay";
++};
++
++&mdio0 {
++        rgmii_phy0: ethernet-phy@0 {
++                compatible = "ethernet-phy-ieee802.3-c22";
++                reg = <0x0>;
++        };
++};
++
++&mdio1 {
++        rgmii_phy1: ethernet-phy@0 {
++                compatible = "ethernet-phy-ieee802.3-c22";
++                reg = <0x0>;
++        };
++};
++
++&pcie30phy {
++         data-lanes = <1 2>;
++         status = "okay";
++};
++
++&pcie2x1 {
++         /*  bus-range = <0x00 0x0f>;  ?wrong? in rk356x.dtsi */
++         reset-gpios = <&gpio2 RK_PD6 GPIO_ACTIVE_HIGH>;
++         vpcie3v3-supply = <&vcc3v3_pcie>;
++         status = "okay";
++};
++
++&pcie3x1 {
++         num-lanes= <1>;
++         bus-range = <0x10 0x1f>;
++         reset-gpios = <&gpio3 RK_PA4 GPIO_ACTIVE_HIGH>;
++         vpcie3v3-supply = <&vcc3v3_pcie>;
++         status = "okay";
++
++};
++
++&pcie3x2 {
++         num-lanes= <1>;
++         bus-range = <0x20 0x2f>;
++         reset-gpios = <&gpio2 RK_PD0 GPIO_ACTIVE_HIGH>;
++         vpcie3v3-supply = <&vcc3v3_pcie>;
++         status = "okay";
++};
++
++&pinctrl {
++        button {
++                reset_button_pin: reset-button-pin {
++                        rockchip,pins = <0 RK_PA0 RK_FUNC_GPIO
+&pcfg_pull_up>;
++                };
++        };
++
++        bluetooth {
++                bt_wake_host_h: bt-wake-host-h {
++                        rockchip,pins = <3 RK_PA1 RK_FUNC_GPIO
+&pcfg_pull_down>;
++                };
++
++                host_wake_bt_h: host-wake-bt-h {
++                        rockchip,pins = <3 RK_PA2 RK_FUNC_GPIO
+&pcfg_pull_none>;
++                };
++        };
++
++        gpio-leds {
++             led_white_pin: led-white-pin  {
++                    rockchip,pins = <0 RK_PB6 RK_FUNC_GPIO
+&pcfg_pull_none>;
++             };
++
++             led_green_pin: led-green-pin {
++                    rockchip,pins = <3 RK_PB0 RK_FUNC_GPIO
+&pcfg_pull_none>;
++             };
++
++             led_amber_pin: led-amber-pin {
++                    rockchip,pins = <3 RK_PA7 RK_FUNC_GPIO
+&pcfg_pull_none>;
++             };
++
++             led_blue_pin: led-blue-pin {
++                    rockchip,pins = <3 RK_PA5 RK_FUNC_GPIO
+&pcfg_pull_none>;
++             };
++
++        };
++
++        pmic {
++                pmic_int: pmic_int {
++                        rockchip,pins = <0 RK_PA3 RK_FUNC_GPIO
+&pcfg_pull_up>;
++                };
++        };
++
++        usb {
++                vcc5v0_usb_host_en: vcc5v0_usb_host_en {
++                        rockchip,pins = <0 RK_PA5 RK_FUNC_GPIO
+&pcfg_pull_none>;
++                };
++        };
++};
++
++&pmu_io_domains {
++        pmuio1-supply = <&vcc3v3_pmu>;
++        pmuio2-supply = <&vcc3v3_pmu>;
++        vccio1-supply = <&vccio_acodec>;
++        vccio2-supply = <&vcc_1v8>;
++        vccio3-supply = <&vccio_sd>;
++        vccio4-supply = <&vcc_1v8>;
++        vccio5-supply = <&vcc_3v3>;
++        vccio6-supply = <&vcc_1v8>;
++        vccio7-supply = <&vcc_3v3>;
++        status = "okay";
++};
++
++&rng {
++        status = "okay";
++};
++
++&saradc {
++        vref-supply = <&vcca_1v8>;
++        status = "okay";
++};
++
++&sata0 { /* sata0 muxed with USB3-OTG  */
++        status = "disabled";
++};
++
++&sata1 { /* sata1 muxed with QSGMII and USB3-A 5G LTE Host1 */
++         status = "disabled";
++};
++
++&sata2 { /* sata 2 muxed with pcie2.0 and QSGMII_M1 M2 Wifi */
++         status = "disabled";
++};
++
++&sdhci {
++        bus-width = <8>;
++        max-frequency = <200000000>;
++        non-removable;
++        pinctrl-0 = <&emmc_bus8 &emmc_clk &emmc_cmd &emmc_datastrobe>;
++        status = "okay";
++};
++
++&sdmmc0 {
++        bus-width = <4>;
++        cap-sd-highspeed;
++        cd-gpios = <&gpio0 RK_PA4 GPIO_ACTIVE_LOW>;
++        disable-wp;
++        pinctrl-names = "default";
++        pinctrl-0 = <&sdmmc0_bus4 &sdmmc0_clk &sdmmc0_cmd &sdmmc0_det>;
++        sd-uhs-sdr104;
++        vmmc-supply = <&vcc3v3_sd>;
++        vqmmc-supply = <&vccio_sd>;
++        status = "okay";
++};
++
++&tsadc {
++        rockchip,hw-tshut-mode = <1>;
++        rockchip,hw-tshut-polarity = <0>;
++        status = "okay";
++};
++
++&uart2 {
++        status = "okay";
++};
++
++&usb_host0_ehci {
++        status = "okay";
++};
++
++&usb_host1_ehci {
++        status = "okay";
++};
++
++&usb_host0_ohci {
++        status = "okay";
++};
++
++&usb_host1_ohci {
++        status = "okay";
++};
++
++&usb_host0_xhci {
++        phys = <&combphy0 PHY_TYPE_USB3>;
++        phy-names = "usb3-phy";
++        status = "okay";
++};
++
++&usb_host1_xhci {
++        status = "okay";
++};
++
++&usb2phy0 {
++        status = "okay";
++};
++
++&usb2phy0_host {
++        phy-supply = <&vcc5v0_usb_host>;
++        status = "okay";
++};
++
++&usb2phy1 {
++        status = "okay";
++};
++
++&usb2phy1_host {
++        phy-supply = <&vcc5v0_usb_host>;
++        status = "okay";
++};
++
++&usb2phy1_otg {
++        phy-supply = <&vcc5v0_usb_host>;
++        status = "okay";
++};
++
++&vop {
++        assigned-clocks = <&cru DCLK_VOP0>, <&cru DCLK_VOP1>;
++        assigned-clock-parents = <&pmucru PLL_HPLL>, <&cru PLL_VPLL>;
++        status = "okay";
++};
++
++&vop_mmu {
++        status = "okay";
++};
++
++&vp0 {
++        vp0_out_hdmi: endpoint@ROCKCHIP_VOP2_EP_HDMI0 {
++                reg = <ROCKCHIP_VOP2_EP_HDMI0>;
++                remote-endpoint = <&hdmi_in_vp0>;
++        };
++};
++
 
