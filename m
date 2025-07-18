@@ -1,164 +1,286 @@
-Return-Path: <linux-kernel+bounces-737328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4242B0AAF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 22:06:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B866FB0AAF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 22:07:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CCC01C48272
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 20:06:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B7691C48284
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 20:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4AF1FE45D;
-	Fri, 18 Jul 2025 20:06:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD971FE45D;
+	Fri, 18 Jul 2025 20:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y9sovkPL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TzP8taYq"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F8DBD517;
-	Fri, 18 Jul 2025 20:06:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2181CD517;
+	Fri, 18 Jul 2025 20:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752869167; cv=none; b=M63oaJxmDmm38IG8BLhsMximjJwDIaFDZUvguU4vtT+tCHO//CRq97TLH6akv/EZ9jlutw/F5shNlXH/fP9ro/5UMfZYIZEVZXrGReEomnbGPQuF5l75Tl1q8iivJprwLI2tKaCvIiZW3W6WrhWXmU+8Ihp8ayasVvAQuq0v6Tc=
+	t=1752869249; cv=none; b=ZgnTPj23y0q3JghRnOke6Z/Hk2qVS/xxR7Gf1qRd5T+U4HDXH7iVbMoar7zgskEB6ZNHgPd96o1LWetrbAj8T6gKcAP4DpmAryaWrPMDLRxD13P6GRbuczzzuzhiEPQmlQ+6WwcC+LqjXAjb6mzWM2hIKM/BqxAleUui+8GuDto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752869167; c=relaxed/simple;
-	bh=iM/cBfn6qf7kJPZApTF05wjQcPVP4ARh8oIYFBvOnbQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WLhTAetYpHUz7WNX7PMiox39tNGeWcHFPWgqmCStllmv1jypGATXt5Z8zwEEdGMoFpW4IoYaBkRO8QUcEOoV7kzRwlgRFjNh1RqPJEwiK20T2GlBGxM3rauY2HWNcpQim9XMC1rO7/r/JjZxlT5/mCxP6/fQR9pK3ATc28mHxM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y9sovkPL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A2DFC4CEEB;
-	Fri, 18 Jul 2025 20:06:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752869167;
-	bh=iM/cBfn6qf7kJPZApTF05wjQcPVP4ARh8oIYFBvOnbQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y9sovkPL7D4ADsST94stWH0zK+qSnkGSP7rTG4uGBOET4Estd53I+YmUj05eVidQY
-	 Z+vhivYCZzdG4JK+0+6+msMFyJNHK0jd9mJWkgZjsA0rWpbTLQod7CrLL/6t4CGjlg
-	 WrBVfNMJ/dnR3gXbbikXOA620EjvAhW2I3S8j55lPP9Ac0ModgGoAYg7tSOm+89kbx
-	 8KW1iUdiwkv/vYGZ5+SIlNRxNvKXtkEX/dfo3XC8eIJM7pp91a1JUHBYV38eZXUUdO
-	 wRgL1XMesXepYg8WKV12cra7adqTbHIwuMPNInU5hpbA2zD1TOoriaAY73a9RXqiGl
-	 MGp/HZUCpQj3w==
-Date: Fri, 18 Jul 2025 21:06:02 +0100
-From: Simon Horman <horms@kernel.org>
-To: "G Thomas, Rohan" <rohan.g.thomas@altera.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Romain Gantois <romain.gantois@bootlin.com>, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Matthew Gerlach <matthew.gerlach@altera.com>
-Subject: Re: [PATCH net-next 3/3] net: stmmac: Set CIC bit only for TX queues
- with COE
-Message-ID: <20250718200602.GM2459@horms.kernel.org>
-References: <20250714-xgmac-minor-fixes-v1-0-c34092a88a72@altera.com>
- <20250714-xgmac-minor-fixes-v1-3-c34092a88a72@altera.com>
- <20250714134012.GN721198@horms.kernel.org>
- <9f4acd69-12ff-4b2f-bb3a-e8d401b23238@altera.com>
- <20250716082209.GH721198@horms.kernel.org>
- <38d05790-eb4a-482a-89ec-8c17cf2e9680@altera.com>
+	s=arc-20240116; t=1752869249; c=relaxed/simple;
+	bh=qiB1Am2MdnaUaej4EZsXEtFdX5Yw7+XNtsIu9hCIgq8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l8RnGy2Io/3uOj5k3J/l+3l/MA7FRrlEXfIRZd3Y9DnLeP4XQQRGskeopNnGKdLcW1Aojr3+Rd/Z7SUxfnkYaxNoko47spEcI+qUj2c66DAd3bqaEv3LSSbawK9+gKN0PR5ZKuX8L9oxRXrK1IuoA/Yd+La6Zi0edFMU9F1ugD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TzP8taYq; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b34b770868dso323695a12.2;
+        Fri, 18 Jul 2025 13:07:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752869247; x=1753474047; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I9RhPn6bn+hJA06IZWwattr/+qu6k9jF9QGOYEXW45s=;
+        b=TzP8taYqI2pNYDaGGKICgn+ZWke2o5FhPOxbNbi3wUlxL1svtzhp03oBk5r805vPxT
+         WayrthpB2k7GGRlmj95t/XN1W1X+ilCMSRdUM8nKhhO+y7r4wR8B0D+agCfK5yBzHFlL
+         OQ0j2V/M4Nzpuxy2pigPRLqIoxOEqT8hGAx1zx8k3fWQO+UDlptceqz7XS0hXFGhEwuj
+         hMa1TF+dPMM19xt0bO0edU9s48E619qs3g8LgUok9cNIXUlPQGFCX4Y+WFmhoCCxFJSi
+         v/ivlo+KdOGoxxcoxsEUZI1PJGHfz0nJTybvp5p4/0js8ZLWvfvSPGOKTCVOvahWGoOc
+         ZRoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752869247; x=1753474047;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=I9RhPn6bn+hJA06IZWwattr/+qu6k9jF9QGOYEXW45s=;
+        b=aSq6bilkMqiGvav+xZihoVgeosMYk6VeDVNh8ZKbLq0zvej53eCmJTt55u6COg25Bu
+         uZ+r2APuvWLEfZsuuYRyyWGnWTN//sEKYcBLJ6AL/CHtyo/+35TRRRTOFFYHaLi1okuk
+         b7gsIYHv49JYL28jhxsFsU+nOoUaisDVo84CVCkS3jqLEaKTHzUC8hQJhzRsHdIce1zU
+         ywUOKr+bIbkVxQMhfxRopDNX1wmKEyUL2cFdlhxnfK1kf4CgL3G/s00OfjY/Id87I8Kv
+         10fMv7HPPZsO6uvQQh2e41/y9HI1TFWvhTRxjcjUgHn/t8+0mWqMjO0iIs99HDMxMLef
+         EVDg==
+X-Forwarded-Encrypted: i=1; AJvYcCVF0LQlRuTQZMaU7U6yfCIQHquncEzq3R1J3+ajtqm2fIeSlzkcetbgUAIFJLS4+P9+fv4N9l2a@vger.kernel.org, AJvYcCXtrsZK9ezE4MJFZlgVflpmMfeNike3g6LW5D3ULsrLJEc5Vcwg3yrm2sMA4IpZMCmq75u2Bc43MBm2Cf8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YworISlkTVwJtnvMMEly3Q1fLQrHG+CXOU7Y8Z0ptWqNe8/R754
+	cgf6RzspQ6ll6LF3nupD2oc9bOJDzlIP0UJyVwvM1ZePzFbxkDtnOWGdt5J1JcjayWviagKY1ek
+	HOjk5al223JAD2tOZuw7tt0+UiZrtPjM=
+X-Gm-Gg: ASbGncuTQKExB20ijLEKPFY7meSVytnFZnYAduFIVy7iMKqOc7jCJrGUdX0NS1cgImm
+	ZwDjvKo25amyOh/ba+c9q+Ika0Z0FCvx6Not18KUKNwnhJjxra6XEwJBp4sdie937RvpCtotTQY
+	cXPiLLy8/GKBJB/kQSjWZn9o/oYYwMujh8J4KE5l5oO+dpXYghU00q7nGFVIwdWxLu3xqEyJu3I
+	ck/yq/G
+X-Google-Smtp-Source: AGHT+IEEIC7Ov8wCVOKS/R8qsm5tmfCXtvXWU4DJsxwH/1X3wLmGk+yjxCtQD3NZENjz6uOuesxywakCO3vaWoj9Bjc=
+X-Received: by 2002:a17:90b:2ec7:b0:312:639:a06d with SMTP id
+ 98e67ed59e1d1-31c9e78ec64mr6626904a91.5.1752869247216; Fri, 18 Jul 2025
+ 13:07:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <38d05790-eb4a-482a-89ec-8c17cf2e9680@altera.com>
+References: <20250716161753.231145-1-bgeffon@google.com> <CADnq5_P+a2g_YzKW7S4YSF5kQgXe+PNrMKEOAHuf9yhFg98pSQ@mail.gmail.com>
+ <CADyq12zB7+opz0vUgyAQSdbHcYMwbZrZp+qxKdYcqaeCeRVbCw@mail.gmail.com>
+ <CADnq5_OeTJqzg0DgV06b-u_AmgaqXL5XWdQ6h40zcgGj1mCE_A@mail.gmail.com>
+ <CADyq12ysC9C2tsQ3GrQJB3x6aZPzM1o8pyTW8z4bxjGPsfEZvw@mail.gmail.com>
+ <CADnq5_PnktmP+0Hw0T04VkrkKoF_TGz5HOzRd1UZq6XOE0Rm1g@mail.gmail.com> <CADyq12x1f0VLjHKWEmfmis8oLncqSWxeTGs5wL0Xj2hua+onOQ@mail.gmail.com>
+In-Reply-To: <CADyq12x1f0VLjHKWEmfmis8oLncqSWxeTGs5wL0Xj2hua+onOQ@mail.gmail.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Fri, 18 Jul 2025 16:07:15 -0400
+X-Gm-Features: Ac12FXzpSsEJ7zuzpP255sChl3CDubYC6yiCREKgz9m-Uq3Jrl2YudKs6Zl1T3g
+Message-ID: <CADnq5_OhHpZDmV5J_5kA+avOdLrexnoRVCCCRddLQ=PPVAJsPQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu: Raven: don't allow mixing GTT and VRAM
+To: Brian Geffon <bgeffon@google.com>
+Cc: "Wentland, Harry" <Harry.Wentland@amd.com>, "Leo (Sunpeng) Li" <Sunpeng.Li@amd.com>, 
+	Alex Deucher <alexander.deucher@amd.com>, christian.koenig@amd.com, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, Yunxiang Li <Yunxiang.Li@amd.com>, 
+	Lijo Lazar <lijo.lazar@amd.com>, Prike Liang <Prike.Liang@amd.com>, 
+	Pratap Nirujogi <pratap.nirujogi@amd.com>, Luben Tuikov <luben.tuikov@amd.com>, 
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Garrick Evans <garrick@google.com>, 
+	Thadeu Lima de Souza Cascardo <cascardo@igalia.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 17, 2025 at 11:50:06AM +0530, G Thomas, Rohan wrote:
-> Hi Simon,
-> 
-> On 7/16/2025 1:52 PM, Simon Horman wrote:
-> > On Tue, Jul 15, 2025 at 07:14:21PM +0530, G Thomas, Rohan wrote:
-> > > Hi Simon,
-> > > 
-> > > Thanks for reviewing the patch.
-> > > 
-> > > On 7/14/2025 7:10 PM, Simon Horman wrote:
-> > > > On Mon, Jul 14, 2025 at 03:59:19PM +0800, Rohan G Thomas via B4 Relay wrote:
-> > > > > From: Rohan G Thomas <rohan.g.thomas@altera.com>
-> > > > > 
-> > > > > Currently, in the AF_XDP transmit paths, the CIC bit of
-> > > > > TX Desc3 is set for all packets. Setting this bit for
-> > > > > packets transmitting through queues that don't support
-> > > > > checksum offloading causes the TX DMA to get stuck after
-> > > > > transmitting some packets. This patch ensures the CIC bit
-> > > > > of TX Desc3 is set only if the TX queue supports checksum
-> > > > > offloading.
-> > > > > 
-> > > > > Signed-off-by: Rohan G Thomas <rohan.g.thomas@altera.com>
-> > > > > Reviewed-by: Matthew Gerlach <matthew.gerlach@altera.com>
-> > > > 
-> > > > Hi Rohan,
-> > > > 
-> > > > I notice that stmmac_xmit() handles a few other cases where
-> > > > checksum offload should not be requested via stmmac_prepare_tx_desc:
-> > > > 
-> > > >           csum_insertion = (skb->ip_summed == CHECKSUM_PARTIAL);
-> > > >           /* DWMAC IPs can be synthesized to support tx coe only for a few tx
-> > > >            * queues. In that case, checksum offloading for those queues that don't
-> > > >            * support tx coe needs to fallback to software checksum calculation.
-> > > >            *
-> > > >            * Packets that won't trigger the COE e.g. most DSA-tagged packets will
-> > > >            * also have to be checksummed in software.
-> > > >            */
-> > > >           if (csum_insertion &&
-> > > >               (priv->plat->tx_queues_cfg[queue].coe_unsupported ||
-> > > >                !stmmac_has_ip_ethertype(skb))) {
-> > > >                   if (unlikely(skb_checksum_help(skb)))
-> > > >                           goto dma_map_err;
-> > > >                   csum_insertion = !csum_insertion;
-> > > >           }
-> > > > 
-> > > > Do we need to care about them in stmmac_xdp_xmit_zc()
-> > > > and stmmac_xdp_xmit_xdpf() too?
-> > > 
-> > > This patch only addresses avoiding the TX DMA hang by ensuring the CIC
-> > > bit is only set when the queue supports checksum offload. For DSA tagged
-> > > packets checksum offloading is not supported by the DWMAC IPs but no TX
-> > > DMA hang. AFAIK, currently AF_XDP paths don't have equivalent handling
-> > > like skb_checksum_help(), since they operate on xdp buffers. So this
-> > > patch doesn't attempt to implement a sw fallback but just avoids DMA
-> > > stall.
-> > 
-> > Ok, fair enough.
-> > 
-> > As per Andrew's advice elsewhere in this thread.
-> > This patch also looks like it should be a fix for net,
-> > and should have a Fixes tag.
-> 
-> Thanks for your comments.
-> 
-> You're right—this patch is a fix for the TX DMA hang issue caused by
-> setting the CIC bit on queues that don't support checksum offload. But
-> I couldn’t pinpoint a specific commit that introduced this behavior in
-> the AF_XDP path. Initially, there was no support for DWMAC IPs with COE
-> enabled only on specific queues, even though there can be IPs with such
-> configuration. Commit 8452a05b2c63 ("net: stmmac: Tx coe sw fallback")
-> added software fallback support for the AF_PACKET path. But the AF_XDP
-> path has always enabled COE unconditionally even before that. So, do you
-> think referencing the commit 8452a05b2c63 in the Fixes tag is
-> appropriate and sufficient?
+On Fri, Jul 18, 2025 at 1:57=E2=80=AFPM Brian Geffon <bgeffon@google.com> w=
+rote:
+>
+> On Thu, Jul 17, 2025 at 10:59=E2=80=AFAM Alex Deucher <alexdeucher@gmail.=
+com> wrote:
+> >
+> > On Wed, Jul 16, 2025 at 8:13=E2=80=AFPM Brian Geffon <bgeffon@google.co=
+m> wrote:
+> > >
+> > > On Wed, Jul 16, 2025 at 5:03=E2=80=AFPM Alex Deucher <alexdeucher@gma=
+il.com> wrote:
+> > > >
+> > > > On Wed, Jul 16, 2025 at 12:40=E2=80=AFPM Brian Geffon <bgeffon@goog=
+le.com> wrote:
+> > > > >
+> > > > > On Wed, Jul 16, 2025 at 12:33=E2=80=AFPM Alex Deucher <alexdeuche=
+r@gmail.com> wrote:
+> > > > > >
+> > > > > > On Wed, Jul 16, 2025 at 12:18=E2=80=AFPM Brian Geffon <bgeffon@=
+google.com> wrote:
+> > > > > > >
+> > > > > > > Commit 81d0bcf99009 ("drm/amdgpu: make display pinning more f=
+lexible (v2)")
+> > > > > > > allowed for newer ASICs to mix GTT and VRAM, this change also=
+ noted that
+> > > > > > > some older boards, such as Stoney and Carrizo do not support =
+this.
+> > > > > > > It appears that at least one additional ASIC does not support=
+ this which
+> > > > > > > is Raven.
+> > > > > > >
+> > > > > > > We observed this issue when migrating a device from a 5.4 to =
+6.6 kernel
+> > > > > > > and have confirmed that Raven also needs to be excluded from =
+mixing GTT
+> > > > > > > and VRAM.
+> > > > > >
+> > > > > > Can you elaborate a bit on what the problem is?  For carrizo an=
+d
+> > > > > > stoney this is a hardware limitation (all display buffers need =
+to be
+> > > > > > in GTT or VRAM, but not both).  Raven and newer don't have this
+> > > > > > limitation and we tested raven pretty extensively at the time.
+> > > > >
+> > > > > Thanks for taking the time to look. We have automated testing and=
+ a
+> > > > > few igt gpu tools tests failed and after debugging we found that
+> > > > > commit 81d0bcf99009 is what introduced the failures on this hardw=
+are
+> > > > > on 6.1+ kernels. The specific tests that fail are kms_async_flips=
+ and
+> > > > > kms_plane_alpha_blend, excluding Raven from this sharing of GTT a=
+nd
+> > > > > VRAM buffers resolves the issue.
+> > > >
+> > > > + Harry and Leo
+> > > >
+> > > > This sounds like the memory placement issue we discussed last week.
+> > > > In that case, the issue is related to where the buffer ends up when=
+ we
+> > > > try to do an async flip.  In that case, we can't do an async flip
+> > > > without a full modeset if the buffers locations are different than =
+the
+> > > > last modeset because we need to update more than just the buffer ba=
+se
+> > > > addresses.  This change works around that limitation by always forc=
+ing
+> > > > display buffers into VRAM or GTT.  Adding raven to this case may fi=
+x
+> > > > those tests but will make the overall experience worse because we'l=
+l
+> > > > end up effectively not being able to not fully utilize both gtt and
+> > > > vram for display which would reintroduce all of the problems fixed =
+by
+> > > > 81d0bcf99009 ("drm/amdgpu: make display pinning more flexible (v2)"=
+).
+> > >
+> > > Thanks Alex, the thing is, we only observe this on Raven boards, why
+> > > would Raven only be impacted by this? It would seem that all devices
+> > > would have this issue, no? Also, I'm not familiar with how
+> >
+> > It depends on memory pressure and available memory in each pool.
+> > E.g., initially the display buffer is in VRAM when the initial mode
+> > set happens.  The watermarks, etc. are set for that scenario.  One of
+> > the next frames ends up in a pool different than the original.  Now
+> > the buffer is in GTT.  The async flip interface does a fast validation
+> > to try and flip as soon as possible, but that validation fails because
+> > the watermarks need to be updated which requires a full modeset.
+> >
+> > It's tricky to fix because you don't want to use the worst case
+> > watermarks all the time because that will limit the number available
+> > display options and you don't want to force everything to a particular
+> > memory pool because that will limit the amount of memory that can be
+> > used for display (which is what the patch in question fixed).  Ideally
+> > the caller would do a test commit before the page flip to determine
+> > whether or not it would succeed before issuing it and then we'd have
+> > some feedback mechanism to tell the caller that the commit would fail
+> > due to buffer placement so it would do a full modeset instead.  We
+> > discussed this feedback mechanism last week at the display hackfest.
+> >
+> >
+> > > kms_plane_alpha_blend works, but does this also support that test
+> > > failing as the cause?
+> >
+> > That may be related.  I'm not too familiar with that test either, but
+> > Leo or Harry can provide some guidance.
+> >
+> > Alex
+>
+> Thanks everyone for the input so far. I have a question for the
+> maintainers, given that it seems that this is functionally broken for
+> ASICs which are iGPUs, and there does not seem to be an easy fix, does
+> it make sense to extend this proposed patch to all iGPUs until a more
+> permanent fix can be identified? At the end of the day I'll take
+> functional correctness over performance.
 
-Hi Rohan,
+It's not functional correctness, it's usability.  All that is
+potentially broken is async flips (which depend on memory pressure and
+buffer placement), while if you effectively revert the patch, you end
+up  limiting all display buffers to either VRAM or GTT which may end
+up causing the inability to display anything because there is not
+enough memory in that pool for the next modeset.  We'll start getting
+bug reports about blank screens and failure to set modes because of
+memory pressure.  I think if we want a short term fix, it would be to
+always set the worst case watermarks.  The downside to that is that it
+would possibly cause some working display setups to stop working if
+they were on the margins to begin with.
 
-Perhaps I'm missing the point, but my thinking is as follows:
+Alex
 
-As this patch only addresses the AF_XDP path I think we can take the
-approach of asking "in which patch would a user of AF_XDP with this stmmac
-observe this bug". (Or some variant thereof.) And I think the answer to
-that question is the patch that added AF_XDP support to stmmac driver.
-
-So I think we can use:
-
-Fixes: 132c32ee5bc0 ("net: stmmac: Add TX via XDP zero-copy socket")
+>
+> Brian
+>
+> >
+> > >
+> > > Thanks again,
+> > > Brian
+> > >
+> > > >
+> > > > Alex
+> > > >
+> > > > >
+> > > > > Brian
+> > > > >
+> > > > > >
+> > > > > >
+> > > > > > Alex
+> > > > > >
+> > > > > > >
+> > > > > > > Fixes: 81d0bcf99009 ("drm/amdgpu: make display pinning more f=
+lexible (v2)")
+> > > > > > > Cc: Luben Tuikov <luben.tuikov@amd.com>
+> > > > > > > Cc: Christian K=C3=B6nig <christian.koenig@amd.com>
+> > > > > > > Cc: Alex Deucher <alexander.deucher@amd.com>
+> > > > > > > Cc: stable@vger.kernel.org # 6.1+
+> > > > > > > Tested-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com=
+>
+> > > > > > > Signed-off-by: Brian Geffon <bgeffon@google.com>
+> > > > > > > ---
+> > > > > > >  drivers/gpu/drm/amd/amdgpu/amdgpu_object.c | 3 ++-
+> > > > > > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > > > > > >
+> > > > > > > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c b/dri=
+vers/gpu/drm/amd/amdgpu/amdgpu_object.c
+> > > > > > > index 73403744331a..5d7f13e25b7c 100644
+> > > > > > > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
+> > > > > > > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
+> > > > > > > @@ -1545,7 +1545,8 @@ uint32_t amdgpu_bo_get_preferred_domain=
+(struct amdgpu_device *adev,
+> > > > > > >                                             uint32_t domain)
+> > > > > > >  {
+> > > > > > >         if ((domain =3D=3D (AMDGPU_GEM_DOMAIN_VRAM | AMDGPU_G=
+EM_DOMAIN_GTT)) &&
+> > > > > > > -           ((adev->asic_type =3D=3D CHIP_CARRIZO) || (adev->=
+asic_type =3D=3D CHIP_STONEY))) {
+> > > > > > > +           ((adev->asic_type =3D=3D CHIP_CARRIZO) || (adev->=
+asic_type =3D=3D CHIP_STONEY) ||
+> > > > > > > +            (adev->asic_type =3D=3D CHIP_RAVEN))) {
+> > > > > > >                 domain =3D AMDGPU_GEM_DOMAIN_VRAM;
+> > > > > > >                 if (adev->gmc.real_vram_size <=3D AMDGPU_SG_T=
+HRESHOLD)
+> > > > > > >                         domain =3D AMDGPU_GEM_DOMAIN_GTT;
+> > > > > > > --
+> > > > > > > 2.50.0.727.gbf7dc18ff4-goog
+> > > > > > >
 
