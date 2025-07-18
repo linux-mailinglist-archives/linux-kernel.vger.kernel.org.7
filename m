@@ -1,128 +1,203 @@
-Return-Path: <linux-kernel+bounces-736909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02BB7B0A50C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:24:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9556B0A50D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:24:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE67D7BD21F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:23:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2D06189E9F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:25:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2EB22DCF66;
-	Fri, 18 Jul 2025 13:23:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECAC12DC32E;
+	Fri, 18 Jul 2025 13:24:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wPrnENv0";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fZwcWDbq"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aDLP4QJe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE042DC32A;
-	Fri, 18 Jul 2025 13:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42CEB2D97B4;
+	Fri, 18 Jul 2025 13:24:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752845033; cv=none; b=ke6NyDnXHdRqlI4/loAHzz8Cx7J3O/2cLatDnMV7pVJn6KqkDq+H/9CKDxMp7bTHQwJg0hDFQFzbk+DJt3kb6KUGnfz0sFjXOXiEZi7xHDLds9HLrBLeYRKFBCmH5tGJr1TQy98UR+ipFsCtRk439Ercl/IxQDmpP3k4BmK0C6Y=
+	t=1752845043; cv=none; b=W3MMxTnN9QQdrA8IugLpdSEJSXx0uWlh0aYJhHJi5WFGBk0MIOJpwU/XIFAKzMonNKjBreqicumt4Jg61HCKVr0kjEFgyZlEdPiZvR2obyn8aTuMCIrv5o3glOsINBedxxc/qVindGyT6yfA3Vts4AOpjYEBvXB2jr6lE00LJgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752845033; c=relaxed/simple;
-	bh=aDE2F+i5U/RwF3bKKM80JxNThsV/LVClmb28mInGzlg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=li2w/YcfmCx6GQc8TjFhjVvV9tj1I2rweFFiG0P3pTaRG56Qf18OvuLLBOPNdde3aOEmpKVI727elBsbIus9+YVn/t4BfvC4Oq6Tb0XqqKbRQ002t96Ro9YktYQ7ELnLrNMmUnWxfZDPHN9Fdxh2VYt/pBLx0Xn1FTMkHalgAZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wPrnENv0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fZwcWDbq; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752845029;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k4RLhqXeWrS5RgZJNQezfsxzg5XGF5Z2AEnOcuhDTjk=;
-	b=wPrnENv06N8UIVCEh7GN7huPaGCkPrf/LRIrlWG9kf0JApUTTnwLnZm19AyEoH7EYYPnfe
-	2rUyhQ89E479cPf0NfRdGMrzHQk2IMqWDme36KBciJwcdSAS9zxD2dec+bpsuEOyNQLFcS
-	LuLSu0L6SHJh1XB0GXUnpIJWfFWMXX6l26AFsh/9ERH72Hw+VG9rpdqWxgrcu+chLMCQuQ
-	ZddSey9m9XuaV6+eE/X6o6QoefcB+r66HKHyql9WrB8TwRS1IPNx29c0ff2O5Z8n3h6nDz
-	xI5EhsjE9cTdGkyyrQQqbT+ZaglZP+0D/612LpG8eV3pePIfPX+/beOiyPsFyw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752845029;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k4RLhqXeWrS5RgZJNQezfsxzg5XGF5Z2AEnOcuhDTjk=;
-	b=fZwcWDbqEHE5G48achDLvaYWRQDua2DiiFMSnNPctFoKX+iSod4JKk8B0v4v9Z0ZHyMkja
-	ee9ygxkk5Fd4fhBg==
-Date: Fri, 18 Jul 2025 15:23:43 +0200
-Subject: [PATCH net-next v4 2/2] net/mlx5: Don't use %pK through printk or
- tracepoints
+	s=arc-20240116; t=1752845043; c=relaxed/simple;
+	bh=L6YBXu9x6pSAB4gABlg8mIrc72K2kdHir/4TsQxtUY4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L6cqmU0lmVFsuE5v6PGATXMtN8mcmyLVt8+WW6IFU34A6H2Z8iz5LU+JUvN18BRrkkHSJdZhYQzHEAKyxENPrjx/Gmd+M9okYBjRGOGY6pmruKpOw1gCaFuyO/SbhgNHrLtvQt3OqMwuJVVth/9mJt6I/Aub+SGHyKJyccLEjWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aDLP4QJe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C56CC4CEEB;
+	Fri, 18 Jul 2025 13:24:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752845042;
+	bh=L6YBXu9x6pSAB4gABlg8mIrc72K2kdHir/4TsQxtUY4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aDLP4QJe6l6vXRZG1COSN6q9o8Eanm3I3DZDrVbn6NYwBx5dpyJRK+pT/v2Wxslk8
+	 ctY96+0uTG23swxTmV4pZZbEaCWiCG36J3j04VZGUrdcd+h51w1iGAw5yO7Zp6lLi/
+	 W32OSJzgL8f3v/pdwyT/HZt+/bqvci4e37SjdmWAmfdR7tJAM5IxSEZ0HN9YtTZjK7
+	 y2/0Hvbc1fKXRV2CPiCbYwudkKRoWegArEua7sXKUpIrQdAmzkQI7NrKlqjTEKGf4u
+	 2X5YnvnBtHsfXOi1Y5PurSsTWaMwyd9fCKWGAFNB7TXvbiiyAuz7/nPLU8iPr2HTBt
+	 jQiy4mdHAV1rg==
+Date: Fri, 18 Jul 2025 14:23:58 +0100
+From: Lee Jones <lee@kernel.org>
+To: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+Cc: "pavel@kernel.org" <pavel@kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	GEO-CHHER-bsp-development <bsp-development.geo@leica-geosystems.com>
+Subject: Re: [PATCH V3 2/2] leds: pwm: Add optional GPIO enable pin support
+Message-ID: <20250718132358.GD11056@google.com>
+References: <20250703035256.225289-1-Qing-wu.Li@leica-geosystems.com.cn>
+ <20250703035256.225289-2-Qing-wu.Li@leica-geosystems.com.cn>
+ <20250710093726.GD1431498@google.com>
+ <AM9PR06MB7955567B37C06BA7FCB05E22D754A@AM9PR06MB7955.eurprd06.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250718-restricted-pointers-net-v4-2-4baa64e40658@linutronix.de>
-References: <20250718-restricted-pointers-net-v4-0-4baa64e40658@linutronix.de>
-In-Reply-To: <20250718-restricted-pointers-net-v4-0-4baa64e40658@linutronix.de>
-To: Tony Nguyen <anthony.l.nguyen@intel.com>, 
- Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, 
- Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>
-Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, 
- Aleksandr Loktionov <aleksandr.loktionov@intel.com>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
- Simon Horman <horms@kernel.org>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752845027; l=1799;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=aDE2F+i5U/RwF3bKKM80JxNThsV/LVClmb28mInGzlg=;
- b=GTdAOYrxRWkN606mCj94ouCBtR8Bj3//Ieq8iAC12TTJ5SRo1fgAgU5ZfYRMVlGgf3wvxj49g
- 3DVA9ISChT3Bxqn1nQghWmkPNLSDLMlhVSweD9deb0BztPXeXYSi8uc
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+In-Reply-To: <AM9PR06MB7955567B37C06BA7FCB05E22D754A@AM9PR06MB7955.eurprd06.prod.outlook.com>
 
-In the past %pK was preferable to %p as it would not leak raw pointer
-values into the kernel log.
-Since commit ad67b74d2469 ("printk: hash addresses printed with %p")
-the regular %p has been improved to avoid this issue.
-Furthermore, restricted pointers ("%pK") were never meant to be used
-through tracepoints. They can still unintentionally leak raw pointers or
-acquire sleeping locks in atomic contexts.
+On Mon, 14 Jul 2025, LI Qingwu wrote:
 
-Switch to the regular pointer formatting which is safer and
-easier to reason about.
-There are still a few users of %pK left, but these use it through seq_file,
-for which its usage is safe.
+> 
+> > -----Original Message-----
+> > From: Lee Jones <lee@kernel.org>
+> > Sent: Thursday, July 10, 2025 5:37 PM
+> > To: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+> > Cc: pavel@kernel.org; robh@kernel.org; krzk+dt@kernel.org;
+> > conor+dt@kernel.org; linux-leds@vger.kernel.org; devicetree@vger.kernel.org;
+> > linux-kernel@vger.kernel.org; GEO-CHHER-bsp-development
+> > <bsp-development.geo@leica-geosystems.com>
+> > Subject: Re: [PATCH V3 2/2] leds: pwm: Add optional GPIO enable pin support
+> > 
+> > This email is not from Hexagon’s Office 365 instance. Please be careful while
+> > clicking links, opening attachments, or replying to this email.
+> > 
+> > 
+> > On Thu, 03 Jul 2025, LI Qingwu wrote:
+> > 
+> > > add support for optional GPIO-based enable pin control to PWM LED driver.
+> > > some PWM LED chips have a dedicated enable GPIO. This commit adds the
+> > > support to specify such GPIO, activating the pin when LED brightness
+> > > is non-zero and deactivating it when off.
+> > >
+> > > Signed-off-by: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+> > > ---
+> > >  drivers/leds/leds-pwm.c | 22 ++++++++++++++++++++++
+> > >  1 file changed, 22 insertions(+)
+> > 
+> > Couple of nits.
+> > 
+> > > diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c index
+> > > c73134e7b9514..1397149464b35 100644
+> > > --- a/drivers/leds/leds-pwm.c
+> > > +++ b/drivers/leds/leds-pwm.c
+> > > @@ -17,6 +17,7 @@
+> > >  #include <linux/err.h>
+> > >  #include <linux/pwm.h>
+> > >  #include <linux/slab.h>
+> > > +#include <linux/gpio/consumer.h>
+> > >
+> > >  struct led_pwm {
+> > >       const char      *name;
+> > > @@ -29,6 +30,7 @@ struct led_pwm_data {
+> > >       struct led_classdev     cdev;
+> > >       struct pwm_device       *pwm;
+> > >       struct pwm_state        pwmstate;
+> > > +     struct gpio_desc        *enable_gpio;
+> > >       unsigned int            active_low;
+> > >  };
+> > >
+> > > @@ -51,6 +53,9 @@ static int led_pwm_set(struct led_classdev *led_cdev,
+> > >       if (led_dat->active_low)
+> > >               duty = led_dat->pwmstate.period - duty;
+> > >
+> > > +     gpiod_set_value_cansleep(led_dat->enable_gpio,
+> > > +                              brightness == LED_OFF ? 0 : 1);
+> > 
+> > Put this on one line.
+> > 
+> 
+> putting it on one line would result in 87 columns as you noted. 
+> I was following the 80-column guideline from
+> Documentation/process/coding-style.rst, which states "The preferred 
+> limit on the length of a single line is 80 columns."
+> Additionally, I used clang-format to format the code, which automatically 
+> split this line to stay within the 80-column limit. The current formatting 
+> follows the kernel's .clang-format configuration.
 
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
-Reviewed-by: Tariq Toukan <tariqt@nvidia.com>
-Reviewed-by: Simon Horman <horms@kernel.org>
----
- drivers/net/ethernet/mellanox/mlx5/core/sf/dev/diag/dev_tracepoint.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The 80-char limit was penned by the ancient Egyptians.  We have 4k
+monitors now.  Feel free to use up to 100-chars in order to prevent
+these silly line-wraps in this subsystem.
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/sf/dev/diag/dev_tracepoint.h b/drivers/net/ethernet/mellanox/mlx5/core/sf/dev/diag/dev_tracepoint.h
-index 0537de86f9817dc80bd897688c539135b1ad37ac..9b0f44253f332aa602a84a1f6d7532a500dd4f55 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/sf/dev/diag/dev_tracepoint.h
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/sf/dev/diag/dev_tracepoint.h
-@@ -28,7 +28,7 @@ DECLARE_EVENT_CLASS(mlx5_sf_dev_template,
- 				   __entry->hw_fn_id = sfdev->fn_id;
- 				   __entry->sfnum = sfdev->sfnum;
- 		    ),
--		    TP_printk("(%s) sfdev=%pK aux_id=%d hw_id=0x%x sfnum=%u\n",
-+		    TP_printk("(%s) sfdev=%p aux_id=%d hw_id=0x%x sfnum=%u\n",
- 			      __get_str(devname), __entry->sfdev,
- 			      __entry->aux_id, __entry->hw_fn_id,
- 			      __entry->sfnum)
+> > > +
+> > >       led_dat->pwmstate.duty_cycle = duty;
+> > >       /*
+> > >        * Disabling a PWM doesn't guarantee that it emits the inactive level.
+> > > @@ -132,6 +137,23 @@ static int led_pwm_add(struct device *dev, struct
+> > led_pwm_priv *priv,
+> > >               break;
+> > >       }
+> > >
+> > > +     /* Claim the GPIO as ASIS and set the value
+> > 
+> > Explain what ASIS is please.
+> > 
+> > > +      * later on to honor the different default states
+> > > +      */
+> > 
+> > Use proper multi-line comments please.
+> > 
+> You're absolutely right about the multi-line comment format, I'll fix that.
+> 
+> > > +     led_data->enable_gpio =
+> > > +             devm_fwnode_gpiod_get(dev, fwnode, "enable",
+> > GPIOD_ASIS,
+> > > + NULL);
+> > 
+> > One line please.
+> > 
+> 
+> result in 96 columns, do you really want that?
+> > > +
+> > 
+> > Drop this line.
+> > 
+> > > +     /* enable_gpio is optional */
+> > 
+> > Comments start with a capital letter.
+> > 
+> > Place this comment inside the second if () statement.
+> > 
+> > > +     if (IS_ERR(led_data->enable_gpio)) {
+> > > +             if (PTR_ERR(led_data->enable_gpio) == -ENOENT)
+> > > +                     led_data->enable_gpio = NULL;
+> > > +             else
+> > > +                     return PTR_ERR(led_data->enable_gpio);
+> > > +     }
+> > > +
+> > > +     gpiod_direction_output(led_data->enable_gpio,
+> > > +                            !!led_data->cdev.brightness);
+> > 
+> > One line.
+> 
+> result in 84 columns.
+
+Great!  16 left to go!
+
+[...]
 
 -- 
-2.50.1
-
+Lee Jones [李琼斯]
 
