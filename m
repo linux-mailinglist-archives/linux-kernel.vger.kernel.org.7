@@ -1,82 +1,81 @@
-Return-Path: <linux-kernel+bounces-737322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EF6CB0AAC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 21:41:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF87AB0AACB
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 21:45:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A7601C44DCA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 19:41:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C087817F77A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 19:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375782DECAA;
-	Fri, 18 Jul 2025 19:41:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE001E3DDE;
+	Fri, 18 Jul 2025 19:45:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O3GD1XJv"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iy1L0Gm8"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33CEB16DEB3;
-	Fri, 18 Jul 2025 19:41:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F1341E379B;
+	Fri, 18 Jul 2025 19:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752867678; cv=none; b=SLMskoJSpJn1BcXgPVKJBXuDqaRcS1ajLOh0r+MhGr5STJauMgphnV6EMw5RXbF3WIgxwnIMiSVmR548hDJ4b3Oaz/EqNDin7huoFS9l4hqUgY8VuveASqQQpSpNgEWs5kDodibhAfXDadeLa8Ph8MeFGEttSa7JbYOvhpCWg7o=
+	t=1752867922; cv=none; b=bszFtbxd5puNvIcKK6UPLdNtl3uY62GUFvExuWXDXwtrdBXMzc9gpCGWOsN8Ts44E646nOLRqv2pazRu4FkmrfZTa3gGMHhNYvYSlc1TtTqk5kqgfk52e8RuVEnIl8UFur+E0olk7SlmA91LyaxNXqFUK50n2pJJLZ3vW8BefxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752867678; c=relaxed/simple;
-	bh=Wx7mxq6ChQzop4uQY5HgvaOf8Be8rggNozwfzEt03JQ=;
+	s=arc-20240116; t=1752867922; c=relaxed/simple;
+	bh=V+xIb5sU3pMiZg1FQYQ1g1B5p1d3HvYa33eEvK6J6bE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Js0yb/QzX4VvRzh308P39Pu9AyRRq8iIgVEi9SsUuul/QRdQgFeHeEYeP9TpekRP79vVFdbGphQPw31djUKDvRrx2iBiohcjI7btwD/EG4j190ZZxlB4cDLlcF5FEH3LbkeYCtbR7xbhzs9aN60i1dorXBCwHzuvJw2UahP9Rzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O3GD1XJv; arc=none smtp.client-ip=209.85.216.43
+	 In-Reply-To:Content-Type; b=VW0YwfAescw2Xv1kNTZbpXE971QqHLz4NEIgB8Xl4Xr7PInfHdFPlp35hKwqhF6OCVjw8oa/fz4n11lRF07IUY0lHImxQvFDZXgx8Cnzb5u3iX9/JdBH9UqFtF+yfzUjGnwP4sFDV9uz3By8b/tGqEQ3IVfFgtLBdkzuAxN0ikQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iy1L0Gm8; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-3141b84bf65so2378637a91.1;
-        Fri, 18 Jul 2025 12:41:17 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-234c5b57557so23650255ad.3;
+        Fri, 18 Jul 2025 12:45:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752867676; x=1753472476; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1752867920; x=1753472720; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=SoPYutq7OwNpmpsRLgWaCVualalc/gklRd4if3lkUSk=;
-        b=O3GD1XJvpGznC+pMncQtMFcu5ds0egRLq+z7YZh8WCzNzuMphwXfAafESkHuhjIL4a
-         8qnglLd2oYRypw5EVU9wNLPtyy862F08FDSmMUkJ3sewQQYyFfpHbFnAu7xvnPoz1QYA
-         jOgk7Ph1IiIrkYs4/bO6vc5lgClrMUyad1YH41asjApEnGn/C6xBkuPr19SzuRf0zP0i
-         xFyGDlIlmlLrxbXzsuvlWvzio8RLKMLlwWN+LLpnSzXFQ2E8cWjOdQ+MOSFGtoI/7uE8
-         zFFGbji9vcux4hiZy4LwfiFO4q4uyFTJtxjEHoNq9Tjf7QaPlKcQrCXhgmTGJ8zJLSGY
-         n0gA==
+        bh=8k91OzzHrBmSNz3hJadNtfDbazsr0HjZ2gHE7qoAzxc=;
+        b=Iy1L0Gm8c1SN3CsBUmqv4YKT+tyqqFh/D9m/mX6HZr08oRHzDduyz6gCWzHx02FObm
+         6us93Se8F6i+FUjT39MZyQnpcGxPD2yxGGtBzpYVf0VkKJ6ek3TdIrhAV5nk5wB/ZQJe
+         iEO/CjSLEn1/x7FAT2tU4xeExIqRiWcgbknBphmMQUjaMn51yP9G4k6+FMA6X9ZRE3as
+         Gw0iRcX5z1x1XacQq11vZIM/WhUvkUgbfib6jN24JUgrMXEeGIh/OYZOOUUdQ/W4f4OR
+         xxhXn4hwZ1H0sMqAoJHdfh55nrm2IcIt6e4efghMxc6KhgnwQCtKETWTvtCo1obbxCEC
+         50og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752867676; x=1753472476;
+        d=1e100.net; s=20230601; t=1752867920; x=1753472720;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SoPYutq7OwNpmpsRLgWaCVualalc/gklRd4if3lkUSk=;
-        b=h0gleZU4jMsjo3KN00LGjLujB2eKNkp7adN/mSrUlrOQn3SlPRZr5NJIlio4i+cT5r
-         gcn7BFPYaksFwCrFjKgCL58HloebfNbyFn2218ykRtXC0rXVuoo4DMvV20u50knePt2Y
-         kBLw4yVdzOvo06cTz0uGM6pRm6Io87+iaACZ//jd7ht9r96tZHA+O4U+4KOu/F69HBny
-         BoygKOWS4uIflx59U0MwUcM36MT4i3SdlwOALZsVKKbSeOVDktYnHtum4iTngYza3Dcy
-         PHK4nbKFxriLH41g4LJUJRYqjP2zzUHaOSMypOrh5tZ2eh4kBhoOptTtbYGJcBwTLgE4
-         v/jw==
-X-Forwarded-Encrypted: i=1; AJvYcCUkv7dGuOLc4Ea9lOARldJJeNwZH62NB6bGk2DDEJRColI3keIkZTqoC3NZ8PkRwk8lwI3EOeju@vger.kernel.org, AJvYcCVk9T4iEefETle4VjF8CSYMPkD1S3tbw5cwVQjbxK0vEpp+O+EPkpmHBgTZu9RIWxK73OzdnZb5JAwGmhE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzVxKO0LECKpyqHSke+Px2jv04pG32odsj5pUMO/MCv2uBGcXU
-	S+GN97vcLhHtLqiZPuU2pgsJyD53t5LFArdDJ47RlEECxMqnEQwg0SJU
-X-Gm-Gg: ASbGncsaF4J2WU5Yx6mqysMXhruazpab38Hdlt8J2aMBzj81Fpn9VvioF3aSlLT30+v
-	X9SYItLSuVZEwYpfPtSfFJozgMNmqp7ZjMyKjc+Nx1bS0b/k7jYicsD+UB8ahEfvkhKmZpOgXPN
-	MJmGHrGh5l3HuwucL94mFMue3LktzGgzvSmlCTsEFgx52BZpprLtZ6kqGfvEFg1c6rTwiwAF/Cm
-	YiDPDoBkH5NiI7Eqm1ta7JkTVNa2k80bzqZS3Z0a/fb+ZoaeLEhmcK80STi0ocyQDlAKFWvBmZ6
-	gNz57oETxAtAQkZZwxCXc/lwpS5ZLKFIDu4oG57MQ2ySbk4gRuPD1qjs6EvsNYY5nvTUjRBW74m
-	gN+aGIXYfPCQqACheiWQkgBu6uW7yjkwLxUuSaUksbUXNijsIxMkfOSHIe+Sp68uwu1aQMIUNEo
-	CEqoTJrg==
-X-Google-Smtp-Source: AGHT+IFKiTbiiVzpbk8QLzuU2TDfDJkO4hgcDcJQmWINn6oefs5kIWYWadN7OxzI11iXq/hcdLw3RA==
-X-Received: by 2002:a17:90b:1d0c:b0:313:1a8c:c2c6 with SMTP id 98e67ed59e1d1-31caf8db7c3mr12573609a91.16.1752867676486;
-        Fri, 18 Jul 2025 12:41:16 -0700 (PDT)
+        bh=8k91OzzHrBmSNz3hJadNtfDbazsr0HjZ2gHE7qoAzxc=;
+        b=uCor2vSjgGN7ygj02m6u556aMHko/pZuv71vZVnP0Jg+z4ZRXAQ9mqey++58KQRXP8
+         QB6mvhMqwrBxYsJ7B7ECLSbBKfhp7QlTcGOoCPY1Q13TU7eet3w2vCCw9JiJOXMHdW3o
+         HmEDij29hIxt6GAlfLbYcJHKwXwT188tfuk9VDPEkIGM2OTrgVMlIbTnovCBPEtrM6mI
+         iDD1UTvNq/UTbARFDv9gZTfm8t9gelM+mXJVANgchVX+7+oXRUH4K6Fh4HLsOQR2cfSU
+         UL4C/WSW7unyI9yBcr3sh3jBK0NoOstxoBhtDzS0RIVlS7/ZBvaDXIag6SePdsltT3pf
+         qjbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWEYbCVRop8lewVlO0rqz7q6OI8L5LNR66qyLlyJ/VP45NkMorQ8ZxDt8hFxz+m0Yx2E0s40XH8kaJdn0M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDWLSkXLh+yIitJ3M6C/BTV6OFrFRLV1ueoasxnasbIDQP87DD
+	rVI+xLon0S2M0qcwme/GLevLix1eKCJn628frof0Gkq7QVVi5hXpLRqL
+X-Gm-Gg: ASbGncsJSA/vNCl/0lMCe4W51W9Z/OHkmWTDdP6HSLD79vdn3EyENxb5j7xdVKQWrGz
+	LJ9OyRDjLkPuDn1S7qB6y2GLoftQDpe8FgqkZiD/w+gV578pW60doG0BQyJq7ar1J6Ku+L6gk9i
+	o7pcnxzrjpLVv4G8KV5MFF0xSP3TtyiEHqcQcrUqjJxNmtsLVQH21Dfn2q3toDY8H1yLnMovwJI
+	8UXDkrX3MxP3VT7/6ahIK+3Hcn55byN72wi/WFMPB8Ggn1MuVvKEHqbOLZZi+PlV/stlWA35VeT
+	54WR7eHXZmP4Zk+RbeM7z0RKNwwyPxsKvno7LMwQd6oL/S0hCCehi3VvwIRA/LorLaqoUrm3xkE
+	A1x0tk0R146OehEtzprThrnvETdbQmfYDLy+vHqTcFAvdDzAqiPHO5aWuE6csUf9R1UDiJtc=
+X-Google-Smtp-Source: AGHT+IEy18SMuMjST0dAswHidNkn4KeQeZOBbdip0wKCHbbRpUXrZ14zlXNSGIUpJvzakY0QktN17Q==
+X-Received: by 2002:a17:903:41c3:b0:234:d292:be72 with SMTP id d9443c01a7336-23e2573019amr162403905ad.26.1752867920261;
+        Fri, 18 Jul 2025 12:45:20 -0700 (PDT)
 Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31cc3e5b40fsm1739688a91.13.2025.07.18.12.41.15
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b5e2d06sm17310515ad.43.2025.07.18.12.45.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Jul 2025 12:41:16 -0700 (PDT)
+        Fri, 18 Jul 2025 12:45:19 -0700 (PDT)
 Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <a0db796c-952a-4e97-9510-760456617db2@roeck-us.net>
-Date: Fri, 18 Jul 2025 12:41:14 -0700
+Message-ID: <05d07f4c-a82f-48fe-bac5-e947d0324e98@roeck-us.net>
+Date: Fri, 18 Jul 2025 12:45:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,15 +83,11 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.4 000/144] 5.4.296-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org,
- patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
- jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
- srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
- hargar@microsoft.com, broonie@kernel.org
-References: <20250716141302.507854168@linuxfoundation.org>
+Subject: Re: [PATCH] watchdog: dw_wdt: Fix default timeout
+To: Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>
+Cc: linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250717-dw-wdt-fix-initial-timeout-v1-1-86dc864d48dd@kernel.org>
 Content-Language: en-US
 From: Guenter Roeck <linux@roeck-us.net>
 Autocrypt: addr=linux@roeck-us.net; keydata=
@@ -138,36 +133,48 @@ Autocrypt: addr=linux@roeck-us.net; keydata=
  F0WaMvQMNrk9UAUziVcUkLU52NS9SXqpVg8vgrO0JKx97IXFPcNh0DWsSj/0Y8HO/RDkGXYn
  FDMj7fZSPKyPQPmEHg+W/KzxSSfdgWIHF2QaQ0b2q1wOSec4Rti52ohmNSY+KNIW/zODhugJ
  np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <20250716141302.507854168@linuxfoundation.org>
+In-Reply-To: <20250717-dw-wdt-fix-initial-timeout-v1-1-86dc864d48dd@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 7/16/25 07:14, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.4.296 release.
-> There are 144 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 7/17/25 09:55, Sebastian Reichel wrote:
+> The Synopsys Watchdog driver sets the default timeout to 30 seconds,
+> but on some devices this is not a valid timeout. E.g. on RK3588 the
+> actual timeout being used is 44 seconds instead.
 > 
-> Responses should be made by Fri, 18 Jul 2025 14:12:35 +0000.
-> Anything received after that time might be too late.
+> Once the watchdog is started the value is updated accordingly, but
+> it would be better to expose a sensible timeout to userspace without
+> the need to first start the watchdog.
 > 
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 
-This is just for reference, in case someone else stumbles over the
-same problem.
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-i386:allmodconfig fails to build.
-
-Building i386:allmodconfig ... failed
---------------
-Error log:
-
-/opt/kernel/gcc-11.5.0-2.40-nolibc/x86_64-linux/bin/../lib/gcc/x86_64-linux/11.5.0/../../../../x86_64-linux/bin/ld:
-	i386 architecture of input file `net/bpfilter/main.o' is incompatible with i386:x86-64 output
-
-I have no idea how that happens, and I don't think it is worth trying
-to track it down. Given that this is an old branch, I'll just stop
-testing this configuration.
-
-Guenter
+> ---
+> This has been found when setting up a CI pipeline, that
+> intentionally runs into the watchdog timeout.
+> ---
+>   drivers/watchdog/dw_wdt.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/watchdog/dw_wdt.c b/drivers/watchdog/dw_wdt.c
+> index 26efca9ae0e7d2fea1b2eaf68085a70829b62b3a..c3fbb6068c520133c8a4ca97313706e877857a7f 100644
+> --- a/drivers/watchdog/dw_wdt.c
+> +++ b/drivers/watchdog/dw_wdt.c
+> @@ -644,6 +644,8 @@ static int dw_wdt_drv_probe(struct platform_device *pdev)
+>   	} else {
+>   		wdd->timeout = DW_WDT_DEFAULT_SECONDS;
+>   		watchdog_init_timeout(wdd, 0, dev);
+> +		/* Limit timeout value to hardware constraints. */
+> +		dw_wdt_set_timeout(wdd, wdd->timeout);
+>   	}
+>   
+>   	platform_set_drvdata(pdev, dw_wdt);
+> 
+> ---
+> base-commit: e2291551827fe5d2d3758c435c191d32b6d1350e
+> change-id: 20250717-dw-wdt-fix-initial-timeout-d4b3a2ada6ed
+> 
+> Best regards,
 
 
