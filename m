@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-736351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29C27B09BE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:01:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A0806B09BE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:01:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD3013A4347
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 07:01:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEA303A8F3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 07:01:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 359C5217704;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C5621859A;
 	Fri, 18 Jul 2025 07:01:29 +0000 (UTC)
 Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0F015A85A
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 07:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941C11B0F23
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 07:01:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752822088; cv=none; b=Zs/haDeoAOnXxf0LkOBohTyudrIkvIR8kdYfSgI3rV6j7D0Su/ID4ex6FVtZI68ddpNZxKZoqOU/kO2joiWLjVrFODzYpUNyeVjnaW0O4wFxJtPHy2LAi+VS4zKlj/hTPDXT/U0luZnVDUT6TVKddRnCRsRFBIbVfZtnWucIeZs=
+	t=1752822088; cv=none; b=Z/eQu69qZCEQlQe8zXQEDMfWD5Dtx3e4VxIOLRNx0vsxGNZdPhZKtVIxylY1YVjTPN6Yacvwx95VSuIEVCX1kqAHXKTuaORKctuSjWzUaOwV2/Pc17a2xAahMlHXjrNffU+LEaNdnunyFTfHwkZPEloE2x327/r21LmNyo6HOSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752822088; c=relaxed/simple;
-	bh=mQ/ZV1ANsqBuY30rjzb8odzJtP/sBL+uOlneYNgciEU=;
+	bh=qwll/ntks+9Me4/eyt/CyWJeg9RccKk/c00VwPhHFaQ=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pEWhJCOo6UEdeYR01PmiSC6B0/g/9CYU13PZl5HqqTtXIfwfl8TAnBsHFP4l3/3OpdP14CjZ6ax2I27vqfpgGvxd8Z3/JOw/ISPA69Kp6ppJKd42IlXr1xFfBTaD/BkTPRhQmcHtsj/e6+3kCM1GJL9s7Gpsww2zbQ8JwZjBUnU=
+	 MIME-Version:Content-Type; b=DhnhLu8Mx/jEeRAKPqUwPXWpwaCvl8ghm97VJIBw3GmRqYqRAqqptMqV8shu6UpJHA0+6ZB/0spojSj1bCU1qC2G1h3SnMf5iAtLy96b7hVzqVhNG9VW1cIgoelqUC7FtjJkBMXol1LNUcnistgN0AbWuxGp3Ojlvx2kJs4HTGw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bk0vR62dnz14Lq4;
-	Fri, 18 Jul 2025 14:56:35 +0800 (CST)
-Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7A3971402ED;
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bk0xj4GTzzvSCj;
+	Fri, 18 Jul 2025 14:58:33 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+	by mail.maildlp.com (Postfix) with ESMTPS id EEC981402ED;
 	Fri, 18 Jul 2025 15:01:23 +0800 (CST)
 Received: from kwepemq100007.china.huawei.com (7.202.195.175) by
- dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
  15.2.1544.11; Fri, 18 Jul 2025 15:01:23 +0800
 Received: from localhost.huawei.com (10.169.71.169) by
  kwepemq100007.china.huawei.com (7.202.195.175) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 18 Jul 2025 15:01:22 +0800
+ 15.2.1544.11; Fri, 18 Jul 2025 15:01:23 +0800
 From: Yongbang Shi <shiyongbang@huawei.com>
 To: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
 	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
@@ -52,9 +52,9 @@ CC: <liangjian010@huawei.com>, <chenjianmin@huawei.com>,
 	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
 	<jani.nikula@linux.intel.com>, <dri-devel@lists.freedesktop.org>,
 	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 drm-dp 02/11] drm/hisilicon/hibmc: fix dp probabilistical detect errors after HPD irq
-Date: Fri, 18 Jul 2025 14:51:16 +0800
-Message-ID: <20250718065125.2892404-3-shiyongbang@huawei.com>
+Subject: [PATCH v3 drm-dp 03/11] drm/hisilicon/hibmc: fix irq_request()'s irq name variable is local
+Date: Fri, 18 Jul 2025 14:51:17 +0800
+Message-ID: <20250718065125.2892404-4-shiyongbang@huawei.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20250718065125.2892404-1-shiyongbang@huawei.com>
 References: <20250718065125.2892404-1-shiyongbang@huawei.com>
@@ -71,124 +71,62 @@ X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
 
 From: Baihan Li <libaihan@huawei.com>
 
-The debouncing when HPD pulled out still remains sometimes, 200ms still can
-not ensure helper_detect() is correct. Add hibmc_dp_detect_link() in
-detect_ctx(), which is to try dp link training.
+The local variable is passed in request_irq (), and there will be use
+after free problem, which will make request_irq failed. Using the global
+irq name instead of it to fix.
 
-Fixes: 3c7623fb5bb6 ("drm/hisilicon/hibmc: Enable this hot plug detect of irq feature")
+Fixes: b11bc1ae4658 ("drm/hisilicon/hibmc: Add MSI irq getting and requesting for HPD")
 Signed-off-by: Baihan Li <libaihan@huawei.com>
 Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 ---
- drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c    | 27 +++++++++++++++----
- drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h    |  2 ++
- .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 10 ++++---
- 3 files changed, 30 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
-index 8f0daec7d174..2d2fb6e759c3 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
-+++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
-@@ -3,6 +3,7 @@
+diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+index 768b97f9e74a..4cdcc34070ee 100644
+--- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
++++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+@@ -32,7 +32,7 @@
  
- #include <linux/io.h>
- #include <linux/delay.h>
-+#include <drm/drm_managed.h>
- #include "dp_config.h"
- #include "dp_comm.h"
- #include "dp_reg.h"
-@@ -162,6 +163,8 @@ int hibmc_dp_hw_init(struct hibmc_dp *dp)
+ DEFINE_DRM_GEM_FOPS(hibmc_fops);
  
- 	mutex_init(&dp_dev->lock);
+-static const char *g_irqs_names_map[HIBMC_MAX_VECTORS] = { "vblank", "hpd" };
++static const char *g_irqs_names_map[HIBMC_MAX_VECTORS] = { "hibmc-vblank", "hibmc-hpd" };
  
-+	drmm_mutex_init(drm_dev, &dp->link_train_mutex);
-+
- 	dp->dp_dev = dp_dev;
- 
- 	dp_dev->dev = drm_dev;
-@@ -238,19 +241,33 @@ void hibmc_dp_display_en(struct hibmc_dp *dp, bool enable)
- 	msleep(50);
- }
- 
--int hibmc_dp_mode_set(struct hibmc_dp *dp, struct drm_display_mode *mode)
-+int hibmc_dp_detect_link(struct hibmc_dp *dp)
+ static irqreturn_t hibmc_interrupt(int irq, void *arg)
  {
- 	struct hibmc_dp_dev *dp_dev = dp->dp_dev;
--	int ret;
-+	int ret = 0;
-+
-+	mutex_lock(&dp->link_train_mutex);
- 
- 	if (!dp_dev->link.status.channel_equalized) {
- 		ret = hibmc_dp_link_training(dp_dev);
--		if (ret) {
-+		if (ret)
- 			drm_err(dp->drm_dev, "dp link training failed, ret: %d\n", ret);
--			return ret;
--		}
- 	}
- 
-+	mutex_unlock(&dp->link_train_mutex);
-+
-+	return ret;
-+}
-+
-+int hibmc_dp_mode_set(struct hibmc_dp *dp, struct drm_display_mode *mode)
-+{
-+	struct hibmc_dp_dev *dp_dev = dp->dp_dev;
-+	int ret;
-+
-+	ret = hibmc_dp_detect_link(dp);
-+	if (ret)
-+		return ret;
-+
- 	hibmc_dp_display_en(dp, false);
- 	hibmc_dp_link_cfg(dp_dev, mode);
- 
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
-index 665f5b166dfb..9b45e88e47e4 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
-+++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
-@@ -50,9 +50,11 @@ struct hibmc_dp {
- 	struct drm_dp_aux aux;
- 	struct hibmc_dp_cbar_cfg cfg;
- 	u32 irq_status;
-+	struct mutex link_train_mutex; /* link training mutex */
- };
- 
- int hibmc_dp_hw_init(struct hibmc_dp *dp);
-+int hibmc_dp_detect_link(struct hibmc_dp *dp);
- int hibmc_dp_mode_set(struct hibmc_dp *dp, struct drm_display_mode *mode);
- void hibmc_dp_display_en(struct hibmc_dp *dp, bool enable);
- void hibmc_dp_set_cbar(struct hibmc_dp *dp, const struct hibmc_dp_cbar_cfg *cfg);
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
-index d06832e62e96..354e18bb2998 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
-+++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
-@@ -34,9 +34,12 @@ static int hibmc_dp_connector_get_modes(struct drm_connector *connector)
- static int hibmc_dp_detect(struct drm_connector *connector,
- 			   struct drm_modeset_acquire_ctx *ctx, bool force)
+@@ -277,7 +277,6 @@ static void hibmc_unload(struct drm_device *dev)
+ static int hibmc_msi_init(struct drm_device *dev)
  {
--	mdelay(200);
-+	struct hibmc_drm_private *priv = to_hibmc_drm_private(connector->dev);
+ 	struct pci_dev *pdev = to_pci_dev(dev->dev);
+-	char name[32] = {0};
+ 	int valid_irq_num;
+ 	int irq;
+ 	int ret;
+@@ -292,9 +291,6 @@ static int hibmc_msi_init(struct drm_device *dev)
+ 	valid_irq_num = ret;
  
--	return drm_connector_helper_detect_from_ddc(connector, ctx, force);
-+	if (!hibmc_dp_detect_link(&priv->dp))
-+		return connector_status_connected;
-+
-+	return connector_status_disconnected;
- }
+ 	for (int i = 0; i < valid_irq_num; i++) {
+-		snprintf(name, ARRAY_SIZE(name) - 1, "%s-%s-%s",
+-			 dev->driver->name, pci_name(pdev), g_irqs_names_map[i]);
+-
+ 		irq = pci_irq_vector(pdev, i);
  
- static const struct drm_connector_helper_funcs hibmc_dp_conn_helper_funcs = {
-@@ -128,8 +131,7 @@ irqreturn_t hibmc_dp_hpd_isr(int irq, void *arg)
- 		hibmc_dp_reset_link(&priv->dp);
- 	}
- 
--	if (dev->registered)
--		drm_connector_helper_hpd_irq_event(&priv->dp.connector);
-+	drm_connector_helper_hpd_irq_event(&priv->dp.connector);
- 
- 	drm_dev_exit(idx);
- 
+ 		if (i)
+@@ -302,10 +298,10 @@ static int hibmc_msi_init(struct drm_device *dev)
+ 			ret = devm_request_threaded_irq(&pdev->dev, irq,
+ 							hibmc_dp_interrupt,
+ 							hibmc_dp_hpd_isr,
+-							IRQF_SHARED, name, dev);
++							IRQF_SHARED, g_irqs_names_map[i], dev);
+ 		else
+ 			ret = devm_request_irq(&pdev->dev, irq, hibmc_interrupt,
+-					       IRQF_SHARED, name, dev);
++					       IRQF_SHARED, g_irqs_names_map[i], dev);
+ 		if (ret) {
+ 			drm_err(dev, "install irq failed: %d\n", ret);
+ 			return ret;
 -- 
 2.33.0
 
