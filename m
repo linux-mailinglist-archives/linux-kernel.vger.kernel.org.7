@@ -1,121 +1,189 @@
-Return-Path: <linux-kernel+bounces-737239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E11CBB0A9A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 19:38:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55ADEB0A9A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 19:39:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F92FAA18A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:37:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B65891C269E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C84642E764B;
-	Fri, 18 Jul 2025 17:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ibVC3nxR"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703292E7643;
+	Fri, 18 Jul 2025 17:39:14 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96EA22E7639;
-	Fri, 18 Jul 2025 17:38:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA28156678;
+	Fri, 18 Jul 2025 17:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752860300; cv=none; b=gU6AcH1dOuryqDAwq7iqIzgf5VYNGUpIZ8Y3IOQKggAluOatLapSgB9/9CKDE1ENHM2KarqC+GewVOU2kI0UBmNwzRiC2T1eZIDiY3qXcJcqNYPIow4L4tA7pSBD+B7I0JWY9Ed6T7xu6sfQChBBBY8y7Mt8ELOS/WXxq4yjhiU=
+	t=1752860354; cv=none; b=WsZQgv0yCTf9q6h+UXRkS1ZR5kj6LiOkLTNFmA430/NJI9TC4ZW+qXdjSq0nSQO9cybLbLmZCCj0t0QO0BmYFHD39lbk8+YGutzY33qe0uTT87IffAWzReiTPHjX+nQ2AcCV6UzxxQJ8PtaZO2O9N07uXxMUHd52JeYTXDS7oNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752860300; c=relaxed/simple;
-	bh=BBrByI1Mib4r2lHIK2Xlx/roasq9l2jl/ntYEFcA3TI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tDotqp2MbbhSWNygK7DPyO2jDB9G4PU19KGNBWxhf+qDDxbl9l9gbnKdN9kcSCYVUgTQN2u7R3K1/3Hsrz0+8C612K60TB368lyGTH/VQApxHYfGeg4+BsuNLvB1KVpvxHNBF3ZPn0oRbZ/n/UMmnDi1sTOhZhL7d9Rhv0+E3Jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ibVC3nxR; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b39011e5f8eso1916660a12.0;
-        Fri, 18 Jul 2025 10:38:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752860298; x=1753465098; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GRxtHwjL+3PAWWyF1a/7oZRVkK0KVn9KJJvGvId1t8Y=;
-        b=ibVC3nxRI8AmPGXJkCzDGuijVurFY03t82tLCTtt+nh1EgDTQ5io9JEYkp8vaQlajm
-         R+K0AW1TyrBea7Ns7fH3ydD8nH+HUzJTDnyzeB2pBes5ADEKmzLVNgP634/pDL3axXSF
-         0dXrUHnu/b/tVQusAUu44sR60leaNW5v3zEF6OABHUUV3LZAzOcxHjsfzZAnwHnM3own
-         7RWGrE1AHhHhUH9x4d0TN3AfuSH2eY+REszZrusXHKeUmc4EgiINdmftUeG+39K3ebkM
-         yo65z59AyL0ZcPOnScDYBC+HAgi0ettv6WZDEweelLzNTXI4QNw+tTuzYNOnPFvilF3W
-         9ntg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752860298; x=1753465098;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GRxtHwjL+3PAWWyF1a/7oZRVkK0KVn9KJJvGvId1t8Y=;
-        b=BT0fbU1lPxEnGxcjYF9EhGQ4TtQWi94do4NSYCdoSiKZrxlfsE3m9FaWtmoWH1mmXt
-         JQ0AmJ59h1hHTgn4O9p0pvxO/kVoXqsjc3eH7CPM4TmYbStjzU2J5Xj/v5kflWHyHrM5
-         OOxTuUddJRCACW2Tlj97uW+jpA6UjRZD5HKjYyOTGrC3dvT47Q+I5Vy1ZOGvx8zjJzPc
-         gHmJWQmncYDrmjH2InS0urcvN6yGvr/NCrvkDAHp9jkK56nth/V1IXEQtXT2Di+vZxnT
-         QR94vy4j3y6tKwrnNcqcnuEM3kNum5gdeU7s+G0hmdsg++GfZgyzAb0ecjVOJnXTnvU5
-         PGmg==
-X-Forwarded-Encrypted: i=1; AJvYcCUh7O2zlV8/HpX4tLqidKURT2KsCvM5KbntsEF4YsPghaGF8iy9rAQ5f1/jl1Zi7JDgTxPFCcFO+kJOZLgf@vger.kernel.org, AJvYcCWi8K2mlM/N09/PVpFCOCwCBRMYfMMRvhrKlkDQFVuCwL5/xfoI8mzZihBHTir+FxBDknbrrNp73BU=@vger.kernel.org, AJvYcCWnMnB9QDQ0i/rkJXPk/U6R0v8LmuQdbHd3Pe33gm2I/ELK1/Vt9CE/RLPybVmHxRuFHKm2j3wzGftYnKA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJzO/ofzSaSwVVD+hRwgJ1jAyjULXN4Fxzzxs+SajKTYZsE+vr
-	XYajlj6CDsfn0uDhXluvjhD6uIFKkc8U1pyqqtX7RABRAhcZKtiMSPSM
-X-Gm-Gg: ASbGncuwqlrsgrZ7N37vOMzeT17va+7xX/FyxqsQCeUoLDA/5e1oWlHIj1NdtgPcFQ2
-	Gvjwi3DgSn6n1nUFK6pfGekPb+YWtd41TbriYjy5KT4GNrKnF1UqlzdambAV/WW/woNnh0fSVk1
-	brDJFcgQLNyfONJCrJ0qNsJ0B4KsMDj0dgBQivrKWnLmhEoBSOarZLXkVGeBJQe9AAP/fLA6NHX
-	5So1lEj1lPoWVxX3a46qHL8BF2rgJY0asiUkaK4Hh0p5krq2pou4C9U8vvg3lyW6SGH1RCJkH//
-	srJU/B+JK2mdUWCjAiln5lEZWXXuyQkJFX1tMH1aGxdOw0yO637OkQdk3LKJcJqp3H4TSB3BP1p
-	gKZvLuc+WUsJhvctY6cwCrc+5/8FyNbB7B2dpDeLsLUvmMA==
-X-Google-Smtp-Source: AGHT+IG9jQJTtmQTkXncQ44ZMFFbqIjAxuSaimpVAcOwrGjlk1NlmL1dUL+MD/xaksVSZRO06M5YnQ==
-X-Received: by 2002:a17:90b:2685:b0:311:df4b:4b7a with SMTP id 98e67ed59e1d1-31c9f4b50d3mr17386475a91.29.1752860297736;
-        Fri, 18 Jul 2025 10:38:17 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31cb5c5da0csm3228067a91.25.2025.07.18.10.38.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jul 2025 10:38:16 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Fri, 18 Jul 2025 10:38:15 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Sung-Chi Li <lschyi@chromium.org>
-Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@weissschuh.net>,
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
-	Sung-Chi Li <lschyi@google.com>
-Subject: Re: [PATCH v6 2/2] hwmon: (cros_ec) register fans into thermal
- framework cooling devices
-Message-ID: <357c26e4-8ec4-4d52-873f-300eb20aa356@roeck-us.net>
-References: <20250718-cros_ec_fan-v6-0-8df018396b56@chromium.org>
- <20250718-cros_ec_fan-v6-2-8df018396b56@chromium.org>
+	s=arc-20240116; t=1752860354; c=relaxed/simple;
+	bh=5Rk/G7wsR0SP1jYxjf6PluXIyHe7/NFMk+1LySyLWSM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MIpzY7IySin0H5JH+D7v01Ihj3DwEcRpc81s9YJw+hZOa3bbcDEWUtjq2xyydVDyjH4AI6w6pSdvWniFCqyhGr4nEKBwz6FNNc1IrE6zsVwUac2dIOdjlVx/Spc8o1xfpru9QZWk2meL9+1Z4mnoojJj5um7pqP6dDXxZ3wweGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf01.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay10.hostedemail.com (Postfix) with ESMTP id E3703C016F;
+	Fri, 18 Jul 2025 17:39:09 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf01.hostedemail.com (Postfix) with ESMTPA id 4002C6000F;
+	Fri, 18 Jul 2025 17:39:08 +0000 (UTC)
+Date: Fri, 18 Jul 2025 13:39:07 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/5] tracing: fprobe-event: Allocate string buffers from
+ heap
+Message-ID: <20250718133907.6e56a3fa@batman.local.home>
+In-Reply-To: <175283845881.343578.10010946807218897188.stgit@devnote2>
+References: <175283843771.343578.8524137568048302760.stgit@devnote2>
+	<175283845881.343578.10010946807218897188.stgit@devnote2>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250718-cros_ec_fan-v6-2-8df018396b56@chromium.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 4002C6000F
+X-Stat-Signature: pqz9gbzk837n1g88pn1xbtzzf6kkkzm3
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19Oaf5WJqTst86BCkvqjzIGjaQw+0fUXAw=
+X-HE-Tag: 1752860348-939073
+X-HE-Meta: U2FsdGVkX1/c/3+Ayp0hT81n12/xrsmZzRdOGAxjRULOdE2aRkfXQMZCWe5aqOdSHM7RTFmxgahPAbiMO4VPVVDVseffe4rSRQNULKBXrOy7CjQgzzM7QiqLhHZ9Izw1wYDOxWixL6T4IV0IK639xa/sB3Xwx3StXpN4p0mLn4D9H9ouhwU8siNZpU9bavK9uA739nGXhdsaIMOKquIMZHe3qDpphEvnTTbZP/VQmL3SlJhMLuIzJwBKHAbhFkW1aFbCxwhhGPx7JwjoDkfKP/ZJhYO8i8EHfJg4t573iuX3APyGzyCthqGX9czORRhgg12+VB59RND5p7v0/a5E53kXPObQI0G5eU0XQqIOD+pgSl7Je+GVpw==
 
-On Fri, Jul 18, 2025 at 03:08:30PM +0800, Sung-Chi Li wrote:
-> From: Sung-Chi Li <lschyi@chromium.org>
-> 
-> Register fans connected under EC as thermal cooling devices as well, so
-> these fans can then work with the thermal framework.
-> 
-> During the driver probing phase, we will also try to register each fan
-> as a thermal cooling device based on previous probe result (whether the
-> there are fans connected on that channel, and whether EC supports fan
-> control). The basic get max state, get current state, and set current
-> state methods are then implemented as well.
-> 
-> Signed-off-by: Sung-Chi Li <lschyi@chromium.org>
-> Acked-by: Thomas Weiﬂschuh <linux@weissschuh.net>
+On Fri, 18 Jul 2025 20:34:19 +0900
+"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
 
-Applied.
+> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> 
+> Allocate temporary string buffers for fprobe-event from heap
+> instead of stack. This fixes the stack frame exceed limit error.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202506240416.nZIhDXoO-lkp@intel.com/
+> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> ---
+>  kernel/trace/trace_fprobe.c |   39 ++++++++++++++++++++++++++-------------
+>  1 file changed, 26 insertions(+), 13 deletions(-)
+> 
+> diff --git a/kernel/trace/trace_fprobe.c b/kernel/trace/trace_fprobe.c
+> index 264cf7fc9a1d..fd1036e27309 100644
+> --- a/kernel/trace/trace_fprobe.c
+> +++ b/kernel/trace/trace_fprobe.c
+> @@ -1234,18 +1234,18 @@ static int trace_fprobe_create_internal(int argc, const char *argv[],
+>  	 *  FETCHARG:TYPE : use TYPE instead of unsigned long.
+>  	 */
+>  	struct trace_fprobe *tf __free(free_trace_fprobe) = NULL;
+> -	struct module *mod __free(module_put) = NULL;
+> -	int i, new_argc = 0, ret = 0;
+> -	bool is_return = false;
+> -	char *symbol __free(kfree) = NULL;
+>  	const char *event = NULL, *group = FPROBE_EVENT_SYSTEM;
+> +	struct module *mod __free(module_put) = NULL;
+>  	const char **new_argv __free(kfree) = NULL;
+> -	char buf[MAX_EVENT_NAME_LEN];
+> -	char gbuf[MAX_EVENT_NAME_LEN];
+> -	char sbuf[KSYM_NAME_LEN];
+> -	char abuf[MAX_BTF_ARGS_LEN];
+> +	char *symbol __free(kfree) = NULL;
+> +	char *ebuf __free(kfree) = NULL;
+> +	char *gbuf __free(kfree) = NULL;
+> +	char *sbuf __free(kfree) = NULL;
+> +	char *abuf __free(kfree) = NULL;
+>  	char *dbuf __free(kfree) = NULL;
+> +	int i, new_argc = 0, ret = 0;
+>  	bool is_tracepoint = false;
+> +	bool is_return = false;
+>  
+>  	if ((argv[0][0] != 'f' && argv[0][0] != 't') || argc < 2)
+>  		return -ECANCELED;
+> @@ -1273,6 +1273,9 @@ static int trace_fprobe_create_internal(int argc, const char *argv[],
+>  
+>  	trace_probe_log_set_index(0);
+>  	if (event) {
+> +		gbuf = kmalloc(MAX_EVENT_NAME_LEN, GFP_KERNEL);
+> +		if (!gbuf)
+> +			return -ENOMEM;
+>  		ret = traceprobe_parse_event_name(&event, &group, gbuf,
+>  						  event - argv[0]);
+>  		if (ret)
+> @@ -1280,15 +1283,18 @@ static int trace_fprobe_create_internal(int argc, const char *argv[],
+>  	}
+>  
+>  	if (!event) {
+> +		ebuf = kmalloc(MAX_EVENT_NAME_LEN, GFP_KERNEL);
 
-Thanks,
-Guenter
+ebuf and gbuf are used with the same length. Why not just keep them
+using the same buffer? It worked before this patch, it should work
+after too.
+
+	buf = kmalloc(MAX_EVENT_NAME_LEN, GFP_KERNEL);
+	if (!buf)
+		return -ENOMEM;
+
+	if (event) {
+		[..]
+	}
+
+	if (!event) {
+		[..]
+	}
+
+And not require two different variables that will add two exit codes
+when one would do.
+
+-- Steve
+
+
+> +		if (!ebuf)
+> +			return -ENOMEM;
+>  		/* Make a new event name */
+>  		if (is_tracepoint)
+> -			snprintf(buf, MAX_EVENT_NAME_LEN, "%s%s",
+> +			snprintf(ebuf, MAX_EVENT_NAME_LEN, "%s%s",
+>  				 isdigit(*symbol) ? "_" : "", symbol);
+>  		else
+> -			snprintf(buf, MAX_EVENT_NAME_LEN, "%s__%s", symbol,
+> +			snprintf(ebuf, MAX_EVENT_NAME_LEN, "%s__%s", symbol,
+>  				 is_return ? "exit" : "entry");
+> -		sanitize_event_name(buf);
+> -		event = buf;
+> +		sanitize_event_name(ebuf);
+> +		event = ebuf;
+>  	}
+>  
+>  	if (is_return)
+> @@ -1304,13 +1310,20 @@ static int trace_fprobe_create_internal(int argc, const char *argv[],
+>  		ctx->flags |= TPARG_FL_TPOINT;
+>  		mod = NULL;
+>  		tpoint = find_tracepoint(symbol, &mod);
+> -		if (tpoint)
+> +		if (tpoint) {
+> +			sbuf = kmalloc(KSYM_NAME_LEN, GFP_KERNEL);
+> +			if (!sbuf)
+> +				return -ENOMEM;
+>  			ctx->funcname = kallsyms_lookup((unsigned long)tpoint->probestub,
+>  							NULL, NULL, NULL, sbuf);
+> +		}
+>  	}
+>  	if (!ctx->funcname)
+>  		ctx->funcname = symbol;
+>  
+> +	abuf = kmalloc(MAX_BTF_ARGS_LEN, GFP_KERNEL);
+> +	if (!abuf)
+> +		return -ENOMEM;
+>  	argc -= 2; argv += 2;
+>  	new_argv = traceprobe_expand_meta_args(argc, argv, &new_argc,
+>  					       abuf, MAX_BTF_ARGS_LEN, ctx);
+
 
