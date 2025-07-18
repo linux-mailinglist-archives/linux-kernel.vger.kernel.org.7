@@ -1,239 +1,231 @@
-Return-Path: <linux-kernel+bounces-736562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 218A7B09E93
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:02:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6070B09E94
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:03:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 352323AC1CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:01:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A72057B674D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:01:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F2D29551B;
-	Fri, 18 Jul 2025 09:01:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="K4JU7HWB"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2082.outbound.protection.outlook.com [40.107.237.82])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD5821A420;
-	Fri, 18 Jul 2025 09:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752829308; cv=fail; b=l+wAD35NiL+pKxTSZNfjURQPlQsaUT1qkFR81GEwPlOjUcp99/8zlimqVDtkxoz3cxifHsdWvh6GXAeMBbIZnriks8lv8s43ZfD/IxSPd9ocL2f5ek2noHrhriZ6apvPmh6Hf3PKQx43mjdQuXbkE8el/UnNeG0X/el/raKP0TI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752829308; c=relaxed/simple;
-	bh=OsW1DcNf3mwuxAUHmP4JxU/U/yqg0kt70v3boynU0C4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=tPgqupXAQOuiKuANANUF/lwfsmQqEDDQLuh0KyfMqFX/di/D9oZdt4SB7+eIDSs7y6v/Eiiwa2Lw0kO50qGS2N0PD4aAYpJ5zmPaPO30sofZz1ui7ELm7uXarrFVksMh6LFC9vDF+e+52qBjqBmiW6aUzdAK/CIgBM8uMAKjM1I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=K4JU7HWB; arc=fail smtp.client-ip=40.107.237.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EI9v2Hc5uQhNoGB6cYJdqiYP0yuI1xi0GcF5N8majryaeFE7a6A9Ic4+VKYh/jwa1zQoBp3UiQUkvNRIs+6fiGeY+CdZehqrCnosp8QZvJzgWXhlQ3LorTQkVPvJ59a6UxHt2J69zd/k9DFPwhNx/KDyBBn8HCLS6uji0hqhoLbWaW5Xq1ypHIRdyGEsK5RVSZob4lYl+jUbsrCL2mk+EwNlDUw9XsXO3uBG/4vDoJTdwDdeqfPoiOgfCZSAvWo2OeFGGmqG9WO7Kjxb0NVTMAQgtudUA8GOqbvR5cMrs2znTXxxhN3eQfu7stFIh4nQKEKeFeAK7pD8QxrPROtwnw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Jbql4STCU8ooODQaga+BPO2087UIfO+L+xMHUavXoQk=;
- b=S/dwtJZHM9Tw+wZvrYb+RPruV0p1BdL27k5Q2SwxMnvPFh8t0Fkkhy0Cl3Ud2Nvc8V3MIpFpOqa2PM7IXd/1/7NSIGb/wWeatSh28o43TmeYjt+HoWiOMtdSCjAnvXgqcNC6zW53pPo8g8qQyLOC+g3wGmbmMkkrXb/CSwlhSsz8KN2bJ2YPuC5BZ48A59hmuQLS6ehVR48NutV7TG3qixZG3YYOkMcnA+ti+4v0KGa4TR8q2eRTLYJRJBI2iUg56mXaqjCSWA6F0i8so21MZji5WDpH8h++cM5WoIDIWKAOWeC1HmrOoP2I72yz3Dafr7f9wxjU6GTIJEzT7k0Kww==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Jbql4STCU8ooODQaga+BPO2087UIfO+L+xMHUavXoQk=;
- b=K4JU7HWBu0D/WC5XNsu4ATIgStKnyYcaEftfLKaczJPVED/1sMLvRXlD/8Z5pGg7ptNX6i0pcEXS2IXdVjIEVO4kvk5tVYlJpzjpiJ/YNCfDB6D5kAp5yNVK7I/oWcMTZPlTRL7F4sLgWXGo3X+R5yJ9IxMHNu6GlqkJL1KuMqypRt2Xw7jTkdERqGPkavnv7OoO8tp0cpRwGofpEIBY0esKdngMxqFs3S6H5qcvWL73ry6K+ZHH2tr4RgE6Ah5eWXpUN6HYXb7j66/cv6ffKYbYE9htEgzi4TZpyM5TMVh1j5y24x5XjZcL5v8rOmbRnf0AaMvXTfLK+FC1Cp7iYA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY5PR12MB6478.namprd12.prod.outlook.com (2603:10b6:930:35::19)
- by MN0PR12MB6001.namprd12.prod.outlook.com (2603:10b6:208:37d::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.17; Fri, 18 Jul
- 2025 09:01:43 +0000
-Received: from CY5PR12MB6478.namprd12.prod.outlook.com
- ([fe80::35dd:2a5e:d28d:55e7]) by CY5PR12MB6478.namprd12.prod.outlook.com
- ([fe80::35dd:2a5e:d28d:55e7%4]) with mapi id 15.20.8922.028; Fri, 18 Jul 2025
- 09:01:43 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Svyatoslav Ryhel <clamor95@gmail.com>, Dmitry Osipenko <digetx@gmail.com>,
- Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-Subject:
- Re: [PATCH v1 5/5] ARM: tegra: add MIPI calibration binding for
- Tegra20/Tegra30
-Date: Fri, 18 Jul 2025 18:01:38 +0900
-Message-ID: <4191623.PYKUYFuaPT@senjougahara>
-In-Reply-To: <20250717142139.57621-6-clamor95@gmail.com>
-References:
- <20250717142139.57621-1-clamor95@gmail.com>
- <20250717142139.57621-6-clamor95@gmail.com>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: SG2PR02CA0127.apcprd02.prod.outlook.com
- (2603:1096:4:188::7) To CY5PR12MB6478.namprd12.prod.outlook.com
- (2603:10b6:930:35::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB4ED2949E5;
+	Fri, 18 Jul 2025 09:03:03 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BBE615278E
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 09:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752829383; cv=none; b=tmyXgciv3R61caK9tJ/3c1o6SaxNsVLOo48UUUjklfnpYHtB1K6QQINJ9B0UdWrkEkiTmghi/E9Dx6ylAyayRPjRY10sL8f8SyJJETna/hzvuGdcUbu2tz8I3stzcwUZgtlN+tbGAtrcQzhvS3lLGGfUx27XWGJMYKwXZYYRpsg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752829383; c=relaxed/simple;
+	bh=VjJtF6nhJ6Vi0Jq28a+KMKCE4IqUKBN0eN7p35y6Brk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FaJScR7lLTBeW0F2bBNwjpNfOn8RRmEcHaQIwQko/Ii0QkkCdHCF2qIGVpThF7zvr4T6yGU9yhf0H8ohO7Hve+QQLP/XYWwKvlvj3ipw2XLupzsplf5j5v+jRSVC3mA6mbkoEBQlioG3+4/PyAbhkSxqopxCt/d6tUc3p91pxgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AE013176C;
+	Fri, 18 Jul 2025 02:02:52 -0700 (PDT)
+Received: from MacBook-Pro.blr.arm.com (unknown [10.164.18.51])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id F3E923F66E;
+	Fri, 18 Jul 2025 02:02:51 -0700 (PDT)
+From: Dev Jain <dev.jain@arm.com>
+To: akpm@linux-foundation.org
+Cc: ryan.roberts@arm.com,
+	david@redhat.com,
+	willy@infradead.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	Liam.Howlett@oracle.com,
+	lorenzo.stoakes@oracle.com,
+	vbabka@suse.cz,
+	jannh@google.com,
+	anshuman.khandual@arm.com,
+	peterx@redhat.com,
+	joey.gouly@arm.com,
+	ioworker0@gmail.com,
+	baohua@kernel.org,
+	kevin.brodsky@arm.com,
+	quic_zhenhuah@quicinc.com,
+	christophe.leroy@csgroup.eu,
+	yangyicong@hisilicon.com,
+	linux-arm-kernel@lists.infradead.org,
+	hughd@google.com,
+	yang@os.amperecomputing.com,
+	ziy@nvidia.com,
+	Dev Jain <dev.jain@arm.com>
+Subject: [PATCH v5 0/7] Optimize mprotect() for large folios
+Date: Fri, 18 Jul 2025 14:32:37 +0530
+Message-Id: <20250718090244.21092-1-dev.jain@arm.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6478:EE_|MN0PR12MB6001:EE_
-X-MS-Office365-Filtering-Correlation-Id: e4028187-6d90-49eb-f3ca-08ddc5d9b769
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|10070799003|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SU4zU2NOUWRIMTJqT3F1R1pJamxXcHkyNGUzQW5OeHppUzNnSXB3MFpGNFM2?=
- =?utf-8?B?a0ZyYThZV2llOExyQWVaam9FcGtuaXRta0ZIdWlpUkRISFR1SW9QVkhuU2R0?=
- =?utf-8?B?RjY3KzdRYWpnRGxjZ002WmhiTzRhK20vSzlSREErdTh3T1ROZ1M1bHNPa3cv?=
- =?utf-8?B?dFM2Si9zbVErUm44NjBFSVZMZW1jWHFhSXh0UGsvZklJQ1pPWXFWakk5TmVZ?=
- =?utf-8?B?T29xWUlackZyWmJxQ1dmOGM1SkpCNW5JWUQ2NE9Xd3hxbEl0UXhIVnViSlB1?=
- =?utf-8?B?YXBJMEJBdWtTRnZpRE5oNkU2cmszSnhxOElxUW1EZ2NNclZCVDFFeHl4NU5N?=
- =?utf-8?B?YWxwVE9KOGg3U1UvSmVkTkJJR0V2Qk41T2RxR0NlYUZmbUVNQ1VOazhTcDNi?=
- =?utf-8?B?VUplS21EemtTTTBCeDBlWXM5bURIVUFsMGhBcDg0aHVyMVVXUnZnR1B3b0t6?=
- =?utf-8?B?aGZ0REhHWC9LWEpuMHppOVVhd1pHakNaNE14V2dMajdVVm1BN1lxV0x3cndZ?=
- =?utf-8?B?NzlHZDdCenNDVFJ3T3ZxK2lQVS9zamVtQlhLWTU0UzErbkpLQ2Rlam9FNDdR?=
- =?utf-8?B?RGxOeTdKRFdiVnpkN3RiTFhqY1JnV0FQYmxNcVlVYTJvVy9nbEdQeXptQXNZ?=
- =?utf-8?B?Mnd1dm1sMEs3eFJQRzB1eU1hUlU2S05qdmo5TUx4cTAyY2NNMDlJajI2R2ds?=
- =?utf-8?B?bzlQK0d5by9XVEoyYzk5czdCdUx6b2M5dHI0S1N6MWpxU2FLdHpyWVd1NXBn?=
- =?utf-8?B?QVFEZjN3MlVGb0lHUm1LM0FTTWd1ZEtXbWQ1THZXcXlRVFcyMGlOZ0sxaGR0?=
- =?utf-8?B?OS9VNnoyYlp3bEpYOEYvYVhKZ0JsNlFYV0c4R3V2anpLeGZWdjAyV1N5My9u?=
- =?utf-8?B?Qm9oaHF3MnlSbzZNUk02eFVaSlovemhQcG01WGt4cTl2cUVrcXZmZER4cUNQ?=
- =?utf-8?B?T1luSm9WY24xTnZIUkVWQTREZ3lWMlFmMi9zdE9hMWlDQUpYTXNTa3R3MXRW?=
- =?utf-8?B?THhQNEE0TU5kdUtSeU9Ed1dYcUxtdFo3RmFGTlZ4MTNKRTNvWWNudm41ekxD?=
- =?utf-8?B?S2lQWjlWR1JGaEk5QTNyMHBxcTU0bmJoQW9QTGprNnVDc01zYUcyNkdhTk1M?=
- =?utf-8?B?TGRYSGNleG1oOWJkUVNtalpTMUdOOTBCRzJrSWlsNVVHay9YT2l3Qzhobkx4?=
- =?utf-8?B?SXBLTStod1FxR2IyNEZ2Mnkrck1Ub2xHVXFzODZnUkZ0bVBqYTM3M3lySnhC?=
- =?utf-8?B?MDhkZnpsMTJnVGFXYTZ6UEFLcTM4dUdRZTdXTU8rTEl1RVA5Z1lNS015bW9w?=
- =?utf-8?B?N3l6WWl3bXgvQjR2NFloZGJHYTgzVTVkSDV0RVNncmRZTGQ5UnlKNzNYU0NJ?=
- =?utf-8?B?VXBoT1J3VWVmNzZDQmc5NVladTdOZFhzTjRKOXJKOXVob1JjU2VBS1BjMmtt?=
- =?utf-8?B?QldJRWpteVZ4SmdRa2xOb2dPb1FZRzQ1b0ZXMnZULy9jdjkrN1dnanhZQUZi?=
- =?utf-8?B?aWRVSFFyZW9Vc2FNSFFpNFQvVms1UmR1K1JmbkRWT0xPYzhTcU9WVDh5VTl1?=
- =?utf-8?B?VzVXb3d2ODRYd2NZLyswdnVNTFdRRjJ1VUtSYmdrUHh4enF0b1ZIOHFGQk5X?=
- =?utf-8?B?UjB0T05WU2VSdmNCbXpIeG5TeXRIOVdubHFod1EwRnJSQnAxa3FrTjRtMzEy?=
- =?utf-8?B?VHc0ZGlycFZTVW1yRTYzbWp1dUVUc29BRVJ0eWFLRXMrT3YyZTFHenFCMXlM?=
- =?utf-8?B?cFU4Z0lqc2tJNC94dzNDUGJjYTByQk5oQ2pxclRKdnFKV01NaGhkZ3ZTNzZ1?=
- =?utf-8?B?QXFWa1BnMFJYKzFDUkpWbzJ4RXd6ZEhPUFg3QmhFTG1yQmFDTmJqS0JtUzFu?=
- =?utf-8?B?L0cveGwvcjAvRXIxMS8wczl3ajkzZWhFMElvUHhFVk55SU9JMUl0dmVPa0h2?=
- =?utf-8?B?cG9zSno3eFN4V3J6STRpSi9lR0o5QVFUR01qYWdGd2lVOVd3R0c4Q0c5NzVs?=
- =?utf-8?B?SjBnUWMwaGp3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6478.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(10070799003)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MTk5bjlxcjVnS2xFejZISDhRRXQ4Qmt4YlN1SzFPZXhwbWl6aTZDa2tZdTg0?=
- =?utf-8?B?R1dkU3o2MndpUXlJNGZ5MEkrYVk5dlFSTTY4N0dabW5LMXY3WFRYS1EvOHFz?=
- =?utf-8?B?ZFhwVXFPV2orS0ZWZFhJRUxwa2hOeHBGaHF6ZUNTTW1JYW0wcmFWSzVyUHZL?=
- =?utf-8?B?NVVJWFRUL0p0YlhyQ1doMVVHMVZ1aEpBNlEyQVF6QVlqWUtLVzVwRHNKVEpv?=
- =?utf-8?B?Q2swMHZGcHBlNFBOV1RZajJrZnNVWm1xU3Q3cnN0eGUyeFhMZ1NDTG9pbzNr?=
- =?utf-8?B?MW1CeHJpUWlSWFd0cTBZZjkxSk5ueFE1alNJam5EQkc0NHhNT3VFeWVneWVB?=
- =?utf-8?B?cXpPcDNyeGlaUTVPelBuK3JOelA2c0xNSi9YNXpoVzZ6WjAvQTJzWkRrUHJh?=
- =?utf-8?B?alVKakJ6WGdJUjg5eU9neWYyMGNPU3JZUVgybzFDMU1zeGtPN2EyVUY4MXFn?=
- =?utf-8?B?Nk1ScmcwL3pJTEtpMmlkc1RveFZGVFhkYkNNZjFkLzIvN2xmUjZNazVmT1hi?=
- =?utf-8?B?QzAwN0x2TlpnRDArZXpkTnVpNk1LTVRiUkxJOThRekFCNHFxNEpyMm5pL25x?=
- =?utf-8?B?NG1vcThBUDhLeGFOM0tsSkdqZllPeDhOKzRKYmd3eXh5K3gzVnp1M2RLaUJx?=
- =?utf-8?B?dkFsRzVpR24zTTB4QXV1cW5xbVB5VjZYVWlXbkF0dVcwWUp3b3o1NjRuUWtH?=
- =?utf-8?B?NmpvZ2RveVFsOG84VHRZM1lNNFYzNkczNm4vV2d0aWVRUWh2UE95aXUvMU44?=
- =?utf-8?B?T210VHhBU3BQVUhMWkdUUzNydXNOTW8wK2psS0k3MEVsbWg5M2x5S3FnSld3?=
- =?utf-8?B?aUpwVTBkQTZRZktaTFdnM2plbG92OW1yYURTb0RuTGdTczNJM1NXOFk2UWZT?=
- =?utf-8?B?QjBJZnpjalpKQkZwcTM2clp0NzF2YUxqZ0E4aTJLRzFocGxDVzM4N2ZmNkkv?=
- =?utf-8?B?SStCWUVzWG5zQlVnUW1OVHdESDlSbGFtV0xMSlJ4Q2s1S0ZSR2txbk5vUk5n?=
- =?utf-8?B?VnhzdEROUlgwZlFTbTZKeGtyUUJ3cmh1RVA3OXhIaDY2ME9KOW5FM3FTbXhN?=
- =?utf-8?B?eDVWZmt5Zk42QjM2L2RaTUNBNHNXU0VPTHBKN2YwWkswT1pnNnBlZnU1WW9z?=
- =?utf-8?B?Wi9ZNWVFR0Y0STEwWG5zcWd1N0Z0RkxaVWpiRkplRG1XQTVjQTYyZW9zWGRC?=
- =?utf-8?B?VyttOGNKaHVDSk1Ucnd0U1RUTzdCS0d6eEpWVVR0QWlsQU8zMGxVOHdVM21X?=
- =?utf-8?B?NFgyMGZrVzlEUUxzbVlsUDVrcEZlbFBOejJtQlNzc05wQUh5WTlKY2tQdTJH?=
- =?utf-8?B?eGFjT1orclhFUE4vS0QxYlJ4MEpxVDZUcTZWcUd6Wmg3ZUtMTlMxcmIwTXJF?=
- =?utf-8?B?OUxjMXhXRHFPVzlmeThBMlMxUjI4Mk9zRmxkU3dlcHhJTkplODYyRm43MXVj?=
- =?utf-8?B?ZjBGMW9PaUN6Z2hUZWpGTHh2SWRrVjhwM0ZRMDRkeDlYakdIM0c0dG1QOUdK?=
- =?utf-8?B?UmJsdWZKY0hqU240ck5vbytMVXFnM0JCRGt0WkNXdzJ5Y2dLc1VvYkdqeUZo?=
- =?utf-8?B?UVIwVjlBNXk5SHJkOGk4RmZRVC9ReEVMeEl3Q0wySFVSbHMzM1Z0bnFZd3FJ?=
- =?utf-8?B?MTNzeUhDL2R0ZmdvUDRPaFdQS3NPM0t4MjJNNlI0eG5sd1VHZ2gyMjIyVm1Z?=
- =?utf-8?B?Sm1MYVU3b2UzV2JTQTBEMHUrNHF1anpLTEpQZ3RCMzFMdzFFZUMycjFsNkxB?=
- =?utf-8?B?RXRKcS92a3paazJRQXdWT0dJVmI2VDBtVTFyc04yVGE2VWtrODgxT1RHR3Rp?=
- =?utf-8?B?THZiOXBDbmNodnN5cWxpdmovQXB2bHVuUHJyRk5PWXFGd2VjT0lnU3BTRDla?=
- =?utf-8?B?YUZvQkRCcWNkbmkzYmRSR3I3eUdKMlpyL3JqdUVhN09tSmNBWHdJZDZGUEQz?=
- =?utf-8?B?eUxocWJJczNyMi8zSWtOWXRLU1hNTXMvaDF3YXlxRytWZGRCTDNvbHhzb3BT?=
- =?utf-8?B?dG1walNDdUpiczVkdHlJVUgwOGNxZEQ4OUUrejlUQ1BacWNHSWlnSkFhS1BU?=
- =?utf-8?B?TE5qQksxTkl6Y2o5SWpWdElzRUdTaG5ERDNYT0g4VGRpZzdyWHpPTVlHRVMv?=
- =?utf-8?B?V1g1S0QrbW9lNVcrK2VHRUQ2TFNIWS9GUU04SGhmOHJTYTJKRHhtTWFJdHEy?=
- =?utf-8?B?ZjNKR2NVTzJ3NmJvaUw2RW1ESEFIdU5BL0cwZTgrT04vaGNlcGQ0UDlkUTRk?=
- =?utf-8?B?RjlRdXhGTW4vbkdsSGlJYjI2clhRPT0=?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e4028187-6d90-49eb-f3ca-08ddc5d9b769
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6478.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2025 09:01:43.4314
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gXSQrvTuq/YTdK+HME9Gb7pUgBefvyTQXkYdoAYg8NDfMEqOqATIGDJOiFKCLBIpu3iddmInz8R2gcoCKKTfXA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6001
+Content-Transfer-Encoding: 8bit
 
-On Thursday, July 17, 2025 11:21=E2=80=AFPM Svyatoslav Ryhel wrote:
-> Add MIPI calibration device node for Tegra20 and Tegra30.
->=20
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  arch/arm/boot/dts/nvidia/tegra20.dtsi | 14 ++++++++++++++
->  arch/arm/boot/dts/nvidia/tegra30.dtsi | 18 ++++++++++++++++++
->  2 files changed, 32 insertions(+)
->=20
-> diff --git a/arch/arm/boot/dts/nvidia/tegra20.dtsi
-> b/arch/arm/boot/dts/nvidia/tegra20.dtsi index 92d422f83ea4..521261045cc8
-> 100644
-> --- a/arch/arm/boot/dts/nvidia/tegra20.dtsi
-> +++ b/arch/arm/boot/dts/nvidia/tegra20.dtsi
-> @@ -74,6 +74,16 @@ vi@54080000 {
->  			status =3D "disabled";
->  		};
->=20
-> +		/* DSI MIPI calibration logic is a part of VI/CSI */
-> +		mipi: mipi@54080220 {
-> +			compatible =3D "nvidia,tegra20-mipi";
-> +			reg =3D <0x54080220 0x100>;
-> +			clocks =3D <&tegra_car TEGRA20_CLK_VI>,
-> +				 <&tegra_car TEGRA20_CLK_CSI>;
-> +			clock-names =3D "vi", "csi";
-> +			#nvidia,mipi-calibrate-cells =3D <1>;
-> +		};
-> +
+Use folio_pte_batch() to optimize change_pte_range(). On arm64, if the ptes
+are painted with the contig bit, then ptep_get() will iterate through all
+16 entries to collect a/d bits. Hence this optimization will result in
+a 16x reduction in the number of ptep_get() calls. Next,
+ptep_modify_prot_start() will eventually call contpte_try_unfold() on
+every contig block, thus flushing the TLB for the complete large folio
+range. Instead, use get_and_clear_full_ptes() so as to elide TLBIs on
+each contig block, and only do them on the starting and ending
+contig block.
 
-As you say in the comment, MIPI calibration on Tegra20/30 is part of VI/CSI=
-.=20
-We can't add a "mipi" device here since such a device doesn't exist in the=
-=20
-hardware hierarchy. We already have the VI device in the device tree, so we=
-=20
-need to use that.
+For split folios, there will be no pte batching; the batch size returned
+by folio_pte_batch() will be 1. For pagetable split folios, the ptes will
+still point to the same large folio; for arm64, this results in the
+optimization described above, and for other arches, a minor improvement
+is expected due to a reduction in the number of function calls.
 
-A driver for tegra20-vi already exists in staging/drivers/media/tegra-video=
-.=20
-We should aim not to break it. Perhaps bring it out of staging? (At least=20
-partially, but then why not the whole thing.)
+mm-selftests pass on arm64. I have some failing tests on my x86 VM already;
+no new tests fail as a result of this patchset.
 
-Thanks,
-Mikko
+We use the following test cases to measure performance, mprotect()'ing
+the mapped memory to read-only then read-write 40 times:
+
+Test case 1: Mapping 1G of memory, touching it to get PMD-THPs, then
+pte-mapping those THPs
+Test case 2: Mapping 1G of memory with 64K mTHPs
+Test case 3: Mapping 1G of memory with 4K pages
+
+Average execution time on arm64, Apple M3:
+Before the patchset:
+T1: 2.1 seconds   T2: 2 seconds   T3: 1 second
+
+After the patchset:
+T1: 0.65 seconds   T2: 0.7 seconds   T3: 1.1 seconds
+
+Observing T1/T2 and T3 before the patchset, we also remove the regression
+introduced by ptep_get() on a contpte block. And, for large folios we get
+an almost 74% performance improvement, albeit the trade-off being a slight
+degradation in the small folio case.
+
+For x86:
+Before the patchset:
+T1: 3.75 seconds  T2: 3.7 seconds  T3: 3.85 seconds
+
+After the patchset:
+T1: 3.7 seconds  T2: 3.7 seconds  T3: 3.9 seconds
+
+So there is a minor improvement due to reduction in number of function
+calls, and a slight degradation in the small folio case due to the
+overhead of vm_normal_folio() + folio_test_large().
+
+Here is the test program:
+
+ #define _GNU_SOURCE
+ #include <sys/mman.h>
+ #include <stdlib.h>
+ #include <string.h>
+ #include <stdio.h>
+ #include <unistd.h>
+
+ #define SIZE (1024*1024*1024)
+
+unsigned long pmdsize = (1UL << 21);
+unsigned long pagesize = (1UL << 12);
+
+static void pte_map_thps(char *mem, size_t size)
+{
+	size_t offs;
+	int ret = 0;
+
+
+	/* PTE-map each THP by temporarily splitting the VMAs. */
+	for (offs = 0; offs < size; offs += pmdsize) {
+		ret |= madvise(mem + offs, pagesize, MADV_DONTFORK);
+		ret |= madvise(mem + offs, pagesize, MADV_DOFORK);
+	}
+
+	if (ret) {
+		fprintf(stderr, "ERROR: mprotect() failed\n");
+		exit(1);
+	}
+}
+
+int main(int argc, char *argv[])
+{
+	char *p;
+        int ret = 0;
+	p = mmap((1UL << 30), SIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+	if (p != (1UL << 30)) {
+		perror("mmap");
+		return 1;
+	}
 
 
 
+	memset(p, 0, SIZE);
+	if (madvise(p, SIZE, MADV_NOHUGEPAGE))
+		perror("madvise");
+	explicit_bzero(p, SIZE);
+	pte_map_thps(p, SIZE);
+
+	for (int loops = 0; loops < 40; loops++) {
+		if (mprotect(p, SIZE, PROT_READ))
+			perror("mprotect"), exit(1);
+		if (mprotect(p, SIZE, PROT_READ|PROT_WRITE))
+			perror("mprotect"), exit(1);
+		explicit_bzero(p, SIZE);
+	}
+}
+
+---
+v4->v5:
+ - Add patch 4
+ - Add patch 1 (Lorenzo)
+ - For patch 2, instead of using nr_ptes returned from prot_numa_skip()
+   as a dummy for whether to skip or not, make that function return
+   boolean, and then use folio_pte_batch() to determine how much to
+   skip
+ - Split can_change_pte_writable() (Lorenzo)
+ - Implement patch 6 in a better way
+
+v3->v4:
+ - Refactor skipping logic into a new function, edit patch 1 subject
+   to highlight it is only for MM_CP_PROT_NUMA case (David H)
+ - Refactor the optimization logic, add more documentation to the generic
+   batched functions, do not add clear_flush_ptes, squash patch 4
+   and 5 (Ryan)
+
+v2->v3:
+ - Add comments for the new APIs (Ryan, Lorenzo)
+ - Instead of refactoring, use a "skip_batch" label
+ - Move arm64 patches at the end (Ryan)
+ - In can_change_pte_writable(), check AnonExclusive page-by-page (David H)
+ - Resolve implicit declaration; tested build on x86 (Lance Yang)
+
+v1->v2:
+ - Rebase onto mm-unstable (6ebffe676fcf: util_macros.h: make the header more resilient)
+ - Abridge the anon-exclusive condition (Lance Yang)
+
+
+Dev Jain (7):
+  mm: Refactor MM_CP_PROT_NUMA skipping case into new function
+  mm: Optimize mprotect() for MM_CP_PROT_NUMA by batch-skipping PTEs
+  mm: Add batched versions of ptep_modify_prot_start/commit
+  mm: Introduce FPB_RESPECT_WRITE for PTE batching infrastructure
+  mm: Split can_change_pte_writable() into private and shared parts
+  mm: Optimize mprotect() by PTE batching
+  arm64: Add batched versions of ptep_modify_prot_start/commit
+
+ arch/arm64/include/asm/pgtable.h |  10 ++
+ arch/arm64/mm/mmu.c              |  28 ++-
+ include/linux/pgtable.h          |  84 ++++++++-
+ mm/internal.h                    |  11 +-
+ mm/mprotect.c                    | 295 ++++++++++++++++++++++++-------
+ 5 files changed, 352 insertions(+), 76 deletions(-)
+
+-- 
+2.30.2
 
 
