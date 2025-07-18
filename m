@@ -1,121 +1,106 @@
-Return-Path: <linux-kernel+bounces-737435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E066B0AC8B
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 01:27:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A70CB0AC90
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 01:30:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24C737B43DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 23:26:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B122A1C27D25
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 23:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B860122D4C3;
-	Fri, 18 Jul 2025 23:27:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA5722D790;
+	Fri, 18 Jul 2025 23:29:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UaNWn7dn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gzsxy/Bg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BEDE2253BA;
-	Fri, 18 Jul 2025 23:27:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC6D2206B1;
+	Fri, 18 Jul 2025 23:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752881245; cv=none; b=jLfViKFoZ6oS9Rg7x8jjjnfp+zTXQ/c6799TRF/NY69Yro447o7gwAO7gYf5gypo4csxrwcCpZNcWUxf3fOTBUNCMt9CnaUPuj3YVETFWjW7MEcH+CZeaU598eyUYy7sQNxZwEdb07d5bMxiNNIuvy1v3xf3KbbiCg1CI/Ysdqg=
+	t=1752881387; cv=none; b=S02U8DHQqpen2QSmqXftYdTcwfbbGnO6et8eFSc+yoF6c2eTeo2tW8Cu24NhaZlq4CxdP3BZJRScS6l22935GkZPAf2XfJj5BfEJNvOJOZaQ4oFzD8wN4zdaTm8H1R3fZZvIZ8xW+mSURHAv4n7fIbVxRcU1l4pGIXqKe1upCLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752881245; c=relaxed/simple;
-	bh=7pa18f3UjzDAJ1eYgUFLIzCYRlxRZIqaHJgl0gEnP9M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o1rqx1esyVV94brru5Jb1y+y5vf4Tg7IMyOU0aUruY5uvWMbrz1A5MweZMBh2J3eTmNM+tO5KGW5zcuuBaxCJdFcyPL9tB5IfkHr47rwC3EoTfBOwTRxoVeKev7JckM+Au28lvrEFVBvTXFEIi9MqZ0bUeHbeW8yMmXBGnyDvXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UaNWn7dn; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752881243; x=1784417243;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=7pa18f3UjzDAJ1eYgUFLIzCYRlxRZIqaHJgl0gEnP9M=;
-  b=UaNWn7dnLKIICOfEW9nnaR1f+TwiM6rByxICHEY4CZgIFrGXtx+TzcWN
-   Q6kWXcTbm/o9kE+NJhn6aXArmDwkQerAxPmRx0qJ9Mpa2jrKnuMeU5Y5N
-   hbKR4w94/4tmvWRhb+vOjS11HA9Vc0tWuTdDoBFyY/3bV2g4BPwfgxa+d
-   uoSl0zyNls8Kj2OBl66b/27S6YhDXQMJO5BlWeW5A1Az9CQKjB+YVTUvm
-   /Xefz4OxUKuC1kaICBbMdPmToysxjWPZEMRqBvyt7ZDyXq399AENx/9nF
-   /ulJIHwSzFzOFrTKlquOgjcz24XMgi9K41qFEIwDbjH2cE/OpKdwR9MqD
-   g==;
-X-CSE-ConnectionGUID: vDAeAotcSAanxN6I8OerVQ==
-X-CSE-MsgGUID: i1X2xw/DSJOHE3Eax3rFbA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11496"; a="54393610"
-X-IronPort-AV: E=Sophos;i="6.16,322,1744095600"; 
-   d="scan'208";a="54393610"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2025 16:27:22 -0700
-X-CSE-ConnectionGUID: 4wHBjNFSS3K3XZGGri9akA==
-X-CSE-MsgGUID: emJLTxEXRtmjvnLA7WgpCA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,322,1744095600"; 
-   d="scan'208";a="195398285"
-Received: from anmitta2-mobl4.gar.corp.intel.com (HELO [10.247.118.127]) ([10.247.118.127])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2025 16:27:16 -0700
-Message-ID: <7d9e6df5-5921-422e-9ef8-4cef3f89b555@intel.com>
-Date: Fri, 18 Jul 2025 16:27:08 -0700
+	s=arc-20240116; t=1752881387; c=relaxed/simple;
+	bh=g61IKfodzjokruztSESID1IfnyBW+0gIC9iZUUN0Dog=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UvURFgaDI7AEU4wu3KkhC21CO5XnmZjkvqmf25zQvHB7Adep84i0U7mLXmpUzod0pHD96mtOzjtbRmdrjQV40Q5OPglBtAHen4/B5s6EWmQjXXu6A1hzwMBNfqQrGR4NRn8fgvxDrGTjiDDl15r8N7ZpkxDkIWdR3ZTGrN/WBwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gzsxy/Bg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41AB7C4CEEB;
+	Fri, 18 Jul 2025 23:29:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752881387;
+	bh=g61IKfodzjokruztSESID1IfnyBW+0gIC9iZUUN0Dog=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gzsxy/BgJp5e/wdTTAHufgZBb3yLY+dEBFJvRfWg7fvfzsYG+M0JEJs1FALh8IZei
+	 J/NyykbnrRG65lLcrVZ5Lyt6qDadA0KNPHNHelBw29FP6gd85mmjFhWTQG282rKY+1
+	 6o2PajKywwNoLbIrIyCBfGI0F5mgXeA05/mf+WRudSofxuYrjdmChkoxCCZjXoDuux
+	 HAGzpCuQWE6FKLxQvqM8XUD3m9Xn6ItxtamiiKF+8X8isURUbB1fwAwc/szjP+mwf9
+	 3O/s1bDx3KXDEpUS2OSMMITqh8QR+e5MbWV9X9rDYMDsYCU5FTl9ZbFzSfhx0tAobx
+	 kfX4B8HjP1n5Q==
+Date: Fri, 18 Jul 2025 16:29:45 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Tariq Toukan <tariqt@nvidia.com>, "Richard Cochran"
+ <richardcochran@gmail.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky
+ <leon@kernel.org>, Mark Bloch <mbloch@nvidia.com>,
+ <netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, Carolina Jubran <cjubran@nvidia.com>,
+ Vladimir Oltean <vladimir.oltean@nxp.com>
+Subject: Re: [PATCH net-next 0/3] Support exposing raw cycle counters in PTP
+ and mlx5
+Message-ID: <20250718162945.0c170473@kernel.org>
+In-Reply-To: <1752556533-39218-1-git-send-email-tariqt@nvidia.com>
+References: <1752556533-39218-1-git-send-email-tariqt@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] cxl/region: Fix an ERR_PTR() vs NULL bug
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Dan Williams <dan.j.williams@intel.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
- Robert Richter <rrichter@amd.com>, Li Ming <ming.li@zohomail.com>,
- Peter Zijlstra <peterz@infradead.org>, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <7def7da0-326a-410d-8c92-718c8963c0a2@sabinyo.mountain>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <7def7da0-326a-410d-8c92-718c8963c0a2@sabinyo.mountain>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-
-
-On 7/18/25 2:22 PM, Dan Carpenter wrote:
-> The __cxl_decoder_detach() function is expected to return NULL on error
-> but this error path accidentally returns an error pointer.  It could
-> potentially lead to an error pointer dereference in the caller.  Change
-> it to return NULL.
+On Tue, 15 Jul 2025 08:15:30 +0300 Tariq Toukan wrote:
+> This patch series introduces support for exposing the raw free-running
+> cycle counter of PTP hardware clocks. Some telemetry and low-level
+> logging use cycle counter timestamps rather than nanoseconds.
+> Currently, there is no generic interface to correlate these raw values
+> with system time.
 > 
-> Fixes: b3a88225519c ("cxl/region: Consolidate cxl_decoder_kill_region() and cxl_region_detach()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-Thanks Dan!
-
-Applied to cxl/next
-49d6e658e758e42aaff8ae5ecdd2d06b29abf53e
-
-> ---
->  drivers/cxl/core/region.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> To address this, the series introduces two new ioctl commands that
+> allow userspace to query the device's raw cycle counter together with
+> host time:
 > 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index f0765a0af845..71cc42d05248 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -2108,7 +2108,7 @@ __cxl_decoder_detach(struct cxl_region *cxlr,
->  		if (pos >= p->interleave_ways) {
->  			dev_dbg(&cxlr->dev, "position %d out of range %d\n",
->  				pos, p->interleave_ways);
-> -			return ERR_PTR(-ENXIO);
-> +			return NULL;
->  		}
->  
->  		if (!p->targets[pos])
+>  - PTP_SYS_OFFSET_PRECISE_CYCLES
+> 
+>  - PTP_SYS_OFFSET_EXTENDED_CYCLES
+> 
+> These commands work like their existing counterparts but return the
+> device timestamp in cycle units instead of real-time nanoseconds.
+> 
+> This can also be useful in the XDP fast path: if a driver inserts the
+> raw cycle value into metadata instead of a real-time timestamp, it can
+> avoid the overhead of converting cycles to time in the kernel. Then
+> userspace can resolve the cycle-to-time mapping using this ioctl when
+> needed.
+> 
+> Adds the new PTP ioctls and integrates support in ptp_ioctl():
+> - ptp: Add ioctl commands to expose raw cycle counter values
+> 
+> Support for exposing raw cycles in mlx5:
+> - net/mlx5: Extract MTCTR register read logic into helper function
+> - net/mlx5: Support getcyclesx and getcrosscycles
 
+It'd be great to an Ack from Thomas or Richard on this (or failing that
+at least other vendors?) Seems like we have a number of parallel
+efforts to extend the PTP uAPI, I'm not sure how they all square
+against each other, TBH.
+
+Full thread for folks I CCed in:
+https://lore.kernel.org/all/1752556533-39218-1-git-send-email-tariqt@nvidia.com/
 
