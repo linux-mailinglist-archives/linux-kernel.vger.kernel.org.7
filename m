@@ -1,82 +1,136 @@
-Return-Path: <linux-kernel+bounces-736246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB127B09A6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:06:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B18F8B09A75
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:14:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64BF17B87E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 04:05:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E146188677F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 04:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 736CD1CB518;
-	Fri, 18 Jul 2025 04:06:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD9AB1DDA18;
+	Fri, 18 Jul 2025 04:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Q6wqpF/8"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U41mU38G"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A3412B94
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 04:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E8E879CD;
+	Fri, 18 Jul 2025 04:13:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752811592; cv=none; b=NIa1PwrzOOIGiyvSZp/qFTumiB3HP2u99nHZf4k9r9qMFs/6oBpGBVGsmAFHAtw/TKfmisP15IRwyrQTMEZ50WTspEMxYu8sOQbb2M9K6HTqPX9sBuojialvQwj2hqc4NCIN+FC8RPpyKGiNd9hE4BMgL9yOYelv87I4VkyH6tM=
+	t=1752812040; cv=none; b=EDNuNpLOTul92AASW2Lz1GgX4jjuPGEOvgBZdZI/jp7UokKLoH/55x1H3qiAzeEpe+r3eQTInXWtape0ogaWh0GMQE9gj3ASRDmZPYcX9hEdOmdSE8x1qn6mKLjLz/4cdHZi6s7u2Sp3NsNXrXxo7qL3uGZvT12Po1T0T8u/7+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752811592; c=relaxed/simple;
-	bh=Dj5u/KtQFgYFQRI0MbO1+bVCFk4kZLlPojif+opMDp4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PUGiudnSzijPCr9Z4ZaTw4Hgqx8uPnVDq01jkhgQR9JeC0M/fsqrAPJcn2s4f6UxsVYZsAFaGxNkJwFjs3d0ncz3SZqRVROEhyrLjj9vGQIO4QcTH7lLLpB6YBcTdiOD4cZFVar+rdYywI0IuX+9kEjcToQ5W+N2aOBZlOQk4jA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Q6wqpF/8; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <48d38fb0-a144-4c32-9d3d-da8ea2fe08d1@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752811577;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tryI3rBd+up7m/BNegEFHhpaR0DXA2esdgQopySmydU=;
-	b=Q6wqpF/8gauvVkF/6haR1Djd+f1UagPMj5Uobv2/LbIYcmKg+zwLjsJOiW6KiZQJe4xCgS
-	ZdA/+qmNReLgIqaFI9hbdB9sC7cyFRedfLXo2JckBukCZvL7B8K1T881hRcGj00pb1G4t5
-	en0L7nOAuJeRrcAFj7hA/mnOteSxnLg=
-Date: Thu, 17 Jul 2025 21:06:12 -0700
+	s=arc-20240116; t=1752812040; c=relaxed/simple;
+	bh=DHnTfajQCSjlkvREjbmaEy/d/ta4Wp+DnSYxZJdnYw0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o5OqKG6P9IwlWdEjlcGrlxcmB2mb5a2dJ4MhgBgEpyAx4bnuPZSGCbWWhHHlSQN38SIUEQaJOCJKg91700UQjcL9t6lhGTUnsiOEFamjO3NMn8lQwgaD/sLrnqswAplXAcSFLKfgoqkGw3HLQwIbq0TskBMPtXC9RajOxGaTvco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U41mU38G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEFACC4CEF0;
+	Fri, 18 Jul 2025 04:13:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752812039;
+	bh=DHnTfajQCSjlkvREjbmaEy/d/ta4Wp+DnSYxZJdnYw0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=U41mU38GA+VlBtnajAa35+hqG/tyMnmjIW1Fe7CKJZ9YtVJ4V9MLHgZLerv/Xz8c/
+	 ZE0wEqeSVCug0Lt4EMgtWffwOrelHEsY7utriP9bseQAP5YkwDSbN9PVM65PGpzqr8
+	 RUKWdQL1o9/Bi6wB+/2pEyhqlmob/WcbqD2lc/5Ad9rb1hgv7c6zgUxf08cOJGggyo
+	 NIL2nps5Z22BC28+W3jrwl6lfxmVKWQh8/Hp0EzUeM+uUy0u65amlnCBS7IYlJwXz2
+	 8dgbDyecqJwKu3xG0gt6G6SlboSHbtxEw5GsVUlWu6hc1IHCJB5FPJtagp3kupFq/r
+	 xxyEzySLUtFcw==
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-60c5b8ee2d9so3378435a12.2;
+        Thu, 17 Jul 2025 21:13:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUCjvWq/tNSP3sXH+kT6c5p0JXCsb1TccFfCMD/GKjBlf2IjK7HhY8yGFEpymAafhJDTKc=@vger.kernel.org, AJvYcCWnXqT+BSJJEPe2uKTBMNerlUDIoGODZ9wd2qULOdSP1QuKPx6fgV5beB4nrvVFk2D1CAWDV3Rdp6UYLvU8@vger.kernel.org
+X-Gm-Message-State: AOJu0YyepPnUoDocJ9TGE/8E2gFaod4HaZ3PJtWC5NlU66tMm/gtdCVU
+	Jshlp5jLJ6NEabvgxP520XJ09FkfGcLGRk5azqGMSCqg/BBvWlb2oJg38J9NTkYYLztF9X/GLBp
+	9IcwZKAWN6u+CAFi9PLGLjBLT4Q+lGcE=
+X-Google-Smtp-Source: AGHT+IEAC/CrykqlVUov+EJ/y6QUARM5tA1ycLqUcm4EWLS9EBEJLRu/mhAQR5yZ9JZRh3AJjQcI43NahP6URex6JzI=
+X-Received: by 2002:a17:907:7e81:b0:aec:4aa6:7800 with SMTP id
+ a640c23a62f3a-aec4aa6a010mr634285766b.20.1752812038366; Thu, 17 Jul 2025
+ 21:13:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next] libbpf: fix warning
-Content-Language: en-GB
-To: Matteo Croce <technoboy85@gmail.com>, bpf@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Matteo Croce <teknoraver@meta.com>
-References: <20250717200337.49168-1-technoboy85@gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <20250717200337.49168-1-technoboy85@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250716165929.22386-1-yury.norov@gmail.com> <20250716165929.22386-3-yury.norov@gmail.com>
+In-Reply-To: <20250716165929.22386-3-yury.norov@gmail.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Fri, 18 Jul 2025 12:13:46 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H729+VA4fAWX1SOhCAptSDSwLDAOp_RwB0hkDtvm0hMLg@mail.gmail.com>
+X-Gm-Features: Ac12FXx3hfpaLFwE6RdiI6R7mON-t5449W1RiBy40PMWcdfNUzWxzQG1L7EcO_o
+Message-ID: <CAAhV-H729+VA4fAWX1SOhCAptSDSwLDAOp_RwB0hkDtvm0hMLg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] LoongArch: KVM:: simplify kvm_deliver_intr()
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
+	WANG Xuerui <kernel@xen0n.name>, kvm@vger.kernel.org, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi, Yury,
 
-
-On 7/17/25 1:03 PM, Matteo Croce wrote:
-> From: Matteo Croce <teknoraver@meta.com>
+On Thu, Jul 17, 2025 at 12:59=E2=80=AFAM Yury Norov <yury.norov@gmail.com> =
+wrote:
 >
-> When compiling libbpf with some compilers, this warning is triggered:
+> From: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
 >
-> libbpf.c: In function ‘bpf_object__gen_loader’:
-> libbpf.c:9209:28: error: ‘calloc’ sizes specified with ‘sizeof’ in the earlier argument and not in the later argument [-Werror=calloc-transposed-args]
->   9209 |         gen = calloc(sizeof(*gen), 1);
->        |                            ^
-> libbpf.c:9209:28: note: earlier argument should specify number of elements, later size of each element
+> The function opencodes for_each_set_bit() macro, which makes it bulky.
+> Using the proper API makes all the housekeeping code going away.
 >
-> Fix this by inverting the calloc() arguments.
+> Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+> ---
+>  arch/loongarch/kvm/interrupt.c | 25 ++++---------------------
+>  1 file changed, 4 insertions(+), 21 deletions(-)
 >
-> Signed-off-by: Matteo Croce <teknoraver@meta.com>
+> diff --git a/arch/loongarch/kvm/interrupt.c b/arch/loongarch/kvm/interrup=
+t.c
+> index 4c3f22de4b40..8462083f0301 100644
+> --- a/arch/loongarch/kvm/interrupt.c
+> +++ b/arch/loongarch/kvm/interrupt.c
+> @@ -83,28 +83,11 @@ void kvm_deliver_intr(struct kvm_vcpu *vcpu)
+>         unsigned long *pending =3D &vcpu->arch.irq_pending;
+>         unsigned long *pending_clr =3D &vcpu->arch.irq_clear;
+>
+> -       if (!(*pending) && !(*pending_clr))
+> -               return;
+Is it necessary to keep these two lines?
 
-Acked-by: Yonghong Song <yonghong.song@linux.dev>
+Huacai
 
+> -
+> -       if (*pending_clr) {
+> -               priority =3D __ffs(*pending_clr);
+> -               while (priority <=3D INT_IPI) {
+> -                       kvm_irq_clear(vcpu, priority);
+> -                       priority =3D find_next_bit(pending_clr,
+> -                                       BITS_PER_BYTE * sizeof(*pending_c=
+lr),
+> -                                       priority + 1);
+> -               }
+> -       }
+> +       for_each_set_bit(priority, pending_clr, INT_IPI + 1)
+> +               kvm_irq_clear(vcpu, priority);
+>
+> -       if (*pending) {
+> -               priority =3D __ffs(*pending);
+> -               while (priority <=3D INT_IPI) {
+> -                       kvm_irq_deliver(vcpu, priority);
+> -                       priority =3D find_next_bit(pending,
+> -                                       BITS_PER_BYTE * sizeof(*pending),
+> -                                       priority + 1);
+> -               }
+> -       }
+> +       for_each_set_bit(priority, pending, INT_IPI + 1)
+> +               kvm_irq_deliver(vcpu, priority);
+>  }
+>
+>  int kvm_pending_timer(struct kvm_vcpu *vcpu)
+> --
+> 2.43.0
+>
+>
 
