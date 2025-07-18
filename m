@@ -1,301 +1,779 @@
-Return-Path: <linux-kernel+bounces-737032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB5D2B0A6CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:05:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E068B0A6D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:06:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 974AC1C43982
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:06:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7496616A9A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:06:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D2C92DCBF4;
-	Fri, 18 Jul 2025 15:05:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F5F72DCF47;
+	Fri, 18 Jul 2025 15:06:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="hrh8xG6/"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b="Ss5YrYCf"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0790C2D9ECB
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 15:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752851146; cv=pass; b=IhNQ1+xPrIZdMsh6Z/Mbfm3hiFkY9b4+Xa0nkOEnuMPk5DaEsvCSapgF6g3DpcFVORsA4TIkMmkxqNdrENkgVflLyCrU68UnvcspzmyuR6074ix3KQpEIZkTUkjVRGq6s8LtKv7gq3S7LTuF3wpONq1x8xxzYnpRRFi7//qFXy4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752851146; c=relaxed/simple;
-	bh=W/acHr8objBZC/WYPYEjF5D7ivrK57VfQYSQlM6jUvg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MTMmyWpMojYEcb7w2okWUaXiTMoURM4olPzPzjJxXowAqlyXyuw7/YJOC0Gan43Hv32AGUVYtVvGFEM0LhXorRJKMPFZlrJKFxrotJ7ahGIDiVM9eLLom0OnLRgA9pPq6/LakyE/uRnZUbU919c8LnDQlsXYfmWdPBuonxLPw8Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=hrh8xG6/; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1752851124; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=d4X9WT2p9ogMVI6NpkNuj4BtXEhvXd3ma72gvuuWV4LCMxnAue1PYNrMhzYsQfI6W3CRkhgAzTtsQfmYeuPQSDqktQ5S9jKiwqcgdZXdLkS6Nnrfb20VUmsEturhoHBL30ZQgI5fEO3hKb1EgUzWVnLo5P2AYAVODP/4qYn8q6E=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1752851124; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=PgXfyljGZ9m0K4Grmd5cae0YYgsk+MtValrJMSt5jnI=; 
-	b=SCS31XP45+nr72pbzinw91NS7qTBlVQj6cvFJ12o57UUXTvHza2A+eWY3ksvRx6gyRnZZGX4k20HGSfeoHkApy7Lodj4Ii71MciVKAM07LHIhol1sGEZ987Pw4WZhgT6XNcbvU4corRdiXkK8ihg86Pw5Xnn3iBLL2H6kQ+jFxI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
-	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752851124;
-	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
-	bh=PgXfyljGZ9m0K4Grmd5cae0YYgsk+MtValrJMSt5jnI=;
-	b=hrh8xG6/2Fl/4uHyr+XlA15FB6X1SVOqwlh203JiFTHiYt0CqshAMehjBbhCoXA8
-	mccHMNXI05ySMljA5h7QTcgKuTsUDfqaidU/0qF1yUCctN3vLjpCex6DEcBa/qOalWv
-	eyQuOO6E91JtdOR1PsVlnrhphbBsSI8B+BqZSwoM=
-Received: by mx.zohomail.com with SMTPS id 1752851122947763.4811264496713;
-	Fri, 18 Jul 2025 08:05:22 -0700 (PDT)
-Date: Fri, 18 Jul 2025 16:05:18 +0100
-From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
-To: Lukas Zapolskas <lukas.zapolskas@arm.com>
-Cc: Boris Brezillon <boris.brezillon@collabora.com>, 
-	Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 7/7] drm/panthor: Expose the panthor perf ioctls
-Message-ID: <pfv5bjmirkaqjl22pxl6oku75chcrq6ohf4ijktkhfzizr24z5@4oioi6khiohw>
-References: <cover.1747148172.git.lukas.zapolskas@arm.com>
- <d196bcce96cf0e3672905c3cb0336505728ddc52.1747148172.git.lukas.zapolskas@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81E512DCC02
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 15:06:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752851162; cv=none; b=CXrkqpAITEuFbfVQenlcXC1s35U9srfvt9C1qj9OCV/16DLuT1CNel3VJ/Rr+T3ZUVARP9HSnz3OjkoVSKCmOEkiIHkfQOc8GOYNBsoE6AwtCGNQQKGLEBdCiSIAaBEeicJjlIdHY5qBLXC07uE9mrCQAOAYERYw3Ea2o4atOvQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752851162; c=relaxed/simple;
+	bh=rVVffuxMBus/RcxOhFWgCU5h3PEDgUw/qcl4X5xIi1Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=mEcnlyA8qZQNFyuz37YWBpo4aQ18XAMvX8ygysuMC+rZrrDaEBFyDqC2nHztsF+QDOvdrPntSAKTcpJLPxFxgHE6Grnh4GSIrRrNiwPJzTMk5/CCPzrdlxUCupFVVkx322++gPYOQwq/PaaRtRdraiTY0bS9Voh3gwe9EstI0kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com; spf=none smtp.mailfrom=readmodwrite.com; dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b=Ss5YrYCf; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=readmodwrite.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-451d6ade159so16146225e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 08:06:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=readmodwrite-com.20230601.gappssmtp.com; s=20230601; t=1752851159; x=1753455959; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2BNj2X+SWkqF45adh7c1im/rMt4/J2J7kU0YH53i2ZQ=;
+        b=Ss5YrYCfprQIQGHSgiR7IuWOa9fukiOrBt57DH+kDo/XBM/yj45o+LmE8duuHZiKHA
+         FaMCkQdSxcwk5AZ4HXfrQMpbxDF6DcIwkRTRUAWA6HLMmxkA+u7ogDQQxlyYP8wGG5fV
+         uT/s6qsVj5B6FqLYPb8C4NfUCRWztuTnoMS0kBNmzT99gqFfOjaGqp4lr1YdVPdHaPAI
+         Ex7WXrhD2Su+QykzT7WCAqKcU6aUQp8NsspNBoqKkS+WkItHDijGnXrDVSCdOzDxEsgp
+         lKh7vXCXaow9ns2ZyhSJ0xSSLD7FA+WS023MQWGNJRf0Xej1yublh0nIFT2FmzzLW3ui
+         vIQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752851159; x=1753455959;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2BNj2X+SWkqF45adh7c1im/rMt4/J2J7kU0YH53i2ZQ=;
+        b=N8swNO7w7Q3MkQ2DW6Yfz7gtrLKe8xyJd1mwwMLwTIuYgLSjQlpfTwGpczZoUh53Wb
+         SiaSpkDL1mhnLyL/F2hHbnnkohDuJKfp7JVXHg9xxj/Wp7d4nTOQv6ibjg64BTdiMd7q
+         v0LOszAm6/oZykevfHmKBW85i3nYlxuh1YKc9pveCSzPiItrypSL5SBGozIso7uVHvZ7
+         8IJbuWQSmKOGMt+BSSxyJmA2LMJ3w8u7o420DcQ6iU/2vVZukyBEpSZ9RlqdcQ8cSDBn
+         6ATpmZ+Fr79HqTjKmX3c66mxT4QFnLZdcnbQmo6IorY7srFDwVD2QuzzpuGwxj6el67K
+         kZew==
+X-Forwarded-Encrypted: i=1; AJvYcCU6JCOLcAjj7SAeoK6zS2ZuYcWr9MKlMPcjKRn1O8noW1bYIY13FCg/aO/iz6D9Otu4JpUFOv4spudicO8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yze+V0dCoayx+XdHJndQbq9M6ZCs/efzx0Pk/oNXSTknsbaSokH
+	/8RCuc30Wn/29IAeqctmZR9tRpWqaRr8ytxZ/riFnuLOYk/PfOIZMNzJAKC2Xsg0AyM=
+X-Gm-Gg: ASbGncutqzQ3aOKq6YymeoIcMUMasqsuHbSOUZ2Nb5SgnBi3a3VxH2nYK4hJEkOKJLP
+	SB68I5beKF3sBpnAcxlLrPHxajilyDQsbLhaI4HrZIy7Xc8W8Ul4eECP0TB0LHFdO61Mcwo6/1S
+	Vbc90gZrk6jMEtuEtE0nG4VPQJj+aMF7ymW2AUHL5cBWcvV/amye9FBfdoHVy2tYjm72EFfA7Ey
+	6ZrAjx9RfP8POnCX54n4NFBJE2Vt+FssHyUv22jw3U6JnnpqJGtBC2JP7Wn9GlepbNXrPSW2zSE
+	yd1Pz90LSQOMvUMGXIsGisZAfkFuhK4PjrCEIRSv9NnC4IhZYgyo0scu5TO5j5mYPzRI9D3Xiw0
+	/IUFSYbjoRy8wFnVj4ER32v0=
+X-Google-Smtp-Source: AGHT+IEM0M+YYT1WF4Hdxs+WLk7MoZfkohvjefp7bSXR0frzr0PWDAv5nHw9Mtw87NHmCDEjkQjtyg==
+X-Received: by 2002:a05:600c:6097:b0:456:26ac:517a with SMTP id 5b1f17b1804b1-4562e3914b3mr102576995e9.24.1752851158340;
+        Fri, 18 Jul 2025 08:05:58 -0700 (PDT)
+Received: from matt-Precision-5490.. ([2a09:bac1:2880:f0::3df:4e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e80731bsm80684255e9.15.2025.07.18.08.05.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Jul 2025 08:05:57 -0700 (PDT)
+From: Matt Fleming <matt@readmodwrite.com>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>
+Cc: Shuah Khan <shuah@kernel.org>,
+	kernel-team@cloudflare.com,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	Matt Fleming <mfleming@cloudflare.com>
+Subject: [PATCH] selftests/bpf: Add LPM trie microbenchmarks
+Date: Fri, 18 Jul 2025 16:05:54 +0100
+Message-Id: <20250718150554.48210-1-matt@readmodwrite.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <d196bcce96cf0e3672905c3cb0336505728ddc52.1747148172.git.lukas.zapolskas@arm.com>
 
-Hi Lucas, this whole patch is alright, but don't forget to bump the
-driver minor revision up, because 1.5 has alrady been assigned:
+From: Matt Fleming <mfleming@cloudflare.com>
 
-1.5 - adds DRM_PANTHOR_SET_USER_MMIO_OFFSET ioctl
+Add benchmarks for the standard set of operations: lookup, update,
+delete. Also, include a benchmark for trie_free() which is known to have
+terrible performance for maps with many entries.
 
-On 16.05.2025 16:49, Lukas Zapolskas wrote:
-> This patch implements the PANTHOR_PERF_CONTROL ioctl series, and
-> a PANTHOR_GET_UOBJ wrapper to deal with the backwards and forwards
-> compatibility of the uAPI.
->
-> The minor version is bumped to indicate that the feature is now
-> supported.
->
-> Signed-off-by: Lukas Zapolskas <lukas.zapolskas@arm.com>
-> Reviewed-by: Adrián Larumbe <adrian.larumbe@collabora.com>
-> ---
->  drivers/gpu/drm/panthor/panthor_drv.c | 141 +++++++++++++++++++++++++-
->  1 file changed, 139 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
-> index 4c1381320859..850a894fe91b 100644
-> --- a/drivers/gpu/drm/panthor/panthor_drv.c
-> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
-> @@ -31,6 +31,7 @@
->  #include "panthor_gpu.h"
->  #include "panthor_heap.h"
->  #include "panthor_mmu.h"
-> +#include "panthor_perf.h"
->  #include "panthor_regs.h"
->  #include "panthor_sched.h"
->
-> @@ -73,6 +74,39 @@ panthor_set_uobj(u64 usr_ptr, u32 usr_size, u32 min_size, u32 kern_size, const v
->  	return 0;
->  }
->
-> +/**
-> + * panthor_get_uobj() - Copy kernel object to user object.
-> + * @usr_ptr: Users pointer.
-> + * @usr_size: Size of the user object.
-> + * @min_size: Minimum size for this object.
-> + *
-> + * Helper automating kernel -> user object copies.
-> + *
-> + * Don't use this function directly, use PANTHOR_UOBJ_GET() instead.
-> + *
-> + * Return: valid pointer on success, an encoded error code otherwise.
-> + */
-> +static void*
-> +panthor_get_uobj(u64 usr_ptr, u32 usr_size, u32 min_size)
-> +{
-> +	int ret;
-> +	void *out_alloc __free(kvfree) = NULL;
-> +
-> +	/* User size shouldn't be smaller than the minimal object size. */
-> +	if (usr_size < min_size)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	out_alloc = kvmalloc(min_size, GFP_KERNEL);
-> +	if (!out_alloc)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	ret = copy_struct_from_user(out_alloc, min_size, u64_to_user_ptr(usr_ptr), usr_size);
-> +	if (ret)
-> +		return ERR_PTR(ret);
-> +
-> +	return_ptr(out_alloc);
-> +}
-> +
->  /**
->   * panthor_get_uobj_array() - Copy a user object array into a kernel accessible object array.
->   * @in: The object array to copy.
-> @@ -176,7 +210,12 @@ panthor_get_uobj_array(const struct drm_panthor_obj_array *in, u32 min_stride,
->  		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_submit, syncs), \
->  		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_create, ringbuf_size), \
->  		 PANTHOR_UOBJ_DECL(struct drm_panthor_vm_bind_op, syncs), \
-> -		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_info, shader_blocks))
-> +		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_info, shader_blocks), \
-> +		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_cmd_setup, shader_enable_mask), \
-> +		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_cmd_start, user_data), \
-> +		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_cmd_stop, user_data), \
-> +		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_cmd_sample, user_data))
-> +
->
->  /**
->   * PANTHOR_UOBJ_SET() - Copy a kernel object to a user object.
-> @@ -191,6 +230,24 @@ panthor_get_uobj_array(const struct drm_panthor_obj_array *in, u32 min_stride,
->  			 PANTHOR_UOBJ_MIN_SIZE(_src_obj), \
->  			 sizeof(_src_obj), &(_src_obj))
->
-> +/**
-> + * PANTHOR_UOBJ_GET() - Copies a user object from _usr_ptr to a kernel accessible _dest_ptr.
-> + * @_dest_ptr: Local variable
-> + * @_usr_size: Size of the user object.
-> + * @_usr_ptr: The pointer of the object in userspace.
-> + *
-> + * Return: Error code. See panthor_get_uobj().
-> + */
-> +#define PANTHOR_UOBJ_GET(_dest_ptr, _usr_size, _usr_ptr) \
-> +	({ \
-> +		typeof(_dest_ptr) _tmp; \
-> +		_tmp = panthor_get_uobj(_usr_ptr, _usr_size, \
-> +				PANTHOR_UOBJ_MIN_SIZE(_tmp[0])); \
-> +		if (!IS_ERR(_tmp)) \
-> +			_dest_ptr = _tmp; \
-> +		PTR_ERR_OR_ZERO(_tmp); \
-> +	})
-> +
->  /**
->   * PANTHOR_UOBJ_GET_ARRAY() - Copy a user object array to a kernel accessible
->   * object array.
-> @@ -1339,6 +1396,83 @@ static int panthor_ioctl_vm_get_state(struct drm_device *ddev, void *data,
->  	return 0;
->  }
->
-> +#define perf_cmd(command) \
-> +	({ \
-> +		struct drm_panthor_perf_cmd_##command *command##_args __free(kvfree) = NULL; \
-> +		int _ret = PANTHOR_UOBJ_GET(command##_args, args->size, args->pointer); \
-> +		if (_ret) \
-> +			return _ret; \
-> +		return panthor_perf_session_##command(pfile, ptdev->perf, args->handle, \
-> +				command##_args->user_data); \
-> +	})
-> +
-> +static int panthor_ioctl_perf_control(struct drm_device *ddev, void *data,
-> +				      struct drm_file *file)
-> +{
-> +	struct panthor_device *ptdev = container_of(ddev, struct panthor_device, base);
-> +	struct panthor_file *pfile = file->driver_priv;
-> +	struct drm_panthor_perf_control *args = data;
-> +	int ret;
-> +
-> +	if (!args->pointer) {
-> +		switch (args->cmd) {
-> +		case DRM_PANTHOR_PERF_COMMAND_SETUP:
-> +			args->size = sizeof(struct drm_panthor_perf_cmd_setup);
-> +			return 0;
-> +
-> +		case DRM_PANTHOR_PERF_COMMAND_TEARDOWN:
-> +			args->size = 0;
-> +			return 0;
-> +
-> +		case DRM_PANTHOR_PERF_COMMAND_START:
-> +			args->size = sizeof(struct drm_panthor_perf_cmd_start);
-> +			return 0;
-> +
-> +		case DRM_PANTHOR_PERF_COMMAND_STOP:
-> +			args->size = sizeof(struct drm_panthor_perf_cmd_stop);
-> +			return 0;
-> +
-> +		case DRM_PANTHOR_PERF_COMMAND_SAMPLE:
-> +			args->size = sizeof(struct drm_panthor_perf_cmd_sample);
-> +			return 0;
-> +
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +	}
-> +
-> +	switch (args->cmd) {
-> +	case DRM_PANTHOR_PERF_COMMAND_SETUP:
-> +	{
-> +		struct drm_panthor_perf_cmd_setup *setup_args __free(kvfree) = NULL;
-> +
-> +		ret = PANTHOR_UOBJ_GET(setup_args, args->size, args->pointer);
-> +		if (ret)
-> +			return -EINVAL;
-> +
-> +		return panthor_perf_session_setup(ptdev, ptdev->perf, setup_args, pfile);
-> +	}
-> +	case DRM_PANTHOR_PERF_COMMAND_TEARDOWN:
-> +	{
-> +		return panthor_perf_session_teardown(pfile, ptdev->perf, args->handle);
-> +	}
-> +	case DRM_PANTHOR_PERF_COMMAND_START:
-> +	{
-> +		perf_cmd(start);
-> +	}
-> +	case DRM_PANTHOR_PERF_COMMAND_STOP:
-> +	{
-> +		perf_cmd(stop);
-> +	}
-> +	case DRM_PANTHOR_PERF_COMMAND_SAMPLE:
-> +	{
-> +		perf_cmd(sample);
-> +	}
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
->  static int
->  panthor_open(struct drm_device *ddev, struct drm_file *file)
->  {
-> @@ -1409,6 +1543,7 @@ static const struct drm_ioctl_desc panthor_drm_driver_ioctls[] = {
->  	PANTHOR_IOCTL(TILER_HEAP_CREATE, tiler_heap_create, DRM_RENDER_ALLOW),
->  	PANTHOR_IOCTL(TILER_HEAP_DESTROY, tiler_heap_destroy, DRM_RENDER_ALLOW),
->  	PANTHOR_IOCTL(GROUP_SUBMIT, group_submit, DRM_RENDER_ALLOW),
-> +	PANTHOR_IOCTL(PERF_CONTROL, perf_control, DRM_RENDER_ALLOW),
->  };
->
->  static int panthor_mmap(struct file *filp, struct vm_area_struct *vma)
-> @@ -1518,6 +1653,8 @@ static void panthor_debugfs_init(struct drm_minor *minor)
->   * - 1.2 - adds DEV_QUERY_GROUP_PRIORITIES_INFO query
->   *       - adds PANTHOR_GROUP_PRIORITY_REALTIME priority
->   * - 1.3 - adds DRM_PANTHOR_GROUP_STATE_INNOCENT flag
-> + * - 1.4 - adds DEV_QUERY_PERF_INFO query
-> + *       - adds PERF_CONTROL ioctl
->   */
->  static const struct drm_driver panthor_drm_driver = {
->  	.driver_features = DRIVER_RENDER | DRIVER_GEM | DRIVER_SYNCOBJ |
-> @@ -1531,7 +1668,7 @@ static const struct drm_driver panthor_drm_driver = {
->  	.name = "panthor",
->  	.desc = "Panthor DRM driver",
->  	.major = 1,
-> -	.minor = 3,
-> +	.minor = 4,
->
->  	.gem_create_object = panthor_gem_create_object,
->  	.gem_prime_import_sg_table = drm_gem_shmem_prime_import_sg_table,
-> --
-> 2.33.0.dirty
+Benchmarks operate on tries without gaps in the key range, i.e. each
+test begins with a trie with valid keys in the range [0, nr_entries).
+This is intended to cause maximum branching when traversing the trie.
 
+All measurements are recorded inside the kernel to remove syscall
+overhead.
 
-Adrian Larumbe
+Most benchmarks run an XDP program to generate stats but free needs to
+collect latencies using fentry/fexit on map_free_deferred() because it's
+not possible to use fentry directly on lpm_trie.c since commit
+c83508da5620 ("bpf: Avoid deadlock caused by nested kprobe and fentry
+bpf programs") and there's no way to create/destroy a map from within an
+XDP program.
+
+Here is example output from an AMD EPYC 9684X 96-Core machine for each
+of the benchmarks using a trie with 10K entries and a 32-bit prefix
+length, e.g.
+
+  $ ./bench lpm-trie-$op \
+  	--prefix_len=32  \
+	--producers=1     \
+	--nr_entries=10000
+
+  lookup: throughput    7.423 ± 0.023 M ops/s (  7.423M ops/prod), latency  134.710 ns/op
+  update: throughput    2.643 ± 0.015 M ops/s (  2.643M ops/prod), latency  378.310 ns/op
+  delete: throughput    0.712 ± 0.008 M ops/s (  0.712M ops/prod), latency 1405.152 ns/op
+    free: throughput    0.574 ± 0.003 K ops/s (  0.574K ops/prod), latency    1.743 ms/op
+
+Signed-off-by: Matt Fleming <mfleming@cloudflare.com>
+---
+ tools/testing/selftests/bpf/Makefile          |   2 +
+ tools/testing/selftests/bpf/bench.c           |  10 +
+ tools/testing/selftests/bpf/bench.h           |   1 +
+ .../selftests/bpf/benchs/bench_lpm_trie_map.c | 345 ++++++++++++++++++
+ .../selftests/bpf/progs/lpm_trie_bench.c      | 175 +++++++++
+ .../selftests/bpf/progs/lpm_trie_map.c        |  19 +
+ 6 files changed, 552 insertions(+)
+ create mode 100644 tools/testing/selftests/bpf/benchs/bench_lpm_trie_map.c
+ create mode 100644 tools/testing/selftests/bpf/progs/lpm_trie_bench.c
+ create mode 100644 tools/testing/selftests/bpf/progs/lpm_trie_map.c
+
+diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
+index 910d8d6402ef..10a5f1d0fa41 100644
+--- a/tools/testing/selftests/bpf/Makefile
++++ b/tools/testing/selftests/bpf/Makefile
+@@ -815,6 +815,7 @@ $(OUTPUT)/bench_bpf_hashmap_lookup.o: $(OUTPUT)/bpf_hashmap_lookup.skel.h
+ $(OUTPUT)/bench_htab_mem.o: $(OUTPUT)/htab_mem_bench.skel.h
+ $(OUTPUT)/bench_bpf_crypto.o: $(OUTPUT)/crypto_bench.skel.h
+ $(OUTPUT)/bench_sockmap.o: $(OUTPUT)/bench_sockmap_prog.skel.h
++$(OUTPUT)/bench_lpm_trie_map.o: $(OUTPUT)/lpm_trie_bench.skel.h $(OUTPUT)/lpm_trie_map.skel.h
+ $(OUTPUT)/bench.o: bench.h testing_helpers.h $(BPFOBJ)
+ $(OUTPUT)/bench: LDLIBS += -lm
+ $(OUTPUT)/bench: $(OUTPUT)/bench.o \
+@@ -836,6 +837,7 @@ $(OUTPUT)/bench: $(OUTPUT)/bench.o \
+ 		 $(OUTPUT)/bench_htab_mem.o \
+ 		 $(OUTPUT)/bench_bpf_crypto.o \
+ 		 $(OUTPUT)/bench_sockmap.o \
++		 $(OUTPUT)/bench_lpm_trie_map.o \
+ 		 #
+ 	$(call msg,BINARY,,$@)
+ 	$(Q)$(CC) $(CFLAGS) $(LDFLAGS) $(filter %.a %.o,$^) $(LDLIBS) -o $@
+diff --git a/tools/testing/selftests/bpf/bench.c b/tools/testing/selftests/bpf/bench.c
+index ddd73d06a1eb..fd15f60fd5a8 100644
+--- a/tools/testing/selftests/bpf/bench.c
++++ b/tools/testing/selftests/bpf/bench.c
+@@ -284,6 +284,7 @@ extern struct argp bench_htab_mem_argp;
+ extern struct argp bench_trigger_batch_argp;
+ extern struct argp bench_crypto_argp;
+ extern struct argp bench_sockmap_argp;
++extern struct argp bench_lpm_trie_map_argp;
+ 
+ static const struct argp_child bench_parsers[] = {
+ 	{ &bench_ringbufs_argp, 0, "Ring buffers benchmark", 0 },
+@@ -299,6 +300,7 @@ static const struct argp_child bench_parsers[] = {
+ 	{ &bench_trigger_batch_argp, 0, "BPF triggering benchmark", 0 },
+ 	{ &bench_crypto_argp, 0, "bpf crypto benchmark", 0 },
+ 	{ &bench_sockmap_argp, 0, "bpf sockmap benchmark", 0 },
++	{ &bench_lpm_trie_map_argp, 0, "LPM trie map benchmark", 0 },
+ 	{},
+ };
+ 
+@@ -558,6 +560,10 @@ extern const struct bench bench_htab_mem;
+ extern const struct bench bench_crypto_encrypt;
+ extern const struct bench bench_crypto_decrypt;
+ extern const struct bench bench_sockmap;
++extern const struct bench bench_lpm_trie_lookup;
++extern const struct bench bench_lpm_trie_update;
++extern const struct bench bench_lpm_trie_delete;
++extern const struct bench bench_lpm_trie_free;
+ 
+ static const struct bench *benchs[] = {
+ 	&bench_count_global,
+@@ -625,6 +631,10 @@ static const struct bench *benchs[] = {
+ 	&bench_crypto_encrypt,
+ 	&bench_crypto_decrypt,
+ 	&bench_sockmap,
++	&bench_lpm_trie_lookup,
++	&bench_lpm_trie_update,
++	&bench_lpm_trie_delete,
++	&bench_lpm_trie_free,
+ };
+ 
+ static void find_benchmark(void)
+diff --git a/tools/testing/selftests/bpf/bench.h b/tools/testing/selftests/bpf/bench.h
+index 005c401b3e22..bea323820ffb 100644
+--- a/tools/testing/selftests/bpf/bench.h
++++ b/tools/testing/selftests/bpf/bench.h
+@@ -46,6 +46,7 @@ struct bench_res {
+ 	unsigned long gp_ns;
+ 	unsigned long gp_ct;
+ 	unsigned int stime;
++	unsigned long duration_ns;
+ };
+ 
+ struct bench {
+diff --git a/tools/testing/selftests/bpf/benchs/bench_lpm_trie_map.c b/tools/testing/selftests/bpf/benchs/bench_lpm_trie_map.c
+new file mode 100644
+index 000000000000..ddd7d3669e70
+--- /dev/null
++++ b/tools/testing/selftests/bpf/benchs/bench_lpm_trie_map.c
+@@ -0,0 +1,345 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2025 Cloudflare */
++
++/*
++ * All of these benchmarks operate on tries with keys in the range
++ * [0, args.nr_entries), i.e. there are no gaps or partially filled
++ * branches of the trie for any key < args.nr_entries.
++ *
++ * This gives an idea of worst-case behaviour.
++ */
++
++#include <argp.h>
++#include <linux/time64.h>
++#include <linux/if_ether.h>
++#include "lpm_trie_bench.skel.h"
++#include "lpm_trie_map.skel.h"
++#include "bench.h"
++#include "testing_helpers.h"
++
++static struct ctx {
++	struct lpm_trie_bench *bench;
++} ctx;
++
++static struct {
++	__u32 nr_entries;
++	__u32 prefixlen;
++} args = {
++	.nr_entries = 10000,
++	.prefixlen = 32,
++};
++
++enum {
++	ARG_NR_ENTRIES = 9000,
++	ARG_PREFIX_LEN,
++};
++
++static const struct argp_option opts[] = {
++	{ "nr_entries", ARG_NR_ENTRIES, "NR_ENTRIES", 0,
++	  "Number of unique entries in the LPM trie" },
++	{ "prefix_len", ARG_PREFIX_LEN, "PREFIX_LEN", 0,
++	  "Number of prefix bits to use in the LPM trie" },
++	{},
++};
++
++static error_t lpm_parse_arg(int key, char *arg, struct argp_state *state)
++{
++	long ret;
++
++	switch (key) {
++	case ARG_NR_ENTRIES:
++		ret = strtol(arg, NULL, 10);
++		if (ret < 1 || ret > UINT_MAX) {
++			fprintf(stderr, "Invalid nr_entries count.");
++			argp_usage(state);
++		}
++		args.nr_entries = ret;
++		break;
++	case ARG_PREFIX_LEN:
++		ret = strtol(arg, NULL, 10);
++		if (ret < 1 || ret > UINT_MAX) {
++			fprintf(stderr, "Invalid prefix_len value.");
++			argp_usage(state);
++		}
++		args.prefixlen = ret;
++		break;
++	default:
++		return ARGP_ERR_UNKNOWN;
++	}
++	return 0;
++}
++
++const struct argp bench_lpm_trie_map_argp = {
++	.options = opts,
++	.parser = lpm_parse_arg,
++};
++
++static void __lpm_validate(void)
++{
++	if (env.consumer_cnt != 0) {
++		fprintf(stderr, "benchmark doesn't support consumer!\n");
++		exit(1);
++	}
++
++	if ((1UL << args.prefixlen) < args.nr_entries) {
++		fprintf(stderr, "prefix_len value too small for nr_entries!\n");
++		exit(1);
++	};
++}
++
++enum { OP_LOOKUP = 1, OP_UPDATE, OP_DELETE, OP_FREE };
++
++static void lpm_delete_validate(void)
++{
++	__lpm_validate();
++
++	if (env.producer_cnt != 1) {
++		fprintf(stderr,
++			"lpm-trie-delete requires a single producer!\n");
++		exit(1);
++	}
++}
++
++static void lpm_free_validate(void)
++{
++	__lpm_validate();
++
++	if (env.producer_cnt != 1) {
++		fprintf(stderr, "lpm-trie-free requires a single producer!\n");
++		exit(1);
++	}
++}
++
++static void fill_map(int map_fd)
++{
++	int i, err;
++
++	for (i = 0; i < args.nr_entries; i++) {
++		struct trie_key {
++			__u32 prefixlen;
++			__u32 data;
++		} key = { args.prefixlen, i };
++		__u32 val = 1;
++
++		err = bpf_map_update_elem(map_fd, &key, &val, BPF_NOEXIST);
++		if (err) {
++			fprintf(stderr, "failed to add key %d to map: %d\n",
++				key.data, -err);
++			exit(1);
++		}
++	}
++}
++
++static void __lpm_setup(void)
++{
++	ctx.bench = lpm_trie_bench__open_and_load();
++	if (!ctx.bench) {
++		fprintf(stderr, "failed to open skeleton\n");
++		exit(1);
++	}
++
++	ctx.bench->bss->nr_entries = args.nr_entries;
++	ctx.bench->bss->prefixlen = args.prefixlen;
++
++	if (lpm_trie_bench__attach(ctx.bench)) {
++		fprintf(stderr, "failed to attach skeleton\n");
++		exit(1);
++	}
++}
++
++static void lpm_setup(void)
++{
++	int fd;
++
++	__lpm_setup();
++
++	fd = bpf_map__fd(ctx.bench->maps.trie_map);
++	fill_map(fd);
++}
++
++static void lpm_lookup_setup(void)
++{
++	lpm_setup();
++
++	ctx.bench->bss->op = OP_LOOKUP;
++}
++
++static void lpm_update_setup(void)
++{
++	lpm_setup();
++
++	ctx.bench->bss->op = OP_UPDATE;
++}
++
++static void lpm_delete_setup(void)
++{
++	lpm_setup();
++
++	ctx.bench->bss->op = OP_DELETE;
++}
++
++static void lpm_free_setup(void)
++{
++	__lpm_setup();
++	ctx.bench->bss->op = OP_FREE;
++}
++
++static void lpm_measure(struct bench_res *res)
++{
++	res->hits = atomic_swap(&ctx.bench->bss->hits, 0);
++	res->duration_ns = atomic_swap(&ctx.bench->bss->duration_ns, 0);
++}
++
++/* For LOOKUP, UPDATE, and DELETE */
++static void *lpm_producer(void *unused __always_unused)
++{
++	int err;
++	char in[ETH_HLEN]; /* unused */
++
++	LIBBPF_OPTS(bpf_test_run_opts, opts, .data_in = in,
++		    .data_size_in = sizeof(in), .repeat = 1, );
++
++	while (true) {
++		int fd = bpf_program__fd(ctx.bench->progs.run_bench);
++		err = bpf_prog_test_run_opts(fd, &opts);
++		if (err) {
++			fprintf(stderr, "failed to run BPF prog: %d\n", err);
++			exit(1);
++		}
++
++		if (opts.retval < 0) {
++			fprintf(stderr, "BPF prog returned error: %d\n",
++				opts.retval);
++			exit(1);
++		}
++
++		if (ctx.bench->bss->op == OP_DELETE && opts.retval == 1) {
++			/* trie_map needs to be refilled */
++			fill_map(bpf_map__fd(ctx.bench->maps.trie_map));
++		}
++	}
++
++	return NULL;
++}
++
++static void *lpm_free_producer(void *unused __always_unused)
++{
++	while (true) {
++		struct lpm_trie_map *skel;
++
++		skel = lpm_trie_map__open_and_load();
++		if (!skel) {
++			fprintf(stderr, "failed to open skeleton\n");
++			exit(1);
++		}
++
++		fill_map(bpf_map__fd(skel->maps.trie_free_map));
++		lpm_trie_map__destroy(skel);
++	}
++
++	return NULL;
++}
++
++static __always_inline double duration_ms(struct bench_res *res)
++{
++	if (!res->hits)
++		return 0.0;
++
++	return res->duration_ns / res->hits / NSEC_PER_MSEC;
++}
++
++static void free_ops_report_progress(int iter, struct bench_res *res,
++				     long delta_ns)
++{
++	double hits_per_sec, hits_per_prod;
++	double rate_divisor = 1000.0;
++	char rate = 'K';
++
++	hits_per_sec = res->hits / (res->duration_ns / (double)NSEC_PER_SEC) /
++		       rate_divisor;
++	hits_per_prod = hits_per_sec / env.producer_cnt;
++
++	printf("Iter %3d (%7.3lfus): ", iter,
++	       (delta_ns - NSEC_PER_SEC) / 1000.0);
++	printf("hits %8.3lf%c/s (%7.3lf%c/prod)\n", hits_per_sec, rate,
++	       hits_per_prod, rate);
++}
++
++static void free_ops_report_final(struct bench_res res[], int res_cnt)
++{
++	double hits_mean = 0.0, hits_stddev = 0.0;
++	double lat_divisor = 1000000.0;
++	double rate_divisor = 1000.0;
++	const char *unit = "ms";
++	double latency = 0.0;
++	char rate = 'K';
++	int i;
++
++	for (i = 0; i < res_cnt; i++) {
++		double val = res[i].hits / rate_divisor /
++			     (res[i].duration_ns / (double)NSEC_PER_SEC);
++		hits_mean += val / (0.0 + res_cnt);
++		latency += res[i].duration_ns / res[i].hits / (0.0 + res_cnt);
++	}
++
++	if (res_cnt > 1) {
++		for (i = 0; i < res_cnt; i++) {
++			double val =
++				res[i].hits / rate_divisor /
++				(res[i].duration_ns / (double)NSEC_PER_SEC);
++			hits_stddev += (hits_mean - val) * (hits_mean - val) /
++				       (res_cnt - 1.0);
++		}
++
++		hits_stddev = sqrt(hits_stddev);
++	}
++	printf("Summary: throughput %8.3lf \u00B1 %5.3lf %c ops/s (%7.3lf%c ops/prod), ",
++	       hits_mean, hits_stddev, rate, hits_mean / env.producer_cnt,
++	       rate);
++	printf("latency %8.3lf %s/op\n",
++	       latency / lat_divisor / env.producer_cnt, unit);
++}
++
++const struct bench bench_lpm_trie_lookup = {
++	.name = "lpm-trie-lookup",
++	.argp = &bench_lpm_trie_map_argp,
++	.validate = __lpm_validate,
++	.setup = lpm_lookup_setup,
++	.producer_thread = lpm_producer,
++	.measure = lpm_measure,
++	.report_progress = ops_report_progress,
++	.report_final = ops_report_final,
++};
++
++const struct bench bench_lpm_trie_update = {
++	.name = "lpm-trie-update",
++	.argp = &bench_lpm_trie_map_argp,
++	.validate = __lpm_validate,
++	.setup = lpm_update_setup,
++	.producer_thread = lpm_producer,
++	.measure = lpm_measure,
++	.report_progress = ops_report_progress,
++	.report_final = ops_report_final,
++};
++
++const struct bench bench_lpm_trie_delete = {
++	.name = "lpm-trie-delete",
++	.argp = &bench_lpm_trie_map_argp,
++	.validate = lpm_delete_validate,
++	.setup = lpm_delete_setup,
++	.producer_thread = lpm_producer,
++	.measure = lpm_measure,
++	.report_progress = ops_report_progress,
++	.report_final = ops_report_final,
++};
++
++const struct bench bench_lpm_trie_free = {
++	.name = "lpm-trie-free",
++	.argp = &bench_lpm_trie_map_argp,
++	.validate = lpm_free_validate,
++	.setup = lpm_free_setup,
++	.producer_thread = lpm_free_producer,
++	.measure = lpm_measure,
++	.report_progress = free_ops_report_progress,
++	.report_final = free_ops_report_final,
++};
+diff --git a/tools/testing/selftests/bpf/progs/lpm_trie_bench.c b/tools/testing/selftests/bpf/progs/lpm_trie_bench.c
+new file mode 100644
+index 000000000000..c335718cc240
+--- /dev/null
++++ b/tools/testing/selftests/bpf/progs/lpm_trie_bench.c
+@@ -0,0 +1,175 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2025 Cloudflare */
++
++#include <vmlinux.h>
++#include <bpf/bpf_tracing.h>
++#include <bpf/bpf_helpers.h>
++#include <bpf/bpf_core_read.h>
++#include "bpf_misc.h"
++
++#define BPF_OBJ_NAME_LEN 16U
++#define MAX_ENTRIES 100000000
++#define NR_LOOPS 10000
++
++struct trie_key {
++	__u32 prefixlen;
++	__u32 data;
++};
++
++char _license[] SEC("license") = "GPL";
++
++struct {
++	__uint(type, BPF_MAP_TYPE_HASH);
++	__uint(max_entries, 512);
++	__type(key, struct bpf_map *);
++	__type(value, __u64);
++} latency_free_start SEC(".maps");
++
++/* Filled by userspace. See fill_map() in bench_lpm_trie_map.c */
++struct {
++	__uint(type, BPF_MAP_TYPE_LPM_TRIE);
++	__type(key, struct trie_key);
++	__type(value, __u32);
++	__uint(map_flags, BPF_F_NO_PREALLOC);
++	__uint(max_entries, MAX_ENTRIES);
++} trie_map SEC(".maps");
++
++long hits;
++long duration_ns;
++
++/* Configured from userspace */
++__u64 nr_entries;
++__u32 prefixlen;
++__u8 op;
++
++static __always_inline void atomic_inc(long *cnt)
++{
++	__atomic_add_fetch(cnt, 1, __ATOMIC_SEQ_CST);
++}
++
++static __always_inline long atomic_swap(long *cnt, long val)
++{
++	return __atomic_exchange_n(cnt, val, __ATOMIC_SEQ_CST);
++}
++
++SEC("fentry/bpf_map_free_deferred")
++int BPF_PROG(trie_free_entry, struct work_struct *work)
++{
++	struct bpf_map *map = container_of(work, struct bpf_map, work);
++	const char *name;
++	u32 map_type;
++	__u64 val;
++
++	map_type = BPF_CORE_READ(map, map_type);
++	if (map_type != BPF_MAP_TYPE_LPM_TRIE)
++		return 0;
++
++	/*
++	 * Ideally we'd have access to the map ID but that's already
++	 * freed before we enter trie_free().
++	 */
++	name = BPF_CORE_READ(map, name);
++	if (bpf_strncmp(name, BPF_OBJ_NAME_LEN, "trie_free_map"))
++		return 0;
++
++	val = bpf_ktime_get_ns();
++	bpf_map_update_elem(&latency_free_start, &map, &val, BPF_ANY);
++
++	return 0;
++}
++
++SEC("fexit/bpf_map_free_deferred")
++int BPF_PROG(trie_free_exit, struct work_struct *work)
++{
++	struct bpf_map *map = container_of(work, struct bpf_map, work);
++	__u64 *val;
++
++	val = bpf_map_lookup_elem(&latency_free_start, &map);
++	if (val) {
++		__sync_add_and_fetch(&duration_ns, bpf_ktime_get_ns() - *val);
++		atomic_inc(&hits);
++		bpf_map_delete_elem(&latency_free_start, &map);
++	}
++
++	return 0;
++}
++
++static void gen_random_key(struct trie_key *key)
++{
++	key->prefixlen = prefixlen;
++	key->data = bpf_get_prandom_u32() % nr_entries;
++}
++
++static int lookup(__u32 index, __u32 *unused)
++{
++	struct trie_key key;
++
++	gen_random_key(&key);
++	bpf_map_lookup_elem(&trie_map, &key);
++	return 0;
++}
++
++static int update(__u32 index, __u32 *unused)
++{
++	struct trie_key key;
++	u32 val = bpf_get_prandom_u32();
++
++	gen_random_key(&key);
++	bpf_map_update_elem(&trie_map, &key, &val, BPF_EXIST);
++	return 0;
++}
++
++long deleted_entries;
++long refill;
++
++static int delete (__u32 index, __u32 *unused)
++{
++	struct trie_key key = {
++		.data = deleted_entries,
++		.prefixlen = prefixlen,
++	};
++
++	bpf_map_delete_elem(&trie_map, &key);
++	atomic_inc(&deleted_entries);
++
++	/* Do we need to refill the map? */
++	if (deleted_entries >= nr_entries) {
++		atomic_swap(&refill, 1);
++		atomic_swap(&deleted_entries, 0);
++		return 1;
++	}
++
++	return 0;
++}
++
++SEC("xdp")
++int BPF_PROG(run_bench)
++{
++	u64 start, delta;
++	bool need_refill = false;
++
++	start = bpf_ktime_get_ns();
++
++	switch (op) {
++	case 1:
++		bpf_loop(NR_LOOPS, lookup, NULL, 0);
++		break;
++	case 2:
++		bpf_loop(NR_LOOPS, update, NULL, 0);
++		break;
++	case 3:
++		bpf_loop(NR_LOOPS, delete, NULL, 0);
++		need_refill = atomic_swap(&refill, 0);
++		break;
++	default:
++		bpf_printk("invalid benchmark operation\n");
++		return -1;
++	}
++
++	delta = bpf_ktime_get_ns() - start;
++
++	__sync_add_and_fetch(&hits, NR_LOOPS);
++	__sync_add_and_fetch(&duration_ns, delta);
++
++	return need_refill;
++}
+diff --git a/tools/testing/selftests/bpf/progs/lpm_trie_map.c b/tools/testing/selftests/bpf/progs/lpm_trie_map.c
+new file mode 100644
+index 000000000000..2ab43e2cd6c6
+--- /dev/null
++++ b/tools/testing/selftests/bpf/progs/lpm_trie_map.c
+@@ -0,0 +1,19 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++#include <linux/bpf.h>
++#include <bpf/bpf_helpers.h>
++#include <bpf/bpf_tracing.h>
++
++#define MAX_ENTRIES 100000000
++
++struct trie_key {
++	__u32 prefixlen;
++	__u32 data;
++};
++
++struct {
++	__uint(type, BPF_MAP_TYPE_LPM_TRIE);
++	__type(key, struct trie_key);
++	__type(value, __u32);
++	__uint(map_flags, BPF_F_NO_PREALLOC);
++	__uint(max_entries, MAX_ENTRIES);
++} trie_free_map SEC(".maps");
+-- 
+2.34.1
+
 
