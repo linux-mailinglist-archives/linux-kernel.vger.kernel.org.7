@@ -1,303 +1,226 @@
-Return-Path: <linux-kernel+bounces-737148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2408B0A862
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 18:25:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80899B0A866
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 18:26:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D1627B0DB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 16:24:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B50DA41F1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 16:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526FE2E173D;
-	Fri, 18 Jul 2025 16:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 065E02E62AF;
+	Fri, 18 Jul 2025 16:26:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="QmvXmLeF"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012010.outbound.protection.outlook.com [52.101.66.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VitDl0P2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6934A1C36;
-	Fri, 18 Jul 2025 16:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752855929; cv=fail; b=beF/rccWoVThdaItgBO+vfnpAwkYMFVA7Ra4KY64OSzXVZIbXbqXx2T1WOvO9d5nWMR/bYh3oLIzL7pekDoTuIPVxhaOAJxWcEet0N/91fyW1o/fJU7NSjuYCP0g82nhxyzbEIawaX805kpHpBERpLd7LNF2KzuVNllEVCwWET0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752855929; c=relaxed/simple;
-	bh=yv8qPkk7kg5xDQ3vq7952P9wxIH+62iSuvVMfKDkbXc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=O6EeDnHztA/5fukHYEW1YEmwoV6o3JYKH0rSktOvnu4kznHMmYNQAI+3+V5aGaGxdn4YoOZbu6uKw7sskTbWJqMrFix60pj2kv/Dz2ZFJSkHbHMYG+ylWCKvtX8Gh6X0Xuaau29aV2tQXo420hNQRdpUxjc4Yu2RDgQd0kbDZA8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=QmvXmLeF; arc=fail smtp.client-ip=52.101.66.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=r3JbHqYEdTh89JMpyndZkMSDfU8dKJ2u8prjScFlGAGdMD8cbnaGodAMrkS+wbv57a8UOJGyfprlqXm/pZkD63LZUYXhFXeYXP8dDO5asai3vStvcefe5Q7IUZkU7Kb6aYUhjei294emXwhBB4OcLJIn6t8uOdrdLhG2H0qwTpicfeLgUqJuuDqw0uuASO4z7rCCIWyZdYZXBjO2NvdH7Qk+CrxUWCv9B4QqsD3yxYeU49b1i8FLvIOXA8EweYG8N6uV4o8MV98LSVBjwQVOZFDWXBvTzqPfWxpYkWIHLLc2wdOdWM7N4kUMaNI90zlQD8tKkrTNmpblasl++0nyJA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IPc0vJDBAhlOz6r0DLS/mf5IG2IV5+PnS7VItYG/Sw0=;
- b=zLURUemQ0w9TmVMIVvv7kJzMpXHwYLhP+L0IQKyWKDeMVz4LPqQd8/djVocfO8FL1OO5FjVH7r/mmC5OYRn9mv3IGsMcjA4ezpx8mXZ9tHd9Lc7kGNHxPzD10QO66sM5AkEKdJM4xIrgmkZ5LoVpviz1KjyDNGTI0ozjuMlGtnobBE13OhLK3vVzByTAAy/Z03n1hDj1+XsIH1YNVbKn8bIiczJkR+l9BZ5gbzrIc8glv8zQL4owEi4DRhEqBpq/83uUsxjXtxD8JcqJruwwxm9HkAYiGGBlEa7ZGMq3mjnVF+bMVrJ7JByBcNrR8aTlzAKL5NEvrI0BbKxpvDz7GQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IPc0vJDBAhlOz6r0DLS/mf5IG2IV5+PnS7VItYG/Sw0=;
- b=QmvXmLeFDW6j/z+zWCcmtTuGtXHTmAQ3HjyIQEvxVclnreWjuRa9g9+KXK/MYVoErDGZWOUjOpFu21UDZQoynW4VKB5IVe2xUqW9Hzcnbht5VKUIJz303YaAA9ncXl89uh33xHAmNJZMudgBQW15JWJkXCMNT5rW4IkDb9TC+g9eK0NE5wRInTJeyWpmdhU/TrcvvZXsZPqzE2QuU5n41+fC+4w4qzuh+kNJ13dzrJo5tO/HXMr6EnLjBfGJIDdqBH2nQ65H8PPJU64gCAqrxKudCGpt4tR++zUVHF1nRwOOqrUb2XEiveYHyMZngaZmY7lEr+oEJgbqdp6xFw11ZQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by DBBPR04MB7580.eurprd04.prod.outlook.com (2603:10a6:10:1f7::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.26; Fri, 18 Jul
- 2025 16:25:24 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8922.037; Fri, 18 Jul 2025
- 16:25:24 +0000
-Date: Fri, 18 Jul 2025 12:25:17 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
-	jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-	simona@ffwll.ch, lumag@kernel.org, dianders@chromium.org,
-	cristian.ciocaltea@collabora.com, luca.ceresoli@bootlin.com,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	victor.liu@nxp.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de,
-	devicetree@vger.kernel.org, l.stach@pengutronix.de,
-	shengjiu.wang@gmail.com
-Subject: Re: [PATCH 3/4] dt-bindings: display: imx: add binding for i.MX8MP
- HDMI PAI
-Message-ID: <aHp1be6omEO8qB8o@lizhi-Precision-Tower-5810>
-References: <20250718101150.3681002-1-shengjiu.wang@nxp.com>
- <20250718101150.3681002-4-shengjiu.wang@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250718101150.3681002-4-shengjiu.wang@nxp.com>
-X-ClientProxiedBy: AM0PR02CA0150.eurprd02.prod.outlook.com
- (2603:10a6:20b:28d::17) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA6C2DD608;
+	Fri, 18 Jul 2025 16:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752855964; cv=none; b=LDHFAmx5/40t8jBEjqZw0f+PPGUo3ffZ4zFsGTyP7hRwdFAxFVppeNKRdG0sKropwH1bq7RyPw6nsIEZYOcuU7t+V2iW8LV/ZhsD0HQ8y3o1ewP1AvRoqcXSFNButEzg2jzY9zCidrnAT/TwYjUc/GB9IQ/KpfgA4oMlKg6Q4Kw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752855964; c=relaxed/simple;
+	bh=aXCC6a0BRcLONBCEG+qLtT+Rm3FPzL7V91riur1H9Xg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=jX2s6ufkFVap81Rv3ncfsGC06R37DQsAL8qq745DY7wrwqfsdyGZ/2/iXBoOJKIMT7Sw0IhNno+NBXOxb0N8vka24hkhFChAD2vyomBTIViFJ2uz6JxQefYEdOP9VLp2rBKrQmdVa7FOVOur79O3Jn3ZCO5mfWGpiPXlj20RqFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VitDl0P2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 812F3C4CEEB;
+	Fri, 18 Jul 2025 16:26:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752855963;
+	bh=aXCC6a0BRcLONBCEG+qLtT+Rm3FPzL7V91riur1H9Xg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=VitDl0P293UBhnBWTfwW9kVJK0g1L/RqqX2mGlwmW2JmETRPxtereKE2Vuq0LK+EG
+	 bf8x/QDXwtgdesGEGkf9l3+tOv/u5eMPMLfDd5Jm8tmNgi/l9dkuuL+h79ov7lthlp
+	 UFI2NSU7GD4fAKI/DAVKgV5+ZvEGjKu37s3kDh3BO2tZWRiDjhL2lKGk1Q0vG+z9uf
+	 wI7zXsu3ola9AnO/2kZYI7KblB/WNrwX/y89x0GMfAWLCxdr3YZUcYLqkv2y4YdPhH
+	 a+Wk/8evsszEwS9hOiOwuRm74mqj4lvhO6udfWVIb4fa6/y07B1q7rkveAwQJ6a9dO
+	 Qcy/kMyM8zjbQ==
+Date: Fri, 18 Jul 2025 11:26:00 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Baochen Qiang <baochen.qiang@oss.qualcomm.com>,
+	manivannan.sadhasivam@oss.qualcomm.com,
+	Jeff Johnson <jjohnson@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Nirmal Patel <nirmal.patel@linux.intel.com>,
+	Jonathan Derrick <jonathan.derrick@linux.dev>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ath12k@lists.infradead.org, ath11k@lists.infradead.org,
+	ath10k@lists.infradead.org, ilpo.jarvinen@linux.intel.com,
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+	Qiang Yu <qiang.yu@oss.qualcomm.com>
+Subject: Re: [PATCH 4/6] wifi: ath12k: Use pci_{enable/disable}_link_state()
+ APIs to enable/disable ASPM states
+Message-ID: <20250718162600.GA2700538@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DBBPR04MB7580:EE_
-X-MS-Office365-Filtering-Correlation-Id: a1e96cc2-f820-4f20-29da-08ddc617b2b7
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|52116014|7416014|376014|1800799024|366016|19092799006|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?ZX5SUMGLphqxe+pV4D93WdB/18UBRJDMAuWhiYLDid5wvd0jILnw1Q/xZJhp?=
- =?us-ascii?Q?AffNenhzaBVE2Lx2BmtmWc8OYNUT/xxP9cGBn0ZP/8gHbrz+BResLQp/8ACG?=
- =?us-ascii?Q?4E+PMEZlYesVRP6oMi/BYcXhnW0drSIbMoUa2FInra+iXy/IY2b/rwbwuzQ0?=
- =?us-ascii?Q?aO6ySkF0iUDxd+7ul5WgXFMJE59550cxV/EjjuDVyRSVJCUHw7xFyyJ0Mhdv?=
- =?us-ascii?Q?ZTwfoCjzkpeya4p0IUUfxefYKLJD1ECtbLyeiaLYyTBFD4nrdZ43va1KYEu5?=
- =?us-ascii?Q?GQJr2tgbtBb0ifnVEwjWfndZnKVTrwWR7RJJI0NRdSu5cAuvvgwhWc+CWQei?=
- =?us-ascii?Q?2PIHk82k8JQyZr57kOzFp9Tn63UfS74/gQHjrmleQc+IStqGPI4PM/rSs/6W?=
- =?us-ascii?Q?Gab0VivM9RhSCXujtXUCi+g3xSD/DV2IJPo8L0HjqDTvkBs0LqCp4LoXkzI7?=
- =?us-ascii?Q?jnoNII06fAfUbzBj4UMocbLZZ+xpRd/L9WwL7gM4Tv14YE8/sKwCtPUAHNvi?=
- =?us-ascii?Q?3inN/mf1JoEmADYQ9thCsYGfK5n+Dg1SGYINhXGuPmwRa3/Rbn0E6XYeaxo7?=
- =?us-ascii?Q?fZkDZ43eiF/buIXzxSV5gK3553maRC1+jHp9rz9qv+JzS6MXLcMnldh0tSYy?=
- =?us-ascii?Q?49AfPpvux8FbVe9IJXuIEn0iBVqwg9bDRz+vNSmc0V/hyrm2beS7eb6c9sD2?=
- =?us-ascii?Q?y/niKYia4baqFFQx0Ntyobfa0OIgU2EGGl6MJCyrRVpWErtTSRqTo0qvryxQ?=
- =?us-ascii?Q?5qzRsE5dRqMl5n8GgpdrZgpEWNDbvl/z+b0ZmNzLjlWpkSVXXoUFFej7goZV?=
- =?us-ascii?Q?hBfxl4Rak08TekQZKtxN5uV3/id/6EoxEXhExmdt4J+W9MmEvyE8pJFxAbeY?=
- =?us-ascii?Q?1Pgf22mK8Da6V0WJZCZQMADh+lUBoyhJok8M/JG2huyzMBRZNPs6f1bKA/9V?=
- =?us-ascii?Q?M+yd1+x8aVMqcWWSxVKTKToqaqVGATJAoBdIG3UCC39U5nbLoeKxTmIlQRMp?=
- =?us-ascii?Q?rBmujIUmm/bYrBzoOcSrs9MYwpCWqCjyxeb746GAI/FTWICkgQB1XmsWIPPD?=
- =?us-ascii?Q?IPUTpsjgif04K4k3S0OLMDTpGpyUYircorzI19Dkg6tyeD4XnGGrH7/ni4iw?=
- =?us-ascii?Q?xyLlLArlBsNIMrcDFft0tthAuADWcBHTZmr7DD9zXxpaMSDQn8+MjEGKKdPt?=
- =?us-ascii?Q?m6UUqs2yZQRt/zS40Ysqmu3Djfkds5G2Id5wA6WG7oVALAxCFOJH7c4Dbz9K?=
- =?us-ascii?Q?9mvD3WPx7Mwb5gTXAVNwZSUrN2juN8CSE1Wktl81ChpZz2MVdGIdjCMf0b0a?=
- =?us-ascii?Q?ebkUyTZHfsBBPY2kp1b6eAOVrZliBCtvcHsUfnKA4mBdM/wObHBt/5smV+K6?=
- =?us-ascii?Q?cOiwu2OzzYAInqW8NAy9Et8m7qxLgQWlomMKAZgI38LwBzW3n5HM8fUFmvlZ?=
- =?us-ascii?Q?xQm/vpi+aQrOLNu5edKtbB1jS8XdHezb?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(1800799024)(366016)(19092799006)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?gwX8LSfFUh6lE6jHjL1wgMiUF9tnqsmYMuF8FlGQMVP9gmc0B23Q7iy6Cn/l?=
- =?us-ascii?Q?Xm1Er+KN+BwbB5bH80v672Ybk1fKEzJx02YkgnNGGcDOkRppvu3An3+lMhxT?=
- =?us-ascii?Q?BZRxwWKesJbIuNvVLMnsQRL8CJmF1Eaz+A96dqcRWhJYeUf2FpEXi8pn5rWN?=
- =?us-ascii?Q?RCJNlI9BacjnEE+7/HIcJw0pZPD6sw7VZ9gudRk3kVvj2LTPgIW0dY7IRWJc?=
- =?us-ascii?Q?bH5zYZo6roeAPF6hNRl9bgIOsG7l0bTYkKv54DnKiZz/BpzTeMhWih7DhFTd?=
- =?us-ascii?Q?ckalLNB+HdieDoFe0B0o2+jJ4SxE9LFCGz1Ge9cOoGQ4IXUwG/qyjH3aGiI9?=
- =?us-ascii?Q?MUFvWN9RSz24MRHmb8hnIJ3MDa1enxkNOePeCsHD9CA67DKPyH132OGUhklH?=
- =?us-ascii?Q?vtQDXSx68WGVCroXS7tahO20MTWoTZcLoXx1rN4achl7KeZd2EN4fCYX0yDV?=
- =?us-ascii?Q?eOlRqwtLdQr79/av5SuEcn5EOKIyMWOuGVWeiLFO0SYi4oCRZJCPTNWsXFd4?=
- =?us-ascii?Q?4Uz8seFIFzrjaeJLxgHehZge4qTgECXkyyhNDLSni3qMJ7qXCsiWnABKB23j?=
- =?us-ascii?Q?7+ilS1Pq7oyFjQgLsW6WhCXthKTcXd6mJCiWk/ngU7CWQymrW/VNolUEKMez?=
- =?us-ascii?Q?Dm0pLeMAPr/TjNom2hs4hXFtnZJ818/+SpWIggFwjYfn12Ux9WXDOtfWFgux?=
- =?us-ascii?Q?X+MsyChJf2KTdFjdQTGYtmwu6AFC9HFb03ZpFKCchJXYWrvBQK3+gD4ul5x+?=
- =?us-ascii?Q?ri6YNLDWMQvu3ZVdtkjDOldnATQzx7nCeutw97/fvXN3a/KKm6CSyutsipiI?=
- =?us-ascii?Q?xVfPCEYMrnKrg3my6HLGDsAHA9E1bIIsCoMzWuq8YHtvGFd2XMhD1VKoNB2f?=
- =?us-ascii?Q?JI7Srye5Q7wWEirV58DQlE/Lo8mn/1plxogOLxYfKclXfsvHOd/MxoyEI48p?=
- =?us-ascii?Q?S2UhFppQXWdVOFZolodE0nyuCtEwuDwMdkXibuZmIRbIEh9KD6fs8Oa7r9Ai?=
- =?us-ascii?Q?kRr5iRNI51VKD9KPqm+OO7S6dEn5HFdxNOA1fkZbNyk+44uhh8219Tgnwe7t?=
- =?us-ascii?Q?Ujqd8kF0Ymnp0uEtyApdqwCqgJNrSrZhQCYSSg8imlbS9JCgNLydNDsiv16/?=
- =?us-ascii?Q?Aw6j5wVAISyqGDOjoZ9a+RMSC7VUyED1IUtGh4kfJmahCgf6m7WOLQ+GauS2?=
- =?us-ascii?Q?hPRhriNU6r5stkut2cRm6uaJf9UnkW9wPF7uzZ+iXLBySLpmM8zW/hLMT2Z5?=
- =?us-ascii?Q?RfdTcbLG9ZLk6GivuT5nJMemktHTGcgQ/mCv8lQcmLGHX/f03B9fUoqeN4CS?=
- =?us-ascii?Q?vsw7bAV8Xjw8jpQ0RCIQyVg6zXc1Qrwluv9SZyXQ4AsGjUUHiqhN9gHThT08?=
- =?us-ascii?Q?TYLBL3hK13agi3CXqVu8v4Ga2B8cXCJ3ZXVdoRcK8mKUSwZfUGSySoiFzgJ5?=
- =?us-ascii?Q?NSVaTObRwV6r9s9OFJA04Yh2BYT5P2JRUbkwW+SGuuNWxrGsMgJxUWlABv7U?=
- =?us-ascii?Q?6kskN7JlsdZWsLyLtrgcMO3aCF9V9oc9rCgAFhbwr8JRU4tHlKUhZiVYf2i9?=
- =?us-ascii?Q?N2ynGTCc5d5cc0un8sSVSdqRO0HoIldMO4RFgJ2P?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a1e96cc2-f820-4f20-29da-08ddc617b2b7
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2025 16:25:24.3034
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: iZRz+3R0HOHztHBueGiILy7QRwInXluKrp62dUHKcb6UHzZlAx5wwl5eJ/jWevSlHuh+2SNzrPLMK+XkX1uCwg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7580
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <wkapzhyr6hzp5az4jae3y5c77c3fg4uwrmyyipbq4uosamcivq@z7nv6w7nbyrp>
 
-On Fri, Jul 18, 2025 at 06:11:49PM +0800, Shengjiu Wang wrote:
+On Fri, Jul 18, 2025 at 05:19:28PM +0530, Manivannan Sadhasivam wrote:
+> On Fri, Jul 18, 2025 at 07:05:03PM GMT, Baochen Qiang wrote:
+> > On 7/18/2025 6:20 PM, Manivannan Sadhasivam wrote:
+> > > On Fri, Jul 18, 2025 at 01:27:27PM GMT, Manivannan Sadhasivam wrote:
+> > >> On Fri, Jul 18, 2025 at 10:05:02AM GMT, Baochen Qiang wrote:
+> > >>> On 7/17/2025 7:29 PM, Manivannan Sadhasivam wrote:
+> > >>>> On Thu, Jul 17, 2025 at 06:46:12PM GMT, Baochen Qiang wrote:
+> > >>>>> On 7/17/2025 6:31 PM, Manivannan Sadhasivam wrote:
+> > >>>>>> On Thu, Jul 17, 2025 at 05:24:13PM GMT, Baochen Qiang wrote:
+> > >>>>>>
+> > >>>>>> [...]
+> > >>>>>>
+> > >>>>>>>> @@ -16,6 +16,8 @@
+> > >>>>>>>>  #include "mhi.h"
+> > >>>>>>>>  #include "debug.h"
+> > >>>>>>>>  
+> > >>>>>>>> +#include "../ath.h"
+> > >>>>>>>> +
+> > >>>>>>>>  #define ATH12K_PCI_BAR_NUM		0
+> > >>>>>>>>  #define ATH12K_PCI_DMA_MASK		36
+> > >>>>>>>>  
+> > >>>>>>>> @@ -928,8 +930,7 @@ static void ath12k_pci_aspm_disable(struct ath12k_pci *ab_pci)
+> > >>>>>>>>  		   u16_get_bits(ab_pci->link_ctl, PCI_EXP_LNKCTL_ASPM_L1));
+> > >>>>>>>>  
+> > >>>>>>>>  	/* disable L0s and L1 */
+> > >>>>>>>> -	pcie_capability_clear_word(ab_pci->pdev, PCI_EXP_LNKCTL,
+> > >>>>>>>> -				   PCI_EXP_LNKCTL_ASPMC);
+> > >>>>>>>> +	pci_disable_link_state(ab_pci->pdev, PCIE_LINK_STATE_L0S | PCIE_LINK_STATE_L1);
+> > >>>>>>>
+> > >>>>>>> Not always, but sometimes seems the 'disable' does not work:
+> > >>>>>>>
+> > >>>>>>> [  279.920507] ath12k_pci_power_up 1475: link_ctl 0x43 //before disable
+> > >>>>>>> [  279.920539] ath12k_pci_power_up 1482: link_ctl 0x43 //after disable
+> > >>>>>>>
+> > >>>>>>>
+> > >>>>>>>>  
+> > >>>>>>>>  	set_bit(ATH12K_PCI_ASPM_RESTORE, &ab_pci->flags);
+> > >>>>>>>>  }
+> > >>>>>>>> @@ -958,10 +959,7 @@ static void ath12k_pci_aspm_restore(struct ath12k_pci *ab_pci)
+> > >>>>>>>>  {
+> > >>>>>>>>  	if (ab_pci->ab->hw_params->supports_aspm &&
+> > >>>>>>>>  	    test_and_clear_bit(ATH12K_PCI_ASPM_RESTORE, &ab_pci->flags))
+> > >>>>>>>> -		pcie_capability_clear_and_set_word(ab_pci->pdev, PCI_EXP_LNKCTL,
+> > >>>>>>>> -						   PCI_EXP_LNKCTL_ASPMC,
+> > >>>>>>>> -						   ab_pci->link_ctl &
+> > >>>>>>>> -						   PCI_EXP_LNKCTL_ASPMC);
+> > >>>>>>>> +		pci_enable_link_state(ab_pci->pdev, ath_pci_aspm_state(ab_pci->link_ctl));
+> > >>>>>>>
+> > >>>>>>> always, the 'enable' is not working:
+> > >>>>>>>
+> > >>>>>>> [  280.561762] ath12k_pci_start 1180: link_ctl 0x43 //before restore
+> > >>>>>>> [  280.561809] ath12k_pci_start 1185: link_ctl 0x42 //after restore
+> > >>>>>>>
+> > >>>>>>
+> > >>>>>> Interesting! I applied your diff and I never see this issue so far (across 10+
+> > >>>>>> reboots):
+> > >>>>>
+> > >>>>> I was not testing reboot. Here is what I am doing:
+> > >>>>>
+> > >>>>> step1: rmmod ath12k
+> > >>>>> step2: force LinkCtrl using setpci (make sure it is 0x43, which seems more likely to see
+> > >>>>> the issue)
+> > >>>>>
+> > >>>>> 	sudo setpci -s 02:00.0 0x80.B=0x43
+> > >>>>>
+> > >>>>> step3: insmod ath12k and check linkctrl
+> > >>>>>
+> > >>>>
+> > >>>> So I did the same and got:
+> > >>>>
+> > >>>> [ 3283.363569] ath12k_pci_power_up 1475: link_ctl 0x43
+> > >>>> [ 3283.363769] ath12k_pci_power_up 1480: link_ctl 0x40
+> > >>>> [ 3284.007661] ath12k_pci_start 1180: link_ctl 0x40
+> > >>>> [ 3284.007826] ath12k_pci_start 1185: link_ctl 0x42
+> > >>>>
+> > >>>> My host machine is Qcom based Thinkpad T14s and it doesn't
+> > >>>> support L0s. So that's why the lnkctl value once enabled
+> > >>>> becomes 0x42. This is exactly the reason why the drivers
+> > >>>> should not muck around LNKCTL register manually.
+> > >>>
+> > >>> Thanks, then the 0x43 -> 0x40 -> 0x40 -> 0x42 sequence should
+> > >>> not be a concern. But still the random 0x43 -> 0x43 -> 0x43 ->
+> > >>> 0x42 sequence seems problematic.
+> > >>>
+> > >>> How many iterations have you done with above steps? From my
+> > >>> side it seems random so better to do some stress test.
+> > >>>
+> > >>
+> > >> So I ran the modprobe for about 50 times on the Intel NUC that
+> > >> has QCA6390, but didn't spot the disparity. This is the script
+> > >> I used:
+> > >>
+> > >> for i in {1..50} ;do echo "Loop $i"; sudo setpci -s 01:00.0 0x80.B=0x43;\
+> > >> sudo modprobe -r ath11k_pci; sleep 1; sudo modprobe ath11k_pci; sleep 1;done
+> > >>
+> > >> And I always got:
+> > >>
+> > >> [ 5862.388083] ath11k_pci_aspm_disable: 609 lnkctrl: 0x43
+> > >> [ 5862.388124] ath11k_pci_aspm_disable: 614 lnkctrl: 0x40
+> > >> [ 5862.876291] ath11k_pci_start: 880 lnkctrl: 0x40
+> > >> [ 5862.876346] ath11k_pci_start: 886 lnkctrl: 0x42
+> > >>
+> > >> Also no AER messages. TBH, I'm not sure how you were able to
+> > >> see the random issues with these APIs. That looks like a race,
+> > >> which is scary.
+> > >>
+> > >> I do not want to ignore your scenario, but would like to
+> > >> reproduce and get to the bottom of it.
+> > > 
+> > > I synced with Baochen internally and able to repro the issue.
+> > > Ths issue is due to hand modifying the LNKCTL register from
+> > > userspace. The PCI core maintains the ASPM state internally and
+> > > uses it to change the state when the
+> > > pci_{enable/disable}_link_state*() APIs are called.
+> > > 
+> > > So if the userspace or a client driver modifies the LNKCTL
+> > > register manually, it makes the PCI cached ASPM states invalid.
+> > > So while this series fixes the driver from doing that, nothing
+> > > prevents userspace from doing so using 'setpci' and other tools.
+> > > Userspace should only use sysfs attributes to change the state
+> > > and avoid modifying the PCI registers when the PCI core is
+> > > controlling the device.  So this is the reason behind the
+> > > errantic behavior of the API and it is not due to the issue with
+> > > the API or the PCI core.
+> > 
+> > IMO we can not rely on userspace doing what or not doing what, or
+> > on how it is doing, right? So can we fix PCI core to avoid this?
+> 
+> I'm not sure it is possible to *fix* the PCI core here. Since the
+> PCI core gives userspace access to the entire config space of the
+> device, the userspace reads/writes to any of the registers it want.
+> So unless the config space access if forbidden if a driver is bound
+> to the device, it is inevitable. And then there is also /dev/mem...
+> 
+> Interestingly, there is an API available for this purpose:
+> pci_request_config_region_exclusive(), but it is used only by the
+> AMD arch driver to prevent userspace from writing to the entire
+> config space of the device.
+> 
+> Maybe it makes sense to use something like this to prevent the
+> userspace access to the entire config space if the driver is bind to
+> the device.
 
-Subject needn't said binding again.
+I'm not really a fan of pci_request_config_region_exclusive() because
+it's such a singleton thing.  I don't like to be one of only a few
+users of an interface.
 
-dt-bindings: display: imx: add HDMI PAI for i.MX8MP
+Linux has a long tradition of allowing root users to shoot themselves
+in the foot, and setpci is very useful as a debugging tool.  Maybe
+tainting the kernel for config writes from userspace, and possibly
+even a WARN_ONCE() at the time, would be a compromise.
 
-> Add binding for the i.MX8MP HDMI parallel Audio interface block.
-
-Need empty line between two paragraph
-
-> As this port is linked to imx8mp-hdmi-tx, add port@2 in
-> fsl,imx8mp-hdmi-tx.yaml document.
-
-In fsl,imx8mp-hdmi-tx.yaml, add port@2 that linked to imx8mp-hdmi-tx (
-look like pai_to_hdmi_tx?)
-
->
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> ---
->  .../display/bridge/fsl,imx8mp-hdmi-tx.yaml    | 13 ++++
->  .../display/imx/fsl,imx8mp-hdmi-pai.yaml      | 61 +++++++++++++++++++
->  2 files changed, 74 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx8mp-hdmi-pai.yaml
->
-> diff --git a/Documentation/devicetree/bindings/display/bridge/fsl,imx8mp-hdmi-tx.yaml b/Documentation/devicetree/bindings/display/bridge/fsl,imx8mp-hdmi-tx.yaml
-> index 05442d437755..cf810b277557 100644
-> --- a/Documentation/devicetree/bindings/display/bridge/fsl,imx8mp-hdmi-tx.yaml
-> +++ b/Documentation/devicetree/bindings/display/bridge/fsl,imx8mp-hdmi-tx.yaml
-> @@ -49,9 +49,14 @@ properties:
->          $ref: /schemas/graph.yaml#/properties/port
->          description: HDMI output port
->
-> +      port@2:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description: Parallel audio input port
-> +
->      required:
->        - port@0
->        - port@1
-> +      - port@2
-
-Are you sure it is required?  It may cause may dtb check warning.
-
->
->  required:
->    - compatible
-> @@ -98,5 +103,13 @@ examples:
->                      remote-endpoint = <&hdmi0_con>;
->                  };
->              };
-> +
-> +            port@2 {
-> +                reg = <2>;
-> +
-> +                endpoint {
-> +                    remote-endpoint = <&pai_to_hdmi_tx>;
-> +                };
-> +            };
->          };
->      };
-> diff --git a/Documentation/devicetree/bindings/display/imx/fsl,imx8mp-hdmi-pai.yaml b/Documentation/devicetree/bindings/display/imx/fsl,imx8mp-hdmi-pai.yaml
-> new file mode 100644
-> index 000000000000..d2d723935032
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/imx/fsl,imx8mp-hdmi-pai.yaml
-> @@ -0,0 +1,61 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/imx/fsl,imx8mp-hdmi-pai.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Freescale i.MX8MP HDMI Parallel Audio Interface
-> +
-> +maintainers:
-> +  - Shengjiu Wang <shengjiu.wang@nxp.com>
-> +
-> +description:
-> +  The HDMI TX Parallel Audio Interface (HTX_PAI) is a digital module that acts as the
-> +  bridge between the Audio Subsystem to the HDMI TX Controller.
-
-remove "a digital module that acts as the"
-
-Frank
-
-> +
-> +properties:
-> +  compatible:
-> +    const: fsl,imx8mp-hdmi-pai
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  port:
-> +    $ref: /schemas/graph.yaml#/properties/port
-> +    description: Output to the HDMI TX controller.
-> +    unevaluatedProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - power-domains
-> +  - port
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    #include <dt-bindings/power/imx8mp-power.h>
-> +
-> +    hdmi@32fc4800 {
-> +        compatible = "fsl,imx8mp-hdmi-pai";
-> +        reg = <0x32fc4800 0x800>;
-> +        interrupt-parent = <&irqsteer_hdmi>;
-> +        interrupts = <14>;
-> +        power-domains = <&hdmi_blk_ctrl IMX8MP_HDMIBLK_PD_PAI>;
-> +
-> +        port {
-> +
-> +            pai_to_hdmi_tx: endpoint {
-> +                remote-endpoint = <&hdmi_tx_from_pai>;
-> +            };
-> +        };
-> +    };
-> --
-> 2.34.1
->
+Bjorn
 
