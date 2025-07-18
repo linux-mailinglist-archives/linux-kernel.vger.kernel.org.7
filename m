@@ -1,146 +1,162 @@
-Return-Path: <linux-kernel+bounces-736853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06A93B0A419
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:24:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D0F9B0A430
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:26:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CE7A188892D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:24:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0A88189721F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:26:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D6362D9794;
-	Fri, 18 Jul 2025 12:24:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4AB2D979E;
+	Fri, 18 Jul 2025 12:26:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="HDRXubgl"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="l5MTkyHz";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vHUQ1FCT";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="l5MTkyHz";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vHUQ1FCT"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D53EFEEBB;
-	Fri, 18 Jul 2025 12:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E68F246761
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 12:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752841441; cv=none; b=ik7S2J65GCUICgnd/0sHkbgYyThlrzDpfj7bPbZI26LTZk8gSsnFeoyCWw6/yIqb8wc4Az875eg81L6gg+15eg5s4MyQHPwK4pmut3I0YnZxw8BZKDEvlJY+Yc11rkmCd6lgGIwqk/Y2ex2K0U+HFKKfRDQleK44+kfF1PpI1YY=
+	t=1752841581; cv=none; b=aDZfuuVhIEJsz/NqIOB3szV4bCpS/T1flECzhJYhhutzoavCwBgRmTsxsEDGBYl2XxgXBfI0zgjMVjZfIaWI0qkO3cj+/YCUqGSWHaB9KmutizSl7I1fPZ1A49LDoSWMzmhvpB+J7TcTm1Ygz42xH3c89YModoy+gSccWQT568o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752841441; c=relaxed/simple;
-	bh=mseOW9jacXi6pM8pqP9rGE0HTBT5k58HBheJu2zl3b0=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Xwg6YppwuKy+p0sN+8HhS5I5TJs/NmK/30u1XeZG5QPTlf/3DRdtzHAVlapkclP4xXSYLguoWpOR5DO52mlezWx0qxenCMj3RsTECRbvllBrcqUdK3hJLCbWtAiEOATxnev43qEGe6wS5a58W1If83gDSFEIfRzdMMt5COdweuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=HDRXubgl; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1752841425; x=1753446225; i=markus.elfring@web.de;
-	bh=mseOW9jacXi6pM8pqP9rGE0HTBT5k58HBheJu2zl3b0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=HDRXubglLBXr7IMMFYK56wpJOljtQKIfhc8QKckL82cGI9STIjgsXU0qLqaflcKC
-	 5FOCf75ZLe1ZDqPJiLZkOik998PAusxyYjjC7HB7dVcSejnts5w7X8uXlNWo6+lyG
-	 Z+khjgcPhL8q3FgXq85RQwJF5XwrAmhZHhuaCkBdPoxE6Xq2WQVBJx0s9XuGgbmho
-	 xY0ACBSLGDoY07oHKcgc9yF1iWb8mMxleBVoYI3jOPxzjzlIweZ5AEUyZ11LSqtKd
-	 vYpXeLMxzQ1dFststmd3DrmFdqpsB2UeJKMHGErkXFFszetbcgqrpZBGJKmMr/akF
-	 EDDRlOgDyjdW85ZRvA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.219]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N9cHX-1uifUy2B7d-00vtsq; Fri, 18
- Jul 2025 14:23:45 +0200
-Message-ID: <ccda6da0-5157-4520-a22d-437467ada3e1@web.de>
-Date: Fri, 18 Jul 2025 14:23:30 +0200
+	s=arc-20240116; t=1752841581; c=relaxed/simple;
+	bh=YLn6T50KiE45tD6SvH/SyM++ZqJcGh7d7SQC7KFT0Sk=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UFYBxgEPpeO74oeBXYwh9WXHC8+RLv9gmYZXqvANydQUUxZXD7oqDAexWzKXSxPdniOSVAXF4ZonNd8kWDqpTYQCJUHHuiGMHL+ichFIMgVaaAxE8LV8AE2lrCXzTqQPAV5MevT+mvfIDYTr63d3DK7xZOdh0641CEcMLXqWogs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=l5MTkyHz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vHUQ1FCT; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=l5MTkyHz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vHUQ1FCT; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 6DFE721195;
+	Fri, 18 Jul 2025 12:26:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1752841578; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SVU9IqAsOg6Uq7TzXhNz3Dmp4GgffUcuOtJokXy/GM4=;
+	b=l5MTkyHzbzdKn8xky2D6mY8mU67ur/68aWYiiZaUFb5ciH6NjXO3LlqdGurq+xaaCXis4e
+	nw6M58AN4wpIfmxoSgnEqHPkkPbjznVKH+tYb7AYO6+PYJ+UGH3TlM6XG1UWu1Zb5gV+sW
+	6gMdBBN72jc0rzkU2tj07sUG0dun4HY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1752841578;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SVU9IqAsOg6Uq7TzXhNz3Dmp4GgffUcuOtJokXy/GM4=;
+	b=vHUQ1FCTu5wAjpgDOt5ZU5LslkI8I/vKbonJFc56CAWy2DnpoPYxowZGo9CFEs8LsccBkc
+	h1jir+vjF2wobIDg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=l5MTkyHz;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=vHUQ1FCT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1752841578; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SVU9IqAsOg6Uq7TzXhNz3Dmp4GgffUcuOtJokXy/GM4=;
+	b=l5MTkyHzbzdKn8xky2D6mY8mU67ur/68aWYiiZaUFb5ciH6NjXO3LlqdGurq+xaaCXis4e
+	nw6M58AN4wpIfmxoSgnEqHPkkPbjznVKH+tYb7AYO6+PYJ+UGH3TlM6XG1UWu1Zb5gV+sW
+	6gMdBBN72jc0rzkU2tj07sUG0dun4HY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1752841578;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SVU9IqAsOg6Uq7TzXhNz3Dmp4GgffUcuOtJokXy/GM4=;
+	b=vHUQ1FCTu5wAjpgDOt5ZU5LslkI8I/vKbonJFc56CAWy2DnpoPYxowZGo9CFEs8LsccBkc
+	h1jir+vjF2wobIDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4285113A52;
+	Fri, 18 Jul 2025 12:26:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id qgXuDmo9emgUEgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Fri, 18 Jul 2025 12:26:18 +0000
+Date: Fri, 18 Jul 2025 14:26:17 +0200
+Message-ID: <87pldx7kie.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Erick Karanja <karanja99erick@gmail.com>
+Cc: perex@perex.cz,
+	tiwai@suse.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] ALSA: usb: qcom: Adjust mutex unlock order
+In-Reply-To: <20250718070309.441282-1-karanja99erick@gmail.com>
+References: <20250718070309.441282-1-karanja99erick@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Zijiang Huang <kerayhuang@tencent.com>, cgroups@vger.kernel.org
-Cc: Zijiang Huang <huangzjsmile@gmail.com>,
- LKML <linux-kernel@vger.kernel.org>, Hao Peng <flyingpeng@tencent.com>,
- Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>, Tejun Heo <tj@kernel.org>
-References: <20250718115409.878122-1-kerayhuang@tencent.com>
-Subject: Re: [PATCH 1/2] cgroup-v1: Fix missing mutex_unlock in error paths
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250718115409.878122-1-kerayhuang@tencent.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:F1+xwENFY4TvlJe0fQVwuOhdjFePYRKBuVhUfxlNzP9e8shwKL0
- 0bdhG0Bxh7QVsK4e71TuWsTaANLO2ZGJbv9+JoSWV5jEUzqhWfMi5LY1tKJ7E43o8FlfEMN
- 7QLGK40P8ySFBGYGgM6o4en9Eo/M0AaW4MHstYh5qwfXu8cinZqU3VvCibCb5JDwBiP/ISa
- rDznDZ7RAUe58dhAARmSw==
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCPT_COUNT_FIVE(0.00)[5];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:788imBRHxQw=;0T4gEAsRJ/DvoXajCcWINu/gKfw
- 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
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 6DFE721195
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.51
 
-> In the function, after acquiring the mutex with mutex_lock, multiple ret=
-urn
-> paths (such as returning ERR_PTR, NULL, or normal pointers)fail to call
-> mutex_unlock to release the lock, which could lead to deadlock risks.
+On Fri, 18 Jul 2025 09:03:08 +0200,
+Erick Karanja wrote:
+> 
+> The mutexes qdev_mutex and chip->mutex are acquired in that order
+> throughout the driver. To preserve proper lock hierarchy and avoid
+> potential deadlocks, they must be released in the reverse
+> order of acquisition.
+> 
+> This change reorders the unlock sequence to first release chip->mutex
+> followed by qdev_mutex, ensuring consistency with the locking pattern.
+> 
+> Fixes: e2710ea98124 ("staging: sound: Adjust mutex unlock order")
 
-How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
-=E2=80=9CCc=E2=80=9D) accordingly?
+This commit ID doesn't exist, and the commit summary doesn't sound
+right.  You need to put the commit to be fixed with the commit summary
+of that commit instead of your own.
 
-See also:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.16-rc6#n94
+Please resubmit with the proper Fixes tag.
 
 
-Will a cover letter become helpful for such a patch series?
+thanks,
 
-Regards,
-Markus
+Takashi
 
