@@ -1,83 +1,64 @@
-Return-Path: <linux-kernel+bounces-737387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E2F4B0ABE4
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 00:01:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CEE5B0ABE6
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 00:02:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E23521C41E0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 22:02:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5AA87B36D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 22:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B763B22068F;
-	Fri, 18 Jul 2025 22:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 950162206B1;
+	Fri, 18 Jul 2025 22:02:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="rvwwX4gt"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2089.outbound.protection.outlook.com [40.107.101.89])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="atQ+VqDF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0FF117CA17;
-	Fri, 18 Jul 2025 22:01:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.89
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752876105; cv=fail; b=JRP3MaPLvj13zmjiaVJ5tiPyKcm0N4koyIbmCP2RkgH4hdnwrJQHgDfTefZrgg0a8aTQWgnzpfiQGLxkZLIhT2YzmUwfLNj2B8zOFsbeW74uN+R5gbfaorhiLgmemy0K0CBLRHFJKK6ebfAYyR33RDp4VVQuhmae2046QtnUahc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752876105; c=relaxed/simple;
-	bh=7VihPfl6LwCGAPyC9ii/T2StNubzj3aNJkIfQDrierk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rKUNDXlHr7K6zUNxZOj2JKMAual20IWUDudGy8LuwuWf+mM+LbHGVnaWVaJ8uAnny+5cqbU58R60hhwVJ2lbYFCvfkOnpO1sshvR31Ek/hUEn5x23wJzgoX4XBX9CbjqNg7HGcyRa2YK3rwwmJa2kWL4gzdHRyH8OxQwBug3i1U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=rvwwX4gt; arc=fail smtp.client-ip=40.107.101.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hTyvJ0yYfWKzpmrQzv3k2vbCz6msY4sTABe9HDwAfQTS0p1pUlxiMKMl6G9+piu+9/eoEa28KwxowkKT8xMrXctgfyDejWdkugQ2uXkjmc57n01ebb/gNTmnETKxOW3KGgXKeJ+Snn/IhLIjmIsm41CoWZx2tH4neXKXcefRNshVe8LBBmhCPDJGz66jlf0kxcdwZ3Q/xPcN0NoOsHRJDs4my0Xmu40e+ciY26E6Sahfd0X7/YJFsH6Dsk15WIBlmD2zXpOO6r2GPtojdi4DJ0GKv8p2s0IA0S+MGIqABJV4+FXFNW72fiu3fEP6RRkLHQ089mCJb1ZBGTz/+Ga/Bg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oCB0F3+fQowiYLnKaCloMmUSkZ/r85iJKNxb4r5GAog=;
- b=Xl3KuxYYjPccqlOPzZ8yjoqAq1fyrcVk0iII8t8B9V8+I33PagJzwsU3e4Np2LOoRwIN3bNlrY7l3QJbWuDEYtjQFRLPlSvNubFeFNP6jMKZbdhxFNQEWzOc/4x36hOZC54KTBmiztbKY1y0SPinHHAhLtOlJjgCarMtYJBkATmWPvQYuVo0Csk+nE2FYC2zkcnLpVyLPpyZppX/6WwcgfskMfKoQPxUKov4uqg/Tbzos5GFF5+EjmPIAM5+Eh40VFta6IRGwxAy8DRhQ693kXOiGKV8K/kx0qg427whZaNYu3OUrIwvOtT2YCkn0aRwwRGS7BKGNril7j3AKzvxtA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oCB0F3+fQowiYLnKaCloMmUSkZ/r85iJKNxb4r5GAog=;
- b=rvwwX4gtrepmzfTXwRt6PpGXA7LiMcVvDUNa6DowtHjgq5+mB3OTA0iQJ22XO/ck2FLRrs1dot3OV5EzgsKcRhHIoMrDlDqoazxJKabsa9PLVx1vzSzT42mFiDvmlIN5+RLm0Px2M0W2+Bqqo+zjG0eUnA6LxKT7tc2b27sKZ8M=
-Received: from BN1PR10CA0012.namprd10.prod.outlook.com (2603:10b6:408:e0::17)
- by DM6PR12MB4059.namprd12.prod.outlook.com (2603:10b6:5:215::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.26; Fri, 18 Jul
- 2025 22:01:41 +0000
-Received: from BN1PEPF00005FFD.namprd05.prod.outlook.com
- (2603:10b6:408:e0:cafe::80) by BN1PR10CA0012.outlook.office365.com
- (2603:10b6:408:e0::17) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.20 via Frontend Transport; Fri,
- 18 Jul 2025 22:01:41 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN1PEPF00005FFD.mail.protection.outlook.com (10.167.243.229) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8943.21 via Frontend Transport; Fri, 18 Jul 2025 22:01:41 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 18 Jul
- 2025 17:01:40 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 18 Jul
- 2025 17:01:40 -0500
-Received: from [10.4.13.140] (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Fri, 18 Jul 2025 17:01:39 -0500
-Message-ID: <eff0ef03-d054-487e-b3bf-96bf394a3bf5@amd.com>
-Date: Fri, 18 Jul 2025 18:01:39 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA1121FF2A;
+	Fri, 18 Jul 2025 22:02:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752876130; cv=none; b=E4Dt1xPfMYKEyvEsOsIVl8N7G7SGuLZFyCY63q3IwFgacwKUCCclt1Rol1YNoj9fynZHnesZd9o4Y1JW0R8kRaldQH3CTjYONH7vEOvKA2r61DmZeQAZZzP+TBPKN1t9GL1UqMVaXzFzFqhUEQqV267uHSQzoFHrc6Xa3ktrdGI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752876130; c=relaxed/simple;
+	bh=Wm/nB+8sqai/GmFeLiGs8L4k09rvN69ajHYnv0IrTro=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nAPdA3nC9dIWgdGvh3GIspS1TbvWaRJUCrfSAgkMik/vj1oRUKm8krXeAIFIbsJQeFW0IssFGG6MqQXcQ0FW0kmTdzE3W9n7B3VRJUdw+tnETmOWpes+u5ObTq/eUluSnIEWLqVrErE9M32JZ+uxAqeYCzn6S17NKOU1cuy3mEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=atQ+VqDF; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752876129; x=1784412129;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Wm/nB+8sqai/GmFeLiGs8L4k09rvN69ajHYnv0IrTro=;
+  b=atQ+VqDFAt5uE8UdoHn3tVr0RswImuzaQPszXAC9x/65UrRmu/QXLtKE
+   TnaLJ8IoAyLvtz1Vbow73MilSULOMRNd+fXR7U9GbvTFHEmQDiNZqw3Dk
+   UVT2zkEBBAm4ll0zTZXdZ4lCZxLkGJJbBgM4pCEeeOEswHh4whkSoUbzU
+   HKSI7RhcYknP5BH3bsTBCkCwJeSiGb3t9lxLZaL8Hh5BD8UZ3t5F9NNeP
+   2ym7GoL2A1Ccv0JinMM7DrMZV77tjFfmtx/kbZfGNI8tkhY11aWpnXtrq
+   O+hJa2g+uU5Wf3XQFxZ0a+AireMUVBdnlQ8LZ2RGhgt4Mwsmlsx2gTgX4
+   Q==;
+X-CSE-ConnectionGUID: jb+WjHHMRP6QuR493p3Kog==
+X-CSE-MsgGUID: GZW2M9fdQnmW6JCDpuAqag==
+X-IronPort-AV: E=McAfee;i="6800,10657,11496"; a="65436682"
+X-IronPort-AV: E=Sophos;i="6.16,322,1744095600"; 
+   d="scan'208";a="65436682"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2025 15:02:07 -0700
+X-CSE-ConnectionGUID: uhiiYh7GSjCbuIqtKcW2ag==
+X-CSE-MsgGUID: bNU9ErX1RaiEYUbhxBrjAA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,322,1744095600"; 
+   d="scan'208";a="162295050"
+Received: from unknown (HELO [10.247.118.125]) ([10.247.118.125])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2025 15:01:57 -0700
+Message-ID: <0d8f7d31-2356-4c9e-9f2e-4bd070edf1e4@intel.com>
+Date: Fri, 18 Jul 2025 15:01:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,286 +66,209 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/amdgpu: Raven: don't allow mixing GTT and VRAM
-To: Alex Deucher <alexdeucher@gmail.com>
-CC: Brian Geffon <bgeffon@google.com>, "Wentland, Harry"
-	<Harry.Wentland@amd.com>, Alex Deucher <alexander.deucher@amd.com>,
-	<christian.koenig@amd.com>, David Airlie <airlied@gmail.com>, Simona Vetter
-	<simona@ffwll.ch>, Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, Yunxiang Li
-	<Yunxiang.Li@amd.com>, Lijo Lazar <lijo.lazar@amd.com>, Prike Liang
-	<Prike.Liang@amd.com>, Pratap Nirujogi <pratap.nirujogi@amd.com>, "Luben
- Tuikov" <luben.tuikov@amd.com>, <amd-gfx@lists.freedesktop.org>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>, "Garrick
- Evans" <garrick@google.com>, Thadeu Lima de Souza Cascardo
-	<cascardo@igalia.com>, <stable@vger.kernel.org>
-References: <20250716161753.231145-1-bgeffon@google.com>
- <CADnq5_P+a2g_YzKW7S4YSF5kQgXe+PNrMKEOAHuf9yhFg98pSQ@mail.gmail.com>
- <CADyq12zB7+opz0vUgyAQSdbHcYMwbZrZp+qxKdYcqaeCeRVbCw@mail.gmail.com>
- <CADnq5_OeTJqzg0DgV06b-u_AmgaqXL5XWdQ6h40zcgGj1mCE_A@mail.gmail.com>
- <CADyq12ysC9C2tsQ3GrQJB3x6aZPzM1o8pyTW8z4bxjGPsfEZvw@mail.gmail.com>
- <CADnq5_PnktmP+0Hw0T04VkrkKoF_TGz5HOzRd1UZq6XOE0Rm1g@mail.gmail.com>
- <CADyq12x1f0VLjHKWEmfmis8oLncqSWxeTGs5wL0Xj2hua+onOQ@mail.gmail.com>
- <CADnq5_OhHpZDmV5J_5kA+avOdLrexnoRVCCCRddLQ=PPVAJsPQ@mail.gmail.com>
- <46bdb101-11c6-46d4-8224-b17d1d356504@amd.com>
- <CADnq5_PwyUwqdv1QG_O2XgvNnax+FNskuppBaKx8d0Kp582wXg@mail.gmail.com>
+Subject: Re: [PATCH v10 09/17] cxl/pci: Map CXL Endpoint Port and CXL Switch
+ Port RAS registers
+To: "Bowman, Terry" <terry.bowman@amd.com>, dave@stgolabs.net,
+ jonathan.cameron@huawei.com, alison.schofield@intel.com,
+ dan.j.williams@intel.com, bhelgaas@google.com, shiju.jose@huawei.com,
+ ming.li@zohomail.com, Smita.KoralahalliChannabasappa@amd.com,
+ rrichter@amd.com, dan.carpenter@linaro.org,
+ PradeepVineshReddy.Kodamati@amd.com, lukas@wunner.de,
+ Benjamin.Cheatham@amd.com, sathyanarayanan.kuppuswamy@linux.intel.com,
+ linux-cxl@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+References: <20250626224252.1415009-1-terry.bowman@amd.com>
+ <20250626224252.1415009-10-terry.bowman@amd.com>
+ <a5b917d5-126e-48a8-b9c3-91d7bb2466e4@intel.com>
+ <164c69a6-fd73-4fc1-990d-37e920582d81@amd.com>
 Content-Language: en-US
-From: Leo Li <sunpeng.li@amd.com>
-In-Reply-To: <CADnq5_PwyUwqdv1QG_O2XgvNnax+FNskuppBaKx8d0Kp582wXg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Received-SPF: None (SATLEXMB05.amd.com: sunpeng.li@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF00005FFD:EE_|DM6PR12MB4059:EE_
-X-MS-Office365-Filtering-Correlation-Id: 89fce9dd-0c97-4783-f074-08ddc646ad1b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|42112799006|7416014|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SU1vWEV2MmE4RU5mM1lWdmFhT0F6d3AyeVlnU0k1L2l5S3RWeWhtd0pmVFhS?=
- =?utf-8?B?V2QxT25rS0lnSURmZ2czVHNpckJMT2w1azZkVkFGZURSYlVPc0lBZTJCWjlx?=
- =?utf-8?B?TWxxMkl6QmFoLzVtUGx0MUZpMmlrWXhMQzFCand6MHZLdWd6eFY5NGdFSWxI?=
- =?utf-8?B?NHdOemkvUnluZEdkTzFMcit2RC9WanBIdTNnU0VqL09JMXpBMjZYQjNoYzBN?=
- =?utf-8?B?S21ZREV5blpyc3VIZFAra204Uk9pWjg2bk5udUhmQTRibXUveWJWV1NqL1V6?=
- =?utf-8?B?R2VmQ0xrUHdjY2cvUHM2WTdFbFdCWnpWcldvazQreHJZN2htQk4xcVlhV21P?=
- =?utf-8?B?R1doc0V0WVEzOXYybmRPZE53S3hvaHZaRm1Ddjl1SWhHcFFtd1lkRHQvWStO?=
- =?utf-8?B?ZnJSbVhycjhvSUJrNUZKQVhNWC9yZlBwSGZPNlNSbkNoTHVSa1I2bnNYUWwz?=
- =?utf-8?B?NDRZYXlTbDlNOTNLOTVnbVpRcXRORUpyYVlaY09oS08wV09YeFBQaVVmQkto?=
- =?utf-8?B?a3A0L096ODE1QmtBeUdmL0xxWWIrRkRqZFR2Z210MWQ5bnBhTCtualFxL1Zn?=
- =?utf-8?B?K00vRGg3dDJ5allXbjNwUXIvby9xWTIvWi9oQXZaZm5KSXNBWDV0cXBWN2RM?=
- =?utf-8?B?ajA1Q0dKQjFkb2N6aXNjMmVJcTJDSmFtUVZLaWMza3VxYTNJakFmaGtQSnBv?=
- =?utf-8?B?a051d1VWUnkvZjFOcnIzV0FKTkNnQWNHYndlblpEdHdjLzk1UUZrL0VpWng0?=
- =?utf-8?B?aVZTZk9ZdHRsVTVyVmdvZzNsekhkUzlGSXdreDFmYWl6M1NZWXIyQytoeW5I?=
- =?utf-8?B?cHUrUExqMGE2VUR3MHpoam13YWxwWHl0OUMwbWJSMndCYkFySmV1SlEyeUVJ?=
- =?utf-8?B?anFpTXhoWkxqRWwycGg0K1R6blY5QjgrK1FSeDkyNDg0S1hudTZOcjkvS2t3?=
- =?utf-8?B?ZTUwTUtSVHdPYzVBa1Q4aHVqSXpDRUtFSkdjOXNQelphaVhTT2FFc0Z2VlAy?=
- =?utf-8?B?N1l5OGx3YWUzMHZ1TGJFdG5wN1BKaEhUUmpuRTVrYXpCN29Tdi95QlRYWUxw?=
- =?utf-8?B?UXMxL202RzBvTU90WnpWVm1wOXZJMlFNb0JkTFd6ZzlXMFRHdnpzdEVxOTNO?=
- =?utf-8?B?QTRRSUx1RnZEcGlFdGwrTGtnZXJBblJsaWEvbjBaWW1EYmtUNzNySHMrTHFM?=
- =?utf-8?B?bStEeG1qbFRVRWRHeTdjdFVOc2FZR3VmZm9XOGNPSVNadHJmZ2RkM2RTeExz?=
- =?utf-8?B?Y0dLQkQ1d0pIdW51bmNMY0FXNFpkZWJuOERUL0JVeGl5S25QZm0xY1h0SUVa?=
- =?utf-8?B?YW43R2hIeTQrQTN0MGlZN2ZBNTlMcjVFWVNxc1ZFRVBGVjkyc25DTnhzZytQ?=
- =?utf-8?B?cXY1ck0rRVRlTmlxR0RHcjZRRy81bnVUR0VNdHdEU2lqcU4wNjRuUGxrdm8x?=
- =?utf-8?B?ZDhEZUFmbHRHcFRzWWMyWEwvZjRKS2pkS0h0RUlHanNFcG1rRUM3cmo3U21J?=
- =?utf-8?B?Y0lPc3F2eXhyRUhTY1F5WHJoZ0ZwRUowTEUwTnpONW5LVVFMTXp3YzdOM2Mr?=
- =?utf-8?B?ZDd3YlY5czFGd3M5VWRCRFdsNFovVURjYnd3TEVFT0I5d0tOc0NRQWlGNTZ0?=
- =?utf-8?B?RlN4WnRkN2RjRThDU3k1SVU2WnJCaldiK0RoU0J3aFdQMS9Qd2lkeWNUaVNB?=
- =?utf-8?B?TnZkNGR5MlFnY3NMVVdxUmlMN1RkVThUY2wwLzZkUjMyTlhTQmFSKzFGc3hM?=
- =?utf-8?B?N1pTQmhVN0VkamJCWWIrOGI2L1FpdWlEVFZoTmFuZjFNWWY1VDAzNFBZVEox?=
- =?utf-8?B?R1lDNkZOdnBVV2U0WTJoQXpMNnhYa2pTQ2s1SjZoOWRpNTNVZmRleTBNSmRm?=
- =?utf-8?B?SGc1S290UFRKYk9Wd2ZWL0xkbldQMVUzUGNZR002TnNOQTlOV0VxcURYVnpy?=
- =?utf-8?B?ZUk1STFMWHR1YTY1cFhuUHp2aUk2SDc2MDRqMkpDclF4d0VuV29NamJkcTRi?=
- =?utf-8?Q?lwvIpVaT4FTvLxAFGWjIxGE+ha++7E=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(42112799006)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2025 22:01:41.0357
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 89fce9dd-0c97-4783-f074-08ddc646ad1b
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN1PEPF00005FFD.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4059
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <164c69a6-fd73-4fc1-990d-37e920582d81@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
 
-On 2025-07-18 17:33, Alex Deucher wrote:
-> On Fri, Jul 18, 2025 at 5:02 PM Leo Li <sunpeng.li@amd.com> wrote:
->>
->>
->>
->> On 2025-07-18 16:07, Alex Deucher wrote:
->>> On Fri, Jul 18, 2025 at 1:57 PM Brian Geffon <bgeffon@google.com> wrote:
->>>>
->>>> On Thu, Jul 17, 2025 at 10:59 AM Alex Deucher <alexdeucher@gmail.com> wrote:
->>>>>
->>>>> On Wed, Jul 16, 2025 at 8:13 PM Brian Geffon <bgeffon@google.com> wrote:
->>>>>>
->>>>>> On Wed, Jul 16, 2025 at 5:03 PM Alex Deucher <alexdeucher@gmail.com> wrote:
->>>>>>>
->>>>>>> On Wed, Jul 16, 2025 at 12:40 PM Brian Geffon <bgeffon@google.com> wrote:
->>>>>>>>
->>>>>>>> On Wed, Jul 16, 2025 at 12:33 PM Alex Deucher <alexdeucher@gmail.com> wrote:
->>>>>>>>>
->>>>>>>>> On Wed, Jul 16, 2025 at 12:18 PM Brian Geffon <bgeffon@google.com> wrote:
->>>>>>>>>>
->>>>>>>>>> Commit 81d0bcf99009 ("drm/amdgpu: make display pinning more flexible (v2)")
->>>>>>>>>> allowed for newer ASICs to mix GTT and VRAM, this change also noted that
->>>>>>>>>> some older boards, such as Stoney and Carrizo do not support this.
->>>>>>>>>> It appears that at least one additional ASIC does not support this which
->>>>>>>>>> is Raven.
->>>>>>>>>>
->>>>>>>>>> We observed this issue when migrating a device from a 5.4 to 6.6 kernel
->>>>>>>>>> and have confirmed that Raven also needs to be excluded from mixing GTT
->>>>>>>>>> and VRAM.
->>>>>>>>>
->>>>>>>>> Can you elaborate a bit on what the problem is?  For carrizo and
->>>>>>>>> stoney this is a hardware limitation (all display buffers need to be
->>>>>>>>> in GTT or VRAM, but not both).  Raven and newer don't have this
->>>>>>>>> limitation and we tested raven pretty extensively at the time.
->>>>>>>>
->>>>>>>> Thanks for taking the time to look. We have automated testing and a
->>>>>>>> few igt gpu tools tests failed and after debugging we found that
->>>>>>>> commit 81d0bcf99009 is what introduced the failures on this hardware
->>>>>>>> on 6.1+ kernels. The specific tests that fail are kms_async_flips and
->>>>>>>> kms_plane_alpha_blend, excluding Raven from this sharing of GTT and
->>>>>>>> VRAM buffers resolves the issue.
->>>>>>>
->>>>>>> + Harry and Leo
->>>>>>>
->>>>>>> This sounds like the memory placement issue we discussed last week.
->>>>>>> In that case, the issue is related to where the buffer ends up when we
->>>>>>> try to do an async flip.  In that case, we can't do an async flip
->>>>>>> without a full modeset if the buffers locations are different than the
->>>>>>> last modeset because we need to update more than just the buffer base
->>>>>>> addresses.  This change works around that limitation by always forcing
->>>>>>> display buffers into VRAM or GTT.  Adding raven to this case may fix
->>>>>>> those tests but will make the overall experience worse because we'll
->>>>>>> end up effectively not being able to not fully utilize both gtt and
->>>>>>> vram for display which would reintroduce all of the problems fixed by
->>>>>>> 81d0bcf99009 ("drm/amdgpu: make display pinning more flexible (v2)").
->>>>>>
->>>>>> Thanks Alex, the thing is, we only observe this on Raven boards, why
->>>>>> would Raven only be impacted by this? It would seem that all devices
->>>>>> would have this issue, no? Also, I'm not familiar with how
->>>>>
->>>>> It depends on memory pressure and available memory in each pool.
->>>>> E.g., initially the display buffer is in VRAM when the initial mode
->>>>> set happens.  The watermarks, etc. are set for that scenario.  One of
->>>>> the next frames ends up in a pool different than the original.  Now
->>>>> the buffer is in GTT.  The async flip interface does a fast validation
->>>>> to try and flip as soon as possible, but that validation fails because
->>>>> the watermarks need to be updated which requires a full modeset.
->>
->> Huh, I'm not sure if this actually is an issue for APUs. The fix that introduced
->> a check for same memory placement on async flips was on a system with a DGPU,
->> for which VRAM placement does matter:
->> https://github.com/torvalds/linux/commit/a7c0cad0dc060bb77e9c9d235d68441b0fc69507
->>
->> Looking around in DM/DML, for APUs, I don't see any logic that changes DCN
->> bandwidth validation depending on memory placement. There's a gpuvm_enable flag
->> for SG, but it's statically set to 1 on APU DCN versions. It sounds like for
->> APUs specifically, we *should* be able to ignore the mem placement check. I can
->> spin up a patch to test this out.
+On 7/18/25 2:55 PM, Bowman, Terry wrote:
 > 
-> Is the gpu_vm_support flag ever set for dGPUs?  The allowed domains
-> for display buffers are determined by
-> amdgpu_display_supported_domains() and we only allow GTT as a domain
-> if gpu_vm_support is set, which I think is just for APUs.  In that
-> case, we could probably only need the checks specifically for
-> CHIP_CARRIZO and CHIP_STONEY since IIRC, they don't support mixed VRAM
-> and GTT (only one or the other?).  dGPUs and really old APUs will
-> always get VRAM, and newer APUs will get VRAM | GTT.
+> 
+> On 7/18/2025 4:28 PM, Dave Jiang wrote:
+>>
+>> On 6/26/25 3:42 PM, Terry Bowman wrote:
+>>> CXL Endpoint (EP) Ports may include Root Ports (RP) or Downstream Switch
+>>> Ports (DSP). CXL RPs and DSPs contain RAS registers that require memory
+>>> mapping to enable RAS logging. This initialization is currently missing and
+>>> must be added for CXL RPs and DSPs.
+>>>
+>>> Update cxl_dport_init_ras_reporting() to support RP and DSP RAS mapping.
+>>> Add alongside the existing Restricted CXL Host Downstream Port RAS mapping.
+>>>
+>>> Update cxl_endpoint_port_probe() to invoke cxl_dport_init_ras_reporting().
+>>> This will initiate the RAS mapping for CXL RPs and DSPs when each CXL EP is
+>>> created and added to the EP port.
+>>>
+>>> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+>>> ---
+>>>  drivers/cxl/cxl.h  |  2 ++
+>>>  drivers/cxl/mem.c  |  3 ++-
+>>>  drivers/cxl/port.c | 58 +++++++++++++++++++++++++++++++++++++++++++++-
+>>>  3 files changed, 61 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
+>>> index c57c160f3e5e..d696d419bd5a 100644
+>>> --- a/drivers/cxl/cxl.h
+>>> +++ b/drivers/cxl/cxl.h
+>>> @@ -590,6 +590,7 @@ struct cxl_dax_region {
+>>>   * @parent_dport: dport that points to this port in the parent
+>>>   * @decoder_ida: allocator for decoder ids
+>>>   * @reg_map: component and ras register mapping parameters
+>>> + * @uport_regs: mapped component registers
+>>>   * @nr_dports: number of entries in @dports
+>>>   * @hdm_end: track last allocated HDM decoder instance for allocation ordering
+>>>   * @commit_end: cursor to track highest committed decoder for commit ordering
+>>> @@ -610,6 +611,7 @@ struct cxl_port {
+>>>  	struct cxl_dport *parent_dport;
+>>>  	struct ida decoder_ida;
+>>>  	struct cxl_register_map reg_map;
+>>> +	struct cxl_component_regs uport_regs;
+>>>  	int nr_dports;
+>>>  	int hdm_end;
+>>>  	int commit_end;
+>>> diff --git a/drivers/cxl/mem.c b/drivers/cxl/mem.c
+>>> index 6e6777b7bafb..d2155f45240d 100644
+>>> --- a/drivers/cxl/mem.c
+>>> +++ b/drivers/cxl/mem.c
+>>> @@ -166,7 +166,8 @@ static int cxl_mem_probe(struct device *dev)
+>>>  	else
+>>>  		endpoint_parent = &parent_port->dev;
+>>>  
+>>> -	cxl_dport_init_ras_reporting(dport, dev);
+>>> +	if (dport->rch)
+>>> +		cxl_dport_init_ras_reporting(dport, dev);
+>>>  
+>>>  	scoped_guard(device, endpoint_parent) {
+>>>  		if (!endpoint_parent->driver) {
+>>> diff --git a/drivers/cxl/port.c b/drivers/cxl/port.c
+>>> index 021f35145c65..b52f82925891 100644
+>>> --- a/drivers/cxl/port.c
+>>> +++ b/drivers/cxl/port.c
+>>> @@ -111,6 +111,17 @@ static void cxl_disable_rch_root_ints(struct cxl_dport *dport)
+>>>  	writel(aer_cmd, aer_base + PCI_ERR_ROOT_COMMAND);
+>>>  }
+>>>  
+>>> +static void cxl_uport_init_ras_reporting(struct cxl_port *port,
+>>> +					 struct device *host)
+>>> +{
+>>> +	struct cxl_register_map *map = &port->reg_map;
+>>> +
+>>> +	map->host = host;
+>>> +	if (cxl_map_component_regs(map, &port->uport_regs,
+>>> +				   BIT(CXL_CM_CAP_CAP_ID_RAS)))
+>>> +		dev_dbg(&port->dev, "Failed to map RAS capability\n");
+>>> +}
+>>> +
+>>>  /**
+>>>   * cxl_dport_init_ras_reporting - Setup CXL RAS report on this dport
+>>>   * @dport: the cxl_dport that needs to be initialized
+>>> @@ -119,7 +130,6 @@ static void cxl_disable_rch_root_ints(struct cxl_dport *dport)
+>>>  void cxl_dport_init_ras_reporting(struct cxl_dport *dport, struct device *host)
+>>>  {
+>>>  	dport->reg_map.host = host;
+>>> -	cxl_dport_map_ras(dport);
+>>>  
+>>>  	if (dport->rch) {
+>>>  		struct pci_host_bridge *host_bridge = to_pci_host_bridge(dport->dport_dev);
+>>> @@ -127,12 +137,54 @@ void cxl_dport_init_ras_reporting(struct cxl_dport *dport, struct device *host)
+>>>  		if (!host_bridge->native_aer)
+>>>  			return;
+>>>  
+>>> +		cxl_dport_map_ras(dport);
+>>>  		cxl_dport_map_rch_aer(dport);
+>>>  		cxl_disable_rch_root_ints(dport);
+>>> +		return;
+>>>  	}
+>>> +
+>>> +	if (cxl_map_component_regs(&dport->reg_map, &dport->regs.component,
+>>> +				   BIT(CXL_CM_CAP_CAP_ID_RAS)))
+>>> +		dev_dbg(dport->dport_dev, "Failed to map RAS capability\n");
+>>> +
+>>>  }
+>>>  EXPORT_SYMBOL_NS_GPL(cxl_dport_init_ras_reporting, "CXL");
+>>>  
+>>> +static void cxl_switch_port_init_ras(struct cxl_port *port)
+>>> +{
+>>> +	if (is_cxl_root(to_cxl_port(port->dev.parent)))
+>>> +		return;
+>>> +
+>>> +	/* May have upstream DSP or RP */
+>>> +	if (port->parent_dport && dev_is_pci(port->parent_dport->dport_dev)) {
+>>> +		struct pci_dev *pdev = to_pci_dev(port->parent_dport->dport_dev);
+>>> +
+>>> +		if ((pci_pcie_type(pdev) == PCI_EXP_TYPE_ROOT_PORT) ||
+>>> +		    (pci_pcie_type(pdev) == PCI_EXP_TYPE_DOWNSTREAM))
+>>> +			cxl_dport_init_ras_reporting(port->parent_dport, &port->dev);
+>>> +	}
+>>> +
+>>> +	cxl_uport_init_ras_reporting(port, &port->dev);
+>>> +}
+>>> +
+>>> +static void cxl_endpoint_port_init_ras(struct cxl_port *port)
+>> Maybe rename 'port' to 'ep' to be explicit
+> Ok
+>>> +{
+>>> +	struct cxl_dport *dport;
+>> parent_dport would be clearer. I was thinking why does the endpoint have a dport for a second there.
+> Ok
+>>> +	struct cxl_memdev *cxlmd = to_cxl_memdev(port->uport_dev);
+>>> +	struct cxl_port *parent_port __free(put_cxl_port) =
+>>> +		cxl_mem_find_port(cxlmd, &dport);
+>>> +
+>>> +	if (!dport || !dev_is_pci(dport->dport_dev)) {
+>>> +		dev_err(&port->dev, "CXL port topology not found\n");> +		return;
+>>> +	}
+>>> +
+>>> +	cxl_dport_init_ras_reporting(dport, cxlmd->cxlds->dev);
+>>> +}
+>>> +
+>>> +#else
+>>> +static void cxl_endpoint_port_init_ras(struct cxl_port *port) { }
+>>> +static void cxl_switch_port_init_ras(struct cxl_port *port) { }
+>>>  #endif /* CONFIG_PCIEAER_CXL */
+>> I cc'd you on the new patch to move all the AER stuff to core/pci_aer.c. That should take care of ifdef CONFIG_PCIEAER_CXL in pci.c and port.c.
+>>
+>> DJ
+> 
+> Move to core/native_ras.c introduced in "Dequeue forwarded CXL error", right? I just want to be certain.
 
-It doesn't look like gpu_vm_support is set for DGPUs
-https://elixir.bootlin.com/linux/v6.15.6/source/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c#L1866
+I just posted this [1] to clean up what's there. Do you prefer me to just rename the file to native_ras.c? Or maybe pci_ras.c?
 
-Though interestingly, further up at #L1858, Raven has gpu_vm_support = 0. Maybe it had stability issues?
-https://github.com/torvalds/linux/commit/098c13079c6fdd44f10586b69132c392ebf87450
+[1]: https://lore.kernel.org/linux-cxl/20250718212452.2100663-1-dave.jiang@intel.com/
 
-- Leo
+DJ
 
 > 
-> Alex
+> Regards,
+> Terry
 > 
->>
->> Thanks,
->> Leo
->>
->>>>>
->>>>> It's tricky to fix because you don't want to use the worst case
->>>>> watermarks all the time because that will limit the number available
->>>>> display options and you don't want to force everything to a particular
->>>>> memory pool because that will limit the amount of memory that can be
->>>>> used for display (which is what the patch in question fixed).  Ideally
->>>>> the caller would do a test commit before the page flip to determine
->>>>> whether or not it would succeed before issuing it and then we'd have
->>>>> some feedback mechanism to tell the caller that the commit would fail
->>>>> due to buffer placement so it would do a full modeset instead.  We
->>>>> discussed this feedback mechanism last week at the display hackfest.
->>>>>
->>>>>
->>>>>> kms_plane_alpha_blend works, but does this also support that test
->>>>>> failing as the cause?
->>>>>
->>>>> That may be related.  I'm not too familiar with that test either, but
->>>>> Leo or Harry can provide some guidance.
->>>>>
->>>>> Alex
->>>>
->>>> Thanks everyone for the input so far. I have a question for the
->>>> maintainers, given that it seems that this is functionally broken for
->>>> ASICs which are iGPUs, and there does not seem to be an easy fix, does
->>>> it make sense to extend this proposed patch to all iGPUs until a more
->>>> permanent fix can be identified? At the end of the day I'll take
->>>> functional correctness over performance.
->>>
->>> It's not functional correctness, it's usability.  All that is
->>> potentially broken is async flips (which depend on memory pressure and
->>> buffer placement), while if you effectively revert the patch, you end
->>> up  limiting all display buffers to either VRAM or GTT which may end
->>> up causing the inability to display anything because there is not
->>> enough memory in that pool for the next modeset.  We'll start getting
->>> bug reports about blank screens and failure to set modes because of
->>> memory pressure.  I think if we want a short term fix, it would be to
->>> always set the worst case watermarks.  The downside to that is that it
->>> would possibly cause some working display setups to stop working if
->>> they were on the margins to begin with.
->>>
->>> Alex
->>>
->>>>
->>>> Brian
->>>>
->>>>>
->>>>>>
->>>>>> Thanks again,
->>>>>> Brian
->>>>>>
->>>>>>>
->>>>>>> Alex
->>>>>>>
->>>>>>>>
->>>>>>>> Brian
->>>>>>>>
->>>>>>>>>
->>>>>>>>>
->>>>>>>>> Alex
->>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> Fixes: 81d0bcf99009 ("drm/amdgpu: make display pinning more flexible (v2)")
->>>>>>>>>> Cc: Luben Tuikov <luben.tuikov@amd.com>
->>>>>>>>>> Cc: Christian König <christian.koenig@amd.com>
->>>>>>>>>> Cc: Alex Deucher <alexander.deucher@amd.com>
->>>>>>>>>> Cc: stable@vger.kernel.org # 6.1+
->>>>>>>>>> Tested-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
->>>>>>>>>> Signed-off-by: Brian Geffon <bgeffon@google.com>
->>>>>>>>>> ---
->>>>>>>>>>  drivers/gpu/drm/amd/amdgpu/amdgpu_object.c | 3 ++-
->>>>>>>>>>  1 file changed, 2 insertions(+), 1 deletion(-)
->>>>>>>>>>
->>>>>>>>>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
->>>>>>>>>> index 73403744331a..5d7f13e25b7c 100644
->>>>>>>>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
->>>>>>>>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
->>>>>>>>>> @@ -1545,7 +1545,8 @@ uint32_t amdgpu_bo_get_preferred_domain(struct amdgpu_device *adev,
->>>>>>>>>>                                             uint32_t domain)
->>>>>>>>>>  {
->>>>>>>>>>         if ((domain == (AMDGPU_GEM_DOMAIN_VRAM | AMDGPU_GEM_DOMAIN_GTT)) &&
->>>>>>>>>> -           ((adev->asic_type == CHIP_CARRIZO) || (adev->asic_type == CHIP_STONEY))) {
->>>>>>>>>> +           ((adev->asic_type == CHIP_CARRIZO) || (adev->asic_type == CHIP_STONEY) ||
->>>>>>>>>> +            (adev->asic_type == CHIP_RAVEN))) {
->>>>>>>>>>                 domain = AMDGPU_GEM_DOMAIN_VRAM;
->>>>>>>>>>                 if (adev->gmc.real_vram_size <= AMDGPU_SG_THRESHOLD)
->>>>>>>>>>                         domain = AMDGPU_GEM_DOMAIN_GTT;
->>>>>>>>>> --
->>>>>>>>>> 2.50.0.727.gbf7dc18ff4-goog
->>>>>>>>>>
->>
+>>>  >  static int cxl_switch_port_probe(struct cxl_port *port)
+>>> @@ -149,6 +201,8 @@ static int cxl_switch_port_probe(struct cxl_port *port)
+>>>  
+>>>  	cxl_switch_parse_cdat(port);
+>>>  
+>>> +	cxl_switch_port_init_ras(port);
+>>> +
+>>>  	cxlhdm = devm_cxl_setup_hdm(port, NULL);
+>>>  	if (!IS_ERR(cxlhdm))
+>>>  		return devm_cxl_enumerate_decoders(cxlhdm, NULL);
+>>> @@ -203,6 +257,8 @@ static int cxl_endpoint_port_probe(struct cxl_port *port)
+>>>  	if (rc)
+>>>  		return rc;
+>>>  
+>>> +	cxl_endpoint_port_init_ras(port);
+>>> +
+>>>  	/*
+>>>  	 * Now that all endpoint decoders are successfully enumerated, try to
+>>>  	 * assemble regions from committed decoders
+> 
 
 
