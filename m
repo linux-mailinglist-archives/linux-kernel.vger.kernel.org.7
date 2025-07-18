@@ -1,113 +1,121 @@
-Return-Path: <linux-kernel+bounces-737434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E570AB0AC83
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 01:18:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E066B0AC8B
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 01:27:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E245A5A19C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 23:18:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24C737B43DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 23:26:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 930C622A4F6;
-	Fri, 18 Jul 2025 23:18:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B860122D4C3;
+	Fri, 18 Jul 2025 23:27:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="elM+aYqs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UaNWn7dn"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE805A923;
-	Fri, 18 Jul 2025 23:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BEDE2253BA;
+	Fri, 18 Jul 2025 23:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752880707; cv=none; b=ljwXV9OL95oHxWLFcbazlA1mKgjG3yu9vpO+GYR4AxeCE17oeBD36c9auohYUSE1r5UHKKx6+1Rdr1tyVImyfDN3lJolCgfXv0XFZupmcHvacaDCi8tisA5Bpm1GuEo/iMujS+pkNu8AYrZJEQuYpwcV94SyS1N0PHE6UBmglPg=
+	t=1752881245; cv=none; b=jLfViKFoZ6oS9Rg7x8jjjnfp+zTXQ/c6799TRF/NY69Yro447o7gwAO7gYf5gypo4csxrwcCpZNcWUxf3fOTBUNCMt9CnaUPuj3YVETFWjW7MEcH+CZeaU598eyUYy7sQNxZwEdb07d5bMxiNNIuvy1v3xf3KbbiCg1CI/Ysdqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752880707; c=relaxed/simple;
-	bh=CZTZ9oUZTzhOy7CxW12Mv61GrBq1wGI/F8Msa4fG+HQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mZxlQr3Zuu6RRWF4Ww3WIGhQyDQhw+NRiH9ix9BNe9CXUpEaAkkp4eIBlGorfbFizPu2nqc8X/rF0i0AIwJL2/TVt6bYPcRN0lDDLB4UXDw8N3w2U/xKVdojiu6KW9cpXXudcjIEsJWOoEvzLpT5Tg90f3My4CzmnEGh1r6QRNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=elM+aYqs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1088CC4CEEB;
-	Fri, 18 Jul 2025 23:18:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752880706;
-	bh=CZTZ9oUZTzhOy7CxW12Mv61GrBq1wGI/F8Msa4fG+HQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=elM+aYqs9RSlCedFnBwaJyWquK+vFNZkIbVf2sd3KVRV+DKy3Huj9k4EQPP89AjRm
-	 1IUaSBELre8rOu8SpL3hD4Bq9Ja7pEqEkr+Oj9BfxWhy5RXLEKv3HuJg2Nz9F26JQj
-	 IgkW3x8BaM5uyBUPKiJ2HUHadjopPKat/cur32TIL5k0ipEteAGbTGp3jkqteBL+km
-	 eQ8fEjuEElCqWZdx9xS9GYhqS4hJk8AmtkGSDUe4xHfA550ya+URIMcPRiePeIA723
-	 uXXhwYB4OKLmtyCxzjOCgpsR760xHdhg/2REs0KNfozNSnrqfuuMmIJqn9ZKfUA3ZC
-	 ZgHFRmFh9oLmw==
-Date: Fri, 18 Jul 2025 16:18:25 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: John Ernberg <john.ernberg@actia.se>
-Cc: Oliver Neukum <oneukum@suse.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Ming Lei
- <ming.lei@canonical.com>, "netdev@vger.kernel.org"
- <netdev@vger.kernel.org>, "linux-usb@vger.kernel.org"
- <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "stable@vger.kernel.org"
- <stable@vger.kernel.org>
-Subject: Re: [PATCH] net: usbnet: Avoid potential RCU stall on LINK_CHANGE
- event
-Message-ID: <20250718161825.65912e37@kernel.org>
-In-Reply-To: <55147f36-822b-4026-a091-33b909d1eea8@actia.se>
-References: <20250710085028.1070922-1-john.ernberg@actia.se>
-	<20250714163505.44876e62@kernel.org>
-	<74a87648-bc02-4edb-9e6a-102cb6621547@actia.se>
-	<20250715065403.641e4bd7@kernel.org>
-	<fbd03180-cca0-4a0f-8fd9-4daf5ff28ff5@actia.se>
-	<20250716143959.683df283@kernel.org>
-	<55147f36-822b-4026-a091-33b909d1eea8@actia.se>
+	s=arc-20240116; t=1752881245; c=relaxed/simple;
+	bh=7pa18f3UjzDAJ1eYgUFLIzCYRlxRZIqaHJgl0gEnP9M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o1rqx1esyVV94brru5Jb1y+y5vf4Tg7IMyOU0aUruY5uvWMbrz1A5MweZMBh2J3eTmNM+tO5KGW5zcuuBaxCJdFcyPL9tB5IfkHr47rwC3EoTfBOwTRxoVeKev7JckM+Au28lvrEFVBvTXFEIi9MqZ0bUeHbeW8yMmXBGnyDvXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UaNWn7dn; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752881243; x=1784417243;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=7pa18f3UjzDAJ1eYgUFLIzCYRlxRZIqaHJgl0gEnP9M=;
+  b=UaNWn7dnLKIICOfEW9nnaR1f+TwiM6rByxICHEY4CZgIFrGXtx+TzcWN
+   Q6kWXcTbm/o9kE+NJhn6aXArmDwkQerAxPmRx0qJ9Mpa2jrKnuMeU5Y5N
+   hbKR4w94/4tmvWRhb+vOjS11HA9Vc0tWuTdDoBFyY/3bV2g4BPwfgxa+d
+   uoSl0zyNls8Kj2OBl66b/27S6YhDXQMJO5BlWeW5A1Az9CQKjB+YVTUvm
+   /Xefz4OxUKuC1kaICBbMdPmToysxjWPZEMRqBvyt7ZDyXq399AENx/9nF
+   /ulJIHwSzFzOFrTKlquOgjcz24XMgi9K41qFEIwDbjH2cE/OpKdwR9MqD
+   g==;
+X-CSE-ConnectionGUID: vDAeAotcSAanxN6I8OerVQ==
+X-CSE-MsgGUID: i1X2xw/DSJOHE3Eax3rFbA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11496"; a="54393610"
+X-IronPort-AV: E=Sophos;i="6.16,322,1744095600"; 
+   d="scan'208";a="54393610"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2025 16:27:22 -0700
+X-CSE-ConnectionGUID: 4wHBjNFSS3K3XZGGri9akA==
+X-CSE-MsgGUID: emJLTxEXRtmjvnLA7WgpCA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,322,1744095600"; 
+   d="scan'208";a="195398285"
+Received: from anmitta2-mobl4.gar.corp.intel.com (HELO [10.247.118.127]) ([10.247.118.127])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2025 16:27:16 -0700
+Message-ID: <7d9e6df5-5921-422e-9ef8-4cef3f89b555@intel.com>
+Date: Fri, 18 Jul 2025 16:27:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] cxl/region: Fix an ERR_PTR() vs NULL bug
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Dan Williams <dan.j.williams@intel.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+ Robert Richter <rrichter@amd.com>, Li Ming <ming.li@zohomail.com>,
+ Peter Zijlstra <peterz@infradead.org>, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <7def7da0-326a-410d-8c92-718c8963c0a2@sabinyo.mountain>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <7def7da0-326a-410d-8c92-718c8963c0a2@sabinyo.mountain>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Fri, 18 Jul 2025 09:07:26 +0000 John Ernberg wrote:
-> > Thanks for the analysis, I think I may have misread the code.
-> > What I was saying is that we are restoring the carrier while
-> > we are still processing the previous carrier off event in
-> > the workqueue. My thinking was that if we deferred the
-> > netif_carrier_on() to the workqueue this race couldn't happen.
-> > 
-> > usbnet_bh() already checks netif_carrier_ok() - we're kinda duplicating
-> > the carrier state with this RX_PAUSED workaround.
-> > 
-> > I don't feel strongly about this, but deferring the carrier_on()
-> > the the workqueue would be a cleaner solution IMO.
-> >   
+
+
+On 7/18/25 2:22 PM, Dan Carpenter wrote:
+> The __cxl_decoder_detach() function is expected to return NULL on error
+> but this error path accidentally returns an error pointer.  It could
+> potentially lead to an error pointer dereference in the caller.  Change
+> it to return NULL.
 > 
-> I've been thinking about this idea, but I'm concerned for the opposite 
-> direction. I cannot think of a way to fully guarantee that the carrier 
-> isn't turned on again incorrectly if an off gets queued.
+> Fixes: b3a88225519c ("cxl/region: Consolidate cxl_decoder_kill_region() and cxl_region_detach()")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Thanks Dan!
+
+Applied to cxl/next
+49d6e658e758e42aaff8ae5ecdd2d06b29abf53e
+
+> ---
+>  drivers/cxl/core/region.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> The most I came up with was adding an extra flag bit to set carrier on, 
-> and then test_and_clear_bit() it in the __handle_link_change() function.
-> And also clear_bit() in the usbnet_link_change() function if an off 
-> arrives. I cannot convince myself that there isn't a way for that to go 
-> sideways. But perhaps that would be robust enough?
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index f0765a0af845..71cc42d05248 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+> @@ -2108,7 +2108,7 @@ __cxl_decoder_detach(struct cxl_region *cxlr,
+>  		if (pos >= p->interleave_ways) {
+>  			dev_dbg(&cxlr->dev, "position %d out of range %d\n",
+>  				pos, p->interleave_ways);
+> -			return ERR_PTR(-ENXIO);
+> +			return NULL;
+>  		}
+>  
+>  		if (!p->targets[pos])
 
-I think it should be robust enough.. Unless my grep skills are failing
-me - no drivers which call usbnet_link_change() twiddle the link state
-directly.
-
-Give it a go, if you think your initial patch is cleaner -- it's fine.
-
-> I've also considered the possibility of just not re-submitting the INTR 
-> poll URB until the last one was fully processed when handling a link 
-> change. But that might cause havoc with ASIX and Sierra devices as they 
-> are calling usbnet_link_change() in other ways than through the 
-> .status-callback. I don't have any of these devices so I cannot test 
-> them for regressions. So this path feels quite dangerous.
-> With a sub-driver property to enable this behavior it might work out?
-
-Yeah, that seems more involved.
 
