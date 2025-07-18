@@ -1,181 +1,177 @@
-Return-Path: <linux-kernel+bounces-737158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22709B0A896
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 18:37:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45A72B0A8E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 18:49:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D0A55A521B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 16:37:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F3FCAA0A3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 16:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F5E72E6D15;
-	Fri, 18 Jul 2025 16:37:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89022E5B1A;
+	Fri, 18 Jul 2025 16:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jh5w+yIQ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="hCq2gHor"
+Received: from relay12.grserver.gr (relay12.grserver.gr [88.99.38.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3072E6D08
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 16:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084D826ADD;
+	Fri, 18 Jul 2025 16:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.99.38.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752856658; cv=none; b=ncpbueg9oOuMmWCzqvGHulI7Opewv6KOGf0WZGEzxgfvGB6uszxrUBVwFrUQTgWQWPrpyf6c7fpjT3okcJ/yQX5hW7QyOgrTkJed05gN/ryYwAU2CEE2ipG2VVXbQABl7Oq5P5DtCv/sJMjZVerV6iZSdYijAPjUKKCAfNT1UOw=
+	t=1752857194; cv=none; b=kac2KAUMgp7MNdyfJUDOGZqL5v+4A/9S+nqDabiWCE+yuQdSgPht1SGhvyC5B9CW/y0tbh2CxjGddbgG0JDa8aY4T0ToTvm8jhO7WsK6ataYNyxdJkHQAUuzgwcrR1+/Red+oCDhERCTAYC7ymWyPzgO0alN3uffqfyckaPpuf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752856658; c=relaxed/simple;
-	bh=twxh0YDbsy5bG2ICpRMFh+TxK2HYQr21LmR3HLWkcg8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T+61hNK0OKqHjVFxzNM5eT7gi97cTiiSKE1alzpWgzoIwhJ8JJRb3SAyXgN5iblwGuwQvQvZsOroC4P/dwXRf8KepcnCJR52FnKYgmirdLi/8ItxA7wxL+jNideQomHXalQS4FGWyzt+f1gelhPKcCIvVMk28lWGsz0jSwKRHCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jh5w+yIQ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56IEHH4k022256
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 16:37:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6ZegwlQ32iOxl1i+QMZet/CdzL3ki4WTCIaMhmI6DoA=; b=jh5w+yIQ/PZJavnM
-	t8UNy6oanuFBNUU67lLQmR94C2gMSxvSRl8qjlSntcQePRVL8Hl2Aul5vY4n2Lhr
-	34gr6hK7wj6sDUGOMm/6IlvczcwH/D5fqq+1ozSDyLXYJjqLIR17UmI6lMucjB8t
-	SZi8A0yWW/oZVDhXmEvIqAmmAQoFjrQoqnyc0lghq1DSm9iOZhO2NIsN5M2iWp8A
-	3MN6zqA1rRGqrWnxvhWFpx/1MnXYfzAc33p9Bn8Jc5rpvVscDsC3jYELWwVcKnE0
-	2o1h7ZGy6NoqlT5UYwx2079BxL3pY3bdk0EbOVG3NJQY+xYw9Nf9vKsHkVfK8PDj
-	AEsX0w==
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47wqsyc9p1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 16:37:34 +0000 (GMT)
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-31215090074so3500302a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 09:37:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752856654; x=1753461454;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6ZegwlQ32iOxl1i+QMZet/CdzL3ki4WTCIaMhmI6DoA=;
-        b=cNbRsoO2KhIjglMd8F64wUIM8Pi7kODk/3TVuUBqhQATlBBqK8OJwdgsyYRRkEHqYI
-         qlaN2FsDZl8XM4erja9J5JDhvScCyGa3uqRjkWV1y9jePjZD/tVoWvBEnE5kt21Fvm+x
-         kwAmRq57c/GkEIomtLSacLWJ8uB9nVpnabPbN1zvc933zV6KTcDFDEtuYyGgdvPYaC5U
-         /lCrWGfoYL//m7+zN3yWeY2U0WI94Po4065fC3YTjrrYgzGpiHoU9NZVHqTZAvNk6S0C
-         Ul6fZ68I3mZncR2mY4I1aBnoMv1/8uuBBpS3xw/aFi+uTLGp0N5PKD3EXv06/1dyFodi
-         hOjw==
-X-Forwarded-Encrypted: i=1; AJvYcCUHeKP48IsrA2zVFY5PUQQ9pc645iK/YobpIDWV5pABdFIvqB8REpiBUQZv6kNlad5TCAPxQuChJffvDyU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoE8rdly2GJaM6VuYz77uB5t1YIZ9idOlVbLGeX/53wtqJUg5v
-	Xzt+iYkW7nJJ1SslG1s5iCKReWf6/CP2oJONvahqLSph3TeeMN15e8cT/57yQ0Cupm4Y9qiY1zl
-	/NHnoTPK8GrPquo/MVvoTqwEs6q/D3lU0UeYej7JmMAameuM/igS7F+VTqfDSoVZ/rNc=
-X-Gm-Gg: ASbGncuDYIvvABIYY5l7V5B5SKejZgSVKDdC29WjzX18GUKRDXpgJ4GUA4xtu3abRQx
-	zrRvJZI75Rqeo6py1AKi5yBtGi/ywBTMKi7iAmVjMtI5YmUgCdAE8HPcqJjL0TZVfUs9tt/wYKh
-	XQ+QM3t9YFr0j41rWz7YKVBIlx1+JSJFlM/p0X6zvJO2NHL0QXCZo8g4MgnpDxvEMxLq74qu7hT
-	JMLstVXoYSX/CK5DTkbS1W0B5Xu2TPcWYTwYg3m8PY9lbWoFzT2FPBqEBatLnWuXAnFo4wLLGmx
-	f1JXsuGDmDNZ/NIKXG0GReK/OVJLfuYzxU14OT+trd2u/8KKEsgbLyzxgZSXJxxxSWfBgzbjYgP
-	Q5fdFRGWhoK2VnKfM1U9+Cg==
-X-Received: by 2002:a17:90b:2d81:b0:313:bf67:b354 with SMTP id 98e67ed59e1d1-31c9f2a0103mr18430773a91.0.1752856653714;
-        Fri, 18 Jul 2025 09:37:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHJSpYJWt9gcJBSv5M7yM4Tjn3hnjTMDiyr0xa8abdyvUZWBHlraaApCwJghcG7Ye9/EcQihg==
-X-Received: by 2002:a17:90b:2d81:b0:313:bf67:b354 with SMTP id 98e67ed59e1d1-31c9f2a0103mr18430722a91.0.1752856653333;
-        Fri, 18 Jul 2025 09:37:33 -0700 (PDT)
-Received: from [10.134.71.99] (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31cb5c5da0csm3170530a91.25.2025.07.18.09.37.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Jul 2025 09:37:32 -0700 (PDT)
-Message-ID: <0261da76-a1fa-42ff-9941-4ce235a449d0@oss.qualcomm.com>
-Date: Fri, 18 Jul 2025 09:37:29 -0700
+	s=arc-20240116; t=1752857194; c=relaxed/simple;
+	bh=Y9/HzNLHHfWUMA2navFffKgWJsVgRHpXB4KSXUWZNro=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EvYOj7GU2NUUVqVSTMOdyeb9Ojg7D81+RkbfWMX/syBjzX11Y14vHNmSBMnXoqL4lYU7yAlB4MczrcfnA31rixmhiWNYSAe1aoJ6GNGHtfpeAn4x/LRGMJRB20ze/X7tIRS1nnpHhrP0fKrb8JpaWqjJjN0AiMfdqZ4+BdrViCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=hCq2gHor; arc=none smtp.client-ip=88.99.38.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from relay12 (localhost [127.0.0.1])
+	by relay12.grserver.gr (Proxmox) with ESMTP id 98F9ABE42E;
+	Fri, 18 Jul 2025 19:38:22 +0300 (EEST)
+Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by relay12.grserver.gr (Proxmox) with ESMTPS id 35830BE408;
+	Fri, 18 Jul 2025 19:38:22 +0300 (EEST)
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id 5D13E1FDAD2;
+	Fri, 18 Jul 2025 19:38:21 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1752856701;
+	bh=T/KHd8xSTyD2a62npLK0GCGhjwX/ZOXYPvlAwzv4DnI=;
+	h=Received:From:Subject:To;
+	b=hCq2gHorp3QxPG8wzB7MCr6R7F0+9EjtImF1nVTQXMrdTXFdL7/bbi6wt7bmNCFDy
+	 iabIXZCU4XkPIwKiTbuG8hdwz4pCK+LGXXsr3i2/Ls7qHAGN7IXUbjYLs2t4akGPS/
+	 y3hrQJmSzrKwHInaVUra0294+hqYC1UbHuIerkdLP1CCZBn/1cwfjJTV5HZ9ON4sRD
+	 YPYuHB5H0vEmAE3sjoc0V08Ppo6axjk5OBSLZcwF/NIMCCphQpf/xZoifxA53fwtRJ
+	 g/9hG+JSlIubFlmtc/u0O176D3nXeoz+Y1JjFfu9gBZG/BPv3unggq2XVrpSNDmHVq
+	 t5Nd+nZ8OxJNg==
+Authentication-Results: linux3247.grserver.gr;
+        spf=pass (sender IP is 209.85.208.177) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f177.google.com
+Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f177.google.com with SMTP id
+ 38308e7fff4ca-32b595891d2so17893381fa.2;
+        Fri, 18 Jul 2025 09:38:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCW3079P2V2AwKBo3MOg0WYRdCnB/UYR1dxqV79dSHbRvsfEgYU2sD4msgaRhm7/+IC90AIIgomi1vI=@vger.kernel.org,
+ AJvYcCWqJMPaETLOd09cFp8b+4YJdrTNajiSEzs4BywsrBTo73+/GwXAMAEJPVRRXke0bNKmGiuENKzCy0FS3z0=@vger.kernel.org,
+ AJvYcCXfeae9z3Ts3JXqlMtMCVr/dO9LnvzbEOA/ZNWvs+iR+Ltq5nyqvsZy+q5UFohvhxibRclU6+1S7XYIG4+v@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy82tVz2UyZN3w2aUdxvUDY0kKBLvLhWmjMsfVL5Itnd0V+D0Hg
+	QCmAfBIM0Kgf//EwzOBDuCHZ0fuveT2Xr7BxAP9N7UhFGm2xfvxE5NZiG/t8Qo68ma6L7DLW4T7
+	lLSZpMXABsC4WLAf+S1me278vxdd3dYo=
+X-Google-Smtp-Source: 
+ AGHT+IH2EOYwVpYNC/dzFgzHOVWnAxLuBk2IBVmgSEVg2YWME1umiaot9LuowLPm+vix6mRC2tvBW2r1o/qDyjmuZqg=
+X-Received: by 2002:a05:651c:419c:b0:32b:755e:6cd4 with SMTP id
+ 38308e7fff4ca-330a7c5726fmr8906081fa.38.1752856700745; Fri, 18 Jul 2025
+ 09:38:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/5] arm64: dts: qcom: Add MST pixel streams for
- displayport
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <lumag@kernel.org>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>,
-        Abel Vesa <abel.vesa@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Mahadevan <quic_mahap@quicinc.com>,
-        Krishna Manikandan <quic_mkrishn@quicinc.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Danila Tikhonov
- <danila@jiaxyga.com>,
-        cros-qcom-dts-watchers@chromium.org
-Cc: Abhinav Kumar <abhinav.kumar@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Yongxing Mou <quic_yongmou@quicinc.com>
-References: <20250717-dp_mst_bindings-v3-0-72ce08285703@oss.qualcomm.com>
- <20250717-dp_mst_bindings-v3-5-72ce08285703@oss.qualcomm.com>
- <17ea4f08-daf0-406c-8760-23a23417ec1f@oss.qualcomm.com>
-Content-Language: en-US
-From: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
-In-Reply-To: <17ea4f08-daf0-406c-8760-23a23417ec1f@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE4MDEzMCBTYWx0ZWRfX1a1dtvykbaAQ
- LUgc/Y8pvVrf25pjwpIP73tLxbrTS1H9hy+ZISyHrODmmPDPkrD0npiOweVLEC89z7k9Ax19+YB
- U5vwYKfORRwIMKWOxWmkRysp3YtohDZKFWDCdp93xRUpgL3001M70hOP64nOTVMFZIW5wf04+0G
- 9cPiikU0rP++mncxUjqietRtPpnoe6DqoAyClXp7p2OpXD0sZSzgEKdLyABTyjyNdyu8U2Mv02x
- SbR6HknotYq1YG6pE1C083bpmjhbLXZi6hOgUZc2JJcSonJBau8QQ/FESnBGXc+cknIXKaGX3id
- amJOuklE+VOC5VysTadcpGbPQxJyaT2W58hu1vgt230JB5NwQ+ruktL1/lR9ZeseYS1j4HyR0nS
- IpFhFfIsxxQvMVqfaIUDdXh3ysclSUHflndr8mMbWqQ/wdLt6euyqABJbxwItiRjEbWyhlVn
-X-Proofpoint-GUID: tOjd5DKlyM-_MSafxNGhI7AUFWKQuK8s
-X-Proofpoint-ORIG-GUID: tOjd5DKlyM-_MSafxNGhI7AUFWKQuK8s
-X-Authority-Analysis: v=2.4 cv=McZsu4/f c=1 sm=1 tr=0 ts=687a784e cx=c_pps
- a=0uOsjrqzRL749jD1oC5vDA==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=Q06rUcgQto-sQqt8d9IA:9
- a=QEXdDO2ut3YA:10 a=mQ_c8vxmzFEMiUWkPHU9:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-18_03,2025-07-17_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 mlxlogscore=687 impostorscore=0 mlxscore=0 phishscore=0
- adultscore=0 lowpriorityscore=0 bulkscore=0 clxscore=1015 suspectscore=0
- spamscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507180130
+References: <20250314-gpd_fan-v6-0-1dc992050e42@gmail.com>
+ <20250314-gpd_fan-v6-1-1dc992050e42@gmail.com>
+ <CAGwozwENLOOS5q1Bs5SEh3FFJAY-=kcVimf5U+tWzy6HaiGd=g@mail.gmail.com>
+ <bb57fe1d-fde9-45f8-9f5c-0836a6e557ff@roeck-us.net>
+In-Reply-To: <bb57fe1d-fde9-45f8-9f5c-0836a6e557ff@roeck-us.net>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Fri, 18 Jul 2025 18:38:09 +0200
+X-Gmail-Original-Message-ID: 
+ <CAGwozwGdZ5tzHg7_TF5d_AWVDmypP987XS-x_GWqrSF81PiG2Q@mail.gmail.com>
+X-Gm-Features: Ac12FXy0Tx-o6uIT1821wM3-KJwlgmKE7INI2kkaYx6M9jkGi9kwYvBZc7x-lOg
+Message-ID: 
+ <CAGwozwGdZ5tzHg7_TF5d_AWVDmypP987XS-x_GWqrSF81PiG2Q@mail.gmail.com>
+Subject: Re: [PATCH v6 1/2] hwmon: add GPD devices sensor driver
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Cryolitia@gmail.com, Jean Delvare <jdelvare@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+ linux-hwmon@vger.kernel.org,
+	linux-doc@vger.kernel.org, Celeste Liu <CoelacanthusHex@gmail.com>,
+	Yao Zi <ziyao@disroot.org>, Derek John Clark <derekjohn.clark@gmail.com>,
+	=?UTF-8?Q?Marcin_Str=C4=85gowski?= <marcin@stragowski.com>,
+	someone5678 <someone5678.dev@gmail.com>,
+ Justin Weiss <justin@justinweiss.com>,
+	command_block <mtf@ik.me>
+Content-Type: text/plain; charset="UTF-8"
+X-PPP-Message-ID: 
+ <175285670187.3291495.16286230662434257056@linux3247.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 1.0.9 at linux3247.grserver.gr
+X-Virus-Status: Clean
 
+On Thu, 17 Jul 2025 at 04:32, Guenter Roeck <linux@roeck-us.net> wrote:
+>
+> On 3/13/25 13:58, Antheas Kapenekakis wrote:
+> > On Thu, 13 Mar 2025 at 21:10, Cryolitia PukNgae via B4 Relay
+> > <devnull+Cryolitia.gmail.com@kernel.org> wrote:
+> >>
+> >> From: Cryolitia PukNgae <Cryolitia@gmail.com>
+> >>
+> >> Sensors driver for GPD Handhelds that expose fan reading and control via
+> >> hwmon sysfs.
+> >>
+> >> Shenzhen GPD Technology Co., Ltd. manufactures a series of handheld
+> >> devices. This driver implements these functions through x86 port-mapped IO.
+> >>
+> >> Signed-off-by: Cryolitia PukNgae <Cryolitia@gmail.com>
+> >> ---
+> >>   MAINTAINERS             |   6 +
+> >>   drivers/hwmon/Kconfig   |  10 +
+> >>   drivers/hwmon/Makefile  |   1 +
+> >>   drivers/hwmon/gpd-fan.c | 681 ++++++++++++++++++++++++++++++++++++++++++++++++
+> >>   4 files changed, 698 insertions(+)
+> >>
+> >> diff --git a/MAINTAINERS b/MAINTAINERS
+> >> index 0fa7c5728f1e64d031f4a47b6fce1db484ce0fc2..777ba74ccb07ccc0840c3cd34e7b4d98d726f964 100644
+> >> --- a/MAINTAINERS
+> >> +++ b/MAINTAINERS
+> >> @@ -9762,6 +9762,12 @@ F:       drivers/phy/samsung/phy-gs101-ufs.c
+> >>   F:     include/dt-bindings/clock/google,gs101.h
+> >>   K:     [gG]oogle.?[tT]ensor
+> >>
+> >> +GPD FAN DRIVER
+> >> +M:     Cryolitia PukNgae <Cryolitia@gmail.com>
+> >> +L:     linux-hwmon@vger.kernel.org
+> >> +S:     Maintained
+> >> +F:     drivers/hwmon/gpd-fan.c
+> >
+> > A problem we had with oxp sensors is that once OneXPlayer expanded
+> > their EC to include e.g., battery capacity limits, it was no longer
+> > appropriate for it to reside in hwmon. I expect GPD to do the same
+> > sometime in the near future. If that is the case, should we
+> > futureproof the driver by moving it to platform-x86 right away?
+> >
+>
+> My problem with platform drivers, especially with x86 platform drivers,
+> including the OneXPlayer driver, is that the developers responsible for
+> those drivers refrain from implementing the client drivers as auxiliary
+> drivers but instead like to bundle everything into a non-subsystem
+> directory. I have always wondered why that is the case. My best guess
+> is that it is to limit and/or avoid subsystem maintainer oversight.
+> Does that work out for you ?
 
+Particularly for simple ECs such as OneXPlayer and GPD boards I think
+keeping all the addresses in the same file makes sense. E.g., I just
+sent a Fixes for the OneXPlayer G1 AMD variant and it was one commit
+instead of 2 or 3. At least for me it was practical, I did not
+consider having a lesser oversight as a benefit when making that
+choice.
 
-On 7/18/2025 2:23 AM, Konrad Dybcio wrote:
-> On 7/18/25 1:28 AM, Jessica Zhang wrote:
->> The following chipsets support 2 total pixel streams:
->>    - sa8775p (on mdss_dp1)
->>    - sc8180x
->>    - sc8280xp (mdss_dp0-2 only)
->>    - sm8150
->>    - sm8350
-> 
-> I think 8250 can do 2 streams too, no?
+But I do understand the concern.
 
-Hi Konrad,
+Antheas
 
-Yes, 8250 supports 2x MST. I will include it in the commit message.
-
-Thanks,
-
-Jessica Zhang
-
-> 
-> sdm845/sm7150 also have the clocks for it FWIW, but that doesn't
-> necessarily mean they're consumed
-> 
-> Konrad
+> Not objecting, I am just curious.
+>
+> Guenter
+>
+>
 
 
