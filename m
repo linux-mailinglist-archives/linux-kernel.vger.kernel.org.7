@@ -1,165 +1,132 @@
-Return-Path: <linux-kernel+bounces-737253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E414B0A9E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 19:59:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B976AB0A9E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 20:00:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63B385A8406
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:59:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5716DAA5AC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B062E7BD9;
-	Fri, 18 Jul 2025 17:58:58 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12FF2E7F22;
+	Fri, 18 Jul 2025 18:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vtx6ekOl"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED6B215F42;
-	Fri, 18 Jul 2025 17:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688582E7F08;
+	Fri, 18 Jul 2025 18:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752861537; cv=none; b=bizN+WPrpHwXzYaouRD5ZHkLsIIyR1+F8gvmDWimb142g7sX2xJ6bYqNabqQe8tHwp7QNOWTC6WxR8Tgx1byVFF+vM2C+ISMAnC5eWuy9fgk606j3//1EZkjuxpAx9nm0C1OLYfpzpFda7FhE7VSUWuJIX6KfYTkLvoh2I5uyvg=
+	t=1752861613; cv=none; b=TBm7gdvAW9XuYSLpLCDVD7qcD76C8kf7SBm+kqbXcVlowUI79mRSARkPzkd5p/CTavDiN1nZXO9dZ4CTH3UOzWvVaM5RKtmXv6fmQAEvlAKHjY7mt+1AMlSxnhC1XmBJEqTdyghXG4QAQsKZaeyhgUXYtOTumFQZG7MwQ/ifoZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752861537; c=relaxed/simple;
-	bh=Zy90RLKwiHKaLLNWHDYAoDxn58xyklq6A+QkZtN0F30=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MkFawN+nxFLfVTS2iPYKewgv51mVuJKkUFtZ9XuXV13K2b2HJRCHVY0Zbirg0OI3gIq9q8aztAoeNE5wy3vll6k59la0B+fHqJR+4VB1S+K4SVN+qxAbvM3HEzXug4/CqtiWrI5SyYD04VSNWD9ZqCEX41HvEiuquREZAY40gm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf13.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay05.hostedemail.com (Postfix) with ESMTP id B118955F5A;
-	Fri, 18 Jul 2025 17:58:48 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf13.hostedemail.com (Postfix) with ESMTPA id 101232000D;
-	Fri, 18 Jul 2025 17:58:46 +0000 (UTC)
-Date: Fri, 18 Jul 2025 13:58:46 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/5] tracing: uprobe-event: Allocate string buffers from
- heap
-Message-ID: <20250718135846.6dd841e7@batman.local.home>
-In-Reply-To: <175283849142.343578.11299469553352925660.stgit@devnote2>
-References: <175283843771.343578.8524137568048302760.stgit@devnote2>
-	<175283849142.343578.11299469553352925660.stgit@devnote2>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752861613; c=relaxed/simple;
+	bh=/xwEHrobFmsCgGgMrYXQUSqVl/v8uLkGaDkEC1/OOeo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tZI2Q7HLXDRixwuePFAJy+xNYDlLRIUYLzCWhXZwCTu/H6SwxBp0WYAyuuqy/3bAVzX94G5CkNBbMFq21Yqw+Ohaq8YUNnhLr0j4nj9CpZCsod75qoX3cSW7E0F3iODCjSJ6+mc/yk41HD+Vn9sa+oFfnnW0wiuWRR381pQ/6Jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vtx6ekOl; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-31308f52248so366457a91.2;
+        Fri, 18 Jul 2025 11:00:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752861610; x=1753466410; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=n5cDl7UpMn5NQofHAaSCQrMbbqbvIVxW1NOwevWmFtY=;
+        b=Vtx6ekOlXk3VzmxucYOlbJOuqXLs/3QCmAzZbtHaYeJRmg7/mvJ/g28aHyz1hQYGga
+         pXt0VybkKDh5roPtfKD514RJyzMkGJ4PxDv/e9OvSGhYhjdp9dqZrWa7+XL/SXjnRIzO
+         8K8Yd748ZInYFt3iwf6iHhlpF4LgQRMAZ22i0EzVFEXHVdkE76ogl3Gn1P0lekoHyT8A
+         wRu3p5ckL2dhP2EyBm6b8g8FxcW1UDQe83pGnDFVKLZ6zhPMq3EaES92aw55hxhkdvr8
+         IYj8NVI7r17ylnX0of/TclN1Hk6qPuqGOda0Ebj4jc8cKYCsA890okdVRII48vnohlsD
+         659g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752861610; x=1753466410;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=n5cDl7UpMn5NQofHAaSCQrMbbqbvIVxW1NOwevWmFtY=;
+        b=sVxnBspaxMMIEGThMia/NulPQGU9Pifm88T9qRTPzLrgq2nPNGe+5IzmecSs/6c6+k
+         pSICYCIzUChUOITWbarsgNo5KgUf9lpBJpT6moXnwsMbWZbwDFkeYEyHbunNNWiIuRrA
+         Jg0yJaIiL3xZmqHbspZve0E4Agt4u2Y69QEE+YqdCHVxnCAy2Ze3+NV4sie6mSAa7sNm
+         jH3CCTsSvQtzJYdWiGa8jG2WbEBalvixh2P20UgAQ0XNmmqMdY0T74mAoyn04IBP0FX9
+         zqUw3K65UmdvGCLXaQJ1haEiD7zjSyqBgY/v2e9qufwXVvxJC3AaO8icV2/MtPeMdaje
+         qRdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVMHW1ouwNfCXCy/R42UrTvawMQKF3OFtLUFkTkHSmFt+XZA32vBiqdkYoX5vXLV5tpeXve4n4V1YFyOo4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywk9Moe39RCSfjWA8JqHZaGZIvh5+DGHLXM7AucyZD8StWMYBLQ
+	wbp//zmmom3SP6RaH0rdOoj2D/JlphmtF6b1YhpP8h82J9EXkpsYIFEeAtuqE63+dhhW5juj6lE
+	UIl12i2MRHxqrCHq2LN0x+J1Pr+b2/uA=
+X-Gm-Gg: ASbGncu8gLS6Aj5a6DUHXIz/1AskbI8GmWqHA28QCrJzic3vkf+cMIklj6zFZ0pGT1V
+	J/G1Y0IlY5FLLuKvcxy8i/vVfiqp6RXG93PPinTNbvFLjsbqDYdOpXnzBCkgvnsx6q+DOo0P+oD
+	YXhxn5+RMa/4XBw9JNDylgImCYQAVwB/Hs2tfIGayDI8XhassTFTiGWUG9Eg/9qBXUMIbR8/yMc
+	XOskI3H
+X-Google-Smtp-Source: AGHT+IE/iSXS0TSQ38cxLFT8YdjwjmWkNWDVWQ9+RczdwIy90TAHOWw+mDsFvXzbGOnKEAGkB5Cqqp9LtcPfLx389Kc=
+X-Received: by 2002:a17:90b:5285:b0:313:2bfc:94c with SMTP id
+ 98e67ed59e1d1-31c9e7afd78mr6651737a91.8.1752861610158; Fri, 18 Jul 2025
+ 11:00:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 101232000D
-X-Stat-Signature: f7ct7khhykke5nespobwssgiha6tr1fq
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+JWvHt2whzU1z8n6w9EjAyRETLKMiUpYg=
-X-HE-Tag: 1752861526-576959
-X-HE-Meta: U2FsdGVkX19ScH/NsbXhWunHJfawwiflmeG5QcwJOnAvoKCOuxrlzeuEkf6nbGQRwEjwvU3bkbnJ1haS2h+tDBkQjP5kln3mOE/AfUVxirgRmF44FxUomBAbQB99xLIzsG3Jw8qeRjXFLOrJyqQ13szpjahBfwGpEAgW7F1g4oxTIIdGHqcbDcCextWhTRV2vEOCm2ueAFBLDWQWh1UYbgIc7dnGCLVGF2zoKDc6JGRe3YuSLmfklpvu6faF41XB49EBC7Wn05GakCR3w/Jl8qukDyvSHpzN2zkPI1xIHtWHTQBDLb+DhR32UhXhEwiGVxK8Cjk1v3kd7ZrUPntcxjPrNx+NmHP+flY+N1vZn0hrlxGMaaPHfvnra+oLVQNh
+References: <20250718142026.2232366-1-i@truongsinh.pro>
+In-Reply-To: <20250718142026.2232366-1-i@truongsinh.pro>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 18 Jul 2025 19:59:57 +0200
+X-Gm-Features: Ac12FXzzo5cde_-LN0WM1hdYPeEwZmA_QiTaWUkRuViXzIZuiZzTey3yZzGz30I
+Message-ID: <CANiq72n8qdymDJnqtvFqoOsFXJqn1EuvRqBkT+A_ibZmmh7SYw@mail.gmail.com>
+Subject: Re: [PATCH] rust: Add #[must_use] to Lock::try_lock,
+ GlobalLock::try_lock, and XArray::try_lock
+To: TruongSinh Tran-Nguyen <i@truongsinh.pro>, Jason Devers <dev.json2@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
+	aliceryhl@google.com, tmgross@umich.edu, dakr@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 18 Jul 2025 20:34:51 +0900
-"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+On Fri, Jul 18, 2025 at 4:20=E2=80=AFPM TruongSinh Tran-Nguyen <i@truongsin=
+h.pro> wrote:
+>
+> This addresses issue #1133 in the rust-for-linux project.
 
-> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> 
-> Allocate temporary string buffers for parsing uprobe-events
-> from heap instead of stack.
-> 
-> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> ---
->  kernel/trace/trace_uprobe.c |   22 +++++++++++++++++-----
->  1 file changed, 17 insertions(+), 5 deletions(-)
-> 
-> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-> index 1fd479718d03..17124769e254 100644
-> --- a/kernel/trace/trace_uprobe.c
-> +++ b/kernel/trace/trace_uprobe.c
-> @@ -7,6 +7,7 @@
->   */
->  #define pr_fmt(fmt)	"trace_uprobe: " fmt
->  
-> +#include <linux/cleanup.h>
->  #include <linux/bpf-cgroup.h>
->  #include <linux/security.h>
->  #include <linux/ctype.h>
-> @@ -19,6 +20,7 @@
->  #include <linux/filter.h>
->  #include <linux/percpu.h>
->  
-> +#include "trace.h"
->  #include "trace_dynevent.h"
->  #include "trace_probe.h"
->  #include "trace_probe_tmpl.h"
-> @@ -538,15 +540,15 @@ static int register_trace_uprobe(struct trace_uprobe *tu)
->  static int __trace_uprobe_create(int argc, const char **argv)
->  {
->  	struct traceprobe_parse_context *ctx __free(traceprobe_parse_context) = NULL;
-> -	struct trace_uprobe *tu;
->  	const char *event = NULL, *group = UPROBE_EVENT_SYSTEM;
->  	char *arg, *filename, *rctr, *rctr_end, *tmp;
-> -	char buf[MAX_EVENT_NAME_LEN];
-> -	char gbuf[MAX_EVENT_NAME_LEN];
-> -	enum probe_print_type ptype;
-> -	struct path path;
->  	unsigned long offset, ref_ctr_offset;
-> +	char *gbuf __free(kfree) = NULL;
-> +	char *buf __free(kfree) = NULL;
-> +	enum probe_print_type ptype;
-> +	struct trace_uprobe *tu;
->  	bool is_return = false;
-> +	struct path path;
->  	int i, ret;
->  
->  	ref_ctr_offset = 0;
-> @@ -654,6 +656,11 @@ static int __trace_uprobe_create(int argc, const char **argv)
->  	/* setup a probe */
->  	trace_probe_log_set_index(0);
->  	if (event) {
-> +		gbuf = kmalloc(MAX_EVENT_NAME_LEN, GFP_KERNEL);
-> +		if (!gbuf) {
-> +			ret = -ENOMEM;
-> +			goto fail_address_parse;
-> +		}
->  		ret = traceprobe_parse_event_name(&event, &group, gbuf,
->  						  event - argv[0]);
->  		if (ret)
-> @@ -674,6 +681,11 @@ static int __trace_uprobe_create(int argc, const char **argv)
->  		if (ptr)
->  			*ptr = '\0';
->  
-> +		buf = kmalloc(MAX_EVENT_NAME_LEN, GFP_KERNEL);
-> +		if (!buf) {
-> +			ret = -ENOMEM;
-> +			goto fail_address_parse;
-> +		}
->  		snprintf(buf, MAX_EVENT_NAME_LEN, "%c_%s_0x%lx", 'p', tail, offset);
->  		event = buf;
->  		kfree(tail);
+We typically use the "Suggested-by:" and "Links:" tags for this,
+please see e.g. how it was done in the patch linked below.
 
-You could easily do the same thing as I mentioned in my reply to patch 4:
+> diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
+> index e82fa5be289c..1c2ddade6d6d 100644
+> --- a/rust/kernel/sync/lock.rs
+> +++ b/rust/kernel/sync/lock.rs
+> @@ -175,6 +175,7 @@ pub fn lock(&self) -> Guard<'_, T, B> {
+>      /// Tries to acquire the lock.
+>      ///
+>      /// Returns a guard that can be used to access the data protected by=
+ the lock if successful.
+> +    #[must_use =3D "the lock unlocks immediately when the guard is unuse=
+d"]
+>      pub fn try_lock(&self) -> Option<Guard<'_, T, B>> {
+>          // SAFETY: The constructor of the type calls `init`, so the exis=
+tence of the object proves
+>          // that `init` was called.
 
-		if (!buf)
-			goto fail_mem;
+This part was done at:
 
-error:
-	free_trace_uprobe(tu);
-out:
-	trace_probe_log_clear();
-	return ret;
+    https://lore.kernel.org/rust-for-linux/20241212154753.139563-1-dev.json=
+2@gmail.com/
 
-fail_mem:
-	ret = -ENOMEM;
-fail_address_parse:
-	trace_probe_log_clear();
-	path_put(&path);
-	kfree(filename);
+which is soon landing in mainline.
 
-	return ret;
-}
+We may want to add the comment on top here like in that patch to the
+other 2, and possibly make the "reason string" after the `=3D` the same
+one too.
 
--- Steve
+Thanks for the patch!
+
+Cheers,
+Miguel
 
