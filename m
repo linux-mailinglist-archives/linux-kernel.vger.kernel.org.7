@@ -1,125 +1,104 @@
-Return-Path: <linux-kernel+bounces-736755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC593B0A16C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:59:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87CB1B0A165
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:59:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F24A168EC3
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:59:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E30C177A79
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:59:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9AC2BD5BD;
-	Fri, 18 Jul 2025 10:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="gl6/Zd5H"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677462BD030;
+	Fri, 18 Jul 2025 10:59:05 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B78249F9;
-	Fri, 18 Jul 2025 10:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 963B9249F9
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 10:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752836391; cv=none; b=uEoaskmKH+G+4K1I/+GiZRms70b8JcMYuqe1aO4SWfERt4GKAYHwQQr+JZ/HS+9KbD9ISGz7Eg49X4uxzxCNYsWEAoRUleZlBjErdG7UF9shAeU51z5Csg7vy8afIGmevWphDGoTuN/v8SMYI1Zv1LWbikA3a8svdw6c++ATPTM=
+	t=1752836345; cv=none; b=PvixaSGqq+5wj2WLHEALmsGmRnM4QvR334BEUMFMIWxz3vwuG3IOf9z+/jBjvmNWgYfUtFG/36hXCciqTZ6uTdqDFHAgq+GhgXMSMA04nlFtG6HEJWjEJoiwiOdJrpwnz4uX3g503RXO8/k44X+r2fGP6XH9+FKvt4HQVTODjSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752836391; c=relaxed/simple;
-	bh=xuyX/CuEeMl4orPPPsGHRb6ykETpEfAXJsfUTFOeNTs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t8fbZT3IxT+OgiXlzOxX+tZIKpjg9kZMYTHNKKJs9xAh4xpztwFiPe8ZY4vHdOb3+9MPPlTzzu5EkyTPNzpwUmk/EWfeKBFz+7N/WyP2W3+lZ1YICYb/TctASiNSzKFDxMpKJtWEom4GxvcdT5YrHdAI7udiLK/kKGDY/2N1YiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=gl6/Zd5H; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=ZAzXiiY/YIuQ/9uY0l8462fgPlzoh4f7KxWN0ebvqKE=; b=gl6/Zd5HCQjexfoJQ5QZ7wWbAN
-	hbTSGnGqU1GFUKmrbFD5jj5vmYPGtEhp2sd/JvCtZM6Ey182276LgB1rE6/Y4aUV+YP9bKd8D1GaR
-	zFO93R0YQ/tC9nTkcRMnuZTdZ9Df6EvDXbhwS0lu+KiAp/tqI1sLtvSsK9OUIfEHv9h1Zgc9fUTSy
-	FhsdvvJ9w0SYBxvit/U5QBdoDkz+FyLZGvo+Wpy+Ut0aSr8T8A7G2SLLgJJQxnRDa/M20K8u0rMGO
-	zTuIwFdckQDDn1z7Fu0M5YEidFHCWP3HUT1OuutOK5JjiGBlgmO95iGw2o9kaSi+0Jbt6qJZK+hZB
-	84nBPNsA==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1uciYM-007yZr-27;
-	Fri, 18 Jul 2025 18:58:56 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 18 Jul 2025 20:58:55 +1000
-Date: Fri, 18 Jul 2025 20:58:55 +1000
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Olivia Mackall <olivia@selenic.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Hadar Gat <hadar.gat@arm.com>, Sean Wang <sean.wang@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Avi Fishman <avifishman70@gmail.com>,
-	Tomer Maimon <tmaimon77@gmail.com>,
-	Tali Perry <tali.perry1@gmail.com>,
-	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
-	Benjamin Fair <benjaminfair@google.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Aurelien Jarno <aurelien@aurel32.net>,
-	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Marek Vasut <marex@denx.de>,
-	Gatien Chevallier <gatien.chevallier@foss.st.com>,
-	linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	openbmc@lists.ozlabs.org, linux-rockchip@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH 05/80] hwrng: Remove redundant
- pm_runtime_mark_last_busy() calls
-Message-ID: <aHoo71TbepQD2Nsd@gondor.apana.org.au>
-References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
- <20250704075359.3217036-1-sakari.ailus@linux.intel.com>
+	s=arc-20240116; t=1752836345; c=relaxed/simple;
+	bh=8GNVxd4El3vltPK1OzAaGFMk/YkynjhYBs/lKmanauE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=BGetyv21b9OFMzGCmrOz/VmxEDDUl2QIBD8cHIx40bgqLt4TVTIiluu9lE0NebbxyvscxybtX/tGg2cSDz4PLdOkDSMRLd1ThS8pVNwruZz2JXmVl6k8qKBXJD+sCx0TezTvpc1GyxNmJOhT/q1NW6VRnnnSVukwOFkuITn3ljA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-869e9667f58so382596939f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 03:59:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752836342; x=1753441142;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8Hle3V98MR0nEl01QFI9n0l/uijLXyWAeDaxEk7ayo0=;
+        b=HTjh53Y/k5yNYEiw6yOduhNsW3tArUopOUGWcF6r1rEwyhC2s86Cd5x1/97Ij4vyZY
+         ClVQWCZo4iIaiPXSWkdZ6A4brVwirWVUEgUSm0jLCtQWq0yZEvoYuoOrSqbxD26xupgp
+         JeVM7EzaxtgONGZPbaxyQslcIETGQEgP0nwt6rEqjwsAbGOdM5iLgrZnMlIe63zeXvdS
+         jea+drrikl5DKk78kUC6lQeCc9odrzw/x/BCa2r7Vyk0g8O8GUzW0lcFs/IIqjDZhUpE
+         jjILfoXR9Fv5GfK0EPJjn4UplECJOnXilgH9f3JccWoTAUcd/N/ygHDuN8vrGZKXpRYh
+         gsQA==
+X-Gm-Message-State: AOJu0YyDyf0Hc258lVPuL4tg1U6gCexxKzLDvW91eAqqFpj2q9ZUDH/Y
+	XkxHaGWPiku+gxCNZa6pfdVdbGEKZQTIicIIN/kOD050UXFpj+9AMXzC3Kvxa5p+JuW+0gaV+aB
+	l3QtrwhFZ2hJxNly2dRUYDG5JyJ89S8zC5yNwIBYIBKox3FPJwnQLg3i6Hoc=
+X-Google-Smtp-Source: AGHT+IENzoR0JBuoZqkQ/XOnSMf8+yyzalRzem902hfta7V+MCetpgFGO2MsFocqu4+HnWpRjOZ4ypo/wvbZT39l2vn4cQTpYTe5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250704075359.3217036-1-sakari.ailus@linux.intel.com>
+X-Received: by 2002:a05:6602:6d0f:b0:879:c790:3ea2 with SMTP id
+ ca18e2360f4ac-879c7904115mr1219166439f.4.1752836342720; Fri, 18 Jul 2025
+ 03:59:02 -0700 (PDT)
+Date: Fri, 18 Jul 2025 03:59:02 -0700
+In-Reply-To: <685ada22.a00a0220.2e5631.0089.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <687a28f6.a70a0220.693ce.0060.GAE@google.com>
+Subject: Forwarded: Re: [syzbot] [fs?] WARNING in minix_rename
+From: syzbot <syzbot+a65e824272c5f741247d@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Jul 04, 2025 at 10:53:59AM +0300, Sakari Ailus wrote:
-> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
-> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
-> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
-> pm_runtime_mark_last_busy().
-> 
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> ---
-> The cover letter of the set can be found here
-> <URL:https://lore.kernel.org/linux-pm/20250704075225.3212486-1-sakari.ailus@linux.intel.com>.
-> 
-> In brief, this patch depends on PM runtime patches adding marking the last
-> busy timestamp in autosuspend related functions. The patches are here, on
-> rc2:
-> 
->         git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
->                 pm-runtime-6.17-rc1
-> 
->  drivers/char/hw_random/atmel-rng.c     | 1 -
->  drivers/char/hw_random/cctrng.c        | 1 -
->  drivers/char/hw_random/mtk-rng.c       | 1 -
->  drivers/char/hw_random/npcm-rng.c      | 1 -
->  drivers/char/hw_random/omap3-rom-rng.c | 1 -
->  drivers/char/hw_random/rockchip-rng.c  | 3 ---
->  drivers/char/hw_random/stm32-rng.c     | 1 -
->  7 files changed, 9 deletions(-)
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Patch applied.  Thanks.
+***
+
+Subject: Re: [syzbot] [fs?] WARNING in minix_rename
+Author: richard120310@gmail.com
+
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 78f4e737a53e
+
+Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
+---
+ fs/minix/namei.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/fs/minix/namei.c b/fs/minix/namei.c
+index 8938536d8d3c..4dfbbfd905d8 100644
+--- a/fs/minix/namei.c
++++ b/fs/minix/namei.c
+@@ -217,8 +217,13 @@ static int minix_rename(struct mnt_idmap *idmap,
+ 		if (err)
+ 			goto out_dir;
+ 		inode_set_ctime_current(new_inode);
+-		if (dir_de)
++		if (dir_de) {
+ 			drop_nlink(new_inode);
++			if (new_inode->i_nlink == 0) {
++				err = -ESTALE;
++				goto out_dir;
++			}
++		}
+ 		inode_dec_link_count(new_inode);
+ 	} else {
+ 		err = minix_add_link(new_dentry, old_inode);
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.43.0
+
 
