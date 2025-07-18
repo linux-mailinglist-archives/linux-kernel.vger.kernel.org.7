@@ -1,122 +1,163 @@
-Return-Path: <linux-kernel+bounces-736593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 219E0B09F0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:18:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 579D0B09F01
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:17:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1777F7AA0CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:17:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DB3F3BEFC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:16:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D28429616A;
-	Fri, 18 Jul 2025 09:18:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29D0C2980D3;
+	Fri, 18 Jul 2025 09:17:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="upUCLIdr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="co4gKkvF"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A111E5B78;
-	Fri, 18 Jul 2025 09:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91C8207DF7;
+	Fri, 18 Jul 2025 09:17:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752830296; cv=none; b=ueIBKhxETet13/O0JaXx4rHoN6bhxSBHQeuE1fVw2qkgikiwlL7Zp3UQHUdjnHzgSaGDaXmWDBQ+N9p9EAEnDKE4/ikJS/sekO3Iybw2GnNJjnch8DEE5fvCCuId1nbxhv8mIja29JFJ4s1q+NkBDHLxjrLEeG2IZ72W+3AdZ3Y=
+	t=1752830236; cv=none; b=H6EG8QJ7ufWd2oGwCmvx/l75LbTFJi5mqecrxGPIud6ooLnMedb+atQRTo2SP2WYXXpSF9/WBdZYMNWM0vdGtb1HCYTPzPZvm7yvvVshqR8/JKfUfXaJWQP9cybr+x9rkvIP43ihl5CmhMywCvz1syV7NiPooAj4NCCYxFMFImk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752830296; c=relaxed/simple;
-	bh=iN0MjV8lG6vlPY6QKWEDWqXP3y58juMGr+peNv9I/+Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AYWM+8wuerHdH4uclnn1P1V5B4lZzQfsfVzWPL2PAAUp0bevycDJ0BfbUxPdhLOH2vsQY9xeX3tR5m4Fu9z+H+Lv+GF9K3uWkRaULer50Q9VxA97mpxISj78zZsqA1VxBaZJlx+hY5d9f9Z/2Lgbw+1REBz49VboqjwgiFtneMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=upUCLIdr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 191D5C4CEF0;
-	Fri, 18 Jul 2025 09:18:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752830296;
-	bh=iN0MjV8lG6vlPY6QKWEDWqXP3y58juMGr+peNv9I/+Y=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=upUCLIdrbbvEbKjUsZgTdUEGyRbXXPVKgUMJXI8oVEu7IuCo+NlAr8pZ3hP/3OpCS
-	 z+m8WoLkMvYdx42mseDFgent82TIUAOPaXDuO0MHrSBPWaortApspXcggf+7lhNmY8
-	 tOaGg0j7eaXiZqMy8OhhL3BAvuI4qqptGCOW5qdmQyljlx4c3DuNukqLAdC4airAsq
-	 nJKi0Be3SrrR2xHh9RGmjhMqPl6sRDW75QEF/7Lu21+PwIinNh5ZPzzmyUHWJMe6cp
-	 dzghcLYsnfaa3tVtbk0VeArOxbSMW6EX7TzfWbBD0ifZlVbF7q2+xGG6ugEJd7zFXx
-	 5DD1NmgbOVSgg==
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-60c4521ae2cso3330368a12.0;
-        Fri, 18 Jul 2025 02:18:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV0AKoUIuonJeWHXWR2Cf7jQZCRjErGiIBNVCjuW0tpqJD3VWWQANTownXAYV244/9x+GvGSnXz7RM=@vger.kernel.org, AJvYcCV1TzUiHaDkQFdVridp0GhxD2QtBGx6xg0Lr3SAHadBj8NveE8r0J+4KYw8N9NpbhNp0K9s8iPNyi/xFTtJ@vger.kernel.org, AJvYcCV2RECSTJAxpYbYkY1rF1Lmt4kB3iosuDgXE19K1ASc8SE6fNRcv92tm/AHUzPKsA8+5FB65qL3NxnsoeKoZUx8@vger.kernel.org, AJvYcCV2fhkW998v5WZH4nLwEFwnzJO9W7r645GdDIgGB3cHzpXmDvZBGe03Upj0r4vlUbk44Oh0fDx97PlMAQ==@vger.kernel.org, AJvYcCVHdEZ8u7svwgKUodrkLtM/yJIIvU6xWOJc2TZJBZxyOX9PxZcyAJ0FmM5nCiAGOa7F1nRqPsmDjedv@vger.kernel.org, AJvYcCW4IDaSJazeWSwFFgACWN7b69epSroBWv2UjtCV4FoSmmVDdLNrz0ZML2pgVp0fPyOFulXTEhsYGbk7yA==@vger.kernel.org, AJvYcCX54pACOS+AT+fpvWNPmgl03ntroAgVDVSeFEZLJCxJoA7bevDnRDhIiCiI4qh+bhZoOHbq223hNnGkOq8KPjz3@vger.kernel.org, AJvYcCXI1xdPeZEbwcZTymERqI5WYVZVnRug5O0uQP3+54Ly+XPRoFapANuj6cb7nMIR75kkF9JyOiLz3rlpclN5@vger.kernel.org, AJvYcCXWHCcRsafKEhSZun1fPA+F8bDs0z7gysLDMQj5i4bfYF4K6fFmjSEG068g/vYSBMUDDLQC77HKfITkIj956HRV8Rob5ZLW@vger.kernel.org, AJvY
- cCXqNg6XyAk9/D4vsEBX1q7rzepaXITLUvpATBsxMYuqEQPgjantjzmPcNjOZr6xYNATsfGYAM5TpRD2rQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKJwdOXXj+QpoI1AL07zJBq6cn8RioZhFakuWRHcCYSS299SHg
-	B6dE6nWhyVZBwFGCBr4SkKevZyzO9uT19Cf5S5TC1wdpfbrwO03biextpt0qsRIGo2Dz+QevQ2k
-	y2LtfM2znofuQa60xHNXrOK5iQYEJz44=
-X-Google-Smtp-Source: AGHT+IH+CR6kK9khsoUi4kQxVa0vWTn3qqM4Z4G6WAw+0g0YyuRvDHP3ooIXGfMWBaXJUiPtMEtFUptkHeWtXN/zID4=
-X-Received: by 2002:a05:6402:26d5:b0:60c:6a48:8047 with SMTP id
- 4fb4d7f45d1cf-612d456bb15mr803449a12.11.1752830294637; Fri, 18 Jul 2025
- 02:18:14 -0700 (PDT)
+	s=arc-20240116; t=1752830236; c=relaxed/simple;
+	bh=Fw3ZT2waXkd52WH6dSOHrXUL1IonLYSsmY5LPvFE23I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=srpsS2mSSVkSeVweHjz6NjoZfJ/z7CcivcnABEm1WNpXFCQ1wrmODm6wwAr8EHuHa7zUnLKWHmS+A8LVV0qDaEa54tJE1aZFtXeN20hSBbzFc8WvAhBpSV24nD/BeYpgG/MFQ10JUg/w9Q2OGNaH1N55cIFoh/uTlAPWzEbOW9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=co4gKkvF; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-605b9488c28so3057092a12.2;
+        Fri, 18 Jul 2025 02:17:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752830233; x=1753435033; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DQt5WkoSDJsxA1BJMl3UO35qCdstjQjYzU9xXXTDo18=;
+        b=co4gKkvF6inHK98b6s4f5uK6YO3m/VlU3WN+2+qQaudKb2ZIxxPN0sbC/QV53HAj6l
+         gMcKptL1JI7ssi3rlPBVp6M8deZJ8CmtZfzVjyb6i85X5aIy+LBc5DIlhC4S34KXS7cL
+         54Xe903ECJBJZx9oRs/egbRTKWpLWzCMAY5MWJu/gb2tGjwkbQ4Rh+XcQoIQtp8Hiq2J
+         1uu0v8S6tY3hSysBAI9wv97vcvjQhbuXRivqMunzLaK/PkSn0sbQvLeKEYfziEar7n+w
+         /c1kyV7MxHBRyHAzFw4LQ3se4Dyu+r5rMSDZ1cqK4BdtK4YDdSmz8esT4dXMf/1NUR9t
+         o2ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752830233; x=1753435033;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DQt5WkoSDJsxA1BJMl3UO35qCdstjQjYzU9xXXTDo18=;
+        b=HZyWxmL4kOi98ZrBEgQvNAD6hDRuoijr7jg5/96itIpBP+Yg4e2Ni/iEWCvL57svkI
+         v5398MpVnWdTPB1+y8/t2r0QdT2D6YpLLT3/lbEI7RVJQibv3jcxU9eYWoO6GWYzu9Ls
+         Z9Y3duEhfefyfNiWuNMNcXCzScC3E4oeUpekaq2IijwDDD3wy/HijWx+f5pNKcHnm4qt
+         YQPQN9gVOPfiKs0XKHaH39hnZI8Uwm8pwj4yoNwLB5tVegdfLaSU2OvdXtD+LtD9waX9
+         LVPxuluSVBh52RrH0VOkgoqKMGalvVf1nyj3Bpj+U0X1XkhTpAsLj9WXoZegkeBAWPz4
+         zpyA==
+X-Forwarded-Encrypted: i=1; AJvYcCU7UpcD6ibzjDV10GBP9gyf4QI9TNFgjlDBBnyh7q9glcCA/d1zcfQppZsm33yScTmU3+eOtfrHErYDgQ==@vger.kernel.org, AJvYcCWs/QfPI+CJgJp6VzbFdsUo3lL/961vDNTgfi0NxriDqKLK7OZf+I+FpA7nIdBwPNMwO7QlnvfR@vger.kernel.org, AJvYcCWzC63zWMekgjcF9nQPYkrxbcHOaQM8C5zrV/Xt1FTDJdReeHC7dVAFImdlqtjMgj5uEoH+jtoPJOFkEbQw@vger.kernel.org, AJvYcCXo0Y0u1sqz6ekt7kPnaqyJ/krtMaIFLEEery1NAPNAJMsWF9hiRW9Lol0eFOk6raoE9rw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBzZzDBc/YY6FKzVawFvMXwygXevirdoxgLb2JNddaWFv7Sbmd
+	QSP/DRb8sQswCw1hNt0xXgiXenmZUJT3Q4p3V7MMZRvH+ATDPmHrnfJt
+X-Gm-Gg: ASbGnctGe01sEjlSPl6OW8FESmC6MNEjCeT/gYIGr+WXDOnonvQ9sdqFqt7nfXIxvOB
+	/MAV8wl8h5zvSgixZJHFf3JDWBOKnZNSHKHa4lGW+C/CH2FZrQB3rzW2mlnvZ6/ZyjGk2MWqb7r
+	hv8fNh4liMvrMIivpB/2V+n5EIbOnhPmIRfM4kMlxuIikRflvGLU0eCWsv9lLU9KEUyhR1NC5nH
+	qXcz6mCRXyX70mPF4/7jojBdq6QYxckSg2YxWnQNlhkbNHe3domBwH/hg9d8zjnlyL4LYzNk0/z
+	QQHVxqxexfak6lWRUOCAblkK3L9KTN3w9GE0/+zLMynCIgf4CbCWQ1ls50S1hLIPIkI26egXWRA
+	muLwnmKVBsE9B3fM/FDcww0b/m+UD8CTkZ1Y=
+X-Google-Smtp-Source: AGHT+IHJ6Qkjj0/27EzE9VVfOI7xbm7fY60xnb0OKnLRmHC6l4c5UZ1MzUN+MM+C38ZmrD/ZAYQsDw==
+X-Received: by 2002:a17:907:7f24:b0:adb:229f:6b71 with SMTP id a640c23a62f3a-ae9cddb1d86mr1032671266b.5.1752830232698;
+        Fri, 18 Jul 2025 02:17:12 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325::1ac? ([2620:10d:c092:600::1:6915])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6cadd8c7sm84561966b.155.2025.07.18.02.17.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Jul 2025 02:17:11 -0700 (PDT)
+Message-ID: <35592824-6749-4fa4-89d9-2de9caccc695@gmail.com>
+Date: Fri, 18 Jul 2025 10:18:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250717231756.make.423-kees@kernel.org> <20250717232519.2984886-9-kees@kernel.org>
-In-Reply-To: <20250717232519.2984886-9-kees@kernel.org>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Fri, 18 Jul 2025 17:18:03 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4RyZQTak5AgYj6TaXHyEefgw+wmXs9Gi8jUJWrUV5HQw@mail.gmail.com>
-X-Gm-Features: Ac12FXyrA9A9-rpLV3MB79YH2kXhj6f2Fk9F6HAlk-0emUPTHthuyPP3lR9zQXg
-Message-ID: <CAAhV-H4RyZQTak5AgYj6TaXHyEefgw+wmXs9Gi8jUJWrUV5HQw@mail.gmail.com>
-Subject: Re: [PATCH v3 09/13] mips: Handle KCOV __init vs inline mismatch
-To: Kees Cook <kees@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, linux-mips@vger.kernel.org, 
-	Ingo Molnar <mingo@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, Christoph Hellwig <hch@lst.de>, 
-	Andrey Konovalov <andreyknvl@gmail.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
-	Ard Biesheuvel <ardb@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	kasan-dev@googlegroups.com, linux-doc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
-	linux-efi@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, sparclinux@vger.kernel.org, 
-	llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Intel-wired-lan] [PATCH net-next v11 12/12] libeth: xdp: access
+ ->pp through netmem_desc instead of page
+To: Byungchul Park <byungchul@sk.com>, kernel test robot <lkp@intel.com>
+Cc: willy@infradead.org, netdev@vger.kernel.org,
+ oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, kernel_team@skhynix.com, almasrymina@google.com,
+ ilias.apalodimas@linaro.org, harry.yoo@oracle.com,
+ akpm@linux-foundation.org, andrew+netdev@lunn.ch, toke@redhat.com,
+ david@redhat.com, Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
+ surenb@google.com, mhocko@suse.com, linux-rdma@vger.kernel.org,
+ bpf@vger.kernel.org, vishal.moola@gmail.com, hannes@cmpxchg.org,
+ ziy@nvidia.com, jackmanb@google.com, wei.fang@nxp.com, shenwei.wang@nxp.com,
+ xiaoning.wang@nxp.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org
+References: <20250717070052.6358-13-byungchul@sk.com>
+ <202507180111.jygqJHzk-lkp@intel.com>
+ <20250718004346.GA38833@system.software.com>
+ <20250718011407.GB38833@system.software.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20250718011407.GB38833@system.software.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
+On 7/18/25 02:14, Byungchul Park wrote:
+...>>>
+>>>     In file included from include/linux/container_of.h:5,
+>>>                      from include/linux/list.h:5,
+>>>                      from include/linux/timer.h:5,
+>>>                      from include/linux/netdevice.h:24,
+>>>                      from include/trace/events/xdp.h:8,
+>>>                      from include/linux/bpf_trace.h:5,
+>>>                      from include/net/libeth/xdp.h:7,
+>>>                      from drivers/net/ethernet/intel/libeth/tx.c:6:
+>>>     include/net/libeth/xdp.h: In function 'libeth_xdp_prepare_buff':
+>>>>> include/net/libeth/xdp.h:1295:23: warning: passing argument 1 of 'page_pool_page_is_pp' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+>>>          pp_page_to_nmdesc(page)->pp->p.offset, len, true);
+>>>                            ^~~~
+>>>     include/linux/build_bug.h:30:63: note: in definition of macro 'BUILD_BUG_ON_INVALID'
+>>>      #define BUILD_BUG_ON_INVALID(e) ((void)(sizeof((__force long)(e))))
+>>>                                                                    ^
+>>>     include/net/netmem.h:301:2: note: in expansion of macro 'DEBUG_NET_WARN_ON_ONCE'
+>>>       DEBUG_NET_WARN_ON_ONCE(!page_pool_page_is_pp(p));  \
+>>>       ^~~~~~~~~~~~~~~~~~~~~~
+>>>     include/net/libeth/xdp.h:1295:5: note: in expansion of macro 'pp_page_to_nmdesc'
+>>>          pp_page_to_nmdesc(page)->pp->p.offset, len, true);
+>>>          ^~~~~~~~~~~~~~~~~
+>>>     In file included from arch/arm/include/asm/cacheflush.h:10,
+>>>                      from include/linux/cacheflush.h:5,
+>>>                      from include/linux/highmem.h:8,
+>>>                      from include/linux/bvec.h:10,
+>>>                      from include/linux/skbuff.h:17,
+>>>                      from include/net/net_namespace.h:43,
+>>>                      from include/linux/netdevice.h:38,
+>>>                      from include/trace/events/xdp.h:8,
+>>>                      from include/linux/bpf_trace.h:5,
+>>>                      from include/net/libeth/xdp.h:7,
+>>>                      from drivers/net/ethernet/intel/libeth/tx.c:6:
+>>>     include/linux/mm.h:4176:54: note: expected 'struct page *' but argument is of type 'const struct page *'
+>>>      static inline bool page_pool_page_is_pp(struct page *page)
+>>>                                              ~~~~~~~~~~~~~^~~~
+>>
+>> Oh.  page_pool_page_is_pp() in the mainline code already has this issue
+>> that the helper cannot take const struct page * as argument.
 
-On Fri, Jul 18, 2025 at 7:26=E2=80=AFAM Kees Cook <kees@kernel.org> wrote:
->
-> When KCOV is enabled all functions get instrumented, unless
-> the __no_sanitize_coverage attribute is used. To prepare for
-> __no_sanitize_coverage being applied to __init functions, we
-> have to handle differences in how GCC's inline optimizations get
-> resolved. For mips this requires adding the __init annotation on
-> init_mips_clocksource().
->
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
-> Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-> Cc: <linux-mips@vger.kernel.org>
-> ---
->  arch/mips/include/asm/time.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/mips/include/asm/time.h b/arch/mips/include/asm/time.h
-> index e855a3611d92..5e7193b759f3 100644
-> --- a/arch/mips/include/asm/time.h
-> +++ b/arch/mips/include/asm/time.h
-> @@ -55,7 +55,7 @@ static inline int mips_clockevent_init(void)
->   */
->  extern int init_r4k_clocksource(void);
->
-> -static inline int init_mips_clocksource(void)
-> +static inline __init int init_mips_clocksource(void)
->  {
->  #ifdef CONFIG_CSRC_R4K
->         return init_r4k_clocksource();
-> --
-> 2.34.1
->
->
+Probably not, and probably for wrong reasons. netmem_ref is define
+as an integer, compilers cast away such const unlike const pointers.
+
+>> How should we resolve the issue?  Changing page_pool_page_is_pp() to
+>> macro and using _Generic again looks too much.  Or should we?  Any idea?
+
+page_pool_page_is_pp() doesn't change the page, just make the
+argument const.
+
+bool page_pool_page_is_pp(const struct page *page)
+
+-- 
+Pavel Begunkov
+
 
