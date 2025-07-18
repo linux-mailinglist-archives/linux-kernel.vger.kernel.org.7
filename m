@@ -1,136 +1,241 @@
-Return-Path: <linux-kernel+bounces-737595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9724CB0AE29
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 08:06:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 073D2B0AE5C
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 09:15:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35E3C1AA6935
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 06:06:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37637580793
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 07:15:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC198217722;
-	Sat, 19 Jul 2025 06:05:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 236AD23185D;
+	Sat, 19 Jul 2025 07:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="saABQ3wA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="WIZJS0jS"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345D91C863B;
-	Sat, 19 Jul 2025 06:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC8A22A7E5
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 07:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752905157; cv=none; b=C+/WPqM0G9BoJ5fHh91E49fBhxd0vJJdvUD8WZpqOwY284xmcnze6l0R/3Cy+k1wRabdDhyTYxkXiOlncWizoDUZP5M+DbsP2GAlcs4t14e/0EqjoEbgso+y4MqvyHw6pi4tMOYfKW2H/pJ+dQ1fHs1cSKmPB+sFap1Cvd3KioQ=
+	t=1752909315; cv=none; b=JEyNUQmlxtg0zjGH+xTNHGZFqKam9pHINFYnLqnkhJ067MA+gyOFKnjMzjS5tjd+ek/3mMBvObS16adyASWn892NG70c2JfEvmLEAXTR4in+P5RbuunkoG+XOAIKB41eC/hAfYGI6K9eGjCCYggZDvlWOFzphjoeKLmd15F4o/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752905157; c=relaxed/simple;
-	bh=mskhn0YVYQWGTgn2FiHZ7SCx/HAvVb9tT6yr5OGjQp8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UtPRG6QROEC7Ughoh2lY+oVTOlWIA2oQs73v1mUVm7sj8rFGfpZKPU8m/t9f4cpVIX+/rdFS9lIfn4S69477ALn5CWrSebLO2o9jGi738CnVzji5syML/A7fXndNKvUzJZBjLJGbrvfs717E3DnsWqWKDoQ+6Ce2oxfRVvEA5l0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=saABQ3wA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80DBAC4CEE3;
-	Sat, 19 Jul 2025 06:05:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752905156;
-	bh=mskhn0YVYQWGTgn2FiHZ7SCx/HAvVb9tT6yr5OGjQp8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=saABQ3wA9M/K0Ti3OtcBYfu/h9qKVVU5+HMkeKvtVBTeQWjiRcWiAUUjOv8pXk/F2
-	 O8Yex/gLKmIv2jVOIWVF7HgChipW5YhA/jFCkIP4+AragXpPnNAsqOfd2pBeqcrJIh
-	 5COp8MCKWGmrDOKmiAI4M1bk60mFSLlXj8rB09MHT8n/U6yWaBszEOAFXnWm2X960t
-	 R9lQ6RPbJs/lxwFdFhVaXJSRdObBrirSWsfFFEeoYKGpPIwq28sIYiVdGzsIg3RC/2
-	 HTJuUYZjHrc2jBfzoNvrgzAxMJFAva66zcw/bwL/dZ1f96zUZ9UMFwySIHLzkaWhf3
-	 Fbmmd6ZzYLAfA==
-Date: Sat, 19 Jul 2025 08:05:52 +0200
-From: Carlos Maiolino <cem@kernel.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: or10n-cli <muhammad.ahmed.27@hotmail.com>, linux-xfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] xfs: scrub: remove unnecessary braces and fix
-Message-ID: <xco2agi4ggy4yy73bwfsfqc3qgtzsanrswfrndsb2kqz4yb6vq@6ysq36faziru>
-References: <DB6PR07MB3142A5C5EAF928BA7F71CA47BB53A@DB6PR07MB3142.eurprd07.prod.outlook.com>
- <xOyvmjMbzYJc2swLFMVBnsx0cITFim-_7d2lhCNHmjNHlrr8hmMYN5l-d5udm7XRBhdUq76FU4trpZw2-H3IRQ==@protonmail.internalid>
- <20250719052916.GT2672049@frogsfrogsfrogs>
+	s=arc-20240116; t=1752909315; c=relaxed/simple;
+	bh=IFXMENYuehKyDmEcdz9cDe2goFgmjIQEyXn0yMj6JFM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=CVGkr0y1PtP5DvS2Jm81eD/muyghl8fa7aAAGSpcJrE+jPqvS083g4lDdes98ehLeHfUL/0r7unCb46qJ2ShYqQmUr/MgZBTAeL9u7UGxR131iqEESBnWoMY0JPiRGb6Vuef5fzqC/LZtBNuVGzHZtph7+so90+BwN6YjD8YTmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=WIZJS0jS; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250719071504epoutp0180c5ab20613c4ba3e83d58f6397056fe~TlbmF0Ax71668116681epoutp013
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 07:15:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250719071504epoutp0180c5ab20613c4ba3e83d58f6397056fe~TlbmF0Ax71668116681epoutp013
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1752909304;
+	bh=JKjySgLQi1aF8xJczQx8d6lCD4F+tC3I1Ce1ucQ0Wkk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=WIZJS0jSD65bQOJfDNYGdAs3WYKbc90j1eNSZxSGOVLNHfpzM99BcZ39PtPZY8glv
+	 +X1hQ9/o3cZsJZ0a6NQ2TyOhn6iume7EqfpsrXIEAKHrpqaawbOJAF3GQbYxFFLxTe
+	 KyB33ebqqpQ2h2Q3FcO0BJhlEWCwuWWAZC0RJl5A=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250719071502epcas5p158955edca94e829594ddd5f3ab0ae5a2~Tlbk9EFhR0199401994epcas5p1N;
+	Sat, 19 Jul 2025 07:15:02 +0000 (GMT)
+Received: from epcpadp1new (unknown [182.195.40.141]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4bkdGG5RW0z3hhT3; Sat, 19 Jul
+	2025 07:15:02 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250718121345epcas5p2e2d67f581d066bef4c9c494fa4252aac~TV3Gp23P_1765017650epcas5p2c;
+	Fri, 18 Jul 2025 12:13:45 +0000 (GMT)
+Received: from test-PowerEdge-R740xd (unknown [107.99.41.79]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250718121343epsmtip21cfd132db7d121ed9ef9926cc502b102~TV3EQ0T2f3097930979epsmtip2T;
+	Fri, 18 Jul 2025 12:13:42 +0000 (GMT)
+Date: Fri, 18 Jul 2025 17:43:36 +0530
+From: Neeraj Kumar <s.neeraj@samsung.com>
+To: Dave Jiang <dave.jiang@intel.com>
+Cc: dan.j.williams@intel.com, dave@stgolabs.net,
+	jonathan.cameron@huawei.com, alison.schofield@intel.com,
+	vishal.l.verma@intel.com, ira.weiny@intel.com, a.manzanares@samsung.com,
+	nifan.cxl@gmail.com, anisa.su@samsung.com, vishak.g@samsung.com,
+	krish.reddy@samsung.com, arun.george@samsung.com, alok.rathore@samsung.com,
+	neeraj.kernel@gmail.com, linux-kernel@vger.kernel.org,
+	linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev, gost.dev@samsung.com,
+	cpgs@samsung.com
+Subject: Re: [RFC PATCH 01/20] nvdimm/label: Introduce NDD_CXL_LABEL flag to
+ set cxl label format
+Message-ID: <1983025922.01752909302744.JavaMail.epsvc@epcpadp1new>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <624c255d-d7e2-4ea3-9186-b435499838a7@intel.com>
+X-CMS-MailID: 20250718121345epcas5p2e2d67f581d066bef4c9c494fa4252aac
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----NUum2bl.CiaUPDLBlJLeOFPEqthXJjtuaYQe8aeKsoDg0nUl=_1b6fb_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+X-CPGSPASS: Y
+X-Hop-Count: 3
+X-CMS-RootMailID: 20250617124008epcas5p2e702f786645d44ceb1cdd980a914ce8e
+References: <20250617123944.78345-1-s.neeraj@samsung.com>
+	<CGME20250617124008epcas5p2e702f786645d44ceb1cdd980a914ce8e@epcas5p2.samsung.com>
+	<158453976.61750165203630.JavaMail.epsvc@epcpadp1new>
+	<624c255d-d7e2-4ea3-9186-b435499838a7@intel.com>
+
+------NUum2bl.CiaUPDLBlJLeOFPEqthXJjtuaYQe8aeKsoDg0nUl=_1b6fb_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
 Content-Disposition: inline
-In-Reply-To: <20250719052916.GT2672049@frogsfrogsfrogs>
 
-On Fri, Jul 18, 2025 at 10:29:16PM -0700, Darrick J. Wong wrote:
-> On Sat, Jul 19, 2025 at 10:22:09AM +0500, or10n-cli wrote:
-> > From b8e455b79c84b4e1501ea554327672b6d391d35d Mon Sep 17 00:00:00 2001
-> > From: or10n-cli <muhammad.ahmed.27@hotmail.com>
-> 
-> WTF is "orion-cli" ?
+On 09/07/25 03:57PM, Dave Jiang wrote:
+>
+>
+>On 6/17/25 5:39 AM, Neeraj Kumar wrote:
+>> NDD_CXL_LABEL is introduced to set cxl LSA 2.1 label format
+>> Accordingly updated label index version
+>
+>Maybe add the spec reference that defines label 2.1 format
 
-No clue, but those 'patches' are going to my spam-list from now on...
+Sure Dave, I will update commit message accordingly.
 
-> 
-> > Date: Sat, 19 Jul 2025 10:10:42 +0500
-> > Subject: [PATCH] xfs: scrub: remove unnecessary braces and fix indentation
-> > in
-> >  findparent.c
-> >
-> > This patch removes unnecessary braces around simple if-else blocks and
-> > fixes inconsistent indentation in fs/xfs/scrub/findparent.c to comply
-> > with kernel coding style guidelines.
-> >
-> > All changes are verified using checkpatch.pl with no warnings or errors.
-> >
-> > Signed-off-by: Muhammad Ahmed <muhammad.ahmed.27@hotmail.com>
-> > ---
-> >  fs/xfs/scrub/findparent.c | 9 +++------
-> >  1 file changed, 3 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/fs/xfs/scrub/findparent.c b/fs/xfs/scrub/findparent.c
-> > index 84487072b6dd..9a2f25c7c2e3 100644
-> > --- a/fs/xfs/scrub/findparent.c
-> > +++ b/fs/xfs/scrub/findparent.c
-> > @@ -229,15 +229,12 @@ xrep_findparent_live_update(
-> >          */
-> >         if (p->ip->i_ino == sc->ip->i_ino &&
-> >             xchk_iscan_want_live_update(&pscan->iscan, p->dp->i_ino)) {
-> > -               if (p->delta > 0) {
-> > +               if (p->delta > 0)
-> >                         xrep_findparent_scan_found(pscan, p->dp->i_ino);
-> > -               } else {
-> > +               else
-> >                         xrep_findparent_scan_found(pscan, NULLFSINO);
-> > -               }
-> >         }
-> > -
-> >         return NOTIFY_DONE;
-> > -}
-> 
-> DID YOU EVEN COMPILE THIS???
+>>
+>> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+>> ---
+>>  drivers/nvdimm/dimm.c      |  1 +
+>>  drivers/nvdimm/dimm_devs.c | 10 ++++++++++
+>>  drivers/nvdimm/label.c     | 16 ++++++++++++----
+>>  drivers/nvdimm/nd.h        |  1 +
+>>  include/linux/libnvdimm.h  |  3 +++
+>>  5 files changed, 27 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/nvdimm/dimm.c b/drivers/nvdimm/dimm.c
+>> index 91d9163ee303..8753b5cd91cc 100644
+>> --- a/drivers/nvdimm/dimm.c
+>> +++ b/drivers/nvdimm/dimm.c
+>> @@ -62,6 +62,7 @@ static int nvdimm_probe(struct device *dev)
+>>  	if (rc < 0)
+>>  		dev_dbg(dev, "failed to unlock dimm: %d\n", rc);
+>>
+>> +	ndd->cxl = nvdimm_check_cxl_label_format(ndd->dev);
+>>
+>>  	/*
+>>  	 * EACCES failures reading the namespace label-area-properties
+>> diff --git a/drivers/nvdimm/dimm_devs.c b/drivers/nvdimm/dimm_devs.c
+>> index 21498d461fde..e8f545f889fd 100644
+>> --- a/drivers/nvdimm/dimm_devs.c
+>> +++ b/drivers/nvdimm/dimm_devs.c
+>> @@ -18,6 +18,16 @@
+>>
+>>  static DEFINE_IDA(dimm_ida);
+>>
+>> +bool nvdimm_check_cxl_label_format(struct device *dev)
+>> +{
+>> +	struct nvdimm *nvdimm = to_nvdimm(dev);
+>> +
+>> +	if (test_bit(NDD_CXL_LABEL, &nvdimm->flags))
+>> +		return true;
+>> +
+>> +	return false;
+>> +}
+>
+>I think we may want to move the checking of the flag to where the patch also set the flag in order to provide a more coherent review experience. Given that I haven't read the rest of the patchset and don't know how NDD_CXL_LABEL is set, I really can't comment on whether there's a better way to detect LSA 2.1 labels. Is there a generic way to determine label versions without the implication of this is CXL device?
+>
 
-I'll stop wasting time on patches from this sender.
+Its been set in cxl driver in later patch, May be I will update the
+commit message with this information.
 
-And just for the *fun* of it... checkpatch.pl fails on this patch...
+>> +
+>>  /*
+>>   * Retrieve bus and dimm handle and return if this bus supports
+>>   * get_config_data commands
+>> diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
+>> index 082253a3a956..48b5ba90216d 100644
+>> --- a/drivers/nvdimm/label.c
+>> +++ b/drivers/nvdimm/label.c
+>> @@ -687,11 +687,19 @@ static int nd_label_write_index(struct nvdimm_drvdata *ndd, int index, u32 seq,
+>>  		- (unsigned long) to_namespace_index(ndd, 0);
+>>  	nsindex->labeloff = __cpu_to_le64(offset);
+>>  	nsindex->nslot = __cpu_to_le32(nslot);
+>> -	nsindex->major = __cpu_to_le16(1);
+>> -	if (sizeof_namespace_label(ndd) < 256)
+>> +
+>> +	/* Support CXL LSA 2.1 label format */
+>> +	if (ndd->cxl) {
+>> +		nsindex->major = __cpu_to_le16(2);
+>>  		nsindex->minor = __cpu_to_le16(1);
+>> -	else
+>> -		nsindex->minor = __cpu_to_le16(2);
+>> +	} else {
+>> +		nsindex->major = __cpu_to_le16(1);
+>> +		if (sizeof_namespace_label(ndd) < 256)
+>> +			nsindex->minor = __cpu_to_le16(1);
+>> +		else
+>> +			nsindex->minor = __cpu_to_le16(2);
+>> +	}
+>
+>Would like to see a more coherent way of detecting label versioning. What happens when there are newer versions introduced later on? This currently feels very disjointed.
+>
+
+Thanks Dave for your suggestion. This current patch-set is extension of
+commit 5af96835e4daf. We may have to do some more change to address this
+coherent way of detecting label versioning. May be we can take this later.
+
+>> +
+>>  	nsindex->checksum = __cpu_to_le64(0);
+>>  	if (flags & ND_NSINDEX_INIT) {
+>>  		unsigned long *free = (unsigned long *) nsindex->free;
+>> diff --git a/drivers/nvdimm/nd.h b/drivers/nvdimm/nd.h
+>> index 5ca06e9a2d29..304f0e9904f1 100644
+>> --- a/drivers/nvdimm/nd.h
+>> +++ b/drivers/nvdimm/nd.h
+>> @@ -522,6 +522,7 @@ void nvdimm_set_labeling(struct device *dev);
+>>  void nvdimm_set_locked(struct device *dev);
+>>  void nvdimm_clear_locked(struct device *dev);
+>>  int nvdimm_security_setup_events(struct device *dev);
+>> +bool nvdimm_check_cxl_label_format(struct device *dev);
+>>  #if IS_ENABLED(CONFIG_NVDIMM_KEYS)
+>>  int nvdimm_security_unlock(struct device *dev);
+>>  #else
+>> diff --git a/include/linux/libnvdimm.h b/include/linux/libnvdimm.h
+>> index e772aae71843..0a55900842c8 100644
+>> --- a/include/linux/libnvdimm.h
+>> +++ b/include/linux/libnvdimm.h
+>> @@ -44,6 +44,9 @@ enum {
+>>  	/* dimm provider wants synchronous registration by __nvdimm_create() */
+>>  	NDD_REGISTER_SYNC = 8,
+>>
+>> +	/* dimm supports region labels (LSA Format 2.1) */
+>> +	NDD_CXL_LABEL = 9,
+>
+>While 2.1 is defined by the CXL spec, is there anything declared by the CXL spec that makes 2.1 exclusive to CXL? Maybe the focus should be to support LSA 2.1 and avoid dragging naming CXL into the conversation at this point. It can be made more generic right? I'm concerned about dragging CXL into nvdimm when it isn't necessary. Maybe introduce a label cap field where when an nvdimm device is registered, the caller can pass in that it's capable of supporting up to a certain version of labeling? Just throwing ideas out to see if it's feasible.
+>
+
+Hi Dave,
+
+I have taken this naming reference from "drivers/nvdimm/label.h"
+where namespace label is defined as "struct nvdimm_efi_label" (LSA 1.1
+is defined in nvdimm namespace spec and LSA 1.2 is defined in efi spec)
+where (from commit 540ccaa2e4dd6) region label is defined as "struct
+cxl_region_label"
+
+Please let me know if I should use some other name in place of this
 
 
-> 
-> --D
-> 
-> >  /*
-> >   * Set up a scan to find the parent of a directory.  The provided dirent
-> > hook
-> > @@ -386,7 +383,7 @@ xrep_findparent_confirm(
-> >
-> >         /* Reject garbage parent inode numbers and self-referential parents.
-> > */
-> >         if (*parent_ino == NULLFSINO)
-> > -              return 0;
-> > +               return 0;
-> >         if (!xfs_verify_dir_ino(sc->mp, *parent_ino) ||
-> >             *parent_ino == sc->ip->i_ino) {
-> >                 *parent_ino = NULLFSINO;
-> > --
-> > 2.47.2
-> >
-> 
+Regards,
+Neeraj
+
+------NUum2bl.CiaUPDLBlJLeOFPEqthXJjtuaYQe8aeKsoDg0nUl=_1b6fb_
+Content-Type: text/plain; charset="utf-8"
+
+
+------NUum2bl.CiaUPDLBlJLeOFPEqthXJjtuaYQe8aeKsoDg0nUl=_1b6fb_--
+
 
