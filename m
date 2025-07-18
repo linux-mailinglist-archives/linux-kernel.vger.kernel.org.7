@@ -1,153 +1,178 @@
-Return-Path: <linux-kernel+bounces-736811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 517D6B0A377
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:50:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD0CBB0A379
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:50:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A30BD3BB596
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:49:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F0547B9FC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:49:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05EAE2D979D;
-	Fri, 18 Jul 2025 11:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D902D979D;
+	Fri, 18 Jul 2025 11:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UdBh/jtf"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fdyaruFF"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2048.outbound.protection.outlook.com [40.107.212.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E54929993E;
-	Fri, 18 Jul 2025 11:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752839408; cv=none; b=fzSZSMTk10JUf2EcnH5hSCEkC7uF4uUB1AZbaboaB+QuC/zy9DFeqpTjsSqaU/nuDGyYwzfrtBBv7liWeFjI/+z+RzTmTK5NvdAdLnpeMmNk+zfnMOzIcpUEP0uUUZo/tbETFHc84atR8ZxQB7TGO7pefmd7XppJ4xsBWP88Uvg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752839408; c=relaxed/simple;
-	bh=QE5IVSFdwUGWOvpdFShq/N4OikapuxZYIHT2X3vGy/4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VF+UijBtQqPmgPVSkQJ8tLSnE0UaignG65sxXI/6Wx2ODOT2UTEuiVv3mpOlKrw2cs6CuNlwqDQE+GLPTIYEoSQWE3CpYGHy4tczdCdl7K1H0bNH24gtTAYhwyu1ZLZGXxF+lQQ43G7hw0dfKCIdI2S4DIKkSpYBCfQHCVBddm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UdBh/jtf; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-23694cec0feso19193275ad.2;
-        Fri, 18 Jul 2025 04:50:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752839406; x=1753444206; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=eO/klyFkBhvTIq8n1w/tCZWfnrQWc9IQCdEVGWfYBCA=;
-        b=UdBh/jtfrXX/Z1c5xZq8vEegAsA2tkthupWjICDquTkcj6F/s4bYt2CNNeypZp5cje
-         wZyobh3+2i08KpRVZaHjnUaGxZu60FMHsWYAO6YVRRy26Eu936fVf87BxITGyJoqkpja
-         gDvYV2n6I0PLQaOx96wF/pdxmtRGobkaWm4uL28Sk66pzCYoScSiV9aVdHOwSzDz5tC3
-         h7xFm7dJqX4PVPm3ExFwXlNGpYuz7vhv5rSflPVIxjhjlJYOJPaaMWYwp+CArtLYTraz
-         17vJBz0QtJmTWV/kBJN/01SI3AI9wgNeIv5TguV5UPyMjIyz17//6TzVrjrGT0tI+LqS
-         92MQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752839406; x=1753444206;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eO/klyFkBhvTIq8n1w/tCZWfnrQWc9IQCdEVGWfYBCA=;
-        b=PH+Yryg06mmf7LjCluB8A80aehZ0VGkjNdiCMPGxh14xGhXtX1+yONWAXAhWyO9WLH
-         50vso/RhbX2RHEOHcjQxV/Fv2y4J4Ep1jTzU1Ws/AY0CQ5GZ6vuXaDvnQgv4XaQMnMEq
-         Oovo5OfZRueZ1OtzRByF2CGDuay5TvsxS64KYvSWNxk/Am7JsE/scex6paC13WHU9/8S
-         VClvrfRO7oVs9BPotmNTKxvNs+0JntwsfMSPE8vAIzExeoxc6W2OrUHguJ97aC+86yRh
-         6AMoQwjB7ux+IkX8YjBoAt9h/KxC89cKpdfgP0J3rQ1vN1hVFSqsh8+1bHV9wJSU6lB7
-         SjBA==
-X-Forwarded-Encrypted: i=1; AJvYcCXEA0hhyd39UKyZV4YOnBmCdmuFPannnqzxMIWKM4c1XmK0nGwc6lFh+HmLqis2Y5nE6asVcYbqN5I38EU=@vger.kernel.org, AJvYcCXxvTY6xKQmqx7RfgHVAHtq6FoyFOv8VfJEhc38y6LBZcnMm22phtrIhGIvnt8wo/y/2t49IKkt@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzq0mo1wAZpSzGX6VaxvG55sQKTL23wKUmPxfHgKrg8LHQfLOUY
-	rQO0TU9DvJbLwD33AArGIY725uziy4FOLlghxqEe690YluG9DIJzLXNk
-X-Gm-Gg: ASbGncsXcLgq+egVmwAJEJr5CM4H9p64CcGM9uRw30Wt3PSTXGV6ioxP6/I6IMGU4Lv
-	GnialayVCzLf/2KYe2NEsUc6rTdOEUHOOJHXA58A16cbEL+GoaxHvK65MVi1M+DOsb8nTG+RxrU
-	Z+PYLOYHIb0RMXwnvKLsiqvkO94PsSkZ/zlWCafrepBOYXJiGZmcVxTArUbU/rDIL9iw4yYiFjO
-	VDegS/JjJX88VqC9hQZVCwbaluHyzpWW9YrXGyC94UNrbz7osJNrJhMnjQeguXqJN+5Sjwfvd/U
-	3IRD6LaGVtk5vVDH3EaqSuwWQypAHW2Nb37Joxg4Eg8iJFdFotiBfBYKa7VL+wgVLHZbhrORc/k
-	mKr+VUjn2DxNsL+GW1RMCT38hQXTJEvFKYrlu8TcAfP3F+7nxkw==
-X-Google-Smtp-Source: AGHT+IHDfnkUErxhP2Jruyl9EbUIMi6bx1KgbflwVufW7rXdBDJmQxHRn72xSOyW1cNvBCuZLq2jsg==
-X-Received: by 2002:a17:902:d50e:b0:234:d7c5:a0ea with SMTP id d9443c01a7336-23e24f4aec0mr185931325ad.24.1752839406098;
-        Fri, 18 Jul 2025 04:50:06 -0700 (PDT)
-Received: from name2965-Precision-7820-Tower.. ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b611f85sm11905295ad.64.2025.07.18.04.50.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jul 2025 04:50:05 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: richardcochran@gmail.com
-Cc: andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	yangbo.lu@nxp.com,
-	vladimir.oltean@nxp.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+7cfb66a237c4a5fb22ad@syzkaller.appspotmail.com,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH net v2] ptp: prevent possible ABBA deadlock in ptp_clock_freerun()
-Date: Fri, 18 Jul 2025 20:49:58 +0900
-Message-Id: <20250718114958.1473199-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B05F29993E;
+	Fri, 18 Jul 2025 11:50:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752839421; cv=fail; b=X7HRqgIfUfcRQWeQygDcWFc+2dj+mCErGN0wLGG4/W9Q3XdJFyneCT37G3UCR8Zy+n4oBfQs1D4lLzFXd9Fd6GX6OoKuO/ANyA9/pwM6CJzzujq8A4YWkf+10lo/MK7qAzSUweYpOJ64uFB7j9HS+YYXeMP3CCmtsCEyh2Q5gNc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752839421; c=relaxed/simple;
+	bh=vxYMMKjJC+D+27A0KhfLdlsKGFJDWUoq3H7lz7K4Nxc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sSCJroyGai9sRd0WCNhBrBoPzAyVksX0dlkKv0tF9KDX3fFp6ySRTM/IdqzsDSqPfbZeJ8isH0cb0+8V0UTmAm930xPPg8RnKa9XCJPBejNwt9Xwc28mudNvvRZ2poVEZt+V17+cwrDLkDjDkmSC72oOrzCzso7IxiFxhfKKfn4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fdyaruFF; arc=fail smtp.client-ip=40.107.212.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SX4hKqHUh5RIR1OSSKS4gSwbS3CbJlRy5ami+ESarPv80rbl+OlxMUrjW5OU+UGxqgxjS47pVbfbb4LPk3hIaOduCNPvR6AZMJbuo9qMyiQg8E3pfrjl/zC7kcgPKHzMcAhCf1Linjfcd0QAVPpha1e8/u1M57l9lSbqlP0pfBrX6T9PWKlKEJHlXCwTE7YflBK9+4bYuanLTVM2zr+EbSaGB0OC8Ti0JuM3W8+CkC8cokk4O8VGdc7kDuWKgyCjrx0H3QiBjGpQIfsiLUo8qhWDdlBa5qyIk+ykKG8v7x3PE2qP0FWKheBdj+Gfle9klJFWHEqxHSHz+uT+m0yCdg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WgSmQyWgPhUykhvt5z+/AAOL+315BCTCTp6p+lq1WgE=;
+ b=yznWA/T/a6Op1NgsFYQcqk3B9s3PLORAziiHs7/UyLf8qMSeAsZHWnuqf/BJnnxD7gTEBGmaIbMWO9bazQtgv2sEtg9HM8JPKTTiETT3Nn+yh2SVqqQOJiMumzQMyEfbzewLYYAuS6VgPRz7iC7sPflpEHSxpOdwWQx9TVP5ZcaWmJE1WaVhpAEpiaN5rJHYlA5jk+8rwfJeiRqmDWZFdFiCxUWb6Ez0X18Ouv7v/D0MAnIC1G9GUqUnxxeOKipeCCNyqKqRfx7F3Mj+/y83QkH7obF79Pjq77R7T5IKBJ4jLtXQVvv2yfVVclzjAHjX9viCjgNmFG/IYWb6zG7zDA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WgSmQyWgPhUykhvt5z+/AAOL+315BCTCTp6p+lq1WgE=;
+ b=fdyaruFFvhAwfWFufMihfEBzxYVw85wfui8nYIct6TVZr/Q92+YE9XNDXJ5lCLENqfwSFcwXbyzYqgrNLfBHd89PUUtzgwgWbIf2QyZ4u9I1E0zTduJ5lQQYqltc+HGTBFp/MyCdYwrK8Y2uZpshbWGUndsfo5hoDEnoi5zCMEY=
+Received: from BN0PR08CA0029.namprd08.prod.outlook.com (2603:10b6:408:142::15)
+ by CH2PR12MB9541.namprd12.prod.outlook.com (2603:10b6:610:27e::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.35; Fri, 18 Jul
+ 2025 11:50:16 +0000
+Received: from BN2PEPF0000449E.namprd02.prod.outlook.com
+ (2603:10b6:408:142:cafe::d5) by BN0PR08CA0029.outlook.office365.com
+ (2603:10b6:408:142::15) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.21 via Frontend Transport; Fri,
+ 18 Jul 2025 11:50:16 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ BN2PEPF0000449E.mail.protection.outlook.com (10.167.243.149) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8943.21 via Frontend Transport; Fri, 18 Jul 2025 11:50:15 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 18 Jul
+ 2025 06:50:15 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 18 Jul
+ 2025 06:50:14 -0500
+Received: from localhost (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39 via Frontend
+ Transport; Fri, 18 Jul 2025 06:50:13 -0500
+From: Michal Simek <michal.simek@amd.com>
+To: <linux-kernel@vger.kernel.org>, <monstr@monstr.eu>,
+	<michal.simek@xilinx.com>, <git@xilinx.com>
+CC: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, "open list:OPEN FIRMWARE
+ AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "moderated
+ list:ARM/ZYNQ ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH] arm64: zynqmp: Enable PSCI 1.0
+Date: Fri, 18 Jul 2025 13:50:10 +0200
+Message-ID: <32be8050838512d4340486227c32f38298ddde57.1752839409.git.michal.simek@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=722; i=michal.simek@amd.com; h=from:subject:message-id; bh=vxYMMKjJC+D+27A0KhfLdlsKGFJDWUoq3H7lz7K4Nxc=; b=owGbwMvMwCG2mv3fB7+vgl8ZT6slMWRUmXwuiJze8SEmL+xOlGpziLo/76m/Qd9U2V6rGy2Ls lBXY/XvKGVhEONgkBVTZJnOpOOw5tu1pWLLI/Nh5rAygQxh4OIUgIlYrGJkuPk8o+h2SPLMNN+q ZK+NnefkPL9b7umSqHhh8nLO0WVn/zAyzLvqubHoelrbS+fdK5v+7DxYtvX12qXaf/KyUuYWBSz awg8A
+X-Developer-Key: i=michal.simek@amd.com; a=openpgp; fpr=67350C9BF5CCEE9B5364356A377C7F21FE3D1F91
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB05.amd.com: michal.simek@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF0000449E:EE_|CH2PR12MB9541:EE_
+X-MS-Office365-Filtering-Correlation-Id: 13b58935-a670-48cf-93db-08ddc5f1431a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?3wcXaDiRoSFevuINhFVRNFZ+pNVfmIK8Y6o+2/sBo66bvZLmclxSlfaORfhl?=
+ =?us-ascii?Q?qdkrDKfLVqEWfl/cxJvlUlx3BK/RTmOx8OH+LuhXLdo+keJaS2Coj1SeJKXM?=
+ =?us-ascii?Q?YL8rS/lUWfelwJb1YHqLOoBSfTEP4taL6sWJW7AuZwQDOG96T7/U0iZXgM+i?=
+ =?us-ascii?Q?y6na01llEJqtKMMkeW7Ai+qZI3qkIMV8xFP+CyDfIpX5ZRJTEWth0SOQuMJU?=
+ =?us-ascii?Q?LdZ2r2ILOYuldTNbMyPRMKUxnMjaYS06djmf/J4vfnNOitftK6eN1IRUckn7?=
+ =?us-ascii?Q?Vubrmu3hj/FcQ/2HQz3l1L3qKNZxlfITlRN9GdsgzluWjDqh3+oQ0PWL1gyQ?=
+ =?us-ascii?Q?b/oWkYGVWF7kKYUrXRMZ0fgcXKH8559AbQ9FS2G7Ci6ZEdQLoVQy+zkRl2eR?=
+ =?us-ascii?Q?3AduNeJcZtExWMnCYcUrKL63Q9Epb9HIu9aXiqvkMbqfFgIfHQrB5n4M+gIQ?=
+ =?us-ascii?Q?Cv4jDEyFhYUoEFMe2VMMYzlUYAA/7KV3X26V2JF9cyqMPdl9u/Ep84idbf77?=
+ =?us-ascii?Q?oyOcgBAjzkh+Ll09Gqt1Ui5QXnsNMF7TPa1ZHom60RgQgCn2BteS9LK50sas?=
+ =?us-ascii?Q?7FqEevyE14VPaChbFPngsFySuBH7iCoGEJ4SfbISDpflbrh7QgBI7JKcymXF?=
+ =?us-ascii?Q?aPBfF0lF2v1wqLHHT2aP4wYId2PqylhxqmYJVbIeeqQQLIPkckHC930Rhkwi?=
+ =?us-ascii?Q?kHKPs9WIkzg6p3s0An6Q8HRdA5/oGoKdD44rItIt96CmULpXsPxyRVEkcbYJ?=
+ =?us-ascii?Q?Vh0ijKrV4BdxfFleAwGhHgg0bLdFSo4zOxk7iYA7PQg1YDRRWRdLcvAw9MgK?=
+ =?us-ascii?Q?eF+IOlDAyxYJYj2eIgIGw39ZMdAhBIK6YBMYQA/C4IRn+EE4y5PFN17KkkjS?=
+ =?us-ascii?Q?iQh9MjYKjRPEgWxE/S/3Y/EgJqdgYvoxAm1j+iN1LmXGjiu64oR5gQyUfmMr?=
+ =?us-ascii?Q?t6vaF44GTwsu9G24Ezmzu9bokqBMyrXKZP9tyZN43ZbWIAajY130bfoJxe9U?=
+ =?us-ascii?Q?IHVjgoTeR8bC3y3fEOjI0RjSbdUrJ7Hqz6NE0r3Gd378GkXelHL+2bVrY5qE?=
+ =?us-ascii?Q?0hXEoNqXexuFOrw4ft+tgB+T6kYFqQfY3IAa1Ygx2qzMelBDvkAONJVL2jzH?=
+ =?us-ascii?Q?6r/II4uTh1bC8azwuJ3yrQfiovzhQoV/DoE96p/binqcL5hq3/PsMVxTwpN5?=
+ =?us-ascii?Q?/m6lYCg+5suNKdheA7au6mYiztDe60h8XvrUk/p8hXBKrnrUihrBQb0CzELf?=
+ =?us-ascii?Q?uPC89QSOlrnZqGFSCOEBJhC5NJIlwUwtmIq3AaljEuKxEVTVvPWvoFXgGilm?=
+ =?us-ascii?Q?E3UXRrJcubeIa7rBfCmqXG+9RrTakXeFU+kpDm5fcnLpU7FImMZP8iLPAYEp?=
+ =?us-ascii?Q?5EHX00pzrvFUix1qmeA6qvtSKd8GrzyQsyzn2CZuXIW178srm53wWQHb6k/r?=
+ =?us-ascii?Q?27jZVmoOuV6hLUumuLrgp1gjkATCX5OAg+zR2bt6UZSrvIQ3MMkNvgSjUV/Y?=
+ =?us-ascii?Q?Z8vxEWTgGWS9VeYLxphAjt3s7xdxOuKrXez2?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2025 11:50:15.9656
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 13b58935-a670-48cf-93db-08ddc5f1431a
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF0000449E.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB9541
 
-ABBA deadlock occurs in the following scenario:
+TF-A is using PSCI 1.0 version for quite a long time but it was never
+reflected in DT.
 
-       CPU0                           CPU1
-       ----                           ----
-  n_vclocks_store()
-    lock(&ptp->n_vclocks_mux) [1]
-                                     pc_clock_adjtime()
-                                       lock(&clk->rwsem) [2]
-                                       ...
-                                       ptp_clock_freerun()
-                                         ptp_vclock_in_use()
-                                           lock(&ptp->n_vclocks_mux) [3]
-    ptp_clock_unregister()
-      posix_clock_unregister()
-        lock(&clk->rwsem) [4]
-
-To solve this with minimal patches, we should change ptp_clock_freerun()
-to briefly release the read lock before calling ptp_vclock_in_use() and
-then re-lock it when we're done.
-
-Reported-by: syzbot+7cfb66a237c4a5fb22ad@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=7cfb66a237c4a5fb22ad
-Fixes: 73f37068d540 ("ptp: support ptp physical/virtual clocks conversion")
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+Signed-off-by: Michal Simek <michal.simek@amd.com>
 ---
-v2: Add CC Vladimir
-- Link to v1: https://lore.kernel.org/all/20250705145031.140571-1-aha310510@gmail.com/
----
- drivers/ptp/ptp_private.h | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/ptp/ptp_private.h b/drivers/ptp/ptp_private.h
-index a6aad743c282..e2c37e968c88 100644
---- a/drivers/ptp/ptp_private.h
-+++ b/drivers/ptp/ptp_private.h
-@@ -124,10 +124,16 @@ static inline bool ptp_vclock_in_use(struct ptp_clock *ptp)
- /* Check if ptp clock shall be free running */
- static inline bool ptp_clock_freerun(struct ptp_clock *ptp)
- {
-+	bool ret = false;
-+
- 	if (ptp->has_cycles)
--		return false;
-+		return ret;
-+
-+	up_read(&ptp->clock.rwsem);
-+	ret = ptp_vclock_in_use(ptp);
-+	down_read(&ptp->clock.rwsem);
+ arch/arm64/boot/dts/xilinx/zynqmp.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/xilinx/zynqmp.dtsi b/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
+index b20a560741e5..5f26649c9e11 100644
+--- a/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
++++ b/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
+@@ -187,7 +187,7 @@ pmu {
+ 	};
  
--	return ptp_vclock_in_use(ptp);
-+	return ret;
- }
+ 	psci {
+-		compatible = "arm,psci-0.2";
++		compatible = "arm,psci-1.0", "arm,psci-0.2";
+ 		method = "smc";
+ 	};
  
- extern const struct class ptp_class;
---
+-- 
+2.43.0
+
+base-commit: eed5dcc142db02f5c07b96b50eb72796b9d0dbc1
+branch: zynqmp/dt2
 
