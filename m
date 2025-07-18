@@ -1,98 +1,112 @@
-Return-Path: <linux-kernel+bounces-736344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E6ABB09BB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:51:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFA3AB09BDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:01:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6F1D1899D9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:51:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BC5117697C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 07:01:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ABB220296E;
-	Fri, 18 Jul 2025 06:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b="JAGrEzdb"
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E7DE215F72;
+	Fri, 18 Jul 2025 07:01:29 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C9F1FF5E3
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 06:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A8BD517
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 07:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752821465; cv=none; b=o4/qvipWX6PBSWh0/x6zqbgPsKFGp1T3M03/G4wEKbA54kI1XRxU/iDRNl5YSEuIXoknQVWXKUAWmW+Fz/WbL4zOIlJm0XiAyS1DCCWI1MiZWyOyjN5IBkM982uc2pXPk6ZDp/CMUl9oEFBgtjYET4amiHtH3NPH7xryKZfPXBA=
+	t=1752822088; cv=none; b=rg9lhec983w1vJqPn3a/Rz4/vXCsfdi2u7iWgRdMB686nv7eHxLvvvfKuqBN/djpQ658HsWSiHwZDHmBnpH4meqAKfk4gNYtbQ6JJAizgEBqvWTX8gU/etrvv7K1ABwKc4ptipKAk//TdS/9WtEqi5du3WQqev2YPuGzLTtdriA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752821465; c=relaxed/simple;
-	bh=g/bQDA1SnPganh7SgBzzVaHUvhqJSHOBmAGh77R65Yw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GT7MdJFUdltbIladpQhabncUAzqBAXTS0Fu9a5DnBZ1eD+YYoC23P3E57kCFnHD1m+OK8IUhgn1GDmozNEzNI9AOAlkF5muJxkzWvVqOJa6RWeBY3M9e1Yl1FizKAi4O8avLEB+P0CiMG3JdTEmfHkbF73bl3RiuncnRCgVk67U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk; spf=pass smtp.mailfrom=thegoodpenguin.co.uk; dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b=JAGrEzdb; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thegoodpenguin.co.uk
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-712be7e034cso17813597b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 23:51:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=thegoodpenguin-co-uk.20230601.gappssmtp.com; s=20230601; t=1752821463; x=1753426263; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=g/bQDA1SnPganh7SgBzzVaHUvhqJSHOBmAGh77R65Yw=;
-        b=JAGrEzdbtOP0h1PRv0Km8fAsJvOctpoYha5dO1N/Tq95l0YwCGsR8vbz4vnI7Lkp/F
-         vuSIzqEdp55gI1ifAzcgS7kB9QhS+xw8avwIhZsdQe436XfE2CKQmlkXySKHkBDR2THo
-         9Wjp3jjWnlEZOaQuXNkt0Jvqtnq5ABktCQh4644+kc8+LjztsLQsY830rp91i8Dyee6q
-         awW/ntnCGPJ9fqwt5t/F16c9ejRrzP/bLHQgohHSF5eLz1HR2Sb0cuw1qegmjqp7nWdb
-         mJJmcjVvEIM+IiLJ1YhNItdb+Gh6cUGlS17YwxzBy30ctwCHaHx/ExFg+lve1nlZ0fWY
-         JsTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752821463; x=1753426263;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g/bQDA1SnPganh7SgBzzVaHUvhqJSHOBmAGh77R65Yw=;
-        b=QDXazbeHXD0UWP9/bQh5ONW4WZnEy4qQl5J+KKB0r9yP01lz/NKD7ReU+MpCoQrTBA
-         oEZdR5U0U2wOLZYRW0g7qkV9peyzzjZvEokfo1QdiYkE9gE+mL2FyUTaH8rdgTBJdutW
-         7xLN7Cp+aA932CGTYolmdWf/Tp4mtVJHwfwUDyz49RJexy/6p6aP6CKun9JquoF4bz4j
-         +xqAowsBwvwl5V/XhkOMmUC0/APJ9iGVTYxf9rvw7pruyDRtkMPlaH+/D+anUgaaV8H6
-         fOTHxX/csIrbJ4Lq4Z9UjtW96WrbKr2GP4fPUfotDt35XCgV2osR9uslJjyV7wO8H8HJ
-         +CnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVIy5XUGcGBRaaD6lCCiY/dnAy3tlx+qoGS4SXNMtu2PhRel9lWW/lSWfka6lhFU1sqS6FM4tCsNtEkUdw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylGDsZW041zQCmtBk68Pz5R59ao7JEPExBT4bd62IFqfgKDmWW
-	TNkJkejAwcO9qRBOKx3vC1C9vLsowtfwQefi1JuZGg8Ef3Dk4iSl8L/SDQc0Jor438rSFeM4aqa
-	NkdCZ8xBbTrUOgiQYiDM1QtHzrhs1QSv6nfanToysyg==
-X-Gm-Gg: ASbGncuEeVJg6Ueno/a9gWd4CAiZ8OZ9Ls2eaggsNGvQgdG9Glv1+sp/2CQIleXNTDq
-	OA1Sxe/fyK9xJuMJmSBd8/uWEQR8SiDbjMl68EoESqg4sKuxjqW7qvol5LhxFGOK1vjttjyM1Fw
-	EZIbO18hF33HR4tFtNCuy62YOkVFdlgRO/MNBB2OguNbdBE+/84MmXswmp2bq9rkqzqHiDqllUo
-	bTAh+UuzOdqE4ID4Ce0gI5qp+aBl7CtGWVX0W9EWw==
-X-Google-Smtp-Source: AGHT+IHB4qPnBvPHuDyr/eRkdonIFJaeMa7b2rimTenEZDBBnypTUT8n4v6UW2cImWERDStmN+Jv4as8F9bxbMRxZ4Q=
-X-Received: by 2002:a05:690c:3605:b0:70e:6105:2360 with SMTP id
- 00721157ae682-7183747508amr140109917b3.24.1752821462689; Thu, 17 Jul 2025
- 23:51:02 -0700 (PDT)
+	s=arc-20240116; t=1752822088; c=relaxed/simple;
+	bh=EmA/pTSUnGAjKw3FytFmhhLYNoB0KTwXWqtLMz4rB6c=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pMKG/lGg/faohx+VEmPRSC+YBX+uAMVjkYRbq8Ml5FYyHlyFtBd1SqNmWaSYzCuPZMhsL90e2haXlQVvNRSTLvrslwnP3bt3zxQPdIUHTqZCVsCDeNrJzDx5WJnt0lEGUUGCAshOiwjror7e0CRijyfoG8z2Mfom+RRL88ql1MY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bk0yW6FPRz2RVFY;
+	Fri, 18 Jul 2025 14:59:15 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9A4021400FD;
+	Fri, 18 Jul 2025 15:01:22 +0800 (CST)
+Received: from kwepemq100007.china.huawei.com (7.202.195.175) by
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 18 Jul 2025 15:01:22 +0800
+Received: from localhost.huawei.com (10.169.71.169) by
+ kwepemq100007.china.huawei.com (7.202.195.175) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 18 Jul 2025 15:01:21 +0800
+From: Yongbang Shi <shiyongbang@huawei.com>
+To: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<kong.kongxinwei@hisilicon.com>, <dmitry.baryshkov@oss.qualcomm.com>
+CC: <liangjian010@huawei.com>, <chenjianmin@huawei.com>,
+	<fengsheng5@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
+	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
+	<jani.nikula@linux.intel.com>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 drm-dp 00/11] Fix hibmc driver bugs
+Date: Fri, 18 Jul 2025 14:51:14 +0800
+Message-ID: <20250718065125.2892404-1-shiyongbang@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250717-leds-is31fl3236a-v4-0-72ef946bfbc8@thegoodpenguin.co.uk>
- <20250717-leds-is31fl3236a-v4-1-72ef946bfbc8@thegoodpenguin.co.uk> <175277045533.3779995.9523277801474945480.robh@kernel.org>
-In-Reply-To: <175277045533.3779995.9523277801474945480.robh@kernel.org>
-From: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
-Date: Fri, 18 Jul 2025 07:50:51 +0100
-X-Gm-Features: Ac12FXwhPQLDpkdyogiRsJ5pr_q3LrxdRNUyRuWOgCuv_ynEzoEm_EA_gQ4kNk0
-Message-ID: <CAA6zWZLyUt9X4+dAgYBVGqdNchasJorWhNH1O1Ti=UBO-J6q9g@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] dt-bindings: leds: is31fl32xx: convert the binding
- to yaml
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Pavel Machek <pavel@kernel.org>, Lucca Fachinetti <luccafachinetti@gmail.com>, 
-	Conor Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemq100007.china.huawei.com (7.202.195.175)
 
-> If you already ran 'make dt_binding_check' and didn't see the above
-> error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> date
+From: Baihan Li <libaihan@huawei.com>
 
-Hmm interesting, I did run it, have yamlint installed and see no
-errors. Will upgrade dtschema and try again.
+There are some bugfix for hibmc-drm driver.
+---
+ChangeLog:
+v2 -> v3:
+  - fix hibmc_connector_get_modes() and hibmc_vdac_detect() to realize BMC KVM, suggested by Dmitry Baryshkov.
+  - fix the issue commit ID, suggested by Dmitry Baryshkov.
+  - split into 2 commits, suggested by Dmitry Baryshkov.
+  - add more comments in commit log, suggested by Dmitry Baryshkov.
+---
+
+Baihan Li (11):
+  drm/hisilicon/hibmc: fix the i2c device resource leak when vdac init
+    failed
+  drm/hisilicon/hibmc: fix dp probabilistical detect errors after HPD
+    irq
+  drm/hisilicon/hibmc: fix irq_request()'s irq name variable is local
+  drm/hisilicon/hibmc: fix the hibmc loaded failed bug
+  drm/hisilicon/hibmc: fix rare monitors cannot display problem
+  drm/hisilicon/hibmc: add dp mode valid check
+  drm/hisilicon/hibmc: fix dp and vga cannot show together
+  drm/hisilicon/hibmc: fix no showing when no connectors connected
+  drm/hisilicon/hibmc: fix no showing problem with loading hibmc
+    manually
+  drm/hisilicon/hibmc: adapting modification for the former commit
+  drm/hisilicon/hibmc: modification for the former commit
+
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h  |  4 +-
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c    | 51 ++++++++++----
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h    |  8 +++
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c  | 33 +++++++---
+ .../gpu/drm/hisilicon/hibmc/dp/dp_serdes.c    | 12 ----
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 64 ++++++++++++++++--
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   | 22 ++++---
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   |  5 ++
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_i2c.c   |  5 ++
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c  | 66 +++++++++++++------
+ 10 files changed, 201 insertions(+), 69 deletions(-)
+
+-- 
+2.33.0
+
 
