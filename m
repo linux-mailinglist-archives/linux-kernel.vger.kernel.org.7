@@ -1,136 +1,150 @@
-Return-Path: <linux-kernel+bounces-736695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28D6BB0A0A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:28:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E7B4B0A0AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:28:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43E5CA83962
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:27:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AECF4E260F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:28:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE64E2BD015;
-	Fri, 18 Jul 2025 10:27:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64EB829E0E5;
+	Fri, 18 Jul 2025 10:28:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cfzLOpU7"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eOF4Nqqm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B3C2BD012;
-	Fri, 18 Jul 2025 10:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6E84221297;
+	Fri, 18 Jul 2025 10:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752834454; cv=none; b=KqqhWbmC+n+JKtoRF/WPnNNXKnAD7gcEo+dmTWRh7Xv8SZpP6hl4bxXWhvtmAvuwvViJ55fI7FxEei78yqljIbEaaYPcqP3tRCIohyz1vFrBdtcrEYKH8d6Kkhbz98Xt+6+FcWxdk4g6fioY8j2pJKwB4zV0hkg59OFMb3fZhVk=
+	t=1752834524; cv=none; b=lbKchX05X0DVTG7DMRb5yKMxfaDwRDzlkuM6chIWpvmF9TV4udW7pAYUVi6Hp4dM9wl/3pOmkbDO6HBqH0F4WtBAchA2d0Dnv/3r5dKi3hcl2u/SvMqLc0oL0Jow6VQymjT+D6zPgIk0LdS8Y9FhxIWqE0vwUXoizjYXXTXLKjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752834454; c=relaxed/simple;
-	bh=34kp88JqtvOHUN1Ruw4Qwe4Ve5+ySa4ozJpDYO/g4bQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ifByyIpR+CFjY+fqWQEhJdwyDFzsBbNp6rfON3vgTnw+yZaGyF7e8sLarl7+nNxaxvWda+v8kmEP6R9IPjKCcFpsIPP/+Nv2uvCTXKJKEayvfsO8tQ77ThkRhfwlEHtwrbgBufTOj6HQgnb+ACW1HHLKuMcFDyLdJzKZPrhuSOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cfzLOpU7; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e8d713e64c5so1472799276.0;
-        Fri, 18 Jul 2025 03:27:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752834452; x=1753439252; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1x8KYMoPHOU/KGMTKlJp4QdTDljWUFg5i2cxTvc6SMc=;
-        b=cfzLOpU74Dq10upz+KeaYP0VDlMNDoxA83YT81l1mgT/GLtTmWcQLyhOUq51j+RQA4
-         l1E0sXvYe8DZL6A3rCMuHfteaLDUtOcbho+LN3QQzbKuh/06VT5DR6tFqJSnsvBZAcrd
-         9jPFUrtOc2JmjSnFDkBQ0YiwBBxrYLJNFGCLbf6TuQnrY+V8EP3jQzPM4fS9+L/xfX3V
-         AzqRO5OPLdMPpfTI1npKZuwZbjBa05y32EUd1Og/PjyuTVfS2bapZBcIeWELJ0ORYcmK
-         LIs1KizX3kmAzTsn7BAqJkYfqAnv9fQEhP+4ySAZ07uNvcM0Jdq60osmsX+oVqwGxt+E
-         XmGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752834452; x=1753439252;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1x8KYMoPHOU/KGMTKlJp4QdTDljWUFg5i2cxTvc6SMc=;
-        b=ooZ+PGSwBA14vNJ7mitj61CTyvUnvQTKFzmhpNxHlFY/o4oQHOpYxo1Ir4tYcjGLvd
-         GMndvFMjMogpgyrxPdd6FDceIXzOvNxJsPfvrxhXyUL9s27HIRYIW0RUg6nwvtwxg3m4
-         YMV9uUUgQPhTm8r1IdAPp15F2HAJndsSOG/pd82RQXwtzjwY37Nj2zOyeJGb1LkXlZuU
-         jYJJp2V2eKs1gAmoRn5XAh3212K8gyCHVvZs0Ne4p0o3ulWbs0cv7WvmGFMSdPSk4ZfZ
-         90TNTUeodeWeHjd1Ksyo39knP55a0tSTcQ6euI4OOUavCfau1P8a3S9jXqPgF0V+ftQt
-         mKrA==
-X-Forwarded-Encrypted: i=1; AJvYcCWnc8FmStaV8rM/RFZ3/9otO2R0GST60zWsd4JQd4/qyWtKIgizutxaieoyCzNUhaKs3MAamVcdWDkrqK4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzpfu3fP8wrM4N/Q/QEqCg/TBfDpl1dsHZ3SLRW1aTXnnDLUOjQ
-	Nm8E19WEaxkF5MjtHZdlY74EJCCsRe7DQbjHDxgJHsc0zHPVTKm0t5QRA6Ps9tKO1x1DKdPaZu1
-	Z2n6w/7zZp3k3xf7LAwqMrwpSs1bnJ8Yc6w==
-X-Gm-Gg: ASbGnct9L8pdn+POCz+KrGBtpTrMEHMyfOGk5nf6QUDdW01Ez7Iw6DC8Opv1Ph5HwtS
-	xoRYPzF0vNPPO1bxYXn+pYjgoO/gdJa4powM87LA1Wzo/qx3pTi+VtuEsE1SFpv9Ui+Drq80e7e
-	1qH2pHF8N8xGplHLXNjDrTJlIukn9ZjHJDmhpx7/wfzCl6I7kGahyE9fdvIEeeGGVgpmGGGBGIy
-	OHG8fIU
-X-Google-Smtp-Source: AGHT+IHbR0TgrZnHWoh6mc9uul5rXSlPg9jvMrr3O/Uj9MClMiXC9JDrYVKVApD3TRnHdcHCmHq6uDJ+bvpNQuMqzr4=
-X-Received: by 2002:a05:690c:38b:b0:708:cd31:88a9 with SMTP id
- 00721157ae682-71952350c3amr27819927b3.37.1752834451459; Fri, 18 Jul 2025
- 03:27:31 -0700 (PDT)
+	s=arc-20240116; t=1752834524; c=relaxed/simple;
+	bh=mLEIXOd7eZdISffuLnCpahYVvfWHAggJn8bBD65Jk+8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uQsS2nA6hs5tKAKOyQ33LRHC+IyVY7nedVQQhH19RMi509S+nuKFl4JeXhh3Z1rsNW58sFWz46W2bmjnR/ja//9MpR+Bzz4W9pG+7nf11O2mA2JyyWoN3ETnQ1udcKNwdRJbb5TzI/sHiKuKKPTn/pR7dRwFG4UPe68Z5Dhb5ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eOF4Nqqm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F19AC4CEEB;
+	Fri, 18 Jul 2025 10:28:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752834524;
+	bh=mLEIXOd7eZdISffuLnCpahYVvfWHAggJn8bBD65Jk+8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eOF4Nqqmy62wOTE6iyDUN+If8Qx8CfTpC+N5PVoQWCe5WQhj+WWHU6Tyv3hi9eNhr
+	 FIoXTkuUWVi3cRj6W8FENzyay4s+zTghm5Vc8MYJeCWKF0Bw2h413GvxFcYuAR9NAR
+	 AsrElcNhPyoTnVlsCVCrQaopu97MxZTemFopAhXFV4BOoUGeXjbUQVsadiEe+JLuav
+	 yW4WCznBsJ0bxTwTsqy3Tg/wFN93AxwPEFWVFLdH8LZz/8Qm3JTU1utMKG2qb9dBji
+	 6qVErsWOPsaWploLev2unOE7h5UtBN5Bu1SJAkGsv/Rx6PACnsIUF3Gl6VH3Kjssvn
+	 2XjO0g8ZNrKhw==
+Date: Fri, 18 Jul 2025 12:28:37 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: manivannan.sadhasivam@oss.qualcomm.com
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+	Oliver O'Halloran <oohall@gmail.com>, Will Deacon <will@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Wilfred Mallawa <wilfred.mallawa@wdc.com>,
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+	Lukas Wunner <lukas@wunner.de>
+Subject: Re: [PATCH v6 0/4] PCI: Add support for resetting the Root Ports in
+ a platform specific way
+Message-ID: <aHoh1XfhR8EB_5yY@ryzen>
+References: <20250715-pci-port-reset-v6-0-6f9cce94e7bb@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aGjUpI1yNjEhSiAq@brak3rDesk>
-In-Reply-To: <aGjUpI1yNjEhSiAq@brak3rDesk>
-From: Rujra Bhatt <braker.noob.kernel@gmail.com>
-Date: Fri, 18 Jul 2025 15:57:20 +0530
-X-Gm-Features: Ac12FXxoU6aFudyIJiyv4FHEoGIyv9QfAgoxU9dgMhQNxFSC-pmiUNMnb69ONhU
-Message-ID: <CAG+54DZQC+-6E-P3D4BUtVujNegL1qKpcB5SGh28+rX5hrHFiw@mail.gmail.com>
-Subject: Re: [PATCH] arc:kernel:perf_event.c : replaced sprintf with sysfs_emit()
-To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
-	namhyung@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com, 
-	kan.liang@linux.intel.com, vgupta@kernel.org
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-snps-arc@lists.infradead.org, skhan@linuxfoundation.org, 
-	linux-kernel-mentees@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250715-pci-port-reset-v6-0-6f9cce94e7bb@oss.qualcomm.com>
 
-Hi,
+On Tue, Jul 15, 2025 at 07:51:03PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> Testing
+> -------
+> 
+> I've lost access to my test setup now. So Krishna (Cced) will help with testing
+> on the Qcom platform and Wilfred or Niklas should be able to test it on Rockchip
+> platform. For the moment, this series is compile tested only.
 
-On Sat, Jul 5, 2025 at 1:00=E2=80=AFPM Rujra Bhatt <braker.noob.kernel@gmai=
-l.com> wrote:
->
-> Replaced sprintf() with sysfs_emit() in sysfs*_show() function in
-> perf_event.c file to follow the kernel's guidelines from
-> documentation/filesystems/sysfs.rst
-> This will improve consistency, safety, and makes it easier to maintain
-> and update in future.
->
-> Signed-off-by: Rujra Bhatt <braker.noob.kernel@gmail.com>
-> ---
->  arch/arc/kernel/perf_event.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/arc/kernel/perf_event.c b/arch/arc/kernel/perf_event.c
-> index ed6d4f0cd621..424ec072c441 100644
-> --- a/arch/arc/kernel/perf_event.c
-> +++ b/arch/arc/kernel/perf_event.c
-> @@ -648,7 +648,7 @@ static ssize_t arc_pmu_events_sysfs_show(struct devic=
-e *dev,
->         struct perf_pmu_events_attr *pmu_attr;
->
->         pmu_attr =3D container_of(attr, struct perf_pmu_events_attr, attr=
-);
-> -       return sprintf(page, "event=3D0x%04llx\n", pmu_attr->id);
-> +       return sysfs_emit(page, "event=3D0x%04llx\n", pmu_attr->id);
->  }
->
->  /*
-> --
-> 2.43.0
->
 
-Gentle reminder for the replacement of sprintf() with the sysfs_emit(), kin=
-dly
-review it.
+Since this patch series implements two things:
 
-Thanking you,
-regards,
-Rujra Bhatt
+1) Testing sysfs initiated reset:
+
+selftests before sysfs initiated reset:
+# FAILED: 14 / 16 tests passed.
+
+# echo 1 > /sys/bus/pci/devices/0000:01:00.0/reset
+
+[  145.567748] pci-endpoint-test 0000:01:00.0: resetting
+[  145.638755] rockchip-dw-pcie a40000000.pcie: PCIE_CLIENT_INTR_STATUS_MISC: 0x3
+[  145.639472] rockchip-dw-pcie a40000000.pcie: LTSSM_STATUS: 0x230011
+[  145.640063] rockchip-dw-pcie a40000000.pcie: Received Link up event. Starting enumeration!
+[  145.682612] rockchip-dw-pcie a40000000.pcie: PCIe Gen.3 x4 link up
+[  145.683162] rockchip-dw-pcie a40000000.pcie: Root Port reset completed
+[  145.810852] pci-endpoint-test 0000:01:00.0: reset done
+
+selftests after sysfs initiated reset:
+# FAILED: 14 / 16 tests passed.
+
+(Without this patch series: # FAILED: 7 / 16 tests passed.)
+
+So for this part:
+Tested-by: Niklas Cassel <cassel@kernel.org>
+
+
+
+
+2) Testing link down reset:
+
+selftests before link down reset:
+# FAILED: 14 / 16 tests passed.
+
+## On EP side:
+# echo 0 > /sys/kernel/config/pci_ep/controllers/a40000000.pcie-ep/start && \
+  sleep 0.1 && echo 1 > /sys/kernel/config/pci_ep/controllers/a40000000.pcie-ep/start
+
+
+[  111.137162] rockchip-dw-pcie a40000000.pcie: PCIE_CLIENT_INTR_STATUS_MISC: 0x4
+[  111.137881] rockchip-dw-pcie a40000000.pcie: LTSSM_STATUS: 0x0
+[  111.138432] rockchip-dw-pcie a40000000.pcie: hot reset or link-down reset
+[  111.139067] pcieport 0000:00:00.0: Recovering Root Port due to Link Down
+[  111.139686] pci-endpoint-test 0000:01:00.0: AER: can't recover (no error_detected callback)
+[  111.255407] rockchip-dw-pcie a40000000.pcie: PCIe Gen.3 x4 link up
+[  111.256019] rockchip-dw-pcie a40000000.pcie: Root Port reset completed
+[  111.383401] pcieport 0000:00:00.0: Root Port has been reset
+[  111.384060] pcieport 0000:00:00.0: AER: device recovery failed
+[  111.384582] rockchip-dw-pcie a40000000.pcie: PCIE_CLIENT_INTR_STATUS_MISC: 0x3
+[  111.385218] rockchip-dw-pcie a40000000.pcie: LTSSM_STATUS: 0x230011
+[  111.385771] rockchip-dw-pcie a40000000.pcie: Received Link up event. Starting enumeration!
+[  111.390866] pcieport 0000:00:00.0: bridge configuration invalid ([bus 00-00]), reconfiguring
+[  111.391650] pci_bus 0000:01: busn_res: [bus 01-ff] end is updated to 01
+
+Basically all tests timeout
+# FAILED: 1 / 16 tests passed.
+
+Which is the same as before this patch series.
+
+So AFAICT, this part does not seem to work as advertised.
+
+Instead of quickly stopping and starting the link, I also tried to reboot the
+EP board, which does the configfs writes and starts the link automatically on
+boot, but that had the same result as quickly stopping and starting the link.
+
+
+Kind regards,
+Niklas
 
