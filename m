@@ -1,779 +1,576 @@
-Return-Path: <linux-kernel+bounces-737034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E068B0A6D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:06:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21EC8B0A6D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:06:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7496616A9A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:06:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 956881C486E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:06:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F5F72DCF47;
-	Fri, 18 Jul 2025 15:06:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F36032DCF73;
+	Fri, 18 Jul 2025 15:06:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b="Ss5YrYCf"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="XeUYj5ga"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2069.outbound.protection.outlook.com [40.107.223.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81E512DCC02
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 15:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752851162; cv=none; b=CXrkqpAITEuFbfVQenlcXC1s35U9srfvt9C1qj9OCV/16DLuT1CNel3VJ/Rr+T3ZUVARP9HSnz3OjkoVSKCmOEkiIHkfQOc8GOYNBsoE6AwtCGNQQKGLEBdCiSIAaBEeicJjlIdHY5qBLXC07uE9mrCQAOAYERYw3Ea2o4atOvQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752851162; c=relaxed/simple;
-	bh=rVVffuxMBus/RcxOhFWgCU5h3PEDgUw/qcl4X5xIi1Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=mEcnlyA8qZQNFyuz37YWBpo4aQ18XAMvX8ygysuMC+rZrrDaEBFyDqC2nHztsF+QDOvdrPntSAKTcpJLPxFxgHE6Grnh4GSIrRrNiwPJzTMk5/CCPzrdlxUCupFVVkx322++gPYOQwq/PaaRtRdraiTY0bS9Voh3gwe9EstI0kE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com; spf=none smtp.mailfrom=readmodwrite.com; dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b=Ss5YrYCf; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=readmodwrite.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-451d6ade159so16146225e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 08:06:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=readmodwrite-com.20230601.gappssmtp.com; s=20230601; t=1752851159; x=1753455959; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2BNj2X+SWkqF45adh7c1im/rMt4/J2J7kU0YH53i2ZQ=;
-        b=Ss5YrYCfprQIQGHSgiR7IuWOa9fukiOrBt57DH+kDo/XBM/yj45o+LmE8duuHZiKHA
-         FaMCkQdSxcwk5AZ4HXfrQMpbxDF6DcIwkRTRUAWA6HLMmxkA+u7ogDQQxlyYP8wGG5fV
-         uT/s6qsVj5B6FqLYPb8C4NfUCRWztuTnoMS0kBNmzT99gqFfOjaGqp4lr1YdVPdHaPAI
-         Ex7WXrhD2Su+QykzT7WCAqKcU6aUQp8NsspNBoqKkS+WkItHDijGnXrDVSCdOzDxEsgp
-         lKh7vXCXaow9ns2ZyhSJ0xSSLD7FA+WS023MQWGNJRf0Xej1yublh0nIFT2FmzzLW3ui
-         vIQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752851159; x=1753455959;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2BNj2X+SWkqF45adh7c1im/rMt4/J2J7kU0YH53i2ZQ=;
-        b=N8swNO7w7Q3MkQ2DW6Yfz7gtrLKe8xyJd1mwwMLwTIuYgLSjQlpfTwGpczZoUh53Wb
-         SiaSpkDL1mhnLyL/F2hHbnnkohDuJKfp7JVXHg9xxj/Wp7d4nTOQv6ibjg64BTdiMd7q
-         v0LOszAm6/oZykevfHmKBW85i3nYlxuh1YKc9pveCSzPiItrypSL5SBGozIso7uVHvZ7
-         8IJbuWQSmKOGMt+BSSxyJmA2LMJ3w8u7o420DcQ6iU/2vVZukyBEpSZ9RlqdcQ8cSDBn
-         6ATpmZ+Fr79HqTjKmX3c66mxT4QFnLZdcnbQmo6IorY7srFDwVD2QuzzpuGwxj6el67K
-         kZew==
-X-Forwarded-Encrypted: i=1; AJvYcCU6JCOLcAjj7SAeoK6zS2ZuYcWr9MKlMPcjKRn1O8noW1bYIY13FCg/aO/iz6D9Otu4JpUFOv4spudicO8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yze+V0dCoayx+XdHJndQbq9M6ZCs/efzx0Pk/oNXSTknsbaSokH
-	/8RCuc30Wn/29IAeqctmZR9tRpWqaRr8ytxZ/riFnuLOYk/PfOIZMNzJAKC2Xsg0AyM=
-X-Gm-Gg: ASbGncutqzQ3aOKq6YymeoIcMUMasqsuHbSOUZ2Nb5SgnBi3a3VxH2nYK4hJEkOKJLP
-	SB68I5beKF3sBpnAcxlLrPHxajilyDQsbLhaI4HrZIy7Xc8W8Ul4eECP0TB0LHFdO61Mcwo6/1S
-	Vbc90gZrk6jMEtuEtE0nG4VPQJj+aMF7ymW2AUHL5cBWcvV/amye9FBfdoHVy2tYjm72EFfA7Ey
-	6ZrAjx9RfP8POnCX54n4NFBJE2Vt+FssHyUv22jw3U6JnnpqJGtBC2JP7Wn9GlepbNXrPSW2zSE
-	yd1Pz90LSQOMvUMGXIsGisZAfkFuhK4PjrCEIRSv9NnC4IhZYgyo0scu5TO5j5mYPzRI9D3Xiw0
-	/IUFSYbjoRy8wFnVj4ER32v0=
-X-Google-Smtp-Source: AGHT+IEM0M+YYT1WF4Hdxs+WLk7MoZfkohvjefp7bSXR0frzr0PWDAv5nHw9Mtw87NHmCDEjkQjtyg==
-X-Received: by 2002:a05:600c:6097:b0:456:26ac:517a with SMTP id 5b1f17b1804b1-4562e3914b3mr102576995e9.24.1752851158340;
-        Fri, 18 Jul 2025 08:05:58 -0700 (PDT)
-Received: from matt-Precision-5490.. ([2a09:bac1:2880:f0::3df:4e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e80731bsm80684255e9.15.2025.07.18.08.05.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jul 2025 08:05:57 -0700 (PDT)
-From: Matt Fleming <matt@readmodwrite.com>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>
-Cc: Shuah Khan <shuah@kernel.org>,
-	kernel-team@cloudflare.com,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	Matt Fleming <mfleming@cloudflare.com>
-Subject: [PATCH] selftests/bpf: Add LPM trie microbenchmarks
-Date: Fri, 18 Jul 2025 16:05:54 +0100
-Message-Id: <20250718150554.48210-1-matt@readmodwrite.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0A3F2D9ECE
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 15:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752851181; cv=fail; b=fRBM/a53ue5sgUM1zT1BD2ykfNoqEO6xvLlGabr5QnpdiqhIQfXKWf77TFrg1F7M4KWNwP7UKLHPDmZ4NeV3h5yeI5Q5ZKjVNgZv/5dnHY9YxY8FO3/kxY7C9v2LbqKp73Cp+OqWab9HqT7Pt2e2Sdj43Ix+idYcMzcpJN3HtOI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752851181; c=relaxed/simple;
+	bh=MX2nEaStYKblwzz7K2RIAdtKCBcq7zYCTioFITaBDhw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=kzbo/6gQrgKWm5welK8QA3pBO/T7uFAEdV2mI8tervqLmiPLGSQA564wsWQdrCrSOs3FdP3zUPp5zpIuJlz9k05a8keNjo6S3hTa6Xf+Z131be8FlcO0EBR1W5feff+RXhHxxXF7gWvdD0WX4qLum77+Pq2yukKqBr0SU9SmYRM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=XeUYj5ga; arc=fail smtp.client-ip=40.107.223.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=q+W7tXTwOVgnu3vqWcblTAV2wyOCZM7HdyiISUEfPXDCpyxCaPNwEK3qf2gXqkVf60xqRmkVBpnJ7hJtYXTXuBoDL8EiBLblyArsSd+ikZechFPtzGPxr2yqb1Zibc3BR4U4zCIiBYIz4sIugDni10zGWEWgpSsmf3QkoR8VsU6PGSUehk4Rakvfv6QEAipLEEcYU/oAeOwsCK+gfc6pa4t5ph+poEcTHiwN2XiGmg9JA45ya1zSsDSpPcT4NzW6hlcc2e2pQg2OwkWWovTSdB+rnnjs5sw942pL0wZhlQ8pMKrGMdG++Wc30hTRHlpmTj5xp8ek4/kt1LKCjVQDvQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VeXLq6nEzyDIq+DaxdmHM1cDLilcB89/Z+nh3xg/4sU=;
+ b=qrd4aLBYSBKDpGP6XV7434LCVvyN+wpT8En6Aa5MAuV23OM7N1UhoOtRYB1n1Ok5KUk7p3mWoeHHjPCnD0ayUmXYQsiyjFPgXvcKXVO/qpVelwwWvQkK1EdXW73u28qbZpUeuIuvf/v7serATsvdtixl194lzj7HG7uVSzEwZ8FO49zJ/7Ln9TKrXk/siED46eggXH3oOoBDzcGH1x/kl96fWK19go+24hRe/V0scd0Vvq1sTJtZox5VJBRPKkaqSD2rpZxs0PnaUFJxwvp7jPBDXR8DiwdCOXqNc1VoVsU3ZhKQcXp9fPdprYJGMkYueEG9k80Z8tcy4h7WdnEEGg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VeXLq6nEzyDIq+DaxdmHM1cDLilcB89/Z+nh3xg/4sU=;
+ b=XeUYj5gaQSiDVFo50tcU9t8uPhbNvkASvS22z0kV8r+PMyqiZfIBqbME9rJqj71i6lmulyBJp40U5GHu6bDf88BB9r4AKj2R0G/BWMHCoWi39wOA/BWWLFBQMSm/N/67aELNfQ5+U2oPLGiNN9J6n81lj/GxZFNdETo0weMzo2cdjUTB11Vq4AnmbUxS8Rc9JVLdZwAJSNFTnpwFgBIZK98bQj6yut98tt8emIUJbeXVjaibJ6YgZGD0VIQUqT3w4qKUCTS+fVqTdfsXYarz+uA3AyNIUwrE2BJACFKp/uoEgtz8VTnXHem6yFZz9Y3l/6vSRampdh1Ey7XfbHQpmA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ DM6PR12MB4315.namprd12.prod.outlook.com (2603:10b6:5:223::16) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8943.26; Fri, 18 Jul 2025 15:06:13 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%6]) with mapi id 15.20.8922.037; Fri, 18 Jul 2025
+ 15:06:13 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: Matthew Brost <matthew.brost@intel.com>
+Cc: Balbir Singh <balbirs@nvidia.com>, linux-mm@kvack.org,
+ akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+ Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ =?utf-8?b?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+ Shuah Khan <shuah@kernel.org>, David Hildenbrand <david@redhat.com>,
+ Barry Song <baohua@kernel.org>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Matthew Wilcox <willy@infradead.org>,
+ Peter Xu <peterx@redhat.com>, Kefeng Wang <wangkefeng.wang@huawei.com>,
+ Jane Chu <jane.chu@oracle.com>, Alistair Popple <apopple@nvidia.com>,
+ Donet Tom <donettom@linux.ibm.com>
+Subject: Re: [v1 resend 08/12] mm/thp: add split during migration support
+Date: Fri, 18 Jul 2025 11:06:09 -0400
+X-Mailer: MailMate (2.0r6272)
+Message-ID: <5B36BFD4-DFDE-464F-8B2F-6A846D827331@nvidia.com>
+In-Reply-To: <aHnAgjaJeyKM+Osm@lstrano-desk.jf.intel.com>
+References: <906590D4-04E2-40CB-A853-25FE6212700C@nvidia.com>
+ <eab52820-813f-4137-b664-c79ba8b453b7@nvidia.com>
+ <aHc5/pmNLf4e9brJ@lstrano-desk.jf.intel.com>
+ <1DD0079E-0AF6-49F5-9CB3-E440F36D2D9B@nvidia.com>
+ <aHfSTdoi/M9ORrXE@lstrano-desk.jf.intel.com>
+ <a7e8485f-e9da-4edb-a809-a014517f26eb@nvidia.com>
+ <aHl4IuMlE9D6yaET@lstrano-desk.jf.intel.com>
+ <9E024BB0-7365-4A81-81E1-72CB44A07775@nvidia.com>
+ <aHmYVkNDRjz5JwNf@lstrano-desk.jf.intel.com>
+ <9F4425D6-609F-40C8-BF24-2455F15234A7@nvidia.com>
+ <aHnAgjaJeyKM+Osm@lstrano-desk.jf.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: BLAPR03CA0171.namprd03.prod.outlook.com
+ (2603:10b6:208:32f::31) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|DM6PR12MB4315:EE_
+X-MS-Office365-Filtering-Correlation-Id: eb256ae1-8f21-4a9d-05a6-08ddc60ca319
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?M3NMUlV1RjJhTHpZeEQwK0p5OS9QejhtWEYvRWpKMHlUekdGc2E1NnBXZWpa?=
+ =?utf-8?B?YnZTNnJGM3BsWCt0M3F4bmRCRXh1aXY2UlVicDZFMUhFemRscWZwcWliNVoz?=
+ =?utf-8?B?SnFLMWt6UkdRWEVrQmxOT1VjcUl2bFM1dDFSa29DK1RhdjY3MGdiRENrcW9L?=
+ =?utf-8?B?c2ZySmtGTU9jajRpV3NaZmo1c3BOZWxSWTFIUzl1azlXMUNFTjNvUTUvOGdF?=
+ =?utf-8?B?THFNb2FadkVIbG9TaFArcTdkREJwMDc2RkZVVU9BVmVFWDZHeEdXbmMwV1pZ?=
+ =?utf-8?B?MitVYzVjMzF4Y0IxU1cyNzlkbXUrWkxlUWdBS0xZRlNvNnhRdnZpZytLQzFO?=
+ =?utf-8?B?b0hReG5aOXVKbG1yZStKYnhVbmFnbFY5WnRWVWtkOWEzUVlFM1ZhM3ZFREV6?=
+ =?utf-8?B?d3BCUzlNaWJMbW52RW9yOVJLV0ZCcTZ4ZGR0djhZYkQ1YzVFTUlQdTFDdjIw?=
+ =?utf-8?B?T3Rkd2pLNkdyVURGZ0EwN1lWUk1vN2c2Z3B3b1g5bHhFVlpnaXhENUw3Zno1?=
+ =?utf-8?B?QjNweGQ5dmRjb29ldVR2UWdiNS9jTmpBbFViaFBkUG1MMVJBL0ZoUVpqNU5E?=
+ =?utf-8?B?VlZnS2VtdkhNMzlDRHhoR0REaTVJVzBkcFZiN0FnQnQzVVVXNU5XbFZZdHZu?=
+ =?utf-8?B?R1Z5U0NETVZBQVZhMlVjbnVTcEdzalpWcVU4cEZ4Nzd1N3pmb1BWbWF1a1Y4?=
+ =?utf-8?B?ZUdlUmhXdUxWdUZvZUl4VFBaaVQwOWNtU2NYTmdCNDUrS3FISlg4emVEUkt5?=
+ =?utf-8?B?b0ZzMHpmYkwxQSs2ZTB0dTFCUmhhVjRQQU5iVjFGWEZJUEMrRnhlcmUyV0M2?=
+ =?utf-8?B?cThFWjZXRjFhL0FQaEZPVXhoV2VTbm9vc1lpYk1HZFRza3haeGU1NUF5S1RO?=
+ =?utf-8?B?WEwwaTA1NWR4cXZpYXYyWFdBeS94Mk9PNGxuWW5wOGRHbkF1VXBvUHZ2UERO?=
+ =?utf-8?B?cFRGZE5yRC84RXVlWk5VQ0NaSUFsS0I3TmkxTWt4V3RsV1NKTzJSQ1F1Qjhs?=
+ =?utf-8?B?bUdMNUlMK2VuZnRrRUdPNjJ0MGpSbW52THVSSms4VDJ0TnBvdFpFbXNrenhu?=
+ =?utf-8?B?TjNjVk5QSTJRSnVZelVHK21HT3Z6VW01R0kwanhJU3Zhem5IMnFqc1ZuUGgx?=
+ =?utf-8?B?cG52NHZKOEk5NjVveGZhYWpOUGJhOFVRQUhBaHNEaWhvSkxHeVNmNGVGUVc1?=
+ =?utf-8?B?K1Fid2EzVkFHWEtkUmNQS3ltY3Mwc3pSeW52OXR5eGt0NFZqNTIzblRRamdt?=
+ =?utf-8?B?T3lvWUpxK25WMTVNZHJGbmZCb1ZuZWJYT3dCODBsQ0ZzS3VoMml0VjJOem9u?=
+ =?utf-8?B?dVFpb1pzQldENTh6bWhKMU9STEN0Z21Ia0QwNTV3M2FXdTlVRk9zWFNSV21R?=
+ =?utf-8?B?SS9LT2NlV0xhK1NyZ2s1MUMvbG1aYTBndC9UaEFyT1lBRnk4UmF0b0o1SHAw?=
+ =?utf-8?B?R2xIcFpPenJ4bkJRbzVFcDl0S25GTCtrR2FveWkyc1cwbThoOVdZTjU0VnJi?=
+ =?utf-8?B?QnJqSFZsL2pFNGx6anZ0OVRiakR3UU5vWnB1MWRDcXFsQTBWdjZJdGVXejJk?=
+ =?utf-8?B?Zm02OFNXZEZGSks0T2w2WnArWElwb29LdEZhaUNKMWM0eXZuZDl1c0VuQWxp?=
+ =?utf-8?B?bmszNmVoR1FYdmFXUDlNc2VkaW5LejdIdTZ6b0tFMytWL1lGbzBqeFhJbTA2?=
+ =?utf-8?B?RmErK0E5WHhKM2FGcm1LbGlDbkIyV1NYZ1F6dzZMdEpvbWhWbVk3MDZ4eW00?=
+ =?utf-8?B?QWs5UC9LUG15ZkFIYUs1SzJJOTFJRmZkMXZ4N2dqN0NnVFB6dmlqL0d4WjRt?=
+ =?utf-8?B?MWZYV3RXTmQ0TDhibk5PaDBJU21qQzVJUHBhc3BzaVlxLytFT3crMzJKeVVD?=
+ =?utf-8?B?U1RYSHZsenhlbE1ReldkRmRpNmN1ckE3cWs4VXNkMmMxZG9Kd2xFRUlPczJT?=
+ =?utf-8?Q?QyHrlLf90SY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?czB2WGYxV01VdFZvQlpyV0xiajB0MEtYcS9IWHc0MGVLWVNnZzE5cU8wa3Fy?=
+ =?utf-8?B?eE96UjNldVJDSDk1RDhJZk9DMGV6NFpuZXNzWjVsZEVUNmxadUJGK1JXcmJZ?=
+ =?utf-8?B?eTg1M21xc0VzeThBb01kbW1BUHUxT0J5K2svQmIyaWN5cVZCdjhpR0s3ZWE1?=
+ =?utf-8?B?Y2JYWldWdnRUWG9nZXNHNnA2a012SkdpVmh1ZVZRM3VJektHL1l3aVR3QW5C?=
+ =?utf-8?B?NytwT1JWbGlhMVMwbGV2TnFPZER2RnpCOVIyaFYreVBZVjRHVzM3VzJwVUpV?=
+ =?utf-8?B?ZlNwRTVtQmM1YTVCb3pUVFhxRGo1T283U1ZXTWYzTnozMXRIZGZsUXpxT25t?=
+ =?utf-8?B?SU04R3dCbUEwaC93cnJ6Z1J6dCtXSWNwYWVkOG9PVDQxNEdaWkZLMUQrSk9O?=
+ =?utf-8?B?NVFFejlTNnErMFVVRndabHU2TEpQOVdVdEk5N1RoRTB0bTd3dXNRZklLRThY?=
+ =?utf-8?B?WWRpWFZrUHUwdXN1NWFpcjJUT0xTZElLdjRaOEFDSnMybWlUL21ybWZ1V2pD?=
+ =?utf-8?B?SkJsUzNYZXlDb1E2OTVRS1Q0QTZhajNBYjVPNVBZcFdiaUE3RVBZdlo5OTlr?=
+ =?utf-8?B?WnE1eHA3b0IzSEJhNGROYUNnZVgrYkMyM1BNYzFFYXUvc01OeDBHZ2ZjKzlD?=
+ =?utf-8?B?RWpicERKblAvWHJoYXBLSTVTVzEyM2l1bTFHV25GQ3RFY0ROR0tzNTE4Y1pD?=
+ =?utf-8?B?RTZCdWJLdkFySDZLeFZhc2JZNVczRktlWERoQUZlcXdTbnVVNmlHemwrbU8z?=
+ =?utf-8?B?L2R5Y0IwMURndFJwUWt0N3pKdXg4S3JjZWdad2dtVVdjRENzcFJjYW1oaGF5?=
+ =?utf-8?B?R0U5ZCsveFZyVDA4bTdSb25jYXJhRGZmak1HMVlrYVliUUk1K0dNVUVnanUz?=
+ =?utf-8?B?ejJIWFpNUWs4QnJBcjd2UE9KZnNMMTYzTVBqdzRUQzZGLzlTcVFTUjQ4Qitn?=
+ =?utf-8?B?UVZTaTBXMSs3UnRtVnhkbVduRSt3NFRLNUltWFpBMGVJMmhBNFEwSllySDZi?=
+ =?utf-8?B?RmZBRVdPek9jOE9IZ0FFL0w0bjdkNHRLT0NVNUh3MVlFZDVsMjE4WTNnZ1Vt?=
+ =?utf-8?B?NEdubDl0K1UwYWVzcDFvK0dtdm9BNUhVZi9HWDBXSjJYcms0UEg2OUlUTm0r?=
+ =?utf-8?B?dHdDNTdNOE5scnNBaEU4WTc1Q3Rha2RkTFRSS1ZzeE9XMzIxS0VveWF0SDlM?=
+ =?utf-8?B?T0krUStLZlpWK2R5N0RFb3BKOHFUMVNJSTdlZklSNWEyTXhyWFl0VEFTZXU4?=
+ =?utf-8?B?Zm41WC9VY1kzeEM0UkluY3NiaUIzSmVXVU5ZaFRKYUFVSUZuTHJVRldZeVhV?=
+ =?utf-8?B?U1dKYWhqNkJUZUFoaFZKcDAyeHVudTdPd0lZZExINmtqOHJtTlViYWM1eUgy?=
+ =?utf-8?B?Zk8rd2hPU2gxU3VCZk5CeldhQk5FS0Z6UUdUZENuekptb0JEbDNGYk84VWV2?=
+ =?utf-8?B?cnBUZkFnUEZFMGdtLzVObWFtbjRYejNneEZKenl6QVo0YjIvejVTbG1GaGZC?=
+ =?utf-8?B?SW9Pb1ZiRWsycFZwTDBQZ1BiVnZjTUZvTloySEMwcXBYYkFtN0J5UzVtWElF?=
+ =?utf-8?B?WTBFSjJVa3ZTdzJiazFMVEtGM0dySEhMdnN2M1ZOYjN1c1hDRW5IOWNNNDRV?=
+ =?utf-8?B?d3F3L0tQbDVaR2Mxay8wazZUWUt5c0NqdjNxN3UrbW5rb0RpSnhQV3pwRXFU?=
+ =?utf-8?B?ZVRnUk4wSnAvU3BGSHlWRzI0L3ZCR2NzaVU3RmRFNWc1bm1kaVpVVmpnY3px?=
+ =?utf-8?B?NmtCOEIzVjRMRHNUKzJNVVhMaE50TEdlb2RGZDdlejRURmIxTmxQbDNQMUVV?=
+ =?utf-8?B?NkMrcUtjc2lmWE56TmE4T1V5cVNPZlkzU0JEa0Rldlo2Nk5jUW1YSDVwcXN1?=
+ =?utf-8?B?TVRhU3NuazlUZzBUUU93NUxxRWxibTZuYlZkdjRaeVZ6UkdPdyt4SjVTLzVq?=
+ =?utf-8?B?UzMyb0s4L2wvd2Z6WlUrMmZpc1U2ejhHSFpjeGs5WkNCV2RrQ3o4RHFJbDZr?=
+ =?utf-8?B?dWY5V2VDU0M1U1pFaHhqb21oaHFPSGpWZjJMSTZsK2o1Yko3WmRueU81NDlz?=
+ =?utf-8?B?R0FGa2wrREtyeDBoSWxxWTVJSVN4bDc0ZWZBZy9MRHBOR2wxZjVodFNUTnZa?=
+ =?utf-8?Q?sg59ICZFoPMYxRzbhhRWWsij0?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: eb256ae1-8f21-4a9d-05a6-08ddc60ca319
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2025 15:06:13.6131
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CwQNm/0N+7AggkJTZqdtRdXiDZus2490XaH89/3GfPWEDnl6CK7d6yo2zEBNtiRQ
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4315
 
-From: Matt Fleming <mfleming@cloudflare.com>
+On 17 Jul 2025, at 23:33, Matthew Brost wrote:
 
-Add benchmarks for the standard set of operations: lookup, update,
-delete. Also, include a benchmark for trie_free() which is known to have
-terrible performance for maps with many entries.
+> On Thu, Jul 17, 2025 at 09:25:02PM -0400, Zi Yan wrote:
+>> On 17 Jul 2025, at 20:41, Matthew Brost wrote:
+>>
+>>> On Thu, Jul 17, 2025 at 07:04:48PM -0400, Zi Yan wrote:
+>>>> On 17 Jul 2025, at 18:24, Matthew Brost wrote:
+>>>>
+>>>>> On Thu, Jul 17, 2025 at 07:53:40AM +1000, Balbir Singh wrote:
+>>>>>> On 7/17/25 02:24, Matthew Brost wrote:
+>>>>>>> On Wed, Jul 16, 2025 at 07:19:10AM -0400, Zi Yan wrote:
+>>>>>>>> On 16 Jul 2025, at 1:34, Matthew Brost wrote:
+>>>>>>>>
+>>>>>>>>> On Sun, Jul 06, 2025 at 11:47:10AM +1000, Balbir Singh wrote:
+>>>>>>>>>> On 7/6/25 11:34, Zi Yan wrote:
+>>>>>>>>>>> On 5 Jul 2025, at 21:15, Balbir Singh wrote:
+>>>>>>>>>>>
+>>>>>>>>>>>> On 7/5/25 11:55, Zi Yan wrote:
+>>>>>>>>>>>>> On 4 Jul 2025, at 20:58, Balbir Singh wrote:
+>>>>>>>>>>>>>
+>>>>>>>>>>>>>> On 7/4/25 21:24, Zi Yan wrote:
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> s/pages/folio
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> Thanks, will make the changes
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> Why name it isolated if the folio is unmapped? Isolated fol=
+ios often mean
+>>>>>>>>>>>>>>> they are removed from LRU lists. isolated here causes confu=
+sion.
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> Ack, will change the name
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>   *
+>>>>>>>>>>>>>>>>   * It calls __split_unmapped_folio() to perform uniform a=
+nd non-uniform split.
+>>>>>>>>>>>>>>>>   * It is in charge of checking whether the split is suppo=
+rted or not and
+>>>>>>>>>>>>>>>> @@ -3800,7 +3799,7 @@ bool uniform_split_supported(struct =
+folio *folio, unsigned int new_order,
+>>>>>>>>>>>>>>>>   */
+>>>>>>>>>>>>>>>>  static int __folio_split(struct folio *folio, unsigned in=
+t new_order,
+>>>>>>>>>>>>>>>>  		struct page *split_at, struct page *lock_at,
+>>>>>>>>>>>>>>>> -		struct list_head *list, bool uniform_split)
+>>>>>>>>>>>>>>>> +		struct list_head *list, bool uniform_split, bool isolat=
+ed)
+>>>>>>>>>>>>>>>>  {
+>>>>>>>>>>>>>>>>  	struct deferred_split *ds_queue =3D get_deferred_split_q=
+ueue(folio);
+>>>>>>>>>>>>>>>>  	XA_STATE(xas, &folio->mapping->i_pages, folio->index);
+>>>>>>>>>>>>>>>> @@ -3846,14 +3845,16 @@ static int __folio_split(struct fo=
+lio *folio, unsigned int new_order,
+>>>>>>>>>>>>>>>>  		 * is taken to serialise against parallel split or coll=
+apse
+>>>>>>>>>>>>>>>>  		 * operations.
+>>>>>>>>>>>>>>>>  		 */
+>>>>>>>>>>>>>>>> -		anon_vma =3D folio_get_anon_vma(folio);
+>>>>>>>>>>>>>>>> -		if (!anon_vma) {
+>>>>>>>>>>>>>>>> -			ret =3D -EBUSY;
+>>>>>>>>>>>>>>>> -			goto out;
+>>>>>>>>>>>>>>>> +		if (!isolated) {
+>>>>>>>>>>>>>>>> +			anon_vma =3D folio_get_anon_vma(folio);
+>>>>>>>>>>>>>>>> +			if (!anon_vma) {
+>>>>>>>>>>>>>>>> +				ret =3D -EBUSY;
+>>>>>>>>>>>>>>>> +				goto out;
+>>>>>>>>>>>>>>>> +			}
+>>>>>>>>>>>>>>>> +			anon_vma_lock_write(anon_vma);
+>>>>>>>>>>>>>>>>  		}
+>>>>>>>>>>>>>>>>  		end =3D -1;
+>>>>>>>>>>>>>>>>  		mapping =3D NULL;
+>>>>>>>>>>>>>>>> -		anon_vma_lock_write(anon_vma);
+>>>>>>>>>>>>>>>>  	} else {
+>>>>>>>>>>>>>>>>  		unsigned int min_order;
+>>>>>>>>>>>>>>>>  		gfp_t gfp;
+>>>>>>>>>>>>>>>> @@ -3920,7 +3921,8 @@ static int __folio_split(struct foli=
+o *folio, unsigned int new_order,
+>>>>>>>>>>>>>>>>  		goto out_unlock;
+>>>>>>>>>>>>>>>>  	}
+>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>> -	unmap_folio(folio);
+>>>>>>>>>>>>>>>> +	if (!isolated)
+>>>>>>>>>>>>>>>> +		unmap_folio(folio);
+>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>  	/* block interrupt reentry in xa_lock and spinlock */
+>>>>>>>>>>>>>>>>  	local_irq_disable();
+>>>>>>>>>>>>>>>> @@ -3973,14 +3975,15 @@ static int __folio_split(struct fo=
+lio *folio, unsigned int new_order,
+>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>  		ret =3D __split_unmapped_folio(folio, new_order,
+>>>>>>>>>>>>>>>>  				split_at, lock_at, list, end, &xas, mapping,
+>>>>>>>>>>>>>>>> -				uniform_split);
+>>>>>>>>>>>>>>>> +				uniform_split, isolated);
+>>>>>>>>>>>>>>>>  	} else {
+>>>>>>>>>>>>>>>>  		spin_unlock(&ds_queue->split_queue_lock);
+>>>>>>>>>>>>>>>>  fail:
+>>>>>>>>>>>>>>>>  		if (mapping)
+>>>>>>>>>>>>>>>>  			xas_unlock(&xas);
+>>>>>>>>>>>>>>>>  		local_irq_enable();
+>>>>>>>>>>>>>>>> -		remap_page(folio, folio_nr_pages(folio), 0);
+>>>>>>>>>>>>>>>> +		if (!isolated)
+>>>>>>>>>>>>>>>> +			remap_page(folio, folio_nr_pages(folio), 0);
+>>>>>>>>>>>>>>>>  		ret =3D -EAGAIN;
+>>>>>>>>>>>>>>>>  	}
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> These "isolated" special handlings does not look good, I wo=
+nder if there
+>>>>>>>>>>>>>>> is a way of letting split code handle device private folios=
+ more gracefully.
+>>>>>>>>>>>>>>> It also causes confusions, since why does "isolated/unmappe=
+d" folios
+>>>>>>>>>>>>>>> not need to unmap_page(), remap_page(), or unlock?
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> There are two reasons for going down the current code path
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> After thinking more, I think adding isolated/unmapped is not =
+the right
+>>>>>>>>>>>>> way, since unmapped folio is a very generic concept. If you a=
+dd it,
+>>>>>>>>>>>>> one can easily misuse the folio split code by first unmapping=
+ a folio
+>>>>>>>>>>>>> and trying to split it with unmapped =3D true. I do not think=
+ that is
+>>>>>>>>>>>>> supported and your patch does not prevent that from happening=
+ in the future.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>
+>>>>>>>>>>>> I don't understand the misuse case you mention, I assume you m=
+ean someone can
+>>>>>>>>>>>> get the usage wrong? The responsibility is on the caller to do=
+ the right thing
+>>>>>>>>>>>> if calling the API with unmapped
+>>>>>>>>>>>
+>>>>>>>>>>> Before your patch, there is no use case of splitting unmapped f=
+olios.
+>>>>>>>>>>> Your patch only adds support for device private page split, not=
+ any unmapped
+>>>>>>>>>>> folio split. So using a generic isolated/unmapped parameter is =
+not OK.
+>>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>> There is a use for splitting unmapped folios (see below)
+>>>>>>>>>>
+>>>>>>>>>>>>
+>>>>>>>>>>>>> You should teach different parts of folio split code path to =
+handle
+>>>>>>>>>>>>> device private folios properly. Details are below.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> 1. if the isolated check is not present, folio_get_anon_vma =
+will fail and cause
+>>>>>>>>>>>>>>    the split routine to return with -EBUSY
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> You do something below instead.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> if (!anon_vma && !folio_is_device_private(folio)) {
+>>>>>>>>>>>>> 	ret =3D -EBUSY;
+>>>>>>>>>>>>> 	goto out;
+>>>>>>>>>>>>> } else if (anon_vma) {
+>>>>>>>>>>>>> 	anon_vma_lock_write(anon_vma);
+>>>>>>>>>>>>> }
+>>>>>>>>>>>>>
+>>>>>>>>>>>>
+>>>>>>>>>>>> folio_get_anon() cannot be called for unmapped folios. In our =
+case the page has
+>>>>>>>>>>>> already been unmapped. Is there a reason why you mix anon_vma_=
+lock_write with
+>>>>>>>>>>>> the check for device private folios?
+>>>>>>>>>>>
+>>>>>>>>>>> Oh, I did not notice that anon_vma =3D folio_get_anon_vma(folio=
+) is also
+>>>>>>>>>>> in if (!isolated) branch. In that case, just do
+>>>>>>>>>>>
+>>>>>>>>>>> if (folio_is_device_private(folio) {
+>>>>>>>>>>> ...
+>>>>>>>>>>> } else if (is_anon) {
+>>>>>>>>>>> ...
+>>>>>>>>>>> } else {
+>>>>>>>>>>> ...
+>>>>>>>>>>> }
+>>>>>>>>>>>
+>>>>>>>>>>>>
+>>>>>>>>>>>>> People can know device private folio split needs a special ha=
+ndling.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> BTW, why a device private folio can also be anonymous? Does i=
+t mean
+>>>>>>>>>>>>> if a page cache folio is migrated to device private, kernel a=
+lso
+>>>>>>>>>>>>> sees it as both device private and file-backed?
+>>>>>>>>>>>>>
+>>>>>>>>>>>>
+>>>>>>>>>>>> FYI: device private folios only work with anonymous private pa=
+ges, hence
+>>>>>>>>>>>> the name device private.
+>>>>>>>>>>>
+>>>>>>>>>>> OK.
+>>>>>>>>>>>
+>>>>>>>>>>>>
+>>>>>>>>>>>>>
+>>>>>>>>>>>>>> 2. Going through unmap_page(), remap_page() causes a full pa=
+ge table walk, which
+>>>>>>>>>>>>>>    the migrate_device API has already just done as a part of=
+ the migration. The
+>>>>>>>>>>>>>>    entries under consideration are already migration entries=
+ in this case.
+>>>>>>>>>>>>>>    This is wasteful and in some case unexpected.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> unmap_folio() already adds TTU_SPLIT_HUGE_PMD to try to split
+>>>>>>>>>>>>> PMD mapping, which you did in migrate_vma_split_pages(). You =
+probably
+>>>>>>>>>>>>> can teach either try_to_migrate() or try_to_unmap() to just s=
+plit
+>>>>>>>>>>>>> device private PMD mapping. Or if that is not preferred,
+>>>>>>>>>>>>> you can simply call split_huge_pmd_address() when unmap_folio=
+()
+>>>>>>>>>>>>> sees a device private folio.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> For remap_page(), you can simply return for device private fo=
+lios
+>>>>>>>>>>>>> like it is currently doing for non anonymous folios.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>
+>>>>>>>>>>>> Doing a full rmap walk does not make sense with unmap_folio() =
+and
+>>>>>>>>>>>> remap_folio(), because
+>>>>>>>>>>>>
+>>>>>>>>>>>> 1. We need to do a page table walk/rmap walk again
+>>>>>>>>>>>> 2. We'll need special handling of migration <-> migration entr=
+ies
+>>>>>>>>>>>>    in the rmap handling (set/remove migration ptes)
+>>>>>>>>>>>> 3. In this context, the code is already in the middle of migra=
+tion,
+>>>>>>>>>>>>    so trying to do that again does not make sense.
+>>>>>>>>>>>
+>>>>>>>>>>> Why doing split in the middle of migration? Existing split code
+>>>>>>>>>>> assumes to-be-split folios are mapped.
+>>>>>>>>>>>
+>>>>>>>>>>> What prevents doing split before migration?
+>>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>> The code does do a split prior to migration if THP selection fai=
+ls
+>>>>>>>>>>
+>>>>>>>>>> Please see https://lore.kernel.org/lkml/20250703233511.2028395-5=
+-balbirs@nvidia.com/
+>>>>>>>>>> and the fallback part which calls split_folio()
+>>>>>>>>>>
+>>>>>>>>>> But the case under consideration is special since the device nee=
+ds to allocate
+>>>>>>>>>> corresponding pfn's as well. The changelog mentions it:
+>>>>>>>>>>
+>>>>>>>>>> "The common case that arises is that after setup, during migrate
+>>>>>>>>>> the destination might not be able to allocate MIGRATE_PFN_COMPOU=
+ND
+>>>>>>>>>> pages."
+>>>>>>>>>>
+>>>>>>>>>> I can expand on it, because migrate_vma() is a multi-phase opera=
+tion
+>>>>>>>>>>
+>>>>>>>>>> 1. migrate_vma_setup()
+>>>>>>>>>> 2. migrate_vma_pages()
+>>>>>>>>>> 3. migrate_vma_finalize()
+>>>>>>>>>>
+>>>>>>>>>> It can so happen that when we get the destination pfn's allocate=
+d the destination
+>>>>>>>>>> might not be able to allocate a large page, so we do the split i=
+n migrate_vma_pages().
+>>>>>>>>>>
+>>>>>>>>>> The pages have been unmapped and collected in migrate_vma_setup(=
+)
+>>>>>>>>>>
+>>>>>>>>>> The next patch in the series 9/12 (https://lore.kernel.org/lkml/=
+20250703233511.2028395-10-balbirs@nvidia.com/)
+>>>>>>>>>> tests the split and emulates a failure on the device side to all=
+ocate large pages
+>>>>>>>>>> and tests it in 10/12 (https://lore.kernel.org/lkml/202507032335=
+11.2028395-11-balbirs@nvidia.com/)
+>>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> Another use case I=E2=80=99ve seen is when a previously allocated=
+ high-order
+>>>>>>>>> folio, now in the free memory pool, is reallocated as a lower-ord=
+er
+>>>>>>>>> page. For example, a 2MB fault allocates a folio, the memory is l=
+ater
+>>>>>>>>
+>>>>>>>> That is different. If the high-order folio is free, it should be s=
+plit
+>>>>>>>> using split_page() from mm/page_alloc.c.
+>>>>>>>>
+>>>>>>>
+>>>>>>> Ah, ok. Let me see if that works - it would easier.
+>>>>>>>
+>>>>>
+>>>>> This suggestion quickly blows up as PageCompound is true and page_cou=
+nt
+>>>>> here is zero.
+>>>>
+>>>> OK, your folio has PageCompound set. Then you will need __split_unmapp=
+ed_foio().
+>>>>
+>>>>>
+>>>>>>>>> freed, and then a 4KB fault reuses a page from that previously al=
+located
+>>>>>>>>> folio. This will be actually quite common in Xe / GPU SVM. In suc=
+h
+>>>>>>>>> cases, the folio in an unmapped state needs to be split. I=E2=80=
+=99d suggest a
+>>>>>>>>
+>>>>>>>> This folio is unused, so ->flags, ->mapping, and etc. are not set,
+>>>>>>>> __split_unmapped_folio() is not for it, unless you mean free folio
+>>>>>>>> differently.
+>>>>>>>>
+>>>>>>>
+>>>>>>> This is right, those fields should be clear.
+>>>>>>>
+>>>>>>> Thanks for the tip.
+>>>>>>>
+>>>>>> I was hoping to reuse __split_folio_to_order() at some point in the =
+future
+>>>>>> to split the backing pages in the driver, but it is not an immediate=
+ priority
+>>>>>>
+>>>>>
+>>>>> I think we need something for the scenario I describe here. I was to
+>>>>> make __split_huge_page_to_list_to_order with a couple of hacks but it
+>>>>> almostly certainig not right as Zi pointed out.
+>>>>>
+>>>>> New to the MM stuff, but play around with this a bit and see if I can
+>>>>> come up with something that will work here.
+>>>>
+>>>> Can you try to write a new split_page function with __split_unmapped_f=
+olio()?
+>>>> Since based on your description, your folio is not mapped.
+>>>>
+>>>
+>>> Yes, page->mapping is NULL in this case - that was part of the hacks to
+>>> __split_huge_page_to_list_to_order (more specially __folio_split) I had
+>>> to make in order to get something working for this case.
+>>>
+>>> I can try out something based on __split_unmapped_folio and report back=
+.
+>>
+>> mm-new tree has an updated __split_unmapped_folio() version, it moves
+>> all unmap irrelevant code out of __split_unmaped_folio(). You might find
+>> it easier to reuse.
+>>
+>> See: https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/tree/mm=
+/huge_memory.c?h=3Dmm-new#n3430
+>>
+>
+> Will take a look. It is possible some of the issues we are hitting are
+> due to working on drm-tip + pulling in core MM patches in this series on
+> top of that branch then missing some other patches in mm-new. I'll see
+> if ww can figure out a work flow to have the latest and greatest from
+> both drm-tip and the MM branches.
+>
+> Will these changes be in 6.17?
 
-Benchmarks operate on tries without gaps in the key range, i.e. each
-test begins with a trie with valid keys in the range [0, nr_entries).
-This is intended to cause maximum branching when traversing the trie.
+Hopefully yes. mm patches usually go from mm-new to mm-unstable
+to mm-stable to mainline. If not, we will figure it out. :)
 
-All measurements are recorded inside the kernel to remove syscall
-overhead.
+>
+>> I am about to update the code with v4 patches. I will cc you, so that
+>> you can get the updated __split_unmaped_folio().
+>>
+>> Feel free to ask questions on folio split code.
+>>
+>
+> Thanks.
+>
+> Matt
+>
+>> Best Regards,
+>> Yan, Zi
 
-Most benchmarks run an XDP program to generate stats but free needs to
-collect latencies using fentry/fexit on map_free_deferred() because it's
-not possible to use fentry directly on lpm_trie.c since commit
-c83508da5620 ("bpf: Avoid deadlock caused by nested kprobe and fentry
-bpf programs") and there's no way to create/destroy a map from within an
-XDP program.
 
-Here is example output from an AMD EPYC 9684X 96-Core machine for each
-of the benchmarks using a trie with 10K entries and a 32-bit prefix
-length, e.g.
-
-  $ ./bench lpm-trie-$op \
-  	--prefix_len=32  \
-	--producers=1     \
-	--nr_entries=10000
-
-  lookup: throughput    7.423 ± 0.023 M ops/s (  7.423M ops/prod), latency  134.710 ns/op
-  update: throughput    2.643 ± 0.015 M ops/s (  2.643M ops/prod), latency  378.310 ns/op
-  delete: throughput    0.712 ± 0.008 M ops/s (  0.712M ops/prod), latency 1405.152 ns/op
-    free: throughput    0.574 ± 0.003 K ops/s (  0.574K ops/prod), latency    1.743 ms/op
-
-Signed-off-by: Matt Fleming <mfleming@cloudflare.com>
----
- tools/testing/selftests/bpf/Makefile          |   2 +
- tools/testing/selftests/bpf/bench.c           |  10 +
- tools/testing/selftests/bpf/bench.h           |   1 +
- .../selftests/bpf/benchs/bench_lpm_trie_map.c | 345 ++++++++++++++++++
- .../selftests/bpf/progs/lpm_trie_bench.c      | 175 +++++++++
- .../selftests/bpf/progs/lpm_trie_map.c        |  19 +
- 6 files changed, 552 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/benchs/bench_lpm_trie_map.c
- create mode 100644 tools/testing/selftests/bpf/progs/lpm_trie_bench.c
- create mode 100644 tools/testing/selftests/bpf/progs/lpm_trie_map.c
-
-diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-index 910d8d6402ef..10a5f1d0fa41 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -815,6 +815,7 @@ $(OUTPUT)/bench_bpf_hashmap_lookup.o: $(OUTPUT)/bpf_hashmap_lookup.skel.h
- $(OUTPUT)/bench_htab_mem.o: $(OUTPUT)/htab_mem_bench.skel.h
- $(OUTPUT)/bench_bpf_crypto.o: $(OUTPUT)/crypto_bench.skel.h
- $(OUTPUT)/bench_sockmap.o: $(OUTPUT)/bench_sockmap_prog.skel.h
-+$(OUTPUT)/bench_lpm_trie_map.o: $(OUTPUT)/lpm_trie_bench.skel.h $(OUTPUT)/lpm_trie_map.skel.h
- $(OUTPUT)/bench.o: bench.h testing_helpers.h $(BPFOBJ)
- $(OUTPUT)/bench: LDLIBS += -lm
- $(OUTPUT)/bench: $(OUTPUT)/bench.o \
-@@ -836,6 +837,7 @@ $(OUTPUT)/bench: $(OUTPUT)/bench.o \
- 		 $(OUTPUT)/bench_htab_mem.o \
- 		 $(OUTPUT)/bench_bpf_crypto.o \
- 		 $(OUTPUT)/bench_sockmap.o \
-+		 $(OUTPUT)/bench_lpm_trie_map.o \
- 		 #
- 	$(call msg,BINARY,,$@)
- 	$(Q)$(CC) $(CFLAGS) $(LDFLAGS) $(filter %.a %.o,$^) $(LDLIBS) -o $@
-diff --git a/tools/testing/selftests/bpf/bench.c b/tools/testing/selftests/bpf/bench.c
-index ddd73d06a1eb..fd15f60fd5a8 100644
---- a/tools/testing/selftests/bpf/bench.c
-+++ b/tools/testing/selftests/bpf/bench.c
-@@ -284,6 +284,7 @@ extern struct argp bench_htab_mem_argp;
- extern struct argp bench_trigger_batch_argp;
- extern struct argp bench_crypto_argp;
- extern struct argp bench_sockmap_argp;
-+extern struct argp bench_lpm_trie_map_argp;
- 
- static const struct argp_child bench_parsers[] = {
- 	{ &bench_ringbufs_argp, 0, "Ring buffers benchmark", 0 },
-@@ -299,6 +300,7 @@ static const struct argp_child bench_parsers[] = {
- 	{ &bench_trigger_batch_argp, 0, "BPF triggering benchmark", 0 },
- 	{ &bench_crypto_argp, 0, "bpf crypto benchmark", 0 },
- 	{ &bench_sockmap_argp, 0, "bpf sockmap benchmark", 0 },
-+	{ &bench_lpm_trie_map_argp, 0, "LPM trie map benchmark", 0 },
- 	{},
- };
- 
-@@ -558,6 +560,10 @@ extern const struct bench bench_htab_mem;
- extern const struct bench bench_crypto_encrypt;
- extern const struct bench bench_crypto_decrypt;
- extern const struct bench bench_sockmap;
-+extern const struct bench bench_lpm_trie_lookup;
-+extern const struct bench bench_lpm_trie_update;
-+extern const struct bench bench_lpm_trie_delete;
-+extern const struct bench bench_lpm_trie_free;
- 
- static const struct bench *benchs[] = {
- 	&bench_count_global,
-@@ -625,6 +631,10 @@ static const struct bench *benchs[] = {
- 	&bench_crypto_encrypt,
- 	&bench_crypto_decrypt,
- 	&bench_sockmap,
-+	&bench_lpm_trie_lookup,
-+	&bench_lpm_trie_update,
-+	&bench_lpm_trie_delete,
-+	&bench_lpm_trie_free,
- };
- 
- static void find_benchmark(void)
-diff --git a/tools/testing/selftests/bpf/bench.h b/tools/testing/selftests/bpf/bench.h
-index 005c401b3e22..bea323820ffb 100644
---- a/tools/testing/selftests/bpf/bench.h
-+++ b/tools/testing/selftests/bpf/bench.h
-@@ -46,6 +46,7 @@ struct bench_res {
- 	unsigned long gp_ns;
- 	unsigned long gp_ct;
- 	unsigned int stime;
-+	unsigned long duration_ns;
- };
- 
- struct bench {
-diff --git a/tools/testing/selftests/bpf/benchs/bench_lpm_trie_map.c b/tools/testing/selftests/bpf/benchs/bench_lpm_trie_map.c
-new file mode 100644
-index 000000000000..ddd7d3669e70
---- /dev/null
-+++ b/tools/testing/selftests/bpf/benchs/bench_lpm_trie_map.c
-@@ -0,0 +1,345 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2025 Cloudflare */
-+
-+/*
-+ * All of these benchmarks operate on tries with keys in the range
-+ * [0, args.nr_entries), i.e. there are no gaps or partially filled
-+ * branches of the trie for any key < args.nr_entries.
-+ *
-+ * This gives an idea of worst-case behaviour.
-+ */
-+
-+#include <argp.h>
-+#include <linux/time64.h>
-+#include <linux/if_ether.h>
-+#include "lpm_trie_bench.skel.h"
-+#include "lpm_trie_map.skel.h"
-+#include "bench.h"
-+#include "testing_helpers.h"
-+
-+static struct ctx {
-+	struct lpm_trie_bench *bench;
-+} ctx;
-+
-+static struct {
-+	__u32 nr_entries;
-+	__u32 prefixlen;
-+} args = {
-+	.nr_entries = 10000,
-+	.prefixlen = 32,
-+};
-+
-+enum {
-+	ARG_NR_ENTRIES = 9000,
-+	ARG_PREFIX_LEN,
-+};
-+
-+static const struct argp_option opts[] = {
-+	{ "nr_entries", ARG_NR_ENTRIES, "NR_ENTRIES", 0,
-+	  "Number of unique entries in the LPM trie" },
-+	{ "prefix_len", ARG_PREFIX_LEN, "PREFIX_LEN", 0,
-+	  "Number of prefix bits to use in the LPM trie" },
-+	{},
-+};
-+
-+static error_t lpm_parse_arg(int key, char *arg, struct argp_state *state)
-+{
-+	long ret;
-+
-+	switch (key) {
-+	case ARG_NR_ENTRIES:
-+		ret = strtol(arg, NULL, 10);
-+		if (ret < 1 || ret > UINT_MAX) {
-+			fprintf(stderr, "Invalid nr_entries count.");
-+			argp_usage(state);
-+		}
-+		args.nr_entries = ret;
-+		break;
-+	case ARG_PREFIX_LEN:
-+		ret = strtol(arg, NULL, 10);
-+		if (ret < 1 || ret > UINT_MAX) {
-+			fprintf(stderr, "Invalid prefix_len value.");
-+			argp_usage(state);
-+		}
-+		args.prefixlen = ret;
-+		break;
-+	default:
-+		return ARGP_ERR_UNKNOWN;
-+	}
-+	return 0;
-+}
-+
-+const struct argp bench_lpm_trie_map_argp = {
-+	.options = opts,
-+	.parser = lpm_parse_arg,
-+};
-+
-+static void __lpm_validate(void)
-+{
-+	if (env.consumer_cnt != 0) {
-+		fprintf(stderr, "benchmark doesn't support consumer!\n");
-+		exit(1);
-+	}
-+
-+	if ((1UL << args.prefixlen) < args.nr_entries) {
-+		fprintf(stderr, "prefix_len value too small for nr_entries!\n");
-+		exit(1);
-+	};
-+}
-+
-+enum { OP_LOOKUP = 1, OP_UPDATE, OP_DELETE, OP_FREE };
-+
-+static void lpm_delete_validate(void)
-+{
-+	__lpm_validate();
-+
-+	if (env.producer_cnt != 1) {
-+		fprintf(stderr,
-+			"lpm-trie-delete requires a single producer!\n");
-+		exit(1);
-+	}
-+}
-+
-+static void lpm_free_validate(void)
-+{
-+	__lpm_validate();
-+
-+	if (env.producer_cnt != 1) {
-+		fprintf(stderr, "lpm-trie-free requires a single producer!\n");
-+		exit(1);
-+	}
-+}
-+
-+static void fill_map(int map_fd)
-+{
-+	int i, err;
-+
-+	for (i = 0; i < args.nr_entries; i++) {
-+		struct trie_key {
-+			__u32 prefixlen;
-+			__u32 data;
-+		} key = { args.prefixlen, i };
-+		__u32 val = 1;
-+
-+		err = bpf_map_update_elem(map_fd, &key, &val, BPF_NOEXIST);
-+		if (err) {
-+			fprintf(stderr, "failed to add key %d to map: %d\n",
-+				key.data, -err);
-+			exit(1);
-+		}
-+	}
-+}
-+
-+static void __lpm_setup(void)
-+{
-+	ctx.bench = lpm_trie_bench__open_and_load();
-+	if (!ctx.bench) {
-+		fprintf(stderr, "failed to open skeleton\n");
-+		exit(1);
-+	}
-+
-+	ctx.bench->bss->nr_entries = args.nr_entries;
-+	ctx.bench->bss->prefixlen = args.prefixlen;
-+
-+	if (lpm_trie_bench__attach(ctx.bench)) {
-+		fprintf(stderr, "failed to attach skeleton\n");
-+		exit(1);
-+	}
-+}
-+
-+static void lpm_setup(void)
-+{
-+	int fd;
-+
-+	__lpm_setup();
-+
-+	fd = bpf_map__fd(ctx.bench->maps.trie_map);
-+	fill_map(fd);
-+}
-+
-+static void lpm_lookup_setup(void)
-+{
-+	lpm_setup();
-+
-+	ctx.bench->bss->op = OP_LOOKUP;
-+}
-+
-+static void lpm_update_setup(void)
-+{
-+	lpm_setup();
-+
-+	ctx.bench->bss->op = OP_UPDATE;
-+}
-+
-+static void lpm_delete_setup(void)
-+{
-+	lpm_setup();
-+
-+	ctx.bench->bss->op = OP_DELETE;
-+}
-+
-+static void lpm_free_setup(void)
-+{
-+	__lpm_setup();
-+	ctx.bench->bss->op = OP_FREE;
-+}
-+
-+static void lpm_measure(struct bench_res *res)
-+{
-+	res->hits = atomic_swap(&ctx.bench->bss->hits, 0);
-+	res->duration_ns = atomic_swap(&ctx.bench->bss->duration_ns, 0);
-+}
-+
-+/* For LOOKUP, UPDATE, and DELETE */
-+static void *lpm_producer(void *unused __always_unused)
-+{
-+	int err;
-+	char in[ETH_HLEN]; /* unused */
-+
-+	LIBBPF_OPTS(bpf_test_run_opts, opts, .data_in = in,
-+		    .data_size_in = sizeof(in), .repeat = 1, );
-+
-+	while (true) {
-+		int fd = bpf_program__fd(ctx.bench->progs.run_bench);
-+		err = bpf_prog_test_run_opts(fd, &opts);
-+		if (err) {
-+			fprintf(stderr, "failed to run BPF prog: %d\n", err);
-+			exit(1);
-+		}
-+
-+		if (opts.retval < 0) {
-+			fprintf(stderr, "BPF prog returned error: %d\n",
-+				opts.retval);
-+			exit(1);
-+		}
-+
-+		if (ctx.bench->bss->op == OP_DELETE && opts.retval == 1) {
-+			/* trie_map needs to be refilled */
-+			fill_map(bpf_map__fd(ctx.bench->maps.trie_map));
-+		}
-+	}
-+
-+	return NULL;
-+}
-+
-+static void *lpm_free_producer(void *unused __always_unused)
-+{
-+	while (true) {
-+		struct lpm_trie_map *skel;
-+
-+		skel = lpm_trie_map__open_and_load();
-+		if (!skel) {
-+			fprintf(stderr, "failed to open skeleton\n");
-+			exit(1);
-+		}
-+
-+		fill_map(bpf_map__fd(skel->maps.trie_free_map));
-+		lpm_trie_map__destroy(skel);
-+	}
-+
-+	return NULL;
-+}
-+
-+static __always_inline double duration_ms(struct bench_res *res)
-+{
-+	if (!res->hits)
-+		return 0.0;
-+
-+	return res->duration_ns / res->hits / NSEC_PER_MSEC;
-+}
-+
-+static void free_ops_report_progress(int iter, struct bench_res *res,
-+				     long delta_ns)
-+{
-+	double hits_per_sec, hits_per_prod;
-+	double rate_divisor = 1000.0;
-+	char rate = 'K';
-+
-+	hits_per_sec = res->hits / (res->duration_ns / (double)NSEC_PER_SEC) /
-+		       rate_divisor;
-+	hits_per_prod = hits_per_sec / env.producer_cnt;
-+
-+	printf("Iter %3d (%7.3lfus): ", iter,
-+	       (delta_ns - NSEC_PER_SEC) / 1000.0);
-+	printf("hits %8.3lf%c/s (%7.3lf%c/prod)\n", hits_per_sec, rate,
-+	       hits_per_prod, rate);
-+}
-+
-+static void free_ops_report_final(struct bench_res res[], int res_cnt)
-+{
-+	double hits_mean = 0.0, hits_stddev = 0.0;
-+	double lat_divisor = 1000000.0;
-+	double rate_divisor = 1000.0;
-+	const char *unit = "ms";
-+	double latency = 0.0;
-+	char rate = 'K';
-+	int i;
-+
-+	for (i = 0; i < res_cnt; i++) {
-+		double val = res[i].hits / rate_divisor /
-+			     (res[i].duration_ns / (double)NSEC_PER_SEC);
-+		hits_mean += val / (0.0 + res_cnt);
-+		latency += res[i].duration_ns / res[i].hits / (0.0 + res_cnt);
-+	}
-+
-+	if (res_cnt > 1) {
-+		for (i = 0; i < res_cnt; i++) {
-+			double val =
-+				res[i].hits / rate_divisor /
-+				(res[i].duration_ns / (double)NSEC_PER_SEC);
-+			hits_stddev += (hits_mean - val) * (hits_mean - val) /
-+				       (res_cnt - 1.0);
-+		}
-+
-+		hits_stddev = sqrt(hits_stddev);
-+	}
-+	printf("Summary: throughput %8.3lf \u00B1 %5.3lf %c ops/s (%7.3lf%c ops/prod), ",
-+	       hits_mean, hits_stddev, rate, hits_mean / env.producer_cnt,
-+	       rate);
-+	printf("latency %8.3lf %s/op\n",
-+	       latency / lat_divisor / env.producer_cnt, unit);
-+}
-+
-+const struct bench bench_lpm_trie_lookup = {
-+	.name = "lpm-trie-lookup",
-+	.argp = &bench_lpm_trie_map_argp,
-+	.validate = __lpm_validate,
-+	.setup = lpm_lookup_setup,
-+	.producer_thread = lpm_producer,
-+	.measure = lpm_measure,
-+	.report_progress = ops_report_progress,
-+	.report_final = ops_report_final,
-+};
-+
-+const struct bench bench_lpm_trie_update = {
-+	.name = "lpm-trie-update",
-+	.argp = &bench_lpm_trie_map_argp,
-+	.validate = __lpm_validate,
-+	.setup = lpm_update_setup,
-+	.producer_thread = lpm_producer,
-+	.measure = lpm_measure,
-+	.report_progress = ops_report_progress,
-+	.report_final = ops_report_final,
-+};
-+
-+const struct bench bench_lpm_trie_delete = {
-+	.name = "lpm-trie-delete",
-+	.argp = &bench_lpm_trie_map_argp,
-+	.validate = lpm_delete_validate,
-+	.setup = lpm_delete_setup,
-+	.producer_thread = lpm_producer,
-+	.measure = lpm_measure,
-+	.report_progress = ops_report_progress,
-+	.report_final = ops_report_final,
-+};
-+
-+const struct bench bench_lpm_trie_free = {
-+	.name = "lpm-trie-free",
-+	.argp = &bench_lpm_trie_map_argp,
-+	.validate = lpm_free_validate,
-+	.setup = lpm_free_setup,
-+	.producer_thread = lpm_free_producer,
-+	.measure = lpm_measure,
-+	.report_progress = free_ops_report_progress,
-+	.report_final = free_ops_report_final,
-+};
-diff --git a/tools/testing/selftests/bpf/progs/lpm_trie_bench.c b/tools/testing/selftests/bpf/progs/lpm_trie_bench.c
-new file mode 100644
-index 000000000000..c335718cc240
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/lpm_trie_bench.c
-@@ -0,0 +1,175 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2025 Cloudflare */
-+
-+#include <vmlinux.h>
-+#include <bpf/bpf_tracing.h>
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_core_read.h>
-+#include "bpf_misc.h"
-+
-+#define BPF_OBJ_NAME_LEN 16U
-+#define MAX_ENTRIES 100000000
-+#define NR_LOOPS 10000
-+
-+struct trie_key {
-+	__u32 prefixlen;
-+	__u32 data;
-+};
-+
-+char _license[] SEC("license") = "GPL";
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_HASH);
-+	__uint(max_entries, 512);
-+	__type(key, struct bpf_map *);
-+	__type(value, __u64);
-+} latency_free_start SEC(".maps");
-+
-+/* Filled by userspace. See fill_map() in bench_lpm_trie_map.c */
-+struct {
-+	__uint(type, BPF_MAP_TYPE_LPM_TRIE);
-+	__type(key, struct trie_key);
-+	__type(value, __u32);
-+	__uint(map_flags, BPF_F_NO_PREALLOC);
-+	__uint(max_entries, MAX_ENTRIES);
-+} trie_map SEC(".maps");
-+
-+long hits;
-+long duration_ns;
-+
-+/* Configured from userspace */
-+__u64 nr_entries;
-+__u32 prefixlen;
-+__u8 op;
-+
-+static __always_inline void atomic_inc(long *cnt)
-+{
-+	__atomic_add_fetch(cnt, 1, __ATOMIC_SEQ_CST);
-+}
-+
-+static __always_inline long atomic_swap(long *cnt, long val)
-+{
-+	return __atomic_exchange_n(cnt, val, __ATOMIC_SEQ_CST);
-+}
-+
-+SEC("fentry/bpf_map_free_deferred")
-+int BPF_PROG(trie_free_entry, struct work_struct *work)
-+{
-+	struct bpf_map *map = container_of(work, struct bpf_map, work);
-+	const char *name;
-+	u32 map_type;
-+	__u64 val;
-+
-+	map_type = BPF_CORE_READ(map, map_type);
-+	if (map_type != BPF_MAP_TYPE_LPM_TRIE)
-+		return 0;
-+
-+	/*
-+	 * Ideally we'd have access to the map ID but that's already
-+	 * freed before we enter trie_free().
-+	 */
-+	name = BPF_CORE_READ(map, name);
-+	if (bpf_strncmp(name, BPF_OBJ_NAME_LEN, "trie_free_map"))
-+		return 0;
-+
-+	val = bpf_ktime_get_ns();
-+	bpf_map_update_elem(&latency_free_start, &map, &val, BPF_ANY);
-+
-+	return 0;
-+}
-+
-+SEC("fexit/bpf_map_free_deferred")
-+int BPF_PROG(trie_free_exit, struct work_struct *work)
-+{
-+	struct bpf_map *map = container_of(work, struct bpf_map, work);
-+	__u64 *val;
-+
-+	val = bpf_map_lookup_elem(&latency_free_start, &map);
-+	if (val) {
-+		__sync_add_and_fetch(&duration_ns, bpf_ktime_get_ns() - *val);
-+		atomic_inc(&hits);
-+		bpf_map_delete_elem(&latency_free_start, &map);
-+	}
-+
-+	return 0;
-+}
-+
-+static void gen_random_key(struct trie_key *key)
-+{
-+	key->prefixlen = prefixlen;
-+	key->data = bpf_get_prandom_u32() % nr_entries;
-+}
-+
-+static int lookup(__u32 index, __u32 *unused)
-+{
-+	struct trie_key key;
-+
-+	gen_random_key(&key);
-+	bpf_map_lookup_elem(&trie_map, &key);
-+	return 0;
-+}
-+
-+static int update(__u32 index, __u32 *unused)
-+{
-+	struct trie_key key;
-+	u32 val = bpf_get_prandom_u32();
-+
-+	gen_random_key(&key);
-+	bpf_map_update_elem(&trie_map, &key, &val, BPF_EXIST);
-+	return 0;
-+}
-+
-+long deleted_entries;
-+long refill;
-+
-+static int delete (__u32 index, __u32 *unused)
-+{
-+	struct trie_key key = {
-+		.data = deleted_entries,
-+		.prefixlen = prefixlen,
-+	};
-+
-+	bpf_map_delete_elem(&trie_map, &key);
-+	atomic_inc(&deleted_entries);
-+
-+	/* Do we need to refill the map? */
-+	if (deleted_entries >= nr_entries) {
-+		atomic_swap(&refill, 1);
-+		atomic_swap(&deleted_entries, 0);
-+		return 1;
-+	}
-+
-+	return 0;
-+}
-+
-+SEC("xdp")
-+int BPF_PROG(run_bench)
-+{
-+	u64 start, delta;
-+	bool need_refill = false;
-+
-+	start = bpf_ktime_get_ns();
-+
-+	switch (op) {
-+	case 1:
-+		bpf_loop(NR_LOOPS, lookup, NULL, 0);
-+		break;
-+	case 2:
-+		bpf_loop(NR_LOOPS, update, NULL, 0);
-+		break;
-+	case 3:
-+		bpf_loop(NR_LOOPS, delete, NULL, 0);
-+		need_refill = atomic_swap(&refill, 0);
-+		break;
-+	default:
-+		bpf_printk("invalid benchmark operation\n");
-+		return -1;
-+	}
-+
-+	delta = bpf_ktime_get_ns() - start;
-+
-+	__sync_add_and_fetch(&hits, NR_LOOPS);
-+	__sync_add_and_fetch(&duration_ns, delta);
-+
-+	return need_refill;
-+}
-diff --git a/tools/testing/selftests/bpf/progs/lpm_trie_map.c b/tools/testing/selftests/bpf/progs/lpm_trie_map.c
-new file mode 100644
-index 000000000000..2ab43e2cd6c6
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/lpm_trie_map.c
-@@ -0,0 +1,19 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+#include <linux/bpf.h>
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+
-+#define MAX_ENTRIES 100000000
-+
-+struct trie_key {
-+	__u32 prefixlen;
-+	__u32 data;
-+};
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_LPM_TRIE);
-+	__type(key, struct trie_key);
-+	__type(value, __u32);
-+	__uint(map_flags, BPF_F_NO_PREALLOC);
-+	__uint(max_entries, MAX_ENTRIES);
-+} trie_free_map SEC(".maps");
--- 
-2.34.1
-
+Best Regards,
+Yan, Zi
 
