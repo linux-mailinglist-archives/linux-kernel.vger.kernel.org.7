@@ -1,110 +1,98 @@
-Return-Path: <linux-kernel+bounces-736339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6E57B09BAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:49:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E6ABB09BB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:51:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F3ABA65175
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:48:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6F1D1899D9A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 689711FBC91;
-	Fri, 18 Jul 2025 06:49:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ABB220296E;
+	Fri, 18 Jul 2025 06:51:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="KRN/SmZO"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b="JAGrEzdb"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC864689;
-	Fri, 18 Jul 2025 06:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C9F1FF5E3
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 06:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752821340; cv=none; b=PQbD4vCjR8swZxIk8202CRQFhpmkpVnyjrQ+WiOOp83DgVLVPQBdJtVrS9PuK9kM46OpEietO8BNAukgaASuxCgfudTBcf0nq0deh4GH1TZiQ8c9RBkeoa5jFTxwi+uKtEkVMNSJk6xwhb62VnQImHlbNJOvMEh9Tx/BMD0jlwA=
+	t=1752821465; cv=none; b=o4/qvipWX6PBSWh0/x6zqbgPsKFGp1T3M03/G4wEKbA54kI1XRxU/iDRNl5YSEuIXoknQVWXKUAWmW+Fz/WbL4zOIlJm0XiAyS1DCCWI1MiZWyOyjN5IBkM982uc2pXPk6ZDp/CMUl9oEFBgtjYET4amiHtH3NPH7xryKZfPXBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752821340; c=relaxed/simple;
-	bh=Cam2JCWYE+AhdiTGpp3U6Crx7h/60ZtiTadCn/kFn8s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YBBgeNjN5OM9sf9n6mWrjKG7IV4/vVAbAjeUMZ7TUJWIXuxLVBfDQLGyPJEssH+7lUpfCsIQbfrSBpL1rx0qi96RDxmDdYF1Kb/64hvLZuIZ8iMerqQwmnJ7PBHtHSt3+QuSuHH7YUqLRDKwF7EeTkkYRbN7arwx32bBSvNqf8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=KRN/SmZO; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1752821337;
-	bh=Cam2JCWYE+AhdiTGpp3U6Crx7h/60ZtiTadCn/kFn8s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KRN/SmZOi39TtZ/lXASxxb5Qni6eSNNQPO3baDCiGypeZZJhKjzPGD3xtRQRYUkun
-	 wmh4VOtikVfvOKzZa8FC9iG+lvMNS3Lrnp/HvgyPPyYFaYLNxjCVHmPv3rI7pl5KRm
-	 zsZKoN6TlFNnbw/bpRYtLASV8tSD/xgqi5PLNbntJwJFXtJ57oa2ur18mAUVFdiIyn
-	 S4ywV0fZuVkp8VRYa0Wz4RfWwhOKWY9wvNVyPKxkMDnXVapcsVt+lqZGOsXGuHlw1S
-	 oORvkkFizQq+/g81sLuU9dakw6gUaQr7YulurCn6ynWoXRQYgPc3gurI3R4HTAD6+t
-	 qN7GOGKlKQZdg==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id E818817E1544;
-	Fri, 18 Jul 2025 08:48:56 +0200 (CEST)
-Message-ID: <e9e60ce4-c8f4-45cf-9ac2-b147eabc3201@collabora.com>
-Date: Fri, 18 Jul 2025 08:48:56 +0200
+	s=arc-20240116; t=1752821465; c=relaxed/simple;
+	bh=g/bQDA1SnPganh7SgBzzVaHUvhqJSHOBmAGh77R65Yw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GT7MdJFUdltbIladpQhabncUAzqBAXTS0Fu9a5DnBZ1eD+YYoC23P3E57kCFnHD1m+OK8IUhgn1GDmozNEzNI9AOAlkF5muJxkzWvVqOJa6RWeBY3M9e1Yl1FizKAi4O8avLEB+P0CiMG3JdTEmfHkbF73bl3RiuncnRCgVk67U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk; spf=pass smtp.mailfrom=thegoodpenguin.co.uk; dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b=JAGrEzdb; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thegoodpenguin.co.uk
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-712be7e034cso17813597b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 23:51:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=thegoodpenguin-co-uk.20230601.gappssmtp.com; s=20230601; t=1752821463; x=1753426263; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=g/bQDA1SnPganh7SgBzzVaHUvhqJSHOBmAGh77R65Yw=;
+        b=JAGrEzdbtOP0h1PRv0Km8fAsJvOctpoYha5dO1N/Tq95l0YwCGsR8vbz4vnI7Lkp/F
+         vuSIzqEdp55gI1ifAzcgS7kB9QhS+xw8avwIhZsdQe436XfE2CKQmlkXySKHkBDR2THo
+         9Wjp3jjWnlEZOaQuXNkt0Jvqtnq5ABktCQh4644+kc8+LjztsLQsY830rp91i8Dyee6q
+         awW/ntnCGPJ9fqwt5t/F16c9ejRrzP/bLHQgohHSF5eLz1HR2Sb0cuw1qegmjqp7nWdb
+         mJJmcjVvEIM+IiLJ1YhNItdb+Gh6cUGlS17YwxzBy30ctwCHaHx/ExFg+lve1nlZ0fWY
+         JsTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752821463; x=1753426263;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g/bQDA1SnPganh7SgBzzVaHUvhqJSHOBmAGh77R65Yw=;
+        b=QDXazbeHXD0UWP9/bQh5ONW4WZnEy4qQl5J+KKB0r9yP01lz/NKD7ReU+MpCoQrTBA
+         oEZdR5U0U2wOLZYRW0g7qkV9peyzzjZvEokfo1QdiYkE9gE+mL2FyUTaH8rdgTBJdutW
+         7xLN7Cp+aA932CGTYolmdWf/Tp4mtVJHwfwUDyz49RJexy/6p6aP6CKun9JquoF4bz4j
+         +xqAowsBwvwl5V/XhkOMmUC0/APJ9iGVTYxf9rvw7pruyDRtkMPlaH+/D+anUgaaV8H6
+         fOTHxX/csIrbJ4Lq4Z9UjtW96WrbKr2GP4fPUfotDt35XCgV2osR9uslJjyV7wO8H8HJ
+         +CnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVIy5XUGcGBRaaD6lCCiY/dnAy3tlx+qoGS4SXNMtu2PhRel9lWW/lSWfka6lhFU1sqS6FM4tCsNtEkUdw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylGDsZW041zQCmtBk68Pz5R59ao7JEPExBT4bd62IFqfgKDmWW
+	TNkJkejAwcO9qRBOKx3vC1C9vLsowtfwQefi1JuZGg8Ef3Dk4iSl8L/SDQc0Jor438rSFeM4aqa
+	NkdCZ8xBbTrUOgiQYiDM1QtHzrhs1QSv6nfanToysyg==
+X-Gm-Gg: ASbGncuEeVJg6Ueno/a9gWd4CAiZ8OZ9Ls2eaggsNGvQgdG9Glv1+sp/2CQIleXNTDq
+	OA1Sxe/fyK9xJuMJmSBd8/uWEQR8SiDbjMl68EoESqg4sKuxjqW7qvol5LhxFGOK1vjttjyM1Fw
+	EZIbO18hF33HR4tFtNCuy62YOkVFdlgRO/MNBB2OguNbdBE+/84MmXswmp2bq9rkqzqHiDqllUo
+	bTAh+UuzOdqE4ID4Ce0gI5qp+aBl7CtGWVX0W9EWw==
+X-Google-Smtp-Source: AGHT+IHB4qPnBvPHuDyr/eRkdonIFJaeMa7b2rimTenEZDBBnypTUT8n4v6UW2cImWERDStmN+Jv4as8F9bxbMRxZ4Q=
+X-Received: by 2002:a05:690c:3605:b0:70e:6105:2360 with SMTP id
+ 00721157ae682-7183747508amr140109917b3.24.1752821462689; Thu, 17 Jul 2025
+ 23:51:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] ASoC: mediatek: mt8365-dai-i2s: pass correct size to
- mt8365_dai_set_priv
-To: Guoqing Jiang <guoqing.jiang@canonical.com>, lgirdwood@gmail.com,
- broonie@kernel.org, perex@perex.cz, tiwai@suse.com, amergnat@baylibre.com
-Cc: zoran.zhan@mediatek.com, linux-sound@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250710011806.134507-1-guoqing.jiang@canonical.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250710011806.134507-1-guoqing.jiang@canonical.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250717-leds-is31fl3236a-v4-0-72ef946bfbc8@thegoodpenguin.co.uk>
+ <20250717-leds-is31fl3236a-v4-1-72ef946bfbc8@thegoodpenguin.co.uk> <175277045533.3779995.9523277801474945480.robh@kernel.org>
+In-Reply-To: <175277045533.3779995.9523277801474945480.robh@kernel.org>
+From: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
+Date: Fri, 18 Jul 2025 07:50:51 +0100
+X-Gm-Features: Ac12FXwhPQLDpkdyogiRsJ5pr_q3LrxdRNUyRuWOgCuv_ynEzoEm_EA_gQ4kNk0
+Message-ID: <CAA6zWZLyUt9X4+dAgYBVGqdNchasJorWhNH1O1Ti=UBO-J6q9g@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] dt-bindings: leds: is31fl32xx: convert the binding
+ to yaml
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Pavel Machek <pavel@kernel.org>, Lucca Fachinetti <luccafachinetti@gmail.com>, 
+	Conor Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Il 10/07/25 03:18, Guoqing Jiang ha scritto:
-> Given mt8365_dai_set_priv allocate priv_size space to copy priv_data which
-> means we should pass mt8365_i2s_priv[i] or "struct mtk_afe_i2s_priv"
-> instead of afe_priv which has the size of "struct mt8365_afe_private".
-> 
-> Otherwise the KASAN complains about.
-> 
-> [   59.389765] BUG: KASAN: global-out-of-bounds in mt8365_dai_set_priv+0xc8/0x168 [snd_soc_mt8365_pcm]
-> ...
-> [   59.394789] Call trace:
-> [   59.395167]  dump_backtrace+0xa0/0x128
-> [   59.395733]  show_stack+0x20/0x38
-> [   59.396238]  dump_stack_lvl+0xe8/0x148
-> [   59.396806]  print_report+0x37c/0x5e0
-> [   59.397358]  kasan_report+0xac/0xf8
-> [   59.397885]  kasan_check_range+0xe8/0x190
-> [   59.398485]  asan_memcpy+0x3c/0x98
-> [   59.399022]  mt8365_dai_set_priv+0xc8/0x168 [snd_soc_mt8365_pcm]
-> [   59.399928]  mt8365_dai_i2s_register+0x1e8/0x2b0 [snd_soc_mt8365_pcm]
-> [   59.400893]  mt8365_afe_pcm_dev_probe+0x4d0/0xdf0 [snd_soc_mt8365_pcm]
-> [   59.401873]  platform_probe+0xcc/0x228
-> [   59.402442]  really_probe+0x340/0x9e8
-> [   59.402992]  driver_probe_device+0x16c/0x3f8
-> [   59.403638]  driver_probe_device+0x64/0x1d8
-> [   59.404256]  driver_attach+0x1dc/0x4c8
-> [   59.404840]  bus_for_each_dev+0x100/0x190
-> [   59.405442]  driver_attach+0x44/0x68
-> [   59.405980]  bus_add_driver+0x23c/0x500
-> [   59.406550]  driver_register+0xf8/0x3d0
-> [   59.407122]  platform_driver_register+0x68/0x98
-> [   59.407810]  mt8365_afe_pcm_driver_init+0x2c/0xff8 [snd_soc_mt8365_pcm]
-> 
-> Fixes: 402bbb13a195 ("ASoC: mediatek: mt8365: Add I2S DAI support")
-> Signed-off-by: Guoqing Jiang <guoqing.jiang@canonical.com>
+> If you already ran 'make dt_binding_check' and didn't see the above
+> error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> date
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
-
+Hmm interesting, I did run it, have yamlint installed and see no
+errors. Will upgrade dtschema and try again.
 
