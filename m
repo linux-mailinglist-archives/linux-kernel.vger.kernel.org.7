@@ -1,142 +1,140 @@
-Return-Path: <linux-kernel+bounces-736888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27B8BB0A4AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:00:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25716B0A4A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:59:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 280F01AA8020
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:00:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F3927B9083
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:57:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFDFB2DC32B;
-	Fri, 18 Jul 2025 13:00:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD46F2DAFDB;
+	Fri, 18 Jul 2025 12:59:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="OHanrKrF"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JLmTt+7g"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0AF52248AE;
-	Fri, 18 Jul 2025 13:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709372949F4
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 12:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752843611; cv=none; b=mgkEbYxemDKKoMM7IOOYYo/6vpg7XAG5DdH3QK8mbc/WDpSO3cDfDgp1hDdUyY75+NsFY9Nr3Y11CKvaiELCGJhFJbySN+1Sbf8tyn9K1yNdaXWCaVsKwbF3kFRqjDAKaf57gOcL9iTIjyW8J0thAMs3AIFW0R3afZLa2gXANYo=
+	t=1752843557; cv=none; b=oogOnFIKX2gWiPOziBswkftLttyld+E1oHULd6dIe0dBVEw7+vZgv7Ec8P+/ACMYYM6SIi1XBI5YlLR5dS3TXMT0uSR5EdGXSj2B47NzqZxxqmWyVoVz5OoU+7Kf05F1IGSRc2wIY5RaAAoKWY7HCbUiZU0JtZZ9q3Naw9Js98c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752843611; c=relaxed/simple;
-	bh=IZbkQ3xfBnJRR8mLGXwqgyZgLY0IodQhcv+PYEmI1VU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k2wPUhTXXpzvuFtt2FHcSOCjocNGNl0fvCMzEAjREQN74WTimqtGeRHwrLyCQeKkiuSa20ApsfrE6UgmuEGVZF/0r4HkdIlCg3N8Aomrr6e1tuW8zW7KvT5o/RWUMeavxjcm+vgoJPPaLC+gWzQgup5vScS4+rOSBVMyhkX3Xp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=OHanrKrF; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56ICwse5714132;
-	Fri, 18 Jul 2025 07:58:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1752843534;
-	bh=yUsTOiGa3kRqTBNBK7IpA6+SLe5En1zTCsg3sQMTpbs=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=OHanrKrF/DefV8Mrb2bedfmKNAHbxsndAxEdnsJc3QfgJwi0t0OhX/DoJ34XNSKbE
-	 QG4IiVhyMWz1oJ7LSIU8MRdFM2mHXgWlPXYYQt+M5v29Vs42rIAhwdGHdOc+Yq+x8h
-	 k4rmecN1GBT/hi5iA7VJxtc+syPyT8ExdGH5x+s4=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56ICwsg43508025
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 18 Jul 2025 07:58:54 -0500
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 18
- Jul 2025 07:58:53 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Fri, 18 Jul 2025 07:58:53 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56ICwraF3541832;
-	Fri, 18 Jul 2025 07:58:53 -0500
-Date: Fri, 18 Jul 2025 07:58:53 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Kees Cook <kees@kernel.org>
-CC: Arnd Bergmann <arnd@arndb.de>, Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner
-	<tglx@linutronix.de>,
-        Santosh Shilimkar <ssantosh@kernel.org>, Lee Jones
-	<lee@kernel.org>,
-        Allison Randal <allison@lohutok.net>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Ingo
- Molnar <mingo@kernel.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Andrey Konovalov <andreyknvl@gmail.com>,
-        Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Nathan Chancellor
-	<nathan@kernel.org>,
-        Nicolas Schier <nicolas.schier@linux.dev>,
-        Nick
- Desaulniers <nick.desaulniers+lkml@gmail.com>,
-        Bill Wendling
-	<morbo@google.com>,
-        Justin Stitt <justinstitt@google.com>, <linux-kernel@vger.kernel.org>,
-        <x86@kernel.org>, <kasan-dev@googlegroups.com>,
-        <linux-doc@vger.kernel.org>, <kvmarm@lists.linux.dev>,
-        <linux-riscv@lists.infradead.org>, <linux-s390@vger.kernel.org>,
-        <linux-efi@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-        <linux-kbuild@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kselftest@vger.kernel.org>, <sparclinux@vger.kernel.org>,
-        <llvm@lists.linux.dev>
-Subject: Re: [PATCH v3 05/13] arm: Handle KCOV __init vs inline mismatches
-Message-ID: <20250718125853.75g4nv2dnbkklud6@leggings>
-References: <20250717231756.make.423-kees@kernel.org>
- <20250717232519.2984886-5-kees@kernel.org>
+	s=arc-20240116; t=1752843557; c=relaxed/simple;
+	bh=oU9JFIpnW9IiwP/zLLrdn3UtCIAWt6eXdWUgszQQbz4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UG7YbTkXw5eq80WpV95FeI/Be/SkH2ecO0NB7Vefa87qz9uQ5qjKUnSMnhH7WFP5LhjFyULuBtdev6f+L4GMEx2Qk7zzPPgeYcTU1D6CBlHF6tUbcAOE3ehB3gaLoghWs+TTmD2iflQsK3uZSSQ1HhZ7zIosOM6XPz7hanzlLx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JLmTt+7g; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-74b56b1d301so1479376b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 05:59:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752843555; x=1753448355; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PYpcavPW85ROVk3E1axG+f3muOD/wyEeug4NFZEIWg8=;
+        b=JLmTt+7gCJpleS4ivc4h024LObg32opRMy26LFXe26hl3fMoiPHJCc74Ai7EJv7kGt
+         csXdNVH2EXZEpV/XR5D3rb3AKllyulCywgF2ifdCEZwQ0cE+m+GFROjQjIUzqsIzMDQL
+         rOvB1LsN5/FwZW0JVYMsIySdmQievYyWwCT3WKe2RLmnRVUQH9KMHerj1G/b+wbnUd0x
+         D5re06Dt3H+ajHWIqwZIA+aAaztsJbe12HFLC20oBPt8puVpyjPQY6OviP978ZtpX8/q
+         tuYUDjHvKfW9Nnt3g9t6T8J9xWtlSKT7zeNlyDzQdA9yANNLPFecrRQA1AIfJMcyJwSl
+         6Wyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752843555; x=1753448355;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PYpcavPW85ROVk3E1axG+f3muOD/wyEeug4NFZEIWg8=;
+        b=fYP5gPUzDRd4n4QIGs5dFfJmI5Nj15rNsGXi83shVIcVM0q/zrKAit71WuB64PzwKD
+         luvZOJJPpdAqEwyv8aKEsW+LIhHHOnlOV/4suHhMGTZylI4JbNgLMsqMRRpt1elr6oZH
+         rDVu08lmoe5F3RP1j3IMjsaEx6KIa91kEjEYEESV0G1LKoj6K1vpVAHi5RSdgaNwM5Wx
+         gzxIsksNKuxS/K8ikkoH/Y1wIntCudugEOeld8kU+46spRTvms2H5IZdMVOCkcGPOcYF
+         OURIqdl9ukpL4qyOI83qNUCevj7nfoMN0AYR9E5DbSYWHBhfBhzFk2pBymdLZPdlaVPy
+         iGrw==
+X-Forwarded-Encrypted: i=1; AJvYcCWeYr84irmGjW8jh+dm5BYF+l9MN2jjeA1izBP6qN/hUdU8X8936hOUZIDUcm1R5tIxOyZQKXBU8x0r09U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztyVFGL7LRvYzfNs/fEskZ6VdaMasVsLSlBTc+eIZDQjSpiyqG
+	m4MJaDU+TIcSVZDMWv4yooVt0y14RpKAs6Z6aiyzRigta8I+N7HFE3aWNQeKMJ9psRGzZLATg6B
+	c8UL9VHAk2adXikiY5/FajJr02NCrF7ucGw/qG12R+A==
+X-Gm-Gg: ASbGncvFnSO2QgKdmlkGpf/GwT9s7DJLAU7+D2fUfhcIIHCdp2D5BA1vPa/4sVq0mmr
+	8OsWNr+y9INMU33gCtjLlSf+VpoIWJxHy5c1GV1zkCMbwX2Av012+rTLi0rOrYl7R3wiWG7snIr
+	CA4/Cg/Nfkn6c6yL/F7QCp7SSMbgRPvUQU7cWiTL9ZjGI4I2+sKDrV3VjzqAKdlSUWrLOWALL2l
+	t71Y4F3+CLhKsvbR8o=
+X-Google-Smtp-Source: AGHT+IHDAc74U25eHKTb9aulfz0KG+bpqSbOJrJeexu2ZAbE44hVvJk6HDFdKtlGLhZcV0OjSUhQj942abhhql0IydM=
+X-Received: by 2002:a05:6a00:bd84:b0:748:f74f:6d27 with SMTP id
+ d2e1a72fcca58-75725480a1bmr16226717b3a.24.1752843554551; Fri, 18 Jul 2025
+ 05:59:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250717232519.2984886-5-kees@kernel.org>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20250718094848.587-1-alireza.sanaee@huawei.com> <20250718094848.587-6-alireza.sanaee@huawei.com>
+In-Reply-To: <20250718094848.587-6-alireza.sanaee@huawei.com>
+From: Mike Leach <mike.leach@linaro.org>
+Date: Fri, 18 Jul 2025 13:59:03 +0100
+X-Gm-Features: Ac12FXxq5RyQqwd6GSdHy6cONAY5fWKaaHEWBZ5tvug2yoehd6FJ-cPiMbA37wc
+Message-ID: <CAJ9a7VjdF0a_5gswt5j+LX9_pxK40ODNpYiYUSmYfsWZYA+Wjg@mail.gmail.com>
+Subject: Re: [PATCH v3 5/6] coresight: Use of_cpu_phandle_to_id for grabbing
+ CPU ID
+To: Alireza Sanaee <alireza.sanaee@huawei.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	jonathan.cameron@huawei.com, coresight@lists.linaro.org, 
+	dianders@chromium.org, james.clark@linaro.org, krzk@kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, 
+	linuxarm@huawei.com, mark.rutland@arm.com, robh@kernel.org, 
+	ruanjinjie@huawei.com, saravanak@google.com, 
+	shameerali.kolothum.thodi@huawei.com, suzuki.poulose@arm.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 16:25-20250717, Kees Cook wrote:
-> When KCOV is enabled all functions get instrumented, unless
-> the __no_sanitize_coverage attribute is used. To prepare for
-> __no_sanitize_coverage being applied to __init functions, we have to
-> handle differences in how GCC's inline optimizations get resolved. For
-> arm this exposed several places where __init annotations were missing
-> but ended up being "accidentally correct". Fix these cases and force
-> several functions to be inline with __always_inline.
-> 
-
-[..]
-
-> diff --git a/drivers/soc/ti/pm33xx.c b/drivers/soc/ti/pm33xx.c
-> index dfdff186c805..dc52a2197d24 100644
-> --- a/drivers/soc/ti/pm33xx.c
-> +++ b/drivers/soc/ti/pm33xx.c
-> @@ -145,7 +145,7 @@ static int am33xx_do_sram_idle(u32 wfi_flags)
->  	return pm_ops->cpu_suspend(am33xx_do_wfi_sram, wfi_flags);
->  }
->  
-> -static int __init am43xx_map_gic(void)
-> +static int am43xx_map_gic(void)
+On Fri, 18 Jul 2025 at 10:51, Alireza Sanaee <alireza.sanaee@huawei.com> wrote:
+>
+> Use the newly created API (of_cpu_phandle_to_id) to grab CPU ID.
+>
+> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> Signed-off-by: Alireza Sanaee <alireza.sanaee@huawei.com>
+> ---
+>  drivers/hwtracing/coresight/coresight-platform.c | 15 +--------------
+>  1 file changed, 1 insertion(+), 14 deletions(-)
+>
+> diff --git a/drivers/hwtracing/coresight/coresight-platform.c b/drivers/hwtracing/coresight/coresight-platform.c
+> index 0db64c5f4995..95d46ea08936 100644
+> --- a/drivers/hwtracing/coresight/coresight-platform.c
+> +++ b/drivers/hwtracing/coresight/coresight-platform.c
+> @@ -167,20 +167,7 @@ of_coresight_get_output_ports_node(const struct device_node *node)
+>
+>  static int of_coresight_get_cpu(struct device *dev)
 >  {
->  	gic_dist_base = ioremap(AM43XX_GIC_DIST_BASE, SZ_4K);
+> -       int cpu;
+> -       struct device_node *dn;
+> -
+> -       if (!dev->of_node)
+> -               return -ENODEV;
+> -
+> -       dn = of_parse_phandle(dev->of_node, "cpu", 0);
+> -       if (!dn)
+> -               return -ENODEV;
+> -
+> -       cpu = of_cpu_node_to_id(dn);
+> -       of_node_put(dn);
+> -
+> -       return cpu;
+> +       return of_cpu_phandle_to_id(dev->of_node, NULL, 0);
+>  }
+>
+>  /*
+> --
+> 2.43.0
+>
 
-Reviewed-by: Nishanth Menon <nm@ti.com>
+Reviewed-by: Mike Leach <mike.leach@linaro.org>
 
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
-https://ti.com/opensource
+--
+Mike Leach
+Principal Engineer, ARM Ltd.
+Manchester Design Centre. UK
 
