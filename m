@@ -1,139 +1,153 @@
-Return-Path: <linux-kernel+bounces-736872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37F35B0A46F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:48:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98F7EB0A478
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:53:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F345AA830FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:47:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A81461764B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D4C2BF3CC;
-	Fri, 18 Jul 2025 12:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E9A12D9EC9;
+	Fri, 18 Jul 2025 12:52:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="srG2GKYu"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TZZOzh/H"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24572CA4B;
-	Fri, 18 Jul 2025 12:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94FF1CA4B;
+	Fri, 18 Jul 2025 12:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752842895; cv=none; b=Ma0GSTESuTElrISnnWdoIefua2OQi/eqO4MPhKAc6j7E6P7G0FXLQu8aqtQ+5bwcS1uc8mTxXrbukRvaIVeOr6OS/NNeWe0D3dJ9qlQ1gjnfKMGvP8G+8AYT7pYN3l2uPZY4dwpOmHNde5D5JPo9yz6NHvCbSZ0LNUHOALiqPWU=
+	t=1752843178; cv=none; b=NrrM/vQdizV1grt7feYCOqG/BYIAvyYtHsZfkTCYVtcuCdztvjTQ2s4WYKFL65ujTuhjCaWY932QaXrF+y5OH/isIrb9wPlpQUc4L2S/4lw2GxI4d02WTKYGWlrvdllEX4jTxbOQImhJviz8t1DIcKHSdNBFx6C6wcxQpX3FGPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752842895; c=relaxed/simple;
-	bh=Gsab9fD3xI9Mag53PYLUfwNjLtNKUXEAuHUT4Se3sQo=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=LdptiWC44DW70tXA8oL6CmHKOfzwbIdZ/wkV5gHvaYvxcxQrQJPpzpXC9euGwYlH3IsgrdG/UHhfPkKgii/pNYz5Su4qIwbftv11ifD5T2mF9jUCNzpA/z9VyEFXrdMlXeTArd2rmdbRiF95d4AyZLs9ZBMLsjkaiCeGqlaJqyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=srG2GKYu; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1752842891; x=1753447691; i=markus.elfring@web.de;
-	bh=Gsab9fD3xI9Mag53PYLUfwNjLtNKUXEAuHUT4Se3sQo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=srG2GKYuSafG8D07vbFkYADQTELN823ECIaR7h0SJe5vs4oCy1wUsPYW7g3OzKWB
-	 9qWJ8G0/93Np3rrtV45a4UDhdXcsS5krP+d4holoYbUC33VGpFzb2EIFFQhV8gymM
-	 7x8+Lq2U4onYvl6Xel96m1VPuwU+1nGKq8x+Reku5on3poBvNHljZL5N/E905f67I
-	 cGMs3xz9OMou16xNt4vQmTFie21y2hTys03+y2mEE5wKL35EAhIpxytZJxwv0HcIm
-	 JvIqx2KOkQ8FiUFeSxTIr+5rjtT2dXbqsKduyYsJbm5ERk8LNYf6Nyshlwx46ChWD
-	 ITvgObO1OwA55LjfEw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.219]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MElZB-1uN8OP3Of5-007Z9K; Fri, 18
- Jul 2025 14:48:10 +0200
-Message-ID: <1e0bf6e2-37a9-4299-8426-e495f3c43f1d@web.de>
-Date: Fri, 18 Jul 2025 14:48:08 +0200
+	s=arc-20240116; t=1752843178; c=relaxed/simple;
+	bh=NLzaj3chJ8j3M7r/+NjIVMEeYvDloByhR46o9CGuCN8=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=CdJZugf2HCKMKUSn6tXlVjSs2mvHhuvtWQlyJxOf9sOBvLVMkefP7IQZMqS2S3VaHHNYlWCXD0gButmBPnclpSjbKZepEyl2Fl8pYJ6jDqD8t77ihqWo3eX+6oBmUaxKlofNtHH1UUVlLIDbRVFaQdMdln6eQk655tnGlZPTo5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TZZOzh/H; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-237e6963f63so12405225ad.2;
+        Fri, 18 Jul 2025 05:52:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752843176; x=1753447976; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tzWLxvcTgWZIAaFaMHK77YFDBh6V9DLia4KmjOhaU4I=;
+        b=TZZOzh/HsA0cNd/GNQcRnf6zUkWxpLSlvbJnUX6+/BnwJlMFILCs0a/PfZAeBhx98D
+         e9CZh6RYEU2BJuaTIXJgPIsve74WBsZX8Yq8RFVkv5u9fxIPvDXKsnvmfz7MeBGv1WU+
+         gtm2Nf6KgFON0z48AsZ7Zq/NG7Du14YR9+gcol85d/5hQqT9aiShDmBBAdvGJ48JvLdp
+         XE3nCJrCmoP/pMMewAA6Rv7PtWwO46AzX94eyucCSRkUuwZELQ0+1PuWA39I1X9qO84d
+         CmoxN7+cWw37tytjv+neyOf+MEE0SC4yEhT798uIhcCDUstQjvHs2ZL/jOOKMu7FJ7Wl
+         jnfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752843176; x=1753447976;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tzWLxvcTgWZIAaFaMHK77YFDBh6V9DLia4KmjOhaU4I=;
+        b=GS+dhogCxQUBFUKInfJN0ajwB6K7J0AvXnOFQx2nlQg86SshRcpwmNOXeQ2FNLbwEU
+         ZvtUjLtVCY4cxla/0C9LmtjFr+WxnPcMkImv8oG0RUR74NxlJcSA22kwDOXDkoiTrReN
+         BbU5VLh5jRzz4JcgYVbDp2FuX8RBdCnTdh78v+NoCaEE/oC7XnZUn8tEuFIKqxH6MJhf
+         pCkPWBpSzHViMerJ3z59QykQKmLVuUuVW/AipBwLdhgKDuMIOx/fNNRVpi4XIyyze0P5
+         kzoF6UajzxscfEp6nEGsE/wzOFRO4yUY+GKte5awvUKeO7m3dxWGfR6E6dawa1Qmx17a
+         VOvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHeTnVhHAFRHGaEnGgELzebeYARtrlFy8EuyE1FXqBQuqdTv/mMKeb7hg2ExnAUOE0rZkjaZRKhMH6iX8=@vger.kernel.org, AJvYcCWmXCXKkEo2SwKCArbxJyJ5jcUblPRGhMQ4xte8JmgbdC7q5YzPGDkQP80xpFRO9ibyjL1mbFEj+Aj4nm0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxr8XBpSZsqnVYgqEFyRwlJBvT2zNeiy/r5YmWfatC4fEJKIKe4
+	2lsldOmnGvsTAPMSKQAtIWlbC/7IQXh3Jo9JaaB69a49HQQnO6COjbvk
+X-Gm-Gg: ASbGncuyW04Tm2PjHR+/Im0M3tSCuxMT504zqAH6LdvnVHOwRAJP6w1KnrmuMjyojt2
+	ARYo6PvK0Ps0BmNOb4duzSrTsyCZbzcGQ2rFHgz9SS79fr1ULWFxdjYrS5wHlv6MydDm1ki4xwh
+	pf9tjTUK8GSRBndrl4yovv3Epc3yBzpcF5LtVR01aYCjef2KiNt4LFXPdHvX4L04BYzX96CzI1O
+	vZvnUn0KYyOiUuNRt3wGf/qLGzti2dHtHU9sA09Y+rzlwrIijWRgklPJ2F7ksDSIw+lGIyunXPY
+	ObwADkHriyi9yQMbTvGuiYha6YCjJU2ryGnYU7GPJQ3paWLcPBvtTygjjvXXP6LGls8sHRKvtHz
+	FbWmw5u9YkL1rMMN6hYoE5zEeG3HCAhJOeDe6X5XSLdvoJ0rvbD9/gMRRsg/QFVZlFhw+s53TZw
+	==
+X-Google-Smtp-Source: AGHT+IExCjv2PYQ0Nbp5/6M3l1rh0G2qV7i6JojbHrMYDYD8daiifGqvWX3AOj8ms/vKg/Ul9yZQKQ==
+X-Received: by 2002:a17:903:ace:b0:234:adce:3ebc with SMTP id d9443c01a7336-23e2578a8aemr170190955ad.52.1752843175652;
+        Fri, 18 Jul 2025 05:52:55 -0700 (PDT)
+Received: from SIQOL-WIN-0002-DARSHAN.localdomain ([49.36.68.205])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b6cfb7dsm12663295ad.140.2025.07.18.05.52.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Jul 2025 05:52:55 -0700 (PDT)
+From: Darshan Rathod <darshanrathod475@gmail.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Darshan Rathod <darshanrathod475@gmail.com>,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] media: b2c2: flexcop-eeprom: Fix assignment in if condition
+Date: Fri, 18 Jul 2025 12:52:41 +0000
+Message-ID: <20250718125245.82910-1-darshanrathod475@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Zijiang Huang <kerayhuang@tencent.com>, cgroups@vger.kernel.org
-Cc: Zijiang Huang <huangzjsmile@gmail.com>,
- LKML <linux-kernel@vger.kernel.org>, Hao Peng <flyingpeng@tencent.com>,
- Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>, Tejun Heo <tj@kernel.org>
-References: <20250718115409.878122-2-kerayhuang@tencent.com>
-Subject: Re: [PATCH 2/2] cgroup: Fix reference count leak when cft->open is
- NULL
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250718115409.878122-2-kerayhuang@tencent.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:n9h/VgI2ZBDDRRNUAooTuanHJ2EJV2D8fVSw8GkyeXFmwOAyzqb
- SU+GF8Vjh/0bbBIrlzODc1l/Q3Po7UBVfKjlaoNp8Tt/ZoGo3LmPXH/Wyl/A6hy0LUadPVc
- RCT3DMUXTN+jDNQ7S0/NQBYiZknQjhk2o1FsSOv6UXCZ+liBmHV51V7iB5Fz0XCKt0NjkyC
- MUPo7IIay+qIj8jvIlEsQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:4Q40KKrmvX4=;QB51eumT2q4b6tixLvvOQoHOwTl
- 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
- Qrv/gQEw/S/gU+2Nq
+Content-Transfer-Encoding: 8bit
 
-> When cft->open is NULL, it will cause ctx namespace reference count leak.
+Function flexcop_eeprom_check_mac_addr() contains an
+assignment in an 'if' condition. This coding style is not
+accepted in the Linux kernel as it can conceal bugs.
 
-Would you like to point out that a reference count should be incremented
-in another case?
+Put the assignment before the 'if' condition, in an
+explicit separate statement. It will also bring this code
+in line with checkpatch.pl.
 
-Regards,
-Markus
+Also, correct a few off-by-one spaces in a function call and
+variable declaration.
+
+Signed-off-by: Darshan Rathod <darshanrathod475@gmail.com>
+---
+ drivers/media/common/b2c2/flexcop-eeprom.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/media/common/b2c2/flexcop-eeprom.c b/drivers/media/common/b2c2/flexcop-eeprom.c
+index 0f2151cd36f2..da7c537ef93b 100644
+--- a/drivers/media/common/b2c2/flexcop-eeprom.c
++++ b/drivers/media/common/b2c2/flexcop-eeprom.c
+@@ -90,7 +90,7 @@ static char eeprom_set_mac_addr(struct adapter *adapter, char type, u8 *mac)
+ static int flexcop_eeprom_read(struct flexcop_device *fc,
+ 		u16 addr, u8 *buf, u16 len)
+ {
+-	return fc->i2c_request(fc,FC_READ,FC_I2C_PORT_EEPROM,0x50,addr,buf,len);
++	return fc->i2c_request(fc, FC_READ, FC_I2C_PORT_EEPROM, 0x50, addr, buf, len);
+ }
+ 
+ #endif
+@@ -107,7 +107,7 @@ static u8 calc_lrc(u8 *buf, int len)
+ static int flexcop_eeprom_request(struct flexcop_device *fc,
+ 	flexcop_access_op_t op, u16 addr, u8 *buf, u16 len, int retries)
+ {
+-	int i,ret = 0;
++	int i, ret = 0;
+ 	u8 chipaddr =  0x50 | ((addr >> 8) & 3);
+ 	for (i = 0; i < retries; i++) {
+ 		ret = fc->i2c_request(&fc->fc_i2c_adap[1], op, chipaddr,
+@@ -135,13 +135,15 @@ int flexcop_eeprom_check_mac_addr(struct flexcop_device *fc, int extended)
+ 	u8 buf[8];
+ 	int ret = 0;
+ 
+-	if ((ret = flexcop_eeprom_lrc_read(fc,0x3f8,buf,8,4)) == 0) {
++	ret = flexcop_eeprom_lrc_read(fc, 0x3f8, buf, 8, 4);
++
++	if (ret == 0) {
+ 		if (extended != 0) {
+ 			err("TODO: extended (EUI64) MAC addresses aren't completely supported yet");
+-			ret = -EINVAL;
+-		} else
+-			memcpy(fc->dvb_adapter.proposed_mac,buf,6);
+-	}
+-	return ret;
++			ret = ret = -EINVAL;
++		} else {
++			memcpy(fc->dvb_adapter.proposed_mac, buf, 6);
++		}
++		return ret;
+ }
+ EXPORT_SYMBOL(flexcop_eeprom_check_mac_addr);
+-- 
+2.43.0
+
 
