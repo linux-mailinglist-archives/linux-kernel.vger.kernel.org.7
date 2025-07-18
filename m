@@ -1,231 +1,138 @@
-Return-Path: <linux-kernel+bounces-736931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 092AAB0A54D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:37:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC639B0A550
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:38:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C35673B2CAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:37:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 429B47BA2BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B9E21386B4;
-	Fri, 18 Jul 2025 13:37:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176EC146588;
+	Fri, 18 Jul 2025 13:38:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yy8qNN24"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L2F6vehq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A55C67262E;
-	Fri, 18 Jul 2025 13:37:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D5162AD2F;
+	Fri, 18 Jul 2025 13:38:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752845841; cv=none; b=lNUpMccJyWkZ5h9yNWhaM8Di33D4/0ji26R39jM8CyQFAyY57wLDdOM8YWnHlhblNihTyRGLsT7rXjFCSH/1FFmXCmC5MjXRj6D7YvlKKMV68Xm/xknWUYc2EN2KnMNSU+qG+N5utMdNXGrEaur9r5Tww3TrHRsjn7Z0sN77+Cc=
+	t=1752845887; cv=none; b=fL2xHFs/tURWcbaH+y8x71S4zDIDJTMSjNjx4ZB9QRdUF/smKcTZysESmbGmgZkM4DZVBH9qEN4Dpp8IwiVpd898lMdcjcymYPcfbu4zNQ6f+5tD4hOtk6Bvs/uBm/w0fXtfwzxKCMFu1CA4VVX2K5f+fj16fZe2ZTu/ZRO0gAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752845841; c=relaxed/simple;
-	bh=4gYK7cAt8c0eJOPvaPS4yKEvnYcbVrFkdFhehLWxsik=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dqdk/7PHadRmpHN8B+PPDkMu2LfTFTEqDTHvczhp4rEybXLX20Zcf9QyU9JPZ9Ao0TbKnA7xyt0oAg5t730Ev5m8BCGw4qausQAGFleL6mko73xXzOzLVwt4hJoClc8spYxxpCzQsTkdCF2HGZVhcn8btzMbnFpi3+lV5ljV+34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yy8qNN24; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14FB1C4CEEB;
-	Fri, 18 Jul 2025 13:37:17 +0000 (UTC)
+	s=arc-20240116; t=1752845887; c=relaxed/simple;
+	bh=cQfMiHxKSxzXd0SZmHAWYnE0ssYW1iWXlohanmbLpSo=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=L/aT4VU1JYO6/IHONCNXnrk4j8hEY9ZeacUvFBG8S9HBQ/TJKnXDnWk4/gLYZulTIRdahatb7DjLZBHu/lk0BMi9bhHsOlA8JgW+CvoatlNWiZxnc77msBAMXF1f/kkNBmpoFGpVcnC7V2dceuByWNh9nuaA6czDZQvtcSSZ0AQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L2F6vehq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4A40C4CEEB;
+	Fri, 18 Jul 2025 13:38:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752845841;
-	bh=4gYK7cAt8c0eJOPvaPS4yKEvnYcbVrFkdFhehLWxsik=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Yy8qNN24agcDyfnirinDCL8kW7X+EzPdoiBa/bKjTRmdTumHRqgxlq98W1ZY9Lqqp
-	 BXRCWHbuo/mPUK1rrExsvfoJk7+cLFTCsO5hvY5XicL6wgeSN0lHUjcUZDxHt/jJ+G
-	 ikoPOXq+obE1oTE44wqcKgR3kbJP3XhaXkO6AokdrxUywUg/GlKuRNkLpE6k8mWuay
-	 z/Xeoq8r/oezbD3wLUOMIgpPcTCeYaqIyloN9DCat7hju8q6/XvrRm2mk9loVJx5gw
-	 tYPcY1areNux5tMVYVKowc7jJ12vSCEu9jHb/ArpmyAeafi1KBW1VgaAS85YgZT1LV
-	 HY/OUHeipGcAg==
-Date: Fri, 18 Jul 2025 14:37:14 +0100
-From: Will Deacon <will@kernel.org>
-To: Per Larsen <perl@immunant.com>
-Cc: Marc Zyngier <maz@kernel.org>, perlarsen@google.com,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, ahomescu@google.com,
-	armellel@google.com, arve@android.com, ayrton@google.com,
-	qperret@google.com, sebastianene@google.com, qwandor@google.com
-Subject: Re: [PATCH v7 2/5] KVM: arm64: Use SMCCC 1.2 for FF-A initialization
- and in host handler
-Message-ID: <aHpOClH1k-3NhI_y@willie-the-truck>
-References: <20250701-virtio-msg-ffa-v7-0-995afc3d385e@google.com>
- <20250701-virtio-msg-ffa-v7-2-995afc3d385e@google.com>
- <8634bdbgaz.wl-maz@kernel.org>
- <3b10fa81-bfdd-4325-a330-c79df2e21621@immunant.com>
+	s=k20201202; t=1752845886;
+	bh=cQfMiHxKSxzXd0SZmHAWYnE0ssYW1iWXlohanmbLpSo=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=L2F6vehqsN4RSbPPfYD/fGbRIOoD30lJ6yZLscm2oNslO8Hdolj1ZxAW/1PA2gmvO
+	 mcdhAEXRqBIEvKHjJGPBF89W5NyCt2WRwCygubCUnpjQ2ViwLcknhm0JRLMTObNGe9
+	 tTTGNv+0wo2mG8c/9ERydH3VneE7Kbn9AVWowcwbVnnr9SkjO3qR+ZTYwLmw4QjWvM
+	 /64fKHIBHrSju+UNa5RlbndYQLm0bvRVDem7QwgXIpYnc6RNVIr2LwQHBeoND2mZ68
+	 0O/gyJGt7e6cQHpgkipCdmwbJuyzEaJILdCDnUnsCk0TOGyf78OPUoC7XJnOw3ilc/
+	 GoDjUfou9mgOg==
+Message-ID: <859be3e3-be14-411d-b5ef-07bdad91a878@kernel.org>
+Date: Fri, 18 Jul 2025 16:38:02 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3b10fa81-bfdd-4325-a330-c79df2e21621@immunant.com>
+User-Agent: Mozilla Thunderbird
+From: Georgi Djakov <djakov@kernel.org>
+Subject: Re: [PATCH v2 03/28] interconnect: qcom: rpmh: make nodes a
+ NULL_terminated array
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250704-rework-icc-v2-0-875fac996ef5@oss.qualcomm.com>
+ <20250704-rework-icc-v2-3-875fac996ef5@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <20250704-rework-icc-v2-3-875fac996ef5@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 07, 2025 at 05:06:23PM -0700, Per Larsen wrote:
-> On 7/3/25 5:38 AM, Marc Zyngier wrote:
-> > On Tue, 01 Jul 2025 23:06:35 +0100,
-> > Per Larsen via B4 Relay <devnull+perlarsen.google.com@kernel.org> wrote:
-> > > diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> > > index 2c199d40811efb5bfae199c4a67d8ae3d9307357..65d241ba32403d014b43cc4ef4d5bf9693813809 100644
-> > > --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
-> > > +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> > > @@ -71,36 +71,68 @@ static u32 hyp_ffa_version;
-> > >   static bool has_version_negotiated;
-> > >   static hyp_spinlock_t version_lock;
-> > > -static void ffa_to_smccc_error(struct arm_smccc_res *res, u64 ffa_errno)
-> > > +static void ffa_to_smccc_error(struct arm_smccc_1_2_regs *res, u64 ffa_errno)
-> > >   {
-> > > -	*res = (struct arm_smccc_res) {
-> > > +	*res = (struct arm_smccc_1_2_regs) {
-> > >   		.a0	= FFA_ERROR,
-> > >   		.a2	= ffa_errno,
-> > >   	};
-> > >   }
-> > > -static void ffa_to_smccc_res_prop(struct arm_smccc_res *res, int ret, u64 prop)
-> > > +static void ffa_to_smccc_res_prop(struct arm_smccc_1_2_regs *res, int ret, u64 prop)
-> > >   {
-> > >   	if (ret == FFA_RET_SUCCESS) {
-> > > -		*res = (struct arm_smccc_res) { .a0 = FFA_SUCCESS,
-> > > -						.a2 = prop };
-> > > +		*res = (struct arm_smccc_1_2_regs) { .a0 = FFA_SUCCESS,
-> > > +						      .a2 = prop };
-> > >   	} else {
-> > >   		ffa_to_smccc_error(res, ret);
-> > >   	}
-> > >   }
-> > > -static void ffa_to_smccc_res(struct arm_smccc_res *res, int ret)
-> > > +static void ffa_to_smccc_res(struct arm_smccc_1_2_regs *res, int ret)
-> > >   {
-> > >   	ffa_to_smccc_res_prop(res, ret, 0);
-> > >   }
-> > >   static void ffa_set_retval(struct kvm_cpu_context *ctxt,
-> > > -			   struct arm_smccc_res *res)
-> > > +			   struct arm_smccc_1_2_regs *res)
-> > >   {
-> > > +	DECLARE_REG(u64, func_id, ctxt, 0);
-> > >   	cpu_reg(ctxt, 0) = res->a0;
-> > >   	cpu_reg(ctxt, 1) = res->a1;
-> > >   	cpu_reg(ctxt, 2) = res->a2;
-> > >   	cpu_reg(ctxt, 3) = res->a3;
-> > > +	cpu_reg(ctxt, 4) = res->a4;
-> > > +	cpu_reg(ctxt, 5) = res->a5;
-> > > +	cpu_reg(ctxt, 6) = res->a6;
-> > > +	cpu_reg(ctxt, 7) = res->a7;
-> > 
-> >  From DEN0028G 2.6:
-> > 
-> > <quote>
-> > Registers W4-W7 must be preserved unless they contain results, as
-> > specified in the function definition.
-> > </quote>
-> > 
-> > On what grounds can you blindly change these registers?
-> From DEN0077A 1.2 Section 11.2: Reserved parameter convention
+Hi Dmitry,
+
+On 7/4/25 7:35 PM, Dmitry Baryshkov wrote:
+> Having the .num_nodes as a separate struct field can provoke errors as
+> it is easy to omit it or to put an incorrect value into that field. Turn
+> .nodes into a NULL-terminated array, removing a need for a separate
+> .num_nodes field. 
+
+I am not entirely convinced that an error in the termination is more
+unlikely than an error in the num_nodes. Aren't we trading one kind of
+error for another? Also if we omit the num_nodes i expect that just the
+QoS of a specific path will fail, but if we miss the NULL - worse things
+might happen.
+
+[..]
+>   27 files changed, 541 insertions(+), 1119 deletions(-)
+
+The negative diffstat is nice.
+
 > 
-> <quote>
-> Unused parameter registers in FF-A ABIs are reserved for future use by the
-> Framework.
-> 
-> [...]
-> 
-> The caller is expected to write zeroes to these registers. The callee
-> ignores the values in these registers.
-> </quote>
-> 
-> My read is that, as long as we are writing zeroes into reserved registers
-> (which I believe we are), we comply with DEN0026G 2.6.>
+> diff --git a/drivers/interconnect/qcom/bcm-voter.c b/drivers/interconnect/qcom/bcm-voter.c
+> index a2d437a05a11fa7325f944865c81a3ac7dbb203e..4fa960630d28f338f484794d271a5b52f3e698d3 100644
+> --- a/drivers/interconnect/qcom/bcm-voter.c
+> +++ b/drivers/interconnect/qcom/bcm-voter.c
+> @@ -68,7 +68,7 @@ static void bcm_aggregate_mask(struct qcom_icc_bcm *bcm)
+>   		bcm->vote_x[bucket] = 0;
+>   		bcm->vote_y[bucket] = 0;
+>   
+> -		for (i = 0; i < bcm->num_nodes; i++) {
+> +		for (i = 0; bcm->nodes[i]; i++) {
+>   			node = bcm->nodes[i];
 
-Right, the specs make this far more difficult to decipher than necessary
-but I think SMCCC defers to the definition of the specific call being
-made and then FF-A is basically saying that unused argument registers
-are always zeroed.
+I like better the single memory access and the two registers comparison
+that we already have, but both are fine as we are not in some critical
+section.
 
-Rather than have the EL2 proxy treat each call differently based on the
-used argument registers, we can rely on EL3 doing the right thing and
-blindly copy everything back, which is what you've done. So I think
-that's ok.
+[..]
+> diff --git a/drivers/interconnect/qcom/icc-rpmh.h b/drivers/interconnect/qcom/icc-rpmh.h
+> index bd8d730249b1c9e5b37afbee485b9500a8028c2e..0018aa74187edcac9a0492c737771d957a133cc0 100644
+> --- a/drivers/interconnect/qcom/icc-rpmh.h
+> +++ b/drivers/interconnect/qcom/icc-rpmh.h
+> @@ -126,7 +126,6 @@ struct qcom_icc_node {
+>    * communicating with RPMh
+>    * @list: used to link to other bcms when compiling lists for commit
+>    * @ws_list: used to keep track of bcms that may transition between wake/sleep
+> - * @num_nodes: total number of @num_nodes
+>    * @nodes: list of qcom_icc_nodes that this BCM encapsulates
+>    */
+>   struct qcom_icc_bcm {
+> @@ -142,7 +141,6 @@ struct qcom_icc_bcm {
+>   	struct bcm_db aux_data;
+>   	struct list_head list;
+>   	struct list_head ws_list;
+> -	size_t num_nodes;
 
-> > > +
-> > > +	/*
-> > > +	 * DEN0028C 2.6: SMC32/HVC32 call from aarch64 must preserve x8-x30.
-> > > +	 *
-> > > +	 * The most straightforward approach is to look at the function ID
-> > > +	 * sent by the caller. However, the caller could send FFA_MSG_WAIT
-> > > +	 * which is a 32-bit interface but the reply could very well be 64-bit
-> > > +	 * such as FFA_FN64_MSG_SEND_DIRECT_REQ or FFA_MSG_SEND_DIRECT_REQ2.
-> > > +	 *
-> > > +	 * Instead, we could look at the function ID in the response (a0) but
-> > > +	 * that doesn't work either as FFA_VERSION responses put the version
-> > > +	 * number (or error code) in w0.
-> > > +	 *
-> > > +	 * Set x8-x17 iff response contains 64-bit function ID in a0.
-> > > +	 */
-> > > +	if (func_id != FFA_VERSION && ARM_SMCCC_IS_64(res->a0)) {
-> > > +		cpu_reg(ctxt, 8) = res->a8;
-> > > +		cpu_reg(ctxt, 9) = res->a9;
-> > > +		cpu_reg(ctxt, 10) = res->a10;
-> > > +		cpu_reg(ctxt, 11) = res->a11;
-> > > +		cpu_reg(ctxt, 12) = res->a12;
-> > > +		cpu_reg(ctxt, 13) = res->a13;
-> > > +		cpu_reg(ctxt, 14) = res->a14;
-> > > +		cpu_reg(ctxt, 15) = res->a15;
-> > > +		cpu_reg(ctxt, 16) = res->a16;
-> > > +		cpu_reg(ctxt, 17) = res->a17;
-> > > +	}
-> > >   }
-> > 
-> > I don't see how that can ever work.
-> > 
-> > Irrespective of how FFA_MSG_WAIT actually works (and I couldn't find
-> > anything in the spec that supports the above), the requester will
-> > fully expect its registers to be preserved based on the initial
-> > function type, and that alone. No ifs, no buts.
-> > 
-> > If what you describe can happen (please provide a convincing example),
-> > then the spec is doomed.
-> 
-> DEN0077A 1.2 Section 8.2 (Runtime Model for FFA_RUN) and 8.3 (Runtime Model
-> for Direct request ABIs) contains Figures 8.1 and 8.2. Each figure shows
-> transitions between states "waiting", "blocked", "running", and "preempted".
-> Key to my understanding is that the waiting state in Figure 8.1 and Figure
-> 8.2 is the exact same state. This appears to be the case per Section 4.10.
-> 
-> So we have to consider the ways to get in and out of the waiting state by
-> joining the state machines in Figures 8.1 and 8.2. Figure 8.1 has an edge
-> between "running" and "waiting" caused by FFA_MSG_WAIT. Figure 8.2 has an
-> edge between "waiting" and "running" caused by a "Direct request ABI".
-> 
-> Direct request ABIs include FFA_MSG_SEND_DIRECT_REQ2 which is why the FF-A
-> 1.2 spec, in my read, permits the response to a 32-bit FFA_MSG_WAIT call can
-> be a 64-bit FFA_MSG_SEND_DIRECT_REQ2 reply.
+So no change in memory footprint, as now instead of the num_nodes, there
+will be an additional NULL pointer for termination.
 
-That seems bonkers to me and I agree with Marc's assessment above. The
-SMCCC is crystal clear that a caller using the SM32/HVC32 calling
-convention can rely on x8-x30 (as well as the stack pointers) being
-preserved. If FF-A has a problem with that then it needs to be fixed
-there and not bodged in Linux.
+[..]
 
-Setting that aside, I'm still not sure I follow this part of your check:
+Well, this approach is also good. The existing one just follows the pattern
+used by other frameworks, that seemed more common and thus make the code
+easier to read and review.
 
-	if (... && ARM_SMCCC_IS_64(res->a0))
+I don't see a strong argument to switch to a NULL terminated arrays (yet),
+as it does not make things any better for performance/memory, so I'm not
+sure if it's worth reshuffling the 10k+ LoC in drivers. Is there any other
+argument that i miss?
 
-won't res->a0 contain something like FFA_SUCCESS? The FFA spec states:
+Thanks,
+Georgi
 
-  FFA_SUCCESS64, is used only if any result register encodes a 64-bit
-  parameter.
-
-which doesn't really seem related to whether or not the initial call
-was using SMC32 or SMC64. What am I missing?
-
-Will
 
