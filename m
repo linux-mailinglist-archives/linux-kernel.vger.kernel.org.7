@@ -1,142 +1,400 @@
-Return-Path: <linux-kernel+bounces-736646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3F78B09FFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:44:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54532B0A002
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:46:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30FAA5A3882
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:44:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 049127A91A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:44:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CA5029994E;
-	Fri, 18 Jul 2025 09:44:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80AC29994E;
+	Fri, 18 Jul 2025 09:46:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ay3N3eBF"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="xkTl9IOt"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EDB2298CB6
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 09:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4233C01;
+	Fri, 18 Jul 2025 09:45:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752831855; cv=none; b=m/GoaDGD8diV6vZfukmWXzxJciZBG5JbDIEyXDKIKWqxB9lcdRXDg9tYKy6lktUvxbgpmClt9pSAl3lS98w/dAl61qatKXuM8dnKS/mKCYYPmuWa00svI7nuPSCrhBnQTwEOsJea3+BsBBKuVKVXe/GXSkvu5D7Iu1fFd8G+CQg=
+	t=1752831959; cv=none; b=k7HjXcvtRMHeCGhrpM13Y6fwBhCEyrLGm0sQD+ANZJgypyyXu5QL3YBDmgUbFiXdGdv/VaxFkMgVBxBGr1No0ERHfR1yrH5SrhdzlTJhh8G6eo0teVvxF+tVVpPwJZIYKV0/yRx+i7veSAJZ+1eoORUa4GNh6TA3cVs0mqb8m90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752831855; c=relaxed/simple;
-	bh=T53jj+uGYaYf52lKowm0CpjH/Cq7fLwZZogKpiquQjg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=le+9JO5qlFF+YOKHzRmZhg1yb0xcXAKxfwX9Fx47dYGSch1/HVkf4Le0k8z52YkmHusOZZQRsZEC+X1h7/ew5XVm7hl66SyhNGqwM97uIwdJVgAMQHTEm2KG69gYsMJdrvOvwXDGRF58V/0Rzib3x24urrwn7RBjHqXaQ/DdVwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ay3N3eBF; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752831853;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T53jj+uGYaYf52lKowm0CpjH/Cq7fLwZZogKpiquQjg=;
-	b=Ay3N3eBFesABuQCUTL+iAbg5xX2Fco53b5u87XHFHAu0NqQst1a24IUKzNW/5mBpSDi9qK
-	CY1Aa0bzBGEcCX1z3JvWBx56WAfmmVGv9hxbUX/kc6k6GA9cJdOxsKo2qhiYwMJ5auS2jh
-	WA7s/CByaVwCibnMLDLvdWLZFM/cRdc=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-670-zmVawsAyPAOsvlvmy6m6vQ-1; Fri, 18 Jul 2025 05:44:11 -0400
-X-MC-Unique: zmVawsAyPAOsvlvmy6m6vQ-1
-X-Mimecast-MFC-AGG-ID: zmVawsAyPAOsvlvmy6m6vQ_1752831850
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a4eb6fcd88so1216074f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 02:44:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752831850; x=1753436650;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=T53jj+uGYaYf52lKowm0CpjH/Cq7fLwZZogKpiquQjg=;
-        b=FJRFs/v2mwc5QLs0Jyr2uEB5BllNQBo71M6f7qVI5BFuM7eVYiXAoxat+Lq4ckedIc
-         y/B/yjXkEK2JjE1HC8lSxydLpG5BVgU8jIour5Ml41lPXQI3ZM5j2+evpWsm6U+rr+OM
-         hWgtLvN3Rv7gOm9gT9JrqgR7f350aBb2GJTwEzLI8WG69/I2w8Qm3XeR0aEq03rp7/IF
-         hjVpVmUnapvIpzYqK9TVR/WlBr3JcvT3ynxMXqDhYCF+P8WVzE4vEgGy9HEJBpbmimHw
-         X4k8FexMMree5dNH57+DGM/sy4Esk3vxvSNS65ZI/ZppxwRsjV08HWZb9NyRko/lIq69
-         tDxw==
-X-Forwarded-Encrypted: i=1; AJvYcCVIvZ6tCUx1TJPlOQXX1t97sxtNEsaiMlj6EMpdrjuYOj1RhYfFKIyRRuaFBGagq5gipE4LWgrMj9S8bIg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEfE6bFceuchWKcuZSh958xVnF/w20Jezw9NSlIh94P61QOFkv
-	yc1GcQzOFoWMuBokM573Ptv/eOMww2gau++Lw8bI7eOmihPLN4IYPpJYjlnJz1J4e7BcN173Tn0
-	vzMEqWWlqzyPPVqWun8xijxiJUXNVT68N164OzTwOsTwpKybRYmYFYLDzbXUH5tiPVw==
-X-Gm-Gg: ASbGncss95J+J47Zf/JNsv+zJ/yaJvPdwhcmLk7xaC+866R0Dymiil5IkItUEqqlOfc
-	wYsKxND0NCAs2kSlswJw1gc1AflEJHmuQ6h3CPnA4aUbEQsyVnGDN6L2Y8Mjougef91gDrGifrp
-	hrGwhIp5ZJstMIIs26xz8QnUIDxKJGCYp2h85ZcEblm+b1BJd1GOYEwu+lBuUj8cELhnirtWPP4
-	5RPD/veiBNQrKZJ3mBRZG4TszWjdELCYjAPbXTseXLWgM0oRI2++d4JDb0OolDorlHAhmpOZygL
-	QbmFdZF2ZISziYVke1JDrbJRsJGxBxiegExImu9ULic9p9JUw2vA8Lqhcoa4Zb/ZZ+EN6zhePWv
-	8UmRhUoH1aKs=
-X-Received: by 2002:a05:6000:2485:b0:3a4:eb92:39b6 with SMTP id ffacd0b85a97d-3b60e5188a9mr7814166f8f.54.1752831849695;
-        Fri, 18 Jul 2025 02:44:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGwyvbO1naMxXvga0v2Mf459n4z6Zb+LqD86VjK+yx3D7c4jUHgFpj1B2IMb4iTSN7BmDYzvA==
-X-Received: by 2002:a05:6000:2485:b0:3a4:eb92:39b6 with SMTP id ffacd0b85a97d-3b60e5188a9mr7814146f8f.54.1752831849175;
-        Fri, 18 Jul 2025 02:44:09 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca487a5sm1334017f8f.42.2025.07.18.02.44.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Jul 2025 02:44:08 -0700 (PDT)
-Message-ID: <3fe2d2e6-993c-4344-8fb3-ff6625aa91f7@redhat.com>
-Date: Fri, 18 Jul 2025 11:44:07 +0200
+	s=arc-20240116; t=1752831959; c=relaxed/simple;
+	bh=pY0MV4mpYdYjPZWc2VFKwAFPw4Xd+79vKStlUueZr5k=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XYm9WsZL+uSEQ9RTYtIYbTgwGoxVVvR7VYIAe/HGoEnqyL1TFs4i41Q+KsPFjqBxzwvyQtsm5voLjZL0fbeA88xl9mZvLHvZCLszi6Q2QgmPxYpDMZPFcb/3WyniaQuZVgGQa0igtfMQZGGfmpYLOAF7b7PebCihHjG+uvBhqVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=xkTl9IOt; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56I9jSEE226499;
+	Fri, 18 Jul 2025 04:45:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1752831928;
+	bh=J0S1VbKJLH31RiIy3lX0zXmUf3R0ULFs66hqGBDEbTo=;
+	h=From:To:CC:Subject:Date;
+	b=xkTl9IOtCTPKVLfekzPLQh82tamAXKw+mlv+TVDSKT5DHEH/8XtFK84TaIosg3HtN
+	 7Bj1j0GAi50EjTmNDnunu2C4u0Hs7rU3rs4QW18kMWHyXQFGdbqI4HGfbTB5nOg+AT
+	 TAcWt/bMA9hMosLHrPiHNLgXhLmN6NDmswlxty9U=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56I9jSaW3421028
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 18 Jul 2025 04:45:28 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 18
+ Jul 2025 04:45:27 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 18 Jul 2025 04:45:27 -0500
+Received: from lelvem-mr05.itg.ti.com ([10.250.165.138])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56I9jLCH3643100;
+	Fri, 18 Jul 2025 04:45:22 -0500
+From: Baojun Xu <baojun.xu@ti.com>
+To: <tiwai@suse.de>
+CC: <broonie@kernel.org>, <andriy.shevchenko@linux.intel.com>,
+        <alsa-devel@alsa-project.org>, <shenghao-ding@ti.com>, <navada@ti.com>,
+        <13916275206@139.com>, <v-hampiholi@ti.com>, <v-po@ti.com>,
+        <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <baojun.xu@ti.com>
+Subject: [PATCH v1] ALSA: hda: Add TAS2770 support
+Date: Fri, 18 Jul 2025 17:44:54 +0800
+Message-ID: <20250718094454.26574-1-baojun.xu@ti.com>
+X-Mailer: git-send-email 2.43.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next V2 0/3] in order support for vhost-net
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Jason Wang <jasowang@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
- eperezma@redhat.com, kvm@vger.kernel.org, virtualization@lists.linux.dev,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, jonah.palmer@oracle.com
-References: <20250714084755.11921-1-jasowang@redhat.com>
- <20250716170406.637e01f5@kernel.org>
- <CACGkMEvj0W98Jc=AB-g8G0J0u5pGAM4mBVCrp3uPLCkc6CK7Ng@mail.gmail.com>
- <20250717015341-mutt-send-email-mst@kernel.org>
- <CACGkMEvX==TSK=0gH5WaFecMY1E+o7mbQ6EqJF+iaBx6DyMiJg@mail.gmail.com>
- <bea4ea64-f7ec-4508-a75f-7b69d04f743a@redhat.com>
- <CACGkMEv3gZLPgimK6=f0Zrt_SSux8ssA5-UeEv+DHPoeSrNBQQ@mail.gmail.com>
- <7aeff791-f26c-4ae3-adaa-c25f3b98ba56@redhat.com>
- <20250718052747-mutt-send-email-mst@kernel.org>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20250718052747-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 7/18/25 11:29 AM, Michael S. Tsirkin wrote:
-> Paolo I'm likely confused. That series is in net-next, right?
-> So now it would be work to drop it from there, and invalidate
-> all the testing it got there, for little benefit -
-> the merge conflict is easy to resolve.
+Add TAS2770 support in TI's HDA driver.
+And add hda_chip_id for more product support in the future.
+Separated DSP and non-DSP in firmware load function.
 
-Yes, that series is in net-next now.
+Signed-off-by: Baojun Xu <baojun.xu@ti.com>
+---
+ include/sound/tas2770-tlv.h     |  23 +++++
+ sound/pci/hda/tas2781_hda_i2c.c | 157 ++++++++++++++++++++++----------
+ 2 files changed, 133 insertions(+), 47 deletions(-)
+ create mode 100644 include/sound/tas2770-tlv.h
 
-My understanding of the merge plan was to pull such series in _both_ the
-net-next and the vhost tree.
-
-Pulling from a stable public branch allows constant commit hashes in
-both trees, avoids conflicts with later vhost patches in the vhost tree
-and with later virtio_net/tun/tap patches in net-next and also avoid
-conflicts at merge window time.
-
-We do (in net-next) that sort of hashes sharing from time to time for
-cross-subtrees changes, like this one.
-
-But not a big deal if you didn't/don't pull the thing in the vhost tree.
-At this point, merging it will be likely quite complex and there will be
-likely no gains on vhost tree management side.
-
-Perhaps we could use this schema next time.
-
-Thanks,
-
-Paolo
-
-
+diff --git a/include/sound/tas2770-tlv.h b/include/sound/tas2770-tlv.h
+new file mode 100644
+index 000000000000..c0bd495b4a07
+--- /dev/null
++++ b/include/sound/tas2770-tlv.h
+@@ -0,0 +1,23 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++//
++// ALSA SoC Texas Instruments TAS2770 Audio Smart Amplifier
++//
++// Copyright (C) 2025 Texas Instruments Incorporated
++// https://www.ti.com
++//
++// The TAS2770 hda driver implements for one, two, or even multiple
++// TAS2770 chips.
++//
++// Author: Baojun Xu <baojun.xu@ti.com>
++//
++
++#ifndef __TAS2770_TLV_H__
++#define __TAS2770_TLV_H__
++
++#define TAS2770_DVC_LEVEL		TASDEVICE_REG(0x0, 0x0, 0x17)
++#define TAS2770_AMP_LEVEL		TASDEVICE_REG(0x0, 0x0, 0x03)
++
++static const __maybe_unused DECLARE_TLV_DB_SCALE(tas2770_dvc_tlv, 1650, 50, 0);
++static const __maybe_unused DECLARE_TLV_DB_SCALE(tas2770_amp_tlv, 1100, 50, 0);
++
++#endif
+diff --git a/sound/pci/hda/tas2781_hda_i2c.c b/sound/pci/hda/tas2781_hda_i2c.c
+index d91eed9f7804..2fdff0f88af7 100644
+--- a/sound/pci/hda/tas2781_hda_i2c.c
++++ b/sound/pci/hda/tas2781_hda_i2c.c
+@@ -24,6 +24,7 @@
+ #include <sound/tas2781.h>
+ #include <sound/tas2781-comlib-i2c.h>
+ #include <sound/tlv.h>
++#include <sound/tas2770-tlv.h>
+ #include <sound/tas2781-tlv.h>
+ 
+ #include "hda_local.h"
+@@ -45,9 +46,18 @@
+ #define TAS2563_CAL_TLIM		TASDEVICE_REG(0, 0x10, 0x14)
+ #define TAS2563_CAL_R0			TASDEVICE_REG(0, 0x0f, 0x34)
+ 
++enum device_chip_id {
++	HDA_TAS2563,
++	HDA_TAS2770,
++	HDA_TAS2781,
++	HDA_OTHERS
++};
++
+ struct tas2781_hda_i2c_priv {
+ 	struct snd_kcontrol *snd_ctls[2];
+ 	int (*save_calibration)(struct tas2781_hda *h);
++
++	int hda_chip_id;
+ };
+ 
+ static int tas2781_get_i2c_res(struct acpi_resource *ares, void *data)
+@@ -246,6 +256,15 @@ static int tas2781_force_fwload_put(struct snd_kcontrol *kcontrol,
+ 	return change;
+ }
+ 
++static const struct snd_kcontrol_new tas2770_snd_controls[] = {
++	ACARD_SINGLE_RANGE_EXT_TLV("Speaker Analog Volume", TAS2770_AMP_LEVEL,
++		0, 0, 20, 0, tas2781_amp_getvol,
++		tas2781_amp_putvol, tas2770_amp_tlv),
++	ACARD_SINGLE_RANGE_EXT_TLV("Speaker Digital Volume", TAS2770_DVC_LEVEL,
++		0, 0, 31, 0, tas2781_amp_getvol,
++		tas2781_amp_putvol, tas2770_dvc_tlv),
++};
++
+ static const struct snd_kcontrol_new tas2781_snd_controls[] = {
+ 	ACARD_SINGLE_RANGE_EXT_TLV("Speaker Analog Gain", TAS2781_AMP_LEVEL,
+ 		1, 0, 20, 0, tas2781_amp_getvol,
+@@ -254,7 +273,7 @@ static const struct snd_kcontrol_new tas2781_snd_controls[] = {
+ 		tas2781_force_fwload_get, tas2781_force_fwload_put),
+ };
+ 
+-static const struct snd_kcontrol_new tas2781_prof_ctrl = {
++static const struct snd_kcontrol_new tasdevice_prof_ctrl = {
+ 	.name = "Speaker Profile Id",
+ 	.iface = SNDRV_CTL_ELEM_IFACE_CARD,
+ 	.info = tasdevice_info_profile,
+@@ -262,7 +281,7 @@ static const struct snd_kcontrol_new tas2781_prof_ctrl = {
+ 	.put = tasdevice_set_profile_id,
+ };
+ 
+-static const struct snd_kcontrol_new tas2781_dsp_prog_ctrl = {
++static const struct snd_kcontrol_new tasdevice_dsp_prog_ctrl = {
+ 	.name = "Speaker Program Id",
+ 	.iface = SNDRV_CTL_ELEM_IFACE_CARD,
+ 	.info = tasdevice_info_programs,
+@@ -270,7 +289,7 @@ static const struct snd_kcontrol_new tas2781_dsp_prog_ctrl = {
+ 	.put = tasdevice_program_put,
+ };
+ 
+-static const struct snd_kcontrol_new tas2781_dsp_conf_ctrl = {
++static const struct snd_kcontrol_new tasdevice_dsp_conf_ctrl = {
+ 	.name = "Speaker Config Id",
+ 	.iface = SNDRV_CTL_ELEM_IFACE_CARD,
+ 	.info = tasdevice_info_config,
+@@ -379,44 +398,15 @@ static void tas2781_hda_remove_controls(struct tas2781_hda *tas_hda)
+ 	snd_ctl_remove(codec->card, tas_hda->prof_ctl);
+ }
+ 
+-static void tasdev_fw_ready(const struct firmware *fmw, void *context)
++static void tasdevice_dspfw_init(void *context)
+ {
+ 	struct tasdevice_priv *tas_priv = context;
+ 	struct tas2781_hda *tas_hda = dev_get_drvdata(tas_priv->dev);
+ 	struct tas2781_hda_i2c_priv *hda_priv = tas_hda->hda_priv;
+ 	struct hda_codec *codec = tas_priv->codec;
+-	int i, ret, spk_id;
+-
+-	pm_runtime_get_sync(tas_priv->dev);
+-	mutex_lock(&tas_priv->codec_lock);
+-
+-	ret = tasdevice_rca_parser(tas_priv, fmw);
+-	if (ret)
+-		goto out;
+-
+-	tas_hda->prof_ctl = snd_ctl_new1(&tas2781_prof_ctrl, tas_priv);
+-	ret = snd_ctl_add(codec->card, tas_hda->prof_ctl);
+-	if (ret) {
+-		dev_err(tas_priv->dev,
+-			"Failed to add KControl %s = %d\n",
+-			tas2781_prof_ctrl.name, ret);
+-		goto out;
+-	}
+-
+-	for (i = 0; i < ARRAY_SIZE(tas2781_snd_controls); i++) {
+-		hda_priv->snd_ctls[i] = snd_ctl_new1(&tas2781_snd_controls[i],
+-			tas_priv);
+-		ret = snd_ctl_add(codec->card, hda_priv->snd_ctls[i]);
+-		if (ret) {
+-			dev_err(tas_priv->dev,
+-				"Failed to add KControl %s = %d\n",
+-				tas2781_snd_controls[i].name, ret);
+-			goto out;
+-		}
+-	}
++	int ret, spk_id;
+ 
+ 	tasdevice_dsp_remove(tas_priv);
+-
+ 	tas_priv->fw_state = TASDEVICE_DSP_FW_PENDING;
+ 	if (tas_priv->speaker_id != NULL) {
+ 		// Speaker id need to be checked for ASUS only.
+@@ -442,48 +432,101 @@ static void tasdev_fw_ready(const struct firmware *fmw, void *context)
+ 		dev_err(tas_priv->dev, "dspfw load %s error\n",
+ 			tas_priv->coef_binaryname);
+ 		tas_priv->fw_state = TASDEVICE_DSP_FW_FAIL;
+-		goto out;
++		return;
+ 	}
+ 
+-	tas_hda->dsp_prog_ctl = snd_ctl_new1(&tas2781_dsp_prog_ctrl,
++	tas_hda->dsp_prog_ctl = snd_ctl_new1(&tasdevice_dsp_prog_ctrl,
+ 		tas_priv);
+ 	ret = snd_ctl_add(codec->card, tas_hda->dsp_prog_ctl);
+ 	if (ret) {
+ 		dev_err(tas_priv->dev,
+ 			"Failed to add KControl %s = %d\n",
+-			tas2781_dsp_prog_ctrl.name, ret);
+-		goto out;
++			tasdevice_dsp_prog_ctrl.name, ret);
++		return;
+ 	}
+ 
+-	tas_hda->dsp_conf_ctl = snd_ctl_new1(&tas2781_dsp_conf_ctrl,
++	tas_hda->dsp_conf_ctl = snd_ctl_new1(&tasdevice_dsp_conf_ctrl,
+ 		tas_priv);
+ 	ret = snd_ctl_add(codec->card, tas_hda->dsp_conf_ctl);
+ 	if (ret) {
+ 		dev_err(tas_priv->dev,
+ 			"Failed to add KControl %s = %d\n",
+-			tas2781_dsp_conf_ctrl.name, ret);
+-		goto out;
++			tasdevice_dsp_conf_ctrl.name, ret);
++		return;
+ 	}
+-
+ 	tas_priv->fw_state = TASDEVICE_DSP_FW_ALL_OK;
++
+ 	tasdevice_prmg_load(tas_priv, 0);
+ 	if (tas_priv->fmw->nr_programs > 0)
+ 		tas_priv->cur_prog = 0;
+ 	if (tas_priv->fmw->nr_configurations > 0)
+ 		tas_priv->cur_conf = 0;
+-
+ 	/* If calibrated data occurs error, dsp will still works with default
+ 	 * calibrated data inside algo.
+ 	 */
+ 	hda_priv->save_calibration(tas_hda);
++}
++
++static void tasdev_add_kcontrols(struct tasdevice_priv *tas_priv,
++	struct snd_kcontrol **ctls, struct hda_codec *codec,
++	const struct snd_kcontrol_new *tas_snd_ctrls, int num_ctls)
++{
++	int i, ret;
++
++	for (i = 0; i < num_ctls; i++) {
++		ctls[i] = snd_ctl_new1(
++			&tas_snd_ctrls[i], tas_priv);
++		ret = snd_ctl_add(codec->card, ctls[i]);
++		if (ret) {
++			dev_err(tas_priv->dev,
++				"Failed to add KControl %s = %d\n",
++				tas_snd_ctrls[i].name, ret);
++			break;
++		}
++	}
++}
++
++static void tasdev_fw_ready(const struct firmware *fmw, void *context)
++{
++	struct tasdevice_priv *tas_priv = context;
++	struct tas2781_hda *tas_hda = dev_get_drvdata(tas_priv->dev);
++	struct tas2781_hda_i2c_priv *hda_priv = tas_hda->hda_priv;
++	struct hda_codec *codec = tas_priv->codec;
++	int ret;
++
++	pm_runtime_get_sync(tas_priv->dev);
++	mutex_lock(&tas_priv->codec_lock);
+ 
+-	tasdevice_tuning_switch(tas_hda->priv, 0);
+-	tas_hda->priv->playback_started = true;
++	ret = tasdevice_rca_parser(tas_priv, fmw);
++	if (ret)
++		goto out;
++
++	tas_priv->fw_state = TASDEVICE_RCA_FW_OK;
++	tasdev_add_kcontrols(tas_priv, &tas_hda->prof_ctl, codec,
++		&tasdevice_prof_ctrl, 1);
++
++	switch (hda_priv->hda_chip_id) {
++	case HDA_TAS2770:
++		tasdev_add_kcontrols(tas_priv, hda_priv->snd_ctls, codec,
++				     &tas2770_snd_controls[0],
++				     ARRAY_SIZE(tas2770_snd_controls));
++		break;
++	case HDA_TAS2781:
++		tasdev_add_kcontrols(tas_priv, hda_priv->snd_ctls, codec,
++				     &tas2781_snd_controls[0],
++				     ARRAY_SIZE(tas2781_snd_controls));
++		tasdevice_dspfw_init(context);
++		break;
++	case HDA_TAS2563:
++		tasdevice_dspfw_init(context);
++		break;
++	default:
++		break;
++	}
+ 
+ out:
+ 	mutex_unlock(&tas_hda->priv->codec_lock);
+ 	release_firmware(fmw);
+-	pm_runtime_mark_last_busy(tas_hda->dev);
+ 	pm_runtime_put_autosuspend(tas_hda->dev);
+ }
+ 
+@@ -584,15 +627,34 @@ static int tas2781_hda_i2c_probe(struct i2c_client *clt)
+ 		return -ENOMEM;
+ 
+ 	if (strstr(dev_name(&clt->dev), "TIAS2781")) {
++		/*
++		 * TAS2781, integrated on-chip DSP with
++		 * global I2C address supported.
++		 */
+ 		device_name = "TIAS2781";
++		hda_priv->hda_chip_id = HDA_TAS2781;
+ 		hda_priv->save_calibration = tas2781_save_calibration;
+ 		tas_hda->priv->global_addr = TAS2781_GLOBAL_ADDR;
++	} else if (strstarts(dev_name(&clt->dev), "i2c-TXNW2770")) {
++		/*
++		 * TAS2770, has no on-chip DSP, so no calibration data
++		 * required; has no global I2C address supported.
++		 */
++		device_name = "TXNW2770";
++		hda_priv->hda_chip_id = HDA_TAS2770;
+ 	} else if (strstr(dev_name(&clt->dev), "INT8866")) {
++		/*
++		 * TAS2563, integrated on-chip DSP with
++		 * global I2C address supported.
++		 */
+ 		device_name = "INT8866";
++		hda_priv->hda_chip_id = HDA_TAS2563;
+ 		hda_priv->save_calibration = tas2563_save_calibration;
+ 		tas_hda->priv->global_addr = TAS2563_GLOBAL_ADDR;
+-	} else
++	} else {
+ 		return -ENODEV;
++	}
++
+ 
+ 	tas_hda->priv->irq = clt->irq;
+ 	ret = tas2781_read_acpi(tas_hda->priv, device_name);
+@@ -724,6 +786,7 @@ static const struct i2c_device_id tas2781_hda_i2c_id[] = {
+ static const struct acpi_device_id tas2781_acpi_hda_match[] = {
+ 	{"TIAS2781", 0 },
+ 	{"INT8866", 0 },
++	{"TXNW2770", 0 },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(acpi, tas2781_acpi_hda_match);
+-- 
+2.34.1
 
 
