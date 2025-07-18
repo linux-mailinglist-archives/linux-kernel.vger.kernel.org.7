@@ -1,80 +1,118 @@
-Return-Path: <linux-kernel+bounces-736859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80BEAB0A443
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:33:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CC76B0A446
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABC09170F7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:33:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D8551C432DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:36:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6422D9EDE;
-	Fri, 18 Jul 2025 12:32:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583482D9EFE;
+	Fri, 18 Jul 2025 12:36:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="AgAkpOed"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2058.outbound.protection.outlook.com [40.107.236.58])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fIxbJj3H";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="fEjEpl/r"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 017F523A563;
-	Fri, 18 Jul 2025 12:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B94629824B;
+	Fri, 18 Jul 2025 12:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752841973; cv=fail; b=LR/w1impaLKuhz7nR42JXgYm7cnrEYFoGdtw34tAVT3qf2Uia4WKdqm+J+YsJ/hfIgHodBgllHwtq50UB29n2+xf+kM3fhYsNS0BaZAV/H6B3milDicqYrLBUJCw8LJCPnPUEAqfd7pUuqIKn+olPmD9Nnsws14rTS2YkuwFgVI=
+	t=1752842183; cv=fail; b=f9zLtl8br6p+nol7tDFhWCdLvfY86HscW6df+9bLFf0RIdt69itfN9J2P4AXjE4EYkgekD0aZE5DtYUOQBlN7pmPBdV9VvW3e7B6o0BlwgHnsfrDrHlJELQpfTfIFEnR9QBF3YJrjRLHsTEO00Fx2QLS9a44diTJoUGanx53rWY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752841973; c=relaxed/simple;
-	bh=ddTOUxkqBbuhu7CTYhCdLITHWJGaX7wF8Jy4XMasvgo=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=rRsGleBik8vN3BnEFOK++jiYumsmjvmH4Z/2EBR8OeCqxoipoVcEe1QXrplLdDOJbvxkwcnqzd6DR3409iNM5ptfYsjTNiYLJEOei0VnTohdGK/eaMQd55FL9i39AaGUbwsdIgHIVZSHhQpE517CoCXNU+KHbN/oRQrpSSBwkQk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=AgAkpOed; arc=fail smtp.client-ip=40.107.236.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1752842183; c=relaxed/simple;
+	bh=s83BWpmYZP71Ar+ROGlihiLMTVTlH6qV8NOUT2cCHzQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=tTvp0mGFoQvnHVEOPpSrtrMuEp/x0VTSgeeV1twboRsgiQmKFcVH6tg0vryphQk0N6BwMyofre2GHwIXLiFJEi7gj0GGJtt3xYpCYA69vpYskcqf5igwyZ+Gqq2ofWYnq3NA3pXU309w6vlLcFxwtx2QPA9Nii1O9N52E3d8GtI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=fIxbJj3H; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=fEjEpl/r; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56I8fhJt016059;
+	Fri, 18 Jul 2025 12:35:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=PGPRNwN4pu3PXQ5swL
+	S0gVK8l1QEymD2y97Ry48GJDU=; b=fIxbJj3HkxtGVqK8J0uOiT1ZATdNXPH6XN
+	PXxHKMSfP3bdXDodFPONvVq4tAU1KIkgLrGgiDDfElGy8LvAC+JKeWp/prMQK660
+	r+BEuQFgDHLttz/jhiZQEe6KCU+c9UOX3Dd+CEMh9+k8bPNldWzKiIHdsN1Sn89V
+	E/ngnROiIyKvxWO4yCqL1Njhsy1Kx4Kphbc+fiPrC3m91+6w0+41Cco4mzDI/kew
+	Psr7t0LqbfYFSLg1MVBcd3RWkPWNpVKVlrS+Fjwp5VbQldeGDdL1XNxSmcTbu+zP
+	xeg2okjt6+IEpPxiyKlw+EuS1N0jOIMEk/dgsJUJNQxoTFA5lDJg==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47uk8g523p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 18 Jul 2025 12:35:41 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56IAbmFl023944;
+	Fri, 18 Jul 2025 12:35:40 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12on2085.outbound.protection.outlook.com [40.107.244.85])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 47ue5dyj7p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 18 Jul 2025 12:35:40 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=j0Um669a9suhSHpvCFz6stNcua5Uevry9ahfLT4c+K6fxHR+GzC7eVcQcS587N/1MTnFjvwcM+Qq4DMe2fb4X3/GqOEcWW2Aybp0Wx8xzUEqOk6rzuUDM3KagU6R2mNQKVCe7m05dyL75UzcF3jqVba84cEnJ8ikBcFZ+nmCsybKH8ydY3ZYidSxNEWCs6nNsub8uRrq2o+oNlOuRIy/Q+7Cs3g5ji6Gkq0IuOfMorB5APLD2QEt20fn2vilZIcc/A+a+BU79vQOzAUl5JSd0OrxZwIuC4/Sr/INyX0vaj+v3RKTxri1CMLRKWktq0UI5dMP9Hs9LQxNsyKPq/mdxA==
+ b=y8d1l6St6MzD8+jGkECAVVihM+oEIma/hZRSPwbQPNtlJ40CmtSSSQEKCEyBAiOlQQxmWVfMOvv2+BGILSFXs6GGdv4S37kv4iMfdJQ/eQUPN6GehAXamVet1TohwOJj4IlpKPcki5mrXI5uQ4G9XzURaOJeILGybF5iqtrC9NTMc/bp+MzNUYBGQkSh2SOywYMuUcywDcMzfa67LTvtjDzF0UYZ+YUop6NLsNZfCmu5K9eH+suwO/0z8BXPO5mrVmQjynt3WzOGqAGJR77tc4d19RTf/o5oSR+T38IQ8TwIQA9JsO55FUmxEQyZfM9KTvAKUzytgPFmza5Wg3gGBA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RduFvMBcWXrNNLOXTGw7H4pLQXTkV7Jbdm30XPukERo=;
- b=isBenzm1L79sB0Z/u41w36LfnCfhZeSl3D3WIoC4HShmuHx3WCz2L01s4rlpHkfNyGWTM1Hl2w7KMDnvr61vqDqMGdD/lMEWgTkLNkUySysqxPO5eWxR14rf69/rM1HkF2W312Xwh+JpnddHpmvuPSR906SU9qRpUiUwpHt5XSB2pg6yhY2wCeMh6ukXJiNEDy6P4Z1M+zMVzSTlfefphWlkH780wiQgGBL8eRZSeFTQDfdGYuILrj3vdvEN2S3zu4sPH97zcmtP3oL+7+C+jz+vUXgjFiXWFnjgJe0vXU9OabUphHyEC+G4VlbbGYitskamMxOGgCNRPGjDFfn94w==
+ bh=PGPRNwN4pu3PXQ5swLS0gVK8l1QEymD2y97Ry48GJDU=;
+ b=D4uxWMFFi5qWFuF1SF2+XvSdfvC5t8xDustCg3enyeI1FmPbY+pD9V53sLGP1vUTaD5hajlMU1okW32MXWDK8sMISDN2QtnfOHZCdeOQAa9C/cZdMjYsqWImTTeaMvFL9MJTnKnRoDUUoTh5mAr9QqnjdWWmjmFRqoug+eSz3mgSa8qEVUEAQMrdR/FGI9czkVXXCfTtrL+iZM6/oh6H4k30iOKygivaolM6hGnYmNotJYYM70fRfKkum8LTE2x/kSANjBLApA7ZwCENp6XGBtAW2XeXZtMIZT2O/LsGlQRC1tijblK726H9gxxe3lGVGyDZlDBAtrqD7xViP8I9eg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RduFvMBcWXrNNLOXTGw7H4pLQXTkV7Jbdm30XPukERo=;
- b=AgAkpOedG/8KQXKwxzBjYmL7bO/fLEd+MMM8wYHDzO3UjXS0XoD7GeZHihvM7PCvLwOXK4lI2FZHzS2oeSGX985D5BH9NiET7vJOQZLBtu78A2XquJ0uaIVrU09MhzrYbo7LJwGneY8OffwOkJyWDjfTEasLMuo8aOo+KvSt5K4XSOlqzgD3LNZiagYnzU2T1InZBtbJFcEuZBO45KcYUdnDDC/MAlCXcb39HoIDx+epbZCoMAfuN9kBFITh6QUbvudF/Hfc5RErItz8ddCisiODT/D/kkLhhByAuV9hsKmS8Z+Yxo+PHTu+MfG/82KodLDX7G8sVQLBmIWKoMGWFg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by IA1PR12MB6282.namprd12.prod.outlook.com (2603:10b6:208:3e6::22) with
+ bh=PGPRNwN4pu3PXQ5swLS0gVK8l1QEymD2y97Ry48GJDU=;
+ b=fEjEpl/rIHcl1P9ebtVRAyb+fP/Gdbn7Xn4wd+wRNcWmQZ0Mi+o991PLTqwjkMPDuziNS2YpJLumkYmJ240Cn/V23Yjb8Cd2zsoILS8ZRGJKn8/r62wL7FlO4SiwQwkDkRt5LTll6N2TRhns9tmbMloKjsjwvoHOdZhpa7ePFbg=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by SJ5PPF04D2D7FA7.namprd10.prod.outlook.com (2603:10b6:a0f:fc02::785) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.37; Fri, 18 Jul
- 2025 12:32:48 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%4]) with mapi id 15.20.8922.037; Fri, 18 Jul 2025
- 12:32:48 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 18 Jul 2025 21:32:43 +0900
-Message-Id: <DBF6M9BZUX3C.2VXBZJKQYGN84@nvidia.com>
-Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/3] device: rust: documentation for DeviceContext
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Danilo Krummrich" <dakr@kernel.org>, <gregkh@linuxfoundation.org>,
- <rafael@kernel.org>, <ojeda@kernel.org>, <alex.gaynor@gmail.com>,
- <boqun.feng@gmail.com>, <gary@garyguo.net>, <bjorn3_gh@protonmail.com>,
- <lossin@kernel.org>, <a.hindborg@kernel.org>, <aliceryhl@google.com>,
- <tmgross@umich.edu>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250717224806.54763-1-dakr@kernel.org>
- <20250717224806.54763-2-dakr@kernel.org>
-In-Reply-To: <20250717224806.54763-2-dakr@kernel.org>
-X-ClientProxiedBy: TYAPR01CA0129.jpnprd01.prod.outlook.com
- (2603:1096:404:2d::21) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.25; Fri, 18 Jul
+ 2025 12:35:37 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%6]) with mapi id 15.20.8922.037; Fri, 18 Jul 2025
+ 12:35:37 +0000
+Date: Fri, 18 Jul 2025 13:35:34 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        xen-devel@lists.xenproject.org, linux-fsdevel@vger.kernel.org,
+        nvdimm@lists.linux.dev, Andrew Morton <akpm@linux-foundation.org>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+        Zi Yan <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+        Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+        Hugh Dickins <hughd@google.com>, Oscar Salvador <osalvador@suse.de>,
+        Lance Yang <lance.yang@linux.dev>
+Subject: Re: [PATCH v2 7/9] mm/memory: factor out common code from
+ vm_normal_page_*()
+Message-ID: <ca28318f-290e-4d03-b2fe-a6ff00b9a9e6@lucifer.local>
+References: <20250717115212.1825089-1-david@redhat.com>
+ <20250717115212.1825089-8-david@redhat.com>
+ <1aef6483-18e6-463b-a197-34dd32dd6fbd@lucifer.local>
+ <d62fd5c9-6ee1-466f-850b-97046b14ebff@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d62fd5c9-6ee1-466f-850b-97046b14ebff@redhat.com>
+X-ClientProxiedBy: LO4P123CA0252.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:1a7::23) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,183 +120,345 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|IA1PR12MB6282:EE_
-X-MS-Office365-Filtering-Correlation-Id: 844284fc-3470-4080-cfd8-08ddc5f73322
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|SJ5PPF04D2D7FA7:EE_
+X-MS-Office365-Filtering-Correlation-Id: a1fc4514-08a1-494b-9d8a-08ddc5f798e7
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|10070799003|376014|1800799024|7416014|7053199007|921020;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?S3JaSTgrWFBmUy9WOWtrV2dQekhKU0N2TExlREdSM3BwdmxJNFRCYU1hQU1i?=
- =?utf-8?B?a0xhY29vVmxkVytEL0E4OW84UkhKR3JOL0RpWFVMNlQ4Y1JHTmUwQjBJcHE4?=
- =?utf-8?B?b0UwYXBJVnByWitqQVJ3eCtGRGhqd3VhTEtUV3FaM3BDK1dYYlpmRFNVQnJM?=
- =?utf-8?B?TUc4ZDFWeEYyMFFKYkloT2xRUmJVQUJ1RmhNQmN3bmVidlBnd3JLK21BWlRV?=
- =?utf-8?B?c3hUaW5CaHVJWWRsSXpXMVRRQ0xNR0ZzYjQwcXI0OTBqc0NpcWY0Sm1GMUJU?=
- =?utf-8?B?S05wczllS0p2MTllb1BHY3Q4QkovVnFBTnJVdkJBVFBRRURrRm1pdktmL3ln?=
- =?utf-8?B?eERtYUI1WW5FQjlhQytHN3lKRWJuY05JVEo0aThJZEdYVDhGY2U1TDk0cmhy?=
- =?utf-8?B?d0FLTXQwWE1FRzE3Z3hWM3U5cDZUNzR5MUdZWWlqcWFhTmlpWDJwaTFRdHlk?=
- =?utf-8?B?UFJ5M1hjcVZDemVJL0RiU2tjcDF1Mk9sUUFkdUFtVGxENFdDakk0Ukh4UVNm?=
- =?utf-8?B?NitIcG9uWmxsd3NReWV0dFh1bDQ2dC8xc2VVOXgvN0JVd2NZRjlWQXorL0F5?=
- =?utf-8?B?cFRGcXE2YWI0cnRqWitKMVdsbFdUZFpWNHBCcVhJamdkWmVTbVdhaDhWNmg5?=
- =?utf-8?B?N3QySGNkaWRlZkxEN0x0RS9pUUNPcUFEODZicUMzREw2NHJBLzkwQXN0ZVNX?=
- =?utf-8?B?SFBpQTZzaWFTVll4SE5kWlZrQjRhU3FONzNEYmJJRjZMWVI3RmFGYXhEa0dj?=
- =?utf-8?B?TGFjVzZvd3M4WkJSSE5ER3Qrc2hCQ2Y2MFRkalZrd2ZkcjROaEl2S0JVdmtq?=
- =?utf-8?B?S1BEYjExT1NnM0NacGFPaDA2RGVGMnhvRzJCUmtoVE9OSVpjZGR2YXh1MXRa?=
- =?utf-8?B?WjVDdVZvQkNhVGVrdmdSakNpaXgxWjdZVk9JOE1mUGhWdWtHbzBsRFR1VlIy?=
- =?utf-8?B?Nk5EckMrZ0NkeGNHRE1JaDRQMllZVzF3TVpTZWtQYnFKMENVR3VTeHU5Zm14?=
- =?utf-8?B?N2ZIQm9IRmxQVVBSN2xtbFQyZXR4L2NUYmMyVUYzbEwrbUFLVlFNODdrRkNY?=
- =?utf-8?B?RkRQWU95dUVZQVUzYjBqWTRsMkQ0UXIvRjhxM1p3OWFOV2hhWWowVzZjQldZ?=
- =?utf-8?B?VVphVUhMMlRqcFBrY2xqdFFuVEVZM25hSi8yS2x5cjl3TENCNDZ0blJlT0tX?=
- =?utf-8?B?Tm1CdTAzZ2FRVElrRVpzcFM1WnZtZTF0ZXRjZExRSVVzcUlsUkFmZytBK1lH?=
- =?utf-8?B?U1VFTThpZ2Z5ZUk0d1RMQktCUCsxaENyU0lEeVFMUEJ3TkZ6YW5iUzJXQ1Uw?=
- =?utf-8?B?TDhLVGdRalc1SHpZd1FMTTdMeHhOMFBjOG8vV3BNdVpDOTJDZmxiY0kvWVdo?=
- =?utf-8?B?WnZTTXF1RDh0UHVVS2hnbDNtM29xOVVIVW5ia2NkNVQzZEVPWjRPaVhwd2ZH?=
- =?utf-8?B?RUtyUVVxNVV2YnlJZ3p1RmpOdU5vKzNURVlDYTBONlU3dGExY2UyQlJ6U0V2?=
- =?utf-8?B?TXg1VURBTUQrNEkveUtFWDdjcCtDU0NNQ1RGRjUwRzdPdTRTbDd0WjY1TjBY?=
- =?utf-8?B?LzZ4QzhrdFhvWkZkaFJpVUlidStDNUhLZmZ1ZERkWTRPNnpHZ2I3QU0xTXNs?=
- =?utf-8?B?VGtBUHppOGdRUzJFdWk2MlI5QzNsMXV5Um5lOUp1UzBPMmNFdkJZSkdaV0h0?=
- =?utf-8?B?MUZFVEw0Z2hNekIyWXpZWXlsZUQ5SkpqWUdyZGd6SXdQdms1L3d5UUZQQ3hS?=
- =?utf-8?B?ZlFqaXpKWjhMQ1JOa2x3WGk4akJhNUJXYVRxdDJGSDV5bFFFVERXUnZVYW15?=
- =?utf-8?B?d3V2cmpLV3NWQndmYlloM0V5RWlzN2Q3My9QclE2NjFhV0lKZy9hNEhkTE9K?=
- =?utf-8?B?U2FPMEJEVlB0dXJFYUhRQm1KclNCa0FQUlBEUys1ZGY3ZVFMeFBFVXdOeGdR?=
- =?utf-8?B?QmhETTJiR3g3YXhMNWxjZG5OS1NGRDI2dkUrV3NLVWYwa1dWOWUzeUxiSWhr?=
- =?utf-8?B?M2UyYUs3Q0RnPT0=?=
+	=?us-ascii?Q?Goxxv8ECYTlE+30Y/PcTHQ7TxYkv+dRzdgoAIYwCbY+LabZOoUDYkbITp+5p?=
+ =?us-ascii?Q?sznu0ItdoSBp3gZs45fA7tcVhV45ON+dq7W5c4td4zF9EZBIdjT9FNER7f90?=
+ =?us-ascii?Q?UmLM/wn42MRb8Q/9l7jh6wXxP9dijkAeTm5rZzOwqZPxFSSzOHtCbKPyVOFy?=
+ =?us-ascii?Q?qxv/xZbnKBoGn+kHzfSoKxJj5FkH8yTfKjRliqvgg6RbPkLtv9633XbaHv+4?=
+ =?us-ascii?Q?6qUwVyH/9p2nuA61MNDLpHO8KLB2HSEdb+zwnTP81wKJ+92eLxrFTb5TXcdT?=
+ =?us-ascii?Q?wo3LlHD9lE2xhPb+IZsoFLbahRbEszato1EsUDUhjT7wg/FAOEjMy/H0cQZy?=
+ =?us-ascii?Q?CV3OofmcfYjs3boFPTNdDf6t0G30oVACigwEEIIDZ1Kk5PMnm0aJfrGO7s9a?=
+ =?us-ascii?Q?CZgTgXHjoyaEVQt/3bBPdaec/MgwwOI+sd6rcyUOIqZjIX8mww+EW3OCurwR?=
+ =?us-ascii?Q?U6JuJkkd41Xh5qGsuNGhNBT4pNjcE3iio8bCRqz4re8NCawYiOXB1bF0W49G?=
+ =?us-ascii?Q?Vr+ar7eh/jkd4MwYdViVuG/CcGxyMqMVW+UX/Kd1vqaVZXtMVKfsQtRMA3vJ?=
+ =?us-ascii?Q?S9riEj/4dyOv1u0a5oJm1h5yaG6PJddqByZp6/i99Fuhy1zQyr+D4sxWhzve?=
+ =?us-ascii?Q?380XIT/oqMoyXiy7uMkP41UbW0ibhE14QviioJNNE1U3QKEsRBrnpwRYGoQN?=
+ =?us-ascii?Q?2uMlA/rSwhUNkFlntiJj7fDK4x/U97BPVuMwkOuisVsk3SpdyAi8HiUBLXpa?=
+ =?us-ascii?Q?Yu0hTBNaPplocOPAacVbtGNnZWbh+6kaJv5lovy5yISAtSr2wQyitNkreZSi?=
+ =?us-ascii?Q?IZ6iBXHAViRYSVfMnOnZiylSEBGkcXEIf0VdNeP1KAfWlQqgGCOWQqA/X87b?=
+ =?us-ascii?Q?iXLIBk9vg5djrAgE4rHWT+lETICASU4ofnNeFewLwfZkvAyLA9fezfapvHnN?=
+ =?us-ascii?Q?7bgG8Mwwz2M1TcWtugoIno+jM5Wi+INsRlaXlAIEozYTcSCrWLFyX3oE3sw1?=
+ =?us-ascii?Q?Nr3WnnCaxOtqVuDHKzfJ0NnYTMs8zYy6NkrBKEbXvFgm3Goalvh06iuk3BIZ?=
+ =?us-ascii?Q?vZLMaZdCC4BJiXzJmubuk/8I6v9cFovpTHfC2PLIt8ChwjXxBC8BACSTOIpM?=
+ =?us-ascii?Q?HP3VoG4Xhn5xzkMtX0cjJhh0JbitqcTnnc3kXQYGuamb3FkAdp4XjGUSzM/I?=
+ =?us-ascii?Q?2yEeUy4hsBT471X2g13TYn9IeXhUsK9I8tqQzXhbLkIC/HrYZ9ZSJXekiO6z?=
+ =?us-ascii?Q?fITxUKIfzSWWmkQEM+N+K0x/Ij4FRneGF9lw7a3FrcOnGLdK/tyrJvBPn2Bn?=
+ =?us-ascii?Q?ZGBeW0sQWAgwHLPe+9Nl6/pI4WArRLCxO0yd3edE8ymgzx1lBosIGq8fX/JT?=
+ =?us-ascii?Q?sjUClA7Pwm2/J3cWcah0/wjXJJ7CocJpvbgzEfPK9rEaV6htpg=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(10070799003)(376014)(1800799024)(7416014)(7053199007)(921020);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SDRKRzRTQlorNyttV3lOQ2t3dVViZUdrNGgvekJiVnRTTnhEOXdIb2REdUpr?=
- =?utf-8?B?cWtXMit2VWx0OTRzQ1hlMkV4MXViNFpZN05HRk5NVkExdXltN2RUQlJHYmtR?=
- =?utf-8?B?TngvMWsvSE1MUEE4STdyZWpGOVVaTFJobFg2TkFhd0QwQk1iVGgwTjZvaGxu?=
- =?utf-8?B?SSswV1NqdS9GNDhNdElZMS9MMUE5WVpyVSsrZTZxanRRT2pyTllWYy9mRXRH?=
- =?utf-8?B?b21icnJOU29lN21NcWhBQVQxZWFTWnFFVWVMbWs3SUN3VjA1RE9GTmQvSWdJ?=
- =?utf-8?B?a0NqU09FYnVOd1BtT3RUUTJwSWR1dEVMbU1IckhBbW1DVUI5YXg4QnpVZkVN?=
- =?utf-8?B?OWNYRXJycFJCMmdEbURhdDB1WjBvamk1aVR6SkF5akpHamd1QUpKYkxBZU9K?=
- =?utf-8?B?WUJmNFAzekxtV3VtVTBESUFKd1d0YitTY0VwRVRRTy9tSHNGRnlYOXc1Qi80?=
- =?utf-8?B?YlBlZnNsUlZibE41aklsM1dZT1llR2Nibk51SEpjd2RIdUovSHlBOGtaZ3dt?=
- =?utf-8?B?MlNEOEd6YmFIVElpSHpyUU41Y1NJTFFVbDhUREd4TUV1SFpIWCsycGt4aWE5?=
- =?utf-8?B?NWxZNU5FeFZCQkNlWWJkaFptckJJRlpTZ2o2eTZ3eVA1dGFrckpzQTNoek1R?=
- =?utf-8?B?eGgrekhjNHA1TmNwQVFVK21SQjdGV3BJMlIyOUxOUW9PbjFWK3cyVXlyaG5R?=
- =?utf-8?B?MndOYmpiN0RsdXJEb3Z6NlVsbXd4c0YzMVZaUVRaZWlXMFA1MEE4MkhUMHk4?=
- =?utf-8?B?ajdBVzh3MWE0WUp5L2FGYkNTMHl5cUxNa3doR09DWmt4bHBLTHJybjArU1Jp?=
- =?utf-8?B?bkt0RCtObUNISE1vcEJEdk5MekVUMHZUTjRQUW5MV0luT2FCamFRVWE3bWFP?=
- =?utf-8?B?YW9OU1V6dmFjOTZGN0NvOUtUR1R2Y0t0S0RLRllCTjdSdFhEeGVOelljQkJU?=
- =?utf-8?B?QkhadGJSV0h2QXpvZEpqT0V1UW1GY2pjT2xOaklhQ1Rzay9DTGw1eFFBem1P?=
- =?utf-8?B?WjJzUTdqTnhxbWNzbzFoMkk0QkJRbjZ1RmlaWEZsLzRrVytEVFdKbXcvdjJs?=
- =?utf-8?B?NW1ESU9ITHBDc0VwTi9yVHhFTTF0RERxVVBtRU1xK2dVZDNINFBobHZnUk9h?=
- =?utf-8?B?VTZNMkFtU3loSm1LaVNkVm1MS0kzcktmdmNrZHlUNXNGL096dmlqb2pwM0Uy?=
- =?utf-8?B?bUV6RlRHY2FrYW41dk00MTFWT3Ryc0pDVE0xT2N6cG5wRTlPeURONG4wNGtH?=
- =?utf-8?B?SHdUNi9pQWpkTUdBSm54ZnZEdUtBZHBqdytmcjMyOEtJbHc0RGRvVzZheEdr?=
- =?utf-8?B?VmpqcFV5OW11NXM3eFhyemJQN1JLNnRGK2NBRG40WlhjemZGTkpUMmp2dWlU?=
- =?utf-8?B?cnVzcUZ2TmwwOXJoR0s3anFRN3FoMys3UmdvMVVSQnViYys3dHR1cm96Wnl0?=
- =?utf-8?B?RFh0SHB4d3hKYTByaG5ja1k0dHhaSHArQW9HQjAzbjBjaDZEWWlOYWNxSFFh?=
- =?utf-8?B?Yk5IaWwwbmxsWlIzd1pxRUFxdnh3RkFJTS81UEhzTHR0MmFzdWVkK2VKV2Nn?=
- =?utf-8?B?Z2U2UGJUTVQ4VGlZNWcyTlZ5SC9wWjdPQzJMdktvM3RMVy9paGtEUGtDMHd5?=
- =?utf-8?B?VXFOeXpUd2taYjRnVEhXMU1qWi9KeGNkSHpWU3NTWFNIWndHOEYvN0VDWXdG?=
- =?utf-8?B?ekZRbHd6MUROdDVEYzZQYnVMOGhJeXFWKzYvaXNjQWRXV01PZEhCcUlaZVl0?=
- =?utf-8?B?b2FBVjZJR3NXeEpwVE93OHdUL09HL0I0cFVXSHVvdUtHWG5GQ0ZTU3VtZ3hk?=
- =?utf-8?B?d1JiR0VUN2kzQis5dUduWnFVUWpFN3JxOFhmYWxwbU1MOHNzZlY0MUdicnlL?=
- =?utf-8?B?dDN3VnJJckRFWnhxeTFVWGVQVzZVb2hjQXd5elJGejFZVXk2cy91M1hpR2ZC?=
- =?utf-8?B?dVhINFpKTXFDaVB6NlFOY2t2Y1FTNTZqSmlKZnIzQWFvVUtCMHQwWUd4NnhU?=
- =?utf-8?B?Q3p2UzBoVXpibk5pZ2RxU0VsdlhNN1FKTk9POHppbHlGRVJ4OEZGd3kza29H?=
- =?utf-8?B?U2M5M09RMVJ0ZlJVRHFKcWxpL3BzdHB4VEthRTQxY3FFOFRpdm90emVBMW5l?=
- =?utf-8?B?Z09hdDZsckMrZXpGV1pYeXRaTWY2aGk0MEN2ZWVGVnBEQWlaYmdtL1NKT3gw?=
- =?utf-8?Q?39JVqz7Kb3XF4cAvPZTnl+h0SqN6D2dO/WdWHSiOdag/?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 844284fc-3470-4080-cfd8-08ddc5f73322
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+	=?us-ascii?Q?BHe1Xk+LQF9JBU5o+8kiwbqrZw138YgsdW+3ILo86+7VOF1hzvKT+5hZNGT8?=
+ =?us-ascii?Q?3tOTsCPPcxdwLCTVZQSSaEDgOf1tyCg0oWvgT6+Z0husY/u+GEcN70FpOwGZ?=
+ =?us-ascii?Q?UbhloIaBIVuhIbK1KyC4WdNp33jQWQhMB/NvIYyt5YP4WyDCxjxVD1M3xcJK?=
+ =?us-ascii?Q?cQwMhvDkakUw/nsgCR/Sb0MSsxhpZGlOwK5QZUoPwJjOltta/yAZIWoBnqJt?=
+ =?us-ascii?Q?sYbmhACPLEGIhmdBPjVVDc2+7lPzlMFhZ7DsIKryKy/B8DDJ1Gd2jL4qvqva?=
+ =?us-ascii?Q?T8kUamNXddk22U8lzahCwGNlnfdhh/9tDM84RW9/2CzdruJ3SjOX7dhAfvv8?=
+ =?us-ascii?Q?IOHgFIDTk0CJqzLnsKmQUitlB+8RysaiHnRsXxPY4bGklACQsL8IocYs33ZE?=
+ =?us-ascii?Q?hko3f2d5ry8i7cFrtxZaqqvNBRBiX3xe6ymQ8q5J+O09xyQtB8TRutNGYtDV?=
+ =?us-ascii?Q?F0ei+4JtBkrvkjATZdIpwRc1jvuInBIC1kO0VxOLd8SNkdbTJ9nldVgSCvgj?=
+ =?us-ascii?Q?cYL1MbD7dET1jiPScLfVxERWhEd0nwENxhFcl3FNyxcn0CCV0WgWn+STaXu5?=
+ =?us-ascii?Q?LGX9Ab6lzIQQwHPAjqd6iBwfPW/M9r2i8UvNRS3PdH4rNoY6IO2rh7vQJjtf?=
+ =?us-ascii?Q?Vaa6X02dkmDbyataUyrDKJpK62BiAnCHClnOhgnF7bX+MjyXq4NEzUrNjQ+O?=
+ =?us-ascii?Q?xupru/7ePM27UTz+B7XdeKSvh/3nOfzlnv1kWjkHIESVwyWXAhIZb+r+5Y7M?=
+ =?us-ascii?Q?wqr85xtZrDS2+HxXpLqQzUySA+WPwBhg6OB4xqcxJYSH4apQiXLKRgLVgzop?=
+ =?us-ascii?Q?chG9Z58EWSeO4JMJpN1bETmPCO36RyzWTVTV38AyXtwMVstPxq4CffJOyItA?=
+ =?us-ascii?Q?V86R1eRZnwLsGFPla+dHSn0mIJNAOKAenVddszrTzlB3Q4Ysg4bLdKTUHSJq?=
+ =?us-ascii?Q?sKaymdAkFcm2NDw54Jxs695fAolbAqJ8TrvuoRIIpbeIG8iOjy4f4CFY8yNU?=
+ =?us-ascii?Q?w793Y9Q+RySsr77PldeM49rv3VmXs8YIjNqTbPEkw0p59cOt8YJw2EelVCNi?=
+ =?us-ascii?Q?m9sxRXiuHVOi20lVawM3ghb24THib52E1Gp+1TU1lbwKuX3Cugx8dTrgEGW/?=
+ =?us-ascii?Q?vPwXxINy+DowHOW+syQZrpu0cqR/zMLAdf05wsag5LQHRHj6iyARX0Qxtbq1?=
+ =?us-ascii?Q?ryzcv6d6iniTZDDxsrq9Yq9P2HGeF12FbO5gLWqRw8qtSy+G0f2bk0kbVXIL?=
+ =?us-ascii?Q?xlWn9hU7hwQyYUzy52yzNo9o4S8Op54oEfozNRS4iUPN3hp4w65nZrP4ksbt?=
+ =?us-ascii?Q?0k9Q+NYYF67gbIFyNxaU2G/mlo6+ncReiwQKC1ZWtvDrho1fWrp8MWeo4zh3?=
+ =?us-ascii?Q?F2KBQMMaPSTc+Y6dgHsi9oL+MHC3ih0/Ufz1hLfzZ95vbrNcai39UmrZVilY?=
+ =?us-ascii?Q?VU0y/EPIo0nI6tU0jK76Ffku9IBflsJWeV022wZv/Gat6mR31mcrspFWLHE0?=
+ =?us-ascii?Q?f3pD7MqEe9kZVVmK2ZThiIbQDHUwNmwztEr8VqlnDnYhQlZ0fgb3yJbNMmw5?=
+ =?us-ascii?Q?v9ZxCMrcevS9VbeLPgIFgeCkdgFYtIjMTi7vZdJj7CYKWb32yMue6vCD8ZEo?=
+ =?us-ascii?Q?9A=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	QVI+PstvtL+OLlvttIikm5XcgRJ2Bz7lyYJ3CwGmObvhJIQxnIFb8YIrKFDBXWTediIxEhVj4qP+nHdSWufSSUSdCE4MBER4KC6kRDGJtIdsEzkuaA5CmmyCCvqUxCvRfCSWKAprbhw/yIrp6KFRT1B61gx7/Fy0urMcYlGc2RqiGK4KzdX3243k+Qat631RBsw/7e0GD4qxLnSQ1nN8P/xsWccif4lhkGGa9m4nVM2K4ZqI/tycsOACoFqdICXbPPAZpWWV4Q62M8PaFA55BScXNbCt9P3/xLlXwG8jo1BdpCxBi1Y6KJZTN3LgbI6xWKpBKs8C07TyUzhkNokwI7n0rX+NJtialJR4QNFtsRbneY2EpRiRiuNr+L5pWzXBo0Q42Nt1rfrYCPFzuI4buqVbPJWPIgI04ISy24PYmNGIxBh+Rybj0ZEyudQOXomjxNzzvxozCMi93xbDw9POm2HdkMbsGyzhjpAPOgXs2o1mu4wuQm+UN48jWuNgTFuzfpg+qReIdDAMqV7MzAPSwKdQhwgIGx4K5Zj1mW5sLUmHI/v4pA2wHt/JzfmScY5L9dAVzM82cHeVpeDySzjk4LfsnvUkfBzJnZujOAWe+yo=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a1fc4514-08a1-494b-9d8a-08ddc5f798e7
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2025 12:32:47.8350
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2025 12:35:37.1369
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jHqcOUC8xJLOeb0Li/Sdi6/hxqpjsyJW6M7TFQIo+es18WIgYjJ2WAdOhL5jCNfDKCS+TJRDLTdxABSBbZfg6w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6282
+X-MS-Exchange-CrossTenant-UserPrincipalName: fTAhcizpKpJQsE/CaGJ/oexvrEphDlymendqMo9Uk1cfGYY+6OBjSEUaB125nLbs2CE1+i+YZ0Vw2lVKH7C6vpU8iLgU14/HGer79mXftEM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF04D2D7FA7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-18_02,2025-07-17_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0 spamscore=0
+ mlxlogscore=999 malwarescore=0 mlxscore=0 suspectscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2507180096
+X-Proofpoint-ORIG-GUID: 1K3701reWHgTFpg5lycL87RUnutklGTX
+X-Authority-Analysis: v=2.4 cv=Of+YDgTY c=1 sm=1 tr=0 ts=687a3f9d b=1 cx=c_pps a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10 a=rNIe8tJn33Rh4yoerTAA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-GUID: 1K3701reWHgTFpg5lycL87RUnutklGTX
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE4MDA5NiBTYWx0ZWRfXwYDAPaGwDVFW vMOtC2NZQQSYGHFG/0J2CKnyVcDFurPb3YRfildhDK26+lCL/EaIIChHI3eBlPSg+dTbViBEqKm jgkeYoH5WATqfRYblV0nupGnbn0yp1Ki5XNqNcM4jjDeEt6aW2+meofIeEbV3frws1U9QZwkOos
+ z2Nlz9cxfin8/9o+eYjjE4dJTD7kNYGC9qnpb5fd/AC/l8sE49yK9qX2VVkDzAWxvkpriWYveNf 5SwbP156Bwamyi46zQVuIOsVO3IuBO/3z5+TiHkCUx3SXfFVWQnCj3Y5LN6gLeoeycvw3H6oezF kmUk+CxuMUjqUDswQH5jtWEjfxWcmNzYFK/rog0F0b9Q4CjMtpmiYVZB9n+Pn6iWO2Ax+o1Hvkh
+ 2oa6on6aMLx2+xE4hFpKCr1HpoDRDbQHnq0X3gUShTuFeOcUSzv+nlCZ+W1mNrsanPfLoQ5W
 
-On Fri Jul 18, 2025 at 7:45 AM JST, Danilo Krummrich wrote:
-> Expand the documentation around DeviceContext states and types, in order
-> to provide detailed information about their purpose and relationship
-> with each other.
+On Thu, Jul 17, 2025 at 10:12:37PM +0200, David Hildenbrand wrote:
+> > >
+> > > -/*
+> > > - * vm_normal_page -- This function gets the "struct page" associated with a pte.
+> > > +/**
+> > > + * vm_normal_page_pfn() - Get the "struct page" associated with a PFN in a
+> > > + *			  non-special page table entry.
+> >
+> > This is a bit nebulous/confusing, I mean you'll get PTE entries with PTE special
+> > bit that'll have a PFN but just no struct page/folio to look at, or should not
+> > be touched.
+> >
+> > So the _pfn() bit doesn't really properly describe what it does.
+> >
+> > I wonder if it'd be better to just separate out the special handler, have
+> > that return a boolean indicating special of either form, and then separate
+> > other shared code separately from that?
 >
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> Let me think about that; I played with various approaches and this was the
+> best I was come up with before running in circles.
 
-Thanks, that's a welcome clarification and I think I finally understand
-the Rust device model after going through this series!
+Thanks
 
-A few minor nits/questions below.
-
-> ---
->  rust/kernel/device.rs | 63 +++++++++++++++++++++++++++++++++++--------
->  1 file changed, 52 insertions(+), 11 deletions(-)
 >
-> diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
-> index ca82926fd67f..d7ac56628fe5 100644
-> --- a/rust/kernel/device.rs
-> +++ b/rust/kernel/device.rs
-> @@ -311,28 +311,69 @@ unsafe impl Send for Device {}
->  // synchronization in `struct device`.
->  unsafe impl Sync for Device {}
-> =20
-> -/// Marker trait for the context of a bus specific device.
-> +/// Marker trait for the context or scope of a bus specific device.
->  ///
-> -/// Some functions of a bus specific device should only be called from a=
- certain context, i.e. bus
-> -/// callbacks, such as `probe()`.
-> +/// [`DeviceContext`] is a marker trait for structures representing the =
-context of a bus specific
-> +/// [`Device`].
->  ///
-> -/// This is the marker trait for structures representing the context of =
-a bus specific device.
+> >
+> > > + * @vma: The VMA mapping the @pfn.
+> > > + * @addr: The address where the @pfn is mapped.
+> > > + * @pfn: The PFN.
+> > > + * @entry: The page table entry value for error reporting purposes.
+> > >    *
+> > >    * "Special" mappings do not wish to be associated with a "struct page" (either
+> > >    * it doesn't exist, or it exists but they don't want to touch it). In this
+> > > @@ -603,10 +608,10 @@ static void print_bad_page_map(struct vm_area_struct *vma,
+> > >    * (such as GUP) can still identify these mappings and work with the
+> > >    * underlying "struct page".
+> > >    *
+> > > - * There are 2 broad cases. Firstly, an architecture may define a pte_special()
+> > > - * pte bit, in which case this function is trivial. Secondly, an architecture
+> > > - * may not have a spare pte bit, which requires a more complicated scheme,
+> > > - * described below.
+> > > + * There are 2 broad cases. Firstly, an architecture may define a "special"
+> > > + * page table entry bit (e.g., pte_special()), in which case this function is
+> > > + * trivial. Secondly, an architecture may not have a spare page table
+> > > + * entry bit, which requires a more complicated scheme, described below.
+> >
+> > Strikes me this bit of the comment should be with vm_normal_page(). As this
+> > implies the 2 broad cases are handled here and this isn't the case.
+>
+> Well, pragmatism. Splitting up the doc doesn't make sense. Having it at
+> vm_normal_page() doesn't make sense.
+>
+> I'm sure the educated reader will be able to make sense of it :P
+>
+> But I'm happy to hear suggestions on how to do it differently :)
 
-Shall we say `types` instead of `structures`, since these are ZSTs?
-`structures` carries the hint that they will contain data, when they
-don't (but maybe that's only me :)).
+Right yeah.
 
-> +/// The specific device context types are: [`CoreInternal`], [`Core`], [=
-`Bound`] and [`Normal`].
-> +///
-> +/// [`DeviceContext`] types are hierarchical, which means that there is =
-a strict hierarchy that
-> +/// defines which [`DeviceContext`] type can be derived from another. Fo=
-r instance, any
-> +/// [`Device<Core>`] can dereference to a [`Device<Bound>`].
-> +///
-> +/// The following enunumeration illustrates the dereference hierarchy of=
- [`DeviceContext`] types.
-> +///
-> +/// - [`CoreInternal`] =3D> [`Core`] =3D> [`Bound`] =3D> [`Normal`]
-> +/// - [`Core`] =3D> [`Bound`] =3D> [`Normal`]
-> +/// - [`Bound`] =3D> [`Normal`]
-> +/// - [`Normal`]
+I feel like having separate 'special' handling for each case as separate
+functions, each with their own specific explanation would work.
 
-That graph is super helpful. The last 3 lines look redundant though,
-since the graph can be followed from any node.
+But I don't want to hold up the series _too_ much on this, generally I just
+find the _pfn thing confusing.
 
-> +///
-> +/// Bus devices can automatically implement the dereference hierarchy by=
- using
-> +/// [`impl_device_context_deref`](kernel::impl_device_context_deref).
->  pub trait DeviceContext: private::Sealed {}
-> =20
-> -/// The [`Normal`] context is the context of a bus specific device when =
-it is not an argument of
-> -/// any bus callback.
-> +/// The [`Normal`] context is the default [`DeviceContext`] of any [`Dev=
-ice`].
-> +///
-> +/// The normal context does not indicate any specific scope. Any `Device=
-<Ctx>` is also a valid
-> +/// [`Device<Normal>`]. It is the only [`DeviceContext`] for which it is=
- valid to implement
-> +/// [`AlwaysRefCounted`](kernel::types::AlwaysRefCounted) for.
->  pub struct Normal;
+I mean the implementation is a total pain anyway...
 
-`Normal` as a name can be interpreted in many different ways, and in the
-case of a device context it is not clear what the "normal" state is. I
-think it would be helpful if we can elaborate a bit more on what this
-implies (i.e. what concretely speaking are the limitations), and if
-possible why this name has been chosen.
+I feel like we could even have separate special handling functions like
+
+#ifdef CONFIG_ARCH_HAS_PTE_SPECIAL
+
+/*
+ * < description of pte special special page >
+ *
+ * If returns true, then pagep set to NULL or, if a page can be found, that
+ * page.
+ *
+ */
+static struct bool is_special_page(struct vm_area_struct *vma, unsigned long addr,
+		pte_t pte, struct page **pagep)
+{
+	unsigned long pfn = pte_pfn(pte);
+
+	if (likely(!pte_special(pte))) {
+		if (pfn <= highest_memmap_pfn)
+			return false;
+
+		goto bad;
+	}
+
+	if (vma->vm_ops && vma->vm_ops->find_special_page) {
+		*pagep = vma->vm_ops->find_special_page(vma, addr);
+		return true;
+	} else if (vma->vm_flags & (VM_PFNMAP | VM_MIXEDMAP)) {
+		goto special;
+	}
+
+	if (is_zero_pfn(pfn))
+		goto special;
+
+	/* If we reach here something's gone wrong. */
+
+bad:
+	print_bad_pte(vma, addr, pte, NULL);
+special:
+	*pagep = NULL;
+	return true;
+}
+#else
+/*
+ * < description for not-pte special special page >
+ */
+static struct bool is_special_page(struct vm_area_struct *vma, unsigned long addr,
+		pte_t pte, struct page **pagep)
+{
+	unsigned long pfn = pte_pfn(pte);
+
+	if (is_zero_pfn(pfn))
+		goto special;
+
+	if (vma->vm_flags & VM_MIXEDMAP) {
+		if (!pfn_valid(pfn) || is_zero_pfn(pfn))
+			goto special;
+	} else if (vma->vm_flags & VM_PFNMAP) {
+		unsigned long off;
+
+		off = (addr - vma->vm_start) >> PAGE_SHIFT;
+		if (pfn == vma->vm_pgoff + off)
+			goto special;
+		/* Hell's bells we allow CoW !arch_has_pte_special of PFN pages! help! */
+		if (!is_cow_mapping(vma->vm_flags))
+			goto special;
+	}
+
+	if (pfn > highest_memmap_pfn) {
+		print_bad_pte(vma, addr, pte, NULL);
+		goto special;
+	}
+
+	return false;
+special:
+	*pagep = NULL;
+	return true;
+}
+
+#endif
+
+And then obviously invoke as makes sense... This is rough and untested,
+just to give a sense :>)
+
+>
+> >
+> > >    *
+> > >    * A raw VM_PFNMAP mapping (ie. one that is not COWed) is always considered a
+> > >    * special mapping (even if there are underlying and valid "struct pages").
+> > > @@ -639,15 +644,72 @@ static void print_bad_page_map(struct vm_area_struct *vma,
+> > >    * don't have to follow the strict linearity rule of PFNMAP mappings in
+> > >    * order to support COWable mappings.
+> > >    *
+> > > + * This function is not expected to be called for obviously special mappings:
+> > > + * when the page table entry has the "special" bit set.
+> >
+> > Hmm this is is a bit weird though, saying "obviously" special, because you're
+> > handling "special" mappings here, but only for architectures that don't specify
+> > the PTE special bit.
+> >
+> > So it makes it quite nebulous what constitutes 'obviously' here, really you mean
+> > pte_special().
+>
+> Yes, I can clarify that.
+
+Thanks!
+
+>
+> >
+> > > + *
+> > > + * Return: Returns the "struct page" if this is a "normal" mapping. Returns
+> > > + *	   NULL if this is a "special" mapping.
+> > > + */
+> > > +static inline struct page *vm_normal_page_pfn(struct vm_area_struct *vma,
+> > > +		unsigned long addr, unsigned long pfn, unsigned long long entry)
+> > > +{
+> > > +	/*
+> > > +	 * With CONFIG_ARCH_HAS_PTE_SPECIAL, any special page table mappings
+> > > +	 * (incl. shared zero folios) are marked accordingly and are handled
+> > > +	 * by the caller.
+> > > +	 */
+> > > +	if (!IS_ENABLED(CONFIG_ARCH_HAS_PTE_SPECIAL)) {
+> > > +		if (unlikely(vma->vm_flags & (VM_PFNMAP | VM_MIXEDMAP))) {
+> > > +			if (vma->vm_flags & VM_MIXEDMAP) {
+> > > +				/* If it has a "struct page", it's "normal". */
+> > > +				if (!pfn_valid(pfn))
+> > > +					return NULL;
+> > > +			} else {
+> > > +				unsigned long off = (addr - vma->vm_start) >> PAGE_SHIFT;
+> > > +
+> > > +				/* Only CoW'ed anon folios are "normal". */
+> > > +				if (pfn == vma->vm_pgoff + off)
+> > > +					return NULL;
+> > > +				if (!is_cow_mapping(vma->vm_flags))
+> > > +					return NULL;
+> > > +			}
+> > > +		}
+> > > +
+> > > +		if (is_zero_pfn(pfn) || is_huge_zero_pfn(pfn))
+> >
+> > This handles zero/zero huge page handling for non-pte_special() case
+> > only. I wonder if we even need to bother having these marked special
+> > generally since you can just check the PFN every time anyway.
+>
+> Well, that makes (a) pte_special() a bit weird -- not set for some special
+> pages and (b) requires additional runtime checks for the case we all really
+> care about -- pte_special().
+>
+> So I don't think we should change that.
+
+OK, best to be consistent in setting for special pages.
+
+>
+> [...]
+>
+> > >
+> > > +/**
+> > > + * vm_normal_folio() - Get the "struct folio" associated with a PTE
+> > > + * @vma: The VMA mapping the @pte.
+> > > + * @addr: The address where the @pte is mapped.
+> > > + * @pte: The PTE.
+> > > + *
+> > > + * Get the "struct folio" associated with a PTE. See vm_normal_page_pfn()
+> > > + * for details.
+> > > + *
+> > > + * Return: Returns the "struct folio" if this is a "normal" mapping. Returns
+> > > + *	   NULL if this is a "special" mapping.
+> > > + */
+> >
+> > Nice to add a comment, but again feels weird to have the whole explanation in
+> > vm_normal_page_pfn() but then to invoke vm_normal_page()..
+>
+> You want people to do pointer chasing to find what they are looking for? :)
+
+Yes.
+
+Only joking :P
+
+Hopefully the ideas mentioned above clarify things... a bit maybe... :>)
+
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
