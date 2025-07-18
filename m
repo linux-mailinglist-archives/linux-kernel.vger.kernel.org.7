@@ -1,170 +1,132 @@
-Return-Path: <linux-kernel+bounces-736790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E53EEB0A1EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:29:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ABAFB0A1F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:33:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48167A8297C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:28:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C7277B3074
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E29F2D8794;
-	Fri, 18 Jul 2025 11:29:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C41472D949B;
+	Fri, 18 Jul 2025 11:33:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="GigmNSQu";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="KWPT/4/d"
-Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XFwPSbbk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B1902D8392;
-	Fri, 18 Jul 2025 11:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4A3221F04;
+	Fri, 18 Jul 2025 11:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752838146; cv=none; b=r2qhi2xZ1Fat5OrfigfdcO5RLyc4i4ptis3nDCQ9QbQx0zsnRkVeluTDm66izyIZJM165Fgnm4ga72J9Oh8CTC6/Fk1YVr3QzccjmTHQVlr9SpfPVkfyE5rE6HVAAMnhotePev1vHQ3LYNOqABbLwRDYrh+0HIeQxaSldDgb7TY=
+	t=1752838401; cv=none; b=oUO4gwPq94zceEdH+3BoI1ZNlu+h7Hq81S1UNOEDxZx5s7tdQPayjXsoCaPZCgiTEYkKhCRD1POaqVZw4qF7ysU8bUdeM1dg9rk+tkVTZ5qVJnYqsR6zpbs/tknhgzSc9z1J/OhqPCPjyDNL984xcD/HWl2pBiEuYOeCt1SZ7b4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752838146; c=relaxed/simple;
-	bh=wYyx6QtDqlyeE85agBM+ojy87kLrC3NYYxZc8mXHeIk=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=GkfNjLT8ZWCp/ZkHVN5xrOtNNKzCoZedU9qyoS9+6UqG7k8tEJA1G0lYdgQ0BxAe0te4BP/2S49O/wwjvEyxvPANRPP/+ctHM+5J4kt8R8KG1CJmmCipuag4IY+E+Ci9/i3tHkD/UxqpbSTdPtISc4upobVMaGvcCdGggW8Ob64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=GigmNSQu; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=KWPT/4/d; arc=none smtp.client-ip=202.12.124.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 192FA7A0179;
-	Fri, 18 Jul 2025 07:29:03 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Fri, 18 Jul 2025 07:29:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1752838142;
-	 x=1752924542; bh=acySwlQIiWdjxBiQbTahfwgiopPILcxq1ta+XgVL72U=; b=
-	GigmNSQuFcFJvfbYbaXXAVh2EcncLgc0TF990YZA9r1Jes4Kipfg1wQoNfjhhUgA
-	jjJDteBVaJSsxzhnocDKTQTP1aCTFE6qPT0yfVC3dIY/HjR3s9e4VE7sDuFtMu16
-	Grw7FsjGRUnm6EgAZaEyHUjfD5/cM8DDmlXpPtwCEhV/zVsQux7miDyGF6xReKpU
-	jQv+8BBONM+s6kSLxgYA0+23Sl8yTUEOB3HyjXgcHfN6OOA8OBEX6vL3bKwHRMwa
-	TTZhV4oY76P5mdcrMAsjctciJkWS3lK2c0+UrCZlcfiBXCV3ut3wMdY1meuklXSq
-	lLxZO0Xr8WTQ15i4wer92A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752838142; x=
-	1752924542; bh=acySwlQIiWdjxBiQbTahfwgiopPILcxq1ta+XgVL72U=; b=K
-	WPT/4/dOcCGnnkFvuj7mhgRzF2nwyj42ww1IUVdOZRDdM7AzfR/+gb8puo3iaTQ8
-	/grCi/y7HTI11+zaaPl/kjLuZ0Gl6+erhA1N7gJSpv1MbIwm/B3uC0HAOJqeWxxp
-	rJiYszPtIRBsjUA8ryoyiZtLTshIo0mNkX36H/dhsvRfvzxls+nqwYsdz77Y1ynf
-	yR4tfh/ZD+oTGFqo7T1O+mWIfzi+SU17YcqUnxaONEh5XABiOt3eOFQBA4VZfo6q
-	yLNHAwJlLZ1bvYstrPIkAei6OpFZ8MKBIC6Mc1pvOQC2ifI/6+2i71gW9vnoXDd3
-	bpbRm7ATARAH9VnrEE+6w==
-X-ME-Sender: <xms:_i96aCtF8nqy1nKX9myevVmixWQ2qFbQGvw7Qz5LUT-0TRE0F1iFSA>
-    <xme:_i96aHcx5lio97iMXUqNtdVmTiBBE7Iat6XYRz-WePLC2dM69dL4MvOapW_YBSiN0
-    rmTq8RhS0H3xPxRgrI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeifeeffecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduhedpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtohepmhgthhgvhhgrsgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprg
-    hnuggvrhhsrdhrohigvghllheslhhinhgrrhhordhorhhgpdhrtghpthhtohepsggvnhdr
-    tghophgvlhgrnhgusehlihhnrghrohdrohhrghdprhgtphhtthhopegsrhihrghnrdhoug
-    honhhoghhhuhgvsehlihhnrghrohdrohhrghdprhgtphhtthhopegurghnrdgtrghrphgv
-    nhhtvghrsehlihhnrghrohdrohhrghdprhgtphhtthhopehnrghrvghshhdrkhgrmhgsoh
-    hjuheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhkfhhtqdhtrhhirghgvgeslhhi
-    shhtshdrlhhinhgrrhhordhorhhgpdhrtghpthhtoheprhgvghhrvghsshhiohhnsheslh
-    hishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehquhhitggpughikhhshhhithgr
-    sehquhhitghinhgtrdgtohhm
-X-ME-Proxy: <xmx:_i96aGX3dgHWHwO096OLua_KCWGSRzMAx65WtS07ERz7NtkPxNWhTw>
-    <xmx:_i96aNcvBJ_WH1-6CG1MJ_mEI37Go3J_phR8R2B9VJQ2hyrOe2yv0Q>
-    <xmx:_i96aEnUXdW_J6nxxapxHpFEiURWxosVrSydq9MN2d-Oejr8cA6-dQ>
-    <xmx:_i96aPA2-PaMiQy21t9Cr1lc8ArYosrRQja56hVFbVcVVw-_oN9wbg>
-    <xmx:_i96aJ7ITfKChApQP8Jq3BIRRHUPoKrQ6vO69ZiYzFhd-mugqOnwyx8->
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 83484700068; Fri, 18 Jul 2025 07:29:02 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1752838401; c=relaxed/simple;
+	bh=92arq/Wo1/KhOpoRdEXUKIc1y6xuILihx9THlijFiR0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TjVq/qbyBJH2d4hikvH2BzQDi89E4Xcwz0ZTFoky4OJZgw16320d+xBZ+VtnY3sIDIzePfoqqOvQsGPGCBmskCoVw7J2wPtkXWgRQCQ+pnmNUXgQQW6whr84oeU/n5DLGFHbb2vND/yyK+wVfhSTZ7PQAME0i1dfgHaqd86WJes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XFwPSbbk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A11AC4CEEB;
+	Fri, 18 Jul 2025 11:33:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752838400;
+	bh=92arq/Wo1/KhOpoRdEXUKIc1y6xuILihx9THlijFiR0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XFwPSbbkzFb40PzhDQ/wJAwKW3YmtkzoutTGTkV/zX1+GLT4rYBnnKNNYzGDui87P
+	 Yi7IOtoXvaRhL5fa1rWumqqxtuAhQae5fbYevDcyF+Lxo0ccUSuMoguYPO/egRL/Qm
+	 EQeCo/h2G3/kiEcq4oJQnk+8G+3ev4ZIRyyke8n1bh/8qHk9kyldId2MUKh5ePVkjP
+	 lcCkEdu1CxQu9uFDq34mw7pvxII3CRaE2y464pDItUdJhiCri28vwejHJU0WqreC7G
+	 7BXZuGgFrCPbtERV8zuJ/vRXT1P1j0zzRzJhZ+1NFvXe3udHk/iOi+ANqxnMqWa2ud
+	 2yZwCecPVUMaw==
+Date: Fri, 18 Jul 2025 12:33:15 +0100
+From: Will Deacon <will@kernel.org>
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: bpf@vger.kernel.org, Puranjay Mohan <puranjay@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Maxwell Bland <mbland@motorola.com>, Dao Huang <huangdao1@oppo.com>
+Subject: Re: [PATCH bpf-next v10 1/3] cfi: add C CFI type macro
+Message-ID: <aHow-yVsJCO2AJsn@willie-the-truck>
+References: <20250715225733.3921432-5-samitolvanen@google.com>
+ <20250715225733.3921432-6-samitolvanen@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T35a041e4b132bd1e
-Date: Fri, 18 Jul 2025 13:28:42 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Naresh Kamboju" <naresh.kamboju@linaro.org>,
- "open list" <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org,
- "Linux Regressions" <regressions@lists.linux.dev>,
- linux-clk <linux-clk@vger.kernel.org>,
- linux-arm-msm <linux-arm-msm@vger.kernel.org>,
- "Linux Media Mailing List" <linux-media@vger.kernel.org>
-Cc: quic_vgarodia@quicinc.com, quic_dikshita@quicinc.com,
- "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
- "Mauro Carvalho Chehab" <mchehab@kernel.org>,
- "Anders Roxell" <anders.roxell@linaro.org>,
- "Dan Carpenter" <dan.carpenter@linaro.org>,
- "Benjamin Copeland" <ben.copeland@linaro.org>,
- "Renjiang Han" <quic_renjiang@quicinc.com>
-Message-Id: <ef216301-a7e6-4c9d-9153-8ce8b0a4111f@app.fastmail.com>
-In-Reply-To: 
- <CA+G9fYu5=3n84VY+vTbCAcfFKOq7Us5vgBZgpypY4MveM=eVwg@mail.gmail.com>
-References: 
- <CA+G9fYu5=3n84VY+vTbCAcfFKOq7Us5vgBZgpypY4MveM=eVwg@mail.gmail.com>
-Subject: Re: arm64 dragonboard 410c Internal error Oops dev_pm_opp_put core_clks_enable
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250715225733.3921432-6-samitolvanen@google.com>
 
-On Fri, Jul 18, 2025, at 13:13, Naresh Kamboju wrote:
-> The following Boot regressions are noticed on the Linux
-> next-20250708with gcc-13 and clang-20 toolchains for the dragonboard
-> 410c device.
+On Tue, Jul 15, 2025 at 10:57:35PM +0000, Sami Tolvanen wrote:
+> From: Mark Rutland <mark.rutland@arm.com>
+> 
+> Currently x86 and riscv open-code 4 instances of the same logic to
+> define a u32 variable with the KCFI typeid of a given function.
+> 
+> Replace the duplicate logic with a common macro.
+> 
+> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> Co-developed-by: Maxwell Bland <mbland@motorola.com>
+> Signed-off-by: Maxwell Bland <mbland@motorola.com>
+> Co-developed-by: Sami Tolvanen <samitolvanen@google.com>
+> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+> Tested-by: Dao Huang <huangdao1@oppo.com>
+> ---
+>  arch/riscv/kernel/cfi.c       | 35 +++--------------------------------
+>  arch/x86/kernel/alternative.c | 31 +++----------------------------
+>  include/linux/cfi_types.h     | 23 +++++++++++++++++++++++
+>  3 files changed, 29 insertions(+), 60 deletions(-)
 
-> [   12.629924] x5 : 0000000000000002 x4 : 00000000c0000000 x3 : 
-> 0000000000000001
-> [   12.629939] x2 : 0000000000000002 x1 : ffffffffffffffde x0 : 
-> ffffffffffffffee
-> [   12.629956] Call trace:
-> [   12.629962]  dev_pm_opp_put+0x24/0x58 (P)
-> [   12.629981]  core_clks_enable+0x54/0x148 venus_core
-> [   12.630064]  core_power_v1+0x78/0x90 venus_core
-> [   12.691130]  venus_runtime_resume+0x6c/0x98 venus_core
+[...]
 
-> [   12.817608] Code: 910003fd f9000bf3 91004013 aa1303e0 (f9402821)
-> All code
-> ========
->    0: 910003fd mov x29, sp
->    4: f9000bf3 str x19, [sp, #16]
->    8: 91004013 add x19, x0, #0x10
->    c: aa1303e0 mov x0, x19
->   10:* f9402821 ldr x1, [x1, #80] <-- trapping instruction
+> diff --git a/include/linux/cfi_types.h b/include/linux/cfi_types.h
+> index 6b8713675765..e5567c0fd0b3 100644
+> --- a/include/linux/cfi_types.h
+> +++ b/include/linux/cfi_types.h
+> @@ -41,5 +41,28 @@
+>  	SYM_TYPED_START(name, SYM_L_GLOBAL, SYM_A_ALIGN)
+>  #endif
+>  
+> +#else /* __ASSEMBLY__ */
+> +
+> +#ifdef CONFIG_CFI_CLANG
+> +#define DEFINE_CFI_TYPE(name, func)						\
+> +	/*									\
+> +	 * Force a reference to the function so the compiler generates		\
+> +	 * __kcfi_typeid_<func>.						\
+> +	 */									\
+> +	__ADDRESSABLE(func);							\
+> +	/* u32 name __ro_after_init = __kcfi_typeid_<func> */			\
+> +	extern u32 name;							\
+> +	asm (									\
+> +	"	.pushsection	.data..ro_after_init,\"aw\",@progbits	\n"	\
+> +	"	.type	" #name ",@object				\n"	\
+> +	"	.globl	" #name "					\n"	\
+> +	"	.p2align	2, 0x0					\n"	\
+> +	#name ":							\n"	\
+> +	"	.4byte	__kcfi_typeid_" #func "				\n"	\
+> +	"	.size	" #name ", 4					\n"	\
+> +	"	.popsection						\n"	\
+> +	);
+> +#endif
 
-It's loading from 'x1', which is an error pointer ffffffffffffffde
-(-EISCONN).  The caller was modified by Renjiang Han (added to Cc)
-in commit b179234b5e59 ("media: venus: pm_helpers: use opp-table
-for the frequency").
+This looks good to me. I was initially a bit worried about the portability
+of the '.4byte' directive, but it seems that cfi_types.h is already using
+that for the __CFI_TYPE() macro so I'm assuming it's not an issue.
 
-The new version of the code is now  
+In which case:
 
-static int core_clks_enable(struct venus_core *core)
- {
-        const struct venus_resources *res = core->res;
-+       struct device *dev = core->dev;
-+       unsigned long freq = 0;
-+       struct dev_pm_opp *opp;
-        unsigned int i;
-        int ret;
- 
-+       opp = dev_pm_opp_find_freq_ceil(dev, &freq);
-+       dev_pm_opp_put(opp);
- 
-Where the 'opp' pointer is the error code and gets passed
-into dev_pm_opp_put() without checking for the error condition.
+Acked-by: Will Deacon <will@kernel.org>
 
-    Arnd
+Thanks for cleaning it up.
+
+Will
 
