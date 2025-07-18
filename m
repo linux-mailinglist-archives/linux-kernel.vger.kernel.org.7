@@ -1,143 +1,98 @@
-Return-Path: <linux-kernel+bounces-737400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3A1BB0AC05
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 00:13:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FC17B0ABFF
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 00:12:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 537AD18922BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 22:13:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE5263B4827
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 22:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 471F8221FCB;
-	Fri, 18 Jul 2025 22:12:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBDF722157B;
+	Fri, 18 Jul 2025 22:12:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="khFAFbSc"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="D3NQ51iJ"
+Received: from smtp153-141.sina.com.cn (smtp153-141.sina.com.cn [61.135.153.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 478812206B1;
-	Fri, 18 Jul 2025 22:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E18FA211460
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 22:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752876772; cv=none; b=Tbld2BJWvzSK6D0ek37b6bpZJ+X28feJTR7OgTPqeR1eH/opUpcmLxCnr27q0kD40COGBJz4VgM9W5x6Pe68AxQD3r40sePzvxbHOmpjzJ0XRF3tiE2+3Io77vZMqogpz+5wKT2FwdKNu2gpe3xQzkxkgvj6dq+mRS8q1WbZmAQ=
+	t=1752876726; cv=none; b=E/WghOWrxzpLIp3Cuy+3Gd7CWOduE+CijeVTFEqNKzpMoSV2ursYlFh0ONgnCZYu3WvV7gAYMIXxtK8VAXiXqIy14T8w2FeSFYCboGmK/9VV1JYimF3hQDbjwL5CPwQwHltRYLL9j7azZLlocHlkeaLsFQKDwpOx7Xkiw0h8g9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752876772; c=relaxed/simple;
-	bh=qzVuvkfAQQqtpak8j7vWQvsEeX5h7ioyRGvKq72N9U4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XDEqNRpvPFgm5DaENNnzVTvwt5InJi29awIJ2NQp0XZTLpgMvhlhCWe1fYg2yM729nUG/F6Z1svOz6wLRcjiv/5NbCNyYgQXYGRKRpVQBufIy4MaWlXkxlD8l4mTeXiSOAUJjCEysYwzK7sGYhL1gpNoDBfov8cAy4JEQeIx3tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=khFAFbSc; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [IPV6:2601:646:8081:9482:197f:c1e5:8ae9:2d06] ([IPv6:2601:646:8081:9482:197f:c1e5:8ae9:2d06])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56IMBIs32809490
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Fri, 18 Jul 2025 15:11:18 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56IMBIs32809490
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025062101; t=1752876686;
-	bh=u3adsmw2raiz193Cp3Ip0T4zuSrb0ygShqiBU7iriLA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=khFAFbScCZJHVCx2iCaQ/z1I13MQx2fEe4vN7kjiySbR87BC1QYYKAH6Qo4dLOvND
-	 wYzZxTi6mA/p9YGAoW38GfQDMozSOsYTA+GA6AHvqyFcYXssYSZ+QYA39g893LN561
-	 8k3fvC8WujrEKRGYTw2jXgpP0Pi0kILbZW2Na1NqIQJkJ+qoL3kv9meHntuuMbdQnm
-	 xqsCV9hLQMO9Lg8+QwGCz54/nLsjuhkoMrUAnjuoKrd9iBo7s8MG+3a1ylVItbx8ws
-	 zRINg5Jiq27watVpljC8QAWIg4HXrCFpM2WpV1nPngLS4rVIgYPTxgZQQgnyGzZYZv
-	 jeIi6qwmD5kRw==
-Message-ID: <62cfe957-56bb-43de-91d9-9f64d8100a62@zytor.com>
-Date: Fri, 18 Jul 2025 15:11:13 -0700
+	s=arc-20240116; t=1752876726; c=relaxed/simple;
+	bh=Ra3d4yk79GRZayeWZZmeTZHAUr1GECTgXY/nJ5YTfco=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=a2lpBUqNk3Np+/dUIpopqdqiGCuU/NlWkid9OROJVQkIb6Rs80+Gvh4oxfJgWD8uqgMW8RM6eY7FEAaIJ42B++Wa7dAP3DQRgOrEAwsbw8ZV7/PUGx1TODpzWvShuu2Vt98cAxd6/zv2Oo5ajGLRiLkxhdQS7HS4k9vKKhNlm9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=D3NQ51iJ; arc=none smtp.client-ip=61.135.153.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1752876719;
+	bh=/07EaF41gnn4gEnfBX30qAY9V6Nyv0EgPAskka0SJFg=;
+	h=From:Subject:Date:Message-ID;
+	b=D3NQ51iJd+8Qa7176q1/U1DycfTMS+Sv8D5/D0Mva8A7zjUxOVdsxDNVaKhP1ekNi
+	 cmmb0kWxXxFYVUczqQcIcFEw5skjbLJW1Yk3/21DWk1NWMrDwE7zOF1KzqURWVBrD4
+	 FWRRR1M5xG3xUWYDZmbhmWdPeA7mYt86eZOJ5+JU=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.31) with ESMTP
+	id 687AC6A400005A43; Fri, 19 Jul 2025 06:11:49 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 6668606816158
+X-SMAIL-UIID: BD9A24E909A44BBEA68488125BCB5FA3-20250719-061149-1
+From: Hillf Danton <hdanton@sina.com>
+To: Nikolay Kuratov <kniv@yandex-team.ru>
+Cc: linux-kernel@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Eugenio Peterz <eperezma@redhat.com>,
+	Lei Yang <leiyang@redhat.com>
+Subject: Re: [PATCH] vhost/net: Replace wait_queue with completion in ubufs reference
+Date: Sat, 19 Jul 2025 06:11:36 +0800
+Message-ID: <20250718221137.2432-1-hdanton@sina.com>
+In-Reply-To: <20250718132414.1572292-1-kniv@yandex-team.ru>
+References: <20250718124657.2394-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/7] arch/nios: replace "__auto_type" with "auto"
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
-        =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, Alexei Starovoitov <ast@kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrii Nakryiko <andrii@kernel.org>, Arnd Bergmann <arnd@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, Cong Wang <cong.wang@bytedance.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Laight <David.Laight@aculab.com>,
-        David Lechner
- <dlechner@baylibre.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Eduard Zingerman <eddyz87@gmail.com>,
-        Gatlin Newhouse <gatlin.newhouse@gmail.com>,
-        Hao Luo <haoluo@google.com>, Ingo Molnar <mingo@redhat.com>,
-        Jakub Sitnicki <jakub@cloudflare.com>,
-        Jan Hendrik Farr <kernel@jfarr.cc>, Jason Wang <jasowang@redhat.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Josh Poimboeuf <jpoimboe@kernel.org>, KP Singh <kpsingh@kernel.org>,
-        Kees Cook <kees@kernel.org>,
-        Luc Van Oostenryck
- <luc.vanoostenryck@gmail.com>,
-        Marc Herbert <Marc.Herbert@linux.intel.com>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Mateusz Guzik <mjguzik@gmail.com>, Michal Luczaj <mhal@rbox.co>,
-        Miguel Ojeda <ojeda@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
-        NeilBrown <neil@brown.name>, Peter Zijlstra <peterz@infradead.org>,
-        Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-        Sami Tolvanen <samitolvanen@google.com>, Shuah Khan <shuah@kernel.org>,
-        Song Liu <song@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Thorsten Blum
- <thorsten.blum@linux.dev>,
-        Uros Bizjak <ubizjak@gmail.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        Yafang Shao <laoar.shao@gmail.com>, Ye Bin <yebin10@huawei.com>,
-        Yonghong Song <yonghong.song@linux.dev>,
-        Yufeng Wang <wangyufeng@kylinos.cn>, bpf@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-sparse@vger.kernel.org,
-        virtualization@lists.linux.dev, x86@kernel.org
-References: <20250718213252.2384177-1-hpa@zytor.com>
- <20250718213252.2384177-5-hpa@zytor.com>
- <CAHk-=whGcopJ_wewAtzfTS7=cG1yvpC90Y-xz5t-1Aw0ew682w@mail.gmail.com>
-Content-Language: en-US
-From: "H. Peter Anvin" <hpa@zytor.com>
-In-Reply-To: <CAHk-=whGcopJ_wewAtzfTS7=cG1yvpC90Y-xz5t-1Aw0ew682w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2025-07-18 14:49, Linus Torvalds wrote:
+On Fri, 18 Jul 2025 16:24:14 +0300 Nikolay Kuratov wrote:
+> > reinit after wait, so the chance for missing wakeup still exists.
 > 
-> Side note: I think some coccinelle (or sed) script that replaces that
-> older form of
-> 
->        typeof(x) Y = (typeof(x))(Z);
-> 
-> or
-> 
->         typeof(Z) Y = Z;
-> 
-> 
-> with just
-> 
->         auto Y = Z;
-> 
-> is also worthwhile at some point.
-> 
-> We have more of those, because that's the really traditional gcc way
-> to do things that predates __auto_type.
-> 
+> Can you please provide more details on this? Yes, it is reinit after wait,
 
-Agreed.  And I think that this, indeed is a job more for Coccinelle than
-for sed, because the patterns can be rather complex and we don't want
-false positives.
+The missing wakeup exists if complete_all() is used in combination with
+reinit after wait, with nothing to do with vhost.
 
-	-hpa
+Your patch was checked simply because of reinit, which hints the chance for
+mess in mind without exception.
 
+Of course feel free to prove that missing wakeup disappears in vhost
+even if reinit is deployed.
+
+> but wait should not be concurrent. I checked multiple code pathes towards
+> vhost_net_flush(), they're all protected by device mutex, except
+> vhost_net_release(). In case of vhost_net_release() - it would be a
+> problem itself if it was called in parallel with some ioctl on a device?
+> 
+> Also rationale for this is that put_and_wait() is waiting for zero
+> refcount condition. Zero refcount means that after put_and_wait() calling
+> thread is the only owner of an ubufs structure. If multiple threads got
+> ubufs structure with zero refcount - how either thread can be sure that
+> another one is not free'ing it?
+> 
+> 
 
