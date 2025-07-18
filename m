@@ -1,130 +1,259 @@
-Return-Path: <linux-kernel+bounces-736848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A636B0A3F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:17:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6446DB0A3FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:18:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D0D23AD6CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:16:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D2B37B61FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:16:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD4E29CB40;
-	Fri, 18 Jul 2025 12:16:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1CED2C3247;
+	Fri, 18 Jul 2025 12:18:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VEUqkmmO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b="XBDUtXGG"
+Received: from pf-012.whm.fr-par.scw.cloud (pf-012.whm.fr-par.scw.cloud [51.159.173.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD1B17BB6
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 12:16:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B246517BB6;
+	Fri, 18 Jul 2025 12:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.173.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752841016; cv=none; b=p1D2CrttUIMJMt2xbb3ENQqVi1PDSjuSLtVgeOCDd2CRxBeR54oZPytvc/Isu5T+y27t+Gd95Qugf7mr9CQpE0YTZmPyX8FVLO/PVoF7dCvxHglB++aicujrutElZqnAdDzE/qXyvxyDjuImFd49p2kuDGLDZB8I2Hoxsq0uGiQ=
+	t=1752841086; cv=none; b=l1kgxJtRG1NHVhbK4RDeZ3iDtSZ0DJY0+Lsj2qynNc1CpT3Ru7IiIVBILoG8zs9Ij/QGAxLMOV9D7x+PUMRDrD7bz0DWqkTAkRjf7ENtUNcGTj7XSPFWOyH+5n0Bf2B/byAgeW9FCpKBQeZMESfGYFVKH6wD23FapAhDd4w2/jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752841016; c=relaxed/simple;
-	bh=ssCJnZiVU0NS5C2CWr681wCS6S2+9KNs1VykMx9TTKc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZDpm1EKCRyE8lpQucTsbANSxDqcHfAwL2Y38K9lKuPYd6WVlOa1DIgm7lm1WXRDJ2ouG0IvWiq0i2UrBvHAHVvU2iPmVqgTDMUb/I4ZrFM2flyJSZ63VDnS2pDp5wyMmkcdPO2u14z9D0b714IBP27324uP0+7aaTE5cTv81My0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VEUqkmmO; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752841014;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=StQAxm1RKG6Tk+bIyXR+UyKD+w6FfQFmbkQV3JFNsg4=;
-	b=VEUqkmmOviFG/LUcUpPSPfICbnaunKmrJ/oXsg2kiFk2gyGuFBG6W9eGnd837p10dpZQ8E
-	xkuSm9k/fFY0pJYk2tVvnXlLer4gsdROHvKkpr6dRRRGWBOZT5JjLho00aY+o9sQn8rOm1
-	odsB+3nG5wi6eMpXrl3tGmWTAvL5xp0=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-391-mWhcBiItOvupwHuYwYGOrg-1; Fri,
- 18 Jul 2025 08:16:49 -0400
-X-MC-Unique: mWhcBiItOvupwHuYwYGOrg-1
-X-Mimecast-MFC-AGG-ID: mWhcBiItOvupwHuYwYGOrg_1752841007
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F08CB19560A2;
-	Fri, 18 Jul 2025 12:16:46 +0000 (UTC)
-Received: from [10.44.33.77] (unknown [10.44.33.77])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EFE33196664F;
-	Fri, 18 Jul 2025 12:16:42 +0000 (UTC)
-Message-ID: <6937b833-4f3b-46cc-84a6-d259c5dc842a@redhat.com>
-Date: Fri, 18 Jul 2025 14:16:41 +0200
+	s=arc-20240116; t=1752841086; c=relaxed/simple;
+	bh=hWOZ5rGhEnOPNj6yZDDj7L2cBQlG1VDSSdDZuRuX/IM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YIpER4k9ZlqpzJ5Wl3FaU3Y1U20GXBrjSSRFGD2scsPJg0E9H/fgWFyY9i1NURITgkNPaRrwTqpjI5mQuf1/sUPaDqhs8aZvPu0xawO6L3mY2oKH7mzdUUk/CWy9DKmUt0RrfMtTYRzLa7PFD7Qxo/KR5MnOz3T+cedm+fpB1bA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr; spf=pass smtp.mailfrom=oss.cyber.gouv.fr; dkim=pass (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b=XBDUtXGG; arc=none smtp.client-ip=51.159.173.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.cyber.gouv.fr
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=oss.cyber.gouv.fr; s=default; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=c8zOjRoJ+GDoM9sJJsiKdCSL52AgaT4ltSuWMazTsbU=; b=XBDUtXGGSolTZM0c/Qwya9lxwQ
+	o7ySFKi8yQuyHvC8H14UAh0SJsG9NrIXV3bjg+XcZ3G8MER2TltGhN925yOhEZk6WwnImQ5O1dQaM
+	0VIC7tuoELqcnZq5BsElxOTtsHmH+I2GvNYj+/DExTvvECIX4nk4M9JvU1tThlj3W1MWcf6s0MsuN
+	IfnC/6hb+0Uadul0ai7JOmr+EbgqEvvTIFpmw21JXXnQrgkw0UarYo/q+DpreInKL5zj2/AkJN50D
+	Rw1OKZcPE8Vvth+OqG4IAdtCruAAF4svkPvpR01zxxonF/Yu4r6NdWTbYBcXk8cBW7Tjok9/h5dRL
+	zr+Ratzg==;
+Received: from laubervilliers-658-1-215-187.w90-63.abo.wanadoo.fr ([90.63.246.187]:18092 helo=archlinux)
+	by pf-012.whm.fr-par.scw.cloud with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <nicolas.bouchinet@oss.cyber.gouv.fr>)
+	id 1uck2L-0000000CGBQ-1j2c;
+	Fri, 18 Jul 2025 14:18:01 +0200
+Date: Fri, 18 Jul 2025 14:17:56 +0200
+From: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Vasiliy Kulikov <segooon@gmail.com>, Christian Brauner <brauner@kernel.org>, 
+	Olivier Bal-Petre <olivier.bal-petre@oss.cyber.gouv.fr>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+Subject: Re: [PATCH] fs: hidepid: Fixes hidepid non dumpable behavior
+Message-ID: <nbmfwdm45z3com6bdo62hac6c3kz4aerjcargsjjeacr4xrajn@4dkrpr45h34w>
+References: <20250718-hidepid_fix-v1-1-3fd5566980bc@ssi.gouv.fr>
+ <20250718.091233-bored.chainsaw.organic.pose-0SJBoWYaT8s@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 1/2] dt-bindings: dpll: Add clock ID property
-To: Krzysztof Kozlowski <krzk@kernel.org>, netdev@vger.kernel.org
-Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>,
- Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
- Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Prathosh Satish <Prathosh.Satish@microchip.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Michal Schmidt <mschmidt@redhat.com>, Petr Oros <poros@redhat.com>
-References: <20250717171100.2245998-1-ivecera@redhat.com>
- <20250717171100.2245998-2-ivecera@redhat.com>
- <5ff2bb3e-789e-4543-a951-e7f2c0cde80d@kernel.org>
-Content-Language: en-US
-From: Ivan Vecera <ivecera@redhat.com>
-In-Reply-To: <5ff2bb3e-789e-4543-a951-e7f2c0cde80d@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250718.091233-bored.chainsaw.organic.pose-0SJBoWYaT8s@cyphar.com>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - pf-012.whm.fr-par.scw.cloud
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - oss.cyber.gouv.fr
+X-Get-Message-Sender-Via: pf-012.whm.fr-par.scw.cloud: authenticated_id: nicolas.bouchinet@oss.cyber.gouv.fr
+X-Authenticated-Sender: pf-012.whm.fr-par.scw.cloud: nicolas.bouchinet@oss.cyber.gouv.fr
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-Hi Krzysztof,
+Hi Aleksa,
 
-On 18. 07. 25 8:55 dop., Krzysztof Kozlowski wrote:
-> On 17/07/2025 19:10, Ivan Vecera wrote:
->> Add property to specify the ID of the clock that the DPLL device
->> drives. The ID value represents Unique Clock Identified (EUI-64)
->> defined by IEEE 1588 standard.
+Thanks for your reply !
+
+On Fri, Jul 18, 2025 at 07:36:37PM +1000, Aleksa Sarai wrote:
+> On 2025-07-18, nicolas.bouchinet@oss.cyber.gouv.fr <nicolas.bouchinet@oss.cyber.gouv.fr> wrote:
+> > From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+> > 
+> > The hidepid mount option documentation defines the following modes:
+> > 
+> > - "noaccess": user may not access any `/proc/<pid>/ directories but
+> >   their own.
+> > - "invisible": all `/proc/<pid>/` will be fully invisible to other users.
+> > - "ptraceable": means that procfs should only contain `/proc/<pid>/`
+> >   directories that the caller can ptrace.
+> > 
+> > We thus expect that with "noaccess" and "invisible" users would be able to
+> > see their own processes in `/proc/<pid>/`.
+> > 
+> > The implementation of hidepid however control accesses using the
+> > `ptrace_may_access()` function in any cases. Thus, if a process set
+> > itself as non-dumpable using the `prctl(PR_SET_DUMPABLE,
+> > SUID_DUMP_DISABLE)` it becomes invisible to the user.
 > 
-> With the exception of clock-output-names and gpio-hogs, we do not define
-> how the output looks like in the provider bindings.
+> In my view, the documentation is wrong here. This behaviour has remained
+> effectively unchanged since it was introduced in 0499680a4214 ("procfs:
+> add hidepid= and gid= mount options"), and the documentation was written
+> by the same author (added to Cc, though they appear to be inactive since
+> 2013). hidepid=ptraceable was added many years later, and so the current
+> documentation seeming somewhat contradictory is probably more a result
+> of a new feature being documented without rewriting the old
+> documentation, rather than an incorrect implementation.
+
+I'll change the documentation to match what it really does.
 > 
-> I also don't understand how this maps to channels and what "device
-> drives a clock" means. Plus how this is not deducible from the compatible...
+> A process marking itself with SUID_DUMP_DISABLE is a *very* strong
+> signal that other processes (even processes owned by the same user) must
+> have very restricted access to it. Given how many times they have been
+> instrumental for protecting against attacks, I am quite hesitant about
+> making changes to loosen these restrictions.
+> 
+> For instance, container runtimes need to set SUID_DUMP_DISABLE to avoid
+> all sorts of breakout attacks (CVE-2016-9962 and CVE-2019-5736 being the
+> most famous examples, but there are plenty of others). If a container
+> has been configured with a restrictive hidepid, I would expect the
+> kernel to block most attempts to interact with such a process to
+> non-privileged users. But this patch would loosen said restrictions.
+> 
+> Now, many of the bits in /proc/self/* are additionally gated behind
+> ptrace_may_access() checks, so this kind of change might be less
+> catastrophic than at first glance, but the original concerns that
+> motivated hidepid= were about /proc/self/cmdline and the uid/euid of
+> processes being discoverable, and AFAICS this patch still undoes those
+> protections for the cases we care about with SUID_DUMP_DISABLE.
+> 
+> What motivated you to want to change this behaviour?
+> 
 
-The clock-id property name may have been poorly chosen. This ID is used 
-by the DPLL subsystem during the registration of a DPLL channel, along 
-with its channel ID. A driver that provides DPLL functionality can 
-compute this clock-id from any unique chip information, such as a serial 
-number.
+Well, the change is motivated by two things, the first one is the fact
+that the only difference between ("noaccess", "invisible") and
+"ptraceable" is the verification of the "gid" hidepid parameter. Thus,
+in anyway it means that only ptraceable process can be seen. 
 
-Currently, other drivers that implement DPLL functionality are network 
-drivers, and they generate the clock-id from one of their MAC addresses 
-by extending it to an EUI-64.
+The second motivation is that the "ptraceable" mode didn't worked with
+the yama LSM, which doesn't care about `PTRACE_MODE_READ_FSCREDS` trace
+mode. Thus, using hidepid "ptraceable" mode with yama "restricted",
+"admin-only" or "no attach" modes doesn't do much.
 
-A standalone DPLL device, like the zl3073x, could use a unique property 
-such as its serial number, but the zl3073x does not have one. This 
-patch-set is motivated by the need to support such devices by allowing 
-the DPLL device ID to be passed via the Device Tree (DT), which is 
-similar to how NICs without an assigned MAC address are handled.
+I have submited a fix to yama [1] in order to make it take into account
+`PTRACE_MODE_READ_FSCREDS` traces. With this yama patch, any hidepid
+modes would have been affected by yama decision even though the hidepid
+documentation claim that processes belonging to users are visible.
 
-Suggestions:
-1. Use the dpll-id property in dpll-device with the description:
-    "Specifies the unique ID of the DPLL device if it is not retrievable
-     from the hardware."
--or-
-2. Use microchip,id or microchip,dpll-id with a similar description, as
-    this issue is specific to this hardware, which does not provide such
-    information.
+The combination of the two patches thus makes the "ptraceable" hidepid
+mode work with yama without locking "noaccess" and "invisible" modes.
 
-Thanks for the advice.
+With hidepid "ptraceable" mode, `SUID_DUMP_DISABLE` process would be
+invisible to the user.
 
-Ivan
+[1]: https://lore.kernel.org/all/cf43bc15-e42d-4fde-a2b7-4fe832e177a8@oss.cyber.gouv.fr/
+
+> > This patch fixes the `has_pid_permissions()` function in order to make
+> > its behavior to match the documentation.
+> > 
+> > Note that since `ptrace_may_access()` is not called anymore with
+> > "noaccess" and "invisible", the `security_ptrace_access_check()` will no
+> > longer be called either.
+> > 
+> > Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+> > ---
+> >  fs/proc/base.c | 27 ++++++++++++++++++++++++---
+> >  1 file changed, 24 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/fs/proc/base.c b/fs/proc/base.c
+> > index c667702dc69b8ca2531e88e12ed7a18533f294dd..fb128cb5f95fe65016fce96c75aee18c762a30f2 100644
+> > --- a/fs/proc/base.c
+> > +++ b/fs/proc/base.c
+> > @@ -746,9 +746,12 @@ static bool has_pid_permissions(struct proc_fs_info *fs_info,
+> >  				 struct task_struct *task,
+> >  				 enum proc_hidepid hide_pid_min)
+> >  {
+> > +	const struct cred *cred = current_cred(), *tcred;
+> > +	kuid_t caller_uid;
+> > +	kgid_t caller_gid;
+> >  	/*
+> > -	 * If 'hidpid' mount option is set force a ptrace check,
+> > -	 * we indicate that we are using a filesystem syscall
+> > +	 * If 'hidepid=ptraceable' mount option is set, force a ptrace check.
+> > +	 * We indicate that we are using a filesystem syscall
+> >  	 * by passing PTRACE_MODE_READ_FSCREDS
+> >  	 */
+> >  	if (fs_info->hide_pid == HIDEPID_NOT_PTRACEABLE)
+> > @@ -758,7 +761,25 @@ static bool has_pid_permissions(struct proc_fs_info *fs_info,
+> >  		return true;
+> >  	if (in_group_p(fs_info->pid_gid))
+> >  		return true;
+> > -	return ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS);
+> > +
+> > +	task_lock(task);
+> > +	rcu_read_lock();
+> > +	caller_uid = cred->fsuid;
+> > +	caller_gid = cred->fsgid;
+> > +	tcred = __task_cred(task);
+> > +	if (uid_eq(caller_uid, tcred->euid) &&
+> > +	    uid_eq(caller_uid, tcred->suid) &&
+> > +	    uid_eq(caller_uid, tcred->uid)  &&
+> > +	    gid_eq(caller_gid, tcred->egid) &&
+> > +	    gid_eq(caller_gid, tcred->sgid) &&
+> > +	    gid_eq(caller_gid, tcred->gid)) {
+> > +		rcu_read_unlock();
+> > +		task_unlock(task);
+> > +		return true;
+> > +	}
+> > +	rcu_read_unlock();
+> > +	task_unlock(task);
+> > +	return false;
+> 
+> At the very least, this check needs to be gated based on
+> ns_capable(get_task_mm(task)->user_ns, CAP_SYS_PTRACE), to avoid
+> containers from being able to introspect SUID_DUMP_DISABLE processes
+> (such as container runtimes) in the process of joining a user namespaced
+> container.
+> 
+
+IIUC, you want to hide non-dumpable processes joining other user
+namespaces to avoid the data exposition of the non-dumpable process in
+`/proc/<pid>/*` ?
+
+Like whats is done in `__ptrace_may_access()` :
+
+```C
+mm = task->mm;
+if (mm &&
+    ((get_dumpable(mm) != SUID_DUMP_USER) &&
+     !ptrace_has_cap(mm->user_ns, mode)))
+```
+
+> >  }
+> >  
+> >  
+> > 
+> > ---
+> > base-commit: 884a80cc9208ce75831b2376f2b0464018d7f2c4
+> > change-id: 20250718-hidepid_fix-d0743d0540e7
+> > 
+> > Best regards,
+> > -- 
+> > Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+> > 
+> > 
+> 
+> -- 
+> Aleksa Sarai
+> Senior Software Engineer (Containers)
+> SUSE Linux GmbH
+> https://www.cyphar.com/
+
 
 
