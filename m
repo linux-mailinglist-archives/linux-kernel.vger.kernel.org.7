@@ -1,139 +1,90 @@
-Return-Path: <linux-kernel+bounces-736667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00702B0A03D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:01:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC7ABB0A042
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:02:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BE983BB8F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:00:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E01555A42D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:02:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6EB299957;
-	Fri, 18 Jul 2025 10:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B494829CB41;
+	Fri, 18 Jul 2025 10:02:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gb5x9nPg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xf39+wID"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B5979CD;
-	Fri, 18 Jul 2025 10:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10EFF1F0992;
+	Fri, 18 Jul 2025 10:02:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752832867; cv=none; b=tVz3859qFWt3TZG9xQDoKGSf4lTMQSVVB03EL4wFEy5E3SGbivHq20G6JapWg4QrG6tk1xkczYJsXl0TQw79MPBFg5ij5IRP+9gMBZAIJfypnGxHA0L2yEwSOt4zAeoTlbWik1OFeMuT4p9E2ThoDVsJENceJGqAkVvoPqtoOq8=
+	t=1752832931; cv=none; b=mX8cWJEu202YsY9/6fiYzi0f+jm/fFk+inJ50gL9NBh5Ucl9UXWi6Lk0EpqHtz9G+kLcHWxOYD0NNN9FHMQK0bASGhwhW+XzB/VdgINyLxfXq9qHusFm5QwjcX14ke2E6lwqwE6jRjv0faqw2rQRIp+izbeYZSkloOJ6q3CZM9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752832867; c=relaxed/simple;
-	bh=Tuozthw9ZWbinUst0+W0nWgiSMxjatMcwMmEzhFln5k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gmk1CgAtpsL0HRUX/weHY2zh5d31K5SINPsyWL2/lfAS5UPxdqmniYgIU9UnDXN/MeWg0G70HeiCb8TAlQO/Fl3E5V3sjfGidnhtDKdlE6PsWWDrU6O/asqIbdk9MJYpMkikxzppMxxTyVRxxJOKaCBj4ePORlFwxM/Ujcq8zbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gb5x9nPg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48AD7C4CEF5;
-	Fri, 18 Jul 2025 10:01:07 +0000 (UTC)
+	s=arc-20240116; t=1752832931; c=relaxed/simple;
+	bh=YEshVgIRVJe+FIOG30qXtz98FkUKcdC9CfphVOWVuSo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HxUOESyKufFU6t3PLkHG57E+5Y/9COd0IXDRVQMZ4WFaPirl6QfUPwr7YDOEb41k8GbnVfFnfW+uDiIDMaNFpg0hlfS6zUJbhBUzh5Htwzh439UGag4FP5ZCFerIr8FbQZIgG035j+AouvBkZXd7Z+3hIONne+/4fdN4N2LkYAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xf39+wID; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E111C4CEEB;
+	Fri, 18 Jul 2025 10:02:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752832867;
-	bh=Tuozthw9ZWbinUst0+W0nWgiSMxjatMcwMmEzhFln5k=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Gb5x9nPgu10FGWRqoi3cYuNPfLlL4YvTg1GtAKsR4yovmNJ/DXkg6iUNp2VBs1eAG
-	 AoyJqtTbxq0NyXyMZwRd/DWchb4kpYTfF4pJv5WQm7jiCP3X2drP61hHxc6pcn7Sad
-	 fA8psSt9EGMX49daeRH5qhiAjl+UWgtgHA4iYkvjaecBpxx20IfLR/yTQ9qfUA+cAD
-	 0ppwN0vBs4b3DX9tkNTf5XXDKSGnIQuoCowo65VMdnEfQ05LXRxipPWV/lvvl7iCYX
-	 GLZ56tnW5jmIYnoscROTXhNQyMU93OEuAgtWU6C4k5W07x2Mx1kLn9+bkqir5wW7YI
-	 K6IjImtoi0ScQ==
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-32f1763673cso22245681fa.3;
-        Fri, 18 Jul 2025 03:01:07 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVs/z7jIlGpmazhLuQ0ge6wpbLhOJIorKkgic/QdMm1xXFZ+rEDjLSqnHvxL0+j8hlufg1V7NDWBnV/B3SW@vger.kernel.org, AJvYcCXxRhr8vxbIT4TeH4DTvfCBjtJeI7ZmDm120YJtR87/j6/lInraSrDrevhSdDl/Y5g6uzoT/doKY3A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqhWovvelzNofgVYud2KNssb9ypitV1kxCMYxKyfCBgY0bI5Dd
-	L2oB2BLm9bAr0AngsJcbm1lQhxIdVwZEuh2q529dgZw3Y9i/axeVZoTQp2/B0llbcndja3xyOku
-	vT7leTTMxO9uk6d7/VQ0BqjDvSnkN9qQ=
-X-Google-Smtp-Source: AGHT+IE0JCjejMM8BHSWUFcEITfm3S50lNi329nj7HudyvgVJDd7HBWaJvX53xeYPxLhkNJuVFSXo5kd/764/FTiu6s=
-X-Received: by 2002:a2e:b8c2:0:b0:32a:8ac3:93f7 with SMTP id
- 38308e7fff4ca-3308f4e4c22mr28117531fa.14.1752832865643; Fri, 18 Jul 2025
- 03:01:05 -0700 (PDT)
+	s=k20201202; t=1752832930;
+	bh=YEshVgIRVJe+FIOG30qXtz98FkUKcdC9CfphVOWVuSo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xf39+wIDVK1OrrUxHmnLa08tKZQKbOEqtKMGVgrb3TjHC9YqGMPRAqqNXtlQfaeDx
+	 sx1ohGFwFJ3yf0+xooCXClBpS+W+V+J+DakSfW8mYu7ExRihyfjEyUBD1IfwZ3HQWE
+	 In9Tg9NMT5no4VPOV2Iu7MkwBuhowaCSgJH5ZBSOQZxDyNDondyfrX4yLZrq/7SPlz
+	 m9lwkwzZewspGNC1M5nxlKZegUDYcUnpqJ+P87Ucopt3D8/hzXMxsvt6vWRhlFjpCD
+	 VxHEyuwgqc2zwTFqqPMW4JD9HfrYqNcQw4Blln+V9HYzaQxTw1iBQf0RMS0H+yFhZf
+	 DXzLEyPANX4UQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1uchuk-000000007sE-1z1R;
+	Fri, 18 Jul 2025 12:02:02 +0200
+Date: Fri, 18 Jul 2025 12:02:02 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
+	mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
+	bhelgaas@google.com, johan+linaro@kernel.org, vkoul@kernel.org,
+	kishon@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
+	kw@linux.com, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-phy@lists.infradead.org,
+	qiang.yu@oss.qualcomm.com, quic_krichai@quicinc.com,
+	quic_vbadigan@quicinc.com
+Subject: Re: [PATCH v5 3/4] arm64: dts: qcom: sa8775p: remove aux clock from
+ pcie phy
+Message-ID: <aHobmsHTjyJVUtFj@hovoldconsulting.com>
+References: <20250718081718.390790-1-ziyue.zhang@oss.qualcomm.com>
+ <20250718081718.390790-4-ziyue.zhang@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250716-kmemleak_efi-v2-1-871878b767f5@debian.org>
-In-Reply-To: <20250716-kmemleak_efi-v2-1-871878b767f5@debian.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 18 Jul 2025 20:00:51 +1000
-X-Gmail-Original-Message-ID: <CAMj1kXFLE+9OsYJepxm0seHREvFB52VvjcQrRnQoSAT9Aoe1Mw@mail.gmail.com>
-X-Gm-Features: Ac12FXxUGFgRcSJwNYt8mbvnKAC1vrmToitVmFr_ofEm1l7fW_1PEYNQzsF1AOM
-Message-ID: <CAMj1kXFLE+9OsYJepxm0seHREvFB52VvjcQrRnQoSAT9Aoe1Mw@mail.gmail.com>
-Subject: Re: [PATCH v2] efivarfs: Fix memory leak of efivarfs_fs_info in
- fs_context error paths
-To: Breno Leitao <leitao@debian.org>
-Cc: Jeremy Kerr <jk@ozlabs.org>, Matthew Garrett <mgarrett@aurora.tech>, Jiao Zhou <jiaozhou@google.com>, 
-	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com, 
-	James Bottomley <James.Bottomley@hansenpartnership.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250718081718.390790-4-ziyue.zhang@oss.qualcomm.com>
 
-On Thu, 17 Jul 2025 at 01:23, Breno Leitao <leitao@debian.org> wrote:
->
-> When processing mount options, efivarfs allocates efivarfs_fs_info (sfi)
-> early in fs_context initialization. However, sfi is associated with the
-> superblock and typically freed when the superblock is destroyed. If the
-> fs_context is released (final put) before fill_super is called=E2=80=94su=
-ch as
-> on error paths or during reconfiguration=E2=80=94the sfi structure would =
-leak,
-> as ownership never transfers to the superblock.
->
-> Implement the .free callback in efivarfs_context_ops to ensure any
-> allocated sfi is properly freed if the fs_context is torn down before
-> fill_super, preventing this memory leak.
->
-> Suggested-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-> Fixes: 5329aa5101f73c ("efivarfs: Add uid/gid mount options")
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> ---
-> Changes in v2:
-> - instead of silenting the warning, just fix the problem.
-> - Link to v1: https://lore.kernel.org/r/20250715-kmemleak_efi-v1-1-c07e68=
-c76ae8@debian.org
-> ---
->  fs/efivarfs/super.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->
+On Fri, Jul 18, 2025 at 04:17:17PM +0800, Ziyue Zhang wrote:
+> gcc_aux_clk is used in PCIe RC and it is not required in pcie phy, in
+> pcie phy it should be gcc_phy_aux_clk, so remove gcc_aux_clk and
+> replace it with gcc_phy_aux_clk.
 
-Queued as a fix - thanks.
+Expanding on why this is a correct change would be good since this does
+not yet seem to have been fully resolved:
 
+	https://lore.kernel.org/lkml/98088092-1987-41cc-ab70-c9a5d3fdbb41@oss.qualcomm.com/
 
+Looks like you're missing a Fixes tag here too.
 
-> diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
-> index c900d98bf4945..284d6dbba2ece 100644
-> --- a/fs/efivarfs/super.c
-> +++ b/fs/efivarfs/super.c
-> @@ -390,10 +390,16 @@ static int efivarfs_reconfigure(struct fs_context *=
-fc)
->         return 0;
->  }
->
-> +static void efivarfs_free(struct fs_context *fc)
-> +{
-> +       kfree(fc->s_fs_info);
-> +}
-> +
->  static const struct fs_context_operations efivarfs_context_ops =3D {
->         .get_tree       =3D efivarfs_get_tree,
->         .parse_param    =3D efivarfs_parse_param,
->         .reconfigure    =3D efivarfs_reconfigure,
-> +       .free           =3D efivarfs_free,
->  };
->
->  static int efivarfs_check_missing(efi_char16_t *name16, efi_guid_t vendo=
-r,
->
-> ---
-> base-commit: 8c2e52ebbe885c7eeaabd3b7ddcdc1246fc400d2
-> change-id: 20250714-kmemleak_efi-bedfe48a304d
->
-> Best regards,
-> --
-> Breno Leitao <leitao@debian.org>
->
+> Signed-off-by: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+
+Johan
 
