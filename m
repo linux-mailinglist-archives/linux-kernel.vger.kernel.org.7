@@ -1,185 +1,102 @@
-Return-Path: <linux-kernel+bounces-737268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F182BB0AA1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 20:26:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3157DB0AA21
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 20:30:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 782DA7B731C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 18:25:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4C143AD279
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 18:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 775592E7BDF;
-	Fri, 18 Jul 2025 18:26:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF952E7BDF;
+	Fri, 18 Jul 2025 18:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HCWUh5St"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BSyrkYHc"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3639B2DECAA;
-	Fri, 18 Jul 2025 18:26:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C215D2E762A
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 18:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752863199; cv=none; b=fhFn6NkKF9e5XF0gTpNCPFSgIjEE2bnq3XmKpDPqKQk3X7wv+4mpF90o7xWHi3z6723Qncf+218Z9NRhBjdTFJPpTxS0MgpTzpI1gIgZznrjY4YI+Q8NiCXjqc/gv5xsSL1i/DSbfN/nmIOlPV1CYIaIVTGxHhqhtZDgMM9XKz8=
+	t=1752863399; cv=none; b=DkIeZRugQRAJQzaIuIJM3tYcmm61T+GyBd1cWNYvElwPFJr4JQzZz5YBWiM7BUqIrLWRZIVsa4ZwLSbrn7Qvm91Gcsap+LoXu9hBOjTRgmcBSHBRrQaLSuyF5hq7+46egb5ouHKQRMk8FqJZzUezdY3mOScByMspk6BHqh192N8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752863199; c=relaxed/simple;
-	bh=dgRbxkQ0coHr2iFITUehDhnrldRwgaTTUMWtfVL/amc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jc3cmPT8pznAT3zKeYV1i659cyHY5bUA5jlBWBSHdOZxJdNNYQ5HjoOQ2lUzNIKAmmbpyroPXgxVFiJdJpfCCRib0aw6uF9A55fNn3nBbCjmSUn/11iBNRJeOnfDmHVUbCOulbhmht/eYsFUyotijNtQ2eKIX/SUP2SZyrCHgv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HCWUh5St; arc=none smtp.client-ip=209.85.208.49
+	s=arc-20240116; t=1752863399; c=relaxed/simple;
+	bh=YKJ1uovM2EggmxTJohVAvKuVCz6yqNmxfdLf7g8+kts=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Lj/8rfqNalNw5ehdFC2Sk9mRyOAO6BDDR2uFZR9imb1feSH9nQ/RLMkfWVqBBj7jxC7tbXpKxK9p34am+0cdWY0RSATqey2lIrqahCXqKFn18BA8urq5dXqmvs0p9Qqfofv3to9wLuKViXHLYY4LfAlrpLHtre33U9EeVEePo0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BSyrkYHc; arc=none smtp.client-ip=209.85.160.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-605b9488c28so3963738a12.2;
-        Fri, 18 Jul 2025 11:26:37 -0700 (PDT)
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4ab61ecc1e8so17851291cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 11:29:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752863196; x=1753467996; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1752863397; x=1753468197; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RdHUOW5vj3zq8m63yOQTUFaQxpwM82ALHsQENfQNICI=;
-        b=HCWUh5StimmLKbXF7GLCPnVpHb+yuLo+Oumf27aXrY9Tc6s2qLax3dluhVAym9MTpk
-         Mw0rW3rcJZ4+lr4JRQfmpquxvlOlsY4ts/oP8e2SFOV3KJMxYaP4cJ0O4FTwNIj7w/SN
-         77u0HcVj/nZEnSBllIuMzBnF4x/5ElTM0NGNALtG30E4TQgLDl13hxJRWv3Tz4bfaVzE
-         4f97yBxvc5IhnWfRp9mRwOJZTECCPWUc85KjBK0KZsgekCJyLmCWw/Yvj0H75zKkn2Cz
-         1gTDYZk0Uku+PGO93CCWToelrg2OFKv4MhAqUzlE0HLLdYJ+CuSgtPXGfI5VD1x96RJC
-         h2Og==
+        bh=YKJ1uovM2EggmxTJohVAvKuVCz6yqNmxfdLf7g8+kts=;
+        b=BSyrkYHcKDbYgtEadYsWI6UfKnL8OPZ57cqNuLrvx2EECor1ATaFjCOJYOCwyN1d5J
+         u4JWaYf/lKheR9yyTC8XuYBc+Kh0728wSM02XLitVU1e07Z8qwR1QQ7ShqXqxg5UBo49
+         3nwHT6qk+mNVxVac/ZS+p8GGjdvaNADfvnKRYzwGYeFGZ25dNJbi6kBvYttIrPwHPrKL
+         YWc4ZPdmyWr1W8z8CzmNE5mYZwfhFillQ4hgLO649no/lQ2P1A1DhpyBlh4xN5zzXEvZ
+         MQhInCGCWcfVNicqBh1QEfS98cJbkTA2ICWyVB0rP4iqys/0hLb/+EJ91pTHYdjnMmMB
+         Tgzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752863196; x=1753467996;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1752863397; x=1753468197;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RdHUOW5vj3zq8m63yOQTUFaQxpwM82ALHsQENfQNICI=;
-        b=Bgoh4Vhuddgh78D1miAWiyP1+Fx3uLcKL0JxxdBSGFdxrx66fk4dFqIFTV8olpYpvu
-         umsyTjvngkh9AwYYjWlEoxOsBsqvDYOGZZLyqm0jHPKOec5Qbkfen04f+G45WO7mS2K9
-         GKE4eQ57nPMKGpNM9j6cH+HIFYFbPbcm9H+HU16haPkiKpVI0i6Nsa0YUllar2fQKVr4
-         bt13lTyooJz+4nR9mK5X+JQppl1m4gMgKlCVgfTjurblrWO4udx9WIvJQ5XLD/WcpjmM
-         oVaHHlZ8m0BfblRWo42hSPTMpst9JJadntIbOLmvFNPAUgzlA0ftMZkJM2M/HVMSZGj6
-         fFXA==
-X-Forwarded-Encrypted: i=1; AJvYcCVIGn47UZPqmu9rMjqTN7DL7NfMS4RQQNDjKO+dxC4xh+w4ARKNXWY5cPR4LoB+pa1QIjnTXYJiAKXFF8ML@vger.kernel.org, AJvYcCXHIho8Sp8fRUtpjfqYhSMQvCNg/e1vpMnU4Bc/PFSJ2sPyHAGCYztGcKvjN/iYWUmJDgiPeXG1B/DphpEf@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1AW3uwfhHuCMGcR52osQG+YdROGOmZfVB8QZBO1xoCBwxJB7z
-	17zscRD0k+ogj7EQcsiPsRKk8vfgLK5rTRKC18slND40Fz9LuvKt2Is9xTqCy1qI9bnYtIfhBWG
-	b5xhI1MxUgLh+zacR7MTQ449jfaJQPQ==
-X-Gm-Gg: ASbGncuxb6m1phgVlhdM3u/FJ0kKHgdlOdg24jfdRiKW4MGE8uGdjVTPXuJLgKs8AKS
-	hJKYSsA/bOBzqbSJwT6xgYFt0eAU+i6t/5wB2xxJkK188oUEN6XD87EPy1zzbhiSBpUQ3euRKc3
-	oRexm8smqfpCVcK4TTjN1T6+4bxs3kExFBhSRHyCUdil5fGh9qpJx2L4CXSED+dijWTM8rYjmfY
-	foT25Negg5ts6rblf/1TY8PQf7Nhevv3WWcRU+6PFtzimxYhA==
-X-Google-Smtp-Source: AGHT+IHC3HLRJsvkFkVqSZ46AEBeJChjVPKxTA/BcSmvLs7WHhxz2lrBATceKFfQkZ14s/5J0Opa/ATwK9R+q41RVsY=
-X-Received: by 2002:a05:6402:13c8:b0:612:b67f:d511 with SMTP id
- 4fb4d7f45d1cf-612b67fd68amr5613405a12.0.1752863196347; Fri, 18 Jul 2025
- 11:26:36 -0700 (PDT)
+        bh=YKJ1uovM2EggmxTJohVAvKuVCz6yqNmxfdLf7g8+kts=;
+        b=lrB58KxB601HWcNYJLaww8g0joNtfH3KJa8y35N4zM1Mziar+GSlGphCQnc5L+5tgd
+         /u3FnsICW+7E0AkU5QchM9XE+razw9P0O9uiq7sUJz8s9xShz7v8tBi3gBhHDtpZ3bDw
+         FYMOPG3eCXJdsHtEYYhO5A7lqOZWf+SXN4Bew2VZcH5FFpFylHbC9c2O1p0zQY16f1VG
+         KQhYVvA2MrNGwXoXXIVqiqE4wxWo20lQzhKs3hPgKvr28aThaUVPr+cwphJM6tteZ3Oz
+         InGaD+qEJUaYVdBOeFcOZ/7fpNhsDFOIRT43TcQUpAqYJCZz/Kr54LNep+R4SBL94HPs
+         8n6g==
+X-Gm-Message-State: AOJu0Yx2yO2B/FBLWamk9E/U1Q51nYT9ai6RIfWyd/OGaQGOpbYdCgXk
+	XZbwjYaxROONHgNKfQm6HvlUjkL1zFNeHjo3QmV/vGtAZ4dmB2pXLgWY
+X-Gm-Gg: ASbGncujdeudRNuZEqd0odw6hv/Cu5UhSRApCpEPc+WibDQ2x+FG7/C2gbzjNw2M5pU
+	9tyJCALL5YI6ntMB866DGz/qv/EV3sfpNQwWmO8j40MZDz65eODttLh/hMAyXD4JjQe6JavetWS
+	KSJIbKkypkNkON+cRU1yu0Fj5Oc0XfxaLK60vLz2uDLarVO//c3t9yM0XzDEeN2EjaMHoFB+nPA
+	1CJ3TcecTgp6kgD4TerUIjdir4LmX5u15vGfdP7S1u6a5mH7V+rOg3BHDR+rs9znlURVg/lf/3u
+	4Lz5k/GtqO2EDuiO8/DEY+LGLRibwnSmjQR/m322LdjvTNEHiq20PU+XeO7iBD/TBuPpvjZrEZ9
+	qCbFNv4gXcPYXAc7EYO35nnOa1k05OHRWcYztdhhuLLO8s3sGotg=
+X-Google-Smtp-Source: AGHT+IGS41v+6MhJMyaP5uh0rlE//WnNcesBuHP1dQ3r5I+puFmRIHytXffnkbGwgpihGdMRtnpkGw==
+X-Received: by 2002:ac8:7d42:0:b0:4ab:37bd:5aa5 with SMTP id d75a77b69052e-4ab93d8ca54mr130410341cf.44.1752863396346;
+        Fri, 18 Jul 2025 11:29:56 -0700 (PDT)
+Received: from linux-kernel-dev-start.. ([159.203.26.228])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4abb4b42618sm9815701cf.62.2025.07.18.11.29.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Jul 2025 11:29:55 -0700 (PDT)
+From: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	vivek.balachandhar@gmail.com
+Subject: Re: [PATCH v5 1/1] staging: rtl8192u: Rename ChannelPlan to channel_plan and fix index name 
+Date: Fri, 18 Jul 2025 18:29:38 +0000
+Message-Id: <20250718182938.188395-1-vivek.balachandhar@gmail.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <2025071809-sulfur-unvaried-8e9a@gregkh>
+References: <2025071809-sulfur-unvaried-8e9a@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250714173554.14223-1-daleyo@gmail.com> <20250714173554.14223-7-daleyo@gmail.com>
- <A9DB4AE061FD8BB9+3519a519-1a29-49c1-a07d-28a0577677cc@radxa.com>
- <CA+kEDGGaKrYO9Pu3un_Nq_6AOZC5L9sG+CEwh2ZEzWFeHGqtEA@mail.gmail.com>
- <eb0f5be5-3a6f-4969-affd-c01a6216ad0c@oss.qualcomm.com> <CA+kEDGE1kb12pW_OH1n4LmB9PVtgEsft563p9Cx_Mxev9Em3Ow@mail.gmail.com>
- <jsynzhzzt4drqcrvbuprjnvu33go4gow3l3hxgafuczdn67uhm@2eq7c5rzflr5>
-In-Reply-To: <jsynzhzzt4drqcrvbuprjnvu33go4gow3l3hxgafuczdn67uhm@2eq7c5rzflr5>
-From: =?UTF-8?B?SsOpcsO0bWUgZGUgQnJldGFnbmU=?= <jerome.debretagne@gmail.com>
-Date: Fri, 18 Jul 2025 20:26:03 +0200
-X-Gm-Features: Ac12FXw0jZDgjQifi0YDj_QD-wc9Vi5La0gySlLng6GYLLcXHYW4aWUZXrUKCds
-Message-ID: <CA+kEDGGVimBZDq1sa0gOXB7Vi6U8AVgD2E8mG_iTUJDce=56PA@mail.gmail.com>
-Subject: Re: [PATCH 6/9] drm/msm/dp: Work around bogus maximum link rate
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Xilin Wu <sophon@radxa.com>, 
-	Dale Whinham <daleyo@gmail.com>, Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <lumag@kernel.org>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Friday, Jul 18, 2025, Dmitry Baryshkov
-<dmitry.baryshkov@oss.qualcomm.com> wrote:
->
-> On Thu, Jul 17, 2025 at 11:36:38PM +0200, J=C3=A9r=C3=B4me de Bretagne wr=
-ote:
-> > Le jeu. 17 juil. 2025 =C3=A0 23:10, Konrad Dybcio
-> > <konrad.dybcio@oss.qualcomm.com> a =C3=A9crit :
-> > >
-> > > On 7/17/25 10:27 PM, J=C3=A9r=C3=B4me de Bretagne wrote:
-> > > > On 2025/7/17 04:21, Xilin Wu <sophon@radxa.com> wrote :
-> > > >>
-> > > >> On 2025/7/15 01:35:42, Dale Whinham wrote:
-> > > >>> From: J=C3=A9r=C3=B4me de Bretagne <jerome.debretagne@gmail.com>
-> > > >>>
-> > > >>> The OLED display in the Surface Pro 11 reports a maximum link rat=
-e of
-> > > >>> zero in its DPCD, causing it to fail to probe correctly.
-> > > >>>
-> > > >>> The Surface Pro 11's DSDT table contains some XML with an
-> > > >>> "EDPOverrideDPCDCaps" block that defines the max link rate as 0x1=
-E
-> > > >>> (8.1Gbps/HBR3).
-> > > >>>
-> > > >>> Add a quirk to conditionally override the max link rate if its va=
-lue
-> > > >>> is zero specifically for this model.
-> > > >>>
-> > > >>> Signed-off-by: J=C3=A9r=C3=B4me de Bretagne <jerome.debretagne@gm=
-ail.com>
-> > > >>> Signed-off-by: Dale Whinham <daleyo@gmail.com>
-> > > >>> ---
-> > > >>>   drivers/gpu/drm/msm/dp/dp_panel.c | 13 +++++++++++++
-> > > >>>   1 file changed, 13 insertions(+)
-> > > >>>
->
-> [...]
->
-> >
-> > > >
-> > > > Is it a feature planned in the short-medium term within the MSM dri=
-ver?
-> > > > If not, would a quirk like [4] be acceptable upstream in the meanwh=
-ile?
-> > >
-> > > I'm not a display guy, but this looks like yet another block of code
-> > > begging to be commonized across DP drivers,
-> >
-> > I agree 100% in principle, but the 3 implementations are different toda=
-y.
-> >
-> > > so I wouldn't expect it to be a big blocker.
-> >
-> > Well, it is for me :)
-> >
-> > > Adding a panel quirk doesn't seem in order, as the panel is /probably=
-/
-> > > very much in spec, and it's the driver bit that's missing.
-> >
-> > I agree that a quirk shouldn't be needed. I guess we'll work on
-> > upstreaming everything else and keep an out-of-tree patch for this
-> > issue for the moment That's a bit sad as this will block regular
-> > users from easily installing / testing via the Ubuntu Concept ISO
-> > for instance.
-> >
-> > Or could the quirk be accepted temporarily with good comments
-> > then reverted when the driver adds the missing support? I guess
-> > it would depend on the time scale of this support landing.
->
-> Unforutunately, there is more than that. We should also be writing the
-> LINK_RATE_SET register. So, just setting the max_bw is not enough.
+Hi Greg,
 
-Maybe I've misunderstood. When you say max_bw is not enough,
-are you talking about some future driver changes or about a potential
-shorter-term fix?
+The `rtl8192u` driver was removed from the kernel in commit 697455ce4110 on October 14, 2023, due to it being broken since 2016. As such, the patch I submitted for renaming `ChannelPlan` is no longer applicable.
 
-I can confirm that this initial simple patch (and also the updated one
-reusing the quirk list [4]) is enough to get the SP11 OLED display
-working whereas it doesn't probe and remains off without such a fix.
+I will pick another driver from `drivers/staging/` to work on for further contributions.
 
-Thanks,
-J=C3=A9r=C3=B4me
+Thanks!
+Vivek Balachandhar
 
-[4] https://github.com/JeromeDeBretagne/linux-surface-pro-11/commit/d265cfb
-> --
-> With best wishes
-> Dmitry
 
