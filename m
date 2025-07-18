@@ -1,87 +1,203 @@
-Return-Path: <linux-kernel+bounces-736766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A4D1B0A194
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:06:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4C20B0A197
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:07:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D83E172A5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:06:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C9383A3843
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BFF52BE63D;
-	Fri, 18 Jul 2025 11:06:06 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8625D33985;
+	Fri, 18 Jul 2025 11:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q6ghCjhz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1782BD59C
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 11:06:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 502F82BD59C
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 11:06:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752836765; cv=none; b=DlnZ3LADBht5s6Enrb8Sd1agi34E7IrgIOGh2ao73K7hvZ9bssLRRDKEVw+ZrZhszEXO0VAghWG4gtB6AJzdTQCI5ZegYHB5Dpb52/JrOd+NMe2S7Crp24dISnR2Uq/K305W8ylHCRBAGNyrplQ1sE+wEor8nQZzjiye4TTYaw8=
+	t=1752836798; cv=none; b=lhhmaKgUtBHeFopWkS1iN12mZbSmhYo8Z3lRiGb0wKAeRSBrBd6WqMY1i/DNVyqUR7Wkfuys4ouSUZl9C7hGburwVOtwsK5cidN8/d0HKligqD1OW6RHnfKKnAvIGbSu772E/muyBR7HjomeSPUCNhiuroTQGv1/4QJ4LRfrHOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752836765; c=relaxed/simple;
-	bh=mMYjD5ushRAcn0hxxbHrwd7wuEdKG3kCFHG24EwFero=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=qhQZ0oblLdHoEojqfyQ0hW9+0gp5bnXy7LeP44Q0FGtkp4VbsbzGAAv9My0huEPio0/WwatlJLn7faGSXl8qtZGsd7JVNS44yJASKEczpuOiZ91U5mUuz3ahC6/oZ0dexMxSinG4yUGsBt42Ge3Mefvr7JE2tGFZM6fy8M5wMB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-86d126265baso195508439f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 04:06:04 -0700 (PDT)
+	s=arc-20240116; t=1752836798; c=relaxed/simple;
+	bh=yV3C4OM0Ncg3Bd4NzNey4UabPHAiewsc05KQRlUt24g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JAPu3a0XJgZHtpxnyP71o04PJq3dEN5YZIuAno7T1Dj0mAR/Q33e0eEOgWQXpOaApjMzrat93b39JlJiTjOG3M7BkEZPcDIbEDV/9q8twAwiI8dZRY65heata2TWp9ijvgewRzMDoYwZCYkQxGFHF8aiNLp/VLQgYBBOVrCGXus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q6ghCjhz; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752836796;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=21+i6/3q/KbRZs7c78B9Zaciwq4VXi+y94ZoRHHKkFg=;
+	b=Q6ghCjhzEf3B3ry1MH8Kp6b9+6wxKV8vZbYPgdJVItblodhrs+nhB8dppSHM8k/5Gxq93G
+	LYMYSWRjWjinMelDistziDK4N3BEKNKMFzbqnhnbxHkAyldRNZwsedlpMRJ+bjHidtZ9yR
+	qrGkkWxzlRCAQ7WWFEvGxWr+K4NRbaA=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-589-jVG5-lcUPWSMAj510k5cVA-1; Fri, 18 Jul 2025 07:06:34 -0400
+X-MC-Unique: jVG5-lcUPWSMAj510k5cVA-1
+X-Mimecast-MFC-AGG-ID: jVG5-lcUPWSMAj510k5cVA_1752836794
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-456175dba68so15619745e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 04:06:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752836763; x=1753441563;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5yZ8G9EiyDhRVh1AzpW2U4oZQf3M8tcVseb712htYAg=;
-        b=H3v2AR1VIlYfhCyIo/IKwinAU5/Edrki7RZLmDmC5eksjnRyffQNJB/v7Ixz3AqHmf
-         jcvsUK/Unhrl3bWQOhmaN7FvdgIsQPRo36yUPq6onSvEL3ZKh+OuusFZoy7KBHXhmZQy
-         ZGtGfyZ8mTDujb3lfoRACBBkbh6gBiNunZityq7VfHMChxrj9gOD3Ha4axgmyfD8fZ1O
-         C+49UR2p8V+x//+ZCFGoT3KthtUgcI5bbeAOVA1qRplHGoLi/ajr4QLEjSqgfbNxLiJ4
-         gKoYcgJBzYWLaJFWczM4e1OVDmytxGzNEv2jKiK6ZyC3ZalQU3p5XthR+58OyxihrshQ
-         i7hw==
-X-Forwarded-Encrypted: i=1; AJvYcCWzMgcNtJOqKLC9as8IOlMC6OhHJw7JqjBPokhP8u75f6BoZkuUMmHgv+byELdf77syHEjKtbpHKSXigx8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyc+PzJ0awax6m5plUvFxnUrT1kJKHgbRoHqvDTvsW0zxXSYfI5
-	2GmtebQm6EW91SVvDd6GVUTU+iZYmr1OORuUoDHz+u/o1oiFLY0Drq9dHCqVaesumlGwnNthKtv
-	unUC6uAniCLNhPjAYe9xIJYczCC33dx9GX/GFvvT+LvnnHcaJx7aAvdeznXM=
-X-Google-Smtp-Source: AGHT+IH3XGerJTcZ08gWl7gkWbjUtHbgYsutqn8t7bKkbzp+UR+MXO2gWdp42jzBOwH0Xk3PsWYJSIw/fv2m5NY5wGEa8saFprWy
+        d=1e100.net; s=20230601; t=1752836793; x=1753441593;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=21+i6/3q/KbRZs7c78B9Zaciwq4VXi+y94ZoRHHKkFg=;
+        b=Jurr23nXn+wJuJsfxIExuyzyY4BY820rXts4ZtBa3XsCcoobR5noEi+Jx6+f52VAsp
+         KHo6ZkBRTF0Cz4FxM0kA58Ya2MEzoqzjRcWG0tLVWcMgNdZNKDYRLOZyW8owrXbc/BQV
+         E5bNuYUHYeGhCa5o5vRfG7LkbUAbIJoMgVS11lfbFNIljSG3XRoxv1ajlKrx0caiZ+dP
+         nlN0KcVxmoKXPFNsouvj13RDdN1yU9Y/x9vZ+PKln2pSR6MfkYRM5Ib2/hBJdN5SVWMV
+         f4gPu4lgS0a+9mq0mu51qyURsoz17Ja03qD8PyBqBZ1hQQLD89jvAG2Ea0mbV+qTVS0n
+         9dOA==
+X-Gm-Message-State: AOJu0YzFaVF1iSrbg1vt5xPvPdVsH8e9xTvGBD9/x2Kpsyq8sjpHHdjR
+	HQLCLxoll295n5EKsarCOXh09OZLipI0ovr+Alm7z3WImj06W7jr5/XsAMXZybdF02gWevl6sAY
+	h/ulLOb4wzcNYiJ7SnvwVXWyzsS3Cyf1xNJZrFq6dRAlzrqqWAB2Qjz9wBo9D9vacYQ==
+X-Gm-Gg: ASbGncuB2PNyMXddL+v6dqQ4gbxjrXeVyqUo581lYzRkWpBkWLV3RzaHE7/v0RS1OnG
+	urOjDYRU9ZFdX36Di+vP4PhQGGo5vhRtvvj6vVGqgO1iJJv9epvVbJvU4dfT+JRWg25kLzrEPoG
+	IPPwUw5E0gUhol9XFGWdkuzHeAJLlNV3eRdm/6FQw/hyTSbVUEGTPU1klstntD9E+T7b2h7sDoj
+	FBfvHGXG571S3ip0X8rvEcPFNVDRLwcevpBOz8AaAOAivdKbkkLoRKDi/4ttc62d7ZLYo0A5bA+
+	PD7inE4Mbscsk0fJ/df+ySRzobw/2tbvMCzw07zxqmaphbzxYLnHCTBJD4lTkn6FUAQmh5MFPyf
+	nrwTY7qFb2/Jr398aiuil67j+FpWO3XKaSiGcmAJ+deZjt2qlkiXcRCtpl10SLq7klgI=
+X-Received: by 2002:a05:600c:1d20:b0:454:a37a:db67 with SMTP id 5b1f17b1804b1-4562e36c7a6mr117551445e9.17.1752836793576;
+        Fri, 18 Jul 2025 04:06:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHcJiqGxI9oDWWi5nW5+YKTz9nonD/LjKsAIai1+MhX5KKmpqdahPoV4Oxx3e4BuJMcH10ZFA==
+X-Received: by 2002:a05:600c:1d20:b0:454:a37a:db67 with SMTP id 5b1f17b1804b1-4562e36c7a6mr117550875e9.17.1752836793013;
+        Fri, 18 Jul 2025 04:06:33 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f43:8900:f364:1333:2a67:d49e? (p200300d82f438900f36413332a67d49e.dip0.t-ipconnect.de. [2003:d8:2f43:8900:f364:1333:2a67:d49e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4563b740c51sm16819475e9.19.2025.07.18.04.06.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Jul 2025 04:06:32 -0700 (PDT)
+Message-ID: <889dade6-8b3d-4cce-93ec-827886f7cb2c@redhat.com>
+Date: Fri, 18 Jul 2025 13:06:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6010:b0:876:a8dc:96cc with SMTP id
- ca18e2360f4ac-87c0136243cmr760657539f.6.1752836763586; Fri, 18 Jul 2025
- 04:06:03 -0700 (PDT)
-Date: Fri, 18 Jul 2025 04:06:03 -0700
-In-Reply-To: <aHoiS5AD92AR3QkT@strlen.de>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <687a2a9b.a70a0220.693ce.0061.GAE@google.com>
-Subject: Re: [syzbot] [netfilter?] KASAN: slab-out-of-bounds Read in nfacct_mt_checkentry
-From: syzbot <syzbot+4ff165b9251e4d295690@syzkaller.appspotmail.com>
-To: fw@strlen.de, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 8/9] mm: introduce and use vm_normal_page_pud()
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ xen-devel@lists.xenproject.org, linux-fsdevel@vger.kernel.org,
+ nvdimm@lists.linux.dev, Andrew Morton <akpm@linux-foundation.org>,
+ Juergen Gross <jgross@suse.com>, Stefano Stabellini
+ <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox
+ <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Zi Yan <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+ Hugh Dickins <hughd@google.com>, Oscar Salvador <osalvador@suse.de>,
+ Lance Yang <lance.yang@linux.dev>
+References: <20250717115212.1825089-1-david@redhat.com>
+ <20250717115212.1825089-9-david@redhat.com>
+ <4750f39e-279b-4806-9eee-73f9fcc58187@lucifer.local>
+ <fdc7f162-e027-493c-bfa1-3e3905930c24@redhat.com>
+ <15adb09d-4cdb-435d-927d-0c648d8239dc@lucifer.local>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAmgsLPQFCRvGjuMACgkQTd4Q
+ 9wD/g1o0bxAAqYC7gTyGj5rZwvy1VesF6YoQncH0yI79lvXUYOX+Nngko4v4dTlOQvrd/vhb
+ 02e9FtpA1CxgwdgIPFKIuXvdSyXAp0xXuIuRPQYbgNriQFkaBlHe9mSf8O09J3SCVa/5ezKM
+ OLW/OONSV/Fr2VI1wxAYj3/Rb+U6rpzqIQ3Uh/5Rjmla6pTl7Z9/o1zKlVOX1SxVGSrlXhqt
+ kwdbjdj/csSzoAbUF/duDuhyEl11/xStm/lBMzVuf3ZhV5SSgLAflLBo4l6mR5RolpPv5wad
+ GpYS/hm7HsmEA0PBAPNb5DvZQ7vNaX23FlgylSXyv72UVsObHsu6pT4sfoxvJ5nJxvzGi69U
+ s1uryvlAfS6E+D5ULrV35taTwSpcBAh0/RqRbV0mTc57vvAoXofBDcs3Z30IReFS34QSpjvl
+ Hxbe7itHGuuhEVM1qmq2U72ezOQ7MzADbwCtn+yGeISQqeFn9QMAZVAkXsc9Wp0SW/WQKb76
+ FkSRalBZcc2vXM0VqhFVzTb6iNqYXqVKyuPKwhBunhTt6XnIfhpRgqveCPNIasSX05VQR6/a
+ OBHZX3seTikp7A1z9iZIsdtJxB88dGkpeMj6qJ5RLzUsPUVPodEcz1B5aTEbYK6428H8MeLq
+ NFPwmknOlDzQNC6RND8Ez7YEhzqvw7263MojcmmPcLelYbfOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCaCwtJQUJG8aPFAAKCRBN3hD3AP+DWlDnD/4k2TW+HyOOOePVm23F5HOhNNd7nNv3
+ Vq2cLcW1DteHUdxMO0X+zqrKDHI5hgnE/E2QH9jyV8mB8l/ndElobciaJcbl1cM43vVzPIWn
+ 01vW62oxUNtEvzLLxGLPTrnMxWdZgxr7ACCWKUnMGE2E8eca0cT2pnIJoQRz242xqe/nYxBB
+ /BAK+dsxHIfcQzl88G83oaO7vb7s/cWMYRKOg+WIgp0MJ8DO2IU5JmUtyJB+V3YzzM4cMic3
+ bNn8nHjTWw/9+QQ5vg3TXHZ5XMu9mtfw2La3bHJ6AybL0DvEkdGxk6YHqJVEukciLMWDWqQQ
+ RtbBhqcprgUxipNvdn9KwNpGciM+hNtM9kf9gt0fjv79l/FiSw6KbCPX9b636GzgNy0Ev2UV
+ m00EtcpRXXMlEpbP4V947ufWVK2Mz7RFUfU4+ETDd1scMQDHzrXItryHLZWhopPI4Z+ps0rB
+ CQHfSpl+wG4XbJJu1D8/Ww3FsO42TMFrNr2/cmqwuUZ0a0uxrpkNYrsGjkEu7a+9MheyTzcm
+ vyU2knz5/stkTN2LKz5REqOe24oRnypjpAfaoxRYXs+F8wml519InWlwCra49IUSxD1hXPxO
+ WBe5lqcozu9LpNDH/brVSzHCSb7vjNGvvSVESDuoiHK8gNlf0v+epy5WYd7CGAgODPvDShGN
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <15adb09d-4cdb-435d-927d-0c648d8239dc@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 18.07.25 12:47, Lorenzo Stoakes wrote:
+> On Thu, Jul 17, 2025 at 10:14:33PM +0200, David Hildenbrand wrote:
+>> On 17.07.25 22:03, Lorenzo Stoakes wrote:
+>>> On Thu, Jul 17, 2025 at 01:52:11PM +0200, David Hildenbrand wrote:
+>>>> Let's introduce vm_normal_page_pud(), which ends up being fairly simple
+>>>> because of our new common helpers and there not being a PUD-sized zero
+>>>> folio.
+>>>>
+>>>> Use vm_normal_page_pud() in folio_walk_start() to resolve a TODO,
+>>>> structuring the code like the other (pmd/pte) cases. Defer
+>>>> introducing vm_normal_folio_pud() until really used.
+>>>
+>>> I mean fine :P but does anybody really use this?
+>>
+>> This is a unified PFN walker (!hugetlb + hugetlb), so you can easily run
+>> into hugetlb PUDs, DAX PUDs and huge pfnmap (vfio) PUDs :)
+> 
+> Ahhh ok. I hate hugetlb so very very much.
+> 
+> Oscar is doing the Lord's work improving things but the trauma is still
+> there... :P
+> 
+> Also yeah DAX ahem.
+> 
+> I'm not familiar with huge pfnmap PUDs, could you give me a hint on this? :>)
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+vmf_insert_pfn_pmd(), called from  drivers/vfio/pci/vfio_pci_core.c
 
-Reported-by: syzbot+4ff165b9251e4d295690@syzkaller.appspotmail.com
-Tested-by: syzbot+4ff165b9251e4d295690@syzkaller.appspotmail.com
+Essentially, we create huge PUDs when mapping device BARs to user space.
 
-Tested on:
+-- 
+Cheers,
 
-commit:         d32b52c0 netfilter: xt_nfacct: make sure acct name is ..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/fwestphal/nf.git testing
-console output: https://syzkaller.appspot.com/x/log.txt?x=16c77d8c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b309c907eaab29da
-dashboard link: https://syzkaller.appspot.com/bug?extid=4ff165b9251e4d295690
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+David / dhildenb
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
 
