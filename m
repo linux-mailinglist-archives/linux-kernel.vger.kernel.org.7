@@ -1,166 +1,154 @@
-Return-Path: <linux-kernel+bounces-736599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 764CEB09F25
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:20:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9180BB09F21
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:20:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9736D5862E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:20:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 053DCA825B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE901298CCD;
-	Fri, 18 Jul 2025 09:19:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C7929826D;
+	Fri, 18 Jul 2025 09:19:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jL84nbZd"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CbMJwHnl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87004298CD7;
-	Fri, 18 Jul 2025 09:19:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4967296163
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 09:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752830379; cv=none; b=S6sk5LquW9XF5B/iU7FHxyoLCKIWMfgK2iBu3L2a1bPwgWShVYJs+4dJeTPiT4jfTVZF3ztMapuOVeyZhkwzVcMFwldsru3KBov5h8RyGknqdvewhwL2wx+lAMgaVXiAtzNxQwNJ8mEb6EuH0KHx6f5KKCj7jko48kSPjZyMwoM=
+	t=1752830374; cv=none; b=nk8lFVQ1+l+aWo7sBccrSzGKBWoKAqvE1PUIXSh6HzF4jNPSllnR1mT2qy7uZzsYMzpn0NVnnevtBnuv7Aqjz0mbxPF0iE9VOjGtKjPZJvL+qJGAW7aMBrFtrEawUXRaqorrmXA/FJm1gcPosIsAouCy0FDwlOe3P3XaY6nXK3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752830379; c=relaxed/simple;
-	bh=1vtCOtG0pwhTlbRz3AbiPSzpt2yIpDsGDLLhuXGZXvw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HfqdFCwMoNdbdgBfCxwUekZLmwFhN0I35j/9B1iHnT7N68D0xilIlMxgdqrMVZDx7+3X6u7hFbgoqhhVSP+JQgVAFW7RUc99NBkov+B5cI2Z/Q0JpsYqdWQdo2ySVkdko1E5GpknjTvF/7cqmlXzXl2ofXCy2jxe15Si6WkiYhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jL84nbZd; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4561ca74829so21165495e9.0;
-        Fri, 18 Jul 2025 02:19:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752830376; x=1753435176; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F9624kxdlf6YfwvmNaKwA8YxPHmSVKpCcbiEww8Vk3E=;
-        b=jL84nbZdojr8Db/iSYxDQ0ZSfXUO8pzPbQp3cWPmTYyNUZl24pXLWOtKWx2ai+/1cr
-         6i1MUnhxQUNxR9/gOGjj297cP9Uw82Yxr51dFOvSAdS//5TK7J4+BZSiCesn2vnE0X01
-         1eI43AuMopRFNElLiOPw6WA1TS1b7Tan1M3geyAl7eoDNeS34VcBZr++Oa/AycaQGo8m
-         MJ1qVjzgUyc4Mz2sSiVutAueE8ifcDRmeyfl5W5EFAhOtw/XddPZ5gUzGB8kkg8PFNtY
-         +QA0D2Q7GffgyvVSGNf3kGbyzZGUmADLEd3/JRRWRMf9thjh693CK83gEZ/9B/elExxg
-         G3rQ==
+	s=arc-20240116; t=1752830374; c=relaxed/simple;
+	bh=9OGXC+HPAx7wjOFmvBxnXdWUJNWtIqbDCCH7mHqqr6s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u/uqsmHv/upSacZFYjtRjWV6sX4qG7z3MyuoAdo9zNi65vvqTgLDAQzdNxbOMEfJk3t0/HZSiV9eZ1aw3wExpFR9io0GzYmw67g95ellgX315eD0ErB/UP5jl1Hm3gMwJC7qfQm5co0rRJTUjHi0S/YBD2JOwpUzOL81A4na2Sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CbMJwHnl; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752830371;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Rz7VEdzguNgZR75iuoM9tSMqqnHJY/Hj/MLHh0vHLZM=;
+	b=CbMJwHnlkstLQpf5jyc/1JXPdwrjWhd7Jesbu8p1dseqEZ+ga49ps3iZja5hNVQ+N2pcRD
+	3VSaQuT41QPkmkxi2kB2bDEmFZQfkc4zH1JuuNxxt+sac3SIi6VmKFGvTW/ZWcYauWMh+A
+	mV3uq+21LPx44mpNLbBYreKXn+aZ0uI=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-13-Dki8DEKDPamYJRbe2gXfRg-1; Fri, 18 Jul 2025 05:19:30 -0400
+X-MC-Unique: Dki8DEKDPamYJRbe2gXfRg-1
+X-Mimecast-MFC-AGG-ID: Dki8DEKDPamYJRbe2gXfRg_1752830369
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4538f375e86so17251205e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 02:19:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752830376; x=1753435176;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F9624kxdlf6YfwvmNaKwA8YxPHmSVKpCcbiEww8Vk3E=;
-        b=FhHtUdi3jiYd04E1o3pTV7mwjzXCUoiMSF9jBB5wy0H2FNhKZWz5IZF90UO1qupEMh
-         ves65BVjk00s7vhFOI1yb0m8DG/msr1/4Y31zSnQfR+uPAdauBhkwhhIaOuIPIZgbqGP
-         6bDX1R2fbjUEoTV3uNP4C65Wr0Yxnupjz795hVz5pozt34DNRnOE5oponv42qJL2yvug
-         8sylyCjcQvBbb+73a1b2ntgEN6eb+JLsTHHZVjo/468m7rsHRkJzAQ+F/fBEBFExKJbZ
-         uP3g4ztmJB7c1GxOt2+osp1+dMEPe9O/huGL4MolKUJRZl//YbDKWSczoG1ryVExQtbx
-         0Twg==
-X-Forwarded-Encrypted: i=1; AJvYcCUa3Voeyi1bPHjzqtuP4Y8Rx/ftSqI5mykMMh2QmDvv4srVEl3Ps5fFlUXafezNXZolsIqTd4DRt8ePqzj7@vger.kernel.org, AJvYcCV4Hky2wdmzAYgB9wkw258UIEtDERtXz2xYVeBL46AGG0HQUWbQYyhQRr1l59SzkFUPqzoR+7BG9BMb@vger.kernel.org, AJvYcCVI1h3Ny9bPWubIx1a+mzwasGQ83Am535DwxzUQuBxunJm6zvIsDUOjNRZo2n7oTgZ3xUyFv5AXrO4R@vger.kernel.org, AJvYcCW1Rma3SR96D3rJ0XypBWCu+EnM6D+MVgG51G0H0JKLDweWcmc0B0fJkvfzJbUCEhh3ErnfqrmEY/q3arE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyW+a2cXA3v3lHURwBJH+dEpz46t9pxI8G9NGyr7jkafYzIE63j
-	kWTxDq7JroXLS9URiBvauWR3TSe/hu/Iu+zISfmaMxe7IFMjAQoeNlQ1uKONJ7sgb2GRy5P5xW6
-	Hsg7mAirNzATqsLOgeFFBPw03X/BB66o=
-X-Gm-Gg: ASbGncusnelbDMdQUH+n8yDlaMICtEpwOGf3rxog7i93zCQXtocTqhlYNTYzEHcbvqT
-	cQJyRP/SeojRGKHdnQWhA1gpXFkNkdQgVsCqL2zicYlsYGovOzxyiFcZaImRsS3sCLdLrvA1w3E
-	GoW5v2vjWxynK6DrrK4al9CmOszuV7IJHfrKKNPqtRuV5NhyrI9TO32t27vmJSn8BdElfa4k0ia
-	nBe4BgS
-X-Google-Smtp-Source: AGHT+IFXFUxkSHC0x5yD9GpDrGnP0Vkk/6Hcqaopw6DVq8kJphRsVttXTBgES6eJ3vh7JXBvsfZ8EFDzCZr6pelsBmI=
-X-Received: by 2002:a05:600c:4f4f:b0:456:2cd9:fc41 with SMTP id
- 5b1f17b1804b1-4562e3b9937mr83880645e9.20.1752830375388; Fri, 18 Jul 2025
- 02:19:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752830369; x=1753435169;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rz7VEdzguNgZR75iuoM9tSMqqnHJY/Hj/MLHh0vHLZM=;
+        b=AlM8w6WaFrkEaRvG4NXD3+krsE6k28VDWdePYn374uYHbKO/Fz1gtwvHGrOGWkVV9W
+         KlL6rXWVv/6Ty37LGAbm4UA50ugIv/mKhQbkVkLeusO/AD/o+vMa8o9IiRTV81Iop9dM
+         4Drp4YNvftSAsEL03pjtGus5fi+YB+0KBwXD+ux+LSe8A17q5gmx9k99NLiYLnpJQZH1
+         ZugcRqiXx9KyaJ6Vs3nxNLCw22fI/oUF/kXDy9ONybXkHe2Qa2iUPNRBSODpwfNPXtsK
+         vNPiUXxVUczaANqizGIY32TxQDgmb6ZNE0GEhcz+SB6sO0h9oLGA2Fpx6Z4WA4C3AML5
+         AcFw==
+X-Forwarded-Encrypted: i=1; AJvYcCWlNmGPd9uFsBAUeFFg2hH9xKL2kCypZP5J6skOA2gew9yrqzHCfsLOkODxhEYshB0tO/YBarlVRu0LNsk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrbEuVcLBqzp8jJ/BcsOvKoybxR2PLg/+La6W/H0YpkgqzmpYC
+	/YWMOoYhzMpQmmbLbMdAhlpto7Mly8afOSkFBEo30sn9sQ6UuIgOovLKVm4khnek4LOlAD9q7+b
+	VyEYaKWqW6wdfmLZDt9gthf5XSrFD+QMm2S6CF1muAeWFYX3I+8dHOUhIdI16EISK2Q==
+X-Gm-Gg: ASbGncvtHD5tbzG5pL6J7nc7cQ0YHTbvOPhmtwUzwobZa3uZb0Lwwq7M04wuagXHXWX
+	7y7Gohzg9y6/8UI3Bd2qrct4X81hRyBN0rF/EfNFtSdBI2U9V3yoixfXCborXiBZXjWY5HB82eI
+	asRlFQIv2Fsg3sbVuCe6JrDaHlvnIkuIHufEbFRG+ZPMI8IGSiqj0cH7AOPUzc6nsNmIEegLj9W
+	LEP4QN4CYoCvzv5wbhlPAQsLHR/0gM2ctOZqep4bowOCiqk41LFsbdnjcmdj9TvzMbCWWXGaJqU
+	04nrqxUnF9o+rwR6wiSLZHCKj9qdAM5FFM5mU113YMjhjFdDuxMKTT/odl0AkMpxrBFTVMrtWjI
+	5FHjBa5YBGl0=
+X-Received: by 2002:a05:6000:440e:b0:3a5:1222:ac64 with SMTP id ffacd0b85a97d-3b60dd7b02dmr5390087f8f.38.1752830368955;
+        Fri, 18 Jul 2025 02:19:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHTjhEq8p44r045oEYKw5E0umkCtE+yHNEk65pXbCxLQ3y2DbvrtoknVhu/Al+Bpx9xmKqa4Q==
+X-Received: by 2002:a05:6000:440e:b0:3a5:1222:ac64 with SMTP id ffacd0b85a97d-3b60dd7b02dmr5390060f8f.38.1752830368389;
+        Fri, 18 Jul 2025 02:19:28 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca2dfe0sm1288433f8f.36.2025.07.18.02.19.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Jul 2025 02:19:27 -0700 (PDT)
+Message-ID: <7aeff791-f26c-4ae3-adaa-c25f3b98ba56@redhat.com>
+Date: Fri, 18 Jul 2025 11:19:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250717142139.57621-1-clamor95@gmail.com> <20250717142139.57621-5-clamor95@gmail.com>
- <10778402.NyiUUSuA9g@senjougahara>
-In-Reply-To: <10778402.NyiUUSuA9g@senjougahara>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Fri, 18 Jul 2025 12:19:24 +0300
-X-Gm-Features: Ac12FXzJO2FaPvG3kozLgWWtNWGcHAVWJUosR9Xg-jWP9kyKhG0okiB-C1KmNR4
-Message-ID: <CAPVz0n1u3=UcYvbZEfC59kMLD647pJKKiOQ308oQ9qde4vQcyQ@mail.gmail.com>
-Subject: Re: [PATCH v1 4/5] gpu/drm: tegra: dsi: add support for Tegra20/Tegra30
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, 
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Dmitry Osipenko <digetx@gmail.com>, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next V2 0/3] in order support for vhost-net
+To: Jason Wang <jasowang@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, eperezma@redhat.com,
+ kvm@vger.kernel.org, virtualization@lists.linux.dev, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, jonah.palmer@oracle.com
+References: <20250714084755.11921-1-jasowang@redhat.com>
+ <20250716170406.637e01f5@kernel.org>
+ <CACGkMEvj0W98Jc=AB-g8G0J0u5pGAM4mBVCrp3uPLCkc6CK7Ng@mail.gmail.com>
+ <20250717015341-mutt-send-email-mst@kernel.org>
+ <CACGkMEvX==TSK=0gH5WaFecMY1E+o7mbQ6EqJF+iaBx6DyMiJg@mail.gmail.com>
+ <bea4ea64-f7ec-4508-a75f-7b69d04f743a@redhat.com>
+ <CACGkMEv3gZLPgimK6=f0Zrt_SSux8ssA5-UeEv+DHPoeSrNBQQ@mail.gmail.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <CACGkMEv3gZLPgimK6=f0Zrt_SSux8ssA5-UeEv+DHPoeSrNBQQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-=D0=BF=D1=82, 18 =D0=BB=D0=B8=D0=BF. 2025=E2=80=AF=D1=80. =D0=BE 12:15 Mikk=
-o Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Thursday, July 17, 2025 11:21=E2=80=AFPM Svyatoslav Ryhel wrote:
-> > Tegra20/Tegra30 are fully compatible with existing tegra DSI driver apa=
-rt
->
-> 'apart from'
->
-> > clock configuration and MIPI calibration which are addressed by this pa=
-tch.
-> >
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
-> >  drivers/gpu/drm/tegra/drm.c |  2 ++
-> >  drivers/gpu/drm/tegra/dsi.c | 69 ++++++++++++++++++++++---------------
-> >  drivers/gpu/drm/tegra/dsi.h | 10 ++++++
-> >  3 files changed, 54 insertions(+), 27 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-> > index 4596073fe28f..5d64cd57e764 100644
-> > --- a/drivers/gpu/drm/tegra/drm.c
-> > +++ b/drivers/gpu/drm/tegra/drm.c
-> > @@ -1359,10 +1359,12 @@ static SIMPLE_DEV_PM_OPS(host1x_drm_pm_ops,
-> > host1x_drm_suspend,
-> >
-> >  static const struct of_device_id host1x_drm_subdevs[] =3D {
-> >       { .compatible =3D "nvidia,tegra20-dc", },
-> > +     { .compatible =3D "nvidia,tegra20-dsi", },
-> >       { .compatible =3D "nvidia,tegra20-hdmi", },
-> >       { .compatible =3D "nvidia,tegra20-gr2d", },
-> >       { .compatible =3D "nvidia,tegra20-gr3d", },
-> >       { .compatible =3D "nvidia,tegra30-dc", },
-> > +     { .compatible =3D "nvidia,tegra30-dsi", },
-> >       { .compatible =3D "nvidia,tegra30-hdmi", },
-> >       { .compatible =3D "nvidia,tegra30-gr2d", },
-> >       { .compatible =3D "nvidia,tegra30-gr3d", },
-> > diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
-> > index 3f91a24ebef2..85bcb8bee1ae 100644
-> > --- a/drivers/gpu/drm/tegra/dsi.c
-> > +++ b/drivers/gpu/drm/tegra/dsi.c
-> > @@ -662,39 +662,48 @@ static int tegra_dsi_pad_enable(struct tegra_dsi =
-*dsi)
-> > {
-> >       u32 value;
-> >
-> > -     value =3D DSI_PAD_CONTROL_VS1_PULLDN(0) | DSI_PAD_CONTROL_VS1_PDI=
-O(0);
-> > -     tegra_dsi_writel(dsi, value, DSI_PAD_CONTROL_0);
-> > +     /* Tegra20/30 uses DSIv0 while Tegra114+ uses DSIv1 */
-> > +     if (of_device_is_compatible(dsi->dev->of_node, "nvidia,tegra20-ds=
-i")
-> ||
-> > +         of_device_is_compatible(dsi->dev->of_node, "nvidia,tegra30-ds=
-i"))
->
-> You need to add "soc data" structures to the of_match table instead of
-> checking for compatible string in the code itself.
->
+On 7/18/25 4:04 AM, Jason Wang wrote:
+> On Thu, Jul 17, 2025 at 9:52 PM Paolo Abeni <pabeni@redhat.com> wrote:
+>> On 7/17/25 8:01 AM, Jason Wang wrote:
+>>> On Thu, Jul 17, 2025 at 1:55 PM Michael S. Tsirkin <mst@redhat.com> wrote:
+>>>> On Thu, Jul 17, 2025 at 10:03:00AM +0800, Jason Wang wrote:
+>>>>> On Thu, Jul 17, 2025 at 8:04 AM Jakub Kicinski <kuba@kernel.org> wrote:
+>>>>>>
+>>>>>> On Mon, 14 Jul 2025 16:47:52 +0800 Jason Wang wrote:
+>>>>>>> This series implements VIRTIO_F_IN_ORDER support for vhost-net. This
+>>>>>>> feature is designed to improve the performance of the virtio ring by
+>>>>>>> optimizing descriptor processing.
+>>>>>>>
+>>>>>>> Benchmarks show a notable improvement. Please see patch 3 for details.
+>>>>>>
+>>>>>> You tagged these as net-next but just to be clear -- these don't apply
+>>>>>> for us in the current form.
+>>>>>>
+>>>>>
+>>>>> Will rebase and send a new version.
+>>>>>
+>>>>> Thanks
+>>>>
+>>>> Indeed these look as if they are for my tree (so I put them in
+>>>> linux-next, without noticing the tag).
+>>>
+>>> I think that's also fine.
+>>>
+>>> Do you prefer all vhost/vhost-net patches to go via your tree in the future?
+>>>
+>>> (Note that the reason for the conflict is because net-next gets UDP
+>>> GSO feature merged).
+>>
+>> FTR, I thought that such patches should have been pulled into the vhost
+>> tree, too. Did I miss something?
+> 
+> See: https://www.spinics.net/lists/netdev/msg1108896.html
 
-I assumed that introducing "soc data" for 2 occurrences would be excessive.
+I'm sorry I likely was not clear in my previous message. My question is:
+any special reason to not pull the UDP tunnel GSO series into the vhost
+tree, too?
 
-> Thanks,
-> Mikko
->
->
->
->
+Thanks,
+
+Paolo
+
 
