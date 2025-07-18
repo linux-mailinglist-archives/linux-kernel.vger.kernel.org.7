@@ -1,115 +1,128 @@
-Return-Path: <linux-kernel+bounces-736758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C56CB0A176
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:01:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C83DB0A179
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:02:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57DB15A3A6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:01:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7263D5878ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25D02BE026;
-	Fri, 18 Jul 2025 11:01:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0374F2BE7B3;
+	Fri, 18 Jul 2025 11:02:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="XJ4kWejx"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="U5EF0Uih";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yHD+AwUZ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 963191A841E;
-	Fri, 18 Jul 2025 11:01:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F3B2BE03A;
+	Fri, 18 Jul 2025 11:02:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752836471; cv=none; b=lvw+z/zuV/VibnM3GleZfzcY+MV/w75qfkAI195+zEj00d6ukXMDrO03Sx6ZfUbedJgBozPexZjpDbCJY3wb+bQSLCD7i1o9rnTHZj+UsIO7aWsBW9UvGnukFGFvZJCflRbgLqURIxuWnBGmFZXc6QA8bNXC9kcG9fJbW1SQ9AM=
+	t=1752836525; cv=none; b=GplhQaZJ6FGQG9GkGa349g0CfPaGj/pj+csR6QjWOmwQn7GCZAMD6hdl1SMWX2RK2TJ5WWcp5r3tlLIndzT4TiihZyOX6qlqw1uK2oOjclZcPv/EYFsz3JxDBsX6zTUpde0cYD8LG9eZllsdFPoiRxz85OfVpKL+lx+TZ28lsEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752836471; c=relaxed/simple;
-	bh=I8D4OH1I4uFcDBVSAeempGAQ9vXZK3HnuS0u6gUpT3U=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=IaGzpWuTBH2ECisnWkYh9V3Y63NyJYhBKQnyNLGGHLVXuB2nfX9rqMmK0Mqokn6HPC/oOUxl/9blblS5s57zg5O8P5E7k4rcqpGECOcDH9wDHLBBEWU3iUKb/tU2TC/lNPa/x6+xFFVcAro3hzFwTaB0XRbBvYsJc7arCgr72So=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=XJ4kWejx; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1752836335;
-	bh=RPiFStHPSGr2FuHumOqoQfDFz4WKGE/wU5mxUzfi7rI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=XJ4kWejxkyIeM5lt6IhPkLwxSUbJrdVdnT+zQS9NabxwPQC7CvbDshl4jTBbIgIuK
-	 0hlt/9b0Pq+Cevp7JGjJ5M4mPIenpwahmS3G/gYqzojSUQ34NJF+2ROkPqoaRHP+tx
-	 a22/hGQFNZn29+cPgpvX/NCcQHrtzM8wC4knLtrZhbwAUgonLWlIGcb/15maoc/0KG
-	 FWFTwbdtf8rsOo2PT6mK9jX0AP5l8BTBxDhs7QvtmRjDuq6NRjqURFflesPyDrSfST
-	 d1EYNjD/Ovrr1oG5+F3D9m5NG8r4T/lsOyFeVXhW415lVjgMblhiAm5bCTpBoL0TYJ
-	 tIQUCxxs1B6Rw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bk6H34JzDz4xQZ;
-	Fri, 18 Jul 2025 20:58:55 +1000 (AEST)
-Date: Fri, 18 Jul 2025 21:01:05 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Miguel Ojeda <ojeda@kernel.org>, Greg KH <greg@kroah.com>, Danilo
- Krummrich <dakr@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Tamir Duberstein
- <tamird@gmail.com>
-Subject: linux-next: manual merge of the rust tree with the driver-core tree
-Message-ID: <20250718210105.0fd8ad19@canb.auug.org.au>
+	s=arc-20240116; t=1752836525; c=relaxed/simple;
+	bh=9h7aVVYYrDkHXwRvOkVokY42S8wdskjweITCzDd9S70=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NrgPa69HXXWN20v8LL1BDiUPciwvlDK8tmdQ9ZTTMejcbGVi+Iy0bMHwDfgKwDZ7rn9VdiLSNsVF+7JHumzd5n7qU3W4HqKP57JKv0LtuuVFbsqS3gvyFx0e4EX2LDqE9Ut6QcCvnlISyo9EEqRBe2ybzXFQK0gAefmCxcFQYgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=U5EF0Uih; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yHD+AwUZ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 18 Jul 2025 13:02:00 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752836521;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z77rWYLJsQPQA+WR1w6ttuEsYazonIeb3TNtZiLJapA=;
+	b=U5EF0Uih5X26U50A9Fb1lbRcnrZeq0FtOJnSo5CTywHTkGGVPjv4U7ZOWEGUgzCrliW7iG
+	Gn34yoSb9oK+PkjRRiKay3EG0IC7TjD5N1nl9qiLpb1YkrT+Lr+4ivyEcsM0TPOOiPen8O
+	pl4r+zAoACGzqu1BzXRpM3CSlFSnkO9vd5WBWyf6DzGdF3GY3hCFGg1aVUzXqktA8U7u1H
+	v2y7tZ19bwTgl6EWCvwkH3UahtOWb6v59vxZaNzMBzLTATTXRanBOmnhFPmbVHq1i0Irgl
+	hXNLW4bufNWwBJMesHhpqfz/UnPvMfg5MWdnpkMGHFkCSvXujodTn2h4Mza66Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752836521;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z77rWYLJsQPQA+WR1w6ttuEsYazonIeb3TNtZiLJapA=;
+	b=yHD+AwUZQmgz78krwhyqHvd6VV/g447bn5OKcRx2icl3ZCMy58siyJaCX1yJJ80zhplwBx
+	lJW9Zw1nuSgIBADQ==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: Matthew Wood <thepacketgeek@gmail.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Mario Limonciello <superm1@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v5 1/1] PCI/sysfs: Expose PCIe device serial number
+Message-ID: <20250718125935-75fa0343-af78-42be-bc3f-e8f806a4aee5@linutronix.de>
+References: <20250717165056.562728-1-thepacketgeek@gmail.com>
+ <20250717165056.562728-2-thepacketgeek@gmail.com>
+ <20250718113611.00003c78@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/CnO.sUv6_j_hSCTg_3wbFyt";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250718113611.00003c78@huawei.com>
 
---Sig_/CnO.sUv6_j_hSCTg_3wbFyt
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Jul 18, 2025 at 11:36:11AM +0100, Jonathan Cameron wrote:
+> On Thu, 17 Jul 2025 09:50:54 -0700
+> Matthew Wood <thepacketgeek@gmail.com> wrote:
 
-Hi all,
+(...)
 
-Today's linux-next merge of the rust tree got a conflict in:
+> > diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+> > index 268c69daa4d5..bc0e0add15d1 100644
+> > --- a/drivers/pci/pci-sysfs.c
+> > +++ b/drivers/pci/pci-sysfs.c
+> > @@ -239,6 +239,22 @@ static ssize_t current_link_width_show(struct device *dev,
+> >  }
+> >  static DEVICE_ATTR_RO(current_link_width);
+> >  
+> > +static ssize_t serial_number_show(struct device *dev,
+> > +				       struct device_attribute *attr, char *buf)
+> > +{
+> > +	struct pci_dev *pci_dev = to_pci_dev(dev);
+> > +	u64 dsn;
+> > +
+> > +	dsn = pci_get_dsn(pci_dev);
+> > +	if (!dsn)
+> > +		return -EIO;
+> > +
+> > +	return sysfs_emit(buf, "%02llx-%02llx-%02llx-%02llx-%02llx-%02llx-%02llx-%02llx\n",
+> > +		dsn >> 56, (dsn >> 48) & 0xff, (dsn >> 40) & 0xff, (dsn >> 32) & 0xff,
+> > +		(dsn >> 24) & 0xff, (dsn >> 16) & 0xff, (dsn >> 8) & 0xff, dsn & 0xff);
+> 
+> I wonder if doing the following i too esoteric. Eyeballing those shifts is painful.
+> 
+> 	u8 bytewise[8]; /* naming hard... */
+> 
+> 	put_unaligned_u64(dsn, bytewise);
+> 
+> 	return sysfs_emit(buf, "%02x-%02x-%02x-%02x-%02x-%02x-%02x-%02x\n",
+> 		bytewise[0], bytewise[1], bytewise[2], bytewise[3],
+> 		bytewise[4], bytewise[5], bytewise[6], bytewise[7]);
 
-  rust/kernel/devres.rs
+This looks endianess-unsafe.
 
-between commit:
+Maybe just do what some drivers are doing:
 
-  f5d3ef25d238 ("rust: devres: get rid of Devres' inner Arc")
+	u8 bytes[8];
 
-from the driver-core tree and commits:
+	put_unaligned_be64(dsn, bytes);
 
-  fcad9bbf9e1a ("rust: enable `clippy::ptr_as_ptr` lint")
-  23773bd8da71 ("rust: enable `clippy::as_ptr_cast_mut` lint")
+	return sysfs_emit(buf, "%8phD");
 
-from the rust tree.
-
-I fixed it up (I basically took the former version) and can carry the
-fix as necessary. This is now fixed as far as linux-next is concerned,
-but any non trivial conflicts should be mentioned to your upstream
-maintainer when your tree is submitted for merging.  You may also want
-to consider cooperating with the maintainer of the conflicting tree to
-minimise any particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/CnO.sUv6_j_hSCTg_3wbFyt
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh6KXEACgkQAVBC80lX
-0Gw0kAf/dyFEDn087jgotSLuwEc7RAR8yc951Pc9DuOCfrIrY27Pbt0J7Knio7uy
-bzCydjSYBrPRsFrhPvuMKvfIL4Ia/9tP3kh1CBQS4X00GyW7qt8yanrcOROAdh1x
-I0YdModO9DK04gGqjeDeEL94W1zv3hosfgH8f75uOKw30/+tX4DcGCLmqWEaKcHa
-nWqwBFy95tKY5kjVyrWAkIosU/ye3qtvxQJ/ErzGWeP1XPiqT1gBihpkgFLM4f/C
-1WgcSjPILcZcD8t25+1B8vQ3INRg28qyZqEykGorz3Y3Orct2nVvvipF2wFEu1sF
-hIce1b6+mF5fS25xTlXx8/FFesNwUg==
-=7oG6
------END PGP SIGNATURE-----
-
---Sig_/CnO.sUv6_j_hSCTg_3wbFyt--
+> 
+> 
+> > +}
+> > +static DEVICE_ATTR_ADMIN_RO(serial_number);
+> 
+> 
 
