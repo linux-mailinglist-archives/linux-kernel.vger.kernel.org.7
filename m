@@ -1,94 +1,115 @@
-Return-Path: <linux-kernel+bounces-736201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14E85B09A03
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 04:59:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5AFBB09A07
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 05:01:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D84BC4A832B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 02:58:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 477A1189CAAA
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:01:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3545E1C5D4B;
-	Fri, 18 Jul 2025 02:59:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFDE01C5D4B;
+	Fri, 18 Jul 2025 03:01:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ei9zX+H0"
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ddJLyyWx"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A37CA923
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 02:59:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA3B21400C;
+	Fri, 18 Jul 2025 03:01:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752807551; cv=none; b=LPVyF4t7G+CDENDW6rvDz9wkWTFCDH16rom7G5BqHvC31vbU/IMNtTmJ0b3M/cH5SJ1s4bh6FAOUhAoLGgtrZoDnoEXuP8euftKken06f0w4eYD1Xgg2J+oolgWEc7x+KrG9OnZwZT2Cyz2zuHRC/+fXbATX8w2yuLw5cspOd70=
+	t=1752807664; cv=none; b=nyMNb1BeMhsJVa5pNIXFqCwXLybMt+V0O8yEJb559x7v3PyGOM4/IkHbrCBJ3Wizi1CgvocwiJqYzxCP5qO35OELeM0qaAKzxOBytFXHuHblgPXu6a7XRo4zxJIFiT2tqUyqt5zol1NV98txM5+G1FEN/j3LqJ5nPhVcunNLXZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752807551; c=relaxed/simple;
-	bh=vjjF7HZgZmTzE5QaUT0K8dC1GXXNAEcvJ0+57MBGKsw=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=dggg3J7oizd1GB4lxR2BwkUSTbgia7/0WsxD92koPfclZyQr7CotKko2qXJJeXLZ9U7lgta9gpm3VThhsyDIyGrOT7mWY3Xuec9tSxQ9ghZWAU036z3DbIzaBWIw/uM2cHjdegwFRjWAYfPPcHqeIFD9+pGKP2CquQj+dP4Mr50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ei9zX+H0; arc=none smtp.client-ip=209.85.219.181
+	s=arc-20240116; t=1752807664; c=relaxed/simple;
+	bh=Za0zigQw41dhaLna7U8uhwpKysbTlyw5OLA2b/m2NTU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Rra9NAD1hrx6cOAsWdytSKNB51cLsGbcXS0V6eUZiVG4+roq9yxjPFQMQVrQXJnXRk88QS7WMO87KcwKDqth1sOViJb837RGfZdx3qr4A7H9aZx0W9ZL9PogQLc9WU1z+/Ev0a8Hu8rde/6oxyXlBsXRDnIvh7UoDuxa8aCVxdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ddJLyyWx; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e8d70c65abcso1074874276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 19:59:09 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-235ef62066eso21165955ad.3;
+        Thu, 17 Jul 2025 20:01:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752807549; x=1753412349; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=G4QEueiv/uKqTFrnIsLY/SjTQWW9tYevlmkSRo2zTLo=;
-        b=Ei9zX+H0B48fbDE5MTh+rrZcGq+qgw1zrG7W+emOr8HK2AqHTuvVGQr/YdUSY9lq4C
-         /V31ZkX+v4aitmwjae9oP+8s35p+pTg3RWi66pZwnJuQdMNxMzSf66ElBvtjwYO63dGz
-         0TyYiptd2z5L2HAbuXM4FreVctZdAiy9sz3AQzV7l+hDwZA2qohq/IysulhgBhWItQwU
-         XhIgcIYW2rzZmmh9jUBKQ6PqtQpAAUmeYRzuX2fipfPT446eeuPL7e1votOfECd1nNDR
-         4o79EXKNKwW82PQttQuRI2W1YE30ZSHwrnD4QX638G9uqByVnwndB+9++xNbKDbEqCum
-         kfqw==
+        d=gmail.com; s=20230601; t=1752807662; x=1753412462; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Dvd6aXGHQkXaHkQ7TKm1HstTmx2BHwwhF0e3QqMyYSA=;
+        b=ddJLyyWxu46sqlzcZQLHJYKuLm2QXrI0S6h9bQPZE3IeMqLx443OG0yjmSWKTnJ+P4
+         QvKAG+PDsg/W0HjmJc7ccB6uIjiWNDiCWMfcL8m8OfOsyO3R5vAT/RM313pQOwicQXN7
+         vWIqbb+cbrhPKbaQ3jYdfStseOCQQ/3cQbg8i2O/Hi5ZxFa74AnwXzfPf2znmD+K7jef
+         7v5ncsL7AcMCRqO83G6Dqj/mSpbNYx2/3IH3z9l5tPwVyUWfpOpBf0Y3db5kH4VMOreC
+         4MvumpDj4IlW+OLUrEDh6SMplr3uN6icuDhOeQjuoapZoKBdkwD+l+S+CJsziBB05MfG
+         pFLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752807549; x=1753412349;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=G4QEueiv/uKqTFrnIsLY/SjTQWW9tYevlmkSRo2zTLo=;
-        b=ISWGASHCOeBSVrbilArRq5Ejnq8mctEYGJcvzZhilhQNjNAiuN8/kJl3GpduF+Be81
-         KhdHLokRmqMefTCNcr1HCofWcU9zt3VCMVkEeZ/SucOTiiN6qC23lQCvIoD+K/myxDsO
-         C5OnNT6tTtbxdo+lNv1ZmH3IsusF3DuNxrqbqyiRdNydOlTkFrqJtJ/u95yXRnxi0LgP
-         8omQO/PxRisQhyKRVcOAoEjBqhdLj+Le690czP1KgpTlXWVhUunhWMFzFn32NAI9RrEe
-         3y4z9hDWavhK1D1C0lJBZuZV4awFiqU43eCsYkEmv09YY/FwOTrY/FGm4o9RDKL0Fc4v
-         jyRg==
-X-Gm-Message-State: AOJu0YxoJHy1m4w4DKD6JxNZLR3h+12i1QfnjeOLCmu1nYn/z/Any1Ht
-	msk/jU+mym/0Aovv9w0RcD114EBcPpU6A+LuHRj6sProHQE3EesmKtivlABxreGcgJKYO2jIAej
-	O2kUpOrCH7pCJg0KpSIHRrz5aCMRrsXbxwn2He3g=
-X-Gm-Gg: ASbGnctj7mjQF2+ssbbe1IOM5ZRYhkAhxnRK5eK5c6QHzX62HTNkezUV158S0CkFmKA
-	fVcrmZqeLu3zoAhZZLI4KK9VNGk+qkj8F8Iztep+Ed4kaO7pLo8Bq2f0TUudCGm+H3q5JGkCCv0
-	i6C0JV2nnJ3M9uHk41P1cB2h9+U1o7xnyac20W6vVWFDzt66tFKxueoi3DGHS+0ThZrBZRsPKzY
-	fduemff
-X-Google-Smtp-Source: AGHT+IFQJ6o5fIZXX+jpOeO4DzV0fmixu5GMuZZmECyrKxj3+KDfzWJ2aE+h5Or9aUiKDCnUOk+Ltya92aTnBpVmW00=
-X-Received: by 2002:a05:690c:6302:b0:70d:ed5d:b4da with SMTP id
- 00721157ae682-71834f36332mr138334597b3.8.1752807548227; Thu, 17 Jul 2025
- 19:59:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752807662; x=1753412462;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Dvd6aXGHQkXaHkQ7TKm1HstTmx2BHwwhF0e3QqMyYSA=;
+        b=In11MRgdu/07wluNQsvqUCK+wK3qHWoyITDY4G990+/MWuLGprcqLs+GlR1PIhNyzS
+         tmtbLx0B+kfGL2OkHGHUVJB0ue1QAHFW41JZPP+Y6s/vlxz+VgAmG37qZ+cWTAS7z8XV
+         n/GKgoQn1WcpBe8xysz4PZXuaLfHMPEWRasF95E+pY8+bnFaFdRdv+95QmrZUfSzmRrw
+         AX5lwslMxgLMEL+4etblFXcPInUkyx5O3qQbbwBQbsKijOTlDNDkIAL+uhggBwcGHMDP
+         a9FB0COpSCdZ4ISnZk9OrJF9oixOmj0y68idnmaUNWVWlVQq/qpTVELIcdGYCIjVzdgu
+         V/VA==
+X-Forwarded-Encrypted: i=1; AJvYcCWrDk+IHbMuRdRl0j/hpa/WbSreyhxMApchRzWLvg5c3EQmxKDy11XNcz/oSIupSsmUpI4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlZPmyoT5PbSAd+cqvkRJ0532VQhYnv0JAbyE0PEtWX/nCFVQX
+	ih4Fk4IES/CQLea6GAnMJxzK/zef+R2x2DlXlXqo+o8lKtHF5jtWy4cyepPRHeL2rAAHsXBlAvy
+	VxX4pWQzliBeAK5b0t779OjGH6Dr9VAc=
+X-Gm-Gg: ASbGncvv8JjuIXLVRuBgECctwVwoDu9CY2/HQ3DR9H7KDVL4W/PbgQ+UkHV00oCCK4V
+	a0fpZRj80vDX0ZEf9Do4qozPYk0nCSrSF8tMeG2kiK2KiSI43uC1N3MZRB3/XxpMY7QftVMkmG9
+	TG5Dt2Fm3wnHIDI6J6qq+NQVnhs2TS2BQpVc4Z5/Ia7xlkbmRtGalDRGTLxsrXgar04LCDP7rCT
+	/l8
+X-Google-Smtp-Source: AGHT+IEvE8yh3sg/OHvEoFG/uAp4Y0DWzGpfpsXGNyNRJ7ffnqbWWfrKE/MieXHpu89fSVDeFfLkbw73s91SBIl4OCY=
+X-Received: by 2002:a17:903:230d:b0:234:e3b7:5ce0 with SMTP id
+ d9443c01a7336-23e30384570mr63626075ad.47.1752807662088; Thu, 17 Jul 2025
+ 20:01:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Aaron Gray <aaronngray.lists@gmail.com>
-Date: Fri, 18 Jul 2025 03:58:51 +0100
-X-Gm-Features: Ac12FXz4FzD8whub4E7UDxXojkh0Iuxe-H1Cs1s44oC98K1mQ4tfau7ZjoRGWtM
-Message-ID: <CANkmNDf1FkXbPP=btJyU8p_Znwmn+sBRDL6fzJ323bu7iEOFbg@mail.gmail.com>
-Subject: [6.12.32|rockchip64|rk3588] Display failure issue
-To: linux-kernel@vger.kernel.org
+References: <20250709033242.267892-1-Neeraj.Upadhyay@amd.com> <20250709033242.267892-30-Neeraj.Upadhyay@amd.com>
+In-Reply-To: <20250709033242.267892-30-Neeraj.Upadhyay@amd.com>
+From: Tianyu Lan <ltykernel@gmail.com>
+Date: Fri, 18 Jul 2025 11:00:26 +0800
+X-Gm-Features: Ac12FXxzE_sqppZnZ_H83WBaxjsUusiyVeEqTm7Ac1K9rtfrr9Krd5_Y1_sE2q8
+Message-ID: <CAMvTesAspapFco-1Xu+LF=WnMTyp6i1ftF0+R1m1J-WsHGvdPQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v8 29/35] x86/sev: Enable NMI support for Secure AVIC
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: linux-kernel@vger.kernel.org, bp@alien8.de, tglx@linutronix.de, 
+	mingo@redhat.com, dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com, 
+	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com, 
+	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org, 
+	hpa@zytor.com, peterz@infradead.org, seanjc@google.com, pbonzini@redhat.com, 
+	kvm@vger.kernel.org, kirill.shutemov@linux.intel.com, huibo.wang@amd.com, 
+	naveen.rao@amd.com, kai.huang@intel.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I am using a rk3588 based device.
+On Wed, Jul 9, 2025 at 11:43=E2=80=AFAM Neeraj Upadhyay <Neeraj.Upadhyay@am=
+d.com> wrote:
+>
+> From: Kishon Vijay Abraham I <kvijayab@amd.com>
+>
+> Now that support to send NMI IPI and support to inject NMI from
+> the hypervisor has been added, set V_NMI_ENABLE in VINTR_CTRL
+> field of VMSA to enable NMI for Secure AVIC guests.
+>
+> Signed-off-by: Kishon Vijay Abraham I <kvijayab@amd.com>
+> Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+> ---
+> Changes since v7:
+>  - No change.
 
-I have four kernels, two older ones the display works 6.12.17, and
-6.12.22, but on 6.12.32, and 6.12.39 the display fails to work.
+Reviewed-by: Tianyu Lan <tiala@microsoft.com>
 
--- 
-Aaron Gray - https://bsky.app/profile/aaronngray.bsky.social |
-@AaronNGray@fosstodon.org | @AaronNGray@Twitter.com
-
-Meta-Mathematician, Independent Open Source Software Engineer,
-Computer Language Researcher and Designer, Type Theorist, Computer
-Scientist, Environmentalist and Climate Science Researcher and
-Disseminator.
+--
+Thanks
+Tianyu Lan
 
