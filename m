@@ -1,117 +1,168 @@
-Return-Path: <linux-kernel+bounces-736935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BB11B0A557
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:40:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2913B0A564
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:43:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BA0116C1CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:40:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 472D71724BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:43:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E4B313A3F2;
-	Fri, 18 Jul 2025 13:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pMluozId";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hdIzQ3dU"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10AA91624DF;
+	Fri, 18 Jul 2025 13:42:55 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616962AD2F
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 13:40:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AE162AD2F;
+	Fri, 18 Jul 2025 13:42:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752846037; cv=none; b=IdSPmTZCcRtvG8guIhmB6PXQsyDrlS2qnC7GC+r6fX71AMw8/JzaYWpp83FjRu9R2oDlq5jAgO4a6XLeUX4eoQGvuxkRZq1OJhF3skF5aPl9g8zSD3NdX27zNLwe9qcd6ND2+AdCf2Zilwsrc7gkA2rlsyvhQ+4fyNpSfX5Q85c=
+	t=1752846174; cv=none; b=ILDbnRKs3Pr1Sua7Fm9Z592AQsBYlYxLR54qrRtMoN5JyXrcphS4h05c851vlnAaOr3JtylnCyAb1U9Bz0m8N2KodOyM/JWRwAxuv/f049Mqp0Djm3jwRZqXBoytrMlEwpBBoFZ9Srfn8p1byx/ZhJzBCeZd3oD91Jl756bfhmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752846037; c=relaxed/simple;
-	bh=LjAcRieKgnMNYcLnZrs27PGMwV9sd+uOX82BwodEtro=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Q02bCun/hccsqUlxHVQWztY3q3C/7hQW9NkothzuWKsyy1m2+aSh3S3vFDvdxsKBQY7Ndp0+5RszeXy3IG+2bT8ysBL5ErkcD46HFdPGmsiC0CGtpWrybfAZ7Z/YHBzhQgqs5qQAJ419nH4nWXicalWtqjhleTjkvOCmJiaQTp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pMluozId; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hdIzQ3dU; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752846034;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=mo94wdkZNDuu5QGZVvAPQQVCJz7QXGr0/48yptUJ974=;
-	b=pMluozIdK72HGQH3aouNde4Sy8FLnoDw6EvYthFAqhtDJApHP5b1VV+saucTVGPZgSvLQ/
-	QPLsAXqCHZGRX+d5JUkvEtWbrUs2AxC8mZJU3iDrNGT7OG8pCVxZUSzSSs7QVbO8p3oVXQ
-	2oIhEA/kAH8FiYUPCksu+tHQfSOwad08orrYTL2N6uh62iwybs4gacV42V36szUcY7XChG
-	KWMPtZJy5oaUJN0E/0eoEhusNgkjD+conIob31AwIl+wZtr9MhqVxhSiMbdcHUBGk/wjH/
-	nL2iy8BUNh1Ya5Nd9zNKsPvwqx+QS12HxDP7fzZgzlWKwELqXGij6EcdJe2gaA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752846034;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=mo94wdkZNDuu5QGZVvAPQQVCJz7QXGr0/48yptUJ974=;
-	b=hdIzQ3dUq2/DyohiQtlXkFcSpDOfDUbpjTBI6U0HUYlN6mwq22xDvpd38/KwWEDeG3g+jX
-	3vo3dZXc5+T2ShDg==
-Date: Fri, 18 Jul 2025 15:40:32 +0200
-Subject: [PATCH] soc: ti: pruss: don't use %pK through printk
+	s=arc-20240116; t=1752846174; c=relaxed/simple;
+	bh=lV1nwsPTJfsJJGOsNP7H/houicUwMhl6uPB07Snem7M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ivMKht8jI7I4pFNBAPqF3QbEwqcRW76Q3Y5M0uiLECqvf2R8kHqykQcZjU1q7eemRUgz2gxItahxF9W8kIKwSDPgu3StCTJztFcL6eJIID3S5EyEXXA1D9jzw84iK4u+7e6VEqcXP3ZiggIhwHr89V+79O4WrsD9h43WktPDfJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [141.14.220.42] (g42.guest.molgen.mpg.de [141.14.220.42])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 623FC61E647AC;
+	Fri, 18 Jul 2025 15:41:41 +0200 (CEST)
+Message-ID: <7ae9f1ad-0882-4c33-9979-fafb03f7de18@molgen.mpg.de>
+Date: Fri, 18 Jul 2025 15:41:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Intel-wired-lan] [PATCH net-next v4 1/2] ice: Don't use %pK
+ through printk or tracepoints
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+ Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
+ intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+ Aleksandr Loktionov <aleksandr.loktionov@intel.com>,
+ Simon Horman <horms@kernel.org>
+References: <20250718-restricted-pointers-net-v4-0-4baa64e40658@linutronix.de>
+ <20250718-restricted-pointers-net-v4-1-4baa64e40658@linutronix.de>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20250718-restricted-pointers-net-v4-1-4baa64e40658@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250718-restricted-pointers-soc-v1-1-c0d0d0bc2e39@linutronix.de>
-X-B4-Tracking: v=1; b=H4sIAM9OemgC/x3MPQqAMAxA4atIZgMqFn+uIg6aRs3SSlJEEO9uc
- fyG9x4wVmGDsXhA+RKTGDLqsgA6lrAzis+Gpmpc1dU9KltSocQezyghsRpaJGyHoWt77xytBLk
- +lTe5//M0v+8HPaDLd2kAAAA=
-X-Change-ID: 20250718-restricted-pointers-soc-499748d55cbc
-To: Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752846034; l=1493;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=LjAcRieKgnMNYcLnZrs27PGMwV9sd+uOX82BwodEtro=;
- b=q94Q80T1q0imLgWgj4Y25ibsdl1Sv4feNSwafmljzXXGeaVEusmw2CTN8r+ycppoVa+Ucmoy0
- sBNWr6vfvfOBJ14oQ6CDECTADQr+MVkI4HMGBiJ9XboQffjJawv2ag+
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-In the past %pK was preferable to %p as it would not leak raw pointer
-values into the kernel log.
-Since commit ad67b74d2469 ("printk: hash addresses printed with %p")
-the regular %p has been improved to avoid this issue.
-Furthermore, restricted pointers ("%pK") were never meant to be used
-through printk(). They can still unintentionally leak raw pointers or
-acquire sleeping locks in atomic contexts.
+Dear Thomas,
 
-Switch to the regular pointer formatting which is safer and
-easier to reason about.
 
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- drivers/soc/ti/pruss.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thank you for the patch.
 
-diff --git a/drivers/soc/ti/pruss.c b/drivers/soc/ti/pruss.c
-index d7634bf5413a3421da296103fc1591030cd00cbc..038576805bfa0f8dece569cf6faecedfb43a392f 100644
---- a/drivers/soc/ti/pruss.c
-+++ b/drivers/soc/ti/pruss.c
-@@ -449,7 +449,7 @@ static int pruss_of_setup_memories(struct device *dev, struct pruss *pruss)
- 		pruss->mem_regions[i].pa = res.start;
- 		pruss->mem_regions[i].size = resource_size(&res);
- 
--		dev_dbg(dev, "memory %8s: pa %pa size 0x%zx va %pK\n",
-+		dev_dbg(dev, "memory %8s: pa %pa size 0x%zx va %p\n",
- 			mem_names[i], &pruss->mem_regions[i].pa,
- 			pruss->mem_regions[i].size, pruss->mem_regions[i].va);
- 	}
+Am 18.07.25 um 15:23 schrieb Thomas Weißschuh:
+> In the past %pK was preferable to %p as it would not leak raw pointer
+> values into the kernel log.
+> Since commit ad67b74d2469 ("printk: hash addresses printed with %p")
+> the regular %p has been improved to avoid this issue.
+> Furthermore, restricted pointers ("%pK") were never meant to be used
+> through printk(). They can still unintentionally leak raw pointers or
+> acquire sleeping locks in atomic contexts.
+> 
+> Switch to the regular pointer formatting which is safer and
+> easier to reason about.
+> There are still a few users of %pK left, but these use it through seq_file,
+> for which its usage is safe.
 
----
-base-commit: d086c886ceb9f59dea6c3a9dae7eb89e780a20c9
-change-id: 20250718-restricted-pointers-soc-499748d55cbc
+The line length are a little uneven.
 
-Best regards,
--- 
-Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+> Acked-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+> Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
+> Reviewed-by: Simon Horman <horms@kernel.org>
+> ---
+>   drivers/net/ethernet/intel/ice/ice_main.c  |  2 +-
+>   drivers/net/ethernet/intel/ice/ice_trace.h | 10 +++++-----
+>   2 files changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/intel/ice/ice_main.c b/drivers/net/ethernet/intel/ice/ice_main.c
+> index af68869693edf6004e70caa4e952794439d800ab..76d67b39a0c1af02293ef2df06a6735b46c6679f 100644
+> --- a/drivers/net/ethernet/intel/ice/ice_main.c
+> +++ b/drivers/net/ethernet/intel/ice/ice_main.c
+> @@ -9153,7 +9153,7 @@ static int ice_create_q_channels(struct ice_vsi *vsi)
+>   		list_add_tail(&ch->list, &vsi->ch_list);
+>   		vsi->tc_map_vsi[i] = ch->ch_vsi;
+>   		dev_dbg(ice_pf_to_dev(pf),
+> -			"successfully created channel: VSI %pK\n", ch->ch_vsi);
+> +			"successfully created channel: VSI %p\n", ch->ch_vsi);
+>   	}
+>   	return 0;
+>   
+> diff --git a/drivers/net/ethernet/intel/ice/ice_trace.h b/drivers/net/ethernet/intel/ice/ice_trace.h
+> index 07aab6e130cd553fa1fcaa2feac9d14f0433239a..4f35ef8d6b299b4acd6c85992c2c93b164a88372 100644
+> --- a/drivers/net/ethernet/intel/ice/ice_trace.h
+> +++ b/drivers/net/ethernet/intel/ice/ice_trace.h
+> @@ -130,7 +130,7 @@ DECLARE_EVENT_CLASS(ice_tx_template,
+>   				   __entry->buf = buf;
+>   				   __assign_str(devname);),
+>   
+> -		    TP_printk("netdev: %s ring: %pK desc: %pK buf %pK", __get_str(devname),
+> +		    TP_printk("netdev: %s ring: %p desc: %p buf %p", __get_str(devname),
+>   			      __entry->ring, __entry->desc, __entry->buf)
+>   );
+>   
+> @@ -158,7 +158,7 @@ DECLARE_EVENT_CLASS(ice_rx_template,
+>   				   __entry->desc = desc;
+>   				   __assign_str(devname);),
+>   
+> -		    TP_printk("netdev: %s ring: %pK desc: %pK", __get_str(devname),
+> +		    TP_printk("netdev: %s ring: %p desc: %p", __get_str(devname),
+>   			      __entry->ring, __entry->desc)
+>   );
+>   DEFINE_EVENT(ice_rx_template, ice_clean_rx_irq,
+> @@ -182,7 +182,7 @@ DECLARE_EVENT_CLASS(ice_rx_indicate_template,
+>   				   __entry->skb = skb;
+>   				   __assign_str(devname);),
+>   
+> -		    TP_printk("netdev: %s ring: %pK desc: %pK skb %pK", __get_str(devname),
+> +		    TP_printk("netdev: %s ring: %p desc: %p skb %p", __get_str(devname),
+>   			      __entry->ring, __entry->desc, __entry->skb)
+>   );
+>   
+> @@ -205,7 +205,7 @@ DECLARE_EVENT_CLASS(ice_xmit_template,
+>   				   __entry->skb = skb;
+>   				   __assign_str(devname);),
+>   
+> -		    TP_printk("netdev: %s skb: %pK ring: %pK", __get_str(devname),
+> +		    TP_printk("netdev: %s skb: %p ring: %p", __get_str(devname),
+>   			      __entry->skb, __entry->ring)
+>   );
+>   
+> @@ -228,7 +228,7 @@ DECLARE_EVENT_CLASS(ice_tx_tstamp_template,
+>   		    TP_fast_assign(__entry->skb = skb;
+>   				   __entry->idx = idx;),
+>   
+> -		    TP_printk("skb %pK idx %d",
+> +		    TP_printk("skb %p idx %d",
+>   			      __entry->skb, __entry->idx)
+>   );
+>   #define DEFINE_TX_TSTAMP_OP_EVENT(name) \
 
+Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+
+
+Kind regards,
+
+Paul
 
