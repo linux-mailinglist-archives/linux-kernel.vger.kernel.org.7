@@ -1,185 +1,98 @@
-Return-Path: <linux-kernel+bounces-737243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96393B0A9C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 19:46:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00215B0A9C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 19:47:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 092FD1C45C64
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:47:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22DAD5A4D69
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:47:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60E5C2E7194;
-	Fri, 18 Jul 2025 17:46:39 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF6E2E764D;
+	Fri, 18 Jul 2025 17:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="wlirihv7"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3B017A2F5;
-	Fri, 18 Jul 2025 17:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A66A2951CA;
+	Fri, 18 Jul 2025 17:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752860799; cv=none; b=dxqUsU1Mx9RbQBzGMpUm4rqqYHp1U43yo1OhEuzThSiyrbYRvhIwnXP95dCJUm5Uy+74Nlu9bxAqb5YAsjBD59B5Bf/AA4Q8+oW53tqOeBEN7ZFV75FGzH3XSEX+LLc+7R8Nj572D2c1YnGqsPVQ/xPY83BXE7f2WcTBy+tRGZw=
+	t=1752860852; cv=none; b=Zk64IYI+VBMZf0+waOMK9hSNx95fUUCKMgKoMaMdi0LklNNQM5g8IV4fNqYpo8BMaBTc1Bnnv3qFpR4ojCPcqtcfoWoJ4fXxyCe/GhpzWRtd/QPtE1KZY8dcnQpkz4PMsUHYGV+TZoSw6XvfSp6pXPbRqvYKz+3rvCMu49u7Czw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752860799; c=relaxed/simple;
-	bh=oBz/Fp1EodKwOhBcnhDmslhGP47e5o6kukJjwTdnwmk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TSFukugVH8oGmycVvoiyWoh+opvCtkQKqyrdEcJTBWAS6QExRIYrePIxJL3mflSPruTkY3Bp9V1GlXZDni66kcd0k8ixwZ4s8wlrwz2JtCAKS6lR6p0u3aAVU5R9IGzNbk9Zo4m3Ai2MNmesNMI0OixStAtMT3uA6nUwFzUheOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf04.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay03.hostedemail.com (Postfix) with ESMTP id 29497B6582;
-	Fri, 18 Jul 2025 17:46:30 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf04.hostedemail.com (Postfix) with ESMTPA id 799EF2002B;
-	Fri, 18 Jul 2025 17:46:28 +0000 (UTC)
-Date: Fri, 18 Jul 2025 13:46:27 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] tracing: kprobe-event: Allocate string buffers from
- heap
-Message-ID: <20250718134627.5d483ca4@batman.local.home>
-In-Reply-To: <175283846936.343578.3747359008449354291.stgit@devnote2>
-References: <175283843771.343578.8524137568048302760.stgit@devnote2>
-	<175283846936.343578.3747359008449354291.stgit@devnote2>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752860852; c=relaxed/simple;
+	bh=U0E/UkXN9tZDVC+Cvo2L0bymR6SulDUIwFpdsD2rypo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gNKWUZRRnzXMPMYbhrL944J6d7nI238s1Vjq5gfGVmw7pNUdlq6h0mjoJHpvlAfVit3PcTNeC2a1jmdJ26SXdMtYKWzHM+bulMpyPEa7bElSZVcrSbop8BfHjQe2IDCI7Bb7nMuT66OUB6c1AsKZ2RCcTnOZTN9yY/qeCBCXO80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=wlirihv7; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=YSPaaQKD+1KQwE0RoZaqBfGqciSCheGL4nggpnlyPHk=; b=wl
+	irihv7J6I0SLdkRjKy8NvcQcyBKNBcFfGm9BxhDwNRKoOd9xRwUDTbrxMTMT1+uzSjAlkcByMLc37
+	1FZG1tjoPTw0PBHCXGXHE/tBnQldrKWr2s5qmaF5AD3E+FB/iGmXPQ0luHxn0L8/H9ggfdgEE6rIw
+	UOXdspGlKsOBbtI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1ucpAz-0021D4-Ci; Fri, 18 Jul 2025 19:47:17 +0200
+Date: Fri, 18 Jul 2025 19:47:17 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Christoph Stoidner <C.Stoidner@phytec.de>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Stefan Wahren <wahrenst@gmx.net>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"upstream@lists.phytec.de" <upstream@lists.phytec.de>,
+	Primoz Fiser <primoz.fiser@norik.com>
+Subject: Re: [Upstream] Re: [PATCH v3] arm64: dts: freescale:
+ imx93-phycore-som: Delay the phy reset by a gpio
+Message-ID: <07a0c325-03f5-4b5d-b6e7-9477aec4e5ad@lunn.ch>
+References: <bf0eb48fc72f4b0abbf62077c2f1fe4438579746.camel@phytec.de>
+ <967484d9-4165-4b75-bbb7-a203c36e8beb@gmx.net>
+ <517be266ebc3b55da53372a76a139245f8945cd8.camel@phytec.de>
+ <5afa6d62-4a3f-4c28-8165-363075ac36d8@lunn.ch>
+ <a948b903766a82897e5fc17a840ab40e29f5eda4.camel@phytec.de>
+ <8e448625-b4ad-4bf1-8930-6fecdedb1d8d@lunn.ch>
+ <78ec24d09d129d52d3442f6319cf1ef5b6ce7f3d.camel@phytec.de>
+ <739f93d0-4cb4-4f1a-8792-84502d4beefe@lunn.ch>
+ <626bca58-e481-4d6f-9bb7-252c040f4b3b@norik.com>
+ <ad5e7450c5cf3a2f9a5d3c23f7219eb08be31062.camel@phytec.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 799EF2002B
-X-Stat-Signature: pjxx5y3m8aq9wx17o1mkubzcpyzcshwa
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18zFTNJoWRCnrYe1mzILyAs45AHpmpIQJM=
-X-HE-Tag: 1752860788-768703
-X-HE-Meta: U2FsdGVkX1983FXNaEcUe10BALS9kFAXrTbh2q/p/7XpZPwlKHaAButfT8iJhMWfJJcBwTo6L0gpfT54as+VIVNglLtiQ3twha0cJtGStmBhj956TZ/vmKp9pneeqj3gzmEbb1oJtMGN8l5UrZfB1wgzDdSp5Usv8ONuIuqTWAYnfpGa9atRlU0dMRsz2krTUtnB6lrq/cOaj8MqcX64x/NQUKDmIzZmQ+p40w/hnu7U9r5Td8EotEVKc6G7wLmx6TUSQIaPOY0VPmGO54XMUUteDEhjOhdZ2geqXG9/rRhBGKf40gOjLy1+6lrOqjDaFEIbLAPOqKM9akCePkBHC4d1ttQwWgsyNgA7nie9jO67X9HK/32VzC7i0ZLQp/psHqNns//CDX8iCp1Qp/MHcw==
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ad5e7450c5cf3a2f9a5d3c23f7219eb08be31062.camel@phytec.de>
 
-On Fri, 18 Jul 2025 20:34:29 +0900
-"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
-
-> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On Fri, Jul 18, 2025 at 05:33:05PM +0000, Christoph Stoidner wrote:
+> On Di, 2025-07-08 at 10:35 +0200, Primoz Fiser wrote:
+> > Hi all,
+> > 
+> > is there something holding up this patch?
 > 
-> Allocate temporary string buffers for parsing kprobe-events
-> from heap instead of stack.
-> 
-> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> ---
->  kernel/trace/trace_kprobe.c |   39 +++++++++++++++++++++++++--------------
->  1 file changed, 25 insertions(+), 14 deletions(-)
-> 
-> diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-> index 15d7a381a128..793af6000f16 100644
-> --- a/kernel/trace/trace_kprobe.c
-> +++ b/kernel/trace/trace_kprobe.c
-> @@ -861,20 +861,20 @@ static int trace_kprobe_create_internal(int argc, const char *argv[],
->  	 *  FETCHARG:TYPE : use TYPE instead of unsigned long.
->  	 */
->  	struct trace_kprobe *tk __free(free_trace_kprobe) = NULL;
-> +	const char *event = NULL, *group = KPROBE_EVENT_SYSTEM;
-> +	const char **new_argv __free(kfree) = NULL;
->  	int i, len, new_argc = 0, ret = 0;
-> -	bool is_return = false;
->  	char *symbol __free(kfree) = NULL;
-> -	char *tmp = NULL;
-> -	const char **new_argv __free(kfree) = NULL;
-> -	const char *event = NULL, *group = KPROBE_EVENT_SYSTEM;
-> +	char *ebuf __free(kfree) = NULL;
-> +	char *gbuf __free(kfree) = NULL;
-> +	char *abuf __free(kfree) = NULL;
-> +	char *dbuf __free(kfree) = NULL;
->  	enum probe_print_type ptype;
-> +	bool is_return = false;
->  	int maxactive = 0;
-> -	long offset = 0;
->  	void *addr = NULL;
-> -	char buf[MAX_EVENT_NAME_LEN];
-> -	char gbuf[MAX_EVENT_NAME_LEN];
-> -	char abuf[MAX_BTF_ARGS_LEN];
-> -	char *dbuf __free(kfree) = NULL;
-> +	char *tmp = NULL;
-> +	long offset = 0;
->  
->  	switch (argv[0][0]) {
->  	case 'r':
-> @@ -893,6 +893,8 @@ static int trace_kprobe_create_internal(int argc, const char *argv[],
->  		event++;
->  
->  	if (isdigit(argv[0][1])) {
-> +		char *buf __free(kfree) = NULL;
+> I dont see any blocker.
+> @Maintainers: If there is any missing/blocking point, could you
+> please comment.
 
-So this gets freed when this if block ends, right?
+This _might_ be broken for NFS root. But that can be fixed when
+somebody actually has a problem with it.
 
-> +
->  		if (!is_return) {
->  			trace_probe_log_err(1, BAD_MAXACT_TYPE);
->  			return -EINVAL;
-> @@ -905,7 +907,7 @@ static int trace_kprobe_create_internal(int argc, const char *argv[],
->  			trace_probe_log_err(1, BAD_MAXACT);
->  			return -EINVAL;
->  		}
-> -		memcpy(buf, &argv[0][1], len);
-> +		buf = kmemdup(&argv[0][1], len + 1, GFP_KERNEL);
->  		buf[len] = '\0';
->  		ret = kstrtouint(buf, 0, &maxactive);
->  		if (ret || !maxactive) {
-> @@ -973,6 +975,9 @@ static int trace_kprobe_create_internal(int argc, const char *argv[],
->  
->  	trace_probe_log_set_index(0);
->  	if (event) {
-> +		gbuf = kmalloc(MAX_EVENT_NAME_LEN, GFP_KERNEL);
-> +		if (!gbuf)
-> +			return -ENOMEM;
->  		ret = traceprobe_parse_event_name(&event, &group, gbuf,
->  						  event - argv[0]);
-
-And you can't use the same trick here because
-traceprobe_parse_event_name() assigns "group" to gbuf and is used
-outside this if block.
-
-I notice there's no comment that states this. At the very minimum,
-traceprobe_parse_event_name() should have a kerneldoc comment above its
-definition and state this. But that's not an issue with this patch
-series. Just an observation. Thus...
-
-Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-
--- Steve
-
-
->  		if (ret)
-> @@ -981,16 +986,22 @@ static int trace_kprobe_create_internal(int argc, const char *argv[],
->  
->  	if (!event) {
->  		/* Make a new event name */
-> +		ebuf = kmalloc(MAX_EVENT_NAME_LEN, GFP_KERNEL);
-> +		if (!ebuf)
-> +			return -ENOMEM;
->  		if (symbol)
-> -			snprintf(buf, MAX_EVENT_NAME_LEN, "%c_%s_%ld",
-> +			snprintf(ebuf, MAX_EVENT_NAME_LEN, "%c_%s_%ld",
->  				 is_return ? 'r' : 'p', symbol, offset);
->  		else
-> -			snprintf(buf, MAX_EVENT_NAME_LEN, "%c_0x%p",
-> +			snprintf(ebuf, MAX_EVENT_NAME_LEN, "%c_0x%p",
->  				 is_return ? 'r' : 'p', addr);
-> -		sanitize_event_name(buf);
-> -		event = buf;
-> +		sanitize_event_name(ebuf);
-> +		event = ebuf;
->  	}
->  
-> +	abuf = kmalloc(MAX_BTF_ARGS_LEN, GFP_KERNEL);
-> +	if (!abuf)
-> +		return -ENOMEM;
->  	argc -= 2; argv += 2;
->  	ctx->funcname = symbol;
->  	new_argv = traceprobe_expand_meta_args(argc, argv, &new_argc,
-
+	Andrew
 
