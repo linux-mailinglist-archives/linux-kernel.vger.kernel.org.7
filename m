@@ -1,136 +1,140 @@
-Return-Path: <linux-kernel+bounces-736248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B18F8B09A75
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:14:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F227B09A76
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:15:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E146188677F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 04:14:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9037617FD3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 04:15:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD9AB1DDA18;
-	Fri, 18 Jul 2025 04:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB5EE1DAC95;
+	Fri, 18 Jul 2025 04:14:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U41mU38G"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xn7K4bhI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E8E879CD;
-	Fri, 18 Jul 2025 04:13:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12E4779CD
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 04:14:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752812040; cv=none; b=EDNuNpLOTul92AASW2Lz1GgX4jjuPGEOvgBZdZI/jp7UokKLoH/55x1H3qiAzeEpe+r3eQTInXWtape0ogaWh0GMQE9gj3ASRDmZPYcX9hEdOmdSE8x1qn6mKLjLz/4cdHZi6s7u2Sp3NsNXrXxo7qL3uGZvT12Po1T0T8u/7+0=
+	t=1752812095; cv=none; b=kAWFVNYkQPNbg2/yQ9pWMsW9brfHo0qUKzwCaETcuWwqmRJnWlmh5SUoZsYJh7rqJSURgXu/L0gwVrA3y+h9BkOJNuEc9HpGZ7esqpOrPtkFz3DNPrnDAt5CoFnBq3vyHWLV3rmPKIn++UwhUXkfbxI6UtDR+VkL24h/aMe4Mlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752812040; c=relaxed/simple;
-	bh=DHnTfajQCSjlkvREjbmaEy/d/ta4Wp+DnSYxZJdnYw0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o5OqKG6P9IwlWdEjlcGrlxcmB2mb5a2dJ4MhgBgEpyAx4bnuPZSGCbWWhHHlSQN38SIUEQaJOCJKg91700UQjcL9t6lhGTUnsiOEFamjO3NMn8lQwgaD/sLrnqswAplXAcSFLKfgoqkGw3HLQwIbq0TskBMPtXC9RajOxGaTvco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U41mU38G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEFACC4CEF0;
-	Fri, 18 Jul 2025 04:13:59 +0000 (UTC)
+	s=arc-20240116; t=1752812095; c=relaxed/simple;
+	bh=WTcM2M9kmNXsP+5g19CjgmgDeuKz6sK0Y/K74c6qLhI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EqsPUYh0FD8AroLTwxynQ5+KmbIKYKYUgrWyv6D3ia+AAd2yyygL38P8ulCEAhJU3GV8s/WxBk6YkPbrKuCPp0CHya8NiUjTBOYQUzsr5oxsFlM2hcqbsPB0zFqUeuhQANgVJEvjjQLr1qHTvBlIoZQU1GM5yWh0lUPYauL8rYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xn7K4bhI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D71DC4CEED;
+	Fri, 18 Jul 2025 04:14:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752812039;
-	bh=DHnTfajQCSjlkvREjbmaEy/d/ta4Wp+DnSYxZJdnYw0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=U41mU38GA+VlBtnajAa35+hqG/tyMnmjIW1Fe7CKJZ9YtVJ4V9MLHgZLerv/Xz8c/
-	 ZE0wEqeSVCug0Lt4EMgtWffwOrelHEsY7utriP9bseQAP5YkwDSbN9PVM65PGpzqr8
-	 RUKWdQL1o9/Bi6wB+/2pEyhqlmob/WcbqD2lc/5Ad9rb1hgv7c6zgUxf08cOJGggyo
-	 NIL2nps5Z22BC28+W3jrwl6lfxmVKWQh8/Hp0EzUeM+uUy0u65amlnCBS7IYlJwXz2
-	 8dgbDyecqJwKu3xG0gt6G6SlboSHbtxEw5GsVUlWu6hc1IHCJB5FPJtagp3kupFq/r
-	 xxyEzySLUtFcw==
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-60c5b8ee2d9so3378435a12.2;
-        Thu, 17 Jul 2025 21:13:59 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUCjvWq/tNSP3sXH+kT6c5p0JXCsb1TccFfCMD/GKjBlf2IjK7HhY8yGFEpymAafhJDTKc=@vger.kernel.org, AJvYcCWnXqT+BSJJEPe2uKTBMNerlUDIoGODZ9wd2qULOdSP1QuKPx6fgV5beB4nrvVFk2D1CAWDV3Rdp6UYLvU8@vger.kernel.org
-X-Gm-Message-State: AOJu0YyepPnUoDocJ9TGE/8E2gFaod4HaZ3PJtWC5NlU66tMm/gtdCVU
-	Jshlp5jLJ6NEabvgxP520XJ09FkfGcLGRk5azqGMSCqg/BBvWlb2oJg38J9NTkYYLztF9X/GLBp
-	9IcwZKAWN6u+CAFi9PLGLjBLT4Q+lGcE=
-X-Google-Smtp-Source: AGHT+IEAC/CrykqlVUov+EJ/y6QUARM5tA1ycLqUcm4EWLS9EBEJLRu/mhAQR5yZ9JZRh3AJjQcI43NahP6URex6JzI=
-X-Received: by 2002:a17:907:7e81:b0:aec:4aa6:7800 with SMTP id
- a640c23a62f3a-aec4aa6a010mr634285766b.20.1752812038366; Thu, 17 Jul 2025
- 21:13:58 -0700 (PDT)
+	s=k20201202; t=1752812094;
+	bh=WTcM2M9kmNXsP+5g19CjgmgDeuKz6sK0Y/K74c6qLhI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Xn7K4bhISJNgiqwZjTilQT8pVaxN0woNqzBHvIbvZ4fnjCL6iKAowSlM9EPCL+lrs
+	 iKFm64+4vc2JnylFeUirOKNVPITseyxTtD0pVNvI5XUyCY8GGf0XN73YH5ZYjeU0ii
+	 uuAeKHVw2iICipRtuyVVsJnQHhtqdTZoOh9Cct39agl9GNW05XCgc3UKtx9qMJhH/M
+	 OaMuC1RxzF8WDCvwzaEdBLNmapi9HRiqSi10sn/ydnvQwM6louO0SfET9OXnyNrwK5
+	 vybqXwDzfvOJFwQlkmMu7pLoiDdYfd/fFz9vaGwYgu+pFf52VOmomOkK7Cbnkr52TK
+	 urma+ArOBaycg==
+Message-ID: <b99e0ae6-f273-4c2d-bdc3-dd8b301f2f0b@kernel.org>
+Date: Fri, 18 Jul 2025 13:14:51 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250716165929.22386-1-yury.norov@gmail.com> <20250716165929.22386-3-yury.norov@gmail.com>
-In-Reply-To: <20250716165929.22386-3-yury.norov@gmail.com>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Fri, 18 Jul 2025 12:13:46 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H729+VA4fAWX1SOhCAptSDSwLDAOp_RwB0hkDtvm0hMLg@mail.gmail.com>
-X-Gm-Features: Ac12FXx3hfpaLFwE6RdiI6R7mON-t5449W1RiBy40PMWcdfNUzWxzQG1L7EcO_o
-Message-ID: <CAAhV-H729+VA4fAWX1SOhCAptSDSwLDAOp_RwB0hkDtvm0hMLg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] LoongArch: KVM:: simplify kvm_deliver_intr()
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
-	WANG Xuerui <kernel@xen0n.name>, kvm@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] nvme: add capability to connect to an
+ administrative controller
+To: Kamaljit Singh <kamaljit.singh1@wdc.com>, kbusch@kernel.org,
+ axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
+ linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: cassel@kernel.org
+References: <20250718001415.3774178-1-kamaljit.singh1@wdc.com>
+ <20250718001415.3774178-2-kamaljit.singh1@wdc.com>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <20250718001415.3774178-2-kamaljit.singh1@wdc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi, Yury,
-
-On Thu, Jul 17, 2025 at 12:59=E2=80=AFAM Yury Norov <yury.norov@gmail.com> =
-wrote:
->
-> From: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
->
-> The function opencodes for_each_set_bit() macro, which makes it bulky.
-> Using the proper API makes all the housekeeping code going away.
->
-> Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+On 2025/07/18 9:14, Kamaljit Singh wrote:
+> Suggested-by: Niklas Cassel <cassel@kernel.org>
+> 
+> Add capability to connect to an administrative controller by
+> preventing ioq creation for admin-controllers.
+> 
+> * Add helper nvme_admin_ctrl() to check for an administrative controller
+> * Add helper nvme_override_prohibited_io_queues() to override queue_count
+> * Call nvme_override_prohibited_io_queues() from nvme_init_ctrl_finish()
+>   so it applies to nvme/tcp and nvme/rdma
+> 
+> Signed-off-by: Kamaljit Singh <kamaljit.singh1@wdc.com>
 > ---
->  arch/loongarch/kvm/interrupt.c | 25 ++++---------------------
->  1 file changed, 4 insertions(+), 21 deletions(-)
->
-> diff --git a/arch/loongarch/kvm/interrupt.c b/arch/loongarch/kvm/interrup=
-t.c
-> index 4c3f22de4b40..8462083f0301 100644
-> --- a/arch/loongarch/kvm/interrupt.c
-> +++ b/arch/loongarch/kvm/interrupt.c
-> @@ -83,28 +83,11 @@ void kvm_deliver_intr(struct kvm_vcpu *vcpu)
->         unsigned long *pending =3D &vcpu->arch.irq_pending;
->         unsigned long *pending_clr =3D &vcpu->arch.irq_clear;
->
-> -       if (!(*pending) && !(*pending_clr))
-> -               return;
-Is it necessary to keep these two lines?
-
-Huacai
-
-> -
-> -       if (*pending_clr) {
-> -               priority =3D __ffs(*pending_clr);
-> -               while (priority <=3D INT_IPI) {
-> -                       kvm_irq_clear(vcpu, priority);
-> -                       priority =3D find_next_bit(pending_clr,
-> -                                       BITS_PER_BYTE * sizeof(*pending_c=
-lr),
-> -                                       priority + 1);
-> -               }
-> -       }
-> +       for_each_set_bit(priority, pending_clr, INT_IPI + 1)
-> +               kvm_irq_clear(vcpu, priority);
->
-> -       if (*pending) {
-> -               priority =3D __ffs(*pending);
-> -               while (priority <=3D INT_IPI) {
-> -                       kvm_irq_deliver(vcpu, priority);
-> -                       priority =3D find_next_bit(pending,
-> -                                       BITS_PER_BYTE * sizeof(*pending),
-> -                                       priority + 1);
-> -               }
-> -       }
-> +       for_each_set_bit(priority, pending, INT_IPI + 1)
-> +               kvm_irq_deliver(vcpu, priority);
+>  drivers/nvme/host/core.c | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+> 
+> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+> index e533d791955d..105127638c31 100644
+> --- a/drivers/nvme/host/core.c
+> +++ b/drivers/nvme/host/core.c
+> @@ -3149,6 +3149,21 @@ static inline bool nvme_discovery_ctrl(struct nvme_ctrl *ctrl)
+>  	return ctrl->opts && ctrl->opts->discovery_nqn;
 >  }
->
->  int kvm_pending_timer(struct kvm_vcpu *vcpu)
-> --
-> 2.43.0
->
->
+>  
+> +static inline bool nvme_admin_ctrl(struct nvme_ctrl *ctrl)
+> +{
+> +	return ctrl->cntrltype == NVME_CTRL_ADMIN;
+> +}
+> +
+> +/*
+> + * An admin controller has one admin queue, but no I/O queues.
+> + * Override queue_count so it only creates an admin queue.
+> + */
+> +static inline void nvme_override_prohibited_io_queues(struct nvme_ctrl *ctrl)
+> +{
+> +	if (nvme_admin_ctrl(ctrl))
+> +		ctrl->queue_count = 1;
+> +}
+> +
+>  static bool nvme_validate_cntlid(struct nvme_subsystem *subsys,
+>  		struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
+>  {
+> @@ -3670,6 +3685,12 @@ int nvme_init_ctrl_finish(struct nvme_ctrl *ctrl, bool was_suspended)
+>  	if (ret)
+>  		return ret;
+>  
+> +	if (nvme_admin_ctrl(ctrl))
+> +		dev_dbg(ctrl->device,
+> +			"Subsystem %s is an administrative controller",
+> +			ctrl->subsys->subnqn);
+> +	nvme_override_prohibited_io_queues(ctrl);
+
+I do not think that this inline function is useful. Simply open-code it inside
+the if above:
+
+	if (nvme_admin_ctrl(ctrl)) {
+		/*
+		 * An admin controller has one admin queue, but no I/O queues.
+		 * Override queue_count so it only creates an admin queue.
+		 */
+		dev_dbg(ctrl->device,
+			"Subsystem %s is an administrative controller",
+			ctrl->subsys->subnqn);
+		ctrl->queue_count = 1;
+	}
+
+With this, feel free to add:
+
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+
+-- 
+Damien Le Moal
+Western Digital Research
 
