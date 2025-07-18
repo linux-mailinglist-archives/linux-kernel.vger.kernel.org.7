@@ -1,80 +1,154 @@
-Return-Path: <linux-kernel+bounces-736541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C73AB09E47
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:46:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD697B09E4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:47:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FDDC4E7629
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:45:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9917F3B7251
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486C9293B7E;
-	Fri, 18 Jul 2025 08:45:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12462221DA5;
+	Fri, 18 Jul 2025 08:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ax7dGiDj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b="ngGkpEEK"
+Received: from pf-012.whm.fr-par.scw.cloud (pf-012.whm.fr-par.scw.cloud [51.159.173.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE0D21B9F1;
-	Fri, 18 Jul 2025 08:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53AB41D5CE8;
+	Fri, 18 Jul 2025 08:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.173.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752828352; cv=none; b=nKW0nUcEznJ20AVK2wHIHhCm78FgAPmFjfklO6qj8SPZpdHZmc9+YcNBZAZYd0acGWcfqs4OQ3hZ32GAmD8pt8obR2AHdkaR061f4J1k0WANoeIL/dIOW0GLgqYMnYeWmg7Djvb8rRro4BUVsaT3Lqw6zcUCcbOZLjuE7uNvobk=
+	t=1752828462; cv=none; b=fNbDElq+paxTRv2BBady4wu2+7hu+VNn7nzzuB1E74myWDLmb1eaDm4yZRKe2lq3bnKWiAFX82MNTr6NyMLzXhaXAtqZ1aT+UeFdcYcfAK1bPJifdkFyQZFDqxY6BnYExfmPuMFgkLsoyZq5HY+xrv3rcqIRiIPlTfnLgiBm8Ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752828352; c=relaxed/simple;
-	bh=xxoKlqY7tpdbQYl1k1rMlb6plPhcFbQU8qEgcZttzs8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oPOnO8zxmeJf+sP/5DVaHHBio0sP5hDKWy6C6XwgdAqtRdEljS/Dkw7lSJ2n9t/i5La2ADlvw7GkDZXxHi1qgNG+60qXKNJyjWdIRr4wCkz7S85nfne/zBSyGv+m6oZQ6GTe+d4ua7Z3HCi1csNmKRzGT2ksGR94ZfE9Ew+a/9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ax7dGiDj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A99AC4CEF0;
-	Fri, 18 Jul 2025 08:45:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752828352;
-	bh=xxoKlqY7tpdbQYl1k1rMlb6plPhcFbQU8qEgcZttzs8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ax7dGiDjKS5HW9aNTnNXer1BNadRAFGX6pOR1cnRHD/A4L5jKRPEss5Vnj/4bdhyZ
-	 XhDfENNt5GXwqxU7zbuV73NFm0Mn7/zceHGNiL8Ef7Mw9smbOW+HVp3MJeKBbcyDDn
-	 ne/FPQli3qVA8Okx30aHdkanstJcoZ98Lh2H1NleBZU7VITbnPnssv+dSnYUhJf1WB
-	 Wua+viDXoKP6UTkH5Z9GS+cLp1tkDyZAy1QqXQQye8f7FtHBA6p1S1VUyFNBeMesSn
-	 u34UpEV1aJe2/5hjDoS140vFP+v+nqJtzVJ6FdOLtdP/leSI+Bd+jSJy9/awgAuN9X
-	 xLnNhDG8XCJEQ==
-Date: Fri, 18 Jul 2025 10:45:47 +0200
-From: Carlos Maiolino <cem@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, 
-	David Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the xfs tree
-Message-ID: <biqcjscrlgfmznvysigpkqqyr3xvy7dbtmdwwxf4bkirbri5l5@rgkuif4novc6>
-References: <jZld0KWAlgFM0KGNf6_lm-4ZXRf4uFdfuPXGopJi8jUD3StPMObAqCIaJUvNZvyoyxrWEJus6A_a0yxRt7X0Eg==@protonmail.internalid>
- <20250718100836.06da20b3@canb.auug.org.au>
- <hmc6flnzhy3fvryk5c4bjgo7qehhnfpecm2w6wfyz7q7wly3a4@nvo6ow5j3ffl>
- <lIRl0Kr0swAUaCb-rM9B3N7ey2F4OYOGLhUTy5UcChhvBMVYona6pjJ0VbWLdzwNImVQPYgYDvYLqWEawwOXGg==@protonmail.internalid>
- <aHoGzku_ey2ClrzD@infradead.org>
+	s=arc-20240116; t=1752828462; c=relaxed/simple;
+	bh=Yq9QXz0Ox7cbIpsb70CwWDGtHtjD0R+7SW0AdUkFj/s=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=tPG9H3wSHKbTFFRs7/poudOULDrjhVjX1NkF8qyG+tM5fAWWZ/9jvXMxJWd7LybNPMQEfD68ID54rarGjoaxqvE0uhOU+6Miyg5Mk2A+y78iHW4Q/SIaTF4tU8fXkVE5ehwc0XhsaEoqbuhDA4DM/Hd8tFn2EfyWJgMJ1YZDqM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr; spf=pass smtp.mailfrom=oss.cyber.gouv.fr; dkim=pass (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b=ngGkpEEK; arc=none smtp.client-ip=51.159.173.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.cyber.gouv.fr
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=oss.cyber.gouv.fr; s=default; h=Cc:To:Message-Id:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:Subject:Date:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Q4bpDP16sdxgAoqUdqyHFHkOWXzJgH0nvWgY+I/2VYQ=; b=ngGkpEEKhc4e8r2fTG6OVGqBJC
+	5i8FgWvD9kQd5MCupE70Ft+/ORQxHrPNMaVvJN4Cy6LU5pX7dEo6n7F9piEV4AWyMj5iZ0cHA7El5
+	NgKPw9uqcizH9zE/8MbUM33BlKIquFUYLIe36LO+4gAldBm+zi3rZB8di2k31ezfj3duW9DzMoD03
+	4Wqk076oX1ddXDoNsHcSt6IJ2VrBJJKRxQmYVscQs1R1ChlEwlI+jLF5j9H7uEKVZSq+b7dlR3lSl
+	9K8d1E2hph63vGsXM84ZqCyNV2AONnnQTr6BUmGb9UJ8uj2wL/2vet+u7gIdXmexnsnyxwnfM8AG2
+	zZm+V/mg==;
+Received: from laubervilliers-658-1-215-187.w90-63.abo.wanadoo.fr ([90.63.246.187]:16149 helo=archlinux.local)
+	by pf-012.whm.fr-par.scw.cloud with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <nicolas.bouchinet@oss.cyber.gouv.fr>)
+	id 1ucgkk-00000009z0B-0LNH;
+	Fri, 18 Jul 2025 10:47:38 +0200
+From: nicolas.bouchinet@oss.cyber.gouv.fr
+Date: Fri, 18 Jul 2025 10:47:22 +0200
+Subject: [PATCH] lsm: yama: Check for PTRACE_MODE_READ_FSCREDS access
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aHoGzku_ey2ClrzD@infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250718-yama_fix-v1-1-a51455359e67@ssi.gouv.fr>
+X-B4-Tracking: v=1; b=H4sIABkKemgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDc0ML3crE3MT4tMwK3dRE02SjZJMko7SkVCWg8oKiVKAw2Kjo2NpaAAy
+ vx4haAAAA
+X-Change-ID: 20250718-yama_fix-ea5c2c4b2fbe
+To: Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>, 
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Olivier Bal-Petre <olivier.bal-petre@oss.cyber.gouv.fr>, 
+ Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+X-Mailer: b4 0.14.2
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - pf-012.whm.fr-par.scw.cloud
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - oss.cyber.gouv.fr
+X-Get-Message-Sender-Via: pf-012.whm.fr-par.scw.cloud: authenticated_id: nicolas.bouchinet@oss.cyber.gouv.fr
+X-Authenticated-Sender: pf-012.whm.fr-par.scw.cloud: nicolas.bouchinet@oss.cyber.gouv.fr
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On Fri, Jul 18, 2025 at 01:33:18AM -0700, Christoph Hellwig wrote:
-> On Fri, Jul 18, 2025 at 10:30:56AM +0200, Carlos Maiolino wrote:
-> > Thanks for the heads up Stephen. I didn't catch those errors while build
-> > testing here. Could you please share with me the build options you usually
-> > use so I can tweak my system to catch those errors before pushing them to
-> > linux-next?
-> 
-> You'll need CONFIG_MEMORY_FAILURE and CONFIG_FS_DAX to trigger this.
-> All my test setups seem to lack the former.
-> 
+From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
 
-Heh, same. I'll default my build tests to use allmodconfig.
+Currently, yama only checks if the `PTRACE_MODE_ATTACH` mode is set
+during the `yama_ptrace_access_check()` LSM hook implementation.
 
-Thanks hch.
+In cases of call with the `PTRACE_MODE_READ_FSCREDS` mode, nothing
+happens. Thus, yama does not interact properly with the
+"hidepid=ptraceable" option.
+
+hidepid's "ptraceable" option being documented as follow :
+
+- hidepid=ptraceable or hidepid=4 means that procfs should only contain
+  `/proc/<pid>/` directories that the caller can ptrace.
+
+This patch simply add yama a `PTRACE_MODE_READ_FSCREDS` mode check to
+enable an interaction with "hidepid=ptraceable".
+
+Combined with hidepid=ptraceable, the following behaviors will then
+happen while reading in `/proc/<pid>`:
+
+- "restricted": A process that has a predefined relationship with the
+  inferior will see the inferior process in `/proc`.
+
+- "admin-only": A process that has the CAP_SYS_PTRACE will be able to
+  see every processes in `/proc`.
+
+- "no attach": A process will not see anything but itself in
+  `/proc/<pid>/`.
+
+It is important to note that the combination of "hidepid=ptraceable" and
+yama "no attach" also makes PIDs invisible to root.
+
+No access reports are logged in case of denied access with
+`PTRACE_MODE_READ_FSCREDS` to avoid flooding kernel logs.
+
+Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+---
+ security/yama/yama_lsm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
+index 3d064dd4e03f9eaaf5258b37ad05641b35967995..63b589850a88d35dd6a08b23c14ba1a660e6f1b3 100644
+--- a/security/yama/yama_lsm.c
++++ b/security/yama/yama_lsm.c
+@@ -352,7 +352,7 @@ static int yama_ptrace_access_check(struct task_struct *child,
+ 	int rc = 0;
+ 
+ 	/* require ptrace target be a child of ptracer on attach */
+-	if (mode & PTRACE_MODE_ATTACH) {
++	if (mode & (PTRACE_MODE_ATTACH | PTRACE_MODE_READ_FSCREDS)) {
+ 		switch (ptrace_scope) {
+ 		case YAMA_SCOPE_DISABLED:
+ 			/* No additional restrictions. */
+@@ -380,7 +380,7 @@ static int yama_ptrace_access_check(struct task_struct *child,
+ 		}
+ 	}
+ 
+-	if (rc && (mode & PTRACE_MODE_NOAUDIT) == 0)
++	if (rc && (mode & PTRACE_MODE_NOAUDIT) == 0 && (mode & PTRACE_MODE_ATTACH))
+ 		report_access("attach", child, current);
+ 
+ 	return rc;
+
+---
+base-commit: 5d8b97c946777118930e1cfb075cab59a139ca7c
+change-id: 20250718-yama_fix-ea5c2c4b2fbe
+
+Best regards,
+-- 
+Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+
 
