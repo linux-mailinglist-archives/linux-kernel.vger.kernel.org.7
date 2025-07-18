@@ -1,274 +1,156 @@
-Return-Path: <linux-kernel+bounces-737388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CEE5B0ABE6
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 00:02:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E204B0ABE9
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 00:04:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5AA87B36D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 22:00:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AF6958769D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 22:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 950162206B1;
-	Fri, 18 Jul 2025 22:02:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39A621FF36;
+	Fri, 18 Jul 2025 22:04:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="atQ+VqDF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FIcF68u/"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA1121FF2A;
-	Fri, 18 Jul 2025 22:02:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0B517CA17
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 22:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752876130; cv=none; b=E4Dt1xPfMYKEyvEsOsIVl8N7G7SGuLZFyCY63q3IwFgacwKUCCclt1Rol1YNoj9fynZHnesZd9o4Y1JW0R8kRaldQH3CTjYONH7vEOvKA2r61DmZeQAZZzP+TBPKN1t9GL1UqMVaXzFzFqhUEQqV267uHSQzoFHrc6Xa3ktrdGI=
+	t=1752876281; cv=none; b=jXb23uuZ8o0sHgwWrjyYGvtDKyq9ImrqVxDP6Sq8A/kS1Rko7/jBWWrJydZDncvRtisgF4C9d/HqC3bS9wCBxQ7jxU5AYwBXiWBzt4bvCse4n2OwOg1l72j23dsDFolI0WVegSQ1Qc7dsQNqJHwb9vZZY1RkZXUC1H3MDrEptQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752876130; c=relaxed/simple;
-	bh=Wm/nB+8sqai/GmFeLiGs8L4k09rvN69ajHYnv0IrTro=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nAPdA3nC9dIWgdGvh3GIspS1TbvWaRJUCrfSAgkMik/vj1oRUKm8krXeAIFIbsJQeFW0IssFGG6MqQXcQ0FW0kmTdzE3W9n7B3VRJUdw+tnETmOWpes+u5ObTq/eUluSnIEWLqVrErE9M32JZ+uxAqeYCzn6S17NKOU1cuy3mEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=atQ+VqDF; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752876129; x=1784412129;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Wm/nB+8sqai/GmFeLiGs8L4k09rvN69ajHYnv0IrTro=;
-  b=atQ+VqDFAt5uE8UdoHn3tVr0RswImuzaQPszXAC9x/65UrRmu/QXLtKE
-   TnaLJ8IoAyLvtz1Vbow73MilSULOMRNd+fXR7U9GbvTFHEmQDiNZqw3Dk
-   UVT2zkEBBAm4ll0zTZXdZ4lCZxLkGJJbBgM4pCEeeOEswHh4whkSoUbzU
-   HKSI7RhcYknP5BH3bsTBCkCwJeSiGb3t9lxLZaL8Hh5BD8UZ3t5F9NNeP
-   2ym7GoL2A1Ccv0JinMM7DrMZV77tjFfmtx/kbZfGNI8tkhY11aWpnXtrq
-   O+hJa2g+uU5Wf3XQFxZ0a+AireMUVBdnlQ8LZ2RGhgt4Mwsmlsx2gTgX4
-   Q==;
-X-CSE-ConnectionGUID: jb+WjHHMRP6QuR493p3Kog==
-X-CSE-MsgGUID: GZW2M9fdQnmW6JCDpuAqag==
-X-IronPort-AV: E=McAfee;i="6800,10657,11496"; a="65436682"
-X-IronPort-AV: E=Sophos;i="6.16,322,1744095600"; 
-   d="scan'208";a="65436682"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2025 15:02:07 -0700
-X-CSE-ConnectionGUID: uhiiYh7GSjCbuIqtKcW2ag==
-X-CSE-MsgGUID: bNU9ErX1RaiEYUbhxBrjAA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,322,1744095600"; 
-   d="scan'208";a="162295050"
-Received: from unknown (HELO [10.247.118.125]) ([10.247.118.125])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2025 15:01:57 -0700
-Message-ID: <0d8f7d31-2356-4c9e-9f2e-4bd070edf1e4@intel.com>
-Date: Fri, 18 Jul 2025 15:01:52 -0700
+	s=arc-20240116; t=1752876281; c=relaxed/simple;
+	bh=3DjuYLXtAsYQlyObqLWduTsvcR7X0g0x/sJxh6ampsk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mPoH/SIZrHxvA+nuIW6Gt7FmxQYL9g4KR749WxTaCF3twd+8JCeJplCtB1c/FmGeMTlnEB3O/47tbEu7JPUkumwa4iBgp6m1WIWA3my2JMy24oPX0V4T0Wfsx96+m4CUlk6PeSt6QTLcatCQUzLTiPIXSY/RF/Iuwbdsob70hM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FIcF68u/; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b31e076f714so2586424a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 15:04:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752876278; x=1753481078; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cotPtNUE4rLZJyYjdxBKbaVvjccEgnkQtK9k7m4RQqQ=;
+        b=FIcF68u/9eGO9wRqhQsAGtfflBY8kfbl07+EjcODDALI8r4+aWkPb4oZ8Trmc9s78u
+         H9TKJ44pKW+H73mTRlAMacmC7TRdoxShzZvrsrhnRowGrOhYGAaobA4waH6KNC7QVx5O
+         5NWIZSHdKuTWo4GQEm6W8t0km0y2JZX2JeVwU19WrQDuZziwx3FYtSmYfRdcNXMIacD6
+         66smxVAAi7AX0jxmf090BDMyUPCUIWOzULkqx6cPMk6UHe2Ri7lW4qlt8LcjtjeoTrgo
+         J7SGpnWNK9g9zcZ1DKcGsVhyHt/eTnbBuqNv9bHRQQyc0Oq6zN2qadhXneIhT/XivdAJ
+         3Rug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752876278; x=1753481078;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cotPtNUE4rLZJyYjdxBKbaVvjccEgnkQtK9k7m4RQqQ=;
+        b=aXq4uxpXjXFypfGu2FprzvTsPXUFON+ZEsLbDYf9RpwSK1IGl40UEc5Lh5Km2heu/a
+         QzrhUqN/dl6A/wHbYVRxJQJevWUKL8O0LQ/0k2frmNON0OODt84juH81pRKzu4KN5adu
+         sFRZvi7UDS2TZP3gPy0l/QHj5NzgK8m18z7Yqla8XZJvmOD4v+HJ9Mh62g4RKFZhkZTF
+         wPfLy2BAJB1p8RXikja9EJK1ZTYqQGUAn71IuHMsciKMfFW4LJ342lur2hEN+OR8flVW
+         UKlRH97XdQAUqUOd4V2V/A+MAaGEu1b0WJMxCSHXkWo2e3xARQX8Twc1P4sq4DhIH9gG
+         rqAQ==
+X-Gm-Message-State: AOJu0Yz5xrSbPgRSh3jy0wN8tUpZWWzFyabk2G+HXV8kkRMpqCuXe0Vv
+	M22rT/EuWl4m2Aahjq91sxka8SQ0DykY517P3/YXPbJRf7tC3NXTO7fTYm5LmA==
+X-Gm-Gg: ASbGncsLV34q47HWOhVbhxEVY2XyHZTcb77Ct2SWem1eaZCRIe1wYoaRL1Cne7nvInX
+	MPKlTqtZ9lIyNVh0DzfPEe3+dun6ym/I8NL3aZy4Y1Ke/2p7TotRVYLOAJapA0uhQ1k3kOUQFZA
+	0Qd61eQkX1xpM1RVQGlQVukWowyEQR3t/qJ1ttU2VaB3Kdd0VOTWtOXUKK1cXtcb1c3uEFKf2ku
+	iAPnpo3zfglTkqo6Ve9ZXsW3WY46jCNsQs6NyWJ5xu9Xnnl0VR/uyI4I4BW92eUEzfaWBzox5Ov
+	WVnPTWE/FuQDG9UmxyY8K9IYwIMwAXmsxtntjPXNDvQBA/ge9DlOep3nX1oQBZC0pAWL+ZMSe2x
+	PSogWwqKd7kUdLooiTmVfBe1KN9SbXNby7COX+oqG/74wzF2ELBd04/R/eCLkW9SDQVTnZfmGW3
+	Q5y6UzVGB62sRwog==
+X-Google-Smtp-Source: AGHT+IGQbuSHZnDK57D7JQm+lc791tZ8jnltH/uC9vUd5j5mSXBQn7TT7sy0xz1SYBKQti0d5gN9Lg==
+X-Received: by 2002:a17:90a:e187:b0:311:482a:f956 with SMTP id 98e67ed59e1d1-31cc03d9906mr7010038a91.5.1752876277557;
+        Fri, 18 Jul 2025 15:04:37 -0700 (PDT)
+Received: from daehojeong-desktop.mtv.corp.google.com ([2a00:79e0:2e14:7:902e:59ec:cd2a:fc00])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31cc3f46ffdsm1847494a91.40.2025.07.18.15.04.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Jul 2025 15:04:37 -0700 (PDT)
+From: Daeho Jeong <daeho43@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	kernel-team@android.com
+Cc: Daeho Jeong <daehojeong@google.com>
+Subject: [PATCH] f2fs: ignore valid ratio when free section count is low
+Date: Fri, 18 Jul 2025 15:04:31 -0700
+Message-ID: <20250718220431.2290301-1-daeho43@gmail.com>
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 09/17] cxl/pci: Map CXL Endpoint Port and CXL Switch
- Port RAS registers
-To: "Bowman, Terry" <terry.bowman@amd.com>, dave@stgolabs.net,
- jonathan.cameron@huawei.com, alison.schofield@intel.com,
- dan.j.williams@intel.com, bhelgaas@google.com, shiju.jose@huawei.com,
- ming.li@zohomail.com, Smita.KoralahalliChannabasappa@amd.com,
- rrichter@amd.com, dan.carpenter@linaro.org,
- PradeepVineshReddy.Kodamati@amd.com, lukas@wunner.de,
- Benjamin.Cheatham@amd.com, sathyanarayanan.kuppuswamy@linux.intel.com,
- linux-cxl@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-References: <20250626224252.1415009-1-terry.bowman@amd.com>
- <20250626224252.1415009-10-terry.bowman@amd.com>
- <a5b917d5-126e-48a8-b9c3-91d7bb2466e4@intel.com>
- <164c69a6-fd73-4fc1-990d-37e920582d81@amd.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <164c69a6-fd73-4fc1-990d-37e920582d81@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+From: Daeho Jeong <daehojeong@google.com>
 
+Otherwise F2FS will not do GC in background in low free section.
 
-On 7/18/25 2:55 PM, Bowman, Terry wrote:
-> 
-> 
-> On 7/18/2025 4:28 PM, Dave Jiang wrote:
->>
->> On 6/26/25 3:42 PM, Terry Bowman wrote:
->>> CXL Endpoint (EP) Ports may include Root Ports (RP) or Downstream Switch
->>> Ports (DSP). CXL RPs and DSPs contain RAS registers that require memory
->>> mapping to enable RAS logging. This initialization is currently missing and
->>> must be added for CXL RPs and DSPs.
->>>
->>> Update cxl_dport_init_ras_reporting() to support RP and DSP RAS mapping.
->>> Add alongside the existing Restricted CXL Host Downstream Port RAS mapping.
->>>
->>> Update cxl_endpoint_port_probe() to invoke cxl_dport_init_ras_reporting().
->>> This will initiate the RAS mapping for CXL RPs and DSPs when each CXL EP is
->>> created and added to the EP port.
->>>
->>> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
->>> ---
->>>  drivers/cxl/cxl.h  |  2 ++
->>>  drivers/cxl/mem.c  |  3 ++-
->>>  drivers/cxl/port.c | 58 +++++++++++++++++++++++++++++++++++++++++++++-
->>>  3 files changed, 61 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
->>> index c57c160f3e5e..d696d419bd5a 100644
->>> --- a/drivers/cxl/cxl.h
->>> +++ b/drivers/cxl/cxl.h
->>> @@ -590,6 +590,7 @@ struct cxl_dax_region {
->>>   * @parent_dport: dport that points to this port in the parent
->>>   * @decoder_ida: allocator for decoder ids
->>>   * @reg_map: component and ras register mapping parameters
->>> + * @uport_regs: mapped component registers
->>>   * @nr_dports: number of entries in @dports
->>>   * @hdm_end: track last allocated HDM decoder instance for allocation ordering
->>>   * @commit_end: cursor to track highest committed decoder for commit ordering
->>> @@ -610,6 +611,7 @@ struct cxl_port {
->>>  	struct cxl_dport *parent_dport;
->>>  	struct ida decoder_ida;
->>>  	struct cxl_register_map reg_map;
->>> +	struct cxl_component_regs uport_regs;
->>>  	int nr_dports;
->>>  	int hdm_end;
->>>  	int commit_end;
->>> diff --git a/drivers/cxl/mem.c b/drivers/cxl/mem.c
->>> index 6e6777b7bafb..d2155f45240d 100644
->>> --- a/drivers/cxl/mem.c
->>> +++ b/drivers/cxl/mem.c
->>> @@ -166,7 +166,8 @@ static int cxl_mem_probe(struct device *dev)
->>>  	else
->>>  		endpoint_parent = &parent_port->dev;
->>>  
->>> -	cxl_dport_init_ras_reporting(dport, dev);
->>> +	if (dport->rch)
->>> +		cxl_dport_init_ras_reporting(dport, dev);
->>>  
->>>  	scoped_guard(device, endpoint_parent) {
->>>  		if (!endpoint_parent->driver) {
->>> diff --git a/drivers/cxl/port.c b/drivers/cxl/port.c
->>> index 021f35145c65..b52f82925891 100644
->>> --- a/drivers/cxl/port.c
->>> +++ b/drivers/cxl/port.c
->>> @@ -111,6 +111,17 @@ static void cxl_disable_rch_root_ints(struct cxl_dport *dport)
->>>  	writel(aer_cmd, aer_base + PCI_ERR_ROOT_COMMAND);
->>>  }
->>>  
->>> +static void cxl_uport_init_ras_reporting(struct cxl_port *port,
->>> +					 struct device *host)
->>> +{
->>> +	struct cxl_register_map *map = &port->reg_map;
->>> +
->>> +	map->host = host;
->>> +	if (cxl_map_component_regs(map, &port->uport_regs,
->>> +				   BIT(CXL_CM_CAP_CAP_ID_RAS)))
->>> +		dev_dbg(&port->dev, "Failed to map RAS capability\n");
->>> +}
->>> +
->>>  /**
->>>   * cxl_dport_init_ras_reporting - Setup CXL RAS report on this dport
->>>   * @dport: the cxl_dport that needs to be initialized
->>> @@ -119,7 +130,6 @@ static void cxl_disable_rch_root_ints(struct cxl_dport *dport)
->>>  void cxl_dport_init_ras_reporting(struct cxl_dport *dport, struct device *host)
->>>  {
->>>  	dport->reg_map.host = host;
->>> -	cxl_dport_map_ras(dport);
->>>  
->>>  	if (dport->rch) {
->>>  		struct pci_host_bridge *host_bridge = to_pci_host_bridge(dport->dport_dev);
->>> @@ -127,12 +137,54 @@ void cxl_dport_init_ras_reporting(struct cxl_dport *dport, struct device *host)
->>>  		if (!host_bridge->native_aer)
->>>  			return;
->>>  
->>> +		cxl_dport_map_ras(dport);
->>>  		cxl_dport_map_rch_aer(dport);
->>>  		cxl_disable_rch_root_ints(dport);
->>> +		return;
->>>  	}
->>> +
->>> +	if (cxl_map_component_regs(&dport->reg_map, &dport->regs.component,
->>> +				   BIT(CXL_CM_CAP_CAP_ID_RAS)))
->>> +		dev_dbg(dport->dport_dev, "Failed to map RAS capability\n");
->>> +
->>>  }
->>>  EXPORT_SYMBOL_NS_GPL(cxl_dport_init_ras_reporting, "CXL");
->>>  
->>> +static void cxl_switch_port_init_ras(struct cxl_port *port)
->>> +{
->>> +	if (is_cxl_root(to_cxl_port(port->dev.parent)))
->>> +		return;
->>> +
->>> +	/* May have upstream DSP or RP */
->>> +	if (port->parent_dport && dev_is_pci(port->parent_dport->dport_dev)) {
->>> +		struct pci_dev *pdev = to_pci_dev(port->parent_dport->dport_dev);
->>> +
->>> +		if ((pci_pcie_type(pdev) == PCI_EXP_TYPE_ROOT_PORT) ||
->>> +		    (pci_pcie_type(pdev) == PCI_EXP_TYPE_DOWNSTREAM))
->>> +			cxl_dport_init_ras_reporting(port->parent_dport, &port->dev);
->>> +	}
->>> +
->>> +	cxl_uport_init_ras_reporting(port, &port->dev);
->>> +}
->>> +
->>> +static void cxl_endpoint_port_init_ras(struct cxl_port *port)
->> Maybe rename 'port' to 'ep' to be explicit
-> Ok
->>> +{
->>> +	struct cxl_dport *dport;
->> parent_dport would be clearer. I was thinking why does the endpoint have a dport for a second there.
-> Ok
->>> +	struct cxl_memdev *cxlmd = to_cxl_memdev(port->uport_dev);
->>> +	struct cxl_port *parent_port __free(put_cxl_port) =
->>> +		cxl_mem_find_port(cxlmd, &dport);
->>> +
->>> +	if (!dport || !dev_is_pci(dport->dport_dev)) {
->>> +		dev_err(&port->dev, "CXL port topology not found\n");> +		return;
->>> +	}
->>> +
->>> +	cxl_dport_init_ras_reporting(dport, cxlmd->cxlds->dev);
->>> +}
->>> +
->>> +#else
->>> +static void cxl_endpoint_port_init_ras(struct cxl_port *port) { }
->>> +static void cxl_switch_port_init_ras(struct cxl_port *port) { }
->>>  #endif /* CONFIG_PCIEAER_CXL */
->> I cc'd you on the new patch to move all the AER stuff to core/pci_aer.c. That should take care of ifdef CONFIG_PCIEAER_CXL in pci.c and port.c.
->>
->> DJ
-> 
-> Move to core/native_ras.c introduced in "Dequeue forwarded CXL error", right? I just want to be certain.
+Signed-off-by: Daeho Jeong <daehojeong@google.com>
+---
+ fs/f2fs/gc.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
-I just posted this [1] to clean up what's there. Do you prefer me to just rename the file to native_ras.c? Or maybe pci_ras.c?
-
-[1]: https://lore.kernel.org/linux-cxl/20250718212452.2100663-1-dave.jiang@intel.com/
-
-DJ
-
-> 
-> Regards,
-> Terry
-> 
->>>  >  static int cxl_switch_port_probe(struct cxl_port *port)
->>> @@ -149,6 +201,8 @@ static int cxl_switch_port_probe(struct cxl_port *port)
->>>  
->>>  	cxl_switch_parse_cdat(port);
->>>  
->>> +	cxl_switch_port_init_ras(port);
->>> +
->>>  	cxlhdm = devm_cxl_setup_hdm(port, NULL);
->>>  	if (!IS_ERR(cxlhdm))
->>>  		return devm_cxl_enumerate_decoders(cxlhdm, NULL);
->>> @@ -203,6 +257,8 @@ static int cxl_endpoint_port_probe(struct cxl_port *port)
->>>  	if (rc)
->>>  		return rc;
->>>  
->>> +	cxl_endpoint_port_init_ras(port);
->>> +
->>>  	/*
->>>  	 * Now that all endpoint decoders are successfully enumerated, try to
->>>  	 * assemble regions from committed decoders
-> 
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 0d7703e7f9e0..08eead027648 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -391,14 +391,15 @@ static unsigned int get_cb_cost(struct f2fs_sb_info *sbi, unsigned int segno)
+ }
+ 
+ static inline unsigned int get_gc_cost(struct f2fs_sb_info *sbi,
+-			unsigned int segno, struct victim_sel_policy *p)
++			unsigned int segno, struct victim_sel_policy *p,
++			unsigned int valid_thresh_ratio)
+ {
+ 	if (p->alloc_mode == SSR)
+ 		return get_seg_entry(sbi, segno)->ckpt_valid_blocks;
+ 
+-	if (p->one_time_gc && (get_valid_blocks(sbi, segno, true) >=
+-		CAP_BLKS_PER_SEC(sbi) * sbi->gc_thread->valid_thresh_ratio /
+-		100))
++	if (p->one_time_gc && (valid_thresh_ratio < 100) &&
++			(get_valid_blocks(sbi, segno, true) >=
++			CAP_BLKS_PER_SEC(sbi) * valid_thresh_ratio / 100))
+ 		return UINT_MAX;
+ 
+ 	/* alloc_mode == LFS */
+@@ -779,6 +780,7 @@ int f2fs_get_victim(struct f2fs_sb_info *sbi, unsigned int *result,
+ 	unsigned int secno, last_victim;
+ 	unsigned int last_segment;
+ 	unsigned int nsearched;
++	unsigned int valid_thresh_ratio = 100;
+ 	bool is_atgc;
+ 	int ret = 0;
+ 
+@@ -788,7 +790,11 @@ int f2fs_get_victim(struct f2fs_sb_info *sbi, unsigned int *result,
+ 	p.alloc_mode = alloc_mode;
+ 	p.age = age;
+ 	p.age_threshold = sbi->am.age_threshold;
+-	p.one_time_gc = one_time;
++	if (one_time) {
++		p.one_time_gc = one_time;
++		if (has_enough_free_secs(sbi, 0, NR_PERSISTENT_LOG))
++			valid_thresh_ratio = sbi->gc_thread->valid_thresh_ratio;
++	}
+ 
+ retry:
+ 	select_policy(sbi, gc_type, type, &p);
+@@ -914,7 +920,7 @@ int f2fs_get_victim(struct f2fs_sb_info *sbi, unsigned int *result,
+ 			goto next;
+ 		}
+ 
+-		cost = get_gc_cost(sbi, segno, &p);
++		cost = get_gc_cost(sbi, segno, &p, valid_thresh_ratio);
+ 
+ 		if (p.min_cost > cost) {
+ 			p.min_segno = segno;
+-- 
+2.50.0.727.gbf7dc18ff4-goog
 
 
