@@ -1,366 +1,236 @@
-Return-Path: <linux-kernel+bounces-736597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E62E4B09F1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:19:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24DBAB09F14
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:19:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40E161C44CEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:19:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94D71560C6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:19:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A68298CC5;
-	Fri, 18 Jul 2025 09:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tJXDeyvK";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7BPAH80o"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28CD12980C4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CEB1295D96;
 	Fri, 18 Jul 2025 09:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="A8Wx/dDa"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2DF02957C1
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 09:18:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752830344; cv=none; b=VyPNz0Ll/L3OHIsP4/fuTBVmmLHdYPFLMdGFvf2kjiryuyJOnQYERayoKRISCKwO3ElyXrfoYB7fPokNzbEPbfDmxTNi4J+TUrF092+g+hewVgkQRy2fiG7zzOl7yHCxbVAHc7L4Z8SQ0IK5H/kEytjkZjbae6qV+cItwgvpMvs=
+	t=1752830340; cv=none; b=ulOtLsfuP4aHFrz5JuD2FK6EZU9Q6N5QhiiFx6Dyj4Ko6TS9tfa8Q9tZQCzCsdGriyLnZ5soX7cruvpzhhHV50EKnqkVAstL2xGo86Pm5q6Ziq9Bv1QPsDEICQC+jh8JtbFace+Q5oaCPUvkAHBwAu+PmozanNmzclkiLkTfUsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752830344; c=relaxed/simple;
-	bh=i11Lfb9jCcjCdnZzfqCChhy3nAJnLHKNA7wmTDd5CRU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HRgFDjlYOW3sy3V8/GftqZvJ5VR/ALLEs0v138MRaMtI70hg71YmbpU3Dg2krsXa3sxv9OgfoeoJi1zzySr2ubyHprYLyne8I2snqM1nRI91039/QqMoJpk0vL2PJVyJ9YCtZuC/RHFQTPZF/EWoHEx2y6GfXYuyR8iMjuYZstI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tJXDeyvK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7BPAH80o; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752830339;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=svrawDf7a534xUP7RG0/R6u1J/lCaMllrkc3HWnuPMk=;
-	b=tJXDeyvKZL1QpMmjYpeNNIqmIYVFMiwpv6WXNzvKDMALvlcwn4LwFl4NeBFWBoy0QQJ55w
-	zHFPJX6OyL39BjlRZd+IC8bEvUKEA8mcOhabKEXGes8MQ90ZZ8JckQvpDPH/DqFYC2jkzr
-	9OrBnGZvUE/UMqRl7vOBUShxxAqGElZHWwo7KkWR4zNBdTWpYMIYz7i/RxmbllCbOWUPTj
-	zIJiUGecAlH5yK75XoawB2x5CAwwqSHZo7NQa/CT2CsAWdr4HWpaIUOu7zHJF1CgZQcfo2
-	0vLZjK4tjWiyOumzlWX47Xp+V9wj7R5o+/lUJKRQcLKZ/lwSNI6noT6ccgpCQA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752830339;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=svrawDf7a534xUP7RG0/R6u1J/lCaMllrkc3HWnuPMk=;
-	b=7BPAH80o/Ga/20wVy34va8eGtxoeeVLJPVgGACfdLy6ApNeXKA5D/RQth2onhTLnd3+dAw
-	NWC1TT1jseZV+RDg==
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Gabriele Monaco <gmonaco@redhat.com>,
-	linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Nam Cao <namcao@linutronix.de>,
-	stable@vger.kernel.org
-Subject: [PATCH] rv: Ensure containers are registered first
-Date: Fri, 18 Jul 2025 11:18:50 +0200
-Message-Id: <20250718091850.2057864-1-namcao@linutronix.de>
+	s=arc-20240116; t=1752830340; c=relaxed/simple;
+	bh=i+Vq/xR72krYm0PnU071Yn9hfDeqbZjLHDI4rSfa0a4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cosn/cMLjcJqjDL+leieAFGODUdVCAyNkI4e97XftUE6HMxIeavC2Ny/h9lOUEpvO+VhZSZ+Sxnf4gYQx5xaHK+iPSGgwqnqUwMVt2isCig0aGGG+kfWHdv9qu/q+Y4q/xImeT2W6ijk2Du/muT5t5ItNeIja6SOBAFIJIb4n0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=A8Wx/dDa; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ae04d3d63e6so346704566b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 02:18:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1752830337; x=1753435137; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=joBFBOMytxNNU/jMdqhGaVi+szdGw5RUwZA6YyI+ma0=;
+        b=A8Wx/dDaY4X0eBACRtg7tsTzk4q75HZblAlH6o4ToicxFdo9waB9Qm1on9URQrTrCW
+         FTR+0lGz6FBQXuCTkvzxaERoOCpoyyHfQpavhNORwt7lGTRmXYbMa9+qBOICMqE6M6eh
+         /yABSPEHlJ3RvxoX0ka1pKepBUxVhi7itElrxtsi3OE3XlQGqW2aEP0UAdhnT8wZuWRG
+         Fk5szLWXqx4CzzSO298rfdp/LiBfK9cTMFFAQxtvKIo96u2NSA3p+NtycfuuVyKlNLCw
+         FyLA7xwQ4vaUJwiQQ32sBWxsfLBnP7GbAVbQnZ6vIwdclX1XwTcPlmwNEld6tHqskZYe
+         cmKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752830337; x=1753435137;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=joBFBOMytxNNU/jMdqhGaVi+szdGw5RUwZA6YyI+ma0=;
+        b=QyjTzubyyBbpYx9r2T/DmwHChEkEmzrs5YhaUcID8JotvdIkPcr+Q0moOecm2CSSOI
+         OoJB92Y+wDpof0vvoHMIWUd1qiCAP1F87IqNf4Z8gYs7wtBZ4RZlxHLh00u5hzWOXzKs
+         NfxtSPT/rlSTQHO+cHeGkM9UWLc2HFHn9WAZ6qiK//TGw/E8nDH+/Hly57U7B4Z+pPu3
+         3NwX0DpCQKbiSW5XAZdvNREJgoBUKuUo2GI7b340CNQbPt/m1LterosVDZC27DT5w0f6
+         /1I9+YOvT1dkGl9bz3ULo+z2Swmh8K1o/uuHZXtxCV41P1l2P/TfVRe/aD8LbJfqVguw
+         WOCA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMDKFI7IP+zxbYYYOAUnqqU39ZpXdwiMFviXn3Q8ZjmUOseoUYMN/Xmh8KLT1jja4I8oCC99JsmQStsdY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCMFTu+8QrYiEMKMUX/2yJLr6S3Sm0zvCRaTy3laOPq9wAUKQM
+	0M317rqAtts8XmGlPxzI2iHvuMxokvu3xzpywmYrmhenlnvs2xp/WIvDqYtX3BB7SwY=
+X-Gm-Gg: ASbGnctWmP8KVFV4VTH3erB+KTynXd7qgfENKzRG0aTmPvA8kOwsZ4aJ33+iZiyPjiR
+	iHjvkdt0kDPZ9lhR9TP6RxB6cmPYohPY4Uru52VoLfvgzFeRoURIhPZqkioagXdRivKkmLd7rmW
+	Zy/w09p5UEsdsBf4cWkw/AbWhfu5r+qHAFwb72Jipyi2lL29W9j6ZtgK8xTX6EBXdMh1wEPElDH
+	u9MKPezpLyomKV+lEiGTEVZz+7VDhbSLCa+YTQQrJe8hFZRHjp7rh1G1hM+P2Q9eCRYsbxVn0Yi
+	8EebANJq0dO0PLO4CCDS19oYJmOPzlK31oNEgdHGP+tDaE8MJFm0ThA3euWIzCeCMCTmdpOH48m
+	4AQ/XSRNhzKdYu3itG6td/IWpT6zHMAeyCBh+5Xoylg==
+X-Google-Smtp-Source: AGHT+IGgzlzcp+poi8q6uuu7BU3aB58Ut4IdQD49YEpQkvDUzHt2FYW5lWaitH/yqU5HPqp9C13ynQ==
+X-Received: by 2002:a17:907:26cd:b0:ae3:bb0a:1ccd with SMTP id a640c23a62f3a-ae9cde5a17amr905879966b.26.1752830336917;
+        Fri, 18 Jul 2025 02:18:56 -0700 (PDT)
+Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6ca2efc1sm85811266b.83.2025.07.18.02.18.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Jul 2025 02:18:56 -0700 (PDT)
+Date: Fri, 18 Jul 2025 11:18:54 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Tejun Heo <tj@kernel.org>, Ben Hutchings <ben@decadent.org.uk>
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, Zefan Li <lizefan.x@bytedance.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
+	Chen Ridong <chenridong@huawei.com>, 1108294@bugs.debian.org
+Subject: Re: [PATCH 4/4] cgroup: Do not report unavailable v1 controllers in
+ /proc/cgroups
+Message-ID: <7sbzasggfk3elhvxsd5mtuzd4yo3c64wuzkaulr7yqybpfxwuh@g6dcatriw7hx>
+References: <20240909163223.3693529-1-mkoutny@suse.com>
+ <20240909163223.3693529-5-mkoutny@suse.com>
+ <b26b60b7d0d2a5ecfd2f3c45f95f32922ed24686.camel@decadent.org.uk>
+ <bio4h3soa5a64zqca66fbtmur3bzwhggobplzg535erpfr2qxe@xsgzgxihirpa>
+ <aHGM6_WOTWLiUdpU@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="lv3ti64caqbl2n53"
+Content-Disposition: inline
+In-Reply-To: <aHGM6_WOTWLiUdpU@slm.duckdns.org>
+
+
+--lv3ti64caqbl2n53
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 4/4] cgroup: Do not report unavailable v1 controllers in
+ /proc/cgroups
+MIME-Version: 1.0
 
-If rv_register_monitor() is called with a non-NULL parent pointer (i.e. by
-monitors inside a container), it is expected that the parent (a.k.a
-container) is already registered.
+On Fri, Jul 11, 2025 at 12:15:07PM -1000, Tejun Heo <tj@kernel.org> wrote:
+> I think we still want to deprecate /proc/cgroups but given that there are
+> impacted users maybe we can bring it back under a boottime param w/ warni=
+ng?
 
-The containers seem to always be registered first. I suspect because of the
-order in Makefile. But nothing guarantees this.
+Something like below? (I don't change the log level.)
 
-If this registering order is changed, "strange" things happen. For example,
-if the container is registered last, rv_is_container_monitor() incorrectly
-says this is NOT a container. .enable() is then called, which is NULL for
-container, thus we have a NULL pointer deref crash.
+Ben, the affected Java users could modify it at boot time. I saw your
+revert is in v6.12, so you may also want backport of a0ab1453226d8 to
+give the users a message. (I realize current->comm in the message would
+be even more instructive.)
 
-Guarantee that containers are registered first.
+-- >8 --
 
-Fixes: cb85c660fcd4 ("rv: Add option for nested monitors and include sched")
-Signed-off-by: Nam Cao <namcao@linutronix.de>
-Cc: stable@vger.kernel.org
+=46rom ace88e9e3a77ff3fe86aee4b7a5866b3bfd2df58 Mon Sep 17 00:00:00 2001
+=46rom: =3D?UTF-8?q?Michal=3D20Koutn=3DC3=3DBD?=3D <mkoutny@suse.com>
+Date: Thu, 17 Jul 2025 17:38:47 +0200
+Subject: [PATCH] cgroup: Add compatibility option for content of /proc/cgro=
+ups
+MIME-Version: 1.0
+Content-Type: text/plain; charset=3DUTF-8
+Content-Transfer-Encoding: 8bit
+
+/proc/cgroups lists only v1 controllers by default, however, this is
+only enforced since the commit af000ce85293b ("cgroup: Do not report
+unavailable v1 controllers in /proc/cgroups") and there is software in
+the wild that uses content of /proc/cgroups to decide on availability of
+v2 (sic) controllers.
+
+Add a boottime param that can bring back the previous behavior for
+setups where the check in the software cannot be changed and it causes
+e.g. unintended OOMs.
+
+Also, this patch takes out cgrp_v1_visible from cgroup1_subsys_absent()
+guard since it's only important to check which hierarchy (v1 vs v2) the
+subsys is attached to. This has no effect on the printed message but
+the code is cleaner since cgrp_v1_visible is really about mounted
+hierarchies, not the content of /proc/cgroups.
+
+Link: https://lore.kernel.org/r/b26b60b7d0d2a5ecfd2f3c45f95f32922ed24686.ca=
+mel@decadent.org.uk
+Fixes: af000ce85293b ("cgroup: Do not report unavailable v1 controllers in =
+/proc/cgroups")
+Fixes: a0ab1453226d8 ("cgroup: Print message when /proc/cgroups is read on =
+v2-only system")
+Signed-off-by: Michal Koutn=FD <mkoutny@suse.com>
 ---
- include/linux/rv.h                                        | 5 +++++
- kernel/trace/rv/monitors/pagefault/pagefault.c            | 4 ++--
- kernel/trace/rv/monitors/rtapp/rtapp.c                    | 4 ++--
- kernel/trace/rv/monitors/sched/sched.c                    | 4 ++--
- kernel/trace/rv/monitors/sco/sco.c                        | 4 ++--
- kernel/trace/rv/monitors/scpd/scpd.c                      | 4 ++--
- kernel/trace/rv/monitors/sleep/sleep.c                    | 4 ++--
- kernel/trace/rv/monitors/sncid/sncid.c                    | 4 ++--
- kernel/trace/rv/monitors/snep/snep.c                      | 4 ++--
- kernel/trace/rv/monitors/snroc/snroc.c                    | 4 ++--
- kernel/trace/rv/monitors/tss/tss.c                        | 4 ++--
- kernel/trace/rv/monitors/wip/wip.c                        | 4 ++--
- kernel/trace/rv/monitors/wwnr/wwnr.c                      | 4 ++--
- tools/verification/rvgen/rvgen/templates/container/main.c | 4 ++--
- tools/verification/rvgen/rvgen/templates/dot2k/main.c     | 4 ++--
- tools/verification/rvgen/rvgen/templates/ltl2k/main.c     | 4 ++--
- 16 files changed, 35 insertions(+), 30 deletions(-)
+ Documentation/admin-guide/kernel-parameters.txt |  8 ++++++++
+ kernel/cgroup/cgroup-v1.c                       | 14 ++++++++++++--
+ 2 files changed, 20 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/rv.h b/include/linux/rv.h
-index 97baf58d88b2..094c9f62389c 100644
---- a/include/linux/rv.h
-+++ b/include/linux/rv.h
-@@ -119,5 +119,10 @@ static inline bool rv_reacting_on(void)
- }
- #endif /* CONFIG_RV_REACTORS */
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentatio=
+n/admin-guide/kernel-parameters.txt
+index 07e22ba5bfe34..f6d317e1674d6 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -633,6 +633,14 @@
+ 			named mounts. Specifying both "all" and "named" disables
+ 			all v1 hierarchies.
 =20
-+#define rv_container_init device_initcall
-+#define rv_container_exit __exitcall
-+#define rv_monitor_init late_initcall
-+#define rv_monitor_exit __exitcall
++	cgroup_v1_proc=3D	[KNL] Show also missing controllers in /proc/cgroups
++			Format: { "true" | "false" }
++			/proc/cgroups lists only v1 controllers by default.
++			This compatibility option enables listing also v2
++			controllers (whose v1 code is not compiled!), so that
++			semi-legacy software can check this file to decide
++			about usage of v2 (sic) controllers.
 +
- #endif /* CONFIG_RV */
- #endif /* _LINUX_RV_H */
-diff --git a/kernel/trace/rv/monitors/pagefault/pagefault.c b/kernel/trace/=
-rv/monitors/pagefault/pagefault.c
-index 9fe6123b2200..2b226d27ddff 100644
---- a/kernel/trace/rv/monitors/pagefault/pagefault.c
-+++ b/kernel/trace/rv/monitors/pagefault/pagefault.c
-@@ -80,8 +80,8 @@ static void __exit unregister_pagefault(void)
- 	rv_unregister_monitor(&rv_pagefault);
+ 	cgroup_favordynmods=3D [KNL] Enable or Disable favordynmods.
+ 			Format: { "true" | "false" }
+ 			Defaults to the value of CONFIG_CGROUP_FAVOR_DYNMODS.
+diff --git a/kernel/cgroup/cgroup-v1.c b/kernel/cgroup/cgroup-v1.c
+index fa24c032ed6fe..2a4a387f867ab 100644
+--- a/kernel/cgroup/cgroup-v1.c
++++ b/kernel/cgroup/cgroup-v1.c
+@@ -32,6 +32,9 @@ static u16 cgroup_no_v1_mask;
+ /* disable named v1 mounts */
+ static bool cgroup_no_v1_named;
+=20
++/* Show unavailable controllers in /proc/cgroups */
++static bool proc_show_all;
++
+ /*
+  * pidlist destructions need to be flushed on cgroup destruction.  Use a
+  * separate workqueue as flush domain.
+@@ -683,10 +686,11 @@ int proc_cgroupstats_show(struct seq_file *m, void *v)
+ 	 */
+=20
+ 	for_each_subsys(ss, i) {
+-		if (cgroup1_subsys_absent(ss))
+-			continue;
+ 		cgrp_v1_visible |=3D ss->root !=3D &cgrp_dfl_root;
+=20
++		if (!proc_show_all && cgroup1_subsys_absent(ss))
++			continue;
++
+ 		seq_printf(m, "%s\t%d\t%d\t%d\n",
+ 			   ss->legacy_name, ss->root->hierarchy_id,
+ 			   atomic_read(&ss->root->nr_cgrps),
+@@ -1359,3 +1363,9 @@ static int __init cgroup_no_v1(char *str)
+ 	return 1;
  }
-=20
--module_init(register_pagefault);
--module_exit(unregister_pagefault);
-+rv_monitor_init(register_pagefault);
-+rv_monitor_exit(unregister_pagefault);
-=20
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Nam Cao <namcao@linutronix.de>");
-diff --git a/kernel/trace/rv/monitors/rtapp/rtapp.c b/kernel/trace/rv/monit=
-ors/rtapp/rtapp.c
-index fd75fc927d65..b078327e71bf 100644
---- a/kernel/trace/rv/monitors/rtapp/rtapp.c
-+++ b/kernel/trace/rv/monitors/rtapp/rtapp.c
-@@ -25,8 +25,8 @@ static void __exit unregister_rtapp(void)
- 	rv_unregister_monitor(&rv_rtapp);
- }
-=20
--module_init(register_rtapp);
--module_exit(unregister_rtapp);
-+rv_container_init(register_rtapp);
-+rv_container_exit(unregister_rtapp);
-=20
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Nam Cao <namcao@linutronix.de>");
-diff --git a/kernel/trace/rv/monitors/sched/sched.c b/kernel/trace/rv/monit=
-ors/sched/sched.c
-index 905e03c3c934..e89e193bd8e0 100644
---- a/kernel/trace/rv/monitors/sched/sched.c
-+++ b/kernel/trace/rv/monitors/sched/sched.c
-@@ -30,8 +30,8 @@ static void __exit unregister_sched(void)
- 	rv_unregister_monitor(&rv_sched);
- }
-=20
--module_init(register_sched);
--module_exit(unregister_sched);
-+rv_container_init(register_sched);
-+rv_container_exit(unregister_sched);
-=20
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Gabriele Monaco <gmonaco@redhat.com>");
-diff --git a/kernel/trace/rv/monitors/sco/sco.c b/kernel/trace/rv/monitors/=
-sco/sco.c
-index 4cff59220bfc..b96e09e64a2f 100644
---- a/kernel/trace/rv/monitors/sco/sco.c
-+++ b/kernel/trace/rv/monitors/sco/sco.c
-@@ -80,8 +80,8 @@ static void __exit unregister_sco(void)
- 	rv_unregister_monitor(&rv_sco);
- }
-=20
--module_init(register_sco);
--module_exit(unregister_sco);
-+rv_monitor_init(register_sco);
-+rv_monitor_exit(unregister_sco);
-=20
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Gabriele Monaco <gmonaco@redhat.com>");
-diff --git a/kernel/trace/rv/monitors/scpd/scpd.c b/kernel/trace/rv/monitor=
-s/scpd/scpd.c
-index cbdd6a5f8d7f..a4c8e78fa768 100644
---- a/kernel/trace/rv/monitors/scpd/scpd.c
-+++ b/kernel/trace/rv/monitors/scpd/scpd.c
-@@ -88,8 +88,8 @@ static void __exit unregister_scpd(void)
- 	rv_unregister_monitor(&rv_scpd);
- }
-=20
--module_init(register_scpd);
--module_exit(unregister_scpd);
-+rv_monitor_init(register_scpd);
-+rv_monitor_exit(unregister_scpd);
-=20
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Gabriele Monaco <gmonaco@redhat.com>");
-diff --git a/kernel/trace/rv/monitors/sleep/sleep.c b/kernel/trace/rv/monit=
-ors/sleep/sleep.c
-index eea447b06907..6980f8de725d 100644
---- a/kernel/trace/rv/monitors/sleep/sleep.c
-+++ b/kernel/trace/rv/monitors/sleep/sleep.c
-@@ -229,8 +229,8 @@ static void __exit unregister_sleep(void)
- 	rv_unregister_monitor(&rv_sleep);
- }
-=20
--module_init(register_sleep);
--module_exit(unregister_sleep);
-+rv_monitor_init(register_sleep);
-+rv_monitor_exit(unregister_sleep);
-=20
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Nam Cao <namcao@linutronix.de>");
-diff --git a/kernel/trace/rv/monitors/sncid/sncid.c b/kernel/trace/rv/monit=
-ors/sncid/sncid.c
-index f5037cd6214c..97a126c6083a 100644
---- a/kernel/trace/rv/monitors/sncid/sncid.c
-+++ b/kernel/trace/rv/monitors/sncid/sncid.c
-@@ -88,8 +88,8 @@ static void __exit unregister_sncid(void)
- 	rv_unregister_monitor(&rv_sncid);
- }
-=20
--module_init(register_sncid);
--module_exit(unregister_sncid);
-+rv_monitor_init(register_sncid);
-+rv_monitor_exit(unregister_sncid);
-=20
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Gabriele Monaco <gmonaco@redhat.com>");
-diff --git a/kernel/trace/rv/monitors/snep/snep.c b/kernel/trace/rv/monitor=
-s/snep/snep.c
-index 0076ba6d7ea4..376a856ebffa 100644
---- a/kernel/trace/rv/monitors/snep/snep.c
-+++ b/kernel/trace/rv/monitors/snep/snep.c
-@@ -88,8 +88,8 @@ static void __exit unregister_snep(void)
- 	rv_unregister_monitor(&rv_snep);
- }
-=20
--module_init(register_snep);
--module_exit(unregister_snep);
-+rv_monitor_init(register_snep);
-+rv_monitor_exit(unregister_snep);
-=20
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Gabriele Monaco <gmonaco@redhat.com>");
-diff --git a/kernel/trace/rv/monitors/snroc/snroc.c b/kernel/trace/rv/monit=
-ors/snroc/snroc.c
-index bb1f60d55296..e4439605b4b6 100644
---- a/kernel/trace/rv/monitors/snroc/snroc.c
-+++ b/kernel/trace/rv/monitors/snroc/snroc.c
-@@ -77,8 +77,8 @@ static void __exit unregister_snroc(void)
- 	rv_unregister_monitor(&rv_snroc);
- }
-=20
--module_init(register_snroc);
--module_exit(unregister_snroc);
-+rv_monitor_init(register_snroc);
-+rv_monitor_exit(unregister_snroc);
-=20
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Gabriele Monaco <gmonaco@redhat.com>");
-diff --git a/kernel/trace/rv/monitors/tss/tss.c b/kernel/trace/rv/monitors/=
-tss/tss.c
-index 542787e6524f..8f960c9fe0ff 100644
---- a/kernel/trace/rv/monitors/tss/tss.c
-+++ b/kernel/trace/rv/monitors/tss/tss.c
-@@ -83,8 +83,8 @@ static void __exit unregister_tss(void)
- 	rv_unregister_monitor(&rv_tss);
- }
-=20
--module_init(register_tss);
--module_exit(unregister_tss);
-+rv_monitor_init(register_tss);
-+rv_monitor_exit(unregister_tss);
-=20
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Gabriele Monaco <gmonaco@redhat.com>");
-diff --git a/kernel/trace/rv/monitors/wip/wip.c b/kernel/trace/rv/monitors/=
-wip/wip.c
-index ed758fec8608..5c39c6074bd3 100644
---- a/kernel/trace/rv/monitors/wip/wip.c
-+++ b/kernel/trace/rv/monitors/wip/wip.c
-@@ -80,8 +80,8 @@ static void __exit unregister_wip(void)
- 	rv_unregister_monitor(&rv_wip);
- }
-=20
--module_init(register_wip);
--module_exit(unregister_wip);
-+rv_monitor_init(register_wip);
-+rv_monitor_exit(unregister_wip);
-=20
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Daniel Bristot de Oliveira <bristot@kernel.org>");
-diff --git a/kernel/trace/rv/monitors/wwnr/wwnr.c b/kernel/trace/rv/monitor=
-s/wwnr/wwnr.c
-index 172f31c4b0f3..ec671546f571 100644
---- a/kernel/trace/rv/monitors/wwnr/wwnr.c
-+++ b/kernel/trace/rv/monitors/wwnr/wwnr.c
-@@ -79,8 +79,8 @@ static void __exit unregister_wwnr(void)
- 	rv_unregister_monitor(&rv_wwnr);
- }
-=20
--module_init(register_wwnr);
--module_exit(unregister_wwnr);
-+rv_monitor_init(register_wwnr);
-+rv_monitor_exit(unregister_wwnr);
-=20
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Daniel Bristot de Oliveira <bristot@kernel.org>");
-diff --git a/tools/verification/rvgen/rvgen/templates/container/main.c b/to=
-ols/verification/rvgen/rvgen/templates/container/main.c
-index 89fc17cf8958..5820c9705d0f 100644
---- a/tools/verification/rvgen/rvgen/templates/container/main.c
-+++ b/tools/verification/rvgen/rvgen/templates/container/main.c
-@@ -30,8 +30,8 @@ static void __exit unregister_%%MODEL_NAME%%(void)
- 	rv_unregister_monitor(&rv_%%MODEL_NAME%%);
- }
-=20
--module_init(register_%%MODEL_NAME%%);
--module_exit(unregister_%%MODEL_NAME%%);
-+rv_container_init(register_%%MODEL_NAME%%);
-+rv_container_exit(unregister_%%MODEL_NAME%%);
-=20
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("dot2k: auto-generated");
-diff --git a/tools/verification/rvgen/rvgen/templates/dot2k/main.c b/tools/=
-verification/rvgen/rvgen/templates/dot2k/main.c
-index 83044a20c89a..d6bd248aba9c 100644
---- a/tools/verification/rvgen/rvgen/templates/dot2k/main.c
-+++ b/tools/verification/rvgen/rvgen/templates/dot2k/main.c
-@@ -83,8 +83,8 @@ static void __exit unregister_%%MODEL_NAME%%(void)
- 	rv_unregister_monitor(&rv_%%MODEL_NAME%%);
- }
-=20
--module_init(register_%%MODEL_NAME%%);
--module_exit(unregister_%%MODEL_NAME%%);
-+rv_monitor_init(register_%%MODEL_NAME%%);
-+rv_monitor_exit(unregister_%%MODEL_NAME%%);
-=20
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("dot2k: auto-generated");
-diff --git a/tools/verification/rvgen/rvgen/templates/ltl2k/main.c b/tools/=
-verification/rvgen/rvgen/templates/ltl2k/main.c
-index f85d076fbf78..2069a7a0f1ae 100644
---- a/tools/verification/rvgen/rvgen/templates/ltl2k/main.c
-+++ b/tools/verification/rvgen/rvgen/templates/ltl2k/main.c
-@@ -94,8 +94,8 @@ static void __exit unregister_%%MODEL_NAME%%(void)
- 	rv_unregister_monitor(&rv_%%MODEL_NAME%%);
- }
-=20
--module_init(register_%%MODEL_NAME%%);
--module_exit(unregister_%%MODEL_NAME%%);
-+rv_monitor_init(register_%%MODEL_NAME%%);
-+rv_monitor_exit(unregister_%%MODEL_NAME%%);
-=20
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR(/* TODO */);
+ __setup("cgroup_no_v1=3D", cgroup_no_v1);
++
++static int __init cgroup_v1_proc(char *str)
++{
++	return (kstrtobool(str, &proc_show_all) =3D=3D 0);
++}
++__setup("cgroup_v1_proc=3D", cgroup_v1_proc);
 --=20
-2.39.5
+2.50.0
 
+
+--lv3ti64caqbl2n53
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaHoRfAAKCRB+PQLnlNv4
+CJVaAP9sO+/2YiTwceG9v6JkcxV5hfVwLBHieERy+1l7jsbjAAD/QSfBAgM5hcw1
+bXWYcQUKpYEwRHUR8Ir+zw4u8U1lMQc=
+=hiX6
+-----END PGP SIGNATURE-----
+
+--lv3ti64caqbl2n53--
 
