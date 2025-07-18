@@ -1,109 +1,152 @@
-Return-Path: <linux-kernel+bounces-736483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8641BB09D6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:11:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C9A5B09D74
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:12:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC3745A1103
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:11:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 870FC5A1595
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E42BD290DB1;
-	Fri, 18 Jul 2025 08:11:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A10D291C2B;
+	Fri, 18 Jul 2025 08:12:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="bFSMIElY"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Wug6dazJ"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D0F220F34
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 08:11:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EC77220F2B;
+	Fri, 18 Jul 2025 08:12:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752826304; cv=none; b=Vq+fVUGumWFgXKe+NhnfIIbWH7kttiYOtBWovWhA9rcbILa12Qvzbb5dptXR25dr3H4WO+giSdIoLU78JPBzrBbekujbmu4e7wYQEWpD/wjo8YcjrlOf0lULvD66FyQRuJXYzlJ5VjBXKFCqfWm9p+WQUOU4RP1lhPikgfRuU6s=
+	t=1752826353; cv=none; b=WoXsZm0GGzAcrrS0kojPeXS7ZMuYDpcigEu1tf8dWkfxOmB/BCuLgLJt+w3fqwhe22c64tyLq054eZ6xYs/Gmrm9CRSevuNPDTLWLLZEsfQUTG8T181uvCgTr+SpNgMlmy1lYibpBbXUez3nksxdpKha2Kvf6WEeGVyDF4fDoWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752826304; c=relaxed/simple;
-	bh=1jAhRd3FU2QWDV+irfVHSFtxSupHRhWFUek+YocDJXU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bgW7305HSqMtlsoFKvnYSZJ1FN2e1Nl/sXbHO/g01ezsVBxhJTz900lcqz0/wEylogz/BngxWX88KBXGoTNcOAEWWmWWKYriopaoUgH0vkleCTkXWx7y/D4OmSA0gowfoo2REHBXEfCYGSSBSIFRzFoj855sOFDhDb6gSlJrK4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=bFSMIElY; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5561d41fc96so2125054e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 01:11:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1752826301; x=1753431101; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1jAhRd3FU2QWDV+irfVHSFtxSupHRhWFUek+YocDJXU=;
-        b=bFSMIElYHdaBXKzDxtG9RfJyeYj7A3fHBpq7D/oI99mPyvum//FPQe266/lU4XF82N
-         /iVWmHXXGxV35qAzN6XhMy3Np7Enl8DdrGjAIc4A3mzcolC+psF6PX00bl3hXg8EpZ0x
-         YIenmSz2bMuN44XWlPKl/AewcHwtOA1mJKX4Q8lO0oAcVXe4eV7JzunUC3Yu0Z35arVS
-         OCSXqqSpiS+XA3aVWTV4lp08ywcxEBjtO4xteKgQgz5TwR9YO8xH2Z77RvHo8L2VYOMh
-         33tbrfGoVt+crLdBAvdmaUF2bmbZKAHhek/hpuBTmJoFPgmQpNbfuUzTBsB6BKLN2sIB
-         3DGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752826301; x=1753431101;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1jAhRd3FU2QWDV+irfVHSFtxSupHRhWFUek+YocDJXU=;
-        b=hKIB+LjsqBkRdw0DaEbogVLU89lezxlUZT7N3zt6b+Efv+07MZIPvZYilWNbQkIz73
-         9OYzLE5paXhs0NU2XkDZZRNJv9igWd0rxZmKZn9gECjlO0g6xR+/xUmESX6LWQXKzPXP
-         wuAuGN0NWn5gg4Zdmswbjcvt0HzoFu44nm/54O5ER92qmTmZpyb7mM+gx0F8yxxQFlax
-         0NcNINsodAZDe7kD2h0jvxiqqrN2ACPZ5gWdhTVpF5lh9wNcqWvichyg95osBEc5TjZD
-         CG1H5v2RA5e7gaOmFwF1TO2OVNGSz1CwvHtFerHNPoQlDMdh2xzpGdlHD0Z3oTIxJPy7
-         O9Vw==
-X-Forwarded-Encrypted: i=1; AJvYcCXe6DUwixUPA1TiJCQF+6C0CDbYexe5jQ30LSjIanBuTEWBRWGb/KNhg9Oj3vgeyBtkLbxkEsoc16l322w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcmPp7AAxv0mZGkUgZR5yY1YQBiv/2kCIN1sMGGWU0g5whQRd/
-	ePLJX6zi0n76WaT/P9h6Vl7pOZ4tOBw6IQCLld0uCYxUVZq+Bi/2eVp2WMw+GtBDuuT6qZH+iFM
-	NSa8+wPxrRgmlvtfo9pWkhyvxciEkKPupK1GVjBkaGwewiUar36XN
-X-Gm-Gg: ASbGnctmkVReRzph7Pe2EudPBOcpYh61/lC5zPTSVio6jZ+elB81cskxBJXfPKfkpzZ
-	xe+JJoJPZk54VI+qdHiFmxodKMasd5rOThwBSuKYSaojaiUxQ7fizLnaaXLZQxLVVmMrPISyksl
-	87h0sPS4KLmRxFloxaKS6l6y8OjVwvGwnp/qp0vqCs+zCkbGsjFMP/gWHthisJCTpHOOD8e2YuA
-	0/S9c8/V8ahehx6k0FZ0Gfdelct1MiB07GDn9dsuD40Hcm1
-X-Google-Smtp-Source: AGHT+IFb1uJD4V9aouoJvlP1yjVac8eQbZ0nNrzuuL9tqojwVBFkpEZenb7Pr8T2XBBshIaYd4a1UVo6aAXBNqT0N6o=
-X-Received: by 2002:ac2:5686:0:b0:54a:cc04:ea24 with SMTP id
- 2adb3069b0e04-55a23facb73mr3023679e87.46.1752826300986; Fri, 18 Jul 2025
- 01:11:40 -0700 (PDT)
+	s=arc-20240116; t=1752826353; c=relaxed/simple;
+	bh=e8WqeO0N/lIYLld9ZiQcTN5U4skZRZXy0znSzppFzpo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=jEE5bXQUPt6BGYrA8Vd6asVz0eWPJIja4QBhjluNuWsHwolpDD/InSFcxraJrNDPDxSJVeuLrHXcuRoCMdTtLyyofJsq/zCMrVqNGAm4vf+MA5sj1nQ36t+yG8LyGUnbPe3wleyv6V2+BQWuW7cvTPDTSdczQMmGPdvwML8Wthk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Wug6dazJ; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752826217;
+	bh=QNYzSYfRj5GUfAseK0uZu8scFuQKLSmTPjGA0brRS9w=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Wug6dazJ9DXwyqQiifkq39RmXxGw+IMUz9AT/XLhHdj+I53DRHm0enkM6UFr7rJ/z
+	 nt7NNfV794SBLUO60s3EPJOZeqCTNWRV+kS6TS07dAMouZs6ZdYpwepJe9l7f3bJdD
+	 XtItjt3dLOdvA1kmPAgk4WJ6WcNzC9TKPRRFyJrGiDgzWI6K4iKk1J6WzzNvNEV/cF
+	 mnuCVoIMU2THW1Ab9EPscbuWzppkjMkiyveKfeX2lsWf1Pk6XGem4TsD6f3zHV6h3i
+	 6LMjmgA9xK0AlCxoen78kUQeodOCagFWHkjHiBi2b+DNK/zIvExYYrTYlAn7B8l5vz
+	 lxTkC+6Y6Ya6w==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bk2XT0rm4z4x3d;
+	Fri, 18 Jul 2025 18:10:17 +1000 (AEST)
+Date: Fri, 18 Jul 2025 18:12:26 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: "Michael S. Tsirkin" <mst@redhat.com>, Marek Szyprowski
+ <m.szyprowski@samsung.com>
+Cc: Jason Wang <jasowang@redhat.com>, Leon Romanovsky <leon@kernel.org>,
+ Leon Romanovsky <leonro@nvidia.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the vhost tree with the dma-mapping
+ tree
+Message-ID: <20250718181226.6343c557@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250717141000.41740-1-harald.mommer@oss.qualcomm.com> <20250717141000.41740-2-harald.mommer@oss.qualcomm.com>
-In-Reply-To: <20250717141000.41740-2-harald.mommer@oss.qualcomm.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 18 Jul 2025 10:11:30 +0200
-X-Gm-Features: Ac12FXxoZ75HfgStvYvOn-iPfwrSf7_9mNtIsTgIecfFZm93LScfE32n1cfLPdw
-Message-ID: <CAMRc=Mcxb4SqH+XJeLkd8J==TNaja3iUep2dEm147HOETUfXEQ@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] gpio: virtio: Fix config space reading.
-To: Harald Mommer <harald.mommer@oss.qualcomm.com>
-Cc: Enrico Weigelt <info@metux.net>, Viresh Kumar <vireshk@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/hqojvehdv5yNWzUSXIl4nOX";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/hqojvehdv5yNWzUSXIl4nOX
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 17, 2025 at 4:10=E2=80=AFPM Harald Mommer
-<harald.mommer@oss.qualcomm.com> wrote:
->
-> Quote from the virtio specification chapter 4.2.2.2:
->
-> "For the device-specific configuration space, the driver MUST use 8 bit
-> wide accesses for 8 bit wide fields, 16 bit wide and aligned accesses
-> for 16 bit wide fields and 32 bit wide and aligned accesses for 32 and
-> 64 bit wide fields."
->
-> Signed-off-by: Harald Mommer <harald.mommer@oss.qualcomm.com>
-> ---
+Hi all,
 
-I guess this needs a Fixes tag? And possibly Cc: stable?
+Today's linux-next merge of the vhost tree got a conflict in:
 
-Viresh, does this look ok to you?
+  drivers/virtio/virtio_ring.c
 
-Bart
+between commit:
+
+  b420b31f009f ("kmsan: convert kmsan_handle_dma to use physical addresses")
+
+from the dma-mapping tree and commit:
+
+  d1814d4fca2c ("virtio: rename dma helpers")
+
+from the vhost tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/virtio/virtio_ring.c
+index a8421dc802d6,3f86e74dd79f..000000000000
+--- a/drivers/virtio/virtio_ring.c
++++ b/drivers/virtio/virtio_ring.c
+@@@ -3143,17 -3240,17 +3240,17 @@@ EXPORT_SYMBOL_GPL(virtqueue_unmap_page_
+   * The caller calls this to do dma mapping in advance. The DMA address ca=
+n be
+   * passed to this _vq when it is in pre-mapped mode.
+   *
+-  * return DMA address. Caller should check that by virtqueue_dma_mapping_=
+error().
++  * return mapped address. Caller should check that by virtqueue_mapping_e=
+rror().
+   */
+- dma_addr_t virtqueue_dma_map_single_attrs(struct virtqueue *_vq, void *pt=
+r,
+- 					  size_t size,
+- 					  enum dma_data_direction dir,
+- 					  unsigned long attrs)
++ dma_addr_t virtqueue_map_single_attrs(const struct virtqueue *_vq, void *=
+ptr,
++ 				      size_t size,
++ 				      enum dma_data_direction dir,
++ 				      unsigned long attrs)
+  {
+- 	struct vring_virtqueue *vq =3D to_vvq(_vq);
++ 	const struct vring_virtqueue *vq =3D to_vvq(_vq);
+ =20
+- 	if (!vq->use_dma_api) {
++ 	if (!vq->use_map_api) {
+ -		kmsan_handle_dma(virt_to_page(ptr), offset_in_page(ptr), size, dir);
+ +		kmsan_handle_dma(virt_to_phys(ptr), size, dir);
+  		return (dma_addr_t)virt_to_phys(ptr);
+  	}
+ =20
+
+--Sig_/hqojvehdv5yNWzUSXIl4nOX
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh6AeoACgkQAVBC80lX
+0GzLTAf+MrLPWNt6+PLl7qfouNZwfetcchyANUYB9oTCNe7pYQzljMFIbF8HILTb
+PyQWV9RsBp91Kr4GLc0RYOZs+ZDVNPna68l3/BOV0mzTcm5R0N9h5+HeQRRnLek6
+r+Mn2Qrulz2ABxWVoSWgqMfdi9nqeXph3ltieW/SIa5Ltuje4RqVkBok+qrh81mC
+AFOYMAJE4C1jlMlfhNOLJ6OmjVIDRNmib/QoB3T1V229PfkNjazRDEcUBXG+FhLe
+zP4dQnnbpJK7Iph8utJgNOdxe4mBQxJX+x0JqYPspUEhHOEmVINrhcaVYN2qEhew
+RrNyOKhq5KTFgdvGMf7SEeEHEsQsUg==
+=8SvH
+-----END PGP SIGNATURE-----
+
+--Sig_/hqojvehdv5yNWzUSXIl4nOX--
 
