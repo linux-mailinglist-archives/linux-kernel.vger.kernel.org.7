@@ -1,181 +1,127 @@
-Return-Path: <linux-kernel+bounces-737128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39021B0A81B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 18:06:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20E54B0A81F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 18:08:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B955179C74
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 16:06:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81C665A0B05
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 16:08:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0E7E2E6102;
-	Fri, 18 Jul 2025 16:06:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66002E612D;
+	Fri, 18 Jul 2025 16:08:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xKGxqeDc"
-Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nibvFDoz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC612E266E
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 16:06:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 389132E6113;
+	Fri, 18 Jul 2025 16:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752854776; cv=none; b=LNlL8O4eco8HVRMT4fbFUXsuxwm2bgDlYNXLEYrK0O6KxJ9GuelN0qtFJq0IrGFVKW9MPhcTKm6IEck1a068i40Fp7XHteHLUoMNoDwU78mAODqUY51B/Y0ndGrLoyF/X2br4B6flnKFDQWBLf/v/6Qm7pnel7iNbsUH6DbDPEc=
+	t=1752854924; cv=none; b=cMTASgZW6DimwsrN4iEWqPyz4an8DBdR+qRJBIPdSVsFq0znJ7qt54gSLG6h+zfAHSqHC+NYbDBMLvWZVOFhU5mM6eGqWgRad8SkLT13p33xWBt8GfPB7mrchuGbVeANF8W3L6R4C6VBrhSHPE4JIY8atYi61tSImXRD1NDzxh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752854776; c=relaxed/simple;
-	bh=ST8lcJ+2yDbKpXgUqoVEvCsnKZ/+vATfwEWuT1/oEC8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VHZn5OUSVaVS8EZia0GYB3OiIx1EdrDIyErDOty+7pwYjRMRcYjtbJY6htIKPbojjjrb/HHMQtw/EKXV1zVsW65WoXrX5ZTWq5rsePTxXoqsSWpJ5UnueAt+p9T44W1s1PVB/Ko+4YyfkVvYcWmklco+F/auEV7/J2sX2ALQSAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xKGxqeDc; arc=none smtp.client-ip=209.85.161.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-6159c26766fso1021319eaf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 09:06:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752854773; x=1753459573; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=i/Q1Nu3K5LZZ1ceVlLq9+6xcxFVBX4qH4aUvmo3kZ28=;
-        b=xKGxqeDcnBAvtDtPmvid5WykC5mC1K8JTlADGnqnGVwcEIGpmNVrqwwEWWBFekq6Or
-         wJO28NV1uyBoXQeg/VUemHI0hfjdGrxo7YORl6iRBBT8dORydOfrZ11zSPmSCJS7m7US
-         D21GmL3IZB+naYS7FrEbDWIUmh7gvr6+yvp7EkgYkh91jOZZxko1Gbbpx6I1Jz3Jz6vq
-         tPv86GFzUu4ivijpMRo6ANsQC3FaVgm7mlnjMFtcXOXZGFmq+/01+rJI4lBhVgwP/Wej
-         I3UJ4L97q45pTSj7WpbxinRkL+0jZ1cGJ2ilAEet9fJW/y2yF0+4zRVcc+1DU4KbWcn1
-         ODVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752854773; x=1753459573;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i/Q1Nu3K5LZZ1ceVlLq9+6xcxFVBX4qH4aUvmo3kZ28=;
-        b=BpRtCUgqey8fXM9dtYvkey5erC7HlcmX6cNbSY4Z+VMfAbyv/Y7JJEAuPhuMRMrrb3
-         Nyo5LfC7MmoHKX/lqH3LNrO6iaR65TxbtXEL80Q+unhYyx6PDcde/RYvvkGfcJdaJkcs
-         eJML8oOp6SrzOF0CPZ+eEAktA5mO+pnlXRw/EaH9P2plpYQGktb0HI37DnML4of/L8I3
-         VTDmeuD9AMEYHM18lA1tWB6dvkr8qCe7n++uZN/kelxWR3NgkwC4nO1nMoPbHNMfepjB
-         tCCp2p8suokpDdkvW14/nAKC77uQCTrZi+3ax4qDqaYLYEqlclOezqqNfpduiGBQNQSV
-         mzDg==
-X-Forwarded-Encrypted: i=1; AJvYcCUzzfX9UW7SHl7qxuQ7jZ/qiIzl+uJ2SxOFtgR0bXKSXQrEm33Y9mnnujNUxo8PN3RE7M6kR8BDsP4wXXg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWiG/BYrPSNq3ewjMWGeVCfadJnUDAvpEQCdgPlFF+slIc7HbI
-	KP2iqS3+ezBmWwTjackdUY+E1FLwNgLqsznUAkJTR4lHJd+hwGz9qcwg7hAhCbvCYVD0CM4M4ho
-	Cb/c/
-X-Gm-Gg: ASbGncttcTmktovLuQeXYgvnW1K/NVC1uDK7mK0Yr0KNn+ht7RiimYRefy649YWa8tC
-	1vYdtXhjmHYAHsAIk+RsjbxReHUjRF4hv3RJ+FZSAmImggdeqgBOmayLcwC1CvQOF1yCQi9GVLv
-	ziC2FViIaCIBKZSZYwxvytoIeHF5JXQaSZJTMHXZIMuoskIPv7z4VJmzgraVtoZ/ZwajF2eTVHk
-	oRIOaRvBvf8hZaP4b06iCtkc1akbQAGEwrpdktA/3i2RKaxFrpnS6kRu+z5AV5BNL5FfORVrC2p
-	kvkpYuE+an0iP5V9skDe8FpLZa6ibNZiIbZWdY3cwVYDEn1wMqHu1yQBuM69gmStj6c8SGJsYMu
-	laIjHAqK5fz/W/Q9uYMHUiy2y8ZAPTg==
-X-Google-Smtp-Source: AGHT+IGeuPdqUEt/1o9qCSn3JuCLxLBD7G98jAwQVyZLgiGe8We//F5qCqqXh6NWoKStNnOYX7sQDw==
-X-Received: by 2002:a05:6870:f603:b0:2ff:94d7:b006 with SMTP id 586e51a60fabf-2ffb2251036mr8483664fac.13.1752854773078;
-        Fri, 18 Jul 2025 09:06:13 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:e5d3:a824:1a57:fcaf])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-301b01d2df8sm228752fac.31.2025.07.18.09.06.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jul 2025 09:06:12 -0700 (PDT)
-Date: Fri, 18 Jul 2025 19:06:10 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: LiangCheng Wang <zaq14760@gmail.com>
-Cc: Andy Shevchenko <andy@kernel.org>, Hans de Goede <hansg@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH v10] staging: media: atomisp: fix indentation in aa, anr,
- and bh modules
-Message-ID: <8f7db034-6b38-44c3-b841-ef4bc1db3973@suswa.mountain>
-References: <20250718-new_atomisp-v10-1-54bdff660058@gmail.com>
+	s=arc-20240116; t=1752854924; c=relaxed/simple;
+	bh=VzTbS3dQMTYz9kMsYYUIVmpHH2bQ133Om2jE2nbXkwk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=lUPPIKadaG0jPhOipi2Bng7nYKOwnKVuSH5PIFSyYMPe7SygOadz7qt88RBDi6RhuxVdodWvAEjoHt7U6WXwjg/5SCHl1Hi2/kCrFHIr6MMCuAFZVSSi+H85ZUUzBQjWcI+cUT1yVnLh9cXqEXogNH/+3QgmI2r1DSSPfHkdXGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nibvFDoz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1214DC4CEEB;
+	Fri, 18 Jul 2025 16:08:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752854923;
+	bh=VzTbS3dQMTYz9kMsYYUIVmpHH2bQ133Om2jE2nbXkwk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=nibvFDoz3FoZ5A42k0SKWox6LXTEch7TfEM3LvNjNGi3vVBVp5G44/ZCm0HEvPKVP
+	 DH2MEd8LlmItCfWzTNjP8KmnksrkSkEFcNnxMpY7UQOsY6zyIeI8lirk8gFwByx61Q
+	 vypEE5V8B7Yr2mf2Ojw6oobzXYIuX9Ok96E+KMc4ApsjstylvbHoBtnSC0Yasg9PEo
+	 uGVMBaDzp+9LwFixBjEb9oZrWcCFK/VfDx4VRQWY0DNUHe/CrxlFtIa0m/jPfpe//x
+	 LuVjFW3bJu2m54pjySW/0tUELmxYFK9jH4B0S5eXjSWYMPEXJQTrsU3AWWhIOToFmk
+	 w5VKDr++bTYgg==
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: syzbot <syzbot+b63d677d63bcac06cf90@syzkaller.appspotmail.com>, 
+ Alan Stern <stern@rowland.harvard.edu>
+Cc: jikos@kernel.org, linux-input@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+ syzkaller-bugs@googlegroups.com
+In-Reply-To: <8bec1698-5008-428f-8e71-ec002def0c54@rowland.harvard.edu>
+References: <68753a08.050a0220.33d347.0008.GAE@google.com>
+ <f6e67c38-8d63-4536-827c-09757a8d5609@rowland.harvard.edu>
+ <ea7f1f42-273b-4c07-8bf2-769992dd9ced@rowland.harvard.edu>
+ <8bec1698-5008-428f-8e71-ec002def0c54@rowland.harvard.edu>
+Subject: Re: (subset) [syzbot] [input?] [usb?] UBSAN: shift-out-of-bounds
+ in s32ton (2)
+Message-Id: <175285492024.272050.11219945704830043047.b4-ty@kernel.org>
+Date: Fri, 18 Jul 2025 18:08:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250718-new_atomisp-v10-1-54bdff660058@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Fri, Jul 18, 2025 at 11:02:14PM +0800, LiangCheng Wang wrote:
-> Fix tab/space indentation and move a standalone kernel-doc
-> comment of the 'strength' field of the struct ia_css_aa_config
-> to the whole-structure one.
-> Align with kernel coding style guidelines.
+On Tue, 15 Jul 2025 15:29:25 -0400, Alan Stern wrote:
+> On Mon, Jul 14, 2025 at 10:10:32AM -0700, syzbot wrote:
+> > Hello,
+> >
+> > syzbot found the following issue on:
+> >
+> > HEAD commit:    b4b4dbfa96de media: stk1160: use usb_alloc_noncoherent/usb..
+> > git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=15a830f0580000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=28729dff5d03ad1
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=b63d677d63bcac06cf90
+> > compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1614418c580000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1257dd82580000
+> >
+> > Downloadable assets:
+> > disk image: https://storage.googleapis.com/syzbot-assets/7301552ad828/disk-b4b4dbfa.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/c559b38fa1b6/vmlinux-b4b4dbfa.xz
+> > kernel image: https://storage.googleapis.com/syzbot-assets/9c1da8b2a83f/bzImage-b4b4dbfa.xz
+> >
+> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > Reported-by: syzbot+b63d677d63bcac06cf90@syzkaller.appspotmail.com
+> >
+> > usb 4-1: config 0 interface 0 altsetting 0 has 1 endpoint descriptor, different from the interface descriptor's value: 9
+> > usb 4-1: New USB device found, idVendor=045e, idProduct=07da, bcdDevice= 0.00
+> > usb 4-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+> > usb 4-1: config 0 descriptor??
+> > microsoft 0003:045E:07DA.0001: ignoring exceeding usage max
+> > microsoft 0003:045E:07DA.0001: unsupported Resolution Multiplier 0
+> > ------------[ cut here ]------------
+> > UBSAN: shift-out-of-bounds in drivers/hid/hid-core.c:69:16
+> > shift exponent 4294967295 is too large for 32-bit type 'int'
+> > CPU: 0 UID: 0 PID: 10 Comm: kworker/0:1 Not tainted 6.16.0-rc4-syzkaller-00314-gb4b4dbfa96de #0 PREEMPT(voluntary)
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+> > Workqueue: usb_hub_wq hub_event
+> > Call Trace:
+> >  <TASK>
+> >  __dump_stack lib/dump_stack.c:94 [inline]
+> >  dump_stack_lvl+0x16c/0x1f0 lib/dump_stack.c:120
+> >  ubsan_epilogue lib/ubsan.c:233 [inline]
+> >  __ubsan_handle_shift_out_of_bounds+0x27f/0x420 lib/ubsan.c:494
+> >  s32ton.cold+0x37/0x9c drivers/hid/hid-core.c:69
+> >  hid_output_field drivers/hid/hid-core.c:1841 [inline]
+> >  hid_output_report+0x36f/0x4a0 drivers/hid/hid-core.c:1874
+> >  __hid_request+0x1e0/0x3c0 drivers/hid/hid-core.c:1987
+> >  hidinput_change_resolution_multipliers drivers/hid/hid-input.c:1950 [inline]
+> >  hidinput_connect+0x1ada/0x2bd0 drivers/hid/hid-input.c:2327
+> 
+> [...]
 
-There are too many changes all at once and some of the changes are not
-described in the commit message.
+Applied to hid/hid.git (for-6.17/core), thanks!
 
-> diff --git a/drivers/staging/media/atomisp/pci/isp/kernels/anr/anr_1.0/ia_css_anr.host.c b/drivers/staging/media/atomisp/pci/isp/kernels/anr/anr_1.0/ia_css_anr.host.c
-> index 899d566234b9d3a35401666dcf0c7b1b80fd5b31..488807a161b9a6ba9ebc4a557221cd21bd1df108 100644
-> --- a/drivers/staging/media/atomisp/pci/isp/kernels/anr/anr_1.0/ia_css_anr.host.c
-> +++ b/drivers/staging/media/atomisp/pci/isp/kernels/anr/anr_1.0/ia_css_anr.host.c
-> @@ -16,25 +16,21 @@ const struct ia_css_anr_config default_anr_config = {
->  		0, 3, 1, 2, 3, 6, 4, 5, 1, 4, 2, 3, 2, 5, 3, 4,
->  		0, 3, 1, 2, 3, 6, 4, 5, 1, 4, 2, 3, 2, 5, 3, 4,
->  		0, 3, 1, 2, 3, 6, 4, 5, 1, 4, 2, 3, 2, 5, 3, 4,
-> -		0, 3, 1, 2, 3, 6, 4, 5, 1, 4, 2, 3, 2, 5, 3, 4
-> +		0, 3, 1, 2, 3, 6, 4, 5, 1, 4, 2, 3, 2, 5, 3, 4,
+[1/1] HID: core: Reject report fields with a size or count of 0
+      https://git.kernel.org/hid/hid/c/bcf266ca2779
 
-No need to add a comma to this line.  The comma at the end of the line
-is useful when we might add another element to an array.  But here the
-length is fixed.
+Cheers,
+-- 
+Benjamin Tissoires <bentiss@kernel.org>
 
-If someone were to add a comma here and it was new code, then that's
-fine.  But I don't want to have to review a separate patch which only
-adds a unnecessary comma.
-
->  	},
-> -	{10, 20, 30}
-> +	{ 10, 20, 30 },
-
-Same here.  This comma serves no purpose.  We can't actually add
-anything to this struct.  What would be actually helpful would be to
-use designated initializers.
-
-diff --git a/drivers/staging/media/atomisp/pci/isp/kernels/anr/anr_1.0/ia_css_anr.host.c b/drivers/staging/media/atomisp/pci/isp/kernels/anr/anr_1.0/ia_css_anr.host.c
-index 899d566234b9..3de7ebea3d6e 100644
---- a/drivers/staging/media/atomisp/pci/isp/kernels/anr/anr_1.0/ia_css_anr.host.c
-+++ b/drivers/staging/media/atomisp/pci/isp/kernels/anr/anr_1.0/ia_css_anr.host.c
-@@ -11,14 +11,14 @@
- #include "ia_css_anr.host.h"
- 
- const struct ia_css_anr_config default_anr_config = {
--	10,
--	{
-+	.threshold = 10,
-+	.thresholds = {
- 		0, 3, 1, 2, 3, 6, 4, 5, 1, 4, 2, 3, 2, 5, 3, 4,
- 		0, 3, 1, 2, 3, 6, 4, 5, 1, 4, 2, 3, 2, 5, 3, 4,
- 		0, 3, 1, 2, 3, 6, 4, 5, 1, 4, 2, 3, 2, 5, 3, 4,
- 		0, 3, 1, 2, 3, 6, 4, 5, 1, 4, 2, 3, 2, 5, 3, 4
- 	},
--	{10, 20, 30}
-+	.factors = {10, 20, 30},
- };
- 
- void
-
-I added a comma to the end of .factors because there is a 1% change we
-will add a new member to the struct and it's the right thing to do.  I
-was already changing that line, so I'm allowed to make tiny white space
-changes like this.
-
-But notice how I left off the comma after the numbers.  That array is a
-fixed size and nothing can be added.  Leaving off the comma communicates
-that.  Also there was no need to change that line.  It's unrelated to
-using desgnated initializers.  If you added a comma, you would need to
-send a separate patch for that with a commit message to describe and
-justify it.  As a reviewer, I would need to go through the line
-carefully and verify that none of the other numbers had been changed.
-
-The commit message for the above patch would say, "Use a designated
-initializer for default_anr_config.  It helps readability."  There would
-be no need to mention that "I added a comma" to the end of the .factors
-line because it's a minor thing that we're not really stressed about.
-
-regards,
-dan carpenter
 
