@@ -1,133 +1,138 @@
-Return-Path: <linux-kernel+bounces-736292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3F4CB09B15
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:04:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE5FFB09B17
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:04:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C0FDA4522E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:03:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5CC41AA1385
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:04:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C701EA7CB;
-	Fri, 18 Jul 2025 06:04:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 237591E98E3;
+	Fri, 18 Jul 2025 06:04:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="D56kPnDe"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="CqD0dyvi"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30E617578;
-	Fri, 18 Jul 2025 06:04:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D7317578;
+	Fri, 18 Jul 2025 06:04:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752818650; cv=none; b=W3O94l52/afW92h3NCQAKXnBi+8jvf3MhcNs/xbcpdaIMAwUH4iOs0MCdcf9rQ/skscNAjJvvipE0ozjSMtBp1AJl2wvar2fbBAf5SiovRhzMBRAge2oMAl5qD8LqZIbREZelw7h9OnulI+8qJhIXolJh2DsKqBHma6/G/Be7Dk=
+	t=1752818662; cv=none; b=n0pU9WDkj630IwAVf3LJAiPd4CYGnXukm2TYZrHnQHvv79QN8TlQDQOFDcODwMod/LzRXffHF8ijGciD054EuoNsvtvEO5U7SFrrtBlMWOqpvFqLHhMG+ey7VQMsI5f3h5/Sk6klziNKrhprkttFHX8hySnu8uIXoRIroY5nsrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752818650; c=relaxed/simple;
-	bh=qNfLc7XonEe7gOviJgyr7hrIJ/hagUUZv3GQNeGmMAE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hRHRxOR9sglFho5H+iWuVCgxYK5dhQ7sOOyydXRGdqZLtfmVJ269d9yQ6EhfL3vFWtvtfJNl9ClISK9FCcmUrPHvNTYrD93KxqzHTUh9oJEyJJfeFBPXVAKCCeAtx3/I+Mrzg5/6MiAqksm+Fs2DghKiYe/TIhbsZbb6gbZ3vHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=D56kPnDe; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1752818640;
-	bh=QuwdC1Tna+trUVMYs7HTIx5JF/YqGy9uHezizJLAtKE=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=D56kPnDePrW9rZX9tzPGAE2AfDG9S2Ub1u68b5Kjcdvfc1xbGxgmTi2eGy6VllcTp
-	 25Pnb2qRTIUP9buFWWCJCjTfl4XAVwNEOcldKWWeqeJy6+1HQWkGXiwBhgid5zPKX1
-	 pvJSgGjflIIfFAaRNXA+lpegfsrS0FoXiUFPwNzoh2oH0F8POUtEPKfMBrfwGGZLtq
-	 e7vm9i+ni+MNIZJHqV7QoWjQ+9sB27OYVWhVHcq4cHgQ4KpHZ7JB+5gr8GgBhD43Xt
-	 UVOC6/eSm0ir/iVJBOtJxH917D8ZoeiNlzX+jFIeKaR6D2qXP0dElKLoTzw/gotfMO
-	 I5fwXFaczv2hA==
-Received: from pecola.lan (unknown [159.196.93.152])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id B729C64C1A;
-	Fri, 18 Jul 2025 14:03:58 +0800 (AWST)
-Message-ID: <59d6a0ee7f47346d8beb0283ee79a493c76dbb45.camel@codeconstruct.com.au>
-Subject: Re: [PATCH] net: mctp: Add MCTP PCIe VDM transport driver
-From: Jeremy Kerr <jk@codeconstruct.com.au>
-To: Khang D Nguyen <khangng@amperemail.onmicrosoft.com>, YH Chung
- <yh_chung@aspeedtech.com>, "matt@codeconstruct.com.au"
- <matt@codeconstruct.com.au>, "andrew+netdev@lunn.ch"
- <andrew+netdev@lunn.ch>,  "davem@davemloft.net" <davem@davemloft.net>,
- "edumazet@google.com" <edumazet@google.com>,  "kuba@kernel.org"
- <kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>, 
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>, BMC-SW
- <BMC-SW@aspeedtech.com>
-Cc: Hieu Le <lhieu@os.amperecomputing.com>
-Date: Fri, 18 Jul 2025 14:03:58 +0800
-In-Reply-To: <5182407d-c252-403a-bb62-ebd11b0f126a@amperemail.onmicrosoft.com>
-References: <20250714062544.2612693-1-yh_chung@aspeedtech.com>
-	 <a01f2ed55c69fc22dac9c8e5c2e84b557346aa4d.camel@codeconstruct.com.au>
-	 <SEZPR06MB57635C8B59C4B0C6053BC1C99054A@SEZPR06MB5763.apcprd06.prod.outlook.com>
-	 <27c18b26e7de5e184245e610b456a497e717365d.camel@codeconstruct.com.au>
-	 <SEZPR06MB5763AD0FC90DD6AF334555DA9051A@SEZPR06MB5763.apcprd06.prod.outlook.com>
-	 <7e8f741b24b1426ae71171dff253921315668bf1.camel@codeconstruct.com.au>
-	 <5182407d-c252-403a-bb62-ebd11b0f126a@amperemail.onmicrosoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1752818662; c=relaxed/simple;
+	bh=wf/hravHlEJOVBzGs8JdFGSe+OuIMU8btgpx5fHC1wU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=nfsua8+UoNT5PmY3irLBzaAkLLYZ3RYqz2nuoBnG/+iA4KeK+k2nGuB6frxvB1o5oORmmSN/8OaWc0XyCyZlYLAmqv1eb5Id8J3HrD8SEyeU5mz2PxTI7kOuE40JJRw99PcVDgngGvojcQojtXAyX45fbtpSx2v3K4qs2CZMjqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=CqD0dyvi; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752818521;
+	bh=vZ0caIWbcYMSdzQC0YG3LfOTL45OUgfdaAhdU+gMsxk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=CqD0dyviOLOmh/m4kyAikCVokip5XsUkA1rnH+gDpR58iyu7XEFtWUzmzvQ2uykdf
+	 JfqLp0VSapmdKLbIZnlEavLV1irjUwXMPauisGonwd54fRU7NFJMxavCQ6Co1r8goO
+	 UBPAkNOYLo5bG3blAbEXL53TWfNgX7qM5nBNwPiSx9K7WdwgdJ7h4lkqK/hW4jJ37R
+	 EU4CjoMB4NaaArIxreLIswEtMm/oqktkrBMqugElETUaFjzLOMgwb5yXf4/Dt87RPG
+	 GYNXK2xC/hm9/Hy6bnYCEJMTaUUTJ/jRv5FNUprZjHcBNHVVpEyehXObDy8Jftcfe4
+	 E9+s7PQDaJ9NQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bjzhS3XL8z4xPd;
+	Fri, 18 Jul 2025 16:02:00 +1000 (AEST)
+Date: Fri, 18 Jul 2025 16:04:07 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Rob Herring <robh@kernel.org>, Lee Jones <lee@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: linux-next: manual merge of the devicetree tree with the mfd tree
+Message-ID: <20250718160407.011e2389@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/8jIM0Qb_UxlxYVxUMHGFqOS";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hi Khang,
+--Sig_/8jIM0Qb_UxlxYVxUMHGFqOS
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the input, I appreciate it.
+Hi all,
 
-> > Khang: any inputs from your side there?
->=20
-> I believe segment 0 is a common valid segment and is not reserved.
+Today's linux-next merge of the devicetree tree got a conflict in:
 
-0 would not have a special meaning in flit mode (ie, when we're using
-the segment number); this was more a reference to being optional in
-non-flit mode.
+  Documentation/devicetree/bindings/trivial-devices.yaml
 
-> If we want to combine, we might need another bit in the first byte to
-> represent if it is flit-mode or not. But I am not sure if it is worth
-> the effort, rather than just separate them.
+between commit:
 
-Yep, had the same line of thinking here too.
+  e65e2b0d0f7e ("dt-bindings: mfd: adp5585: document adp5589 I/O expander")
 
-I agree that it would make sense to have the address format reflect the
-actual hardware transport. Having variation across the binding
-identifier should not be a problem.
+from the mfd tree and commits:
 
-> It should be safer and easier to get the format right for each Physical=
-=20
-> Medium Identifier, rather than for each Physical Transport Binding.
->
->=20
-> So my opinion:
->=20
-> - 3-byte for non-Flit (0x08-0x0E medium type)
-> =C2=A0=C2=A0 4-byte for Flit Mode (0x40 medium type)
-> - Drivers should be able to advertise their Physical Medium Identifier
-> =C2=A0=C2=A0 alongside the existing Physical Transport Binding Identifier=
-.
-> - We can document a stable lladdr / Linux kernel physical format used
-> =C2=A0=C2=A0 for sockets for each Physical Medium Identifier, not Physica=
-l
-> =C2=A0=C2=A0 Transport Binding.
+  4fb2210866f7 ("dt-bindings: trivial-devices: Add Analog Devices ADT7411")
+  828e50188de5 ("dt-bindings: trivial-devices: Add undocumented hwmon devic=
+es")
 
-Agreed, sounds like a good plan. I'll look at options for the physical
-medium identifier.
+from the devicetree tree.
 
-YH: so we would just have the three-byte format for your proposed
-driver:
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-   [0]: routing type (bits 0:2, others reserved)
-   [1]: bus
-   [2]: device / function
-
-- assuming you're only handling non-flit mode for now.
-
+--=20
 Cheers,
+Stephen Rothwell
 
+diff --cc Documentation/devicetree/bindings/trivial-devices.yaml
+index dd6297392f72,95c9bd36cc63..000000000000
+--- a/Documentation/devicetree/bindings/trivial-devices.yaml
++++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+@@@ -39,6 -39,16 +39,14 @@@ properties
+            - ad,adm9240
+              # AD5110 - Nonvolatile Digital Potentiometer
+            - adi,ad5110
++             # Temperature sensor with integrated fan control
++           - adi,adm1027
+ -            # Analog Devices ADP5589 Keypad Decoder and I/O Expansion
+ -          - adi,adp5589
++             # Analog Devices ADT7411 Temperature Sensor and 8-channel ADC
++           - adi,adt7411
++             # Temperature sensor with integrated fan control
++           - adi,adt7463
++             # Temperature sensor with integrated fan control
++           - adi,adt7468
+              # Analog Devices LT7182S Dual Channel 6A, 20V PolyPhase Step-=
+Down Silent Switcher
+            - adi,lt7182s
+              # AMS iAQ-Core VOC Sensor
 
-Jeremy
+--Sig_/8jIM0Qb_UxlxYVxUMHGFqOS
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh549cACgkQAVBC80lX
+0Gzp7Af+JrxtmVBDAwpaOhQmTo7VnyEoYtrGSX+26JEVsNl6ZDT4jJvyFKAXd0vF
+oO344cIvtoFDaCpRU4tn1i7kps3uYYjO8UY52dgImW22HwBbD4ihzGyEXp5tV1aw
+I/LPKqt/n+hYMU3RcIum+cAifO5i0n3Q2uQ14Sdf+Durfg5aU+3eu6ml8K/UUxqA
+oqDlPj0sgaEomWEBZjXizbG45+u66VLIsO0FgBrjjjz82Ku4vV+sRTx96AHHe2ZV
+64EC3beMNDspPywC0Heho9JY4zR6Zm3vGrpsJ6FEN/FTMY0n6Od0+YK+4i8aARUd
+Aapn+MoGGGMqbzihxMgacdKfELO7gw==
+=SwO5
+-----END PGP SIGNATURE-----
+
+--Sig_/8jIM0Qb_UxlxYVxUMHGFqOS--
 
