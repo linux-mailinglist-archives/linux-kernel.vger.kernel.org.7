@@ -1,86 +1,38 @@
-Return-Path: <linux-kernel+bounces-736576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4916CB09EB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:09:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA673B09EB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:10:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D41C01C445E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:10:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CAF31C44C5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7009295513;
-	Fri, 18 Jul 2025 09:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DMwSPG7t"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77639295524;
+	Fri, 18 Jul 2025 09:10:48 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6446D20E71D
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 09:09:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06FE217719;
+	Fri, 18 Jul 2025 09:10:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752829777; cv=none; b=YEOZpFpcdiqFVff3rdK+yrSXPdfk+xY5bG0VBG8sdn+ddRgQATdwMuqPrm11lvFYwiKYuAhZqD3k+lWegyD7jBEKsQOlu306TH+nYdXvTWXKjvDtz3+7DjMva836TKggxyk6WESecZgeRO/ZS1ntZBp0n2hSddtAKisSPWaCvPE=
+	t=1752829848; cv=none; b=WHUHlFpFRFvDf8AeuB/fgC0KKmtKJt4krVyxbI5kEnAPvcf8Mcq+tyP+FJTycQsxDLkn+gm3JPyNung+kSv1wALeH7s+dY4Di62eEE2x2SIo1kd6bsdmqGjYPxkPHP9CO/uXkhfsM22Zdk/01iAiHQOuh9Fpcvtj9Iv+Uo9Edec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752829777; c=relaxed/simple;
-	bh=UtCb0XEENQrhwIrwSyIf3fzwd5mpbrwW2EYLLnWjwOw=;
+	s=arc-20240116; t=1752829848; c=relaxed/simple;
+	bh=cBX8jb8/E8dXl35jg55xxJT05v9kGOTkRga0coGmOZk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kWMfAlchIIVttrQIhgsbplZyXcMoVFAXguFnFlvfqKGhpKq7xSVYrsSmoRJKHG+oQGqMHiYtHVMZjxi5AJEGh31KF7scSU7hGz5nvdduLNqj9j4Tv3p0mU0C//2axSjBhV4S3aMelW64sWmlQ/cV5GYDSEv0j1Iec/1dFGkorto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DMwSPG7t; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752829774;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kLyNWUZYLntH6kzg6fsWrkbR7v6uvcRiHtF10eyX+X4=;
-	b=DMwSPG7txv2LAWgrTJHAyq3Cn776uZvyTaT6fD5UBZwJeyZtlkbXFLLK8Hw00RHzTFqOJR
-	POWdrpcDQfJIDeRYOWTQpLvvCKs99CJai+pnP5WKPF12KGWshKPLnQ8RsQIfdeGKKQTvvB
-	zPrfmKrXbzmMRDgPk4DuaPq3B5Xnkm4=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-47-lpn9YZEBO6KzPZK-AB6L9A-1; Fri, 18 Jul 2025 05:09:32 -0400
-X-MC-Unique: lpn9YZEBO6KzPZK-AB6L9A-1
-X-Mimecast-MFC-AGG-ID: lpn9YZEBO6KzPZK-AB6L9A_1752829771
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45600d19a2aso17078545e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 02:09:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752829771; x=1753434571;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kLyNWUZYLntH6kzg6fsWrkbR7v6uvcRiHtF10eyX+X4=;
-        b=FTH+Zq9sMchTKGTaHomOtwGLE+WJBAXd5/IO/QM8+Kv+oWmgIrYEHDXegt2IBdmdF+
-         vevQHmZH5Ijd7of09LjN8BvAAu7gQJ19ej24wn9YJDJ3Qt8YdoLbcmP84Gccd+rgE+Ji
-         wzmOBI+N+kWFUQ57332tdDi2ilt+XAJepom+kA5+iOvFOtRGVDHZuWgTy6YTXC/+TbjE
-         yOjsIG1O/lwdyn+QxEB0HdfF5hy42bqeDBacGm6zdJohRI4muNZnAbY+dISvOjMyChvs
-         l2pvmPUVrGW4u+4yBIa4vGpODn/BMO/rPAnGN/DrPjER1pCHhCFvjeuJcb5oqAd5PorG
-         3yjw==
-X-Forwarded-Encrypted: i=1; AJvYcCWrrx0Iza668kPw9ZOth1X47Av+/XQmPXLVrrDVLf7n7bPH++VqRbrlBFSgIKyNJu6Lon9UhUDAxrF3RPQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQESmolWqrIleuwZ42bxnDue40ckQLZ/D5nsM4GDOtNch7V46e
-	Gtv9GEP7eQaqEyDADv4ESH0iK75wGxG0yw3OrEQebG2909MTNnbU82smP1OwYJPexAoo3gu3MFJ
-	fZKP89wtywty+cBBpUGlhnM6Lkl6YLHwtFcU4aUGwKz8eo6doAeq/YWsjKXXuSaEedA==
-X-Gm-Gg: ASbGncuJGp2e6OmJHj24KpPhEEvItu58n+4XF1m6zz5czqKwsUL6/QNod8T4YKns+lJ
-	XNRZt7tplEBILJiW8HE0OnkFH3kKR+WDO0+IPd1QshEy/u6lHsPkA4WbqkbjavhD5NjtbY0XSxn
-	0SLlsCamssvV+TZHMbcFuJA5R5CPm4hQQNIiOXTrDRi3AZitwkZ8hYxogY2UcXcfssKyiNQbgSK
-	wWETovUTmw6mf5YnfYsyrwenUEzHCttzIlnRcm4Ywq8jyEDmoEmxrOjsi0TYs05yKjgYfaIZXY2
-	3UAgPEZkinCSeuJ9e5BcaAO8q78EbpfFPMYGQYr0N7rlYZwoJsf7E6YUcoTyXo270w3kCsdSJ2a
-	CdDcPRQ4E2eM=
-X-Received: by 2002:a05:600c:4709:b0:456:f1e:205c with SMTP id 5b1f17b1804b1-4562e32e598mr89675335e9.4.1752829770943;
-        Fri, 18 Jul 2025 02:09:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFGN/Cv3drNsF8UaKNdX/NfxKGTgGum22Q8FGNtEDQQFlxthmY+ud4BApn5/n0KWmB/pCzOcw==
-X-Received: by 2002:a05:600c:4709:b0:456:f1e:205c with SMTP id 5b1f17b1804b1-4562e32e598mr89674875e9.4.1752829770415;
-        Fri, 18 Jul 2025 02:09:30 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e818525sm72859355e9.16.2025.07.18.02.09.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Jul 2025 02:09:29 -0700 (PDT)
-Message-ID: <0becc009-68a8-452f-9115-a5df3ca998ed@redhat.com>
-Date: Fri, 18 Jul 2025 11:09:28 +0200
+	 In-Reply-To:Content-Type; b=oOI38YwKxalKSMA4nJXUsA0ElL88Jpp4mHRqz5Nr9NYbsuRTb/ujZ5RQh2n2UPJ7WXLALpw4QJDZcD0TEzI886pDwvj3DVaaaUrKYc9gA47X33o+oBeAmBuZIxja1642SYAP9kI4hRCDrRu5yKdYdfdLkZYG63UyqU0K5Jc0F+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [192.168.0.106] (unknown [114.241.87.235])
+	by APP-05 (Coremail) with SMTP id zQCowAAnulp+D3poBZ4XBQ--.32570S2;
+	Fri, 18 Jul 2025 17:10:23 +0800 (CST)
+Message-ID: <8ade99a6-84a0-4e69-8ebf-d9dfdc9141b5@iscas.ac.cn>
+Date: Fri, 18 Jul 2025 17:10:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,78 +40,80 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 3/3] net/mlx5: Support getcyclesx and
- getcrosscycles
-To: Carolina Jubran <cjubran@nvidia.com>,
- Richard Cochran <richardcochran@gmail.com>
-Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
- Mark Bloch <mbloch@nvidia.com>, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- Tariq Toukan <tariqt@nvidia.com>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>
-References: <1752556533-39218-1-git-send-email-tariqt@nvidia.com>
- <1752556533-39218-4-git-send-email-tariqt@nvidia.com>
- <650be1b7-a175-4e89-b7ea-808ec0d2a8b3@redhat.com>
- <4b81bea4-ef05-4801-8903-2affa02d2366@nvidia.com>
+Subject: Re: [PATCH v2 2/2] riscv: dts: spacemit: Add OrangePi RV2 board
+ device tree
+To: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>, dlan@gentoo.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ paul.walmsley@sifive.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+ palmer@dabbelt.com
+Cc: skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250718084339.471449-1-hendrik.hamerlinck@hammernet.be>
+ <20250718084339.471449-3-hendrik.hamerlinck@hammernet.be>
 Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <4b81bea4-ef05-4801-8903-2affa02d2366@nvidia.com>
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+In-Reply-To: <20250718084339.471449-3-hendrik.hamerlinck@hammernet.be>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:zQCowAAnulp+D3poBZ4XBQ--.32570S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kw4kWr4UWw4ruF13AF1fWFg_yoW8Ar1DpF
+	Z7uFs3AF1DtF4fKr42g3W8Way8urn5XF47t3y2g3s09Fn8XFyFqwn29ay5uF1UArn3uFWq
+	yF4UW348G3Z8ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvvb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I
+	8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
+	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l
+	c7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
+	1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
+	14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7
+	IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E
+	87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73Uj
+	IFyTuYvjxUqiFxDUUUU
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
-On 7/17/25 5:56 PM, Carolina Jubran wrote:
-> On 17/07/2025 13:55, Paolo Abeni wrote:
->> On 7/15/25 7:15 AM, Tariq Toukan wrote:
->>> From: Carolina Jubran <cjubran@nvidia.com>
->>>
->>> Implement the getcyclesx64 and getcrosscycles callbacks in ptp_info to
->>> expose the device’s raw free-running counter.
->>>
->>> Signed-off-by: Carolina Jubran <cjubran@nvidia.com>
->>> Reviewed-by: Dragos Tatulea <dtatulea@nvidia.com>
->>> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
->>> ---
->>>   .../ethernet/mellanox/mlx5/core/lib/clock.c   | 74 ++++++++++++++++++-
->>>   1 file changed, 73 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lib/clock.c b/drivers/net/ethernet/mellanox/mlx5/core/lib/clock.c
->>> index b1e2deeefc0c..2f75726674a9 100644
->>> --- a/drivers/net/ethernet/mellanox/mlx5/core/lib/clock.c
->>> +++ b/drivers/net/ethernet/mellanox/mlx5/core/lib/clock.c
->>> @@ -306,6 +306,23 @@ static int mlx5_mtctr_syncdevicetime(ktime_t *device_time,
->>>   	return 0;
->>>   }
->>>   
->>> +static int
->>> +mlx5_mtctr_syncdevicecyclestime(ktime_t *device_time,
->>> +				struct system_counterval_t *sys_counterval,
->>> +				void *ctx)
->>> +{
->>> +	struct mlx5_core_dev *mdev = ctx;
->>> +	u64 device;
->>> +	int err;
->>> +
->>> +	err = mlx5_mtctr_read(mdev, false, sys_counterval, &device);
->>> +	if (err)
->>> +		return err;
->>> +	*device_time = ns_to_ktime(device);
->>
->> If the goal is providing a raw cycle counter, why still using a timespec
->> to the user space? A plain u64 would possibly be less ambiguous.
->>
->> /P
->>
-> 
-> getcycles64 and getcrosscycles already return the cycle counter in a 
-> timespec64/ktime format, so I kept the new ioctls consistent with them.
+Hi Hendrik,
 
-Ah, sorry I missed that context. Looks good to me than.
+On 7/18/25 16:43, Hendrik Hamerlinck wrote:
+> Add initial device tree support for the OrangePi RV2 board [1], which is
+> marketed as using the Ky X1 SoC but has been confirmed to be 
+> identical to the SpacemiT K1 [2].
+>
+> The device tree is adapted from the OrangePi vendor tree [3], and similar
+> integration can be found in the Banana Pi kernel tree [4], confirming SoC
+> compatibility.
 
-Thanks,
+This isn't particularly crucial, but I wonder if we can do something
+similar to a jh7110-common.dtsi arrangement, where most of the boards
+sharing similar designs can also share devicetree source files.
 
-Paolo
+Easier said than done, probably, but I think it should be possible by
+just comparing the vendor dts files.
 
+Again this doesn't need to block this patch.
 
+Yixun: I'm assuming you'll be handling this. What do you think about a
+k1-common.dtsi?
+
+Vivian "dramforever" Wang
+
+> This minimal device tree enables booting into a serial console with UART
+> output and a blinking LED.
+>
+> Link: http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-RV2.html [1]
+> Link: https://www.spacemit.com/en/key-stone-k1 [2]
+> Link: https://github.com/BPI-SINOVOIP/pi-linux/blob/linux-6.6.63-k1/arch/riscv/boot/dts/spacemit/k1-x_orangepi-rv2.dts [3]
+> Link: https://github.com/orangepi-xunlong/linux-orangepi/tree/orange-pi-6.6-ky [4]
+> Signed-off-by: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
+> ---
+> Changes since v1:
+> - Added the aliases section to the device tree.
+> - Removed the memory section, as it is populated by the bootloader.
+> - Replaced unclear copyright similar to the other K1-based boards.
+> ---
+> [...]
 
 
