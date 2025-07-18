@@ -1,218 +1,207 @@
-Return-Path: <linux-kernel+bounces-736896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A8FCB0A4D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:08:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA983B0A4DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:10:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3BAE16EC2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:08:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 965F4AA0B17
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DFDC2DBF78;
-	Fri, 18 Jul 2025 13:08:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EFE52DC327;
+	Fri, 18 Jul 2025 13:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QV/PvT7f"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="UozkiPgl"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F6C5218EA8;
-	Fri, 18 Jul 2025 13:08:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752844095; cv=none; b=TdA2vtM/M/IDlt/2yRMqbkQ9/Ul91yo+TVU3n5LrRbVHtLT7M0k0ZAkMX/JTHyWzvtE+9TzfocvN8AvKpy9JuBtbIuyQaHhFmyesdSpOi5vKWImBjVaDWSSYqh0uJ75RW9YRgXVcAGTcr2SgY1yqdwFZO4OW7+yCc5a1JEygR4s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752844095; c=relaxed/simple;
-	bh=BGoXAIPMUMwVyrTqd9zgZfK7KQasBow3XqKhoUBGF58=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=aI3JH+6QcG2fYDY2sr4UTHy+nDWhcTvhduV8DzxGww6GYjdrXftSWLgSjV7fNDEX3DRpvDpNo/etP0WCpO4va04ygEvxrvJCVoztXi69lYFbP8ICfzXZc9n3SGwg4CKTNJkEr1sV3UqgDJLRaBg4wJp7ysBKEA3jYPiM+uFSqKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QV/PvT7f; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-879d2e419b9so1353347a12.2;
-        Fri, 18 Jul 2025 06:08:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752844093; x=1753448893; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pKd3GvcYF3gQCFm0OcSr9YY+9zf3UHvOPRoBWIJzi6M=;
-        b=QV/PvT7fvbS8XVCXH1xJkxCqmN1N7zX/4RVkMo/MXaO0q2BgiSbeYe+SfAyPivxAu6
-         GM2l6MXDKcdbu9ONnHVMuiJB5788YX7ODbE+Nsmq2vsUaiMcDolIgAzw2W0m/CHnpi/w
-         QP3QKBriJSpkmOkNgTCFk3/+0xCCVp2Jbzdis5QzgX+nYn5TdBHMxOVzq4F74Zz5SeO/
-         /sXnTwnDGhH1y7Zmdzm0QPV+/05KvNA7W0WtAxxnYXqY2hRNEXBiqU7ozrfPz3Aqz/N7
-         PkL8LTG/tVdqjVEhvZ+GXI+FYacMdqH8jkAHjnpRncW+2NphZ6mG1qDF3bhkutUedhiN
-         vugw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752844093; x=1753448893;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pKd3GvcYF3gQCFm0OcSr9YY+9zf3UHvOPRoBWIJzi6M=;
-        b=CAJX5O9pYYgMNG8i16iUrtdgkQdL0AERsvS90EujjbDX8JxsJFn+9atIWJk+0oxixU
-         kmWrt/rlaq7LzrND7fmreHRj5Rlqjqoguc4HNUBU6RavR2xPR51Y28Y9wmeTi7sz0u1V
-         98tViBn2c+5XUbiC5Dx4EPDgcs68H2aYYf0TjDqF0LCYQCwURPDL1de28nXZNBW1WN7X
-         2jefeGAN6eeHgjrRnBgtiigGIfqiyao+/M5pQezcuiq0G854T06TfiWTJ0Saf8Jq8NxM
-         mnFh81HtU0/33VP1AvEZPd/vNX0sNWbDo/noqraCiRjTm3YeZHIEpz9wlj/QNmg3OIAD
-         1Q9g==
-X-Forwarded-Encrypted: i=1; AJvYcCVf9ONzh59D6meNoEek/r1xHNB4oSBiTBFM0XmoYbbL4g9OnWMaAXpgsG2FXm5Nxfa9W9sstY+u+PJxiA0=@vger.kernel.org, AJvYcCWWWTv8mzdTcmmU2eWMfJNrI48EqeZ5Ap4eYK5jsHmwdA1jLpjGc48ltlyZ6YqAxae57d7HUNJXQFH55lo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHgrj2c6XVUn/ZsByabeNbXO0zU3Ei773tb69vme3NkMHQnL8x
-	hQZZZLR3pXF2JmMRruACtXGUWqJtqMaPT2bvI6NAGVKG8Qss3Z7Zd7MHjkb0En7OtmFbpA==
-X-Gm-Gg: ASbGncvYdQVs42MBqBlqEnK4OHtM81miTS7LVKsVBNaZU0G/T3McyLxOsnshOQKrXvD
-	548IW/KNAy57CmUlY9bMtTjmIGIvaoQ4Ff3BCADTMyTa+5QDelqqn+Ol1JSLNC7AA5rS2qMnj9j
-	NCBytpFPCe0sV8h6pveAlK60ctUEo5fPwWVytTri/4L4dbc1d2PyEdW6YcbF3TClnSrFfX6gHKj
-	q7i5X4TaIn5+hTe0czCDFNgiLB6lncLotGzatvhLz1D+GqokRBAXzUYzB+BDtvwOf0+v5KI72HV
-	46JZD7GZoiDltJGvBhumDJPjtCPkOfTG7a+5vn2Hr2cnrpcCsfRYeovkt5Jc/+k7ngrfbm5DvT+
-	N5Wn5IsEWOMCFlO4atGHQTs94y9qdmIqWXk3gbB2BNrWkCa6KGhdMedBl4jwrMmWUCIlqJog3JA
-	==
-X-Google-Smtp-Source: AGHT+IGsbO5kdgwYLDnOzUgEZqdvPKwh1sS8bHjGVzzPRV8MeKQtn3K5FzvMAFLMrUJDAdUvFor96A==
-X-Received: by 2002:a17:90b:5244:b0:312:db8:dbd2 with SMTP id 98e67ed59e1d1-31c9e75b9bcmr15887851a91.19.1752844093398;
-        Fri, 18 Jul 2025 06:08:13 -0700 (PDT)
-Received: from SIQOL-WIN-0002-DARSHAN.localdomain ([49.36.68.205])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31cc3e4566fsm1302031a91.1.2025.07.18.06.08.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jul 2025 06:08:13 -0700 (PDT)
-From: Darshan Rathod <darshanrathod475@gmail.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Darshan Rathod <darshanrathod475@gmail.com>,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] media: dvb-core: dvb_ringbuffer: Fix various coding style issues
-Date: Fri, 18 Jul 2025 13:08:01 +0000
-Message-ID: <20250718130807.87691-1-darshanrathod475@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E22218EA8;
+	Fri, 18 Jul 2025 13:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752844221; cv=pass; b=BcqtffXQ+YSWQE35dw+Db9L0ak4IyDPw7IPYcMmVZjmK+v6no641Wd8x6Bq2zccj+n5i7nVKIEOIuteSWDCY0kLJFtzg9DT756k8NRENUvYLsil+T1NPg0qQtH4BWqMBXTyBlO4krmWRCj9ijn12FlOPmkpqL6p1h86cle0wZ3I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752844221; c=relaxed/simple;
+	bh=FJEqeqkRdVcwjxS2tptIUlZ/piS5Nm+IBw5fm66u6gU=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=Qq4xOS/k1K3AgkO1sFCJVewhLtuIZDqqGXswR1UwuMWU8NSJh2y5r8+ARQvVBPHsrusWb1obudcw3dfxKhi4DW2sBw28q0tW0xinTTNwZDnJnlQTkd565ezXtFZxz4ZRdyQ9FP02WuAE8N5tZg2ZsnrwuAHBwjNjH0EM8gjS+t0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=UozkiPgl; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1752844201; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=W0a11xWUSCHN5MFqq5EWs3Ux53GOOnfRiGwYEnhUOZOJrz/8oat71RRHCTZ/iaLbfymPLGEAlFhH5eNKs7F+GIzNqAVsrHtAGvtMMPHVfcXQJj4//MUw1tSF1quY/ETzPJDnhXao7bClwPsWc8Vwv2NR6KsC0Q7hb6TDgiNhvHQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1752844201; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Q6WEZlv79GvHGDyDAONzLm9yEqiwKE68ufLFe6YvfbI=; 
+	b=OlQKk2di/esq9GBXDYGoEcThhn+NMbaMyhCTyzDLc7tNfat/AEXQ49ye9TXcBwEITS3+T2e07agAgCycUPsFJCupk8wXXBRcLMV/l+mrSnUagYIl4CTX+evJt48pDxuJAOGQcDY8H0ADmjFDQzhMn/ywltoh8fnOjJ6os0ohUZ8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752844201;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=Q6WEZlv79GvHGDyDAONzLm9yEqiwKE68ufLFe6YvfbI=;
+	b=UozkiPglz3ajikvUUSVRC1+pXQgew64sMIiTIKp+KTlBjYhkI+wYX+PT5s/plRp1
+	tVNR0uoeUdYOlNxKaMKa8RhLvV9eGz+oHBuuPd6iQGnDyvnCZudiyQKs2BIw1QckEJk
+	N2SGCswuGFKhtoNc7vKDQv/2It4hgFpqDAXGM5h0=
+Received: by mx.zohomail.com with SMTPS id 175284419917769.13110536163424;
+	Fri, 18 Jul 2025 06:09:59 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH 1/3] device: rust: documentation for DeviceContext
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250717224806.54763-2-dakr@kernel.org>
+Date: Fri, 18 Jul 2025 10:09:43 -0300
+Cc: gregkh@linuxfoundation.org,
+ rafael@kernel.org,
+ ojeda@kernel.org,
+ alex.gaynor@gmail.com,
+ boqun.feng@gmail.com,
+ gary@garyguo.net,
+ bjorn3_gh@protonmail.com,
+ lossin@kernel.org,
+ a.hindborg@kernel.org,
+ aliceryhl@google.com,
+ tmgross@umich.edu,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <664AA6FF-4EFD-49FD-91A6-4D66B8614529@collabora.com>
+References: <20250717224806.54763-1-dakr@kernel.org>
+ <20250717224806.54763-2-dakr@kernel.org>
+To: Danilo Krummrich <dakr@kernel.org>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-The file dvb_ringbuffer.c has several minor coding style violations.
-This patch resolves these issues to improve code readability and align
-the code with the Linux kernel coding style.
+Hi Danilo,
 
-The cleanups include:
-- Adding spaces around assignment and comparison operators.
-- Adding spaces after commas in function arguments.
-- Placing statements on a new line for single-line 'if' blocks.
-- Correcting minor indentation.
+> On 17 Jul 2025, at 19:45, Danilo Krummrich <dakr@kernel.org> wrote:
+>=20
+> Expand the documentation around DeviceContext states and types, in =
+order
+> to provide detailed information about their purpose and relationship
+> with each other.
+>=20
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> ---
+> rust/kernel/device.rs | 63 +++++++++++++++++++++++++++++++++++--------
+> 1 file changed, 52 insertions(+), 11 deletions(-)
+>=20
+> diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
+> index ca82926fd67f..d7ac56628fe5 100644
+> --- a/rust/kernel/device.rs
+> +++ b/rust/kernel/device.rs
+> @@ -311,28 +311,69 @@ unsafe impl Send for Device {}
+> // synchronization in `struct device`.
+> unsafe impl Sync for Device {}
+>=20
+> -/// Marker trait for the context of a bus specific device.
+> +/// Marker trait for the context or scope of a bus specific device.
+> ///
+> -/// Some functions of a bus specific device should only be called =
+from a certain context, i.e. bus
+> -/// callbacks, such as `probe()`.
+> +/// [`DeviceContext`] is a marker trait for structures representing =
+the context of a bus specific
+> +/// [`Device`].
+> ///
+> -/// This is the marker trait for structures representing the context =
+of a bus specific device.
+> +/// The specific device context types are: [`CoreInternal`], =
+[`Core`], [`Bound`] and [`Normal`].
+> +///
+> +/// [`DeviceContext`] types are hierarchical, which means that there =
+is a strict hierarchy that
+> +/// defines which [`DeviceContext`] type can be derived from another. =
+For instance, any
+> +/// [`Device<Core>`] can dereference to a [`Device<Bound>`].
+> +///
+> +/// The following enunumeration illustrates the dereference hierarchy =
+of [`DeviceContext`] types.
+> +///
+> +/// - [`CoreInternal`] =3D> [`Core`] =3D> [`Bound`] =3D> [`Normal`]
+> +/// - [`Core`] =3D> [`Bound`] =3D> [`Normal`]
+> +/// - [`Bound`] =3D> [`Normal`]
+> +/// - [`Normal`]
+> +///
+> +/// Bus devices can automatically implement the dereference hierarchy =
+by using
+> +/// [`impl_device_context_deref`](kernel::impl_device_context_deref).
+> pub trait DeviceContext: private::Sealed {}
 
-This is a purely stylistic change with no functional impact.
+Overall this looks good to me. I think that one point you could perhaps
+consider is that, to me at least, it wasn't clear that the contexts were =
+only
+valid for a given scope. Or what was precisely meant by =E2=80=9Cscope=E2=80=
+=9D.
 
-Signed-off-by: Darshan Rathod <darshanrathod475@gmail.com>
----
- drivers/media/dvb-core/dvb_ringbuffer.c | 35 ++++++++++++++-----------
- 1 file changed, 20 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/media/dvb-core/dvb_ringbuffer.c b/drivers/media/dvb-core/dvb_ringbuffer.c
-index 7d4558de8e83..ecb6f11abc24 100644
---- a/drivers/media/dvb-core/dvb_ringbuffer.c
-+++ b/drivers/media/dvb-core/dvb_ringbuffer.c
-@@ -37,10 +37,10 @@
- 
- void dvb_ringbuffer_init(struct dvb_ringbuffer *rbuf, void *data, size_t len)
- {
--	rbuf->pread=rbuf->pwrite=0;
--	rbuf->data=data;
--	rbuf->size=len;
--	rbuf->error=0;
-+	rbuf->pread = rbuf->pwrite = 0;
-+	rbuf->data = data;
-+	rbuf->size = len;
-+	rbuf->error = 0;
- 
- 	init_waitqueue_head(&rbuf->queue);
- 
-@@ -235,7 +235,7 @@ ssize_t dvb_ringbuffer_write_user(struct dvb_ringbuffer *rbuf,
- 	return len;
- }
- 
--ssize_t dvb_ringbuffer_pkt_write(struct dvb_ringbuffer *rbuf, u8* buf, size_t len)
-+ssize_t dvb_ringbuffer_pkt_write(struct dvb_ringbuffer *rbuf, u8 *buf, size_t len)
- {
- 	int status;
- 	ssize_t oldpwrite = rbuf->pwrite;
-@@ -245,7 +245,8 @@ ssize_t dvb_ringbuffer_pkt_write(struct dvb_ringbuffer *rbuf, u8* buf, size_t le
- 	DVB_RINGBUFFER_WRITE_BYTE(rbuf, PKT_READY);
- 	status = dvb_ringbuffer_write(rbuf, buf, len);
- 
--	if (status < 0) rbuf->pwrite = oldpwrite;
-+	if (status < 0)
-+		rbuf->pwrite = oldpwrite;
- 	return status;
- }
- 
-@@ -258,8 +259,10 @@ ssize_t dvb_ringbuffer_pkt_read_user(struct dvb_ringbuffer *rbuf, size_t idx,
- 
- 	pktlen = rbuf->data[idx] << 8;
- 	pktlen |= rbuf->data[(idx + 1) % rbuf->size];
--	if (offset > pktlen) return -EINVAL;
--	if ((offset + len) > pktlen) len = pktlen - offset;
-+	if (offset > pktlen)
-+		return -EINVAL;
-+	if ((offset + len) > pktlen)
-+		len = pktlen - offset;
- 
- 	idx = (idx + DVB_RINGBUFFER_PKTHDRSIZE + offset) % rbuf->size;
- 	todo = len;
-@@ -278,7 +281,7 @@ ssize_t dvb_ringbuffer_pkt_read_user(struct dvb_ringbuffer *rbuf, size_t idx,
- }
- 
- ssize_t dvb_ringbuffer_pkt_read(struct dvb_ringbuffer *rbuf, size_t idx,
--				int offset, u8* buf, size_t len)
-+				int offset, u8 *buf, size_t len)
- {
- 	size_t todo;
- 	size_t split;
-@@ -286,8 +289,10 @@ ssize_t dvb_ringbuffer_pkt_read(struct dvb_ringbuffer *rbuf, size_t idx,
- 
- 	pktlen = rbuf->data[idx] << 8;
- 	pktlen |= rbuf->data[(idx + 1) % rbuf->size];
--	if (offset > pktlen) return -EINVAL;
--	if ((offset + len) > pktlen) len = pktlen - offset;
-+	if (offset > pktlen)
-+		return -EINVAL;
-+	if ((offset + len) > pktlen)
-+		len = pktlen - offset;
- 
- 	idx = (idx + DVB_RINGBUFFER_PKTHDRSIZE + offset) % rbuf->size;
- 	todo = len;
-@@ -309,7 +314,7 @@ void dvb_ringbuffer_pkt_dispose(struct dvb_ringbuffer *rbuf, size_t idx)
- 	rbuf->data[(idx + 2) % rbuf->size] = PKT_DISPOSED;
- 
- 	// clean up disposed packets
--	while(dvb_ringbuffer_avail(rbuf) > DVB_RINGBUFFER_PKTHDRSIZE) {
-+	while (dvb_ringbuffer_avail(rbuf) > DVB_RINGBUFFER_PKTHDRSIZE) {
- 		if (DVB_RINGBUFFER_PEEK(rbuf, 2) == PKT_DISPOSED) {
- 			pktlen = DVB_RINGBUFFER_PEEK(rbuf, 0) << 8;
- 			pktlen |= DVB_RINGBUFFER_PEEK(rbuf, 1);
-@@ -321,14 +326,14 @@ void dvb_ringbuffer_pkt_dispose(struct dvb_ringbuffer *rbuf, size_t idx)
- 	}
- }
- 
--ssize_t dvb_ringbuffer_pkt_next(struct dvb_ringbuffer *rbuf, size_t idx, size_t* pktlen)
-+ssize_t dvb_ringbuffer_pkt_next(struct dvb_ringbuffer *rbuf, size_t idx, size_t *pktlen)
- {
- 	int consumed;
- 	int curpktlen;
- 	int curpktstatus;
- 
- 	if (idx == -1) {
--	       idx = rbuf->pread;
-+		idx = rbuf->pread;
- 	} else {
- 		curpktlen = rbuf->data[idx] << 8;
- 		curpktlen |= rbuf->data[(idx + 1) % rbuf->size];
-@@ -339,7 +344,7 @@ ssize_t dvb_ringbuffer_pkt_next(struct dvb_ringbuffer *rbuf, size_t idx, size_t*
- 	if (consumed < 0)
- 		consumed += rbuf->size;
- 
--	while((dvb_ringbuffer_avail(rbuf) - consumed) > DVB_RINGBUFFER_PKTHDRSIZE) {
-+	while ((dvb_ringbuffer_avail(rbuf) - consumed) > DVB_RINGBUFFER_PKTHDRSIZE) {
- 
- 		curpktlen = rbuf->data[idx] << 8;
- 		curpktlen |= rbuf->data[(idx + 1) % rbuf->size];
--- 
-2.43.0
+I.e.: I thought that once you saw Device<Bound>, for example, that would =
+be
+valid indefinitely. If we retrieve one of our past conversations at [0]:
 
+>=20
+> > Fine, but can=E2=80=99t you get a &Device<Bound> from a =
+ARef<drm::Device>, for example?
+> > Perhaps a nicer solution would be to offer this capability instead?
+>=20
+> I think you're confusing quite some things here.
+>=20
+>   [...]
+>=20
+>   (2) Owning a reference count of a device (i.e. ARef<Device>) does =
+*not*
+>       guarantee that the device is bound. You can own a reference =
+count to the
+>       device object way beyond it being bound. Instead, the guarantee =
+comes from
+>       the scope.
+>=20
+>       In this case, the scope is the IRQ callback, since the =
+irq::Registration
+>       guarantees to call and complete free_irq() before the underlying =
+bus
+>       device is unbound.
+
+
+I see that you mention the word "scope" a few times, but perhaps it =
+would be
+more instructional if you say a few more things on this topic.
+
+For example, when you mention probe(), it would be useful to emphasize =
+that the
+Core state would only be guaranteed for the _scope of that function_, =
+and that
+it wouldn't mean that "the state Core is active from now on", or "I can =
+assume
+that we have a Device<Core> from now on in other parts of the driver".
+
+Kind of like you do here:
+
+> +/// The core context indicates that the [`Device<Core>`] reference's =
+scope is limited to the bus
+> +/// callback it appears in.
+
+But generalizing to all states if possible.
+
+The difference is very subtle so this can sound a bit confusing. Let me =
+know if
+you want me to clarify this further.
+
+
+[0] =
+https://lore.kernel.org/rust-for-linux/DBB0NXU86D6G.2M3WZMS2NUV10@kernel.o=
+rg/
+
+=E2=80=94 Daniel=
 
