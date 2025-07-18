@@ -1,344 +1,241 @@
-Return-Path: <linux-kernel+bounces-736196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D8DBB099F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 04:52:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68B5AB09A02
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 04:58:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27B144A6EDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 02:52:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1FAA4A379C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 02:58:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E20E1C5D4B;
-	Fri, 18 Jul 2025 02:52:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C916F1D47B4;
+	Fri, 18 Jul 2025 02:58:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="K/KcT0Jf"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jZLudt9C"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020DA1A3A80
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 02:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752807160; cv=pass; b=hhL8eTkdFZO+A9OGPg+r/iAeUp4GLbMy0xlL7UqPJApdNh2OyGr7Jtq6KoiZ3eB8IXwPee7GyDThPzVopF9mEeGUAbMNtCh9Ve+/2Z09Cey62tduOLPltuxJX3aCXZwlu4l+tvYMlGM81804YAJwDrcE1ExJzRpwsBGWua3NET0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752807160; c=relaxed/simple;
-	bh=wCI/0+pRlWeqI6P+v6Wo4XYP0h5h0FEfj+5KgbamfRI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BskePY8Qjxd7jn9Ue+/zV5Q3lDf/9joslpQOKD1iyNkU5E1joKpCGEml2Ez5vRve9SZhx/cLfdRCLMhawOC0H2xCE2zQF4SZDEjUofvQ9Isaz8AZDL/dh6jFm+C4BrLrMP0xack7dWu714NzTY0Psj70pkQo658d/YqaozYGkfI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=K/KcT0Jf; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1752807144; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=d6y5TgFY3h3n08Bs6m51AYEY8mx/dtsh7Fd/SA+qZwk5n43Ox5koGX2vN1POWFbI+97U7d1lr/ZMsTenOEdk6h0di9nx9CvM+KqXZ6W5+3zQ2LGCSYNyVXVqhoTJYRdnbuYGpsmXgQPBdD1kTnefeOs74WyEbYwE6OMelDqjmAQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1752807144; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=NgHhnAAqe1PojsVUE8EOVu4MsbrgUtTRD81P0mPqnCI=; 
-	b=Znb+l2BPHaDdkw6ubT4AlymKtwdepXVVXOpveA9wIdmnWxT70Sfb7VF1WTwp7CBtdwGuMkr8an+uCnUdUm2vyUtlGV/J24vQraqSxhIRZW0lfCcgMt9Fea8LSAuQ9zA0gRCWNJUq9TO2W/jTNgjz6r65X/fJGG2OWeb7YxrczXU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
-	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752807144;
-	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
-	bh=NgHhnAAqe1PojsVUE8EOVu4MsbrgUtTRD81P0mPqnCI=;
-	b=K/KcT0JfztJMRFnMLwk1xBrUM9BKdZNDX+K2lyIr400uyKbZJ4JURDkghWGz+zpw
-	cqwebddzfeme3Et5wQuq174WlC90XcsXbezPwSUkmPtrRj/IMega/pUD/x7Mf1OmFaC
-	4RpiPRabcPQPgLLGcY53LyCeF2MUYBbGt6hR3v9c=
-Received: by mx.zohomail.com with SMTPS id 1752807142791141.93646766275276;
-	Thu, 17 Jul 2025 19:52:22 -0700 (PDT)
-Date: Fri, 18 Jul 2025 03:52:18 +0100
-From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
-To: Lukas Zapolskas <lukas.zapolskas@arm.com>
-Cc: Boris Brezillon <boris.brezillon@collabora.com>, 
-	Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/7] drm/panthor: Add DEV_QUERY.PERF_INFO handling for
- Gx10
-Message-ID: <tg24k25nbli6avakjx4nbjkminpkkw65jiqtwmnc5ozwsrghh6@52fvrd2t6hqh>
-References: <cover.1747148172.git.lukas.zapolskas@arm.com>
- <90e9521ad4deb13fd098f30ab3edae55cde8b5f5.1747148172.git.lukas.zapolskas@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C561A923
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 02:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752807502; cv=none; b=bZxNw9MlSDD7QZ2LI1S88kkxFSmCXZ/LSEWBmpBWfu/35OdNfQxeFW2TXMpJIsDl3aYZFJY8hSTb0nzGngK97YthTYNMu3YIvEv8ihdxG6z/Ogo/bYr8bMsTkUsmrdtzUJZpk064k0RIf2xHF8sbze8IxqEvCXrcKoJ7O8kAtXc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752807502; c=relaxed/simple;
+	bh=rZJmkQwqKZ7T7fqYmnIk08peIPBf4DxqJuRD3FWD7TA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uRmIgQgiASdGew0Ro2/PX4D4W1ST/wqKcNnFT/PJcNGWqGOTpluJWJZF6N2S66zmBRKpnyTd/5mKfloKk1oF7NayTPUMJf76ecl/K6mK4hoFjeSF+vdNzM1CLMrCpoaFCols5st3JnNXK7s+912fHqT/LcH52SQz+77Yqwyl+go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jZLudt9C; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752807500; x=1784343500;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=rZJmkQwqKZ7T7fqYmnIk08peIPBf4DxqJuRD3FWD7TA=;
+  b=jZLudt9CFGm8a5Tzv4Zr6dw69gCJd8pI2Gc5WxdCmntStqPkR6pmewY1
+   vrBvuhuq4yCdkSprxQ5cKhP8Gbnxb90yYSGEEvOCzJzSHbGrk0V9LH0LJ
+   +C4juBs3KlplvtkpdkXmd+LTDV0MjHH8uzReviJUgAjoHV5iLKGpqL3wb
+   S3FJcd2P8bfqA6kpoP7k54RPVQ18g724JZDam3l0cNvMlVoalAoGfACvS
+   +KfRB9ak9P5bRTCY8HxK4W++FY5LjvvBAHkaZMxkZg9Sfl8+K8FNXK4nU
+   0zWxC+J69pgABrunQFXs4D4LvuntcmLSnr0ZovahvKHbJn6A4qOCseoCS
+   A==;
+X-CSE-ConnectionGUID: M6RBwxGLRDy5vef37gfKMg==
+X-CSE-MsgGUID: S2jW3k32QmahvWN6LUdhiw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11495"; a="65669909"
+X-IronPort-AV: E=Sophos;i="6.16,320,1744095600"; 
+   d="scan'208";a="65669909"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 19:58:20 -0700
+X-CSE-ConnectionGUID: O9utCyDnQPWndaZMOxjZ7A==
+X-CSE-MsgGUID: Kd056GL/Qrqj617b6FuwxA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,320,1744095600"; 
+   d="scan'208";a="181662494"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 19:58:18 -0700
+Message-ID: <3ea54d65-7ccc-479a-8912-bccd79d678d4@linux.intel.com>
+Date: Fri, 18 Jul 2025 10:56:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <90e9521ad4deb13fd098f30ab3edae55cde8b5f5.1747148172.git.lukas.zapolskas@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/11] iommu/vt-d: Optimize iotlb_sync_map for
+ non-caching/non-RWBF modes
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Joerg Roedel <joro@8bytes.org>, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250714045028.958850-1-baolu.lu@linux.intel.com>
+ <20250714045028.958850-3-baolu.lu@linux.intel.com>
+ <20250716141218.GA2166806@nvidia.com>
+ <8aedbbcc-9f4c-4700-acb7-43ec4f540135@linux.intel.com>
+ <20250717115559.GD2177622@nvidia.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20250717115559.GD2177622@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 16.05.2025 16:49, Lukas Zapolskas wrote:
-> This change adds the IOCTL to query data about the performance counter
-> setup. Some of this data was available via previous DEV_QUERY calls,
-> for instance for GPU info, but exposing it via PERF_INFO
-> minimizes the overhead of creating a single session to just the one
-> aggregate IOCTL.
->
-> Signed-off-by: Lukas Zapolskas <lukas.zapolskas@arm.com>
-> Reviewed-by: Adrián Larumbe <adrian.larumbe@collabora.com>
-> ---
->  drivers/gpu/drm/panthor/Makefile         |  1 +
->  drivers/gpu/drm/panthor/panthor_device.c |  5 ++
->  drivers/gpu/drm/panthor/panthor_device.h |  3 +
->  drivers/gpu/drm/panthor/panthor_drv.c    | 10 +++-
->  drivers/gpu/drm/panthor/panthor_fw.h     |  3 +
->  drivers/gpu/drm/panthor/panthor_perf.c   | 76 ++++++++++++++++++++++++
->  drivers/gpu/drm/panthor/panthor_perf.h   | 15 +++++
->  drivers/gpu/drm/panthor/panthor_regs.h   |  1 +
->  8 files changed, 113 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/gpu/drm/panthor/panthor_perf.c
->  create mode 100644 drivers/gpu/drm/panthor/panthor_perf.h
->
-> diff --git a/drivers/gpu/drm/panthor/Makefile b/drivers/gpu/drm/panthor/Makefile
-> index 15294719b09c..0df9947f3575 100644
-> --- a/drivers/gpu/drm/panthor/Makefile
-> +++ b/drivers/gpu/drm/panthor/Makefile
-> @@ -9,6 +9,7 @@ panthor-y := \
->  	panthor_gpu.o \
->  	panthor_heap.o \
->  	panthor_mmu.o \
-> +	panthor_perf.o \
->  	panthor_sched.o
->
->  obj-$(CONFIG_DRM_PANTHOR) += panthor.o
-> diff --git a/drivers/gpu/drm/panthor/panthor_device.c b/drivers/gpu/drm/panthor/panthor_device.c
-> index a9da1d1eeb70..76b4cf3dc391 100644
-> --- a/drivers/gpu/drm/panthor/panthor_device.c
-> +++ b/drivers/gpu/drm/panthor/panthor_device.c
-> @@ -19,6 +19,7 @@
->  #include "panthor_fw.h"
->  #include "panthor_gpu.h"
->  #include "panthor_mmu.h"
-> +#include "panthor_perf.h"
->  #include "panthor_regs.h"
->  #include "panthor_sched.h"
->
-> @@ -259,6 +260,10 @@ int panthor_device_init(struct panthor_device *ptdev)
->  	if (ret)
->  		goto err_unplug_fw;
->
-> +	ret = panthor_perf_init(ptdev);
-> +	if (ret)
-> +		goto err_unplug_fw;
-                goto err_unplug_sched;
+On 7/17/25 19:55, Jason Gunthorpe wrote:
+> On Thu, Jul 17, 2025 at 10:40:01AM +0800, Baolu Lu wrote:
+>> On 7/16/25 22:12, Jason Gunthorpe wrote:
+>>> On Mon, Jul 14, 2025 at 12:50:19PM +0800, Lu Baolu wrote:
+>>>> @@ -1833,6 +1845,8 @@ static int dmar_domain_attach_device(struct dmar_domain *domain,
+>>>>    	if (ret)
+>>>>    		goto out_block_translation;
+>>>> +	domain->iotlb_sync_map |= domain_need_iotlb_sync_map(domain, iommu);
+>>>
+>>> This has no locking and is in the wrong order anyhow :(
+>>>
+>>> Any change to how invalidation works has to be done before attaching
+>>> the HW so that the required invalidations are already happening before
+>>> the HW can walk the page table.
+>>>
+>>> And you need to serialize somehow with concurrent map/unmap as iommufd
+>>> doesn't prevent userspace from racing attach with map/unmap.
+>>
+>> domain->iotlb_sync_map does not change the driver's behavior. It simply
+>> indicates that there's no need to waste time calling
+>> cache_tag_flush_range_np(), as it's just a no-op.
+> 
+> Of course it changes the behavior, it changes what the invalidation
+> callback does.
+> 
+> Without locking you have a race situation where a PGD is visible to HW
+> that requires extra flushing and the SW is not doing the extra
+> flushing.
+> 
+> Before any PGD is made visible to the HW the software must ensure all
+> the required invalidations are happening.
 
-                [...]
+Oh, I understand now. If there is no synchronization between attach/
+detach and map/unmap operations, the cache invalidation behavior must be
+determined when a domain is allocated.
 
-err_disable_autosuspend:
-	pm_runtime_dont_use_autosuspend(ptdev->base.dev);
+> 
+>> I previously discussed this with Kevin, and we agreed on a phase-by-
+>> phase approach. As I mentioned, domain->iotlb_sync_map is merely a hint
+>> for the driver, preventing it from looping through all cache tags to
+>> determine if any cache invalidation work needs to be performed. We
+>> already know it's predetermined that no work needs to be done.
+> 
+> The iteration though the cache tags is done inside a lock so it
+> doesn't have this race (it has the issue I mentioned setting up the
+> cache tage list though).
+> 
+>> RWBF is only required on some early implementations where memory
+>> coherence was not yet implemented by the VT-d engine. It should be
+>> difficult to find such systems in modern environments.
+> 
+> Then I would set it at domain creation time, check it during attach,
+> and remove this race.
 
-err_unplug_sched:
-	panthor_sched_unplug(ptdev);
+How about the following changes (compiled but not tested)?
 
-        [...]
+diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+index 8db8be9b7e7d..bb00dc14275d 100644
+--- a/drivers/iommu/intel/iommu.c
++++ b/drivers/iommu/intel/iommu.c
+@@ -1780,18 +1780,6 @@ static int domain_setup_first_level(struct 
+intel_iommu *iommu,
+  					  __pa(pgd), flags, old);
+  }
 
-> +
->  	/* ~3 frames */
->  	pm_runtime_set_autosuspend_delay(ptdev->base.dev, 50);
->  	pm_runtime_use_autosuspend(ptdev->base.dev);
-> diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/panthor/panthor_device.h
-> index da6574021664..657ccc39568c 100644
-> --- a/drivers/gpu/drm/panthor/panthor_device.h
-> +++ b/drivers/gpu/drm/panthor/panthor_device.h
-> @@ -120,6 +120,9 @@ struct panthor_device {
->  	/** @csif_info: Command stream interface information. */
->  	struct drm_panthor_csif_info csif_info;
->
-> +	/** @perf_info: Performance counter interface information. */
-> +	struct drm_panthor_perf_info perf_info;
-> +
->  	/** @gpu: GPU management data. */
->  	struct panthor_gpu *gpu;
->
-> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
-> index 06fe46e32073..9d2b716cca45 100644
-> --- a/drivers/gpu/drm/panthor/panthor_drv.c
-> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
-> @@ -175,7 +175,8 @@ panthor_get_uobj_array(const struct drm_panthor_obj_array *in, u32 min_stride,
->  		 PANTHOR_UOBJ_DECL(struct drm_panthor_sync_op, timeline_value), \
->  		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_submit, syncs), \
->  		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_create, ringbuf_size), \
-> -		 PANTHOR_UOBJ_DECL(struct drm_panthor_vm_bind_op, syncs))
-> +		 PANTHOR_UOBJ_DECL(struct drm_panthor_vm_bind_op, syncs), \
-> +		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_info, shader_blocks))
->
->  /**
->   * PANTHOR_UOBJ_SET() - Copy a kernel object to a user object.
-> @@ -835,6 +836,10 @@ static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct d
->  			args->size = sizeof(priorities_info);
->  			return 0;
->
-> +		case DRM_PANTHOR_DEV_QUERY_PERF_INFO:
-> +			args->size = sizeof(ptdev->perf_info);
-> +			return 0;
-> +
->  		default:
->  			return -EINVAL;
->  		}
-> @@ -859,6 +864,9 @@ static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct d
->  		panthor_query_group_priorities_info(file, &priorities_info);
->  		return PANTHOR_UOBJ_SET(args->pointer, args->size, priorities_info);
->
-> +	case DRM_PANTHOR_DEV_QUERY_PERF_INFO:
-> +		return PANTHOR_UOBJ_SET(args->pointer, args->size, ptdev->perf_info);
-> +
->  	default:
->  		return -EINVAL;
->  	}
-> diff --git a/drivers/gpu/drm/panthor/panthor_fw.h b/drivers/gpu/drm/panthor/panthor_fw.h
-> index 6598d96c6d2a..8bcb933fa790 100644
-> --- a/drivers/gpu/drm/panthor/panthor_fw.h
-> +++ b/drivers/gpu/drm/panthor/panthor_fw.h
-> @@ -197,8 +197,11 @@ struct panthor_fw_global_control_iface {
->  	u32 output_va;
->  	u32 group_num;
->  	u32 group_stride;
-> +#define GLB_PERFCNT_FW_SIZE(x) ((((x) >> 16) << 8))
->  	u32 perfcnt_size;
->  	u32 instr_features;
-> +#define PERFCNT_FEATURES_MD_SIZE(x) (((x) & GENMASK(3, 0)) << 8)
+-static bool domain_need_iotlb_sync_map(struct dmar_domain *domain,
+-				       struct intel_iommu *iommu)
+-{
+-	if (cap_caching_mode(iommu->cap) && intel_domain_is_ss_paging(domain))
+-		return true;
+-
+-	if (rwbf_quirk || cap_rwbf(iommu->cap))
+-		return true;
+-
+-	return false;
+-}
+-
+  static int dmar_domain_attach_device(struct dmar_domain *domain,
+  				     struct device *dev)
+  {
+@@ -1831,8 +1819,6 @@ static int dmar_domain_attach_device(struct 
+dmar_domain *domain,
+  	if (ret)
+  		goto out_block_translation;
 
-What does MD stand for here?
+-	domain->iotlb_sync_map |= domain_need_iotlb_sync_map(domain, iommu);
+-
+  	return 0;
 
-> +	u32 perfcnt_features;
->  };
->
->  struct panthor_fw_global_input_iface {
-> diff --git a/drivers/gpu/drm/panthor/panthor_perf.c b/drivers/gpu/drm/panthor/panthor_perf.c
-> new file mode 100644
-> index 000000000000..66e9a197ac1f
-> --- /dev/null
-> +++ b/drivers/gpu/drm/panthor/panthor_perf.c
-> @@ -0,0 +1,76 @@
-> +// SPDX-License-Identifier: GPL-2.0 or MIT
-> +/* Copyright 2023 Collabora Ltd */
-> +/* Copyright 2025 Arm ltd. */
-> +
-> +#include <linux/bitops.h>
-> +#include <drm/panthor_drm.h>
-> +
-> +#include "panthor_device.h"
-> +#include "panthor_fw.h"
-> +#include "panthor_perf.h"
-> +
-> +struct panthor_perf_counter_block {
-> +	struct drm_panthor_perf_block_header header;
-> +	u64 counters[];
-> +};
-> +
+  out_block_translation:
+@@ -3352,6 +3338,14 @@ intel_iommu_domain_alloc_first_stage(struct 
+device *dev,
+  		return ERR_CAST(dmar_domain);
 
-> +{
-> +	return struct_size_t(struct panthor_perf_counter_block, counters, counters_per_block);
-> +}
-> +
-> +static size_t session_get_user_sample_size(const struct drm_panthor_perf_info *const info)
-> +{
-> +	const size_t block_size = get_annotated_block_size(info->counters_per_block);
-> +	const size_t block_nr = info->cshw_blocks + info->fw_blocks +
-> +		info->tiler_blocks + info->memsys_blocks + info->shader_blocks;
-> +
-> +	return sizeof(struct drm_panthor_perf_sample_header) + (block_size * block_nr);
-> +}
+  	dmar_domain->domain.ops = &intel_fs_paging_domain_ops;
++	/*
++	 * iotlb sync for map is only needed for legacy implementations that
++	 * explicitly require flushing internal write buffers to ensure memory
++	 * coherence.
++	 */
++	if (rwbf_quirk || cap_rwbf(iommu->cap))
++		dmar_domain->iotlb_sync_map = true;
++
+  	return &dmar_domain->domain;
+  }
 
-You're assining perf_info->counters_per_block the same sizeof() slightly further below
-so maybe you can use that value here straight away.
+@@ -3386,6 +3380,14 @@ intel_iommu_domain_alloc_second_stage(struct 
+device *dev,
+  	if (flags & IOMMU_HWPT_ALLOC_DIRTY_TRACKING)
+  		dmar_domain->domain.dirty_ops = &intel_dirty_ops;
 
-> +
-> +/**
-> + * PANTHOR_PERF_COUNTERS_PER_BLOCK - On CSF architectures pre-11.x, the number of counters
-> + * per block was hardcoded to be 64. Arch 11.0 onwards supports the PRFCNT_FEATURES GPU register,
-> + * which indicates the same information.
-> + */
++	/*
++	 * Besides the internal write buffer flush, the caching mode used for
++	 * legacy nested translation (which utilizes shadowing page tables)
++	 * also requires iotlb sync on map.
++	 */
++	if (rwbf_quirk || cap_rwbf(iommu->cap) || cap_caching_mode(iommu->cap))
++		dmar_domain->iotlb_sync_map = true;
++
+  	return &dmar_domain->domain;
+  }
 
-I guess you're waiting for the commit in ML message <20250320111741.1937892-7-karunika.choo@arm.com>
-("drm/panthor: Add support for Mali-G715 family of GPUs) to check whether GPU_ARCH_MAJOR(ptdev->gpu_info.gpu_id)
-returns anything equal or above 11 to add support for reading the number of counters from PRFCNT_FEATURES?
+@@ -3446,6 +3448,11 @@ static int 
+paging_domain_compatible_first_stage(struct dmar_domain *dmar_domain,
+  	if (!cap_fl1gp_support(iommu->cap) &&
+  	    (dmar_domain->domain.pgsize_bitmap & SZ_1G))
+  		return -EINVAL;
++
++	/* iotlb sync on map requirement */
++	if ((rwbf_quirk || cap_rwbf(iommu->cap)) && !dmar_domain->iotlb_sync_map)
++		return -EINVAL;
++
+  	return 0;
+  }
 
-I don't remember whether that series is already merged, but it'd be nice to have it in this one too.
+@@ -3469,6 +3476,12 @@ paging_domain_compatible_second_stage(struct 
+dmar_domain *dmar_domain,
+  		return -EINVAL;
+  	if (!(sslps & BIT(1)) && (dmar_domain->domain.pgsize_bitmap & SZ_1G))
+  		return -EINVAL;
++
++	/* iotlb sync on map requirement */
++	if ((rwbf_quirk || cap_rwbf(iommu->cap) || 
+cap_caching_mode(iommu->cap)) &&
++	    !dmar_domain->iotlb_sync_map)
++		return -EINVAL;
++
+  	return 0;
+  }
 
-> +#define PANTHOR_PERF_COUNTERS_PER_BLOCK (64)
-> +
-> +static void panthor_perf_info_init(struct panthor_device *ptdev)
-> +{
-> +	struct panthor_fw_global_iface *glb_iface = panthor_fw_get_glb_iface(ptdev);
-> +	struct drm_panthor_perf_info *const perf_info = &ptdev->perf_info;
-> +
-> +	if (PERFCNT_FEATURES_MD_SIZE(glb_iface->control->perfcnt_features))
-> +		perf_info->flags |= DRM_PANTHOR_PERF_BLOCK_STATES_SUPPORT;
-> +
-> +	perf_info->counters_per_block = PANTHOR_PERF_COUNTERS_PER_BLOCK;
-> +
-> +	perf_info->sample_header_size = sizeof(struct drm_panthor_perf_sample_header);
-> +	perf_info->block_header_size = sizeof(struct drm_panthor_perf_block_header);
-> +
-> +	if (GLB_PERFCNT_FW_SIZE(glb_iface->control->perfcnt_size))
-> +		perf_info->fw_blocks = 1;
-> +
-> +	perf_info->cshw_blocks = 1;
-> +	perf_info->tiler_blocks = 1;
-> +	perf_info->memsys_blocks = GPU_MEM_FEATURES_L2_SLICES(ptdev->gpu_info.mem_features);
-> +	perf_info->shader_blocks = hweight64(ptdev->gpu_info.shader_present);
-> +
-> +	perf_info->sample_size = session_get_user_sample_size(perf_info);
-> +}
-> +
-> +/**
-> + * panthor_perf_init - Initialize the performance counter subsystem.
-> + * @ptdev: Panthor device
-> + *
-> + * Return: 0 on success, negative error code on failure.
-> + */
-> +int panthor_perf_init(struct panthor_device *ptdev)
-> +{
-> +	if (!ptdev)
-> +		return -EINVAL;
-> +
-> +	panthor_perf_info_init(ptdev);
-> +
-> +	return 0;
-> +}
-> diff --git a/drivers/gpu/drm/panthor/panthor_perf.h b/drivers/gpu/drm/panthor/panthor_perf.h
-> new file mode 100644
-> index 000000000000..3c32c24c164c
-> --- /dev/null
-> +++ b/drivers/gpu/drm/panthor/panthor_perf.h
-> @@ -0,0 +1,15 @@
-> +/* SPDX-License-Identifier: GPL-2.0 or MIT */
-> +/* Copyright 2025 Collabora Ltd */
-> +/* Copyright 2025 Arm ltd. */
-> +
-> +#ifndef __PANTHOR_PERF_H__
-> +#define __PANTHOR_PERF_H__
-> +
-> +#include <linux/types.h>
-> +
-> +struct panthor_device;
-> +
-> +int panthor_perf_init(struct panthor_device *ptdev);
-> +
-> +#endif /* __PANTHOR_PERF_H__ */
-> +
-> diff --git a/drivers/gpu/drm/panthor/panthor_regs.h b/drivers/gpu/drm/panthor/panthor_regs.h
-> index b7b3b3add166..d9e9379d1a20 100644
-> --- a/drivers/gpu/drm/panthor/panthor_regs.h
-> +++ b/drivers/gpu/drm/panthor/panthor_regs.h
-> @@ -27,6 +27,7 @@
->  #define GPU_TILER_FEATURES				0xC
->  #define GPU_MEM_FEATURES				0x10
->  #define   GROUPS_L2_COHERENT				BIT(0)
-> +#define   GPU_MEM_FEATURES_L2_SLICES(x)			((((x) & GENMASK(11, 8)) >> 8) + 1)
->
->  #define GPU_MMU_FEATURES				0x14
->  #define  GPU_MMU_FEATURES_VA_BITS(x)			((x) & GENMASK(7, 0))
-> --
-> 2.33.0.dirty
+-- 
+2.43.0
 
-Adrian Larumbe
+Thanks,
+baolu
+
 
