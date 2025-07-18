@@ -1,773 +1,427 @@
-Return-Path: <linux-kernel+bounces-736482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32767B09D6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:11:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A9E5B09D5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:04:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77F9AA40862
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:10:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF2B2583AFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E27E220F34;
-	Fri, 18 Jul 2025 08:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6522D291C0F;
+	Fri, 18 Jul 2025 08:04:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="Qb1UDLsT"
-Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n739tt50"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57DE6AD21
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 08:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86051249F9;
+	Fri, 18 Jul 2025 08:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752826232; cv=none; b=BEnNTzBhsIOQrFRzC/22ynMP0EFckZHHradQFAEdUPKCVvl1GX1dmvyx6IgOrHddQm0VNePwKnPC2l4f/uHXB6B2AavEtYZHNeMnuf1gNGbalpa5NTBK07vxvcFubwQQzg5Rs41621mKmNZFxE9gSBNBiw5on0bpcNb8kkrq7jw=
+	t=1752825879; cv=none; b=ckadEB0JcXu3AdXjfjzH/8mnLuEeo7JH70dkjLVjakatPnDHNf2SEWxMF6I+rzdhmq4yx7kMwBez0ymIlElZtsesC4u8nZ4Ioh20VaGG7W0dPYlzwr+j4oIK4sn4tpPKKbslKxJxrv84xr59g22FZxuI9gG0rz47GF7sibmmTBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752826232; c=relaxed/simple;
-	bh=K3ZHlAI+FwaZFliBI1Er8+p2IEjx7tt4SeqWWw+yfUA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=C4Db3dqgnnAHe+9PFtAkrfR6I6WWv5h7IWSlbXcJOisl6zZ++QndFwsdMjcW8YxlGctBcd2NzZkmRRro6sSuJl7x/3HTzitDyFO9VuePUP+pFDGaGs0retT4pINpLOsgHudAUb2g8qWRWxY69FWuU0GWfvJqrQ94nttxnYp9iwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=Qb1UDLsT; arc=none smtp.client-ip=220.130.44.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
-X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
-	s=richtek; t=1752826225;
-	bh=i672eYdBgpAfNV0uAsPkT6fP1kqwIG7wj0M2Ynj6Kyo=; l=21107;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Qb1UDLsTQVbgD1zqOkGMbdNMWd1QQ+ld8m3nLLP4tvxmXVcq4Sbxh15sxXNAwqo2s
-	 y/7V2BhSRkmYr8rUB9rJGguQ8xXAkZMvhmnPYh2rHIua3bLH+muC0u4uFUNV0E6YAu
-	 i7K3Krpk/9O61bmtXw6TVtbxu//opClyaPxHUJJ/6EmGP1BxSJMMEPnGNqliIgFdoF
-	 7XgSXwGOgaX7ZPGsGUvI+fWV3QO1u+cxpjgYRIjhxbBQ3LyA1mP+fxHeJDKGV3j9R8
-	 MSvQIeKaJm1An12ju2kObvsP6qtq9P8NAbUKp7MYMgphYc/mHXyQ5lZ+14qzTRmklt
-	 bK1R4kmIDPKxA==
-Received: from 192.168.10.47
-	by mg.richtek.com with MailGates ESMTPS Server V6.0(244599:0:AUTH_RELAY)
-	(envelope-from <jeff_chang@richtek.com>)
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Fri, 18 Jul 2025 16:10:15 +0800 (CST)
-Received: from ex3.rt.l (192.168.10.46) by ex4.rt.l (192.168.10.47) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 18 Jul
- 2025 16:10:15 +0800
-Received: from git-send.richtek.com (192.168.10.154) by ex3.rt.l
- (192.168.10.45) with Microsoft SMTP Server id 15.2.1544.11 via Frontend
- Transport; Fri, 18 Jul 2025 16:10:15 +0800
-From: <jeff_chang@richtek.com>
-To: <lgirdwood@gmail.com>, <broonie@kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <jeff_chang@richtek.com>
-Subject: [PATCH v2] regulator: rt5133: Add RT5133 PMIC regulator Support
-Date: Fri, 18 Jul 2025 16:04:28 +0800
-Message-ID: <20250718081052.2685826-1-jeff_chang@richtek.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1752825879; c=relaxed/simple;
+	bh=5YLH0B30wGVpAwrxZAlI6qNxZW0jgLZa03hx5hfBDvw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jCR+/+bjqNk5JHDUi3sbhcsTkbxAO9py34DbfdBkIKfBj3GHNxk34dwmCBQzQEob4YWi2D0bMZSI/PPTrBuO1/+Qvljn+hTbQuiALM7mPXvDrrdya4TahLTZUV9auw/1MrLDskiq+tyviZlhMP+VTZI43I0PtbsGl9apxiWiRSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n739tt50; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1154AC4CEEB;
+	Fri, 18 Jul 2025 08:04:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752825879;
+	bh=5YLH0B30wGVpAwrxZAlI6qNxZW0jgLZa03hx5hfBDvw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=n739tt50+rk7LcNgfsBniXYm/fzHIEVS5DrXPv3xg8fU44MabAAQamBbhSMDf2SI0
+	 V+1rFKDPl3auNf3j4hrYUGKQ4i5jFxaN4PzS2rHGkGiDtGvTQJofE4P6Zkpxj1vMJ1
+	 U868EJsNvtlxDdE/f9F1f7ugKx5xbrKtUFz8qFwgOGkq3KpAssGlqutzbfzkRxpIKy
+	 L53QpGEr4IeHcATVb5NKYXbsy/V+HP3zcdRjtcuaDob/9JKKlWcDywiU8Pckyw2Mxu
+	 BkF2a9sj42ul3btq64bWGN476JsMxrtttmMSLnuUKGvXmcwbrC7S9Kx2D25TIcgSnk
+	 mI6WGY1bIll3Q==
+Message-ID: <0c7e171d-056d-4c00-a30b-0fd39e25bf4c@kernel.org>
+Date: Fri, 18 Jul 2025 10:04:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 2/4] leds: add basic support for TI/National
+ Semiconductor LP5812 LED Driver
+To: Nam Tran <trannamatk@gmail.com>, lee@kernel.org
+Cc: pavel@kernel.org, rdunlap@infradead.org, christophe.jaillet@wanadoo.fr,
+ krzk+dt@kernel.org, robh@kernel.org, conor+dt@kernel.org, corbet@lwn.net,
+ linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20250714172355.84609-1-trannamatk@gmail.com>
+ <20250714172355.84609-3-trannamatk@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250714172355.84609-3-trannamatk@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Jeff Chang <jeff_chang@richtek.com>
+On 14/07/2025 19:23, Nam Tran wrote:
+>> +static int lp5812_parse_led(struct device_node *np,
+> +			    struct lp5812_led_config *cfg,
+> +			    int led_index)
+> +{
+> +	int num_colors = 0, ret;
+> +
+> +	of_property_read_string(np, "label", &cfg[led_index].name);
+> +
+> +	ret = of_property_read_u32(np, "reg", &cfg[led_index].chan_nr);
 
-RT5133 is an integrated chip. It includes 8 LDOs and 3 GPOs that
-can be used to drive output high/low purpose. The dependency of the
-GPO block is internally LDO1 Voltage. If LDO1 voltage output disabled,
-GPO cannot be used to drive output high. It need to pay more attention
-on the usage.
+You mix code for probe with code for regular operation. This is not
+expected and confusing. All functions related to probe must be before
+the probe function is defined.
 
-Signed-off-by: Jeff Chang <jeff_chang@richtek.com>
+> +	if (ret)
+> +		return ret;
+> +
+> +	for_each_available_child_of_node_scoped(np, child) {
+> +		ret = lp5812_parse_led_channel(child, cfg, led_index, num_colors);
+> +		if (ret)
+> +			return ret;
+> +		num_colors++;
+> +	}
+> +
+> +	if (num_colors == 0) {
+> +		ret = lp5812_parse_led_channel(np, cfg, led_index, 0);
+> +		if (ret)
+> +			return ret;
+> +		num_colors = 1;
+> +		cfg[led_index].is_sc_led = true;
+> +	} else {
+> +		cfg[led_index].is_sc_led = false;
+> +	}
+> +
+> +	cfg[led_index].num_colors = num_colors;
+> +
+> +	return 0;
+> +}
+> +
+> +static int lp5812_of_populate_pdata(struct device *dev,
+> +				    struct device_node *np,
+> +				    struct lp5812_chip *chip)
+> +{
+> +	struct lp5812_led_config *cfg;
+> +	int num_channels, i = 0, ret;
+> +
+> +	num_channels = of_get_available_child_count(np);
+> +	if (num_channels == 0) {
+> +		dev_err(dev, "no LED channels\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	cfg = devm_kcalloc(dev, num_channels, sizeof(*cfg), GFP_KERNEL);
+> +	if (!cfg)
+> +		return -ENOMEM;
+> +
+> +	chip->led_config = &cfg[0];
+> +	chip->num_channels = num_channels;
+> +
+> +	for_each_available_child_of_node_scoped(np, child) {
+> +		ret = lp5812_parse_led(child, cfg, i);
+> +		if (ret)
+> +			return -EINVAL;
+> +		i++;
+> +	}
+> +
+> +	of_property_read_string(np, "label", &chip->label);
+> +	return 0;
+> +}
+> +
 
-PATCH V2
-1. Fix typo intefrated -> integrated
-2. Remove yaml file
-3. Remove soft-start-time-sel property
-4. Remove GPL-4.0, using GPL-2.0
-5. Using C++ comment
-6. Using standard dev_dbg
-7. Remove driver version
-8. Using dev_dbg for base event occured. And return IRQ_HANDLED
-9. Because of CRC8 for IO, we don't use cache for regmap_config 
-10. Remove tracing logs. 
-11. Set can_sleep = true for gpio operations. 
+This is a messy driver :/
 
----
- drivers/regulator/Kconfig            |  13 +
- drivers/regulator/Makefile           |   1 +
- drivers/regulator/rt5133-regulator.c | 627 +++++++++++++++++++++++++++
- 3 files changed, 641 insertions(+)
- create mode 100644 drivers/regulator/rt5133-regulator.c
+....
 
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index 6d8988387da4..d2856012df98 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -1229,6 +1229,19 @@ config REGULATOR_RT5120
- 	  600mV to 1395mV, per step 6.250mV. The others are all fixed voltage
- 	  by external hardware circuit.
- 
-+config REGULATOR_RT5133
-+	tristate "Richtek RT5133 PMIC Regulators"
-+	depends on I2C && GPIOLIB
-+	select REGMAP
-+	select CRC8
-+	select OF_GPIO
-+	help
-+	  RT5133 is an integrated chip. It includes 8 LDOs and 3 GPOs that
-+	  can be used to drive output high/low purpose. The dependency of the
-+	  GPO block is internally LDO1 Voltage. If LDO1 voltage output disabled,
-+	  GPO cannot be used to drive output high. It need to pay more attention
-+	  on the usage.
-+
- config REGULATOR_RT5190A
- 	tristate "Richtek RT5190A PMIC"
- 	depends on I2C
-diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
-index c0bc7a0f4e67..709384ae0a0c 100644
---- a/drivers/regulator/Makefile
-+++ b/drivers/regulator/Makefile
-@@ -145,6 +145,7 @@ obj-$(CONFIG_REGULATOR_RT4803)	+= rt4803.o
- obj-$(CONFIG_REGULATOR_RT4831)	+= rt4831-regulator.o
- obj-$(CONFIG_REGULATOR_RT5033)	+= rt5033-regulator.o
- obj-$(CONFIG_REGULATOR_RT5120)	+= rt5120-regulator.o
-+obj-$(CONFIG_REGULATOR_RT5133)	+= rt5133-regulator.o
- obj-$(CONFIG_REGULATOR_RT5190A) += rt5190a-regulator.o
- obj-$(CONFIG_REGULATOR_RT5739)	+= rt5739.o
- obj-$(CONFIG_REGULATOR_RT5759)	+= rt5759-regulator.o
-diff --git a/drivers/regulator/rt5133-regulator.c b/drivers/regulator/rt5133-regulator.c
-new file mode 100644
-index 000000000000..cf9a45326b8a
---- /dev/null
-+++ b/drivers/regulator/rt5133-regulator.c
-@@ -0,0 +1,627 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2025 Richtek Technology Corp.
-+// Author: ChiYuan Huang <cy_huang@richtek.com>
-+// Author: ShihChia Chang <jeff_chang@richtek.com>
-+
-+#include <linux/crc8.h>
-+#include <linux/delay.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/gpio/driver.h>
-+#include <linux/i2c.h>
-+#include <linux/interrupt.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/regmap.h>
-+#include <linux/regulator/driver.h>
-+
-+#define RT5133_REG_CHIP_INFO		0x00
-+#define RT5133_REG_RST_CTRL		0x06
-+#define RT5133_REG_BASE_CTRL		0x09
-+#define RT5133_REG_GPIO_CTRL		0x0B
-+#define RT5133_REG_BASE_EVT		0x10
-+#define RT5133_REG_BASE_MASK		0x16
-+#define RT5133_REG_LDO_SHDN		0x19
-+#define RT5133_REG_LDO1_CTRL1		0x20
-+#define RT5133_REG_LDO1_CTRL2		0x21
-+#define RT5133_REG_LDO1_CTRL3		0x22
-+#define RT5133_REG_LDO2_CTRL1		0x24
-+#define RT5133_REG_LDO2_CTRL2		0x25
-+#define RT5133_REG_LDO2_CTRL3		0x26
-+#define RT5133_REG_LDO3_CTRL1		0x28
-+#define RT5133_REG_LDO3_CTRL2		0x29
-+#define RT5133_REG_LDO3_CTRL3		0x2A
-+#define RT5133_REG_LDO4_CTRL1		0x2C
-+#define RT5133_REG_LDO4_CTRL2		0x2D
-+#define RT5133_REG_LDO4_CTRL3		0x2E
-+#define RT5133_REG_LDO5_CTRL1		0x30
-+#define RT5133_REG_LDO5_CTRL2		0x31
-+#define RT5133_REG_LDO5_CTRL3		0x32
-+#define RT5133_REG_LDO6_CTRL1		0x34
-+#define RT5133_REG_LDO6_CTRL2		0x35
-+#define RT5133_REG_LDO6_CTRL3		0x36
-+#define RT5133_REG_LDO7_CTRL1		0x38
-+#define RT5133_REG_LDO7_CTRL2		0x39
-+#define RT5133_REG_LDO7_CTRL3		0x3A
-+#define RT5133_REG_LDO8_CTRL1		0x3C
-+#define RT5133_REG_LDO8_CTRL2		0x3D
-+#define RT5133_REG_LDO8_CTRL3		0x3E
-+#define RT5133_REG_LDO8_CTRL4		0x3F
-+
-+#define RT5133_LDO_REG_BASE(_id)	(0x20 + ((_id) - 1) * 4)
-+
-+#define RT5133_VENDOR_ID_MASK		GENMASK(7, 4)
-+#define RT5133_RESET_CODE		0xB1
-+
-+#define RT5133_FOFF_BASE_MASK		BIT(1)
-+#define RT5133_OCSHDN_ALL_MASK		BIT(7)
-+#define RT5133_OCSHDN_ALL_SHIFT		(7)
-+#define RT5133_PGBSHDN_ALL_MASK		BIT(6)
-+#define RT5133_PGBSHDN_ALL_SHIFT	(6)
-+
-+#define RT5133_OCPTSEL_MASK		BIT(5)
-+#define RT5133_PGBPTSEL_MASK		BIT(4)
-+#define RT5133_STBTDSEL_MASK		GENMASK(1, 0)
-+
-+#define RT5133_LDO_ENABLE_MASK		BIT(7)
-+#define RT5133_LDO_VSEL_MASK		GENMASK(7, 5)
-+#define RT5133_LDO_AD_MASK		BIT(2)
-+#define RT5133_LDO_SOFT_START_MASK	GENMASK(1, 0)
-+
-+#define RT5133_GPIO_NR			3
-+
-+#define RT5133_LDO_PGB_EVT_MASK		GENMASK(23, 16)
-+#define RT5133_LDO_PGB_EVT_SHIFT	16
-+#define RT5133_LDO_OC_EVT_MASK		GENMASK(15, 8)
-+#define RT5133_LDO_OC_EVT_SHIFT		8
-+#define RT5133_VREF_EVT_MASK		BIT(6)
-+#define RT5133_BASE_EVT_MASK		GENMASK(7, 0)
-+#define RT5133_INTR_CLR_MASK		GENMASK(23, 0)
-+#define RT5133_INTR_BYTE_NR		3
-+
-+#define RT5133_MAX_I2C_BLOCK_SIZE	1
-+
-+#define RT5133_CRC8_POLYNOMIAL		0x7
-+
-+#define RT5133_I2C_ADDR_LEN		1
-+#define RT5133_PREDATA_LEN		2
-+#define RT5133_I2C_CRC_LEN		1
-+#define RT5133_REG_ADDR_LEN		1
-+#define RT5133_I2C_DUMMY_LEN		1
-+
-+#define I2C_ADDR_XLATE_8BIT(_addr, _rw)	((((_addr) & 0x7F) << 1) | (_rw))
-+
-+enum {
-+	RT5133_REGULATOR_BASE = 0,
-+	RT5133_REGULATOR_LDO1,
-+	RT5133_REGULATOR_LDO2,
-+	RT5133_REGULATOR_LDO3,
-+	RT5133_REGULATOR_LDO4,
-+	RT5133_REGULATOR_LDO5,
-+	RT5133_REGULATOR_LDO6,
-+	RT5133_REGULATOR_LDO7,
-+	RT5133_REGULATOR_LDO8,
-+	RT5133_REGULATOR_MAX
-+};
-+
-+struct chip_data {
-+	const struct regulator_desc *regulators;
-+	const u8 vendor_id;
-+};
-+
-+struct rt5133_priv {
-+	struct device *dev;
-+	struct regmap *regmap;
-+	struct gpio_desc *enable_gpio;
-+	struct regulator_dev *rdev[RT5133_REGULATOR_MAX];
-+	struct gpio_chip gc;
-+	const struct chip_data *cdata;
-+	unsigned int gpio_output_flag;
-+	u8 crc8_tbls[CRC8_TABLE_SIZE];
-+};
-+
-+static const unsigned int vout_type1_tables[] = {
-+	1800000, 2500000, 2700000, 2800000, 2900000, 3000000, 3100000, 3200000
-+};
-+
-+static const unsigned int vout_type2_tables[] = {
-+	1700000, 1800000, 1900000, 2500000, 2700000, 2800000, 2900000, 3000000
-+};
-+
-+static const unsigned int vout_type3_tables[] = {
-+	900000, 950000, 1000000, 1050000, 1100000, 1150000, 1200000, 1800000
-+};
-+
-+static const unsigned int vout_type4_tables[] = {
-+	855000, 900000, 950000, 1000000, 1040000, 1090000, 1140000, 1710000
-+};
-+
-+static const struct regulator_ops rt5133_regulator_ops = {
-+	.list_voltage = regulator_list_voltage_table,
-+	.set_voltage_sel = regulator_set_voltage_sel_regmap,
-+	.get_voltage_sel = regulator_get_voltage_sel_regmap,
-+	.enable = regulator_enable_regmap,
-+	.disable = regulator_disable_regmap,
-+	.is_enabled = regulator_is_enabled_regmap,
-+	.set_active_discharge = regulator_set_active_discharge_regmap,
-+};
-+
-+static const struct regulator_ops rt5133_base_regulator_ops = {
-+	.enable = regulator_enable_regmap,
-+	.disable = regulator_disable_regmap,
-+	.is_enabled = regulator_is_enabled_regmap,
-+};
-+
-+static int rt5133_of_parse_cb(struct device_node *node,
-+			      const struct regulator_desc *desc,
-+			      struct regulator_config *config)
-+{
-+	struct rt5133_priv *priv = config->driver_data;
-+	unsigned int val = 0;
-+	int ret = 0;
-+
-+	switch (desc->id) {
-+	case RT5133_REGULATOR_BASE:
-+		ret = of_property_read_u32(node, "oc-shutdown-all", &val);
-+		if (!ret) {
-+			ret = regmap_update_bits(priv->regmap, RT5133_REG_LDO_SHDN,
-+						 RT5133_OCSHDN_ALL_MASK,
-+						 val << RT5133_OCSHDN_ALL_SHIFT);
-+			if (ret)
-+				return ret;
-+		}
-+
-+		ret = of_property_read_u32(node, "pgb-shutdown-all", &val);
-+		if (!ret) {
-+			ret = regmap_update_bits(priv->regmap, RT5133_REG_LDO_SHDN,
-+						 RT5133_PGBSHDN_ALL_MASK,
-+						 val << RT5133_PGBSHDN_ALL_SHIFT);
-+			if (ret)
-+				return ret;
-+		}
-+		break;
-+	default:
-+		break;
-+	};
-+
-+	return 0;
-+}
-+
-+#define RT5133_REGULATOR_DESC(_name, vtables, _supply) \
-+{\
-+	.name = #_name,\
-+	.id = RT5133_REGULATOR_##_name,\
-+	.of_match = of_match_ptr(#_name),\
-+	.regulators_node = of_match_ptr("regulators"),\
-+	.supply_name = _supply,\
-+	.of_parse_cb = rt5133_of_parse_cb,\
-+	.type = REGULATOR_VOLTAGE,\
-+	.owner = THIS_MODULE,\
-+	.ops = &rt5133_regulator_ops,\
-+	.n_voltages = ARRAY_SIZE(vtables),\
-+	.volt_table = vtables,\
-+	.enable_reg = RT5133_REG_##_name##_CTRL1,\
-+	.enable_mask = RT5133_LDO_ENABLE_MASK,\
-+	.vsel_reg = RT5133_REG_##_name##_CTRL2,\
-+	.vsel_mask = RT5133_LDO_VSEL_MASK,\
-+	.active_discharge_reg = RT5133_REG_##_name##_CTRL3,\
-+	.active_discharge_mask = RT5133_LDO_AD_MASK,\
-+}
-+
-+static const struct regulator_desc rt5133_regulators[] = {
-+	/* For digital part, base current control */
-+	{
-+		.name = "rt5133,base",
-+		.id = RT5133_REGULATOR_BASE,
-+		.of_match = of_match_ptr("BASE"),
-+		.regulators_node = of_match_ptr("regulators"),
-+		.of_parse_cb = rt5133_of_parse_cb,
-+		.type = REGULATOR_VOLTAGE,
-+		.owner = THIS_MODULE,
-+		.ops = &rt5133_base_regulator_ops,
-+		.enable_reg = RT5133_REG_BASE_CTRL,
-+		.enable_mask = RT5133_FOFF_BASE_MASK,
-+		.enable_is_inverted = true,
-+	},
-+	RT5133_REGULATOR_DESC(LDO1, vout_type1_tables, "rt5133,base"),
-+	RT5133_REGULATOR_DESC(LDO2, vout_type1_tables, "rt5133,base"),
-+	RT5133_REGULATOR_DESC(LDO3, vout_type2_tables, "rt5133,base"),
-+	RT5133_REGULATOR_DESC(LDO4, vout_type2_tables, "rt5133,base"),
-+	RT5133_REGULATOR_DESC(LDO5, vout_type2_tables, "rt5133,base"),
-+	RT5133_REGULATOR_DESC(LDO6, vout_type2_tables, "rt5133,base"),
-+	RT5133_REGULATOR_DESC(LDO7, vout_type3_tables, "rt5133-ldo1"),
-+	RT5133_REGULATOR_DESC(LDO8, vout_type3_tables, "rt5133-ldo1"),
-+};
-+
-+static const struct regulator_desc rt5133a_regulators[] = {
-+	/* For digital part, base current control */
-+	{
-+		.name = "rt5133,base",
-+		.id = RT5133_REGULATOR_BASE,
-+		.of_match = of_match_ptr("BASE"),
-+		.regulators_node = of_match_ptr("regulators"),
-+		.of_parse_cb = rt5133_of_parse_cb,
-+		.type = REGULATOR_VOLTAGE,
-+		.owner = THIS_MODULE,
-+		.ops = &rt5133_base_regulator_ops,
-+		.enable_reg = RT5133_REG_BASE_CTRL,
-+		.enable_mask = RT5133_FOFF_BASE_MASK,
-+		.enable_is_inverted = true,
-+	},
-+	RT5133_REGULATOR_DESC(LDO1, vout_type1_tables, "rt5133,base"),
-+	RT5133_REGULATOR_DESC(LDO2, vout_type1_tables, "rt5133,base"),
-+	RT5133_REGULATOR_DESC(LDO3, vout_type2_tables, "rt5133,base"),
-+	RT5133_REGULATOR_DESC(LDO4, vout_type2_tables, "rt5133,base"),
-+	RT5133_REGULATOR_DESC(LDO5, vout_type2_tables, "rt5133,base"),
-+	RT5133_REGULATOR_DESC(LDO6, vout_type2_tables, "rt5133,base"),
-+	RT5133_REGULATOR_DESC(LDO7, vout_type3_tables, "rt5133-ldo1"),
-+	RT5133_REGULATOR_DESC(LDO8, vout_type4_tables, "rt5133-ldo1"),
-+};
-+
-+static const struct chip_data regulator_data[] = {
-+	{ rt5133_regulators, 0x70},
-+	{ rt5133a_regulators, 0x80},
-+};
-+
-+static int rt5133_gpio_direction_output(struct gpio_chip *gpio,
-+					unsigned int offset, int value)
-+{
-+	struct rt5133_priv *priv = gpiochip_get_data(gpio);
-+
-+	if (offset >= RT5133_GPIO_NR)
-+		return -EINVAL;
-+
-+	return regmap_update_bits(priv->regmap, RT5133_REG_GPIO_CTRL,
-+				  BIT(7 - offset) | BIT(3 - offset),
-+				  value ? BIT(7 - offset) | BIT(3 - offset) : 0);
-+}
-+
-+static int rt5133_gpio_get(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct rt5133_priv *priv = gpiochip_get_data(chip);
-+
-+	return !!(priv->gpio_output_flag & BIT(offset));
-+}
-+
-+static int rt5133_get_gpioen_mask(unsigned int offset, unsigned int *mask)
-+{
-+	if (offset >= RT5133_GPIO_NR)
-+		return -EINVAL;
-+
-+	*mask = (BIT(7 - offset) | BIT(3 - offset));
-+
-+	return 0;
-+}
-+
-+static void rt5133_gpio_set(struct gpio_chip *chip, unsigned int offset,
-+			    int set_val)
-+{
-+	struct rt5133_priv *priv = gpiochip_get_data(chip);
-+	unsigned int mask = 0, val = 0, next_flag = priv->gpio_output_flag;
-+	int ret = 0;
-+
-+	ret = rt5133_get_gpioen_mask(offset, &mask);
-+	if (ret) {
-+		dev_err(priv->dev, "%s get gpion en mask failed, offset(%d)\n", __func__, offset);
-+		return;
-+	}
-+
-+	val = set_val ? mask : 0;
-+
-+	if (set_val)
-+		next_flag |= BIT(offset);
-+	else
-+		next_flag &= ~BIT(offset);
-+
-+	ret = regmap_update_bits(priv->regmap, RT5133_REG_GPIO_CTRL, mask, val);
-+	if (ret) {
-+		dev_err(priv->dev, "Failed to set gpio [%d] val %d\n", offset,
-+			set_val);
-+		return;
-+	}
-+
-+	priv->gpio_output_flag = next_flag;
-+}
-+
-+static irqreturn_t rt5133_intr_handler(int irq_number, void *data)
-+{
-+	struct rt5133_priv *priv = data;
-+	u32 intr_evts = 0, handle_evts;
-+	int i, ret;
-+
-+	ret = regmap_bulk_read(priv->regmap, RT5133_REG_BASE_EVT, &intr_evts,
-+			       RT5133_INTR_BYTE_NR);
-+	if (ret) {
-+		dev_err(priv->dev, "%s, read event failed\n", __func__);
-+		return IRQ_HANDLED;
-+	}
-+
-+	handle_evts = intr_evts & RT5133_BASE_EVT_MASK;
-+	/*
-+	 * VREF_EVT is a special case, if base off
-+	 * this event will also be trigger. Skip it
-+	 */
-+	if (handle_evts & ~RT5133_VREF_EVT_MASK)
-+		dev_dbg(priv->dev, "base event occurred [0x%02x]\n",
-+			handle_evts);
-+
-+	handle_evts = (intr_evts & RT5133_LDO_OC_EVT_MASK) >>
-+		RT5133_LDO_OC_EVT_SHIFT;
-+
-+	for (i = RT5133_REGULATOR_LDO1; i < RT5133_REGULATOR_MAX && handle_evts; i++) {
-+		if (!(handle_evts & BIT(i - 1)))
-+			continue;
-+		regulator_notifier_call_chain(priv->rdev[i],
-+					      REGULATOR_EVENT_OVER_CURRENT,
-+					      &i);
-+	}
-+
-+	handle_evts = (intr_evts & RT5133_LDO_PGB_EVT_MASK) >>
-+		RT5133_LDO_PGB_EVT_SHIFT;
-+	for (i = RT5133_REGULATOR_LDO1; i < RT5133_REGULATOR_MAX && handle_evts; i++) {
-+		if (!(handle_evts & BIT(i - 1)))
-+			continue;
-+		regulator_notifier_call_chain(priv->rdev[i],
-+					      REGULATOR_EVENT_FAIL, &i);
-+	}
-+
-+	ret = regmap_bulk_write(priv->regmap, RT5133_REG_BASE_EVT, &intr_evts,
-+				RT5133_INTR_BYTE_NR);
-+	if (ret)
-+		dev_err(priv->dev, "%s, clear event failed\n", __func__);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int rt5133_enable_interrupts(int irq_no, struct rt5133_priv *priv)
-+{
-+	u32 mask = RT5133_INTR_CLR_MASK;
-+	int ret;
-+
-+	/* Force to write clear all events */
-+	ret = regmap_bulk_write(priv->regmap, RT5133_REG_BASE_EVT, &mask,
-+				RT5133_INTR_BYTE_NR);
-+	if (ret) {
-+		dev_err(priv->dev, "Failed to clear all interrupts\n");
-+		return ret;
-+	}
-+
-+	/* Unmask all interrupts */
-+	mask = 0;
-+	ret = regmap_bulk_write(priv->regmap, RT5133_REG_BASE_MASK, &mask,
-+				RT5133_INTR_BYTE_NR);
-+	if (ret) {
-+		dev_err(priv->dev, "Failed to unmask all interrupts\n");
-+		return ret;
-+	}
-+
-+	return devm_request_threaded_irq(priv->dev, irq_no, NULL,
-+					 rt5133_intr_handler, IRQF_ONESHOT,
-+					 dev_name(priv->dev), priv);
-+}
-+
-+static int rt5133_regmap_hw_read(void *context, const void *reg_buf,
-+				 size_t reg_size, void *val_buf,
-+				 size_t val_size)
-+{
-+	struct rt5133_priv *priv = context;
-+	struct i2c_client *client = to_i2c_client(priv->dev);
-+	u8 reg = *(u8 *)reg_buf, crc;
-+	u8 *buf;
-+	int buf_len = RT5133_PREDATA_LEN + val_size + RT5133_I2C_CRC_LEN;
-+	int read_len, ret;
-+
-+	buf = kzalloc(buf_len, GFP_KERNEL);
-+	if (!buf)
-+		return -ENOMEM;
-+
-+	buf[0] = I2C_ADDR_XLATE_8BIT(client->addr, I2C_SMBUS_READ);
-+	buf[1] = reg;
-+
-+	read_len = val_size + RT5133_I2C_CRC_LEN;
-+	ret = i2c_smbus_read_i2c_block_data(client, reg, read_len,
-+					    buf + RT5133_PREDATA_LEN);
-+
-+	if (ret < 0)
-+		goto out_read_err;
-+
-+	if (ret != read_len) {
-+		ret = -EIO;
-+		goto out_read_err;
-+	}
-+
-+	crc = crc8(priv->crc8_tbls, buf, RT5133_PREDATA_LEN + val_size, 0);
-+	if (crc != buf[RT5133_PREDATA_LEN + val_size]) {
-+		ret = -EIO;
-+		goto out_read_err;
-+	}
-+
-+	memcpy(val_buf, buf + RT5133_PREDATA_LEN, val_size);
-+	dev_dbg(priv->dev, "reg = 0x%02x, data = 0x%02x\n", reg, *(u8 *)val_buf);
-+
-+out_read_err:
-+	kfree(buf);
-+	return (ret < 0) ? ret : 0;
-+}
-+
-+static int rt5133_regmap_hw_write(void *context, const void *data, size_t count)
-+{
-+	struct rt5133_priv *priv = context;
-+	struct i2c_client *client = to_i2c_client(priv->dev);
-+	u8 reg = *(u8 *)data, crc;
-+	u8 *buf;
-+	int buf_len = RT5133_I2C_ADDR_LEN + count + RT5133_I2C_CRC_LEN +
-+		RT5133_I2C_DUMMY_LEN;
-+	int write_len, ret;
-+
-+	buf = kzalloc(buf_len, GFP_KERNEL);
-+	if (!buf)
-+		return -ENOMEM;
-+
-+	buf[0] = I2C_ADDR_XLATE_8BIT(client->addr, I2C_SMBUS_WRITE);
-+	buf[1] = reg;
-+	memcpy(buf + RT5133_PREDATA_LEN, data + RT5133_REG_ADDR_LEN,
-+	       count - RT5133_REG_ADDR_LEN);
-+
-+	crc = crc8(priv->crc8_tbls, buf, RT5133_I2C_ADDR_LEN + count, 0);
-+	buf[RT5133_I2C_ADDR_LEN + count] = crc;
-+
-+	write_len = count - RT5133_REG_ADDR_LEN + RT5133_I2C_CRC_LEN +
-+		RT5133_I2C_DUMMY_LEN;
-+	ret = i2c_smbus_write_i2c_block_data(client, reg, write_len,
-+					     buf + RT5133_PREDATA_LEN);
-+
-+	dev_dbg(priv->dev, "reg = 0x%02x, data = 0x%02x\n", reg,
-+		*(u8 *)(buf + RT5133_PREDATA_LEN));
-+	kfree(buf);
-+	return ret;
-+}
-+
-+static const struct regmap_bus rt5133_regmap_bus = {
-+	.read = rt5133_regmap_hw_read,
-+	.write = rt5133_regmap_hw_write,
-+	/* Due to crc, the block read/write length has the limit */
-+	.max_raw_read = RT5133_MAX_I2C_BLOCK_SIZE,
-+	.max_raw_write = RT5133_MAX_I2C_BLOCK_SIZE,
-+};
-+
-+// Due to crc, cache is not necessary
-+static const struct regmap_config rt5133_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.max_register = RT5133_REG_LDO8_CTRL4,
-+};
-+
-+static int rt5133_chip_reset(struct rt5133_priv *priv)
-+{
-+	int ret;
-+
-+	ret = regmap_write(priv->regmap, RT5133_REG_RST_CTRL,
-+			   RT5133_RESET_CODE);
-+	if (ret)
-+		return ret;
-+
-+	/* Wait for register reset to take effect */
-+	udelay(2);
-+
-+	return 0;
-+}
-+
-+static int rt5133_validate_vendor_info(struct rt5133_priv *priv)
-+{
-+	unsigned int val = 0;
-+	int i, ret;
-+
-+	ret = regmap_read(priv->regmap, RT5133_REG_CHIP_INFO, &val);
-+	if (ret)
-+		return ret;
-+
-+	for (i = 0; i < ARRAY_SIZE(regulator_data); i++) {
-+		if ((val & RT5133_VENDOR_ID_MASK) ==
-+						regulator_data[i].vendor_id){
-+			priv->cdata = &regulator_data[i];
-+			break;
-+		}
-+	}
-+	if (IS_ERR(priv->cdata)) {
-+		dev_err(priv->dev, "Failed to find regualtor match version\n");
-+		return -ENODEV;
-+	}
-+
-+	return 0;
-+}
-+
-+static int rt5133_probe(struct i2c_client *i2c)
-+{
-+	struct rt5133_priv *priv;
-+	struct regulator_config config = {0};
-+	int i, ret;
-+
-+	priv = devm_kzalloc(&i2c->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->dev = &i2c->dev;
-+	crc8_populate_msb(priv->crc8_tbls, RT5133_CRC8_POLYNOMIAL);
-+
-+	priv->enable_gpio = devm_gpiod_get_optional(&i2c->dev, "enable",
-+						    GPIOD_OUT_HIGH);
-+	if (IS_ERR(priv->enable_gpio))
-+		dev_err(&i2c->dev, "Failed to request HWEN gpio, check if default en=high\n");
-+
-+	priv->regmap = devm_regmap_init(&i2c->dev, &rt5133_regmap_bus, priv,
-+					&rt5133_regmap_config);
-+	if (IS_ERR(priv->regmap)) {
-+		dev_err(&i2c->dev, "Failed to register regmap\n");
-+		return PTR_ERR(priv->regmap);
-+	}
-+
-+	ret = rt5133_validate_vendor_info(priv);
-+	if (ret) {
-+		dev_err(&i2c->dev, "Failed to check vendor info [%d]\n", ret);
-+		return ret;
-+	}
-+
-+	ret = rt5133_chip_reset(priv);
-+	if (ret) {
-+		dev_err(&i2c->dev, "Failed to execute sw reset\n");
-+		return ret;
-+	}
-+
-+	config.dev = &i2c->dev;
-+	config.driver_data = priv;
-+	config.regmap = priv->regmap;
-+
-+	for (i = 0; i < RT5133_REGULATOR_MAX; i++) {
-+		priv->rdev[i] = devm_regulator_register(&i2c->dev,
-+							priv->cdata->regulators + i,
-+							&config);
-+		if (IS_ERR(priv->rdev[i])) {
-+			dev_err(&i2c->dev,
-+				"Failed to register [%d] regulator\n", i);
-+			return PTR_ERR(priv->rdev[i]);
-+		}
-+	}
-+
-+	priv->gc.label = dev_name(&i2c->dev);
-+	priv->gc.parent = &i2c->dev;
-+	priv->gc.base = -1;
-+	priv->gc.ngpio = RT5133_GPIO_NR;
-+	priv->gc.set = rt5133_gpio_set;
-+	priv->gc.get = rt5133_gpio_get;
-+	priv->gc.direction_output = rt5133_gpio_direction_output;
-+	priv->gc.can_sleep = true;
-+
-+	ret = devm_gpiochip_add_data(&i2c->dev, &priv->gc, priv);
-+	if (ret)
-+		return ret;
-+
-+	ret = rt5133_enable_interrupts(i2c->irq, priv);
-+	if (ret) {
-+		dev_err(&i2c->dev, "enable interrupt failed\n");
-+		return ret;
-+	}
-+
-+	i2c_set_clientdata(i2c, priv);
-+
-+	return ret;
-+}
-+
-+static const struct of_device_id __maybe_unused rt5133_of_match_table[] = {
-+	{ .compatible = "richtek,rt5133", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, rt5133_of_match_table);
-+
-+static struct i2c_driver rt5133_driver = {
-+	.driver = {
-+		.name = "rt5133",
-+		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
-+		.of_match_table = rt5133_of_match_table,
-+	},
-+	.probe = rt5133_probe,
-+};
-+module_i2c_driver(rt5133_driver);
-+
-+MODULE_DESCRIPTION("RT5133 Regulator Driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.43.0
+> +
+> +static struct lp5812_led *lp5812_dev_to_led(struct device *dev)
+> +{
+> +	struct led_classdev *cdev = dev_get_drvdata(dev);
+> +	const char *name = dev->platform_data;
+> +
+> +	if (strcmp(name, LP5812_SC_LED) == 0)
+> +		return container_of(cdev, struct lp5812_led, cdev);
+> +
+> +	return container_of((struct led_classdev_mc *)cdev, struct lp5812_led, mc_cdev);
 
+
+No, just pass correct pointer to platform data, no need with strcmp and
+then different container of...
+
+
+...
+
+> +
+> +static int lp5812_init_led(struct lp5812_led *led, struct lp5812_chip *chip, int chan)
+> +{
+> +	struct device *dev = &chip->client->dev;
+> +	struct mc_subled *mc_led_info;
+> +	struct led_classdev *led_cdev;
+> +	int i, ret = 0;
+> +
+> +	if (chip->led_config[chan].name) {
+> +		led->cdev.name = chip->led_config[chan].name;
+> +	} else {
+> +		led->cdev.name = devm_kasprintf(dev, GFP_KERNEL, "%s:channel%d",
+> +						chip->label ? : chip->client->name, chan);
+> +		if (!led->cdev.name)
+> +			return -ENOMEM;
+> +	}
+> +
+> +	if (!chip->led_config[chan].is_sc_led) {
+> +		mc_led_info = devm_kcalloc(dev,
+> +					   chip->led_config[chan].num_colors,
+> +					   sizeof(*mc_led_info), GFP_KERNEL);
+> +		if (!mc_led_info)
+> +			return -ENOMEM;
+> +
+> +		led_cdev = &led->mc_cdev.led_cdev;
+> +		led_cdev->name = led->cdev.name;
+> +		led_cdev->brightness_set_blocking = lp5812_set_mc_brightness;
+> +		led->mc_cdev.num_colors = chip->led_config[chan].num_colors;
+> +		for (i = 0; i < led->mc_cdev.num_colors; i++) {
+> +			mc_led_info[i].color_index =
+> +				chip->led_config[chan].color_id[i];
+> +			mc_led_info[i].channel =
+> +					chip->led_config[chan].led_id[i];
+> +		}
+> +
+> +		led->mc_cdev.subled_info = mc_led_info;
+> +	} else {
+> +		led->cdev.brightness_set_blocking = lp5812_set_brightness;
+> +	}
+> +
+> +	led->cdev.groups = lp5812_led_groups;
+> +	led->chan_nr = chan;
+> +
+> +	if (chip->led_config[chan].is_sc_led) {
+> +		ret = devm_led_classdev_register(dev, &led->cdev);
+> +		if (ret == 0) {
+> +			led->cdev.dev->platform_data = devm_kstrdup(dev, LP5812_SC_LED, GFP_KERNEL);
+> +			if (!led->cdev.dev->platform_data)
+> +				return -ENOMEM;
+> +		}
+> +	} else {
+> +		ret = devm_led_classdev_multicolor_register(dev, &led->mc_cdev);
+> +		if (ret == 0) {
+> +			led->mc_cdev.led_cdev.dev->platform_data =
+> +				devm_kstrdup(dev, LP5812_MC_LED, GFP_KERNEL);
+> +			if (!led->mc_cdev.led_cdev.dev->platform_data)
+> +				return -ENOMEM;
+> +
+> +			ret = sysfs_create_groups(&led->mc_cdev.led_cdev.dev->kobj,
+> +						  lp5812_led_groups);
+> +			if (ret)
+> +				dev_err(dev, "sysfs_create_groups failed\n");
+> +		}
+> +	}
+> +
+> +	if (ret) {
+> +		dev_err(dev, "led register err: %d\n", ret);
+
+Why are you printing same error multiple times?
+
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int lp5812_register_leds(struct lp5812_led *led, struct lp5812_chip *chip)
+> +{
+> +	struct lp5812_led *each;
+> +	int num_channels = chip->num_channels;
+> +	int ret, i, j;
+> +
+> +	for (i = 0; i < num_channels; i++) {
+> +		each = led + i;
+> +		ret = lp5812_init_led(each, chip, i);
+> +		if (ret)
+> +			goto err_init_led;
+> +
+> +		each->chip = chip;
+> +
+> +		for (j = 0; j < chip->led_config[i].num_colors; j++) {
+> +			ret = lp5812_auto_dc(chip, chip->led_config[i].led_id[j],
+> +					     chip->led_config[i].led_id[j]);
+> +			if (ret)
+> +				goto err_init_led;
+> +
+> +			ret = lp5812_set_led_mode(chip, chip->led_config[i].led_id[j],
+> +						  LP5812_MODE_MANUAL);
+> +			if (ret)
+> +				goto err_init_led;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +
+> +err_init_led:
+> +	return ret;
+> +}
+> +
+> +static int lp5812_register_sysfs(struct lp5812_chip *chip)
+> +{
+> +	struct device *dev = &chip->client->dev;
+> +	const struct lp5812_device_config *cfg = chip->cfg;
+> +	int ret;
+> +
+> +	ret = sysfs_create_group(&dev->kobj, cfg->dev_attr_group);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+> +
+> +static void lp5812_unregister_sysfs(struct lp5812_led *led, struct lp5812_chip *chip)
+> +{
+> +	struct device *dev = &chip->client->dev;
+> +	const struct lp5812_device_config *cfg = chip->cfg;
+> +	struct lp5812_led *each;
+> +	int i;
+> +
+> +	sysfs_remove_group(&dev->kobj, cfg->dev_attr_group);
+> +
+> +	for (i = 0; i < chip->num_channels; i++) {
+> +		if (!chip->led_config[i].is_sc_led) {
+> +			each = led + i;
+> +			sysfs_remove_groups(&each->mc_cdev.led_cdev.dev->kobj, lp5812_led_groups);
+> +		}
+> +	}
+> +}
+> +
+> +static int lp5812_probe(struct i2c_client *client)
+> +{
+> +	struct lp5812_chip *chip;
+> +	const struct i2c_device_id *id = i2c_client_get_device_id(client);
+> +	struct device_node *np = dev_of_node(&client->dev);
+> +	struct lp5812_led *led;
+> +	int ret;
+> +
+> +	chip = devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
+> +	if (!chip)
+> +		return -ENOMEM;
+> +
+> +	chip->cfg = i2c_get_match_data(client);
+> +
+> +	if (np) {
+> +		ret = lp5812_of_populate_pdata(&client->dev, np, chip);
+> +		if (ret)
+> +			goto err_init;
+> +	} else {
+> +		return dev_err_probe(&client->dev, -EINVAL, "No platform data\n");
+
+This is confusing syntax. Expected is:
+if (!missing something)
+	return -EINVAL
+
+The other problem is that you claim this can match and bind without OF,
+but here you say it is a requirement. So either this code is wrong or
+your I2C ID table should be removed.
+
+
+> +	}
+> +
+> +	led = devm_kcalloc(&client->dev, chip->num_channels, sizeof(*led), GFP_KERNEL);
+> +	if (!led)
+> +		return -ENOMEM;
+> +
+> +	chip->client = client;
+> +
+> +	mutex_init(&chip->lock);
+> +
+> +	i2c_set_clientdata(client, led);
+> +
+> +	ret = lp5812_init_device(chip);
+> +	if (ret)
+> +		goto err_init;
+> +
+> +	dev_info(&client->dev, "%s Programmable led chip found\n", id->name);
+
+Drop. You have only one device type (look at your binding), so you
+cannot "find" devices.
+
+> +
+> +	ret = lp5812_register_leds(led, chip);
+> +	if (ret)
+> +		goto err_out;
+> +
+> +	ret = lp5812_register_sysfs(chip);
+> +	if (ret) {
+> +		dev_err_probe(&client->dev, ret, "Registering sysfs failed\n");
+> +		goto err_out;
+> +	}
+> +
+> +	return 0;
+> +
+> +err_out:
+> +	lp5812_deinit_device(chip);
+> +err_init:
+> +	return ret;
+> +}
+> +
+> +static void lp5812_remove(struct i2c_client *client)
+> +{
+> +	struct lp5812_led *led = i2c_get_clientdata(client);
+> +
+> +	lp5812_unregister_sysfs(led, led->chip);
+> +	lp5812_deinit_device(led->chip);
+> +
+> +	dev_info(&client->dev, "Removed driver\n");
+
+No, drop, useless.
+
+
+Best regards,
+Krzysztof
 
