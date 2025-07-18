@@ -1,62 +1,59 @@
-Return-Path: <linux-kernel+bounces-736377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F4C3B09C27
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:14:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78E25B09C32
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:16:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1047A45633
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 07:13:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 181FF188FC03
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 07:16:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DDA1213E74;
-	Fri, 18 Jul 2025 07:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89CA8202983;
+	Fri, 18 Jul 2025 07:16:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ePewANYk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="APPixPty"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10DD217F26;
-	Fri, 18 Jul 2025 07:13:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38E811CAF;
+	Fri, 18 Jul 2025 07:16:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752822830; cv=none; b=PHWWj8pqpG+Nn3uUERvkNh3AUC8tbK1rk9im2K4zdsjG81JIqpf9YuZaG4eC6b/kE9jWn+DjDLH3QxSOQ6mwf8YIlHatO3WXAT5c6eVNFqD5qWYcdFJondHRniu2wSrEd9/+u8W2PyAmoHKg7D5xEcgcs2tSFrolegRh5bCY1tM=
+	t=1752822988; cv=none; b=bLoQ1llMKVjtT0qacBfXShKHCwcLq6qqRp4xb28p4pXNaJ/Ig9q/FK825ROhKpiBmTlZ99DaYn2Ohkv4yTmF8e1I2d5BJEsewZHZLIbG1d+AifDRMPDe3umh9eztFd9phQUjo/wDCicjMrplmgqc/xfdzIYuVfX35sIcbs+EuE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752822830; c=relaxed/simple;
-	bh=OdMtW5lc/8Syc5fXGf6jT6SkSmBc/+J9IqjG6QyQdco=;
+	s=arc-20240116; t=1752822988; c=relaxed/simple;
+	bh=Lge0NYoif5nduRoA5W6c1yvWLXuJuaMaklUH0UN7kVI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bycZgQ0oNJK3Gm4ORjB6nRm4w1k82EOWCNiuRvgmryX5gkX/1yWAnVtVn8IbJZf++3F17KpyVDgH3mfF/NxalpyU+rfdoeHRKDKtoxJyPv3OypP5RVEOsCERTnguZi3jSDxNgCyCVR/ZCOx9ihbHMEF9lFIToWTdlskaR7cdT2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ePewANYk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5025FC4CEED;
-	Fri, 18 Jul 2025 07:13:47 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=BZOw4lDHvw35L6q+QNIL5Yn3XoVvWgd5GsACo510axHEiqTtZihoiKQqkXfI76NaiM5PQ0fexRtw5IWOX47NuGvD1X/uCKSlmZnw9qariYWGBJNvHFV+aOGiiK/VZYbVmZidwJUsgC+fQcxU2ftNKJ4G6Ldt07Nq5FZKOBIzYNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=APPixPty; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D60F4C4CEED;
+	Fri, 18 Jul 2025 07:16:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752822830;
-	bh=OdMtW5lc/8Syc5fXGf6jT6SkSmBc/+J9IqjG6QyQdco=;
+	s=k20201202; t=1752822987;
+	bh=Lge0NYoif5nduRoA5W6c1yvWLXuJuaMaklUH0UN7kVI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ePewANYkgnoEx2ygQsQvJACtYlUxJX7ZPXEaGZx4yZPWGwfwv36vcFSEXPy2sVVTJ
-	 Ad7oPxtO4whFPSp2Zmsy23uRQj76Mr12mFlgsKxjiyUh+xIvle7Wct3hdHe4MRPS5v
-	 JJZnZURuQV0mBzHFwgpbpBoXYFVBrxcK04ob2HdCGV40fXTJFxHpE6/bwSDFmZ0g7o
-	 sofviehkHfxQ41ppbdE9cygODg9jMlrigX4Pln0QjicFxQFe4qLMZuEpR4lpZEx7XK
-	 62g5cyqgkSih8R2S3pgc0TApOd0F/AO6Gai0iIlrZ5yB6Hu3cGbg015Kvt45yYQxtm
-	 pKeYehf9WSnwA==
-Date: Fri, 18 Jul 2025 08:13:44 +0100
-From: Lee Jones <lee@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Michael Walle <mwalle@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Julien Panis <jpanis@baylibre.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [GIT PULL] Immutable branch between MFD, Misc and Pinctrl due
- for the v6.17 merge window
-Message-ID: <20250718071344.GA11056@google.com>
-References: <20250613114518.1772109-1-mwalle@kernel.org>
- <20250710094906.GG1431498@google.com>
- <aG-OmSNn-oULfEuB@finisterre.sirena.org.uk>
+	b=APPixPty1AKa3jggu5DmHwWzFjk4Aw8XCzbc7r+Zt91ghlSphQWWgMxTb4lJKsIjp
+	 tPyJzSP1hQtgW3c7/W0IIiRA8DFUvt6jWXWBK2vTvrVBV0zHwJ/dvQW0yxvljhdkl0
+	 k4b1tBlU9Dhx01woCdMZupkJaU95cPlfowpMUUX1+xRgFLvndkGYiJ6a0BAdqxoNFS
+	 NfF55YbX4bDNFm5dRnRJgdwNdlSUuj34BlPiGWs+sANtYna/YKGKl/vPXNySvpNWmL
+	 gY9OOPAHFryUStT7E9yKZIwgI7nD9WxHb5O1J8o+JBhf40ljmtv1kIq46J06rV6C8n
+	 GYJttDb3syDpQ==
+Date: Fri, 18 Jul 2025 09:16:24 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
+Cc: "Rob Herring (Arm)" <robh@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Lucca Fachinetti <luccafachinetti@gmail.com>, Conor Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] dt-bindings: leds: is31fl32xx: convert the
+ binding to yaml
+Message-ID: <20250718-dangerous-smart-guppy-b8aa74@kuoka>
+References: <20250717-leds-is31fl3236a-v4-0-72ef946bfbc8@thegoodpenguin.co.uk>
+ <20250717-leds-is31fl3236a-v4-1-72ef946bfbc8@thegoodpenguin.co.uk>
+ <175277045533.3779995.9523277801474945480.robh@kernel.org>
+ <CAA6zWZLyUt9X4+dAgYBVGqdNchasJorWhNH1O1Ti=UBO-J6q9g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,60 +62,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aG-OmSNn-oULfEuB@finisterre.sirena.org.uk>
+In-Reply-To: <CAA6zWZLyUt9X4+dAgYBVGqdNchasJorWhNH1O1Ti=UBO-J6q9g@mail.gmail.com>
 
-On Thu, 10 Jul 2025, Mark Brown wrote:
-
-> On Thu, Jul 10, 2025 at 10:49:06AM +0100, Lee Jones wrote:
-> > Enjoy!
-> > 
-> > The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
-> > 
-> >   Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
-> > 
-> > are available in the Git repository at:
-> > 
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-misc-pinctrl-v6.17
-> > 
-> > for you to fetch changes up to d90171bc2e5f69c038d1807e6f64fba3d1ad6bee:
-> > 
-> >   dt-bindings: mfd: ti,tps6594: Add TI TPS652G1 PMIC (2025-07-10 10:40:21 +0100)
-> > 
-> > ----------------------------------------------------------------
-> > Immutable branch between MFD, Misc and Pinctrl due for the v6.17 merge window
+On Fri, Jul 18, 2025 at 07:50:51AM +0100, Pawel Zalewski wrote:
+> > If you already ran 'make dt_binding_check' and didn't see the above
+> > error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> > date
 > 
-> Is there some reason you didn't also pick up the regulator patches?
+> Hmm interesting, I did run it, have yamlint installed and see no
+> errors. Will upgrade dtschema and try again.
 
-Is that a joke?  I'm going to assume that you're not serious!
+Are you sure you tested patch #1 only?
 
-https://lore.kernel.org/all/aCWfre2-n_PSuhxR@finisterre.sirena.org.uk/
+Best regards,
+Krzysztof
 
-  ">   1. Apply this now and merge the dependents next cycle
-   >   2. Apply this now and provide an IB
-   >   3. Wait for all Acks and apply as a unified set
-   >
-   > We usually choose 3, hence my assumptions above.
-
-   Well, you choose 3 - I do think it'd be a lot easier to go with option
-   2, or with applying the rest to your tree as acks come in.  There seemed
-   to still be a reasonable amount of discussion on the MFD bits (eg,
-   there's some formatting comments still) so I was expecting this series
-   to churn some more and was waiting for a resend."
-
-https://lore.kernel.org/all/601dd4c7-0940-498b-815e-99e570e732d2@sirena.org.uk/
-
-  "So not apply the first two patches and share a branch like you said
-   above...  TBH these serieses would probably be a bit more legible if
-   the branch were created with just the MFD patches, that'd also mean
-   smaller cross merges."
-
-IRC:
-
-  "<b*****e> Probably the easiest thing is a tag with the MFD bits and then I can apply the regulator patches?"
-
-Etc ...
-
--- 
-Lee Jones [李琼斯]
 
