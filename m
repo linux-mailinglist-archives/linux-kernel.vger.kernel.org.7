@@ -1,929 +1,212 @@
-Return-Path: <linux-kernel+bounces-736836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01AD2B0A3BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:01:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76242B0A383
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:52:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F1993A6778
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:00:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 730E87BAC08
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:50:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCFF62D8375;
-	Fri, 18 Jul 2025 12:00:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57CC92D979D;
+	Fri, 18 Jul 2025 11:52:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=tahomasoft.com header.i=@tahomasoft.com header.b="GeGmB1ll"
-Received: from chumsalmon.baetis.net (chumsalmon.baetis.net [209.222.21.150])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="bdptE/iF"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2059.outbound.protection.outlook.com [40.107.220.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0554425C810;
-	Fri, 18 Jul 2025 12:00:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.222.21.150
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752840055; cv=none; b=t/vKzT6eqeroj1uZOzBllKcr9tBb9d2sWL/yAWckfIhrtNJAuiIzUoo/n/NDjuznWO2Hd0IssciXK5p4CswXgYpt9GcRFVif6WDwPVidJsQCjN1QR1e8TnV087kVkNwKeSUfDspEN5+xtpL/jsnSn1DLtolbGe6xmcNEZFWo4YQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752840055; c=relaxed/simple;
-	bh=ktECcEkqDIsB4rOIy9abe/XcCS/qQdj3NFkSR2xSDzQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=PF8qlZDL3enQn710tyLqUWdWaiXK5Vj/XUXCM/m7S3VgNbwMoKYZ997+Tm4heWPbP8mHdLd/3UxE4tdxU3U4kqc2WGhOqFoqC9T5lsVrtcrQFn2SbO1XTzl6dfz0bLXKkG4nZa+edgToIjSYudIDeIMsFtwDYgHbZsXWQFnsh6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tahomasoft.com; spf=pass smtp.mailfrom=tahomasoft.com; dkim=fail (0-bit key) header.d=tahomasoft.com header.i=@tahomasoft.com header.b=GeGmB1ll reason="key not found in DNS"; arc=none smtp.client-ip=209.222.21.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tahomasoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tahomasoft.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tahomasoft.com;
-	s=default; t=1752839459;
-	bh=ktECcEkqDIsB4rOIy9abe/XcCS/qQdj3NFkSR2xSDzQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=GeGmB1llNufkPA2rUlN27j1RdtpBw52kM+5YtNTv7XK8S3CrPAE4MUNosy34W1jtP
-	 QOr+flgNkHzkiodtF5jQcQvOdRJWsX+xrqN8Tw7y4YsqhS0lcwJYB18u9FW+/LXBu3
-	 2LGnx+Z/11xfYnNclKEVlsAFaFRYG7fDYhgfISgP0wltlNvX9YUJiQRspP2WpgVR5G
-	 Pf2gWlVGlNilZ9N0RJiJ/wR7xtTCgVutgCE2ubjqNjgq1f6YsyPdY9uKV6Y/X3svNm
-	 k6faoBXCg3axhKqm5t0Pw9wYS14kJlHf8pDx8ygt7imTgSMc1wOzAqctXBz91poZfA
-	 3nwYMcY2wSIDg==
-Received: from WahpenayoPeak.tahoma.link (unknown [IPv6:2600:4040:50b7:b604:3b13:d53e:3e62:ce43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by chumsalmon.baetis.net (Postfix) with ESMTPSA id AB80C27E434;
-	Fri, 18 Jul 2025 11:50:59 +0000 (UTC)
-Date: Fri, 18 Jul 2025 07:50:58 -0400
-From: Erik Beck <xunil@tahomasoft.com>
-To: linux-rockchip@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, soc@lists.linux.dev
-Cc: heiko@sntech.de
-Subject: [PATCH 1/1] arm: dts: rockchip: Add initial support for LinkStar
- H68K-1432v1 Board with RK3568 SoC
-Message-ID: <20250718075058.243a5619.xunil@tahomasoft.com>
-Organization: Tahoma Soft
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0041DED49;
+	Fri, 18 Jul 2025 11:51:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752839520; cv=fail; b=kkG2HTuBgAO+efamCJEQ3K1gViGD6KeA9VAvzOUz/BobBY6xUXdd9jAa4gHhZkUg/2J6VeEB7xDmcnHlU1PuDLMeNjI8kwrRlvSZ6kM9wLXLjQxlIXCYJ+kPR5n5EsN7wE3GUP8iry9R9KdAu8fm7Wy8U+PMCECwHQxokET2CJ0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752839520; c=relaxed/simple;
+	bh=Np7MuS/huJaVhiGpDU3BvQJWE2+EDuFNuDAUYAN4geU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MIFPaJMBdDUh8CrT0bGkZH1J3fU8l/JmuwYq+RpInVe1Ek/xTLLQc3ynfz9GuLiJ1yiVfXSmWQoQ3B7a1fYIoeUImxnR4shLbItM4vnwcDVoha1fzruH8NEM1frzqxhJO2AdCa2U4RB2etfPyhb/itAGXC0wiG1dayFrJTlLf8I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=bdptE/iF; arc=fail smtp.client-ip=40.107.220.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EFbv+ioVmcuP0zdqJazqnhWrqX+jelRL9iCf2ZZnA0yNYlyv3TL51ttX9krUYOortD4rM+Cn83ig2ECUGy4s0Vs0eaH6ZqpuqgeKS/JgdJwLCuidCh3DiAueU66UAmeHtP+XkKj1xermn+1NF+iCIkQQqwKqze3FwizJKblXWvT+tBL9vNGwU/Og2PFWOSlOAL5/saqA39Tv9erOBsmvKo4wweYgWerkHEH4wEbVjZjo9XPTDcGQIh4Vy4r712HLzUGh7Mj3xS7kdLgH/sxhb6v0rtsMWEFAHwKFWWhF9zmOJKqQGRim+/EHms7UjOhDvjT2jLip4pR5tD2ATjoYzw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xpNyWn/Y9z++tqDbRoF9uJkiN0p+t/J0r5lqKcU8ZTE=;
+ b=Wu3EnNuSdNGs5/DB4RbhnfYduntIppYKB00fFVJnV4oQmFJ4EOgXgUbfu1VMwB30tlU97iUXLn+VH8L9RRHAq0j3BFgQoBJnzZe2uroU+/Ufyo1uESkKV0hNASEfO8iHCAPPtpH8zDbkPUD3enc4+lCAoWL3pvFNpLu5Z44+2DPIAe7pbPPD6hpbw0DzPFTEePoDonPXQzFx+Yw8oK7PGMuiUTGoSrgzPcIkdCd/c4F2vM7LDIk/FZMkWbv1UJOXdRoJcBJqRDEqjJmvOpLxa0dmXikuiepp6rcY4QiQ/1OnEXz354rh8aBWl+co1pznzh29XGbYpS4l8/M+bYpUjw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xpNyWn/Y9z++tqDbRoF9uJkiN0p+t/J0r5lqKcU8ZTE=;
+ b=bdptE/iF1C8yicGVzZr/RR5IQUSuEfrm1epwHIiDpJJlPUuDyxu+e7MtrxZr/tCXY9caXm9PkeftHUIhb3nScpVd/zfvLnKr0o8nYMZMVKMjoJv+xEWiP1tIzo+i0omHICo/C6fTPiCbmpYlz4jWSkE9AbR9G+LTJK8FB7lLvvv+0kOLlBzpLFNX1fAN6zEDbz0WNGgxWidw/GuH4a1iAklbunyHUZXhpX2GD6KjYC54rpoi9tejV64DTqRBZ/ujh0rbFuD1H32ORECEd+DU8yu+8rD8ht0EUUU3a1oLasz1R39ipc51lCbIuItsdDnyJJgDm2l7AO6Phf+yq9tqGw==
+Received: from SA1P222CA0098.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:35e::8)
+ by DM4PR12MB6328.namprd12.prod.outlook.com (2603:10b6:8:a0::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.35; Fri, 18 Jul
+ 2025 11:51:56 +0000
+Received: from SN1PEPF0002636C.namprd02.prod.outlook.com
+ (2603:10b6:806:35e:cafe::5b) by SA1P222CA0098.outlook.office365.com
+ (2603:10b6:806:35e::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.20 via Frontend Transport; Fri,
+ 18 Jul 2025 11:51:56 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SN1PEPF0002636C.mail.protection.outlook.com (10.167.241.137) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8943.21 via Frontend Transport; Fri, 18 Jul 2025 11:51:56 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 18 Jul
+ 2025 04:51:38 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 18 Jul
+ 2025 04:51:37 -0700
+Received: from vdi.nvidia.com (10.127.8.9) by mail.nvidia.com (10.129.68.7)
+ with Microsoft SMTP Server id 15.2.1544.14 via Frontend Transport; Fri, 18
+ Jul 2025 04:51:32 -0700
+From: Yonatan Maman <ymaman@nvidia.com>
+To: =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>, Andrew Morton
+	<akpm@linux-foundation.org>, Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky
+	<leon@kernel.org>
+CC: Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, "David
+ Airlie" <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Alistair Popple
+	<apopple@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>, Michael Guralnik
+	<michaelgur@nvidia.com>, Or Har-Toov <ohartoov@nvidia.com>, Daisuke Matsuda
+	<dskmtsd@gmail.com>, Shay Drory <shayd@nvidia.com>, <linux-mm@kvack.org>,
+	<linux-rdma@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+	<nouveau@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>, "Yonatan
+ Maman" <Ymaman@Nvidia.com>
+Subject: [PATCH v2 0/5] *** GPU Direct RDMA (P2P DMA) for Device Private Pages ***
+Date: Fri, 18 Jul 2025 14:51:07 +0300
+Message-ID: <20250718115112.3881129-1-ymaman@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF0002636C:EE_|DM4PR12MB6328:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3a6f0fb2-4aa0-4115-0f00-08ddc5f17edb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|376014|7416014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?x73bhzORsKHwN8kXXZZM5SgBabPz2TDJrZF6ZGXWWv46AyglE5s+CYWQoUhd?=
+ =?us-ascii?Q?qFK7CWi8GbjF6AtL00dcYhsb5no5vfRPNXZwnfNflHfSpunDVmvPw0aOgcYF?=
+ =?us-ascii?Q?3pWCSoM36DW5sChqhx/WYYb9YhFSCQSCV8YcjY2SLfeW/KSAx5Cfb/AmUayG?=
+ =?us-ascii?Q?SZfQDZaNs9DDT+EJMUKo/aNATJqTlr5rRRvS03NI2zC/sBXUF7almE+W/ueO?=
+ =?us-ascii?Q?ou7f6avrJhW+oyAuta6is+yxjLZ0koFgsUQQvzr04PQbE0vT1Y9VfSash71V?=
+ =?us-ascii?Q?9CprB877w54S3ez0zcV4Vn0+Rs50wDuYhyevx3I5b5aBkgWtpJ6gp29VJN+8?=
+ =?us-ascii?Q?G9/07Ywq2xI8V1KF8MYpQ3PUlIq6WKraA3aC/d8Oj4d73wDGhu3LoPoJvMu1?=
+ =?us-ascii?Q?Abyz2ct1EDkkpY0VAtftg8orWIGOYAXAmXHpwzsVSAw5LqkTSXuRydIrjnru?=
+ =?us-ascii?Q?CvRopdsPEISuGW8F/BgOSA+3TrsKQAGctRLnZDbme3Gu+YPVJYWsJXuosw1l?=
+ =?us-ascii?Q?/rn0nyN6GjSxlVoXpXoUfi/wg/dG9pccuuooAIZ6vXGhjGeeQswg02YkCKJK?=
+ =?us-ascii?Q?RPPo/ctq0AgQ6gVpYN1+ZwRpktqJLpg4mdmKXkbD08/S/Eqjgf7IG6/QJmV+?=
+ =?us-ascii?Q?XxPFPxJ4PovyJwi+I0kHlqU85WNblSLNYPHxEsXm3qEWkqtU5Ld+b+5nabd8?=
+ =?us-ascii?Q?u91x5g4ViUXeG5nOBYpWgFlyfcEhkrY5QYU/Bf/dVqjxgkWp++sc9m7P9grE?=
+ =?us-ascii?Q?Z4LhrPWdw97jZpfLjG1J/X9bo9kdqzZspgkAwlUBV7FjABu4ppYTv/zXlR/8?=
+ =?us-ascii?Q?BzuChUWSx0VOrmdPrmiYqGO+r43WsWyClCSGSu8Rtb220aEsrRbg5OfV2CyA?=
+ =?us-ascii?Q?njoK8FVdE0bJiwIrcw1ci56vGfTqjbNy/5vPYPACHd6KT6O9hXHPdpE0craM?=
+ =?us-ascii?Q?qk2uX0KCdkn9x54wYzXt7QEbSKSINderq23+k4nH30NHqk+X/qiTYxpWiGib?=
+ =?us-ascii?Q?cV4AVZcf5aZBW+D3PvGpAdYypK1i5PoRKimaGqH6q/EQSep9oaVX6v8j4QQ3?=
+ =?us-ascii?Q?eO9EEwaeMi4qZ4XDa+sLl4Qn5S0bWnTdJ1wA2nZGGH0kibmJkItvLWzWX/C1?=
+ =?us-ascii?Q?TfICbBNeLd+8otrAAUrq/3BoGiLf3CeWRjmZgVkXrpokwj7OPEOBvXSkYlYv?=
+ =?us-ascii?Q?GTTFcoLyScltgBOX4AxnRljKNZ1bKNPpYTsxOlNSBkVBgpqNOKNOKK7CDdN2?=
+ =?us-ascii?Q?MCCn4v1tZhighcaGv0CJf8Pxxvt3aTvNItXSiBjIIAOhepffmF8JDYXJUIHw?=
+ =?us-ascii?Q?dA0J0vy4YpwggIUg8Xa+3+IeA3etCeVjbb9Glg0ILz6S20OLE0Q5bem6o49P?=
+ =?us-ascii?Q?60BIot6nSroDONTOmVo5NrVBmWsReM4KPDk4PbjU2nTWsxqIb+uS81joKClQ?=
+ =?us-ascii?Q?OffQnU0oxcc54Nr/AFwfrR5tu8qh7MiRXkmM5o7oz7n60QCTmvHATmFjhQcg?=
+ =?us-ascii?Q?X8kbVwTbd4CRUS+PMRDfbWl3yEazpB16Tjm0qiAqY7M4ecS0kJt8nZ+x/w?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(7416014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2025 11:51:56.1149
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3a6f0fb2-4aa0-4115-0f00-08ddc5f17edb
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF0002636C.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6328
 
-Hello,
+From: Yonatan Maman <Ymaman@Nvidia.com>
 
-Below please find a patch to three files to provide initial support for
-the LinkStar H68K-1432v1 board with Rockchip rk3568 SOC. 
+This patch series aims to enable Peer-to-Peer (P2P) DMA access in
+GPU-centric applications that utilize RDMA and private device pages. This
+enhancement reduces data transfer overhead by allowing the GPU to directly
+expose device private page data to devices such as NICs, eliminating the
+need to traverse system RAM, which is the native method for exposing
+device private page data.
 
-This has been tested on the hardware and works well in support of
-router features. Namely, it supports:
+To fully support Peer-to-Peer for device private pages, the following
+changes are proposed:
 
-* Two 1 Gbs Ethernet ports
-* Two 2.5 Gbs Ethernet ports
-* Two USB 3.0 Type A sockets
-* One USB 3.0 Type C socket
-* One USB 2.0 Type A socket
-* WiFi
-* LED
-* Debug console
+`Memory Management (MM)`
+ * Leverage struct pagemap_ops to support P2P page operations: This
+modification ensures that the GPU can directly map device private pages
+for P2P DMA.
+ * Utilize hmm_range_fault to support P2P connections for device private
+pages (instead of Page fault)
 
-I look forward to receiving and responding to questions, comments,
-concerns, and critiques.
+`IB Drivers`
+Add TRY_P2P_REQ flag for the hmm_range_fault call: This flag indicates the
+need for P2P mapping, enabling IB drivers to efficiently handle P2P DMA
+requests.
 
-Thank you for your reviews.
+`Nouveau driver`
+Add support for the Nouveau p2p_page callback function: This update
+integrates P2P DMA support into the Nouveau driver, allowing it to handle
+P2P page operations seamlessly.
 
-Regards,
+`MLX5 Driver`
+Utilize NIC Address Translation Service (ATS) for ODP memory, to optimize
+DMA P2P for private device pages. Also, when P2P DMA mapping fails due to
+inaccessible bridges, the system falls back to standard DMA, which uses host
+memory, for the affected PFNs
 
-Erik
+Previous version:
+https://lore.kernel.org/linux-mm/20241201103659.420677-1-ymaman@nvidia.com/
+https://lore.kernel.org/linux-mm/20241015152348.3055360-1-ymaman@nvidia.com/
 
+Yonatan Maman (5):
+  mm/hmm: HMM API to enable P2P DMA for device private pages
+  nouveau/dmem: HMM P2P DMA for private dev pages
+  IB/core: P2P DMA for device private pages
+  RDMA/mlx5: Enable P2P DMA with fallback mechanism
+  RDMA/mlx5: Enabling ATS for ODP memory
 
-Signed-off-by: Erik Beck <xunil@tahomasoft.com>
-Tested-by: Erik Beck <xunil@tahomasoft.com>
+ drivers/gpu/drm/nouveau/nouveau_dmem.c | 110 +++++++++++++++++++++++++
+ drivers/infiniband/core/umem_odp.c     |   4 +
+ drivers/infiniband/hw/mlx5/mlx5_ib.h   |   6 +-
+ drivers/infiniband/hw/mlx5/odp.c       |  24 +++++-
+ include/linux/hmm.h                    |   3 +-
+ include/linux/memremap.h               |   8 ++
+ mm/hmm.c                               |  57 ++++++++++---
+ 7 files changed, 195 insertions(+), 17 deletions(-)
 
- .../devicetree/bindings/arm/rockchip.yaml          |   5 +
- arch/arm64/boot/dts/rockchip/Makefile              |   1 +
- .../dts/rockchip/rk3568-linkstar-h68k-1432v1.dts   | 777
- +++++++++++++++++++++ 3 files changed, 783 insertions(+)
+-- 
+2.34.1
 
-
-diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml
-b/Documentation/devicetree/bindings/arm/rockchip.yaml index
-28db6bd6aa5b..e48b168cfffe 100644 ---
-a/Documentation/devicetree/bindings/arm/rockchip.yaml +++
-b/Documentation/devicetree/bindings/arm/rockchip.yaml @@ -1137,6
-+1137,11 @@ properties:
-           - const: sakurapi,rk3308-sakurapi-rk3308b
-           - const: rockchip,rk3308
- 
-+      - description: Seeed LinkStar H68K-1432v1 RK3568
-+        items:
-+          - const: seeed,rk3568-linkstar-h68k-1432v1
-+          - const: rockchip,rk3568
-+
-       - description: Sinovoip RK3308 Banana Pi P2 Pro
-         items:
-           - const: sinovoip,rk3308-bpi-p2pro
-
-diff --git a/arch/arm64/boot/dts/rockchip/Makefile
-b/arch/arm64/boot/dts/rockchip/Makefile index
-099520962ffb..00a38d085998 100644 ---
-a/arch/arm64/boot/dts/rockchip/Makefile +++
-b/arch/arm64/boot/dts/rockchip/Makefile @@ -130,6 +130,7 @@
-dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-bpi-r2-pro.dtb
-dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-evb1-v10.dtb
-dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-fastrhino-r66s.dtb
-dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-fastrhino-r68s.dtb
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-linkstar-h68k-1432v1.dtb
-dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-lubancat-2.dtb
-dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-mecsbc.dtb
-dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-nanopi-r5c.dtb 
-
-diff --git
-a/arch/arm64/boot/dts/rockchip/rk3568-linkstar-h68k-1432v1.dts
-b/arch/arm64/boot/dts/rockchip/rk3568-linkstar-h68k-1432v1.dts new file
-mode 100644 index 000000000000..f8f80c7616cd --- /dev/null +++
-b/arch/arm64/boot/dts/rockchip/rk3568-linkstar-h68k-1432v1.dts @@ -0,0
-+1,777 @@ +// SPDX-License-Identifier: (GPL-2.0+ OR MIT) +// Copyright
-(c) 2022 AmadeusGhost <amadeus@jmu.edu.cn> +//
-+// Copyright (c) 2025 TahomaSoft xunil@tahomasoft.com
-+//
-+// Support for Seeed LinkStar H68K-1432v1
-+// Also likely supports LinkStar H68K-1432v2
-+// NB: Hinlink H68K is same or very similar under different trade name
-+
-+/dts-v1/;
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/leds/common.h>
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/pinctrl/rockchip.h>
-+#include <dt-bindings/soc/rockchip,vop2.h>
-+#include "rk3568.dtsi"
-+
-+
-+/ {
-+        model = "Seeed LinkStar H68K-1432V1 (RK3568) DDR4 Board";
-+        compatible = "seeed,rk3568-linkstar-h68k-1432v1",
-"rockchip,rk3568"; +
-+        aliases {
-+                ethernet0 = &gmac0;
-+                ethernet1 = &gmac1;
-+
-+                /* fixed eMMC */
-+                mmc0 = &sdhci;  /* sdhci:= @fe310000 */ /* mmcblk0...
-*/ +
-+                /* removable uSD/TF Card */
-+                mmc1 = &sdmmc0; /* sdmmc0:= @fe2b0000 */ /* mmcblk1...
-*/ +
-+                rtc0 = &rk809;
-+
-+               led-boot = &led_one; /* status LED, green */
-+               led-failsafe = &led_three; /* heartbeat LED */
-+               led-running = &led_one; /* status LED, green */
-+               led-upgrade = &led_two; /* function LED, amber */
-+
-+        };
-+
-+        chosen {
-+                stdout-path = "serial2:1500000n8";
-+        };
-+
-+        hdmi-con {
-+                compatible = "hdmi-connector";
-+                type = "a";
-+
-+                port {
-+                        hdmi_con_in: endpoint {
-+                                remote-endpoint = <&hdmi_out_con>;
-+                        };
-+                };
-+        };
-+
-+        gpio-keys {
-+                compatible = "gpio-keys";
-+                pinctrl-0 = <&reset_button_pin>;
-+                pinctrl-names = "default";
-+
-+        /* Middle inset/recessed button,
-+                  marked by clockwise arrow/circle */
-+
-+                button-reset { /* gpiochip=0, line=0 */
-+                        label = "button:system:reset";
-+                        gpios = <&gpio0 RK_PA0 GPIO_ACTIVE_LOW>;
-+                        linux,code = <KEY_RESTART>;
-+                        debounce-interval = <50>;
-+                };
-+
-+        };
-+
-+ /* gpio chip 0, line 24 responds to console key press */
-+
-+        gpio-leds {
-+                compatible = "gpio-leds";
-+                pinctrl-names = "default";
-+                pinctrl-0 = <&led_white_pin>, <&led_green_pin>,
-+                         <&led_amber_pin>, <&led_blue_pin>;
-+
-+                /* White LED inset in power button */
-+
-+                led_zero: led_white   { /* gpiochip=0, line=14 */
-+                        color = <LED_COLOR_ID_WHITE>;
-+                        default-state = "on";
-+                        function = LED_FUNCTION_POWER;
-+                        gpios = <&gpio0 RK_PB6 GPIO_ACTIVE_HIGH>;
-+                        label = "power_button_led:white_led";
-+                        linux,default-trigger = "default-on";
-+
-+                };
-+
-+                led_one: led_green { /* gpiochip=3, line=8 */
-+                        default-state = "off";
-+                        color = <LED_COLOR_ID_GREEN>;
-+                        function = LED_FUNCTION_STATUS;
-+                        gpios = <&gpio3 RK_PB0 GPIO_ACTIVE_HIGH>;
-+                        label = "status_led:green_led";
-+                };
-+
-+                led_two: led_amber {   /* gpiochip=3, line=7 */
-+                        default-state = "off";
-+                        color = <LED_COLOR_ID_AMBER>;
-+                        function = LED_FUNCTION_INDICATOR;
-+                        gpios = <&gpio3 RK_PA7 GPIO_ACTIVE_HIGH>;
-+                        label = "function_led:amber_led";
-+                };
-+
-+                led_three: led_blue { /* gpiochip=3, line=5 */
-+                        color = <LED_COLOR_ID_BLUE>;
-+                        gpios = <&gpio3 RK_PA5 GPIO_ACTIVE_HIGH>;
-+                        default-state = "off";
-+                        function = LED_FUNCTION_HEARTBEAT;
-+                        label = "heartbeat_led:blue_led";
-+                };
-+        };
-+
-+        vcc12v_dcin: vcc12v-dcin {
-+                compatible = "regulator-fixed";
-+                regulator-always-on;
-+                regulator-boot-on;
-+                regulator-min-microvolt = <12000000>;
-+                regulator-max-microvolt = <12000000>;
-+                regulator-name = "vcc12v_dcin";
-+        };
-+
-+        vcc3v3_sys: vcc3v3-sys {
-+                compatible = "regulator-fixed";
-+                regulator-always-on;
-+                regulator-boot-on;
-+                regulator-min-microvolt = <3300000>;
-+                regulator-max-microvolt = <3300000>;
-+                regulator-name = "vcc3v3_sys";
-+                vin-supply = <&vcc12v_dcin>;
-+        };
-+
-+        vcc5v0_sys: vcc5v0-sys {
-+                compatible = "regulator-fixed";
-+                regulator-always-on;
-+                regulator-boot-on;
-+                regulator-min-microvolt = <5000000>;
-+                regulator-max-microvolt = <5000000>;
-+                regulator-name = "vcc5v0_sys";
-+                vin-supply = <&vcc12v_dcin>;
-+        };
-+
-+        vcc5v0_usb: vcc5v0-usb {
-+                compatible = "regulator-fixed";
-+                regulator-always-on;
-+                regulator-boot-on;
-+                regulator-min-microvolt = <5000000>;
-+                regulator-max-microvolt = <5000000>;
-+                regulator-name = "vcc5v0_usb";
-+                vin-supply = <&vcc12v_dcin>;
-+        };
-+
-+        vcc5v0_usb_host: vcc5v0-usb-host {
-+                compatible = "regulator-fixed";
-+                enable-active-high;
-+                gpio = <&gpio0 RK_PA5 GPIO_ACTIVE_HIGH>;
-+                pinctrl-names = "default";
-+                pinctrl-0 = <&vcc5v0_usb_host_en>;
-+                regulator-min-microvolt = <5000000>;
-+                regulator-max-microvolt = <5000000>;
-+                regulator-name = "vcc5v0_usb_host";
-+                vin-supply = <&vcc5v0_usb>;
-+        };
-+
-+        vcc3v3_pcie: vcc3v3-pcie {
-+                compatible = "regulator-fixed";
-+                enable-active-high;
-+                regulator-min-microvolt = <3300000>;
-+                regulator-max-microvolt = <3300000>;
-+                regulator-name = "vcc3v3_pcie";
-+                startup-delay-us = <5000>;
-+                vin-supply = <&vcc5v0_sys>;
-+        };
-+
-+        rk809-sound {
-+                compatible = "simple-audio-card";
-+                simple-audio-card,format = "i2s";
-+                simple-audio-card,name = "Analog RK809";
-+                simple-audio-card,mclk-fs = <256>;
-+
-+                simple-audio-card,cpu {
-+                        sound-dai = <&i2s1_8ch>;
-+                };
-+                simple-audio-card,codec {
-+                        sound-dai = <&rk809>;
-+                };
-+        };
-+
-+};
-+
-+&gmac0 {
-+        assigned-clocks = <&cru SCLK_GMAC0_RX_TX>, <&cru SCLK_GMAC0>;
-+        assigned-clock-parents = <&cru SCLK_GMAC0_RGMII_SPEED>;
-+        assigned-clock-rates = <0>, <125000000>;
-+        clock_in_out = "output";
-+        phy-mode = "rgmii-id";
-+        pinctrl-names = "default";
-+        pinctrl-0 = <&gmac0_miim
-+                     &gmac0_tx_bus2
-+                     &gmac0_rx_bus2
-+                     &gmac0_rgmii_clk
-+                     &gmac0_rgmii_bus>;
-+        snps,reset-gpio = <&gpio2 RK_PD3 GPIO_ACTIVE_LOW>;
-+        snps,reset-active-low;
-+        snps,reset-delays-us = <0 20000 100000>;
-+        tx_delay = <0x3c>;
-+        rx_delay = <0x2f>;
-+        phy-handle = <&rgmii_phy0>;
-+        status = "okay";
-+};
-+
-+&gmac1 {
-+        assigned-clocks = <&cru SCLK_GMAC1_RX_TX>, <&cru SCLK_GMAC1>;
-+        assigned-clock-parents = <&cru SCLK_GMAC1_RGMII_SPEED>;
-+        assigned-clock-rates = <0>, <125000000>;
-+        clock_in_out = "output";
-+        phy-mode = "rgmii-id";
-+        pinctrl-names = "default";
-+        pinctrl-0 = <&gmac1m1_miim
-+                     &gmac1m1_tx_bus2
-+                     &gmac1m1_rx_bus2
-+                     &gmac1m1_rgmii_clk
-+                     &gmac1m1_rgmii_bus>;
-+        snps,reset-gpio = <&gpio1 RK_PB0 GPIO_ACTIVE_LOW>;
-+        snps,reset-active-low;
-+        snps,reset-delays-us = <0 20000 100000>;
-+        tx_delay = <0x4f>;
-+        rx_delay = <0x26>;
-+        phy-handle = <&rgmii_phy1>;
-+        status = "okay";
-+};
-+
-+ /* combphy0/multi-phy0 supports one of: usb3.0 otg, sata0 */
-+
-+&combphy0 {
-+        status = "okay";
-+
-+};
-+
-+ /* combphy1/multi-phy1 supports one of:
-+                         - usb3.0 host
-+                         - sata1
-+                         - qsgmii/sgmii
-+ */
-+
-+&combphy1 {
-+        status = "okay";
-+};
-+
-+ /* combphy2/multi-phy2 supports one of:
-+                         - pcie2.1
-+                         - sata2
-+                         - qsgmii/sgmii
-+ */
-+
-+&combphy2 {
-+        status = "okay";
-+};
-+
-+&cpu0 {
-+        cpu-supply = <&vdd_cpu>;
-+};
-+
-+&cpu1 {
-+        cpu-supply = <&vdd_cpu>;
-+};
-+
-+&cpu2 {
-+        cpu-supply = <&vdd_cpu>;
-+};
-+
-+&cpu3 {
-+        cpu-supply = <&vdd_cpu>;
-+};
-+
-+&gpu {
-+        mali-supply = <&vdd_gpu>;
-+        status = "okay";
-+};
-+
-+&hdmi {
-+        avdd-0v9-supply = <&vdda0v9_image>;
-+        avdd-1v8-supply = <&vcca1v8_image>;
-+        status = "okay";
-+};
-+
-+&hdmi_in {
-+        hdmi_in_vp0: endpoint {
-+                remote-endpoint = <&vp0_out_hdmi>;
-+        };
-+};
-+
-+&hdmi_out {
-+        hdmi_out_con: endpoint {
-+                remote-endpoint = <&hdmi_con_in>;
-+        };
-+};
-+
-+&hdmi_sound {
-+        status = "okay";
-+};
-+
-+&i2c0 {
-+        status = "okay";
-+
-+        vdd_cpu: regulator@1c {
-+                compatible = "tcs,tcs4525";
-+                reg = <0x1c>;
-+                fcs,suspend-voltage-selector = <1>;
-+                regulator-name = "vdd_cpu";
-+                regulator-always-on;
-+                regulator-boot-on;
-+                regulator-min-microvolt = <800000>;
-+                regulator-max-microvolt = <1150000>;
-+                regulator-ramp-delay = <2300>;
-+                vin-supply = <&vcc5v0_sys>;
-+
-+                regulator-state-mem {
-+                        regulator-off-in-suspend;
-+                };
-+        };
-+
-+        rk809: pmic@20 {
-+                compatible = "rockchip,rk809";
-+                reg = <0x20>;
-+                interrupt-parent = <&gpio0>;
-+                interrupts = <RK_PA3 IRQ_TYPE_LEVEL_LOW>;
-+                assigned-clocks = <&cru I2S1_MCLKOUT_TX>;
-+                assigned-clock-parents = <&cru CLK_I2S1_8CH_TX>;
-+                #clock-cells = <1>;
-+                clock-names = "mclk";
-+                clocks = <&cru I2S1_MCLKOUT_TX>;
-+                pinctrl-names = "default";
-+                pinctrl-0 = <&pmic_int>, <&i2s1m0_mclk>;
-+                rockchip,system-power-controller;
-+                #sound-dai-cells = <0>;
-+                wakeup-source;
-+
-+                vcc1-supply = <&vcc3v3_sys>;
-+                vcc2-supply = <&vcc3v3_sys>;
-+                vcc3-supply = <&vcc3v3_sys>;
-+                vcc4-supply = <&vcc3v3_sys>;
-+                vcc5-supply = <&vcc3v3_sys>;
-+                vcc6-supply = <&vcc3v3_sys>;
-+                vcc7-supply = <&vcc3v3_sys>;
-+                vcc8-supply = <&vcc3v3_sys>;
-+                vcc9-supply = <&vcc3v3_sys>;
-+
-+                regulators {
-+                        vdd_logic: DCDC_REG1 {
-+                                regulator-always-on;
-+                                regulator-boot-on;
-+                                regulator-initial-mode = <0x2>;
-+                                regulator-min-microvolt = <500000>;
-+                                regulator-max-microvolt = <1350000>;
-+                                regulator-name = "vdd_logic";
-+                                regulator-ramp-delay = <6001>;
-+
-+                                regulator-state-mem {
-+                                        regulator-off-in-suspend;
-+                                };
-+                        };
-+
-+                        vdd_gpu: DCDC_REG2 {
-+                                regulator-always-on;
-+                                regulator-initial-mode = <0x2>;
-+                                regulator-min-microvolt = <500000>;
-+                                regulator-max-microvolt = <1350000>;
-+                                regulator-name = "vdd_gpu";
-+                                regulator-ramp-delay = <6001>;
-+
-+                                regulator-state-mem {
-+                                        regulator-off-in-suspend;
-+                                };
-+                        };
-+
-+                        vcc_ddr: DCDC_REG3 {
-+                                regulator-always-on;
-+                                regulator-boot-on;
-+                                regulator-initial-mode = <0x2>;
-+                                regulator-name = "vcc_ddr";
-+
-+                                regulator-state-mem {
-+                                        regulator-on-in-suspend;
-+                                };
-+                        };
-+
-+                        vdd_npu: DCDC_REG4 {
-+                                regulator-initial-mode = <0x2>;
-+                                regulator-min-microvolt = <500000>;
-+                                regulator-max-microvolt = <1350000>;
-+                                regulator-name = "vdd_npu";
-+                                regulator-ramp-delay = <6001>;
-+
-+                                regulator-state-mem {
-+                                        regulator-off-in-suspend;
-+                                };
-+                        };
-+
-+                        vcc_1v8: DCDC_REG5 {
-+                                regulator-always-on;
-+                                regulator-boot-on;
-+                                regulator-min-microvolt = <1800000>;
-+                                regulator-max-microvolt = <1800000>;
-+                                regulator-name = "vcc_1v8";
-+
-+                                regulator-state-mem {
-+                                        regulator-off-in-suspend;
-+                                };
-+                        };
-+
-+                        vdda0v9_image: LDO_REG1 {
-+                                regulator-name = "vdda0v9_image";
-+                                regulator-min-microvolt = <900000>;
-+                                regulator-max-microvolt = <900000>;
-+
-+                                regulator-state-mem {
-+                                        regulator-off-in-suspend;
-+                                };
-+                        };
-+
-+                        vdda_0v9: LDO_REG2 {
-+                                regulator-always-on;
-+                                regulator-boot-on;
-+                                regulator-min-microvolt = <900000>;
-+                                regulator-max-microvolt = <900000>;
-+                                regulator-name = "vdda_0v9";
-+
-+                                regulator-state-mem {
-+                                        regulator-off-in-suspend;
-+                                };
-+                        };
-+
-+                        vdda0v9_pmu: LDO_REG3 {
-+                                regulator-always-on;
-+                                regulator-boot-on;
-+                                regulator-min-microvolt = <900000>;
-+                                regulator-max-microvolt = <900000>;
-+                                regulator-name = "vdda0v9_pmu";
-+
-+                                regulator-state-mem {
-+                                        regulator-on-in-suspend;
-+                                        regulator-suspend-microvolt =
-<900000>;
-+                                };
-+                        };
-+
-+                        vccio_acodec: LDO_REG4 {
-+                                regulator-always-on;
-+                                regulator-min-microvolt = <3300000>;
-+                                regulator-max-microvolt = <3300000>;
-+                                regulator-name = "vccio_acodec";
-+
-+                                regulator-state-mem {
-+                                        regulator-off-in-suspend;
-+                                };
-+                        };
-+
-+                        vccio_sd: LDO_REG5 {
-+                                regulator-min-microvolt = <1800000>;
-+                                regulator-max-microvolt = <3300000>;
-+                                regulator-name = "vccio_sd";
-+
-+                                regulator-state-mem {
-+                                        regulator-off-in-suspend;
-+                                };
-+                        };
-+
-+                        vcc3v3_pmu: LDO_REG6 {
-+                                regulator-always-on;
-+                                regulator-boot-on;
-+                                regulator-min-microvolt = <3300000>;
-+                                regulator-max-microvolt = <3300000>;
-+                                regulator-name = "vcc3v3_pmu";
-+
-+                                regulator-state-mem {
-+                                        regulator-on-in-suspend;
-+                                        regulator-suspend-microvolt =
-<3300000>;
-+                                };
-+                        };
-+
-+                        vcca_1v8: LDO_REG7 {
-+                                regulator-always-on;
-+                                regulator-boot-on;
-+                                regulator-min-microvolt = <1800000>;
-+                                regulator-max-microvolt = <1800000>;
-+                                regulator-name = "vcca_1v8";
-+
-+                                regulator-state-mem {
-+                                        regulator-off-in-suspend;
-+                                };
-+                        };
-+
-+                        vcca1v8_pmu: LDO_REG8 {
-+                                regulator-always-on;
-+                                regulator-boot-on;
-+                                regulator-min-microvolt = <1800000>;
-+                                regulator-max-microvolt = <1800000>;
-+                                regulator-name = "vcca1v8_pmu";
-+
-+                                regulator-state-mem {
-+                                        regulator-on-in-suspend;
-+                                        regulator-suspend-microvolt =
-<1800000>;
-+                                };
-+                        };
-+
-+                        vcca1v8_image: LDO_REG9 {
-+                                regulator-min-microvolt = <1800000>;
-+                                regulator-max-microvolt = <1800000>;
-+                                regulator-name = "vcca1v8_image";
-+
-+                                regulator-state-mem {
-+                                        regulator-off-in-suspend;
-+                                };
-+                        };
-+
-+                        vcc_3v3: SWITCH_REG1 {
-+                                regulator-name = "vcc_3v3";
-+                                regulator-always-on;
-+                                regulator-boot-on;
-+
-+                                regulator-state-mem {
-+                                        regulator-off-in-suspend;
-+                                };
-+                        };
-+
-+                        vcc3v3_sd: SWITCH_REG2 {
-+                                regulator-name = "vcc3v3_sd";
-+
-+                                regulator-state-mem {
-+                                        regulator-off-in-suspend;
-+                                };
-+                        };
-+                };
-+
-+                codec {
-+                        rockchip,mic-in-differential;
-+                };
-+        };
-+};
-+
-+&i2s0_8ch {
-+        status = "okay";
-+};
-+
-+&i2s1_8ch {
-+        rockchip,trcm-sync-tx-only;
-+        status = "okay";
-+};
-+
-+&mdio0 {
-+        rgmii_phy0: ethernet-phy@0 {
-+                compatible = "ethernet-phy-ieee802.3-c22";
-+                reg = <0x0>;
-+        };
-+};
-+
-+&mdio1 {
-+        rgmii_phy1: ethernet-phy@0 {
-+                compatible = "ethernet-phy-ieee802.3-c22";
-+                reg = <0x0>;
-+        };
-+};
-+
-+&pcie30phy {
-+         data-lanes = <1 2>;
-+         status = "okay";
-+};
-+
-+&pcie2x1 {
-+         /*  bus-range = <0x00 0x0f>;  ?wrong? in rk356x.dtsi */
-+         reset-gpios = <&gpio2 RK_PD6 GPIO_ACTIVE_HIGH>;
-+         vpcie3v3-supply = <&vcc3v3_pcie>;
-+         status = "okay";
-+};
-+
-+&pcie3x1 {
-+         num-lanes= <1>;
-+         bus-range = <0x10 0x1f>;
-+         reset-gpios = <&gpio3 RK_PA4 GPIO_ACTIVE_HIGH>;
-+         vpcie3v3-supply = <&vcc3v3_pcie>;
-+         status = "okay";
-+
-+};
-+
-+&pcie3x2 {
-+         num-lanes= <1>;
-+         bus-range = <0x20 0x2f>;
-+         reset-gpios = <&gpio2 RK_PD0 GPIO_ACTIVE_HIGH>;
-+         vpcie3v3-supply = <&vcc3v3_pcie>;
-+         status = "okay";
-+};
-+
-+&pinctrl {
-+        button {
-+                reset_button_pin: reset-button-pin {
-+                        rockchip,pins = <0 RK_PA0 RK_FUNC_GPIO
-&pcfg_pull_up>;
-+                };
-+        };
-+
-+        bluetooth {
-+                bt_wake_host_h: bt-wake-host-h {
-+                        rockchip,pins = <3 RK_PA1 RK_FUNC_GPIO
-&pcfg_pull_down>;
-+                };
-+
-+                host_wake_bt_h: host-wake-bt-h {
-+                        rockchip,pins = <3 RK_PA2 RK_FUNC_GPIO
-&pcfg_pull_none>;
-+                };
-+        };
-+
-+        gpio-leds {
-+             led_white_pin: led-white-pin  {
-+                    rockchip,pins = <0 RK_PB6 RK_FUNC_GPIO
-&pcfg_pull_none>;
-+             };
-+
-+             led_green_pin: led-green-pin {
-+                    rockchip,pins = <3 RK_PB0 RK_FUNC_GPIO
-&pcfg_pull_none>;
-+             };
-+
-+             led_amber_pin: led-amber-pin {
-+                    rockchip,pins = <3 RK_PA7 RK_FUNC_GPIO
-&pcfg_pull_none>;
-+             };
-+
-+             led_blue_pin: led-blue-pin {
-+                    rockchip,pins = <3 RK_PA5 RK_FUNC_GPIO
-&pcfg_pull_none>;
-+             };
-+
-+        };
-+
-+        pmic {
-+                pmic_int: pmic_int {
-+                        rockchip,pins = <0 RK_PA3 RK_FUNC_GPIO
-&pcfg_pull_up>;
-+                };
-+        };
-+
-+        usb {
-+                vcc5v0_usb_host_en: vcc5v0_usb_host_en {
-+                        rockchip,pins = <0 RK_PA5 RK_FUNC_GPIO
-&pcfg_pull_none>;
-+                };
-+        };
-+};
-+
-+&pmu_io_domains {
-+        pmuio1-supply = <&vcc3v3_pmu>;
-+        pmuio2-supply = <&vcc3v3_pmu>;
-+        vccio1-supply = <&vccio_acodec>;
-+        vccio2-supply = <&vcc_1v8>;
-+        vccio3-supply = <&vccio_sd>;
-+        vccio4-supply = <&vcc_1v8>;
-+        vccio5-supply = <&vcc_3v3>;
-+        vccio6-supply = <&vcc_1v8>;
-+        vccio7-supply = <&vcc_3v3>;
-+        status = "okay";
-+};
-+
-+&rng {
-+        status = "okay";
-+};
-+
-+&saradc {
-+        vref-supply = <&vcca_1v8>;
-+        status = "okay";
-+};
-+
-+&sata0 { /* sata0 muxed with USB3-OTG  */
-+        status = "disabled";
-+};
-+
-+&sata1 { /* sata1 muxed with QSGMII and USB3-A 5G LTE Host1 */
-+         status = "disabled";
-+};
-+
-+&sata2 { /* sata 2 muxed with pcie2.0 and QSGMII_M1 M2 Wifi */
-+         status = "disabled";
-+};
-+
-+&sdhci {
-+        bus-width = <8>;
-+        max-frequency = <200000000>;
-+        non-removable;
-+        pinctrl-0 = <&emmc_bus8 &emmc_clk &emmc_cmd &emmc_datastrobe>;
-+        status = "okay";
-+};
-+
-+&sdmmc0 {
-+        bus-width = <4>;
-+        cap-sd-highspeed;
-+        cd-gpios = <&gpio0 RK_PA4 GPIO_ACTIVE_LOW>;
-+        disable-wp;
-+        pinctrl-names = "default";
-+        pinctrl-0 = <&sdmmc0_bus4 &sdmmc0_clk &sdmmc0_cmd &sdmmc0_det>;
-+        sd-uhs-sdr104;
-+        vmmc-supply = <&vcc3v3_sd>;
-+        vqmmc-supply = <&vccio_sd>;
-+        status = "okay";
-+};
-+
-+&tsadc {
-+        rockchip,hw-tshut-mode = <1>;
-+        rockchip,hw-tshut-polarity = <0>;
-+        status = "okay";
-+};
-+
-+&uart2 {
-+        status = "okay";
-+};
-+
-+&usb_host0_ehci {
-+        status = "okay";
-+};
-+
-+&usb_host1_ehci {
-+        status = "okay";
-+};
-+
-+&usb_host0_ohci {
-+        status = "okay";
-+};
-+
-+&usb_host1_ohci {
-+        status = "okay";
-+};
-+
-+&usb_host0_xhci {
-+        phys = <&combphy0 PHY_TYPE_USB3>;
-+        phy-names = "usb3-phy";
-+        status = "okay";
-+};
-+
-+&usb_host1_xhci {
-+        status = "okay";
-+};
-+
-+&usb2phy0 {
-+        status = "okay";
-+};
-+
-+&usb2phy0_host {
-+        phy-supply = <&vcc5v0_usb_host>;
-+        status = "okay";
-+};
-+
-+&usb2phy1 {
-+        status = "okay";
-+};
-+
-+&usb2phy1_host {
-+        phy-supply = <&vcc5v0_usb_host>;
-+        status = "okay";
-+};
-+
-+&usb2phy1_otg {
-+        phy-supply = <&vcc5v0_usb_host>;
-+        status = "okay";
-+};
-+
-+&vop {
-+        assigned-clocks = <&cru DCLK_VOP0>, <&cru DCLK_VOP1>;
-+        assigned-clock-parents = <&pmucru PLL_HPLL>, <&cru PLL_VPLL>;
-+        status = "okay";
-+};
-+
-+&vop_mmu {
-+        status = "okay";
-+};
-+
-+&vp0 {
-+        vp0_out_hdmi: endpoint@ROCKCHIP_VOP2_EP_HDMI0 {
-+                reg = <ROCKCHIP_VOP2_EP_HDMI0>;
-+                remote-endpoint = <&hdmi_in_vp0>;
-+        };
-+};
-+
 
