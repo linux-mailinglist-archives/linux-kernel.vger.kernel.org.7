@@ -1,129 +1,181 @@
-Return-Path: <linux-kernel+bounces-737354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D37DB0AB45
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 23:09:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3CE4B0AB46
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 23:10:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D61C87A24F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 21:07:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A401D3BD792
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 21:10:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F24321C9ED;
-	Fri, 18 Jul 2025 21:08:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B89B21C9F4;
+	Fri, 18 Jul 2025 21:10:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MQHaEj/H"
-Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="N+tn9SBV"
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B67E18E20
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 21:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D155921A436
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 21:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752872932; cv=none; b=k7x15bjkByllXzaposAhnVhg/AKrA1Lx7jtB8SaEHr91TtcxRSFqcy5mNKi8Acq2WY4Z4jC2vYd5AMwQQfJSk82iLO7npyiN8Ta5cQZOmJK3sKEhStoXX7I2ta3CD2zXKU962MONwpd96ZnOPvQhHtEkLZRqEfnhW7YY5EP3r+I=
+	t=1752873037; cv=none; b=P7qCMLRk3r7nBnl95dOBswR8Ost6lsZ3xuno76dGrAtTuzPT0u4618tP7XXbPfiPEh7OagzwVwQkWJrpJdTg+PkiL5fSZTn2a6dHH2pKmXILQPUlQiOC+pZjE6QuqaJ/HcsKZCmRLgNowe4QaW6PX/YMXwyBRVutfK/0bc7vFvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752872932; c=relaxed/simple;
-	bh=Nu5mtZ4NwfZ8rujMonQHI4GrQ8sbEhrMWC62SCFw1Y4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=XcwSeYMI2Ej6UdNBWJW4sr6a/UHNwnzXnmcyXL3bibJKTEUpDsuncj3vn0HKY/1D7WZFiMluHlcE3UvZ2LjpBVBe3YD7cJzF7Jk4imYygulR0QYANcscvUIfg1TGpRBLtp0Y4S4wgGAphRuPWLP19eWqGLCkdkIOSh0CiggzRTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MQHaEj/H; arc=none smtp.client-ip=209.85.161.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-615bb20b741so638368eaf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 14:08:50 -0700 (PDT)
+	s=arc-20240116; t=1752873037; c=relaxed/simple;
+	bh=eoeq2lfkKQQfblu8s5uJwmmDlVAzN3yXJqVPP+2D0MY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PVjr8n9ryrPNeViqm/z6w1l17QZY9q74T0MFnVA3Zrbd+7dbGrvQGQbdk4EWCIDGNjX5bgjhz/8Pp8B0BlwgSdjyFwIH9zmB6vlDmzt/U9CYLW0kX1RBYTO9pesk0sBcZd2C7CuhHpTqd+Y6Wa5Wt9VqGfq8E+U8RhSV65iI1/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=N+tn9SBV; arc=none smtp.client-ip=209.85.166.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3e25355160dso8647525ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 14:10:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752872929; x=1753477729; darn=vger.kernel.org;
-        h=user-agent:content-transfer-encoding:content-disposition
-         :mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=pSULKMzrr8h3J6cHGwQRnm1S6z9BixXJHjAlFAzTitk=;
-        b=MQHaEj/Hz5RioU18r3BR9Dxjr1MF7TQnfgt/nXV4Q54j9ZYN/zAuAnnPoScqELyiqa
-         18Hgla32jlVUGa5IJh8bqGCGRsW4gxCJSyJiC5MsEAVS2DUdBrMpgXfHN5a/mpxAV4z0
-         qLck8DTvMzzNtMRSBP5ao+AD5xVYTGBKsBegN24a9k8Wklh7nkPPIx5FCz1W5r4dy4Nc
-         ZkLgPjfJP6pMuEu1gwPpTVH2Hj6L0C7ozX7iIkbX86rtIYQDnlu3mvQvSnIZWtlk1N9v
-         BJFysht/0WOh7az2jXOb2hOLien/GxOambK7wmVkCNZzZgso72zzY/a7qRFHcblpps7D
-         xHcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752872929; x=1753477729;
-        h=user-agent:content-transfer-encoding:content-disposition
-         :mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
+        d=linuxfoundation.org; s=google; t=1752873035; x=1753477835; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=pSULKMzrr8h3J6cHGwQRnm1S6z9BixXJHjAlFAzTitk=;
-        b=r9UAEo0lFkjzEixvstwFert6AG2BqKMP8jhZcRwSUQRr82btgpgDr6QgFmr6UxgZd+
-         qkZnKozZJ4ctOrUATk/vpT45gX8vQSnZVsZfp5PaNK8RIPP9VdI4o4sDsmJhSUxLhH35
-         VsNQ21UgOvUEcImyhJWAdYm2e/a1tuAN5jda92mVOXRliWYTtGgOMdCbjePaRLBBbakP
-         0RyA3+BooSlt+935rk/Pss3Pby3GuTVedpWf70DIBWgysIdFFohk8mSOqL9Jv6vITO02
-         xu66h1PTd/REFdsrsvKo1i6BArf3Lq6cd0sjDQtnFZXTlDOfybKpNHfvYRN4JWyNPkqW
-         1LHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUeSOZNnI6mL2GbL2mqDi5gtOjLEoHDHP56sRtdalhx0RkRjqQsRx7xicdQg+TREp65DfHfGzX6KwpGGgw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNe1ku4usMu1ep7wPHD0jsBg2kZb7kBDyPirxzvlqKTd0mQOyK
-	3Ue4AnC6a69FZIxh0HPR6FXxZSyJXF2Z17xEiMLRVz0ERl86AwEXuy8yOVAV7XmChok=
-X-Gm-Gg: ASbGncuwkAQYAPf9FnvRppYHA/yzGZx9uf6/N+UCr1CEHhcd1NAkQXhaPdcRVVbjx6V
-	0lEvAVWw5MZ0PU3EUTu0iX5TeJOGSrIXk55lFiTt9zB03S3ogrC0pY5prbwNN6TcwaOmMTObHAN
-	DzikGznwJu0j1ffFk9VwKJ56ZhrhkSFl6FIJeKC3IwnrN9WxSqdDY9nfl12mohtpHJlxdyRbzTi
-	GG7FAHGF0l8dnnKjLAWzdTrxEA0wZKIRq53A3P3RWCY1lY4xspFOVoxTdTVKwtP6W6FDl0gOM8b
-	WP7cUf6Wp1zWuplOk5HUL6iR/ojY3xeAT5hg0BTLImTLXXrzlXjLxJdrYp9VY+j/hUd+4ql6+zT
-	y/gBlTrJKSaypkAPPj/57x+CcGxvtFJfNXbqMJ04cREnCFXqbNCLRCmrWUc8YXg==
-X-Google-Smtp-Source: AGHT+IHx0kDpjfV8SxDOWW+9C9/fEq/WS+qbThQ/XaDA0IiNPkWI3p28qTBXAzs9RbnlCTE0ZgP4Tg==
-X-Received: by 2002:a05:6820:201a:b0:615:c2af:de7 with SMTP id 006d021491bc7-615c2af11b9mr2147349eaf.4.1752872929294;
-        Fri, 18 Jul 2025 14:08:49 -0700 (PDT)
-Received: from MacBook-Pro-de-Ignacio.local ([181.161.11.224])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73e8369a85dsm935936a34.27.2025.07.18.14.08.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jul 2025 14:08:48 -0700 (PDT)
-Date: Fri, 18 Jul 2025 17:08:46 -0400
-From: Ignacio =?utf-8?B?UGXDsWE=?= <ignacio.pena87@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: [PATCH v4] staging: sm750fb: make fixId array static const char *
- const
-Message-ID: <aHq33vXh0F481FB-@MacBook-Pro-de-Ignacio.local>
+        bh=ZGhXZyOJNCmIt8fGNKAY+r1NcPVJKPwyIQ57/sp4SqQ=;
+        b=N+tn9SBV1LyRRQV23UL8H17kdtO6fGArP0dFg//ZCO0gwi2IZfv9r7o0rO7e4NowiJ
+         l3gNVpbGeRRkRXDRAcLO0vuCz1MNVXdOQa85UGLw3i51INycRHpERSlQ3vTG5DYSEK4U
+         UyHOX/n44SKEx/QzRZR7+qIuB+SxLQ2KOGp24=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752873035; x=1753477835;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZGhXZyOJNCmIt8fGNKAY+r1NcPVJKPwyIQ57/sp4SqQ=;
+        b=NQFxFdg+owvNiqSGcErvrO+fTjYiC1Hi2HS0h5rTeFrNsTD+dhobWfm3WxO3uUU1G6
+         BPuaWb7SHDE9HXi8bOmSyE2Xgu3XnDRFN9/N3sxhyNZeni01J6L35BlSfVYqqaAq2B4l
+         KzyJQA3bByBjQoVWExOXdZb+Zjnz6WFQjmmZu/m8nLnSzwEpKHOx7qbfEcus7Cs66fix
+         uy9++aBnEpCkmLU7M1nlbwjVKQQjyWnMJhgFksKzSePINJ2NRUMQfB8hWAEM0kE3c9Rt
+         I2jYmupx0u2dY770cgpJPEE0y7tmXByEUxOBwvVQ2a5g8bjmTLlGwXlVl/6JSAxg1WvZ
+         eOmw==
+X-Forwarded-Encrypted: i=1; AJvYcCWOwn/O/amfHku3u58KvlV0CnRGV5VNywSTlm7SUf8ks+dYt+LEL/nEmQpwxyQUKLJ1dVPVOGumcJ2zHSE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+BCYp3UExAQ8XyW1ncHxygIih1yL9gyL556nrHjOw3ZpJS4Pd
+	Q7yc4xgvDtCDccUlIhppuUPkVIUQB7AI1gO7rShyrAYbPGXOHKSppbzkjj7d8d8LmYQ=
+X-Gm-Gg: ASbGncuDL/s8OQPcZvdYYdsA818K1pQBysyKjDR8IlU8ZD6hNTMaVjK01NwBa0lSrTl
+	QTIz1Bubl6Jjdb4pt/Mxsk2qCXf1CVFJzMHjp1AtGv9+2EPxTdwcWoXtpjLPWDzfAtHeg36pxP+
+	7ozxUGKN0PWry1/956EA7jqvUIQ6u8KukaugfBjXahnRfVkB4E2fn33QGCXEcJ9hXeqJCfcX2vl
+	jc7vEATLFeGblJshWNsl7letLKsnfKWXrQyQYCqnE7pyhX4wRFas58VYHY9UKZbKh9tymCNrxf5
+	6e0iOiPYVVlWZ83fDemrlDifqPK+dbkhipdUO4hH1JIZlTVqEHYkOI5WgpSbwUoT5m21YOgrRtX
+	8qSgQE4TNeC7MOuSQNemOaO6azkJsrkkGEw==
+X-Google-Smtp-Source: AGHT+IEzr9jrK3MqEFYKMgLIWYTjssE2U6iSeHK3JVv5WiuQYDYPp5VXlS4Rx6IaMtKrDNjdUXWfqA==
+X-Received: by 2002:a05:6e02:4506:10b0:3e2:8e44:8240 with SMTP id e9e14a558f8ab-3e28e448353mr59141415ab.11.1752873034702;
+        Fri, 18 Jul 2025 14:10:34 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5084c7bce49sm520209173.28.2025.07.18.14.10.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Jul 2025 14:10:33 -0700 (PDT)
+Message-ID: <c6dca956-d0ea-4c63-a48f-d02f21d38b9d@linuxfoundation.org>
+Date: Fri, 18 Jul 2025 15:10:32 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH] selftests/pidfd: align stack to fix SP alignment
+ exception
+To: Shuai Xue <xueshuai@linux.alibaba.com>, brauner@kernel.org,
+ shuah@kernel.org, will@kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: baolin.wang@linux.alibaba.com, tianruidong@linux.alibaba.com,
+ catalin.marinas@arm.com, mark.rutland@arm.com,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20250616050648.58716-1-xueshuai@linux.alibaba.com>
+ <ee095fdd-b3c1-4c41-9b06-a8e3695c1863@linuxfoundation.org>
+ <0a8d5fdb-28b9-41f5-a601-cf36641bddbf@linux.alibaba.com>
+ <821acc51-1429-4625-bae5-daa67bddc7bc@linux.alibaba.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <821acc51-1429-4625-bae5-daa67bddc7bc@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.x.x (Linux)
 
-Fix checkpatch warning for the fixId array only:
-"WARNING: static const char * array should probably be
- static const char * const"
+On 7/16/25 01:00, Shuai Xue wrote:
+> 
+> 
+> 在 2025/6/19 10:26, Shuai Xue 写道:
+>>
+>>
+>> 在 2025/6/19 05:36, Shuah Khan 写道:
+>>> On 6/15/25 23:06, Shuai Xue wrote:
+>>>> The pidfd_test fails on the ARM64 platform with the following error:
+>>>>
+>>>>      Bail out! pidfd_poll check for premature notification on child thread exec test: Failed
+>>>>
+>>>> When exception-trace is enabled, the kernel logs the details:
+>>>>
+>>>>      #echo 1 > /proc/sys/debug/exception-trace
+>>>>      #dmesg | tail -n 20
+>>>>      [48628.713023] pidfd_test[1082142]: unhandled exception: SP Alignment, ESR 0x000000009a000000, SP/PC alignment exception in pidfd_test[400000+4000]
+>>>>      [48628.713049] CPU: 21 PID: 1082142 Comm: pidfd_test Kdump: loaded Tainted: G        W   E      6.6.71-3_rc1.al8.aarch64 #1
+>>>>      [48628.713051] Hardware name: AlibabaCloud AliServer-Xuanwu2.0AM-1UC1P-5B/AS1111MG1, BIOS 1.2.M1.AL.P.157.00 07/29/2023
+>>>>      [48628.713053] pstate: 60001800 (nZCv daif -PAN -UAO -TCO -DIT +SSBS BTYPE=-c)
+>>>>      [48628.713055] pc : 0000000000402100
+>>>>      [48628.713056] lr : 0000ffff98288f9c
+>>>>      [48628.713056] sp : 0000ffffde49daa8
+>>>>      [48628.713057] x29: 0000000000000000 x28: 0000000000000000 x27: 0000000000000000
+>>>>      [48628.713060] x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
+>>>>      [48628.713062] x23: 0000000000000000 x22: 0000000000000000 x21: 0000000000400e80
+>>>>      [48628.713065] x20: 0000000000000000 x19: 0000000000402650 x18: 0000000000000000
+>>>>      [48628.713067] x17: 00000000004200d8 x16: 0000ffff98288f40 x15: 0000ffffde49b92c
+>>>>      [48628.713070] x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
+>>>>      [48628.713072] x11: 0000000000001011 x10: 0000000000402100 x9 : 0000000000000010
+>>>>      [48628.713074] x8 : 00000000000000dc x7 : 3861616239346564 x6 : 000000000000000a
+>>>>      [48628.713077] x5 : 0000ffffde49daa8 x4 : 000000000000000a x3 : 0000ffffde49daa8
+>>>>      [48628.713079] x2 : 0000ffffde49dadc x1 : 0000ffffde49daa8 x0 : 0000000000000000
+>>>>
+>>>> According to ARM ARM D1.3.10.2 SP alignment checking:
+>>>>
+>>>>> When the SP is used as the base address of a calculation, regardless of
+>>>>> any offset applied by the instruction, if bits [3:0] of the SP are not
+>>>>> 0b0000, there is a misaligned SP.
+>>>>
+>>>> To fix it, align the stack with 16 bytes.
+>>>>
+>>>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+>>>> ---
+>>>
+>>> Assuming this is going through Christian's tree.
+>>>
+>>> Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+>>>
+>>> Let me know if you would like me to pick it up.
+>>>
+>>> thanks,
+>>> -- Shuah
+>>
+>> Hi, Shuah
+>>
+>> Thanks for your review.
+>>
+>> I send this fix in Mar, but it missed last linux version.
+>> I think I need your help to pick it up.
+>>
+>> Thanks.
+>> Shuai
+>>
+> 
+> Hi, Shuah,
+> 
+> Gentle ping,
+> 
+> Thanks.
+> Shuai
+> 
 
-The g_fbmode array cannot be made const as it is modified at runtime
-in lynxfb_setup() and lynx_alloc().
+Will, Christian,
 
-Signed-off-by: Ignacio Peña <ignacio.pena87@gmail.com>
----
-v4: Sorry for the confusion. Previous versions had wrong line numbers
-    or included changes to g_fbmode. This version ONLY changes fixId
-    at the correct line number (734) against current mainline.
+Can you take a look at this and let me know if this change looks
+good to you both.
 
-v3: Apologies for the confusion. v2 accidentally included changes to 
-    g_fbmode which breaks the build. This version ONLY changes fixId
-    which is never modified.
+I can take this through my tree after your reviews.
 
- drivers/staging/sm750fb/sm750.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/sm750fb/sm750.c b/drivers/staging/sm750fb/sm750.c
-index 1d929aca3..82e01f114 100644
---- a/drivers/staging/sm750fb/sm750.c
-+++ b/drivers/staging/sm750fb/sm750.c
-@@ -734,7 +734,7 @@ static int lynxfb_set_fbinfo(struct fb_info *info, int index)
- 		"kernel HELPERS prepared vesa_modes",
- 	};
- 
--	static const char *fixId[2] = {
-+	static const char * const fixId[2] = {
- 		"sm750_fb1", "sm750_fb2",
- 	};
- 
--- 
-2.39.5
+thanks,
+-- Shuah
 
