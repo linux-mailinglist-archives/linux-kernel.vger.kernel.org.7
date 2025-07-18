@@ -1,188 +1,149 @@
-Return-Path: <linux-kernel+bounces-736117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4B9EB09904
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 02:56:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A45AEB09907
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:05:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF15B5651A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 00:56:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 167AA1C44455
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 01:06:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6049191;
-	Fri, 18 Jul 2025 00:56:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70672AD22;
+	Fri, 18 Jul 2025 01:05:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZcIWXRcn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="G3RCeyHQ"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC03128816;
-	Fri, 18 Jul 2025 00:56:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09E242AA5
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 01:05:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752800187; cv=none; b=tRIH+JKHikbIQz4M9TRkc5d/LTJhqhClxwR06F4EAEcFySZahzF4NpDlwEdOvPfTVzqFWObRoJtiT8wSrD6+77VWm5loAmmDIjqjezZwfjgk9a68n0wbNe33USvu1t/GGQeQvJ7h1+ovvZAg6oOrDvJrZ80q6DK6uq5ThqISLsA=
+	t=1752800743; cv=none; b=iN922V1/Aydt1q8kd2QfbHRQJT56CGFCyS6eqzjrtDBuP+ci6GGGs3PQFLxJuOvtxmNbSDfwwZIgEBLOt1FyQpx9xSVwMcspLVnvdp3AKYpTlaM8AZiaczKT6A2PTqVVW9FGFnZu+rw2oJE2faIG9K8M4pPWhz8dUnAtXwbjYTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752800187; c=relaxed/simple;
-	bh=SY6veYEenY3ETaNp90Fgi3oqpoAKdNxhIi+bTZtizDM=;
+	s=arc-20240116; t=1752800743; c=relaxed/simple;
+	bh=XOrlqtqrDX/2HGjlVR4wdMWUi738RFOWWukkfL1LH3s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qZeK0S6gjgQbQN4waDGHoi/Rgorgt+1hjov90woc0VbTe5VE9hLsPJusqTxYrtDb6usiGHFK4ff1qHr9fuZ6q9cF3jK2REcF4wXeIU04JxDY3L/kmd8/3VU5SS3D2fBBKZJ+SVmnebOYVwr2EtWbIWqyxJRounVyoBcZxHH+S0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZcIWXRcn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23233C4CEE3;
-	Fri, 18 Jul 2025 00:56:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752800186;
-	bh=SY6veYEenY3ETaNp90Fgi3oqpoAKdNxhIi+bTZtizDM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZcIWXRcnolHN2gWY2+iymLVYl3JeOO7lUYBB1V/8/qccbb7Cs1UveUcs6vLq4s+kH
-	 JVddSr4+Aeyg/mmnDdBJhhZc2vxv81Drd97qre9tgQtxP2GDXen0YXRnY5AmXBD4ap
-	 9hf0RAvYDwH9mz9feeH7pB87wljMljAvVtB6hUZ2QNAe0P6aT0jyStJfcTNzMWVxir
-	 2yIQEL1k2Wv5SNrhLDFPaDk0sT78S40EhHJD/6y2fjzhEQzipxERScHsd/77irjhK9
-	 QNRiD3LCHw29wcKAkxTe977EJSX8EHSjeII0tlPeJKhZnqIh1eK/Yi+oXXqwXQRP2k
-	 w7SnrRkqiZAqQ==
-Date: Fri, 18 Jul 2025 02:56:19 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Kees Cook <kees@kernel.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>
-Cc: David Laight <david.laight.linux@gmail.com>, 
-	Martin Uecker <ma.uecker@gmail.com>, linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
-	Christopher Bazley <chris.bazley.wg14@gmail.com>, shadow <~hallyn/shadow@lists.sr.ht>, 
-	linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
-	kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
-	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
-	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
-	Andrew Clayton <andrew@digital-domain.net>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Michal Hocko <mhocko@suse.com>, Al Viro <viro@zeniv.linux.org.uk>, Sam James <sam@gentoo.org>, 
-	Andrew Pinski <pinskia@gmail.com>
-Subject: Re: [RFC v5 6/7] sprintf: Add [v]sprintf_array()
-Message-ID: <p2gl2w7gntydz4lpoyrazha2hqswwoggykdxo2un7us5wsc3lp@ij5my4epi3ot>
-References: <cover.1751823326.git.alx@kernel.org>
- <cover.1752182685.git.alx@kernel.org>
- <04c1e026a67f1609167e834471d0f2fe977d9cb0.1752182685.git.alx@kernel.org>
- <CAHk-=wiNJQ6dVU8t7oM0sFpSqxyK8JZQXV5NGx7h+AE0PY4kag@mail.gmail.com>
- <28c8689c7976b4755c0b5c2937326b0a3627ebf6.camel@gmail.com>
- <20250711184541.68d770b9@pumpkin>
- <CAHk-=wjC0pAFfMBHKtCLOAcUvLs30PpjKoMfN9aP1-YwD0MZ5Q@mail.gmail.com>
- <202507142211.F1E0730A@keescook>
- <3o3ra7vjn44iey2dosunsm3wa4kagfeas2o4yzsl34girgn2eb@6rnktm2dmwul>
- <202507171644.7FB3379@keescook>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YmIAZOH3unCSw4jKsr0a08zC5oivejPJ4LGCvVTK+schhfIEP+Hr9mmaJKZI2KflaretiQpndjoJv66cMNwDCbmFkDW93doJtuvmW+wI+aChhrKVb4YUeiR0d1TQnyIetzkSJX63My+TkyjgtLW6aBa9i3IPy4lejE0r5B2BveI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=G3RCeyHQ; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-108-26-156-131.bstnma.fios.verizon.net [108.26.156.131])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 56I15LnL015966
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Jul 2025 21:05:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1752800724; bh=47MrvFVIL5gfquO0TuUwWAIK+sNLLvE+ehK38vF6nHU=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=G3RCeyHQjLKBOadQ9r+lAWFneQuzh9IPGwMcsmVilGMsRgDAQbeV1IaM0EDVCXTwQ
+	 f4qGjUQ/WUGQEsZyNZbWUnCuXxyab8IBnxtW9/MpDiYoXXeyihB0bnfEGpjEJJiTUo
+	 HzY2pX/sQqYwUS3o6bm5AXGq8/w5Xn7mdAAdEcKv0PSmioxM6dA+ib6XJEaofJmYHe
+	 CRh1QhyIFgXNsZxw88zeHXuEOc53EWfvh86Kh4GRrKP8Oe/dIf6rLFqCo03uuDUi4R
+	 5BMLUGZYy0Uu1zxd0P1aUiK5tmvxEC6+bU3aYD+mrsMR2sp6Byd6c+cWn1ajVOjsKP
+	 FTebFHj+ortxw==
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id 176282E00D5; Thu, 17 Jul 2025 21:05:21 -0400 (EDT)
+Date: Thu, 17 Jul 2025 21:05:21 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Moon Hee Lee <moonhee.lee.ca@gmail.com>
+Cc: syzbot+544248a761451c0df72f@syzkaller.appspotmail.com,
+        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org
+Subject: Re: [PATCH] ext4: do not BUG when INLINE_DATA_FL lacks system.data
+ xattr
+Message-ID: <20250718010521.GC112967@mit.edu>
+References: <CAF3JpA7a0ExYEJ8_c7v7evKsV83s+_p7qUoH9uiYZLPxT_Md6g@mail.gmail.com>
+ <20250717145911.GB112967@mit.edu>
+ <CAF3JpA6RwyzQMdG4y3P_8jkaS8qUFPerE5MJ8Xecs+VkbPEmpg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="k63pphsxoo2hl7dh"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <202507171644.7FB3379@keescook>
+In-Reply-To: <CAF3JpA6RwyzQMdG4y3P_8jkaS8qUFPerE5MJ8Xecs+VkbPEmpg@mail.gmail.com>
+
+On Thu, Jul 17, 2025 at 09:59:13AM -0700, Moon Hee Lee wrote:
+> The current patch addresses ext4_update_inline_data() directly, but the
+> same condition also leads to a BUG_ON in ext4_create_inline_data() [2],
+> which the earlier approach intended to prevent as well.
+
+Actually, the two conditions are opposite to each other.  The one in
+ext4_update_inline_data() was:
+
+         BUG_ON(is.s.not_found);
+
+while te one in ext4_create_inline_data() was:
+
+	BUG_ON(!is.s.not_found);
+
+So your patch would not only cause an extra xattr lookup in
+ext4_prepare_inline_data(), but it would actually cause problems by
+causing spurious failures when first writing to an inline data file.
+(Which makes me suspect that you hadn't run other test on your patich
+other than just vaidating that the syzkaller reproduce was no longer
+reproducing.)   
+
+Also, having taking a closer look at te code paths, I became
+suspicious that there is something about the syzkaller reproducer is
+doing which might be a bit sus.  That's because whether we call
+ext4_update_inline_data() or ext4_create_inline_data() is based on
+whether i_inline off is set or not:
+
+	if (ei->i_inline_off)
+		ret = ext4_update_inline_data(handle, inode, len);
+	else
+		ret = ext4_create_inline_data(handle, inode, len);
 
 
---k63pphsxoo2hl7dh
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Kees Cook <kees@kernel.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>
-Cc: David Laight <david.laight.linux@gmail.com>, 
-	Martin Uecker <ma.uecker@gmail.com>, linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
-	Christopher Bazley <chris.bazley.wg14@gmail.com>, shadow <~hallyn/shadow@lists.sr.ht>, 
-	linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
-	kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
-	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
-	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
-	Andrew Clayton <andrew@digital-domain.net>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Michal Hocko <mhocko@suse.com>, Al Viro <viro@zeniv.linux.org.uk>, Sam James <sam@gentoo.org>, 
-	Andrew Pinski <pinskia@gmail.com>
-Subject: Re: [RFC v5 6/7] sprintf: Add [v]sprintf_array()
-References: <cover.1751823326.git.alx@kernel.org>
- <cover.1752182685.git.alx@kernel.org>
- <04c1e026a67f1609167e834471d0f2fe977d9cb0.1752182685.git.alx@kernel.org>
- <CAHk-=wiNJQ6dVU8t7oM0sFpSqxyK8JZQXV5NGx7h+AE0PY4kag@mail.gmail.com>
- <28c8689c7976b4755c0b5c2937326b0a3627ebf6.camel@gmail.com>
- <20250711184541.68d770b9@pumpkin>
- <CAHk-=wjC0pAFfMBHKtCLOAcUvLs30PpjKoMfN9aP1-YwD0MZ5Q@mail.gmail.com>
- <202507142211.F1E0730A@keescook>
- <3o3ra7vjn44iey2dosunsm3wa4kagfeas2o4yzsl34girgn2eb@6rnktm2dmwul>
- <202507171644.7FB3379@keescook>
-MIME-Version: 1.0
-In-Reply-To: <202507171644.7FB3379@keescook>
+But how is ei->i_inline_off set?  It's set from a former call to
+ext4_xattr_ibody_find():
 
-Hi Kees,
+	error = ext4_xattr_ibody_find(inode, &i, &is);
+	if (error)
+		goto out;
 
-On Thu, Jul 17, 2025 at 04:47:04PM -0700, Kees Cook wrote:
-> On Tue, Jul 15, 2025 at 09:08:14AM +0200, Alejandro Colomar wrote:
-> > Hi Kees,
-> >=20
-> > On Mon, Jul 14, 2025 at 10:19:39PM -0700, Kees Cook wrote:
-> > > On Fri, Jul 11, 2025 at 10:58:56AM -0700, Linus Torvalds wrote:
-> > > >         struct seq_buf s;
-> > > >         seq_buf_init(&s, buf, szie);
-> > >=20
-> > > And because some folks didn't like this "declaration that requires a
-> > > function call", we even added:
-> > >=20
-> > > 	DECLARE_SEQ_BUF(s, 32);
-> > >=20
-> > > to do it in 1 line. :P
-> > >=20
-> > > I would love to see more string handling replaced with seq_buf.
-> >=20
-> > The thing is, it's not as easy as the fixes I'm proposing, and
-> > sprintf_end() solves a lot of UB in a minimal diff that you can dumbly
-> > apply.
->=20
-> Note that I'm not arguing against your idea -- I just think it's not
-> going to be likely to end up in Linux soon given Linus's objections.
+	if (!is.s.not_found) {
+		if (is.s.here->e_value_inum) {
+			EXT4_ERROR_INODE(inode, "inline data xattr refers "
+					 "to an external xattr inode");
+			error = -EFSCORRUPTED;
+			goto out;
+		}
+		EXT4_I(inode)->i_inline_off = (u16)((void *)is.s.here -
+					(void *)ext4_raw_inode(&is.iloc));
+		EXT4_I(inode)->i_inline_size = EXT4_MIN_INLINE_DATA_SIZE +
+				le32_to_cpu(is.s.here->e_value_size);
+	}
 
-It would be interesting to hear if Linus holds his objections on v6.
+So the whole *reason* why i_inline_off exists is because we're caching
+the result of calling ext4_xattr_ibody_find().  So if i_inline_off is
+non-zero, and then when we call ext4_ibody_find() later on, and we
+find that xattr has suddenly disappeared, there is something weird
+going on.   That's why the BUG_ON was added orginally.
 
-> My
-> perspective is mainly one of pragmatic damage control: what *can* we do
-> in Linux that would make things better? Currently, seq_buf is better
-> than raw C strings...
+When I took a look at the reproduer, I found that indeed, it is
+calling LOOP_CLR_FD and LOOP_SET_STATUS64 to reconfigure the loop
+device out from under the mounted file system.  This is smashing the
+file system, and is therefore corrupting the block device.  As it
+turns out, Jan Kara recently sent out a patch, and it has been
+accepted in the block tree, to prevent a similar Syzkaller issue using
+LOOP_SET_BLOCK_SIZE[1].
 
-TBH, I'm not fully convinced.  While it may look simpler at first
-glance, I'm worried that it might bite in the details.  I default to not
-trusting APIs that hide the complexity in hidden state.  On the other
-hand, I agree that almost anything is safer than snprintf(3).
+[1] https://lore.kernel.org/r/20250711163202.19623-2-jack@suse.cz
 
-But one good thing of snprintf(3) is that it's simple, and thus
-relatively obvious to see that it's wrong, so it's easy to fix (it's
-easy to transition from snprintf(3) to sprintf_end()).  So, maybe
-keeping it bogus until it's replaced by sprintf_end() is a better
-approach than using seq_buf.  (Unless the current code is found
-exploitable, but I assume not.)
+We need to do something similar for LOOP_CLR_FD, LOOP_SET_STATUS,
+LOOP_SET_STATUS64, LOOP_CHANGE_FD, and LOOP_SET_CAPACITY ioctls.
 
+Cheers,
 
-Have a lovely night!
-Alex
-
---=20
-<https://www.alejandro-colomar.es/>
-
---k63pphsxoo2hl7dh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmh5m60ACgkQ64mZXMKQ
-wqkLwBAAhgrJrpnkhBACfYY0eDqJcZh5qz8L/7W6xPGCf46NZSmjG/xJiYD2Ystf
-j2+6m1UM6ynUzTMKK0hUo2nMhmBqqd3mmgFpTgWO6iwOt+Am5C7+RuLtBhCNrAh+
-kYBPjichLntIH4Di6kHYlGevuH2NCR5zh5ImDK/fbBl56V6p0YTJCFGKqqWeiKo6
-UI/SXQgqL1leL6clVP18x0WTaPfslnoZ9SlbGT2FpVIkhs/fLzcfJm+sXDQTzGff
-1ccwyUPLGSJoiAD8jlrAxPson+KND8FtjU582aK/JwX05VVZSPzcKJLHm3Vu36j0
-ye+DL97kD00ebWjS+w2u9F2Xfl5mc1cNqGJUHhmaK2jJV1JTlus1HhWgQp9rNe/K
-49FWUIhnfqG2rz1kFzpGyTJY0zEXRmctcmm35K+qiGKnFHpO3DikvtBbgTPlOO2/
-+8ODvnlfr0ffTLHZ3Zh0x+vvKqCXm/OI7Wm9H3utA9X3GvSeDIYHfYjtTuJFyO8F
-Hw82ItMzcbi9h2mOgUQtVliLtxskzOxt+1jN+QgUfcRRQbV4K21MTQ/HzBioIKk1
-JUQZbyYIaXqS1RsJ308A4fuDA+XR5zah2Zn7WiIbVmnU7/xt72UQ3Jrq/jr3f0aW
-pXJ8aI2ggPuQXwUaF1pN3yHwlAXdAVziskVxXFiOXPTp7WXtC/c=
-=mSgQ
------END PGP SIGNATURE-----
-
---k63pphsxoo2hl7dh--
+						- Ted
 
