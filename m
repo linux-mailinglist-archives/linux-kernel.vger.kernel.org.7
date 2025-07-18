@@ -1,365 +1,271 @@
-Return-Path: <linux-kernel+bounces-737283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C61AEB0AA45
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 20:40:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F0D2B0AA48
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 20:41:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CF7F16DFB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 18:40:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86160179B81
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 18:41:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F521C5D53;
-	Fri, 18 Jul 2025 18:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D2A42E7F36;
+	Fri, 18 Jul 2025 18:41:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SP/chH1a"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Gq4HN+jL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7512E7F06
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 18:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752864032; cv=none; b=t9rF1KeiPcZ+us8UaeTRsxjWlTvpLgFGIL1q6iAEI3Q2yToJ/NeW5S7sb5LcmRRtXdTXMWxvy5zrVo6Q94A00JOPbDJkar3d5krh+e+S5z9KAkTZOqoGlF9PyDNHELOdXQvfE3UChMMGFhDwQ59uv9EkhgYwCMgsBLhirWAcgI8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752864032; c=relaxed/simple;
-	bh=u74v2ZPWbKf07KJ1IltzXzIxmN3s5/LwyFkkuh1Mykw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R1Kx+5NVFf4QcArpKa8kwfs0vIUbjCWxZWwkR0Us8kz/024qAc3d5mocFd48qV+B53r0Muuxbm7pIfxdVFKGX3Y/xh+Q5ujxNLL/l9XQry2SjKwfVRp/cav05h8vsSqyZ17jxmuFDYjjTslpAzk3wDQS+27FQnqzYwNdu8GBK4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SP/chH1a; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56IHFfYJ007301
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 18:40:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	fl/6M6Rq/6jNajcCYuhAK92SmJY6l5itfv/1kSpS1jc=; b=SP/chH1akjGFRZXh
-	O7YrljpvyrsMFhX/GlscO5L8O70wnWRHydWh1oDUiojOMts7ynMitK2/20PzwLuV
-	8icRuhNEYFEWv/YofICS5KQTpxgNdiODfgCEtRIKpNW3/nw0KOgaF+X+cKxbyZgZ
-	z2huyAUWYZppO//7qO8F12Ri1drER/ERWbTzZdQ0ZwKbML7AyBSU+8XGi2HXKkGR
-	R5jQ8RKYEu3aql6C3snRTfWj4RF6N53moqCZsaWOk52i1JUTV48YIP9FyhQ68AIt
-	ekfgqR/TjfJR129IT/2kc0G57Wpg19F2/O1IQYa+PgYoP7/v3SbHAeorc/hdRO1D
-	oDm7QQ==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47wfcads3k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 18:40:29 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4ab878dfc1aso43099911cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 11:40:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752864029; x=1753468829;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fl/6M6Rq/6jNajcCYuhAK92SmJY6l5itfv/1kSpS1jc=;
-        b=OMs2V+sLzpvqLNpTE07o0S2IXUyGlIsIzj+Cda5aW14w1KBkfZN3HwyoNq9KMz8gvN
-         T8GweMkJ9q7pbTQaiCOEpjdP/LXdFdwFugEqnqtQsKUmef91VByfpMaoUvIklqgDxS3L
-         5KhilQp+W9MvGaOxMrB8JH6L1ZNV2ZzW1+Kz/TI5S8Qaoe0ixB/nv19vsdhHTOFsiVu5
-         ALeU4xGX9yI2q78d/9njJJSr/ZnxgvqMOXPR+uGHw5AsfuTO1F8pZECB3aaVQ7GlmyPV
-         GIq5Hf1+kENbNr0+fUrpJpWEtWCPRTVr9r5YabNme3/EAcDltWAgfoKfDZeAkPDc8joh
-         xKVA==
-X-Forwarded-Encrypted: i=1; AJvYcCVqsjSwalGEYVxm9Io9GrEW6WjYpaZvbnb8aMN5D7EWBKebs4A6N1u19zuxzq4wCr0b+hx8XotQOB7P0BU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzm1H9inXC/gQZ8nVSyJ1BAH7Ajt64yaLyc1iZdsrnLL7Uh5PfV
-	NeChpMpeD3PG21iGHhapP1puMkt9vjZyqJCLw/fftnBKEgtKGFfOQe1JGM75H1+gqJ4IgZDTi4K
-	UET4I5x+8+FRxjRVHOneFxoUdZy8gIv8G+dxLY2fx5gk3pc8yaPWpFM7je/Nj2shZpf5Okpun7F
-	Y=
-X-Gm-Gg: ASbGncuZ8Dc5V0TfMZ8FSX/4u/Wv7ySpMgCrn9OaY8wUzInP4GOuTcI2jmhp1Ci3Aur
-	QbqcPMngVJo8iczb2UdeCDF+B/41ax82Ualhy71fOSIqGkxW213oRBdYjDqcNB0axMXo06laemL
-	Z67Ia9qv+5IV3bff8d3fwRnSu91bjXsQ5i9PUxoVj/ijwV5tSzPBAS5tMD9NTlS2zBfKs2KoPWk
-	x95re9/c/tlnzN8GT1YHx3Esq9wRzZdCiI29LcRU10OYTymyaNbwH1uBXne4/Ml5bWtymo47yb4
-	n/Du1eunmGVr0WD8XIDvXIdQQqAOdX3WVUXeoBq8gtErx3dQCNzgjDCsf28pMhG4ltg+qMOuN+E
-	p3uUpavNuR249y0XlNAwKvZW5oi8XIby6AvjXKkiIHJS5rDaE8uMq
-X-Received: by 2002:a05:622a:4ac4:b0:4ab:887a:66fd with SMTP id d75a77b69052e-4aba3c8dfccmr129184721cf.15.1752864028753;
-        Fri, 18 Jul 2025 11:40:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG2cRSkLcZStyjZjNMEN+wUSX0qjErIvadVGsd64otX6kO10enQxXworlq7oMTTVOWMN7HNzA==
-X-Received: by 2002:a05:622a:4ac4:b0:4ab:887a:66fd with SMTP id d75a77b69052e-4aba3c8dfccmr129183731cf.15.1752864027979;
-        Fri, 18 Jul 2025 11:40:27 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-330a90d4ebdsm2876781fa.8.2025.07.18.11.40.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jul 2025 11:40:27 -0700 (PDT)
-Date: Fri, 18 Jul 2025 21:40:25 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Andy Yan <andy.yan@rock-chips.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Konrad Dybcio <konradybcio@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org, Vinod Koul <vkoul@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Andre Draszik <andre.draszik@linaro.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        Elliot Berman <quic_eberman@quicinc.com>,
-        Srinivas Kandagatla <srini@kernel.org>
-Subject: Re: [PATCH v11 2/8] power: reset: reboot-mode: Add support for 64
- bit magic
-Message-ID: <6vlm3ybjpy2jq3cr2pzj4vcmqwoissdml2xmhfzlulfbrpzakt@xrepu6c5zykb>
-References: <20250717-arm-psci-system_reset2-vendor-reboots-v11-0-df3e2b2183c3@oss.qualcomm.com>
- <20250717-arm-psci-system_reset2-vendor-reboots-v11-2-df3e2b2183c3@oss.qualcomm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948A81C5D53;
+	Fri, 18 Jul 2025 18:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752864070; cv=fail; b=IkHKpZf7gpToIpibMlM5jvLb/G8DfMQmvlpB2BJdDcJglflHwSuzurLG/iS/uaMAhkIXd27Vy8sWG72mHPfzz/pLX6dvMI6+mrk+Rs5dUOehfqcCl8BrjHpu7PTLuBSfzlBF/5G8xq/DIuI8H5Yzb2nC9PsEEikJ+xaqy+BEemo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752864070; c=relaxed/simple;
+	bh=a+rrCcALltv/efFUGPyNQxmRN8QrTMmyapZpTQnbcOM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=mx6rU8uT96nymctgbJVH55fYRvp0llLn3JSuNxlTc05PYZjxicDgoL9Cvc9VO9HLINAdf6DFhN+5OCOKkPNEeQncw6azR3BllrZkGyTuAkRRL+S7xlGMzKWIl0oC61VikZIG6qc/CAr0DvaVjZXlrqqTvudnmlP++AJ+O4RZdBU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Gq4HN+jL; arc=fail smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752864069; x=1784400069;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=a+rrCcALltv/efFUGPyNQxmRN8QrTMmyapZpTQnbcOM=;
+  b=Gq4HN+jLRgUaaHeNIF8H8CzSKzqq4dHWM4eves93ZUDEUakQ0OtDswRE
+   Q4uj9I7GxyCuYxFWGvtpqS5ReOeix81nlaiu3VrkND1m8pmAKu8mDqojT
+   3bbzwX1+/9h7BrYHH9JoJqnD/n3xJFzlqRNVQ7hvv5Yz9/byZBmKiYF4O
+   Rv9gKqdMGpT3cxiNn8hDROofZJvlOKK13uxM3aGyKhcp4z1SYTAC0aKpN
+   tg4Vvw4ZQhzuUt9SHFbavK5gLATRui4mNjJgT/Gvozrl9MRggWR3hVWAV
+   LuGQ4xtaAgq3Mg8yk/AOrl5lXN4fPswIqCTqz1qtbGjwNidlY8jx4U6d1
+   w==;
+X-CSE-ConnectionGUID: sKIWlJ/RTqmdcKAvfpRXRA==
+X-CSE-MsgGUID: EgLWsL0oSV+VpJYHHA/PgQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11496"; a="55285626"
+X-IronPort-AV: E=Sophos;i="6.16,322,1744095600"; 
+   d="scan'208";a="55285626"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2025 11:41:08 -0700
+X-CSE-ConnectionGUID: uD6ottUKSSiXMTHTC+Qgqw==
+X-CSE-MsgGUID: 3tcM06EKQoC15vUa1xvpyA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,322,1744095600"; 
+   d="scan'208";a="181819988"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2025 11:41:08 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Fri, 18 Jul 2025 11:41:07 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Fri, 18 Jul 2025 11:41:07 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (40.107.94.58) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Fri, 18 Jul 2025 11:41:05 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=zPld/8HL+jTKmUUynsaalCaU7H81qwibVQrmqmxLyCt6KAXVy22F+3Z+h56NcNMB5c/JpGp1NfLDLHrTN0iq9Tiki62x/eywSVHKrrzUSmZ5QC2JoCDZUAzX49A3ZxtXIudABek/mSEfzMFOsvVruKGkXheNiJq1YZudheqMjATDG9uv1qMxZkoPzWEH6AmDS3qSPtURw+L0wHCH6kCAbwWmz8nS/VhGMxEswtnzXbc/zy4UV/hm23fBx/PbCJr90pISoCYT8j1oB5TbEid3xsJbC0ieg+K907rnup974RHcK7vCZ37ZwgskXUG7HuW2ytAfZa04k+8+3ctsJLQQUQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+tHGN71zpOGe6ZNUbX6ByHLP9J/Wd2DAHudl/KbMLRI=;
+ b=VTrGd8QGtIHV5499RUfHVGhHMkJsxUBv+wLF+b8sE+xE0cMxQJEz8i5fr9Ygirjs77qZ50w2gOuxHcZRcK9F5/xmOZE3t03tOmf2DdMnbrd3Rjp9qaER6ps+6eAzeho4xCjZ9LXqIKfvdFmPw38HHwINZMHILDPo1u012/CFZz22lgxUbm10wG+rCFonn2hhOvoxU4alM8d2AxSWqO0JsvC4F8i3gRmOcIIrXz3mAsuL4q2tNIZyKwAGpWzW/Bd3dc/Yjyu2rKUndt/hJNVwvXS/m0AZHiWd19vwM0UEB3EtnaEy+JLn/ac2U934ckKPW8KOFjfYX36V1RdLS1TQkw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
+ (2603:10b6:518:1::d3c) by SA2PR11MB4844.namprd11.prod.outlook.com
+ (2603:10b6:806:f9::6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.39; Fri, 18 Jul
+ 2025 18:41:00 +0000
+Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
+ ([fe80::19ef:ed1c:d30:468f]) by PH3PPF9E162731D.namprd11.prod.outlook.com
+ ([fe80::19ef:ed1c:d30:468f%5]) with mapi id 15.20.8835.018; Fri, 18 Jul 2025
+ 18:41:00 +0000
+Date: Fri, 18 Jul 2025 13:42:34 -0500
+From: Ira Weiny <ira.weiny@intel.com>
+To: Vishal Annapurve <vannapurve@google.com>, Yan Zhao <yan.y.zhao@intel.com>
+CC: Sean Christopherson <seanjc@google.com>, Michael Roth
+	<michael.roth@amd.com>, <pbonzini@redhat.com>, <kvm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <rick.p.edgecombe@intel.com>,
+	<kai.huang@intel.com>, <adrian.hunter@intel.com>,
+	<reinette.chatre@intel.com>, <xiaoyao.li@intel.com>,
+	<tony.lindgren@intel.com>, <binbin.wu@linux.intel.com>,
+	<dmatlack@google.com>, <isaku.yamahata@intel.com>, <ira.weiny@intel.com>,
+	<david@redhat.com>, <ackerleytng@google.com>, <tabba@google.com>,
+	<chao.p.peng@intel.com>
+Subject: Re: [RFC PATCH] KVM: TDX: Decouple TDX init mem region from
+ kvm_gmem_populate()
+Message-ID: <687a959ad915e_3c99a32942b@iweiny-mobl.notmuch>
+References: <20250709232103.zwmufocd3l7sqk7y@amd.com>
+ <aG_pLUlHdYIZ2luh@google.com>
+ <aHCUyKJ4I4BQnfFP@yzhao56-desk>
+ <20250711151719.goee7eqti4xyhsqr@amd.com>
+ <aHEwT4X0RcfZzHlt@google.com>
+ <aHSgdEJpY/JF+a1f@yzhao56-desk>
+ <aHUmcxuh0a6WfiVr@google.com>
+ <aHWqkodwIDZZOtX8@yzhao56-desk>
+ <aHoQa4dBSi877f1a@yzhao56-desk.sh.intel.com>
+ <CAGtprH9kwV1RCu9j6LqToa5M97_aidGN2Lc2XveQdeR799SK6A@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGtprH9kwV1RCu9j6LqToa5M97_aidGN2Lc2XveQdeR799SK6A@mail.gmail.com>
+X-ClientProxiedBy: MW4PR03CA0288.namprd03.prod.outlook.com
+ (2603:10b6:303:b5::23) To PH3PPF9E162731D.namprd11.prod.outlook.com
+ (2603:10b6:518:1::d3c)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250717-arm-psci-system_reset2-vendor-reboots-v11-2-df3e2b2183c3@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE4MDE0OCBTYWx0ZWRfX2ShxlMmDIbS/
- /wPOPFJqUG+kr5xsVQ5U6ne98/erhNvuvBO6cAPMN4t71OIdVrOTPoMh9c46QdrSg112+zDcmM9
- NsmHThNydr/1BqbNPp+WQ521lQhK4i7zOikrQ3UZIgdTTJdIolzgXVTwaEw7UP6tuVg0LROfhQO
- lDpocXAAIhIfcCvwIINS759HLPBdRMc4QlchPrjaUpY1eYOmJ/tifMxDmEQCEZNPdS4VEfKKMuu
- t13JRixvbMpjU5tNGJyNGH7MKRfoH/eelbXRIdn+9Z2LvB9YO4ovj+It+NjWmneLqQsSO44PgSf
- TodESwGAKkKahDaTvK5fwC3VSbUkJUDTEjwBJYY6cwIUy/G95a/YUR7xtIhw2/07Y1o/PVQHqJl
- vF6FfVkYPII0Jtov/d6voWi4hoXOQsYbmQPszmskKYHfCUUv29Mov9usHmhn63x/p9IbGCXp
-X-Proofpoint-GUID: 55h03zUZLo3hM8d1JYqLfrnAx0aHg9TV
-X-Authority-Analysis: v=2.4 cv=SeX3duRu c=1 sm=1 tr=0 ts=687a951e cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=fKl0S-9-5daLM7QqcyEA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22
-X-Proofpoint-ORIG-GUID: 55h03zUZLo3hM8d1JYqLfrnAx0aHg9TV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-18_04,2025-07-17_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 mlxscore=0 priorityscore=1501 bulkscore=0 phishscore=0
- lowpriorityscore=0 mlxlogscore=999 impostorscore=0 clxscore=1015 adultscore=0
- suspectscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507180148
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH3PPF9E162731D:EE_|SA2PR11MB4844:EE_
+X-MS-Office365-Filtering-Correlation-Id: a2a4a1fc-b478-4daa-ea18-08ddc62aa3fb
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?LzRWZ1FuSmNweWkvUHF2TGpCOHVBYlYxRkdwbW8rTWRIMyt6VEtGYU1wckFH?=
+ =?utf-8?B?Z3BrNm5jZ1RDLzhibTdQMW4vUmYyR1QxQ1NvckRYeWFKTHVTUm92dUQ1WGkx?=
+ =?utf-8?B?Ri9EQmk3eS9qTDJ2eElzdGZVa0RuYmlDTXcvb1lPbTdoZkJBYXhjLzJoa1Jk?=
+ =?utf-8?B?Qi8vejVYYzFabFpMRWlFNGYyU2RtTUJHQ3k4RVlkSTdYc1RTZGRoaXFhdjR5?=
+ =?utf-8?B?eGY4am1sT2hNZnJ1UVVXUUdDbGx4RHpyMDJ3US9PamJ0U0pxNnZwbGVvY0pV?=
+ =?utf-8?B?WXBsdWFjVkZYUk45blEzWlhXRWhETFpjK0JOMnlvTnZoZGJ5MDJvMDhjMTFV?=
+ =?utf-8?B?aG5yQ3lYeDR6MDVXUTVsUmFxZDdLa1h2cXF3QjlBaWpFcmVyQ3BKUm96RTJ4?=
+ =?utf-8?B?Z08vbXBqd21CRW5hQ3NwQTZJcVlMSUw2dmRZbWdMU2Zuamk1K25DREtHOGpq?=
+ =?utf-8?B?ME1ZTVJBM3hyWDFrcUxROXBDMFpsQUJqOVRWOWpqdFBlWjVWZHFBT2lBUzF5?=
+ =?utf-8?B?RTBORFVZTlhpaG1EMm5iYzhGY3VWVW4yT2VPYkZlcWJqcVFhRDh6dUwxQWMw?=
+ =?utf-8?B?ZC9NdVVSUHRoc2JHUHB6T3pXM0VHQWU1dnNWa1NGTVBveUdaRzRVQS9IWlBV?=
+ =?utf-8?B?VE5zT0Z0WmJvRXZ6dXNiN2JHa1ZJOW1jWGtFT2hTMEIrVFdpa2VSQzlYaHp2?=
+ =?utf-8?B?bTJrNUxnOURZUkNYdXRiNXZ2cG1aZllUTkwzSld4blhhcWJ4YlVTZmtGWnh4?=
+ =?utf-8?B?SDE4VXVkcXRuWjYwczU4Zy9PY0dlTWhqbnRQWndqUE5zZGhQMUJDTTRlN0Rq?=
+ =?utf-8?B?aVJ3RUhTTWZtL3ExZkYwbjYrdXRIKzdSY0ZQZGRYRUZsaTRkOU5hc2g2a0Ro?=
+ =?utf-8?B?UDg3aDA3ak5LaWlQVkEzdkJnNW9YQ2xhRTRobFR4R3ErTkRZVnJkNm9zL1pX?=
+ =?utf-8?B?aUxkTURmRjBSdnQ3V3FucG1JR2RXa3NkcnVCMjVDaGp6OVBxKzNObVVQbTNB?=
+ =?utf-8?B?T2NVMlczcEhMOE1OUVk0M0Q1TkQ2QlBDaldZb3A3dWlRdVRpVUdzMnlmdXJD?=
+ =?utf-8?B?N0MwRnRwRU1aRm1hSlJQdFhZeGZpemRLeUZCQlFnN0VQY3RSY3VNTG9UZWRj?=
+ =?utf-8?B?dkJBQTYwcnpCdVlvRC81eTFUckc4VVArdTNUb2RrVm5vMmhtYzN5UmRwS1Mv?=
+ =?utf-8?B?dzFmb0RoWlFJcnFOd3JsSDVmMDBnRU1weXlKNy9uakgxYW1qSWplUmpYZ21O?=
+ =?utf-8?B?Q3pDWk9mMVBNbDBxdjhBY2NYV2huZlVOcFd6NU9INlA1aktCTWZRYjFQejFP?=
+ =?utf-8?B?Vkg0amJZRDBsR1RBNmVvSzlKL0xPUDRzMEpHZDM4c0MvWTdtNzJQeEROTXo0?=
+ =?utf-8?B?aW5BQzhQSXdDbnNGSWhORUhGRENCYnJNZzVMckVPeHJIQXcvazJLS3d1MHJ6?=
+ =?utf-8?B?SzFGNnF2NnRzQ1VNUzhCQnZuRXg1MjJBSml5a2ZXejV2anRHbHpQaWcwUHJ0?=
+ =?utf-8?B?ZEY2aVlLamJTTE8wci9JVW5WWDgyYkY4RVBWMys3Q01JRmMzdDltVDlualBU?=
+ =?utf-8?B?c240Wm0rWVh2Q2d6RFE0UENvU3pFdzVCb2FKNUhvemxXQ0xlYlIvRlU4d3I0?=
+ =?utf-8?B?alJtLy9qTkUyQWhZdS91S2pXZjVOR0RsZlVGd1NGL0FhMjVEaW9oL3pVTllh?=
+ =?utf-8?B?MkJpd0VoUXByOVBQY0x2a2VYZkN5eXB3NU5qSTgwZTV0Y3ZPYStSM3JhNzYy?=
+ =?utf-8?B?VnVNaVJyc1BJQlpCOEJVMGdBRExBdFlZcFEzYytTYmg1d2pRczN2K3QrWlNn?=
+ =?utf-8?B?dU1PVkxuMCtuRW9COEhzMXl2TDVpZ0ZmenBzR2dTTU5KV2RxdTdSUzQyUlFF?=
+ =?utf-8?B?TklzUG9Hck1PWjBnb1JLZXllUEh0UmZ0dmtWNWRUeXBEdEJuU3Y2U3NWMVFM?=
+ =?utf-8?Q?HpoAcArJzbk=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH3PPF9E162731D.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VFcvTTZrZURSaCtubll0MWdMeGxjYmtyWjJkQ0FBY0FGVThUVklDTEZ3S2Iy?=
+ =?utf-8?B?YjlQZmJXVFRzWWZhVUU4QlIrSFpySml3ZDJ5bDJ1dnd6dGt1MFRSdW5ZTXFj?=
+ =?utf-8?B?QXBid2hLREpkM1hJbXAyMzJEMzJNN0JXQW9UcmEvNWdiUjdGWVVDSkYyUCtB?=
+ =?utf-8?B?SDRtRE01Z3VRRHVzb21DOUlKRys0QTBuUEFnVmdzTHFLcDN3OXNXYTFsMi9x?=
+ =?utf-8?B?T2ZZQ1hySjluTzhaL3l3cTBpVGMxcEdmbVpodDFrQ0ZIQ1dEQ3pSem5TZHkv?=
+ =?utf-8?B?N1RPVER4QW9sQWRsTDVIY1cvZ0Q2WCtoNWFyMExNQlVqdlRvV2Y1L2o2Ty9W?=
+ =?utf-8?B?VHI1RHJad0tvTFBFOElxUHpCTWhnenhuNGp6alQ4NTgrc3psTm1nT2RNTkVU?=
+ =?utf-8?B?N3RpbTFFam43aVV3Tk5zNWFXVjFDUzU1cWh3bEM3Q2s1TmFwVmdzK1VVYll0?=
+ =?utf-8?B?L0w3bC92WjF5ZXBtS3NPQm51b1Q1SG9vSHZLSzdKbFVxOVMvNngzdmk5M2FY?=
+ =?utf-8?B?ZVBsRUhUaEx6dWMzSzljVDFBOGhGQXFnZDRaUTZhUjlIaGRUN0E3aWFJcXM0?=
+ =?utf-8?B?dXRGS0RncDMyM1g4RUFENXpJb3AySGFkcVRkYlFMVlBnVS9IRjhZR2h6Vnpa?=
+ =?utf-8?B?RFhVc2RGbk11TEhNYWIydlkyUm02YlFjTUQySVB0OGM4VlMvRXJ6VEFnZ3Ru?=
+ =?utf-8?B?bWVuQ240OXRrRTd5YWR0dzE1UlorR041Vk96K0dIcTI4d3BWdjF3dW1Ha1Ex?=
+ =?utf-8?B?bjB0YWErbXUwb0Y1bVAyMkxISWd4RzdEc2M3Sk1FeUVCUkRNYzZsUDhQZURW?=
+ =?utf-8?B?bmpFOXNqV3l5WE9uR0FKQ1JweElPWDNpM2NCR2ZJa3NNVk03Ujh3Tzl6RVh3?=
+ =?utf-8?B?cWl5T0lSdmoxa1NGUVRObEZERDg3UUhuN0tuS0hpay9UcUI2aXlpT3lJUG51?=
+ =?utf-8?B?SFBLNUduekkwc2tSZVVLeWdZbWRCcldWSS9rb0tkS0Zyak1pQTlsZDhtaktU?=
+ =?utf-8?B?ekVEVXFZcUU3Y3J4YWpOUzJqM2hEU0g0UXA4QjdLZ3FPWEM0eVRXV0V0MDIv?=
+ =?utf-8?B?VFNSSHVVd2dWdTgwTVBoVzdqem9IczdaTXpXelN0ZW8yUXEwY2t6eFZCVm5p?=
+ =?utf-8?B?R21aZ0p0MUw5M0JaZUVlUG5oN0dlck9YMWFZaEhtVEFhcjRkeklaN0N3SExB?=
+ =?utf-8?B?M0l2MTE4QzRUMTFNUmw2WHRScXhHQU9KT1NnKy9xb1NyY0tqMUdNdVkxRmNs?=
+ =?utf-8?B?QXB3eFhKSVRIZFNFL2JHY1NRM0JOVm9tMmJBbTBML0FNVVlLZHpGZTJ5UlIz?=
+ =?utf-8?B?bUJFU1d3TFV6b21mRUhPdEFsWVZaSzRuVlFzRjRxdkdiWUJ3dUJyaG5ON3lJ?=
+ =?utf-8?B?SnFPY094MnNSZndSZGZiQ3d0UlpPbi8rVGtKdTV6a0Npdkc1USswZkpWd1o2?=
+ =?utf-8?B?VDZ4Nm1DME8zUStvZ0doMnM2eTg2WWpLU0JRRFBlL0c2M2QyMkJZb3BTMks5?=
+ =?utf-8?B?ZUhJL2U4QnRHVmhibDRqY2RmY1F6cmdIZXE1clpTdGMrS0ZoUGdra0lwZWpl?=
+ =?utf-8?B?aFlOdGFVWHlZZTdFSzNSZ2J1VUo3bWxXTVZPZ1p3T25zM0FvaUpTUkplcE8v?=
+ =?utf-8?B?b1pKQ0hPUzBxTWNaWlRQSi9ja3lrcWFrdkZxWXM5R3krN2toM2lReFZually?=
+ =?utf-8?B?STBYbHNzTitKeGp3NTB2TnlJcmxRZk9yMzFXRDI2cFpvanhneXM0a3c3VFoy?=
+ =?utf-8?B?ZHpnQWRrbHBrcU9JMk9ETU05SlU2U01teGFDSzg3QklHbXF6MERxYXZKSVhM?=
+ =?utf-8?B?RURadGxQOS9BMWxxNXI3bGNkbzZGOTlGanpzcnlrLzZkNUFqRjJnUDV3VHBH?=
+ =?utf-8?B?cjlEbFpOVXh5TXF6ek8vdG0vNmc3NW11eUtYSzdDc0F6TGN0Y0FFbWJUTi9t?=
+ =?utf-8?B?NUVTWjRqZURsNW9GdDdwVlE4dkd4MW1heVczeFBUTEF0V3dmTDlzOXVFeHRh?=
+ =?utf-8?B?cVR1U05TYjZodnZIc096TmdYbjhTNUJqTUJ3UDZiZWg1ak1XN3VmaGFZa0Zs?=
+ =?utf-8?B?bUV1ZFU5eUp0Qk4zb3Q0Y2pYZEdvR2pWb2gyQzlFQzhXY1RoYjAvUjQ1QzVP?=
+ =?utf-8?Q?hVmLiNQuWEw7z2f8X7vmhHqFA?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: a2a4a1fc-b478-4daa-ea18-08ddc62aa3fb
+X-MS-Exchange-CrossTenant-AuthSource: PH3PPF9E162731D.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2025 18:40:59.9988
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zH7E9Q1eyPOKzuYGTYuPdZ/NLEKC6fL1EAifnVu9ilOUiaqYq3zQl5LDy/LZxGx10k6giTaZvT0VhlwFbn/xWQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB4844
+X-OriginatorOrg: intel.com
 
-On Thu, Jul 17, 2025 at 06:16:48PM +0530, Shivendra Pratap wrote:
-> Current reboot-mode supports a single 32-bit argument for any
-> supported mode. Some reboot-mode based drivers may require
-> passing two independent 32-bit arguments during a reboot
-> sequence, for uses-cases, where a mode requires an additional
-> argument. Such drivers may not be able to use the reboot-mode
-> driver. For example, ARM PSCI vendor-specific resets, need two
-> arguments for its operation – reset_type and cookie, to complete
-> the reset operation. If a driver wants to implement this
-> firmware-based reset, it cannot use reboot-mode framework.
+Vishal Annapurve wrote:
+> On Fri, Jul 18, 2025 at 2:15 AM Yan Zhao <yan.y.zhao@intel.com> wrote:
+> >
+> > On Tue, Jul 15, 2025 at 09:10:42AM +0800, Yan Zhao wrote:
+> > > On Mon, Jul 14, 2025 at 08:46:59AM -0700, Sean Christopherson wrote:
+> > > > > >         folio = __kvm_gmem_get_pfn(file, slot, index, &pfn, &is_prepared, &max_order);
+> > > > > If max_order > 0 is returned, the next invocation of __kvm_gmem_populate() for
+> > > > > GFN+1 will return is_prepared == true.
+> > > >
+> > > > I don't see any reason to try and make the current code truly work with hugepages.
+> > > > Unless I've misundertood where we stand, the correctness of hugepage support is
+> > > Hmm. I thought your stand was to address the AB-BA lock issue which will be
+> > > introduced by huge pages, so you moved the get_user_pages() from vendor code to
+> > > the common code in guest_memfd :)
+> > >
+> > > > going to depend heavily on the implementation for preparedness.  I.e. trying to
+> > > > make this all work with per-folio granulartiy just isn't possible, no?
+> > > Ah. I understand now. You mean the right implementation of __kvm_gmem_get_pfn()
+> > > should return is_prepared at 4KB granularity rather than per-folio granularity.
+> > >
+> > > So, huge pages still has dependency on the implementation for preparedness.
+> > Looks with [3], is_prepared will not be checked in kvm_gmem_populate().
+> >
+> > > Will you post code [1][2] to fix non-hugepages first? Or can I pull them to use
+> > > as prerequisites for TDX huge page v2?
+> > So, maybe I can use [1][2][3] as the base.
+> >
+> > > [1] https://lore.kernel.org/all/aG_pLUlHdYIZ2luh@google.com/
+> > > [2] https://lore.kernel.org/all/aHEwT4X0RcfZzHlt@google.com/
 > 
-> Introduce 64-bit magic values in reboot-mode driver to
-> accommodate dual 32-bit arguments when specified via device tree.
-> In cases, where no second argument is passed from device tree,
-> keep the upper 32-bit of magic un-changed(0) to maintain backward
-> compatibility.
+> IMO, unless there is any objection to [1], it's un-necessary to
+> maintain kvm_gmem_populate for any arch (even for SNP). All the
+> initial memory population logic needs is the stable pfn for a given
+> gfn, which ideally should be available using the standard mechanisms
+> such as EPT/NPT page table walk within a read KVM mmu lock (This patch
+> already demonstrates it to be working).
 > 
-> Update the current drivers using reboot-mode for a 64-bit magic
-> value.
+> It will be hard to clean-up this logic once we have all the
+> architectures using this path.
+
+Did you mean to say 'not hard'?
+
+Ira
+
 > 
-> Signed-off-by: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
-> ---
->  drivers/power/reset/nvmem-reboot-mode.c  |  5 ++---
->  drivers/power/reset/qcom-pon.c           |  5 ++---
->  drivers/power/reset/reboot-mode.c        | 27 +++++++++++++++------------
->  drivers/power/reset/syscon-reboot-mode.c |  5 ++---
->  include/linux/reboot-mode.h              |  4 +++-
->  5 files changed, 24 insertions(+), 22 deletions(-)
+> [1] https://lore.kernel.org/lkml/CAGtprH8+x5Z=tPz=NcrQM6Dor2AYBu3jiZdo+Lg4NqAk0pUJ3w@mail.gmail.com/
 > 
-> diff --git a/drivers/power/reset/nvmem-reboot-mode.c b/drivers/power/reset/nvmem-reboot-mode.c
-> index 41530b70cfc48c2a83fbbd96f523d5816960a0d1..e3eed943fdefa271b22e1f1891abef5c9095b9a5 100644
-> --- a/drivers/power/reset/nvmem-reboot-mode.c
-> +++ b/drivers/power/reset/nvmem-reboot-mode.c
-> @@ -16,15 +16,14 @@ struct nvmem_reboot_mode {
->  	struct nvmem_cell *cell;
->  };
->  
-> -static int nvmem_reboot_mode_write(struct reboot_mode_driver *reboot,
-> -				    unsigned int magic)
-> +static int nvmem_reboot_mode_write(struct reboot_mode_driver *reboot, u64 magic)
->  {
->  	int ret;
->  	struct nvmem_reboot_mode *nvmem_rbm;
->  
->  	nvmem_rbm = container_of(reboot, struct nvmem_reboot_mode, reboot);
->  
-> -	ret = nvmem_cell_write(nvmem_rbm->cell, &magic, sizeof(magic));
-> +	ret = nvmem_cell_write(nvmem_rbm->cell, (u32 *)&magic, sizeof(u32));
+> > [3] https://lore.kernel.org/lkml/20250613005400.3694904-2-michael.roth@amd.com,
 
-This will work differently on BE and LE systems. Assign a temp var and
-use it.
 
->  	if (ret < 0)
->  		dev_err(reboot->dev, "update reboot mode bits failed\n");
->  
-> diff --git a/drivers/power/reset/qcom-pon.c b/drivers/power/reset/qcom-pon.c
-> index 7e108982a582e8243c5c806bd4a793646b87189f..93daf93c097f970afbaf43d36b1e4f725ca7a81f 100644
-> --- a/drivers/power/reset/qcom-pon.c
-> +++ b/drivers/power/reset/qcom-pon.c
-> @@ -27,8 +27,7 @@ struct qcom_pon {
->  	long reason_shift;
->  };
->  
-> -static int qcom_pon_reboot_mode_write(struct reboot_mode_driver *reboot,
-> -				    unsigned int magic)
-> +static int qcom_pon_reboot_mode_write(struct reboot_mode_driver *reboot, u64 magic)
->  {
->  	struct qcom_pon *pon = container_of
->  			(reboot, struct qcom_pon, reboot_mode);
-> @@ -37,7 +36,7 @@ static int qcom_pon_reboot_mode_write(struct reboot_mode_driver *reboot,
->  	ret = regmap_update_bits(pon->regmap,
->  				 pon->baseaddr + PON_SOFT_RB_SPARE,
->  				 GENMASK(7, pon->reason_shift),
-> -				 magic << pon->reason_shift);
-> +				 ((u32)magic) << pon->reason_shift);
->  	if (ret < 0)
->  		dev_err(pon->dev, "update reboot mode bits failed\n");
->  
-> diff --git a/drivers/power/reset/reboot-mode.c b/drivers/power/reset/reboot-mode.c
-> index 0269ec55106472cf2f2b12bd65704dd0114bf4a3..1196627fbf98d87eec57a3d4ee544e403e6eb946 100644
-> --- a/drivers/power/reset/reboot-mode.c
-> +++ b/drivers/power/reset/reboot-mode.c
-> @@ -19,12 +19,11 @@
->  
->  struct mode_info {
->  	const char *mode;
-> -	u32 magic;
-> +	u64 magic;
->  	struct list_head list;
->  };
->  
-> -static unsigned int get_reboot_mode_magic(struct reboot_mode_driver *reboot,
-> -					  const char *cmd)
-> +static struct mode_info *get_reboot_mode_info(struct reboot_mode_driver *reboot, const char *cmd)
-
-Why? This doesn't seem relevant to u32 -> u64 conversion.
-
->  {
->  	const char *normal = "normal";
->  	struct mode_info *info;
-> @@ -35,11 +34,11 @@ static unsigned int get_reboot_mode_magic(struct reboot_mode_driver *reboot,
->  
->  	list_for_each_entry(info, &reboot->head, list)
->  		if (!strcmp(info->mode, cmd))
-> -			return info->magic;
-> +			return info;
->  
->  	/* try to match again, replacing characters impossible in DT */
->  	if (strscpy(cmd_, cmd, sizeof(cmd_)) == -E2BIG)
-> -		return 0;
-> +		return NULL;
->  
->  	strreplace(cmd_, ' ', '-');
->  	strreplace(cmd_, ',', '-');
-> @@ -47,21 +46,21 @@ static unsigned int get_reboot_mode_magic(struct reboot_mode_driver *reboot,
->  
->  	list_for_each_entry(info, &reboot->head, list)
->  		if (!strcmp(info->mode, cmd_))
-> -			return info->magic;
-> +			return info;
->  
-> -	return 0;
-> +	return NULL;
->  }
->  
->  static int reboot_mode_notify(struct notifier_block *this,
->  			      unsigned long mode, void *cmd)
->  {
->  	struct reboot_mode_driver *reboot;
-> -	unsigned int magic;
-> +	struct mode_info *info;
->  
->  	reboot = container_of(this, struct reboot_mode_driver, reboot_notifier);
-> -	magic = get_reboot_mode_magic(reboot, cmd);
-> -	if (magic)
-> -		reboot->write(reboot, magic);
-> +	info = get_reboot_mode_info(reboot, cmd);
-> +	if (info)
-> +		reboot->write(reboot, info->magic);
->  
->  	return NOTIFY_DONE;
->  }
-> @@ -78,6 +77,7 @@ int reboot_mode_register(struct reboot_mode_driver *reboot, struct device_node *
->  	struct mode_info *info;
->  	struct property *prop;
->  	size_t len = strlen(PREFIX);
-> +	u32 magic_64;
->  	int ret;
->  
->  	if (!np)
-> @@ -95,12 +95,15 @@ int reboot_mode_register(struct reboot_mode_driver *reboot, struct device_node *
->  			goto error;
->  		}
->  
-> -		if (of_property_read_u32(np, prop->name, &info->magic)) {
-> +		if (of_property_read_u32(np, prop->name, (u32 *)&info->magic)) {
-
-Again, somebody didn't think about endianness.
-
->  			pr_err("reboot mode %s without magic number\n", info->mode);
->  			kfree(info);
->  			continue;
->  		}
->  
-> +		if (!of_property_read_u32_index(np, prop->name, 1, &magic_64))
-> +			info->magic |= (u64)magic_64 << 32;
-> +
->  		info->mode = kstrdup_const(prop->name + len, GFP_KERNEL);
->  		if (!info->mode) {
->  			ret =  -ENOMEM;
-> diff --git a/drivers/power/reset/syscon-reboot-mode.c b/drivers/power/reset/syscon-reboot-mode.c
-> index e0772c9f70f7a19cd8ec8a0b7fdbbaa7ba44afd0..6783d05e80fbc2c812b45ffe69755478af90d30a 100644
-> --- a/drivers/power/reset/syscon-reboot-mode.c
-> +++ b/drivers/power/reset/syscon-reboot-mode.c
-> @@ -20,8 +20,7 @@ struct syscon_reboot_mode {
->  	u32 mask;
->  };
->  
-> -static int syscon_reboot_mode_write(struct reboot_mode_driver *reboot,
-> -				    unsigned int magic)
-> +static int syscon_reboot_mode_write(struct reboot_mode_driver *reboot, u64 magic)
->  {
->  	struct syscon_reboot_mode *syscon_rbm;
->  	int ret;
-> @@ -29,7 +28,7 @@ static int syscon_reboot_mode_write(struct reboot_mode_driver *reboot,
->  	syscon_rbm = container_of(reboot, struct syscon_reboot_mode, reboot);
->  
->  	ret = regmap_update_bits(syscon_rbm->map, syscon_rbm->offset,
-> -				 syscon_rbm->mask, magic);
-> +				 syscon_rbm->mask, (u32)magic);
->  	if (ret < 0)
->  		dev_err(reboot->dev, "update reboot mode bits failed\n");
->  
-> diff --git a/include/linux/reboot-mode.h b/include/linux/reboot-mode.h
-> index 36f071f4b82e1fc255d8dd679a18e537655c3179..d9d9165a8635e5d55d92197a69c7fae179ac2045 100644
-> --- a/include/linux/reboot-mode.h
-> +++ b/include/linux/reboot-mode.h
-> @@ -2,10 +2,12 @@
->  #ifndef __REBOOT_MODE_H__
->  #define __REBOOT_MODE_H__
->  
-> +#include <linux/types.h>
-> +
->  struct reboot_mode_driver {
->  	struct device *dev;
->  	struct list_head head;
-> -	int (*write)(struct reboot_mode_driver *reboot, unsigned int magic);
-> +	int (*write)(struct reboot_mode_driver *reboot, u64 magic);
->  	struct notifier_block reboot_notifier;
->  };
->  
-> 
-> -- 
-> 2.34.1
-> 
-
--- 
-With best wishes
-Dmitry
 
