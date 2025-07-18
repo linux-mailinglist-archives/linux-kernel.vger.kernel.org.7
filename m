@@ -1,245 +1,97 @@
-Return-Path: <linux-kernel+bounces-736345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10D4CB09BBA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:51:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3106BB09BBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:53:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45BA65A58B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:51:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1BED3A8D8E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:53:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B8161FDA7B;
-	Fri, 18 Jul 2025 06:51:49 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D825B202960;
+	Fri, 18 Jul 2025 06:53:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b="HMgO6kY1"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DD284689
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 06:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27FE1FBC91
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 06:53:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752821509; cv=none; b=eHXBWx3N9g2uwtFSxYJdj9hCu1ejFzjwApZvdfwBMLcgMjmursDWkmmjXheNYxy80hquQghyRR7ZlhfCeT7OsNo5jqW7ggAd+dtahCIOhZNZig0o8AJkYzYp/3QLKj+zJykQC1QGvSNXV2hu1yHliEGmfBzO+LoN/i1LVGwAnM4=
+	t=1752821616; cv=none; b=E7RGJ76pa792azDFIXjBbMCWoPanfyFJfBahBjM07yLXvYyTEmSaDgni5/brgOROksED8Kf2cJXJndzw4hsbCf0jhYw8i9WaxFUMN6YjYct44wkCz8NAHfRHywCURl5CduJSJq5ZOijJsvsQ7X4YwR/OaCDTdT1YyvUSw0STTFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752821509; c=relaxed/simple;
-	bh=eRN9ploC6vX6SGE4XnCvVUDHpyOKD4RWrlIvw8xGzCA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qbQyxr7q3ZvQt085I/kXXl+gIVqovfD5h581fL7f/LX4Y4U66vaSN/LGtsKM4U/K/eBvRPzO8ZkRapP50cAe05bTyj/Jqq6DIRMk/TNfPHAVNgaBXo3j2Boe3/nq/5/HL+Bextv1dw1PEqbwDAnaG43JOuYfln+zJDdD1acvO5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bk0nr07przYQtpg
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 14:51:44 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id BCFB81A0EBC
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 14:51:42 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.166.178.91])
-	by APP3 (Coremail) with SMTP id _Ch0CgA3sdv87nloC4iRAg--.35938S2;
-	Fri, 18 Jul 2025 14:51:41 +0800 (CST)
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-To: akpm@linux-foundation.org,
-	kasong@tencent.com,
-	nphamcs@gmail.com,
-	bhe@redhat.com,
-	baohua@kernel.org,
-	chrisl@kernel.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Kemeng Shi <shikemeng@huaweicloud.com>
-Subject: [PATCH] mm: swap: correctly use maxpages in swapon syscall to avoid potential deadloop
-Date: Fri, 18 Jul 2025 14:51:39 +0800
-Message-Id: <20250718065139.61989-1-shikemeng@huaweicloud.com>
-X-Mailer: git-send-email 2.36.1
+	s=arc-20240116; t=1752821616; c=relaxed/simple;
+	bh=ybAswk9vrSD8WcUdO7ioNsJSz4/UhNNPszfHVPjePD8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V3a4nVeGxBqS21eb3NXvILrhTTQ77wnna69MZcPUrg4YDeB9ttDltuNS379UfWkHikBUSFPJMSaQngLOh58addLaXc/gynAykgzl8BESFoJ4I3gMKh/J9E4tamZy9EFI2gtKlVtfZ/0uEl83tFdIxbf5RzZdf4Tsfq8gTQ6UmRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk; spf=pass smtp.mailfrom=thegoodpenguin.co.uk; dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b=HMgO6kY1; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thegoodpenguin.co.uk
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-70f94fe1e40so32461287b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 23:53:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=thegoodpenguin-co-uk.20230601.gappssmtp.com; s=20230601; t=1752821614; x=1753426414; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ybAswk9vrSD8WcUdO7ioNsJSz4/UhNNPszfHVPjePD8=;
+        b=HMgO6kY1CuOLjnNzL+nGkL1VOPU92B9lw1SRLQ10W2xEO+/Q88MVbhz7mHo4wW9flv
+         iYQvkshSWBle+esBdrJZVJvDbdC/P7W8Jz8TcraimHMTeEzIyA3y75oVQfxdhkNf82By
+         RdG0LaEf8UbU9icAulHMrU6pL4calEuKlRSitk8DZ6kpPkPp37QrjvT6rFwI8Hpcu+tb
+         1XX3yXgXWIk9d1p+E9ijvuMjkUXn+0tXJqTBe5H8BwU2Hvd9uvcni5odG0EYkh5FbOb+
+         O2jBwJBNTBE2AW05+Gf0+W+dnHFTq0WqUtdr4Hu6BkLouaYb5E0oW3WYJo2ZbUlUmzKL
+         Sqew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752821614; x=1753426414;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ybAswk9vrSD8WcUdO7ioNsJSz4/UhNNPszfHVPjePD8=;
+        b=cGXoERCAMwjt7H/3h76767tTUbx8GF98aEXeD/Axz4WWduLsQDkIZbZxipKlF1+r3c
+         TXZlnfKJG5OUSODPyEpEPozQrl5h5YAkh9mvJlxdipFvCkRv9uHkzztil0OwBjallLGC
+         8+zMOV3aecBvQYou9FUHY56uzIxXaOeG4bzSAmpPpdQJq4mKPpw+QhnC434ZKH9Bwvpz
+         kD+mnTqUbfw5L56bb4XUDV3JJAQNK2fOdotNsvW9XE/ncbRWLqnDP9a6BfusEhJbjWzp
+         3+AvWqsmiqUMpF51P+JPJOUrmWJvsN1jT1nRWj3uWD+u17t6sKaY5MpAVkFUAzQczJJu
+         bj5w==
+X-Forwarded-Encrypted: i=1; AJvYcCWgYVNVGciFRcbJA1sd9Im6T6o/vStZHkP088t0TaxA3VEUZZJO1xIv1stSkS5ZuGsV8x7jbwyxrkPMZm8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAvigYXXYZ+5kmFF+9hkn4wy3g15jTKzg3lcLs87K+VoyQwk2/
+	Hml9dbOgIiWY6/Lqe2UvrWQaWBLFl2WfAWuesACGPugxafCcD6RRlnmWGECOEKd1DZOQEVxOrRn
+	wTBX6utJmMot/m4rTrqGRB7mz8xCJi2GBmBE5emxj0w==
+X-Gm-Gg: ASbGncvCoOw6hpw6Qaz9ISlciQRqcKL2JJ91GTzzSLRKlR/9zS2tkXXZNPSgOmCQtPc
+	YptdKg3NDYWU9dXbozmTkL0ZSDDMI+hqSLXK5KyYS0O1rVuyKAw09Yz9+CN0TTro5swrj5jCf7d
+	BZV0KCRYLGYGXgbwDZlEnm/eNZ1bsQI3acI5HH/tydDwQo2IoA0EjxuTeShlyMA8wOcC1ZzVtBS
+	8qUFRGVaGDlp+IHAvdcEd4W9bA3EAjdjVe3U3HHzg==
+X-Google-Smtp-Source: AGHT+IFvLgiDoFdyL34VARsxW+rGxmiWW9QMSci2UPUIkg/0n3HOf6tTiCSKpVsOiMnEC0d1xu5Uz8jS1p4UQRTGt6c=
+X-Received: by 2002:a05:690c:6513:b0:716:5fa6:c3e0 with SMTP id
+ 00721157ae682-7194cf5c6e5mr39124737b3.18.1752821613946; Thu, 17 Jul 2025
+ 23:53:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgA3sdv87nloC4iRAg--.35938S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3Ww13Kw4rKF4rWFykWr1UAwb_yoW7tF1xpF
-	W3WFn0kr4kJrn2kw17Aa1DCry3Cr1fCa17ta13JFySv3WDXrySgr97trn5ZrySgFn5JFyq
-	qrs7t34Uu3WYqa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
-	Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUoWlkDU
-	UUU
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+References: <20250717-leds-is31fl3236a-v4-0-72ef946bfbc8@thegoodpenguin.co.uk>
+ <20250717-leds-is31fl3236a-v4-1-72ef946bfbc8@thegoodpenguin.co.uk> <20250717193118.GA3988681-robh@kernel.org>
+In-Reply-To: <20250717193118.GA3988681-robh@kernel.org>
+From: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
+Date: Fri, 18 Jul 2025 07:53:22 +0100
+X-Gm-Features: Ac12FXwbQ2naP0VaM-2jRM9KQR9PuTu6W0JfEaf7adOYalfSuSBdpeibbuvgG0w
+Message-ID: <CAA6zWZJ8-V40qLcRbRJXaOo+mLt-v1aqUg9X39mqhJD5M2sHnA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] dt-bindings: leds: is31fl32xx: convert the binding
+ to yaml
+To: Rob Herring <robh@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-leds@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Pavel Machek <pavel@ucw.cz>, devicetree@vger.kernel.org, 
+	Lucca Fachinetti <luccafachinetti@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-We use maxpages from read_swap_header() to initialize swap_info_struct,
-however the maxpages might be reduced in setup_swap_extents() and the
-si->max is assigned with the reduced maxpages from the
-setup_swap_extents().
+> This is already false because you haven't defined the property anywhere.
+> Though this property didn't exist in the existing binding, so why are
+> you adding it (the commit msg needs an explanation)?
 
-Obviously, this could lead to memory waste as we allocated memory based on
-larger maxpages, besides, this could lead to a potential deadloop as
-following:
-
-1) When calling setup_clusters() with larger maxpages, unavailable
-   pages within range [si->max, larger maxpages) are not accounted with
-   inc_cluster_info_page().  As a result, these pages are assumed
-   available but can not be allocated.  The cluster contains these pages
-   can be moved to frag_clusters list after it's all available pages were
-   allocated.
-
-2) When the cluster mentioned in 1) is the only cluster in
-   frag_clusters list, cluster_alloc_swap_entry() assume order 0
-   allocation will never failed and will enter a deadloop by keep trying
-   to allocate page from the only cluster in frag_clusters which contains
-   no actually available page.
-
-Call setup_swap_extents() to get the final maxpages before
-swap_info_struct initialization to fix the issue.
-
-After this change, span will include badblocks and will become large
-value which I think is correct value:
-In summary, there are two kinds of swapfile_activate operations.
-1. Filesystem style: Treat all blocks logical continuity and find
-usable physical extents in logical range. In this way, si->pages
-will be actual usable physical blocks and span will be "1 +
-highest_block - lowest_block".
-2. Block device style: Treat all blocks physically continue and
-only one single extent is added. In this way, si->pages will be
-si->max and span will be "si->pages - 1".
-Actually, si->pages and si->max is only used in block device style
-and span value is set with si->pages. As a result, span value in
-block device style will become a larger value as you mentioned.
-
-I think larger value is correct based on:
-1. Span value in filesystem style is "1 + highest_block -
-lowest_block" which is the range cover all possible phisical blocks
-including the badblocks.
-2. For block device style, si->pages is the actual usable block
-number and is already in pr_info. The original span value before
-this patch is also refer to usable block number which is redundant
-in pr_info.
-
-Link: https://lkml.kernel.org/r/20250522122554.12209-3-shikemeng@huaweicloud.com
-Fixes: 661383c6111a ("mm: swap: relaim the cached parts that got scanned")
-Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
-Reviewed-by: Baoquan He <bhe@redhat.com>
----
-v1->v2:
--Fix typo
--Add description of behavior change of "span" in git log
--Ensure si->pages == si->max - 1 after setup_swap_extents()
-
- mm/swapfile.c | 53 +++++++++++++++++++++++++--------------------------
- 1 file changed, 26 insertions(+), 27 deletions(-)
-
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 68ce283e84be..57397434929e 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -3141,43 +3141,30 @@ static unsigned long read_swap_header(struct swap_info_struct *si,
- 	return maxpages;
- }
- 
--static int setup_swap_map_and_extents(struct swap_info_struct *si,
--					union swap_header *swap_header,
--					unsigned char *swap_map,
--					unsigned long maxpages,
--					sector_t *span)
-+static int setup_swap_map(struct swap_info_struct *si,
-+			  union swap_header *swap_header,
-+			  unsigned char *swap_map,
-+			  unsigned long maxpages)
- {
--	unsigned int nr_good_pages;
- 	unsigned long i;
--	int nr_extents;
--
--	nr_good_pages = maxpages - 1;	/* omit header page */
- 
-+	swap_map[0] = SWAP_MAP_BAD; /* omit header page */
- 	for (i = 0; i < swap_header->info.nr_badpages; i++) {
- 		unsigned int page_nr = swap_header->info.badpages[i];
- 		if (page_nr == 0 || page_nr > swap_header->info.last_page)
- 			return -EINVAL;
- 		if (page_nr < maxpages) {
- 			swap_map[page_nr] = SWAP_MAP_BAD;
--			nr_good_pages--;
-+			si->pages--;
- 		}
- 	}
- 
--	if (nr_good_pages) {
--		swap_map[0] = SWAP_MAP_BAD;
--		si->max = maxpages;
--		si->pages = nr_good_pages;
--		nr_extents = setup_swap_extents(si, span);
--		if (nr_extents < 0)
--			return nr_extents;
--		nr_good_pages = si->pages;
--	}
--	if (!nr_good_pages) {
-+	if (!si->pages) {
- 		pr_warn("Empty swap-file\n");
- 		return -EINVAL;
- 	}
- 
--	return nr_extents;
-+	return 0;
- }
- 
- #define SWAP_CLUSTER_INFO_COLS						\
-@@ -3217,7 +3204,7 @@ static struct swap_cluster_info *setup_clusters(struct swap_info_struct *si,
- 	 * Mark unusable pages as unavailable. The clusters aren't
- 	 * marked free yet, so no list operations are involved yet.
- 	 *
--	 * See setup_swap_map_and_extents(): header page, bad pages,
-+	 * See setup_swap_map(): header page, bad pages,
- 	 * and the EOF part of the last cluster.
- 	 */
- 	inc_cluster_info_page(si, cluster_info, 0);
-@@ -3363,6 +3350,21 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
- 		goto bad_swap_unlock_inode;
- 	}
- 
-+	si->max = maxpages;
-+	si->pages = maxpages - 1;
-+	nr_extents = setup_swap_extents(si, &span);
-+	if (nr_extents < 0) {
-+		error = nr_extents;
-+		goto bad_swap_unlock_inode;
-+	}
-+	if (si->pages != si->max - 1) {
-+		pr_err("swap:%u != (max:%u - 1)\n", si->pages, si->max);
-+		error = -EINVAL;
-+		goto bad_swap_unlock_inode;
-+	}
-+
-+	maxpages = si->max;
-+
- 	/* OK, set up the swap map and apply the bad block list */
- 	swap_map = vzalloc(maxpages);
- 	if (!swap_map) {
-@@ -3374,12 +3376,9 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
- 	if (error)
- 		goto bad_swap_unlock_inode;
- 
--	nr_extents = setup_swap_map_and_extents(si, swap_header, swap_map,
--						maxpages, &span);
--	if (unlikely(nr_extents < 0)) {
--		error = nr_extents;
-+	error = setup_swap_map(si, swap_header, swap_map, maxpages);
-+	if (error)
- 		goto bad_swap_unlock_inode;
--	}
- 
- 	/*
- 	 * Use kvmalloc_array instead of bitmap_zalloc as the allocation order might
--- 
-2.36.1
-
+Ah forgot to rebase - this should really be in the next patch !
 
