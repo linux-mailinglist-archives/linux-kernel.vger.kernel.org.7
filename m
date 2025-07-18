@@ -1,127 +1,108 @@
-Return-Path: <linux-kernel+bounces-737366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D216B0AB64
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 23:25:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09FC6B0AB6D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 23:27:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB2AA188ECF8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 21:25:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81E62AA16E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 21:26:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265C521D5BE;
-	Fri, 18 Jul 2025 21:24:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B9821D5B2;
+	Fri, 18 Jul 2025 21:27:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XlSLolAD"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1k3SEokf";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XTTfwGcf"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0794621ABDB;
-	Fri, 18 Jul 2025 21:24:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6164C21D3F3
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 21:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752873893; cv=none; b=YSz1vBaUmR44utFjOFv7Erw8Plqa2eO3WXnacKyaasY8F3HyW2+7FsHR/Mohw8Vfqi9q4tEG226Aj3+czXx5+Avz3XWjMO0HqUdaYaryi/VEBqBTG64snzoo+4JtpS3/Tlxbhwd1AOPmrYR88lchkRJnXzLpYR7dLs6/2uVaNg8=
+	t=1752874024; cv=none; b=kPSHzcuQXUsHgIVsA5aoobIAx5bxlxM6DTYrUPC2bqT5PdzNnkwAwWTpoUiBm5dZSTgn7O1pmaEBOZqBZl21weM/e2pTbmpjOurGz2xzGhjD0LlmY/8bC3LV4fcfxOCnyckMk2hTLFUy46itBDiDBAnt3qx5pAwNllvJsmpEbfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752873893; c=relaxed/simple;
-	bh=im0LTQLxPAOeG/77Xo+4Zf+M8+BWkj92FwbmNijiq08=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IliCpP/RRBDRqmHy5bEzfLt+XHCXQjONU7XPQAhFlkGF5SKxEC9uCCqM2TNTLRM0Pa5rOpdYKzUC5PxqLPduKRtLGUOfpOl4wpnAmyJhEUNb5KraO0SeEnlKHwxD8tERznP4nopsLdwKYXruhrZK1VwGmXLFKyi7N5a/ONbiVkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XlSLolAD; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a4f379662cso1863132f8f.0;
-        Fri, 18 Jul 2025 14:24:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752873890; x=1753478690; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t7hWuC5RvJazo5XlM0dlOAfjH8Jrh55sZo4UkN4XHdM=;
-        b=XlSLolAD/CfbcXSIDd01xnSLNjupCjJUOaKh40sqFmQNm4ChOkgZuSrF1iq2a0qpMr
-         vD778I1MzufPlWz9y8sZW7ZtM1G1ipYdQZQyRfus5rfVaC7pZCvVFxYgRB6g43+OgvTl
-         ToS9GyFLknEFkmkPXKyXubNNiTfG5fVVLQ5BPxu3uEnXEu/nGMttmwflvZalCFwL2fYJ
-         dP4dge3f2kIsC+F9G7SRmpB71PS82USUR1YwaavavhHO4GM1KK2EtYwo0bicJA3sYqmF
-         x/hzxStKeW/0IqIF9GYTZyHFfda6FHHiJgVrzOMjOEWN6MwMzphbiFGigyVLRt7yo+tu
-         tm6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752873890; x=1753478690;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t7hWuC5RvJazo5XlM0dlOAfjH8Jrh55sZo4UkN4XHdM=;
-        b=eFkgUZzuXrILZdSrkYBS/ACxPOsajUacAVzF2EXLlpRAFx5BUNtL9lqCtsFuvOERWK
-         b77dtI8mm+g/1IMrJCcZfj/NDYNLXDnr2D8GNJS4HZo0D+pDWZyJ3dcPArqa111M2ygc
-         ogRXzeZ8M7sihFJV+zKNxQ02+URajqTX6MoKabERJs/rlSWHHKzhyqzuRf+P/jDIZB//
-         NfF7yytiZohF9h41VSa70ZK5cYf4k/1EzpORVHMC8uFrppdg8Dw2Nk/+45Gp3KjyRNhv
-         fPAh6dvUAXLN72uLKaNmmoI86xH3DUUD5ihoK+lHyEKH8+3zrptrEy/12S+AnMrepZEd
-         HgoA==
-X-Forwarded-Encrypted: i=1; AJvYcCUacKEdYLhFX709QVcdLyFD51AbnUxFIKByGfFlbsAOzwr1j5VJTy3p5Qyz0kEsuOaHGO6MQf6CEwwnIa5ROJM=@vger.kernel.org, AJvYcCWNbwC6HMldE5ozx+02HjgpZGICNXyRCVb6mJk7RdTLz3lekiKdopuA6exZX3I4rZUxHcpCggpHhJzEg9ZaI0QgsYwa@vger.kernel.org, AJvYcCWzScDZo3PM6x6KOFBNRSj6748qikWX7gnd4u9avhzL5v0XEfDzPdv7MfyShk5TwU4H5BjymscIdSqw+F2Q@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDZI0cgw8Qp6yZK1Z1bxgT7ze/6eq2maStGqRk10rVlwY2ScGK
-	NBfpneIXddYWwDs35xR7K8nEAFi0+As8C3MEdQpjtYqVfpeLn3VnL2tL
-X-Gm-Gg: ASbGncuYdHQbwKdTT/lWPF/z9kLrwbxdZzCMl1W5rsX4IhUClv6UOmoRoYZLKGVbMcX
-	r+p/DKXswha3MBgeRlVjP2CJRp14cGNMBQ/208t83vOS7ygQSq4/lUi53JywmH/Ej82uipmCO+H
-	AD+0traRGxoPREhtmJOmMpHXvWi6UyCwlLayOID2i+K//pAcchQ9JvVcrfSyNaXyJgXrDqCXxP9
-	OvZOpqDK5CIcSH/fkdAdXBq9sB+mWmzhLKhzT0btWeFXr3jDq/FO7538B2RXUWQ/v3RUIu89EqZ
-	cb2xgTzv/9y/wiy1YRBqbOkS46bPAq25ZH9sdLM/1YL5UfTuvGuPYW/1dcc0lmVpDjQBAx34qp0
-	aoOXvA0ICdDWr6A0oLq1dgc9iSl7k1Z2AuCmtyAr+PY33zpP7mFDr9s158/a9
-X-Google-Smtp-Source: AGHT+IEmq7tvpzQGV1xWuIhLQqWelIwDGHeGg+CQxLmril0favWmgaefoWQjbU1qA85RWMATzxD8Bg==
-X-Received: by 2002:a05:6000:2285:b0:3a4:f7ae:77ca with SMTP id ffacd0b85a97d-3b60e4b8585mr10851424f8f.3.1752873889957;
-        Fri, 18 Jul 2025 14:24:49 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca4d786sm2928732f8f.72.2025.07.18.14.24.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jul 2025 14:24:49 -0700 (PDT)
-Date: Fri, 18 Jul 2025 22:24:48 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-trace-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ring-buffer: make the const read-only 'type' static
-Message-ID: <20250718222448.13162080@pumpkin>
-In-Reply-To: <20250714160858.1234719-1-colin.i.king@gmail.com>
-References: <20250714160858.1234719-1-colin.i.king@gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1752874024; c=relaxed/simple;
+	bh=2CM4PM4YcNwNTDoDpIwtc5IwfgnCElSJzdiwNdBTOB0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=caIL8l7mwOsOKHOexXUJHo37B6LN2F1lkkDx67M6J2WkPQvQzsUV/kMfjqxk+bmRP29UEK0jBnL6NnZeBYj+p1dcLz9aaY7p21iwa4GEs5fN9BDqP95uK0FhUSz4aSiSlR71YYJ3G9C7WZHjLBcnzTGNiPxZrcaZTZv3DR6L8fM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1k3SEokf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XTTfwGcf; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752874020;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HNzdv87a/rWq9tLSyEQPN0gDEde6E0UtRnippuxMHZM=;
+	b=1k3SEokf2DBVJWgiF+T/xnJOe2eEqWGJLJ00C8SsTwH8x1nM5SZiBDmLZUebOhfii+iVuG
+	s4+tESctQnG48CFtQHqPgJwTltmpCoGIi2OyV/1oz6yHpnLeulrQnGooaWGSkHpY97elqF
+	InEmN3BmvnWJfTfz45eaVaHk6La2pBV3EkfKx5fZcSwca6eNLFm62SJJiOaBxlZcpCzbYg
+	F14bdVOShusu5A7bNHEUESC4troKiGYNlYfZHIlCSEsEvyHEM94Q3CRWKsE7NscCOwM2bo
+	4maJC7nsozVTPffITe3MFsv8Phg/ZQJ/8iR76dyJuWP6JP39vHxYHCpfCb0ZpA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752874020;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HNzdv87a/rWq9tLSyEQPN0gDEde6E0UtRnippuxMHZM=;
+	b=XTTfwGcffydfGuv9QlkDzZ39VMlTjrkghsf4EOfBdgI7BhVW6CZYXQHAY0fGzaXv/laho9
+	ZnSs1FsFSv4KQoDA==
+To: Marc Zyngier <maz@kernel.org>
+Cc: Breno Leitao <leitao@debian.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>, Jonathan
+ Cameron <Jonathan.Cameron@huawei.com>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, Mark
+ Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>, Sascha
+ Bischoff <sascha.bischoff@arm.com>, Timothy Hayes <timothy.hayes@arm.com>,
+ Will Deacon <will@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ kvmarm@lists.linux.dev
+Subject: Re: [GIT PULL] irqchip: Add GICv5 support
+In-Reply-To: <20250717122306.4043011-1-maz@kernel.org>
+References: <20250717122306.4043011-1-maz@kernel.org>
+Date: Fri, 18 Jul 2025 23:26:58 +0200
+Message-ID: <87y0slur4t.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On Mon, 14 Jul 2025 17:08:58 +0100
-Colin Ian King <colin.i.king@gmail.com> wrote:
+Marc!
 
-> Don't populate the read-only 'type' on the stack at run time,
-> instead make it static.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  kernel/trace/ring_buffer.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-> index 00fc38d70e86..39aa1f50274f 100644
-> --- a/kernel/trace/ring_buffer.c
-> +++ b/kernel/trace/ring_buffer.c
-> @@ -4118,7 +4118,7 @@ EXPORT_SYMBOL_GPL(ring_buffer_unlock_commit);
->  
->  static const char *show_irq_str(int bits)
->  {
-> -	const char *type[] = {
-> +	static const char * type[] = {
+On Thu, Jul 17 2025 at 13:23, Marc Zyngier wrote:
 
-Better would be:
-	static const char type[][4] = {
+> Thomas,
+>
+> After some time simmering in -next without much catching fire (only a
+> single regression has been reported, which was promptly fixed), here's
+> the pull request for the GICv5 core infrastructure.
+>
+> There are still a couple of patches on the list (mostly addressing
+> error paths, and actively being reviewed), but I don't see anything
+> that would warrant holding this any longer, and these fixes can be
+> added down the line. If anything, this work has allowed us to
+> pipe-clean a number of issues in the tree.
+>
+> Please note that the kvmarm tree also carries this branch, as this is
+> a dependency for enabling GICv3 compatibility for guests on a GICv5
+> host.
 
-  David
+I'm fine with keeping this in the kvmarm tree only if that is intended
+to hit the next merge window. There is no point to carry this
+redundantly in two trees, unless there is some conflict to resolve in my
+tree.
 
->  		".",	// 0
->  		"s",	// 1
->  		"h",	// 2
+If the kvmarm stuff is not ready yet, then please let me know and I
+happily pull in the pile.
 
+Thanks,
+
+        tglx
 
