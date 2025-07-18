@@ -1,136 +1,159 @@
-Return-Path: <linux-kernel+bounces-736488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD145B09D7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:14:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA4B7B09D85
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:15:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 596E0A8655A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:13:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A78BA86EAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:14:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F9DA291C2B;
-	Fri, 18 Jul 2025 08:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C0D292B2E;
+	Fri, 18 Jul 2025 08:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chrisdown.name header.i=@chrisdown.name header.b="SwrTJZYp"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mGzi81tP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503F91D7E42
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 08:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9584C1D7E42;
+	Fri, 18 Jul 2025 08:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752826439; cv=none; b=ZObuAKF0FZYJOKlGefpEnkHB4kdR3pD/WHbyFffvbX4J3cpkz5PNIrnddGeuNfjFDXMBZM7PWPx5HGs5DKEce1M7is1Slmwesqcsr9uiVIxKsWKwtdX/CPsXGny8wkvlVCuzYucrSjw+gMAUBPG1qWlx+egFuXionGwtmjEDszM=
+	t=1752826501; cv=none; b=a1yFKMIKw/lqL9MAchAf/Pu9RLEwlCK3jLq3vYaKEZjSSsifukvueUoNcW+br6PFNP7NOUDTujogqHMEKvmVjwIqYbGSK/wHmqGYyo2wZgx6PxrwLe1UgAEKIOqhjtzezNYkxr3uhyuG/+78t1C+ZVajHikyh/pV2x4ZyMCN7Gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752826439; c=relaxed/simple;
-	bh=2XxJMxqvE/Cjfusd0XxjbthJPfpvtef/UFrkblBe79c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gaug8ay69fd7Ry/MpQbqHy/eTDjXEBnLmE74pFvDNIQpVbSfzEd3FvC3FoJy89X0nr2hbpbi/VfFM+Lu8m2wPbK8p6inDMB5WUw+VVgyY6sm7Ke1K1SiDCaJqQ7oGv+C8fgUmE71l1Q+w6mcAcO7T/uusX5Nl8G6zoA8fMRfMyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chrisdown.name; spf=pass smtp.mailfrom=chrisdown.name; dkim=pass (1024-bit key) header.d=chrisdown.name header.i=@chrisdown.name header.b=SwrTJZYp; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chrisdown.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chrisdown.name
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-747c2cc3419so1594740b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 01:13:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chrisdown.name; s=google; t=1752826437; x=1753431237; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qMPeAL07/lZrKnUkmH8nVJ8wh1GwyumIputOyztfgS4=;
-        b=SwrTJZYpL9BW/5AE1sgr1NXM8fBoz3t/1IYRep4VjasHeMWV8VuVpZ8M/zqGANLyDB
-         oSGqJJMkt4QM82e7f5zleJCHzPLjQyShvTC6XZ7YX8gJ8uG1kdBLOXK0C3l4XMYxl0Ej
-         Ml15xPwaO0fq05wz2sbC34Kn9xNDfrYLOpX/8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752826437; x=1753431237;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qMPeAL07/lZrKnUkmH8nVJ8wh1GwyumIputOyztfgS4=;
-        b=N5NPhNsU1vnTIbOAVBgkBVet4LZ2FPdpuxgnSmQglLezCInm356qWUMYpGOd7mTlAK
-         Vwt2eBl5kgt1JuGD4DGClHhdZkBfMfK2q+fUrPWIrWpDBi6ZpcU5TRcjYZ8ddN8/pEEA
-         t1nAPkHpA471GOhkM3fXriJe8kpPKp5nXepfcxVb/o49RuPTQzTHpWYMwlMSCWUc4JBZ
-         w3lWm5EAVg3ltAy+51rVmtnx/O6TF7OJHamWssj8TAFwgkQVWRXVAVDeUxCmgAaO+7ez
-         NZrDWChAA8BupxdZ1loK0VbBiP4E9hxmyIZpyyScj9W2e9z+52vNCxfyVHPeMinG+Xle
-         +s7w==
-X-Forwarded-Encrypted: i=1; AJvYcCW/qvwASw38fHVsd25XV/rAzZeuMKdPOcC8cQk6lARFPcgluDsMmBKD32NawGzbc9wUfuH6196gsIFF658=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGfgVQiA1s1l1riCR0r5upS+KTlcfgN5ZPHgod0NrJIJIqtvli
-	y27UUrk5EtF08RscWdgj63N8wm0uPs9zn6DuhQnU7hqILV0jsLDycIbGeVi356f+NZRKMR6+uH/
-	5qJx83WM=
-X-Gm-Gg: ASbGnctK9frUuGjGjn5bYBr1dhDGoumjPe6bVXNOtEtXmyWCcLGIkZYlRGxSOn1wUyU
-	Ic0ZIIAxKPBr/BmDGTCFsf6EQmvolnALZFxJhu4cio10ardlSe8LNE86JfJo55ly4vtv/9797oK
-	0Ihn6gZNmSbXo2hgyF1cINp+rZz6L2WtoNw+3jk0tv3LZHYn7yDfmVm/Se6DHZBChYfGb1tDZoV
-	3OXbIYH8jnPsgXW4zHv42Da7HkSHBsr1xQzcTMiQWqo61+3/eE3d/ben0ciciSE6LEx+dd+CkGP
-	xeqTTPJfLU6M6/7Pu3R1qeWPbIHz7anbsibve/CczlSBTcVouHCOG9GNVFbojIw+sY37YscxsVK
-	RXuYyoIHWLipXs8A3kLX/00U3P0Gw2g==
-X-Google-Smtp-Source: AGHT+IG73zCnFU9COboaEFW/fs2gtFK6dqDUiJYlBGv5r2t2tuOfTRYElrNJO1jXi74JhoPkFbTRRw==
-X-Received: by 2002:a05:6a00:23d5:b0:748:323f:ba21 with SMTP id d2e1a72fcca58-759ab639668mr2324482b3a.1.1752826437509;
-        Fri, 18 Jul 2025 01:13:57 -0700 (PDT)
-Received: from localhost ([116.86.186.54])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-759c8eb0e98sm763432b3a.66.2025.07.18.01.13.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jul 2025 01:13:56 -0700 (PDT)
-Date: Fri, 18 Jul 2025 16:13:55 +0800
-From: Chris Down <chris@chrisdown.name>
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-team@fb.com, Jaganath Kanakkassery <jaganath.k.os@gmail.com>
-Subject: Re: [PATCH] Bluetooth: hci_event: Mask data status from LE ext adv
- reports
-Message-ID: <aHoCQ_RfBl5Zm4oQ@chrisdown.name>
-References: <aHfd_H6c9MheDoQP@chrisdown.name>
- <CABBYNZJo48983SWhxcB7UzWXPeUofRCMhQ8mJjih-rJoTET3_Q@mail.gmail.com>
+	s=arc-20240116; t=1752826501; c=relaxed/simple;
+	bh=a1VHiYig2tcCBF/qnEVeRZwRbUaQmriCu4Wwqc44OpY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lWdZId/5UaGyDu08XTz/khZO9X0qIiql+itWf/1aJB6pmV9tehdthpvOry/wXefw06LYwEkc5Av14Dv8Ivk5Wjnwf82PXqE0K1ovGAod7xXCky8uV/kpgkg6yh2LT/AsOYu2xvnDgkSUja8tNOC798B1o+Oqd8xmNPJFmdH/mHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mGzi81tP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBD53C4CEEB;
+	Fri, 18 Jul 2025 08:14:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752826501;
+	bh=a1VHiYig2tcCBF/qnEVeRZwRbUaQmriCu4Wwqc44OpY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mGzi81tPM04nWK2+LRQLytTu69FIv4oYRxTfCiNCu9Q/ABQ3cK3lZQpVP9dnOwonR
+	 uhQ0Utshv1nQ9cRXW7J224yLgtG2846/EO1e8nxCVPtgcrykXewafSarYEqfH7kEMT
+	 I9qIjR95/y5iaduHAfRXS6NFvPOY5mBq+S92nY0+ug9XB496BDAcCUo0PWmopNaok1
+	 g6rjtLl6ObF2eDqEYtb67rNzTslwCsUL09vMHbDWlbCtblRDbpU3W6xka71Ui02tiG
+	 GUYCsXs3apBac5PiMwkI6Z4kUqtTVVzxmymtzp3dKWIqg9jH8PPhNkdJbXIXjv/JIC
+	 MDXIdDT/PJLRg==
+Message-ID: <2691a1ca-7325-4129-999d-61d883d1bac4@kernel.org>
+Date: Fri, 18 Jul 2025 10:14:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CABBYNZJo48983SWhxcB7UzWXPeUofRCMhQ8mJjih-rJoTET3_Q@mail.gmail.com>
-User-Agent: Mutt/2.2.14 (516568dc) (2025-02-20)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/5] arm64: dts: rockchip: rk3399-evb-ind: Add support
+ for DisplayPort
+To: Chaoyi Chen <kernel@airkyi.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Heiko Stuebner
+ <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
+ Andy Yan <andy.yan@rock-chips.com>,
+ Yubing Zhang <yubing.zhang@rock-chips.com>,
+ Frank Wang <frank.wang@rock-chips.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Amit Sunil Dhamne <amitsd@google.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Chaoyi Chen <chaoyi.chen@rock-chips.com>, Dragan Simic <dsimic@manjaro.org>,
+ Johan Jonker <jbx6244@gmail.com>, Diederik de Haas <didi.debian@cknow.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
+References: <20250718062619.99-1-kernel@airkyi.com>
+ <20250718062619.99-6-kernel@airkyi.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20250718062619.99-6-kernel@airkyi.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Luiz,
+On 18/07/2025 08:26, Chaoyi Chen wrote:
+> +			altmodes {
+> +				displayport {
+> +					svid = /bits/ 16 <0xff01>;
+> +					vdo = <0xffffffff>;
+> +				};
+> +			};
+> +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@0 {
+> +					reg = <0>;
+> +
+> +					usbc0_orien_sw: endpoint {
+> +						remote-endpoint = <&tcphy0_orientation_switch>;
 
-Thanks for the review!
+How did you address feedback given here? I don't see any replies.
 
-Luiz Augusto von Dentz writes:
->Can you include a sample trace of the above?
+> +					};
+> +				};
+> +
+> +				port@1 {
+> +					reg = <1>;
+> +
+> +					dp_mode_sw: endpoint {
+> +						remote-endpoint = <&tcphy_dp_altmode_switch>;
+> +					};
+> +				};
 
-Is that with btmon or similar? Sorry, I'm not a regular contributor to this 
-subsystem :-)
 
-I mostly have a personal desire to get this merged because it's a particularly 
-noisy case where I happen to live :-) These are all with 0x40:
 
-   % dmesg | wc -l
-   3815
-   % dmesg | grep -c 'Unknown advertising'
-   3227
-
->Also it would be great to  have a mgmt-tester for example that attempts to 
->generate an advertisement like that to exercise such change.
-
-Looks like that's in Bluez userspace code right, so what's the order of doing 
-these things?
-
->> -       if (evt_type == LE_EXT_ADV_NON_CONN_IND ||
->> -           evt_type & LE_EXT_ADV_DIRECT_IND)
->> +       if (pdu_type == LE_EXT_ADV_NON_CONN_IND ||
->
->I'm not sure I would keep checking for  LE_EXT_ADV_NON_CONN_IND, maybe
->just return LE_ADV_NONCONN_IND, LE_EXT_ADV_NON_CONN_IND is not
->actually a bit it is the absence of any bits being set, so I guess the
->only invalid adv are the ones for legacy which seem to require a bit
->to be set.
-
-So are you thinking of doing this?
-
-   if (!(pdu_type & ~(LE_EXT_ADV_DIRECT_IND)))
-           return LE_ADV_NONCONN_IND;
-
-Thanks for your help!
-
-Chris
+Best regards,
+Krzysztof
 
