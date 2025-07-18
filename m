@@ -1,126 +1,78 @@
-Return-Path: <linux-kernel+bounces-736879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B6CEB0A48C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:57:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FCA5B0A491
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 14:57:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2EAF3AF9CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:56:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B88D25C04D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:57:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC452DBF76;
-	Fri, 18 Jul 2025 12:56:44 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 624562DBF51;
-	Fri, 18 Jul 2025 12:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98DE92DAFC3;
+	Fri, 18 Jul 2025 12:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="WLuqDgIY"
+Received: from r3-23.sinamail.sina.com.cn (r3-23.sinamail.sina.com.cn [202.108.3.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505D52DA75C
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 12:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752843404; cv=none; b=k9OtGVlx4WKyZIfTr2VueAe2AH2Y1oBrW5kZ7wtSwz6meOU2Xx/mr5DlMEUzos+28Ep2Wuj9K/LXWyp138f/QTScLDM2eAtCHCZ/cfagx6iaijl/OPRgxAy2DhFNwt/4J24LxrSylnnx8xoADf7cCLE6mEIh8jM9XmLNQE64hAM=
+	t=1752843435; cv=none; b=W8I8q51BJ9klQn8y02yMUUYcSnvyMU40kChWV5IJCvit7FqGswx1x/RJHw5attINhqLo8Y8PiQCwSjtTI3YY7fbNrDUS6U3TZD1/UbfViJbp50D4VYfYPiIFrooR6mi730Em+EaXbkOkPcbm3oWZTye9DGR8y4nhKXzZyVcwLTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752843404; c=relaxed/simple;
-	bh=tJiqVXRt0a+gvJ9l3cFrPtNY47CPPeIvbURs6OLnEjo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pIJe2/iy2z3b2o3BsoTf3FSFYHeCKlSD5j4OL5Pv8/c6iBnZQUrjcDAsit82Sna38jmnrugIMnlUiErjxNrUUc2WqAyEGRMrLJUJNafU7kbNJ1B8fgaJn91SM7DCp2fJgBqGaRMCqhnHGUl1Ob14P3wwYjyGc79iIVqlyDNksmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5049B15A1;
-	Fri, 18 Jul 2025 05:56:34 -0700 (PDT)
-Received: from [10.57.1.4] (unknown [10.57.1.4])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B98733F6A8;
-	Fri, 18 Jul 2025 05:56:38 -0700 (PDT)
-Message-ID: <b4169471-fcd0-4415-8281-c5bd722e5f2b@arm.com>
-Date: Fri, 18 Jul 2025 13:56:36 +0100
+	s=arc-20240116; t=1752843435; c=relaxed/simple;
+	bh=FH1pglRH3yAZRNLGE3tPi+sWRv0MyE01bV+s+YUV5QI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=LTCc4U/ihkAJKfVAhVN9qmOyF0xWW/m0NAuWfjqbhXhGJ2CTWPFYMcZbzbVjI4wJu3PG+zXp9ZeWjfNpQmcpwGC67w+Ine5575lLYQEMWElYoiZ9q5JCFS4v5XQGM6lPot5c6xO19jgHXmxZfoTeyUiLWH5iAlKNu9E5Q2a4V5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=WLuqDgIY; arc=none smtp.client-ip=202.108.3.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1752843429;
+	bh=QsntRwVuTNW3g2lel1bEzTGGy0quz5L7jFv6tl1mAeo=;
+	h=From:Subject:Date:Message-ID;
+	b=WLuqDgIY4a2ow5WDq6MtHY23Z41L5bBxvfP/lKPzoTLyHD1zn811P19ViqEyz87q1
+	 vEzjJzOLZqzVxjUibgoFzlxMRcees2hLUcPv9yn9Nke7Yu8SrAwzieWmAd2JCiIMQf
+	 wgoDs5+KusNlIKxnjrsWOiNSTjr9ckS9YclQTcjI=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.31) with ESMTP
+	id 687A449B0000154D; Fri, 18 Jul 2025 20:57:01 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 2693856816076
+X-SMAIL-UIID: F0315DC85F164657BE537261CFB111D7-20250718-205701-1
+From: Hillf Danton <hdanton@sina.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: syzbot <syzbot+ebfd0e44b5c11034e1eb@syzkaller.appspotmail.com>,
+	akpm@linux-foundation.org,
+	liam.howlett@oracle.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	syzkaller-bugs@googlegroups.com,
+	vbabka@suse.cz
+Subject: Re: [syzbot] [mm?] KASAN: slab-use-after-free Read in mas_next_slot (2)
+Date: Fri, 18 Jul 2025 20:56:48 +0800
+Message-ID: <20250718125649.2411-1-hdanton@sina.com>
+In-Reply-To: <1b307a1f-2667-4f06-afab-a49061129e77@lucifer.local>
+References: <20250717014623.2253-1-hdanton@sina.com> <68787417.a70a0220.693ce.0037.GAE@google.com> <8a2f1892-3184-4aaf-91ea-522e9ba2391b@lucifer.local> <20250717234212.2329-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/5] iommu: Add verisilicon IOMMU driver
-To: Will Deacon <will@kernel.org>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>
-Cc: joro@8bytes.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, heiko@sntech.de, nicolas.dufresne@collabora.com,
- jgg@ziepe.ca, iommu@lists.linux.dev, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, kernel@collabora.com
-References: <20250710082450.125585-1-benjamin.gaignard@collabora.com>
- <20250710082450.125585-4-benjamin.gaignard@collabora.com>
- <aHTzPwTob8_5rtBS@willie-the-truck>
- <baa1fcde-f167-4a1b-afca-0a2957a688cc@collabora.com>
- <aHozv0NG1OBlAH6c@willie-the-truck>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <aHozv0NG1OBlAH6c@willie-the-truck>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 2025-07-18 12:45 pm, Will Deacon wrote:
-> On Mon, Jul 14, 2025 at 04:56:53PM +0200, Benjamin Gaignard wrote:
->> Le 14/07/2025 à 14:08, Will Deacon a écrit :
->>> On Thu, Jul 10, 2025 at 10:24:44AM +0200, Benjamin Gaignard wrote:
->>>> +/* vsi iommu regs address */
->>>> +#define VSI_MMU_CONFIG1_BASE			0x1ac
->>>> +#define VSI_MMU_AHB_EXCEPTION_BASE		0x380
->>>> +#define VSI_MMU_AHB_CONTROL_BASE		0x388
->>>> +#define VSI_MMU_AHB_TLB_ARRAY_BASE_L_BASE	0x38C
->>>> +
->>>> +/* MMU register offsets */
->>>> +#define VSI_MMU_FLUSH_BASE		0x184
->>>> +#define VSI_MMU_BIT_FLUSH		BIT(4)
->>>> +
->>>> +#define VSI_MMU_PAGE_FAULT_ADDR		0x380
->>>> +#define VSI_MMU_STATUS_BASE		0x384	/* IRQ status */
->>>> +
->>>> +#define VSI_MMU_BIT_ENABLE		BIT(0)
->>>> +
->>>> +#define VSI_MMU_OUT_OF_BOUND		BIT(28)
->>>> +/* Irq mask */
->>>> +#define VSI_MMU_IRQ_MASK		0x7
->>>> +
->>>> +#define VSI_DTE_PT_ADDRESS_MASK		0xffffffc0
->>>> +#define VSI_DTE_PT_VALID		BIT(0)
->>>> +
->>>> +#define VSI_PAGE_DESC_LO_MASK		0xfffff000
->>>> +#define VSI_PAGE_DESC_HI_MASK		GENMASK_ULL(39, 32)
->>>> +#define VSI_PAGE_DESC_HI_SHIFT		(32 - 4)
->>> How does this page-table format relate to the one supported already by
->>> rockchip-iommu.c? From a quick glance, I suspect this is a derivative
->>> and so ideally we'd be able to have a common implementation of the
->>> page-table code which can be used by both of the drivers.
->>>
->>> Similarly:
->>
->> No they comes from different IP providers, this one is from Verisilicon.
->> I agree they looks very similar and my first attempt was to add it into
->> rockchip-iommu code but when doing it I realize that registers addresses
->> where all different so I had to code all the functions twice.
+On Fri, 18 Jul 2025 12:08:44 +0100 Lorenzo Stoakes wrote:
 > 
-> Understood, and I'm not suggesting to merge the drivers or try to
-> consolidate the register layouts. What I _am_ saying is that the
-> in-memory page-table format should be factored out in a way that can
-> be reused by the two drivers and also that some of the logic (as highlighted
-> by vsi_iommu_domain_free()) is practically identical between the drivers
-> and should also be shared.
-
-All they really have in common is that they're 2-level formats with 
-32-bit PTEs and 10 bits per level (as is tegra-smmu too). The permission 
-encodings have some overlap but are not fully equivalent. Crucially, the 
-schemes for packing >32-bit PAs into PTEs are incompatibly different, so 
-if you're really keen to genericise things to *that* extent, that's what 
-Jason's already working on.
-
-As for domain_free, you could argue that it also looks basically the 
-same as exynos_iommu_domain_free(), because at the end of the day, 
-there's only so many ways to free a 2-level pagetable, and it's at least 
-better than what, say, sun50i, omap or tegra are doing (or rather, not 
-doing...)
-
-Cheers,
-Robin.
+> Go away Hillf.
+> 
+Are you paid much more than thought lad to do so?
 
