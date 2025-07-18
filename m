@@ -1,409 +1,261 @@
-Return-Path: <linux-kernel+bounces-736120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 078ACB0990D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:07:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C76BB0990B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:06:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64B1C1C4430B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 01:07:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57E813A8424
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 01:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4719872630;
-	Fri, 18 Jul 2025 01:07:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="TvUjQrbD"
-Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4F386352;
+	Fri, 18 Jul 2025 01:06:31 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65AF027453;
-	Fri, 18 Jul 2025 01:07:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A76288D6
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 01:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752800839; cv=none; b=YIWs2abhoCYRZRszreHdbz8v0oqyI9rCJFFKdpV5gn2MW+CfViXMHD7kt7SHqK0E5MYzPTqdH4ZyHcFv5orstwoWUtK9+ZEwsgeRdrvEFdQdaGgza7lkcN7oKicVYKclU41TeH2Qn8o8109SsIy0Lvh3YstBTpucvDh/Jwl7ooc=
+	t=1752800791; cv=none; b=OgyS0zriyktgqlwPE+fM1XEnRIq/6r6yLuE83699bbYDNrE3ILsQK/5fFWjGsUA+ze3ZpiulucL3+0R4nTWXal71M8mAxq0y/6MQcxq1zFX88FbkDE0vLOHzFzQnXoPczbCcw09uIQLS58saGGOX+sjk7rOpVIdKWp8NmOb4OPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752800839; c=relaxed/simple;
-	bh=P35ctYQB+qX139Wn/jlhweNkG+cX1k1ocNbEvPbIGc8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=MmW4f2sNomjL0DJakfi55kKawti4T4kO1FXSMq99ADE+OPbU2VXUMjbnXbwUjGArENvMCIx/geiR4ULCEv7/qV4gj46w6fzOIoSdt0FkV1Kg2pRbtPAj0cdUeVW0Z/XaLTS4wIf5RiUVVPFuWf4K5H74TFt+/5cMWBSPb/hgw38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=TvUjQrbD; arc=none smtp.client-ip=54.206.16.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1752800752;
-	bh=04m7qtTQGyGCwKsiOHgoQYjPy58h9DvSWn62UdQPUBo=;
-	h=From:Date:Subject:MIME-Version:Message-Id:To;
-	b=TvUjQrbDh6s4hrQH/jaR4DeDG0sgawQzDiUe1N4MztL5wQ7JIL5dLL8duwjtpyi+T
-	 J34EJSQL1cQ+n39ea2CxhxZWub5dWjWYaSoDWepaPNN9g8F8WsGyWcm64qpPwsg/qX
-	 1wpkSzNWWMSJe4M0BETRvBdMDH1Xdvtg1qo4BREk=
-X-QQ-mid: esmtpgz10t1752800745t3c8184ea
-X-QQ-Originating-IP: i/fm1UR6BReSQanUlzyIoj+ThdTztcK3EctZ8aHBx58=
-Received: from = ( [61.145.255.150])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 18 Jul 2025 09:05:44 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 4963373291552723371
-EX-QQ-RecipientCnt: 7
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Date: Fri, 18 Jul 2025 09:05:42 +0800
-Subject: [PATCH v2] i2c: spacemit: configure ILCR for accurate SCL
- frequency
+	s=arc-20240116; t=1752800791; c=relaxed/simple;
+	bh=xes/QDIUIHN8EjLPNglaHTdMVrh+eaR9Yu4cJRkqgvY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=A0Z0wDzg6cVWAfyPLqDhdSCBfGwTOyEc8NLcjaVVsm0XNInRTUVufpN+kbaMUYsu6okTxE3tkHQc8oyc/qXKviHLnTuQQFtryfNv8FJj1dJz40R9zsQDPRIPvgihg/Z2VsiAylfVjWLJ0L3jF584asJI4D9up0yJ3YuKnyNTQAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-86d07944f29so286426639f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 18:06:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752800788; x=1753405588;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eTCmAiawRnsaiyTbtDIy39I8p5t+nIktnBNUX6f7pVs=;
+        b=gXbEONgss5Ra1LTHDj7DjexEC9sVHodhG/Cyri0seLfA2eG/exj45gFdb6wbcw5doj
+         mqO63ZIB1Px2RPRR66KRhyGpL9uVGsGsKISRlOtoow4ezlGtCGKbEpDxt+Bd4/3mRkBW
+         Nlpwzp5Y/Ccu29CPc9wxCg9ECrJuLGItGALR36ziey5NDkPThhGyy+cbd9x7wFmNGBim
+         9gf2k+b1sWWmHXRnnw0knyK2SKJGc8cEHtOoTxB6Xq1IqFSCmsdDbt7jNtxg3h3sqwJI
+         zYeFqiGPplQj4BhxkT8li0Kp53zZUmFylCMC/0SUOqxgxhRcUhma3QYmvi1zLT4Uing5
+         3YdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWl+uY/QziKrrvakiat6Y1RAIhZ2xKGoHuAE9W75Eezlb4gHj8Ir0mS9+XiUCi8idZ/tYaMMO4U9HJcF58=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCYe8W/7bEQGF+4KA9nlCSUPqkRZEvBUAlU71nmCv+/L0q50MP
+	CBdB3Y3aMBI4E2QyRTnPPYN76pGPxE4uSkcF8dR9qaWgozhrUp+hCfV4jMGBnR/070DOWiQSqbK
+	zdf6pNUJ97ZJslxyOSqQFjvs+Yp7TevvVDOIXcPG0T8ylyupWHEj4p96afZM=
+X-Google-Smtp-Source: AGHT+IH2UKxeeLEZ4G42S5gvaf+QK0Sz21VtE6bhTD8VX4NfAMmMbvpk2Z6joXFekBozKJfmv6fEb2xhh9UmwB5E07gABuBShYgU
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250718-k1-i2c-ilcr-v2-1-b4c68f13dcb1@linux.spacemit.com>
-X-B4-Tracking: v=1; b=H4sIAOWdeWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHQUlJIzE
- vPSU3UzU4B8JSMDI1MDcwNL3WxD3UyjZN3MnOQi3dREYxPzVAMLU4NEEyWgjoKi1LTMCrBp0bG
- 1tQAyjPloXQAAAA==
-X-Change-ID: 20250709-k1-i2c-ilcr-ea347e0850a4
-To: Andi Shyti <andi.shyti@kernel.org>, Yixun Lan <dlan@gentoo.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
- Troy Mitchell <troy.mitchell@linux.spacemit.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752800744; l=10640;
- i=troy.mitchell@linux.spacemit.com; s=20250710; h=from:subject:message-id;
- bh=P35ctYQB+qX139Wn/jlhweNkG+cX1k1ocNbEvPbIGc8=;
- b=GSUDIzqNMmHu35O5GWUupsWv06nVVa4IJxTDTGGV6MqZcFxq86daETDsi55jkakNbwSz9nJ9l
- MU6+J36zgxaDd7OpiFBsvD+onMmVIRrGKk3hGQ4i5d6xWWA3AUi9vkT
-X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=ed25519;
- pk=lQa7BzLrq8DfZnChqmwJ5qQk8fP2USmY/4xZ2/MSsXc=
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: My5OXIb+boh/wBK1SMv6URqtzON8yQSv2imDGhYyCDJ2TPG5NDcsZ75N
-	dMWaJEYDK8/oXVn9M9pcVVgXO2W3ZjGzgMoyDAVFwJurxvYFI+u7zWUADlEnLRpxytr8LkF
-	vmjP4ZwqRnsd31srGs5kvSEJyONFS5tbdgX6bKQKInnFwKCAQ2DVNpak1PKW4f+RDB0zwCR
-	7iYby61klFwQ0sviQj2nGs4oM1MhfY4eIv9EtcqpiMk5Q2xhFKMplf2j0ls031gN/E1n4El
-	s79qc1Hp6kxw/g4ZUGJkJqF/ep4lHrBDQFLIeJogTQ/3SdMvTXlWxXF5CPf+M9Qu8IdE2jn
-	nxarc32TXsTgJ4T7hqEN2FXEYyxu1pi2hyAhEMkMNwPvybt5ApmVFGp8C7O2mcFxB77MsYR
-	eKmVi0cgfZq3tQYiSQERjo/o4EBagA6P5c2nwkr+UoVtZzgHHdOuzKqVO/9NJB23uKdHQq3
-	RrJDgFsYXII6khCtuTNZjl0VfGC0SGj3unMnUKnyUMs9v8cbFRBziw/qxmR7FfGGHhLX43K
-	/5yXYWrF1rvxSFhOsvnn3rBtMEuKzymQNNnA33Phj0NrNhublPm/REKOnAF5j1W++qxvB+l
-	9KvTCTA6Q3/txuOoO9rv3BKJVSAHE/NLePN3OyuDJb/iI9vCVkDgK0mgq1eMQ3blMWzOG9S
-	p1yDvxid6EysSbvu2L7+pcydEaYBCbs3A2wXyruJJ7HZZhGgUY2FBNOIoqenRM3WR+jjS5C
-	vSTM+pfUuNcGCpvzVAOwaFwwK/osAHbFGnYG2dliSQiVq4W5psVgo099KOcVNyJ7OCsQmWn
-	J3vjA+SCY9SmVuMYyCjCHnzCIwCSZ3TzFkQYTLt2oItrQBTa4OHJvLZ68Fr6ePmc8hO+Uia
-	K3t9hkNJhh9tzHeprJ0tNGWHopGSwP6JS+IF6bQYM9rgm9717euKEpmO8JWwbddxHLOS72C
-	C4/ysSGhTVIAuWTo1woWsl7cV6Jyn1LNcSJgU58LaLGuQWc9m+S225BYBtq4JImgfVLmT5b
-	+xIlmUplv1yp9M9Mi68uJiEDwdBzjFM78JR9ODczr6T6BRqFWco/4HoLEAWz4OvZT+6UWri
-	Lxrz/p+vX5AxQ9q/XAB/FI=
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-X-QQ-RECHKSPAM: 0
+X-Received: by 2002:a05:6602:488a:b0:87c:a93:da20 with SMTP id
+ ca18e2360f4ac-87c0a93dc07mr305789739f.10.1752800788459; Thu, 17 Jul 2025
+ 18:06:28 -0700 (PDT)
+Date: Thu, 17 Jul 2025 18:06:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68799e14.a00a0220.3af5df.0025.GAE@google.com>
+Subject: [syzbot] [netfilter?] KASAN: slab-out-of-bounds Read in nfacct_mt_checkentry
+From: syzbot <syzbot+4ff165b9251e4d295690@syzkaller.appspotmail.com>
+To: coreteam@netfilter.org, davem@davemloft.net, edumazet@google.com, 
+	fw@strlen.de, horms@kernel.org, kadlec@netfilter.org, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, pabeni@redhat.com, pablo@netfilter.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The SpacemiT I2C controller's SCL (Serial Clock Line) frequency for
-master mode operations is determined by the ILCR (I2C Load Count Register).
-Previously, the driver relied on the hardware's reset default
-values for this register.
+Hello,
 
-The hardware's default ILCR values (SLV=0x156, FLV=0x5d) yield SCL
-frequencies lower than intended. For example, with the default
-31.5 MHz input clock, these default settings result in an SCL
-frequency of approximately 93 kHz (standard mode) when targeting 100 kHz,
-and approximately 338 kHz (fast mode) when targeting 400 kHz.
-These frequencies are below the 100 kHz/400 kHz nominal speeds.
+syzbot found the following issue on:
 
-This patch integrates the SCL frequency management into
-the Common Clock Framework (CCF). Specifically, the ILCR register,
-which acts as a frequency divider for the SCL clock, is now registered
-as a managed clock (scl_clk) within the CCF.
+HEAD commit:    5d5d62298b8b Merge tag 'x86_urgent_for_v6.16_rc6' of git:/..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1655418c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b309c907eaab29da
+dashboard link: https://syzkaller.appspot.com/bug?extid=4ff165b9251e4d295690
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=156787d4580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=136787d4580000
 
-This patch also cleans up unnecessary whitespace
-in the included header files.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/621a2e2bbe6e/disk-5d5d6229.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1822022cd8cb/vmlinux-5d5d6229.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/10cee653a6cd/bzImage-5d5d6229.xz
 
-Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
----
-Changelog in v2:
-- Align line breaks.
-- Check `lv` in `clk_set_rate` function.
-- Force fast mode when SCL frequency is illegal or unavailable.
-- Change "linux/bits.h" to <linux/bits.h>
-- Kconfig: Add dependency on CCF.
----
- drivers/i2c/busses/Kconfig  |   2 +-
- drivers/i2c/busses/i2c-k1.c | 180 ++++++++++++++++++++++++++++++++++++++++----
- 2 files changed, 167 insertions(+), 15 deletions(-)
+The issue was bisected to:
 
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index c8d115b58e449b59a38339b439190dcb0e332965..1382b6c257fa4ba4cf5098d684c1bbd5e2636fd4 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -797,7 +797,7 @@ config I2C_JZ4780
- config I2C_K1
- 	tristate "SpacemiT K1 I2C adapter"
- 	depends on ARCH_SPACEMIT || COMPILE_TEST
--	depends on OF
-+	depends on OF && COMMON_CLK
- 	help
- 	  This option enables support for the I2C interface on the SpacemiT K1
- 	  platform.
-diff --git a/drivers/i2c/busses/i2c-k1.c b/drivers/i2c/busses/i2c-k1.c
-index b68a21fff0b56b59fe2032ccb7ca6953423aad32..3a6aeea245b56a3c3e63bb67b623495a6bec848b 100644
---- a/drivers/i2c/busses/i2c-k1.c
-+++ b/drivers/i2c/busses/i2c-k1.c
-@@ -3,17 +3,20 @@
-  * Copyright (C) 2024-2025 Troy Mitchell <troymitchell988@gmail.com>
-  */
- 
-- #include <linux/clk.h>
-- #include <linux/i2c.h>
-- #include <linux/iopoll.h>
-- #include <linux/module.h>
-- #include <linux/of_address.h>
-- #include <linux/platform_device.h>
-+#include <linux/bits.h>
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/i2c.h>
-+#include <linux/iopoll.h>
-+#include <linux/module.h>
-+#include <linux/of_address.h>
-+#include <linux/platform_device.h>
- 
- /* spacemit i2c registers */
- #define SPACEMIT_ICR		 0x0		/* Control register */
- #define SPACEMIT_ISR		 0x4		/* Status register */
- #define SPACEMIT_IDBR		 0xc		/* Data buffer register */
-+#define SPACEMIT_ILCR		 0x10		/* Load Count Register */
- #define SPACEMIT_IBMR		 0x1c		/* Bus monitor register */
- 
- /* SPACEMIT_ICR register fields */
-@@ -80,6 +83,19 @@
- #define SPACEMIT_BMR_SDA         BIT(0)		/* SDA line level */
- #define SPACEMIT_BMR_SCL         BIT(1)		/* SCL line level */
- 
-+#define SPACEMIT_LCR_LV_STANDARD_SHIFT		0
-+#define SPACEMIT_LCR_LV_FAST_SHIFT		9
-+#define SPACEMIT_LCR_LV_STANDARD_WIDTH		9
-+#define SPACEMIT_LCR_LV_FAST_WIDTH		9
-+#define SPACEMIT_LCR_LV_STANDARD_MAX_VALUE	GENMASK(SPACEMIT_LCR_LV_STANDARD_WIDTH - 1, 0)
-+#define SPACEMIT_LCR_LV_FAST_MAX_VALUE		GENMASK(SPACEMIT_LCR_LV_FAST_WIDTH - 1, 0)
-+#define SPACEMIT_LCR_LV_STANDARD_MASK		GENMASK(SPACEMIT_LCR_LV_STANDARD_SHIFT +\
-+						SPACEMIT_LCR_LV_STANDARD_WIDTH - 1,\
-+						SPACEMIT_LCR_LV_STANDARD_SHIFT)
-+#define SPACEMIT_LCR_LV_FAST_MASK		GENMASK(SPACEMIT_LCR_LV_FAST_SHIFT +\
-+						SPACEMIT_LCR_LV_FAST_WIDTH - 1,\
-+						SPACEMIT_LCR_LV_FAST_SHIFT)
-+
- /* i2c bus recover timeout: us */
- #define SPACEMIT_I2C_BUS_BUSY_TIMEOUT		100000
- 
-@@ -95,11 +111,20 @@ enum spacemit_i2c_state {
- 	SPACEMIT_STATE_WRITE,
- };
- 
-+enum spacemit_i2c_mode {
-+	SPACEMIT_MODE_STANDARD,
-+	SPACEMIT_MODE_FAST
-+};
-+
- /* i2c-spacemit driver's main struct */
- struct spacemit_i2c_dev {
- 	struct device *dev;
- 	struct i2c_adapter adapt;
- 
-+	struct clk_hw scl_clk_hw;
-+	struct clk *scl_clk;
-+	enum spacemit_i2c_mode mode;
-+
- 	/* hardware resources */
- 	void __iomem *base;
- 	int irq;
-@@ -120,6 +145,88 @@ struct spacemit_i2c_dev {
- 	u32 status;
- };
- 
-+static void spacemit_i2c_scl_clk_disable_unprepare(void *data)
-+{
-+	struct spacemit_i2c_dev *i2c = data;
-+
-+	clk_disable_unprepare(i2c->scl_clk);
-+}
-+
-+static void spacemit_i2c_scl_clk_exclusive_put(void *data)
-+{
-+	struct spacemit_i2c_dev *i2c = data;
-+
-+	clk_rate_exclusive_put(i2c->scl_clk);
-+}
-+
-+static int spacemit_i2c_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-+				     unsigned long parent_rate)
-+{
-+	struct spacemit_i2c_dev *i2c = container_of(hw, struct spacemit_i2c_dev, scl_clk_hw);
-+	u32 lv, lcr, mask, shift, max_lv;
-+
-+	lv = DIV_ROUND_UP(parent_rate, rate);
-+
-+	if (i2c->mode == SPACEMIT_MODE_STANDARD) {
-+		mask = SPACEMIT_LCR_LV_STANDARD_MASK;
-+		shift = SPACEMIT_LCR_LV_STANDARD_SHIFT;
-+		max_lv = SPACEMIT_LCR_LV_STANDARD_MAX_VALUE;
-+	} else if (i2c->mode == SPACEMIT_MODE_FAST) {
-+		mask = SPACEMIT_LCR_LV_FAST_MASK;
-+		shift = SPACEMIT_LCR_LV_FAST_SHIFT;
-+		max_lv = SPACEMIT_LCR_LV_FAST_MAX_VALUE;
-+	}
-+
-+	if (!lv || lv > max_lv) {
-+		dev_err(i2c->dev, "set scl clock failed: lv 0x%x", lv);
-+		return -EINVAL;
-+	}
-+
-+	lcr = readl(i2c->base + SPACEMIT_ILCR);
-+	lcr &= ~mask;
-+	lcr |= lv << shift;
-+	writel(lcr, i2c->base + SPACEMIT_ILCR);
-+
-+	return 0;
-+}
-+
-+static long spacemit_i2c_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-+					unsigned long *parent_rate)
-+{
-+	u32 lv, freq;
-+
-+	lv = DIV_ROUND_UP(*parent_rate, rate);
-+	freq = DIV_ROUND_UP(*parent_rate, lv);
-+
-+	return freq;
-+}
-+
-+static unsigned long spacemit_i2c_clk_recalc_rate(struct clk_hw *hw,
-+						  unsigned long parent_rate)
-+{
-+	struct spacemit_i2c_dev *i2c = container_of(hw, struct spacemit_i2c_dev, scl_clk_hw);
-+	u32 lcr, lv = 0;
-+
-+	lcr = readl(i2c->base + SPACEMIT_ILCR);
-+
-+	if (i2c->mode == SPACEMIT_MODE_STANDARD)
-+		lv = (lcr >> SPACEMIT_LCR_LV_STANDARD_SHIFT) &
-+		     GENMASK(SPACEMIT_LCR_LV_STANDARD_WIDTH - 1, 0);
-+	else if (i2c->mode == SPACEMIT_MODE_FAST)
-+		lv = (lcr >> SPACEMIT_LCR_LV_FAST_SHIFT) &
-+		     GENMASK(SPACEMIT_LCR_LV_FAST_WIDTH - 1, 0);
-+	else
-+		return 0;
-+
-+	return DIV_ROUND_UP(parent_rate, lv);
-+}
-+
-+static const struct clk_ops spacemit_i2c_clk_ops = {
-+	.set_rate = spacemit_i2c_clk_set_rate,
-+	.round_rate = spacemit_i2c_clk_round_rate,
-+	.recalc_rate = spacemit_i2c_clk_recalc_rate,
-+};
-+
- static void spacemit_i2c_enable(struct spacemit_i2c_dev *i2c)
- {
- 	u32 val;
-@@ -138,6 +245,27 @@ static void spacemit_i2c_disable(struct spacemit_i2c_dev *i2c)
- 	writel(val, i2c->base + SPACEMIT_ICR);
- }
- 
-+static struct clk *spacemit_i2c_register_scl_clk(struct spacemit_i2c_dev *i2c,
-+						 struct clk *parent)
-+{
-+	struct clk_init_data init;
-+	char name[32];
-+
-+	snprintf(name, sizeof(name), "%s_scl_clk", dev_name(i2c->dev));
-+
-+	init.name = name;
-+	init.ops = &spacemit_i2c_clk_ops;
-+	init.parent_data = (struct clk_parent_data[]) {
-+		{ .fw_name = "func" },
-+	};
-+	init.num_parents = 1;
-+	init.flags = 0;
-+
-+	i2c->scl_clk_hw.init = &init;
-+
-+	return devm_clk_register(i2c->dev, &i2c->scl_clk_hw);
-+}
-+
- static void spacemit_i2c_reset(struct spacemit_i2c_dev *i2c)
- {
- 	writel(SPACEMIT_CR_UR, i2c->base + SPACEMIT_ICR);
-@@ -224,7 +352,7 @@ static void spacemit_i2c_init(struct spacemit_i2c_dev *i2c)
- 	 */
- 	val |= SPACEMIT_CR_DRFIE;
- 
--	if (i2c->clock_freq == SPACEMIT_I2C_MAX_FAST_MODE_FREQ)
-+	if (i2c->mode == SPACEMIT_MODE_FAST)
- 		val |= SPACEMIT_CR_MODE_FAST;
- 
- 	/* disable response to general call */
-@@ -519,14 +647,15 @@ static int spacemit_i2c_probe(struct platform_device *pdev)
- 		dev_warn(dev, "failed to read clock-frequency property: %d\n", ret);
- 
- 	/* For now, this driver doesn't support high-speed. */
--	if (!i2c->clock_freq || i2c->clock_freq > SPACEMIT_I2C_MAX_FAST_MODE_FREQ) {
--		dev_warn(dev, "unsupported clock frequency %u; using %u\n",
--			 i2c->clock_freq, SPACEMIT_I2C_MAX_FAST_MODE_FREQ);
-+	if (i2c->clock_freq > SPACEMIT_I2C_MAX_STANDARD_MODE_FREQ &&
-+	    i2c->clock_freq <= SPACEMIT_I2C_MAX_FAST_MODE_FREQ) {
-+		i2c->mode = SPACEMIT_MODE_FAST;
-+	} else if (i2c->clock_freq && i2c->clock_freq <= SPACEMIT_I2C_MAX_STANDARD_MODE_FREQ) {
-+		i2c->mode = SPACEMIT_MODE_STANDARD;
-+	} else {
-+		dev_warn(i2c->dev, "invalid clock-frequency, using fast mode");
-+		i2c->mode = SPACEMIT_MODE_FAST;
- 		i2c->clock_freq = SPACEMIT_I2C_MAX_FAST_MODE_FREQ;
--	} else if (i2c->clock_freq < SPACEMIT_I2C_MAX_STANDARD_MODE_FREQ) {
--		dev_warn(dev, "unsupported clock frequency %u; using %u\n",
--			 i2c->clock_freq,  SPACEMIT_I2C_MAX_STANDARD_MODE_FREQ);
--		i2c->clock_freq = SPACEMIT_I2C_MAX_STANDARD_MODE_FREQ;
- 	}
- 
- 	i2c->dev = &pdev->dev;
-@@ -548,10 +677,33 @@ static int spacemit_i2c_probe(struct platform_device *pdev)
- 	if (IS_ERR(clk))
- 		return dev_err_probe(dev, PTR_ERR(clk), "failed to enable func clock");
- 
-+	i2c->scl_clk = spacemit_i2c_register_scl_clk(i2c, clk);
-+	if (IS_ERR(i2c->scl_clk))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(i2c->scl_clk),
-+				     "failed to register scl clock\n");
-+
- 	clk = devm_clk_get_enabled(dev, "bus");
- 	if (IS_ERR(clk))
- 		return dev_err_probe(dev, PTR_ERR(clk), "failed to enable bus clock");
- 
-+	ret = clk_set_rate_exclusive(i2c->scl_clk, i2c->clock_freq);
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret, "failed to set exclusive rate for SCL clock");
-+
-+	ret = devm_add_action_or_reset(dev, spacemit_i2c_scl_clk_exclusive_put, i2c);
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret,
-+				"failed to register cleanup action for exclusive SCL clock rate");
-+
-+	ret = clk_prepare_enable(i2c->scl_clk);
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret, "failed to prepare and enable clock");
-+
-+	ret = devm_add_action_or_reset(dev, spacemit_i2c_scl_clk_disable_unprepare, i2c);
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret,
-+				"failed to register cleanup action for clk disable and unprepare");
-+
- 	spacemit_i2c_reset(i2c);
- 
- 	i2c_set_adapdata(&i2c->adapt, i2c);
+commit 6001a930ce0378b62210d4f83583fc88a903d89d
+Author: Pablo Neira Ayuso <pablo@netfilter.org>
+Date:   Mon Feb 15 11:28:07 2021 +0000
+
+    netfilter: nftables: introduce table ownership
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=133e518c580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=10be518c580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=173e518c580000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+4ff165b9251e4d295690@syzkaller.appspotmail.com
+Fixes: 6001a930ce03 ("netfilter: nftables: introduce table ownership")
+
+==================================================================
+BUG: KASAN: slab-out-of-bounds in string_nocheck lib/vsprintf.c:639 [inline]
+BUG: KASAN: slab-out-of-bounds in string+0x231/0x2b0 lib/vsprintf.c:721
+Read of size 1 at addr ffff88801eac95c8 by task syz-executor183/5851
+
+CPU: 0 UID: 0 PID: 5851 Comm: syz-executor183 Not tainted 6.16.0-rc5-syzkaller-00276-g5d5d62298b8b #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0xca/0x230 mm/kasan/report.c:480
+ kasan_report+0x118/0x150 mm/kasan/report.c:593
+ string_nocheck lib/vsprintf.c:639 [inline]
+ string+0x231/0x2b0 lib/vsprintf.c:721
+ vsnprintf+0x739/0xf00 lib/vsprintf.c:2874
+ vprintk_store+0x3c7/0xd00 kernel/printk/printk.c:2279
+ vprintk_emit+0x21e/0x7a0 kernel/printk/printk.c:2426
+ _printk+0xcf/0x120 kernel/printk/printk.c:2475
+ nfacct_mt_checkentry+0xd2/0xe0 net/netfilter/xt_nfacct.c:41
+ xt_check_match+0x3d1/0xab0 net/netfilter/x_tables.c:523
+ __nft_match_init+0x63a/0x840 net/netfilter/nft_compat.c:520
+ nf_tables_newexpr net/netfilter/nf_tables_api.c:3493 [inline]
+ nf_tables_newrule+0x178c/0x2890 net/netfilter/nf_tables_api.c:4324
+ nfnetlink_rcv_batch net/netfilter/nfnetlink.c:525 [inline]
+ nfnetlink_rcv_skb_batch net/netfilter/nfnetlink.c:648 [inline]
+ nfnetlink_rcv+0x1132/0x2520 net/netfilter/nfnetlink.c:666
+ netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+ netlink_unicast+0x759/0x8e0 net/netlink/af_netlink.c:1346
+ netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
+ sock_sendmsg_nosec net/socket.c:712 [inline]
+ __sock_sendmsg+0x219/0x270 net/socket.c:727
+ ____sys_sendmsg+0x505/0x830 net/socket.c:2566
+ ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
+ __sys_sendmsg net/socket.c:2652 [inline]
+ __do_sys_sendmsg net/socket.c:2657 [inline]
+ __se_sys_sendmsg net/socket.c:2655 [inline]
+ __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2655
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fa7bbf1c6a9
+Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fff7139c908 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007fff7139cad8 RCX: 00007fa7bbf1c6a9
+RDX: 0000000000000000 RSI: 0000200000000000 RDI: 0000000000000003
+RBP: 00007fa7bbf8f610 R08: 0000000000000002 R09: 00007fff7139cad8
+R10: 0000000000000009 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007fff7139cac8 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+
+Allocated by task 5851:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0x93/0xb0 mm/kasan/common.c:394
+ kasan_kmalloc include/linux/kasan.h:260 [inline]
+ __do_kmalloc_node mm/slub.c:4328 [inline]
+ __kmalloc_noprof+0x27a/0x4f0 mm/slub.c:4340
+ kmalloc_noprof include/linux/slab.h:909 [inline]
+ kzalloc_noprof include/linux/slab.h:1039 [inline]
+ nf_tables_newrule+0x1506/0x2890 net/netfilter/nf_tables_api.c:4306
+ nfnetlink_rcv_batch net/netfilter/nfnetlink.c:525 [inline]
+ nfnetlink_rcv_skb_batch net/netfilter/nfnetlink.c:648 [inline]
+ nfnetlink_rcv+0x1132/0x2520 net/netfilter/nfnetlink.c:666
+ netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+ netlink_unicast+0x759/0x8e0 net/netlink/af_netlink.c:1346
+ netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
+ sock_sendmsg_nosec net/socket.c:712 [inline]
+ __sock_sendmsg+0x219/0x270 net/socket.c:727
+ ____sys_sendmsg+0x505/0x830 net/socket.c:2566
+ ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
+ __sys_sendmsg net/socket.c:2652 [inline]
+ __do_sys_sendmsg net/socket.c:2657 [inline]
+ __se_sys_sendmsg net/socket.c:2655 [inline]
+ __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2655
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff88801eac9580
+ which belongs to the cache kmalloc-cg-96 of size 96
+The buggy address is located 0 bytes to the right of
+ allocated 72-byte region [ffff88801eac9580, ffff88801eac95c8)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1eac9
+flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000000 ffff88801a449640 dead000000000122 0000000000000000
+raw: 0000000000000000 0000000080200020 00000000f5000000 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 1, tgid 1 (swapper/0), ts 2776913905, free_ts 0
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1704
+ prep_new_page mm/page_alloc.c:1712 [inline]
+ get_page_from_freelist+0x21e4/0x22c0 mm/page_alloc.c:3669
+ __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:4959
+ alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2419
+ alloc_slab_page mm/slub.c:2451 [inline]
+ allocate_slab+0x8a/0x3b0 mm/slub.c:2619
+ new_slab mm/slub.c:2673 [inline]
+ ___slab_alloc+0xbfc/0x1480 mm/slub.c:3859
+ __slab_alloc mm/slub.c:3949 [inline]
+ __slab_alloc_node mm/slub.c:4024 [inline]
+ slab_alloc_node mm/slub.c:4185 [inline]
+ __do_kmalloc_node mm/slub.c:4327 [inline]
+ __kmalloc_noprof+0x305/0x4f0 mm/slub.c:4340
+ kmalloc_noprof include/linux/slab.h:909 [inline]
+ kzalloc_noprof include/linux/slab.h:1039 [inline]
+ __register_sysctl_table+0x72/0x1340 fs/proc/proc_sysctl.c:1380
+ user_namespace_sysctl_init+0x25/0x150 kernel/ucount.c:355
+ do_one_initcall+0x233/0x820 init/main.c:1274
+ do_initcall_level+0x137/0x1f0 init/main.c:1336
+ do_initcalls+0x69/0xd0 init/main.c:1352
+ kernel_init_freeable+0x3d9/0x570 init/main.c:1584
+ kernel_init+0x1d/0x1d0 init/main.c:1474
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+page_owner free stack trace missing
+
+Memory state around the buggy address:
+ ffff88801eac9480: 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc
+ ffff88801eac9500: 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc
+>ffff88801eac9580: 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc
+                                              ^
+ ffff88801eac9600: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88801eac9680: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+
 
 ---
-base-commit: 733923397fd95405a48f165c9b1fbc8c4b0a4681
-change-id: 20250709-k1-i2c-ilcr-ea347e0850a4
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Best regards,
--- 
-Troy Mitchell <troy.mitchell@linux.spacemit.com>
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
