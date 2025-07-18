@@ -1,125 +1,300 @@
-Return-Path: <linux-kernel+bounces-736282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D47A6B09AF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 07:29:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1E27B09AFB
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 07:39:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D360D5A20E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 05:29:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16F5A586A8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 05:39:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E30D31E5718;
-	Fri, 18 Jul 2025 05:29:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A496E1E5B78;
+	Fri, 18 Jul 2025 05:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="W46kVCg0"
-Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lzShy1Of"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5882E3701;
-	Fri, 18 Jul 2025 05:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284EA3C1F
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 05:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752816573; cv=none; b=SZTwxaddmKnn9TsNcgPenzZiRZphY/8k6H/nBYDuYrb/vfQ1qkmAn6R8cN5XBSzotUErZ3e5yBbaYcVscBeI42DaY7bO5EWiyOjtKO/lwnzHJ3z1La+eUHv3sJg/U7wx94XqNNph9inML5MK6kc7YVkP8TtzDqzbtis8QQT51mw=
+	t=1752817147; cv=none; b=RX2IcEnStJb2uVZWWOHunmcG/DjSxrMvYpQ4y7vONhh1pP8dX5gasdWk7gPF3QP27pltd8C3iRwlZJjuz6Zeptw61KamGBXQ0tFygoqRsmdiJyo54iFddvsDGWy7I6RyKnT10sQeshz5wz7QiPuoWhcHsCWYDpQo9+M/osX2OVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752816573; c=relaxed/simple;
-	bh=m2miZFl5NgGe92LTcMBCK2TMuOH0GrVO+wRE0y1hl6c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S9VsfHwNOtpB2rc2Dnqxetwt/qhvxjn+6RXQb3AEl8kcqCdJvzxgLkv5YWnwr6pSLtwn8c1+4vppfp7lxS8hkghVQB3q8rUu7rWR4i56Z2wHZRLcJ8C/M1iwBfVaDNV2a+kHz7ZT7uwtgKYlNODXdpjyeDDYT/t4bEJnjzzucz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=W46kVCg0; arc=none smtp.client-ip=115.124.30.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1752816561; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=zqVP7ZJu/yyqnzJzHTqxeHX8EL7nFVPdLIswEFCIT7k=;
-	b=W46kVCg0VGYhkosD+BO6CLUHv3WWgUbg7XlIyVW76x7qBzmdGBtOyzaFKNwwB7Z4baooZgaNwNrEln/Ghvuj+B4Sd/ffJeNw49sOyn7/lI69k4lP11c/166RArmH3gQhDnQ53enOymSH46B7ZJqmeDL+v3bQ7Q166T87xfXwgRI=
-Received: from 30.246.162.71(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WjBAWRW_1752816558 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 18 Jul 2025 13:29:20 +0800
-Message-ID: <e92f8d1f-457c-4248-8397-81b0e20ff4af@linux.alibaba.com>
-Date: Fri, 18 Jul 2025 13:29:18 +0800
+	s=arc-20240116; t=1752817147; c=relaxed/simple;
+	bh=3VRHSLbfFMV30+oHmvvg99voIwMBnQiupyrlI5aH2h8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hbpZE+q0pQLDfOhmHgnt8P5y3G2Z4g0TmtMqAFDO82o+cvu6BYi+GfziKDG7duHpB8H/b5c3TdtsV/Dv2zYykPwrUuDF/yoCk3OS2I5FDPOQqu6Gf5ABeFxWo+GXPVu7fqPiCLKt2ySxIwWlpiE0X0GGGlNPaUR4GbolsEELD6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lzShy1Of; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56I04QPo016007
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 05:39:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=G1mpECc2DWmohZNB1xSF+YezHshSuAdDAe7
+	QU653A4c=; b=lzShy1OfI7f6bvyZxXjSUWvF1eokn40YLVl3C86E2clgV7gAHQT
+	Dv6IpcCLteB9ENMYBuOg/qczLMFwcqxSbJzigv+8j/pK6qZnRrHPgzE1WC7okr23
+	MeQDPcRmIaiPYCmHpcLvlfN9uhDOv1X+7mpoFHypF4y0OnAo93/e9KdA1jLNtdYL
+	PzJbHm39fudUBlF/ouwhHyReJ+BEre1UVRbCqIoWFS44e4kIwp7sWn3TCWQ2O57l
+	rnn/z79Bk9QODlm3AYiGIVkmhX89YAVWcOVX7dQFzMwYFxNwmTCDtMwmKXIdtbHY
+	G1eqE4pJzLG2IJQfx9j9Ebc7WCUhQ58VdTw==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47y3tc24fx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 05:39:05 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2365ab89b52so16212395ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 22:39:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752817144; x=1753421944;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G1mpECc2DWmohZNB1xSF+YezHshSuAdDAe7QU653A4c=;
+        b=ErN5DvdWwshh/HfkBhlPtlDCSFwJNY0S7e2GDoW3oEMLSH+i+LHIsS5ffWUCFYwvhy
+         leMLlTHsy4cWusPQe8rqfl5jmYGgYNohDgeghP4uaO95pVe9YVrobA20iJfutMGK9EnI
+         RwQwwdpTQ60y98+UgRl+7m+RnlUKMH6JxeY7+FCEEwiRYkRgD/r8uu554N8fZhH2U6hE
+         778m/DeRYvkiMmcML1lx0DggASxmFvx2NjkznRNBjAw2PRjldkX8pmUbvBfEp5bKlnr0
+         SbtJVVkUgfACWQDkcshgSYzsLWvkGQ3DgEeXBoLaX6cJWe2jVeC9nt09aMAn+Lt8XrSg
+         jAWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWVleYW3OccMhWQqihj23hm8banZQRwdovhftyMGPpSk9Dt2dzaaQo5sLwCbRHt2fFyEiOxIxMi1YbElwg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhlZ+9nrhZNmpHlYqthHLrzfQriU7xh9ow84vxAcBrvCRVxaQw
+	4hzlqzQvVORJaSxv2zeS7/tbx0YpE/gQd2IAXF+PVEQGTV6w+I6ZPN0jQtNGpEPFtrKYjWKIZK2
+	7EjUYvgITWTGXeUT5LgGgq6hgma7nf/Vuteri0T6tY3rkZFbz6rTp6dNY/QKP5IpwONo=
+X-Gm-Gg: ASbGncuP6CAhVKwtxIYDTxyPQ03puGdl1UzTxv2cRZD5XA6gJ3BjDAWEvKosc6WtRYo
+	86Hi1fkZTrVR5nRJt/qK90z8Lk8w+8g8Kf078ks8RZJfXvShWYGbjfMTJ+doUsnISFRxAHai3yF
+	0zIlj+F6UsYJu9WLYeGG9il2CaRZnLAbUAe+yRFSPDr4+U8/gcKHBTd5A+N2mu+XKEnXteGjLN7
+	DneE8UzF1nubrK/udtdUv0taCBd/5LzoiNCUxi80Cd0mpffDC04DqWkFJXjvqeK6+/ZODNFYj5t
+	r6kjZ2fDplonHrC8Jm/NzYnD8klASPbbhb7DtTVHvJugZj/UI9zfdJogz4ALSR0MHwIPMQe796I
+	nHQ==
+X-Received: by 2002:a17:903:3d0d:b0:234:f4da:7eed with SMTP id d9443c01a7336-23e3b84f72emr25656825ad.44.1752817144254;
+        Thu, 17 Jul 2025 22:39:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEUgIQzh7Rce+Nz24SOwgDJNcyIJqreqf4m/9u80kOmZepuCO5O32Z9VbH3vpFrqTpTRPzxAg==
+X-Received: by 2002:a17:903:3d0d:b0:234:f4da:7eed with SMTP id d9443c01a7336-23e3b84f72emr25656475ad.44.1752817143782;
+        Thu, 17 Jul 2025 22:39:03 -0700 (PDT)
+Received: from hu-kriskura-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3f2fe67f96sm536916a12.13.2025.07.17.22.39.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Jul 2025 22:39:03 -0700 (PDT)
+From: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+Subject: [PATCH v4] usb: dwc3: qcom: Remove extcon functionality from glue
+Date: Fri, 18 Jul 2025 11:08:56 +0530
+Message-Id: <20250718053856.2859946-1-krishna.kurapati@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8] PCI: hotplug: Add a generic RAS tracepoint for hotplug
- event
-To: Matthew W Carlis <mattc@purestorage.com>, helgaas@kernel.org,
- lukas@wunner.de, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>
-Cc: anil.s.keshavamurthy@intel.com, bhelgaas@google.com, bp@alien8.de,
- davem@davemloft.net, ilpo.jarvinen@linux.intel.com,
- linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- lukas@wunner.de, mark.rutland@arm.com, mathieu.desnoyers@efficios.com,
- mhiramat@kernel.org, naveen@kernel.org, oleg@redhat.com,
- peterz@infradead.org, rostedt@goodmis.org, tianruidong@linux.alibaba.com,
- tony.luck@intel.com
-References: <20250717235055.GA2664149@bhelgaas>
- <20250718034616.26250-1-mattc@purestorage.com>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <20250718034616.26250-1-mattc@purestorage.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=Z5PsHGRA c=1 sm=1 tr=0 ts=6879ddf9 cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=HsaRtseu1FE5unmruSMA:9
+ a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-ORIG-GUID: N7zT0Qw1vXZ5NeOBlpnPmqPWLcQA-mcH
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE4MDA0MiBTYWx0ZWRfX890/Zw96uxf0
+ buwfPo7XET1SUzDwj2IS6gR4HLSpF1guJnk0J5W4PszdRb82mJk89pcsjxCHb66gmqzmQC0YASN
+ ODtYdw8xUHUkSDKDcc42YAiGwV2dOeHSmRtnVCigRnxG+VJoOZ2AbsKXHBQ8rXO4Y0aLNFJ33Vj
+ VSy6zav1ug2upBx4UAHIQ6g82hjHtfvfeSEIn0BSUagSP8V6RTZ1iK/6gsIs/G27u/uMkk+1D8z
+ 30eTvJua3kLkxm86FS+m/YAMkyGqB3jDenn/q0uO6qBW0MpHACoW60wUdP+QPtsMpVT0jk0cwNR
+ BEHTwfDNKdpb+rUBRNosG2+EmUZGJcYEAFRZWGEOl/pbxDJQZPjrfRfgOtvwIBPDLGKSRwHUi43
+ AvAAZgl7gpDDCBeNAoZ6kEb27tmazR3HXXVHuknexrKY8xJmNU/VToRcXUUXBrZGoFsmXGe2
+X-Proofpoint-GUID: N7zT0Qw1vXZ5NeOBlpnPmqPWLcQA-mcH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-18_01,2025-07-17_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 mlxlogscore=999 suspectscore=0 spamscore=0 clxscore=1015
+ mlxscore=0 malwarescore=0 phishscore=0 lowpriorityscore=0 adultscore=0
+ priorityscore=1501 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507180042
 
+Deprecate usage of extcon functionality from the glue driver. Now
+that the glue driver is a flattened implementation, all existing
+DTs would eventually move to new bindings. While doing so let them
+make use of role-switch/ typec frameworks to provide role data
+rather than using extcon. None of the existing in-kernel extcon users
+have moved to using new bindings yet, so this change doesn't affect
+any existing users.
 
+On upstream, summary of targets/platforms using extcon is as follows:
 
-在 2025/7/18 11:46, Matthew W Carlis 写道:
-> On Thu, Jul 17, 2025 Bjorn Helgaas wrote
->> So I think your idea of adding current link speed/width to the "Link
->> Up" event is still on the table, and that does sound useful to me.
-> 
-> We're already reading the link status register here to check DLLA so
-> it would be nice. I guess if everything is healthy we're probably already
-> at the maximum speed by this point.
-> 
->> In the future we might add another tracepoint when we enumerate the
->> device and know the Vendor/Device ID.
-> 
-> I think we might have someone who would be interested in doing it.
+1. MSM8916 and MSM8939 use Chipidea controller, hence the changes have no
+effect on them.
 
+2. Of the other extcon users, most of them use "linux,extcon-usb-gpio"
+driver which relies on id/vbus gpios to inform role changes. This can be
+transitioned to role switch based driver (usb-conn-gpio) while flattening
+those platforms to move away from extcon and rely on role switching.
 
-Hi, all,
+3. The one target that uses dwc3 controller and extcon and is not based
+on reading gpios is "arch/arm64/boot/dts/qcom/msm8996-xiaomi-common.dtsi".
+This platform uses TI's Type-C Port controller chip to provide extcon. If
+usb on this platform is being flattened, then effort should be put in to
+define a usb-c-connector device in DT and make use of role switch in
+TUSB320L driver.
 
-IIUC, the current hotplug event (or presence event) is enough for Matthew.
-and we would like a new tracepoing for link speed change which reports
-speeds.
+Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+---
+Changes in v4:
+Updated commit text to reflect the patch doesn't affect in-kernel users.
+Removed RB tags from v3 since commit text is changed.
 
-For hotplug event, I plan to send a new version to
+Link to v3:
+https://lore.kernel.org/all/20250714044703.2091075-1-krishna.kurapati@oss.qualcomm.com/
 
-1. address Bjorn' concerns about event strings by removing its spaces.
+ drivers/usb/dwc3/dwc3-qcom.c | 90 +-----------------------------------
+ 1 file changed, 1 insertion(+), 89 deletions(-)
 
-#define PCI_HOTPLUG_EVENT							\
-	EM(PCI_HOTPLUG_LINK_UP,			"PCI_HOTPLUG_LINK_UP")		\
-	EM(PCI_HOTPLUG_LINK_DOWN,		"PCI_HOTPLUG_LINK_DOWN")	\
-	EM(PCI_HOTPLUG_CARD_PRESENT,		"PCI_HOTPLUG_CARD_PRESENT")	\
-	EMe(PCI_HOTPLUG_CARD_NOT_PRESENT,	"PCI_HOTPLUG_CARD_NOT_PRESENT")
+diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
+index ca7e1c02773a..a7eaefaeec4d 100644
+--- a/drivers/usb/dwc3/dwc3-qcom.c
++++ b/drivers/usb/dwc3/dwc3-qcom.c
+@@ -11,7 +11,6 @@
+ #include <linux/of_clk.h>
+ #include <linux/module.h>
+ #include <linux/kernel.h>
+-#include <linux/extcon.h>
+ #include <linux/interconnect.h>
+ #include <linux/platform_device.h>
+ #include <linux/phy/phy.h>
+@@ -79,11 +78,6 @@ struct dwc3_qcom {
+ 	struct dwc3_qcom_port	ports[DWC3_QCOM_MAX_PORTS];
+ 	u8			num_ports;
+ 
+-	struct extcon_dev	*edev;
+-	struct extcon_dev	*host_edev;
+-	struct notifier_block	vbus_nb;
+-	struct notifier_block	host_nb;
+-
+ 	enum usb_dr_mode	mode;
+ 	bool			is_suspended;
+ 	bool			pm_suspended;
+@@ -119,8 +113,7 @@ static inline void dwc3_qcom_clrbits(void __iomem *base, u32 offset, u32 val)
+ 
+ /*
+  * TODO: Make the in-core role switching code invoke dwc3_qcom_vbus_override_enable(),
+- * validate that the in-core extcon support is functional, and drop extcon
+- * handling from the glue
++ * validate that the in-core extcon support is functional
+  */
+ static void dwc3_qcom_vbus_override_enable(struct dwc3_qcom *qcom, bool enable)
+ {
+@@ -137,80 +130,6 @@ static void dwc3_qcom_vbus_override_enable(struct dwc3_qcom *qcom, bool enable)
+ 	}
+ }
+ 
+-static int dwc3_qcom_vbus_notifier(struct notifier_block *nb,
+-				   unsigned long event, void *ptr)
+-{
+-	struct dwc3_qcom *qcom = container_of(nb, struct dwc3_qcom, vbus_nb);
+-
+-	/* enable vbus override for device mode */
+-	dwc3_qcom_vbus_override_enable(qcom, event);
+-	qcom->mode = event ? USB_DR_MODE_PERIPHERAL : USB_DR_MODE_HOST;
+-
+-	return NOTIFY_DONE;
+-}
+-
+-static int dwc3_qcom_host_notifier(struct notifier_block *nb,
+-				   unsigned long event, void *ptr)
+-{
+-	struct dwc3_qcom *qcom = container_of(nb, struct dwc3_qcom, host_nb);
+-
+-	/* disable vbus override in host mode */
+-	dwc3_qcom_vbus_override_enable(qcom, !event);
+-	qcom->mode = event ? USB_DR_MODE_HOST : USB_DR_MODE_PERIPHERAL;
+-
+-	return NOTIFY_DONE;
+-}
+-
+-static int dwc3_qcom_register_extcon(struct dwc3_qcom *qcom)
+-{
+-	struct device		*dev = qcom->dev;
+-	struct extcon_dev	*host_edev;
+-	int			ret;
+-
+-	if (!of_property_present(dev->of_node, "extcon"))
+-		return 0;
+-
+-	qcom->edev = extcon_get_edev_by_phandle(dev, 0);
+-	if (IS_ERR(qcom->edev))
+-		return dev_err_probe(dev, PTR_ERR(qcom->edev),
+-				     "Failed to get extcon\n");
+-
+-	qcom->vbus_nb.notifier_call = dwc3_qcom_vbus_notifier;
+-
+-	qcom->host_edev = extcon_get_edev_by_phandle(dev, 1);
+-	if (IS_ERR(qcom->host_edev))
+-		qcom->host_edev = NULL;
+-
+-	ret = devm_extcon_register_notifier(dev, qcom->edev, EXTCON_USB,
+-					    &qcom->vbus_nb);
+-	if (ret < 0) {
+-		dev_err(dev, "VBUS notifier register failed\n");
+-		return ret;
+-	}
+-
+-	if (qcom->host_edev)
+-		host_edev = qcom->host_edev;
+-	else
+-		host_edev = qcom->edev;
+-
+-	qcom->host_nb.notifier_call = dwc3_qcom_host_notifier;
+-	ret = devm_extcon_register_notifier(dev, host_edev, EXTCON_USB_HOST,
+-					    &qcom->host_nb);
+-	if (ret < 0) {
+-		dev_err(dev, "Host notifier register failed\n");
+-		return ret;
+-	}
+-
+-	/* Update initial VBUS override based on extcon state */
+-	if (extcon_get_state(qcom->edev, EXTCON_USB) ||
+-	    !extcon_get_state(host_edev, EXTCON_USB_HOST))
+-		dwc3_qcom_vbus_notifier(&qcom->vbus_nb, true, qcom->edev);
+-	else
+-		dwc3_qcom_vbus_notifier(&qcom->vbus_nb, false, qcom->edev);
+-
+-	return 0;
+-}
+-
+ static int dwc3_qcom_interconnect_enable(struct dwc3_qcom *qcom)
+ {
+ 	int ret;
+@@ -737,11 +656,6 @@ static int dwc3_qcom_probe(struct platform_device *pdev)
+ 	if (qcom->mode != USB_DR_MODE_HOST)
+ 		dwc3_qcom_vbus_override_enable(qcom, true);
+ 
+-	/* register extcon to override sw_vbus on Vbus change later */
+-	ret = dwc3_qcom_register_extcon(qcom);
+-	if (ret)
+-		goto interconnect_exit;
+-
+ 	wakeup_source = of_property_read_bool(dev->of_node, "wakeup-source");
+ 	device_init_wakeup(&pdev->dev, wakeup_source);
+ 
+@@ -749,8 +663,6 @@ static int dwc3_qcom_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ 
+-interconnect_exit:
+-	dwc3_qcom_interconnect_exit(qcom);
+ remove_core:
+ 	dwc3_core_remove(&qcom->dwc);
+ clk_disable:
+-- 
+2.34.1
 
-2. address Ilpo comments by moving pci_hp_event to a common place
-(include/trace/events/pci.h) so that the new comming can also use it.
-
-For link speed change event (perhaps named as pci_link_event),
-I plan to send a seperate patch, which provides:
-
-	TP_STRUCT__entry(
-		__string(	port_name,	port_name	)
-		__field(	unsigned char,	cur_bus_speed	)
-		__field(	unsigned char,	max_bus_speed	)
-  		__field(	unsigned char,	width		)
-  		__field(	unsigned int,	flit_mode	)
-		__field(	unsigned char,	reason		)
-		),
-
-The reason field is from Lukas ideas which indicates why the link speed
-changed, e.g. "hotplug", "autonomous", "thermal", "retrain", etc.
-
-Are you happy with above changes?
-
-Thanks.
-Shuai
 
