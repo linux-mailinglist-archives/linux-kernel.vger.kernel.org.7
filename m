@@ -1,122 +1,108 @@
-Return-Path: <linux-kernel+bounces-736214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E854DB09A23
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 05:21:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63083B09A24
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 05:22:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DA9D1C43F56
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:22:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A5835A267E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:22:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8711AE877;
-	Fri, 18 Jul 2025 03:21:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3016198A2F;
+	Fri, 18 Jul 2025 03:22:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="jlNW1CGI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EeOaozD4"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78C62E36F7;
-	Fri, 18 Jul 2025 03:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C341B2E36F7
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 03:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752808909; cv=none; b=IZ7KaVRmMdKeeEQIS9xL3Hb1rn1OW3JVa2QYkJmDekZ9H9fhjEuu27j1tFFKIJN9A5uBRUjbdGwJV5E/UKlDh1faQBgvDSb5GZfChvjECm4dpC2JWwr2LaVyER6Y3mftcptLODhQEga5fhK0GY4lOvng7C7T08d1/26fy4I2cag=
+	t=1752808934; cv=none; b=Z1SNTbGxF7p8VZyEV4Ff1EV73CI6L7VafLpmsHdvlm2e81663JI7wrdgKpSDzIKHkp7WHX7oTxpZio5Tadn7J4dNbFMSihRs3yDaTCy7vkIvBx+ItqhwuZAJ06YRfWoNGu5HUEIz1IXGa/l61zy0Fi7vy86zwlwNzprbgP+6wmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752808909; c=relaxed/simple;
-	bh=b2fD2BgLJEesI7wAkvlo1CATxqClIgP1m/8XnzokmrE=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=r13xkIznx3IqX2BQUBjiitgXpi3ZGSIJVn12VJBIuEz4w0hXpW6XSkZCRgr25aMA8xjbE4ANEheLluL4Mo/0FyqxBcbzfjBnK/6Nd64xvqP4U3nNG2Vn3CY7IUnDfa61F4PR7ITCmWWNtUn/ForpnGoAzrG7oopE1KtwuBaVsBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=jlNW1CGI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AEADC4CEE3;
-	Fri, 18 Jul 2025 03:21:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1752808908;
-	bh=b2fD2BgLJEesI7wAkvlo1CATxqClIgP1m/8XnzokmrE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jlNW1CGIaibg8DSdi2tsfY+SrzOqS4pUiDUhamKUUFtNSOUILmVESWfDTNGEiEcit
-	 jPxHcPHUT96CedlGF/3+jpPVlLbKR7xLPfMgz7Z0JxkTxZ0EvPcb1D1MsF1YihXovC
-	 ou/ufVwEmgitX0yudX6RwAqpy8sVaogA2/8KsTVE=
-Date: Thu, 17 Jul 2025 20:21:46 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Ye Liu <ye.liu@linux.dev>
-Cc: David Hildenbrand <david@redhat.com>, Davidlohr Bueso
- <dave@stgolabs.net>, "Paul E. McKenney" <paulmck@kernel.org>, Josh Triplett
- <josh@joshtriplett.org>, Frederic Weisbecker <frederic@kernel.org>, Neeraj
- Upadhyay <neeraj.upadhyay@kernel.org>, Joel Fernandes
- <joelagnelf@nvidia.com>, Boqun Feng <boqun.feng@gmail.com>, Uladzislau
- Rezki <urezki@gmail.com>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra
- <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
- <vincent.guittot@linaro.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Ye Liu <liuye@kylinos.cn>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Suren
- Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Steven
- Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Lai Jiangshan <jiangshanlai@gmail.com>,
- Zqiang <qiang.zhang@linux.dev>, Dietmar Eggemann
- <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, Mel Gorman
- <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Zi Yan
- <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, Nico Pache
- <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>, Dev Jain
- <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, Kemeng Shi
- <shikemeng@huaweicloud.com>, Kairui Song <kasong@tencent.com>, Nhat Pham
- <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, Chris Li
- <chrisl@kernel.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- rcu@vger.kernel.org
-Subject: Re: [PATCH] mm: Replace (20 - PAGE_SHIFT) with common macros for
- pages<->MB conversion
-Message-Id: <20250717202146.0b9b8f59eae21da8529af559@linux-foundation.org>
-In-Reply-To: <20250718024134.1304745-1-ye.liu@linux.dev>
-References: <20250718024134.1304745-1-ye.liu@linux.dev>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752808934; c=relaxed/simple;
+	bh=n6utyHrS1klbIJP5UqovfPWnPhkm3jElbTknWQ0KIcY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=STj5AEP7sksBRMUgBbT1KzfmZwxXtMUM+98LoZvzcbcLb9memsj1C9gj9lHUHAdQNyXJjCsFaDr++QQEy7lROafUtDgfNKvFZiLDZeiB2RHF4DSRypXDTZgU/XNUZX8bHvECcbuEJIvLvXQ8n4vQA0nirWcXxl60XxEV3JUC0sM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EeOaozD4; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7d9eac11358so164929785a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 20:22:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752808931; x=1753413731; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=STDQsD1yvbYQKJ20DIXlZqPy3dCRbK5oAjMrl9gSagM=;
+        b=EeOaozD44EEwjjVfLtP8xHrz5LjszPV+YAyQDrfzTd/EYBwegJa/m/GKi9WPOTKvg/
+         RooG+oH2OJ93i+YuET9fm1X6QXJoUyRdR2jsLx4+uRfB41d+8R2RWPjYZzoen3QjAsZ2
+         lqK04NkczlB9jqH05L6liQO7FMTuIpqUphIp5kyWSXdgrAACghSQ7GQ6MpzXJcj8CSb4
+         4Fjb/l4FQROQ0mFVx/9I8jJ6h0awQ/oO3vJGdWllnlz9WakJeI78fsY6tCLafqMg3dP8
+         Y5AcgHIYYZZvqZKc4jpuOiHUe17Ug9ZN1l6ZAtAm/mhnVtHjg524R4U7eLou4u2sR3PD
+         nwbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752808931; x=1753413731;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=STDQsD1yvbYQKJ20DIXlZqPy3dCRbK5oAjMrl9gSagM=;
+        b=cpm3f5he4S08Re94AWNqNC9H0fPCrZKAgs/AIWP53943R/aaxKLrjRHuzYRNknpd5W
+         xdyzheZRta/TFYMoeMmqIk7NJYTj+GmST1Q5Nam8TR5BoKab72xaBVPlOEM2kbamFU7f
+         HbBDxwZnCbD01Ep+ZmqwKA/zFpQBJT2Nt3xH2CwUJmdhiJlwOebRWAA+oXSbXUhqDJrg
+         snXKeX4J5XVDnUrNuK4bVfVroJ56f5LWPO6h2HMzIICytCI4Z1Mwwh/Et/kCW1vh4Mrc
+         0V58H0fb/gY1LVcUdZMT0tjJaltkXcnucL8eGBUR2p676OOu/PRwtotCr+ktKM/jKAkZ
+         Q8ZQ==
+X-Gm-Message-State: AOJu0Ywd9HzPcAAIRrVSUlJQY+jJ+tlhckD4S8u4OJi0Z+sQarpWp7ON
+	X0idhhs9KZMn9BF/ruSbk21gMuBUh+s9BPGAdgYZll+YxedrqVNZ5Tz7Yow+RQ==
+X-Gm-Gg: ASbGncuBDDZ7d/USlFX65UuQl7ohXs0zi7evp1cwM+p10h490TnbMdPN9OLdp6Khmvi
+	7bcUTAlLpgCQMt01XXcNzi7My6Jby+UFjhC6dYW3FVlZ0WNswFaAUa9fnYtZQnBKmt3vVThqF3V
+	V9rmM4cdczeV8MXzLnm7dU6lp0oTN5pBepCeaJ9s9ZZI+lifJeu2i/z3QHB/rAwKYC/2EdPakvC
+	z/VX1fYTzu5H7Y0/vuaGadNm+zYW9cYw2vrlAt2h1N6gjSstwRh05T7V8TPiKSb3KrZRo0xOScY
+	mHMFr/FpE9sndXM/FU54Hfkd3B2cl4sAnJMtFiFwHVBvmduqHkoRChDl8e0dQ9M/NB6RsTRgy2d
+	eG4GHwtnomMmvSFAlKDsYkaWk4Nu6P+u8nQCKMl0n6MQTK06rG6s=
+X-Google-Smtp-Source: AGHT+IEC6JTp/JGOhneMz1pTM3MlZvUY8Hu95wzlpk1ZfgOP6zSUG4B1xM2Efsz8n5qls4LtK3doaA==
+X-Received: by 2002:a05:620a:7088:b0:7e1:a84f:d9f3 with SMTP id af79cd13be357-7e34d8c03c7mr711999785a.7.1752808931053;
+        Thu, 17 Jul 2025 20:22:11 -0700 (PDT)
+Received: from linux-kernel-dev-start.. ([159.203.26.228])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e356c649c0sm39584185a.73.2025.07.17.20.22.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Jul 2025 20:22:10 -0700 (PDT)
+From: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+Subject: [PATCH] Documentation: remove trailing spaces in sysfs-bus-pci
+Date: Fri, 18 Jul 2025 03:21:58 +0000
+Message-Id: <20250718032158.172387-1-vivek.balachandhar@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, 18 Jul 2025 10:41:32 +0800 Ye Liu <ye.liu@linux.dev> wrote:
+Signed-off-by: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+---
+ Documentation/ABI/testing/sysfs-bus-pci | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> From: Ye Liu <liuye@kylinos.cn>
-> 
-> Replace repeated (20 - PAGE_SHIFT) calculations with standard macros:
-> - MB_TO_PAGES(mb)    converts MB to page count
-> - PAGES_TO_MB(pages) converts pages to MB
-> 
-> No functional change.
-> 
-> ...
->
-> +/*
-> + * Convert between pages and MB
-> + * 20 is the shift for 1MB (2^20 = 1MB)
-> + * PAGE_SHIFT is the shift for page size (e.g., 12 for 4KB pages)
-> + * So (20 - PAGE_SHIFT) converts between pages and MB
-> + */
-> +#define PAGES_TO_MB(pages) ((pages) >> (20 - PAGE_SHIFT))
-> +#define MB_TO_PAGES(mb)    ((mb) << (20 - PAGE_SHIFT))
-> +
->  #ifdef CONFIG_SYSCTL
->  extern int sysctl_legacy_va_layout;
->  #else
->
-> ...
->
-> @@ -796,7 +796,7 @@ kfree_scale_thread(void *arg)
->  		pr_alert("Total time taken by all kfree'ers: %llu ns, loops: %d, batches: %ld, memory footprint: %lldMB\n",
->  		       (unsigned long long)(end_time - start_time), kfree_loops,
->  		       rcuscale_seq_diff(b_rcu_gp_test_finished, b_rcu_gp_test_started),
-> -		       (mem_begin - mem_during) >> (20 - PAGE_SHIFT));
-> +		       PAGES_TO_MB(mem_begin - mem_during));
->  
->  		if (shutdown) {
->  			smp_mb(); /* Assign before wake. */
+diff --git a/Documentation/ABI/testing/sysfs-bus-pci b/Documentation/ABI/testing/sysfs-bus-pci
+index 840727fc7..c0f923639 100644
+--- a/Documentation/ABI/testing/sysfs-bus-pci
++++ b/Documentation/ABI/testing/sysfs-bus-pci
+@@ -171,7 +171,7 @@ Description:
+ 		binary file containing the Vital Product Data for the
+ 		device.  It should follow the VPD format defined in
+ 		PCI Specification 2.1 or 2.2, but users should consider
+-		that some devices may have incorrectly formatted data.  
++		that some devices may have incorrectly formatted data.
+ 		If the underlying VPD has a writable section then the
+ 		corresponding section of this file will be writable.
+ 
+-- 
+2.39.5
 
-But, but, but, obscure hard-coded magic numbers are there for our job
-security!
-
-Oh well, we got caught.  Applied, thanks.
 
