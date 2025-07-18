@@ -1,163 +1,366 @@
-Return-Path: <linux-kernel+bounces-736591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 579D0B09F01
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:17:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E62E4B09F1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:19:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DB3F3BEFC1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:16:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40E161C44CEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:19:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29D0C2980D3;
-	Fri, 18 Jul 2025 09:17:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A68298CC5;
+	Fri, 18 Jul 2025 09:19:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="co4gKkvF"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tJXDeyvK";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7BPAH80o"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91C8207DF7;
-	Fri, 18 Jul 2025 09:17:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28CD12980C4;
+	Fri, 18 Jul 2025 09:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752830236; cv=none; b=H6EG8QJ7ufWd2oGwCmvx/l75LbTFJi5mqecrxGPIud6ooLnMedb+atQRTo2SP2WYXXpSF9/WBdZYMNWM0vdGtb1HCYTPzPZvm7yvvVshqR8/JKfUfXaJWQP9cybr+x9rkvIP43ihl5CmhMywCvz1syV7NiPooAj4NCCYxFMFImk=
+	t=1752830344; cv=none; b=VyPNz0Ll/L3OHIsP4/fuTBVmmLHdYPFLMdGFvf2kjiryuyJOnQYERayoKRISCKwO3ElyXrfoYB7fPokNzbEPbfDmxTNi4J+TUrF092+g+hewVgkQRy2fiG7zzOl7yHCxbVAHc7L4Z8SQ0IK5H/kEytjkZjbae6qV+cItwgvpMvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752830236; c=relaxed/simple;
-	bh=Fw3ZT2waXkd52WH6dSOHrXUL1IonLYSsmY5LPvFE23I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=srpsS2mSSVkSeVweHjz6NjoZfJ/z7CcivcnABEm1WNpXFCQ1wrmODm6wwAr8EHuHa7zUnLKWHmS+A8LVV0qDaEa54tJE1aZFtXeN20hSBbzFc8WvAhBpSV24nD/BeYpgG/MFQ10JUg/w9Q2OGNaH1N55cIFoh/uTlAPWzEbOW9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=co4gKkvF; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-605b9488c28so3057092a12.2;
-        Fri, 18 Jul 2025 02:17:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752830233; x=1753435033; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DQt5WkoSDJsxA1BJMl3UO35qCdstjQjYzU9xXXTDo18=;
-        b=co4gKkvF6inHK98b6s4f5uK6YO3m/VlU3WN+2+qQaudKb2ZIxxPN0sbC/QV53HAj6l
-         gMcKptL1JI7ssi3rlPBVp6M8deZJ8CmtZfzVjyb6i85X5aIy+LBc5DIlhC4S34KXS7cL
-         54Xe903ECJBJZx9oRs/egbRTKWpLWzCMAY5MWJu/gb2tGjwkbQ4Rh+XcQoIQtp8Hiq2J
-         1uu0v8S6tY3hSysBAI9wv97vcvjQhbuXRivqMunzLaK/PkSn0sbQvLeKEYfziEar7n+w
-         /c1kyV7MxHBRyHAzFw4LQ3se4Dyu+r5rMSDZ1cqK4BdtK4YDdSmz8esT4dXMf/1NUR9t
-         o2ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752830233; x=1753435033;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DQt5WkoSDJsxA1BJMl3UO35qCdstjQjYzU9xXXTDo18=;
-        b=HZyWxmL4kOi98ZrBEgQvNAD6hDRuoijr7jg5/96itIpBP+Yg4e2Ni/iEWCvL57svkI
-         v5398MpVnWdTPB1+y8/t2r0QdT2D6YpLLT3/lbEI7RVJQibv3jcxU9eYWoO6GWYzu9Ls
-         Z9Y3duEhfefyfNiWuNMNcXCzScC3E4oeUpekaq2IijwDDD3wy/HijWx+f5pNKcHnm4qt
-         YQPQN9gVOPfiKs0XKHaH39hnZI8Uwm8pwj4yoNwLB5tVegdfLaSU2OvdXtD+LtD9waX9
-         LVPxuluSVBh52RrH0VOkgoqKMGalvVf1nyj3Bpj+U0X1XkhTpAsLj9WXoZegkeBAWPz4
-         zpyA==
-X-Forwarded-Encrypted: i=1; AJvYcCU7UpcD6ibzjDV10GBP9gyf4QI9TNFgjlDBBnyh7q9glcCA/d1zcfQppZsm33yScTmU3+eOtfrHErYDgQ==@vger.kernel.org, AJvYcCWs/QfPI+CJgJp6VzbFdsUo3lL/961vDNTgfi0NxriDqKLK7OZf+I+FpA7nIdBwPNMwO7QlnvfR@vger.kernel.org, AJvYcCWzC63zWMekgjcF9nQPYkrxbcHOaQM8C5zrV/Xt1FTDJdReeHC7dVAFImdlqtjMgj5uEoH+jtoPJOFkEbQw@vger.kernel.org, AJvYcCXo0Y0u1sqz6ekt7kPnaqyJ/krtMaIFLEEery1NAPNAJMsWF9hiRW9Lol0eFOk6raoE9rw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBzZzDBc/YY6FKzVawFvMXwygXevirdoxgLb2JNddaWFv7Sbmd
-	QSP/DRb8sQswCw1hNt0xXgiXenmZUJT3Q4p3V7MMZRvH+ATDPmHrnfJt
-X-Gm-Gg: ASbGnctGe01sEjlSPl6OW8FESmC6MNEjCeT/gYIGr+WXDOnonvQ9sdqFqt7nfXIxvOB
-	/MAV8wl8h5zvSgixZJHFf3JDWBOKnZNSHKHa4lGW+C/CH2FZrQB3rzW2mlnvZ6/ZyjGk2MWqb7r
-	hv8fNh4liMvrMIivpB/2V+n5EIbOnhPmIRfM4kMlxuIikRflvGLU0eCWsv9lLU9KEUyhR1NC5nH
-	qXcz6mCRXyX70mPF4/7jojBdq6QYxckSg2YxWnQNlhkbNHe3domBwH/hg9d8zjnlyL4LYzNk0/z
-	QQHVxqxexfak6lWRUOCAblkK3L9KTN3w9GE0/+zLMynCIgf4CbCWQ1ls50S1hLIPIkI26egXWRA
-	muLwnmKVBsE9B3fM/FDcww0b/m+UD8CTkZ1Y=
-X-Google-Smtp-Source: AGHT+IHJ6Qkjj0/27EzE9VVfOI7xbm7fY60xnb0OKnLRmHC6l4c5UZ1MzUN+MM+C38ZmrD/ZAYQsDw==
-X-Received: by 2002:a17:907:7f24:b0:adb:229f:6b71 with SMTP id a640c23a62f3a-ae9cddb1d86mr1032671266b.5.1752830232698;
-        Fri, 18 Jul 2025 02:17:12 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325::1ac? ([2620:10d:c092:600::1:6915])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6cadd8c7sm84561966b.155.2025.07.18.02.17.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Jul 2025 02:17:11 -0700 (PDT)
-Message-ID: <35592824-6749-4fa4-89d9-2de9caccc695@gmail.com>
-Date: Fri, 18 Jul 2025 10:18:41 +0100
+	s=arc-20240116; t=1752830344; c=relaxed/simple;
+	bh=i11Lfb9jCcjCdnZzfqCChhy3nAJnLHKNA7wmTDd5CRU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HRgFDjlYOW3sy3V8/GftqZvJ5VR/ALLEs0v138MRaMtI70hg71YmbpU3Dg2krsXa3sxv9OgfoeoJi1zzySr2ubyHprYLyne8I2snqM1nRI91039/QqMoJpk0vL2PJVyJ9YCtZuC/RHFQTPZF/EWoHEx2y6GfXYuyR8iMjuYZstI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tJXDeyvK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7BPAH80o; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752830339;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=svrawDf7a534xUP7RG0/R6u1J/lCaMllrkc3HWnuPMk=;
+	b=tJXDeyvKZL1QpMmjYpeNNIqmIYVFMiwpv6WXNzvKDMALvlcwn4LwFl4NeBFWBoy0QQJ55w
+	zHFPJX6OyL39BjlRZd+IC8bEvUKEA8mcOhabKEXGes8MQ90ZZ8JckQvpDPH/DqFYC2jkzr
+	9OrBnGZvUE/UMqRl7vOBUShxxAqGElZHWwo7KkWR4zNBdTWpYMIYz7i/RxmbllCbOWUPTj
+	zIJiUGecAlH5yK75XoawB2x5CAwwqSHZo7NQa/CT2CsAWdr4HWpaIUOu7zHJF1CgZQcfo2
+	0vLZjK4tjWiyOumzlWX47Xp+V9wj7R5o+/lUJKRQcLKZ/lwSNI6noT6ccgpCQA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752830339;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=svrawDf7a534xUP7RG0/R6u1J/lCaMllrkc3HWnuPMk=;
+	b=7BPAH80o/Ga/20wVy34va8eGtxoeeVLJPVgGACfdLy6ApNeXKA5D/RQth2onhTLnd3+dAw
+	NWC1TT1jseZV+RDg==
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Gabriele Monaco <gmonaco@redhat.com>,
+	linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Nam Cao <namcao@linutronix.de>,
+	stable@vger.kernel.org
+Subject: [PATCH] rv: Ensure containers are registered first
+Date: Fri, 18 Jul 2025 11:18:50 +0200
+Message-Id: <20250718091850.2057864-1-namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Intel-wired-lan] [PATCH net-next v11 12/12] libeth: xdp: access
- ->pp through netmem_desc instead of page
-To: Byungchul Park <byungchul@sk.com>, kernel test robot <lkp@intel.com>
-Cc: willy@infradead.org, netdev@vger.kernel.org,
- oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, kernel_team@skhynix.com, almasrymina@google.com,
- ilias.apalodimas@linaro.org, harry.yoo@oracle.com,
- akpm@linux-foundation.org, andrew+netdev@lunn.ch, toke@redhat.com,
- david@redhat.com, Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
- surenb@google.com, mhocko@suse.com, linux-rdma@vger.kernel.org,
- bpf@vger.kernel.org, vishal.moola@gmail.com, hannes@cmpxchg.org,
- ziy@nvidia.com, jackmanb@google.com, wei.fang@nxp.com, shenwei.wang@nxp.com,
- xiaoning.wang@nxp.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org
-References: <20250717070052.6358-13-byungchul@sk.com>
- <202507180111.jygqJHzk-lkp@intel.com>
- <20250718004346.GA38833@system.software.com>
- <20250718011407.GB38833@system.software.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20250718011407.GB38833@system.software.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On 7/18/25 02:14, Byungchul Park wrote:
-...>>>
->>>     In file included from include/linux/container_of.h:5,
->>>                      from include/linux/list.h:5,
->>>                      from include/linux/timer.h:5,
->>>                      from include/linux/netdevice.h:24,
->>>                      from include/trace/events/xdp.h:8,
->>>                      from include/linux/bpf_trace.h:5,
->>>                      from include/net/libeth/xdp.h:7,
->>>                      from drivers/net/ethernet/intel/libeth/tx.c:6:
->>>     include/net/libeth/xdp.h: In function 'libeth_xdp_prepare_buff':
->>>>> include/net/libeth/xdp.h:1295:23: warning: passing argument 1 of 'page_pool_page_is_pp' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
->>>          pp_page_to_nmdesc(page)->pp->p.offset, len, true);
->>>                            ^~~~
->>>     include/linux/build_bug.h:30:63: note: in definition of macro 'BUILD_BUG_ON_INVALID'
->>>      #define BUILD_BUG_ON_INVALID(e) ((void)(sizeof((__force long)(e))))
->>>                                                                    ^
->>>     include/net/netmem.h:301:2: note: in expansion of macro 'DEBUG_NET_WARN_ON_ONCE'
->>>       DEBUG_NET_WARN_ON_ONCE(!page_pool_page_is_pp(p));  \
->>>       ^~~~~~~~~~~~~~~~~~~~~~
->>>     include/net/libeth/xdp.h:1295:5: note: in expansion of macro 'pp_page_to_nmdesc'
->>>          pp_page_to_nmdesc(page)->pp->p.offset, len, true);
->>>          ^~~~~~~~~~~~~~~~~
->>>     In file included from arch/arm/include/asm/cacheflush.h:10,
->>>                      from include/linux/cacheflush.h:5,
->>>                      from include/linux/highmem.h:8,
->>>                      from include/linux/bvec.h:10,
->>>                      from include/linux/skbuff.h:17,
->>>                      from include/net/net_namespace.h:43,
->>>                      from include/linux/netdevice.h:38,
->>>                      from include/trace/events/xdp.h:8,
->>>                      from include/linux/bpf_trace.h:5,
->>>                      from include/net/libeth/xdp.h:7,
->>>                      from drivers/net/ethernet/intel/libeth/tx.c:6:
->>>     include/linux/mm.h:4176:54: note: expected 'struct page *' but argument is of type 'const struct page *'
->>>      static inline bool page_pool_page_is_pp(struct page *page)
->>>                                              ~~~~~~~~~~~~~^~~~
->>
->> Oh.  page_pool_page_is_pp() in the mainline code already has this issue
->> that the helper cannot take const struct page * as argument.
+If rv_register_monitor() is called with a non-NULL parent pointer (i.e. by
+monitors inside a container), it is expected that the parent (a.k.a
+container) is already registered.
 
-Probably not, and probably for wrong reasons. netmem_ref is define
-as an integer, compilers cast away such const unlike const pointers.
+The containers seem to always be registered first. I suspect because of the
+order in Makefile. But nothing guarantees this.
 
->> How should we resolve the issue?  Changing page_pool_page_is_pp() to
->> macro and using _Generic again looks too much.  Or should we?  Any idea?
+If this registering order is changed, "strange" things happen. For example,
+if the container is registered last, rv_is_container_monitor() incorrectly
+says this is NOT a container. .enable() is then called, which is NULL for
+container, thus we have a NULL pointer deref crash.
 
-page_pool_page_is_pp() doesn't change the page, just make the
-argument const.
+Guarantee that containers are registered first.
 
-bool page_pool_page_is_pp(const struct page *page)
+Fixes: cb85c660fcd4 ("rv: Add option for nested monitors and include sched")
+Signed-off-by: Nam Cao <namcao@linutronix.de>
+Cc: stable@vger.kernel.org
+---
+ include/linux/rv.h                                        | 5 +++++
+ kernel/trace/rv/monitors/pagefault/pagefault.c            | 4 ++--
+ kernel/trace/rv/monitors/rtapp/rtapp.c                    | 4 ++--
+ kernel/trace/rv/monitors/sched/sched.c                    | 4 ++--
+ kernel/trace/rv/monitors/sco/sco.c                        | 4 ++--
+ kernel/trace/rv/monitors/scpd/scpd.c                      | 4 ++--
+ kernel/trace/rv/monitors/sleep/sleep.c                    | 4 ++--
+ kernel/trace/rv/monitors/sncid/sncid.c                    | 4 ++--
+ kernel/trace/rv/monitors/snep/snep.c                      | 4 ++--
+ kernel/trace/rv/monitors/snroc/snroc.c                    | 4 ++--
+ kernel/trace/rv/monitors/tss/tss.c                        | 4 ++--
+ kernel/trace/rv/monitors/wip/wip.c                        | 4 ++--
+ kernel/trace/rv/monitors/wwnr/wwnr.c                      | 4 ++--
+ tools/verification/rvgen/rvgen/templates/container/main.c | 4 ++--
+ tools/verification/rvgen/rvgen/templates/dot2k/main.c     | 4 ++--
+ tools/verification/rvgen/rvgen/templates/ltl2k/main.c     | 4 ++--
+ 16 files changed, 35 insertions(+), 30 deletions(-)
 
--- 
-Pavel Begunkov
+diff --git a/include/linux/rv.h b/include/linux/rv.h
+index 97baf58d88b2..094c9f62389c 100644
+--- a/include/linux/rv.h
++++ b/include/linux/rv.h
+@@ -119,5 +119,10 @@ static inline bool rv_reacting_on(void)
+ }
+ #endif /* CONFIG_RV_REACTORS */
+=20
++#define rv_container_init device_initcall
++#define rv_container_exit __exitcall
++#define rv_monitor_init late_initcall
++#define rv_monitor_exit __exitcall
++
+ #endif /* CONFIG_RV */
+ #endif /* _LINUX_RV_H */
+diff --git a/kernel/trace/rv/monitors/pagefault/pagefault.c b/kernel/trace/=
+rv/monitors/pagefault/pagefault.c
+index 9fe6123b2200..2b226d27ddff 100644
+--- a/kernel/trace/rv/monitors/pagefault/pagefault.c
++++ b/kernel/trace/rv/monitors/pagefault/pagefault.c
+@@ -80,8 +80,8 @@ static void __exit unregister_pagefault(void)
+ 	rv_unregister_monitor(&rv_pagefault);
+ }
+=20
+-module_init(register_pagefault);
+-module_exit(unregister_pagefault);
++rv_monitor_init(register_pagefault);
++rv_monitor_exit(unregister_pagefault);
+=20
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Nam Cao <namcao@linutronix.de>");
+diff --git a/kernel/trace/rv/monitors/rtapp/rtapp.c b/kernel/trace/rv/monit=
+ors/rtapp/rtapp.c
+index fd75fc927d65..b078327e71bf 100644
+--- a/kernel/trace/rv/monitors/rtapp/rtapp.c
++++ b/kernel/trace/rv/monitors/rtapp/rtapp.c
+@@ -25,8 +25,8 @@ static void __exit unregister_rtapp(void)
+ 	rv_unregister_monitor(&rv_rtapp);
+ }
+=20
+-module_init(register_rtapp);
+-module_exit(unregister_rtapp);
++rv_container_init(register_rtapp);
++rv_container_exit(unregister_rtapp);
+=20
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Nam Cao <namcao@linutronix.de>");
+diff --git a/kernel/trace/rv/monitors/sched/sched.c b/kernel/trace/rv/monit=
+ors/sched/sched.c
+index 905e03c3c934..e89e193bd8e0 100644
+--- a/kernel/trace/rv/monitors/sched/sched.c
++++ b/kernel/trace/rv/monitors/sched/sched.c
+@@ -30,8 +30,8 @@ static void __exit unregister_sched(void)
+ 	rv_unregister_monitor(&rv_sched);
+ }
+=20
+-module_init(register_sched);
+-module_exit(unregister_sched);
++rv_container_init(register_sched);
++rv_container_exit(unregister_sched);
+=20
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Gabriele Monaco <gmonaco@redhat.com>");
+diff --git a/kernel/trace/rv/monitors/sco/sco.c b/kernel/trace/rv/monitors/=
+sco/sco.c
+index 4cff59220bfc..b96e09e64a2f 100644
+--- a/kernel/trace/rv/monitors/sco/sco.c
++++ b/kernel/trace/rv/monitors/sco/sco.c
+@@ -80,8 +80,8 @@ static void __exit unregister_sco(void)
+ 	rv_unregister_monitor(&rv_sco);
+ }
+=20
+-module_init(register_sco);
+-module_exit(unregister_sco);
++rv_monitor_init(register_sco);
++rv_monitor_exit(unregister_sco);
+=20
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Gabriele Monaco <gmonaco@redhat.com>");
+diff --git a/kernel/trace/rv/monitors/scpd/scpd.c b/kernel/trace/rv/monitor=
+s/scpd/scpd.c
+index cbdd6a5f8d7f..a4c8e78fa768 100644
+--- a/kernel/trace/rv/monitors/scpd/scpd.c
++++ b/kernel/trace/rv/monitors/scpd/scpd.c
+@@ -88,8 +88,8 @@ static void __exit unregister_scpd(void)
+ 	rv_unregister_monitor(&rv_scpd);
+ }
+=20
+-module_init(register_scpd);
+-module_exit(unregister_scpd);
++rv_monitor_init(register_scpd);
++rv_monitor_exit(unregister_scpd);
+=20
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Gabriele Monaco <gmonaco@redhat.com>");
+diff --git a/kernel/trace/rv/monitors/sleep/sleep.c b/kernel/trace/rv/monit=
+ors/sleep/sleep.c
+index eea447b06907..6980f8de725d 100644
+--- a/kernel/trace/rv/monitors/sleep/sleep.c
++++ b/kernel/trace/rv/monitors/sleep/sleep.c
+@@ -229,8 +229,8 @@ static void __exit unregister_sleep(void)
+ 	rv_unregister_monitor(&rv_sleep);
+ }
+=20
+-module_init(register_sleep);
+-module_exit(unregister_sleep);
++rv_monitor_init(register_sleep);
++rv_monitor_exit(unregister_sleep);
+=20
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Nam Cao <namcao@linutronix.de>");
+diff --git a/kernel/trace/rv/monitors/sncid/sncid.c b/kernel/trace/rv/monit=
+ors/sncid/sncid.c
+index f5037cd6214c..97a126c6083a 100644
+--- a/kernel/trace/rv/monitors/sncid/sncid.c
++++ b/kernel/trace/rv/monitors/sncid/sncid.c
+@@ -88,8 +88,8 @@ static void __exit unregister_sncid(void)
+ 	rv_unregister_monitor(&rv_sncid);
+ }
+=20
+-module_init(register_sncid);
+-module_exit(unregister_sncid);
++rv_monitor_init(register_sncid);
++rv_monitor_exit(unregister_sncid);
+=20
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Gabriele Monaco <gmonaco@redhat.com>");
+diff --git a/kernel/trace/rv/monitors/snep/snep.c b/kernel/trace/rv/monitor=
+s/snep/snep.c
+index 0076ba6d7ea4..376a856ebffa 100644
+--- a/kernel/trace/rv/monitors/snep/snep.c
++++ b/kernel/trace/rv/monitors/snep/snep.c
+@@ -88,8 +88,8 @@ static void __exit unregister_snep(void)
+ 	rv_unregister_monitor(&rv_snep);
+ }
+=20
+-module_init(register_snep);
+-module_exit(unregister_snep);
++rv_monitor_init(register_snep);
++rv_monitor_exit(unregister_snep);
+=20
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Gabriele Monaco <gmonaco@redhat.com>");
+diff --git a/kernel/trace/rv/monitors/snroc/snroc.c b/kernel/trace/rv/monit=
+ors/snroc/snroc.c
+index bb1f60d55296..e4439605b4b6 100644
+--- a/kernel/trace/rv/monitors/snroc/snroc.c
++++ b/kernel/trace/rv/monitors/snroc/snroc.c
+@@ -77,8 +77,8 @@ static void __exit unregister_snroc(void)
+ 	rv_unregister_monitor(&rv_snroc);
+ }
+=20
+-module_init(register_snroc);
+-module_exit(unregister_snroc);
++rv_monitor_init(register_snroc);
++rv_monitor_exit(unregister_snroc);
+=20
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Gabriele Monaco <gmonaco@redhat.com>");
+diff --git a/kernel/trace/rv/monitors/tss/tss.c b/kernel/trace/rv/monitors/=
+tss/tss.c
+index 542787e6524f..8f960c9fe0ff 100644
+--- a/kernel/trace/rv/monitors/tss/tss.c
++++ b/kernel/trace/rv/monitors/tss/tss.c
+@@ -83,8 +83,8 @@ static void __exit unregister_tss(void)
+ 	rv_unregister_monitor(&rv_tss);
+ }
+=20
+-module_init(register_tss);
+-module_exit(unregister_tss);
++rv_monitor_init(register_tss);
++rv_monitor_exit(unregister_tss);
+=20
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Gabriele Monaco <gmonaco@redhat.com>");
+diff --git a/kernel/trace/rv/monitors/wip/wip.c b/kernel/trace/rv/monitors/=
+wip/wip.c
+index ed758fec8608..5c39c6074bd3 100644
+--- a/kernel/trace/rv/monitors/wip/wip.c
++++ b/kernel/trace/rv/monitors/wip/wip.c
+@@ -80,8 +80,8 @@ static void __exit unregister_wip(void)
+ 	rv_unregister_monitor(&rv_wip);
+ }
+=20
+-module_init(register_wip);
+-module_exit(unregister_wip);
++rv_monitor_init(register_wip);
++rv_monitor_exit(unregister_wip);
+=20
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Daniel Bristot de Oliveira <bristot@kernel.org>");
+diff --git a/kernel/trace/rv/monitors/wwnr/wwnr.c b/kernel/trace/rv/monitor=
+s/wwnr/wwnr.c
+index 172f31c4b0f3..ec671546f571 100644
+--- a/kernel/trace/rv/monitors/wwnr/wwnr.c
++++ b/kernel/trace/rv/monitors/wwnr/wwnr.c
+@@ -79,8 +79,8 @@ static void __exit unregister_wwnr(void)
+ 	rv_unregister_monitor(&rv_wwnr);
+ }
+=20
+-module_init(register_wwnr);
+-module_exit(unregister_wwnr);
++rv_monitor_init(register_wwnr);
++rv_monitor_exit(unregister_wwnr);
+=20
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Daniel Bristot de Oliveira <bristot@kernel.org>");
+diff --git a/tools/verification/rvgen/rvgen/templates/container/main.c b/to=
+ols/verification/rvgen/rvgen/templates/container/main.c
+index 89fc17cf8958..5820c9705d0f 100644
+--- a/tools/verification/rvgen/rvgen/templates/container/main.c
++++ b/tools/verification/rvgen/rvgen/templates/container/main.c
+@@ -30,8 +30,8 @@ static void __exit unregister_%%MODEL_NAME%%(void)
+ 	rv_unregister_monitor(&rv_%%MODEL_NAME%%);
+ }
+=20
+-module_init(register_%%MODEL_NAME%%);
+-module_exit(unregister_%%MODEL_NAME%%);
++rv_container_init(register_%%MODEL_NAME%%);
++rv_container_exit(unregister_%%MODEL_NAME%%);
+=20
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("dot2k: auto-generated");
+diff --git a/tools/verification/rvgen/rvgen/templates/dot2k/main.c b/tools/=
+verification/rvgen/rvgen/templates/dot2k/main.c
+index 83044a20c89a..d6bd248aba9c 100644
+--- a/tools/verification/rvgen/rvgen/templates/dot2k/main.c
++++ b/tools/verification/rvgen/rvgen/templates/dot2k/main.c
+@@ -83,8 +83,8 @@ static void __exit unregister_%%MODEL_NAME%%(void)
+ 	rv_unregister_monitor(&rv_%%MODEL_NAME%%);
+ }
+=20
+-module_init(register_%%MODEL_NAME%%);
+-module_exit(unregister_%%MODEL_NAME%%);
++rv_monitor_init(register_%%MODEL_NAME%%);
++rv_monitor_exit(unregister_%%MODEL_NAME%%);
+=20
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("dot2k: auto-generated");
+diff --git a/tools/verification/rvgen/rvgen/templates/ltl2k/main.c b/tools/=
+verification/rvgen/rvgen/templates/ltl2k/main.c
+index f85d076fbf78..2069a7a0f1ae 100644
+--- a/tools/verification/rvgen/rvgen/templates/ltl2k/main.c
++++ b/tools/verification/rvgen/rvgen/templates/ltl2k/main.c
+@@ -94,8 +94,8 @@ static void __exit unregister_%%MODEL_NAME%%(void)
+ 	rv_unregister_monitor(&rv_%%MODEL_NAME%%);
+ }
+=20
+-module_init(register_%%MODEL_NAME%%);
+-module_exit(unregister_%%MODEL_NAME%%);
++rv_monitor_init(register_%%MODEL_NAME%%);
++rv_monitor_exit(unregister_%%MODEL_NAME%%);
+=20
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR(/* TODO */);
+--=20
+2.39.5
 
 
