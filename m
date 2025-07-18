@@ -1,335 +1,245 @@
-Return-Path: <linux-kernel+bounces-736328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D47E2B09B92
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:41:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B099AB09B94
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:41:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 419111C234D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:41:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 030E91C41F83
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:41:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77E2F1FDA8C;
-	Fri, 18 Jul 2025 06:41:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA83B202960;
+	Fri, 18 Jul 2025 06:41:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="BLO8Rttl"
-Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="XJaB8sOC"
+Received: from mail-4323.protonmail.ch (mail-4323.protonmail.ch [185.70.43.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD281EDA03
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 06:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6B519E97C;
+	Fri, 18 Jul 2025 06:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752820862; cv=none; b=lxbZU2SXoVqyJX9i8dZmHj+QkErmaQC+kGShHSdNcxEjxmXy086QKH1kH7ltW0p7fUo3Vw5tevdpfmimQ7pBXcRFbubZ6asX4CFRrx5/a5iYTUIQqNq8qWA9Dp9skphIk7YV/8vGFbzYIbeRLDvyzxOLrRDvIw0n63CQbS3g1fg=
+	t=1752820863; cv=none; b=rmGtYBQgVhvweTvgx1G5C4lShZ3oz3y4JVVoyjLtCoLRFqxzQtYMm1trfNSXNV2bdoaE8ed/TI3xIaII9pxBs4jnnQHCkIlj8lEX7PygAhZQfjTOklxdMGBy7w3dN2kF7NVHauJYFvh8VE7IasnSXjhp/LUXEazH7rqcVycLclU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752820862; c=relaxed/simple;
-	bh=ATL6hMLXs6JKus3MhyX5eic0CZfZYiudcGoxF0SusTg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K64ftI5ZWspL0G8+IjkjEYHG/1EaeMfpC8KNwMs6/+vWt4diM6GZfafKYd8BTyIVvLYVorS3KsBeQmkSIeeezEEFQDM6okOz0bmOYqx4ae1afFaYA45Pt0Qr0rpg7nJh4K9Jj+bSOM2Exz1OkYvYJa3T0S++REtAR2+KEDTNzGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=BLO8Rttl; arc=none smtp.client-ip=209.85.161.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-6159fb8b2aaso720414eaf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 23:40:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1752820859; x=1753425659; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X7dKWbZdVMrwFL5WdZSRxXUx2ZtPr1EjW0b8TdOPUJg=;
-        b=BLO8RttlQLcQk270LwiXVYPyYW59KoquXrcxFh7r0HdI5HveaRX/qtfAkXmX7ksBAy
-         1Gc3Rn2y73etF4OhBVpRWG+pOCmZcf45hsWniIN1OTUjn6GtWPzzq8Y0Qw2fEOpEdHIj
-         wA8RnaaWRJcHm8fJPXmCjEBZ+PasLZ3yJOtEdZAknsvCjoccRNiyJ1gQoxLLr+gdNvO9
-         k723TMvoQMQVMEQfxeIFRmUjOyP3Di/Ry5Nj4BVjJmcDqZNzvIVa1P+DUNXhD8TQS3S/
-         gi0vo42TOgNEFZWewye2k9xH/nzI6TE0DfLzI6TITBM8emubUUNbQG3G4vwVrPfugyhS
-         lZOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752820859; x=1753425659;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=X7dKWbZdVMrwFL5WdZSRxXUx2ZtPr1EjW0b8TdOPUJg=;
-        b=qMoUbHv8e8yIS0Hm/n0iyA4I9QCvAxlkeUQBO0MAQ078shg/Tj/lkcuWkENu0/W/9D
-         SeQnpZLSl9m4cnSIIvJ7VR12LvjY0dtTk5kswoBbGRO93uNT4jTnOk7yG4FJpqeMk6dZ
-         5dnUOXEQF14u4KcCfFeK44JWHazlq+ca3+/5qmhuQeuqof7alDp6tyB+VrCSk9k544cU
-         H+DGLvaH5gAyZKSK+/05T3K3NJhjrNFO2Bpf+4vhrSO6+2sg8DeoXcIZZlwS2wDKL3Ih
-         dhhnfhDrhkdwXaY5MITza6pTakPUHvL0K64aTF8ozNbLWT4yz/jMgbmvN7cXQNHO+dpH
-         r+Ww==
-X-Forwarded-Encrypted: i=1; AJvYcCV3HEhHiSz2nJWUSVSByYD4G7Wi8V+qehGX3FF4g3MeC3D0Xf2zddSX+gdWVTotAstdu+g1xKv/XC9+hdg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyY7UJ8zkDZV7fGqwgExX3L63Zx8W4lZT+umycHJqGlozRtg+eJ
-	jfPijy9f+p1Ppz6tJ0//YVUv1IfHGcO//LOAQzl9gi3mpiQI0LJFBgWOC7aFZrBHghc/rwKMwk+
-	f0X3qlC741AUDWjOiQyT+aWhG+u5JxQDDlvjFwKRN3A==
-X-Gm-Gg: ASbGncvgDehbq5NkKZrjJNwI0YCNhx5qO3FwbFe5zRa3mM1xYOSB6rNWM26bznjEQlc
-	fjpuLY1dc/XngN4sqxDpxzfk0r416ersHM3/2C+6ckFca/uZ7k/vEz4FgvUjWrnZjAJgRpEE5YL
-	IKRIHI3b7W0RORKeILGLWvPhODGi0syj0Pr776aM68Mx8+yt/bhUvR/uN4mJ6nwipSxpWOpk7xz
-	BDarNHw0nwrQVbNzOIQ8oSm
-X-Google-Smtp-Source: AGHT+IGXQx+9+D6Byk3UXF81OJJT/N94+GYvK1ZOdYb5atejUT67iwYQFLmGj8mi5zdY0L0jDSNAUdYsuxI2RrKi4vk=
-X-Received: by 2002:a4a:ee05:0:b0:615:b344:927 with SMTP id
- 006d021491bc7-615b3440a8amr3164215eaf.3.1752820858950; Thu, 17 Jul 2025
- 23:40:58 -0700 (PDT)
+	s=arc-20240116; t=1752820863; c=relaxed/simple;
+	bh=q39p1m0KImyjmrZzHGZP/KQFFVQ2EwD0obEjRv1VANI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IfuI78m8QWJDO5jxjzPvE9ASTZA5iCqZooh1OcHm/JdCocTDDHW5uOKKJaVCT1stHVSdGQ/bcSIvvKxcY0xcSgK2n5USDt8b+GTZTMko0usw1nCkuuHrBZGqzFmcHkelB5AZUU5TQFStD/YZvwF6USD5I1XjXdV4ooY3vYinWhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=XJaB8sOC; arc=none smtp.client-ip=185.70.43.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=geanix.com;
+	s=protonmail; t=1752820856; x=1753080056;
+	bh=WyBrBMZgahDlTwqTy1B3jfzPfAA/nVumx1kd7cv4+XY=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=XJaB8sOC5BX4cVv7YYcu+5wfsNppcGFo/NE8BHYTh6EPh+4kpjs67zW7+wyNfLuXS
+	 Qun+Y3tRJNWJsVgkqj0b+D04Ity6V9lwsaF3EMoaOBtkixJuC6ib0fUwVBHvAIn42S
+	 YMWDogfIelnKY/Tw/tLTFeRY4zdKGZoXlNUSYx7SDYVy0JaDDzeaxD2cYgNwVqJjwX
+	 w5VXcVt0BRVo72q7GP4iDbO+8cwPAz3NbARSRIObPTwwyri0/8rnlRp6Kke2kTRcx1
+	 gNdn880YEg7KwzaUsDRv4tejdyeD5UfTh9mIBdimHwYpdB7Gta5d46nnGhaeEJ0hoW
+	 D5ch1SFsqR30w==
+Date: Fri, 18 Jul 2025 06:40:50 +0000
+To: Jonathan Cameron <jic23@kernel.org>
+From: Sean Nyekjaer <sean@geanix.com>
+Cc: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>, David Lechner <dlechner@baylibre.com>, =?utf-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/6] iio: imu: inv_icm42600: Simplify pm_runtime setup
+Message-ID: <iwe34sdzsgeqpgqrc7ndbx6n4ef6kiwd4bczbiwbhlfgv3zesx@rnr5l7diy5z7>
+In-Reply-To: <20250716090010.23ea03b6@jic23-huawei>
+References: <20250709-icm42pmreg-v1-0-3d0e793c99b2@geanix.com> <20250709-icm42pmreg-v1-4-3d0e793c99b2@geanix.com> <20250713152810.4483c786@jic23-huawei> <ie3zr2mvuss2f7prksw6nuc3wonig5ju6y6hqq46upvkhovwpa@vtfc3tqwz3d5> <76fnxeuufv56fmfvq6odi5xz2yjtjxymz24t436zk7rtuyst4s@oihlvsoxhllp> <20250716090010.23ea03b6@jic23-huawei>
+Feedback-ID: 134068486:user:proton
+X-Pm-Message-ID: e2003db9e5aa6aa2fa927c616a60d4378c120b72
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250618034328.21904-1-cuiyunhui@bytedance.com>
- <20250618034328.21904-2-cuiyunhui@bytedance.com> <c9ba6163-6703-441b-915c-d784044f862f@ghiti.fr>
- <b0583098-204a-4ad1-b173-4bd00a358d61@ghiti.fr>
-In-Reply-To: <b0583098-204a-4ad1-b173-4bd00a358d61@ghiti.fr>
-From: yunhui cui <cuiyunhui@bytedance.com>
-Date: Fri, 18 Jul 2025 14:40:47 +0800
-X-Gm-Features: Ac12FXwmaPFHuBEP0HhRKKK58IY4j11d1En-lve2np4vZlMrzO0q73zQBQvU45s
-Message-ID: <CAEEQ3w=uz-kTe05-fnPa_BfkZ6ZocQHg-G001yBtLqRM2zEr+g@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH RFC 2/2] riscv: introduce percpu.h into include/asm
-To: Alexandre Ghiti <alex@ghiti.fr>
-Cc: yury.norov@gmail.com, linux@rasmusvillemoes.dk, paul.walmsley@sifive.com, 
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, dennis@kernel.org, tj@kernel.org, cl@gentwo.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi Alex,
+On Wed, Jul 16, 2025 at 09:00:10AM +0100, Jonathan Cameron wrote:
+> On Mon, 14 Jul 2025 07:42:43 +0000
+> Sean Nyekjaer <sean@geanix.com> wrote:
+>=20
+> > On Mon, Jul 14, 2025 at 07:24:57AM +0100, Sean Nyekjaer wrote:
+> > > On Sun, Jul 13, 2025 at 03:28:10PM +0100, Jonathan Cameron wrote:
+> > > > On Wed, 09 Jul 2025 14:35:12 +0200
+> > > > Sean Nyekjaer <sean@geanix.com> wrote:
+> > > >
+> > > > > Remove unnecessary pm_runtime_get_noresume() and pm_runtime_put()
+> > > > > calls during probe. These are not required when the device is mar=
+ked
+> > > > > active via pm_runtime_set_active() before enabling pm_runtime wit=
+h
+> > > > > pm_runtime_enable().
+> > > > >
+> > > > > Also remove the redundant pm_runtime_put_sync() call from the cle=
+anup
+> > > > > path, since the core is not incrementing the usage count beforeha=
+nd.
+> > > > >
+> > > > > This simplifies the PM setup and avoids manipulating the usage co=
+unter
+> > > > > unnecessarily.
+> > > >
+> > > > Could we switch directly to using devm_pm_runtime_enable() for this=
+ driver?
+> > > >
+> > > > At first glance looks like this code is missing the disable of auto=
+suspend
+> > > > that should be there (which devm_pm_runtime_enable() will also hand=
+le).
+> > > >
+> > >
+> > > I have tried to use devm_pm_runtime_enable() but on rmmod it warns
+> > > "unbalanced disables for regulator"
+> > >
+> > > If I remove this:
+> > > -=09ret =3D devm_add_action_or_reset(dev, inv_icm42600_disable_vddio_=
+reg, st);
+> > > -=09if (ret)
+> > > -=09=09return ret;
+> > >
+> > > Everything seems okay again. I have checked with printk's that
+> > > inv_icm42600_disable_vddio_reg() is called twice with
+> > > devm_pm_runtime_enable() used.
+> > > Does it make sense?
+> > >
+> > > /Sean
+> >
+> > with pm_runtime_enable():
+> > root@v4:/data/root# insmod /tmp/inv-icm42600.ko; insmod /tmp/inv-icm426=
+00-i2c.ko
+> > [ 3793.713077] inv-icm42600-i2c 1-0068: no INT1 interrupt defined, fall=
+back to first interrupt
+> > [ 3793.727728] inv-icm42600-i2c 1-0068: mounting matrix not found: usin=
+g identity...
+> > [ 3793.737660] inv-icm42600-i2c 1-0068: supply vdd not found, using dum=
+my regulator
+> > [ 3793.856891] inv-icm42600-i2c 1-0068: supply vddio not found, using d=
+ummy regulator
+> > [ 3793.866872] inv_icm42600_enable_regulator_vddio() enable vddio
+> > [ 3793.920739] inv_icm42600_runtime_suspend() disable vddio
+> > root@v4:/data/root# rmmod inv_icm42600_i2c inv_icm42600
+> > [ 3796.954850] inv_icm42600_runtime_resume() -> inv_icm42600_enable_reg=
+ulator_vddio()
+> > [ 3796.954910] inv_icm42600_enable_regulator_vddio() enable vddio
+> > [ 3796.985140] inv_icm42600_disable_vddio_reg() disable vddio
+> >
+> > with devm_pm_runtime_enable():
+> > root@v4:/data/root# insmod /tmp/inv-icm42600.ko; insmod /tmp/inv-icm426=
+00-i2c.ko
+> > [ 3852.873887] inv-icm42600-i2c 1-0068: no INT1 interrupt defined, fall=
+back to first interrupt
+> > [ 3852.888715] inv-icm42600-i2c 1-0068: mounting matrix not found: usin=
+g identity...
+> > [ 3852.898514] inv-icm42600-i2c 1-0068: supply vdd not found, using dum=
+my regulator
+> > [ 3853.016890] inv-icm42600-i2c 1-0068: supply vddio not found, using d=
+ummy regulator
+> > [ 3853.026860] inv_icm42600_enable_regulator_vddio() enable vddio
+> > [ 3853.080835] inv_icm42600_runtime_suspend() disable vddio
+> > root@v4:/data/root# rmmod inv_icm42600_i2c inv_icm42600
+> > [ 3854.448461] inv_icm42600_runtime_resume() -> inv_icm42600_enable_reg=
+ulator_vddio()
+> > [ 3854.448540] inv_icm42600_enable_regulator_vddio() enable vddio
+> > [ 3854.467061] inv_icm42600_runtime_suspend() disable vddio
+>=20
+> As below What is the call path for this final suspend?
+> Is it coming from update_autosuspend()?
 
-On Thu, Jul 17, 2025 at 9:06=E2=80=AFPM Alexandre Ghiti <alex@ghiti.fr> wro=
-te:
->
-> On 7/17/25 15:04, Alexandre Ghiti wrote:
-> > Hi Yunhui,
-> >
-> > On 6/18/25 05:43, Yunhui Cui wrote:
-> >> Current percpu operations rely on generic implementations, where
-> >> raw_local_irq_save() introduces substantial overhead. Optimization
-> >> is achieved through atomic operations and preemption disabling.
-> >>
-> >> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-> >> ---
-> >>   arch/riscv/include/asm/percpu.h | 138 ++++++++++++++++++++++++++++++=
-++
-> >>   1 file changed, 138 insertions(+)
-> >>   create mode 100644 arch/riscv/include/asm/percpu.h
-> >>
-> >> diff --git a/arch/riscv/include/asm/percpu.h
-> >> b/arch/riscv/include/asm/percpu.h
-> >> new file mode 100644
-> >> index 0000000000000..423c0d01f874c
-> >> --- /dev/null
-> >> +++ b/arch/riscv/include/asm/percpu.h
-> >> @@ -0,0 +1,138 @@
-> >> +/* SPDX-License-Identifier: GPL-2.0-only */
-> >> +
-> >> +#ifndef __ASM_PERCPU_H
-> >> +#define __ASM_PERCPU_H
-> >> +
-> >> +#include <linux/preempt.h>
-> >> +
-> >> +#define PERCPU_RW_OPS(sz)                        \
-> >> +static inline unsigned long __percpu_read_##sz(void *ptr)        \
-> >> +{                                    \
-> >> +    return READ_ONCE(*(u##sz *)ptr);                \
-> >> +}                                    \
-> >> +                                    \
-> >> +static inline void __percpu_write_##sz(void *ptr, unsigned long
-> >> val)    \
-> >> +{                                    \
-> >> +    WRITE_ONCE(*(u##sz *)ptr, (u##sz)val);                \
-> >> +}
-> >> +
-> >> +#define __PERCPU_AMO_OP_CASE(sfx, name, sz, amo_insn)            \
-> >> +static inline void                            \
-> >> +__percpu_##name##_amo_case_##sz(void *ptr, unsigned long val)        =
-\
-> >> +{                                    \
-> >> +    asm volatile (                            \
-> >> +    "amo" #amo_insn #sfx " zero, %[val], %[ptr]"            \
-> >> +    : [ptr] "+A" (*(u##sz *)ptr)                    \
-> >> +    : [val] "r" ((u##sz)(val))                    \
-> >> +    : "memory");                            \
-> >> +}
-> >> +
-> >> +#define __PERCPU_AMO_RET_OP_CASE(sfx, name, sz, amo_insn)        \
-> >> +static inline u##sz                            \
-> >> +__percpu_##name##_return_amo_case_##sz(void *ptr, unsigned long
-> >> val)    \
-> >> +{                                    \
-> >> +    register u##sz ret;                        \
-> >> +                                    \
-> >> +    asm volatile (                            \
-> >> +    "amo" #amo_insn #sfx " %[ret], %[val], %[ptr]"            \
-> >> +    : [ptr] "+A" (*(u##sz *)ptr), [ret] "=3Dr" (ret)            \
-> >> +    : [val] "r" ((u##sz)(val))                    \
-> >> +    : "memory");                            \
-> >> +                                    \
-> >> +    return ret + val;                        \
-> >> +}
-> >> +
-> >> +#define PERCPU_OP(name, amo_insn)                    \
-> >> +    __PERCPU_AMO_OP_CASE(.b, name, 8, amo_insn)            \
-> >> +    __PERCPU_AMO_OP_CASE(.h, name, 16, amo_insn)            \
-> >> +    __PERCPU_AMO_OP_CASE(.w, name, 32, amo_insn)            \
-> >> +    __PERCPU_AMO_OP_CASE(.d, name, 64, amo_insn)            \
-> >> +
-> >> +#define PERCPU_RET_OP(name, amo_insn)                    \
-> >> +    __PERCPU_AMO_RET_OP_CASE(.b, name, 8, amo_insn) \
-> >> +    __PERCPU_AMO_RET_OP_CASE(.h, name, 16, amo_insn)        \
-> >> +    __PERCPU_AMO_RET_OP_CASE(.w, name, 32, amo_insn)        \
-> >> +    __PERCPU_AMO_RET_OP_CASE(.d, name, 64, amo_insn)
-> >> +
-> >> +PERCPU_RW_OPS(8)
-> >> +PERCPU_RW_OPS(16)
-> >> +PERCPU_RW_OPS(32)
-> >> +PERCPU_RW_OPS(64)
-> >> +
-> >> +PERCPU_OP(add, add)
-> >> +PERCPU_OP(andnot, and)
-> >> +PERCPU_OP(or, or)
-> >> +PERCPU_RET_OP(add, add)
-> >> +
-> >> +#undef PERCPU_RW_OPS
-> >> +#undef __PERCPU_AMO_OP_CASE
-> >> +#undef __PERCPU_AMO_RET_OP_CASE
-> >> +#undef PERCPU_OP
-> >> +#undef PERCPU_RET_OP
-> >> +
-> >> +#define _pcp_protect(op, pcp, ...)                    \
-> >> +({                                    \
-> >> +    preempt_disable_notrace();                    \
-> >> +    op(raw_cpu_ptr(&(pcp)), __VA_ARGS__);                \
-> >> +    preempt_enable_notrace();                    \
-> >> +})
-> >> +
-> >> +#define _pcp_protect_return(op, pcp, args...)                \
-> >> +({                                    \
-> >> +    typeof(pcp) __retval;                        \
-> >> +    preempt_disable_notrace();                    \
-> >> +    __retval =3D (typeof(pcp))op(raw_cpu_ptr(&(pcp)), ##args);    \
-> >> +    preempt_enable_notrace();                    \
-> >> +    __retval;                            \
-> >> +})
-> >> +
-> >> +#define this_cpu_read_1(pcp) _pcp_protect_return(__percpu_read_8, pcp=
-)
-> >> +#define this_cpu_read_2(pcp) _pcp_protect_return(__percpu_read_16, pc=
-p)
-> >> +#define this_cpu_read_4(pcp) _pcp_protect_return(__percpu_read_32, pc=
-p)
-> >> +#define this_cpu_read_8(pcp) _pcp_protect_return(__percpu_read_64, pc=
-p)
-> >> +
-> >> +#define this_cpu_write_1(pcp, val) _pcp_protect(__percpu_write_8,
-> >> pcp, (unsigned long)val)
-> >> +#define this_cpu_write_2(pcp, val) _pcp_protect(__percpu_write_16,
-> >> pcp, (unsigned long)val)
-> >> +#define this_cpu_write_4(pcp, val) _pcp_protect(__percpu_write_32,
-> >> pcp, (unsigned long)val)
-> >> +#define this_cpu_write_8(pcp, val) _pcp_protect(__percpu_write_64,
-> >> pcp, (unsigned long)val)
-> >> +
-> >> +#define this_cpu_add_1(pcp, val)
-> >> _pcp_protect(__percpu_add_amo_case_8, pcp, val)
-> >> +#define this_cpu_add_2(pcp, val)
-> >> _pcp_protect(__percpu_add_amo_case_16, pcp, val)
-> >> +#define this_cpu_add_4(pcp, val)
-> >> _pcp_protect(__percpu_add_amo_case_32, pcp, val)
-> >> +#define this_cpu_add_8(pcp, val)
-> >> _pcp_protect(__percpu_add_amo_case_64, pcp, val)
-> >> +
-> >> +#define this_cpu_add_return_1(pcp, val)        \
-> >> +_pcp_protect_return(__percpu_add_return_amo_case_8, pcp, val)
-> >> +
-> >> +#define this_cpu_add_return_2(pcp, val)        \
-> >> +_pcp_protect_return(__percpu_add_return_amo_case_16, pcp, val)
-> >> +
-> >> +#define this_cpu_add_return_4(pcp, val)        \
-> >> +_pcp_protect_return(__percpu_add_return_amo_case_32, pcp, val)
-> >> +
-> >> +#define this_cpu_add_return_8(pcp, val)        \
-> >> +_pcp_protect_return(__percpu_add_return_amo_case_64, pcp, val)
-> >> +
-> >> +#define this_cpu_and_1(pcp, val)
-> >> _pcp_protect(__percpu_andnot_amo_case_8, pcp, ~val)
-> >> +#define this_cpu_and_2(pcp, val)
-> >> _pcp_protect(__percpu_andnot_amo_case_16, pcp, ~val)
-> >> +#define this_cpu_and_4(pcp, val)
-> >> _pcp_protect(__percpu_andnot_amo_case_32, pcp, ~val)
-> >> +#define this_cpu_and_8(pcp, val)
-> >> _pcp_protect(__percpu_andnot_amo_case_64, pcp, ~val)
-> >
-> >
-> > Why do we define __percpu_andnot based on amoand, and use
-> > __percpu_andnot with ~val here? Can't we just define __percpu_and?
-> >
-> >
-> >> +
-> >> +#define this_cpu_or_1(pcp, val) _pcp_protect(__percpu_or_amo_case_8,
-> >> pcp, val)
-> >> +#define this_cpu_or_2(pcp, val)
-> >> _pcp_protect(__percpu_or_amo_case_16, pcp, val)
-> >> +#define this_cpu_or_4(pcp, val)
-> >> _pcp_protect(__percpu_or_amo_case_32, pcp, val)
-> >> +#define this_cpu_or_8(pcp, val)
-> >> _pcp_protect(__percpu_or_amo_case_64, pcp, val)
-> >> +
-> >> +#define this_cpu_xchg_1(pcp, val) _pcp_protect_return(xchg_relaxed,
-> >> pcp, val)
-> >> +#define this_cpu_xchg_2(pcp, val) _pcp_protect_return(xchg_relaxed,
-> >> pcp, val)
-> >> +#define this_cpu_xchg_4(pcp, val) _pcp_protect_return(xchg_relaxed,
-> >> pcp, val)
-> >> +#define this_cpu_xchg_8(pcp, val) _pcp_protect_return(xchg_relaxed,
-> >> pcp, val)
-> >> +
-> >> +#define this_cpu_cmpxchg_1(pcp, o, n)
-> >> _pcp_protect_return(cmpxchg_relaxed, pcp, o, n)
-> >> +#define this_cpu_cmpxchg_2(pcp, o, n)
-> >> _pcp_protect_return(cmpxchg_relaxed, pcp, o, n)
-> >> +#define this_cpu_cmpxchg_4(pcp, o, n)
-> >> _pcp_protect_return(cmpxchg_relaxed, pcp, o, n)
-> >> +#define this_cpu_cmpxchg_8(pcp, o, n)
-> >> _pcp_protect_return(cmpxchg_relaxed, pcp, o, n)
-> >> +
-> >> +#include <asm-generic/percpu.h>
-> >> +
-> >> +#endif /* __ASM_PERCPU_H */
-> >
-> >
-> > It all looks good to me, just one thing, can you also implement
-> > this_cpu_cmpxchg64/128()?
-> >
->
-> One last thing sorry, can you add a cover letter too?
+Yeah it looks like pm_runtime_dont_use_autosuspend() is calling runtime_sus=
+pend().
 
-Okay.
+root@v4:/data/root# rmmod inv-icm42600-i2c inv-icm42600
+[  291.511085] inv_icm42600_runtime_resume() -> inv_icm42600_enable_regulat=
+or_vddio()
+[  291.511165] inv_icm42600_enable_regulator_vddio() enable vddio
+[  291.532398] inv_icm42600_runtime_suspend() disable vddio
+[  291.538517] CPU: 0 UID: 0 PID: 331 Comm: rmmod Tainted: G        W      =
+     6.16.0-rc1-00202-g7fe6e564b5c9-dirty #146 VOLUNTARY
+[  291.538559] Tainted: [W]=3DWARN
+[  291.538566] Hardware name: Freescale i.MX6 Ultralite (Device Tree)
+[  291.538575] Call trace:
+[  291.538590]  unwind_backtrace from show_stack+0x10/0x14
+[  291.538643]  show_stack from dump_stack_lvl+0x54/0x68
+[  291.538679]  dump_stack_lvl from inv_icm42600_runtime_suspend+0x68/0x6c =
+[inv_icm42600]
+[  291.538728]  inv_icm42600_runtime_suspend [inv_icm42600] from __rpm_call=
+back+0x48/0x18c
+[  291.538775]  __rpm_callback from rpm_callback+0x5c/0x68
+[  291.538815]  rpm_callback from rpm_suspend+0xdc/0x584
+[  291.538853]  rpm_suspend from pm_runtime_disable_action+0x30/0x5c
+[  291.538885]  pm_runtime_disable_action from devres_release_group+0x180/0=
+x1a0
+[  291.538917]  devres_release_group from i2c_device_remove+0x34/0x84
+[  291.538949]  i2c_device_remove from device_release_driver_internal+0x180=
+/0x1f4
+[  291.538976]  device_release_driver_internal from driver_detach+0x54/0xa0
+[  291.538998]  driver_detach from bus_remove_driver+0x58/0xa4
+[  291.539030]  bus_remove_driver from sys_delete_module+0x16c/0x250
+[  291.539065]  sys_delete_module from ret_fast_syscall+0x0/0x54
+[  291.539089] Exception stack(0xd0ab1fa8 to 0xd0ab1ff0)
+[  291.539108] 1fa0:                   be94fe46 be94fd1c 017ccfa4 00000800 =
+0000000a 017ccf68
+[  291.539126] 1fc0: be94fe46 be94fd1c 017ccf68 00000081 00000000 00000001 =
+00000003 017cc190
+[  291.539139] 1fe0: b6c8be41 be94fadc 000179cb b6c8be48
+[  291.685102] inv_icm42600_disable_vddio_reg() disable vddio
+[  291.694566] ------------[ cut here ]------------
+[  291.694621] WARNING: CPU: 0 PID: 331 at drivers/regulator/core.c:3016 _r=
+egulator_disable+0x140/0x1a0
+[  291.708496] unbalanced disables for regulator-dummy
+[  291.713391] Modules linked in: inv_icm42600_i2c(-) inv_icm42600 inv_sens=
+ors_timestamp [last unloaded: inv_icm42600]
+[  291.723939] CPU: 0 UID: 0 PID: 331 Comm: rmmod Tainted: G        W      =
+     6.16.0-rc1-00202-g7fe6e564b5c9-dirty #146 VOLUNTARY
+[  291.735620] Tainted: [W]=3DWARN
+[  291.738598] Hardware name: Freescale i.MX6 Ultralite (Device Tree)
+[  291.744789] Call trace:
+[  291.744807]  unwind_backtrace from show_stack+0x10/0x14
+[  291.752614]  show_stack from dump_stack_lvl+0x54/0x68
+[  291.757704]  dump_stack_lvl from __warn+0x7c/0xe0
+[  291.762437]  __warn from warn_slowpath_fmt+0x124/0x18c
+[  291.767602]  warn_slowpath_fmt from _regulator_disable+0x140/0x1a0
+[  291.773812]  _regulator_disable from regulator_disable+0x48/0x80
+[  291.779843]  regulator_disable from devres_release_group+0x180/0x1a0
+[  291.786231]  devres_release_group from i2c_device_remove+0x34/0x84
+[  291.792446]  i2c_device_remove from device_release_driver_internal+0x180=
+/0x1f4
+[  291.799699]  device_release_driver_internal from driver_detach+0x54/0xa0
+[  291.806427]  driver_detach from bus_remove_driver+0x58/0xa4
+[  291.812033]  bus_remove_driver from sys_delete_module+0x16c/0x250
+[  291.818160]  sys_delete_module from ret_fast_syscall+0x0/0x54
+[  291.823934] Exception stack(0xd0ab1fa8 to 0xd0ab1ff0)
+[  291.829007] 1fa0:                   be94fe46 be94fd1c 017ccfa4 00000800 =
+0000000a 017ccf68
+[  291.837205] 1fc0: be94fe46 be94fd1c 017ccf68 00000081 00000000 00000001 =
+00000003 017cc190
+[  291.845397] 1fe0: b6c8be41 be94fadc 000179cb b6c8be48
+[  291.850632] ---[ end trace 0000000000000000 ]---0
 
->
-> Thanks!
->
-> Alex
->
->
-> > And since this is almost a copy/paste from arm64, either mention it at
-> > the top of the file or (better) merge both implementations somewhere
-> > to avoid redefining existing code :) But up to you.
+>=20
+> > [ 3854.477170] inv_icm42600_disable_vddio_reg() disable vddio
+> > [ 3854.483835] ------------[ cut here ]------------
+> > [ 3854.483912] WARNING: CPU: 0 PID: 582 at drivers/regulator/core.c:301=
+6 _regulator_disable+0x140/0x1a0
+> > [ 3854.497853] unbalanced disables for regulator
+> >
+> > Is the way from here to remove the devm_add_action_or_reset(dev,
+> > inv_icm42600_disable_vddio_reg... ?
+>=20
+> That will make a mess if runtime PM is not built into
+> the kernel which is why an PM state in remove should return to the state
+> before it was enabled in the first place (i.e. on!).
+> That final runtime suspend surprises me.
 
-Actually, there's a concern here. We should account for scenarios
-where ZABHA isn't supported. Given that xxx_8() and xxx_16() are
-rarely used in practice, could we initially support only xxx_32() and
-xxx_64()? For xxx_8() and xxx_16(), we could default to the generic
-implementation.
+Got it :)
 
+/Sean
 
-> >
-> > Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> >
-> > Thanks,
-> >
-> > Alex
-> >
-> >
-> >
-
-Thanks,
-Yunhui
 
