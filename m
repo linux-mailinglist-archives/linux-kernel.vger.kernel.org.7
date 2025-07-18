@@ -1,131 +1,117 @@
-Return-Path: <linux-kernel+bounces-736172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 368DDB099AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 04:15:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74D99B099B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 04:15:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA1A31C80AE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 02:15:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C1297AC79C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 02:14:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 330F2198A2F;
-	Fri, 18 Jul 2025 02:15:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4719517A2E1;
+	Fri, 18 Jul 2025 02:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="AhhKwz80"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SnbVS/i2"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF291BC2A;
-	Fri, 18 Jul 2025 02:14:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576A43597A;
+	Fri, 18 Jul 2025 02:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752804901; cv=none; b=QFOT1xAqOYLu6eVQ/QzRLCMptHyAgyEoXTFNavvJw8MzlFt8GqcsUpMz9V0oXnJouPFeNqWrS0RYJBE55OmGoNsNpGxeLjPagz/SBkl7KfOWepWYfcW4Fh7ISiPepe7vwMJFT38AWPZHREzdgMrPftXKA3Au19u8sDb2fmDwcuQ=
+	t=1752804934; cv=none; b=kfQwOt2l0wcOtqi6/HvjwpuHA4OP5s9l3YjTcd2ddSzQEZSeKPxhiT1qqcmmivODKHi1MJIYBEGuvs1Zr/sJrptSxDV54GV0vcAbixotXHb1LCCVLbRtmDkU7dsqzlB0PrDsSNHVAGnfU3UG6fN2YZM4yRlkSUZ0nj9OG5nkMcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752804901; c=relaxed/simple;
-	bh=KXiYzDb/12B8ZKzq05chDYOX4Fw7SGPOEPy7EA2MF24=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R1r0vewB2nEk7krhSc43r2BTj/rqg+FILPVClRPIMlDXyJJ0BvFLuMZHYypYfuiWmi6cVolLe86Nwtl3XQAqJYV+xw0Zd/Ox500M7b0/YFDxbWTcICAEXugLUbVm3Y/zgl5a0EYVd4IG2wT7kNziHvFuxdzoSpjLr8TjVOFed1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=AhhKwz80; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1752804896; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=8jLJM3I7MXzt5ywvPrJqc6L2LFY2+2u42CbPGeXe8wI=;
-	b=AhhKwz80ghHB8L+TGf836Ycj/c3TPWwTR05BIPl9VSg90uVtf+AXls/U5/dJx2wqixDzFJWmYfErU/9Cuv1uIkJqxnBsi1X3cFEePRNrxFlhjwqgF1JdIZ35lL+aE3qw6rb7/Tq6DFoLgmzgH4+3xisfxsKFLx6I/mZnlZHEx78=
-Received: from 30.74.144.111(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WjAe3gk_1752804891 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 18 Jul 2025 10:14:52 +0800
-Message-ID: <85b2cfd8-4aeb-4e98-8065-b6594783de62@linux.alibaba.com>
-Date: Fri, 18 Jul 2025 10:14:51 +0800
+	s=arc-20240116; t=1752804934; c=relaxed/simple;
+	bh=lVHWpjgrHfaaSWR03iDj35NiFPjPMwhsuwBitStBHaI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZdEQDzeb4vQ7ecc7xN7KWmAUqhBSPeZsQ7kbbL9ZxurjncHJ7gwP0aoi0uRB/idhSMk5AMcE7zguXMstIC4toURKSG4LeX2Fl3L2QJKz1rejmPt2eDT06cGxbrEociIRS82dNwQAiEqN2NJtjNwK6Ax2YCncmdVPw2aD6hTt2ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SnbVS/i2; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b2c4e46a89fso1218801a12.2;
+        Thu, 17 Jul 2025 19:15:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752804933; x=1753409733; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WWlEUDGBKmoJoMq2kVDXDpu9PhO5j92+uYIkA1+OTaQ=;
+        b=SnbVS/i2Gs8vJeCdTqyeAxQSTkq0WxNtpmSKhjBCXEu+R3jzv2Gn9s9crg7wvFClSb
+         LeCRkTo+6xFrKF3z+e4gVJL2lqO+BLpyz/B8UJ4Ya2qtPkybA/cJMoveZgDnNvj9SsVN
+         P9HbJL3Vif9JhnKixt8cgB37QmcDHJwrmPiLyxQoA04tTmLAd6CzAz5j70TK31YxUjcF
+         yQSJGedB8iQRohvwU2zN60FdCTwX2pH4O47f/XAnvR7tgF0oPD+agSg2+apkjsH0N7Tt
+         aZefbfBpz3IMFj51TxygAX8pfXaGr1hoXRW5iIv2g9VqJzlnE5lw+nG1iwxzaYIBCuM6
+         flkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752804933; x=1753409733;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WWlEUDGBKmoJoMq2kVDXDpu9PhO5j92+uYIkA1+OTaQ=;
+        b=OaxwSpQmgXYb7FHaOBAbX2KUiKVlDqlMZ0P6RbdfwDeYtcZFNMoLE2MRjGWvKpGdVw
+         Z6OloheDFBfLZOkc2RGFXlaYq1syQ7FaxFauoYtwpKj3eQ8aKw6VKflHrp334tW16K/K
+         PYwe4FzXLfRsR2/bpE8JqiaJmJqL4cjgh0UxwpWMcsKyIEPyPHnPmtDck81dWpmOoJGZ
+         ZIwmDIo4IAfMKCfEQh4LPpa346uAweqYuyOOtUdFcYgENDnnbGY2SC3eeUSp70Mbdi5i
+         jzST1ENltwcxaSR8W9XfiemQ7FrTh1WwkEPBxgiRtrRpmTeO2l7yjI2/cPZwgFhGVsPm
+         fV3w==
+X-Forwarded-Encrypted: i=1; AJvYcCXbcCEo07ZDnVf75leUSS3xztpjZBImFnAWfrSPCa/kihV+jOF/fsfUkgabRjRCvDvnVfc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBRPeXaPnzhyLVrsfBnrQepVADTKjKyIXymz7KT00LFb0E323N
+	STf4rbNuSNvojp/DzN4C+glYfpylg5Tx3Tj3HaPADl+e37Q5nZLihZ8iC/+AmmInmTxzmPNj5hx
+	yUdsUXVbS8Cq4ESJhPG4skZCGhKsVk6A=
+X-Gm-Gg: ASbGncv/CbIvBa1BCDklzNA6y3vw9Q0ev5x2qarRJIFOUW7QGapomFA70zUbZx11WP5
+	PQPAs++Da1+JZjPAJB8atKFRWE/qgdGLui/g6sHBIhWhvMbyaWhFu26JjxXfbs5FUZqS1vJG9sF
+	zsVSKAayvXxfkGrLQ53GSh1ij8ufsHBv/MpApvg34nLz5YL142rHRmDjzsPBkqC1ZLTnmrBL+Tq
+	49in7jrWOAsi08=
+X-Google-Smtp-Source: AGHT+IFWdZVlTl88oEkKWXdskwBLZOiN3Fdk4Hj0vV6hvasLjU8N4elJwG7L6YbeRTm+lXtAw5ze3lz5zfCFcykOff8=
+X-Received: by 2002:a17:90b:5385:b0:311:c939:c851 with SMTP id
+ 98e67ed59e1d1-31c9f3c3635mr12504426a91.4.1752804932592; Thu, 17 Jul 2025
+ 19:15:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 09/14] khugepaged: avoid unnecessary mTHP collapse
- attempts
-To: Nico Pache <npache@redhat.com>, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Cc: david@redhat.com, ziy@nvidia.com, lorenzo.stoakes@oracle.com,
- Liam.Howlett@oracle.com, ryan.roberts@arm.com, dev.jain@arm.com,
- corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, akpm@linux-foundation.org,
- baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
- wangkefeng.wang@huawei.com, usamaarif642@gmail.com, sunnanyong@huawei.com,
- vishal.moola@gmail.com, thomas.hellstrom@linux.intel.com,
- yang@os.amperecomputing.com, kirill.shutemov@linux.intel.com,
- aarcange@redhat.com, raquini@redhat.com, anshuman.khandual@arm.com,
- catalin.marinas@arm.com, tiwai@suse.de, will@kernel.org,
- dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
- jglisse@google.com, surenb@google.com, zokeefe@google.com,
- hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
- rdunlap@infradead.org, hughd@google.com
-References: <20250714003207.113275-1-npache@redhat.com>
- <20250714003207.113275-10-npache@redhat.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20250714003207.113275-10-npache@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250709033242.267892-1-Neeraj.Upadhyay@amd.com> <20250709033242.267892-26-Neeraj.Upadhyay@amd.com>
+In-Reply-To: <20250709033242.267892-26-Neeraj.Upadhyay@amd.com>
+From: Tianyu Lan <ltykernel@gmail.com>
+Date: Fri, 18 Jul 2025 10:14:54 +0800
+X-Gm-Features: Ac12FXzcjNVIh8_Bpj66iqPrxKzICtwa0qE0lMBWTJuBGNQ1LXDlZ3eXFBep_DM
+Message-ID: <CAMvTesB_YL7iOQdmgXDV+--c5xSh+ZDc9PwAi8_fzx12n-D0-g@mail.gmail.com>
+Subject: Re: [RFC PATCH v8 25/35] x86/apic: Support LAPIC timer for Secure AVIC
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: linux-kernel@vger.kernel.org, bp@alien8.de, tglx@linutronix.de, 
+	mingo@redhat.com, dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com, 
+	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com, 
+	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org, 
+	hpa@zytor.com, peterz@infradead.org, seanjc@google.com, pbonzini@redhat.com, 
+	kvm@vger.kernel.org, kirill.shutemov@linux.intel.com, huibo.wang@amd.com, 
+	naveen.rao@amd.com, kai.huang@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 2025/7/14 08:32, Nico Pache wrote:
-> There are cases where, if an attempted collapse fails, all subsequent
-> orders are guaranteed to also fail. Avoid these collapse attempts by
-> bailing out early.
-> 
-> Signed-off-by: Nico Pache <npache@redhat.com>
+On Wed, Jul 9, 2025 at 11:42=E2=80=AFAM Neeraj Upadhyay <Neeraj.Upadhyay@am=
+d.com> wrote:
+>
+> Secure AVIC requires LAPIC timer to be emulated by the hypervisor.
+> KVM already supports emulating LAPIC timer using hrtimers. In order
+> to emulate LAPIC timer, APIC_LVTT, APIC_TMICT and APIC_TDCR register
+> values need to be propagated to the hypervisor for arming the timer.
+> APIC_TMCCT register value has to be read from the hypervisor, which
+> is required for calibrating the APIC timer. So, read/write all APIC
+> timer registers from/to the hypervisor.
+>
+> Co-developed-by: Kishon Vijay Abraham I <kvijayab@amd.com>
+> Signed-off-by: Kishon Vijay Abraham I <kvijayab@amd.com>
+> Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
 > ---
->   mm/khugepaged.c | 17 +++++++++++++++++
->   1 file changed, 17 insertions(+)
-> 
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index a701d9f0f158..7a9c4edf0e23 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -1367,6 +1367,23 @@ static int collapse_scan_bitmap(struct mm_struct *mm, unsigned long address,
->   				collapsed += (1 << order);
->   				continue;
->   			}
+> Changes since v7:
+>  - No change.
 
-After doing more testing, I think you need to add the following changes 
-after patch 8.
-
-Because when collapsing mTHP, if we encounter a PTE-mapped large folio 
-within the PMD range, we should continue scanning to complete that PMD, 
-in case there is another mTHP that can be collapsed within that PMD range.
-
-+                       if (ret == SCAN_PTE_MAPPED_HUGEPAGE)
-+                               continue;
-
-> +			/*
-> +			 * Some ret values indicate all lower order will also
-> +			 * fail, dont trying to collapse smaller orders
-> +			 */
-> +			if (ret == SCAN_EXCEED_NONE_PTE ||
-> +				ret == SCAN_EXCEED_SWAP_PTE ||
-> +				ret == SCAN_EXCEED_SHARED_PTE ||
-> +				ret == SCAN_PTE_NON_PRESENT ||
-> +				ret == SCAN_PTE_UFFD_WP ||
-> +				ret == SCAN_ALLOC_HUGE_PAGE_FAIL ||
-> +				ret == SCAN_CGROUP_CHARGE_FAIL ||
-> +				ret == SCAN_COPY_MC ||
-> +				ret == SCAN_PAGE_LOCK ||
-> +				ret == SCAN_PAGE_COUNT)
-> +				goto next;
-> +			else
-
-Nit: the 'else' statement can be dropped.
-
-> +				break;
->   		}
->   
->   next:
-
+Reviewed-by: Tianyu Lan <tiala@microsoft.com>
+--
+Thanks
+Tianyu Lan
 
