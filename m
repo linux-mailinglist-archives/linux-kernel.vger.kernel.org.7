@@ -1,99 +1,114 @@
-Return-Path: <linux-kernel+bounces-736090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 409A1B098B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 02:03:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28A43B098B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 02:05:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0B114A77EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 00:03:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B55AD1896BC7
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 00:05:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78AE63C01;
-	Fri, 18 Jul 2025 00:03:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F933C01;
+	Fri, 18 Jul 2025 00:05:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="U7WJofQb"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b="VjdYPlHm"
+Received: from raptorengineering.com (mail.raptorengineering.com [23.155.224.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 313C2AD21
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 00:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B09E182;
+	Fri, 18 Jul 2025 00:05:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.155.224.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752797027; cv=none; b=USpcwjn7EGd7R+5nPfrloxtj0h1wbZVAtP5Jnv7rrp1VADoml64t6ggXcTMoM/HFUrc2sRDhF0ISBops5UEZgLVEb5zrt8bGlP2WB49j/UMQVkmD+8QQCz4Dw549C+k5UYf8eWjJyD+EZLKiL1aCjq9/mky5E6ctGaT1dvf0H3A=
+	t=1752797125; cv=none; b=MsicWiYhrEqPmTEyk40/ygqXjlU+dPE3dc9/9UIarLRhKsvszbFuMucbLtsosT6bvAfD7Pzn5EShDezj8+uuVrEu+nzGpWA8SdzgPjBwy2QUS5mwgmm3xzrGAu9iIJbLHpO+1t/3l7xhIE3MbT2QRTTm2OddJF6TJz/6oArwHRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752797027; c=relaxed/simple;
-	bh=j8XoN8wm5vMCLiPaNNF2pggRUi/IpnaqN6r5ZSfiOO0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PKQsXMxZR7JztiuTd5wXwdXdL3Pjn1OdZTkJYJe9p4FafzpkUSu0mQ/FXHQcZMjUXhg3CGjZMcLVy4QcJLT34G38ZfaPorHSCzRlqnA/zCQ/FmImbwQvlKx75yIT6uAFKYHCZpUC3866CmRQZr3yERs8i1G7uxmtKRgsAwaaFJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=U7WJofQb; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 17 Jul 2025 20:03:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752797013;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=RkUy0/eddyr1B+B24sjHKUq1x4/Az8aRCiU5ZGMSaXk=;
-	b=U7WJofQb7Q/ChRaWzco0brOEVtq8F3U8H2fip4xDaCZi6014PmxpEK9KuEE6o45ThlA5pt
-	2bVyuuIuyxP6rvcWebOwAhCe8uf6Gr7PsbykKVm0DuDOKIkI/vpaPPK7s6mGd0o1XtQWgL
-	Sa/pHwI0sfkOROezK2+ep7UKhUd6DzU=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] bcachefs fixes for 6.16-rc7
-Message-ID: <bgaxbeebayrzhkawwhrxrrdgc6xtsk5h454ejv7py4g74hxjs2@yyvkmakatffx>
+	s=arc-20240116; t=1752797125; c=relaxed/simple;
+	bh=BjITnCdBAzI0MQalAl38WFS1xnO9Ts5R2ceAbYlxbyg=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=bR4sybLZHhYia1ioyVn5xj5VfkFVFAyOC4kgsAiGLttnMGmQgXk3t6ipucisp3nrBJoNDFThoAUNFggBwGpN422/U0e0PMWqvUPdvxCyNijpLUEFmZGwr4Q8ZiV3khj89hZwsq1iubxKtVqw07yCStmPlU7iHOoVLMv1DkDLYqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com; spf=pass smtp.mailfrom=raptorengineering.com; dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b=VjdYPlHm; arc=none smtp.client-ip=23.155.224.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raptorengineering.com
+Received: from localhost (localhost [127.0.0.1])
+	by mail.rptsys.com (Postfix) with ESMTP id 02D168285589;
+	Thu, 17 Jul 2025 19:05:16 -0500 (CDT)
+Received: from mail.rptsys.com ([127.0.0.1])
+	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id joaj3DPirEEm; Thu, 17 Jul 2025 19:05:12 -0500 (CDT)
+Received: from localhost (localhost [127.0.0.1])
+	by mail.rptsys.com (Postfix) with ESMTP id 39E43828775B;
+	Thu, 17 Jul 2025 19:05:12 -0500 (CDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.rptsys.com 39E43828775B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=raptorengineering.com; s=B8E824E6-0BE2-11E6-931D-288C65937AAD;
+	t=1752797112; bh=HH/9mXt7gkyzrKXSj6txN9ECfNMdRVxJxuDvf9QCG70=;
+	h=Date:From:To:Message-ID:MIME-Version;
+	b=VjdYPlHmlBacwsUZm4AkIqdRIbHvyx+3JPKcvOjHoutc761D7ZA51jRKEcrqPLhE9
+	 CsOlf/ZlO+CJCsH5X7vjU2K0Nsgoj9flw5in3flUi0hd2q9fsRgeGOzuR6VffvdEec
+	 uEyR39exZl4EO6NvYCZNE0yoSQlqG1JypmQkjYts=
+X-Virus-Scanned: amavisd-new at rptsys.com
+Received: from mail.rptsys.com ([127.0.0.1])
+	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 6FN37W4-erl3; Thu, 17 Jul 2025 19:05:11 -0500 (CDT)
+Received: from vali.starlink.edu (localhost [127.0.0.1])
+	by mail.rptsys.com (Postfix) with ESMTP id DC84D8285589;
+	Thu, 17 Jul 2025 19:05:11 -0500 (CDT)
+Date: Thu, 17 Jul 2025 19:05:08 -0500 (CDT)
+From: Timothy Pearson <tpearson@raptorengineering.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Timothy Pearson <tpearson@raptorengineering.com>, 
+	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	linux-pci <linux-pci@vger.kernel.org>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, 
+	christophe leroy <christophe.leroy@csgroup.eu>, 
+	Naveen N Rao <naveen@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, 
+	Shawn Anastasio <sanastasio@raptorengineering.com>
+Message-ID: <551742074.1370228.1752797108649.JavaMail.zimbra@raptorengineeringinc.com>
+In-Reply-To: <20250717232745.GA2662794@bhelgaas>
+References: <20250717232745.GA2662794@bhelgaas>
+Subject: Re: [PATCH v3 5/6] PCI: pnv_php: Fix surprise plug detection and
+ recovery
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: Zimbra 8.5.0_GA_3042 (ZimbraWebClient - GC138 (Linux)/8.5.0_GA_3042)
+Thread-Topic: pnv_php: Fix surprise plug detection and recovery
+Thread-Index: SRr2FJcjkaGgIRkFlhO9QWQJ8V6vhw==
 
-The following changes since commit 347e9f5043c89695b01e66b3ed111755afcf1911:
 
-  Linux 6.16-rc6 (2025-07-13 14:25:58 -0700)
 
-are available in the Git repository at:
+----- Original Message -----
+> From: "Bjorn Helgaas" <helgaas@kernel.org>
+> To: "Timothy Pearson" <tpearson@raptorengineering.com>
+> Cc: "linuxppc-dev" <linuxppc-dev@lists.ozlabs.org>, "linux-kernel" <linux-kernel@vger.kernel.org>, "linux-pci"
+> <linux-pci@vger.kernel.org>, "Madhavan Srinivasan" <maddy@linux.ibm.com>, "Michael Ellerman" <mpe@ellerman.id.au>,
+> "christophe leroy" <christophe.leroy@csgroup.eu>, "Naveen N Rao" <naveen@kernel.org>, "Bjorn Helgaas"
+> <bhelgaas@google.com>, "Shawn Anastasio" <sanastasio@raptorengineering.com>
+> Sent: Thursday, July 17, 2025 6:27:45 PM
+> Subject: Re: [PATCH v3 5/6] PCI: pnv_php: Fix surprise plug detection and recovery
 
-  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-07-17
+> On Tue, Jul 15, 2025 at 04:39:06PM -0500, Timothy Pearson wrote:
+>> The existing PowerNV hotplug code did not handle surprise plug events
+>> correctly, leading to a complete failure of the hotplug system after
+>> device removal and a required reboot to detect new devices.
+> 
+>> +++ b/drivers/pci/hotplug/pnv_php.c
+>> @@ -4,12 +4,14 @@
+>>   *
+>>   * Copyright Gavin Shan, IBM Corporation 2016.
+>>   * Copyright (C) 2025 Raptor Engineering, LLC
+>> + * Copyright (C) 2025 Raptor Computing Systems, LLC
+> 
+> Just to double-check that you want both copyright lines here?
 
-for you to fetch changes up to 89edfcf710875feedc4264a6c9c4e7fb55486422:
-
-  bcachefs: Fix bch2_maybe_casefold() when CONFIG_UTF8=n (2025-07-16 17:32:33 -0400)
-
-----------------------------------------------------------------
-bcachefs fixes for 6.16-rc7
-
-- two small syzbot fixes
-- fix discard behaviour regression; we no longer wait until the number
-  of buckets needing discard is greater than the number of buckets
-  available before kicking off discards
-- fix a fast_list leak when async object debugging is enabled
-- fixes for casefolding when CONFIG_UTF8 != y
-
-----------------------------------------------------------------
-Kent Overstreet (7):
-      bcachefs: io_read: remove from async obj list in rbio_done()
-      bcachefs: Fix triggering of discard by the journal path
-      bcachefs: Tweak threshold for allocator triggering discards
-      bcachefs: Don't build aux search tree when still repairing node
-      bcachefs: Fix reference to invalid bucket in copygc
-      bcachefs: Fix build when CONFIG_UNICODE=n
-      bcachefs: Fix bch2_maybe_casefold() when CONFIG_UTF8=n
-
- fs/bcachefs/alloc_foreground.c | 3 ++-
- fs/bcachefs/btree_io.c         | 6 +++---
- fs/bcachefs/dirent.c           | 4 ++++
- fs/bcachefs/dirent.h           | 8 ++++++++
- fs/bcachefs/io_read.c          | 5 +++++
- fs/bcachefs/journal_io.c       | 1 +
- fs/bcachefs/movinggc.c         | 2 +-
- 7 files changed, 24 insertions(+), 5 deletions(-)
+Yes, both entities ended up sponsoring this part of the work over time.  Thank you for double checking!
 
