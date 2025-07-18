@@ -1,172 +1,184 @@
-Return-Path: <linux-kernel+bounces-736923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98122B0A52F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:29:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E00D3B0A531
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:29:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 535DE3BE75E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:28:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 852203B8252
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4124F2D94AD;
-	Fri, 18 Jul 2025 13:29:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5011F2DCBEB;
+	Fri, 18 Jul 2025 13:29:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="CAV+8Nmn"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2069.outbound.protection.outlook.com [40.107.243.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CyM2x3eh"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A372DC332
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 13:29:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752845359; cv=fail; b=pt+zdKN57U0Ez58fLg/T/PPP6EXkVHyQZklv4/9bF39iM8GSPUvfNqOGy86Etd1uX2FYDE/iLE8boX4JrJ5NBR/9lC2pDs+NJY5TaSLwANpXaQ8dU1BZLkyutiFAJWoCBxZgyG8POxPtRcgDwWZmuOWzUu9XPxixnPlpR+KlBnE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752845359; c=relaxed/simple;
-	bh=OSHKditElNuTbWAo1zifinLH7O79cTx22xES/elAOlc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=YdqWxAstTV4btCgwJ3pWhyommXW+GkT8bhNK6aJKIe0q8Z0LaxmFNDepupRKXVxHIw64vPozOll/SjFDbVYehG69PFhNctBr3iR86bU3lQOiOLDlUNb8SVp+ixPhg4PbE+XMMpXfFM5pBB/u4l3533kHXCGtvIKfH9BkfanVTzo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=CAV+8Nmn; arc=fail smtp.client-ip=40.107.243.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qFFVXjtxRUF+HckjhIcs+eDV1ChMPEw8EvYAIzGKOL9jIlyDEHyZov9Pwg+jcVKFhrdFoTIeoPAEseMBSIq1jFmVgno8i+H1iBbWjgfb02+tK85lLNW1eEeF+BVaCmZ/qNYllyOQzVOY7mXwUMcMvsRFhJvWx1Eu874fjgaaaDEFcSocruK4H3gJFAAnzgYvZG39/wEqdD6wnCgOh8pt5WZz/kk9NhzpDQS7FQ1jWpN4WVMz60hVMYD+Cdz8d4e8Is7kP6xFBfijkYBKzi+buVhy+6eTHr/wbNBoXtntOoj4epzn+EYiCgWwNNV7+KfvKyOGj2fX4zpCptMn7N34MQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OSHKditElNuTbWAo1zifinLH7O79cTx22xES/elAOlc=;
- b=VgZX8Ed3SYI1K6U9Swk72hmtyQAKylCRDuGXySn8v9pBseVxQAIEI52FGA4mtiAShNxxtC332pFKDlqFOux+qks4220sP2Q5n4f8oY2+CuTlhnCvXGDVjeujPWhYO4XCYMKL19zbAU3J8Z32YGE9GAF9E/Fu7U93ZtQV7rye/VHNZriTPpk8EiFCiaCsINZcQvaymLivKMYSPHnZC2G+CnUnbAMLyz1vAgrgTyY+VLzLILVqULMVQjHhohDfPiv7q8gY4/focPeyn5SjNlRZb5SXARIIaBnoee7D7GK9i8X9nFZLZXaTINXGQm2bXfQMMEdg7tXvLgu0gOZWlLVdzQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OSHKditElNuTbWAo1zifinLH7O79cTx22xES/elAOlc=;
- b=CAV+8Nmn2/SKGoh0czO/UdvwT3xV8sGdvroYDe09xMoIOHe0JbzTxWNEuXGFc1bk4w/ls8OpYm+dqxWOSloNP9kikLSLxi2078mm10mQ109A/U1u8ZWVKDkrrWiHb4isJyBBFvntPDj34c8GldB/AO3n2voFd/miEmWR738kJO6zBDEDhGGJMU4MTZYSQgIMjByiwNyqu4pBMmpmJkHTp5hGgM/8tj0UAGZza411KzC8TUy83jnU2Qs/Rk9iizDaS3jz5Drk6RJLVuQ8+N7bf3errbA37QPwZW0nAMD6CdIGjXdNnQckzU8+Kzt7jvkSHJ5+cXtychnIvSx9K4FFZQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by LV2PR12MB5751.namprd12.prod.outlook.com (2603:10b6:408:17d::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.39; Fri, 18 Jul
- 2025 13:29:13 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%7]) with mapi id 15.20.8901.033; Fri, 18 Jul 2025
- 13:29:13 +0000
-Date: Fri, 18 Jul 2025 10:29:12 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Baolu Lu <baolu.lu@linux.intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>, iommu@lists.linux.dev,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40FB323507F;
+	Fri, 18 Jul 2025 13:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752845378; cv=none; b=Pii9stWuuRz7+u+FrS3iOXrQG91D4RBVQjamVIZIZE+JpUnwvhXpx7wzU5wIFa9WUQOcR4MBaVq0liiL+a3R4UswepKKkcs+b4yyy27stMA2Ia2NgZhDnAcxf6oxG9qy528At2X1VlqVqEHdxvXE1ppQZ9JUJu9i0wW+EX6eXBw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752845378; c=relaxed/simple;
+	bh=9zAdNuMujNK7rK5zDyvK0DONlnXOhbHGzRZV3zSBitc=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=ODoO+NdG8umUd8snR9wd3ikJe+DE3kqT3jn9nVkojM4H8ZUmayLNCNqaTTZ4hAAyv47bil1cs0c86P58Es9dMlVr1AAlF3+sg+79n+k/pckLs3u2g2UxLoJbJeW85E+HCtPZd4T8hQC4WD6hfMQEEB9IsEBWgAVnj74rkWoqhR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CyM2x3eh; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2350b1b9129so14052365ad.0;
+        Fri, 18 Jul 2025 06:29:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752845376; x=1753450176; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=43GOBP/H9DxdSQ7s07hm8GW5mk8Errz/UJkcXIpPVPg=;
+        b=CyM2x3ehHRbEKZmKIJOPUeiPr3OYsbChiXqTbZR/DPpI7QWreGfGF5GOjopKm8e3+n
+         /OJZ8OVbQTDBNWuQwI5QYcnFC4sdVJta+qobxKr/0vVpQ5lyy/d27hHkmOYBBwDWS6vs
+         tXJ1/PE2phOX7b39SKkYwvIoeMWyipdMei6W7iiJqaIjIXgN7CXqBH+QtyzXFkuMZ5l8
+         eg12lVwj4hLJ2cCiPsXc0eJutejjzd0IfakuT5vNMFcrHk7himItCOhGCT20k3DCSJUT
+         qiMURjuwczsRzwMWC29ThN4XLADfh1ar1eSnbnsAdnF0Zuh46jmPjIGR2v+RSzcuIjis
+         +uIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752845376; x=1753450176;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=43GOBP/H9DxdSQ7s07hm8GW5mk8Errz/UJkcXIpPVPg=;
+        b=beiZ+nRdqSf/8Ih/lEJp/DtcR/hNyPTSzE9zl1B6hSuGtgFCEVFurRxiimyGkSN87V
+         xqGMLLxs4+5U3EHvJsZeHDLV3gk6wajKV58iAdxJhtmVBadAuRb1Z0YKYk6FvxLDrfey
+         xcJlH/aC9a+rL4YYsMkjBXa3RaPqqi7+3jIrXbwZceBqVdN4C/7cO0V1KhhwuWNEnSkA
+         DEtAGm+xsnYvFfgSdiUXOrtAN6pUO+bM4+VE2Noib1n0ImpSxLOFF05CtG0f68mzRpsq
+         fXjUndvuaRMPzYVP4tS0rpqB8TTkupoDIqjilmA8DVfZRoOfa1NOoFZjlsG/mP49yor6
+         BZqA==
+X-Forwarded-Encrypted: i=1; AJvYcCVEIJZmnpef++u2RgdqT5umz/Es2Sm0FIi7qYEDBFWWYiP+Sko381yIBlDWqXRYl/JbUupemLlKew22VAU=@vger.kernel.org, AJvYcCW2GBBArdH7RhLqet7pwhetLuLTU1QghDzJDSLQT7xPurOmDT/uWypZTSQHYSU4kDnS2wHNn6bHuInRW4I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywce0A1M1W1YPos04+Q0Nq/NwmPDQXgYjO5ruw0EmIljp6W/h83
+	uko+ihK5IgI/ShYqAL6gWaVN82nSqlY38h792oldUm2O38KriIDVxgJ8
+X-Gm-Gg: ASbGnctp7XgEaHbJNnNvIQT0qPZ7dIaa8xle/I+98CblauEryoqTxN0+cuwSizO2081
+	56uxQJwRyxiSdgeanBa9KUFQMtsV+Hnjp2e/Pvjuf+v1NLAy7+983zGZTAuFDV44fi8ei4XAyUL
+	qJQIp66jK5o120mtgaHBv0LUyPtiBdn4YaZtsSiz2FyyJHCRq8B0q7MJpG+EbN9DUmMaKe7zCF9
+	Yxq8jMyQ8Zu4OTFgT9yZ1eaj6KOOAX+BXRxzIrLNePAu7Fj908OQ1FI3NdinyyyEIbjv2bdtR5a
+	VMHhAuRw5pgeSs6DtJ/zynbi6qyPFvR65Yuuj6rdF2yviFE1WbkPu55t//IHTyGwcI16ZhSqwjI
+	DaB5Jgx/q56J1+dxOmwYCKc+KqbkNo3IGgg5MCMsiVN+RE3p784Bn4UmZKvkunVEqCpmqibTeOA
+	==
+X-Google-Smtp-Source: AGHT+IEXxtqwJ7/WCKe6hpmTwVqXwJmKGTfQMnbab1AEa2sLxKhDjYCk92WfWge749OlkwUzAGQ3ow==
+X-Received: by 2002:a17:902:ce81:b0:23c:7b9e:163e with SMTP id d9443c01a7336-23e25685233mr131078065ad.11.1752845376410;
+        Fri, 18 Jul 2025 06:29:36 -0700 (PDT)
+Received: from SIQOL-WIN-0002-DARSHAN.localdomain ([49.36.68.205])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b6d239dsm13265945ad.155.2025.07.18.06.29.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Jul 2025 06:29:36 -0700 (PDT)
+From: Darshan Rathod <darshanrathod475@gmail.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Darshan Rathod <darshanrathod475@gmail.com>,
+	linux-media@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 02/11] iommu/vt-d: Optimize iotlb_sync_map for
- non-caching/non-RWBF modes
-Message-ID: <20250718132912.GC2250220@nvidia.com>
-References: <20250714045028.958850-1-baolu.lu@linux.intel.com>
- <20250714045028.958850-3-baolu.lu@linux.intel.com>
- <20250716141218.GA2166806@nvidia.com>
- <8aedbbcc-9f4c-4700-acb7-43ec4f540135@linux.intel.com>
- <20250717115559.GD2177622@nvidia.com>
- <3ea54d65-7ccc-479a-8912-bccd79d678d4@linux.intel.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3ea54d65-7ccc-479a-8912-bccd79d678d4@linux.intel.com>
-X-ClientProxiedBy: MN0PR02CA0017.namprd02.prod.outlook.com
- (2603:10b6:208:530::35) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+Subject: [PATCH] media: dvb-core: dvb_demux: Fix assignments in if conditions
+Date: Fri, 18 Jul 2025 13:29:27 +0000
+Message-ID: <20250718132929.95115-1-darshanrathod475@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|LV2PR12MB5751:EE_
-X-MS-Office365-Filtering-Correlation-Id: c047b618-6600-4512-d10d-08ddc5ff15fc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?5CvQI20cNgKm/EguDG1e7HuRIUrNidEjQuHaNDtYTTbWJfxU03NGXUF+Zt03?=
- =?us-ascii?Q?pVfekpgsdncEDAewFB73GGrX/tvod/XuFSvuNDOO0HPY3tqzfa+WlE5OBBhc?=
- =?us-ascii?Q?8v4g4RQQHDfewVbZkVA1S5SW1fADsvJCnODZmOID0RygDYjitSz8/HffkSfQ?=
- =?us-ascii?Q?QTVarb4gdP3VZ7bYgPrjIu6cY4m8LlGf2Hq2NUZVsQVS3OuO/iT6jUOlE6pq?=
- =?us-ascii?Q?8bDhNGHvl45VjpGWkhWuCLAijfCjflUYIz+7bkpMrpvHuxiHmPfVKsqzf2qP?=
- =?us-ascii?Q?jMdyPEp6ljtIPzVZxgEu+xkd2NzzoPKrkfaeckuASzmzJRoNGG3GRXKQv/Jq?=
- =?us-ascii?Q?KVPfOKKvR/LdXD7PfU7dqdeVt3SV1j9r9kZhVP0kVkEzjn/QUguHFOjHYWt7?=
- =?us-ascii?Q?CMk8iZlswH68Qh5/HyNd/H1HAUqrPoWb7JJp6A82auezKhfz+IWhM9Ur8g7r?=
- =?us-ascii?Q?OJluzBKDQ881nj15SAfedJJGzsa6oGBKkSQt5QCgEU/IpweGbWpWjHVCG6xu?=
- =?us-ascii?Q?jv1nJUaRylBpoF4xk9ai0HgMk0u5q19dLNoB8meKJ58611NzCoMndp6USsTj?=
- =?us-ascii?Q?k5ZN6gX5z+UQRtAhGMQw3VcNspoAkNO3xyvpNzPjG0KFjm+PXUVsd8tr+awp?=
- =?us-ascii?Q?t6BteSrol2oYH9GC7rgYHNIlQnbh6CoVhtTZBe7KHDywkLdFmQbGZ62z7XiZ?=
- =?us-ascii?Q?rR7ur7UHaFKSk89Q47KA+pIeqJrQ9OOAbf6JNJTPFEWr5rfuwXHFr8wGL8nO?=
- =?us-ascii?Q?mxtQHiR8fH7Rt+4jjmqHJjdiz1bR6ftztXjF3GOvindrUV1ZTw8Rf86nBvCm?=
- =?us-ascii?Q?bTQ+B7XUmYmdVy4z2QXeLQ7I6xCpupJHhie80/ic5l5HGTBwhLlt14dwKvlk?=
- =?us-ascii?Q?Um4TtwCxPiW+YnkorpMNhHQ9Dxe4C0cvzF88KOELGPIXqkYKK+Tk/NTKyVVp?=
- =?us-ascii?Q?tuHWgE2lJ/Jt7x+zFSa9u5OO5rqLVp1cKSyDnbAiWNfVf5bPKLwV6JMvFhlB?=
- =?us-ascii?Q?wwGvtHBdfNp2Nz/D9NInJs/aZeXXhW4WN861JLMW3mzWIDU8CVgD43TVcDfp?=
- =?us-ascii?Q?FVHCGKhrQK8wOuoLZ3a3gF3naUyqly4QSnVwa92ZivSLAahlaBm6p6RAMyxY?=
- =?us-ascii?Q?ID0fK1sHtOyfVmEJdP6a8L2Cvt10XRcbZhFHFlqm2XTYIV8B98CZCkLWvXCe?=
- =?us-ascii?Q?dOCT3K3JWZ4FbIkA6EXHJAGf9BFM2RGUY1ikT9pZ1TmkmB7WHizunUS3RP/U?=
- =?us-ascii?Q?KzOQSGcbdXPl/AojRhLYDbt1YGtX8oyTYpUCiuBkb0Pn0hmNoBA+8xuHhn5k?=
- =?us-ascii?Q?Wtmuy4KVtif6wU7TLgpMwyynczNtoKo8Aw8Pafl1tE2WxDM29L8S413aFmO1?=
- =?us-ascii?Q?UIZxAIyp5ywGK8saGVvpRw2YQkTQxZoV3FhH9bYtL8nvdBg3yzS3Cfq7CLn0?=
- =?us-ascii?Q?TOtC32Y68Ds=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?MF/VA/vNKCzrGUbHRHcn2ZLmwsO29D56ifmLiqYdSA2e0E7giYTR/ZGEXpjy?=
- =?us-ascii?Q?+y8YAqa/5/huvtqceMCzC75rrL6l7qyb1LcDcAsh85wfBvfmGuJgY620WOf5?=
- =?us-ascii?Q?/6xM+Fdy51K00MoEk9SIR03plmgH1w0qF66b8pNrXp8qc08GJaiJaVsPXojL?=
- =?us-ascii?Q?UK1/6Q82eT4QnfUqhTnM3+vWjys03sLVnrY5YqJPHV2/5oB2eSySAYQbaDpc?=
- =?us-ascii?Q?BcZmBQOfluRifIgKGPI5U20qz8gLjA43KBdH7Gs4UUawwmqd3bYVCtGxjUjz?=
- =?us-ascii?Q?ER06TJk86CRv84LqWtUTImJxjCqO6DbFAMxjCex8Sa8sCxvRyqf7aQTcL3Tb?=
- =?us-ascii?Q?L7ffmSeySg/c773SRqdCBw2IxJDVKiBvIw5V9UNTaUZtguAPKe2Q63EW9Lur?=
- =?us-ascii?Q?EtozEntyTlbBRUMjz7Qpk70QIGCQdGrLAo7iYsThZdveQZ6T5nznB8F9Zezj?=
- =?us-ascii?Q?Og7hjIRlSYNy1ZBvGD9RxlgJo/2rs5YO6fFaVXZO9SOlhBVLLQdqKRxYB4ZJ?=
- =?us-ascii?Q?/QEXIDKa5HzdOgk3zDDmb6nmsDgoHJlyJMmkY00DX2lwXhBIiGqL1R2uPXrC?=
- =?us-ascii?Q?eYa/FLIGCT13ZSDNaIm5OydjJN91kjiwUBgIOAdr0cS/oKeKz7LrLgZv4GGA?=
- =?us-ascii?Q?UTbjQfOblaXNq1qpcCJuk6OsA1JWBu6M96yEayTJqPxNFCtkAeS58TOTtq0A?=
- =?us-ascii?Q?0qJkFDugio27TWVS+B/ptzs6mhjUn5BKklfuxxx2mhRb9brPdGN9XAp2wrB+?=
- =?us-ascii?Q?xQJ/uF9qpKaQ4Q8CMwNDwPmvhOlFeq44Gmxq84AUACCQL7yjdDMs7wypEuMY?=
- =?us-ascii?Q?9uO0xIvYXyJtO92N1RgX3Cg9VQlh42nKApFxp4EXin20934qjy92fshjrjrt?=
- =?us-ascii?Q?EZP5Z+F92Is7OsiL2hePxGJKmo0ga0cx26lqA1CYoFCo6lgeLtJ/rWyk5PH9?=
- =?us-ascii?Q?OMm3rpL9yVP173XJlFMaUtRRZFkmXB4zyyBhRkysTKWyDnF1cGqjWuMkbORy?=
- =?us-ascii?Q?FzYuh2OwmMNS3Mkm6CKcALUYdI5Jq0H6TcGX/prLr8ocEevK/oKb9M3XCTQQ?=
- =?us-ascii?Q?Kf/ZNHjvpu7SxRGgt1oAvN2eWbASzqAqQGoDtYc+e6lwjh9c9A3FkwpwmVye?=
- =?us-ascii?Q?QRhOOLzkmwp6pJ5Y8auzFE7l2Nuamk6kYPbAZisn4APpmr/nRbDf5oDZ23ie?=
- =?us-ascii?Q?TSWzqngSSyKyE9OQQt6HmXcACvFnboMnqNZh9nJ5WAN16EH1M2xJDsygVR9p?=
- =?us-ascii?Q?UK4BkqLvgQWRNLF+Tl3GkKazJgaWKFJRya5WEmeJub/hxuTR26q0Z8mvUVSd?=
- =?us-ascii?Q?t/sE1C5cgYdQldd2L5VJR3uoXb4k8wU+nar9+2qAKPkjUNPfc0UhkK3d9mSx?=
- =?us-ascii?Q?2KB+C4I5qxp9fHKiFUCYHEMt/QjyHT9RZr0zVF5tDHCNZ/56pXMyo/VahfaU?=
- =?us-ascii?Q?/lymVI8NC2/FQRhli/yuGEpARwbk7a0DPTKi4SNE1aZP4umRLh0a9Q2hPNKr?=
- =?us-ascii?Q?tFv8gPWyCCU2nPzbpM/SAKIk0a7faCbQ14q7IQuAc5aotrcr4+92zkjWTFSM?=
- =?us-ascii?Q?kPJnn5iMs1cTJfkyjzQN7oSLSguNuJi4mfAIGtgo?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c047b618-6600-4512-d10d-08ddc5ff15fc
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2025 13:29:13.4748
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: olH065y7KGPlqN6dY0pqlmewgJXLxhSM0fOTkM0VwOCBFSxHnpLhco8ecJ8XuFuF
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5751
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 18, 2025 at 10:56:24AM +0800, Baolu Lu wrote:
+The code in dvb_demux.c has multiple instances where a variable is
+assigned a value inside the conditional part of an 'if' statement.
+This practice is prohibited by the Linux kernel coding style to avoid
+potential bugs arising from accidental assignments (e.g., '=' instead
+of '==').
 
-> How about the following changes (compiled but not tested)?
+This patch refactors these instances by moving the assignment out of
+the 'if' statement and onto the preceding line. This makes the code
+clearer, safer, and compliant with checkpatch.pl.
 
-Yes, exactly what I was thinking!
+Additionally, a minor whitespace issue in a function signature is also
+corrected. This is a purely stylistic change with no functional impact.
 
-That leaves the cache tag linked list race..
+Signed-off-by: Darshan Rathod <darshanrathod475@gmail.com>
+---
+ drivers/media/dvb-core/dvb_demux.c | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
-Nicolin is working on a neat solution for SMMU I wonder if we can
-reuse it here too..
+diff --git a/drivers/media/dvb-core/dvb_demux.c b/drivers/media/dvb-core/dvb_demux.c
+index 7c4d86bfdd6c..c93a3110a05d 100644
+--- a/drivers/media/dvb-core/dvb_demux.c
++++ b/drivers/media/dvb-core/dvb_demux.c
+@@ -744,7 +744,8 @@ static int dmx_ts_feed_start_filtering(struct dmx_ts_feed *ts_feed)
+ 		return -ENODEV;
+ 	}
+ 
+-	if ((ret = demux->start_feed(feed)) < 0) {
++	ret = demux->start_feed(feed);
++	if (ret < 0) {
+ 		mutex_unlock(&demux->mutex);
+ 		return ret;
+ 	}
+@@ -797,7 +798,8 @@ static int dvbdmx_allocate_ts_feed(struct dmx_demux *dmx,
+ 	if (mutex_lock_interruptible(&demux->mutex))
+ 		return -ERESTARTSYS;
+ 
+-	if (!(feed = dvb_dmx_feed_alloc(demux))) {
++	feed = dvb_dmx_feed_alloc(demux);
++	if (!feed) {
+ 		mutex_unlock(&demux->mutex);
+ 		return -EBUSY;
+ 	}
+@@ -817,7 +819,8 @@ static int dvbdmx_allocate_ts_feed(struct dmx_demux *dmx,
+ 	(*ts_feed)->stop_filtering = dmx_ts_feed_stop_filtering;
+ 	(*ts_feed)->set = dmx_ts_feed_set;
+ 
+-	if (!(feed->filter = dvb_dmx_filter_alloc(demux))) {
++	feed->filter = dvb_dmx_filter_alloc(demux);
++	if (!feed->filter) {
+ 		feed->state = DMX_STATE_FREE;
+ 		mutex_unlock(&demux->mutex);
+ 		return -EBUSY;
+@@ -923,7 +926,8 @@ static void prepare_secfilters(struct dvb_demux_feed *dvbdmxfeed)
+ 	struct dmx_section_filter *sf;
+ 	u8 mask, mode, doneq;
+ 
+-	if (!(f = dvbdmxfeed->filter))
++	f =  dvbdmxfeed->filter;
++	if (!f)
+ 		return;
+ 	do {
+ 		sf = &f->filter;
+@@ -970,7 +974,8 @@ static int dmx_section_feed_start_filtering(struct dmx_section_feed *feed)
+ 
+ 	prepare_secfilters(dvbdmxfeed);
+ 
+-	if ((ret = dvbdmx->start_feed(dvbdmxfeed)) < 0) {
++	ret = dvbdmx->start_feed(dvbdmxfeed);
++	if (ret < 0) {
+ 		mutex_unlock(&dvbdmx->mutex);
+ 		return ret;
+ 	}
+@@ -1057,7 +1062,8 @@ static int dvbdmx_allocate_section_feed(struct dmx_demux *demux,
+ 	if (mutex_lock_interruptible(&dvbdmx->mutex))
+ 		return -ERESTARTSYS;
+ 
+-	if (!(dvbdmxfeed = dvb_dmx_feed_alloc(dvbdmx))) {
++	dvbdmxfeed = dvb_dmx_feed_alloc(dvbdmx);
++	if (!dvbdmxfeed) {
+ 		mutex_unlock(&dvbdmx->mutex);
+ 		return -EBUSY;
+ 	}
+@@ -1223,7 +1229,7 @@ static int dvbdmx_disconnect_frontend(struct dmx_demux *demux)
+ 	return 0;
+ }
+ 
+-static int dvbdmx_get_pes_pids(struct dmx_demux *demux, u16 * pids)
++static int dvbdmx_get_pes_pids(struct dmx_demux *demux, u16 *pids)
+ {
+ 	struct dvb_demux *dvbdemux = (struct dvb_demux *)demux;
+ 
+-- 
+2.43.0
 
-Jason
 
