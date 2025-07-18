@@ -1,170 +1,131 @@
-Return-Path: <linux-kernel+bounces-736326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A70A0B09B8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:39:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 694E2B09B91
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:40:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACE211895986
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:39:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F75318994B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B9C215075;
-	Fri, 18 Jul 2025 06:38:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AACE91FE45D;
+	Fri, 18 Jul 2025 06:40:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cA5GS697"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jLror3kV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C442036ED
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 06:38:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077A419E97C;
+	Fri, 18 Jul 2025 06:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752820709; cv=none; b=jzT7u2WOlYUupSPBob5wEDGGKy8yHvfCZLDlgqitlkqSZvaG+IAPjH3gV22PLEv+tH6PUG6QUanEw8YBIr3vLEi5S+kXFCdN1nGDdr/1LmgnuvSYa9h5xjaItg6gwTgems3mvPbfcbzt+HEVzFsgAhIQNfdYx2MPOcwLHTUz6aE=
+	t=1752820817; cv=none; b=sg35QbFpuQUnP90G2bOX+Z+uhkkCNVODPfYNoebFLZ/JiJFzNKgM6KoxuR0SOU9qgCQxBKjh5uh+IPoaJ8sjzBmvWlhexP2SbSUdKnRQJR/9krmjKrZJ67l1H+IuAojnbANJXhidZjOxMGDiLnfau4LzIN4ofwkbaORP/RMTvS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752820709; c=relaxed/simple;
-	bh=Z6bGvuSgue5vg55Who+wVSq92ZE+83sSHwdR9oeaeBQ=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=R7vNeRmHwM8r+bPprDXU/LiVU0WjpAu1eMppZvF1FH/mnawR2rQli/T+jvf7T9WhwM5m2J0bb7IRHnOCHgUcc6FEHx9jfbNtEtr6v/bzskKTEiY8+d4/P9AimXSC6E1CKj4F3xAPDEquWKVfsW4+D2QSK2irAeOOMsEmoHKeBKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cA5GS697; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-23636167afeso17373075ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 23:38:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752820707; x=1753425507; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pyOFBjjILGZ/9yy1QKGeqG5tqzgbh2ChTzOEA3keYr0=;
-        b=cA5GS697X7q9QVpN7Trbbexh/wz2JCSWjNGZKNMQMzGe3PgVLz4Kx286FBujwMo+iJ
-         BsjBCXuM/JmUmUKp/ykV1C+JH3354nrtt2y06g2eaYvFequFJupwYyccEMz6zjUIsY4R
-         ZR7x1MG5PNN4TA6i0Z6rVEEe3XX56tEQ1+9JTihnMWoW1+BIMkfrePHVBRKwIaLuMN1s
-         zYdv22Gcv1keOlD8VOxgHZyP5r2d4+7aSfcZKiDg77eQF1YhUBCyraLlCzQCYGapGlzg
-         O1HC7Qp4UvBqEJXRzJrpYSBfeB45d56DA5T2AvYiF5YS25zQjxKS/wW8dONdMiSQ8iKI
-         Nx6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752820707; x=1753425507;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pyOFBjjILGZ/9yy1QKGeqG5tqzgbh2ChTzOEA3keYr0=;
-        b=q0AdYy2mRhKcTmphHz97CdEteeWa5Qo8m7fF6gK1Oga6UbAviyUIAZNkFyznUPupTF
-         P/1UT2GBM+7ZS8VOYQBIq5ozWSevAnAZBNrHalXSUUd/ttBlJtqu8IpeqLZkVZT/naOh
-         JXIfVYGcf4gwNpX1wjZdBuprHEC6/Led3OQuSSIc1Ygh+xTYkpVnSxg0Tn75eJ8H+V5r
-         2i/uJJo7vAQuwr1OgsdEec/BrAkKlkMTZO5Cfr8gW581c5YAmso33RzTEKyOgdAUnsJ9
-         xFm7oXHNoST72/LIOtBp87A1iS4rwz9HJ9HRRk9viLavaAy7QKclOqOBNLjYxWNakZI1
-         7Dtg==
-X-Forwarded-Encrypted: i=1; AJvYcCV0Tdgep6Oz2XupGDsVBxiJu3e+jRIoWTlbXz2VukSnsn0mvbsp7JuvVTh6kF9nnmWZbJFECCDZbRmBIlA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7IWUf5HHXNtKdTsDFCqChj0FmNp1ABLWBGZHScX29UzOuo+Z6
-	UcBuIXmd2CqWBNWU79j5sbm2Cx4iC911Ik3Y3zzBSlO/6GcwmaDtLPTz
-X-Gm-Gg: ASbGnctlUfvf5JSOiO39bxN53cypXP7QKEFJAlfPSJ/TSXRsm425tQ5EWW1+YckqlZo
-	8TJlcgNzzosNuGpNFxAJ3ZYfZ3+zSUwMwhaxhXDhsecogYY3UtjLYupQQqZ7BGhlAP9HWsx1xgv
-	GUdKbU/ML3T3z4+sNCUPn6eaqAORRB8MQDnosTsVgKLDz38TQLjyV7St4NfxrSZcjcyDb9J8J9f
-	fYNCY2iP4FKlNEVaAUBiavctS0Is56F41p+BySm/RTY40UQZUjbjUCxAiKvGvaJB+BTThCcxtgj
-	L4NwY6Miiz/Z+gLhSEJufVxVKuCGHVmx054mV9Yu44o9JzBfTzy/nuGAkdN47wLJixv/yTg+sL0
-	6mDFHgMhplQVXLtxnFmz3xZcAmBnGZJqN2diPdIDhUg2E3l1/bZaj6sEadv8cYjoMaS8=
-X-Google-Smtp-Source: AGHT+IEyBbipxL07jKyKAdXRLruyc99NlUyMTGUqtVPY6nQyPvdJBmDPwU1q3oCR3Iz/i0MUPQJT5g==
-X-Received: by 2002:a17:902:db11:b0:237:ed7c:cd0c with SMTP id d9443c01a7336-23e2566b0fdmr128701105ad.11.1752820707379;
-        Thu, 17 Jul 2025 23:38:27 -0700 (PDT)
-Received: from localhost (212.18.125.34.bc.googleusercontent.com. [34.125.18.212])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-23e3b6b4b73sm6649105ad.113.2025.07.17.23.38.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 23:38:27 -0700 (PDT)
-From: Chia-I Wu <olvaffe@gmail.com>
-To: Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/3] panthor: dump task pid and comm on gpu errors
-Date: Thu, 17 Jul 2025 23:38:16 -0700
-Message-ID: <20250718063816.1452123-4-olvaffe@gmail.com>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-In-Reply-To: <20250718063816.1452123-1-olvaffe@gmail.com>
-References: <20250718063816.1452123-1-olvaffe@gmail.com>
+	s=arc-20240116; t=1752820817; c=relaxed/simple;
+	bh=GhzeLVbX/3PMXar6M1Ezq8hE094AhVZL61bD69xgm/I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K0WeBJlX5FtdagVCSpfdgylbfFoDtswPxGYw5kjqcQ1zD5MfXvwQYxFB0zX5CSTStwT6UJeao73fAIpQrtCFriup7RWx0walZc+fr5J/nffAzGF0LsayZRPxKnq/kSwEJTV5WB5D6wSyWY/YwfHffNyzb+KXnc62xCL3lFff2gM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jLror3kV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37AD0C4CEED;
+	Fri, 18 Jul 2025 06:40:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752820816;
+	bh=GhzeLVbX/3PMXar6M1Ezq8hE094AhVZL61bD69xgm/I=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jLror3kVYaJZGYbecDAxZ2y+xV4l9vuv4UkLDXg79ffbS3mcsGRrAdpHaMtRfX6bN
+	 7ukmnULtfGL06Ob3Zd2yEz/PCYvLzeQtO7j/9HR4ShyaiPmLCMbH4vXLbnz7Fd0sq8
+	 4WdOf6YztGL0/tmuKUVSdxAiCk/spSoWxX86Nog96CUoH6lxaT3zb6mwtYu43REda3
+	 Ald4hoQ80XB3d1ZnfxU9FFt1cVuFk5xHZcCPVybucYi05c8/gQFO/l5xb0lAeT//mB
+	 gMEYhlrRW+b//RIRP8mNne/RLv7bpTdtUAvnyL6x5K+QvG3WcXkeUhGwveMjadGJmW
+	 fvL7jlaTWU5Fw==
+Message-ID: <dcc64217-2320-49d3-a237-631793cd3ebc@kernel.org>
+Date: Fri, 18 Jul 2025 08:40:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] arm64: dts: qcom: Add HAMOA-IOT-SOM platform
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Yijie Yang <yijie.yang@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250716-hamoa_initial-v1-0-f6f5d0f9a163@oss.qualcomm.com>
+ <20250716-hamoa_initial-v1-3-f6f5d0f9a163@oss.qualcomm.com>
+ <b4nxjsx4fu4xmookpxukumw36wlcpzelh6axjucqe4lyswptm4@kczsldalq53n>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <b4nxjsx4fu4xmookpxukumw36wlcpzelh6axjucqe4lyswptm4@kczsldalq53n>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-It is useful to know which tasks cause gpu errors.
+On 17/07/2025 20:52, Dmitry Baryshkov wrote:
+>>
+> 
+>> +&remoteproc_adsp {
+>> +	firmware-name = "qcom/hamoa-iot/adsp.mbn",
+>> +			"qcom/hamoa-iot/adsp_dtb.mbn";
+> 
+> Is there a significant difference qcom/x1e80100/adsp.mbn ? If not, can
+> we use that firmware?
 
-Signed-off-by: Chia-I Wu <olvaffe@gmail.com>
-Reviewed-by: Steven Price <steven.price@arm.com>
----
- drivers/gpu/drm/panthor/panthor_sched.c | 24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
+Another problem is that we split FW per SoC and the SoC is x1e80100, not
+hamoa-iot. This patchset should not bring so many inconsistencies. It
+must adhere TO EXISTING rules. You don't get renames of everything just
+because company decided on new naming.
 
-diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
-index 9987aeb4608bc..3a7472baa09ac 100644
---- a/drivers/gpu/drm/panthor/panthor_sched.c
-+++ b/drivers/gpu/drm/panthor/panthor_sched.c
-@@ -1364,8 +1364,12 @@ cs_slot_process_fatal_event_locked(struct panthor_device *ptdev,
- 	fatal = cs_iface->output->fatal;
- 	info = cs_iface->output->fatal_info;
- 
--	if (group)
-+	if (group) {
-+		drm_warn(&ptdev->base, "CS_FATAL: pid=%d, comm=%s\n",
-+			 group->task_info.pid, group->task_info.comm);
-+
- 		group->fatal_queues |= BIT(cs_id);
-+	}
- 
- 	if (CS_EXCEPTION_TYPE(fatal) == DRM_PANTHOR_EXCEPTION_CS_UNRECOVERABLE) {
- 		/* If this exception is unrecoverable, queue a reset, and make
-@@ -1425,6 +1429,11 @@ cs_slot_process_fault_event_locked(struct panthor_device *ptdev,
- 		spin_unlock(&queue->fence_ctx.lock);
- 	}
- 
-+	if (group) {
-+		drm_warn(&ptdev->base, "CS_FAULT: pid=%d, comm=%s\n",
-+			 group->task_info.pid, group->task_info.comm);
-+	}
-+
- 	drm_warn(&ptdev->base,
- 		 "CSG slot %d CS slot: %d\n"
- 		 "CS_FAULT.EXCEPTION_TYPE: 0x%x (%s)\n"
-@@ -1641,11 +1650,15 @@ csg_slot_process_progress_timer_event_locked(struct panthor_device *ptdev, u32 c
- 
- 	lockdep_assert_held(&sched->lock);
- 
--	drm_warn(&ptdev->base, "CSG slot %d progress timeout\n", csg_id);
--
- 	group = csg_slot->group;
--	if (!drm_WARN_ON(&ptdev->base, !group))
-+	if (!drm_WARN_ON(&ptdev->base, !group)) {
-+		drm_warn(&ptdev->base, "CSG_PROGRESS_TIMER_EVENT: pid=%d, comm=%s\n",
-+			 group->task_info.pid, group->task_info.comm);
-+
- 		group->timedout = true;
-+	}
-+
-+	drm_warn(&ptdev->base, "CSG slot %d progress timeout\n", csg_id);
- 
- 	sched_queue_delayed_work(sched, tick, 0);
- }
-@@ -3227,7 +3240,8 @@ queue_timedout_job(struct drm_sched_job *sched_job)
- 	struct panthor_scheduler *sched = ptdev->scheduler;
- 	struct panthor_queue *queue = group->queues[job->queue_idx];
- 
--	drm_warn(&ptdev->base, "job timeout\n");
-+	drm_warn(&ptdev->base, "job timeout: pid=%d, comm=%s, seqno=%llu\n",
-+		 group->task_info.pid, group->task_info.comm, job->done_fence->seqno);
- 
- 	drm_WARN_ON(&ptdev->base, atomic_read(&sched->reset.in_progress));
- 
--- 
-2.50.0.727.gbf7dc18ff4-goog
+We've been there with sa8775p.
 
+Best regards,
+Krzysztof
 
