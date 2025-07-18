@@ -1,119 +1,108 @@
-Return-Path: <linux-kernel+bounces-736772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 293ACB0A1AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:12:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BEFB7B0A1AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:13:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E47B3587DCA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:12:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A767E587E86
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:13:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03AE82BF001;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA072BFC7B;
 	Fri, 18 Jul 2025 11:12:46 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="Yg66yAmq"
+Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538932BEC23;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD052BEC24;
 	Fri, 18 Jul 2025 11:12:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752837165; cv=none; b=fuooK7wgcpJ4/R1th7pZkIHX6525KL111zstc6lqdTTMkNr+eRzTZv9HKRC6GhEjtRTGvZzdQdCAl1zZFP4mFJIoMz7o8sJ27TovnI/VuXS4FYSrF7OiDRgEMdDJnPX/+qCQbDOjz8vSlKPwI5+HjxJKq069B8SHF+NSf50qv6o=
+	t=1752837165; cv=none; b=gns7SIXpSvnssQT8DILZ+G6HVJuX6mDn7HA36qvD5/3RVZYiXiVgwKSCTJ4QSUYjg99OsT5d32OBNorMStUb1C4wM5E/KJ/M7g2aRIPJRbqhLlaFqW44Z5sCG/efKYizPPjY8G6pZ9zvqiiD6UGSQfV2u+4+YQLtUn03Y1D3V4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752837165; c=relaxed/simple;
-	bh=FFB3OWSH77pgVw2sukp0UOuTzgd9s4ZkgJsJbCCcchc=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jLuTQv+Uvf9tTbDhASyy9m/6Jq+HTZJvnDD2vkbexYgzTHU7ZXqoVGDnQ8nH3/vgVdmwZL1bSd5uHcWi0nCIXjiaZdNB7vJ+UttHNGjoe28YWp7Ma9a9udVgn6iMmzs3J7zmcKZzNZKbAVdEyfyhhRPTABzNehAxT5Td+i6VSUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bk6Vk6JhGz6L5Gj;
-	Fri, 18 Jul 2025 19:09:02 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0953E140142;
-	Fri, 18 Jul 2025 19:12:41 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 18 Jul
- 2025 13:12:40 +0200
-Date: Fri, 18 Jul 2025 12:12:38 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Alireza Sanaee <alireza.sanaee@huawei.com>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<coresight@lists.linaro.org>, <dianders@chromium.org>,
-	<james.clark@linaro.org>, <krzk@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-perf-users@vger.kernel.org>,
-	<linuxarm@huawei.com>, <mark.rutland@arm.com>, <mike.leach@linaro.org>,
-	<robh@kernel.org>, <ruanjinjie@huawei.com>, <saravanak@google.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <suzuki.poulose@arm.com>
-Subject: Re: [PATCH v3 2/6] arch_topology: drop the use of cpu_node in the
- pr_info
-Message-ID: <20250718121238.00005121@huawei.com>
-In-Reply-To: <20250718094848.587-3-alireza.sanaee@huawei.com>
-References: <20250718094848.587-1-alireza.sanaee@huawei.com>
-	<20250718094848.587-3-alireza.sanaee@huawei.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	bh=pN7nMJzYWuyor/OgGpD7F0YeaFDp1vibzzy5pYJe6lI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KD94M9iz49XL5JTngyfJ7jv4itB2tmtYj2JZSGNcCXQmIPYU/NK/FVobU6KsEHeMxc2qbjKc+m0bUfssa1qK5jz7CmNo21avDPvUsES64ghE+3zwblr6hC/VzS1lqpcFaxASDo9RBbUH9U15qEAvAxDTVTKaZ1SA2KDx9f9JgZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=Yg66yAmq; arc=none smtp.client-ip=180.181.231.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=BvTCZ51d3XXJlGmGkI41GCgkn6QO1Hi7Y8wl9qsGLf8=; b=Yg66yAmqWi4oGtG2EA6VsBfKtr
+	3GjI9+T/5LKrkpwDeyqYB1cqKNa18OVTyY8joaNOG0ZPUtE4NIWprAWCWiwvJI36alsLCBeMA5nax
+	760R6euyUnZ+x3BFN7ziO45hUSebyYR3GQYADhAaKRFNKVoOWzqIqZE0lwzN4DqKt4ejn7cAoRjFp
+	D12SFtaAU3fHYOvO+LV64Sx5KWTyNWCz+ND+A8FMc7zDRha/tW1WEyWy8V3TGBEMF9HxUw450uGMO
+	FgqszKkU+EcjQzrlnHTP3BlZVUbi+FSn8rKgtzO2WxHlCX/fBpvi8e8oULQdLYvZbIlsEaMzq05sC
+	ubsBt86Q==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1ucilf-007ymj-0N;
+	Fri, 18 Jul 2025 19:12:40 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 18 Jul 2025 21:12:39 +1000
+Date: Fri, 18 Jul 2025 21:12:39 +1000
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Chenghai Huang <huangchenghai2@huawei.com>
+Cc: davem@davemloft.net, linux-kernel@vger.kernel.org,
+	linux-crypto@vger.kernel.org, liulongfang@huawei.com,
+	qianweili@huawei.com, linwenkai6@hisilicon.com,
+	wangzhou1@hisilicon.com
+Subject: Re: [PATCH] crypto: hisilicon/sec2 - implement full backlog mode for
+ sec
+Message-ID: <aHosJ8XZ-SbcAxtf@gondor.apana.org.au>
+References: <20250710122457.2295119-1-huangchenghai2@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250710122457.2295119-1-huangchenghai2@huawei.com>
 
-On Fri, 18 Jul 2025 10:48:44 +0100
-Alireza Sanaee <alireza.sanaee@huawei.com> wrote:
-
-> Remove the use of cpu_node in the pr_info. When of_cpu_node_to_id fails,
-> it may set a pointer, cpu_node, and the get_cpu_for_node function uses that
-> pointer to log further in the fail scenario.
+On Thu, Jul 10, 2025 at 08:24:57PM +0800, Chenghai Huang wrote:
+> From: Wenkai Lin <linwenkai6@hisilicon.com>
 > 
-> Also, change the structure to exit early in fail scenarios which will
-> help enabling code unification that follows in this series.
-
-So this patch is the trade off to the unification.   Some small
-amount of info in the info message is lost.  To me that looks
-fine, but others may disagree!
-
-I assume the motivation for not just leaving this one alone is
-we ultimately need the flexible handler for the SMT series?
-
+> This patch introduces a hierarchical backlog mechanism to cache
+> user data in high-throughput encryption/decryption scenarios,
+> the implementation addresses packet loss issues when hardware
+> queues overflow during peak loads.
 > 
-> Signed-off-by: Alireza Sanaee <alireza.sanaee@huawei.com>
-
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-
+> First, we use sec_alloc_req_id to obtain an exclusive resource
+> from the pre-allocated resource pool of each queue, if no resource
+> is allocated, perform the DMA map operation on the request memory.
+> 
+> When the task is ready, we will attempt to send it to the hardware,
+> if the hardware queue is already full, we cache the request into
+> the backlog list, then return an EBUSY status to the upper layer
+> and instruct the packet-sending thread to pause transmission.
+> Simultaneously, when the hardware completes a task, it triggers
+> the sec callback function, within this function, reattempt to send
+> the requests from the backlog list and wake up the sending thread
+> until the hardware queue becomes fully occupied again.
+> 
+> In addition, it handles such exceptions like the hardware is reset
+> when packets are sent, it will switch to the software computing
+> and release occupied resources.
+> 
+> Signed-off-by: Wenkai Lin <linwenkai6@hisilicon.com>
+> Signed-off-by: Chenghai Huang <huangchenghai2@huawei.com>
 > ---
->  drivers/base/arch_topology.c | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
-> index 1037169abb45..6fafd86f608a 100644
-> --- a/drivers/base/arch_topology.c
-> +++ b/drivers/base/arch_topology.c
-> @@ -481,12 +481,13 @@ static int __init get_cpu_for_node(struct device_node *node)
->  		return -1;
->  
->  	cpu = of_cpu_node_to_id(cpu_node);
-> -	if (cpu >= 0)
-> -		topology_parse_cpu_capacity(cpu_node, cpu);
-> -	else
-> -		pr_info("CPU node for %pOF exist but the possible cpu range is :%*pbl\n",
-> -			cpu_node, cpumask_pr_args(cpu_possible_mask));
-> +	if (cpu < 0) {
-> +		pr_info("CPU node exist but the possible cpu range is :%*pbl\n",
-> +			cpumask_pr_args(cpu_possible_mask));
-> +		return cpu;
-> +	}
->  
-> +	topology_parse_cpu_capacity(cpu_node, cpu);
->  	return cpu;
->  }
->  
+>  drivers/crypto/hisilicon/sec2/sec.h        |  63 ++-
+>  drivers/crypto/hisilicon/sec2/sec_crypto.c | 574 ++++++++++++++-------
+>  2 files changed, 457 insertions(+), 180 deletions(-)
 
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
