@@ -1,210 +1,83 @@
-Return-Path: <linux-kernel+bounces-736150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A70BEB0996E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:53:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B1EEB09971
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:53:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 336F3A422BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 01:52:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24FF11C48025
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 01:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F5C219E98C;
-	Fri, 18 Jul 2025 01:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5ED61A76DE;
+	Fri, 18 Jul 2025 01:52:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A2/DsdGy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kRUffZBi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 911C818CC1D
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 01:52:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A4F1A0BE1;
+	Fri, 18 Jul 2025 01:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752803548; cv=none; b=le1g8BlqhZTbYfDUmP4Bhh1YbClT+bXlRXdcd1wUfjvxEJNwgOt2N5tItJW3CkGTlOyMTbxNZt5HqHQvVvTk3JY64HbeVRAOWUHz0SSjrXUoefVPxcROPQForqCEESzLhK7Lb5v6bZMnKVNdZyCGG7ak/qb0LTR39L9WZhMIPtA=
+	t=1752803566; cv=none; b=o7sk3+yFJzMfC055roOu2bjmsXS/cSF8tLHXJUX26Tjuhj+lZ7QU7TdvdGoS7T9+trydbou+CKiYMSEPVzoPUBOBf0k6ppfK3H0A94CuhX0OFYWaLjgfJ4Cc180w40fDow6WcBFBgbjQ1Q6SJuh+RaUDdqqk4P4V/fsdvkcxh+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752803548; c=relaxed/simple;
-	bh=DZenHan6HEdNoDKIaO8bmG2IU9oiW+D1QihQoYGhJXg=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=DpuIFaUiXoO/D5e3VZ4aTnPBtax1JdTz5fVyxN9q1Tdw3z4FJYkFsgdTiHkTj5Ji9KKH60mAP2xZPFbrz9a58u7/qD9UxR/JSY+6jLA/OKBLW3gxjoqCSu2k+TWj8OFs/gtvvw1IsFak3HxLRDQF08uxBpqdPJ56z+U3xxHg09o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A2/DsdGy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0CC7C4CEF0;
-	Fri, 18 Jul 2025 01:52:24 +0000 (UTC)
+	s=arc-20240116; t=1752803566; c=relaxed/simple;
+	bh=1cjPQZG49ULYWlm40rtP4WEZcJmw5m9FE/5gQLfKUIA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=diGGV5frH8LUdIngNfrrgB7EYt19SIs1DvS2i9Zw2uDp6s5D+Ip+ZkWLW9PyDY/eAMJ1L9JPcpdsA3sDu72lE7lVCAuYe3D7wd4bWqwlB3nhEbWvujsso9S1Pjjq4LLsIl3NxyA5GoS3W6FVnxGWK1h4Ek2WGXoOu21IUJA5i9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kRUffZBi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C30E9C4CEE3;
+	Fri, 18 Jul 2025 01:52:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752803548;
-	bh=DZenHan6HEdNoDKIaO8bmG2IU9oiW+D1QihQoYGhJXg=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=A2/DsdGy+8I0YzRpiNgnIjuPrIBym2QcTh+RuEGoEgLHHPcPOkS24qqFV38HuikYx
-	 EjSWY2er6PPZF/4uxznCqxgIe0QvKoaXtt6mMBGHlUZOluUe3p4PX7gI3hoKAWASfc
-	 IAwhcijBQXe0siBt7s+OmhUqNNgjo2cbK5rCAGwaR0bOJzI68PdTjuFdTgxC3rsIp+
-	 BZK/OSrFMKH2Y+pzsGN9w1V347fN1YMyYyR/PAF2x63JCvroyUEnf3mzjMQf2NLDoe
-	 CV0aeIhBlopPAiBIAbHNLT6QuKJdY1Fu1LDzKzYo3szS9WrvdGQ1wS+AdKknkvjgf/
-	 buEk//nXvkFdQ==
-Message-ID: <19ee5db7-814f-402b-9b06-586f7203977d@kernel.org>
-Date: Fri, 18 Jul 2025 09:52:21 +0800
+	s=k20201202; t=1752803565;
+	bh=1cjPQZG49ULYWlm40rtP4WEZcJmw5m9FE/5gQLfKUIA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kRUffZBi/nLRcXjM5TX7AGvwwEt2KTuk9Qhnudj6xyNAJ+NIzQ0PFuyI9HvuNwRT2
+	 ReQq22zorTaVgw8OEcQFeIT3aVu6AlliVJZUwAkZ/FaWQ7HGl4xW7CtOHObTWn880E
+	 snT+hFUSKIBRs/NpQJDxeGpeMc4dki3qrjP5MHmlXiDSIodjUGByVX4VAPRRgEEYIj
+	 EvsJ9pbXrlx+z3TeJ4YdA98udVLwGo7K7rCjP3czmnK7xrgtGVvUG2T+Sc4TEEuRu9
+	 PKrYb0sO+Ofx3x51qmqFQgYWzQmkbNr4FBw0c+9+oEbK01Oq98bP4DvWK0XuO0LvFE
+	 VQ25DsokWnLiA==
+Date: Thu, 17 Jul 2025 18:52:42 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Saeed Mahameed <saeed@kernel.org>, Gal Pressman
+ <gal@nvidia.com>, "Leon Romanovsky" <leon@kernel.org>, Saeed Mahameed
+ <saeedm@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
+ <netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, Lama Kayal <lkayal@nvidia.com>
+Subject: Re: [PATCH net-next V2 4/6] net/mlx5e: SHAMPO, Cleanup reservation
+ size formula
+Message-ID: <20250717185242.68891d37@kernel.org>
+In-Reply-To: <1752675472-201445-5-git-send-email-tariqt@nvidia.com>
+References: <1752675472-201445-1-git-send-email-tariqt@nvidia.com>
+	<1752675472-201445-5-git-send-email-tariqt@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-erofs@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, Yue Hu <zbestahu@gmail.com>,
- Jeffle Xu <jefflexu@linux.alibaba.com>, Sandeep Dhavale
- <dhavale@google.com>, Hongbo Li <lihongbo22@huawei.com>
-Subject: Re: [PATCH v3] erofs: support to readahead dirent blocks in
- erofs_readdir()
-To: Gao Xiang <hsiangkao@linux.alibaba.com>, xiang@kernel.org
-References: <20250714093935.200749-1-chao@kernel.org>
- <631728e2-2808-47af-8db7-28cd8ae17622@linux.alibaba.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <631728e2-2808-47af-8db7-28cd8ae17622@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Xiang,
+On Wed, 16 Jul 2025 17:17:50 +0300 Tariq Toukan wrote:
+> -	int rsrv_size = BIT(mlx5e_shampo_get_log_rsrv_size(mdev, params)) *
+> -		MLX5E_SHAMPO_WQ_BASE_RESRV_SIZE;
+>  	u16 num_strides = BIT(mlx5e_mpwqe_get_log_num_strides(mdev, params, xsk));
+> -	int pkt_per_rsrv = BIT(mlx5e_shampo_get_log_pkt_per_rsrv(mdev, params));
+> +	int pkt_per_rsrv = BIT(mlx5e_shampo_get_log_pkt_per_rsrv(params));
+>  	u8 log_stride_sz = mlx5e_mpwqe_get_log_stride_size(mdev, params, xsk);
+>  	int wq_size = BIT(mlx5e_mpwqe_get_log_rq_size(mdev, params, xsk));
+>  	int wqe_size = BIT(log_stride_sz) * num_strides;
+> +	int rsrv_size = MLX5E_SHAMPO_WQ_RESRV_SIZE;
 
-On 2025/7/17 16:26, Gao Xiang wrote:
-> Hi Chao,
-> 
-> On 2025/7/14 17:39, Chao Yu wrote:
->> This patch supports to readahead more blocks in erofs_readdir(), it can
->> enhance readdir performance in large direcotry.
->>
->> readdir test in a large directory which contains 12000 sub-files.
->>
->>         files_per_second
->> Before:        926385.54
->> After:        2380435.562
->>
->> Meanwhile, let's introduces a new sysfs entry to control readahead
->> bytes to provide more flexible policy for readahead of readdir().
->> - location: /sys/fs/erofs/<disk>/dir_ra_bytes
->> - default value: 16384
->> - disable readahead: set the value to 0
->>
->> Signed-off-by: Chao Yu <chao@kernel.org>
->> ---
->> v3:
->> - add EROFS prefix for macro
->> - update new sysfs interface to 1) use bytes instead of pages
->> 2) remove upper boundary limitation
->> - fix bug of pageidx calculation
->>   Documentation/ABI/testing/sysfs-fs-erofs |  8 ++++++++
->>   fs/erofs/dir.c                           | 13 +++++++++++++
->>   fs/erofs/internal.h                      |  4 ++++
->>   fs/erofs/super.c                         |  2 ++
->>   fs/erofs/sysfs.c                         |  2 ++
->>   5 files changed, 29 insertions(+)
->>
->> diff --git a/Documentation/ABI/testing/sysfs-fs-erofs b/Documentation/ 
->> ABI/testing/sysfs-fs-erofs
->> index bf3b6299c15e..85fa56ca092c 100644
->> --- a/Documentation/ABI/testing/sysfs-fs-erofs
->> +++ b/Documentation/ABI/testing/sysfs-fs-erofs
->> @@ -35,3 +35,11 @@ Description:    Used to set or show hardware 
->> accelerators in effect
->>           and multiple accelerators are separated by '\n'.
->>           Supported accelerator(s): qat_deflate.
->>           Disable all accelerators with an empty string (echo > accel).
->> +
->> +What:        /sys/fs/erofs/<disk>/dir_ra_bytes
->> +Date:        July 2025
->> +Contact:    "Chao Yu" <chao@kernel.org>
->> +Description:    Used to set or show readahead bytes during readdir(), by
->> +        default the value is 16384.
->> +
->> +        - 0: disable readahead.
->> diff --git a/fs/erofs/dir.c b/fs/erofs/dir.c
->> index 3e4b38bec0aa..950d6b0046f4 100644
->> --- a/fs/erofs/dir.c
->> +++ b/fs/erofs/dir.c
->> @@ -47,8 +47,10 @@ static int erofs_readdir(struct file *f, struct 
->> dir_context *ctx)
->>       struct inode *dir = file_inode(f);
->>       struct erofs_buf buf = __EROFS_BUF_INITIALIZER;
->>       struct super_block *sb = dir->i_sb;
->> +    struct file_ra_state *ra = &f->f_ra;
->>       unsigned long bsz = sb->s_blocksize;
->>       unsigned int ofs = erofs_blkoff(sb, ctx->pos);
->> +    unsigned long nr_pages = DIV_ROUND_UP_POW2(dir->i_size, PAGE_SIZE);
-> 
->      pgoff_t ra_pages = PAGE_ALIGN(EROFS_SB(dir)->dir_ra_bytes);
+So you fixed placement of rsrv_size for RCT but the change
+to pkt_per_rsrv is still breaking the order :(
 
-Do you mean?
-
-pgoff_t ra_pages = PAGE_ALIGN(EROFS_SB(dir)->dir_ra_bytes) >> PAGE_SHIFT?
-
-> 
->>       int err = 0;
->>       bool initial = true;
->> @@ -63,6 +65,17 @@ static int erofs_readdir(struct file *f, struct 
->> dir_context *ctx)
->>               break;
->>           }
->> +        /* readahead blocks to enhance performance in large directory */
->> +        if (EROFS_I_SB(dir)->dir_ra_bytes) {
- > >          if (ra_pages) {
-> 
->> +            unsigned long idx = DIV_ROUND_UP(ctx->pos, PAGE_SIZE);
->> +            pgoff_t ra_pages = DIV_ROUND_UP(
->> +                EROFS_I_SB(dir)->dir_ra_bytes, PAGE_SIZE);
-
-I put calculation here because if the value is zero, we don't need 
-unnecessary calculation above, anyway, will update as you suggested, but 
-let me know if you have any other concerns. :)
-
-> 
->              pgoff_t idx = PAGE_ALIGN(ctx->pos);
-
-Ditto,
-
-Thanks,
-
->              pgoff_t pages = min(nr_pages - idx, ra_pages);
-> 
->> +
->> +            if (nr_pages - idx > 1 && !ra_has_index(ra, idx))
-> 
->              if (pages > 1 && !ra_has_index(ra, idx))
->                  page_cache_sync_readahead(dir->i_mapping, ra,
->                                f, idx, pages)?
-> 
-> 
->> +                page_cache_sync_readahead(dir->i_mapping, ra,
->> +                    f, idx, min(nr_pages - idx, ra_pages));
->> +        }
->> +
->>           de = erofs_bread(&buf, dbstart, true);
->>           if (IS_ERR(de)) {
->>               erofs_err(sb, "failed to readdir of logical block %llu 
->> of nid %llu",
->> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
->> index 0d19bde8c094..4399b9332307 100644
->> --- a/fs/erofs/internal.h
->> +++ b/fs/erofs/internal.h
->> @@ -157,6 +157,7 @@ struct erofs_sb_info {
->>       /* sysfs support */
->>       struct kobject s_kobj;        /* /sys/fs/erofs/<devname> */
->>       struct completion s_kobj_unregister;
->> +    erofs_off_t dir_ra_bytes;
->>       /* fscache support */
->>       struct fscache_volume *volume;
->> @@ -238,6 +239,9 @@ EROFS_FEATURE_FUNCS(xattr_filter, compat, 
->> COMPAT_XATTR_FILTER)
->>   #define EROFS_I_BL_XATTR_BIT    (BITS_PER_LONG - 1)
->>   #define EROFS_I_BL_Z_BIT    (BITS_PER_LONG - 2)
->> +/* default readahead size of directory */
-> 
-> /* default readahead size of directories */
-> 
-> Otherwise it looks good to me.
-> 
-> Thanks,
-> Gao Xiang
-> 
->> +#define EROFS_DIR_RA_BYTES    16384
-
+I'll pick the first 3 patches up, they look unrelated.
 
