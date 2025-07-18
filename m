@@ -1,125 +1,77 @@
-Return-Path: <linux-kernel+bounces-736697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 625A5B0A0AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:29:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1130B0A0B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:30:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB9881C22477
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:29:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F3047B1580
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE3DC29CB5B;
-	Fri, 18 Jul 2025 10:29:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="fyg+6pdC"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCCBB21C177;
+	Fri, 18 Jul 2025 10:30:39 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3CE6221297;
-	Fri, 18 Jul 2025 10:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B7D1DB95E
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 10:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752834554; cv=none; b=auN2WqivWp3NhmppTjyiUR3o7uEjHwvv5bVz1qS5MgizQNr0vIaxuSmXuHvrCJ1mMenH/fHeB2YPoZuGBM4ZJYtF8SAvl8V1Dv7m9T+PQ4qR3bCIK7ZTdKhGRcsfkyzm9nOC+Fph9qX2WwbAwcVw/UOn5ALLe6FNIaxOxm5z5DU=
+	t=1752834639; cv=none; b=mfgSjulKws6pUQq2KceNFzYBBl7ctQ1M4DRBk6/UWZiHaC0y9HL7T6RR/fWWp/2ijF8jCugLF2KPI6IGWMtc08RfnV0jWG93mSsgIY8SdtETAMMfPH8obTubcKbFixSh7+D5hmIJWfSeG+7P/T3NaqlrzS3g+4am0sCyOEBTj14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752834554; c=relaxed/simple;
-	bh=xjrDRr782sePSQVOCVhimtrQA1KZ/CJ2tMd/Ps4topo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=WnbudKp4HSio8N0Nap12kPMwsH12uM0wuMPBscuQZubkqYdiKaBUcQxQNtZ8Frmxfw0S/nhrIfSqX1im5K4TSARJDQyyk34Sd301JSr5QacIWYWU49U0BwkoRdhkrxDom0ooDprzzthtOEpRo9Eig5EPy6krmLjppJTMw1RG4TY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=fyg+6pdC; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 56IASePkA1422390, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1752834520; bh=xjrDRr782sePSQVOCVhimtrQA1KZ/CJ2tMd/Ps4topo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=fyg+6pdCoZzV7MRxScrjoffWCQgTxmaweRPIGeCPbvuOSXh0Ev+Td++Xyb8XmMumC
-	 vQ+qijFgwx2QLPc0l+7YxT9me6XIFbj0B2/UPv0zRxIdNMiyp2lq2nkncGShgGPxKF
-	 vKBKiSlnaMS0+nUhFxVNlDxX+f1Cwv99gH9/zd9sDgaVGTkqKUA2PKYq6L4pN1r9HC
-	 8kkIL6pzQPFwmYX8kWAo4DgSl94W6DY6lzusO/uM8yDYWxE+QtO90dWpBE4ib+SoeD
-	 /hS2/xdMlE6WkkvECR/U29mOCoUm1YCKQ0eyCWQNfDxBsCqQ7HoyrMaQnpSxggirDz
-	 hb6O4QEJr7nCQ==
-Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 56IASePkA1422390
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 18 Jul 2025 18:28:40 +0800
-Received: from RTEXMBS05.realtek.com.tw (172.21.6.98) by
- RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 18 Jul 2025 18:28:41 +0800
-Received: from RTEXMBS01.realtek.com.tw (172.21.6.94) by
- RTEXMBS05.realtek.com.tw (172.21.6.98) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Fri, 18 Jul 2025 18:28:40 +0800
-Received: from RTEXMBS01.realtek.com.tw ([fe80::f5bd:6ac9:46d:9547]) by
- RTEXMBS01.realtek.com.tw ([fe80::f5bd:6ac9:46d:9547%5]) with mapi id
- 15.01.2507.035; Fri, 18 Jul 2025 18:28:40 +0800
-From: Ricky WU <ricky_wu@realtek.com>
-To: Gwendal Grignou <gwendal@google.com>, Ulf Hansson <ulf.hansson@linaro.org>
-CC: Arnd Bergmann <arnd@arndb.de>, "gfl3162@gmail.com" <gfl3162@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "kai.heng.feng@canonical.com" <kai.heng.feng@canonical.com>,
-        Linux Kernel
-	<linux-kernel@vger.kernel.org>,
-        "mingo@kernel.org" <mingo@kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH] misc: rtsx: usb: Ensure mmc child device is active when card is present
-Thread-Topic: [PATCH] misc: rtsx: usb: Ensure mmc child device is active when
- card is present
-Thread-Index: AQHb90TblG9c2uNggkeqhjG4r/HTebQ3rNiA
-Date: Fri, 18 Jul 2025 10:28:40 +0000
-Message-ID: <b1bda1a712b64785ad4a3c1a083ca839@realtek.com>
-References: <CAMHSBOWue5bwysERvoZQjSG8h32me06wwcSQGteTN=aX=5OXYg@mail.gmail.com>
-In-Reply-To: <CAMHSBOWue5bwysERvoZQjSG8h32me06wwcSQGteTN=aX=5OXYg@mail.gmail.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1752834639; c=relaxed/simple;
+	bh=Jfy+813P5sUHYyLJPaQ3rH1oP1312It9JFN75GQFnRc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=VC/B7XZbMJS9JDzqmoi4gMS0B00Qi3LuymeS+CtOsBKGrbkb2yd3JEe29Sq1Mzt+4SrGWGQLRtTm17yvPW/DgErtHwNWjHQaPvM5Uo2r/PJ3dYnGW1bf8XMLUXmGGi5zvlkVPkSzg518XC4w7Pr6M0tb6FUjiAfPf+Z9Q7XtJA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-86cf753423cso179711339f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 03:30:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752834637; x=1753439437;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jfy+813P5sUHYyLJPaQ3rH1oP1312It9JFN75GQFnRc=;
+        b=v14SBYc1eh1WEHdzqzwFjnTDesvVv6Z1M4GQLWGJr0U0Y0t0xfAMFTO8LHA7LPxQIR
+         hWv20zlFaXDx/xV5La+izHJy7dEB0nuH+Mc8xBWPhw9JrppHzFJhTgDX5OrQbhKzNcNS
+         IQXZ/dm6QD9JgcY11zNRPagJrbmdSKQ0odHl2egoWyRN5fAyjOM52/ivJlaLUrtlL4vZ
+         XjcqTUqKz2TKfHVg0UA4U4Jc34EDQZUBSRfIzExhA+/0cqdMCg/G05QEha7Rxb8kjQYI
+         9pSRpwyxJCWeMEqai4nYFtlUJACSOmnHnBNPF3jhLh0JI34ge0I1rgR8kDSvVqJitcj3
+         TiYw==
+X-Gm-Message-State: AOJu0YxPTlQrbqZTVvlsbAEOQPl46llk6KHYMhkn9bJ6CS55KcD162Gi
+	tEuUZcKI4fWrZQEDkE1mINAkPSAHbzuCoHb15CJR5WeewEgtAZDL87cuGADVnWGgeIEt9wtW0+T
+	sKoCaUbGwLjGlowrru+j0ZcePspf+5oZxhO6jvYXUVOWhqAq1uleLzUuPWY4=
+X-Google-Smtp-Source: AGHT+IG4MOcAbM5SENlzdvLJCW3lHvpWcWNaD91l2lCLVKlVCZyWYNcJDFxriHkMsaHkpLj4sBMUGpnvTBeeL3DJNImnuEFpcUK7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Received: by 2002:a5e:c116:0:b0:862:fe54:df4e with SMTP id
+ ca18e2360f4ac-879c28b1addmr824413539f.7.1752834637073; Fri, 18 Jul 2025
+ 03:30:37 -0700 (PDT)
+Date: Fri, 18 Jul 2025 03:30:37 -0700
+In-Reply-To: <68799e14.a00a0220.3af5df.0025.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <687a224d.a70a0220.693ce.005f.GAE@google.com>
+Subject: Forwarded: Re: [syzbot] [netfilter?] KASAN: slab-out-of-bounds Read
+ in nfacct_mt_checkentry
+From: syzbot <syzbot+4ff165b9251e4d295690@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-PiA+IC0tLQ0KPiA+ICBkcml2ZXJzL21pc2MvY2FyZHJlYWRlci9ydHN4X3VzYi5jIHwgMTYgKysr
-KysrKysrLS0tLS0tLQ0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgOSBpbnNlcnRpb25zKCspLCA3IGRl
-bGV0aW9ucygtKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWlzYy9jYXJkcmVhZGVy
-L3J0c3hfdXNiLmMNCj4gYi9kcml2ZXJzL21pc2MvY2FyZHJlYWRlci9ydHN4X3VzYi5jDQo+ID4g
-aW5kZXggMTQ4MTA3YTQ1NDdjLi5kMDA3YTQ0NTVjZTUgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVy
-cy9taXNjL2NhcmRyZWFkZXIvcnRzeF91c2IuYw0KPiA+ICsrKyBiL2RyaXZlcnMvbWlzYy9jYXJk
-cmVhZGVyL3J0c3hfdXNiLmMNCj4gPiBAQCAtNjk4LDYgKzY5OCwxMiBAQCBzdGF0aWMgdm9pZCBy
-dHN4X3VzYl9kaXNjb25uZWN0KHN0cnVjdCB1c2JfaW50ZXJmYWNlDQo+ICppbnRmKQ0KPiA+ICB9
-DQo+ID4NCj4gPiAgI2lmZGVmIENPTkZJR19QTQ0KPiA+ICtzdGF0aWMgaW50IHJ0c3hfdXNiX3Jl
-c3VtZV9jaGlsZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHZvaWQgKmRhdGEpDQo+ID4gK3sNCj4gPiAr
-ICAgICAgIHBtX3JlcXVlc3RfcmVzdW1lKGRldik7DQo+ID4gKyAgICAgICByZXR1cm4gMDsNCj4g
-PiArfQ0KPiA+ICsNCj4gPiAgc3RhdGljIGludCBydHN4X3VzYl9zdXNwZW5kKHN0cnVjdCB1c2Jf
-aW50ZXJmYWNlICppbnRmLCBwbV9tZXNzYWdlX3QNCj4gbWVzc2FnZSkNCj4gPiAgew0KPiA+ICAg
-ICAgICAgc3RydWN0IHJ0c3hfdWNyICp1Y3IgPQ0KPiA+IEBAIC03MTMsOCArNzE5LDEwIEBAIHN0
-YXRpYyBpbnQgcnRzeF91c2Jfc3VzcGVuZChzdHJ1Y3QgdXNiX2ludGVyZmFjZQ0KPiAqaW50Ziwg
-cG1fbWVzc2FnZV90IG1lc3NhZ2UpDQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgbXV0ZXhf
-dW5sb2NrKCZ1Y3ItPmRldl9tdXRleCk7DQo+ID4NCj4gPiAgICAgICAgICAgICAgICAgICAgICAg
-ICAvKiBEZWZlciB0aGUgYXV0b3N1c3BlbmQgaWYgY2FyZCBleGlzdHMgKi8NCj4gPiAtICAgICAg
-ICAgICAgICAgICAgICAgICBpZiAodmFsICYgKFNEX0NEIHwgTVNfQ0QpKQ0KPiA+ICsgICAgICAg
-ICAgICAgICAgICAgICAgIGlmICh2YWwgJiAoU0RfQ0QgfCBNU19DRCkpIHsNCj4gPiArICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgIGRldmljZV9mb3JfZWFjaF9jaGlsZCgmaW50Zi0+ZGV2
-LA0KPiBOVUxMLCBydHN4X3VzYl9yZXN1bWVfY2hpbGQpOw0KPiBXaHkgbm90IGNhbGxpbmcgcnRz
-eF91c2JfcmVzdW1lKCkgaGVyZT8NCg0KQmVjYXVzZSBpbiB0aGlzIHRpbWUgcnRzeF91c2IgaXMg
-bm90IGluIHJ1bnRpbWVfc3VzcGVuZCwgb25seSBuZWVkIHRvIG1ha2Ugc3VyZSBjaGlsZCBpcyBu
-b3QgaW4gc3VzcGVuZA0KQWN0dWFsbHkgd2hlbiB0aGUgcHJvZ3JhbSBjYW1lIGhlcmUgdGhpcyBz
-dXNwZW5kIHdpbGwgYmUgcmVqZWN0ZWQgYmVjYXVzZSByZXR1cm4gLUVBR0FJTg0KDQo+ID4gICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gLUVBR0FJTjsNCj4gPiArICAgICAg
-ICAgICAgICAgICAgICAgICB9DQo+ID4gICAgICAgICAgICAgICAgIH0gZWxzZSB7DQo+ID4gICAg
-ICAgICAgICAgICAgICAgICAgICAgLyogVGhlcmUgaXMgYW4gb25nb2luZyBvcGVyYXRpb24qLw0K
-PiA+ICAgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiAtRUFHQUlOOw0KPiA+IEBAIC03MjQs
-MTIgKzczMiw2IEBAIHN0YXRpYyBpbnQgcnRzeF91c2Jfc3VzcGVuZChzdHJ1Y3QgdXNiX2ludGVy
-ZmFjZQ0KPiAqaW50ZiwgcG1fbWVzc2FnZV90IG1lc3NhZ2UpDQo+ID4gICAgICAgICByZXR1cm4g
-MDsNCj4gPiAgfQ0KPiA+DQo+ID4gLXN0YXRpYyBpbnQgcnRzeF91c2JfcmVzdW1lX2NoaWxkKHN0
-cnVjdCBkZXZpY2UgKmRldiwgdm9pZCAqZGF0YSkNCj4gPiAtew0KPiA+IC0gICAgICAgcG1fcmVx
-dWVzdF9yZXN1bWUoZGV2KTsNCj4gPiAtICAgICAgIHJldHVybiAwOw0KPiA+IC19DQo+ID4gLQ0K
-PiA+ICBzdGF0aWMgaW50IHJ0c3hfdXNiX3Jlc3VtZShzdHJ1Y3QgdXNiX2ludGVyZmFjZSAqaW50
-ZikNCj4gPiAgew0KPiA+ICAgICAgICAgZGV2aWNlX2Zvcl9lYWNoX2NoaWxkKCZpbnRmLT5kZXYs
-IE5VTEwsIHJ0c3hfdXNiX3Jlc3VtZV9jaGlsZCk7DQo+ID4gLS0NCj4gPiAyLjI1LjENCj4gPg0K
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+
+***
+
+Subject: Re: [syzbot] [netfilter?] KASAN: slab-out-of-bounds Read in nfacct_mt_checkentry
+Author: fw@strlen.de
+
+#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/fwestphal/nf.git testing
 
