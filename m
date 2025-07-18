@@ -1,270 +1,708 @@
-Return-Path: <linux-kernel+bounces-736212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ADC4B09A20
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 05:17:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3506B09A22
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 05:20:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61CE517ED34
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:17:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B11E1C43E7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C854814F121;
-	Fri, 18 Jul 2025 03:17:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD83C1A0703;
+	Fri, 18 Jul 2025 03:19:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SIefvjJ/"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="mk1kR4JA"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41DE31400C;
-	Fri, 18 Jul 2025 03:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D1A5BA27
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 03:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752808644; cv=none; b=Wfc4hL8bF9KIDsp+Ka07wcgFFsx6h5HlDybUXJMIhpb6Ys5HuYDykfJIHVpOm+/fczxigkxQ5tvgN1EvnfbYimUNM3XAJPs1vzew66lex9RfGm9IOtbpK+84LANTCpoAQh9OZiCPu7Y3wrX05OlNy/1GdRT5NzZr7Qi3kFtiKfg=
+	t=1752808797; cv=none; b=j0hYMxGkTb30zEv2RsATfTiRO9hpey+UOp+5bNBK+hyvr5Eo+LMLw8eMwAA3mN4A+toC9p2nMX8drUg/Pa62FvBlD1wyDYG3lMiM5y4P8PV1RRRZ4KpzauuZm9xTVFwyUYuwdxirDfhOQXIn5pAPvyFNBpJj6Mjik/vq1vIvgac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752808644; c=relaxed/simple;
-	bh=lxayXSqvokqrTEjYHa9AUo75ZKKOi9qgsaPYBbCZaIo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DG53uzPmEfwFmhPggzfhqbymm2cjW9vlS2621CL145E+fx/oTV/1CbaEG2y3PfG3NCwx60su/8qPBkz3JUFx67VrAeaBpYVk4aF0q+yxcI0gN65YyLE8VAuEXUsmmQfuBzVMeEGsC5Zke6B2FTpLSe1ZIp8+zVPP65R2j3tKokQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SIefvjJ/; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45634205adaso7945375e9.2;
-        Thu, 17 Jul 2025 20:17:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752808640; x=1753413440; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+xLyVZDIwAcj1HEAQ8+4rL33smyGPoUW6kEINY6RwQw=;
-        b=SIefvjJ/AKmHXvHga+Nj3yod6PyftaFiRv+H/HLajRb7Z6AX4BddN6KP8BlMzGZZrZ
-         +9yuVLyC3Dlrj5QBYI0MiJKc8YIlHXCg/7kXxiyoUSBLTVGl8z+zqzYJ85qMoEOK48ta
-         r9A6lojcE7dyqtBZ4Q69LkdckL1PkPRS4UiIyxvLlRU6QnwDIi/GtJfbqgn4nIUaFFNF
-         Pt66BwQr7AOJf2xI+QBpu6tyLLeSiusitXRtwWsMhibYfRvcWW0dLXVYH8LNFWTwkjPQ
-         +n/ZuPv287iG4DAPdy8vayPGykOBxYcWCjnsDpqReNhZNbrvBFYWiDlk4G0brnRtj1Sh
-         1SwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752808640; x=1753413440;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+xLyVZDIwAcj1HEAQ8+4rL33smyGPoUW6kEINY6RwQw=;
-        b=E5nfKHSDw+Wkwtt3Cw3pgzvhBr9A6EiUUc/k3tFgR1EvMGlvWCiD7E4lcJaxVSogRL
-         f7CsV5aHr1o69+dK3oyOAuCjC4Jr9skmCTu58Uwp4UB3O9zsNGIUsxhL3gonkZ1slapl
-         oCGwbS1CzYYZhCeowoVFh6LdbL/oPlKQsjOQGokpklBLLNH5IyPzI6xxSJ7Xf3S9Pj//
-         u9RLrWSUrHcrQ9A+KeiqiI5TBvvsT2mA3Xw5ldWAZ9gRcSL25SpdDXHGqHMrGrNZS5Ve
-         DsRTa/aoHT4GjeXbI1hIIpM4sTLddSjFzyokjFhf0Uod2nXSaC6Jo7Q5b6FhKFjw2yjS
-         2YuA==
-X-Forwarded-Encrypted: i=1; AJvYcCVR6zUmfDfE55kdsmNd/uC5QG/FkOorbpIuQWjgcx+0opl/SCiFbNph6w5Fu4TJ883cerWclzRXfQsCdCT9@vger.kernel.org, AJvYcCWfUpSrIiCLPa2jYBLdBiUociKMBmrl5fEnuk+qZ3+VzA48yrt9JlGx6E4mciRVhAfFci0fqZkTqjQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfuCa5/GN8HTdPUV1DW8vwcQ1BGfI6kPGxyBUSg61bmg0RovJf
-	reYHT3v7Krb9Ng/em8SIrrujQDuIvZxSQhv+UusxXRv+FhSJq9Rxk5zg9OAbo49UxzITZIyjAWR
-	jiEY1r0UsZs/Sy3X1TNo/DwxbcccJyEU=
-X-Gm-Gg: ASbGncsbUsIDxQzLfnFCybsu/m+ulvDpJn4N3Z+BIeMREfR+PLypJIPMZ0WbsBAKvMY
-	P/0szEhyyn7Mwaxu9kjoALR4YaoBpOynq5keRY1htjt0OJBnnXVL6k/4Msh3F2zTVPFIui8Yvh1
-	ppHkkYqYBtxNHAimK2/9XFjDEVLo5BoM6JLspoG2+GX4OpLN66/gMsWbsw6f40XL4bUnK+BNxNS
-	6YmJJTd
-X-Google-Smtp-Source: AGHT+IF6HqZhMnM1S5SriTeRFu45wU1jwnPvEWa5YJwPLmPns1dVqf+yP0H+WgfkvxP0STMyHCOWZiUQMc0r+vOOQWk=
-X-Received: by 2002:a5d:6f1d:0:b0:3b2:fe46:9812 with SMTP id
- ffacd0b85a97d-3b60e4d3e2cmr5229036f8f.19.1752808640240; Thu, 17 Jul 2025
- 20:17:20 -0700 (PDT)
+	s=arc-20240116; t=1752808797; c=relaxed/simple;
+	bh=uPPKvKwoCucLd63Jomxqd5poe8Sfn15Dqj/a5dcifdQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Dw/RzdkkWkBPG2cx2GZiQc3wPE3zUmBCsGs08INAMLvClTsA9xtkmhomwRBqBFH5Rv3cqb2ZThspawYje+gIDU4Is4EEXDXnAT4srTobEbzfLtno9gQmyvfN1ixnh7s3ipI1Yf9ELhDA5nSHPA3QQpjj8CV78dgykcVxQC9Enuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=mk1kR4JA; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1752808790; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=kL5zpaJ0dc6vZztuNBWzGbE6P0Ws7ZPyMNYS+dp2e+U=;
+	b=mk1kR4JAPU3KW3yrCLfnm61Yq36bMd9OeqWzjyktgTZ/Xf4JgQlyQe0gpqBH+T41hKvso5CO6M+/D9goA7bo7Inzcgegxx9dB3EZfCY5whj40xczV8we6TO7mCH2zgU1BHN/nU7sLWBw2B3vnLedDPk5QvhP+WAWoSHEjEiMe5Y=
+Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WjAk.XJ_1752808783 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 18 Jul 2025 11:19:50 +0800
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+To: linux-erofs@lists.ozlabs.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Bo Liu <liubo03@inspur.com>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>
+Subject: [PATCH v6 2/2] erofs: implement metadata compression
+Date: Fri, 18 Jul 2025 11:19:42 +0800
+Message-ID: <20250718031942.3052585-1-hsiangkao@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <20250717070804.1446345-3-hsiangkao@linux.alibaba.com>
+References: <20250717070804.1446345-3-hsiangkao@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250718-k1-clk-i2s-v1-1-e92c10fd0f60@linux.spacemit.com>
-In-Reply-To: <20250718-k1-clk-i2s-v1-1-e92c10fd0f60@linux.spacemit.com>
-From: Jesse T <mr.bossman075@gmail.com>
-Date: Thu, 17 Jul 2025 23:16:43 -0400
-X-Gm-Features: Ac12FXxu7iDTL6EHvyzjs4TsEjO7dBDwq7U1sYpuaMmupzIdSEt8fvtu992HPZw
-Message-ID: <CAJFTR8TfctXn=+o0SbjUgC0xHu6w7JPrAR7rERrL1u1EvLgKyw@mail.gmail.com>
-Subject: Re: [PATCH] clk: spacemit: fix sspax_clk
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Yixun Lan <dlan@gentoo.org>, linux-clk@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 17, 2025 at 10:10=E2=80=AFPM Troy Mitchell
-<troy.mitchell@linux.spacemit.com> wrote:
->
-> In the SpacemiT public document, when the FNCLKSEL field of
-> the APBC_SSPAX_CLK_RST register is 7 (3'b111),
-> which is a reserved value. And BIT3 of the same register is
-> a reserved bit.
->
-> But the document is wrong, the actual situation is:
-> when FNCLKSEL is 7 (3'b111), and the purpose of bit 3 is
-> if to select i2s_bclk as the parent clock.
->
-> And only when FNCLKSEL is 7 (3'b111), The bit 3 is not a reserved bit.
->
-> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> ---
->  drivers/clk/spacemit/ccu-k1.c  |  4 ++--
->  drivers/clk/spacemit/ccu_mix.c | 29 +++++++++++++++++++++++++++++
->  drivers/clk/spacemit/ccu_mix.h | 14 ++++++++++++++
->  3 files changed, 45 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.=
-c
-> index cdde37a0523537c2f436e481ae8d6ec5a581b87e..0e22f6fb2c45b68ab20a9b156=
-3a1a6dec1a7e16c 100644
-> --- a/drivers/clk/spacemit/ccu-k1.c
-> +++ b/drivers/clk/spacemit/ccu-k1.c
-> @@ -359,8 +359,8 @@ static const struct clk_parent_data sspa_parents[] =
-=3D {
->         CCU_PARENT_HW(pll1_d3072_0p8),
->         CCU_PARENT_HW(i2s_bclk),
->  };
-> -CCU_MUX_GATE_DEFINE(sspa0_clk, sspa_parents, APBC_SSPA0_CLK_RST, 4, 3, B=
-IT(1), 0);
-> -CCU_MUX_GATE_DEFINE(sspa1_clk, sspa_parents, APBC_SSPA1_CLK_RST, 4, 3, B=
-IT(1), 0);
-> +CCU_SSPA_MUX_GATE_DEFINE(sspa0_clk, sspa_parents, APBC_SSPA0_CLK_RST, 4,=
- 3, BIT(1), 0);
-> +CCU_SSPA_MUX_GATE_DEFINE(sspa1_clk, sspa_parents, APBC_SSPA1_CLK_RST, 4,=
- 3, BIT(1), 0);
->  CCU_GATE_DEFINE(dro_clk, CCU_PARENT_HW(apb_clk), APBC_DRO_CLK_RST, BIT(1=
-), 0);
->  CCU_GATE_DEFINE(ir_clk, CCU_PARENT_HW(apb_clk), APBC_IR_CLK_RST, BIT(1),=
- 0);
->  CCU_GATE_DEFINE(tsen_clk, CCU_PARENT_HW(apb_clk), APBC_TSEN_CLK_RST, BIT=
-(1), 0);
-> diff --git a/drivers/clk/spacemit/ccu_mix.c b/drivers/clk/spacemit/ccu_mi=
-x.c
-> index 9b852aa61f78aed5256bfe6fc3b01932d6db6256..bfc65fc00df67299523eb5d1d=
-2ed479c61fc6141 100644
-> --- a/drivers/clk/spacemit/ccu_mix.c
-> +++ b/drivers/clk/spacemit/ccu_mix.c
-> @@ -191,6 +191,25 @@ static int ccu_mux_set_parent(struct clk_hw *hw, u8 =
-index)
->         return ccu_mix_trigger_fc(hw);
->  }
->
-> +static int ccu_mux_set_sspa_parent(struct clk_hw *hw, u8 index)
-> +{
-> +       struct ccu_mix *mix =3D hw_to_ccu_mix(hw);
-> +       struct ccu_mux_config *mux =3D &mix->mux;
-> +       u32 mask, val;
-> +
-> +       mask =3D GENMASK(mux->width + mux->shift - 1, mux->shift);
-> +       val =3D index << mux->shift;
-> +
-> +       if (index =3D=3D 7) {
-> +               mask |=3D BIT(3);
-> +               val |=3D BIT(3);
+From: Bo Liu <liubo03@inspur.com>
 
-Can the value 3 here be a macro like FNCLKSEL_SSPX_I2S_BCLK_PARENT.
-A comment would be nice too.
+Thanks to the meta buffer infrastructure, metadata-compressed inodes are
+just read from the metabox inode instead of the blockdevice (or backing
+file) inode.
 
-> +       }
-> +
-> +       ccu_update(&mix->common, ctrl, mask, val);
-> +
-> +       return ccu_mix_trigger_fc(hw);
-> +}
-> +
->  const struct clk_ops spacemit_ccu_gate_ops =3D {
->         .disable        =3D ccu_gate_disable,
->         .enable         =3D ccu_gate_enable,
-> @@ -235,6 +254,16 @@ const struct clk_ops spacemit_ccu_mux_gate_ops =3D {
->         .set_parent     =3D ccu_mux_set_parent,
->  };
->
-> +const struct clk_ops spacemit_ccu_sspa_mux_gate_ops =3D {
-> +       .disable        =3D ccu_gate_disable,
-> +       .enable         =3D ccu_gate_enable,
-> +       .is_enabled     =3D ccu_gate_is_enabled,
-> +
-> +       .determine_rate =3D ccu_mix_determine_rate,
-> +       .get_parent     =3D ccu_mux_get_parent,
-> +       .set_parent     =3D ccu_mux_set_sspa_parent,
-> +};
-> +
->  const struct clk_ops spacemit_ccu_div_gate_ops =3D {
->         .disable        =3D ccu_gate_disable,
->         .enable         =3D ccu_gate_enable,
-> diff --git a/drivers/clk/spacemit/ccu_mix.h b/drivers/clk/spacemit/ccu_mi=
-x.h
-> index 51d19f5d6aacb7203d1eddf96047cf3174533601..7753446386353bf849787ed4e=
-c7c85c298238ab5 100644
-> --- a/drivers/clk/spacemit/ccu_mix.h
-> +++ b/drivers/clk/spacemit/ccu_mix.h
-> @@ -124,6 +124,19 @@ static struct ccu_mix _name =3D {                   =
-                                 \
->         }                                                                =
-       \
->  }
->
-> +#define CCU_SSPA_MUX_GATE_DEFINE(_name, _parents, _reg_ctrl,            =
-       \
+The same is true for shared extended attributes.
 
-I think it would be better to add a flags bit to struct ccu_mux_config
-Then add CCU_MUX_GATE_DEFINE_FLAGS, something like how
-drivers/clk/nxp/clk-lpc18xx-ccu.c has CCU_BRANCH_HAVE_DIV2 and CCU_BRANCH_I=
-S_BUS
-This would allow for multiple different variants of the same mux to be
-added without having a bunch of
-peripheral specific functions.
+When metadata compression is enabled, inode numbers are divided from
+on-disk NIDs because of non-LTS 32-bit application compatibility.
 
-> +                                    _shift, _width, _mask_gate, _flags) =
-       \
-> +static struct ccu_mix _name =3D {                                       =
-                 \
-> +       .gate   =3D CCU_GATE_INIT(_mask_gate),                           =
-         \
-> +       .mux    =3D CCU_MUX_INIT(_shift, _width),                        =
-         \
-> +       .common =3D {                                                    =
-         \
-> +               .reg_ctrl       =3D _reg_ctrl,                           =
-         \
-> +               CCU_MIX_INITHW_PARENTS(_name, _parents,                  =
-       \
-> +                                      spacemit_ccu_sspa_mux_gate_ops,   =
-       \
-> +                                      _flags),                          =
-       \
-> +       }                                                                =
-       \
-> +}
-> +
->  #define CCU_DIV_GATE_DEFINE(_name, _parent, _reg_ctrl, _shift, _width,  =
-       \
->                             _mask_gate, _flags)                          =
-       \
->  static struct ccu_mix _name =3D {                                       =
-                 \
-> @@ -213,6 +226,7 @@ extern const struct clk_ops spacemit_ccu_div_ops;
->  extern const struct clk_ops spacemit_ccu_factor_gate_ops;
->  extern const struct clk_ops spacemit_ccu_div_gate_ops;
->  extern const struct clk_ops spacemit_ccu_mux_gate_ops;
-> +extern const struct clk_ops spacemit_ccu_sspa_mux_gate_ops;
->  extern const struct clk_ops spacemit_ccu_mux_div_ops;
->  extern const struct clk_ops spacemit_ccu_mux_div_gate_ops;
->  #endif /* _CCU_DIV_H_ */
->
-> ---
-> base-commit: 733923397fd95405a48f165c9b1fbc8c4b0a4681
-> change-id: 20250717-k1-clk-i2s-e4272f1f915b
->
-> Best regards,
-> --
-> Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Co-developed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+Signed-off-by: Bo Liu <liubo03@inspur.com>
+Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+---
+change since v5:
+ - adjust inode numbers for metadata-compressed inodes in order to
+   keep compatibility with non-LTS applications. 
 
-Congrats on working at spacemit!!
+ Documentation/ABI/testing/sysfs-fs-erofs |  2 +-
+ fs/erofs/data.c                          | 59 +++++++++++++++---------
+ fs/erofs/decompressor.c                  |  2 +-
+ fs/erofs/dir.c                           |  3 +-
+ fs/erofs/erofs_fs.h                      |  2 +-
+ fs/erofs/fileio.c                        |  2 +-
+ fs/erofs/fscache.c                       |  3 +-
+ fs/erofs/inode.c                         | 17 +++----
+ fs/erofs/internal.h                      | 34 ++++++++++++--
+ fs/erofs/super.c                         | 22 ++++++++-
+ fs/erofs/sysfs.c                         |  2 +
+ fs/erofs/xattr.c                         | 26 +++++++----
+ fs/erofs/zdata.c                         |  5 +-
+ fs/erofs/zmap.c                          | 16 ++++---
+ 14 files changed, 136 insertions(+), 59 deletions(-)
 
-Thanks,
-Jesse Taube
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+diff --git a/Documentation/ABI/testing/sysfs-fs-erofs b/Documentation/ABI/testing/sysfs-fs-erofs
+index bf3b6299c15e..ad6d1a3ccd4e 100644
+--- a/Documentation/ABI/testing/sysfs-fs-erofs
++++ b/Documentation/ABI/testing/sysfs-fs-erofs
+@@ -5,7 +5,7 @@ Description:	Shows all enabled kernel features.
+ 		Supported features:
+ 		zero_padding, compr_cfgs, big_pcluster, chunked_file,
+ 		device_table, compr_head2, sb_chksum, ztailpacking,
+-		dedupe, fragments.
++		dedupe, fragments, 48bit, metabox.
+ 
+ What:		/sys/fs/erofs/<disk>/sync_decompress
+ Date:		November 2021
+diff --git a/fs/erofs/data.c b/fs/erofs/data.c
+index 383c1337e157..f46c47335b9c 100644
+--- a/fs/erofs/data.c
++++ b/fs/erofs/data.c
+@@ -49,11 +49,18 @@ void *erofs_bread(struct erofs_buf *buf, erofs_off_t offset, bool need_kmap)
+ 	return buf->base + (offset & ~PAGE_MASK);
+ }
+ 
+-void erofs_init_metabuf(struct erofs_buf *buf, struct super_block *sb)
++int erofs_init_metabuf(struct erofs_buf *buf, struct super_block *sb,
++		       bool in_metabox)
+ {
+ 	struct erofs_sb_info *sbi = EROFS_SB(sb);
+ 
+ 	buf->file = NULL;
++	if (in_metabox) {
++		if (unlikely(!sbi->metabox_inode))
++			return -EFSCORRUPTED;
++		buf->mapping = sbi->metabox_inode->i_mapping;
++		return 0;
++	}
+ 	buf->off = sbi->dif0.fsoff;
+ 	if (erofs_is_fileio_mode(sbi)) {
+ 		buf->file = sbi->dif0.file;	/* some fs like FUSE needs it */
+@@ -62,12 +69,17 @@ void erofs_init_metabuf(struct erofs_buf *buf, struct super_block *sb)
+ 		buf->mapping = sbi->dif0.fscache->inode->i_mapping;
+ 	else
+ 		buf->mapping = sb->s_bdev->bd_mapping;
++	return 0;
+ }
+ 
+ void *erofs_read_metabuf(struct erofs_buf *buf, struct super_block *sb,
+-			 erofs_off_t offset)
++			 erofs_off_t offset, bool in_metabox)
+ {
+-	erofs_init_metabuf(buf, sb);
++	int err;
++
++	err = erofs_init_metabuf(buf, sb, in_metabox);
++	if (err)
++		return ERR_PTR(err);
+ 	return erofs_bread(buf, offset, true);
+ }
+ 
+@@ -118,7 +130,7 @@ int erofs_map_blocks(struct inode *inode, struct erofs_map_blocks *map)
+ 	pos = ALIGN(erofs_iloc(inode) + vi->inode_isize +
+ 		    vi->xattr_isize, unit) + unit * chunknr;
+ 
+-	idx = erofs_read_metabuf(&buf, sb, pos);
++	idx = erofs_read_metabuf(&buf, sb, pos, erofs_inode_in_metabox(inode));
+ 	if (IS_ERR(idx)) {
+ 		err = PTR_ERR(idx);
+ 		goto out;
+@@ -264,7 +276,6 @@ static int erofs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+ 
+ 	map.m_la = offset;
+ 	map.m_llen = length;
+-
+ 	ret = erofs_map_blocks(inode, &map);
+ 	if (ret < 0)
+ 		return ret;
+@@ -273,35 +284,37 @@ static int erofs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+ 	iomap->length = map.m_llen;
+ 	iomap->flags = 0;
+ 	iomap->private = NULL;
++	iomap->addr = IOMAP_NULL_ADDR;
+ 	if (!(map.m_flags & EROFS_MAP_MAPPED)) {
+ 		iomap->type = IOMAP_HOLE;
+-		iomap->addr = IOMAP_NULL_ADDR;
+ 		return 0;
+ 	}
+ 
+-	mdev = (struct erofs_map_dev) {
+-		.m_deviceid = map.m_deviceid,
+-		.m_pa = map.m_pa,
+-	};
+-	ret = erofs_map_dev(sb, &mdev);
+-	if (ret)
+-		return ret;
+-
+-	if (flags & IOMAP_DAX)
+-		iomap->dax_dev = mdev.m_dif->dax_dev;
+-	else
+-		iomap->bdev = mdev.m_bdev;
+-
+-	iomap->addr = mdev.m_dif->fsoff + mdev.m_pa;
+-	if (flags & IOMAP_DAX)
+-		iomap->addr += mdev.m_dif->dax_part_off;
++	if (!(map.m_flags & EROFS_MAP_META) || !erofs_inode_in_metabox(inode)) {
++		mdev = (struct erofs_map_dev) {
++			.m_deviceid = map.m_deviceid,
++			.m_pa = map.m_pa,
++		};
++		ret = erofs_map_dev(sb, &mdev);
++		if (ret)
++			return ret;
++
++		if (flags & IOMAP_DAX)
++			iomap->dax_dev = mdev.m_dif->dax_dev;
++		else
++			iomap->bdev = mdev.m_bdev;
++		iomap->addr = mdev.m_dif->fsoff + mdev.m_pa;
++		if (flags & IOMAP_DAX)
++			iomap->addr += mdev.m_dif->dax_part_off;
++	}
+ 
+ 	if (map.m_flags & EROFS_MAP_META) {
+ 		void *ptr;
+ 		struct erofs_buf buf = __EROFS_BUF_INITIALIZER;
+ 
+ 		iomap->type = IOMAP_INLINE;
+-		ptr = erofs_read_metabuf(&buf, sb, mdev.m_pa);
++		ptr = erofs_read_metabuf(&buf, sb, map.m_pa,
++					 erofs_inode_in_metabox(inode));
+ 		if (IS_ERR(ptr))
+ 			return PTR_ERR(ptr);
+ 		iomap->inline_data = ptr;
+diff --git a/fs/erofs/decompressor.c b/fs/erofs/decompressor.c
+index 358061d7b660..354762c9723f 100644
+--- a/fs/erofs/decompressor.c
++++ b/fs/erofs/decompressor.c
+@@ -467,7 +467,7 @@ int z_erofs_parse_cfgs(struct super_block *sb, struct erofs_super_block *dsb)
+ 		return -EOPNOTSUPP;
+ 	}
+ 
+-	erofs_init_metabuf(&buf, sb);
++	(void)erofs_init_metabuf(&buf, sb, false);
+ 	offset = EROFS_SUPER_OFFSET + sbi->sb_size;
+ 	alg = 0;
+ 	for (algs = sbi->available_compr_algs; algs; algs >>= 1, ++alg) {
+diff --git a/fs/erofs/dir.c b/fs/erofs/dir.c
+index 3e4b38bec0aa..d1c6cd1a45e8 100644
+--- a/fs/erofs/dir.c
++++ b/fs/erofs/dir.c
+@@ -34,7 +34,8 @@ static int erofs_fill_dentries(struct inode *dir, struct dir_context *ctx,
+ 		}
+ 
+ 		if (!dir_emit(ctx, de_name, de_namelen,
+-			      le64_to_cpu(de->nid), d_type))
++			      erofs_nid_to_ino64(EROFS_SB(dir->i_sb),
++						 le64_to_cpu(de->nid)), d_type))
+ 			return 1;
+ 		++de;
+ 		ctx->pos += sizeof(struct erofs_dirent);
+diff --git a/fs/erofs/erofs_fs.h b/fs/erofs/erofs_fs.h
+index 7b150ac64742..377ee12b8b96 100644
+--- a/fs/erofs/erofs_fs.h
++++ b/fs/erofs/erofs_fs.h
+@@ -34,7 +34,7 @@
+ #define EROFS_FEATURE_INCOMPAT_48BIT		0x00000080
+ #define EROFS_FEATURE_INCOMPAT_METABOX		0x00000100
+ #define EROFS_ALL_FEATURE_INCOMPAT		\
+-	((EROFS_FEATURE_INCOMPAT_48BIT << 1) - 1)
++	((EROFS_FEATURE_INCOMPAT_METABOX << 1) - 1)
+ 
+ #define EROFS_SB_EXTSLOT_SIZE	16
+ 
+diff --git a/fs/erofs/fileio.c b/fs/erofs/fileio.c
+index 3ee082476c8c..b7b3432a9882 100644
+--- a/fs/erofs/fileio.c
++++ b/fs/erofs/fileio.c
+@@ -115,7 +115,7 @@ static int erofs_fileio_scan_folio(struct erofs_fileio *io, struct folio *folio)
+ 			void *src;
+ 
+ 			src = erofs_read_metabuf(&buf, inode->i_sb,
+-						 map->m_pa + ofs);
++				map->m_pa + ofs, erofs_inode_in_metabox(inode));
+ 			if (IS_ERR(src)) {
+ 				err = PTR_ERR(src);
+ 				break;
+diff --git a/fs/erofs/fscache.c b/fs/erofs/fscache.c
+index 9a8ee646e51d..362acf828279 100644
+--- a/fs/erofs/fscache.c
++++ b/fs/erofs/fscache.c
+@@ -274,7 +274,8 @@ static int erofs_fscache_data_read_slice(struct erofs_fscache_rq *req)
+ 		size_t size = map.m_llen;
+ 		void *src;
+ 
+-		src = erofs_read_metabuf(&buf, sb, map.m_pa);
++		src = erofs_read_metabuf(&buf, sb, map.m_pa,
++					 erofs_inode_in_metabox(inode));
+ 		if (IS_ERR(src))
+ 			return PTR_ERR(src);
+ 
+diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
+index 47215c5e3385..9a2f59721522 100644
+--- a/fs/erofs/inode.c
++++ b/fs/erofs/inode.c
+@@ -29,6 +29,7 @@ static int erofs_read_inode(struct inode *inode)
+ 	struct super_block *sb = inode->i_sb;
+ 	erofs_blk_t blkaddr = erofs_blknr(sb, erofs_iloc(inode));
+ 	unsigned int ofs = erofs_blkoff(sb, erofs_iloc(inode));
++	bool in_mbox = erofs_inode_in_metabox(inode);
+ 	struct erofs_buf buf = __EROFS_BUF_INITIALIZER;
+ 	struct erofs_sb_info *sbi = EROFS_SB(sb);
+ 	erofs_blk_t addrmask = BIT_ULL(48) - 1;
+@@ -39,7 +40,7 @@ static int erofs_read_inode(struct inode *inode)
+ 	void *ptr;
+ 	int err = 0;
+ 
+-	ptr = erofs_read_metabuf(&buf, sb, erofs_pos(sb, blkaddr));
++	ptr = erofs_read_metabuf(&buf, sb, erofs_pos(sb, blkaddr), in_mbox);
+ 	if (IS_ERR(ptr)) {
+ 		err = PTR_ERR(ptr);
+ 		erofs_err(sb, "failed to read inode meta block (nid: %llu): %d",
+@@ -78,7 +79,7 @@ static int erofs_read_inode(struct inode *inode)
+ 
+ 			memcpy(&copied, dic, gotten);
+ 			ptr = erofs_read_metabuf(&buf, sb,
+-					erofs_pos(sb, blkaddr + 1));
++					erofs_pos(sb, blkaddr + 1), in_mbox);
+ 			if (IS_ERR(ptr)) {
+ 				err = PTR_ERR(ptr);
+ 				erofs_err(sb, "failed to read inode payload block (nid: %llu): %d",
+@@ -264,13 +265,13 @@ static int erofs_fill_inode(struct inode *inode)
+  * ino_t is 32-bits on 32-bit arch. We have to squash the 64-bit value down
+  * so that it will fit.
+  */
+-static ino_t erofs_squash_ino(erofs_nid_t nid)
++static ino_t erofs_squash_ino(struct super_block *sb, erofs_nid_t nid)
+ {
+-	ino_t ino = (ino_t)nid;
++	u64 ino64 = erofs_nid_to_ino64(EROFS_SB(sb), nid);
+ 
+ 	if (sizeof(ino_t) < sizeof(erofs_nid_t))
+-		ino ^= nid >> (sizeof(erofs_nid_t) - sizeof(ino_t)) * 8;
+-	return ino;
++		ino64 ^= ino64 >> (sizeof(erofs_nid_t) - sizeof(ino_t)) * 8;
++	return (ino_t)ino64;
+ }
+ 
+ static int erofs_iget5_eq(struct inode *inode, void *opaque)
+@@ -282,7 +283,7 @@ static int erofs_iget5_set(struct inode *inode, void *opaque)
+ {
+ 	const erofs_nid_t nid = *(erofs_nid_t *)opaque;
+ 
+-	inode->i_ino = erofs_squash_ino(nid);
++	inode->i_ino = erofs_squash_ino(inode->i_sb, nid);
+ 	EROFS_I(inode)->nid = nid;
+ 	return 0;
+ }
+@@ -291,7 +292,7 @@ struct inode *erofs_iget(struct super_block *sb, erofs_nid_t nid)
+ {
+ 	struct inode *inode;
+ 
+-	inode = iget5_locked(sb, erofs_squash_ino(nid), erofs_iget5_eq,
++	inode = iget5_locked(sb, erofs_squash_ino(sb, nid), erofs_iget5_eq,
+ 			     erofs_iget5_set, &nid);
+ 	if (!inode)
+ 		return ERR_PTR(-ENOMEM);
+diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+index ad932f670bb6..c24100ef7bc5 100644
+--- a/fs/erofs/internal.h
++++ b/fs/erofs/internal.h
+@@ -125,6 +125,7 @@ struct erofs_sb_info {
+ 	struct erofs_sb_lz4_info lz4;
+ #endif	/* CONFIG_EROFS_FS_ZIP */
+ 	struct inode *packed_inode;
++	struct inode *metabox_inode;
+ 	struct erofs_dev_context *devs;
+ 	u64 total_blocks;
+ 
+@@ -148,6 +149,7 @@ struct erofs_sb_info {
+ 	/* what we really care is nid, rather than ino.. */
+ 	erofs_nid_t root_nid;
+ 	erofs_nid_t packed_nid;
++	erofs_nid_t metabox_nid;
+ 	/* used for statfs, f_files - f_favail */
+ 	u64 inos;
+ 
+@@ -232,6 +234,23 @@ EROFS_FEATURE_FUNCS(sb_chksum, compat, COMPAT_SB_CHKSUM)
+ EROFS_FEATURE_FUNCS(xattr_filter, compat, COMPAT_XATTR_FILTER)
+ EROFS_FEATURE_FUNCS(shared_ea_in_metabox, compat, COMPAT_SHARED_EA_IN_METABOX)
+ 
++static inline u64 erofs_nid_to_ino64(struct erofs_sb_info *sbi, erofs_nid_t nid)
++{
++	if (!erofs_sb_has_metabox(sbi))
++		return nid;
++
++	/*
++	 * When metadata compression is enabled, avoid generating excessively
++	 * large inode numbers for metadata-compressed inodes.  Shift NIDs in
++	 * the 31-62 bit range left by one and move the metabox flag to bit 31.
++	 *
++	 * Note: on-disk NIDs remain unchanged as they are primarily used for
++	 * compatibility with non-LFS 32-bit applications.
++	 */
++	return ((nid << 1) & GENMASK_ULL(63, 32)) | (nid & GENMASK(30, 0)) |
++		((nid >> EROFS_DIRENT_NID_METABOX_BIT) << 31);
++}
++
+ /* atomic flag definitions */
+ #define EROFS_I_EA_INITED_BIT	0
+ #define EROFS_I_Z_INITED_BIT	1
+@@ -281,12 +300,20 @@ struct erofs_inode {
+ 
+ #define EROFS_I(ptr)	container_of(ptr, struct erofs_inode, vfs_inode)
+ 
++static inline bool erofs_inode_in_metabox(struct inode *inode)
++{
++	return EROFS_I(inode)->nid & BIT(EROFS_DIRENT_NID_METABOX_BIT);
++}
++
+ static inline erofs_off_t erofs_iloc(struct inode *inode)
+ {
+ 	struct erofs_sb_info *sbi = EROFS_I_SB(inode);
++	erofs_nid_t nid_lo = EROFS_I(inode)->nid & EROFS_DIRENT_NID_MASK;
+ 
++	if (erofs_inode_in_metabox(inode))
++		return nid_lo << sbi->islotbits;
+ 	return erofs_pos(inode->i_sb, sbi->meta_blkaddr) +
+-		(EROFS_I(inode)->nid << sbi->islotbits);
++		(nid_lo << sbi->islotbits);
+ }
+ 
+ static inline unsigned int erofs_inode_version(unsigned int ifmt)
+@@ -385,9 +412,10 @@ void *erofs_read_metadata(struct super_block *sb, struct erofs_buf *buf,
+ void erofs_unmap_metabuf(struct erofs_buf *buf);
+ void erofs_put_metabuf(struct erofs_buf *buf);
+ void *erofs_bread(struct erofs_buf *buf, erofs_off_t offset, bool need_kmap);
+-void erofs_init_metabuf(struct erofs_buf *buf, struct super_block *sb);
++int erofs_init_metabuf(struct erofs_buf *buf, struct super_block *sb,
++		       bool in_metabox);
+ void *erofs_read_metabuf(struct erofs_buf *buf, struct super_block *sb,
+-			 erofs_off_t offset);
++			 erofs_off_t offset, bool in_metabox);
+ int erofs_map_dev(struct super_block *sb, struct erofs_map_dev *dev);
+ int erofs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 		 u64 start, u64 len);
+diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+index bc27fa3bd678..539551cf59db 100644
+--- a/fs/erofs/super.c
++++ b/fs/erofs/super.c
+@@ -141,7 +141,7 @@ static int erofs_init_device(struct erofs_buf *buf, struct super_block *sb,
+ 	struct erofs_deviceslot *dis;
+ 	struct file *file;
+ 
+-	dis = erofs_read_metabuf(buf, sb, *pos);
++	dis = erofs_read_metabuf(buf, sb, *pos, false);
+ 	if (IS_ERR(dis))
+ 		return PTR_ERR(dis);
+ 
+@@ -258,7 +258,7 @@ static int erofs_read_superblock(struct super_block *sb)
+ 	void *data;
+ 	int ret;
+ 
+-	data = erofs_read_metabuf(&buf, sb, 0);
++	data = erofs_read_metabuf(&buf, sb, 0, false);
+ 	if (IS_ERR(data)) {
+ 		erofs_err(sb, "cannot read erofs superblock");
+ 		return PTR_ERR(data);
+@@ -319,6 +319,14 @@ static int erofs_read_superblock(struct super_block *sb)
+ 		sbi->root_nid = le16_to_cpu(dsb->rb.rootnid_2b);
+ 	}
+ 	sbi->packed_nid = le64_to_cpu(dsb->packed_nid);
++	if (erofs_sb_has_metabox(sbi)) {
++		if (sbi->sb_size <= offsetof(struct erofs_super_block,
++					     metabox_nid))
++			return -EFSCORRUPTED;
++		sbi->metabox_nid = le64_to_cpu(dsb->metabox_nid);
++		if (sbi->metabox_nid & BIT(EROFS_DIRENT_NID_METABOX_BIT))
++			return -EFSCORRUPTED;	/* self-loop detection */
++	}
+ 	sbi->inos = le64_to_cpu(dsb->inos);
+ 
+ 	sbi->epoch = (s64)le64_to_cpu(dsb->epoch);
+@@ -335,6 +343,8 @@ static int erofs_read_superblock(struct super_block *sb)
+ 
+ 	if (erofs_sb_has_48bit(sbi))
+ 		erofs_info(sb, "EXPERIMENTAL 48-bit layout support in use. Use at your own risk!");
++	if (erofs_sb_has_metabox(sbi))
++		erofs_info(sb, "EXPERIMENTAL metadata compression support in use. Use at your own risk!");
+ 	if (erofs_is_fscache_mode(sb))
+ 		erofs_info(sb, "[deprecated] fscache-based on-demand read feature in use. Use at your own risk!");
+ out:
+@@ -690,6 +700,12 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
+ 			return PTR_ERR(inode);
+ 		sbi->packed_inode = inode;
+ 	}
++	if (erofs_sb_has_metabox(sbi)) {
++		inode = erofs_iget(sb, sbi->metabox_nid);
++		if (IS_ERR(inode))
++			return PTR_ERR(inode);
++		sbi->metabox_inode = inode;
++	}
+ 
+ 	inode = erofs_iget(sb, sbi->root_nid);
+ 	if (IS_ERR(inode))
+@@ -845,6 +861,8 @@ static void erofs_drop_internal_inodes(struct erofs_sb_info *sbi)
+ {
+ 	iput(sbi->packed_inode);
+ 	sbi->packed_inode = NULL;
++	iput(sbi->metabox_inode);
++	sbi->metabox_inode = NULL;
+ #ifdef CONFIG_EROFS_FS_ZIP
+ 	iput(sbi->managed_cache);
+ 	sbi->managed_cache = NULL;
+diff --git a/fs/erofs/sysfs.c b/fs/erofs/sysfs.c
+index eed8797a193f..a9fe35ba0906 100644
+--- a/fs/erofs/sysfs.c
++++ b/fs/erofs/sysfs.c
+@@ -95,6 +95,7 @@ EROFS_ATTR_FEATURE(ztailpacking);
+ EROFS_ATTR_FEATURE(fragments);
+ EROFS_ATTR_FEATURE(dedupe);
+ EROFS_ATTR_FEATURE(48bit);
++EROFS_ATTR_FEATURE(metabox);
+ 
+ static struct attribute *erofs_feat_attrs[] = {
+ 	ATTR_LIST(zero_padding),
+@@ -108,6 +109,7 @@ static struct attribute *erofs_feat_attrs[] = {
+ 	ATTR_LIST(fragments),
+ 	ATTR_LIST(dedupe),
+ 	ATTR_LIST(48bit),
++	ATTR_LIST(metabox),
+ 	NULL,
+ };
+ ATTRIBUTE_GROUPS(erofs_feat);
+diff --git a/fs/erofs/xattr.c b/fs/erofs/xattr.c
+index d61110f511e0..eaa9efd766ee 100644
+--- a/fs/erofs/xattr.c
++++ b/fs/erofs/xattr.c
+@@ -77,7 +77,9 @@ static int erofs_init_inode_xattrs(struct inode *inode)
+ 	}
+ 
+ 	it.buf = __EROFS_BUF_INITIALIZER;
+-	erofs_init_metabuf(&it.buf, sb);
++	ret = erofs_init_metabuf(&it.buf, sb, erofs_inode_in_metabox(inode));
++	if (ret)
++		goto out_unlock;
+ 	it.pos = erofs_iloc(inode) + vi->inode_isize;
+ 
+ 	/* read in shared xattr array (non-atomic, see kmalloc below) */
+@@ -326,6 +328,9 @@ static int erofs_xattr_iter_inline(struct erofs_xattr_iter *it,
+ 		return -ENODATA;
+ 	}
+ 
++	ret = erofs_init_metabuf(&it->buf, it->sb, erofs_inode_in_metabox(inode));
++	if (ret)
++		return ret;
+ 	remaining = vi->xattr_isize - xattr_header_sz;
+ 	it->pos = erofs_iloc(inode) + vi->inode_isize + xattr_header_sz;
+ 
+@@ -361,12 +366,17 @@ static int erofs_xattr_iter_shared(struct erofs_xattr_iter *it,
+ 	struct erofs_inode *const vi = EROFS_I(inode);
+ 	struct super_block *const sb = it->sb;
+ 	struct erofs_sb_info *sbi = EROFS_SB(sb);
+-	unsigned int i;
+-	int ret = -ENODATA;
++	unsigned int i = 0;
++	int ret;
+ 
+-	for (i = 0; i < vi->xattr_shared_count; ++i) {
++	ret = erofs_init_metabuf(&it->buf, sb,
++				 erofs_sb_has_shared_ea_in_metabox(sbi));
++	if (ret)
++		return ret;
++
++	while (i < vi->xattr_shared_count) {
+ 		it->pos = erofs_pos(sb, sbi->xattr_blkaddr) +
+-				vi->xattr_shared_xattrs[i] * sizeof(__le32);
++				vi->xattr_shared_xattrs[i++] * sizeof(__le32);
+ 		it->kaddr = erofs_bread(&it->buf, it->pos, true);
+ 		if (IS_ERR(it->kaddr))
+ 			return PTR_ERR(it->kaddr);
+@@ -378,7 +388,7 @@ static int erofs_xattr_iter_shared(struct erofs_xattr_iter *it,
+ 		if ((getxattr && ret != -ENODATA) || (!getxattr && ret))
+ 			break;
+ 	}
+-	return ret;
++	return i ? ret : -ENODATA;
+ }
+ 
+ int erofs_getxattr(struct inode *inode, int index, const char *name,
+@@ -413,7 +423,6 @@ int erofs_getxattr(struct inode *inode, int index, const char *name,
+ 
+ 	it.sb = inode->i_sb;
+ 	it.buf = __EROFS_BUF_INITIALIZER;
+-	erofs_init_metabuf(&it.buf, it.sb);
+ 	it.buffer = buffer;
+ 	it.buffer_size = buffer_size;
+ 	it.buffer_ofs = 0;
+@@ -439,7 +448,6 @@ ssize_t erofs_listxattr(struct dentry *dentry, char *buffer, size_t buffer_size)
+ 
+ 	it.sb = dentry->d_sb;
+ 	it.buf = __EROFS_BUF_INITIALIZER;
+-	erofs_init_metabuf(&it.buf, it.sb);
+ 	it.dentry = dentry;
+ 	it.buffer = buffer;
+ 	it.buffer_size = buffer_size;
+@@ -485,7 +493,7 @@ int erofs_xattr_prefixes_init(struct super_block *sb)
+ 	if (sbi->packed_inode)
+ 		buf.mapping = sbi->packed_inode->i_mapping;
+ 	else
+-		erofs_init_metabuf(&buf, sb);
++		(void)erofs_init_metabuf(&buf, sb, false);
+ 
+ 	for (i = 0; i < sbi->xattr_prefix_count; i++) {
+ 		void *ptr = erofs_read_metadata(sb, &buf, &pos, &len);
+diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
+index 0d1ddd9b15de..792f20888a8f 100644
+--- a/fs/erofs/zdata.c
++++ b/fs/erofs/zdata.c
+@@ -855,7 +855,10 @@ static int z_erofs_pcluster_begin(struct z_erofs_frontend *fe)
+ 		/* bind cache first when cached decompression is preferred */
+ 		z_erofs_bind_cache(fe);
+ 	} else {
+-		erofs_init_metabuf(&map->buf, sb);
++		ret = erofs_init_metabuf(&map->buf, sb,
++					 erofs_inode_in_metabox(fe->inode));
++		if (ret)
++			return ret;
+ 		ptr = erofs_bread(&map->buf, map->m_pa, false);
+ 		if (IS_ERR(ptr)) {
+ 			ret = PTR_ERR(ptr);
+diff --git a/fs/erofs/zmap.c b/fs/erofs/zmap.c
+index b72a0e3f9362..a93efd95c555 100644
+--- a/fs/erofs/zmap.c
++++ b/fs/erofs/zmap.c
+@@ -17,7 +17,7 @@ struct z_erofs_maprecorder {
+ 	u16 delta[2];
+ 	erofs_blk_t pblk, compressedblks;
+ 	erofs_off_t nextpackoff;
+-	bool partialref;
++	bool partialref, in_mbox;
+ };
+ 
+ static int z_erofs_load_full_lcluster(struct z_erofs_maprecorder *m,
+@@ -31,7 +31,7 @@ static int z_erofs_load_full_lcluster(struct z_erofs_maprecorder *m,
+ 	struct z_erofs_lcluster_index *di;
+ 	unsigned int advise;
+ 
+-	di = erofs_read_metabuf(&m->map->buf, inode->i_sb, pos);
++	di = erofs_read_metabuf(&m->map->buf, inode->i_sb, pos, m->in_mbox);
+ 	if (IS_ERR(di))
+ 		return PTR_ERR(di);
+ 	m->lcn = lcn;
+@@ -146,7 +146,7 @@ static int z_erofs_load_compact_lcluster(struct z_erofs_maprecorder *m,
+ 	else
+ 		return -EOPNOTSUPP;
+ 
+-	in = erofs_read_metabuf(&m->map->buf, m->inode->i_sb, pos);
++	in = erofs_read_metabuf(&m->map->buf, inode->i_sb, pos, m->in_mbox);
+ 	if (IS_ERR(in))
+ 		return PTR_ERR(in);
+ 
+@@ -392,6 +392,7 @@ static int z_erofs_map_blocks_fo(struct inode *inode,
+ 	struct z_erofs_maprecorder m = {
+ 		.inode = inode,
+ 		.map = map,
++		.in_mbox = erofs_inode_in_metabox(inode),
+ 	};
+ 	int err = 0;
+ 	unsigned int endoff, afmt;
+@@ -521,6 +522,7 @@ static int z_erofs_map_blocks_ext(struct inode *inode,
+ 	unsigned int recsz = z_erofs_extent_recsize(vi->z_advise);
+ 	erofs_off_t pos = round_up(Z_EROFS_MAP_HEADER_END(erofs_iloc(inode) +
+ 				   vi->inode_isize + vi->xattr_isize), recsz);
++	bool in_mbox = erofs_inode_in_metabox(inode);
+ 	erofs_off_t lend = inode->i_size;
+ 	erofs_off_t l, r, mid, pa, la, lstart;
+ 	struct z_erofs_extent *ext;
+@@ -530,7 +532,7 @@ static int z_erofs_map_blocks_ext(struct inode *inode,
+ 	map->m_flags = 0;
+ 	if (recsz <= offsetof(struct z_erofs_extent, pstart_hi)) {
+ 		if (recsz <= offsetof(struct z_erofs_extent, pstart_lo)) {
+-			ext = erofs_read_metabuf(&map->buf, sb, pos);
++			ext = erofs_read_metabuf(&map->buf, sb, pos, in_mbox);
+ 			if (IS_ERR(ext))
+ 				return PTR_ERR(ext);
+ 			pa = le64_to_cpu(*(__le64 *)ext);
+@@ -543,7 +545,7 @@ static int z_erofs_map_blocks_ext(struct inode *inode,
+ 		}
+ 
+ 		for (; lstart <= map->m_la; lstart += 1 << vi->z_lclusterbits) {
+-			ext = erofs_read_metabuf(&map->buf, sb, pos);
++			ext = erofs_read_metabuf(&map->buf, sb, pos, in_mbox);
+ 			if (IS_ERR(ext))
+ 				return PTR_ERR(ext);
+ 			map->m_plen = le32_to_cpu(ext->plen);
+@@ -563,7 +565,7 @@ static int z_erofs_map_blocks_ext(struct inode *inode,
+ 		for (l = 0, r = vi->z_extents; l < r; ) {
+ 			mid = l + (r - l) / 2;
+ 			ext = erofs_read_metabuf(&map->buf, sb,
+-						 pos + mid * recsz);
++						 pos + mid * recsz, in_mbox);
+ 			if (IS_ERR(ext))
+ 				return PTR_ERR(ext);
+ 
+@@ -645,7 +647,7 @@ static int z_erofs_fill_inode(struct inode *inode, struct erofs_map_blocks *map)
+ 		goto out_unlock;
+ 
+ 	pos = ALIGN(erofs_iloc(inode) + vi->inode_isize + vi->xattr_isize, 8);
+-	h = erofs_read_metabuf(&map->buf, sb, pos);
++	h = erofs_read_metabuf(&map->buf, sb, pos, erofs_inode_in_metabox(inode));
+ 	if (IS_ERR(h)) {
+ 		err = PTR_ERR(h);
+ 		goto out_unlock;
+-- 
+2.43.5
+
 
