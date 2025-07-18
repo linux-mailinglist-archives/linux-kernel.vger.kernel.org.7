@@ -1,447 +1,230 @@
-Return-Path: <linux-kernel+bounces-736640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B298B09FE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:36:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A588B09FEC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:36:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE59C1C81EE0
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:36:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E28E167433
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E99298CB0;
-	Fri, 18 Jul 2025 09:35:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CC8F298CB0;
+	Fri, 18 Jul 2025 09:36:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O0THrh55"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OOpgf8ho"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B33921D5BF
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 09:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576E4296150
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 09:36:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752831337; cv=none; b=nm3iqSdQpJ8bvlvXsBJ66l3JK+LHFzmhf1XbT8HT6b1buy5R78/F/G3uvX0ZORsD3cwsmp25J9jZU33F9j5swpEWnHLvyhDj7dLzjdKUuA1BIq+haQ4nbDpHk8nTNTgB3h2JV3v2xp4iNQGeJ4fe6fyTuuAsHxRTaLCyDEKRJjo=
+	t=1752831405; cv=none; b=ppoW1UzdtkPTzO5Ls0l3bS4rkE1tetwCPRruUHTz4QKT9QOuPkXm2USZqBWzClgOkNDMkAkgnua0yNLMzCpQcUDMnuHXq8jRk1PNZCb347Nv72jeIK6J6IUBnSqtlE2i7MIBbNe1wt4Y7ggEmlvg1ShdiArgrfpcMgLfIuERcMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752831337; c=relaxed/simple;
-	bh=1sSYsSdaeQ2eydjqXCYfur/xtbgP3F8lST/RyTQk/tY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sIG6+nPX5PHfzK4TeG56vzm9l2KPZ59/GA7mYGJAlnWJq1uwpb2895VyiObq1+nAQnXwNNbLkwi1cMklPsiywfvq2hIZ/nz7U+eAqU+iRL4sfch3T+bEiQRN0H5un/NemqbtzxFyLFp2R/z2uWoAkfG8Jik9cbAZBB74n5MQqVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O0THrh55; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752831333;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=iTF6vz15x5rsg8l38DnxKYnwMg1qcWf6xTcMKtsaUCM=;
-	b=O0THrh557CHU5hy4VFaV2PPMsdbs4FScj9YDCf3LNahGA7UzVbDguqzvwe9/0RwCUudjbw
-	tDGoVMQUkoB/9SLPk7Oec3nUE/3yMBwt07Lmwa1cMiofK7CsKvmL86kda82RcROK9qRyo8
-	/59Ots1EJk8ROPEVWOmOVhouNCNGr/A=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-48-NlT-a7m2PMSZ1_IkvDHDrg-1; Fri, 18 Jul 2025 05:35:31 -0400
-X-MC-Unique: NlT-a7m2PMSZ1_IkvDHDrg-1
-X-Mimecast-MFC-AGG-ID: NlT-a7m2PMSZ1_IkvDHDrg_1752831330
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4538f375e86so17422165e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 02:35:31 -0700 (PDT)
+	s=arc-20240116; t=1752831405; c=relaxed/simple;
+	bh=qEFZ5DH2AG+giULJkp/4FDX1QNcmSbW+QRxBkpWw1p0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EKHEF192vi9nt0ZXfFbOXcTn+Fb3tXWsJrkAI6KK+VJya532fp1bFvdJ9eaAzl/dMAyskG20s+xKPSof5Jaq2QnUp0ovlkGMt9ttg+TgAjK+VNxTIy5ADvTNXRNTHTAZAk7ckRwUp58abBNjez8E0upYp5/DyfEQ46teQ5rIEcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OOpgf8ho; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56I8NQaI028159
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 09:36:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	72fuRZDHA2C4w80oHJ+JOeIuL4vnW4n3bjADol5r4EQ=; b=OOpgf8hoD7V37vAx
+	B2k1F++oE8DrbU5e9psagCXnTfbdUG664WOHtYv5bXYTWSZYWUNVbXFOTKF+VkTE
+	TXrVjMF0uzp9pzSoumW8oAW0JzeYMw3u78Uq4vO+tA2Vo/oRw4kmLFp6KbLdJP1K
+	z+UBkzh8jHVpRKXM462OwntkvVH1VQRzmwnLzNSAVMI2vj2apa9WVuOQlMILUhBH
+	x6VDwpiZ79+qs9zOGAo+M5i/fIlsNJlSbOIdAzRQYIhLE0RnIBDGh35ZZ5SMtaPU
+	7iRu1qFz+yqEuuAEvTLCIOXQuZ6rlIPZTGqOvXBeYKRwdjsUzoJF6wzs6JfWbc1J
+	Zqaleg==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47wnh637qh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 09:36:42 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2382607509fso13560545ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 02:36:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752831330; x=1753436130;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
+        d=1e100.net; s=20230601; t=1752831402; x=1753436202;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iTF6vz15x5rsg8l38DnxKYnwMg1qcWf6xTcMKtsaUCM=;
-        b=t09DfIihOZ/Bpbp67B+clLn1+HcH388MqyTN81nX4UrB0LRS76nERWmPyMVXlnbzz7
-         qgX+aNFeKegv4cnH/FJlLpL8JvTxKIlKsPXWKv7eF+v2t7vnol7xPpPjqrhyUQe3Qbh+
-         VF94nY+HWzgu6pp/8Qqt9vtSBtl5zKFaYhFjiAnKALmMKoiC05uOtp6nzUwPC+2hMiLR
-         U2tiCphO4Z0ir6wS1i3V1n3GcXIR70lYAu3Uwjbm9RzX6MJU+K/Q6BqSOm8VYLVr+nuo
-         93nHIr08MU3aVNr8BF9j1yp/F3XoZ6eq5DvhL5PNOTpJAxo9s/AJWGCPn3KcuIuPHu2/
-         E8gw==
-X-Forwarded-Encrypted: i=1; AJvYcCXFqXN8KHPlyTOnGPuRYCLQPAb6WePTXtsAwKX6vgO1/xHTzgw5/HfnlFzNHfowjx4fUcuOz+lynVpW+SA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7BoxMnZtNkbFZerYhAg0od6HFmKCWYQL0n+Zfc+Pjx1c48BQC
-	oj6FDoXgqstEAdWCaUBwZfIHCqXXC1l+cOTL2dc9QSfeKLZY3ZzJcAaasf/PFniJeN+BCYti3BU
-	evb+JqfKtkrFkv3exkMZpU1Zweiu5viavAJi6Zy6wZTGcHCeA5TEKXYosaWXImxNZsg==
-X-Gm-Gg: ASbGncs7kz4e/Xm3jcAQb8hr0PZ33dYpf0Q93HF8b7Us5PHO5Y8lxoM9bY9iDN94Vs5
-	hNF27vfL0gaDht6vfH0XIDdnUVkrNfBNpbmT14lMnan4Qe9lnyEwjnheaMi/1dJPTPCNfl0xMBX
-	WhOJH7SzCLT3iH3ORYNtu+ltm2ovKa+0Ca6bSRdJ7ylCqFDAFpLtAO0iV/w7v5+/5dHT6Ru36GI
-	hveHs/+OB3bUS1LSRFa9V+E4bq169T1YDIdpglW1k8iMH42lDadt1bj92A121RBLA89Sm9y0knJ
-	CsKtRlLhqG2VrAun0JUfzH/bU/ADnL8o630FmQ4yr/0aCWoytWbezoT6wyb+L56BRA==
-X-Received: by 2002:a05:600c:3491:b0:439:9b2a:1b2f with SMTP id 5b1f17b1804b1-4562e039d93mr105237645e9.3.1752831329885;
-        Fri, 18 Jul 2025 02:35:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGGQ7ZA5e7DAm4x7neiy2lZh2cXrvrJW8tFpyTLTBIoUHtoh3gHTEOBzZXNrp024CiQjWToSA==
-X-Received: by 2002:a05:600c:3491:b0:439:9b2a:1b2f with SMTP id 5b1f17b1804b1-4562e039d93mr105237345e9.3.1752831329405;
-        Fri, 18 Jul 2025 02:35:29 -0700 (PDT)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.30])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca2bf4bsm1317245f8f.31.2025.07.18.02.35.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jul 2025 02:35:28 -0700 (PDT)
-Message-ID: <57b1e83ede5ef8f5b2d661b3326374d82da0bd1a.camel@redhat.com>
-Subject: Re: [PATCH] rv: Ensure containers are registered first
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Nam Cao <namcao@linutronix.de>, Steven Rostedt <rostedt@goodmis.org>, 
- Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, 	linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Date: Fri, 18 Jul 2025 11:35:27 +0200
-In-Reply-To: <20250718091850.2057864-1-namcao@linutronix.de>
-References: <20250718091850.2057864-1-namcao@linutronix.de>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
- xyhmqeUWOzFx5P43S1E1dhsrLWgP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+        bh=72fuRZDHA2C4w80oHJ+JOeIuL4vnW4n3bjADol5r4EQ=;
+        b=Frwb0scXPbyoRDIwWiZRpaqJsX6yi7bnHtSMwluiBN/KFgi2sFYMxE9t+VtM/ty1gj
+         N/HeVdMzgCuBqthjvTyG0QlspdBbjadMppCBaxBCGAQmjrdazye5RQkOogCnHUIVImRz
+         B3IeMjSe2NeC4S59Q3KuN4PJAhSDPlLHdhkreSZKP6aOL8DIH1yO5WX0hDZMbLTsw+i4
+         fR0vuFimvjXk72dExeenANKpjPrfPpE27WtSpjkfEVbSGw+/P9rHXi+aTGes45+I9qys
+         kBX6m8Pf+CwTw/PxX5lmOedqhI2kUC+wYHQd+YQytkcj5mJVpNyhEYsOrhAYJw9aZE6i
+         PCIg==
+X-Forwarded-Encrypted: i=1; AJvYcCXYeONQoJsbV73yospKw0R2kBF0L4I7ZKKQSmdE8cal6htDw9zKlI02LxqX1aia44AfWgQt7VLMMRXAA84=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDfxp0GQ3Jp4M0PYZq0xLJVDxHaTXhwkdAYJWoMhyWvysF2vmg
+	yccqLy+At6ifs+9yNMbgoCHHRVnIjjVhfsf+Y38GASmbHzT0Y9fXYk5tt0ohZTWZK6G6uxpi4Ob
+	4iFF4LStHf3rf4Tnw9mhmB+N1ari1jVZvdHltTs7+rQ63YvD2KwE1mlApqlCJ4nODaUY=
+X-Gm-Gg: ASbGncv37BFfSCZm+L9qC9kB4gk7QR/JlW7T9Rze9bHdQiXO7Wup6Sp8PcHXLkrpqWS
+	Ih0Lg5GyQl0gvIPjAryJlg1L748sAopeEq7l0wFYYUhi6WbjmrS0+j4Wq7Xvj0b5gMfVO7GdWgV
+	Wh2h88uMUkX4xPR77AuRjLwakOZYtUJk9w1svl80J0yetW58ClnxeZzr1PPYLKU8gynwjsMPl9A
+	PGhFnzWsZVc8tojbg3P55J5CLU71xyOTA/La3sxmg6Xs2JzkTRtZZYWi5KWasw5HQ94XVXAf/Vm
+	RKUWoLKXq2lmR74eAf895Hvj40apGbv5CPEutzFG/8kXoVLteYc3WUAd7pjlmPmXAT+DkZzhHBV
+	R0fEH1LuuXaPG2vWMBbg8Xm4=
+X-Received: by 2002:a17:902:c943:b0:234:ba37:87a5 with SMTP id d9443c01a7336-23e24f4a7c9mr130870315ad.25.1752831401594;
+        Fri, 18 Jul 2025 02:36:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEp4sFfqHaGHRuWJ/EeS/AGLmlnSykkRcmXhCvLfBNJz2Ba7o/Pxq0DoSFqc2RPSb3hpiQ0Kw==
+X-Received: by 2002:a17:902:c943:b0:234:ba37:87a5 with SMTP id d9443c01a7336-23e24f4a7c9mr130869955ad.25.1752831401127;
+        Fri, 18 Jul 2025 02:36:41 -0700 (PDT)
+Received: from [10.133.33.13] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b6d2a82sm9687825ad.156.2025.07.18.02.36.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Jul 2025 02:36:40 -0700 (PDT)
+Message-ID: <da49f445-7365-4863-bb41-f7a55150c4dd@oss.qualcomm.com>
+Date: Fri, 18 Jul 2025 17:36:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 RESEND 02/10] coresight: core: add a new API to
+ retrieve the helper device
+To: Mike Leach <mike.leach@linaro.org>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        James Clark <james.clark@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Tingwei Zhang <quic_tingweiz@quicinc.com>,
+        Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+        Mao Jinlong <quic_jinlmao@quicinc.com>,
+        Jie Gan <quic_jiegan@quicinc.com>, coresight@lists.linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+References: <20250714063109.591-1-jie.gan@oss.qualcomm.com>
+ <20250714063109.591-3-jie.gan@oss.qualcomm.com>
+ <CAJ9a7VikU9UktC-fpLfR5EdpGupHHor2GaDGAujBnQJky=W17w@mail.gmail.com>
+Content-Language: en-US
+From: Jie Gan <jie.gan@oss.qualcomm.com>
+In-Reply-To: <CAJ9a7VikU9UktC-fpLfR5EdpGupHHor2GaDGAujBnQJky=W17w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=dKimmPZb c=1 sm=1 tr=0 ts=687a15aa cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=4z_qIjeFvS-qpd6pgFUA:9
+ a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-GUID: OhtVmxVFS7twyoh4D79WtfxA_I0D9mS-
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE4MDA3NSBTYWx0ZWRfXwqBsfTmNd11s
+ 5paC8lMbjMo9lNqsTG7G0LYJUdqAc2RlatLEOYGL9lDgSbtxnaRc7iPxkyToyoBIg94zW6b9uxQ
+ y56Kyx9zdP9hVTiOc7dH7uv7QCrqWdxU2OgUN+BdCJ5YSG5D+aEy0Zazs4LE54IvG0JszkJNKV+
+ 3kZQ+Cz5KdgwKmzZheAe5hHHpZSFyLV2gxgXFk9D3cdfcES2DI4f19mpCIkuUUWDfG0RcGfijCS
+ m86v7kLs/w/Kf5wHK1NGD5i/zfuIJQuUVppMWLELcRnR/AYh2wu8UljblPnUotJzxBfhWk7uj4J
+ cCzsgVot7aAjR9pKcz9/dzLbD7uPoXC5OGgQj2trulX+79yf0hToV2a0IPlIeItWbdBlc/hAFhW
+ aOx8Q2s4b075YuRCtCvabSbtJv/sDOOodnmRY7PpKtDi74WtaxOt3yOScbaEwnzEsOW4aEAT
+X-Proofpoint-ORIG-GUID: OhtVmxVFS7twyoh4D79WtfxA_I0D9mS-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-18_02,2025-07-17_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 clxscore=1015 mlxlogscore=999 mlxscore=0 spamscore=0
+ adultscore=0 impostorscore=0 priorityscore=1501 suspectscore=0 bulkscore=0
+ phishscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507180075
 
-On Fri, 2025-07-18 at 11:18 +0200, Nam Cao wrote:
-> If rv_register_monitor() is called with a non-NULL parent pointer
-> (i.e. by
-> monitors inside a container), it is expected that the parent (a.k.a
-> container) is already registered.
->=20
-> The containers seem to always be registered first. I suspect because
-> of the order in Makefile. But nothing guarantees this.
 
-Yes, the linking order does guarantee this.
-But I guess it doesn't hurt enforcing it.
 
-Anyway do you have a good reason for using device_initcall/__exitcall
-instead of module_init/module_exit?
-Keeping those might save a bit of ifdeffery if (when) we decide to
-fully support RV monitors as kernel modules.
+On 7/18/2025 4:37 PM, Mike Leach wrote:
+> Hi,
+> 
+> On Mon, 14 Jul 2025 at 07:31, Jie Gan <jie.gan@oss.qualcomm.com> wrote:
+>>
+>> Retrieving the helper device of the specific coresight device based on
+>> its helper_subtype because a single coresight device may has multiple types
+>> of the helper devices.
+>>
+>> Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
+>> ---
+>>   drivers/hwtracing/coresight/coresight-core.c | 30 ++++++++++++++++++++
+>>   drivers/hwtracing/coresight/coresight-priv.h |  2 ++
+>>   2 files changed, 32 insertions(+)
+>>
+>> diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
+>> index 5297a5ff7921..76e10c36a8a1 100644
+>> --- a/drivers/hwtracing/coresight/coresight-core.c
+>> +++ b/drivers/hwtracing/coresight/coresight-core.c
+>> @@ -580,6 +580,36 @@ struct coresight_device *coresight_get_sink(struct coresight_path *path)
+>>   }
+>>   EXPORT_SYMBOL_GPL(coresight_get_sink);
+>>
+>> +/**
+>> + * coresight_get_helper: find the helper device of the assigned csdev.
+>> + *
+>> + * @csdev: The csdev the helper device is conntected to.
+>> + * @type:  helper_subtype of the expected helper device.
+>> + *
+>> + * Retrieve the helper device for the specific csdev based on its
+>> + * helper_subtype.
+>> + *
+>> + * Return: the helper's csdev upon success or NULL for fail.
+>> + */
+>> +struct coresight_device *coresight_get_helper(struct coresight_device *csdev,
+>> +                                             int type)
+>> +{
+>> +       int i;
+>> +       struct coresight_device *helper;
+>> +
+>> +       for (i = 0; i < csdev->pdata->nr_outconns; ++i) {
+>> +               helper = csdev->pdata->out_conns[i]->dest_dev;
+>> +               if (!helper || !coresight_is_helper(helper))
+>> +                       continue;
+>> +
+> 
+> Manipulating the connections list almost certainly requires some
+> locking. See other functions in this file
+> 
+
+Thanks for pointing out. I will fix it in next version.
 
 Thanks,
-Gabriele
+Jie
 
->=20
-> If this registering order is changed, "strange" things happen. For
-> example,
-> if the container is registered last, rv_is_container_monitor()
-> incorrectly
-> says this is NOT a container. .enable() is then called, which is NULL
-> for
-> container, thus we have a NULL pointer deref crash.
->=20
-> Guarantee that containers are registered first.
->=20
-> Fixes: cb85c660fcd4 ("rv: Add option for nested monitors and include
-> sched")
-> Signed-off-by: Nam Cao <namcao@linutronix.de>
-> Cc: stable@vger.kernel.org
-> ---
-> =C2=A0include/linux/rv.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 5 +++++
-> =C2=A0kernel/trace/rv/monitors/pagefault/pagefault.c=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 4 ++--
-> =C2=A0kernel/trace/rv/monitors/rtapp/rtapp.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 | 4 ++--
-> =C2=A0kernel/trace/rv/monitors/sched/sched.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 | 4 ++--
-> =C2=A0kernel/trace/rv/monitors/sco/sco.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 4 ++--
-> =C2=A0kernel/trace/rv/monitors/scpd/scpd.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 | 4 ++--
-> =C2=A0kernel/trace/rv/monitors/sleep/sleep.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 | 4 ++--
-> =C2=A0kernel/trace/rv/monitors/sncid/sncid.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 | 4 ++--
-> =C2=A0kernel/trace/rv/monitors/snep/snep.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 | 4 ++--
-> =C2=A0kernel/trace/rv/monitors/snroc/snroc.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 | 4 ++--
-> =C2=A0kernel/trace/rv/monitors/tss/tss.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 4 ++--
-> =C2=A0kernel/trace/rv/monitors/wip/wip.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 4 ++--
-> =C2=A0kernel/trace/rv/monitors/wwnr/wwnr.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 | 4 ++--
-> =C2=A0tools/verification/rvgen/rvgen/templates/container/main.c | 4 ++--
-> =C2=A0tools/verification/rvgen/rvgen/templates/dot2k/main.c=C2=A0=C2=A0=
-=C2=A0=C2=A0 | 4 ++--
-> =C2=A0tools/verification/rvgen/rvgen/templates/ltl2k/main.c=C2=A0=C2=A0=
-=C2=A0=C2=A0 | 4 ++--
-> =C2=A016 files changed, 35 insertions(+), 30 deletions(-)
->=20
-> diff --git a/include/linux/rv.h b/include/linux/rv.h
-> index 97baf58d88b2..094c9f62389c 100644
-> --- a/include/linux/rv.h
-> +++ b/include/linux/rv.h
-> @@ -119,5 +119,10 @@ static inline bool rv_reacting_on(void)
-> =C2=A0}
-> =C2=A0#endif /* CONFIG_RV_REACTORS */
-> =C2=A0
-> +#define rv_container_init device_initcall
-> +#define rv_container_exit __exitcall
-> +#define rv_monitor_init late_initcall
-> +#define rv_monitor_exit __exitcall
-> +
-> =C2=A0#endif /* CONFIG_RV */
-> =C2=A0#endif /* _LINUX_RV_H */
-> diff --git a/kernel/trace/rv/monitors/pagefault/pagefault.c
-> b/kernel/trace/rv/monitors/pagefault/pagefault.c
-> index 9fe6123b2200..2b226d27ddff 100644
-> --- a/kernel/trace/rv/monitors/pagefault/pagefault.c
-> +++ b/kernel/trace/rv/monitors/pagefault/pagefault.c
-> @@ -80,8 +80,8 @@ static void __exit unregister_pagefault(void)
-> =C2=A0	rv_unregister_monitor(&rv_pagefault);
-> =C2=A0}
-> =C2=A0
-> -module_init(register_pagefault);
-> -module_exit(unregister_pagefault);
-> +rv_monitor_init(register_pagefault);
-> +rv_monitor_exit(unregister_pagefault);
-> =C2=A0
-> =C2=A0MODULE_LICENSE("GPL");
-> =C2=A0MODULE_AUTHOR("Nam Cao <namcao@linutronix.de>");
-> diff --git a/kernel/trace/rv/monitors/rtapp/rtapp.c
-> b/kernel/trace/rv/monitors/rtapp/rtapp.c
-> index fd75fc927d65..b078327e71bf 100644
-> --- a/kernel/trace/rv/monitors/rtapp/rtapp.c
-> +++ b/kernel/trace/rv/monitors/rtapp/rtapp.c
-> @@ -25,8 +25,8 @@ static void __exit unregister_rtapp(void)
-> =C2=A0	rv_unregister_monitor(&rv_rtapp);
-> =C2=A0}
-> =C2=A0
-> -module_init(register_rtapp);
-> -module_exit(unregister_rtapp);
-> +rv_container_init(register_rtapp);
-> +rv_container_exit(unregister_rtapp);
-> =C2=A0
-> =C2=A0MODULE_LICENSE("GPL");
-> =C2=A0MODULE_AUTHOR("Nam Cao <namcao@linutronix.de>");
-> diff --git a/kernel/trace/rv/monitors/sched/sched.c
-> b/kernel/trace/rv/monitors/sched/sched.c
-> index 905e03c3c934..e89e193bd8e0 100644
-> --- a/kernel/trace/rv/monitors/sched/sched.c
-> +++ b/kernel/trace/rv/monitors/sched/sched.c
-> @@ -30,8 +30,8 @@ static void __exit unregister_sched(void)
-> =C2=A0	rv_unregister_monitor(&rv_sched);
-> =C2=A0}
-> =C2=A0
-> -module_init(register_sched);
-> -module_exit(unregister_sched);
-> +rv_container_init(register_sched);
-> +rv_container_exit(unregister_sched);
-> =C2=A0
-> =C2=A0MODULE_LICENSE("GPL");
-> =C2=A0MODULE_AUTHOR("Gabriele Monaco <gmonaco@redhat.com>");
-> diff --git a/kernel/trace/rv/monitors/sco/sco.c
-> b/kernel/trace/rv/monitors/sco/sco.c
-> index 4cff59220bfc..b96e09e64a2f 100644
-> --- a/kernel/trace/rv/monitors/sco/sco.c
-> +++ b/kernel/trace/rv/monitors/sco/sco.c
-> @@ -80,8 +80,8 @@ static void __exit unregister_sco(void)
-> =C2=A0	rv_unregister_monitor(&rv_sco);
-> =C2=A0}
-> =C2=A0
-> -module_init(register_sco);
-> -module_exit(unregister_sco);
-> +rv_monitor_init(register_sco);
-> +rv_monitor_exit(unregister_sco);
-> =C2=A0
-> =C2=A0MODULE_LICENSE("GPL");
-> =C2=A0MODULE_AUTHOR("Gabriele Monaco <gmonaco@redhat.com>");
-> diff --git a/kernel/trace/rv/monitors/scpd/scpd.c
-> b/kernel/trace/rv/monitors/scpd/scpd.c
-> index cbdd6a5f8d7f..a4c8e78fa768 100644
-> --- a/kernel/trace/rv/monitors/scpd/scpd.c
-> +++ b/kernel/trace/rv/monitors/scpd/scpd.c
-> @@ -88,8 +88,8 @@ static void __exit unregister_scpd(void)
-> =C2=A0	rv_unregister_monitor(&rv_scpd);
-> =C2=A0}
-> =C2=A0
-> -module_init(register_scpd);
-> -module_exit(unregister_scpd);
-> +rv_monitor_init(register_scpd);
-> +rv_monitor_exit(unregister_scpd);
-> =C2=A0
-> =C2=A0MODULE_LICENSE("GPL");
-> =C2=A0MODULE_AUTHOR("Gabriele Monaco <gmonaco@redhat.com>");
-> diff --git a/kernel/trace/rv/monitors/sleep/sleep.c
-> b/kernel/trace/rv/monitors/sleep/sleep.c
-> index eea447b06907..6980f8de725d 100644
-> --- a/kernel/trace/rv/monitors/sleep/sleep.c
-> +++ b/kernel/trace/rv/monitors/sleep/sleep.c
-> @@ -229,8 +229,8 @@ static void __exit unregister_sleep(void)
-> =C2=A0	rv_unregister_monitor(&rv_sleep);
-> =C2=A0}
-> =C2=A0
-> -module_init(register_sleep);
-> -module_exit(unregister_sleep);
-> +rv_monitor_init(register_sleep);
-> +rv_monitor_exit(unregister_sleep);
-> =C2=A0
-> =C2=A0MODULE_LICENSE("GPL");
-> =C2=A0MODULE_AUTHOR("Nam Cao <namcao@linutronix.de>");
-> diff --git a/kernel/trace/rv/monitors/sncid/sncid.c
-> b/kernel/trace/rv/monitors/sncid/sncid.c
-> index f5037cd6214c..97a126c6083a 100644
-> --- a/kernel/trace/rv/monitors/sncid/sncid.c
-> +++ b/kernel/trace/rv/monitors/sncid/sncid.c
-> @@ -88,8 +88,8 @@ static void __exit unregister_sncid(void)
-> =C2=A0	rv_unregister_monitor(&rv_sncid);
-> =C2=A0}
-> =C2=A0
-> -module_init(register_sncid);
-> -module_exit(unregister_sncid);
-> +rv_monitor_init(register_sncid);
-> +rv_monitor_exit(unregister_sncid);
-> =C2=A0
-> =C2=A0MODULE_LICENSE("GPL");
-> =C2=A0MODULE_AUTHOR("Gabriele Monaco <gmonaco@redhat.com>");
-> diff --git a/kernel/trace/rv/monitors/snep/snep.c
-> b/kernel/trace/rv/monitors/snep/snep.c
-> index 0076ba6d7ea4..376a856ebffa 100644
-> --- a/kernel/trace/rv/monitors/snep/snep.c
-> +++ b/kernel/trace/rv/monitors/snep/snep.c
-> @@ -88,8 +88,8 @@ static void __exit unregister_snep(void)
-> =C2=A0	rv_unregister_monitor(&rv_snep);
-> =C2=A0}
-> =C2=A0
-> -module_init(register_snep);
-> -module_exit(unregister_snep);
-> +rv_monitor_init(register_snep);
-> +rv_monitor_exit(unregister_snep);
-> =C2=A0
-> =C2=A0MODULE_LICENSE("GPL");
-> =C2=A0MODULE_AUTHOR("Gabriele Monaco <gmonaco@redhat.com>");
-> diff --git a/kernel/trace/rv/monitors/snroc/snroc.c
-> b/kernel/trace/rv/monitors/snroc/snroc.c
-> index bb1f60d55296..e4439605b4b6 100644
-> --- a/kernel/trace/rv/monitors/snroc/snroc.c
-> +++ b/kernel/trace/rv/monitors/snroc/snroc.c
-> @@ -77,8 +77,8 @@ static void __exit unregister_snroc(void)
-> =C2=A0	rv_unregister_monitor(&rv_snroc);
-> =C2=A0}
-> =C2=A0
-> -module_init(register_snroc);
-> -module_exit(unregister_snroc);
-> +rv_monitor_init(register_snroc);
-> +rv_monitor_exit(unregister_snroc);
-> =C2=A0
-> =C2=A0MODULE_LICENSE("GPL");
-> =C2=A0MODULE_AUTHOR("Gabriele Monaco <gmonaco@redhat.com>");
-> diff --git a/kernel/trace/rv/monitors/tss/tss.c
-> b/kernel/trace/rv/monitors/tss/tss.c
-> index 542787e6524f..8f960c9fe0ff 100644
-> --- a/kernel/trace/rv/monitors/tss/tss.c
-> +++ b/kernel/trace/rv/monitors/tss/tss.c
-> @@ -83,8 +83,8 @@ static void __exit unregister_tss(void)
-> =C2=A0	rv_unregister_monitor(&rv_tss);
-> =C2=A0}
-> =C2=A0
-> -module_init(register_tss);
-> -module_exit(unregister_tss);
-> +rv_monitor_init(register_tss);
-> +rv_monitor_exit(unregister_tss);
-> =C2=A0
-> =C2=A0MODULE_LICENSE("GPL");
-> =C2=A0MODULE_AUTHOR("Gabriele Monaco <gmonaco@redhat.com>");
-> diff --git a/kernel/trace/rv/monitors/wip/wip.c
-> b/kernel/trace/rv/monitors/wip/wip.c
-> index ed758fec8608..5c39c6074bd3 100644
-> --- a/kernel/trace/rv/monitors/wip/wip.c
-> +++ b/kernel/trace/rv/monitors/wip/wip.c
-> @@ -80,8 +80,8 @@ static void __exit unregister_wip(void)
-> =C2=A0	rv_unregister_monitor(&rv_wip);
-> =C2=A0}
-> =C2=A0
-> -module_init(register_wip);
-> -module_exit(unregister_wip);
-> +rv_monitor_init(register_wip);
-> +rv_monitor_exit(unregister_wip);
-> =C2=A0
-> =C2=A0MODULE_LICENSE("GPL");
-> =C2=A0MODULE_AUTHOR("Daniel Bristot de Oliveira <bristot@kernel.org>");
-> diff --git a/kernel/trace/rv/monitors/wwnr/wwnr.c
-> b/kernel/trace/rv/monitors/wwnr/wwnr.c
-> index 172f31c4b0f3..ec671546f571 100644
-> --- a/kernel/trace/rv/monitors/wwnr/wwnr.c
-> +++ b/kernel/trace/rv/monitors/wwnr/wwnr.c
-> @@ -79,8 +79,8 @@ static void __exit unregister_wwnr(void)
-> =C2=A0	rv_unregister_monitor(&rv_wwnr);
-> =C2=A0}
-> =C2=A0
-> -module_init(register_wwnr);
-> -module_exit(unregister_wwnr);
-> +rv_monitor_init(register_wwnr);
-> +rv_monitor_exit(unregister_wwnr);
-> =C2=A0
-> =C2=A0MODULE_LICENSE("GPL");
-> =C2=A0MODULE_AUTHOR("Daniel Bristot de Oliveira <bristot@kernel.org>");
-> diff --git
-> a/tools/verification/rvgen/rvgen/templates/container/main.c
-> b/tools/verification/rvgen/rvgen/templates/container/main.c
-> index 89fc17cf8958..5820c9705d0f 100644
-> --- a/tools/verification/rvgen/rvgen/templates/container/main.c
-> +++ b/tools/verification/rvgen/rvgen/templates/container/main.c
-> @@ -30,8 +30,8 @@ static void __exit unregister_%%MODEL_NAME%%(void)
-> =C2=A0	rv_unregister_monitor(&rv_%%MODEL_NAME%%);
-> =C2=A0}
-> =C2=A0
-> -module_init(register_%%MODEL_NAME%%);
-> -module_exit(unregister_%%MODEL_NAME%%);
-> +rv_container_init(register_%%MODEL_NAME%%);
-> +rv_container_exit(unregister_%%MODEL_NAME%%);
-> =C2=A0
-> =C2=A0MODULE_LICENSE("GPL");
-> =C2=A0MODULE_AUTHOR("dot2k: auto-generated");
-> diff --git a/tools/verification/rvgen/rvgen/templates/dot2k/main.c
-> b/tools/verification/rvgen/rvgen/templates/dot2k/main.c
-> index 83044a20c89a..d6bd248aba9c 100644
-> --- a/tools/verification/rvgen/rvgen/templates/dot2k/main.c
-> +++ b/tools/verification/rvgen/rvgen/templates/dot2k/main.c
-> @@ -83,8 +83,8 @@ static void __exit unregister_%%MODEL_NAME%%(void)
-> =C2=A0	rv_unregister_monitor(&rv_%%MODEL_NAME%%);
-> =C2=A0}
-> =C2=A0
-> -module_init(register_%%MODEL_NAME%%);
-> -module_exit(unregister_%%MODEL_NAME%%);
-> +rv_monitor_init(register_%%MODEL_NAME%%);
-> +rv_monitor_exit(unregister_%%MODEL_NAME%%);
-> =C2=A0
-> =C2=A0MODULE_LICENSE("GPL");
-> =C2=A0MODULE_AUTHOR("dot2k: auto-generated");
-> diff --git a/tools/verification/rvgen/rvgen/templates/ltl2k/main.c
-> b/tools/verification/rvgen/rvgen/templates/ltl2k/main.c
-> index f85d076fbf78..2069a7a0f1ae 100644
-> --- a/tools/verification/rvgen/rvgen/templates/ltl2k/main.c
-> +++ b/tools/verification/rvgen/rvgen/templates/ltl2k/main.c
-> @@ -94,8 +94,8 @@ static void __exit unregister_%%MODEL_NAME%%(void)
-> =C2=A0	rv_unregister_monitor(&rv_%%MODEL_NAME%%);
-> =C2=A0}
-> =C2=A0
-> -module_init(register_%%MODEL_NAME%%);
-> -module_exit(unregister_%%MODEL_NAME%%);
-> +rv_monitor_init(register_%%MODEL_NAME%%);
-> +rv_monitor_exit(unregister_%%MODEL_NAME%%);
-> =C2=A0
-> =C2=A0MODULE_LICENSE("GPL");
-> =C2=A0MODULE_AUTHOR(/* TODO */);
+> Mike
+> 
+> 
+>> +               if (helper->subtype.helper_subtype == type)
+>> +                       return helper;
+>> +       }
+>> +
+>> +       return NULL;
+>> +}
+>> +EXPORT_SYMBOL_GPL(coresight_get_helper);
+>> +
+>>   /**
+>>    * coresight_get_port_helper: get the in-port number of the helper device
+>>    * that is connected to the csdev.
+>> diff --git a/drivers/hwtracing/coresight/coresight-priv.h b/drivers/hwtracing/coresight/coresight-priv.h
+>> index 07a5f03de81d..5b912eb60401 100644
+>> --- a/drivers/hwtracing/coresight/coresight-priv.h
+>> +++ b/drivers/hwtracing/coresight/coresight-priv.h
+>> @@ -158,6 +158,8 @@ void coresight_path_assign_trace_id(struct coresight_path *path,
+>>                                     enum cs_mode mode);
+>>   int coresight_get_port_helper(struct coresight_device *csdev,
+>>                                struct coresight_device *helper);
+>> +struct coresight_device *coresight_get_helper(struct coresight_device *csdev,
+>> +                                             int type);
+>>
+>>   #if IS_ENABLED(CONFIG_CORESIGHT_SOURCE_ETM3X)
+>>   int etm_readl_cp14(u32 off, unsigned int *val);
+>> --
+>> 2.34.1
+>>
+> 
+> 
 
 
