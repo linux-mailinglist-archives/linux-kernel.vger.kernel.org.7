@@ -1,170 +1,173 @@
-Return-Path: <linux-kernel+bounces-736691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55EC6B0A093
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:26:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91A70B0A099
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:27:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E28B6A43F77
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:25:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C44C25A6332
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:27:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 600F129C343;
-	Fri, 18 Jul 2025 10:26:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D86C29E110;
+	Fri, 18 Jul 2025 10:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fWPAvV8L"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="dUTptwpj"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8AABA27;
-	Fri, 18 Jul 2025 10:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42C229B76B
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 10:26:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752834380; cv=none; b=VQiue9vSfePy1eu9HnR2lrLdSx4UJsw8zIedQfKljXGweN+KEOKhmeLj6apWVuFFIvT26jSaM5RczBIYBa/HwfHyKjx4riz6+9VFW5EmYlvogKKXilneVAEdoVP5fjZnirKP4FSyo6WlPkNgnCETLqYWF4a9uDGhcu2mmekjiRY=
+	t=1752834418; cv=none; b=PdD1EHK5xwP/I0Ocs1ebxkdqblGWG5NM44F11qzG2ZRnzimzT2zTxX8gBqBlD0xJ1YGzC/lSulqToxUwGmNegZVO27bhh2KEIdgmRwQXgFDens9V/TaZihdYz4bKWyIGERsnQAgugzM97PDi4sQGMNYjEfmDYoo+P79XuK7MDqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752834380; c=relaxed/simple;
-	bh=ztu979h0svZQ93UgfU7HHWO8pk08b5eoEybQcXeUTW4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=M1h0ahf9CQg3gByCQxoO2ePZGjh+Ts1+Y+vPCMBlsS5ZN2D1FPt7lukJQeOtnqjsK7hpi4XsH0emxS9rI0jGmAI1gdVDWv6wYKyZXXlSIiCyF53q/KqH4bnFJfIKUj+P538bT6/eLV59Oi5CFvwYzVpr8VsajdYeXPCQCk3XFP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=fWPAvV8L; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1752834243;
-	bh=hzk/ogVlzsc/jlYK1Scv8nFmLfBUPTOSCUN8dDe3KYw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=fWPAvV8L/XCZqvX5YfkNyLsa3cxwXQBSnpoEcLoJRroAseE10OTDqVVW4EERZkdQ8
-	 5ycmtOgnMMu4RygsWV/7OIni7IUqU4Ss/q9UNpN7mXV1p9LvVMsQr8x8CkLOkqkFKH
-	 bsIcFJ0N3YHtg2PEAbNH+rQmBIAa80YiKlZfwXD15ZSeJ3C6FWQKT74T08V9WLp3ns
-	 69RIpQr+HZgXya2AdacIK6wMMJOG3/Yxc1xwOOd+64M/9Ugds1ktFNJ+yyQyr+sqyB
-	 6dq+xNrUYTu/Uzc+Db4bSgAVubUAHR41kTFSo7+o3n3qoP+LfoM0E3OOE9YnrC+NrG
-	 +90XFoVeMac4w==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bk5Vp65SGz4wxh;
-	Fri, 18 Jul 2025 20:24:02 +1000 (AEST)
-Date: Fri, 18 Jul 2025 20:26:12 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Danilo Krummrich <dakr@kernel.org>, FUJITA Tomonori
- <fujita.tomonori@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the rust tree with the driver-core tree
-Message-ID: <20250718202612.15567f80@canb.auug.org.au>
+	s=arc-20240116; t=1752834418; c=relaxed/simple;
+	bh=iOuJFTTwJt339tYjnwcMIWFz/RUheBu5DfdHuCk8cH8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rFzD/ywh0dXL1L8/ymBuGN5NQZzhJDK8MlCA3IJmd2uqtgG6XHM84bZm9g/5lNl1QBfShIuzvXV8gtMF03caa/c4iJCw9YglH1JTEAOpH5NATu1ILzHRcklOaMAk7PkTEsGk1avK2CaPE4X8g14QCEzANt+hfSidc323H5oRuyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=dUTptwpj; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7e34399cdb2so201331385a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 03:26:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1752834415; x=1753439215; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=Tceb6O3nBrebvy+ZDwLDwrGTRdGaZ8naYMQfV4XKrrU=;
+        b=dUTptwpjD2CfWgUwDgumV9Tyfz2J3Z3D//IIMS18fws4cPiZA2fx1VBTwps4t/jEb9
+         ce4d7Y/dZsDx1GP27VILaf+yJECvizSWN3gLf0cOGptwlnblfGiDp0ATqNAVB2t4PDu1
+         Zha58DZmeXu/50FEdP6btJbsGdAIM/+Ufh8uU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752834415; x=1753439215;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Tceb6O3nBrebvy+ZDwLDwrGTRdGaZ8naYMQfV4XKrrU=;
+        b=o4ST0wG46WYfaTDT2vrVmYHsQlyCRexYyJB5Df+d/f49L1sSI3NqZZioC99/04rAad
+         qPPbNBqGz9ocs4jTZg7Mdp8CDruIKJ1fTnXsbYsAt7aSO8ylqtrl29pySdK5C1g6IvJG
+         yZyG/sWOAqsCZlKvuWaRmOicNWwVrN5ohlUH4lttjPne6pyGPDSIIRSvuHcvmldjSkV8
+         xgryWcrY3o2CyhgSj+xect0mPHVjGOEFemg/ZZsLt+igQVezFovnoZewsr3hjjcEnv+c
+         jFrApqNelHPE0QppwMe3e2xoIHAKQGjZqTuBlGDtVd6ZKyQfCJdonehDhxS/CK6FEQlf
+         tiYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUVsOSszIvp7e5kpRiQMW5OMHUcuEjQuKiN3bC4Y6iWkgpsS+YjADisWRVY3J3aKjC7Yps9CfudMvG1g9s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoNuCzEGLFyieejS8zZE6OpiP/lPGm1JdspKk5gk65MZ0QIrLY
+	pko4WSGjFdWDRioIMHBYYaB3C/YEPG0neHu6vwZkf6isk36AaCyUyR0bGtqPLIcY1A==
+X-Gm-Gg: ASbGnctyx3So8pSjHW0rt6LJ0kBF2Iac1YMYZuTy7xtSLekbmHxk2j+SzhW/KJkJuVH
+	hNvo1wlw9oct4pQq8ir3fdsqYxbFWI4BZKpQxoD4aueibGcl1ysB8rEw86QN0GmaPlCijNpvdI+
+	6vAOMejCh8ho3LKHqlGqbYbLscYgfh2HIHCz7LjxkrhElfDfxRL5Sx3jFrlbeIvafeAWnKQ9IqE
+	j5LqlJHIEzjSJaxDDV5bUcSTYp30ChOFELe9dK6HcqMEbGiwyUViJ1R932XPcKYvwAWEZPGv0nw
+	CND5KRzGq6B6RIqoCW9L0JIIF8bSQQfIchdcaoUWUh/l4ZwMIN+8YlofJ+gTTOxC+B548mEwIx8
+	q98c/13OJShvU5+coGpT54Yh2gRInItDMsnU190BHfAOrUpwrv7s=
+X-Google-Smtp-Source: AGHT+IEqo4UAFanleVPdYl4dXVyU1lZnXf1z6whg+8xWt/p2QDWx5PJ8H+d/5db0hyJyi9WF5q8VPA==
+X-Received: by 2002:a05:620a:19a5:b0:7e3:52f6:66e5 with SMTP id af79cd13be357-7e352f6672amr568859885a.35.1752834415217;
+        Fri, 18 Jul 2025 03:26:55 -0700 (PDT)
+Received: from [10.229.41.1] ([192.19.176.250])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e356b46814sm68537885a.30.2025.07.18.03.26.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Jul 2025 03:26:54 -0700 (PDT)
+Message-ID: <4445c7ec-a580-4c28-89cf-2df5790de6ac@broadcom.com>
+Date: Fri, 18 Jul 2025 12:26:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/gQiIrg/zURtwYJhBSZAQI+j";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/8] wifi: brcmfmac: Fix typo "notifer"
+To: WangYuli <wangyuli@uniontech.com>
+Cc: airlied@gmail.com, akpm@linux-foundation.org, alison.schofield@intel.com,
+ andrew+netdev@lunn.ch, andriy.shevchenko@linux.intel.com, bp@alien8.de,
+ brcm80211-dev-list.pdl@broadcom.com, brcm80211@lists.linux.dev,
+ colin.i.king@gmail.com, cvam0000@gmail.com, dan.j.williams@intel.com,
+ dave.hansen@linux.intel.com, dave.jiang@intel.com, dave@stgolabs.net,
+ davem@davemloft.net, dri-devel@lists.freedesktop.org, edumazet@google.com,
+ gregkh@linuxfoundation.org, guanwentao@uniontech.com, hpa@zytor.com,
+ ilpo.jarvinen@linux.intel.com, intel-xe@lists.freedesktop.org,
+ ira.weiny@intel.com, j@jannau.net, jeff.johnson@oss.qualcomm.com,
+ jgross@suse.com, jirislaby@kernel.org, johannes.berg@intel.com,
+ jonathan.cameron@huawei.com, kuba@kernel.org, kvalo@kernel.org,
+ kvm@vger.kernel.org, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+ linux-wireless@vger.kernel.org, linux@treblig.org, lucas.demarchi@intel.com,
+ marcin.s.wojtas@gmail.com, ming.li@zohomail.com, mingo@kernel.org,
+ mingo@redhat.com, netdev@vger.kernel.org, niecheng1@uniontech.com,
+ oleksandr_tyshchenko@epam.com, pabeni@redhat.com, pbonzini@redhat.com,
+ quic_ramess@quicinc.com, ragazenta@gmail.com, rodrigo.vivi@intel.com,
+ seanjc@google.com, shenlichuan@vivo.com, simona@ffwll.ch,
+ sstabellini@kernel.org, tglx@linutronix.de,
+ thomas.hellstrom@linux.intel.com, vishal.l.verma@intel.com, x86@kernel.org,
+ xen-devel@lists.xenproject.org, yujiaoliang@vivo.com, zhanjun@uniontech.com
+References: <BD5C52D2838AEA48+20250715134050.539234-1-wangyuli@uniontech.com>
+ <F92035B0A9123150+20250715134407.540483-5-wangyuli@uniontech.com>
+Content-Language: en-US
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+Autocrypt: addr=arend.vanspriel@broadcom.com; keydata=
+ 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
+In-Reply-To: <F92035B0A9123150+20250715134407.540483-5-wangyuli@uniontech.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---Sig_/gQiIrg/zURtwYJhBSZAQI+j
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 7/15/2025 3:44 PM, WangYuli wrote:
+> There is a spelling mistake of 'notifer' in the comment which
+> should be 'notifier'.
+> 
+> Link:https://lore.kernel.org/all/B3C019B63C93846F+20250715071245.398846-1- 
+> wangyuli@uniontech.com/
 
-Hi all,
+I think it has been said on other patches but it is not common to link 
+to obsolete version of the patch series. Apart from that:
 
-Today's linux-next merge of the rust tree got conflicts in:
+Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>> 
+Signed-off-by: WangYuli<wangyuli@uniontech.com>
+> ---
+>   drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 
-  rust/kernel/device_id.rs
-  rust/kernel/devres.rs
-
-between commits:
-
-  8d84b32075fb ("rust: device_id: split out index support into a separate t=
-rait")
-  f5d3ef25d238 ("rust: devres: get rid of Devres' inner Arc")
-
-from the driver-core tree and various commits from the rust tree.
-
-I fixed it up (see below - basically took the former version of
-devres.rs and I suspect I have not got device_id.rs right) and can
-carry the fix as necessary. This is now fixed as far as linux-next is
-concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the
-conflicting tree to minimise any particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc rust/kernel/device_id.rs
-index 8ed2c946144c,3dc72ca8cfc2..000000000000
---- a/rust/kernel/device_id.rs
-+++ b/rust/kernel/device_id.rs
-@@@ -94,16 -77,14 +94,16 @@@ impl<T: RawDeviceId, U, const N: usize
-              // SAFETY: by the safety requirement of `RawDeviceId`, we're =
-guaranteed that `T` is
-              // layout-wise compatible with `RawType`.
-              raw_ids[i] =3D unsafe { core::mem::transmute_copy(&ids[i].0) =
-};
- -            // SAFETY: by the safety requirement of `RawDeviceId`, this w=
-ould be effectively
- -            // `raw_ids[i].driver_data =3D i;`.
- -            unsafe {
- -                raw_ids[i]
- -                    .as_mut_ptr()
- -                    .byte_add(T::DRIVER_DATA_OFFSET)
- -                    .cast::<usize>()
- -                    .write(i);
- +            if let Some(data_offset) =3D data_offset {
- +                // SAFETY: by the safety requirement of this function, th=
-is would be effectively
- +                // `raw_ids[i].driver_data =3D i;`.
- +                unsafe {
- +                    raw_ids[i]
- +                        .as_mut_ptr()
--                         .byte_offset(data_offset as _)
-++                        .byte_add(T::DRIVER_DATA_OFFSET)
- +                        .cast::<usize>()
- +                        .write(i);
- +                }
-              }
- =20
-              // SAFETY: this is effectively a move: `infos[i] =3D ids[i].1=
-`. We make a copy here but
-diff --cc rust/kernel/devres.rs
-index 152a89b78943,d0e6c6e162c2..000000000000
---- a/rust/kernel/devres.rs
-+++ b/rust/kernel/devres.rs
-@@@ -49,10 -44,10 +49,10 @@@ struct Inner<T: Send>=20
-  /// [`Devres`] users should make sure to simply free the corresponding ba=
-cking resource in `T`'s
-  /// [`Drop`] implementation.
-  ///
-- /// # Example
-+ /// # Examples
-  ///
-  /// ```no_run
- -/// # use kernel::{bindings, c_str, device::{Bound, Device}, devres::Devr=
-es, io::{Io, IoRaw}};
- +/// # use kernel::{bindings, device::{Bound, Device}, devres::Devres, io:=
-:{Io, IoRaw}};
-  /// # use core::ops::Deref;
-  ///
-  /// // See also [`pci::Bar`] for a real example.
-
---Sig_/gQiIrg/zURtwYJhBSZAQI+j
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh6IUQACgkQAVBC80lX
-0GzxAAgAmcixf+9YSOtIJfbUJsxCOObiXpd/QMXL2yPTn8VHLUPossjsAF3ev6rm
-urV3dPUusaSiE5H//jVSnufZC7sdz5nenERzpUY8UYhiEbPTquocuYWl+FGfhry7
-N4SAjkXXn7/h6EKlwtBWrJWL4Ao0ZeP4mlq98cbslAQHr3JkHMly7b1USonKUaMe
-BpzvdU+lcpeyXrQ+hR3VtrmfsZ0dIw6biR+YW2HIn+emN8HzP1K+nLfeeEFRBOpS
-5c/NDIFk7D3vKXL3kZOAHlqbVYngjpIJZicDsIy+htWfzvIozBIJ2m4kF6S4pNlX
-pFpDKNrKQO9TEiIQRuVlJyPukzrdEA==
-=UXyh
------END PGP SIGNATURE-----
-
---Sig_/gQiIrg/zURtwYJhBSZAQI+j--
 
