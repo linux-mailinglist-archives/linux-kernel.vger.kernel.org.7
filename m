@@ -1,113 +1,210 @@
-Return-Path: <linux-kernel+bounces-736148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C52A5B0996C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:52:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A70BEB0996E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:53:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E06401C47DB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 01:52:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 336F3A422BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 01:52:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6E91A76DE;
-	Fri, 18 Jul 2025 01:52:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F5C219E98C;
+	Fri, 18 Jul 2025 01:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JNgOm7vQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A2/DsdGy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D34C191F91;
-	Fri, 18 Jul 2025 01:52:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 911C818CC1D
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 01:52:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752803540; cv=none; b=FV0aqhq6ol0Cot8Mmz20Um981p9p1g9LcxgKyt0SXkz6BHlPtq111ZednYDbTSPvYlHtCDBtTmVCpWsfHpbVd1ANmQrzOZOfNEKe6fWXVsUuPVGcYoQXK2H8bfYvKPssse4mmxk87TT2OWKQCk+7HmHH6j58Uif2MaHeaA1Gfjc=
+	t=1752803548; cv=none; b=le1g8BlqhZTbYfDUmP4Bhh1YbClT+bXlRXdcd1wUfjvxEJNwgOt2N5tItJW3CkGTlOyMTbxNZt5HqHQvVvTk3JY64HbeVRAOWUHz0SSjrXUoefVPxcROPQForqCEESzLhK7Lb5v6bZMnKVNdZyCGG7ak/qb0LTR39L9WZhMIPtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752803540; c=relaxed/simple;
-	bh=ZG2hqHecU73ektMlHLBv3zCPSuuwC64rbg9ypuyirdM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=sT/lVhLRQe28XBMnH9E5m7yV1A1haZ1pbhc06irwF5Abs2tL+4LxoGr/N7nzDlElQJ+LWH7xTRWTR6sldsyp+az4Vrym+wL1t9qEQodOU1N40LiU7wTWnRZcEoPCoDiFYycJOLoKOfmuJClTwKfUWXU88aSxcOzssgC2YuLLvh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JNgOm7vQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C4649C4CEF6;
-	Fri, 18 Jul 2025 01:52:19 +0000 (UTC)
+	s=arc-20240116; t=1752803548; c=relaxed/simple;
+	bh=DZenHan6HEdNoDKIaO8bmG2IU9oiW+D1QihQoYGhJXg=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=DpuIFaUiXoO/D5e3VZ4aTnPBtax1JdTz5fVyxN9q1Tdw3z4FJYkFsgdTiHkTj5Ji9KKH60mAP2xZPFbrz9a58u7/qD9UxR/JSY+6jLA/OKBLW3gxjoqCSu2k+TWj8OFs/gtvvw1IsFak3HxLRDQF08uxBpqdPJ56z+U3xxHg09o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A2/DsdGy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0CC7C4CEF0;
+	Fri, 18 Jul 2025 01:52:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752803539;
-	bh=ZG2hqHecU73ektMlHLBv3zCPSuuwC64rbg9ypuyirdM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=JNgOm7vQMqRlMkKtlGoG2rxdtaAHX9lqcxZI2kfqcy6zMusbe9r3y0JeItkgnfRTn
-	 eEb66hHB4ylYCHIKeLnism6UAHg5XYuQ5WPgABNNhzxCsY1/6MUtJIiXHo1zslq8OG
-	 y5KlH7YcrnQ9d1YYMWPRgSlL3hhrPJKbmrZGhA3YTRmZ/PzwVmucoUL7PXrWx5ngOt
-	 7K+8SnFXCHJP+lp232RLUcT5Oh0yRD6TVD+aRPwRfeozvpzXeqsUnvJr4KaNt3tBAk
-	 GjrxMlhO+AzWB75+bYpGLZaNRgg6lI80iEPXpPACbUzBiH1/xzPXFKZVT0jwtcNikL
-	 NOy4POrT1Vo/A==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7CBCC83F1A;
-	Fri, 18 Jul 2025 01:52:19 +0000 (UTC)
-From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
-Date: Fri, 18 Jul 2025 09:52:18 +0800
-Subject: [PATCH v5 3/3] MAINTAINERS: Add an entry for Amlogic spi driver
+	s=k20201202; t=1752803548;
+	bh=DZenHan6HEdNoDKIaO8bmG2IU9oiW+D1QihQoYGhJXg=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=A2/DsdGy+8I0YzRpiNgnIjuPrIBym2QcTh+RuEGoEgLHHPcPOkS24qqFV38HuikYx
+	 EjSWY2er6PPZF/4uxznCqxgIe0QvKoaXtt6mMBGHlUZOluUe3p4PX7gI3hoKAWASfc
+	 IAwhcijBQXe0siBt7s+OmhUqNNgjo2cbK5rCAGwaR0bOJzI68PdTjuFdTgxC3rsIp+
+	 BZK/OSrFMKH2Y+pzsGN9w1V347fN1YMyYyR/PAF2x63JCvroyUEnf3mzjMQf2NLDoe
+	 CV0aeIhBlopPAiBIAbHNLT6QuKJdY1Fu1LDzKzYo3szS9WrvdGQ1wS+AdKknkvjgf/
+	 buEk//nXvkFdQ==
+Message-ID: <19ee5db7-814f-402b-9b06-586f7203977d@kernel.org>
+Date: Fri, 18 Jul 2025 09:52:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250718-spisg-v5-3-b8f0f1eb93a2@amlogic.com>
-References: <20250718-spisg-v5-0-b8f0f1eb93a2@amlogic.com>
-In-Reply-To: <20250718-spisg-v5-0-b8f0f1eb93a2@amlogic.com>
-To: Sunny Luo <sunny.luo@amlogic.com>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-amlogic@lists.infradead.org, linux-spi@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Xianwei Zhao <xianwei.zhao@amlogic.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752803537; l=878;
- i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
- bh=d96hwpa3CUOhnffR2RHeVgOJAkVgtVaxxsoYbBLIdso=;
- b=wIO4Nvl9SJ9G6w63S2Qsm2HFkMy6Cc1zIelD4Mo/R+YrpDo73uUsGMmRIhKoUwzOiUN5FSuOj
- AduBJFto1h+Cy+N9Vri6FycrGoemxypZwHeCY41BYJY+zzHFs0OfQkq
-X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
- pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
-X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
- auth_id=107
-X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Reply-To: xianwei.zhao@amlogic.com
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, linux-erofs@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, Yue Hu <zbestahu@gmail.com>,
+ Jeffle Xu <jefflexu@linux.alibaba.com>, Sandeep Dhavale
+ <dhavale@google.com>, Hongbo Li <lihongbo22@huawei.com>
+Subject: Re: [PATCH v3] erofs: support to readahead dirent blocks in
+ erofs_readdir()
+To: Gao Xiang <hsiangkao@linux.alibaba.com>, xiang@kernel.org
+References: <20250714093935.200749-1-chao@kernel.org>
+ <631728e2-2808-47af-8db7-28cd8ae17622@linux.alibaba.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <631728e2-2808-47af-8db7-28cd8ae17622@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Hi Xiang,
 
-Add Amlogic spi entry to MAINTAINERS to clarify the maintainers.
+On 2025/7/17 16:26, Gao Xiang wrote:
+> Hi Chao,
+> 
+> On 2025/7/14 17:39, Chao Yu wrote:
+>> This patch supports to readahead more blocks in erofs_readdir(), it can
+>> enhance readdir performance in large direcotry.
+>>
+>> readdir test in a large directory which contains 12000 sub-files.
+>>
+>>         files_per_second
+>> Before:        926385.54
+>> After:        2380435.562
+>>
+>> Meanwhile, let's introduces a new sysfs entry to control readahead
+>> bytes to provide more flexible policy for readahead of readdir().
+>> - location: /sys/fs/erofs/<disk>/dir_ra_bytes
+>> - default value: 16384
+>> - disable readahead: set the value to 0
+>>
+>> Signed-off-by: Chao Yu <chao@kernel.org>
+>> ---
+>> v3:
+>> - add EROFS prefix for macro
+>> - update new sysfs interface to 1) use bytes instead of pages
+>> 2) remove upper boundary limitation
+>> - fix bug of pageidx calculation
+>>   Documentation/ABI/testing/sysfs-fs-erofs |  8 ++++++++
+>>   fs/erofs/dir.c                           | 13 +++++++++++++
+>>   fs/erofs/internal.h                      |  4 ++++
+>>   fs/erofs/super.c                         |  2 ++
+>>   fs/erofs/sysfs.c                         |  2 ++
+>>   5 files changed, 29 insertions(+)
+>>
+>> diff --git a/Documentation/ABI/testing/sysfs-fs-erofs b/Documentation/ 
+>> ABI/testing/sysfs-fs-erofs
+>> index bf3b6299c15e..85fa56ca092c 100644
+>> --- a/Documentation/ABI/testing/sysfs-fs-erofs
+>> +++ b/Documentation/ABI/testing/sysfs-fs-erofs
+>> @@ -35,3 +35,11 @@ Description:    Used to set or show hardware 
+>> accelerators in effect
+>>           and multiple accelerators are separated by '\n'.
+>>           Supported accelerator(s): qat_deflate.
+>>           Disable all accelerators with an empty string (echo > accel).
+>> +
+>> +What:        /sys/fs/erofs/<disk>/dir_ra_bytes
+>> +Date:        July 2025
+>> +Contact:    "Chao Yu" <chao@kernel.org>
+>> +Description:    Used to set or show readahead bytes during readdir(), by
+>> +        default the value is 16384.
+>> +
+>> +        - 0: disable readahead.
+>> diff --git a/fs/erofs/dir.c b/fs/erofs/dir.c
+>> index 3e4b38bec0aa..950d6b0046f4 100644
+>> --- a/fs/erofs/dir.c
+>> +++ b/fs/erofs/dir.c
+>> @@ -47,8 +47,10 @@ static int erofs_readdir(struct file *f, struct 
+>> dir_context *ctx)
+>>       struct inode *dir = file_inode(f);
+>>       struct erofs_buf buf = __EROFS_BUF_INITIALIZER;
+>>       struct super_block *sb = dir->i_sb;
+>> +    struct file_ra_state *ra = &f->f_ra;
+>>       unsigned long bsz = sb->s_blocksize;
+>>       unsigned int ofs = erofs_blkoff(sb, ctx->pos);
+>> +    unsigned long nr_pages = DIV_ROUND_UP_POW2(dir->i_size, PAGE_SIZE);
+> 
+>      pgoff_t ra_pages = PAGE_ALIGN(EROFS_SB(dir)->dir_ra_bytes);
 
-Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
----
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Do you mean?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a92290fffa16..8225df5ede74 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1307,6 +1307,15 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/rtc/amlogic,a4-rtc.yaml
- F:	drivers/rtc/rtc-amlogic-a4.c
- 
-+AMLOGIC SPISG DRIVER
-+M:	Sunny Luo <sunny.luo@amlogic.com>
-+M:	Xianwei Zhao <xianwei.zhao@amlogic.com>
-+L:	linux-amlogic@lists.infradead.org
-+L:	linux-spi@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/spi/amlogic,a4-spisg.yaml
-+F:	drivers/spi/spi-amlogic-spisg.c
-+
- AMPHENOL CHIPCAP 2 DRIVER
- M:	Javier Carrasco <javier.carrasco.cruz@gmail.com>
- L:	linux-hwmon@vger.kernel.org
+pgoff_t ra_pages = PAGE_ALIGN(EROFS_SB(dir)->dir_ra_bytes) >> PAGE_SHIFT?
 
--- 
-2.37.1
+> 
+>>       int err = 0;
+>>       bool initial = true;
+>> @@ -63,6 +65,17 @@ static int erofs_readdir(struct file *f, struct 
+>> dir_context *ctx)
+>>               break;
+>>           }
+>> +        /* readahead blocks to enhance performance in large directory */
+>> +        if (EROFS_I_SB(dir)->dir_ra_bytes) {
+ > >          if (ra_pages) {
+> 
+>> +            unsigned long idx = DIV_ROUND_UP(ctx->pos, PAGE_SIZE);
+>> +            pgoff_t ra_pages = DIV_ROUND_UP(
+>> +                EROFS_I_SB(dir)->dir_ra_bytes, PAGE_SIZE);
 
+I put calculation here because if the value is zero, we don't need 
+unnecessary calculation above, anyway, will update as you suggested, but 
+let me know if you have any other concerns. :)
+
+> 
+>              pgoff_t idx = PAGE_ALIGN(ctx->pos);
+
+Ditto,
+
+Thanks,
+
+>              pgoff_t pages = min(nr_pages - idx, ra_pages);
+> 
+>> +
+>> +            if (nr_pages - idx > 1 && !ra_has_index(ra, idx))
+> 
+>              if (pages > 1 && !ra_has_index(ra, idx))
+>                  page_cache_sync_readahead(dir->i_mapping, ra,
+>                                f, idx, pages)?
+> 
+> 
+>> +                page_cache_sync_readahead(dir->i_mapping, ra,
+>> +                    f, idx, min(nr_pages - idx, ra_pages));
+>> +        }
+>> +
+>>           de = erofs_bread(&buf, dbstart, true);
+>>           if (IS_ERR(de)) {
+>>               erofs_err(sb, "failed to readdir of logical block %llu 
+>> of nid %llu",
+>> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+>> index 0d19bde8c094..4399b9332307 100644
+>> --- a/fs/erofs/internal.h
+>> +++ b/fs/erofs/internal.h
+>> @@ -157,6 +157,7 @@ struct erofs_sb_info {
+>>       /* sysfs support */
+>>       struct kobject s_kobj;        /* /sys/fs/erofs/<devname> */
+>>       struct completion s_kobj_unregister;
+>> +    erofs_off_t dir_ra_bytes;
+>>       /* fscache support */
+>>       struct fscache_volume *volume;
+>> @@ -238,6 +239,9 @@ EROFS_FEATURE_FUNCS(xattr_filter, compat, 
+>> COMPAT_XATTR_FILTER)
+>>   #define EROFS_I_BL_XATTR_BIT    (BITS_PER_LONG - 1)
+>>   #define EROFS_I_BL_Z_BIT    (BITS_PER_LONG - 2)
+>> +/* default readahead size of directory */
+> 
+> /* default readahead size of directories */
+> 
+> Otherwise it looks good to me.
+> 
+> Thanks,
+> Gao Xiang
+> 
+>> +#define EROFS_DIR_RA_BYTES    16384
 
 
