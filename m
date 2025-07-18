@@ -1,227 +1,153 @@
-Return-Path: <linux-kernel+bounces-736810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 085D0B0A374
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:49:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 517D6B0A377
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:50:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31ED61665B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:49:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A30BD3BB596
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9340B2D97A9;
-	Fri, 18 Jul 2025 11:49:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05EAE2D979D;
+	Fri, 18 Jul 2025 11:50:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JB+JFFDA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UdBh/jtf"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFDDA249F9;
-	Fri, 18 Jul 2025 11:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E54929993E;
+	Fri, 18 Jul 2025 11:50:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752839382; cv=none; b=kA1O0qwgFrUqQSke2NinCezhkYGtsJTjBgkAiUWUrn2FmGsJcognwyY0RUKoLCGieLdWSjGucpXU/MfmQgWww8+l+GL26AGhC8Po0zCCwHNvBqxxhPeke3Awx95+IH8PZfDddNrd0fGxGGuV8v2d9zQ+KSLtCml6oPOqeFGSlag=
+	t=1752839408; cv=none; b=fzSZSMTk10JUf2EcnH5hSCEkC7uF4uUB1AZbaboaB+QuC/zy9DFeqpTjsSqaU/nuDGyYwzfrtBBv7liWeFjI/+z+RzTmTK5NvdAdLnpeMmNk+zfnMOzIcpUEP0uUUZo/tbETFHc84atR8ZxQB7TGO7pefmd7XppJ4xsBWP88Uvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752839382; c=relaxed/simple;
-	bh=brnIQKO+k671IytUQOcvFc/YtZw2YsaVUB7/hwCJ4Og=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VWmWmQaav2drmdaL6qJ7DjhWfY3vog2N0knq8a9+eX2x6VmGB5whlzcS+ll51dZlR9ZOfVxHSQl+C2Gi7oWrm4qCy03f3UCfRbrgZ4EPKE7recDGaOPEQLyapfYW4uRHj3mW6oyg2C/8JSEFTBlikFxUtkPpGJdkxwik9cclWEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JB+JFFDA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8035C4CEEB;
-	Fri, 18 Jul 2025 11:49:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752839382;
-	bh=brnIQKO+k671IytUQOcvFc/YtZw2YsaVUB7/hwCJ4Og=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JB+JFFDAXTlnRS4Z+CB4KzaASA/lRSl0akwPbIGypV5TL6xotGMMcx0yekHa//dQH
-	 dmAMeryoXQtvixnT6Cmjyx9kKA4UDmlKcLNMBYegnul9JgjJDGNhkUx7m99q45YnWn
-	 nVpw4VGDKPVoi43G1pjvDA/wflXVneWXyn0Qh00Fqbpj+isk5CGIiPzyqcKwZgonBM
-	 D7izHy+QPZgpBRq/0WsMG/VEoaKULIuw0jlgdglFEubWEdmOv0QXD94bwBIXfS/HQJ
-	 qp0ad+lSvUsxtwHnpOiWMAV3BGcbRXHnWy5LCIAc6LHprB97yy2ahBZ3996t4xpFN+
-	 GV4mLvh3b3uMw==
-Date: Fri, 18 Jul 2025 17:19:28 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
-Cc: manivannan.sadhasivam@oss.qualcomm.com, 
-	Jeff Johnson <jjohnson@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Nirmal Patel <nirmal.patel@linux.intel.com>, 
-	Jonathan Derrick <jonathan.derrick@linux.dev>, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ath12k@lists.infradead.org, ath11k@lists.infradead.org, ath10k@lists.infradead.org, 
-	Bjorn Helgaas <helgaas@kernel.org>, ilpo.jarvinen@linux.intel.com, linux-arm-msm@vger.kernel.org, 
-	linux-pci@vger.kernel.org, Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
-	Qiang Yu <qiang.yu@oss.qualcomm.com>
-Subject: Re: [PATCH 4/6] wifi: ath12k: Use pci_{enable/disable}_link_state()
- APIs to enable/disable ASPM states
-Message-ID: <wkapzhyr6hzp5az4jae3y5c77c3fg4uwrmyyipbq4uosamcivq@z7nv6w7nbyrp>
-References: <20250716-ath-aspm-fix-v1-0-dd3e62c1b692@oss.qualcomm.com>
- <20250716-ath-aspm-fix-v1-4-dd3e62c1b692@oss.qualcomm.com>
- <38ace6a3-d594-4438-a193-cf730a7b87d6@oss.qualcomm.com>
- <wyqtr3tz3k2zdf62kgtcepf3sedm7z7wacv27visl2xsrqspmq@wi4fgef2mn2m>
- <03806d02-1cfc-4db2-8b63-c1e51f5456e2@oss.qualcomm.com>
- <o2gqqty6lakc4iw7vems2dejh6prjyl746gnq4gny4sxdxl65v@zmqse3244afv>
- <1db7c119-882f-4184-9ca4-9dbe5a49cb16@oss.qualcomm.com>
- <gx5gruyhrhwhvwkiqlkp2bggqd4oqe4quvqiiphfzolhjtzun6@okogvabkqah3>
- <otdgyzdymraa3f33vyb445kmssi3mqf5z2mw7w5pib4q4sb7vz@qbrzvrojqji3>
- <30fe1325-16d6-4621-a7d2-811d9c958e04@oss.qualcomm.com>
+	s=arc-20240116; t=1752839408; c=relaxed/simple;
+	bh=QE5IVSFdwUGWOvpdFShq/N4OikapuxZYIHT2X3vGy/4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VF+UijBtQqPmgPVSkQJ8tLSnE0UaignG65sxXI/6Wx2ODOT2UTEuiVv3mpOlKrw2cs6CuNlwqDQE+GLPTIYEoSQWE3CpYGHy4tczdCdl7K1H0bNH24gtTAYhwyu1ZLZGXxF+lQQ43G7hw0dfKCIdI2S4DIKkSpYBCfQHCVBddm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UdBh/jtf; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-23694cec0feso19193275ad.2;
+        Fri, 18 Jul 2025 04:50:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752839406; x=1753444206; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eO/klyFkBhvTIq8n1w/tCZWfnrQWc9IQCdEVGWfYBCA=;
+        b=UdBh/jtfrXX/Z1c5xZq8vEegAsA2tkthupWjICDquTkcj6F/s4bYt2CNNeypZp5cje
+         wZyobh3+2i08KpRVZaHjnUaGxZu60FMHsWYAO6YVRRy26Eu936fVf87BxITGyJoqkpja
+         gDvYV2n6I0PLQaOx96wF/pdxmtRGobkaWm4uL28Sk66pzCYoScSiV9aVdHOwSzDz5tC3
+         h7xFm7dJqX4PVPm3ExFwXlNGpYuz7vhv5rSflPVIxjhjlJYOJPaaMWYwp+CArtLYTraz
+         17vJBz0QtJmTWV/kBJN/01SI3AI9wgNeIv5TguV5UPyMjIyz17//6TzVrjrGT0tI+LqS
+         92MQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752839406; x=1753444206;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eO/klyFkBhvTIq8n1w/tCZWfnrQWc9IQCdEVGWfYBCA=;
+        b=PH+Yryg06mmf7LjCluB8A80aehZ0VGkjNdiCMPGxh14xGhXtX1+yONWAXAhWyO9WLH
+         50vso/RhbX2RHEOHcjQxV/Fv2y4J4Ep1jTzU1Ws/AY0CQ5GZ6vuXaDvnQgv4XaQMnMEq
+         Oovo5OfZRueZ1OtzRByF2CGDuay5TvsxS64KYvSWNxk/Am7JsE/scex6paC13WHU9/8S
+         VClvrfRO7oVs9BPotmNTKxvNs+0JntwsfMSPE8vAIzExeoxc6W2OrUHguJ97aC+86yRh
+         6AMoQwjB7ux+IkX8YjBoAt9h/KxC89cKpdfgP0J3rQ1vN1hVFSqsh8+1bHV9wJSU6lB7
+         SjBA==
+X-Forwarded-Encrypted: i=1; AJvYcCXEA0hhyd39UKyZV4YOnBmCdmuFPannnqzxMIWKM4c1XmK0nGwc6lFh+HmLqis2Y5nE6asVcYbqN5I38EU=@vger.kernel.org, AJvYcCXxvTY6xKQmqx7RfgHVAHtq6FoyFOv8VfJEhc38y6LBZcnMm22phtrIhGIvnt8wo/y/2t49IKkt@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzq0mo1wAZpSzGX6VaxvG55sQKTL23wKUmPxfHgKrg8LHQfLOUY
+	rQO0TU9DvJbLwD33AArGIY725uziy4FOLlghxqEe690YluG9DIJzLXNk
+X-Gm-Gg: ASbGncsXcLgq+egVmwAJEJr5CM4H9p64CcGM9uRw30Wt3PSTXGV6ioxP6/I6IMGU4Lv
+	GnialayVCzLf/2KYe2NEsUc6rTdOEUHOOJHXA58A16cbEL+GoaxHvK65MVi1M+DOsb8nTG+RxrU
+	Z+PYLOYHIb0RMXwnvKLsiqvkO94PsSkZ/zlWCafrepBOYXJiGZmcVxTArUbU/rDIL9iw4yYiFjO
+	VDegS/JjJX88VqC9hQZVCwbaluHyzpWW9YrXGyC94UNrbz7osJNrJhMnjQeguXqJN+5Sjwfvd/U
+	3IRD6LaGVtk5vVDH3EaqSuwWQypAHW2Nb37Joxg4Eg8iJFdFotiBfBYKa7VL+wgVLHZbhrORc/k
+	mKr+VUjn2DxNsL+GW1RMCT38hQXTJEvFKYrlu8TcAfP3F+7nxkw==
+X-Google-Smtp-Source: AGHT+IHDfnkUErxhP2Jruyl9EbUIMi6bx1KgbflwVufW7rXdBDJmQxHRn72xSOyW1cNvBCuZLq2jsg==
+X-Received: by 2002:a17:902:d50e:b0:234:d7c5:a0ea with SMTP id d9443c01a7336-23e24f4aec0mr185931325ad.24.1752839406098;
+        Fri, 18 Jul 2025 04:50:06 -0700 (PDT)
+Received: from name2965-Precision-7820-Tower.. ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b611f85sm11905295ad.64.2025.07.18.04.50.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Jul 2025 04:50:05 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: richardcochran@gmail.com
+Cc: andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	yangbo.lu@nxp.com,
+	vladimir.oltean@nxp.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+7cfb66a237c4a5fb22ad@syzkaller.appspotmail.com,
+	Jeongjun Park <aha310510@gmail.com>
+Subject: [PATCH net v2] ptp: prevent possible ABBA deadlock in ptp_clock_freerun()
+Date: Fri, 18 Jul 2025 20:49:58 +0900
+Message-Id: <20250718114958.1473199-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <30fe1325-16d6-4621-a7d2-811d9c958e04@oss.qualcomm.com>
 
-On Fri, Jul 18, 2025 at 07:05:03PM GMT, Baochen Qiang wrote:
-> 
-> 
-> On 7/18/2025 6:20 PM, Manivannan Sadhasivam wrote:
-> > On Fri, Jul 18, 2025 at 01:27:27PM GMT, Manivannan Sadhasivam wrote:
-> >> On Fri, Jul 18, 2025 at 10:05:02AM GMT, Baochen Qiang wrote:
-> >>>
-> >>>
-> >>> On 7/17/2025 7:29 PM, Manivannan Sadhasivam wrote:
-> >>>> On Thu, Jul 17, 2025 at 06:46:12PM GMT, Baochen Qiang wrote:
-> >>>>>
-> >>>>>
-> >>>>> On 7/17/2025 6:31 PM, Manivannan Sadhasivam wrote:
-> >>>>>> On Thu, Jul 17, 2025 at 05:24:13PM GMT, Baochen Qiang wrote:
-> >>>>>>
-> >>>>>> [...]
-> >>>>>>
-> >>>>>>>> @@ -16,6 +16,8 @@
-> >>>>>>>>  #include "mhi.h"
-> >>>>>>>>  #include "debug.h"
-> >>>>>>>>  
-> >>>>>>>> +#include "../ath.h"
-> >>>>>>>> +
-> >>>>>>>>  #define ATH12K_PCI_BAR_NUM		0
-> >>>>>>>>  #define ATH12K_PCI_DMA_MASK		36
-> >>>>>>>>  
-> >>>>>>>> @@ -928,8 +930,7 @@ static void ath12k_pci_aspm_disable(struct ath12k_pci *ab_pci)
-> >>>>>>>>  		   u16_get_bits(ab_pci->link_ctl, PCI_EXP_LNKCTL_ASPM_L1));
-> >>>>>>>>  
-> >>>>>>>>  	/* disable L0s and L1 */
-> >>>>>>>> -	pcie_capability_clear_word(ab_pci->pdev, PCI_EXP_LNKCTL,
-> >>>>>>>> -				   PCI_EXP_LNKCTL_ASPMC);
-> >>>>>>>> +	pci_disable_link_state(ab_pci->pdev, PCIE_LINK_STATE_L0S | PCIE_LINK_STATE_L1);
-> >>>>>>>
-> >>>>>>> Not always, but sometimes seems the 'disable' does not work:
-> >>>>>>>
-> >>>>>>> [  279.920507] ath12k_pci_power_up 1475: link_ctl 0x43 //before disable
-> >>>>>>> [  279.920539] ath12k_pci_power_up 1482: link_ctl 0x43 //after disable
-> >>>>>>>
-> >>>>>>>
-> >>>>>>>>  
-> >>>>>>>>  	set_bit(ATH12K_PCI_ASPM_RESTORE, &ab_pci->flags);
-> >>>>>>>>  }
-> >>>>>>>> @@ -958,10 +959,7 @@ static void ath12k_pci_aspm_restore(struct ath12k_pci *ab_pci)
-> >>>>>>>>  {
-> >>>>>>>>  	if (ab_pci->ab->hw_params->supports_aspm &&
-> >>>>>>>>  	    test_and_clear_bit(ATH12K_PCI_ASPM_RESTORE, &ab_pci->flags))
-> >>>>>>>> -		pcie_capability_clear_and_set_word(ab_pci->pdev, PCI_EXP_LNKCTL,
-> >>>>>>>> -						   PCI_EXP_LNKCTL_ASPMC,
-> >>>>>>>> -						   ab_pci->link_ctl &
-> >>>>>>>> -						   PCI_EXP_LNKCTL_ASPMC);
-> >>>>>>>> +		pci_enable_link_state(ab_pci->pdev, ath_pci_aspm_state(ab_pci->link_ctl));
-> >>>>>>>
-> >>>>>>> always, the 'enable' is not working:
-> >>>>>>>
-> >>>>>>> [  280.561762] ath12k_pci_start 1180: link_ctl 0x43 //before restore
-> >>>>>>> [  280.561809] ath12k_pci_start 1185: link_ctl 0x42 //after restore
-> >>>>>>>
-> >>>>>>
-> >>>>>> Interesting! I applied your diff and I never see this issue so far (across 10+
-> >>>>>> reboots):
-> >>>>>
-> >>>>> I was not testing reboot. Here is what I am doing:
-> >>>>>
-> >>>>> step1: rmmod ath12k
-> >>>>> step2: force LinkCtrl using setpci (make sure it is 0x43, which seems more likely to see
-> >>>>> the issue)
-> >>>>>
-> >>>>> 	sudo setpci -s 02:00.0 0x80.B=0x43
-> >>>>>
-> >>>>> step3: insmod ath12k and check linkctrl
-> >>>>>
-> >>>>
-> >>>> So I did the same and got:
-> >>>>
-> >>>> [ 3283.363569] ath12k_pci_power_up 1475: link_ctl 0x43
-> >>>> [ 3283.363769] ath12k_pci_power_up 1480: link_ctl 0x40
-> >>>> [ 3284.007661] ath12k_pci_start 1180: link_ctl 0x40
-> >>>> [ 3284.007826] ath12k_pci_start 1185: link_ctl 0x42
-> >>>>
-> >>>> My host machine is Qcom based Thinkpad T14s and it doesn't support L0s. So
-> >>>> that's why the lnkctl value once enabled becomes 0x42. This is exactly the
-> >>>> reason why the drivers should not muck around LNKCTL register manually.
-> >>>
-> >>> Thanks, then the 0x43 -> 0x40 -> 0x40 -> 0x42 sequence should not be a concern. But still
-> >>> the random 0x43 -> 0x43 -> 0x43 -> 0x42 sequence seems problematic.
-> >>>
-> >>> How many iterations have you done with above steps? From my side it seems random so better
-> >>> to do some stress test.
-> >>>
-> >>
-> >> So I ran the modprobe for about 50 times on the Intel NUC that has QCA6390, but
-> >> didn't spot the disparity. This is the script I used:
-> >>
-> >> for i in {1..50} ;do echo "Loop $i"; sudo setpci -s 01:00.0 0x80.B=0x43;\
-> >> sudo modprobe -r ath11k_pci; sleep 1; sudo modprobe ath11k_pci; sleep 1;done
-> >>
-> >> And I always got:
-> >>
-> >> [ 5862.388083] ath11k_pci_aspm_disable: 609 lnkctrl: 0x43
-> >> [ 5862.388124] ath11k_pci_aspm_disable: 614 lnkctrl: 0x40
-> >> [ 5862.876291] ath11k_pci_start: 880 lnkctrl: 0x40
-> >> [ 5862.876346] ath11k_pci_start: 886 lnkctrl: 0x42
-> >>
-> >> Also no AER messages. TBH, I'm not sure how you were able to see the random
-> >> issues with these APIs. That looks like a race, which is scary.
-> >>
-> >> I do not want to ignore your scenario, but would like to reproduce and get to
-> >> the bottom of it.
-> >>
-> > 
-> > I synced with Baochen internally and able to repro the issue. Ths issue is due
-> > to hand modifying the LNKCTL register from userspace. The PCI core maintains
-> > the ASPM state internally and uses it to change the state when the
-> > pci_{enable/disable}_link_state*() APIs are called.
-> > 
-> > So if the userspace or a client driver modifies the LNKCTL register manually, it
-> > makes the PCI cached ASPM states invalid. So while this series fixes the driver
-> > from doing that, nothing prevents userspace from doing so using 'setpci' and
-> > other tools. Userspace should only use sysfs attributes to change the state and
-> > avoid modifying the PCI registers when the PCI core is controlling the device.
-> > So this is the reason behind the errantic behavior of the API and it is not due
-> > to the issue with the API or the PCI core.
-> 
-> IMO we can not rely on userspace doing what or not doing what, or on how it is doing,
-> right? So can we fix PCI core to avoid this?
-> 
+ABBA deadlock occurs in the following scenario:
 
-I'm not sure it is possible to *fix* the PCI core here. Since the PCI core gives
-userspace access to the entire config space of the device, the userspace
-reads/writes to any of the registers it want. So unless the config space access
-if forbidden if a driver is bound to the device, it is inevitable. And then
-there is also /dev/mem...
+       CPU0                           CPU1
+       ----                           ----
+  n_vclocks_store()
+    lock(&ptp->n_vclocks_mux) [1]
+                                     pc_clock_adjtime()
+                                       lock(&clk->rwsem) [2]
+                                       ...
+                                       ptp_clock_freerun()
+                                         ptp_vclock_in_use()
+                                           lock(&ptp->n_vclocks_mux) [3]
+    ptp_clock_unregister()
+      posix_clock_unregister()
+        lock(&clk->rwsem) [4]
 
-Interestingly, there is an API available for this purpose:
-pci_request_config_region_exclusive(), but it is used only by the AMD arch
-driver to prevent userspace from writing to the entire config space of the
-device.
+To solve this with minimal patches, we should change ptp_clock_freerun()
+to briefly release the read lock before calling ptp_vclock_in_use() and
+then re-lock it when we're done.
 
-Maybe it makes sense to use something like this to prevent the userspace access
-to the entire config space if the driver is bind to the device.
+Reported-by: syzbot+7cfb66a237c4a5fb22ad@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=7cfb66a237c4a5fb22ad
+Fixes: 73f37068d540 ("ptp: support ptp physical/virtual clocks conversion")
+Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+---
+v2: Add CC Vladimir
+- Link to v1: https://lore.kernel.org/all/20250705145031.140571-1-aha310510@gmail.com/
+---
+ drivers/ptp/ptp_private.h | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-Bjorn, thoughts?
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+diff --git a/drivers/ptp/ptp_private.h b/drivers/ptp/ptp_private.h
+index a6aad743c282..e2c37e968c88 100644
+--- a/drivers/ptp/ptp_private.h
++++ b/drivers/ptp/ptp_private.h
+@@ -124,10 +124,16 @@ static inline bool ptp_vclock_in_use(struct ptp_clock *ptp)
+ /* Check if ptp clock shall be free running */
+ static inline bool ptp_clock_freerun(struct ptp_clock *ptp)
+ {
++	bool ret = false;
++
+ 	if (ptp->has_cycles)
+-		return false;
++		return ret;
++
++	up_read(&ptp->clock.rwsem);
++	ret = ptp_vclock_in_use(ptp);
++	down_read(&ptp->clock.rwsem);
+ 
+-	return ptp_vclock_in_use(ptp);
++	return ret;
+ }
+ 
+ extern const struct class ptp_class;
+--
 
