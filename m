@@ -1,187 +1,379 @@
-Return-Path: <linux-kernel+bounces-736918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BD22B0A524
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:27:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9772B0A528
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:28:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E6C47A7A5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:26:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7115E166D90
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C4C2DC34F;
-	Fri, 18 Jul 2025 13:27:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7652DCBF8;
+	Fri, 18 Jul 2025 13:28:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oCAN643G";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eaLHvwgl"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AbNu6FzW"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F2D2DC349;
-	Fri, 18 Jul 2025 13:27:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74EA2DC332
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 13:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752845262; cv=none; b=rMMz6oTRm3NiOBWvUgnTSGhhI0usI8TZuOloFw+0F3/dMrVPD6F2Ne0Gzvp2okohNaOaQpSXdkfImswyq+ZugcDUcw/twNyMHCcs9JvdSjCMu1yjdNg86eAuPCrVH+1ghsMGpSNlORVfKUJYQ6tdYpsVoH7cPjeptgLCe9+QZaI=
+	t=1752845280; cv=none; b=UF8CeKLpvIwacU8OArLf6Rfu4LZejWDmJ+ZC5yletLC2DnmeAdlkuLr609G6fwEwdUA8O5BUyRQRbCWqaYEeE5JoWLUYeelVCTz162k4Gl26Lcrro8CGW0CnXxrmmwOd6ZOUoHJGlhLEmxYOX8+Wg/ivvt77q0LVPB/64PpyYus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752845262; c=relaxed/simple;
-	bh=VWAH+3AGXcFzWM1iqUfxiu+KLg26t8PA+iVM7DpFyjE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HLQBXaqvuQps2Dp63OdivnvCMXeQjWN3ujxIw9aZm+Hk9wCt24dwfSvBuAJ2SbcXfdL353XXa5trzuFhK1UdLSNQn6hwESYasXHQ/aZ6JmTX75vVG9wYLnPOBpXoSPw+Tjy8pFEJ90WxN7QxRPhifUyfx9xYCVUOfxK861Ogot4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oCAN643G; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eaLHvwgl; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752845258;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=80yt9PNGZ40066R0qjg7QPOIFgJ0BIytwbIbV0r3YLo=;
-	b=oCAN643GsWhpiOlaV27hV7jYVi2ciU4EsTR4XN512a68GbM4QHhzrgzE/o5FERgoMgD55U
-	zpavaDJDi4kVRgOxdXywEK2vh8i0QMj1lWseeSK2lj+rTyD1pur2ngD7s8okIt5GVHNsaN
-	UOMn9rUrFyQA13mSPlEJna5A0Pt9sKYLLaMA48ifslLklDG6/DpVlL9xLgtAuWPyvAXfet
-	4LmVPPCmU7lvz1ym5jJfg3HmhMtDCfxx+tFX5WOLVDPRDGbSsNFDhCOBzfYO8K4+Pdll/J
-	XemtCPgBaCmye+oEXGrY8JgLvHF8YO6zHH6z3Dr+Skl0xJlQYG9lDwFCEpR3zg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752845258;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=80yt9PNGZ40066R0qjg7QPOIFgJ0BIytwbIbV0r3YLo=;
-	b=eaLHvwgl4BJI9zNp6GtF6PLOadkYibJtpUyG5TOwhuxK5f7ZzjZLaVA3K8apvD0fiitzot
-	zbYLnfau4jy88SAw==
-Date: Fri, 18 Jul 2025 15:27:37 +0200
-Subject: [PATCH v2] drm/msm: Don't use %pK through printk
+	s=arc-20240116; t=1752845280; c=relaxed/simple;
+	bh=QX1ZFZoy77kXJVY+shs+MAXOEsT89Rxp1CS196e90wA=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=m/O0Y0/TcunnWdpvoUye0T2b9YikMF1NCBtMsqOGC2mvLOL9PSUZ4LrSPOqPTfKUcoDoZcxypF3PyM/MEOjFk9SZSeD9jeQQ2uVRUcjE7V3zoOmj+Mq+bxmVqm8qjGX8WbBdWsWex/Qsr00A8y0Cw7gLdyEV1mgcHudux3BqBHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AbNu6FzW; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b2c36951518so2340596a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 06:27:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752845277; x=1753450077; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=fsxL8L8W7y9gnvueti74PHIwOUalGfFDynZg+KuuTMM=;
+        b=AbNu6FzWXgCjqU6o9Z9w0SHrf1H7LscRXZnJti6ka71zmW94/fb4fkQXq9t/En2r7z
+         dqpXj5T1/NVfrke237ukddOCNkcGO2p/BdI/9yl7HdFWVBMQxIPH+bA3FOyJY4gwWMWt
+         AjMq7anWoQ59uIf0QhWhHGZ/dZ69dVC+5TjZqmHXTL4taFUeF6M+qppiMruEYsN0Nyf3
+         KC7VA8p2tQyWZIt00NM3NjKyfUR3WCh91rbi19f6hF/QCc2nbgxEvoDmSy06AAPFXNz0
+         FZCK9cWSxVspn85YdCgpSkeHt6YyPwq4OgTzQEwm+RK/w6ck/h8d7uv7aMAktVQ/o8u8
+         YUsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752845277; x=1753450077;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fsxL8L8W7y9gnvueti74PHIwOUalGfFDynZg+KuuTMM=;
+        b=E04ZM6xkwBVtrUYTjQTJ5Ts8wEDCneI5X96FpYpDAWxSySPQnWWd3GnN0qUmijH4CO
+         rxWVhF1ajeFk05f+Bey95ARaPlR//K/6gBSKVaYItoXNOvw6zoacoTprDlo/NxiS2PrH
+         QzAG3OZ5+CM+AGirtEoL2CWPhOuPNgMJ4zrgr6fRyxNcHpXEXwDbSsp96lETEqgaaJF+
+         bZR9is1L5ymFGVquAWos52RW1wmHbhFZQ4Q8Bcy5UJwDsHCaFVZzW3ifijXbcug8oSqK
+         S/KgCicULdTZG60b/rvOmpgT8pFLSic30LGEJX78He6u1PaBqJ3UJ9QXktomYSuqb4HE
+         xkDw==
+X-Forwarded-Encrypted: i=1; AJvYcCWHwewjSYiWnPfMbkxDl0T1OV6e/vKMmX1eecG64hqD9OsFVwJul7TGfSbQnj+vfKi9LQfJAPOJITYUa1o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqRZQ4b+TNnu/gQEdcKi6QspaIwkvSLqMluY8nUJbW7zjBRQq2
+	Y2COJAcAjxupeC+qqyP0GKzdhnlfn5ar7a1ii539dT1ji7o3MHyQFxqfcsmV4JqPvvwXzEPy5Xx
+	ACdXL95JVig==
+X-Google-Smtp-Source: AGHT+IGoE1Cdx2MYPuy6gfFOmYh+7FW8y108rxmk4honrUZGdb8YtAf5nK87QmiJYqcYQ99pp9skvUaT01xr
+X-Received: from plhe10.prod.google.com ([2002:a17:903:1ca:b0:237:cedc:1467])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d4cc:b0:23d:dcf5:480e
+ with SMTP id d9443c01a7336-23e30281270mr101860035ad.5.1752845276999; Fri, 18
+ Jul 2025 06:27:56 -0700 (PDT)
+Date: Fri, 18 Jul 2025 06:27:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250718-restricted-pointers-drm-v2-1-3d9f8566f927@linutronix.de>
-X-B4-Tracking: v=1; b=H4sIAMhLemgC/3WNQQ6CMBBFr0JmbU1bkRZW3sOwQDrIJNqSaSUYw
- t2tuHb5XvLfXyEiE0ZoihUYZ4oUfAZ9KKAfO39HQS4zaKnPspSlYIyJqU/oxBTIJ+QoHD+FNTc
- jT5Wph85BXk+MAy17+dpmHimmwO/9aFZf+2tWyv5tzkpIYaxC6aztXa0vD/KvxMHTcnQI7bZtH
- xH0DfHCAAAA
-X-Change-ID: 20250404-restricted-pointers-drm-87b703679fad
-To: Rob Clark <robin.clark@oss.qualcomm.com>, 
- Dmitry Baryshkov <lumag@kernel.org>, 
- Abhinav Kumar <abhinav.kumar@linux.dev>, 
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752845258; l=4224;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=VWAH+3AGXcFzWM1iqUfxiu+KLg26t8PA+iVM7DpFyjE=;
- b=eWaz9frDehJCeSMgrLB5NPtTUy4c6S5MzkkKUGrqlpQ8KeEhwxUFESvF+038wbq8IuvOmyMGh
- /4qI74uRl8zD6c3iyOi1iKtbGEi786xLqtGBf/RNqcOmhtWOHIlNkpN
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+Message-ID: <20250718132750.1546457-1-irogers@google.com>
+Subject: [PATCH v2 1/2] perf topdown: Use attribute to see an event is a
+ topdown metic or slots
+From: Ian Rogers <irogers@google.com>
+To: Thomas Falcon <thomas.falcon@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	"Liang, Kan" <kan.liang@linux.intel.com>, Ravi Bangoria <ravi.bangoria@amd.com>, 
+	James Clark <james.clark@linaro.org>, Dapeng Mi <dapeng1.mi@linux.intel.com>, 
+	Weilin Wang <weilin.wang@intel.com>, Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-In the past %pK was preferable to %p as it would not leak raw pointer
-values into the kernel log.
-Since commit ad67b74d2469 ("printk: hash addresses printed with %p")
-the regular %p has been improved to avoid this issue.
-Furthermore, restricted pointers ("%pK") were never meant to be used
-through printk(). They can still unintentionally leak raw pointers or
-acquire sleeping locks in atomic contexts.
+The string comparisons were overly broad and could fire for the
+incorrect PMU and events. Switch to using the config in the attribute
+then add a perf test to confirm the attribute config values match
+those of parsed events of that name and don't match others. This
+exposed matches for slots events that shouldn't have matched as the
+slots fixed counter event, such as topdown.slots_p.
 
-Switch to the regular pointer formatting which is safer and
-easier to reason about.
-
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+Fixes: fbc798316bef ("perf x86/topdown: Refine helper arch_is_topdown_metrics()")
+Signed-off-by: Ian Rogers <irogers@google.com>
 ---
-Changes in v2:
-- Drop already applied patches
-- Link to v1: https://lore.kernel.org/r/20250618-restricted-pointers-drm-v1-0-781e0d88cd92@linutronix.de
+v2: In test rename topdown_pmu to p_core_pmu for clarity.
 ---
- drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    | 2 +-
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c | 4 ++--
- drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c     | 4 ++--
- drivers/gpu/drm/msm/msm_mdss.c              | 2 +-
- 4 files changed, 6 insertions(+), 6 deletions(-)
+ tools/perf/arch/x86/include/arch-tests.h |  4 ++
+ tools/perf/arch/x86/tests/Build          |  1 +
+ tools/perf/arch/x86/tests/arch-tests.c   |  1 +
+ tools/perf/arch/x86/tests/topdown.c      | 76 ++++++++++++++++++++++++
+ tools/perf/arch/x86/util/evsel.c         | 46 ++++----------
+ tools/perf/arch/x86/util/topdown.c       | 31 ++++------
+ tools/perf/arch/x86/util/topdown.h       |  4 ++
+ 7 files changed, 108 insertions(+), 55 deletions(-)
+ create mode 100644 tools/perf/arch/x86/tests/topdown.c
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-index d4b545448d74657aafc96e9042c7756654b4f0e7..94912b4708fb5be937f1b3898a5676f7b481bd42 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-@@ -596,7 +596,7 @@ static void _dpu_crtc_complete_flip(struct drm_crtc *crtc)
+diff --git a/tools/perf/arch/x86/include/arch-tests.h b/tools/perf/arch/x86/include/arch-tests.h
+index 4fd425157d7d..8713e9122d4c 100644
+--- a/tools/perf/arch/x86/include/arch-tests.h
++++ b/tools/perf/arch/x86/include/arch-tests.h
+@@ -2,6 +2,8 @@
+ #ifndef ARCH_TESTS_H
+ #define ARCH_TESTS_H
  
- 	spin_lock_irqsave(&dev->event_lock, flags);
- 	if (dpu_crtc->event) {
--		DRM_DEBUG_VBL("%s: send event: %pK\n", dpu_crtc->name,
-+		DRM_DEBUG_VBL("%s: send event: %p\n", dpu_crtc->name,
- 			      dpu_crtc->event);
- 		trace_dpu_crtc_complete_flip(DRMID(crtc));
- 		drm_crtc_send_vblank_event(crtc, dpu_crtc->event);
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c
-index 11fb1bc54fa92a5d9926addb437bc4b8f283723b..54b20faa0b697e3bf8ad81bd806adb49de98f2b5 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c
-@@ -31,14 +31,14 @@ static void dpu_setup_dspp_pcc(struct dpu_hw_dspp *ctx,
- 	u32 base;
++#include "tests/tests.h"
++
+ struct test_suite;
  
- 	if (!ctx) {
--		DRM_ERROR("invalid ctx %pK\n", ctx);
-+		DRM_ERROR("invalid ctx %p\n", ctx);
- 		return;
- 	}
+ /* Tests */
+@@ -17,6 +19,8 @@ int test__amd_ibs_via_core_pmu(struct test_suite *test, int subtest);
+ int test__amd_ibs_period(struct test_suite *test, int subtest);
+ int test__hybrid(struct test_suite *test, int subtest);
  
- 	base = ctx->cap->sblk->pcc.base;
++DECLARE_SUITE(x86_topdown);
++
+ extern struct test_suite *arch_tests[];
  
- 	if (!base) {
--		DRM_ERROR("invalid ctx %pK pcc base 0x%x\n", ctx, base);
-+		DRM_ERROR("invalid ctx %p pcc base 0x%x\n", ctx, base);
- 		return;
- 	}
+ #endif
+diff --git a/tools/perf/arch/x86/tests/Build b/tools/perf/arch/x86/tests/Build
+index 01d5527f38c7..311b6b53d3d8 100644
+--- a/tools/perf/arch/x86/tests/Build
++++ b/tools/perf/arch/x86/tests/Build
+@@ -11,6 +11,7 @@ endif
+ perf-test-$(CONFIG_X86_64) += bp-modify.o
+ perf-test-y += amd-ibs-via-core-pmu.o
+ perf-test-y += amd-ibs-period.o
++perf-test-y += topdown.o
  
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-index 12dcb32b472497f9e59619db4e810abfbf610c7c..a306077647c317af9345eeff13082230906b5767 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-@@ -1345,7 +1345,7 @@ static int dpu_kms_mmap_mdp5(struct dpu_kms *dpu_kms)
- 		dpu_kms->mmio = NULL;
- 		return ret;
- 	}
--	DRM_DEBUG("mapped dpu address space @%pK\n", dpu_kms->mmio);
-+	DRM_DEBUG("mapped dpu address space @%p\n", dpu_kms->mmio);
+ ifdef SHELLCHECK
+   SHELL_TESTS := gen-insn-x86-dat.sh
+diff --git a/tools/perf/arch/x86/tests/arch-tests.c b/tools/perf/arch/x86/tests/arch-tests.c
+index bfee2432515b..29ec1861ccef 100644
+--- a/tools/perf/arch/x86/tests/arch-tests.c
++++ b/tools/perf/arch/x86/tests/arch-tests.c
+@@ -53,5 +53,6 @@ struct test_suite *arch_tests[] = {
+ 	&suite__amd_ibs_via_core_pmu,
+ 	&suite__amd_ibs_period,
+ 	&suite__hybrid,
++	&suite__x86_topdown,
+ 	NULL,
+ };
+diff --git a/tools/perf/arch/x86/tests/topdown.c b/tools/perf/arch/x86/tests/topdown.c
+new file mode 100644
+index 000000000000..8d0ea7a4bbc1
+--- /dev/null
++++ b/tools/perf/arch/x86/tests/topdown.c
+@@ -0,0 +1,76 @@
++// SPDX-License-Identifier: GPL-2.0
++#include "arch-tests.h"
++#include "../util/topdown.h"
++#include "evlist.h"
++#include "parse-events.h"
++#include "pmu.h"
++#include "pmus.h"
++
++static int event_cb(void *state, struct pmu_event_info *info)
++{
++	char buf[256];
++	struct parse_events_error parse_err;
++	int *ret = state, err;
++	struct evlist *evlist = evlist__new();
++	struct evsel *evsel;
++
++	if (!evlist)
++		return -ENOMEM;
++
++	parse_events_error__init(&parse_err);
++	snprintf(buf, sizeof(buf), "%s/%s/", info->pmu->name, info->name);
++	err = parse_events(evlist, buf, &parse_err);
++	if (err) {
++		parse_events_error__print(&parse_err, buf);
++		*ret = TEST_FAIL;
++	}
++	parse_events_error__exit(&parse_err);
++	evlist__for_each_entry(evlist, evsel) {
++		bool fail = false;
++		bool p_core_pmu = evsel->pmu->type == PERF_TYPE_RAW;
++		const char *name = evsel__name(evsel);
++
++		if (strcasestr(name, "uops_retired.slots") ||
++		    strcasestr(name, "topdown.backend_bound_slots") ||
++		    strcasestr(name, "topdown.br_mispredict_slots") ||
++		    strcasestr(name, "topdown.memory_bound_slots") ||
++		    strcasestr(name, "topdown.bad_spec_slots") ||
++		    strcasestr(name, "topdown.slots_p")) {
++			if (arch_is_topdown_slots(evsel) || arch_is_topdown_metrics(evsel))
++				fail = true;
++		} else if (strcasestr(name, "slots")) {
++			if (arch_is_topdown_slots(evsel) != p_core_pmu ||
++			    arch_is_topdown_metrics(evsel))
++				fail = true;
++		} else if (strcasestr(name, "topdown")) {
++			if (arch_is_topdown_slots(evsel) ||
++			    arch_is_topdown_metrics(evsel) != p_core_pmu)
++				fail = true;
++		} else if (arch_is_topdown_slots(evsel) || arch_is_topdown_metrics(evsel)) {
++			fail = true;
++		}
++		if (fail) {
++			pr_debug("Broken topdown information for '%s'\n", evsel__name(evsel));
++			*ret = TEST_FAIL;
++		}
++	}
++	evlist__delete(evlist);
++	return 0;
++}
++
++static int test__x86_topdown(struct test_suite *test __maybe_unused, int subtest __maybe_unused)
++{
++	int ret = TEST_OK;
++	struct perf_pmu *pmu = NULL;
++
++	if (!topdown_sys_has_perf_metrics())
++		return TEST_OK;
++
++	while ((pmu = perf_pmus__scan_core(pmu)) != NULL) {
++		if (perf_pmu__for_each_event(pmu, /*skip_duplicate_pmus=*/false, &ret, event_cb))
++			break;
++	}
++	return ret;
++}
++
++DEFINE_SUITE("x86 topdown", x86_topdown);
+diff --git a/tools/perf/arch/x86/util/evsel.c b/tools/perf/arch/x86/util/evsel.c
+index 3dd29ba2c23b..9bc80fff3aa0 100644
+--- a/tools/perf/arch/x86/util/evsel.c
++++ b/tools/perf/arch/x86/util/evsel.c
+@@ -23,47 +23,25 @@ void arch_evsel__set_sample_weight(struct evsel *evsel)
+ bool evsel__sys_has_perf_metrics(const struct evsel *evsel)
+ {
+ 	struct perf_pmu *pmu;
+-	u32 type = evsel->core.attr.type;
  
- 	dpu_kms->vbif[VBIF_RT] = msm_ioremap_mdss(mdss_dev,
- 						  dpu_kms->pdev,
-@@ -1380,7 +1380,7 @@ static int dpu_kms_mmap_dpu(struct dpu_kms *dpu_kms)
- 		dpu_kms->mmio = NULL;
- 		return ret;
- 	}
--	DRM_DEBUG("mapped dpu address space @%pK\n", dpu_kms->mmio);
-+	DRM_DEBUG("mapped dpu address space @%p\n", dpu_kms->mmio);
+-	/*
+-	 * The PERF_TYPE_RAW type is the core PMU type, e.g., "cpu" PMU
+-	 * on a non-hybrid machine, "cpu_core" PMU on a hybrid machine.
+-	 * The slots event is only available for the core PMU, which
+-	 * supports the perf metrics feature.
+-	 * Checking both the PERF_TYPE_RAW type and the slots event
+-	 * should be good enough to detect the perf metrics feature.
+-	 */
+-again:
+-	switch (type) {
+-	case PERF_TYPE_HARDWARE:
+-	case PERF_TYPE_HW_CACHE:
+-		type = evsel->core.attr.config >> PERF_PMU_TYPE_SHIFT;
+-		if (type)
+-			goto again;
+-		break;
+-	case PERF_TYPE_RAW:
+-		break;
+-	default:
++	if (!topdown_sys_has_perf_metrics())
+ 		return false;
+-	}
+-
+-	pmu = evsel->pmu;
+-	if (pmu && perf_pmu__is_fake(pmu))
+-		pmu = NULL;
  
- 	dpu_kms->vbif[VBIF_RT] = msm_ioremap(pdev, "vbif");
- 	if (IS_ERR(dpu_kms->vbif[VBIF_RT])) {
-diff --git a/drivers/gpu/drm/msm/msm_mdss.c b/drivers/gpu/drm/msm/msm_mdss.c
-index 1f5fe7811e016909282087176a42a2349b21c9c4..39885b333910bb7aab7f72b9846f49ab16cfe5cc 100644
---- a/drivers/gpu/drm/msm/msm_mdss.c
-+++ b/drivers/gpu/drm/msm/msm_mdss.c
-@@ -423,7 +423,7 @@ static struct msm_mdss *msm_mdss_init(struct platform_device *pdev, bool is_mdp5
- 	if (IS_ERR(msm_mdss->mmio))
- 		return ERR_CAST(msm_mdss->mmio);
+-	if (!pmu) {
+-		while ((pmu = perf_pmus__scan_core(pmu)) != NULL) {
+-			if (pmu->type == PERF_TYPE_RAW)
+-				break;
+-		}
+-	}
+-	return pmu && perf_pmu__have_event(pmu, "slots");
++	/*
++	 * The PERF_TYPE_RAW type is the core PMU type, e.g., "cpu" PMU on a
++	 * non-hybrid machine, "cpu_core" PMU on a hybrid machine.  The
++	 * topdown_sys_has_perf_metrics checks the slots event is only available
++	 * for the core PMU, which supports the perf metrics feature. Checking
++	 * both the PERF_TYPE_RAW type and the slots event should be good enough
++	 * to detect the perf metrics feature.
++	 */
++	pmu = evsel__find_pmu(evsel);
++	return pmu && pmu->type == PERF_TYPE_RAW;
+ }
  
--	dev_dbg(&pdev->dev, "mapped mdss address space @%pK\n", msm_mdss->mmio);
-+	dev_dbg(&pdev->dev, "mapped mdss address space @%p\n", msm_mdss->mmio);
+ bool arch_evsel__must_be_in_group(const struct evsel *evsel)
+ {
+-	if (!evsel__sys_has_perf_metrics(evsel) || !evsel->name ||
+-	    strcasestr(evsel->name, "uops_retired.slots"))
++	if (!evsel__sys_has_perf_metrics(evsel))
+ 		return false;
  
- 	ret = msm_mdss_parse_data_bus_icc_path(&pdev->dev, msm_mdss);
- 	if (ret)
-
----
-base-commit: d086c886ceb9f59dea6c3a9dae7eb89e780a20c9
-change-id: 20250404-restricted-pointers-drm-87b703679fad
-
-Best regards,
+ 	return arch_is_topdown_metrics(evsel) || arch_is_topdown_slots(evsel);
+diff --git a/tools/perf/arch/x86/util/topdown.c b/tools/perf/arch/x86/util/topdown.c
+index d1c654839049..66b231fbf52e 100644
+--- a/tools/perf/arch/x86/util/topdown.c
++++ b/tools/perf/arch/x86/util/topdown.c
+@@ -1,6 +1,4 @@
+ // SPDX-License-Identifier: GPL-2.0
+-#include "api/fs/fs.h"
+-#include "util/evsel.h"
+ #include "util/evlist.h"
+ #include "util/pmu.h"
+ #include "util/pmus.h"
+@@ -8,6 +6,9 @@
+ #include "topdown.h"
+ #include "evsel.h"
+ 
++// cmask=0, inv=0, pc=0, edge=0, umask=4, event=0
++#define TOPDOWN_SLOTS		0x0400
++
+ /* Check whether there is a PMU which supports the perf metrics. */
+ bool topdown_sys_has_perf_metrics(void)
+ {
+@@ -32,31 +33,19 @@ bool topdown_sys_has_perf_metrics(void)
+ 	return has_perf_metrics;
+ }
+ 
+-#define TOPDOWN_SLOTS		0x0400
+ bool arch_is_topdown_slots(const struct evsel *evsel)
+ {
+-	if (evsel->core.attr.config == TOPDOWN_SLOTS)
+-		return true;
+-
+-	return false;
++	return evsel->core.attr.type == PERF_TYPE_RAW &&
++	       evsel->core.attr.config == TOPDOWN_SLOTS &&
++	       evsel->core.attr.config1 == 0;
+ }
+ 
+ bool arch_is_topdown_metrics(const struct evsel *evsel)
+ {
+-	int config = evsel->core.attr.config;
+-	const char *name_from_config;
+-	struct perf_pmu *pmu;
+-
+-	/* All topdown events have an event code of 0. */
+-	if ((config & 0xFF) != 0)
+-		return false;
+-
+-	pmu = evsel__find_pmu(evsel);
+-	if (!pmu || !pmu->is_core)
+-		return false;
+-
+-	name_from_config = perf_pmu__name_from_config(pmu, config);
+-	return name_from_config && strcasestr(name_from_config, "topdown");
++	// cmask=0, inv=0, pc=0, edge=0, umask=0x80-0x87, event=0
++	return evsel->core.attr.type == PERF_TYPE_RAW &&
++		(evsel->core.attr.config & 0xFFFFF8FF) == 0x8000 &&
++		evsel->core.attr.config1 == 0;
+ }
+ 
+ /*
+diff --git a/tools/perf/arch/x86/util/topdown.h b/tools/perf/arch/x86/util/topdown.h
+index 1bae9b1822d7..2349536cf882 100644
+--- a/tools/perf/arch/x86/util/topdown.h
++++ b/tools/perf/arch/x86/util/topdown.h
+@@ -2,6 +2,10 @@
+ #ifndef _TOPDOWN_H
+ #define _TOPDOWN_H 1
+ 
++#include <stdbool.h>
++
++struct evsel;
++
+ bool topdown_sys_has_perf_metrics(void);
+ bool arch_is_topdown_slots(const struct evsel *evsel);
+ bool arch_is_topdown_metrics(const struct evsel *evsel);
 -- 
-Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+2.50.0.727.gbf7dc18ff4-goog
 
 
