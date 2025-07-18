@@ -1,258 +1,773 @@
-Return-Path: <linux-kernel+bounces-736475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25DEEB09D58
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:04:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32767B09D6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:11:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D7203B324E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:03:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77F9AA40862
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:10:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1312A292B24;
-	Fri, 18 Jul 2025 08:04:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E27E220F34;
+	Fri, 18 Jul 2025 08:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="R6hI3PNg"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="Qb1UDLsT"
+Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0AF61D7E42
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 08:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57DE6AD21
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 08:10:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752825839; cv=none; b=oXckU5byd0er/AaZX4fz8HEmDpPu6CO6FenVIMlyjmod9c5+lr1P4AYqij45R0NfYmC8Dk+oWTAZtbMDtTB0tWQ96xpOF8K1X02QxSr1S1bbKYJDJKxle5hN1VVnowr0jyoUT966Ab2i3julgHEwdSaIr44jZoUZQ3TP/5weH/0=
+	t=1752826232; cv=none; b=BEnNTzBhsIOQrFRzC/22ynMP0EFckZHHradQFAEdUPKCVvl1GX1dmvyx6IgOrHddQm0VNePwKnPC2l4f/uHXB6B2AavEtYZHNeMnuf1gNGbalpa5NTBK07vxvcFubwQQzg5Rs41621mKmNZFxE9gSBNBiw5on0bpcNb8kkrq7jw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752825839; c=relaxed/simple;
-	bh=Cd4S2/x3c2nivhZqYlZo9PbkOfdJG+AH9/oE2X9+BKw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Sd2VKLa7idgGvcIUnhgvSahGcvgx5YzAYGM6cGbSySx7zN3JrV4Ses0jTLSovHVwZZzfGIEztK8pcxx+AwnZmp7zRz7MVt91sJiUS1iXi6pO5I/u5GVkCzmtjZFH4bP25+nwGd3TL4j+WcWjfRYRrga8bJz9lLw19lv9JdcENSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=R6hI3PNg; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56I7AUl5028060
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 08:03:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	nxueihSNUT2gvfRCYLszVQxvKLpm8BbA2TEvBIULlTw=; b=R6hI3PNgaBmb/wKU
-	275ikXLUpWvTan0VU9GJXpxejQRUnNmYjnz3Mjm+JRaQKEbHtpKcco40BPvput0d
-	puOMJKcwtKqrsuQ2OHqbMBHdCuUtebky9mT1WZcjzgj6uVfCu43dqDULfuW08Q5/
-	TtBicGgbRW/EQqxyOxhIi3MVKKDq0IzmdayJQEuVIYc7BoEfF38Rpmd2RW9WKmmU
-	ipF0/rUS1BDPZsI0gy3p11dQvPviH3W/C03bxuszcW/qEluvI0XXHe79F2wP3dqx
-	M/fBzMbRZjT0jGgnqMTSTD6nfLu3AgAAkJq3SDOWiAKKqhS0vdPHRr2JjTJwPs7N
-	RhZIUw==
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47wnh62w3b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 08:03:55 +0000 (GMT)
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b3f2e05fb78so658300a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 01:03:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752825835; x=1753430635;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nxueihSNUT2gvfRCYLszVQxvKLpm8BbA2TEvBIULlTw=;
-        b=g7v3ntngYtdyB+5nmMa/vL3DW3vvpdx6aTFsuUTqU2AtKoRYwoEqZkZ/XTGlY+9SL0
-         7BcR6NameoILfba1QXfk1GRfJWEYpp6uH7S2AEiJ4JlafL6UN+zaSv6K64WJ28JAMMBH
-         LnlAgTqZYbQBAt8VZB2gM+o3oKsI6JMdCRKHrFwMr7WJcP315V3adC2Obmmc297Awf79
-         eMHtlRR+Sx2SO7eth58rmW5C+1yMiFoXABMP2rZ8+IyEvevQTdQx3JONbx0+khMfPBdh
-         CfqjA1q+2RNp/QAD6d6kX53RhSc+RNQftxyqcj+KBDeuJvMiKC3vytRVALobuRoO91QE
-         XNyg==
-X-Forwarded-Encrypted: i=1; AJvYcCWnBUeS80rWwHnShwXW1w8BkiaQArv6fMI5kYWuhlqzR5OB3enR1TS0ZGdiDa7C8WC8EDIDTCpTAumn+gU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzba7yAjwAB3nMDj9INynCixC5Pi8PSs645OTolYU9Ah1eJGBMB
-	NfOKsFd+1XVdi+/ezkP0P2jr7f4VwBlzE6Pu9T3vfIn2HE15eFcuyujDxdQXVA4fvkHGEaxPkh+
-	J8GzZ8Etc440bKQ1FFgfdxp8676anKZgfbU6OEZ5cWQgLnjm5Jyql29zuSCGsSyz+QvM=
-X-Gm-Gg: ASbGnctByFqvHiSUC/B3HXflZPsyf91vILR5tFzf+f+SeALHiac16CrKG1w4mBL9gpg
-	30vah6XwhxOmcQcX2pDe59+3rQGFu7WxtLQzcPg4PTQ8u98Kk4eh7+vB5NR70Ot8jeLYWzQ7r9m
-	Jo0amvwLabLtWIbBJc2gL6By/p0nfUr4jiLUW0y16U4zRBno6bBBGuO7iHMghYZOmdDw2Gh5HPW
-	N/+r51iFsTB6cSiq4WliRTNu6qq7BSKF40NSU5H5Tuc9iSFbtIKzPu+9TMLPVs1Ory0oTS0BYjj
-	t/JhkypOJ6XwQqwLqjMYV0cAx0cv9zOaley5zyKK9Dv/IU+40KhhXTOov8t4x4vDUwAXcQ==
-X-Received: by 2002:a17:90b:38c8:b0:313:287c:74bd with SMTP id 98e67ed59e1d1-31c9f4c46d3mr14699052a91.33.1752825834940;
-        Fri, 18 Jul 2025 01:03:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFxPYhZgCck07MGmNFAvaF85ucZQYS+3cPmHxVMPoQhjM4CsqlXubj80zgLzii9a5VFOEcvWQ==
-X-Received: by 2002:a17:90b:38c8:b0:313:287c:74bd with SMTP id 98e67ed59e1d1-31c9f4c46d3mr14698992a91.33.1752825834371;
-        Fri, 18 Jul 2025 01:03:54 -0700 (PDT)
-Received: from [10.218.37.122] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31cc0be8975sm737350a91.1.2025.07.18.01.03.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Jul 2025 01:03:54 -0700 (PDT)
-Message-ID: <aa2f6350-3235-422b-be04-a03bd3a1010d@oss.qualcomm.com>
-Date: Fri, 18 Jul 2025 13:33:46 +0530
+	s=arc-20240116; t=1752826232; c=relaxed/simple;
+	bh=K3ZHlAI+FwaZFliBI1Er8+p2IEjx7tt4SeqWWw+yfUA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=C4Db3dqgnnAHe+9PFtAkrfR6I6WWv5h7IWSlbXcJOisl6zZ++QndFwsdMjcW8YxlGctBcd2NzZkmRRro6sSuJl7x/3HTzitDyFO9VuePUP+pFDGaGs0retT4pINpLOsgHudAUb2g8qWRWxY69FWuU0GWfvJqrQ94nttxnYp9iwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=Qb1UDLsT; arc=none smtp.client-ip=220.130.44.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
+X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
+	s=richtek; t=1752826225;
+	bh=i672eYdBgpAfNV0uAsPkT6fP1kqwIG7wj0M2Ynj6Kyo=; l=21107;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Qb1UDLsTQVbgD1zqOkGMbdNMWd1QQ+ld8m3nLLP4tvxmXVcq4Sbxh15sxXNAwqo2s
+	 y/7V2BhSRkmYr8rUB9rJGguQ8xXAkZMvhmnPYh2rHIua3bLH+muC0u4uFUNV0E6YAu
+	 i7K3Krpk/9O61bmtXw6TVtbxu//opClyaPxHUJJ/6EmGP1BxSJMMEPnGNqliIgFdoF
+	 7XgSXwGOgaX7ZPGsGUvI+fWV3QO1u+cxpjgYRIjhxbBQ3LyA1mP+fxHeJDKGV3j9R8
+	 MSvQIeKaJm1An12ju2kObvsP6qtq9P8NAbUKp7MYMgphYc/mHXyQ5lZ+14qzTRmklt
+	 bK1R4kmIDPKxA==
+Received: from 192.168.10.47
+	by mg.richtek.com with MailGates ESMTPS Server V6.0(244599:0:AUTH_RELAY)
+	(envelope-from <jeff_chang@richtek.com>)
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Fri, 18 Jul 2025 16:10:15 +0800 (CST)
+Received: from ex3.rt.l (192.168.10.46) by ex4.rt.l (192.168.10.47) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 18 Jul
+ 2025 16:10:15 +0800
+Received: from git-send.richtek.com (192.168.10.154) by ex3.rt.l
+ (192.168.10.45) with Microsoft SMTP Server id 15.2.1544.11 via Frontend
+ Transport; Fri, 18 Jul 2025 16:10:15 +0800
+From: <jeff_chang@richtek.com>
+To: <lgirdwood@gmail.com>, <broonie@kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <jeff_chang@richtek.com>
+Subject: [PATCH v2] regulator: rt5133: Add RT5133 PMIC regulator Support
+Date: Fri, 18 Jul 2025 16:04:28 +0800
+Message-ID: <20250718081052.2685826-1-jeff_chang@richtek.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/6] wifi: ath12k: Use pci_{enable/disable}_link_state()
- APIs to enable/disable ASPM states
-To: Manivannan Sadhasivam <mani@kernel.org>,
-        Baochen Qiang <baochen.qiang@oss.qualcomm.com>
-Cc: manivannan.sadhasivam@oss.qualcomm.com,
-        Jeff Johnson
- <jjohnson@kernel.org>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-        Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-        Nirmal Patel <nirmal.patel@linux.intel.com>,
-        Jonathan Derrick <jonathan.derrick@linux.dev>,
-        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ath12k@lists.infradead.org, ath11k@lists.infradead.org,
-        ath10k@lists.infradead.org, Bjorn Helgaas <helgaas@kernel.org>,
-        ilpo.jarvinen@linux.intel.com, linux-arm-msm@vger.kernel.org,
-        linux-pci@vger.kernel.org, Qiang Yu <qiang.yu@oss.qualcomm.com>
-References: <20250716-ath-aspm-fix-v1-0-dd3e62c1b692@oss.qualcomm.com>
- <20250716-ath-aspm-fix-v1-4-dd3e62c1b692@oss.qualcomm.com>
- <38ace6a3-d594-4438-a193-cf730a7b87d6@oss.qualcomm.com>
- <wyqtr3tz3k2zdf62kgtcepf3sedm7z7wacv27visl2xsrqspmq@wi4fgef2mn2m>
- <03806d02-1cfc-4db2-8b63-c1e51f5456e2@oss.qualcomm.com>
- <o2gqqty6lakc4iw7vems2dejh6prjyl746gnq4gny4sxdxl65v@zmqse3244afv>
- <1db7c119-882f-4184-9ca4-9dbe5a49cb16@oss.qualcomm.com>
- <gx5gruyhrhwhvwkiqlkp2bggqd4oqe4quvqiiphfzolhjtzun6@okogvabkqah3>
-Content-Language: en-US
-From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-In-Reply-To: <gx5gruyhrhwhvwkiqlkp2bggqd4oqe4quvqiiphfzolhjtzun6@okogvabkqah3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=dKimmPZb c=1 sm=1 tr=0 ts=6879ffeb cx=c_pps
- a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=bhzlIsU2D2yyHOt3_ukA:9
- a=QEXdDO2ut3YA:10 a=3WC7DwWrALyhR5TkjVHa:22
-X-Proofpoint-GUID: AVfGCtzpKxxgcYhYDhkv0T4TJZnaCyEl
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE4MDA2MiBTYWx0ZWRfX+1TzEQORAk8j
- Zf2ugMeOMtxDhZ4aJQmB+8MqUk6/MpT7Liuk9HZSlcMr4twFvpQTGrUU96UNdD4pWXK55iNKbda
- /8n7frLks1pGPLPnZBWc06IgTg6HAMKlvW8/sr4wpIonh4PAKuY6qmBqsStycthObxiuzcXpvBm
- /FyDsKKzJUTJJGDwgHo9HW9Lt4DRt4CWMsquU+kpSB0S6ZPGFUK1W5jING6dghG36S4cgIoT9qG
- GIsvS3Q6oEHL/CtBWck2PGXhoaMtOiuODjJbPkE6lOV7JApRWs8QUWs+uM2AZ5aE8p7Nyiewp44
- yXlGxghapNMo8ra/hrC4S6a8GHZkVuI80gAuHSzZEX+Hy8/k97aypLKu6sz/RO1RU4MZLuYpZ1l
- BfvVwSXuajuDFLyYuoJ4Qh1EsIwyedKmxm1rhaBWJ1l00hEFqWZjVz+/PuSCsun6kyJRXQfQ
-X-Proofpoint-ORIG-GUID: AVfGCtzpKxxgcYhYDhkv0T4TJZnaCyEl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-18_01,2025-07-17_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 clxscore=1015 mlxlogscore=999 mlxscore=0 spamscore=0
- adultscore=0 impostorscore=0 priorityscore=1501 suspectscore=0 bulkscore=0
- phishscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507180062
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
+From: Jeff Chang <jeff_chang@richtek.com>
 
+RT5133 is an integrated chip. It includes 8 LDOs and 3 GPOs that
+can be used to drive output high/low purpose. The dependency of the
+GPO block is internally LDO1 Voltage. If LDO1 voltage output disabled,
+GPO cannot be used to drive output high. It need to pay more attention
+on the usage.
 
-On 7/18/2025 1:27 PM, Manivannan Sadhasivam wrote:
-> On Fri, Jul 18, 2025 at 10:05:02AM GMT, Baochen Qiang wrote:
->>
->>
->> On 7/17/2025 7:29 PM, Manivannan Sadhasivam wrote:
->>> On Thu, Jul 17, 2025 at 06:46:12PM GMT, Baochen Qiang wrote:
->>>>
->>>>
->>>> On 7/17/2025 6:31 PM, Manivannan Sadhasivam wrote:
->>>>> On Thu, Jul 17, 2025 at 05:24:13PM GMT, Baochen Qiang wrote:
->>>>>
->>>>> [...]
->>>>>
->>>>>>> @@ -16,6 +16,8 @@
->>>>>>>   #include "mhi.h"
->>>>>>>   #include "debug.h"
->>>>>>>   
->>>>>>> +#include "../ath.h"
->>>>>>> +
->>>>>>>   #define ATH12K_PCI_BAR_NUM		0
->>>>>>>   #define ATH12K_PCI_DMA_MASK		36
->>>>>>>   
->>>>>>> @@ -928,8 +930,7 @@ static void ath12k_pci_aspm_disable(struct ath12k_pci *ab_pci)
->>>>>>>   		   u16_get_bits(ab_pci->link_ctl, PCI_EXP_LNKCTL_ASPM_L1));
->>>>>>>   
->>>>>>>   	/* disable L0s and L1 */
->>>>>>> -	pcie_capability_clear_word(ab_pci->pdev, PCI_EXP_LNKCTL,
->>>>>>> -				   PCI_EXP_LNKCTL_ASPMC);
->>>>>>> +	pci_disable_link_state(ab_pci->pdev, PCIE_LINK_STATE_L0S | PCIE_LINK_STATE_L1);
->>>>>>
->>>>>> Not always, but sometimes seems the 'disable' does not work:
->>>>>>
->>>>>> [  279.920507] ath12k_pci_power_up 1475: link_ctl 0x43 //before disable
->>>>>> [  279.920539] ath12k_pci_power_up 1482: link_ctl 0x43 //after disable
->>>>>>
->>>>>>
->>>>>>>   
->>>>>>>   	set_bit(ATH12K_PCI_ASPM_RESTORE, &ab_pci->flags);
->>>>>>>   }
->>>>>>> @@ -958,10 +959,7 @@ static void ath12k_pci_aspm_restore(struct ath12k_pci *ab_pci)
->>>>>>>   {
->>>>>>>   	if (ab_pci->ab->hw_params->supports_aspm &&
->>>>>>>   	    test_and_clear_bit(ATH12K_PCI_ASPM_RESTORE, &ab_pci->flags))
->>>>>>> -		pcie_capability_clear_and_set_word(ab_pci->pdev, PCI_EXP_LNKCTL,
->>>>>>> -						   PCI_EXP_LNKCTL_ASPMC,
->>>>>>> -						   ab_pci->link_ctl &
->>>>>>> -						   PCI_EXP_LNKCTL_ASPMC);
->>>>>>> +		pci_enable_link_state(ab_pci->pdev, ath_pci_aspm_state(ab_pci->link_ctl));
->>>>>>
->>>>>> always, the 'enable' is not working:
->>>>>>
->>>>>> [  280.561762] ath12k_pci_start 1180: link_ctl 0x43 //before restore
->>>>>> [  280.561809] ath12k_pci_start 1185: link_ctl 0x42 //after restore
->>>>>>
->>>>>
->>>>> Interesting! I applied your diff and I never see this issue so far (across 10+
->>>>> reboots):
->>>>
->>>> I was not testing reboot. Here is what I am doing:
->>>>
->>>> step1: rmmod ath12k
->>>> step2: force LinkCtrl using setpci (make sure it is 0x43, which seems more likely to see
->>>> the issue)
->>>>
->>>> 	sudo setpci -s 02:00.0 0x80.B=0x43
->>>>
->>>> step3: insmod ath12k and check linkctrl
->>>>
->>>
->>> So I did the same and got:
->>>
->>> [ 3283.363569] ath12k_pci_power_up 1475: link_ctl 0x43
->>> [ 3283.363769] ath12k_pci_power_up 1480: link_ctl 0x40
->>> [ 3284.007661] ath12k_pci_start 1180: link_ctl 0x40
->>> [ 3284.007826] ath12k_pci_start 1185: link_ctl 0x42
->>>
->>> My host machine is Qcom based Thinkpad T14s and it doesn't support L0s. So
->>> that's why the lnkctl value once enabled becomes 0x42. This is exactly the
->>> reason why the drivers should not muck around LNKCTL register manually.
->>
->> Thanks, then the 0x43 -> 0x40 -> 0x40 -> 0x42 sequence should not be a concern. But still
->> the random 0x43 -> 0x43 -> 0x43 -> 0x42 sequence seems problematic.
->>
->> How many iterations have you done with above steps? From my side it seems random so better
->> to do some stress test.
->>
-> 
-> So I ran the modprobe for about 50 times on the Intel NUC that has QCA6390, but
-> didn't spot the disparity. This is the script I used:
-> 
-> for i in {1..50} ;do echo "Loop $i"; sudo setpci -s 01:00.0 0x80.B=0x43;\
-> sudo modprobe -r ath11k_pci; sleep 1; sudo modprobe ath11k_pci; sleep 1;done
-> 
-> And I always got:
-> 
-> [ 5862.388083] ath11k_pci_aspm_disable: 609 lnkctrl: 0x43
-> [ 5862.388124] ath11k_pci_aspm_disable: 614 lnkctrl: 0x40
-> [ 5862.876291] ath11k_pci_start: 880 lnkctrl: 0x40
-> [ 5862.876346] ath11k_pci_start: 886 lnkctrl: 0x42
-> 
-> Also no AER messages. TBH, I'm not sure how you were able to see the random
-> issues with these APIs. That looks like a race, which is scary.
-> 
-How about using locked variants pci_disable_link_state_locked &
-pci_enable_link_state_locked give it a try?
+Signed-off-by: Jeff Chang <jeff_chang@richtek.com>
 
-- Krishna Chaitanya
-> I do not want to ignore your scenario, but would like to reproduce and get to
-> the bottom of it.
-> 
-> - Mani
-> 
+PATCH V2
+1. Fix typo intefrated -> integrated
+2. Remove yaml file
+3. Remove soft-start-time-sel property
+4. Remove GPL-4.0, using GPL-2.0
+5. Using C++ comment
+6. Using standard dev_dbg
+7. Remove driver version
+8. Using dev_dbg for base event occured. And return IRQ_HANDLED
+9. Because of CRC8 for IO, we don't use cache for regmap_config 
+10. Remove tracing logs. 
+11. Set can_sleep = true for gpio operations. 
+
+---
+ drivers/regulator/Kconfig            |  13 +
+ drivers/regulator/Makefile           |   1 +
+ drivers/regulator/rt5133-regulator.c | 627 +++++++++++++++++++++++++++
+ 3 files changed, 641 insertions(+)
+ create mode 100644 drivers/regulator/rt5133-regulator.c
+
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index 6d8988387da4..d2856012df98 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -1229,6 +1229,19 @@ config REGULATOR_RT5120
+ 	  600mV to 1395mV, per step 6.250mV. The others are all fixed voltage
+ 	  by external hardware circuit.
+ 
++config REGULATOR_RT5133
++	tristate "Richtek RT5133 PMIC Regulators"
++	depends on I2C && GPIOLIB
++	select REGMAP
++	select CRC8
++	select OF_GPIO
++	help
++	  RT5133 is an integrated chip. It includes 8 LDOs and 3 GPOs that
++	  can be used to drive output high/low purpose. The dependency of the
++	  GPO block is internally LDO1 Voltage. If LDO1 voltage output disabled,
++	  GPO cannot be used to drive output high. It need to pay more attention
++	  on the usage.
++
+ config REGULATOR_RT5190A
+ 	tristate "Richtek RT5190A PMIC"
+ 	depends on I2C
+diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
+index c0bc7a0f4e67..709384ae0a0c 100644
+--- a/drivers/regulator/Makefile
++++ b/drivers/regulator/Makefile
+@@ -145,6 +145,7 @@ obj-$(CONFIG_REGULATOR_RT4803)	+= rt4803.o
+ obj-$(CONFIG_REGULATOR_RT4831)	+= rt4831-regulator.o
+ obj-$(CONFIG_REGULATOR_RT5033)	+= rt5033-regulator.o
+ obj-$(CONFIG_REGULATOR_RT5120)	+= rt5120-regulator.o
++obj-$(CONFIG_REGULATOR_RT5133)	+= rt5133-regulator.o
+ obj-$(CONFIG_REGULATOR_RT5190A) += rt5190a-regulator.o
+ obj-$(CONFIG_REGULATOR_RT5739)	+= rt5739.o
+ obj-$(CONFIG_REGULATOR_RT5759)	+= rt5759-regulator.o
+diff --git a/drivers/regulator/rt5133-regulator.c b/drivers/regulator/rt5133-regulator.c
+new file mode 100644
+index 000000000000..cf9a45326b8a
+--- /dev/null
++++ b/drivers/regulator/rt5133-regulator.c
+@@ -0,0 +1,627 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2025 Richtek Technology Corp.
++// Author: ChiYuan Huang <cy_huang@richtek.com>
++// Author: ShihChia Chang <jeff_chang@richtek.com>
++
++#include <linux/crc8.h>
++#include <linux/delay.h>
++#include <linux/gpio/consumer.h>
++#include <linux/gpio/driver.h>
++#include <linux/i2c.h>
++#include <linux/interrupt.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/regmap.h>
++#include <linux/regulator/driver.h>
++
++#define RT5133_REG_CHIP_INFO		0x00
++#define RT5133_REG_RST_CTRL		0x06
++#define RT5133_REG_BASE_CTRL		0x09
++#define RT5133_REG_GPIO_CTRL		0x0B
++#define RT5133_REG_BASE_EVT		0x10
++#define RT5133_REG_BASE_MASK		0x16
++#define RT5133_REG_LDO_SHDN		0x19
++#define RT5133_REG_LDO1_CTRL1		0x20
++#define RT5133_REG_LDO1_CTRL2		0x21
++#define RT5133_REG_LDO1_CTRL3		0x22
++#define RT5133_REG_LDO2_CTRL1		0x24
++#define RT5133_REG_LDO2_CTRL2		0x25
++#define RT5133_REG_LDO2_CTRL3		0x26
++#define RT5133_REG_LDO3_CTRL1		0x28
++#define RT5133_REG_LDO3_CTRL2		0x29
++#define RT5133_REG_LDO3_CTRL3		0x2A
++#define RT5133_REG_LDO4_CTRL1		0x2C
++#define RT5133_REG_LDO4_CTRL2		0x2D
++#define RT5133_REG_LDO4_CTRL3		0x2E
++#define RT5133_REG_LDO5_CTRL1		0x30
++#define RT5133_REG_LDO5_CTRL2		0x31
++#define RT5133_REG_LDO5_CTRL3		0x32
++#define RT5133_REG_LDO6_CTRL1		0x34
++#define RT5133_REG_LDO6_CTRL2		0x35
++#define RT5133_REG_LDO6_CTRL3		0x36
++#define RT5133_REG_LDO7_CTRL1		0x38
++#define RT5133_REG_LDO7_CTRL2		0x39
++#define RT5133_REG_LDO7_CTRL3		0x3A
++#define RT5133_REG_LDO8_CTRL1		0x3C
++#define RT5133_REG_LDO8_CTRL2		0x3D
++#define RT5133_REG_LDO8_CTRL3		0x3E
++#define RT5133_REG_LDO8_CTRL4		0x3F
++
++#define RT5133_LDO_REG_BASE(_id)	(0x20 + ((_id) - 1) * 4)
++
++#define RT5133_VENDOR_ID_MASK		GENMASK(7, 4)
++#define RT5133_RESET_CODE		0xB1
++
++#define RT5133_FOFF_BASE_MASK		BIT(1)
++#define RT5133_OCSHDN_ALL_MASK		BIT(7)
++#define RT5133_OCSHDN_ALL_SHIFT		(7)
++#define RT5133_PGBSHDN_ALL_MASK		BIT(6)
++#define RT5133_PGBSHDN_ALL_SHIFT	(6)
++
++#define RT5133_OCPTSEL_MASK		BIT(5)
++#define RT5133_PGBPTSEL_MASK		BIT(4)
++#define RT5133_STBTDSEL_MASK		GENMASK(1, 0)
++
++#define RT5133_LDO_ENABLE_MASK		BIT(7)
++#define RT5133_LDO_VSEL_MASK		GENMASK(7, 5)
++#define RT5133_LDO_AD_MASK		BIT(2)
++#define RT5133_LDO_SOFT_START_MASK	GENMASK(1, 0)
++
++#define RT5133_GPIO_NR			3
++
++#define RT5133_LDO_PGB_EVT_MASK		GENMASK(23, 16)
++#define RT5133_LDO_PGB_EVT_SHIFT	16
++#define RT5133_LDO_OC_EVT_MASK		GENMASK(15, 8)
++#define RT5133_LDO_OC_EVT_SHIFT		8
++#define RT5133_VREF_EVT_MASK		BIT(6)
++#define RT5133_BASE_EVT_MASK		GENMASK(7, 0)
++#define RT5133_INTR_CLR_MASK		GENMASK(23, 0)
++#define RT5133_INTR_BYTE_NR		3
++
++#define RT5133_MAX_I2C_BLOCK_SIZE	1
++
++#define RT5133_CRC8_POLYNOMIAL		0x7
++
++#define RT5133_I2C_ADDR_LEN		1
++#define RT5133_PREDATA_LEN		2
++#define RT5133_I2C_CRC_LEN		1
++#define RT5133_REG_ADDR_LEN		1
++#define RT5133_I2C_DUMMY_LEN		1
++
++#define I2C_ADDR_XLATE_8BIT(_addr, _rw)	((((_addr) & 0x7F) << 1) | (_rw))
++
++enum {
++	RT5133_REGULATOR_BASE = 0,
++	RT5133_REGULATOR_LDO1,
++	RT5133_REGULATOR_LDO2,
++	RT5133_REGULATOR_LDO3,
++	RT5133_REGULATOR_LDO4,
++	RT5133_REGULATOR_LDO5,
++	RT5133_REGULATOR_LDO6,
++	RT5133_REGULATOR_LDO7,
++	RT5133_REGULATOR_LDO8,
++	RT5133_REGULATOR_MAX
++};
++
++struct chip_data {
++	const struct regulator_desc *regulators;
++	const u8 vendor_id;
++};
++
++struct rt5133_priv {
++	struct device *dev;
++	struct regmap *regmap;
++	struct gpio_desc *enable_gpio;
++	struct regulator_dev *rdev[RT5133_REGULATOR_MAX];
++	struct gpio_chip gc;
++	const struct chip_data *cdata;
++	unsigned int gpio_output_flag;
++	u8 crc8_tbls[CRC8_TABLE_SIZE];
++};
++
++static const unsigned int vout_type1_tables[] = {
++	1800000, 2500000, 2700000, 2800000, 2900000, 3000000, 3100000, 3200000
++};
++
++static const unsigned int vout_type2_tables[] = {
++	1700000, 1800000, 1900000, 2500000, 2700000, 2800000, 2900000, 3000000
++};
++
++static const unsigned int vout_type3_tables[] = {
++	900000, 950000, 1000000, 1050000, 1100000, 1150000, 1200000, 1800000
++};
++
++static const unsigned int vout_type4_tables[] = {
++	855000, 900000, 950000, 1000000, 1040000, 1090000, 1140000, 1710000
++};
++
++static const struct regulator_ops rt5133_regulator_ops = {
++	.list_voltage = regulator_list_voltage_table,
++	.set_voltage_sel = regulator_set_voltage_sel_regmap,
++	.get_voltage_sel = regulator_get_voltage_sel_regmap,
++	.enable = regulator_enable_regmap,
++	.disable = regulator_disable_regmap,
++	.is_enabled = regulator_is_enabled_regmap,
++	.set_active_discharge = regulator_set_active_discharge_regmap,
++};
++
++static const struct regulator_ops rt5133_base_regulator_ops = {
++	.enable = regulator_enable_regmap,
++	.disable = regulator_disable_regmap,
++	.is_enabled = regulator_is_enabled_regmap,
++};
++
++static int rt5133_of_parse_cb(struct device_node *node,
++			      const struct regulator_desc *desc,
++			      struct regulator_config *config)
++{
++	struct rt5133_priv *priv = config->driver_data;
++	unsigned int val = 0;
++	int ret = 0;
++
++	switch (desc->id) {
++	case RT5133_REGULATOR_BASE:
++		ret = of_property_read_u32(node, "oc-shutdown-all", &val);
++		if (!ret) {
++			ret = regmap_update_bits(priv->regmap, RT5133_REG_LDO_SHDN,
++						 RT5133_OCSHDN_ALL_MASK,
++						 val << RT5133_OCSHDN_ALL_SHIFT);
++			if (ret)
++				return ret;
++		}
++
++		ret = of_property_read_u32(node, "pgb-shutdown-all", &val);
++		if (!ret) {
++			ret = regmap_update_bits(priv->regmap, RT5133_REG_LDO_SHDN,
++						 RT5133_PGBSHDN_ALL_MASK,
++						 val << RT5133_PGBSHDN_ALL_SHIFT);
++			if (ret)
++				return ret;
++		}
++		break;
++	default:
++		break;
++	};
++
++	return 0;
++}
++
++#define RT5133_REGULATOR_DESC(_name, vtables, _supply) \
++{\
++	.name = #_name,\
++	.id = RT5133_REGULATOR_##_name,\
++	.of_match = of_match_ptr(#_name),\
++	.regulators_node = of_match_ptr("regulators"),\
++	.supply_name = _supply,\
++	.of_parse_cb = rt5133_of_parse_cb,\
++	.type = REGULATOR_VOLTAGE,\
++	.owner = THIS_MODULE,\
++	.ops = &rt5133_regulator_ops,\
++	.n_voltages = ARRAY_SIZE(vtables),\
++	.volt_table = vtables,\
++	.enable_reg = RT5133_REG_##_name##_CTRL1,\
++	.enable_mask = RT5133_LDO_ENABLE_MASK,\
++	.vsel_reg = RT5133_REG_##_name##_CTRL2,\
++	.vsel_mask = RT5133_LDO_VSEL_MASK,\
++	.active_discharge_reg = RT5133_REG_##_name##_CTRL3,\
++	.active_discharge_mask = RT5133_LDO_AD_MASK,\
++}
++
++static const struct regulator_desc rt5133_regulators[] = {
++	/* For digital part, base current control */
++	{
++		.name = "rt5133,base",
++		.id = RT5133_REGULATOR_BASE,
++		.of_match = of_match_ptr("BASE"),
++		.regulators_node = of_match_ptr("regulators"),
++		.of_parse_cb = rt5133_of_parse_cb,
++		.type = REGULATOR_VOLTAGE,
++		.owner = THIS_MODULE,
++		.ops = &rt5133_base_regulator_ops,
++		.enable_reg = RT5133_REG_BASE_CTRL,
++		.enable_mask = RT5133_FOFF_BASE_MASK,
++		.enable_is_inverted = true,
++	},
++	RT5133_REGULATOR_DESC(LDO1, vout_type1_tables, "rt5133,base"),
++	RT5133_REGULATOR_DESC(LDO2, vout_type1_tables, "rt5133,base"),
++	RT5133_REGULATOR_DESC(LDO3, vout_type2_tables, "rt5133,base"),
++	RT5133_REGULATOR_DESC(LDO4, vout_type2_tables, "rt5133,base"),
++	RT5133_REGULATOR_DESC(LDO5, vout_type2_tables, "rt5133,base"),
++	RT5133_REGULATOR_DESC(LDO6, vout_type2_tables, "rt5133,base"),
++	RT5133_REGULATOR_DESC(LDO7, vout_type3_tables, "rt5133-ldo1"),
++	RT5133_REGULATOR_DESC(LDO8, vout_type3_tables, "rt5133-ldo1"),
++};
++
++static const struct regulator_desc rt5133a_regulators[] = {
++	/* For digital part, base current control */
++	{
++		.name = "rt5133,base",
++		.id = RT5133_REGULATOR_BASE,
++		.of_match = of_match_ptr("BASE"),
++		.regulators_node = of_match_ptr("regulators"),
++		.of_parse_cb = rt5133_of_parse_cb,
++		.type = REGULATOR_VOLTAGE,
++		.owner = THIS_MODULE,
++		.ops = &rt5133_base_regulator_ops,
++		.enable_reg = RT5133_REG_BASE_CTRL,
++		.enable_mask = RT5133_FOFF_BASE_MASK,
++		.enable_is_inverted = true,
++	},
++	RT5133_REGULATOR_DESC(LDO1, vout_type1_tables, "rt5133,base"),
++	RT5133_REGULATOR_DESC(LDO2, vout_type1_tables, "rt5133,base"),
++	RT5133_REGULATOR_DESC(LDO3, vout_type2_tables, "rt5133,base"),
++	RT5133_REGULATOR_DESC(LDO4, vout_type2_tables, "rt5133,base"),
++	RT5133_REGULATOR_DESC(LDO5, vout_type2_tables, "rt5133,base"),
++	RT5133_REGULATOR_DESC(LDO6, vout_type2_tables, "rt5133,base"),
++	RT5133_REGULATOR_DESC(LDO7, vout_type3_tables, "rt5133-ldo1"),
++	RT5133_REGULATOR_DESC(LDO8, vout_type4_tables, "rt5133-ldo1"),
++};
++
++static const struct chip_data regulator_data[] = {
++	{ rt5133_regulators, 0x70},
++	{ rt5133a_regulators, 0x80},
++};
++
++static int rt5133_gpio_direction_output(struct gpio_chip *gpio,
++					unsigned int offset, int value)
++{
++	struct rt5133_priv *priv = gpiochip_get_data(gpio);
++
++	if (offset >= RT5133_GPIO_NR)
++		return -EINVAL;
++
++	return regmap_update_bits(priv->regmap, RT5133_REG_GPIO_CTRL,
++				  BIT(7 - offset) | BIT(3 - offset),
++				  value ? BIT(7 - offset) | BIT(3 - offset) : 0);
++}
++
++static int rt5133_gpio_get(struct gpio_chip *chip, unsigned int offset)
++{
++	struct rt5133_priv *priv = gpiochip_get_data(chip);
++
++	return !!(priv->gpio_output_flag & BIT(offset));
++}
++
++static int rt5133_get_gpioen_mask(unsigned int offset, unsigned int *mask)
++{
++	if (offset >= RT5133_GPIO_NR)
++		return -EINVAL;
++
++	*mask = (BIT(7 - offset) | BIT(3 - offset));
++
++	return 0;
++}
++
++static void rt5133_gpio_set(struct gpio_chip *chip, unsigned int offset,
++			    int set_val)
++{
++	struct rt5133_priv *priv = gpiochip_get_data(chip);
++	unsigned int mask = 0, val = 0, next_flag = priv->gpio_output_flag;
++	int ret = 0;
++
++	ret = rt5133_get_gpioen_mask(offset, &mask);
++	if (ret) {
++		dev_err(priv->dev, "%s get gpion en mask failed, offset(%d)\n", __func__, offset);
++		return;
++	}
++
++	val = set_val ? mask : 0;
++
++	if (set_val)
++		next_flag |= BIT(offset);
++	else
++		next_flag &= ~BIT(offset);
++
++	ret = regmap_update_bits(priv->regmap, RT5133_REG_GPIO_CTRL, mask, val);
++	if (ret) {
++		dev_err(priv->dev, "Failed to set gpio [%d] val %d\n", offset,
++			set_val);
++		return;
++	}
++
++	priv->gpio_output_flag = next_flag;
++}
++
++static irqreturn_t rt5133_intr_handler(int irq_number, void *data)
++{
++	struct rt5133_priv *priv = data;
++	u32 intr_evts = 0, handle_evts;
++	int i, ret;
++
++	ret = regmap_bulk_read(priv->regmap, RT5133_REG_BASE_EVT, &intr_evts,
++			       RT5133_INTR_BYTE_NR);
++	if (ret) {
++		dev_err(priv->dev, "%s, read event failed\n", __func__);
++		return IRQ_HANDLED;
++	}
++
++	handle_evts = intr_evts & RT5133_BASE_EVT_MASK;
++	/*
++	 * VREF_EVT is a special case, if base off
++	 * this event will also be trigger. Skip it
++	 */
++	if (handle_evts & ~RT5133_VREF_EVT_MASK)
++		dev_dbg(priv->dev, "base event occurred [0x%02x]\n",
++			handle_evts);
++
++	handle_evts = (intr_evts & RT5133_LDO_OC_EVT_MASK) >>
++		RT5133_LDO_OC_EVT_SHIFT;
++
++	for (i = RT5133_REGULATOR_LDO1; i < RT5133_REGULATOR_MAX && handle_evts; i++) {
++		if (!(handle_evts & BIT(i - 1)))
++			continue;
++		regulator_notifier_call_chain(priv->rdev[i],
++					      REGULATOR_EVENT_OVER_CURRENT,
++					      &i);
++	}
++
++	handle_evts = (intr_evts & RT5133_LDO_PGB_EVT_MASK) >>
++		RT5133_LDO_PGB_EVT_SHIFT;
++	for (i = RT5133_REGULATOR_LDO1; i < RT5133_REGULATOR_MAX && handle_evts; i++) {
++		if (!(handle_evts & BIT(i - 1)))
++			continue;
++		regulator_notifier_call_chain(priv->rdev[i],
++					      REGULATOR_EVENT_FAIL, &i);
++	}
++
++	ret = regmap_bulk_write(priv->regmap, RT5133_REG_BASE_EVT, &intr_evts,
++				RT5133_INTR_BYTE_NR);
++	if (ret)
++		dev_err(priv->dev, "%s, clear event failed\n", __func__);
++
++	return IRQ_HANDLED;
++}
++
++static int rt5133_enable_interrupts(int irq_no, struct rt5133_priv *priv)
++{
++	u32 mask = RT5133_INTR_CLR_MASK;
++	int ret;
++
++	/* Force to write clear all events */
++	ret = regmap_bulk_write(priv->regmap, RT5133_REG_BASE_EVT, &mask,
++				RT5133_INTR_BYTE_NR);
++	if (ret) {
++		dev_err(priv->dev, "Failed to clear all interrupts\n");
++		return ret;
++	}
++
++	/* Unmask all interrupts */
++	mask = 0;
++	ret = regmap_bulk_write(priv->regmap, RT5133_REG_BASE_MASK, &mask,
++				RT5133_INTR_BYTE_NR);
++	if (ret) {
++		dev_err(priv->dev, "Failed to unmask all interrupts\n");
++		return ret;
++	}
++
++	return devm_request_threaded_irq(priv->dev, irq_no, NULL,
++					 rt5133_intr_handler, IRQF_ONESHOT,
++					 dev_name(priv->dev), priv);
++}
++
++static int rt5133_regmap_hw_read(void *context, const void *reg_buf,
++				 size_t reg_size, void *val_buf,
++				 size_t val_size)
++{
++	struct rt5133_priv *priv = context;
++	struct i2c_client *client = to_i2c_client(priv->dev);
++	u8 reg = *(u8 *)reg_buf, crc;
++	u8 *buf;
++	int buf_len = RT5133_PREDATA_LEN + val_size + RT5133_I2C_CRC_LEN;
++	int read_len, ret;
++
++	buf = kzalloc(buf_len, GFP_KERNEL);
++	if (!buf)
++		return -ENOMEM;
++
++	buf[0] = I2C_ADDR_XLATE_8BIT(client->addr, I2C_SMBUS_READ);
++	buf[1] = reg;
++
++	read_len = val_size + RT5133_I2C_CRC_LEN;
++	ret = i2c_smbus_read_i2c_block_data(client, reg, read_len,
++					    buf + RT5133_PREDATA_LEN);
++
++	if (ret < 0)
++		goto out_read_err;
++
++	if (ret != read_len) {
++		ret = -EIO;
++		goto out_read_err;
++	}
++
++	crc = crc8(priv->crc8_tbls, buf, RT5133_PREDATA_LEN + val_size, 0);
++	if (crc != buf[RT5133_PREDATA_LEN + val_size]) {
++		ret = -EIO;
++		goto out_read_err;
++	}
++
++	memcpy(val_buf, buf + RT5133_PREDATA_LEN, val_size);
++	dev_dbg(priv->dev, "reg = 0x%02x, data = 0x%02x\n", reg, *(u8 *)val_buf);
++
++out_read_err:
++	kfree(buf);
++	return (ret < 0) ? ret : 0;
++}
++
++static int rt5133_regmap_hw_write(void *context, const void *data, size_t count)
++{
++	struct rt5133_priv *priv = context;
++	struct i2c_client *client = to_i2c_client(priv->dev);
++	u8 reg = *(u8 *)data, crc;
++	u8 *buf;
++	int buf_len = RT5133_I2C_ADDR_LEN + count + RT5133_I2C_CRC_LEN +
++		RT5133_I2C_DUMMY_LEN;
++	int write_len, ret;
++
++	buf = kzalloc(buf_len, GFP_KERNEL);
++	if (!buf)
++		return -ENOMEM;
++
++	buf[0] = I2C_ADDR_XLATE_8BIT(client->addr, I2C_SMBUS_WRITE);
++	buf[1] = reg;
++	memcpy(buf + RT5133_PREDATA_LEN, data + RT5133_REG_ADDR_LEN,
++	       count - RT5133_REG_ADDR_LEN);
++
++	crc = crc8(priv->crc8_tbls, buf, RT5133_I2C_ADDR_LEN + count, 0);
++	buf[RT5133_I2C_ADDR_LEN + count] = crc;
++
++	write_len = count - RT5133_REG_ADDR_LEN + RT5133_I2C_CRC_LEN +
++		RT5133_I2C_DUMMY_LEN;
++	ret = i2c_smbus_write_i2c_block_data(client, reg, write_len,
++					     buf + RT5133_PREDATA_LEN);
++
++	dev_dbg(priv->dev, "reg = 0x%02x, data = 0x%02x\n", reg,
++		*(u8 *)(buf + RT5133_PREDATA_LEN));
++	kfree(buf);
++	return ret;
++}
++
++static const struct regmap_bus rt5133_regmap_bus = {
++	.read = rt5133_regmap_hw_read,
++	.write = rt5133_regmap_hw_write,
++	/* Due to crc, the block read/write length has the limit */
++	.max_raw_read = RT5133_MAX_I2C_BLOCK_SIZE,
++	.max_raw_write = RT5133_MAX_I2C_BLOCK_SIZE,
++};
++
++// Due to crc, cache is not necessary
++static const struct regmap_config rt5133_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++	.max_register = RT5133_REG_LDO8_CTRL4,
++};
++
++static int rt5133_chip_reset(struct rt5133_priv *priv)
++{
++	int ret;
++
++	ret = regmap_write(priv->regmap, RT5133_REG_RST_CTRL,
++			   RT5133_RESET_CODE);
++	if (ret)
++		return ret;
++
++	/* Wait for register reset to take effect */
++	udelay(2);
++
++	return 0;
++}
++
++static int rt5133_validate_vendor_info(struct rt5133_priv *priv)
++{
++	unsigned int val = 0;
++	int i, ret;
++
++	ret = regmap_read(priv->regmap, RT5133_REG_CHIP_INFO, &val);
++	if (ret)
++		return ret;
++
++	for (i = 0; i < ARRAY_SIZE(regulator_data); i++) {
++		if ((val & RT5133_VENDOR_ID_MASK) ==
++						regulator_data[i].vendor_id){
++			priv->cdata = &regulator_data[i];
++			break;
++		}
++	}
++	if (IS_ERR(priv->cdata)) {
++		dev_err(priv->dev, "Failed to find regualtor match version\n");
++		return -ENODEV;
++	}
++
++	return 0;
++}
++
++static int rt5133_probe(struct i2c_client *i2c)
++{
++	struct rt5133_priv *priv;
++	struct regulator_config config = {0};
++	int i, ret;
++
++	priv = devm_kzalloc(&i2c->dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	priv->dev = &i2c->dev;
++	crc8_populate_msb(priv->crc8_tbls, RT5133_CRC8_POLYNOMIAL);
++
++	priv->enable_gpio = devm_gpiod_get_optional(&i2c->dev, "enable",
++						    GPIOD_OUT_HIGH);
++	if (IS_ERR(priv->enable_gpio))
++		dev_err(&i2c->dev, "Failed to request HWEN gpio, check if default en=high\n");
++
++	priv->regmap = devm_regmap_init(&i2c->dev, &rt5133_regmap_bus, priv,
++					&rt5133_regmap_config);
++	if (IS_ERR(priv->regmap)) {
++		dev_err(&i2c->dev, "Failed to register regmap\n");
++		return PTR_ERR(priv->regmap);
++	}
++
++	ret = rt5133_validate_vendor_info(priv);
++	if (ret) {
++		dev_err(&i2c->dev, "Failed to check vendor info [%d]\n", ret);
++		return ret;
++	}
++
++	ret = rt5133_chip_reset(priv);
++	if (ret) {
++		dev_err(&i2c->dev, "Failed to execute sw reset\n");
++		return ret;
++	}
++
++	config.dev = &i2c->dev;
++	config.driver_data = priv;
++	config.regmap = priv->regmap;
++
++	for (i = 0; i < RT5133_REGULATOR_MAX; i++) {
++		priv->rdev[i] = devm_regulator_register(&i2c->dev,
++							priv->cdata->regulators + i,
++							&config);
++		if (IS_ERR(priv->rdev[i])) {
++			dev_err(&i2c->dev,
++				"Failed to register [%d] regulator\n", i);
++			return PTR_ERR(priv->rdev[i]);
++		}
++	}
++
++	priv->gc.label = dev_name(&i2c->dev);
++	priv->gc.parent = &i2c->dev;
++	priv->gc.base = -1;
++	priv->gc.ngpio = RT5133_GPIO_NR;
++	priv->gc.set = rt5133_gpio_set;
++	priv->gc.get = rt5133_gpio_get;
++	priv->gc.direction_output = rt5133_gpio_direction_output;
++	priv->gc.can_sleep = true;
++
++	ret = devm_gpiochip_add_data(&i2c->dev, &priv->gc, priv);
++	if (ret)
++		return ret;
++
++	ret = rt5133_enable_interrupts(i2c->irq, priv);
++	if (ret) {
++		dev_err(&i2c->dev, "enable interrupt failed\n");
++		return ret;
++	}
++
++	i2c_set_clientdata(i2c, priv);
++
++	return ret;
++}
++
++static const struct of_device_id __maybe_unused rt5133_of_match_table[] = {
++	{ .compatible = "richtek,rt5133", },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, rt5133_of_match_table);
++
++static struct i2c_driver rt5133_driver = {
++	.driver = {
++		.name = "rt5133",
++		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
++		.of_match_table = rt5133_of_match_table,
++	},
++	.probe = rt5133_probe,
++};
++module_i2c_driver(rt5133_driver);
++
++MODULE_DESCRIPTION("RT5133 Regulator Driver");
++MODULE_LICENSE("GPL v2");
+-- 
+2.43.0
+
 
