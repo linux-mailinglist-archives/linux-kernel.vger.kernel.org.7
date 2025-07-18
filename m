@@ -1,167 +1,314 @@
-Return-Path: <linux-kernel+bounces-736610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52514B09F65
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:24:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2321B09FBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:31:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05F327BFDE1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:22:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89A0D5A7949
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60E28296150;
-	Fri, 18 Jul 2025 09:23:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MMa3nh+j"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E982BD5BB;
+	Fri, 18 Jul 2025 09:29:57 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6992949E5
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 09:23:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF0729ACF7;
+	Fri, 18 Jul 2025 09:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752830602; cv=none; b=PC7EC54SEZugWN2aL6Fhvl8VHxB3JtG16LXuVOlMInzY/3nKV1d7VGqtNmzZG9AMskbaWUv5DzFf1q83veyzpylAsUfLuT/vR36IyZfIhqiImxQT7st7faw4ugG2KiZbBohtiAJPjmgkLjQuFRVVr2mD40RF7h9IhM9GKPplO2M=
+	t=1752830996; cv=none; b=FUyCva+qF9ZFbeA8VL6dL0TvEFro89xgIqNGqkXr66hLycR3v1tnkAlUwWedSgCq0g5n/0ZK+MuzgXGMCzM9S3pAyMz5GhDRtuRInxwzoiPHIUTQ8mOUJE8Pok5WI7pUWYD0MrQq2YikjkVnVRhXSiGqPdfVpdaY8G2ASnJzmU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752830602; c=relaxed/simple;
-	bh=RcdS4qXRNHqoIFtflPy8p6xxpU4RVnQO+PYcwJzQfzA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UtX9gK7UGauOootCWpdWBSrt2i5R0l9uamhGunKOsWm9ZjjNFZwx13pU1LwUHu9a0iNfV5U379LUblOUGPYard/eIgICPEjhZO+SAN56DNQ8gdUKwDuLufbPuQFPudUjvprwzBGVEenCY1ycNJlLAPsP9AT0eaZ1TkubLQogMGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MMa3nh+j; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56I04Qsr016007
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 09:23:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	R9tbdwW74cZEyqwu7Rui55/J0rnn4mTkIqlUTKDRA+4=; b=MMa3nh+jnbnhJj/n
-	qLQLWRiB8S65cc2Ewc0lGtk7lveJn4/SBE3pbMdBizMtCXuUyixMc1OkNBN49KTg
-	nZ2nREVccb8OVDQpqgK9wlOQzuN3Nf2BvQ0TRg0R2Rn2mBmRxSIcxhMhGzpisIjt
-	nB7dKqeET01QFmvtrzYIznq9zZ9/ZCDczjvrnHLO++e8lONjZZP2sFNykCgKnMma
-	Ixi2/NtSYvZAnKU14/XT7d6a7oQB+YWRG7OsJ+QTB8LVZC6euEmaZlwiWK1GiWc+
-	mwLdpRPLgROVQm59wwns/lyozmb5pEi94KDrerDGy5uFiHm8xmxM5cuqN8dz7swz
-	iY3WEg==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47y3tc2t1p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 09:23:20 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4a9bcdc73c0so5179641cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 02:23:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752830599; x=1753435399;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R9tbdwW74cZEyqwu7Rui55/J0rnn4mTkIqlUTKDRA+4=;
-        b=hVj5MPAwhOAm9crhU4aIxw+BTeGBvJ43fH9C98ETBf0Bk4YnpjNZjmUeE4C+OhYhrl
-         F+Jit2NPvermj2E+6qRWmCC+EVDTOqq75jW4b1z+oV5nTbZzeV1Hcdm1qe23KHApL5jt
-         TrLSMbcQpjBnUSjyYFYRJHCMiwmUpFI8AkAA+46UwKkvj2BqEPjEsWdXM6p9Q4i7xcqY
-         0krgBRGUkJK7alXFWmXKpsP0d46ze6XeMd+o7aTnxDV5KfKX4Ar5z6UgvxoZfuhQJOkG
-         ZIiZPWdTllSz3hPHx6BfSeIIaqZoPjVyGf6Ky31j5ELdYENEJ0vUCsgFEKqIA0XtCFWe
-         fJ8g==
-X-Forwarded-Encrypted: i=1; AJvYcCVp9yR+otV4k5CNdfGyprk3aw1g/TcSqU/U6WRv7bS5fvML1LsBjaNm4OY2dZ9B1YFCTgXmX39k3GHOME0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9tF7cXwhVs3v1Rr9wmSL9K+RAfe8m+UTH2XUexYrT8kEmFvaI
-	AKy1wdeATlIcJCaQLuF+OyozLhHNphAVqQiSD56tKU+JYcfwgBesWmK8z8RPNypPbwgKjuVXjgq
-	t7pFVsRBkVIczZ+8I7dK5i5cizqnVOaUY9bq8rZ73ICTuNVUkUgZOrY5f2XMS7WKQBmI=
-X-Gm-Gg: ASbGncsC2OQ7heMvNe3kI1037XzV/yEnmgIiJYJjF3KzbsPAmS5IphSxEmID10DAUbv
-	TzeLZ5em7uIdm4+bagoBS4V16+ftzS5l94IlQmDD/am8YzPh5zXAouV4RL6yY6SHDD9EWSPA2Lo
-	emoknKCqGnlAKZ0RoNpKus5gFCrrpgRIdWPp9JP/R6Yydd6SQrel25yv8KToA2u6rdOr1rNKoKB
-	MoxlGRRYEOdhZW0dvOIqdvRWBC3eS6EDwC0caOaEvCSKNel6O2yRDK8908Z/afNqrarBDTswV8y
-	gNNhBbp0toUKUOSoj8a/FenWLzyb3Jvbx14c3xgGbh9C0PXA8RucOAV+EeTxep4NCzMnctxcxaf
-	g4w7cjq0EvfxD3ZQpsqpR
-X-Received: by 2002:a05:620a:27d2:b0:7e2:1609:a19a with SMTP id af79cd13be357-7e342aeef45mr582361885a.8.1752830599229;
-        Fri, 18 Jul 2025 02:23:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEp5OpRRRlubBf4j3XB9hMRhuiSC9XEu5aCviHEU07bToJoCBMGtr/bqJyK9a710HZLckzjkg==
-X-Received: by 2002:a05:620a:27d2:b0:7e2:1609:a19a with SMTP id af79cd13be357-7e342aeef45mr582357585a.8.1752830598696;
-        Fri, 18 Jul 2025 02:23:18 -0700 (PDT)
-Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6c7d9941sm87211666b.56.2025.07.18.02.23.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Jul 2025 02:23:17 -0700 (PDT)
-Message-ID: <17ea4f08-daf0-406c-8760-23a23417ec1f@oss.qualcomm.com>
-Date: Fri, 18 Jul 2025 11:23:14 +0200
+	s=arc-20240116; t=1752830996; c=relaxed/simple;
+	bh=7F2Aue6bfcZPHtfeGlCc7gKpgwJMNj1nFFdC+A/zbVA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RJlSyCE/02IkmAgEGBM8TrV6mZfwiaHONO2cdQN4BW9hvKtmpMWBOgY42L1qHG82dTnjLxkltqMbssfHoiJAHIOvNyYhiKy3R0LuyL5YJ5SsH5BJ1r3Vpcg6q339pn0grZtiMc0bYyZ3WQyHiCylydBbGLJUiVZr+CxxpHdmBEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bk4JC6VPPzYQvMd;
+	Fri, 18 Jul 2025 17:29:47 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id A08711A1382;
+	Fri, 18 Jul 2025 17:29:46 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgDXUxQGFHpoDl6qAg--.5172S4;
+	Fri, 18 Jul 2025 17:29:44 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: corbet@lwn.net,
+	agk@redhat.com,
+	snitzer@kernel.org,
+	mpatocka@redhat.com,
+	song@kernel.org,
+	yukuai3@huawei.com,
+	hare@suse.de
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dm-devel@lists.linux.dev,
+	linux-raid@vger.kernel.org,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	johnny.chenyi@huawei.com
+Subject: [PATCH v3 00/11] md/llbitmap: md/md-llbitmap: introduce a new lockless bitmap
+Date: Fri, 18 Jul 2025 17:23:25 +0800
+Message-Id: <20250718092336.3346644-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/5] arm64: dts: qcom: Add MST pixel streams for
- displayport
-To: Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <lumag@kernel.org>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>,
-        Abel Vesa <abel.vesa@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Mahadevan <quic_mahap@quicinc.com>,
-        Krishna Manikandan <quic_mkrishn@quicinc.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Danila Tikhonov
- <danila@jiaxyga.com>,
-        cros-qcom-dts-watchers@chromium.org
-Cc: Abhinav Kumar <abhinav.kumar@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Yongxing Mou <quic_yongmou@quicinc.com>
-References: <20250717-dp_mst_bindings-v3-0-72ce08285703@oss.qualcomm.com>
- <20250717-dp_mst_bindings-v3-5-72ce08285703@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250717-dp_mst_bindings-v3-5-72ce08285703@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=Z5PsHGRA c=1 sm=1 tr=0 ts=687a1288 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=biz6BXDC6RXR6m6nPMoA:9
- a=QEXdDO2ut3YA:10 a=a_PwQJl-kcHnX1M80qC6:22
-X-Proofpoint-ORIG-GUID: LtG7l5Z4hgjhK7V2P5PxjzkFQDWMwbX1
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE4MDA3MiBTYWx0ZWRfX9Ct0KH2ifA+T
- 7hxd5xoUngQ7erxcw2CqGiQ1FSoe7yQWsBA/T2T9BdelEZnWOWrV+COEXtVFxDQnpTnSXEbTUTl
- gzCJLeeB148YVzb9w+9eNQMRhGz/6E/SHkguXxnzLticPqYz0h3fOAR5GtWS/RuyoGAOHcMr/Zr
- kFzkmbmpMf7tEJmtYkhuOuQDo1A0nEqBu08p2IhNsegpXfW1heoDB8ALJ947Hs+AgJjOT0193OJ
- qvK1ZdfGSXnNmKPpHeZiMXa4BJht5ooLfYFOqLwUF8D0Xoe+uIwKW7ggkcFQcY7yqrJjPvoso1a
- sW5eaR3iFJzKh69rASqw/YeyRp8h7Ghr0aHY1UJHQFDLv4twCPMbCSHv3y95bDFBLYLECXCje1n
- Kg4k0ilqIHz1ez/GiwowoVxQR1ewAZiuW8tmCdeERuOX2NgYYtf2NQdjaKFvBZAYeXakW8Sp
-X-Proofpoint-GUID: LtG7l5Z4hgjhK7V2P5PxjzkFQDWMwbX1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-18_02,2025-07-17_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 mlxlogscore=577 suspectscore=0 spamscore=0 clxscore=1015
- mlxscore=0 malwarescore=0 phishscore=0 lowpriorityscore=0 adultscore=0
- priorityscore=1501 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507180072
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDXUxQGFHpoDl6qAg--.5172S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxKryrKr1rKF18CryfZFykuFg_yoW3tF1Dp3
+	yavrn3Grs8Jr40gwsrA34IqFyrtw4kJrnrtr1rJ3yF93s0krn0vF4xWay0q3y7Gry7GF1j
+	qFs8tr97GFyq9FJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUOv38UUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On 7/18/25 1:28 AM, Jessica Zhang wrote:
-> The following chipsets support 2 total pixel streams:
->   - sa8775p (on mdss_dp1)
->   - sc8180x
->   - sc8280xp (mdss_dp0-2 only)
->   - sm8150
->   - sm8350
+From: Yu Kuai <yukuai3@huawei.com>
 
-I think 8250 can do 2 streams too, no?
+Changes from v2:
+ - add comments about KOBJECT_CHANGE uevent in patch 6;
+ - convert llbitmap_suspend() to llbitmap_suspend_timeout() in patch 11;
+ - add some comments in patch 11;
+ - add review tag:
+  - patch 3,4,5,9 from Hannes
+Changes from v1:
+ - explain md_bitmap_fn in commit message, patch 3;
+ - handle the case CONFIG_MD_BITMAP is disabled, patch 4;
+ - split patch 7 from v1 into patch 5 + 6;
+ - rewrite bitmap_type_store, patch 5;
+ - fix dm-raid regerssion that md-bitmap sysfs entries should not be
+ created under mddev kobject, patch 6
+ - merge llbitmap patches into one patch, with lots of cleanups;
+ - add review tag:
+  - patch 1,2,7,8,9,10 from Christoph
+  - patch 1,2,7,8,10 from Hannes
+  - patch 1,2,3,7 from Xiao
 
-sdm845/sm7150 also have the clocks for it FWIW, but that doesn't
-necessarily mean they're consumed
+v2: https://lore.kernel.org/all/20250707165202.11073-12-yukuai@kernel.org/
+v1: https://lore.kernel.org/all/20250524061320.370630-1-yukuai1@huaweicloud.com/
+RFC: https://lore.kernel.org/all/20250512011927.2809400-1-yukuai1@huaweicloud.com/
 
-Konrad
+Branch for review:
+https://git.kernel.org/pub/scm/linux/kernel/git/yukuai/linux.git/log/?h=yukuai/md-llbitmap-v3
+
+#### Background
+
+Redundant data is used to enhance data fault tolerance, and the storage
+method for redundant data vary depending on the RAID levels. And it's
+important to maintain the consistency of redundant data.
+
+Bitmap is used to record which data blocks have been synchronized and which
+ones need to be resynchronized or recovered. Each bit in the bitmap
+represents a segment of data in the array. When a bit is set, it indicates
+that the multiple redundant copies of that data segment may not be
+consistent. Data synchronization can be performed based on the bitmap after
+power failure or readding a disk. If there is no bitmap, a full disk
+synchronization is required.
+
+#### Key Features
+
+ - IO fastpath is lockless, if user issues lots of write IO to the same
+ bitmap bit in a short time, only the first write have additional overhead
+ to update bitmap bit, no additional overhead for the following writes;
+ - support only resync or recover written data, means in the case creating
+ new array or replacing with a new disk, there is no need to do a full disk
+ resync/recovery;
+
+#### Key Concept
+
+##### State Machine
+
+Each bit is one byte, contain 6 difference state, see llbitmap_state. And
+there are total 8 differenct actions, see llbitmap_action, can change state:
+
+llbitmap state machine: transitions between states
+
+|           | Startwrite | Startsync | Endsync | Abortsync|
+| --------- | ---------- | --------- | ------- | -------  |
+| Unwritten | Dirty      | x         | x       | x        |
+| Clean     | Dirty      | x         | x       | x        |
+| Dirty     | x          | x         | x       | x        |
+| NeedSync  | x          | Syncing   | x       | x        |
+| Syncing   | x          | Syncing   | Dirty   | NeedSync |
+
+|           | Reload   | Daemon | Discard   | Stale     |
+| --------- | -------- | ------ | --------- | --------- |
+| Unwritten | x        | x      | x         | x         |
+| Clean     | x        | x      | Unwritten | NeedSync  |
+| Dirty     | NeedSync | Clean  | Unwritten | NeedSync  |
+| NeedSync  | x        | x      | Unwritten | x         |
+| Syncing   | NeedSync | x      | Unwritten | NeedSync  |
+
+Typical scenarios:
+
+1) Create new array
+All bits will be set to Unwritten by default, if --assume-clean is set,
+all bits will be set to Clean instead.
+
+2) write data, raid1/raid10 have full copy of data, while raid456 doesn't and
+rely on xor data
+
+2.1) write new data to raid1/raid10:
+Unwritten --StartWrite--> Dirty
+
+2.2) write new data to raid456:
+Unwritten --StartWrite--> NeedSync
+
+Because the initial recover for raid456 is skipped, the xor data is not build
+yet, the bit must set to NeedSync first and after lazy initial recover is
+finished, the bit will finially set to Dirty(see 5.1 and 5.4);
+
+2.3) cover write
+Clean --StartWrite--> Dirty
+
+3) daemon, if the array is not degraded:
+Dirty --Daemon--> Clean
+
+For degraded array, the Dirty bit will never be cleared, prevent full disk
+recovery while readding a removed disk.
+
+4) discard
+{Clean, Dirty, NeedSync, Syncing} --Discard--> Unwritten
+
+5) resync and recover
+
+5.1) common process
+NeedSync --Startsync--> Syncing --Endsync--> Dirty --Daemon--> Clean
+
+5.2) resync after power failure
+Dirty --Reload--> NeedSync
+
+5.3) recover while replacing with a new disk
+By default, the old bitmap framework will recover all data, and llbitmap
+implement this by a new helper, see llbitmap_skip_sync_blocks:
+
+skip recover for bits other than dirty or clean;
+
+5.4) lazy initial recover for raid5:
+By default, the old bitmap framework will only allow new recover when there
+are spares(new disk), a new recovery flag MD_RECOVERY_LAZY_RECOVER is add
+to perform raid456 lazy recover for set bits(from 2.2).
+
+##### Bitmap IO
+
+##### Chunksize
+
+The default bitmap size is 128k, incluing 1k bitmap super block, and
+the default size of segment of data in the array each bit(chunksize) is 64k,
+and chunksize will adjust to twice the old size each time if the total number
+bits is not less than 127k.(see llbitmap_init)
+
+##### READ
+
+While creating bitmap, all pages will be allocated and read for llbitmap,
+there won't be read afterwards
+
+##### WRITE
+
+WRITE IO is divided into logical_block_size of the array, the dirty state
+of each block is tracked independently, for example:
+
+each page is 4k, contain 8 blocks; each block is 512 bytes contain 512 bit;
+
+| page0 | page1 | ... | page 31 |
+|       |
+|        \-----------------------\
+|                                |
+| block0 | block1 | ... | block 8|
+|        |
+|         \-----------------\
+|                            |
+| bit0 | bit1 | ... | bit511 |
+
+>From IO path, if one bit is changed to Dirty or NeedSync, the corresponding
+subpage will be marked dirty, such block must write first before the IO is
+issued. This behaviour will affect IO performance, to reduce the impact, if
+multiple bits are changed in the same block in a short time, all bits in this
+block will be changed to Dirty/NeedSync, so that there won't be any overhead
+until daemon clears dirty bits.
+
+##### Dirty Bits syncronization
+
+IO fast path will set bits to dirty, and those dirty bits will be cleared
+by daemon after IO is done. llbitmap_page_ctl is used to synchronize between
+IO path and daemon;
+
+IO path:
+ 1) try to grab a reference, if succeed, set expire time after 5s and return;
+ 2) if failed to grab a reference, wait for daemon to finish clearing dirty
+ bits;
+
+Daemon(Daemon will be waken up every daemon_sleep seconds):
+For each page:
+ 1) check if page expired, if not skip this page; for expired page:
+ 2) suspend the page and wait for inflight write IO to be done;
+ 3) change dirty page to clean;
+ 4) resume the page;
+
+Performance Test:
+Simple fio randwrite test to build array with 20GB ramdisk in my VM:
+
+|                      | none      | bitmap    | llbitmap  |
+| -------------------- | --------- | --------- | --------- |
+| raid1                | 13.7MiB/s | 9696KiB/s | 19.5MiB/s |
+| raid1(assume clean)  | 19.5MiB/s | 11.9MiB/s | 19.5MiB/s |
+| raid10               | 21.9MiB/s | 11.6MiB/s | 27.8MiB/s |
+| raid10(assume clean) | 27.8MiB/s | 15.4MiB/s | 27.8MiB/s |
+| raid5                | 14.0MiB/s | 11.6MiB/s | 12.9MiB/s |
+| raid5(assume clean)  | 17.8MiB/s | 13.4MiB/s | 13.9MiB/s |
+
+For raid1/raid10 llbitmap can be better than none bitmap with background
+initial resync, and it's the same as none bitmap without it.
+
+Noted that llbitmap performance improvement for raid5 is not obvious,
+this is due to raid5 has many other performance bottleneck, perf
+results still shows that bitmap overhead will be much less.
+
+Yu Kuai (11):
+  md: add a new parameter 'offset' to md_super_write()
+  md: factor out a helper raid_is_456()
+  md/md-bitmap: support discard for bitmap ops
+  md: add a new mddev field 'bitmap_id'
+  md/md-bitmap: add a new sysfs api bitmap_type
+  md/md-bitmap: delay registration of bitmap_ops until creating bitmap
+  md/md-bitmap: add a new method skip_sync_blocks() in bitmap_operations
+  md/md-bitmap: add a new method blocks_synced() in bitmap_operations
+  md: add a new recovery_flag MD_RECOVERY_LAZY_RECOVER
+  md/md-bitmap: make method bitmap_ops->daemon_work optional
+  md/md-llbitmap: introduce new lockless bitmap
+
+ Documentation/admin-guide/md.rst |   84 +-
+ drivers/md/Kconfig               |   11 +
+ drivers/md/Makefile              |    1 +
+ drivers/md/md-bitmap.c           |   15 +-
+ drivers/md/md-bitmap.h           |   45 +-
+ drivers/md/md-llbitmap.c         | 1564 ++++++++++++++++++++++++++++++
+ drivers/md/md.c                  |  289 ++++--
+ drivers/md/md.h                  |   20 +-
+ drivers/md/raid5.c               |    6 +
+ 9 files changed, 1927 insertions(+), 108 deletions(-)
+ create mode 100644 drivers/md/md-llbitmap.c
+
+-- 
+2.39.2
+
 
