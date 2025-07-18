@@ -1,168 +1,162 @@
-Return-Path: <linux-kernel+bounces-736944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4688CB0A576
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:45:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20C54B0A579
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:45:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E92C3AEFCA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:44:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39FB118841D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:45:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE932155CB3;
-	Fri, 18 Jul 2025 13:43:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD9C2DAFB1;
+	Fri, 18 Jul 2025 13:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XnPSymwU";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="T//Eds1e"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h6yFO+Qc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C969113C9A6
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 13:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31F0295DA6;
+	Fri, 18 Jul 2025 13:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752846237; cv=none; b=egzZUYKvRdk6Go/hYyZk2eCG4mOSEz+qw6Zfa032AlFSpoT4msX0aZoo03K/9WOLuoZD+/sgAwqEm7KrkgBotxGWdsp86aFv+yfHEkxcmj+XEJhE7U8g/b23Jo4GSTG43+iyJRQw/5QiDhFNEBduokDG7miBtZNy3p5GbyTgfGE=
+	t=1752846324; cv=none; b=iohbK1lT/idf2B/s+2QFSbqDmzbV4uIZuqb7JawlFXq+frKXNsA4YfhWoD+m47VVECr3HKJ+FEDJzNVD4G8wg3Kl5RkX3Z8SNgL7CwUfg6NVGjgZZZLn51xVtM5cS+qAWj64YyQa+ynRyt1Oz9u6eddEPa8ZeXemyCaxBL81kCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752846237; c=relaxed/simple;
-	bh=q2UjMKOga6JToQy1uIaopMAEf1fITIaxtJHPyKM7SwA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=CGigxFKbMp4Och/Y/gM5gxdHubGPLmu+CRFhQrqUU1ERjgkUKf+WN0iuxesalt245zrPMQkGP3eBx2amgnYEHzcmtl8nRp9vw5w5o5NFNs3Ces49Ow69RlzFHuj7xt5Gb3x8+bKdOw4gCXUKlw6o9F+S9Y+/I583aK96YUosd7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XnPSymwU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=T//Eds1e; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752846234;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=a4gWJwKjGqlCn3SHvIPVpvQm4zN1334M0yU56VgpRRE=;
-	b=XnPSymwUhnbipVc7aff+wxyOsOwyCr8tAjQWtH1swGBR8DIQvdfx2p9MBWR3X5zzBO/eTa
-	To1vBHdU7VwJQd8iV1pySLCskprvC/67T2VnhOyRixljxrlYlO5RFInAswXFf/3p5KBo2M
-	adaXOSTAvWXwgrG84NM0kXnIGexvG28qwBkuYYUVUoQ3zwQ6Uaj2KEHBw0DPYnYpf9ZpZl
-	aMt77fm1RZnHymVxl3LU1uaDNKATljxpIcz5Rj/YMUhqzqgQz4OV0HFwMQ6NrxJdPYvGdn
-	7J73NXwPZv6EuxNHgTot1vZHi/ywinGLRCSt3eEiyDuoC6Gz4e90gOSdY7y7EQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752846234;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=a4gWJwKjGqlCn3SHvIPVpvQm4zN1334M0yU56VgpRRE=;
-	b=T//Eds1eCehNxOcxKJJbUZXhqzSCd4hnRVBT0nHtubwKZqc/o89xmqW/gVlQmOZnsxThgm
-	HhPz34nJwhm04cDw==
-Date: Fri, 18 Jul 2025 15:43:49 +0200
-Subject: [PATCH] drivers: virt: acrn: Don't use %pK through printk
+	s=arc-20240116; t=1752846324; c=relaxed/simple;
+	bh=lBP1tzJtVv+ELpkrm+Hxa6Vf6Oiw3IR0Q/iMkUJvCxs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QsPni4w+zy62Zl59fpoLveRcXpZoDMS416Bq4JjMN9YavQswO+WWVLjZH4LrmIXEZPWNxK/V6O6fyC9BgdB7wCt6TuIlUJkjhDZbi7dkNgjwdaJ39UEnghYgkbZW03n7+IwiQFWjqZ0pZOYpG4hUkEYnlFtvARe3ipn9qF4Eiho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h6yFO+Qc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27009C4CEEB;
+	Fri, 18 Jul 2025 13:45:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752846324;
+	bh=lBP1tzJtVv+ELpkrm+Hxa6Vf6Oiw3IR0Q/iMkUJvCxs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h6yFO+QciUODNeNc6oLaPSievka/COZ7FjdiqWTRSHbwajP52I4qTSihh2m4CKxWl
+	 8SA2w9m2zLbgsQ/Bv/FY8avM/ZRklvj+spKlpRArQiSDx60NWHu8vc4ackmEf02XXg
+	 tbmDZ4WPmE/nkZPceSTCKapGZutcdmi3PG1k0e/fDC/OWdrQhEtmv+PJlG73M1J+oi
+	 wXOOahvXEq3dEdOeMxV8Pq4qXbqmOfAseOAvciovHfDkWucQZgL9HZP04sVsluJ6wl
+	 cLxBGMyOIjqAAxjqzlvPafBuDWNHUIBMedJczxZ9HgycszXhOOK9m9SOIdDAVUO3K9
+	 mH8eEr0svb//g==
+Date: Fri, 18 Jul 2025 14:45:17 +0100
+From: Will Deacon <will@kernel.org>
+To: perlarsen@google.com
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, ahomescu@google.com,
+	armellel@google.com, arve@android.com, ayrton@google.com,
+	qperret@google.com, sebastianene@google.com, qwandor@google.com
+Subject: Re: [PATCH v7 4/5] KVM: arm64: Bump the supported version of FF-A to
+ 1.2
+Message-ID: <aHpP7fntDQ7SMPAC@willie-the-truck>
+References: <20250701-virtio-msg-ffa-v7-0-995afc3d385e@google.com>
+ <20250701-virtio-msg-ffa-v7-4-995afc3d385e@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250718-restricted-pointers-virt-v1-1-12913fceaf52@linutronix.de>
-X-B4-Tracking: v=1; b=H4sIAJRPemgC/x3MQQqFMAxF0a1Ixj9gK2J1K/IHUp+aSZWkiCDu3
- eLwDO69yaACo6G6SXGKyZ4K3K+iuE1pBctcTL72bd25wArLKjFj5mOXlKHGp2hmF8KCyfnY9JF
- KfigWub71+H+eFzqfCH5qAAAA
-X-Change-ID: 20250718-restricted-pointers-virt-188fea12c39c
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Fei Li <fei1.li@intel.com>
-Cc: linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752846233; l=3405;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=q2UjMKOga6JToQy1uIaopMAEf1fITIaxtJHPyKM7SwA=;
- b=lXi9lyg7l+RVZWqk+KnWqJ2cW+QQOjV0tSdGVAct4twexKCSbw8aWe/Q/p1B0ckrRRUQoJ1re
- guXH4R+M2swD27A90OGaFWMBslByvvw3RaWlONTT8LQvGDS5rJi97Dl
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250701-virtio-msg-ffa-v7-4-995afc3d385e@google.com>
 
-In the past %pK was preferable to %p as it would not leak raw pointer
-values into the kernel log.
-Since commit ad67b74d2469 ("printk: hash addresses printed with %p")
-the regular %p has been improved to avoid this issue.
-Furthermore, restricted pointers ("%pK") were never meant to be used
-through printk(). They can still unintentionally leak raw pointers or
-acquire sleeping locks in atomic contexts.
+On Tue, Jul 01, 2025 at 10:06:37PM +0000, Per Larsen via B4 Relay wrote:
+> From: Per Larsen <perlarsen@google.com>
+> 
+> FF-A version 1.2 introduces the DIRECT_REQ2 ABI. Bump the FF-A version
+> preferred by the hypervisor as a precursor to implementing the 1.2-only
+> FFA_MSG_SEND_DIRECT_REQ2 and FFA_MSG_SEND_RESP2 messaging interfaces.
+> 
+> We must also use SMCCC 1.2 for 64-bit SMCs if hypervisor negotiated FF-A
+> 1.2, so ffa_set_retval is updated and a new function to call 64-bit smcs
+> using SMCCC 1.2 with fallback to SMCCC 1.1 is introduced.
+> 
+> Update ffa_call_supported to mark FF-A 1.2 interfaces as unsupported
+> lest they get forwarded.
+> 
+> Co-developed-by: Ayrton Munoz <ayrton@google.com>
+> Signed-off-by: Ayrton Munoz <ayrton@google.com>
+> Signed-off-by: Per Larsen <perlarsen@google.com>
+> ---
+>  arch/arm64/kvm/hyp/nvhe/ffa.c | 18 ++++++++++++++----
+>  include/linux/arm_ffa.h       |  1 +
+>  2 files changed, 15 insertions(+), 4 deletions(-)
 
-Switch to the regular pointer formatting which is safer and
-easier to reason about.
+This patch needs to be split into smaller chunks as it's doing a number
+of things in one go.
 
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- drivers/virt/acrn/ioreq.c | 4 ++--
- drivers/virt/acrn/mm.c    | 8 ++++----
- 2 files changed, 6 insertions(+), 6 deletions(-)
+> diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> index 5fd6474d96ae4b90d99796ee81bb36373219afc4..79d834120a3f3d26e17e9170c60012b60c6f5a5e 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
+> +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> @@ -678,6 +678,13 @@ static bool ffa_call_supported(u64 func_id)
+>  	case FFA_NOTIFICATION_SET:
+>  	case FFA_NOTIFICATION_GET:
+>  	case FFA_NOTIFICATION_INFO_GET:
+> +	/* Optional interfaces added in FF-A 1.2 */
+> +	case FFA_MSG_SEND_DIRECT_REQ2:		/* Optional per 7.5.1 */
+> +	case FFA_MSG_SEND_DIRECT_RESP2:		/* Optional per 7.5.1 */
+> +	case FFA_CONSOLE_LOG:			/* Optional per 13.1: not in Table 13.1 */
+> +	case FFA_PARTITION_INFO_GET_REGS:	/* Optional for virtual instances per 13.1 */
+> +	/* Unsupported interfaces added in FF-A 1.2 */
+> +	case FFA_EL3_INTR_HANDLE:		/* Only valid for secure physical instances */
+>  		return false;
+>  	}
 
-diff --git a/drivers/virt/acrn/ioreq.c b/drivers/virt/acrn/ioreq.c
-index e94358239a4b54013b2d770b3626175c6c312059..55ddfa4840afc4c0bf72a73b9dac1a74ddbddb09 100644
---- a/drivers/virt/acrn/ioreq.c
-+++ b/drivers/virt/acrn/ioreq.c
-@@ -626,7 +626,7 @@ int acrn_ioreq_init(struct acrn_vm *vm, u64 buf_vma)
- 	}
- 
- 	dev_dbg(acrn_dev.this_device,
--		"Init ioreq buffer %pK!\n", vm->ioreq_buf);
-+		"Init ioreq buffer %p!\n", vm->ioreq_buf);
- 	ret = 0;
- free_buf:
- 	kfree(set_buffer);
-@@ -638,7 +638,7 @@ void acrn_ioreq_deinit(struct acrn_vm *vm)
- 	struct acrn_ioreq_client *client, *next;
- 
- 	dev_dbg(acrn_dev.this_device,
--		"Deinit ioreq buffer %pK!\n", vm->ioreq_buf);
-+		"Deinit ioreq buffer %p!\n", vm->ioreq_buf);
- 	/* Destroy all clients belonging to this VM */
- 	list_for_each_entry_safe(client, next, &vm->ioreq_clients, list)
- 		acrn_ioreq_client_destroy(client);
-diff --git a/drivers/virt/acrn/mm.c b/drivers/virt/acrn/mm.c
-index 4c2f28715b703957eb8ef1aef2a719cd704cb1ef..bfb3031885e8d6c288d0d34a01c2509c808249cb 100644
---- a/drivers/virt/acrn/mm.c
-+++ b/drivers/virt/acrn/mm.c
-@@ -68,7 +68,7 @@ int acrn_mm_region_add(struct acrn_vm *vm, u64 user_gpa, u64 service_gpa,
- 	ret = modify_region(vm, region);
- 
- 	dev_dbg(acrn_dev.this_device,
--		"%s: user-GPA[%pK] service-GPA[%pK] size[0x%llx].\n",
-+		"%s: user-GPA[%p] service-GPA[%p] size[0x%llx].\n",
- 		__func__, (void *)user_gpa, (void *)service_gpa, size);
- 	kfree(region);
- 	return ret;
-@@ -99,7 +99,7 @@ int acrn_mm_region_del(struct acrn_vm *vm, u64 user_gpa, u64 size)
- 
- 	ret = modify_region(vm, region);
- 
--	dev_dbg(acrn_dev.this_device, "%s: user-GPA[%pK] size[0x%llx].\n",
-+	dev_dbg(acrn_dev.this_device, "%s: user-GPA[%p] size[0x%llx].\n",
- 		__func__, (void *)user_gpa, size);
- 	kfree(region);
- 	return ret;
-@@ -224,7 +224,7 @@ int acrn_vm_ram_map(struct acrn_vm *vm, struct acrn_vm_memmap *memmap)
- 
- 		if (ret) {
- 			dev_dbg(acrn_dev.this_device,
--				"Failed to lookup PFN at VMA:%pK.\n", (void *)memmap->vma_base);
-+				"Failed to lookup PFN at VMA:%p.\n", (void *)memmap->vma_base);
- 			return ret;
- 		}
- 
-@@ -326,7 +326,7 @@ int acrn_vm_ram_map(struct acrn_vm *vm, struct acrn_vm_memmap *memmap)
- 	kfree(regions_info);
- 
- 	dev_dbg(acrn_dev.this_device,
--		"%s: VM[%u] service-GVA[%pK] user-GPA[%pK] size[0x%llx]\n",
-+		"%s: VM[%u] service-GVA[%p] user-GPA[%p] size[0x%llx]\n",
- 		__func__, vm->vmid,
- 		remap_vaddr, (void *)memmap->user_vm_pa, memmap->len);
- 	return ret;
+This could be a standalone change ^^^
 
----
-base-commit: d086c886ceb9f59dea6c3a9dae7eb89e780a20c9
-change-id: 20250718-restricted-pointers-virt-188fea12c39c
+>  
+> @@ -734,7 +741,10 @@ static int hyp_ffa_post_init(void)
+>  	if (res.a0 != FFA_SUCCESS)
+>  		return -EOPNOTSUPP;
+>  
+> -	switch (res.a2) {
+> +	if ((res.a2 & GENMASK(15, 2)) != 0 || res.a3 != 0)
+> +		return -EINVAL;
 
-Best regards,
--- 
-Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+Why are you checking bits a2[15:2] and a3? The spec says they MBZ,
+so we shouldn't care about enforcing that. In fact, adding the check
+probably means we'll fail if those bits get allocated in future.
 
+> +
+> +	switch (res.a2 & FFA_FEAT_RXTX_MIN_SZ_MASK) {
+
+That makes sense, and can be its own patch.
+
+>  	case FFA_FEAT_RXTX_MIN_SZ_4K:
+>  		min_rxtx_sz = SZ_4K;
+>  		break;
+> @@ -931,7 +941,7 @@ int hyp_ffa_init(void *pages)
+>  
+>  	arm_smccc_1_2_smc(&(struct arm_smccc_1_2_regs) {
+>  		.a0 = FFA_VERSION,
+> -		.a1 = FFA_VERSION_1_1,
+> +		.a1 = FFA_VERSION_1_2,
+>
+>  	}, &res);
+>  	if (res.a0 == FFA_RET_NOT_SUPPORTED)
+>  		return 0;
+> @@ -952,10 +962,10 @@ int hyp_ffa_init(void *pages)
+>  	if (FFA_MAJOR_VERSION(res.a0) != 1)
+>  		return -EOPNOTSUPP;
+>  
+> -	if (FFA_MINOR_VERSION(res.a0) < FFA_MINOR_VERSION(FFA_VERSION_1_1))
+> +	if (FFA_MINOR_VERSION(res.a0) < FFA_MINOR_VERSION(FFA_VERSION_1_2))
+>  		hyp_ffa_version = res.a0;
+>  	else
+> -		hyp_ffa_version = FFA_VERSION_1_1;
+> +		hyp_ffa_version = FFA_VERSION_1_2;
+
+The move to v1.2 can also be its own patch. So you end up with three in
+total.
+
+Will
 
