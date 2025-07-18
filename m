@@ -1,161 +1,153 @@
-Return-Path: <linux-kernel+bounces-736594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59FCAB09F12
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:18:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E863B09F15
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:19:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E015AA858CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:18:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F158EA863CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:18:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C298D29617F;
-	Fri, 18 Jul 2025 09:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D70F29898D;
+	Fri, 18 Jul 2025 09:19:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NxJw3+50"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="feAxFeI6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B62C3292B2A;
-	Fri, 18 Jul 2025 09:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 748C3298255;
+	Fri, 18 Jul 2025 09:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752830328; cv=none; b=UUz5IN6bx1pwan8zF9ySnVeGgS4AEQrbo1SbGaKHUpA0HwLmF19xhTr9wHjccIAEw1IBNF9EV1wMpawnlof+3zGByeCHpwc4HN0teaQnBJiRS8daI9Ll/zd7APH70b6DgvP27+lbYlEY5Wj5w/DeCarowir3v6zT6p0dVbwm2TM=
+	t=1752830343; cv=none; b=iM76owqsIcBn2VbxsPmCPFGvS+anlUhHw7Njm9Qeogp0Ue705ycYs0cgzvbMV0uZAaX1bI5tZk03YNklqjcmr4csbov3hyM/tcLOmarO2652r62gxbBJ7Dp3ym1/quqha/GBElQqjHCkloi5MJN97SGHLlwmeyni83yjY1nTanw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752830328; c=relaxed/simple;
-	bh=5IIQlhSaDwcM9aIUYlCa5hvLfThu03yoQGKmdTdrlPQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qDffEl9BV2NWoLh2CieYEq6uItCtAnJRo5TaEKp1eSIE5u4fBLHgMJxuIeiGBHu0klMtGXsU2TjihbCA93WDVLtYqdseiVbR3KAPAiKxLxQ4Ln0I//I5R5+1BGFLysiX48NLU4fJPtGwer1cJ70IU1x7eAjeSsalsiGVWl59vbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NxJw3+50; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7e3142e58cfso114782785a.0;
-        Fri, 18 Jul 2025 02:18:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752830325; x=1753435125; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2R2Qj7lClXBDivuzyVGIVlMGwvZsFjShl3bXiqZmo9w=;
-        b=NxJw3+50rFA2dJEYQTb/bWgQcrHZvT9//SufsgkgN4uxPApOdcZ2IHF8yBL72nDxHZ
-         HJuIuELbxfDpxGXQGREWMWD5ELwZLUdfrwZHmIOLijJT72THOPQ0gybxRowUnv3Cz6m1
-         h5MkyMrJlUNNQP0gH5YkcxRdsHa6A1KpMNK493Weyes4597kCEpMBg8lZ16hvKHg2kRN
-         dPbvLtX3d0eshPe6bLjPcLZ0UJWHAYbD2jeUgr+fF1InHFenKzNtigJoGsEj5jqv811N
-         Qomaz6/swtXek6//W/zf9rTQJOG90Yi1nAg5+rHwCslbQ1Tcisc+G65YfAqwSA1JX37S
-         gmLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752830325; x=1753435125;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2R2Qj7lClXBDivuzyVGIVlMGwvZsFjShl3bXiqZmo9w=;
-        b=XqYdhPmFo1repgvEtRbufZoYKOasYPk/N78ITjudQZTn1FwvFFgTZ7Ia5OjTH6D7ax
-         fu7avapyvHnONl6WbUmnQGWsOcC0YYqsJ64yE39UKbdiAsvwtC+HqFbV+74H088AF8rM
-         NtTDlUE+m0blVFBtkX0XP1AJFZrYzLOmlCZeXTZw4HXa0Kse09nKEkq9HV3i3SwFd5o/
-         eEEJCiC8Q7n9IK73hIhvfrakuSG3TJzzqq2Zt+o7PakleGIPiJHKPlk6CNwo3ARGG6U3
-         Y3nxFGxv8Yec3n3Vqyr2Li+FzIQADTqtlakckUe8P75Gw1KZTzfDPqnkW7lAdimRivQL
-         WpEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXLIZArSlU5fsmNdzHE/kiehSkTGIOCaO5/dcG9IHWoGvZQqA61C98/b8hpEV3if38jSISvBiEjlU0/Kcc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5dRkskfJFZ7/Zvf3flLxGDFBMoins94GCxBp1Ngs8B5aVjw1x
-	pAJVHROlj+Y3q/Cbu80Lr+S1e/6hRFggKqW8UP83aa1GntmJln+l4ynR5bB6DKD7zvJd9w==
-X-Gm-Gg: ASbGncvJNLoCmGqFzWbri/VxDq9ix4148Udvp78VVtZ/q2pBjKfdxSUCe8J7nUqqL9I
-	z52qFaGlGojnsvHzitnivt6xRfP0rGln2sUYUPVOeFdTL5qyxnPqU9LXuvPU76U2nrU9ljRVqbb
-	qyk64D8npjdYlvvdp977lAj98QPHoju8yq9M1V3Xj4mnMVz6daU33KWtEiLf/oNxxmqzldP2IrD
-	yaYhi3eEoZSEe9XZReJAGx1N0shHjZW2aaMviYGhlQsapJifqWRaJ1J9VCRYlK6XxWlagpzQ6Gd
-	C92WHBVUe6k24uoov+DJkElV9Tq/mMIdueiSI95UPoL3Pya3VnrGdsN8BYRnkGDaY5eE5y7ISlI
-	Q2YhHTRKueA1/
-X-Google-Smtp-Source: AGHT+IG1E5Nuzq9HW2jysz/q+IFoyBEHy+O9n2un23FehdBlKlqe4qProNMQTj9aMBHBtI6rYNgduQ==
-X-Received: by 2002:a05:620a:6181:b0:7e1:ad94:af71 with SMTP id af79cd13be357-7e3435fa891mr1365981285a.35.1752830325474;
-        Fri, 18 Jul 2025 02:18:45 -0700 (PDT)
-Received: from nsa ([45.144.113.46])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e356c3ed05sm62742785a.65.2025.07.18.02.18.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jul 2025 02:18:45 -0700 (PDT)
-Date: Fri, 18 Jul 2025 10:18:56 +0100
-From: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
-To: Jonathan Santos <Jonathan.Santos@analog.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org, 
-	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org, jonath4nns@gmail.com
-Subject: Re: [PATCH] iio: adc: ad7768-1: disable IRQ autoenable
-Message-ID: <5llfgo2wifyi43zj24rv7ph5gebevcszrxl3hp3yc3ibaglcr3@fqdejauv6rmo>
-References: <20250718013307.153281-1-Jonathan.Santos@analog.com>
+	s=arc-20240116; t=1752830343; c=relaxed/simple;
+	bh=zc0SCSe5dmWIeZjMz3hpH98kv1/ooid1+C6hklMxXHY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o6+ZudnVxtqjdif8VHOZo9tKO0kdtHOQqa6Y3k3ZAOCOvgIe2HIwj2VY0v5CajV6EgFC1tmolXqK+/RaEmPFewdfCvhH4q34SSrNIVoaNH+nAOV+q7CnffwXIWVI3yCKqkxuitepKdZisMl7eBzXsDemCrIJuhqWgk5DajIyhJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=feAxFeI6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45DA8C4CEED;
+	Fri, 18 Jul 2025 09:18:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752830342;
+	bh=zc0SCSe5dmWIeZjMz3hpH98kv1/ooid1+C6hklMxXHY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=feAxFeI6s7xbdfD7VqMf9akefxnzKYsmkZ/mH2hde8VOomBy2PEh1fmKvFA3t/TmB
+	 UCC6zLMXP2pm1eh6wvbNL4bQ3VksNVHTunfpA44KDJmjIN6urxINtCCiwRJxvCGs0O
+	 I1C2Tx6HMiN6vlCiLBMoBtgYvjRyXw5BRSb8uHKsNn5TdS9GBiiBeM6FaSe/rNu8Jd
+	 FD69hz3QXn9/9hx2QBHsEmFAEhTcVPbGRJBwvTOP67WZ63Udt2Ch4Mtdv3JMv8bPa0
+	 sBuob2YfAJ7UR18UkiYL4uEa1nl9+en+8GKLYyMRdjbo+LGXsMSih4X9Hc3w4rbOTl
+	 hZCoBy6EEQMGA==
+Message-ID: <9a932904-4aec-4e2d-b00f-519a4ca92e17@kernel.org>
+Date: Fri, 18 Jul 2025 11:18:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 09/10] ASoC: mediatek: mt8189: add machine driver with
+ nau8825
+To: =?UTF-8?B?Q3lyaWwgQ2hhbyAo6ZKe5oKmKQ==?= <Cyril.Chao@mediatek.com>,
+ "broonie@kernel.org" <broonie@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>, "tiwai@suse.com"
+ <tiwai@suse.com>, "robh@kernel.org" <robh@kernel.org>,
+ "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>, "perex@perex.cz"
+ <perex@perex.cz>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ "linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Project_Global_Chrome_Upstream_Group
+ <Project_Global_Chrome_Upstream_Group@mediatek.com>
+References: <20250628071442.31155-1-Cyril.Chao@mediatek.com>
+ <20250628071442.31155-10-Cyril.Chao@mediatek.com>
+ <a62e0111-e3b7-4772-9467-3a2927972f6f@kernel.org>
+ <143fb1f0756caeb8287ab02be450ecdb3459c6d8.camel@mediatek.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <143fb1f0756caeb8287ab02be450ecdb3459c6d8.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250718013307.153281-1-Jonathan.Santos@analog.com>
 
-On Thu, Jul 17, 2025 at 10:33:07PM -0300, Jonathan Santos wrote:
-> The device continuously converts data while powered up, generating
-> interrupts in the background. Configure the IRQ to be enabled and
-> disabled manually as needed to avoid unnecessary CPU load.
+On 18/07/2025 10:44, Cyril Chao (钞悦) wrote:
+> On Sat, 2025-06-28 at 14:39 +0200, Krzysztof Kozlowski wrote:
+>>> +             .of_match_table = mt8189_nau8825_dt_match,
+>>> +#endif
+>>> +             .pm = &snd_soc_pm_ops,
+>>> +     },
+>>> +     .probe = mtk_soundcard_common_probe,
+>>> +};
+>>> +
+>>> +module_platform_driver(mt8189_nau8825_driver);
+>>> +
+>>> +/* Module information */
+>>> +MODULE_DESCRIPTION("MT8189 NAU8825 ALSA SoC machine driver");
+>>> +MODULE_AUTHOR("Darren Ye <darren.ye@mediatek.com>");
+>>> +MODULE_LICENSE("GPL");
+>>> +MODULE_ALIAS("mt8189 nau8825 soc card");
+>>
+>> That's neither needed nor correct. Look how aliases are created
+>> first.
 > 
-> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
-> ---
+> I reffered to the previous platform(mt8188). Could you help to give an
+> example about MODULE_ALIAS or some doc for me to reffer? Much thanks ~~
 
-LGTM,
+If you ask for doc, then it feels like you do not know if you need it. I
+think you do not need it and the burden of proving why you need it is on
+you.
 
-Reviewed-by: Nuno Sá <nuno.sa@analog.com>
-
->  drivers/iio/adc/ad7768-1.c | 18 +++++++++++++++++-
->  1 file changed, 17 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/adc/ad7768-1.c b/drivers/iio/adc/ad7768-1.c
-> index a2e061f0cb08..3eea03c004c3 100644
-> --- a/drivers/iio/adc/ad7768-1.c
-> +++ b/drivers/iio/adc/ad7768-1.c
-> @@ -395,8 +395,10 @@ static int ad7768_scan_direct(struct iio_dev *indio_dev)
->  	if (ret < 0)
->  		return ret;
->  
-> +	enable_irq(st->spi->irq);
->  	ret = wait_for_completion_timeout(&st->completion,
->  					  msecs_to_jiffies(1000));
-> +	disable_irq(st->spi->irq);
->  	if (!ret)
->  		return -ETIMEDOUT;
->  
-> @@ -1130,7 +1132,21 @@ static const struct iio_buffer_setup_ops ad7768_buffer_ops = {
->  	.predisable = &ad7768_buffer_predisable,
->  };
->  
-> +static int ad7768_set_trigger_state(struct iio_trigger *trig, bool enable)
-> +{
-> +	struct iio_dev *indio_dev = iio_trigger_get_drvdata(trig);
-> +	struct ad7768_state *st = iio_priv(indio_dev);
-> +
-> +	if (enable)
-> +		enable_irq(st->spi->irq);
-> +	else
-> +		disable_irq(st->spi->irq);
-> +
-> +	return 0;
-> +}
-> +
->  static const struct iio_trigger_ops ad7768_trigger_ops = {
-> +	.set_trigger_state = ad7768_set_trigger_state,
->  	.validate_device = iio_trigger_validate_own_device,
->  };
->  
-> @@ -1417,7 +1433,7 @@ static int ad7768_probe(struct spi_device *spi)
->  
->  	ret = devm_request_irq(&spi->dev, spi->irq,
->  			       &ad7768_interrupt,
-> -			       IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-> +			       IRQF_TRIGGER_RISING | IRQF_NO_AUTOEN,
->  			       indio_dev->name, indio_dev);
->  	if (ret)
->  		return ret;
-> 
-> base-commit: 0a686b9c4f847dc21346df8e56d5b119918fefef
-> -- 
-> 2.34.1
-> 
+Best regards,
+Krzysztof
 
