@@ -1,104 +1,128 @@
-Return-Path: <linux-kernel+bounces-736263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 343A0B09AA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:52:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 110E5B09ACC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 07:02:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B53891C45AC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 04:52:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C03616EC97
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 05:02:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2DF31DE4E7;
-	Fri, 18 Jul 2025 04:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F56A1BD9F0;
+	Fri, 18 Jul 2025 05:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qg0cyTZl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="GnPlu2Wc"
+Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B4E63214;
-	Fri, 18 Jul 2025 04:52:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DEB311185
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 05:02:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752814349; cv=none; b=EO/+sFqDRHGEL1OUq1JFgE8w1Z3vbV+ZQ9YFmSgaakoCF5EAFLN6INOZEJdCF6O2gFfsPoFo71FEAjh5SgPtDNp2WZ0CdgyanKTyz8y6EHnEn592ZxgqYwzEl/A4avZHHO00WvfEG2u7DDwF5LDUL2nLFm9ZGYtlsASqxhn5Ri4=
+	t=1752814962; cv=none; b=RtWxJxSfm4+iLlkleYW+Rg5G9fi1c8Vdfy6lWfeUUbtbmD3nAr5MfrDEyjee8eepAN3SdPI9g7Z+n1M9LFpxS8rwTyvSBLYnhquKKHYQ7G2LKNopHtFK51bd8Awo1shaz1//l5l7A+nbTvHxiSrgpCvzhl0dnIn62257nALTiA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752814349; c=relaxed/simple;
-	bh=FupbUBUrdSZ0TJ2N1xUV1dTQyd9vwDIJ79ctuHulAH4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tR8jqUkP9kZ5dYNM+h41U9/LmS2uCZTQhxHF9TKvSUsWfGGDGs+Pwi7yFEF1TZiPc0unu4dO1x//9zs667guQyqmbL55UwTw4Rt0IdBaZ/oXUpLM0rqTyTlGPqryv4zY6SM1c9AaymTkxg/D/8JPZDC2V3+xen+6j0OXnLULhB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qg0cyTZl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84F31C4CEED;
-	Fri, 18 Jul 2025 04:52:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752814348;
-	bh=FupbUBUrdSZ0TJ2N1xUV1dTQyd9vwDIJ79ctuHulAH4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Qg0cyTZlPRjcy0iFtxA4C3BYIKBabl3begko7SxYdeaeCyNLvqEafsFTzgJSvzrNi
-	 vm6+FE6DQuOqgxl7h5F2sPWaqrgFbmFHq/9IFeacmlqHLnM6zDYIkDO2KELBrgebxX
-	 S/wWnoeqAJpljWEAKKYJIPKRg0NgUzxwRurLmWOwbxhqOV6udPA4QQR7/6siR9lxXO
-	 YRY0nNxIVU7pYfzQLw0zPrq26iPyZqYGYpbZ2Pdsu9weNN9A1xGuaGFT3ZMlTTwWhS
-	 hYBe4FYfOCroKp/Rl36vzcEXlZ4VBBf+zDVrbIlKd+ciYkGJnynpd8EoERlPN/GBh0
-	 xCKEbZ6BMYPHA==
-Date: Thu, 17 Jul 2025 21:52:24 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Jens Remus <jremus@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, x86@kernel.org, Steven Rostedt <rostedt@kernel.org>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Ilya Leoshkevich <iii@linux.ibm.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, 
-	Indu Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, 
-	Beau Belgrave <beaub@linux.microsoft.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, 
-	Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>
-Subject: Re: [RFC PATCH v1 08/16] unwind_user: Enable archs that save RA/FP
- in other registers
-Message-ID: <qk5sfunxgef6qtnfqorszybubhai7kqg5h473dx5wcmvlphq5a@om7pohqhho6a>
-References: <20250710163522.3195293-1-jremus@linux.ibm.com>
- <20250710163522.3195293-9-jremus@linux.ibm.com>
- <oasyyga72yuiad7y2nzh7wcd7t7wmxnsbo2kuvsn5xsnuypewd@ukxxgdjbvegz>
- <3he7rlcdchkwjtpbdt5khqflg4dipuvkneydhju2jjgs2ujqoh@2rpb6dutdogx>
- <94e27f70-58f6-431d-9623-9c349a5977ff@linux.ibm.com>
+	s=arc-20240116; t=1752814962; c=relaxed/simple;
+	bh=CFx1IeDtZ+sN7mgMMepBTLN+tYrRYBQxlBPdHX6l2uY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jfxwQFgSH5gmoucrGEHaN7scz5D8jWrrfNxZui7AgYq4G1gaLWjhyHDtRLCY0QF+zI+uEGj+XNLJ2L/wrujnsqLlC3HFtACEOrMKEHpANh55THVhBpPooj4zbZrGh2IGmkmqXPsbet70XH9f/XcSRuuSFocN6gAu9f0uND2Wa0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=GnPlu2Wc; arc=none smtp.client-ip=103.21.126.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
+Received: from ldns1.iitb.ac.in (ldns1.iitb.ac.in [10.200.12.1])
+	by smtp1.iitb.ac.in (Postfix) with SMTP id 60CBD104C1E6
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 10:24:33 +0530 (IST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 60CBD104C1E6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
+	t=1752814473; bh=CFx1IeDtZ+sN7mgMMepBTLN+tYrRYBQxlBPdHX6l2uY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=GnPlu2WcC27uQRQ06Fbdv44xHFOL6HTCNAf2upNDaRm76T8q4EokBfr1OWnj5MZZW
+	 7DsKuex367kV4zDoxQ6jpw1XLITFrQXkEHWYdDeYDjwp2dlWPLC/bzM7seECfWXJOQ
+	 em/qNuZ5hmpE4g2kfNzJRO0vyq7iVZL+YUod0pis=
+Received: (qmail 32448 invoked by uid 510); 18 Jul 2025 10:24:33 +0530
+X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns1 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
+ spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.101.4/26439} 
+ Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 2.55098 secs; 18 Jul 2025 10:24:33 +0530
+X-Spam-Level: 
+X-Spam-Pyzor: Reported 0 times.
+X-Envelope-From: akhilesh@ee.iitb.ac.in
+X-Qmail-Scanner-Mime-Attachments: |
+X-Qmail-Scanner-Zip-Files: |
+Received: from unknown (HELO ldns1.iitb.ac.in) (10.200.1.25)
+  by ldns1.iitb.ac.in with SMTP; 18 Jul 2025 10:24:30 +0530
+Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	by ldns1.iitb.ac.in (Postfix) with ESMTP id 2A40236003F;
+	Fri, 18 Jul 2025 10:24:30 +0530 (IST)
+Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	(Authenticated sender: akhilesh)
+	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id E71351E814DD;
+	Fri, 18 Jul 2025 10:24:29 +0530 (IST)
+Date: Fri, 18 Jul 2025 10:24:14 +0530
+From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+To: gregkh@linuxfoundation.org, griffin@kroah.com, riyandhiman14@gmail.com,
+	gagath@debian.org, pedropz1537@gmail.com
+Cc: liyuesong@vivo.com, linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev, skhan@linuxfoundation.org,
+	akhilesh@ee.iitb.ac.in
+Subject: [PATCH] staging: vme_user: fix spelling errors
+Message-ID: <aHnTdicud7sW/Zis@bhairav-test.ee.iitb.ac.in>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <94e27f70-58f6-431d-9623-9c349a5977ff@linux.ibm.com>
 
-On Thu, Jul 17, 2025 at 02:07:05PM +0200, Jens Remus wrote:
-> On 17.07.2025 04:50, Josh Poimboeuf wrote:
-> > So the following is wrong:
-> > 
-> > 	case UNWIND_USER_LOC_STACK:
-> > 		if (!frame->fp.frame_off)
-> > 			goto done;
-> > 		if (unwind_get_user_long(fp, cfa + frame->fp.frame_off, state))
-> > 			goto done;
-> > 		break;
-> > 
-> > Instead of having !fp.frame_off stopping the unwind, it should just
-> > break out of the switch statement and keep going.
-> 
-> If frame->fp.loc is UNWIND_USER_LOC_STACK then frame->fp.frame_off must
-> have a value != 0.  At least if we keep the original semantic.
-> 
-> We can omit this check, if we assume all producers of frame behave
-> correctly.  For instance user unwind sframe would not produce that
-> (see below).  Could it somehow be made a debug-config-only check?
+Fix spelling errors reported by codespell tool as below.
+bewteen --> between
+enty --> entry
+Copntroller --> Controller
 
-Ah... the !frame->fp.frame_off check for the UNWIND_USER_LOC_STACK case
-completely threw me for a loop.  I was confusing that with
-UNWIND_USER_LOC_NONE.  So never mind.
+Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+---
+ drivers/staging/vme_user/vme.c        | 4 ++--
+ drivers/staging/vme_user/vme_tsi148.h | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-And yes, I think that check has no use and can be removed.
-
+diff --git a/drivers/staging/vme_user/vme.c b/drivers/staging/vme_user/vme.c
+index 42304c9f83a2..a9bff27127a7 100644
+--- a/drivers/staging/vme_user/vme.c
++++ b/drivers/staging/vme_user/vme.c
+@@ -809,7 +809,7 @@ EXPORT_SYMBOL(vme_master_free);
+  * @vdev: Pointer to VME device struct vme_dev assigned to driver instance.
+  * @route: Required src/destination combination.
+  *
+- * Request a VME DMA controller with capability to perform transfers bewteen
++ * Request a VME DMA controller with capability to perform transfers between
+  * requested source/destination combination.
+  *
+  * Return: Pointer to VME DMA resource on success, NULL on failure.
+@@ -1045,7 +1045,7 @@ void vme_dma_free_attribute(struct vme_dma_attr *attributes)
+ EXPORT_SYMBOL(vme_dma_free_attribute);
+ 
+ /**
+- * vme_dma_list_add - Add enty to a VME DMA list.
++ * vme_dma_list_add - Add entry to a VME DMA list.
+  * @list: Pointer to VME list.
+  * @src: Pointer to DMA list attribute to use as source.
+  * @dest: Pointer to DMA list attribute to use as destination.
+diff --git a/drivers/staging/vme_user/vme_tsi148.h b/drivers/staging/vme_user/vme_tsi148.h
+index db246cbc54c3..f73ac92320bb 100644
+--- a/drivers/staging/vme_user/vme_tsi148.h
++++ b/drivers/staging/vme_user/vme_tsi148.h
+@@ -1347,7 +1347,7 @@ static const int TSI148_LCSR_INTC_MBC[4] = { TSI148_LCSR_INTC_MB0C,
+ #define TSI148_GCSR_GCTRL_LRST         BIT(15)	/* Local Reset */
+ #define TSI148_GCSR_GCTRL_SFAILEN      BIT(14)	/* System Fail enable */
+ #define TSI148_GCSR_GCTRL_BDFAILS      BIT(13)	/* Board Fail Status */
+-#define TSI148_GCSR_GCTRL_SCON         BIT(12)	/* System Copntroller */
++#define TSI148_GCSR_GCTRL_SCON         BIT(12)	/* System Controller */
+ #define TSI148_GCSR_GCTRL_MEN          BIT(11)	/* Module Enable (READY) */
+ 
+ #define TSI148_GCSR_GCTRL_LMI3S        BIT(7)	/* Loc Monitor 3 Int Status */
 -- 
-Josh
+2.34.1
+
 
