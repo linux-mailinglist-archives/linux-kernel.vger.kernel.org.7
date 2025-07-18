@@ -1,205 +1,106 @@
-Return-Path: <linux-kernel+bounces-736674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CAB1B0A054
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:07:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC9BBB0A057
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:07:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B03BF5A1E14
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:07:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A26F5A1FA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E3029DB7F;
-	Fri, 18 Jul 2025 10:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b="ZFJ9UMKc"
-Received: from mta22.hihonor.com (mta22.hihonor.com [81.70.192.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1071229CB42;
+	Fri, 18 Jul 2025 10:07:41 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDFB929C338
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 10:07:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54CED29B76B;
+	Fri, 18 Jul 2025 10:07:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752833237; cv=none; b=o2L/AOupwHqFS7RNM9q9ljRjPZ1rjfDVWN6pO17u+2/kyC7m6vFTwRU7M6BkpP84+Ibo74OYDY4m0b00EIoY4ujwkhO4bsV74CrifYKf5PENMSpOJdqN/sv0HNP01NTJJrElQxlFtHXXFaAFCZJSUv15KYI1R12uRgjsyxcVZ0w=
+	t=1752833260; cv=none; b=DHN7BnmH6OUUEH7m0WaIcsCIhW9OigAdpfrXZqZELjAGI1n7Edm008nnkowE0POGIX9sMGHJt81nR14B910qRSCmOBa2dU76YGeG0Qc8e11VXkBIeC0wgOA6kADVTUlyj3JYJorSUw6+z2YG1Rv78Pg/BuyXvY+eN8OnPbgReEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752833237; c=relaxed/simple;
-	bh=9wTkIHTfq6zfcCmHPL4gmuX5zl9rqyVA70PUijUNJhA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qPt2XSXBir9/ZhlAOBYXlr6dG/ZUab6QxNh3HB/tEFcNGGIs2G7SBBiDvl8hFxJLTyLKQjJBN10SJtt8JHdff2LGp/5mvzP+VtJJyQZnR9EGkoDu1qFuffvBhb7bx3V9GpMvZLluPSMyalKaX6XBLf5OogEomaXpd3vTIBipv50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b=ZFJ9UMKc; arc=none smtp.client-ip=81.70.192.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-dkim-signature: v=1; a=rsa-sha256; d=honor.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=To:From;
-	bh=yvLeAOiNbKySYVyV0FC3sYP4OCKXKTDAGgNoYT6pEfg=;
-	b=ZFJ9UMKcNaCfGZd30a8yvbnOLiouQ6LfbdcYdteYbi3KvWMUHLGCpB/jNgU0VON6LdZcZfsy9
-	h9w2ZGl+EE2x0DsCN06l4LWxaQ5J7Cz4jbpyZp4QTmoVQ1JYaHfxQOmTaMvKNZWlQpLXh8NspGZ
-	EC4cRtkMZ7hGit9PF6jVkNY=
-Received: from w011.hihonor.com (unknown [10.68.20.122])
-	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4bk54q418DzYl1GD;
-	Fri, 18 Jul 2025 18:04:59 +0800 (CST)
-Received: from a011.hihonor.com (10.68.31.243) by w011.hihonor.com
- (10.68.20.122) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 18 Jul
- 2025 18:07:13 +0800
-Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
- (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 18 Jul
- 2025 18:07:12 +0800
-From: wangzijie <wangzijie1@honor.com>
-To: <jaegeuk@kernel.org>, <chao@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
-	<bintian.wang@honor.com>, <feng.han@honor.com>, wangzijie
-	<wangzijie1@honor.com>
-Subject: [f2fs-dev] [PATCH 2/2] f2fs: directly add newly allocated pre-dirty nat entry to dirty set list
-Date: Fri, 18 Jul 2025 18:07:06 +0800
-Message-ID: <20250718100706.3948806-2-wangzijie1@honor.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250718100706.3948806-1-wangzijie1@honor.com>
-References: <20250718100706.3948806-1-wangzijie1@honor.com>
+	s=arc-20240116; t=1752833260; c=relaxed/simple;
+	bh=keXTVKHuCD0L5Qb/JscNYjXIELHz1c4oi3RqVYlTU6o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NrZgqYuwJdErMkg4NbiDyGkpTayOF1N+6pv3TcEshdo5fiAG21BQVi2/YiRc2CIsbhbqzhBkvBTL4jAJs0opFCoTOrKZtndN5P/57uwZZc6KPPoj38T/nfTP/aYmGw9l+COy1bSZMbofjMINZfOWLkxz1WpkpJm+LQZ0adAZRpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.48.207])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 3380A340F28;
+	Fri, 18 Jul 2025 10:07:37 +0000 (UTC)
+Date: Fri, 18 Jul 2025 18:07:32 +0800
+From: Yixun Lan <dlan@gentoo.org>
+To: Vivian Wang <wangruikang@iscas.ac.cn>
+Cc: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, paul.walmsley@sifive.com,
+	aou@eecs.berkeley.edu, alex@ghiti.fr, palmer@dabbelt.com,
+	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] riscv: dts: spacemit: Add OrangePi RV2 board
+ device tree
+Message-ID: <20250718100732-GYA700698@gentoo>
+References: <20250718084339.471449-1-hendrik.hamerlinck@hammernet.be>
+ <20250718084339.471449-3-hendrik.hamerlinck@hammernet.be>
+ <8ade99a6-84a0-4e69-8ebf-d9dfdc9141b5@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: w011.hihonor.com (10.68.20.122) To a011.hihonor.com
- (10.68.31.243)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8ade99a6-84a0-4e69-8ebf-d9dfdc9141b5@iscas.ac.cn>
 
-When we need to alloc nat entry and set it dirty, we can directly add it to
-dirty set list(or initialize its list_head for new_ne) instead of adding it
-to clean list and make a move. Introduce init_dirty flag to do it.
+Hi Vivian,
 
-Signed-off-by: wangzijie <wangzijie1@honor.com>
----
- fs/f2fs/node.c | 37 ++++++++++++++++++++++++++++++-------
- 1 file changed, 30 insertions(+), 7 deletions(-)
+On 17:10 Fri 18 Jul     , Vivian Wang wrote:
+> Hi Hendrik,
+> 
+> On 7/18/25 16:43, Hendrik Hamerlinck wrote:
+> > Add initial device tree support for the OrangePi RV2 board [1], which is
+> > marketed as using the Ky X1 SoC but has been confirmed to be 
+> > identical to the SpacemiT K1 [2].
+> >
+> > The device tree is adapted from the OrangePi vendor tree [3], and similar
+> > integration can be found in the Banana Pi kernel tree [4], confirming SoC
+> > compatibility.
+> 
+> This isn't particularly crucial, but I wonder if we can do something
+> similar to a jh7110-common.dtsi arrangement, where most of the boards
+> sharing similar designs can also share devicetree source files.
+> 
+> Easier said than done, probably, but I think it should be possible by
+> just comparing the vendor dts files.
+> 
+> Again this doesn't need to block this patch.
+> 
+Sure
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index b9fbc6bf7..b891be98b 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -185,7 +185,7 @@ static void __free_nat_entry(struct nat_entry *e)
- 
- /* must be locked by nat_tree_lock */
- static struct nat_entry *__init_nat_entry(struct f2fs_nm_info *nm_i,
--	struct nat_entry *ne, struct f2fs_nat_entry *raw_ne, bool no_fail)
-+	struct nat_entry *ne, struct f2fs_nat_entry *raw_ne, bool no_fail, bool init_dirty)
- {
- 	if (no_fail)
- 		f2fs_radix_tree_insert(&nm_i->nat_root, nat_get_nid(ne), ne);
-@@ -195,6 +195,11 @@ static struct nat_entry *__init_nat_entry(struct f2fs_nm_info *nm_i,
- 	if (raw_ne)
- 		node_info_from_raw_nat(&ne->ni, raw_ne);
- 
-+	if (init_dirty) {
-+		nm_i->nat_cnt[TOTAL_NAT]++;
-+		return ne;
-+	}
-+
- 	spin_lock(&nm_i->nat_list_lock);
- 	list_add_tail(&ne->list, &nm_i->nat_entries);
- 	spin_unlock(&nm_i->nat_list_lock);
-@@ -256,7 +261,7 @@ static struct nat_entry_set *__grab_nat_entry_set(struct f2fs_nm_info *nm_i,
- }
- 
- static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
--						struct nat_entry *ne)
-+					struct nat_entry *ne, bool init_dirty)
- {
- 	struct nat_entry_set *head;
- 	bool new_ne = nat_get_blkaddr(ne) == NEW_ADDR;
-@@ -275,6 +280,18 @@ static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
- 
- 	set_nat_flag(ne, IS_PREALLOC, new_ne);
- 
-+	if (init_dirty) {
-+		nm_i->nat_cnt[DIRTY_NAT]++;
-+		set_nat_flag(ne, IS_DIRTY, true);
-+		spin_lock(&nm_i->nat_list_lock);
-+		if (new_ne)
-+			INIT_LIST_HEAD(&ne->list);
-+		else
-+			list_add_tail(&ne->list, &head->entry_list);
-+		spin_unlock(&nm_i->nat_list_lock);
-+		return;
-+    }
-+
- 	if (get_nat_flag(ne, IS_DIRTY))
- 		goto refresh_list;
- 
-@@ -441,7 +458,7 @@ static void cache_nat_entry(struct f2fs_sb_info *sbi, nid_t nid,
- 	f2fs_down_write(&nm_i->nat_tree_lock);
- 	e = __lookup_nat_cache(nm_i, nid);
- 	if (!e)
--		e = __init_nat_entry(nm_i, new, ne, false);
-+		e = __init_nat_entry(nm_i, new, ne, false, false);
- 	else
- 		f2fs_bug_on(sbi, nat_get_ino(e) != le32_to_cpu(ne->ino) ||
- 				nat_get_blkaddr(e) !=
-@@ -458,11 +475,13 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
- 	struct nat_entry *e;
- 	struct nat_entry *new = __alloc_nat_entry(sbi, ni->nid, true);
-+	bool init_dirty = false;
- 
- 	f2fs_down_write(&nm_i->nat_tree_lock);
- 	e = radix_tree_lookup(&nm_i->nat_root, ni->nid);
- 	if (!e) {
--		e = __init_nat_entry(nm_i, new, NULL, true);
-+		init_dirty = true;
-+		e = __init_nat_entry(nm_i, new, NULL, true, true);
- 		copy_node_info(&e->ni, ni);
- 		f2fs_bug_on(sbi, ni->blk_addr == NEW_ADDR);
- 	} else if (new_blkaddr == NEW_ADDR) {
-@@ -498,7 +517,7 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
- 	nat_set_blkaddr(e, new_blkaddr);
- 	if (!__is_valid_data_blkaddr(new_blkaddr))
- 		set_nat_flag(e, IS_CHECKPOINTED, false);
--	__set_nat_cache_dirty(nm_i, e);
-+	__set_nat_cache_dirty(nm_i, e, init_dirty);
- 
- 	/* update fsync_mark if its inode nat entry is still alive */
- 	if (ni->nid != ni->ino)
-@@ -2914,6 +2933,7 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
- 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
- 	struct f2fs_journal *journal = curseg->journal;
- 	int i;
-+	bool init_dirty;
- 
- 	down_write(&curseg->journal_rwsem);
- 	for (i = 0; i < nats_in_cursum(journal); i++) {
-@@ -2924,12 +2944,15 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
- 		if (f2fs_check_nid_range(sbi, nid))
- 			continue;
- 
-+		init_dirty = false;
-+
- 		raw_ne = nat_in_journal(journal, i);
- 
- 		ne = radix_tree_lookup(&nm_i->nat_root, nid);
- 		if (!ne) {
-+			init_dirty = true;
- 			ne = __alloc_nat_entry(sbi, nid, true);
--			__init_nat_entry(nm_i, ne, &raw_ne, true);
-+			__init_nat_entry(nm_i, ne, &raw_ne, true, true);
- 		}
- 
- 		/*
-@@ -2944,7 +2967,7 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
- 			spin_unlock(&nm_i->nid_list_lock);
- 		}
- 
--		__set_nat_cache_dirty(nm_i, ne);
-+		__set_nat_cache_dirty(nm_i, ne, init_dirty);
- 	}
- 	update_nats_in_cursum(journal, -i);
- 	up_write(&curseg->journal_rwsem);
+> Yixun: I'm assuming you'll be handling this. What do you think about a
+> k1-common.dtsi?
+> 
+
+Sharing dtsi file for similar boards is generally fine, I saw a few
+other SoC maintainers have done the same..
+
+In the practical cases, we have to evaluate and plan carefully, it
+should be manageable to support fixed number of boards for one file,
+but would be nasty if expect one common dts file to cover all boards..
+
+Anyhow, I think we can revisit this idea and having incremental patch
+later, it's not the problem for now
+
+Thanks for the suggestion
+
 -- 
-2.25.1
-
+Yixun Lan (dlan)
 
