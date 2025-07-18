@@ -1,97 +1,116 @@
-Return-Path: <linux-kernel+bounces-737125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A845B0A80B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:57:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A275B0A813
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:59:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36C3A1C42BD2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:58:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A43093B5FE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:59:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068462E5B2B;
-	Fri, 18 Jul 2025 15:57:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2321D2E5B15;
+	Fri, 18 Jul 2025 15:59:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="b2Wv6gID"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JnNlQPtK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C59EA26ADD;
-	Fri, 18 Jul 2025 15:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DFE526ADD;
+	Fri, 18 Jul 2025 15:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752854260; cv=none; b=d/Ltm/BsZGwyFPZy0qRV/uwUpCy0nzKnWOJrGHHCsihl04UpijAos6/XTPjqO4Ogz7UJHgy3z3aJGvhCw6uZLr/YAxcLAckl39sAALZGcu7TNieP/3+7DG+7M5mIk/UAtXDQfAXa2bT32GkXAkPo+Q0eGLmEq+KUQ27nqrINVDk=
+	t=1752854392; cv=none; b=n0D7pz6+tSNAqB3gZkt240P7spmxpuUzx5JZTtx+JWERlvbryuF5cfWKMhlU54ykF2qimILPNYAcGbXnmIiMfXtk+MjNnM2asrhaG+EYbm31+m9z7LsDaLXl6m4Hecqt64aOOFxGn0QYqLt4g1z4P+tJ3mrw5UAYssOBpErOq9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752854260; c=relaxed/simple;
-	bh=LHLqqJFovhgxSpklvL5XVrRNk8HTcb+MZcN/GxLQd6s=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fYwev+9B0UA1LQ3W7UVgfccJXErWGWx5MiHdbVhGIsZVmWApCpk01if08LgNyIRMRirV5CX0VDe9xm6r/GheRzhb9vKZ2rRUkiltopNZUFptIEkNl0fRF/j9TImWobqy4lXP2MY5EuTvZleO2ruu5oHW5lwF4gNJqEpp8TvVqBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=b2Wv6gID; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=SulPe+WYKJoxLSlyxNtx26YPColW+wIyanOtCwJbKL8=;
-	t=1752854258; x=1754063858; b=b2Wv6gID4qx47/Ra62pddlMHvZIShPIjavkQuMNjQEMNgD5
-	/Ex43RsUFS+SodbCgD3nx29U1jDKV1Hk2aXMFKaV2v6C+y4/jg448OFq+u7tplKoFaw1dWlxbnvW2
-	luq3qouoegRSAoDOmmpqHyx97tvZaq+U9bOf1PcBsnCMB5jziLMB7pnI4tNUrSu0/Q+wegmFKi1QG
-	C9CEVRc5JDqDWt2fiQW0MJIapu4GihkEhEAX46R+Mg2W/SeJjLy/eVlFKuXyie1900wtOxW1JzLAR
-	U99JHV7WE9rf+Zn3f+fENTQW2MKV5g1f7o5FyQT9yKvWm2/M7f8PBCFO/RnA+aSg==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1ucnSi-0000000CwCr-1R0U;
-	Fri, 18 Jul 2025 17:57:28 +0200
-Message-ID: <2d1a41aa000c8de8f82827bd8c06459e01f10423.camel@sipsolutions.net>
-Subject: Re: [syzbot] [wireless] BUG: unable to handle kernel paging request
- in ieee80211_wep_encrypt
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Eric Biggers <ebiggers@kernel.org>, linux-wireless@vger.kernel.org
-Cc: syzbot <syzbot+d1008c24929007591b6b@syzkaller.appspotmail.com>, 
-	ardb@kernel.org, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
- mingo@redhat.com, 	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
- tglx@linutronix.de, 	x86@kernel.org
-Date: Fri, 18 Jul 2025 17:57:27 +0200
-In-Reply-To: <20250718145049.GA1574@quark>
-References: <6878cd49.a70a0220.693ce.0044.GAE@google.com>
-	 <20250718145049.GA1574@quark>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1752854392; c=relaxed/simple;
+	bh=P4hev8OlYY0l7LuAM/+Fw7Y+n28sL4Q39Z9vhY1xmq8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=oCS8PHqiTpoQ8L3aGtJv8iHNbpJPGsqoLaJR7ZrVoQpjkXAQPuRfgJpz3+SSov8WKpUurQS1irn8YazclSzwBV7psCpbdrXlUBWhhIulEjX1w3JftSIwPsn41WWIPubjTr0RYIYi4k2U+JIDzVYvyu/hmVswbG0rKvN8mfTO4kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JnNlQPtK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3A34C4CEEB;
+	Fri, 18 Jul 2025 15:59:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752854391;
+	bh=P4hev8OlYY0l7LuAM/+Fw7Y+n28sL4Q39Z9vhY1xmq8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=JnNlQPtKr5vNgAnqqAZn8qe9w+d0v2EGt8pYuY/QlPc6fWsrZMrXD8iDhm21GFU2j
+	 WPfLgHwBqPQMULxAZIsLcU7XEz/NmjJa/LviMGiQzUmTx2BLc+xqpRll/iKf75ZD9F
+	 xtr6HP18MPPMzEsUs2HgflhfKQLMpqRTFUWHFrQ7XYgSZPOaNxQF0fy7OmLRDF4P2Q
+	 auzUrDbOPpclU7VKA5QD6OCx82Wqvs6tYEX/Mg4qccUNR4MUhTIxg0U2YXQazq2nfu
+	 EuLgK9tApeASInxfXf2JqWQOA4jQ+Wlrz9c6zinkfNxMH8lkD/pEMkn9SCcj20o+7K
+	 GE61pXqD4d9bg==
+Date: Fri, 18 Jul 2025 17:59:45 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: lkml <linux-kernel@vger.kernel.org>, 
+	linux-i2c <linux-i2c@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>
+Subject: [GIT PULL] i2c-host-fixes for v6.16-rc7
+Message-ID: <2lbfr4r4icozrhnh5vgitzc6dylnxvh7x6fkdytacsy3oncsfe@7usj2u6nbk45>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-On Fri, 2025-07-18 at 07:50 -0700, Eric Biggers wrote:
-> >=20
-> > BUG: unable to handle page fault for address: ffff8880bfffd000
-[...]
-> > Call Trace:
-> >  <TASK>
-> >  crc32_le_arch+0x56/0xa0 arch/x86/lib/crc32.c:21
-> >  crc32_le include/linux/crc32.h:18 [inline]
-> >  ieee80211_wep_encrypt_data net/mac80211/wep.c:114 [inline]
-> >  ieee80211_wep_encrypt+0x228/0x410 net/mac80211/wep.c:158
-[...]
-> >  nl80211_tx_mgmt+0x9fd/0xd50 net/wireless/nl80211.c:12921
->=20
-> syzbot assigned this to the "crypto" subsystem.  However, the crash
-> happened in crc32_le() which is not part of the crypto subsystem.  Also,
-> crc32_le() is well-tested (e.g. by crc_kunit), and the bug is unlikely
-> to be there.  Rather, the calling code in ieee80211_wep_encrypt_data()
-> is passing an invalid data buffer to crc32_le().  So let's do:
+Hi Wolfram,
 
-Agree, that makes sense, looks like we never check the frame length
-correctly. Since there's no reproducer (yet) I guess we won't be testing
-against it with syzbot though :)
+in this pull request you have included also the previous week's
+patches. Everything is rebased on top of rc6.
 
-johannes
+I wish you a great weekend,
+Andi
+
+The following changes since commit 347e9f5043c89695b01e66b3ed111755afcf1911:
+
+  Linux 6.16-rc6 (2025-07-13 14:25:58 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags/i2c-host-fixes-6.16-rc7
+
+for you to fetch changes up to c39101198e733cacb03fbaa6fcefa15b9c04361c:
+
+  i2c: qup: jump out of the loop in case of timeout (2025-07-17 00:57:13 +0200)
+
+----------------------------------------------------------------
+i2c-host-fixes for v6.16-rc7
+
+- omap: add missing error check and fix PM disable in probe
+  failure path
+- qup: avoid potential hang when waiting for bus idle
+- stm32: unmap DMA buffer on xfer failure and fix device
+  reference
+- tegra: improve ACPI reset error handling
+- virtio: use interruptible wait to prevent hang during transfer
+
+----------------------------------------------------------------
+Akhil R (1):
+      i2c: tegra: Fix reset error handling with ACPI
+
+Christophe JAILLET (2):
+      i2c: omap: Handle omap_i2c_init() errors in omap_i2c_probe()
+      i2c: omap: Fix an error handling path in omap_i2c_probe()
+
+Clément Le Goffic (2):
+      i2c: stm32: fix the device used for the DMA map
+      i2c: stm32f7: unmap DMA mapped buffer
+
+Viresh Kumar (1):
+      i2c: virtio: Avoid hang by using interruptible completion wait
+
+Yang Xiwen (1):
+      i2c: qup: jump out of the loop in case of timeout
+
+ drivers/i2c/busses/i2c-omap.c    |  7 +++++--
+ drivers/i2c/busses/i2c-qup.c     |  4 +++-
+ drivers/i2c/busses/i2c-stm32.c   |  8 +++-----
+ drivers/i2c/busses/i2c-stm32f7.c | 24 +++++++++---------------
+ drivers/i2c/busses/i2c-tegra.c   | 24 +-----------------------
+ drivers/i2c/busses/i2c-virtio.c  | 15 ++++++++-------
+ 6 files changed, 29 insertions(+), 53 deletions(-)
 
