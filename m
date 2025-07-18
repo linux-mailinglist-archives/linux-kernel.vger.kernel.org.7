@@ -1,166 +1,117 @@
-Return-Path: <linux-kernel+bounces-737246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AECAB0A9C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 19:48:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B268EB0A9D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 19:51:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F9AB1C46297
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:48:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BB327B07FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 17:49:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F83E2E7189;
-	Fri, 18 Jul 2025 17:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3E4B2E7BD4;
+	Fri, 18 Jul 2025 17:50:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nbnuni49"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="tiRNBv1J"
+Received: from sonic307-21.consmr.mail.sg3.yahoo.com (sonic307-21.consmr.mail.sg3.yahoo.com [106.10.241.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C90B215F42
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 17:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BAB2E764D
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 17:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.241.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752860906; cv=none; b=XLj0OKFipb1L8fpvLH110N3+dn5eMy33CkhAGJt/J1+lIs8uzlMmvjc6geks2Jh/XTuCbEJZEjCfZ6pI52Too/OWNi0C72HdZ4yd4GzrVyAeS8z2YkWNZlniOW7CbHJtzPnR3hQVucrAQPPAHm711lBXG1ucc6YMgMTkePwbl/c=
+	t=1752861053; cv=none; b=dYmnJzS6ZXp0u31kwBrKh4eYJvS2E3BLmHOgD2w9aINqD0K1QnnMdPrOIk7VU6V7ci/254k28ZRlwSQaHgpHAQMZZf9ArcgP6JkV6Pt42Qs+N9A6gqxDjcf0S7jQhe3TlImCdQBHuRhMhjWyvWUgBPDL5yIZSawAHC0f/O9IWQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752860906; c=relaxed/simple;
-	bh=mzzjGN45joZGnvp8f28PqKcd3YKxSWARz+VYx9M6wXw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gKlD4b2mGc28F+CpiWdqkC46bjw8wgm4WKM5GkIMX6TzsyWZYO2ln6Y0M5j2/UfqRUEPkLsEFFqF9qmnO/UX1b7VZ0lmkHdXlmfqiuStZuXcBU+wc1KbMfh5zF6k7vldUMUEbIPIU5HRCgGKHBxZfkEVKXUPIkj23TYsR/7EtnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nbnuni49; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 18 Jul 2025 13:48:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752860890;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VUTeXIBey0yAZHmz9jTxxcUB9BBedR5oDK38kj40LiE=;
-	b=nbnuni49umgLeeQjLqtRoCbnaa6Oilxvo53kUd/FPZJwC2rSAqgFUjdeEGc1MryvYW0ya2
-	pQHEgy6swgD5+IqnpV3PzvMKp3pMnlteoKX3yPgHXW0ACjP8UdQhSLGcFhFVnuf3J4qI6D
-	6aPSrUyK9qBAS3TYs/D7OCeKpYQjQtc=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: syzbot <syzbot+56edda805363e0a093b8@syzkaller.appspotmail.com>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bcachefs?] BUG: unable to handle kernel NULL pointer
- dereference in mempool_alloc_noprof (2)
-Message-ID: <bdnhmqeqgv3igi5x33n6j5dhjizodp7s5bugt4omjcfxesqncb@xgarlfhy4i6s>
-References: <683bede4.a00a0220.d8eae.002a.GAE@google.com>
+	s=arc-20240116; t=1752861053; c=relaxed/simple;
+	bh=pWuTIEPknc1+PSVkaIsrd439yAS0Y7o7RNEQH+z8aB4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=TlFN3a88KOzxPVTpMS8nx8iH/1AOzgo1e0cGUCD+LbSajGaoC35UKvVudz+MA+73EX7b2HJH0QJytIZt1uthGz7hgQz5O2Ye1tYnP/WHrH4Qad2DsWAW+EOG32sBMfFzmjoF1oOUafkuD7dUPqEpz6wlsHX4votnVpo9cC0YOds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=tiRNBv1J; arc=none smtp.client-ip=106.10.241.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1752861044; bh=bg+Sbb0dtEq89GA86fQkxE2YnIn2nupjzJC6MN4vTJU=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=tiRNBv1JQF5IH9zSn95BOmt9WJnHuI4D6qf4Swt8RKSkw7FrQ89nPklcWl/OsK+nsLvRDtDUuc2WsN+ocsl8W6fKinChFJk49qarW+iVY4bwNXIdzPqP3IIJANVEmzRlykPD4jgFVwMH5o/4n7jHEyt7o0B/UYvov3W2618nuVGjaYFWXnmSzmOrY3aW9k8/N7r6foias2xV1j9F1uZlKwXqyqorFhkq+gj0ScewQJjxbcvY+V94G7casi9tSeOddN3oK4VpeDFrLNZlOhNIlKGRPlF3lW+q7Pxcexo2sZDoMGcFTP64DoFPkbDFLGhHLLdSe3YOVWtjA1+76Bu8Uw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1752861044; bh=2TocIBoAxbt1idmCdc3u+6HHXyOoiE6alKkgA66DrRp=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=iJKXGHF1/lOqfsdJCu+fEC9LI7WR8zKWqx68DkZwzJ35kXbcu8Yq/OJ/tnv+Wo1WvQj2gNJ/rM82/PqK0WvvkVRFqrkpil7N4lO4nE2DR4KlG5ozqe7abmF8tv6U1fxZgkXSIOK3V/3HJD3YALJazZBkkmeOSfjK6cCcUZsjmZ2rzQ2vwDLxpW7nO6ChV6fTE3yP1VUTMsbuvWjsk761p8u2lcJxIxp/W4mpYZmxB1liTdf/13w5wzgFsINgt0XpmM/TS/YAbEy1fYdY1JO+jlI41S+4mLMc9D6OLn/gTK1+g408bCKMyAx9v/slk6RxirqtY7cE8s98cs12gS32wQ==
+X-YMail-OSG: 0pmXQ8EVM1lBIoaMX7UT4kMtL4q475ExqYKHwURoZk8arhfayQqbdCLlvjmdWFf
+ qmiYY.CN5OsJSZBsJcO1qeErBKjiKxyCukxti680N4uoD.MWB2sSrtig3dDU4TIytK5vjsSyNRsq
+ Y5Qe4D2f4yTnK9.sZj92Z2y3d41kpfgCkgB_Had7KxBnF.fnh3MQp0R1Euw29ri_a0KgXgezpMib
+ VpcQv.3MbfBm8fWMmih8DPLHQ5cSERw19HtZoKZ28IL0GU9guOurth27kKQa0oeRGGiGpf4CZjim
+ I9EbH7cpTahSvtYj6lKhOhXDt8TniSOqst2qHtLrv.2sr4WHMy.TwAS0WbgtfOD_xboOQQAYhnfg
+ aE6Ia4WbS8jHR.UMM3SQi4L.tQhg78tecemlsy6gA3EwOVVdtjWNllEvdQZaNfLT87JCImKYrVEM
+ lN385RhE0sy_HAXB1V0eCbQcrVuV6pDAUCFWnAhdA53iueqF5VfFID_9R_87d2t7Uqa7t5vv0QTL
+ w8en_n21yUlqSiTLShrsK_dqOJ5cWCgU.SojYAKPahiIEanRqW9ZsCmqhMcBiCkN.9Mm5rp77wma
+ wq02H0hYLzZ11J8QgY4wYA1btzrVVvomytu46UPiHPVxF1usILiq9xOPehsNnPF8I8c7x3kS0IQd
+ XRFyBp4_G713pgeHgr5QdqgsTHLOzu5Ru8C6YHKbVaZjKrXktZcK4JCbYiBX834hJ8j2QF1UdT_U
+ 9hZvz2lqM8tWH.j2DIv0Wfbkc7SDEFZEaUAZ8dozLeF6g2ukeEjZgdVIVNORgQXFyszXLqouUrYY
+ lZCc97yJ52TaPCNFz2lIGjvUwzSAbiURiRflIUtA8NEDx7feLxeY2bkLyVnYIrCIYWVYTaPqlfB1
+ TFKpnE7npE9P2tesNBkcgGYIKqBB0_B8dY9Yzbt_svHzMRP0LTwTQPjzPMRHyDlxnZSPBDFxdy6A
+ L9zxtWL7z7G98q2CjoNWWv8EBXs7KpfUMW7p43DxUIw0s9tEoAitkr4qdrWJakX6eOVDrS0dxX7H
+ eXWTMkIWSnmgp.5lP5p8N8y9mJWLwKqFordWkxmN0U0sZIenLxQnB2_aak4pXaD.dl.SOl9Ro0qf
+ qbM.62_9saN3KUlLjvdaIWQReMFEz1RVrshPVf6pGUWb5GSIhrihK4N527Qws5quqHKvZHZNZh9G
+ A52ndlpt57aK5ckcwsjRK5MWIXHNmIAPOZ8XOwbSDsecoDc5XYsIKPvBaQZp38DSuZcTJx1wr_tx
+ gboikRXUKdqbaJHE1ROrLMZlKu209z0aHJ0Ykx4g0QHMyypaNW8bs5nZHdqcH24D.DnPEZAD1v6m
+ OLzs3X2Ijd_90nQtfzAfIOet5M7In3ZhT5J0K7VW7K8wl.r.HDDk2v6AXdYPKeeySD8OiWCoRmTQ
+ heB1zYgmvUJ93RUK4v0CeDUmg4m64iijdkvcfR4s3LNgGoBarBfrOo4CHQV67r04bfvBZhNDCfS6
+ ntX3TxwALTZ5C8beEKtPq06dvcwi2alv1YBAz_N1i_DbtuXcF98LR_20bS4YoQejTEPJWHcGzjmt
+ tjs8xsRaZC8vFxhOsLjXF9jv2uHKoG64beJsptwm3Hv51ey2TraL0e4TPW5JoOmUAlSu6jbdXTTN
+ okyZ5cnI8s7P3Qh39JI39u8rUxHLO9LDNCdRjUlD_q.mWHUgAE4JlA_92N78ypPpPoajZpxUt1Fs
+ TH8KUfEqJ5chEnGrvmO4Mv523J.LpMfvIhE87wsVO3KXO3wdLknBUWG.giek5b_MOqqyJcFZMqfW
+ kzHtwjvZUtlJcuSJYFDahF4NCwEQC8j6cqTmZ2mTwHDwk_gRJ0QWNbFDvIptTgBzaRp6VKCEvRZl
+ 1ff841WGpQ.n78NQ8qgGS0HH.7bSUZFguu4rONvrxpaoOXstvHCPErSN4kR26TQhgaljsTewmQlP
+ _Tw5fwjDYISnDcdLdykiBs7c0aJ7U69F4zGTSSWaBXoIJ64D4iwN3e7OoOootbpSiceNAUSgWfHJ
+ wOsdH59h5lFtrj33Y580EAwzncEtesJu9HgfXCgf2.pPphzcUOcSN3okTBxaI4dthql4qDJGPozw
+ l.5dqj1wBdo_EWV1pgGV9RnD4IajQ.gX0xc6nnZRMler60OWEy3AE3UpcTnmPKDM5Xw2ZacUuWbc
+ EPa71wDmRPWLVcL.PRqVOG9klt7wa_KHu0yw7ZsKDO0Dh8cb8lPLSpCC1LsWZGl8vn4RI_2CxIr3
+ IfK9VNPBx90xBrxtJen.456m2PeL7N_cP1a9XhE34XzDbLH2KGcncA3Pg62PW2ErViLyGaGmmKIi
+ Xt_2Iee07zDqZp_HB1A--
+X-Sonic-MF: <sumanth.gavini@yahoo.com>
+X-Sonic-ID: c11bdc34-8446-4b38-9fdf-805d214b9985
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.sg3.yahoo.com with HTTP; Fri, 18 Jul 2025 17:50:44 +0000
+Received: by hermes--production-ne1-9495dc4d7-psbrp (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 70d73d121d4fbf7a2d2044420498d4fa;
+          Fri, 18 Jul 2025 17:50:41 +0000 (UTC)
+From: Sumanth Gavini <sumanth.gavini@yahoo.com>
+To: gregkh@linuxfoundation.org,
+	crwulff@gmail.com,
+	sumanth.gavini@yahoo.com
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com
+Subject: [PATCH] usb: gadget: f_uac1: replace scnprintf() with sysfs_emit()
+Date: Fri, 18 Jul 2025 12:50:35 -0500
+Message-ID: <20250718175037.299710-1-sumanth.gavini@yahoo.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <683bede4.a00a0220.d8eae.002a.GAE@google.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+References: <20250718175037.299710-1-sumanth.gavini.ref@yahoo.com>
 
-On Sat, May 31, 2025 at 11:06:28PM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    4cb6c8af8591 selftests/filesystems: Fix build of anon_inod..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16a8a00c580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=43b7075a5c42ffca
-> dashboard link: https://syzkaller.appspot.com/bug?extid=56edda805363e0a093b8
-> compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11c67ed4580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=147a300c580000
-> 
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-4cb6c8af.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/91b28032d866/vmlinux-4cb6c8af.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/7cf2a9f8c096/bzImage-4cb6c8af.xz
-> mounted in repro #1: https://storage.googleapis.com/syzbot-assets/9c0eef7ba9b5/mount_0.gz
-> mounted in repro #2: https://storage.googleapis.com/syzbot-assets/0c5386ea7a4e/mount_4.gz
->   fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=12a8a00c580000)
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+56edda805363e0a093b8@syzkaller.appspotmail.com
-> 
-> BUG: kernel NULL pointer dereference, address: 0000000000000000
-> #PF: supervisor instruction fetch in kernel mode
-> #PF: error_code(0x0010) - not-present page
-> PGD 0 P4D 0 
-> Oops: Oops: 0010 [#1] SMP KASAN NOPTI
-> CPU: 0 UID: 0 PID: 5317 Comm: syz-executor257 Not tainted 6.15.0-syzkaller-10402-g4cb6c8af8591 #0 PREEMPT(full) 
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> RIP: 0010:0x0
-> Code: Unable to access opcode bytes at 0xffffffffffffffd6.
-> RSP: 0018:ffffc9000d3fedb8 EFLAGS: 00010246
-> RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffff888044583ee8
-> RDX: 1ffff110088b07dd RSI: 0000000000000000 RDI: 0000000000092800
-> RBP: ffffc9000d3fef10 R08: ffffc9000d3fee87 R09: 0000000000000000
-> R10: ffffc9000d3fee60 R11: 0000000000000000 R12: 1ffff92001a7fdc8
-> R13: ffff888044583ee8 R14: 0000000000092c40 R15: 0000000000092800
-> FS:  0000000000000000(0000) GS:ffff88808d265000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: ffffffffffffffd6 CR3: 0000000042a6b000 CR4: 0000000000352ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  mempool_alloc_noprof+0x1a7/0x510 mm/mempool.c:402
->  bch2_btree_update_start+0x549/0x1480 fs/bcachefs/btree_update_interior.c:1194
->  bch2_btree_node_rewrite+0x17e/0x1120 fs/bcachefs/btree_update_interior.c:2208
->  bch2_move_btree+0x6f0/0xc70 fs/bcachefs/move.c:1093
->  bch2_scan_old_btree_nodes+0x95/0x240 fs/bcachefs/move.c:1215
->  bch2_data_job+0x646/0x910 fs/bcachefs/move.c:1354
->  bch2_data_thread+0x8f/0x1d0 fs/bcachefs/chardev.c:315
->  kthread+0x711/0x8a0 kernel/kthread.c:464
->  ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
->  </TASK>
-> Modules linked in:
-> CR2: 0000000000000000
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:0x0
-> Code: Unable to access opcode bytes at 0xffffffffffffffd6.
-> RSP: 0018:ffffc9000d3fedb8 EFLAGS: 00010246
-> RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffff888044583ee8
-> RDX: 1ffff110088b07dd RSI: 0000000000000000 RDI: 0000000000092800
-> RBP: ffffc9000d3fef10 R08: ffffc9000d3fee87 R09: 0000000000000000
-> R10: ffffc9000d3fee60 R11: 0000000000000000 R12: 1ffff92001a7fdc8
-> R13: ffff888044583ee8 R14: 0000000000092c40 R15: 0000000000092800
-> FS:  0000000000000000(0000) GS:ffff88808d265000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: ffffffffffffffd6 CR3: 0000000042a6b000 CR4: 0000000000352ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
+Documentation/filesystems/sysfs.rst mentions that show() should only
+use sysfs_emit() or sysfs_emit_at() when formating the value to be
+returned to user space. So replace scnprintf() with sysfs_emit().
 
-#syz fix: bcachefs: Fix pool->alloc NULL pointer dereference
+Signed-off-by: Sumanth Gavini <sumanth.gavini@yahoo.com>
+---
+ drivers/usb/gadget/function/f_uac1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/usb/gadget/function/f_uac1.c b/drivers/usb/gadget/function/f_uac1.c
+index c87e74afc881..9da9fb4e1239 100644
+--- a/drivers/usb/gadget/function/f_uac1.c
++++ b/drivers/usb/gadget/function/f_uac1.c
+@@ -1634,7 +1634,7 @@ static ssize_t f_uac1_opts_##name##_show(struct config_item *item,	\
+ 	int result;							\
+ 									\
+ 	mutex_lock(&opts->lock);					\
+-	result = scnprintf(page, sizeof(opts->name), "%s", opts->name);	\
++	result = sysfs_emit(page, "%s", opts->name);        	        \
+ 	mutex_unlock(&opts->lock);					\
+ 									\
+ 	return result;							\
+-- 
+2.43.0
 
 
