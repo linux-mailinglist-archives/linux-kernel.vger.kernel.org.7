@@ -1,167 +1,136 @@
-Return-Path: <linux-kernel+bounces-736342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48D3BB09BB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:50:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 617AAB09BA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:45:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91E7F189D333
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:51:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C00CD1C246BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1D921859A;
-	Fri, 18 Jul 2025 06:50:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D30202960;
+	Fri, 18 Jul 2025 06:45:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z86NTFOB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Fu23QsMJ"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C422165E2;
-	Fri, 18 Jul 2025 06:50:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DDF01FE45D;
+	Fri, 18 Jul 2025 06:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752821413; cv=none; b=SC/wg9gB0kZ1h+D3H5bg8jDhlh/uDcXsKHTiRYKa4T1rj5rOa2RqU0HHQuywz0qTiWgjT6Bq5+yKMuHx8iQcRm+2aKHDqN6Z90tb29Qu3Pb2JvYg/4K6Zvva1y5xSgC738ZCZK0jGOZOYujAP6QK4WuFM48SRl0PFsxySZAaV4I=
+	t=1752821105; cv=none; b=MOxCehCbA6XhWPmSGe66YGMAuevS5tSL7LxGoT8xjHX+PbQnAQ4hjfehXSBAVmfHsbfBx8oIQpXKH9TZgt+ixPgS2WErwonEU1h1jwkdwRWWvl9dGcWb0StMPigSCBgzMIFf7taWQMyk+Qjzm9Opzf5R/ZxVnC2xbdb+HPmRY+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752821413; c=relaxed/simple;
-	bh=az5WShJBzTatj4e1fADgsYjVxGvIrztySJpSGhfMsTw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eYCnW99ptjHdT80iEiMIYlP9lgFhZST4VM6BRICXqa/SFo5VtMydIUHi950jD8b7oDmy8PbKchD6CtCM7ty23Q0U1L95K31pxBcRZ5jrlWgA81E9zItB4aGKJooJ+1e5LEgcrGL3I6/tbYe/F4Zz6CFDh0kDt5j2POahHXOvFZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z86NTFOB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75F21C4CEF1;
-	Fri, 18 Jul 2025 06:50:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752821413;
-	bh=az5WShJBzTatj4e1fADgsYjVxGvIrztySJpSGhfMsTw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Z86NTFOBdrdXBhXsplkHCCuStm6qe32seKJiBsueeHRNdm7CVlV1VJdDoC2IbsYvi
-	 e0KmG9wUf1Pqv8/wk4KZblrvuqKuMB0n1bKfoZJmwzJxJsuTcE+jGL3nNicxkJRAsW
-	 bt9HTHA7PeImgD2kdrxN5uPXcXR5SbMV+c4136W8P/2tarNLXVV88o1yw/2r48s8Zy
-	 i9iTb0SR4dZuZgbhOWiSTVsHTjF/QrJgPXTrMvoSkHM/JV7cW8k4E5BMWZn+Hknlml
-	 nI0i5rvIS2ct06Kp5zOXcWHnZ8Fk96BHM3I/sBVtKo71pLqoFuivvOR04Dfr//N8L0
-	 e94C78xhdqAkw==
-From: "Naveen N Rao (AMD)" <naveen@kernel.org>
-To: Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>
-Cc: <kvm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>,
-	Maxim Levitsky <mlevitsk@redhat.com>,
-	Vasant Hegde <vasant.hegde@amd.com>,
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Subject: [RFC PATCH 3/3] KVM: SVM: Optimize IRQ window inhibit handling
-Date: Fri, 18 Jul 2025 12:13:36 +0530
-Message-ID: <55adf9e49743b8027231d66d79369b774a353536.1752819570.git.naveen@kernel.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <cover.1752819570.git.naveen@kernel.org>
-References: <cover.1752819570.git.naveen@kernel.org>
+	s=arc-20240116; t=1752821105; c=relaxed/simple;
+	bh=sGbj5FKKg+88/BDygAxdWai9Cf3SHGZigk3s46T72ok=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uXMym6PQelDLQETFOujLRj0cpdbpjWT2jcm1ljsrgfc18dmZnbiaNioaabiJUxTs4T+mGNbGsptoNaoBhIeM6igfNYg5fvveT9Qw4RVytB+Abx4NgJ7naAd8KfEysDcBalTUQ/zshhoJORGUSIh4me7Mx+1zLAs0EqFqgH5gbnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Fu23QsMJ; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1752821101;
+	bh=sGbj5FKKg+88/BDygAxdWai9Cf3SHGZigk3s46T72ok=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Fu23QsMJypE9g+UTg1Qa9uvMU6FeZvBncgIcGIexPNIiog9kWIkqimRqQSHiGziYK
+	 3+y9SEAiaPmtjT4oQnCZBLUXo2dF1gsixtdBYWnMNMg1DhqFjDkKMkoO7vjdPqWfyQ
+	 78KqzOMmjs513mek6T7pYDbJk1eZKi8pVpiFmSiyS6VzN/hDXPK8GPAsENlz2vNZOH
+	 n+bNno/I0fVLR3v5A6eyY0XgNjXkgvnV74G2/W2W6h7sltRV/gedGj8GHBSM93PUoO
+	 xyx84itTrjWg6/UuAyz1libm0gzIYB38MR8S20AEsZ70fTBdCwggQyfts7i7N2ubiz
+	 IHMZxHkv7uS+g==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id A03DE17E1439;
+	Fri, 18 Jul 2025 08:45:00 +0200 (CEST)
+Message-ID: <987aeeef-6f3e-4ba3-b04f-a60e0cf201ac@collabora.com>
+Date: Fri, 18 Jul 2025 08:44:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] arm64: dts: mediatek: mt8189: Add pinmux macro
+ header file
+To: Cathy Xu <ot_cathy.xu@mediatek.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Sean Wang <sean.wang@kernel.org>
+Cc: Lei Xue <lei.xue@mediatek.com>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Yong Mao <yong.mao@mediatek.com>, Wenbin Mei <Wenbin.Mei@mediatek.com>,
+ Axe Yang <Axe.Yang@mediatek.com>
+References: <20250711094513.17073-1-ot_cathy.xu@mediatek.com>
+ <20250711094513.17073-3-ot_cathy.xu@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250711094513.17073-3-ot_cathy.xu@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-IRQ windows represent times during which an IRQ can be injected into a
-vCPU, and thus represent times when a vCPU is running with RFLAGS.IF=1
-and GIF enabled (TPR/PPR don't matter since KVM controls interrupt
-injection and it only injects one interrupt at a time). On SVM, when
-emulating the local APIC (i.e., AVIC disabled), KVM detects IRQ windows
-by injecting a dummy virtual interrupt through VMCB.V_IRQ and
-intercepting virtual interrupts (INTERCEPT_VINTR). This intercept
-triggers as soon as the guest enables interrupts and is about to take
-the dummy interrupt, at which point the actual interrupt can be injected
-through VMCB.EVENTINJ.
+Il 11/07/25 11:44, Cathy Xu ha scritto:
+> Add the pinctrl header file on MediaTek mt8189.
+> 
+> Signed-off-by: Cathy Xu <ot_cathy.xu@mediatek.com>
+> ---
+>   arch/arm64/boot/dts/mediatek/mt8189-pinfunc.h | 1125 +++++++++++++++++
+>   1 file changed, 1125 insertions(+)
+>   create mode 100644 arch/arm64/boot/dts/mediatek/mt8189-pinfunc.h
+> 
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8189-pinfunc.h b/arch/arm64/boot/dts/mediatek/mt8189-pinfunc.h
+> new file mode 100644
+> index 000000000000..f9c270ebab89
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/mediatek/mt8189-pinfunc.h
+> @@ -0,0 +1,1125 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) 2025 MediaTek Inc.
+> + * Author: Lei Xue <lei.xue@mediatek.com>
+> + *         Cathy Xu <ot_cathy.xu@mediatek.com>
+> + */
+> +
+> +#ifndef __MT8189_PINFUNC_H
+> +#define __MT8189_PINFUNC_H
+> +
+> +#include "mt65xx.h"
+> +
+..snip..
 
-When AVIC is enabled, VMCB.V_IRQ is ignored by the hardware and so
-detecting IRQ windows requires AVIC to be inhibited. However, this is
-only necessary for ExtINTs since all other interrupts can be injected
-either by directly setting IRR in the APIC backing page and letting the
-AVIC hardware inject the interrupt into the guest, or via VMCB.V_NMI for
-NMIs.
+> +#define PINMUX_GPIO27__FUNC_GPIO27 (MTK_PIN_NO(27) | 0)
+> +#define PINMUX_GPIO27__FUNC_DP_TX_HPD (MTK_PIN_NO(27) | 1)
 
-If AVIC is enabled but inhibited for some other reason, KVM has to
-request for IRQ window inhibits every time it has to inject an interrupt
-into the guest. This is because APICv inhibits are dynamic in nature, so
-KVM has to be sure that AVIC is inhibited for purposes of discovering an
-IRQ window even if the other inhibit is cleared in the meantime.
 
-This is particularly problematic with APICV_INHIBIT_REASON_PIT_REINJ
-which stays set throughout the life of the guest and results in KVM
-rapidly toggling IRQ window inhibit resulting in contention on
-apicv_update_lock.
+> +#define PINMUX_GPIO27__FUNC_mbistreaden_trigger (MTK_PIN_NO(27) | 2)
+                                ^^^^^^^^^^^^^^^^^^^
+Please fix: this has to be uppercase as much as the other definitions.
 
-Address this by setting and clearing APICV_INHIBIT_REASON_PIT_REINJ
-lazily: if some other inhibit reason is already set, just increment the
-IRQ window request count and do not update apicv_inhibit_reasons
-immediately. If any other inhibit reason is set/cleared in the meantime,
-re-evaluate APICV_INHIBIT_REASON_PIT_REINJ by checking the IRQ window
-request count and update apicv_inhibit_reasons appropriately. Otherwise,
-just the IRQ window request count is incremented/decremented each time
-an IRQ window is requested. This reduces much of the contention on the
-apicv_update_lock semaphore and does away with much of the performance
-degradation.
 
----
- arch/x86/kvm/x86.c | 26 +++++++++++++++++++++++++-
- 1 file changed, 25 insertions(+), 1 deletion(-)
+> +#define PINMUX_GPIO27__FUNC_MD32_0_GPIO0 (MTK_PIN_NO(27) | 3)
+> +#define PINMUX_GPIO27__FUNC_TP_UCTS1_VCORE (MTK_PIN_NO(27) | 4)
+> +#define PINMUX_GPIO27__FUNC_CMVREF4 (MTK_PIN_NO(27) | 5)
+> +#define PINMUX_GPIO27__FUNC_EXTIF0_ACT (MTK_PIN_NO(27) | 6)
+> +#define PINMUX_GPIO27__FUNC_ANT_SEL0 (MTK_PIN_NO(27) | 7)
+> +
+> +#define PINMUX_GPIO28__FUNC_GPIO28 (MTK_PIN_NO(28) | 0)
+> +#define PINMUX_GPIO28__FUNC_EDP_TX_HPD (MTK_PIN_NO(28) | 1)
+> +#define PINMUX_GPIO28__FUNC_mbistwriteen_trigger (MTK_PIN_NO(28) | 2)
 
-I think patch tags for this should be:
-	From: Sean Christopherson <seanjc@google.com>
+same here
 
-	Signed-off-by: Sean Christopherson <seanjc@google.com>
-	Co-developed-by: Paolo Bonzini <pbonzini@redhat.com>
-	Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-	Co-developed-by: Naveen N Rao (AMD) <naveen@kernel.org>
-	Signed-off-by: Naveen N Rao (AMD) <naveen@kernel.org>
-
-- Naveen
-
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 216d1801a4f2..845afcf6e85f 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -10534,7 +10534,11 @@ void __kvm_set_or_clear_apicv_inhibit(struct kvm *kvm,
- 
- 	old = new = kvm->arch.apicv_inhibit_reasons;
- 
--	set_or_clear_apicv_inhibit(&new, reason, set);
-+	if (reason != APICV_INHIBIT_REASON_IRQWIN)
-+		set_or_clear_apicv_inhibit(&new, reason, set);
-+
-+	set_or_clear_apicv_inhibit(&new, APICV_INHIBIT_REASON_IRQWIN,
-+				   atomic_read(&kvm->arch.apicv_nr_irq_window_req));
- 
- 	if (!!old != !!new) {
- 		/*
-@@ -10582,6 +10586,26 @@ void kvm_inc_or_dec_irq_window_inhibit(struct kvm *kvm, bool inc)
- 	if (!enable_apicv)
- 		return;
- 
-+	/*
-+	 * IRQ windows are requested either because of ExtINT injections, or
-+	 * because APICv is already disabled/inhibited for another reason.
-+	 * While ExtINT injections are rare and should not happen while the
-+	 * vCPU is running its actual workload, it's worth avoiding thrashing
-+	 * if the IRQ window is being requested because APICv is already
-+	 * inhibited.  So, toggle the actual inhibit (which requires taking
-+	 * the lock for write) if and only if there's no other inhibit.
-+	 * kvm_set_or_clear_apicv_inhibit() always evaluates the IRQ window
-+	 * count; thus the IRQ window inhibit call _will_ be lazily updated on
-+	 * the next call, if it ever happens.
-+	 */
-+	if (READ_ONCE(kvm->arch.apicv_inhibit_reasons) & ~BIT(APICV_INHIBIT_REASON_IRQWIN)) {
-+		guard(rwsem_read)(&kvm->arch.apicv_update_lock);
-+		if (READ_ONCE(kvm->arch.apicv_inhibit_reasons) & ~BIT(APICV_INHIBIT_REASON_IRQWIN)) {
-+			atomic_add(add, &kvm->arch.apicv_nr_irq_window_req);
-+			return;
-+		}
-+	}
-+
- 	/*
- 	 * Strictly speaking, the lock is only needed if going 0->1 or 1->0,
- 	 * a la atomic_dec_and_mutex_lock.  However, ExtINTs are rare and
--- 
-2.50.1
-
+> +#define PINMUX_GPIO28__FUNC_MD32_1_GPIO0 (MTK_PIN_NO(28) | 3)
+> +#define PINMUX_GPIO28__FUNC_TP_URTS1_VCORE (MTK_PIN_NO(28) | 4)
+> +#define PINMUX_GPIO28__FUNC_EXTIF0_PRI (MTK_PIN_NO(28) | 6)
+> +#define PINMUX_GPIO28__FUNC_ANT_SEL1 (MTK_PIN_NO(28) | 7)
+> +
+Cheers,
+Angelo
 
