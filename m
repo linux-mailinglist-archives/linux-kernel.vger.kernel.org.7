@@ -1,201 +1,299 @@
-Return-Path: <linux-kernel+bounces-736686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A882B0A07D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:20:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B52D9B0A081
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:21:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3F833AADB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:19:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B38C7A52DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:19:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDFC329DB6E;
-	Fri, 18 Jul 2025 10:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7BFB29CB41;
+	Fri, 18 Jul 2025 10:20:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iuSlBAGv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0720E218EA8;
-	Fri, 18 Jul 2025 10:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Zk6oHOd0"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 620F7218EA8;
+	Fri, 18 Jul 2025 10:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752834015; cv=none; b=PJeEAlc/24auhBlWWVjQh4yyP9xvEV1plWNO8fLWaM3+9+Ia//Dz+X3BOrztGyE6bJruSP1zO3tY10TDfnJ23xaDwUS9gW6NGfCMif175AKXg5zUfDDGwBjqQS1nx3wWqKyWGwrPhmSl9XzbhAnP8VaQ7IZ5c8JaXQQVtvJ9iVE=
+	t=1752834051; cv=none; b=oiHdHpjSOyX7ts5/eJnUUbR+lURxjR1A026KlkDGkXfLGdQj577CqeKmzCHW4xtY+xM2d93kv/KjtTJcIZaKSqavpyC8wCQo3wQLiEYM7qn+BBtJBldGmkrkxAn4xen0lvsSL+FBY86tZvu3JCR51tZF3X4pAwHYhHi5t8YnQwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752834015; c=relaxed/simple;
-	bh=+5ibE7W/5saHgifi0etEPnKSgL+kf0dniPuKyO3xXDc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FoKi4+zJ5UtY17F35MEh2OU5yWrqx3y9cra8bQODNhLIbrqwUUkD2IvibpOrF+L1+hTmeUy+LpzHrXkDEV1z9RtCpP+ugvh5jds/IoELm1zLc1d3hR3koC9ADuXC8AFYRn9W/WkbS0IZPjkWI9G/GRpb7koQyq0KjRQGrcFteCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iuSlBAGv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9827C4CEEB;
-	Fri, 18 Jul 2025 10:20:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752834014;
-	bh=+5ibE7W/5saHgifi0etEPnKSgL+kf0dniPuKyO3xXDc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iuSlBAGv+ZcdD3mBcvVOK3pWxBQHS5Cf3X5tUUogmfSgNJPbcxpxwPTbALmSV5hzZ
-	 JKWjAkKaGm0nkRbz3yBvGd1aiVCmsawQkCOJ+mxCb81TSSP2WesMvpISYpv/nqs6l3
-	 yjOlzFXchTxybbRIkvE3tVlrWqfopsMvXyhyqqpWLn/5f6qBSThEGEjmXHfW/xTJ0+
-	 j/xPjyf/azbwtxaQBr6+2BxYR1MAFK2Us6QoB9+LQZKrUKJwmAhynws3owTORgr9MV
-	 Ejmff87hbc2Sc783ZqcHr7C1wjRjIeLIRvr3lIL5rla9Egp5MK9MpE1lcBSZj0VEss
-	 KWedwqYlyG7jQ==
-Date: Fri, 18 Jul 2025 15:50:02 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
-Cc: manivannan.sadhasivam@oss.qualcomm.com, 
-	Jeff Johnson <jjohnson@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Nirmal Patel <nirmal.patel@linux.intel.com>, 
-	Jonathan Derrick <jonathan.derrick@linux.dev>, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ath12k@lists.infradead.org, ath11k@lists.infradead.org, ath10k@lists.infradead.org, 
-	Bjorn Helgaas <helgaas@kernel.org>, ilpo.jarvinen@linux.intel.com, linux-arm-msm@vger.kernel.org, 
-	linux-pci@vger.kernel.org, Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
-	Qiang Yu <qiang.yu@oss.qualcomm.com>
-Subject: Re: [PATCH 4/6] wifi: ath12k: Use pci_{enable/disable}_link_state()
- APIs to enable/disable ASPM states
-Message-ID: <otdgyzdymraa3f33vyb445kmssi3mqf5z2mw7w5pib4q4sb7vz@qbrzvrojqji3>
-References: <20250716-ath-aspm-fix-v1-0-dd3e62c1b692@oss.qualcomm.com>
- <20250716-ath-aspm-fix-v1-4-dd3e62c1b692@oss.qualcomm.com>
- <38ace6a3-d594-4438-a193-cf730a7b87d6@oss.qualcomm.com>
- <wyqtr3tz3k2zdf62kgtcepf3sedm7z7wacv27visl2xsrqspmq@wi4fgef2mn2m>
- <03806d02-1cfc-4db2-8b63-c1e51f5456e2@oss.qualcomm.com>
- <o2gqqty6lakc4iw7vems2dejh6prjyl746gnq4gny4sxdxl65v@zmqse3244afv>
- <1db7c119-882f-4184-9ca4-9dbe5a49cb16@oss.qualcomm.com>
- <gx5gruyhrhwhvwkiqlkp2bggqd4oqe4quvqiiphfzolhjtzun6@okogvabkqah3>
+	s=arc-20240116; t=1752834051; c=relaxed/simple;
+	bh=Fc4HWWcuM5AGQrRuqZHDXysN7AmEvHaXRYlOpCWP8ss=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=N8OKiY5GnKCLwEH0BpzX4YuEaBkrMaz29RmJ69kxlDnySLGIM6hbDHTds6npvl/uG4cTE2wOjL6BVXqJc5PT5yn7OoUMyP2q9FidsfY43iW8Zo4ojvvA6i5P9LX9a5PtOGlDQGSMyg4J4+iYqqXKbjWORX1ZnVs5NYLDSurDwMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Zk6oHOd0; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1186)
+	id AD0702114253; Fri, 18 Jul 2025 03:20:48 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AD0702114253
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1752834048;
+	bh=2yZL1sxeUy5FJOB8LH1hmtT4+28g4InGn+OK2WmQz40=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Zk6oHOd0k8kM4QYYpDS0FXJd0sC6AedDd/BF/Zqtbw4i0vdc41q824H6+MYNufEwE
+	 xL9QKfA/9W5g4rcEJV/Xj1/tHpK4UTGyLDLWGWbQOY4p0oZD8td37zKMwLyYQY5BjT
+	 HogGqwA2Y2DiDiI8lIUO4vgipseTF4+eZQYJ8cXw=
+From: Konstantin Taranov <kotaranov@linux.microsoft.com>
+To: kotaranov@microsoft.com,
+	longli@microsoft.com,
+	jgg@ziepe.ca,
+	leon@kernel.org
+Cc: linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH rdma-next 1/1] RDMA/mana_ib: add support of multiple ports
+Date: Fri, 18 Jul 2025 03:20:48 -0700
+Message-Id: <1752834048-31696-1-git-send-email-kotaranov@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <gx5gruyhrhwhvwkiqlkp2bggqd4oqe4quvqiiphfzolhjtzun6@okogvabkqah3>
 
-On Fri, Jul 18, 2025 at 01:27:27PM GMT, Manivannan Sadhasivam wrote:
-> On Fri, Jul 18, 2025 at 10:05:02AM GMT, Baochen Qiang wrote:
-> > 
-> > 
-> > On 7/17/2025 7:29 PM, Manivannan Sadhasivam wrote:
-> > > On Thu, Jul 17, 2025 at 06:46:12PM GMT, Baochen Qiang wrote:
-> > >>
-> > >>
-> > >> On 7/17/2025 6:31 PM, Manivannan Sadhasivam wrote:
-> > >>> On Thu, Jul 17, 2025 at 05:24:13PM GMT, Baochen Qiang wrote:
-> > >>>
-> > >>> [...]
-> > >>>
-> > >>>>> @@ -16,6 +16,8 @@
-> > >>>>>  #include "mhi.h"
-> > >>>>>  #include "debug.h"
-> > >>>>>  
-> > >>>>> +#include "../ath.h"
-> > >>>>> +
-> > >>>>>  #define ATH12K_PCI_BAR_NUM		0
-> > >>>>>  #define ATH12K_PCI_DMA_MASK		36
-> > >>>>>  
-> > >>>>> @@ -928,8 +930,7 @@ static void ath12k_pci_aspm_disable(struct ath12k_pci *ab_pci)
-> > >>>>>  		   u16_get_bits(ab_pci->link_ctl, PCI_EXP_LNKCTL_ASPM_L1));
-> > >>>>>  
-> > >>>>>  	/* disable L0s and L1 */
-> > >>>>> -	pcie_capability_clear_word(ab_pci->pdev, PCI_EXP_LNKCTL,
-> > >>>>> -				   PCI_EXP_LNKCTL_ASPMC);
-> > >>>>> +	pci_disable_link_state(ab_pci->pdev, PCIE_LINK_STATE_L0S | PCIE_LINK_STATE_L1);
-> > >>>>
-> > >>>> Not always, but sometimes seems the 'disable' does not work:
-> > >>>>
-> > >>>> [  279.920507] ath12k_pci_power_up 1475: link_ctl 0x43 //before disable
-> > >>>> [  279.920539] ath12k_pci_power_up 1482: link_ctl 0x43 //after disable
-> > >>>>
-> > >>>>
-> > >>>>>  
-> > >>>>>  	set_bit(ATH12K_PCI_ASPM_RESTORE, &ab_pci->flags);
-> > >>>>>  }
-> > >>>>> @@ -958,10 +959,7 @@ static void ath12k_pci_aspm_restore(struct ath12k_pci *ab_pci)
-> > >>>>>  {
-> > >>>>>  	if (ab_pci->ab->hw_params->supports_aspm &&
-> > >>>>>  	    test_and_clear_bit(ATH12K_PCI_ASPM_RESTORE, &ab_pci->flags))
-> > >>>>> -		pcie_capability_clear_and_set_word(ab_pci->pdev, PCI_EXP_LNKCTL,
-> > >>>>> -						   PCI_EXP_LNKCTL_ASPMC,
-> > >>>>> -						   ab_pci->link_ctl &
-> > >>>>> -						   PCI_EXP_LNKCTL_ASPMC);
-> > >>>>> +		pci_enable_link_state(ab_pci->pdev, ath_pci_aspm_state(ab_pci->link_ctl));
-> > >>>>
-> > >>>> always, the 'enable' is not working:
-> > >>>>
-> > >>>> [  280.561762] ath12k_pci_start 1180: link_ctl 0x43 //before restore
-> > >>>> [  280.561809] ath12k_pci_start 1185: link_ctl 0x42 //after restore
-> > >>>>
-> > >>>
-> > >>> Interesting! I applied your diff and I never see this issue so far (across 10+
-> > >>> reboots):
-> > >>
-> > >> I was not testing reboot. Here is what I am doing:
-> > >>
-> > >> step1: rmmod ath12k
-> > >> step2: force LinkCtrl using setpci (make sure it is 0x43, which seems more likely to see
-> > >> the issue)
-> > >>
-> > >> 	sudo setpci -s 02:00.0 0x80.B=0x43
-> > >>
-> > >> step3: insmod ath12k and check linkctrl
-> > >>
-> > > 
-> > > So I did the same and got:
-> > > 
-> > > [ 3283.363569] ath12k_pci_power_up 1475: link_ctl 0x43
-> > > [ 3283.363769] ath12k_pci_power_up 1480: link_ctl 0x40
-> > > [ 3284.007661] ath12k_pci_start 1180: link_ctl 0x40
-> > > [ 3284.007826] ath12k_pci_start 1185: link_ctl 0x42
-> > > 
-> > > My host machine is Qcom based Thinkpad T14s and it doesn't support L0s. So
-> > > that's why the lnkctl value once enabled becomes 0x42. This is exactly the
-> > > reason why the drivers should not muck around LNKCTL register manually.
-> > 
-> > Thanks, then the 0x43 -> 0x40 -> 0x40 -> 0x42 sequence should not be a concern. But still
-> > the random 0x43 -> 0x43 -> 0x43 -> 0x42 sequence seems problematic.
-> > 
-> > How many iterations have you done with above steps? From my side it seems random so better
-> > to do some stress test.
-> > 
-> 
-> So I ran the modprobe for about 50 times on the Intel NUC that has QCA6390, but
-> didn't spot the disparity. This is the script I used:
-> 
-> for i in {1..50} ;do echo "Loop $i"; sudo setpci -s 01:00.0 0x80.B=0x43;\
-> sudo modprobe -r ath11k_pci; sleep 1; sudo modprobe ath11k_pci; sleep 1;done
-> 
-> And I always got:
-> 
-> [ 5862.388083] ath11k_pci_aspm_disable: 609 lnkctrl: 0x43
-> [ 5862.388124] ath11k_pci_aspm_disable: 614 lnkctrl: 0x40
-> [ 5862.876291] ath11k_pci_start: 880 lnkctrl: 0x40
-> [ 5862.876346] ath11k_pci_start: 886 lnkctrl: 0x42
-> 
-> Also no AER messages. TBH, I'm not sure how you were able to see the random
-> issues with these APIs. That looks like a race, which is scary.
-> 
-> I do not want to ignore your scenario, but would like to reproduce and get to
-> the bottom of it.
-> 
+From: Konstantin Taranov <kotaranov@microsoft.com>
 
-I synced with Baochen internally and able to repro the issue. Ths issue is due
-to hand modifying the LNKCTL register from userspace. The PCI core maintains
-the ASPM state internally and uses it to change the state when the
-pci_{enable/disable}_link_state*() APIs are called.
+If the HW indicates support of multiple ports for rdma, create an IB device
+with a port per netdev in the ethernet mana driver.
 
-So if the userspace or a client driver modifies the LNKCTL register manually, it
-makes the PCI cached ASPM states invalid. So while this series fixes the driver
-from doing that, nothing prevents userspace from doing so using 'setpci' and
-other tools. Userspace should only use sysfs attributes to change the state and
-avoid modifying the PCI registers when the PCI core is controlling the device.
-So this is the reason behind the errantic behavior of the API and it is not due
-to the issue with the API or the PCI core.
+CM is only available on port 1, but RC QPs are supported on all
+ports.
 
-- Mani
+Signed-off-by: Konstantin Taranov <kotaranov@microsoft.com>
+---
+ drivers/infiniband/hw/mana/device.c  | 107 +++++++++++++--------------
+ drivers/infiniband/hw/mana/main.c    |  13 +++-
+ drivers/infiniband/hw/mana/mana_ib.h |   1 +
+ 3 files changed, 64 insertions(+), 57 deletions(-)
 
+diff --git a/drivers/infiniband/hw/mana/device.c b/drivers/infiniband/hw/mana/device.c
+index 65d0af740..f322f0d17 100644
+--- a/drivers/infiniband/hw/mana/device.c
++++ b/drivers/infiniband/hw/mana/device.c
+@@ -77,28 +77,30 @@ static int mana_ib_netdev_event(struct notifier_block *this,
+ 	struct gdma_context *gc = dev->gdma_dev->gdma_context;
+ 	struct mana_context *mc = gc->mana.driver_data;
+ 	struct net_device *ndev;
++	int i;
+ 
+ 	/* Only process events from our parent device */
+-	if (event_dev != mc->ports[0])
+-		return NOTIFY_DONE;
+-
+-	switch (event) {
+-	case NETDEV_CHANGEUPPER:
+-		ndev = mana_get_primary_netdev(mc, 0, &dev->dev_tracker);
+-		/*
+-		 * RDMA core will setup GID based on updated netdev.
+-		 * It's not possible to race with the core as rtnl lock is being
+-		 * held.
+-		 */
+-		ib_device_set_netdev(&dev->ib_dev, ndev, 1);
+-
+-		/* mana_get_primary_netdev() returns ndev with refcount held */
+-		netdev_put(ndev, &dev->dev_tracker);
+-
+-		return NOTIFY_OK;
+-	default:
+-		return NOTIFY_DONE;
+-	}
++	for (i = 0; i < dev->ib_dev.phys_port_cnt; i++)
++		if (event_dev == mc->ports[i]) {
++			switch (event) {
++			case NETDEV_CHANGEUPPER:
++				ndev = mana_get_primary_netdev(mc, i, &dev->dev_tracker);
++				/*
++				 * RDMA core will setup GID based on updated netdev.
++				 * It's not possible to race with the core as rtnl lock is being
++				 * held.
++				 */
++				ib_device_set_netdev(&dev->ib_dev, ndev, i + 1);
++
++				/* mana_get_primary_netdev() returns ndev with refcount held */
++				netdev_put(ndev, &dev->dev_tracker);
++
++				return NOTIFY_OK;
++			default:
++				return NOTIFY_DONE;
++			}
++		}
++	return NOTIFY_DONE;
+ }
+ 
+ static int mana_ib_probe(struct auxiliary_device *adev,
+@@ -111,7 +113,7 @@ static int mana_ib_probe(struct auxiliary_device *adev,
+ 	struct net_device *ndev;
+ 	struct mana_ib_dev *dev;
+ 	u8 mac_addr[ETH_ALEN];
+-	int ret;
++	int ret, i;
+ 
+ 	dev = ib_alloc_device(mana_ib_dev, ib_dev);
+ 	if (!dev)
+@@ -126,34 +128,11 @@ static int mana_ib_probe(struct auxiliary_device *adev,
+ 
+ 	if (mana_ib_is_rnic(dev)) {
+ 		dev->ib_dev.phys_port_cnt = 1;
+-		ndev = mana_get_primary_netdev(mc, 0, &dev->dev_tracker);
+-		if (!ndev) {
+-			ret = -ENODEV;
+-			ibdev_err(&dev->ib_dev, "Failed to get netdev for IB port 1");
+-			goto free_ib_device;
+-		}
+-		ether_addr_copy(mac_addr, ndev->dev_addr);
+-		addrconf_addr_eui48((u8 *)&dev->ib_dev.node_guid, ndev->dev_addr);
+-		ret = ib_device_set_netdev(&dev->ib_dev, ndev, 1);
+-		/* mana_get_primary_netdev() returns ndev with refcount held */
+-		netdev_put(ndev, &dev->dev_tracker);
+-		if (ret) {
+-			ibdev_err(&dev->ib_dev, "Failed to set ib netdev, ret %d", ret);
+-			goto free_ib_device;
+-		}
+-
+-		dev->nb.notifier_call = mana_ib_netdev_event;
+-		ret = register_netdevice_notifier(&dev->nb);
+-		if (ret) {
+-			ibdev_err(&dev->ib_dev, "Failed to register net notifier, %d",
+-				  ret);
+-			goto free_ib_device;
+-		}
+-
++		addrconf_addr_eui48((u8 *)&dev->ib_dev.node_guid, mc->ports[0]->dev_addr);
+ 		ret = mana_ib_gd_query_adapter_caps(dev);
+ 		if (ret) {
+ 			ibdev_err(&dev->ib_dev, "Failed to query device caps, ret %d", ret);
+-			goto deregister_net_notifier;
++			goto free_ib_device;
+ 		}
+ 
+ 		ib_set_device_ops(&dev->ib_dev, &mana_ib_stats_ops);
+@@ -163,16 +142,36 @@ static int mana_ib_probe(struct auxiliary_device *adev,
+ 		ret = mana_ib_create_eqs(dev);
+ 		if (ret) {
+ 			ibdev_err(&dev->ib_dev, "Failed to create EQs, ret %d", ret);
+-			goto deregister_net_notifier;
++			goto free_ib_device;
+ 		}
+ 
+ 		ret = mana_ib_gd_create_rnic_adapter(dev);
+ 		if (ret)
+ 			goto destroy_eqs;
+ 
+-		ret = mana_ib_gd_config_mac(dev, ADDR_OP_ADD, mac_addr);
++		if (dev->adapter_caps.feature_flags & MANA_IB_FEATURE_MULTI_PORTS_SUPPORT)
++			dev->ib_dev.phys_port_cnt = mc->num_ports;
++
++		for (i = 0; i < dev->ib_dev.phys_port_cnt; i++) {
++			ndev = mana_get_primary_netdev(mc, i, &dev->dev_tracker);
++			ether_addr_copy(mac_addr, ndev->dev_addr);
++			ret = ib_device_set_netdev(&dev->ib_dev, ndev, i + 1);
++			/* mana_get_primary_netdev() returns ndev with refcount held */
++			netdev_put(ndev, &dev->dev_tracker);
++			if (ret) {
++				ibdev_err(&dev->ib_dev, "Failed to set ib netdev, ret %d", ret);
++				goto destroy_rnic;
++			}
++			ret = mana_ib_gd_config_mac(dev, ADDR_OP_ADD, mac_addr);
++			if (ret) {
++				ibdev_err(&dev->ib_dev, "Failed to add Mac address, ret %d", ret);
++				goto destroy_rnic;
++			}
++		}
++		dev->nb.notifier_call = mana_ib_netdev_event;
++		ret = register_netdevice_notifier(&dev->nb);
+ 		if (ret) {
+-			ibdev_err(&dev->ib_dev, "Failed to add Mac address, ret %d", ret);
++			ibdev_err(&dev->ib_dev, "Failed to register net notifier, %d", ret);
+ 			goto destroy_rnic;
+ 		}
+ 	} else {
+@@ -188,7 +187,7 @@ static int mana_ib_probe(struct auxiliary_device *adev,
+ 				       MANA_AV_BUFFER_SIZE, 0);
+ 	if (!dev->av_pool) {
+ 		ret = -ENOMEM;
+-		goto destroy_rnic;
++		goto deregister_net_notifier;
+ 	}
+ 
+ 	ibdev_dbg(&dev->ib_dev, "mdev=%p id=%d num_ports=%d\n", mdev,
+@@ -205,15 +204,15 @@ static int mana_ib_probe(struct auxiliary_device *adev,
+ 
+ deallocate_pool:
+ 	dma_pool_destroy(dev->av_pool);
++deregister_net_notifier:
++	if (mana_ib_is_rnic(dev))
++		unregister_netdevice_notifier(&dev->nb);
+ destroy_rnic:
+ 	if (mana_ib_is_rnic(dev))
+ 		mana_ib_gd_destroy_rnic_adapter(dev);
+ destroy_eqs:
+ 	if (mana_ib_is_rnic(dev))
+ 		mana_ib_destroy_eqs(dev);
+-deregister_net_notifier:
+-	if (mana_ib_is_rnic(dev))
+-		unregister_netdevice_notifier(&dev->nb);
+ free_ib_device:
+ 	xa_destroy(&dev->qp_table_wq);
+ 	ib_dealloc_device(&dev->ib_dev);
+@@ -227,9 +226,9 @@ static void mana_ib_remove(struct auxiliary_device *adev)
+ 	ib_unregister_device(&dev->ib_dev);
+ 	dma_pool_destroy(dev->av_pool);
+ 	if (mana_ib_is_rnic(dev)) {
++		unregister_netdevice_notifier(&dev->nb);
+ 		mana_ib_gd_destroy_rnic_adapter(dev);
+ 		mana_ib_destroy_eqs(dev);
+-		unregister_netdevice_notifier(&dev->nb);
+ 	}
+ 	xa_destroy(&dev->qp_table_wq);
+ 	ib_dealloc_device(&dev->ib_dev);
+diff --git a/drivers/infiniband/hw/mana/main.c b/drivers/infiniband/hw/mana/main.c
+index 41a24a186..6a2471f2e 100644
+--- a/drivers/infiniband/hw/mana/main.c
++++ b/drivers/infiniband/hw/mana/main.c
+@@ -563,8 +563,14 @@ int mana_ib_get_port_immutable(struct ib_device *ibdev, u32 port_num,
+ 	immutable->gid_tbl_len = attr.gid_tbl_len;
+ 
+ 	if (mana_ib_is_rnic(dev)) {
+-		immutable->core_cap_flags = RDMA_CORE_PORT_IBA_ROCE_UDP_ENCAP;
+-		immutable->max_mad_size = IB_MGMT_MAD_SIZE;
++		if (port_num == 1) {
++			immutable->core_cap_flags = RDMA_CORE_PORT_IBA_ROCE_UDP_ENCAP;
++			immutable->max_mad_size = IB_MGMT_MAD_SIZE;
++		} else {
++			immutable->core_cap_flags = RDMA_CORE_CAP_PROT_ROCE_UDP_ENCAP
++						    | RDMA_CORE_CAP_ETH_AH;
++			immutable->max_mad_size = 0;
++		}
+ 	} else {
+ 		immutable->core_cap_flags = RDMA_CORE_PORT_RAW_PACKET;
+ 	}
+@@ -633,8 +639,9 @@ int mana_ib_query_port(struct ib_device *ibdev, u32 port,
+ 	props->pkey_tbl_len = 1;
+ 	if (mana_ib_is_rnic(dev)) {
+ 		props->gid_tbl_len = 16;
+-		props->port_cap_flags = IB_PORT_CM_SUP;
+ 		props->ip_gids = true;
++		if (port == 1)
++			props->port_cap_flags = IB_PORT_CM_SUP;
+ 	}
+ 
+ 	return 0;
+diff --git a/drivers/infiniband/hw/mana/mana_ib.h b/drivers/infiniband/hw/mana/mana_ib.h
+index 369825fde..e782dc7f1 100644
+--- a/drivers/infiniband/hw/mana/mana_ib.h
++++ b/drivers/infiniband/hw/mana/mana_ib.h
+@@ -220,6 +220,7 @@ struct mana_ib_query_adapter_caps_req {
+ enum mana_ib_adapter_features {
+ 	MANA_IB_FEATURE_CLIENT_ERROR_CQE_SUPPORT = BIT(4),
+ 	MANA_IB_FEATURE_DEV_COUNTERS_SUPPORT = BIT(5),
++	MANA_IB_FEATURE_MULTI_PORTS_SUPPORT = BIT(6),
+ };
+ 
+ struct mana_ib_query_adapter_caps_resp {
 -- 
-மணிவண்ணன் சதாசிவம்
+2.43.0
+
 
