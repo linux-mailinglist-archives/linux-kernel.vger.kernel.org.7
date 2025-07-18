@@ -1,81 +1,78 @@
-Return-Path: <linux-kernel+bounces-736786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36320B0A1DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:24:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D372AB0A1E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:24:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D25AF3B4643
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:24:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 918093B3D0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:24:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5443E2D8375;
-	Fri, 18 Jul 2025 11:24:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D222D876A;
+	Fri, 18 Jul 2025 11:24:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="iszpwQND"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2045.outbound.protection.outlook.com [40.107.236.45])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="wusU9Oe2"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2052.outbound.protection.outlook.com [40.107.243.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394A32C1597;
-	Fri, 18 Jul 2025 11:24:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEFD72D77F0;
+	Fri, 18 Jul 2025 11:24:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.52
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752837870; cv=fail; b=jKxruciGoCS45+3Vvd110bEFrViEZ67CZT68yJb+ypl4QRflS2OVYtgHpnmiFHKqnydC3bCPZb6po6OnU4AGFlKe2rIjx7X3FeHxLgIOrXGw0Y8XYuOhxd+tKjB5mwTBfXaIRsFz//1LjZmMNv9PYV4isuKv3qSR9hRRKdyoCPE=
+	t=1752837871; cv=fail; b=oTrMc/skPd5Eze374+eb8AXOByq7TZ/w+ijKCsws7Eo9Fh+M3NwitT2sb7nfK1GhI3w2LffEFOmHve3sGK/wveeIEyZonWrODPBZXxThzHD3/eeQxe1DGFrxDlfR966/iCAd7rnjxqTINPpuezrnB+Evsv5bOGxhVJIFZCZqxmU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752837870; c=relaxed/simple;
-	bh=2I2WHOUGSmTLqkZ4bh8QcpUtsz0asfRj2SXXqhFCbDo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=l7E2AvvlZyrwdQihk8rPna9Agp7jdJ0kZeUXTA8Ve2yTCC8/CYCRGV54WdvAi0ReZvtNFDONh5pf7P2A5wJTOvqa5xoOkRTbYbfkV7J0O2ZC11cWQU2cRUBBlD61mqGQSinlTBliqG5G0OBDpekrRAKpDCe2dTGVGAB0z0MqVg0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=iszpwQND; arc=fail smtp.client-ip=40.107.236.45
+	s=arc-20240116; t=1752837871; c=relaxed/simple;
+	bh=tcqZav8s2lrCjMN5groouZ/gXf15w9BB89+28GGlRj8=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TOTqSnGBCqYYG80mJa9Z36J/Xnnx0SiMVlYyKqgJr+2IUrxB5qNv6k0r2d59/ki5l782l0iNj9fHInBPHW9hjlKZBdWWtNf9pjB5uGi9YxmUsd8qoSgWrBOHPRPLaE+JeQzDEb/mRxxrLAYKwX7ZWWNSekAtY4DrhBG3cQqj4X4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=wusU9Oe2; arc=fail smtp.client-ip=40.107.243.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dj0SRN+4QyMOVD+A5MpBHeB7+7CAxp3fyq25j0PNVj/SMZ7ImAP+DzUQQCVEOhLQriUM2No86rN5jMaovbNKotncVFFZlv8hQVU0qTgvD/aBFYf0ln2Sti9LFHsmmHBxhvECErBn87nm7IcBohsjqZkchQLvr4vN8iEk5rubGGRyAdg+SUgfiWkhmSu/q/DllRiJOecQJxRLyXcXl9cqHYTdJk090JmUynowGTXuwHm550iDZjJaIG+K0DAW3NbZvYW3CVuxaEbHais8ffei515MtOEe8JxOQjFeuKls4WX7/dDLqvpkkDEI/eAgqcDsm4qzqF8ZigPYgt6jsHkUTA==
+ b=R+JMqgXn5dllUlmwvbfQ5nzvAqDHC/fRYEPos9TyTen6X07eIAjZGn4M2kDeP0UGFqXwxkyimv7iqorzbSp+PG/JRLxqIe2qpVbVKf45GMAQN0/NNdAOtUVPuRhfpmBPcL3zIj2AAYYMO5fzAFReKDorMROrJHlYpEKOkTUXujmrzIBwZyG7m1ATUhr7Yjn8J9FlkAyjwSw5kzfjDUoRfwi6GkJ5cVQNcbuJRg905TRnVqLQIpHE/nK/22s5ZBL6Rz5/Yrqmq6h4yO23p7kpdkOUqX4YRzNKrnjCDbo5OhnGY21JZOECW1ABjQnXrl+H9/0HHZ3HOEhvTo6kNYPEqg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dNnJgIuMkX1y0V2BRId+ruz7414Hy7H4YyDiyLoPRlk=;
- b=ApD+8SeWVB7rNJqECxExVlnBksmRurFscfIiweWssemyEg/gWtEUH+KWdqhclkZM1p+Zq1JHrIaPJC4fNZKvUfLbceJPfhEq1PK8+S9ZfZb3z4chG4tVhmpbfmS0M0QLgfHngv+SYtbkvAu5FkxSDK5WP+USTw/7NkeZRmOtytU49qNv0NeM5ckRLJ9KU6wfqWX1866YZiVepfjH++8UmAw5tBumD7WrvcT1xfTENSoizVez+apk2HnkUa1UQgaEAkPnbJfjFIRU5j3TCrbgmyKXO6PjBYfodBkn9T2dh5ThgHvWAmg602nLsa7YN4Jz2qfT+o7kHUbLwZ8HaDPaww==
+ bh=XOgCMEoCJzELv83glUnmlOCcrr6VlVVYipxh4L0NKE4=;
+ b=x25/W6mWabjfE0aqfUUZ+ctRllIiw/djD0SNyGtRY/uM84jXM01nxs6TZYVnJK1OEmeR5W02GqywBQdp7CYEI+PvAgnfggD0XgUlNjgrFjxT2n7NeXsft1gB3KzWOXCkTpYsKGAd+g9cwzuvz33mfbZfFC+oujdCeG6Rd4YrEK2sspt4o3SfmamkmP/h6E6JZpy7l4nNYh5n3njethm4t0INnLUocPZJ2ufJMRMbIFpXg/jQn2+WKc3DuTJoDbKlWcFteLJ4DM4FILpezXczZ1nAaZurATeI/E9N/3rJcey/OkX1pRHT2pGtFyw2JRaiAnvIamdlhgjSR4Ke16L87g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dNnJgIuMkX1y0V2BRId+ruz7414Hy7H4YyDiyLoPRlk=;
- b=iszpwQND1dzJXD/4+l1t+x7+NsSQfM96HWWzbWvdAEOmA4l/j0Q7t/ui1YxPMnSTxR4Y/+ckJ4vPdYazh0djYITVrLicSNMt6dmq3y8kg1juLvPC06YCJu2JnHrHfgNdNigVUbIDfhui1VFB/ScD7Y9sQe41BF6VlqrBp+C0I4U=
-Received: from DM6PR11CA0005.namprd11.prod.outlook.com (2603:10b6:5:190::18)
- by PH7PR12MB9068.namprd12.prod.outlook.com (2603:10b6:510:1f4::7) with
+ bh=XOgCMEoCJzELv83glUnmlOCcrr6VlVVYipxh4L0NKE4=;
+ b=wusU9Oe2eeTlYZ68D3NyYcaphcCjBkHFTEDugyqmZAMj2bp+uRCInidzgtUXDFw/6pZ35VMQ1PPsg1/5h3doSmUU18pxZGzoSk7ZWK4hO/YXA3XO+sOfS0MXP5XeKuHx3QWLGzIZwVHSLM/q9LcTwcJyGDiKBgr6qXYkk33tjoc=
+Received: from SA9PR13CA0034.namprd13.prod.outlook.com (2603:10b6:806:22::9)
+ by DM6PR12MB4058.namprd12.prod.outlook.com (2603:10b6:5:21d::16) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.39; Fri, 18 Jul
- 2025 11:24:24 +0000
-Received: from DS3PEPF000099DF.namprd04.prod.outlook.com
- (2603:10b6:5:190:cafe::1a) by DM6PR11CA0005.outlook.office365.com
- (2603:10b6:5:190::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.20 via Frontend Transport; Fri,
- 18 Jul 2025 11:24:24 +0000
+ 2025 11:24:26 +0000
+Received: from SN1PEPF0002636D.namprd02.prod.outlook.com
+ (2603:10b6:806:22:cafe::84) by SA9PR13CA0034.outlook.office365.com
+ (2603:10b6:806:22::9) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.17 via Frontend Transport; Fri,
+ 18 Jul 2025 11:24:26 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
 Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DS3PEPF000099DF.mail.protection.outlook.com (10.167.17.202) with Microsoft
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ SN1PEPF0002636D.mail.protection.outlook.com (10.167.241.138) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8943.21 via Frontend Transport; Fri, 18 Jul 2025 11:24:24 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.8943.21 via Frontend Transport; Fri, 18 Jul 2025 11:24:26 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 18 Jul
- 2025 06:24:17 -0500
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 18 Jul
- 2025 06:24:16 -0500
+ 2025 06:24:19 -0500
 Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39 via Frontend
- Transport; Fri, 18 Jul 2025 06:24:15 -0500
+ Transport; Fri, 18 Jul 2025 06:24:19 -0500
 From: Michal Simek <michal.simek@amd.com>
 To: <linux-kernel@vger.kernel.org>, <monstr@monstr.eu>,
 	<michal.simek@xilinx.com>, <git@xilinx.com>
@@ -83,102 +80,189 @@ CC: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
 	<krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, "open list:OPEN FIRMWARE
  AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "moderated
  list:ARM/ZYNQ ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH 0/3] arm64: zynqmp: Add support for kr260 and kd240
-Date: Fri, 18 Jul 2025 13:24:05 +0200
-Message-ID: <cover.1752837842.git.michal.simek@amd.com>
+Subject: [PATCH 1/3] dt-bindings: soc: xilinx: Add support for K24, KR260 and KD240 CCs
+Date: Fri, 18 Jul 2025 13:24:06 +0200
+Message-ID: <8ff66d0dc4e0de6f239c25d43a2a96b4224305e8.1752837842.git.michal.simek@amd.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1752837842.git.michal.simek@amd.com>
+References: <cover.1752837842.git.michal.simek@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1304; i=michal.simek@amd.com; h=from:subject:message-id; bh=2I2WHOUGSmTLqkZ4bh8QcpUtsz0asfRj2SXXqhFCbDo=; b=owGbwMvMwCG2mv3fB7+vgl8ZT6slMWRU6V3Tt9Styoqd2TRjhfFlBid5PUuzQ7+4DsYeXTD5d KH19KaKjlIWBjEOBlkxRZbpTDoOa75dWyq2PDIfZg4rE8gQBi5OAZiIsizDX0ENSQP5fXdaJU0S J5wy3LDX3eiIqHGdZNVWpsOisas+BTIybDz26sc80f4AvpDv9xva5wrVxTnvdlaa3N8vYxr7puE cCwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3826; i=michal.simek@amd.com; h=from:subject:message-id; bh=tcqZav8s2lrCjMN5groouZ/gXf15w9BB89+28GGlRj8=; b=owGbwMvMwCG2mv3fB7+vgl8ZT6slMWRU6V2/faF92453E3fVvH0jvM5wse0065NllrKfOxI+L pzu2aG1rqOUhUGMg0FWTJFlOpOOw5pv15aKLY/Mh5nDygQyhIGLUwAmojydkWG69xWnZxcr7hxY si8vsnyWwXkfzqeO0VK6dzs1drzbFpPC8M+i4bDo//IjV9/Msf/a1XgtTV/nYIGJkquQ+OHjukJ zs7gB
 X-Developer-Key: i=michal.simek@amd.com; a=openpgp; fpr=67350C9BF5CCEE9B5364356A377C7F21FE3D1F91
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-Received-SPF: None (SATLEXMB05.amd.com: michal.simek@amd.com does not
+Received-SPF: None (SATLEXMB03.amd.com: michal.simek@amd.com does not
  designate permitted sender hosts)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF000099DF:EE_|PH7PR12MB9068:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0c805cdc-ccac-4dd8-f73e-08ddc5eda61a
+X-MS-TrafficTypeDiagnostic: SN1PEPF0002636D:EE_|DM6PR12MB4058:EE_
+X-MS-Office365-Filtering-Correlation-Id: 98471440-b93d-4968-8cb3-08ddc5eda794
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|36860700013|82310400026;
+	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?3MLqm44CCsy4WKD0EuUbK0MyM5e4BaU+wD+Mne5X7JUwNfabvFKCXgKVqIy5?=
- =?us-ascii?Q?GT7IquGJ9wGBivCh64hLRXQzuUpoTrfApH1+UrZzlTgonogBmzuHDcIoD53P?=
- =?us-ascii?Q?KCRlD9Mx1drq38/YMoAuaLMKeKnpeMsmBFiTGAuxz7py3epLzk0TzdOn7Y/c?=
- =?us-ascii?Q?HRAHm+0P0j9UukCOPuVWd08kdfObdlEfB14H1fpEVIlJmQkg4g5dnnPZJpH4?=
- =?us-ascii?Q?YmSktZl9o5VuwBiDpJhNDJGCqfgxzBpvx3pmI56UkZ1S9MEDsiirCXWZ4tRv?=
- =?us-ascii?Q?maOJsXPeWyoPlkdQQ1salJWG6HvJmz5RAvAi5Uuge8iFcTzQ9tOBkdfArYbk?=
- =?us-ascii?Q?BCF3lqL/s55ooRChz+GrwM961S7MP23eZNRyG4sxg4PVnpBMtSWjsnSCfKiv?=
- =?us-ascii?Q?uy+i4fOvPFaLWTmDH+UzwtAypSmwzvci90KFcI/VlXJGtFnedGa8XhnqgmJO?=
- =?us-ascii?Q?wARG9iUFgkltpmlAZ2n7kTOdCR3WH10SXhGu8pnkKpcCwoeFEIQUpzMD06Hw?=
- =?us-ascii?Q?ero/tUVxjbOL78Hs9JDkjH7Rko5JgprqAXZB/PMgkWr3+Wha5/IeBgAFHpC5?=
- =?us-ascii?Q?fSkrXMCTHZ2qhlZ5qYoKZGfc1JMEbC+vmqT7UBpfjKxJbms06yMQftpoMfUH?=
- =?us-ascii?Q?KhrNyeD0Lp+MQCQKssvtHGOksVwjzXlh/u2o8PGIe+AOgWsHELcqB3NIEsMv?=
- =?us-ascii?Q?TElkegfAj2XB8t8WyIhCjYIPntmC4xHSjgpUN/ykM82Ut8gShdA6/bCL55uB?=
- =?us-ascii?Q?B9EnuevFtdvMt0eFwxlvZsCca0Vum6THUq3z0FCmd9Ua2SujG44NKoX69t0q?=
- =?us-ascii?Q?Pj6L6lmn1rTvJGDOAQg6/t3aop0XdilYIa61wPJ/K2nqiR+msC5iWPck55Vv?=
- =?us-ascii?Q?vzx+zb+Dptk369nknauki9Md9K1xqQ8Fhr65GcjsrJiAK6xlWfql9os2XDY1?=
- =?us-ascii?Q?YJNPbj9KcZ7prtud1dapUx2pNzEiGy8Cj0+aqC5t3W5K39jjM8oimFsM51BO?=
- =?us-ascii?Q?yYORGB2lbb3kFv1594aUQE7BOEd3D+Hgtx2NriQIx46DAUUD7k3wCmgJkSoy?=
- =?us-ascii?Q?+/TU8pUoFJz938NRvSWZhyKDXnn2BbuF+Cg9DGiTHsrPDrZMIjtuRwLTbaIo?=
- =?us-ascii?Q?4VtBJplZ6ZZ08AD/HNxCXGtPgUS8Xo+Cg1WT+9QVqqfwMQNShXmewGA/vB7k?=
- =?us-ascii?Q?RnMYiRTuTijJ0jdn/zYT02vYZ9ED9PdFwORzsQl3ShAuH72QfrEnEpVzEFi7?=
- =?us-ascii?Q?jU/wUhNyFp1XgG7jrC1Om/FQVWjnc69wDyq311X6X1Te5pf6gW3OMT/T/ckS?=
- =?us-ascii?Q?1M/8tIs+2YZDvYvqOfDwKRo96IXqR/HNoCR7nse5zw8qR5WkqgtV0fR8wvcb?=
- =?us-ascii?Q?yaYLL6vtNNUFKjIwteiKDIh5Hb4VNg1hsYllGYeecsqXsGlzSSSbwbtTEBUp?=
- =?us-ascii?Q?l7Mt/Y/K1wvkCvdHwqGovOimtjrEfwJa0SrBjT4Tjygh3dYNGa9GfF/iCutQ?=
- =?us-ascii?Q?eEEfET6pHy93QOAtCFxfWUcB9C2WPDIPiWsB?=
+	=?us-ascii?Q?pdAbRluWvi42m+pCQytH5bEkS9NGNiIvnajnn4ioNd/8g8qFtKb2g6xwo1wq?=
+ =?us-ascii?Q?vt0aR+ayByp6g9DFeSNl6St6KH7PpuKzIAaiNYfghm/p1ehhjvJS1O76PyN8?=
+ =?us-ascii?Q?Xq8tnH3U0TJWYEY5I+jWpBMTagG/WNTVKa8EM7kI26OUfF5DR9qbTWxOrdht?=
+ =?us-ascii?Q?YakiLwDncKKTnIFXQMd6JJaM4fs4BFXwYGQdcfpvwuuj2kY7k+XRda2AXWLN?=
+ =?us-ascii?Q?XnlJmUpDcSwlsiVBQzm0v9vaCgHP9xM4yVdMkyWMkf6uINDYUBVdlsSB8G6g?=
+ =?us-ascii?Q?AT0v5l3+HL9KlYCUt0ofn8BKPMUSMpQnwvZi0KQdjp+uL7LcEY+BzbQflstS?=
+ =?us-ascii?Q?mTifdZeYWiflcWxhrLzg7QBAfVd2eogqOXqgxkX48VqxnfSP6SqjvrKxdjNy?=
+ =?us-ascii?Q?pWsiI55bL8ycFdP7NRHhtfx/e0wWlTFvGS3DSQd805QYZlqpphGKf1258keg?=
+ =?us-ascii?Q?VebwIuWxRNjbAtbP3rFQfD5oewREycdw4wBXkDEY29oNr7Zh+H5+HNasfF8K?=
+ =?us-ascii?Q?ZOcd53437c6KtddDxwLQqKfXmSwG44HVnJw4RJEq7Kra5eQW4QvIsAl89yY6?=
+ =?us-ascii?Q?N8FTlFgnLfGGtAPOvGZNP38R08bql/mHb2FvRfUkQsvG4gclbntDAZkaBVEY?=
+ =?us-ascii?Q?nxZfqYzRd/AS7JMxQ1ULOyZFeoAeGbIybANbFRBNbaTM94FGVu7mGbB4mOzo?=
+ =?us-ascii?Q?6S7GDVNi6/YPYLhlPskAKQTKx1/KAnt9WYlD95mU+LDDqhyEtkm07VisBJXE?=
+ =?us-ascii?Q?suI5lYgUzC8/QHV+68cPGDcdKzBouJkJA4c2o9NSAicj8IggL6EVsAC4FENd?=
+ =?us-ascii?Q?aWFIWkSqLppkY4hNpbNQ6Rnxizx75CAbzCl+Ei7kJqDMscPwy0zxiw63vGh1?=
+ =?us-ascii?Q?ZXKOy7y60D8F6ZkBXsu/ON3n0JUoeleqzGOtC/8LeOK88NeL489d+x13YF/W?=
+ =?us-ascii?Q?pJNNQHxnKXw8at7i5Lc/UkWJKEFfISeUyV8G6cdduqs9AXILGe2IBUxQn9yM?=
+ =?us-ascii?Q?qf6K5YgwuBMUBsxZ1hwwvQINYmWZ+as67jrzuNaG0T3oWTsK1vtwmhyz3lK+?=
+ =?us-ascii?Q?azWm3ovvDBwoeZ0cHHbJ3t74fTSopBw+g+gYuE73oWLGm/68kIpzGoqjTgt7?=
+ =?us-ascii?Q?O+q7kFTyRrWsfgsMsBoGCLVfCkyg6Qjt4jsVBrX+M5QIzJssJpKVRr2CmF9J?=
+ =?us-ascii?Q?6ip15HzjaghDEbL2Mr7jgEiQ2KUukTYptsXNZaZOSQXVkTe45anRcpc6c0dn?=
+ =?us-ascii?Q?hcBrv3183iIuKzZIlwDfEqGbOORVGwNlDgblM4up+6cKsMmnIk82iYptGSr8?=
+ =?us-ascii?Q?JbfZBw38RZJm2ZDTyJu27CaMPp0ccYgJBUrQLE2fY4ONoj5qz2CrKkel04UH?=
+ =?us-ascii?Q?2ylurdCEuBJvk0quxL3R4UcAUfTXij8aeySFcrZSqvPawgvlWP3lVbD+4EJy?=
+ =?us-ascii?Q?voMjnQsr+Ep53C8vUZX8CrfwTIpB77duAwX1EoR4dMmqZ6CLt7J3LPpsslL3?=
+ =?us-ascii?Q?FBA0SlzNWcDb2Ow+CpGHB8sG/7IMtTnSj4Aw?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2025 11:24:24.0438
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2025 11:24:26.5282
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0c805cdc-ccac-4dd8-f73e-08ddc5eda61a
+X-MS-Exchange-CrossTenant-Network-Message-Id: 98471440-b93d-4968-8cb3-08ddc5eda794
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	DS3PEPF000099DF.namprd04.prod.outlook.com
+	SN1PEPF0002636D.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB9068
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4058
 
-Hi,
+The commit 7a4c31ee877a ("arm64: zynqmp: Add support for Xilinx Kria SOM
+board") has added support for k26 and kv260 and the commit dbcd27526e6a
+("dt-bindings: soc: xilinx: Add support for KV260 CC") has added support
+for KV260 and this is follow up patch for adding description for k24 SOM,
+KR260 (robotics platform) and KD240 (driver platform).
+The bootflow is the same that's why for more information please take a look
+at above commits.
 
-add description for k24 and kr260 with kd240 boards.
-Pretty much both k24 and k26 SOMs can be plugged to other carrier cards but
-not all combinations are tested together.
+The KD240 kit is based on smaller k24 SOM with only 2GB of memory.
 
-Thanks,
-Michal
+Signed-off-by: Michal Simek <michal.simek@amd.com>
+---
 
+ .../bindings/soc/xilinx/xilinx.yaml           | 81 +++++++++++++++++++
+ 1 file changed, 81 insertions(+)
 
-Michal Simek (3):
-  dt-bindings: soc: xilinx: Add support for K24, KR260 and KD240 CCs
-  arm64: zynqmp: Add support for kr260 board
-  arm64: zynqmp: Add support for kd240 board
-
- .../bindings/soc/xilinx/xilinx.yaml           |  81 ++++
- arch/arm64/boot/dts/xilinx/Makefile           |  24 +
- .../boot/dts/xilinx/zynqmp-sck-kd-g-revA.dtso | 390 +++++++++++++++
- .../boot/dts/xilinx/zynqmp-sck-kr-g-revA.dtso | 438 +++++++++++++++++
- .../boot/dts/xilinx/zynqmp-sck-kr-g-revB.dtso | 451 ++++++++++++++++++
- .../boot/dts/xilinx/zynqmp-sm-k24-revA.dts    |  23 +
- .../boot/dts/xilinx/zynqmp-smk-k24-revA.dts   |  21 +
- 7 files changed, 1428 insertions(+)
- create mode 100644 arch/arm64/boot/dts/xilinx/zynqmp-sck-kd-g-revA.dtso
- create mode 100644 arch/arm64/boot/dts/xilinx/zynqmp-sck-kr-g-revA.dtso
- create mode 100644 arch/arm64/boot/dts/xilinx/zynqmp-sck-kr-g-revB.dtso
- create mode 100644 arch/arm64/boot/dts/xilinx/zynqmp-sm-k24-revA.dts
- create mode 100644 arch/arm64/boot/dts/xilinx/zynqmp-smk-k24-revA.dts
-
+diff --git a/Documentation/devicetree/bindings/soc/xilinx/xilinx.yaml b/Documentation/devicetree/bindings/soc/xilinx/xilinx.yaml
+index fb5c39c79d28..c9f99e0df2b3 100644
+--- a/Documentation/devicetree/bindings/soc/xilinx/xilinx.yaml
++++ b/Documentation/devicetree/bindings/soc/xilinx/xilinx.yaml
+@@ -116,6 +116,36 @@ properties:
+           - const: xlnx,zynqmp-zcu111
+           - const: xlnx,zynqmp
+ 
++      - description: Xilinx Kria SOMs K24
++        minItems: 3
++        items:
++          enum:
++            - xlnx,zynqmp-sm-k24-rev1
++            - xlnx,zynqmp-sm-k24-revB
++            - xlnx,zynqmp-sm-k24-revA
++            - xlnx,zynqmp-sm-k24
++            - xlnx,zynqmp
++        allOf:
++          - contains:
++              const: xlnx,zynqmp
++          - contains:
++              const: xlnx,zynqmp-sm-k24
++
++      - description: Xilinx Kria SOMs K24 (starter)
++        minItems: 3
++        items:
++          enum:
++            - xlnx,zynqmp-smk-k24-rev1
++            - xlnx,zynqmp-smk-k24-revB
++            - xlnx,zynqmp-smk-k24-revA
++            - xlnx,zynqmp-smk-k24
++            - xlnx,zynqmp
++        allOf:
++          - contains:
++              const: xlnx,zynqmp
++          - contains:
++              const: xlnx,zynqmp-smk-k24
++
+       - description: Xilinx Kria SOMs
+         minItems: 3
+         items:
+@@ -148,6 +178,57 @@ properties:
+           - contains:
+               const: xlnx,zynqmp-smk-k26
+ 
++      - description: Xilinx Kria SOM KD240 revA/B/1
++        minItems: 3
++        items:
++          enum:
++            - xlnx,zynqmp-sk-kd240-rev1
++            - xlnx,zynqmp-sk-kd240-revB
++            - xlnx,zynqmp-sk-kd240-revA
++            - xlnx,zynqmp-sk-kd240
++            - xlnx,zynqmp
++        allOf:
++          - contains:
++              const: xlnx,zynqmp-sk-kd240-revA
++          - contains:
++              const: xlnx,zynqmp-sk-kd240
++          - contains:
++              const: xlnx,zynqmp
++
++      - description: Xilinx Kria SOM KR260 revA/Y/Z
++        minItems: 3
++        items:
++          enum:
++            - xlnx,zynqmp-sk-kr260-revA
++            - xlnx,zynqmp-sk-kr260-revY
++            - xlnx,zynqmp-sk-kr260-revZ
++            - xlnx,zynqmp-sk-kr260
++            - xlnx,zynqmp
++        allOf:
++          - contains:
++              const: xlnx,zynqmp-sk-kr260-revA
++          - contains:
++              const: xlnx,zynqmp-sk-kr260
++          - contains:
++              const: xlnx,zynqmp
++
++      - description: Xilinx Kria SOM KR260 rev2/1/B
++        minItems: 3
++        items:
++          enum:
++            - xlnx,zynqmp-sk-kr260-rev2
++            - xlnx,zynqmp-sk-kr260-rev1
++            - xlnx,zynqmp-sk-kr260-revB
++            - xlnx,zynqmp-sk-kr260
++            - xlnx,zynqmp
++        allOf:
++          - contains:
++              const: xlnx,zynqmp-sk-kr260-revB
++          - contains:
++              const: xlnx,zynqmp-sk-kr260
++          - contains:
++              const: xlnx,zynqmp
++
+       - description: Xilinx Kria SOM KV260 revA/Y/Z
+         minItems: 3
+         items:
 -- 
 2.43.0
 
-base-commit: bab2fdce8aafb5eb809d979d3de7cb9b05c28dd7
 
