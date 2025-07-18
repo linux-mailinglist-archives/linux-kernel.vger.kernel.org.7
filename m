@@ -1,108 +1,128 @@
-Return-Path: <linux-kernel+bounces-736634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1703CB09FD5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:34:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F36F4B09FD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:34:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDB7B1C81DDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:33:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73F3AA870B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 09:32:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB21729B78E;
-	Fri, 18 Jul 2025 09:32:24 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B356929ACC6;
+	Fri, 18 Jul 2025 09:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TojAV+ph"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33130221FBA;
-	Fri, 18 Jul 2025 09:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64DF9221FBA;
+	Fri, 18 Jul 2025 09:31:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752831144; cv=none; b=nqbYg6hL/kgBu85RWmfck6f2oRvfSP+wgO3xxMoWj5X83Hpd6fNVTBv2zyU6G8X5uuHezKWOsk44jfpS8u/RmpiHGQKHHMRa7e55tB0fMN7PT871JV/E+Pe0IGSCx6QzjVPZ/X941cVa7ez0bty4bSt3ujHOVCFT3Wc+6edoc7w=
+	t=1752831073; cv=none; b=Bo/CiFEVR9s6rhU36hddroU5LMbjhdoUBYvF7oG5z449MZ8O1ICTSosKVnxLqMLN8TB7yqo9DVtUYeyK+iYiyxIOsgjdDr+knfafJZxJv4TFxcnwaXeZrKLgEkLHfHCZuyPsg0WTaHoxCq/R4uhA62O3ydEmNh3nzEJu6YolvHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752831144; c=relaxed/simple;
-	bh=nGVvF6nK59wes4T4bei2C9AddEL7aiF3cGhmMHQLGzQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KPoQux1wrzeLX28PJ0WbgpktSzQyWnYHBFI2hh9W7BkxFgwVywMjtc6Qv0CmkfxBBpalBreED5M7Sk9SZp58GL5x4VBRxNv8vYHJYu9kw2nHZugD2gGcAX/eSKRn1zb6fPmZAQ1cgGCKRb/GmHkEzZ73PvUcP3d6gnikX4NX4mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [211.71.28.34])
-	by APP-03 (Coremail) with SMTP id rQCowADXanyWFHposJcuBQ--.1121S2;
-	Fri, 18 Jul 2025 17:32:15 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: davem@davemloft.net,
-	andreas@gaisler.com,
-	make24@iscas.ac.cn
-Cc: akpm@linux-foundation.org,
-	sparclinux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH v2 RESEND] sparc: fix error handling in scan_one_device()
-Date: Fri, 18 Jul 2025 17:32:05 +0800
-Message-Id: <20250718093205.3403010-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1752831073; c=relaxed/simple;
+	bh=bhe0zcLGy5GklMgwNIQG4xyAuKnkHHvNVTH7d7Uwzqs=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=q/7s1MlWFbFrqKG1so033sfP0hTdPF8fhMcAUZ7nuQFpfUjFuSBTJ5Jx+VL/6hmkcYbkje4Q6CpqUsQbFjAVDf36sPQeZnMPp/iL+n0c6Yv8Ru14kiHYC0vLoolJbzJfFRZl+CjlZ8q5ylw7dcdSjImSzq3kz/KEVJvo4G33ahE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TojAV+ph; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ae0e0271d82so335662866b.3;
+        Fri, 18 Jul 2025 02:31:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752831070; x=1753435870; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=XjU6nrqfbiw0u0TIKCSt6roZUluHkikf0/decEoYNJE=;
+        b=TojAV+phUnHpE12r/iHX2Yz5o1m1dHl06PQjdp9hkZkG2NK8Esx77EPg0wLlqaUxNu
+         tctMMIYbwuUc5YcXn10of94ELvmSnWF338zsp2WSdV2oYBDCCwDotnPBWqzBGfK//lHF
+         Cykj6z0MeXOxzYbxAHH7c8PoMEFwGx8aoREWzwvs2qwPeO6g2eYZlzNuh0X6yQk2VTbq
+         Bec6zemUETdlEU70WqC35z1TCAU26n7irzebZIScMGDHAuvzVhM1Y2YneCqx4hlfNrZD
+         ACWuT5e854cuKEIcIftQaZTO0y8UeXbzC2dyW1o2yjP9cBggKn9yiy/N/lYlmpK+S+DI
+         ovXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752831070; x=1753435870;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XjU6nrqfbiw0u0TIKCSt6roZUluHkikf0/decEoYNJE=;
+        b=Euh1x1iLF0m9JyM7qRzEDe+SWE9ug6FCDU+3HZH1fkeigc+qn3VVuuQeTjzvy2c5bb
+         GnliDKlmTl7cjHzkUzKMrcMuygYDYAlLzdGQKafRrK1x6LNxP2t7GK8bc7nouR9gck/e
+         pQLzl+fY8Fc7XYGefyrq0de1cN4t9Ik1ex+jsaQUQrMEm8dbiem9k3maQ8BdXfaw6RaL
+         HD3JX7jk3b0QyWT8gEP1LydDzHc8kzNMSDZ4mhpZWJeqQfH5aUnoCD67osNr0z2TMOT2
+         f20ecTPtHjaT/FMTIobJ4OeSfG/eK4kuLaE7OfFqFtDZoHVhhUc+wYuCnNxyf/Yfc8tO
+         hs5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV/SEAb1QSTRVTYxTZvGtYnYSAf60PTNrci+hYHVK3IjtbqHb5gcQirYD/Z6R5C9j4lsJiUuct9@vger.kernel.org, AJvYcCVpN5zFb68TecQJMhzZ9P9OMHeAHaZMyW7uUF+kLJkHKpPVX9PbQwW8QKbDbFeapdImwXs=@vger.kernel.org, AJvYcCWX+X9G4DBg0C7GZslYMkEAYAKARDmAxdpsZ9sMnL19hX/7CsWl6kUO8UmxPdTbsyR7emWOlQTXKpirIfS/@vger.kernel.org, AJvYcCXbl/HMjIGDgCSL89VU0iGPIvzbLfsROUEdinG0vv2wuYirBuFqZX0i/anxO06aEzfbRoUGmUqc6fovRg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDGTrJhIRmvcomt9EktZGqAbxKu1DGpK1S5kkZRpViYHVJntym
+	f/wrs8CrFnoUGHny3CrMpYydsEGjV/ctgiQvd8g40uDWuOvLDRYjNo/x
+X-Gm-Gg: ASbGncu4GzhQS4NUzkjM1GbBgR8LSf6pVr37zAFrm/VXU8XP0yFupWE2G5/NDFdSkV1
+	M2dk1H9L/gN2XbLj9gkfvPxawTtLK5+G3sNGFcPV985Fyng1qEjnoC7oa/HXEc+RiKsPcD105Pk
+	mFriq+zZj8xxk0lmbHg22q5MV9BjBY0pWRZPIcsVAgPFLyjnQ/0+EeHB/FkjBFyhBv4eByxm/rA
+	Yj8prI9q7jxpZKt3tibWAAnJ+kxrJDQ9kwVmTj/SqqYLb7oiUFoaHYQlMh20+NMWrhEVqCs4PXK
+	FqiCw2Z0IWF3RB+2gDelllKrkCcEBQNP6gIk0rYpU1sR25jsP7XoS/hOuskCem6U4xpafnCktXn
+	Rr3b1mnw7NXefI7NN3n549vBK90nVoS/gwhU=
+X-Google-Smtp-Source: AGHT+IFIqad+0hlUN3zY87QsZXaNiyLAJ+x0TZ9qnNxIHZCIsq6bsPaf5QF99Ci+hSan+dVtZ2on2A==
+X-Received: by 2002:a17:907:990c:b0:ae6:eff6:165c with SMTP id a640c23a62f3a-aec4fc41e91mr497084166b.48.1752831069432;
+        Fri, 18 Jul 2025 02:31:09 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325::1ac? ([2620:10d:c092:600::1:6915])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6c7d46ffsm88380066b.42.2025.07.18.02.31.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Jul 2025 02:31:08 -0700 (PDT)
+Message-ID: <1fe747ea-56ce-4418-92cb-057d989e3732@gmail.com>
+Date: Fri, 18 Jul 2025 10:32:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Intel-wired-lan] [PATCH net-next v11 12/12] libeth: xdp: access
+ ->pp through netmem_desc instead of page
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: Byungchul Park <byungchul@sk.com>, kernel test robot <lkp@intel.com>
+Cc: willy@infradead.org, netdev@vger.kernel.org,
+ oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, kernel_team@skhynix.com, almasrymina@google.com,
+ ilias.apalodimas@linaro.org, harry.yoo@oracle.com,
+ akpm@linux-foundation.org, andrew+netdev@lunn.ch, toke@redhat.com,
+ david@redhat.com, Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
+ surenb@google.com, mhocko@suse.com, linux-rdma@vger.kernel.org,
+ bpf@vger.kernel.org, vishal.moola@gmail.com, hannes@cmpxchg.org,
+ ziy@nvidia.com, jackmanb@google.com, wei.fang@nxp.com, shenwei.wang@nxp.com,
+ xiaoning.wang@nxp.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org
+References: <20250717070052.6358-13-byungchul@sk.com>
+ <202507180111.jygqJHzk-lkp@intel.com>
+ <20250718004346.GA38833@system.software.com>
+ <20250718011407.GB38833@system.software.com>
+ <35592824-6749-4fa4-89d9-2de9caccc695@gmail.com>
+Content-Language: en-US
+In-Reply-To: <35592824-6749-4fa4-89d9-2de9caccc695@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowADXanyWFHposJcuBQ--.1121S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7WryrKw45JFyrCr15ZF1DWrg_yoW8Gr4xp3
-	s7Aas8JrWUur1vkws7XF18ZF1UCw4jy3Wruw45C3W0krn3WryrJ3yv9r4kK3W5trZrAF40
-	qrZrtw10yF4Uu3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9l14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr
-	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
-	rcIFxwCY1x0262kKe7AKxVWUAVWUtwCY02Avz4vE14v_GFWl42xK82IYc2Ij64vIr41l4I
-	8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AK
-	xVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcV
-	AFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8I
-	cIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r
-	4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU538nUUUUU
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-Once of_device_register() failed, we should call put_device() to
-decrement reference count for cleanup. Or it could cause memory leak.
-So fix this by calling put_device(), then the name can be freed in
-kobject_cleanup().
+On 7/18/25 10:18, Pavel Begunkov wrote:
+> On 7/18/25 02:14, Byungchul Park wrote:
+...>>>>     include/linux/mm.h:4176:54: note: expected 'struct page *' but argument is of type 'const struct page *'
+>>>>      static inline bool page_pool_page_is_pp(struct page *page)
+>>>>                                              ~~~~~~~~~~~~~^~~~
+>>>
+>>> Oh.  page_pool_page_is_pp() in the mainline code already has this issue
+>>> that the helper cannot take const struct page * as argument.
+> 
+> Probably not, and probably for wrong reasons. netmem_ref is define
+> as an integer, compilers cast away such const unlike const pointers.
 
-Calling path: of_device_register() -> of_device_add() -> device_add().
-As comment of device_add() says, 'if device_add() succeeds, you should
-call device_del() when you want to get rid of it. If device_add() has
-not succeeded, use only put_device() to drop the reference count'.
+Taking a look libeth, at least at the reported spot it does
+page->pp->p.offset, that should be fine. And your problem
+is caused by the is_pp check in pp_page_to_nmdesc().
 
-Found by code review.
-
-Cc: stable@vger.kernel.org
-Fixes: cf44bbc26cf1 ("[SPARC]: Beginnings of generic of_device framework.")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
-Changes in v2:
-- retained kfree() manually due to the lack of a release callback function.
----
- arch/sparc/kernel/of_device_64.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/sparc/kernel/of_device_64.c b/arch/sparc/kernel/of_device_64.c
-index f98c2901f335..f53092b07b9e 100644
---- a/arch/sparc/kernel/of_device_64.c
-+++ b/arch/sparc/kernel/of_device_64.c
-@@ -677,6 +677,7 @@ static struct platform_device * __init scan_one_device(struct device_node *dp,
- 
- 	if (of_device_register(op)) {
- 		printk("%pOF: Could not register of device.\n", dp);
-+		put_device(&op->dev);
- 		kfree(op);
- 		op = NULL;
- 	}
 -- 
-2.25.1
+Pavel Begunkov
 
 
