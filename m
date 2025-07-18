@@ -1,106 +1,117 @@
-Return-Path: <linux-kernel+bounces-736675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC9BBB0A057
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:07:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91B7CB0A17E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:03:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A26F5A1FA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:07:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72CBA16E989
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1071229CB42;
-	Fri, 18 Jul 2025 10:07:41 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD2A2BE63D;
+	Fri, 18 Jul 2025 11:03:28 +0000 (UTC)
+Received: from baidu.com (mx24.baidu.com [111.206.215.185])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54CED29B76B;
-	Fri, 18 Jul 2025 10:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1D7C2AD14;
+	Fri, 18 Jul 2025 11:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752833260; cv=none; b=DHN7BnmH6OUUEH7m0WaIcsCIhW9OigAdpfrXZqZELjAGI1n7Edm008nnkowE0POGIX9sMGHJt81nR14B910qRSCmOBa2dU76YGeG0Qc8e11VXkBIeC0wgOA6kADVTUlyj3JYJorSUw6+z2YG1Rv78Pg/BuyXvY+eN8OnPbgReEo=
+	t=1752836607; cv=none; b=HNNgoXB1kQ5ny4Ii7wh34E4LcC/cCUTipcxOYto/C8jg4WlPNlE5A6WX5GdgufxZNUXwzGBr+Q42M+s4TLxR2G37VmCOVFKeacU/X8Uvvh2vmTsWGrmiIBgUYvjbUqX0w8ECDZ4aU/9M+yPhwTte+Bf6akXq2vmM2l1qxdYPE5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752833260; c=relaxed/simple;
-	bh=keXTVKHuCD0L5Qb/JscNYjXIELHz1c4oi3RqVYlTU6o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NrZgqYuwJdErMkg4NbiDyGkpTayOF1N+6pv3TcEshdo5fiAG21BQVi2/YiRc2CIsbhbqzhBkvBTL4jAJs0opFCoTOrKZtndN5P/57uwZZc6KPPoj38T/nfTP/aYmGw9l+COy1bSZMbofjMINZfOWLkxz1WpkpJm+LQZ0adAZRpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.48.207])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 3380A340F28;
-	Fri, 18 Jul 2025 10:07:37 +0000 (UTC)
-Date: Fri, 18 Jul 2025 18:07:32 +0800
-From: Yixun Lan <dlan@gentoo.org>
-To: Vivian Wang <wangruikang@iscas.ac.cn>
-Cc: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, paul.walmsley@sifive.com,
-	aou@eecs.berkeley.edu, alex@ghiti.fr, palmer@dabbelt.com,
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] riscv: dts: spacemit: Add OrangePi RV2 board
- device tree
-Message-ID: <20250718100732-GYA700698@gentoo>
-References: <20250718084339.471449-1-hendrik.hamerlinck@hammernet.be>
- <20250718084339.471449-3-hendrik.hamerlinck@hammernet.be>
- <8ade99a6-84a0-4e69-8ebf-d9dfdc9141b5@iscas.ac.cn>
+	s=arc-20240116; t=1752836607; c=relaxed/simple;
+	bh=qDkhYkrGTILVWAr/MYvLU0ABsOv1ngXhgVMbnsF+LEU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=a3eaBQ7dXB5rup9zFMEJ+WmjkqfSAwpyXVyRd+O9YN3wFS2WQXNAK3U+rhSW7JK2ouPY3TxACWHs5GzXjW5Qx5S2Flv/lNykGBfYG36KBSmbKozHqoOroxU5txywoFhtzq3VTyF1lDXMRaxlnROG4z9pmK9P7P4DLEzs6OAzk+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: lirongqing <lirongqing@baidu.com>
+To: <pbonzini@redhat.com>, <vkuznets@redhat.com>, <tglx@linutronix.de>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
+	<x86@kernel.org>, <hpa@zytor.com>, <kvm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Li RongQing <lirongqing@baidu.com>
+Subject: [PATCH] x86/kvm: Reorder PV spinlock checks for dedicated CPU case
+Date: Fri, 18 Jul 2025 17:49:36 +0800
+Message-ID: <20250718094936.5283-1-lirongqing@baidu.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8ade99a6-84a0-4e69-8ebf-d9dfdc9141b5@iscas.ac.cn>
+Content-Type: text/plain
+X-ClientProxiedBy: bjhj-exc4.internal.baidu.com (172.31.3.14) To
+ bjkjy-exc3.internal.baidu.com (172.31.50.47)
+X-FEAS-Client-IP: 172.31.50.47
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-Hi Vivian,
+From: Li RongQing <lirongqing@baidu.com>
 
-On 17:10 Fri 18 Jul     , Vivian Wang wrote:
-> Hi Hendrik,
-> 
-> On 7/18/25 16:43, Hendrik Hamerlinck wrote:
-> > Add initial device tree support for the OrangePi RV2 board [1], which is
-> > marketed as using the Ky X1 SoC but has been confirmed to be 
-> > identical to the SpacemiT K1 [2].
-> >
-> > The device tree is adapted from the OrangePi vendor tree [3], and similar
-> > integration can be found in the Banana Pi kernel tree [4], confirming SoC
-> > compatibility.
-> 
-> This isn't particularly crucial, but I wonder if we can do something
-> similar to a jh7110-common.dtsi arrangement, where most of the boards
-> sharing similar designs can also share devicetree source files.
-> 
-> Easier said than done, probably, but I think it should be possible by
-> just comparing the vendor dts files.
-> 
-> Again this doesn't need to block this patch.
-> 
-Sure
+When a vCPU has a dedicated physical CPU, typically, the hypervisor
+disables the HLT exit too, rendering the KVM_FEATURE_PV_UNHALT feature
+unavailable, and virt_spin_lock_key is expected to be disabled in
+this configuration, but:
 
-> Yixun: I'm assuming you'll be handling this. What do you think about a
-> k1-common.dtsi?
-> 
+The problematic execution flow caused the enabled virt_spin_lock_key:
+- First check PV_UNHALT
+- Then check dedicated CPUs
 
-Sharing dtsi file for similar boards is generally fine, I saw a few
-other SoC maintainers have done the same..
+So change the order:
+- First check dedicated CPUs
+- Then check PV_UNHALT
 
-In the practical cases, we have to evaluate and plan carefully, it
-should be manageable to support fixed number of boards for one file,
-but would be nasty if expect one common dts file to cover all boards..
+This ensures virt_spin_lock_key is disable when dedicated physical
+CPUs are available and HLT exit is disabled, and this will gives a
+pretty performance boost at high contention level
 
-Anyhow, I think we can revisit this idea and having incremental patch
-later, it's not the problem for now
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
+---
+ arch/x86/kernel/kvm.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-Thanks for the suggestion
-
+diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+index 921c1c7..9cda79f 100644
+--- a/arch/x86/kernel/kvm.c
++++ b/arch/x86/kernel/kvm.c
+@@ -1073,16 +1073,6 @@ static void kvm_wait(u8 *ptr, u8 val)
+ void __init kvm_spinlock_init(void)
+ {
+ 	/*
+-	 * In case host doesn't support KVM_FEATURE_PV_UNHALT there is still an
+-	 * advantage of keeping virt_spin_lock_key enabled: virt_spin_lock() is
+-	 * preferred over native qspinlock when vCPU is preempted.
+-	 */
+-	if (!kvm_para_has_feature(KVM_FEATURE_PV_UNHALT)) {
+-		pr_info("PV spinlocks disabled, no host support\n");
+-		return;
+-	}
+-
+-	/*
+ 	 * Disable PV spinlocks and use native qspinlock when dedicated pCPUs
+ 	 * are available.
+ 	 */
+@@ -1101,6 +1091,16 @@ void __init kvm_spinlock_init(void)
+ 		goto out;
+ 	}
+ 
++	/*
++	 * In case host doesn't support KVM_FEATURE_PV_UNHALT there is still an
++	 * advantage of keeping virt_spin_lock_key enabled: virt_spin_lock() is
++	 * preferred over native qspinlock when vCPU is preempted.
++	 */
++	if (!kvm_para_has_feature(KVM_FEATURE_PV_UNHALT)) {
++		pr_info("PV spinlocks disabled, no host support\n");
++		return;
++	}
++
+ 	pr_info("PV spinlocks enabled\n");
+ 
+ 	__pv_init_lock_hash();
 -- 
-Yixun Lan (dlan)
+2.9.4
+
 
