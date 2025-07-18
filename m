@@ -1,279 +1,231 @@
-Return-Path: <linux-kernel+bounces-736930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 468E7B0A54B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:37:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 092AAB0A54D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 15:37:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05A321C81F88
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:37:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C35673B2CAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:37:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA7821D5BF;
-	Fri, 18 Jul 2025 13:37:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B9E21386B4;
+	Fri, 18 Jul 2025 13:37:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="IQIZwGDW"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yy8qNN24"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 163752AD2F
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 13:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A55C67262E;
+	Fri, 18 Jul 2025 13:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752845827; cv=none; b=puXB/KCsLc4L29x6SFG2URAWMjOB9a/V8oLSi/tYdYzJBNDneWsU0lsUZDpcctcfe/Z5FaVU/+1VytkIc+Ij3NPfDAyd3+JhKeKNNxBoe7gg6M+tDxzCPnhDLzHRbOZj8yjoeAq/UI/C5MQ3ndxbcIqjrnSJk3ohKCqtRzRNlKA=
+	t=1752845841; cv=none; b=lNUpMccJyWkZ5h9yNWhaM8Di33D4/0ji26R39jM8CyQFAyY57wLDdOM8YWnHlhblNihTyRGLsT7rXjFCSH/1FFmXCmC5MjXRj6D7YvlKKMV68Xm/xknWUYc2EN2KnMNSU+qG+N5utMdNXGrEaur9r5Tww3TrHRsjn7Z0sN77+Cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752845827; c=relaxed/simple;
-	bh=qxr0lo1TN0HaCQ7Fgn8BLcctimnaTlHOFjPoqfSkCzg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eYslgVuPa4jJweIw0yK0MZlRyqbZri2z2sPwH1uwD5rq9bVwnXimVNj44jqklFWJiFGVLQ2QvlkXPC0T0L2GFoTh987xJHlaAWD4ZO3Z3zR2XbFa2MciLagFzTTaJl2qQWDfHZxBRxBjFBG/7CYS2j/cKW47Ip4AG5jje/axz7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=IQIZwGDW; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ae3b336e936so409080666b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 06:37:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1752845822; x=1753450622; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=qxr0lo1TN0HaCQ7Fgn8BLcctimnaTlHOFjPoqfSkCzg=;
-        b=IQIZwGDWdFQxiuDguV1uvGYsuC8Oao1MnOV6TvN4EVmc/Hv5RVVqnw68/JcfQBrqJy
-         1lMBxKv7NbZ8bjbXIkNVqRF/iYOx8wpGBHLan28dMCSof+lU/1zEPLbQ6KmmMJXi6Cru
-         gT7wFo6JBhbgYT8zGBZy8LiNkkkpr9VI84bUSN7dJ/3+FpSlqmT7EggKDTyjRseWCgPG
-         LyOTDbG4UeS8eZzzAXl0UvtuVb/AZXMjS5rv2NuVAJGc9BKGWjedcdgvg/b0UuUyO1Zr
-         ghvDN37kLUm+9mPlO0bP0G2OmYb4idzd7+8h5F7uFFE1XFSyACUQs84FYWVbW7d5g6dk
-         n4uQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752845822; x=1753450622;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qxr0lo1TN0HaCQ7Fgn8BLcctimnaTlHOFjPoqfSkCzg=;
-        b=Q7TI1shiFXUTfAg8paEekAWGpIWXtBAPWY+quone9Vc3l9Z8WGzA4T6vaIDnJIgrkB
-         DFWp5Hkfd5hlvko2CuUTc6/NXk6KOsDUWw7AV40SYuXroGuHg9ETrznxregzzdfN/8X1
-         jU0/1Wk1F4WhZChozFmuVGdbWiCERI13xtqksqEgB4/F1VKTDidGPZO9955SAMB8IVBG
-         iKrsxLmzoxJkBU5LNx9+V4op0bXuc/5brCUtanleDb9l2aNO4sAxZ78CxjCSmSAPtWbm
-         izACMSe7/mOtYHZBODxIyMaRAePgOz3jrNIclbpGGHfjN9PKSN7oe8fN9K0WRfPbQUNq
-         1WCA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQEPLOKfmtSET9GVFdsppFYzAAm220JfqpMBuCxNO5lSVg58kTfeeu9pDmt2A5dkAFCK1cgo6uVFL4AfI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxP2tkLlkdpWbvRGdEcdoNGtgsJQA866ZqBWVtjh4bgY/f5GIln
-	8uK1XIHh1NokeIkjEBhfQZJacw1GvMzqR0sM+ffTiAL+vriyTXUjkCgls6iuYTCAHaw=
-X-Gm-Gg: ASbGncu7I/nlddAIxDYMMASQNMuXowjeJ8ngaurSoR2nGU1s4yKdzsmFw0DP1Xz+lFT
-	p0pdLo/spCQ6LjLPJR1nSQssRlNez+OCu2gU3OvGLDXDEUx7rFOYpYY61ur5z1PMLSfQALcfWc7
-	nO9XSdcWTa1H4xXW0kHEcrMUuSwolgqdKJTfjFKnbwqYvha34G4ZVuZsNsv1DRyAx/qUVtbLP+X
-	9W0Rp5b1DITkxIn7XMp372Q9gbLxRILyZm2rtTpyfolFy0Qy/35muS0CUo76O+Kg1Ok2lqRxhbY
-	aJ2vRdjYCXs0KReqnVz8m+SjfmFNLC7Uem0NGvi5GZRQceTgcJVMaMAHPx9CflZdgiLvCRoY6p9
-	g68tFfkhw8bA+IVCC8/LDkYsJidHeJJ5DrfU5e3Bu8rMIg7Tp1LEhYDkJZq7fN1KcZ7HCZNlUsg
-	uR7wkcWakrgrbYtrTR0ILudpoZh9mTG4g3TlVv0E68z1RX
-X-Google-Smtp-Source: AGHT+IGRXSvT8NrU4jhoTjesWfENh9gKHP5kfnupJ/w3fqPHsnvgkcSRmM63jgcb144OZnu3MTsjnA==
-X-Received: by 2002:a17:907:983:b0:ae0:54b9:dc17 with SMTP id a640c23a62f3a-ae9cdd8605amr976953266b.11.1752845822181;
-        Fri, 18 Jul 2025 06:37:02 -0700 (PDT)
-Received: from ?IPV6:2003:e5:8728:2b00:e047:1b8:d101:cf8e? (p200300e587282b00e04701b8d101cf8e.dip0.t-ipconnect.de. [2003:e5:8728:2b00:e047:1b8:d101:cf8e])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6c7d4806sm123151766b.39.2025.07.18.06.37.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Jul 2025 06:37:01 -0700 (PDT)
-Message-ID: <01dae2e9-dad7-465c-94ae-bcfbc2f96337@suse.com>
-Date: Fri, 18 Jul 2025 15:36:59 +0200
+	s=arc-20240116; t=1752845841; c=relaxed/simple;
+	bh=4gYK7cAt8c0eJOPvaPS4yKEvnYcbVrFkdFhehLWxsik=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dqdk/7PHadRmpHN8B+PPDkMu2LfTFTEqDTHvczhp4rEybXLX20Zcf9QyU9JPZ9Ao0TbKnA7xyt0oAg5t730Ev5m8BCGw4qausQAGFleL6mko73xXzOzLVwt4hJoClc8spYxxpCzQsTkdCF2HGZVhcn8btzMbnFpi3+lV5ljV+34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yy8qNN24; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14FB1C4CEEB;
+	Fri, 18 Jul 2025 13:37:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752845841;
+	bh=4gYK7cAt8c0eJOPvaPS4yKEvnYcbVrFkdFhehLWxsik=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Yy8qNN24agcDyfnirinDCL8kW7X+EzPdoiBa/bKjTRmdTumHRqgxlq98W1ZY9Lqqp
+	 BXRCWHbuo/mPUK1rrExsvfoJk7+cLFTCsO5hvY5XicL6wgeSN0lHUjcUZDxHt/jJ+G
+	 ikoPOXq+obE1oTE44wqcKgR3kbJP3XhaXkO6AokdrxUywUg/GlKuRNkLpE6k8mWuay
+	 z/Xeoq8r/oezbD3wLUOMIgpPcTCeYaqIyloN9DCat7hju8q6/XvrRm2mk9loVJx5gw
+	 tYPcY1areNux5tMVYVKowc7jJ12vSCEu9jHb/ArpmyAeafi1KBW1VgaAS85YgZT1LV
+	 HY/OUHeipGcAg==
+Date: Fri, 18 Jul 2025 14:37:14 +0100
+From: Will Deacon <will@kernel.org>
+To: Per Larsen <perl@immunant.com>
+Cc: Marc Zyngier <maz@kernel.org>, perlarsen@google.com,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, ahomescu@google.com,
+	armellel@google.com, arve@android.com, ayrton@google.com,
+	qperret@google.com, sebastianene@google.com, qwandor@google.com
+Subject: Re: [PATCH v7 2/5] KVM: arm64: Use SMCCC 1.2 for FF-A initialization
+ and in host handler
+Message-ID: <aHpOClH1k-3NhI_y@willie-the-truck>
+References: <20250701-virtio-msg-ffa-v7-0-995afc3d385e@google.com>
+ <20250701-virtio-msg-ffa-v7-2-995afc3d385e@google.com>
+ <8634bdbgaz.wl-maz@kernel.org>
+ <3b10fa81-bfdd-4325-a330-c79df2e21621@immunant.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 7/8] xen/xenbus: Fix typo "notifer"
-To: WangYuli <wangyuli@uniontech.com>
-Cc: airlied@gmail.com, akpm@linux-foundation.org, alison.schofield@intel.com,
- andrew+netdev@lunn.ch, andriy.shevchenko@linux.intel.com,
- arend.vanspriel@broadcom.com, bp@alien8.de,
- brcm80211-dev-list.pdl@broadcom.com, brcm80211@lists.linux.dev,
- colin.i.king@gmail.com, cvam0000@gmail.com, dan.j.williams@intel.com,
- dave.hansen@linux.intel.com, dave.jiang@intel.com, dave@stgolabs.net,
- davem@davemloft.net, dri-devel@lists.freedesktop.org, edumazet@google.com,
- gregkh@linuxfoundation.org, guanwentao@uniontech.com, hpa@zytor.com,
- ilpo.jarvinen@linux.intel.com, intel-xe@lists.freedesktop.org,
- ira.weiny@intel.com, j@jannau.net, jeff.johnson@oss.qualcomm.com,
- jirislaby@kernel.org, johannes.berg@intel.com, jonathan.cameron@huawei.com,
- kuba@kernel.org, kvalo@kernel.org, kvm@vger.kernel.org,
- linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org, linux-wireless@vger.kernel.org,
- linux@treblig.org, lucas.demarchi@intel.com, marcin.s.wojtas@gmail.com,
- ming.li@zohomail.com, mingo@kernel.org, mingo@redhat.com,
- netdev@vger.kernel.org, niecheng1@uniontech.com,
- oleksandr_tyshchenko@epam.com, pabeni@redhat.com, pbonzini@redhat.com,
- quic_ramess@quicinc.com, ragazenta@gmail.com, rodrigo.vivi@intel.com,
- seanjc@google.com, shenlichuan@vivo.com, simona@ffwll.ch,
- sstabellini@kernel.org, tglx@linutronix.de,
- thomas.hellstrom@linux.intel.com, vishal.l.verma@intel.com, x86@kernel.org,
- xen-devel@lists.xenproject.org, yujiaoliang@vivo.com, zhanjun@uniontech.com
-References: <BD5C52D2838AEA48+20250715134050.539234-1-wangyuli@uniontech.com>
- <906F22CD3C183048+20250715134407.540483-7-wangyuli@uniontech.com>
-Content-Language: en-US
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Autocrypt: addr=jgross@suse.com; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
- mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
- G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
- kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
- Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
- RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
- vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
- sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
- aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
- w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
- auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
- 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
- fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
- HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
- QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
- ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
-In-Reply-To: <906F22CD3C183048+20250715134407.540483-7-wangyuli@uniontech.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------cT4r0JNOUrsPfSEaUgW0eBEO"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3b10fa81-bfdd-4325-a330-c79df2e21621@immunant.com>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------cT4r0JNOUrsPfSEaUgW0eBEO
-Content-Type: multipart/mixed; boundary="------------oGJ4EHAKnSBOvFH3NUzTflx0";
- protected-headers="v1"
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-To: WangYuli <wangyuli@uniontech.com>
-Cc: airlied@gmail.com, akpm@linux-foundation.org, alison.schofield@intel.com,
- andrew+netdev@lunn.ch, andriy.shevchenko@linux.intel.com,
- arend.vanspriel@broadcom.com, bp@alien8.de,
- brcm80211-dev-list.pdl@broadcom.com, brcm80211@lists.linux.dev,
- colin.i.king@gmail.com, cvam0000@gmail.com, dan.j.williams@intel.com,
- dave.hansen@linux.intel.com, dave.jiang@intel.com, dave@stgolabs.net,
- davem@davemloft.net, dri-devel@lists.freedesktop.org, edumazet@google.com,
- gregkh@linuxfoundation.org, guanwentao@uniontech.com, hpa@zytor.com,
- ilpo.jarvinen@linux.intel.com, intel-xe@lists.freedesktop.org,
- ira.weiny@intel.com, j@jannau.net, jeff.johnson@oss.qualcomm.com,
- jirislaby@kernel.org, johannes.berg@intel.com, jonathan.cameron@huawei.com,
- kuba@kernel.org, kvalo@kernel.org, kvm@vger.kernel.org,
- linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org, linux-wireless@vger.kernel.org,
- linux@treblig.org, lucas.demarchi@intel.com, marcin.s.wojtas@gmail.com,
- ming.li@zohomail.com, mingo@kernel.org, mingo@redhat.com,
- netdev@vger.kernel.org, niecheng1@uniontech.com,
- oleksandr_tyshchenko@epam.com, pabeni@redhat.com, pbonzini@redhat.com,
- quic_ramess@quicinc.com, ragazenta@gmail.com, rodrigo.vivi@intel.com,
- seanjc@google.com, shenlichuan@vivo.com, simona@ffwll.ch,
- sstabellini@kernel.org, tglx@linutronix.de,
- thomas.hellstrom@linux.intel.com, vishal.l.verma@intel.com, x86@kernel.org,
- xen-devel@lists.xenproject.org, yujiaoliang@vivo.com, zhanjun@uniontech.com
-Message-ID: <01dae2e9-dad7-465c-94ae-bcfbc2f96337@suse.com>
-Subject: Re: [PATCH v2 7/8] xen/xenbus: Fix typo "notifer"
-References: <BD5C52D2838AEA48+20250715134050.539234-1-wangyuli@uniontech.com>
- <906F22CD3C183048+20250715134407.540483-7-wangyuli@uniontech.com>
-In-Reply-To: <906F22CD3C183048+20250715134407.540483-7-wangyuli@uniontech.com>
+On Mon, Jul 07, 2025 at 05:06:23PM -0700, Per Larsen wrote:
+> On 7/3/25 5:38 AM, Marc Zyngier wrote:
+> > On Tue, 01 Jul 2025 23:06:35 +0100,
+> > Per Larsen via B4 Relay <devnull+perlarsen.google.com@kernel.org> wrote:
+> > > diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> > > index 2c199d40811efb5bfae199c4a67d8ae3d9307357..65d241ba32403d014b43cc4ef4d5bf9693813809 100644
+> > > --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
+> > > +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> > > @@ -71,36 +71,68 @@ static u32 hyp_ffa_version;
+> > >   static bool has_version_negotiated;
+> > >   static hyp_spinlock_t version_lock;
+> > > -static void ffa_to_smccc_error(struct arm_smccc_res *res, u64 ffa_errno)
+> > > +static void ffa_to_smccc_error(struct arm_smccc_1_2_regs *res, u64 ffa_errno)
+> > >   {
+> > > -	*res = (struct arm_smccc_res) {
+> > > +	*res = (struct arm_smccc_1_2_regs) {
+> > >   		.a0	= FFA_ERROR,
+> > >   		.a2	= ffa_errno,
+> > >   	};
+> > >   }
+> > > -static void ffa_to_smccc_res_prop(struct arm_smccc_res *res, int ret, u64 prop)
+> > > +static void ffa_to_smccc_res_prop(struct arm_smccc_1_2_regs *res, int ret, u64 prop)
+> > >   {
+> > >   	if (ret == FFA_RET_SUCCESS) {
+> > > -		*res = (struct arm_smccc_res) { .a0 = FFA_SUCCESS,
+> > > -						.a2 = prop };
+> > > +		*res = (struct arm_smccc_1_2_regs) { .a0 = FFA_SUCCESS,
+> > > +						      .a2 = prop };
+> > >   	} else {
+> > >   		ffa_to_smccc_error(res, ret);
+> > >   	}
+> > >   }
+> > > -static void ffa_to_smccc_res(struct arm_smccc_res *res, int ret)
+> > > +static void ffa_to_smccc_res(struct arm_smccc_1_2_regs *res, int ret)
+> > >   {
+> > >   	ffa_to_smccc_res_prop(res, ret, 0);
+> > >   }
+> > >   static void ffa_set_retval(struct kvm_cpu_context *ctxt,
+> > > -			   struct arm_smccc_res *res)
+> > > +			   struct arm_smccc_1_2_regs *res)
+> > >   {
+> > > +	DECLARE_REG(u64, func_id, ctxt, 0);
+> > >   	cpu_reg(ctxt, 0) = res->a0;
+> > >   	cpu_reg(ctxt, 1) = res->a1;
+> > >   	cpu_reg(ctxt, 2) = res->a2;
+> > >   	cpu_reg(ctxt, 3) = res->a3;
+> > > +	cpu_reg(ctxt, 4) = res->a4;
+> > > +	cpu_reg(ctxt, 5) = res->a5;
+> > > +	cpu_reg(ctxt, 6) = res->a6;
+> > > +	cpu_reg(ctxt, 7) = res->a7;
+> > 
+> >  From DEN0028G 2.6:
+> > 
+> > <quote>
+> > Registers W4-W7 must be preserved unless they contain results, as
+> > specified in the function definition.
+> > </quote>
+> > 
+> > On what grounds can you blindly change these registers?
+> From DEN0077A 1.2 Section 11.2: Reserved parameter convention
+> 
+> <quote>
+> Unused parameter registers in FF-A ABIs are reserved for future use by the
+> Framework.
+> 
+> [...]
+> 
+> The caller is expected to write zeroes to these registers. The callee
+> ignores the values in these registers.
+> </quote>
+> 
+> My read is that, as long as we are writing zeroes into reserved registers
+> (which I believe we are), we comply with DEN0026G 2.6.>
 
---------------oGJ4EHAKnSBOvFH3NUzTflx0
-Content-Type: multipart/mixed; boundary="------------iEXRbWM0AKXbkOVtyXZqSTc3"
+Right, the specs make this far more difficult to decipher than necessary
+but I think SMCCC defers to the definition of the specific call being
+made and then FF-A is basically saying that unused argument registers
+are always zeroed.
 
---------------iEXRbWM0AKXbkOVtyXZqSTc3
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+Rather than have the EL2 proxy treat each call differently based on the
+used argument registers, we can rely on EL3 doing the right thing and
+blindly copy everything back, which is what you've done. So I think
+that's ok.
 
-T24gMTUuMDcuMjUgMTU6NDQsIFdhbmdZdWxpIHdyb3RlOg0KPiBUaGVyZSBpcyBhIHNwZWxs
-aW5nIG1pc3Rha2Ugb2YgJ25vdGlmZXInIGluIHRoZSBjb21tZW50IHdoaWNoDQo+IHNob3Vs
-ZCBiZSAnbm90aWZpZXInLg0KPiANCj4gTGluazogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcv
-YWxsL0IzQzAxOUI2M0M5Mzg0NkYrMjAyNTA3MTUwNzEyNDUuMzk4ODQ2LTEtd2FuZ3l1bGlA
-dW5pb250ZWNoLmNvbS8NCj4gU2lnbmVkLW9mZi1ieTogV2FuZ1l1bGkgPHdhbmd5dWxpQHVu
-aW9udGVjaC5jb20+DQoNClJldmlld2VkLWJ5OiBKdWVyZ2VuIEdyb3NzIDxqZ3Jvc3NAc3Vz
-ZS5jb20+DQoNCg0KSnVlcmdlbg0K
---------------iEXRbWM0AKXbkOVtyXZqSTc3
-Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+> > > +
+> > > +	/*
+> > > +	 * DEN0028C 2.6: SMC32/HVC32 call from aarch64 must preserve x8-x30.
+> > > +	 *
+> > > +	 * The most straightforward approach is to look at the function ID
+> > > +	 * sent by the caller. However, the caller could send FFA_MSG_WAIT
+> > > +	 * which is a 32-bit interface but the reply could very well be 64-bit
+> > > +	 * such as FFA_FN64_MSG_SEND_DIRECT_REQ or FFA_MSG_SEND_DIRECT_REQ2.
+> > > +	 *
+> > > +	 * Instead, we could look at the function ID in the response (a0) but
+> > > +	 * that doesn't work either as FFA_VERSION responses put the version
+> > > +	 * number (or error code) in w0.
+> > > +	 *
+> > > +	 * Set x8-x17 iff response contains 64-bit function ID in a0.
+> > > +	 */
+> > > +	if (func_id != FFA_VERSION && ARM_SMCCC_IS_64(res->a0)) {
+> > > +		cpu_reg(ctxt, 8) = res->a8;
+> > > +		cpu_reg(ctxt, 9) = res->a9;
+> > > +		cpu_reg(ctxt, 10) = res->a10;
+> > > +		cpu_reg(ctxt, 11) = res->a11;
+> > > +		cpu_reg(ctxt, 12) = res->a12;
+> > > +		cpu_reg(ctxt, 13) = res->a13;
+> > > +		cpu_reg(ctxt, 14) = res->a14;
+> > > +		cpu_reg(ctxt, 15) = res->a15;
+> > > +		cpu_reg(ctxt, 16) = res->a16;
+> > > +		cpu_reg(ctxt, 17) = res->a17;
+> > > +	}
+> > >   }
+> > 
+> > I don't see how that can ever work.
+> > 
+> > Irrespective of how FFA_MSG_WAIT actually works (and I couldn't find
+> > anything in the spec that supports the above), the requester will
+> > fully expect its registers to be preserved based on the initial
+> > function type, and that alone. No ifs, no buts.
+> > 
+> > If what you describe can happen (please provide a convincing example),
+> > then the spec is doomed.
+> 
+> DEN0077A 1.2 Section 8.2 (Runtime Model for FFA_RUN) and 8.3 (Runtime Model
+> for Direct request ABIs) contains Figures 8.1 and 8.2. Each figure shows
+> transitions between states "waiting", "blocked", "running", and "preempted".
+> Key to my understanding is that the waiting state in Figure 8.1 and Figure
+> 8.2 is the exact same state. This appears to be the case per Section 4.10.
+> 
+> So we have to consider the ways to get in and out of the waiting state by
+> joining the state machines in Figures 8.1 and 8.2. Figure 8.1 has an edge
+> between "running" and "waiting" caused by FFA_MSG_WAIT. Figure 8.2 has an
+> edge between "waiting" and "running" caused by a "Direct request ABI".
+> 
+> Direct request ABIs include FFA_MSG_SEND_DIRECT_REQ2 which is why the FF-A
+> 1.2 spec, in my read, permits the response to a 32-bit FFA_MSG_WAIT call can
+> be a 64-bit FFA_MSG_SEND_DIRECT_REQ2 reply.
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+That seems bonkers to me and I agree with Marc's assessment above. The
+SMCCC is crystal clear that a caller using the SM32/HVC32 calling
+convention can rely on x8-x30 (as well as the stack pointers) being
+preserved. If FF-A has a problem with that then it needs to be fixed
+there and not bodged in Linux.
 
-xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjri
-oyspZKOBycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2
-kaV2KL9650I1SJvedYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i
-1TXkH09XSSI8mEQ/ouNcMvIJNwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/B
-BLUVbDa4+gmzDC9ezlZkTZG2t14zWPvxXP3FAp2pkW0xqG7/377qptDmrk42GlSK
-N4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEBAAHNHEp1ZXJnZW4gR3Jvc3Mg
-PGpnQHBmdXBmLm5ldD7CwHkEEwECACMFAlOMcBYCGwMHCwkIBwMCAQYVCAIJCgsE
-FgIDAQIeAQIXgAAKCRCw3p3WKL8TL0KdB/93FcIZ3GCNwFU0u3EjNbNjmXBKDY4F
-UGNQH2lvWAUy+dnyThpwdtF/jQ6j9RwE8VP0+NXcYpGJDWlNb9/JmYqLiX2Q3Tye
-vpB0CA3dbBQp0OW0fgCetToGIQrg0MbD1C/sEOv8Mr4NAfbauXjZlvTj30H2jO0u
-+6WGM6nHwbh2l5O8ZiHkH32iaSTfN7Eu5RnNVUJbvoPHZ8SlM4KWm8rG+lIkGurq
-qu5gu8q8ZMKdsdGC4bBxdQKDKHEFExLJK/nRPFmAuGlId1E3fe10v5QL+qHI3EIP
-tyfE7i9Hz6rVwi7lWKgh7pe0ZvatAudZ+JNIlBKptb64FaiIOAWDCx1SzR9KdWVy
-Z2VuIEdyb3NzIDxqZ3Jvc3NAc3VzZS5jb20+wsB5BBMBAgAjBQJTjHCvAhsDBwsJ
-CAcDAgEGFQgCCQoLBBYCAwECHgECF4AACgkQsN6d1ii/Ey/HmQf/RtI7kv5A2PS4
-RF7HoZhPVPogNVbC4YA6lW7DrWf0teC0RR3MzXfy6pJ+7KLgkqMlrAbN/8Dvjoz7
-8X+5vhH/rDLa9BuZQlhFmvcGtCF8eR0T1v0nC/nuAFVGy+67q2DH8As3KPu0344T
-BDpAvr2uYM4tSqxK4DURx5INz4ZZ0WNFHcqsfvlGJALDeE0LhITTd9jLzdDad1pQ
-SToCnLl6SBJZjDOX9QQcyUigZFtCXFst4dlsvddrxyqT1f17+2cFSdu7+ynLmXBK
-7abQ3rwJY8SbRO2iRulogc5vr/RLMMlscDAiDkaFQWLoqHHOdfO9rURssHNN8WkM
-nQfvUewRz80hSnVlcmdlbiBHcm9zcyA8amdyb3NzQG5vdmVsbC5jb20+wsB5BBMB
-AgAjBQJTjHDXAhsDBwsJCAcDAgEGFQgCCQoLBBYCAwECHgECF4AACgkQsN6d1ii/
-Ey8PUQf/ehmgCI9jB9hlgexLvgOtf7PJnFOXgMLdBQgBlVPO3/D9R8LtF9DBAFPN
-hlrsfIG/SqICoRCqUcJ96Pn3P7UUinFG/I0ECGF4EvTE1jnDkfJZr6jrbjgyoZHi
-w/4BNwSTL9rWASyLgqlA8u1mf+c2yUwcGhgkRAd1gOwungxcwzwqgljf0N51N5Jf
-VRHRtyfwq/ge+YEkDGcTU6Y0sPOuj4Dyfm8fJzdfHNQsWq3PnczLVELStJNdapwP
-OoE+lotufe3AM2vAEYJ9rTz3Cki4JFUsgLkHFqGZarrPGi1eyQcXeluldO3m91NK
-/1xMI3/+8jbO0tsn1tqSEUGIJi7ox80eSnVlcmdlbiBHcm9zcyA8amdyb3NzQHN1
-c2UuZGU+wsB5BBMBAgAjBQJTjHDrAhsDBwsJCAcDAgEGFQgCCQoLBBYCAwECHgEC
-F4AACgkQsN6d1ii/Ey+LhQf9GL45eU5vOowA2u5N3g3OZUEBmDHVVbqMtzwlmNC4
-k9Kx39r5s2vcFl4tXqW7g9/ViXYuiDXb0RfUpZiIUW89siKrkzmQ5dM7wRqzgJpJ
-wK8Bn2MIxAKArekWpiCKvBOB/Cc+3EXE78XdlxLyOi/NrmSGRIov0karw2RzMNOu
-5D+jLRZQd1Sv27AR+IP3I8U4aqnhLpwhK7MEy9oCILlgZ1QZe49kpcumcZKORmzB
-TNh30FVKK1EvmV2xAKDoaEOgQB4iFQLhJCdP1I5aSgM5IVFdn7v5YgEYuJYx37Io
-N1EblHI//x/e2AaIHpzK5h88NEawQsaNRpNSrcfbFmAg987ATQRTjHAWAQgAyzH6
-AOODMBjgfWE9VeCgsrwH3exNAU32gLq2xvjpWnHIs98ndPUDpnoxWQugJ6MpMncr
-0xSwFmHEgnSEjK/PAjppgmyc57BwKII3sV4on+gDVFJR6Y8ZRwgnBC5mVM6JjQ5x
-Dk8WRXljExRfUX9pNhdE5eBOZJrDRoLUmmjDtKzWaDhIg/+1Hzz93X4fCQkNVbVF
-LELU9bMaLPBG/x5q4iYZ2k2ex6d47YE1ZFdMm6YBYMOljGkZKwYde5ldM9mo45mm
-we0icXKLkpEdIXKTZeKDO+Hdv1aqFuAcccTg9RXDQjmwhC3yEmrmcfl0+rPghO0I
-v3OOImwTEe4co3c1mwARAQABwsBfBBgBAgAJBQJTjHAWAhsMAAoJELDendYovxMv
-Q/gH/1ha96vm4P/L+bQpJwrZ/dneZcmEwTbe8YFsw2V/Buv6Z4Mysln3nQK5ZadD
-534CF7TDVft7fC4tU4PONxF5D+/tvgkPfDAfF77zy2AH1vJzQ1fOU8lYFpZXTXIH
-b+559UqvIB8AdgR3SAJGHHt4RKA0F7f5ipYBBrC6cyXJyyoprT10EMvU8VGiwXvT
-yJz3fjoYsdFzpWPlJEBRMedCot60g5dmbdrZ5DWClAr0yau47zpWj3enf1tLWaqc
-suylWsviuGjKGw7KHQd3bxALOknAp4dN3QwBYCKuZ7AddY9yjynVaD5X7nF9nO5B
-jR/i1DG86lem3iBDXzXsZDn8R3/CwO0EGAEIACAWIQSFEmdy6PYElKXQl/ew3p3W
-KL8TLwUCWt3w0AIbAgCBCRCw3p3WKL8TL3YgBBkWCAAdFiEEUy2wekH2OPMeOLge
-gFxhu0/YY74FAlrd8NAACgkQgFxhu0/YY75NiwD/fQf/RXpyv9ZX4n8UJrKDq422
-bcwkujisT6jix2mOOwYBAKiip9+mAD6W5NPXdhk1XraECcIspcf2ff5kCAlG0DIN
-aTUH/RIwNWzXDG58yQoLdD/UPcFgi8GWtNUp0Fhc/GeBxGipXYnvuWxwS+Qs1Qay
-7/Nbal/v4/eZZaWs8wl2VtrHTS96/IF6q2o0qMey0dq2AxnZbQIULiEndgR625EF
-RFg+IbO4ldSkB3trsF2ypYLij4ZObm2casLIP7iB8NKmQ5PndL8Y07TtiQ+Sb/wn
-g4GgV+BJoKdDWLPCAlCMilwbZ88Ijb+HF/aipc9hsqvW/hnXC2GajJSAY3Qs9Mib
-4Hm91jzbAjmp7243pQ4bJMfYHemFFBRaoLC7ayqQjcsttN2ufINlqLFPZPR/i3IX
-kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
-=3DeeAB
------END PGP PUBLIC KEY BLOCK-----
+Setting that aside, I'm still not sure I follow this part of your check:
 
---------------iEXRbWM0AKXbkOVtyXZqSTc3--
+	if (... && ARM_SMCCC_IS_64(res->a0))
 
---------------oGJ4EHAKnSBOvFH3NUzTflx0--
+won't res->a0 contain something like FFA_SUCCESS? The FFA spec states:
 
---------------cT4r0JNOUrsPfSEaUgW0eBEO
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+  FFA_SUCCESS64, is used only if any result register encodes a 64-bit
+  parameter.
 
------BEGIN PGP SIGNATURE-----
+which doesn't really seem related to whether or not the initial call
+was using SMC32 or SMC64. What am I missing?
 
-wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmh6TfsFAwAAAAAACgkQsN6d1ii/Ey8c
-Ygf/U0f6aO6tXuLVLY6fZvfaFWhIB7EB2CVm4zKF7LgVe0t84C2fovOiSsaEQZha5J86f+37KuMH
-ahCur6raARzYTpUM//Os66LLW5nTG8yKd89CnE24MFDJsUdnv5qPqF4jb/wYDtr8xvuKwWEqWZz2
-gWXCJNYry4wnZucm2Y0O4ylQXLJOzaDyc7Q3mnobvAJEuAbqPgoJCuMYaU2M9o7b4X4l2TO9lVAz
-VaKGeVaTbiu8ys+JRy35HTdHyKboyr8Johi1iRtV42/+5rxr1fWIeQfGEBnOEXnzi6URr8HOKFSr
-pdIJDp/rLD79JiOzGRZXBJZ2l8jybh7o7dN5y7z7Kg==
-=9yKc
------END PGP SIGNATURE-----
-
---------------cT4r0JNOUrsPfSEaUgW0eBEO--
+Will
 
