@@ -1,77 +1,93 @@
-Return-Path: <linux-kernel+bounces-736699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1130B0A0B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:30:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FDBEB0A0B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:31:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F3047B1580
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:29:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A3654E11FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:31:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCCBB21C177;
-	Fri, 18 Jul 2025 10:30:39 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9E629B782;
+	Fri, 18 Jul 2025 10:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="rpAEHbP+"
+Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B7D1DB95E
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 10:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F21198A2F;
+	Fri, 18 Jul 2025 10:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752834639; cv=none; b=mfgSjulKws6pUQq2KceNFzYBBl7ctQ1M4DRBk6/UWZiHaC0y9HL7T6RR/fWWp/2ijF8jCugLF2KPI6IGWMtc08RfnV0jWG93mSsgIY8SdtETAMMfPH8obTubcKbFixSh7+D5hmIJWfSeG+7P/T3NaqlrzS3g+4am0sCyOEBTj14=
+	t=1752834687; cv=none; b=n1dsjgkinKUgc16PqBP0aMnbrt9/+cXVsKPpDagZRTGjmILtnmy8HapbIbNCTI00r/XoFOuU0syVGKeyl2bjjbSPZX6WOg08JD6zXTy7E8F3mHdEkg3f2qqnbqrsTQ6aTigfOHvjiLOAVR1h5pkI6VZb95zABjBV3J7Hoo3SJVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752834639; c=relaxed/simple;
-	bh=Jfy+813P5sUHYyLJPaQ3rH1oP1312It9JFN75GQFnRc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=VC/B7XZbMJS9JDzqmoi4gMS0B00Qi3LuymeS+CtOsBKGrbkb2yd3JEe29Sq1Mzt+4SrGWGQLRtTm17yvPW/DgErtHwNWjHQaPvM5Uo2r/PJ3dYnGW1bf8XMLUXmGGi5zvlkVPkSzg518XC4w7Pr6M0tb6FUjiAfPf+Z9Q7XtJA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-86cf753423cso179711339f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 03:30:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752834637; x=1753439437;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jfy+813P5sUHYyLJPaQ3rH1oP1312It9JFN75GQFnRc=;
-        b=v14SBYc1eh1WEHdzqzwFjnTDesvVv6Z1M4GQLWGJr0U0Y0t0xfAMFTO8LHA7LPxQIR
-         hWv20zlFaXDx/xV5La+izHJy7dEB0nuH+Mc8xBWPhw9JrppHzFJhTgDX5OrQbhKzNcNS
-         IQXZ/dm6QD9JgcY11zNRPagJrbmdSKQ0odHl2egoWyRN5fAyjOM52/ivJlaLUrtlL4vZ
-         XjcqTUqKz2TKfHVg0UA4U4Jc34EDQZUBSRfIzExhA+/0cqdMCg/G05QEha7Rxb8kjQYI
-         9pSRpwyxJCWeMEqai4nYFtlUJACSOmnHnBNPF3jhLh0JI34ge0I1rgR8kDSvVqJitcj3
-         TiYw==
-X-Gm-Message-State: AOJu0YxPTlQrbqZTVvlsbAEOQPl46llk6KHYMhkn9bJ6CS55KcD162Gi
-	tEuUZcKI4fWrZQEDkE1mINAkPSAHbzuCoHb15CJR5WeewEgtAZDL87cuGADVnWGgeIEt9wtW0+T
-	sKoCaUbGwLjGlowrru+j0ZcePspf+5oZxhO6jvYXUVOWhqAq1uleLzUuPWY4=
-X-Google-Smtp-Source: AGHT+IG4MOcAbM5SENlzdvLJCW3lHvpWcWNaD91l2lCLVKlVCZyWYNcJDFxriHkMsaHkpLj4sBMUGpnvTBeeL3DJNImnuEFpcUK7
+	s=arc-20240116; t=1752834687; c=relaxed/simple;
+	bh=59VSGdV+1J+G46yTP2chmQXs4clXZPvyWRI+wjhGLSg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UFD2raQBdmIJkdDpQA62Pxj5motx2GEhtm6k/hDbESNTxoHR+Hxn3/08UNztmOtKfY1GtjKewUwhMkiqTHFTA0yHca5SE+qPLMRvOgbelJr2fenW4ADMwxFAZZ1zfCF5pa+5xwh1JeUoh+3OqGM+huCVUyXtvhdKuN9y0HKLrrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=rpAEHbP+; arc=none smtp.client-ip=180.181.231.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=TmeP+yow1RBgKJBVVeBNniATmYMII+R0E6wQz5nLZbI=; b=rpAEHbP+kkF0IarNY+5A8dM+yJ
+	DMpUEBbVkIFB+H62c5liwl2Yiyr1uFNOH28mKTsXgv++cqlrA0CnI/NPhbAI/MwkHyZlGViKM6SFB
+	W/uxdQvhWSAfeggnjE7CgTN6zqq5XyuWEB0MOl+VXMIGMbfJHXa58K9TdpX3QsNrSK6KOUCfqlpA1
+	IfW6YTpNKb2h9e44PGzIzlxr2bUxMIecNUgWQIPhzpKTgjD9HDxoACnTJD7EKwVeZNpUnR3S9RiLt
+	5yaE/HZfIq3VYegTTWRq7m6UubdRzeQr8vnmTQEn92JI71Ii8K39f+ge1OS367qE3wKgz/9pjeitX
+	pVJfS07w==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1uci7T-007yBt-22;
+	Fri, 18 Jul 2025 18:31:09 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 18 Jul 2025 20:31:08 +1000
+Date: Fri, 18 Jul 2025 20:31:08 +1000
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Stefan Berger <stefanb@linux.ibm.com>
+Cc: linux-crypto@vger.kernel.org, davem@davemloft.net,
+	linux-kernel@vger.kernel.org, James.Bottomley@hansenpartnership.com,
+	dhowells@redhat.com, simo@redhat.com
+Subject: Re: [PATCH v2 0/4] crypto: Add support for shake128/256 XOFs
+Message-ID: <aHoibPpl7CHM3FGd@gondor.apana.org.au>
+References: <20250630143834.2748285-1-stefanb@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a5e:c116:0:b0:862:fe54:df4e with SMTP id
- ca18e2360f4ac-879c28b1addmr824413539f.7.1752834637073; Fri, 18 Jul 2025
- 03:30:37 -0700 (PDT)
-Date: Fri, 18 Jul 2025 03:30:37 -0700
-In-Reply-To: <68799e14.a00a0220.3af5df.0025.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <687a224d.a70a0220.693ce.005f.GAE@google.com>
-Subject: Forwarded: Re: [syzbot] [netfilter?] KASAN: slab-out-of-bounds Read
- in nfacct_mt_checkentry
-From: syzbot <syzbot+4ff165b9251e4d295690@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250630143834.2748285-1-stefanb@linux.ibm.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Mon, Jun 30, 2025 at 10:38:30AM -0400, Stefan Berger wrote:
+> This series adds support for shake128/256 extended output functions (XOFs)
+> along with test cases to verify the produced digest and XOF output. A new
+> squeeze method is added to the shash_alg structure to get an arbitrary
+> number of bytes from these XOFs.
+> 
+> Regards,
+>    Stefan
+> 
+> 
+> v2:
+>  - Refactored crypto_shake_squeeze_bytes to be called for arbitrary number
+>    of bytes to return
+>  - Adjusted XOF test case parameters to better test modfied squeeze
+>    function
 
-***
+Please post this along with the actual user so that it can be
+evaluated in the proper context.
 
-Subject: Re: [syzbot] [netfilter?] KASAN: slab-out-of-bounds Read in nfacct_mt_checkentry
-Author: fw@strlen.de
-
-#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/fwestphal/nf.git testing
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
