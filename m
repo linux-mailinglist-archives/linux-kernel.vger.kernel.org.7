@@ -1,104 +1,105 @@
-Return-Path: <linux-kernel+bounces-736216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FF52B09A26
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 05:25:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A942B09A28
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 05:27:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D96645A2F00
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:25:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94BE95A2FC5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8251D1C84C0;
-	Fri, 18 Jul 2025 03:25:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F2B01C84C0;
+	Fri, 18 Jul 2025 03:27:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="c85Ein5m"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="o9XZuOw2"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763AA2E36F7;
-	Fri, 18 Jul 2025 03:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B7B82E36F7;
+	Fri, 18 Jul 2025 03:27:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752809102; cv=none; b=RPvzVSUS2R91rUW3KaARip1tSYYbo0GRuxDjl2+ivnBXWgeEqH4j9LcIA/WNM4NChPaDk+BGUZk3ZXVB/veszMQ7c0aQ/OCU2svTG04EIDp56B1sYTTPs4r4KgLDOkKbjyz7nLkoKFhBFBRJ7ukTUqfemH7HeO07cgkVwbYg6JA=
+	t=1752809232; cv=none; b=pQ0h1qy2gxPOrgwcDtykTLzxskw2vECd2oz/6IaElb4qHIPUVIN6rFpOP/MGD7rgti3UlPGgOfOxXU0qiceJKPKdqebKHbCZ6R4P4uIrwKMco30lH4anq/lwG8Wlp72RKpdxxvT15rSh0xsKTrV4eOcCg0frfNhmHw5DjFq2XBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752809102; c=relaxed/simple;
-	bh=lRv3sKv38vRAvQzWbRpV+TJqci+sx5IbWt9hWqkf14E=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HTDyAkzb2qh6EMYXpwT8im5H9eitqujfbPhI7I+yTM6T+KNgfA5BycX7tN57NX92cq4aLlIHGKGrIoQtbu9nmjXOSiw4nSYioC4C4v+wunPQTLqB5/FcnhePv4hlBXyzY9zef4iMY+mQtju+3kXiEAF9ehDWL+8j+aubfB2VOtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=c85Ein5m; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1752809096;
-	bh=lRv3sKv38vRAvQzWbRpV+TJqci+sx5IbWt9hWqkf14E=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=c85Ein5mWQlmYNdnjOzQ5rVqUzhMlv4o8lX842YuspRHe2eRXX5+Y2VeVPl8BpaVg
-	 dtolCYSahfQMhPNIiRPxCna4Tbfgle7ef+j99Ba6jGPALN+1T7ElVlcckjnvTxoraB
-	 KUSjzFu+XKZT0cOuybwp69PN0th/ua735Sd0CD02hELUVbes/wf67YSg56f130bzgh
-	 mKJr+j0B+uC3CRc7OUhiTC0CU6EfQ5AMM2J5fQylIlYXXBrh1VDYrrEuHoX/LW+5n3
-	 AzwkpDPOcNYpF6m+akA5kH9yxWZFbgaA1J1q8BVix/t+qLOX6prh0A4F9Q3zImmLHF
-	 s7QzUzqi6uhjw==
-Received: from pecola.lan (unknown [159.196.93.152])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 7B41A69703;
-	Fri, 18 Jul 2025 11:24:55 +0800 (AWST)
-Message-ID: <05aa941118f1dee000a05a9eeccb7a33e3e14d23.camel@codeconstruct.com.au>
-Subject: Re: [PATCH] net: mctp: Add MCTP PCIe VDM transport driver
-From: Jeremy Kerr <jk@codeconstruct.com.au>
-To: YH Chung <yh_chung@aspeedtech.com>, "matt@codeconstruct.com.au"
- <matt@codeconstruct.com.au>, "andrew+netdev@lunn.ch"
- <andrew+netdev@lunn.ch>,  "davem@davemloft.net" <davem@davemloft.net>,
- "edumazet@google.com" <edumazet@google.com>,  "kuba@kernel.org"
- <kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>, 
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>, BMC-SW
- <BMC-SW@aspeedtech.com>
-Cc: Khang D Nguyen <khangng@amperemail.onmicrosoft.com>
-Date: Fri, 18 Jul 2025 11:24:55 +0800
-In-Reply-To: <SEZPR06MB57634C3876BF0DF92174CDFA9051A@SEZPR06MB5763.apcprd06.prod.outlook.com>
-References: <20250714062544.2612693-1-yh_chung@aspeedtech.com>
-	 <a01f2ed55c69fc22dac9c8e5c2e84b557346aa4d.camel@codeconstruct.com.au>
-	 <SEZPR06MB57635C8B59C4B0C6053BC1C99054A@SEZPR06MB5763.apcprd06.prod.outlook.com>
-	 <27c18b26e7de5e184245e610b456a497e717365d.camel@codeconstruct.com.au>
-	 <SEZPR06MB5763AD0FC90DD6AF334555DA9051A@SEZPR06MB5763.apcprd06.prod.outlook.com>
-	 <7e8f741b24b1426ae71171dff253921315668bf1.camel@codeconstruct.com.au>
-	 <SEZPR06MB5763125EBCAAA4F0C14C939E9051A@SEZPR06MB5763.apcprd06.prod.outlook.com>
-	 <2fbeb73a21dc9d9f7cffdb956c712ad28ecf1a7f.camel@codeconstruct.com.au>
-	 <SEZPR06MB57634C3876BF0DF92174CDFA9051A@SEZPR06MB5763.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1752809232; c=relaxed/simple;
+	bh=OuE8+GuXn88Cmn8qlc46+mY678JtOGJYdh4SdIcU/rc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Km22uLkx2YAN8omzpQk5xKslbOtHEubhNOVoSSlkyBQtHFHg73OAEFb+9/CHu7hz5sOWRfp4EU4zA9mOeHOTDBLxTYqxbUJhXpRfQwB0WRJN1Td0cAiBknl7nA4qwAi/+mpv7AqsYotdeTy69GCaDZ9xHdMY0v+ueTgxO6v8d1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=o9XZuOw2; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752809097;
+	bh=ENH2f/B28PrzijqHJPWIglQ0MM/RFeZATGfmRWB85oA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=o9XZuOw2gPTz/AbB7H5wF1MBgA69AEZY+RbOr3vlqyHTf3tmon42avt0ljBqS2ABJ
+	 1sgLRERwbRufstygrfHMhbytBlbn2vEuklqUtKrcHQJM97tEQuL397BP3jM45t1HDT
+	 jEQadBxKJXq9w0YQVB92Bmlh/PHfcZQPPIgVrQ945tbQ4a5Qu0AstALMw+XTHoHZ8X
+	 53cWbZPeT3Ne55vy/Apz3Lphdn3jnLDB/JYtgMWn8AyiaBhQWQUYh3rqyaMwcm/IsM
+	 LwPOtX80Ui4YSoKlFZC/Di4hpnMj6nKQrH4NVhjhHgKAObIt5o/S8T7u0/Ue3l5RgC
+	 Ic57W2xEzwETw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bjwCD0LDBz4w2H;
+	Fri, 18 Jul 2025 13:24:55 +1000 (AEST)
+Date: Fri, 18 Jul 2025 13:27:02 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Jonathan Corbet
+ <corbet@lwn.net>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the pm tree
+Message-ID: <20250718132702.3d15eb51@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/20B2kj1xla6wSND/Tl8Ivt7";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hi YH,
+--Sig_/20B2kj1xla6wSND/Tl8Ivt7
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> We're planning to split the MCTP controller driver into two separate
-> drivers for AST2600 and AST2700, removing the AST2600-specific
-> workarounds in the process for improving long-term maintainability.
-> And it's part of the reason we want to decouple the binding protocol
-> logic into its own layer.
+Hi all,
 
-The split is entirely up to you (and sounds reasonable), but the
-"binding protocol logic" is really minimal. I would think a couple of
-shared helper functions should be sufficient?
+The following commit is also in the jc_docs tree as a different commit
+(but the same patch):
 
-> Would it be preferable to create a directory such as net/mctp/aspeed/
-> to host the abstraction layer alongside the hardware-specific
-> drivers?
+  efbc5b4ac98e ("Documentation: amd-pstate:fix minimum performance state la=
+bel error")
 
-Just put them in the top-level at drivers/net/mctp/ for now. There's not
-much in there at present, so will be simple to keep organised. If you
-end up with two drivers and a common set of utils between the two,
-that's a total of four files, which I think we can manage.
+This is commit
 
+  4613bf5fd045 ("Documentation: amd-pstate:fix minimum performance state la=
+bel error")
+
+in the jc_docs tree.
+
+--=20
 Cheers,
+Stephen Rothwell
 
+--Sig_/20B2kj1xla6wSND/Tl8Ivt7
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Jeremy
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh5vwYACgkQAVBC80lX
+0GxNYQf/WoQHcEXedoXxFnAsl17OniAdWYSX6w8wNcfq4QG/LbmEEh8bk3QI+8JU
+9ia+aDpTC2Y81DTffj4Lm0qFWbILPYgDF/FuedXm0BqYKqO8dHEyDE7379eVtLcs
+ARSZC2dIGf1a1M3XjIJTRcsrXBPgDoxb8fX8D9eYtG85s2eR59GlVifjlDcYm7Bj
+MTDY/RloDqUww8Z5ZJVAih3NIqqbIGnfX+nHNbGIOG+Pxo9OE/5fhFKcPVZjmEH9
+07cnXq+wWvyuFnJUEJKXbsehxAEUz+22/sYOlrOElH6b31BXe0AKBJYhAD3lQkb1
+S0NGz3wLHmO7fSYPmkjqSrH4e26O9w==
+=TVzD
+-----END PGP SIGNATURE-----
+
+--Sig_/20B2kj1xla6wSND/Tl8Ivt7--
 
