@@ -1,102 +1,110 @@
-Return-Path: <linux-kernel+bounces-736126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88F26B09926
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:28:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7112CB09927
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:33:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91C70A64E46
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 01:28:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 097E21C454F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 01:33:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1950218A6AE;
-	Fri, 18 Jul 2025 01:28:42 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54BBA13DDAE;
+	Fri, 18 Jul 2025 01:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jps5h5gv"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5832EEADC
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 01:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54CEEA932;
+	Fri, 18 Jul 2025 01:33:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752802121; cv=none; b=s+PrUwarL94Jc2v7EYI2itqDGlOTNxZfryXit2RbeidmeVsPmbDKTVOuVxSy1CBcIWfXbiv2c4udit08EiGxNbEdN3slKN95BIJJm0ITbmxUJymDuGT4Pm1EC2Bg8GH0xW2XcrsItVW/yj1A58HAIxRofZo56C0TMpuxkboLCD4=
+	t=1752802393; cv=none; b=sVQ3shk/1TlGQIlZmENwI8jrnEbgWFWQ0sXBDk6F9LwVYRR/pgynXnt2lOmoykdHLWS5mx0BTPJLl3uRJezZ7tz3OV/1QCRBN4rj0cmeYGTaXKUA6JVZYgNNWixLxjkWcCvFnznC4tS8RMcsYM6aTVWP+OF7sqG55BYPGRIauSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752802121; c=relaxed/simple;
-	bh=qmz0wOC1pPAxGW3UK5Z8ZLMTotEkFsfp8mMigSPO7zg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Oh3My0aDVPGX7ETUGg/4k8y2MicHGcKr79wvxPNNw44LF4dc6bgTwyHg7uy6W869RKEI7tu52m1PWbKu4kzeb/JDJiUH/TK8NNCQ+7qNY2/jsIXPs/kY4AfO3vp3VjgrCG/jW3MSfLl2v/P/mkuP5IvBRuDQxxb5vQwmoaMNVSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bjsZY3hBYz2RVsC;
-	Fri, 18 Jul 2025 09:26:29 +0800 (CST)
-Received: from kwepemg500017.china.huawei.com (unknown [7.202.181.81])
-	by mail.maildlp.com (Postfix) with ESMTPS id EA7FE140298;
-	Fri, 18 Jul 2025 09:28:35 +0800 (CST)
-Received: from [10.174.179.155] (10.174.179.155) by
- kwepemg500017.china.huawei.com (7.202.181.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 18 Jul 2025 09:28:34 +0800
-Message-ID: <5d63f92f-1b48-445f-8cbb-a6ae148d36aa@huawei.com>
-Date: Fri, 18 Jul 2025 09:28:34 +0800
+	s=arc-20240116; t=1752802393; c=relaxed/simple;
+	bh=CbtKel0F8ajAZhNlxi7Qlpw05dN+QrxC41VPfGf0XOM=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=shKIrn45pNY77BJDIzIEz1I0br9iatmTMNGDcp3mqLsied1Mx5X+tWL57NdfxW4zF0g5aGcUksGN52JxbhucS3sQPGN+uKizVU2Q51W3eEEQkV9F3UYRbHbfz8OvO14iGh17CDGzfM56rBIn8xWG576ABTpGrjJBfvb+sZAiYHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jps5h5gv; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6fad4a1dc33so15618086d6.1;
+        Thu, 17 Jul 2025 18:33:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752802390; x=1753407190; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CbtKel0F8ajAZhNlxi7Qlpw05dN+QrxC41VPfGf0XOM=;
+        b=jps5h5gvOEqK7g+NG6DIKR3cFFlU1+W4YiJvwl3mVcXMT3mrfZHC9QHjes4EbmkW+9
+         r2ylhSF3VTCqB4QKUBfyU0ydfAsYoeBH5QXE2AhTyelyzvRtoVfXiOgstyp0plegE327
+         RFLIBKGy3DzOcONkqHNDbod8J2YDga7drOXc3yBUCVzBZkh6PghtSwzyAm89HakqNZpz
+         D6gp7zbUmhF/E2NvJ3VO1ZIafRFdo2AQiqqexPU0h9Bs1V1X5WuY8K4aW2W78Nj36VpC
+         Jt2zlTuZSVT4B4CzXIn8j3oGUPO8B0tWgNj+k2I5Z/kfIOwYBZ98YyCNTtVjn+bn0Pxa
+         YohQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752802390; x=1753407190;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CbtKel0F8ajAZhNlxi7Qlpw05dN+QrxC41VPfGf0XOM=;
+        b=FPQZrLE+ELd6KnGOSttoNuPGXkMYwOVAM21ckiy/usuGx93QciVp8VbtU80u5NfG0X
+         griXU/EpjFTKjEUQ8w0jshQg5LVVHxKo5CCrsn4OKQRCBBTX0TmvIK/pOk3iHs+qRusX
+         dZ0ZcAEVAyt2w1iwSJ/CQCfwN6Pxq5v/oZU/f88jBuOWNGDORsIRf8pAkcFVp1EjqTFw
+         oNFcuY9A5bxlca4nuKqqhv7/214ngvA8EXfCp951eLl60YTyEGzX1OsP2C89OxyG/7hr
+         VWsE24gasW7H6fs7xZEKLH8mEAdWFpzkN3iD8g90tAXtLkLBbYelk495AonhH6HlyKT/
+         o0kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUcbbGcpu96y/0hAYWDTNyvfIEbZs1hE3/L7cjmoqX4uLnZwknGy8bzbvwWvH2jKspS4M+FK6k6TuvnUQFLgRg=@vger.kernel.org, AJvYcCW8uYnPoA7+mUG7p2wJWThFL/sZcPBGh1XFDeOGnTbzLoL61r6PcKWsZ2yTrKrPHELo0gaFU6ce5wJgiFjd@vger.kernel.org
+X-Gm-Message-State: AOJu0Yye7v1k0XeF4eFZaFT4flMOXrlwvyUsgY5prp7V7i1Jnyxo/Jf4
+	ppbazs7Jbx8es2hlOWgEQhSl3fFPh+YDqDq7a8i5UgDi17idORuqJbVRczM1kQ==
+X-Gm-Gg: ASbGncuRatBybrrdDYUf8Gw/WDoXzr7J616jUq/HindVkFus21oz+9d3ZBe13hoMYDU
+	RZtMHSk5VzTptl2XRNy/7J6BliSyDWgmuHGcQzz9tGu2ZO2FZVWWn7cvHPLeABTtXiXstyYmqxo
+	bBckg2f6sZuUbEIvnF9ZnddiiUemg3QLZvcBRhdEe8UgCT1GHyBQAXS9Axw2yTwztpM/nQuUIE5
+	r+TZEmW8sO5ItV1qkd3btiTDO8ldxP/PlFoznVpPbyoV1FyQNvNMNtJPoOeqTy0INmjKs7twjDE
+	a0nV2EShWIYaq5AnaBHGvqVyabMQv0MGPbyDkLVqTX+/+w6Uvij2DLVTJkihN8EgRFfGnFz2EHw
+	FQmJ7rMDVeh/xGt64DhC3MA==
+X-Google-Smtp-Source: AGHT+IFW5rhe2ZbyNRvd/olJoYRdm/v8VboVlGjhcpo8byIkDL6un2sya1dkkADmSJzCAoiPWugxNg==
+X-Received: by 2002:a05:6214:d8f:b0:704:a929:a4cd with SMTP id 6a1803df08f44-704f69eb073mr122604856d6.1.1752802390001;
+        Thu, 17 Jul 2025 18:33:10 -0700 (PDT)
+Received: from pc ([165.51.18.150])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4abb4aebcf8sm1772341cf.40.2025.07.17.18.33.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Jul 2025 18:33:09 -0700 (PDT)
+Date: Fri, 18 Jul 2025 02:33:06 +0100
+From: Salah Triki <salah.triki@gmail.com>
+To: Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Bluetooth: btintel_pcie: Drop pci_set_drvdata(pdev, NULL)
+Message-ID: <aHmkUowa2Lt7KIB2@pc>
+References: <aHhtIL3jyVbCEMqh@pc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: =?UTF-8?B?TW96aWxsYSBUaHVuZGVyYmlyZCDmtYvor5XniYg=?=
-Subject: Re: [PATCH] dm: introduce spinlocks to prevent concurrent usage and
- release of device_metadata and hash
-To: Mikulas Patocka <mpatocka@redhat.com>, Hou Tao <houtao1@huawei.com>
-CC: <dm-devel@lists.linux.dev>, <agk@redhat.com>, <snitzer@kernel.org>,
-	<tusharsu@linux.microsoft.com>, <colin.i.king@gmail.com>,
-	<linux-kernel@vger.kernel.org>, <yi.zhang@huawei.com>,
-	<yangerkun@huawei.com>, <yukuai3@huawei.com>, <chengzhihao1@huawei.com>,
-	<lilingfeng@huaweicloud.com>
-References: <20250717140728.3221243-1-lilingfeng3@huawei.com>
- <5a29db22-13a9-f3ea-dbf2-13ce7f7aa649@huawei.com>
- <5be1fab4-192d-8327-b541-bb92d53313cc@redhat.com>
-From: Li Lingfeng <lilingfeng3@huawei.com>
-In-Reply-To: <5be1fab4-192d-8327-b541-bb92d53313cc@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemg500017.china.huawei.com (7.202.181.81)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aHhtIL3jyVbCEMqh@pc>
 
+Hi Marcel, Luiz, and linux-bluetooth community,
 
-在 2025/7/18 2:45, Mikulas Patocka 写道:
->
-> On Thu, 17 Jul 2025, Hou Tao wrote:
->
->> Hi,
->>
->> On 7/17/2025 10:07 PM, Li Lingfeng wrote:
->>> There is a window between freeing md->ima.active_table.hash and setting
->>> md->ima.active_table.hash to NULL in dm_ima_measure_on_device_resume().
->>> If dm_ima_measure_on_device_remove() accesses md->ima.active_table.hash
->>> concurrently during this window, it could lead to a double free or UAF,
->>> as shown below:
->> The UAF is a problem. However, I think the order of
->> dm_ima_measure_on_device_remove() and dm_ima_measure_on_device_resume is
->> bigger problem. Is it possible to order these two invocations properly
->> by using suspend_lock ?
-> That's a good point. The patch just papers over the problem. It will fix
-> the UAF warning, but it won't fix the fact that
-> dm_ima_measure_on_device_resume can race with
-> dm_ima_measure_on_device_remove.
->
-> The real fix would be to make sure that dm_ima_measure_* calls are never
-> called concurrently on the same table - we should use existing device
-> mapper locks for that.
->
-> Mikukas
->
-Thanks for your advice, I will send a new patch soon.
+Thank you for the CI test results on my patch [PATCH] Bluetooth: btintel: Drop
+pci_set_drvdata(pdev, NULL).
 
-Thanks,
+I've reviewed the automated test results and noted the failure of `TestRunner_mesh-tester`,
+specifically the "Mesh - Send cancel - 1" and "Mesh - Send cancel - 2" cases which timed out.
 
-Lingfeng
+I'm currently investigating why this seemingly unrelated change might be impacting the mesh
+tester functionality. I will work to understand the root cause and will submit a revised
+patch if necessary.
 
+Could you send some information about the two test cases ?
+
+Thank you for your time and review.
+
+Best regards,
+Salah Triki
 
