@@ -1,97 +1,130 @@
-Return-Path: <linux-kernel+bounces-736346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3106BB09BBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:53:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 37517B09BCD
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 08:55:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1BED3A8D8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:53:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE14A3AFEA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 06:55:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D825B202960;
-	Fri, 18 Jul 2025 06:53:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D07AD20FAB6;
+	Fri, 18 Jul 2025 06:55:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b="HMgO6kY1"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p3IOen/I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27FE1FBC91
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 06:53:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E35B191F91;
+	Fri, 18 Jul 2025 06:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752821616; cv=none; b=E7RGJ76pa792azDFIXjBbMCWoPanfyFJfBahBjM07yLXvYyTEmSaDgni5/brgOROksED8Kf2cJXJndzw4hsbCf0jhYw8i9WaxFUMN6YjYct44wkCz8NAHfRHywCURl5CduJSJq5ZOijJsvsQ7X4YwR/OaCDTdT1YyvUSw0STTFQ=
+	t=1752821732; cv=none; b=MnqOncmcU/G5odb59tt+lHtnFE2n9wu4iuV+fTesLfgGxZ3oJMus5J6zHXCieGLq734F7hYoE+KB3VHq7JvvaKy81Lb+tRe54GICcNrb+dtGEvgJsAm8CWQTNtv/C9oRzyFuz3HgNhVLIEgVpMV/XD6Aej/mdNK/bXKjSh5JnyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752821616; c=relaxed/simple;
-	bh=ybAswk9vrSD8WcUdO7ioNsJSz4/UhNNPszfHVPjePD8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V3a4nVeGxBqS21eb3NXvILrhTTQ77wnna69MZcPUrg4YDeB9ttDltuNS379UfWkHikBUSFPJMSaQngLOh58addLaXc/gynAykgzl8BESFoJ4I3gMKh/J9E4tamZy9EFI2gtKlVtfZ/0uEl83tFdIxbf5RzZdf4Tsfq8gTQ6UmRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk; spf=pass smtp.mailfrom=thegoodpenguin.co.uk; dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b=HMgO6kY1; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thegoodpenguin.co.uk
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-70f94fe1e40so32461287b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 23:53:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=thegoodpenguin-co-uk.20230601.gappssmtp.com; s=20230601; t=1752821614; x=1753426414; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ybAswk9vrSD8WcUdO7ioNsJSz4/UhNNPszfHVPjePD8=;
-        b=HMgO6kY1CuOLjnNzL+nGkL1VOPU92B9lw1SRLQ10W2xEO+/Q88MVbhz7mHo4wW9flv
-         iYQvkshSWBle+esBdrJZVJvDbdC/P7W8Jz8TcraimHMTeEzIyA3y75oVQfxdhkNf82By
-         RdG0LaEf8UbU9icAulHMrU6pL4calEuKlRSitk8DZ6kpPkPp37QrjvT6rFwI8Hpcu+tb
-         1XX3yXgXWIk9d1p+E9ijvuMjkUXn+0tXJqTBe5H8BwU2Hvd9uvcni5odG0EYkh5FbOb+
-         O2jBwJBNTBE2AW05+Gf0+W+dnHFTq0WqUtdr4Hu6BkLouaYb5E0oW3WYJo2ZbUlUmzKL
-         Sqew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752821614; x=1753426414;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ybAswk9vrSD8WcUdO7ioNsJSz4/UhNNPszfHVPjePD8=;
-        b=cGXoERCAMwjt7H/3h76767tTUbx8GF98aEXeD/Axz4WWduLsQDkIZbZxipKlF1+r3c
-         TXZlnfKJG5OUSODPyEpEPozQrl5h5YAkh9mvJlxdipFvCkRv9uHkzztil0OwBjallLGC
-         8+zMOV3aecBvQYou9FUHY56uzIxXaOeG4bzSAmpPpdQJq4mKPpw+QhnC434ZKH9Bwvpz
-         kD+mnTqUbfw5L56bb4XUDV3JJAQNK2fOdotNsvW9XE/ncbRWLqnDP9a6BfusEhJbjWzp
-         3+AvWqsmiqUMpF51P+JPJOUrmWJvsN1jT1nRWj3uWD+u17t6sKaY5MpAVkFUAzQczJJu
-         bj5w==
-X-Forwarded-Encrypted: i=1; AJvYcCWgYVNVGciFRcbJA1sd9Im6T6o/vStZHkP088t0TaxA3VEUZZJO1xIv1stSkS5ZuGsV8x7jbwyxrkPMZm8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAvigYXXYZ+5kmFF+9hkn4wy3g15jTKzg3lcLs87K+VoyQwk2/
-	Hml9dbOgIiWY6/Lqe2UvrWQaWBLFl2WfAWuesACGPugxafCcD6RRlnmWGECOEKd1DZOQEVxOrRn
-	wTBX6utJmMot/m4rTrqGRB7mz8xCJi2GBmBE5emxj0w==
-X-Gm-Gg: ASbGncvCoOw6hpw6Qaz9ISlciQRqcKL2JJ91GTzzSLRKlR/9zS2tkXXZNPSgOmCQtPc
-	YptdKg3NDYWU9dXbozmTkL0ZSDDMI+hqSLXK5KyYS0O1rVuyKAw09Yz9+CN0TTro5swrj5jCf7d
-	BZV0KCRYLGYGXgbwDZlEnm/eNZ1bsQI3acI5HH/tydDwQo2IoA0EjxuTeShlyMA8wOcC1ZzVtBS
-	8qUFRGVaGDlp+IHAvdcEd4W9bA3EAjdjVe3U3HHzg==
-X-Google-Smtp-Source: AGHT+IFvLgiDoFdyL34VARsxW+rGxmiWW9QMSci2UPUIkg/0n3HOf6tTiCSKpVsOiMnEC0d1xu5Uz8jS1p4UQRTGt6c=
-X-Received: by 2002:a05:690c:6513:b0:716:5fa6:c3e0 with SMTP id
- 00721157ae682-7194cf5c6e5mr39124737b3.18.1752821613946; Thu, 17 Jul 2025
- 23:53:33 -0700 (PDT)
+	s=arc-20240116; t=1752821732; c=relaxed/simple;
+	bh=zC5sbJLaBPq7+QLSjaWrQxbXPqynzgfL5jF7j3Gn6Xo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pD09WYd7Js9PN0dXNcWnP4JRfDVr8rMrSkJOvIZdKFtxZ8stAhnDAdmX2uJe5izonl/7yg17ZOR0iUZjDfo6t81LqRKrhepVWj7zlzsFFBHpwUc1YFDAnANhnD82AO8SYGvaY5h/NY3CtkP4ja8Tx32pqRWxe0xjS5BHjr+38NY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p3IOen/I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD96BC4CEED;
+	Fri, 18 Jul 2025 06:55:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752821731;
+	bh=zC5sbJLaBPq7+QLSjaWrQxbXPqynzgfL5jF7j3Gn6Xo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=p3IOen/IJytT9Fg3awcd+OyXVXniQPakbCYfsO06jkdhEkbHEADHV6Ht4HaJDydUX
+	 i7cgDxttc+HfNbScUfSXjibwDLdSzxUP2sDgln8ve7lGkGtkibRmb86GPvXsJmEO8e
+	 eO1bJ8Mj7fqIKBZaZyOQpzzb6kz9khFzHppKcgJJr9RdCZD0yRBqGeyVHxoLs4GCeU
+	 d6KslBsh+Wi8zafYNhAvLRTxHMAadVvL4HSxbVkn+n4lBv27MpZy15e/HPEXoezD84
+	 omIb7yd9U6fJLse4R5F1PN2XP/T0uBPVrIv15YY5Ko8Ops82YqgbhNWe3MTEZNTj4W
+	 602x5x3NZs8JA==
+Message-ID: <5ff2bb3e-789e-4543-a951-e7f2c0cde80d@kernel.org>
+Date: Fri, 18 Jul 2025 08:55:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250717-leds-is31fl3236a-v4-0-72ef946bfbc8@thegoodpenguin.co.uk>
- <20250717-leds-is31fl3236a-v4-1-72ef946bfbc8@thegoodpenguin.co.uk> <20250717193118.GA3988681-robh@kernel.org>
-In-Reply-To: <20250717193118.GA3988681-robh@kernel.org>
-From: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
-Date: Fri, 18 Jul 2025 07:53:22 +0100
-X-Gm-Features: Ac12FXwbQ2naP0VaM-2jRM9KQR9PuTu6W0JfEaf7adOYalfSuSBdpeibbuvgG0w
-Message-ID: <CAA6zWZJ8-V40qLcRbRJXaOo+mLt-v1aqUg9X39mqhJD5M2sHnA@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] dt-bindings: leds: is31fl32xx: convert the binding
- to yaml
-To: Rob Herring <robh@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-leds@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Pavel Machek <pavel@ucw.cz>, devicetree@vger.kernel.org, 
-	Lucca Fachinetti <luccafachinetti@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 1/2] dt-bindings: dpll: Add clock ID property
+To: Ivan Vecera <ivecera@redhat.com>, netdev@vger.kernel.org
+Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+ Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+ Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Prathosh Satish <Prathosh.Satish@microchip.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Michal Schmidt <mschmidt@redhat.com>, Petr Oros <poros@redhat.com>
+References: <20250717171100.2245998-1-ivecera@redhat.com>
+ <20250717171100.2245998-2-ivecera@redhat.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250717171100.2245998-2-ivecera@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> This is already false because you haven't defined the property anywhere.
-> Though this property didn't exist in the existing binding, so why are
-> you adding it (the commit msg needs an explanation)?
+On 17/07/2025 19:10, Ivan Vecera wrote:
+> Add property to specify the ID of the clock that the DPLL device
+> drives. The ID value represents Unique Clock Identified (EUI-64)
+> defined by IEEE 1588 standard.
 
-Ah forgot to rebase - this should really be in the next patch !
+With the exception of clock-output-names and gpio-hogs, we do not define
+how the output looks like in the provider bindings.
+
+I also don't understand how this maps to channels and what "device
+drives a clock" means. Plus how this is not deducible from the compatible...
+
+So many questions.
+
+And your driver code confirms that this looks like misrepresenting
+consumer properties.
+
+Best regards,
+Krzysztof
 
