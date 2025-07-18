@@ -1,246 +1,189 @@
-Return-Path: <linux-kernel+bounces-736155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E84EB09979
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:58:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C208B09991
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 04:02:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A36571C80B18
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 01:59:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A56583A32C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 02:01:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F4C19E98C;
-	Fri, 18 Jul 2025 01:58:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F671A5B8B;
+	Fri, 18 Jul 2025 02:00:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="5Wq/eCLP"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2048.outbound.protection.outlook.com [40.107.102.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="baHWlJnk"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D20118A6AE;
-	Fri, 18 Jul 2025 01:58:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752803920; cv=fail; b=VAjEZ8AJdc16qt5UcpwnufRnEsIgHwUPOxTz21xF4DC2KmAK8Lyx1Ju4nmQ5dPO9uIJ0fnGoWJ99H8fsi7diot97e6j+lX+kFH3GSqLfmPi0OI53Xbg6KoXYgGINLcOP8vGdXoMgi+ycdJUIPS99wOYTYAIAgMyoVTr+FRuPm0U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752803920; c=relaxed/simple;
-	bh=JIpPzjoEPpsb9WuExlsU8a6GXGW7bZl4idvOB8g0Nsw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=gch/PKy8PC8JdV10bCN+FHrfc1mLZVgU0kuCPzcCSMU71+dO5qrC1o+W+tMhu3zB0NxLNsCfQrB4vwcGXN+DVXqNfqcY9azjIACv4t/xZ1UFP8neZ7iXuYOD6LrKIRlXRw51E2iuBwuWIvMobzYFtz0v9vP/4Duoa1unR0nOCfM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=5Wq/eCLP; arc=fail smtp.client-ip=40.107.102.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RZCTZk1EmdJdvpLtXQyG2SwVKjnfAerXthmkOUl3LFFA/mvsF0f0AIwGYYbtxQG+FhREEagvsI/oTA6H1MHdPbMcs84thxRvH5tEXKsH86xhXJ+8CxMI+on7ocAhzNYSTsOv5cy5QOV2U1LfdO4+1I7jmlcK7xEZHkbbILvhQbSXRS6ZedFLvDbYqydX513dRP9+HtNaVjKAFIYEB05pRfSmZfdmPEvnXVTC2+qhx4w8VwPafB5l+6Lh/PqnzYCHOCNnDDU50FvMAhBpfcw9TB86m9W3FtPP+LgM1iJJIO9EYOiO24SZnICONPVz7QKy8TQdGsLee2oomxUWTqEtzQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=X8ZtcbePW62bb49rt1Ee0rG6f6+hp58oI2EFbiQzLq0=;
- b=whedsON1PKNnf9/vHe6jEtpWjIb02ZRscVXI9f0bnunDoYBpnEa+WlifPbyfr+sBHfh8iUQtNxgln1BBhDfL8I0Jjj+113YsdSFvaW806MwatgAPAcI2VThIRqyernZ26UzUdkUNj5gyM75e8/TjX7TaOwRMi6AB7bfmA2AQ7V20emlLm+KImZANBCLDHPvKKeDtuT1hQMRjFJipnVG8hPuFLUp6BtHLTWQSn951SBuEKepFI89/C/DYRXcOMe8Sjn+IcGsnmFn8QJ0o7/cjnTzkb37QjltnCQBkM3wisjkQEC/W6Ts/NwgJtH8WWwsDiWFBn2AtKtFRY7/M3ko3PA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=X8ZtcbePW62bb49rt1Ee0rG6f6+hp58oI2EFbiQzLq0=;
- b=5Wq/eCLPqZNZItc9D5jUIMuw9cUtMPSRvFCO/64SoythUEjVH3s+mRATuD1gcR5vdmzI8TDBQCdxpuX5hZZVij3nH6Lz7TblVB7FUhc7rakKBX+bOmaXNSFZ2lKMjQxIl+MeKPc6Vb0SQsPGb+a6upskY9lM7b+QyjenDx2tTJA=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CH3PR12MB9194.namprd12.prod.outlook.com (2603:10b6:610:19f::7)
- by PH0PR12MB7929.namprd12.prod.outlook.com (2603:10b6:510:284::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.39; Fri, 18 Jul
- 2025 01:58:36 +0000
-Received: from CH3PR12MB9194.namprd12.prod.outlook.com
- ([fe80::1e6b:ca8b:7715:6fee]) by CH3PR12MB9194.namprd12.prod.outlook.com
- ([fe80::1e6b:ca8b:7715:6fee%7]) with mapi id 15.20.8922.037; Fri, 18 Jul 2025
- 01:58:34 +0000
-Message-ID: <d004a5c9-fbd9-4298-89ab-292524ae3ad6@amd.com>
-Date: Fri, 18 Jul 2025 11:58:22 +1000
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [RFC PATCH] PCI: Add quirk to always map ivshmem as write-back
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- Bjorn Helgaas <bhelgaas@google.com>, David Woodhouse <dwmw@amazon.co.uk>,
- Kai-Heng Feng <kai.heng.feng@canonical.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson
- <seanjc@google.com>, Santosh Shukla <santosh.shukla@amd.com>,
- "Nikunj A. Dadhania" <nikunj@amd.com>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-References: <20250612082233.3008318-1-aik@amd.com>
- <52f0d07a-b1a0-432c-8f6f-8c9bf59c1843@amd.com>
- <930fc54c-a88c-49b3-a1a7-6ad9228d84ac@amd.com>
- <opdpelyb26bzp723lyxljjb2dmxgunkcjlvpkxgbrxaxhoycv6@eigu7etse3g7>
-Content-Language: en-US
-From: Alexey Kardashevskiy <aik@amd.com>
-In-Reply-To: <opdpelyb26bzp723lyxljjb2dmxgunkcjlvpkxgbrxaxhoycv6@eigu7etse3g7>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SY6PR01CA0009.ausprd01.prod.outlook.com
- (2603:10c6:10:e8::14) To CH3PR12MB9194.namprd12.prod.outlook.com
- (2603:10b6:610:19f::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99111198A2F
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 02:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752804030; cv=none; b=UtOOGxhLYdLQCBWY2D8gDRRY/NqIy6z8PLxmiRX0ehQkoyN47bi7P2HlBTOEa7KWZT68PWzsCODFkuMfRwFp4cOHm9s0WLEgOX28gkx0Qq69idzmr31bhf1WjeOcvKSZnGMyH+yeVBnB7rYS62ykv9ViY+G0K+R056m44ckx4go=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752804030; c=relaxed/simple;
+	bh=RtGwBwsoM+YdBqJCMoMBjHu4AUT6wQVKiQgBOmsy2zk=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=DoWD0gECVdj1BQGrXK9jkWov6+N8TVJXTz7dMp0F7rvkG/UmNbA+QEHYSkeHdkC3i1c58dtt/XjhJEPp3s2QhrH5meKyROAt8FoIyFUxu4xM6A16zMif3uQX7AHr2BBLq18umBNJ9kXOeYKOIajV0V7NhIj8ddqGAD63ll0pH2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=baHWlJnk; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4ab3fb340e7so30504511cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 19:00:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752804027; x=1753408827; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9COw14ata83P2hN7EoNI52jllfLH9udiIyK4NEOuRdc=;
+        b=baHWlJnke7yEqAQ9HmSl1sTr2unkyL+T0tyjf5f3fPj4TccEBeha1qNPzR6o2GAMKq
+         sYKUj/drUMfwVPzg91qWgq7VY5tO0DvWOx8+zgtqp9gtQ5rBxNCVwm1dnnoF+aq0xjgh
+         tAD3KzEnieoteJPW8LteCpcxKp/ebCR9lxuph+/ojI8BXoqCa8FeS3ANW1enFq2pqJvd
+         w9wyWmrY8n6y8Bi8WWV4CeSfiD/5muVwpTtACHiX4RB4laK1MTJ5wjbv/SCELu3HRp3t
+         5eFiDkNcmPqqyyhlMmfTY4ZGfX/1J+j3tzNsceDCH11t8Rctwl4umaFgx2h/2/5lahZo
+         c61Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752804027; x=1753408827;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9COw14ata83P2hN7EoNI52jllfLH9udiIyK4NEOuRdc=;
+        b=cpqtxJGPxNziCOlIJTygsHC6VZyrEYmaCI7qgG2XprEZPXFRM5iLKqFKHnFbMukNGC
+         Tpa1Arvl/TTi1QNNcUlx1B5VL35BYpkdhQFi9+b0pWqf/rikjRIqYZex8wvVIei//Q4d
+         wq3dFeNpu5rSIAGHcFtZ9JkXw0CiUoySS+ZAWYC6NYbIMlJRyf4ZDpAM0mmNH3fglNrA
+         JMsgn/GYDDfCpT4B6VQbWnknBi8ZEq9ZP8/bbywYBXGfuu4mby0INoqnTm9Kjz0nPFPw
+         m+TGz5s7+ELnJWD7nvBAdzSA9XFIYwz4h/BMWuZ5CvkBkX95QvRCRbmu6hogC3SjZgw7
+         vLNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW1FTqDrHNu2U5Yk7EAevC07L7w5/7X+uksQ4CVB4wTmdIV12U50apmDbqPezoxmxVvLuJsllyO5bNGsaw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRwi90syG50gV989wo6SHrJYHJb4Z1RlfCN43SvrozgMQ2H4YW
+	8s978CYllMQn4lrrzPEWgRUrrc+ze/W2hju0TpWgSrCFekKUPTFfHi3/
+X-Gm-Gg: ASbGncutPPBJe60gStzxvDIwRMPyQHpeHCnqFap/ZgPM7bMIRpOdc1o2RfX4SoWREpL
+	2TyvCiwRmFPgrK9utQVev6J/Frt0uIt6l2NKclYz0Vov+D4EWvh/MKnBolD3aV+sSF42XdxiaVC
+	dRXKjQzbPvxOZSuigTo/daCy2jsARkOE41xun8GFWgEgC266K7r2dcjUfaC/0zMs9q6Y55pBO8N
+	VBHYITb97xeW9EQVw24lauhjUt/KeyLXaYwd/rC88k0Mip7TfpGMGlkOo/ILHpcePH5ofounFOp
+	dyvM/0TLjoZVInAjlrtxlVoPZqFZYP/od32gL2wOMSGksxErdA9cXqv72LRLetd535lz5UWHGPK
+	RtOhcWQ9IkugJtABIj6Qvo9JTShBFbjZwaB/g0BetuBRskxEO9sM=
+X-Google-Smtp-Source: AGHT+IFnuc6J+FrFQP9DOdmL4XTa6mu7FhA0kgysswrAIgU175zByPCXQT3aDqaALDIInWXrUeE/6Q==
+X-Received: by 2002:a05:622a:1827:b0:4ab:5337:618e with SMTP id d75a77b69052e-4abb2caf197mr19548721cf.19.1752804027123;
+        Thu, 17 Jul 2025 19:00:27 -0700 (PDT)
+Received: from linux-kernel-dev-start.. ([159.203.26.228])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4abb49c7867sm1992201cf.32.2025.07.17.19.00.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Jul 2025 19:00:26 -0700 (PDT)
+From: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+To: gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	vivek.balachandhar@gmail.com
+Subject: [PATCH v4] staging: rtl8192u: Rename ChannelPlan to channel_plan and fix index name
+Date: Fri, 18 Jul 2025 01:59:25 +0000
+Message-Id: <20250718015925.162713-1-vivek.balachandhar@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB9194:EE_|PH0PR12MB7929:EE_
-X-MS-Office365-Filtering-Correlation-Id: 54a63ba4-6e7e-43ef-8777-08ddc59e9a59
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?THVhVjB5dEZMZWF4UHA4eGNwQjM0L3ZxUnE5K3REeGg3M21hNFNvd1lCNW9p?=
- =?utf-8?B?bUg1RVVxRXVEeXhUd2dZUG5xNE9WaDlDMHdURmppZXBzczZFRFp4QVh5cFhU?=
- =?utf-8?B?aUlrb0hXaGpuREZXeEoyUWhNalVsYmdONmJuaEdUZExMMDc1aGU5bGhOM3lI?=
- =?utf-8?B?ZGYyTEF5RTZkaThzTXR0U1IrM2lNL2JTaFRPSENvby9OODU1NTZReU1ETzd4?=
- =?utf-8?B?cVdKYzlXK2o4RVRPMkFIVEI1V0FkQjlVT0hsekdCREdmYXZVMDM0cXpydkxv?=
- =?utf-8?B?bC84dDlkOWdycGV3VVZYcXBuM3l6bDFQZStsbnJJNHdlTmYyWk1wemp3bmlP?=
- =?utf-8?B?Vzc4aXpVaGVKKzFGbmhIdzREU2U4L3UvT2ZBMklmQ29FbFpza0VYVlNqUG5D?=
- =?utf-8?B?YWtkU3RYeE1JQXlRcFFwbVNnNHE5MEVIais3ZDdIY0pPRWZHY3IySGFsTDM4?=
- =?utf-8?B?ek5jcWJjSXE4MlJmTUtDQ1VVKzUxL2c0NnBQem95VS9rVk1EWkFGcCtDeWc3?=
- =?utf-8?B?Znhrd3gxZ2hjSjFFZXl4N0crbEVaWTh5M3pONHZzRFBYYTBqM0owZDRhTHY0?=
- =?utf-8?B?bGEzQnpCdWlia1gxSE1kZ1RZMFlyMmxWb3J0MzdxOFJ1Z0ZPR1ZjVm4zN1E1?=
- =?utf-8?B?eHU4d1l5RU9jTTBjNUZjWSsxczMwdWRFNi90SEdMTzRwOWZRTmVEQW8wY092?=
- =?utf-8?B?S0htZEtmWG9ZaGNuOE05cDd4RmdYRGJiSDBEakllQTB2M1MreExJQU5Dank5?=
- =?utf-8?B?RmRVeGRmZHVZSmJXMGluVXlGRlAxWGpXN2krQmVwdTdXdU15VERtZFc3cTJB?=
- =?utf-8?B?VHlJRlpBTlhvejZ6UXY2ZlVqSzFwRmVCUmRLbGpmN2JQb0VUOGpJZGY4WTE4?=
- =?utf-8?B?bU5TR1ZZQjY3cUZWMTI0b0Rnb3drNk5NUDBEK3hYKzROUlE4Tk1uQmtvcG9N?=
- =?utf-8?B?Y1NSWjgycW1NSkNQcjJ2TC9ML3ltOGhVOWhHN09PU2FPbTl0ZDBUT2dDTGFh?=
- =?utf-8?B?b0t1bHNJSFNucHo3bVBnWGtWMG1zbUtrRTVUMUZFM09Yb2xXVitQOXlvcUdR?=
- =?utf-8?B?cjF3NVZJMmlvN01QTlBWSVVsZ0E4U3YwVFVCSStXa0M2aUhmbEVTZHF1M0w5?=
- =?utf-8?B?WDgyQnZTRzdyRXRLSnhKMkM1MGRCNEg0aEtqdXVlVGpWaEx0djR3VllGc1lU?=
- =?utf-8?B?SGp5OGl6MVZyZTgzWlVpc2NmQlRJajE3SmxjWGtaQWhVSjJ1WjVWN09KQThE?=
- =?utf-8?B?TW9pRmplRC8xc2NuUUI4U2lKclZaeFZBdUFKd3Myb3hpTVpramxjQWhxbit5?=
- =?utf-8?B?YThEb3UyQzRSNWtlYjFxZ1o1VzVXbjVTdGRKR0RDOFA0NHd6Zk5xSzRvaVZy?=
- =?utf-8?B?QWZSbXVnWTNHUEVTUlV5eFcxRElSVVZ3OTJ3QkZxdHFhMm15enRBUElzUDZ6?=
- =?utf-8?B?cTFzTUdhMGlKV1RyNU1zMmRSOGNPOURpNkRBVCtNdHZBWkFPSUtrbG5kK0Ex?=
- =?utf-8?B?S25KeTBYVGZSZG9uZ3NZSG40TUN2Q0srVUFGRGRPeUJjbnROOU1keG5iei9y?=
- =?utf-8?B?MXlJeW8zLzFiYXFuYVM3Umdjc3htVGJGTWlXMTEvdEN1OXZyQXJWdTYxZ2Ft?=
- =?utf-8?B?c0dVdlE5S1VkQjJKUkFXbVllbFZObU5jekxYYzBZcFYzSU5jOW5pZTR4ZkRr?=
- =?utf-8?B?UVVGL2R0RHROOEltNE5lajI4UmFKdldyTVo5cjVaa21oZGt1RVFGdXlZemFJ?=
- =?utf-8?B?Z0xINmJ5ZUt6NGxncThzQXBYOGg5NEJIeWdJeWRmVmxMMVZ5K3VEdEJzb1hy?=
- =?utf-8?B?Yk82Vk9ML1R5RzhLK2MwaS9MQzlFeGJxZTdyeEZlNGYvZ05Vak5KT2VhWU45?=
- =?utf-8?B?b2RkRVJDOUZZU3owWjViNDdpbWJJSDZzSmUxUDFLY2VrdE01M3FOS0l3N3VD?=
- =?utf-8?Q?QomqaJASkV8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB9194.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Tk1tMXArQ3VLSUR4YncyUlp2RXJBK2kzbUhCNlBsM1ZIZGFHV3JSWEVkSUNr?=
- =?utf-8?B?THZ2dS9odGJPVmRLdnl4VDgvWDIzYVJmQ3FpMFBuYzllclBNOU14MzRyNGFH?=
- =?utf-8?B?RkdkWERCY25IWGxiT3d0NENZRWhXRG5tRmdCV25NUzdrbXRJQ2J6MjF1bjdy?=
- =?utf-8?B?TFBmWHhWQjZhN0VJQUQ0N3dXMUs2WTV4S3oxTmlhb1RWTTNYWHByNCtSRFdy?=
- =?utf-8?B?Q3BjSU5ZZ0ZqekkzbG5tMVJWOU5xaVZacVdMcUhManEwamtNZUZjOS9kVXRy?=
- =?utf-8?B?MURsc21sWlU1N1ZaeTRXVnVGQ2xKWmVLWnFoNzRMQXhoMDNMaTVFMXdmeGhp?=
- =?utf-8?B?SjFKanRKcWJINGVJbmVsMk1FcWo5SGQyUTlsSmt4NE56dzREb1d0ZklNd1Nu?=
- =?utf-8?B?UTFPOE9ZSFJYRVcyRmtkV3hyeHJZK21tK1k0R2tiL3M1QlFqb1FwL20vcUtn?=
- =?utf-8?B?eGE1Y0g4aGI0bTNCVzFoZ0RWSHFhRDU2Y0tYa3VhaFQ2ZjhUWVZxRUxDWmw1?=
- =?utf-8?B?VDFxSUZIbW4wcWx4dmJubXpDcEhyQkJCWUdJemdBWmNCaHMrQnhZZ25SMHVQ?=
- =?utf-8?B?SUdLRnpaNjJRbkhBNFFsQUtleTZVNEIwdXlZNnFzR05tUS9ka0prWUxvVExq?=
- =?utf-8?B?UGJ6b1RCek5pdlVOdEFrS3ROREpFQVIwaWhoa3BmVThYaDZUR3VvK2RJUk9q?=
- =?utf-8?B?bHBCdmlHNDhlVFZQS0UzbXBvbW5tdlZ2cjBVU3hMSHlDM3FqS1RtR3lrcGRE?=
- =?utf-8?B?V2JPN3FXMXRkWnNVMzBISFQ4RTU5NEkyK0lmS1cvek1pallmbU5KL3l2RGpQ?=
- =?utf-8?B?R0lXeTVlbDlNbUdkQnlyUjJERjRVL0RzaDBnOFdKQXVQUFpiRWFJNFowN28y?=
- =?utf-8?B?RTRwakFrZlhCekxkQUxwUU90SUZQOXVEaE5sZE0wMEdIZmdjYVF5MUNxdHJ3?=
- =?utf-8?B?WDlhK2NIK1E4ZUdnRzZsQkNBWmxwQmJXaGw0UGhaVWhDSkcvazlTYW4vMXE1?=
- =?utf-8?B?bkZ2cWpQS0pqa1pWRmh6WkJjajJYRzhtUDkxMFNHbHZzSHJJaW83VWRGdGla?=
- =?utf-8?B?Z0lRSTRaY2JZS1VVYis3VkcrY3pxb00zMmNXRTE1WUcwRGdtK2R0VWt1blZH?=
- =?utf-8?B?cldESFZSNXV0VERaNUcwaEdjNUUyTThDUEs0Zkord1FLVlptWmV1c085engy?=
- =?utf-8?B?cmVGeVdVRHhUd2h1N21mWGhQeUtTb1BlODRVblRBZW5nazRDZG1jd1hSdVgw?=
- =?utf-8?B?MnU4VG1oQkNVL3N2cHhvbUdZeVNRQ28vMW5FdnIvZWpXMC9NbDZNQ3U2K1VP?=
- =?utf-8?B?RTVKNG5wQkdOUURVQ1g4akpyUWpEaHpkbXlpRzNmSng1TXArQTNVTFJnblJi?=
- =?utf-8?B?THhjNDJEdk1jR2FaL0VxWDdVR3RyUTJneUtmL2pkSkNoY1RJMHdFSmJ6RFF0?=
- =?utf-8?B?VWw5cXh3Z2VQWEJBNDVwdXdxUmN6bWgveW13SFMxeG0xcVN3L2FnMEFkdlJj?=
- =?utf-8?B?eG1FeWV2MldwTDNLdEV4Zy8zUURMU1FRV0xEQTVHZFhwK2xFMW1wNDZYYjJy?=
- =?utf-8?B?c0xPQ2U2Rm9vcHFqaStwNCt1dEU2MFJQaFEwM1J4Q01hNFU0TG9FYWllUm1R?=
- =?utf-8?B?RC9zQzNhbGYwV3NGR2xVU3pOR3cwZUZQMWdFNWxXRkJxMDU2NWFBay9LZ3kz?=
- =?utf-8?B?UU1QZ3NBd011VUxDeXhMMUExODBQZnpSZ0JDdTJjRjJsZVlIMWZaK0xBeE5y?=
- =?utf-8?B?eVdhUExCNUdrVGphTjZsMExqMjAySC9aNElyb1NjVk9jd3JUQ2hzN3lkUDBJ?=
- =?utf-8?B?b0xGV3NnNFgxWVlRS0ZuWjgzeEFrajhLYU80c3czVUhkNDJheTNVakc2bTQ2?=
- =?utf-8?B?QjR0ZkwrdkF1YVIyd0pkRFlDdFBwNGNZeXpBaTBJOWtiNUQ4SkE2VythUURl?=
- =?utf-8?B?eE1LYUNqeW5sYVlHeHp1UG1YSHc2L3lGNzVpZzY0d25QT1U2aHJRcVdqa0R5?=
- =?utf-8?B?SjRsREkyanVwM1ZZOTZ3dGFWbTZlR21tcngrbWZGYWRvckcrM1piVEZtWUhj?=
- =?utf-8?B?a0VBQ3REaWlOL3J2K2xMYyt4M0lxR2hucHFTOXlrNy90alM1ZU03ZkpKWWF1?=
- =?utf-8?Q?CpEkFH3ZoRUpjeodKPXaBQj2u?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 54a63ba4-6e7e-43ef-8777-08ddc59e9a59
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB9194.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2025 01:58:34.5606
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: E3Mpy53OLGS3OrF4YqAhqKSxVA+uQefk3B+eToqYWvFuqOwTJcczcLU41Q9kVJneHbmJQutXkTCBPUDhItnmPg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7929
+Content-Transfer-Encoding: 8bit
 
+This patch renames the global array ChannelPlan to channel_plan
+to follow Linux kernel coding style. Also renamed the index
+variable from channel_plan to chan_plan_idx to avoid
+shadowing and improve readability.
 
+v2:
+- Fixed Cc list to include Greg and staging list
 
-On 26/6/25 02:28, Manivannan Sadhasivam wrote:
-> On Tue, Jun 24, 2025 at 11:42:47AM +1000, Alexey Kardashevskiy wrote:
->> Ping? Thanks,
->>
->>
->> On 12/6/25 18:27, Alexey Kardashevskiy wrote:
->>> Wrong email for Nikunj :) And I missed the KVM ml. Sorry for the noise.
->>>
->>>
->>> On 12/6/25 18:22, Alexey Kardashevskiy wrote:
->>>> QEMU Inter-VM Shared Memory (ivshmem) is designed to share a memory
->>>> region between guest and host. The host creates a file, passes it to QEMU
->>>> which it presents to the guest via PCI BAR#2. The guest userspace
->>>> can map /sys/bus/pci/devices/0000:01:02.3/resource2(_wc) to use the region
->>>> without having the guest driver for the device at all.
->>>>
->>>> The problem with this, since it is a PCI resource, the PCI sysfs
->>>> reasonably enforces:
->>>> - no caching when mapped via "resourceN" (PTE::PCD on x86) or
->>>> - write-through when mapped via "resourceN_wc" (PTE::PWT on x86).
->>>>
->>>> As the result, the host writes are seen by the guest immediately
->>>> (as the region is just a mapped file) but it takes quite some time for
->>>> the host to see non-cached guest writes.
->>>>
->>>> Add a quirk to always map ivshmem's BAR2 as cacheable (==write-back) as
->>>> ivshmem is backed by RAM anyway.
->>>> (Re)use already defined but not used IORESOURCE_CACHEABLE flag.
->>>>
-> 
-> It just makes me nervous to change the sematics of the sysfs attribute, even if
-> the user knows what it is expecting.
+v3:
+- Removed EXTRAVERSION = -vivek from Makefile.
 
-On 1) Intel 2) without VFIO, the user already gets this semantic. Which seems... alright?
+v4:
+- Tested and verified Makefile EXTRAVERSION removal does not break build
+- Removed EXTRAVERSION = -vivek to keep version clean
 
-> Now the "resourceN_wc" essentially becomes
-> "resourceN_wb", which goes against the rule of sysfs I'm afraid.
+Signed-off-by: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+---
+ Makefile                               |  2 +-
+ drivers/staging/rtl8192u/r8192U_core.c | 16 +++++++++-------
+ init/main.c                            |  1 +
+ 3 files changed, 11 insertions(+), 8 deletions(-)
 
-What is this rule?
-
-> 
->>>> This does not affect other ways of mapping a PCI BAR, a driver can use
->>>> memremap() for this functionality.
->>>>
->>>> Signed-off-by: Alexey Kardashevskiy <aik@amd.com>
->>>> ---
->>>>
->>>> What is this IORESOURCE_CACHEABLE for actually?
->>>>
->>>> Anyway, the alternatives are:
->>>>
->>>> 1. add a new node in sysfs - "resourceN_wb" - for mapping as writeback
->>>> but this requires changing existing (and likely old) userspace tools;
->>>>
-> 
-> I guess this would the cleanest approach. The old tools can continue to suffer
-> from the performance issue and the new tools can work more faster.
-
-Well yes but the only possible user of this is going to be ivshmem as every other cache coherent thing has a driver which can pick any sort of caching policy, and nobody will ever want a slow ivshmem because there will be no added benefit. I can send a patch if we get consensus on this though. Thanks,
-
-
+diff --git a/Makefile b/Makefile
+index 997b67722..a31bb7e1c 100644
+--- a/Makefile
++++ b/Makefile
+@@ -2,7 +2,7 @@
+ VERSION = 6
+ PATCHLEVEL = 1
+ SUBLEVEL = 0
+-EXTRAVERSION =
++EXTRAVERSION = 
+ NAME = Hurr durr I'ma ninja sloth
+ 
+ # *DOCUMENTATION*
+diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
+index 0a60ef201..b449d0d96 100644
+--- a/drivers/staging/rtl8192u/r8192U_core.c
++++ b/drivers/staging/rtl8192u/r8192U_core.c
+@@ -120,7 +120,7 @@ struct CHANNEL_LIST {
+ 	u8	Len;
+ };
+ 
+-static struct CHANNEL_LIST ChannelPlan[] = {
++static struct CHANNEL_LIST channel_plan[] = {
+ 	/* FCC */
+ 	{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 36, 40, 44, 48, 52, 56, 60, 64, 149, 153, 157, 161, 165}, 24},
+ 	/* IC */
+@@ -145,12 +145,12 @@ static struct CHANNEL_LIST ChannelPlan[] = {
+ 	{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}, 14}
+ };
+ 
+-static void rtl819x_set_channel_map(u8 channel_plan, struct r8192_priv *priv)
++static void rtl819x_set_channel_map(u8 chan_plan_idx, struct r8192_priv *priv)
+ {
+ 	int i, max_chan = -1, min_chan = -1;
+ 	struct ieee80211_device *ieee = priv->ieee80211;
+ 
+-	switch (channel_plan) {
++	switch (chan_plan_idx) {
+ 	case COUNTRY_CODE_FCC:
+ 	case COUNTRY_CODE_IC:
+ 	case COUNTRY_CODE_ETSI:
+@@ -172,15 +172,17 @@ static void rtl819x_set_channel_map(u8 channel_plan, struct r8192_priv *priv)
+ 				 "unknown rf chip, can't set channel map in function:%s()\n",
+ 				 __func__);
+ 		}
+-		if (ChannelPlan[channel_plan].Len != 0) {
++		if (channel_plan[chan_plan_idx].Len != 0) {
+ 			/* Clear old channel map */
+ 			memset(GET_DOT11D_INFO(ieee)->channel_map, 0,
+ 			       sizeof(GET_DOT11D_INFO(ieee)->channel_map));
+ 			/* Set new channel map */
+-			for (i = 0; i < ChannelPlan[channel_plan].Len; i++) {
+-				if (ChannelPlan[channel_plan].Channel[i] < min_chan || ChannelPlan[channel_plan].Channel[i] > max_chan)
++			for (i = 0; i < channel_plan[chan_plan_idx].Len; i++) {
++				if (channel_plan[chan_plan_idx].Channel[i] < min_chan ||
++					channel_plan[chan_plan_idx].Channel[i] > max_chan)
+ 					break;
+-				GET_DOT11D_INFO(ieee)->channel_map[ChannelPlan[channel_plan].Channel[i]] = 1;
++				GET_DOT11D_INFO(ieee)->channel_map
++					[channel_plan[chan_plan_idx].Channel[i]] = 1;
+ 			}
+ 		}
+ 		break;
+diff --git a/init/main.c b/init/main.c
+index aa21add5f..648589720 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -680,6 +680,7 @@ static void __init setup_command_line(char *command_line)
+ 
+ static __initdata DECLARE_COMPLETION(kthreadd_done);
+ 
++
+ noinline void __ref rest_init(void)
+ {
+ 	struct task_struct *tsk;
 -- 
-Alexey
+2.39.5
 
 
