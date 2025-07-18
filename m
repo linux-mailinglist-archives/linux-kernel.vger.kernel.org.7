@@ -1,115 +1,100 @@
-Return-Path: <linux-kernel+bounces-736730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 227AAB0A109
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:50:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E8DEB0A10B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:50:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C21B47BCEBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:47:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DCCE16ACDE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 465B32BDC32;
-	Fri, 18 Jul 2025 10:47:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5875B2BD024;
+	Fri, 18 Jul 2025 10:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="YZFoTqmc"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X7gqLWkn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF61D54654;
-	Fri, 18 Jul 2025 10:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05B672605;
+	Fri, 18 Jul 2025 10:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752835670; cv=none; b=L+IdJU8K6nU4x3b731jwUc7L/TB4Jd85XxHcHIvsu+PHriEwoEjye1goYH337xAoyEJN+gpkvRvTrCZdZuw8dfI43k9wrUd54iFdNzztt0cCevO4oiwMokLhXbVULkvlL6c5+ku3vicK6tfB9DezfGeK1FT8uKvZREuWemYVuM4=
+	t=1752835821; cv=none; b=r4wfBiz2/VQdnhMqv7bMoqMOKno48PG2IlHTvjFxdIOnKL8HEN3Z3xOLllEsfXhu3/5QOymBR7x7vHyVYl3XfipSC+/yxi0aq0VOuqdwvWT/cqgtrRMpQBAnYb8hWddNym3ekNFSdM9ChzdJn4NV58V47mFK1bkv4RLPb7clwgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752835670; c=relaxed/simple;
-	bh=z6gVOJfxiynYeUPM0bJS2uQ7z3BvE6IrkaCNhMFuoH0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AHx570xmqF6mcfQhWKwPGkSSJgRA1FwlB/+tt2LTVlxlHmiW5+1sALJieeEHtU5YtfAFv+nOf141Kw2UZPhR/w27utKYa3q1epgmQczIz3fky63PiAUugTsKvF9Ps+xBy8kbz3IAbYKjUXHw1XGE7HT5CNMt8siL+BZB8YDD3Yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=YZFoTqmc; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1752835536;
-	bh=SfqGx57HbJOqQpUdTI0A7vhAsxIoUys2M/SD1c64K3w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=YZFoTqmc2NvbFAc66WB62e74wl6uzViwj/GCMCX9QdYw96xKGNzd6HLwURvW9YOOo
-	 a3O8dfAfAqgF7/+nEY2EX65qevypjBc9kWsYtzNJl2C8rIDFVeRoqdfQD4/te1wGgO
-	 3RS5b0inwMZ4ys2vZmeQevn2D4/juI3Ffm8FU+5IsiHSVvcEvAYKPDNVbGN01UL/JI
-	 05bSL0Am/rfS6K/22qDXW1m7Ge4Qk6sOeZl1ci8M+tggITcSS0hBpLfaerurURZkAB
-	 uXYme7aMY1oVKY+l7PLnmcveEOS8iJT/RM95eoObWusXOIpsQuYEaKJv9Y1JnqlyQh
-	 nkcYf2sB+q65w==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bk5zh0dmTz4xQN;
-	Fri, 18 Jul 2025 20:45:36 +1000 (AEST)
-Date: Fri, 18 Jul 2025 20:47:46 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Danilo Krummrich <dakr@kernel.org>, FUJITA Tomonori
- <fujita.tomonori@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the rust tree with the driver-core
- tree
-Message-ID: <20250718204746.729d027b@canb.auug.org.au>
-In-Reply-To: <20250718202612.15567f80@canb.auug.org.au>
-References: <20250718202612.15567f80@canb.auug.org.au>
+	s=arc-20240116; t=1752835821; c=relaxed/simple;
+	bh=HebdHsS4n8w/p8M0w8SAL7pKxJdoLT/etZGGGL2VYMM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A9KOBH257N2lqeM0cxUNAM+Z8g11HZOyULXfKL+X6ozqplCiGuR7IH3m8as+kI/5Y+ZOhVG4df25umpP9tRIKk3de+B3gHCbjlWuyIwawHqQwW6pO2cwJjZSALLC99o/art4PFlqcmJaNUoZH2YcpdWsMzFCSIUhjI68Ftzvbys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X7gqLWkn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57121C4CEEB;
+	Fri, 18 Jul 2025 10:50:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752835821;
+	bh=HebdHsS4n8w/p8M0w8SAL7pKxJdoLT/etZGGGL2VYMM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=X7gqLWknqtGGoKvEI+04i0epAm6MbvsEZpT4Xi13Y8XAyvckmWpLryvk5bpNNij0W
+	 MTQLLJXCJ62xYdvgts/BOxh8oyEFtqeaDciorCxhHo6FVLZVPdAvxnrbx0b60R68Vm
+	 JA8OjHCzc/6BelYn6lycjoeUTiCu0vwC9FxwOQWhRHc3+QvsjxjzxyeU8LvgIX5Lev
+	 eX2XIfm5ik8w91Ytx0CByvQVaQBWqooEynfTVE2E9PWrZyor+kv923isyFsgVutpjL
+	 OF/UJejhNohhci+gZlJV7VDwu1fiPB28ZarCY+kS6vsVyrqzSkIO83Rzp4IVelQuiS
+	 tYXQHASjX829w==
+Message-ID: <57e06aa7-4805-4b1e-bc46-e6f33582fb97@kernel.org>
+Date: Fri, 18 Jul 2025 12:50:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/7E/mEW95xT0qdRiG6Nk87VD";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/2] rust: add initial scatterlist abstraction
+To: Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: acourbot@nvidia.com, jgg@ziepe.ca, lyude@redhat.com,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ Tamir Duberstein <tamird@gmail.com>,
+ FUJITA Tomonori <fujita.tomonori@gmail.com>,
+ open list <linux-kernel@vger.kernel.org>,
+ Randy Dunlap <rdunlap@infradead.org>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ Caleb Sander Mateos <csander@purestorage.com>,
+ Petr Tesarik <petr@tesarici.cz>, Sui Jingfeng <sui.jingfeng@linux.dev>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Robin Murphy <robin.murphy@arm.com>, airlied@redhat.com,
+ "open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>,
+ rust-for-linux@vger.kernel.org
+References: <20250718103359.1026240-1-abdiel.janulgue@gmail.com>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20250718103359.1026240-1-abdiel.janulgue@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---Sig_/7E/mEW95xT0qdRiG6Nk87VD
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 7/18/25 12:33 PM, Abdiel Janulgue wrote:
+> Abdiel Janulgue (2):
+>    rust: add initial scatterlist abstraction
+>    samples: rust: add sample code for scatterlist abstraction
+> 
+>   rust/bindings/bindings_helper.h |   1 +
+>   rust/helpers/helpers.c          |   1 +
+>   rust/helpers/scatterlist.c      |  30 +++
+>   rust/kernel/dma.rs              |  18 ++
+>   rust/kernel/lib.rs              |   1 +
+>   rust/kernel/scatterlist.rs      | 405 ++++++++++++++++++++++++++++++++
+>   samples/rust/rust_dma.rs        |  49 +++-
+>   7 files changed, 504 insertions(+), 1 deletion(-)
+>   create mode 100644 rust/helpers/scatterlist.c
+>   create mode 100644 rust/kernel/scatterlist.rs
 
-Hi all,
+I think this is missing a corresponding MAINTAINERS entry. I assume the
+scatterlist stuff should go under the "DMA MAPPING HELPERS DEVICE DRIVER API
+[RUST]" entry (which we may want to rename a bit for this purpose).
 
-
-On Fri, 18 Jul 2025 20:26:12 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Today's linux-next merge of the rust tree got conflicts in:
->=20
->   rust/kernel/device_id.rs
->   rust/kernel/devres.rs
->=20
-> between commits:
->=20
->   8d84b32075fb ("rust: device_id: split out index support into a separate=
- trait")
->   f5d3ef25d238 ("rust: devres: get rid of Devres' inner Arc")
->=20
-> from the driver-core tree and various commits from the rust tree.
-
-Ignore this, I am redoing the merge ...
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/7E/mEW95xT0qdRiG6Nk87VD
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh6JlIACgkQAVBC80lX
-0GxVfQf+KVoTW5SxKdLx2uIzQB80xTQu4oTF6asAd1XawbhMAdmN92b0Qi2lb932
-GPWtqOKIZGov3CA1YPwfywTgruurohud0SE/nmCd696q++98lvYiPZVCZTov2VWH
-epI3MEUkTkLc2U8PAS+JdWV4gv6qXgPAfYNX/M6PN7lsvuZKFpkD+nYNByzg796+
-YZW0e5Z/1NQ1VEK7syGWwoPfMwg+Hiw56xDTKhGUdDfYEl8REOCd3oHBI/t0oua3
-DOUor1axXxhzNp+65UQsbfR2ZF1AuAjXZPByQulU3z2ATpxgdEWW+iKmr8F+zZfe
-lfxtwRuzcrxQjrMT9+6dM1TpoNctIQ==
-=hBqb
------END PGP SIGNATURE-----
-
---Sig_/7E/mEW95xT0qdRiG6Nk87VD--
+@Andrew: Any comments or other preferences from your end?
 
