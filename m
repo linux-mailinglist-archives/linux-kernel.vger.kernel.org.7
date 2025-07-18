@@ -1,184 +1,102 @@
-Return-Path: <linux-kernel+bounces-736125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A19F9B09921
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:27:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88F26B09926
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:28:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 149B53B7DA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 01:27:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91C70A64E46
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 01:28:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A2B17A2FC;
-	Fri, 18 Jul 2025 01:27:36 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1950218A6AE;
+	Fri, 18 Jul 2025 01:28:42 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D101CEADC
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 01:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5832EEADC
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 01:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752802055; cv=none; b=NPO4EpfhAQ9fcYqvTC6zAq5b7AztHEGGr0FdHWDUDtk9B2wFsQnqD9qMbE16pntOmXZyHBUKycGo7lusVmQmk9CCCAoc7IzwRYMM+sKA3wsCY0Y4z1a70N3ixqVOxbhaRVP8vz0z70pJFIHkEhAKrsTurg+WV02FilLtlNXOGH8=
+	t=1752802121; cv=none; b=s+PrUwarL94Jc2v7EYI2itqDGlOTNxZfryXit2RbeidmeVsPmbDKTVOuVxSy1CBcIWfXbiv2c4udit08EiGxNbEdN3slKN95BIJJm0ITbmxUJymDuGT4Pm1EC2Bg8GH0xW2XcrsItVW/yj1A58HAIxRofZo56C0TMpuxkboLCD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752802055; c=relaxed/simple;
-	bh=ClGRLA5JwobQ+TrMYUX+2N5uynzlAkA45QbLQziQOZQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=t0uO3cAEzDjaX2N2KkbS/mx41tIJw586txcnBD+KAnuLIH2XBPw7QnRMiiWhWPXGf4DCBSk5Ajk1K+GKG5ogZeasfqiVpGuI9vRo368cyKgjN4LXKbMa/O2njotwhoI/53ve+tI22GQKQltSFm/AAEFjM/E4nNIAkptP0tj2QRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-87326a81ceaso257149139f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 18:27:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752802053; x=1753406853;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+e/8dmNeBGDHJJdePZWSz8F9xUK4kTHRVRIH1DEwq9E=;
-        b=XCvwoxrAonymTT3lbEpMKqSIHaa0mAS3sBG37xruOTWm8BwdH/HyRoXzxtVaxIf9N6
-         tmOOD7KHnfWrq8x1MtY25ka1Ufr2tVRdMUvMfpReJPUppDDBEIDgasfNzfwn4haDm5tP
-         44ZxP6WPpt2jqfUiC+PyR6zGDX69daGsR5gLnZHWhBbEZtSJxJCFy50XPHsFHx5RVhWe
-         IEFpJSNHuLt0dO/kcnSgffPfHXVNgU95zp297e+GeC2aeKELsnJ1MlQzeD9tIcba+bLX
-         7cdkZ6Rkh77udFzPnKhoTKtgXnTNb3EBbsJ2is4pRo0IVuAZMcqvmyt5mxtwTk4v9c76
-         Byew==
-X-Forwarded-Encrypted: i=1; AJvYcCVsVhajcX+XJMjWTdVQ3psMhRj2gMQ+EdP7MUt1px2FzgnnWAx0qw+M8WFKpcIBW5sJ4F1eCVL46a5sSkk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+TCpYgTpve5PJxtxZzX2xhu9uDF2Z5BbZL9F8DFO72ihGtPuy
-	cVGM43nyzllq1+958ic5oK9Zp4W4fEjM/cub1OfK/l4eaYqd3wDPoPKLgKGJ41KD9Oul4A+IMEV
-	5RU69gMuNLcShwUidFQsZQJW4LSqWoAAKOdvagqS/iiHhhjk1JUg+Uk1vcJ0=
-X-Google-Smtp-Source: AGHT+IF+hyYDUWUIUIGqPHGovpNWzOaNGT1VAUYD0lRvRMwhyjTQ0Ht5wONd8ON+ZFeq8seuQKfweuMBgYl0Y+3XlWppUiftJFjI
+	s=arc-20240116; t=1752802121; c=relaxed/simple;
+	bh=qmz0wOC1pPAxGW3UK5Z8ZLMTotEkFsfp8mMigSPO7zg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Oh3My0aDVPGX7ETUGg/4k8y2MicHGcKr79wvxPNNw44LF4dc6bgTwyHg7uy6W869RKEI7tu52m1PWbKu4kzeb/JDJiUH/TK8NNCQ+7qNY2/jsIXPs/kY4AfO3vp3VjgrCG/jW3MSfLl2v/P/mkuP5IvBRuDQxxb5vQwmoaMNVSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bjsZY3hBYz2RVsC;
+	Fri, 18 Jul 2025 09:26:29 +0800 (CST)
+Received: from kwepemg500017.china.huawei.com (unknown [7.202.181.81])
+	by mail.maildlp.com (Postfix) with ESMTPS id EA7FE140298;
+	Fri, 18 Jul 2025 09:28:35 +0800 (CST)
+Received: from [10.174.179.155] (10.174.179.155) by
+ kwepemg500017.china.huawei.com (7.202.181.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 18 Jul 2025 09:28:34 +0800
+Message-ID: <5d63f92f-1b48-445f-8cbb-a6ae148d36aa@huawei.com>
+Date: Fri, 18 Jul 2025 09:28:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6189:b0:876:adc1:44e5 with SMTP id
- ca18e2360f4ac-87ba839fd94mr636819439f.3.1752802053013; Thu, 17 Jul 2025
- 18:27:33 -0700 (PDT)
-Date: Thu, 17 Jul 2025 18:27:33 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6879a305.a70a0220.693ce.0058.GAE@google.com>
-Subject: [syzbot] [bcachefs?] INFO: task hung in bch2_run_recovery_passes
-From: syzbot <syzbot+c2294ae43bae606e3c7d@syzkaller.appspotmail.com>
-To: anna-maria@linutronix.de, frederic@kernel.org, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    aaef6f251176 Merge branches 'for-next/core' and 'for-next/..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=162817d4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=167a38bcf05390d5
-dashboard link: https://syzkaller.appspot.com/bug?extid=c2294ae43bae606e3c7d
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=112817d4580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/dfd0a4db9e57/disk-aaef6f25.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/602c89e1c208/vmlinux-aaef6f25.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/82e8ab4e1b11/Image-aaef6f25.gz.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/780ac1e01de6/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c2294ae43bae606e3c7d@syzkaller.appspotmail.com
-
-INFO: task syz.1.22:6793 blocked for more than 143 seconds.
-      Not tainted 6.16.0-rc6-syzkaller-gaaef6f251176 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.1.22        state:D stack:0     pid:6793  tgid:6793  ppid:6662   task_flags:0x400140 flags:0x00000019
-Call trace:
- __switch_to+0x414/0x834 arch/arm64/kernel/process.c:741 (T)
- context_switch kernel/sched/core.c:5397 [inline]
- __schedule+0x1414/0x2a28 kernel/sched/core.c:6786
- __schedule_loop kernel/sched/core.c:6864 [inline]
- schedule+0xb4/0x230 kernel/sched/core.c:6879
- schedule_timeout+0xac/0x270 kernel/time/sleep_timeout.c:75
- ___down_common+0x23c/0x374 kernel/locking/semaphore.c:268
- __down_common+0xc0/0x3a4 kernel/locking/semaphore.c:293
- __down+0x18/0x24 kernel/locking/semaphore.c:303
- down+0x94/0xe8 kernel/locking/semaphore.c:100
- bch2_run_recovery_passes+0x164/0x1f4 fs/bcachefs/recovery_passes.c:609
- bch2_fs_recovery+0x1df4/0x2fb4 fs/bcachefs/recovery.c:1050
- bch2_fs_start+0x940/0xbec fs/bcachefs/super.c:1213
- bch2_fs_get_tree+0x880/0x107c fs/bcachefs/fs.c:2488
- vfs_get_tree+0x90/0x28c fs/super.c:1804
- do_new_mount+0x228/0x814 fs/namespace.c:3902
- path_mount+0x5b4/0xde0 fs/namespace.c:4226
- do_mount fs/namespace.c:4239 [inline]
- __do_sys_mount fs/namespace.c:4450 [inline]
- __se_sys_mount fs/namespace.c:4427 [inline]
- __arm64_sys_mount+0x3e8/0x468 fs/namespace.c:4427
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-
-Showing all locks held in the system:
-2 locks held by kworker/u8:0/12:
-1 lock held by khungtaskd/32:
- #0: ffff80008f869980 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire+0x4/0x48 include/linux/rcupdate.h:330
-5 locks held by kworker/u8:2/41:
- #0: ffff0000dafdd148 ((wq_completion)btree_update#272){+.+.}-{0:0}, at: process_one_work+0x63c/0x155c kernel/workqueue.c:3212
- #1: ffff8000990f7bc0 ((work_completion)(&c->btree_interior_update_work)){+.+.}-{0:0}, at: process_one_work+0x6d4/0x155c kernel/workqueue.c:3212
- #2: ffff00010b404398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire+0x18/0x54 include/linux/srcu.h:160
- #3: ffff0001078f01b0 (bcachefs_btree){+.+.}-{0:0}, at: trans_set_locked+0x68/0x200 fs/bcachefs/btree_locking.h:205
- #4: ffff00010b400920 (&c->sb_lock){+.+.}-{4:4}, at: btree_update_new_nodes_mark_sb fs/bcachefs/btree_update_interior.c:609 [inline]
- #4: ffff00010b400920 (&c->sb_lock){+.+.}-{4:4}, at: btree_update_nodes_written fs/bcachefs/btree_update_interior.c:683 [inline]
- #4: ffff00010b400920 (&c->sb_lock){+.+.}-{4:4}, at: btree_interior_update_work+0x2e8/0x1d28 fs/bcachefs/btree_update_interior.c:867
-2 locks held by pr/ttyAMA0/43:
-2 locks held by kworker/u8:6/352:
- #0: ffff0000c0031148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x63c/0x155c kernel/workqueue.c:3212
- #1: ffff80009bed7bc0 ((reaper_work).work){+.+.}-{0:0}, at: process_one_work+0x6d4/0x155c kernel/workqueue.c:3212
-2 locks held by kworker/u8:8/4125:
-5 locks held by kworker/u8:9/4137:
- #0: ffff0000fbc4b948 ((wq_completion)btree_update#271){+.+.}-{0:0}, at: process_one_work+0x63c/0x155c kernel/workqueue.c:3212
- #1: ffff8000a0197bc0 ((work_completion)(&c->btree_interior_update_work)){+.+.}-{0:0}, at: process_one_work+0x6d4/0x155c kernel/workqueue.c:3212
- #2: ffff00010d304398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire+0x18/0x54 include/linux/srcu.h:160
- #3: ffff000104da81b0 (bcachefs_btree){+.+.}-{0:0}, at: trans_set_locked+0x68/0x200 fs/bcachefs/btree_locking.h:205
- #4: ffff00010d300920 (&c->sb_lock){+.+.}-{4:4}, at: btree_update_new_nodes_mark_sb fs/bcachefs/btree_update_interior.c:609 [inline]
- #4: ffff00010d300920 (&c->sb_lock){+.+.}-{4:4}, at: btree_update_nodes_written fs/bcachefs/btree_update_interior.c:683 [inline]
- #4: ffff00010d300920 (&c->sb_lock){+.+.}-{4:4}, at: btree_interior_update_work+0x2e8/0x1d28 fs/bcachefs/btree_update_interior.c:867
-2 locks held by getty/6289:
- #0: ffff0000c19cc0a0 (&tty->ldisc_sem){++++}-{0:0}, at: ldsem_down_read+0x3c/0x4c drivers/tty/tty_ldsem.c:340
- #1: ffff80009ba3e2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x34c/0xfa4 drivers/tty/n_tty.c:2222
-3 locks held by kworker/1:3/6710:
-2 locks held by syz.0.299/9979:
-3 locks held by syz.5.300/9983:
-
-=============================================
+User-Agent: =?UTF-8?B?TW96aWxsYSBUaHVuZGVyYmlyZCDmtYvor5XniYg=?=
+Subject: Re: [PATCH] dm: introduce spinlocks to prevent concurrent usage and
+ release of device_metadata and hash
+To: Mikulas Patocka <mpatocka@redhat.com>, Hou Tao <houtao1@huawei.com>
+CC: <dm-devel@lists.linux.dev>, <agk@redhat.com>, <snitzer@kernel.org>,
+	<tusharsu@linux.microsoft.com>, <colin.i.king@gmail.com>,
+	<linux-kernel@vger.kernel.org>, <yi.zhang@huawei.com>,
+	<yangerkun@huawei.com>, <yukuai3@huawei.com>, <chengzhihao1@huawei.com>,
+	<lilingfeng@huaweicloud.com>
+References: <20250717140728.3221243-1-lilingfeng3@huawei.com>
+ <5a29db22-13a9-f3ea-dbf2-13ce7f7aa649@huawei.com>
+ <5be1fab4-192d-8327-b541-bb92d53313cc@redhat.com>
+From: Li Lingfeng <lilingfeng3@huawei.com>
+In-Reply-To: <5be1fab4-192d-8327-b541-bb92d53313cc@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemg500017.china.huawei.com (7.202.181.81)
 
 
+在 2025/7/18 2:45, Mikulas Patocka 写道:
+>
+> On Thu, 17 Jul 2025, Hou Tao wrote:
+>
+>> Hi,
+>>
+>> On 7/17/2025 10:07 PM, Li Lingfeng wrote:
+>>> There is a window between freeing md->ima.active_table.hash and setting
+>>> md->ima.active_table.hash to NULL in dm_ima_measure_on_device_resume().
+>>> If dm_ima_measure_on_device_remove() accesses md->ima.active_table.hash
+>>> concurrently during this window, it could lead to a double free or UAF,
+>>> as shown below:
+>> The UAF is a problem. However, I think the order of
+>> dm_ima_measure_on_device_remove() and dm_ima_measure_on_device_resume is
+>> bigger problem. Is it possible to order these two invocations properly
+>> by using suspend_lock ?
+> That's a good point. The patch just papers over the problem. It will fix
+> the UAF warning, but it won't fix the fact that
+> dm_ima_measure_on_device_resume can race with
+> dm_ima_measure_on_device_remove.
+>
+> The real fix would be to make sure that dm_ima_measure_* calls are never
+> called concurrently on the same table - we should use existing device
+> mapper locks for that.
+>
+> Mikukas
+>
+Thanks for your advice, I will send a new patch soon.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Thanks,
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Lingfeng
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
