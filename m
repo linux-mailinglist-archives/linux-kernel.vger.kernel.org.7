@@ -1,117 +1,115 @@
-Return-Path: <linux-kernel+bounces-736761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91B7CB0A17E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 13:03:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7CA8B0A05C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 12:08:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72CBA16E989
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 11:03:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 248117B8A1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 10:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD2A2BE63D;
-	Fri, 18 Jul 2025 11:03:28 +0000 (UTC)
-Received: from baidu.com (mx24.baidu.com [111.206.215.185])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED5A29C338;
+	Fri, 18 Jul 2025 10:08:34 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1D7C2AD14;
-	Fri, 18 Jul 2025 11:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5567033086;
+	Fri, 18 Jul 2025 10:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752836607; cv=none; b=HNNgoXB1kQ5ny4Ii7wh34E4LcC/cCUTipcxOYto/C8jg4WlPNlE5A6WX5GdgufxZNUXwzGBr+Q42M+s4TLxR2G37VmCOVFKeacU/X8Uvvh2vmTsWGrmiIBgUYvjbUqX0w8ECDZ4aU/9M+yPhwTte+Bf6akXq2vmM2l1qxdYPE5c=
+	t=1752833314; cv=none; b=PGnqNniG1qExjxAJQSdh356YrOLYayXbfnz4H2vH9v7uhEvj4VFdGWF0PAJqTmDpDwlhOFIw5ViapboM8Fx4Z01KT+mSYMEtg2hJMSweutHdSmqIngFUD3uwOrOCoU+/kryCS9RrVBm0ovhX5xztvfPb0wvpcGTMCu6KnacCTQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752836607; c=relaxed/simple;
-	bh=qDkhYkrGTILVWAr/MYvLU0ABsOv1ngXhgVMbnsF+LEU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=a3eaBQ7dXB5rup9zFMEJ+WmjkqfSAwpyXVyRd+O9YN3wFS2WQXNAK3U+rhSW7JK2ouPY3TxACWHs5GzXjW5Qx5S2Flv/lNykGBfYG36KBSmbKozHqoOroxU5txywoFhtzq3VTyF1lDXMRaxlnROG4z9pmK9P7P4DLEzs6OAzk+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
-From: lirongqing <lirongqing@baidu.com>
-To: <pbonzini@redhat.com>, <vkuznets@redhat.com>, <tglx@linutronix.de>,
-	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<x86@kernel.org>, <hpa@zytor.com>, <kvm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Li RongQing <lirongqing@baidu.com>
-Subject: [PATCH] x86/kvm: Reorder PV spinlock checks for dedicated CPU case
-Date: Fri, 18 Jul 2025 17:49:36 +0800
-Message-ID: <20250718094936.5283-1-lirongqing@baidu.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1752833314; c=relaxed/simple;
+	bh=8bt3Uu2z/NA/kSlutCPfVE7KQEvACOpvwhlrZ4sAB/Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mX2q5S4pD3eXzG+hbMe+L/ubzeWNumrx5906N0a28Zc+qywCLuCA29a97rW3jQJA339ngZRV5RcUnfdLmwE5CIk26QIbXuVFjH1QO10kmBGfcoGeLOlBg0E65L9apg5m2lXEzfMR0J3dKvwZc4i7oRqMIp4v6+rqQX85W0Ygql4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [211.71.28.34])
+	by APP-03 (Coremail) with SMTP id rQCowAAXrH0QHXpoUwkxBQ--.1396S2;
+	Fri, 18 Jul 2025 18:08:26 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: eli.billauer@gmail.com,
+	arnd@arndb.de,
+	gregkh@linuxfoundation.org
+Cc: akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH v3] char: xillybus: Fix error handling in xillybus_init_chrdev()
+Date: Fri, 18 Jul 2025 18:08:15 +0800
+Message-Id: <20250718100815.3404437-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: bjhj-exc4.internal.baidu.com (172.31.3.14) To
- bjkjy-exc3.internal.baidu.com (172.31.50.47)
-X-FEAS-Client-IP: 172.31.50.47
-X-FE-Policy-ID: 52:10:53:SYSTEM
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAAXrH0QHXpoUwkxBQ--.1396S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ary8Ww1rZw4kur43Wr1xKrg_yoW8Wr18pF
+	47W3ZYkrW5Ga1jvw1DXa1kCFW3JanFgrZrur47K3sxZwn8ua4xJFW8GrW8XrWUW3yrK3yU
+	tanxAw18JF4xZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9l14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
+	rcIFxwCY1x0262kKe7AKxVWUAVWUtwCY02Avz4vE14v_Gw1l42xK82IYc2Ij64vIr41l4I
+	8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AK
+	xVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcV
+	AFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8I
+	cIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r
+	4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUYxhLUUUUU
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-From: Li RongQing <lirongqing@baidu.com>
+Use cdev_del() instead of direct kobject_put() when cdev_add() fails.
+This aligns with standard kernel practice and maintains consistency
+within the driver's own error paths.
 
-When a vCPU has a dedicated physical CPU, typically, the hypervisor
-disables the HLT exit too, rendering the KVM_FEATURE_PV_UNHALT feature
-unavailable, and virt_spin_lock_key is expected to be disabled in
-this configuration, but:
+Found by code review.
 
-The problematic execution flow caused the enabled virt_spin_lock_key:
-- First check PV_UNHALT
-- Then check dedicated CPUs
-
-So change the order:
-- First check dedicated CPUs
-- Then check PV_UNHALT
-
-This ensures virt_spin_lock_key is disable when dedicated physical
-CPUs are available and HLT exit is disabled, and this will gives a
-pretty performance boost at high contention level
-
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
+Cc: stable@vger.kernel.org
+Fixes: 8cb5d216ab33 ("char: xillybus: Move class-related functions to new xillybus_class.c")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 ---
- arch/x86/kernel/kvm.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+Changes in v3:
+- modified the patch description, centralized cdev cleanup through standard API and maintained symmetry with driver's existing error handling;
+Changes in v2:
+- modified the patch as suggestions to avoid UAF.
+---
+ drivers/char/xillybus/xillybus_class.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-index 921c1c7..9cda79f 100644
---- a/arch/x86/kernel/kvm.c
-+++ b/arch/x86/kernel/kvm.c
-@@ -1073,16 +1073,6 @@ static void kvm_wait(u8 *ptr, u8 val)
- void __init kvm_spinlock_init(void)
- {
- 	/*
--	 * In case host doesn't support KVM_FEATURE_PV_UNHALT there is still an
--	 * advantage of keeping virt_spin_lock_key enabled: virt_spin_lock() is
--	 * preferred over native qspinlock when vCPU is preempted.
--	 */
--	if (!kvm_para_has_feature(KVM_FEATURE_PV_UNHALT)) {
--		pr_info("PV spinlocks disabled, no host support\n");
--		return;
--	}
--
--	/*
- 	 * Disable PV spinlocks and use native qspinlock when dedicated pCPUs
- 	 * are available.
- 	 */
-@@ -1101,6 +1091,16 @@ void __init kvm_spinlock_init(void)
- 		goto out;
+diff --git a/drivers/char/xillybus/xillybus_class.c b/drivers/char/xillybus/xillybus_class.c
+index c92a628e389e..e79cf9a0caa4 100644
+--- a/drivers/char/xillybus/xillybus_class.c
++++ b/drivers/char/xillybus/xillybus_class.c
+@@ -103,8 +103,7 @@ int xillybus_init_chrdev(struct device *dev,
+ 		      unit->num_nodes);
+ 	if (rc) {
+ 		dev_err(dev, "Failed to add cdev.\n");
+-		/* kobject_put() is normally done by cdev_del() */
+-		kobject_put(&unit->cdev->kobj);
++		cdev_del(unit->cdev);
+ 		goto unregister_chrdev;
  	}
  
-+	/*
-+	 * In case host doesn't support KVM_FEATURE_PV_UNHALT there is still an
-+	 * advantage of keeping virt_spin_lock_key enabled: virt_spin_lock() is
-+	 * preferred over native qspinlock when vCPU is preempted.
-+	 */
-+	if (!kvm_para_has_feature(KVM_FEATURE_PV_UNHALT)) {
-+		pr_info("PV spinlocks disabled, no host support\n");
-+		return;
-+	}
-+
- 	pr_info("PV spinlocks enabled\n");
+@@ -157,8 +156,6 @@ int xillybus_init_chrdev(struct device *dev,
+ 		device_destroy(&xillybus_class, MKDEV(unit->major,
+ 						     i + unit->lowest_minor));
  
- 	__pv_init_lock_hash();
+-	cdev_del(unit->cdev);
+-
+ unregister_chrdev:
+ 	unregister_chrdev_region(MKDEV(unit->major, unit->lowest_minor),
+ 				 unit->num_nodes);
 -- 
-2.9.4
+2.25.1
 
 
