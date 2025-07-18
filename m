@@ -1,95 +1,131 @@
-Return-Path: <linux-kernel+bounces-736170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3744DB099AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 04:10:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 368DDB099AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 04:15:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FA06A4648B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 02:09:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA1A31C80AE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 02:15:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BFDC19F11F;
-	Fri, 18 Jul 2025 02:09:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 330F2198A2F;
+	Fri, 18 Jul 2025 02:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FwpzHDbn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="AhhKwz80"
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C683A146D45;
-	Fri, 18 Jul 2025 02:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF291BC2A;
+	Fri, 18 Jul 2025 02:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752804589; cv=none; b=gGIS6iOCEmSsZhdDU/TGmtociJWufK62adEKOGZQA+WNUAWPWGGVec7peAiKBEf0LSsyL1FNF/DgBCsmh0iwCYeYJ+Y/ruddncoJTs57+gTWTkz97jsjZt2UzqNB1sVVtPmqINNcKG1Z+hWDFFNh75O6IJpbAAYYvhp4IPTDR08=
+	t=1752804901; cv=none; b=QFOT1xAqOYLu6eVQ/QzRLCMptHyAgyEoXTFNavvJw8MzlFt8GqcsUpMz9V0oXnJouPFeNqWrS0RYJBE55OmGoNsNpGxeLjPagz/SBkl7KfOWepWYfcW4Fh7ISiPepe7vwMJFT38AWPZHREzdgMrPftXKA3Au19u8sDb2fmDwcuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752804589; c=relaxed/simple;
-	bh=zlBeCbSN8/dcw+bg39PqFe6YPjDYYzZltm4Jhf++RMA=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=C4kvRDlFcAFeBLRq+4OOudPRHl0pDZHIbSTE8AZdGour+W3f2r4i79MFnQGpa4E4yR08WEti1TDJRt7vHppblyq2wX10XsBixCuWztpzfpHNOjcRxrx4gqHDhLFOrAoBEtxsPavmBYextSMyzqzF9rFg+QOg9Rt5WQ2tHOQNuZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FwpzHDbn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 543F2C4CEF0;
-	Fri, 18 Jul 2025 02:09:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752804589;
-	bh=zlBeCbSN8/dcw+bg39PqFe6YPjDYYzZltm4Jhf++RMA=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=FwpzHDbn6DIxb/soJYs5BcMtElg457RjRkq6YYQWADyxc/ZS3KI3MV/qhs5rfLszW
-	 1PtcY73gMCm3cUURJ7lwOBY0q9IAtv4BZP/DyE0i7E9o53HV9GAZqk5dhaxyMkRDIK
-	 5rhDRY6CRBmN4sKwiMaHr6gewbfIqWl6d2DNXx44xgljeNaNuZupxtS/d7x+Qct1VE
-	 aSiTTQGrhZSTTcAyQ0nfM8+nMCLMvvyxBIPQB/+ZcuqkaJod7oUy5/k4P6IFH4FRQJ
-	 hdQahlY2BlEJFbRncCtx6PYY0e90QfU7Z99E12EyS8iKNdttPj3InuQE5v8c0CNrW/
-	 058ZBAPKtku+w==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70ADE383BA3C;
-	Fri, 18 Jul 2025 02:10:10 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1752804901; c=relaxed/simple;
+	bh=KXiYzDb/12B8ZKzq05chDYOX4Fw7SGPOEPy7EA2MF24=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R1r0vewB2nEk7krhSc43r2BTj/rqg+FILPVClRPIMlDXyJJ0BvFLuMZHYypYfuiWmi6cVolLe86Nwtl3XQAqJYV+xw0Zd/Ox500M7b0/YFDxbWTcICAEXugLUbVm3Y/zgl5a0EYVd4IG2wT7kNziHvFuxdzoSpjLr8TjVOFed1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=AhhKwz80; arc=none smtp.client-ip=115.124.30.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1752804896; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=8jLJM3I7MXzt5ywvPrJqc6L2LFY2+2u42CbPGeXe8wI=;
+	b=AhhKwz80ghHB8L+TGf836Ycj/c3TPWwTR05BIPl9VSg90uVtf+AXls/U5/dJx2wqixDzFJWmYfErU/9Cuv1uIkJqxnBsi1X3cFEePRNrxFlhjwqgF1JdIZ35lL+aE3qw6rb7/Tq6DFoLgmzgH4+3xisfxsKFLx6I/mZnlZHEx78=
+Received: from 30.74.144.111(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WjAe3gk_1752804891 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 18 Jul 2025 10:14:52 +0800
+Message-ID: <85b2cfd8-4aeb-4e98-8065-b6594783de62@linux.alibaba.com>
+Date: Fri, 18 Jul 2025 10:14:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2] et131x: Add missing check after DMA map
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175280460930.2144612.10439503396784467047.git-patchwork-notify@kernel.org>
-Date: Fri, 18 Jul 2025 02:10:09 +0000
-References: <20250716094733.28734-2-fourier.thomas@gmail.com>
-In-Reply-To: <20250716094733.28734-2-fourier.thomas@gmail.com>
-To: Thomas Fourier <fourier.thomas@gmail.com>
-Cc: mark.einon@gmail.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, mingo@kernel.org,
- tglx@linutronix.de, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 09/14] khugepaged: avoid unnecessary mTHP collapse
+ attempts
+To: Nico Pache <npache@redhat.com>, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: david@redhat.com, ziy@nvidia.com, lorenzo.stoakes@oracle.com,
+ Liam.Howlett@oracle.com, ryan.roberts@arm.com, dev.jain@arm.com,
+ corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org,
+ mathieu.desnoyers@efficios.com, akpm@linux-foundation.org,
+ baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
+ wangkefeng.wang@huawei.com, usamaarif642@gmail.com, sunnanyong@huawei.com,
+ vishal.moola@gmail.com, thomas.hellstrom@linux.intel.com,
+ yang@os.amperecomputing.com, kirill.shutemov@linux.intel.com,
+ aarcange@redhat.com, raquini@redhat.com, anshuman.khandual@arm.com,
+ catalin.marinas@arm.com, tiwai@suse.de, will@kernel.org,
+ dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
+ jglisse@google.com, surenb@google.com, zokeefe@google.com,
+ hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
+ rdunlap@infradead.org, hughd@google.com
+References: <20250714003207.113275-1-npache@redhat.com>
+ <20250714003207.113275-10-npache@redhat.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20250714003207.113275-10-npache@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello:
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
 
-On Wed, 16 Jul 2025 11:47:30 +0200 you wrote:
-> The DMA map functions can fail and should be tested for errors.
-> If the mapping fails, unmap and return an error.
+On 2025/7/14 08:32, Nico Pache wrote:
+> There are cases where, if an attempted collapse fails, all subsequent
+> orders are guaranteed to also fail. Avoid these collapse attempts by
+> bailing out early.
 > 
-> Fixes: 38df6492eb51 ("et131x: Add PCIe gigabit ethernet driver et131x to drivers/net")
-> Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
+> Signed-off-by: Nico Pache <npache@redhat.com>
 > ---
-> v1 -> v2:
->   - Fix subject
->   - Fix double decrement of frag
->   - Make comment more explicit about why there are two loops
+>   mm/khugepaged.c | 17 +++++++++++++++++
+>   1 file changed, 17 insertions(+)
 > 
-> [...]
+> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> index a701d9f0f158..7a9c4edf0e23 100644
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -1367,6 +1367,23 @@ static int collapse_scan_bitmap(struct mm_struct *mm, unsigned long address,
+>   				collapsed += (1 << order);
+>   				continue;
+>   			}
 
-Here is the summary with links:
-  - [net,v2] et131x: Add missing check after DMA map
-    https://git.kernel.org/netdev/net-next/c/d61f6cb6f6ef
+After doing more testing, I think you need to add the following changes 
+after patch 8.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Because when collapsing mTHP, if we encounter a PTE-mapped large folio 
+within the PMD range, we should continue scanning to complete that PMD, 
+in case there is another mTHP that can be collapsed within that PMD range.
 
++                       if (ret == SCAN_PTE_MAPPED_HUGEPAGE)
++                               continue;
+
+> +			/*
+> +			 * Some ret values indicate all lower order will also
+> +			 * fail, dont trying to collapse smaller orders
+> +			 */
+> +			if (ret == SCAN_EXCEED_NONE_PTE ||
+> +				ret == SCAN_EXCEED_SWAP_PTE ||
+> +				ret == SCAN_EXCEED_SHARED_PTE ||
+> +				ret == SCAN_PTE_NON_PRESENT ||
+> +				ret == SCAN_PTE_UFFD_WP ||
+> +				ret == SCAN_ALLOC_HUGE_PAGE_FAIL ||
+> +				ret == SCAN_CGROUP_CHARGE_FAIL ||
+> +				ret == SCAN_COPY_MC ||
+> +				ret == SCAN_PAGE_LOCK ||
+> +				ret == SCAN_PAGE_COUNT)
+> +				goto next;
+> +			else
+
+Nit: the 'else' statement can be dropped.
+
+> +				break;
+>   		}
+>   
+>   next:
 
 
