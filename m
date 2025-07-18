@@ -1,465 +1,189 @@
-Return-Path: <linux-kernel+bounces-736222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-736224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AFFBB09A37
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 05:38:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11718B09A3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 05:42:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E5A858693B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:38:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6019D1C2819F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Jul 2025 03:43:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 218871C861A;
-	Fri, 18 Jul 2025 03:38:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E47731C861A;
+	Fri, 18 Jul 2025 03:42:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ufg+YgGf"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="hG1aLYCA"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2073.outbound.protection.outlook.com [40.107.100.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4633C38;
-	Fri, 18 Jul 2025 03:38:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752809920; cv=none; b=DMf4r0Wsp0NLGhNtV95qGlWJ81peVxrzb2NLWJkqO2KGs4L5K7fNrSOKwvyGWA31vYerOR5DaM4jTm/zja1KZT4igloHl6Fn3OmoJYWGDyb5uZJa6ANBSzfUzvqRNy+jCtizhDbUndVxfUdaRLf2iWS1rXjROlGhRkABmvGs/xY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752809920; c=relaxed/simple;
-	bh=XZSner3yVbM32DUEJkj9xjJcA8O/x7Q+Prb0damfS6I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qHBgIohI2HRhnaPlQhk5aLuNxScp/sLxqrHuXDCLoGBLZ28ifLSFkMXuW/Vm30vuv5z5jHiQ3/Fzu/rNLlLcVHpk3sBmhRauhNLe9Rsn1nUeZ/cPa2H2p1hb05TBZeVY7XzLb7WlSe6mqebIzyvwnJTj2ZYOOC8yXSEuZ0aDiis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ufg+YgGf; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45618ddd62fso17619745e9.3;
-        Thu, 17 Jul 2025 20:38:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752809915; x=1753414715; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8kVjnu4ZRPVskrhklztcS1q/76OOQ5xKy8zMuiq2fhc=;
-        b=Ufg+YgGfyK/5s1Sj3/m+Tg7FPcy0ClNFtabevaHP1QxddDH606zR/N7Pg6eXFTu2+f
-         fwqmovkICIlTbdF/3QU06ikqcudOdyeFpSua0BKFh0VnTFn6QoM227lOkw6pb3sp9KrJ
-         WlL6itTw1hxrYz6IabBbKLDtomNQyIlxKO0IXABaCEQCHVDNsiS38+0gmJflU60UDgpL
-         h0EQWTXJOYyEP4VyXSo+iWWKde66e55a/pbWxWxhtiyt4RMeSXaLAN/MAqdtwFymcyQJ
-         rqGAiw38ER2J1WocuX8/W85dOvniInMCntQtuZSzU5qobyoVnjsyMW5V2MCV5iXdTD0P
-         j4Yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752809915; x=1753414715;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8kVjnu4ZRPVskrhklztcS1q/76OOQ5xKy8zMuiq2fhc=;
-        b=gCTsYedibDnj68jGP/QvECOT2I5NOFYMz5eUcE/cYxuUOfcpsQ2ilrxtwo4t4fEkeU
-         LiWduVGJZfqOSjzouz6svRN6fuSYY7Ockjbc+7gR/o8OVZulWSJjc+DIXE32Wmkm7toc
-         aogXh2zuUC4M92kkXiydDTnhLwMM8FkcAeODRAeggGXg/KiOUrYgioMEcOmIR7pOl4DM
-         lcCB9AfEooeBGsgG5XoEIpGp9SWRPqCu7tn8djMuaRMW6LCjMb/b4WVR0hb5FHJ7lKyk
-         u+Wb6vsZxJUDOZfkBqO0TjTCCsshelslPnj7f2hg11Ecs9mZr5ilBUs9bpnH8ZbSGJxK
-         yK/g==
-X-Forwarded-Encrypted: i=1; AJvYcCV7ikxDDcjjj31x/L1hxOCokhZh1ZMFGPdujoq5H4Dpevm94mXsn5RDaj0jvq6PV9gfsof31DupwGA=@vger.kernel.org, AJvYcCVPY8kUqMQ0st3nJY9u8WYSzWIu/OXXpv7boVFl9a9eBSaH4JO6QNoslZ46VnvR/2JxuI8arOvKetCEJxPg@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrebREyfgCYUKFZOyF7gT6xcQfHl08BNv9hZO9M6/fVowzEH2g
-	gljFHe9VaOFFz+BMZXytMElOrWjnHgzqDDZJBePuEG7xsYj5OWa66XcOKxH+z459MqnJkFygYpU
-	YtC/qmX/sDmOacGmLtQIA/HG3DOOl42FaaNNw
-X-Gm-Gg: ASbGncvW/CR5m2o2lw2Wmo0R54ebxTata1EDGSFmUFIvoO/lpntJtMcKT3npKjeErIe
-	Zeowwu2vhcxZHGuWuOz21tiNKlgTgmeTpk6KnN+WyKxpxT3h1FwyfHzWKCsiACsit8VsyNnT/Wd
-	jENyk23Ydlb6yd8ZYE960wi8SP0alE5XQd5EBaJaRwYxPImkyV8SQn3x9XRvAYW/1/zf6uKBlJG
-	TYjv0Zd
-X-Google-Smtp-Source: AGHT+IELv6Eaj7bGZf5I98pEzsmbm6s1vyuZK2HmDfNsscBzikAW0+BcPmINlO4LtIhh/nN1Iyn6Ts9tnAFZv7DRzcg=
-X-Received: by 2002:a05:600c:450f:b0:453:1e14:6387 with SMTP id
- 5b1f17b1804b1-4562e3cad06mr78336625e9.32.1752809914957; Thu, 17 Jul 2025
- 20:38:34 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961C74A33
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 03:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752810160; cv=fail; b=QBYJ8U/4XESf7Gx+STqoQcPSBt3GuY10DeTJHyYFubZfrghFgpHstvIUI4qnRLjFr5j+sEkvNPV672HZGINKQt1qrEmlk9jd9lVHMxgB4H9QmSTcQZQTZU9ylE30At1a0GAvoRWYHORY2SonbQX7ZyxlK32WWPLLeJAZ4HKEbjw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752810160; c=relaxed/simple;
+	bh=dkWfqxWK+Vx5dfxmVa+nv8zNLE7hs6kcEF+3JgLvXoY=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=DopsQLd6zLWXXhFykX3ywFCwEFl/K/+Uh0PkQ0nrSK5TZwLFMA/lGjEaar5ADqwJt4bVMLdONAqhReMFc+nnJEPKs1OMkNaNut/eiK2CJWaaI3cKBi4sairn26noTWmJLg05QKQudWX8jkTeHSlmp+WJfVWjzRFNr9XqFDqfEfM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=hG1aLYCA; arc=fail smtp.client-ip=40.107.100.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=E7Sb+NdX7+L0Dkl2eu3YkGCifl32JKQ3g4dRlFIMbfLb+emyFoX6l1x4/QA1+HVq+LcD5MqFgrXU/pocx6Ch77cKjErweWbdctU3IS4fQCz8x9oGnqg2eKeQ5hjWUI3QkELOEH/m9fmr3cVLni1Tt0yNIqX8ubv62/bMavfWp41PseC6hHEKOBim4wkmHlvlQRm4Kjy32FaUI/qzQdFoTyUT8irF4Ksd1hwYLln7wBiycNY+uMy3wphjEX4W0zQbDmDn58wwMm9UPf9ZTCL5IvlSKd5AqA0SHnPJBj1KED1jPmQFc1xb2EBdGoSyfN5Nbd5V3aPrAs5vdQhm22WqJQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cRLlG6qOPrkkcndatstf22uwSgfGSVYdW8rlMN9Q3fQ=;
+ b=o7ldljejyYE+Ujxtrgrup6fBxizfuIwjoKEzY1twLZlCG6AZflsFspHvZT50xaktQqAR/6qpXZpoZWeVKHFT5PBDc2qmFWuKtby1lSk6SqIMZgR0qKi2YY72piOSeU8Sabws1Jlemo/01djJYshTj3XU+5vAcv1o3VKCqVHSioClIdtiP5wcPdGtlJFNVgQN1wjv2xuZFEXn7oELbr/WCvdZ6kMih2SqJ2MnTsK95LlI3GkkTfALtfqY6T4QrGM+GT2mnaTqIks5VvPlkmZeRLIRcry1M3S4Sdl9rVuACDwTolpRrYWwkIrQpWU8Nl7MNt4rTsOb6ISc9jQCA4dkeg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cRLlG6qOPrkkcndatstf22uwSgfGSVYdW8rlMN9Q3fQ=;
+ b=hG1aLYCAMivc3i6eSgOG7KZ2e4Jv5i1TwISgvAsvmnrkZdsuNRqaEJA7PMBiKONETnz0fsa07EvyhMvyCd7+rk88DnLPZZL989yzIngsMe9st36Fk3g63wzLXDOQ91c9Ez03kP88SXWxwhs8enZ0wLe6dqx53NuiVywkq6+VRLM=
+Received: from SJ0PR03CA0152.namprd03.prod.outlook.com (2603:10b6:a03:338::7)
+ by DM4PR12MB6589.namprd12.prod.outlook.com (2603:10b6:8:b4::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.23; Fri, 18 Jul
+ 2025 03:42:31 +0000
+Received: from MWH0EPF000A6733.namprd04.prod.outlook.com
+ (2603:10b6:a03:338:cafe::78) by SJ0PR03CA0152.outlook.office365.com
+ (2603:10b6:a03:338::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.33 via Frontend Transport; Fri,
+ 18 Jul 2025 03:42:31 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ MWH0EPF000A6733.mail.protection.outlook.com (10.167.249.25) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8943.21 via Frontend Transport; Fri, 18 Jul 2025 03:42:31 +0000
+Received: from BLR-L1-NDADHANI (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 17 Jul
+ 2025 22:42:28 -0500
+From: Nikunj A Dadhania <nikunj@amd.com>
+To: Sean Christopherson <seanjc@google.com>, Tom Lendacky
+	<thomas.lendacky@amd.com>
+CC: <linux-kernel@vger.kernel.org>, <bp@alien8.de>, <x86@kernel.org>,
+	<tglx@linutronix.de>, <mingo@redhat.com>, <dave.hansen@linux.intel.com>,
+	<santosh.shukla@amd.com>
+Subject: Re: [PATCH v2] x86/sev: Improve handling of writes to intercepted
+ TSC MSRs
+In-Reply-To: <aHeyNvzvbgrWAob5@google.com>
+References: <20250716055315.2229037-1-nikunj@amd.com>
+ <229325e8-a461-6e5c-0d32-1c36086b62f7@amd.com>
+ <aHeyNvzvbgrWAob5@google.com>
+Date: Fri, 18 Jul 2025 03:42:36 +0000
+Message-ID: <85zfd2upub.fsf@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250718-k1-i2c-ilcr-v2-1-b4c68f13dcb1@linux.spacemit.com>
-In-Reply-To: <20250718-k1-i2c-ilcr-v2-1-b4c68f13dcb1@linux.spacemit.com>
-From: Jesse T <mr.bossman075@gmail.com>
-Date: Thu, 17 Jul 2025 23:37:59 -0400
-X-Gm-Features: Ac12FXw3tcLluwuU4fs6VIlHtZDcSRFnzMMvxMtn1S4JkspGxTu1GcRKTEH9Nr8
-Message-ID: <CAJFTR8RGT0JFcsSODEgyWgJYKj6QhWa7=5Tm9_6U4Pkv56X=-g@mail.gmail.com>
-Subject: Re: [PATCH v2] i2c: spacemit: configure ILCR for accurate SCL frequency
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Andi Shyti <andi.shyti@kernel.org>, Yixun Lan <dlan@gentoo.org>, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	spacemit@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000A6733:EE_|DM4PR12MB6589:EE_
+X-MS-Office365-Filtering-Correlation-Id: 714998e8-99ed-4aa8-c11f-08ddc5ad1ffe
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?b+fVOAGTb81x8T0H+28oGOOoYQrX4ylib08UouEqujrHscF2Cvi2TlIQLImq?=
+ =?us-ascii?Q?Oyp16bn3FSaue9zWqVWvO8TcB0kgDFJVTni0GSC1X6iS8bhDocEGVcSbnHJB?=
+ =?us-ascii?Q?OZp9rEB+BBYjIU/uAW8u1/jOj3VMf4J6SEw2WOSQ6FxJ0BG4dbFqqwQ9jZqh?=
+ =?us-ascii?Q?RbJVeLJuerzaZ3+4QiPO/cSXCS1c4PuAW31mcetMBQXwkvJd0O13FyfmrhvC?=
+ =?us-ascii?Q?b8VsGvEiq0UWP2DbDsezxFSBvMhLvZ9sov2ekYOajpxchW2r5/Rn3+tz+t/n?=
+ =?us-ascii?Q?C+uWFMh9Ow4iIP+yEnElXHFonvs228zNXIMD5Tub45Fwbd1GihQS16mCkz1m?=
+ =?us-ascii?Q?OyH8oOgD924kZcdBnZwCV4b5tDcv1h53QuYWZn0VKI+1IJNjZQGC55BqwgvN?=
+ =?us-ascii?Q?LhuZQ2Rr6QX+7FCvq4sudmgqeUpYvdbBKwYnCpufuqWnAwVxQU4qjsJQoNH3?=
+ =?us-ascii?Q?ILyq2E64YcYioguYJGgTXhcAhpE9FcYZfaA39Dr+Ed+BkfuRstU8PVss4k4u?=
+ =?us-ascii?Q?bciJt9H+WKGLrBVsJrwBe8gibHAFYONWn8mOlKWSot5YoSVQDg3MA/DSPNtM?=
+ =?us-ascii?Q?FIl//yfnREyyVxzW2J54x4+PSRbsIijdBRDQDypmY35GEkbhu0UXXwGiukES?=
+ =?us-ascii?Q?PVQnUyru7nlX9LigHGF6xqj6WQaojIinhGXTzfCZQKO91RKKYJa1K49CquSl?=
+ =?us-ascii?Q?SoLrznuDaCb9I1dvGph8Y8swfrIGBBJw4eC4fh5GMB07CQLEUv2btvU6Dz8s?=
+ =?us-ascii?Q?ogC0N9Eha4H0+hnpj+30sC9h9dJCzJc9WUcWcL+bq2wCnSxARGTr06oOZMBN?=
+ =?us-ascii?Q?mmVz7eqd458aVBVsAYBkyZO3WrywgiBviJfFV65HS1dT+w49IGffayPycvkc?=
+ =?us-ascii?Q?Jut8po75I+ohRLHl7hYcgk5wffDqf4brEQqEwo3BO89od4unJ0muCDkDpN7u?=
+ =?us-ascii?Q?z4+aRhaig8dQUrkBelZU6X98KELVcdo/BgPqBhoayEhblB/PhhO1ejL54Mmv?=
+ =?us-ascii?Q?8P5uAz3M/c+nTq8T6QIZM7yPA5gs0ffPNkMi46kmyC+6ff1J7pAHYFyAfjPX?=
+ =?us-ascii?Q?pIRfZBQf9WI+NCKnSNe3uh/FTyH56dVOmvksd8nyxwYSU3cgPOOfgTkU7mhK?=
+ =?us-ascii?Q?0FJODnFE0rWTIbXxbTm9wfpld1DzC0BO8k68ozf7QLTq9xZ/Y2m43G9PkUhS?=
+ =?us-ascii?Q?ZMkd+gpJ0E6aP1DLDvY+TiYixnkckVKuC/JZ3RgSQ+73Ovcpb74LjA+zui9V?=
+ =?us-ascii?Q?3cx+lNlI2NOdq112TeygPbcKg8MYZaHCILMpEakSeGeMrcXTU88AQpVBImGh?=
+ =?us-ascii?Q?JVfAtrbPCAkPWNXTiYgj0MU449HXzUL+ie+bU6sMYw45wkzTMyMQMrXl9Xt1?=
+ =?us-ascii?Q?jF2Qb7wH09eMQANxRlbjvWV+bYGANtumk83aev53Q7JWgHG9E3t6cejWKJ6t?=
+ =?us-ascii?Q?W3huPM2/LCaX1kT6AvMrUHM9mgaaSqHpFIF+SOwJDtJBxMhhtmYMATu3FU0p?=
+ =?us-ascii?Q?tliRuN5BwZG4118x83ik5qJ5gv0+O8XGvXWu?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2025 03:42:31.1934
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 714998e8-99ed-4aa8-c11f-08ddc5ad1ffe
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000A6733.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6589
 
-On Thu, Jul 17, 2025 at 9:08=E2=80=AFPM Troy Mitchell
-<troy.mitchell@linux.spacemit.com> wrote:
->
-> The SpacemiT I2C controller's SCL (Serial Clock Line) frequency for
-> master mode operations is determined by the ILCR (I2C Load Count Register=
-).
-> Previously, the driver relied on the hardware's reset default
-> values for this register.
->
-> The hardware's default ILCR values (SLV=3D0x156, FLV=3D0x5d) yield SCL
-> frequencies lower than intended. For example, with the default
-> 31.5 MHz input clock, these default settings result in an SCL
-> frequency of approximately 93 kHz (standard mode) when targeting 100 kHz,
-> and approximately 338 kHz (fast mode) when targeting 400 kHz.
-> These frequencies are below the 100 kHz/400 kHz nominal speeds.
->
-> This patch integrates the SCL frequency management into
-> the Common Clock Framework (CCF). Specifically, the ILCR register,
-> which acts as a frequency divider for the SCL clock, is now registered
-> as a managed clock (scl_clk) within the CCF.
->
-> This patch also cleans up unnecessary whitespace
-> in the included header files.
->
-> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> ---
-> Changelog in v2:
-> - Align line breaks.
-> - Check `lv` in `clk_set_rate` function.
-> - Force fast mode when SCL frequency is illegal or unavailable.
-> - Change "linux/bits.h" to <linux/bits.h>
-> - Kconfig: Add dependency on CCF.
-> ---
->  drivers/i2c/busses/Kconfig  |   2 +-
->  drivers/i2c/busses/i2c-k1.c | 180 ++++++++++++++++++++++++++++++++++++++=
-++----
->  2 files changed, 167 insertions(+), 15 deletions(-)
->
-> diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-> index c8d115b58e449b59a38339b439190dcb0e332965..1382b6c257fa4ba4cf5098d68=
-4c1bbd5e2636fd4 100644
-> --- a/drivers/i2c/busses/Kconfig
-> +++ b/drivers/i2c/busses/Kconfig
-> @@ -797,7 +797,7 @@ config I2C_JZ4780
->  config I2C_K1
->         tristate "SpacemiT K1 I2C adapter"
->         depends on ARCH_SPACEMIT || COMPILE_TEST
-> -       depends on OF
-> +       depends on OF && COMMON_CLK
->         help
->           This option enables support for the I2C interface on the Spacem=
-iT K1
->           platform.
-> diff --git a/drivers/i2c/busses/i2c-k1.c b/drivers/i2c/busses/i2c-k1.c
-> index b68a21fff0b56b59fe2032ccb7ca6953423aad32..3a6aeea245b56a3c3e63bb67b=
-623495a6bec848b 100644
-> --- a/drivers/i2c/busses/i2c-k1.c
-> +++ b/drivers/i2c/busses/i2c-k1.c
-> @@ -3,17 +3,20 @@
->   * Copyright (C) 2024-2025 Troy Mitchell <troymitchell988@gmail.com>
->   */
->
-> - #include <linux/clk.h>
-> - #include <linux/i2c.h>
-> - #include <linux/iopoll.h>
-> - #include <linux/module.h>
-> - #include <linux/of_address.h>
-> - #include <linux/platform_device.h>
-> +#include <linux/bits.h>
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/i2c.h>
-> +#include <linux/iopoll.h>
-> +#include <linux/module.h>
-> +#include <linux/of_address.h>
-> +#include <linux/platform_device.h>
->
->  /* spacemit i2c registers */
->  #define SPACEMIT_ICR            0x0            /* Control register */
->  #define SPACEMIT_ISR            0x4            /* Status register */
->  #define SPACEMIT_IDBR           0xc            /* Data buffer register *=
-/
-> +#define SPACEMIT_ILCR           0x10           /* Load Count Register */
->  #define SPACEMIT_IBMR           0x1c           /* Bus monitor register *=
-/
->
->  /* SPACEMIT_ICR register fields */
-> @@ -80,6 +83,19 @@
->  #define SPACEMIT_BMR_SDA         BIT(0)                /* SDA line level=
- */
->  #define SPACEMIT_BMR_SCL         BIT(1)                /* SCL line level=
- */
->
-> +#define SPACEMIT_LCR_LV_STANDARD_SHIFT         0
-> +#define SPACEMIT_LCR_LV_FAST_SHIFT             9
-> +#define SPACEMIT_LCR_LV_STANDARD_WIDTH         9
-> +#define SPACEMIT_LCR_LV_FAST_WIDTH             9
-> +#define SPACEMIT_LCR_LV_STANDARD_MAX_VALUE     GENMASK(SPACEMIT_LCR_LV_S=
-TANDARD_WIDTH - 1, 0)
-> +#define SPACEMIT_LCR_LV_FAST_MAX_VALUE         GENMASK(SPACEMIT_LCR_LV_F=
-AST_WIDTH - 1, 0)
-> +#define SPACEMIT_LCR_LV_STANDARD_MASK          GENMASK(SPACEMIT_LCR_LV_S=
-TANDARD_SHIFT +\
-> +                                               SPACEMIT_LCR_LV_STANDARD_=
-WIDTH - 1,\
-> +                                               SPACEMIT_LCR_LV_STANDARD_=
-SHIFT)
-> +#define SPACEMIT_LCR_LV_FAST_MASK              GENMASK(SPACEMIT_LCR_LV_F=
-AST_SHIFT +\
-> +                                               SPACEMIT_LCR_LV_FAST_WIDT=
-H - 1,\
-> +                                               SPACEMIT_LCR_LV_FAST_SHIF=
-T)
-> +
->  /* i2c bus recover timeout: us */
->  #define SPACEMIT_I2C_BUS_BUSY_TIMEOUT          100000
->
-> @@ -95,11 +111,20 @@ enum spacemit_i2c_state {
->         SPACEMIT_STATE_WRITE,
->  };
->
-> +enum spacemit_i2c_mode {
-> +       SPACEMIT_MODE_STANDARD,
-> +       SPACEMIT_MODE_FAST
-> +};
-> +
->  /* i2c-spacemit driver's main struct */
->  struct spacemit_i2c_dev {
->         struct device *dev;
->         struct i2c_adapter adapt;
->
-> +       struct clk_hw scl_clk_hw;
-> +       struct clk *scl_clk;
-> +       enum spacemit_i2c_mode mode;
-> +
->         /* hardware resources */
->         void __iomem *base;
->         int irq;
-> @@ -120,6 +145,88 @@ struct spacemit_i2c_dev {
->         u32 status;
->  };
->
-> +static void spacemit_i2c_scl_clk_disable_unprepare(void *data)
-> +{
-> +       struct spacemit_i2c_dev *i2c =3D data;
-> +
-> +       clk_disable_unprepare(i2c->scl_clk);
-> +}
-> +
-> +static void spacemit_i2c_scl_clk_exclusive_put(void *data)
-> +{
-> +       struct spacemit_i2c_dev *i2c =3D data;
-> +
-> +       clk_rate_exclusive_put(i2c->scl_clk);
-> +}
-> +
-> +static int spacemit_i2c_clk_set_rate(struct clk_hw *hw, unsigned long ra=
-te,
-> +                                    unsigned long parent_rate)
-> +{
-> +       struct spacemit_i2c_dev *i2c =3D container_of(hw, struct spacemit=
-_i2c_dev, scl_clk_hw);
-> +       u32 lv, lcr, mask, shift, max_lv;
-> +
-> +       lv =3D DIV_ROUND_UP(parent_rate, rate);
-> +
-> +       if (i2c->mode =3D=3D SPACEMIT_MODE_STANDARD) {
-> +               mask =3D SPACEMIT_LCR_LV_STANDARD_MASK;
-> +               shift =3D SPACEMIT_LCR_LV_STANDARD_SHIFT;
-> +               max_lv =3D SPACEMIT_LCR_LV_STANDARD_MAX_VALUE;
-> +       } else if (i2c->mode =3D=3D SPACEMIT_MODE_FAST) {
-> +               mask =3D SPACEMIT_LCR_LV_FAST_MASK;
-> +               shift =3D SPACEMIT_LCR_LV_FAST_SHIFT;
-> +               max_lv =3D SPACEMIT_LCR_LV_FAST_MAX_VALUE;
-> +       }
-> +
-> +       if (!lv || lv > max_lv) {
-> +               dev_err(i2c->dev, "set scl clock failed: lv 0x%x", lv);
-> +               return -EINVAL;
-> +       }
-> +
-> +       lcr =3D readl(i2c->base + SPACEMIT_ILCR);
-> +       lcr &=3D ~mask;
-> +       lcr |=3D lv << shift;
-> +       writel(lcr, i2c->base + SPACEMIT_ILCR);
-> +
-> +       return 0;
-> +}
-> +
-> +static long spacemit_i2c_clk_round_rate(struct clk_hw *hw, unsigned long=
- rate,
-> +                                       unsigned long *parent_rate)
-> +{
-> +       u32 lv, freq;
-> +
-> +       lv =3D DIV_ROUND_UP(*parent_rate, rate);
-> +       freq =3D DIV_ROUND_UP(*parent_rate, lv);
-> +
-> +       return freq;
-> +}
-> +
-> +static unsigned long spacemit_i2c_clk_recalc_rate(struct clk_hw *hw,
-> +                                                 unsigned long parent_ra=
-te)
-> +{
-> +       struct spacemit_i2c_dev *i2c =3D container_of(hw, struct spacemit=
-_i2c_dev, scl_clk_hw);
-> +       u32 lcr, lv =3D 0;
-> +
-> +       lcr =3D readl(i2c->base + SPACEMIT_ILCR);
-> +
-> +       if (i2c->mode =3D=3D SPACEMIT_MODE_STANDARD)
-> +               lv =3D (lcr >> SPACEMIT_LCR_LV_STANDARD_SHIFT) &
-> +                    GENMASK(SPACEMIT_LCR_LV_STANDARD_WIDTH - 1, 0);
-> +       else if (i2c->mode =3D=3D SPACEMIT_MODE_FAST)
-> +               lv =3D (lcr >> SPACEMIT_LCR_LV_FAST_SHIFT) &
-> +                    GENMASK(SPACEMIT_LCR_LV_FAST_WIDTH - 1, 0);
+Sean Christopherson <seanjc@google.com> writes:
 
-GENMASK(SPACEMIT_LCR_LV_FAST_WIDTH - 1, 0); and  SPACEMIT_LCR_LV_FAST_MAX_V=
-ALUE
-happen to be the same value; can we use that and rename it to MASK? Or
-better yet, use FIELD_GET here.
+> On Wed, Jul 16, 2025, Tom Lendacky wrote:
+>> On 7/16/25 00:53, Nikunj A Dadhania wrote:
+>> > From: Sean Christopherson <seanjc@google.com>
+>> > 
+>> > Currently, when a Secure TSC enabled SNP guest attempts to write to the
+>> > intercepted GUEST_TSC_FREQ MSR (a read-only MSR), the guest kernel response
+>> > incorrectly implies a VMM configuration error, when in fact it is the usual
+>> > VMM configuration to intercept writes to read-only MSRs, unless explicitly
+>> > documented.
+>> > 
+>> > Modify the intercepted TSC MSR #VC handling:
+>> > * Write to GUEST_TSC_FREQ will generate a #GP instead of terminating the
+>> >   guest
+>> > * Write to MSR_IA32_TSC will generate a #GP instead of silently ignoring it
+>> > 
+>> > Add a WARN_ONCE to log the incident, as well-behaved SNP guest kernels
+>> > should never attempt to write to these MSRs.
+>> > 
+>> > However, continue to terminate the guest when reading from intercepted
+>> > GUEST_TSC_FREQ MSR with Secure TSC enabled, as intercepted reads indicate
+>> > an improper VMM configuration for Secure TSC enabled SNP guests.
+>> > 
+>> > Signed-off-by: Sean Christopherson <seanjc@google.com>
+>
+> Feel free to drop me as author and just give me a Reported-by or Suggested-by.
+> At this point, I ain't doing a whole lot of anything for this patch :-)
 
-> +       else
-> +               return 0;
-> +
-> +       return DIV_ROUND_UP(parent_rate, lv);
-> +}
-> +
-> +static const struct clk_ops spacemit_i2c_clk_ops =3D {
-> +       .set_rate =3D spacemit_i2c_clk_set_rate,
-> +       .round_rate =3D spacemit_i2c_clk_round_rate,
-> +       .recalc_rate =3D spacemit_i2c_clk_recalc_rate,
-> +};
-> +
->  static void spacemit_i2c_enable(struct spacemit_i2c_dev *i2c)
->  {
->         u32 val;
-> @@ -138,6 +245,27 @@ static void spacemit_i2c_disable(struct spacemit_i2c=
-_dev *i2c)
->         writel(val, i2c->base + SPACEMIT_ICR);
->  }
->
-> +static struct clk *spacemit_i2c_register_scl_clk(struct spacemit_i2c_dev=
- *i2c,
-> +                                                struct clk *parent)
-> +{
-> +       struct clk_init_data init;
-> +       char name[32];
-> +
-> +       snprintf(name, sizeof(name), "%s_scl_clk", dev_name(i2c->dev));
-> +
-> +       init.name =3D name;
-> +       init.ops =3D &spacemit_i2c_clk_ops;
-> +       init.parent_data =3D (struct clk_parent_data[]) {
-> +               { .fw_name =3D "func" },
+Sure
 
-Is "func" a placeholder? Can we name it i2c_scl_clk?
+>
+>> > +	if (WARN_ON_ONCE(write)) {
+>> 
+>> Do we want to capture individual WARNs for each MSR? I guess I'm ok with
+>> a single WARN for either MSR, but just asking the question.
+>
+> Or don't WARN at all.  If the caller is doing a bare wrmsrq(), then the kernel
+> will WARN in ex_handler_msr().  If the caller is doing wrmsrq_safe(), do we care
+> that they're being deliberately weird?
 
-Thanks,
-Jesse Taube
+Agree, we can drop the WARN.
 
-> +       };
-> +       init.num_parents =3D 1;
-> +       init.flags =3D 0;
-> +
-> +       i2c->scl_clk_hw.init =3D &init;
-> +
-> +       return devm_clk_register(i2c->dev, &i2c->scl_clk_hw);
-> +}
-> +
->  static void spacemit_i2c_reset(struct spacemit_i2c_dev *i2c)
->  {
->         writel(SPACEMIT_CR_UR, i2c->base + SPACEMIT_ICR);
-> @@ -224,7 +352,7 @@ static void spacemit_i2c_init(struct spacemit_i2c_dev=
- *i2c)
->          */
->         val |=3D SPACEMIT_CR_DRFIE;
->
-> -       if (i2c->clock_freq =3D=3D SPACEMIT_I2C_MAX_FAST_MODE_FREQ)
-> +       if (i2c->mode =3D=3D SPACEMIT_MODE_FAST)
->                 val |=3D SPACEMIT_CR_MODE_FAST;
->
->         /* disable response to general call */
-> @@ -519,14 +647,15 @@ static int spacemit_i2c_probe(struct platform_devic=
-e *pdev)
->                 dev_warn(dev, "failed to read clock-frequency property: %=
-d\n", ret);
->
->         /* For now, this driver doesn't support high-speed. */
-> -       if (!i2c->clock_freq || i2c->clock_freq > SPACEMIT_I2C_MAX_FAST_M=
-ODE_FREQ) {
-> -               dev_warn(dev, "unsupported clock frequency %u; using %u\n=
-",
-> -                        i2c->clock_freq, SPACEMIT_I2C_MAX_FAST_MODE_FREQ=
-);
-> +       if (i2c->clock_freq > SPACEMIT_I2C_MAX_STANDARD_MODE_FREQ &&
-> +           i2c->clock_freq <=3D SPACEMIT_I2C_MAX_FAST_MODE_FREQ) {
-> +               i2c->mode =3D SPACEMIT_MODE_FAST;
-> +       } else if (i2c->clock_freq && i2c->clock_freq <=3D SPACEMIT_I2C_M=
-AX_STANDARD_MODE_FREQ) {
-> +               i2c->mode =3D SPACEMIT_MODE_STANDARD;
-> +       } else {
-> +               dev_warn(i2c->dev, "invalid clock-frequency, using fast m=
-ode");
-> +               i2c->mode =3D SPACEMIT_MODE_FAST;
->                 i2c->clock_freq =3D SPACEMIT_I2C_MAX_FAST_MODE_FREQ;
-> -       } else if (i2c->clock_freq < SPACEMIT_I2C_MAX_STANDARD_MODE_FREQ)=
- {
-> -               dev_warn(dev, "unsupported clock frequency %u; using %u\n=
-",
-> -                        i2c->clock_freq,  SPACEMIT_I2C_MAX_STANDARD_MODE=
-_FREQ);
-> -               i2c->clock_freq =3D SPACEMIT_I2C_MAX_STANDARD_MODE_FREQ;
->         }
->
->         i2c->dev =3D &pdev->dev;
-> @@ -548,10 +677,33 @@ static int spacemit_i2c_probe(struct platform_devic=
-e *pdev)
->         if (IS_ERR(clk))
->                 return dev_err_probe(dev, PTR_ERR(clk), "failed to enable=
- func clock");
->
-> +       i2c->scl_clk =3D spacemit_i2c_register_scl_clk(i2c, clk);
-> +       if (IS_ERR(i2c->scl_clk))
-> +               return dev_err_probe(&pdev->dev, PTR_ERR(i2c->scl_clk),
-> +                                    "failed to register scl clock\n");
-> +
->         clk =3D devm_clk_get_enabled(dev, "bus");
->         if (IS_ERR(clk))
->                 return dev_err_probe(dev, PTR_ERR(clk), "failed to enable=
- bus clock");
->
-> +       ret =3D clk_set_rate_exclusive(i2c->scl_clk, i2c->clock_freq);
-> +       if (ret)
-> +               return dev_err_probe(&pdev->dev, ret, "failed to set excl=
-usive rate for SCL clock");
-> +
-> +       ret =3D devm_add_action_or_reset(dev, spacemit_i2c_scl_clk_exclus=
-ive_put, i2c);
-> +       if (ret)
-> +               return dev_err_probe(&pdev->dev, ret,
-> +                               "failed to register cleanup action for ex=
-clusive SCL clock rate");
-> +
-> +       ret =3D clk_prepare_enable(i2c->scl_clk);
-> +       if (ret)
-> +               return dev_err_probe(&pdev->dev, ret, "failed to prepare =
-and enable clock");
-> +
-> +       ret =3D devm_add_action_or_reset(dev, spacemit_i2c_scl_clk_disabl=
-e_unprepare, i2c);
-> +       if (ret)
-> +               return dev_err_probe(&pdev->dev, ret,
-> +                               "failed to register cleanup action for cl=
-k disable and unprepare");
-> +
->         spacemit_i2c_reset(i2c);
->
->         i2c_set_adapdata(&i2c->adapt, i2c);
->
-> ---
-> base-commit: 733923397fd95405a48f165c9b1fbc8c4b0a4681
-> change-id: 20250709-k1-i2c-ilcr-ea347e0850a4
->
-> Best regards,
-> --
-> Troy Mitchell <troy.mitchell@linux.spacemit.com>
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+Regards,
+Nikunj
 
