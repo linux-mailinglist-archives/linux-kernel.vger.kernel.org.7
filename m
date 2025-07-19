@@ -1,155 +1,159 @@
-Return-Path: <linux-kernel+bounces-737666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAB14B0AF16
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 11:27:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD4ECB0AF1C
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 11:35:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B9321891786
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 09:28:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 470727ABD91
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 09:34:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74B41238C23;
-	Sat, 19 Jul 2025 09:27:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F0F239E7B;
+	Sat, 19 Jul 2025 09:35:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eq0pnbf1"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aYNd9kCJ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D5B22DA0B
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 09:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE4021ABB0
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 09:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752917263; cv=none; b=Ly4iEhwUPZah1+xFQi6khH13H9ZI7eKZhY2+Oot8bJuLp5UMgWWdMXxePqywi+8Iko/mMIVLkE9mvKkazd4XHD5beOA65cbgxVHHRGflPzCbJ2TabBnRfcLzxrGkBVlI6ORhklBT43jq7bf/e8GAB1Qf7D7CMXel+G5waD5s+9M=
+	t=1752917742; cv=none; b=MIicwp5pdIdd/czQe8etjdNYA+Ie7EpLlnbAnXwMVUk6Mx7ELHvOQeKxfiS+xRg7bnWvWZPWECFVBfNJFACkEL0kv84ZBG08+5vCQu2Ijh8lVpiLDLf+GDUUtQCjrBF+YT76SFFoMPWZLDhm0X64DNzYT9odPXmb2G9wWPaHSzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752917263; c=relaxed/simple;
-	bh=nyokRy0+G2souZrsCqB5DwSPvPzy28wDE1HvAPamzR0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hh4Xq/Rt8aynEjv6Hvqae8oHv5y/Wx3I4AXiipnHcoK/wu3BAHo4rC3RIIsylmte97cHgEtaSPIaEq+Eu1F/Hk1kztXIDmUitBhReV0cEbj+daIKFxwy9TLxHLTF3oLlLKa+i2Ikzy92aVrpax0SJ0pV0Ohrj0MavXehy5bTt9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eq0pnbf1; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4550709f2c1so20867835e9.3
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 02:27:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752917260; x=1753522060; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QqWFgJChad3oM9bzLjXHXfury4l1/Iqz4njVutsiJGA=;
-        b=eq0pnbf14Cu95u4w/dHKQccx33hJSvDVw2SER62CFPdIBsUwx/Ys3Bw0SkD3/MnOZw
-         XWPy9fMx2JtAHAKPuhGyIeSAcr/zjCKOE+04KC3j0Ts9oDLc4p33Z8s6SbZtdlzdIqKA
-         Q1lj/f0cwr+neCFu30/a39Z2OoTSyDWrAMUnoxrO3HHmsbNMD9/tYhk4rXtAXBG5ywvl
-         xBNW+BCLzJQ62AxpfRKOhpfqsmUJkXIWzTmlCqTucoQ33gGLE4/7WGQpyMRH5UEBXkRb
-         bNMMBqT6p3FLDfCI2r0WToyWD1a238LrR3eL8017BTD/+6Y0B2OOXSJCRZihX8uKM/F0
-         wbeQ==
+	s=arc-20240116; t=1752917742; c=relaxed/simple;
+	bh=hoSWN+5jhLJI9d8DpMrlNxb5YX+YAZkHose3puHowik=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J7DCjtJ9qzQaVmX+9OjAzUsqYX6V+H2dgBTmKMfEdv7S1Olh1BZCeebPaJOzhhiWuNHFeXnYf13KBghhq0dE3AWXcX3ab+zRhwGCb36Tmsvc1L14EgxZ7rvdDiccjtQX95Lx0Pbr4lYPWNRyxMG/aRYqZWxMbjPdV/LORCDBLx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aYNd9kCJ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56J6Bgiw013017
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 09:35:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=wSbh+xGKxOsPi/4J27pwmx2I
+	Cc9rg1Dj97VeqIVuWg8=; b=aYNd9kCJBpJD8plQqeqjz/IuZ6xQz243UkfZsZl2
+	xfMrkrgp61/ad0lwFhnxvzBZfBwaJwIXkXf+e4secVC/5Zb66PlHfH2bQ/AkEQ+S
+	UEJ/TE/6lu9GEH+F7mTu33dlaEhdBI/Yb4E672HHDkvbeePuQWNPnt5Ugt8xLvpW
+	2NOJV3h/UJxDWgd4VAhTCZnyDQVyPnZtJ518PNR2jrsKVTXIl0E2AXtcYmM4tdVC
+	mFYYA1Km/E9LwiHwpq3c/Kv9KhFnaLRe8lpUSbJevx37qrINemTr/FNDDjGvOUuO
+	6ZFE3SL0a8tE+FSiXq7eCzkMG4OfC1IjMDr/8usJHWdQ+A==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48044f8ec8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 09:35:34 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7e338e627f1so780476485a.0
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 02:35:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752917260; x=1753522060;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QqWFgJChad3oM9bzLjXHXfury4l1/Iqz4njVutsiJGA=;
-        b=r3u0sn8gy8eUuaVtslFr2P9D1+CCU1dfnMaBcXvYMcDg5nkD5ee/DSbVKWVqk1KZ+D
-         nJqSF5mUyGTA6kD0t2H4gi81Tk+PerhLJIOT89CcoCCWKJ91aHKeRGTlX2IiRNVLIF36
-         rCPb76j6BcZUFEtThA4flwkij9zDjHyC5BnNiHGDnck7fLNZ/ROeNNHA4zqJmZaf0Prx
-         WwCEyj7yjIPBiEbo/N60+I7EIE9GWZ0hK6e9ngYs9s1ibAqL9ZlS+9En2uBnR6QSwEyt
-         X6Q6OqNn2i11eOKgFzAELyhxYESL+uxv8Fu9gqkv5I2j+eJgXOK4NVt4InW9SFvE0Pg7
-         EMIA==
-X-Forwarded-Encrypted: i=1; AJvYcCXa6aqooCkN+nH/d1NbRtgpveBQvK53PcPN2ld9dEnW3SizfHFfXWtIAWf0bKKb2Wzsg1dXMUEghYKk5qI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDFYe52k2vShM6i3COxiYvR0fSpyDFOeuYrlsHr1SYwziY0taK
-	1VXHLA10D99OouaulUpeCqsb2qj3ZhiQvbHWoprXK8iOf83K5lcuPt07
-X-Gm-Gg: ASbGncsbeeIPScdDMm+nTvj7ilKbeYDtF4n3OD1ofqYBM6txaimbPuUJGphyvOCU/63
-	3Hb5E0ut2B6xf0GnvbjuSVMDquIwI1Laq2Q7rpPZ6Eq+APHhd/ef6PSfZrnGHBjAbt0uz/tzN2F
-	52Rv02YHz/kU3uXHGzV3A2q9vB3Hv4bP8k41prRFEjw9CJtpDKienv4B3wgVqgOzMJ8WK5RSP1y
-	cSReY4gh56MntPKP7H4U0ifMMp4PSQd3K3Fe5iulmh3r6/apxeYaiSQfRYaoboPSLe7TeVTL6k3
-	L4qa4Ctp7yxJaxVb592LfX8RLpxk0tVUmODFiPQxKqjbEvq+FsdlwMyapIKAGajQvkvZ4vPF9Cj
-	2Ngsi+MEhXmdiHG/a34JwX2XZ91pGhWo9JwRYib/zQGCWWTBPlewplnHBH/3+
-X-Google-Smtp-Source: AGHT+IGX36BXd2A2fUDV2jwsQJj5QjbGyvEmFdXGMYvz8lFtHEC3xlgD+mRYMrJ3Udq/9Hh5u0V7oQ==
-X-Received: by 2002:a05:600c:4e8e:b0:456:1b8b:b8ab with SMTP id 5b1f17b1804b1-4563b8fca24mr60612325e9.30.1752917259983;
-        Sat, 19 Jul 2025 02:27:39 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e886286sm104052895e9.26.2025.07.19.02.27.39
+        d=1e100.net; s=20230601; t=1752917733; x=1753522533;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wSbh+xGKxOsPi/4J27pwmx2ICc9rg1Dj97VeqIVuWg8=;
+        b=jyRS9oBYt3XgZLSt6vCE5J4FdO930RjyQfBMiowtM78PyrlGO/rD9Td3r7uZnDYc/S
+         k/gYwGrc0vnLjSRI7aoh1/U9MTn75mdTz/HJSv+iYsg3778FuPT/wKv+XZ/793hbeC4/
+         pa4WAmKJiIaouYXSke97G8/XB6jOsn1SdDhIoHnukS3dLUZq/K8Lwvb/9a7dnVmxS1CZ
+         6QJELUNXHvJmhIl80e5MyQ20nrvppg9HwHLen1JLTv7uO1elEvO6hnzSnHLES0c9xE3F
+         a16ju63Ifqb/agOBi1XPXSj7HZius39hRND+wLpMvPKdKYjxjzjM/wHoR6eOvY6lGgvV
+         qOWg==
+X-Forwarded-Encrypted: i=1; AJvYcCVXy1fmCtUluXl6ufJLRQYcQX7lDhYK/ao35TkF140xPqtYgqh+2pczMo30sokIStavEG7IA1AdZV0e0b0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx242l/6qUMB1ZgzBEaf1XSROsQqIyKInosYpfaYFi+iM+XOb/n
+	QvfjvMIVai9l7o/jA66p5CAWQETEJBi33xZ9hZ7E2PEr/np2QbO8gVkgleBHK5jePH7zUJmUTmM
+	UmkITcm5qlrtOKt/ojGvWm389o3tP89pEZUdTABSuMQIf0Pu56RHb2qWfJ2lhkpygoAc=
+X-Gm-Gg: ASbGncsen+2grjUVCy4W3KT3jyrDB4a65Kg4r/6GCAzcFvBu5F5XxK7ototRrN1UxGr
+	/kDo5FXax/dydA146LeUQF83raHYc7HCweD1BXFaxD2lr7dG3kHwWPeghqrYBw9V0wzoI2FLK/7
+	S2Cb5nszYKRAUBWUvdeE+JsRl5u6rag4F3OLAExwIEhOihtrTalPoTKVOpASZh+5Z+HkwpIw4M7
+	e/yG9rNwzap5t3yRptM2jUxCUto8fHKwv9vqMKY9vMbVAcfqbIAPuG7p/JtOIFvY82hhST9gk1n
+	RfbykWSFJo6WRiQVSINBs1hUuRkq5LeBgR3+jp/MxmWHb1nM1YuA8jbDGZA27rQ8YG4caTg0XYl
+	m9Jvg1Rt60awOcoXWtXjckuDVlXR5kZe4dfhOk41RckjKzlA187nQ
+X-Received: by 2002:a05:620a:2699:b0:7d4:28d9:efbe with SMTP id af79cd13be357-7e356ae17fcmr791787885a.32.1752917733018;
+        Sat, 19 Jul 2025 02:35:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGM5wbUvtWyq03MOIlSlrD0IZhIz8P5EDs5+tTPDfigb89vA+4wYsZvArhwqxS6KlWMIpuEvg==
+X-Received: by 2002:a05:620a:2699:b0:7d4:28d9:efbe with SMTP id af79cd13be357-7e356ae17fcmr791785185a.32.1752917732539;
+        Sat, 19 Jul 2025 02:35:32 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55a31aba0f7sm648128e87.83.2025.07.19.02.35.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Jul 2025 02:27:39 -0700 (PDT)
-Date: Sat, 19 Jul 2025 10:27:38 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: wang lian <lianux.mm@gmail.com>, akpm@linux-foundation.org,
- Liam.Howlett@oracle.com, brauner@kernel.org, broonie@kernel.org,
- gkwang@linx-info.com, jannh@google.com, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, lorenzo.stoakes@oracle.com, ludovico.zy.wu@gmail.com,
- p1ucky0923@gmail.com, ryncsn@gmail.com, shuah@kernel.org, sj@kernel.org,
- vbabka@suse.cz, zijing.zhang@proton.me, ziy@nvidia.com
-Subject: Re: [PATCH] selftests/mm: reuse FORCE_READ to replace "asm
- volatile("" : "+r" (XXX));"
-Message-ID: <20250719102738.06b91a8b@pumpkin>
-In-Reply-To: <d27e9451-8807-4c86-b2aa-063639f7801d@redhat.com>
-References: <20250716151543.998b121a58064011e9ce68cb@linux-foundation.org>
-	<20250717104811.3773-1-lianux.mm@gmail.com>
-	<d27e9451-8807-4c86-b2aa-063639f7801d@redhat.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        Sat, 19 Jul 2025 02:35:30 -0700 (PDT)
+Date: Sat, 19 Jul 2025 12:35:27 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v2] usb: dwc3: qcom: Don't leave BCR asserted
+Message-ID: <iyvjr6fx3ec327mcbtemxdke32wzm6xy2zuwbdimy7ticsuvmq@rlbqiwdwi4x2>
+References: <20250709132900.3408752-1-krishna.kurapati@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250709132900.3408752-1-krishna.kurapati@oss.qualcomm.com>
+X-Proofpoint-ORIG-GUID: c6jvHK9lqNu5WxY1oVMMSdm7Pm1d8Klb
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE5MDA5NCBTYWx0ZWRfX4ud3ke6fAScc
+ kMjhMz/u9yFuknemtX0Wa018FxMiVoUsfonE3Bq2tfJOToPa6Awn0/95nPIZLtWMXZA8u2fSDrg
+ tSyd97yAMggqls53UPkg+Hk6dC8gg4RrqX+mb0ZA0reWsCxRY/6ma0C5HsCYL+uNTksOkQbLNw6
+ +HFe/me5kCQroC0nCfB/CZ/5klMixxGbm46hI+CbUfcAevRJUwHF9SmX00rOqE8kPmezRX7uRZJ
+ 1e32DVD084EicJYmMBzsrWGZFf804D7w8lK4/RZwgsGZUSuQZHNcnd0+xRjjVF/Sh/vl7E7QbBj
+ HJc6strEG5ctgPEpo6TnJBmqBxVlfaUq7diu/3DASXuoZvUefPpk3G3mPKHwHgTV1g9tnD1rZli
+ MdLdc2etoj62G5fntfv5dFXLLf9oXcT5iqtje9CGMB7XhgX8NOaPuycahIWLc32phdJ+744a
+X-Proofpoint-GUID: c6jvHK9lqNu5WxY1oVMMSdm7Pm1d8Klb
+X-Authority-Analysis: v=2.4 cv=YtcPR5YX c=1 sm=1 tr=0 ts=687b66e6 cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=jIQo8A4GAAAA:8
+ a=eOX_9S80fVGYM9ega84A:9 a=CjuIK1q_8ugA:10 a=NFOGd7dJGGMPyQGDc5-O:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-19_01,2025-07-17_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 priorityscore=1501 malwarescore=0 lowpriorityscore=0
+ impostorscore=0 mlxlogscore=597 suspectscore=0 clxscore=1015 spamscore=0
+ phishscore=0 adultscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507190094
 
-On Thu, 17 Jul 2025 13:43:45 +0200
-David Hildenbrand <david@redhat.com> wrote:
-
-> On 17.07.25 12:48, wang lian wrote:
-> >> On Wed, 16 Jul 2025 20:31:26 +0800 wang lian <lianux.mm@gmail.com> wrote:  
-> >   
-> >>> Several mm selftests use the `asm volatile("" : "+r" (variable));`
-> >>> construct to force a read of a variable, preventing the compiler from
-> >>> optimizing away the memory access. This idiom is cryptic and duplicated
-> >>> across multiple test files.
-> >>>
-> >>> Following a suggestion from David[1], this patch refactors this
-> >>> common pattern into a FORCE_READ() macro
-> >>>
-> >>>   tools/testing/selftests/mm/cow.c              | 30 +++++++++----------
-> >>>   tools/testing/selftests/mm/hugetlb-madvise.c  |  5 +---
-> >>>   tools/testing/selftests/mm/migration.c        | 13 ++++----
-> >>>   tools/testing/selftests/mm/pagemap_ioctl.c    |  4 +--
-> >>>   .../selftests/mm/split_huge_page_test.c       |  4 +--
-> >>>   5 files changed, 24 insertions(+), 32 deletions(-)  
-> >   
-> >> The patch forgot to move the FORCE_READ definition into a header?  
-> > 
-> > Hi Andrew,
-> > You are absolutely right. My apologies for the inconvenience.
-> > This patch was sent standalone based on a suggestion from David during
-> > the discussion of a previous, larger patch series. In that original series,
-> > I had already moved the FORCE_READ() macro definition into vm_util.h.
-> > 
-> > You can find the original patch series and discussion at this link:
-> > https://lore.kernel.org/lkml/20250714130009.14581-1-lianux.mm@gmail.com/
-> > It should also be in your mailing list archive.
-> > 
-> > To make this easier to review and apply, I can send a new, small patch series
-> > that first introduces the FORCE_READ() macro in vm_util.h and then applies this refactoring.  
+On Wed, Jul 09, 2025 at 06:59:00PM +0530, Krishna Kurapati wrote:
+> Leaving the USB BCR asserted prevents the associated GDSC to turn on. This
+> blocks any subsequent attempts of probing the device, e.g. after a probe
+> deferral, with the following showing in the log:
 > 
-> Please simply perform the move of FORCE_READ() in this very patch where 
-> you also use it elswehere.
-
-Why not use READ_ONCE() instead (or even just make all the variables 'volatile char *').
-I had to look up the definition to find the hidden indirection in FORCE_READ().
-
-It has to be said that now writes to variables that are READ_ONCE() have to be
-WRITE_ONCE() why not just make the variables 'volatile'.
-That will stop things bleating about missing READ/WRITE_ONCE() wrappers.
-There was a rational for not using volatile, but it is getting to be moot.
-
-	David
-
-
+> [    1.332226] usb30_prim_gdsc status stuck at 'off'
 > 
-> I missed that when skimming over this patch.
+> Leave the BCR deasserted when exiting the driver to avoid this issue.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: a4333c3a6ba9 ("usb: dwc3: Add Qualcomm DWC3 glue driver")
+> Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+> ---
+> Changes in v2:
+> Added Fixes tag and CC'd stable.
+> 
+> Link to v1:
+> https://lore.kernel.org/all/20250604060019.2174029-1-krishna.kurapati@oss.qualcomm.com/
+> 
+>  drivers/usb/dwc3/dwc3-qcom.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
 > 
 
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+
+
+-- 
+With best wishes
+Dmitry
 
