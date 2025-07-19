@@ -1,98 +1,134 @@
-Return-Path: <linux-kernel+bounces-737458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 645A0B0ACD8
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 02:36:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51F2EB0ACDA
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 02:38:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 779F65A1568
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 00:36:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E693E1C41178
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 00:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F5771CAB3;
-	Sat, 19 Jul 2025 00:36:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="PIMun5ui"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 539AD2AE8D;
+	Sat, 19 Jul 2025 00:37:58 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498D01FDD;
-	Sat, 19 Jul 2025 00:36:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3542E23DE;
+	Sat, 19 Jul 2025 00:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752885385; cv=none; b=aJvkGVKMOaMxNfJaWgvl1MzT74hB+5NJTs6OXqYjHPHWlYtVbY9bi8SuZqwIwPDd8e0rr2aVRgsvs33rCmtCdOwq1trUwNzwwAun/5VVUb4yTvEP/MRJvP6PeFG9af0FVT1eDKLyomk9WDITo9OhO3XVWLiVvOJfVwaK/y5NKjc=
+	t=1752885478; cv=none; b=GBkOZVrASg6XwU5onC/JOA4HYzD7oqT84mLi+XWlO3VnJ10pmnVW/PRfdzPH68K6ciuRjA4eAnSUnBeN/IpDoddw2WjIODBygkh8444zNzWuBq+Ku+wMNYHc+bL6MNuC95dg46xjsCZE/Me9dHJdK1heH629xff7ToMcLaA0hSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752885385; c=relaxed/simple;
-	bh=I/r2vN3wqJ5qQdZvUGsuyTs//bOBUe/HAHBQjZKBpKw=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=luOWB3Ad73Hu1nx9yMo6bGCoNmcRjtJs6Bzp1ir6R+u01EJ9nvGhOJtxxTKO/2rkY9AANpYb0gfEXfEnfCIXahnmW/i8CWTqj44myC9BZnim5q/itneBqcPNCsqNkkc0WHjURHZa0y4sH/nrSNE54AY9/9j58vPkd3h3w6J13v8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=PIMun5ui; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=Content-Type:MIME-Version:Message-ID:Subject:To:From:Date:
-	Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=IqC7ruty75JcffgNk6jVN0gBHdmHmCCllYQ2BM10vTw=; b=PIMun5ui99bZh+Ky7djZtul3Rb
-	UrWzNiQ41W1bVwHBqffwJKLpUBd8QYbuTZhaiSQ5s9R10LFWdoI9aF2iBVFXn6QJRB8dOgY6qX4LD
-	GLs1FN71H4PXjWuN3dgpxXcfJwvBLpM/XtfQywDYviewr4xFbS04w2men+C4fCtRoEakGBkUF1d5Y
-	ESyHPLaLSgZWU+u+/Rd3ck+FOAf4fHimGMp2rdCuJ1189WNI4Ou1lX0H9SloltKJSOyKLFBN45QiE
-	ODJw2FJPCC3pht3/D2QGf+q/k9IUBS4b2cZsIS0DQGZh6rPBhdVBy0MhVs/wMOFTDpqwnsEwZ5uK+
-	DLyBglqg==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1ucvJG-0089dm-0t;
-	Sat, 19 Jul 2025 08:36:11 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 19 Jul 2025 10:36:10 +1000
-Date: Sat, 19 Jul 2025 10:36:10 +1000
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Subject: [GIT PULL] Crypto Fixes for 6.16
-Message-ID: <aHroehR8vSrZnULY@gondor.apana.org.au>
+	s=arc-20240116; t=1752885478; c=relaxed/simple;
+	bh=iHuRoaqiqgLMa15x4TcvHU/rCSRoHuJ3bjn6cbUe/7E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mem0AVRld8UK3zC9hw8QFM87WRt5zsIIt5REPRNRj7z0HJYkSgKuxz+wbJBZMG5OhcXr4q7ZcYGhIUJsb8pt+fRCWADUTajyV7rhAM8T7UIOhUfyLU734U7uTTxLXYInG1ceibydSI1vb0bfdESq4RWGQWdYmP0NWgT7VYnp0I4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bkSLL2PFcz14Lx6;
+	Sat, 19 Jul 2025 08:32:58 +0800 (CST)
+Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4E1F3180B3F;
+	Sat, 19 Jul 2025 08:37:46 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.71) by dggpemf500013.china.huawei.com
+ (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 19 Jul
+ 2025 08:37:45 +0800
+Message-ID: <bf0bda81-5e75-4b5e-aac1-685e4697f513@huawei.com>
+Date: Sat, 19 Jul 2025 08:37:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 01/17] ext4: add ext4_try_lock_group() to skip busy
+ groups
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+CC: <linux-ext4@vger.kernel.org>, <tytso@mit.edu>, <adilger.kernel@dilger.ca>,
+	<jack@suse.cz>, <linux-kernel@vger.kernel.org>, <julia.lawall@inria.fr>,
+	<yi.zhang@huawei.com>, <yangerkun@huawei.com>, <libaokun@huaweicloud.com>
+References: <20250714130327.1830534-1-libaokun1@huawei.com>
+ <20250714130327.1830534-2-libaokun1@huawei.com>
+ <aHjL5J3Ui9VMZt2o@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+Content-Language: en-US
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <aHjL5J3Ui9VMZt2o@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ dggpemf500013.china.huawei.com (7.185.36.188)
 
-Hi Linus:
+On 2025/7/17 18:09, Ojaswin Mujoo wrote:
+> On Mon, Jul 14, 2025 at 09:03:11PM +0800, Baokun Li wrote:
+>> When ext4 allocates blocks, we used to just go through the block groups
+>> one by one to find a good one. But when there are tons of block groups
+>> (like hundreds of thousands or even millions) and not many have free space
+>> (meaning they're mostly full), it takes a really long time to check them
+>> all, and performance gets bad. So, we added the "mb_optimize_scan" mount
+>> option (which is on by default now). It keeps track of some group lists,
+>> so when we need a free block, we can just grab a likely group from the
+>> right list. This saves time and makes block allocation much faster.
+>>
+>> But when multiple processes or containers are doing similar things, like
+>> constantly allocating 8k blocks, they all try to use the same block group
+>> in the same list. Even just two processes doing this can cut the IOPS in
+>> half. For example, one container might do 300,000 IOPS, but if you run two
+>> at the same time, the total is only 150,000.
+>>
+>> Since we can already look at block groups in a non-linear way, the first
+>> and last groups in the same list are basically the same for finding a block
+>> right now. Therefore, add an ext4_try_lock_group() helper function to skip
+>> the current group when it is locked by another process, thereby avoiding
+>> contention with other processes. This helps ext4 make better use of having
+>> multiple block groups.
+>>
+>> Also, to make sure we don't skip all the groups that have free space
+>> when allocating blocks, we won't try to skip busy groups anymore when
+>> ac_criteria is CR_ANY_FREE.
+>>
+>> Performance test data follows:
+>>
+>> Test: Running will-it-scale/fallocate2 on CPU-bound containers.
+>> Observation: Average fallocate operations per container per second.
+>>
+>> |CPU: Kunpeng 920   |          P80            |
+>> |Memory: 512GB      |-------------------------|
+>> |960GB SSD (0.5GB/s)| base  |    patched      |
+>> |-------------------|-------|-----------------|
+>> |mb_optimize_scan=0 | 2667  | 4821  (+80.7%)  |
+>> |mb_optimize_scan=1 | 2643  | 4784  (+81.0%)  |
+>>
+>> |CPU: AMD 9654 * 2  |          P96            |
+>> |Memory: 1536GB     |-------------------------|
+>> |960GB SSD (1GB/s)  | base  |    patched      |
+>> |-------------------|-------|-----------------|
+>> |mb_optimize_scan=0 | 3450  | 15371 (+345%)   |
+>> |mb_optimize_scan=1 | 3209  | 6101  (+90.0%)  |
+>>
+>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+>> Reviewed-by: Jan Kara <jack@suse.cz>
+> Hey Baokun, I reviewed some of the patches in v2 but i think that was
+> very last moment so I'll add the comments in this series, dont mind the
+> copy paste :)
+>
+> The patch itself looks good, thanks for the changes.
+>
+> Feel free to add:
+>
+>   Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 
-The following changes since commit 20d71750cc72e80859d52548cf5c2a7513983b0d:
+Sorry for missing your review, I've snowed under with work lately.
 
-  crypto: wp512 - Use API partial block handling (2025-06-23 16:56:56 +0800)
+Thanks for the review!
 
-are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git tags/v6.16-p7
+Cheers,
+Baokun
 
-for you to fetch changes up to ccafe2821cfaa880cf4461307111b76df07c48fb:
-
-  crypto: qat - Use crypto_shash_export_core (2025-06-26 12:55:22 +0800)
-
-----------------------------------------------------------------
-This push fixes a buffer overflows in qat and chelsio.
-----------------------------------------------------------------
-
-Herbert Xu (2):
-      crypto: chelsio - Use crypto_shash_export_core
-      crypto: qat - Use crypto_shash_export_core
-
- drivers/crypto/chelsio/chcr_algo.c             | 10 +++++-----
- drivers/crypto/intel/qat/qat_common/qat_algs.c | 14 +++++++-------
- 2 files changed, 12 insertions(+), 12 deletions(-)
-
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
