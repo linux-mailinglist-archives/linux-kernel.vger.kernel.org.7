@@ -1,72 +1,74 @@
-Return-Path: <linux-kernel+bounces-737777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BFEEB0B078
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 16:34:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2384BB0B079
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 16:34:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 169771895796
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 14:34:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1AE5563B0B
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 14:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B6AB2877D9;
-	Sat, 19 Jul 2025 14:34:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD9B2882D0;
+	Sat, 19 Jul 2025 14:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="k1GEk6Qs"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="LVAHdl1W"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139111E0E1F
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 14:34:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1C2F2877F2
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 14:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752935650; cv=none; b=aShfq5CpR7xb606nUq7AQjyz1EyFE7aOdZQTEp+v71tMMvU3QThh6hPx/lOBCgEH0rUM117W9kwDAQxajNEVV1RGEtKJlW0wHTip5vNHavmE3gd02WpESZcu2sms/brVNnjfkhD4zWRZ3gyacv2QaLwhI/hUp24DLl4rX3vQfS8=
+	t=1752935653; cv=none; b=SqV2zqbFbABUVz9vCl45erD4oe+w4Tk6AkNX7zp1BgEZuw54h/giU4FEUdKPcOu6+AcZUyk/3Xbl93iyoElM0WIqdRYiUHRtqak2euN4+OQLCZSNQkV4UFSW54uhcsxZxbahn0O0uRTPmwVOyIqWlJMqUxVQ6OPXVi9QxKAVvMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752935650; c=relaxed/simple;
-	bh=cIlsCjU60tcTX9pCHNYoUdcY4K8aiFQvCiC3AoK61jA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EIbPbpwjcrGc/ppj4zncmmWE3a/ubYmfELjy8GVIKrj7uWTlOvxcaeJAX8CIHZiXWfafFr5RAPnOJNj1g5Fktnf3/w9iansKtEflM21sDRJGw5VSWNe9v4wvwR2w5WWGAuAwduHO2PRTxfqefptGFIbFWfA0b81+Feo2jms5vx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=k1GEk6Qs; arc=none smtp.client-ip=209.85.214.178
+	s=arc-20240116; t=1752935653; c=relaxed/simple;
+	bh=H4aHIJOV1TJAq6ZuusFg9Zqr2Br14ng8uZtfr3ysksQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=cbHKxEO6F8AarwiWzB1FivbcCqqP3aiHqXXDm2iBoZiJ1b8sfthxiaqfHwvBFLtqCJxOBZHsJPd/c/Vp9HrG28pmRrJKdZsnHGR9+h9HyXJnw+p/kPAi7AXR2Hi6RFjCqqSo0GNUcPfyDsERxyMyY1mqX9mgJWiOvZxOYRGjxfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=LVAHdl1W; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-23636167afeso30139785ad.3
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 07:34:08 -0700 (PDT)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-23649faf69fso25507605ad.0
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 07:34:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=furiosa.ai; s=google; t=1752935648; x=1753540448; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZgLQWEfUsgUd4bc4XTm4Fj5yFjdCjIN4tWY9zvoyEr0=;
-        b=k1GEk6QsJy7Gr8V2GkgXwYyY6fMmoLO+SL4J7RMq41hSdzOp9o7tyyzHeBiKm6ic6F
-         ByVh2CPivEttJ2usjF56ufvZlU9JjpGinv6GUPvnjB8xcKYf8isEJ9ICp5tVoLek3arL
-         pxAsLWu2HYjm2eyXB4rKpOIJHBq4/V0anUMtk=
+        d=furiosa.ai; s=google; t=1752935651; x=1753540451; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TkIl0Ng87tj2Fj8IQfRrJkmK5nZP9FIei480gavcNNA=;
+        b=LVAHdl1Wrq0uawe3y/ixfQc3yT6BbiwWtht0+RGCFhvZFl04LGSg35NAT9ETQYSSIc
+         eRM78ss+P/L8QQxPEu199EbTHs/EQ9g3YV4dr3LiQM0BxAbwQ1RHRazR6lk4ixQh2zw9
+         6o3GqZIh3A/YNGjwytyV0iLgE2VyEjzUW+KbA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752935648; x=1753540448;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZgLQWEfUsgUd4bc4XTm4Fj5yFjdCjIN4tWY9zvoyEr0=;
-        b=NnFOGjIpY0C7wKLh/skbLDSsunDvboThVz5cLY7/w/yS3vj0rZI/4Xg2G5WxUpxiHl
-         PjYMibrySlk4kDl4LFG9dge+9rwdBiFJZ5YF6V2J8Gk4ICN22vxlr/25J+ILQce9KWfd
-         DXaX3rW6rB5t5IHd22zQiVZe5klvZZGVYfSs9cj+UW0uwdmLzG2qAVcBeZBGrjdGvcXf
-         fbwHYnsiHGRhIPElz6f8AcQD4PWMdi9XMr3Necy7OVIjwpus+wtb+U36uApb28GOalmJ
-         EtI2TE/DQX1Uzozfe4a99WW8a7x7GSI1etRTwPYjwvbBZxpm0PxpONE/WJ0xJ6duXBUL
-         CSLA==
-X-Forwarded-Encrypted: i=1; AJvYcCV520O9r3IL8mA3xjpUhSHZOovOUzGDzrRswdXFZYHzk31wlwXxrHgHOrF2SypI9xw1RRqmAhiTxmywTvk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxL0eXQk/YWlff0BBSdx/sQ4rwsp5tS4ISqN38JmWUD/bf0/pdo
-	ySNq1ymBauTFn0swoD0B/2klD6yMKvbTqJ14L8sERl3jd4VFdzE4tquoza6n0j3/fAg=
-X-Gm-Gg: ASbGncumZvMTXdyQV4J/0f/4aQMROdD+XtTIQ8rMrI1divtfgrxzSQMcXtSxtifEWrP
-	u8mWo4JGexwW4WD5TZMjPDvzcyOWhkK2nD1Z1wPAH4yclCDAqt/xzI+AKuxE9+fnWl04g0nYU2n
-	T535QvHtDoVx3EbsQ8B1GjHjmHgY+A6+ZYW3UV9qVcnqScFzahN1k2kGZyrlQja8P5wZ5zZytnT
-	vx/2gXvE84ixyDM9bQWBlm3xaPQGZoljPymVrhPBQtn9yKnlmrwY9s5l3zqQDyJmYVawjjkk5lX
-	wEy5+38AMeH3Cb9NxlhzpM6KuOU02Pl7XMCT/gQo448ldIY+DbWdIkg34WnBdEG0rJF0or+MkUP
-	KeWZ3rbFmwB4xdnaAePh+l23FtSjuKNuokcSZuUsE9nMNH5gOqpiJAcW1WFE=
-X-Google-Smtp-Source: AGHT+IHmqgL62d37O3Ajjc0SWP3lfmOKTeqf3aN029Y1WM6pxkfJu+Z5abVV+qUXutkwbgMwULqrSQ==
-X-Received: by 2002:a17:902:ce85:b0:23c:8f15:3d46 with SMTP id d9443c01a7336-23e25750d9emr181722575ad.37.1752935648180;
-        Sat, 19 Jul 2025 07:34:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752935651; x=1753540451;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TkIl0Ng87tj2Fj8IQfRrJkmK5nZP9FIei480gavcNNA=;
+        b=LRVIIiQKPnlONl+bWRUzU5PgAnhDMSa38J6ahBup/ZcZHA17L7ltD0PVte3YB4U7/A
+         CqvUJYixCs3CNKB+CWEAkpz/09mh3iNO2pVf+NllJYiSnQt0lxsGT/17ateivMkfdEiv
+         F46tBMCHRDva2pH7mhZb8bM0KFt9/wjHgm43Z8RLVyu0YOsRy0LJhVzJiExo4+SZ/gvx
+         6eB6wrNR8wKV8NB9TOKpsX+hx3cucCV443NOcj7qGYuohr7ZX9Vj/odqOyCKqrB+0QYX
+         GvJjXAZGpTcEzef1TJZTM+OJz058ZlaITVtJoFKyxUD1S568HUjI1APN7m/PQ0frpiLh
+         htig==
+X-Forwarded-Encrypted: i=1; AJvYcCVcRvePH8WkhUNy9H9s1Y+vFNxWx5/871oQxI+XhurvJT/ZGzs632nU5DuzWWq71rE4GSIrCZIDI3G+QJI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfipQFm5SgHnOlnPv8eA8mGTV9Qf2SmN3P8wYdvj1oMvhoPb06
+	jWCkP6Ed4xqwmmENTPfUQoYQxvXcvVcE0P/prWRGbQjm5ZPYBWwHqwF5DhDS1+8z2gQ=
+X-Gm-Gg: ASbGncv75Xx+XGo3+jDenl0L62NXuHawQRc1/CWZTUBEjVL5kKJKvtB52R1gkYKo1TM
+	3BLH48XcQIbPSLNAK3qKGqtOGnmRdInlsqIwsbgptUGR4PpQFKmFWh3nLUFbqnW6sViVeJL5s8O
+	oZRyKRSIRlv9z9fCBHB8e9Y2L/HKtu8Yy+voKQ63zvBzOlQerxdH5KYwtqbuhhQzh12jO5zr34y
+	k9JWNXKek0OgxG2raC3g30n7rkXQQprX7HcFJCGpgAAHrF7hUzf7Tb4zZhJgEurBcDhS2zmCC2l
+	7YgunJsJ8dy12afjjJHQq30zUIPuOQGCCyWxxkbW6hZsM3YLtQCrqL1izNxAoO4y2fcKQf1UTEL
+	aVNk0rQj+PjJPRRsnC/0qzEnkKflr+FsTW8a81FSdiiHKAKr5wbQa29n8W/U=
+X-Google-Smtp-Source: AGHT+IGpEs8uiBA7/aVMtHrt52Qtzk5GqQnPoy335qfDXK4TTerS+kRTHT4TOUh64k+czliVVMOb7A==
+X-Received: by 2002:a17:902:e88d:b0:234:ed31:fc96 with SMTP id d9443c01a7336-23e2572fbc3mr200769665ad.26.1752935651099;
+        Sat, 19 Jul 2025 07:34:11 -0700 (PDT)
 Received: from sidong.sidong.yang.office.furiosa.vpn ([61.83.209.48])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b5e3d4esm30017525ad.23.2025.07.19.07.34.05
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b5e3d4esm30017525ad.23.2025.07.19.07.34.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Jul 2025 07:34:07 -0700 (PDT)
+        Sat, 19 Jul 2025 07:34:10 -0700 (PDT)
 From: Sidong Yang <sidong.yang@furiosa.ai>
 To: Miguel Ojeda <ojeda@kernel.org>,
 	Arnd Bergmann <arnd@arndb.de>,
@@ -75,10 +77,12 @@ Cc: rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	io-uring@vger.kernel.org,
 	Sidong Yang <sidong.yang@furiosa.ai>
-Subject: [RFC PATCH 0/4] rust: miscdevice: abstraction for uring-cmd
-Date: Sat, 19 Jul 2025 14:33:54 +0000
-Message-ID: <20250719143358.22363-1-sidong.yang@furiosa.ai>
+Subject: [PATCH 1/4] rust: bindings: add io_uring headers in bindings_helper.h
+Date: Sat, 19 Jul 2025 14:33:55 +0000
+Message-ID: <20250719143358.22363-2-sidong.yang@furiosa.ai>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250719143358.22363-1-sidong.yang@furiosa.ai>
+References: <20250719143358.22363-1-sidong.yang@furiosa.ai>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,24 +91,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch series implemens an abstraction for io-uring sqe and cmd and
-adds uring_cmd callback for miscdevice. Also there is an example that use
-uring_cmd in rust-miscdevice sample.
+This patch adds two headers io_uring.h io_uring/cmd.h in bindings_helper
+for implementing rust io_uring abstraction.
 
-Sidong Yang (4):
-  rust: bindings: add io_uring headers in bindings_helper.h
-  rust: io_uring: introduce rust abstraction for io-uring cmd
-  rust: miscdevice: add uring_cmd() for MiscDevice trait
-  samples: rust: rust_misc_device: add uring_cmd example
+Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
+---
+ rust/bindings/bindings_helper.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
- rust/bindings/bindings_helper.h  |   2 +
- rust/kernel/io_uring.rs          | 114 +++++++++++++++++++++++++++++++
- rust/kernel/lib.rs               |   1 +
- rust/kernel/miscdevice.rs        |  34 +++++++++
- samples/rust/rust_misc_device.rs |  30 ++++++++
- 5 files changed, 181 insertions(+)
- create mode 100644 rust/kernel/io_uring.rs
-
+diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+index 8cbb660e2ec2..a41205e2b8b8 100644
+--- a/rust/bindings/bindings_helper.h
++++ b/rust/bindings/bindings_helper.h
+@@ -72,6 +72,8 @@
+ #include <linux/wait.h>
+ #include <linux/workqueue.h>
+ #include <linux/xarray.h>
++#include <linux/io_uring.h>
++#include <linux/io_uring/cmd.h>
+ #include <trace/events/rust_sample.h>
+ 
+ #if defined(CONFIG_DRM_PANIC_SCREEN_QR_CODE)
 -- 
 2.43.0
 
