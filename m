@@ -1,217 +1,236 @@
-Return-Path: <linux-kernel+bounces-737694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFD8BB0AF7C
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 13:10:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9523B0AF7F
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 13:13:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19EE9564425
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 11:10:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07971174F98
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 11:13:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48DD0221F01;
-	Sat, 19 Jul 2025 11:09:53 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46096238C1D;
+	Sat, 19 Jul 2025 11:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HSH3AGrZ"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 349B81E3DDE
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 11:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042A722157B;
+	Sat, 19 Jul 2025 11:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752923392; cv=none; b=gwld+4qmLARDQrcpiMW/HPvLrUrEPQtOyjUNOBLSZiA3VlyHI4PgJieNQZqTJII99OL6saZ55QObrVWE9fVZW4j7FdhstmvMSBXZ70ISB2rkDBNkd0Ihj6tm3emyZL7JFeVJSmmRrs80dJdbAqsiWyxzy37TZ+k/evk3y4Wd+ZA=
+	t=1752923596; cv=none; b=HaNVXT6sqmTbSxct1tK0ZYUsrAnFx6E049rJB8B9skNkdYq3WbJhyS6jicFe3DKQxaI+29yWF0wa0izzWRdm2mnmr5uTyxe2ecNXqbpFI+yFV/zqLotU0ospqSE+W87EbQgaMBh20eaQjr49JnbMibC9R+UK5CiU2qeS5GyHG1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752923392; c=relaxed/simple;
-	bh=33TO7SOBRi1e0VWy4kW4DgxXVCZU4AT0AUB1VKuajy8=;
-	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Su7kiwwwePpCYlAe+TGtFxisXNmRBQw38n2709lXMj+Z428KlVV7Xeu0XU2QEhG3PEiyr4uWfNB9rzduk2GwEY7zUCTJKpFdjDiIG0J61Nh5iE2Rbf/HjHp8xoXVuKHpG4+p2xjgxsKr05oz7KyB8CkUxi4iPDpQoRm2elMoSiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bkkRm4th1ztSLD;
-	Sat, 19 Jul 2025 19:08:36 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id 66FB5180468;
-	Sat, 19 Jul 2025 19:09:41 +0800 (CST)
-Received: from kwepemn500004.china.huawei.com (7.202.194.145) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 19 Jul 2025 19:09:41 +0800
-Received: from [10.67.120.218] (10.67.120.218) by
- kwepemn500004.china.huawei.com (7.202.194.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 19 Jul 2025 19:09:40 +0800
-Subject: Re: [PATCH v2 2/3] coresight: tmc: refactor the tmc-etr mode setting
- to avoid race conditions
-To: Leo Yan <leo.yan@arm.com>
-References: <20250620075412.952934-1-hejunhao3@huawei.com>
- <20250620075412.952934-3-hejunhao3@huawei.com>
- <20250702164729.GA1039028@e132581.arm.com>
-CC: <suzuki.poulose@arm.com>, <james.clark@arm.com>,
-	<anshuman.khandual@arm.com>, <coresight@lists.linaro.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linuxarm@huawei.com>, <jonathan.cameron@huawei.com>,
-	<yangyicong@huawei.com>, <prime.zeng@hisilicon.com>
-From: hejunhao <hejunhao3@huawei.com>
-Message-ID: <8e359805-ac00-8d19-f278-9172d9daef96@huawei.com>
-Date: Sat, 19 Jul 2025 19:09:40 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+	s=arc-20240116; t=1752923596; c=relaxed/simple;
+	bh=0mwzNFeEDlJbURltDxuzC/0HvB2I9wVfuHC9hjlqpfM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dKlafO1jvIe+31gsnpSJxjVBnNb0f07JxVQ4nyWWaQbItJNjvCBQRmXvokhvYgKRo12NskmN5HVDznvuZJQvtaZAVOoQEpyn/DRnEZQKVR+u7bgn+2ufsMlPIwd04QzjTY2v1uyQcNLYPrL24ZWFbBDI8QbAM3G+qOf2zp0LC9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HSH3AGrZ; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2363616a1a6so24755135ad.3;
+        Sat, 19 Jul 2025 04:13:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752923594; x=1753528394; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ErnUj0TrfehYqLSfVNQWUCMO7rE+AGCV77A73SWWF44=;
+        b=HSH3AGrZak25Ym9+4VyTEznPsLXnNjUbBIGa2OwQmNWCl7+UmiMaKq5h7+QpducAtv
+         QtVMBJ9NgRb0MYc0m1/g4PmJ3SWdRjyOpNJhakxLB3cd0Bs3mI8XyYmLMjEHGPsUaBy1
+         +HvuXRDvif9JU+Xq/1QQG2ler3jDBpcGINWBbSMlDS/TjNJkDOUxzGd/CFMemKl8YyJM
+         hXHkpK9nDAeI/prd74p9v/kS3Fd8SOc6fRm4mG+CxwdjtxzW4z1Snm0HXi/WfZkF8bpH
+         4HcRocax9tsBnMZxyR2VTD0o8qcWPSWg4yj0bTaMZHwqr2sO5H8TMqMiGmo4jmbitptr
+         DrPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752923594; x=1753528394;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ErnUj0TrfehYqLSfVNQWUCMO7rE+AGCV77A73SWWF44=;
+        b=FlUOwTsgLAu8LEDds7egJXA2PFK4QQ3rbVOrYU2uvNqf7rUeEiqAj4p4s+4qL0JRv4
+         75Hz4qOukvPnRf6w4Qw/ksskNd/0LWJNlM7YhMEgqAskmgKqmJ/wk13tyFoVTQ6uwf86
+         eDug+KL1IAwAaz00HCg7IQMUY1YED/6WQjqii3jKkviW/JQcJsOEfk8hzNIWQRwvpf5S
+         KWTitlOMP7xR/zWR13qZ+8Z8xhPCG40rGnUofqIEIgPuXGok+iz0DFZSlOT/zWRVf6Fb
+         lQ0kjTqweYCXlPSEutFfo0qEWdX1q4PZLL1f43NO9E7R9YTeIbGk84N62RKApkgoQgad
+         KbNA==
+X-Forwarded-Encrypted: i=1; AJvYcCWU2EpzsjVxls8aGAaS+icZFNUldXm6WqENHtBF3NBL3BB9G/BrG3mFupYD+EjaFYAy1mEZ6GXuujLP/Hg=@vger.kernel.org, AJvYcCWVEpE79K/Zhe7TnoQScc2h+eBHDT8AwP5P3fnXio/zuviF/ly9lCUM6Xdmu8EQFmhCX5/WcXgUKauE/RT+h93Z@vger.kernel.org
+X-Gm-Message-State: AOJu0Yww1sCYnJP1WMW5/iZCF+W9Jb4pFWTq3tOCwMRIFbga6OZStOmA
+	7H7xqGJmGr3Sj6LVUeYRZ6piabpyglkyUNnqOHfQ5VO+QyQbces+6qR+
+X-Gm-Gg: ASbGncvCnsW6s0lzuxAmBbI6HpQpTxSJRmnAINN279dyZ9orB5ZhVJf/HK5D/ScZRm0
+	Q6mEYTB6LhYopEDvs6QauJ/559IVOIGmZjlVgCOuWArl2pdAgOJpno9hBtsVvbqtCsL8sRuGd3y
+	/otUQyL/OWyNGwZWurk9007jJ76UD3yhuwBtHqD4nrbty3vkwqBsM9zit2Xm4i1SgpNP2h7a2+6
+	P9S6W2JgQJ9nyLyD4lFOIZeGfFJeK76esXZwki6+wWZ5sOO4O7dTvJndQQ+dNrLMK2tcN+R3u7a
+	YR5ag9I+G0fC8HzySrIU3Tvjgb14nj3K66AhtjXpGNRo3Qo1xKaPOlUe7OEFeAY+zydnOqA6HL3
+	nCMYuWGlWKUhs3A0k8kMs
+X-Google-Smtp-Source: AGHT+IHgWhFSIa0YZjtHFpdAkGBDwT7thwYY+GMM19qe0nKu2IjFjS7vlWftbrR/tzPZYceTmT3k2A==
+X-Received: by 2002:a17:902:c947:b0:23e:1aba:410e with SMTP id d9443c01a7336-23e25684a2dmr216606045ad.2.1752923594262;
+        Sat, 19 Jul 2025 04:13:14 -0700 (PDT)
+Received: from [0.0.5.57] ([136.159.213.146])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b6b4c81sm27388875ad.114.2025.07.19.04.13.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 19 Jul 2025 04:13:13 -0700 (PDT)
+From: Abhinav Saxena <xandfury@gmail.com>
+Subject: [PATCH RFC 0/4] landlock: add LANDLOCK_SCOPE_MEMFD_EXEC execution
+Date: Sat, 19 Jul 2025 05:13:10 -0600
+Message-Id: <20250719-memfd-exec-v1-0-0ef7feba5821@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250702164729.GA1039028@e132581.arm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemn500004.china.huawei.com (7.202.194.145)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMZ9e2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDc0Mz3dzU3LQU3dSK1GTdxGSDFFMLIwNDi2RjJaCGgqLUtMwKsGHRSkF
+ uzkqxtbUAqeaksWEAAAA=
+To: =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
+ =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+ "Serge E. Hallyn" <serge@hallyn.com>, Shuah Khan <shuah@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, 
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, llvm@lists.linux.dev, 
+ Abhinav Saxena <xandfury@gmail.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752923593; l=5097;
+ i=xandfury@gmail.com; s=20250614; h=from:subject:message-id;
+ bh=0mwzNFeEDlJbURltDxuzC/0HvB2I9wVfuHC9hjlqpfM=;
+ b=T4or0kAxS6LcwdHdKgCeBBFyDGKhf/asX5RpBfbbUWJjkblUmKpVWY70jaqgVbPgLfxQYmtiS
+ NzlQebThU1DA2nC8KYDs2QQ60bEC06s47uwrz042tvQxY67+Xvs5ufU
+X-Developer-Key: i=xandfury@gmail.com; a=ed25519;
+ pk=YN6w7WNet8skqvMWxhG5BlAmtd1SQmo8If6Mofh4k44=
 
+This patch series introduces LANDLOCK_SCOPE_MEMFD_EXEC, a new Landlock
+scoping mechanism that restricts execution of anonymous memory file
+descriptors (memfd) created via memfd_create(2). This addresses security
+gaps where processes can bypass W^X policies and execute arbitrary code
+through anonymous memory objects.
 
+Fixes: https://github.com/landlock-lsm/linux/issues/37
 
-On 2025/7/3 0:47, Leo Yan wrote:
-> On Fri, Jun 20, 2025 at 03:54:11PM +0800, Junhao He wrote:
->
-> [...]
->
->> To fix this, configure the tmc-etr mode before invoking enable_etr_perf()
->> or enable_etr_sysfs(), explicitly check if the tmc-etr sink is already
->> enabled in a different mode, and simplily the setup and checks for "mode".
->> To prevent race conditions between mode transitions.
-> I have a similiar fixing for CTI driver, see:
-> https://lore.kernel.org/linux-arm-kernel/20250701-arm_cs_pm_fix_v3-v2-0-23ebb864fcc1@arm.com/T/#maccd68b460fb8d74ccdd3504163d8f486f04178b
->
-> [...]
->
->> @@ -1781,14 +1756,52 @@ static int tmc_enable_etr_sink_perf(struct coresight_device *csdev, void *data)
->>   static int tmc_enable_etr_sink(struct coresight_device *csdev,
->>   			       enum cs_mode mode, void *data)
->>   {
->> +	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
->> +	enum cs_mode old_mode;
->> +	int rc = -EINVAL;
->> +
->> +	scoped_guard(spinlock_irqsave, &drvdata->spinlock) {
-> scoped_guard(raw_spinlock_irqsave, &drvdata->spinlock) {
+SECURITY PROBLEM
+================
 
-Ok, will fix it.
+Current Landlock filesystem restrictions do not cover memfd objects,
+allowing processes to:
 
-> I am concerned that the spinlock is acquired and released for several
-> times in a single flow. It is possible to hit some corner case, e.g.,
->
-> - CPU0 acquires the lock, set sink as SYSFS mode, and releases the lock;
-> - CPU1 acquires the lock, detects the SYSFS mode has been set,
->    directly bail out, then enable ETM.
->
-> The problem is the sink has not been enabled yet. This leads to CPU1
-> to enable the tracer but prior to sink's enabling.
+1. Read-to-execute bypass: Create writable memfd, inject code,
+   then execute via mmap(PROT_EXEC) or direct execve()
+2. Anonymous execution: Execute code without touching the filesystem via
+   execve("/proc/self/fd/N") where N is a memfd descriptor
+3. Cross-domain access violations: Pass memfd between processes to
+   bypass domain restrictions
 
-Yes, you are right. So I added a minor note for that. The impact of this 
-corner case may not have been fully considered.
+These scenarios can occur in sandboxed environments where filesystem
+access is restricted but memfd creation remains possible.
 
-> The key piont is we should ensure the mode is consistent to the
-> hardware state. I will take a bit time for if we can have a better idea
-> for this.
->
->> +		old_mode = coresight_get_mode(csdev);
->> +		if (old_mode != CS_MODE_DISABLED && old_mode != mode)
->> +			return -EBUSY;
->> +
->> +		if (drvdata->reading)
->> +			return -EBUSY;
->> +
->> +		/* In sysFS mode we can have multiple writers per sink. */
->> +		if (old_mode == CS_MODE_SYSFS) {
->> +			csdev->refcnt++;
-> I am just wandering if we can unify the "refcnt" code for both SYSFS
-> mode and Perf mode, and as a result, we can consolidate the code cross
-> different drivers.
->
-> Something like:
->
->                  if (!csdev->refcnt) {
->                          coresight_set_mode(csdev, mode);
->                  } else {
->                          /* The device has been configured with an incompatible mode */
->                          if (coresight_get_mode(csdev) != mode)
->                                  return -EBUSY;
->
->                          csdev->refcnt++;
+IMPLEMENTATION
+==============
 
-we need to check the mode, cannot directly increase the reference count 
-In performance mode.
+The implementation adds hierarchical execution control through domain
+scoping:
 
->                  }
->
-> Then when disable the device:
->
->                  csdev->refcnt--;
->                  if (!csdev->refcnt)
->                          coresight_set_mode(csdev, CS_MODE_DISABLED);
->
-> We should not check "drvdata->reading" when enable or disable sink, as
-> it is a flag to track if reading the trace buffer, it is irrelevant to
-> the sink device's enabling or disabling.
+Core Components:
+- is_memfd_file(): Reliable memfd detection via "memfd:" dentry prefix
+- domain_is_scoped(): Cross-domain hierarchy checking (moved to domain.c)
+- LSM hooks: mmap_file, file_mprotect, bprm_creds_for_exec
+- Creation-time restrictions: hook_file_alloc_security
 
-In sysfs mode, it is necessary to check drvdata->reading.
+Security Matrix:
+Execution decisions follow domain hierarchy rules preventing both
+same-domain bypass attempts and cross-domain access violations while
+preserving legitimate hierarchical access patterns.
 
->
-> Please verify perf mode (especially for system wide session) to avoid
-> anything missed.
+Domain Hierarchy with LANDLOCK_SCOPE_MEMFD_EXEC:
+===============================================
 
-I will refactor this code and upload a new version that includes all of 
-your suggested solutions.
+Root (no domain) - No restrictions
+  |
+  +-- Domain A [SCOPE_MEMFD_EXEC] Layer 1
+  |     +-- memfd_A (tagged with Domain A as creator)
+  |     |
+  |     +-- Domain A1 (child) [NO SCOPE] Layer 2
+  |     |     +-- Inherits Layer 1 restrictions from parent
+  |     |     +-- memfd_A1 (can create, inherits restrictions)
+  |     |     +-- Domain A1a [SCOPE_MEMFD_EXEC] Layer 3
+  |     |           +-- memfd_A1a (tagged with Domain A1a)
+  |     |
+  |     +-- Domain A2 (child) [SCOPE_MEMFD_EXEC] Layer 2
+  |           +-- memfd_A2 (tagged with Domain A2 as creator)
+  |           +-- CANNOT access memfd_A1 (different subtree)
+  |
+  +-- Domain B [SCOPE_MEMFD_EXEC] Layer 1
+        +-- memfd_B (tagged with Domain B as creator)
+        +-- CANNOT access ANY memfd from Domain A subtree
 
-Thanks,
-Junhao
+Execution Decision Matrix:
+========================
+Executor->  |  A  | A1 | A1a | A2 | B  | Root
+Creator     |     |    |     |    |    |
+------------|-----|----|-----|----|----|-----
+Domain A    |  X  | X  | X   | X  | X  |  Y
+Domain A1   |  Y  | X  | X   | X  | X  |  Y
+Domain A1a  |  Y  | Y  | X   | X  | X  |  Y
+Domain A2   |  Y  | X  | X   | X  | X  |  Y
+Domain B    |  X  | X  | X   | X  | X  |  Y
+Root        |  Y  | Y  | Y   | Y  | Y  |  Y
 
-> Thanks,
-> Leo
->
->> +			return 0;
->> +		}
->> +
->> +		/*
->> +		 * minor note: In sysFS mode, the task1 get locked first, it setup
->> +		 * etr mode to SYSFS. Then task2 get locked，it will directly return
->> +		 * success even when the tmc-etr is not enabled at this moment.
->> +		 * Ultimately, task1 will still successfully enable tmc-etr.
->> +		 * This is a transient state and does not cause an anomaly.
->> +		 */
->> +		coresight_set_mode(csdev, mode);
->> +	}
->> +
->>   	switch (mode) {
->>   	case CS_MODE_SYSFS:
->> -		return tmc_enable_etr_sink_sysfs(csdev);
->> +		rc = tmc_enable_etr_sink_sysfs(csdev);
->> +		break;
->>   	case CS_MODE_PERF:
->> -		return tmc_enable_etr_sink_perf(csdev, data);
->> +		rc = tmc_enable_etr_sink_perf(csdev, data);
->> +		break;
->>   	default:
->> -		return -EINVAL;
->> +		rc = -EINVAL;
->>   	}
->> +
->> +	if (rc && old_mode != mode) {
->> +		scoped_guard(spinlock_irqsave, &drvdata->spinlock) {
->> +			coresight_set_mode(csdev, old_mode);
->> +		}
->> +	}
->> +
->> +	return rc;
->>   }
->>   
->>   static int tmc_disable_etr_sink(struct coresight_device *csdev)
->> -- 
->> 2.33.0
->>
-> .
->
+Legend: Y = Execution allowed, X = Execution denied
+
+Scenarios Covered:
+- Direct mmap(PROT_EXEC) on memfd files
+- Two-stage mmap(PROT_READ) + mprotect(PROT_EXEC) bypass attempts
+- execve("/proc/self/fd/N") anonymous execution
+- execveat() and fexecve() file descriptor execution
+- Cross-process memfd inheritance and IPC passing
+
+TESTING
+=======
+
+All patches have been validated with:
+- scripts/checkpatch.pl --strict (clean)
+- Selftests covering same-domain restrictions, cross-domain 
+  hierarchy enforcement, and regular file isolation
+- KUnit tests for memfd detection edge cases
+
+DISCLAIMER
+==========
+
+My understanding of Landlock scoping semantics may be limited, but this
+implementation reflects my current understanding based on available
+documentation and code analysis. I welcome feedback and corrections
+regarding the scoping logic and domain hierarchy enforcement.
+
+Signed-off-by: Abhinav Saxena <xandfury@gmail.com>
+---
+Abhinav Saxena (4):
+      landlock: add LANDLOCK_SCOPE_MEMFD_EXEC scope
+      landlock: implement memfd detection
+      landlock: add memfd exec LSM hooks and scoping
+      selftests/landlock: add memfd execution tests
+
+ include/uapi/linux/landlock.h                      |   5 +
+ security/landlock/.kunitconfig                     |   1 +
+ security/landlock/audit.c                          |   4 +
+ security/landlock/audit.h                          |   1 +
+ security/landlock/cred.c                           |  14 -
+ security/landlock/domain.c                         |  67 ++++
+ security/landlock/domain.h                         |   4 +
+ security/landlock/fs.c                             | 405 ++++++++++++++++++++-
+ security/landlock/limits.h                         |   2 +-
+ security/landlock/task.c                           |  67 ----
+ .../selftests/landlock/scoped_memfd_exec_test.c    | 325 +++++++++++++++++
+ 11 files changed, 812 insertions(+), 83 deletions(-)
+---
+base-commit: 5b74b2eff1eeefe43584e5b7b348c8cd3b723d38
+change-id: 20250716-memfd-exec-ac0d582018c3
+
+Best regards,
+-- 
+Abhinav Saxena <xandfury@gmail.com>
 
 
