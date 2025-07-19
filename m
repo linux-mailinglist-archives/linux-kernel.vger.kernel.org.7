@@ -1,126 +1,147 @@
-Return-Path: <linux-kernel+bounces-737923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91513B0B1F5
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 23:29:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A9B4B0B1F7
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 23:34:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23C86AA4435
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 21:28:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DDF4AA496F
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 21:34:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A792264B7;
-	Sat, 19 Jul 2025 21:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B6FB222566;
+	Sat, 19 Jul 2025 21:34:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VGFGg6G6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aiagtwe5"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26BB6148838
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 21:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78AD71D63DD
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 21:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752960549; cv=none; b=mlLa9k9RREMSbB3IK5mpByyvBngQ5Mf+oPLH3BOIqgwClL6hNssVTAT37aSCkg7JutBLnVqxlf0Jin4eFc4wYBoRGH9lyQ/NuWO4wrL5CK4yltCT78ZjFB1fbIl8tAAoJmEtyGfA97p1pABKI3pfH3Bs8rLXik1rjxqtwUwdoGo=
+	t=1752960869; cv=none; b=mA5mNsfNWQf9WEjfwx2ehcIo+j1R93bPFrCXCVptVcZJuWmCvEQsnKHvh7oXlCTutNX1rcJB2n3hlhXxwAdIiguZJDrIspIhY9aN2xYTGIBwjIMMwndN+clIFRECumFanM0jfC6upmvRLWji1qsQ5QepsuFklaB7tgqVY5qy7XU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752960549; c=relaxed/simple;
-	bh=S+IAogN4RSr4qVuiZ51VRNqMJuK8sEvXC5Of2Dn9YK8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H6CjGQ93ujOg/odOHXwoEY/jQgNuZY64jNuTP8d0nAboN6nVkeosBFdj/AOiGKfMTFCZMn6LZ6wj5jvMMSyyEHQV2/16aK89leI4KVDz6kSme3n7mlx10yzYPNwbUOc3hoD8f2s7XxXBBPN8TMvWXfTFtTh3kNX6k2fn304HJCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VGFGg6G6; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752960546; x=1784496546;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=S+IAogN4RSr4qVuiZ51VRNqMJuK8sEvXC5Of2Dn9YK8=;
-  b=VGFGg6G6qtKGixNFNy4bXfF1mDwXHlC4pHcO5aUrFhYHCpd+iBvf1Usx
-   xHPQS6ok7/NCnJa6qBq5H1JfbYjgGFlGZFkpf5xrSZY8wq1eC/6VLqM6B
-   XiV44Vs69/IZXWT9S1L8QfF4WyAFMMRS05YPoQVe5g48YWlF24wDiTrYL
-   IUXoE/P3xSY4aHZDXdWCg7gEjxFXL/go96kSZ6P5cHFoBuJ9ZR0tNf7jc
-   lzCmxiFN0CMvD3XMM7nMN+9g4W3WckYxQegcsj3iRu+XR63wLwBgIl2ov
-   bBQ0xgr73wRa2aHmmt1sILgN3SbHn7CSNbx/CLCbEedzbbwrzatnGwSi7
-   g==;
-X-CSE-ConnectionGUID: E4u1Xv5sSbCs0TPmNypr6Q==
-X-CSE-MsgGUID: rfTe3443TvSxgkvpRi21cQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11497"; a="66570231"
-X-IronPort-AV: E=Sophos;i="6.16,325,1744095600"; 
-   d="scan'208";a="66570231"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2025 14:29:05 -0700
-X-CSE-ConnectionGUID: BGXElBXgRTCAEG1ImpsmqA==
-X-CSE-MsgGUID: EOvTOH1PR6ihuaTKCY7RAQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,325,1744095600"; 
-   d="scan'208";a="195575550"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 19 Jul 2025 14:29:04 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1udF77-000FnN-0m;
-	Sat, 19 Jul 2025 21:29:01 +0000
-Date: Sun, 20 Jul 2025 05:28:43 +0800
-From: kernel test robot <lkp@intel.com>
-To: jeff_chang@richtek.com, lgirdwood@gmail.com, broonie@kernel.org,
+	s=arc-20240116; t=1752960869; c=relaxed/simple;
+	bh=1jVQPcZUaDrSz3SIjSW9s/ndZFlY73xv0k8OR9kANGQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gsZ84eCvpc4TXbzZwHwii0grJ4Jyq2RzQof5X3WMrspdbTEI1RheQxwoB3zIcf9ilKDcquyy7WCtVwW53vAQNJrtuEkn4t+Z3nZ6rerICbw4DG9Eyi5ceU9fLtsVub8g4Rp+Wavn25N1v1TzfLDJTISchCFiwbg1zNZchOb3vYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aiagtwe5; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-235f9ea8d08so26088135ad.1
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 14:34:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752960868; x=1753565668; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RmLGUZG1SFofD7aLds62twbH2Sqn20p333YxpHUm6vI=;
+        b=aiagtwe5mzNP0VDp+xH708qOedIrGup27wkh354Nyxv1SLaatWr7x/GqLhRG/ePJZN
+         6FHQuxN2EqhZWjUexgqch1Oqsgh5k5clv54volw9c65UR4YObj/R+1V4+dfz2PSDQCLb
+         YoBMGD7BXsRS98PXqHeCyXlGm1XS0r37yTrB4KOxokGvQ9EoZtG8vvdN/iyF0pXJf4pw
+         2TzYtDer8VulxkrscsgKS0FbRT8NSDIui1PE3Bxrc2N8yeRxODQkGvjP/j1PS+LDYTWj
+         A6MPfKvJxIm7jFJkkbDjypb9cJP1np71RzNqoiaUA/D4xOT4m5fhqIPPbFAg2rQugONO
+         dKXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752960868; x=1753565668;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RmLGUZG1SFofD7aLds62twbH2Sqn20p333YxpHUm6vI=;
+        b=uXDHadTISojVwcXFC+rUv4CyGisSUc8DZK790fMx7DKu0tZqj1W8coLLuFu0h86exI
+         X1bTtYE9a87HFYPKOnIGu/WCrfnAtx/dH1AKvNb7kKR2X/pjRuPuMbdQD8F1FoounPWq
+         SpHM9KsI4L7+QdZKOx7FfBfBPQuutJDLwO/DFTaPINbMB6CcsDTdsB+5yoA/+FfKRxQT
+         BK+y2jDR7ypiBchx0wOhyNKEhNLcF+aONtvd1UPUG7KIPnzvcgc14bhbm0vH64HQb5vz
+         XE//mpuM/YPoyra4Gy+PARX47VoGV+a4fZ4ScCz0ziCWdAchkvsxt8s4RELe+VIZj1Sj
+         Idzw==
+X-Forwarded-Encrypted: i=1; AJvYcCU54vqlCWnatt70KHgFhqQxwp+Bb9dg0VvayGKdA6iPZ5iAztl9OjZHpumnxfbMZEh7LDrMeK27gr+0Hq8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIZ/Kl0Wj9rFkYtw4PJI2vbLUMI1VxP5983MFvm6RXzjGAT1jo
+	tX+FR0IOOJm19/AacjnMuZaa1JlRlHN0uabABJyj+Gl/25zHG3jBZ2Zj
+X-Gm-Gg: ASbGnctfriP8hizFaaXP6HRd15+vN2nmn9W93G4zr90Cq+yx/jlJjZLjiJEFgSaLjsp
+	oJNEtieUFljh9nkT9LMuaavwmebBSOsCR0AJlRvMKicGsInjk0cLKRgqgcBn7aO3Hb/0qOHGNtk
+	yoTCHxbDsdU87UUjEBHxoUthcemnbrHBJqk54ZL3cUF+wOtg/tHRIhFY2acTj+k3E8Z/GcYNuLt
+	252fVCjCuTyQ45sMZpmtPCas4yql1x1+EaoEO+YPojYxZTE2hiSmbsaTh00cSamNrBGSfQU9VhR
+	NaecCNv+ajdsMB9/X1ye348T8haTmUAeIV7Q03FMCL/yMbfBEJO2Y+SLGXjPn3d+tglPRPTd6HG
+	bR2L8H74N9KDb9ANkP2rs6Bm99eSx/B9/
+X-Google-Smtp-Source: AGHT+IHCLK40B5N2+SVa9Owe7vuPcaRxputEr52wKn+7nmyJWztktAiRmFzlK46bSh5kvb7gHY8PUw==
+X-Received: by 2002:a17:902:d503:b0:234:e8db:431d with SMTP id d9443c01a7336-23e24edda6dmr204417035ad.20.1752960867525;
+        Sat, 19 Jul 2025 14:34:27 -0700 (PDT)
+Received: from localhost ([216.228.127.129])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b5e2de8sm33136895ad.11.2025.07.19.14.34.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 19 Jul 2025 14:34:26 -0700 (PDT)
+From: Yury Norov <yury.norov@gmail.com>
+To: Tony Luck <tony.luck@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Dave Martin <Dave.Martin@arm.com>,
+	James Morse <james.morse@arm.com>,
 	linux-kernel@vger.kernel.org
-Cc: Paul Gazzillo <paul@pgazz.com>,
-	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
-	oe-kbuild-all@lists.linux.dev, jeff_chang@richtek.com
-Subject: Re: [PATCH v2] regulator: rt5133: Add RT5133 PMIC regulator Support
-Message-ID: <202507200505.u1UDlUuV-lkp@intel.com>
-References: <20250718081052.2685826-1-jeff_chang@richtek.com>
+Cc: Yury Norov <yury.norov@gmail.com>
+Subject: [PATCH] fs/resctl: use for_each_bit_from() in __check_limbo()
+Date: Sat, 19 Jul 2025 17:34:23 -0400
+Message-ID: <20250719213424.403632-1-yury.norov@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250718081052.2685826-1-jeff_chang@richtek.com>
+Content-Transfer-Encoding: 8bit
 
-Hi,
+From: Yury Norov (NVIDIA) <yury.norov@gmail.com>
 
-kernel test robot noticed the following build warnings:
+The function opencodes for_each_set_bit_from(). Switch to the dedicated
+macro, and drop some housekeeping code.
 
-[auto build test WARNING on broonie-regulator/for-next]
-[also build test WARNING on linus/master v6.16-rc6 next-20250718]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+While there, switch to non-atomic __clear_bit(), because atomicity is
+not possible in this context, and that may confuse readers.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/jeff_chang-richtek-com/regulator-rt5133-Add-RT5133-PMIC-regulator-Support/20250718-161216
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
-patch link:    https://lore.kernel.org/r/20250718081052.2685826-1-jeff_chang%40richtek.com
-patch subject: [PATCH v2] regulator: rt5133: Add RT5133 PMIC regulator Support
-config: alpha-kismet-CONFIG_MFD_STMFX-CONFIG_PINCTRL_STMFX-0-0 (https://download.01.org/0day-ci/archive/20250720/202507200505.u1UDlUuV-lkp@intel.com/config)
-reproduce: (https://download.01.org/0day-ci/archive/20250720/202507200505.u1UDlUuV-lkp@intel.com/reproduce)
+Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+---
+ fs/resctrl/monitor.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507200505.u1UDlUuV-lkp@intel.com/
-
-kismet warnings: (new ones prefixed by >>)
->> kismet: WARNING: unmet direct dependencies detected for MFD_STMFX when selected by PINCTRL_STMFX
-   WARNING: unmet direct dependencies detected for OF_GPIO
-     Depends on [n]: GPIOLIB [=y] && OF [=n] && HAS_IOMEM [=y]
-     Selected by [y]:
-     - REGULATOR_RT5133 [=y] && REGULATOR [=y] && I2C [=y] && GPIOLIB [=y]
-   
-   WARNING: unmet direct dependencies detected for MFD_STMFX
-     Depends on [n]: HAS_IOMEM [=y] && I2C [=y] && OF [=n]
-     Selected by [y]:
-     - PINCTRL_STMFX [=y] && PINCTRL [=y] && I2C [=y] && OF_GPIO [=y]
-   
-   WARNING: unmet direct dependencies detected for GPIO_SYSCON
-     Depends on [n]: GPIOLIB [=y] && HAS_IOMEM [=y] && MFD_SYSCON [=y] && OF [=n]
-     Selected by [y]:
-     - GPIO_SAMA5D2_PIOBU [=y] && GPIOLIB [=y] && HAS_IOMEM [=y] && MFD_SYSCON [=y] && OF_GPIO [=y] && (ARCH_AT91 || COMPILE_TEST [=y])
-
+diff --git a/fs/resctrl/monitor.c b/fs/resctrl/monitor.c
+index f5637855c3ac..3e1c14214ea8 100644
+--- a/fs/resctrl/monitor.c
++++ b/fs/resctrl/monitor.c
+@@ -135,7 +135,7 @@ void __check_limbo(struct rdt_mon_domain *d, bool force_free)
+ 	struct rdt_resource *r = resctrl_arch_get_resource(RDT_RESOURCE_L3);
+ 	u32 idx_limit = resctrl_arch_system_num_rmid_idx();
+ 	struct rmid_entry *entry;
+-	u32 idx, cur_idx = 1;
++	u32 idx = 1;
+ 	void *arch_mon_ctx;
+ 	bool rmid_dirty;
+ 	u64 val = 0;
+@@ -153,11 +153,7 @@ void __check_limbo(struct rdt_mon_domain *d, bool force_free)
+ 	 * is less than the threshold decrement the busy counter of the
+ 	 * RMID and move it to the free list when the counter reaches 0.
+ 	 */
+-	for (;;) {
+-		idx = find_next_bit(d->rmid_busy_llc, idx_limit, cur_idx);
+-		if (idx >= idx_limit)
+-			break;
+-
++	for_each_set_bit_from(idx, d->rmid_busy_llc, idx_limit) {
+ 		entry = __rmid_entry(idx);
+ 		if (resctrl_arch_rmid_read(r, d, entry->closid, entry->rmid,
+ 					   QOS_L3_OCCUP_EVENT_ID, &val,
+@@ -178,11 +174,10 @@ void __check_limbo(struct rdt_mon_domain *d, bool force_free)
+ 		}
+ 
+ 		if (force_free || !rmid_dirty) {
+-			clear_bit(idx, d->rmid_busy_llc);
++			__clear_bit(idx, d->rmid_busy_llc);
+ 			if (!--entry->busy)
+ 				limbo_release_entry(entry);
+ 		}
+-		cur_idx = idx + 1;
+ 	}
+ 
+ 	resctrl_arch_mon_ctx_free(r, QOS_L3_OCCUP_EVENT_ID, arch_mon_ctx);
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
+
 
