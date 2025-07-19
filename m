@@ -1,240 +1,543 @@
-Return-Path: <linux-kernel+bounces-737764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FF2FB0B049
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 15:33:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 856E2B0B051
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 15:47:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A9DB1AA594F
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 13:33:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF9F1567629
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 13:47:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DCE2231824;
-	Sat, 19 Jul 2025 13:32:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A626B156678;
+	Sat, 19 Jul 2025 13:47:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZfPm4gpD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="l4y7kuPY";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="l4y7kuPY"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011023.outbound.protection.outlook.com [52.101.65.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E2D14883F;
-	Sat, 19 Jul 2025 13:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752931978; cv=none; b=rQZ53UftUfbrs6f0RU4lyF12nXypjiBqACFp2tNysubi2/buNTeZJnX+0YpvsdMmH6ZVPBEvuJoJhVRP8cdxN1OSkhwmLb44QBoPrrPJLISBdlbIgpkQjLJh+6NoqPxtmtiD1xcMKeCCeFQP2fQZ2ulKaIHi0RCxIucBEUzzKrs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752931978; c=relaxed/simple;
-	bh=SBYcDz1ru58OTFpL1ENwBR1B6jCp0163ii6LzeGWhxY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JRQ7kdwjGn63Bafv6A5S3CC7+QcEGWJP2xkLACCiKRM9DyoExiD9V4PUlTXmk1MCUllpSXTUr34WqWF6tQEW8edZdemPeerWTt7C8e2itWm5M8ASq0wEGlQBas3EaPJRWF2D9GMgdpheVjMnCBYWVaLWT7DBNbVtrcbQiA2u/78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZfPm4gpD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B084C4CEE3;
-	Sat, 19 Jul 2025 13:32:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752931978;
-	bh=SBYcDz1ru58OTFpL1ENwBR1B6jCp0163ii6LzeGWhxY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZfPm4gpDc7Dw7wQ6b1C7StxCzMxqwRDYrq/FMZ7rTlxo7QoGaenAiYoZANZ/KRIF1
-	 PZ6l5qpID3qXdoALvxPyKnwZ90g4hdrF1hx0+iv5Hl0t8Y0O28NeGwL9E9GXjC43nK
-	 IdcYSRmGPTqkqvo9TA8P2vlQINGVjnQKknC6THyPNKCBupzx7TWD3buDvCr3/PK1lx
-	 yyQRtApiLxzch0WuK8SAw1w7xPLbiyDSQd21q8XrMJMqvNj77+scBkzGPbshD2UNhR
-	 iCzu4ZbMvfJ8wnDBRXhhulkGjNkSu7iVoIiypoVT5nUcWJmPsaBN3OZvdDSzpQ3rNz
-	 9CESsyQimu2tA==
-Date: Sat, 19 Jul 2025 14:32:50 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Sean Nyekjaer <sean@geanix.com>
-Cc: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/6] iio: imu: inv_icm42600: Simplify pm_runtime setup
-Message-ID: <20250719143250.6799eb5d@jic23-huawei>
-In-Reply-To: <20250719124711.42fe1a00@jic23-huawei>
-References: <20250709-icm42pmreg-v1-0-3d0e793c99b2@geanix.com>
-	<20250709-icm42pmreg-v1-4-3d0e793c99b2@geanix.com>
-	<20250713152810.4483c786@jic23-huawei>
-	<ie3zr2mvuss2f7prksw6nuc3wonig5ju6y6hqq46upvkhovwpa@vtfc3tqwz3d5>
-	<76fnxeuufv56fmfvq6odi5xz2yjtjxymz24t436zk7rtuyst4s@oihlvsoxhllp>
-	<20250716090010.23ea03b6@jic23-huawei>
-	<iwe34sdzsgeqpgqrc7ndbx6n4ef6kiwd4bczbiwbhlfgv3zesx@rnr5l7diy5z7>
-	<20250719124711.42fe1a00@jic23-huawei>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2621101FF
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 13:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.23
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752932863; cv=fail; b=KPc7+eU9Q4dNy156joG9eeSEtL/8Gw7yGgpR9nrtzxr5MEI/J08uvVu99dNwvRwCfIRJjK9u+bSKEqwwdepZYYF6wmyVoQOZJWA8Vy5CTmW15PVClcNmtVceB757qKsokZKWQKqHk4BypXdcBvWaZnJD4Y+ZCwFXqX/KbOHFO8U=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752932863; c=relaxed/simple;
+	bh=DWEA6KP489/bXI744Nf8zD5mnvSLDs4ZSdZrMVhxuQ4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=mK+rnTLn6XfGCzrOP6BuXh5bAPBEZjFIJOlmS7gP9CidKiNTPoXExznGDWYveeE0k62jhi5GEwXjDSy0qWTS2N9Q2HRSAIVzKep3H2WFEyaeW25SY5dKaj6qBtABJ71JYn/CRCDUIDqGK9wRmA32+zXH5RQ/Mm1OGSUPkG0KsC0=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=l4y7kuPY; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=l4y7kuPY; arc=fail smtp.client-ip=52.101.65.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=N9awUmn64ZnKyLHTIJF7kbkwWAsB+V9HnxXJT3PV1dkqJy246UbLSM4DT6HqAfyu2SYTGIJ1CHIuInJtETrQS/zU5hGhy1fZ412NVwodRMkra5Gyu9aAZDU+v1+pTlFZOelwNxX2pRhYxQgL/NFl6jGXRq88M98woefsvDhWt84ijNTgon/+lE3pqQrpP/BBC0X2sHKOvFb15BZEgjX8P/L8X6Bs5Spu4+dA+7CvmX0WaTsyKs9qqMB/Ah1MHgxq7kRld9SZ3Rlvyhc9vxuCCbg/r+6ISFlFgzT+zKsplAA4fHNNM35Oh/HvqbSZqffWZPq5fN1cwoJWzL4nOy6fDw==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qDOIuucyd3s11XTN2gA3RxTmFuuLbisKcUxTqaL1kMk=;
+ b=LdV+ZmnNr+Rl15wzgwmvDvG/ZV4eHjyNfjexRSXNGZyk+IezJYjeYHCd4nNG7CVIqSzCroUIvDX0d3E7CBI0sH/dT1v6JMKa+oQPpJIc7al8baY7HbfJD+xIbEZREcZorijdzzctDD/t1oR3PjTbKHR20oumEbKKTYj7Jsw5K1tUQN7/7cqlNjFxJ4vWDv0qhHewMcyA50pq82QIkYUMY32VSMiAb/UWb5GmeMD8WANkMjhrz6TR1JJdam8BhMWpbxCVX4Tf4JBu23iNqzJEef0v7hTmUYQFuR80UH7hE4rXbuCyQ+eZRm+QBvWOddfDxT/0KGyEv4yIaYJwMtfaVQ==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 4.158.2.129) smtp.rcpttodomain=oracle.com smtp.mailfrom=arm.com; dmarc=pass
+ (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
+ (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qDOIuucyd3s11XTN2gA3RxTmFuuLbisKcUxTqaL1kMk=;
+ b=l4y7kuPYV3MwV1xiUwf5cnfHzRcVCeCA40t3KtyDOc6KDzEgBlXMaelnqH3l2sJ3zHhzcNdMcE6qVsartt/aogV31D+4oqJongGSgKMN2Rjss9lZgliFmjHS1PzkkofaufFjp1jsw7YH+rhpFNQZaAHvrzNnX88k8FD/K+kuHnk=
+Received: from PR3P191CA0044.EURP191.PROD.OUTLOOK.COM (2603:10a6:102:55::19)
+ by DB9PR08MB9443.eurprd08.prod.outlook.com (2603:10a6:10:45b::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.26; Sat, 19 Jul
+ 2025 13:47:33 +0000
+Received: from AM2PEPF0001C713.eurprd05.prod.outlook.com
+ (2603:10a6:102:55:cafe::65) by PR3P191CA0044.outlook.office365.com
+ (2603:10a6:102:55::19) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.21 via Frontend Transport; Sat,
+ 19 Jul 2025 13:47:32 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
+ client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
+Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
+ AM2PEPF0001C713.mail.protection.outlook.com (10.167.16.183) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8964.20
+ via Frontend Transport; Sat, 19 Jul 2025 13:47:30 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eeEkMiRpXFWckxzFez0veon44Pi/DDb8aRMaI+DlmdorN5WxYyZgWB4WVowaoYVopzK3oqg3J8UV2//ztl6nzZF1rHDNNmy/jCEAM9fE51iU04DSXAzGhp0rKNFJzowhuDwB9gxqU6j3TgRS/vKHel35WFMCs0CD6IF7kFpkzWBcApuds52WcBwGRznzpAVmW3YxsRrQSdFM1DcAOIYNmVD6NRiAVIXfKnE+VwfHGMRhxrH+TyO3oOM7Xjh3w6WTr0aHM7E50awppFiwDYagXqmCjj18wlBgNZB3UbiCY0CwNc5lpXpx3sBjJYqgVsM/L0i96H0JQ9MyWQSdb+iGPQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qDOIuucyd3s11XTN2gA3RxTmFuuLbisKcUxTqaL1kMk=;
+ b=ckex19T4kvlOrTd0aVtLp1/T5iwK15fIHvSKa4n0ouaDPEHXOR2xUPO2RhulD3geftaW0KaxuJyW0kd3UksIOzeDXvtFs3tcSgfhsq/23xZWTv6VPBpu4XFP6LzHuFKoa476HndjXSel805xKv4oMHjJOMrCgCyEtIqGN33L4CFTyASOHZQoo2z/HF6hKYyImpDX9apWa+8SoZ/esr3tB7E/HI3AZRMk+OvjkyDlXt2Lvg+t7cMfuY/WBoyyF9rVzzXuB5YSgd42Sx6ouBC1OIUVmh5B78YQLZZuqM9IWg0L/cmViViRJk/aSBbGB3HkAbY58HJ6bTwRx1LbhdlR+w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qDOIuucyd3s11XTN2gA3RxTmFuuLbisKcUxTqaL1kMk=;
+ b=l4y7kuPYV3MwV1xiUwf5cnfHzRcVCeCA40t3KtyDOc6KDzEgBlXMaelnqH3l2sJ3zHhzcNdMcE6qVsartt/aogV31D+4oqJongGSgKMN2Rjss9lZgliFmjHS1PzkkofaufFjp1jsw7YH+rhpFNQZaAHvrzNnX88k8FD/K+kuHnk=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from AM9PR08MB7120.eurprd08.prod.outlook.com (2603:10a6:20b:3dc::22)
+ by DB9PR08MB6666.eurprd08.prod.outlook.com (2603:10a6:10:2a7::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.29; Sat, 19 Jul
+ 2025 13:46:57 +0000
+Received: from AM9PR08MB7120.eurprd08.prod.outlook.com
+ ([fe80::2933:29aa:2693:d12e]) by AM9PR08MB7120.eurprd08.prod.outlook.com
+ ([fe80::2933:29aa:2693:d12e%5]) with mapi id 15.20.8943.028; Sat, 19 Jul 2025
+ 13:46:57 +0000
+Message-ID: <9377543e-3b92-443c-adb0-bc3227ea994c@arm.com>
+Date: Sat, 19 Jul 2025 19:16:48 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 6/7] mm: Optimize mprotect() by PTE batching
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: akpm@linux-foundation.org, ryan.roberts@arm.com, david@redhat.com,
+ willy@infradead.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ catalin.marinas@arm.com, will@kernel.org, Liam.Howlett@oracle.com,
+ vbabka@suse.cz, jannh@google.com, anshuman.khandual@arm.com,
+ peterx@redhat.com, joey.gouly@arm.com, ioworker0@gmail.com,
+ baohua@kernel.org, kevin.brodsky@arm.com, quic_zhenhuah@quicinc.com,
+ christophe.leroy@csgroup.eu, yangyicong@hisilicon.com,
+ linux-arm-kernel@lists.infradead.org, hughd@google.com,
+ yang@os.amperecomputing.com, ziy@nvidia.com
+References: <20250718090244.21092-1-dev.jain@arm.com>
+ <20250718090244.21092-7-dev.jain@arm.com>
+ <5c993cf6-13c8-4420-bd78-706ea287fb28@lucifer.local>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <5c993cf6-13c8-4420-bd78-706ea287fb28@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MA1PR01CA0167.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:d::15) To AM9PR08MB7120.eurprd08.prod.outlook.com
+ (2603:10a6:20b:3dc::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-TrafficTypeDiagnostic:
+	AM9PR08MB7120:EE_|DB9PR08MB6666:EE_|AM2PEPF0001C713:EE_|DB9PR08MB9443:EE_
+X-MS-Office365-Filtering-Correlation-Id: 22d643a9-f7f9-4c69-339f-08ddc6caceb7
+x-checkrecipientrouted: true
+NoDisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?utf-8?B?VitBbi9uSDBIc3duR0Rwd2tETWIwUUJaZmFRUXZqWDcxQlFDWXFUeVJIUHBx?=
+ =?utf-8?B?cGhla09oaHVSWWd5MVhvSzJZbXBSZ0RmOEsxbUN0aHg5MUR6ZzhKbEFwUUYr?=
+ =?utf-8?B?aHo2cjh5TzRVWFQxWEhhQTBNWjYzVWRzYUIzajFnVEN3RVVYWkw0U3AzM0hT?=
+ =?utf-8?B?ZytrS3NId1UxOEpDbzFJSHBJdDlFVXFRSWJ0UWxMVnM4R0pjMEVXenU0UzRn?=
+ =?utf-8?B?TGJrVXNKVFFveGhiSDJHQi9zN1F6QlJzK0M5UGJiM1FnZlczYWNCbXUyRFc2?=
+ =?utf-8?B?UXE4VGFZN2pPdmdVMnYyRVVybXV4L2FOY1htK0FYckQxa0p1VTV6L1FlRlk0?=
+ =?utf-8?B?OWc2ZjI2KzFjcjREN3I5NFVVV0oyb2pOOGE4MDZyVUlhMGlmUHZIaTl5cDkz?=
+ =?utf-8?B?dm9mSDNzWUxaWVgvQ3VtVzYzQ2ZlR3lBRXc4VVkxUnYwM1FERnIrSm4xM0xu?=
+ =?utf-8?B?SjVnVUFJZ3A2RUt2TmRLTkx2WHNJdFNsZjFYNmZxUm1ROVFHMFJ3dTdrRDNC?=
+ =?utf-8?B?YzZBSFdxR2ttT2RxU3FiV04vbE42SlJjUkdHRENNeHhHMzdISFVUeGNBVGo0?=
+ =?utf-8?B?SWpOU0ZZYzg4aWZnNXhvQml3d0ZrenRFVm5nTHpEQzJaejZhV2o0NmtQdXZG?=
+ =?utf-8?B?QUxjdEsrRUMzNDdCZzlQM0NxeHQ0RUpBSGJoYjZSTnFlTkkyei8wejVoaHdJ?=
+ =?utf-8?B?K3k3d0J4anlXaTF3OGs2YjdZNWJkM1F4TnJwSStjNEN4ZjJyamNKQ2d6UGVX?=
+ =?utf-8?B?NGpiNGxTRjJvZU5hWHU1QWhzNjNDdXV6K1pPKzJYUWF1bnZMem82dXFmZkRq?=
+ =?utf-8?B?K2luWUVFVUc1MWt5WDV2RVZkcElCZktQRER6OVd5T1RrQ3NUUXRrV1dSYS9q?=
+ =?utf-8?B?WDA0a3ZpWGFueDZOdVArVUhKZzBmUk9zRDBlZzQ5cXhpd1hHcWNhMkZqYjQ2?=
+ =?utf-8?B?WGp6WHA5d0t1NFZxaWFUQTkyZWFDM0YwU1ZJTWh4RnF4STAzMW1waEFOempL?=
+ =?utf-8?B?Z1NjR3RUMDArM3BNRzEyMlFYV3JSOE9Xd2xXTEhtbFp2R3F4ZzlCbkUxRm92?=
+ =?utf-8?B?WS9DcnJ4dkFVR3l1R3MvZWhScmFiWEVGQk1YZXdwUzJ5RHFMUGV6dlVGWFJE?=
+ =?utf-8?B?ZnBmcTVCaVFhL2VuNWZUbnpDNmgyNEEvcW1GOThyczFpRC85ZXMzdjl3bGNm?=
+ =?utf-8?B?bkpxcjFRcUJzVDRqbm05NEt0Q25sYTBhTVZUTVZvVHI2UlhWMlJWcFlWTUZz?=
+ =?utf-8?B?YkxsS1NIbCt5TUdjM0NKb1BJY05Dc2FDT25NTVN0LzE3dEtVY1pJN2phdVR4?=
+ =?utf-8?B?MGU4RXJKRm9nbHFUSzlac0x4czBDQTJOQ1hwaFYvRzdrS0IyZzA4Y3Z6RXk5?=
+ =?utf-8?B?QkN5RzZSSGlPdE1TVTZGSk9xTm1oQ1g1UGlzU25VK0xzdzFRdXdoa0J2aDJI?=
+ =?utf-8?B?QmlzcnFaVitlUUd5bi9GVzB0THFTQlRXSW56Zkk4VURuYTIxN0tQSFV0WWda?=
+ =?utf-8?B?c0RIbnRNdTRuY0FwVWcrVzI2b2VORm91aVpLOGh4STdyeGtNOFRBZXQ1dEto?=
+ =?utf-8?B?ajRxcjRQWXJIRXFjd1dMQWZJVkZ6cEFhc2RuRjlOOWQ4T1lqUkVOQjZobDVD?=
+ =?utf-8?B?ODczOUxzS3E3NWdlT0ZSNEZFMXZBRkRSQmhQOHJoVTBsbnhFSm8yQ1dmUW9w?=
+ =?utf-8?B?MlZieWxoajd6MTVFb01HKzZtN3dmTisrUy95QUpvWHROOVpKeFlBS3l6L0ha?=
+ =?utf-8?B?VjhnSytlUzFHWVNna0hSZzRhS0pLTWtrall0T0Q3R0dLckhrSURvNTB0eHgx?=
+ =?utf-8?B?TjN6aWQvYnhjeE1NRkZzcHNaSGRTNXZZTXBjUkpCaFBMTDZITXFZYS9ZRTNm?=
+ =?utf-8?B?NlRKOE5pTzNvT3ZNcG9WRERmbkxkRkVnODZMRDZra0NCanZRTm8zeHpPNGh0?=
+ =?utf-8?Q?7U6cTpScPFM=3D?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR08MB7120.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR08MB6666
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ AM2PEPF0001C713.eurprd05.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	e3019d1f-a2c5-417a-3ede-08ddc6caba48
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|14060799003|36860700013|82310400026|35042699022|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WTVMby8xN1BYVWF6dnI1R2c0ZDNDUHd6SGx6SXJscmozYXJPVTZ5N3g2dFRQ?=
+ =?utf-8?B?NW12WU1admZ0Y3QyOVVlVVFPNU9WQW1VTDh2ckFBaG1NcHhiSkJOSWV5cGhC?=
+ =?utf-8?B?YWdTQXA1MU8vNzR5M3ZCZFJSNDdhZ3JJNzZCL05URHNlSndwWXNTaWd3T0Vp?=
+ =?utf-8?B?UytRZEhFVHFia1k3NkM3b1ZRbE53a3ZhcVlRZDBmSnNDb0tVenVZdU5Lc29I?=
+ =?utf-8?B?L2JYRFhNWFRCaDg3RHNtYmtSNEdRZExSZGhQUDNETnJIdzhtRE5ZeXdkcmlZ?=
+ =?utf-8?B?VS95N0YwL3NZVnQwTFlpeGRUQ01ScGVHZDlBbnhpZFJSMzdXanh6bmxyYVA3?=
+ =?utf-8?B?OVBpbmxsTHlSVWMwMHRiZG8rejdpZG0zdkhQVGpWV0FXNy9HamV3dGp6VTFN?=
+ =?utf-8?B?YmdXVTByY0lReHVwNnpLNUpMQ1NEeW01eGR3eFBuRkVDb2toczltR1Y0Wlhr?=
+ =?utf-8?B?RkxHMVV0MmZDUFYveko5MnkrcjNBNHY0L2UrQ3llNVBkdjBMSGRKRVlrS3hP?=
+ =?utf-8?B?R2pvczhFNGpzeS9IS2VZNktxSVRNZk02NEJzSjdsZzZEanB2dDhFcVY2Vml2?=
+ =?utf-8?B?dlkvNjI5aS9US1BoeUxZc3AyYXlVZlorS3RFWkRRVTVFYkxoUzN5TzhreDFu?=
+ =?utf-8?B?T29JNU5KT2x3dnlqZHAyZUcvNGdwL21yRFVtMnl6Z2VvY0VtUE96WFVhQ0tn?=
+ =?utf-8?B?ME1ISUtRRnQzZ0xROUQ5MVhhTkhHN2hPN2Z2WkRjN3FwQTVENHI2SFJUSk9U?=
+ =?utf-8?B?ODFFK3YzbkxSQ1JQUFZ1QkROd1laS3BZaVFrU3k4Ylo4bmVhaXZLYnBqMGg1?=
+ =?utf-8?B?UDhaMzJORjdsOUFoS0NrbzEvVGsrWGNEU3BWY2Vyck5IaU1XYmJTWEVrV0tW?=
+ =?utf-8?B?M0E3cm9pUFBJUHNEOW9rUkIwS29vRmRIaFk3SmtHWVhmbitmenlnRVh5eUlS?=
+ =?utf-8?B?em95Ly9Lc3RnbVZXSU0wblRwU3EzZ3ZPZXg2dE1ZMlZjNmk4VmFlRGlYMHhh?=
+ =?utf-8?B?VXo3QlFGdjUyaWs2WG9WU2FRNzlCRFcvbjhwUzZOZTN6bVBrNEFjZDRURlpH?=
+ =?utf-8?B?SkdONW5hQzJyaDN6TmpjVnNvMmZveXpXYzR2VWVGcXZxcFVEMEEwMHlqNmRa?=
+ =?utf-8?B?TGhoRWZTMU4rNnA3NUt4THU3N0NCS21mUExXZ09aNzhsTDJ1VW9rZzNsTzJw?=
+ =?utf-8?B?LzhMcmwrMVRTL3dtSDZBcy95UjdqTmthUUtxN2dWQTRCR0lhTVJiN0ZMWmVV?=
+ =?utf-8?B?NjZJWENyb1JxalJaZVBFdnpPZk1UT01WZDJxQ0lXRlNDTGFQN2RCYXBnaHFE?=
+ =?utf-8?B?ZDJ3SnNQR2JhektvYUNnbTdOamZKMXlLcDY1Qll5SlVxZndOYWdvODV2cEMv?=
+ =?utf-8?B?SVpwaVRubTZLdjF0T3k3UkQxOUFNcENSVFplbXYwQm9xaEVHamVNMk8yeWdq?=
+ =?utf-8?B?T0FyT2x1L3V4Y0lGeE5DVkh5cUhxS0RYTEw5V1NFNTBUdEorMmk2aWEwZnVr?=
+ =?utf-8?B?THZzMjgzUWw5OTFnRlVQWmYvRkZGZloyU1dFdy9icU1pK3k0QmlaclpsaEdP?=
+ =?utf-8?B?Uzc5UTJWTFJMdm5KalBieitHQzl4UjNGRnBZalRIUTAxNHlySVV2V1JFaVBQ?=
+ =?utf-8?B?OFEzZThORjBxak5vQ2IwaTBqQUtIT0R1YUNTd2J6RFZtT2ZEUWNJU1FmYUFs?=
+ =?utf-8?B?RW8xaDhsejJIZFRMMU5NNERMTWE4dkx6MHdUdHJhK1FhZmVlbSs4MUVDZ1Jt?=
+ =?utf-8?B?ZU8wcUhScUJQSy9jRzF4eFNCckNVREJNUTZjbDlYaDZ5Slg5Y0JTWTNOYWRy?=
+ =?utf-8?B?RkJ0cFZDaDUzdFhGTUV5TUcxdmoyK0Fwcmt0N0VUNTA4UjgzbTJUek4yK0FW?=
+ =?utf-8?B?S3J5QjJQV29tWHRmR0hPRFJxRmdBOHBRWis5SkpIWlZyUm5tWFI0ODUwYmJG?=
+ =?utf-8?B?eVM2Rktka0t5ZUh5VjFDaTJEVEd6VUdTYzhPS2RJdXlCdVA4ZXhhODQxc1RU?=
+ =?utf-8?B?NzhDRHVaNnRFSFVvRi9QdTBvMlZVeHZmd0liV0FPaEdZZnErSTRXclAzMWlY?=
+ =?utf-8?Q?YqAWiM?=
+X-Forefront-Antispam-Report:
+	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(14060799003)(36860700013)(82310400026)(35042699022)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jul 2025 13:47:30.9336
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 22d643a9-f7f9-4c69-339f-08ddc6caceb7
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM2PEPF0001C713.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR08MB9443
 
-On Sat, 19 Jul 2025 12:47:11 +0100
-Jonathan Cameron <jic23@kernel.org> wrote:
 
-> On Fri, 18 Jul 2025 06:40:50 +0000
-> Sean Nyekjaer <sean@geanix.com> wrote:
-> 
-> > On Wed, Jul 16, 2025 at 09:00:10AM +0100, Jonathan Cameron wrote:  
-> > > On Mon, 14 Jul 2025 07:42:43 +0000
-> > > Sean Nyekjaer <sean@geanix.com> wrote:
-> > >     
-> > > > On Mon, Jul 14, 2025 at 07:24:57AM +0100, Sean Nyekjaer wrote:    
-> > > > > On Sun, Jul 13, 2025 at 03:28:10PM +0100, Jonathan Cameron wrote:    
-> > > > > > On Wed, 09 Jul 2025 14:35:12 +0200
-> > > > > > Sean Nyekjaer <sean@geanix.com> wrote:
-> > > > > >    
-> > > > > > > Remove unnecessary pm_runtime_get_noresume() and pm_runtime_put()
-> > > > > > > calls during probe. These are not required when the device is marked
-> > > > > > > active via pm_runtime_set_active() before enabling pm_runtime with
-> > > > > > > pm_runtime_enable().
-> > > > > > >
-> > > > > > > Also remove the redundant pm_runtime_put_sync() call from the cleanup
-> > > > > > > path, since the core is not incrementing the usage count beforehand.
-> > > > > > >
-> > > > > > > This simplifies the PM setup and avoids manipulating the usage counter
-> > > > > > > unnecessarily.    
-> > > > > >
-> > > > > > Could we switch directly to using devm_pm_runtime_enable() for this driver?
-> > > > > >
-> > > > > > At first glance looks like this code is missing the disable of autosuspend
-> > > > > > that should be there (which devm_pm_runtime_enable() will also handle).
-> > > > > >    
-> > > > >
-> > > > > I have tried to use devm_pm_runtime_enable() but on rmmod it warns
-> > > > > "unbalanced disables for regulator"
-> > > > >
-> > > > > If I remove this:
-> > > > > -	ret = devm_add_action_or_reset(dev, inv_icm42600_disable_vddio_reg, st);
-> > > > > -	if (ret)
-> > > > > -		return ret;
-> > > > >
-> > > > > Everything seems okay again. I have checked with printk's that
-> > > > > inv_icm42600_disable_vddio_reg() is called twice with
-> > > > > devm_pm_runtime_enable() used.
-> > > > > Does it make sense?
-> > > > >
-> > > > > /Sean    
-> > > >
-> > > > with pm_runtime_enable():
-> > > > root@v4:/data/root# insmod /tmp/inv-icm42600.ko; insmod /tmp/inv-icm42600-i2c.ko
-> > > > [ 3793.713077] inv-icm42600-i2c 1-0068: no INT1 interrupt defined, fallback to first interrupt
-> > > > [ 3793.727728] inv-icm42600-i2c 1-0068: mounting matrix not found: using identity...
-> > > > [ 3793.737660] inv-icm42600-i2c 1-0068: supply vdd not found, using dummy regulator
-> > > > [ 3793.856891] inv-icm42600-i2c 1-0068: supply vddio not found, using dummy regulator
-> > > > [ 3793.866872] inv_icm42600_enable_regulator_vddio() enable vddio
-> > > > [ 3793.920739] inv_icm42600_runtime_suspend() disable vddio
-> > > > root@v4:/data/root# rmmod inv_icm42600_i2c inv_icm42600
-> > > > [ 3796.954850] inv_icm42600_runtime_resume() -> inv_icm42600_enable_regulator_vddio()
-> > > > [ 3796.954910] inv_icm42600_enable_regulator_vddio() enable vddio
-> > > > [ 3796.985140] inv_icm42600_disable_vddio_reg() disable vddio
-> > > >
-> > > > with devm_pm_runtime_enable():
-> > > > root@v4:/data/root# insmod /tmp/inv-icm42600.ko; insmod /tmp/inv-icm42600-i2c.ko
-> > > > [ 3852.873887] inv-icm42600-i2c 1-0068: no INT1 interrupt defined, fallback to first interrupt
-> > > > [ 3852.888715] inv-icm42600-i2c 1-0068: mounting matrix not found: using identity...
-> > > > [ 3852.898514] inv-icm42600-i2c 1-0068: supply vdd not found, using dummy regulator
-> > > > [ 3853.016890] inv-icm42600-i2c 1-0068: supply vddio not found, using dummy regulator
-> > > > [ 3853.026860] inv_icm42600_enable_regulator_vddio() enable vddio
-> > > > [ 3853.080835] inv_icm42600_runtime_suspend() disable vddio
-> > > > root@v4:/data/root# rmmod inv_icm42600_i2c inv_icm42600
-> > > > [ 3854.448461] inv_icm42600_runtime_resume() -> inv_icm42600_enable_regulator_vddio()
-> > > > [ 3854.448540] inv_icm42600_enable_regulator_vddio() enable vddio
-> > > > [ 3854.467061] inv_icm42600_runtime_suspend() disable vddio    
-> > > 
-> > > As below What is the call path for this final suspend?
-> > > Is it coming from update_autosuspend()?    
-> > 
-> > Yeah it looks like pm_runtime_dont_use_autosuspend() is calling runtime_suspend().  
-> 
-> ok. So how are we supposed to handle this?  Seems like it would be a fairly common
-> situation.  devm_pm_runtime_set_active_enabled() might be relevant.
-> I get confused by all the reference counter
-> complexity in runtime pm but is devm_pm_runtime_get_noresume() what we want?
-> That will decrement the usage count with no action just before we hit the point
-> were the suspend or not decision is made.  So I think that will mean the device
-> things it is already suspended when you hit the path here and so not do it again?
->  
-> There seems to be only one user of this stuff though:
-> https://elixir.bootlin.com/linux/v6.15.6/source/drivers/spi/atmel-quadspi.c#L1440
-Note that example does a get in the remove callback().   Seems odd but maybe
-we need a devm_pm_runtime_*put() that results in an a get in the remove path to ensure counts
-all match.
+On 19/07/25 12:19 am, Lorenzo Stoakes wrote:
+> On Fri, Jul 18, 2025 at 02:32:43PM +0530, Dev Jain wrote:
+>> Use folio_pte_batch to batch process a large folio. Note that, PTE
+>> batching here will save a few function calls, and this strategy in certain
+>> cases (not this one) batches atomic operations in general, so we have
+>> a performance win for all arches. This patch paves the way for patch 7
+>> which will help us elide the TLBI per contig block on arm64.
+>>
+>> The correctness of this patch lies on the correctness of setting the
+>> new ptes based upon information only from the first pte of the batch
+>> (which may also have accumulated a/d bits via modify_prot_start_ptes()).
+>>
+>> Observe that the flag combination we pass to mprotect_folio_pte_batch()
+>> guarantees that the batch is uniform w.r.t the soft-dirty bit and the
+>> writable bit. Therefore, the only bits which may differ are the a/d bits.
+>> So we only need to worry about code which is concerned about the a/d bits
+>> of the PTEs.
+>>
+>> Setting extra a/d bits on the new ptes where previously they were not set,
+>> is fine - setting access bit when it was not set is not an incorrectness
+>> problem but will only possibly delay the reclaim of the page mapped by
+>> the pte (which is in fact intended because the kernel just operated on this
+>> region via mprotect()!). Setting dirty bit when it was not set is again
+>> not an incorrectness problem but will only possibly force an unnecessary
+>> writeback.
+>>
+>> So now we need to reason whether something can go wrong via
+>> can_change_pte_writable(). The pte_protnone, pte_needs_soft_dirty_wp,
+>> and userfaultfd_pte_wp cases are solved due to uniformity in the
+>> corresponding bits guaranteed by the flag combination. The ptes all
+>> belong to the same VMA (since callers guarantee that [start, end) will
+>> lie within the VMA) therefore the conditional based on the VMA is also
+>> safe to batch around.
+>>
+>> Since the dirty bit on the PTE really is just an indication that the folio
+>> got written to - even if the PTE is not actually dirty but one of the PTEs
+>> in the batch is, the wp-fault optimization can be made. Therefore, it is
+>> safe to batch around pte_dirty() in can_change_shared_pte_writable()
+>> (in fact this is better since without batching, it may happen that
+>> some ptes aren't changed to writable just because they are not dirty,
+>> even though the other ptes mapping the same large folio are dirty).
+>>
+>> To batch around the PageAnonExclusive case, we must check the corresponding
+>> condition for every single page. Therefore, from the large folio batch,
+>> we process sub batches of ptes mapping pages with the same
+>> PageAnonExclusive condition, and process that sub batch, then determine
+>> and process the next sub batch, and so on. Note that this does not cause
+>> any extra overhead; if suppose the size of the folio batch is 512, then
+>> the sub batch processing in total will take 512 iterations, which is the
+>> same as what we would have done before.
+>>
+>> For pte_needs_flush():
+>>
+>> ppc does not care about the a/d bits.
+>>
+>> For x86, PAGE_SAVED_DIRTY is ignored. We will flush only when a/d bits
+>> get cleared; since we can only have extra a/d bits due to batching,
+>> we will only have an extra flush, not a case where we elide a flush due
+>> to batching when we shouldn't have.
+>>
+> Thanks for great commit message!
+>
+>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+> This is looking MUCH better :) Thanks!
+>
+> Some nits below, but I've gone through this carefully and can't find
+> anything that seems obviously wrong here, so:
+>
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-> > 
-> > root@v4:/data/root# rmmod inv-icm42600-i2c inv-icm42600
-> > [  291.511085] inv_icm42600_runtime_resume() -> inv_icm42600_enable_regulator_vddio()
-> > [  291.511165] inv_icm42600_enable_regulator_vddio() enable vddio
-> > [  291.532398] inv_icm42600_runtime_suspend() disable vddio
-> > [  291.538517] CPU: 0 UID: 0 PID: 331 Comm: rmmod Tainted: G        W           6.16.0-rc1-00202-g7fe6e564b5c9-dirty #146 VOLUNTARY
-> > [  291.538559] Tainted: [W]=WARN
-> > [  291.538566] Hardware name: Freescale i.MX6 Ultralite (Device Tree)
-> > [  291.538575] Call trace:
-> > [  291.538590]  unwind_backtrace from show_stack+0x10/0x14
-> > [  291.538643]  show_stack from dump_stack_lvl+0x54/0x68
-> > [  291.538679]  dump_stack_lvl from inv_icm42600_runtime_suspend+0x68/0x6c [inv_icm42600]
-> > [  291.538728]  inv_icm42600_runtime_suspend [inv_icm42600] from __rpm_callback+0x48/0x18c
-> > [  291.538775]  __rpm_callback from rpm_callback+0x5c/0x68
-> > [  291.538815]  rpm_callback from rpm_suspend+0xdc/0x584
-> > [  291.538853]  rpm_suspend from pm_runtime_disable_action+0x30/0x5c
-> > [  291.538885]  pm_runtime_disable_action from devres_release_group+0x180/0x1a0
-> > [  291.538917]  devres_release_group from i2c_device_remove+0x34/0x84
-> > [  291.538949]  i2c_device_remove from device_release_driver_internal+0x180/0x1f4
-> > [  291.538976]  device_release_driver_internal from driver_detach+0x54/0xa0
-> > [  291.538998]  driver_detach from bus_remove_driver+0x58/0xa4
-> > [  291.539030]  bus_remove_driver from sys_delete_module+0x16c/0x250
-> > [  291.539065]  sys_delete_module from ret_fast_syscall+0x0/0x54
-> > [  291.539089] Exception stack(0xd0ab1fa8 to 0xd0ab1ff0)
-> > [  291.539108] 1fa0:                   be94fe46 be94fd1c 017ccfa4 00000800 0000000a 017ccf68
-> > [  291.539126] 1fc0: be94fe46 be94fd1c 017ccf68 00000081 00000000 00000001 00000003 017cc190
-> > [  291.539139] 1fe0: b6c8be41 be94fadc 000179cb b6c8be48
-> > [  291.685102] inv_icm42600_disable_vddio_reg() disable vddio
-> > [  291.694566] ------------[ cut here ]------------
-> > [  291.694621] WARNING: CPU: 0 PID: 331 at drivers/regulator/core.c:3016 _regulator_disable+0x140/0x1a0
-> > [  291.708496] unbalanced disables for regulator-dummy
-> > [  291.713391] Modules linked in: inv_icm42600_i2c(-) inv_icm42600 inv_sensors_timestamp [last unloaded: inv_icm42600]
-> > [  291.723939] CPU: 0 UID: 0 PID: 331 Comm: rmmod Tainted: G        W           6.16.0-rc1-00202-g7fe6e564b5c9-dirty #146 VOLUNTARY
-> > [  291.735620] Tainted: [W]=WARN
-> > [  291.738598] Hardware name: Freescale i.MX6 Ultralite (Device Tree)
-> > [  291.744789] Call trace:
-> > [  291.744807]  unwind_backtrace from show_stack+0x10/0x14
-> > [  291.752614]  show_stack from dump_stack_lvl+0x54/0x68
-> > [  291.757704]  dump_stack_lvl from __warn+0x7c/0xe0
-> > [  291.762437]  __warn from warn_slowpath_fmt+0x124/0x18c
-> > [  291.767602]  warn_slowpath_fmt from _regulator_disable+0x140/0x1a0
-> > [  291.773812]  _regulator_disable from regulator_disable+0x48/0x80
-> > [  291.779843]  regulator_disable from devres_release_group+0x180/0x1a0
-> > [  291.786231]  devres_release_group from i2c_device_remove+0x34/0x84
-> > [  291.792446]  i2c_device_remove from device_release_driver_internal+0x180/0x1f4
-> > [  291.799699]  device_release_driver_internal from driver_detach+0x54/0xa0
-> > [  291.806427]  driver_detach from bus_remove_driver+0x58/0xa4
-> > [  291.812033]  bus_remove_driver from sys_delete_module+0x16c/0x250
-> > [  291.818160]  sys_delete_module from ret_fast_syscall+0x0/0x54
-> > [  291.823934] Exception stack(0xd0ab1fa8 to 0xd0ab1ff0)
-> > [  291.829007] 1fa0:                   be94fe46 be94fd1c 017ccfa4 00000800 0000000a 017ccf68
-> > [  291.837205] 1fc0: be94fe46 be94fd1c 017ccf68 00000081 00000000 00000001 00000003 017cc190
-> > [  291.845397] 1fe0: b6c8be41 be94fadc 000179cb b6c8be48
-> > [  291.850632] ---[ end trace 0000000000000000 ]---0
-> >   
-> > >     
-> > > > [ 3854.477170] inv_icm42600_disable_vddio_reg() disable vddio
-> > > > [ 3854.483835] ------------[ cut here ]------------
-> > > > [ 3854.483912] WARNING: CPU: 0 PID: 582 at drivers/regulator/core.c:3016 _regulator_disable+0x140/0x1a0
-> > > > [ 3854.497853] unbalanced disables for regulator
-> > > >
-> > > > Is the way from here to remove the devm_add_action_or_reset(dev,
-> > > > inv_icm42600_disable_vddio_reg... ?    
-> > > 
-> > > That will make a mess if runtime PM is not built into
-> > > the kernel which is why an PM state in remove should return to the state
-> > > before it was enabled in the first place (i.e. on!).
-> > > That final runtime suspend surprises me.    
-> > 
-> > Got it :)
-> > 
-> > /Sean
-> > 
-> >   
-> 
-> 
+Thanks!
 
+>
+>> ---
+>>   mm/mprotect.c | 125 +++++++++++++++++++++++++++++++++++++++++++++-----
+>>   1 file changed, 113 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/mm/mprotect.c b/mm/mprotect.c
+>> index a1c7d8a4648d..2ddd37b2f462 100644
+>> --- a/mm/mprotect.c
+>> +++ b/mm/mprotect.c
+>> @@ -106,7 +106,7 @@ bool can_change_pte_writable(struct vm_area_struct *vma, unsigned long addr,
+>>   }
+>>
+>>   static int mprotect_folio_pte_batch(struct folio *folio, pte_t *ptep,
+>> -				    pte_t pte, int max_nr_ptes)
+>> +				    pte_t pte, int max_nr_ptes, fpb_t flags)
+>>   {
+>>   	/* No underlying folio, so cannot batch */
+>>   	if (!folio)
+>> @@ -115,7 +115,7 @@ static int mprotect_folio_pte_batch(struct folio *folio, pte_t *ptep,
+>>   	if (!folio_test_large(folio))
+>>   		return 1;
+>>
+>> -	return folio_pte_batch(folio, ptep, pte, max_nr_ptes);
+>> +	return folio_pte_batch_flags(folio, NULL, ptep, &pte, max_nr_ptes, flags);
+>>   }
+>>
+>>   static bool prot_numa_skip(struct vm_area_struct *vma, unsigned long addr,
+>> @@ -177,6 +177,102 @@ static bool prot_numa_skip(struct vm_area_struct *vma, unsigned long addr,
+>>   	return ret;
+>>   }
+>>
+>> +/* Set nr_ptes number of ptes, starting from idx */
+>> +static void prot_commit_flush_ptes(struct vm_area_struct *vma, unsigned long addr,
+>> +		pte_t *ptep, pte_t oldpte, pte_t ptent, int nr_ptes,
+>> +		int idx, bool set_write, struct mmu_gather *tlb)
+>> +{
+>> +	/*
+>> +	 * Advance the position in the batch by idx; note that if idx > 0,
+>> +	 * then the nr_ptes passed here is <= batch size - idx.
+>> +	 */
+>> +	addr += idx * PAGE_SIZE;
+>> +	ptep += idx;
+>> +	oldpte = pte_advance_pfn(oldpte, idx);
+>> +	ptent = pte_advance_pfn(ptent, idx);
+>> +
+>> +	if (set_write)
+>> +		ptent = pte_mkwrite(ptent, vma);
+>> +
+>> +	modify_prot_commit_ptes(vma, addr, ptep, oldpte, ptent, nr_ptes);
+>> +	if (pte_needs_flush(oldpte, ptent))
+>> +		tlb_flush_pte_range(tlb, addr, nr_ptes * PAGE_SIZE);
+>> +}
+>> +
+>> +/*
+>> + * Get max length of consecutive ptes pointing to PageAnonExclusive() pages or
+>> + * !PageAnonExclusive() pages, starting from start_idx. Caller must enforce
+>> + * that the ptes point to consecutive pages of the same anon large folio.
+>> + */
+>> +static int page_anon_exclusive_sub_batch(int start_idx, int max_len,
+>> +		struct page *first_page, bool expected_anon_exclusive)
+>> +{
+>> +	int idx;
+> Nit but:
+>
+> 	int end = start_idx + max_len;
+>
+> 	for (idx = start_idx + 1; idx < end; idx++) {
+>
+> Would be a little neater here.
+
+I politely disagree :) start_idx + max_len is *obviously* the
+end index, no need to add one more line of code asserting that.
+
+
+>
+>> +
+>> +	for (idx = start_idx + 1; idx < start_idx + max_len; ++idx) {
+> Nitty again but the below might be a little clearer?
+>
+> 	struct page *page = &firstpage[idx];
+>
+> 	if (expected_anon_exclusive != PageAnonExclusive(page))
+
+I don't think so. first_page[idx] may confuse us into thinking that
+we have an array of pages. Also, the way you define it assigns a
+stack address to struct page *page; this is not a problem in theory
+and the code will still be correct, but I will prefer struct page *page
+containing the actual address of the linear map struct page, which is
+vmemmap + PFN. The way I write it is, I initialize first_page from folio_page()
+which will derive the address from folio->page, and folio was derived from
+vm_normal_folio() (which was derived from the PFN in the PTE), therefore
+first_page will contain the actual vmemmap address of corresponding struct page,
+hence it is guaranteed that first_page + x will give me the x'th page in
+the folio.
+
+
+>
+>
+>> +		if (expected_anon_exclusive != PageAnonExclusive(first_page + idx))
+>> +			break;
+>> +	}
+>> +	return idx - start_idx;
+>> +}
+>> +
+>> +/*
+>> + * This function is a result of trying our very best to retain the
+>> + * "avoid the write-fault handler" optimization. In can_change_pte_writable(),
+>> + * if the vma is a private vma, and we cannot determine whether to change
+>> + * the pte to writable just from the vma and the pte, we then need to look
+>> + * at the actual page pointed to by the pte. Unfortunately, if we have a
+>> + * batch of ptes pointing to consecutive pages of the same anon large folio,
+>> + * the anon-exclusivity (or the negation) of the first page does not guarantee
+>> + * the anon-exclusivity (or the negation) of the other pages corresponding to
+>> + * the pte batch; hence in this case it is incorrect to decide to change or
+>> + * not change the ptes to writable just by using information from the first
+>> + * pte of the batch. Therefore, we must individually check all pages and
+>> + * retrieve sub-batches.
+>> + */
+> Nice comment thanks.
+>
+>> +static void commit_anon_folio_batch(struct vm_area_struct *vma,
+>> +		struct folio *folio, unsigned long addr, pte_t *ptep,
+>> +		pte_t oldpte, pte_t ptent, int nr_ptes, struct mmu_gather *tlb)
+>> +{
+>> +	struct page *first_page = folio_page(folio, 0);
+>> +	bool expected_anon_exclusive;
+>> +	int sub_batch_idx = 0;
+>> +	int len;
+>> +
+>> +	while (nr_ptes) {
+> I'd prefer this to be:
+>
+> 	int i;
+>
+> 	...
+>
+> 	for (i = 0; i < nr_ptes; i += len, sub_batch_idx += len) {
+>
+>> +		expected_anon_exclusive = PageAnonExclusive(first_page + sub_batch_idx);
+
+We won't be able to do nr_ptes -= len with this. And personally a while loop
+is clearer to me here.
+
+
+> Nit but would prefer:
+>
+> 		struct page *page = &first_page[sub_batch_idx];
+>
+> 		expected_anon_exclusive = PageAnonExclusive(page);
+>
+>> +		len = page_anon_exclusive_sub_batch(sub_batch_idx, nr_ptes,
+>> +					first_page, expected_anon_exclusive);
+>> +		prot_commit_flush_ptes(vma, addr, ptep, oldpte, ptent, len,
+>> +				       sub_batch_idx, expected_anon_exclusive, tlb);
+>> +		sub_batch_idx += len;
+>> +		nr_ptes -= len;
+>> +	}
+>> +}
+>> +
+>> +static void set_write_prot_commit_flush_ptes(struct vm_area_struct *vma,
+>> +		struct folio *folio, unsigned long addr, pte_t *ptep,
+>> +		pte_t oldpte, pte_t ptent, int nr_ptes, struct mmu_gather *tlb)
+>> +{
+>> +	bool set_write;
+>> +
+>> +	if (vma->vm_flags & VM_SHARED) {
+>> +		set_write = can_change_shared_pte_writable(vma, ptent);
+>> +		prot_commit_flush_ptes(vma, addr, ptep, oldpte, ptent, nr_ptes,
+>> +				       /* idx = */ 0, set_write, tlb);
+>> +		return;
+>> +	}
+>> +
+>> +	set_write = maybe_change_pte_writable(vma, ptent) &&
+>> +		    (folio && folio_test_anon(folio));
+>> +	if (!set_write) {
+>> +		prot_commit_flush_ptes(vma, addr, ptep, oldpte, ptent, nr_ptes,
+>> +				       /* idx = */ 0, set_write, tlb);
+>> +		return;
+>> +	}
+>> +	commit_anon_folio_batch(vma, folio, addr, ptep, oldpte, ptent, nr_ptes, tlb);
+>> +}
+>> +
+>>   static long change_pte_range(struct mmu_gather *tlb,
+>>   		struct vm_area_struct *vma, pmd_t *pmd, unsigned long addr,
+>>   		unsigned long end, pgprot_t newprot, unsigned long cp_flags)
+>> @@ -206,8 +302,9 @@ static long change_pte_range(struct mmu_gather *tlb,
+>>   		nr_ptes = 1;
+>>   		oldpte = ptep_get(pte);
+>>   		if (pte_present(oldpte)) {
+>> +			const fpb_t flags = FPB_RESPECT_SOFT_DIRTY | FPB_RESPECT_WRITE;
+>>   			int max_nr_ptes = (end - addr) >> PAGE_SHIFT;
+>> -			struct folio *folio;
+>> +			struct folio *folio = NULL;
+>>   			pte_t ptent;
+>>
+>>   			/*
+>> @@ -221,11 +318,16 @@ static long change_pte_range(struct mmu_gather *tlb,
+>>
+>>   					/* determine batch to skip */
+>>   					nr_ptes = mprotect_folio_pte_batch(folio,
+>> -						  pte, oldpte, max_nr_ptes);
+>> +						  pte, oldpte, max_nr_ptes, /* flags = */ 0);
+>>   					continue;
+>>   				}
+>>   			}
+>>
+>> +			if (!folio)
+>> +				folio = vm_normal_folio(vma, addr, oldpte);
+>> +
+>> +			nr_ptes = mprotect_folio_pte_batch(folio, pte, oldpte, max_nr_ptes, flags);
+>> +
+>>   			oldpte = modify_prot_start_ptes(vma, addr, pte, nr_ptes);
+>>   			ptent = pte_modify(oldpte, newprot);
+>>
+>> @@ -248,14 +350,13 @@ static long change_pte_range(struct mmu_gather *tlb,
+>>   			 * COW or special handling is required.
+>>   			 */
+>>   			if ((cp_flags & MM_CP_TRY_CHANGE_WRITABLE) &&
+>> -			    !pte_write(ptent) &&
+>> -			    can_change_pte_writable(vma, addr, ptent))
+>> -				ptent = pte_mkwrite(ptent, vma);
+>> -
+>> -			modify_prot_commit_ptes(vma, addr, pte, oldpte, ptent, nr_ptes);
+>> -			if (pte_needs_flush(oldpte, ptent))
+>> -				tlb_flush_pte_range(tlb, addr, PAGE_SIZE);
+>> -			pages++;
+>> +			     !pte_write(ptent))
+>> +				set_write_prot_commit_flush_ptes(vma, folio,
+>> +				addr, pte, oldpte, ptent, nr_ptes, tlb);
+>> +			else
+>> +				prot_commit_flush_ptes(vma, addr, pte, oldpte, ptent,
+>> +					nr_ptes, /* idx = */ 0, /* set_write = */ false, tlb);
+>> +			pages += nr_ptes;
+>>   		} else if (is_swap_pte(oldpte)) {
+>>   			swp_entry_t entry = pte_to_swp_entry(oldpte);
+>>   			pte_t newpte;
+>> --
+>> 2.30.2
+>>
 
