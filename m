@@ -1,63 +1,99 @@
-Return-Path: <linux-kernel+bounces-737873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBFE1B0B173
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 20:36:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED1AAB0B174
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 20:37:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94D631897656
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 18:36:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 509B53B1FE9
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 18:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04324221721;
-	Sat, 19 Jul 2025 18:36:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEA0121CC4D;
+	Sat, 19 Jul 2025 18:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="OKD1G0WW"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L3R/hiUJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA68E1DF74F
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 18:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 301891EF1D;
+	Sat, 19 Jul 2025 18:37:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752950182; cv=none; b=ibunuHG+DKfvxpXBI8qPj7ZtV+R56KGozmoRL9kiPxx27aeN+2mqzYXKYUDjo7vpyMztc5NHBSzCWrCf2fXjeh99f1v9XeFiZktJ+KcSFdRboGgxeU6OX0DEcnZlTp57jzGWQMQwOOphVlBRh5HbLXIsKHRwPsozNKMJ1qdvTJs=
+	t=1752950225; cv=none; b=p7O/znEYle9gH8NWfKprwVLVyWjneB3gSA8wFy0QYCtP0qg6n2rLNYKpNpdom0OVVKppmje5aMor4OmzE5d277ZPly/3yYBh9MTf5z2ZHkR7e7cZv88MWs+xAgInifNUR5h4rX6nAzCRADk2EzBMT8xOwuqWFMDW1A7k4BY/RGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752950182; c=relaxed/simple;
-	bh=8YYOVYUvREZN04Anb5VZesSY/aodjhWQXXvnzRS9byw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gj8UuIX33QxS8mBZHKk6JPm2DEcNfc4M5QZHR+THDG2HGe71vPvkxxOlA/+SEJ+RrjEPzT0kFqBLNq46St/EnE6mShdG7OfYYn7VJ69fn048OutjLl/GG5WoUBx1wdB2Nn/p4rVE1XM5nFrg2n92QW8AlbjbGtYN+EbRBnkA7N8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=OKD1G0WW; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 19 Jul 2025 14:36:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752950178;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8YYOVYUvREZN04Anb5VZesSY/aodjhWQXXvnzRS9byw=;
-	b=OKD1G0WW38y6uau3lAXVj47fg73+3aEg5/pGDF4eK/QrRilSJ51hBFID/01amtDbHDLZ8o
-	vaodGVLE5G5DjFrnLWg5YOFQjQTYgjUOBLkkjX6AeDRVXxJuZvBi1NE3SdgH1HrUOcv1Bt
-	eHbUPv8B2q2F9fG77Qzc6HVmcRlfSnc=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: syzbot <syzbot+d78b3c996e2381acd902@syzkaller.appspotmail.com>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bcachefs?] kernel BUG in __bch2_bkey_unpack_key
-Message-ID: <r6bi5awjusaxgmc73nn7upic7xn24tzryrtcl4mcnxt6si6gdl@oyazetidjkxy>
-References: <6835d715.a70a0220.253bc2.00ba.GAE@google.com>
+	s=arc-20240116; t=1752950225; c=relaxed/simple;
+	bh=6S2MHYjCSvEbnYdKa6ZxyilifS2dWfn2HrXD97TZfPg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IYG2OyL84rqmhRvD93tSVAMMv0DPl6ExmiqfItmcGx2DgnCFTtBX4U3geV1e25E7mI9e/Gwp+JMlCeNIJO8n5weJ+JoFP485EYHc3g9LjtGiToM//WaogO4eGgBcXgdfjXGmc8I/8paaznjSJztypnyZKa8YwENtU5NsmB3E8/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L3R/hiUJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE3BDC4CEE3;
+	Sat, 19 Jul 2025 18:37:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752950224;
+	bh=6S2MHYjCSvEbnYdKa6ZxyilifS2dWfn2HrXD97TZfPg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=L3R/hiUJgBTPbjKMj30YmC985sG2vvBbkS1N8wHAPSYQvMwS1inkxSFh9ZyMte8BT
+	 yH7GmP0LniMlrL0WxfrJ9C4IbK595eSyET+Ik7hlU8tIpThv0WK0Q2ztIHCVIgZkpW
+	 h2CTQSfRTU7QX7r2/3TF3XGD3lYIQq7/5mpj5nppROCTMOrzOKLv5dfaLKovCoq2k4
+	 By/mZoRDwO562OyXm+Ebrf7nRWVZZ5g73W7NcZ0ahRpCBlwolfaqZ8aX/ggrmASmNq
+	 zq6u0BBLD+XfszANthrsItEUT8MDWHhK14H1fbcHTz2Ro+REZX1Zs3NilDWLot/yf8
+	 B7uATd9LkROcQ==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: [PATCH] rust: list: undo unintended replacement of method name
+Date: Sat, 19 Jul 2025 20:36:49 +0200
+Message-ID: <20250719183649.596051-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6835d715.a70a0220.253bc2.00ba.GAE@google.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-#syz fix: bcachefs: Don't build aux search tree when still repairing node
+When we renamed `Opaque::raw_get` to `cast_into`, there was one
+replacement that was not supposed to be there.
+
+It does not cause an issue so far because it is inside a macro rule (the
+`ListLinksSelfPtr` one) that is unused so far. However, it will start
+to be used soon.
+
+Thus fix it now.
+
+Fixes: 64fb810bce03 ("rust: types: rename Opaque::raw_get to cast_into")
+Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+---
+ rust/kernel/list/impl_list_item_mod.rs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/rust/kernel/list/impl_list_item_mod.rs b/rust/kernel/list/impl_list_item_mod.rs
+index c1edba0a9501..3f6c30e14904 100644
+--- a/rust/kernel/list/impl_list_item_mod.rs
++++ b/rust/kernel/list/impl_list_item_mod.rs
+@@ -252,7 +252,7 @@ unsafe fn view_value(links_field: *mut $crate::list::ListLinks<$num>) -> *const
+                 // the pointer stays in bounds of the allocation.
+                 let self_ptr = unsafe { (links_field as *const u8).add(spoff) }
+                     as *const ::core::cell::UnsafeCell<*const Self>;
+-                let cell_inner = ::core::cell::UnsafeCell::cast_into(self_ptr);
++                let cell_inner = ::core::cell::UnsafeCell::raw_get(self_ptr);
+                 // SAFETY: This is not a data race, because the only function that writes to this
+                 // value is `prepare_to_insert`, but by the safety requirements the
+                 // `prepare_to_insert` method may not be called in parallel with `view_value` or
+
+base-commit: 23b128bba76776541dc09efaf3acf6242917e1f0
+--
+2.50.1
 
