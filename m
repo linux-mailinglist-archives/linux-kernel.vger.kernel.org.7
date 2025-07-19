@@ -1,86 +1,53 @@
-Return-Path: <linux-kernel+bounces-737876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49195B0B177
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 20:38:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C48DB0B178
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 20:38:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBC511897CE6
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 18:38:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47E48163AEA
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 18:38:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF75822425E;
-	Sat, 19 Jul 2025 18:38:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A89223302;
+	Sat, 19 Jul 2025 18:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OvXU3Fjl"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RHChGeSK"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E721EB3D;
-	Sat, 19 Jul 2025 18:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 911021C54A9
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 18:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752950291; cv=none; b=Jk9hnmATjrUxTqHkjaMpnCkKLtDjzyrUUcFPPCtFas2UvE+X0zFmlvodj/VpsS70JQplniILSYuQzRhbYYsLzFnL1pdrr28vX67m8eJBExZo1j2AlLQToWgKS+cchPRYg/V9lnTFKiOVFRqIhgaWFAvqhLQzYA/hJsdHWRwSc3M=
+	t=1752950305; cv=none; b=seiPV9G/PaNpyXYvo7z//hanY5PDOoTSttcG8huHVA8NeQK0bhL177OBAGhx2OwF9XjuptFheYMF2DWESvcuRUGjSLQRHFnxGfBobbDyZFrO4Wi7IOi65NpIeNlba+VU3GXXyV0TIjJzcrlrxIzfEHw27syCTcbFvQXr8lP8x5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752950291; c=relaxed/simple;
-	bh=e0fIJnWzyKIkigChJGyFFUHzeIg+IxZGanqGe8fTimo=;
+	s=arc-20240116; t=1752950305; c=relaxed/simple;
+	bh=AF3p4dcJEuGWtg0GuYj+jCfsY/ZvAbYUKXbHdJmKvyE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fae6kHTHJSuT5Mm/94RadhMMtdfs2rOhKm3XYPW31kU1qgDG/EkLWrYxlo20IOTNBebGAJqBiF7eBt08Gu25dNWURWvoEvSOfmqr6K1koTSxMGMuTrm3iika/76ub+p79Tt8eAu2Zi8vS5j5TFGBKrTHXYxpL9YQ1RvYu8ZMnBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OvXU3Fjl; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4ab8403b6daso32775881cf.2;
-        Sat, 19 Jul 2025 11:38:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752950289; x=1753555089; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bl59C4GeZmc27Uq7dkQuVOyvhcWeHD2FRxPp5t1oZ9s=;
-        b=OvXU3FjltiLbgURKadpcrF+xRQRvIQptAGUQzhVpi9AU1D4Yjmqcj3sOtwTqo/9JY2
-         J/bZjbG+5nHtY9it342MhWtlH9vszNUXx1iUx0NSgVu+WHXDf5lDDfQ4ebl1MaJQtTpQ
-         Sq3SI1m9Wil7dxCzNuPx+MEUMIOzHDwFr5cQovJAz8ACqblJZKK4DbQKIzGeFiC8D2d7
-         OZRPglRzjwCKhiqKHCwI6Isw+lygl3TwxbpWtXygIfyrxJYug4c0y4a6ksLdRVfcKQh/
-         I/j/os0fDT7gA/qIpckwyXlQcYy5IOp1+dJbvm3eNw4hLm4SLp+cPzwYKDOfTnv9Zb4a
-         21Sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752950289; x=1753555089;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bl59C4GeZmc27Uq7dkQuVOyvhcWeHD2FRxPp5t1oZ9s=;
-        b=FUZKLDKGBYlEL+Ea54eLpRUWbIg50PFr09z9JSocRt822EifU1DKCt+2M7CGKSfWKs
-         gTZoqWXOgV7ab5wc0qJ4J1/pvToMOu9mmh/4QWBGndPkAO9wg6kdhtkK0f73oYSefq/M
-         XDldN4r1k9O9IVzpnW2tHfDQXpUEMjropx+fz1Ku+LJpmIeu+H3DjEBkzhrN46dGI6rD
-         e1qCZJvMgN5cji115/8piviuWT4oOkPrwzzHqfJimcuIswA+WvVP1Qwt9uEBRiOSrU4k
-         HERL9ldJOOJYcrivSZQthdjf04fMJAk+U2wqUBQ3dto6Prp1YKWT6p6vxziLKq/yHQq2
-         ZEEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWFYRm0U/AtpSun4791ZQXiatZwHHcmnevarEpWAYtBlv25Rep5CCqJ/nG4pjIe6VbV3+Ko2tIkJo8RIjKeUfQ=@vger.kernel.org, AJvYcCXHkHwCLlKJtUnzuMfHeSa/Z04X3wQHqB0U9zsXS0ibGS1q/g0akfV0UkEGaJkk7E35A2D21kzoqJkSJ4Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGxsi3yRT6hQeJbBioDbXU9zUvXkiy0lqO1w63+Pk5314ZgaTb
-	NF2P6+zco8RV/jXvjDwmu75OtSy5dc5wH5Bdl5qzchdK2vzMQEd+Uk5y3SreWD9w
-X-Gm-Gg: ASbGncsoykQcYU1VHCJeGH/aBy7UFSqr0wBKtWeUQAEoJorhMLYRWMpTo1zt2UpxV+N
-	K+9KODsZYgyYMw620fC4Mk7IRTSSETS5XYdKFVnCpja5xY5DF7Rk5+C/fABzCNrGBYk30Fe2KiV
-	Qcapwis3rieW6DS/IV1hDyGZrdRlPwuaAsI8WEH7fxB6t16jt9NGxM8l3BI+ZweBJ2rL8I2+D+e
-	e2tE3xNmmDmTpJFUu4Y5EOymy0ChcONcMtwBafPq7SckZw17PZg1rginkulCGoqgDMGsh9XTuci
-	uN9vsYapFCsMmW9bmFPI1XffcnWKeCBOQ099K9+iPzpXj63NHxYmtHpktCnGPfiQcLOdD7mhQyC
-	FWtPM3XBacw1V
-X-Google-Smtp-Source: AGHT+IFRJkagt9nzAyOqwe1iSpk+o1UngMElTbIW8vXx9uVIUaHZNNUT7RZAmsUBTogbTuWdSIk6MA==
-X-Received: by 2002:ac8:574a:0:b0:4ab:60a1:2eff with SMTP id d75a77b69052e-4ab93c52158mr172271671cf.9.1752950288711;
-        Sat, 19 Jul 2025 11:38:08 -0700 (PDT)
-Received: from pc ([196.235.236.92])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4abb4aecf52sm21616231cf.45.2025.07.19.11.38.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Jul 2025 11:38:08 -0700 (PDT)
-Date: Sat, 19 Jul 2025 19:38:05 +0100
-From: Salah Triki <salah.triki@gmail.com>
-To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>,
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] bcma: Use managed APIs
-Message-ID: <aHvmDZjmhxG3EJg9@pc>
-References: <aHvFi5PMXFxGwd1W@pc>
- <1cb5c9e8-9894-43e6-ba3b-755a7d1dd56b@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YrQ1aYtONy5X0xkTbRS2O7nOOljJrEk5JVeSR08djpICWxDYVTGNg6s9phWNTHMBYip1oGFz/vkC7hKIS3tODkKC89qAjaDkL1AjprszPcjGP7gX6BfqaweaI5XU9KeZpCKrVE3bZ0x2Isx+3CAp0PNW0ROD2gOXgHP6Y1pZaZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RHChGeSK; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sat, 19 Jul 2025 14:38:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752950300;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AF3p4dcJEuGWtg0GuYj+jCfsY/ZvAbYUKXbHdJmKvyE=;
+	b=RHChGeSKF2M7hKHfmQ5CqF/IWCM3kUkhz1BZ5pC8xiL0Y1G69AB9FiARxKRis7Y8zima6q
+	Qo1Vg7NsPWbpfoaysvSLxexznl2413C6bY/F7ccW7g7C/hhhMhSckgqdwi3F5nhqiGeSkJ
+	zwNU+6kw5tYGp/wYOW1UB3mT+cWOBDY=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: syzbot <syzbot+397f6fe952a0defb9424@syzkaller.appspotmail.com>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bcachefs?] kernel BUG in bch2_fill_extent (2)
+Message-ID: <p337gu4fd36z2ciwwuz46k44h2brymdfmdkmilbft654p44hz6@zpqhai5bubge>
+References: <687605ef.050a0220.158d12.0000.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,21 +56,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1cb5c9e8-9894-43e6-ba3b-755a7d1dd56b@oss.qualcomm.com>
+In-Reply-To: <687605ef.050a0220.158d12.0000.GAE@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Sat, Jul 19, 2025 at 10:21:59AM -0700, Jeff Johnson wrote:
-> 
-> 1) When you post a new version of a patch, please do NOT have it be
-> In-Reply-To any previous messages. Each version of a patch should start a
-> separate e-mail thread. The guidance at
-> <https://www.kernel.org/doc/html/latest/process/submitting-patches.html#explicit-in-reply-to-headers>
-> seems outdated.
-> 
-> 2) Most maintainers will not accept patches which make such a big semantic
-> change without actually testing the change on hardware.
-
-Thanx for information
-
-Best regards,
-Salah Triki
+#syz fix: bcachefs: Fix unhandled key type in fiemap_fill_extent
 
