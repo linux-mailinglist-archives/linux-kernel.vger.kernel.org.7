@@ -1,144 +1,78 @@
-Return-Path: <linux-kernel+bounces-737589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9A24B0AE1C
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 07:37:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 172A8B0AE1E
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 07:40:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8F43AA803E
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 05:37:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2B09AA7FF9
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 05:39:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FF32222560;
-	Sat, 19 Jul 2025 05:37:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA7B2222D4;
+	Sat, 19 Jul 2025 05:40:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ePvz9Fsz"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l2Ma3C8b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8920DA920;
-	Sat, 19 Jul 2025 05:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774C4155725;
+	Sat, 19 Jul 2025 05:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752903462; cv=none; b=DjFHVJare2Jk44t1CdY3BufP5VvHlmurTYBoPcglvT4wGPkGk+KD+iEadqhXSMn5cHWzIqPc42olP9eNO20j4mga+z1MoFO7cmXT/tQk5aJ1d5armsz0gdDgMysF1Fs+kOKLdkPK84rbm9iYVlJLzmvOOJn2esudUU5INBhcXnk=
+	t=1752903621; cv=none; b=FXoI8itOtHBL7Vzjz8pXFCLqd3EPW/aSJ6XCoiJn/iFw5Pr+HVbz1TN7ppHa2lWiI0FYf9wDiB/UsubmMfBrpBUPzTXYk8oNNtiGF1Hcp6kIMSt1BZcmMyZMuEfPq0Y9+4UYkVih4jFMIkw9TulLjofHd8W542YKxDZx4R+oYsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752903462; c=relaxed/simple;
-	bh=MJon/TZYWADZmZDD9hceG9yEzZZXNwLvFdal03egBqE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DhE+UIAG0+d27FuEUcK65w3QhE6CJJ/8jDYaRg59MvatrmXxzy455K7dm95spnWQX0gfnd82UMU/Jdy2nWvy2XzbFUCGf7xeoUbSnWpQHzw822xkOOsUmMfOY236f1cywsGFlqXcn5+IGizchxM1/W/dCso4qq/7OSHk1yp4CzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ePvz9Fsz; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752903460; x=1784439460;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=MJon/TZYWADZmZDD9hceG9yEzZZXNwLvFdal03egBqE=;
-  b=ePvz9FszYccziLjvBka58iTlF6iZpZbaxGFfWNAdJZd2prBnV06J6dXR
-   VS9ZSflmKv0zozcTkSwJZ+8nZw2X5/YF4F4PlwlqyY41DRncKXlrXuFlP
-   ThpDSYJNHpbDA81/x9Bp4fZBmuZignL/5srGWfq4giQZ0phPhYTwPnTy3
-   TQ4+/zrOUU3UHYE8qzO1hdR96QUoGg3A+TFqR14J8BTMLdtgxUsTG3xDn
-   RD7UzOnkfEWCx1pWkpS3eX03oNVH0vQhze8qkrYuTlnmSYJ+A+vMdohXV
-   TbIFX3DTLJEU8UhpLQ2oWr+ooosRLfeSIpdTljCvZTtnZ0K5pxDlUgKrL
-   g==;
-X-CSE-ConnectionGUID: nh1gCXudRZuig76fITt5VQ==
-X-CSE-MsgGUID: oI1eZtQFTb27Z/NdsGWe3Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11496"; a="66544341"
-X-IronPort-AV: E=Sophos;i="6.16,323,1744095600"; 
-   d="scan'208";a="66544341"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2025 22:37:40 -0700
-X-CSE-ConnectionGUID: tGCe+fNpRMSY7yrO8L13EA==
-X-CSE-MsgGUID: NyrmdtgnTS2lacFieNxAJg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,323,1744095600"; 
-   d="scan'208";a="189375078"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 18 Jul 2025 22:37:36 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ud0GM-000FGd-1D;
-	Sat, 19 Jul 2025 05:37:34 +0000
-Date: Sat, 19 Jul 2025 13:37:05 +0800
-From: kernel test robot <lkp@intel.com>
-To: Abid Ali <dev.nuvorolabs@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Abid Ali <dev.nuvorolabs@gmail.com>
-Subject: Re: [PATCH] net: phy: Fix premature resume by a PHY driver
-Message-ID: <202507191322.YG6cNwF6-lkp@intel.com>
-References: <20250718-phy_resume-v1-1-9c6b59580bee@gmail.com>
+	s=arc-20240116; t=1752903621; c=relaxed/simple;
+	bh=B21l7mWWon97pvNsLueKpMRCBi23QWvVfwwzR14OSY8=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=dY/8h0qX8V5AeN/BWLr5peuE3uf97B42RkLsNZ1Tq1CKTwdVh13cTFQcG8iZ3Bwa2NY9XnW6qNi2TfVcceIRkCIz8I9eLjJGTZujaQFMkDIe1H3Psa5WBD5Q/57HzxeNndyYWvGmSFeMFevxcE5leSI8UlOOgmG4Ejpgq/ABdwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l2Ma3C8b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F36D9C4CEE3;
+	Sat, 19 Jul 2025 05:40:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752903621;
+	bh=B21l7mWWon97pvNsLueKpMRCBi23QWvVfwwzR14OSY8=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=l2Ma3C8btR0Wi5OhfQi7gEi7/HR3wrvdLp/TvDsW+RT8T1momLyjyRl6Q8xaQzLGC
+	 bHcmlbCWDGJ9doY5ntMnSP6n6jIW+YZFDrlGbkFZgwEMji4UbwJO1X+iqiqNckazrO
+	 9qgGurFkh2SQhaN2FxhiTXV7+djobrQYbkHgALOp13hdNE1WH5E+C2gmk6YyVd6g3Q
+	 AH0WArLVzPx/IyC+5Z9nquve1MKx9uUhO+f6N8YxNF3uWrrHh8ZwMlJOybuKFnTi6T
+	 Msk3/zBXX4xjAsk/OxmOS4N4jkA7+lPCCt02xHB9xXYZ6z5Ef0Gxbrc1Tz0vFRuNoW
+	 7sw7jmajJb9Aw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE18F383BA3C;
+	Sat, 19 Jul 2025 05:40:41 +0000 (UTC)
+Subject: Re: [GIT PULL] smb3 client fixes
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <CAH2r5msnypvFXCtKuDuA=kZX6vCTVaXVF3OmvLRTZoWwYGrdOg@mail.gmail.com>
+References: <CAH2r5msnypvFXCtKuDuA=kZX6vCTVaXVF3OmvLRTZoWwYGrdOg@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAH2r5msnypvFXCtKuDuA=kZX6vCTVaXVF3OmvLRTZoWwYGrdOg@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.samba.org/sfrench/cifs-2.6.git tags/v6.16-rc6-smb3-client-fixes
+X-PR-Tracked-Commit-Id: 8767cb3fbd514c4cf85b4f516ca30388e846f540
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 4871b7cb27f480f6ecce804f81d4b9ee27281dd2
+Message-Id: <175290364026.2894363.1607484167644581553.pr-tracker-bot@kernel.org>
+Date: Sat, 19 Jul 2025 05:40:40 +0000
+To: Steve French <smfrench@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250718-phy_resume-v1-1-9c6b59580bee@gmail.com>
 
-Hi Abid,
+The pull request you sent on Fri, 18 Jul 2025 23:02:49 -0500:
 
-kernel test robot noticed the following build warnings:
+> git://git.samba.org/sfrench/cifs-2.6.git tags/v6.16-rc6-smb3-client-fixes
 
-[auto build test WARNING on 347e9f5043c89695b01e66b3ed111755afcf1911]
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/4871b7cb27f480f6ecce804f81d4b9ee27281dd2
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Abid-Ali/net-phy-Fix-premature-resume-by-a-PHY-driver/20250718-234858
-base:   347e9f5043c89695b01e66b3ed111755afcf1911
-patch link:    https://lore.kernel.org/r/20250718-phy_resume-v1-1-9c6b59580bee%40gmail.com
-patch subject: [PATCH] net: phy: Fix premature resume by a PHY driver
-config: i386-buildonly-randconfig-004-20250719 (https://download.01.org/0day-ci/archive/20250719/202507191322.YG6cNwF6-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250719/202507191322.YG6cNwF6-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507191322.YG6cNwF6-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/net/phy/phy_device.c:1849:33: warning: '&&' within '||' [-Wlogical-op-parentheses]
-    1849 |         if (!phydrv || !phydrv->resume && phydev->suspended)
-         |                     ~~ ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
-   drivers/net/phy/phy_device.c:1849:33: note: place parentheses around the '&&' expression to silence this warning
-    1849 |         if (!phydrv || !phydrv->resume && phydev->suspended)
-         |                                        ^                   
-         |                        (                                   )
-   1 warning generated.
-
-
-vim +1849 drivers/net/phy/phy_device.c
-
-  1841	
-  1842	int __phy_resume(struct phy_device *phydev)
-  1843	{
-  1844		const struct phy_driver *phydrv = phydev->drv;
-  1845		int ret;
-  1846	
-  1847		lockdep_assert_held(&phydev->lock);
-  1848	
-> 1849		if (!phydrv || !phydrv->resume && phydev->suspended)
-  1850			return 0;
-  1851	
-  1852		ret = phydrv->resume(phydev);
-  1853		if (!ret)
-  1854			phydev->suspended = false;
-  1855	
-  1856		return ret;
-  1857	}
-  1858	EXPORT_SYMBOL(__phy_resume);
-  1859	
+Thank you!
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
