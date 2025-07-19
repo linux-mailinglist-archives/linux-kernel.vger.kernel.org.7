@@ -1,149 +1,141 @@
-Return-Path: <linux-kernel+bounces-737913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31818B0B1E4
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 22:57:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AFF6B0B1E5
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 23:06:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38C71561C09
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 20:57:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B4EA189BFD8
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 21:06:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02A83BB48;
-	Sat, 19 Jul 2025 20:57:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F4040194A60;
+	Sat, 19 Jul 2025 21:06:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WcaclMLJ"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gNlu+86D"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839CC9476;
-	Sat, 19 Jul 2025 20:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65FE1FDD;
+	Sat, 19 Jul 2025 21:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752958649; cv=none; b=ZqWj3CgYUDNiUhq7N0NMMkbAYg6R5EnFcsj4u0fEQmOjI+gFcXwsyifnopcZa7TiDLKAinlBujhowSUVGnNizB4Q7NYkd4wqmddHtbeYOBzhMdWSWTRPhCvkQrBXWrDqY64qZi6hClCIY6X9ZzFrIFtYpz2WGLw0gV/knRx0dlU=
+	t=1752959177; cv=none; b=cSbj/38I157smRUjdS9jkjlADiyeDGQvnSu8s+WlVVsfTiMZ/Bn7wxyeGNeBQAzWibn5R+xk/+EdEYLzPpX80U4NuQdfOCprgmy0nD8y0IIPkaxdYFp9oLodJz2iWxWvfrOQ6EeRlFXbgFZ+/m9mbmYs/+6QbNhrGXkfohLd8CU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752958649; c=relaxed/simple;
-	bh=JFEUBLXTOcCv/4N0Mp/tCI4SIosRp/cR4vxQ6pkYVlA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=S45yHSRTzGTzyrIaJr/zj/EJvo8+/x2IXqj6IpWnH1Lv52hgO1FfGDVgZ9kTGfqD463Cg89+20JWbTVcWbbrKBXIw+b4Y2FuGczGhsDk+NCjJg/gAgEvGMeL4rR7ZSLENhYj+qtWG+yNas6XTyjJja6oJIPk9+CdDOYsFIiOOws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WcaclMLJ; arc=none smtp.client-ip=209.85.208.43
+	s=arc-20240116; t=1752959177; c=relaxed/simple;
+	bh=nyswjgChzex87fkUmGlz803mOXSUIG3Re0obcW/WBZk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lAZDCM7J4I1J/DHRh/IzC02xVFZ+ptArdoJjyOfi8hwW1S2+UHU1rNsKWF+RQ/dmZK2knt/y6wm8lUVDthvV/dS6XUjXZUTwysTMXy51z8f9FmVLg37/KGbIXc1O6UTpm5zh7hwp5QOGlCUzpIyTZRgBAq7rG0e+Y3g/n1fo8l8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gNlu+86D; arc=none smtp.client-ip=209.85.208.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-607cf70b00aso5643909a12.2;
-        Sat, 19 Jul 2025 13:57:27 -0700 (PDT)
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-32f144d0db8so16486961fa.0;
+        Sat, 19 Jul 2025 14:06:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752958646; x=1753563446; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=1pxSQc8IFFh0/t7y5+pYbGbktW/qqWoII3Ry8ywKIxo=;
-        b=WcaclMLJM6iliaDlMcf7OCfDMkE3/rRDzxXb3jHPPLg4b6nxJfzGxlBcl/+JgSMbt/
-         39AYRslTHvWFQU3Y7PKHkcy1EL4q/cOAJM+/vdK8PhouLXPYHlCr+9yZI5JaT5C5bYxi
-         Xy6Nd47M1OmgrZ9vc0CnrbyGj7uig2klCHIckfUoQCkk5bXmQ0DoQdYyE58q97cy17ec
-         kQfmjd8tqY1KtKKC5dEsZxmRdIeYmKk5wGadZOsboanqyCkWdvzE2UZjhLPUrxzidl4c
-         BxoPZ3pMl5+ZNw/U36Kk480my7NJBYvOxJYOpVfh237lKp2lilgv4x8p/+oIx4As+mEN
-         igqA==
+        d=gmail.com; s=20230601; t=1752959174; x=1753563974; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KDD5lvVgbLQzMHEKqvD4drpjZqiteKdnziSv4nMIVYg=;
+        b=gNlu+86DYbRamez5QJVoSpcor7vbAtBZBywsW5qM31QW38a3M9WCZjKbXt9KoPLfr3
+         NPRfCZTwxAR4/4Hh/PpBOMNdvQmkGVVO/eh7EnWNV1cCGY8MUrfV439aHuBCiLTDf9Vt
+         bdTqs/cmNmSFnC4ssKBBm3vMBv7rqlH9Tlkm9hmYE2NB+gvRU9gCFGW2kwlDW+vqQXzb
+         Br9zjP1K0QNIl8YPqLr2zBXngCP+HfzjBVnolgBHTbuvcPD24VKyBuRoRAoJtlDmCLgG
+         6bWRecZ7acGns3y8RXtzr6ALCArIMluFlCQN1/gDNLlbWRft4VwC4zqnT/Uhe1hXqYJ6
+         8WlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752958646; x=1753563446;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1pxSQc8IFFh0/t7y5+pYbGbktW/qqWoII3Ry8ywKIxo=;
-        b=i63usivseIXRGy4V73U6Oz8rr3thxAmFIPMVRhRkZ/jywyVxF3x6LwAj5mQlPRvA7l
-         9r5ZyKCL/qP+IYgsN0pOppnmJ62PoJGfEy6YDzVm0lQ61wVv2pl6E9ecF2hEYo+tGApJ
-         +9H2i16s++NgfWnv4jhcIRRBDDLotzdZ4u1sP6Cg3fE3c5bHGjAIivAd1lwX9kOxarbi
-         zFoFTgQkdK63q07SUwXw//+Jg5FGKYvhqz/b7ak7lkuooiyj2uAvICWWT0UmFPU0ulbU
-         8wHqLyzsJEfHfXB207+urJVQlu3OoxdhE7LzhB28b92X5it8vJaSX7os40xdCnnEYiSX
-         7SOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXVhWyBx0CqZ3BwzPzOaBialGCSCjsq6YlBRsgL5tohtoGP0+4lMbDIvSSs8LzE574kGZLzrti+inmZHAg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvfCrO/1VBXeYxgnLSZrWVckiYA4eWQUai4IZK4WeAjr25muV1
-	0cHddfSukwz2WgSpnBEjySjj6W9f6ZZ30V/jB0WUxBOewLe/VFx4SVsAiOXShQ==
-X-Gm-Gg: ASbGncvmzlU4p0XAl8X1JAszO15ffdJ/N9Hzw+xeeLKRs+CLexkENaOxWWjAZ1k39OZ
-	NuBdsfWA3m7enFP0qsF2YK3Kt2dUhVWeKZBNtPJ/9JGqlFHXLkXi1euZHS9WJE7cfQVCqMb8fUH
-	CgjrYRxFx796kTmhC0yB/cm5psCCKAKZu4fIghs/XJeWVoZQPt9dVd+s+8dclm9y5l2iT24VAAn
-	XgVDfFBgSdWVr0Jz6nl6Zz2i7O+UBT0YAex3/erGn3FApy644tdEyMFzVUpx2XxBJEDFWxzysVM
-	L4oqduKSw0jb1U5hVeayI1Au4+gMO54c6fr7MD6M/eTgC5iX7MnVYZb/7Xbvbv7rlQ+tG3XnLqI
-	Z5q29ofEFBZfzSnaJknvo5K3TCrQ/RWl/mKONwUKlM8Ga3pCzOutplG7I9gEt0nDrumFLWE6IT6
-	rSdEvL7eOaXJ3zmSoGa1h5FcgG34S994Hi6Urfins=
-X-Google-Smtp-Source: AGHT+IHXhGO5KtDinw3HUKi8PDwr0g/iIoKLRi1pDk0QepKJRFGMapsKVykydsSE++8MamKKDvuz0g==
-X-Received: by 2002:a17:906:d7df:b0:ae9:ca8f:9642 with SMTP id a640c23a62f3a-aec4fa95412mr1174178266b.15.1752958645525;
-        Sat, 19 Jul 2025 13:57:25 -0700 (PDT)
-Received: from ?IPV6:2a02:a466:68ed:1:7706:e3e2:69b7:ae8? (2a02-a466-68ed-1-7706-e3e2-69b7-ae8.fixed6.kpn.net. [2a02:a466:68ed:1:7706:e3e2:69b7:ae8])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6ca3001esm367235966b.89.2025.07.19.13.57.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 19 Jul 2025 13:57:25 -0700 (PDT)
-Message-ID: <dc05e447-06a1-4865-8252-c4a0710d6da9@gmail.com>
-Date: Sat, 19 Jul 2025 22:57:24 +0200
+        d=1e100.net; s=20230601; t=1752959174; x=1753563974;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KDD5lvVgbLQzMHEKqvD4drpjZqiteKdnziSv4nMIVYg=;
+        b=wGWLv8dt1fjmxHBj0LwLA5g8T2IM8tqdRaMg81NfI3Ram2JkO3eJDCaFd78mURNfdO
+         ybXlO0SuNvWNxI8AfckcMMymSoN+sk5Z+rbEvQesrce21EVJZf+S7nPoM+Gaml/Tx8zJ
+         I1EVbH39lmWVdHZzSOYNXbq6TJC934KhQ+aI9+IU/XaXDCPDbRi61ZPSD46nv1AM6Wrd
+         LekLcVZIoJML57NgqeRzIpxmayHwOoAW5MydfUAkpz58bJU0P9TSNwZM8dCXgjSXi4hb
+         DQDS+R4V1SfGZyqc7OhmU+0yr0dynjOTSj/ifz2YrEOO1jufzDN9XH4i4Lix5BrZ6rax
+         b4Sw==
+X-Forwarded-Encrypted: i=1; AJvYcCXVDIpOPqOEVr+UbUP0RjmaureCaQB3iehBJCBxvpi02Wia1u2MOkMuB6mrJyt9CL41ZtIYcJYzaUS0JGbSQOA=@vger.kernel.org, AJvYcCXzQmS/l3jdN/+d8B35XXDb/xFaQvHWjY7PaOMkrYVrFdJhvg7ppsVfByodeKKWNBJfNX0Hk98q9pupKcg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1PQCGVA+KQizmXfFiAoq4hWPbL8/YybXh+37SqzyfCCKP7oOa
+	dnGq/t0pwXD8Xw9x020a4g1Bo/iSvDd9w6QxKrQoZslVPJhdj2qmNvtNEdBLzeU+F1Otd5/rGXH
+	SrA0TDU3PjvBVuNPmaUyIyduaaI+y/pY=
+X-Gm-Gg: ASbGnctGajeTFlFvqHtDLrZywdPtIU/0FJw6vBZHcJHv0k9JF1nNqF3drATmoqK/2ih
+	7CbUNSBtP/K32magep+Nj6pW6mQP9PhKg/oI/c14Gk5L2augftihcdtI/8prkb0OE+p4m4JB8lV
+	O2WlZjUSYRg3ZJ0IMXzOB3ZGB32fWdG9i1LFrbcVaY8Z6k2MTMcgowJEl818i3M7lTf1ecN5X3g
+	Qbri1XzO4aDv9zlL2olPyrzOTk4NmG0sXj++z6DaA==
+X-Google-Smtp-Source: AGHT+IFel6LcPVo3L3MCsNHOrcdqbyyvw2loT4c8a3F8Eu9ST3sLv5A/WpAB8b1q4cUP+onWoJI49Fm8mHtQap8cx7Y=
+X-Received: by 2002:a05:651c:b28:b0:32b:9792:1029 with SMTP id
+ 38308e7fff4ca-33098f6680amr28756151fa.14.1752959173475; Sat, 19 Jul 2025
+ 14:06:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Ferry Toth <fntoth@gmail.com>
-Subject: brcmfmac: Can not completely turn off AP (BCM43340/2)
-To: Arend Van Spriel <arend.vanspriel@broadcom.com>
-Cc: linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev,
- brcm80211-dev-list.pdl@broadcom.com, linux-kernel@vger.kernel.org
-References: <20250407042028.1481-1-vulab@iscas.ac.cn>
-Content-Language: en-US
-In-Reply-To: <20250407042028.1481-1-vulab@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250719183649.596051-1-ojeda@kernel.org>
+In-Reply-To: <20250719183649.596051-1-ojeda@kernel.org>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Sat, 19 Jul 2025 17:05:37 -0400
+X-Gm-Features: Ac12FXwNuJFlNB4FrlOz_4LZnrwumCxbRuVE87wbB2tt8bbMYaX8TCEyZEcw5sk
+Message-ID: <CAJ-ks9=Ye4v4g0roTu_CJSveRwj6c6P95kGfzy29VEh2c8XHKA@mail.gmail.com>
+Subject: Re: [PATCH] rust: list: undo unintended replacement of method name
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Sat, Jul 19, 2025 at 2:37=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
+te:
+>
+> When we renamed `Opaque::raw_get` to `cast_into`, there was one
+> replacement that was not supposed to be there.
+>
+> It does not cause an issue so far because it is inside a macro rule (the
+> `ListLinksSelfPtr` one) that is unused so far. However, it will start
+> to be used soon.
+>
+> Thus fix it now.
+>
+> Fixes: 64fb810bce03 ("rust: types: rename Opaque::raw_get to cast_into")
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-I have an Intel Edison board with BCM43340/2.
+Reviewed-by: Tamir Duberstein <tamird@gmail.com>
 
-I am currently running 6.12.39-edison-acpi-preempt-rt which is mostly 
-mainline with a Yocto 5.0.11 (scarthgap) user space.
-
-When I turn on tethering (using connman) it seems to be working fine.
-
-But when I turn off tethering, connman seems to be believe it is off, 
-but I can still see the AP with my phone.
-
-After this wifi is dead (can not scan, connect, tether on again, 
-nothing) and connman believes wifi is not supported. The only way to get 
-it working after this is reboot.
-
-While AP is up I do see in the logs:
-
-Jul 19 22:06:34 yuna kernel: brcmfmac: brcmf_fil_cmd_data Firmware 
-error: BCME_UNSUPPORTED (-23)
-Jul 19 22:06:34 yuna kernel: brcmfmac: brcmf_configure_arp_nd_offload 
-failed to configure (0) ND offload err = -52
-
-But maybe more importantly when tearing down I see:
-...
-Jul 19 22:07:23 yuna kernel: brcmfmac mmc2:0001:1 wlan0: left 
-allmulticast mode
-Jul 19 22:07:23 yuna kernel: brcmfmac mmc2:0001:1 wlan0: left 
-promiscuous mode
-...
-Jul 19 22:07:23 yuna kernel: brcmfmac: brcmf_configure_arp_nd_offload 
-successfully configured (1) ARP offload to 0x9
-Jul 19 22:07:23 yuna kernel: brcmfmac: brcmf_fil_iovar_data_set ifidx=0, 
-name=ndoe, len=4
-...
-Jul 19 22:07:23 yuna kernel: brcmfmac: brcmf_fil_cmd_data Firmware 
-error: BCME_UNSUPPORTED (-23)
-Jul 19 22:07:23 yuna kernel: brcmfmac: brcmf_configure_arp_nd_offload 
-failed to configure (1) ND offload err = -52
-...
-
-This has regressed from some older kernels (it used to work fine) , but 
-I don't know exactly when, since I hadn't been testing AP for a while.
-
-Any ideas are welcome to debug this. Or any patches to try, I can build 
-on current kernel (6.16-rc6) easily and capture logs.
-
-Currently I am using:
-echo 0x1006 > /sys/module/brcmfmac/parameters/debug
-journalctl -k | grep -e brcm -e "000000" -e ieee > debug.log
-
-Thanks
-Ferry
+> ---
+>  rust/kernel/list/impl_list_item_mod.rs | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/rust/kernel/list/impl_list_item_mod.rs b/rust/kernel/list/im=
+pl_list_item_mod.rs
+> index c1edba0a9501..3f6c30e14904 100644
+> --- a/rust/kernel/list/impl_list_item_mod.rs
+> +++ b/rust/kernel/list/impl_list_item_mod.rs
+> @@ -252,7 +252,7 @@ unsafe fn view_value(links_field: *mut $crate::list::=
+ListLinks<$num>) -> *const
+>                  // the pointer stays in bounds of the allocation.
+>                  let self_ptr =3D unsafe { (links_field as *const u8).add=
+(spoff) }
+>                      as *const ::core::cell::UnsafeCell<*const Self>;
+> -                let cell_inner =3D ::core::cell::UnsafeCell::cast_into(s=
+elf_ptr);
+> +                let cell_inner =3D ::core::cell::UnsafeCell::raw_get(sel=
+f_ptr);
+>                  // SAFETY: This is not a data race, because the only fun=
+ction that writes to this
+>                  // value is `prepare_to_insert`, but by the safety requi=
+rements the
+>                  // `prepare_to_insert` method may not be called in paral=
+lel with `view_value` or
+>
+> base-commit: 23b128bba76776541dc09efaf3acf6242917e1f0
+> --
+> 2.50.1
+>
 
