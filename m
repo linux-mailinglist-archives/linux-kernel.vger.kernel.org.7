@@ -1,141 +1,161 @@
-Return-Path: <linux-kernel+bounces-737503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72227B0AD72
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 04:12:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04396B0AD77
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 04:18:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53E251C4473B
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 02:13:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72702189FE02
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 02:18:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB3AD21D5B3;
-	Sat, 19 Jul 2025 02:11:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719011A3179;
+	Sat, 19 Jul 2025 02:18:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jONw8ShQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XfBPK90D"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88AF81E9B28;
-	Sat, 19 Jul 2025 02:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6DF224D7;
+	Sat, 19 Jul 2025 02:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752891114; cv=none; b=Igs/zKLvM6jZOURLmsBcCNZD6EkjWCXPb6xem5fcev7784+b75U34jdB9B/07sDuxQdqKPs+9wBS4QwKt8dJUtQLhrMUk32sv7tNO8iaTMKed5xG51XvovdcMTJZR4tSIgDED8/KFQSCOAApps4BIyyOSCNOSMpr2BPfA8MZOW4=
+	t=1752891505; cv=none; b=jvDU6gjSsa+k+0tZhxClMmfXQtPD3zopF9XCUHHmm0M6+uvns4MZjg61psFBTNwgDOhB/32zmxxggM+infbS2BVtaYme8DJQUxRh06+r9KnXTB1VfZCHsHKQFZzCkrfn962t5nLCJawyyd0vp94uDkGtHhykFgDD1XL4BBGTobs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752891114; c=relaxed/simple;
-	bh=pL2iiryt41F/60ONkgpcLd+A0vFpoBJsL1JAkyL26QQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MF1JY+4x0PtQgnJZ2JbexYvqrTZ34Igv1K2Mta4nVWAkzbHPZEc4TMXZaMWERnhlwDjt7OdPx1ACZenviM3lW7IYJ2Xd2i4WVPnzgdgUvDlhRFI03h10T55WQSFtemhCjiMJdjuUiL/u4gxte4KTs0oqxA+fWEYF4ItkpWNrsrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jONw8ShQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id ECDF7C113D0;
-	Sat, 19 Jul 2025 02:11:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752891114;
-	bh=pL2iiryt41F/60ONkgpcLd+A0vFpoBJsL1JAkyL26QQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=jONw8ShQFNBkFOyuawi/6n4Bjna8VUgy5C+QgBOUvC0NH5PxU74lrT58uF1cUcU6P
-	 Per+e9Ujy6WCwjTvzzRaMK5/10cISSE78d9SJpJiGz2up7GDDaM01kW3JYVIGNN+GI
-	 K1FXKhgDFOlcGKSB6qdE2RRYSvwfpr+aeHCbyBElqdY1mRK0azf8DArvaQ3A75yqvu
-	 5zmvMgGB3s3nJxCV77pIbjlaA5/IeSactV/xNvx3zp/4wLvAkxmT4+oOkjeYLbCs05
-	 rA7tWrPP6DL9QsRRz3o5PVwW5UXQZ3BQ323bLviVrotMWCoiv2QIlZA0mFk12cRf74
-	 P5DrPYscAhZaA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4E0AC83F3E;
-	Sat, 19 Jul 2025 02:11:53 +0000 (UTC)
-From: Per Larsen via B4 Relay <devnull+perlarsen.google.com@kernel.org>
-Date: Sat, 19 Jul 2025 02:11:29 +0000
-Subject: [PATCH v8 7/7] KVM: arm64: Support FFA_MSG_SEND_DIRECT_REQ2 in
- host handler
+	s=arc-20240116; t=1752891505; c=relaxed/simple;
+	bh=Zk/o38lPu0GsIj9gRObIbM29T5weVpXkSDm8WmFPFmw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h1Hqcpfl5rORK4wtt3CsC/NJSajifgWCBUsianMf4BpbSc+fM6Hcf2GaRoZSI9qIi6RLdysgMmhRK9gNf7Mpa7jqnIuXdWbw1UINKYpldkumQJyj8izW7NTfgqd6T6pemWVGLO9F1acoM/1d+VT0oN+UcEUUjww9lo8isC9BCRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XfBPK90D; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-31c4a546cc2so2329900a91.2;
+        Fri, 18 Jul 2025 19:18:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752891504; x=1753496304; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Scnqs5pk340zKN/IMxaD8uFN1w3h3QowSgutbiQPbOA=;
+        b=XfBPK90DS71475VJO37F/UHGvLpjzgqvKSxrvoKR7iETMvl1vWrbu0ImxkrmVETlR4
+         Aq3D+BZkOXweYYVW77+3l4fCng5W45+YICsx4bjiX3biWyza64fLfXJO0oCcFOZSLmaT
+         exFJbT1r2NT85d2VWHEAxnEeG/p9jPcPv6StipJ5Eec1mOWAuDGScJRwZZMLn9xRiVlT
+         NEJu1xU2+iZemV+6aHofk/wp7IZtjjcqBaRj6pTmJOdXqWRzNF6oTPX+g9wuJGvHKzaM
+         VQhkg9DlGXChLGn3bEHDkxAWm+rCXDXpiFpybP9nJjvn/Z59OvB1SdnULCB3T0jlRiXg
+         9+Bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752891504; x=1753496304;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Scnqs5pk340zKN/IMxaD8uFN1w3h3QowSgutbiQPbOA=;
+        b=CM9ukoWqjWYUlXZZPm4jclKLyIBw1rC6zuNB3eLgaEKgKHwHYbT/nUuSZ/Vb2KbqC6
+         Ydb1oJwfqaMThjUzF66DYHOEmRm+pzGalXJ2HMI+j53pywrwZIOpgs+V+fufVCu8OeOD
+         sm8VGX31KZSvNzSW06bA1wPLGZkbKjn1oBeq/xqRgFPp7lsRhnbpDIRSZJ9LtZMrIGdt
+         4V/kRyJw/xTPioci16Xm1sZMsKz//5KZ+CpcFmFx6l9vaRAclqE3rBRHrMRY3SS6NDBb
+         jcrwd2pkTUp6cls1xdW+eclI5UobONV9xQqUtSZYQf5w1P8EyFOPMjlewTpkCivyjrlD
+         tUew==
+X-Forwarded-Encrypted: i=1; AJvYcCX/DLQtQBQ30JgDl8+N05zmBPtskb8kKCAVe/LmsyBguQ6hFvO/+bDIz+HXCzzuysvHHcpYluIDfNL2aaiL@vger.kernel.org, AJvYcCX4PR+aUtuLnzokDbRr1eaj6Ub4t7rnj8Bz33aeHf6GpLkmcD5RkM6g9fNz+ehvep2/4cc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkflBNOE35jHcZOeLHDQcQhtN4nxYv+7hDBh47N28JERXqD+Dc
+	rJaDdtgJtpdlnggjfQnL52AFaFOTVQ8DjDJWcvaf9Z3IzWs7/DKFU2hr
+X-Gm-Gg: ASbGnctV1KgUciHxPQe+CbTLb7GfD50KuYsrdwvSHkFB3CJvGeNU/+0TLMjxfWT/NzU
+	1yLi59+uM7eu8tfVqYmZcKa7I8Tpd9XiF0Wbp3eaDzQ4xQXK/vq2KW9Zjr01GnAZDpYSU3GRTCG
+	x/+swCIs66p9V2CAcF8ysKzKSXbfCRuquqrQPqtqmz2lIG4CtyeaQl8Vz0oTDeHNjSQamE3xyC+
+	gPprwxHSXhUrB6SlULqcNOzMpWDx+45jBwcSx1qIHlNv8bLH5zjcIgX4v0eceZBbCvQK0XnsZzv
+	j7+NdbP/DktF2grJbiOaPUJ2BqnU/d2gvZ183bGAa4E3A/z3qDhsBQnW1nu3IkSuOdFmSNL+azI
+	GgNB96QCQUft2JOs1wUf7LRCz5w==
+X-Google-Smtp-Source: AGHT+IHXIiFPtH//gJNmM/1/06X218/c+AnTD0afEkaxcRjYT0TB+ufmUNpan+0zr5nVWSbonniezQ==
+X-Received: by 2002:a17:90a:d60c:b0:312:ffdc:42b2 with SMTP id 98e67ed59e1d1-31c9f4b409bmr17155214a91.23.1752891503580;
+        Fri, 18 Jul 2025 19:18:23 -0700 (PDT)
+Received: from localhost ([2409:891f:6a27:93c:d451:d825:eb30:1bcc])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-31c9f1ba530sm5900828a91.4.2025.07.18.19.18.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Jul 2025 19:18:22 -0700 (PDT)
+Date: Sat, 19 Jul 2025 10:15:56 +0800
+From: Yao Yuan <yaoyuan0329os@gmail.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Yao Yuan <yaoyuan@linux.alibaba.com>, Keir Fraser <keirf@google.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	Eric Auger <eric.auger@redhat.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH v2 2/4] KVM: arm64: vgic: Explicitly implement
+ vgic_dist::ready ordering
+Message-ID: <5zpxxmymnyzncdnewdonnglvmvbtggjyxyqvkf6yars2bbyr4b@gottasrtoq2s>
+References: <20250716110737.2513665-1-keirf@google.com>
+ <20250716110737.2513665-3-keirf@google.com>
+ <kb7nwrco6s7e6catcareyic72pxvx52jbqbfc5gbqb5zu434kg@w3rrzbut3h34>
+ <aHphgd0fOjHXjPCI@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250719-virtio-msg-ffa-v8-7-03e8e8dbe856@google.com>
-References: <20250719-virtio-msg-ffa-v8-0-03e8e8dbe856@google.com>
-In-Reply-To: <20250719-virtio-msg-ffa-v8-0-03e8e8dbe856@google.com>
-To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
- Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
- Zenghui Yu <yuzenghui@huawei.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Sudeep Holla <sudeep.holla@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
- linux-kernel@vger.kernel.org, ahomescu@google.com, armellel@google.com, 
- arve@android.com, ayrton@google.com, qperret@google.com, 
- sebastianene@google.com, qwandor@google.com, 
- Per Larsen <perlarsen@google.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752891112; l=1826;
- i=perlarsen@google.com; s=20250508; h=from:subject:message-id;
- bh=XKLIrLx+xVZkKFUyrkWFNAg3jN3LAX8G3drs7Zg0LpU=;
- b=bAFm8MojrTV0HWjRNrhEW7+sivMya8UgN2MnWTQD8h9xbMw8WrO+9bYJ7E6lzG9tF2K5n+Xux
- wriZLkODV0ZDCFwoyKRat6h5JRoPq6c1NwRiFbJwu04nzWiREVYMTbv
-X-Developer-Key: i=perlarsen@google.com; a=ed25519;
- pk=jjc/Ta4VmrLRmMoahP6d1mBcKzvWU+nsmdtYe2oS2kQ=
-X-Endpoint-Received: by B4 Relay for perlarsen@google.com/20250508 with
- auth_id=402
-X-Original-From: Per Larsen <perlarsen@google.com>
-Reply-To: perlarsen@google.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aHphgd0fOjHXjPCI@google.com>
 
-From: Per Larsen <perlarsen@google.com>
+On Fri, Jul 18, 2025 at 08:00:17AM -0700, Sean Christopherson wrote:
+> On Thu, Jul 17, 2025, Yao Yuan wrote:
+> > On Wed, Jul 16, 2025 at 11:07:35AM +0800, Keir Fraser wrote:
+> > > In preparation to remove synchronize_srcu() from MMIO registration,
+> > > remove the distributor's dependency on this implicit barrier by
+> > > direct acquire-release synchronization on the flag write and its
+> > > lock-free check.
+> > >
+> > > Signed-off-by: Keir Fraser <keirf@google.com>
+> > > ---
+> > >  arch/arm64/kvm/vgic/vgic-init.c | 11 ++---------
+> > >  1 file changed, 2 insertions(+), 9 deletions(-)
+> > >
+> > > diff --git a/arch/arm64/kvm/vgic/vgic-init.c b/arch/arm64/kvm/vgic/vgic-init.c
+> > > index 502b65049703..bc83672e461b 100644
+> > > --- a/arch/arm64/kvm/vgic/vgic-init.c
+> > > +++ b/arch/arm64/kvm/vgic/vgic-init.c
+> > > @@ -567,7 +567,7 @@ int kvm_vgic_map_resources(struct kvm *kvm)
+> > >  	gpa_t dist_base;
+> > >  	int ret = 0;
+> > >
+> > > -	if (likely(dist->ready))
+> > > +	if (likely(smp_load_acquire(&dist->ready)))
+> > >  		return 0;
+> > >
+> > >  	mutex_lock(&kvm->slots_lock);
+> > > @@ -598,14 +598,7 @@ int kvm_vgic_map_resources(struct kvm *kvm)
+> > >  		goto out_slots;
+> > >  	}
+> > >
+> > > -	/*
+> > > -	 * kvm_io_bus_register_dev() guarantees all readers see the new MMIO
+> > > -	 * registration before returning through synchronize_srcu(), which also
+> > > -	 * implies a full memory barrier. As such, marking the distributor as
+> > > -	 * 'ready' here is guaranteed to be ordered after all vCPUs having seen
+> > > -	 * a completely configured distributor.
+> > > -	 */
+> > > -	dist->ready = true;
+> > > +	smp_store_release(&dist->ready, true);
+> >
+> > No need the store-release and load-acquire for replacing
+> > synchronize_srcu_expedited() w/ call_srcu() IIUC:
+>
+> This isn't about using call_srcu(), because it's not actually about kvm->buses.
+> This code is concerned with ensuring that all stores to kvm->arch.vgic are ordered
+> before the store to set kvm->arch.vgic.ready, so that vCPUs never see "ready==true"
+> with a half-baked distributor.
+>
+> In the current code, kvm_vgic_map_resources() relies on the synchronize_srcu() in
+> kvm_io_bus_register_dev() to provide the ordering guarantees.  Switching to
+> smp_store_release() + smp_load_acquire() removes the dependency on the
+> synchronize_srcu() so that the synchronize_srcu() call can be safely removed.
 
-FF-A 1.2 adds the DIRECT_REQ2 messaging interface which is similar to
-the existing FFA_MSG_SEND_DIRECT_{REQ,RESP} functions except that it
-uses the SMC calling convention v1.2 which allows calls to use x4-x17 as
-argument and return registers. Add support for FFA_MSG_SEND_DIRECT_REQ2
-in the host ffa handler.
+Yes, I understand this and agree with your point.
 
-Signed-off-by: Per Larsen <perlarsen@google.com>
----
- arch/arm64/kvm/hyp/nvhe/ffa.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+Just for discusstion: I thought it should also work even w/o
+introduce the load acqure + store release after switch to
+call_srcu(): The smp_mb() in call_srcu() order the all store
+to kvm->arch.vgic before store kvm->arch.vgic.ready in
+current implementation.
 
-diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
-index f6d964df53c3e21ba85984f35cc7b6859012d1b0..363374408b354a5d65861b9cf140974d8914ff40 100644
---- a/arch/arm64/kvm/hyp/nvhe/ffa.c
-+++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
-@@ -851,6 +851,15 @@ static void do_ffa_part_get(struct arm_smccc_1_2_regs *res,
- 	hyp_spin_unlock(&host_buffers.lock);
- }
- 
-+static void do_ffa_direct_msg2(struct arm_smccc_1_2_regs *regs,
-+			       struct kvm_cpu_context *ctxt,
-+			       u64 vm_handle)
-+{
-+	struct arm_smccc_1_2_regs *args = (void *)&ctxt->regs.regs[0];
-+
-+	arm_smccc_1_2_smc(args, regs);
-+}
-+
- bool kvm_host_ffa_handler(struct kvm_cpu_context *host_ctxt, u32 func_id)
- {
- 	struct arm_smccc_1_2_regs res;
-@@ -909,11 +918,18 @@ bool kvm_host_ffa_handler(struct kvm_cpu_context *host_ctxt, u32 func_id)
- 	case FFA_PARTITION_INFO_GET:
- 		do_ffa_part_get(&res, host_ctxt);
- 		goto out_handled;
-+	case FFA_MSG_SEND_DIRECT_REQ2:
-+		if (hyp_ffa_version >= FFA_VERSION_1_2) {
-+			do_ffa_direct_msg2(&res, host_ctxt, HOST_FFA_ID);
-+			goto out_handled;
-+		}
-+		goto out_not_supported;
- 	}
- 
- 	if (ffa_call_supported(func_id))
- 		return false; /* Pass through */
- 
-+out_not_supported:
- 	ffa_to_smccc_error(&res, FFA_RET_NOT_SUPPORTED);
- out_handled:
- 	ffa_set_retval(host_ctxt, &res);
-
--- 
-2.50.0.727.gbf7dc18ff4-goog
-
-
+>
 
