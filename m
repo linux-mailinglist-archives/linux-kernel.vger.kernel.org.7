@@ -1,191 +1,98 @@
-Return-Path: <linux-kernel+bounces-737457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0470EB0ACD4
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 02:33:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 645A0B0ACD8
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 02:36:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F0B717E230
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 00:33:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 779F65A1568
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 00:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183871A285;
-	Sat, 19 Jul 2025 00:33:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F5771CAB3;
+	Sat, 19 Jul 2025 00:36:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="niuhIcbP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="PIMun5ui"
+Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751DC23CE;
-	Sat, 19 Jul 2025 00:33:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498D01FDD;
+	Sat, 19 Jul 2025 00:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752885198; cv=none; b=oArtf+JaD2JA7Dfqn6uHtu1STSh2RxWCI0AZtreXufQpl16BG4epMe+V+5Rt77mEmcP0Ux3PH3p+0dA5/e85wYMgnt5PqHNjSzRacyrellJwLdnig+jJzCX0P6Zz7txtbGaT9xWkx4GM1fOlmrIWXalP67g51XVA6pSXdSpt0h0=
+	t=1752885385; cv=none; b=aJvkGVKMOaMxNfJaWgvl1MzT74hB+5NJTs6OXqYjHPHWlYtVbY9bi8SuZqwIwPDd8e0rr2aVRgsvs33rCmtCdOwq1trUwNzwwAun/5VVUb4yTvEP/MRJvP6PeFG9af0FVT1eDKLyomk9WDITo9OhO3XVWLiVvOJfVwaK/y5NKjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752885198; c=relaxed/simple;
-	bh=IKdWOuH1Cz2/le0dawobJNZYJuvUACKwnfdlhD9hMJk=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=J4ex0t1NNJQB1eLGVIDzebBdvmiyn3dkqg6ErJijWFENMA55lUJtDp6Zzohv7CwbsgRJPQ76qPe+JoUjHJvFiZjMX0cejksoFYfptorGQ7luP7pJRhzXHo7sxCMSwnJSq5OpN+259YrTCshsBLO+zAWvLtur6xykgyUlD4Dsn5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=niuhIcbP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03688C4CEEB;
-	Sat, 19 Jul 2025 00:33:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752885198;
-	bh=IKdWOuH1Cz2/le0dawobJNZYJuvUACKwnfdlhD9hMJk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=niuhIcbPQc73G8/rbUlX9L+9eJLujz23MdY1XD/zZuKOX1BlflcHFDz6sLNRY9w/f
-	 KnsT7VtCDARC8UmoizkvebsHot2mP8JZ62r1dM+HvGbL75LYuwCTrto7MPvSBO3YIU
-	 zXw9t0CtTX7LjsxJsfUGtUb5lN+09RTqK+jCaIrGMjhMunu//wTr5vJu0zv9EFIrQ2
-	 YdYUtbmjoTv+aNo0UU4mD1ar3XJEWauifolpl0HlCxnxMM1Q5rjhbsafp0JBi94rDj
-	 00J/KqjtI1+eU1S6Raigmwgun1cQBkZWEwBub+YZtFVuhuNAV0LVRZ3KgNVy5zyX16
-	 /x4R7kWd+W27Q==
-Date: Sat, 19 Jul 2025 09:33:14 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/5] tracing: probe: Allocate traceprobe_parse_context
- from heap
-Message-Id: <20250719093314.053bae15fe65df0484c312a5@kernel.org>
-In-Reply-To: <20250718125820.0d0ae198@batman.local.home>
-References: <175283843771.343578.8524137568048302760.stgit@devnote2>
-	<175283844827.343578.10408845752163723065.stgit@devnote2>
-	<20250718125820.0d0ae198@batman.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752885385; c=relaxed/simple;
+	bh=I/r2vN3wqJ5qQdZvUGsuyTs//bOBUe/HAHBQjZKBpKw=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=luOWB3Ad73Hu1nx9yMo6bGCoNmcRjtJs6Bzp1ir6R+u01EJ9nvGhOJtxxTKO/2rkY9AANpYb0gfEXfEnfCIXahnmW/i8CWTqj44myC9BZnim5q/itneBqcPNCsqNkkc0WHjURHZa0y4sH/nrSNE54AY9/9j58vPkd3h3w6J13v8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=PIMun5ui; arc=none smtp.client-ip=180.181.231.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=Content-Type:MIME-Version:Message-ID:Subject:To:From:Date:
+	Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=IqC7ruty75JcffgNk6jVN0gBHdmHmCCllYQ2BM10vTw=; b=PIMun5ui99bZh+Ky7djZtul3Rb
+	UrWzNiQ41W1bVwHBqffwJKLpUBd8QYbuTZhaiSQ5s9R10LFWdoI9aF2iBVFXn6QJRB8dOgY6qX4LD
+	GLs1FN71H4PXjWuN3dgpxXcfJwvBLpM/XtfQywDYviewr4xFbS04w2men+C4fCtRoEakGBkUF1d5Y
+	ESyHPLaLSgZWU+u+/Rd3ck+FOAf4fHimGMp2rdCuJ1189WNI4Ou1lX0H9SloltKJSOyKLFBN45QiE
+	ODJw2FJPCC3pht3/D2QGf+q/k9IUBS4b2cZsIS0DQGZh6rPBhdVBy0MhVs/wMOFTDpqwnsEwZ5uK+
+	DLyBglqg==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1ucvJG-0089dm-0t;
+	Sat, 19 Jul 2025 08:36:11 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 19 Jul 2025 10:36:10 +1000
+Date: Sat, 19 Jul 2025 10:36:10 +1000
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Subject: [GIT PULL] Crypto Fixes for 6.16
+Message-ID: <aHroehR8vSrZnULY@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Fri, 18 Jul 2025 12:58:20 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+Hi Linus:
 
-> On Fri, 18 Jul 2025 20:34:08 +0900
-> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
-> 
-> > diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
-> > index 854e5668f5ee..7bc4c84464e4 100644
-> > --- a/kernel/trace/trace_probe.h
-> > +++ b/kernel/trace/trace_probe.h
-> > @@ -10,6 +10,7 @@
-> >   * Author:     Srikar Dronamraju
-> >   */
-> >  
-> > +#include <linux/cleanup.h>
-> >  #include <linux/seq_file.h>
-> >  #include <linux/slab.h>
-> >  #include <linux/smp.h>
-> 
-> Nit, but let's keep the "upside-down x-mas tree" format:
-> 
-> #include <linux/seq_file.h>
-> #include <linux/cleanup.h>
-> #include <linux/slab.h>
-> #include <linux/smp.h>
+The following changes since commit 20d71750cc72e80859d52548cf5c2a7513983b0d:
 
-Isn't it for variable rules?
-I saw some examples of sorting headers by A-Z.
+  crypto: wp512 - Use API partial block handling (2025-06-23 16:56:56 +0800)
 
-> 
-> 
-> > @@ -438,6 +439,14 @@ extern void traceprobe_free_probe_arg(struct probe_arg *arg);
-> >   * this MUST be called for clean up the context and return a resource.
-> >   */
-> >  void traceprobe_finish_parse(struct traceprobe_parse_context *ctx);
-> > +static inline void traceprobe_free_parse_ctx(struct traceprobe_parse_context *ctx)
-> > +{
-> > +	traceprobe_finish_parse(ctx);
-> > +	kfree(ctx);
-> > +}
-> > +
-> > +DEFINE_FREE(traceprobe_parse_context, struct traceprobe_parse_context *,
-> > +		if (!IS_ERR_OR_NULL(_T)) traceprobe_free_parse_ctx(_T))
-> 
-> ctx will either be allocated or NULL, I think the above could be:
-> 
-> 		if (_T) traceprobe_free_parse_ctx(_T))
+are available in the Git repository at:
 
-OK.
+  git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git tags/v6.16-p7
 
-> 
-> 
-> >  
-> >  extern int traceprobe_split_symbol_offset(char *symbol, long *offset);
-> >  int traceprobe_parse_event_name(const char **pevent, const char **pgroup,
-> > diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-> > index f95a2c3d5b1b..1fd479718d03 100644
-> > --- a/kernel/trace/trace_uprobe.c
-> > +++ b/kernel/trace/trace_uprobe.c
-> > @@ -537,6 +537,7 @@ static int register_trace_uprobe(struct trace_uprobe *tu)
-> >   */
-> >  static int __trace_uprobe_create(int argc, const char **argv)
-> >  {
-> > +	struct traceprobe_parse_context *ctx __free(traceprobe_parse_context) = NULL;
-> >  	struct trace_uprobe *tu;
-> >  	const char *event = NULL, *group = UPROBE_EVENT_SYSTEM;
-> >  	char *arg, *filename, *rctr, *rctr_end, *tmp;
-> > @@ -693,15 +694,17 @@ static int __trace_uprobe_create(int argc, const char **argv)
-> >  	tu->path = path;
-> >  	tu->filename = filename;
-> >  
-> > +	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
-> > +	if (!ctx) {
-> > +		ret = -ENOMEM;
-> > +		goto error;
-> > +	}
-> > +	ctx->flags = (is_return ? TPARG_FL_RETURN : 0) | TPARG_FL_USER;
-> > +
-> >  	/* parse arguments */
-> >  	for (i = 0; i < argc; i++) {
-> > -		struct traceprobe_parse_context ctx = {
-> > -			.flags = (is_return ? TPARG_FL_RETURN : 0) | TPARG_FL_USER,
-> > -		};
-> > -
-> >  		trace_probe_log_set_index(i + 2);
-> > -		ret = traceprobe_parse_probe_arg(&tu->tp, i, argv[i], &ctx);
-> > -		traceprobe_finish_parse(&ctx);
-> > +		ret = traceprobe_parse_probe_arg(&tu->tp, i, argv[i], ctx);
-> 
-> Doesn't this change the semantics a bit?
+for you to fetch changes up to ccafe2821cfaa880cf4461307111b76df07c48fb:
 
-Yes, and we don't need to allocate ctx each time because probe target
-point is always same (not different for each field). In this case,
-we don't need to allocate/free each time.
+  crypto: qat - Use crypto_shash_export_core (2025-06-26 12:55:22 +0800)
 
-> 
-> Before this change, traceprobe_finish_parse(&ctx) is called for every
-> iteration of the loop. Now we only do it when it exits the function.
+----------------------------------------------------------------
+This push fixes a buffer overflows in qat and chelsio.
+----------------------------------------------------------------
 
-Yes, but that is not a good way to use the ctx. As same as kprobe and
-fprobe events, it is designed to be the same through parsing one probe,
-not each field.
+Herbert Xu (2):
+      crypto: chelsio - Use crypto_shash_export_core
+      crypto: qat - Use crypto_shash_export_core
 
-For the uprobe case, this is just passing ctx->flags, others are mostly
-unused or temporarily used in field parsing. So allocating from stack
-frame, it is OK. But allocating from heap, it involves slab allocation
-and free each time. I think it is just inefficient. 
+ drivers/crypto/chelsio/chcr_algo.c             | 10 +++++-----
+ drivers/crypto/intel/qat/qat_common/qat_algs.c | 14 +++++++-------
+ 2 files changed, 12 insertions(+), 12 deletions(-)
 
-Hmm, but eprobe seems doing the same mistake. Let me split that part
-to fix to keep using the same ctx through parsing one probe.
-
-
-Thank you,
-
-> 
-> -- Steve
-> 
-> 
-> >  		if (ret)
-> >  			goto error;
-> >  	}
-> 
-
-
+Thanks,
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
