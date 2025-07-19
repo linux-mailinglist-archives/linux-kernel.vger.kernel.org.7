@@ -1,241 +1,210 @@
-Return-Path: <linux-kernel+bounces-737543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68AB4B0ADBC
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 05:41:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25040B0ADC5
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 05:45:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A1451C23C6A
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 03:41:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2B977A6449
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 03:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDFB01F4E57;
-	Sat, 19 Jul 2025 03:41:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B04440BF5;
+	Sat, 19 Jul 2025 03:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ICxRnPSS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uEta7Ds5"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D542E36ED
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 03:41:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47AE8216392
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 03:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752896471; cv=none; b=sF0CHfA9DQn+JCavlD0lA4EFaTnrXLSAZaGYXrR4NsFvD34U9Evqrb7mzlO3K3B+rmI7wnrvEMdJsgSL5F5efq/SaZBDirLQbFbxKe6R9Kduot16vwsOnWbo1Tsogg8y+viOXjuKlnG4qmuOyk34LyT6FykLgeq0M93XLb65LKs=
+	t=1752896727; cv=none; b=gewp8rE69crReGzZdFEFmZmUS+hhnadikXaD1uROmZZDZr6zZo4RNZdS0BhRcCHvTzAmknSuY4LS1UjuANH7OPnvDviab7zGxQCGYRyeWMFr2ptVnPigHifd/15u8MN3EEImOXPeeeVX5EOofC+tnB10QFFMl/OrAFFfZ8UxGDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752896471; c=relaxed/simple;
-	bh=vNKzp08fR6rGe3dowzaw73p6nSns3OGxHIzWfBKeCoc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=g8ZEl8uDdJKpKApKB2ifHs2r4NhA0mLmU9YfE/Ik0Xk305hJwYvCHrw/skOeinS2SjXIrKb/DLsGQbNc8Zu6ZwqrFl06D2bIZXRqAVIBl61KFFZL+2qVAwrwiFgzplbZWe7cyLRXJXDwZWW13fvqA3wBhMjl7etjZnRx2LGvJl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ICxRnPSS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68234C4CEE3;
-	Sat, 19 Jul 2025 03:41:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752896470;
-	bh=vNKzp08fR6rGe3dowzaw73p6nSns3OGxHIzWfBKeCoc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ICxRnPSScuwdp+SZOPuNnTuroZxiNahWtbCQm7rdVOpcYHcYGPDTbISINBzBw7WYp
-	 Htwfy3yVBSSDXPYhv+SuiGJXRquuMAH8407oTxNCnNlN3ONhFLj7HrVOFT2dCAHgGk
-	 WDEdjp5zG5hbJVXVcuVnRBVN36fyo242jaUShPKyBSObrjD/i6EOnlegzlYiL0VOna
-	 KTqtwC/9c+IHx6fuhLhpTzMDyPmHgI1AY8BfbYNgx4bNJVgtRY2TcGFibEuiluYQhK
-	 Z9MXY+APLPoTPvAkNqAoIvLaAD5NBE1IA4Gjj4VVpjAomrdB9mkjftB4FB7r2bqJLZ
-	 gycCfC/rVZghQ==
-From: Drew Fustini <fustini@kernel.org>
-To: Palmer Dabbelt <palmer@dabbelt.com>,
-	=?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Drew Fustini <dfustini@tenstorrent.com>,
-	Andy Chiu <andybnac@gmail.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Drew Fustini <fustini@kernel.org>
-Subject: [PATCH] riscv: Add sysctl to control discard of vstate during syscall
-Date: Fri, 18 Jul 2025 20:39:13 -0700
-Message-Id: <20250719033912.1313955-1-fustini@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1752896727; c=relaxed/simple;
+	bh=4sPNJohyZiSaP6bVdNUZSFtFW0sP5pkTkymnqX8jPwQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=W+4ldLmnO/WmxR/3K58/VowI53vt7pMRq3Lji7W+zDM5S2+9IHGnQBf7xXEVXXInne+XdxMoZuipcZjgtRQyMvKiBMT7+k9oWzFDE1J0lIVR4JLmsmb+LJ5crAYPyo9/uaBILodKmHjB2BLH0Fd6psFMspEPpv/Ye26gqVBw57Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uEta7Ds5; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-23689228a7fso42017105ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 20:45:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752896725; x=1753501525; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=WqiLWeTfwca+ZCiVwfRlVuUMX0C/baa/Iki7LyO/m5k=;
+        b=uEta7Ds5bhZ8eBw28Ly/pZX5MugsJdNsg9Ed73F+UTCsvO2lcCAZAmeQ/CKDBe8xmG
+         2FYds+DmTeQgk7lIiGPrvQxVLnrL++zFJCWsB3TT7Rrvbm1NrUc/1MQ4cJEeFyLytZUg
+         /J67ptV04BjAjjttXaDBYrjKpiVH7gNreKGoGdLF5D2DxF9GXK/jsCaNLMtBTj+e95xk
+         5S5ApZlDB27t8tx+CXONmfvXOP7JS6kIXZDSjKvuanUbgKtWwcoNH5MTHH7zIQybeHc/
+         FPehmdtu3Rrh9nKQqu+yoxTqCJvys0jEwaUcPco9Coob7SieyptyY+k/4FO0JMcp6IF5
+         m3OA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752896725; x=1753501525;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WqiLWeTfwca+ZCiVwfRlVuUMX0C/baa/Iki7LyO/m5k=;
+        b=xNF89MnWf+NvB5hyUeMyUCBDbk7YWTgSn2eYlki9T8DPQYqO00dv9PSivl1c5uIIyQ
+         vX8iI9E/Qjc2vvAAVCt0V/7GKpx4rxgJKmN4vAjDiNxkxIkkwPxarrteUX33tmxYZE9P
+         MsfoaBMHkSdW0DWsW+cKMP1ysQg8UAjRjq/Q+mnqRuGa9mviBGK513fY01aZEkSpyjCR
+         Rva/aMTChIbPc6r5rRjAYcn6P8o/D19ZpTG5iVcM3m5HFjfExmgJGlr7dDUinJnCSU07
+         IOKEerOwS7w1+U3eBFWHc4gL34pKK9l9E8XC0EByPq+iwAJ9G4znWYpjvNTFrqS/P5mH
+         fpBA==
+X-Forwarded-Encrypted: i=1; AJvYcCVPv3bSfQK13UjCf7kMkyCGTPiWssdXVMKCDV5UH8+sg5HPMvbmaXEhzeoiff4k7uCg8at9GDioj7LIMPI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxR8yBxcpHsftjn3pjrxr9ENjzn7HplJ0fpSmtB7A0tXRl2AZ/z
+	CidSxfa4Wy7fT2rDWBkzCkAzfEwXUKVy6qfQCHGqqv3GF93ni6/et0AFcmQV5MFp/PAn/zdmdsH
+	o1UKEmekjDQ==
+X-Google-Smtp-Source: AGHT+IHOdI8T6cUx74r7dZ/PvCczYxC1VCDvNVPBQLTqMZoVUSnomyHJted7sh7Fd5TYTJMr/OnALNl7AWMj
+X-Received: from plbkh3.prod.google.com ([2002:a17:903:643:b0:236:945a:3454])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:cf0f:b0:23e:277b:b921
+ with SMTP id d9443c01a7336-23e3035f774mr127637705ad.42.1752896725602; Fri, 18
+ Jul 2025 20:45:25 -0700 (PDT)
+Date: Fri, 18 Jul 2025 20:44:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+Message-ID: <20250719034515.2000467-1-irogers@google.com>
+Subject: [PATCH v1 00/19] Intel TMA 5.1 metrics and event updates
+From: Ian Rogers <irogers@google.com>
+To: Thomas Falcon <thomas.falcon@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, 
+	"=?UTF-8?q?Andreas=20F=C3=A4rber?=" <afaerber@suse.de>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Caleb Biggers <caleb.biggers@intel.com>, Weilin Wang <weilin.wang@intel.com>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-actions@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Drew Fustini <dfustini@tenstorrent.com>
+Update events from:
+v1.31 -> v1.33 for alderlake
+v1.09 -> v1.12 for arrowlake
+v1.14 -> v1.16 for emeraldrapids
+v1.10 -> v1.12 for graniterpaids
+v1.14 -> v1.17 for lunarlake
+v1.14 -> v1.16 for meteorlake
+v1.28 -> v1.30 for sapphirerapids
 
-Clobbering the vector registers can significantly increase system call
-latency for some implementations. To mitigate this performance impact, a
-policy mechanism is provided to administrators, distro maintainers, and
-developers to control vector state discard in the form of a sysctl knob:
+Update TMA 5.0 to 5.1 removing the slots event workaround as the patch series:
+https://lore.kernel.org/lkml/20250719030517.1990983-1-irogers@google.com/
+is assumed.
 
-/proc/sys/abi/riscv_v_vstate_discard
+The patches are generated by:
+https://github.com/intel/perfmon/blob/main/scripts/create_perf_json.py
+with pull requests 323 and 324 applied.
 
-Valid values are:
+Ian Rogers (19):
+  perf vendor events: Update alderlake events/metrics
+  perf vendor events: Update arrowlake events/metrics
+  perf vendor events: Update broadwell metrics
+  perf vendor events: Update cascadelakex metrics
+  perf vendor events: Update emeraldrapids events/metrics
+  perf vendor events: Update grandridge metrics
+  perf vendor events: Update graniterapids events/metrics
+  perf vendor events: Update haswell metrics
+  perf vendor events: Update icelake metrics
+  perf vendor events: Update ivybridge/ivytown metrics
+  perf vendor events: Update jaketown metrics
+  perf vendor events: Update lunarlake events/metrics
+  perf vendor events: Update meteorlake events/metrics
+  perf vendor events: Update rocketlake metrics
+  perf vendor events: Update sandybridge metrics
+  perf vendor events: Update sapphirerapids events/metrics
+  perf vendor events: Update sierraforest metrics
+  perf vendor events: Update skylake metrics
+  perf vendor events: Update tigerlake metrics
 
-0: Do not discard vector state during syscall
-1: Discard vector state during syscall
+ .../arch/x86/alderlake/adl-metrics.json       | 104 ++++----
+ .../pmu-events/arch/x86/alderlake/cache.json  |  99 ++++----
+ .../arch/x86/alderlake/floating-point.json    |  28 +--
+ .../arch/x86/alderlake/frontend.json          |  42 ++--
+ .../pmu-events/arch/x86/alderlake/memory.json |  12 +-
+ .../pmu-events/arch/x86/alderlake/other.json  |   8 +-
+ .../arch/x86/alderlake/pipeline.json          | 163 +++++--------
+ .../x86/alderlake/uncore-interconnect.json    |   2 -
+ .../arch/x86/alderlake/virtual-memory.json    |  40 +--
+ .../arch/x86/alderlaken/adln-metrics.json     |  20 +-
+ .../x86/alderlaken/uncore-interconnect.json   |   2 -
+ .../arch/x86/arrowlake/arl-metrics.json       | 180 ++++++++------
+ .../pmu-events/arch/x86/arrowlake/cache.json  | 122 +++++++---
+ .../arch/x86/arrowlake/frontend.json          |  40 +--
+ .../pmu-events/arch/x86/arrowlake/memory.json |  22 +-
+ .../arch/x86/arrowlake/pipeline.json          |  94 +++++---
+ .../arch/x86/broadwell/bdw-metrics.json       |  30 +--
+ .../arch/x86/broadwellde/bdwde-metrics.json   |  30 +--
+ .../arch/x86/broadwellx/bdx-metrics.json      |  33 ++-
+ .../arch/x86/cascadelakex/clx-metrics.json    | 139 ++++++++---
+ .../arch/x86/emeraldrapids/cache.json         | 100 ++++----
+ .../arch/x86/emeraldrapids/emr-metrics.json   | 131 +++++-----
+ .../x86/emeraldrapids/floating-point.json     |  43 ++--
+ .../arch/x86/emeraldrapids/frontend.json      |  42 ++--
+ .../arch/x86/emeraldrapids/memory.json        |  30 +--
+ .../arch/x86/emeraldrapids/other.json         |  28 ++-
+ .../arch/x86/emeraldrapids/pipeline.json      | 167 +++++--------
+ .../arch/x86/emeraldrapids/uncore-memory.json |  82 +++++++
+ .../x86/emeraldrapids/virtual-memory.json     |  40 +--
+ .../arch/x86/grandridge/grr-metrics.json      |  20 +-
+ .../arch/x86/graniterapids/cache.json         | 227 +++++++++++++-----
+ .../x86/graniterapids/floating-point.json     |  43 ++--
+ .../arch/x86/graniterapids/frontend.json      |  42 ++--
+ .../arch/x86/graniterapids/gnr-metrics.json   | 131 +++++-----
+ .../arch/x86/graniterapids/memory.json        |  33 ++-
+ .../arch/x86/graniterapids/other.json         |  30 ++-
+ .../arch/x86/graniterapids/pipeline.json      | 167 ++++++-------
+ .../arch/x86/graniterapids/uncore-io.json     |   1 -
+ .../arch/x86/graniterapids/uncore-memory.json |  31 ---
+ .../x86/graniterapids/virtual-memory.json     |  40 +--
+ .../arch/x86/haswell/hsw-metrics.json         |  32 ++-
+ .../arch/x86/haswellx/hsx-metrics.json        |  35 ++-
+ .../arch/x86/icelake/icl-metrics.json         |  96 ++++----
+ .../arch/x86/icelakex/icx-metrics.json        | 155 ++++++++----
+ .../arch/x86/ivybridge/ivb-metrics.json       |  30 +--
+ .../arch/x86/ivytown/ivt-metrics.json         |  33 ++-
+ .../arch/x86/jaketown/jkt-metrics.json        |  20 +-
+ .../pmu-events/arch/x86/lunarlake/cache.json  | 104 ++++++--
+ .../arch/x86/lunarlake/frontend.json          |  40 +--
+ .../arch/x86/lunarlake/lnl-metrics.json       | 216 +++++++++--------
+ .../pmu-events/arch/x86/lunarlake/memory.json |  22 +-
+ .../arch/x86/lunarlake/pipeline.json          |  85 ++++---
+ .../x86/lunarlake/uncore-interconnect.json    |  10 +
+ .../arch/x86/lunarlake/uncore-memory.json     |   8 +
+ tools/perf/pmu-events/arch/x86/mapfile.csv    |  16 +-
+ .../pmu-events/arch/x86/meteorlake/cache.json | 129 +++++-----
+ .../arch/x86/meteorlake/floating-point.json   |  28 +--
+ .../arch/x86/meteorlake/frontend.json         |  42 ++--
+ .../arch/x86/meteorlake/memory.json           |  15 +-
+ .../arch/x86/meteorlake/mtl-metrics.json      | 103 ++++----
+ .../pmu-events/arch/x86/meteorlake/other.json |   5 +-
+ .../arch/x86/meteorlake/pipeline.json         | 173 ++++++-------
+ .../arch/x86/meteorlake/virtual-memory.json   |  40 +--
+ .../arch/x86/rocketlake/rkl-metrics.json      |  97 ++++----
+ .../arch/x86/sandybridge/snb-metrics.json     |  19 +-
+ .../arch/x86/sapphirerapids/cache.json        | 100 ++++----
+ .../x86/sapphirerapids/floating-point.json    |  43 ++--
+ .../arch/x86/sapphirerapids/frontend.json     |  42 ++--
+ .../arch/x86/sapphirerapids/memory.json       |  30 +--
+ .../arch/x86/sapphirerapids/other.json        |  28 ++-
+ .../arch/x86/sapphirerapids/pipeline.json     | 167 +++++--------
+ .../arch/x86/sapphirerapids/spr-metrics.json  | 153 +++++++-----
+ .../x86/sapphirerapids/uncore-memory.json     |  82 +++++++
+ .../x86/sapphirerapids/virtual-memory.json    |  40 +--
+ .../arch/x86/sierraforest/srf-metrics.json    |  20 +-
+ .../arch/x86/skylake/skl-metrics.json         | 101 +++++---
+ .../arch/x86/skylakex/skx-metrics.json        | 101 +++++---
+ .../arch/x86/tigerlake/tgl-metrics.json       |  97 ++++----
+ 78 files changed, 2870 insertions(+), 2325 deletions(-)
+ create mode 100644 tools/perf/pmu-events/arch/x86/lunarlake/uncore-interconnect.json
 
-The initial state is controlled by CONFIG_RISCV_ISA_V_VSTATE_DISCARD.
-
-Fixes: 9657e9b7d253 ("riscv: Discard vector state on syscalls")
-Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
----
- Documentation/arch/riscv/vector.rst | 15 +++++++++++++++
- arch/riscv/Kconfig                  | 10 ++++++++++
- arch/riscv/include/asm/vector.h     |  4 ++++
- arch/riscv/kernel/vector.c          | 16 +++++++++++++++-
- 4 files changed, 44 insertions(+), 1 deletion(-)
-
-I've tested the impact of riscv_v_vstate_discard() on the SiFive X280
-cores [1] in the Tenstorrent Blackhole SoC [2]. The results from the
-Blackhole P100 [3] card show that discarding the vector registers
-increases null syscall latency by 25%.
-
-The null syscall program [4] executes vsetvli and then calls getppid()
-in a loop. The average duration of getppid() is 198 ns when registers
-are clobbered in riscv_v_vstate_discard(). The average duration drops
-to 149 ns when riscv_v_vstate_discard() skips clobbering the registers
-as result of riscv_v_vstate_discard being set to 0.
-
-$ sudo sysctl abi.riscv_v_vstate_discard=1
-abi.riscv_v_vstate_discard = 1
-
-$ ./null_syscall --vsetvli
-vsetvli complete
- iterations: 1000000000
-   duration: 198 seconds
-avg latency: 198.73 ns
-
-$ sudo sysctl abi.riscv_v_vstate_discard=0
-abi.riscv_v_vstate_discard = 0
-
-$ ./null_syscall --vsetvli
-vsetvli complete
- iterations: 1000000000
-   duration: 149 seconds
-avg latency: 149.89 ns
-
-I'm testing on the tt-blackhole-v6.16-rc1_vstate_discard [5] branch that
-has 13 patches, including this one, on top of v6.16-rc1. Most are simple
-yaml patches for dt bindings along with dts files and a bespoke network
-driver. I don't think the other patches are relevant to this discussion.
-
-This patch applies clean on its own to riscv/for-next and next-20250718.
-
-[1] https://www.sifive.com/cores/intelligence-x200-series
-[2] https://tenstorrent.com/en/hardware/blackhole
-[3] https://github.com/tenstorrent/tt-bh-linux
-[4] https://gist.github.com/tt-fustini/ab9b217756912ce75522b3cce11d0d58
-[5] https://github.com/tenstorrent/linux/tree/tt-blackhole-v6.16-rc1_vstate_discard
-
-diff --git a/Documentation/arch/riscv/vector.rst b/Documentation/arch/riscv/vector.rst
-index 3987f5f76a9d..1edbce436015 100644
---- a/Documentation/arch/riscv/vector.rst
-+++ b/Documentation/arch/riscv/vector.rst
-@@ -137,4 +137,19 @@ processes in form of sysctl knob:
- As indicated by version 1.0 of the V extension [1], vector registers are
- clobbered by system calls.
- 
-+Clobbering the vector registers can significantly increase system call latency
-+for some implementations. To mitigate the performance impact, a policy mechanism
-+is provided to the administrators, distro maintainers, and developers to control
-+the vstate discard in the form of a sysctl knob:
-+
-+* /proc/sys/abi/riscv_v_vstate_discard
-+
-+    Valid values are:
-+
-+    * 0: Do not discard vector state during syscall
-+    * 1: Discard vector state during syscall
-+
-+    Reading this file returns the current discard behavior. The initial state is
-+    controlled by CONFIG_RISCV_ISA_V_VSTATE_DISCARD.
-+
- 1: https://github.com/riscv/riscv-v-spec/blob/master/calling-convention.adoc
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 0aeee50da016..c0039f21d1f0 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -655,6 +655,16 @@ config RISCV_ISA_V_DEFAULT_ENABLE
- 
- 	  If you don't know what to do here, say Y.
- 
-+config RISCV_ISA_V_VSTATE_DISCARD
-+	bool "Enable Vector state discard by default"
-+	depends on RISCV_ISA_V
-+	default n
-+	help
-+	  Say Y here if you want to enable Vector state discard on syscall.
-+	  Otherwise, userspace has to enable it via the sysctl interface.
-+
-+	  If you don't know what to do here, say N.
-+
- config RISCV_ISA_V_UCOPY_THRESHOLD
- 	int "Threshold size for vectorized user copies"
- 	depends on RISCV_ISA_V
-diff --git a/arch/riscv/include/asm/vector.h b/arch/riscv/include/asm/vector.h
-index 45c9b426fcc5..77991013216b 100644
---- a/arch/riscv/include/asm/vector.h
-+++ b/arch/riscv/include/asm/vector.h
-@@ -40,6 +40,7 @@
- 	_res;								\
- })
- 
-+extern bool riscv_v_vstate_discard_ctl;
- extern unsigned long riscv_v_vsize;
- int riscv_v_setup_vsize(void);
- bool insn_is_vector(u32 insn_buf);
-@@ -270,6 +271,9 @@ static inline void __riscv_v_vstate_discard(void)
- {
- 	unsigned long vl, vtype_inval = 1UL << (BITS_PER_LONG - 1);
- 
-+	if (READ_ONCE(riscv_v_vstate_discard_ctl) == 0)
-+		return;
-+
- 	riscv_v_enable();
- 	if (has_xtheadvector())
- 		asm volatile (THEAD_VSETVLI_T4X0E8M8D1 : : : "t4");
-diff --git a/arch/riscv/kernel/vector.c b/arch/riscv/kernel/vector.c
-index 184f780c932d..7a4c209ad337 100644
---- a/arch/riscv/kernel/vector.c
-+++ b/arch/riscv/kernel/vector.c
-@@ -26,6 +26,7 @@ static struct kmem_cache *riscv_v_user_cachep;
- static struct kmem_cache *riscv_v_kernel_cachep;
- #endif
- 
-+bool riscv_v_vstate_discard_ctl = IS_ENABLED(CONFIG_RISCV_ISA_V_VSTATE_DISCARD);
- unsigned long riscv_v_vsize __read_mostly;
- EXPORT_SYMBOL_GPL(riscv_v_vsize);
- 
-@@ -307,11 +308,24 @@ static const struct ctl_table riscv_v_default_vstate_table[] = {
- 	},
- };
- 
-+static const struct ctl_table riscv_v_vstate_discard_table[] = {
-+	{
-+		.procname       = "riscv_v_vstate_discard",
-+		.data           = &riscv_v_vstate_discard_ctl,
-+		.maxlen         = sizeof(riscv_v_vstate_discard_ctl),
-+		.mode           = 0644,
-+		.proc_handler   = proc_dobool,
-+	},
-+};
-+
- static int __init riscv_v_sysctl_init(void)
- {
--	if (has_vector() || has_xtheadvector())
-+	if (has_vector() || has_xtheadvector()) {
- 		if (!register_sysctl("abi", riscv_v_default_vstate_table))
- 			return -EINVAL;
-+		if (!register_sysctl("abi", riscv_v_vstate_discard_table))
-+			return -EINVAL;
-+	}
- 	return 0;
- }
- 
 -- 
-2.34.1
+2.50.0.727.gbf7dc18ff4-goog
 
 
