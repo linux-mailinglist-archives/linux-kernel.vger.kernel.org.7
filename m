@@ -1,142 +1,201 @@
-Return-Path: <linux-kernel+bounces-737604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22EACB0AE44
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 08:47:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DF67B0AE47
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 08:49:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45F033BA97C
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 06:46:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23A043BAFB0
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 06:48:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE512222CC;
-	Sat, 19 Jul 2025 06:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="DAfrqHNI"
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6DE22DFB8;
+	Sat, 19 Jul 2025 06:49:15 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B861E51D
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 06:46:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752907618; cv=pass; b=CXssu16UBDbX4i52gprh1TZIvy2MydpkLDKc/bHtbxn+S895RiX8Ez9BBf3S0cBocUjeTn6lCXQ9+b2qF6A8nAM2gdR+NZE86U/8IGSbQ+nFU3gQmpUrnbcPKI89SXWEn9wrUql4F9KPxTlW3fp5cXY2unGjRsnD+n+SkGdQlk8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752907618; c=relaxed/simple;
-	bh=P82HZxG3L48rg4ge5f70V0N8EO916obPJ7k3B7Fd3jE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KEiex0Lgyzu2sHrpY8lIJhVjjhDv+Gzkf0rdq5uNY/fHjEPuslO2UJ52yQLrwF0rqTZquHQP9IT23e6vSF7zniiDA6OCY56ifFuOq9AFlKlzQIDXng32zPznymQ44elwseiOkgOJ33ygui0OvpD6EaqmRWF1BvO+C2/zJ9FRqok=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=DAfrqHNI; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1752907597; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Tv5PtB/Hu0pilIetNsmQ8GuCl9Blw4g6utc7I3xb4Gg5bSglvP2IAOT08JkoaDtaueGoGl7W8XeV/kY7B18zEueCZHOQBw7FkEOCZO3DUqKzEWDtioxvGrSuDLYR/00ExjqNmutnCPMKZALgIA9M68wjPjS/SLDOuZ5YkhRIhvc=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1752907597; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=LHHndUs+/G5YW9qx+xWQMhGSrQiJOYOxKpwiXLvTjD4=; 
-	b=J9Gg8BZ4Hu8LrN5jAWdG8xXcdN8RODt53r1YHiqUGw5Mw7fYpnmp4GchY3OPUF+zf4g1Vp4QVybOn4DGEctAhvFrELtGyP6BqCUiBSeJppQP5APttY42mVQHG7XIvI6Kce23ty2h87kBjjeiwLSFh1UvQXEvAuL/cpGErA5fmBY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752907597;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=LHHndUs+/G5YW9qx+xWQMhGSrQiJOYOxKpwiXLvTjD4=;
-	b=DAfrqHNIFLYKxJLY3UrTlPvNkcRk3XRcSOk0Ql1kUxWQUg6cqmAiBurjZmFU76dW
-	ik51svEVHL17MoIcOHDU1mNTDgkOvIxvE82drY7SOhLIUKg5pWOfEvY00ojmu+8xTxJ
-	wKKVGNQTMrSqOLwoG4nF3xsezxb68HvJhrxSY3aQREYlkKCxdWD/POS+qzjUoQMWpkb
-	NnJqloVoYPaBPMan/hmGfpVo8mSXkXaiVyoyXN9aXz9Z43e8kDsZTYYf8vKYlIIBve2
-	Tji0PASQhUY3GDgYjsc9Ibko3plTz9gvo2gvQXSg4nIpg8YQ9euAThOxEJX0Jb1hanV
-	OX0PGejKGg==
-Received: by mx.zohomail.com with SMTPS id 1752907596122572.0044863390824;
-	Fri, 18 Jul 2025 23:46:36 -0700 (PDT)
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Lucas Stach <l.stach@pengutronix.de>,
-	Russell King <linux+etnaviv@armlinux.org.uk>,
-	Christian Gmeiner <christian.gmeiner@gmail.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: etnaviv@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Icenowy Zheng <uwu@icenowy.me>
-Subject: [RFC PATCH] drm/etnaviv: set the 32-bit coherent DMA mask later
-Date: Sat, 19 Jul 2025 14:46:24 +0800
-Message-ID: <20250719064624.690606-1-uwu@icenowy.me>
-X-Mailer: git-send-email 2.50.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAB821C861B;
+	Sat, 19 Jul 2025 06:49:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752907755; cv=none; b=ptdbB+ivBLikHIlTvXzruL0pRBsLp6bA/q8mC3OIWTx/FYQeasuchLdVwTl+G5sOGAsSUu/BVvGWlxWrbQyTZp4L/V5T7zqfMry4ZDvA+Ybm6i9gYwBYp3igsFqYJPxV9SrhHQqiS9HU2fmrSkUVWaalMmxyAr2t9FhnfkRFZaM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752907755; c=relaxed/simple;
+	bh=kxdB6V/A9iBSlknMAs0moABiseCV1oQqESUopgkYZn8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XgFuoAJOl+PUlqKX73CV217+MIkxVmwfLSX3Qlc3cmNnfEK3cg7N+F/RgMXUuQNyrE2uLQp6KRtyHmxcRQSLLDMfyAMeDx9haRW9YUbr4B/KB2HOvlzZQ0Nnj2v48QtnrFUOOiGCoflzNvxeUjNudRSWzQuCZfvEda9pN2n/1vY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bkchQ1RnbzKHLyg;
+	Sat, 19 Jul 2025 14:49:10 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id CF8C21A0D68;
+	Sat, 19 Jul 2025 14:49:08 +0800 (CST)
+Received: from [10.174.179.247] (unknown [10.174.179.247])
+	by APP4 (Coremail) with SMTP id gCh0CgDnYhPiP3tonuMMAw--.29572S3;
+	Sat, 19 Jul 2025 14:49:08 +0800 (CST)
+Message-ID: <d1ee0f33-40e9-5586-36ec-88192747998f@huaweicloud.com>
+Date: Sat, 19 Jul 2025 14:49:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v3 06/11] md/md-bitmap: delay registration of bitmap_ops
+ until creating bitmap
+To: Yu Kuai <yukuai1@huaweicloud.com>, corbet@lwn.net, agk@redhat.com,
+ snitzer@kernel.org, mpatocka@redhat.com, song@kernel.org,
+ yukuai3@huawei.com, hare@suse.de
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dm-devel@lists.linux.dev, linux-raid@vger.kernel.org, yi.zhang@huawei.com,
+ yangerkun@huawei.com, johnny.chenyi@huawei.com
+References: <20250718092336.3346644-1-yukuai1@huaweicloud.com>
+ <20250718092336.3346644-7-yukuai1@huaweicloud.com>
+From: Li Nan <linan666@huaweicloud.com>
+In-Reply-To: <20250718092336.3346644-7-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+X-CM-TRANSID:gCh0CgDnYhPiP3tonuMMAw--.29572S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxXF43AF1DKw4xtw48Cr4fAFb_yoW5try3p3
+	97JF9xCr4rJrWSqa17Xa4q9F1rZrn7trZayryIqw1rGrnrWrnxWa1FgF4Utw1kGa4xuF4D
+	Zw45tr48Cr1j9F7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBSb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487
+	Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aV
+	AFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E
+	8cxan2IY04v7Mxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82
+	IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC2
+	0s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMI
+	IF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF
+	0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87
+	Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFDGOUUUUU
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-The etnaviv driver wants to use 40-bit DMA mask and 32-bit coherent
-allocation mask, to be able to access memory up to 40-bit, but still
-limit page tables to lower 32-bit.
 
-However, the call to of_dma_configure() next to setting the masks ruined
-everything -- of_dma_configure will use the coherent allocation mask to
-clip the DMA accessibility mask, leads to a setup with both masks as
-32-bit.
 
-In this situation PRIME imports stop to work because of SWIOTLB getting
-activated.
+在 2025/7/18 17:23, Yu Kuai 写道:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> Currently bitmap_ops is registered while allocating mddev, this is fine
+> when there is only one bitmap_ops.
+> 
+> Delay setting bitmap_ops until creating bitmap, so that user can choose
+> which bitmap to use before running the array.
+> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>   Documentation/admin-guide/md.rst |  3 ++
+>   drivers/md/md.c                  | 82 +++++++++++++++++++++-----------
+>   2 files changed, 56 insertions(+), 29 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/md.rst b/Documentation/admin-guide/md.rst
+> index 356d2a344f08..03a9f5025f99 100644
+> --- a/Documentation/admin-guide/md.rst
+> +++ b/Documentation/admin-guide/md.rst
+> @@ -388,6 +388,9 @@ All md devices contain:
+>        bitmap
+>            The default internal bitmap
+>   
+> +If bitmap_type is not none, then additional bitmap attributes will be
+> +created after md device KOBJ_CHANGE event.
+> +
+>   If bitmap_type is bitmap, then the md device will also contain:
+>   
+>     bitmap/location
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index d8b0dfdb4bfc..639b0143cbb1 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -674,9 +674,11 @@ static void no_op(struct percpu_ref *r) {}
+>   
+>   static bool mddev_set_bitmap_ops(struct mddev *mddev)
+>   {
+> +	struct bitmap_operations *old = mddev->bitmap_ops;
+>   	struct md_submodule_head *head;
+>   
+> -	if (mddev->bitmap_id == ID_BITMAP_NONE)
+> +	if (mddev->bitmap_id == ID_BITMAP_NONE ||
+> +	    (old && old->head.id == mddev->bitmap_id))
+>   		return true;
+>   
+>   	xa_lock(&md_submodule);
+> @@ -694,6 +696,18 @@ static bool mddev_set_bitmap_ops(struct mddev *mddev)
+>   
+>   	mddev->bitmap_ops = (void *)head;
+>   	xa_unlock(&md_submodule);
+> +
+> +	if (mddev->bitmap_ops->group) {
+> +		if (sysfs_create_group(&mddev->kobj, mddev->bitmap_ops->group))
+> +			pr_warn("md: cannot register extra bitmap attributes for %s\n",
+> +				mdname(mddev));
+> +		else
+> +			/*
+> +			 * Inform user with KOBJ_CHANGE about new bitmap
+> +			 * attributes.
+> +			 */
+> +			kobject_uevent(&mddev->kobj, KOBJ_CHANGE);
+> +	}
+>   	return true;
+>   
+>   err:
+> @@ -703,28 +717,25 @@ static bool mddev_set_bitmap_ops(struct mddev *mddev)
+>   
+>   static void mddev_clear_bitmap_ops(struct mddev *mddev)
+>   {
+> +	if (mddev->bitmap_ops && mddev->bitmap_ops->group)
+> +		sysfs_remove_group(&mddev->kobj, mddev->bitmap_ops->group);
+> +
+>   	mddev->bitmap_ops = NULL;
+>   }
+>   
+>   int mddev_init(struct mddev *mddev)
+>   {
+> -	if (!IS_ENABLED(CONFIG_MD_BITMAP)) {
+> +	if (!IS_ENABLED(CONFIG_MD_BITMAP))
+>   		mddev->bitmap_id = ID_BITMAP_NONE;
+> -	} else {
+> +	else
+>   		mddev->bitmap_id = ID_BITMAP;
 
-Set a 40-bit coherent mask before of_dma_configure() and then the real
-32-bit mask after it, to prevent main DMA mask being clipped.
+'bitmap_id' is set here.
 
-Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
----
-This patch is marked RFC because the practice looks a little dirty.
+> -		if (!mddev_set_bitmap_ops(mddev))
+> -			return -EINVAL;
+> -	}
+>   
+>   	if (percpu_ref_init(&mddev->active_io, active_io_release,
+> -			    PERCPU_REF_ALLOW_REINIT, GFP_KERNEL)) {
+> -		mddev_clear_bitmap_ops(mddev);
+> +			    PERCPU_REF_ALLOW_REINIT, GFP_KERNEL))
+>   		return -ENOMEM;
+> -	}
+>   
+>   	if (percpu_ref_init(&mddev->writes_pending, no_op,
+>   			    PERCPU_REF_ALLOW_REINIT, GFP_KERNEL)) {
+> -		mddev_clear_bitmap_ops(mddev);
+>   		percpu_ref_exit(&mddev->active_io);
+>   		return -ENOMEM;
+>   	}
+> @@ -752,6 +763,7 @@ int mddev_init(struct mddev *mddev)
+>   	mddev->resync_min = 0;
+>   	mddev->resync_max = MaxSector;
+>   	mddev->level = LEVEL_NONE;
+> +	mddev->bitmap_id = ID_BITMAP;
+>   
 
-P.S. unfortunately the testing situation isn't mainlined yet -- I am
-using etnaviv as the X.org 2D accelerator on TH1520 SoC (with
-xf86-video-thead DDX), and importing buffers from powervr device
-(open source Vulkan driver, hacked to add xcb WSI support). Both devices
-are a few patches away from mainline, and the display engine
-(VeriSilicon DC8200) support is a big TODO.
+This change is wrong.
 
- drivers/gpu/drm/etnaviv/etnaviv_drv.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-index 3e91747ed339..cded63904c65 100644
---- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-@@ -650,9 +650,11 @@ static int etnaviv_pdev_probe(struct platform_device *pdev)
- 	 * To make things easy, we set the dma_coherent_mask to 32
- 	 * bit to make sure we are allocating the command buffers and
- 	 * TLBs in the lower 4 GiB address space.
-+	 *
-+	 * As coherent_mask may mislead of_dma_configure(), set it to
-+	 * the same with main dma mask temporarily as a hack.
- 	 */
--	if (dma_set_mask(dev, DMA_BIT_MASK(40)) ||
--	    dma_set_coherent_mask(dev, DMA_BIT_MASK(32))) {
-+	if (dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(40))) {
- 		dev_dbg(dev, "No suitable DMA available\n");
- 		return -ENODEV;
- 	}
-@@ -668,6 +670,13 @@ static int etnaviv_pdev_probe(struct platform_device *pdev)
- 		of_node_put(first_node);
- 	}
- 
-+	/*
-+	 * Now as of_dma_configure() is done, we're now safe to set
-+	 * coherent_dma_mask to the real value.
-+	 */
-+	if (dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(32)))
-+		return -ENODEV;
-+
- 	return component_master_add_with_match(dev, &etnaviv_master_ops, match);
- }
- 
 -- 
-2.50.1
+Thanks,
+Nan
 
 
