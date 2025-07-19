@@ -1,242 +1,179 @@
-Return-Path: <linux-kernel+bounces-737709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AE36B0AF9E
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 13:37:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB212B0AFA0
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 13:38:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91608189A324
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 11:38:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64610189A666
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 11:38:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A374B2264C7;
-	Sat, 19 Jul 2025 11:37:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A39C226CEB;
+	Sat, 19 Jul 2025 11:37:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QDHlqGiQ"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eW9fNJZC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3529A33086;
-	Sat, 19 Jul 2025 11:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E2B33086;
+	Sat, 19 Jul 2025 11:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752925058; cv=none; b=KWBZ+XtuabNIE110XL1bByZswIqqylJ8DwmIKLWfua3MUyrRLoqGzqi3QoHxOEjLwGqT6i9R1L/aay5enocVVktEn0YdkDToIWi/rjNte1DCPZ/NMrbXdUHmRqSzbFot/ggqTzeyYiLYgvUc1F76cVJS4QTXv7ilVa9w/5+ydSQ=
+	t=1752925076; cv=none; b=QSDqmZvFoB3f+pNli2cGF33A3LynuYmIU1acGRI0myye3malWupZpyCw0xgX3kaOnNaEfcY6j9VCcrzmDa6Vm23RZ2VqMPIrj0t6biMKKliCpq8f17f6OfPCsGX9OSJ4RsK572nIFB91tnpGoSlb5Qzw7/wDY5LSadRJT00Ydzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752925058; c=relaxed/simple;
-	bh=ZfMI25QHUZSwQG3NMh5F1DQkcrlpzfG2pIZc2YV5Ljk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Wsk3okrvldUv9ipYyyInpcAN3e6ARI/v+8MxNZ4AbW+ApYQfLd5oURZOoyuw6T10ul+ErwfTv6kmJX7BpPmHOCSviSrEKh8YitR1QpNSoqqJLNFGFUtb4MaLbJnxqAyiPDjlX5iEVqj5O/LeQV6VNMWQcJ1QroCDGbqr16O7Xt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QDHlqGiQ; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-55511c3e203so2781958e87.3;
-        Sat, 19 Jul 2025 04:37:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752925054; x=1753529854; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4ERF2Sk0XqRBkD3XsxUBB+tND9y8lq/D9RF87CJ77e8=;
-        b=QDHlqGiQPeHVWFaWN0Q2rE9/X9ZJO2gvbZgnMLo/xZzKlE7z77r0ZOCK43AO7PT9BG
-         frbE05Gr9kAjgY3xhy9sUhR7gnx4m65J6fMaXK+crXsU7iD3TI1JaC+wrxsaheklFta7
-         HK1ZxbCx5q6lBmAkWwCI1EKiU/wxl2rWoqls5Yag8zUNCzUQf7U2QQcuympMJxtsM8HX
-         5wYF5G3TlxYNsctCZ+Lq0f7qi5WiQC9IMlE3GgpPTc51uwZe3zOPx0pQuOiuXirNmHlL
-         fLI9PI4yfJbOtHpiMnLK42f1JhcSytpLe48eQ4ZPG1iITvDlKWlpFXAkFkIGmEgxwk3g
-         K/Ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752925054; x=1753529854;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4ERF2Sk0XqRBkD3XsxUBB+tND9y8lq/D9RF87CJ77e8=;
-        b=iacU4nah0HTjRm615ARt+X/iQyqq92F/kn04GMorJWQwW7HgrHQ1QT15aLug6WRg9B
-         naTkLb5OwhmQMIWVICGuZX+kbGXzC+QRnj2vvQji0Els+EXMbzB5ESUVIb9vUN73cblg
-         2XwZXmgwBTAYN5SIbFOX13qlw16tvt/EtU7HM3u5TLFU+uTcPf2YNCLluVoP9QIaB/O0
-         ufSGLlofI1Tpy0v2sFQx4YiRy9UnRQi0Cuch00HwuZN9BcCHX+VohDKuxocibbKGsKZk
-         UjOT4qquYXTpYco8VtlmhpWNTw4BB0wTRMGzVMMvwOsqzsH081dhRaBYZeynOsJDfdye
-         ++SQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWEDlWX4FRVC000vg/qh5h+1LAHQOkZ0Re/lL4X8VqRx3kGtpS+s58HP7pmTkm9OpFuYTVVB5hmkU0tyTc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwykoWnMtFOviiUaR7aL0gD0ajHYkf6ZXY6NJDWUKtsF3f/7aLp
-	+0gwf4EbyBpxmtpn4jq3gjko/zhfhAun4Uwu8Iu3L/9NHFXzfjkq32oU
-X-Gm-Gg: ASbGncvtWB8IQa3fwPH/3xbwPAUrXGSihnEmX5m3MtV3tAN1hXJGcXG6FWT5bU+YTOE
-	8Ev+8ITi4tFjzrO6QWZHbysjJGYOSXvDz6yVdQiVr7qE1jWDD+qzDywU2KUUyiGcr633+d9BWwh
-	nYyERdCmWDwf2U2+hST/3NQAa+iUdfi5scrZuv4nomd/lfYH7DAMW58CBxQSO4zPYTcdNPg2Gc0
-	JnepHUUA0kmcuaqMJivJDTN5NYKWkF/Rrtz1Kh4iaPUNQU+EdUmOq1hvt588e+mDsz+OSUrSe5a
-	iT2emqeRXs1YTfZnVmdheKoVxeAJu1nt1IV4tmyof5YYHBzD6yACOVsNGaZYh33VFoct0+vVMsM
-	3jT6HC3M+eymMOZ34301DafxqLMq3WtTuGwjythMM2kwMD55WDKxd5+QTiYY=
-X-Google-Smtp-Source: AGHT+IG+9LlUG1qH0+6z9tQS7rdjofP4KWefH0bcwJKwXf65VSUr8FfVIWj0L0dB7SeTD2mJ+9scWA==
-X-Received: by 2002:a05:6512:1595:b0:553:2e0f:96c with SMTP id 2adb3069b0e04-55a23ef82dbmr3984293e87.23.1752925053876;
-        Sat, 19 Jul 2025 04:37:33 -0700 (PDT)
-Received: from SC-WS-02452.corp.sbercloud.ru ([37.78.122.38])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55a31dadf26sm672074e87.213.2025.07.19.04.37.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Jul 2025 04:37:33 -0700 (PDT)
-From: Sergey Bashirov <sergeybashirov@gmail.com>
-To: Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	NeilBrown <neil@brown.name>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>
-Cc: linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Sergey Bashirov <sergeybashirov@gmail.com>
-Subject: [PATCH] NFSD: Rework encoding and decoding of nfsd4_deviceid
-Date: Sat, 19 Jul 2025 14:37:28 +0300
-Message-ID: <20250719113730.338129-1-sergeybashirov@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1752925076; c=relaxed/simple;
+	bh=WHImR9ml49rOWCFEslqOX+Ll5RQy1Y/vpMK7wGbnRrQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mk9s86Hbokqdk+ROb2mTO3AMr8V1hU4tCgwU8pto+/Z0rq96L9QH8SBGzuoSntxYoj0EvxKmU+IecAJROJT2mh55PEyoO/ZgpRgUcRt2AD3Rb7Ktk2KOvn2Q1D7K55/FBzK6YhLWM03g602JIzduBvvoccG2UqVfAQa07/KxxoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eW9fNJZC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C10FC4CEE3;
+	Sat, 19 Jul 2025 11:37:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752925075;
+	bh=WHImR9ml49rOWCFEslqOX+Ll5RQy1Y/vpMK7wGbnRrQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eW9fNJZCn0+MCDcGdnpSmUF5Vm7+TaQqaiHlaj/naBPXrRmZAljXoyiUwmJHhDtic
+	 Q/3w9sMROeb/N3JjZKLphbTfuulzQX+RZ/OnReTzsqT8mHmrSfyBm1seEIC9zq9hsX
+	 N3UtqMPddFs0qs27h6UHsImtbaGE4IMOaYiByL4uGHlxfQ2Ji5dCo6/ISk5kZYjtGK
+	 EZaGxl2KUX/lWcbdOfqwIn4xgnWeOUsGBWl/79PYdprW2a8xiFPymDbeso8xpmI9in
+	 n9L3CkoDX9pSwl3bp7Em1BCk6XEvbI5fCO3eXhPvarHQe3mCOPyVSBhEfDiTN1irU8
+	 FTVhbAg5rZH5g==
+Date: Sat, 19 Jul 2025 14:37:51 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: "Orlov, Ivan" <ivan.orlov0322@gmail.com>
+Cc: Jonathan McDowell <noodles@earth.li>,
+	"Orlov, Ivan" <iorlov@amazon.co.uk>,
+	"peterhuewe@gmx.de" <peterhuewe@gmx.de>,
+	"jgg@ziepe.ca" <jgg@ziepe.ca>,
+	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Woodhouse, David" <dwmw@amazon.co.uk>
+Subject: Re: [PATCH v2] tpm: Fix the timeout & use ktime
+Message-ID: <aHuDj36Qa6iKsvkn@kernel.org>
+References: <20250620180828.98413-1-iorlov@amazon.com>
+ <aFhtKrWTDzZbpTSh@earth.li>
+ <aFwnG--lzZO0mQgc@kernel.org>
+ <aGeYqQG15lb2_NaU@earth.li>
+ <aGfwPbMZf-SHshXH@kernel.org>
+ <048723bf-4a8d-451a-911b-f9f94a4270d7@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <048723bf-4a8d-451a-911b-f9f94a4270d7@gmail.com>
 
-Compilers may optimize the layout of C structures, so we should not rely
-on sizeof and memcpy to encode and decode XDR structures. The byte order
-of the fields should also be taken into account. This patch adds the
-correct functions to handle the nfsd4_deviceid structure and removes the
-pad field, which is currently unused.
+On Fri, Jul 04, 2025 at 04:39:20PM +0100, Orlov, Ivan wrote:
+> On 04/07/2025 16:16, Jarkko Sakkinen wrote:
+> > On Fri, Jul 04, 2025 at 10:02:33AM +0100, Jonathan McDowell wrote:
+> > > On Wed, Jun 25, 2025 at 07:43:07PM +0300, Jarkko Sakkinen wrote:
+> > > > On Sun, Jun 22, 2025 at 09:52:58PM +0100, Jonathan McDowell wrote:
+> > > > > On Fri, Jun 20, 2025 at 06:08:31PM +0000, Orlov, Ivan wrote:
+> > > > > > The current implementation of timeout detection works in the following
+> > > > > > way:
+> > > > > > 
+> > > > > > 1. Read completion status. If completed, return the data
+> > > > > > 2. Sleep for some time (usleep_range)
+> > > > > > 3. Check for timeout using current jiffies value. Return an error if
+> > > > > >    timed out
+> > > > > > 4. Goto 1
+> > > > > > 
+> > > > > > usleep_range doesn't guarantee it's always going to wake up strictly in
+> > > > > > (min, max) range, so such a situation is possible:
+> > > > > > 
+> > > > > > 1. Driver reads completion status. No completion yet
+> > > > > > 2. Process sleeps indefinitely. In the meantime, TPM responds
+> > > > > > 3. We check for timeout without checking for the completion again.
+> > > > > >    Result is lost.
+> > > > > > 
+> > > > > > Such a situation also happens for the guest VMs: if vCPU goes to sleep
+> > > > > > and doesn't get scheduled for some time, the guest TPM driver will
+> > > > > > timeout instantly after waking up without checking for the completion
+> > > > > > (which may already be in place).
+> > > > > > 
+> > > > > > Perform the completion check once again after exiting the busy loop in
+> > > > > > order to give the device the last chance to send us some data.
+> > > > > > 
+> > > > > > Since now we check for completion in two places, extract this check into
+> > > > > > a separate function.
+> > > > > > 
+> > > > > > Signed-off-by: Ivan Orlov <iorlov@amazon.com>
+> > > > > > ---
+> > > > > > V1 -> V2:
+> > > > > > - Exclude the jiffies -> ktime change from the patch
+> > > > > > - Instead of recording the time before checking for completion, check
+> > > > > >   for completion once again after leaving the loop
+> > > > > > 
+> > > > > > drivers/char/tpm/tpm-interface.c | 17 +++++++++++++++--
+> > > > > > 1 file changed, 15 insertions(+), 2 deletions(-)
+> > > > > > 
+> > > > > > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> > > > > > index 8d7e4da6ed53..6960ee2798e1 100644
+> > > > > > --- a/drivers/char/tpm/tpm-interface.c
+> > > > > > +++ b/drivers/char/tpm/tpm-interface.c
+> > > > > > @@ -82,6 +82,13 @@ static bool tpm_chip_req_canceled(struct tpm_chip *chip, u8 status)
+> > > > > > 	return chip->ops->req_canceled(chip, status);
+> > > > > > }
+> > > > > > 
+> > > > > > +static bool tpm_transmit_completed(struct tpm_chip *chip)
+> > > > > > +{
+> > > > > > +	u8 status_masked = tpm_chip_status(chip) & chip->ops->req_complete_mask;
+> > > > > > +
+> > > > > > +	return status_masked == chip->ops->req_complete_val;
+> > > > > > +}
+> > > > > > +
+> > > > > > static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
+> > > > > > {
+> > > > > > 	struct tpm_header *header = buf;
+> > > > > > @@ -129,8 +136,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
+> > > > > > 	stop = jiffies + tpm_calc_ordinal_duration(chip, ordinal);
+> > > > > > 	do {
+> > > > > > 		u8 status = tpm_chip_status(chip);
+> > > > > > -		if ((status & chip->ops->req_complete_mask) ==
+> > > > > > -		    chip->ops->req_complete_val)
+> > > > > > +		if (tpm_transmit_completed(chip))
+> > > > > > 			goto out_recv;
+> > > > > 
+> > > > > The only thing I'd point out here is we end up doing a double status read
+> > > > > one after the other (once here, once in tpm_transmit_completed), and I'm
+> > > > > pretty sure I've seen instances where that caused a problem.
+> > > > 
+> > > > It would be easy to to prevent at least double reads after completion
+> > > > e.g., in tpm_chip_status():
+> > > 
+> > > Or just take the simple approach and make the check after the while loop:
+> > > 
+> > > 	if ((tpm_chip_status(chip) & chip->ops->req_complete_mask) ==
+> > > 	    chip->ops->req_complete_val)
+> > > 		goto out_recv;
+> > > 
+> > > There might be potential for a longer term cleanup using chip->status to
+> > > cache things, but I'm little concerned that's going to open paths where we
+> > > might not correctly update it, so I think it should be a separate piece.
+> > > 
+> > > (I'm motivated by the fact we've started to see the "Operation Canceled"
+> > > error and I'd like us to close on the best way to fix it. :) )
+> > 
+> > This would work for me too!
+> > 
+> 
+> Hi, and sorry for the late reply :(
+> 
+> I believe this option would work for us as well. Please let me know whether
+> you'd like me to send V3 or you feel free to send it yourself if you want.
 
-Signed-off-by: Sergey Bashirov <sergeybashirov@gmail.com>
----
- Tested on the block layout setup, checked with smatch.
+Please send one more patch. I just came from holiday and now have
+hands full backtracking last two weeks.
 
- fs/nfsd/blocklayoutxdr.c    |  7 ++-----
- fs/nfsd/flexfilelayoutxdr.c |  3 +--
- fs/nfsd/nfs4layouts.c       |  1 -
- fs/nfsd/nfs4xdr.c           | 14 +-------------
- fs/nfsd/xdr4.h              | 31 ++++++++++++++++++++++++++++++-
- 5 files changed, 34 insertions(+), 22 deletions(-)
+> 
+> --
+> Kind regards,
+> Ivan Orlov
 
-diff --git a/fs/nfsd/blocklayoutxdr.c b/fs/nfsd/blocklayoutxdr.c
-index bcf21fde91207..9ff2a23470e61 100644
---- a/fs/nfsd/blocklayoutxdr.c
-+++ b/fs/nfsd/blocklayoutxdr.c
-@@ -29,8 +29,7 @@ nfsd4_block_encode_layoutget(struct xdr_stream *xdr,
- 	*p++ = cpu_to_be32(len);
- 	*p++ = cpu_to_be32(1);		/* we always return a single extent */
- 
--	p = xdr_encode_opaque_fixed(p, &b->vol_id,
--			sizeof(struct nfsd4_deviceid));
-+	p = nfsd4_encode_deviceid(p, &b->vol_id);
- 	p = xdr_encode_hyper(p, b->foff);
- 	p = xdr_encode_hyper(p, b->len);
- 	p = xdr_encode_hyper(p, b->soff);
-@@ -156,9 +155,7 @@ nfsd4_block_decode_layoutupdate(__be32 *p, u32 len, struct iomap **iomapp,
- 	for (i = 0; i < nr_iomaps; i++) {
- 		struct pnfs_block_extent bex;
- 
--		memcpy(&bex.vol_id, p, sizeof(struct nfsd4_deviceid));
--		p += XDR_QUADLEN(sizeof(struct nfsd4_deviceid));
--
-+		p = nfsd4_decode_deviceid(p, &bex.vol_id);
- 		p = xdr_decode_hyper(p, &bex.foff);
- 		if (bex.foff & (block_size - 1)) {
- 			goto fail;
-diff --git a/fs/nfsd/flexfilelayoutxdr.c b/fs/nfsd/flexfilelayoutxdr.c
-index aeb71c10ff1b9..28eb5bedb7e13 100644
---- a/fs/nfsd/flexfilelayoutxdr.c
-+++ b/fs/nfsd/flexfilelayoutxdr.c
-@@ -54,8 +54,7 @@ nfsd4_ff_encode_layoutget(struct xdr_stream *xdr,
- 	*p++ = cpu_to_be32(1);			/* single mirror */
- 	*p++ = cpu_to_be32(1);			/* single data server */
- 
--	p = xdr_encode_opaque_fixed(p, &fl->deviceid,
--			sizeof(struct nfsd4_deviceid));
-+	p = nfsd4_encode_deviceid(p, &fl->deviceid);
- 
- 	*p++ = cpu_to_be32(1);			/* efficiency */
- 
-diff --git a/fs/nfsd/nfs4layouts.c b/fs/nfsd/nfs4layouts.c
-index aea905fcaf87a..683bd1130afe2 100644
---- a/fs/nfsd/nfs4layouts.c
-+++ b/fs/nfsd/nfs4layouts.c
-@@ -120,7 +120,6 @@ nfsd4_set_deviceid(struct nfsd4_deviceid *id, const struct svc_fh *fhp,
- 
- 	id->fsid_idx = fhp->fh_export->ex_devid_map->idx;
- 	id->generation = device_generation;
--	id->pad = 0;
- 	return 0;
- }
- 
-diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-index ea91bad4eee2c..f3a089df164c6 100644
---- a/fs/nfsd/nfs4xdr.c
-+++ b/fs/nfsd/nfs4xdr.c
-@@ -587,18 +587,6 @@ nfsd4_decode_state_owner4(struct nfsd4_compoundargs *argp,
- }
- 
- #ifdef CONFIG_NFSD_PNFS
--static __be32
--nfsd4_decode_deviceid4(struct nfsd4_compoundargs *argp,
--		       struct nfsd4_deviceid *devid)
--{
--	__be32 *p;
--
--	p = xdr_inline_decode(argp->xdr, NFS4_DEVICEID4_SIZE);
--	if (!p)
--		return nfserr_bad_xdr;
--	memcpy(devid, p, sizeof(*devid));
--	return nfs_ok;
--}
- 
- static __be32
- nfsd4_decode_layoutupdate4(struct nfsd4_compoundargs *argp,
-@@ -1783,7 +1771,7 @@ nfsd4_decode_getdeviceinfo(struct nfsd4_compoundargs *argp,
- 	__be32 status;
- 
- 	memset(gdev, 0, sizeof(*gdev));
--	status = nfsd4_decode_deviceid4(argp, &gdev->gd_devid);
-+	status = nfsd4_stream_decode_deviceid(argp->xdr, &gdev->gd_devid);
- 	if (status)
- 		return status;
- 	if (xdr_stream_decode_u32(argp->xdr, &gdev->gd_layout_type) < 0)
-diff --git a/fs/nfsd/xdr4.h b/fs/nfsd/xdr4.h
-index a23bc56051caf..ec70cb9c17788 100644
---- a/fs/nfsd/xdr4.h
-+++ b/fs/nfsd/xdr4.h
-@@ -595,9 +595,38 @@ struct nfsd4_reclaim_complete {
- struct nfsd4_deviceid {
- 	u64			fsid_idx;
- 	u32			generation;
--	u32			pad;
- };
- 
-+static inline __be32 *
-+nfsd4_encode_deviceid(__be32 *p, const struct nfsd4_deviceid *devid)
-+{
-+	p = xdr_encode_hyper(p, devid->fsid_idx);
-+	*p++ = cpu_to_be32(devid->generation);
-+	*p++ = cpu_to_be32(0); /* pad field is currently unused */
-+	return p;
-+}
-+
-+static inline __be32 *
-+nfsd4_decode_deviceid(__be32 *p, struct nfsd4_deviceid *devid)
-+{
-+	p = xdr_decode_hyper(p, &devid->fsid_idx);
-+	devid->generation = be32_to_cpup(p++);
-+	p++; /* pad field is currently unused */
-+	return p;
-+}
-+
-+static inline __be32
-+nfsd4_stream_decode_deviceid(struct xdr_stream *xdr,
-+			     struct nfsd4_deviceid *devid)
-+{
-+	__be32 *p = xdr_inline_decode(xdr, NFS4_DEVICEID4_SIZE);
-+
-+	if (unlikely(!p))
-+		return nfserr_bad_xdr;
-+	nfsd4_decode_deviceid(p, devid);
-+	return nfs_ok;
-+}
-+
- struct nfsd4_layout_seg {
- 	u32			iomode;
- 	u64			offset;
--- 
-2.43.0
-
+BR, Jarkko
 
