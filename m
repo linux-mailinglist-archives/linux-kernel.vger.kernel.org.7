@@ -1,52 +1,51 @@
-Return-Path: <linux-kernel+bounces-737499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E37A8B0AD6E
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 04:12:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86B51B0AD74
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 04:13:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D57311AA0417
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 02:12:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8398FAC001A
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 02:12:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB96E1F4E57;
-	Sat, 19 Jul 2025 02:11:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9731F21D58B;
+	Sat, 19 Jul 2025 02:11:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R/ayT6l7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kvzBhPX2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F57219D8A2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE031DC9A3;
 	Sat, 19 Jul 2025 02:11:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752891114; cv=none; b=aijxgxcJ40yZTM4GBXbkqoa9zjqpOYYWtBPyUird9iV5FP63vnFQQGqiC+VidbUlzBeTe1Zvr5IUlh5TZ6I1AIHMkKOy5hpGz+rPYIkbQjV6KvGxnr4C7np83O29aoOL2lpSFFftt3qfRfUABI9cPoaP09dK/N9NRVHREkVuDng=
+	t=1752891114; cv=none; b=n8pxf87cYl7x6iVO1gRtozXb61JZz55OpHWEyc4JVyvZtEzRJk1J6ejYzh/L4qVD/Q/N870R0sVbiMIlSGnaP3Xt+j6uxRZqm+mmOh077rsThJ7rwB42OVYhm11R4cvrjY2bdCvNTLyZ+gqgVSUBCnLZvf9jfCeK6LTRYzRs8BM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752891114; c=relaxed/simple;
-	bh=Mp/jgK6Xt9LoSu/naNECO65nKErgpdesQbN446RlRp0=;
+	bh=Qkay+td2CTF8tiBwafQanjBkZb8hXhQmz0Ko/raVV7c=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YGl+Kq5mDf0MOoS8Sk7hjZCX071E6KF983CH2gAIR24z0lnSlFo/wBoR8GkmRu9TKrJH2g/NOrdv89xJhrp3mWhWQS7SeG4XStBydhqebc7p/ndEZCcImbvWrOvwmu44PQer+adfCg020MPm6/KCV0YVq3val2SNlsuqPr55YwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R/ayT6l7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C743AC4CEF7;
+	 In-Reply-To:To:Cc; b=m+xMKqVdgO946HweuQbYESY/MbmsQw3i2Ne1TXnsLKR4hcOcfjODAAKIni9BpzRG0O6JdoFB2STaeBFfGybqIdil2H+tYbLmCcoAT3fZ/1ymufxlhp0Q4WrbWumnziZE92oTozvUJVd2v5iPp67d1y58IykkQoCR25Dnn9jLwUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kvzBhPX2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D9659C4CEFF;
 	Sat, 19 Jul 2025 02:11:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1752891113;
-	bh=Mp/jgK6Xt9LoSu/naNECO65nKErgpdesQbN446RlRp0=;
+	bh=Qkay+td2CTF8tiBwafQanjBkZb8hXhQmz0Ko/raVV7c=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=R/ayT6l7wFXlgg7aGJK8S37b0YdFH5sFrRyktLemEsrkBxRPWE9G0cFsXPqmhET+j
-	 p5xhbLPnzya+vFCgQrfyJrzzGVCR6roN4kOwhMBtMn0r3u/x/UXmPAXrMZnmBo8htB
-	 2lCgcRuOCWRqbXOSlmL0tXdWMlnFkt7YcxAQYGFGI4gABjKkGWRWF5Cbc4bLaXWhsu
-	 KNFaOtJ1rbUT9d0V0I/GCX6+b07no3TGFULDUteUt+oLKgQp07f9PgAoDqMYUZuF/B
-	 Em0N2/sor7dBnaOoiNx5ogVQqrEEwt+CE4jd+ZEDBLzsMglMkvhtUKWuC6JRHrNU1D
-	 uur1MzkYlfXdw==
+	b=kvzBhPX2As4S9PpPjzujySHMe3jFqms6HMlL0V9wpkpYHlWsxrHjO9A2MEYY2eLbh
+	 mEroUHMTA7LOsSDrqNMug+L0vFFnSHdZGYzahA6Vvkl/DHIDo8qMZYSLMmvBHlPltP
+	 j7X3xEDLpX5YHb8RfrhHyPyfnoKrCWKomCE68FZk2mPohdZ2el872gDANrEIWpKI5w
+	 cKLDKQlTeJAymtOSOmH/wMSwynhrOxQNZ90YfMlVunbB6jzAxYwi+kBX4aXJ6AXPc4
+	 XT9NI+bklB9duXZFpDHsAnWe+3IoZSkWc9RnrL+D1yB1v9KaEgHLMDCPxpMl4l8zUn
+	 0YKzI6KzZbJxw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF2FEC83F3E;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB895C83F1A;
 	Sat, 19 Jul 2025 02:11:53 +0000 (UTC)
 From: Per Larsen via B4 Relay <devnull+perlarsen.google.com@kernel.org>
-Date: Sat, 19 Jul 2025 02:11:26 +0000
-Subject: [PATCH v8 4/7] KVM: arm64: Mark optional FF-A 1.2 interfaces as
- unsupported
+Date: Sat, 19 Jul 2025 02:11:27 +0000
+Subject: [PATCH v8 5/7] KVM: arm64: Mask response to FFA_FEATURE call
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +54,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250719-virtio-msg-ffa-v8-4-03e8e8dbe856@google.com>
+Message-Id: <20250719-virtio-msg-ffa-v8-5-03e8e8dbe856@google.com>
 References: <20250719-virtio-msg-ffa-v8-0-03e8e8dbe856@google.com>
 In-Reply-To: <20250719-virtio-msg-ffa-v8-0-03e8e8dbe856@google.com>
 To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
@@ -69,11 +68,11 @@ Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
  sebastianene@google.com, qwandor@google.com, 
  Per Larsen <perlarsen@google.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752891112; l=1289;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752891112; l=1363;
  i=perlarsen@google.com; s=20250508; h=from:subject:message-id;
- bh=dgBVrMdjAZFSIYAnESFiV+uLEGMo1SRSm+p8aDNjGJQ=;
- b=IMDnhHhg0FoazYMmOZA5MqsjVPfiAVVoRRaOwqYguuaRhtoI9suue0RLYVCELMYFA2XwFnrmW
- SiPndnyo+0qDWbM6/aUAyJ88rBrYneqLwdQgpn7XWKjl1F0F3qQYkKZ
+ bh=55yA/b9WaRmX85NmDdLJkZinkMYQwcAGAdUeGaUKBZ4=;
+ b=sNeyafSSHUrLsmXTiUjqsrcfVjOFuY4rtzvyG/u1PdIsoRhxBd/haBBhQ1GbB2Dt0nX/m0MLl
+ pbxXYv/TMoOA6/Y9FNIxafXa33hJUmsrt3XKiCqhCvmuwtgEaAsL8Mt
 X-Developer-Key: i=perlarsen@google.com; a=ed25519;
  pk=jjc/Ta4VmrLRmMoahP6d1mBcKzvWU+nsmdtYe2oS2kQ=
 X-Endpoint-Received: by B4 Relay for perlarsen@google.com/20250508 with
@@ -83,35 +82,41 @@ Reply-To: perlarsen@google.com
 
 From: Per Larsen <perlarsen@google.com>
 
-Update ffa_call_supported to mark FF-A 1.2 interfaces as unsupported
-lest they get forwarded. FFA_MSG_SEND_DIRECT_REQ2 is not marked as
-unsupported because a later patch in this series adds support.
-
-Also mark FFA_EL3_INTR_HANDLE as unsupported as it is only valid for
-physical instances.
+The minimum size and alignment boundary for FFA_RXTX_MAP is returned in
+bit[1:0]. Mask off any other bits in w2 when reading the minimum buffer
+size in hyp_ffa_post_init.
 
 Signed-off-by: Per Larsen <perlarsen@google.com>
 ---
- arch/arm64/kvm/hyp/nvhe/ffa.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm64/kvm/hyp/nvhe/ffa.c | 2 +-
+ include/linux/arm_ffa.h       | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
-index 50ec52bcce4b4443c2f3ffeda455594733f3a5a0..5a173ea481940236356e2bc4248d094a858a0923 100644
+index 5a173ea481940236356e2bc4248d094a858a0923..2cbecc9af5d27a9e7c8497001cf9b0987c72bdb4 100644
 --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
 +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
-@@ -671,6 +671,12 @@ static bool ffa_call_supported(u64 func_id)
- 	case FFA_NOTIFICATION_SET:
- 	case FFA_NOTIFICATION_GET:
- 	case FFA_NOTIFICATION_INFO_GET:
-+	/* Optional interfaces added in FF-A 1.2 */
-+	case FFA_MSG_SEND_DIRECT_RESP2:		/* Optional per 7.5.1 */
-+	case FFA_CONSOLE_LOG:			/* Optional per 13.1: not in Table 13.1 */
-+	case FFA_PARTITION_INFO_GET_REGS:	/* Optional for virtual instances per 13.1 */
-+	/* Unsupported interfaces added in FF-A 1.2 */
-+	case FFA_EL3_INTR_HANDLE:		/* Only valid for secure physical instances */
- 		return false;
- 	}
+@@ -733,7 +733,7 @@ static int hyp_ffa_post_init(void)
+ 	if (res.a0 != FFA_SUCCESS)
+ 		return -EOPNOTSUPP;
  
+-	switch (res.a2) {
++	switch (res.a2 & FFA_FEAT_RXTX_MIN_SZ_MASK) {
+ 	case FFA_FEAT_RXTX_MIN_SZ_4K:
+ 		min_rxtx_sz = SZ_4K;
+ 		break;
+diff --git a/include/linux/arm_ffa.h b/include/linux/arm_ffa.h
+index e1634897e159cdc208931938649eb0fb04d5a070..cd7ee4df9045dceca1c4e0dca2d533b770b1b056 100644
+--- a/include/linux/arm_ffa.h
++++ b/include/linux/arm_ffa.h
+@@ -128,6 +128,7 @@
+ #define FFA_FEAT_RXTX_MIN_SZ_4K		0
+ #define FFA_FEAT_RXTX_MIN_SZ_64K	1
+ #define FFA_FEAT_RXTX_MIN_SZ_16K	2
++#define FFA_FEAT_RXTX_MIN_SZ_MASK	GENMASK(1, 0)
+ 
+ /* FFA Bus/Device/Driver related */
+ struct ffa_device {
 
 -- 
 2.50.0.727.gbf7dc18ff4-goog
