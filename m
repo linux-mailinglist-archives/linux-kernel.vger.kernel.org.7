@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-737724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED0C4B0AFC3
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 14:13:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88A0FB0AFC0
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 14:12:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7DB03BD5A1
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 12:12:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26B271C20A97
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 12:12:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34C723C4F6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52AA923B626;
 	Sat, 19 Jul 2025 12:11:43 +0000 (UTC)
 Received: from srv01.abscue.de (abscue.de [89.58.28.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C0C226D0F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BA9226CEB;
 	Sat, 19 Jul 2025 12:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.28.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752927103; cv=none; b=DzyyrvQYZuzTHKJWnkPjpXaYf+mUVc3JoYbkhcqxijxp7TO2W+99V7kq2ieTOp0C8K1IOTGwNFpt1Iu90HrZsIBV5F0FK9XBQaAZv2QWj6BMNqxu2Quq1ByH9Fys/sZyvrraR7R8zHogQNA/9r0aowxS+T+dV5PZiSoBLQJPbqY=
+	t=1752927102; cv=none; b=YDrpO+V2sMDN9q1HI8TgKrIgkCbolcQLQ4gEE2HGGBqRuWJBYdpe7GwhwCUzWiNR6sBpc5lTREKWdFxbSrDljm7KzFaSMHdyT9SSP2orA6rsJKpQOExauvJc5DvOvnFR/FcPLPYRZQMvOMq2LugH2d2oIlPaU4EWdm5nFzw0viU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752927103; c=relaxed/simple;
-	bh=UnzIUZPlQGz0ouabWYlcKenXk2gXi61rjpPc3/sFfw0=;
+	s=arc-20240116; t=1752927102; c=relaxed/simple;
+	bh=NcDT63SYeHWCMr3OEf9L0NA2IEyzjCSsdO8vGRpDFkU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TAThStQSjIwD+0EFFaxwezaI3S+IAa3PDXU7WA5oznhXXeYA34mdFWev74FKyMVQI5VXR+HAVrStq+HaIvAqBYSpdy+4jR/BF+0jdvuO+yjqtOcPZwHIM5Y4fjjSlnbJR1MCsr/lqMjzRfpLUUGXWEuZBC2yqPOAgZrvMTsUitk=
+	 In-Reply-To:To:Cc; b=DslqxQxWEP78tGUrsvUa9/rCeIlyfuVn2YAsq8+Bm6c1kFdjgT3Kd9zNdiGE0juvAySI4jF7lSf1UJ2xL3L8/OA0lP9mPtvOgpl5UyWXg79IX6O8oD3D8Xed2RdVpAUO21/bHBwv22mrKlXYnBh5BKtZ5HFUgZparXiDkyTi1v8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=abscue.de; spf=pass smtp.mailfrom=abscue.de; arc=none smtp.client-ip=89.58.28.240
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=abscue.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=abscue.de
 Received: from srv01.abscue.de (localhost [127.0.0.1])
-	by spamfilter.srv.local (Postfix) with ESMTP id 8D0941C07C4;
-	Sat, 19 Jul 2025 14:11:32 +0200 (CEST)
+	by spamfilter.srv.local (Postfix) with ESMTP id 3BC511C233A;
+	Sat, 19 Jul 2025 14:11:33 +0200 (CEST)
 X-Spam-Level: 
 Received: from fluffy-mammal.metal.fwg-cag.de (unknown [IPv6:2001:9e8:cdf7:4000:ceae:3606:9020:cd4f])
-	by srv01.abscue.de (Postfix) with ESMTPSA id ED5A11C0740;
-	Sat, 19 Jul 2025 14:11:31 +0200 (CEST)
+	by srv01.abscue.de (Postfix) with ESMTPSA id 9C7581C07FA;
+	Sat, 19 Jul 2025 14:11:32 +0200 (CEST)
 From: =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>
-Date: Sat, 19 Jul 2025 14:09:43 +0200
-Subject: [PATCH 07/12] drm: sprd: fix DSI rate and PLL setup code
+Date: Sat, 19 Jul 2025 14:09:44 +0200
+Subject: [PATCH 08/12] drm: sprd: add gate clock support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,7 +46,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250719-ums9230-drm-v1-7-e4344a05eb3d@abscue.de>
+Message-Id: <20250719-ums9230-drm-v1-8-e4344a05eb3d@abscue.de>
 References: <20250719-ums9230-drm-v1-0-e4344a05eb3d@abscue.de>
 In-Reply-To: <20250719-ums9230-drm-v1-0-e4344a05eb3d@abscue.de>
 To: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
@@ -61,93 +61,112 @@ Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
  =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>
 X-Mailer: b4 0.14.2
 
-Correct the initialization code to treat the hs_rate and lp_rate values
-as hertz instead of kilohertz. While at it, fix a bit operation bug in
-the PLL initialization code which caused a PLL register to be set to
-zero instead of the desired value.
+Enable the DPU and DSI gate clocks specified in the device tree.
+Disable the DSI clock when it is not needed.
 
 Signed-off-by: Otto Pflüger <otto.pflueger@abscue.de>
 ---
- drivers/gpu/drm/sprd/megacores_pll.c | 7 +++----
- drivers/gpu/drm/sprd/sprd_dsi.c      | 7 +++----
- 2 files changed, 6 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/sprd/sprd_dpu.c |  7 +++++++
+ drivers/gpu/drm/sprd/sprd_dpu.h |  1 +
+ drivers/gpu/drm/sprd/sprd_dsi.c | 10 ++++++++++
+ drivers/gpu/drm/sprd/sprd_dsi.h |  4 +++-
+ 4 files changed, 21 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/sprd/megacores_pll.c b/drivers/gpu/drm/sprd/megacores_pll.c
-index e5a18599678ab6e3771cd732dcca409ab2d59f72..f214f906b58fb006c4305de9b8b86b4a934f2074 100644
---- a/drivers/gpu/drm/sprd/megacores_pll.c
-+++ b/drivers/gpu/drm/sprd/megacores_pll.c
-@@ -23,13 +23,12 @@
+diff --git a/drivers/gpu/drm/sprd/sprd_dpu.c b/drivers/gpu/drm/sprd/sprd_dpu.c
+index 0d9eb778794d92418b39f8535d94abde3566de43..575bcdb0e0bb30055ac5c3d0e65178cc9f6611f3 100644
+--- a/drivers/gpu/drm/sprd/sprd_dpu.c
++++ b/drivers/gpu/drm/sprd/sprd_dpu.c
+@@ -3,6 +3,7 @@
+  * Copyright (C) 2020 Unisoc Inc.
+  */
  
- static int dphy_calc_pll_param(struct dphy_pll *pll)
- {
--	const u32 khz = 1000;
- 	const u32 mhz = 1000000;
- 	const unsigned long long factor = 100;
- 	unsigned long long tmp;
- 	int i;
++#include <linux/clk.h>
+ #include <linux/component.h>
+ #include <linux/delay.h>
+ #include <linux/dma-buf.h>
+@@ -794,6 +795,12 @@ static int sprd_dpu_context_init(struct sprd_dpu *dpu,
+ 	if (ctx->irq < 0)
+ 		return ctx->irq;
  
--	pll->potential_fvco = pll->freq / khz;
-+	pll->potential_fvco = pll->freq / mhz;
- 
- 	for (i = 0; i < 4; ++i) {
- 		if (pll->potential_fvco >= pll->platform->band_low &&
-@@ -89,7 +88,7 @@ static void dphy_set_pll_reg(struct dphy_pll *pll, struct regmap *regmap)
- 	reg_val[3] = pll->vco_band | (pll->sdm_en << 1) | (pll->refin << 2);
- 	reg_val[4] = pll->kint >> 12;
- 	reg_val[5] = pll->kint >> 4;
--	reg_val[6] = pll->out_sel | ((pll->kint << 4) & 0xf);
-+	reg_val[6] = pll->out_sel | ((pll->kint & 0xf) << 4);
- 	reg_val[7] = 1 << 4;
- 	reg_val[8] = pll->det_delay;
- 
-@@ -218,7 +217,7 @@ void dphy_timing_config(struct dsi_context *ctx)
- 	u32 tmp = 0;
- 
- 	/* t_ui: 1 ui, byteck: 8 ui, half byteck: 4 ui */
--	t_ui = 1000 * scale / (pll->freq / 1000);
-+	t_ui = 1000 * scale / (pll->freq / 1000000);
- 	t_byteck = t_ui << 3;
- 	t_half_byteck = t_ui << 2;
- 	constant = t_ui << 1;
++	ctx->clk = devm_clk_get_optional_enabled(dev, "enable");
++	if (IS_ERR(ctx->clk)) {
++		dev_err(dev, "failed to get dpu enable clock\n");
++		return PTR_ERR(ctx->clk);
++	}
++
+ 	/* disable and clear interrupts before register dpu IRQ. */
+ 	writel(0x00, ctx->base + REG_DPU_INT_EN);
+ 	writel(0xff, ctx->base + REG_DPU_INT_CLR);
+diff --git a/drivers/gpu/drm/sprd/sprd_dpu.h b/drivers/gpu/drm/sprd/sprd_dpu.h
+index 157a78f24dc18b071602552ea9d005af66525263..d48b922de580a8a4bf07c4610c431d3321f7b810 100644
+--- a/drivers/gpu/drm/sprd/sprd_dpu.h
++++ b/drivers/gpu/drm/sprd/sprd_dpu.h
+@@ -44,6 +44,7 @@ enum {
+  */
+ struct dpu_context {
+ 	void __iomem *base;
++	struct clk *clk;
+ 	int irq;
+ 	u8 if_type;
+ 	struct videomode vm;
 diff --git a/drivers/gpu/drm/sprd/sprd_dsi.c b/drivers/gpu/drm/sprd/sprd_dsi.c
-index db5f9bcbb2500096402b9d44b9cc4428070e69ba..e01d1d28fe579644ec2e0c83ec9170269932adfe 100644
+index e01d1d28fe579644ec2e0c83ec9170269932adfe..e781e6c84860402f37352e768244d88ca6ffd4c9 100644
 --- a/drivers/gpu/drm/sprd/sprd_dsi.c
 +++ b/drivers/gpu/drm/sprd/sprd_dsi.c
-@@ -391,7 +391,7 @@ static u32 fmt_to_coding(u32 fmt)
- static void sprd_dsi_init(struct dsi_context *ctx)
- {
- 	struct sprd_dsi *dsi = container_of(ctx, struct sprd_dsi, ctx);
--	u32 byte_clk = dsi->slave->hs_rate / 8;
-+	u32 byte_clk = dsi->slave->hs_rate / 8000;
- 	u16 data_hs2lp, data_lp2hs, clk_hs2lp, clk_lp2hs;
- 	u16 max_rd_time;
- 	int div;
-@@ -408,7 +408,7 @@ static void sprd_dsi_init(struct dsi_context *ctx)
- 	dsi_reg_up(ctx, VIRTUAL_CHANNEL_ID, VIDEO_PKT_VCID, 0);
- 	dsi_reg_up(ctx, VIRTUAL_CHANNEL_ID, GEN_RX_VCID, 0);
+@@ -828,6 +828,8 @@ static void sprd_dsi_bridge_pre_enable(struct drm_bridge *bridge)
+ 	struct sprd_dsi *dsi = bridge_to_dsi(bridge);
+ 	struct dsi_context *ctx = &dsi->ctx;
  
--	div = DIV_ROUND_UP(byte_clk, dsi->slave->lp_rate);
-+	div = DIV_ROUND_UP(byte_clk, dsi->slave->lp_rate / 1000);
- 	writel(div, ctx->base + TX_ESC_CLK_CONFIG);
++	clk_prepare_enable(ctx->clk);
++
+ 	if (ctx->enabled) {
+ 		drm_warn(dsi->drm, "dsi is initialized\n");
+ 		return;
+@@ -875,6 +877,8 @@ static void sprd_dsi_bridge_post_disable(struct drm_bridge *bridge)
+ 	sprd_dphy_fini(ctx);
+ 	sprd_dsi_fini(ctx);
  
- 	max_rd_time = ns_to_cycle(ctx->max_rd_time, byte_clk);
-@@ -450,7 +450,6 @@ static int sprd_dsi_dpi_video(struct dsi_context *ctx)
- {
- 	struct sprd_dsi *dsi = container_of(ctx, struct sprd_dsi, ctx);
- 	struct videomode *vm = &ctx->vm;
--	u32 byte_clk = dsi->slave->hs_rate / 8;
- 	u16 bpp_x100;
- 	u16 video_size;
- 	u32 ratio_x1000;
-@@ -472,7 +471,7 @@ static int sprd_dsi_dpi_video(struct dsi_context *ctx)
- 	video_size = round_video_size(coding, vm->hactive);
- 	bpp_x100 = calc_bytes_per_pixel_x100(coding);
- 	video_size_step = calc_video_size_step(coding);
--	ratio_x1000 = byte_clk * 1000 / (vm->pixelclock / 1000);
-+	ratio_x1000 = dsi->slave->hs_rate / 8 / (vm->pixelclock / 1000);
- 	hline = vm->hactive + vm->hsync_len + vm->hfront_porch +
- 		vm->hback_porch;
++	clk_disable_unprepare(ctx->clk);
++
+ 	ctx->enabled = false;
+ }
  
+@@ -1098,6 +1102,12 @@ static int sprd_dsi_probe(struct platform_device *pdev)
+ 	if (!dsi->ctx.pll.platform)
+ 		return -EINVAL;
+ 
++	dsi->ctx.clk = devm_clk_get_optional(dev, "enable");
++	if (IS_ERR(dsi->ctx.clk)) {
++		dev_err(dev, "failed to get dsi enable clock\n");
++		return PTR_ERR(dsi->ctx.clk);
++	}
++
+ 	return mipi_dsi_host_register(&dsi->host);
+ }
+ 
+diff --git a/drivers/gpu/drm/sprd/sprd_dsi.h b/drivers/gpu/drm/sprd/sprd_dsi.h
+index 0b9f1cabe71570743cbc68a8061e95a249f27191..15e57f3f49f8e5c4f856fb496a0c88f1b0414ced 100644
+--- a/drivers/gpu/drm/sprd/sprd_dsi.h
++++ b/drivers/gpu/drm/sprd/sprd_dsi.h
+@@ -6,8 +6,9 @@
+ #ifndef __SPRD_DSI_H__
+ #define __SPRD_DSI_H__
+ 
+-#include <linux/of.h>
++#include <linux/clk.h>
+ #include <linux/device.h>
++#include <linux/of.h>
+ #include <linux/regmap.h>
+ #include <video/videomode.h>
+ 
+@@ -95,6 +96,7 @@ struct dphy_pll {
+ struct dsi_context {
+ 	void __iomem *base;
+ 	struct regmap *regmap;
++	struct clk *clk;
+ 	struct dphy_pll pll;
+ 	struct videomode vm;
+ 	bool enabled;
 
 -- 
 2.50.0
