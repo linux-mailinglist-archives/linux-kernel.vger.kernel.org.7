@@ -1,264 +1,240 @@
-Return-Path: <linux-kernel+bounces-737763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 702BBB0B047
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 15:31:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FF2FB0B049
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 15:33:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1037CAC02B6
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 13:30:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A9DB1AA594F
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 13:33:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A545220694;
-	Sat, 19 Jul 2025 13:31:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DCE2231824;
+	Sat, 19 Jul 2025 13:32:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cfz50PJ4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZfPm4gpD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5E61EB39;
-	Sat, 19 Jul 2025 13:31:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E2D14883F;
+	Sat, 19 Jul 2025 13:32:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752931864; cv=none; b=MR63+pcDDJpbmIrO6okefmLHZXdwS7AodsJ0WA58HgjEF0VgTf1lcgpP4Q7eKNYWfexKCEGlPZb4IoI9FaQ0/tXNLdQpbP0UNBDSnsdPcFNxPVRbhObBOnSdeEpkYjvD1CbmYhHoahbgifY81yuoi4B0rqKYgsYNj8WPOuq87xY=
+	t=1752931978; cv=none; b=rQZ53UftUfbrs6f0RU4lyF12nXypjiBqACFp2tNysubi2/buNTeZJnX+0YpvsdMmH6ZVPBEvuJoJhVRP8cdxN1OSkhwmLb44QBoPrrPJLISBdlbIgpkQjLJh+6NoqPxtmtiD1xcMKeCCeFQP2fQZ2ulKaIHi0RCxIucBEUzzKrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752931864; c=relaxed/simple;
-	bh=z2JR3HkcpJBDNgayovbHLmEgj7dd5sLh6yvpSXE4KZY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JST/IS31WmhBABMJvjGxNCmXwEI3Jrt6mA7UXM+c/bhlc+LlWbCK87gi3/O0ygSTJ3qWZQAQjeAyK12txuS1RpmM5L2GXDNk1RDcdbJJVqIovtEY5+/Rvvd+aaCUuQCGydbjEPjVn46zSxLcqyyhvEjDL1a0izVb6bWM6hEC5DM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cfz50PJ4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5CB6C4CEE7;
-	Sat, 19 Jul 2025 13:31:03 +0000 (UTC)
+	s=arc-20240116; t=1752931978; c=relaxed/simple;
+	bh=SBYcDz1ru58OTFpL1ENwBR1B6jCp0163ii6LzeGWhxY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JRQ7kdwjGn63Bafv6A5S3CC7+QcEGWJP2xkLACCiKRM9DyoExiD9V4PUlTXmk1MCUllpSXTUr34WqWF6tQEW8edZdemPeerWTt7C8e2itWm5M8ASq0wEGlQBas3EaPJRWF2D9GMgdpheVjMnCBYWVaLWT7DBNbVtrcbQiA2u/78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZfPm4gpD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B084C4CEE3;
+	Sat, 19 Jul 2025 13:32:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752931863;
-	bh=z2JR3HkcpJBDNgayovbHLmEgj7dd5sLh6yvpSXE4KZY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Cfz50PJ4JoGmdBj5RnQ0FjFa7+Z9UDHiE4ZTaNsehYrwE7mB0VBCFs6EjzM/+44Ju
-	 2T9d9dxC9lMCzRgVmTLhFWsFTRP/Zx72o53xtzf9MD9uIdOXOsgrms00kyFhjMyjF9
-	 dCt5vNfkbDJ6T7xG27OUdJ6mqWPYKXRxvihnwN/cg6VuAzQ4wRd7IFCGX1IFoBZOEU
-	 P6o+nNg9AmKZbaY3GE0UGG3nrK++IbauHEWhg9xK3y+AJDbVVyDdFFIW4aSyDQg4J2
-	 OxU4i6SQi4Ejm4BKL8/TEvQiYvQV7QgJxqZEtcrr2yecFZ4mq1wwTA4fPD+JyFXWIa
-	 P4sPhox8W8X0g==
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-553d52cb80dso3379126e87.1;
-        Sat, 19 Jul 2025 06:31:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUCYlofoc4gQpk+KTgh0lTzFVTEAVFyzCbWW9OVJJWl8mpcmH0Ow7zi5/JhFoUnJ+Spa3G8utAUpFXki0k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHytO915wSg4bClGErMhDnuFclrvoeSjNNxhGUOvf+7fIXv4+s
-	5f8eewddqgOtJav/Jq07EXXWm1t2XPwaotM0G1ItXv88SbBw4HB4z+ZS4wm+jxa5+FB8F5KLwHZ
-	OJWB+PwIPH+uw7I+cOyNn5gXnAHTZZyw=
-X-Google-Smtp-Source: AGHT+IEkD87TyBxn2cchD8cExvn8kotDaYH2D3vRnj7/THbvCknCACBFViUkNnIwXdcNdNhHMSMyQhO/euFVZbTyFD4=
-X-Received: by 2002:a05:6512:318a:b0:553:268e:5011 with SMTP id
- 2adb3069b0e04-55a2fe889e6mr2135208e87.26.1752931862489; Sat, 19 Jul 2025
- 06:31:02 -0700 (PDT)
+	s=k20201202; t=1752931978;
+	bh=SBYcDz1ru58OTFpL1ENwBR1B6jCp0163ii6LzeGWhxY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZfPm4gpDc7Dw7wQ6b1C7StxCzMxqwRDYrq/FMZ7rTlxo7QoGaenAiYoZANZ/KRIF1
+	 PZ6l5qpID3qXdoALvxPyKnwZ90g4hdrF1hx0+iv5Hl0t8Y0O28NeGwL9E9GXjC43nK
+	 IdcYSRmGPTqkqvo9TA8P2vlQINGVjnQKknC6THyPNKCBupzx7TWD3buDvCr3/PK1lx
+	 yyQRtApiLxzch0WuK8SAw1w7xPLbiyDSQd21q8XrMJMqvNj77+scBkzGPbshD2UNhR
+	 iCzu4ZbMvfJ8wnDBRXhhulkGjNkSu7iVoIiypoVT5nUcWJmPsaBN3OZvdDSzpQ3rNz
+	 9CESsyQimu2tA==
+Date: Sat, 19 Jul 2025 14:32:50 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Sean Nyekjaer <sean@geanix.com>
+Cc: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>, David Lechner
+ <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/6] iio: imu: inv_icm42600: Simplify pm_runtime setup
+Message-ID: <20250719143250.6799eb5d@jic23-huawei>
+In-Reply-To: <20250719124711.42fe1a00@jic23-huawei>
+References: <20250709-icm42pmreg-v1-0-3d0e793c99b2@geanix.com>
+	<20250709-icm42pmreg-v1-4-3d0e793c99b2@geanix.com>
+	<20250713152810.4483c786@jic23-huawei>
+	<ie3zr2mvuss2f7prksw6nuc3wonig5ju6y6hqq46upvkhovwpa@vtfc3tqwz3d5>
+	<76fnxeuufv56fmfvq6odi5xz2yjtjxymz24t436zk7rtuyst4s@oihlvsoxhllp>
+	<20250716090010.23ea03b6@jic23-huawei>
+	<iwe34sdzsgeqpgqrc7ndbx6n4ef6kiwd4bczbiwbhlfgv3zesx@rnr5l7diy5z7>
+	<20250719124711.42fe1a00@jic23-huawei>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <571ac74b-f632-44f3-ae62-730717bf4465@infradead.org>
-In-Reply-To: <571ac74b-f632-44f3-ae62-730717bf4465@infradead.org>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 19 Jul 2025 22:30:26 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAT54nvwYmTy20Ep8U2kr4thn68yYWXi9R-d3Yx3iXs=Bg@mail.gmail.com>
-X-Gm-Features: Ac12FXwRLYiEtbgcWcdG5ao7qP0r12HnepojmY5bZJlrfTXcBlJMcq7lToi2mOA
-Message-ID: <CAK7LNAT54nvwYmTy20Ep8U2kr4thn68yYWXi9R-d3Yx3iXs=Bg@mail.gmail.com>
-Subject: Re: [BUG linux-next] nconfig: uncleared lines of text on help screens
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Shankari Anand <shankari.ak0208@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Jul 19, 2025 at 5:31=E2=80=AFPM Randy Dunlap <rdunlap@infradead.org=
-> wrote:
->
->
-> If I revert
->   commit 1b92b18ec419
->   Author: Shankari Anand <shankari.ak0208@gmail.com>
->   Date:   Thu Jun 26 00:36:54 2025 +0530
->     kconfig: nconf: Ensure null termination where strncpy is used
->
-> this problem goes away.
->
-> When using F1, F2, or F3 (Help, SymInfo, or Help 2), short lines
-> of text are not cleared (blanked, space-filled).
+On Sat, 19 Jul 2025 12:47:11 +0100
+Jonathan Cameron <jic23@kernel.org> wrote:
 
-Indeed.
-This is a bug introduced by the following change:
+> On Fri, 18 Jul 2025 06:40:50 +0000
+> Sean Nyekjaer <sean@geanix.com> wrote:
+> 
+> > On Wed, Jul 16, 2025 at 09:00:10AM +0100, Jonathan Cameron wrote:  
+> > > On Mon, 14 Jul 2025 07:42:43 +0000
+> > > Sean Nyekjaer <sean@geanix.com> wrote:
+> > >     
+> > > > On Mon, Jul 14, 2025 at 07:24:57AM +0100, Sean Nyekjaer wrote:    
+> > > > > On Sun, Jul 13, 2025 at 03:28:10PM +0100, Jonathan Cameron wrote:    
+> > > > > > On Wed, 09 Jul 2025 14:35:12 +0200
+> > > > > > Sean Nyekjaer <sean@geanix.com> wrote:
+> > > > > >    
+> > > > > > > Remove unnecessary pm_runtime_get_noresume() and pm_runtime_put()
+> > > > > > > calls during probe. These are not required when the device is marked
+> > > > > > > active via pm_runtime_set_active() before enabling pm_runtime with
+> > > > > > > pm_runtime_enable().
+> > > > > > >
+> > > > > > > Also remove the redundant pm_runtime_put_sync() call from the cleanup
+> > > > > > > path, since the core is not incrementing the usage count beforehand.
+> > > > > > >
+> > > > > > > This simplifies the PM setup and avoids manipulating the usage counter
+> > > > > > > unnecessarily.    
+> > > > > >
+> > > > > > Could we switch directly to using devm_pm_runtime_enable() for this driver?
+> > > > > >
+> > > > > > At first glance looks like this code is missing the disable of autosuspend
+> > > > > > that should be there (which devm_pm_runtime_enable() will also handle).
+> > > > > >    
+> > > > >
+> > > > > I have tried to use devm_pm_runtime_enable() but on rmmod it warns
+> > > > > "unbalanced disables for regulator"
+> > > > >
+> > > > > If I remove this:
+> > > > > -	ret = devm_add_action_or_reset(dev, inv_icm42600_disable_vddio_reg, st);
+> > > > > -	if (ret)
+> > > > > -		return ret;
+> > > > >
+> > > > > Everything seems okay again. I have checked with printk's that
+> > > > > inv_icm42600_disable_vddio_reg() is called twice with
+> > > > > devm_pm_runtime_enable() used.
+> > > > > Does it make sense?
+> > > > >
+> > > > > /Sean    
+> > > >
+> > > > with pm_runtime_enable():
+> > > > root@v4:/data/root# insmod /tmp/inv-icm42600.ko; insmod /tmp/inv-icm42600-i2c.ko
+> > > > [ 3793.713077] inv-icm42600-i2c 1-0068: no INT1 interrupt defined, fallback to first interrupt
+> > > > [ 3793.727728] inv-icm42600-i2c 1-0068: mounting matrix not found: using identity...
+> > > > [ 3793.737660] inv-icm42600-i2c 1-0068: supply vdd not found, using dummy regulator
+> > > > [ 3793.856891] inv-icm42600-i2c 1-0068: supply vddio not found, using dummy regulator
+> > > > [ 3793.866872] inv_icm42600_enable_regulator_vddio() enable vddio
+> > > > [ 3793.920739] inv_icm42600_runtime_suspend() disable vddio
+> > > > root@v4:/data/root# rmmod inv_icm42600_i2c inv_icm42600
+> > > > [ 3796.954850] inv_icm42600_runtime_resume() -> inv_icm42600_enable_regulator_vddio()
+> > > > [ 3796.954910] inv_icm42600_enable_regulator_vddio() enable vddio
+> > > > [ 3796.985140] inv_icm42600_disable_vddio_reg() disable vddio
+> > > >
+> > > > with devm_pm_runtime_enable():
+> > > > root@v4:/data/root# insmod /tmp/inv-icm42600.ko; insmod /tmp/inv-icm42600-i2c.ko
+> > > > [ 3852.873887] inv-icm42600-i2c 1-0068: no INT1 interrupt defined, fallback to first interrupt
+> > > > [ 3852.888715] inv-icm42600-i2c 1-0068: mounting matrix not found: using identity...
+> > > > [ 3852.898514] inv-icm42600-i2c 1-0068: supply vdd not found, using dummy regulator
+> > > > [ 3853.016890] inv-icm42600-i2c 1-0068: supply vddio not found, using dummy regulator
+> > > > [ 3853.026860] inv_icm42600_enable_regulator_vddio() enable vddio
+> > > > [ 3853.080835] inv_icm42600_runtime_suspend() disable vddio
+> > > > root@v4:/data/root# rmmod inv_icm42600_i2c inv_icm42600
+> > > > [ 3854.448461] inv_icm42600_runtime_resume() -> inv_icm42600_enable_regulator_vddio()
+> > > > [ 3854.448540] inv_icm42600_enable_regulator_vddio() enable vddio
+> > > > [ 3854.467061] inv_icm42600_runtime_suspend() disable vddio    
+> > > 
+> > > As below What is the call path for this final suspend?
+> > > Is it coming from update_autosuspend()?    
+> > 
+> > Yeah it looks like pm_runtime_dont_use_autosuspend() is calling runtime_suspend().  
+> 
+> ok. So how are we supposed to handle this?  Seems like it would be a fairly common
+> situation.  devm_pm_runtime_set_active_enabled() might be relevant.
+> I get confused by all the reference counter
+> complexity in runtime pm but is devm_pm_runtime_get_noresume() what we want?
+> That will decrement the usage count with no action just before we hit the point
+> were the suspend or not decision is made.  So I think that will mean the device
+> things it is already suspended when you hit the path here and so not do it again?
+>  
+> There seems to be only one user of this stuff though:
+> https://elixir.bootlin.com/linux/v6.15.6/source/drivers/spi/atmel-quadspi.c#L1440
+Note that example does a get in the remove callback().   Seems odd but maybe
+we need a devm_pm_runtime_*put() that results in an a get in the remove path to ensure counts
+all match.
 
+> > 
+> > root@v4:/data/root# rmmod inv-icm42600-i2c inv-icm42600
+> > [  291.511085] inv_icm42600_runtime_resume() -> inv_icm42600_enable_regulator_vddio()
+> > [  291.511165] inv_icm42600_enable_regulator_vddio() enable vddio
+> > [  291.532398] inv_icm42600_runtime_suspend() disable vddio
+> > [  291.538517] CPU: 0 UID: 0 PID: 331 Comm: rmmod Tainted: G        W           6.16.0-rc1-00202-g7fe6e564b5c9-dirty #146 VOLUNTARY
+> > [  291.538559] Tainted: [W]=WARN
+> > [  291.538566] Hardware name: Freescale i.MX6 Ultralite (Device Tree)
+> > [  291.538575] Call trace:
+> > [  291.538590]  unwind_backtrace from show_stack+0x10/0x14
+> > [  291.538643]  show_stack from dump_stack_lvl+0x54/0x68
+> > [  291.538679]  dump_stack_lvl from inv_icm42600_runtime_suspend+0x68/0x6c [inv_icm42600]
+> > [  291.538728]  inv_icm42600_runtime_suspend [inv_icm42600] from __rpm_callback+0x48/0x18c
+> > [  291.538775]  __rpm_callback from rpm_callback+0x5c/0x68
+> > [  291.538815]  rpm_callback from rpm_suspend+0xdc/0x584
+> > [  291.538853]  rpm_suspend from pm_runtime_disable_action+0x30/0x5c
+> > [  291.538885]  pm_runtime_disable_action from devres_release_group+0x180/0x1a0
+> > [  291.538917]  devres_release_group from i2c_device_remove+0x34/0x84
+> > [  291.538949]  i2c_device_remove from device_release_driver_internal+0x180/0x1f4
+> > [  291.538976]  device_release_driver_internal from driver_detach+0x54/0xa0
+> > [  291.538998]  driver_detach from bus_remove_driver+0x58/0xa4
+> > [  291.539030]  bus_remove_driver from sys_delete_module+0x16c/0x250
+> > [  291.539065]  sys_delete_module from ret_fast_syscall+0x0/0x54
+> > [  291.539089] Exception stack(0xd0ab1fa8 to 0xd0ab1ff0)
+> > [  291.539108] 1fa0:                   be94fe46 be94fd1c 017ccfa4 00000800 0000000a 017ccf68
+> > [  291.539126] 1fc0: be94fe46 be94fd1c 017ccf68 00000081 00000000 00000001 00000003 017cc190
+> > [  291.539139] 1fe0: b6c8be41 be94fadc 000179cb b6c8be48
+> > [  291.685102] inv_icm42600_disable_vddio_reg() disable vddio
+> > [  291.694566] ------------[ cut here ]------------
+> > [  291.694621] WARNING: CPU: 0 PID: 331 at drivers/regulator/core.c:3016 _regulator_disable+0x140/0x1a0
+> > [  291.708496] unbalanced disables for regulator-dummy
+> > [  291.713391] Modules linked in: inv_icm42600_i2c(-) inv_icm42600 inv_sensors_timestamp [last unloaded: inv_icm42600]
+> > [  291.723939] CPU: 0 UID: 0 PID: 331 Comm: rmmod Tainted: G        W           6.16.0-rc1-00202-g7fe6e564b5c9-dirty #146 VOLUNTARY
+> > [  291.735620] Tainted: [W]=WARN
+> > [  291.738598] Hardware name: Freescale i.MX6 Ultralite (Device Tree)
+> > [  291.744789] Call trace:
+> > [  291.744807]  unwind_backtrace from show_stack+0x10/0x14
+> > [  291.752614]  show_stack from dump_stack_lvl+0x54/0x68
+> > [  291.757704]  dump_stack_lvl from __warn+0x7c/0xe0
+> > [  291.762437]  __warn from warn_slowpath_fmt+0x124/0x18c
+> > [  291.767602]  warn_slowpath_fmt from _regulator_disable+0x140/0x1a0
+> > [  291.773812]  _regulator_disable from regulator_disable+0x48/0x80
+> > [  291.779843]  regulator_disable from devres_release_group+0x180/0x1a0
+> > [  291.786231]  devres_release_group from i2c_device_remove+0x34/0x84
+> > [  291.792446]  i2c_device_remove from device_release_driver_internal+0x180/0x1f4
+> > [  291.799699]  device_release_driver_internal from driver_detach+0x54/0xa0
+> > [  291.806427]  driver_detach from bus_remove_driver+0x58/0xa4
+> > [  291.812033]  bus_remove_driver from sys_delete_module+0x16c/0x250
+> > [  291.818160]  sys_delete_module from ret_fast_syscall+0x0/0x54
+> > [  291.823934] Exception stack(0xd0ab1fa8 to 0xd0ab1ff0)
+> > [  291.829007] 1fa0:                   be94fe46 be94fd1c 017ccfa4 00000800 0000000a 017ccf68
+> > [  291.837205] 1fc0: be94fe46 be94fd1c 017ccf68 00000081 00000000 00000001 00000003 017cc190
+> > [  291.845397] 1fe0: b6c8be41 be94fadc 000179cb b6c8be48
+> > [  291.850632] ---[ end trace 0000000000000000 ]---0
+> >   
+> > >     
+> > > > [ 3854.477170] inv_icm42600_disable_vddio_reg() disable vddio
+> > > > [ 3854.483835] ------------[ cut here ]------------
+> > > > [ 3854.483912] WARNING: CPU: 0 PID: 582 at drivers/regulator/core.c:3016 _regulator_disable+0x140/0x1a0
+> > > > [ 3854.497853] unbalanced disables for regulator
+> > > >
+> > > > Is the way from here to remove the devm_add_action_or_reset(dev,
+> > > > inv_icm42600_disable_vddio_reg... ?    
+> > > 
+> > > That will make a mess if runtime PM is not built into
+> > > the kernel which is why an PM state in remove should return to the state
+> > > before it was enabled in the first place (i.e. on!).
+> > > That final runtime suspend surprises me.    
+> > 
+> > Got it :)
+> > 
+> > /Sean
+> > 
+> >   
+> 
+> 
 
-diff --git a/scripts/kconfig/nconf.gui.c b/scripts/kconfig/nconf.gui.c
-index 4bfdf8ac2a9a..475a403ab8ba 100644
---- a/scripts/kconfig/nconf.gui.c
-+++ b/scripts/kconfig/nconf.gui.c
-@@ -177,7 +177,7 @@ void fill_window(WINDOW *win, const char *text)
-                const char *line =3D get_line(text, i);
-                int len =3D get_line_length(line);
-                strncpy(tmp, line, min(len, x));
--               tmp[len] =3D '\0';
-+               tmp[sizeof(tmp) - 1] =3D '\0';
-                mvwprintw(win, i, 0, "%s", tmp);
-        }
- }
-
-
-The original code already null-terminates the buffer.
-This part should be reverted.
-
-
-
-
-
-
-> Example F1:
->
->   =E2=94=8C=E2=94=80=E2=94=80 Global help =E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=90
->  =E2=94=8C=E2=94=82                                                      =
-                    =E2=94=82=E2=94=90
->  =E2=94=82=E2=94=82 Help windows                                         =
-                    =E2=94=82=E2=94=82
->  =E2=94=82=E2=94=82 ------------                                         =
-                    =E2=94=82=E2=94=82
->  =E2=94=82=E2=94=82 o  Global help:  Unless in a data entry window, press=
-ing <F1> will give `=E2=94=82=E2=94=82
->  =E2=94=82=E2=94=82    you the global help window, which you are just rea=
-ding.F1> will give `=E2=94=82=E2=94=82
->  =E2=94=82=E2=94=82    you the global help window, which you are just rea=
-ding.F1> will give `=E2=94=82=E2=94=82
->  =E2=94=82=E2=94=82 o  A short version of the global help is available by=
- pressing <F3>.ive `=E2=94=82=E2=94=82
->  =E2=94=82=E2=94=82 o  A short version of the global help is available by=
- pressing <F3>.ive `=E2=94=82=E2=94=82
->  =E2=94=82=E2=94=82 o  Local help:  To get help related to the current me=
-nu entry, use anye `=E2=94=82=E2=94=82
->  =E2=94=82=E2=94=82    of <?> <h>, or if in a data entry window then pres=
-s <F1>.y, use anye `=E2=94=82=E2=94=82
->  =E2=94=82=E2=94=82    of <?> <h>, or if in a data entry window then pres=
-s <F1>.y, use anye `=E2=94=82=E2=94=82
->  =E2=94=82=E2=94=82    of <?> <h>, or if in a data entry window then pres=
-s <F1>.y, use anye `=E2=94=82=E2=94=82
->  =E2=94=82=E2=94=82 Menu entries>, or if in a data entry window then pres=
-s <F1>.y, use anye `=E2=94=82=E2=94=82
->  =E2=94=82=E2=94=82 ------------>, or if in a data entry window then pres=
-s <F1>.y, use anye `=E2=94=82=E2=94=82
->  =E2=94=82=E2=94=82 This interface lets you select features and parameter=
-s for the kernelye `=E2=94=82=E2=94=82
->  =E2=94=82=E2=94=82 build.  Kernel features can either be built-in, modul=
-arized, or removed.`=E2=94=82=E2=94=82
->  =E2=94=82=E2=94=82 Parameters must be entered as text or decimal or hexa=
-decimal numbers.ed.`=E2=94=82=E2=94=82
->  =E2=94=82=E2=94=82 Parameters must be entered as text or decimal or hexa=
-decimal numbers.ed.`=E2=94=82=E2=94=82
->  =E2=94=82=E2=94=82 Menu entries beginning with following braces represen=
-t features that.ed.`
->
->
-> Example F2:
->
->      =E2=94=8C=E2=94=80=E2=94=80 Sysfs syscall support =E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=90
->  =E2=94=8C=E2=94=80=E2=94=80 =E2=94=82                                   =
-                                =E2=94=82=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=90
->  =E2=94=82   =E2=94=82 CONFIG_SYSFS_SYSCALL:                             =
-                =E2=94=82    =E2=94=82
->  =E2=94=82 [*=E2=94=82 CONFIG_SYSFS_SYSCALL:                             =
-                =E2=94=82    =E2=94=82
->  =E2=94=82 [ =E2=94=82 sys_sysfs is an obsolete system call no longer sup=
-ported in libc. =E2=94=82    =E2=94=82
->  =E2=94=82 [*=E2=94=82 Note that disabling this option is more secure but=
- might breakbc. =E2=94=82    =E2=94=82
->  =E2=94=82   =E2=94=82 compatibility with some systems.is more secure but=
- might breakbc. =E2=94=82    =E2=94=82
->  =E2=94=82 [ =E2=94=82 compatibility with some systems.is more secure but=
- might breakbc. =E2=94=82    =E2=94=82
->  =E2=94=82 [*=E2=94=82 If unsure say N here.me systems.is more secure but=
- might breakbc. =E2=94=82    =E2=94=82
->  =E2=94=82 < =E2=94=82 If unsure say N here.me systems.is more secure but=
- might breakbc. =E2=94=82    =E2=94=82
->  =E2=94=82 [*=E2=94=82 Symbol: SYSFS_SYSCALL [=3Dn]stems.is more secure b=
-ut might breakbc. =E2=94=82    =E2=94=82
->  =E2=94=82 -*=E2=94=82 Type  : boolS_SYSCALL [=3Dn]stems.is more secure b=
-ut might breakbc. =E2=94=82    =E2=94=82
->  =E2=94=82 -*=E2=94=82 Defined at init/Kconfig:1600ems.is more secure but=
- might breakbc. =E2=94=82    =E2=94=82
->  =E2=94=82 [*=E2=94=82   Prompt: Sysfs syscall support.is more secure but=
- might breakbc. =E2=94=82    =E2=94=82
->  =E2=94=82 [ =E2=94=82   Location:ysfs syscall support.is more secure but=
- might breakbc. =E2=94=82    =E2=94=82
->  =E2=94=82 [*=E2=94=82     -> General setupall support.is more secure but=
- might breakbc. =E2=94=82    =E2=94=82
->  =E2=94=82 [ =E2=94=82       -> Sysfs syscall support (SYSFS_SYSCALL [=3D=
-n])might breakbc. =E2=94=82    =E2=94=82
->  =E2=94=82 -*=E2=94=82       -> Sysfs syscall support (SYSFS_SYSCALL [=3D=
-n])might breakbc. =E2=94=82    =E2=94=82
->  =E2=94=82 [ =E2=94=82       -> Sysfs syscall support (SYSFS_SYSCALL [=3D=
-n])might breakbc.
->
->
-> Example F3:
->
->  =E2=94=8C=E2=94=80=E2=94=80=E2=94=8C=E2=94=80=E2=94=80 Short help =E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=90=E2=94=80=E2=94=80=
-=E2=94=90
->  =E2=94=82  =E2=94=82                                                    =
-                  =E2=94=82  =E2=94=82
->  =E2=94=82 [=E2=94=82 Legend:  [*] built-in  [ ] excluded  <M> module  < =
-> module capable. =E2=94=82  =E2=94=82
->  =E2=94=82 [=E2=94=82 Submenus are designated by a trailing "--->", empty=
- ones by "----".. =E2=94=82  =E2=94=82
->  =E2=94=82 [=E2=94=82 Submenus are designated by a trailing "--->", empty=
- ones by "----".. =E2=94=82  =E2=94=82
->  =E2=94=82  =E2=94=82 Use the following keys to navigate the menus: empty=
- ones by "----".. =E2=94=82  =E2=94=82
->  =E2=94=82 [=E2=94=82 Move up or down with <Up> or <Down>.he menus: empty=
- ones by "----".. =E2=94=82  =E2=94=82
->  =E2=94=82 [=E2=94=82 Enter a submenu with <Enter> or <Right>.enus: empty=
- ones by "----".. =E2=94=82  =E2=94=82
->  =E2=94=82 <=E2=94=82 Exit a submenu to its parent menu with <Esc> or <Le=
-ft>.s by "----".. =E2=94=82  =E2=94=82
->  =E2=94=82 [=E2=94=82 Pressing <y> includes, <n> excludes, <m> modularize=
-s features.---".. =E2=94=82  =E2=94=82
->  =E2=94=82 -=E2=94=82 Pressing <Space> cycles through the available optio=
-ns.eatures.---".. =E2=94=82  =E2=94=82
->  =E2=94=82 -=E2=94=82 To search for menu entries press </>.vailable optio=
-ns.eatures.---".. =E2=94=82  =E2=94=82
->  =E2=94=82 [=E2=94=82 <Esc> always leaves the current window.ilable optio=
-ns.eatures.---".. =E2=94=82  =E2=94=82
->  =E2=94=82 [=E2=94=82 <Esc> always leaves the current window.ilable optio=
-ns.eatures.---".. =E2=94=82  =E2=94=82
->  =E2=94=82 [=E2=94=82 Pressing <1> may be used instead of <F1>, <2> inste=
-ad of <F2>, etc.. =E2=94=82  =E2=94=82
->  =E2=94=82 [=E2=94=82 For verbose global help press <F1>. <F1>, <2> inste=
-ad of <F2>, etc.. =E2=94=82  =E2=94=82
->  =E2=94=82 -=E2=94=82 For help related to the current menu entry press <?=
-> or <h>.>, etc..
->
-> --
-> ~Randy
->
-
-
---=20
-Best Regards
-Masahiro Yamada
 
