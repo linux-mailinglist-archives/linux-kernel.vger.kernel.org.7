@@ -1,139 +1,128 @@
-Return-Path: <linux-kernel+bounces-737620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB820B0AE79
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 09:48:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55B97B0AE77
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 09:48:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAFB51C2527D
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 07:49:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28B15580125
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 07:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A78233D7C;
-	Sat, 19 Jul 2025 07:48:35 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15FE62309AA;
+	Sat, 19 Jul 2025 07:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="fJpOaLhm"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE80C1F30CC;
-	Sat, 19 Jul 2025 07:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C1B881E;
+	Sat, 19 Jul 2025 07:48:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752911315; cv=none; b=cIXNPJjgxWociqtoApU0Dfm66EJm2bpDdVtAB1DchaYznQ+bO6vArBBxYeIzy+GhA1X7Ak8B692OAurEfj8n8AuEY+sWUDk+JZgy8A7SO1OkBUj66dDGmWAMdER5wMxZVJ4TsgwHyZ1klTvbeHSpsvdCBoTd14CxIPMkzu+fy00=
+	t=1752911313; cv=none; b=QKidTtUpFqm43XnbEC2ZiSNPBsDXpMREicTQarz6skp6RbK/bEoaYcP4z7dXEccEDzbGJTDJ3GP/gcGyYKAJ6Drb9siT2Kz69UBqiIltsQ3tHV5OvS0ULsv1hPiFxBbpW3428riW992jbhn32n0b6NXw57yfZZW5ZJsa4MolWUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752911315; c=relaxed/simple;
-	bh=+rEwf4F/NYLyOVrkMo+vhOGo6Wak1RaZ6CmKhyLtYXg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OwtyvrDwozxtGWEtvDyEnLkp8YKqDDw7EZrO2wVMNjL2lTq2U3OYQnEec5kQZICEiL6LXoHJOF0oMGar5D4ZOgGUkmq0TY1yqItsK3c4wO+bwG5j5X9qrXRFbks+GudOFgmzeu3e4V+w/i+dmE/xGRZHK0njH59aD3XYRENnb/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from [192.168.0.107] (unknown [114.241.87.235])
-	by APP-03 (Coremail) with SMTP id rQCowABXsIG9TXtoDCV8BQ--.10075S2;
-	Sat, 19 Jul 2025 15:48:14 +0800 (CST)
-Message-ID: <22fd8b89-b937-48db-a5bf-4e468441b206@iscas.ac.cn>
-Date: Sat, 19 Jul 2025 15:48:13 +0800
+	s=arc-20240116; t=1752911313; c=relaxed/simple;
+	bh=dOTF4TfM5DkdldHHbpLtsX+V527pvOffm6b+AAZX3J0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pHY2T1SUUf/nX5BbkIRwR1J6fCR5+2sVU2SZaKV8zE65sDGZ7gMFDSqrnXHdxV7hdUGJUR90nijt13OldVg7/E9X0Ke0PIFt8fEpAyXJNAsaww1/uAAGGbUs11bgzyFrCS3pdohdeko0tVO/L1HIsuX1XF6prBOGKtcKTviY/j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=fJpOaLhm; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=FcFMDElLC1w3IwQAZkIy/F9GBkkrWViENuKHPwxqZEg=; b=fJpOaLhmWJX0ZsrbDPd4EhqIDy
+	TmqDsdiZGMK1CtxQJIZTEFpXBtWaSsGw8N6Khv53+I2DCoD+DVuoaJP/LazbyqQZQwEZVX/zuakQK
+	5foc7Ip5F0DjB4GGliacXe8/a8oEtQGxqY51+D1NeNB3dd80S+9ObdUVxpSneplKSRHR6r3ph+CtB
+	B4e16AngspEr20Eqn8yJkzj9aHSuFRy4yWj1rgh7XMz1sISMBm5GuTIFvsB3HZWTtAUeEPrGde0J6
+	cfnoIoY11Ci7otdtxcx3g32BniWkXEzk4fZpO+aZXqclsO7tCaTe+uk3g+lpWiYDVcWsIN7rF7fVT
+	ksKCCI5A==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:41384)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1ud2Ix-00046g-1p;
+	Sat, 19 Jul 2025 08:48:23 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1ud2Iu-000410-2o;
+	Sat, 19 Jul 2025 08:48:20 +0100
+Date: Sat, 19 Jul 2025 08:48:20 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Abid Ali <dev.nuvorolabs@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: phy: Fix premature resume by a PHY driver
+Message-ID: <aHtNxLODmEHRVfdn@shell.armlinux.org.uk>
+References: <aHpyDpI9PW8wPf6I@shell.armlinux.org.uk>
+ <20250719062550.652-1-dev.nuvorolabs@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] riscv: dts: spacemit: uart: set dummy clock to silent dt
- warning
-To: Yixun Lan <dlan@gentoo.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>
-Cc: devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
- spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250718-02-k1-uart-clock-v1-1-698e884aa717@gentoo.org>
-Content-Language: en-US
-From: Vivian Wang <wangruikang@iscas.ac.cn>
-In-Reply-To: <20250718-02-k1-uart-clock-v1-1-698e884aa717@gentoo.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:rQCowABXsIG9TXtoDCV8BQ--.10075S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7tF4kAFWUXF18XFWxAF4Utwb_yoW8ur1xp3
-	92g393ArZ7Zr10v3ZFgFs0gr1kG3s5WF1UKr17Wr1UAr4DWay7KFW3GrnxJFyjqrs3Z3sF
-	qanY9Fy8uF4Uuw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvmb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
-	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I
-	8E87Iv6xkF7I0E14v26F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
-	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7
-	MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r
-	4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF
-	67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
-	x0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2
-	z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnU
-	UI43ZEXa7IU56yI5UUUUU==
-X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250719062550.652-1-dev.nuvorolabs@gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 7/18/25 23:13, Yixun Lan wrote:
-> sec_uart1 is reserved in DT, and no clock is implemented in the CCF
-> framework, thus 'make dtbs_check' will eject this warning message:
->   serial@f0612000: 'clock-names' is a required property
->
-> So, adding a dummy clock to the device tree to fulfill the clock
-> requirement, then silent this dt check warning.
+On Sat, Jul 19, 2025 at 06:25:47AM +0000, Abid Ali wrote:
+> On Fri, Jul 18, 2025 at 05:10:54 PM +0100, Russell King (Oracle) wrote:
+> > Sorry but no. The PHY will be "resumed" from boot, even if it wasn't
+> > "suspended". So the idea that resume should only be called if it was
+> > previously suspended is incorrect.
+> 
+> > E.g. .ndo_open -> ... -> phy_attach_direct() -> phy_resume() ->
+> > 	phydrv->resume()
+> 
+> I do point this path out and there is also a second call
+> (2) .ndo_open -> phylink_start -> phy_start -> __phy_resume
+> This would mean 2 calls to the PHY resume every time an interface is
+> taken UP is expected behaviour?.
 
-NAK. This is definitely worse than the warning.
+The whole point is this:
 
-Honestly, if you don't like this warning, I think we should just drop
-the node. If not...
+> > During this path, the PHY may or may not be suspended, depending on
+> > the state of the hardware when control was passed to the kernel,
+> > which includes kexec().
 
->
-> Signed-off-by: Yixun Lan <dlan@gentoo.org>
-> ---
->  arch/riscv/boot/dts/spacemit/k1.dtsi | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
-> index c0f8c5fca975d73b6ea6886da13fcf55289cb16c..e9b98f2a3b1cc38f569d7de336630df846cbfbe7 100644
-> --- a/arch/riscv/boot/dts/spacemit/k1.dtsi
-> +++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-> @@ -309,6 +309,13 @@ cluster1_l2_cache: l2-cache1 {
->  	};
->  
->  	clocks {
-> +		clk_dummy: clock-dummy {
-> +			compatible = "fixed-clock";
-> +			#clock-cells = <0>;
-> +			clock-frequency = <0>;
+Thus, the resume function *must* cope with an already resumed PHY,
+and thus adding extra complexity to try to ignore calling the resume
+function if it wasn't previously suspended is likely to cause
+regressions - phydrv->suspended will be clear for the initial call
+to ->resume(). Thus, if the PHY was suspended at boot time, it won't
+be resumed when one attempts to bring up the interface initially.
 
-That can't be right for UART, which depends on knowing about the baud
-clock rate. If we want a fixed clock to represent whatever the "secure"
-clock controller has at least it should be set to the nominal frequency.
+Just fix your driver's resume function.
 
-Vivian "dramforever" Wang
+> > PHY drivers must cope with an already functional PHY when their
+> > resume() method is called.
+> 
+> This is not what I expected, but if it is by design I do not see a
+> need to fight it. Just to make it clear, if we need to reset a PHY
+> after it returns from suspend(or any code thats dependant), the driver`s
+> callback should provide this guarantee?.
 
-> +			clock-output-names = "clk_dummy";
-> +		};
-> +
->  		vctcxo_1m: clock-1m {
->  			compatible = "fixed-clock";
->  			clock-frequency = <1000000>;
-> @@ -556,8 +563,9 @@ clint: timer@e4000000 {
->  		sec_uart1: serial@f0612000 {
->  			compatible = "spacemit,k1-uart", "intel,xscale-uart";
->  			reg = <0x0 0xf0612000 0x0 0x100>;
-> +			clocks = <&clk_dummy>, <&clk_dummy>;
-> +			clock-names = "core", "bus";
->  			interrupts = <43>;
-> -			clock-frequency = <14857000>;
->  			reg-shift = <2>;
->  			reg-io-width = <4>;
->  			status = "reserved"; /* for TEE usage */
->
-> ---
-> base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
-> change-id: 20250718-02-k1-uart-clock-0beb9ef10fe0
->
-> Best regards,
+Hardware or software reset?
 
+How much a software reset disrupts the PHY is PHY dependent. E.g. there
+are PHYs that need to be software reset for configuration and
+advertisement changes, but all the software configuration is preserved
+over such a reset.
+
+So I can't answer your question. It depends how disruptive the reset
+you are talking about is to your PHY implementation.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
