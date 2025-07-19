@@ -1,207 +1,90 @@
-Return-Path: <linux-kernel+bounces-737477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2D7CB0AD38
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 03:17:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DC6AB0AD39
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 03:19:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CE361AA693F
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 01:17:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE532582B76
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 01:19:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFC6E86342;
-	Sat, 19 Jul 2025 01:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lvL54+0o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7EB186342;
+	Sat, 19 Jul 2025 01:19:04 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF60AD23;
-	Sat, 19 Jul 2025 01:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E748AD23
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 01:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752887826; cv=none; b=RUnqJnuARgVa/n9Wfiz5fh/1bFgZnpEftMo7aUMinozs9k44bXviKTg7WaCkiikY+1Om7XkdZQFphhrEA67nIpms4umodYLobBY4jmlU2iiojvRANYmtC81ILIOEnGSFeasLwaFtu/ngUf4IvFkTj3a+q5dbfN2NrzLpl3pEalU=
+	t=1752887944; cv=none; b=bYAtc4kSMTasHNpDZfjU/brtbY7Bbr/rHuTCSqaDOGiA894yKEmqtv91hE8WScuOfWjHJMX2abwVr29KkE7u0gamsxasCkcEC9C5Tp/C9/qMnV077hJM1TqLhfgtrxmbMtZ6XsV1ToxpsGI3xDWwK9WNnP/xRHmTJ6viF/1IxmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752887826; c=relaxed/simple;
-	bh=FPWiPcjYSntguei1vjfZ6WAkudlepH1LgXSxbOmd/q0=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=eb7KUIGcK08jLRA+1jhySyCJn6lVaKKB/Vm1YWFR4GXrbi60NllHDgoaolNx48sYphoyLH1M8VZQX7FDOkIwZPSqWQmFKpuH0AmPVPbg1lw2U1OJOIb9ddL2yWMah4Lh8azeVc9BuCZmIMkeAsYbZeE4PJj38GYGU1s+lfUcdvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lvL54+0o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C812C4CEEB;
-	Sat, 19 Jul 2025 01:17:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752887825;
-	bh=FPWiPcjYSntguei1vjfZ6WAkudlepH1LgXSxbOmd/q0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=lvL54+0oybb/4AfrH/Uc9gVtF1zi9VLicG/hkBWxbjHYh4nJEM2RIuajYWB008ZAv
-	 lFkV/028zFCxQiaMeJ23pc2XdWt5wJZrVqrvjVNM9ORBJ0CqtgbVxqb0iZpySuanAp
-	 aRqlsh+c7YNACM69GPd2zE72bdVsdfRlICe38oxAytFN6q10kLvCYeu45Ld9XqF67v
-	 S97RS3N8FWuEUZ5C0BVssNeHFV3uQ1phSmVg41x/X9NxO+/awsINQFatn60fZeDSOF
-	 xIqR+GzcJ7tIlBJ7NoVXuniMY8RtrEBElb+lMBGNhy/TbOOLSwiP0vAxLHpZ3JciL/
-	 Z7Z232V2LlFEQ==
-Date: Sat, 19 Jul 2025 10:17:01 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] tracing: kprobe-event: Allocate string buffers from
- heap
-Message-Id: <20250719101701.0df8cde9709bdd9f0075c82a@kernel.org>
-In-Reply-To: <20250718134627.5d483ca4@batman.local.home>
-References: <175283843771.343578.8524137568048302760.stgit@devnote2>
-	<175283846936.343578.3747359008449354291.stgit@devnote2>
-	<20250718134627.5d483ca4@batman.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752887944; c=relaxed/simple;
+	bh=aJCF0ddyOXuF5gjXcwXOGYNzipJTNJaKbHCa4KbjIRQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=qhkyDnXUP6NzevbItddrLTqfXl3KUgVjysb/Bdapv72mtwcsnH3UR3IiMOJ757589BTSFrSj1XX70D8x/KaSBQg1dSjpU2uRiuOFlJbU3KHB0LGX1Sw96CbVEC+oZ9kqN3CR90bLTRCAukhrOPB5wvFMrWV5dtEOnTvrv5EFeQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-87c0e531fc4so272614539f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 18:19:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752887942; x=1753492742;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LZl0/D780um6dbWcTsTxWLS1FuHbnhc7kOw2oVZ1k5Y=;
+        b=m+e/1ynVHAhO0K7SLpumK8j9wi0DeOw2QoKYCTOJd2BEm1lYHSiXRa1FPtl8/xvOR0
+         eqn0xSAPPJM2Bjtz4ze1LJTt3TLDlPjGUB6npBQpDL/KcB2DAv5g7ME8JScJF5f/dkOL
+         8zUIrjuSKvRL/gCtggJyvfoqpnHcUKAcmIbpzXvxJ4zuUmkDARF9gHhCQaiE+gIvUu9g
+         sgpGOdtl9vK2S/ktv6uTfRLlWvZtwB24BRRniUkYx2JZ55JfrAXVvuq5Ly9gjdOW+UjT
+         D9Fcsud9ligcu7WCjrHeCLS+4FsiX5mEUge3WiY6zqNF0Nk+SJSIiCmSeA4lupiNMQSH
+         tW5g==
+X-Forwarded-Encrypted: i=1; AJvYcCUjcc2mgahK0V1gk6SdJDMKXwHkCxF+gMMK2/kAYlLG6L4Iwn3vFaa09krwU7fjZSgenXdSZHHYMPubPuM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/oD374y7DY3HavIJQQ2ywFzO98CGhxW3MQubKyuGDJFh6j6UA
+	ImJ6wDxDx1LFBozX83ilmkXY843j+57fmInujHkvJyf57m0coTCYBmOXolw5Hc2lJi6UMW5eVoD
+	X6AznmdQWAXc/uyP+8/1acheh4bMqtmkIdaQz9nTKL3j4wQtuWOxKHedfHt8=
+X-Google-Smtp-Source: AGHT+IEz7v0ZnTkAXOeS5QfX2R8CDG5BXTGoxHEoQOMpKNawU5nmdncLP7FeZtqmvJDLpReKxyl046ognEV3rW/tnq6sb2EKrx2E
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Received: by 2002:a05:6602:4c0c:b0:879:c9db:cbf0 with SMTP id
+ ca18e2360f4ac-879c9dbcd6emr1226466939f.2.1752887942234; Fri, 18 Jul 2025
+ 18:19:02 -0700 (PDT)
+Date: Fri, 18 Jul 2025 18:19:02 -0700
+In-Reply-To: <8b62af1c-64f0-4742-a96b-34d23635c089n@googlegroups.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <687af286.a00a0220.3af5df.0033.GAE@google.com>
+Subject: Re: [syzbot] [fs?] KASAN: use-after-free Read in hpfs_get_ea
+From: syzbot <syzbot+fa88eb476e42878f2844@syzkaller.appspotmail.com>
+To: kapoorarnav43@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 18 Jul 2025 13:46:27 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+Hello,
 
-> On Fri, 18 Jul 2025 20:34:29 +0900
-> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
-> 
-> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > 
-> > Allocate temporary string buffers for parsing kprobe-events
-> > from heap instead of stack.
-> > 
-> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > ---
-> >  kernel/trace/trace_kprobe.c |   39 +++++++++++++++++++++++++--------------
-> >  1 file changed, 25 insertions(+), 14 deletions(-)
-> > 
-> > diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-> > index 15d7a381a128..793af6000f16 100644
-> > --- a/kernel/trace/trace_kprobe.c
-> > +++ b/kernel/trace/trace_kprobe.c
-> > @@ -861,20 +861,20 @@ static int trace_kprobe_create_internal(int argc, const char *argv[],
-> >  	 *  FETCHARG:TYPE : use TYPE instead of unsigned long.
-> >  	 */
-> >  	struct trace_kprobe *tk __free(free_trace_kprobe) = NULL;
-> > +	const char *event = NULL, *group = KPROBE_EVENT_SYSTEM;
-> > +	const char **new_argv __free(kfree) = NULL;
-> >  	int i, len, new_argc = 0, ret = 0;
-> > -	bool is_return = false;
-> >  	char *symbol __free(kfree) = NULL;
-> > -	char *tmp = NULL;
-> > -	const char **new_argv __free(kfree) = NULL;
-> > -	const char *event = NULL, *group = KPROBE_EVENT_SYSTEM;
-> > +	char *ebuf __free(kfree) = NULL;
-> > +	char *gbuf __free(kfree) = NULL;
-> > +	char *abuf __free(kfree) = NULL;
-> > +	char *dbuf __free(kfree) = NULL;
-> >  	enum probe_print_type ptype;
-> > +	bool is_return = false;
-> >  	int maxactive = 0;
-> > -	long offset = 0;
-> >  	void *addr = NULL;
-> > -	char buf[MAX_EVENT_NAME_LEN];
-> > -	char gbuf[MAX_EVENT_NAME_LEN];
-> > -	char abuf[MAX_BTF_ARGS_LEN];
-> > -	char *dbuf __free(kfree) = NULL;
-> > +	char *tmp = NULL;
-> > +	long offset = 0;
-> >  
-> >  	switch (argv[0][0]) {
-> >  	case 'r':
-> > @@ -893,6 +893,8 @@ static int trace_kprobe_create_internal(int argc, const char *argv[],
-> >  		event++;
-> >  
-> >  	if (isdigit(argv[0][1])) {
-> > +		char *buf __free(kfree) = NULL;
-> 
-> So this gets freed when this if block ends, right?
+syzbot tried to test the proposed patch but the build/boot failed:
 
-Yes, because in this block, "buf" is used as a really temporary
-buffer.
-
-> 
-> > +
-> >  		if (!is_return) {
-> >  			trace_probe_log_err(1, BAD_MAXACT_TYPE);
-> >  			return -EINVAL;
-> > @@ -905,7 +907,7 @@ static int trace_kprobe_create_internal(int argc, const char *argv[],
-> >  			trace_probe_log_err(1, BAD_MAXACT);
-> >  			return -EINVAL;
-> >  		}
-> > -		memcpy(buf, &argv[0][1], len);
-> > +		buf = kmemdup(&argv[0][1], len + 1, GFP_KERNEL);
-> >  		buf[len] = '\0';
-> >  		ret = kstrtouint(buf, 0, &maxactive);
-> >  		if (ret || !maxactive) {
-> > @@ -973,6 +975,9 @@ static int trace_kprobe_create_internal(int argc, const char *argv[],
-> >  
-> >  	trace_probe_log_set_index(0);
-> >  	if (event) {
-> > +		gbuf = kmalloc(MAX_EVENT_NAME_LEN, GFP_KERNEL);
-> > +		if (!gbuf)
-> > +			return -ENOMEM;
-> >  		ret = traceprobe_parse_event_name(&event, &group, gbuf,
-> >  						  event - argv[0]);
-> 
-> And you can't use the same trick here because
-> traceprobe_parse_event_name() assigns "group" to gbuf and is used
-> outside this if block.
-
-Yes, that holds the group name used until parsing the probe.
-
-> 
-> I notice there's no comment that states this. At the very minimum,
-> traceprobe_parse_event_name() should have a kerneldoc comment above its
-> definition and state this.
-
-Yeah, that function should be docummented, it is a bit complicated.
-
-> But that's not an issue with this patch
-> series. Just an observation. Thus...
-> 
-> Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-
-Thank you!
-
-> 
-> -- Steve
-> 
-> 
-> >  		if (ret)
-> > @@ -981,16 +986,22 @@ static int trace_kprobe_create_internal(int argc, const char *argv[],
-> >  
-> >  	if (!event) {
-> >  		/* Make a new event name */
-> > +		ebuf = kmalloc(MAX_EVENT_NAME_LEN, GFP_KERNEL);
-> > +		if (!ebuf)
-> > +			return -ENOMEM;
-> >  		if (symbol)
-> > -			snprintf(buf, MAX_EVENT_NAME_LEN, "%c_%s_%ld",
-> > +			snprintf(ebuf, MAX_EVENT_NAME_LEN, "%c_%s_%ld",
-> >  				 is_return ? 'r' : 'p', symbol, offset);
-> >  		else
-> > -			snprintf(buf, MAX_EVENT_NAME_LEN, "%c_0x%p",
-> > +			snprintf(ebuf, MAX_EVENT_NAME_LEN, "%c_0x%p",
-> >  				 is_return ? 'r' : 'p', addr);
-> > -		sanitize_event_name(buf);
-> > -		event = buf;
-> > +		sanitize_event_name(ebuf);
-> > +		event = ebuf;
-> >  	}
-> >  
-> > +	abuf = kmalloc(MAX_BTF_ARGS_LEN, GFP_KERNEL);
-> > +	if (!abuf)
-> > +		return -ENOMEM;
-> >  	argc -= 2; argv += 2;
-> >  	ctx->funcname = symbol;
-> >  	new_argv = traceprobe_expand_meta_args(argc, argv, &new_argc,
-> 
+failed to apply patch:
+checking file fs/hpfs/ea.c
+Hunk #1 succeeded at 135 with fuzz 1.
+patch: **** malformed patch at line 61: + }
 
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+
+Tested on:
+
+commit:         414aaef1 Merge tag 'riscv-for-linus-6.16-rc7' of git:/..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f09d04131ef56b22
+dashboard link: https://syzkaller.appspot.com/bug?extid=fa88eb476e42878f2844
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1165038c580000
+
 
