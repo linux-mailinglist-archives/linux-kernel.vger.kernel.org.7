@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-737463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60019B0AD11
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 02:50:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4EC0B0AD14
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 02:50:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 970967A781F
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 00:48:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34C96AC01A8
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 00:50:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0768C78F43;
-	Sat, 19 Jul 2025 00:49:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6800D155725;
+	Sat, 19 Jul 2025 00:50:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P/aVtXQ3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rC94RXIE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 602C24A23;
-	Sat, 19 Jul 2025 00:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35A2130A73;
+	Sat, 19 Jul 2025 00:50:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752886191; cv=none; b=EtswwzCWRkLDHWk26rtvXZjn+zLQ2bsIgIxxFm9KBOgsbLttrTEoJnbLIjIfSe9jCYYuUqspo6BxdI1rbSjsGLPBjnGBcA6zCenkS533t5Y/5LZF76CKt7FDcEXv+zQvq6GlW3ilrAgM+eEM8pZCw8piF1AqXsfwb8L4YVHUOQE=
+	t=1752886209; cv=none; b=GF5pA61buu8iL02pc2/03h6Bh3FJTwfBxth4ecy9WAezfGlqJ4ogD4TaR7ETVkIQpqRDbhFaaK7/UsteKpN6YWWbQYxAGr9lFSAADKGdQ0nhThPP+DcVZq/o9TiSOpBhw6AD1gkmenvM2jomjw7AaIeB/1VTfJSnlSj+KzPLOlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752886191; c=relaxed/simple;
-	bh=DW8vjxBQp6/eikh2tKufwXCbRHKBXNUGD4AN0/Iianw=;
+	s=arc-20240116; t=1752886209; c=relaxed/simple;
+	bh=pOCNF97ddEfHE3C6e1BqT8r5RSsqtKDXSC1RWom9FfM=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=p69aNW9Q1WWoVGuPET524FoROktrxtmhgb4Z/KGhPLt+IP3kdQawJt82eG6ooPGC5kr46ZrrYc8iPHOvzs5nlJ0kcH9P5j8Np7SDX4uJPUEKU+IcgRAcUIoW4VvW5ZazuMFvL3lqKU/dAzm/9g90eTuLFbVQbyq2nbm1f3B3MXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P/aVtXQ3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D95D0C4CEEB;
-	Sat, 19 Jul 2025 00:49:50 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=Md5FYLSpdDMkWgAYyF0CcwGWobd/EOKsC6Wq7g0k6wKtfuJ4lRiTsST8QLDFnxz91bpKs+8np0Is1GXX3o7+N2dWhvec44U78BuFEnPWNH/ypAFz0XJ/aKOQaaLRKGcEp6hBvNdcVtaPthHspW2T+VVI81V5T7J/pc1f53p+IwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rC94RXIE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A1F0C4CEEB;
+	Sat, 19 Jul 2025 00:50:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752886190;
-	bh=DW8vjxBQp6/eikh2tKufwXCbRHKBXNUGD4AN0/Iianw=;
+	s=k20201202; t=1752886209;
+	bh=pOCNF97ddEfHE3C6e1BqT8r5RSsqtKDXSC1RWom9FfM=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=P/aVtXQ3C1ITgUv7pz+/u6+L0KtqxvbcSFD7MsfN4waZVfp0zbvDbeep5flKDlart
-	 FJcJcPSSIU0M0xrNd/xbFqJV3tGHpkV4cZhmwOqHLtWIfzo7r6hfaRbYbFMXOCwBeS
-	 PK48kzuM/gGfisJxnoeTthlLYn5xhonKe5wHSv2NVybkoXw6zZR6M+O+Aclq6Nps55
-	 r87/HukW680sqgbcxesURWClNGfoa2cPN/7HfhBm5RSRfuMChlXg3dc2+MiUU/YoFT
-	 7zQD0XWP9bgOdKp7BQUi0Ymi/+GoY1f/gycBAQSKT/g77AIDK8DhJ3Crg0qlcV2j0R
-	 wd23iZ+V4MwGA==
+	b=rC94RXIEMUncfeEvJepabphkkE6u6sKlfhBFkYQqTrrSPNs2IAncl8R99ayeTz7SH
+	 TR2Tu+GwlxgVPsMnKOVDIlL6LaJFawyrWFPPTdxhEK8fFvMsEjrqIgxry9N6TL9a/u
+	 PsSLMdxBwa/OpKuGDIRVMPeKTmkmH/zFdLImL5gOkbSaXWps3fw29iol6v96LappeP
+	 sZI8yETIlSnyLUjekpsopHLWQ64HjLqmeuDrpKFTDIiPFWl1Sa2rBQMz9QTPFt39R4
+	 WR5tRNqA2wtktkIpoveqUeN0SiWnpzv2xPklB9XoZk7S46jbF6bke1yx/oO94nUvTG
+	 aO9zV9luAfoDw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADD6C383BA3C;
-	Sat, 19 Jul 2025 00:50:11 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70BA7383BA3C;
+	Sat, 19 Jul 2025 00:50:30 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,41 +51,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net 0/2] mlx5 misc fixes 2025-07-17
+Subject: Re: [PATCH net-next] net: bcmasp: Add support for re-starting
+ auto-negotiation
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <175288621044.2839493.14619363729044720272.git-patchwork-notify@kernel.org>
-Date: Sat, 19 Jul 2025 00:50:10 +0000
-References: <1752753970-261832-1-git-send-email-tariqt@nvidia.com>
-In-Reply-To: <1752753970-261832-1-git-send-email-tariqt@nvidia.com>
-To: Tariq Toukan <tariqt@nvidia.com>
-Cc: edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, saeed@kernel.org, gal@nvidia.com,
- leon@kernel.org, saeedm@nvidia.com, mbloch@nvidia.com,
- netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
- linux-kernel@vger.kernel.org
+ <175288622900.2839493.11455333079632181551.git-patchwork-notify@kernel.org>
+Date: Sat, 19 Jul 2025 00:50:29 +0000
+References: <20250717180915.2611890-1-florian.fainelli@broadcom.com>
+In-Reply-To: <20250717180915.2611890-1-florian.fainelli@broadcom.com>
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: netdev@vger.kernel.org, justin.chen@broadcom.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org
 
 Hello:
 
-This series was applied to netdev/net.git (main)
+This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Thu, 17 Jul 2025 15:06:08 +0300 you wrote:
-> Hi,
+On Thu, 17 Jul 2025 11:09:15 -0700 you wrote:
+> Wire-up ethtool_ops::nway_reset to phy_ethtool_nway_reset in order to
+> support re-starting auto-negotiation.
 > 
-> This small patchset provides misc bug fixes from the team to the mlx5
-> driver.
-> 
-> Thanks,
-> Tariq.
-> 
-> [...]
+> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> ---
+>  drivers/net/ethernet/broadcom/asp2/bcmasp_ethtool.c | 1 +
+>  1 file changed, 1 insertion(+)
 
 Here is the summary with links:
-  - [net,1/2] net/mlx5: Fix memory leak in cmd_exec()
-    https://git.kernel.org/netdev/net/c/3afa3ae3db52
-  - [net,2/2] net/mlx5: E-Switch, Fix peer miss rules to use peer eswitch
-    https://git.kernel.org/netdev/net/c/5b4c56ad4da0
+  - [net-next] net: bcmasp: Add support for re-starting auto-negotiation
+    https://git.kernel.org/netdev/net-next/c/190ccb817637
 
 You are awesome, thank you!
 -- 
