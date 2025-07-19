@@ -1,113 +1,277 @@
-Return-Path: <linux-kernel+bounces-737823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21BF3B0B0FA
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 18:58:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FE32B0B0FB
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 18:58:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 876DBAA6B08
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 16:57:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDEDEAA6876
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 16:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4704288C8B;
-	Sat, 19 Jul 2025 16:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="pDnwgip7"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0502F288C19;
+	Sat, 19 Jul 2025 16:58:42 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E21320B80A;
-	Sat, 19 Jul 2025 16:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A66752AF07
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 16:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752944278; cv=none; b=quNhEYnTlMtB+t5dMy5g1JOo1u5A01lGZKtgxF2bgHIVacjCBoT35r7+ph/y9V16NALRzxTqwT+AfdfeFH24SeFmTxEnsD4z+B3vfao+gyfJpsmFPJlkww1Z7qQPK8hzhN1liDIP2sl44KZwfMpa9qJQW2hmfnwwjeGgrLq84sM=
+	t=1752944321; cv=none; b=GZhf8BUFRbgDeJr6S7rmVRGJ4MuzduVw0Vl5bpfZ9p9BNa+JUH7vXdx/hejQlv8qBTN9luQcQkrhmVTc/C0GaKpSuPVPhy/eCM0PxMcEczb6J+ce7f+NY0+8r0zMH+Chn/V2Vq53Y2O/oh8XIbSYCjQibwg7zmCWcjO/3z41Mqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752944278; c=relaxed/simple;
-	bh=vqvz+1tGu+LpaR4QvDy5MuUcglJGRzLgrNDVSW5K+4c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lGgpCFIl7BhPAqr+xNjAph9LyyFcnYfP3ZskIeU/nTjLy1/e/cSGhtUESJ7/w23B+1oclmAMKp57MbsnoTQ5ODG7S91BVvhTbRphsm20LUFrTvVn9uOTwk+1f24IXb7zm+Q838OLlqBVM+O91ODcoO6p3nxLXko4VgO/R+CBtNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=pDnwgip7; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=1mfA517rjzPZoRXNHzM0lVU9Rb/n66iO6+Wm0YH3JEY=; b=pDnwgip7JjpRRWIQ+7eRa13nTL
-	sQhiLhgkqwUNQzTMjMiV6IwiXk3MJxORqA/jcroj65TMl3vSBO6v6/9F/sFhmRJLyGC2ssIVr/z6t
-	xIGP+9TukEbjzMlariteXOPgxw88EJGzpxqNhZ+1M9Fk8GCP87KYK0v7j40u+srk3kNg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1udAsS-0025PX-Nw; Sat, 19 Jul 2025 18:57:36 +0200
-Date: Sat, 19 Jul 2025 18:57:36 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	cros-qcom-dts-watchers@chromium.org, Vinod Koul <vkoul@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
-	Stephen Boyd <swboyd@chromium.org>,
-	Andre Draszik <andre.draszik@linaro.org>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	Elliot Berman <quic_eberman@quicinc.com>,
-	Srinivas Kandagatla <srini@kernel.org>
-Subject: Re: [PATCH v11 2/8] power: reset: reboot-mode: Add support for 64
- bit magic
-Message-ID: <8d4a42b6-657f-4c30-8e25-4213d8d53a89@lunn.ch>
-References: <20250717-arm-psci-system_reset2-vendor-reboots-v11-0-df3e2b2183c3@oss.qualcomm.com>
- <20250717-arm-psci-system_reset2-vendor-reboots-v11-2-df3e2b2183c3@oss.qualcomm.com>
- <6vlm3ybjpy2jq3cr2pzj4vcmqwoissdml2xmhfzlulfbrpzakt@xrepu6c5zykb>
- <713b2cc8-1bc7-a8b7-678b-5fc7fe25615a@oss.qualcomm.com>
+	s=arc-20240116; t=1752944321; c=relaxed/simple;
+	bh=9Gq+leZb/A+D6ye3VY2Hb0yCgnTy75wf619P/wTOCpU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=bQy7lQS8EZVRVEvdbUgnhqLl5xaUOXjRzW1/YFdZIRDvruEpML9MeZsVQumlTZBFdakRQh/QR0gF3PDTIFfhT0nJRkcRDa72CSeO7mZKuaWykfmkjtJ4UGIunKIO/lJ1FUBH+2c20nOKxLS6tRChIFYZudd9sv3V9rxyoSsqosc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-86cc7cdb86fso284495539f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 09:58:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752944315; x=1753549115;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nlqkQLh/K8VLnu8hKjximPArNY0x+mjxGEw2XcDN9WA=;
+        b=L/+px4UYZGtbb0DonHHWp7CLuQt/qIHJmPB8K+7bkMkzRfpaidRizxTBhhOWEq90eU
+         0HiK1ZSc9v/qlk5WPfbcIJkBcAKYqiKDzQT9t0wv+b0Pt8YtKhdH8EQck2dpndM7fTch
+         jQXHlMbMMNLFV2yaP3WYXdnQyHLJbDfqR/cU9+py5irWAzdO9u5F7eDpr9U+4RPGJale
+         ONIae/A1IOFl/U9DII/8d2+SIl2rae+ltVR/9IixKiMbTNPUNq0LwV67CgoQTkE9/qzD
+         kq17oLSkJgMV9aEsvEhRgSPu8YJFc6rPb/WSOokWpuO9QuLTaotT8f9vtsJvEo1FsFy6
+         xs3A==
+X-Forwarded-Encrypted: i=1; AJvYcCVGTGALgoFf2R7iLhqzeASJJ2IzVeK9vgIuSMOGZzkjKmxD15Ro6/ZKsYPxzmla3yvqETi4/FC19Ktg+zA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbqJvSTiuLY/h/2Evp+4PbcQYUpfzq9W1H71JVlsFid9j3qwBX
+	1qDz6bBQTfy4qUqVCt/KJA3ZaArsxX/gwfmgNyJcxcAIdEs629yr6l9IQgIEzoRdrE2uptnD1Ia
+	5ili0/4xEcUDBcw+Aqx6HCd+EbbBS0dYfUTA43H2MFZhM38YC98NnvrhI0/k=
+X-Google-Smtp-Source: AGHT+IHUNKka3jl9vQQhlozaLdZY5EwGA+RSlJqz3CE10G3ZfdJGVPVsT2IpM9UV5kekB4/MX7/3+EABSGZH/ZeMdOEsZkxlMf1R
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <713b2cc8-1bc7-a8b7-678b-5fc7fe25615a@oss.qualcomm.com>
+X-Received: by 2002:a5e:8c06:0:b0:864:4b3a:9e3a with SMTP id
+ ca18e2360f4ac-879c298bce6mr1503078339f.13.1752944314711; Sat, 19 Jul 2025
+ 09:58:34 -0700 (PDT)
+Date: Sat, 19 Jul 2025 09:58:34 -0700
+In-Reply-To: <687a71bf.a70a0220.693ce.006b.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <687bceba.a70a0220.693ce.008d.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] KASAN: slab-use-after-free Write in bch2_get_next_dev
+From: syzbot <syzbot+2b98caf09c41174a9697@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-> >> +static int qcom_pon_reboot_mode_write(struct reboot_mode_driver *reboot, u64 magic)
-> >>  {
-> >>  	struct qcom_pon *pon = container_of
-> >>  			(reboot, struct qcom_pon, reboot_mode);
-> >> @@ -37,7 +36,7 @@ static int qcom_pon_reboot_mode_write(struct reboot_mode_driver *reboot,
-> >>  	ret = regmap_update_bits(pon->regmap,
-> >>  				 pon->baseaddr + PON_SOFT_RB_SPARE,
-> >>  				 GENMASK(7, pon->reason_shift),
-> >> -				 magic << pon->reason_shift);
-> >> +				 ((u32)magic) << pon->reason_shift);
+syzbot has found a reproducer for the following issue on:
 
-As a general rule of thumb, code with casts is poor quality code. Try
-to write the code without casts.
+HEAD commit:    d086c886ceb9 Add linux-next specific files for 20250718
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=17bd438c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cc0cd9fdf69889c3
+dashboard link: https://syzkaller.appspot.com/bug?extid=2b98caf09c41174a9697
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1480c38c580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=112df8f0580000
 
-Maybe something like
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/4435f80a19c4/disk-d086c886.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/9a7dc57a5ea3/vmlinux-d086c886.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/da9f2dc22ae1/bzImage-d086c886.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/30708d56eaf8/mount_2.gz
 
-      If (magic > MAX_U32)
-      	   return -EINVAL;
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+2b98caf09c41174a9697@syzkaller.appspotmail.com
 
-      magic_32 = magic;
+==================================================================
+BUG: KASAN: slab-use-after-free in instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+BUG: KASAN: slab-use-after-free in atomic_long_inc_return include/linux/atomic/atomic-instrumented.h:3609 [inline]
+BUG: KASAN: slab-use-after-free in bch2_dev_get fs/bcachefs/sb-members.h:114 [inline]
+BUG: KASAN: slab-use-after-free in bch2_get_next_dev+0x38f/0x4e0 fs/bcachefs/sb-members.h:145
+Write of size 8 at addr ffff88807b3cc040 by task kworker/u9:4/5922
 
-You might be able to go further, and validate that magic actually fits
-into the field when you consider the << pon->reason_shift.
+CPU: 0 UID: 0 PID: 5922 Comm: kworker/u9:4 Not tainted 6.16.0-rc6-next-20250718-syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+Workqueue: bcachefs_journal journal_write_done
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0xca/0x240 mm/kasan/report.c:482
+ kasan_report+0x118/0x150 mm/kasan/report.c:595
+ check_region_inline mm/kasan/generic.c:-1 [inline]
+ kasan_check_range+0x2b0/0x2c0 mm/kasan/generic.c:189
+ instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+ atomic_long_inc_return include/linux/atomic/atomic-instrumented.h:3609 [inline]
+ bch2_dev_get fs/bcachefs/sb-members.h:114 [inline]
+ bch2_get_next_dev+0x38f/0x4e0 fs/bcachefs/sb-members.h:145
+ bch2_do_discards+0x20/0x160 fs/bcachefs/alloc_background.c:1935
+ journal_write_done+0x11b9/0x13f0 fs/bcachefs/journal_io.c:1822
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3319
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+ kthread+0x70e/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
 
-	Andrew
+Allocated by task 5859:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0x93/0xb0 mm/kasan/common.c:394
+ kasan_kmalloc include/linux/kasan.h:260 [inline]
+ __kmalloc_cache_noprof+0x230/0x3d0 mm/slub.c:4396
+ kmalloc_noprof include/linux/slab.h:905 [inline]
+ kzalloc_noprof include/linux/slab.h:1039 [inline]
+ __bch2_dev_alloc+0xa7/0xc30 fs/bcachefs/super.c:1487
+ bch2_dev_alloc+0xcd/0x180 fs/bcachefs/super.c:1558
+ bch2_fs_alloc fs/bcachefs/super.c:1068 [inline]
+ bch2_fs_open+0x256f/0x2760 fs/bcachefs/super.c:2395
+ bch2_fs_get_tree+0x44f/0x1540 fs/bcachefs/fs.c:2440
+ vfs_get_tree+0x92/0x2b0 fs/super.c:1815
+ do_new_mount+0x2a2/0x9e0 fs/namespace.c:3805
+ do_mount fs/namespace.c:4133 [inline]
+ __do_sys_mount fs/namespace.c:4344 [inline]
+ __se_sys_mount+0x317/0x410 fs/namespace.c:4321
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 5859:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:576
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x62/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:233 [inline]
+ slab_free_hook mm/slub.c:2417 [inline]
+ slab_free mm/slub.c:4680 [inline]
+ kfree+0x18e/0x440 mm/slub.c:4879
+ kobject_cleanup lib/kobject.c:689 [inline]
+ kobject_release lib/kobject.c:720 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ kobject_put+0x22b/0x480 lib/kobject.c:737
+ bch2_fs_free+0x4b3/0x5c0 fs/bcachefs/super.c:749
+ bch2_fs_get_tree+0xb76/0x1540 fs/bcachefs/fs.c:2572
+ vfs_get_tree+0x92/0x2b0 fs/super.c:1815
+ do_new_mount+0x2a2/0x9e0 fs/namespace.c:3805
+ do_mount fs/namespace.c:4133 [inline]
+ __do_sys_mount fs/namespace.c:4344 [inline]
+ __se_sys_mount+0x317/0x410 fs/namespace.c:4321
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Last potentially related work creation:
+ kasan_save_stack+0x3e/0x60 mm/kasan/common.c:47
+ kasan_record_aux_stack+0xbd/0xd0 mm/kasan/generic.c:548
+ insert_work+0x3d/0x330 kernel/workqueue.c:2184
+ __queue_work+0xcd2/0xfb0 kernel/workqueue.c:2339
+ queue_work_on+0x181/0x270 kernel/workqueue.c:2390
+ queue_work include/linux/workqueue.h:669 [inline]
+ bch2_dev_do_discards fs/bcachefs/alloc_background.c:1925 [inline]
+ bch2_do_discards+0xd0/0x160 fs/bcachefs/alloc_background.c:1936
+ journal_write_done+0x11b9/0x13f0 fs/bcachefs/journal_io.c:1822
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3319
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+ kthread+0x70e/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+Second to last potentially related work creation:
+ kasan_save_stack+0x3e/0x60 mm/kasan/common.c:47
+ kasan_record_aux_stack+0xbd/0xd0 mm/kasan/generic.c:548
+ insert_work+0x3d/0x330 kernel/workqueue.c:2184
+ __queue_work+0xcd2/0xfb0 kernel/workqueue.c:2339
+ queue_work_on+0x181/0x270 kernel/workqueue.c:2390
+ queue_work include/linux/workqueue.h:669 [inline]
+ bch2_dev_do_discards fs/bcachefs/alloc_background.c:1925 [inline]
+ bch2_do_discards+0xd0/0x160 fs/bcachefs/alloc_background.c:1936
+ journal_write_done+0x11b9/0x13f0 fs/bcachefs/journal_io.c:1822
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3319
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+ kthread+0x70e/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+The buggy address belongs to the object at ffff88807b3cc000
+ which belongs to the cache kmalloc-4k of size 4096
+The buggy address is located 64 bytes inside of
+ freed 4096-byte region [ffff88807b3cc000, ffff88807b3cd000)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x7b3c8
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000040 ffff88801a442140 ffffea0000cdf200 dead000000000002
+raw: 0000000000000000 0000000000040004 00000000f5000000 0000000000000000
+head: 00fff00000000040 ffff88801a442140 ffffea0000cdf200 dead000000000002
+head: 0000000000000000 0000000000040004 00000000f5000000 0000000000000000
+head: 00fff00000000003 ffffea0001ecf201 00000000ffffffff 00000000ffffffff
+head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5228, tgid 5228 (udevadm), ts 37270032838, free_ts 31080557231
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1851
+ prep_new_page mm/page_alloc.c:1859 [inline]
+ get_page_from_freelist+0x21e4/0x22c0 mm/page_alloc.c:3858
+ __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:5148
+ alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2416
+ alloc_slab_page mm/slub.c:2487 [inline]
+ allocate_slab+0x8a/0x370 mm/slub.c:2655
+ new_slab mm/slub.c:2709 [inline]
+ ___slab_alloc+0xbeb/0x1410 mm/slub.c:3891
+ __slab_alloc mm/slub.c:3981 [inline]
+ __slab_alloc_node mm/slub.c:4056 [inline]
+ slab_alloc_node mm/slub.c:4217 [inline]
+ __kmalloc_cache_noprof+0x296/0x3d0 mm/slub.c:4391
+ kmalloc_noprof include/linux/slab.h:905 [inline]
+ kzalloc_noprof include/linux/slab.h:1039 [inline]
+ kernfs_iop_get_link+0x66/0x6c0 fs/kernfs/symlink.c:137
+ vfs_readlink+0x24d/0x550 fs/namei.c:5375
+ do_readlinkat+0x215/0x500 fs/stat.c:590
+ __do_sys_readlink fs/stat.c:613 [inline]
+ __se_sys_readlink fs/stat.c:610 [inline]
+ __x64_sys_readlink+0x7f/0x90 fs/stat.c:610
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+page last free pid 1 tgid 1 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1395 [inline]
+ __free_frozen_pages+0xbc4/0xd30 mm/page_alloc.c:2895
+ __free_pages mm/page_alloc.c:5260 [inline]
+ free_contig_range+0x1bd/0x4a0 mm/page_alloc.c:7117
+ destroy_args+0x7e/0x5d0 mm/debug_vm_pgtable.c:958
+ debug_vm_pgtable+0x404/0x420 mm/debug_vm_pgtable.c:1340
+ do_one_initcall+0x233/0x820 init/main.c:1269
+ do_initcall_level+0x137/0x1f0 init/main.c:1331
+ do_initcalls+0x69/0xd0 init/main.c:1347
+ kernel_init_freeable+0x3d9/0x590 init/main.c:1579
+ kernel_init+0x1d/0x1d0 init/main.c:1469
+ ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+Memory state around the buggy address:
+ ffff88807b3cbf00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88807b3cbf80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff88807b3cc000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                           ^
+ ffff88807b3cc080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88807b3cc100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
