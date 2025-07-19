@@ -1,270 +1,132 @@
-Return-Path: <linux-kernel+bounces-737612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ADF6B0AE64
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 09:18:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D40BB0AE2C
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 08:26:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4D88AA4E7B
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 07:18:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 159024E83FA
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 06:25:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 275FC23373B;
-	Sat, 19 Jul 2025 07:18:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6515228C99;
+	Sat, 19 Jul 2025 06:25:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="RtmWv7wF"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WkJoBrGk"
+Received: from mail-wm1-f68.google.com (mail-wm1-f68.google.com [209.85.128.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5ED1DC9A3
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 07:18:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709611C84AE;
+	Sat, 19 Jul 2025 06:25:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752909488; cv=none; b=AxjVTf6QYAc/T/sWZ9YXi/WEHIGrx9g6QZvUo2BPpJKJUPZSPsUObJ0PRscaH4EY68B4naPp8qmLiTMu/XtG2AM7ay4RB50iule/4DVX9/cR4GlWd+b2Rcyw+AujNw/DswdkiSSxpMWpXPawRvCi3szLkwcjEGISy+lS/SvJH88=
+	t=1752906358; cv=none; b=j8YDt4VN2tAEuaOgvAcxNrn0RKY3vJQv0f9CBZPOh1dJrXQp94dhVFvr4F/KOL1GSOaflyUD2OqE+A/65itAtFhxqdTmYWFB2MsueiZfglPDwjeGtifGtJ3VlsqS39JmbhAU8cKEevD5fRd+sykXPFlmdqgjhzg3EpqGVtZayyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752909488; c=relaxed/simple;
-	bh=aQwqn852ez4VSZnU4yg3Uq3Q3reU50ORuomePn2f2MY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=DOOVgD110H39hnBPuDjdy7aOyzxDjQMLpOO3AaITT7KMSYxzqHI3+SeBQWOlvCe3wCTObTQfQ6G6AWnlz7kj7DBUkio2hng3aZo0h8f+TwAoA9HRlbQJhCOJl82hAw3l4Fy+kW4u47k2uagP0Vly9Fn7AhZ1LajkrM8xcCa5Jbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=RtmWv7wF; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250719071804epoutp01ed1657a1afd8ff90bcf365718361e0c9~TleN5gWhk1707217072epoutp01Y
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 07:18:04 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250719071804epoutp01ed1657a1afd8ff90bcf365718361e0c9~TleN5gWhk1707217072epoutp01Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1752909484;
-	bh=UudTUHuSBSXOz6BPd7gqcDNPQ4zU70lFCIesGgqDksY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=RtmWv7wF+301P7dwxFef8w0FIO4ih7k6qW3n90sqmtskidCflVkvc8/8KHMY3gNGh
-	 c70wt49G/hBAbCCy5Pdp6SCktirzHZ/QDdXXojNkh1iWQGiNAljBNdmY+XtfzP4K9c
-	 Nv0vmBulZ/OlSsgQ5aIJAUhLNymz74JY4N027euE=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250719071803epcas5p4d42a42d05e0cc180a61163f6d69942ff~TleM08fUo0565305653epcas5p4u;
-	Sat, 19 Jul 2025 07:18:03 +0000 (GMT)
-Received: from epcpadp2new (unknown [182.195.40.142]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4bkdKl082mz2SSKX; Sat, 19 Jul
-	2025 07:18:03 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250718130021epcas5p22a6d36cbef9d0520eb16462bf875e8f2~TWfys0Ovy1715917159epcas5p24;
-	Fri, 18 Jul 2025 13:00:21 +0000 (GMT)
-Received: from test-PowerEdge-R740xd (unknown [107.99.41.79]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250718130019epsmtip1d471c4cbd9a0d5c9df54f8969451565a~TWfwNZj992028620286epsmtip1i;
-	Fri, 18 Jul 2025 13:00:18 +0000 (GMT)
-Date: Fri, 18 Jul 2025 18:30:13 +0530
-From: Neeraj Kumar <s.neeraj@samsung.com>
-To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-Cc: dan.j.williams@intel.com, dave@stgolabs.net,
-	jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	alison.schofield@intel.com, vishal.l.verma@intel.com, ira.weiny@intel.com,
-	a.manzanares@samsung.com, nifan.cxl@gmail.com, anisa.su@samsung.com,
-	vishak.g@samsung.com, krish.reddy@samsung.com, arun.george@samsung.com,
-	alok.rathore@samsung.com, neeraj.kernel@gmail.com,
-	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
-	nvdimm@lists.linux.dev, gost.dev@samsung.com, cpgs@samsung.com
-Subject: Re: [RFC PATCH 05/20] nvdimm/region_label: Add region label
- updation routine
-Message-ID: <158453976.61752909483013.JavaMail.epsvc@epcpadp2new>
+	s=arc-20240116; t=1752906358; c=relaxed/simple;
+	bh=XwJ21gHeqdOULgvCF8ZTkqBgOmIEfdl5i9YoW2R9H6A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=q+tdByusQbPb0SaYmWP2+L4xZ7nE2NDuP7lCXoaYmVG/tG8+9xKuanF8p+gvq79PcAMydePRVh6vhQGBPm/MmPYLY71v2ac0auLSxFzUhVgJIyZ/XvIlhOnNS82a8qA6K0IolXPcljLowQTZsyOwA9sHNaEP9T5pPUkGt8/Y0xE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WkJoBrGk; arc=none smtp.client-ip=209.85.128.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f68.google.com with SMTP id 5b1f17b1804b1-455fdfb5d04so15547635e9.2;
+        Fri, 18 Jul 2025 23:25:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752906355; x=1753511155; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vQte6lI5PiSDZsROxixX7uIAesOBBN2vdifhMT0mgMU=;
+        b=WkJoBrGk+/8EQdqSKuMbKBeKK/cxMkjc3CiIQUMQJn9LfJO6okW2sZYsUoUPhmZcCp
+         M1wktG9Ithj6h3EjzRg8VialtCMJWrrqNaOEctMuDbOWhOhgGGkQJmeO04H4TPlhbRwH
+         4wAG6sdTPGb/lpMJFYTHiy5DjnevI0mm1XYiZLrSb8nk7VWndASAG9lArX4yrc01AflV
+         fMFPwPnESIvwhBOIVZbjPzdu5dkCJMDz2tTMTbir9CsN2x7zPNmUlx7KPW2kAJIvOZl8
+         AQ3TngJghba4/tH5+IAew7Ilw8zqsthszzKj2SiJP7XliFS4Tk/aBYPbxyc9e/Xp/FU7
+         NC8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752906355; x=1753511155;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vQte6lI5PiSDZsROxixX7uIAesOBBN2vdifhMT0mgMU=;
+        b=VT2YmmX+8FACOHE+TNLvPb6bPbOYTnx/ZTT+JkiDYjuDtvHfBaCh2DMjfc6ZX0EB0C
+         GgqQ4BizzrljnXL739UJTx17phjjQ6qPY8LVeQKgtosWnT7zVV6OvESJon+yoOpjVZie
+         2F2oUnozLgTNg5HDoY+73F5l0zG6YGteTD5Y8mYuIPTH6P9ZcwXKxj+Sg9auvjWvQobw
+         w7Nhik+/VmKUabVv1EwtlXNwV9s64BN835XN+YTQaXawHfZaKBni9IMZSs43RwAyJAiF
+         R3SyphTizgC+PqC57JhZ5DppLqKuKitO6zGzzge/ZyyySZNVF3rp7se3lsjKLt4tHH1d
+         pPOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVFCE+VyBximNqVVMzAyBXUCpiE4DDnYbIWOGf9FtSZG7CkiZARCkwS8wxwDE8s4yiRZQzdAchY0QrACZg=@vger.kernel.org, AJvYcCW44V3772yLoOO8Ydj+8jnIu8wWSIopLgHkhpp3/q+errxH+zvmX24AgE5pmadt1SEq560OYY+r@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyt+VIpCJbJfC9EfxyE6l+iIPKeNzm366mgQffcl8d8WF+UZGx/
+	d7Anr6BEFy+7u8sbUhCKkre5/0hGIC+VrsE5bP4VlJatwGQbBC56Z34W
+X-Gm-Gg: ASbGnctykcdR1kg4b3Z02lRdJxT5MgGz7kK3OJPRD+P0H4dkQyNXUzZjKhZ3A3mrF85
+	YPB4AdObStwMxOQwWuG5kr4M2/K3tBQxaNHBahRIqVy4OQJhBdh0kJZkfwTLVO/ZUGnVXwgXnbt
+	830BdubzjI1q9VMvRy4zaPL6zFIy06GteCDj7Wo1kFhotlmKhNkQbU4ooq5cNX+8OoYdYssbzD2
+	1o2pygug645QMxClZj5MJbCy+EROOsmwvHQgX3wj851z5+BwY7bhJGlRNbKQaLF9ARd17ZZAjpz
+	P5h/H73KlO+C4oul19wODffZM4TPueqEsq+LJXfwBGf4cHNRdpMnJKR6Rvjxxcq4RtLJe26sL0B
+	N20y0SyhlDjplzlN3zwliiXT9SCcBUEKBoK8V1oNB8a95shGUP5PFssEjrfvKbQF0YwQjN6uFNz
+	vWLc42cbA=
+X-Google-Smtp-Source: AGHT+IHCYmjEIfhlQwmc8yrS7GWnHntpJS0njrNamtTKFpzD6ap2kSWGk/ZfVqw9GGz7tTQlhFVEwA==
+X-Received: by 2002:a05:600c:4eca:b0:456:db0:4f3d with SMTP id 5b1f17b1804b1-4563533d6fcmr75253535e9.24.1752906354647;
+        Fri, 18 Jul 2025 23:25:54 -0700 (PDT)
+Received: from INBSWN167928.ad.harman.com (bba-86-98-199-117.alshamil.net.ae. [86.98.199.117])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca2bf4bsm3811274f8f.31.2025.07.18.23.25.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Jul 2025 23:25:54 -0700 (PDT)
+From: Abid Ali <dev.nuvorolabs@gmail.com>
+To: Abid Ali <dev.nuvorolabs@gmail.com>
+Cc: Russell King <linux@armlinux.org.uk>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: phy: Fix premature resume by a PHY driver
+Date: Sat, 19 Jul 2025 06:25:47 +0000
+Message-ID: <20250719062550.652-1-dev.nuvorolabs@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <aHpyDpI9PW8wPf6I@shell.armlinux.org.uk>
+References: <aHpyDpI9PW8wPf6I@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <2354653.gBsaNRSFpC@fdefranc-mobl3>
-X-CMS-MailID: 20250718130021epcas5p22a6d36cbef9d0520eb16462bf875e8f2
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----kMDsK0IEhKoUUkzyxABlnve5J-Otg2bCPR2yRM97vA1oUAWq=_23520_"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-X-CPGSPASS: Y
-X-Hop-Count: 3
-X-CMS-RootMailID: 20250617124019epcas5p39815cc0f2b175aee40c194625166695c
-References: <20250617123944.78345-1-s.neeraj@samsung.com>
-	<CGME20250617124019epcas5p39815cc0f2b175aee40c194625166695c@epcas5p3.samsung.com>
-	<1690859824.141750165204442.JavaMail.epsvc@epcpadp1new>
-	<2354653.gBsaNRSFpC@fdefranc-mobl3>
-
-------kMDsK0IEhKoUUkzyxABlnve5J-Otg2bCPR2yRM97vA1oUAWq=_23520_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
 Content-Transfer-Encoding: 8bit
-Content-Disposition: inline
 
-On 18/07/25 12:53AM, Fabio M. De Francesco wrote:
->On Tuesday, June 17, 2025 2:39:29 PM Central European Summer Time Neeraj Kumar wrote:
->> Added __pmem_region_label_update region label update routine to update
->> region label
->>
->> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
->> ---
->>  drivers/nvdimm/label.c          | 142 ++++++++++++++++++++++++++++++++
->>  drivers/nvdimm/label.h          |   2 +
->>  drivers/nvdimm/namespace_devs.c |  12 +++
->>  drivers/nvdimm/nd.h             |  20 +++++
->>  include/linux/libnvdimm.h       |   8 ++
->>  5 files changed, 184 insertions(+)
->>
->> diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
->> index d5cfaa99f976..7f33d14ce0ef 100644
->> --- a/drivers/nvdimm/label.c
->> +++ b/drivers/nvdimm/label.c
->> @@ -381,6 +381,16 @@ static void nsl_calculate_checksum(struct nvdimm_drvdata *ndd,
->>  	nsl_set_checksum(ndd, nd_label, sum);
->>  }
->>
->> +static void rgl_calculate_checksum(struct nvdimm_drvdata *ndd,
->> +				   struct cxl_region_label *rg_label)
->> +{
->> +	u64 sum;
->> +
->> +	rgl_set_checksum(rg_label, 0);
->> +	sum = nd_fletcher64(rg_label, sizeof_namespace_label(ndd), 1);
->> +	rgl_set_checksum(rg_label, sum);
->> +}
->> +
->>  static bool slot_valid(struct nvdimm_drvdata *ndd,
->>  		struct nd_lsa_label *nd_label, u32 slot)
->>  {
->> @@ -1117,6 +1127,138 @@ int nd_pmem_namespace_label_update(struct nd_region *nd_region,
->>  	return 0;
->>  }
->>
->> +static int __pmem_region_label_update(struct nd_region *nd_region,
->> +		struct nd_mapping *nd_mapping, int pos, unsigned long flags)
->
->Hi Neeraj,
->
->I've noticed that __pmem_region_label_update() shares many similarities
->with the existing __pmem_label_update().
+On Fri, Jul 18, 2025 at 05:10:54 PM +0100, Russell King (Oracle) wrote:
+> Sorry but no. The PHY will be "resumed" from boot, even if it wasn't
+> "suspended". So the idea that resume should only be called if it was
+> previously suspended is incorrect.
 
-Hi Fabio,
+> E.g. .ndo_open -> ... -> phy_attach_direct() -> phy_resume() ->
+> 	phydrv->resume()
 
-Yes these functions looks similar, as one is updating namespace label
-and other (__pmem_region_label_update) is updating region label. But
-they don't use much duplicated code.
+I do point this path out and there is also a second call
+(2) .ndo_open -> phylink_start -> phy_start -> __phy_resume
+This would mean 2 calls to the PHY resume every time an interface is
+taken UP is expected behaviour?.
 
-May be I will try refactoring to avoid any duplicate code.
-
->
->> +{
->> +	struct nd_interleave_set *nd_set = nd_region->nd_set;
->> +	struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
->> +	struct nd_lsa_label *nd_label;
->> +	struct cxl_region_label *rg_label;
->> +	struct nd_namespace_index *nsindex;
->> +	struct nd_label_ent *label_ent;
->> +	unsigned long *free;
->> +	u32 nslot, slot;
->> +	size_t offset;
->> +	int rc;
->> +	uuid_t tmp;
->> +
->> +	if (!preamble_next(ndd, &nsindex, &free, &nslot))
->> +		return -ENXIO;
->> +
->> +	/* allocate and write the label to the staging (next) index */
->> +	slot = nd_label_alloc_slot(ndd);
->> +	if (slot == UINT_MAX)
->> +		return -ENXIO;
->> +	dev_dbg(ndd->dev, "allocated: %d\n", slot);
->> +
->> +	nd_label = to_label(ndd, slot);
->> +
->> +	memset(nd_label, 0, sizeof_namespace_label(ndd));
->> +	rg_label = &nd_label->rg_label;
->> +
->> +	/* Set Region Label Format identification UUID */
->> +	uuid_parse(CXL_REGION_UUID, &tmp);
->> +	export_uuid(nd_label->rg_label.type, &tmp);
->> +
->> +	/* Set Current Region Label UUID */
->> +	export_uuid(nd_label->rg_label.uuid, &nd_set->uuid);
->> +
->> +	rg_label->flags = __cpu_to_le32(flags);
->> +	rg_label->nlabel = __cpu_to_le16(nd_region->ndr_mappings);
->> +	rg_label->position = __cpu_to_le16(pos);
->> +	rg_label->dpa = __cpu_to_le64(nd_mapping->start);
->> +	rg_label->rawsize = __cpu_to_le64(nd_mapping->size);
->> +	rg_label->hpa = __cpu_to_le64(nd_set->res->start);
->> +	rg_label->slot = __cpu_to_le32(slot);
->> +	rg_label->ig = __cpu_to_le32(nd_set->interleave_granularity);
->> +	rg_label->align = __cpu_to_le16(0);
->> +
->> +	/* Update fletcher64 Checksum */
->> +	rgl_calculate_checksum(ndd, rg_label);
->> +
->> +	/* update label */
->> +	offset = nd_label_offset(ndd, nd_label);
->> +	rc = nvdimm_set_config_data(ndd, offset, nd_label,
->> +			sizeof_namespace_label(ndd));
->> +	if (rc < 0) {
->> +		nd_label_free_slot(ndd, slot);
->> +		return rc;
->> +	}
->> +
->> +	/* Garbage collect the previous label */
->> +	mutex_lock(&nd_mapping->lock);
->> +	list_for_each_entry(label_ent, &nd_mapping->labels, list) {
->> +		if (!label_ent->label)
->> +			continue;
->> +		if (rgl_uuid_equal(&label_ent->label->rg_label, &nd_set->uuid))
->> +			reap_victim(nd_mapping, label_ent);
->> +	}
->> +
->> +	/* update index */
->> +	rc = nd_label_write_index(ndd, ndd->ns_next,
->> +			nd_inc_seq(__le32_to_cpu(nsindex->seq)), 0);
->> +
->> +	if (rc == 0) {
->> +		list_for_each_entry(label_ent, &nd_mapping->labels, list)
->> +			if (!label_ent->label) {
->> +				label_ent->label = nd_label;
->> +				nd_label = NULL;
->> +				break;
->> +			}
->> +		dev_WARN_ONCE(&nd_region->dev, nd_label,
->> +				"failed to track label: %d\n",
->> +				to_slot(ndd, nd_label));
->> +		if (nd_label)
->> +			rc = -ENXIO;
->> +	}
->> +	mutex_unlock(&nd_mapping->lock);
->> +
->> +	return rc;
->> +}
->> +
->> +int nd_pmem_region_label_update(struct nd_region *nd_region)
->
->Same here. nd_pmem_region_label_update() is almost identical to the
->existing nd_pmem_namespace_label_update.
-
-Sure, I will try refactoring these in next patch-set.
-
->
->Although I'm not familiar with drivers/nvdimm, it seems preferable to
->reuse and adapt the existing functions to reduce redundancy and simplify
->future maintenance, unless there are specific reasons for not doing so
->that I'm unaware of.
->
->Thanks,
->
->Fabio
-
-Thanks Fabio for your feedback.
-
-Regards,
-Neeraj
-
-------kMDsK0IEhKoUUkzyxABlnve5J-Otg2bCPR2yRM97vA1oUAWq=_23520_
-Content-Type: text/plain; charset="utf-8"
+> During this path, the PHY may or may not be suspended, depending on
+> the state of the hardware when control was passed to the kernel,
+> which includes kexec().
 
 
-------kMDsK0IEhKoUUkzyxABlnve5J-Otg2bCPR2yRM97vA1oUAWq=_23520_--
+> PHY drivers must cope with an already functional PHY when their
+> resume() method is called.
 
+This is not what I expected, but if it is by design I do not see a
+need to fight it. Just to make it clear, if we need to reset a PHY
+after it returns from suspend(or any code thats dependant), the driver`s
+callback should provide this guarantee?.
+if yes, this was just a misconception of relating it to resume callbacks
+provided by the PM subsystem where such behaviour is not exepcted
+
+Obvious logic error in the patch but this patch is not required as it stands.
+-	if (!phydrv || !phydrv->resume && phydev->suspended)
++	if (!phydrv || !phydrv->resume || !phydev->suspended)
 
