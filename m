@@ -1,44 +1,43 @@
-Return-Path: <linux-kernel+bounces-737727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16E6DB0AFD8
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 14:20:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63191B0AFD1
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 14:20:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB2514E78ED
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 12:20:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E37531AA744B
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 12:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F10C28643B;
-	Sat, 19 Jul 2025 12:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDCE1286425;
+	Sat, 19 Jul 2025 12:20:40 +0000 (UTC)
 Received: from srv01.abscue.de (abscue.de [89.58.28.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E18285CB6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29AA2285C99;
 	Sat, 19 Jul 2025 12:20:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.28.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752927640; cv=none; b=gyM/h4ef4ruj3CVkOESE/svyPy2X3Gy+JKdEUouiSNpQLB4PxqmXV6yG2vLYehLazr/UJE9c5uynF8AkKWAc9LVmxrA2VnoFxPnmI04842KilgiuwMbH+kXZcRUZLpo0MFszwaD+LnP/rHRaNpetpmhL41bPES62oJCAnr3K68c=
+	t=1752927640; cv=none; b=Xst0Z+bzlBxYxxcqrGqs7EmT8OV0R78TUhOd391zrz/s/iscneUkFzp13+7bzm4awssGff6HT+jxBeYG2Na7hM1h9gHXN9Vc9E93sCjiF92Y3z76QRq++QlBWcq7Lox/LCFQTDEu2TmXjlPEy7ZTODrpnIeTVf/j0kVbhJse+Gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752927640; c=relaxed/simple;
-	bh=zjySMz+0/AYUyh6hSQ6Z7HdCkhoMYz0NaMLOFFvVLGc=;
+	bh=7zQVZxclqEAxO9auvvhhb/M0VjFV62I5c4EKcIGwF90=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=in4r/I8lH1TwzkDT76IJvxTwuF0+D+Vu2uj/ZhcEwFRCThwbJdnOhkydkJ/TERG+uLFvDYnnEFt4GicKSfKUqWOJ9dJ02zqGm5cZwqiEnoW3wEwlDEtrbHlYwK9TbpGFciSoi5tPbbu4DjTswup0vneOt5Eu2IuET18Ku2mf3eo=
+	 In-Reply-To:To:Cc; b=RHgd9UGgUZTttvL8DVCNUBw+MuYbn2xiwJQtzbXWEEmz8uCcTF8DE+ENRXOQ5X0BnpUBuyyVkjDXk9yEdG4LBs3/s2gx0LmPgqo0icZlx+hKZKDEn/e97I5BCXtTm5NSLoXzzMMFZDYHjFhY54xAXuOtCF9/ZgqW2UE56pppEmY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=abscue.de; spf=pass smtp.mailfrom=abscue.de; arc=none smtp.client-ip=89.58.28.240
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=abscue.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=abscue.de
 Received: from srv01.abscue.de (localhost [127.0.0.1])
-	by spamfilter.srv.local (Postfix) with ESMTP id E13BD1C0628;
-	Sat, 19 Jul 2025 14:11:29 +0200 (CEST)
+	by spamfilter.srv.local (Postfix) with ESMTP id 8FB2C1C067F;
+	Sat, 19 Jul 2025 14:11:30 +0200 (CEST)
 X-Spam-Level: 
 Received: from fluffy-mammal.metal.fwg-cag.de (unknown [IPv6:2001:9e8:cdf7:4000:ceae:3606:9020:cd4f])
-	by srv01.abscue.de (Postfix) with ESMTPSA id 4DA581C067F;
+	by srv01.abscue.de (Postfix) with ESMTPSA id F10F21C0680;
 	Sat, 19 Jul 2025 14:11:29 +0200 (CEST)
 From: =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>
-Date: Sat, 19 Jul 2025 14:09:39 +0200
-Subject: [PATCH 03/12] drm: of: try binding port parent node instead of the
- port itself
+Date: Sat, 19 Jul 2025 14:09:40 +0200
+Subject: [PATCH 04/12] drm: sprd: remove plane and crtc destroy callbacks
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,7 +46,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250719-ums9230-drm-v1-3-e4344a05eb3d@abscue.de>
+Message-Id: <20250719-ums9230-drm-v1-4-e4344a05eb3d@abscue.de>
 References: <20250719-ums9230-drm-v1-0-e4344a05eb3d@abscue.de>
 In-Reply-To: <20250719-ums9230-drm-v1-0-e4344a05eb3d@abscue.de>
 To: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
@@ -62,42 +61,34 @@ Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
  =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>
 X-Mailer: b4 0.14.2
 
-The drm_of_component_probe function is intended to bind all devices in
-an OF graph given a set of ports linked using the "ports" property on a
-main device node. This means that it should also bind the components
-providing these ports, not just the components of other ports connected
-to them. In order to do this, it calls drm_of_component_match_add with
-a pointer to each port node after checking that its parent node is a
-device.
-
-However, when given a pointer to the port node, the compare_of callback
-does not match it with a device node and thus fails to detect that the
-node belongs to a component. Fix this by passing a pointer to the parent
-node here too.
-
-Currently only the Unisoc platform driver relies on this feature, which
-was previously broken and is fixed by this change. On other platforms,
-the "ports" property points to ports that are not part of a component,
-i.e. the components only have indirect connections to the main node.
+These callbacks are now required to be NULL and trigger a runtime
+warning if they are present.
 
 Signed-off-by: Otto Pflüger <otto.pflueger@abscue.de>
 ---
- drivers/gpu/drm/drm_of.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/sprd/sprd_dpu.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_of.c b/drivers/gpu/drm/drm_of.c
-index d0183dea770308e77f05da364ffe087d53f3be36..b972facc2ec3fe40a4e10b5d7178b5ac8c0158d5 100644
---- a/drivers/gpu/drm/drm_of.c
-+++ b/drivers/gpu/drm/drm_of.c
-@@ -132,7 +132,7 @@ int drm_of_component_probe(struct device *dev,
+diff --git a/drivers/gpu/drm/sprd/sprd_dpu.c b/drivers/gpu/drm/sprd/sprd_dpu.c
+index a3447622a33cd612e34be038e833222567bdcd2c..0d9eb778794d92418b39f8535d94abde3566de43 100644
+--- a/drivers/gpu/drm/sprd/sprd_dpu.c
++++ b/drivers/gpu/drm/sprd/sprd_dpu.c
+@@ -577,7 +577,6 @@ static const struct drm_plane_helper_funcs sprd_plane_helper_funcs = {
+ static const struct drm_plane_funcs sprd_plane_funcs = {
+ 	.update_plane = drm_atomic_helper_update_plane,
+ 	.disable_plane	= drm_atomic_helper_disable_plane,
+-	.destroy = drm_plane_cleanup,
+ 	.reset = drm_atomic_helper_plane_reset,
+ 	.atomic_duplicate_state = drm_atomic_helper_plane_duplicate_state,
+ 	.atomic_destroy_state = drm_atomic_helper_plane_destroy_state,
+@@ -704,7 +703,6 @@ static const struct drm_crtc_helper_funcs sprd_crtc_helper_funcs = {
+ };
  
- 		if (of_device_is_available(port->parent))
- 			drm_of_component_match_add(dev, &match, compare_of,
--						   port);
-+						   port->parent);
- 
- 		of_node_put(port);
- 	}
+ static const struct drm_crtc_funcs sprd_crtc_funcs = {
+-	.destroy	= drm_crtc_cleanup,
+ 	.set_config	= drm_atomic_helper_set_config,
+ 	.page_flip	= drm_atomic_helper_page_flip,
+ 	.reset		= drm_atomic_helper_crtc_reset,
 
 -- 
 2.50.0
