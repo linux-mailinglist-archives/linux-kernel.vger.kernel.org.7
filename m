@@ -1,145 +1,116 @@
-Return-Path: <linux-kernel+bounces-737731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30D2CB0AFE1
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 14:26:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73F54B0AFE3
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 14:33:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C47CF3A708A
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 12:25:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FD83AA3267
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 12:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68DCF284B51;
-	Sat, 19 Jul 2025 12:26:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D32286D7A;
+	Sat, 19 Jul 2025 12:33:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eZbCmvEm"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n+H2BOuw"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47FAB2E3701;
-	Sat, 19 Jul 2025 12:26:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A052367A0;
+	Sat, 19 Jul 2025 12:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752927979; cv=none; b=OkpFdKgxsBf1ZD4acg+mWqk359ab0cYtTokpicOBn9eFSZ0RzV0bE09mW3ZKHM11qFBw0Nd4rhZ9Sw0BFTuepd9AKf3klejk1dEszlXztx7aJy+HPIo5k+3qWcfJLjBSPcitGyA6D4e3+85brv+l/uSqvljA2q+NhVU0urqW5xw=
+	t=1752928396; cv=none; b=ShXBqS09Pic1d0RNhFwijoKAWyFR+3ezkwMaAWB1vLHqDUncksp/jkXq2GlV+r98afZxZp4PAobhvVTM1xyr2Aa+dCuX3kvYV6aQ8RR8fwfTC8Nzq7QdFFA5C1j4U9F8xPG27IT6YwvLSIOiwDzjTJR0JT2cBPZqj4YMauP6iEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752927979; c=relaxed/simple;
-	bh=krNqVLn8n4xKhjVwpkidSDuvS44saFLsxWfYVLb0zo0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=RLPlDN17q6Zf0BvimyD0CHGyCEVdytn9lVQQ6y3xETY9f1b3AW1v4pBCYY159JcdnI4yHUvg+5QLY5sdWRcs/EXclyeOiaCzJkWOI8L6s3NiimHd5IzcTcvSCM2nueUOKroz3KgkV7rUCKWQsRQtOpHtpfVScWBQaE9a8d04W/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eZbCmvEm; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-32b595891d2so22714931fa.2;
-        Sat, 19 Jul 2025 05:26:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752927976; x=1753532776; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=SVTmbpjrvgsqK+LXFLHUA+OLiijS8nQ9hRmjxh99LXk=;
-        b=eZbCmvEmf4bpz4sBOWOh89q1tLXc7d/mm5F+ASdIGHbfkjD6aYT28NVSamD/FtMPQ8
-         KE19r1u1FZj6gJQgFWmMXHC7kGcA+xXAU8OkubYs9TvzqTnhOcl0hPJ9gprFnQMIursl
-         PMzRJu6aokw+eGyNyCo5fkzNnjTqKCVR7I5yGHcuQhI/NCgtpHhqfbQ7+no+c31BPir3
-         wEkmKYBGrYplfUfY1bMqte0oaOChyOzpTckZQkKhN2p9FtjJS0/aUOpRYtfr/bvCaM5V
-         0ZSRWhkcQGqQ6912QJP+ADo/kAyQCKN2tyCEPaXbBhs4Rdd6H58bJgjyfUtmv1IqwqnQ
-         /ouw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752927976; x=1753532776;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SVTmbpjrvgsqK+LXFLHUA+OLiijS8nQ9hRmjxh99LXk=;
-        b=LA4m/f1ueXThU/PWuzWDoOZYfM33ue9nDsoWvxuX1L/Enb0t4wZd48oND4Vcr5yUTC
-         NYN6MAUrXRM7GYvUl5qMK4dfd4HMjU9zI+mWNUY7bi1VaU8/0RSg8xh47c5BiUPH1Juu
-         Xqts3FyZlaKF0Kh+jBxMmedvxT59l9Ls3mnO2ac17XNOUY2duztqMmQClj9Kg92gZMM+
-         ptYRq5gTbyUe3NUu+rBmfD0nOc73zye46YPvrxhSQU1exJFlhAvp2SW92Ls48D7L83XU
-         gVIjk1QavjaGWbjvWEM908+VN6gpPRP10x+pWHXryRZ5sqYETP+l13ciWGkrBlUo2blI
-         pL8A==
-X-Forwarded-Encrypted: i=1; AJvYcCVhRy14exSx+nDzweF82EKfzOFgHCoW4LnWSwLRum21JuVyTeBrju8EEG0c03q92nsr5NtC4AP715l1Ql8=@vger.kernel.org, AJvYcCXx3Lm+LuffHKHGANDwopWvNstvsOLaJgN1qY4jx1FoAdSjzMEVVhDfxpayvZi76gMJXNNNF8M0@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPLIW4r8uQi9jY1lZNP1c5ZI1EhLKEi7GT1Q6V21pKqKUQunFi
-	EdL19NABYEJYie4smpMoZi+j9WzQRTYfUKoEBM/u/DRUeI9Hz9iHU57j
-X-Gm-Gg: ASbGncud6pHm1zlN0XN73YbNA69gP6g8BaMNN8BAZnu+mR8USridQzczO7BqgBsRccF
-	p/3dxTyi3PQJvToPNqFFcq/MirskDWLVkSDOBDc6CTS4jzlzvTaz1ZgQqLL0p0U+LHq/X1nu8Wi
-	elT9lfvRLjLhnS2QUetIgfpvBQZwS6WmFD8VYFiNpEl7d4SU4loYg+UEW6n2sI0ygaB2Lt2d5oZ
-	XrmrwvtbLg+9v2pPgqdaphLpNYgyyl6U33I6gqITnfmzZtToDjEs2FdJkscTIyQR5GYD51/tW5u
-	WtpMGmIjkiKPExhDRO/jghycqFkLMNcNGmUupsI7y9+EXszfbbpk+jh1Sc5pyWIRJMVll0C8EVr
-	CYs1nYt9sRbn0Wzb5sC/01NTrpaqy9m/hDVrOpl+snKxK0IK2+/zyFk460A==
-X-Google-Smtp-Source: AGHT+IEveyhVrEcB+rlD0yOS3BUrqKa0DUT00e6nskBX9SpCXdPppmQZsC1ZsDAW3ghC2R+AOs31Lw==
-X-Received: by 2002:a05:651c:b0e:b0:32c:bc69:e921 with SMTP id 38308e7fff4ca-330a7b12523mr19069211fa.9.1752927976152;
-        Sat, 19 Jul 2025 05:26:16 -0700 (PDT)
-Received: from [192.168.1.89] (c-85-228-54-30.bbcust.telenor.se. [85.228.54.30])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-330a91f0607sm6288581fa.92.2025.07.19.05.26.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 19 Jul 2025 05:26:15 -0700 (PDT)
-Message-ID: <fae36efb-be09-8b60-ff84-db6cb38fc18e@outbound.gmail.com>
-Date: Sat, 19 Jul 2025 14:26:14 +0200
+	s=arc-20240116; t=1752928396; c=relaxed/simple;
+	bh=OoWTn86S/wzPfInI0YVYIOh8btez0qEmOg3YNqB057E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cEd1NzJnXfdX1DeCExUB1qEoiAgEPR9Piu+aXRcZsby0pP355fLGTTbE/BJKG82iz5qE2G1HIMhbwiO5Ty4aeo6lKxJhPoYItyRcF4kVU3WtpyrmKY2qq/32fa1ymcFsNei3n7gT2bG4axSO+P8GT1QshTBUJtQ1yXL30sfdi9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n+H2BOuw; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752928395; x=1784464395;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=OoWTn86S/wzPfInI0YVYIOh8btez0qEmOg3YNqB057E=;
+  b=n+H2BOuwF6ARHmfGkZAPbgwQHJ3gIEQnzHodd1/PtiOoDC/dL/XUQdF6
+   CVD7f6kjEDmkiFepS6NY+0PCTxduFdEhcwCQnjZMXp4b8laCrGwD9kk1R
+   QaJH49bL0C9YU75cxKHulwB+SeMgbW7P1X/ITkNkxGgQnpKgh/xUtxdve
+   /d/PdXM704KEewo6hWZR75A6ltgkUEjUsKJsxOukymCvIIcH5SuE1rKOm
+   x+wgcO9Sm42P7ft8FOm4o7vx0EaqAKHhKfb2gLH6crXSqWlOfhbr2TnXK
+   oU7h8edlL57UPZHn+OKiGECRN6uxYzRE6ffNQm2qbYCFqgCObE5MDSI3T
+   w==;
+X-CSE-ConnectionGUID: be6kfTwEScGJnSMC6hK3bA==
+X-CSE-MsgGUID: xKFr8gZLRT6oIQoENj4Beg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11497"; a="55088139"
+X-IronPort-AV: E=Sophos;i="6.16,324,1744095600"; 
+   d="scan'208";a="55088139"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2025 05:33:14 -0700
+X-CSE-ConnectionGUID: jC8b1ftnQ6uby/bxzkdHAw==
+X-CSE-MsgGUID: BeBpsqEZQhG0cN6nKOTDEw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,324,1744095600"; 
+   d="scan'208";a="189417871"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 19 Jul 2025 05:33:12 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ud6kW-000FUN-32;
+	Sat, 19 Jul 2025 12:33:08 +0000
+Date: Sat, 19 Jul 2025 20:32:47 +0800
+From: kernel test robot <lkp@intel.com>
+To: Zizhi Wo <wozizhi@huawei.com>, viro@zeniv.linux.org.uk, jack@suse.com,
+	brauner@kernel.org, axboe@kernel.dk, hch@lst.de
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	wozizhi@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH] fs: Add additional checks for block devices during mount
+Message-ID: <202507192025.N75TF4Gp-lkp@intel.com>
+References: <20250719024403.3452285-1-wozizhi@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-From: Eli Billauer <eli.billauer@gmail.com>
-Subject: Re: [PATCH v3] char: xillybus: Fix error handling in
- xillybus_init_chrdev()
-To: Ma Ke <make24@iscas.ac.cn>, arnd@arndb.de, gregkh@linuxfoundation.org
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250718100815.3404437-1-make24@iscas.ac.cn>
-Content-Language: en-US
-In-Reply-To: <20250718100815.3404437-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250719024403.3452285-1-wozizhi@huawei.com>
 
-On 18/07/2025 12:08, Ma Ke wrote:
-> Use cdev_del() instead of direct kobject_put() when cdev_add() fails.
-> This aligns with standard kernel practice and maintains consistency
-> within the driver's own error paths.
-> 
+Hi Zizhi,
 
-Could you please point at how and why this is "standard kernel 
-practice"? In my reply to PATCH v2, I pointed out that indeed, in 
-fs/fuse/cuse.c a failure of cdev_add() leads to a call to cdev_del(), 
-like you suggested. However, in uio/uio.c the same scenario is handled 
-by a call to kobject_put(), exactly as in my driver. So which way is 
-"standard"?
+kernel test robot noticed the following build errors:
 
-There are indeed kernel-global efforts to align code with a certain 
-coding style every now and then. Is there any such in relation to this 
-issue?
+[auto build test ERROR on brauner-vfs/vfs.all]
+[also build test ERROR on jack-fs/for_next linus/master v6.16-rc6 next-20250718]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Otherwise, please leave this alone. Playing around with error handling 
-flows is a dangerous business, and can lead to vulnerabilities. One 
-needs a good reason to do that on code that has been out there for a 
-while (four years, in this case).
+url:    https://github.com/intel-lab-lkp/linux/commits/Zizhi-Wo/fs-Add-additional-checks-for-block-devices-during-mount/20250719-105053
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+patch link:    https://lore.kernel.org/r/20250719024403.3452285-1-wozizhi%40huawei.com
+patch subject: [PATCH] fs: Add additional checks for block devices during mount
+config: i386-buildonly-randconfig-001-20250719 (https://download.01.org/0day-ci/archive/20250719/202507192025.N75TF4Gp-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250719/202507192025.N75TF4Gp-lkp@intel.com/reproduce)
 
-And now, to the patch itself:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507192025.N75TF4Gp-lkp@intel.com/
 
-> @@ -157,8 +156,6 @@ int xillybus_init_chrdev(struct device *dev,
->   		device_destroy(&xillybus_class, MKDEV(unit->major,
->   						     i + unit->lowest_minor));
->   
-> -	cdev_del(unit->cdev);
-> -
->   unregister_chrdev:
->   	unregister_chrdev_region(MKDEV(unit->major, unit->lowest_minor),
->   				 unit->num_nodes);
+All errors (new ones prefixed by >>):
 
-Why did you do this? It just adds a memory leak, and it's out of the way 
-of even trying to fix anything: The only effect this has is that 
-cdev_del() isn't called on error situations that occur after cdev_add() 
-has been successful. It has nothing to do with the kobject_put() / 
-cdev_add() thing, because that case jumps to unregister_chrdev, which is 
-after this removal.
+>> ld.lld: error: undefined symbol: disk_live
+   >>> referenced by super.c:1385 (fs/super.c:1385)
+   >>>               fs/super.o:(super_s_dev_test) in archive vmlinux.a
 
-I have to say, both the language of the patch description as well as the 
-weird removal of cdev_del() remind me of nonsense ChatGPT does when it's 
-given tasks related to programming. If you're using AI to suggest 
-patches, please stop.
-
-Regards,
-    Eli
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
