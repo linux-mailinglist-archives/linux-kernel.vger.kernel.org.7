@@ -1,86 +1,90 @@
-Return-Path: <linux-kernel+bounces-737931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CCA9B0B206
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 23:58:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80332B0B211
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 00:00:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44AA07AB671
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 21:57:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0C641899495
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 22:00:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03841230272;
-	Sat, 19 Jul 2025 21:58:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63EAE230BE5;
+	Sat, 19 Jul 2025 21:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N8h3Qka5"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Szuodfbs"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C04C21CC60;
-	Sat, 19 Jul 2025 21:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476CA148832;
+	Sat, 19 Jul 2025 21:59:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752962316; cv=none; b=KhqPiOWjpUkUQtB+JIb1CkSzHsoGLM1iG7CL5+b53/oCkAa078qhVqmWRSFiQqTJ3USqhfTxHp+ZjqqXSZkPxNz0iS4G4w85vHEbUtAd5qyhe40nq3Q3BCGBWD4OapvAIi4Uc1zqy2v/nqmxic9Ji9OXybzHGIuebUqDu2Eg33w=
+	t=1752962395; cv=none; b=E9gVJhrZ3z7pqqkDu9+TuEePhLtju9v/kUe4zp7HS8F7ZVgilQqoITuLqJ3CfQC52BqYvn1hkftQzuvvrCF3TPCpIfXBmJlY6C82VrC0GI5tqLWfjFvEUTwohlnKCFIxrPhAyT6ajAQkEOP+soNZqxJ+s4jurfN0BNsd3HeS0nQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752962316; c=relaxed/simple;
-	bh=ijItil8V62O2kVUtC26QEXdBMLktypTb3rG3Iru+Z7U=;
+	s=arc-20240116; t=1752962395; c=relaxed/simple;
+	bh=bevhsHl8l+DoOyS9L0Ugu9wtd5dWkZZaONJ4a6TWKWY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gRqvBcf0PgRNd7NOm9IyANTzBQ7K824JZitbvY6Eg+EN24XTXemGDEENI65v9/BuuhwhtsCDP25cvFMDjlG3uNKfbxmWA8YPsqtw4B6I5HmqBr6nvuhVy/E/4zcGqFhigyL/VyXwFUMoaikhqdFziO0lvn5bgSLSrsrvEGsJrvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N8h3Qka5; arc=none smtp.client-ip=209.85.210.182
+	 Content-Type:Content-Disposition:In-Reply-To; b=UMDc8p0g7NA5xCBgMvdIBxeTVT5txpzUGE6x7sQ7FtP86XoRrgUG2oL/i+B/MTUDS1b4HT7UI+QmvGqFV969m13I2JTX0adOgosWUYWHgG42nkTwy+N2Slr1P1Pkk5ATtRjXs9WTS9iMR7/h3bIKcyNOXVkLuit9QU2ss8EXQBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Szuodfbs; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-75bd436d970so127707b3a.3;
-        Sat, 19 Jul 2025 14:58:34 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2352400344aso29029685ad.2;
+        Sat, 19 Jul 2025 14:59:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752962314; x=1753567114; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1752962393; x=1753567193; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=TPrj2roU+BdR8kXOg9jpXmZzV43hAStF4vi0GsTae64=;
-        b=N8h3Qka5VP0UKJSXph3qW6sjeeP6D4lQ733jjbuQLy/cZ38NEH2if+34J3YqumsvD9
-         GMl3win5o3ToB1V20F5dgsnjUalih2lsTNzCtMU5RTcPnnxjN7nv7Ozs7rUmz5t5fawV
-         fyYm0hkh2SED7V0n6bDWFINCnPI39jXE/QLtIaL/4yqGfUumdUA75UFPhSGrtlPf5CMd
-         iqfYQRwvf2xjRkOpW8fa0Dn+k6yOmiDLMGvUFitSUouuEG3WmVDwUdNuGTVtmWcO8M8e
-         ICzoh3cXurAz8qPMR4I3D2zDz9kfH+rNeGY2vhFvRFcArBzighfrUd3KTHvY8/7juz6P
-         HW4A==
+        bh=YChmhcAuQ6Yp2l/0qA4EPLqTylrmbaEWKg7bJnpyTvA=;
+        b=SzuodfbsNvxIMNOb0qiv/R/ecCuXHApUA5q5uMtXj55yEvgNSulszjCHBKJGzi5280
+         TfxkBTaPMcAQc8PTCEI5N0Td2kUTBiEAUNY9y98mrcNgTaAnh/bnhcmMpazIX3zcWis3
+         6Gq48MRyKwMIkHa1Gy7UbpvzniQcObNeOOg71HkxraKzyqE0Zlnq46OTsrzxyyGOus0m
+         LP8AmfeqwDxT7mfQGoIp3OgF4JdhFtcHpdkHirO6kEOgsK2xPsxDEJlRsSc19s9mz0eu
+         myZy50UqqixzHHGAgDAAOW/5iCQthpULRSZ/Fu3Sj5hnZ5HRjfnJ0aoqUPf+3/Mdq+Nq
+         aNiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752962314; x=1753567114;
+        d=1e100.net; s=20230601; t=1752962393; x=1753567193;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TPrj2roU+BdR8kXOg9jpXmZzV43hAStF4vi0GsTae64=;
-        b=eZglSfLmQnxQqGGedcGN1xPknW6zyb/MS6YyxbtMKMEeMUfMo9CGYGRVfU3qUKBOzF
-         ccPXXTxGbkLiucLSkho8V5Rk11bPYFwaO4rIDiNDOyOf13IK6Sj9x/xE0MnceSOP6JBV
-         /mdEHF4zbOe0uzjq6/ZNzzsgnLFx0b4564GUf09zfTAeMCJBAEyhwUR67Zc3yljqmqjF
-         7qwLdaqtkMLZlz0wRT3FZkg/KfmKLCVDdSGUm8yCaUMtc1vKspdYA4U22vQTtVtdTpVw
-         it49d3w1f3/ImeAKLQE25vioFmWLhdkIPwzPSaaPn23wrcPAI6S2skUmuPTyAksg6m7S
-         sMxw==
-X-Forwarded-Encrypted: i=1; AJvYcCUYb7tqH3LdUMrm89y3W/SEQtSM6FsbEOE/OyPoraqfyWw5OZ1RgVn+TvPFcGMRFPIFfnxtgvX6@vger.kernel.org, AJvYcCVLVi8itjIa6Xe474onxHL2iHqAdlnG7O2cEHHdX/U3SYvpaCI31iHE5+CGhdzI6v+EC2bxLFoI8lj/fg==@vger.kernel.org, AJvYcCWjT066gpE/rpU36xad9Sp/7cRI8FumYXMvQ5Lf82SLFZMCKI/3fgsoPHzFztJinNbcBaph+Dwsle4sg+Qr@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSkDjve95cn4fWp7AU52O/3JlJ3ybyzTS7QCKD39kyXoQfFIZj
-	3oqiMD42NV+s2GeshNuoHTSPi9ovL2LzJpKHB+pe8DeIBIWfZkNKJof7
-X-Gm-Gg: ASbGnctYPKK88Y1Jp2HJh5Y5XQ/xDrIOinJYKcBV8kFOu6+nQnTXpwkcFRqYl9ew8WP
-	/ga37au2fZgEpSrx/hFeTOoSEkM3/cPxLWzSnD9Ap2RSA1F5dTuIYXVvsltyHBcorf21Tbu1oyd
-	rZju6fwwh8RrpjRMNMJS+fbNQs5aRxMTLGk8JXnLGBSd3KB+y1r0NjNl6v7h+Dobur30333b0G2
-	/rMC+GZ6gmEPS6DMWRpciSwQ+6oDI78o4COnKjBZTGYYJhlIgvwmow9Eeqg9QMTsBu3u6lmeoed
-	mZDh22D+J9HCJA761yMDxvJf91Rj2b7+apcIAkMEjKH1I6QI7qQ0TiE05rgCXBVH6MZUVZgQoZC
-	7RtmDCD+27K45c6ofoUtek6/9qpVQ7bHro+w=
-X-Google-Smtp-Source: AGHT+IHMXiqi0F8pzkYB1crNV/L8f7gosSFBqJflURAh463jF+uee7gA1PpkIYraE/5mn+AOQ/XCkQ==
-X-Received: by 2002:a05:6a00:3ccc:b0:740:6f69:f52a with SMTP id d2e1a72fcca58-7571f911982mr21889437b3a.0.1752962313597;
-        Sat, 19 Jul 2025 14:58:33 -0700 (PDT)
+        bh=YChmhcAuQ6Yp2l/0qA4EPLqTylrmbaEWKg7bJnpyTvA=;
+        b=shCmINmYRXoeNa+0lL7lrz/Eyp9w7dKcQbHNSB8s5NWGfjkGXJHRtzYBy+FCFNn9vl
+         Ng1XqAAyBuUMyRfl3EXZPCWH3Nf6eoPnEBTfr/PlHUZC6XxyFLQIxLOPhcQ2N9UqEvy0
+         OL5AzMlnoqg7aVvzAjjjw37OHXhmv7MSx2Hu7CF3EdGb8ofndUKN0yppYA5kXeLHp1/m
+         a/26SpK1arWpHvXyrPEc+t+uVTzUaZbw8QK7LiYqGmnITvP65wFlz8K+mgp8SL6cLjN5
+         mPh+7CMqd9Hk5GI6Cr/cnnv5gDDjt4rGrHSSMs05EXqXdSwDmr8/Bls06vyIoo/jmAo0
+         V1tA==
+X-Forwarded-Encrypted: i=1; AJvYcCVrPp8b1DEDwkOtO+vzbLgeM6ZicOSF+ah3wNQakNkc4bIJpFeNXKm2UOMntL6ducCfAyP31PykcciV@vger.kernel.org, AJvYcCWICRlnb5AhB2kF9FJLa7DWXEOQnhD8C/XSWIKTb5MPreVaI/MlUjHetV4w2sPcvQ7teIBI3UZeTjcxVdcp@vger.kernel.org, AJvYcCXusTJ9TN7RcQdGNRKfG4crxzxiildVY2+zhR6LdSIPJz3KDkbHkTJZH6pufu0a69G4teMmvMTh7j6skXo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrbhmYa0HkkIWVwJeXZZkbRPj0p8ftUwl6WEMibj2z6lydfQg8
+	/KRZCzIw9BdXyiLw6SWXXmU6SqxMysdnwOlOZgO/e2DtDhpwzl+qoFyV
+X-Gm-Gg: ASbGnctt0DzGmvsAnF6+grfTi67TGnSHfg8YDNV/34rVMfNt5izeyMjBNdv8IdGLtOz
+	g47NKhFCTUAu9uJCRz8ALsTnnM3yv4fls+vfLD1+g20QimcJvpzqdYOYddqT+ndeO2wNNL1qUZ3
+	Zk+9u9NOoZAIcT55GUzcWxWjUaW+mWh2fNnCvls/lGgT5G/+kbR/0FfwwP705Z76a29IJJjp1nG
+	RBkhQ8iBQ8y242XB+LaIZSvH7H2drtMlA7dtXhQWRTP5MuW+Xcj9fnVnZRMDxXsW50OpGbj/3dX
+	43eFKMqkD4cay+lPAEFd0xJcT0eF4sqtOx47UF0HbnVyAzVA0g9VSG/o3lm4EAkY0/RvdJvM8oo
+	sYRN6ySanpMGRCB3Irh2vz4LavOaPOhoALvLCF4C3eJZ5Jw==
+X-Google-Smtp-Source: AGHT+IETovopte449BYactpPjvYmFSiBBH8dWuzCI5ys3s27HhH/PRv/o5CpfCqxTo1tR8dBNm2R+w==
+X-Received: by 2002:a17:903:19f0:b0:224:910:23f6 with SMTP id d9443c01a7336-23e24ff339bmr228893455ad.45.1752962393406;
+        Sat, 19 Jul 2025 14:59:53 -0700 (PDT)
 Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759c84e27a8sm3313815b3a.21.2025.07.19.14.58.32
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b6b4b2bsm33364915ad.119.2025.07.19.14.59.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Jul 2025 14:58:32 -0700 (PDT)
+        Sat, 19 Jul 2025 14:59:52 -0700 (PDT)
 Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Sat, 19 Jul 2025 14:58:31 -0700
+Date: Sat, 19 Jul 2025 14:59:52 -0700
 From: Guenter Roeck <linux@roeck-us.net>
-To: Tim Harvey <tharvey@gateworks.com>
-Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] hwmon: (gsc-hwmon) fix fan pwm setpoint show functions
-Message-ID: <10e92428-b233-4c7a-b762-36980ce104e0@roeck-us.net>
-References: <20250718200259.1840792-1-tharvey@gateworks.com>
+To: Jonas Rebmann <jre@pengutronix.de>
+Cc: Jean Delvare <jdelvare@suse.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
+	devicetree@vger.kernel.org, kernel@pengutronix.de
+Subject: Re: [PATCH v2 1/3] hwmon: ina238: Fix inconsistent whitespace
+Message-ID: <fa03ce2c-59dd-428e-a31d-da320fdc5428@roeck-us.net>
+References: <20250718-ina228-v2-0-227feb62f709@pengutronix.de>
+ <20250718-ina228-v2-1-227feb62f709@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,32 +93,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250718200259.1840792-1-tharvey@gateworks.com>
+In-Reply-To: <20250718-ina228-v2-1-227feb62f709@pengutronix.de>
 
-On Fri, Jul 18, 2025 at 01:02:59PM -0700, Tim Harvey wrote:
-> The Linux hwmon sysfs API values for pwmX_auto_pointY_pwm represent an
-> integer value between 0 (0%) to 255 (100%) and the pwmX_auto_pointY_temp
-> represent millidegrees Celcius.
+On Fri, Jul 18, 2025 at 04:12:48PM +0200, Jonas Rebmann wrote:
+> Some purely cosmetic changes in ina238.c:
 > 
-> Commit a6d80df47ee2 ("hwmon: (gsc-hwmon) fix fan pwm temperature
-> scaling") properly addressed the incorrect scaling in the
-> pwm_auto_point_temp_store implementation but erroneously scaled
-> the pwm_auto_point_pwm_show (pwm value) instead of the
-> pwm_auto_point_temp_show (temp value) resulting in:
->  # cat /sys/class/hwmon/hwmon0/pwm1_auto_point6_pwm
->  25500
->  # cat /sys/class/hwmon/hwmon0/pwm1_auto_point6_temp
->  4500
+>  - When aligning definitions, do so consistently with tab stop of 8.
+>  - Use spaces instead of tabs around operators.
+>  - Align wrapped lines.
 > 
-> Fix the scaling of these attributes:
->  # cat /sys/class/hwmon/hwmon0/pwm1_auto_point6_pwm
->  255
->  # cat /sys/class/hwmon/hwmon0/pwm1_auto_point6_temp
->  45000
-> 
-> Fixes: a6d80df47ee2 ("hwmon: (gsc-hwmon) fix fan pwm temperature scaling")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
+> Signed-off-by: Jonas Rebmann <jre@pengutronix.de>
 
 Applied.
 
