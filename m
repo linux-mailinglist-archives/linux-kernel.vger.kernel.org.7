@@ -1,89 +1,138 @@
-Return-Path: <linux-kernel+bounces-737718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FCB8B0AFB7
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 14:11:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43158B0AFB3
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 14:10:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B33B61C2074D
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 12:12:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA6DA3B4BAE
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 12:10:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5A322FE10;
-	Sat, 19 Jul 2025 12:11:41 +0000 (UTC)
-Received: from srv01.abscue.de (abscue.de [89.58.28.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D96226D1E;
+	Sat, 19 Jul 2025 12:10:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uexWTw21"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD6F226D1E;
-	Sat, 19 Jul 2025 12:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.28.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E26C72629;
+	Sat, 19 Jul 2025 12:10:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752927101; cv=none; b=mPhORX2xSAeDRhB988Qm0uvzASra3dfAZg6c0eR5ng/lDrXwrjPl9J4X6APnPYuCZI+K7Xp4emxgaHLJmlYjNbifn4zhV2UkzWAVomLACfxLkmKhdI0wpGHozXFHtng7Y5JysCpGjOCTr/DinbghnDa0V67Ntm8PRu07uCzY9jk=
+	t=1752927044; cv=none; b=YRibO0MRXL1jY7aLXKGQ4UBxLcDJXWLTUhlpie/nj2fA+BhDdRf0EIsYmlHqBTaYsze0ox6dyjL+4mXp/irV6zTGAZxlEOdZabpDC77QvVQiWrw9JCW1RrdGrflPoZDYKYKJahdo65G1vL1YiMHRbcNPLUONgd5K1x8W24r8j9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752927101; c=relaxed/simple;
-	bh=CJ32DjOptoB7KvxuPypA+ror4zNwEHUflLxk4bWDq+s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ANRcwOnP1BcOpKiEFusb5Tc221URM0mQovtENnkp84+thOicgGHDbWe5a6xTcPYjoNOGR9NCXHv49d492yRIqDNC3+e6Js7RFK6Lm3UMzMtqCYR96sUIv+Pz2QFsN/cetUD6nzQHwUeiVoFUe+Q8Ese7rJ6bRbTSCh7NlAJiVEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=abscue.de; spf=pass smtp.mailfrom=abscue.de; arc=none smtp.client-ip=89.58.28.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=abscue.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=abscue.de
-Received: from srv01.abscue.de (localhost [127.0.0.1])
-	by spamfilter.srv.local (Postfix) with ESMTP id D5E5B1C233E;
-	Sat, 19 Jul 2025 14:11:35 +0200 (CEST)
-X-Spam-Level: 
-Received: from fluffy-mammal.metal.fwg-cag.de (unknown [IPv6:2001:9e8:cdf7:4000:ceae:3606:9020:cd4f])
-	by srv01.abscue.de (Postfix) with ESMTPSA id 42A791C2341;
-	Sat, 19 Jul 2025 14:11:35 +0200 (CEST)
-From: =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>
-Date: Sat, 19 Jul 2025 14:09:48 +0200
-Subject: [PATCH 12/12] drm: sprd: select REGMAP in Kconfig
+	s=arc-20240116; t=1752927044; c=relaxed/simple;
+	bh=VMUOM21ZepW7cAEO8KjJ/sFW2pU+FeWUcisSB3jueEo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qu7NzcVVhWFImj6tulrKyfASRikM6aLiDChZjye5bQcAEJXVdLfeAE7gBjODdJNgTkCz1tgqudbkzPCd3JVyvel1MxqIuMmOZW+5Aq0AbUvNnOMpFXuaPkstubslus6CESdzxDkHb4jeeivmKIjKlPT24mACOPa8PN299Jlb/R8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uexWTw21; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43655C4CEE3;
+	Sat, 19 Jul 2025 12:10:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752927043;
+	bh=VMUOM21ZepW7cAEO8KjJ/sFW2pU+FeWUcisSB3jueEo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=uexWTw21wXX6pAXiS/mD3x5wF0sNXGLqmKeOXlmAKg7+0CCTdR2FxhQkWpQj4KgrG
+	 82YmIx5NFXsjRmq9zfXzh1JhxUW4pUqVO891SjI9n11/2KT60yfdJYc8D7gE9cZXLQ
+	 k4PFI1jWHEGtBS1IBCkVuvZKnZv4GMkm3F+8vhErLt8Fixzjq+3aHmJqP6iuFGy6PY
+	 vG0l4yqQxFiYaf91WE5NYgxXp+JB3i3xwgbf9mU9XcVPUzdulj2JRwI9VGtOZIKFIk
+	 OqbyPWTu/toUcd1vDNDUew7napwO/1+qWTEMp4W6/rlM5ZaQWaiOa+40ohsitQiOAp
+	 fk7V+gRIzOJ2A==
+Date: Sat, 19 Jul 2025 13:10:39 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+Cc: dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
+ ~lkcamp/patches@lists.sr.ht, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] iio: adc: spear_adc: mask SPEAR_ADC_STATUS channel
+ and avg sample before setting register
+Message-ID: <20250719131039.07a5fb24@jic23-huawei>
+In-Reply-To: <20250717221559.158872-1-rodrigo.gobbi.7@gmail.com>
+References: <20250717221559.158872-1-rodrigo.gobbi.7@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250719-ums9230-drm-v1-12-e4344a05eb3d@abscue.de>
-References: <20250719-ums9230-drm-v1-0-e4344a05eb3d@abscue.de>
-In-Reply-To: <20250719-ums9230-drm-v1-0-e4344a05eb3d@abscue.de>
-To: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, 
- Baolin Wang <baolin.wang@linux.alibaba.com>, 
- Chunyan Zhang <zhang.lyra@gmail.com>, Kevin Tang <kevin.tang@unisoc.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-When compile-testing this driver with all other drivers disabled,
-sprd_dsi.c fails to compile due to a missing definition of struct
-regmap_bus. Ensure that this does not happen by declaring the
-compile-time dependency on regmap in Kconfig.
+On Thu, 17 Jul 2025 19:13:49 -0300
+Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com> wrote:
 
-Signed-off-by: Otto Pflüger <otto.pflueger@abscue.de>
----
- drivers/gpu/drm/sprd/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+> avg sample info is a bit field coded inside the following
+> bits: 5,6,7 and 8 of a device status register.
+> 
+> channel num info the same, but over bits: 1, 2 and 3.
+> 
+> mask both values in order to avoid touching other register bits,
+> since the first info (avg sample), came from dt.
+> 
+I read this as meaning this is a hardening change against bad DT rather
+than a bug fix?
 
-diff --git a/drivers/gpu/drm/sprd/Kconfig b/drivers/gpu/drm/sprd/Kconfig
-index 1afcdbf6f0ee3304f2297835241c9bb10d422154..828384d42c5aac4bf194558f22d9a77f7c693572 100644
---- a/drivers/gpu/drm/sprd/Kconfig
-+++ b/drivers/gpu/drm/sprd/Kconfig
-@@ -7,6 +7,7 @@ config DRM_SPRD
- 	select DRM_GEM_DMA_HELPER
- 	select DRM_KMS_HELPER
- 	select DRM_MIPI_DSI
-+	select REGMAP
- 	select VIDEOMODE_HELPERS
- 	help
- 	  Choose this option if you have a Unisoc chipset.
+As such applied for next cycle to the testing branch of iio.git.
 
--- 
-2.50.0
+Thanks,
+
+Jonathan
+
+> Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+> ---
+> About @David comment at v2:
+> 
+> > For bonus points, a separate patch that cleans up and sorts the existing
+> > includes would be appreciated.  
+> 
+> I`ll change that in a later moment.
+> Tks and regards.
+> 
+> Changelog:
+> v3: moving up include; fix indentation;
+> v2: https://lore.kernel.org/linux-iio/20250701213728.32064-1-rodrigo.gobbi.7@gmail.com/
+> v1: https://lore.kernel.org/linux-iio/20250621185301.9536-1-rodrigo.gobbi.7@gmail.com/#t
+> ---
+>  drivers/iio/adc/spear_adc.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/spear_adc.c b/drivers/iio/adc/spear_adc.c
+> index e3a865c79686..0acc65c74221 100644
+> --- a/drivers/iio/adc/spear_adc.c
+> +++ b/drivers/iio/adc/spear_adc.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/clk.h>
+>  #include <linux/err.h>
+>  #include <linux/completion.h>
+> +#include <linux/bitfield.h>
+>  
+>  #include <linux/iio/iio.h>
+>  #include <linux/iio/sysfs.h>
+> @@ -29,9 +30,9 @@
+>  
+>  /* Bit definitions for SPEAR_ADC_STATUS */
+>  #define SPEAR_ADC_STATUS_START_CONVERSION	BIT(0)
+> -#define SPEAR_ADC_STATUS_CHANNEL_NUM(x)		((x) << 1)
+> +#define SPEAR_ADC_STATUS_CHANNEL_NUM_MASK	GENMASK(3, 1)
+>  #define SPEAR_ADC_STATUS_ADC_ENABLE		BIT(4)
+> -#define SPEAR_ADC_STATUS_AVG_SAMPLE(x)		((x) << 5)
+> +#define SPEAR_ADC_STATUS_AVG_SAMPLE_MASK	GENMASK(8, 5)
+>  #define SPEAR_ADC_STATUS_VREF_INTERNAL		BIT(9)
+>  
+>  #define SPEAR_ADC_DATA_MASK		0x03ff
+> @@ -157,8 +158,8 @@ static int spear_adc_read_raw(struct iio_dev *indio_dev,
+>  	case IIO_CHAN_INFO_RAW:
+>  		mutex_lock(&st->lock);
+>  
+> -		status = SPEAR_ADC_STATUS_CHANNEL_NUM(chan->channel) |
+> -			SPEAR_ADC_STATUS_AVG_SAMPLE(st->avg_samples) |
+> +		status = FIELD_PREP(SPEAR_ADC_STATUS_CHANNEL_NUM_MASK, chan->channel) |
+> +			FIELD_PREP(SPEAR_ADC_STATUS_AVG_SAMPLE_MASK, st->avg_samples) |
+>  			SPEAR_ADC_STATUS_START_CONVERSION |
+>  			SPEAR_ADC_STATUS_ADC_ENABLE;
+>  		if (st->vref_external == 0)
+
 
