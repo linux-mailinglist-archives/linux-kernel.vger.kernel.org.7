@@ -1,73 +1,154 @@
-Return-Path: <linux-kernel+bounces-737971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B81BB0B2BA
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 01:18:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2E38B0B2BF
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 01:22:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 850D316F0AC
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 23:18:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55C7F3AD0D7
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 23:21:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E019028A726;
-	Sat, 19 Jul 2025 23:18:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3AD128B3E8;
+	Sat, 19 Jul 2025 23:22:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="kHZjQLdQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JowmF4+o"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F0D72E659;
-	Sat, 19 Jul 2025 23:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7DC288CBA;
+	Sat, 19 Jul 2025 23:22:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752967129; cv=none; b=aIIOtKfCMXTKv8mEkzazD5zWM0o0X9FTRC+C5ukJ3+Dw5Shwa1R6FEQFxpPWeU9nBh2MkCzx8ph9pNk/Srk+v5+DHTt8CLOZdFXSyTvnVA144uUXdfagC2TYmV8A2/zPsss7RLnko1I+BV47u6wzY5H26ou6EyDYK0ZQzRxFsMk=
+	t=1752967337; cv=none; b=opg3xO+rwUNcbLGpCYg7j9XVBemX+1p4IeknzUOzbCkaT+Og7mxTmd+DzoDOatgKxPnwfNDyjVqag5PKUKdT8yoXLh6A1gv8VZUoN2/QbZAE6vOe90pp0b1oCr59s6yL/5gfJm4ZXqTSWLVcshbxQ/gAfWB6VfoLf7g9te65qsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752967129; c=relaxed/simple;
-	bh=HyoTfwEg4C9wFU+VWZw2N+JdhbGSMa6Fwx18HRuaSdw=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=k8gHF1ceehBqK4qmK69qzPxvDZSFtMSdu6YriS8xzcMPI73G5X7nijV3+bA0XIpMLZAuYz2yxR48NvAVCIU2IFoE4xMeh7gZl+qjJiPZJ9lbzjyvHvyaAur3gvwL/8guhq5j8TQYyrpOh0v1OReIHTUTLeXU7iLCUitE5JkdfeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=kHZjQLdQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20885C4CEE3;
-	Sat, 19 Jul 2025 23:18:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1752967129;
-	bh=HyoTfwEg4C9wFU+VWZw2N+JdhbGSMa6Fwx18HRuaSdw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kHZjQLdQm8Xd5WDVH+rbSCpn4w/crzJeE7U0jVXaAHh85IQb4ymFyKBdkdb2JtxgA
-	 IV0yh3LTSj+yqNFLN3FGXtRnfnCuMF4hi2YhV/1zB5NTX6RJ53fTleakMXnP4t9kuP
-	 E2riMY89gRTBvzLWewW0lNyvJDahQVYHYbysuiSA=
-Date: Sat, 19 Jul 2025 16:18:47 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, david@redhat.com,
- vbabka@suse.cz, peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org,
- mhocko@kernel.org, paulmck@kernel.org, shuah@kernel.org,
- adobriyan@gmail.com, brauner@kernel.org, josef@toxicpanda.com,
- yebin10@huawei.com, linux@weissschuh.net, willy@infradead.org,
- osalvador@suse.de, andrii@kernel.org, ryan.roberts@arm.com,
- christophe.leroy@csgroup.eu, tjmercier@google.com, kaleshsingh@google.com,
- aha310510@gmail.com, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v8 0/6] use per-vma locks for /proc/pid/maps reads
-Message-Id: <20250719161847.d09abb0c9a0db0b94c4daa23@linux-foundation.org>
-In-Reply-To: <20250719182854.3166724-1-surenb@google.com>
-References: <20250719182854.3166724-1-surenb@google.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752967337; c=relaxed/simple;
+	bh=592mduOSIIbjRo6QOG1O1f748urmA9UgcK+qaVVszxw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ic9vlKTTcZTq2uBaeFOGPp0vnZ8cNMxbL6rfxnEsljjxJhT+UfIb71uh/Wp1SdK0+RXBMuQeewh8nzTxbFPcbcHC98gvk1j3en425dyNYolm6KyepyAiMYXWjK+5pMDjGW4xSVFmkj+4C7mLJftgOEeHoVV4iYqqCVj+LiLgwrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JowmF4+o; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752967335; x=1784503335;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=592mduOSIIbjRo6QOG1O1f748urmA9UgcK+qaVVszxw=;
+  b=JowmF4+oMR7uc/bvahy8yNe8EWGt2QwNKwpPn6EixHr+bnwASfsWCXtj
+   kC1oa+grz2lRZg4OFLcLBSfK+FpyYJEYR0NLNFoPoJWkQuCNQzPAQb6Xr
+   k2byGpbJQEKV4MCRKe8zEO+nWDS6tdiYlV3rsMWS6KotpsGPXpxnagBip
+   5jYqpoofU0tp+rOykkU4fzvDLSC2N3MEY1ec+2RyppKy+3apkjrccsmFh
+   9QQkxt7VMjzbsA+MLG/XtP8/nVl4z2u2ATMia7/f0gc+NMs6xvfHiN54l
+   oG9SqFBV3rwpt+IWnJszYDWjzpchnRpfF61e0eTQ+LfJw7NgjaFrTQcXE
+   w==;
+X-CSE-ConnectionGUID: 7Hx6cFLMTq+KQ8zITO7gMQ==
+X-CSE-MsgGUID: 47SZ4qeTTzKgSN3xM9C0cQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11497"; a="55105536"
+X-IronPort-AV: E=Sophos;i="6.16,325,1744095600"; 
+   d="scan'208";a="55105536"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2025 16:22:15 -0700
+X-CSE-ConnectionGUID: DE2RZxVNR9maiV7c8OKcRw==
+X-CSE-MsgGUID: 5djQIU38Qxqxg9c80EihYA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,325,1744095600"; 
+   d="scan'208";a="158560564"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 19 Jul 2025 16:22:11 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1udGsb-000Fpx-0q;
+	Sat, 19 Jul 2025 23:22:09 +0000
+Date: Sun, 20 Jul 2025 07:22:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mihai Moldovan <ionic@ionic.de>, linux-arm-msm@vger.kernel.org,
+	Manivannan Sadhasivam <mani@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, Denis Kenzior <denkenz@gmail.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Willem de Bruijn <willemb@google.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v2 03/10] net: qrtr: support identical node ids
+Message-ID: <202507200739.pd0Gkp22-lkp@intel.com>
+References: <4d0fe1eab4b38fb85e2ec53c07289bc0843611a2.1752947108.git.ionic@ionic.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4d0fe1eab4b38fb85e2ec53c07289bc0843611a2.1752947108.git.ionic@ionic.de>
 
-On Sat, 19 Jul 2025 11:28:48 -0700 Suren Baghdasaryan <surenb@google.com> wrote:
+Hi Mihai,
 
-> This patchset switches from holding mmap_lock while reading /proc/pid/maps
-> to taking per-vma locks as we walk the vma tree.
+kernel test robot noticed the following build warnings:
 
-Thanks, I updated mm-new to this v8 series.
+[auto build test WARNING on mani-mhi/mhi-next]
+[also build test WARNING on net-next/main net/main linus/master v6.16-rc6 next-20250718]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Mihai-Moldovan/net-qrtr-ns-validate-msglen-before-ctrl_pkt-use/20250720-030426
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/mani/mhi.git mhi-next
+patch link:    https://lore.kernel.org/r/4d0fe1eab4b38fb85e2ec53c07289bc0843611a2.1752947108.git.ionic%40ionic.de
+patch subject: [PATCH v2 03/10] net: qrtr: support identical node ids
+config: arc-randconfig-002-20250720 (https://download.01.org/0day-ci/archive/20250720/202507200739.pd0Gkp22-lkp@intel.com/config)
+compiler: arc-linux-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250720/202507200739.pd0Gkp22-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507200739.pd0Gkp22-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   net/qrtr/af_qrtr.c: In function 'qrtr_node_assign':
+>> net/qrtr/af_qrtr.c:429:36: warning: left shift count >= width of type [-Wshift-count-overflow]
+     key = (unsigned long)node->ep->id << 32 | nid;
+                                       ^~
+
+
+vim +429 net/qrtr/af_qrtr.c
+
+   412	
+   413	/* Assign node id to node.
+   414	 *
+   415	 * This is mostly useful for automatic node id assignment, based on
+   416	 * the source id in the incoming packet.
+   417	 */
+   418	static void qrtr_node_assign(struct qrtr_node *node, unsigned int nid)
+   419	{
+   420		unsigned long flags;
+   421		unsigned long key;
+   422	
+   423		if (nid == QRTR_EP_NID_AUTO)
+   424			return;
+   425	
+   426		spin_lock_irqsave(&qrtr_nodes_lock, flags);
+   427	
+   428		/* Always insert with the endpoint_id + node_id */
+ > 429		key = (unsigned long)node->ep->id << 32 | nid;
+   430		radix_tree_insert(&qrtr_nodes, key, node);
+   431	
+   432		if (!radix_tree_lookup(&qrtr_nodes, nid))
+   433			radix_tree_insert(&qrtr_nodes, nid, node);
+   434	
+   435		if (node->nid == QRTR_EP_NID_AUTO)
+   436			node->nid = nid;
+   437		spin_unlock_irqrestore(&qrtr_nodes_lock, flags);
+   438	}
+   439	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
