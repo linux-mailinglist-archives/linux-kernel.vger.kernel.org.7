@@ -1,66 +1,83 @@
-Return-Path: <linux-kernel+bounces-737772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F37D0B0B062
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 16:17:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6359AB0B066
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 16:19:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21F407B288D
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 14:16:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 877021AA2EC8
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 14:19:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B2A92877CC;
-	Sat, 19 Jul 2025 14:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC30F2877D5;
+	Sat, 19 Jul 2025 14:19:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SVUdM+0K"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NleAHXKJ"
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E717881E;
-	Sat, 19 Jul 2025 14:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7544879CD
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 14:19:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752934644; cv=none; b=n9nFkoODNn1fj084wa6EhWRMwi9NWfW2ENLLkGyP0hp3Hv9gzd6LbCDxxtf76sdRMAI64PhXbD2Agb63MtD/PJAQHfoWB1pHDEY4B9FD7tgl0eR8Oaqh1xhJ74GJLCdjHvRYeOiUyIba6UfViPyyf5BNz0Oa4HcUtnPPHSC7Go0=
+	t=1752934755; cv=none; b=gwXBMI+9vwTIdfDP8KkyeA14VrYZ47vJDtCGfC5lgY+oKbhrKJ5NZEw7906JEJ+t+62mW1+0AVtcavwli/hw2+o2pyqjy5kO8dTyCOjNZ/tm9++c9oNJRGbGC5dlldPw7XBXicqLhmOi7vu0JBRzCa/yhK9ep7wRa+EBftomPxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752934644; c=relaxed/simple;
-	bh=KUofb521B8AZVG1D7BsR/ikz80zn5hGl17C7QpRR16o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nyjWhbSltVZlQ6nz4nl7bkY2EvnU62K2dRVC3nDilO3y0EF+lrac2eZDrPpe2x2Bk0r4/yCnoVx7hPzWEFKMBHxBgpCL6G1DPYXYLlUwtTyIoFUT2OemMPLW9PgTCCNRim/8eNpS+lqvd+hgvE+1mDB96Lu4WKfcb3tDYW44Ph4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SVUdM+0K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F87AC4CEE7;
-	Sat, 19 Jul 2025 14:17:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752934644;
-	bh=KUofb521B8AZVG1D7BsR/ikz80zn5hGl17C7QpRR16o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SVUdM+0K0jGe4rVqrY0b0y344DhaNF/P4l5qjcxHDZvjs1Sz5lEaHuUgqbvaNEk53
-	 qQnUBOgvlrcAm4zN71fyfN0akPvw/r1ml61YT3oGeexTcYdu/yhx9FzkdMacNyRNTE
-	 zyv+HGIXmcJ0L36rHQzw5SOny2Rg8llXUoO/L8Si1gfO5eJCm5+HS+FjpcPSHzj46P
-	 wwH+vlfJORYkYA65kjGqarey6/GIYwgDIS+PBmngoO9/dqd8SZTjQXQ77/y7bSQnem
-	 2aXfilZYH0Gma9kVAdLA7hP3yS6+DftAVDwDHFrwttCgKK6fRvpP/mcsYh6NPp0qYL
-	 8r1iJCcLOAHyw==
-Date: Sat, 19 Jul 2025 17:17:20 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	Stefan Berger <stefanb@linux.ibm.com>,
-	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
-	Jonathan Corbet <corbet@lwn.net>, Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Frank van der Linden <fvdl@google.com>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
-Subject: Re: [RFC PATCH] tpm, tpm_vtpm_proxy: boot-time TPM
-Message-ID: <aHuo8Fh_S8aEi7VM@kernel.org>
-References: <20250716121823.173949-1-jarkko@kernel.org>
- <bfcc3a24-b48c-48a6-8280-07f7a2669e6b@infradead.org>
+	s=arc-20240116; t=1752934755; c=relaxed/simple;
+	bh=BZkhiLiNBaaHEpkcyxUOemT1nuyItl5ktC8ckt/5+cI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=qNDzG07ry38j3e/5giirdyZrjn8QK61cHO4ikXI1Ch0tP9culWI++Nev1aVoQlEAGGQWnX9GhBn05SVH5//EhU0vVbu13b9Yos44O0QsURyloQGT89qMo9da5PdRHB5fXfATkTv3v0+Og0V8qlYoh4svMf1eYiyDW1uHCDCru2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NleAHXKJ; arc=none smtp.client-ip=209.85.210.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-73e58d51060so739396a34.0
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 07:19:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752934752; x=1753539552; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0idHqKxmTJuhj0L2KEoP7cF5EgTKZubwwzAqdTlzNN8=;
+        b=NleAHXKJd56eWDOG0gO73cYhNQNwOsXGKtPh3S5hN/nz8tOgQzDTPzsI4JrLfChP1g
+         DUiUxffuhXm9cRq6bjuHGncTpjsIzX0IIQ1EnqNLbKzNWy9D+OW7k45Ndhde1Z1teLsi
+         GlKpa5sXMiy6MSC1nVuqMzQhxRzElUgAoC9TdCumOUD89R8CYqqrtfyK1+GTFZxdL8Mv
+         xAyQajzAxEgmNjj1Iw2dm3Hr3RVjIITW/+SJirJkuRrkdD0Lgqew0hBB8UXRwfzb65JU
+         XGUuKaYTQ2QanjxoIervpsxTT1YHvHEllq3vss/upaGrrUQN5qx6YTyGt5/hFtpHPDT0
+         2gJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752934752; x=1753539552;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0idHqKxmTJuhj0L2KEoP7cF5EgTKZubwwzAqdTlzNN8=;
+        b=cn7Bm4nbRWCMPXGSsFXxIFxjAisb7BdYuWJChhPxtjYEw3P4vEa72T5xDY+gyL9h7M
+         LPqhuE0z375aOrVjMlO4Sy7/Aun2eZ++cCMCW2FVtDlQ0jcJKIHZoQQwNj6vSVUokmWa
+         IX8fVdRFz/RQ2XpGWT3xRnJPkVEGiVGxE1UwSFhbq1cLKACnjyu3ljbXLwMvaYYXerco
+         w1NbT6EZA40lLb7Q/pgOYHMLUajzl8+i0A/S2jP/TCLuz1FXtuYfuFXUxrqhp/MXP61k
+         BWIzoZxBs2U9HwVg+YNqnUFNijSwAQfKwaQb3sdt0/LTVV4rgWolhOMwSWsp8t4OvZx6
+         7f0A==
+X-Forwarded-Encrypted: i=1; AJvYcCWwL/Y3SCq6KeeAgJ8fpE+35VPCkGacOwYkgPD2eO0/cIjZnvUwTD83y0aAaOVjZVIxeT2O6U+QnmZgLpI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJOk8nVxL6x0ARWtnLVchkzQfJlZ2oH/n9Tul9CpifJeViSXgy
+	VBtDyVy7Vr84huXpyU3q9AOBV+TVRPMC/hQ/b1p6zgCmRM6lAbW8xg/Y79aySrrq1DPFyV6+HN5
+	JMV6+
+X-Gm-Gg: ASbGncsxiofJRZcrFilOjNr2+RrvBiuaUtI3yGZwZzxStfnp0XFpIKE51OaLs9wh2hC
+	VckbEzIPlij0DXxjey45x+92Sz14Doq3ArsKghLBvFUksKYerz8HI8inNVttVAL7xiOS2rpJ+0E
+	TvE2+myk5g3UGVOR4N92K1lpIb4G4PoweWVm2xFNRQlaVZlClumSr5lSDFE4n6nszjdgHpX/HfS
+	GSJdWIa3w9rkDZDp1yu4v7NzkwVgM3/mMjslMLCZlmz6qpoR5darvWhHBe/PuL3GACgybiEFSwF
+	/3NjApEQdN+zR2/qqcTzIscu99FPZb62MN3og/vJGHBbCbLbTqpAxrD/tDqUq2fDBjZ3aXsdpqU
+	0bbZzUX6XRw1lDm6TnVanOA==
+X-Google-Smtp-Source: AGHT+IEZOcpRl7U1aHBWudyyNCCkirYut88+0gEsK9gTfyQxPBTvvJ/MXoCvXLBTC94QwN8GQcEFEA==
+X-Received: by 2002:a05:6871:3582:b0:2d5:2955:aa6a with SMTP id 586e51a60fabf-300e8c77f14mr4390379fac.7.1752934752464;
+        Sat, 19 Jul 2025 07:19:12 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700::1fec])
+        by smtp.gmail.com with UTF8SMTPSA id 46e09a7af769-73e83b0a51dsm1439995a34.36.2025.07.19.07.19.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 19 Jul 2025 07:19:11 -0700 (PDT)
+Date: Sat, 19 Jul 2025 09:19:10 -0500
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Martin Brandenburg <martin@omnibond.com>
+Cc: Mike Marshall <hubcap@omnibond.com>, devel@lists.orangefs.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] fs/orangefs: Allow 2 more characters in do_c_string()
+Message-ID: <842e7e14-bb93-4a2e-9ad9-2b4e11d2c441@sabinyo.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,80 +86,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bfcc3a24-b48c-48a6-8280-07f7a2669e6b@infradead.org>
+X-Mailer: git-send-email haha only kidding
 
-On Wed, Jul 16, 2025 at 11:44:02AM -0700, Randy Dunlap wrote:
-> (mostly nits, along with Paul's comments)
-> 
-> 
-> On 7/16/25 5:18 AM, Jarkko Sakkinen wrote:
-> > From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
-> > 
-> > Provide a kernel command-line parameter named as `supplicant`, which
-> > contains a path to an TPM emulator binary. When defind, the kernel will
-> 
->                   to a TPM
-> 
-> > launch the program during boot-time.
-> > 
-> > This feature is most useful in feature testing e.g., in environments
-> 
->                                          testing, e.g.,
-> 
-> > where other means are not possible, such as CI runners. Its original use
-> > case highlights also quite well of its applicability for pre-production
-> > hardware: it was used to provide a TPM implemnentation for a RISC-V SoC
-> > running on FPGA with no TPM HW implementation at the time.
-> > 
-> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
-> > ---
-> > Bumped into this in my archives so thought to make it available just in
-> > case anyone is interested.
-> > ---
-> >  .../admin-guide/kernel-parameters.txt         | 14 +++++
-> >  drivers/char/tpm/tpm_vtpm_proxy.c             | 51 +++++++++++++++++++
-> >  2 files changed, 65 insertions(+)
-> > 
-> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> > index f1f2c0874da9..e062de99480e 100644
-> > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > @@ -7230,6 +7230,20 @@
-> >  			defined by Trusted Computing Group (TCG) see
-> >  			https://trustedcomputinggroup.org/resource/pc-client-platform-tpm-profile-ptp-specification/
-> >  
-> > +	tpm_vtpm_proxy.supplicant= [TPM]
-> > +			When defined, this field must contain a legit path to a
-> 
-> 			                                        legitimate
-> or			                                        valid
-> 
-> > +			program emulating a TPM chip, which will be started
-> > +			during the driver initialization, thus providing a
-> > +			mechanism for the user space have an emulated TPM from
-> > +			the get go. Kernel prepares the process with a file
-> 
-> 			    get-go.
-> or just don't use slang terms.
-> 
-> > +			pre-opened file descriptor in the index 3 for
-> > +			/dev/vtpmx.
-> > +
-> > +			An emulator can optionally provide support for
-> > +			localities by reacting to the vendor command defined
-> > +			by the driver: 0x20001000. Its payload is a single
-> > +			byte containing the new locality.
-> > +
-> >  	tp_printk	[FTRACE]
-> >  			Have the tracepoints sent to printk as well as the
-> >  			tracing ring buffer. This is useful for early boot up
-> 
-> thanks.
-> -- 
-> ~Randy
-> 
+The do_k_string() and do_c_string() functions do essentially the same
+thing which is they add a string and a comma onto the end of an existing
+string.  At the end, the caller will overwrite the last comma with a
+newline.  Later, in orangefs_kernel_debug_init(), we add a newline to
+the string.
 
-Thank you for reviewing this (especially given how bad shape it was)!
+The change to do_k_string() is just cosmetic.  I moved the "- 1" to
+the other side of the comparison and made it "+ 1".  This has no
+effect on runtime, I just wanted the functions to match each other
+and the rest of the file.
 
-BR, Jarkko
+However in do_c_string(), I removed the "- 2" which allows us to print
+two extra characters.  I noticed this issue while reviewing the code
+and I doubt affects anything in real life.  My guess is that this was
+double counting the comma and the newline.  The "+ 1" accounts for
+the newline, and the caller will delete the final comma which ensures
+there is enough space for the newline.
+
+Removing the "- 2" lets us print 2 more characters, but mainly it makes
+the code more consistent and understandable for reviewers.
+
+Fixes: 44f4641073f1 ("orangefs: clean up debugfs globals")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ fs/orangefs/orangefs-debugfs.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/fs/orangefs/orangefs-debugfs.c b/fs/orangefs/orangefs-debugfs.c
+index e463d3c73533..802bbbbe9a79 100644
+--- a/fs/orangefs/orangefs-debugfs.c
++++ b/fs/orangefs/orangefs-debugfs.c
+@@ -769,8 +769,8 @@ static void do_k_string(void *k_mask, int index)
+ 
+ 	if (*mask & s_kmod_keyword_mask_map[index].mask_val) {
+ 		if ((strlen(kernel_debug_string) +
+-		     strlen(s_kmod_keyword_mask_map[index].keyword))
+-			< ORANGEFS_MAX_DEBUG_STRING_LEN - 1) {
++		     strlen(s_kmod_keyword_mask_map[index].keyword) + 1)
++			< ORANGEFS_MAX_DEBUG_STRING_LEN) {
+ 				strcat(kernel_debug_string,
+ 				       s_kmod_keyword_mask_map[index].keyword);
+ 				strcat(kernel_debug_string, ",");
+@@ -797,7 +797,7 @@ static void do_c_string(void *c_mask, int index)
+ 	    (mask->mask2 & cdm_array[index].mask2)) {
+ 		if ((strlen(client_debug_string) +
+ 		     strlen(cdm_array[index].keyword) + 1)
+-			< ORANGEFS_MAX_DEBUG_STRING_LEN - 2) {
++			< ORANGEFS_MAX_DEBUG_STRING_LEN) {
+ 				strcat(client_debug_string,
+ 				       cdm_array[index].keyword);
+ 				strcat(client_debug_string, ",");
+-- 
+2.47.2
+
 
