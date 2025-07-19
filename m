@@ -1,179 +1,230 @@
-Return-Path: <linux-kernel+bounces-737710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB212B0AFA0
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 13:38:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0F6AB0AFA2
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 13:47:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64610189A666
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 11:38:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 789651AA36A5
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 11:47:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A39C226CEB;
-	Sat, 19 Jul 2025 11:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2FFC223DC6;
+	Sat, 19 Jul 2025 11:47:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eW9fNJZC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dwWLn5a4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E2B33086;
-	Sat, 19 Jul 2025 11:37:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E42F2E36ED;
+	Sat, 19 Jul 2025 11:47:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752925076; cv=none; b=QSDqmZvFoB3f+pNli2cGF33A3LynuYmIU1acGRI0myye3malWupZpyCw0xgX3kaOnNaEfcY6j9VCcrzmDa6Vm23RZ2VqMPIrj0t6biMKKliCpq8f17f6OfPCsGX9OSJ4RsK572nIFB91tnpGoSlb5Qzw7/wDY5LSadRJT00Ydzw=
+	t=1752925640; cv=none; b=aWoOBZFA6NeNZnqI60IUQOCCnSXk82gcT/urPMQr0PlmnLqrlRAXPAziIRe/V4ckey8ID0eKMes17f/uhX+ZXsiqZiWf+CAhy3Xt971qsbDUnNVCJJRjAgaklrP41kH2R1ZzZ0qLJM4pgeZjfDGXDVg5YyR1yhg6U65DA5/9Fzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752925076; c=relaxed/simple;
-	bh=WHImR9ml49rOWCFEslqOX+Ll5RQy1Y/vpMK7wGbnRrQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mk9s86Hbokqdk+ROb2mTO3AMr8V1hU4tCgwU8pto+/Z0rq96L9QH8SBGzuoSntxYoj0EvxKmU+IecAJROJT2mh55PEyoO/ZgpRgUcRt2AD3Rb7Ktk2KOvn2Q1D7K55/FBzK6YhLWM03g602JIzduBvvoccG2UqVfAQa07/KxxoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eW9fNJZC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C10FC4CEE3;
-	Sat, 19 Jul 2025 11:37:54 +0000 (UTC)
+	s=arc-20240116; t=1752925640; c=relaxed/simple;
+	bh=aDBIw0JNbRo7hEXAyEuODvWVe6SmWjPo1tnjm0smGT0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Vb6p3dfq0cNzFNLABBgMYLX7z8WxAXD6WVCZNtf6F6L2ywW8yQs0ZQyNGJdYRI7taasXu4wY2G3In+HtnO4CVWMiT6rGC8MjT4Haz5nPBVASPNGvD4V7EHWw8P4TZveyclbEaULB75Fi85xb9hOykPm3eFsVImuknRk+zpcqgUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dwWLn5a4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CA84C4CEE3;
+	Sat, 19 Jul 2025 11:47:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752925075;
-	bh=WHImR9ml49rOWCFEslqOX+Ll5RQy1Y/vpMK7wGbnRrQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eW9fNJZCn0+MCDcGdnpSmUF5Vm7+TaQqaiHlaj/naBPXrRmZAljXoyiUwmJHhDtic
-	 Q/3w9sMROeb/N3JjZKLphbTfuulzQX+RZ/OnReTzsqT8mHmrSfyBm1seEIC9zq9hsX
-	 N3UtqMPddFs0qs27h6UHsImtbaGE4IMOaYiByL4uGHlxfQ2Ji5dCo6/ISk5kZYjtGK
-	 EZaGxl2KUX/lWcbdOfqwIn4xgnWeOUsGBWl/79PYdprW2a8xiFPymDbeso8xpmI9in
-	 n9L3CkoDX9pSwl3bp7Em1BCk6XEvbI5fCO3eXhPvarHQe3mCOPyVSBhEfDiTN1irU8
-	 FTVhbAg5rZH5g==
-Date: Sat, 19 Jul 2025 14:37:51 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: "Orlov, Ivan" <ivan.orlov0322@gmail.com>
-Cc: Jonathan McDowell <noodles@earth.li>,
-	"Orlov, Ivan" <iorlov@amazon.co.uk>,
-	"peterhuewe@gmx.de" <peterhuewe@gmx.de>,
-	"jgg@ziepe.ca" <jgg@ziepe.ca>,
-	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Woodhouse, David" <dwmw@amazon.co.uk>
-Subject: Re: [PATCH v2] tpm: Fix the timeout & use ktime
-Message-ID: <aHuDj36Qa6iKsvkn@kernel.org>
-References: <20250620180828.98413-1-iorlov@amazon.com>
- <aFhtKrWTDzZbpTSh@earth.li>
- <aFwnG--lzZO0mQgc@kernel.org>
- <aGeYqQG15lb2_NaU@earth.li>
- <aGfwPbMZf-SHshXH@kernel.org>
- <048723bf-4a8d-451a-911b-f9f94a4270d7@gmail.com>
+	s=k20201202; t=1752925639;
+	bh=aDBIw0JNbRo7hEXAyEuODvWVe6SmWjPo1tnjm0smGT0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=dwWLn5a4mVBy3+BdmVTn1ItJL0Tvhp37J6Lga67vQwbWqvIlyR0XXE6dhL/n4hEXy
+	 9sgrr7+ibElNj/riukay5Nb+vVxiOR0Ty7HLxTOK7qLmhrUuAZcMs1MTgWFO9EH7Hw
+	 766zGY31XhvZtMuxMz8BtHB1qzTVbM3g/TgBs70SKGWUXhPtwicEM7V7pz50DYBFZF
+	 2HovQQAPcSvz2AyOohpWv+pHgi5eBom7k8d2kk/NkwqGzYyYU1LXyGctGm4WfVWl2D
+	 ONNM0QZqnVJSabWoOkyjOuhjExDdWACbnosYia3Eor5q5IgcBsf3sZD+u264EqZP35
+	 fTV3rE6MY+hLA==
+Date: Sat, 19 Jul 2025 12:47:11 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Sean Nyekjaer <sean@geanix.com>
+Cc: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>, David Lechner
+ <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/6] iio: imu: inv_icm42600: Simplify pm_runtime setup
+Message-ID: <20250719124711.42fe1a00@jic23-huawei>
+In-Reply-To: <iwe34sdzsgeqpgqrc7ndbx6n4ef6kiwd4bczbiwbhlfgv3zesx@rnr5l7diy5z7>
+References: <20250709-icm42pmreg-v1-0-3d0e793c99b2@geanix.com>
+	<20250709-icm42pmreg-v1-4-3d0e793c99b2@geanix.com>
+	<20250713152810.4483c786@jic23-huawei>
+	<ie3zr2mvuss2f7prksw6nuc3wonig5ju6y6hqq46upvkhovwpa@vtfc3tqwz3d5>
+	<76fnxeuufv56fmfvq6odi5xz2yjtjxymz24t436zk7rtuyst4s@oihlvsoxhllp>
+	<20250716090010.23ea03b6@jic23-huawei>
+	<iwe34sdzsgeqpgqrc7ndbx6n4ef6kiwd4bczbiwbhlfgv3zesx@rnr5l7diy5z7>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <048723bf-4a8d-451a-911b-f9f94a4270d7@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 04, 2025 at 04:39:20PM +0100, Orlov, Ivan wrote:
-> On 04/07/2025 16:16, Jarkko Sakkinen wrote:
-> > On Fri, Jul 04, 2025 at 10:02:33AM +0100, Jonathan McDowell wrote:
-> > > On Wed, Jun 25, 2025 at 07:43:07PM +0300, Jarkko Sakkinen wrote:
-> > > > On Sun, Jun 22, 2025 at 09:52:58PM +0100, Jonathan McDowell wrote:
-> > > > > On Fri, Jun 20, 2025 at 06:08:31PM +0000, Orlov, Ivan wrote:
-> > > > > > The current implementation of timeout detection works in the following
-> > > > > > way:
-> > > > > > 
-> > > > > > 1. Read completion status. If completed, return the data
-> > > > > > 2. Sleep for some time (usleep_range)
-> > > > > > 3. Check for timeout using current jiffies value. Return an error if
-> > > > > >    timed out
-> > > > > > 4. Goto 1
-> > > > > > 
-> > > > > > usleep_range doesn't guarantee it's always going to wake up strictly in
-> > > > > > (min, max) range, so such a situation is possible:
-> > > > > > 
-> > > > > > 1. Driver reads completion status. No completion yet
-> > > > > > 2. Process sleeps indefinitely. In the meantime, TPM responds
-> > > > > > 3. We check for timeout without checking for the completion again.
-> > > > > >    Result is lost.
-> > > > > > 
-> > > > > > Such a situation also happens for the guest VMs: if vCPU goes to sleep
-> > > > > > and doesn't get scheduled for some time, the guest TPM driver will
-> > > > > > timeout instantly after waking up without checking for the completion
-> > > > > > (which may already be in place).
-> > > > > > 
-> > > > > > Perform the completion check once again after exiting the busy loop in
-> > > > > > order to give the device the last chance to send us some data.
-> > > > > > 
-> > > > > > Since now we check for completion in two places, extract this check into
-> > > > > > a separate function.
-> > > > > > 
-> > > > > > Signed-off-by: Ivan Orlov <iorlov@amazon.com>
-> > > > > > ---
-> > > > > > V1 -> V2:
-> > > > > > - Exclude the jiffies -> ktime change from the patch
-> > > > > > - Instead of recording the time before checking for completion, check
-> > > > > >   for completion once again after leaving the loop
-> > > > > > 
-> > > > > > drivers/char/tpm/tpm-interface.c | 17 +++++++++++++++--
-> > > > > > 1 file changed, 15 insertions(+), 2 deletions(-)
-> > > > > > 
-> > > > > > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> > > > > > index 8d7e4da6ed53..6960ee2798e1 100644
-> > > > > > --- a/drivers/char/tpm/tpm-interface.c
-> > > > > > +++ b/drivers/char/tpm/tpm-interface.c
-> > > > > > @@ -82,6 +82,13 @@ static bool tpm_chip_req_canceled(struct tpm_chip *chip, u8 status)
-> > > > > > 	return chip->ops->req_canceled(chip, status);
-> > > > > > }
-> > > > > > 
-> > > > > > +static bool tpm_transmit_completed(struct tpm_chip *chip)
-> > > > > > +{
-> > > > > > +	u8 status_masked = tpm_chip_status(chip) & chip->ops->req_complete_mask;
-> > > > > > +
-> > > > > > +	return status_masked == chip->ops->req_complete_val;
-> > > > > > +}
-> > > > > > +
-> > > > > > static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
-> > > > > > {
-> > > > > > 	struct tpm_header *header = buf;
-> > > > > > @@ -129,8 +136,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
-> > > > > > 	stop = jiffies + tpm_calc_ordinal_duration(chip, ordinal);
-> > > > > > 	do {
-> > > > > > 		u8 status = tpm_chip_status(chip);
-> > > > > > -		if ((status & chip->ops->req_complete_mask) ==
-> > > > > > -		    chip->ops->req_complete_val)
-> > > > > > +		if (tpm_transmit_completed(chip))
-> > > > > > 			goto out_recv;
-> > > > > 
-> > > > > The only thing I'd point out here is we end up doing a double status read
-> > > > > one after the other (once here, once in tpm_transmit_completed), and I'm
-> > > > > pretty sure I've seen instances where that caused a problem.
-> > > > 
-> > > > It would be easy to to prevent at least double reads after completion
-> > > > e.g., in tpm_chip_status():
-> > > 
-> > > Or just take the simple approach and make the check after the while loop:
-> > > 
-> > > 	if ((tpm_chip_status(chip) & chip->ops->req_complete_mask) ==
-> > > 	    chip->ops->req_complete_val)
-> > > 		goto out_recv;
-> > > 
-> > > There might be potential for a longer term cleanup using chip->status to
-> > > cache things, but I'm little concerned that's going to open paths where we
-> > > might not correctly update it, so I think it should be a separate piece.
-> > > 
-> > > (I'm motivated by the fact we've started to see the "Operation Canceled"
-> > > error and I'd like us to close on the best way to fix it. :) )
+On Fri, 18 Jul 2025 06:40:50 +0000
+Sean Nyekjaer <sean@geanix.com> wrote:
+
+> On Wed, Jul 16, 2025 at 09:00:10AM +0100, Jonathan Cameron wrote:
+> > On Mon, 14 Jul 2025 07:42:43 +0000
+> > Sean Nyekjaer <sean@geanix.com> wrote:
+> >   
+> > > On Mon, Jul 14, 2025 at 07:24:57AM +0100, Sean Nyekjaer wrote:  
+> > > > On Sun, Jul 13, 2025 at 03:28:10PM +0100, Jonathan Cameron wrote:  
+> > > > > On Wed, 09 Jul 2025 14:35:12 +0200
+> > > > > Sean Nyekjaer <sean@geanix.com> wrote:
+> > > > >  
+> > > > > > Remove unnecessary pm_runtime_get_noresume() and pm_runtime_put()
+> > > > > > calls during probe. These are not required when the device is marked
+> > > > > > active via pm_runtime_set_active() before enabling pm_runtime with
+> > > > > > pm_runtime_enable().
+> > > > > >
+> > > > > > Also remove the redundant pm_runtime_put_sync() call from the cleanup
+> > > > > > path, since the core is not incrementing the usage count beforehand.
+> > > > > >
+> > > > > > This simplifies the PM setup and avoids manipulating the usage counter
+> > > > > > unnecessarily.  
+> > > > >
+> > > > > Could we switch directly to using devm_pm_runtime_enable() for this driver?
+> > > > >
+> > > > > At first glance looks like this code is missing the disable of autosuspend
+> > > > > that should be there (which devm_pm_runtime_enable() will also handle).
+> > > > >  
+> > > >
+> > > > I have tried to use devm_pm_runtime_enable() but on rmmod it warns
+> > > > "unbalanced disables for regulator"
+> > > >
+> > > > If I remove this:
+> > > > -	ret = devm_add_action_or_reset(dev, inv_icm42600_disable_vddio_reg, st);
+> > > > -	if (ret)
+> > > > -		return ret;
+> > > >
+> > > > Everything seems okay again. I have checked with printk's that
+> > > > inv_icm42600_disable_vddio_reg() is called twice with
+> > > > devm_pm_runtime_enable() used.
+> > > > Does it make sense?
+> > > >
+> > > > /Sean  
+> > >
+> > > with pm_runtime_enable():
+> > > root@v4:/data/root# insmod /tmp/inv-icm42600.ko; insmod /tmp/inv-icm42600-i2c.ko
+> > > [ 3793.713077] inv-icm42600-i2c 1-0068: no INT1 interrupt defined, fallback to first interrupt
+> > > [ 3793.727728] inv-icm42600-i2c 1-0068: mounting matrix not found: using identity...
+> > > [ 3793.737660] inv-icm42600-i2c 1-0068: supply vdd not found, using dummy regulator
+> > > [ 3793.856891] inv-icm42600-i2c 1-0068: supply vddio not found, using dummy regulator
+> > > [ 3793.866872] inv_icm42600_enable_regulator_vddio() enable vddio
+> > > [ 3793.920739] inv_icm42600_runtime_suspend() disable vddio
+> > > root@v4:/data/root# rmmod inv_icm42600_i2c inv_icm42600
+> > > [ 3796.954850] inv_icm42600_runtime_resume() -> inv_icm42600_enable_regulator_vddio()
+> > > [ 3796.954910] inv_icm42600_enable_regulator_vddio() enable vddio
+> > > [ 3796.985140] inv_icm42600_disable_vddio_reg() disable vddio
+> > >
+> > > with devm_pm_runtime_enable():
+> > > root@v4:/data/root# insmod /tmp/inv-icm42600.ko; insmod /tmp/inv-icm42600-i2c.ko
+> > > [ 3852.873887] inv-icm42600-i2c 1-0068: no INT1 interrupt defined, fallback to first interrupt
+> > > [ 3852.888715] inv-icm42600-i2c 1-0068: mounting matrix not found: using identity...
+> > > [ 3852.898514] inv-icm42600-i2c 1-0068: supply vdd not found, using dummy regulator
+> > > [ 3853.016890] inv-icm42600-i2c 1-0068: supply vddio not found, using dummy regulator
+> > > [ 3853.026860] inv_icm42600_enable_regulator_vddio() enable vddio
+> > > [ 3853.080835] inv_icm42600_runtime_suspend() disable vddio
+> > > root@v4:/data/root# rmmod inv_icm42600_i2c inv_icm42600
+> > > [ 3854.448461] inv_icm42600_runtime_resume() -> inv_icm42600_enable_regulator_vddio()
+> > > [ 3854.448540] inv_icm42600_enable_regulator_vddio() enable vddio
+> > > [ 3854.467061] inv_icm42600_runtime_suspend() disable vddio  
 > > 
-> > This would work for me too!
+> > As below What is the call path for this final suspend?
+> > Is it coming from update_autosuspend()?  
+> 
+> Yeah it looks like pm_runtime_dont_use_autosuspend() is calling runtime_suspend().
+
+ok. So how are we supposed to handle this?  Seems like it would be a fairly common
+situation.  devm_pm_runtime_set_active_enabled() might be relevant.
+I get confused by all the reference counter
+complexity in runtime pm but is devm_pm_runtime_get_noresume() what we want?
+That will decrement the usage count with no action just before we hit the point
+were the suspend or not decision is made.  So I think that will mean the device
+things it is already suspended when you hit the path here and so not do it again?
+ 
+There seems to be only one user of this stuff though:
+https://elixir.bootlin.com/linux/v6.15.6/source/drivers/spi/atmel-quadspi.c#L1440
+> 
+> root@v4:/data/root# rmmod inv-icm42600-i2c inv-icm42600
+> [  291.511085] inv_icm42600_runtime_resume() -> inv_icm42600_enable_regulator_vddio()
+> [  291.511165] inv_icm42600_enable_regulator_vddio() enable vddio
+> [  291.532398] inv_icm42600_runtime_suspend() disable vddio
+> [  291.538517] CPU: 0 UID: 0 PID: 331 Comm: rmmod Tainted: G        W           6.16.0-rc1-00202-g7fe6e564b5c9-dirty #146 VOLUNTARY
+> [  291.538559] Tainted: [W]=WARN
+> [  291.538566] Hardware name: Freescale i.MX6 Ultralite (Device Tree)
+> [  291.538575] Call trace:
+> [  291.538590]  unwind_backtrace from show_stack+0x10/0x14
+> [  291.538643]  show_stack from dump_stack_lvl+0x54/0x68
+> [  291.538679]  dump_stack_lvl from inv_icm42600_runtime_suspend+0x68/0x6c [inv_icm42600]
+> [  291.538728]  inv_icm42600_runtime_suspend [inv_icm42600] from __rpm_callback+0x48/0x18c
+> [  291.538775]  __rpm_callback from rpm_callback+0x5c/0x68
+> [  291.538815]  rpm_callback from rpm_suspend+0xdc/0x584
+> [  291.538853]  rpm_suspend from pm_runtime_disable_action+0x30/0x5c
+> [  291.538885]  pm_runtime_disable_action from devres_release_group+0x180/0x1a0
+> [  291.538917]  devres_release_group from i2c_device_remove+0x34/0x84
+> [  291.538949]  i2c_device_remove from device_release_driver_internal+0x180/0x1f4
+> [  291.538976]  device_release_driver_internal from driver_detach+0x54/0xa0
+> [  291.538998]  driver_detach from bus_remove_driver+0x58/0xa4
+> [  291.539030]  bus_remove_driver from sys_delete_module+0x16c/0x250
+> [  291.539065]  sys_delete_module from ret_fast_syscall+0x0/0x54
+> [  291.539089] Exception stack(0xd0ab1fa8 to 0xd0ab1ff0)
+> [  291.539108] 1fa0:                   be94fe46 be94fd1c 017ccfa4 00000800 0000000a 017ccf68
+> [  291.539126] 1fc0: be94fe46 be94fd1c 017ccf68 00000081 00000000 00000001 00000003 017cc190
+> [  291.539139] 1fe0: b6c8be41 be94fadc 000179cb b6c8be48
+> [  291.685102] inv_icm42600_disable_vddio_reg() disable vddio
+> [  291.694566] ------------[ cut here ]------------
+> [  291.694621] WARNING: CPU: 0 PID: 331 at drivers/regulator/core.c:3016 _regulator_disable+0x140/0x1a0
+> [  291.708496] unbalanced disables for regulator-dummy
+> [  291.713391] Modules linked in: inv_icm42600_i2c(-) inv_icm42600 inv_sensors_timestamp [last unloaded: inv_icm42600]
+> [  291.723939] CPU: 0 UID: 0 PID: 331 Comm: rmmod Tainted: G        W           6.16.0-rc1-00202-g7fe6e564b5c9-dirty #146 VOLUNTARY
+> [  291.735620] Tainted: [W]=WARN
+> [  291.738598] Hardware name: Freescale i.MX6 Ultralite (Device Tree)
+> [  291.744789] Call trace:
+> [  291.744807]  unwind_backtrace from show_stack+0x10/0x14
+> [  291.752614]  show_stack from dump_stack_lvl+0x54/0x68
+> [  291.757704]  dump_stack_lvl from __warn+0x7c/0xe0
+> [  291.762437]  __warn from warn_slowpath_fmt+0x124/0x18c
+> [  291.767602]  warn_slowpath_fmt from _regulator_disable+0x140/0x1a0
+> [  291.773812]  _regulator_disable from regulator_disable+0x48/0x80
+> [  291.779843]  regulator_disable from devres_release_group+0x180/0x1a0
+> [  291.786231]  devres_release_group from i2c_device_remove+0x34/0x84
+> [  291.792446]  i2c_device_remove from device_release_driver_internal+0x180/0x1f4
+> [  291.799699]  device_release_driver_internal from driver_detach+0x54/0xa0
+> [  291.806427]  driver_detach from bus_remove_driver+0x58/0xa4
+> [  291.812033]  bus_remove_driver from sys_delete_module+0x16c/0x250
+> [  291.818160]  sys_delete_module from ret_fast_syscall+0x0/0x54
+> [  291.823934] Exception stack(0xd0ab1fa8 to 0xd0ab1ff0)
+> [  291.829007] 1fa0:                   be94fe46 be94fd1c 017ccfa4 00000800 0000000a 017ccf68
+> [  291.837205] 1fc0: be94fe46 be94fd1c 017ccf68 00000081 00000000 00000001 00000003 017cc190
+> [  291.845397] 1fe0: b6c8be41 be94fadc 000179cb b6c8be48
+> [  291.850632] ---[ end trace 0000000000000000 ]---0
+> 
+> >   
+> > > [ 3854.477170] inv_icm42600_disable_vddio_reg() disable vddio
+> > > [ 3854.483835] ------------[ cut here ]------------
+> > > [ 3854.483912] WARNING: CPU: 0 PID: 582 at drivers/regulator/core.c:3016 _regulator_disable+0x140/0x1a0
+> > > [ 3854.497853] unbalanced disables for regulator
+> > >
+> > > Is the way from here to remove the devm_add_action_or_reset(dev,
+> > > inv_icm42600_disable_vddio_reg... ?  
 > > 
+> > That will make a mess if runtime PM is not built into
+> > the kernel which is why an PM state in remove should return to the state
+> > before it was enabled in the first place (i.e. on!).
+> > That final runtime suspend surprises me.  
 > 
-> Hi, and sorry for the late reply :(
+> Got it :)
 > 
-> I believe this option would work for us as well. Please let me know whether
-> you'd like me to send V3 or you feel free to send it yourself if you want.
-
-Please send one more patch. I just came from holiday and now have
-hands full backtracking last two weeks.
-
+> /Sean
 > 
-> --
-> Kind regards,
-> Ivan Orlov
+> 
 
-BR, Jarkko
 
