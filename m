@@ -1,128 +1,154 @@
-Return-Path: <linux-kernel+bounces-737751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4551B0B01C
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 14:59:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B83B4B0B020
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 15:00:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EBAD3A3F15
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 12:58:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6D1D189FAE0
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 13:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44139288C8F;
-	Sat, 19 Jul 2025 12:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81DF62874EB;
+	Sat, 19 Jul 2025 12:57:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TgTJYi2g"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jXg9BoHT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B9728851F;
-	Sat, 19 Jul 2025 12:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1BE93597E;
+	Sat, 19 Jul 2025 12:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752929801; cv=none; b=JrjltL+izIk8t8jHPAZRIlrzygw4oO6VFfojxDv1wXGQOzx5i6PrqKcfKJyKwrQcNtUTnVFBYNUV0SBpZGyg4+yr0KLb5wA512WoSWEeGk6BHdvHI76ArOCzhv1GEZYU9aN5oH14Ffo4wcpLK1XsWhU2truDbC8niy6DMoc+aTg=
+	t=1752929867; cv=none; b=qzJJoR47VKFLcs9ergKK4KBh3ZW8kBu5wQEycXstGS26MZnLNQDLuApV/vaCrpU45Ff0Hpy7MT4wtCBXfctWuFZDx+zG5PSIfjSUQbudhLJZ7EVcZqFvSCVXhU3z6lowTlCA+WDGHjvvAIElUe5Sgh5LG+SMaeP3Wvz+RIsogu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752929801; c=relaxed/simple;
-	bh=XuqdLOxXDPO9JQSHjDKhnVmvk5hC7cXCT51JI5Zeh+0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TDHGBxWk4xA03lbbQOl4vkammyBIvy06BUGo03xNd7fX7Lflw3vpyQUkr8qQuiRPXZkRupGPK0+DsT3KaB3YhngcbEhu95YZTCrdAe8VM1gf7OKp6WnF4OOHYjqgCOP+in0pCDWZP+FlJtv5lfhwzamKKAJMn9ztcyN7USxAAbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TgTJYi2g; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3b5e6bfb427so1677016f8f.2;
-        Sat, 19 Jul 2025 05:56:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752929798; x=1753534598; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Flp2kuB43upoDmZKHtPKy1TYQrSu+LhhKaLm1sYr4pw=;
-        b=TgTJYi2gJyB8KUmuifll2B7ydocFdzWKLtSaYeDAxcQfI4kyIeg+obhbdJvWs+E05m
-         YDUf09xhGFmq6pmct7gpn5GqFdawMPuAEr5Vz90T8Q2p6M3PWNLNrEry6cK6Ahbr4VdK
-         0MRBZjcDEkaJUmvDzLlhs7m/oOmcf7LkTKDfFz2fyczENt9hkw9yy+gPMFXS/S11Wrop
-         Zw2Me3Wd+1Z5KQz69ycWemGFjxKOFZ4TGaa2HoEG28kBlXvA8tOlKdzJ9N23Id2sMCOP
-         Jyc9VfotgQ8JYj9oJNtVBpcFu7uiJNTZ2Iz2Dut2s0DBTTws6V8PtfFD0JKMLk5zvHlG
-         T7BA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752929798; x=1753534598;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Flp2kuB43upoDmZKHtPKy1TYQrSu+LhhKaLm1sYr4pw=;
-        b=iCV31DxBI6/uhgKU2slfye3HOMWojy5L/9Z8wTtGniVK+69e6SOZZszKLQ2ScjxHN2
-         3kBiyWbetvNfEeB3tseTJ3cLqS/vdLe2M3wcqIb3JrkDQAKeY4pA3mIgn/5CY16H1uQg
-         iEMlf2fTZ964cY8JhTapwdmtYL4piiNxOrakZGduC35eYyqVQhybwhJZ3fe/B+yxkfES
-         mq2P/Qs7dmUZM34coGaSFbumUOx6f4KKbdGwhWF/OqLwz3CEY7ZJtyCzBL2OvF6lt8cB
-         kz2RyAab0+FAB4hRNCD5EfK/7/LXPWVM1QchFQYw3mNWwQbkyRu/7egKOWxRdtPsFiBL
-         pkjw==
-X-Forwarded-Encrypted: i=1; AJvYcCVSvzYOnK2KQqViVBFNu77pDGzut6yz4WhjbGWLmzE4307rwE7wZaOIsUeUGcoSHmPL0TJ1P/KfFm6f@vger.kernel.org, AJvYcCWbqWQNNlQc+4rXWtbtSfTsrrT8VMZB629W9IMynsUbWnwrY606Ty2beh7YaZWu13qBcyVa2SgZn/w6@vger.kernel.org, AJvYcCXsDra0m3Gvzk+ZqyOqZqlv7hSi4BlFJ1pLvLWHOsuUZxZJ+ywQzXT/UvfltUkuYtTodBg2vkB7GMsNnZug@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAmA91l3iMsCdRbXrBLrVzT0sGM8PENCef6rtOYlRH7hEt1QGA
-	eTCOfZ4CA3QmySh20a7MTRu/S1UNp/WmvoM2a2PfvC2gBYn5/oJGtoDb
-X-Gm-Gg: ASbGncv8dCJar1qvDzgQp+epRmnQKk5BsifDz08PtM3krZhktRFWjzvSmjNiVY0vGHb
-	n1G1JwtWk8EeBXpDq7jDcAIxYVQkch5M9GlA9fCjxjR7gbDSfEBnPye43bFqWeuQML9VOv3smHW
-	k6lYPNxK2P1ufVL3aeEPsb26tdXhfOnyWmAODuZWn8ygHkbqUG2LNE3N0RZC14CrvcowqwTqe82
-	w0nRa7RO0ZZfP7OfRCsjzn1mC4pnTe8u3CFuySo+uXCpsfOiW+8H4a/h7sA9KeZGuW0OqtoQLRv
-	ZPCRGwFGv1UAFGvDDVBLiCcb5L7TwrQYWPLneHCcekXeSOAHE3y8eXvBkGm5fkUKEUf6en/Dhb/
-	o70qZFu1HlEf6eMmAMajC3stgABxodmso06BhZsPIK/2wNxOaw215Js5ARbZLUc/ysHs5+w7Kca
-	t/
-X-Google-Smtp-Source: AGHT+IE4JOLUnKqTG+RRT3va8EmyFFWbs2GSaAaRZYzN4jRFgloh4aLC71f8N6Pli1m8JiHLL5dIBg==
-X-Received: by 2002:a5d:64cd:0:b0:3a4:f7e6:284b with SMTP id ffacd0b85a97d-3b61b0ec05bmr5500785f8f.10.1752929798033;
-        Sat, 19 Jul 2025 05:56:38 -0700 (PDT)
-Received: from Ansuel-XPS24 (host-212-171-170-230.retail.telecomitalia.it. [212.171.170.230])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4562e81ccb4sm106688005e9.17.2025.07.19.05.56.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Jul 2025 05:56:37 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Stefan Roese <sr@denx.de>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Cc: Christian Marangi <ansuelsmth@gmail.com>
-Subject: [PATCH 5/5] i2c: mt7621: make device reset optional
-Date: Sat, 19 Jul 2025 14:56:15 +0200
-Message-ID: <20250719125617.8886-6-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250719125617.8886-1-ansuelsmth@gmail.com>
-References: <20250719125617.8886-1-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1752929867; c=relaxed/simple;
+	bh=C37ie8I+20jkjConEf+5/eKxSa7Tx/KOav8UbMQf704=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y9XMffLrrr36iPZWDBnG0l8bvdN2VBtxb5uMSSJQmWk3N7CvXNqLv3UlgeXL6iobL1ZHK9fIqZMgttiOkHNDBNMevwG4Q90Kt+Vuz55gE8u9NMwnZyB6u9upH8nWJ4bzLsGGt+rfLGxh3Z+a+u+zADjW4IhpVo49tRVDH1oy8G0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jXg9BoHT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D56FC4CEE3;
+	Sat, 19 Jul 2025 12:57:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752929866;
+	bh=C37ie8I+20jkjConEf+5/eKxSa7Tx/KOav8UbMQf704=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jXg9BoHTkrXiMC1Pu4Xx63OY4txlLPVfqDoPW8+rAwgY4KYJ5FRtMkkCHC1gZ5G2J
+	 Xrc/Q5JAA723pP0cTOovmNBwdENUYnElmVoX8GvqJY793dZYwUhJCXo/xa9lf4h3XY
+	 ap2rFNFvAmSf2F3TBOpSuBNrzkQDz5wVuuT99uJwVC/3YNtQh1BYlvmtxkN/VjwEIM
+	 ldnaIFVtbyDLvOrhyyQ9o5dpdzE5JZmvlxhyupDUriINIb3FkqhO3OwDdR3nvbBbNp
+	 kpOdS4ojfgAqsOX+4U5Kz8nLwO/mGZ7pJqMcLmaBqZHTdXFaChaP8vSB1DDX54eUDa
+	 p7CgfqmR7PvUQ==
+Message-ID: <a67fcfc9-e708-47db-8605-e20a8b54b0d1@kernel.org>
+Date: Sat, 19 Jul 2025 14:57:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 05/10] mfd: Add Apple Silicon System Management
+ Controller
+To: Lee Jones <lee@kernel.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
+ Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel
+ <sre@kernel.org>, Janne Grunau <j@jannau.net>,
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>,
+ Hector Martin <marcan@marcan.st>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Marc Zyngier <maz@kernel.org>,
+ "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, asahi@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+References: <20250610-smc-6-15-v7-0-556cafd771d3@kernel.org>
+ <20250610-smc-6-15-v7-5-556cafd771d3@kernel.org>
+ <20250619114958.GJ587864@google.com>
+ <f30406ae-90ed-4f81-9519-e6ae2dcc9e03@kernel.org>
+ <20250624155340.GL795775@google.com>
+Content-Language: en-US
+From: Sven Peter <sven@kernel.org>
+In-Reply-To: <20250624155340.GL795775@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Airoha SoC that makes use of the same Mediatek I2C driver/logic doesn't
-have reset line for I2C so use optional device_reset variant.
+On 24.06.25 17:53, Lee Jones wrote:
+> On Sat, 21 Jun 2025, Sven Peter wrote:
+> 
+>> On 19.06.25 13:49, Lee Jones wrote:
+>>> On Tue, 10 Jun 2025, Sven Peter wrote:
+>>>
+>>>> The System Management Controller (SMC) on Apple Silicon machines is a
+>>>> piece of hardware that exposes various functionalities such as
+>>>> temperature sensors, voltage/power meters, shutdown/reboot handling,
+>>>> GPIOs and more.
+>>>>
+>>>> Communication happens via a shared mailbox using the RTKit protocol
+>>>> which is also used for other co-processors. The SMC protocol then allows
+>>>> reading and writing many different keys which implement the various
+>>>> features. The MFD core device handles this protocol and exposes it
+>>>> to the sub-devices.
+>>>>
+>>>> Some of the sub-devices are potentially also useful on pre-M1 Apple
+>>>> machines and support for SMCs on these machines can be added at a later
+>>>> time.
+>>>>
+>>>> Co-developed-by: Hector Martin <marcan@marcan.st>
+>>>> Signed-off-by: Hector Martin <marcan@marcan.st>
+>>>> Reviewed-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+>>>> Reviewed-by: Neal Gompa <neal@gompa.dev>
+>>>> Signed-off-by: Sven Peter <sven@kernel.org>
+>>>> ---
+>>>>    MAINTAINERS                |   2 +
+>>>>    drivers/mfd/Kconfig        |  18 ++
+>>>>    drivers/mfd/Makefile       |   1 +
+>>>>    drivers/mfd/macsmc.c       | 498 +++++++++++++++++++++++++++++++++++++++++++++
+>>>>    include/linux/mfd/macsmc.h | 279 +++++++++++++++++++++++++
+>>>>    5 files changed, 798 insertions(+)
+>>>
+>>> This is ready.  Let me know when you have all of the other driver/* Acks.
+>>>
+>>
+>> They've all been reviewed by the respective maintainers.
+>>
+>> I assume you want to take this all through the mfd tree and we'll need acks
+>> from Sebastian for power/reset and either Linus or Bartosz for gpio then.
+> 
+> That's right.
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- drivers/i2c/busses/i2c-mt7621.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Can you maybe comment on 
+https://lore.kernel.org/asahi/20250610-smc-6-15-v7-0-556cafd771d3@kernel.org/T/#m25fe0bd8fe5fa47ed63f4238da80d7186a65450c?
 
-diff --git a/drivers/i2c/busses/i2c-mt7621.c b/drivers/i2c/busses/i2c-mt7621.c
-index b4dc1fb269a6..6e3848f163f0 100644
---- a/drivers/i2c/busses/i2c-mt7621.c
-+++ b/drivers/i2c/busses/i2c-mt7621.c
-@@ -91,7 +91,7 @@ static void mtk_i2c_reset(struct mtk_i2c *i2c)
- 	u32 reg;
- 	int ret;
- 
--	ret = device_reset(i2c->adap.dev.parent);
-+	ret = device_reset_optional(i2c->adap.dev.parent);
- 	if (ret)
- 		dev_err(i2c->dev, "I2C reset failed!\n");
- 
--- 
-2.50.0
+A sub device declared with
+
+MFD_CELL_OF("macsmc-reboot", NULL, NULL, 0, 0, "apple,smc-reboot")
+
+is picked up even if there's no corresponding node in the device tree.
+Is this expected behavior for mfd? There are some pre-M1 iDevices that 
+also have a variant of SMC that doesn't have the reboot functionality.
+We can always special case it with a different compatible but just 
+dropping the sub-node from the device tree would've been neat.
+
+> 
+>> The one line change inside drivers/soc/apple would usually go through my
+>> tree and I'm fine with taking that through mfd instead.
+> 
+> If there are no build-time dependencies on it, you can take it.
+
+Okay, I've picked it up now.
+
+> 
+> I'm happy to take only the inter-dep ones or all (except the arch/ ones).
+>
+
+Sure, I'll take those as well once the dt-bindings are in.
+
+
+Thanks,
+
+Sven
+
 
 
