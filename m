@@ -1,128 +1,76 @@
-Return-Path: <linux-kernel+bounces-737619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55B97B0AE77
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 09:48:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56283B0AE7F
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 09:57:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28B15580125
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 07:48:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2D887B940F
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 07:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15FE62309AA;
-	Sat, 19 Jul 2025 07:48:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="fJpOaLhm"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45D623314B;
+	Sat, 19 Jul 2025 07:57:43 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C1B881E;
-	Sat, 19 Jul 2025 07:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1124F1D90C8
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 07:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752911313; cv=none; b=QKidTtUpFqm43XnbEC2ZiSNPBsDXpMREicTQarz6skp6RbK/bEoaYcP4z7dXEccEDzbGJTDJ3GP/gcGyYKAJ6Drb9siT2Kz69UBqiIltsQ3tHV5OvS0ULsv1hPiFxBbpW3428riW992jbhn32n0b6NXw57yfZZW5ZJsa4MolWUM=
+	t=1752911863; cv=none; b=K4nRO2CxMlSMDZdkmn05ZdPAWq+GkWWYDD7qUnoRm1x0IPR3H5L1sEdrYHtLlV6LqFOnmGiHu0E3wkYpb/oxPHHrKxSqUjf4FUHIyIvxK3wizI5EiiYTIXVY9NDcbhDZA4nUjJwk1nz4Fpr7GDx3dvA16/Pc1h7bpZYycZnuUHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752911313; c=relaxed/simple;
-	bh=dOTF4TfM5DkdldHHbpLtsX+V527pvOffm6b+AAZX3J0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pHY2T1SUUf/nX5BbkIRwR1J6fCR5+2sVU2SZaKV8zE65sDGZ7gMFDSqrnXHdxV7hdUGJUR90nijt13OldVg7/E9X0Ke0PIFt8fEpAyXJNAsaww1/uAAGGbUs11bgzyFrCS3pdohdeko0tVO/L1HIsuX1XF6prBOGKtcKTviY/j8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=fJpOaLhm; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=FcFMDElLC1w3IwQAZkIy/F9GBkkrWViENuKHPwxqZEg=; b=fJpOaLhmWJX0ZsrbDPd4EhqIDy
-	TmqDsdiZGMK1CtxQJIZTEFpXBtWaSsGw8N6Khv53+I2DCoD+DVuoaJP/LazbyqQZQwEZVX/zuakQK
-	5foc7Ip5F0DjB4GGliacXe8/a8oEtQGxqY51+D1NeNB3dd80S+9ObdUVxpSneplKSRHR6r3ph+CtB
-	B4e16AngspEr20Eqn8yJkzj9aHSuFRy4yWj1rgh7XMz1sISMBm5GuTIFvsB3HZWTtAUeEPrGde0J6
-	cfnoIoY11Ci7otdtxcx3g32BniWkXEzk4fZpO+aZXqclsO7tCaTe+uk3g+lpWiYDVcWsIN7rF7fVT
-	ksKCCI5A==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:41384)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1ud2Ix-00046g-1p;
-	Sat, 19 Jul 2025 08:48:23 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1ud2Iu-000410-2o;
-	Sat, 19 Jul 2025 08:48:20 +0100
-Date: Sat, 19 Jul 2025 08:48:20 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Abid Ali <dev.nuvorolabs@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: phy: Fix premature resume by a PHY driver
-Message-ID: <aHtNxLODmEHRVfdn@shell.armlinux.org.uk>
-References: <aHpyDpI9PW8wPf6I@shell.armlinux.org.uk>
- <20250719062550.652-1-dev.nuvorolabs@gmail.com>
+	s=arc-20240116; t=1752911863; c=relaxed/simple;
+	bh=d6HmxEgwgZMXqc3bZqhmeNos/FnnF6dfPT5rV+oUBOU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=YfmtMeg27z80qkFi+3JJ93dLBpXOPNwajFd39xS34cYyv73BjnzR8DYliNMgOCloMrKQt2TweOPk+Uw57xcGjxVN4yHkCGIVbMJyvlJmCW6a30Vfq8p+qEcbF6fgyYiegm/WAA90W8O/7b2J4R7+FwwIuYauaSfV5fGyRQ3ZrQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3e29fa7a669so14643365ab.3
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 00:57:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752911861; x=1753516661;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5t67112kUMJ6QpstqvWgt2XYp3uT2C9pcxSXPdo9apA=;
+        b=Brv2PCNk+vyFd2So/uMZvWoRpiDXM5pR6QKylbAFT6ehgeXZN7vXPQyAYLEZQCadM1
+         fUY+mgpmxUDTvGfw8m7pZCuXc1/Lu+84sO+lGGHPB7C+j34o2kTPgLIyLDl6OI7W8bVk
+         aeMpnfFXj/UBRbaCGuQ6rbReZs1WQkmdP6LfcsjDKVr+bUGJxnenrLhJNEZLWxERqF8O
+         V1OwY8q6ST88fQqeP/X43M1OYGg3qEWvMnPB/9bd/MSjKQI2db5AJOUzwrMJvyFqDVna
+         PKhpjIa3YV35Hu37IYlGkZkuk2AhO67lxBh7J0s2nVpWygGQUR7C0FZCEevo5KRdqMo5
+         fuMQ==
+X-Gm-Message-State: AOJu0YzDpHSGvDkPti+gCxJNCPfuPS9g20C05WlRY5wsFC/OMqsJD4ed
+	9V52nu3HtJ/c6II4vPHKYKoNmvdIUFR6aNAbtgKeXumDucnykc0fDj5wgwmm9dArgd9ZtB5G/Do
+	AIz64GxTcn5x1aUTaj/FfhFVYoIDO9UTBsNtthZHPSmUHv0mduAgiTlK9vmY=
+X-Google-Smtp-Source: AGHT+IHXf1O8a0eyT88RrkksEpuZUBNnRU/xBoEHm4Q3l2/2ueFtx/tDf/7T34n4iX+UxBItqSBVN3HyPrVgxbDFlR2yaXkloLPu
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250719062550.652-1-dev.nuvorolabs@gmail.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+X-Received: by 2002:a05:6e02:1a01:b0:3e2:a586:3f2a with SMTP id
+ e9e14a558f8ab-3e2a58640b4mr2088535ab.10.1752911861200; Sat, 19 Jul 2025
+ 00:57:41 -0700 (PDT)
+Date: Sat, 19 Jul 2025 00:57:41 -0700
+In-Reply-To: <68794b99.a70a0220.693ce.0052.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <687b4ff5.a70a0220.693ce.007d.GAE@google.com>
+Subject: Forwarded: 
+From: syzbot <syzbot+fa88eb476e42878f2844@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Jul 19, 2025 at 06:25:47AM +0000, Abid Ali wrote:
-> On Fri, Jul 18, 2025 at 05:10:54 PM +0100, Russell King (Oracle) wrote:
-> > Sorry but no. The PHY will be "resumed" from boot, even if it wasn't
-> > "suspended". So the idea that resume should only be called if it was
-> > previously suspended is incorrect.
-> 
-> > E.g. .ndo_open -> ... -> phy_attach_direct() -> phy_resume() ->
-> > 	phydrv->resume()
-> 
-> I do point this path out and there is also a second call
-> (2) .ndo_open -> phylink_start -> phy_start -> __phy_resume
-> This would mean 2 calls to the PHY resume every time an interface is
-> taken UP is expected behaviour?.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-The whole point is this:
+***
 
-> > During this path, the PHY may or may not be suspended, depending on
-> > the state of the hardware when control was passed to the kernel,
-> > which includes kexec().
+Subject: 
+Author: purvayeshi550@gmail.com
 
-Thus, the resume function *must* cope with an already resumed PHY,
-and thus adding extra complexity to try to ignore calling the resume
-function if it wasn't previously suspended is likely to cause
-regressions - phydrv->suspended will be clear for the initial call
-to ->resume(). Thus, if the PHY was suspended at boot time, it won't
-be resumed when one attempts to bring up the interface initially.
-
-Just fix your driver's resume function.
-
-> > PHY drivers must cope with an already functional PHY when their
-> > resume() method is called.
-> 
-> This is not what I expected, but if it is by design I do not see a
-> need to fight it. Just to make it clear, if we need to reset a PHY
-> after it returns from suspend(or any code thats dependant), the driver`s
-> callback should provide this guarantee?.
-
-Hardware or software reset?
-
-How much a software reset disrupts the PHY is PHY dependent. E.g. there
-are PHYs that need to be software reset for configuration and
-advertisement changes, but all the software configuration is preserved
-over such a reset.
-
-So I can't answer your question. It depends how disruptive the reset
-you are talking about is to your PHY implementation.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+#syz-test
 
