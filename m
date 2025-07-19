@@ -1,92 +1,174 @@
-Return-Path: <linux-kernel+bounces-737664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6979CB0AF11
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 11:17:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D42FEB0AEFE
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 11:15:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26C4D7B7556
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 09:15:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D42D7ACEB2
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 09:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 608C922FF2E;
-	Sat, 19 Jul 2025 09:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="clQmT50X"
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528E523AB8A;
+	Sat, 19 Jul 2025 09:14:29 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F30C21CA14
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 09:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86C5238166;
+	Sat, 19 Jul 2025 09:14:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752916640; cv=none; b=PNHf1IoyJguNv4HWE7RH6Vri3HX0HU7n/vEd5kU4DC+QwTmzGVQ1jIlCZ8sEzIUzR9GwaHVEQSoezB6zCgO+WYdfkyM97S1OrcUFNDYl3xz/F95ydQ5BVvgtiThP/I09m+U3XGcipgfGyUM9Mz0zUITTzRFu7LqYu2J8snErUL0=
+	t=1752916468; cv=none; b=kfriQMzB9aHcDDhuEqATjKlzyPivo6F903nwIq8y3y2VvFgvfrAu29B4StbXhzDYOBuOiQTvmT2W+MFm6bJdFvasc/cDAMKoJ2iNqbyxSAxUr8s1jYQJYw921O695BFqm27tdSUNKSmQmKpupFyoVCheQFWtPutFCrFL3jTSHxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752916640; c=relaxed/simple;
-	bh=7IlYzhn77dJev2hRKjtozxd0Yq8XgaGAhUfgXTdMQ6Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B8IF5DBTiqNWfsJUgtgsLRlG8+q9ah6D+Lmk0Wc9Ple1zXjxBoB69UFBiWLTEpB42O0SlAaqYeXu2ydjs8VD/IMkQsITON09P/D9iAfTQYnTnylBO9pnuDK03p5Lu1Af4yU/ONlyLQRwwsKUYc45apFeJn6RJxRtaT1tJLAvT/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=clQmT50X; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1752916630; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=48j/Fiq/ITVOw3EkwwMwGlaSpdF2iiyoXb+kYVk+eX0=;
-	b=clQmT50XrkjVBXRNRwijoVR8H6+Jy50apcc017bjArRIwnAMr7BS53DYCNYAgfBfinqOdhAo8a+IXRMDEOXSzSXuNn5f+i1ph1O+Xt4OXqjg7lUctWv7w0jEYfezkOnvCedVAmbXK9cWmhlQQdl/HZH60MnCkEsCERYpnn3SRng=
-Received: from U-V2QX163P-2032.local(mailfrom:fengwei_yin@linux.alibaba.com fp:SMTPD_---0WjEL8b0_1752916629 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Sat, 19 Jul 2025 17:17:09 +0800
-Date: Sat, 19 Jul 2025 17:17:09 +0800
-From: YinFengwei <fengwei_yin@linux.alibaba.com>
-To: Kees Cook <kees@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	zhourundong.zrd@linux.alibaba.com
-Subject: Re: [PATCH] binfmt_elf: remove the 4k limitation of program header
- size
-Message-ID: <xd6zp5ytq6iakxkqoqqtseomgu5oohau4ynj3xbo7ejohpv7dv@skp2v7awzab4>
-References: <20250717110108.55586-1-fengwei_yin@linux.alibaba.com>
- <175279510782.2985357.8915174612817966643.b4-ty@kernel.org>
+	s=arc-20240116; t=1752916468; c=relaxed/simple;
+	bh=aMHhOoynbPDET+/Dpg649q+vDc0nYBSz40pFbmgcYaQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IiwlSH591ZIf6c/t2g0FJEcXIZ6y04Bw0bpqIxd1wxMx1PlVeLuxrraVDpkWdEN1BFBsoP7mwdS4xEoedew1cGTWCmTDz6JZS1RBjnWRS0F9vGIhXUr0p8DTYAyvq5yBnufxA10u4iKVu7OKLFVgtYj8XAxFU3eGra1aCfQLcNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bkgw06XK6zKHMq3;
+	Sat, 19 Jul 2025 17:14:24 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 839EB1A109E;
+	Sat, 19 Jul 2025 17:14:23 +0800 (CST)
+Received: from ultra.huawei.com (unknown [10.90.53.71])
+	by APP4 (Coremail) with SMTP id gCh0CgCHURLuYXtopCAYAw--.54295S2;
+	Sat, 19 Jul 2025 17:14:23 +0800 (CST)
+From: Pu Lehui <pulehui@huaweicloud.com>
+To: bpf@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@kernel.org>,
+	Puranjay Mohan <puranjay@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Pu Lehui <pulehui@huawei.com>
+Subject: [PATCH bpf-next 00/10] Add support arena atomics for RV64
+Date: Sat, 19 Jul 2025 09:17:20 +0000
+Message-Id: <20250719091730.2660197-1-pulehui@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <175279510782.2985357.8915174612817966643.b4-ty@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCHURLuYXtopCAYAw--.54295S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAw1DAryftr4fCFW3Kw4DArb_yoW5AFW3pr
+	43Gr9rGa15Ww1UCa9I9a4xC345Ca1Yvw15Jw4kAw1xAF1Ygr15JFZ2k3W3Ar15Krs3Xa1Y
+	kryjqa4jyw4UAr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
+	n4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
+	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8
+	ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
+	CY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAF
+	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
+	7IU0s2-5UUUUU==
+X-CM-SenderInfo: psxovxtxl6x35dzhxuhorxvhhfrp/
 
-On Thu, Jul 17, 2025 at 04:31:50PM +0800, Kees Cook wrote:
-> On Thu, 17 Jul 2025 19:01:08 +0800, fengwei_yin@linux.alibaba.com wrote:
-> > We have assembly code generated by a script. GCC successfully compiles
-> > it. However, the kernel cannot load it on an ARM64 platform with a 4K
-> > page size. In contrast, the same ELF file loads correctly on the same
-> > platform with a 64K page size.
-> > 
-> > The root cause is the Linux kernel's ELF_MIN_ALIGN limitation on the
-> > program headers of ELF files. The ELF file contains 78 program headers
-> > (the script inserts many holes when generating the assembly code). On
-> > ARM64 with a 4K page size, the ELF_MIN_ALLIGN enforces a maximum of 74
-> > program headers, causing the ELF file to fail. However, with a 64K page
-> > size, the ELF_MIN_ALIGN is relaxed to over 1,184 program headers, allowing
-> > the file to run correctly.
-> > 
-> > [...]
-> 
-> Applied to for-next/execve, thanks!
-Cook, thanks a lot.
+From: Pu Lehui <pulehui@huawei.com>
 
-Regards
-Yin, Fengwei
+patch 1-3 refactor redundant load and store operations.
+patch 4-7 add Zacas instructions for cmpxchg.
+patch 8 optimizes exception table handling.
+patch 9-10 add support arena atomics for RV64.
 
-> 
-> [1/1] binfmt_elf: remove the 4k limitation of program header size
->       https://git.kernel.org/kees/c/8030790477e8
-> 
-> Take care,
-> 
-> -- 
-> Kees Cook
+Tests `test_progs -t atomic,arena` have passed as shown bellow,
+as well as `test_verifier` and `test_bpf.ko` have passed.
+
+$ ./test_progs -t arena,atomic
+#3/1     arena_atomics/add:OK
+#3/2     arena_atomics/sub:OK
+#3/3     arena_atomics/and:OK
+#3/4     arena_atomics/or:OK
+#3/5     arena_atomics/xor:OK
+#3/6     arena_atomics/cmpxchg:OK
+#3/7     arena_atomics/xchg:OK
+#3/8     arena_atomics/uaf:OK
+#3/9     arena_atomics/load_acquire:OK
+#3/10    arena_atomics/store_release:OK
+#3       arena_atomics:OK
+#4/1     arena_htab/arena_htab_llvm:OK
+#4/2     arena_htab/arena_htab_asm:OK
+#4       arena_htab:OK
+#5/1     arena_list/arena_list_1:OK
+#5/2     arena_list/arena_list_1000:OK
+#5       arena_list:OK
+#6/1     arena_spin_lock/arena_spin_lock_1:OK
+#6/2     arena_spin_lock/arena_spin_lock_1000:OK
+#6/3     arena_spin_lock/arena_spin_lock_50000:OK
+#6       arena_spin_lock:OK
+#10      atomic_bounds:OK
+#11/1    atomics/add:OK
+#11/2    atomics/sub:OK
+#11/3    atomics/and:OK
+#11/4    atomics/or:OK
+#11/5    atomics/xor:OK
+#11/6    atomics/cmpxchg:OK
+#11/7    atomics/xchg:OK
+#11      atomics:OK
+#513/1   verifier_arena/basic_alloc1:OK
+#513/2   verifier_arena/basic_alloc2:OK
+#513/3   verifier_arena/basic_alloc3:OK
+#513/4   verifier_arena/basic_reserve1:OK
+#513/5   verifier_arena/basic_reserve2:OK
+#513/6   verifier_arena/reserve_twice:OK
+#513/7   verifier_arena/reserve_invalid_region:OK
+#513/8   verifier_arena/iter_maps1:OK
+#513/9   verifier_arena/iter_maps2:OK
+#513/10  verifier_arena/iter_maps3:OK
+#513     verifier_arena:OK
+#514/1   verifier_arena_large/big_alloc1:OK
+#514/2   verifier_arena_large/access_reserved:OK
+#514/3   verifier_arena_large/request_partially_reserved:OK
+#514/4   verifier_arena_large/free_reserved:OK
+#514/5   verifier_arena_large/big_alloc2:OK
+#514     verifier_arena_large:OK
+Summary: 8/39 PASSED, 0 SKIPPED, 0 FAILED
+
+Pu Lehui (10):
+  riscv, bpf: Extract emit_stx() helper
+  riscv, bpf: Extract emit_st() helper
+  riscv, bpf: Extract emit_ldx() helper
+  riscv: Separate toolchain support dependency from RISCV_ISA_ZACAS
+  riscv, bpf: Add rv_ext_enabled macro for runtime detection extentsion
+  riscv, bpf: Add Zacas instructions
+  riscv, bpf: Optimize cmpxchg insn with Zacas support
+  riscv, bpf: Add ex_insn_off and ex_jmp_off for exception table
+    handling
+  riscv, bpf: Add support arena atomics for RV64
+  selftests/bpf: Enable arena atomics tests for RV64
+
+ arch/riscv/Kconfig                            |   1 -
+ arch/riscv/include/asm/cmpxchg.h              |   6 +-
+ arch/riscv/kernel/setup.c                     |   1 +
+ arch/riscv/net/bpf_jit.h                      |  70 ++-
+ arch/riscv/net/bpf_jit_comp64.c               | 516 +++++-------------
+ .../selftests/bpf/progs/arena_atomics.c       |   9 +-
+ 6 files changed, 214 insertions(+), 389 deletions(-)
+
+-- 
+2.34.1
+
 
