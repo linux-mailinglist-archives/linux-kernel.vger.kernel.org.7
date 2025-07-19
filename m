@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-737452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E4E5B0ACCA
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 02:28:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5518AB0ACCC
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 02:28:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FC8A1C26FAB
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 00:28:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61DEA5A0781
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 00:28:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F07342C18A;
-	Sat, 19 Jul 2025 00:28:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 029F93BB48;
+	Sat, 19 Jul 2025 00:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ifjq+2gK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q3yVfyRS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5027E125B2;
-	Sat, 19 Jul 2025 00:28:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 502AC13FEE;
+	Sat, 19 Jul 2025 00:28:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752884899; cv=none; b=Jes0NN34Uzekn4PObjbyZ2E/PccOeKv69EcvmWLn8GW8zX0CFlCJ7QE7JX18+cv4mzW28l0YfEmSphhuTFU1Y0531uf1fGr5IzfWK7zLiHzpg02NKAPMJQI+my2RqKO9edz+DNllGAts7MlYBsEo0ChqE3ExmVmI8ClRwPWyxxY=
+	t=1752884899; cv=none; b=G2KXXsuELqzfhZIRJe9bKOuUtGFfUrWCavwU8okEAEiv0A+pghBsWuae0Yju1NUUHlMxzWheKMXY2y6zmBCjDiB6ngjXhZGDHqQ2oBOWLggEC9pUtmVklySjh93AyQOE4LPakl1NT4VFkoAEThAcQj8TH5LOYIn9ISzwcg83Btw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752884899; c=relaxed/simple;
-	bh=9QmLJANZefPN4fX6BWptBQk5yBPaFOqHuPr+mZ0Kvo4=;
+	bh=BlaBOIkXVR5xoqsab95nUX5wZC2ogd2y9wiA1pKiHvc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PzjDix55d6XB0FkIwDyfxjcbKHPer6svevXVgwWFvzzwVsiFnJQv8h327FvP5JJP8BQugpY43bYsfqXy8t/NEcz99WT7OKwbkPQE9/fWLxGxKlQdq9aSCkfIVU72YbL7JuuAd5lKGnAKRN9Kwp2hk3X6Mc6U2lXZLX4efX0h50U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ifjq+2gK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD8F0C4CEF1;
+	 MIME-Version; b=TLMpA363cc5ARJmiXBNs4DPHgTmyHQNamA0BkXXLNbvNmMU0gQMyc8cbEepBuLDYOU8ND5uXa/dwaWH3TteM3BaX3yXNwwlBEUjPcaxrYa7gmHIIfT2HzJdV1X+QtSyBTUbQOkJsqxo4tu3aNj+q7iqQAuGCXi0fSQ96HG90h9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q3yVfyRS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2D9EC4CEF7;
 	Sat, 19 Jul 2025 00:28:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1752884898;
-	bh=9QmLJANZefPN4fX6BWptBQk5yBPaFOqHuPr+mZ0Kvo4=;
+	bh=BlaBOIkXVR5xoqsab95nUX5wZC2ogd2y9wiA1pKiHvc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ifjq+2gKCKX4amJcdslj69q121nVmcLIc2OWZqqCGH0rLFErN5Pa1GjHLDz90GoYo
-	 sDMiekM/Kc2jIVSLNwq48F1O/F2zmSXAF4bo09kmzrBRgk1R0KOYqswGj6eiFpVoSl
-	 Yz00GhngEJdlapfSDzvUtJHtxXV7NFLsaefWDfMIsbffPTWLmVe1vWyWnIhjZTJ38V
-	 wnn0cNTXGTIn4k4C85cmTKdCKdR3FPaQd1jjEElJn1l7si1/MZ5opA6ktN3EBRfVzb
-	 vqKk0hUVw/ikxgbsz+5i1G7kJKzTDIJJstOFzqXEk2WuO6enfoUk6Qp1seubFo7C0S
-	 l3QByV3HOft5Q==
+	b=q3yVfyRS2ue4vgmK53aJk0P6HiMmYuA7qjTqg0ZPbFFD1mPJY7/1KLCntptvFbbH4
+	 SW/olTypliXUoj+FLaRkEpCV8g6hVn52+ncXpYUV+w0Z/NOVXc4cTpH3uisvu95nSC
+	 Ie2S4WqQYtwDok5oGOdrRCxjd1iATjNcguPPyt2/tW2c375ajKEdimX1J6qo8Uyo+r
+	 sAkoOfzKr/Lh3+8fpJlf001DJqJBP/DYCIIdTCo90j5uH6+HhNKAo+fOBpjyN/bdZ5
+	 igeXRnePlvwSH5yr4NnNPahUUEJqZXc8/LcPBwoojMh4RF5aWGoXwp8/dXQNS2b2MF
+	 NPklXUqs0v1Fw==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 7D961CE0D86; Fri, 18 Jul 2025 17:28:18 -0700 (PDT)
+	id 80477CE0DEB; Fri, 18 Jul 2025 17:28:18 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -50,9 +50,9 @@ Cc: linux-kernel@vger.kernel.org,
 	"Paul E. McKenney" <paulmck@kernel.org>,
 	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
 	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH v2 2/4] srcu: Add srcu_read_lock_fast_notrace() and srcu_read_unlock_fast_notrace()
-Date: Fri, 18 Jul 2025 17:28:15 -0700
-Message-Id: <20250719002817.4121867-2-paulmck@kernel.org>
+Subject: [PATCH v2 3/4] srcu: Add guards for notrace variants of SRCU-fast readers
+Date: Fri, 18 Jul 2025 17:28:16 -0700
+Message-Id: <20250719002817.4121867-3-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <3cecf6c9-b2ee-4f34-9d1b-ca4cfb8e56a7@paulmck-laptop>
 References: <3cecf6c9-b2ee-4f34-9d1b-ca4cfb8e56a7@paulmck-laptop>
@@ -64,60 +64,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This commit adds no-trace variants of the srcu_read_lock_fast() and
-srcu_read_unlock_fast() functions for tracing use.
+This adds the usual scoped_guard(srcu_fast_notrace, &my_srcu) and
+guard(srcu_fast_notrace)(&my_srcu).
 
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Cc: Steven Rostedt <rostedt@goodmis.org>
 Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- include/linux/srcu.h | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ include/linux/srcu.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/include/linux/srcu.h b/include/linux/srcu.h
-index 478c73d067f7d..7a692bf8f99b9 100644
+index 7a692bf8f99b9..ada65b58bc4c5 100644
 --- a/include/linux/srcu.h
 +++ b/include/linux/srcu.h
-@@ -282,6 +282,20 @@ static inline struct srcu_ctr __percpu *srcu_read_lock_fast(struct srcu_struct *
- 	return retval;
- }
+@@ -515,4 +515,9 @@ DEFINE_LOCK_GUARD_1(srcu_fast, struct srcu_struct,
+ 		    srcu_read_unlock_fast(_T->lock, _T->scp),
+ 		    struct srcu_ctr __percpu *scp)
  
-+/*
-+ * Used by tracing, cannot be traced and cannot call lockdep.
-+ * See srcu_read_lock_fast() for more information.
-+ */
-+static inline struct srcu_ctr __percpu *srcu_read_lock_fast_notrace(struct srcu_struct *ssp)
-+	__acquires(ssp)
-+{
-+	struct srcu_ctr __percpu *retval;
++DEFINE_LOCK_GUARD_1(srcu_fast_notrace, struct srcu_struct,
++		    _T->scp = srcu_read_lock_fast_notrace(_T->lock),
++		    srcu_read_unlock_fast_notrace(_T->lock, _T->scp),
++		    struct srcu_ctr __percpu *scp)
 +
-+	srcu_check_read_flavor_force(ssp, SRCU_READ_FLAVOR_FAST);
-+	retval = __srcu_read_lock_fast(ssp);
-+	return retval;
-+}
-+
- /**
-  * srcu_down_read_fast - register a new reader for an SRCU-protected structure.
-  * @ssp: srcu_struct in which to register the new reader.
-@@ -394,6 +408,17 @@ static inline void srcu_read_unlock_fast(struct srcu_struct *ssp, struct srcu_ct
- 	RCU_LOCKDEP_WARN(!rcu_is_watching(), "RCU must be watching srcu_read_unlock_fast().");
- }
- 
-+/*
-+ * Used by tracing, cannot be traced and cannot call lockdep.
-+ * See srcu_read_unlock_fast() for more information.
-+ */
-+static inline void srcu_read_unlock_fast_notrace(struct srcu_struct *ssp,
-+						 struct srcu_ctr __percpu *scp) __releases(ssp)
-+{
-+	srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_FAST);
-+	__srcu_read_unlock_fast(ssp, scp);
-+}
-+
- /**
-  * srcu_up_read_fast - unregister a old reader from an SRCU-protected structure.
-  * @ssp: srcu_struct in which to unregister the old reader.
+ #endif
 -- 
 2.40.1
 
