@@ -1,99 +1,79 @@
-Return-Path: <linux-kernel+bounces-737825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DA4DB0B0FF
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 19:03:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C050B0B101
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 19:03:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24B187B13AA
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 17:01:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 233321AA2CBF
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 17:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D6A72882C8;
-	Sat, 19 Jul 2025 17:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0F9288C2F;
+	Sat, 19 Jul 2025 17:03:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lznGnp/o"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X0iXKGdg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6862642AA4;
-	Sat, 19 Jul 2025 17:02:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3B3E288D6;
+	Sat, 19 Jul 2025 17:03:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752944577; cv=none; b=lCwT267xFNiAxL7dZ1vBcSKVVjUNRdQPHEIMb7YY0HZ9cW36s2Pkgrf42nc+57HY0U1ZSM2opsccVnwVbQ6jbnWWeUdNd8R8uAG86J9V0waJ7iD1sLufafegXkIOKLQa7MMIn6NIKFGEEVZCoMft27UcgUsgCfDJ4pFu8EvDag0=
+	t=1752944608; cv=none; b=RAANvbBr2yXi1NB5b5m6n8I+4uJISrYENlNWjk0cG7DN2jzyuHUDSZV99SM4wB9KKImc3F/gzR7yuMWTY9UTksJa83CAJBLFF1PR43sbO01yfqpHHDQdWmxlXpcJjLw0qZT0oADz+JZB2HCUqM0sfbdfG1Ai89dBcUnwiisp+FQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752944577; c=relaxed/simple;
-	bh=NxrKEo6TW3QpFyL4ZwiWJ9cTkhlJqK8L2nDZg37x57s=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=uNVVfnKEuir5+if4Gl47iTcUGqvTFnNQXnXa2ElAbnS3nPuz01Q7pHZp7jBgSSDgLaIi6lOBhOYnKOy1Y2xr/aUAHolhGugOJrzWfdirag0d4IABuG3x1dNumkNqoUUbY/Qt0KOYsUWSJuWROwpK5tM/0udjYapx5R3lw77Fb+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lznGnp/o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C101EC4CEE3;
-	Sat, 19 Jul 2025 17:02:56 +0000 (UTC)
+	s=arc-20240116; t=1752944608; c=relaxed/simple;
+	bh=sJNnKnkXGsdPPhNfMhZY6tva9BGGaREvLPGZEO1Wn6Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iIlJxC74kiYDx4EtNJwRQd0X+PFZm09cXcsV38jZHnBXEA3lJFMZypmUDkwH0xdFAo5aEkNYp7X82XQt3/ZTZcaWF5gmOYurxAayOVo8o8AZjEHf2Z537BJoURqDNo5desZH1yUXUzUIwIfQ0kLDVotk5keLE9Y5NgM31cod5kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X0iXKGdg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B34ABC4CEE3;
+	Sat, 19 Jul 2025 17:03:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752944576;
-	bh=NxrKEo6TW3QpFyL4ZwiWJ9cTkhlJqK8L2nDZg37x57s=;
-	h=Date:From:To:Cc:Subject:From;
-	b=lznGnp/oNO50dbJTV7ja5VKnkzMdO6dlcG1ddglomgpBlcOVIlQ90VLkXhztg33Sy
-	 hvqZzzDehNrsBili0eMzIP0Yq36NrkJA1XNWoVrQ32wAcyGl+scToFy/deznpqWIiO
-	 3xPxOm0kBdNe/rZLjHaTkxnwhbachdl30zGJPvwyCaEklA26I2TVMFnzijdXD7Axhm
-	 vsb5FX56rH7tFzCgcPWgq4DD+Sz2oNAbvIvTTsNb6EcJkzyeIobvdUQJWGFZdYV3x0
-	 OErqqp5lwuaq3Sjg0ULQKgNBDLtOSB2gByhiPRA0SSn52LsiBS/V1fxZJTAwR0cqSc
-	 G7nReJa/brMfA==
-Date: Sat, 19 Jul 2025 07:02:54 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>,
-	Changwoo Min <changwoo@igalia.com>, linux-kernel@vger.kernel.org,
-	sched-ext@lists.linux.dev
-Subject: [GIT PULL] sched_ext: Fixes for v6.16-rc6
-Message-ID: <aHvPvsnPScZVpVAM@slm.duckdns.org>
+	s=k20201202; t=1752944608;
+	bh=sJNnKnkXGsdPPhNfMhZY6tva9BGGaREvLPGZEO1Wn6Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=X0iXKGdgHrgediD/d5EQhRvnRAy5MbMODvn5vzQC6W+Kfp2XVLZSDDBX41DQ4huFz
+	 EolTMkquCT2WPksuU4e8co4gkv1PBNR4g/WvMtqgeZpB3TNYrRBsWb/tjCXO/EYy4o
+	 pWLT5E7qn0Vhub/PS/okqCbcHj97dyxrCpeiY9q5t5mTOeVviF1yc9K1WugjiYfdPq
+	 eSFTOhDN8KFYvN68IlR61lA1k1BmcX7k9BlxsXnE6CIhvK1KBUI3AoUSIztzH5ZetV
+	 nG+Ws6k0e+1phUhwp6US4cJ4MNSHmSm6XHttOupSb2N5LA86SmBfzH9gRgR8nQ+e+o
+	 Nb62ZVQBzZ58g==
+Message-ID: <a0a868ef-107e-4b1b-8443-f10b7a35aabb@kernel.org>
+Date: Sat, 19 Jul 2025 19:03:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/4] rust: miscdevice: abstraction for uring-cmd
+To: Sidong Yang <sidong.yang@furiosa.ai>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Jens Axboe <axboe@kernel.dk>, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <20250719143358.22363-1-sidong.yang@furiosa.ai>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20250719143358.22363-1-sidong.yang@furiosa.ai>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The following changes since commit 33796b91871ad4010c8188372dd1faf97cf0f1c0:
+Hi Sidong,
 
-  sched_ext, sched/core: Don't call scx_group_set_weight() prematurely from sched_create_group() (2025-06-17 08:19:55 -1000)
+On 7/19/25 4:33 PM, Sidong Yang wrote:
+> This patch series implemens an abstraction for io-uring sqe and cmd and
+> adds uring_cmd callback for miscdevice. Also there is an example that use
+> uring_cmd in rust-miscdevice sample.
 
-are available in the Git repository at:
+Please also add Greg, maybe get_maintainer.pl does not list him, since the
+entries for miscdevice were missing for a while I think.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git/ tags/sched_ext-for-6.16-rc6-fixes
+For new abstractions I also recommend to Cc the RUST reviewers.
 
-for you to fetch changes up to 06efc9fe0b8deeb83b47fd7c5451fe1a60c8a761:
-
-  sched_ext: idle: Handle migration-disabled tasks in idle selection (2025-07-17 08:19:38 -1000)
-
-----------------------------------------------------------------
-sched_ext: Fixes for v6.16-rc6
-
-- Fix handling of migration disabled tasks in default idle selection.
-
-- update_locked_rq() called __this_cpu_write() spuriously with NULL when @rq
-  was not locked. As the writes were spurious, it didn't break anything
-  directly. However, the function could be called in a preemptible leading
-  to a context warning in __this_cpu_write(). Skip the spurious NULL writes.
-
-- Selftest fix on UP.
-
-----------------------------------------------------------------
-Andrea Righi (2):
-      selftests/sched_ext: Fix exit selftest hang on UP
-      sched_ext: idle: Handle migration-disabled tasks in idle selection
-
-Breno Leitao (1):
-      sched/ext: Prevent update_locked_rq() calls with NULL rq
-
- kernel/sched/ext.c                       | 12 ++++++++----
- kernel/sched/ext_idle.c                  |  2 +-
- tools/testing/selftests/sched_ext/exit.c |  8 ++++++++
- 3 files changed, 17 insertions(+), 5 deletions(-)
-
--- 
-tejun
+Thanks,
+Danilo
 
