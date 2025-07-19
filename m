@@ -1,169 +1,271 @@
-Return-Path: <linux-kernel+bounces-737857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52E4DB0B14F
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 20:24:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E124B0B158
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 20:29:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C642562EBC
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 18:24:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 023AEAA714C
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 18:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8322121FF23;
-	Sat, 19 Jul 2025 18:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B041F956;
+	Sat, 19 Jul 2025 18:29:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uxLdz5Is"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HQUUUtNT"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3B049625
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 18:24:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC9AC288C13
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 18:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752949446; cv=none; b=q6/stz/yfsYtL7AQY//JCoTz9iaEJ04ZEaybbCRNQxitTmLh0hi1T7rQUVM3Yjp94/eNVfX9DFpR+g300ZFN+k+TiT0V0Cb9S7okutORt/8lL1CtmyPBPSCI3X5pCaOyoPuszojt1Bv1td6DdSBgn9C1Tu8U6mdC8IezSeYCtPQ=
+	t=1752949739; cv=none; b=CPju6zKNF7HszVB+S1Wkk2JX8q+39d1koXDg2s8s4dgZzpTyHxfRYkTuVWFLLqfapKUy8l+95Tnw9/GT5U0DJbekPwjfBcE+7NluJmaDjTzvlMAPtAf19dG7JDwjMg3+x7SLn/U9cciRVp890xYU1QALq0fnV76nQGkNrJGzfAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752949446; c=relaxed/simple;
-	bh=nuU4mdOobL67xNrn3j1Q+QlHy+gYsTQlVY9cjyDLs9Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jJRcD3yR5M0UEDZ5Zu3fte328WpEUIblsdu4EbN5y9/YB5bokh47fmn0loe9IwQAeoknL8KA6fioL0OwdMCTFhTMNHVPC2IdmgHzexUL6WYPTOvl/Oy/XwC6I5TeRhK1zRQxsKVAhBVFlY6Ow5TQ5LHJ3qKabsSF1IVbdMl0/6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uxLdz5Is; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 19 Jul 2025 14:23:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752949428;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3SR847fU0+ZN9JbGCXp2+j9CL/K+GJvO19i9f39mEaU=;
-	b=uxLdz5IsEVwpvdK8bs9Lm0hHcxbRm7jBgIMMWRGC8G8MkPbrUbibhQQbuWmsew7vSIyOXA
-	iZYuREoQY1/2i4uercNMLe7ihcIyIuOkao6dxif9DA7PU8HJJK649C9Q76Xrq9nBjLJVZK
-	v7hIBehJESCeyjf40h+kB65Bj750YFk=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: syzbot <syzbot+2b98caf09c41174a9697@syzkaller.appspotmail.com>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bcachefs?] KASAN: slab-use-after-free Write in
- bch2_get_next_dev
-Message-ID: <n2gwogdq44vxgvjdefktzbhfny2ezktepblcsj2q3z7t4dgbtv@6uafqubd7qr2>
-References: <ci6d4nck2pydr7gprqmv5v5rudgx5wrt5xumkzrewnwol2p2z7@t6ksfe4l3ayu>
- <687ac6f0.a70a0220.693ce.0070.GAE@google.com>
+	s=arc-20240116; t=1752949739; c=relaxed/simple;
+	bh=4eqfbzwTRiWOdlSaFW6JIpPIbctEpx/139iEQZ8sh8Q=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Wekb3p38evFhYZhHe+v9LHlihMaTWVKpzCyxG08z4hpr+ep+9+Breb3Xa95+SGj5Y6h64ZAQmsdJbnNSi9T4uuVIn7zsfUAlh37+mo+btKZksuJbnIFj1pkrVL5ZXSQ7CsuTqYYD36pB2UDg/11w56lQisycgXb/einKep5Bt3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HQUUUtNT; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2356ce55d33so51709515ad.0
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 11:28:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752949737; x=1753554537; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=0xEd/u+2IpZE3HiQH1JMDxFxVYywITI5/mdS+tdMrMQ=;
+        b=HQUUUtNTpsBM3qs8m1BPNr3USA4yjR75n4dJPqN+Lr2IWKQaT/XcThyBNJQA8k58fE
+         P5bOLV4hin4Gk1uTvRO/RyUIAWriidmcNi2PLMw89lGcw9ORIac/GKWfZ3VNccAW+goL
+         Huu/6YNoZ5tGvLlvBqrl8SmSvls5CYd6kAQIX2F2quKeBgZA9EAR9RvOZy47CTfwltd3
+         /7QNg85qeB4D1QKjzi/Ct8B1svpgNyfxKyTfHSmuW9QEyBI6jBMWBxRArjc21IzVQOW2
+         2eFYTagOuX4XlVL3oFWNmLZOaG3DBZNQlsBh+rJruK8s9sK7cwXgqZdEtsZxDvqpJZhu
+         tFvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752949737; x=1753554537;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0xEd/u+2IpZE3HiQH1JMDxFxVYywITI5/mdS+tdMrMQ=;
+        b=IeLLMnpqMygvxPKodXwywaSv3HpN29YW9jFdJAKHUrBeDjnsyq0S+loeBR7wInWt+N
+         hapQcJKJ0rsGHTsHAbN7PRRSph2BcElNlCh0qhiyAhrsRvaYRLVVL0SBFB4Uo/6GIST7
+         FOJVFweVV2JBmgFPUQNnrRVWzL94XBRe0spfXOX+nSZnDtGK65QqJfmMsAoZQFMIbHgs
+         sk6vxhxH23X9NOMwCXrnfuUTr7qG7Hzzxhaay2SNSowQjPxF0R4awH1vLIWZ6YGD03VS
+         nXzYMJrTbst4tOWygX11S/eRBY7F+oxTlnZE0ONoQyM0l0XM6MG0lJGdI6X4geCB/jBO
+         2FpA==
+X-Forwarded-Encrypted: i=1; AJvYcCW4rYXIyBCT50fI09Ei8IPIICcbeDQjkjaFkuslDS4Eox/ykGc60dwX+kzIDkCZ9HE4fQ/2XJNi1La04GA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxL2tHiRhwiC0EpD0TnoeZ87c8n0dua1vs1OXGYGXwnuQGQKaSR
+	LfJtCIqOu7YjjQKoY0QTS4HMxRFg9HzaDrwoB6fLGYBEiPyGFPXru1A/HEpKVv64T4Qdd+a+ZxM
+	KunLqew==
+X-Google-Smtp-Source: AGHT+IEo3zTyfmVqhcB5gfo8/UAHWAF5v2Oo3REY86B4jZzhZ39jSaM2c98Ey7dPLGRgT7CVz0wCfqx2UBI=
+X-Received: from plhq4.prod.google.com ([2002:a17:903:11c4:b0:231:def0:d268])
+ (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1447:b0:238:120:134a
+ with SMTP id d9443c01a7336-23e302cad77mr178702025ad.22.1752949737334; Sat, 19
+ Jul 2025 11:28:57 -0700 (PDT)
+Date: Sat, 19 Jul 2025 11:28:48 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <687ac6f0.a70a0220.693ce.0070.GAE@google.com>
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+Message-ID: <20250719182854.3166724-1-surenb@google.com>
+Subject: [PATCH v8 0/6] use per-vma locks for /proc/pid/maps reads
+From: Suren Baghdasaryan <surenb@google.com>
+To: akpm@linux-foundation.org
+Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, david@redhat.com, 
+	vbabka@suse.cz, peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org, 
+	mhocko@kernel.org, paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com, 
+	brauner@kernel.org, josef@toxicpanda.com, yebin10@huawei.com, 
+	linux@weissschuh.net, willy@infradead.org, osalvador@suse.de, 
+	andrii@kernel.org, ryan.roberts@arm.com, christophe.leroy@csgroup.eu, 
+	tjmercier@google.com, kaleshsingh@google.com, aha310510@gmail.com, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kselftest@vger.kernel.org, surenb@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Jul 18, 2025 at 03:13:04PM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-> general protection fault in seq_buf_puts
-> 
-> shmem_inode_cache total: 7.91 MiB active: 7.89 MiB
-> kmalloc-8k        total: 5.63 MiB active: 5.48 MiB
-> Shrinkers:
-> Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] SMP KASAN PTI
-> KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-> CPU: 1 UID: 0 PID: 6968 Comm: syz.4.25 Not tainted 6.16.0-rc6-syzkaller-gca12b17b7ceb #0 PREEMPT(full) 
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-> RIP: 0010:strlen+0x29/0x70 lib/string.c:420
-> Code: 90 f3 0f 1e fa 41 57 41 56 41 54 53 48 c7 c0 ff ff ff ff 49 be 00 00 00 00 00 fc ff df 48 89 fb 49 89 c7 48 89 d8 48 c1 e8 03 <42> 0f b6 04 30 84 c0 75 11 48 ff c3 49 8d 47 01 42 80 7c 3f 01 00
-> RSP: 0018:ffffc90003dde7a0 EFLAGS: 00010246
-> RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff88802c468000
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: ffffc90003dde8f0 R08: ffff8880357dead7 R09: 1ffff11006afbd5a
-> R10: dffffc0000000000 R11: ffffed1006afbd5b R12: ffffc90003dde860
-> R13: dffffc0000000000 R14: dffffc0000000000 R15: ffffffffffffffff
-> FS:  00007fb031fe66c0(0000) GS:ffff888125d2a000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007fe025a39e9c CR3: 0000000034726000 CR4: 00000000003526f0
-> Call Trace:
->  <TASK>
->  __fortify_strlen include/linux/fortify-string.h:268 [inline]
->  seq_buf_puts+0x34/0x1a0 lib/seq_buf.c:184
->  shrinker_to_text+0x115/0x3c0 mm/shrinker.c:836
->  shrinkers_to_text+0x840/0x960 mm/shrinker.c:911
->  __show_mem+0x242b/0x24d0 mm/show_mem.c:496
->  warn_alloc_show_mem mm/page_alloc.c:3719 [inline]
->  warn_alloc+0x2dd/0x310 mm/page_alloc.c:3744
->  __vmalloc_area_node mm/vmalloc.c:3702 [inline]
->  __vmalloc_node_range_noprof+0x67e/0x12f0 mm/vmalloc.c:3893
->  __kvmalloc_node_noprof+0x3b8/0x5f0 mm/slub.c:5037
->  bch2_fs_journal_start+0x2b4/0x12b0 fs/bcachefs/journal.c:1484
->  bch2_fs_recovery+0x1fbe/0x3860 fs/bcachefs/recovery.c:975
->  bch2_fs_start+0x957/0xbf0 fs/bcachefs/super.c:1216
->  bch2_fs_get_tree+0xb39/0x1540 fs/bcachefs/fs.c:2462
->  vfs_get_tree+0x92/0x2b0 fs/super.c:1804
->  do_new_mount+0x24a/0xa40 fs/namespace.c:3902
->  do_mount fs/namespace.c:4239 [inline]
->  __do_sys_mount fs/namespace.c:4450 [inline]
->  __se_sys_mount+0x317/0x410 fs/namespace.c:4427
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7fb0311900ca
-> Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007fb031fe5e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-> RAX: ffffffffffffffda RBX: 00007fb031fe5ef0 RCX: 00007fb0311900ca
-> RDX: 000020000000fec0 RSI: 000020000000ff00 RDI: 00007fb031fe5eb0
-> RBP: 000020000000fec0 R08: 00007fb031fe5ef0 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 000020000000ff00
-> R13: 00007fb031fe5eb0 R14: 000000000000fe88 R15: 000020000000ff40
->  </TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:strlen+0x29/0x70 lib/string.c:420
-> Code: 90 f3 0f 1e fa 41 57 41 56 41 54 53 48 c7 c0 ff ff ff ff 49 be 00 00 00 00 00 fc ff df 48 89 fb 49 89 c7 48 89 d8 48 c1 e8 03 <42> 0f b6 04 30 84 c0 75 11 48 ff c3 49 8d 47 01 42 80 7c 3f 01 00
-> RSP: 0018:ffffc90003dde7a0 EFLAGS: 00010246
-> RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff88802c468000
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: ffffc90003dde8f0 R08: ffff8880357dead7 R09: 1ffff11006afbd5a
-> R10: dffffc0000000000 R11: ffffed1006afbd5b R12: ffffc90003dde860
-> R13: dffffc0000000000 R14: dffffc0000000000 R15: ffffffffffffffff
-> FS:  00007fb031fe66c0(0000) GS:ffff888125d2a000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00005578d9f91950 CR3: 0000000034726000 CR4: 00000000003526f0
-> ----------------
-> Code disassembly (best guess):
->    0:	90                   	nop
->    1:	f3 0f 1e fa          	endbr64
->    5:	41 57                	push   %r15
->    7:	41 56                	push   %r14
->    9:	41 54                	push   %r12
->    b:	53                   	push   %rbx
->    c:	48 c7 c0 ff ff ff ff 	mov    $0xffffffffffffffff,%rax
->   13:	49 be 00 00 00 00 00 	movabs $0xdffffc0000000000,%r14
->   1a:	fc ff df
->   1d:	48 89 fb             	mov    %rdi,%rbx
->   20:	49 89 c7             	mov    %rax,%r15
->   23:	48 89 d8             	mov    %rbx,%rax
->   26:	48 c1 e8 03          	shr    $0x3,%rax
-> * 2a:	42 0f b6 04 30       	movzbl (%rax,%r14,1),%eax <-- trapping instruction
->   2f:	84 c0                	test   %al,%al
->   31:	75 11                	jne    0x44
->   33:	48 ff c3             	inc    %rbx
->   36:	49 8d 47 01          	lea    0x1(%r15),%rax
->   3a:	42 80 7c 3f 01 00    	cmpb   $0x0,0x1(%rdi,%r15,1)
-> 
-> 
-> Tested on:
-> 
-> commit:         ca12b17b bcachefs: fix check_extent_overbig() call
-> git tree:       git://evilpiepirate.org/bcachefs.git bcachefs-testing
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1752038c580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=37de60b3108b6d8f
-> dashboard link: https://syzkaller.appspot.com/bug?extid=2b98caf09c41174a9697
-> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> 
-> Note: no patches were applied.
+Reading /proc/pid/maps requires read-locking mmap_lock which prevents any
+other task from concurrently modifying the address space. This guarantees
+coherent reporting of virtual address ranges, however it can block
+important updates from happening. Oftentimes /proc/pid/maps readers are
+low priority monitoring tasks and them blocking high priority tasks
+results in priority inversion.
 
-#syz test: git://evilpiepirate.org/bcachefs.git for-next
+Locking the entire address space is required to present fully coherent
+picture of the address space, however even current implementation does not
+strictly guarantee that by outputting vmas in page-size chunks and
+dropping mmap_lock in between each chunk. Address space modifications are
+possible while mmap_lock is dropped and userspace reading the content is
+expected to deal with possible concurrent address space modifications.
+Considering these relaxed rules, holding mmap_lock is not strictly needed
+as long as we can guarantee that a concurrently modified vma is reported
+either in its original form or after it was modified.
+
+This patchset switches from holding mmap_lock while reading /proc/pid/maps
+to taking per-vma locks as we walk the vma tree. This reduces the
+contention with tasks modifying the address space because they would have
+to contend for the same vma as opposed to the entire address space.
+Previous version of this patchset [1] tried to perform /proc/pid/maps
+reading under RCU, however its implementation is quite complex and the
+results are worse than the new version because it still relied on
+mmap_lock speculation which retries if any part of the address space gets
+modified. New implementaion is both simpler and results in less
+contention. Note that similar approach would not work for /proc/pid/smaps
+reading as it also walks the page table and that's not RCU-safe.
+
+Paul McKenney's designed a test [2] to measure mmap/munmap latencies while
+concurrently reading /proc/pid/maps. The test has a pair of processes
+scanning /proc/PID/maps, and another process unmapping and remapping 4K
+pages from a 128MB range of anonymous memory.  At the end of each 10
+second run, the latency of each mmap() or munmap() operation is measured,
+and for each run the maximum and mean latency is printed. The map/unmap
+process is started first, its PID is passed to the scanners, and then the
+map/unmap process waits until both scanners are running before starting
+its timed test.  The scanners keep scanning until the specified
+/proc/PID/maps file disappears.
+
+The latest results from Paul:
+Stock mm-unstable, all of the runs had maximum latencies in excess of
+0.5 milliseconds, and with 80% of the runs' latencies exceeding a full
+millisecond, and ranging up beyond 4 full milliseconds.  In contrast,
+99% of the runs with this patch series applied had maximum latencies
+of less than 0.5 milliseconds, with the single outlier at only 0.608
+milliseconds.
+
+From a median-performance (as opposed to maximum-latency) viewpoint,
+this patch series also looks good, with stock mm weighing in at 11
+microseconds and patch series at 6 microseconds, better than a 2x
+improvement.
+
+Before the change:
+./run-proc-vs-map.sh --nsamples 100 --rawdata -- --busyduration 2
+    0.011     0.008     0.521
+    0.011     0.008     0.552
+    0.011     0.008     0.590
+    0.011     0.008     0.660
+    ...
+    0.011     0.015     2.987
+    0.011     0.015     3.038
+    0.011     0.016     3.431
+    0.011     0.016     4.707
+
+After the change:
+./run-proc-vs-map.sh --nsamples 100 --rawdata -- --busyduration 2
+    0.006     0.005     0.026
+    0.006     0.005     0.029
+    0.006     0.005     0.034
+    0.006     0.005     0.035
+    ...
+    0.006     0.006     0.421
+    0.006     0.006     0.423
+    0.006     0.006     0.439
+    0.006     0.006     0.608
+
+The patchset also adds a number of tests to check for /proc/pid/maps data
+coherency. They are designed to detect any unexpected data tearing while
+performing some common address space modifications (vma split, resize and
+remap). Even before these changes, reading /proc/pid/maps might have
+inconsistent data because the file is read page-by-page with mmap_lock
+being dropped between the pages. An example of user-visible inconsistency
+can be that the same vma is printed twice: once before it was modified and
+then after the modifications. For example if vma was extended, it might be
+found and reported twice. What is not expected is to see a gap where there
+should have been a vma both before and after modification. This patchset
+increases the chances of such tearing, therefore it's even more important
+now to test for unexpected inconsistencies.
+
+In [3] Lorenzo identified the following possible vma merging/splitting
+scenarios:
+
+Merges with changes to existing vmas:
+1 Merge both - mapping a vma over another one and between two vmas which
+can be merged after this replacement;
+2. Merge left full - mapping a vma at the end of an existing one and
+completely over its right neighbor;
+3. Merge left partial - mapping a vma at the end of an existing one and
+partially over its right neighbor;
+4. Merge right full - mapping a vma before the start of an existing one
+and completely over its left neighbor;
+5. Merge right partial - mapping a vma before the start of an existing one
+and partially over its left neighbor;
+
+Merges without changes to existing vmas:
+6. Merge both - mapping a vma into a gap between two vmas which can be
+merged after the insertion;
+7. Merge left - mapping a vma at the end of an existing one;
+8. Merge right - mapping a vma before the start end of an existing one;
+
+Splits
+9. Split with new vma at the lower address;
+10. Split with new vma at the higher address;
+
+If such merges or splits happen concurrently with the /proc/maps reading
+we might report a vma twice, once before the modification and once after
+it is modified:
+
+Case 1 might report overwritten and previous vma along with the final
+merged vma;
+Case 2 might report previous and the final merged vma;
+Case 3 might cause us to retry once we detect the temporary gap caused by
+shrinking of the right neighbor;
+Case 4 might report overritten and the final merged vma;
+Case 5 might cause us to retry once we detect the temporary gap caused by
+shrinking of the left neighbor;
+Case 6 might report previous vma and the gap along with the final marged
+vma;
+Case 7 might report previous and the final merged vma;
+Case 8 might report the original gap and the final merged vma covering the
+gap;
+Case 9 might cause us to retry once we detect the temporary gap caused by
+shrinking of the original vma at the vma start;
+Case 10 might cause us to retry once we detect the temporary gap caused by
+shrinking of the original vma at the vma end;
+
+In all these cases the retry mechanism prevents us from reporting possible
+temporary gaps.
+
+Changes since v7 [4]:
+- Refactored tests to use kselftest harness, per David Hildenbrand and
+Lorenzo Stoakes
+- Removed PROCMAP_QUERY selftest, per David Hildenbrand and
+Lorenzo Stoakes
+- Added Acked-by, per David Hildenbrand
+- Replaced sentinels values with named definitions, per Vlastimil Babka
+- Added Reviewed-by, per Vlastimil Babka
+
+!!! NOTES FOR APPLYING THE PATCHSET !!!
+
+Applies cleanly over mm-unstable after reverting v7 version of this
+patchset (from 94951ab6fe6f to e47914e6c28f in mm-unstable).
+
+[1] https://lore.kernel.org/all/20250418174959.1431962-1-surenb@google.com/
+[2] https://github.com/paulmckrcu/proc-mmap_sem-test
+[3] https://lore.kernel.org/all/e1863f40-39ab-4e5b-984a-c48765ffde1c@lucifer.local/
+[4] https://lore.kernel.org/all/20250716030557.1547501-1-surenb@google.com/
+
+Suren Baghdasaryan (6):
+  selftests/proc: add /proc/pid/maps tearing from vma split test
+  selftests/proc: extend /proc/pid/maps tearing test to include vma
+    resizing
+  selftests/proc: extend /proc/pid/maps tearing test to include vma
+    remapping
+  selftests/proc: add verbose mode for /proc/pid/maps tearing tests
+  fs/proc/task_mmu: remove conversion of seq_file position to unsigned
+  fs/proc/task_mmu: read proc/pid/maps under per-vma lock
+
+ fs/proc/internal.h                            |   5 +
+ fs/proc/task_mmu.c                            | 158 +++-
+ include/linux/mmap_lock.h                     |  11 +
+ mm/madvise.c                                  |   3 +-
+ mm/mmap_lock.c                                |  93 +++
+ tools/testing/selftests/proc/.gitignore       |   1 +
+ tools/testing/selftests/proc/Makefile         |   1 +
+ tools/testing/selftests/proc/proc-maps-race.c | 741 ++++++++++++++++++
+ 8 files changed, 997 insertions(+), 16 deletions(-)
+ create mode 100644 tools/testing/selftests/proc/proc-maps-race.c
+
+-- 
+2.50.0.727.gbf7dc18ff4-goog
+
 
