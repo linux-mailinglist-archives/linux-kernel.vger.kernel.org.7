@@ -1,141 +1,127 @@
-Return-Path: <linux-kernel+bounces-737914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AFF6B0B1E5
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 23:06:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C963B0B1E6
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 23:08:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B4EA189BFD8
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 21:06:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C21D67B282C
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 21:06:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F4040194A60;
-	Sat, 19 Jul 2025 21:06:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F84D21D59F;
+	Sat, 19 Jul 2025 21:08:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gNlu+86D"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gxLEeSUF"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65FE1FDD;
-	Sat, 19 Jul 2025 21:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D267FD
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 21:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752959177; cv=none; b=cSbj/38I157smRUjdS9jkjlADiyeDGQvnSu8s+WlVVsfTiMZ/Bn7wxyeGNeBQAzWibn5R+xk/+EdEYLzPpX80U4NuQdfOCprgmy0nD8y0IIPkaxdYFp9oLodJz2iWxWvfrOQ6EeRlFXbgFZ+/m9mbmYs/+6QbNhrGXkfohLd8CU=
+	t=1752959279; cv=none; b=otDAus4ySsqyvXNYhAAUtM0GrYqZq6F4+37GYOXpnPzzJk1LKvaKMe12bkMgUqmrokHNgQQNTVXO4ugEzPGtEEwaVkEitG4UO5zyW4TUmNM+//V27mgyQLRMNUfb39XJCsCCcZ6BjzYcWehQY+yXi4RURUUNd5VyRbFExqcoib8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752959177; c=relaxed/simple;
-	bh=nyswjgChzex87fkUmGlz803mOXSUIG3Re0obcW/WBZk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lAZDCM7J4I1J/DHRh/IzC02xVFZ+ptArdoJjyOfi8hwW1S2+UHU1rNsKWF+RQ/dmZK2knt/y6wm8lUVDthvV/dS6XUjXZUTwysTMXy51z8f9FmVLg37/KGbIXc1O6UTpm5zh7hwp5QOGlCUzpIyTZRgBAq7rG0e+Y3g/n1fo8l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gNlu+86D; arc=none smtp.client-ip=209.85.208.180
+	s=arc-20240116; t=1752959279; c=relaxed/simple;
+	bh=ArmlKBfZxNbUFwEW2lqId3JtnhwJvHXQ87OQu/EuWOA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i8uBJnW6fI+AMjzskrsyrWeje5BXOtTlFjlsq21SGysKmo3AxYZXi3UJ8IRe5v8Oz7vupM19Kz//AS/FYyjnwi4fGAlgMV76vS0+X/U8Oq63omNUDug9IWjFppCo1IML2hivtZs8RGD3FsLWk0+bdo0dgfi3uXQWzhVIsy/MzTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gxLEeSUF; arc=none smtp.client-ip=209.85.210.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-32f144d0db8so16486961fa.0;
-        Sat, 19 Jul 2025 14:06:15 -0700 (PDT)
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-74801bc6dc5so3203834b3a.1
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 14:07:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752959174; x=1753563974; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KDD5lvVgbLQzMHEKqvD4drpjZqiteKdnziSv4nMIVYg=;
-        b=gNlu+86DYbRamez5QJVoSpcor7vbAtBZBywsW5qM31QW38a3M9WCZjKbXt9KoPLfr3
-         NPRfCZTwxAR4/4Hh/PpBOMNdvQmkGVVO/eh7EnWNV1cCGY8MUrfV439aHuBCiLTDf9Vt
-         bdTqs/cmNmSFnC4ssKBBm3vMBv7rqlH9Tlkm9hmYE2NB+gvRU9gCFGW2kwlDW+vqQXzb
-         Br9zjP1K0QNIl8YPqLr2zBXngCP+HfzjBVnolgBHTbuvcPD24VKyBuRoRAoJtlDmCLgG
-         6bWRecZ7acGns3y8RXtzr6ALCArIMluFlCQN1/gDNLlbWRft4VwC4zqnT/Uhe1hXqYJ6
-         8WlQ==
+        d=gmail.com; s=20230601; t=1752959276; x=1753564076; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mVvefwE3oIc/g0ArxrNVtUMZSMmqcbF63rhOC+xvOF4=;
+        b=gxLEeSUFUPvBysO8Kmpu4F46dEsOwQqOEYLRlmTOcsFCYDJLsIud8/CUPVGV7vYKd/
+         n1GDogzs99RHbfC9bA76/0uNlXP/oQlyRW+57nchsWVz6jtwnpcoL2o6FQD46mt2eoQO
+         LNl4teUvtY6vpr3A4+a2VuGe8Uf/caYi8+V8YtwV0IL5t+XzlkMhSveXwmfg8uPVMSkD
+         3919R0wSqv9vXD87R+6g2JI+AZMh1014rGbS3zHDDwI4dEZZegt02N/HVw3XmPjGL8bQ
+         sJljk5/rmiXujWaNMV6i02tfbxKfdEZgnTac/G5+VI62DJd4UElmIaTCM/CH53hoHcJU
+         1EIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752959174; x=1753563974;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KDD5lvVgbLQzMHEKqvD4drpjZqiteKdnziSv4nMIVYg=;
-        b=wGWLv8dt1fjmxHBj0LwLA5g8T2IM8tqdRaMg81NfI3Ram2JkO3eJDCaFd78mURNfdO
-         ybXlO0SuNvWNxI8AfckcMMymSoN+sk5Z+rbEvQesrce21EVJZf+S7nPoM+Gaml/Tx8zJ
-         I1EVbH39lmWVdHZzSOYNXbq6TJC934KhQ+aI9+IU/XaXDCPDbRi61ZPSD46nv1AM6Wrd
-         LekLcVZIoJML57NgqeRzIpxmayHwOoAW5MydfUAkpz58bJU0P9TSNwZM8dCXgjSXi4hb
-         DQDS+R4V1SfGZyqc7OhmU+0yr0dynjOTSj/ifz2YrEOO1jufzDN9XH4i4Lix5BrZ6rax
-         b4Sw==
-X-Forwarded-Encrypted: i=1; AJvYcCXVDIpOPqOEVr+UbUP0RjmaureCaQB3iehBJCBxvpi02Wia1u2MOkMuB6mrJyt9CL41ZtIYcJYzaUS0JGbSQOA=@vger.kernel.org, AJvYcCXzQmS/l3jdN/+d8B35XXDb/xFaQvHWjY7PaOMkrYVrFdJhvg7ppsVfByodeKKWNBJfNX0Hk98q9pupKcg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1PQCGVA+KQizmXfFiAoq4hWPbL8/YybXh+37SqzyfCCKP7oOa
-	dnGq/t0pwXD8Xw9x020a4g1Bo/iSvDd9w6QxKrQoZslVPJhdj2qmNvtNEdBLzeU+F1Otd5/rGXH
-	SrA0TDU3PjvBVuNPmaUyIyduaaI+y/pY=
-X-Gm-Gg: ASbGnctGajeTFlFvqHtDLrZywdPtIU/0FJw6vBZHcJHv0k9JF1nNqF3drATmoqK/2ih
-	7CbUNSBtP/K32magep+Nj6pW6mQP9PhKg/oI/c14Gk5L2augftihcdtI/8prkb0OE+p4m4JB8lV
-	O2WlZjUSYRg3ZJ0IMXzOB3ZGB32fWdG9i1LFrbcVaY8Z6k2MTMcgowJEl818i3M7lTf1ecN5X3g
-	Qbri1XzO4aDv9zlL2olPyrzOTk4NmG0sXj++z6DaA==
-X-Google-Smtp-Source: AGHT+IFel6LcPVo3L3MCsNHOrcdqbyyvw2loT4c8a3F8Eu9ST3sLv5A/WpAB8b1q4cUP+onWoJI49Fm8mHtQap8cx7Y=
-X-Received: by 2002:a05:651c:b28:b0:32b:9792:1029 with SMTP id
- 38308e7fff4ca-33098f6680amr28756151fa.14.1752959173475; Sat, 19 Jul 2025
- 14:06:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752959276; x=1753564076;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mVvefwE3oIc/g0ArxrNVtUMZSMmqcbF63rhOC+xvOF4=;
+        b=J9yImzmmw4c54rbW7iTz0mueL3ND0ITEHKXkUNH+WhaPOJC/E3AxiM/EZGcLMHSgHd
+         IyS71eaO3daR6wFQst/Y6wKw3Evf/qQl2Pm/pavEmKJbvRgdovQ/Cmt+pC4b4Kup04B3
+         5XIJCdKMvZTdrhNmQKN9NMom9JP1spuySRfIAfd8lWNEg3fRpYrn4RMJhr1BuLxG2hq9
+         +CCPCh82q4srp7T88ig69DmYI7mtBzZh+7kY0wZN5qNQEBNc/DDSLR25GiKDyimRzA9B
+         vEHnMdV1jXwcTjOHgIwtmTV2XhqR0qFJ3+obow8Rx0FswU26f3LKO5C1G0hH0PamvKtJ
+         XMew==
+X-Forwarded-Encrypted: i=1; AJvYcCXeGNyTN1Y6ljpsZfvojV65SM0xHqXwoSbWBnCw7USxoj7ebI/b+lurSGQVhHyeQxzFZTJIDLkgwG/j/04=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEYth1B4BmTratRr3ZlfLb2dISbVUbuHyrAq/4+lf2/DbwDmty
+	MPpyZ8Hz6CsU6UEfkuwi9VuJqN3RINwb7dJ9MIu43BGDPUY8QQPABgN5
+X-Gm-Gg: ASbGncv7vzY1IPzUgF8cxucKThpoz6urwPFNk7pZ2I0TvTDvuaYr0QQvHECHmvkW8Fe
+	YiUVOrI5sJMPC/SwnbiZhlSXdsYDhUAZWa5lI0QYfN1uaYy17SzXXJoMl7Gz3nEBw2Bm4NFdHdK
+	7Ynkdk1CkeBX9jB5neIzdPDXAap1CvzbcbTgooBZBOyhFSBuTVX7qpNA003JlXBIfBAx2ngUpC6
+	Yl0I82F0Jp9STueawf1Kvc6ME2aH1GXO+hIkdeNlve3ucbC155p0KviccETv8ahPQaSOlp4e6yA
+	uzA0ZPHNCZFNL7Q3Xkccz0drIvlp3Podb6ye5ZOsgZIGGXhXC4KIlB98eqP7LPyj2fvDcBarWGJ
+	sI0/E3Tx9aWbMuw6uphtWZED+7CEb3Z3e
+X-Google-Smtp-Source: AGHT+IESZ8LjsFQjwuooBZVsZ2XSPU1XbY+rDgrL6H+xeC9sOe1kpRwLu8GR06VaM9m2guRutS8obA==
+X-Received: by 2002:a05:6a20:2450:b0:220:1843:3b7b with SMTP id adf61e73a8af0-2390c744f29mr19156111637.4.1752959276328;
+        Sat, 19 Jul 2025 14:07:56 -0700 (PDT)
+Received: from localhost ([216.228.127.129])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759c84e2727sm3195849b3a.33.2025.07.19.14.07.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 19 Jul 2025 14:07:55 -0700 (PDT)
+From: Yury Norov <yury.norov@gmail.com>
+To: Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org
+Cc: Yury Norov <yury.norov@gmail.com>
+Subject: [PATCH] sched: simplify sched_init_numa()
+Date: Sat, 19 Jul 2025 17:07:51 -0400
+Message-ID: <20250719210753.401129-1-yury.norov@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250719183649.596051-1-ojeda@kernel.org>
-In-Reply-To: <20250719183649.596051-1-ojeda@kernel.org>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Sat, 19 Jul 2025 17:05:37 -0400
-X-Gm-Features: Ac12FXwNuJFlNB4FrlOz_4LZnrwumCxbRuVE87wbB2tt8bbMYaX8TCEyZEcw5sk
-Message-ID: <CAJ-ks9=Ye4v4g0roTu_CJSveRwj6c6P95kGfzy29VEh2c8XHKA@mail.gmail.com>
-Subject: Re: [PATCH] rust: list: undo unintended replacement of method name
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jul 19, 2025 at 2:37=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
-te:
->
-> When we renamed `Opaque::raw_get` to `cast_into`, there was one
-> replacement that was not supposed to be there.
->
-> It does not cause an issue so far because it is inside a macro rule (the
-> `ListLinksSelfPtr` one) that is unused so far. However, it will start
-> to be used soon.
->
-> Thus fix it now.
->
-> Fixes: 64fb810bce03 ("rust: types: rename Opaque::raw_get to cast_into")
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+From: Yury Norov (NVIDIA) <yury.norov@gmail.com>
 
-Reviewed-by: Tamir Duberstein <tamird@gmail.com>
+The function opencodes for_each_set_bit() macro.
 
-> ---
->  rust/kernel/list/impl_list_item_mod.rs | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/rust/kernel/list/impl_list_item_mod.rs b/rust/kernel/list/im=
-pl_list_item_mod.rs
-> index c1edba0a9501..3f6c30e14904 100644
-> --- a/rust/kernel/list/impl_list_item_mod.rs
-> +++ b/rust/kernel/list/impl_list_item_mod.rs
-> @@ -252,7 +252,7 @@ unsafe fn view_value(links_field: *mut $crate::list::=
-ListLinks<$num>) -> *const
->                  // the pointer stays in bounds of the allocation.
->                  let self_ptr =3D unsafe { (links_field as *const u8).add=
-(spoff) }
->                      as *const ::core::cell::UnsafeCell<*const Self>;
-> -                let cell_inner =3D ::core::cell::UnsafeCell::cast_into(s=
-elf_ptr);
-> +                let cell_inner =3D ::core::cell::UnsafeCell::raw_get(sel=
-f_ptr);
->                  // SAFETY: This is not a data race, because the only fun=
-ction that writes to this
->                  // value is `prepare_to_insert`, but by the safety requi=
-rements the
->                  // `prepare_to_insert` method may not be called in paral=
-lel with `view_value` or
->
-> base-commit: 23b128bba76776541dc09efaf3acf6242917e1f0
-> --
-> 2.50.1
->
+Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+---
+ kernel/sched/topology.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index b958fe48e020..7dc3c79aa480 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -1932,10 +1932,9 @@ void sched_init_numa(int offline_node)
+ 		return;
+ 	}
+ 
+-	for (i = 0, j = 0; i < nr_levels; i++, j++) {
+-		j = find_next_bit(distance_map, NR_DISTANCE_VALUES, j);
+-		distances[i] = j;
+-	}
++	for_each_set_bit(j, distance_map, NR_DISTANCE_VALUES)
++		distances[i++] = j;
++
+ 	rcu_assign_pointer(sched_domains_numa_distance, distances);
+ 
+ 	bitmap_free(distance_map);
+-- 
+2.43.0
+
 
