@@ -1,180 +1,112 @@
-Return-Path: <linux-kernel+bounces-737608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2386AB0AE55
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 09:09:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF890B0AE59
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 09:11:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF6863A5D8B
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 07:08:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEB447B4222
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 07:10:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE56D230BC9;
-	Sat, 19 Jul 2025 07:08:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aN4uofE8"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2ED723027C;
+	Sat, 19 Jul 2025 07:11:35 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF4261C84AE;
-	Sat, 19 Jul 2025 07:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0A631EB3D;
+	Sat, 19 Jul 2025 07:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752908928; cv=none; b=WgpTXrhOgo/5yWv5MAeJWzAAzrh6sf3LKJsWYgAGUyuf51pUQT3DxyqtHqcCHbmJUUuKqGfL18aoKSW9gik1HoskayumnnuDJbLXOW7HJFuTv8PplKMZ6Dz8D1Ll/7/+hAcZ1PxTzNgNQ36p2Y2AX0YSi18WGCBswBTfyhsMlGM=
+	t=1752909095; cv=none; b=lxfM6tRHWjLWoXeWSupvn3q4c97OJK+v2tIJcSV/JA7krEk/OmGXji55Ie6vYbau4vwAblviEzJ4Uunj4Yz5SUzAQdd1SRq5uCU2WGQ9eUJ5Ln3M0aRR34E46g+oi+THYxos+QzW/bY6QyAuZGEMzT28tHE0XX3hcjrP/mGFESE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752908928; c=relaxed/simple;
-	bh=vufT61B0JmqwAIxP7VPqMs0HC4W5rnfofR5tYibjGiE=;
+	s=arc-20240116; t=1752909095; c=relaxed/simple;
+	bh=6YgL7snu0W4hOdOcQqIYhKMjSngfymntUynFt4Pl4gQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KuepfvtDx32JoxNpqspd/m5q2xPTwQdONgHoWXkla9/qKcHGxihOQ/dn23IzI+hhVnWC6+nlcsX/Dp0SHC/CyMbzKBP0GfYmPdXIIFQci05F43rIIccOwZcOY0AiGhfF/o0rTiENpl6CifP218MYqjfLVXEAkhr42XGSVJHF+cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aN4uofE8; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-60c6fea6742so5874643a12.1;
-        Sat, 19 Jul 2025 00:08:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752908925; x=1753513725; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UT5HypfoUTQWMwocYzVj5Hl5OahvJzyO3VxVcUyzP0k=;
-        b=aN4uofE8GRR5bClzmAAzfAjJ4IqoFNwk87Zd16hCDrK+TeQI+TfCOVOXoyW+kw0Dtd
-         wXckNn0WFttAPxJ1QZm+Gle//IrUPGWUXJ2qYyjx8Elp2XVTEsH+Tr65BeDFM1hoHc0j
-         a78mMUh4+TpZQR/hHY1uXANngzUH+820wZiPr1gcwdo82FVUEVjxhveoh6VoB2q3vNaz
-         IgQL0tpJEFHzN48yKpqiwYN/AJPg6byjS02k6Ryw6QGJHXgYOcJzK3O/5qoLvusQlwPz
-         jkLG1LJ0jmOx5Lu+nl9kTrLnhjf/piLLKwwyINDg4yrdHYPI8CHvcfJC7ledNgt/f/Xz
-         vCgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752908925; x=1753513725;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UT5HypfoUTQWMwocYzVj5Hl5OahvJzyO3VxVcUyzP0k=;
-        b=o3skrOENsRZATVyPmI/7TmtC9uuHI+VLteEw7Rd+APQRRWjI+vXcWqe3oktNkIAP0z
-         waYnJ+Q+4zQKwWIz/BN3VuSqfnBbU2m9Mr6wtVOS5shXiOe/3wg50H3A3ZwCv5vXAbjw
-         YkwYZ/pAORdZyVmaWPDSBUaH0D992ak06y/A9w5s/CHr7QutjziA38Z6gEtnVf4qyuvY
-         +PE1s6Ak9dl+Q37ruStNRFjm4jg83aHQiVzF4qfMTcAWV9UKKqufbCNf+tlOW9Xdk8S1
-         FfCXOrfsCZ51NdLy9WEo1GishpL0ZvaUIzXx5JtdtJWTqfMWwNCnAKandXVjnCrNpDD/
-         pxcw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0x8SY/PlcfTq4MArPY49h6N9n7QhucmIgYiwTyQqEEppNdWfzhH8XM8sHQccJX6+4vsCJ@vger.kernel.org, AJvYcCVP8xQ0/l7NlHuzn/Tm9IFT0WePBJf+JBjBKuhdfWToWiu6IenaJrpz34ZPic79PaPRKjajfJN0W+TctQ==@vger.kernel.org, AJvYcCWGHQxmXXdYvNpimdN27ndINoZ8bYOcx+wuYvpur0jZokL5tLlVAJ0IOMozJBm6YtX2xwT2FyYFBsVO@vger.kernel.org, AJvYcCXzNKLlnaCfkVCDLv9o/tYI5xtI5cyZ1hGQPBMN89TVzMA+eI4Bp4ySvko0q0ten58LYF4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAi1zLGwQhWdE+v/nrhVN1DXlJclOVaOdFrbM+GQdg/UmxDPfA
-	oEe6k7Jue5vqVGSUSJxJuL18g1iiLhzmZb3CpX5lq2F+JZYcvC3I1/FB
-X-Gm-Gg: ASbGncvMD7c5NnZCSj90clcPAR9eBptiiwGw02W1Snn27NK8xDfdV2pKyKYHPnGVC45
-	37P4lB7egpRLJSPyuDeFS2KHFC1sz9uFKpDSisNCkwgCRZESNmXtkhSt3KfdYVZ/U5vdzBI+4uo
-	BA1yldR1EyIAx6DVGCcAfiof+P2NL91VWbrA07AlO6Mz1hMKYHACm6K+vaVmrh1H8CDj4PMOkMk
-	P2Up39Iw/FVmwN1SOTs+m4mq3BqyQp/bWNFaJ1DKgcGjEeU5Y/hGDz4B0ajzqX3yfC6AcclYBw0
-	uF2VAoXJ+kFV6WHJn4aHiptYqMBrh16Jy/AAfjPOuZtMz6E7mYHKFv4cHFN19hiZnDfYZCSJ6HY
-	BWrK2Yse66duK+1W5vUw23A==
-X-Google-Smtp-Source: AGHT+IFThgtoJuSP5FXWdNpEpQ5czog6sgr2fMyqs2egrXeD+Pi/tn7lPVEjYiDM63dPY9Wul0I/mA==
-X-Received: by 2002:a17:907:7208:b0:ad5:8412:1c9 with SMTP id a640c23a62f3a-aec6a674779mr480258166b.59.1752908924588;
-        Sat, 19 Jul 2025 00:08:44 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6c7d8357sm253986566b.52.2025.07.19.00.08.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Jul 2025 00:08:42 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 87B73423BF32; Sat, 19 Jul 2025 14:08:38 +0700 (WIB)
-Date: Sat, 19 Jul 2025 14:08:38 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Vegard Nossum <vegard.nossum@oracle.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux RCU <rcu@vger.kernel.org>,
-	Linux CPU Architectures Development <linux-arch@vger.kernel.org>,
-	Linux LKMM <lkmm@lists.linux.dev>, Linux KVM <kvm@vger.kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang@linux.dev>, Jonathan Corbet <corbet@lwn.net>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Andrea Parri <parri.andrea@gmail.com>,
-	Will Deacon <will@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
-	David Howells <dhowells@redhat.com>,
-	Jade Alglave <j.alglave@ucl.ac.uk>,
-	Luc Maranget <luc.maranget@inria.fr>,
-	Akira Yokosawa <akiyks@gmail.com>,
-	Daniel Lustig <dlustig@nvidia.com>,
-	Mark Rutland <mark.rutland@arm.com>, Ingo Molnar <mingo@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Tejun Heo <tj@kernel.org>,
-	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
-	Changyuan Lyu <changyuanl@google.com>,
-	Dan Williams <dan.j.williams@intel.com>, Xavier <xavier_qy@163.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Maarten Lankhorst <dev@lankhorst.se>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH 0/4] Convert atomic_*.txt and memory-barriers.txt to reST
-Message-ID: <aHtEdoj_qgpq9NNa@archie.me>
-References: <20250717080617.35577-1-bagasdotme@gmail.com>
- <20250717105554.GA1479557@noisy.programming.kicks-ass.net>
- <aHjd-oisajaKW_Z5@archie.me>
- <65735554-0420-4af7-881d-5243b83a3eb6@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iehsUpkbNoZaExlD8xZuny7lsYcFLGonD4xNi31fTa907yNIBB9Aff5BRnvy4nPkTh0Uh9XR0PSfstkaAFdXZVTdox2dqNmIvHZDqWQFWGgOTSvOa400q6wXRTLAQinxMR85iST9uOOKVosvNffwtBl8mdyT1EbD44uqO0ADyXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 9CDA62C1997E;
+	Sat, 19 Jul 2025 09:11:23 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 70E6640DB9; Sat, 19 Jul 2025 09:11:23 +0200 (CEST)
+Date: Sat, 19 Jul 2025 09:11:23 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Shuai Xue <xueshuai@linux.alibaba.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>,
+	Matthew W Carlis <mattc@purestorage.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	anil.s.keshavamurthy@intel.com, bhelgaas@google.com, bp@alien8.de,
+	davem@davemloft.net, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, mark.rutland@arm.com,
+	mathieu.desnoyers@efficios.com, mhiramat@kernel.org,
+	naveen@kernel.org, oleg@redhat.com, peterz@infradead.org,
+	rostedt@goodmis.org, tianruidong@linux.alibaba.com,
+	tony.luck@intel.com
+Subject: Re: [PATCH v8] PCI: hotplug: Add a generic RAS tracepoint for
+ hotplug event
+Message-ID: <aHtFG3QsdohG466k@wunner.de>
+References: <20250718163532.GA2700834@bhelgaas>
+ <fc0ded97-8643-4faa-a606-732bcd4ce4a1@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2gLgncKtdrrHipxb"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <65735554-0420-4af7-881d-5243b83a3eb6@oracle.com>
+In-Reply-To: <fc0ded97-8643-4faa-a606-732bcd4ce4a1@linux.alibaba.com>
 
+On Sat, Jul 19, 2025 at 01:23:28PM +0800, Shuai Xue wrote:
+>            <...>-120     [002] .....   104.864051: pci_hp_event: 0000:00:03.0 slot:30, event:PCI_HOTPLUG_CARD_PRESENT
+>            <...>-120     [002] .....   104.864081: pci_hp_event: 0000:00:03.0 slot:30, event:PCI_HOTPLUG_LINK_UP
 
---2gLgncKtdrrHipxb
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Somehow I liked the simple "Link Up" and "Card present" strings more
+than this. :)
 
-On Thu, Jul 17, 2025 at 01:56:12PM +0200, Vegard Nossum wrote:
-> On 17/07/2025 13:26, Bagas Sanjaya wrote:
-> > On Thu, Jul 17, 2025 at 12:55:54PM +0200, Peter Zijlstra wrote:
-> > > On Thu, Jul 17, 2025 at 03:06:13PM +0700, Bagas Sanjaya wrote:
-> > > > Bagas Sanjaya (4):
-> > > >    Documentation: memory-barriers: Convert to reST format
-> > > >    Documentation: atomic_bitops: Convert to reST format
-> > > >    Documentation: atomic_t: Convert to reST format
-> > > >    Documentation: atomic_bitops, atomic_t, memory-barriers: Link to
-> > > >      newly-converted docs
-> > >=20
-> > > NAK
-> > >=20
-> > > If these are merged I will no longer touch / update these files.
-> >=20
-> > Why? Do you mean these docs should be kept as-is (not converted)? Jon w=
-rote
-> > in e40573a43d163a that the conversion were opposed but AFAIK I can't fi=
-nd
-> > the rationale on lore.
->=20
-> Here's one:
->=20
-> https://lore.kernel.org/all/20200806064823.GA7292@infradead.org/
+The PCI_HOTPLUG substring repeats what pci_hp_event already betrays,
+that this is a hotplug event.
 
-OK, thanks!
+>    irq/57-pciehp-120     [002] .....   104.990434: pci_link_event: 0000:00:03.0 cur_bus_speed:20, max_bus_speed:23, width:1, flit_mode:0, reason:5
+>    irq/57-pciehp-120     [002] .....   104.992377: pci_link_event: 0000:00:03.0 cur_bus_speed:20, max_bus_speed:23, width:1, flit_mode:0, reason:0
 
---=20
-An old man doll... just what I always wanted! - Clara
+This contains a lot of terminology specific to PCI *Express*
+(versus Conventional PCI or PCI-X).  Either it needs to be
+"pcie_link_event" or we need to come up with a structure that
+works for non-PCIe as well.
 
---2gLgncKtdrrHipxb
-Content-Type: application/pgp-signature; name=signature.asc
+PCI links can be tunneled over Thunderbolt, in this case the
+link speed is fixed to 2.5 GT/s (USB4 v1.0 sec 11.2.1), but
+in reality is governed by the speed of the Thunderbolt fabric
+(which can even be asymmetric).  Do we want to report the
+virtual 2.5 GT/s in this case or the actual Thunderbolt speed?
+Or do we want a separate trace event for Thunderbolt?
 
------BEGIN PGP SIGNATURE-----
+For Root and Downstream Ports, the physical "port" points "downstream",
+whereas for Upstream Ports and Endpoints, the physical "port" points
+"upstream".  Software interpreting the trace event may want to know
+the direction (or whatever one wants to call it) because it cannot
+tell from the address 0000:00:03.0 what the PCIe type is.  Having to
+look this up in lspci seems cumbersome.  So it may be worthwhile to
+include either the port's direction or the device's PCIe type in the
+trace event.
 
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaHtEawAKCRD2uYlJVVFO
-o1DEAQDTgA9l2rIBDAihhUg5LQsrzUGjdyEsn0EUAnvE5VwB3gEAorEAChqX8FzC
-FkHus6Bb8Vr43ZFqoi0M5HJt4JCX5Qg=
-=jzZz
------END PGP SIGNATURE-----
+Of course, hotplug only exists at Root or Downstream Ports, so any
+trace event generated from the PCIe hotplug driver will pertain to
+a downstream-facing port.  But the bandwidth controller also binds
+to Upstream Ports and its trace events may thus pertain to link speed
+changes at an upstream-facing port.
 
---2gLgncKtdrrHipxb--
+Thanks,
+
+Lukas
 
