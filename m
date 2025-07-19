@@ -1,49 +1,61 @@
-Return-Path: <linux-kernel+bounces-737449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B6C2B0ACC4
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 02:20:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7CA3B0ACC9
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 02:28:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 703B9585C20
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 00:20:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34B46AC200B
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 00:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2380F1CAB3;
-	Sat, 19 Jul 2025 00:19:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB6C62BCFB;
+	Sat, 19 Jul 2025 00:28:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gaW/S/Z1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ob/ORKQk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802AC10957;
-	Sat, 19 Jul 2025 00:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5024B10957;
+	Sat, 19 Jul 2025 00:28:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752884393; cv=none; b=aUW7eF9QvcJLeflqfVlBB/XZONZ07K/EL5gnTCVLoFB7glj+OhB84tBneRlCtlM9uoXBK3Trchk7dIWeYY36JKqXPVUyajeFnIPkfqb5u8+DSVMPjk3Vv6kpwH/FtxLId4ubUp/zhBfBewebRhyqmWk3Z07wML6DUwwSn2XTRb8=
+	t=1752884899; cv=none; b=B+fIoiSphDUdG278BwQDdPcV4nEiqe9IYMoZ3jirO3m3FR96ap2URKQVVJNj/mv23DmoLkTYzLHO0sNOlYtKxAG7jRMpmU/eiN2XEU7ZCgBaME4bJhcI/XhcMWJzBLpTCyoIjQDYM9e/M9IvZont8TUz0OItOetQQPo3sxrCyP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752884393; c=relaxed/simple;
-	bh=E+17LaBUs6OjQnYqc0HJB1Ya5gyH9Km7O9Y5EqWdP40=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=L2zGQ2EK4puVfECcgbJtct9ms7sTStp6+JKm4ffFOcYjKNjM8t1n9E7P5dk8z7Z7kvwfuxCpY+otbV0MSyqj9DqEFOKsTg5+lXv6NrvZv4E6YnPNi0mPQeE8JjE1G+vRzQsfPlkvsmhYO8Q8381oSWJT895wxxjM4tuJiG0BA+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gaW/S/Z1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E88EC4CEEB;
-	Sat, 19 Jul 2025 00:19:53 +0000 (UTC)
+	s=arc-20240116; t=1752884899; c=relaxed/simple;
+	bh=qadST8dMScf+fp2b57F+1Eh6ZSs22RC1OPSOHO2JUcw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=GativC4vZXhIo8f50SDzF4w7PAyI/V8GWfz27+m1C0rRekXucAAg2En61FXCccfOwLhmU1cMpKjDT8zVtvHLNriYuybj8PXNrfUPfSzeXTCRkAs6BUz0yhQrxuIhcQyNaOKxRbdW7mpEJMa77V16LxR+0wbcdEubZ/ZKXfUJc/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ob/ORKQk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C71AFC4CEEB;
+	Sat, 19 Jul 2025 00:28:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752884393;
-	bh=E+17LaBUs6OjQnYqc0HJB1Ya5gyH9Km7O9Y5EqWdP40=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=gaW/S/Z1ReBuc0AAhjOyXSItcuij0h/+/kTM4vvgynYsPciI889oJpHyT7mJQusru
-	 90HJmh6cMeXNl0Mjick7CNJAuucv96GO3u7u73ugo1L+SUhIATTZRStqb8ir5hjMYx
-	 b0/Z7MSLf+UNmEAwwjFIsz37vx4DlYMmTf6M1ujvJ68SWWXMdtMdPAGOyzSu10i+pm
-	 +FtzsCfQtOn5Kz15hEHFXqjMnPcnWJ340o1bWxwGzZZhAaEZWF83JRoCfbYhmlb2Wr
-	 Cf8px6rJ3tgTymHb3yXd3YxgLgVyZ2Sed76jq11LrFbFTYHvyADrDaekGeSNaZjypC
-	 D5owAcx4J3FQw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33FAD383BA3C;
-	Sat, 19 Jul 2025 00:20:14 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1752884898;
+	bh=qadST8dMScf+fp2b57F+1Eh6ZSs22RC1OPSOHO2JUcw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ob/ORKQkLs7qTjIru6zSoVokyGNoK1w8bu0TJQodYIJMcm0NBZ18n/l16a5Yu0BRr
+	 koPljjYaJEcTQlzWwLN+qw/iwEiBL+yMhgpuhNLxxnTZTaOT553ZivcKJOpIgLG0Rb
+	 FHem7dIcESJ6eJJtKasaMq3SRBsVjFbhidLELvqiVw+ySt3Fjd9AlZrIitd4v0B1mE
+	 RRxN0u8b6cDS1gZtaVO89aWDbeGrs0jXL4LAgFXS8ol0tyDgW78ojsZ4l4XE2blUjw
+	 yUSPIKzW5z7x3ob8N8kJSr16wbeuJJ1ZhIPbtpd+nQ5yX9UIsI2uvj5J/YYnV/EeoC
+	 QaHwNn+1HGWsA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 7A4C5CE0D3A; Fri, 18 Jul 2025 17:28:18 -0700 (PDT)
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: rcu@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	rostedt@goodmis.org,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH v2 1/4] srcu: Move rcu_is_watching() checks to srcu_read_{,un}lock_fast()
+Date: Fri, 18 Jul 2025 17:28:14 -0700
+Message-Id: <20250719002817.4121867-1-paulmck@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <3cecf6c9-b2ee-4f34-9d1b-ca4cfb8e56a7@paulmck-laptop>
+References: <3cecf6c9-b2ee-4f34-9d1b-ca4cfb8e56a7@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,51 +63,80 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2 1/3] bus: fsl-mc: Fix potential double device
- reference
- in fsl_mc_get_endpoint()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175288441299.2833543.14707347919961717043.git-patchwork-notify@kernel.org>
-Date: Sat, 19 Jul 2025 00:20:12 +0000
-References: <20250717022309.3339976-1-make24@iscas.ac.cn>
-In-Reply-To: <20250717022309.3339976-1-make24@iscas.ac.cn>
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: ioana.ciornei@nxp.com, davem@davemloft.net, andrew+netdev@lunn.ch,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- akpm@linux-foundation.org, stable@vger.kernel.org
 
-Hello:
+The rcu_is_watching() warnings are currently in the SRCU-tree
+implementations of __srcu_read_lock_fast() and __srcu_read_unlock_fast().
+However, this makes it difficult to create _notrace variants of
+srcu_read_lock_fast() and srcu_read_unlock_fast().  This commit therefore
+moves these checks to srcu_read_lock_fast(), srcu_read_unlock_fast(),
+srcu_down_read_fast(), and srcu_up_read_fast().
 
-This series was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ include/linux/srcu.h     | 4 ++++
+ include/linux/srcutree.h | 2 --
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-On Thu, 17 Jul 2025 10:23:07 +0800 you wrote:
-> The fsl_mc_get_endpoint() function may call fsl_mc_device_lookup()
-> twice, which would increment the device's reference count twice if
-> both lookups find a device. This could lead to a reference count leak.
-> 
-> Found by code review.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 1ac210d128ef ("bus: fsl-mc: add the fsl_mc_get_endpoint function")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> 
-> [...]
-
-Here is the summary with links:
-  - [net,v2,1/3] bus: fsl-mc: Fix potential double device reference in fsl_mc_get_endpoint()
-    https://git.kernel.org/netdev/net/c/bddbe13d36a0
-  - [net,v2,2/3] dpaa2-eth: Fix device reference count leak in MAC endpoint handling
-    https://git.kernel.org/netdev/net/c/ee9f3a81ab08
-  - [net,v2,3/3] dpaa2-switch: Fix device reference count leak in MAC endpoint handling
-    https://git.kernel.org/netdev/net/c/96e056ffba91
-
-You are awesome, thank you!
+diff --git a/include/linux/srcu.h b/include/linux/srcu.h
+index f179700fecafb..478c73d067f7d 100644
+--- a/include/linux/srcu.h
++++ b/include/linux/srcu.h
+@@ -275,6 +275,7 @@ static inline struct srcu_ctr __percpu *srcu_read_lock_fast(struct srcu_struct *
+ {
+ 	struct srcu_ctr __percpu *retval;
+ 
++	RCU_LOCKDEP_WARN(!rcu_is_watching(), "RCU must be watching srcu_read_lock_fast().");
+ 	srcu_check_read_flavor_force(ssp, SRCU_READ_FLAVOR_FAST);
+ 	retval = __srcu_read_lock_fast(ssp);
+ 	rcu_try_lock_acquire(&ssp->dep_map);
+@@ -295,6 +296,7 @@ static inline struct srcu_ctr __percpu *srcu_read_lock_fast(struct srcu_struct *
+ static inline struct srcu_ctr __percpu *srcu_down_read_fast(struct srcu_struct *ssp) __acquires(ssp)
+ {
+ 	WARN_ON_ONCE(IS_ENABLED(CONFIG_PROVE_RCU) && in_nmi());
++	RCU_LOCKDEP_WARN(!rcu_is_watching(), "RCU must be watching srcu_down_read_fast().");
+ 	srcu_check_read_flavor_force(ssp, SRCU_READ_FLAVOR_FAST);
+ 	return __srcu_read_lock_fast(ssp);
+ }
+@@ -389,6 +391,7 @@ static inline void srcu_read_unlock_fast(struct srcu_struct *ssp, struct srcu_ct
+ 	srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_FAST);
+ 	srcu_lock_release(&ssp->dep_map);
+ 	__srcu_read_unlock_fast(ssp, scp);
++	RCU_LOCKDEP_WARN(!rcu_is_watching(), "RCU must be watching srcu_read_unlock_fast().");
+ }
+ 
+ /**
+@@ -405,6 +408,7 @@ static inline void srcu_up_read_fast(struct srcu_struct *ssp, struct srcu_ctr __
+ 	WARN_ON_ONCE(IS_ENABLED(CONFIG_PROVE_RCU) && in_nmi());
+ 	srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_FAST);
+ 	__srcu_read_unlock_fast(ssp, scp);
++	RCU_LOCKDEP_WARN(!rcu_is_watching(), "RCU must be watching srcu_up_read_fast().");
+ }
+ 
+ /**
+diff --git a/include/linux/srcutree.h b/include/linux/srcutree.h
+index bf44d8d1e69ea..043b5a67ef71e 100644
+--- a/include/linux/srcutree.h
++++ b/include/linux/srcutree.h
+@@ -244,7 +244,6 @@ static inline struct srcu_ctr __percpu *__srcu_read_lock_fast(struct srcu_struct
+ {
+ 	struct srcu_ctr __percpu *scp = READ_ONCE(ssp->srcu_ctrp);
+ 
+-	RCU_LOCKDEP_WARN(!rcu_is_watching(), "RCU must be watching srcu_read_lock_fast().");
+ 	if (!IS_ENABLED(CONFIG_NEED_SRCU_NMI_SAFE))
+ 		this_cpu_inc(scp->srcu_locks.counter); /* Y */
+ 	else
+@@ -275,7 +274,6 @@ static inline void __srcu_read_unlock_fast(struct srcu_struct *ssp, struct srcu_
+ 		this_cpu_inc(scp->srcu_unlocks.counter);  /* Z */
+ 	else
+ 		atomic_long_inc(raw_cpu_ptr(&scp->srcu_unlocks));  /* Z */
+-	RCU_LOCKDEP_WARN(!rcu_is_watching(), "RCU must be watching srcu_read_unlock_fast().");
+ }
+ 
+ void __srcu_check_read_flavor(struct srcu_struct *ssp, int read_flavor);
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.40.1
 
 
