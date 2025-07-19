@@ -1,47 +1,55 @@
-Return-Path: <linux-kernel+bounces-737753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9911BB0B024
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 15:00:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A701EB0B025
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 15:01:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3875B3A9D56
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 13:00:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE73F17826F
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 13:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263BF2877D7;
-	Sat, 19 Jul 2025 12:59:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7CEB3597E;
+	Sat, 19 Jul 2025 13:01:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gg0Tr47K"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="JWjenM4f"
+Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D210231824;
-	Sat, 19 Jul 2025 12:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8CA5AD5E;
+	Sat, 19 Jul 2025 13:01:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752929987; cv=none; b=IG7WzjOJKXLeWDUqH1Kqr+Oq8xdXgzosqVSOHpdrvdpl1BVtAaqicdtDMnAB9PCU2eiW6bo2xs6PHLzOezK2mFKm4iHtdmBmFlk6UmqiRt1xy42KrS6BQSlxCpiO1UCRQgW6tq6V/hU3MmxMH/ox+059/jmOUHqhKSowqNpx9/g=
+	t=1752930108; cv=none; b=hWXY+CxP33b/ltD44VkP3KT1HaYRNkbsvCT9ozdZk8VA6Qw8JqF9yJB93wRuGTLj+h2+yM5csrTQvDnbBR4y25YiJKLBdKu+jQQuDuLfQ6dWL1SN2biO6jmPI4cxDD6OwiiZHIWen+tw0sLNKgUKenqeMGW1JI98jicGj7i3c0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752929987; c=relaxed/simple;
-	bh=Jc9LnpqRoxmgeWH+iMEHKogtW1KyENPU7ieXc3P23Vo=;
+	s=arc-20240116; t=1752930108; c=relaxed/simple;
+	bh=3P7MDEtAobW/rju+KIzwv48gfKsjghBJMvaCS1w0xRw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tLNuwzAJCd7rHB4VrpaEONWtYTAx45xEdNs9lnZsaRyKk/jBNjNWSpZ6Ay8rqRjWI53gcj2J73LyK43f562+0VGSTDWyP9XOGtzky4meU7y+fe1dz+FxgtQlyzFUcD/tl6f3nROPJoy6hvxV9A1Blcdt/5cOe/TnzhiEnK6vgME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gg0Tr47K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BA0CC4CEE3;
-	Sat, 19 Jul 2025 12:59:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752929986;
-	bh=Jc9LnpqRoxmgeWH+iMEHKogtW1KyENPU7ieXc3P23Vo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Gg0Tr47KgwUD6zd6eCkB12oPjZP7JAyA/YCnQWRSB3Pup6L+a4hyBtXxW6k/rodae
-	 FXnDZejl08/gqQcwXhOg2xYXMpXaN85FXNFeInsFbKz7VQ88TUUZwfJvUZwkRuz9CD
-	 V7Zv7F27l8RF1RRbLTNG3JiGuqFOjm5LKQ/gEtXcVTZ6tq2YCAT1R479CQp8hAChTT
-	 D3yjNua5jR4ZFxUD9xDz208zX9oeoVmi9nEgADyKkrAHtI4S9KcTsNycfJN9xv/bXE
-	 qybGuDllg+AiZ0OuNAmWQoRoHUk1I6p4YoNvS5ehBOQGQHhE5YLTqq/jnXg0dhKW3N
-	 /pRhxG0FGKTmw==
-Message-ID: <8f9fdb3e-9655-44ce-8a2f-c1628c88c929@kernel.org>
-Date: Sat, 19 Jul 2025 14:59:41 +0200
+	 In-Reply-To:Content-Type; b=Sn8v/KgpReVckblp2unH8Q4lwpRjFQgYWKOatnHe+G9gSG79dkEw4jcofBSdts+rLOuv7keMa6oBmrN9vcdb9r1HJJ9KOJXq2tGZqYG0PctB2VK03j4Kn+WQdpsZ/9+j9Kb3bo0UfV8eXqLxPwQB/2NJm1hoUKSGXhg3Rcvi7WQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=JWjenM4f; arc=none smtp.client-ip=80.12.242.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id d7Axueh39pTm4d7AxulBeP; Sat, 19 Jul 2025 15:00:33 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1752930034;
+	bh=luTLF4WhRoXNPErA/O4bSpxNmwyHlcnK/b1iN63tmoA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=JWjenM4fhgqP4Og8ND+UQNmaGkZYhnJUMGVk5DXQ0p5WBiF7xlWGvzCQ6w7FAyotS
+	 0M0TpcO7LRZCPVSkDaDDtYrQnt1WZNzvswJbVpvm/duME1BvcV7AwavwzPB6LuUVTT
+	 IKpAyZEVfu9BjCDMb51FC8MTqiDqr9qUvT6fc97+H9OsNbWSB8Bz37iDsxpAGNtwQ3
+	 XUxEG234UsN9y/TytR9s+Df+vISCqd4HGl/XvGuJPPSix6MfaMe2OvIBeTIBwIL0cg
+	 zRRehFt+GKB68rSs5TgE442Zb/6w6Njp2C4N/9yF34iFO7/YcaJYN+di3ECTn77RAU
+	 2pu9HW+wFzIjQ==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sat, 19 Jul 2025 15:00:34 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+Message-ID: <e4c297a7-1ef1-4c39-8daa-8acdade47508@wanadoo.fr>
+Date: Sat, 19 Jul 2025 15:00:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,69 +57,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 06/10] gpio: Add new gpio-macsmc driver for Apple Macs
-To: Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Lee Jones <lee@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- Hector Martin <marcan@marcan.st>, Neal Gompa <neal@gompa.dev>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
- linux-kernel@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
- linux-pm@vger.kernel.org, "Russell King (Oracle)"
- <rmk+kernel@armlinux.org.uk>, Conor Dooley <conor+dt@kernel.org>,
- Janne Grunau <j@jannau.net>
-References: <20250610-smc-6-15-v7-0-556cafd771d3@kernel.org>
- <20250610-smc-6-15-v7-6-556cafd771d3@kernel.org>
-Content-Language: en-US
-From: Sven Peter <sven@kernel.org>
-In-Reply-To: <20250610-smc-6-15-v7-6-556cafd771d3@kernel.org>
+Subject: Re: [PATCH] crypto: caam - switch to use devm_kmemdup_array()
+To: zhang.enpei@zte.com.cn, horia.geanta@nxp.com
+Cc: pankaj.gupta@nxp.com, gaurav.jain@nxp.com, herbert@gondor.apana.org.au,
+ davem@davemloft.net, linux-crypto@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250719163416760SUAwKHXRQRBFKhvAOpNbT@zte.com.cn>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20250719163416760SUAwKHXRQRBFKhvAOpNbT@zte.com.cn>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Linus, Bartosz,
-
-top posting on purpose: are you fine if Lee takes this commit with the 
-rest through his mfd tree?
-
-
-Thanks,
-
-
-Sven
-
-
-
-On 10.06.25 17:29, Sven Peter wrote:
-> From: Hector Martin <marcan@marcan.st>
+Le 19/07/2025 à 10:34, zhang.enpei@zte.com.cn a écrit :
+> From: Zhang Enpei <zhang.enpei@zte.com.cn>
+> Use devm_kmemdup_array() to avoid multiplication or possible overflows.
 > 
-> This driver implements the GPIO service on top of the SMC framework
-> on Apple Mac machines. In particular, these are the GPIOs present in the
-> PMU IC which are used to control power to certain on-board devices.
-> 
-> Although the underlying hardware supports various pin config settings
-> (input/output, open drain, etc.), this driver does not implement that
-> functionality and leaves it up to the firmware to configure things
-> properly. We also don't yet support interrupts/events. This is
-> sufficient for device power control, which is the only thing we need to
-> support at this point. More features will be implemented when needed.
-> 
-> To our knowledge, only Apple Silicon Macs implement this SMC feature.
-> 
-> Signed-off-by: Hector Martin <marcan@marcan.st>
-> Reviewed-by: Bartosz Golaszewski <brgl@bgdev.pl>
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> Reviewed-by: Sven Peter <sven@kernel.org>
-> Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-> Reviewed-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-> Reviewed-by: Neal Gompa <neal@gompa.dev>
-> Signed-off-by: Sven Peter <sven@kernel.org>
+> Signed-off-by: Zhang Enpei <zhang.enpei@zte.com.cn>
 > ---
->   MAINTAINERS                |   1 +
->   drivers/gpio/Kconfig       |  10 ++
->   drivers/gpio/Makefile      |   1 +
->   drivers/gpio/gpio-macsmc.c | 292 +++++++++++++++++++++++++++++++++++++++++++++
->   4 files changed, 304 insertions(+)
+>   drivers/crypto/caam/ctrl.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/crypto/caam/ctrl.c b/drivers/crypto/caam/ctrl.c
+> index ce7b99019537..2250dce9c344 100644
+> --- a/drivers/crypto/caam/ctrl.c
+> +++ b/drivers/crypto/caam/ctrl.c
+> @@ -592,9 +592,9 @@ static int init_clocks(struct device *dev, const struct caam_imx_data *data)
+>          int ret;
+> 
+>          ctrlpriv->num_clks = data->num_clks;
+> -       ctrlpriv->clks = devm_kmemdup(dev, data->clks,
+> -                                     data->num_clks * sizeof(data->clks[0]),
+> -                                     GFP_KERNEL);
+> +       ctrlpriv->clks = devm_kmemdup_array(dev, data->clks,
+> +                                           data->num_clks, sizeof(data->clks[0]),
 
-[...]
+sizeof(*data->clks) maybe?
+
+> +                                           GFP_KERNEL);
+>          if (!ctrlpriv->clks)
+>                  return -ENOMEM;
+> 
+
+Just my 2c,
+
+CJ
 
