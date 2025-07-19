@@ -1,108 +1,111 @@
-Return-Path: <linux-kernel+bounces-737760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C49D5B0B037
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 15:18:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F172B0B03A
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 15:25:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EECF5634C8
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 13:18:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10CDB564908
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 13:24:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5982C2248BE;
-	Sat, 19 Jul 2025 13:18:34 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 248BA287248;
+	Sat, 19 Jul 2025 13:24:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z8PcE7pP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD5278F4A;
-	Sat, 19 Jul 2025 13:18:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3781A7AE3;
+	Sat, 19 Jul 2025 13:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752931114; cv=none; b=SAwnZOzcFkXf2ub5d5Mfa6yrIPao7YBqOM9SRlE5l9hKgAkET2hYPknuBDKaSEow6Wt0RJYaz4WGVHelSivfrosRavVeBqlkD/8SIpr5VkzwFG72PMymwbryj8YjfUkEubVza2HbPo9WsfvWM/b9ByaMWhD9Ogzd6Ii6+UlEpPs=
+	t=1752931486; cv=none; b=gdbetVlhG3EbSzzrAm9FCFhq6KUDj31K1p20Gy1muqYw5DbpgOidbXfJmdsVNH7xlxgOJhheQjW0yfseAlCvKQV56hAWUnvWzvJ8NL066QF55/o1qcaO8xylllSZkmFW2KCFzIuz6uj/gsPUgRW3KMT6XMXt1BKPjvXwI4CIkAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752931114; c=relaxed/simple;
-	bh=QIVADv+zCAQp7r0/sAmvKhzMjW5Og9xW3fTb692QlSg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kkEdzQDl3As66oDBzZde/LMIzkbrMXZBEaDPNvQN8MrBzRO7TvfNQKmFgEM8pJCyEMKjxCJu5u46NERgL5hmYz4Agi5yrILAlNN6Ubdvc3ZT8Cb/e9zN9lFM7eygfGYLiXQ2N+YTtwtg/5k1IKZDw6I6VawAe6JeMJ844zewjNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [211.71.28.34])
-	by APP-01 (Coremail) with SMTP id qwCowADnE6gIm3toLJmCBQ--.46045S2;
-	Sat, 19 Jul 2025 21:18:08 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: eli.billauer@gmail.com,
-	arnd@arndb.de,
-	gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v4] char: xillybus: Fix error handling in xillybus_init_chrdev()
-Date: Sat, 19 Jul 2025 21:17:58 +0800
-Message-Id: <20250719131758.3458238-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1752931486; c=relaxed/simple;
+	bh=K6ehNrIeWFbo2IhyErHCbxwdJtL8CPLpZhn861VUH1I=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=nU1mk6PAKjhH2JJimLcpaH3UjZ+JamM8IcQIbpF15v9pQkpf6n+TwzvDpVtulv43GLR4ToyyN0422d+nMKydYbCq7KWACco0no9RlTsXI6/LJzZKTizKS4XOCWpHRxr6cKSybVUnpknhGqR9/gk82bQQCRrfVEb4RJLRdICehsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z8PcE7pP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4D5AC4CEE3;
+	Sat, 19 Jul 2025 13:24:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752931486;
+	bh=K6ehNrIeWFbo2IhyErHCbxwdJtL8CPLpZhn861VUH1I=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=Z8PcE7pPpWF/Bf/0ZcbCfDXnDswj+gRhGP/EwCZEzZIP8apc6DmlsTps2OyvxW4Mr
+	 yB0rpFUEjN5Rb07ZilqPP4iveE+p4VCoKfA737lJAPRYhPC9DOuvfbQ7xoNS3A2MGn
+	 0xNQMBlRs4BmHK0owTCJ8BN9IRdRS9FIKOEkh6txGyfak2T+EPyW/RiyJcDrMGVYsK
+	 iRdswvcEIQHcuhalueN7pwesLDCErNkvUC2CussPNG9SXwrE54eemsgcmpxjM8l3Hm
+	 TOev1MfDdZRme8lx5cKiSVHuy42U3XIf40xfv5k/0tl9YjrukzzrPqQQBXi+tP94sD
+	 StiLiltdTz1yQ==
+Date: Sat, 19 Jul 2025 08:24:44 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowADnE6gIm3toLJmCBQ--.46045S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Ary8Ww1rZw4kur43Wr1xKrg_yoW8GFWrpF
-	ZrW3ZYkrWUGa1jy3Zrtan8uay3Ja9rXr9rur47K3srZw15Wa4xJFWrCFWUJFyDWw4rK3y2
-	yanxAF18JF4xZaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9m14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
-	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
-	YxC7MxkF7I0En4kS14v26r126r1DMxkIecxEwVAFwVW5GwCF04k20xvY0x0EwIxGrwCFx2
-	IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v2
-	6r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67
-	AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IY
-	s7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr
-	0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JU4WlkUUUUU=
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>, 
+ Orson Zhai <orsonzhai@gmail.com>, dri-devel@lists.freedesktop.org, 
+ David Airlie <airlied@gmail.com>, Conor Dooley <conor+dt@kernel.org>, 
+ Kevin Tang <kevin.tang@unisoc.com>, devicetree@vger.kernel.org, 
+ Baolin Wang <baolin.wang@linux.alibaba.com>, 
+ Maxime Ripard <mripard@kernel.org>, Chunyan Zhang <zhang.lyra@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org
+To: =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>
+In-Reply-To: <20250719-ums9230-drm-v1-1-e4344a05eb3d@abscue.de>
+References: <20250719-ums9230-drm-v1-0-e4344a05eb3d@abscue.de>
+ <20250719-ums9230-drm-v1-1-e4344a05eb3d@abscue.de>
+Message-Id: <175293148489.4113846.8949388873166546770.robh@kernel.org>
+Subject: Re: [PATCH 01/12] dt-bindings: display: sprd: adapt for UMS9230
+ support
 
-Use cdev_del() instead of direct kobject_put() when cdev_add() fails.
-This aligns with standard kernel practice and maintains consistency
-within the driver's own error paths.
 
-Found by code review.
+On Sat, 19 Jul 2025 14:09:37 +0200, Otto Pflüger wrote:
+> Add the compatible strings for the display controller found in the
+> UMS9230 SoC and bindings for a gate clock. Add IOMMU-related bindings
+> to the display-subsystem node.
+> 
+> Signed-off-by: Otto Pflüger <otto.pflueger@abscue.de>
+> ---
+>  .../bindings/display/sprd/sprd,display-subsystem.yaml  | 11 +++++++++++
+>  .../bindings/display/sprd/sprd,sharkl3-dpu.yaml        | 18 +++++++++++++-----
+>  .../bindings/display/sprd/sprd,sharkl3-dsi-host.yaml   | 11 ++++++++---
+>  3 files changed, 32 insertions(+), 8 deletions(-)
+> 
 
-Cc: stable@vger.kernel.org
-Fixes: 8cb5d216ab33 ("char: xillybus: Move class-related functions to new xillybus_class.c")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
-Changes in v4:
-- Apologize, due to the long time that has passed since the last v2 version, I was negligent when submitting v3. I have now corrected it;
-Changes in v3:
-- modified the patch description, centralized cdev cleanup through standard API and maintained symmetry with driver's existing error handling;
-Changes in v2:
-- modified the patch as suggestions to avoid UAF.
----
- drivers/char/xillybus/xillybus_class.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+My bot found errors running 'make dt_binding_check' on your patch:
 
-diff --git a/drivers/char/xillybus/xillybus_class.c b/drivers/char/xillybus/xillybus_class.c
-index c92a628e389e..493bbed918c2 100644
---- a/drivers/char/xillybus/xillybus_class.c
-+++ b/drivers/char/xillybus/xillybus_class.c
-@@ -103,8 +103,7 @@ int xillybus_init_chrdev(struct device *dev,
- 		      unit->num_nodes);
- 	if (rc) {
- 		dev_err(dev, "Failed to add cdev.\n");
--		/* kobject_put() is normally done by cdev_del() */
--		kobject_put(&unit->cdev->kobj);
-+		cdev_del(unit->cdev);
- 		goto unregister_chrdev;
- 	}
- 
--- 
-2.25.1
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/display/sprd/sprd,sharkl3-dpu.yaml:38:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
+./Documentation/devicetree/bindings/display/sprd/sprd,sharkl3-dpu.yaml:41:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/sprd/sprd,sharkl3-dpu.example.dtb: dpu@63000000 (sprd,sharkl3-dpu): clocks: [[4294967295, 21], [4294967295, 13]] is too long
+	from schema $id: http://devicetree.org/schemas/display/sprd/sprd,sharkl3-dpu.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250719-ums9230-drm-v1-1-e4344a05eb3d@abscue.de
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
