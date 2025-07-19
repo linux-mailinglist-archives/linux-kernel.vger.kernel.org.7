@@ -1,65 +1,74 @@
-Return-Path: <linux-kernel+bounces-737744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB56FB0B006
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 14:49:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD63AB0B00A
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 14:54:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8B9B176B90
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 12:49:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7386AA5F51
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 12:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228E3287277;
-	Sat, 19 Jul 2025 12:49:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB175287273;
+	Sat, 19 Jul 2025 12:54:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AgZK+PhL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jq8jwH5i"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64B3626B973;
-	Sat, 19 Jul 2025 12:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F02E3597E;
+	Sat, 19 Jul 2025 12:54:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752929351; cv=none; b=TvBAP8H7oaYdcOpK/sCRmeGXPKsp5RbDNNxKoLRG6JoibBcGxnU3xZ3F86nQhnbCAEi5N1UOL3lb8fPkbMUn3Rw5m1j+nqi8M3w6E6gkL8KutX3KaAUWI4ydSVIN0CGfCSrAgJPqxazLc23N3CqhYIjMvM4hmVSa8xdvaau7NHY=
+	t=1752929677; cv=none; b=YOVaklBzG4t2QBgWJEUlgjxBMgVITNcJtfBxYCJQw8bZemnep9lNPMDUt5xOmZtfZGaZcecUAaEeR+nMCNviVlGy7KlgMJ+6deG1ULC0RlSNvUaTrJifFypZAcMYTu4haPMbL1cHZeEj5+8GqqqkiVXSyqY8Wp3jaM3eOYxJ54g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752929351; c=relaxed/simple;
-	bh=JhG4cUlhKgYFQz3cgZNnjli9ESfpxaxEnJSPQZbW0Ig=;
+	s=arc-20240116; t=1752929677; c=relaxed/simple;
+	bh=a2WHzkI/q/vrfok07xSzhfKqQpt4+MzLjtP3AUlEfJI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RH1PQHDE7QcO1esQMgVUCEFvCaOJmUmXWG7Vcv3QuWvl3RmivX1rmbw1atrrQlsfk6yv5yEgz9/5JM56PWDSGqSH03u91fQJTorx2dpVGu8Hf+ZetSMSATc9b8maFKHNbgcZLPwdsUoLr4BemR35wbBxKlbXF8lVvjDshTAuRAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AgZK+PhL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCECCC4CEE3;
-	Sat, 19 Jul 2025 12:49:07 +0000 (UTC)
+	 MIME-Version:Content-Type; b=iL7qgp6xuRm9gzcHLNZB5AVYy7h5HdbUdPC/HQ60vz4QUGYNMJ7Ktnj5Qt70aVANHCEORlRExr5b5xbj9N7CVClAQlYWAVgGNpdnm4MdwzKt7MfXUFPVAOxJCyEgQQHdBB++oT9w+aVoi9yE9+2R9u3VfRHVpyrFAGmYCcGO2OE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jq8jwH5i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3978C4CEE3;
+	Sat, 19 Jul 2025 12:54:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752929350;
-	bh=JhG4cUlhKgYFQz3cgZNnjli9ESfpxaxEnJSPQZbW0Ig=;
+	s=k20201202; t=1752929676;
+	bh=a2WHzkI/q/vrfok07xSzhfKqQpt4+MzLjtP3AUlEfJI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=AgZK+PhL9KcwBlBqF6apnlNa9jTsn3quUdEnM1NNxcGjj7WCF1J3z92e4dN0sAC0j
-	 e/O5xo//Jx5pfrivRhHvDCqY/xFbG5X5Ff/uzMnBg5lMOjGBFCSHXTWDwAIBz/LgM+
-	 pAlyV8aNhc5OMFxT/tLpFMP2Zo46Lx6SKS7YCOyPAmL6n3m2H+LU80WB6g8NRbzQIr
-	 HZX1JMS4SoTk7FcMYFGlsc7e4OZv78ZlfKL4KbV7fg/X1cBQK9LC7M+H9YK9GMAEM3
-	 Fu/6O2P8t2eRnWbq5WWkDY2nFtssRp3/AQu4qgAvEVtePejIGNaDdv+iNgloeF7wii
-	 CZ68vIUfIdtXw==
+	b=Jq8jwH5ioSPAWSCDq53c0gOMiFlEapSfh+u1ampq1Bc2an1kYbzy+Qp5JwT4oCONn
+	 5DJpv4QxdFB4CMjzAyO46vKignmqVGI/XyjMKQ+VOnzYJoDoj+sINd25AxXRtl92eo
+	 NOFO6lX01LEFFhpxiNbiJci1AYikzfGAngRAGRofT03gCf1qrXhdyS6QJdOh1/kVG6
+	 5EMvCqYHxxHIWMFLcwOAD28Q0dpwnB3NReOvwE/ULTcV3fWNGULEq9W4dux/jx3B1j
+	 8oJiksxGtGrivHaRVUSLcY4z6JEVXOZqibk75hlFj6NoV2/A5hkiGAvfE9lU0E/VDt
+	 Y4eWjdBpazflQ==
 From: Sven Peter <sven@kernel.org>
 To: Janne Grunau <j@jannau.net>,
 	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
 	Neal Gompa <neal@gompa.dev>,
+	Hector Martin <marcan@marcan.st>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Nick Chan <towinchenmi@gmail.com>
-Cc: Sven Peter <sven@kernel.org>,
-	asahi@lists.linux.dev,
+	Sebastian Reichel <sre@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Marc Zyngier <maz@kernel.org>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Sven Peter <sven@kernel.org>
+Cc: asahi@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2] arm64: dts: apple: t8012-j132: Include touchbar framebuffer node
-Date: Sat, 19 Jul 2025 14:48:40 +0200
-Message-Id: <175292930372.11148.7080198294186970764.b4-ty@kernel.org>
+	linux-pm@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: Re: (subset) [PATCH v7 00/10] Apple Mac System Management Controller
+Date: Sat, 19 Jul 2025 14:54:20 +0200
+Message-Id: <175292958117.11653.12996215497191655678.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250620-j132-fb-v2-1-65f100182085@gmail.com>
-References: <20250620-j132-fb-v2-1-65f100182085@gmail.com>
+In-Reply-To: <20250610-smc-6-15-v7-0-556cafd771d3@kernel.org>
+References: <20250610-smc-6-15-v7-0-556cafd771d3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,16 +78,24 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Fri, 20 Jun 2025 18:35:36 +0800, Nick Chan wrote:
-> Apple T2 MacBookPro15,2 (j132) has a touchbar so include the framebuffer
-> node.
+On Tue, 10 Jun 2025 15:29:41 +0000, Sven Peter wrote:
+> This series adds support for the System Management Controller found in
+> Apple Silicon devices which we model as a mfd. It also includes support
+> for the GPIO block and the power/reset block as sub-devices.
 > 
+> Changes between v6 and v7:
+>   - Rebased on 6.16-rc1
+>   - Dropped mfd- prefix from the macsmc driver name
+>   - Removed the check if the MBSE key exists in the reboot driver since
+>     we can rely on the device tree now
+>   - Changed my mail address to kernel.org
 > 
+> [...]
 
-Applied to git@github.com:AsahiLinux/linux.git (asahi-soc/for-next), thanks!
+Applied to git@github.com:AsahiLinux/linux.git (asahi-soc/drivers-6.17), thanks!
 
-[1/1] arm64: dts: apple: t8012-j132: Include touchbar framebuffer node
-      https://github.com/AsahiLinux/linux/commit/d1cf32949f9d
+[04/10] soc: apple: rtkit: Make shmem_destroy optional
+        https://github.com/AsahiLinux/linux/commit/0445eee835d6
 
 Best regards,
 -- 
