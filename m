@@ -1,163 +1,214 @@
-Return-Path: <linux-kernel+bounces-737714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8144B0AFAD
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 14:08:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EBE8B0AFB0
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 14:09:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 728FE1AA4B9D
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 12:09:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 850D31C202C4
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 12:10:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39073226D1E;
-	Sat, 19 Jul 2025 12:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6482422B595;
+	Sat, 19 Jul 2025 12:09:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bH1NxzHq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gbzfNgO+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1DE2629C;
-	Sat, 19 Jul 2025 12:08:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF0172629;
+	Sat, 19 Jul 2025 12:09:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752926931; cv=none; b=l4k16igSWLnZ4Vanv4MmfFFCRPnRKNqbgV7Y0LyCrajXkcEQvO11z8a7B4lwr0kobYZWp5m7uWyuwJmxz5WOWxqnOtwXcWAqSUZ4pxSyroW6fpzkTssfjM05QYKLqwOhn/dZjUvxrSHuNkVHEhoR/dZ+10HFMeB4ExPf7ylxGH8=
+	t=1752926978; cv=none; b=tW8V+Ya8tJXW1lIRkNdMBJvgo7BgtZ1VTNBJ7xnfoe4FjVkRNitGess1ZYj95VwpTfUtMJ/xly1DRIow5gJwhYqnSVR3bZg4b2bt50bxYm83DLAwpes9LvroSqnpuViiLzM4+4UEjnBmgRFWtRUtEuhiNYIMc7A/bwWNGtwSLEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752926931; c=relaxed/simple;
-	bh=V6+7/IxV8vU8dpSJuED/i3OjmTkW9aA8vLRVkWmQLMs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uthm3EtdOIRBoqk0zmE6nrw9ZeSV3CYouLTW0qTgwjYVfRO4HpEtBA416uncqO676MvajNSVKLPmwtBKdossOJ9Ac8a3ePhp/iV3Ynz8IN0+FQG98cQ1VDbPaEXCctfcj8HWp+gUWvyDJMPm7THXmSESStAfdXY4ATIS75Gw4Yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bH1NxzHq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCFE4C4CEE3;
-	Sat, 19 Jul 2025 12:08:48 +0000 (UTC)
+	s=arc-20240116; t=1752926978; c=relaxed/simple;
+	bh=fn8YKQ7uo24LYlUXF5nhxlSDkHFZ7BfRQEgFvald5DQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=idH7h9am3IeJa3hlEzP4gzqlmUD1W5LwKoaYR7WAiqe7Z53a77Bis+TTuz354K7qA8IbbVR+G2Ukh1KTPRJD++UKrsm5xy2BSgGL9ryDePplX9zwejjD+g7Hnn23jZAHeHgYqt4MmcB8HuDUEXlzYOoxBYkBWOa9gdhAc4rU8TE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gbzfNgO+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25EBBC4CEE3;
+	Sat, 19 Jul 2025 12:09:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752926931;
-	bh=V6+7/IxV8vU8dpSJuED/i3OjmTkW9aA8vLRVkWmQLMs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=bH1NxzHqP9JcpLV7DL5umzHTTksAeo/AyyEDcvE4mvLTMzdAtESfyqhCz1TU4L4a4
-	 LHFOf1Z9dvHxzcPU01wNmlavrY3T/JzYesl6UhgQVm9A39b2pYLao4LsJAV8kbQxZb
-	 DwGb7h1lzUIfXSJLdsTS2q2G1Deoz9rFIRoms0dlrQugTXvCqE9N2u/Ggm+NBxjrjb
-	 J6oi1mi4VQRIuAjcv/vY/9+ye1F6XBqSNlXHjiAhFPeTnqYUEskX30Kg8XlsVEcHbO
-	 vnPdx6ou19EcvbJE00kFLvcam9D9vVsJSAA3iT9x2LB8x/YLE6lxF/gktx3a0G2fN+
-	 XMBnR/lDfgcAg==
-Date: Sat, 19 Jul 2025 13:08:44 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
-Cc: Jonathan Santos <Jonathan.Santos@analog.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, lars@metafoo.de,
- Michael.Hennerich@analog.com, dlechner@baylibre.com, nuno.sa@analog.com,
- andy@kernel.org, jonath4nns@gmail.com
-Subject: Re: [PATCH] iio: adc: ad7768-1: disable IRQ autoenable
-Message-ID: <20250719130844.7559e322@jic23-huawei>
-In-Reply-To: <5llfgo2wifyi43zj24rv7ph5gebevcszrxl3hp3yc3ibaglcr3@fqdejauv6rmo>
-References: <20250718013307.153281-1-Jonathan.Santos@analog.com>
-	<5llfgo2wifyi43zj24rv7ph5gebevcszrxl3hp3yc3ibaglcr3@fqdejauv6rmo>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=k20201202; t=1752926978;
+	bh=fn8YKQ7uo24LYlUXF5nhxlSDkHFZ7BfRQEgFvald5DQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gbzfNgO+gNc1/m/rzqJxptbWswW03Ne9ZkgRQ0blpJoai+V27hkVFiPDRAiLrTO2d
+	 VFTQY3lW1U4rDOa2wX6Tm7+9+gL6HJtVnllzgaq+SCr+RaiPGKsPVRMVDnJvV5XTzP
+	 asaUG9tufPYhStkZv3WcbzcLi5qZjFtEft1Va+1XRJdZ1KTKj2uGw1JvT14YZNpwOg
+	 Y5FJfSNVGidE0uW13wZdFlPpxA2L/uUK4gavstmt6hf3Ql3oxhbm+bIT5fDNt/btvi
+	 XRNy8ancv6qUcf5VKRsCDab7rYGt8z3YhLWzGkp/44wT17uMEJbDZdp2EaM/+Ph6RC
+	 o2B6OQ8mhieew==
+Date: Sat, 19 Jul 2025 15:09:34 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Qunqin Zhao <zhaoqunqin@loongson.cn>
+Cc: lee@kernel.org, herbert@gondor.apana.org.au,
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+	davem@davemloft.net, linux-crypto@vger.kernel.org,
+	peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+	Yinggang Gu <guyinggang@loongson.cn>,
+	Huacai Chen <chenhuacai@loongson.cn>
+Subject: Re: [PATCH v12 3/4] tpm: Add a driver for Loongson TPM device
+Message-ID: <aHuK_pY2Ap4B7JWZ@kernel.org>
+References: <20250705072045.1067-1-zhaoqunqin@loongson.cn>
+ <20250705072045.1067-4-zhaoqunqin@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250705072045.1067-4-zhaoqunqin@loongson.cn>
 
-On Fri, 18 Jul 2025 10:18:56 +0100
-Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
+On Sat, Jul 05, 2025 at 03:20:44PM +0800, Qunqin Zhao wrote:
+> Loongson Security Engine supports random number generation, hash,
+> symmetric encryption and asymmetric encryption. Based on these
+> encryption functions, TPM2 have been implemented in the Loongson
+> Security Engine firmware. This driver is responsible for copying data
+> into the memory visible to the firmware and receiving data from the
+> firmware.
+> 
+> Co-developed-by: Yinggang Gu <guyinggang@loongson.cn>
+> Signed-off-by: Yinggang Gu <guyinggang@loongson.cn>
+> Signed-off-by: Qunqin Zhao <zhaoqunqin@loongson.cn>
+> Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
+> ---
+>  drivers/char/tpm/Kconfig        |  9 ++++
+>  drivers/char/tpm/Makefile       |  1 +
+>  drivers/char/tpm/tpm_loongson.c | 84 +++++++++++++++++++++++++++++++++
+>  3 files changed, 94 insertions(+)
+>  create mode 100644 drivers/char/tpm/tpm_loongson.c
+> 
+> diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
+> index dddd702b2..ba3924eb1 100644
+> --- a/drivers/char/tpm/Kconfig
+> +++ b/drivers/char/tpm/Kconfig
+> @@ -189,6 +189,15 @@ config TCG_IBMVTPM
+>  	  will be accessible from within Linux.  To compile this driver
+>  	  as a module, choose M here; the module will be called tpm_ibmvtpm.
+>  
+> +config TCG_LOONGSON
+> +	tristate "Loongson TPM Interface"
+> +	depends on MFD_LOONGSON_SE
+> +	help
+> +	  If you want to make Loongson TPM support available, say Yes and
+> +	  it will be accessible from within Linux. To compile this
+> +	  driver as a module, choose M here; the module will be called
+> +	  tpm_loongson.
+> +
+>  config TCG_XEN
+>  	tristate "XEN TPM Interface"
+>  	depends on TCG_TPM && XEN
+> diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
+> index 9de1b3ea3..5b5cdc0d3 100644
+> --- a/drivers/char/tpm/Makefile
+> +++ b/drivers/char/tpm/Makefile
+> @@ -46,3 +46,4 @@ obj-$(CONFIG_TCG_ARM_CRB_FFA) += tpm_crb_ffa.o
+>  obj-$(CONFIG_TCG_VTPM_PROXY) += tpm_vtpm_proxy.o
+>  obj-$(CONFIG_TCG_FTPM_TEE) += tpm_ftpm_tee.o
+>  obj-$(CONFIG_TCG_SVSM) += tpm_svsm.o
+> +obj-$(CONFIG_TCG_LOONGSON) += tpm_loongson.o
+> diff --git a/drivers/char/tpm/tpm_loongson.c b/drivers/char/tpm/tpm_loongson.c
+> new file mode 100644
+> index 000000000..a4ec23639
+> --- /dev/null
+> +++ b/drivers/char/tpm/tpm_loongson.c
+> @@ -0,0 +1,84 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/* Copyright (c) 2025 Loongson Technology Corporation Limited. */
+> +
+> +#include <linux/device.h>
+> +#include <linux/mfd/loongson-se.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/wait.h>
+> +
+> +#include "tpm.h"
+> +
+> +struct tpm_loongson_cmd {
+> +	u32 cmd_id;
+> +	u32 data_off;
+> +	u32 data_len;
+> +	u32 pad[5];
+> +};
+> +
+> +static int tpm_loongson_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+> +{
+> +	struct loongson_se_engine *tpm_engine = dev_get_drvdata(&chip->dev);
+> +	struct tpm_loongson_cmd *cmd_ret = tpm_engine->command_ret;
+> +
+> +	if (cmd_ret->data_len > count)
+> +		return -EIO;
+> +
+> +	memcpy(buf, tpm_engine->data_buffer, cmd_ret->data_len);
+> +
+> +	return cmd_ret->data_len;
+> +}
+> +
+> +static int tpm_loongson_send(struct tpm_chip *chip, u8 *buf, size_t count)
+> +{
+> +	struct loongson_se_engine *tpm_engine = dev_get_drvdata(&chip->dev);
+> +	struct tpm_loongson_cmd *cmd = tpm_engine->command;
+> +
+> +	if (count > tpm_engine->buffer_size)
+> +		return -E2BIG;
+> +
+> +	cmd->data_len = count;
+> +	memcpy(tpm_engine->data_buffer, buf, count);
+> +
+> +	return loongson_se_send_engine_cmd(tpm_engine);
+> +}
+> +
+> +static const struct tpm_class_ops tpm_loongson_ops = {
+> +	.flags = TPM_OPS_AUTO_STARTUP,
+> +	.recv = tpm_loongson_recv,
+> +	.send = tpm_loongson_send,
+> +};
+> +
+> +static int tpm_loongson_probe(struct platform_device *pdev)
+> +{
+> +	struct loongson_se_engine *tpm_engine;
+> +	struct device *dev = &pdev->dev;
+> +	struct tpm_loongson_cmd *cmd;
+> +	struct tpm_chip *chip;
+> +
+> +	tpm_engine = loongson_se_init_engine(dev->parent, SE_ENGINE_TPM);
+> +	if (!tpm_engine)
+> +		return -ENODEV;
+> +	cmd = tpm_engine->command;
+> +	cmd->cmd_id = SE_CMD_TPM;
+> +	cmd->data_off = tpm_engine->buffer_off;
+> +
+> +	chip = tpmm_chip_alloc(dev, &tpm_loongson_ops);
+> +	if (IS_ERR(chip))
+> +		return PTR_ERR(chip);
+> +	chip->flags = TPM_CHIP_FLAG_TPM2 | TPM_CHIP_FLAG_IRQ;
+> +	dev_set_drvdata(&chip->dev, tpm_engine);
+> +
+> +	return tpm_chip_register(chip);
+> +}
+> +
+> +static struct platform_driver tpm_loongson = {
+> +	.probe   = tpm_loongson_probe,
+> +	.driver  = {
+> +		.name  = "tpm_loongson",
+> +	},
+> +};
+> +module_platform_driver(tpm_loongson);
+> +
+> +MODULE_ALIAS("platform:tpm_loongson");
+> +MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("Loongson TPM driver");
+> -- 
+> 2.45.2
+> 
 
-> On Thu, Jul 17, 2025 at 10:33:07PM -0300, Jonathan Santos wrote:
-> > The device continuously converts data while powered up, generating
-> > interrupts in the background. Configure the IRQ to be enabled and
-> > disabled manually as needed to avoid unnecessary CPU load.
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-This generates interrupts continuously even when in oneshot mode?
+Can you take this through loongson tree? It's highly unlikely to
+conflict with anything.
 
-> >=20
-> > Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
-> > --- =20
->=20
-> LGTM,
->=20
-> Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
->=20
-> >  drivers/iio/adc/ad7768-1.c | 18 +++++++++++++++++-
-> >  1 file changed, 17 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/iio/adc/ad7768-1.c b/drivers/iio/adc/ad7768-1.c
-> > index a2e061f0cb08..3eea03c004c3 100644
-> > --- a/drivers/iio/adc/ad7768-1.c
-> > +++ b/drivers/iio/adc/ad7768-1.c
-> > @@ -395,8 +395,10 @@ static int ad7768_scan_direct(struct iio_dev *indi=
-o_dev)
-> >  	if (ret < 0)
-> >  		return ret;
-> > =20
-> > +	enable_irq(st->spi->irq);
-
-Looks racey to me in a number of ways.
-
-Before this patch:
-In continuous mode, reinit_completion called then interrupt before we enter
- oneshot mode. What was captured?=20
-
-After this patch
-Oneshot mode starts - hardware interrupt happens but enable_irq() is not set
-so we miss it - or do we get another pulse later?
-
-I'm not sure how to solve this as a device generating a stream of garbage
-interrupts is near impossible to deal with.
-
-I'm not following the datasheet description of this features vs the code=20
-though. It refers to oneshot mode requiring a pulse on sync in which I can't
-find.
-
-> >  	ret =3D wait_for_completion_timeout(&st->completion,
-> >  					  msecs_to_jiffies(1000));
-> > +	disable_irq(st->spi->irq);
-> >  	if (!ret)
-> >  		return -ETIMEDOUT;
-> > =20
-> > @@ -1130,7 +1132,21 @@ static const struct iio_buffer_setup_ops ad7768_=
-buffer_ops =3D {
-> >  	.predisable =3D &ad7768_buffer_predisable,
-> >  };
-> > =20
-> > +static int ad7768_set_trigger_state(struct iio_trigger *trig, bool ena=
-ble)
-> > +{
-> > +	struct iio_dev *indio_dev =3D iio_trigger_get_drvdata(trig);
-> > +	struct ad7768_state *st =3D iio_priv(indio_dev);
-> > +
-> > +	if (enable)
-> > +		enable_irq(st->spi->irq);
-> > +	else
-> > +		disable_irq(st->spi->irq);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  static const struct iio_trigger_ops ad7768_trigger_ops =3D {
-> > +	.set_trigger_state =3D ad7768_set_trigger_state,
-> >  	.validate_device =3D iio_trigger_validate_own_device,
-> >  };
-> > =20
-> > @@ -1417,7 +1433,7 @@ static int ad7768_probe(struct spi_device *spi)
-> > =20
-> >  	ret =3D devm_request_irq(&spi->dev, spi->irq,
-> >  			       &ad7768_interrupt,
-> > -			       IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-> > +			       IRQF_TRIGGER_RISING | IRQF_NO_AUTOEN,
-
-Why drop oneshot?
-
-> >  			       indio_dev->name, indio_dev);
-> >  	if (ret)
-> >  		return ret;
-> >=20
-> > base-commit: 0a686b9c4f847dc21346df8e56d5b119918fefef
-> > --=20
-> > 2.34.1
-> >  =20
->=20
-
+BR, Jarkko
 
