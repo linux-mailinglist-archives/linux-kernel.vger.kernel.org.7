@@ -1,125 +1,80 @@
-Return-Path: <linux-kernel+bounces-737564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA1FFB0ADE7
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 06:03:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D34A0B0ADEB
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 06:17:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65A703AFB20
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 04:02:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9733AA25A5
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 04:17:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A02761C3BEB;
-	Sat, 19 Jul 2025 04:03:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A58A186E2D;
+	Sat, 19 Jul 2025 04:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dPvVftal"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="bP3FJ5Aa"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D9BA2557A;
-	Sat, 19 Jul 2025 04:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A63AD24;
+	Sat, 19 Jul 2025 04:17:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752897783; cv=none; b=WFldxXPbxzTGvCsb7CoXj0IzQrbRafRPIPT+QIFYnHg3FaK3n3RDWxYtFNgcQyTyVSGUIELrLbsIO51n/TslAFZhJg9VWJA1P8LAINnOVohWLHvRC8ZD1ApaL7ffewh10KrBuvqm4VRI/hvUxbt1yd3uPHA/XiG11MKCtOmXzQY=
+	t=1752898641; cv=none; b=CPzhdTgQ5Mqp+Tm+hfMfjWnC5hv7sXJ6ggApeCbUoOXospO+1fdli5hSIUhXY6Iy7nrf7sQutdOxTIZXuqB29FGl2W/bJ2/0O9uyuXR4RriA0gqr+0ffKaBPq2lihvKejrCAwaHr3gCQwbBfnpknknDYFm7C8fpv23q0VvJb8Cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752897783; c=relaxed/simple;
-	bh=QJYtj07mWOU5fCCInMKerzvpfv/eT3lhRd6Pc1iitiw=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=k2YVQg2g+AyVEz9TGQ0ig87S3V8fmgxxvm0aju126F8KykoaiavfdZcy5GwWkVgmmRoTBBSMxwMU5mOMZI3wffXwbefR1hzDL40/XqLkMEVPAlp4bIi6Nmsf9p1CojGIzK3309KE76bk3R+7CZDyySya3e2/zC0b9wo0AqmGhFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dPvVftal; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-7048d8fec46so38689366d6.0;
-        Fri, 18 Jul 2025 21:03:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752897780; x=1753502580; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=0lp1Yf/k8UsFif9a5gBYtii8uEjPKY2WnDmYxFUXzCk=;
-        b=dPvVftalN1cGFXdVMgLRbBUGAiqaiDCrFnd3kmFmW2EPZAyxIcRd86QSzhX/kBmXxj
-         ZZPAZWrXWDCKJboe306OF6UnrCVP8UHJgxdAQk4UsSQ61LdZLpvAojFz731WiN834m7+
-         MzRoncT18suMiQ8ovsEuIv6B00EaSs6SffO3krQp0AZRCqbblr4smmy5Q6rWOce5vWPe
-         nEeSrlAPhVjhh4OOzSb5Zz2a8R9awdXa+EnNSqOAymdcz8jP3H1kpoUrH2E7iaVLLLvs
-         JLbkal9Py0CgUj8XB2aPyHeprIMkC/kKXyuFCUMkR+k+GYii0n595+g/MSuauUtoOSjM
-         rTbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752897780; x=1753502580;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0lp1Yf/k8UsFif9a5gBYtii8uEjPKY2WnDmYxFUXzCk=;
-        b=JLehSaC/6Ky8ESSqWXPQiVYfENk/WaZr3jLj0wbxJRr62+hXdou//95O7k2BIUGbJQ
-         66vDhz9cTzTI3WTV5dDvxck3Rp3V3sdCEvz1V0CrUpk4ZcWFvob7nLeJIUdVfsZrwZZ7
-         tQT2YUO57hNRS3nHMUAHh7RlUClJoNNGub2nU1ZgtRVkzGGTHt594G5BZAPYHMfnuor0
-         0bKsKAPNyVHAtEeJBv4K/mW0KypYZzIhAQYdLcGmKcHHXJgsqxjvEspTEvXNQ0c67yV+
-         aI5nxxovM52Z/1FbqvIZLDCLLFpmVypMFo03GM8YXeuMJYB1A44ByAH4nfZqe2jFLfhv
-         4+0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUfqdLLwrujVInmsi3iuOMjvzRw0LZeNTzfJiUhcU2DkSY0WNEC8H6ABzqo6qbLY1awCZo7aEIrS85/+jg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxC9BVg5+Qtq/eVXGsMCjldAuEtU2iy3Wq4be9tW/ILRP+pCK0f
-	QOX7fvLolUHThg2p7cUAmmp8jUSIAt6k2r7d5ZEHxrjOKBKC1XNco0QLTaUgTBYpo+GOsR+cIHU
-	vmAK/5Cp7bbbPW7ioOfF/lpAxstVb8B11HSVQOGw=
-X-Gm-Gg: ASbGncvVtY5E+7AS/DS/zxeptEk847YZj7zUVVItunpIXLpAVslfNdtwmfxqjpPSVX7
-	sbCxq+Kp2dD4Sva24+hdpqejGpZmoQDVXnuGwG8ULqKOg34BU9RwgYt1jxOAlYYGFYKfxfz3MWU
-	DnI3qJ/W1QpwujO6f/krPN0Mmlu+3yFbGVshoMF/EnvOAi4xWYz7m0L2PTsSFneqj8rqCpPxsVv
-	y4vRZHKGI21ymtt130U/0n0ZV/1aCTHGAotrqMJbbK2YJpv9KHS
-X-Google-Smtp-Source: AGHT+IFJMI0UsEUNY2xOijhIntoR9+1k7e9BSsCohO8QxvP+Az+D1+KrrZo2a4O3mW2+I4QQtkcrAzhVfDq963K/CeA=
-X-Received: by 2002:a05:6214:4e90:b0:702:d756:8a05 with SMTP id
- 6a1803df08f44-70515fb2106mr98681536d6.16.1752897780263; Fri, 18 Jul 2025
- 21:03:00 -0700 (PDT)
+	s=arc-20240116; t=1752898641; c=relaxed/simple;
+	bh=8Mupvjh8C3CjS9E8BGBz7fLYIr+7QB6sQWXmscgCUGg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EGprlvfTczIfMMBN7y5BWMV0UneIWnosD1mhVV6aFutQvIhpYkYYxuAJEhqBDCCJFJi4Jo1GaMJkucKE8ea4vGcd2mG5XbAaM4ckebb5fK6zwBvtrNopAqjtoie7sJfoJlOT1MSG1uVPPAmaJrCBYsQKY37shP2uaSoGIcg0Dfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=bP3FJ5Aa; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=YENCZnGysDyoXLTiMskCs9m24InAyieLb39es5sSD2s=; b=bP3FJ5Aa30BKFT9OQVwhQS1IMb
+	3U7GtwYiXRTLHxK7QpjXsdAVcanA6itY9TZLPFFEtqz48JtQbUW6KP6tHmqyIuqt/nGGqWR4tztxx
+	zwv5UQbhTNwGNyFKi/ED7osXcFML9PjICMYvFZSf46AIQ8YCMeTvePgN7HBgbLGrQXPpn4/s7oLCv
+	sPXtuy3T9wKI78Ct9R2aVl8D3KF4iEwJdcooGnl1kl2gxQZju6A/cJPDK35oSRdovljbhCvyAdE5m
+	SuTZjGAkvzR6YhCu6t1DMVKtHMaxwAOxMeq+0q5uNebz1Rl8RNIxFvhh0iVyjB+VaAGbrBD5p7omo
+	N2SYm6Hg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ucz0X-0000000HFdr-1mze;
+	Sat, 19 Jul 2025 04:17:09 +0000
+Date: Sat, 19 Jul 2025 05:17:09 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Zizhi Wo <wozizhi@huawei.com>
+Cc: jack@suse.com, brauner@kernel.org, axboe@kernel.dk, hch@lst.de,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH] fs: Add additional checks for block devices during mount
+Message-ID: <20250719041709.GI2580412@ZenIV>
+References: <20250719024403.3452285-1-wozizhi@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Fri, 18 Jul 2025 23:02:49 -0500
-X-Gm-Features: Ac12FXxJe79t-QEO6EFR3pG4uR7-rUMQzVEMT6SmF36jyHT6s_ZuEw-yvLd33YA
-Message-ID: <CAH2r5msnypvFXCtKuDuA=kZX6vCTVaXVF3OmvLRTZoWwYGrdOg@mail.gmail.com>
-Subject: [GIT PULL] smb3 client fixes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250719024403.3452285-1-wozizhi@huawei.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Please pull the following changes since commit
-347e9f5043c89695b01e66b3ed111755afcf1911:
+On Sat, Jul 19, 2025 at 10:44:03AM +0800, Zizhi Wo wrote:
 
-  Linux 6.16-rc6 (2025-07-13 14:25:58 -0700)
+> mkfs.ext4 -F /dev/sdb
+> mount /dev/sdb /mnt
+> mknod /dev/test b 8 16    # [sdb 8:16]
+> echo 1 > /sys/block/sdb/device/delete
+> mount /dev/test /mnt1    # -> mount success
+> 
+> Therefore, it is necessary to add an extra check. Solve this problem by
+> checking disk_live() in super_s_dev_test().
 
-are available in the Git repository at:
-
-  git://git.samba.org/sfrench/cifs-2.6.git tags/v6.16-rc6-smb3-client-fixes
-
-for you to fetch changes up to 8767cb3fbd514c4cf85b4f516ca30388e846f540:
-
-  Fix SMB311 posix special file creation to servers which do not
-advertise reparse support (2025-07-18 12:12:02 -0500)
-
-----------------------------------------------------------------
-Four smb3 client fixes
-- fix creating special files to Samba when using SMB3.1.1 POSIX Extensions
-- fix incorrect caching on new file creation with directory leases enabled
-- Two use after free fixes: one in oplock_break and one in async decryption
-----------------------------------------------------------------
-Bharath SM (1):
-      smb: invalidate and close cached directory when creating child entries
-
-Steve French (1):
-      Fix SMB311 posix special file creation to servers which do not
-advertise reparse support
-
-Wang Zhaolong (2):
-      smb: client: fix use-after-free in cifs_oplock_break
-      smb: client: fix use-after-free in crypt_message when using async crypto
-
- fs/smb/client/dir.c       |  6 ++++--
- fs/smb/client/file.c      | 10 +++++++++-
- fs/smb/client/smb2inode.c |  3 ++-
- fs/smb/client/smb2ops.c   | 10 ++++++++--
- 4 files changed, 23 insertions(+), 6 deletions(-)
-
-
--- 
-Thanks,
-
-Steve
+That smells like a wrong approach...  You are counting upon the failure
+of setup_bdev_super() after the thing is forced on the "no reuse" path,
+and that's too convoluted and brittle...
 
