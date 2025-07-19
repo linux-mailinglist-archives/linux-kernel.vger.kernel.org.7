@@ -1,76 +1,123 @@
-Return-Path: <linux-kernel+bounces-737704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B59ABB0AF95
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 13:22:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBF66B0AF96
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 13:26:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C15C1C218CA
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 11:22:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 924153A4535
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 11:26:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 956F0222585;
-	Sat, 19 Jul 2025 11:22:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 043FF224240;
+	Sat, 19 Jul 2025 11:26:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nXpBQWhr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TcOaZQiA"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78871D5CE8;
-	Sat, 19 Jul 2025 11:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202D7186A;
+	Sat, 19 Jul 2025 11:26:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752924135; cv=none; b=VdJcSQdEMLXqxfqxtCXmsvHmPgRjz6GHevP9Q5ZquwzhhbDqaUC/h2d14JlM0JA5kI+tC11xFpHxrvvCNNK7qGIQ6kaKKBew/MFDlpzs1/glzv8jtliPkU6etvCBLC2Imx0P6jaScbtwOyHO0xssZBBf3vfEUS3rppUzOctwE4A=
+	t=1752924390; cv=none; b=aaKsARAeDJ+QA7rmQeSdTSmmBz99zGRWuzIRaKcGLA8FggHOPA2gDiAR7Nx0PusRwe90CoiHNcU5+nT2NnZzmPd8esWvWpXzLjex1FiQgiMQvzyZpGLgP5AY67JmP7p/jB5pMx8xEJ2qh7MZ3f6Ac7e3P+G6NR8XWVe6jslPrQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752924135; c=relaxed/simple;
-	bh=OemD69XNu4bVL5RG5dSNkAwP0rHMtlS8t/5gDfFpzPk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TTr0SNeo4U68kY7wZlXd4nLoNDhAbCmgbcwLqqp5wuKr1MYfWgEX3VPJf7sazin4AQ8kFtA5d+sNd59jf4z0z5UFBUpVOo3LxJInnfsUlsemG3BLPT869CANQWesVAxIe1z8wIKXKWEIav6qV0iijihN1U2cH/9fFcn9ZHouE8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nXpBQWhr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10E80C4CEE3;
-	Sat, 19 Jul 2025 11:22:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752924134;
-	bh=OemD69XNu4bVL5RG5dSNkAwP0rHMtlS8t/5gDfFpzPk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nXpBQWhrGt8RCplSagwoNEc6e8t+dnVEaA/JJHY1TefQgeNbUQY/J9sb+aoYGX+Pa
-	 sRxI3Dwsx83+if7O+rlLMjzU4Sb7uLi2azSBMo6OPXfxlsOAcnu1/TaQqeuwf7Ni1B
-	 /0REXCyACxW48XnrkoZe1bDG3h5tgrX63oWU/DDL1ixBSRRQIafI2pdLOEoLNXxjB0
-	 QKmO8Pt1hnoNzAuNKGQeVLcbN56qhV8/31sNVDejjV4zpHAnobA+2LZVErioujoCOh
-	 HQUagU5R9Bd2OaoY0MX4G6tKMsK3pQro14KH/sZVWmdRSt8cgvV/efyZv+PMwgRpqY
-	 oZWWGsQVh+PXQ==
-Date: Sat, 19 Jul 2025 14:22:10 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Elena Reshetova <elena.reshetova@intel.com>
-Cc: dave.hansen@intel.com, seanjc@google.com, kai.huang@intel.com,
-	mingo@kernel.org, linux-sgx@vger.kernel.org,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	asit.k.mallick@intel.com, vincent.r.scarlata@intel.com,
-	chongc@google.com, erdemaktas@google.com, vannapurve@google.com,
-	bondarn@google.com, scott.raynor@intel.com
-Subject: Re: [PATCH v8 5/5] x86/sgx: Enable automatic SVN updates for SGX
- enclaves
-Message-ID: <aHt_4oLff2zjIuNH@kernel.org>
-References: <20250715124109.1711717-1-elena.reshetova@intel.com>
- <20250715124109.1711717-6-elena.reshetova@intel.com>
+	s=arc-20240116; t=1752924390; c=relaxed/simple;
+	bh=KYnXqm+R0357NOyh+FXM6qRFnZpUrmAPV6EatTu4tXk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=M65a9yNJUM6JBdKJ7NOvObxRYk2vphqq2HrXgbMwoBTrGNDcyI8TFZH2RywyQRPcuM3fFd36ri1V0NJTn3PLRvIgryiNighcQcndxo7U569NIKH5AI5Ih/uF5tWaM24woU4uT5G4RSz5ujnl4JUQvcLSRln4A54N4vD+0qfZcvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TcOaZQiA; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-747fba9f962so2824647b3a.0;
+        Sat, 19 Jul 2025 04:26:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752924388; x=1753529188; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1tm4VD55Vw0PRPdwY8xwaWOPoyGLCdto1ggUmWV9vps=;
+        b=TcOaZQiAVqW9NiDdMF0J1nCI8IQ9CxR3jK+IPQ0EWtHhopS8Oz8WNujjUrM1xyZQE0
+         SYA9A6clTYRPy8WgvIeYPEwZWvNkbgPVZvgrDDAhFrrIJjbOFZybpF2l9oq8iJywmcvS
+         JhtkglBm1Hg8gde02S29w9M0kbLjDCcxHYRIyYq2zAgpuJ/Sjcft3+VWPrJ3fyG5BQU8
+         PNZ9I/+D2WEq8H8/xXvVgp4nGNvwhsyXc3bMPlfuvjML95WHyeUnlcNvF3WoItzE4f1a
+         IvFE/SnoBH/AZWFOZeq+HPCn68+B9Ti/ANrd2zfslgL36VFHv692olUTEsQaaRDZwcSY
+         3m1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752924388; x=1753529188;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1tm4VD55Vw0PRPdwY8xwaWOPoyGLCdto1ggUmWV9vps=;
+        b=VzAKgFUh6DtctO6Z1rrjiUuBqyPghB5eLR7d3EHpwTgCqHrF2vx1KvnTiXJYXg4TT1
+         xkO8j1NhrqfkatWfH2rHrODh9lfp6JjyaV/n346RXx7f1hmEUXLFXRKvfE/cUzG9ERyB
+         KqAxnPB11qa+5j7a16t6OY3vEZNu5LDyZZpKZCguLLg4Sde+wh6Jzv3vXAcxcjZtDpjs
+         oEiPUx+UhuyzN7xrHe/aAGHJK5wXgWSvGmaIeSW6loLZ766gGxFnkCQCszjecRoQD4WU
+         NLD7Tn+ItjpKwFa/FkyuAV540Mvx+jh3D5am/EdZGNGAGQQ4M9UiviMZUBEzw/NsuI9Y
+         W5cA==
+X-Gm-Message-State: AOJu0YwaxC/xCLlT9nWvDcY58zeyv/cVPkQghY2uKEZeLV0FbnkXgtDo
+	YNji7BIY+wVv6QP9A2D/lbGJFzMhAixBYGUgMcj6ZBdubv/XRzfUVbcJfJESsQ==
+X-Gm-Gg: ASbGncs0AH/LQ4ysBabkvwy66ssL+fJ4YFfvHfTkOcBK19GjCP4EGhnBsjMu+S8yWeP
+	g4b6YgGVgBVMbV9xJnm/yeA7/JZuIIW3dAlvIRDG9s7jRzpyIM8nJIF5RMeF8ea78vsmqZiZ0eQ
+	gzJINWhubXQY9MLfioFXGn+cN8ajzyhkrnxvlNRjtEdraczGoeUec+pdupkXB+3cFWnmiPTi6iE
+	K0nc6FIQYkDyMkb2R5Em1HnoL8mBAbfYXDP1IaWBrbhoWMZvaddOQW62nbK4A9TwptgLEHrjNMh
+	JFH8fDjPcRPyU7wptlbHj8pCW0w7YTYomUkJfMPW6xODXSQ/RT1sK0CMnPazbj4lg7tg3GlkLT7
+	9B2IxzX3+tWTj/gbyZobrweojl+iHDFal9zIx
+X-Google-Smtp-Source: AGHT+IFmRoeLC70Lhc7juH4UNMmJFL7/wL5HGXnGAKf9YWlOgGS/dduvmFnLqo5f3fnqixRiHbm17w==
+X-Received: by 2002:a05:6a21:4598:b0:232:22a4:bd50 with SMTP id adf61e73a8af0-2391a30a4edmr11063515637.9.1752924387722;
+        Sat, 19 Jul 2025 04:26:27 -0700 (PDT)
+Received: from localhost.localdomain ([240f:34:212d:1:b20:5ffa:a79a:5174])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3f2fe8b88bsm2479637a12.16.2025.07.19.04.26.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 19 Jul 2025 04:26:27 -0700 (PDT)
+From: Akinobu Mita <akinobu.mita@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-cxl@vger.kernel.org,
+	akpm@linux-foundation.org,
+	akinobu.mita@gmail.com
+Subject: [PATCH] resource: fix false warning in __request_region()
+Date: Sat, 19 Jul 2025 20:26:04 +0900
+Message-Id: <20250719112604.25500-1-akinobu.mita@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250715124109.1711717-6-elena.reshetova@intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 15, 2025 at 03:40:22PM +0300, Elena Reshetova wrote:
-> -static int __maybe_unused sgx_update_svn(void)
-> +static int sgx_update_svn(void)
+A warning is raised when __request_region() detects a conflict with a
+resource whose resource.desc is IORES_DESC_DEVICE_PRIVATE_MEMORY.
 
-I'd combine 4/5 and 5/5 because of this. Makes them so much easier to
-backtrack changes later on if this type of stuff is avoided when
-possible.
+But this warning is only valid for iomem_resources.
+The hmem device resource uses resource.desc as the numa node id, which can
+cause spurious warnings.
 
-BR, Jarkko
+This change fixes this by restricting the warning to only iomem_resource.
+This also adds a missing new line to the warning message.
+
+Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+---
+ kernel/resource.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/resource.c b/kernel/resource.c
+index 8d3e6ed0bdc1..f9bb5481501a 100644
+--- a/kernel/resource.c
++++ b/kernel/resource.c
+@@ -1279,8 +1279,9 @@ static int __request_region_locked(struct resource *res, struct resource *parent
+ 		 * become unavailable to other users.  Conflicts are
+ 		 * not expected.  Warn to aid debugging if encountered.
+ 		 */
+-		if (conflict->desc == IORES_DESC_DEVICE_PRIVATE_MEMORY) {
+-			pr_warn("Unaddressable device %s %pR conflicts with %pR",
++		if (parent == &iomem_resource &&
++		    conflict->desc == IORES_DESC_DEVICE_PRIVATE_MEMORY) {
++			pr_warn("Unaddressable device %s %pR conflicts with %pR\n",
+ 				conflict->name, conflict, res);
+ 		}
+ 		if (conflict != parent) {
+-- 
+2.34.1
+
 
