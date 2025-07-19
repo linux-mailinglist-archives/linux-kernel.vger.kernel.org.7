@@ -1,76 +1,86 @@
-Return-Path: <linux-kernel+bounces-737732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73F54B0AFE3
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 14:33:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53D91B0AFE7
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 14:35:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FD83AA3267
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 12:32:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70FCA179ED6
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 12:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D32286D7A;
-	Sat, 19 Jul 2025 12:33:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAECE238C08;
+	Sat, 19 Jul 2025 12:35:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n+H2BOuw"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IH6NOkrZ"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A052367A0;
-	Sat, 19 Jul 2025 12:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2896F9E8
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 12:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752928396; cv=none; b=ShXBqS09Pic1d0RNhFwijoKAWyFR+3ezkwMaAWB1vLHqDUncksp/jkXq2GlV+r98afZxZp4PAobhvVTM1xyr2Aa+dCuX3kvYV6aQ8RR8fwfTC8Nzq7QdFFA5C1j4U9F8xPG27IT6YwvLSIOiwDzjTJR0JT2cBPZqj4YMauP6iEs=
+	t=1752928532; cv=none; b=rRQghbegVucFgkBjzAJHR0YO946b3aHvKlkF+ah2u3R7SVokFZt7nVv4Z28Rj9dIeOo4duHAcYMZa9dUyztxG+1a+iY9QOFcuqA+Ri7ImhzhToVs5UT+juNhXjoHcuvt2rZ/CYuaYqPGyYzuvCXd59l+PvF1rEWJbp/VZnJ1aZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752928396; c=relaxed/simple;
-	bh=OoWTn86S/wzPfInI0YVYIOh8btez0qEmOg3YNqB057E=;
+	s=arc-20240116; t=1752928532; c=relaxed/simple;
+	bh=4Y61ezedNlasNuguew5yc/qYVWkZkiIOi2FvberhkQQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cEd1NzJnXfdX1DeCExUB1qEoiAgEPR9Piu+aXRcZsby0pP355fLGTTbE/BJKG82iz5qE2G1HIMhbwiO5Ty4aeo6lKxJhPoYItyRcF4kVU3WtpyrmKY2qq/32fa1ymcFsNei3n7gT2bG4axSO+P8GT1QshTBUJtQ1yXL30sfdi9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n+H2BOuw; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752928395; x=1784464395;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=OoWTn86S/wzPfInI0YVYIOh8btez0qEmOg3YNqB057E=;
-  b=n+H2BOuwF6ARHmfGkZAPbgwQHJ3gIEQnzHodd1/PtiOoDC/dL/XUQdF6
-   CVD7f6kjEDmkiFepS6NY+0PCTxduFdEhcwCQnjZMXp4b8laCrGwD9kk1R
-   QaJH49bL0C9YU75cxKHulwB+SeMgbW7P1X/ITkNkxGgQnpKgh/xUtxdve
-   /d/PdXM704KEewo6hWZR75A6ltgkUEjUsKJsxOukymCvIIcH5SuE1rKOm
-   x+wgcO9Sm42P7ft8FOm4o7vx0EaqAKHhKfb2gLH6crXSqWlOfhbr2TnXK
-   oU7h8edlL57UPZHn+OKiGECRN6uxYzRE6ffNQm2qbYCFqgCObE5MDSI3T
-   w==;
-X-CSE-ConnectionGUID: be6kfTwEScGJnSMC6hK3bA==
-X-CSE-MsgGUID: xKFr8gZLRT6oIQoENj4Beg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11497"; a="55088139"
-X-IronPort-AV: E=Sophos;i="6.16,324,1744095600"; 
-   d="scan'208";a="55088139"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2025 05:33:14 -0700
-X-CSE-ConnectionGUID: jC8b1ftnQ6uby/bxzkdHAw==
-X-CSE-MsgGUID: BeBpsqEZQhG0cN6nKOTDEw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,324,1744095600"; 
-   d="scan'208";a="189417871"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 19 Jul 2025 05:33:12 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ud6kW-000FUN-32;
-	Sat, 19 Jul 2025 12:33:08 +0000
-Date: Sat, 19 Jul 2025 20:32:47 +0800
-From: kernel test robot <lkp@intel.com>
-To: Zizhi Wo <wozizhi@huawei.com>, viro@zeniv.linux.org.uk, jack@suse.com,
-	brauner@kernel.org, axboe@kernel.dk, hch@lst.de
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	wozizhi@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH] fs: Add additional checks for block devices during mount
-Message-ID: <202507192025.N75TF4Gp-lkp@intel.com>
-References: <20250719024403.3452285-1-wozizhi@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NhQpIwJhkQbqRbayg4idqIq0XnF8xCqyowW9LuazDFPoz0VPi8x5Kjn8nE+cNaQC/0jyw0BsjmpcoOxwcWHs7WR/L945cFGYkk8DW+43SgPpjpGPriF3wdH6fYe5JppiKxkxApC1A9DG1uwecbU7WHdzybu4vHzAp26O45X44zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IH6NOkrZ; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6facacf521eso26234276d6.3
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 05:35:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752928530; x=1753533330; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4Y61ezedNlasNuguew5yc/qYVWkZkiIOi2FvberhkQQ=;
+        b=IH6NOkrZMDVhUhuy2T9zuDQowkSpuROuEBfeSiWmRaxFnZn0RsLt9MkQmqCMxjio21
+         MCAhj20rtpOEBRJH5i/HxFDcv4oyqPDhCZg1UlpVzX54e28UIj4a79vjN+ungF3yMv+v
+         ktQ+TP7QaN+igYP9IMPqThfBLbqwQ1FbQy23/5KKUNg1LsaFFZG5ojjScREhYNgqaL/U
+         7TTm6bpgp1SdQlyVCgj0ddmFnsWiwf7kc5NIGJZm3sJSqSjCOmh7YBQZA/c/khU3IAdR
+         jL3N8hKXT4m5d+sevLTINS3HnV6un+Gg6rZiWDl9sop7xlkDOJsxQ1DsXjCUpB4l6QYn
+         fYlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752928530; x=1753533330;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4Y61ezedNlasNuguew5yc/qYVWkZkiIOi2FvberhkQQ=;
+        b=DbbvtIV61D/Thxv6vohk4aXZ37kiIiKBQ/Q29H5Yj/mh29bvKlZYtb9W1DwgJ8ZAeR
+         1qvFGHeEBas+3qjqXiRhGUNG5g+7TQ9VnfTb42L58efSrdbmaY+5mek/BLqm6CmQy38Q
+         8PCVniHxtBYN8ykqf+UuAWQS+fxhJQvvRgj58NBbpi1vUoPfbwvtBzACg6oKBiEDV7Xj
+         oycY3JmJBzo5bR0/whhyX7uJ0gAgb0MSKlSSiBjD7ZFN6Z7nNBEQeNk3RzvXiglp0etT
+         0+6uwCz4A2roEn6hfXWJWGWRliX0IKUrdzUVCrqdD34+jaQch1nVnU4vSAz/JPL3t/pw
+         /lxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXPTTRrYVvBxeLwhWjNRdi9PmEa8L5UXyBzrfCXcLDv5LJHKmmKp13E0O12nqXQMqyCX9eQ1Gt/Arv83e8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUa4ZCY8tq1betrbniIqEAy/XIhar1p0Fs9TvAh8rQK+tTNLwY
+	YiwNOIn/NXPNWiE2LftwGSpb4q2UaPAcvO4Hr/1Avu/pHR0w2Mw4OToky6i14aUQ
+X-Gm-Gg: ASbGncsyfk1jQYGbnRntdyY5P1iuPHb59tUuiV3mos2NeyEZYTUtBwD1ypy/MEWQFjr
+	3cjcswRFRLohZ7Tobdm5uxDTKw1R4Ib9jo85trTXUpn9ZVijeDr8YQ5dOVle+KqW+Bja9aZxDOv
+	9jDxXbH4Cxp/1OeOr8lLgwJcnDzzg6rpHTkUm+OTSN6B5JvEUgiaSyYEM48z9dYgR4imxhlxCHX
+	mYvZT/mvMVYqYQ/W9yup9ImQ3/gWck3IrDQFiyjysdPHCGUMRXBUFpejAbwpGeHJkTeH2309Gn7
+	fZonFZNTNoOJ1NJW7NM5BHOHStsA9jhwDFBwSMt+5usKoCSMWxNimaXHTfxK6FioZEvufLwa2+Z
+	cN3Pb1AWO2Awang==
+X-Google-Smtp-Source: AGHT+IHJA+QRPflJYc7M8xzBI0EQypb5RolX8qrCsFpoC25cIFIq9h+6eg9e7GqTk3uzfky4dIMm8w==
+X-Received: by 2002:a05:6214:5c08:b0:6fd:ace:4cf8 with SMTP id 6a1803df08f44-705073a3be4mr108216856d6.30.1752928529605;
+        Sat, 19 Jul 2025 05:35:29 -0700 (PDT)
+Received: from pc ([196.235.158.242])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4abb49a0147sm19223221cf.21.2025.07.19.05.35.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 19 Jul 2025 05:35:29 -0700 (PDT)
+Date: Sat, 19 Jul 2025 13:35:26 +0100
+From: Salah Triki <salah.triki@gmail.com>
+To: Eli Billauer <eli.billauer@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] char: xillybus: Replace deprecated MSI API
+Message-ID: <aHuRDhvUbVt9kcxa@pc>
+References: <aHskWESzZdyBFj4x@pc>
+ <f2f794bc-7c0c-ae18-70bc-97c7ffa8e235@outbound.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,38 +89,10 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250719024403.3452285-1-wozizhi@huawei.com>
+In-Reply-To: <f2f794bc-7c0c-ae18-70bc-97c7ffa8e235@outbound.gmail.com>
 
-Hi Zizhi,
+You are welcome
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on brauner-vfs/vfs.all]
-[also build test ERROR on jack-fs/for_next linus/master v6.16-rc6 next-20250718]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Zizhi-Wo/fs-Add-additional-checks-for-block-devices-during-mount/20250719-105053
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20250719024403.3452285-1-wozizhi%40huawei.com
-patch subject: [PATCH] fs: Add additional checks for block devices during mount
-config: i386-buildonly-randconfig-001-20250719 (https://download.01.org/0day-ci/archive/20250719/202507192025.N75TF4Gp-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250719/202507192025.N75TF4Gp-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507192025.N75TF4Gp-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> ld.lld: error: undefined symbol: disk_live
-   >>> referenced by super.c:1385 (fs/super.c:1385)
-   >>>               fs/super.o:(super_s_dev_test) in archive vmlinux.a
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best regards,
+Salah Triki
 
