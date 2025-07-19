@@ -1,205 +1,215 @@
-Return-Path: <linux-kernel+bounces-737526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD1E1B0AD95
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 05:08:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C003BB0AD97
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 05:09:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B59C2588074
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 03:08:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA15D1C214A3
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 03:09:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F224C23507A;
-	Sat, 19 Jul 2025 03:06:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E70DD202996;
+	Sat, 19 Jul 2025 03:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yYCQ1zNJ"
-Received: from mail-oa1-f74.google.com (mail-oa1-f74.google.com [209.85.160.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hGmx6cVf"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D01023313E
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 03:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774BE8C0B;
+	Sat, 19 Jul 2025 03:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752894364; cv=none; b=X8/LC7/HXjEgs/AyauL6kxlSLOGMVEtoJ6ytUlrU1yH/nCZWIiTiBR6ModS0WJdIrFyCjAOHVwpsc6q6soGySkDeUK2sEFvIZgcDoOyGaG1H+GbfwNvMMUgSzofIS+fKdd9ATlgt2ZDAFh+U62VfBEcwGI6Dw/6kZSzDlaSblAo=
+	t=1752894515; cv=none; b=uiLPba2XTuGKpnXoHDh4l+arev99kbxuyogMZqxR/jdZ68/rfLOFfhqjMcLis5w61ZCUMwUq4O0ux/jwi0VKWIJXY5EArsKNCPmA/2+jijVtuRV2AZyyICR3hP+g4HW6Vc8oSD1Dx+5ardpqk1y+JbwR7IUORgzJc6b+5TfaZ/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752894364; c=relaxed/simple;
-	bh=DANcYFjWFog65lA2TzZsCGmS77SSjwfSoaVllkCywbg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=ZOf+CP0bZazMIrqdSd0E4W0hOJkKm8J2G8RO+5Ta+6o3c7kzs+5buaiYQ9GG1DAUcTieYVpI9owx9CYGPSAgCBaN7ZcrVi9QEMSdNRrHwqHqCZYNJBHPh3s4EGzhnivdyK5emJ7msym47gMFK4FhhJEse6xME9e9P+83bPYEoEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yYCQ1zNJ; arc=none smtp.client-ip=209.85.160.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-oa1-f74.google.com with SMTP id 586e51a60fabf-2f3b9f042a6so2734765fac.3
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 20:06:01 -0700 (PDT)
+	s=arc-20240116; t=1752894515; c=relaxed/simple;
+	bh=cA+Rlc1UA4aEgEbhMbx+uYk06TRoNYUa2mIsSD9jTQE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jbvffDXS2egTzm5Whbaxz1JfNTQ3FsA9IMKWOTikQSIWvapHXhYqDF6IAxF7U3avecUHw2eq27wwj1BnciJyDJgXy8YzSiL/XV/JZQJ3Dh9drD7XFi77fngdY3RA+q+CkImbBO8gJW/226yHTUDoSbSfHdttEpr3xbg6ph55M0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hGmx6cVf; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7df981428abso419538785a.1;
+        Fri, 18 Jul 2025 20:08:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752894361; x=1753499161; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=87ygbU8b8rNXhdTHrIi6W+OHuxcL4xxMWjwjqIk1tDg=;
-        b=yYCQ1zNJJn62ZjijvzW0htn1cPOve7/0R39uDMGm4al7JKbcwvWBgs1WeCZWWltWzA
-         qZUQE8f7/jt8YhJ9Vw3CcIdLc9vH7vGGwYf7WNygoGR7pkY7/Se4ABmOyfD07872MzpN
-         /rDuD0DBdrlKXULBA/hLLnt4SZ5qrVPIEcc9tQaM0KK/v1P7iBYHpmRdg04/eA7oz+oG
-         70j/L/Ebm+bY+TXoSOc8df2hiVeJV8nM2GrVyDgBX/05bEVz0E4QxKYvc8oA8iPYWQJK
-         6wknfjxuq4WJWxr1SodQV1250fpE5+aZBRpO9qu1QQD+TuvDYckmkX5FFKFm33BRoT+W
-         I8iA==
+        d=gmail.com; s=20230601; t=1752894512; x=1753499312; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=nFN6uyXpb8WVQyZlorRYj+zulMxQ9kEVhp1w5q5VCv8=;
+        b=hGmx6cVf4lTaD0EEWn+9nPl/ZjbxGzvuLNYUvDc5wCCZOMW/tpsnlUIGDuV9pb4Kmp
+         gofnNYtJ2qRVHJi8DUw9FFbic5P+HIrlya/FRDkhsf3C0FNjF/wo3wphAP7/w+m+fcZB
+         Om1pChZb0zUlHkFxCrePPC6ClR1T7EwOVcutGxbWOvqoGug6ArLLhCIvV/srZuxOP8y0
+         zcV70GPyKzQlVofGBE/vy9N3nmhQkNmorR41J4WKRJlDNLAOikBV0+eBWbaqRE753NNf
+         nSjUPjrC6RHcnsfGprs/e5aMJ8rByHe3mvBzMvMJ58+ObJUAH+THO2neMu+woIJaDbJO
+         l2xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752894361; x=1753499161;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=87ygbU8b8rNXhdTHrIi6W+OHuxcL4xxMWjwjqIk1tDg=;
-        b=tzKDX7Isa98l7OOG5o+dZnymON+TbgK7E0pBIXp5bLsVCViTwyUhjaOHDTXf8kAJpL
-         7jnjoYaJbLu39QcKvVncVNN6bZktVB7i9HwrxP8902moptTt8qLPZ6cG2EbinHsCVWJN
-         rY7V1u9SJJ9Vx2c5aNJtAjWi3OTWa1+0Vai7jO7V81804WSNfu6epRchuTtblDCqSa2D
-         R3qoynOUm7u3UulPuJuhy+bqMzwb8w0hl2iwwiwPGd2nRVNrfMnJcm59uKIIcjGHIAVJ
-         feKcIHlqr4TUVTjM71na7UPHT2VfvbNWCvFD133jVQtxjjJdXLanFDYYeTu9gA6nzTb5
-         xfZA==
-X-Forwarded-Encrypted: i=1; AJvYcCWH+TqAb44zA1LYk66aE1p8RzmKkgjBewnNXul7J1fhsmGWvlH2jRNDVTHxVd1M2kezkblEAqn6y2qKos0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyfz50GAxIQo1lJHlBzB5zYhl/RswUJYUJRNf3Vdkg36clkcR+Z
-	aDoP4pgOVEiq5+UhCkNDew8Lu4t2XN1WRVsVUT2/8JixUB9mCKjE/n3ox8V+e/9WGWX+Y3EiV5H
-	22xm9AhsPdw==
-X-Google-Smtp-Source: AGHT+IF1zn1v8hKOs29XSjJpG0BiScmrrZ3QjOazEkYYMiDIpN9PpZyK6FC/Hrsm7Uo2yRHmvvdrcHmf9GW3
-X-Received: from oabrc11.prod.google.com ([2002:a05:6871:61cb:b0:2ff:9f42:9536])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6870:c995:b0:2cc:3523:9cd5
- with SMTP id 586e51a60fabf-2ffb22a045amr9659853fac.17.1752894361378; Fri, 18
- Jul 2025 20:06:01 -0700 (PDT)
-Date: Fri, 18 Jul 2025 20:05:17 -0700
-In-Reply-To: <20250719030517.1990983-1-irogers@google.com>
+        d=1e100.net; s=20230601; t=1752894512; x=1753499312;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:feedback-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nFN6uyXpb8WVQyZlorRYj+zulMxQ9kEVhp1w5q5VCv8=;
+        b=VEczqeg281kJQWSMd8jIMat2AbPb/NGIXJ13tW0rMhTMnmF6qMFOReLNUq+MfAMdmp
+         mDgUPI9lWH78v4kAKuoOGT+P3lGspmNxK/6A7kJGHj1ly8xi+wklWZQxZ1JxPiWJLfAy
+         CnGQf7LP5wcu//stn3GmhHJJrdnvLtGFUBZ/+BXq5o/GaBglByn29Vb5G02TI/DxgfoX
+         zHpZ5zLF6BRmAwXyWTdo46Vprq8UtFbXc9Oy/e3bSvRP3qBWP5SEQTuADIOtMXhiZZih
+         pKgHCKzykdznxlygkF7XfIMjcjpjYzjwm9o2FudRvkxrYU/okA3XmC3n6ZG6nu5ubNfh
+         EN2w==
+X-Forwarded-Encrypted: i=1; AJvYcCUQorImKStxn8X5CSZU7nDHccRX5o6a2OVnIZ3w1GIsDK9TWdPJnR0L8ZpWqFnoEBtskSp6p4xxrtVt@vger.kernel.org, AJvYcCVHuf+oTfn2gbBVGDsCE/dinV320JEbHAU1wY06b5m6/CoEITR+BGRSZBHGv3CTNHNR3A/I4GiSd136RYW7578=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXQy3C7rDf2j4A0ZaEU0LNE22K8Onz7A5Hs9xMdtccuei/yTcV
+	D5UmZIM1P2ZVTugFLS1Jzia5irqVPcuEX5d09HRfcHbiuEl8AKhM3/nP
+X-Gm-Gg: ASbGncsrT7GU6aKaSwPLo47WcxHs5CsdeK4WjmTqHOCaDKhJN4h/iuN0bL7AyqDq3DH
+	cgWUwniW90ywLrZ7Wh713YSi4l/8vCaDvoJFvuv/ibdje4oOcH5sCSUDmH2vujScTcCzTwVYmow
+	MmKWfp0Chv0RgTQLON42BOlK2leDZpEh53uk0YIwNzFS7wdxHS7U3In+s1TqwzInd1AttB22Np3
+	45mThMVGeDH7yfe69y9ytRdmXQan5Tybzalq7FXQBwcYhGx9HsHiGkfXZ1D33yuD12/XQrCVp+p
+	H6RA0gBVx7DyJ5dIhW+NTjPKQ3/xucfMkm9Le8PKWtCwNx3Vhvg63ZcgZbrW2P7/FQsUSNX2t96
+	4FcjHSRb53MeF9fLl+fcYqdTSoglc5xZCgQWQStT2ZDuaZ9M9v0tOUwc6WcPaAm8S8xXS1dmj1O
+	WTYWeR8IzpHOOYd8p2FAJGNIQ=
+X-Google-Smtp-Source: AGHT+IH46tO8GnXNGM87ZiDkJfwNSMULwxgsOqQxzPPUobUpcgLsukjaJK1/fL19UjstzFKC6zQ0nA==
+X-Received: by 2002:a05:620a:26a1:b0:7e3:3fba:900b with SMTP id af79cd13be357-7e356a247e5mr726807785a.4.1752894512106;
+        Fri, 18 Jul 2025 20:08:32 -0700 (PDT)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e356c9015dsm158556385a.92.2025.07.18.20.08.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Jul 2025 20:08:31 -0700 (PDT)
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfauth.phl.internal (Postfix) with ESMTP id DE9E0F40066;
+	Fri, 18 Jul 2025 23:08:30 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-05.internal (MEProxy); Fri, 18 Jul 2025 23:08:30 -0400
+X-ME-Sender: <xms:Lgx7aERoHNNeVjwf-paVvotjTQFXJgE99Mgmthi-tIFAlHVGzHfQLw>
+    <xme:Lgx7aDTmRslI_3R_c5CLjHlBL13Dsezs5ctVaotve9infeOUqqsQ44B68pCiC3VLs
+    IDV_sQsQ3XIX1WXSw>
+X-ME-Received: <xmr:Lgx7aGYbAvohmhRhNWNhDKsk63c7SKaV6br2Gv-cJU5mQAfKrjDBTz5-kg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeihedvudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeeuohhquhhnucfhvghn
+    ghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvghrnh
+    epgeegueekgefhvedukedtveejhefhkeffveeufeduiedvleetledtkeehjefgieevnecu
+    ffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshho
+    nhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngh
+    eppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepvdej
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvh
+    hgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehruhhsthdqfhhorhdqlhhinhhu
+    giesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlkhhmmheslhhishhtsh
+    drlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdgrrhgthhesvhhgvghrrdhk
+    vghrnhgvlhdrohhrghdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprh
+    gtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohep
+    sghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepghgrrhihsehgrg
+    hrhihguhhordhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhrohhtohhnmhgr
+    ihhlrdgtohhm
+X-ME-Proxy: <xmx:Lgx7aHj4fLEY0XA2kEsKo321ag5eJddKRA-R2YajcYP4KN_xjV2nSA>
+    <xmx:Lgx7aLjyCLDTPGd04bc8YFDg55LKSOHAfunzN_46Qoygb1mFtyW0kw>
+    <xmx:Lgx7aNK-JNmVmNmkJjnT9eLSf5uXl1TCkEzQO86MoQxiE5lz8kAMoA>
+    <xmx:Lgx7aCX1Xs1kRRoSkYzUYcnMU2O6HXGuqhzbzNrkcolhZ_LLvjZXaA>
+    <xmx:Lgx7aP1_d9MMuGoAfDB_71KJ2Sf2AwapEYqmRW2HQZSePemBwEk1WOo5>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 18 Jul 2025 23:08:30 -0400 (EDT)
+From: Boqun Feng <boqun.feng@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	lkmm@lists.linux.dev,
+	linux-arch@vger.kernel.org
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,
+	"Alex Gaynor" <alex.gaynor@gmail.com>,
+	"Boqun Feng" <boqun.feng@gmail.com>,
+	"Gary Guo" <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	"Benno Lossin" <lossin@kernel.org>,
+	"Andreas Hindborg" <a.hindborg@kernel.org>,
+	"Alice Ryhl" <aliceryhl@google.com>,
+	"Trevor Gross" <tmgross@umich.edu>,
+	"Danilo Krummrich" <dakr@kernel.org>,
+	"Will Deacon" <will@kernel.org>,
+	"Peter Zijlstra" <peterz@infradead.org>,
+	"Mark Rutland" <mark.rutland@arm.com>,
+	"Wedson Almeida Filho" <wedsonaf@gmail.com>,
+	"Viresh Kumar" <viresh.kumar@linaro.org>,
+	"Lyude Paul" <lyude@redhat.com>,
+	"Ingo Molnar" <mingo@kernel.org>,
+	"Mitchell Levy" <levymitchell0@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	"Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+	"Linus Torvalds" <torvalds@linux-foundation.org>,
+	"Thomas Gleixner" <tglx@linutronix.de>,
+	"Alan Stern" <stern@rowland.harvard.edu>
+Subject: [PATCH v8 0/9] LKMM atomics in Rust
+Date: Fri, 18 Jul 2025 20:08:18 -0700
+Message-Id: <20250719030827.61357-1-boqun.feng@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250719030517.1990983-1-irogers@google.com>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250719030517.1990983-16-irogers@google.com>
-Subject: [PATCH v3 15/15] perf metricgroups: Add NO_THRESHOLD_AND_NMI constraint
-From: Ian Rogers <irogers@google.com>
-To: Thomas Falcon <thomas.falcon@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	"Liang, Kan" <kan.liang@linux.intel.com>, Ravi Bangoria <ravi.bangoria@amd.com>, 
-	James Clark <james.clark@linaro.org>, Dapeng Mi <dapeng1.mi@linux.intel.com>, 
-	Weilin Wang <weilin.wang@intel.com>, Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Thresholds can increase the number of counters a metric needs. The NMI
-watchdog can take away a counter (hopefully the buddy watchdog will
-become the default and this will no longer be true). Add a new
-constraint for the case that a metric and its thresholds would fit in
-counters but only if the NMI watchdog isn't enabled. Either the
-threshold or the NMI watchdog should be disabled to make the metric
-fit. Wire this up into the metric__group_events logic.
+Hi all,
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/pmu-events/jevents.py   |  1 +
- tools/perf/pmu-events/pmu-events.h | 14 ++++++++++----
- tools/perf/util/metricgroup.c      | 16 ++++++++++++----
- 3 files changed, 23 insertions(+), 8 deletions(-)
+This is the v8 of LKMM atomics in Rust, you can find the previous
+versions at:
 
-diff --git a/tools/perf/pmu-events/jevents.py b/tools/perf/pmu-events/jevents.py
-index e821155151ec..0abd3cfb15ea 100755
---- a/tools/perf/pmu-events/jevents.py
-+++ b/tools/perf/pmu-events/jevents.py
-@@ -235,6 +235,7 @@ class JsonEvent:
-           'NO_GROUP_EVENTS_NMI': '2',
-           'NO_NMI_WATCHDOG': '2',
-           'NO_GROUP_EVENTS_SMT': '3',
-+          'NO_THRESHOLD_AND_NMI': '4',
-       }
-       return metric_constraint_to_enum[metric_constraint]
- 
-diff --git a/tools/perf/pmu-events/pmu-events.h b/tools/perf/pmu-events/pmu-events.h
-index a523936846e0..ea022ea55087 100644
---- a/tools/perf/pmu-events/pmu-events.h
-+++ b/tools/perf/pmu-events/pmu-events.h
-@@ -25,15 +25,21 @@ enum metric_event_groups {
- 	 */
- 	MetricNoGroupEvents = 1,
- 	/**
--	 * @MetricNoGroupEventsNmi: Don't group events for the metric if the NMI
--	 *                          watchdog is enabled.
-+	 * @MetricNoGroupEventsNmi:
-+	 * Don't group events for the metric if the NMI watchdog is enabled.
- 	 */
- 	MetricNoGroupEventsNmi = 2,
- 	/**
--	 * @MetricNoGroupEventsSmt: Don't group events for the metric if SMT is
--	 *                          enabled.
-+	 * @MetricNoGroupEventsSmt:
-+	 * Don't group events for the metric if SMT is enabled.
- 	 */
- 	MetricNoGroupEventsSmt = 3,
-+	/**
-+	 * @MetricNoGroupEventsThresholdAndNmi:
-+	 * Don't group events for the metric thresholds and if the NMI watchdog
-+	 * is enabled.
-+	 */
-+	MetricNoGroupEventsThresholdAndNmi = 4,
- };
- /*
-  * Describe each PMU event. Each CPU has a table of PMU events.
-diff --git a/tools/perf/util/metricgroup.c b/tools/perf/util/metricgroup.c
-index 3cc6c47402bd..595b83142d2c 100644
---- a/tools/perf/util/metricgroup.c
-+++ b/tools/perf/util/metricgroup.c
-@@ -179,7 +179,7 @@ static void metric__watchdog_constraint_hint(const char *name, bool foot)
- 		   "    echo 1 > /proc/sys/kernel/nmi_watchdog\n");
- }
- 
--static bool metric__group_events(const struct pmu_metric *pm)
-+static bool metric__group_events(const struct pmu_metric *pm, bool metric_no_threshold)
- {
- 	switch (pm->event_grouping) {
- 	case MetricNoGroupEvents:
-@@ -191,6 +191,13 @@ static bool metric__group_events(const struct pmu_metric *pm)
- 		return false;
- 	case MetricNoGroupEventsSmt:
- 		return !smt_on();
-+	case MetricNoGroupEventsThresholdAndNmi:
-+		if (metric_no_threshold)
-+			return true;
-+		if (!sysctl__nmi_watchdog_enabled())
-+			return true;
-+		metric__watchdog_constraint_hint(pm->metric_name, /*foot=*/false);
-+		return false;
- 	case MetricGroupEvents:
- 	default:
- 		return true;
-@@ -212,6 +219,7 @@ static void metric__free(struct metric *m)
- static struct metric *metric__new(const struct pmu_metric *pm,
- 				  const char *modifier,
- 				  bool metric_no_group,
-+				  bool metric_no_threshold,
- 				  int runtime,
- 				  const char *user_requested_cpu_list,
- 				  bool system_wide)
-@@ -246,7 +254,7 @@ static struct metric *metric__new(const struct pmu_metric *pm,
- 	}
- 	m->pctx->sctx.runtime = runtime;
- 	m->pctx->sctx.system_wide = system_wide;
--	m->group_events = !metric_no_group && metric__group_events(pm);
-+	m->group_events = !metric_no_group && metric__group_events(pm, metric_no_threshold);
- 	m->metric_refs = NULL;
- 	m->evlist = NULL;
- 
-@@ -831,8 +839,8 @@ static int __add_metric(struct list_head *metric_list,
- 		 * This metric is the root of a tree and may reference other
- 		 * metrics that are added recursively.
- 		 */
--		root_metric = metric__new(pm, modifier, metric_no_group, runtime,
--					  user_requested_cpu_list, system_wide);
-+		root_metric = metric__new(pm, modifier, metric_no_group, metric_no_threshold,
-+					  runtime, user_requested_cpu_list, system_wide);
- 		if (!root_metric)
- 			return -ENOMEM;
- 
+v7: https://lore.kernel.org/rust-for-linux/20250714053656.66712-1-boqun.feng@gmail.com/
+v6: https://lore.kernel.org/rust-for-linux/20250710060052.11955-1-boqun.feng@gmail.com/
+v5: https://lore.kernel.org/rust-for-linux/20250618164934.19817-1-boqun.feng@gmail.com/
+v4: https://lore.kernel.org/rust-for-linux/20250609224615.27061-1-boqun.feng@gmail.com/
+v3: https://lore.kernel.org/rust-for-linux/20250421164221.1121805-1-boqun.feng@gmail.com/
+v2: https://lore.kernel.org/rust-for-linux/20241101060237.1185533-1-boqun.feng@gmail.com/
+v1: https://lore.kernel.org/rust-for-linux/20240612223025.1158537-1-boqun.feng@gmail.com/
+wip: https://lore.kernel.org/rust-for-linux/20240322233838.868874-1-boqun.feng@gmail.com/
+
+Changes since v7:
+
+- A lot of trait renaming per the suggestion of Benno.
+- Add new internal type `AtomicRepr<T>` to make Atomc*Ops function safe.
+- Rename atomic/ops.rs => atomic/internal.rs per the suggestion of
+  Benno.
+- Move `Atomic<T>`, `AtomicType` and `AtomicAdd` into atomic.rs.
+- Remove atomic/generic.rs and move `impl AtomciType for {i,u}{32, 64,
+  size}` blocks and the tests into a new atomic/predefine.rs file.
+- Make `internal` not public, except that `AtomicImpl` is public.
+- Other minor documentation improvememt.
+
+Regards,
+Boqun
+
+Boqun Feng (9):
+  rust: Introduce atomic API helpers
+  rust: sync: Add basic atomic operation mapping framework
+  rust: sync: atomic: Add ordering annotation types
+  rust: sync: atomic: Add generic atomics
+  rust: sync: atomic: Add atomic {cmp,}xchg operations
+  rust: sync: atomic: Add the framework of arithmetic operations
+  rust: sync: atomic: Add Atomic<u{32,64}>
+  rust: sync: atomic: Add Atomic<{usize,isize}>
+  rust: sync: Add memory barriers
+
+ MAINTAINERS                               |    4 +-
+ rust/helpers/atomic.c                     | 1040 +++++++++++++++++++++
+ rust/helpers/barrier.c                    |   18 +
+ rust/helpers/helpers.c                    |    2 +
+ rust/kernel/sync.rs                       |    2 +
+ rust/kernel/sync/atomic.rs                |  553 +++++++++++
+ rust/kernel/sync/atomic/internal.rs       |  265 ++++++
+ rust/kernel/sync/atomic/ordering.rs       |  104 +++
+ rust/kernel/sync/atomic/predefine.rs      |  170 ++++
+ rust/kernel/sync/barrier.rs               |   61 ++
+ scripts/atomic/gen-atomics.sh             |    1 +
+ scripts/atomic/gen-rust-atomic-helpers.sh |   67 ++
+ 12 files changed, 2286 insertions(+), 1 deletion(-)
+ create mode 100644 rust/helpers/atomic.c
+ create mode 100644 rust/helpers/barrier.c
+ create mode 100644 rust/kernel/sync/atomic.rs
+ create mode 100644 rust/kernel/sync/atomic/internal.rs
+ create mode 100644 rust/kernel/sync/atomic/ordering.rs
+ create mode 100644 rust/kernel/sync/atomic/predefine.rs
+ create mode 100644 rust/kernel/sync/barrier.rs
+ create mode 100755 scripts/atomic/gen-rust-atomic-helpers.sh
+
 -- 
-2.50.0.727.gbf7dc18ff4-goog
+2.39.5 (Apple Git-154)
 
 
