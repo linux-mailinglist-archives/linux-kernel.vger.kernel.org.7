@@ -1,165 +1,141 @@
-Return-Path: <linux-kernel+bounces-737788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32505B0B096
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 17:17:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC564B0B09A
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 17:24:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A07C17482D
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 15:17:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54306189B4A5
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 15:24:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D832236F0;
-	Sat, 19 Jul 2025 15:16:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Y/EV+ckb"
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7722882A6;
+	Sat, 19 Jul 2025 15:24:35 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570DC1EB3D
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 15:16:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A424438B;
+	Sat, 19 Jul 2025 15:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752938217; cv=none; b=C3n9O8wJQzoZKzRREm+HZp0+2F6i3lBS5TF9BMcxixUWaMeZ10c8CVlQ1wRN40DQk3iqTPYCngSgRkbcJj0P57R8U2J3e5VBdQBMTQzuw/PvWBaRwZN0o2UbbocRDp8Uusv1/qsAT3j/a6VRqsL+Eg8x7ztGi0ZZ29ASRKDfuDA=
+	t=1752938674; cv=none; b=a9Li6YOyCVncm4By2dltpW04GPyhrASXiMSv+76w0wvgJ2Fm2JtmYQHbMMKEDe+TJuybUJtHC6qp2KR7cgGgy4yTIo8pEKPeVuiXHBpbteVlW29WBbOH3QkM/7U8cu20Wcj3ZUj0px2qb5XVJps1Z8BKTjZSP6NeGew+qplvTWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752938217; c=relaxed/simple;
-	bh=IHwbvCz1zDamw2mairfQORXsN8jGBSDQs5nizcpprvk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=r2LBmMkAS9+9m2pHkHMauUi60PfscoebMybIgM//zOWpHfsVqzmaQyMirGLjYo3liyPlfnYyiIf/7x4pt6ul/p1cebdHtZhfrV0xlhgcT2sxIQmpZxhPXn+01Jc22nTNwpIdaXMRUTHnId8+XA0oSCUhLIdv0WSnz9hIlz9XXDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Y/EV+ckb; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <509add4e-5dff-4f30-b96b-488919fedb77@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752938211;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Xk5P+fAr8LMRJWfH3D/mBbRYfZMtip1HO6juhnoIxBM=;
-	b=Y/EV+ckbbNQVvUL5aVpnV+d9009/TlvtMJ0Eln5GB5rU7Qy8/UVEdkLPOZ4LbFOdP6yrqS
-	gk5+GjlGTihHxaSG2yoIYmmAQm7BJGAvNKxlgm9cejdCBHDiUOhAevASkJu96HT+w8MKkT
-	JHxU52K+ntlrtd0xXPN+sPeWXLJ5zQc=
-Date: Sat, 19 Jul 2025 16:16:49 +0100
+	s=arc-20240116; t=1752938674; c=relaxed/simple;
+	bh=jkHsgEJILU/Qbv8DEUBcwA3kkM6X16M2Txy15MRCo+g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=utdruCGzvhjOp+u/m5tPvOiVVeEpTJUMVWUoivUJLxcCAZb3o6eqHdioP4ABqWYRZfJa2f5b/+prpvFSbkADZqKMn6YA7kbMrxxHRvJF0/7FDaYzzullBfW/oQF6Fs+zFJIfdsqfnVlVYxlr+rUFnYt9+w5oNY3ozhv5EEuegaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [82.8.138.118])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sam@gentoo.org)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 8ADBD340BD3;
+	Sat, 19 Jul 2025 15:24:31 +0000 (UTC)
+From: Sam James <sam@gentoo.org>
+To: Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>
+Cc: linux-kbuild@vger.kernel.org,
+	=?UTF-8?q?Micha=C5=82=20G=C3=B3rny?= <mgorny@gentoo.org>,
+	Sam James <sam@gentoo.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] kheaders: make it possible to override TAR
+Date: Sat, 19 Jul 2025 16:24:05 +0100
+Message-ID: <277557da458c5fa07eba7d785b4f527cc37a023f.1752938644.git.sam@gentoo.org>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20230412082743.350699-1-mgorny@gentoo.org>
+References: <20230412082743.350699-1-mgorny@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [RESEND PATCH net-next] amd-xgbe: Configure and retrieve
- 'tx-usecs' for Tx coalescing
-To: Vishal Badole <Vishal.Badole@amd.com>, Shyam-sundar.S-k@amd.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250719072608.4048494-1-Vishal.Badole@amd.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20250719072608.4048494-1-Vishal.Badole@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 19.07.2025 08:26, Vishal Badole wrote:
-> Ethtool has advanced with additional configurable options, but the
-> current driver does not support tx-usecs configuration.
-> 
-> Add support to configure and retrieve 'tx-usecs' using ethtool, which
-> specifies the wait time before servicing an interrupt for Tx coalescing.
-> 
-> Signed-off-by: Vishal Badole <Vishal.Badole@amd.com>
-> Acked-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-> ---
->   drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c | 19 +++++++++++++++++--
->   drivers/net/ethernet/amd/xgbe/xgbe.h         |  1 +
->   2 files changed, 18 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c b/drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c
-> index 12395428ffe1..362f8623433a 100644
-> --- a/drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c
-> +++ b/drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c
-> @@ -450,6 +450,7 @@ static int xgbe_get_coalesce(struct net_device *netdev,
->   	ec->rx_coalesce_usecs = pdata->rx_usecs;
->   	ec->rx_max_coalesced_frames = pdata->rx_frames;
->   
-> +	ec->tx_coalesce_usecs = pdata->tx_usecs;
->   	ec->tx_max_coalesced_frames = pdata->tx_frames;
->   
->   	return 0;
-> @@ -463,7 +464,7 @@ static int xgbe_set_coalesce(struct net_device *netdev,
->   	struct xgbe_prv_data *pdata = netdev_priv(netdev);
->   	struct xgbe_hw_if *hw_if = &pdata->hw_if;
->   	unsigned int rx_frames, rx_riwt, rx_usecs;
-> -	unsigned int tx_frames;
-> +	unsigned int tx_frames, tx_usecs;
->   
->   	rx_riwt = hw_if->usec_to_riwt(pdata, ec->rx_coalesce_usecs);
->   	rx_usecs = ec->rx_coalesce_usecs;
-> @@ -485,9 +486,22 @@ static int xgbe_set_coalesce(struct net_device *netdev,
->   		return -EINVAL;
->   	}
->   
-> +	tx_usecs = ec->tx_coalesce_usecs;
->   	tx_frames = ec->tx_max_coalesced_frames;
->   
-> +	/* Check if both tx_usecs and tx_frames are set to 0 simultaneously */
-> +	if (!tx_usecs && !tx_frames) {
-> +		netdev_err(netdev,
-> +			   "tx_usecs and tx_frames must not be 0 together\n");
-> +		return -EINVAL;
-> +	}
-> +
->   	/* Check the bounds of values for Tx */
-> +	if (tx_usecs > XGMAC_MAX_COAL_TX_TICK) {
-> +		netdev_err(netdev, "tx-usecs is limited to %d usec\n",
-> +			   XGMAC_MAX_COAL_TX_TICK);
-> +		return -EINVAL;
-> +	}
->   	if (tx_frames > pdata->tx_desc_count) {
->   		netdev_err(netdev, "tx-frames is limited to %d frames\n",
->   			   pdata->tx_desc_count);
-> @@ -499,6 +513,7 @@ static int xgbe_set_coalesce(struct net_device *netdev,
->   	pdata->rx_frames = rx_frames;
->   	hw_if->config_rx_coalesce(pdata);
->   
-> +	pdata->tx_usecs = tx_usecs;
->   	pdata->tx_frames = tx_frames;
->   	hw_if->config_tx_coalesce(pdata);
->
+From: Michał Górny <mgorny@gentoo.org>
 
-I'm not quite sure, but it looks like it never works. config_tx_coalesce()
-callback equals to xgbe_config_tx_coalesce() which is implemented as:
+Commit 86cdd2fdc4e39c388d39c7ba2396d1a9dfd66226 ("kheaders: make headers
+archive reproducible") introduced a number of options specific to GNU
+tar to the `tar` invocation in `gen_kheaders.sh` script.  This causes
+the script to fail to work on systems where `tar` is not GNU tar.  This
+can occur e.g. on recent Gentoo Linux installations that support using
+bsdtar from libarchive instead.
 
-static int xgbe_config_tx_coalesce(struct xgbe_prv_data *pdata)
-{
-         return 0;
-}
+Add a `TAR` make variable to make it possible to override the tar
+executable used, e.g. by specifying:
 
-How is it expected to change anything from HW side?
+  make TAR=gtar
 
-> @@ -830,7 +845,7 @@ static int xgbe_set_channels(struct net_device *netdev,
->   }
->   
->   static const struct ethtool_ops xgbe_ethtool_ops = {
-> -	.supported_coalesce_params = ETHTOOL_COALESCE_RX_USECS |
-> +	.supported_coalesce_params = ETHTOOL_COALESCE_USECS |
->   				     ETHTOOL_COALESCE_MAX_FRAMES,
->   	.get_drvinfo = xgbe_get_drvinfo,
->   	.get_msglevel = xgbe_get_msglevel,
-> diff --git a/drivers/net/ethernet/amd/xgbe/xgbe.h b/drivers/net/ethernet/amd/xgbe/xgbe.h
-> index 42fa4f84ff01..e330ae9ea685 100755
-> --- a/drivers/net/ethernet/amd/xgbe/xgbe.h
-> +++ b/drivers/net/ethernet/amd/xgbe/xgbe.h
-> @@ -272,6 +272,7 @@
->   /* Default coalescing parameters */
->   #define XGMAC_INIT_DMA_TX_USECS		1000
->   #define XGMAC_INIT_DMA_TX_FRAMES	25
-> +#define XGMAC_MAX_COAL_TX_TICK		100000
->   
->   #define XGMAC_MAX_DMA_RIWT		0xff
->   #define XGMAC_INIT_DMA_RX_USECS		30
+Link: https://bugs.gentoo.org/884061
+Reported-by: Sam James <sam@gentoo.org>
+Tested-by: Sam James <sam@gentoo.org>
+Co-developed-by: Masahiro Yamada <masahiroy@kernel.org>
+Signed-off-by: Michał Górny <mgorny@gentoo.org>
+Signed-off-by: Sam James <sam@gentoo.org>
+---
+v3: Rebase, cover more tar instances.
+
+ Makefile               | 3 ++-
+ kernel/gen_kheaders.sh | 6 +++---
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index c09766beb7eff..22d6037d738fe 100644
+--- a/Makefile
++++ b/Makefile
+@@ -543,6 +543,7 @@ LZMA		= lzma
+ LZ4		= lz4
+ XZ		= xz
+ ZSTD		= zstd
++TAR		= tar
+ 
+ CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
+ 		  -Wbitwise -Wno-return-void -Wno-unknown-attribute $(CF)
+@@ -622,7 +623,7 @@ export RUSTC RUSTDOC RUSTFMT RUSTC_OR_CLIPPY_QUIET RUSTC_OR_CLIPPY BINDGEN
+ export HOSTRUSTC KBUILD_HOSTRUSTFLAGS
+ export CPP AR NM STRIP OBJCOPY OBJDUMP READELF PAHOLE RESOLVE_BTFIDS LEX YACC AWK INSTALLKERNEL
+ export PERL PYTHON3 CHECK CHECKFLAGS MAKE UTS_MACHINE HOSTCXX
+-export KGZIP KBZIP2 KLZOP LZMA LZ4 XZ ZSTD
++export KGZIP KBZIP2 KLZOP LZMA LZ4 XZ ZSTD TAR
+ export KBUILD_HOSTCXXFLAGS KBUILD_HOSTLDFLAGS KBUILD_HOSTLDLIBS KBUILD_PROCMACROLDFLAGS LDFLAGS_MODULE
+ export KBUILD_USERCFLAGS KBUILD_USERLDFLAGS
+ 
+diff --git a/kernel/gen_kheaders.sh b/kernel/gen_kheaders.sh
+index c9e5dc068e854..bb609a9ed72b4 100755
+--- a/kernel/gen_kheaders.sh
++++ b/kernel/gen_kheaders.sh
+@@ -66,13 +66,13 @@ if [ "$building_out_of_srctree" ]; then
+ 		cd $srctree
+ 		for f in $dir_list
+ 			do find "$f" -name "*.h";
+-		done | tar -c -f - -T - | tar -xf - -C "${tmpdir}"
++		done | ${TAR:-tar} -c -f - -T - | ${TAR:-tar} -xf - -C "${tmpdir}"
+ 	)
+ fi
+ 
+ for f in $dir_list;
+ 	do find "$f" -name "*.h";
+-done | tar -c -f - -T - | tar -xf - -C "${tmpdir}"
++done | ${TAR:-tar} -c -f - -T - | ${TAR:-tar} -xf - -C "${tmpdir}"
+ 
+ # Always exclude include/generated/utsversion.h
+ # Otherwise, the contents of the tarball may vary depending on the build steps.
+@@ -88,7 +88,7 @@ xargs -0 -P8 -n1 \
+ rm -f "${tmpdir}.contents.txt"
+ 
+ # Create archive and try to normalize metadata for reproducibility.
+-tar "${KBUILD_BUILD_TIMESTAMP:+--mtime=$KBUILD_BUILD_TIMESTAMP}" \
++${TAR:-tar} "${KBUILD_BUILD_TIMESTAMP:+--mtime=$KBUILD_BUILD_TIMESTAMP}" \
+     --owner=0 --group=0 --sort=name --numeric-owner --mode=u=rw,go=r,a+X \
+     -I $XZ -cf $tarfile -C "${tmpdir}/" . > /dev/null
+ 
+-- 
+2.50.1
 
 
