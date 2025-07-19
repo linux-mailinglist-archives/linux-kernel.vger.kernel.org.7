@@ -1,52 +1,85 @@
-Return-Path: <linux-kernel+bounces-737782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B0F8B0B082
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 16:35:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E193B0B076
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 16:32:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0BB1AA80C3
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 14:35:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F19C3B84F6
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 14:31:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 453BAA926;
-	Sat, 19 Jul 2025 14:35:31 +0000 (UTC)
-Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7C4217F26;
+	Sat, 19 Jul 2025 14:32:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a7k2s5oN"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADB2C148838;
-	Sat, 19 Jul 2025 14:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079905479B;
+	Sat, 19 Jul 2025 14:32:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752935730; cv=none; b=RQlB6yk0zfazrHfHWybIpbVlR1lqjzsaCDKFukNssSNrRXvMPxYAYkihumFg9+bSUDITsP2Citl0zNxbctH1b5va1KbJUOi69GvlvwftbbNn8wUVVbhQ9/rzcdkNypLZEZx0yIYbM4nkel8Sfll7PXAXBGvBPntPcB1RTwEPfNo=
+	t=1752935541; cv=none; b=datWUVZdLuZX9Xi8zP/q3l9ZLqXl1JzPuqkbfsZwTtJEAlFro6GOsm8kfzhiyqT7tCbbptbIcDI/TzgnY1i+n/vUPxQLWiqum0jk5cqKA1PGHiHlsbPQjfS8+Z4OlJ1IIV8EiDBHuIubyx6FkgFBJ48H7UNs0jTAadf76767dOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752935730; c=relaxed/simple;
-	bh=1qXl/txmWEl/CHkCfq4k8N/fK5Ptvhrb+z6hE3Agwig=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jPw8mU9bGGJg4s2eXbS60Jnexw+r8M3HxbnWpGP6ts1N5Z7AwdFNcerACphUAy45OeyrM+k3n7KzKEe4gVxMqH+CAm/2/fIGjbyvU0gDXFaxCBg3P/WjSHBsP6bLsPN/gKweu5IicoXvMcHJzoQhw3rxlcSOdzLtrVE47zPU8Pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
-Received: from localhost.localdomain (unknown [119.122.214.181])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1c936174f;
-	Sat, 19 Jul 2025 22:30:13 +0800 (GMT+08:00)
-From: Chukun Pan <amadeus@jmu.edu.cn>
-To: knaerzche@gmail.com
-Cc: amadeus@jmu.edu.cn,
-	devicetree@vger.kernel.org,
-	heiko@sntech.de,
-	jonas@kwiboo.se,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	ziyao@disroot.org
-Subject: Re: [PATCH v3 0/6] arm64: dts: rockchip: Add ROCK 2A/2F, Sige1 and NanoPi Zero2
-Date: Sat, 19 Jul 2025 22:30:08 +0800
-Message-Id: <20250719143008.54288-1-amadeus@jmu.edu.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <104a501d-b9b2-494e-b073-932ddadd7129@gmail.com>
-References: <104a501d-b9b2-494e-b073-932ddadd7129@gmail.com>
+	s=arc-20240116; t=1752935541; c=relaxed/simple;
+	bh=V+cqlAHvyL6c/ohKdJfzOjs77XVYpRYB/WRjplcnoCg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=F/E9lUE5+uQsi7UEAAMwHnyPNyk8sZwKRmekxVukUKHKYCyE1lpPXqisieM025g/+d+zDsQ3ugnJ8VSJwGwG0+Ps+ykFHoIlDmBrxxHfrIcYu6VMtyL+syG03hIfXuj4I9RmcEM3XtaPPXajlB7fNhWATRBtBEkask8Dfig1eNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a7k2s5oN; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-74ce477af25so1988838b3a.3;
+        Sat, 19 Jul 2025 07:32:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752935538; x=1753540338; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MQBjRnreXxOAnskMzQcqhE92/7vDfe3b61ckiq4cRzU=;
+        b=a7k2s5oNLp6CjXQdHn/kFRwfHWkk2Pj0XFoKapwQsU/VHSYKSN5Z3BmMXRYvUTszq+
+         AdOPXOLH+Fcmi/Q9h9quXZ9s2mAx9VEiQN/XNkS61hZ12L28g30VtZecxiSYGyfzKi/k
+         rGeQCctzHqjhU3EdvrAqb+5sZYmyNdbDhXBQoo5iJEkkEHEaWe1nJISr/C86RhrZb0GP
+         uYjbC9tZxcGGfWElRXQgeoE3LrNM4lIFxnzdY/L8mnM0Q+/xkfHK/A2NFSl/0csz+8IX
+         k3jJ1ena9LAaCkcOOoHidVTpOCqXuhEzw3sU7PSHe0uNyljnEeEasPIoHcqxsId1A5BI
+         rHKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752935538; x=1753540338;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MQBjRnreXxOAnskMzQcqhE92/7vDfe3b61ckiq4cRzU=;
+        b=hvlIkrgnrJQcToP/t2T5aKv+sIpVOxdfkXzDsZB/CMMb+EG1MJ6H9yZohN7Iuy8Gwe
+         PoSWg+P0Aquv9hhYXHgSZfGGprIfIH6z12BFV0+ud0onp8qDwSydmaGdBffQ2Wg5rnZ6
+         LRw+k1yAXVibBYkN6ZvHCWIoEUDQI/v1XVIBDgOVkszycv7zET8dHLRj0+Ea3MN3LiVH
+         vk66YF75gc05jeOditpTq76V+omyiGjiGnXU0Lps6aNc8HTz5sYc75227WOi+3IIVImG
+         XUzynZY/xxxcUBi85qofjBO1uI5ZhIraQntc6sY6RkQQm8YMDpCLPJ6iVi5LgneFr7DP
+         FjlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX9dt8OiCil4mzaYDOJw8gwxGrQmXbDMOSxbVm2SHIbnWVJd45ku4636jA5bEDXr6zN2EINY6O7dHKmVvc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBjWQ2GeUHPgxG452vBC83pAjmHOkrY5nlru2XaNaLWR+05zsN
+	UJrxr0MVsMHMQgNNeNhtWGH2SoXeW3khTU5rOioPTqD4mKYd7AkozaPE7Ieaaw==
+X-Gm-Gg: ASbGncstVbYFWItsPtnvnSwRIWHuuMKb2LHVpTLknH/fOkqsYUIq5a8XURHy2c2PR0W
+	RZzUDcSQolCIT6OWBf/6uIDuQRVl4zjb76lRLP0hZ04ATnm/chojW+mUHkYlwrvAQN1W7Ug+TV8
+	fWskDTTiVjE4aLGNT5Y9FSQIFe6LsMeR5SRdpOJmjMmwCOwFEQi2v/DUakDK5KrWZTbsSEbac3K
+	eFyMccVDr/NS0ZhxDLCVpc7t2AdEsjDKhpCpLsp5RTcm4fF7BEfCt9GngdI9Aa4FJMg923Uhm1w
+	ePFBsesy/k5gZ/ytn/WEPd4PzRjTF0h4jeAA1KGbVS2Lfajk2utDUBY6jQh3851JvU01VR6/5MQ
+	Wl2GngwHGr/pd0eGhIlpqXVT1zhewn9mV28f+
+X-Google-Smtp-Source: AGHT+IE34Sc2Ts0uwneG0QWgzhLn24VuOpMD0GPaeFLyq22UDcU3Y5hEKJcAMpBdLOBjefH77/Ncag==
+X-Received: by 2002:a05:6a20:3c8d:b0:222:1802:2ddb with SMTP id adf61e73a8af0-23810667018mr22218551637.8.1752935537837;
+        Sat, 19 Jul 2025 07:32:17 -0700 (PDT)
+Received: from shankari-IdeaPad.. ([103.24.60.31])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759cb76d5d8sm2912668b3a.112.2025.07.19.07.32.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 19 Jul 2025 07:32:17 -0700 (PDT)
+From: Shankari Anand <shankari.ak0208@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Shankari Anand <shankari.ak0208@gmail.com>,
+	Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] kconfig: nconf: Fix uncleared lines on help screens
+Date: Sat, 19 Jul 2025 20:02:07 +0530
+Message-Id: <20250719143207.215020-1-shankari.ak0208@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,29 +87,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a982317b60e03a2kunma5e02ceb86108
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCTEMaVhhIGRgaSkxDH0keSVYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlKSkJVSklJVUlKT1VKQ0pZV1kWGg8SFR0UWUFZT0tIVUpLSUJNS0pVSktLVU
-	tZBg++
 
-Hi,
+commit 1b92b18ec419 ("kconfig: nconf: Ensure null termination where
+strncpy is used")
+introduced a regression where help screens (F1, F2, F3) no longer properly 
+clear short lines of text,
+resulting in duplicated or trailing content when lines are overwritten.
 
-> The issue I was seeing is that there actually *is* a variant called
-> 'RK3528' which at least according to the latest datasheets slightly differs
-> from 'RK3528A'. We are doing development based on 'RK3528A' and calling it
-> 'rockchip,rk3528' which might make it hard to add the non-A-variant in
-> future (unless we call it 'rockchip,the-actual-rk3528').
+Revert the null-termination change to match
+the actual length of the copied string.
 
-I think this can be ignored, because rockchip only provides RK3528A chip.
-RK3528A should be a revised version of RK3528, which solves some bugs,
-so we have never seen the silk screen printed with RK3528.
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Fixes: 1b92b18ec419 ("kconfig: nconf: Ensure null termination where strncpy is used")
+Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
+---
+I apologise for the overlook from my side. This should set it right.
+Link of the report : 
+https://lore.kernel.org/lkml/CAK7LNAT54nvwYmTy20Ep8U2kr4thn68yYWXi9R-d3Yx3iXs=Bg@mail.gmail.com/T/#
+---
+ scripts/kconfig/nconf.gui.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Chukun
+diff --git a/scripts/kconfig/nconf.gui.c b/scripts/kconfig/nconf.gui.c
+index 475a403ab8ba..7206437e784a 100644
+--- a/scripts/kconfig/nconf.gui.c
++++ b/scripts/kconfig/nconf.gui.c
+@@ -177,7 +177,7 @@ void fill_window(WINDOW *win, const char *text)
+ 		const char *line = get_line(text, i);
+ 		int len = get_line_length(line);
+ 		strncpy(tmp, line, min(len, x));
+-		tmp[sizeof(tmp) - 1] = '\0';
++		tmp[len] = '\0';
+ 		mvwprintw(win, i, 0, "%s", tmp);
+ 	}
+ }
 
---
-2.25.1
+base-commit: d086c886ceb9f59dea6c3a9dae7eb89e780a20c9
+-- 
+2.34.1
 
 
