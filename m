@@ -1,156 +1,182 @@
-Return-Path: <linux-kernel+bounces-737901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 955CBB0B1B8
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 22:10:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 24B6FB0B1BA
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 22:13:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3DEB3BFA2E
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 20:09:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6A9EAA3506
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 20:13:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5C5A2248B0;
-	Sat, 19 Jul 2025 20:10:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7282253F2;
+	Sat, 19 Jul 2025 20:13:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P6DY8u0Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TIZCNDL8"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8071422DD;
-	Sat, 19 Jul 2025 20:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651331422DD;
+	Sat, 19 Jul 2025 20:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752955807; cv=none; b=WBWQspMXHCJued9YuSq8RLKBO9oFOJxA8znZtJxWIzB+9tW8jMO91WjoW6guNLPlhrh+IyiOjZBKxoV1LOP8cpCdyyRwYYuYCmEs6SgYCfMuPr/jmTst6oWo9LzpnGeS8KZC0/Qz4bTBikDFxQOk4dG0+s7QeC7loDFkl68MV6M=
+	t=1752956029; cv=none; b=Hv704P4sDIkV1VpOD0nGwQWe/cj6sJdMrBeO3bMwybjcRjV4ziM6UfyXry+MY4ckRNWKTw7ezVIMyJ5TY11dwIvENivf12hsfHE667+OFb4pwmYwVk8OclE0LicXHdD4jvKZ0tn1DH7NjeVbMH2+PUDHxqHgf7MjN5yBamNhlYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752955807; c=relaxed/simple;
-	bh=Cq/LZcfPIbL/5x2NRYTCVuvf5o76InLZt0XHgDULnG8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HuwW3A9xMFEsBDuu5Jqk93D4BssRqYaoTLYQx7YUwdnaeY90yPIJFlTE3wceUdnG65mL7Rjw8EVmsTQUriNbGsToC/Ww2rch77dbg+r62cWl1ayjFRbU7pSdUkS4VI6ZE4wN18SnDVwQzDKiXI9oAmlDDUo/RnouxkU+Vkad9r4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P6DY8u0Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D2B1C4CEE3;
-	Sat, 19 Jul 2025 20:10:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752955806;
-	bh=Cq/LZcfPIbL/5x2NRYTCVuvf5o76InLZt0XHgDULnG8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P6DY8u0Z2f+wbChxlRb55lieHl3end2LOuOTRP1IHOJsUAAq7e9zh7nXPM5gOJdLl
-	 2qeDqM0tMurCwewKqJE9QQ0xWR6Ph9PDGej4xcUAsTew9J/1xSenT8nynZICPc2MFS
-	 3YPEFpFX1MuPA3psIsJPQMVcbvcMys9y2/A+GXCGf7h06PnUz8GG9yFyIRQl97OGuN
-	 gfKq/HpSgedtH+pEi1PLVzOdGKehiJFWA3Z2d97Vdu3ir/P5+4fBEixYZfcXwaQRdd
-	 OQWaxH/ARl3ajEuYlfd1EYZ7D1x7LH76BIeeBvXoc6JaDMCHAdzGCVkHEagfFh3drV
-	 H3atKFerHxR9A==
-Date: Sat, 19 Jul 2025 16:10:02 -0400
-From: Nathan Chancellor <nathan@kernel.org>
-To: Sam James <sam@gentoo.org>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	linux-kbuild@vger.kernel.org,
-	=?utf-8?B?TWljaGHFgiBHw7Nybnk=?= <mgorny@gentoo.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] kheaders: make it possible to override TAR
-Message-ID: <20250719201002.GA3285766@ax162>
-References: <20230412082743.350699-1-mgorny@gentoo.org>
- <277557da458c5fa07eba7d785b4f527cc37a023f.1752938644.git.sam@gentoo.org>
+	s=arc-20240116; t=1752956029; c=relaxed/simple;
+	bh=BJuiJFxFWen1mX2O9kqsVBAVZ9G5deeY8gE9u2WXPQU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g8620LmjFPn61rZ1a216lL7II1+iclzaSrCVmhNrItaa02O2Nuq4uuhUoymYvGdY3unbY0NlVrBJnRfZ/uYaOCwoTQgJt8A8xf5WUXGezh07YmMf+yOdZPP6jOb98I/hTgN5/TBqvN+SjOpgmyDOJmE5xxfOQCx9aflVjrTaMD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TIZCNDL8; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3b611665b96so1735873f8f.2;
+        Sat, 19 Jul 2025 13:13:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752956026; x=1753560826; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=in+3wMalymhyd0mcNEzfURo1USS+50XS18ZabbbVbQ0=;
+        b=TIZCNDL8nu+KPtrtz2CjYT+TJEl0FckFq6h3pW6vnEpTD9/owZTnBArepm1xJmg3IB
+         xkiwMipHrhED34CXAQRtzrf0QPM14pvD5qWSxwRaUUzzn4BhcAtaOUB2tLl32f0cP6ZL
+         VXniN6GmEgxKoF5LvizFE9enk+alWOKX8peyVjGVrqhE9gIVRPNIYT+8LSTX/+opiOs5
+         KHGzKeowkJhXEx6cPNEwox1zXDZfP8UeMPUVAxjjUd4v1rV2DPZa4pPm4GoWicQI2Khm
+         UlOpXWMyeo2W3YnHqFeVv7TUKK0MP+iMYW3w5ZsthWDwFaRmrfgciu64autLtq6r4R2Z
+         WJQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752956026; x=1753560826;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=in+3wMalymhyd0mcNEzfURo1USS+50XS18ZabbbVbQ0=;
+        b=drmwUr7lVnVS4W0CLAx0/y/Eq98wsT8BvZcgWgiJ12PXAz9Xe4sWV47+6wvBCLeXwG
+         tlD1o+r3w4AsyNOkSK/S0C+z9mEhpe4PZjKf87Owc59LAlmtDy0ocfi5vNA1TtPmmf86
+         Ia730Dpc9NzcZrhq0pc8kh+oIw2lDh0nTS+xslq6P5l5/qyCXysIk3ISkH1qKv/xRkYt
+         XRllO6TZNpZ0zpy5z7s5sBBoZvC2sT3eFGu/3u5mcE3Jgc8pll9lCaz84JVvqivA9WZk
+         KBhsqmPudzUv262SAieVGON4nCv9c1Vd+4Pjt8SvY1TozRhvgv+oNZQhm2Xd0/42cY49
+         eVxA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ8yA/LRs2ttGy7PiAZXRIpsCG6YdlSXb2+Vc9el76iR4Qg6s9llYOlHSwPgTauNW8HYVQ/+zLOe+77Fa3@vger.kernel.org, AJvYcCXzR4xdolqaK+D2ANApcEP9Ct4Y+UhI6d6jl/fBwYbubWk9MBCAEdjPowdXJS6wbDuim9ZdpMKfsQRInxnBtXM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzTbpu+laDBm/uzH0HfMz0FI9egKR9lkiwHBol3/Gb0ecZ8BKz
+	BITYcoNCZU7x5gK3MZJ1c37B26XiEJuvCE+1Sdt2K7sWLp5w9TdVEeLAurB2U8PJhkU=
+X-Gm-Gg: ASbGnctExvU7Fqouo9zZPgydOJb3Fzo8Un7LRVe+DAqjHCA6fIVYbwL3kG34Z99Xjgt
+	468SBXGHRolVK0Gy6z9tNepksSzSPWulEzIRngU9ACLGIhwksD5Sph5m+K0dZWg/x7d3lsMzPkj
+	2mG8Wa6UVVxvdru7kjAmojrRdibT7IMiUy09zuN7wiHjSrxGk3GxkJY2V+oWzAOna+cMad6Ybu3
+	T1faTyQLIuYgXQK6btck7es1cFQn66l65jX7bh5B5oxV4sQZTyRfbAVeJK2d7uxAFp3HcQ58BAE
+	zMnQZYFjHyGIqPzlkRcnz9NIMLk69iEtOmCd2PavPRcEILQjCvxaeMcykTU+AfgmE6PFY3oWCgD
+	OMd2IwX29Z+HjSJsTwH/1lsiu8Vdgi1WJWwan0OyriHNSJLMO7QbakazBlq0w4u/vGD93NBAFiU
+	Z7UT1uHos4I6Wb6JbiW3FAQ9LWYXaNdBOp1CyN2GEpbSHoej9X
+X-Google-Smtp-Source: AGHT+IEeVEAp37YnmoMBm7w59WNgzIG7isklWQTZZWVzH29omb+dgi0uRxWJL8sxVIM9C8IO8+tt+Q==
+X-Received: by 2002:adf:e193:0:b0:3a3:7987:945f with SMTP id ffacd0b85a97d-3b60e5242a1mr13227365f8f.57.1752956025568;
+        Sat, 19 Jul 2025 13:13:45 -0700 (PDT)
+Received: from ip-172-31-24-186.eu-west-1.compute.internal (ec2-18-202-80-98.eu-west-1.compute.amazonaws.com. [18.202.80.98])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca48c40sm5674576f8f.58.2025.07.19.13.13.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 19 Jul 2025 13:13:45 -0700 (PDT)
+From: Ivan Orlov <ivan.orlov0322@gmail.com>
+To: peterhuewe@gmx.de,
+	jarkko@kernel.org
+Cc: Ivan Orlov <ivan.orlov0322@gmail.com>,
+	iorlov@amazon.co.uk,
+	jgg@ziepe.ca,
+	linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dwmw@amazon.co.uk,
+	noodles@earth.li
+Subject: [PATCH v3] tpm: Check for completion after timeout
+Date: Sat, 19 Jul 2025 20:13:39 +0000
+Message-ID: <20250719201340.24447-1-ivan.orlov0322@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <277557da458c5fa07eba7d785b4f527cc37a023f.1752938644.git.sam@gentoo.org>
 
-On Sat, Jul 19, 2025 at 04:24:05PM +0100, Sam James wrote:
-> From: Michał Górny <mgorny@gentoo.org>
-> 
-> Commit 86cdd2fdc4e39c388d39c7ba2396d1a9dfd66226 ("kheaders: make headers
-> archive reproducible") introduced a number of options specific to GNU
-> tar to the `tar` invocation in `gen_kheaders.sh` script.  This causes
-> the script to fail to work on systems where `tar` is not GNU tar.  This
-> can occur e.g. on recent Gentoo Linux installations that support using
-> bsdtar from libarchive instead.
-> 
-> Add a `TAR` make variable to make it possible to override the tar
-> executable used, e.g. by specifying:
-> 
->   make TAR=gtar
-> 
-> Link: https://bugs.gentoo.org/884061
-> Reported-by: Sam James <sam@gentoo.org>
-> Tested-by: Sam James <sam@gentoo.org>
-> Co-developed-by: Masahiro Yamada <masahiroy@kernel.org>
-> Signed-off-by: Michał Górny <mgorny@gentoo.org>
-> Signed-off-by: Sam James <sam@gentoo.org>
-> ---
+The current implementation of timeout detection works in the following
+way:
 
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+1. Read completion status. If completed, return the data
+2. Sleep for some time (usleep_range)
+3. Check for timeout using current jiffies value. Return an error if
+   timed out
+4. Goto 1
 
-I assume that other places that call tar within the build process are
-not problematic because they do not use GNU specific options, such as
-scripts/Makefile.package and scripts/package/install-extmod-build, or
-maybe that people just have not tried building those packages with
-bsdtar?
+usleep_range doesn't guarantee it's always going to wake up strictly in
+(min, max) range, so such a situation is possible:
 
-> v3: Rebase, cover more tar instances.
-> 
->  Makefile               | 3 ++-
->  kernel/gen_kheaders.sh | 6 +++---
->  2 files changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Makefile b/Makefile
-> index c09766beb7eff..22d6037d738fe 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -543,6 +543,7 @@ LZMA		= lzma
->  LZ4		= lz4
->  XZ		= xz
->  ZSTD		= zstd
-> +TAR		= tar
->  
->  CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
->  		  -Wbitwise -Wno-return-void -Wno-unknown-attribute $(CF)
-> @@ -622,7 +623,7 @@ export RUSTC RUSTDOC RUSTFMT RUSTC_OR_CLIPPY_QUIET RUSTC_OR_CLIPPY BINDGEN
->  export HOSTRUSTC KBUILD_HOSTRUSTFLAGS
->  export CPP AR NM STRIP OBJCOPY OBJDUMP READELF PAHOLE RESOLVE_BTFIDS LEX YACC AWK INSTALLKERNEL
->  export PERL PYTHON3 CHECK CHECKFLAGS MAKE UTS_MACHINE HOSTCXX
-> -export KGZIP KBZIP2 KLZOP LZMA LZ4 XZ ZSTD
-> +export KGZIP KBZIP2 KLZOP LZMA LZ4 XZ ZSTD TAR
->  export KBUILD_HOSTCXXFLAGS KBUILD_HOSTLDFLAGS KBUILD_HOSTLDLIBS KBUILD_PROCMACROLDFLAGS LDFLAGS_MODULE
->  export KBUILD_USERCFLAGS KBUILD_USERLDFLAGS
->  
-> diff --git a/kernel/gen_kheaders.sh b/kernel/gen_kheaders.sh
-> index c9e5dc068e854..bb609a9ed72b4 100755
-> --- a/kernel/gen_kheaders.sh
-> +++ b/kernel/gen_kheaders.sh
-> @@ -66,13 +66,13 @@ if [ "$building_out_of_srctree" ]; then
->  		cd $srctree
->  		for f in $dir_list
->  			do find "$f" -name "*.h";
-> -		done | tar -c -f - -T - | tar -xf - -C "${tmpdir}"
-> +		done | ${TAR:-tar} -c -f - -T - | ${TAR:-tar} -xf - -C "${tmpdir}"
->  	)
->  fi
->  
->  for f in $dir_list;
->  	do find "$f" -name "*.h";
-> -done | tar -c -f - -T - | tar -xf - -C "${tmpdir}"
-> +done | ${TAR:-tar} -c -f - -T - | ${TAR:-tar} -xf - -C "${tmpdir}"
->  
->  # Always exclude include/generated/utsversion.h
->  # Otherwise, the contents of the tarball may vary depending on the build steps.
-> @@ -88,7 +88,7 @@ xargs -0 -P8 -n1 \
->  rm -f "${tmpdir}.contents.txt"
->  
->  # Create archive and try to normalize metadata for reproducibility.
-> -tar "${KBUILD_BUILD_TIMESTAMP:+--mtime=$KBUILD_BUILD_TIMESTAMP}" \
-> +${TAR:-tar} "${KBUILD_BUILD_TIMESTAMP:+--mtime=$KBUILD_BUILD_TIMESTAMP}" \
->      --owner=0 --group=0 --sort=name --numeric-owner --mode=u=rw,go=r,a+X \
->      -I $XZ -cf $tarfile -C "${tmpdir}/" . > /dev/null
->  
-> -- 
-> 2.50.1
-> 
+1. Driver reads completion status. No completion yet
+2. Process sleeps indefinitely. In the meantime, TPM responds
+3. We check for timeout without checking for the completion again.
+   Result is lost.
+
+Such a situation also happens for the guest VMs: if vCPU goes to sleep
+and doesn't get scheduled for some time, the guest TPM driver will
+timeout instantly after waking up without checking for the completion
+(which may already be in place).
+
+Perform the completion check once again after exiting the busy loop in
+order to give the device the last chance to send us some data.
+
+Since now we check for completion in two places, extract this check into
+a separate function.
+
+Signed-off-by: Ivan Orlov <ivan.orlov0322@gmail.com>
+---
+V1 -> V2:
+- Exclude the jiffies -> ktime change from the patch
+- Instead of recording the time before checking for completion, check
+  for completion once again after leaving the loop
+V2 -> V3:
+- Avoid reading the chip status twice in the inner loop by passing
+  status into tpm_transmit_completed
+
+ drivers/char/tpm/tpm-interface.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 8d7e4da6ed53..8d18b33aa62d 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -82,6 +82,13 @@ static bool tpm_chip_req_canceled(struct tpm_chip *chip, u8 status)
+ 	return chip->ops->req_canceled(chip, status);
+ }
+ 
++static bool tpm_transmit_completed(u8 status, struct tpm_chip *chip)
++{
++	u8 status_masked = status & chip->ops->req_complete_mask;
++
++	return status_masked == chip->ops->req_complete_val;
++}
++
+ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
+ {
+ 	struct tpm_header *header = buf;
+@@ -129,8 +136,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
+ 	stop = jiffies + tpm_calc_ordinal_duration(chip, ordinal);
+ 	do {
+ 		u8 status = tpm_chip_status(chip);
+-		if ((status & chip->ops->req_complete_mask) ==
+-		    chip->ops->req_complete_val)
++		if (tpm_transmit_completed(status, chip))
+ 			goto out_recv;
+ 
+ 		if (tpm_chip_req_canceled(chip, status)) {
+@@ -142,6 +148,13 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
+ 		rmb();
+ 	} while (time_before(jiffies, stop));
+ 
++	/*
++	 * Check for completion one more time, just in case the device reported
++	 * it while the driver was sleeping in the busy loop above.
++	 */
++	if (tpm_transmit_completed(tpm_chip_status(chip), chip))
++		goto out_recv;
++
+ 	tpm_chip_cancel(chip);
+ 	dev_err(&chip->dev, "Operation Timed out\n");
+ 	return -ETIME;
+-- 
+2.43.0
+
 
