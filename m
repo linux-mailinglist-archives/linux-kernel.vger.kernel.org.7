@@ -1,119 +1,151 @@
-Return-Path: <linux-kernel+bounces-737882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42C91B0B17D
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 20:47:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A3CBB0B18D
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 21:00:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAA4717A94D
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 18:47:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FCAC189EE26
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 19:00:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CFDF221DA8;
-	Sat, 19 Jul 2025 18:47:05 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C6B28934F;
+	Sat, 19 Jul 2025 18:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ionic.de header.i=@ionic.de header.b="cFCGztxM"
+Received: from mail.ionic.de (ionic.de [145.239.234.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6D0186E40
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 18:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9330F21CC4F;
+	Sat, 19 Jul 2025 18:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=145.239.234.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752950824; cv=none; b=D2UNwV6RA1K0nzBDcUpT/8kblL08k9ZEEjaekaoY2rorzOWYRikVHHcMjt5qHV7vCsLeqTOYEyKS1YhJum8XbhAUlttjiW8T33ZAmaCWvK9yi9dBDPK5YsnFhfUYTvy4iCuYZqSmf7ZkPd484f7KrL1Gh0uZc57Tfhbub17IoCE=
+	t=1752951583; cv=none; b=kTqPNOekRc/aDeOSO4oLsuEUCeFM8gQrSWk6HsaspNtOGCHbKykXalxIss9f6gahyUo63g1X6K/6giL/BRIOqSapg62/IPP15sqaH54Zqmz4z/LwnoP5zsCLUQWRjZcb+phy5c97dXybdjHd/aqajpqo1s/cV0mc136bfS/4fn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752950824; c=relaxed/simple;
-	bh=GZz4R4rWf9RTfmBIOUlTYRCCGPL5BNmvOxvYedjCamk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=HwKIzpoQnAHv5BIIA5VqFYj2VBd7ZrL+wWvn4Lq5r+QlT49UKf7l92IX0yUAyiFDA81kgyKvGj9B5OqEkjWF4lriTbDnU5GWh5DgL2fwLK0pzcLOg1Misi5V9o7fXQY07Aej+++fkwyZO//Sxwhf6+WsI5KKW+gYRPbDL6wRf6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3df33827a8cso57006365ab.1
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 11:47:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752950822; x=1753555622;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cF+BgT1Z16QR2JRNCljkE/P7XL0rVlwz4FN/WduuFNY=;
-        b=VDBAfh1bzx7e1in/PdmQTK6+IUlXnPrlpu2/y+anju254XqYGEX97sZ9dvAqj2VOiF
-         N9JetuRUkuxXhtKAlClS1ZnsdtjNIdhruYiBC4inj9rIJ1pot89hhW+f9xWbe5SRo3H4
-         6lXz4ev7Y/JZ13WN2P1A03JDuWGLk9Axsbw6fvpAaENkHDrT0OQnzYG57ft1vQuGzsGG
-         gdVTHW6nKzOsywRT2O/h8AjVm/qUvTBlnt6J60uXrbjB5NhFmmdquHeC1/BD+33Ld1VJ
-         8ZI7DEChf86ixwTMxRKcjyVFftOybErotLxrPytn6yfSG4b8nMq4Vnf627QUgXIYlXRv
-         BhSA==
-X-Forwarded-Encrypted: i=1; AJvYcCWpUCTKERfapVLcEMosnLRQqTOmnG8LgWYOqhiXmLh6KKW4qk06ZlZiZ3eOCzosVck8x2KIYQqHX3jyq98=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLR42e8+zjssUUYkpOK3Y4CHIxxygQyu5aNLbZfQZ+1TWNS9Cp
-	/KKY712UH74uOrXVlfBRUPtUiO0HvqZXg9u8WomLGOsxR4ut9WOwqtvz5c8DCBXtcoiT42aweNn
-	KRHn7WULaqq8lpfHNfhpuQe+FKQdRMaeES2Exw44YOROOH6gM9WlddaeNZ9E=
-X-Google-Smtp-Source: AGHT+IE4wY8WbjFLG2VMamX4ClAgvD3mpyfH3Aooa+6LA5O04vsuQAw0QKyXI1Blv30efQyTEDuSidivYEUzZx8bKQD8cDwSH/UJ
+	s=arc-20240116; t=1752951583; c=relaxed/simple;
+	bh=ZQQSpeYx6C+JYwaOHhOsSow7r+sdrx3hq4erYJG3nHc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oPcB8joEXs7D9UIVDquCsZNE8JC5BBMVzBZNSl90Ppn5tDtzhELlAp6XGYdBvDetyS88M+VERUx3BXzNAyKsioGXbAglOjFXK6C3Kcx12vsQE3NVRb79jweZvB4CQGTXhmUqRjJfitWhkbV1aUuAQL38/QlAGK57V4OirGvvyzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ionic.de; spf=pass smtp.mailfrom=ionic.de; dkim=pass (1024-bit key) header.d=ionic.de header.i=@ionic.de header.b=cFCGztxM; arc=none smtp.client-ip=145.239.234.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ionic.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionic.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ionic.de; s=default;
+	t=1752951576; bh=ZQQSpeYx6C+JYwaOHhOsSow7r+sdrx3hq4erYJG3nHc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=cFCGztxMW6iBBrp2gko+o9xu2bJm/SWJySeFwybKwleAf6mMXvFpq4tMQdx7uz6ZS
+	 JP5IiFSejq9ye0RilVcB+VyEPWJjoGzRWemukEDyH+kgyIwtsoWcOwlTqywyQQaDx0
+	 o2f0t9+xzo/H+1jVCBmMtxPC+traaog9U2uLuhmo=
+Received: from grml.local.home.ionic.de (unknown [IPv6:2a00:11:fb41:7a00:21b:21ff:fe5e:dddc])
+	by mail.ionic.de (Postfix) with ESMTPSA id BF3AD14871AE;
+	Sat, 19 Jul 2025 20:59:36 +0200 (CEST)
+From: Mihai Moldovan <ionic@ionic.de>
+To: linux-arm-msm@vger.kernel.org,
+	Manivannan Sadhasivam <mani@kernel.org>
+Cc: Eric Dumazet <edumazet@google.com>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Willem de Bruijn <willemb@google.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Simon Horman <horms@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH v2 00/10] QRTR Multi-endpoint support
+Date: Sat, 19 Jul 2025 20:59:20 +0200
+Message-ID: <cover.1752947108.git.ionic@ionic.de>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c247:0:b0:3e2:a749:252e with SMTP id
- e9e14a558f8ab-3e2a749281fmr15522145ab.4.1752950822520; Sat, 19 Jul 2025
- 11:47:02 -0700 (PDT)
-Date: Sat, 19 Jul 2025 11:47:02 -0700
-In-Reply-To: <n2gwogdq44vxgvjdefktzbhfny2ezktepblcsj2q3z7t4dgbtv@6uafqubd7qr2>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <687be826.a70a0220.693ce.0093.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] KASAN: slab-use-after-free Write in bch2_get_next_dev
-From: syzbot <syzbot+2b98caf09c41174a9697@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+I am incredibly thankful for Denis's work on this. To get this back on
+track and to eventually get it merged, I'm resubmitting his patch set
+with issues in the first review round resolved. This feature is a
+prerequisite for my work on ath1{1,2}k to allow using multiple devices
+in one computer.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-kernel panic: btree_update_nodes_written leaked btree_trans
+The original description follows:
 
-Kernel panic - not syncing: btree_update_nodes_written leaked btree_trans
-CPU: 0 UID: 0 PID: 7134 Comm: syz.4.31 Not tainted 6.16.0-rc6-syzkaller-gcbdeb0ffd5bf #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x99/0x250 lib/dump_stack.c:120
- panic+0x2db/0x790 kernel/panic.c:382
- bch2_fs_btree_iter_exit+0x475/0x490 fs/bcachefs/btree_iter.c:3732
- __bch2_fs_free fs/bcachefs/super.c:640 [inline]
- bch2_fs_release+0x2ab/0x830 fs/bcachefs/super.c:690
- kobject_cleanup lib/kobject.c:689 [inline]
- kobject_release lib/kobject.c:720 [inline]
- kref_put include/linux/kref.h:65 [inline]
- kobject_put+0x22b/0x480 lib/kobject.c:737
- bch2_fs_get_tree+0xb76/0x1540 fs/bcachefs/fs.c:2578
- vfs_get_tree+0x92/0x2b0 fs/super.c:1804
- do_new_mount+0x24a/0xa40 fs/namespace.c:3902
- do_mount fs/namespace.c:4239 [inline]
- __do_sys_mount fs/namespace.c:4450 [inline]
- __se_sys_mount+0x317/0x410 fs/namespace.c:4427
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f59aa99014a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f59ab804e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f59ab804ef0 RCX: 00007f59aa99014a
-RDX: 00002000000000c0 RSI: 0000200000000080 RDI: 00007f59ab804eb0
-RBP: 00002000000000c0 R08: 00007f59ab804ef0 R09: 0000000000818001
-R10: 0000000000818001 R11: 0000000000000246 R12: 0000200000000080
-R13: 00007f59ab804eb0 R14: 000000000000596b R15: 0000200000000000
- </TASK>
-Kernel Offset: disabled
+The current implementation of QRTR assumes that each entity on the QRTR
+IPC bus is uniquely identifiable by its node/port combination, with
+node/port combinations being used to route messages between entities.
 
+However, this assumption of uniqueness is problematic in scenarios
+where multiple devices with the same node/port combinations are
+connected to the system.  A practical example is a typical consumer PC
+with multiple PCIe-based devices, such as WiFi cards or 5G modems, where
+each device could potentially have the same node identifier set.  In
+such cases, the current QRTR protocol implementation does not provide a
+mechanism to differentiate between these devices, making it impossible
+to support communication with multiple identical devices.
 
-Tested on:
+This patch series addresses this limitation by introducing support for
+a concept of an 'endpoint.' Multiple devices with conflicting node/port
+combinations can be supported by assigning a unique endpoint identifier
+to each one.  Such endpoint identifiers can then be used to distinguish
+between devices while sending and receiving messages over QRTR sockets.
 
-commit:         cbdeb0ff bcachefs: Fix UAF by journal write path
-git tree:       git://evilpiepirate.org/bcachefs.git for-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1627f8f0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=37de60b3108b6d8f
-dashboard link: https://syzkaller.appspot.com/bug?extid=2b98caf09c41174a9697
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+The patch series maintains backward compatibility with existing clients:
+the endpoint concept is added using auxiliary data that can be added to
+recvmsg and sendmsg system calls.  The QRTR socket interface is extended
+as follows:
 
-Note: no patches were applied.
+- Adds QRTR_ENDPOINT auxiliary data element that reports which endpoint
+  generated a particular message.  This auxiliary data is only reported
+  if the socket was explicitly opted in using setsockopt, enabling the
+  QRTR_REPORT_ENDPOINT socket option.  SOL_QRTR socket level was added
+  to facilitate this.  This requires QRTR clients to be updated to use
+  recvmsg instead of the more typical recvfrom() or recv() use.
+
+- Similarly, QRTR_ENDPOINT auxiliary data element can be included in
+  sendmsg() requests.  This will allow clients to route QRTR messages
+  to the desired endpoint, even in cases of node/port conflict between
+  multiple endpoints.
+
+- Finally, QRTR_BIND_ENDPOINT socket option is introduced.  This allows
+  clients to bind to a particular endpoint (such as a 5G PCIe modem) if
+  they're only interested in receiving or sending messages to this
+  device.
+
+NOTE: There is 32-bit unsafe use of radix_tree_insert in this patch set.
+This follows the existing usage inside net/qrtr/af_qrtr.c in
+qrtr_tx_wait(), qrtr_tx_resume() and qrtr_tx_flow_failed().  This was
+done deliberately in order to keep the changes as minimal as possible
+until it is known whether the approach outlined is generally acceptable.
+
+v2:
+  - rebased against current master
+  - fixed most issues found in first review round (see individual
+    commits), minus the 32-bit long
+    unsafe use
+
+Link: https://lore.kernel.org/all/20241018181842.1368394-1-denkenz@gmail.com/
+
+Denis Kenzior (10):
+  net: qrtr: ns: validate msglen before ctrl_pkt use
+  net: qrtr: allocate and track endpoint ids
+  net: qrtr: support identical node ids
+  net: qrtr: Report sender endpoint in aux data
+  net: qrtr: Report endpoint for locally generated messages
+  net: qrtr: Allow sendmsg to target an endpoint
+  net: qrtr: allow socket endpoint binding
+  net: qrtr: Drop remote {NEW|DEL}_LOOKUP messages
+  net: qrtr: ns: support multiple endpoints
+  net: qrtr: mhi: Report endpoint id in sysfs
+
+ include/linux/socket.h    |   1 +
+ include/uapi/linux/qrtr.h |   7 +
+ net/qrtr/af_qrtr.c        | 286 ++++++++++++++++++++++++++++++------
+ net/qrtr/mhi.c            |  14 ++
+ net/qrtr/ns.c             | 299 +++++++++++++++++++++++---------------
+ net/qrtr/qrtr.h           |   4 +
+ 6 files changed, 448 insertions(+), 163 deletions(-)
+
+-- 
+2.50.0
+
 
