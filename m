@@ -1,94 +1,89 @@
-Return-Path: <linux-kernel+bounces-737708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E299B0AF9C
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 13:35:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AE36B0AF9E
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 13:37:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE6C0AA0D9C
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 11:34:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91608189A324
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 11:38:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F001022655B;
-	Sat, 19 Jul 2025 11:35:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A374B2264C7;
+	Sat, 19 Jul 2025 11:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JnMviboH"
-Received: from mail-wr1-f65.google.com (mail-wr1-f65.google.com [209.85.221.65])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QDHlqGiQ"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3CC41E7C10;
-	Sat, 19 Jul 2025 11:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3529A33086;
+	Sat, 19 Jul 2025 11:37:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752924900; cv=none; b=Hgzn6hdB6jJhGrRDFcl1rOCW67ZnhnPL2WHzJu6nD1d9V1QYwPYb2/t+ikY0QvSlfklZ6EFPyFueCB2OJrL4FT5qHTEEaTBZnAnl6DEw4zNftPK5fnX4fqopJ8+kLptm/khljCTrWh0tvDTTebJlp0MFz0w7HSkYK7q76J0e4yA=
+	t=1752925058; cv=none; b=KWBZ+XtuabNIE110XL1bByZswIqqylJ8DwmIKLWfua3MUyrRLoqGzqi3QoHxOEjLwGqT6i9R1L/aay5enocVVktEn0YdkDToIWi/rjNte1DCPZ/NMrbXdUHmRqSzbFot/ggqTzeyYiLYgvUc1F76cVJS4QTXv7ilVa9w/5+ydSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752924900; c=relaxed/simple;
-	bh=pI/Wu4VJD4vdRub6/Z5Gz2RtKzMxqQmEx7I+Ec3VubU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VypRfKdtcFA4+2XXyJ1b5zrgW1k3lE7Pgnyi/nWzchpxxaODFSv9j35sK6vqSQDXpzbuP4w/N/vNqi0iBZdg+CpT9QSVRko3+zpeVvKtqgHuKGOek58g6bpmeb5w7DzGSkWoux5xZ7Vklnp0K2L8i3o9zJfdNV/AxPEpu/EcJjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JnMviboH; arc=none smtp.client-ip=209.85.221.65
+	s=arc-20240116; t=1752925058; c=relaxed/simple;
+	bh=ZfMI25QHUZSwQG3NMh5F1DQkcrlpzfG2pIZc2YV5Ljk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Wsk3okrvldUv9ipYyyInpcAN3e6ARI/v+8MxNZ4AbW+ApYQfLd5oURZOoyuw6T10ul+ErwfTv6kmJX7BpPmHOCSviSrEKh8YitR1QpNSoqqJLNFGFUtb4MaLbJnxqAyiPDjlX5iEVqj5O/LeQV6VNMWQcJ1QroCDGbqr16O7Xt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QDHlqGiQ; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f65.google.com with SMTP id ffacd0b85a97d-3a57c8e247cso2672138f8f.1;
-        Sat, 19 Jul 2025 04:34:58 -0700 (PDT)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-55511c3e203so2781958e87.3;
+        Sat, 19 Jul 2025 04:37:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752924897; x=1753529697; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pI/Wu4VJD4vdRub6/Z5Gz2RtKzMxqQmEx7I+Ec3VubU=;
-        b=JnMviboHs4KILsKUgkt4Y16ZapGISts+KOKPL52ESSS8BAscV1M0/uRl4scS7S80Rt
-         hJuAhs6HE7c1Go2Wdo+WS9r1Mc77LenC1cv53JeSqBVp9RyP4omWFCtorCg5uQBVWh+R
-         yFW1BZuIJR9XW1i6Lru9v9hdRKISTWixdjlSysxEIc552mZLYwWpAbfnTFlgqvGTW2iD
-         vtCK3BNiIf1UrWelEPEFV9Rb0NSc/OIsxkPJlrhNdWqKXkrrnu3PScW31zoDsM/fJeCR
-         S0p617X2ianijhzVlP9Ps/JYSghChXzgrhIYGxGdpRy5h6oUJYP0WfnVRyQggIdzRROT
-         3qWA==
+        d=gmail.com; s=20230601; t=1752925054; x=1753529854; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4ERF2Sk0XqRBkD3XsxUBB+tND9y8lq/D9RF87CJ77e8=;
+        b=QDHlqGiQPeHVWFaWN0Q2rE9/X9ZJO2gvbZgnMLo/xZzKlE7z77r0ZOCK43AO7PT9BG
+         frbE05Gr9kAjgY3xhy9sUhR7gnx4m65J6fMaXK+crXsU7iD3TI1JaC+wrxsaheklFta7
+         HK1ZxbCx5q6lBmAkWwCI1EKiU/wxl2rWoqls5Yag8zUNCzUQf7U2QQcuympMJxtsM8HX
+         5wYF5G3TlxYNsctCZ+Lq0f7qi5WiQC9IMlE3GgpPTc51uwZe3zOPx0pQuOiuXirNmHlL
+         fLI9PI4yfJbOtHpiMnLK42f1JhcSytpLe48eQ4ZPG1iITvDlKWlpFXAkFkIGmEgxwk3g
+         K/Ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752924897; x=1753529697;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pI/Wu4VJD4vdRub6/Z5Gz2RtKzMxqQmEx7I+Ec3VubU=;
-        b=k9IFuopbtGtRxa1vfH/4dhdcPDUIG62NJLPHPFCyZHfQEINjoN0nTSE9Kj5yQvQCJU
-         ntXyaDt69FS7oaBb8SSqL0KMQHLnKsVf1ChmDTrRSj5Jg5S+1m87E0b+IuDwahD8N/Qi
-         nkQU13keRN/lkub9Gvw6lBzDr5V45/dVe+tEZIlpmX2Hq6wwypscvUC+liKnmsk5ce4b
-         3lOH62hjIett3v8LakSEtbHHeELUkHWFf8Id4NJ2FvoKHudiuB92r4vWWTGxyxcqhnnz
-         2sdI1AKN35eRZoRkzfszVEVg3A/VXvnE0xRnDOzknrsD06A25Ul0kAXKzsfypymuHaMz
-         py2w==
-X-Forwarded-Encrypted: i=1; AJvYcCVsOqAS0dq+1fjDOxdtcdAUH8UbtGYpMRKADb6cZkdwjOVG8BCWoyho/3u7wcYcZrr2gXltV6iMLNypS40=@vger.kernel.org, AJvYcCX74jPxORrbJd1RTU0mhhazvqb87WFeUMfRlf2bOreXjicfFbrgliXL2Nk4oRe1UVc3u7thTQ1M@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsWkNxm/c+dEePnJyFY3CSWSWw4i5vgBF0OZIJ7xX8nNftFMIr
-	PlKMSKx2DirrbSZn/Eu7io9pz2HKvanXxTTg2y79OYVFWGiRWsV1BTDr
-X-Gm-Gg: ASbGncvV5beMvcMot312dj08Z45IiDPw8irf7kkpi9sI+r6A8YKL6GClsOEKp6am7qB
-	BXyFVa7hctFzK/uUlHfJFmzo+tePEpdTIsV99vPD1bQWHv9H01hX0MJ4s3nAYTtL/9zyNF3z4dV
-	JCeBYpkjszDNPo3PFCMCekfwhXM6DCBgoFS+jUNBaFyl4UfT9pAJfT9AsRToVt1vwOwWit+Upit
-	ZW/pWxgXGXKXcep1R4+Az6flJHs9DrWZ6jG/sPYpZN/JEJjczMXD+0TdDx/MIKsw8Zk5ait4M/a
-	77By/TUQDYr9BGMcW0jznn1VzOZRhf0Ghbx5YRUSZKLNGFhl4/4YZB/PcUX0W/jAQVNOgELzT+R
-	5d5ZoeinGzgYICj8jeuvS5ijP6tu0nw+U13CR6G0fdJ+spyU7ejlY1xjEdPG0f/rHQzaY0YxP
-X-Google-Smtp-Source: AGHT+IE6g19+dUycquzad6W/cE38ba4tQ7W22bnkBUjwXHT8HNV6H9kA6IReaLnHzsPSz4zYawmCGg==
-X-Received: by 2002:a05:6000:1ac7:b0:3b6:d94:d62b with SMTP id ffacd0b85a97d-3b60e4d28e9mr12485560f8f.15.1752924896790;
-        Sat, 19 Jul 2025 04:34:56 -0700 (PDT)
-Received: from INBSWN167928.ad.harman.com (bba-86-98-199-117.alshamil.net.ae. [86.98.199.117])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4563b740c51sm45073575e9.19.2025.07.19.04.34.54
+        d=1e100.net; s=20230601; t=1752925054; x=1753529854;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4ERF2Sk0XqRBkD3XsxUBB+tND9y8lq/D9RF87CJ77e8=;
+        b=iacU4nah0HTjRm615ARt+X/iQyqq92F/kn04GMorJWQwW7HgrHQ1QT15aLug6WRg9B
+         naTkLb5OwhmQMIWVICGuZX+kbGXzC+QRnj2vvQji0Els+EXMbzB5ESUVIb9vUN73cblg
+         2XwZXmgwBTAYN5SIbFOX13qlw16tvt/EtU7HM3u5TLFU+uTcPf2YNCLluVoP9QIaB/O0
+         ufSGLlofI1Tpy0v2sFQx4YiRy9UnRQi0Cuch00HwuZN9BcCHX+VohDKuxocibbKGsKZk
+         UjOT4qquYXTpYco8VtlmhpWNTw4BB0wTRMGzVMMvwOsqzsH081dhRaBYZeynOsJDfdye
+         ++SQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWEDlWX4FRVC000vg/qh5h+1LAHQOkZ0Re/lL4X8VqRx3kGtpS+s58HP7pmTkm9OpFuYTVVB5hmkU0tyTc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwykoWnMtFOviiUaR7aL0gD0ajHYkf6ZXY6NJDWUKtsF3f/7aLp
+	+0gwf4EbyBpxmtpn4jq3gjko/zhfhAun4Uwu8Iu3L/9NHFXzfjkq32oU
+X-Gm-Gg: ASbGncvtWB8IQa3fwPH/3xbwPAUrXGSihnEmX5m3MtV3tAN1hXJGcXG6FWT5bU+YTOE
+	8Ev+8ITi4tFjzrO6QWZHbysjJGYOSXvDz6yVdQiVr7qE1jWDD+qzDywU2KUUyiGcr633+d9BWwh
+	nYyERdCmWDwf2U2+hST/3NQAa+iUdfi5scrZuv4nomd/lfYH7DAMW58CBxQSO4zPYTcdNPg2Gc0
+	JnepHUUA0kmcuaqMJivJDTN5NYKWkF/Rrtz1Kh4iaPUNQU+EdUmOq1hvt588e+mDsz+OSUrSe5a
+	iT2emqeRXs1YTfZnVmdheKoVxeAJu1nt1IV4tmyof5YYHBzD6yACOVsNGaZYh33VFoct0+vVMsM
+	3jT6HC3M+eymMOZ34301DafxqLMq3WtTuGwjythMM2kwMD55WDKxd5+QTiYY=
+X-Google-Smtp-Source: AGHT+IG+9LlUG1qH0+6z9tQS7rdjofP4KWefH0bcwJKwXf65VSUr8FfVIWj0L0dB7SeTD2mJ+9scWA==
+X-Received: by 2002:a05:6512:1595:b0:553:2e0f:96c with SMTP id 2adb3069b0e04-55a23ef82dbmr3984293e87.23.1752925053876;
+        Sat, 19 Jul 2025 04:37:33 -0700 (PDT)
+Received: from SC-WS-02452.corp.sbercloud.ru ([37.78.122.38])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55a31dadf26sm672074e87.213.2025.07.19.04.37.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Jul 2025 04:34:56 -0700 (PDT)
-From: Abid Ali <dev.nuvorolabs@gmail.com>
-To: Abid Ali <dev.nuvorolabs@gmail.com>
-Cc: Russell King <linux@armlinux.org.uk>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: phy: Fix premature resume by a PHY driver
-Date: Sat, 19 Jul 2025 11:34:50 +0000
-Message-ID: <20250719113452.7701-1-dev.nuvorolabs@gmail.com>
+        Sat, 19 Jul 2025 04:37:33 -0700 (PDT)
+From: Sergey Bashirov <sergeybashirov@gmail.com>
+To: Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	NeilBrown <neil@brown.name>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>
+Cc: linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sergey Bashirov <sergeybashirov@gmail.com>
+Subject: [PATCH] NFSD: Rework encoding and decoding of nfsd4_deviceid
+Date: Sat, 19 Jul 2025 14:37:28 +0300
+Message-ID: <20250719113730.338129-1-sergeybashirov@gmail.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <aHtNxLODmEHRVfdn@shell.armlinux.org.uk>
-References: <aHtNxLODmEHRVfdn@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,49 +92,151 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Sat, Jul 19, 2025 at 08:48:20 AM +0100, Russell King (Oracle) wrote:
-> > I do point this path out and there is also a second call
-> > (2) .ndo_open -> phylink_start -> phy_start -> __phy_resume
-> > This would mean 2 calls to the PHY resume every time an interface is
-> > taken UP is expected behaviour?.
->
-> The whole point is this:
->
-> > > During this path, the PHY may or may not be suspended, depending on
-> > > the state of the hardware when control was passed to the kernel,
-> > > which includes kexec().
->
-> Thus, the resume function *must* cope with an already resumed PHY,
-> and thus adding extra complexity to try to ignore calling the resume
-> function if it wasn't previously suspended is likely to cause
-> regressions - phydrv->suspended will be clear for the initial call
-> to ->resume(). Thus, if the PHY was suspended at boot time, it won't
-> be resumed when one attempts to bring up the interface initially.
+Compilers may optimize the layout of C structures, so we should not rely
+on sizeof and memcpy to encode and decode XDR structures. The byte order
+of the fields should also be taken into account. This patch adds the
+correct functions to handle the nfsd4_deviceid structure and removes the
+pad field, which is currently unused.
 
-yea, I get your point.
+Signed-off-by: Sergey Bashirov <sergeybashirov@gmail.com>
+---
+ Tested on the block layout setup, checked with smatch.
 
-> Hardware or software reset?
->
-> How much a software reset disrupts the PHY is PHY dependent. E.g. there
-> are PHYs that need to be software reset for configuration and
-> advertisement changes, but all the software configuration is preserved
-> over such a reset.
+ fs/nfsd/blocklayoutxdr.c    |  7 ++-----
+ fs/nfsd/flexfilelayoutxdr.c |  3 +--
+ fs/nfsd/nfs4layouts.c       |  1 -
+ fs/nfsd/nfs4xdr.c           | 14 +-------------
+ fs/nfsd/xdr4.h              | 31 ++++++++++++++++++++++++++++++-
+ 5 files changed, 34 insertions(+), 22 deletions(-)
 
-The PHY we have loses power when the kernel PM goes to suspend and we
-need have a hardware reset upon its bootup in resume.
-As an unintentional consequence this ended with 2 additional
-resets (reset-delay-us in dts + 2 PHY resume) at boot->interface-UP.
-In the end the "phydev->state" in the driver`s resume callback was used to
-prevent it and checking further, it was evident that there were 2
-intentional calls for phy_resume from .ndo_open which didnt look obvious.
+diff --git a/fs/nfsd/blocklayoutxdr.c b/fs/nfsd/blocklayoutxdr.c
+index bcf21fde91207..9ff2a23470e61 100644
+--- a/fs/nfsd/blocklayoutxdr.c
++++ b/fs/nfsd/blocklayoutxdr.c
+@@ -29,8 +29,7 @@ nfsd4_block_encode_layoutget(struct xdr_stream *xdr,
+ 	*p++ = cpu_to_be32(len);
+ 	*p++ = cpu_to_be32(1);		/* we always return a single extent */
+ 
+-	p = xdr_encode_opaque_fixed(p, &b->vol_id,
+-			sizeof(struct nfsd4_deviceid));
++	p = nfsd4_encode_deviceid(p, &b->vol_id);
+ 	p = xdr_encode_hyper(p, b->foff);
+ 	p = xdr_encode_hyper(p, b->len);
+ 	p = xdr_encode_hyper(p, b->soff);
+@@ -156,9 +155,7 @@ nfsd4_block_decode_layoutupdate(__be32 *p, u32 len, struct iomap **iomapp,
+ 	for (i = 0; i < nr_iomaps; i++) {
+ 		struct pnfs_block_extent bex;
+ 
+-		memcpy(&bex.vol_id, p, sizeof(struct nfsd4_deviceid));
+-		p += XDR_QUADLEN(sizeof(struct nfsd4_deviceid));
+-
++		p = nfsd4_decode_deviceid(p, &bex.vol_id);
+ 		p = xdr_decode_hyper(p, &bex.foff);
+ 		if (bex.foff & (block_size - 1)) {
+ 			goto fail;
+diff --git a/fs/nfsd/flexfilelayoutxdr.c b/fs/nfsd/flexfilelayoutxdr.c
+index aeb71c10ff1b9..28eb5bedb7e13 100644
+--- a/fs/nfsd/flexfilelayoutxdr.c
++++ b/fs/nfsd/flexfilelayoutxdr.c
+@@ -54,8 +54,7 @@ nfsd4_ff_encode_layoutget(struct xdr_stream *xdr,
+ 	*p++ = cpu_to_be32(1);			/* single mirror */
+ 	*p++ = cpu_to_be32(1);			/* single data server */
+ 
+-	p = xdr_encode_opaque_fixed(p, &fl->deviceid,
+-			sizeof(struct nfsd4_deviceid));
++	p = nfsd4_encode_deviceid(p, &fl->deviceid);
+ 
+ 	*p++ = cpu_to_be32(1);			/* efficiency */
+ 
+diff --git a/fs/nfsd/nfs4layouts.c b/fs/nfsd/nfs4layouts.c
+index aea905fcaf87a..683bd1130afe2 100644
+--- a/fs/nfsd/nfs4layouts.c
++++ b/fs/nfsd/nfs4layouts.c
+@@ -120,7 +120,6 @@ nfsd4_set_deviceid(struct nfsd4_deviceid *id, const struct svc_fh *fhp,
+ 
+ 	id->fsid_idx = fhp->fh_export->ex_devid_map->idx;
+ 	id->generation = device_generation;
+-	id->pad = 0;
+ 	return 0;
+ }
+ 
+diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
+index ea91bad4eee2c..f3a089df164c6 100644
+--- a/fs/nfsd/nfs4xdr.c
++++ b/fs/nfsd/nfs4xdr.c
+@@ -587,18 +587,6 @@ nfsd4_decode_state_owner4(struct nfsd4_compoundargs *argp,
+ }
+ 
+ #ifdef CONFIG_NFSD_PNFS
+-static __be32
+-nfsd4_decode_deviceid4(struct nfsd4_compoundargs *argp,
+-		       struct nfsd4_deviceid *devid)
+-{
+-	__be32 *p;
+-
+-	p = xdr_inline_decode(argp->xdr, NFS4_DEVICEID4_SIZE);
+-	if (!p)
+-		return nfserr_bad_xdr;
+-	memcpy(devid, p, sizeof(*devid));
+-	return nfs_ok;
+-}
+ 
+ static __be32
+ nfsd4_decode_layoutupdate4(struct nfsd4_compoundargs *argp,
+@@ -1783,7 +1771,7 @@ nfsd4_decode_getdeviceinfo(struct nfsd4_compoundargs *argp,
+ 	__be32 status;
+ 
+ 	memset(gdev, 0, sizeof(*gdev));
+-	status = nfsd4_decode_deviceid4(argp, &gdev->gd_devid);
++	status = nfsd4_stream_decode_deviceid(argp->xdr, &gdev->gd_devid);
+ 	if (status)
+ 		return status;
+ 	if (xdr_stream_decode_u32(argp->xdr, &gdev->gd_layout_type) < 0)
+diff --git a/fs/nfsd/xdr4.h b/fs/nfsd/xdr4.h
+index a23bc56051caf..ec70cb9c17788 100644
+--- a/fs/nfsd/xdr4.h
++++ b/fs/nfsd/xdr4.h
+@@ -595,9 +595,38 @@ struct nfsd4_reclaim_complete {
+ struct nfsd4_deviceid {
+ 	u64			fsid_idx;
+ 	u32			generation;
+-	u32			pad;
+ };
+ 
++static inline __be32 *
++nfsd4_encode_deviceid(__be32 *p, const struct nfsd4_deviceid *devid)
++{
++	p = xdr_encode_hyper(p, devid->fsid_idx);
++	*p++ = cpu_to_be32(devid->generation);
++	*p++ = cpu_to_be32(0); /* pad field is currently unused */
++	return p;
++}
++
++static inline __be32 *
++nfsd4_decode_deviceid(__be32 *p, struct nfsd4_deviceid *devid)
++{
++	p = xdr_decode_hyper(p, &devid->fsid_idx);
++	devid->generation = be32_to_cpup(p++);
++	p++; /* pad field is currently unused */
++	return p;
++}
++
++static inline __be32
++nfsd4_stream_decode_deviceid(struct xdr_stream *xdr,
++			     struct nfsd4_deviceid *devid)
++{
++	__be32 *p = xdr_inline_decode(xdr, NFS4_DEVICEID4_SIZE);
++
++	if (unlikely(!p))
++		return nfserr_bad_xdr;
++	nfsd4_decode_deviceid(p, devid);
++	return nfs_ok;
++}
++
+ struct nfsd4_layout_seg {
+ 	u32			iomode;
+ 	u64			offset;
+-- 
+2.43.0
 
-This particular scenario was not the point of the commit but rather
-having some protection for phy_resume but I guess its not possible.
-To keep it simple, these would be my present understanding.
-
-1. Should the PHY driver be able handle consecutive resume callbacks?
-a. yes. It would have to be taken care in the driver.
-
-2. Why does phy_resume exec twice in .ndo_open with PHYLINK API?
-a. can happen but still dont have clarity on why .ndo_open does this.
 
