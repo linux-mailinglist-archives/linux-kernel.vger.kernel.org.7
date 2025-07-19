@@ -1,77 +1,135 @@
-Return-Path: <linux-kernel+bounces-737907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E039B0B1C3
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 22:37:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F14A4B0B1C1
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 22:37:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC487189E7A3
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 20:38:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71A9F189E9F2
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 20:37:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA9B222593;
-	Sat, 19 Jul 2025 20:37:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B564B2264B7;
+	Sat, 19 Jul 2025 20:36:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="y7aU6BVm"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gL23AST7"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7FC9191484;
-	Sat, 19 Jul 2025 20:37:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB2F1C861E;
+	Sat, 19 Jul 2025 20:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752957455; cv=none; b=B986bCrQNkICETPa7Es7Jnri0/66KD+A9lwzJ3JtaAkiUym1bzPmX+eIGZVyXzhC4VkrNbDNNj2PQvCD4eDJsLsoWExFMyo1dn1y0gRzbGc+ahkszeikCvq+BmuR6IKKoRavkf4k/UkKuKa1JKcPGrMvi9gGICGl7FCKWV7+doU=
+	t=1752957413; cv=none; b=QKzTMpfXnDYheg0vlfjJc8IlsZCBEMYblrbHGlqSmcXAsQ76G4qO4BT2WV7gbq484YE3Y0tc/4P6qDlpY6PZYAD7NhlRnAkwguVPDQT81cQj4ZWIAzlwBKPuW0D2rdfw+1UBTIIs8DRaxjeGkTqWylJs6e3rpUQx1ZT2P9nEKS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752957455; c=relaxed/simple;
-	bh=d1y7Y/qXdjcx7CdL+FADat6eddsAFGpX2OE/zDSRinM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OiV6RrynlFs+fvyATxJc99dX1MSs/oiq5/o85c2ZzRvQp+yXGRD2wk6rl0aY20/2Ie+SGAqs0g3fpXKb+rLwPc4WP+TKiHpFHEGtxyMSaqHsxMVYuRQL7nmQZ3FXVwobhqCIVboRyXiJ6z9K/VZdLSi0/QfGsKmYS9Zunp0epTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=y7aU6BVm; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56JJPANx008103;
-	Sat, 19 Jul 2025 16:37:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=DKIM; bh=5VhNeZaGVO+KPeewbNqaIdq0o85
-	MTUTPES/xWee+v8U=; b=y7aU6BVmKTGDHLCODdfO1M8kFaUBKO6ATkNyJEyKucx
-	rtdlqtOyXmLzedVBEjpHXOcZj3ZZnIBoeLHUOT87yiH5Ntmm6nUN8GC/F0i3aplb
-	uvEn3b1+Xu+9Z7802NeeWJgajM1ymhl9DI4LxLqqsKIuilKPLIq9prPZIv+e6XbL
-	qnbo2gr4/X3+1Juy6NRxMZvf4L1jPlNkvZExsYrN4yTN09dar8OyGpB18LGR4ak/
-	FVUYU0P5XoMj0PP8y9V9BDjQ4LcZG2nw2ZYWh3Cvw8HdHQ7qI+bbGm/shiiugEKD
-	8TTSempyumsinELkIl+DhttdNxemyqa1jg954RTcCRw==
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 480b6p98p9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 19 Jul 2025 16:37:04 -0400 (EDT)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 56JKb2GE054515
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sat, 19 Jul 2025 16:37:02 -0400
-Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
- ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Sat, 19 Jul 2025 16:37:02 -0400
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
- ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Sat, 19 Jul 2025 16:37:02 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Sat, 19 Jul 2025 16:37:02 -0400
-Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.9])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 56JKalu6019557;
-	Sat, 19 Jul 2025 16:36:50 -0400
-From: Marcelo Schmitt <marcelo.schmitt@analog.com>
-To: <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <jic23@kernel.org>, <dan.carpenter@linaro.org>, <lars@metafoo.de>,
-        <Michael.Hennerich@analog.com>, <dlechner@baylibre.com>,
-        <nuno.sa@analog.com>, <andy@kernel.org>, <marcelo.schmitt1@gmail.com>
-Subject: [PATCH] iio: adc: ad4170-4: Correctly update filter_fs after filter type change
-Date: Sat, 19 Jul 2025 17:36:42 -0300
-Message-ID: <7b2fec30e9c6a80630a5fc08fb061d17417eb350.1752956751.git.marcelo.schmitt@analog.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1752957413; c=relaxed/simple;
+	bh=di+mcCvt0+UBtHhM8HRY9AByVNConNif7PwF2Wn94wc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=HWvd1SXGp4ADag4bZXmOEgrnfu2nSbUrZT/EnKVpUldTiGbLLwHd2oW1PndONoED7UrzZUSRbiD7IY0tPy6yRcYQ506nSxjyu5dTtcax/Vdjqv2D262JTw2QPMAvbnQeaOW2FNOux2iviSNNCGQn53j6T0SxVz0MP+8tKkXdjIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gL23AST7; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7e32c95778aso166046285a.3;
+        Sat, 19 Jul 2025 13:36:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752957410; x=1753562210; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:feedback-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/28dPvNYfbE+FFDSr4PtOx6mzozUV3wLj3+bPK0eQsM=;
+        b=gL23AST7CbA5hEIhcZXxZ1Ve54aXFk7se2ROxOSVSeWPELjLcgsgYxB3VIntTgUybE
+         4jbelWCHJu2pl6FfrrNLJwlf2NOqZZXeDOfmgY2KaVYTwZ7pkglabwkKXfQ7nkYMZUm6
+         IAAyEodp31vU8AhM5UPTvQsY+3hy26Y8k72u0FUUnHlXkUImqFgD6B9GCETiXtJidOId
+         kjykoPiu/5LLIlPztL8efYCVTB3l65t+yWVlq2swOEp3KiCpUcX15I7838GfIHzQ93NR
+         t5VESHf6q4f3q/84Bifpfia2bhfH6linw58lUaAzNout7MNF8tFs071WI9IZmTZe7ywR
+         Tyqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752957410; x=1753562210;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:feedback-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/28dPvNYfbE+FFDSr4PtOx6mzozUV3wLj3+bPK0eQsM=;
+        b=ALsvQLlR3HCjWgIchBt/2JT7udvf2GeyQ4q2Gci81tnXPf73aMmT/cS+fGz4o7UbfT
+         ClTh6TrFaQdR3TmWZ7cMoUVu53JBlRF/HYzlo0qZs26VL/q7pUqi/CcKwDmUaShM6AtZ
+         gsvDaZJ9x8wRmz8JJJQLRtRKc9C7YyGcVkPYgqka+7rqitXZdAQYYjMU44N5CZfuW9Pu
+         Z0PoXMZ7B2uquBkVFPVXHGbJQiMZj6FrHEJBJTRHonXqXCkc3uU0+g8Usmb9IH3FB3yI
+         jRZOKzY/t/o3KFovFVesUZTOm1UDNVb2JxB9fNf/8a4WKAbvGnkSkEIz6uTY4YZyjpdZ
+         2J0g==
+X-Forwarded-Encrypted: i=1; AJvYcCWUmo+GSlxU66/52U13xYzkAeO1f67ENNrlDxyF1LNl3rsKBPtDBw3rTr6g9M8ZctbJdVYPxo/fa6inxoY=@vger.kernel.org, AJvYcCWxmfN52bxABSfXX4AiNuXzp2Td/ZFdfjjPVJvMVTNzw2v58HGISEhZuRceiw42LRuDH/PD85Jw2waBybu/wZU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzi3W50NEbthemzKg92je3xEUxGkw3u4UfSJltgNY5CUWqeobou
+	NeHfcSFjzWDIRkdDiCvXh4UY5pqekgz0y7uZJDjLMEBO65wrgFBdvRbr
+X-Gm-Gg: ASbGncsZTPTvLxslDaL2VLgMVdy97YJQ8MXjiJj/ZKVpxSWy6sE3OO6Ys6tLJvHKET9
+	kEA1T2h1oAVSbsSpgX1coOer7x9ZiZ6et1CYGdyUGfwZopMcgoPAuwUAni8q4Gxc+gTPTmZQc18
+	RJLefbDS9mjDAE+6va4KH537Sd8TXRmoorJazPl5opt4H7VrrwmW/7iLx3wF8EfjXd8gGMdHyYe
+	nkWC5wgyhvygCfpYZ4IJFT0p1x/gwe8Q8nbE0QmAr1xSNHc5Vn82f5R7R/ojmLX68mHC5xYDthn
+	QTwW3ZXK1R36DTPG4VekyRbuKqDZqMGApBXh5NcFESQAQp8oSlZ/CDa6Q7kSCypjnjUOww04FkA
+	aIhC1L2qX7Ye7169qMtMvO0ewY8HWwqD0D0qD+RRjDknp8cPkvhstAXlIFNqTeaCB5m0z/InNhQ
+	90a8E2eUlxLHUrcjDdbGZsP+o=
+X-Google-Smtp-Source: AGHT+IGeKABTFHfN9W6A3yT2jAFSY2KexZG1xm5flv3gh7T0aNpDMjDu7i8oSpr1PQh701WQXLZoPw==
+X-Received: by 2002:a05:6214:cc8:b0:702:d655:f4e9 with SMTP id 6a1803df08f44-704f6a19c56mr233430946d6.18.1752957409906;
+        Sat, 19 Jul 2025 13:36:49 -0700 (PDT)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7051ba6b0e4sm21863886d6.68.2025.07.19.13.36.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 19 Jul 2025 13:36:49 -0700 (PDT)
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfauth.phl.internal (Postfix) with ESMTP id BAB4EF40066;
+	Sat, 19 Jul 2025 16:36:48 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Sat, 19 Jul 2025 16:36:48 -0400
+X-ME-Sender: <xms:4AF8aKoCiqhLIc-d40SEhuiBP1zRqgP3VBYQQUEAh5R_nS9i6GqPlw>
+    <xme:4AF8aHnjCjYScWhQcTKBgd_nLeH0F3zjrD9ZQF4O3Zb9fkJawt63Y2a3fKZw6-2xj
+    cx7wK-GjMm2WJ4ugw>
+X-ME-Received: <xmr:4AF8aLQDOKCfFGUPJ2ihvaKQ9JwVlvRJnuW04mTdJkuApcle6dOrEl71-g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeijeefudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeeuohhquhhnucfh
+    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
+    hrnhepgffhffevhffhvdfgjefgkedvlefgkeegveeuheelhfeivdegffejgfetuefgheei
+    necuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtne
+    curfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghr
+    shhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvg
+    hngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohep
+    udehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhr
+    tghpthhtohepsghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepgh
+    grrhihsehgrghrhihguhhordhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhr
+    ohhtohhnmhgrihhlrdgtohhmpdhrtghpthhtoheplhhoshhsihhnsehkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopegrrdhhihhnuggsohhrgheskhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepthhmgh
+    hrohhsshesuhhmihgthhdrvgguuh
+X-ME-Proxy: <xmx:4AF8aNa7AG7q6qFr78s3XEt4AwRn3Ix4m1K6r8yEWh0R6KE38r5DdA>
+    <xmx:4AF8aL8N7JIvbmsnBa63R9pCJ52SUIdCVjKNIvGdhW0T0vxTgm98Rg>
+    <xmx:4AF8aPl-mgumOgmQubcbV4iG18QEuly0ldctV1HpS0NgXod1-7fJUg>
+    <xmx:4AF8aIYlG24qGS3p4NyQgKBEw2Dxkji_HN1RXx2Mb41T5xw0t7aGFQ>
+    <xmx:4AF8aPPlHiWshwO0mGLlC2JdpS47gf0t2ivHw6fChvEByGGisWzzuItV>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 19 Jul 2025 16:36:48 -0400 (EDT)
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	I Hsin Cheng <richard120310@gmail.com>,
+	Albin Babu Varghese <albinbabuvarghese20@gmail.com>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: [PATCH] rust: list: Add an example for `ListLinksSelfPtr` usage
+Date: Sat, 19 Jul 2025 13:36:46 -0700
+Message-Id: <20250719203646.84350-1-boqun.feng@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20250719183649.596051-1-ojeda@kernel.org>
+References: <20250719183649.596051-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,72 +137,164 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-ORIG-GUID: 8LB8axdSLzkqH8-K2XkpZKq-z1Mf46h-
-X-Proofpoint-GUID: 8LB8axdSLzkqH8-K2XkpZKq-z1Mf46h-
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE5MDIwNSBTYWx0ZWRfX6dRS8Xa+wJeO
- b1gBfdTgeIg/i7O3mYTYa7oYbSPzH3mLWqShkSQo1U2BqTfpN1e1+WIBLfH0jaqUY6ohrvYpIBt
- P1Mr/dDcAYGPFAmM1ZoZZ+g3/h3/uNKcXSVCOSXWf/VxR0HPaTlheUNuceKBFrPsoN4U92GJPPh
- Aaz/mD1l+KBGPE3/tgVxVEf4aDlRHqdTD9lI8XTZeAf9ea/4I42At/xjdPi3ysK2c7sonZK501t
- ka6Q+byexasflmyjsSxlv+B//dVvsohvKNjgcmLRhZVyio2TELe5dEgV8b9jRsvv+ZRR9WDvnpG
- OKtdQEbeSv0rAceAz8x1vpBjStw8ez5uFMHPxWJevvk2ojFVnCkQLM+ldcMoRQ06KQHdiyHUc3N
- j+PhBfBErJ3nxfFZqFW7lNytcbt4r2QQQg/KpTZHKvP2OUv1wEdUQGnghuQDnqSADGhZxACj
-X-Authority-Analysis: v=2.4 cv=KKdaDEFo c=1 sm=1 tr=0 ts=687c01f0 cx=c_pps
- a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17
- a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=gAnH3GRIAAAA:8
- a=dFwZVDRm2i14ZgZprooA:9 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-19_02,2025-07-17_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 mlxlogscore=999 clxscore=1011 malwarescore=0
- impostorscore=0 bulkscore=0 spamscore=0 priorityscore=1501 suspectscore=0
- phishscore=0 mlxscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507190205
 
-Previously, the driver was directly using the filter type value to update
-the filter frequency (filter_fs) configuration. That caused the driver to
-switch to the lowest filter_fs configuration (highest sampling frequency)
-on every update to the filter type. Correct the filter_fs colateral update
-by clampling it to the range of supported values instead of mistakenly
-using the filter type to update the filter_fs.
+It appears that the support for `ListLinksSelfPtr` is dead code at the
+moment [1]. Hence add an example similar to `ListLinks` usage to help
+catching bugs and demonstrating the usage.
 
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Link: https://lore.kernel.org/linux-iio/c6e54942-5b42-484b-be53-9d4606fd25c4@sabinyo.mountain/
-Suggested-by: Jonathan Cameron <jic23@kernel.org>
-Fixes: 8ab7434734cd ("iio: adc: ad4170-4: Add digital filter and sample frequency config support")
-Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+The example is mostly based on Alice's usage in binder driver[2].
+
+Link: https://lore.kernel.org/rust-for-linux/20250719183649.596051-1-ojeda@kernel.org/ [1]
+Link: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-4-08ba9197f637@google.com/ [2]
+Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
 ---
-Didn't find a bug report in https://bugzilla.kernel.org/ to link with a
-Closes: tag so added a Link: tag instead.
+ rust/kernel/list.rs | 125 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 125 insertions(+)
 
- drivers/iio/adc/ad4170-4.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/iio/adc/ad4170-4.c b/drivers/iio/adc/ad4170-4.c
-index 6cd84d6fb08b..de35cef85a6e 100644
---- a/drivers/iio/adc/ad4170-4.c
-+++ b/drivers/iio/adc/ad4170-4.c
-@@ -880,10 +880,12 @@ static int ad4170_set_filter_type(struct iio_dev *indio_dev,
- 			return -EBUSY;
- 
- 		if (val == AD4170_SINC5_AVG || val == AD4170_SINC3)
--			setup->filter_fs = clamp(val, AD4170_SINC3_MIN_FS,
-+			setup->filter_fs = clamp(setup->filter_fs,
-+						 AD4170_SINC3_MIN_FS,
- 						 AD4170_SINC3_MAX_FS);
- 		else
--			setup->filter_fs = clamp(val, AD4170_SINC5_MIN_FS,
-+			setup->filter_fs = clamp(setup->filter_fs,
-+						 AD4170_SINC5_MIN_FS,
- 						 AD4170_SINC5_MAX_FS);
- 
- 		setup->filter &= ~AD4170_FILTER_FILTER_TYPE_MSK;
-
-base-commit: cd2731444ee4e35db76f4fb587f12d327eec5446
+diff --git a/rust/kernel/list.rs b/rust/kernel/list.rs
+index 7ebb81b2a3d4..f66898738b31 100644
+--- a/rust/kernel/list.rs
++++ b/rust/kernel/list.rs
+@@ -38,6 +38,8 @@
+ ///
+ /// # Examples
+ ///
++/// Use [`ListLinks`] as the type of the intrusive field.
++///
+ /// ```
+ /// use kernel::list::*;
+ ///
+@@ -143,6 +145,129 @@
+ /// }
+ /// # Result::<(), Error>::Ok(())
+ /// ```
++///
++/// Use [`ListLinksSelfPtr`] as the type of the intrusive field. This allows a list of trait object
++/// type.
++///
++/// ```
++/// use kernel::list::*;
++///
++/// trait Trait {
++///     fn foo(&self) -> (&'static str, i32);
++/// }
++///
++/// #[pin_data]
++/// struct DTWrap<T: ?Sized> {
++///     #[pin]
++///     links: ListLinksSelfPtr<DTWrap<dyn Trait>>,
++///     value: T,
++/// }
++///
++/// impl<T> DTWrap<T> {
++///     fn new(value: T) -> Result<ListArc<Self>> {
++///         ListArc::pin_init(try_pin_init!(Self {
++///             value,
++///             links <- ListLinksSelfPtr::new(),
++///         }), GFP_KERNEL)
++///     }
++/// }
++///
++/// impl_has_list_links_self_ptr! {
++///     impl HasSelfPtr<DTWrap<dyn Trait>> for DTWrap<dyn Trait> { self.links }
++/// }
++/// impl_list_arc_safe! {
++///     impl{T: ?Sized} ListArcSafe<0> for DTWrap<T> { untracked; }
++/// }
++/// impl_list_item! {
++///     impl ListItem<0> for DTWrap<dyn Trait> { using ListLinksSelfPtr; }
++/// }
++///
++/// // Create a new empty list.
++/// let mut list = List::<DTWrap<dyn Trait>>::new();
++/// {
++///     assert!(list.is_empty());
++/// }
++///
++/// struct A(i32);
++///
++/// // `A` returns the inner value for `foo`.
++/// impl Trait for A { fn foo(&self) -> (&'static str, i32) { ("a", self.0) } }
++///
++/// struct B;
++/// // `B` always returns 42.
++/// impl Trait for B { fn foo(&self) -> (&'static str, i32) { ("b", 42) } }
++///
++/// // Insert 3 element using `push_back()`.
++/// list.push_back(DTWrap::new(A(15))?);
++/// list.push_back(DTWrap::new(A(32))?);
++/// list.push_back(DTWrap::new(B)?);
++///
++/// // Iterate over the list to verify the nodes were inserted correctly.
++/// // [A(15), A(32), B]
++/// {
++///     let mut iter = list.iter();
++///     assert_eq!(iter.next().ok_or(EINVAL)?.value.foo(), ("a", 15));
++///     assert_eq!(iter.next().ok_or(EINVAL)?.value.foo(), ("a", 32));
++///     assert_eq!(iter.next().ok_or(EINVAL)?.value.foo(), ("b", 42));
++///     assert!(iter.next().is_none());
++///
++///     // Verify the length of the list.
++///     assert_eq!(list.iter().count(), 3);
++/// }
++///
++/// // Pop the items from the list using `pop_back()` and verify the content.
++/// {
++///     assert_eq!(list.pop_back().ok_or(EINVAL)?.value.foo(), ("b", 42));
++///     assert_eq!(list.pop_back().ok_or(EINVAL)?.value.foo(), ("a", 32));
++///     assert_eq!(list.pop_back().ok_or(EINVAL)?.value.foo(), ("a", 15));
++/// }
++///
++/// // Insert 3 elements using `push_front()`.
++/// list.push_front(DTWrap::new(A(15))?);
++/// list.push_front(DTWrap::new(A(32))?);
++/// list.push_front(DTWrap::new(B)?);
++///
++/// // Iterate over the list to verify the nodes were inserted correctly.
++/// // [B, A(32), A(15)]
++/// {
++///     let mut iter = list.iter();
++///     assert_eq!(iter.next().ok_or(EINVAL)?.value.foo(), ("b", 42));
++///     assert_eq!(iter.next().ok_or(EINVAL)?.value.foo(), ("a", 32));
++///     assert_eq!(iter.next().ok_or(EINVAL)?.value.foo(), ("a", 15));
++///     assert!(iter.next().is_none());
++///
++///     // Verify the length of the list.
++///     assert_eq!(list.iter().count(), 3);
++/// }
++///
++/// // Pop the items from the list using `pop_front()` and verify the content.
++/// {
++///     assert_eq!(list.pop_back().ok_or(EINVAL)?.value.foo(), ("a", 15));
++///     assert_eq!(list.pop_back().ok_or(EINVAL)?.value.foo(), ("a", 32));
++/// }
++///
++/// // Push `list2` to `list` through `push_all_back()`.
++/// // list: [B]
++/// // list2: [B, A(25)]
++/// {
++///     let mut list2 = List::<DTWrap<dyn Trait>>::new();
++///     list2.push_back(DTWrap::new(B)?);
++///     list2.push_back(DTWrap::new(A(25))?);
++///
++///     list.push_all_back(&mut list2);
++///
++///     // list: [B, B, A(25)]
++///     // list2: []
++///     let mut iter = list.iter();
++///     assert_eq!(iter.next().ok_or(EINVAL)?.value.foo(), ("b", 42));
++///     assert_eq!(iter.next().ok_or(EINVAL)?.value.foo(), ("b", 42));
++///     assert_eq!(iter.next().ok_or(EINVAL)?.value.foo(), ("a", 25));
++///     assert!(iter.next().is_none());
++///     assert!(list2.is_empty());
++/// }
++/// # Result::<(), Error>::Ok(())
++/// ```
++///
+ pub struct List<T: ?Sized + ListItem<ID>, const ID: u64 = 0> {
+     first: *mut ListLinksFields,
+     _ty: PhantomData<ListArc<T, ID>>,
 -- 
-2.47.2
+2.39.5 (Apple Git-154)
 
 
