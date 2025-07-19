@@ -1,200 +1,241 @@
-Return-Path: <linux-kernel+bounces-737542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F161B0ADBB
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 05:33:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68AB4B0ADBC
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 05:41:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C95F4E3164
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 03:33:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A1451C23C6A
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 03:41:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C7021F91C8;
-	Sat, 19 Jul 2025 03:33:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDFB01F4E57;
+	Sat, 19 Jul 2025 03:41:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DFu91kg4"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ICxRnPSS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5682E36ED;
-	Sat, 19 Jul 2025 03:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D542E36ED
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 03:41:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752896006; cv=none; b=K80aQyWTjz6AkGBssXywbC/5zHP0zqsZwXMka5sSKFCAEaJpbikWDgwbrgK3g0eX4H+q/M2wo/Py6eAyVDdt2Imlx6Er1uBApQ4pwkh6yrBT6mjeU7S/kRYB44NZvFhTCKRvgawlhllE8t6mqxdwmBK/PqFlk8+imL6cISvaV9U=
+	t=1752896471; cv=none; b=sF0CHfA9DQn+JCavlD0lA4EFaTnrXLSAZaGYXrR4NsFvD34U9Evqrb7mzlO3K3B+rmI7wnrvEMdJsgSL5F5efq/SaZBDirLQbFbxKe6R9Kduot16vwsOnWbo1Tsogg8y+viOXjuKlnG4qmuOyk34LyT6FykLgeq0M93XLb65LKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752896006; c=relaxed/simple;
-	bh=nxsiErN7K+UDI08bWfIdtteXjK4vzOHEI67tHhqObzQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o9m56qYu6Noxl9g0c3XM1KXQyPgXH7stgsRRbMRzlw+drsS3PLcNuX/nKYkeVAJqKevK4bydP/Aj2Eb993Tx3eiXSC196Sj4pITyVzUmYYHnb6tMk/GZS1Bb4EYltReZgut39YDJ1bB9LLLwvIrXZvqL8oETUXDqHNZHI+Zivjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DFu91kg4; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4ab380b8851so24488271cf.2;
-        Fri, 18 Jul 2025 20:33:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752896004; x=1753500804; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZWxI+jiA7cRK6VG7N78OlHjeHTVdqckiDB+WAU1/JDE=;
-        b=DFu91kg41i4Zv3UnjXNnUjEiLXHm+0DncNFqPNVHA3+KPvSyVqhCGe3EgWI92PyKPs
-         i5Ii+XcJtl3Q6Zr76q0/2ut2wFEJibilR7BMmqkM+Ufuwya1pquCufg9Hj0H9BvCjTnc
-         BpUntp+6MbWnuMLu+1+LZbLXU4S5NZmDxcXZGky9R+f3b7TUInGG/rQuaS1Es7dEiOfg
-         KpvI3isWOm+TenDtmahubYAQ5J8KZtPvkxhW8A9xOQkDd0cqxnXDt3/8LuovDnWgd06J
-         +zpnD8USLfzduGsYNKrohR2IwZOMYT3rEApJ9PZQYOxXVVfV+6Cwh/MTa67DfevCraoQ
-         Si2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752896004; x=1753500804;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZWxI+jiA7cRK6VG7N78OlHjeHTVdqckiDB+WAU1/JDE=;
-        b=PvpOiU3KnIpDvcYQUeRoe2j1ZVF/GyvwRBMHMZwO4Iam3jZmgXE9FK77sD4n4wEojE
-         GK+zsFJaFjewSLUZ69d/2V1bvIHzJlwQWf/0i7CNuYkHxtnL8im8YZUf/yzrPfErFTgO
-         ru7d1lGSqPk/M4pKcacitZpOQK2amZlwLFkxx1x5q+Q9Q8jftgfi/X4lYRDMaED2uuYg
-         Mxc/CXOnj/7PXZ2qELXjAVYxNTQudDoGkpxlox9KD5iWQnF80p1Y7jjgyx6F/sGP+0MC
-         +PDX90KW/hnfsVVhGtDg+xMAarRIIL/sjISu68d8rZzFTsbYEM/IKakCB4wQqKEOtlxU
-         rmMw==
-X-Forwarded-Encrypted: i=1; AJvYcCXcOk1DYLlp17j0HpGQpeAC+PWsBzuNej8oR58QwRHJDNFPNXd7khEzswi5/8GZTe+YqzpRU9/AGLrPg3U=@vger.kernel.org, AJvYcCXzGxU89DwXFB53s+DFX7FXEeOI5SZ5llMvgyjCD98UfAW8ApCzYueYuYgmCZ9OwPUK4lvJBGpFtheFjizOIJ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYTjyJV4spNRE5EawkBzZz3vMrkUTDFb0Yj2TuFz26kAKGpmza
-	phJf6mIbcLiIgHyhzsI2Lle5/TRwfprUGYzvdE+ncGiZt8dK1fV/Grnf
-X-Gm-Gg: ASbGncuGkeUt1Px2TL3OiVMusBXYnbNPdiv3bvrJbYBe493I+J3P1PMkZoCI//h2uQP
-	nhfvJSs4Z+opbG8TrO6+ozU6PZTwtCxmvpLX02oTrCytBooavnrl8ygxsZPqQzzSggFRIzN3XNQ
-	ZUZZhNW5YBYKOs+y/HszhJ4padyDnRxCVM91dEIXOSj/mYKRE25Lxr7pzw0lqJx5uRALF+97BTv
-	ICHH3VL64FRjgYUk/Hu5mLU3l7kfSIcTVyd9fnQGBQI4x7qI/+RWM7SmHepHO2JaiWn2HtyGWSF
-	9UiLRVyAIOaa5uZQ9KLK+PtXq1TsjWIfxxO11dNMdXwqr/Jn+YMem6IPe8QoV7yzcIFMgPFnRqf
-	uPdYpHjf5ZdH2wFTTqeqljqgRXJw0hYXdhACjqPpiZz2XPfJM+vtjLv0XVmqpZIPLfMNBPwrzvE
-	Z4gl3Quz9bzOIaOHO//4s38vE=
-X-Google-Smtp-Source: AGHT+IEotIbNPwv1+8HyiNhpEijCD2XBx6YcAVfoP57dSY8dIlOi6xyTGu7mH7aEFw8imdgPjLMseQ==
-X-Received: by 2002:a05:622a:653:b0:4ab:af74:e0be with SMTP id d75a77b69052e-4abaf74e17amr101495361cf.43.1752896003966;
-        Fri, 18 Jul 2025 20:33:23 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4abb49a95c9sm15290411cf.27.2025.07.18.20.33.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jul 2025 20:33:23 -0700 (PDT)
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfauth.phl.internal (Postfix) with ESMTP id D3348F40066;
-	Fri, 18 Jul 2025 23:33:22 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Fri, 18 Jul 2025 23:33:22 -0400
-X-ME-Sender: <xms:AhJ7aOEj3eQVtFZ07wjjMFz8AYNA6IHGFz5xHmLD7xpuHdPe57_AOg>
-    <xme:AhJ7aHN3e2wYRWZKujXTMLCPeRUpDStsluOg0ooBgBjbue1euSCrpSuxWbvoo5pDm
-    I74r4mCZb9mLv2eFA>
-X-ME-Received: <xmr:AhJ7aHiNmqkU5M4lLaq2DAIwFqRC0EIS2M8pu1DIfpxUzR4OHjtC2KN_Hg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeihedviecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtugfgjgesthekredttddtudenucfhrhhomhepuehoqhhunhcu
-    hfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtth
-    gvrhhnpeelledujeetgedtkeduveelgeejiefhieetveetlefggeffhfetleekueehvdei
-    ieenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdhlfihnrdhnvghtnecuvehluhhsth
-    gvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhm
-    thhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehheehvd
-    dqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhn
-    sggprhgtphhtthhopeduiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepfihorh
-    hksehonhhurhhoiihkrghnrdguvghvpdhrtghpthhtoheprgdrhhhinhgusghorhhgsehk
-    vghrnhgvlhdrohhrghdprhgtphhtthhopehjvghnshdrkhhorhhinhhthhesthhuthgrrd
-    hiohdprhgtphhtthhopeguvghvnhhulhhlodhjvghnshdrkhhorhhinhhthhdrthhuthgr
-    rdhioheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrd
-    horhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgt
-    phhtthhopehgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhnfe
-    gpghhhsehprhhothhonhhmrghilhdrtghomhdprhgtphhtthhopehlohhsshhinheskhgv
-    rhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:AhJ7aP2T2aAn00bq-0Bl_bTpO-18dyKLMu47QzyatyEN4NF_vY4IbQ>
-    <xmx:AhJ7aMmOW6qLD5i8W038XvSIaZFBmMJyoY0AORKG3uTkpbla4ObKtw>
-    <xmx:AhJ7aGt9jDDZFAufB32WlYWMbucccaAA5b_SiFH92ymQZ6O419UBAA>
-    <xmx:AhJ7aE3UiR6sbdon4EOBIfP3lcBiry72ZvqtbbPkaB7VzsNRbxnhaw>
-    <xmx:AhJ7aKTQZyJQoZDJhukyT9jgfvdsCHL6wMqitGSifLTKv-rLG4Jn0Sw4>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 18 Jul 2025 23:33:22 -0400 (EDT)
-Date: Fri, 18 Jul 2025 20:33:21 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Onur =?iso-8859-1?Q?=D6zkan?= <work@onurozkan.dev>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>, jens.korinth@tuta.io,
-	Jens Korinth via B4 Relay <devnull+jens.korinth.tuta.io@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Rust For Linux <rust-for-linux@vger.kernel.org>,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>,
-	Dirk Behme <dirk.behme@gmail.com>,
-	Linux Kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 0/3] rust: Add pr_*_once macros134
-Message-ID: <aHsSAaLDjp8TTXAw@Mac.home>
-References: <20241126-pr_once_macros-v4-0-410b8ca9643e@tuta.io>
- <87zfish69f.fsf@kernel.org>
- <XyUDgEm-do6Hd7zeR0J2gte301dYC_LTbQqJ85HUnf0DKGZoH4V9G9dgvmEw4fEadnu8CAZ4j4XWqLdn2YzkAw==@protonmail.internalid>
- <OIpcOXB--F-9@tuta.io>
- <87o6z8h4im.fsf@kernel.org>
- <20250717190713.1f19043e@nimda.home>
+	s=arc-20240116; t=1752896471; c=relaxed/simple;
+	bh=vNKzp08fR6rGe3dowzaw73p6nSns3OGxHIzWfBKeCoc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=g8ZEl8uDdJKpKApKB2ifHs2r4NhA0mLmU9YfE/Ik0Xk305hJwYvCHrw/skOeinS2SjXIrKb/DLsGQbNc8Zu6ZwqrFl06D2bIZXRqAVIBl61KFFZL+2qVAwrwiFgzplbZWe7cyLRXJXDwZWW13fvqA3wBhMjl7etjZnRx2LGvJl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ICxRnPSS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68234C4CEE3;
+	Sat, 19 Jul 2025 03:41:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752896470;
+	bh=vNKzp08fR6rGe3dowzaw73p6nSns3OGxHIzWfBKeCoc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ICxRnPSScuwdp+SZOPuNnTuroZxiNahWtbCQm7rdVOpcYHcYGPDTbISINBzBw7WYp
+	 Htwfy3yVBSSDXPYhv+SuiGJXRquuMAH8407oTxNCnNlN3ONhFLj7HrVOFT2dCAHgGk
+	 WDEdjp5zG5hbJVXVcuVnRBVN36fyo242jaUShPKyBSObrjD/i6EOnlegzlYiL0VOna
+	 KTqtwC/9c+IHx6fuhLhpTzMDyPmHgI1AY8BfbYNgx4bNJVgtRY2TcGFibEuiluYQhK
+	 Z9MXY+APLPoTPvAkNqAoIvLaAD5NBE1IA4Gjj4VVpjAomrdB9mkjftB4FB7r2bqJLZ
+	 gycCfC/rVZghQ==
+From: Drew Fustini <fustini@kernel.org>
+To: Palmer Dabbelt <palmer@dabbelt.com>,
+	=?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Drew Fustini <dfustini@tenstorrent.com>,
+	Andy Chiu <andybnac@gmail.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Drew Fustini <fustini@kernel.org>
+Subject: [PATCH] riscv: Add sysctl to control discard of vstate during syscall
+Date: Fri, 18 Jul 2025 20:39:13 -0700
+Message-Id: <20250719033912.1313955-1-fustini@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250717190713.1f19043e@nimda.home>
 
-On Thu, Jul 17, 2025 at 07:07:13PM +0300, Onur Özkan wrote:
-> On Tue, 11 Feb 2025 16:42:25 +0100
-> Andreas Hindborg <a.hindborg@kernel.org> wrote:
-> 
-> > <jens.korinth@tuta.io> writes:
-> > 
-> > > Hi!
-> > >
-> > >> Thanks for the patch! Do you plan on sending a new version? If
-> > >>not, do you mind if I send v5?
-> > >
-> > > I think there is currently no consensus on how exactly it should be
-> > > done (or at least I was confused about that). If you´re actively
-> > > using the patch please go ahead! Active usage is always the best
-> > > argument in such cases.
-> > 
-> > I was informed this patch set is the correct way to emit a warning in
-> > the module_params patch set [1].
-> > 
-> > I did not follow all the discussion so I am not sure either. But I'll
-> > look into the discussion then.
-> > 
-> > 
-> > Best regards,
-> > Andreas Hindborg
-> > 
-> > 
-> > 
-> > [1]
-> > https://lore.kernel.org/rust-for-linux/20250204-module-params-v3-v5-0-bf5ec2041625@kernel.org/
-> > 
-> > 
-> 
-> I have reviewed the patch series from start to finish. I am not
-> using or depending the patch actively but I can send v5 sometime
-> soon (I will have some space next week) if you would like.
-> 
+From: Drew Fustini <dfustini@tenstorrent.com>
 
-Note that you need to use LKMM atomics [1], and you should really use
-a 32bit atomic at the beginning. Thanks!
+Clobbering the vector registers can significantly increase system call
+latency for some implementations. To mitigate this performance impact, a
+policy mechanism is provided to administrators, distro maintainers, and
+developers to control vector state discard in the form of a sysctl knob:
 
-There are a few explanations on why we want to avoid use Rust native
-atomics:
+/proc/sys/abi/riscv_v_vstate_discard
 
-	https://lwn.net/Articles/993785/
-	https://lore.kernel.org/rust-for-linux/CAHk-=whkQk=zq5XiMcaU3xj4v69+jyoP-y6Sywhq-TvxSSvfEA@mail.gmail.com/
+Valid values are:
 
-[1]: https://lore.kernel.org/rust-for-linux/20250719030827.61357-1-boqun.feng@gmail.com/
+0: Do not discard vector state during syscall
+1: Discard vector state during syscall
 
-Regards,
-Boqun
+The initial state is controlled by CONFIG_RISCV_ISA_V_VSTATE_DISCARD.
 
-> Regards,
-> Onur
+Fixes: 9657e9b7d253 ("riscv: Discard vector state on syscalls")
+Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
+---
+ Documentation/arch/riscv/vector.rst | 15 +++++++++++++++
+ arch/riscv/Kconfig                  | 10 ++++++++++
+ arch/riscv/include/asm/vector.h     |  4 ++++
+ arch/riscv/kernel/vector.c          | 16 +++++++++++++++-
+ 4 files changed, 44 insertions(+), 1 deletion(-)
+
+I've tested the impact of riscv_v_vstate_discard() on the SiFive X280
+cores [1] in the Tenstorrent Blackhole SoC [2]. The results from the
+Blackhole P100 [3] card show that discarding the vector registers
+increases null syscall latency by 25%.
+
+The null syscall program [4] executes vsetvli and then calls getppid()
+in a loop. The average duration of getppid() is 198 ns when registers
+are clobbered in riscv_v_vstate_discard(). The average duration drops
+to 149 ns when riscv_v_vstate_discard() skips clobbering the registers
+as result of riscv_v_vstate_discard being set to 0.
+
+$ sudo sysctl abi.riscv_v_vstate_discard=1
+abi.riscv_v_vstate_discard = 1
+
+$ ./null_syscall --vsetvli
+vsetvli complete
+ iterations: 1000000000
+   duration: 198 seconds
+avg latency: 198.73 ns
+
+$ sudo sysctl abi.riscv_v_vstate_discard=0
+abi.riscv_v_vstate_discard = 0
+
+$ ./null_syscall --vsetvli
+vsetvli complete
+ iterations: 1000000000
+   duration: 149 seconds
+avg latency: 149.89 ns
+
+I'm testing on the tt-blackhole-v6.16-rc1_vstate_discard [5] branch that
+has 13 patches, including this one, on top of v6.16-rc1. Most are simple
+yaml patches for dt bindings along with dts files and a bespoke network
+driver. I don't think the other patches are relevant to this discussion.
+
+This patch applies clean on its own to riscv/for-next and next-20250718.
+
+[1] https://www.sifive.com/cores/intelligence-x200-series
+[2] https://tenstorrent.com/en/hardware/blackhole
+[3] https://github.com/tenstorrent/tt-bh-linux
+[4] https://gist.github.com/tt-fustini/ab9b217756912ce75522b3cce11d0d58
+[5] https://github.com/tenstorrent/linux/tree/tt-blackhole-v6.16-rc1_vstate_discard
+
+diff --git a/Documentation/arch/riscv/vector.rst b/Documentation/arch/riscv/vector.rst
+index 3987f5f76a9d..1edbce436015 100644
+--- a/Documentation/arch/riscv/vector.rst
++++ b/Documentation/arch/riscv/vector.rst
+@@ -137,4 +137,19 @@ processes in form of sysctl knob:
+ As indicated by version 1.0 of the V extension [1], vector registers are
+ clobbered by system calls.
+ 
++Clobbering the vector registers can significantly increase system call latency
++for some implementations. To mitigate the performance impact, a policy mechanism
++is provided to the administrators, distro maintainers, and developers to control
++the vstate discard in the form of a sysctl knob:
++
++* /proc/sys/abi/riscv_v_vstate_discard
++
++    Valid values are:
++
++    * 0: Do not discard vector state during syscall
++    * 1: Discard vector state during syscall
++
++    Reading this file returns the current discard behavior. The initial state is
++    controlled by CONFIG_RISCV_ISA_V_VSTATE_DISCARD.
++
+ 1: https://github.com/riscv/riscv-v-spec/blob/master/calling-convention.adoc
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 0aeee50da016..c0039f21d1f0 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -655,6 +655,16 @@ config RISCV_ISA_V_DEFAULT_ENABLE
+ 
+ 	  If you don't know what to do here, say Y.
+ 
++config RISCV_ISA_V_VSTATE_DISCARD
++	bool "Enable Vector state discard by default"
++	depends on RISCV_ISA_V
++	default n
++	help
++	  Say Y here if you want to enable Vector state discard on syscall.
++	  Otherwise, userspace has to enable it via the sysctl interface.
++
++	  If you don't know what to do here, say N.
++
+ config RISCV_ISA_V_UCOPY_THRESHOLD
+ 	int "Threshold size for vectorized user copies"
+ 	depends on RISCV_ISA_V
+diff --git a/arch/riscv/include/asm/vector.h b/arch/riscv/include/asm/vector.h
+index 45c9b426fcc5..77991013216b 100644
+--- a/arch/riscv/include/asm/vector.h
++++ b/arch/riscv/include/asm/vector.h
+@@ -40,6 +40,7 @@
+ 	_res;								\
+ })
+ 
++extern bool riscv_v_vstate_discard_ctl;
+ extern unsigned long riscv_v_vsize;
+ int riscv_v_setup_vsize(void);
+ bool insn_is_vector(u32 insn_buf);
+@@ -270,6 +271,9 @@ static inline void __riscv_v_vstate_discard(void)
+ {
+ 	unsigned long vl, vtype_inval = 1UL << (BITS_PER_LONG - 1);
+ 
++	if (READ_ONCE(riscv_v_vstate_discard_ctl) == 0)
++		return;
++
+ 	riscv_v_enable();
+ 	if (has_xtheadvector())
+ 		asm volatile (THEAD_VSETVLI_T4X0E8M8D1 : : : "t4");
+diff --git a/arch/riscv/kernel/vector.c b/arch/riscv/kernel/vector.c
+index 184f780c932d..7a4c209ad337 100644
+--- a/arch/riscv/kernel/vector.c
++++ b/arch/riscv/kernel/vector.c
+@@ -26,6 +26,7 @@ static struct kmem_cache *riscv_v_user_cachep;
+ static struct kmem_cache *riscv_v_kernel_cachep;
+ #endif
+ 
++bool riscv_v_vstate_discard_ctl = IS_ENABLED(CONFIG_RISCV_ISA_V_VSTATE_DISCARD);
+ unsigned long riscv_v_vsize __read_mostly;
+ EXPORT_SYMBOL_GPL(riscv_v_vsize);
+ 
+@@ -307,11 +308,24 @@ static const struct ctl_table riscv_v_default_vstate_table[] = {
+ 	},
+ };
+ 
++static const struct ctl_table riscv_v_vstate_discard_table[] = {
++	{
++		.procname       = "riscv_v_vstate_discard",
++		.data           = &riscv_v_vstate_discard_ctl,
++		.maxlen         = sizeof(riscv_v_vstate_discard_ctl),
++		.mode           = 0644,
++		.proc_handler   = proc_dobool,
++	},
++};
++
+ static int __init riscv_v_sysctl_init(void)
+ {
+-	if (has_vector() || has_xtheadvector())
++	if (has_vector() || has_xtheadvector()) {
+ 		if (!register_sysctl("abi", riscv_v_default_vstate_table))
+ 			return -EINVAL;
++		if (!register_sysctl("abi", riscv_v_vstate_discard_table))
++			return -EINVAL;
++	}
+ 	return 0;
+ }
+ 
+-- 
+2.34.1
+
 
