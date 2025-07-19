@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-737757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CFA3B0B02E
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 15:11:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA4FFB0B033
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 15:15:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49489561A87
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 13:11:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 688FA5624F9
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 13:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74A42248B0;
-	Sat, 19 Jul 2025 13:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5458E287507;
+	Sat, 19 Jul 2025 13:15:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nZrsEDcQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="knA3+jwx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECDB5DDC1;
-	Sat, 19 Jul 2025 13:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC32286D7A;
+	Sat, 19 Jul 2025 13:15:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752930653; cv=none; b=ODr1tkKXUKFbhMXKA+pdWhWQxucBXWpqLU7V9DHxUIkDz2rR0biCayLDeAvlzFEix9m2qamnDBRu1l73wHCuVg+1vCJK36DOFfbG0RUtugKjQgkyI3U6qF4scYFpyVwU8uDM2xsEO5D+EZO1VOmKoOFkSR8UYR6w3M4WJcx3S/E=
+	t=1752930912; cv=none; b=K7dgOdm7RF88UeZkHW8zIrJOmtwBRhZPmK8w2KC6tH72bxP3K1fCF9X9eT8aKayLCgD0B5dtyzUOhibQi1F4bQ4h9m5D9F13A/RWgE5ZF806K6SUlvCkvyuKKBp3/Lux+fwyUPTzfW15xiYfScFoMmWLG2/j5H+244EHe9tCKK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752930653; c=relaxed/simple;
-	bh=rSTIGzJE4AZYfml7shVbzMPVYvWAf8JVrO1QpxdZuh0=;
+	s=arc-20240116; t=1752930912; c=relaxed/simple;
+	bh=Y56Y9TszFLVMWinBCZFOHZxvFqKUs/k3AHWrTwYXNBI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EAcQRGrDv6vha2uMoYgy7GUL1gl1ZlS4cuj/3OmCptBK7iuaLApMcmQLT3GajTlfK0BWItDvD46G/b8/tVQJoObva6aASkU50bsgqk6yGbKPTsCNH3hsD+yem6CP+XB7svRal+dBtqsMgt7wTrwWm0/AO0xsyIV/xZXUtS4tp68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nZrsEDcQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B95A9C4CEE3;
-	Sat, 19 Jul 2025 13:10:49 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=Hu/bMnjaZrVZToIzftaVycHSpLZkw5uXt63gWuKArNvaHD8wT9oYhJGGUVP2evgmjBGNaK+US3eWrFLdR0ITvSCfv51x0Iu+dWvcPl9uyz6OY0+Y/wXHCdElYy9SJ/DzCd37P5t4/tmjbv+Jp/dy8i1ZHqtzhRpSgNnc2xXdkZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=knA3+jwx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CC0AC4CEE3;
+	Sat, 19 Jul 2025 13:15:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752930652;
-	bh=rSTIGzJE4AZYfml7shVbzMPVYvWAf8JVrO1QpxdZuh0=;
+	s=k20201202; t=1752930912;
+	bh=Y56Y9TszFLVMWinBCZFOHZxvFqKUs/k3AHWrTwYXNBI=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nZrsEDcQp7EjPt8b6W+QExMsYf8U6TiOGHeo8WXIbgH3bzxNijIviTLT+bMd6S3pt
-	 RILQ5JwahYtLFDFypUEGy3nX0D+ebLT1JvykCytL2c/wJSdt7e1r4zSQTrVokRiv0G
-	 PosLZ2kDExIbc8isbgk8KmCur2leHVapofN+WITyYx4dxvsIHUZubAEFwk8X6NVqCw
-	 v8uvPrEE1Q8bW/JRa8qlpYWaeNzgUg6VLsdP3aF6kLeIUnDDG4JsV1J0/P5kXxMFYe
-	 7rMlTWu6xCKpeW6v5Qn65qPBlaNbUzn2yhabpGqKqOfemEn0azOOyDsH3Xz3Kqj72a
-	 eZSu1Kp86Kvhw==
-Message-ID: <43aaf42a-6756-4133-8422-03ab99a59d19@kernel.org>
-Date: Sat, 19 Jul 2025 15:10:48 +0200
+	b=knA3+jwxJ5/pPrzTMnyfUBfKL1V+3ZIfj6r1GGRWjfwBiKnjAuDznBaXjQsa1Dh0b
+	 ObE3uIAwdhux6+4Yjk313yDknHRfADprbR0oNEbrYTP399z4+xIYGjJc8azdxFbF+F
+	 UmwnxH+tj5kT2IJrgVk81w3nLnV4mRYdWwzKbDoxYtWuTeF80xHPDMaKWVC/ketKdr
+	 NsnZ3zWsqMUUABAI8HJwiiU3cakyDe8vO9JJs0mEiFtdv0FBIIYemXINpD5s7L4n4L
+	 agNBid3yCcvCfV7n6zgACi5P1ogwui64zpkSiWi/ME3lOixtn7pbgBNLLKkVA7Uvud
+	 KUVvYyiVznBUg==
+Message-ID: <81cd8749-6212-4fcf-8e1a-5eba5a8e2a73@kernel.org>
+Date: Sat, 19 Jul 2025 15:15:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,43 +49,110 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/9] dt-bindings: i2c: apple,i2c: Document Apple
- A7-A11, T2 compatibles
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Alyssa Rosenzweig <alyssa@rosenzweig.io>, Janne Grunau <j@jannau.net>,
- Nick Chan <towinchenmi@gmail.com>, asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Neal Gompa <neal@gompa.dev>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
-References: <20250610-i2c-no-t2-v2-0-a5a71080fba9@gmail.com>
- <20250610-i2c-no-t2-v2-1-a5a71080fba9@gmail.com>
+Subject: Re: [PATCH] selftests/bpf: Add LPM trie microbenchmarks
+To: Matt Fleming <matt@readmodwrite.com>, Alexei Starovoitov
+ <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
+ Martin KaFai Lau <martin.lau@kernel.org>
+Cc: Shuah Khan <shuah@kernel.org>, kernel-team@cloudflare.com,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, Matt Fleming <mfleming@cloudflare.com>,
+ Yonghong Song <yonghong.song@linux.dev>, Netdev <netdev@vger.kernel.org>
+References: <20250718150554.48210-1-matt@readmodwrite.com>
 Content-Language: en-US
-From: Sven Peter <sven@kernel.org>
-In-Reply-To: <20250610-i2c-no-t2-v2-1-a5a71080fba9@gmail.com>
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+In-Reply-To: <20250718150554.48210-1-matt@readmodwrite.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10.06.25 15:45, Nick Chan wrote:
-> The I2C controllers found on Apple A7-A11, T2 SoCs are compatible with
-> the existing driver so add their per-SoC compatibles.
+
+
+On 18/07/2025 17.05, Matt Fleming wrote:
+> From: Matt Fleming <mfleming@cloudflare.com>
 > 
-> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+> Add benchmarks for the standard set of operations: lookup, update,
+> delete. Also, include a benchmark for trie_free() which is known to have
+> terrible performance for maps with many entries.
+> 
+> Benchmarks operate on tries without gaps in the key range, i.e. each
+> test begins with a trie with valid keys in the range [0, nr_entries).
+> This is intended to cause maximum branching when traversing the trie.
+> 
+> All measurements are recorded inside the kernel to remove syscall
+> overhead.
+> 
+> Most benchmarks run an XDP program to generate stats but free needs to
+> collect latencies using fentry/fexit on map_free_deferred() because it's
+> not possible to use fentry directly on lpm_trie.c since commit
+> c83508da5620 ("bpf: Avoid deadlock caused by nested kprobe and fentry
+> bpf programs") and there's no way to create/destroy a map from within an
+> XDP program.
+> 
+> Here is example output from an AMD EPYC 9684X 96-Core machine for each
+> of the benchmarks using a trie with 10K entries and a 32-bit prefix
+> length, e.g.
+> 
+>    $ ./bench lpm-trie-$op \
+>    	--prefix_len=32  \
+> 	--producers=1     \
+> 	--nr_entries=10000
+> 
+>    lookup: throughput    7.423 ± 0.023 M ops/s (  7.423M ops/prod), latency  134.710 ns/op
+>    update: throughput    2.643 ± 0.015 M ops/s (  2.643M ops/prod), latency  378.310 ns/op
+>    delete: throughput    0.712 ± 0.008 M ops/s (  0.712M ops/prod), latency 1405.152 ns/op
+>      free: throughput    0.574 ± 0.003 K ops/s (  0.574K ops/prod), latency    1.743 ms/op
+> 
+> Signed-off-by: Matt Fleming <mfleming@cloudflare.com>
 > ---
+>   tools/testing/selftests/bpf/Makefile          |   2 +
+>   tools/testing/selftests/bpf/bench.c           |  10 +
+>   tools/testing/selftests/bpf/bench.h           |   1 +
+>   .../selftests/bpf/benchs/bench_lpm_trie_map.c | 345 ++++++++++++++++++
+>   .../selftests/bpf/progs/lpm_trie_bench.c      | 175 +++++++++
+>   .../selftests/bpf/progs/lpm_trie_map.c        |  19 +
+>   6 files changed, 552 insertions(+)
+>   create mode 100644 tools/testing/selftests/bpf/benchs/bench_lpm_trie_map.c
+>   create mode 100644 tools/testing/selftests/bpf/progs/lpm_trie_bench.c
+>   create mode 100644 tools/testing/selftests/bpf/progs/lpm_trie_map.c
+> 
 
-Hi Andi,
+I've already tested + reviewed this and different version of this 
+benchmark during internal development.  Thanks to Matt for working on this.
 
-I think usually this dt-binding change adding new compatibles should go 
-through your tree.
+Tested-by: Jesper Dangaard Brouer <hawk@kernel.org>
 
-If you want to I can also take it together with the other dts changes 
-though.
+You can add my reviewed by when we resolve below comment.
 
-
-Best,
+Reviewed-by: Jesper Dangaard Brouer <hawk@kernel.org>
 
 
-Sven
+> [...]
+> diff --git a/tools/testing/selftests/bpf/progs/lpm_trie_bench.c b/tools/testing/selftests/bpf/progs/lpm_trie_bench.c
+> new file mode 100644
+> index 000000000000..c335718cc240
+> --- /dev/null
+> +++ b/tools/testing/selftests/bpf/progs/lpm_trie_bench.c
+> @@ -0,0 +1,175 @@
+[...]
+> +
+> +static __always_inline void atomic_inc(long *cnt)
+> +{
+> +	__atomic_add_fetch(cnt, 1, __ATOMIC_SEQ_CST);
+> +}
+> +
+> +static __always_inline long atomic_swap(long *cnt, long val)
+> +{
+> +	return __atomic_exchange_n(cnt, val, __ATOMIC_SEQ_CST);
+> +}
+
+For userspace includes we have similar defines in bench.h.
+Except they use __ATOMIC_RELAXED and here __ATOMIC_SEQ_CST.
+Which is the correct to use?
+
+For BPF kernel-side do selftests have another header file that define
+these `atomic_inc` and `atomic_swap` ?
+
+--Jesper
 
 
 
