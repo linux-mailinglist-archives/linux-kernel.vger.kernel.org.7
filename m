@@ -1,291 +1,171 @@
-Return-Path: <linux-kernel+bounces-737855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C98B0B0B14B
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 20:22:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DFA6B0B14E
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 20:23:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3BB356214A
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 18:22:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02DEB16A9D3
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 18:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC722264D7;
-	Sat, 19 Jul 2025 18:22:05 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CAC72264D7;
+	Sat, 19 Jul 2025 18:23:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ne+csaHt"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 783311DF74F
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 18:22:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F643A923
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 18:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752949325; cv=none; b=IB98sIrnk94HmtgJwERcqm2tFmxusFOkMN4ojV1F28Uh1mICmaXUVzDwLb3iIhoqdDrnM1/gfxiVP+fxqDSvpj4rbLjgZB9Spbi+3ybnrkHwkxPOgz4IG+ecaSGfqgW0oIR9Ixka6MuSxbdUjRCIMMsX4hNI2a6ICy9WNSXqpew=
+	t=1752949393; cv=none; b=Lt9Vo2v4JSzsA6AnhN4Lc8cM6CYXmoGUmokU0jk6Y5iOzliI1kYj6zI2A+bMh2/F4SRVPYqlZTdZkzdFzxlfNrl7byN2ioq8lzT6NiuoOEAmMiyTboEf8gVORPQt0TpfhGc0U7QRvooOPSTLPbU8tPmtJJcmfeEHXknsOeLyOzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752949325; c=relaxed/simple;
-	bh=9aZd/5CS1K6gUiUNxrlzawKZLrPC/XSVlBs/J4mDkSE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=W+j/0TMkxLTtIwURAD5p9U7OY9P3GN+A1fUeVNDSxL1gVaQvQb0g7fgRO6qeHTlrsV36Gfrc7tQgw0mgPheBwzjCJLVx+UX6NOilASYsBlkQxKpgQED+Eq7z1AsAgoFUPs7xtYK16m0dRYslQ40QMrw5gV4Wohv+77iKM54c30I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-86a5def8869so680801839f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 11:22:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752949322; x=1753554122;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JCKTfCl6CCVCX3wgtyABQ/D2o7hzY1/EQS4mWEzcyIU=;
-        b=vM8bNam9JDeQyu1qxcaoW8Cr+JVDojvMjzFR6kdNvPWC6fF5m5gQ/vFK8uy7gzxyp/
-         oCX+PHgw9dGuhyvbCe9TkJymISdW+p41g5x6Tbd0nUfF3IdoefWrfFK7QkbvprwbYyJh
-         GnqmlR7HCfbkL2cdjFJGnKEdJuaRKthbNx7v7NJUHDoziO1mrUpMKqMzs5+XkPt7JZ93
-         Ru/6/MfKX3xy8ljgkrUFmR3nmGISsikxGpYQw5RPzcrmRTimzSDqw6yU+SvBlDhwKfPF
-         O8Fl102uCBrCGp14i5Rj1uYJjt3SNfGVBLMeRPiIF/lntQ2BElevDwatDkRQlNtKoj9C
-         JWtw==
-X-Gm-Message-State: AOJu0Yzx/MQKT+VxEzgbRgEswYeXx4YdO5u3LGaRRfeOCLL6ubg/p6il
-	ToF7eAEauRFm9a//I59CfATQMAUe6l/SrmfldrBol/4183dn+ftnCUi8hC+4bXzfeshKv4fAt92
-	VcIvhZD6GwaLTzBdwxvnukS1RPhLcvUtlIx5lI82GDnDh/3znJ3C0HQouuRA=
-X-Google-Smtp-Source: AGHT+IGzby/TVFBkZc4NQrILrDFv+CEclMjLuIu6RI1cIy8NKSJdmL6B5S27SVOH5FcOw4ByBu/TbU+kFT6kIZbc+Eqfm00SYU3V
+	s=arc-20240116; t=1752949393; c=relaxed/simple;
+	bh=norkHxz8yxnk58XydmAoXQnBoaw/0mN9mBKqltfKkiU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SLKoQvwvDSwksDpVDS+f0dxUQJfb6G3IiVPi/0XJShyU96GMTG+2v8uPCW5zs5CQMvQSEnPYeh3yYHMSpOYPctQiE7qOlqzAWdnSP3+kvPuo18wInnGN0X6CHfQYqnvimQqkDjHIdz4yIn623mmhF7egobxQSpkPqGe1Nmss4J8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ne+csaHt; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752949391; x=1784485391;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=norkHxz8yxnk58XydmAoXQnBoaw/0mN9mBKqltfKkiU=;
+  b=ne+csaHtjbmmiRYieT3eWGRngZu8DUEixqJ60OLs9NmZh30QHnkzR3kZ
+   yY7yNlckXspd4V/LyuYwBGocCGX8A0hKwkobmKM9qnwLor6r8XkAWJrxt
+   dtsKp+03ajdJM2KCm9dca4esOUJaghmJTOVVtrBIzIu3bG0GU4vOjJcJk
+   aqDgZACjhdacQf6c3CZ210v9DSdBTxx+B53qxa1H3dQlLGao8HR/Cf/3M
+   ZKHkXotMfAsCoL8r4peThWmfIqZiKkYmgUYw4LipY+3MnrUz89iNbnq/e
+   hD6KSzyuushFo8a/JwB3aiyqDyV2kgLgJuCDujCZKRbWnNv/F4PIITT1Z
+   Q==;
+X-CSE-ConnectionGUID: pc91SuEuTtWESzqSohH5lA==
+X-CSE-MsgGUID: sDdiaA5gTXmIpu9LOCAV6w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11497"; a="55304361"
+X-IronPort-AV: E=Sophos;i="6.16,324,1744095600"; 
+   d="scan'208";a="55304361"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2025 11:23:11 -0700
+X-CSE-ConnectionGUID: MlmxtoMwTl2ma06tPXyaGg==
+X-CSE-MsgGUID: eJ4hZavaRu+uyYInUO9f7g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,324,1744095600"; 
+   d="scan'208";a="164120833"
+Received: from sschumil-mobl2.ger.corp.intel.com (HELO stinkbox) ([10.245.245.152])
+  by orviesa005.jf.intel.com with SMTP; 19 Jul 2025 11:23:05 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Sat, 19 Jul 2025 21:23:04 +0300
+Date: Sat, 19 Jul 2025 21:23:04 +0300
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To: Jocelyn Falempe <jfalempe@redhat.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Christian Koenig <christian.koenig@amd.com>,
+	Huang Rui <ray.huang@amd.com>,
+	Matthew Auld <matthew.auld@intel.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 03/10] drm/i915/display/i9xx: Add a disable_tiling()
+ for i9xx planes
+Message-ID: <aHviiKb0EnQbNksL@intel.com>
+References: <20250618094011.238154-1-jfalempe@redhat.com>
+ <20250618094011.238154-4-jfalempe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6a8b:b0:87c:155f:d0c with SMTP id
- ca18e2360f4ac-87c155f23d7mr636027839f.0.1752949322441; Sat, 19 Jul 2025
- 11:22:02 -0700 (PDT)
-Date: Sat, 19 Jul 2025 11:22:02 -0700
-In-Reply-To: <690ae6be-8313-46eb-a546-b895f5a7227c@I-love.SAKURA.ne.jp>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <687be24a.a70a0220.693ce.0092.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] possible deadlock in ocfs2_try_remove_refcount_tree
-From: syzbot <syzbot+1fed2de07d8e11a3ec1b@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, penguin-kernel@i-love.sakura.ne.jp, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250618094011.238154-4-jfalempe@redhat.com>
+X-Patchwork-Hint: comment
 
-Hello,
+On Wed, Jun 18, 2025 at 11:31:21AM +0200, Jocelyn Falempe wrote:
+> drm_panic draws in linear framebuffer, so it's easier to re-use the
+> current framebuffer, and disable tiling in the panic handler, to show
+> the panic screen.
+> This assumes that the alignment restriction is always smaller in
+> linear than in tiled.
+> It also assumes that the linear framebuffer size is always smaller
+> than the tiled.
+> 
+> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
+> ---
+> 
+> v7:
+>  * Reword commit message about alignment/size when disabling tiling (Ville Syrjälä)
+> 
+>  drivers/gpu/drm/i915/display/i9xx_plane.c     | 23 +++++++++++++++++++
+>  .../drm/i915/display/intel_display_types.h    |  2 ++
+>  2 files changed, 25 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/i915/display/i9xx_plane.c b/drivers/gpu/drm/i915/display/i9xx_plane.c
+> index 8f15333a4b07..0807fae12450 100644
+> --- a/drivers/gpu/drm/i915/display/i9xx_plane.c
+> +++ b/drivers/gpu/drm/i915/display/i9xx_plane.c
+> @@ -905,6 +905,27 @@ static const struct drm_plane_funcs i8xx_plane_funcs = {
+>  	.format_mod_supported_async = intel_plane_format_mod_supported_async,
+>  };
+>  
+> +static void i9xx_disable_tiling(struct intel_plane *plane)
+> +{
+> +	struct intel_display *display = to_intel_display(plane);
+> +	enum i9xx_plane_id i9xx_plane = plane->i9xx_plane;
+> +	u32 dspcntr;
+> +	u32 reg;
+> +
+> +	dspcntr = intel_de_read_fw(display, DSPCNTR(display, i9xx_plane));
+> +	dspcntr &= ~DISP_TILED;
+> +	intel_de_write_fw(display, DSPCNTR(display, i9xx_plane), dspcntr);
+> +
+> +	if (DISPLAY_VER(display) >= 4) {
+> +		reg = intel_de_read_fw(display, DSPSURF(display, i9xx_plane));
+> +		intel_de_write_fw(display, DSPSURF(display, i9xx_plane), reg);
+> +
+> +	} else {
+> +		reg = intel_de_read_fw(display, DSPADDR(display, i9xx_plane));
+> +		intel_de_write_fw(display, DSPADDR(display, i9xx_plane), reg);
+> +	}
+> +}
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-possible deadlock in ocfs2_truncate_file
+I thought I already shot this down before, but apparently this
+got merged now :(
 
-         option from the mount to silence this warning.
-=======================================================
-ocfs2: Mounting device (7,0) on (node local, slot 0) with writeback data mode.
-======================================================
-WARNING: possible circular locking dependency detected
-6.16.0-rc6-syzkaller-00253-g4871b7cb27f4-dirty #0 Not tainted
-------------------------------------------------------
-syz.0.16/6592 is trying to acquire lock:
-ffff88807a9fc618 (sb_internal#2){.+.+}-{0:0}, at: ocfs2_orphan_for_truncate fs/ocfs2/file.c:396 [inline]
-ffff88807a9fc618 (sb_internal#2){.+.+}-{0:0}, at: ocfs2_truncate_file+0x648/0x1410 fs/ocfs2/file.c:500
+Just to reiterate why we don't want these 'disable tiling' hacks:
+- different tiling formats have different stride/alignment/watermark
+  requirements so one can't safely change from one tiling to another
+- this completely fails to account for the TILEOFF vs. LINOFF stuff
+- etc.
 
-but task is already holding lock:
-ffff88807da38660 (&oi->ip_alloc_sem){++++}-{4:4}, at: ocfs2_down_write fs/ocfs2/inode.h:74 [inline]
-ffff88807da38660 (&oi->ip_alloc_sem){++++}-{4:4}, at: ocfs2_truncate_file+0x36a/0x1410 fs/ocfs2/file.c:471
+So IMO these hacks must be removed and instead the code must learn how
+to propetly write the tiled data. igt has all the code for that btw
+(twice over IIRC) so shouldn't be that hard.
 
-which lock already depends on the new lock.
+I suppose the only hack we need to keep is to disable compression,
+mainly because (IIRC) on flat CCS systems the CPU doesn't have access
+to the AUX data to clear it manually.
 
+I also wonder if there are actual igts for this? I think what is needed
+is a test that sets random things (different panning, rotation, pixel
+foramts, etc.) and triggers the dumper. Not quite sure how the test
+could validate that the output is correct though. CRCs might be a bit
+tricky since you need an identical reference image.
 
-the existing dependency chain (in reverse order) is:
+/me off to summer vacation. Good luck
 
--> #4 (&oi->ip_alloc_sem){++++}-{4:4}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
-       down_write+0x96/0x1f0 kernel/locking/rwsem.c:1577
-       ocfs2_down_write fs/ocfs2/inode.h:74 [inline]
-       ocfs2_xattr_set_handle+0x3af/0x7a0 fs/ocfs2/xattr.c:3503
-       ocfs2_init_security_set+0xbd/0xe0 fs/ocfs2/xattr.c:7309
-       ocfs2_mknod+0x137f/0x2050 fs/ocfs2/namei.c:419
-       ocfs2_create+0x1a5/0x440 fs/ocfs2/namei.c:673
-       lookup_open fs/namei.c:3717 [inline]
-       open_last_lookups fs/namei.c:3816 [inline]
-       path_openat+0x14f1/0x3830 fs/namei.c:4052
-       do_filp_open+0x1fa/0x410 fs/namei.c:4082
-       do_sys_openat2+0x121/0x1c0 fs/open.c:1437
-       do_sys_open fs/open.c:1452 [inline]
-       __do_sys_open fs/open.c:1460 [inline]
-       __se_sys_open fs/open.c:1456 [inline]
-       __x64_sys_open+0x11e/0x150 fs/open.c:1456
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #3 (&oi->ip_xattr_sem){++++}-{4:4}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
-       down_write+0x96/0x1f0 kernel/locking/rwsem.c:1577
-       ocfs2_down_write fs/ocfs2/inode.h:73 [inline]
-       ocfs2_xattr_set_handle+0x3a0/0x7a0 fs/ocfs2/xattr.c:3503
-       ocfs2_init_security_set+0xbd/0xe0 fs/ocfs2/xattr.c:7309
-       ocfs2_mknod+0x137f/0x2050 fs/ocfs2/namei.c:419
-       ocfs2_create+0x1a5/0x440 fs/ocfs2/namei.c:673
-       lookup_open fs/namei.c:3717 [inline]
-       open_last_lookups fs/namei.c:3816 [inline]
-       path_openat+0x14f1/0x3830 fs/namei.c:4052
-       do_filp_open+0x1fa/0x410 fs/namei.c:4082
-       do_sys_openat2+0x121/0x1c0 fs/open.c:1437
-       do_sys_open fs/open.c:1452 [inline]
-       __do_sys_open fs/open.c:1460 [inline]
-       __se_sys_open fs/open.c:1456 [inline]
-       __x64_sys_open+0x11e/0x150 fs/open.c:1456
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #2 (jbd2_handle){++++}-{0:0}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
-       start_this_handle+0x1fa7/0x21c0 fs/jbd2/transaction.c:444
-       jbd2__journal_start+0x2c1/0x5b0 fs/jbd2/transaction.c:501
-       jbd2_journal_start+0x2a/0x40 fs/jbd2/transaction.c:540
-       ocfs2_start_trans+0x376/0x6d0 fs/ocfs2/journal.c:374
-       ocfs2_block_group_alloc fs/ocfs2/suballoc.c:685 [inline]
-       ocfs2_reserve_suballoc_bits+0x711/0x4640 fs/ocfs2/suballoc.c:834
-       ocfs2_reserve_new_metadata_blocks+0x403/0x940 fs/ocfs2/suballoc.c:984
-       ocfs2_mknod+0xe08/0x2050 fs/ocfs2/namei.c:347
-       ocfs2_create+0x1a5/0x440 fs/ocfs2/namei.c:673
-       lookup_open fs/namei.c:3717 [inline]
-       open_last_lookups fs/namei.c:3816 [inline]
-       path_openat+0x14f1/0x3830 fs/namei.c:4052
-       do_filp_open+0x1fa/0x410 fs/namei.c:4082
-       do_sys_openat2+0x121/0x1c0 fs/open.c:1437
-       do_sys_open fs/open.c:1452 [inline]
-       __do_sys_open fs/open.c:1460 [inline]
-       __se_sys_open fs/open.c:1456 [inline]
-       __x64_sys_open+0x11e/0x150 fs/open.c:1456
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (&journal->j_trans_barrier){.+.+}-{4:4}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
-       down_read+0x46/0x2e0 kernel/locking/rwsem.c:1524
-       ocfs2_start_trans+0x36a/0x6d0 fs/ocfs2/journal.c:372
-       ocfs2_block_group_alloc fs/ocfs2/suballoc.c:685 [inline]
-       ocfs2_reserve_suballoc_bits+0x711/0x4640 fs/ocfs2/suballoc.c:834
-       ocfs2_reserve_new_metadata_blocks+0x403/0x940 fs/ocfs2/suballoc.c:984
-       ocfs2_mknod+0xe08/0x2050 fs/ocfs2/namei.c:347
-       ocfs2_create+0x1a5/0x440 fs/ocfs2/namei.c:673
-       lookup_open fs/namei.c:3717 [inline]
-       open_last_lookups fs/namei.c:3816 [inline]
-       path_openat+0x14f1/0x3830 fs/namei.c:4052
-       do_filp_open+0x1fa/0x410 fs/namei.c:4082
-       do_sys_openat2+0x121/0x1c0 fs/open.c:1437
-       do_sys_open fs/open.c:1452 [inline]
-       __do_sys_open fs/open.c:1460 [inline]
-       __se_sys_open fs/open.c:1456 [inline]
-       __x64_sys_open+0x11e/0x150 fs/open.c:1456
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (sb_internal#2){.+.+}-{0:0}:
-       check_prev_add kernel/locking/lockdep.c:3168 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3287 [inline]
-       validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3911
-       __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5240
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
-       percpu_down_read_internal include/linux/percpu-rwsem.h:53 [inline]
-       percpu_down_read_freezable include/linux/percpu-rwsem.h:83 [inline]
-       __sb_start_write include/linux/fs.h:1795 [inline]
-       sb_start_intwrite include/linux/fs.h:1978 [inline]
-       ocfs2_start_trans+0x26b/0x6d0 fs/ocfs2/journal.c:370
-       ocfs2_orphan_for_truncate fs/ocfs2/file.c:396 [inline]
-       ocfs2_truncate_file+0x648/0x1410 fs/ocfs2/file.c:500
-       ocfs2_setattr+0x1571/0x1b60 fs/ocfs2/file.c:1212
-       notify_change+0xb36/0xe40 fs/attr.c:552
-       do_truncate+0x1a4/0x220 fs/open.c:68
-       handle_truncate fs/namei.c:3517 [inline]
-       do_open fs/namei.c:3900 [inline]
-       path_openat+0x306c/0x3830 fs/namei.c:4055
-       do_filp_open+0x1fa/0x410 fs/namei.c:4082
-       do_sys_openat2+0x121/0x1c0 fs/open.c:1437
-       do_sys_open fs/open.c:1452 [inline]
-       __do_sys_open fs/open.c:1460 [inline]
-       __se_sys_open fs/open.c:1456 [inline]
-       __x64_sys_open+0x11e/0x150 fs/open.c:1456
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  sb_internal#2 --> &oi->ip_xattr_sem --> &oi->ip_alloc_sem
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&oi->ip_alloc_sem);
-                               lock(&oi->ip_xattr_sem);
-                               lock(&oi->ip_alloc_sem);
-  rlock(sb_internal#2);
-
- *** DEADLOCK ***
-
-4 locks held by syz.0.16/6592:
- #0: ffff88807a9fc428 (sb_writers#12){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:557
- #1: ffff88807da389c0 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: inode_lock_killable include/linux/fs.h:874 [inline]
- #1: ffff88807da389c0 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: do_truncate+0x171/0x220 fs/open.c:63
- #2: ffff88807da386f8 (&oi->ip_xattr_sem){++++}-{4:4}, at: ocfs2_down_write fs/ocfs2/inode.h:73 [inline]
- #2: ffff88807da386f8 (&oi->ip_xattr_sem){++++}-{4:4}, at: ocfs2_truncate_file+0x359/0x1410 fs/ocfs2/file.c:471
- #3: ffff88807da38660 (&oi->ip_alloc_sem){++++}-{4:4}, at: ocfs2_down_write fs/ocfs2/inode.h:74 [inline]
- #3: ffff88807da38660 (&oi->ip_alloc_sem){++++}-{4:4}, at: ocfs2_truncate_file+0x36a/0x1410 fs/ocfs2/file.c:471
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 6592 Comm: syz.0.16 Not tainted 6.16.0-rc6-syzkaller-00253-g4871b7cb27f4-dirty #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_circular_bug+0x2ee/0x310 kernel/locking/lockdep.c:2046
- check_noncircular+0x134/0x160 kernel/locking/lockdep.c:2178
- check_prev_add kernel/locking/lockdep.c:3168 [inline]
- check_prevs_add kernel/locking/lockdep.c:3287 [inline]
- validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3911
- __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5240
- lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
- percpu_down_read_internal include/linux/percpu-rwsem.h:53 [inline]
- percpu_down_read_freezable include/linux/percpu-rwsem.h:83 [inline]
- __sb_start_write include/linux/fs.h:1795 [inline]
- sb_start_intwrite include/linux/fs.h:1978 [inline]
- ocfs2_start_trans+0x26b/0x6d0 fs/ocfs2/journal.c:370
- ocfs2_orphan_for_truncate fs/ocfs2/file.c:396 [inline]
- ocfs2_truncate_file+0x648/0x1410 fs/ocfs2/file.c:500
- ocfs2_setattr+0x1571/0x1b60 fs/ocfs2/file.c:1212
- notify_change+0xb36/0xe40 fs/attr.c:552
- do_truncate+0x1a4/0x220 fs/open.c:68
- handle_truncate fs/namei.c:3517 [inline]
- do_open fs/namei.c:3900 [inline]
- path_openat+0x306c/0x3830 fs/namei.c:4055
- do_filp_open+0x1fa/0x410 fs/namei.c:4082
- do_sys_openat2+0x121/0x1c0 fs/open.c:1437
- do_sys_open fs/open.c:1452 [inline]
- __do_sys_open fs/open.c:1460 [inline]
- __se_sys_open fs/open.c:1456 [inline]
- __x64_sys_open+0x11e/0x150 fs/open.c:1456
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fa61778e929
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fa61868b038 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 00007fa6179b5fa0 RCX: 00007fa61778e929
-RDX: 0000000000000020 RSI: 000000000014927e RDI: 00002000000001c0
-RBP: 00007fa617810b39 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fa6179b5fa0 R15: 00007fffb0c2bbe8
- </TASK>
-
-
-Tested on:
-
-commit:         4871b7cb Merge tag 'v6.16-rc6-smb3-client-fixes' of gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1474c38c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f09d04131ef56b22
-dashboard link: https://syzkaller.appspot.com/bug?extid=1fed2de07d8e11a3ec1b
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1510c38c580000
-
+-- 
+Ville Syrjälä
+Intel
 
