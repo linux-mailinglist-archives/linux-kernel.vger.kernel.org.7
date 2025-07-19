@@ -1,104 +1,76 @@
-Return-Path: <linux-kernel+bounces-737973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0975B0B2C1
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 01:25:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79B76B0B2C2
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 01:27:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25AD4189B560
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 23:25:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DC283B63FE
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 23:26:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E19F28ECF2;
-	Sat, 19 Jul 2025 23:25:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jg4RU7lE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD4A428ECCD;
+	Sat, 19 Jul 2025 23:27:16 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C343D28EBFE;
-	Sat, 19 Jul 2025 23:25:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D5B224B00
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 23:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752967530; cv=none; b=eziQUYpBm2TxY+WjpcJ+9h+W/YAnI4yadxGrprxjDpt9PDjBb4Z0jhQrmrNSBQMKqeuxjO2GRUPRgv9yWknVKSR+uQaBr1e5tzB6hdnISp7jpbxK7K6/xr8NJM2SxEMEnkzYKVTqpsz5Bebpu9veqfbukaC4LsTRr51OMJIEVAk=
+	t=1752967636; cv=none; b=C3gLVWGoIe8BaDuyznvkcqKPzNZ9af1LlhLM/pHQRocoBmOVpf8tVXOo1zqsxOWzwldALBPU+VXHPByj9I6omonVQLTi87mMhZkvzDlRGrP0N43Y2rjq3XzGfF0Lsj/D/iIgs2c+lV0x1gkQTH5cDjhpgEdXfo9n2R/la/1fcOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752967530; c=relaxed/simple;
-	bh=peq7X5T5L9rleO+1sgszgJjNh6IB635WmU1jTfpTxO4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cxABsiiJX8+5j71bf0f+jMATsQ7ik1mfcQtFVWtrLof7F+0Rmm1XKLdPZSTiFlJw1SyMjsSiSA01prsu4POO/C9ofx5aM64rm0656ObtkRmCx8tB7cNT4oHgL/cdqhYFeoElmD5JcUJWAq5DIeAXdiX7SIndxh5gRAoiUB+Q2cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jg4RU7lE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A313EC4CEE3;
-	Sat, 19 Jul 2025 23:25:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752967530;
-	bh=peq7X5T5L9rleO+1sgszgJjNh6IB635WmU1jTfpTxO4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Jg4RU7lEmQ4jX6Fx0S8H/+jdvExKWA11Bz68Q1EhxUlFku9BqA6aVDr6GS96uK8+6
-	 /IU0YJhiE2gR09bsH8NzfRZDY0LBIRSt0ljRNB5JmgoFTZGYcYQsuao8/7h4Tr2T5x
-	 +xrWnxgxWlhp1TxGCi2AdVXdrXwLFUo8sWUPFi1A8xwg/eS9KG5/IeYCv/1/QEkkmv
-	 CFzQJolyz+PPE7Kk39NERKGXGvVYyleBjm+0WinbLPeIkA6R3T8oOABYNDjuW8b6Rw
-	 x1PxJAcFkzGXpb/hSS3Zv6nOgdeL+7QP+KK/Tex/V6Gi27TyaH+WZI8FwYPURZAFSS
-	 AyKFw2F15ntsQ==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: [PATCH] rust: list: remove nonexistent generic parameter in link
-Date: Sun, 20 Jul 2025 01:25:00 +0200
-Message-ID: <20250719232500.822313-1-ojeda@kernel.org>
+	s=arc-20240116; t=1752967636; c=relaxed/simple;
+	bh=nvWm18lkwC7jEtM37SUfTrGX9waWdbmRWDWCNOISSOk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=FEOEgrqknCza+fpv25mp3xW0amYveaCsc499d5+OGtXRkeePEGQzQTr9NNH7f70bsiWKwhrR1HWn58P7qHDnckzKCSOff847u95Ek6mkwO/gxXAMm6OME4rvdh1av72fZXPx2VF7J/vz5cPDOpM7yn83UlBec6Lw8xmJqzdaI00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-87c29bef96cso105261339f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 16:27:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752967634; x=1753572434;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lrFN5I4Oc2L279PU6A6j7eY89aSi31qYyO2TGnMnZMA=;
+        b=UXkaJJB8UcutkX/N+/KvCXM34EgJ1/CuWvdPkghU8qi4HEep6WFdZ+f4W/HpFeUpsT
+         GflTX4s+NpIcFcobPiArrpqfQoSRVt/3m6HHxzsaOYChopj0XZBCor1ROtzrp6k8sQFR
+         gNmyiw2L4OjlXAMTaXfXs4PoA7ICSAEYq5+OWD4q5HK//+jmooc3NG67gnK+8vkKHn/t
+         Wl5CdgJKKR/W9eWO5VLygJDR3470qRK+KjkRBZ/1XTJZg5CwaCpxthV5Eoe+UJTIAXQ5
+         TvKRMfQ8uIm8ub9C1yseKSfvtUtpBlZgf7bGTvVZxczZNrBAl/xC3cgUpVOB+R4qWoLL
+         xSzA==
+X-Gm-Message-State: AOJu0Yykwop2FB5gXIJRcmWihw118jYvFB6YX3QCmec6BbbRCpotoSBz
+	259KvfIEIRAW35nzet3nUdk6hkEAMsE27PU36gsQ1Bavb4J2LvSAL5USqOj6KXrhOjl5k7YiHZL
+	DdYdTbeD6wnbmL3mVZyRfJ8Y2Ct1O7bShYwESspldwlPeypatZRp4Oo+fu/M=
+X-Google-Smtp-Source: AGHT+IEaFYM73wmbZGR7TtvQNcWEYnip2Qah9FJA5lA0AqzFkFh8OBlYz+qp0Oi/LsASLhTWdqVbUbmHXcuUa+RfKKfoujqdEWoP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6602:6933:b0:86c:f603:8907 with SMTP id
+ ca18e2360f4ac-879c286e1fbmr1330789339f.5.1752967634092; Sat, 19 Jul 2025
+ 16:27:14 -0700 (PDT)
+Date: Sat, 19 Jul 2025 16:27:14 -0700
+In-Reply-To: <0000000000003361de0618679a80@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <687c29d2.a70a0220.693ce.009e.GAE@google.com>
+Subject: Forwarded: 
+From: syzbot <syzbot+52eec578b7504cf32002@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-`ListLinks` does not take a `T` generic parameter, unlike
-`ListLinksSelfPtr`.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Thus fix it, which makes it also consistent with the rest of the links
-in the file.
+***
 
-Fixes: 40c53294596b ("rust: list: add macro for implementing ListItem")
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
----
- rust/kernel/list/impl_list_item_mod.rs | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Subject: 
+Author: kent.overstreet@linux.dev
 
-diff --git a/rust/kernel/list/impl_list_item_mod.rs b/rust/kernel/list/impl_list_item_mod.rs
-index f4c91832a875..202bc6f97c13 100644
---- a/rust/kernel/list/impl_list_item_mod.rs
-+++ b/rust/kernel/list/impl_list_item_mod.rs
-@@ -17,13 +17,13 @@
- /// [`ListLinks<ID>`]: crate::list::ListLinks
- /// [`ListItem`]: crate::list::ListItem
- pub unsafe trait HasListLinks<const ID: u64 = 0> {
--    /// Returns a pointer to the [`ListLinks<T, ID>`] field.
-+    /// Returns a pointer to the [`ListLinks<ID>`] field.
-     ///
-     /// # Safety
-     ///
-     /// The provided pointer must point at a valid struct of type `Self`.
-     ///
--    /// [`ListLinks<T, ID>`]: crate::list::ListLinks
-+    /// [`ListLinks<ID>`]: crate::list::ListLinks
-     unsafe fn raw_get_list_links(ptr: *mut Self) -> *mut crate::list::ListLinks<ID>;
- }
- 
-
-base-commit: cc84ef3b88f407e8bd5a5f7b6906d1e69851c856
--- 
-2.50.1
-
+#syz fix:  bcachefs: fix the memory leak in exception case
 
