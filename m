@@ -1,82 +1,89 @@
-Return-Path: <linux-kernel+bounces-737783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1657B0B086
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 16:43:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25BE0B0B089
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 16:48:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4449D1AA5492
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 14:43:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B64A4AA24AA
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 14:47:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EBD02877D9;
-	Sat, 19 Jul 2025 14:43:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4181B21D3DF;
+	Sat, 19 Jul 2025 14:48:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KeridxFc"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="Urq9Gdzx"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2495479B;
-	Sat, 19 Jul 2025 14:43:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F260148838
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 14:48:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752936208; cv=none; b=BalEFsKsw7wmowyhiF6QdY9feVHUUpNdjZlYTr7JUHCYS69B7qw/9HPxjdGEHWqSMrr3LLmNiemCtj5gUwxOQJyLZeWG0l9AHoXrfiSqw/F2ZQFQyiIsPPf9tf72zfxV/BYXmqClrifoW36q8dCoe70IepFEjI2aix4XV3g41/M=
+	t=1752936495; cv=none; b=RbNQLVY5hO/5Mp+YzwXU+zJ4gr+RumdRrOGRqKibf99mw9h8lxqnfTfAs+I1cCEkoV06GZZLT4wyWfRDG2Os+OkD2/J5GwC++JZAHIYxwjbkRBiBQw9q9ppb3CqGKsK/h7jRHuOQZ842sYbKtsx5VLjcxcfx64KtOU/7I+2176k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752936208; c=relaxed/simple;
-	bh=kiYYKb9OBftr0y8ZJPDKJAyQyL662fXoi9F6AXSCTTM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=JL6Xc/s6ITHBFL+G5XaDa55NErJ8/6xW+g8/d7VGLs8R9b+VHT6yGH9qQlogEzTX9qr37xKUjdM6DLoU7oyQ3HLRaQKXW3CS+o10aiosUZtMlKKxHwwDbDYv2bCbo0tDu3G9rM+7LGNySQpZrxWxFUHnee43Mz50dRZRhfkA0DA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KeridxFc; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7e334de8df9so337978085a.0;
-        Sat, 19 Jul 2025 07:43:26 -0700 (PDT)
+	s=arc-20240116; t=1752936495; c=relaxed/simple;
+	bh=28XnBw7q177szPp/TEn7iGwfbaGLu0lOkwxbxmfTAFo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C4K6FVYsJ7GOYzNeo4yPOcO6aShcuvGFin9c1UOjxaK9vpPrt1k1iXwH0c2Lk0wEOrQtu1VT7XKQKSt8scThOQ3J6Eyq0/B/kmjDPSnRXlEpUiSVAZ/IMEKM413jFW7++yuQuKpTFBYn0WeZkk3dNoSxol6KP8DVn8RVqLJh8Iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=Urq9Gdzx; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6fad4a1dc33so27571916d6.1
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 07:48:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752936206; x=1753541006; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RhWUdLMBkHa/VmL6SvN8zMUj9EPv2Ix6mJIXJQMgHG0=;
-        b=KeridxFctqcNrgrd0c2mdIySOPIJIWetxDpipsbrI+u9H2q4AtpXkUaVHdctdKCgge
-         hfDJtTQdpNgYeP9tnTGUD3km3diXom0DtvFnhsebOTQFFyj/Y4v7dZZTx4HM3fQg8R71
-         LrhsJaXokruJrcYGbmHvjS3uV4UIY836XbNxKVVMZT0NGYk6KJX/4wzRqYDeLxau9WMl
-         hxkPHOM2s4bohf8YRxDMMBDkUquzDO9Z2a/UTZ1yFwNjKp+IQ1FgZSviqrxixZqrcQO5
-         eMKfWRSTNZ57i4NAS9RjWFGPzDwX93m7beMii7V4QJXiLnTYqolYGtGYE8xoejN7yMMN
-         u9VA==
+        d=rowland.harvard.edu; s=google; t=1752936492; x=1753541292; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GktA+Qc4C2gku9tgC+xGfCvYixZIxS7PIy2EBRiNL8Y=;
+        b=Urq9GdzxQwqC261OTzPmkAWGPRdP5R9W8inZhU2iuFfINgcuuDjHVckfDrHi+Mkknn
+         7RvQj1BEfCw+FyDv3eEsir1KMcyodduzyoH+Sx/+MPIRENILLlrmQFR438o3jEcKu8gm
+         /EXF/TVxXLSpAv3u8Blsoeoy+sSgqQgPxTr5IbvQJSc0nxU507DZ/T+naEbAVRRuJWnl
+         Vcw8+hELlE17hT+G8zIyJ0qxXorPaRBZDD985mRc4o849Bv+bsiznfAJPA+/aRWKZzQ4
+         1pMr4GkIj4CenAj6FvCsc4gIsHiYgAIqh2QbriWFDWyHcu9z02o8CKtgmdV4CWa8Q/9/
+         Xesg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752936206; x=1753541006;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RhWUdLMBkHa/VmL6SvN8zMUj9EPv2Ix6mJIXJQMgHG0=;
-        b=ROdQ8xRIBMdS2Qd3tzgaOCzqhXmGCBE+x8Qqoloih/LvQyuuH7HyPHHEUaezvpSazG
-         57/YjiSZQ5W8elmkt5ZTo8026Q2erxs0SJjNMnlktswqVKQ78ZzQEQ9rEXV1Ypz/+/rR
-         FQB1rXQK3/5H9+mK7HmPHRDR6OHlerudi9UAy35AOextpzeT/iCyc2Cwa5QhsQokX/nk
-         6sqkby/tDMarvBoh7TRe1WSMsFzyDa0RNc8gUtc7N7DwOV7y2x/AoHRQKeLX5KFL+Fpr
-         EoOfS+BqJ9G3K18kNOyL2ObBjzA+e0DalP4NRVSX0muL5nqojb6rQcF33ltx+NaK7jPG
-         32Jw==
-X-Forwarded-Encrypted: i=1; AJvYcCWynGILs3x3sDnJkmEU2fAAa2LsVVcDj8To13zOaKuGcd/6K103ceFLKy9VOxA+jnS9KdBAbV9+2AbzuXE=@vger.kernel.org, AJvYcCX9CUl/mDz5HAlaE5w5aa2WXqfYm29VUYCPHNehR4k0SIIe/8XRcjahEWCuNWQ88r0XGvftp4nUMhKHfOZh60Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1NBRtkdjcB1Sh3N9yd4s4e8DYxKEy6gU4pYI+5qA0qhm9n/Fk
-	gy0hyMCZa+xke52+Vz9k7qP/mommU045TVSGwBfqUmeKOmEoRiDdSbfK
-X-Gm-Gg: ASbGncvS/Zxtd4A2gv5JyrHD8tJNHNLBy+F6AidfFRzoFBXAQluA0N+/Wv+TaVUqgB7
-	+2w8G4ZSVFKgSvTxv149rayul7JGF16sC8TVyKm7TAALIOpipPQy8NNwlnzGgphosKNTPFmzxa4
-	KvkY/UDHrr3JnVgaaalaiMkKWVxc0g17cAGKe6RK9Qjfxx4xnRcpXaWAnFMvDdF8R9NHfIKu/qU
-	ON5syhl7q4yMsvCfFnSlt+aoVxHA4/f/9u+e5h1wUw3L3Ym95kJ/v5xUAW+4uE8n8gmArajc5G2
-	I8op9KX0H5mY5uHm6cICDL24saX2qsIa9ZsrmPWdgtsiBUEqvRkwa6GJVS7/ci2+8sTPncbc/OJ
-	8L9M+ChQ75XlxoXxPCutZ66w=
-X-Google-Smtp-Source: AGHT+IF/dNLtRi00UDiSBMjTUuhj3EXijLt6s9DftrDL+2bf5nBduUOw0gFg6rlzRxfrQJkTppmmOw==
-X-Received: by 2002:a05:620a:8013:b0:7df:dea8:63a1 with SMTP id af79cd13be357-7e34357af07mr1804323685a.23.1752936205969;
-        Sat, 19 Jul 2025 07:43:25 -0700 (PDT)
-Received: from pc ([196.235.236.92])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e356ca2c5dsm202612785a.103.2025.07.19.07.43.24
+        d=1e100.net; s=20230601; t=1752936492; x=1753541292;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GktA+Qc4C2gku9tgC+xGfCvYixZIxS7PIy2EBRiNL8Y=;
+        b=lcXiTvuqjA2wlpnXqYCYcWNYZU93p3R128S2/os/OM8s6cGxTsNkxxg1XNxSFNRBZj
+         1BcPSZ90AOrEUZxWb3RNmZACDFRjGUc4rILbphn5ahLhvInTQ/Inzb6zcw3V/m+/0W2q
+         6hRoCXnmik3ixnLZFjOgd13eUlEsUi8M0jmS95v/AF6SOVXWjwm41FpMkfJ2ZGe8etnJ
+         0oXAkLVARLKs4SzcbM5tBkE3vTdNm/5/tYHEd4+Fz0Y6ApSYt7wQT5N5oYukDSHlK8Bo
+         bPnmaW5p/pV5pSebzHCx0GlF2nEHQvl/A1h1z0qcgh5QcFRIQ4T+mjOJmoETlcTRF7KU
+         zO8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ7l0wqon2d3SR34IG80ALTX2izrPqAqoDSkw1LQr8o166s5PDa9g8DvrIXqO/FNvkZjSVpl4Hbb1fL1Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyejayXMgRwkhgdgWu4Z/PPz3DmkxnYfaSUeAcyHLWTPRbrjnb0
+	lx1+di1LsJNxB/ABbfuOJClflSauLYGwwdzq0Y+siTV79HfTniBCJxggdriTptAX7lB3stomu43
+	AfyQ=
+X-Gm-Gg: ASbGncvI1jTIDH26wFd2H+JjXZ2uGSLTT63trjU950BkLSPR+xjO6HKhyWSZVQ7hCWM
+	W+iN8dGez1hMUlJ8ckWjldO0FrM8UtA8uiB0yognTdyDqcriQNQqAHRdWl93MNU/UThCxYImtw+
+	ezCQSNIRDGiwnll20Tb26s5ApZXn6ayRVA1B5PJKGzvE4KaWtd7ZNpTIjnyvr+oUbyv7MCnytc0
+	4IFKd24wibF4eJdv01GwC+S85y8JoC6RGofZFOv6GSWAzS1iOdBwgia9MDsRT4KLrTtIqS6ky5J
+	vXHI4KfUXCG34GWNX/k+V4HbPQexO7Ed/lfEsQW5Rzxt2m6ygtHqXrmOiDEkeaydAlVx8ivuu3a
+	lzL2kU+MoJzWRZDHCqvm8+PQ=
+X-Google-Smtp-Source: AGHT+IF+rERqamMpsCeMReo4+AhIbc/oNuC0Bp58/dxdqIZvmhBxs9npo13uMROLsAZUUSfk2u6LoA==
+X-Received: by 2002:a05:6214:5096:b0:6fa:fddf:734b with SMTP id 6a1803df08f44-704f6ac577dmr182774486d6.24.1752936492301;
+        Sat, 19 Jul 2025 07:48:12 -0700 (PDT)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::317e])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e356c9250esm208771285a.89.2025.07.19.07.48.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Jul 2025 07:43:25 -0700 (PDT)
-Date: Sat, 19 Jul 2025 15:43:22 +0100
-From: Salah Triki <salah.triki@gmail.com>
-To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: salah.triki@gmail.com
-Subject: [PATCH] bcma: Use managed APIs
-Message-ID: <aHuvCpFcC2DwBU1P@pc>
+        Sat, 19 Jul 2025 07:48:11 -0700 (PDT)
+Date: Sat, 19 Jul 2025 10:48:08 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Benjamin Tissoires <bentiss@kernel.org>
+Cc: syzbot <syzbot+b63d677d63bcac06cf90@syzkaller.appspotmail.com>,
+	jikos@kernel.org, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] HID: core: Reject report fields with a size or count of 0
+Message-ID: <a2c3537a-8ddc-467f-a9f4-b4d413914914@rowland.harvard.edu>
+References: <68791b6f.a70a0220.693ce.004b.GAE@google.com>
+ <8a4eb6b0-f640-4207-9f05-83e06080410b@rowland.harvard.edu>
+ <lrhydvc7huuqck2kvqzobqt7hhwt36zwsa2i3fpegbpykt5q43@2md6gfitjlb3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,121 +92,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <lrhydvc7huuqck2kvqzobqt7hhwt36zwsa2i3fpegbpykt5q43@2md6gfitjlb3>
 
-Replace pci_* with pcim_* and kzalloc() with devm_kzalloc() so that no
-need to worry about freeing resources and disabling the device.
+On Sat, Jul 19, 2025 at 10:36:01AM +0200, Benjamin Tissoires wrote:
+> On Jul 17 2025, Alan Stern wrote:
+> > Testing by the syzbot fuzzer showed that the HID core gets a
+> > shift-out-of-bounds exception when it tries to convert a 32-bit
+> > quantity to a 0-bit quantity.  This is hardly an unexpected result,
+> > but it means that we should not accept report fields that have a size
+> > of zero bits.  Similarly, there's no reason to accept report fields
+> > with a count of zero; either type of item is completely meaningless
+> > since no information can be conveyed in zero bits.
+> > 
+> > Reject fields with a size or count of zero, and reject reports
+> > containing such fields.
+> > 
+> > Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+> > Reported-by: syzbot+b63d677d63bcac06cf90@syzkaller.appspotmail.com
+> > Closes: https://lore.kernel.org/linux-usb/68753a08.050a0220.33d347.0008.GAE@google.com/
+> > Tested-by: syzbot+b63d677d63bcac06cf90@syzkaller.appspotmail.com
+> > Fixes: dde5845a529f ("[PATCH] Generic HID layer - code split")
+> > Cc: stable@vger.kernel.org
 
-Signed-off-by: Salah Triki <salah.triki@gmail.com>
----
- drivers/bcma/host_pci.c | 39 ++++++++++++++-------------------------
- 1 file changed, 14 insertions(+), 25 deletions(-)
+> Sigh... I applied this one too quickly before going on holidays.
+> 
+> This breaks the hid testsuite:
+> https://gitlab.freedesktop.org/bentiss/hid/-/jobs/80805946
+> 
+> (yes, I should have run it before applying).
+> 
+> So basically, there are devices out there with a "broken" report size of
+> 0, and this patch now entirely disables them.
+> 
+> That Saitek gamepad has the following (see tools/testing/selftests/hid/tests/test_gamepad.py):
+>         0x95, 0x01,                    # ..Report Count (1)                  60
+>         0x75, 0x00,                    # ..Report Size (0)                   62
+>         0x81, 0x03,                    # ..Input (Cnst,Var,Abs)              64
+> 
+> So we'd need to disable the field, but not invalidate the entire report.
+> 
+> I'm glad I scheduled this one for the next cycle.
+> 
+> I'll try to get something next week.
 
-diff --git a/drivers/bcma/host_pci.c b/drivers/bcma/host_pci.c
-index 960632197b05..665990b8afb5 100644
---- a/drivers/bcma/host_pci.c
-+++ b/drivers/bcma/host_pci.c
-@@ -10,6 +10,7 @@
- #include <linux/bcma/bcma.h>
- #include <linux/pci.h>
- #include <linux/module.h>
-+#include <linux/serdev.h>
- 
- static void bcma_host_pci_switch_core(struct bcma_device *core)
- {
-@@ -161,22 +162,23 @@ static int bcma_host_pci_probe(struct pci_dev *dev,
- 			       const struct pci_device_id *id)
- {
- 	struct bcma_bus *bus;
--	int err = -ENOMEM;
-+	int err;
- 	u32 val;
- 
- 	/* Alloc */
--	bus = kzalloc(sizeof(*bus), GFP_KERNEL);
-+	bus = devm_kzalloc(&dev->dev, sizeof(*bus), GFP_KERNEL);
- 	if (!bus)
--		goto out;
-+		return -ENOMEM;
- 
- 	/* Basic PCI configuration */
--	err = pci_enable_device(dev);
-+	err = pcim_enable_device(dev);
- 	if (err)
--		goto err_kfree_bus;
-+		return err;
- 
--	err = pci_request_regions(dev, "bcma-pci-bridge");
-+	err = pcim_request_all_regions(dev, "bcma-pci-bridge");
- 	if (err)
--		goto err_pci_disable;
-+		return err;
-+
- 	pci_set_master(dev);
- 
- 	/* Disable the RETRY_TIMEOUT register (0x41) to keep
-@@ -188,17 +190,16 @@ static int bcma_host_pci_probe(struct pci_dev *dev,
- 	/* SSB needed additional powering up, do we have any AMBA PCI cards? */
- 	if (!pci_is_pcie(dev)) {
- 		bcma_err(bus, "PCI card detected, they are not supported.\n");
--		err = -ENXIO;
--		goto err_pci_release_regions;
-+		return -ENXIO;
- 	}
- 
- 	bus->dev = &dev->dev;
- 
- 	/* Map MMIO */
- 	err = -ENOMEM;
--	bus->mmio = pci_iomap(dev, 0, ~0UL);
-+	bus->mmio = pcim_iomap(dev, 0, ~0UL);
- 	if (!bus->mmio)
--		goto err_pci_release_regions;
-+		return err;
- 
- 	/* Host specific */
- 	bus->host_pci = dev;
-@@ -214,7 +215,7 @@ static int bcma_host_pci_probe(struct pci_dev *dev,
- 	/* Scan bus to find out generation of PCIe core */
- 	err = bcma_bus_scan(bus);
- 	if (err)
--		goto err_pci_unmap_mmio;
-+		return err;
- 
- 	if (bcma_find_core(bus, BCMA_CORE_PCIE2))
- 		bus->host_is_pcie2 = true;
-@@ -226,19 +227,11 @@ static int bcma_host_pci_probe(struct pci_dev *dev,
- 
- 	pci_set_drvdata(dev, bus);
- 
--out:
- 	return err;
- 
- err_unregister_cores:
- 	bcma_unregister_cores(bus);
--err_pci_unmap_mmio:
--	pci_iounmap(dev, bus->mmio);
--err_pci_release_regions:
--	pci_release_regions(dev);
--err_pci_disable:
--	pci_disable_device(dev);
--err_kfree_bus:
--	kfree(bus);
-+
- 	return err;
- }
- 
-@@ -247,10 +240,6 @@ static void bcma_host_pci_remove(struct pci_dev *dev)
- 	struct bcma_bus *bus = pci_get_drvdata(dev);
- 
- 	bcma_bus_unregister(bus);
--	pci_iounmap(dev, bus->mmio);
--	pci_release_regions(dev);
--	pci_disable_device(dev);
--	kfree(bus);
- }
- 
- #ifdef CONFIG_PM_SLEEP
--- 
-2.43.0
+So then would it be better to accept these report fields (perhaps with a 
+warning) and instead, harden the core HID code so that it doesn't choke 
+when it runs across one of them?
 
+Alan Stern
 
