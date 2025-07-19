@@ -1,144 +1,121 @@
-Return-Path: <linux-kernel+bounces-737460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 417F5B0AD01
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 02:46:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 44FA0B0AD03
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 02:48:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78B3A5A212F
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 00:46:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B375E5A2A70
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 00:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E880654279;
-	Sat, 19 Jul 2025 00:46:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2714376034;
+	Sat, 19 Jul 2025 00:47:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MXTwJQ7s"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rFghbRVZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10AC125B2;
-	Sat, 19 Jul 2025 00:46:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 729224C6C;
+	Sat, 19 Jul 2025 00:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752885980; cv=none; b=LcXfAe553jkeEFx0YCcfksyHjvBaaCOjEWRCqEF6BwDqSVgRZKPa2qYklwScgUKSYpUhMuFruUG+vpUATpqx8UKctIB7xSt6qcM/HjrW122cFmW4+hoX+8q+zT+AnvWKnjDhwrX2J8b3MpsdyphzrjS5p286tpTlIt8I0HKpbCc=
+	t=1752886060; cv=none; b=qtnPRyCZkXRqZhgCgeyV8pZTPAdns+Ri4U41EH7D2xQ+VwGDQICIyemziOw2fIdQUntFeHpo8Ix5JXzKtje083mVNT2oN4JrToRB0aPHPXqDnFhmF2/72GIyRkiAa4Q8XlJiHTtEBEuCFOltczIFPT/utRss+lFK1FnebKhm7YQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752885980; c=relaxed/simple;
-	bh=sHVK+o/maKVsX9aoh7fRAQ2DWovhgiCMkKfZ91jvNd4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=apEX6v2booMfnLDNiMUf17frKsjw/pQ9fkBFmgW8plpFcOm1r4b3PnwwQNNv0qMZ/RmnJ0ey6QtdjoQ6e36Y4IBic0u2Z3bEo28Vb0iDSdIIksv3xGMwOIexPlV6HSRK8nu6Q+x2W+79QjsyHIEnEnkGCzN9zNMZfCxkJRCefN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MXTwJQ7s; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752885979; x=1784421979;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=sHVK+o/maKVsX9aoh7fRAQ2DWovhgiCMkKfZ91jvNd4=;
-  b=MXTwJQ7ssScYkbChXdxRjomLrdYqnUtz20COB5qxQXZd5lwMpobQo/LH
-   bzh8/xh6MuUJIIyhpOXsFXTPtt3ckLnTUa6fowXwjIb6t8RI3NJVitFVY
-   xjRTQfbr+kuosCV5qivX66haRasunCNET5SsAo0VtblOLGU3hzLsZmsol
-   evPf6dFy6I7W5HaVHING7K19VLRDHQQz9j9B1qQZ02OPSnC7Sb2Nhn9Xd
-   n5xaGyecchXjpxD9aZZD8RhmY0KJnK2vdbfnPMWbIntz6YwVXGEq+2vRS
-   //vHNxkSDipC9INQqo7ROcqDA9AV3Jgln29YV0syi04BNGnFR2DFDe1rc
-   w==;
-X-CSE-ConnectionGUID: UIqpGcbsSkiblJfE27dpwg==
-X-CSE-MsgGUID: 0LKEjKiiSSG3Hr7EYETHcA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11496"; a="54397050"
-X-IronPort-AV: E=Sophos;i="6.16,323,1744095600"; 
-   d="scan'208";a="54397050"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2025 17:46:17 -0700
-X-CSE-ConnectionGUID: B27O95sKTymoZbvkf+PSoA==
-X-CSE-MsgGUID: syfJzeuMSfWXk5Ofi1cw+w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,323,1744095600"; 
-   d="scan'208";a="189346245"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 18 Jul 2025 17:46:15 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ucviP-000FAV-02;
-	Sat, 19 Jul 2025 00:46:13 +0000
-Date: Sat, 19 Jul 2025 08:45:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: Darshan Rathod <darshanrathod475@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org
-Subject: Re: [PATCH] media: b2c2: flexcop-eeprom: Fix assignment in if
- condition
-Message-ID: <202507190855.RA0Awmj9-lkp@intel.com>
-References: <20250718125245.82910-1-darshanrathod475@gmail.com>
+	s=arc-20240116; t=1752886060; c=relaxed/simple;
+	bh=XWuJCJJk0aV1qvt1Ws58hkJTkIsuqdkQoYz9oZwo0A8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hNsTNeBUENVa+iXYeZTgPYFycb8hSJTuNibQot8vZgVDWDIHaVanB24OXN+JnZaB4bfutZkRJV9EkiVzQ8qDJBQhD9pjNV23pR3IHBA1y9v4mupv5TLLjscmzKnoNuP4M+o/sDLXEeLOsWT9an/Srevh834bUpc8muo06beydzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rFghbRVZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2896C4CEEB;
+	Sat, 19 Jul 2025 00:47:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752886059;
+	bh=XWuJCJJk0aV1qvt1Ws58hkJTkIsuqdkQoYz9oZwo0A8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rFghbRVZUQtS04xAEUavFtutQFmD8yLdkuOrSdpLL7c0Na4XiUXsAtxW6wDwztw3w
+	 XhxiZbMRo6PVPayxGEye1e9kHjqqmPfuSBkibINJfSce7CBGXv/MT2QAV5v+9GnLhM
+	 muW7QjvrVXFzBX7jB+1tCZKE3bF2HIlgZBGVT1Ob16bluI3YuNWd8JLqfBpiUDAzFc
+	 x58WpHF08HMRyq/mc4j5jIMTFtC9DVVGIbAafBzvCyAMOadb+ggVDkBBYt41qDGvHI
+	 4vyhzzN0OPjTENEdko/RT71JSsyxVMDx125WBvK++u53IkIExjDt4y0qQBC74xrugD
+	 IATv9Up02IfUg==
+Date: Fri, 18 Jul 2025 17:47:37 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Jiri Pirko <jiri@resnulli.us>, Jiri Pirko
+ <jiri@nvidia.com>, Saeed Mahameed <saeed@kernel.org>, Gal Pressman
+ <gal@nvidia.com>, "Leon Romanovsky" <leon@kernel.org>, Shahar Shitrit
+ <shshitrit@nvidia.com>, "Donald Hunter" <donald.hunter@gmail.com>, Jonathan
+ Corbet <corbet@lwn.net>, "Brett Creeley" <brett.creeley@amd.com>, Michael
+ Chan <michael.chan@broadcom.com>, Pavan Chebbi <pavan.chebbi@broadcom.com>,
+ Cai Huoqing <cai.huoqing@linux.dev>, Tony Nguyen
+ <anthony.l.nguyen@intel.com>, "Przemek Kitszel"
+ <przemyslaw.kitszel@intel.com>, Sunil Goutham <sgoutham@marvell.com>, Linu
+ Cherian <lcherian@marvell.com>, Geetha sowjanya <gakula@marvell.com>, Jerin
+ Jacob <jerinj@marvell.com>, hariprasad <hkelam@marvell.com>, "Subbaraya
+ Sundeep" <sbhatta@marvell.com>, Saeed Mahameed <saeedm@nvidia.com>, Mark
+ Bloch <mbloch@nvidia.com>, Ido Schimmel <idosch@nvidia.com>, Petr Machata
+ <petrm@nvidia.com>, Manish Chopra <manishc@marvell.com>,
+ <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>, <intel-wired-lan@lists.osuosl.org>,
+ <linux-rdma@vger.kernel.org>
+Subject: Re: [PATCH net-next 0/5] Expose grace period delay for devlink
+ health reporter
+Message-ID: <20250718174737.1d1177cd@kernel.org>
+In-Reply-To: <1752768442-264413-1-git-send-email-tariqt@nvidia.com>
+References: <1752768442-264413-1-git-send-email-tariqt@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250718125245.82910-1-darshanrathod475@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Darshan,
+On Thu, 17 Jul 2025 19:07:17 +0300 Tariq Toukan wrote:
+> Currently, the devlink health reporter initiates the grace period
+> immediately after recovering an error, which blocks further recovery
+> attempts until the grace period concludes. Since additional errors
+> are not generally expected during this short interval, any new error
+> reported during the grace period is not only rejected but also causes
+> the reporter to enter an error state that requires manual intervention.
+> 
+> This approach poses a problem in scenarios where a single root cause
+> triggers multiple related errors in quick succession - for example,
+> a PCI issue affecting multiple hardware queues. Because these errors
+> are closely related and occur rapidly, it is more effective to handle
+> them together rather than handling only the first one reported and
+> blocking any subsequent recovery attempts. Furthermore, setting the
+> reporter to an error state in this context can be misleading, as these
+> multiple errors are manifestations of a single underlying issue, making
+> it unlike the general case where additional errors are not expected
+> during the grace period.
+> 
+> To resolve this, introduce a configurable grace period delay attribute
+> to the devlink health reporter. This delay starts when the first error
+> is recovered and lasts for a user-defined duration. Once this grace
+> period delay expires, the actual grace period begins. After the grace
+> period ends, a new reported error will start the same flow again.
+> 
+> Timeline summary:
+> 
+> ----|--------|------------------------------/----------------------/--
+> error is  error is    grace period delay          grace period
+> reported  recovered  (recoveries allowed)     (recoveries blocked)
+> 
+> With grace period delay, create a time window during which recovery
+> attempts are permitted, allowing all reported errors to be handled
+> sequentially before the grace period starts. Once the grace period
+> begins, it prevents any further error recoveries until it ends.
 
-kernel test robot noticed the following build warnings:
+We are rate limiting recoveries, the "networking solution" to the
+problem you're describing would be to introduce a burst size.
+Some kind of poor man's token bucket filter.
 
-[auto build test WARNING on linuxtv-media-pending/master]
-[also build test WARNING on sailus-media-tree/master linus/master media-tree/master sailus-media-tree/streams v6.16-rc6 next-20250718]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Darshan-Rathod/media-b2c2-flexcop-eeprom-Fix-assignment-in-if-condition/20250718-205456
-base:   https://git.linuxtv.org/media-ci/media-pending.git master
-patch link:    https://lore.kernel.org/r/20250718125245.82910-1-darshanrathod475%40gmail.com
-patch subject: [PATCH] media: b2c2: flexcop-eeprom: Fix assignment in if condition
-config: i386-randconfig-002-20250719 (https://download.01.org/0day-ci/archive/20250719/202507190855.RA0Awmj9-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250719/202507190855.RA0Awmj9-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507190855.RA0Awmj9-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/media/common/b2c2/flexcop-eeprom.c: In function 'flexcop_eeprom_check_mac_addr':
->> drivers/media/common/b2c2/flexcop-eeprom.c:143:29: warning: operation on 'ret' may be undefined [-Wsequence-point]
-     143 |                         ret = ret = -EINVAL;
-   drivers/media/common/b2c2/flexcop-eeprom.c:149:1: error: expected declaration or statement at end of input
-     149 | EXPORT_SYMBOL(flexcop_eeprom_check_mac_addr);
-         | ^~~~~~~~~~~~~
->> drivers/media/common/b2c2/flexcop-eeprom.c:150: warning: control reaches end of non-void function [-Wreturn-type]
-
-
-vim +/ret +143 drivers/media/common/b2c2/flexcop-eeprom.c
-
-   130	
-   131	/* JJ's comment about extended == 1: it is not presently used anywhere but was
-   132	 * added to the low-level functions for possible support of EUI64 */
-   133	int flexcop_eeprom_check_mac_addr(struct flexcop_device *fc, int extended)
-   134	{
-   135		u8 buf[8];
-   136		int ret = 0;
-   137	
-   138		ret = flexcop_eeprom_lrc_read(fc, 0x3f8, buf, 8, 4);
-   139	
-   140		if (ret == 0) {
-   141			if (extended != 0) {
-   142				err("TODO: extended (EUI64) MAC addresses aren't completely supported yet");
- > 143				ret = ret = -EINVAL;
-   144			} else {
-   145				memcpy(fc->dvb_adapter.proposed_mac, buf, 6);
-   146			}
-   147			return ret;
-   148	}
-   149	EXPORT_SYMBOL(flexcop_eeprom_check_mac_addr);
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Could you say more about what designs were considered and why this
+one was chosen?
 
