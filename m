@@ -1,141 +1,120 @@
-Return-Path: <linux-kernel+bounces-737508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0287EB0AD7E
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 04:37:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 816BBB0AD82
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 04:50:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2899C58254F
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 02:37:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0028EAC1312
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 02:50:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603CD1C861B;
-	Sat, 19 Jul 2025 02:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MDweOYIX"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ECFF19E7D1;
+	Sat, 19 Jul 2025 02:50:21 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7239C33EC;
-	Sat, 19 Jul 2025 02:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6008C9476;
+	Sat, 19 Jul 2025 02:50:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752892643; cv=none; b=Luibdxt2yAozXSo9pojqI+UCNrgbDoVzIE+xQZDpxA+yA+iaeMRPswR4lefbS4+v5pgC0m31FqYm/w0s620m3RSKKgCXudfjC7RV6ld0QlUgVizMG/9z3VcCLGVabiVa02geBfUqlbB2pGkC3L4WcW3n3Kipsp9by6M4ejl3AsI=
+	t=1752893420; cv=none; b=KBaKbTm0edUjcpQSK9njoS2xMlbHnShyJ84Br3YJnL0Tpvz6fjkW1Y5oRL6JmhjiipMLpW+aR+TWgx9CIDoE5i6usQJMw77CfFDtd99rG+YJVKERfd4ARmsNTvVh3SiIgZSVs3pmO3MAxef39iZS5bLOX9+UhvgzH6c5X8ACglU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752892643; c=relaxed/simple;
-	bh=KIVA6REMN8H6oOLux4sfSiNKNJnFGdIXADK6o7yNqHE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N5PEtzJlvz1wF0eUmINPTEjRckbEGdx2Er20Frx/3Yp71u6W1td1mHA+ifwgMLH9SUkolZeRyZR8kme9W7ay53UQ9f6Nw+EMIoeRlepM1yPliRwQa26McodZtu4nZY0hmFDJ9q+haRqLELcaKKMEW9EaLYtQ7cpwHUostaQzC/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MDweOYIX; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-23c8a505177so25123655ad.2;
-        Fri, 18 Jul 2025 19:37:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752892642; x=1753497442; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mmJMEJ8CBKKO2kYbDPf0j/vMdEOUiylooeiw9fBRZ6k=;
-        b=MDweOYIXFTtOXhZcOM+e5HXQx3Y1PgdTzjo2DPQESblqBglgcD6vZVeYwdc57MFOaM
-         xUcAhvDU9MnLYPD3OtDjwr35Ax56IWDMxGAeUfBifiLsLa5Fw1zxL7qbAZVUq4GdSQUL
-         2I/3WJH53CRG1tUQGQJwddmIP8svcN7uUznMWt0PLiLCMGKusFu95v1KzBmAoiioyApC
-         yaPgobefi4FzxNpE0HvBK86QTqdBIQHLQjbq8xifbCR6aU6UuDJAsYNx5IxLKCFpGf4U
-         +Q3jk954PRQHEZLCfy8EnUZJKkXfy30IS4cV1yZRGl6fhOgQj7kKYgzirFKGcMJNzLoX
-         ZBhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752892642; x=1753497442;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mmJMEJ8CBKKO2kYbDPf0j/vMdEOUiylooeiw9fBRZ6k=;
-        b=YOi3Oem8oYJAyEGjph3BuWHEOmDMW/fxpVHUI08OHKzhVnxxmXv4khywKcozzXNGND
-         2O/VjfGSi4fPKCQfWRudDKi31A1CVlyg15dx3VWm+VdVAIjtJOATwT3FCrMrLm97vgws
-         hgdMS6tu9bvJOppit9gq2D0bLNf8ZaZIPNg48X0xe62A9ChxcmxqQ52Bapcp/rCJsnpP
-         ckAbH8UsjLlaJPbAxdnlpSQH/eV9ZeI7cu/YKhL5QtG4eCHEGMv+6asOgbHNBNWbod8t
-         umdpfMcY4frdiSGCGsCsRHPLzE7j2diQ4cFj2tpDMbkIpERNyRyvaVVP81ee5DaxzbAO
-         iEwA==
-X-Forwarded-Encrypted: i=1; AJvYcCW/YEeNUGOoUh3z8iurLTKPWOS6B9hpoNykugDARahf5uhQYWsTbAeTEpZjYLH3NQkusoY=@vger.kernel.org, AJvYcCX9vXijpFcgqP7YPDmrsl3x+HhS2TcjUyOVsuB+/TV+eii4Cn+w1u2UuvUfu/mgGMBrCket3MeZ1b1aGjrt@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCoIsWKnUSnSFrlW/joOhS581xN4YtalDs6G+uXknkFoxjsaJB
-	qEXm+ACBywqOox0PY78dlCPt5SLdWx0uNdUQPe+4hCXOW3jWATg7Zf8O
-X-Gm-Gg: ASbGncuOF6pD1llaS8UAa2qqkzXak0VK2pIoEOU35WVYdObIefhtqbvjTzjOlf5g7Pc
-	RamIJgWaTNjCDgY/EG5BviAOc/1RWw2nPBcdhminmwc0FYz5RSJyuXSthzAAiTeSTdQkv3IMxae
-	3WK321zXK6Gj+oYlysKZsMDKQ+bXIs8abIhJ8wYMf+DC6oImftJreETFKbPyxf2OmZPeOA5qONn
-	B+94ql3rTvmjEvKrcnZGBfLqgzfEEhDrYwU4d3hixEG6rXtZrHZOlO2DnfRfb8Bqpv/r6ivPwo1
-	+zVY4Le9dQ0f6GB8cx43VvWWEyXyrv3wA5GlgwR9uAATsEtz3uR5UUmEPboCXPeeNumPWUkYuNL
-	oUDHMU+LDFXBns3MSM5SA+Av+mw==
-X-Google-Smtp-Source: AGHT+IHs5pq3GcJWKuMtDUrc0Y5CYsi9XeqZUlq9pzhl8kPltEUbezNpqEVKb0km9n9B1drEwGrtoQ==
-X-Received: by 2002:a17:903:b47:b0:23c:8f2d:5e23 with SMTP id d9443c01a7336-23e3b89a480mr76816525ad.52.1752892641661;
-        Fri, 18 Jul 2025 19:37:21 -0700 (PDT)
-Received: from localhost ([2409:891f:6a27:93c:d451:d825:eb30:1bcc])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-23e3b5e2cbfsm20297065ad.9.2025.07.18.19.37.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jul 2025 19:37:21 -0700 (PDT)
-Date: Sat, 19 Jul 2025 10:37:12 +0800
-From: Yao Yuan <yaoyuan0329os@gmail.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Yao Yuan <yaoyuan@linux.alibaba.com>, Keir Fraser <keirf@google.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	Eric Auger <eric.auger@redhat.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [PATCH v2 3/4] KVM: Implement barriers before accessing
- kvm->buses[] on SRCU read paths
-Message-ID: <yr5vh2yn25fxa7xeja6gxix6nlqvx7jdwfuurwvf26523vnbiz@5ppp455mjuuc>
-References: <20250716110737.2513665-1-keirf@google.com>
- <20250716110737.2513665-4-keirf@google.com>
- <ndwhwg4lmy22vnqy3yqnpdqj7o366crbrhgj5py5fm3g3l2ow3@5s24dzpkswa2>
- <aHpgLnfQjp3qdZOL@google.com>
+	s=arc-20240116; t=1752893420; c=relaxed/simple;
+	bh=t9Py5tL8Dk6bAJwADZccNx+0tjERFwe/Vl3OBS1dYig=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ev1AlkTa60RNG7XetsuGs2XEXc6xoG1QnL9NZUU7vGmGNTCpJ0vh5wU5KWBPG36q7E79tyO6odGNI4x1E/oSIhoEsRLZSMCSUOp3Vv9ZHcjWETt4+MW8lbHxdxYT0qcIoA65zdyGmueEmg1mgJeSHeXx1Aj7fje717GcBlWf+Lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bkWKP5NP4z13MRv;
+	Sat, 19 Jul 2025 10:47:21 +0800 (CST)
+Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2C792180468;
+	Sat, 19 Jul 2025 10:50:13 +0800 (CST)
+Received: from localhost.localdomain (10.175.101.6) by
+ kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 19 Jul 2025 10:50:12 +0800
+From: Zizhi Wo <wozizhi@huawei.com>
+To: <viro@zeniv.linux.org.uk>, <jack@suse.com>, <brauner@kernel.org>,
+	<axboe@kernel.dk>, <hch@lst.de>
+CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<wozizhi@huawei.com>, <yukuai3@huawei.com>, <yangerkun@huawei.com>
+Subject: [PATCH] fs: Add additional checks for block devices during mount
+Date: Sat, 19 Jul 2025 10:44:03 +0800
+Message-ID: <20250719024403.3452285-1-wozizhi@huawei.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aHpgLnfQjp3qdZOL@google.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemf100017.china.huawei.com (7.202.181.16)
 
-On Fri, Jul 18, 2025 at 07:54:38AM -0700, Sean Christopherson wrote:
-> On Thu, Jul 17, 2025, Yao Yuan wrote:
-> > On Wed, Jul 16, 2025 at 11:07:36AM +0800, Keir Fraser wrote:
-> > > diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> > > index 3bde4fb5c6aa..9132148fb467 100644
-> > > --- a/include/linux/kvm_host.h
-> > > +++ b/include/linux/kvm_host.h
-> > > @@ -965,11 +965,15 @@ static inline bool kvm_dirty_log_manual_protect_and_init_set(struct kvm *kvm)
-> > >  	return !!(kvm->manual_dirty_log_protect & KVM_DIRTY_LOG_INITIALLY_SET);
-> > >  }
-> > >
-> > > +/*
-> > > + * Get a bus reference under the update-side lock. No long-term SRCU reader
-> > > + * references are permitted, to avoid stale reads vs concurrent IO
-> > > + * registrations.
-> > > + */
-> > >  static inline struct kvm_io_bus *kvm_get_bus(struct kvm *kvm, enum kvm_bus idx)
-> > >  {
-> > > -	return srcu_dereference_check(kvm->buses[idx], &kvm->srcu,
-> > > -				      lockdep_is_held(&kvm->slots_lock) ||
-> > > -				      !refcount_read(&kvm->users_count));
-> > > +	return rcu_dereference_protected(kvm->buses[idx],
-> > > +					 lockdep_is_held(&kvm->slots_lock));
-> >
-> > I want to consult the true reason for using protected version here,
-> > save unnecessary READ_ONCE() ?
->
-> Avoiding the READ_ONCE() is a happy bonus.  The main goal is to help document
-> and enforce that kvm_get_bus() can only be used if slots_lock is held.  Keeping
-> this as srcu_dereference_check() would result in PROVE_RCU getting a false negative
-> if the caller held kvm->srcu but not slots_lock.
+A filesystem abnormal mount issue was found during current testing:
 
-Ah, I noticed the srcu_read_lock_held(ssp) in srcu_dereference_check() this time !
+disk_container=$(...kata-runtime...io.kubernets.docker.type=container...)
+docker_id=$(...kata-runtime...io.katacontainers.disk_share=
+            "{"src":"/dev/sdb","dest":"/dev/test"}"...)
+${docker} stop "$disk_container"
+${docker} exec "$docker_id" mount /dev/test /tmp -->success!!
 
->
-> From a documentation perspective, rcu_dereference_protected() (hopefully) helps
-> highlight that there's something "special" about this helper, e.g. gives the reader
-> a hint that they probably shouldn't be using kvm_get_bus().
+When the "disk_container" is stopped, the created sda/sdb/sdc disks are
+already deleted, but inside the "docker_id", /dev/test can still be mounted
+successfully. The reason is that runc calls unshare, which triggers
+clone_mnt(), increasing the "sb->s_active" reference count. As long as the
+"docker_id" does not exit, the superblock still has a reference count.
 
-Yes, I got it. Thanks for your nice explanation!
+So when mounting, the old superblock is reused in sget_fc(), and the mount
+succeeds, even if the actual device no longer exists. The whole process can
+be simplified as follows:
 
->
+mkfs.ext4 -F /dev/sdb
+mount /dev/sdb /mnt
+mknod /dev/test b 8 16    # [sdb 8:16]
+echo 1 > /sys/block/sdb/device/delete
+mount /dev/test /mnt1    # -> mount success
+
+Therefore, it is necessary to add an extra check. Solve this problem by
+checking disk_live() in super_s_dev_test().
+
+Fixes: aca740cecbe5 ("fs: open block device after superblock creation")
+Link: https://lore.kernel.org/all/20250717091150.2156842-1-wozizhi@huawei.com/
+Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
+---
+ fs/super.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/fs/super.c b/fs/super.c
+index 80418ca8e215..8030fb519eb5 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -1376,8 +1376,16 @@ static int super_s_dev_set(struct super_block *s, struct fs_context *fc)
+ 
+ static int super_s_dev_test(struct super_block *s, struct fs_context *fc)
+ {
+-	return !(s->s_iflags & SB_I_RETIRED) &&
+-		s->s_dev == *(dev_t *)fc->sget_key;
++	if (s->s_iflags & SB_I_RETIRED)
++		return false;
++
++	if (s->s_dev != *(dev_t *)fc->sget_key)
++		return false;
++
++	if (s->s_bdev && !disk_live(s->s_bdev->bd_disk))
++		return false;
++
++	return true;
+ }
+ 
+ /**
+-- 
+2.39.2
+
 
