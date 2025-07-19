@@ -1,221 +1,71 @@
-Return-Path: <linux-kernel+bounces-737621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4B88B0AE7C
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 09:54:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEB51B0AE94
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 10:13:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DF0218936EC
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 07:54:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 185E416D47C
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 08:13:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1820231829;
-	Sat, 19 Jul 2025 07:54:16 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A842343CF;
+	Sat, 19 Jul 2025 08:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KYyrvCOz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A3332063F3;
-	Sat, 19 Jul 2025 07:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EB991DE3D6;
+	Sat, 19 Jul 2025 08:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752911656; cv=none; b=Z9dnwepOM89fkyvW1oNFuPskXCKreSGEaVTbPqiQ6iVutL0W9hzrrLC/wAW1eYKZvPxd++in4/0yu+jULCGEwTsKb1Y1fGFNwJS6jFWg8UaCpGJXJ2pZzIugB1PIy6PBbjcM+i0vtYVuG7QXCFV5e8nv9Da7WAQGL1klOQCnyLc=
+	t=1752912773; cv=none; b=Bd8zym57b33D2jzESrPwKBWVrFiBIfP+uqcW0856lsOM/9KFiWCj48LDcBqDf9LAFckeWWyezCgHlfRXL2uTj0GL2j+w+mU2pmL4L3VnRSZAywLP5rVsk6AFQCKX+fiUH13+iMeOmD3MVQaE+R+E3pwBfqYMkNOgRjI6pn3maUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752911656; c=relaxed/simple;
-	bh=xBI0T+96SjFAMoX1/0kuU0TCmJbFkiRVJ+X0k+S96zc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=efnyp7v32LzmZ/QATJrUiaoFyRsh6z88HlKAFJ4ae9Rj26pfsXIrsVvQnmbNH8K4CNFmPwo3DsrEuKviOM0YXoeorC40D7zgE9f0IVYDgCcXDbeoAp/NcpmMI7ZYTWnc62pEQuKLKV+AGaaDr+Z/ijXR0k0Ve7R6tpzx/43Yol0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bkf451MfKz13MSy;
-	Sat, 19 Jul 2025 15:51:17 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id AD2B0180B60;
-	Sat, 19 Jul 2025 15:54:08 +0800 (CST)
-Received: from huawei.com (10.175.124.27) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 19 Jul
- 2025 15:54:07 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yuehaibing@huawei.com>
-Subject: [PATCH net-next] ip6_gre: Factor out common ip6gre tunnel match into helper
-Date: Sat, 19 Jul 2025 16:15:51 +0800
-Message-ID: <20250719081551.963670-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1752912773; c=relaxed/simple;
+	bh=LEEcuXOJk/YHQ2LbF5XiqcQm+O5jC1MZBGi9wHIOdGo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fYpbu1fkbW/s0EBiPXR3oBiDSR3n6W8VhN6egNTF12ukbJbcWYjlLdHlkjnDBAkpcPO0o39bCVVxIqKiKADFVyjgsiBD/kmf16AEJ/dwXNLOWHcSPIPPOxnE3Ur3boOJTtcykitxawtnU6Sj9NVhbVyofyPC3L57Y+gmaNNG3OA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KYyrvCOz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73F2DC4CEE3;
+	Sat, 19 Jul 2025 08:12:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752912773;
+	bh=LEEcuXOJk/YHQ2LbF5XiqcQm+O5jC1MZBGi9wHIOdGo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KYyrvCOzGvwxPYFvNusB/GmcYlDzwiScqnO2ud13BfEpZvLfxmEXdeInRXv7K6925
+	 K+Z8Y9pDFQ/DupX0nbDVhHWaP4iTkDG/cqRvD1MMBBZmHTZRmEd2yv5bfYsxqFOeLc
+	 uVUsHB9O7KFPl415CKrjQDXUd2lN+NGHDckmgrNU=
+Date: Sat, 19 Jul 2025 09:56:46 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: rafael@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	lossin@kernel.org, a.hindborg@kernel.org, aliceryhl@google.com,
+	tmgross@umich.edu, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] Documentation for Device / Driver infrastructure
+Message-ID: <2025071931-manger-earphone-a98d@gregkh>
+References: <20250717224806.54763-1-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250717224806.54763-1-dakr@kernel.org>
 
-Extract common ip6gre tunnel match from ip6gre_tunnel_lookup() into new
-helper function ip6gre_tunnel_match() to reduces code duplication.
+On Fri, Jul 18, 2025 at 12:45:36AM +0200, Danilo Krummrich wrote:
+> This patch series expands the documentation for the generic device and driver
+> infrastructure and provides a guideline on how to implement bus and class
+> specific devices as well as bus specific driver infrastructure, i.e. bus
+> abstractions. It also expands on the existing documentation of device context
+> types.
 
-No functional change intended.
+Looks great to me, thanks for writing this all up:
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
- net/ipv6/ip6_gre.c | 100 +++++++++++++++------------------------------
- 1 file changed, 34 insertions(+), 66 deletions(-)
-
-diff --git a/net/ipv6/ip6_gre.c b/net/ipv6/ip6_gre.c
-index a1210fd6404e..74d49dd6124d 100644
---- a/net/ipv6/ip6_gre.c
-+++ b/net/ipv6/ip6_gre.c
-@@ -111,8 +111,32 @@ static u32 HASH_ADDR(const struct in6_addr *addr)
- #define tunnels_l	tunnels[1]
- #define tunnels_wc	tunnels[0]
- 
--/* Given src, dst and key, find appropriate for input tunnel. */
-+static bool ip6gre_tunnel_match(struct ip6_tnl *t, int dev_type, int link,
-+				int *cand_score, struct ip6_tnl **ret)
-+{
-+	int score = 0;
-+
-+	if (t->dev->type != ARPHRD_IP6GRE &&
-+	    t->dev->type != dev_type)
-+		return false;
-+
-+	if (t->parms.link != link)
-+		score |= 1;
-+	if (t->dev->type != dev_type)
-+		score |= 2;
-+	if (score == 0) {
-+		*ret = t;
-+		return true;
-+	}
-+
-+	if (score < *cand_score) {
-+		*ret = t;
-+		*cand_score = score;
-+	}
-+	return false;
-+}
- 
-+/* Given src, dst and key, find appropriate for input tunnel. */
- static struct ip6_tnl *ip6gre_tunnel_lookup(struct net_device *dev,
- 		const struct in6_addr *remote, const struct in6_addr *local,
- 		__be32 key, __be16 gre_proto)
-@@ -127,8 +151,8 @@ static struct ip6_tnl *ip6gre_tunnel_lookup(struct net_device *dev,
- 			gre_proto == htons(ETH_P_ERSPAN) ||
- 			gre_proto == htons(ETH_P_ERSPAN2)) ?
- 		       ARPHRD_ETHER : ARPHRD_IP6GRE;
--	int score, cand_score = 4;
- 	struct net_device *ndev;
-+	int cand_score = 4;
- 
- 	for_each_ip_tunnel_rcu(t, ign->tunnels_r_l[h0 ^ h1]) {
- 		if (!ipv6_addr_equal(local, &t->parms.laddr) ||
-@@ -137,22 +161,8 @@ static struct ip6_tnl *ip6gre_tunnel_lookup(struct net_device *dev,
- 		    !(t->dev->flags & IFF_UP))
- 			continue;
- 
--		if (t->dev->type != ARPHRD_IP6GRE &&
--		    t->dev->type != dev_type)
--			continue;
--
--		score = 0;
--		if (t->parms.link != link)
--			score |= 1;
--		if (t->dev->type != dev_type)
--			score |= 2;
--		if (score == 0)
--			return t;
--
--		if (score < cand_score) {
--			cand = t;
--			cand_score = score;
--		}
-+		if (ip6gre_tunnel_match(t, dev_type, link, &cand_score, &cand))
-+			return cand;
- 	}
- 
- 	for_each_ip_tunnel_rcu(t, ign->tunnels_r[h0 ^ h1]) {
-@@ -161,22 +171,8 @@ static struct ip6_tnl *ip6gre_tunnel_lookup(struct net_device *dev,
- 		    !(t->dev->flags & IFF_UP))
- 			continue;
- 
--		if (t->dev->type != ARPHRD_IP6GRE &&
--		    t->dev->type != dev_type)
--			continue;
--
--		score = 0;
--		if (t->parms.link != link)
--			score |= 1;
--		if (t->dev->type != dev_type)
--			score |= 2;
--		if (score == 0)
--			return t;
--
--		if (score < cand_score) {
--			cand = t;
--			cand_score = score;
--		}
-+		if (ip6gre_tunnel_match(t, dev_type, link, &cand_score, &cand))
-+			return cand;
- 	}
- 
- 	for_each_ip_tunnel_rcu(t, ign->tunnels_l[h1]) {
-@@ -187,22 +183,8 @@ static struct ip6_tnl *ip6gre_tunnel_lookup(struct net_device *dev,
- 		    !(t->dev->flags & IFF_UP))
- 			continue;
- 
--		if (t->dev->type != ARPHRD_IP6GRE &&
--		    t->dev->type != dev_type)
--			continue;
--
--		score = 0;
--		if (t->parms.link != link)
--			score |= 1;
--		if (t->dev->type != dev_type)
--			score |= 2;
--		if (score == 0)
--			return t;
--
--		if (score < cand_score) {
--			cand = t;
--			cand_score = score;
--		}
-+		if (ip6gre_tunnel_match(t, dev_type, link, &cand_score, &cand))
-+			return cand;
- 	}
- 
- 	for_each_ip_tunnel_rcu(t, ign->tunnels_wc[h1]) {
-@@ -210,22 +192,8 @@ static struct ip6_tnl *ip6gre_tunnel_lookup(struct net_device *dev,
- 		    !(t->dev->flags & IFF_UP))
- 			continue;
- 
--		if (t->dev->type != ARPHRD_IP6GRE &&
--		    t->dev->type != dev_type)
--			continue;
--
--		score = 0;
--		if (t->parms.link != link)
--			score |= 1;
--		if (t->dev->type != dev_type)
--			score |= 2;
--		if (score == 0)
--			return t;
--
--		if (score < cand_score) {
--			cand = t;
--			cand_score = score;
--		}
-+		if (ip6gre_tunnel_match(t, dev_type, link, &cand_score, &cand))
-+			return cand;
- 	}
- 
- 	if (cand)
--- 
-2.34.1
-
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
