@@ -1,180 +1,133 @@
-Return-Path: <linux-kernel+bounces-737917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06708B0B1E9
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 23:11:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43C83B0B1ED
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 23:17:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 920D53BDD9E
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 21:10:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9137A17AEF4
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 21:17:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 366CA220F4C;
-	Sat, 19 Jul 2025 21:11:09 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4BD422D790;
+	Sat, 19 Jul 2025 21:17:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BSjRnFtD"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 231A43BB48
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 21:11:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0CE720FAAB;
+	Sat, 19 Jul 2025 21:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752959468; cv=none; b=UIrLmuDnWspEJExsbkgfMV5a2EsbSUpuOazYTselZQzDgS6LGuRf/VbeuUVRhT5H5LLhroy7jv3TzSDxCFF5WLPXqda0+3KzejsvTLtiAdFlfhc9ZKUSzrVd1DST4y6R+JUkDej6A6meWgJwbufnasEN1AFitn3OBDUwi2qPm4c=
+	t=1752959865; cv=none; b=oJh/DUHNvYKbZUGID30n0tKU88cAzXLVok6iviDHKllhe+a0Z5uDvoK5CTr4ymG69a1kRpGA61oyEqotETALTw6WTKgysmXJjYJzgiMPsTUS78P0HSpNk+9mI2F2+K2cyJ6vobaiFkhHIb/8hvXjXfKVDAMLcA5ng3K1SF1W3l4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752959468; c=relaxed/simple;
-	bh=f4mVRmSS5zwo/+69Lf/8SnOIf2ToVuUaa4SR3RYhhqo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=hrY9fleP21Gbhcg3pE7t1BcWZ07XZ3SxMKMBQ8SETO1m5gnGZbgATBKG9819LcjNwlNRpXZsLNH7FqSJniPa/n3Ba5aOf+IPR/SX0vwPHE4DLT7HSco4zz1EenCNo/suWfszFD1/u+2b/eTYsEvalWykJ/E5hh5eGwzB6/xf/Gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3ddd03db21cso53343335ab.1
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 14:11:06 -0700 (PDT)
+	s=arc-20240116; t=1752959865; c=relaxed/simple;
+	bh=MEp7Wf0O2C0g0O3vR40ys088xNOv/DqBtlHXQfu9wYc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Wqc4erUoItk6YN8UbW0d2w4IN73tNgxuvBKjBGFtS+s4+l1FMLzJL0CctZZ+XPHvIX28+7ESVY6iTe3T9vxQI6Mj+uDeLizUARgtdPb6/utAUguqBI+s5ZDZSHwUm0rDioX9X6jlhe2qP1ilK8r21GC1KKdHdMriR2ovID2S9u4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BSjRnFtD; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-32b595891d2so24833761fa.2;
+        Sat, 19 Jul 2025 14:17:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752959861; x=1753564661; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MEp7Wf0O2C0g0O3vR40ys088xNOv/DqBtlHXQfu9wYc=;
+        b=BSjRnFtDeBZatDWIDE3z2nXUrd+SYiG5vUvRTciMZo7W/UwiwZGZEX+B81eO3VaI4y
+         mIG8tj2Qe3aNjOrgNdVuNUhB5SdUHqk0QJI2Tq1gUUDEgz7xB/F0/D8ngEuj5DEvxelU
+         NwnuRXgAbC3EZte32S9exZv5ccg4JoxT+4HM9pwfdOUZ0ueN291DckoBrW17nU9NagoK
+         bi5iROT/hjrlLibzqUUbnHPqxfVu7CAgzOp9EnQNPgcJEvMyBIw+q4id2nDC0Tj19Uz5
+         OjLbb3qr8Y1zEFELeQjxov6zFdXdnQHPF3j6ZaY3NqDFFNsmWocRsFnlxKeRqQJrrd2L
+         WLOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752959466; x=1753564266;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IyUCadtFBvejsvhONvhc8/3NBpBPoWwi+Q2YsetS1m4=;
-        b=l6n7bjipJPFNtrpGsgOs1upJtcT97sJPsIiM69PYJiao0nafJx09xluKePzEym9d8S
-         fWtYDgD1AM/Q9gvzcvDbS+pB0PwoR0GEJnRW3MhDR46CrV06g5v4m8V4ogzBG7Sb4JYT
-         +ulVwZ2yp/3vW18uiY7RZ0+ambX4AW3cO8JnuSYFa5wfey9n15aDvfwDBHjqw3Fpml+8
-         bdVCX4Rgv+3Qb2R5hoRa9RKMXhMm0AZb/E3x/7GeqLdOscGEJDiYvyOC/ZY6pr7mXroQ
-         6PODttfp+nuCgYrWpFTr6nO6lpkBomajx+pHLn4VAkWBaJtQdeunFQN8fgu3QSQ604dC
-         zqTw==
-X-Forwarded-Encrypted: i=1; AJvYcCVcTx/CPX6LCTIzjgJruIt8Q5W3k3Swz8rv4nza3F47xWs7D4mwglDF58cJ1HIme2XLASJSKnyVO4Wmi8w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjLJM/h815kNW0nc7OjfzhMWHBn3DqEoXWzCZcIuloejDdvAYq
-	SvVcGI/IZ1WtLi8v6IxQqcSWKOXrXejl0Tbi6w1wtHo0WoAyJoC7gt286qyfv6pKwiJeXpGrE/I
-	QabCdckrPTmiJmblS7V/fpnuG5gwp7xxCMy3lwl4HIrWVGGl74ItU1UoI7ms=
-X-Google-Smtp-Source: AGHT+IF9ThgsjzgmjSCo2y9S10Hq2jTXsYcC1pm2LeL5sIE7Q3swJWTQrq6D6AxMs6PNAqmevbZ0Isyok8Kz1nDXQBLYTS1+Qr0p
+        d=1e100.net; s=20230601; t=1752959861; x=1753564661;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MEp7Wf0O2C0g0O3vR40ys088xNOv/DqBtlHXQfu9wYc=;
+        b=mbwYCbaEsR9VtWw+Nq73+4w64rSjJ0rlc5P+UtU1ZfOjmruNWNV8Bqq189ReuOrwCl
+         jnSE3KUNwpO6QZ4wQNfDR+6Yv4Y1FTyw7lvanbVXlackw8U/gpItwoROmvCsrB7BDn3W
+         xRFvHqjaxTXgvIZw7jFKrosrzm6rIotxeeDXixbyHXqyTY1+Nv7szF1lqhxq5PTMM6IQ
+         Z8m9NhPcKCciLe9jyin8oRKwAAPOWG2hsnSgifIseSxTH6H1zSTvKLZUtrB1xxsfpnVy
+         uzg3ySRMVEdLaSw/UE2WVCkl2B0IA5NPXtVRc8II3+VkCEtiNabmvh3uojNE/V28m1li
+         0nkw==
+X-Forwarded-Encrypted: i=1; AJvYcCUW3CE7I5BZIqHRoYyRU9jCPNWgtTdKHFGW3Z1YMOB6SFXzo6IJILamLmALx610+RNIOUjQGetJQZGP@vger.kernel.org, AJvYcCVK5ir1E0uPZmsQ16kbOpBp3E6FKVOSx0dN46dKAllx+Bl8AcpwfkIFUQRgcrLOyHhd9Y+Inu5kikn62Ho=@vger.kernel.org, AJvYcCWhvVzuar4kJnjV1h5Rcl7vgt8p7NC7/cgITGs4QlTvQKrAUjCfq1/zcIoSyE4ZFDiLOCjnhO+XCpsuLj5n+NY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkBc7spWp2OaT8oazDp3MZhfe0AIRq5ul/qjtG41zMpDi0nVwS
+	Wh5rF7moDX8ciAhgY2U4AMqLgzt8wa6r3cSO6EIG24W89fv9VdBAzswwxVtLbamihbvF5IdfIX3
+	iArIibBtZM5tm8USsfCrVKFeoSRGZjlw=
+X-Gm-Gg: ASbGncs9E6fZcazQ7th7O38phs9HNvYWss8fD/yJsY6g66+J77seU67d8scjtw+mD8c
+	YeEFFYSldhEh2OItQzCzpm5Lm4BpktBgy54p2Exb5mnpUv0d5YCiRprE8MSt1i0rd0cdzrvuj9J
+	zf0BtxgzpGmG87OyQ9UAcIUlCmAH7n4NEJwwZ0Ko04/yzrmjJZrJ8x9YqDufR/Ssq2KkEzQSmLr
+	CxbxKvWFR+DH1Erq0Q7EkXq6Uz05CCAejomFAUdCA==
+X-Google-Smtp-Source: AGHT+IHXFphFe4euLN0ElLcp51Vb1Dg+FL1aRzGfRRPh7ThHYIqOXCUduLpaQKiyURhCFoKowSc4+0/F+DutBNFLH8A=
+X-Received: by 2002:a05:651c:b0e:b0:32c:bc69:e921 with SMTP id
+ 38308e7fff4ca-330a7b12523mr22220551fa.9.1752959860488; Sat, 19 Jul 2025
+ 14:17:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2602:b0:3e2:988a:101d with SMTP id
- e9e14a558f8ab-3e2988a12bfmr69339225ab.6.1752959466272; Sat, 19 Jul 2025
- 14:11:06 -0700 (PDT)
-Date: Sat, 19 Jul 2025 14:11:06 -0700
-In-Reply-To: <gtbxhrjzbwuevau27w2zi645uu2y4xuhzutebojmh535blvah7@bc4344cq25cs>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <687c09ea.a70a0220.693ce.0097.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] KASAN: slab-use-after-free Write in bch2_get_next_dev
-From: syzbot <syzbot+2b98caf09c41174a9697@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20250709-list-no-offset-v4-0-a429e75840a9@gmail.com>
+ <20250709-list-no-offset-v4-6-a429e75840a9@gmail.com> <CANiq72kvYuoSSOruDQiEo5ppSDvtxSzQ4R6rxdN9RBkucBRuew@mail.gmail.com>
+In-Reply-To: <CANiq72kvYuoSSOruDQiEo5ppSDvtxSzQ4R6rxdN9RBkucBRuew@mail.gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Sat, 19 Jul 2025 17:17:04 -0400
+X-Gm-Features: Ac12FXzLIC8GWNX3bHP_PQS6NeSoHlnrb73ILutus--5bbT5RNqMTwdClHIjArk
+Message-ID: <CAJ-ks9mJN37GZOr=fAN18yV+X4q+8Ah0qSQkOa23dRqg79_AOQ@mail.gmail.com>
+Subject: Re: [PATCH v4 6/6] rust: list: remove OFFSET constants
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Sat, Jul 19, 2025 at 5:09=E2=80=AFPM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> On Wed, Jul 9, 2025 at 9:31=E2=80=AFPM Tamir Duberstein <tamird@gmail.com=
+> wrote:
+> >
+> > -/// Declares that this type has a `ListLinks<ID>` field at a fixed off=
+set.
+> > +/// Declares that this type has a [`ListLinks<ID>`] field.
+>
+> I was applying this series the other day, and I noticed these
+> doc-related changes in the patch, which are appreciated (I think you
+> did it to make it consistent with the other lines you were adding with
+> intra-doc links), but I think in general it is better to clean those
+> separately in a patch first.
+>
+> I am mentioning it because the docs do not build due to those --
+> please check the `rustdoc` target for patches, especially if it is a
+> non-trivial change.
+>
+> I also did another change to make the examples (in the other patch)
+> build with the minimum Rust version. It is good to test that too,
+> since sometimes that can slip, especially as the window of versions
+> grow.
+>
+> Anyway, the examples/series here caught another issue with a previous
+> patch, so that is good news :)
+>
+> Thanks!
+>
+> Cheers,
+> Miguel
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-general protection fault in seq_buf_puts
-
-kmalloc-512       total: 10.9 MiB active: 9.75 MiB
-kmalloc-cg-2k     total: 9.78 MiB active: 8.77 MiB
-shmem_inode_cache total: 8.09 MiB active: 8.06 MiB
-kmalloc-8k        total: 5.72 MiB active: 5.56 MiB
-Shrinkers:
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 0 UID: 0 PID: 7134 Comm: syz.0.42 Not tainted 6.16.0-rc6-syzkaller-g8546371cc837 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-RIP: 0010:strlen+0x29/0x70 lib/string.c:420
-Code: 90 f3 0f 1e fa 41 57 41 56 41 54 53 48 c7 c0 ff ff ff ff 49 be 00 00 00 00 00 fc ff df 48 89 fb 49 89 c7 48 89 d8 48 c1 e8 03 <42> 0f b6 04 30 84 c0 75 11 48 ff c3 49 8d 47 01 42 80 7c 3f 01 00
-RSP: 0018:ffffc90003f8e700 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff88802d1fda00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc90003f8e850 R08: ffff88814d01cad7 R09: 1ffff11029a0395a
-R10: dffffc0000000000 R11: ffffed1029a0395b R12: ffffc90003f8e7c0
-R13: dffffc0000000000 R14: dffffc0000000000 R15: ffffffffffffffff
-FS:  00007f15d42266c0(0000) GS:ffff888125c29000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f0e6f5ff000 CR3: 00000000251d2000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- __fortify_strlen include/linux/fortify-string.h:268 [inline]
- seq_buf_puts+0x34/0x1a0 lib/seq_buf.c:184
- shrinker_to_text+0x115/0x3c0 mm/shrinker.c:836
- shrinkers_to_text+0x840/0x960 mm/shrinker.c:911
- __show_mem+0x242b/0x24d0 mm/show_mem.c:496
- warn_alloc_show_mem mm/page_alloc.c:3719 [inline]
- warn_alloc+0x2dd/0x310 mm/page_alloc.c:3744
- __vmalloc_area_node mm/vmalloc.c:3702 [inline]
- __vmalloc_node_range_noprof+0x67e/0x12f0 mm/vmalloc.c:3893
- __kvmalloc_node_noprof+0x3b8/0x5f0 mm/slub.c:5037
- __bch2_darray_resize_noprof+0xd7/0x290 fs/bcachefs/darray.c:24
- bch2_fs_btree_write_buffer_init+0x16e/0x1f0 fs/bcachefs/btree_write_buffer.c:885
- bch2_fs_init_rw+0x226/0x2d0 fs/bcachefs/super.c:835
- __bch2_fs_read_write+0x18f/0x5a0 fs/bcachefs/super.c:509
- bch2_fs_read_write_early+0x26/0x40 fs/bcachefs/super.c:601
- bch2_run_recovery_pass fs/bcachefs/recovery_passes.c:487 [inline]
- __bch2_run_recovery_passes+0x39a/0x1050 fs/bcachefs/recovery_passes.c:543
- bch2_run_recovery_passes+0x184/0x210 fs/bcachefs/recovery_passes.c:614
- bch2_fs_recovery+0x2544/0x3860 fs/bcachefs/recovery.c:996
- bch2_fs_start+0x957/0xbf0 fs/bcachefs/super.c:1218
- bch2_fs_get_tree+0xb39/0x1540 fs/bcachefs/fs.c:2462
- vfs_get_tree+0x92/0x2b0 fs/super.c:1804
- do_new_mount+0x24a/0xa40 fs/namespace.c:3902
- do_mount fs/namespace.c:4239 [inline]
- __do_sys_mount fs/namespace.c:4450 [inline]
- __se_sys_mount+0x317/0x410 fs/namespace.c:4427
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f15d339014a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f15d4225e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f15d4225ef0 RCX: 00007f15d339014a
-RDX: 00002000000000c0 RSI: 0000200000000080 RDI: 00007f15d4225eb0
-RBP: 00002000000000c0 R08: 00007f15d4225ef0 R09: 0000000000818001
-R10: 0000000000818001 R11: 0000000000000246 R12: 0000200000000080
-R13: 00007f15d4225eb0 R14: 000000000000596b R15: 0000200000000000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:strlen+0x29/0x70 lib/string.c:420
-Code: 90 f3 0f 1e fa 41 57 41 56 41 54 53 48 c7 c0 ff ff ff ff 49 be 00 00 00 00 00 fc ff df 48 89 fb 49 89 c7 48 89 d8 48 c1 e8 03 <42> 0f b6 04 30 84 c0 75 11 48 ff c3 49 8d 47 01 42 80 7c 3f 01 00
-RSP: 0018:ffffc90003f8e700 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff88802d1fda00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc90003f8e850 R08: ffff88814d01cad7 R09: 1ffff11029a0395a
-R10: dffffc0000000000 R11: ffffed1029a0395b R12: ffffc90003f8e7c0
-R13: dffffc0000000000 R14: dffffc0000000000 R15: ffffffffffffffff
-FS:  00007f15d42266c0(0000) GS:ffff888125c29000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f4538002565 CR3: 00000000251d2000 CR4: 00000000003526f0
-----------------
-Code disassembly (best guess):
-   0:	90                   	nop
-   1:	f3 0f 1e fa          	endbr64
-   5:	41 57                	push   %r15
-   7:	41 56                	push   %r14
-   9:	41 54                	push   %r12
-   b:	53                   	push   %rbx
-   c:	48 c7 c0 ff ff ff ff 	mov    $0xffffffffffffffff,%rax
-  13:	49 be 00 00 00 00 00 	movabs $0xdffffc0000000000,%r14
-  1a:	fc ff df
-  1d:	48 89 fb             	mov    %rdi,%rbx
-  20:	49 89 c7             	mov    %rax,%r15
-  23:	48 89 d8             	mov    %rbx,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 0f b6 04 30       	movzbl (%rax,%r14,1),%eax <-- trapping instruction
-  2f:	84 c0                	test   %al,%al
-  31:	75 11                	jne    0x44
-  33:	48 ff c3             	inc    %rbx
-  36:	49 8d 47 01          	lea    0x1(%r15),%rax
-  3a:	42 80 7c 3f 01 00    	cmpb   $0x0,0x1(%rdi,%r15,1)
-
-
-Tested on:
-
-commit:         8546371c bcachefs: Flush btree_interior_update_work be..
-git tree:       git://evilpiepirate.org/bcachefs.git bcachefs-testing
-console output: https://syzkaller.appspot.com/x/log.txt?x=102f0b82580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=37de60b3108b6d8f
-dashboard link: https://syzkaller.appspot.com/bug?extid=2b98caf09c41174a9697
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-
-Note: no patches were applied.
+Thanks Miguel, will do in the future!
+Tamir
 
