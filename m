@@ -1,147 +1,88 @@
-Return-Path: <linux-kernel+bounces-737536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6FDBB0ADA9
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 05:11:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27C57B0ADAB
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 05:12:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5918189E918
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 03:11:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 296B11C20E21
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 03:12:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99AC523185D;
-	Sat, 19 Jul 2025 03:08:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E01A71FF1B5;
+	Sat, 19 Jul 2025 03:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VeQjW80m"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="mpIPAmwR"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2076.outbound.protection.outlook.com [40.107.92.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C560122A4F6;
-	Sat, 19 Jul 2025 03:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752894529; cv=none; b=W45KeqlnxAi5+Or8CQmwehp8l5YTRX6GRw0Sy2Byty+NafdM09PGAgWI+tNSwmYONhyR61O7VGLF7xstWfvNc79PT9xSBZogpWtSiKe1rNFnXmrjKfawFMD0Mc+bMryrzK70ZwMIubmbIBnxjKMpuoKRCTzs1zuqmrnayC39Hag=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752894529; c=relaxed/simple;
-	bh=WCT6z5PFKds5elqtScAZ0FqkB10N0S9kF8SYI2tCpwg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QOIOl55kppVwCy8bCk7Z85Xq8QvJnnlsiSunbhUYQ6CCNA25cNKymvqhRAR/zQP6fj2wYLAzCuzG4+Xa9KRTYSzWhp0BFA5gzQGrT4fV9BbmCut5/bxkM8nADN72Ib20PTqkilSl0vft8QT/qJ6gi5/GQhYl+u0CJP/EDtxvzXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VeQjW80m; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4ab5aec969eso50398821cf.3;
-        Fri, 18 Jul 2025 20:08:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752894525; x=1753499325; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:feedback-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xbxFvcQp2SKKo4g3N8pGlZT4YowYhGke/9HCeglF0aQ=;
-        b=VeQjW80mpQwLyDWLA4fFRZACQvYnsZ1Y/mJ0m4VAIB4QEi04jbnRV2D6+8vBdHjjyB
-         4jFdqb9ClSlO6yjayaDaiQkPV+wi+TTROzkb3gIRV/Ktc2XGPRLFn53gTaT189n5JZWi
-         0PYt1wPbyU2r1Cht+3i4+isztj/fze2ExP9EKoCNm7/TQra4ZYzl6cwY9MpBqkKZ1uwm
-         ofsfrOP548MChhz2Srds/2uWMhaj8PTEfMI2llDL0mZ7Win4ACb9ji7DtYvjMeMrThIv
-         Nycy2mbAh449kB9rQS36Zb/DzgXDv9haLmgHl+jNf/YMeIWya+3z0tskvcPbTsTEijYF
-         TVLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752894525; x=1753499325;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:feedback-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xbxFvcQp2SKKo4g3N8pGlZT4YowYhGke/9HCeglF0aQ=;
-        b=CVMRQhb2EuS0EzirnuOGl8Yybt1mIll2+bTdXpaeUM59yNQknJ+wE1yu0U9u5RfC66
-         PiYqYYeZ9boFWwlbGnx25ePtOdW1pg6W0MucXRrx2qPJZCpCwnwYwoyM1Obh6t4pZEg6
-         XGK6C6mz/w2hbZaWH3PMGRQ+CLgs1ADwjf9jhfF3ArxrUZFSecnjHOmPJw/mXNV8tygK
-         g0kIGn9PjwQ8wwt/WP87FUsIpSa4jrJU8V7xVFqc7ANjDDVM+Ew4x4jIZpB/EEWeY62Z
-         1lo1SqWPPsbBaNjFwhmub88SFrSKriCeqt0zo7LRbLNlWe+NoHP8HwtixBIsO3n0cb5Y
-         76dg==
-X-Forwarded-Encrypted: i=1; AJvYcCVioDInE/wajm5vm+f3aGmu7XrR7ouXX5uOgpkvSGD9Sfzw9whz3Yb2A+K4XIM2RdHfSZg010CZVtkk@vger.kernel.org, AJvYcCWjl6Q+oByopVLS5bOCDpmQQNIqpdKoBSoLULvCx1X0Tid2WNY/mUurYrMqFjD3HLdatxXpN4THvDiXeXubs7Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1wVpyL5YOepeSa+qEuEaSCgvXQVo2XyGvcc95MZLZr7rKdiPK
-	P8odeYbKe06Qy37644HNiZ8l1C9/gmxU7XFm/NKXwL4B7MosLdUAOBBA
-X-Gm-Gg: ASbGncsW3ZB4MelWfzYkLrSGxIQSxkIoCQom1rF4Mk7+vzl2eoew4vlzRJoG89khRvQ
-	71dGeWtcDpOwQkbrN6gKf8N4NxX/+xD0LWN9ysW3OCJAWeHoKU464rK/ggwTj9+VNU7tvqvLl/J
-	2ykkloO4a2ejJyqHQLJkPOdOAOKwpBXxTOH4Acju8LANLStNPbvdPGBlb00ThLzCinHrCQQV0Bq
-	sSeUFrQFV5V9fPeO3uxeqSYw6ezz8b17t++kAm22P0Ps4c1yGzzeND+vHpFksYME4MeA+7hGmcd
-	1b794msToisVUOQl0HCrv3KbaQG0kWTMr+QAqTjvPsklCPCK0pW701+HFzCUt/dvULD2osx10NQ
-	b31WyjHlnxVeu7ZYHHg8ylw3z48fr+V4d9IObjHavNz6mehMoD1gnIxCzbk5OXznULY9ukjpb6K
-	hLPD0GN0Zv1Uaw/poY17euN3XVQdW3OL49UA==
-X-Google-Smtp-Source: AGHT+IGvIMhjAo8O2Xy1EXQ+szSYQ0zQRyQvTPo729F9LOE3fLEo20etcZscd7pMYfa3qVnCljRHGA==
-X-Received: by 2002:a05:622a:260a:b0:4ab:7e22:8553 with SMTP id d75a77b69052e-4abb2ca84f4mr72883261cf.12.1752894525404;
-        Fri, 18 Jul 2025 20:08:45 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7051b8bc2fdsm14615996d6.23.2025.07.18.20.08.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jul 2025 20:08:44 -0700 (PDT)
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 4B4A0F40066;
-	Fri, 18 Jul 2025 23:08:44 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Fri, 18 Jul 2025 23:08:44 -0400
-X-ME-Sender: <xms:PAx7aKnVdgbtIVsnBc_6AEWqRg8-xIgJnuKRrPI-0gfoDBvvS5BFGA>
-    <xme:PAx7aDU4LFRlSFbdcnuJDoKyT92YuQnZUmWUYhmkLiQ8sObDJcdcCXJweBZfCNCEA
-    35lr9UGC9iJBRuKUA>
-X-ME-Received: <xmr:PAx7aNPrPpyjad1BbY0NbwScDFr3x5_uxWfa-Yivg9FB7f8IV1KwSGXmiA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeihedvudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeeuohhquhhnucfh
-    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
-    hrnhepgeeljeeitdehvdehgefgjeevfeejjeekgfevffeiueejhfeuiefggeeuheeggefg
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqh
-    hunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddu
-    jeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvg
-    drnhgrmhgvpdhnsggprhgtphhtthhopedvjedpmhhouggvpehsmhhtphhouhhtpdhrtghp
-    thhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheprhhushhtqdhfohhrqdhlihhnuhigsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-    pdhrtghpthhtoheplhhkmhhmsehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtoh
-    eplhhinhhugidqrghrtghhsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    ohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhhorh
-    esghhmrghilhdrtghomhdprhgtphhtthhopegsohhquhhnrdhfvghnghesghhmrghilhdr
-    tghomhdprhgtphhtthhopehgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhope
-    gsjhhorhhnfegpghhhsehprhhothhonhhmrghilhdrtghomh
-X-ME-Proxy: <xmx:PAx7aOGkHxN3pTrVrM7IyiJuObQKcl0h9jfFzjcRT7DrVxmFfP8fEQ>
-    <xmx:PAx7aG2x_med2JBhHVJ3uzCGIlis1z2Yx02hUiQR8HvhGJ72n0EdOw>
-    <xmx:PAx7aOOP-bou4dJjNjKenIjeUNTt-eLFBc5j9AUJBHwSyivCrsNCmw>
-    <xmx:PAx7aGI_faKFehD1xTFBteRUKRKXgqtZm6rEyEmZCjmfYNH_76T8pg>
-    <xmx:PAx7aPbpSx6b6orp5axcccZQTVLc2vbpwEoud3BZ6nEeZbq3a2SsjOeB>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 18 Jul 2025 23:08:43 -0400 (EDT)
-From: Boqun Feng <boqun.feng@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	lkmm@lists.linux.dev,
-	linux-arch@vger.kernel.org
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,
-	"Alex Gaynor" <alex.gaynor@gmail.com>,
-	"Boqun Feng" <boqun.feng@gmail.com>,
-	"Gary Guo" <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	"Benno Lossin" <lossin@kernel.org>,
-	"Andreas Hindborg" <a.hindborg@kernel.org>,
-	"Alice Ryhl" <aliceryhl@google.com>,
-	"Trevor Gross" <tmgross@umich.edu>,
-	"Danilo Krummrich" <dakr@kernel.org>,
-	"Will Deacon" <will@kernel.org>,
-	"Peter Zijlstra" <peterz@infradead.org>,
-	"Mark Rutland" <mark.rutland@arm.com>,
-	"Wedson Almeida Filho" <wedsonaf@gmail.com>,
-	"Viresh Kumar" <viresh.kumar@linaro.org>,
-	"Lyude Paul" <lyude@redhat.com>,
-	"Ingo Molnar" <mingo@kernel.org>,
-	"Mitchell Levy" <levymitchell0@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	"Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-	"Linus Torvalds" <torvalds@linux-foundation.org>,
-	"Thomas Gleixner" <tglx@linutronix.de>,
-	"Alan Stern" <stern@rowland.harvard.edu>
-Subject: [PATCH v8 9/9] rust: sync: Add memory barriers
-Date: Fri, 18 Jul 2025 20:08:27 -0700
-Message-Id: <20250719030827.61357-10-boqun.feng@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250719030827.61357-1-boqun.feng@gmail.com>
-References: <20250719030827.61357-1-boqun.feng@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D7D2BCF5;
+	Sat, 19 Jul 2025 03:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.76
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752894606; cv=fail; b=EWxSWGP2C80jImoqgxCITRi5j+aXQacfBRT883uc5ap/6aROcEzaBC9ia7DYNJXiEqMGnkL9HTQqvtfnmTGr+eNbG88tOStPBvIs6WyojDXm1XCewwTz+LpxZolQVIZtjU8bW8/a/6wBjGgMlUgvy9vurCxELd6Nh0GQqMq+5vo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752894606; c=relaxed/simple;
+	bh=864mpNiXIlIcdO+/ed5E4CB/vFVDyJBw1XtrDzkEECI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EHNMK/iPh9hi8/Q7NUBqiI6Z8jE9ttr0sBpPNFX1mbDkPgmYyk1wQrOSlNh1fIiNyqT1KBjrJRAFTC9dERBsYnJmtuPEoNCaSlWRLSB0tIvNe74q/WLiXZSvqJmHxaWANDZUguAfnuzFIqV03dJzXXNLEDqc9qToFIq9+g9EXEA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=mpIPAmwR; arc=fail smtp.client-ip=40.107.92.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=i9mvPbXq8f8DHaRhKrplGFOGdw/8DESAlFtTNRM32/Ak9cAtsuCdlxk4tC9UZyuZKnBSbSLIaqaqF9ktl0dKM0M8TJ/VzKg9Zy0NoT3TGlRhpzbN0nh4qFgC0whIUB2SILexm96GWGmc6SeGIzOh2u+q40p0NHD8dC9uIqNkFvnTv5InHu2UJt2vHZgevUWMdljdXtir/fXVff/x+Adz7+heAKp/LkJbfmyiRNOEqms2R07DmbhmAbLt3EYPtamJobFQ7jUkJTAB7VdBNodNz/B07K7KPVKLUygdAolYIHLB5Jeb5A77Tb1FIHFaR+5PH2wJT4Keaa87BB/nMyw38g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=feW/V5rrt76jlD0sIBjZ3UBXxlvb9M+1eKWBDYTvrjI=;
+ b=fyX/6nKD6pWJRKA30ZAwZnI7BW3wjXzkqEmzpfyNYK1Pi30LUi4MsiKgiVbbFKVPEL+I+dhMPE5PNuYMy3XD4paex3P3VW3QQnVZBjiRQ6TbIw6GmY5nLTmneG+kKrk3HE9rGGg29e9ySR/9SNx3NNp8eGcv6Cf7YSKQmSd6Qo5ztU9m3Cjv8vchVTIEXkz0hSTjQxP/T+y5slWTXX/4iL1EtJ0pLzIJ0Hb3LJCvQ4DFCpKJgejVpva6WEAWsExjX/Nj78OM5juI0LJCO9ufBKE0fjSDuCwAXGcMxvdcZ2LpFnyteuqF4EbYNom0w1HluKa8bU+IlfCDjUQE1RGh4w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=feW/V5rrt76jlD0sIBjZ3UBXxlvb9M+1eKWBDYTvrjI=;
+ b=mpIPAmwRm+EWxmZdVnRFavvU42iMXr9OUIdkRN+qSNyOpMrRGn9vWeEEV0yzpqpmvqE+WzKYHU9h53gZw8GAXg52toIRPXNolJGFPVd+i7GZqjf/0JeDGo6N/vWDkFMsQikxqKXZEPlrfgwFtJR2HEvfioI6ZAIRWX9SmP+vNCQ=
+Received: from SJ0PR05CA0107.namprd05.prod.outlook.com (2603:10b6:a03:334::22)
+ by CY5PR12MB6273.namprd12.prod.outlook.com (2603:10b6:930:22::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.39; Sat, 19 Jul
+ 2025 03:10:00 +0000
+Received: from MWH0EPF000989EA.namprd02.prod.outlook.com
+ (2603:10b6:a03:334:cafe::ea) by SJ0PR05CA0107.outlook.office365.com
+ (2603:10b6:a03:334::22) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8964.15 via Frontend Transport; Sat,
+ 19 Jul 2025 03:10:00 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ MWH0EPF000989EA.mail.protection.outlook.com (10.167.241.137) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8943.21 via Frontend Transport; Sat, 19 Jul 2025 03:10:00 +0000
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 18 Jul
+ 2025 22:09:58 -0500
+Received: from xhdlc201964.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Fri, 18 Jul 2025 22:09:54 -0500
+From: Sai Krishna Musham <sai.krishna.musham@amd.com>
+To: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
+	<mani@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <cassel@kernel.org>
+CC: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <michal.simek@amd.com>,
+	<bharat.kumar.gogada@amd.com>, <thippeswamy.havalige@amd.com>,
+	<sai.krishna.musham@amd.com>
+Subject: [PATCH v6 0/2] Add support for AMD Versal Gen 2 MDB PCIe RP PERST#
+Date: Sat, 19 Jul 2025 08:39:49 +0530
+Message-ID: <20250719030951.3616385-1-sai.krishna.musham@amd.com>
+X-Mailer: git-send-email 2.44.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -149,144 +90,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB04.amd.com: sai.krishna.musham@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000989EA:EE_|CY5PR12MB6273:EE_
+X-MS-Office365-Filtering-Correlation-Id: 047b24da-5538-446d-c09a-08ddc671bfad
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|376014|7416014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?YqIf9JFgaWUSKGBaPcWNjQnybypCDyGGU1GG6WyuU6hf1PdXrjW8jyJy5Wmd?=
+ =?us-ascii?Q?rzgr6wt+IuL5vVdz/BQvqEh72AwkpeH3SFLZhPrwUwJ/RNN56n/MEIez3M+g?=
+ =?us-ascii?Q?jNonVc0cu5HR6/FLPxoxSvI9l5IlKyrOhSiyIazJOqXnhgvG3XO5mWkZ0yv2?=
+ =?us-ascii?Q?wPMdckkXC6hCZJV9t40i8qgqbUQQcgOGvK1j9sc9VYxqlpKPOp1tQbyHryh9?=
+ =?us-ascii?Q?KtswHQkAzpFc1jDeTVGjzUSVFxnVA0bDhAcxN751A9/utRe1YJ2R1+LifHqo?=
+ =?us-ascii?Q?+V5DKEbq9X0EOrjlSmDjonFsWJ6K2cPn+/U77F698RTiGdNwKso8ohBVrzHC?=
+ =?us-ascii?Q?TldkGXAwgABeS4bGF2N4pafUcPqQ+fw5/ICT/KW7npNlZDtJai4OmsOg9TbW?=
+ =?us-ascii?Q?0u1RH37BJEKEFTFrbjuXnxJHGaHEPXdas6z5dDQwHNQibNv6p5qmumHtOfte?=
+ =?us-ascii?Q?bGcTXsBPDNAKcrlgu1Osfl1pFwjuqqWZ5tAdxD7VsLz0o9Mz9jyrqteLaxxx?=
+ =?us-ascii?Q?WHqqZ/Ei2Kg6gFTE5rSQ4ivUYFVDakQzjECMivOCJBoMCPbmyFNII46ZZkQB?=
+ =?us-ascii?Q?HaHEpksARTYFXzZEMO7AVfyZZih1VGQlcPkkC+czKVdPmZdsAC8iVjCiLSwD?=
+ =?us-ascii?Q?znqlbPiPvdRKnVrfGzCFF6ubnST+JRv598u8AXo1/pb+rzpJggEjhSS3Sl7n?=
+ =?us-ascii?Q?7FnG37L/w4Tcdsfx+ctbHWT2fOyf7nn0+vJa/uGhR4u6w2/U5Dw84eacl0wf?=
+ =?us-ascii?Q?HDcOya8+9ufv0Rsdn5JncFoaIq5bCvvTo2ZynmgnywTLEf3i4vwrwr02Vnzo?=
+ =?us-ascii?Q?kbiO+WLXfvudU8cpyUm2tHF7n4VROTGAUAXQ+Dp7090k/G9cmOM1SmNb07wa?=
+ =?us-ascii?Q?osp7uQ5XCgiHhXQAgqiGoMuW+2dm0cdB6ISIXdi5bu73rPoWjOJCH+ZzMdtX?=
+ =?us-ascii?Q?p/PdUQNE1YrBVhB4r63V+xSWnFL66AqwRUL1BYa3Sxnj+PR6qtL8g0DinMeb?=
+ =?us-ascii?Q?BtIVBtLVBA2xtVC6uHB5YLIqmTX9DvCG8lW/5T13ucWdOGEKIyfcOg7vYi2J?=
+ =?us-ascii?Q?tBg0lSBhm8pSveDUnUL4Bohva9FyDg7CD+Fu9xgESaS7L+R3SxvMIzKeusFb?=
+ =?us-ascii?Q?PUgbuUyw2wJSnR171ZqAayyCyfcTnICzql0JWZPMTYbN9mU1SJy+EY5itNuc?=
+ =?us-ascii?Q?i9nmItjgaaMH024h0PNFgchx+z3YmT9be76Uu8Wn13DVh/r0olNDqIw6l1X6?=
+ =?us-ascii?Q?QYydDyVjIQLGnjD/KqQW7+Kas/xJgg21LxlALz//lNmxHdfzpv/FgK05WsVQ?=
+ =?us-ascii?Q?9q27gniMhrWSQr16nzHsWnqNAoE+3MsxWHqopMgNixMRlbt0/mgQQU8cYdkL?=
+ =?us-ascii?Q?Hi2UsQUzxiI1gfprO0vdi9Grb3PbqVvaqs5bX9oKRqhYOtxa7TCXiLc3QbFG?=
+ =?us-ascii?Q?R8o8eR0NUlGmcVJN/AtRhbmEjwVbUTpAYIW/abRmEl5aSnqOob4KPu55UHbQ?=
+ =?us-ascii?Q?3+21tbR+4tJqmB40JQEj1rBP8MHVLL2gK8al?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(7416014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jul 2025 03:10:00.4526
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 047b24da-5538-446d-c09a-08ddc671bfad
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000989EA.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6273
 
-Memory barriers are building blocks for concurrent code, hence provide
-a minimal set of them.
+Add example usage of reset-gpios for PCIe RP PERST#
 
-The compiler barrier, barrier(), is implemented in inline asm instead of
-using core::sync::atomic::compiler_fence() because memory models are
-different: kernel's atomics are implemented in inline asm therefore the
-compiler barrier should be implemented in inline asm as well. Also it's
-currently only public to the kernel crate until there's a reasonable
-driver usage.
+Add support for PCIe Root Port PERST# signal handling
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
----
- rust/helpers/barrier.c      | 18 +++++++++++
- rust/helpers/helpers.c      |  1 +
- rust/kernel/sync.rs         |  1 +
- rust/kernel/sync/barrier.rs | 61 +++++++++++++++++++++++++++++++++++++
- 4 files changed, 81 insertions(+)
- create mode 100644 rust/helpers/barrier.c
- create mode 100644 rust/kernel/sync/barrier.rs
+Sai Krishna Musham (2):
+  dt-bindings: PCI: amd-mdb: Add example usage of reset-gpios for PCIe
+    RP PERST#
+  PCI: amd-mdb: Add support for PCIe RP PERST# signal handling
 
-diff --git a/rust/helpers/barrier.c b/rust/helpers/barrier.c
-new file mode 100644
-index 000000000000..cdf28ce8e511
---- /dev/null
-+++ b/rust/helpers/barrier.c
-@@ -0,0 +1,18 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <asm/barrier.h>
-+
-+void rust_helper_smp_mb(void)
-+{
-+	smp_mb();
-+}
-+
-+void rust_helper_smp_wmb(void)
-+{
-+	smp_wmb();
-+}
-+
-+void rust_helper_smp_rmb(void)
-+{
-+	smp_rmb();
-+}
-diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
-index 83e89f6a68fb..8ddfc8f84e87 100644
---- a/rust/helpers/helpers.c
-+++ b/rust/helpers/helpers.c
-@@ -9,6 +9,7 @@
- 
- #include "atomic.c"
- #include "auxiliary.c"
-+#include "barrier.c"
- #include "blk.c"
- #include "bug.c"
- #include "build_assert.c"
-diff --git a/rust/kernel/sync.rs b/rust/kernel/sync.rs
-index b620027e0641..c7c0e552bafe 100644
---- a/rust/kernel/sync.rs
-+++ b/rust/kernel/sync.rs
-@@ -11,6 +11,7 @@
- 
- mod arc;
- pub mod atomic;
-+pub mod barrier;
- mod condvar;
- pub mod lock;
- mod locked_by;
-diff --git a/rust/kernel/sync/barrier.rs b/rust/kernel/sync/barrier.rs
-new file mode 100644
-index 000000000000..8f2d435fcd94
---- /dev/null
-+++ b/rust/kernel/sync/barrier.rs
-@@ -0,0 +1,61 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Memory barriers.
-+//!
-+//! These primitives have the same semantics as their C counterparts: and the precise definitions
-+//! of semantics can be found at [`LKMM`].
-+//!
-+//! [`LKMM`]: srctree/tools/memory-model/
-+
-+/// A compiler barrier.
-+///
-+/// A barrier that prevents compiler from reordering memory accesses across the barrier.
-+#[inline(always)]
-+pub(crate) fn barrier() {
-+    // By default, Rust inline asms are treated as being able to access any memory or flags, hence
-+    // it suffices as a compiler barrier.
-+    //
-+    // SAFETY: An empty asm block.
-+    unsafe { core::arch::asm!("") };
-+}
-+
-+/// A full memory barrier.
-+///
-+/// A barrier that prevents compiler and CPU from reordering memory accesses across the barrier.
-+#[inline(always)]
-+pub fn smp_mb() {
-+    if cfg!(CONFIG_SMP) {
-+        // SAFETY: `smp_mb()` is safe to call.
-+        unsafe { bindings::smp_mb() };
-+    } else {
-+        barrier();
-+    }
-+}
-+
-+/// A write-write memory barrier.
-+///
-+/// A barrier that prevents compiler and CPU from reordering memory write accesses across the
-+/// barrier.
-+#[inline(always)]
-+pub fn smp_wmb() {
-+    if cfg!(CONFIG_SMP) {
-+        // SAFETY: `smp_wmb()` is safe to call.
-+        unsafe { bindings::smp_wmb() };
-+    } else {
-+        barrier();
-+    }
-+}
-+
-+/// A read-read memory barrier.
-+///
-+/// A barrier that prevents compiler and CPU from reordering memory read accesses across the
-+/// barrier.
-+#[inline(always)]
-+pub fn smp_rmb() {
-+    if cfg!(CONFIG_SMP) {
-+        // SAFETY: `smp_rmb()` is safe to call.
-+        unsafe { bindings::smp_rmb() };
-+    } else {
-+        barrier();
-+    }
-+}
+ .../bindings/pci/amd,versal2-mdb-host.yaml    | 22 +++++++
+ drivers/pci/controller/dwc/pcie-amd-mdb.c     | 62 ++++++++++++++++++-
+ 2 files changed, 83 insertions(+), 1 deletion(-)
+
+
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
 -- 
-2.39.5 (Apple Git-154)
+2.44.1
 
 
