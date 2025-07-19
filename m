@@ -1,273 +1,241 @@
-Return-Path: <linux-kernel+bounces-737689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E6CBB0AF69
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 12:54:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBBD2B0AF6E
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 12:56:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EF5D4E6861
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 10:53:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00306564F28
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 10:56:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B4A221F01;
-	Sat, 19 Jul 2025 10:53:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BD2C238142;
+	Sat, 19 Jul 2025 10:56:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SdRgksaU"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="P4HrsYYq"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7CB2036FF
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 10:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB8E33086;
+	Sat, 19 Jul 2025 10:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752922436; cv=none; b=lFUUhYSyaJDZvToLLsGDW6b83o8KSbIZsMB8Zfsx49mjU91W0kfbeLReSNNvVPGL8JcqVUt5NdC1n9ZIAbmG/hHePZk2dU2ZzH3xYFgUM5b1IfrrTgNiVcsXyddlc6SF/FzrAV7Klghu9RB+qiiWmlAlScpXx7drUW6rFRXuik4=
+	t=1752922593; cv=none; b=NnwUHfygPPjxIxkTkzMOh43BpvcBsU+yEyl6AAgzUK9tmbKy1J8NCcIYLqAQzTNYCewfEN2UGzsdW+ruRo9aOgPzwQbOfU9zxpsKlfcFa7kPD8h5Xex2fq8Iu51++E9MIhwzj0/5Hr8HM5x+D41vsL30oQvn/d0V7wBHEvTh5ZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752922436; c=relaxed/simple;
-	bh=R68RVaZmjRSkOEe/XAUeN/NzBKTsIcCDe6z2wPq6oqc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C3gOQ+Vt9eO050ZQWZ/0nVid55NijJdSRRnNVL1L9y6mgYaoAOVtNAaOA3PAnMUhsuj1faKo/YnlakyMMMffhjod+TTjrvNodM9Drkkd86uG0n2BPh3xRtgYMlP1r1QkFlffa9x5HEje/4hG1T7o7asZAbyhYZQBIezzmUkK22A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SdRgksaU; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56J4EDS4032135
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 10:53:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=aqHtp61gi/MVVqpPkBkPz7nq
-	zj2NZMIcHn+kla2ZN4c=; b=SdRgksaU3n0/sMpQ8XUiiDYGoQ70xrm0QbQr8PDg
-	S0+acoJzMc8l4SYRgpySDuIJSlEcsc2Hwby8/Wt/hNGd90zWTuI0BQ+7oE+t49ht
-	9apLGxz83+0t7M2CAMACWcMiYuCppt0E9xdoBFGUlExRGIjTvBP6mXG2regVuHzR
-	qZu6bD8W4MID62X2DgD9kIkEIDjO6koIqjP7ry4/5SGzaLyayxxeNQXfaREoEUVQ
-	hPUFsnGMEKXZHeHrcXFxqM41p+xgeQISAbSFix/xXhW1WDcGLBO/73pKi172Zfk+
-	NMogtuaHI361nKygSHQn/MvffjIaC+BaWrXm4J6RaFdMaA==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 480459ggj4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 10:53:53 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7e2c8137662so504858085a.2
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 03:53:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752922432; x=1753527232;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aqHtp61gi/MVVqpPkBkPz7nqzj2NZMIcHn+kla2ZN4c=;
-        b=cfEG53Vwz6OKQOnqjF6vID+XhqUNPKXy8gvSnST06ra4nMuBH5A28jzTK/C9+wEvoW
-         98Sb4jLPv+j+gI6zlO3nHObKhdNFKCn6wq5wuW6yjrN5OyQAXsx7XesjhujU7KfL/sRL
-         EHxCb8Jxm5l82vfMTnyZlBzcJnGGhxHaDcNibIb6a4MMURSrLCJz1WR3wo98CJr25110
-         fLYaqrxiokvRUMjjINI3m+aXE+N27qa+OCIjXazwoRc9Wz+KQH5uSfmFCfvqSqI5Rsn8
-         MYqlE/0J4aBHgSgwhpEuAhWAsYTbyIKVy3FAFycmI7PKXIZ6ulwhX1FBQeV36tlpnw36
-         LtVg==
-X-Forwarded-Encrypted: i=1; AJvYcCVSdhaZsFE8llviaGbetv1NMJlQcdQpLKe+MYDc+ZL7az6RbDKqkDlym3+BDrGSjLHDMQDUp04gF/VQIpQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6pXfzi0lXjgnO8vVynWteYeHA7ScUgvb1RPAqNnlHu3fAnwrW
-	XKQ5xouq3CQ1qErW9CCRhQWOhqab8aI8sfbFm+KHeunPFXSu4EJn7ZzxluLK8X5E2cABA3MpH8L
-	Xrs6AiMLxECQnv67cUoowo80mkIEeZa+y5FtYIYrJy3VPGCEhL4cE5xwH2IKaSIWY1xQ=
-X-Gm-Gg: ASbGncurLiP8uCiwf86SUkCC72YkGPTif8KZsHCenaT8b82cea8hvUT8dJ7XZYvjuFO
-	uuoBP53K7GSB++h8Dny+Gn+1qLKu4g/sLl2F6IAA/9TFhYEaJ4vAuuW7ZTRJ2yHrCuqRxsphtP6
-	VNvCCTH2Cc4mCIqY2KESDthkZzkwX5YY4znI0hiHGD1e5AQjc9wAVQWPwDOtkP61XgC2hkIy8XR
-	WmgbtaooMPoIumUaiy30Ul7nV2S5vGaNgZrCyHirDHR+ibPxSUE6OGMG9ki3zaONf1FfPnoJngO
-	7XUQkHQnZvZxk9OwC9pBXvnfZ3Sb4XlyKJceiewjop1Pio9Jl9O8mr4r12sC0AaFd5Y9YjFtrqD
-	cDJtD79IGJGUo/4cy4qYgdJyuuOvrBtLF1miZLJHO0wJ68ylaS0JY
-X-Received: by 2002:a05:620a:440a:b0:7d4:49fa:3c59 with SMTP id af79cd13be357-7e34356c61bmr2239108185a.15.1752922432074;
-        Sat, 19 Jul 2025 03:53:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGPrmyV8egRcX0tplCS17IxY7fqr0+H6cJp69VeGuqF/GMP4bJno9IhBcl041AaSBLD5rosBg==
-X-Received: by 2002:a05:620a:440a:b0:7d4:49fa:3c59 with SMTP id af79cd13be357-7e34356c61bmr2239105885a.15.1752922431592;
-        Sat, 19 Jul 2025 03:53:51 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55a31a9b1b1sm677727e87.35.2025.07.19.03.53.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Jul 2025 03:53:50 -0700 (PDT)
-Date: Sat, 19 Jul 2025 13:53:47 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Chaoyi Chen <kernel@airkyi.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Yubing Zhang <yubing.zhang@rock-chips.com>,
-        Frank Wang <frank.wang@rock-chips.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Amit Sunil Dhamne <amitsd@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Chaoyi Chen <chaoyi.chen@rock-chips.com>,
-        Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>,
-        Diederik de Haas <didi.debian@cknow.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2 3/5] drm/rockchip: cdn-dp: Support handle lane info
- and HPD without extcon
-Message-ID: <t3th2tqbnkmsqssypxvye6vsfhpw37sf7wyl53cso3r5pqa7qp@gn74pj75j4pb>
-References: <20250718062619.99-1-kernel@airkyi.com>
- <20250718062619.99-4-kernel@airkyi.com>
+	s=arc-20240116; t=1752922593; c=relaxed/simple;
+	bh=8CDwXX3HzreVp6VcPV55yzgMZETSE5j2+/qjBNZKVYU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QbMDJJStegxpfMgGKPY99PbjOAgTchS9nSG+fBOAQ2mNztesihdhrUp3oGKF8xxt2S1UrWIsW2S2CoAhJx56UHz4QZh0cidnJMp5EKxUUJffuM6EUzbIFH2d8dCuoX5dcr9U3xm725EgxqGNUKlhhLbIFR5mLYHfU/fS/k2Vwx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=P4HrsYYq; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0EAF71F68D;
+	Sat, 19 Jul 2025 10:56:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1752922581;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u+V4okcQg5oev0dJo7W9WyupRbgSuk/hNGg+xMr7j5I=;
+	b=P4HrsYYqAhmsXl1kclEkZQG9JsrFGmEV54vH98kLPctV2Q6P14yJc5XQdbugAbDGEtBefU
+	2NTFBx17uTgNhAYS8OJVSkgsFIvVErk9re1JfRlxzl3+hD2o8zk2VQP0f3jLaluiueuONu
+	UVhOoySTeVWarG+s3JB/khD9TQ8H56+sC4O4tyyBtgflwXHXeD7yHuddsZI3yw1DT5EFJe
+	IzQXU1/czG/fPBdnlEg3P0GVQ2T1nxUBq2DhTojmRUGwYVA4DtjYev5rQiCtlgMJWimVu8
+	tX9GkfkKqqVB1nR3UuiircLA7AoVjiB5yBitGLYqAUEZU9V/MgefpOvQ0X7nqA==
+Date: Sat, 19 Jul 2025 12:56:16 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
+ <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
+ Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>, Marek
+ =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>, Oleksij Rempel
+ <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
+ <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
+ mwojtas@chromium.org, Antoine Tenart <atenart@kernel.org>,
+ devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Romain
+ Gantois <romain.gantois@bootlin.com>, Daniel Golle <daniel@makrotopia.org>,
+ Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+Subject: Re: [PATCH net-next v9 05/15] net: phy: dp83822: Add support for
+ phy_port representation
+Message-ID: <20250719125616.336ece14@kmaincent-XPS-13-7390>
+In-Reply-To: <20250717073020.154010-6-maxime.chevallier@bootlin.com>
+References: <20250717073020.154010-1-maxime.chevallier@bootlin.com>
+	<20250717073020.154010-6-maxime.chevallier@bootlin.com>
+Organization: bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250718062619.99-4-kernel@airkyi.com>
-X-Proofpoint-ORIG-GUID: GLC6id8MG5WRKfP8cCJNE_32EE4UZh1I
-X-Authority-Analysis: v=2.4 cv=fdyty1QF c=1 sm=1 tr=0 ts=687b7941 cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=Wb1JkmetP80A:10 a=s8YR1HE3AAAA:8 a=ady2-bcLGFUvj2b528oA:9 a=CjuIK1q_8ugA:10
- a=IoWCM6iH3mJn3m4BftBB:22 a=jGH_LyMDp9YhSvY-UuyI:22
-X-Proofpoint-GUID: GLC6id8MG5WRKfP8cCJNE_32EE4UZh1I
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE5MDEwOCBTYWx0ZWRfX181ebAdbN8sb
- 40g6bSilI1cTwfQYKVT6b9ZQNh8Nyg22uN1wYYNJJm4WV6zJOtEAoMF2/1WQDLep+XhBe5Kl5OQ
- 4XgfYVpA8MSNNHw3TbTWwnnpFCIrJ4b5fpwpk5ORZ6KHX6JOe2MxJyhN7tCOlDjVsX59A9KQPgO
- TsncgVpBnWaGejtv0Td7o5nPRLjIDT8bQ4G7U2VrawKuU1mGz3JueNvcG3AyM6iZc/lrvB/Yo0A
- ps48MWoVDMD2MSAuryzBbvcvXdDI4c9UMvSzAFGzKhliQAF8w/3uY7iwKnZm5x5x9B23wqsoYxN
- 074mEbrTDUk62gGGQUYZ+aSzdaPr5wDSvfUTWqaGI39dzAiDySrzEzxR5h+NAZ7gcWNLl/eAq1V
- XWXBIw2GBZlkjX6dUJARg3EnAvL3Gz9JrqxBLO5Sc3GMT3RPN9nKVoKZnMrUBvBuGxjcZfd+
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-19_01,2025-07-17_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 priorityscore=1501 phishscore=0 impostorscore=0
- mlxlogscore=999 mlxscore=0 spamscore=0 bulkscore=0 malwarescore=0
- lowpriorityscore=0 adultscore=0 clxscore=1015 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507190108
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeiieduhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthhqredtredtjeenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefguddtfeevtddugeevgfevtdfgvdfhtdeuleetffefffffhffgteekvdefudeiieenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgduheemfegvgeemtgehtddtmeejtggsvgemiedtieeimeeirgdufhemtggsuggunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduheemfegvgeemtgehtddtmeejtggsvgemiedtieeimeeirgdufhemtggsuggupdhhvghlohepkhhmrghinhgtvghnthdqigfrufdqudefqdejfeeltddpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeefuddprhgtphhtthhopehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtp
+ hhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhmshhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrgh
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On Fri, Jul 18, 2025 at 02:26:17PM +0800, Chaoyi Chen wrote:
-> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-> 
-> This patch add support for get PHY lane info and handle HPD state
-> without help of extcon.
-> 
-> There is no extcon needed if the Type-C controller is present. In this
-> case, cdn_dp_hpd_notify() will handle HPD event from USB/DP combo PHY,
-> and the lane info can be get from PHY instead of extcon.
+Le Thu, 17 Jul 2025 09:30:09 +0200,
+Maxime Chevallier <maxime.chevallier@bootlin.com> a =C3=A9crit :
 
-The DP AltMode driver will send drm_connector_oob_hotplug_event() to the
-DRM connector associated with the USB-C connector fwnode. However your
-DP connector will have fwnode set to the DP controller, if I'm not
-mistaken. So I doubt that HPD events are going to be delivered
-correctly.
+> With the phy_port representation intrduced, we can use .attach_port to
 
-> 
-> The extcon device should still be supported if Type-C controller is
-> not present.
-> 
-> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+*introduced
+
+As you will have to resend a new version ;)
+
+else
+Reviewed-by: Kory Maincent <kory.maincent@bootlin.com>
+
+Thank you!
+
+> populate the port information based on either the straps or the
+> ti,fiber-mode property. This allows simplifying the probe function and
+> allow users to override the strapping configuration.
+>=20
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 > ---
-> 
-> Changes in v2:
-> - Ignore duplicate HPD events.
-> 
->  drivers/gpu/drm/rockchip/cdn-dp-core.c | 37 ++++++++++++++++++++------
->  1 file changed, 29 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.c b/drivers/gpu/drm/rockchip/cdn-dp-core.c
-> index 24f6b3879f4b..b574b059b58d 100644
-> --- a/drivers/gpu/drm/rockchip/cdn-dp-core.c
-> +++ b/drivers/gpu/drm/rockchip/cdn-dp-core.c
-> @@ -156,6 +156,9 @@ static int cdn_dp_get_port_lanes(struct cdn_dp_port *port)
->  	int dptx;
->  	u8 lanes;
->  
-> +	if (!edev)
-> +		return phy_get_bus_width(port->phy);
-> +
->  	dptx = extcon_get_state(edev, EXTCON_DISP_DP);
->  	if (dptx > 0) {
->  		extcon_get_property(edev, EXTCON_DISP_DP,
-> @@ -219,7 +222,7 @@ static bool cdn_dp_check_sink_connection(struct cdn_dp_device *dp)
->  	 * some docks need more time to power up.
->  	 */
->  	while (time_before(jiffies, timeout)) {
-> -		if (!extcon_get_state(port->extcon, EXTCON_DISP_DP))
-> +		if (port->extcon && !extcon_get_state(port->extcon, EXTCON_DISP_DP))
->  			return false;
->  
->  		if (!cdn_dp_get_sink_count(dp, &sink_count))
-> @@ -385,11 +388,14 @@ static int cdn_dp_enable_phy(struct cdn_dp_device *dp, struct cdn_dp_port *port)
->  		goto err_power_on;
->  	}
->  
-> -	ret = extcon_get_property(port->extcon, EXTCON_DISP_DP,
-> -				  EXTCON_PROP_USB_TYPEC_POLARITY, &property);
-> -	if (ret) {
-> -		DRM_DEV_ERROR(dp->dev, "get property failed\n");
-> -		goto err_power_on;
-> +	property.intval = 0;
-> +	if (port->extcon) {
-> +		ret = extcon_get_property(port->extcon, EXTCON_DISP_DP,
-> +					  EXTCON_PROP_USB_TYPEC_POLARITY, &property);
-> +		if (ret) {
-> +			DRM_DEV_ERROR(dp->dev, "get property failed\n");
-> +			goto err_power_on;
-> +		}
->  	}
->  
->  	port->lanes = cdn_dp_get_port_lanes(port);
-> @@ -821,6 +827,17 @@ static int cdn_dp_audio_mute_stream(struct drm_connector *connector,
->  	return ret;
+>  drivers/net/phy/dp83822.c | 71 +++++++++++++++++++++++++--------------
+>  1 file changed, 45 insertions(+), 26 deletions(-)
+>=20
+> diff --git a/drivers/net/phy/dp83822.c b/drivers/net/phy/dp83822.c
+> index 33db21251f2e..2657be2e9034 100644
+> --- a/drivers/net/phy/dp83822.c
+> +++ b/drivers/net/phy/dp83822.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/phy.h>
+> +#include <linux/phy_port.h>
+>  #include <linux/netdevice.h>
+>  #include <linux/bitfield.h>
+> =20
+> @@ -811,17 +812,6 @@ static int dp83822_of_init(struct phy_device *phydev)
+>  	int i, ret;
+>  	u32 val;
+> =20
+> -	/* Signal detection for the PHY is only enabled if the FX_EN and the
+> -	 * SD_EN pins are strapped. Signal detection can only enabled if
+> FX_EN
+> -	 * is strapped otherwise signal detection is disabled for the PHY.
+> -	 */
+> -	if (dp83822->fx_enabled && dp83822->fx_sd_enable)
+> -		dp83822->fx_signal_det_low =3D device_property_present(dev,
+> -
+> "ti,link-loss-low");
+> -	if (!dp83822->fx_enabled)
+> -		dp83822->fx_enabled =3D device_property_present(dev,
+> -
+> "ti,fiber-mode"); -
+>  	if (!device_property_read_string(dev, "ti,gpio2-clk-out", &of_val)) {
+>  		if (strcmp(of_val, "mac-if") =3D=3D 0) {
+>  			dp83822->gpio2_clk_out =3D DP83822_CLK_SRC_MAC_IF;
+> @@ -950,6 +940,48 @@ static int dp83822_read_straps(struct phy_device *ph=
+ydev)
+>  	return 0;
 >  }
->  
-> +static void cdn_dp_hpd_notify(struct drm_bridge *bridge,
-> +			      enum drm_connector_status status)
-> +{
-> +	struct cdn_dp_device *dp = bridge_to_dp(bridge);
-> +	enum drm_connector_status last_status =
-> +		dp->connected ? connector_status_connected : connector_status_disconnected;
+> =20
+> +static int dp83822_attach_port(struct phy_device *phydev, struct phy_port
+> *port) +{
+> +	struct dp83822_private *dp83822 =3D phydev->priv;
+> +	int ret;
 > +
-> +	if (last_status != status)
-> +		schedule_work(&dp->event_work);
+> +	if (port->mediums) {
+> +		if (phy_port_is_fiber(port))
+> +			dp83822->fx_enabled =3D true;
+> +	} else {
+> +		ret =3D dp83822_read_straps(phydev);
+> +		if (ret)
+> +			return ret;
+> +
+> +#if IS_ENABLED(CONFIG_OF_MDIO)
+> +		if (dp83822->fx_enabled && dp83822->fx_sd_enable)
+> +			dp83822->fx_signal_det_low =3D
+> +				device_property_present(&phydev->mdio.dev,
+> +							"ti,link-loss-low");
+> +
+> +		/* ti,fiber-mode is still used for backwards compatibility,
+> but
+> +		 * has been replaced with the mdi node definition, see
+> +		 * ethernet-port.yaml
+> +		 */
+> +		if (!dp83822->fx_enabled)
+> +			dp83822->fx_enabled =3D
+> +				device_property_present(&phydev->mdio.dev,
+> +							"ti,fiber-mode");
+> +#endif /* CONFIG_OF_MDIO */
+> +
+> +		if (dp83822->fx_enabled) {
+> +			port->lanes =3D 1;
+> +			port->mediums =3D BIT(ETHTOOL_LINK_MEDIUM_BASEF);
+> +		} else {
+> +			/* This PHY can only to 100BaseTX max, so on 2 lanes
+> */
+> +			port->lanes =3D 2;
+> +			port->mediums =3D BIT(ETHTOOL_LINK_MEDIUM_BASET);
+> +		}
+> +	}
+> +
+> +	return 0;
 > +}
 > +
->  static const struct drm_bridge_funcs cdn_dp_bridge_funcs = {
->  	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
->  	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
-> @@ -831,6 +848,7 @@ static const struct drm_bridge_funcs cdn_dp_bridge_funcs = {
->  	.atomic_disable = cdn_dp_bridge_atomic_disable,
->  	.mode_valid = cdn_dp_bridge_mode_valid,
->  	.mode_set = cdn_dp_bridge_mode_set,
-> +	.hpd_notify = cdn_dp_hpd_notify,
->  
->  	.dp_audio_prepare = cdn_dp_audio_prepare,
->  	.dp_audio_mute_stream = cdn_dp_audio_mute_stream,
-> @@ -1028,6 +1046,9 @@ static int cdn_dp_bind(struct device *dev, struct device *master, void *data)
->  	for (i = 0; i < dp->ports; i++) {
->  		port = dp->port[i];
->  
-> +		if (!port->extcon)
-> +			continue;
-> +
->  		port->event_nb.notifier_call = cdn_dp_pd_event;
->  		ret = devm_extcon_register_notifier(dp->dev, port->extcon,
->  						    EXTCON_DISP_DP,
-> @@ -1120,14 +1141,14 @@ static int cdn_dp_probe(struct platform_device *pdev)
->  		    PTR_ERR(phy) == -EPROBE_DEFER)
->  			return -EPROBE_DEFER;
->  
-> -		if (IS_ERR(extcon) || IS_ERR(phy))
-> +		if (IS_ERR(phy) || PTR_ERR(extcon) != -ENODEV)
->  			continue;
->  
->  		port = devm_kzalloc(dev, sizeof(*port), GFP_KERNEL);
->  		if (!port)
->  			return -ENOMEM;
->  
-> -		port->extcon = extcon;
-> +		port->extcon = IS_ERR(extcon) ? NULL : extcon;
->  		port->phy = phy;
->  		port->dp = dp;
->  		port->id = i;
-> -- 
-> 2.49.0
-> 
+>  static int dp8382x_probe(struct phy_device *phydev)
+>  {
+>  	struct dp83822_private *dp83822;
+> @@ -968,27 +1000,13 @@ static int dp8382x_probe(struct phy_device *phydev)
+> =20
+>  static int dp83822_probe(struct phy_device *phydev)
+>  {
+> -	struct dp83822_private *dp83822;
+>  	int ret;
+> =20
+>  	ret =3D dp8382x_probe(phydev);
+>  	if (ret)
+>  		return ret;
+> =20
+> -	dp83822 =3D phydev->priv;
+> -
+> -	ret =3D dp83822_read_straps(phydev);
+> -	if (ret)
+> -		return ret;
+> -
+> -	ret =3D dp83822_of_init(phydev);
+> -	if (ret)
+> -		return ret;
+> -
+> -	if (dp83822->fx_enabled)
+> -		phydev->port =3D PORT_FIBRE;
+> -
+> -	return 0;
+> +	return dp83822_of_init(phydev);
+>  }
+> =20
+>  static int dp83826_probe(struct phy_device *phydev)
+> @@ -1172,6 +1190,7 @@ static int dp83822_led_hw_control_get(struct phy_de=
+vice
+> *phydev, u8 index, .led_hw_is_supported =3D dp83822_led_hw_is_supported,
+> \ .led_hw_control_set =3D dp83822_led_hw_control_set,	\
+>  		.led_hw_control_get =3D dp83822_led_hw_control_get,	\
+> +		.attach_port =3D dp83822_attach_port		\
+>  	}
+> =20
+>  #define DP83825_PHY_DRIVER(_id, _name)				\
 
--- 
-With best wishes
-Dmitry
+
+
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
