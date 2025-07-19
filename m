@@ -1,133 +1,110 @@
-Return-Path: <linux-kernel+bounces-737919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43C83B0B1ED
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 23:17:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39907B0B1EB
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 23:17:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9137A17AEF4
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 21:17:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BB1D3B9EC4
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 21:17:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4BD422D790;
-	Sat, 19 Jul 2025 21:17:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB44F21A437;
+	Sat, 19 Jul 2025 21:17:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BSjRnFtD"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UCMEkicg";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="taVGBjyM"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0CE720FAAB;
-	Sat, 19 Jul 2025 21:17:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0281148838
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 21:17:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752959865; cv=none; b=oJh/DUHNvYKbZUGID30n0tKU88cAzXLVok6iviDHKllhe+a0Z5uDvoK5CTr4ymG69a1kRpGA61oyEqotETALTw6WTKgysmXJjYJzgiMPsTUS78P0HSpNk+9mI2F2+K2cyJ6vobaiFkhHIb/8hvXjXfKVDAMLcA5ng3K1SF1W3l4=
+	t=1752959848; cv=none; b=k542O5kWwFrZXQ+GXh6UxCuJMVBVaYl/B3LAUv7IgytH3V7MA8Xl0lN2QEp9vLxKLieWxpXUGlgNPP5LJHeEl3krIplFflRIZA7w/x9uqNHIYMMBColZjUbE2qFHmn+dAtMB6pTGcUo59X8BJmVTCCSy+m5YNd5dj8tqZnp6ULE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752959865; c=relaxed/simple;
-	bh=MEp7Wf0O2C0g0O3vR40ys088xNOv/DqBtlHXQfu9wYc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Wqc4erUoItk6YN8UbW0d2w4IN73tNgxuvBKjBGFtS+s4+l1FMLzJL0CctZZ+XPHvIX28+7ESVY6iTe3T9vxQI6Mj+uDeLizUARgtdPb6/utAUguqBI+s5ZDZSHwUm0rDioX9X6jlhe2qP1ilK8r21GC1KKdHdMriR2ovID2S9u4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BSjRnFtD; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-32b595891d2so24833761fa.2;
-        Sat, 19 Jul 2025 14:17:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752959861; x=1753564661; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MEp7Wf0O2C0g0O3vR40ys088xNOv/DqBtlHXQfu9wYc=;
-        b=BSjRnFtDeBZatDWIDE3z2nXUrd+SYiG5vUvRTciMZo7W/UwiwZGZEX+B81eO3VaI4y
-         mIG8tj2Qe3aNjOrgNdVuNUhB5SdUHqk0QJI2Tq1gUUDEgz7xB/F0/D8ngEuj5DEvxelU
-         NwnuRXgAbC3EZte32S9exZv5ccg4JoxT+4HM9pwfdOUZ0ueN291DckoBrW17nU9NagoK
-         bi5iROT/hjrlLibzqUUbnHPqxfVu7CAgzOp9EnQNPgcJEvMyBIw+q4id2nDC0Tj19Uz5
-         OjLbb3qr8Y1zEFELeQjxov6zFdXdnQHPF3j6ZaY3NqDFFNsmWocRsFnlxKeRqQJrrd2L
-         WLOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752959861; x=1753564661;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MEp7Wf0O2C0g0O3vR40ys088xNOv/DqBtlHXQfu9wYc=;
-        b=mbwYCbaEsR9VtWw+Nq73+4w64rSjJ0rlc5P+UtU1ZfOjmruNWNV8Bqq189ReuOrwCl
-         jnSE3KUNwpO6QZ4wQNfDR+6Yv4Y1FTyw7lvanbVXlackw8U/gpItwoROmvCsrB7BDn3W
-         xRFvHqjaxTXgvIZw7jFKrosrzm6rIotxeeDXixbyHXqyTY1+Nv7szF1lqhxq5PTMM6IQ
-         Z8m9NhPcKCciLe9jyin8oRKwAAPOWG2hsnSgifIseSxTH6H1zSTvKLZUtrB1xxsfpnVy
-         uzg3ySRMVEdLaSw/UE2WVCkl2B0IA5NPXtVRc8II3+VkCEtiNabmvh3uojNE/V28m1li
-         0nkw==
-X-Forwarded-Encrypted: i=1; AJvYcCUW3CE7I5BZIqHRoYyRU9jCPNWgtTdKHFGW3Z1YMOB6SFXzo6IJILamLmALx610+RNIOUjQGetJQZGP@vger.kernel.org, AJvYcCVK5ir1E0uPZmsQ16kbOpBp3E6FKVOSx0dN46dKAllx+Bl8AcpwfkIFUQRgcrLOyHhd9Y+Inu5kikn62Ho=@vger.kernel.org, AJvYcCWhvVzuar4kJnjV1h5Rcl7vgt8p7NC7/cgITGs4QlTvQKrAUjCfq1/zcIoSyE4ZFDiLOCjnhO+XCpsuLj5n+NY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkBc7spWp2OaT8oazDp3MZhfe0AIRq5ul/qjtG41zMpDi0nVwS
-	Wh5rF7moDX8ciAhgY2U4AMqLgzt8wa6r3cSO6EIG24W89fv9VdBAzswwxVtLbamihbvF5IdfIX3
-	iArIibBtZM5tm8USsfCrVKFeoSRGZjlw=
-X-Gm-Gg: ASbGncs9E6fZcazQ7th7O38phs9HNvYWss8fD/yJsY6g66+J77seU67d8scjtw+mD8c
-	YeEFFYSldhEh2OItQzCzpm5Lm4BpktBgy54p2Exb5mnpUv0d5YCiRprE8MSt1i0rd0cdzrvuj9J
-	zf0BtxgzpGmG87OyQ9UAcIUlCmAH7n4NEJwwZ0Ko04/yzrmjJZrJ8x9YqDufR/Ssq2KkEzQSmLr
-	CxbxKvWFR+DH1Erq0Q7EkXq6Uz05CCAejomFAUdCA==
-X-Google-Smtp-Source: AGHT+IHXFphFe4euLN0ElLcp51Vb1Dg+FL1aRzGfRRPh7ThHYIqOXCUduLpaQKiyURhCFoKowSc4+0/F+DutBNFLH8A=
-X-Received: by 2002:a05:651c:b0e:b0:32c:bc69:e921 with SMTP id
- 38308e7fff4ca-330a7b12523mr22220551fa.9.1752959860488; Sat, 19 Jul 2025
- 14:17:40 -0700 (PDT)
+	s=arc-20240116; t=1752959848; c=relaxed/simple;
+	bh=J9eoBaDQVC0xDb6mwaI4YMmNU6lqSGRDVuceK9AR/Ok=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=djPafJuMZa9S28aWki6gsd7IZP592fTycRRg0kaElmFro5dlDpxFOiVSReO59LlQxeheEOfMvuxj7utdC85nhnmzkamDAhVUWNJfotAFI7fDEOFka5oPM/KQxY5Pl2963XXn1rA1d/CYrE/H5CAj1OUTxSneiLJ4do7nCepWLoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UCMEkicg; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=taVGBjyM; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752959844;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oFcvEnugLvV2961ov3yXEloBN8oXe/mIU9Hb11/Ub8s=;
+	b=UCMEkicgRAaJYnzgEfRr/kshTFiJNmDSuqaiklmZ3YCWBUMQ8glH9uJAleXe4tzVD1/sUV
+	sPJGhF+0BDF56tO31AFN12dEvDsDROEhUaW9Lpe4wdPIArYXgjU2Gp7FlA3MudDaXshyHO
+	ZsrH8W5OXPUV6w8cSzuQDioCiiFFrrsxhMc6E40TrQecE4xYEufdKCEUeHLgGTxRYY3nvz
+	TbOH7e2EPY8U31RGWFiYifOgt/CglO8QXKLYTjVcxmKbHFNBohvkO/ehNA/ZbGHsvQz2AZ
+	e15Vb8k3iVGtF9sXlR8t9j2OMvCIrKhnu4iuMQ1uBe0y10UUctLSDtXxDOI+OQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752959844;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oFcvEnugLvV2961ov3yXEloBN8oXe/mIU9Hb11/Ub8s=;
+	b=taVGBjyMHxwLgnAyTHFS5ZDZ4iRVx0QOFSdXB93CS7SyJJdzzzf79T++weQ7MiZAOyhuST
+	r6m49xRxciYi8vAQ==
+To: Phil Auld <pauld@redhat.com>
+Cc: Jan Kiszka <jan.kiszka@siemens.com>, Henning Schild
+ <henning.schild@siemens.com>, Peter Zijlstra <peterz@infradead.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org, Ingo Molnar
+ <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Guenter Roeck
+ <linux@roeck-us.net>, xenomai@xenomai.org, guocai.he.cn@windriver.com,
+ pauld@redhat.com
+Subject: Re: sched: Unexpected reschedule of offline CPU#2!
+In-Reply-To: <20250709134401.GA675435@lorien.usersys.redhat.com>
+References: <20190729101349.GX31381@hirez.programming.kicks-ass.net>
+ <alpine.DEB.2.21.1907291235580.1791@nanos.tec.linutronix.de>
+ <20190729104745.GA31398@hirez.programming.kicks-ass.net>
+ <20190729205059.GA1127@roeck-us.net>
+ <alpine.DEB.2.21.1908161217380.1873@nanos.tec.linutronix.de>
+ <20190816193208.GA29478@roeck-us.net>
+ <alpine.DEB.2.21.1908172219470.1923@nanos.tec.linutronix.de>
+ <20210727100018.19d61165@md1za8fc.ad001.siemens.net>
+ <745f219e-1593-4fbd-fa7f-1719ef6f444d@siemens.com> <8734mg92pt.ffs@tglx>
+ <20250709134401.GA675435@lorien.usersys.redhat.com>
+Date: Sat, 19 Jul 2025 23:17:23 +0200
+Message-ID: <87frervq1o.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709-list-no-offset-v4-0-a429e75840a9@gmail.com>
- <20250709-list-no-offset-v4-6-a429e75840a9@gmail.com> <CANiq72kvYuoSSOruDQiEo5ppSDvtxSzQ4R6rxdN9RBkucBRuew@mail.gmail.com>
-In-Reply-To: <CANiq72kvYuoSSOruDQiEo5ppSDvtxSzQ4R6rxdN9RBkucBRuew@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Sat, 19 Jul 2025 17:17:04 -0400
-X-Gm-Features: Ac12FXzLIC8GWNX3bHP_PQS6NeSoHlnrb73ILutus--5bbT5RNqMTwdClHIjArk
-Message-ID: <CAJ-ks9mJN37GZOr=fAN18yV+X4q+8Ah0qSQkOa23dRqg79_AOQ@mail.gmail.com>
-Subject: Re: [PATCH v4 6/6] rust: list: remove OFFSET constants
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Sat, Jul 19, 2025 at 5:09=E2=80=AFPM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
+On Wed, Jul 09 2025 at 09:44, Phil Auld wrote:
+> Hi Thomas,
 >
-> On Wed, Jul 9, 2025 at 9:31=E2=80=AFPM Tamir Duberstein <tamird@gmail.com=
-> wrote:
-> >
-> > -/// Declares that this type has a `ListLinks<ID>` field at a fixed off=
-set.
-> > +/// Declares that this type has a [`ListLinks<ID>`] field.
+> On Tue, Sep 03, 2024 at 05:27:58PM +0200 Thomas Gleixner wrote:
+>> On Tue, Jul 27 2021 at 10:46, Jan Kiszka wrote:
+>> 
+>> Picking up this dead thread again.
 >
-> I was applying this series the other day, and I noticed these
-> doc-related changes in the patch, which are appreciated (I think you
-> did it to make it consistent with the other lines you were adding with
-> intra-doc links), but I think in general it is better to clean those
-> separately in a patch first.
+> Necro-ing this again...
 >
-> I am mentioning it because the docs do not build due to those --
-> please check the `rustdoc` target for patches, especially if it is a
-> non-trivial change.
+> I keep getting occasional reports of this case. Unfortunately
+> though, I've never been able to reproduce it myself.
 >
-> I also did another change to make the examples (in the other patch)
-> build with the minimum Rust version. It is good to test that too,
-> since sometimes that can slip, especially as the window of versions
-> grow.
->
-> Anyway, the examples/series here caught another issue with a previous
-> patch, so that is good news :)
->
-> Thanks!
->
-> Cheers,
-> Miguel
+> Did the below patch ever go anywhere?
 
-Thanks Miguel, will do in the future!
-Tamir
+Nope. Guocai said it does not work and I have no reproducer either to
+actually look at it deeper and there was further debug data provided.
+
+> It seems to be stable in my testing with the addition of
+> an "extern" in asm/cpu.h to get it to build.
+
+I don't see why it wouldn't be stable, but as it does not seem to solve
+the issue merging it as is does not make sense.
+
+Thanks,
+
+        tglx
 
