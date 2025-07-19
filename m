@@ -1,205 +1,163 @@
-Return-Path: <linux-kernel+bounces-737713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EF7BB0AFAB
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 14:07:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8144B0AFAD
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 14:08:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AB7856363F
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 12:07:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 728FE1AA4B9D
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 12:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A318224227;
-	Sat, 19 Jul 2025 12:07:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39073226D1E;
+	Sat, 19 Jul 2025 12:08:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AOfutDMa"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bH1NxzHq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE2512629C
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 12:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1DE2629C;
+	Sat, 19 Jul 2025 12:08:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752926819; cv=none; b=QO36iuzDR3w9g4j2L/uP2kJdQ7UFJ75sTu8uQj6a5o78YmbDVygMTNHzJaz2xbrOJIZ0aRFkprumKwPC7cpQn3at7zx2M4dTNn5ySo3+Qvfqebh1hOG/51s0geX44yRhJVzmSVEICKC/dwGa52+RvV7wACV/P3andeggaWcCstc=
+	t=1752926931; cv=none; b=l4k16igSWLnZ4Vanv4MmfFFCRPnRKNqbgV7Y0LyCrajXkcEQvO11z8a7B4lwr0kobYZWp5m7uWyuwJmxz5WOWxqnOtwXcWAqSUZ4pxSyroW6fpzkTssfjM05QYKLqwOhn/dZjUvxrSHuNkVHEhoR/dZ+10HFMeB4ExPf7ylxGH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752926819; c=relaxed/simple;
-	bh=6HqLQG94GQj/P6oUjeWS2sn51kqJobq3VqK4DTDTAs4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=mZW3valIGwy69xUg70ue+bF2uu8hk32uYAfVmLqDgE09uJeXl0HRW2Cr5vEvcnfZUDrc6pnLscRGhPYvMfa1I0Z1J6hOgI+gcPykevcOsuFDE+rFEpofrMTsCKt4oHoOLTPDOVbEZ2rj/BGvFTH1ViTgZXG5oRtEmf4KL8wFNYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AOfutDMa; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a6d1369d4eso1754456f8f.2
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 05:06:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752926816; x=1753531616; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SAYxuxbarDVKTOv5KTcPmqdU578ljPfscuxrv251wl8=;
-        b=AOfutDMawsh6eI27mEEWfCkfmpobRykTo4/JgZdZY41Qb9F8pVwnuXu9g1im17oTl7
-         2Rm3oXUgW39m5tm6cvinyFBocyLhxDf6ZwYcEDSYLFqVW5mMJAymqM0lzBbuqz6GcGQn
-         GRS/skD7EWELtVxxJ1zD+WvecdRAATyMgmJKCzVW7D39whMjTdd5CwaBkE7YUgyqbloU
-         gSKpx+vILkjJd0Hh6r183ajEuFYhONqLyEGea5YKkokJN8wMp2dPJuPbE0CCsl04C0bh
-         vHKRiXnVZYQt+ETdaV8Xk7Mg0WPpLMNWXNVxW1DW2Z2u+iNMMJSZvOcEZHVPJr7vyQpA
-         BPjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752926816; x=1753531616;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SAYxuxbarDVKTOv5KTcPmqdU578ljPfscuxrv251wl8=;
-        b=P5zKekKpHk1V0wHl3/CzFPU9UMqcK5gGMje7KUOFd3m/m6wuC5i2X7ZZRHbLI7fTRQ
-         fu+F2B693VsgfMAiBDd1kIqZ1bMVKfsxuNXgiDaCNXaxZrRKjhbHAQKp9eeu6qZpBbQH
-         BT8F5GEpv0K5RuEEF3ZIRDh+X/aqwfH8tpS2pAF0ox/SUF8vfdXl/n2imIXTgcinK1tV
-         ViyfzJJZPte66EoardPhoYvq+KtQe31f+cIF9uVSzCXeS/7sqSzrQENVsqhA5LHHk4w5
-         JeZ6T7U60yBNmFO81QNuSX3GG6hZIQsXsBnDQE+V0pZ2cj/wnYDK4jLgWrApgTiIky40
-         NsNQ==
-X-Gm-Message-State: AOJu0YxUFjc+t9bYVreuTqLaUQ60WMwEVTVIbAsLqex9ihBOud+uaRE3
-	Dtn7ToAwNa0Fq5/mi/UhUciWbJWKD8fxXWEEIsw/8jMGM73grdMYnJuf
-X-Gm-Gg: ASbGncvRy27FzK/Tu8imqDlrtJ6xVd9YHdd9oA670miT3NyqQWUgCULSchxxw3LoJw5
-	u0vOnbltrexsT0flfyDi2X2RMEuiILHJ0PGxo9neKKiGWpvEtuNSAy6HhnEvj5vfP1OcBnWfwTs
-	wHUAs2/oL2wVDfKAzdx9ctFY823FGlQ22KpCzSPK1VkzLF10oY5LZOVVAGEsXP/hfa9skZZUlbB
-	yLnFhKvk6BteKV2y6eDvrfl0fOJQRCoFPSQVxBwvLXIYge2IUj06qNQsl/IBGwhpxIo7vqCrY9/
-	dfb24o4vIh5wKTU3yLOwBOAriAmWUP+SvF9nFfkKe9jb1UUHtvcsQqjtBFoLLP83UNzZLsdTpvK
-	B6iPypAWen3VDcJ5lbxF+7R53QiBYvD1Op9wlXSZagbb+08t83Pk=
-X-Google-Smtp-Source: AGHT+IFLdTuYjVFtB4WcOmac/pGDIhuVUnjQRk2cKqBAlO+EeqLEYXAwpa1uN2KYem4Bij1+GuQ4pQ==
-X-Received: by 2002:a05:6000:2811:b0:3a5:8565:44d1 with SMTP id ffacd0b85a97d-3b60dd78e32mr8146812f8f.25.1752926815752;
-        Sat, 19 Jul 2025 05:06:55 -0700 (PDT)
-Received: from [192.168.0.253] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b61ca48970sm4681883f8f.57.2025.07.19.05.06.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Jul 2025 05:06:55 -0700 (PDT)
-From: Gabor Juhos <j4g8y7@gmail.com>
-Date: Sat, 19 Jul 2025 14:06:48 +0200
-Subject: [PATCH] mtd: expose ooblayout information via sysfs
+	s=arc-20240116; t=1752926931; c=relaxed/simple;
+	bh=V6+7/IxV8vU8dpSJuED/i3OjmTkW9aA8vLRVkWmQLMs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uthm3EtdOIRBoqk0zmE6nrw9ZeSV3CYouLTW0qTgwjYVfRO4HpEtBA416uncqO676MvajNSVKLPmwtBKdossOJ9Ac8a3ePhp/iV3Ynz8IN0+FQG98cQ1VDbPaEXCctfcj8HWp+gUWvyDJMPm7THXmSESStAfdXY4ATIS75Gw4Yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bH1NxzHq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCFE4C4CEE3;
+	Sat, 19 Jul 2025 12:08:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752926931;
+	bh=V6+7/IxV8vU8dpSJuED/i3OjmTkW9aA8vLRVkWmQLMs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bH1NxzHqP9JcpLV7DL5umzHTTksAeo/AyyEDcvE4mvLTMzdAtESfyqhCz1TU4L4a4
+	 LHFOf1Z9dvHxzcPU01wNmlavrY3T/JzYesl6UhgQVm9A39b2pYLao4LsJAV8kbQxZb
+	 DwGb7h1lzUIfXSJLdsTS2q2G1Deoz9rFIRoms0dlrQugTXvCqE9N2u/Ggm+NBxjrjb
+	 J6oi1mi4VQRIuAjcv/vY/9+ye1F6XBqSNlXHjiAhFPeTnqYUEskX30Kg8XlsVEcHbO
+	 vnPdx6ou19EcvbJE00kFLvcam9D9vVsJSAA3iT9x2LB8x/YLE6lxF/gktx3a0G2fN+
+	 XMBnR/lDfgcAg==
+Date: Sat, 19 Jul 2025 13:08:44 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: Jonathan Santos <Jonathan.Santos@analog.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, lars@metafoo.de,
+ Michael.Hennerich@analog.com, dlechner@baylibre.com, nuno.sa@analog.com,
+ andy@kernel.org, jonath4nns@gmail.com
+Subject: Re: [PATCH] iio: adc: ad7768-1: disable IRQ autoenable
+Message-ID: <20250719130844.7559e322@jic23-huawei>
+In-Reply-To: <5llfgo2wifyi43zj24rv7ph5gebevcszrxl3hp3yc3ibaglcr3@fqdejauv6rmo>
+References: <20250718013307.153281-1-Jonathan.Santos@analog.com>
+	<5llfgo2wifyi43zj24rv7ph5gebevcszrxl3hp3yc3ibaglcr3@fqdejauv6rmo>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250719-mtd-ooblayout-sysfs-v1-1-e0d68d872e17@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAFeKe2gC/x3MQQ5AMBBA0avIrE2ihOIqYlFMmQSVDkLE3TWWb
- /H/A0KeSaCOHvB0srBbA1QcQT+ZdSTkIRjSJM0TrSpc9gGd62Zzu2NHucUKam1skasu01kJodw
- 8Wb7+a9O+7wciHUjSZQAAAA==
-X-Change-ID: 20250719-mtd-ooblayout-sysfs-77af651b3738
-To: Miquel Raynal <miquel.raynal@bootlin.com>, 
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org, 
- Gabor Juhos <j4g8y7@gmail.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Add two new sysfs device attributes which allows to determine the OOB
-layout used by a given MTD device. This can be useful to verify the
-current layout during driver development without adding extra debug
-code. The exposed information also makes it easier to analyze NAND
-dumps without the need of cravling out the layout from the driver code.
+On Fri, 18 Jul 2025 10:18:56 +0100
+Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
 
-The content of the new sysfs files is similar to this:
+> On Thu, Jul 17, 2025 at 10:33:07PM -0300, Jonathan Santos wrote:
+> > The device continuously converts data while powered up, generating
+> > interrupts in the background. Configure the IRQ to be enabled and
+> > disabled manually as needed to avoid unnecessary CPU load.
 
-    # cat /sys/class/mtd/mtd0/ooblayout_ecc
-    0      0   49
-    1     65   63
-    # cat /sys/class/mtd/mtd0/ooblayout_free
-    0     49   16
+This generates interrupts continuously even when in oneshot mode?
 
-Also update the ABI documentation about the new attributes.
+> >=20
+> > Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
+> > --- =20
+>=20
+> LGTM,
+>=20
+> Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+>=20
+> >  drivers/iio/adc/ad7768-1.c | 18 +++++++++++++++++-
+> >  1 file changed, 17 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/iio/adc/ad7768-1.c b/drivers/iio/adc/ad7768-1.c
+> > index a2e061f0cb08..3eea03c004c3 100644
+> > --- a/drivers/iio/adc/ad7768-1.c
+> > +++ b/drivers/iio/adc/ad7768-1.c
+> > @@ -395,8 +395,10 @@ static int ad7768_scan_direct(struct iio_dev *indi=
+o_dev)
+> >  	if (ret < 0)
+> >  		return ret;
+> > =20
+> > +	enable_irq(st->spi->irq);
 
-Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
----
- Documentation/ABI/testing/sysfs-class-mtd | 14 +++++++++++
- drivers/mtd/mtdcore.c                     | 40 +++++++++++++++++++++++++++++++
- 2 files changed, 54 insertions(+)
+Looks racey to me in a number of ways.
 
-diff --git a/Documentation/ABI/testing/sysfs-class-mtd b/Documentation/ABI/testing/sysfs-class-mtd
-index f77fa4f6d46571175b156113a1afeeb9f5f51c0f..fd3000b9cc7aee4ea9069d1869f310fefa24f97a 100644
---- a/Documentation/ABI/testing/sysfs-class-mtd
-+++ b/Documentation/ABI/testing/sysfs-class-mtd
-@@ -240,3 +240,17 @@ Contact:	linux-mtd@lists.infradead.org
- Description:
- 		Number of bytes available for a client to place data into
- 		the out of band area.
-+
-+What:		/sys/class/mtd/mtdX/ooblayout_ecc
-+What:		/sys/class/mtd/mtdX/ooblayout_free
-+Date:		July 2025
-+KernelVersion:	6.17
-+Contact:	linux-mtd@lists.infradead.org
-+Description:
-+		Newline separated list of the regions in the out of band area.
-+
-+		Each line contains three decimal numbers separated by spaces.
-+		The first number indicates the index of the region. The second
-+		number describes the starting offset within the out of band
-+		area. The last number specifies the amount of bytes available
-+		in the region.
-diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
-index 429d8c16baf045e6a030e309ce0fb1cbec669098..552d12f749e43b7d9abb07e0235a3ef2d2a98546 100644
---- a/drivers/mtd/mtdcore.c
-+++ b/drivers/mtd/mtdcore.c
-@@ -254,6 +254,44 @@ static ssize_t mtd_oobavail_show(struct device *dev,
- }
- MTD_DEVICE_ATTR_RO(oobavail);
- 
-+static ssize_t mtd_ooblayout_show(struct device *dev,
-+				  struct device_attribute *attr, char *buf,
-+				  int (*iter)(struct mtd_info *, int section,
-+					      struct mtd_oob_region *region))
-+{
-+	struct mtd_info *mtd = dev_get_drvdata(dev);
-+	ssize_t size = 0;
-+	int section;
-+
-+	for (section = 0;; section++) {
-+		struct mtd_oob_region region;
-+		int err;
-+
-+		err = iter(mtd, section, &region);
-+		if (err)
-+			break;
-+
-+		size += sysfs_emit_at(buf, size, "%-3d %4u %4u\n", section,
-+				      region.offset, region.length);
-+	}
-+
-+	return size;
-+}
-+
-+static ssize_t mtd_ooblayout_ecc_show(struct device *dev,
-+				      struct device_attribute *attr, char *buf)
-+{
-+	return mtd_ooblayout_show(dev, attr, buf, mtd_ooblayout_ecc);
-+}
-+MTD_DEVICE_ATTR_RO(ooblayout_ecc);
-+
-+static ssize_t mtd_ooblayout_free_show(struct device *dev,
-+				       struct device_attribute *attr, char *buf)
-+{
-+	return mtd_ooblayout_show(dev, attr, buf, mtd_ooblayout_free);
-+}
-+MTD_DEVICE_ATTR_RO(ooblayout_free);
-+
- static ssize_t mtd_numeraseregions_show(struct device *dev,
- 		struct device_attribute *attr, char *buf)
- {
-@@ -366,6 +404,8 @@ static struct attribute *mtd_attrs[] = {
- 	&dev_attr_subpagesize.attr,
- 	&dev_attr_oobsize.attr,
- 	&dev_attr_oobavail.attr,
-+	&dev_attr_ooblayout_ecc.attr,
-+	&dev_attr_ooblayout_free.attr,
- 	&dev_attr_numeraseregions.attr,
- 	&dev_attr_name.attr,
- 	&dev_attr_ecc_strength.attr,
+Before this patch:
+In continuous mode, reinit_completion called then interrupt before we enter
+ oneshot mode. What was captured?=20
 
----
-base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
-change-id: 20250719-mtd-ooblayout-sysfs-77af651b3738
+After this patch
+Oneshot mode starts - hardware interrupt happens but enable_irq() is not set
+so we miss it - or do we get another pulse later?
 
-Best regards,
--- 
-Gabor Juhos <j4g8y7@gmail.com>
+I'm not sure how to solve this as a device generating a stream of garbage
+interrupts is near impossible to deal with.
+
+I'm not following the datasheet description of this features vs the code=20
+though. It refers to oneshot mode requiring a pulse on sync in which I can't
+find.
+
+> >  	ret =3D wait_for_completion_timeout(&st->completion,
+> >  					  msecs_to_jiffies(1000));
+> > +	disable_irq(st->spi->irq);
+> >  	if (!ret)
+> >  		return -ETIMEDOUT;
+> > =20
+> > @@ -1130,7 +1132,21 @@ static const struct iio_buffer_setup_ops ad7768_=
+buffer_ops =3D {
+> >  	.predisable =3D &ad7768_buffer_predisable,
+> >  };
+> > =20
+> > +static int ad7768_set_trigger_state(struct iio_trigger *trig, bool ena=
+ble)
+> > +{
+> > +	struct iio_dev *indio_dev =3D iio_trigger_get_drvdata(trig);
+> > +	struct ad7768_state *st =3D iio_priv(indio_dev);
+> > +
+> > +	if (enable)
+> > +		enable_irq(st->spi->irq);
+> > +	else
+> > +		disable_irq(st->spi->irq);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  static const struct iio_trigger_ops ad7768_trigger_ops =3D {
+> > +	.set_trigger_state =3D ad7768_set_trigger_state,
+> >  	.validate_device =3D iio_trigger_validate_own_device,
+> >  };
+> > =20
+> > @@ -1417,7 +1433,7 @@ static int ad7768_probe(struct spi_device *spi)
+> > =20
+> >  	ret =3D devm_request_irq(&spi->dev, spi->irq,
+> >  			       &ad7768_interrupt,
+> > -			       IRQF_TRIGGER_RISING | IRQF_ONESHOT,
+> > +			       IRQF_TRIGGER_RISING | IRQF_NO_AUTOEN,
+
+Why drop oneshot?
+
+> >  			       indio_dev->name, indio_dev);
+> >  	if (ret)
+> >  		return ret;
+> >=20
+> > base-commit: 0a686b9c4f847dc21346df8e56d5b119918fefef
+> > --=20
+> > 2.34.1
+> >  =20
+>=20
 
 
