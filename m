@@ -1,55 +1,54 @@
-Return-Path: <linux-kernel+bounces-737606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B37CCB0AE4E
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 08:52:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 266A3B0AE50
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 08:57:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FD241899C47
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 06:53:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C93C17F56A
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 06:57:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D11D22F75B;
-	Sat, 19 Jul 2025 06:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95EF522E40F;
+	Sat, 19 Jul 2025 06:56:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="xKbO697j"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="v6f7DdJK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B33E421B18B;
-	Sat, 19 Jul 2025 06:52:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A5513AD3F;
+	Sat, 19 Jul 2025 06:56:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752907965; cv=none; b=GtagsNOEqY2n+jaMpFUEvdzU/ev/wH5DI7Wtt89e6EHqYgLrUugcbg+PKHLgEJ5dGso2cFk5g5wHLh/L96NomTOgszfedyXWWkHVT88/nNjhIkbPLXoUKaajAIslPnIbcbjnskMiLzjydSdALpiulN9Igev/ehprk5zKKMcaqsE=
+	t=1752908213; cv=none; b=M+sLl1gKGlAvsfp8ZRjpVt+3G/MfLbt0w+OBBX6UHZNdIaN/XirgWxAxgErutASquVO3snPq3U7shV2MGp0vZxKM2bafir8TNiiQr0KZQlCa7GaHt+C8w1q6kX055o7X58QcxDbNi5s+1D+BwODmehRzv970uBMwmvGlv51UKOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752907965; c=relaxed/simple;
-	bh=6OH2X3Wst3e0vy94IdDlrw8pEvX7FDKjFs7Y/qkgnGA=;
+	s=arc-20240116; t=1752908213; c=relaxed/simple;
+	bh=r6bw3423e8YmtqggTsK4AedE2im5LHqew1In59FP+cM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iR1tO3V0DCKrJUv/OwbqUopLhS0y70sFi4zXFmVqxGa/1vkRaLozZc6mrQCGbx1Au2ayrA4TBzgvH62IelkZNe9KGIXRsnugLUx1hV/Q2VxXqhtIyP6qHbHAojmVd3fVGLh//1aaYFJEX0B4asCOGnsoOe6t/Mt07UINQfHZZCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=xKbO697j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D7EAC4CEE3;
-	Sat, 19 Jul 2025 06:52:44 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=CdqWOBllK9dCyJ/u3sl9lj+Nvl495zlvx/uUdIZmlKA2GyL/Hjj7E5r+S5+Sf6MT6dGbJk18bDVnuZK73W8o1YhY/FKjiecg8oPe6MYJvT3Oul0sVRct87CXwKpUe3APba2C1T26+cBTrhgyYV0Y3XXcr1r1SjbGuzdZ1Vvs7KM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=v6f7DdJK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 046F2C4CEE3;
+	Sat, 19 Jul 2025 06:56:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752907965;
-	bh=6OH2X3Wst3e0vy94IdDlrw8pEvX7FDKjFs7Y/qkgnGA=;
+	s=korg; t=1752908212;
+	bh=r6bw3423e8YmtqggTsK4AedE2im5LHqew1In59FP+cM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=xKbO697jatzdRrok3rYuTBbyv8uR0uNOxEioC1xrZuTZJNDfY9ulx1P0yONafeWyS
-	 AQntVtchLzGHw9/6TbYdhlZFHgCGrMFLVe22um6xdMjrqZ5867cidTVu/m90RtpCV5
-	 ZbC3nSzJqX3/m1/V4xxVP6s321IisGi081KQRfis=
-Date: Sat, 19 Jul 2025 08:52:41 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: x86@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org, linux-mips@vger.kernel.org,
-	loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
-	linux-sh@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/7] syscore: Pass context data to callbacks
-Message-ID: <2025071919-patience-cattishly-cf7c@gregkh>
-References: <20250717103241.2806798-1-thierry.reding@gmail.com>
- <2025071716-phoney-object-1648@gregkh>
- <rzbzah5iigz25jtxyqadnitkzkazxsaxntajhlfrfdslyioevk@pylcjkfh5n42>
+	b=v6f7DdJKgdJuivI7S1S/mCg1pPwsQ8aB7Cu34YiEF3mykd67v0WUibsLotqpEP3TM
+	 cLOWc3VvGSR5aXI2wsTYDv0uw6F/TrGknofh05Ow7XQ5+S8J9mTIVJLApOesyWwQ7A
+	 nu82/yCcF1IoeXR2KyPdhsERK/6i9LnKTaTop5AA=
+Date: Sat, 19 Jul 2025 08:56:49 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Tao Xue <xuetao09@huawei.com>
+Cc: Thinh.Nguyen@synopsys.com, prashanth.k@oss.qualcomm.com,
+	m.grzeschik@pengutronix.de, Chris.Wulff@biamp.com,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	caiyadong@huawei.com, suzhuangluan@hisilicon.com,
+	weiwenwen3@huawei.com
+Subject: Re: [PATCH] usb: gadget : fix use-after-free in
+ composite_dev_cleanup()
+Message-ID: <2025071946-dilation-elongated-b68f@gregkh>
+References: <20250719045612.10739-1-xuetao09@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,113 +57,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <rzbzah5iigz25jtxyqadnitkzkazxsaxntajhlfrfdslyioevk@pylcjkfh5n42>
+In-Reply-To: <20250719045612.10739-1-xuetao09@huawei.com>
 
-On Fri, Jul 18, 2025 at 03:49:37PM +0200, Thierry Reding wrote:
-> On Thu, Jul 17, 2025 at 02:11:41PM +0200, Greg Kroah-Hartman wrote:
-> > On Thu, Jul 17, 2025 at 12:32:34PM +0200, Thierry Reding wrote:
-> > > From: Thierry Reding <treding@nvidia.com>
-> > > 
-> > > Hi,
-> > > 
-> > > Something that's been bugging me over the years is how some drivers have
-> > > had to adopt file-scoped variables to pass data into something like the
-> > > syscore operations. This is often harmless, but usually leads to drivers
-> > > not being able to deal with multiple instances, or additional frameworks
-> > > or data structures needing to be created to handle multiple instances.
-> > > 
-> > > This series proposes to "objectify" struct syscore_ops by passing a
-> > > pointer to struct syscore_ops to the syscore callbacks. Implementations
-> > > of these callbacks can then make use of container_of() to get access to
-> > > contextual data that struct syscore_ops was embedded in. This elegantly
-> > > avoids the need for file-scoped, singleton variables, by tying syscore
-> > > to individual instances.
-> > > 
-> > > Patch 1 contains the bulk of these changes. It's fairly intrusive
-> > > because it does the conversion of the function signature all in one
-> > > patch. An alternative would've been to introduce new callbacks such that
-> > > these changes could be staged in. However, the amount of changes here
-> > > are not quite numerous enough to justify that, in my opinion, and
-> > > syscore isn't very frequently used, so the risk of another user getting
-> > > added while this is merged is rather small. All in all I think merging
-> > > this in one go is the simplest way.
-> > 
-> > All at once is good, I like the idea, but:
-> > 
-> > > Patches 2-7 are conversions of some existing drivers to take advantage
-> > > of this new parameter and tie the code to per-instance data.
-> > 
-> > That's great, but none of these conversions actually get rid of the
-> > global structure, so what actually was helped here other than the churn
-> > of this "potentially" allowing the global data variables from being
-> > removed in the future?
-> > 
-> > So how does this actually help?
+On Sat, Jul 19, 2025 at 12:56:12PM +0800, Tao Xue wrote:
+> The pointer cdev->os_desc_req need to be set null when kmalloc failed in
+> composite_os_desc_req_prepare(),otherwise the use-after-free issue will
+> be encountered in composite_dev_cleanup()
 > 
-> Thanks for pointing this out and letting me look at it again. Most of
-> these actually do get rid of the global data variables. The MIPS patch
-> doesn't because I forgot, but the __alchemy_pci_ctx is no longer used
-> after the patch (except where it's initialized to the ctx variable, but
-> that's no longer needed now). I've updated that patch.
+> BUG: KASAN: use-after-free in composite_dev_cleanup+0xf4/0x2c0
+> Read of size 8 at addr 0000004827837a00 by task init/1
 > 
-> The Ingenic TCU patch gets rid of it, and so do the clk/mvebu and
-> irq-imx-gpcv2 patches. The two exceptions where it wasn't possible to
-> get rid of the global data variables are mvebu-mbus and Tegra PMC, in
-> both cases because there is other functionality that relies on the
-> global variable. The bits that make it very difficult to remove these
-> entirely is that they export functions that are called without context
-> from other parts of code.
+> CPU: 10 PID: 1 Comm: init Tainted: G           O      5.10.97-oh #1
+>  kasan_report+0x188/0x1cc
+>  __asan_load8+0xb4/0xbc
+>  composite_dev_cleanup+0xf4/0x2c0
+>  configfs_composite_bind+0x210/0x7ac
+>  udc_bind_to_driver+0xb4/0x1ec
+>  usb_gadget_probe_driver+0xec/0x21c
+>  gadget_dev_desc_UDC_store+0x264/0x27c
+> 
+> Fixes: 37a3a533429e ("usb: gadget: OS Feature Descriptors support")
+> Signed-off-by: Tao Xue <xuetao09@huawei.com>
+> Signed-off-by: weiwenwen <weiwenwen3@huawei.com>
 
-Ah, I must have looked at the wrong examples in the patch series, sorry.
+The order of signed-off-by is odd here.  And I need a "full" name for
+the last one please.
 
-> I have a fairly large series on top of this that converts the Tegra PMC
-> driver to move away from this as much as possible. It's not possible to
-> do on 32-bit ARM because there is some low-level CPU code that needs to
-> call into this function. However, the goal is to at least make the PMC
-> driver data completely instance-specific on 64-bit ARM so that we can
-> support multiple instances eventually.
+> ---
+>  drivers/usb/gadget/composite.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Maybe something similar could be done for mvebu-bus, but I'm not sure
-> it's worth it. Typically for these cases you need some form of context
-> in order to replace the global data. On Tegra we do have that in many
-> cases (via DT phandle references), but I'm not familiar enough with
-> mvebu to know if something similar exists.
-> 
-> My goal with this series is to get this a bit more established so that
-> people don't use the lack of context in syscore as an excuse for not
-> properly encapsulating things. These usually tend to go hand in hand,
-> where people end up using a global data variable for syscore and since
-> they can't get around that one, they keep using it for a bunch of other
-> shortcuts.
+> diff --git a/drivers/usb/gadget/composite.c b/drivers/usb/gadget/composite.c
+> index 8dbc132a505e..385398a039ea 100644
+> --- a/drivers/usb/gadget/composite.c
+> +++ b/drivers/usb/gadget/composite.c
+> @@ -2489,6 +2489,7 @@ int composite_os_desc_req_prepare(struct usb_composite_dev *cdev,
+>  	if (!cdev->os_desc_req->buf) {
+>  		ret = -ENOMEM;
+>  		usb_ep_free_request(ep0, cdev->os_desc_req);
+> +		cdev->os_desc_req = NULL;
 
-I agree, I overall like this change, just expected to see more global
-structures being able to be removed.
-
-> > Also, small nit, make the function pointers const please :)
-> 
-> I originally tried that. Unfortunately, the struct syscore_ops contains
-> a struct list_head to add it to the global list of structures. I suppose
-> I could move the function pointers into a different structure and make
-> pointers to that const, something like this:
-> 
-> 	struct syscore;
-> 
-> 	struct syscore_ops {
-> 		int (*suspend)(struct syscore *syscore);
-> 		void (*resume)(struct syscore *syscore);
-> 		void (*shutdown)(struct syscore *syscore);
-> 	};
-> 
-> 	struct syscore {
-> 		const struct syscore_ops *ops;
-> 		struct list_head node;
-> 	};
-> 
-> Is that what you had in mind?
-
-I missed the list_head, so yes, this would be better, but don't pass
-back the syscore structure, how about just a void * instead, making the
-whole container_of() stuff go away?
+Can you add a comment here as to why you need to set this to NULL, as it
+is not obvious at all.
 
 thanks,
 
