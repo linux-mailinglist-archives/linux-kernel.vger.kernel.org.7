@@ -1,117 +1,147 @@
-Return-Path: <linux-kernel+bounces-737642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9C7DB0AED0
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 10:38:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25EAAB0AEC0
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 10:32:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 352444E478B
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 08:37:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F04421C22005
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 08:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA681238C08;
-	Sat, 19 Jul 2025 08:37:35 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 796E4239E98;
+	Sat, 19 Jul 2025 08:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iWJM010U"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6AF23534D;
-	Sat, 19 Jul 2025 08:37:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E4B9230BEC;
+	Sat, 19 Jul 2025 08:31:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752914255; cv=none; b=LwudzPtJF5JHJ5gxfw8leqUsTUqJfqYRmflRVDyVX3J53Zfocp4K6BJ3eZGRfkURXnfzXPjjAciNsI7/efEWA6t9IAXtZP/NacTL2eHZyrGRhnBd4LGwXEbt/ASY9dIqLTLg6+E1PUwCFCV3W49FG1FYSOum3APHMnnhpiHjx1k=
+	t=1752913900; cv=none; b=SYGPyR7b6GuiqFAb5hjwoRaSeyQX4hybtCegHvotoR+XCeNtxMadMcck2HjmuU7DTxvOgBlziKmRHvPEDPnc9Jwgzh5A04bkVChzfekzb1Uriu70gB7k4tY1yXBLMyLrHHml2QAdIn4kT5FXIs7HZS5ftiKJz2MQr9QzyCZXjdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752914255; c=relaxed/simple;
-	bh=p7bpIvZCIm0RHjrxeNtvLnmg5tVr/XRCGk0rMkfZ0qQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=G+6O2WnK8iQ2ck56Zxf6ba3WJAlyqFkLFUuh9LrDSSe9jWfBflYnOjrtmEQBe1g7F8hIncGnWuHr/GrV7eP1Zpxy8jkU6YX8KoDCi6fQu59S5tEyBwClIxp5JqvBPWFEeCdkcOYL+Qaf6yHcFVrshfJepMOv7oQd4gdw6/dwJyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bkg5T1RwRzKHMgc;
-	Sat, 19 Jul 2025 16:37:33 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id CFDA81A0DDB;
-	Sat, 19 Jul 2025 16:37:31 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgBHERJIWXtorEYVAw--.20439S7;
-	Sat, 19 Jul 2025 16:37:31 +0800 (CST)
-From: linan666@huaweicloud.com
-To: song@kernel.org,
-	yukuai3@huawei.com,
-	martin.petersen@oracle.com,
-	hare@suse.de,
-	axboe@kernel.dk
-Cc: linux-raid@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bvanassche@acm.org,
-	hch@infradead.org,
-	filipe.c.maia@gmail.com,
-	linan666@huaweicloud.com,
-	yangerkun@huawei.com,
-	yi.zhang@huawei.com
-Subject: [PATCH v2 3/3] md: Fix the return value of mddev_stack_new_rdev
-Date: Sat, 19 Jul 2025 16:31:19 +0800
-Message-Id: <20250719083119.1068811-4-linan666@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250719083119.1068811-1-linan666@huaweicloud.com>
-References: <20250719083119.1068811-1-linan666@huaweicloud.com>
+	s=arc-20240116; t=1752913900; c=relaxed/simple;
+	bh=p/4tHwIU5J+HL1pupPVCrwBPj9rwctf3mYnTChrWMOw=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=NEIAGK1cuoDjLtMNUfiv41uWMeSx8DT3eGBqVcCWFNe6w+D8QxWk5o/BoFnkrRvuzbKKVHHBWksiZZBbUgF5xX+zrUpTl6+4msnD3AOa4PyVvxbGbQZ+pNaTyEiOBTdRjTGVP9AUu3VGJnq3bR25VMy3vZzrHM1kXNxri3VwxqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iWJM010U; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:Subject:From:To:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=vM5C1L9nTY4BtLK1GnGkd6DJjdD1eYDCS+ci1UjSURE=; b=iWJM010UbLNSLkIBn+GaoZ+gv7
+	IwunvaYz3n0gKBh/0OiKVoyOuDc3R5fqZvAGQDSoPxth6Gni/EHB/ff468fPFIiDRrAVk0s1oUHJl
+	C4iSPUTbHsOJP4+1IOrqfeL9d5CWDA0a4TkeQdCzD+V3TX/Z2CDjOsvlLPubC9fIwSskauhMEDFEH
+	qa5VJkHoXT3OFIvWT3ZgWkLvXKD+lOIYRIZds+yzsDamTLSw7+CB8QOBbVibpbgLQKSaMOkCSuep3
+	B4DcvOjcLpS2Ic6f+xusVKQV9vMJ0dEy//VZ+lEFtEzw1wl5KxzMPtGKbrBlKlJzZtcjud5KQq5O8
+	sbAi8Ucw==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ud2ym-0000000E2Yp-3Mxg;
+	Sat, 19 Jul 2025 08:31:36 +0000
+Message-ID: <571ac74b-f632-44f3-ae62-730717bf4465@infradead.org>
+Date: Sat, 19 Jul 2025 01:31:36 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Masahiro Yamada <masahiroy@kernel.org>,
+ Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Shankari Anand <shankari.ak0208@gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: [BUG linux-next] nconfig: uncleared lines of text on help screens
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBHERJIWXtorEYVAw--.20439S7
-X-Coremail-Antispam: 1UD129KBjvdXoWruFyDZF43Gr45Kw4kKF1Dtrb_yoWftwc_CF
-	sYvFy0grykCF97Zw15Z3yxZryDJw1kWanrXF12gryfZFW3Xrn5GFy8C343W3yrC3y3AryU
-	KrsF9aySvw4akjkaLaAFLSUrUUUU1b8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbNkFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUWwA2048vs2IY02
-	0Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xv
-	wVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UM2
-	8EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2kK
-	e7AKxVWUXVWUAwAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc
-	02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAF
-	wI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4
-	CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kIc2xKxwAKzVCY07xG64k0F24lc7CjxVAa
-	w2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4c8EcI0En4kS14v26r1Y6r17MxAqzxv26x
-	kF7I0En4kS14v26r4a6rW5MxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_
-	Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x
-	0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWx
-	JVW8Jr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMI
-	IF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjTRA_-BDUUU
-	U
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-From: Li Nan <linan122@huawei.com>
 
-In mddev_stack_new_rdev(), if the integrity profile check fails, it
-returns -ENXIO, which means "No such device or address". This is
-inaccurate and can mislead users. Change it to return -EINVAL.
+If I revert
+  commit 1b92b18ec419
+  Author: Shankari Anand <shankari.ak0208@gmail.com>
+  Date:   Thu Jun 26 00:36:54 2025 +0530
+    kconfig: nconf: Ensure null termination where strncpy is used
 
-Fixes: c6e56cf6b2e7 ("block: move integrity information into queue_limits")
-Signed-off-by: Li Nan <linan122@huawei.com>
----
- drivers/md/md.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+this problem goes away.
 
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index ad8d44493c0f..f2dfe0a72c51 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -5920,7 +5920,7 @@ int mddev_stack_new_rdev(struct mddev *mddev, struct md_rdev *rdev)
- 		pr_err("%s: incompatible integrity profile for %pg\n",
- 		       mdname(mddev), rdev->bdev);
- 		queue_limits_cancel_update(mddev->gendisk->queue);
--		return -ENXIO;
-+		return -EINVAL;
- 	}
- 
- 	return queue_limits_commit_update(mddev->gendisk->queue, &lim);
+When using F1, F2, or F3 (Help, SymInfo, or Help 2), short lines
+of text are not cleared (blanked, space-filled).
+
+Example F1:
+
+  ┌── Global help ───────────────────────────────────────────────────────────┐
+ ┌│                                                                          │┐
+ ││ Help windows                                                             ││
+ ││ ------------                                                             ││
+ ││ o  Global help:  Unless in a data entry window, pressing <F1> will give `││
+ ││    you the global help window, which you are just reading.F1> will give `││
+ ││    you the global help window, which you are just reading.F1> will give `││
+ ││ o  A short version of the global help is available by pressing <F3>.ive `││
+ ││ o  A short version of the global help is available by pressing <F3>.ive `││
+ ││ o  Local help:  To get help related to the current menu entry, use anye `││
+ ││    of <?> <h>, or if in a data entry window then press <F1>.y, use anye `││
+ ││    of <?> <h>, or if in a data entry window then press <F1>.y, use anye `││
+ ││    of <?> <h>, or if in a data entry window then press <F1>.y, use anye `││
+ ││ Menu entries>, or if in a data entry window then press <F1>.y, use anye `││
+ ││ ------------>, or if in a data entry window then press <F1>.y, use anye `││
+ ││ This interface lets you select features and parameters for the kernelye `││
+ ││ build.  Kernel features can either be built-in, modularized, or removed.`││
+ ││ Parameters must be entered as text or decimal or hexadecimal numbers.ed.`││
+ ││ Parameters must be entered as text or decimal or hexadecimal numbers.ed.`││
+ ││ Menu entries beginning with following braces represent features that.ed.`
+
+
+Example F2:
+
+     ┌── Sysfs syscall support ──────────────────────────────────────────┐
+ ┌── │                                                                   │────┐
+ │   │ CONFIG_SYSFS_SYSCALL:                                             │    │
+ │ [*│ CONFIG_SYSFS_SYSCALL:                                             │    │
+ │ [ │ sys_sysfs is an obsolete system call no longer supported in libc. │    │
+ │ [*│ Note that disabling this option is more secure but might breakbc. │    │
+ │   │ compatibility with some systems.is more secure but might breakbc. │    │
+ │ [ │ compatibility with some systems.is more secure but might breakbc. │    │
+ │ [*│ If unsure say N here.me systems.is more secure but might breakbc. │    │
+ │ < │ If unsure say N here.me systems.is more secure but might breakbc. │    │
+ │ [*│ Symbol: SYSFS_SYSCALL [=n]stems.is more secure but might breakbc. │    │
+ │ -*│ Type  : boolS_SYSCALL [=n]stems.is more secure but might breakbc. │    │
+ │ -*│ Defined at init/Kconfig:1600ems.is more secure but might breakbc. │    │
+ │ [*│   Prompt: Sysfs syscall support.is more secure but might breakbc. │    │
+ │ [ │   Location:ysfs syscall support.is more secure but might breakbc. │    │
+ │ [*│     -> General setupall support.is more secure but might breakbc. │    │
+ │ [ │       -> Sysfs syscall support (SYSFS_SYSCALL [=n])might breakbc. │    │
+ │ -*│       -> Sysfs syscall support (SYSFS_SYSCALL [=n])might breakbc. │    │
+ │ [ │       -> Sysfs syscall support (SYSFS_SYSCALL [=n])might breakbc.
+
+
+Example F3:
+
+ ┌──┌── Short help ────────────────────────────────────────────────────────┐──┐
+ │  │                                                                      │  │
+ │ [│ Legend:  [*] built-in  [ ] excluded  <M> module  < > module capable. │  │
+ │ [│ Submenus are designated by a trailing "--->", empty ones by "----".. │  │
+ │ [│ Submenus are designated by a trailing "--->", empty ones by "----".. │  │
+ │  │ Use the following keys to navigate the menus: empty ones by "----".. │  │
+ │ [│ Move up or down with <Up> or <Down>.he menus: empty ones by "----".. │  │
+ │ [│ Enter a submenu with <Enter> or <Right>.enus: empty ones by "----".. │  │
+ │ <│ Exit a submenu to its parent menu with <Esc> or <Left>.s by "----".. │  │
+ │ [│ Pressing <y> includes, <n> excludes, <m> modularizes features.---".. │  │
+ │ -│ Pressing <Space> cycles through the available options.eatures.---".. │  │
+ │ -│ To search for menu entries press </>.vailable options.eatures.---".. │  │
+ │ [│ <Esc> always leaves the current window.ilable options.eatures.---".. │  │
+ │ [│ <Esc> always leaves the current window.ilable options.eatures.---".. │  │
+ │ [│ Pressing <1> may be used instead of <F1>, <2> instead of <F2>, etc.. │  │
+ │ [│ For verbose global help press <F1>. <F1>, <2> instead of <F2>, etc.. │  │
+ │ -│ For help related to the current menu entry press <?> or <h>.>, etc.. 
+
 -- 
-2.39.2
+~Randy
 
 
