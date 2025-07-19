@@ -1,66 +1,65 @@
-Return-Path: <linux-kernel+bounces-737743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71E5CB0B003
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 14:49:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB56FB0B006
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 14:49:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E384CAA4904
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 12:48:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8B9B176B90
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 12:49:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D310828689B;
-	Sat, 19 Jul 2025 12:49:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228E3287277;
+	Sat, 19 Jul 2025 12:49:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T2TIAbnc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AgZK+PhL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35FC81862A;
-	Sat, 19 Jul 2025 12:48:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64B3626B973;
+	Sat, 19 Jul 2025 12:49:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752929340; cv=none; b=LMPyZF5tAgOBetsGcFn0ZMyfRXWykZHvbmgSPUqM7fz38GTnmrEH+uBK49BZ2QZR3JVumwg2GDNgfu6ZsQInhrfpfOXnEruGfrzZavm1yG1Mevave9MhG7a5s6OZfeHyDIVwEdaCMlxOIHQjZEhm+Rbjz+RHl55tDxC9ieeDg+Y=
+	t=1752929351; cv=none; b=TvBAP8H7oaYdcOpK/sCRmeGXPKsp5RbDNNxKoLRG6JoibBcGxnU3xZ3F86nQhnbCAEi5N1UOL3lb8fPkbMUn3Rw5m1j+nqi8M3w6E6gkL8KutX3KaAUWI4ydSVIN0CGfCSrAgJPqxazLc23N3CqhYIjMvM4hmVSa8xdvaau7NHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752929340; c=relaxed/simple;
-	bh=5SM3JjfwPbAzhO4EKz+cDoOsvzGPzduC3NBRmt8QUZA=;
+	s=arc-20240116; t=1752929351; c=relaxed/simple;
+	bh=JhG4cUlhKgYFQz3cgZNnjli9ESfpxaxEnJSPQZbW0Ig=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oJHT5dDVnzh7e6aJAwY5BeoehWG2rDVyG68iaro16JsL6gO+y2jVUnijDSf08B7KWSmjOKDBSc92uu+4qGgCfzZLsACu+detIaueYtwCWdlySYE6FLWMWwwj68k7CrTJonEQBfAn7UA/lFSGW42pRoj1GrTEhNn3wydqqjEULwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T2TIAbnc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75471C4CEE7;
-	Sat, 19 Jul 2025 12:48:56 +0000 (UTC)
+	 MIME-Version:Content-Type; b=RH1PQHDE7QcO1esQMgVUCEFvCaOJmUmXWG7Vcv3QuWvl3RmivX1rmbw1atrrQlsfk6yv5yEgz9/5JM56PWDSGqSH03u91fQJTorx2dpVGu8Hf+ZetSMSATc9b8maFKHNbgcZLPwdsUoLr4BemR35wbBxKlbXF8lVvjDshTAuRAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AgZK+PhL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCECCC4CEE3;
+	Sat, 19 Jul 2025 12:49:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752929339;
-	bh=5SM3JjfwPbAzhO4EKz+cDoOsvzGPzduC3NBRmt8QUZA=;
+	s=k20201202; t=1752929350;
+	bh=JhG4cUlhKgYFQz3cgZNnjli9ESfpxaxEnJSPQZbW0Ig=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=T2TIAbnc9yVX5tqWvu1WyvfhEBGfcitOaJBAgRSppOkNESHgPzUwuhAArFTG9UqHM
-	 Mu6fDoXbtqyepEITcgChTu68lB5qs2fXx7pc9tn0/8pIEg6VjMrpO9aE+WtQZ8vgNB
-	 aq6ZHW1I5UWt7p2pcTVWbpNHVW+QIebPZJ54B8mJmfJtHzikoh/3+T9jE8GmAO2N1J
-	 eL+ecZb6vHpA4ZE/o3/4SVONdt7+eN8DTpuS0x4bsV+cQOgoTEgSphWGpLZo8x6TLS
-	 IRk53G+3q7lRdGjPWBhmKRiyifryP46VzOZMAoRGL4LRLBcthsiuYttacgE0Nat6YK
-	 b4e1mHn8o1Ocg==
+	b=AgZK+PhL9KcwBlBqF6apnlNa9jTsn3quUdEnM1NNxcGjj7WCF1J3z92e4dN0sAC0j
+	 e/O5xo//Jx5pfrivRhHvDCqY/xFbG5X5Ff/uzMnBg5lMOjGBFCSHXTWDwAIBz/LgM+
+	 pAlyV8aNhc5OMFxT/tLpFMP2Zo46Lx6SKS7YCOyPAmL6n3m2H+LU80WB6g8NRbzQIr
+	 HZX1JMS4SoTk7FcMYFGlsc7e4OZv78ZlfKL4KbV7fg/X1cBQK9LC7M+H9YK9GMAEM3
+	 Fu/6O2P8t2eRnWbq5WWkDY2nFtssRp3/AQu4qgAvEVtePejIGNaDdv+iNgloeF7wii
+	 CZ68vIUfIdtXw==
 From: Sven Peter <sven@kernel.org>
-To: Srinivas Kandagatla <srini@kernel.org>,
+To: Janne Grunau <j@jannau.net>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Janne Grunau <j@jannau.net>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>,
-	Hector Martin <marcan@marcan.st>,
-	Sven Peter <sven@kernel.org>
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Sasha Finkelstein <fnkl.kernel@gmail.com>,
+	Nick Chan <towinchenmi@gmail.com>
+Cc: Sven Peter <sven@kernel.org>,
 	asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: (subset) [PATCH 0/2] Extend nvmem patternProperties and then fix W=1 warnings in Apple dts
-Date: Sat, 19 Jul 2025 14:48:39 +0200
-Message-Id: <175292930369.11148.3364795405585687646.b4-ty@kernel.org>
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: dts: apple: t8012-j132: Include touchbar framebuffer node
+Date: Sat, 19 Jul 2025 14:48:40 +0200
+Message-Id: <175292930372.11148.7080198294186970764.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250610-nvmem-bit-pattern-v1-0-55ed5c1b369c@kernel.org>
-References: <20250610-nvmem-bit-pattern-v1-0-55ed5c1b369c@kernel.org>
+In-Reply-To: <20250620-j132-fb-v2-1-65f100182085@gmail.com>
+References: <20250620-j132-fb-v2-1-65f100182085@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,21 +69,16 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Tue, 10 Jun 2025 17:17:33 +0000, Sven Peter wrote:
-> This brief series fixes a W=1 warning recently introduced with the Apple
-> Silicon PMIC NVMEM nodes. We have cells that are the same bytes but a
-> different bit offset and these currently result in the same node name.
-> The legcy layout already allows to specify the bit offset in the name as
-> a suffix but this isn't possible in the new fixed-layout.
-> Thus first adjust the fixed-layout cell patternProperties to the same pattern
-> as the legacy one and then fix the node names in our device tree files.
+On Fri, 20 Jun 2025 18:35:36 +0800, Nick Chan wrote:
+> Apple T2 MacBookPro15,2 (j132) has a touchbar so include the framebuffer
+> node.
 > 
-> [...]
+> 
 
 Applied to git@github.com:AsahiLinux/linux.git (asahi-soc/for-next), thanks!
 
-[2/2] arm64: dts: apple: Add bit offset to PMIC NVMEM node names
-      https://github.com/AsahiLinux/linux/commit/a622259af9eb
+[1/1] arm64: dts: apple: t8012-j132: Include touchbar framebuffer node
+      https://github.com/AsahiLinux/linux/commit/d1cf32949f9d
 
 Best regards,
 -- 
