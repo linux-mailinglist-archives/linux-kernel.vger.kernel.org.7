@@ -1,163 +1,125 @@
-Return-Path: <linux-kernel+bounces-737692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44D34B0AF72
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 12:59:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12ACFB0AF76
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 13:06:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0C9B3A478B
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 10:59:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3D837B340A
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 11:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B02C23536B;
-	Sat, 19 Jul 2025 10:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PoiwaSL0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD7B9221F01;
+	Sat, 19 Jul 2025 11:06:44 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7BDF221FCD;
-	Sat, 19 Jul 2025 10:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C09A186A
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 11:06:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752922779; cv=none; b=b6jR2AGUnpoC4s6cn41o80HGKN7bfR0JCKO1bCA2cF96dIvQ6N7/Oj+bGtgcV6SBeSgLzmbb77wt4m4B3MVsNVQFf7oZaqjTNUh4E3MfyI+WmHOg6V2gYUsnVwTrDRc3oU8WS/KY6x0ASgcw6zHAK8hHRtGjURZeoLVYuho07XA=
+	t=1752923204; cv=none; b=S2/0R81emPkk9uCQ3JIv+oCw2pLsy+OCQCrN53BvCQISwEsP4LciKKIoVxPkDb5LaPGbVCo2cNovl2wwesHLYiz+Udy9ON08/kw153Oi+850ocwECcw40mm2bthJ5gZD3V812knmG7AfRiRsjRuoLPvyIUNAlTAG43Xogq1Xerc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752922779; c=relaxed/simple;
-	bh=0Z9uacVG6TvX12qae+8okbz7XM8Pza7grx3UtvRkaFs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PHVL664juu/eUkDLBm9OwmzYR9Xuwmihj6Oh8DduIBwgif8etmD7NOgI9PaAlA2ytYkynLvKrVT9nJswfAgVbeEJaUA3XRHoFMN4IPPR94YmPbAC0XZcnjB+DC/ScMIgfIRh8EfkV/NIXRrQP/8yb1yN+3XtJdEIDpyo3huyPhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PoiwaSL0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAE1AC4CEE3;
-	Sat, 19 Jul 2025 10:59:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752922777;
-	bh=0Z9uacVG6TvX12qae+8okbz7XM8Pza7grx3UtvRkaFs=;
-	h=From:To:Cc:Subject:Date:From;
-	b=PoiwaSL0wf0IsKK/7gXktWBJ7pqT0mqRluhA12xcx3mWTNT94Pe5NlVZywopBkiBk
-	 2IHCtOyomkFEr8/6Akg0jKCsrw+yEfpZ3U7jpQ5dBmiQWd74Vrf+6iv2f6D9/I4Y58
-	 xUTwF2BMx7japfgOSsWn0Qr4lBA7vENbbVXC4n4W3QfHqdWmcN+FEfQA1sSdr7Cp7O
-	 /pjAvPooIX70wMsYC+FdoZJKd69NyvE4XAg1BhU3Mw4dZAXWPkiO444GX0GOlVH0vC
-	 uQq2Vx8pzRoj26w3Bgk2yIdhuSOoXQRR9RibOiPWONOQoMStRmO3AEw6Il5hhiZc5D
-	 PtvoEEeHdZdYg==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs fixes
-Date: Sat, 19 Jul 2025 12:59:10 +0200
-Message-ID: <20250719-vfs-fixes-6414760dc851@brauner>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1752923204; c=relaxed/simple;
+	bh=Jqhyf5esafdVrs77vQ9Ygodm/F+YvqsIVtp1zk1cwPA=;
+	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=dse8jRCHjGtLOmaqGMTqaVjYtW4gjbvBStEZDUDYgh1Zbb9I3vWLHSPIpM4B/9JyYM1XwoVpDl0jT6kHcInPY2BGvBpSihYpkzRa+F9r39eKcgsHY1t5zjPqKtbokgCaFsX//D7t91K6b3Yr1122Hz0Y//mhbOV05ggde+chpns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bkkKK2DQYz2gKdp;
+	Sat, 19 Jul 2025 19:03:01 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0BE5A1A0188;
+	Sat, 19 Jul 2025 19:05:40 +0800 (CST)
+Received: from kwepemn500004.china.huawei.com (7.202.194.145) by
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 19 Jul 2025 19:05:39 +0800
+Received: from [10.67.120.218] (10.67.120.218) by
+ kwepemn500004.china.huawei.com (7.202.194.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 19 Jul 2025 19:05:39 +0800
+Subject: Re: [PATCH v2 1/3] coresight: tmc: Add missing doc of
+ tmc_drvdata::reading
+To: Leo Yan <leo.yan@arm.com>
+References: <20250620075412.952934-1-hejunhao3@huawei.com>
+ <20250620075412.952934-2-hejunhao3@huawei.com>
+ <20250702152720.GA794930@e132581.arm.com>
+CC: <anshuman.khandual@arm.com>, <coresight@lists.linaro.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linuxarm@huawei.com>, <jonathan.cameron@huawei.com>,
+	<yangyicong@huawei.com>, <prime.zeng@hisilicon.com>
+From: hejunhao <hejunhao3@huawei.com>
+Message-ID: <41ddbd02-f2a5-f287-5096-90a420aee441@huawei.com>
+Date: Sat, 19 Jul 2025 19:05:30 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3043; i=brauner@kernel.org; h=from:subject:message-id; bh=0Z9uacVG6TvX12qae+8okbz7XM8Pza7grx3UtvRkaFs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRUVzX/Fy6VXsmqG+p47E3Xy+KEzrA9aTVz+LzEPX7k6 In79dh1lLIwiHExyIopsji0m4TLLeep2GyUqQEzh5UJZAgDF6cATKRTkuF/TXmbrWjy4ls2R0M2 zi9fLFt3Z9+P76k1Vr++lC1+MP/sE0aGJZeEq+2DJ54Tmz9X3GKeUGwgIzfvhr8JF2v+XFuqV/G FEQA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250702152720.GA794930@e132581.arm.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemn500004.china.huawei.com (7.202.194.145)
 
-Hey Linus,
 
-/* Summary */
+On 2025/7/2 23:27, Leo Yan wrote:
+> On Fri, Jun 20, 2025 at 03:54:10PM +0800, Junhao He wrote:
+>> From: Yicong Yang <yangyicong@hisilicon.com>
+>>
+>> tmc_drvdata::reading is used to indicate whether a reading process
+>> is performed through /dev/xyz.tmc. Document it.
+>>
+>> Reviewed-by: James Clark <james.clark@linaro.org>
+>> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
+>> Signed-off-by: Junhao He <hejunhao3@huawei.com>
+>> ---
+>>   drivers/hwtracing/coresight/coresight-tmc.h | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
+>> index 6541a27a018e..3ca0d40c580d 100644
+>> --- a/drivers/hwtracing/coresight/coresight-tmc.h
+>> +++ b/drivers/hwtracing/coresight/coresight-tmc.h
+>> @@ -220,6 +220,7 @@ struct tmc_resrv_buf {
+>>    * @pid:	Process ID of the process that owns the session that is using
+>>    *		this component. For example this would be the pid of the Perf
+>>    *		process.
+>> + * @reading:	buffer's in the reading through "/dev/xyz.tmc" entry
+> Are you working on the latest code base? For example, the mainline
+> kernel or coresight next branch.
+> The latest code already has comment for reading, and I saw a duplicated
+> "reading" field in tmc_drvdata.
 
-This contains a few fixes for this cycle:
+This patch is based on mainline kernel v6.16-rc1, and adds a comment to 
+struct tmc_drvdata::reading.
+Perhaps, this git log could easily be misunderstood as adding comments 
+to tmc_resrv_buf::reading.
 
-- Fix a memory leak in fcntl_dirnotify().
+> The tmc_resrv_buf structure does not have the fields "pid",
+> "stop_on_flush", "buf", etc. They have been moved into the tmc_drvdata
+> structure.
+>
+> Thanks,
+> Leo
+>
+>>    * @stop_on_flush: Stop on flush trigger user configuration.
+>>    * @buf:	Snapshot of the trace data for ETF/ETB.
+>>    * @etr_buf:	details of buffer used in TMC-ETR
+>> -- 
+>> 2.33.0
+>>
+> _______________________________________________
+> CoreSight mailing list -- coresight@lists.linaro.org
+> To unsubscribe send an email to coresight-leave@lists.linaro.org
+> .
+>
 
-- Raise SB_I_NOEXEC on secrement superblock instead of messing with
-  flags on the mount.
-
-- Add fsdevel and block mailing lists to uio entry. We had a few
-  instances were very questionable stuff was added without either block
-  or the VFS being aware of it.
-
-- Fix netfs copy-to-cache so that it performs collection with ceph+fscache.
-
-- Fix netfs race between cache write completion and ALL_QUEUED being set.
-
-- Verify the inode mode when loading entries from disk in isofs.
-
-- Avoid state_lock in iomap_set_range_uptodate().
-
-- Fix PIDFD_INFO_COREDUMP check in PIDFD_GET_INFO ioctl.
-
-- Fix the incorrect return value in __cachefiles_write().
-
-/* Testing */
-
-gcc (Debian 14.2.0-19) 14.2.0
-Debian clang version 19.1.7 (3)
-
-No build failures or warnings were observed.
-
-/* Conflicts */
-
-Merge conflicts with mainline
-=============================
-
-No known conflicts.
-
-Merge conflicts with other trees
-================================
-
-No known conflicts.
-
-The following changes since commit d7b8f8e20813f0179d8ef519541a3527e7661d3a:
-
-  Linux 6.16-rc5 (2025-07-06 14:10:26 -0700)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.16-rc7.fixes
-
-for you to fetch changes up to a88cddaaa3bf7445357a79a5c351c6b6d6f95b7d:
-
-  MAINTAINERS: add block and fsdevel lists to iov_iter (2025-07-16 14:46:53 +0200)
-
-Please consider pulling these changes from the signed vfs-6.16-rc7.fixes tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.16-rc7.fixes
-
-----------------------------------------------------------------
-Al Viro (1):
-      fix a leak in fcntl_dirnotify()
-
-Christian Brauner (3):
-      secretmem: use SB_I_NOEXEC
-      Merge patch series "netfs: Fix use of fscache with ceph"
-      MAINTAINERS: add block and fsdevel lists to iov_iter
-
-David Howells (2):
-      netfs: Fix copy-to-cache so that it performs collection with ceph+fscache
-      netfs: Fix race between cache write completion and ALL_QUEUED being set
-
-Jan Kara (1):
-      isofs: Verify inode mode when loading from disk
-
-Jinliang Zheng (1):
-      iomap: avoid unnecessary ifs_set_range_uptodate() with locks
-
-Laura Brehm (1):
-      coredump: fix PIDFD_INFO_COREDUMP ioctl check
-
-Zizhi Wo (1):
-      cachefiles: Fix the incorrect return value in __cachefiles_write()
-
- MAINTAINERS                  |  2 ++
- fs/cachefiles/io.c           |  2 --
- fs/cachefiles/ondemand.c     |  4 +---
- fs/iomap/buffered-io.c       |  3 +++
- fs/isofs/inode.c             |  9 ++++++++-
- fs/netfs/read_pgpriv2.c      |  5 +++++
- fs/notify/dnotify/dnotify.c  |  8 ++++----
- fs/pidfs.c                   |  2 +-
- include/trace/events/netfs.h | 30 ++++++++++++++++++++++++++++++
- mm/secretmem.c               | 13 +++++++++----
- 10 files changed, 63 insertions(+), 15 deletions(-)
 
