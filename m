@@ -1,109 +1,202 @@
-Return-Path: <linux-kernel+bounces-737804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B510BB0B0BD
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 17:51:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6425B0B0BF
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 17:52:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FFC93AC3BF
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 15:51:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AAFB1AA46BB
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 15:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4F17270548;
-	Sat, 19 Jul 2025 15:51:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B105A2882C2;
+	Sat, 19 Jul 2025 15:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hpHkZsfT"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O4f8Z14i"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 598452AE97
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 15:51:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961DC1EB3D;
+	Sat, 19 Jul 2025 15:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752940311; cv=none; b=OwvUtGr9TH/h5dVA7oXouhrhGuRga9uFkFMuR3dK3i98UxldYZee1sK6fZ6ugZ3Rtez8jMOIyR/5OvZAJjUtErr5gCy8VH6BIHEt2wWtq6BE5WETHxoWG0toGQCTfpeZXl0Z6hh8Xm7Zqf6XRe/bH88rhHNi9rlVbqL6+gswJnI=
+	t=1752940342; cv=none; b=OXK/XLf933WLixd7CUB3DslDtQX1Wue6sEncSCuAJfclL5fcuAFhymac+TopL2VGkEwIiO+ThwjvmiHdQ5jwnAT9ZhwBLmhuPr7PB9a7+Az61K21yIfzSsE+2QP1KYdgTxIOatHB9vNdxiB/5rakyC+EQ+2LemkPnxwmgM3A854=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752940311; c=relaxed/simple;
-	bh=xUyLwvuX8RrIJBwb9nywYEnmo/FKy04yCsP85ts1BQc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MwF2lzKjotIW/t5+0vcpeAajLXLes1ZZfuZ7gsFKv5XkqpXWFt3BSlAmJdr50Z/rK2wvdkKdR2gR/VbCSOnMcueVmYAqljADkAKjz3w7vVDJVsfu3NM3FIwLYBJmqgZWz2+dgQWxe3RsxbfONm2X4Y2AizEzxwo4tPBr40YJbgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hpHkZsfT; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-32b7cf56cacso28494001fa.1
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 08:51:49 -0700 (PDT)
+	s=arc-20240116; t=1752940342; c=relaxed/simple;
+	bh=cin655EQGH7FsjcGWRKN7CQ3dY5XGKAhN0J9RkHwm8Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=qHnHtKW2s2/SRnSVkaIOfBdrcbexlmGvLH2Tw0lm8gKjLBip9yuP0wd/erpkhRiQc1IgrxlY5dHxGBe8+Yf3IzQOEEqCDZxas9JaBhrKKhzNKSI0bX6YEJEUycctNpKshvWSpapQWGuxJWC9L+dnvGXYt3Kjc0RUqDSSkKM3d74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O4f8Z14i; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7e182e4171bso326306185a.3;
+        Sat, 19 Jul 2025 08:52:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752940307; x=1753545107; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xUyLwvuX8RrIJBwb9nywYEnmo/FKy04yCsP85ts1BQc=;
-        b=hpHkZsfTqpAK1DtqNxy0JrcoZEEoKU/yllwvDC8UhO3GAeHoRS+NvKKsQYc3MREaTr
-         AiGa+4bSpQcH6B/Xxfz/A6ERh3XMOc1PfnXAyeItk9aRFH+HxT85kcBxA35pg8IGnQ7F
-         1M+Dp2LB5WubjwOjj5TCPpiCjH5eeRsLgEu72gjvowb1FWwIOtzsGuuZ0dnzpnWqI7QS
-         wwmq9lt70FDWU7rC23mZGeWO/d/2785hEdL4K8bVhAOHXm1njOMgXING5RIZGtzTqiW1
-         QOnAU8MT3nNIq7hSRMppds8a4icHksONZwNkylzN/GfEjZovD60M1R8rWdT1CA/RsVdM
-         9Zog==
+        d=gmail.com; s=20230601; t=1752940339; x=1753545139; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nNgvgnp9VW65TFUHyeSpqBiDH6x3REnx6kZhnFLQurA=;
+        b=O4f8Z14igGBe0oQDq+G5cN77P0wWSylhVkSbZDopXrnqv/4memzgZJkqquGbhFwunq
+         MWFTryiSOcmLqZJADg5CsTjW/ngYhzd531ZFl02POySIVRx8kDjhMwb9meEjpcAr9NeH
+         u353gfolQ4QnFHC44BBt/OmCcbu5PyUh/NMBzLmb0vmtPHUsZmSSenxYOpAnmEOaeDdC
+         CDbA71kVyqfJUrdkN6cy4/SFaHC54s6WOclYRdCuVMe10okSS8mAvRzLfwDSYC04B0rr
+         y1NAnFPgbzrTK4+33iEn6PSbRooVn3U3UpKb+Nn3DINypW04vrxRKdrh2wqtjmSTCpFw
+         8sjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752940307; x=1753545107;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xUyLwvuX8RrIJBwb9nywYEnmo/FKy04yCsP85ts1BQc=;
-        b=gq89g2qVNRlJJzX7Zp1HxCrPYjh9szWAep3/DIB91Bm84dfU/6LCt8SL1cSoX7vDRe
-         ScQL9ujc9qc/xRpHcj/4JhftNXB1qiOIY6h3fl6WYg0U69tK39hxfsRa4LiTzkzVvxxD
-         4mPFA2LZYQo1aQa7GvoMw35COzeKTz1CvoH+nvAMIBGRP6pgPkcICMcCIxTx8cS5rWC7
-         CUmLBpGVkcO42DiIZnGGkz3of7+aR8w2HM8rB6OHwQaHDS2Yby9k0r42cQQsn13bS9+N
-         EcGsndo4SlLCJwqUMzNeSlV93+j7RfvNBrGm6zLfaHq2o7FE1wQD6x1lTlqlcnDkk4/u
-         msPg==
-X-Forwarded-Encrypted: i=1; AJvYcCWeGsD2ghVeAiR+gfQlw8jVaTvj3aDjD0ORgT1SdAIeP/3wA3f5I3WUQTQH6fgbGcHQxXg3pn+e4WaQpVQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVl2uaqYnwaKusKtwHvCC6X1iPzA6A5UMs4ufEujFUCIIDIYBT
-	GNQHHoZ02gGXiSBSN+sMqMWsibS+ttFwJ14H+1JesABEdpSu3eyXaIgK9Yltog6SMamrr+J764z
-	NpU6Jhz1SdH9qbTZZcwmid25xtTTVyuw+QZ5oGAFZjA==
-X-Gm-Gg: ASbGncuDHR4FyuDG2QkrsNqqCUxp4UQW9uvTGk8fPmtxNmINx0gOoYbGtKR6cdfsCfd
-	oI7SUM5KkqZUMEuPtBx03W4rXKmMhAO8RBGGUT3MwC3n8udKP90vgVFrOXrBzZQ9Ps51t0+jARJ
-	Cw7Y0fejKIBH2GW4ys5qCuV4tuRfk+nNoolELJvv7P9bhNCTEdp47w7ATkVytwwD69rXxYb4LHd
-	eGgjP8=
-X-Google-Smtp-Source: AGHT+IFXeTHhPaOyxY0Nk9agb1L0O31EoADNbqUd9xTlC8OSA53ttfdVB/jc5+To3L3KfXA2F+y39spMOsqQEmMnEHA=
-X-Received: by 2002:a2e:a99f:0:b0:32a:de85:4613 with SMTP id
- 38308e7fff4ca-3308e546b5cmr52460501fa.23.1752940307461; Sat, 19 Jul 2025
- 08:51:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752940339; x=1753545139;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nNgvgnp9VW65TFUHyeSpqBiDH6x3REnx6kZhnFLQurA=;
+        b=KQYrkbPvi3PV3dSWEt4kVg9RMer01R/FBSTkmJmnEh/7tQ3MM4hJ7aOzeYRgzgosbc
+         7KTwsoqQcDn2AhWLm+R6c1ZHzegMhp56GI10EKxENikMgzfcLGKDXVAZG5L13YhkJED2
+         gWOvGaPnQnLJTKGzp/NqDSasstbJ21eTBbDl1+37g6WuNcecllZMsMMHHJ35Cr9TGZs2
+         Bf8ex4rYUsU9Tdk+QVlE+QLW8FTWvBRvHxkAKVIaEfX2K+ppKBLEmZ2ZijvLA8vZIJ2z
+         SXor/Cx8DhUn8gAJc+cV6rvcvzBBcQgp3q4BYrHOxDE/Essz6MgFf+NwrK1x/OaTazyj
+         pBeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWU8CBE8mM/hgILiqXsj606rkzuU/GWJF1VZ0ri6pHN+eJXIpfibaRcZr957A5eLv7F3OnNPBc+QU0aP0s=@vger.kernel.org, AJvYcCXLS+k+8/UGlkTtHv5gl/KIvYxwOnq08U9O+VSfA1ME69DkQyGNl9GgQ4LENDLGbE7ghzN6YJ8RIR0fprcm78Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIdUoeHRU/YpU220I9Apq1mxwYBMB/eH8puH/j5RHjOpr2C0yc
+	zCCKdrTX3olb/WghpFBniPXIzvj7ooRxy2bZIdFPt2y192Jsu6owL5r2a7GfvMEC
+X-Gm-Gg: ASbGncvNtXUt3oKxemwVZjgGVr8fU8AWEr9BBPsEbEFYcVFJ6dZefy6d6wwvSf4FTkr
+	iXlCojkOtjGaNR8UMO9GETdEGl9V4g6FP4w2zuAX+29dZLjU+QjwpagMU1Sp0qzBBSCfhubIvIm
+	gnfhZaSFwJIgEln2gQGZvzO3FsSCy4WbOu2C7JOi3B3hT7uA8GuGCDmP1UhmVlOXHiq5wqx0X7D
+	N1tthVl9Q579+33PlaN07S2ZZlRewDVARjIYIcNXf7dXoz2PloPCWXuLXRTtCzH1LpyhfGXJl4c
+	cOZre0Q3HidiVYH6Vhcq+57emcYgjPC1ICB56ORDrWgG1C0x+zk0d2vbebjZH+NyEY1RljpKfYn
+	ajLSHJkMn/U19
+X-Google-Smtp-Source: AGHT+IHAUTIRWkoe+CDTlju6sOUvxj0pxoPNUZXb0JQMt1ClqQcAJ5JYjALPlQQGFDxfIfNV/Gsvgw==
+X-Received: by 2002:a05:620a:6088:b0:7e3:6270:ab59 with SMTP id af79cd13be357-7e36270ac35mr454657185a.57.1752940339392;
+        Sat, 19 Jul 2025 08:52:19 -0700 (PDT)
+Received: from pc ([196.235.236.92])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e356b2a976sm210185985a.13.2025.07.19.08.52.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 19 Jul 2025 08:52:19 -0700 (PDT)
+Date: Sat, 19 Jul 2025 16:52:16 +0100
+From: Salah Triki <salah.triki@gmail.com>
+To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: salah.triki@gmail.com
+Subject: [PATCH v2] bcma: Use managed APIs
+Message-ID: <aHu_MHDYB7-Vuua_@pc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250717131251.54021-1-brgl@bgdev.pl>
-In-Reply-To: <20250717131251.54021-1-brgl@bgdev.pl>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sat, 19 Jul 2025 17:51:36 +0200
-X-Gm-Features: Ac12FXyWnmZ3mBsiac0JX_cSbKPzIlY5bLihE_1iOsyGvaZBUN9ieovpMR_Xnwo
-Message-ID: <CACRpkdb-u1JBQykc0BdnoVE0mEHnw6ygyg0EQxziDSU50VCiNQ@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: rp1: use new GPIO line value setter callbacks
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Andrea della Porta <andrea.porta@suse.com>, inux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aHuvCpFcC2DwBU1P@pc>
 
-On Thu, Jul 17, 2025 at 3:12=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
- wrote:
+Replace pci_* with pcim_* and kzalloc() with devm_kzalloc() so that no
+need to worry about freeing resources and disabling the device.
 
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> struct gpio_chip now has callbacks for setting line values that return
-> an integer, allowing to indicate failures. Convert the driver to using
-> them.
->
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Signed-off-by: Salah Triki <salah.triki@gmail.com>
+---
+Changes in v2:
+    -Delete the inclusion of serdev.h since it is not needed
 
-This one isn't in the pinctrl tree, I think it's in SoC, maybe Arnd can
-apply it pronto?
+ drivers/bcma/host_pci.c | 38 +++++++++++++-------------------------
+ 1 file changed, 13 insertions(+), 25 deletions(-)
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+diff --git a/drivers/bcma/host_pci.c b/drivers/bcma/host_pci.c
+index 960632197b05..8cdb546ce697 100644
+--- a/drivers/bcma/host_pci.c
++++ b/drivers/bcma/host_pci.c
+@@ -161,22 +161,23 @@ static int bcma_host_pci_probe(struct pci_dev *dev,
+ 			       const struct pci_device_id *id)
+ {
+ 	struct bcma_bus *bus;
+-	int err = -ENOMEM;
++	int err;
+ 	u32 val;
+ 
+ 	/* Alloc */
+-	bus = kzalloc(sizeof(*bus), GFP_KERNEL);
++	bus = devm_kzalloc(&dev->dev, sizeof(*bus), GFP_KERNEL);
+ 	if (!bus)
+-		goto out;
++		return -ENOMEM;
+ 
+ 	/* Basic PCI configuration */
+-	err = pci_enable_device(dev);
++	err = pcim_enable_device(dev);
+ 	if (err)
+-		goto err_kfree_bus;
++		return err;
+ 
+-	err = pci_request_regions(dev, "bcma-pci-bridge");
++	err = pcim_request_all_regions(dev, "bcma-pci-bridge");
+ 	if (err)
+-		goto err_pci_disable;
++		return err;
++
+ 	pci_set_master(dev);
+ 
+ 	/* Disable the RETRY_TIMEOUT register (0x41) to keep
+@@ -188,17 +189,16 @@ static int bcma_host_pci_probe(struct pci_dev *dev,
+ 	/* SSB needed additional powering up, do we have any AMBA PCI cards? */
+ 	if (!pci_is_pcie(dev)) {
+ 		bcma_err(bus, "PCI card detected, they are not supported.\n");
+-		err = -ENXIO;
+-		goto err_pci_release_regions;
++		return -ENXIO;
+ 	}
+ 
+ 	bus->dev = &dev->dev;
+ 
+ 	/* Map MMIO */
+ 	err = -ENOMEM;
+-	bus->mmio = pci_iomap(dev, 0, ~0UL);
++	bus->mmio = pcim_iomap(dev, 0, ~0UL);
+ 	if (!bus->mmio)
+-		goto err_pci_release_regions;
++		return err;
+ 
+ 	/* Host specific */
+ 	bus->host_pci = dev;
+@@ -214,7 +214,7 @@ static int bcma_host_pci_probe(struct pci_dev *dev,
+ 	/* Scan bus to find out generation of PCIe core */
+ 	err = bcma_bus_scan(bus);
+ 	if (err)
+-		goto err_pci_unmap_mmio;
++		return err;
+ 
+ 	if (bcma_find_core(bus, BCMA_CORE_PCIE2))
+ 		bus->host_is_pcie2 = true;
+@@ -226,19 +226,11 @@ static int bcma_host_pci_probe(struct pci_dev *dev,
+ 
+ 	pci_set_drvdata(dev, bus);
+ 
+-out:
+ 	return err;
+ 
+ err_unregister_cores:
+ 	bcma_unregister_cores(bus);
+-err_pci_unmap_mmio:
+-	pci_iounmap(dev, bus->mmio);
+-err_pci_release_regions:
+-	pci_release_regions(dev);
+-err_pci_disable:
+-	pci_disable_device(dev);
+-err_kfree_bus:
+-	kfree(bus);
++
+ 	return err;
+ }
+ 
+@@ -247,10 +239,6 @@ static void bcma_host_pci_remove(struct pci_dev *dev)
+ 	struct bcma_bus *bus = pci_get_drvdata(dev);
+ 
+ 	bcma_bus_unregister(bus);
+-	pci_iounmap(dev, bus->mmio);
+-	pci_release_regions(dev);
+-	pci_disable_device(dev);
+-	kfree(bus);
+ }
+ 
+ #ifdef CONFIG_PM_SLEEP
+-- 
+2.43.0
 
-Yours,
-Linus Walleij
 
