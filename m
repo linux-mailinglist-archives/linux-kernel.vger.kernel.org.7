@@ -1,306 +1,195 @@
-Return-Path: <linux-kernel+bounces-737510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDA48B0AD85
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 04:59:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56CCBB0AD86
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 05:05:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F9711C4039D
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 03:00:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E40624E82CE
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 03:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D5B71F0995;
-	Sat, 19 Jul 2025 02:59:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57CF417BB21;
+	Sat, 19 Jul 2025 03:05:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="vPYOfbcz"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2062.outbound.protection.outlook.com [40.107.92.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Dsha6KDL"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3212E36E0;
-	Sat, 19 Jul 2025 02:59:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752893987; cv=fail; b=KvgJ67qQrn5jyVV7mys36nzUMto/7wO50qxlV3PI0upBjzWdt8pKZUfWLQ+Ncs0H96byHDmldc7PeACy65lykKyUWw1lFZIU/13ng3KqL8wKEQYGEdc90QJWVcnA/uZPN13l0JlcgcnE9gPVPoBLUO/+NJ7dnWDcnIoWd8u6zxk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752893987; c=relaxed/simple;
-	bh=QTpbRxH5GyIYgkdGafbjOiuBukYPYCjSel/WtptccAw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=G0Da+BwPJVmwgXxppca0Vz0gDCUrBPeDGyU6ZZ8W/IPHMmdJwQgCt4I2EGQO9DjXMaCO8B2OHLq3qwZ3Y9efLJ/5Hjjj6t8+WERyc/OXVqR48LAqpkT7Meuk/71uriLmo1kkpBny2Znx5aoIG0uBOCGbt44WobUdVhGvc38Unu4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=vPYOfbcz; arc=fail smtp.client-ip=40.107.92.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LrJKMXtioVlKWLPeU2lCCo+YNk8KmRb+rDWCfbmdAbvHWOHS7CsOOWrlpV0bR8i0XkcRko6Ycv5hK77MQEW7ZzuLHJAgANVEimZNOxIjV9yQ4QEfaxvzRXijU4j2YnpFMDRoOuoLVEBU0HH/Pg6opQobPYWXZX9cKW/cL1j0vnImy9oH0A55WHLIk91kzXm7Q6zKuz9B1wNG7nQ6Sb57TD89TgLfkezMlJwh7Q19UwfjTSb5mBe46F59sTRmi3wnE5BbJ8uMYvp/yKWqV/hy18vEN/S5/n4M/H359jZhyEwQ62hoAs4Zp+fNu1dL5XXCWBCCUqbE0v56EQgrI3fcqg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZBE2kadrUtpsKhpTqXaHkj/5KWauMK6B9bFxPtyWWPQ=;
- b=P0iUOF+0TLa81LC+Fh1CnQ7xmdAJRh2EgBsXv0BD+pxRKDDuhZ8GlgTeV67EJOqnt4PQaymU2p5sxgYWn3JL3OtCRAwtRfFL15rIweOY3pe2JiXOTiVrE2JFRwuaMJm+4CXMMwVHbZ4+RK9TiyAqh6MPEuRjzNIIS1JqaGsjKUFLP8MlXZ9AvfgZ92izfwTT8eal0l2J2qM+TSmQpCSBCh/Fv0ph3y9MnGPBgNVsbhIwy+FBrYaq/q9k2vNtmu3ZE2YcGvcitnYZqtFcsjVnUfJ+508IF33ICFMR02KC5leG3/3m/oLe0G28mu1n1G/I2rckoh37UWi712yunfMxDw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZBE2kadrUtpsKhpTqXaHkj/5KWauMK6B9bFxPtyWWPQ=;
- b=vPYOfbcz5vdcn5jAocrkw0HnUXSUkf1fu/xDCDZ8FIs8XOiDkh8SG9rNOwJQY9kCkJ3Xji7ig3g/IyP/pFZJQEu5+GOaPtbRUES5n6I9/Mr4HlVyVd52U0VL/Nkd/ypZuWFJT/HZyO/cxLIOKAvkNbeXf1T2cJdwwx7+kqT2Epc=
-Received: from IA1PR12MB6140.namprd12.prod.outlook.com (2603:10b6:208:3e8::16)
- by CYXPR12MB9388.namprd12.prod.outlook.com (2603:10b6:930:e8::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.25; Sat, 19 Jul
- 2025 02:59:42 +0000
-Received: from IA1PR12MB6140.namprd12.prod.outlook.com
- ([fe80::92c9:cc21:f1dd:abec]) by IA1PR12MB6140.namprd12.prod.outlook.com
- ([fe80::92c9:cc21:f1dd:abec%6]) with mapi id 15.20.8922.037; Sat, 19 Jul 2025
- 02:59:41 +0000
-From: "Musham, Sai Krishna" <sai.krishna.musham@amd.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-CC: "bhelgaas@google.com" <bhelgaas@google.com>, "lpieralisi@kernel.org"
-	<lpieralisi@kernel.org>, "kw@linux.com" <kw@linux.com>, "mani@kernel.org"
-	<mani@kernel.org>, "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"cassel@kernel.org" <cassel@kernel.org>, "linux-pci@vger.kernel.org"
-	<linux-pci@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Simek, Michal" <michal.simek@amd.com>,
-	"Gogada, Bharat Kumar" <bharat.kumar.gogada@amd.com>, "Havalige, Thippeswamy"
-	<thippeswamy.havalige@amd.com>
-Subject: RE: [PATCH v5 2/2] PCI: amd-mdb: Add support for PCIe RP PERST#
- signal handling
-Thread-Topic: [PATCH v5 2/2] PCI: amd-mdb: Add support for PCIe RP PERST#
- signal handling
-Thread-Index: AQHb8iQRia+LCHEfhkup0319RPtRobQtj/EAgAjHjwCAAcckAIAAqjkg
-Date: Sat, 19 Jul 2025 02:59:41 +0000
-Message-ID:
- <IA1PR12MB614051F6617C327B6306CC1CCD53A@IA1PR12MB6140.namprd12.prod.outlook.com>
-References:
- <DM4PR12MB6158DFAD4351A17E3523CA58CD50A@DM4PR12MB6158.namprd12.prod.outlook.com>
- <20250718163150.GA2700763@bhelgaas>
-In-Reply-To: <20250718163150.GA2700763@bhelgaas>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=True;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2025-07-19T02:41:05.0000000Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=3;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: IA1PR12MB6140:EE_|CYXPR12MB9388:EE_
-x-ms-office365-filtering-correlation-id: fdddadf4-844a-4d88-3eef-08ddc6704ea2
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|376014|7416014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?YMTKifF45J6g7vvyu9t592S7VnmYAFKfC+Yi5HINjdCszqWZjx+K5RvcoEXl?=
- =?us-ascii?Q?aNozTS9kIwzABlUdWvZIlJ5K+W/3oxvk4neL88zUaWWsAvAFqcS4FM5b41yG?=
- =?us-ascii?Q?cQlSdFtINi+AyChwMwL+DmhtPL+4VLft/gnHUUVYUbDassSZ3wWUBmguUKEe?=
- =?us-ascii?Q?lhgEr4SkXJTaydG2HcAzB3OMzhNzZyZYURk85dWMuThbVRX14Z6tIDw/4tNJ?=
- =?us-ascii?Q?hwQY73NVVPbEOh9s5j0fF6tpwOpRocA5SrMYoZPzMkVlNo/bgTruHBT+Isfq?=
- =?us-ascii?Q?2aTBqUl9VwJoQHxSqpibVWvu2raonMkgLc+HRnSCuvZWoN7gna/zROEZ2bae?=
- =?us-ascii?Q?YSp9YLy1CROvALgm4fJcqOXAsn2BcBxnHgAY6PacSxIvOxzildDF02//+TS4?=
- =?us-ascii?Q?c8R4C/X5swX4sAE6Tm3T7cZ4kzT4FvQEqpaaSREw3q884vG0ky5fA2PTCGOQ?=
- =?us-ascii?Q?tvyXlIJzYkO1/aCQ1V1H7T1lZExUkarQrgzMwJ0WD4k/d+c3Z+oQbsg/B/Bl?=
- =?us-ascii?Q?3oXkb7WUWLkgUpCEQtb/DxrsQX3tC0zK2tiv+29io0dJqMjiL+9zugkFdpPc?=
- =?us-ascii?Q?AjsJivgHRkHFpVIpjpfwHbUGWWDU6MRTuPi2z5f7t4wP92hMUAtVGfNOX8Uh?=
- =?us-ascii?Q?imDsKC6HtueigbdyAWcIDx781+KoI5PkfX23b7MdG31lXhn7VMPmwy2jmlbQ?=
- =?us-ascii?Q?Jn6y7o/8yP2FfOWTZjtBp5EpXUCjwWR27meC//k5NXI4yuRVoeas6jhn/RJQ?=
- =?us-ascii?Q?j8ClphWrGDcACwDHgpXxXCdGAQMMkaMO1msqbOvw7Vfv+TrvRhPW2CqFzDHP?=
- =?us-ascii?Q?f3lIfP+Q9NtX68JscKLd9YEiMqwcbBWQzuoMMbFBD0zmBMoUz2FVXNMoChyE?=
- =?us-ascii?Q?0dzOA0xx22ccbWxuEsN/JZ1UHgmTrD/6CIHFmOehMzi9ZgVWTFW2OUCLXVUP?=
- =?us-ascii?Q?e1u2tZ5cB8y9OU1Oifj69h1rHN2u/CXDHMyZau+roviFpFu65K1cGDzuStWo?=
- =?us-ascii?Q?hveY9xSeD1+AOPscaM8P5yzsQ3SDsLgjXDbGRwq+uwEHb3xgxSOufxzVbmM+?=
- =?us-ascii?Q?Kxujo8j6ytGULDm6lreScCdetUbaohuOvQi2U6u5KqOENoF40IpHExiHCxiG?=
- =?us-ascii?Q?nNJzjsexe8ZbA/37+gBjP0PUDiQUKJrwlfgKxlfj50mJKfuoBFjgQHgoHGFw?=
- =?us-ascii?Q?W1Cjd8/ccnFrROYnA6FsGmzNsw7zkyk3gXxkAJ4+DmcIA2FAt65w3v2BS5qH?=
- =?us-ascii?Q?tRHbJFQbLTfVzE0/Av/wxiGRJMk/ctrion8b6kTURShFw2M+rPho8t9g6ENW?=
- =?us-ascii?Q?HrZaG6pr00sgmGYmSg7E3mYCPjw25c3mvOPqE7QpjuY61eQqkXgNYMyJjPj9?=
- =?us-ascii?Q?2W1rTSLbiV1bTVI3xFs7EPPzLBCbpXRXibNN1acNdldK/eBMg0UV7OmaeQb4?=
- =?us-ascii?Q?x0Pt3ortnH32kLRTXfu45uy6K8ZdTwPunGNHancHhci8ZPWwamYqkf9TU3ps?=
- =?us-ascii?Q?6z2La+C9Cs/FvFY=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB6140.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?1bZMQ2vCjQcruOtA7zZS+vfAyBgBlXUP2jsqojbM5jp3ZcQfReW45CsDIzaw?=
- =?us-ascii?Q?ZGoE/daJJyXIKbvgLDj+WcHbd+b+RnBwK2fKFOSN2Fd/YaLuZGIUXrBv8lmK?=
- =?us-ascii?Q?ZQAK4ZOW7in72osBjy+lbnVVuKAoRKdtWLMsLp5hlO+SDTIwj7H1JMU0c1s2?=
- =?us-ascii?Q?tUzcPzbsNKKbz1o9LZPcn/poRaMLf1Jdc4ixh72KW2MkYokL+0dBzooDcxwH?=
- =?us-ascii?Q?ucVtq42putL2U8PtscNf51lMzGmMHeVxTIX8AzelaVAd9xZbpL2pHXWZ+gYu?=
- =?us-ascii?Q?pyOGxqoR7LRau7eZQzJk/HWbYnpsAif3nlSonjhLVz2obgsZWptWf9M9oku2?=
- =?us-ascii?Q?G3BbSilPWMBBaXyrpNvRCgYgqJIMudf2lKOFdyuk8wcXL49sgsORW5X4Vud9?=
- =?us-ascii?Q?zdmYN0GNPPRJn5XZifKjWkXPLxntYamHpzKT2vpusnS/lNFLBehsRtZijdvt?=
- =?us-ascii?Q?2yjtJTA3cTsEo9LziDtU0AMvW6K+EFewR8zoBkpK+JBtdH/BOX5SgOpAhcA6?=
- =?us-ascii?Q?5X72k8sGVZMtXGtMu4Sw+fPLZ6cz2pWB1YMNXwRQosk51ziJWQ92UkY9BHGo?=
- =?us-ascii?Q?X+0NuCYjFNSJf+wEJiq4U2cd8BUuajI7mM8ftk2e/d/7alhB8BGkzwiWLnFe?=
- =?us-ascii?Q?zX8LmqJySQPE5KTYNjqO0MXxBW04AGzdEgcMdiAi67YsaqGfwsPDL5KLhn+/?=
- =?us-ascii?Q?zKaBJrOnZYSizQi/zOh1XvLlLxneGHxfukh7vSwQTbFGojocJeAabvFPaBvl?=
- =?us-ascii?Q?9Ckl0vB7OK4YKVxEqIxX89ZVKXuSjITPe0zLw5m7AG6OFeA4pKED2iv7RwbL?=
- =?us-ascii?Q?8R4A2p+yL1oWIPNiR33e9S3HJeS+R13sDjtzOWw/aP+0KyHnrpSEteCPWRis?=
- =?us-ascii?Q?8mxxU47bsX8dxug1eP96Elyaxi/WRMOtT1SeV/6Dlzm4bdzA3FBOSmUu+mkY?=
- =?us-ascii?Q?seDDs0rdLsJtlyyKo+u4b8aQE00cFgyst8NRqIDI7MV9L46wCkMi51jBhKut?=
- =?us-ascii?Q?L5Cv5vQ/PxAyn819neXAL/wEzL5tUra1nhO9cmDpYdP2ONtUCJS7svL0BJiU?=
- =?us-ascii?Q?GS6OEDbgOCOEEwn7jQf58C1DmW4RFEP9HLjYmtdwSjENfE4H6AaznbYsfIra?=
- =?us-ascii?Q?v4OEaZAYlBvYAB51UMCMem+0FSF6wkcAOB1i93DNqPmZ9LADPMeSjmecTRaR?=
- =?us-ascii?Q?U2MzNBhJZM0GL61Xkef6niBuasfx4ClAQAOVFF3k+7e4MTUq+QQ3dZCbR5ZB?=
- =?us-ascii?Q?9QeBTnnnwKiN7mCgkE7PAO6qKjnNki+JUWVh/yz9gSANqxFn+4THguHeOznG?=
- =?us-ascii?Q?SbLaEhh/X6FX/RpUBza98mP/V12aYu/5t1VbNnrTN6k1vL9i8BXD6Bebs23i?=
- =?us-ascii?Q?ZRoE6BEtUYsCnVyZlQv9bS/VxzZA6hho1uUX/27YO7PefHWDG/NCUNcEiJPV?=
- =?us-ascii?Q?f9xXXZwb4sps0k2Dr0l6aQmTkQwlqDN1UK+gNXQRxDEsqBR5N+GqTqZtnaBx?=
- =?us-ascii?Q?HChno8LS2o+YRghPd07V2UmuSkgBkkFEkDfgz4Y2pZUbqxvjPLrfm884va9s?=
- =?us-ascii?Q?rpYJ/fH095FjrKQzPHg=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E4510A3E
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 03:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752894332; cv=none; b=gvZMutxrrZ9qIbQP/Mcbt3gDlTm9w3cZFFvikcPDUvdal8f3xPMvg3z4A+l2i6bjiGlp84CIjbA4gikWoGQMx8PbtLqwrLbzQzNNcOqF0aOhYyKRPM6OqLwXU3arb23wzomP2y0zQ+z9MqZrZLSrLkdBP4VnkLvmImvwx/zRBP0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752894332; c=relaxed/simple;
+	bh=HVbdRO3fXtbaJl20WHynvio6GFq0aXcE5wnvaZs5A18=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=TN/ug0cEt1EULs0Olxa46bj1pAwb0yJl6vYctKCeOc1yAeS6vKGIjx23G6mLcACN/Zi7iYOYSwVUp8kuo6X3yfsayhL8PLwRUIGTXqCmd8OeraD+ZFQj+CwLgn6AVywODRwv5FVF8EXa/2+oSAtJyfYHv6mM4mfPjTokGnfycek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Dsha6KDL; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2369261224bso27598005ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Jul 2025 20:05:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752894330; x=1753499130; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=fZSAaYjQadlJ5t8OLt3QyjXK3Oc1PimyC7G7VWhUz2A=;
+        b=Dsha6KDLhnrNScw1c1ndF7D3i/iE8XCQ3J03QPzNNADQkppdp4JYgxQfEp4TooZYil
+         nqoAJprG6HgGlQsQ07Yh+8n0k6c+kQ0D9EOr41/M5XP98DM3lXOl2PIsjxZrqe6p4Vmg
+         9wo/Ig6Aw+IAkXGj45cdqq5QdCoXT4L3r+OdwXgovFcDPPgRRhgk6DKdj4A3IDpzX4Om
+         K4Nu1Lh/fwjxHXbksQjUmMmir+dHNaVOmJILynb+RPTflb71wN/VMVI48jaEEHFxgKGn
+         gapyTTIFpCf4Jp/aAyrv+HOJxFZA83WWzNgl2Xf9C7Gbum0YT0PJeLjoTOFFAw5UiVDJ
+         ETzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752894330; x=1753499130;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fZSAaYjQadlJ5t8OLt3QyjXK3Oc1PimyC7G7VWhUz2A=;
+        b=XXjs7EALKP1Ux3ruVWIcsNf9p6fsAtHs3oT9uzV3Za0WPyp9ETkSxWIukxDIuV/pke
+         CUGyhABPKfwbb+G1nlHGOg8cHvy73aaOCqQBYUQzTuzRpM/E2WmKDNjhcp72YU+c4vtZ
+         NTQyFbVjDpD8FX6HXjOkNVJOohHaG0rN/mjXfKweEw+ESbUc8X0hwDLbhmj3E8WMZCR/
+         9aVqseHWU3p2q4w0yUfj9Nd0tHyHQHbZ4gZVEDZ9aBXknTZdBkUacU2X44lNwT1wzm+R
+         M3WArQ98YrpwJdYU6eneMjTth4dyDBDfzNP6tWSStUps6a8lzhqTEEto/hyAxe/lnxL0
+         oC0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWUFgF+Vb4542v9Hkw4yWQ69mA270K67zo7bxrTzLkg2Rgk4xiuuvBaysUiL38utfBTrS85Mnyuw3inAyM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywdb90t8v4lE0zmL/dqfAjiCFXjbLisc/ZEBROiiIujaQvXUJvV
+	3EXDv+5iCK6cPg+ULprd2aKb0ZSgRZQsRkKpzt5nq1zgP+6sGLioPdJnLZWYiHeOwbPvG8XfZKs
+	AgGqDQJoUjw==
+X-Google-Smtp-Source: AGHT+IE+gNU99Avc91IEZFlBaOvZsdVDrA/2mGusfGYOIagrdmcHM8Bp6WZxhUhREiHnXWPMTb7qw+gvXZNa
+X-Received: from pjbsi4.prod.google.com ([2002:a17:90b:5284:b0:311:4aa8:2179])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:da4b:b0:237:ed38:a5b3
+ with SMTP id d9443c01a7336-23e256937femr184001685ad.8.1752894330554; Fri, 18
+ Jul 2025 20:05:30 -0700 (PDT)
+Date: Fri, 18 Jul 2025 20:05:02 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB6140.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fdddadf4-844a-4d88-3eef-08ddc6704ea2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jul 2025 02:59:41.3760
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: JibCIbc7sJM0g9R5y51KqYKWJ9B6El56b0pthuq6LdzwIa/xjgBO0Pvk3Qvudhi+Jri3n40SOgdooCuQhSOTKA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR12MB9388
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+Message-ID: <20250719030517.1990983-1-irogers@google.com>
+Subject: [PATCH v3 00/15] Fixes for Intel TMA, particularly for hybrid
+From: Ian Rogers <irogers@google.com>
+To: Thomas Falcon <thomas.falcon@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	"Liang, Kan" <kan.liang@linux.intel.com>, Ravi Bangoria <ravi.bangoria@amd.com>, 
+	James Clark <james.clark@linaro.org>, Dapeng Mi <dapeng1.mi@linux.intel.com>, 
+	Weilin Wang <weilin.wang@intel.com>, Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-[AMD Official Use Only - AMD Internal Distribution Only]
+On hybrid systems some PMUs apply to all core types, particularly for
+metrics the msr PMU and the tsc event. The metrics often only want the
+values of the counter for their specific core type. These patches
+allow the cpu term in an event to give a PMU name to take the cpumask
+from. For example:
 
-Hi Bjorn,
+  $ perf stat -e msr/tsc,cpu=cpu_atom/ ...
 
-> -----Original Message-----
-> From: Bjorn Helgaas <helgaas@kernel.org>
-> Sent: Friday, July 18, 2025 10:02 PM
-> To: Musham, Sai Krishna <sai.krishna.musham@amd.com>
-> Cc: bhelgaas@google.com; lpieralisi@kernel.org; kw@linux.com; mani@kernel=
-.org;
-> robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org; cassel@kernel.o=
-rg;
-> linux-pci@vger.kernel.org; devicetree@vger.kernel.org; linux-
-> kernel@vger.kernel.org; Simek, Michal <michal.simek@amd.com>; Gogada, Bha=
-rat
-> Kumar <bharat.kumar.gogada@amd.com>; Havalige, Thippeswamy
-> <thippeswamy.havalige@amd.com>
-> Subject: Re: [PATCH v5 2/2] PCI: amd-mdb: Add support for PCIe RP PERST#
-> signal handling
->
-> Caution: This message originated from an External Source. Use proper caut=
-ion
-> when opening attachments, clicking links, or responding.
->
->
-> On Fri, Jul 18, 2025 at 04:30:32AM +0000, Musham, Sai Krishna wrote:
-> > [AMD Official Use Only - AMD Internal Distribution Only]
-> >
-> > Hi Bjorn,
-> >
-> > > -----Original Message-----
-> > > From: Bjorn Helgaas <helgaas@kernel.org>
-> > > Sent: Saturday, July 12, 2025 4:49 AM
-> > > To: Musham, Sai Krishna <sai.krishna.musham@amd.com>
-> > > Cc: bhelgaas@google.com; lpieralisi@kernel.org; kw@linux.com;
-> mani@kernel.org;
-> > > robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org; cassel@kern=
-el.org;
-> > > linux-pci@vger.kernel.org; devicetree@vger.kernel.org; linux-
-> > > kernel@vger.kernel.org; Simek, Michal <michal.simek@amd.com>; Gogada,
-> Bharat
-> > > Kumar <bharat.kumar.gogada@amd.com>; Havalige, Thippeswamy
-> > > <thippeswamy.havalige@amd.com>
-> > > Subject: Re: [PATCH v5 2/2] PCI: amd-mdb: Add support for PCIe RP PER=
-ST#
-> > > signal handling
-> > >
-> > > Caution: This message originated from an External Source. Use proper =
-caution
-> > > when opening attachments, clicking links, or responding.
-> > >
-> > >
-> > > On Fri, Jul 11, 2025 at 10:53:57AM +0530, Sai Krishna Musham wrote:
-> > > > Add support for handling the AMD Versal Gen 2 MDB PCIe Root Port PE=
-RST#
-> > > > signal via a GPIO by parsing the new PCIe bridge node to acquire th=
-e
-> > > > reset GPIO. If the bridge node is not found, fall back to acquiring=
- it
-> > > > from the PCIe node.
-> > > >
-> > > > As part of this, update the interrupt controller node parsing to us=
-e
-> > > > of_get_child_by_name() instead of of_get_next_child(), since the PC=
-Ie
-> > > > node now has multiple children. This ensures the correct node is
-> > > > selected during initialization.
->
-> > > > +      * If amd_mdb_parse_pcie_port returns -ENODEV, it indicates t=
-hat the
-> > > > +      * PCIe Bridge node was not found in the device tree. This is=
- not
-> > > > +      * considered a fatal error and will trigger a fallback where=
- the
-> > > > +      * reset GPIO is acquired directly from the PCIe node.
-> > > > +      */
-> > > > +     if (ret && ret !=3D -ENODEV) {
-> > > > +             return ret;
-> > > > +     } else if (ret =3D=3D -ENODEV) {
-> > >
-> > > The "ret" checking seems unnecessarily complicated.
-> > >
-> > > > +             dev_info(dev, "Falling back to acquire reset GPIO fro=
-m PCIe
-> node\n");
-> > >
-> > > I don't think this is worthy of a message.  If there are DTs in the
-> > > field that were valid once, they continue to be valid forever, and
-> > > there's no point in complaining about them.
-> > >
-> > > https://lore.kernel.org/all/20250702-perst-v5-2-
-> 920b3d1f6ee1@qti.qualcomm.com/
-> > > has a good example of how to this fallback nicely.
-> > >
-> > > Otherwise looks good to me.
-> >
-> > Thanks for the feedback. I've removed the fallback message and simplifi=
-ed the
-> "ret"
-> > checking. Could you please confirm if this looks good for v6?
-> >
-> >         if (ret =3D=3D -ENODEV) {
-> >
-> >                 /* Request the GPIO for PCIe reset signal and assert */
-> >                 pcie->perst_gpio =3D devm_gpiod_get_optional(dev, "rese=
-t",
-> >                                                            GPIOD_OUT_HI=
-GH);
-> >                 if (IS_ERR(pcie->perst_gpio))
-> >                         return dev_err_probe(dev, PTR_ERR(pcie->perst_g=
-pio),
-> >                                              "Failed to request reset G=
-PIO\n");
-> >         } else if (ret) {
-> >                 return ret;
-> >         }
->
-> Looks good to me.  It's important to note that this -ENODEV fallback
-> uses the PERST# GPIO described in the host bridge, not in a Root Port,
-> but I think your comment above includes this.
->
+will aggregate the msr/tsc/ value but only for atom cores. In doing
+this problems were identified in how cpumasks are handled by parsing
+and event setup when cpumasks are specified along with a task to
+profile. The event parsing, cpumask evlist propagation code and perf
+stat code are updated accordingly.
 
-Thanks for the confirmation. Yes, you're correct - the fallback uses the
-PERST# GPIO described in the host bridge.
+The final result of the patch series is to be able to run:
+```
+$ perf stat --no-scale -e 'msr/tsc/,msr/tsc,cpu=cpu_core/,msr/tsc,cpu=cpu_atom/' perf test -F 10
+ 10.1: Basic parsing test                                            : Ok
+ 10.2: Parsing without PMU name                                      : Ok
+ 10.3: Parsing with PMU name                                         : Ok
 
-I will submit v6 with the simplified error handling.
+ Performance counter stats for 'perf test -F 10':
 
-> Bjorn
+        63,704,975      msr/tsc/
+        47,060,704      msr/tsc,cpu=cpu_core/                        (4.62%)
+        16,640,591      msr/tsc,cpu=cpu_atom/                        (2.18%)
+```
 
-Regards,
-Sai Krishna
+This has (further) identified a kernel bug for task events around the
+enabled time being too large leading to invalid scaling (hence the
+ --no-scale in the command line above).
+
+Additionally the series corrects topdown event processing and starts
+injecting slots events as preparation for TMA 5.1 whose updates will
+be sent as a follow-up patch series.
+
+v3: Fix CPU map computation for uncore/requires_cpu, don't simplify
+    for the "any"(-1) CPU case. Combine with topdown slots/fix and
+    injection previously:
+    https://lore.kernel.org/lkml/20250718132750.1546457-1-irogers@google.com/
+    This has a grouping fix added for the injected slots event.  Add
+    new no grouping constraint for threshold + NMI for issue with
+    alderlake metrics failing to schedule when thresholds are enabled
+    along with the NMI watchdog.
+
+v2: Add additional documentation of the cpu term to `perf list`
+    (Namhyung), extend the term to also allow CPU ranges. Add Thomas
+    Falcon's reviewed-by. Still open for discussion whether the term
+    cpu should have >1 variant for PMUs, etc. or whether the single
+    term is okay. We could refactor later and add a term, but that
+    would break existing users, but they are most likely to be metrics
+    so probably not a huge issue.
+
+Ian Rogers (15):
+  perf parse-events: Warn if a cpu term is unsupported by a CPU
+  perf stat: Avoid buffer overflow to the aggregation map
+  perf stat: Don't size aggregation ids from user_requested_cpus
+  perf parse-events: Allow the cpu term to be a PMU or CPU range
+  perf tool_pmu: Allow num_cpus(_online) to be specific to a cpumask
+  libperf evsel: Rename own_cpus to pmu_cpus
+  libperf evsel: Factor perf_evsel__exit out of perf_evsel__delete
+  perf evsel: Use libperf perf_evsel__exit
+  perf pmus: Factor perf_pmus__find_by_attr out of evsel__find_pmu
+  perf parse-events: Minor __add_event refactoring
+  perf evsel: Add evsel__open_per_cpu_and_thread
+  perf parse-events: Support user CPUs mixed with threads/processes
+  perf topdown: Use attribute to see an event is a topdown metic or
+    slots
+  perf parse-events: Fix missing slots for Intel topdown metric events
+  perf metricgroups: Add NO_THRESHOLD_AND_NMI constraint
+
+ tools/lib/perf/evlist.c                  | 119 +++++++++++++++-------
+ tools/lib/perf/evsel.c                   |   9 +-
+ tools/lib/perf/include/internal/evsel.h  |   3 +-
+ tools/perf/Documentation/perf-list.txt   |  25 +++--
+ tools/perf/arch/x86/include/arch-tests.h |   4 +
+ tools/perf/arch/x86/tests/Build          |   1 +
+ tools/perf/arch/x86/tests/arch-tests.c   |   1 +
+ tools/perf/arch/x86/tests/topdown.c      |  76 ++++++++++++++
+ tools/perf/arch/x86/util/evlist.c        |  24 +++++
+ tools/perf/arch/x86/util/evsel.c         |  46 +++------
+ tools/perf/arch/x86/util/topdown.c       |  59 +++++++----
+ tools/perf/arch/x86/util/topdown.h       |   6 ++
+ tools/perf/builtin-stat.c                |   9 +-
+ tools/perf/pmu-events/jevents.py         |   1 +
+ tools/perf/pmu-events/pmu-events.h       |  14 ++-
+ tools/perf/tests/event_update.c          |   4 +-
+ tools/perf/tests/parse-events.c          |  24 ++---
+ tools/perf/util/evlist.c                 |  15 +--
+ tools/perf/util/evlist.h                 |   1 +
+ tools/perf/util/evsel.c                  |  55 ++++++++--
+ tools/perf/util/evsel.h                  |   5 +
+ tools/perf/util/expr.c                   |   2 +-
+ tools/perf/util/header.c                 |   4 +-
+ tools/perf/util/metricgroup.c            |  16 ++-
+ tools/perf/util/parse-events.c           | 122 ++++++++++++++++++-----
+ tools/perf/util/pmus.c                   |  29 +++---
+ tools/perf/util/pmus.h                   |   2 +
+ tools/perf/util/stat.c                   |   6 +-
+ tools/perf/util/synthetic-events.c       |   4 +-
+ tools/perf/util/tool_pmu.c               |  56 +++++++++--
+ tools/perf/util/tool_pmu.h               |   2 +-
+ 31 files changed, 532 insertions(+), 212 deletions(-)
+ create mode 100644 tools/perf/arch/x86/tests/topdown.c
+
+-- 
+2.50.0.727.gbf7dc18ff4-goog
+
 
