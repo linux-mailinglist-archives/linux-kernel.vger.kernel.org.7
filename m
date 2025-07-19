@@ -1,134 +1,144 @@
-Return-Path: <linux-kernel+bounces-737459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51F2EB0ACDA
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 02:38:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 417F5B0AD01
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 02:46:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E693E1C41178
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 00:38:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78B3A5A212F
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Jul 2025 00:46:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 539AD2AE8D;
-	Sat, 19 Jul 2025 00:37:58 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E880654279;
+	Sat, 19 Jul 2025 00:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MXTwJQ7s"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3542E23DE;
-	Sat, 19 Jul 2025 00:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10AC125B2;
+	Sat, 19 Jul 2025 00:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752885478; cv=none; b=GBkOZVrASg6XwU5onC/JOA4HYzD7oqT84mLi+XWlO3VnJ10pmnVW/PRfdzPH68K6ciuRjA4eAnSUnBeN/IpDoddw2WjIODBygkh8444zNzWuBq+Ku+wMNYHc+bL6MNuC95dg46xjsCZE/Me9dHJdK1heH629xff7ToMcLaA0hSo=
+	t=1752885980; cv=none; b=LcXfAe553jkeEFx0YCcfksyHjvBaaCOjEWRCqEF6BwDqSVgRZKPa2qYklwScgUKSYpUhMuFruUG+vpUATpqx8UKctIB7xSt6qcM/HjrW122cFmW4+hoX+8q+zT+AnvWKnjDhwrX2J8b3MpsdyphzrjS5p286tpTlIt8I0HKpbCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752885478; c=relaxed/simple;
-	bh=iHuRoaqiqgLMa15x4TcvHU/rCSRoHuJ3bjn6cbUe/7E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mem0AVRld8UK3zC9hw8QFM87WRt5zsIIt5REPRNRj7z0HJYkSgKuxz+wbJBZMG5OhcXr4q7ZcYGhIUJsb8pt+fRCWADUTajyV7rhAM8T7UIOhUfyLU734U7uTTxLXYInG1ceibydSI1vb0bfdESq4RWGQWdYmP0NWgT7VYnp0I4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bkSLL2PFcz14Lx6;
-	Sat, 19 Jul 2025 08:32:58 +0800 (CST)
-Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4E1F3180B3F;
-	Sat, 19 Jul 2025 08:37:46 +0800 (CST)
-Received: from [127.0.0.1] (10.174.177.71) by dggpemf500013.china.huawei.com
- (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 19 Jul
- 2025 08:37:45 +0800
-Message-ID: <bf0bda81-5e75-4b5e-aac1-685e4697f513@huawei.com>
-Date: Sat, 19 Jul 2025 08:37:44 +0800
+	s=arc-20240116; t=1752885980; c=relaxed/simple;
+	bh=sHVK+o/maKVsX9aoh7fRAQ2DWovhgiCMkKfZ91jvNd4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=apEX6v2booMfnLDNiMUf17frKsjw/pQ9fkBFmgW8plpFcOm1r4b3PnwwQNNv0qMZ/RmnJ0ey6QtdjoQ6e36Y4IBic0u2Z3bEo28Vb0iDSdIIksv3xGMwOIexPlV6HSRK8nu6Q+x2W+79QjsyHIEnEnkGCzN9zNMZfCxkJRCefN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MXTwJQ7s; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752885979; x=1784421979;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=sHVK+o/maKVsX9aoh7fRAQ2DWovhgiCMkKfZ91jvNd4=;
+  b=MXTwJQ7ssScYkbChXdxRjomLrdYqnUtz20COB5qxQXZd5lwMpobQo/LH
+   bzh8/xh6MuUJIIyhpOXsFXTPtt3ckLnTUa6fowXwjIb6t8RI3NJVitFVY
+   xjRTQfbr+kuosCV5qivX66haRasunCNET5SsAo0VtblOLGU3hzLsZmsol
+   evPf6dFy6I7W5HaVHING7K19VLRDHQQz9j9B1qQZ02OPSnC7Sb2Nhn9Xd
+   n5xaGyecchXjpxD9aZZD8RhmY0KJnK2vdbfnPMWbIntz6YwVXGEq+2vRS
+   //vHNxkSDipC9INQqo7ROcqDA9AV3Jgln29YV0syi04BNGnFR2DFDe1rc
+   w==;
+X-CSE-ConnectionGUID: UIqpGcbsSkiblJfE27dpwg==
+X-CSE-MsgGUID: 0LKEjKiiSSG3Hr7EYETHcA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11496"; a="54397050"
+X-IronPort-AV: E=Sophos;i="6.16,323,1744095600"; 
+   d="scan'208";a="54397050"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2025 17:46:17 -0700
+X-CSE-ConnectionGUID: B27O95sKTymoZbvkf+PSoA==
+X-CSE-MsgGUID: syfJzeuMSfWXk5Ofi1cw+w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,323,1744095600"; 
+   d="scan'208";a="189346245"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 18 Jul 2025 17:46:15 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ucviP-000FAV-02;
+	Sat, 19 Jul 2025 00:46:13 +0000
+Date: Sat, 19 Jul 2025 08:45:17 +0800
+From: kernel test robot <lkp@intel.com>
+To: Darshan Rathod <darshanrathod475@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org
+Subject: Re: [PATCH] media: b2c2: flexcop-eeprom: Fix assignment in if
+ condition
+Message-ID: <202507190855.RA0Awmj9-lkp@intel.com>
+References: <20250718125245.82910-1-darshanrathod475@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 01/17] ext4: add ext4_try_lock_group() to skip busy
- groups
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-CC: <linux-ext4@vger.kernel.org>, <tytso@mit.edu>, <adilger.kernel@dilger.ca>,
-	<jack@suse.cz>, <linux-kernel@vger.kernel.org>, <julia.lawall@inria.fr>,
-	<yi.zhang@huawei.com>, <yangerkun@huawei.com>, <libaokun@huaweicloud.com>
-References: <20250714130327.1830534-1-libaokun1@huawei.com>
- <20250714130327.1830534-2-libaokun1@huawei.com>
- <aHjL5J3Ui9VMZt2o@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-Content-Language: en-US
-From: Baokun Li <libaokun1@huawei.com>
-In-Reply-To: <aHjL5J3Ui9VMZt2o@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- dggpemf500013.china.huawei.com (7.185.36.188)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250718125245.82910-1-darshanrathod475@gmail.com>
 
-On 2025/7/17 18:09, Ojaswin Mujoo wrote:
-> On Mon, Jul 14, 2025 at 09:03:11PM +0800, Baokun Li wrote:
->> When ext4 allocates blocks, we used to just go through the block groups
->> one by one to find a good one. But when there are tons of block groups
->> (like hundreds of thousands or even millions) and not many have free space
->> (meaning they're mostly full), it takes a really long time to check them
->> all, and performance gets bad. So, we added the "mb_optimize_scan" mount
->> option (which is on by default now). It keeps track of some group lists,
->> so when we need a free block, we can just grab a likely group from the
->> right list. This saves time and makes block allocation much faster.
->>
->> But when multiple processes or containers are doing similar things, like
->> constantly allocating 8k blocks, they all try to use the same block group
->> in the same list. Even just two processes doing this can cut the IOPS in
->> half. For example, one container might do 300,000 IOPS, but if you run two
->> at the same time, the total is only 150,000.
->>
->> Since we can already look at block groups in a non-linear way, the first
->> and last groups in the same list are basically the same for finding a block
->> right now. Therefore, add an ext4_try_lock_group() helper function to skip
->> the current group when it is locked by another process, thereby avoiding
->> contention with other processes. This helps ext4 make better use of having
->> multiple block groups.
->>
->> Also, to make sure we don't skip all the groups that have free space
->> when allocating blocks, we won't try to skip busy groups anymore when
->> ac_criteria is CR_ANY_FREE.
->>
->> Performance test data follows:
->>
->> Test: Running will-it-scale/fallocate2 on CPU-bound containers.
->> Observation: Average fallocate operations per container per second.
->>
->> |CPU: Kunpeng 920   |          P80            |
->> |Memory: 512GB      |-------------------------|
->> |960GB SSD (0.5GB/s)| base  |    patched      |
->> |-------------------|-------|-----------------|
->> |mb_optimize_scan=0 | 2667  | 4821  (+80.7%)  |
->> |mb_optimize_scan=1 | 2643  | 4784  (+81.0%)  |
->>
->> |CPU: AMD 9654 * 2  |          P96            |
->> |Memory: 1536GB     |-------------------------|
->> |960GB SSD (1GB/s)  | base  |    patched      |
->> |-------------------|-------|-----------------|
->> |mb_optimize_scan=0 | 3450  | 15371 (+345%)   |
->> |mb_optimize_scan=1 | 3209  | 6101  (+90.0%)  |
->>
->> Signed-off-by: Baokun Li <libaokun1@huawei.com>
->> Reviewed-by: Jan Kara <jack@suse.cz>
-> Hey Baokun, I reviewed some of the patches in v2 but i think that was
-> very last moment so I'll add the comments in this series, dont mind the
-> copy paste :)
->
-> The patch itself looks good, thanks for the changes.
->
-> Feel free to add:
->
->   Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Hi Darshan,
 
-Sorry for missing your review, I've snowed under with work lately.
+kernel test robot noticed the following build warnings:
 
-Thanks for the review!
+[auto build test WARNING on linuxtv-media-pending/master]
+[also build test WARNING on sailus-media-tree/master linus/master media-tree/master sailus-media-tree/streams v6.16-rc6 next-20250718]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Darshan-Rathod/media-b2c2-flexcop-eeprom-Fix-assignment-in-if-condition/20250718-205456
+base:   https://git.linuxtv.org/media-ci/media-pending.git master
+patch link:    https://lore.kernel.org/r/20250718125245.82910-1-darshanrathod475%40gmail.com
+patch subject: [PATCH] media: b2c2: flexcop-eeprom: Fix assignment in if condition
+config: i386-randconfig-002-20250719 (https://download.01.org/0day-ci/archive/20250719/202507190855.RA0Awmj9-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250719/202507190855.RA0Awmj9-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507190855.RA0Awmj9-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/media/common/b2c2/flexcop-eeprom.c: In function 'flexcop_eeprom_check_mac_addr':
+>> drivers/media/common/b2c2/flexcop-eeprom.c:143:29: warning: operation on 'ret' may be undefined [-Wsequence-point]
+     143 |                         ret = ret = -EINVAL;
+   drivers/media/common/b2c2/flexcop-eeprom.c:149:1: error: expected declaration or statement at end of input
+     149 | EXPORT_SYMBOL(flexcop_eeprom_check_mac_addr);
+         | ^~~~~~~~~~~~~
+>> drivers/media/common/b2c2/flexcop-eeprom.c:150: warning: control reaches end of non-void function [-Wreturn-type]
 
 
-Cheers,
-Baokun
+vim +/ret +143 drivers/media/common/b2c2/flexcop-eeprom.c
 
+   130	
+   131	/* JJ's comment about extended == 1: it is not presently used anywhere but was
+   132	 * added to the low-level functions for possible support of EUI64 */
+   133	int flexcop_eeprom_check_mac_addr(struct flexcop_device *fc, int extended)
+   134	{
+   135		u8 buf[8];
+   136		int ret = 0;
+   137	
+   138		ret = flexcop_eeprom_lrc_read(fc, 0x3f8, buf, 8, 4);
+   139	
+   140		if (ret == 0) {
+   141			if (extended != 0) {
+   142				err("TODO: extended (EUI64) MAC addresses aren't completely supported yet");
+ > 143				ret = ret = -EINVAL;
+   144			} else {
+   145				memcpy(fc->dvb_adapter.proposed_mac, buf, 6);
+   146			}
+   147			return ret;
+   148	}
+   149	EXPORT_SYMBOL(flexcop_eeprom_check_mac_addr);
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
