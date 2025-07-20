@@ -1,52 +1,79 @@
-Return-Path: <linux-kernel+bounces-738129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A4E9B0B4CE
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 12:07:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFDD1B0B4D2
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 12:11:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 811D91898989
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 10:07:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB6E417774E
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 10:11:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 135AA1E51EC;
-	Sun, 20 Jul 2025 10:07:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 831F81F1534;
+	Sun, 20 Jul 2025 10:11:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b="MqHVQJQe"
-Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QI5A7Idw"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0EE64A23;
-	Sun, 20 Jul 2025 10:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.59.177.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B7A2AD24;
+	Sun, 20 Jul 2025 10:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753006036; cv=none; b=PGHIYXqXjBW6l0BOMV3bPDjUPrS7lpSDRShM9+JuXbkw+1w/b9M9j0oTeN6jqfvFuXCokflY2X1vBTBLWFOT00HP6GTqyXQtMwN3IWS35BZfM8tlRvMIGNdbwli0OxQ/IuPqO7uwd3T+x3xNl2D8GFy0TUogyrZqDvO/anAEATQ=
+	t=1753006295; cv=none; b=mmGRM95GeNqHdxooGUGeUN0V6YT8kbhagl00MsGfHvDLFgHX0vCXvXZWN8LByL6a76yjhnQe0cd9Yq1Z7ckRiNqGfZze+iwQbzDllh95N3nnTWzZc4yBKOpd7o9xrTEwDIz56u82QMxnTZyDMtJDPnRddKIB8OPX70LBY1Phorc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753006036; c=relaxed/simple;
-	bh=6mN67hZadsyweT7MULaeH8/5vhBeDbL2Trh3WMoneNo=;
+	s=arc-20240116; t=1753006295; c=relaxed/simple;
+	bh=MEmze2/KZRm/Fg7Y6ZlAMO/Flv4J768QynVfXRHbNaU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=flihyLJ1FV7MFOKhR/BvWBnp6vLuIPqCNBcFfcJEn0Nw3DZUM6cto9S6KM+rpBkkGCGHvTa/MJJbVL4S3MO4qoKJq31saL58CNZm0UNVPaJaavMCZl7vylYQYiZtKOHbO6OPp47sAYyaq9WM0kpPwCEpZ2nxkrttBUNNoduSNqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com; spf=pass smtp.mailfrom=airkyi.com; dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b=MqHVQJQe; arc=none smtp.client-ip=52.59.177.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=airkyi.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=airkyi.com;
-	s=altu2504; t=1753006019;
-	bh=HRxfufF4OUe+W5VRpXOA9RrWw0ix/G9yeSyBfXtoFkM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=MqHVQJQelHI/KZnfskIVRZ7CcfZLRt/n6SLTeAEWWZ7AMO2sq8saTenv+lR5KAR6j
-	 VbpPICty3T/ujG2D4m7n4497mQ5wzlqSPE+pJL4kaRjPEhKB/uTAmsaIGkbQMyD8F8
-	 LqXTCwjbBUwTz6csN2zr+rokcg+M0wJK458ISVEc=
-X-QQ-mid: esmtpgz14t1753006014t51320e67
-X-QQ-Originating-IP: F7PdjKICQ8nRZpWX1lEhOBgGMEMX4m1ChMp59nydQx0=
-Received: from [192.168.0.103] ( [117.25.58.172])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sun, 20 Jul 2025 18:06:50 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 11197095626192148985
-Message-ID: <61E98DE80D7F342D+8e29ec49-1291-48f5-b47e-17aed7c4b032@airkyi.com>
-Date: Sun, 20 Jul 2025 18:06:48 +0800
+	 In-Reply-To:Content-Type; b=RsLO8rygu9lski0zsec6tYP8j+lgahaJV6AfCytaAZ0vl62V2jCqxb6Rnq3mgM4mZtw3vcDVafj/9BmPfOBG0alCMsWYJITJ94v37H6knYuCJPwrZZybOLYZQnrMmZhEEKPQwHmZqJJuIvmkjgFO6QlIByvTozHXcFF8rMZUfSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QI5A7Idw; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4555f89b236so33413885e9.1;
+        Sun, 20 Jul 2025 03:11:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753006293; x=1753611093; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JdRTpizrrU5e3G8Qae8BhJ1GHYpNCsEA8s4Rmi93U9U=;
+        b=QI5A7IdwFyg533ugC5W3TcdWitsVLj/Kfni9xIAEUAIZH1cJ61PnlqX+4Mvzbms+gM
+         mWE+BcH4tgWfCCK1Y7Qtu5j2nk37rLMteZIr8ZcBRELKEKWmJGm6DfIwiu0U/19PXoMp
+         YfF03vHRwbFO7lzvf0gLnaPFthKu3b4dYzIeIRPJ1JCvt8Bbqm0JiojWK3xujfXBSOUV
+         OJZyEZADV22FnjeKtv9ozr8BMtuQbJdjapZdtct8vdCxftKhRj/WAx0044AxwaeUTfyw
+         px2qJpaywoQ3Bw9EPIkAnxVO7Y6xUwdkUAZDHApksZLuqHqDDk6iOc/Jl8RUq/eoK9No
+         HiEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753006293; x=1753611093;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JdRTpizrrU5e3G8Qae8BhJ1GHYpNCsEA8s4Rmi93U9U=;
+        b=Zsi8EhY9dHAm+fOe2STos9ktrsaIru1tNQFkrVTa2b+jmoFY8KHbT+791xJLzhucZG
+         yAVJ4PhHq52ZTkFS0qLLF7mvKdwb04pexaS/cAhK8dZ7nJ/h1kUFmOsXgBMqbw0J7SIp
+         mtY5nawR/5nrFGJ2/a9Dy8m7mYxMTOUjxfW2W3fzaHRyLfKA08ahjppUnF2aQ6xNRVEu
+         /tenIvcHhfWl3lp0+1SkF4QXBxdXxm5AFOVekqMb9HZ1BKLMVH8HBSSrO64MB+NQJdGt
+         fE3SzIrv7MfeJTG0oB7Sg5x+AUQGhrjDoMMINGYYDZgLHTS8H7jCLcdm7H+d3LltoDN8
+         Pd5g==
+X-Forwarded-Encrypted: i=1; AJvYcCUROAmIlafjjH0aHHFGm8KiphxQ4CwTydwTiWNDWXV13aDPIEoIlAwhro+RkmSvpnOaPn27tnKZMEk=@vger.kernel.org, AJvYcCWHUsBIOyCzaGW8g6DOvnUIlkugAxrTr7urYPFVnDLeZUtvGSVZCMDF91V+OK7UNXr9/5mUB1TK@vger.kernel.org, AJvYcCXcslcLQpTX6YAgw4VFzFRSvKtr+lb9cFgWhLzJbF74nOduHwj+EX3jaWsOmhXqN4NsFlVP2yFugevRKw==@vger.kernel.org, AJvYcCXiH+l5hNGB9FDSxj4HxgIhQbSmY93cciqtDwRhM8dRPxPeScG9f3I3/iIEeL1cudivUe9gq/X/WWDVjSZy@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPv9sApn+samv1nWJeV/+ej4c+VJjmAQAKIcgMyMNBLdcP4SW3
+	WEljSWlKpiA65Bl2GP9ppdeurRAhECcCoVmQFHO/EKZ30lzTXAMa4gK5
+X-Gm-Gg: ASbGnctuOCPi15wnI3OnUPdqRNQIPznUGr5ziZfTnBjKHa7D2iJOuC2C08f5Bw7ZZVs
+	cxQm0DkZrhfoyKl8FcAZPvi+Kacehn8RQMnUKItXXCSLquKwNuyICi/kHYF2oaW503cyVlAfGDq
+	AZYXjWQZbQ9zG5/vwFdR+pF20ZJU4FJPqdW39M2ox9cINqSceEjVlDfyxrwJIAiDIujgWE4OEDL
+	vZticupxflp26yd7Vv4OeLAQUKAt8t1XJSg7p+jaoMeeJFtsEv55qglfhdHuefTVYd8e+oNqrHa
+	ZjGBDFGeg+pZlIOqqZ6yTxf0NeK9yKDnuok0Md4WLuK5udu9jG/KHImAEXBiztU2m5NDSPNqZe3
+	BdCBReS3QCFtn/0W0aAHCFssu9MComSo519Fmr4dfZ2sxlR/CK36x7kIPjQ==
+X-Google-Smtp-Source: AGHT+IF2s+ysLSvlfEeRDPjVCEmq+qa5T5BlTc61WRYN/BrMqkjiw4nWQHAfv2AZZ83vJjydX+cmVA==
+X-Received: by 2002:a05:600c:64ca:b0:456:1752:2b43 with SMTP id 5b1f17b1804b1-4562e39ba8dmr145529555e9.21.1753006292314;
+        Sun, 20 Jul 2025 03:11:32 -0700 (PDT)
+Received: from [172.27.57.153] ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45627898725sm114520565e9.1.2025.07.20.03.11.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 20 Jul 2025 03:11:31 -0700 (PDT)
+Message-ID: <f132d14c-0d82-495f-8f6d-bf87ecb4bc75@gmail.com>
+Date: Sun, 20 Jul 2025 13:11:27 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,183 +81,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/5] drm/rockchip: cdn-dp: Support handle lane info and
- HPD without extcon
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Heiko Stuebner
- <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
- Andy Yan <andy.yan@rock-chips.com>,
- Yubing Zhang <yubing.zhang@rock-chips.com>,
- Frank Wang <frank.wang@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Amit Sunil Dhamne <amitsd@google.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Chaoyi Chen <chaoyi.chen@rock-chips.com>, Dragan Simic <dsimic@manjaro.org>,
- Johan Jonker <jbx6244@gmail.com>, Diederik de Haas <didi.debian@cknow.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
-References: <20250718062619.99-1-kernel@airkyi.com>
- <20250718062619.99-4-kernel@airkyi.com>
- <t3th2tqbnkmsqssypxvye6vsfhpw37sf7wyl53cso3r5pqa7qp@gn74pj75j4pb>
-From: air windows <kernel@airkyi.com>
-In-Reply-To: <t3th2tqbnkmsqssypxvye6vsfhpw37sf7wyl53cso3r5pqa7qp@gn74pj75j4pb>
+Subject: Re: [PATCH net-next 4/5] devlink: Make health reporter grace period
+ delay configurable
+To: Jakub Kicinski <kuba@kernel.org>, Tariq Toukan <tariqt@nvidia.com>
+Cc: Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Jiri Pirko <jiri@resnulli.us>,
+ Jiri Pirko <jiri@nvidia.com>, Saeed Mahameed <saeed@kernel.org>,
+ Gal Pressman <gal@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+ Shahar Shitrit <shshitrit@nvidia.com>,
+ Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ Brett Creeley <brett.creeley@amd.com>,
+ Michael Chan <michael.chan@broadcom.com>,
+ Pavan Chebbi <pavan.chebbi@broadcom.com>, Cai Huoqing
+ <cai.huoqing@linux.dev>, Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Sunil Goutham <sgoutham@marvell.com>, Linu Cherian <lcherian@marvell.com>,
+ Geetha sowjanya <gakula@marvell.com>, Jerin Jacob <jerinj@marvell.com>,
+ hariprasad <hkelam@marvell.com>, Subbaraya Sundeep <sbhatta@marvell.com>,
+ Saeed Mahameed <saeedm@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
+ Ido Schimmel <idosch@nvidia.com>, Petr Machata <petrm@nvidia.com>,
+ Manish Chopra <manishc@marvell.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org
+References: <1752768442-264413-1-git-send-email-tariqt@nvidia.com>
+ <1752768442-264413-5-git-send-email-tariqt@nvidia.com>
+ <20250718174844.71062bc9@kernel.org>
+Content-Language: en-US
+From: Tariq Toukan <ttoukan.linux@gmail.com>
+In-Reply-To: <20250718174844.71062bc9@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:airkyi.com:qybglogicsvrsz:qybglogicsvrsz4a-0
-X-QQ-XMAILINFO: OFfQQ3bkz2z4et79pb1eegZJVLlzJ8KmsuIsU3+kaxV3BcZoBlBFrGQs
-	DrkkF0C/7pKqoNew1CMgI8iPWeUqOo+yY8Oj+De/Tt6CCyuyCjzVX7Lh27bEYRtqHkiGwBz
-	qgnieV9iozlCeHJSQci2wLuqR/hJwRmfJJr7VJj/8k0JFS/iYGpeMEzv53t8czcHTNeoeXX
-	WujnXSpAvLqSYxXuBJKVvvqs/cjPqohjTMicdV0HT7LfIK4R2r1T3hdMR9dwMzIvR35wP1Z
-	piUNfoiwxdvV6oV5y2wR1LgjrO2tyFhLh6tMMkKRRrVARFFofERJajVt+BjAoJ3XpmJlxPO
-	IxxlycKpeuzsShL/5BP8Z2EXoP4Xc/Wal/QNqbs55Q43kLeLPdBj2qIayRKFZc/vBfWnLo0
-	cW9VACSv93/FWW0rk5cnP6sZdz0qasDBZ/N8W/aEdWOjLkJK2xp8jxFWSU+vUf9M53KZaq9
-	bLyCrS739fXCqy0pgl7PHOJF6XMAqO/kzlcNjFVZ2YOifgpJV5+ONdM+Sn73ILsKnPUuMKz
-	iWkL4v+OTWU01IAx84xcST5iuhPtkTP6SwrBAjJFDawHhhk9ByIgW9Z+zLkJvab+Ps9csC+
-	IzVm5HtX9tXNofIJWqNzSoIT08UaVT5iB11XGF3wmh5miDbUfiPLuh9zM5glCfXDnB5hWSR
-	GLSqxI+MZ0BDBkPO8cCj2qVlbTrXFVLjR4A7pv5WbiUGLvMDXOh8JnSgwmSTHQofIllxKxQ
-	gpemu7SSJJ6Kfqs9DRUVM8a44ezBFkzC4EXiexe3otGnoskRAhXI7yL4aKmex0n3OQU/TzC
-	GmYgqqq7Vt0s/mSCfAiD9AHMNVa1pgMwxs7mT/o1LcObeYMOGudFg1AM3DHqG/JJfmPjmdp
-	8WNjPGSyYbfTHVGPNwVqjFaPF2WatzjOaQ41myHpBzOSiKz6v3pHYEUWau9Q4g3UC/COnHJ
-	KphCWXbUkDQ8n/dt6q0MfzJaaH2uS7zpEhd0nsGCPD61OFc6fuPV3siHp
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-X-QQ-RECHKSPAM: 0
-
-在 2025/7/19 18:53, Dmitry Baryshkov 写道:
-
-> On Fri, Jul 18, 2025 at 02:26:17PM +0800, Chaoyi Chen wrote:
->> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
->>
->> This patch add support for get PHY lane info and handle HPD state
->> without help of extcon.
->>
->> There is no extcon needed if the Type-C controller is present. In this
->> case, cdn_dp_hpd_notify() will handle HPD event from USB/DP combo PHY,
->> and the lane info can be get from PHY instead of extcon.
-> The DP AltMode driver will send drm_connector_oob_hotplug_event() to the
-> DRM connector associated with the USB-C connector fwnode. However your
-> DP connector will have fwnode set to the DP controller, if I'm not
-> mistaken. So I doubt that HPD events are going to be delivered
-> correctly.
-
-Yes, that's exactly the case for the DP Altmode driver! I've thought of a few approaches, but none of them are elegant. Now it relying on the PHY driver to call the drm_connector_oob_hotplug_event(). You'll find the relevant code in the PHY driver.
+Content-Transfer-Encoding: 7bit
 
 
->
->> The extcon device should still be supported if Type-C controller is
->> not present.
->>
->> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
->> ---
->>
->> Changes in v2:
->> - Ignore duplicate HPD events.
->>
->>   drivers/gpu/drm/rockchip/cdn-dp-core.c | 37 ++++++++++++++++++++------
->>   1 file changed, 29 insertions(+), 8 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.c b/drivers/gpu/drm/rockchip/cdn-dp-core.c
->> index 24f6b3879f4b..b574b059b58d 100644
->> --- a/drivers/gpu/drm/rockchip/cdn-dp-core.c
->> +++ b/drivers/gpu/drm/rockchip/cdn-dp-core.c
->> @@ -156,6 +156,9 @@ static int cdn_dp_get_port_lanes(struct cdn_dp_port *port)
->>   	int dptx;
->>   	u8 lanes;
->>   
->> +	if (!edev)
->> +		return phy_get_bus_width(port->phy);
->> +
->>   	dptx = extcon_get_state(edev, EXTCON_DISP_DP);
->>   	if (dptx > 0) {
->>   		extcon_get_property(edev, EXTCON_DISP_DP,
->> @@ -219,7 +222,7 @@ static bool cdn_dp_check_sink_connection(struct cdn_dp_device *dp)
->>   	 * some docks need more time to power up.
->>   	 */
->>   	while (time_before(jiffies, timeout)) {
->> -		if (!extcon_get_state(port->extcon, EXTCON_DISP_DP))
->> +		if (port->extcon && !extcon_get_state(port->extcon, EXTCON_DISP_DP))
->>   			return false;
->>   
->>   		if (!cdn_dp_get_sink_count(dp, &sink_count))
->> @@ -385,11 +388,14 @@ static int cdn_dp_enable_phy(struct cdn_dp_device *dp, struct cdn_dp_port *port)
->>   		goto err_power_on;
->>   	}
->>   
->> -	ret = extcon_get_property(port->extcon, EXTCON_DISP_DP,
->> -				  EXTCON_PROP_USB_TYPEC_POLARITY, &property);
->> -	if (ret) {
->> -		DRM_DEV_ERROR(dp->dev, "get property failed\n");
->> -		goto err_power_on;
->> +	property.intval = 0;
->> +	if (port->extcon) {
->> +		ret = extcon_get_property(port->extcon, EXTCON_DISP_DP,
->> +					  EXTCON_PROP_USB_TYPEC_POLARITY, &property);
->> +		if (ret) {
->> +			DRM_DEV_ERROR(dp->dev, "get property failed\n");
->> +			goto err_power_on;
->> +		}
->>   	}
->>   
->>   	port->lanes = cdn_dp_get_port_lanes(port);
->> @@ -821,6 +827,17 @@ static int cdn_dp_audio_mute_stream(struct drm_connector *connector,
->>   	return ret;
->>   }
->>   
->> +static void cdn_dp_hpd_notify(struct drm_bridge *bridge,
->> +			      enum drm_connector_status status)
->> +{
->> +	struct cdn_dp_device *dp = bridge_to_dp(bridge);
->> +	enum drm_connector_status last_status =
->> +		dp->connected ? connector_status_connected : connector_status_disconnected;
->> +
->> +	if (last_status != status)
->> +		schedule_work(&dp->event_work);
->> +}
->> +
->>   static const struct drm_bridge_funcs cdn_dp_bridge_funcs = {
->>   	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
->>   	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
->> @@ -831,6 +848,7 @@ static const struct drm_bridge_funcs cdn_dp_bridge_funcs = {
->>   	.atomic_disable = cdn_dp_bridge_atomic_disable,
->>   	.mode_valid = cdn_dp_bridge_mode_valid,
->>   	.mode_set = cdn_dp_bridge_mode_set,
->> +	.hpd_notify = cdn_dp_hpd_notify,
->>   
->>   	.dp_audio_prepare = cdn_dp_audio_prepare,
->>   	.dp_audio_mute_stream = cdn_dp_audio_mute_stream,
->> @@ -1028,6 +1046,9 @@ static int cdn_dp_bind(struct device *dev, struct device *master, void *data)
->>   	for (i = 0; i < dp->ports; i++) {
->>   		port = dp->port[i];
->>   
->> +		if (!port->extcon)
->> +			continue;
->> +
->>   		port->event_nb.notifier_call = cdn_dp_pd_event;
->>   		ret = devm_extcon_register_notifier(dp->dev, port->extcon,
->>   						    EXTCON_DISP_DP,
->> @@ -1120,14 +1141,14 @@ static int cdn_dp_probe(struct platform_device *pdev)
->>   		    PTR_ERR(phy) == -EPROBE_DEFER)
->>   			return -EPROBE_DEFER;
->>   
->> -		if (IS_ERR(extcon) || IS_ERR(phy))
->> +		if (IS_ERR(phy) || PTR_ERR(extcon) != -ENODEV)
->>   			continue;
->>   
->>   		port = devm_kzalloc(dev, sizeof(*port), GFP_KERNEL);
->>   		if (!port)
->>   			return -ENOMEM;
->>   
->> -		port->extcon = extcon;
->> +		port->extcon = IS_ERR(extcon) ? NULL : extcon;
->>   		port->phy = phy;
->>   		port->dp = dp;
->>   		port->id = i;
->> -- 
->> 2.49.0
->>
+
+On 19/07/2025 3:48, Jakub Kicinski wrote:
+> On Thu, 17 Jul 2025 19:07:21 +0300 Tariq Toukan wrote:
+>> +	DEVLINK_ATTR_HEALTH_REPORTER_GRACEFUL_PERIOD_DELAY,	/* u64 */
+> 
+> /me pulls out a ruler
+> 
+> 50 characters, -ENAMETOOLONG
+
+We'll address.
 
