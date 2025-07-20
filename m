@@ -1,89 +1,95 @@
-Return-Path: <linux-kernel+bounces-738295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CEB3B0B6DD
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 18:11:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EE07B0B6DE
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 18:13:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86A561899333
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 16:12:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA5CC3BDB6F
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 16:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 156A921FF39;
-	Sun, 20 Jul 2025 16:11:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3997621E08B;
+	Sun, 20 Jul 2025 16:13:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="XtQTbhsV"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JnDhFWoF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C0831F0E53
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 16:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802DF1A08A3
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 16:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753027894; cv=none; b=IB5hKwGwIhB2omUbh/GzAF31w1And7aygsCvZLwkVyQ6rOPb8UhAUDJ3YRHUBnP3IwKaW5Uo6Mylf+0kaWVCJ+K3Jqog+gvGc2kqActzocxdd/maO+ntDa4nAAd+1IAdwaUpeOmDOqiKcBvZ40AKvfjke/rt4tDw98b8zoWW+sk=
+	t=1753028003; cv=none; b=DEkz2Br9mgWImFfTrzpQo5C7SlEtvgOhArwfOU7wv21qpzXT03NE3izv6NQ3vF9dzgqTMs2bxlMI2Z1CRn7tuczEEeDy4KOKqd08ghNXBPUwOu57QhBy8+OxWFM97PGI+TX65193oZkKnf73j602VdJ8mwO4781QxCydSUcsPvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753027894; c=relaxed/simple;
-	bh=1kkgAJedVRmqE+NjlLS/JrjnCCyYksp2IzhgSl3fYFs=;
+	s=arc-20240116; t=1753028003; c=relaxed/simple;
+	bh=waHBK/dHOhY61lgCppPc1hC3CKS8KkMfCExvaN3qBfw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b5T1x+HuK1SxqwbkPt0+H0ADoOOPmxsXGiaT1UqPXUqlcM6Vs3y07M8oiP7nyphxVgFhpVDxhpE67iChCcGxVl78Mww3nzVUYmsSb4rnFJuaUmjsZqYK+7Cut5GgkglKNEFucjThVNEaN6rRdA+RLPQky0nmj1ZKfdY706YbIAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=XtQTbhsV; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-747fba9f962so3207452b3a.0
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 09:11:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=furiosa.ai; s=google; t=1753027893; x=1753632693; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=X3sE27/WAqZP41FkkjgAc8UwvwE9+GItC8A+pDEL148=;
-        b=XtQTbhsVB/YmaMFMLuKs0K9dxI9bTaAbSr2oTdREH6vCWRbo3p+beRPlq4o2rItFxC
-         4kbk2Tm0d3lj+avtfo+bKjEO7Q28DWvECd90S6hIzd605Tk5TRapJGipGaDRt/0tP0gs
-         Bl23b7I+D+A04VKDzGi/sSMIVCQw+mbLQwjeo=
+	 Content-Type:Content-Disposition:In-Reply-To; b=BGDRB5gqpLWdT4YqKZIYHYY4dIsPP7t+tXsw/zPuwrjgwU3iTsRL7O3ZSGTM4Q0VEqSwNXXWwFS53O/09Rr7slmAe5Vgh8sjmQdWksoQxQ+6VL6SPzaVcpH+duNZZJg3g/NEboxZKYAmQmRIF1THZZBXc/G/g8JVyExXuwtTY9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JnDhFWoF; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753028000;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/Jj3apqxe+kr9fcNoPVcjrR+Gq4Oua7cDA/qKij4XC8=;
+	b=JnDhFWoFpB1LQgegSDbzQB4oQThem0qd6xOU3ROiKfJBaXd/7t2IWvJbU5DVr064cDbatg
+	DjPCHyHSjzrSn/hUAWChnI7Ejk7WAZIR9oPx3+w13qI/s+Cig71k41a8fgoSe7gPTB/sb7
+	QBZ6a8qNb90XvDPUyKIm+2LSOhPUNHE=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-426-Wj-rO7QhPvGhAGVFAGWiNQ-1; Sun, 20 Jul 2025 12:13:18 -0400
+X-MC-Unique: Wj-rO7QhPvGhAGVFAGWiNQ-1
+X-Mimecast-MFC-AGG-ID: Wj-rO7QhPvGhAGVFAGWiNQ_1753027998
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6fd0a3f15daso134069916d6.2
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 09:13:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753027893; x=1753632693;
+        d=1e100.net; s=20230601; t=1753027998; x=1753632798;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=X3sE27/WAqZP41FkkjgAc8UwvwE9+GItC8A+pDEL148=;
-        b=Z9e4o8HFqeNX8cRJ8e0GKCCM59fZuR6Fw6CWhZIj4qAkeVhceQLR7jsOOEepVq0X0m
-         8/m67KmyKcE4wLSlEK2RYPMyxbs0HFgG0lRRx5CXYMai41lm/13+kxxa60yx0Ka6o82P
-         gBPw8HN20kWtDSuJfJpOtya3VO+6NiG0DT2S/SSikwRJwfqABniRTlmPIrpa8e4kEmE2
-         RNi87qUx/CCMDkERxLeV72HwyydME9rSEQOsiXjYTsF+O1cdPyYtGPwBkQxn7Wx5eEco
-         puesKY0IqrIZsCT3mG+LGCqYPhcxfeUpCMxmZrZzxOGQET23QoD1jJ1e7sO51VIAesbw
-         zMfw==
-X-Forwarded-Encrypted: i=1; AJvYcCUY0W2avTOCoQAOItG0ZDRLFhNG6UIv7e8XX7YgB6/JpycQfLRVmn9ZeRK49+Zt8NV6DBuiyJXqhzgEztk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBH6uo0SZK7ZBUwkdZtpOsv1yFyJoBIm6UXJ6ZJ1MRgKjMPyue
-	N2+P7jFnNzCTHk9lLhDrc6/pAoTAXqhDVs33f0Z/ZgCQMpIyEAHEWaECjCjOp6b1g+U=
-X-Gm-Gg: ASbGncuK2vZC68OrA0eeM+vh7CMnNgTb/uCWfHEOgsDee1VD8I0C/62eXRUj/Wo8yj9
-	EuBRvUySijUo2Y6yiCvglqa5fwQjMcv2nF+Yv/aKFyAg7E7lg/WsGqdnGbCElQju1GNO7ljG4cd
-	tc1oJ4H3irg2IadlVFzEh8CDySQcFKlgLc0dQjYzvSh7jryGukch9mn3XYYEambXrk2CosXwuwa
-	kWMzj+hfjopofw89vNbwzggSxMXMfHfPdtyXQSqe/jT///oNDCb0ydcI1l5qD1IbN/srgX4uOeq
-	4kGBNen3IJv6Bc4yq9WeBWHG/zcpXxcJiS6CoZW5MGkPmrG4d5bgdthn87XhUhdXijpgge1RrQ+
-	abFabKLe87ES3L4RUFZ/t58dIOAsA6ZNi5OUc4M1jDkh+wITMUzG04eP75A==
-X-Google-Smtp-Source: AGHT+IFF1fTWCOr6/BH6HO2z3c4L025UX0QqK8oCHrmmePFPB5CppScDYdz+haI97RiMoMTtOxzo2g==
-X-Received: by 2002:a05:6a00:3e15:b0:736:4d05:2e35 with SMTP id d2e1a72fcca58-75836faac4emr20252321b3a.3.1753027892574;
-        Sun, 20 Jul 2025 09:11:32 -0700 (PDT)
-Received: from sidongui-MacBookPro.local ([61.83.209.48])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759c8acb61csm4358217b3a.64.2025.07.20.09.11.28
+        bh=/Jj3apqxe+kr9fcNoPVcjrR+Gq4Oua7cDA/qKij4XC8=;
+        b=Yo6Mam7uTfpQ/kuKr1EVZN1TeIbGIDpck1XPnprLll5c/Rwi97k3dZLjAlFYEYYNYi
+         YcNQChJqMVgMvLDkl5RBGCD49acaFZ3QPuFs+AM8RCRTG06qrrsscZ+SG7wwFublLXDL
+         vdmUv5LbrXmKSuVtLdzvC7lcI7fwuf7lubznxTBvrI4CY2HKRKMzHQ7MogKsXjDgP5t+
+         n10mkmUCanj0J/vv0yesUiSSfCk5JfcaFKpTQ9Qf/fqmg5KdfIdC2Fv4wDaD/JWAVnlb
+         X6QOPpIDohJDRCBufrZJIrCl7emGXV//Aqya3WSXu8/B0GPezUT+XtnAMHneSh4HpfnK
+         0XMA==
+X-Forwarded-Encrypted: i=1; AJvYcCUtB7gjqiwxTMOkOonCcczVKusRcntgBWBo/ho1OqxVmusN/foQUqJo9Je/LvSwfWuxICVr2+WF8fDte6k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyj9300znKeA1G7FSUv7FdaaUzQEHuWYUmeXRKkMlMLK6Rz8qNa
+	V4wL8P+7FRy+Gm02p2Vnxati7dDexeujx/8EJz76pYPPjByTinUSctjjLlmjKRwBAzFxecUnX1J
+	QsBdYhAmUkZERK5fj0z+/tCj5ZcsuI/Ti1UhhXEUVyWtPjh6+2iQcnrYRU87nNmpgcw==
+X-Gm-Gg: ASbGnctK/6Dv3eyzVt1ym3SAIwuhAyyAXEm/M2VQhmP4OlLGmVNNmnoE/ccf4GC97ME
+	SzT5M5Xw8QRRTidNRuF7s2O+KpdtWWSk1gVPz0/2J9P4072T0PcAaIeWKf16qxTnMPrVFZa3XDO
+	vDg1SMVWM/8RebytB3e/MPJB2LSCAcWWG2FCevKIAhlBvXrnGLlLgObfiOLdJIQk/Dk7n5hLVsf
+	5mjmgd1nolptzij+uvj6T1CaRQ4W7R8K4HxUJOB4OZhgreN8GnAkjN/WkLGJeQd7vRqRWI3al/T
+	Te58a6DLOp3zeobbmZ9h1F3IJh0QU38=
+X-Received: by 2002:a05:6214:5195:b0:704:7dbd:5d90 with SMTP id 6a1803df08f44-70519fc9cf4mr124408986d6.9.1753027998171;
+        Sun, 20 Jul 2025 09:13:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF6LiE8pkS62bIaBTVjt45PmxaYTrc0y1TsJte7EO3rbVHjyeTl3+MgHQg0Hafie3fbwQjvdw==
+X-Received: by 2002:a05:6214:5195:b0:704:7dbd:5d90 with SMTP id 6a1803df08f44-70519fc9cf4mr124408646d6.9.1753027997715;
+        Sun, 20 Jul 2025 09:13:17 -0700 (PDT)
+Received: from redhat.com ([185.187.243.84])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7051b90616asm29643326d6.35.2025.07.20.09.13.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Jul 2025 09:11:32 -0700 (PDT)
-Date: Mon, 21 Jul 2025 01:11:26 +0900
-From: Sidong Yang <sidong.yang@furiosa.ai>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Jens Axboe <axboe@kernel.dk>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>
-Subject: Re: [RFC PATCH 0/4] rust: miscdevice: abstraction for uring-cmd
-Message-ID: <aH0VLhYptH_Sw0Py@sidongui-MacBookPro.local>
-References: <20250719143358.22363-1-sidong.yang@furiosa.ai>
- <a0a868ef-107e-4b1b-8443-f10b7a35aabb@kernel.org>
+        Sun, 20 Jul 2025 09:13:17 -0700 (PDT)
+Date: Sun, 20 Jul 2025 12:13:10 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Hillf Danton <hdanton@sina.com>
+Cc: Nikolay Kuratov <kniv@yandex-team.ru>, linux-kernel@vger.kernel.org,
+	virtualization@lists.linux.dev, Jason Wang <jasowang@redhat.com>,
+	Eugenio Perez <eperezma@redhat.com>, Lei Yang <leiyang@redhat.com>,
+	Andrey Ryabinin <arbn@yandex-team.com>,
+	Andrey Smetanin <asmetanin@yandex-team.ru>
+Subject: Re: [PATCH v2] vhost/net: Replace wait_queue with completion in
+ ubufs reference
+Message-ID: <20250720121256-mutt-send-email-mst@kernel.org>
+References: <20250718110355.1550454-1-kniv@yandex-team.ru>
+ <20250718230356.2459-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,27 +98,74 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a0a868ef-107e-4b1b-8443-f10b7a35aabb@kernel.org>
+In-Reply-To: <20250718230356.2459-1-hdanton@sina.com>
 
-On Sat, Jul 19, 2025 at 07:03:24PM +0200, Danilo Krummrich wrote:
-> Hi Sidong,
+On Sat, Jul 19, 2025 at 07:03:23AM +0800, Hillf Danton wrote:
+> On Fri, 18 Jul 2025 14:03:55 +0300 Nikolay Kuratov wrote:
+> > When operating on struct vhost_net_ubuf_ref, the following execution
+> > sequence is theoretically possible:
+> > CPU0 is finalizing DMA operation                   CPU1 is doing VHOST_NET_SET_BACKEND
+> >                              // &ubufs->refcount == 2
+> > vhost_net_ubuf_put()                               vhost_net_ubuf_put_wait_and_free(oldubufs)
+> >                                                      vhost_net_ubuf_put_and_wait()
+> >                                                        vhost_net_ubuf_put()
+> >                                                          int r = atomic_sub_return(1, &ubufs->refcount);
+> >                                                          // r = 1
+> > int r = atomic_sub_return(1, &ubufs->refcount);
+> > // r = 0
+> >                                                       wait_event(ubufs->wait, !atomic_read(&ubufs->refcount));
+> >                                                       // no wait occurs here because condition is already true
+> >                                                     kfree(ubufs);
+> > if (unlikely(!r))
+> >   wake_up(&ubufs->wait);  // use-after-free
+> > 
+> > This leads to use-after-free on ubufs access. This happens because CPU1
+> > skips waiting for wake_up() when refcount is already zero.
+> > 
+> > To prevent that use a completion instead of wait_queue as the ubufs
+> > notification mechanism. wait_for_completion() guarantees that there will
+> > be complete() call prior to its return.
+> > 
+> Alternatively rcu helps.
 > 
-> On 7/19/25 4:33 PM, Sidong Yang wrote:
-> > This patch series implemens an abstraction for io-uring sqe and cmd and
-> > adds uring_cmd callback for miscdevice. Also there is an example that use
-> > uring_cmd in rust-miscdevice sample.
-> 
-> Please also add Greg, maybe get_maintainer.pl does not list him, since the
-> entries for miscdevice were missing for a while I think.
-> 
-> For new abstractions I also recommend to Cc the RUST reviewers.
+> --- x/drivers/vhost/net.c
+> +++ y/drivers/vhost/net.c
+> @@ -96,6 +96,7 @@ struct vhost_net_ubuf_ref {
+>  	atomic_t refcount;
+>  	wait_queue_head_t wait;
+>  	struct vhost_virtqueue *vq;
+> +	struct rcu_head rcu;
+>  };
+>  
+>  #define VHOST_NET_BATCH 64
+> @@ -247,9 +248,13 @@ vhost_net_ubuf_alloc(struct vhost_virtqu
+>  
+>  static int vhost_net_ubuf_put(struct vhost_net_ubuf_ref *ubufs)
+>  {
+> -	int r = atomic_sub_return(1, &ubufs->refcount);
+> +	int r;
+> +
+> +	rcu_read_lock();
+> +	r = atomic_sub_return(1, &ubufs->refcount);
+>  	if (unlikely(!r))
+>  		wake_up(&ubufs->wait);
+> +	rcu_read_unlock();
+>  	return r;
+>  }
+>  
+> @@ -262,7 +267,7 @@ static void vhost_net_ubuf_put_and_wait(
+>  static void vhost_net_ubuf_put_wait_and_free(struct vhost_net_ubuf_ref *ubufs)
+>  {
+>  	vhost_net_ubuf_put_and_wait(ubufs);
+> -	kfree(ubufs);
+> +	kfree_rcu(ubufs, rcu);
+>  }
+>  
+>  static void vhost_net_clear_ubuf_info(struct vhost_net *n)
 
-Thanks for a advice. I've added Greg, and other RUST reviewers to Cc. 
+I like that.
 
-Thanks,
-Sidong
+-- 
+MST
 
-> 
-> Thanks,
-> Danilo
 
