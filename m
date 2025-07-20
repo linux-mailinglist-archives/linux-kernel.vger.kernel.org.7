@@ -1,110 +1,179 @@
-Return-Path: <linux-kernel+bounces-738424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8649AB0B822
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 22:14:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 805C6B0B825
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 22:21:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01CF97A3468
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 20:12:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90F68178B02
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 20:21:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D547F223DE7;
-	Sun, 20 Jul 2025 20:14:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F5F208A7;
+	Sun, 20 Jul 2025 20:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E3qH+EWf"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="bRz4bSWC"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8A77262D;
-	Sun, 20 Jul 2025 20:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801DE19F130
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 20:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753042451; cv=none; b=SZ+1R6dTNHn2oLpLzShWG1ym6Hicvosdlc6/Kr9yexWfTf7nik+qWC5XOnwCpI+dAYOkUz9bORjfnjy9aoa6sEvq7LWGDhZWyS7SAEGYgbvSW7gMq0j7WoUAO+eHS/rrkvCbgc5GKthGv8wCrzqjuhXrsGPbHxnELbEovkguAOQ=
+	t=1753042875; cv=none; b=YwuPzrrDpTw2dLsojLltd0uQRYJL1WSo0kVrFh02tsseGKvTQKWQ3nvvmN/Q/YaMbIMXEfyYvt4gszb7HPxbOppnKq40vwY3/HLYR/BEsnZrWRYBDh6JvInHg6r2bV94mvIwuECfsaWqNbHndO7AnBTKi+XzE88KVZHk5cp+lec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753042451; c=relaxed/simple;
-	bh=3XqnZ3lQ7EVpBDgAQl7576ulVBufGzapdE6biJkdf1c=;
+	s=arc-20240116; t=1753042875; c=relaxed/simple;
+	bh=i3OpDp6GUcBgyD7nVFA8rvtMwYwGqH2Ruhus24O6PMA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fSk1dr0GEez15ezTODAW+BL+q48hGyNycH9os7bI8yYBIvuJ33DPlJ5gYQ08FggcW00myTVf/KqT+2bs3hPqSWv4LOJ5nJYz1klgCNvPlBXnzqciQPtXzx4AFOaijwLsxtCstMVK12C1x4iBkN0OUovvb4/mViO8LKRh+1oAnYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E3qH+EWf; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-31306794b30so746773a91.2;
-        Sun, 20 Jul 2025 13:14:08 -0700 (PDT)
+	 To:Cc:Content-Type; b=Ud+Pvxx0zvLHfprcj/7ws2WywCpfNATZttxWQnt8kvZs5mMau/H62mBI3AQciRHWrM2Z1fI0x1f3oJLTA4NbcICeI89TUw14ppFh0/XmKloG077P2/1v6cxs5HXIWLModO5MdNfbx5KKvVVwK22idnGzAZWYonbX6owiq4DWraE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=bRz4bSWC; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-23c71b21f72so6902935ad.2
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 13:21:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753042448; x=1753647248; darn=vger.kernel.org;
+        d=purestorage.com; s=google2022; t=1753042873; x=1753647673; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3XqnZ3lQ7EVpBDgAQl7576ulVBufGzapdE6biJkdf1c=;
-        b=E3qH+EWfpYX0aFcxGab0mraj1wmnzzTPnW4TMhG3sxL+8be0PTVia/Lo2xNUr69EZa
-         5OoulhZDktErEQHBzTNQL1S2bCxPyWnzWHeb6RmYURpP4TUcVbOXbDR7Ty7roKsD6eCK
-         lE0PLy7qIe4ydTmXs8a3trZbcBGMlGrXGJHKNk8nbdPLU0V5NuNUzGmsNT8cUup+T5jq
-         Ee3+krrqtUOeiNiWAN/f3noZKUnhXtSqrQg9m3D+fG9fXmqoN+0244A7q/4TVWTvsmQt
-         SRHydLVa+edVfw9Lzt/goPzWAo4HbW1O1idVscoNUTOb6LUvm2mT24ozCe+nHOksOZsK
-         VsVg==
+        bh=vgQF+os2zt2fS8ZD9Pne7S+zqukANXwnLxzYWaaxPso=;
+        b=bRz4bSWCPEuiQOTpFjJevbjlXEAGW88ptuzqAlU/7wxjffaxopVGZwY1+JnjUqPQJ+
+         LgNfVp+F5EjGVPAfxCc/HbFjhDrMClkLARamxgHK2a+8KNNlPzArNfc6F9Hu02GKKJL+
+         YJD1R3nDLIVR2rubH3GmdzL+tvFMQxVL8GhIPV8gyIkHVY0aNGj5W2dPcX5mBgpBwcn0
+         /hbvU+mMqDB7aIhBTSVYRN2+A8U4ykENmktFREa7oxqoeyRQSKUA8O3TkmyTIO2J80Nf
+         muUssel6yh/1xcZHRpv9UjnhKpT3UdD/bzDY+plLVuKUc1tyK1CzIowlQVbHKJdvGIgx
+         YkyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753042448; x=1753647248;
+        d=1e100.net; s=20230601; t=1753042873; x=1753647673;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3XqnZ3lQ7EVpBDgAQl7576ulVBufGzapdE6biJkdf1c=;
-        b=vNT4GxU33dUY6EW5a3AEFYzt2yJaXmU0BWEbwXclhWwKddizqeAIdyxmxq+HhRqdWx
-         FLGAgbGc6JoAiezg+ijvAgAjkr0iZEZG4n1aT1ANdRqWYwTDsbB1goC2rfBzoBRTB57M
-         aufTcTJDtFCrW6aN5Ubjr9y/ykXicFXKnHVsQTe7LaYwJeDkRC+b3EX3UzPCWWUS8NOI
-         82W6ZAdpoMhSfjlqr7kmrI/2uMI5M9Byu8yA/L5FsTex77Si59Nm3q44eDrzxdq68LS7
-         AQgmQM6t03sdw2UrBA+xbdzCrO3/otlKeNYhPjig9pLYJ4v+pa4sCKVBcRzRNQT/+bid
-         fz/w==
-X-Forwarded-Encrypted: i=1; AJvYcCURxTElSm2ot2UNyyVk4RPQemoTLsCCvUapkJ1v8jrn9qX3Lcuyp6jD2S+oSi9TMh1ATtCfIXQ7Px5gupkEuJQ=@vger.kernel.org, AJvYcCXkELBPP9jA+Fp2+YLIBv7FxGiVpn+fvHjaPwcdTCfoWthFxp/g/pq2Eb6E4uN2/GVpJARDPEP+WgaY+d8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztqVJDu8i4eJavwT5y3CnaNzcbZGeyLDR6AbuKSuQI6VTHXjjy
-	sDAD9NmQRizY4H7yja3Cwq7A58YuKi1MjYURHCgVZ/p9dMwvTCx2tkVJtcnDv8M36wHfb+FfyPY
-	Cntkbg4JHLrcX5lqHjCKdJ5Nu/hFxXgSnGrPF+cs=
-X-Gm-Gg: ASbGnctcY3Cc9jOM2k1iAGbJ/9bKIWymimFN2ah8l5OGh3WSRQ73ZyH/MM3zQ0lJCPc
-	xGS2G55pniK/41kmxyuNRJQJdCXBk/2U765w3NYRbQZIncM1wZx4TC+kG4tQ+2I9rntPCIaFXzk
-	vez9mFzRdJoKu9lxfekzYF1MOJFgI27iTI0IYEm31oefjrFIXmZ1RIGBjk3im6hYbHaWswdbmi5
-	xkTqUnIO+rnfOoXObc=
-X-Google-Smtp-Source: AGHT+IGGe7wNplwNP495bHYi0LizOC3vDHJ4gAQzN47ag/wp0xuN+oscFUl41uSFDjxAQY0aFBK4Zcz8LnBJ86GRkyw=
-X-Received: by 2002:a17:90b:2fc7:b0:2ff:7970:d2b6 with SMTP id
- 98e67ed59e1d1-31c9e77a4f1mr10752184a91.5.1753042448310; Sun, 20 Jul 2025
- 13:14:08 -0700 (PDT)
+        bh=vgQF+os2zt2fS8ZD9Pne7S+zqukANXwnLxzYWaaxPso=;
+        b=Xa7B2iu6YlgcUYrSNg28RN4K8QyHIcj9Tp3iWr97nst+BNxjJObd++5a0//Twpl4jg
+         /9w8f2WHI8F63V3HBCmHq4/pKqEIdI7e6rmICtYG9m/aAH2BCm46rUy9kCK7FigdZVj0
+         jK/6kLjibymsmyKziaEFsV46RQRVnsIH5GEyGaTGbtsNn2Yl0WCx3VaJnjbXK/sSNA9m
+         xkofhzUl1uaGKt7iUze2BWcS8U4w5F97QmOcHvnu6KkxN4oVbweX3LqF5bhUWC1lt1/y
+         VVwhoGpZfNI87iAWe5zEw6pPLpLEbpPL1oIbUqa0zqm/2y6lyfUv/ja49nJcCFW6UBNC
+         pEUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUKK6Oz9+p7BKkfc+eESn5i8xXhYIhVoa1UjEQqvCM+8LAVuMXAHwwsJyTHVScp18Dbe+soDFyNsirWEtM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/sFSscdUQKBYglOGWgzEVrzVs+ul8ssdj6bLG4AKwUiCHAWd9
+	3shvDoiDssnFl5x1s4kKBvzsaaNOZNHL3x4OB8VWByA4aDZ9Tr6eGZ/aB+Ly5a+n8x1A+0a9O59
+	Wuwgdz/5KRPyzpYB2UkuaQbpbpYeXxvaQuKUuUd2+Hw==
+X-Gm-Gg: ASbGncskH/HOVTrdeekX34omcY++mgL+oSB0DWuJpnc15jY5m1K9jYQG0j/Kls7bz2+
+	c6NXcWjmE5b42F31BieeXdNETv3CqB8veAE6XttxmRC67WvDI0c0TMuh4gk2WfuqCnGBzwCCift
+	4+nDg4/jBo/qp8MlltDejl5a80g34pNid4ezmQidVvCYY2z+ukYcKmUQh8iZGIA8iN4U42Krsh1
+	xeHPw==
+X-Google-Smtp-Source: AGHT+IEWxc8ZXBpGnuH7BtjlkjbLy1+k0TfoVszqQadn+Lip/Uf9JIC2KIrML2pi3hIF+AZtqdaq/0v/JpXSmKvLfhg=
+X-Received: by 2002:a17:90b:5610:b0:312:1ae9:1537 with SMTP id
+ 98e67ed59e1d1-31c9e6048aamr12302789a91.0.1753042872549; Sun, 20 Jul 2025
+ 13:21:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250719232500.822313-1-ojeda@kernel.org>
-In-Reply-To: <20250719232500.822313-1-ojeda@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sun, 20 Jul 2025 22:13:56 +0200
-X-Gm-Features: Ac12FXxb7ZG69y5dslaoRTvC7tHnGWA-2l9OwqxXbxYjAVnCX9uZ3NKFIYtXaO4
-Message-ID: <CANiq72mk8Mp3M5hWSzgskxqWbQLBix_7_Hvqej5OA3RQnr5VbQ@mail.gmail.com>
-Subject: Re: [PATCH] rust: list: remove nonexistent generic parameter in link
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+References: <20250719143358.22363-1-sidong.yang@furiosa.ai> <20250719143358.22363-5-sidong.yang@furiosa.ai>
+In-Reply-To: <20250719143358.22363-5-sidong.yang@furiosa.ai>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Sun, 20 Jul 2025 16:21:00 -0400
+X-Gm-Features: Ac12FXyNBpWr6ecWxgZNuFpVIAdDVVSKNB1T_-1vERAcvQs9WnfiPq_xSp5xYWw
+Message-ID: <CADUfDZqv_KEhUaS58CuZDPB8PvcigxBFDJSPY_Kq9WFViug4+w@mail.gmail.com>
+Subject: Re: [PATCH 4/4] samples: rust: rust_misc_device: add uring_cmd example
+To: Sidong Yang <sidong.yang@furiosa.ai>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	io-uring@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jul 20, 2025 at 1:25=E2=80=AFAM Miguel Ojeda <ojeda@kernel.org> wro=
-te:
+On Sat, Jul 19, 2025 at 10:35=E2=80=AFAM Sidong Yang <sidong.yang@furiosa.a=
+i> wrote:
 >
-> `ListLinks` does not take a `T` generic parameter, unlike
-> `ListLinksSelfPtr`.
+> This patch makes rust_misc_device handle uring_cmd. Command ops are like
+> ioctl that set or get values in simple way.
 >
-> Thus fix it, which makes it also consistent with the rest of the links
-> in the file.
+> Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
+> ---
+>  samples/rust/rust_misc_device.rs | 30 ++++++++++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
 >
-> Fixes: 40c53294596b ("rust: list: add macro for implementing ListItem")
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> diff --git a/samples/rust/rust_misc_device.rs b/samples/rust/rust_misc_de=
+vice.rs
+> index c881fd6dbd08..cd0e578231d2 100644
+> --- a/samples/rust/rust_misc_device.rs
+> +++ b/samples/rust/rust_misc_device.rs
+> @@ -101,6 +101,7 @@
+>      c_str,
+>      device::Device,
+>      fs::File,
+> +    io_uring::IoUringCmd,
+>      ioctl::{_IO, _IOC_SIZE, _IOR, _IOW},
+>      miscdevice::{MiscDevice, MiscDeviceOptions, MiscDeviceRegistration},
+>      new_mutex,
+> @@ -114,6 +115,9 @@
+>  const RUST_MISC_DEV_GET_VALUE: u32 =3D _IOR::<i32>('|' as u32, 0x81);
+>  const RUST_MISC_DEV_SET_VALUE: u32 =3D _IOW::<i32>('|' as u32, 0x82);
+>
+> +const RUST_MISC_DEV_URING_CMD_SET_VALUE: u32 =3D 0x83;
+> +const RUST_MISC_DEV_URING_CMD_GET_VALUE: u32 =3D 0x84;
 
-Applied to `rust-next` -- thanks!
+In real uring_cmd() implementations, the cmd_op values are assigned
+using the _IO* macros, same as for ioctls. But I suppose that's not
+strictly required for the sample driver.
 
-Cheers,
-Miguel
+> +
+>  module! {
+>      type: RustMiscDeviceModule,
+>      name: "rust_misc_device",
+> @@ -190,6 +194,32 @@ fn ioctl(me: Pin<&RustMiscDevice>, _file: &File, cmd=
+: u32, arg: usize) -> Result
+>
+>          Ok(0)
+>      }
+> +
+> +    fn uring_cmd(
+> +        me: Pin<&RustMiscDevice>,
+> +        _file: &File,
+> +        io_uring_cmd: &IoUringCmd,
+> +        _issue_flags: u32,
+> +    ) -> Result<isize> {
+> +        dev_info!(me.dev, "UringCmd Rust Misc Device Sample\n");
+> +        let cmd =3D io_uring_cmd.cmd_op();
+> +        let cmd_data =3D io_uring_cmd.sqe().cmd_data().as_ptr() as *cons=
+t usize;
+> +        let addr =3D unsafe { *cmd_data };
+
+The io_uring_sqe is user-mapped memory, so this load needs to be
+atomic. In C, the uring_cmd() implementation would use READ_ONCE().
+Sounds like Rust code is currently using read_volatile() (with a FIXME
+comment to switch to read_once() once that's available).
+
+Best,
+Caleb
+
+> +
+> +        match cmd {
+> +            RUST_MISC_DEV_URING_CMD_SET_VALUE =3D> {
+> +                me.set_value(UserSlice::new(addr, 8).reader())?;
+> +            }
+> +            RUST_MISC_DEV_URING_CMD_GET_VALUE =3D> {
+> +                me.get_value(UserSlice::new(addr, 8).writer())?;
+> +            }
+> +            _ =3D> {
+> +                dev_err!(me.dev, "-> uring_cmd not recognised: {}\n", cm=
+d);
+> +                return Err(ENOTTY);
+> +            }
+> +        }
+> +        Ok(0)
+> +    }
+>  }
+>
+>  #[pinned_drop]
+> --
+> 2.43.0
+>
+>
 
