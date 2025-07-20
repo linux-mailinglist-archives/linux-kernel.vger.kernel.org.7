@@ -1,163 +1,166 @@
-Return-Path: <linux-kernel+bounces-738404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C2C3B0B7F2
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 21:30:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EDAEB0B7F3
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 21:38:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 399C43BA666
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 19:30:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDEDD3BCEE6
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 19:37:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402BF22172C;
-	Sun, 20 Jul 2025 19:30:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 106DF1DC994;
+	Sun, 20 Jul 2025 19:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="XQxvSgoj"
-Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yRhg3DyY";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zGFBYRzP"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D4BB221D80
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 19:30:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 054981F5F6
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 19:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753039821; cv=none; b=LLBKaiZy2ffwiSfyzwDQ8gIz+ZWfXsuKC1j0Tzh9Nwci14pIjEKHT1kJuQeAYkE6bvD2e4kdm6oVNdZoqxmA7xZWqLe+L5qic3tKOT/qHVdyeZYq+3JlD00D4ezvo+/6XmDRau6P3dNjyKNhbzfTRrRolMlK3YKAqaXD85sSWd4=
+	t=1753040292; cv=none; b=uzJ/IgfyZ1V9oOzXOAzaTx90l0lUOBrIcHjIbSgwivpkO7+lH1vUD7KZq0xXB9ZchR0E/0Ek9j78zUaf+X+EHtI90TzpKgWsR0NaLdHhDfCqWFvD8FgUrX5vBoYFVyAdqvlGXEyNuRF599Iqrlu3QM/rx00DMZiELhC637QE0X0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753039821; c=relaxed/simple;
-	bh=ghqmh3TE//hyt6GyPI3uOU0dAX4yL2Qg3jl94n9vAgM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gMy1TnZW37WB36T95//O0sDcBXsS3ZqrDaef7O0X8zsEUpnfHnFKbS//3m3AcliPu1IZ0hNezotQ9KkVuheQY4/c4LDOz9qvRm02uwtkIovnDd9Nb1EIQS/UZhgcuIR6uc8LemkZiSVc6VJH9+0lwzvBOY62wlEhpJGoz6PTzbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=XQxvSgoj; arc=none smtp.client-ip=209.85.161.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-615d75ee53dso114143eaf.0
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 12:30:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1753039817; x=1753644617; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mgCpQGFdNKfFxGlOj3n44UsvhM4SmScTq7fqsGjnsnI=;
-        b=XQxvSgojdrlJ21QWdBTOuapCEdefjUdjFVmdcooUGxYYoVvl+jd5P1/Gh9cUw1F76A
-         T0VgutCbLTiCFHY9EXtJA6Qfyz8MIZ+uJGf8OyMVFhz25wWATipL3LFwww4WLersOdIL
-         k6PhbyusX6enIWkJnngy9c6lJATV+Nz656vrWDrJQKe6FICsMtZ+F+T04HNqIoMCmGvv
-         yTkH4q//MrXAZhl1fxHo/g+Rl9xuHVqUfx4E1kP8qN9iukC21kg0+bHt2zBIsdSnB3uh
-         yI9qEmE9AII3rSaeukC/mot907rJA6jM47MvwTmwh14pZW7GcMt5sfHS/03R3UpzI7lx
-         FgOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753039817; x=1753644617;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mgCpQGFdNKfFxGlOj3n44UsvhM4SmScTq7fqsGjnsnI=;
-        b=FwHC23/Vt4rjdOeciwXgkIjJ07n8hdZmcSavi+dZzvt1wkS5wv5Fig19231vqql1+O
-         5dKH736tfwF9W087g3rkkXQH0FkeRIdfQhd+e24jVoapnZzLgCRIdKSE6/R+xpsurD8+
-         3/O+r2lpvL9ThP/yhy4QisrU5Ub2tpF1JAXOPnBfGP2W7jqwbYnRItaw6F2OtdY8+Tmi
-         1V2CSB0Ij1F4QvRN9BoM5OV0UCd5YDjW0ewzF7mCNumuJqR4Y2aTE7pBenZYEuMVjbRN
-         yzpXj1oG/yqI2uXZ1+jL8tyevpwaxQPGIFblSMwNSwLBjFVj5KNFO2J7TguTPEpxEZ9c
-         35DA==
-X-Forwarded-Encrypted: i=1; AJvYcCVYK1dp9A6YuMhjbzCayKgy6IPfv5qUks4Lujx6xPZ2Vxrw5VfB/RHsBR/+gIVgMW0LNUopZrxb+CiUays=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4MYsu2P9K1Er2WPoyYEWuG3uLSkAeOGGx8NqKsSXMvTildEPt
-	KxdzB9CWiuffE9fMBJ1w8RaETY0VXK4WMsETEwpQioLY8NEfK8VuNuLJPktI5N/EDto=
-X-Gm-Gg: ASbGncveDvV+c3foqsV15GbjdXAfNxocOP2YA6/UD661DYvQ1C0VIl88Mdbh3F1dklX
-	CwZN4koY63Gvg1CFIVjzMn34X7+R0UTiFBtvesd8mXck8hFt4thJ3ZtFTIxXUDW3dyElFvfgtLj
-	x9qsIQIWi+n6Vd7xuHkPMY1y1srIg/0cqG0Rl7v8szpA5xz4n3oxjgmTuUXTcwULBEXj4og8QdZ
-	GXXmvGr+E80iX9UOJgjE/j6iHq4WMLROfgAKwT4EpQiQSTXS4aEeHzs53z16iRBzr4jyd43L25E
-	gqcxlaSHWJdUYxMo6YUTBU+q0PZBzF2oaEJDp2UpZUNicFsbx53TMHAbfe1HVEDLO6YeNmtNKe5
-	maVQ0CoqbpOn3Cr0KKTzP8Ok1RJlc5aewtrLg8JROpxrvAAU6F/R6cMig7l17c6oNNnkcQrcgIs
-	4=
-X-Google-Smtp-Source: AGHT+IHYlwxJWcEbEzE218c+xTVkYKK8Z8wtqJxL+cWGCmY4FshNpm6DDdkY0i7NRft8/tk1CqodKQ==
-X-Received: by 2002:a05:6830:2aac:b0:727:423c:95d5 with SMTP id 46e09a7af769-73e66114315mr14839191a34.3.1753039816972;
-        Sun, 20 Jul 2025 12:30:16 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:6b9c:951d:3d17:9e9d? ([2600:8803:e7e4:1d00:6b9c:951d:3d17:9e9d])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73e83be07c4sm2291733a34.61.2025.07.20.12.30.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 20 Jul 2025 12:30:16 -0700 (PDT)
-Message-ID: <84ad0f66-311e-4560-870d-851852c6f902@baylibre.com>
-Date: Sun, 20 Jul 2025 14:30:15 -0500
+	s=arc-20240116; t=1753040292; c=relaxed/simple;
+	bh=Ln3VbZhlVrp2HFzHS8J1PB917UqYH5/hJjmf1yRQsfE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=suH6GWvDvkwXQCMolyvXUstsyy4fR8LNo0+I4mT7TUi4V46ptUfsDXTI2qsw8Xuq9qXFi1EU7ahxFbZ7llNsVsw1KrhH6HhHNGgIUDySS72XrJffEqoJkXqXVs4vGYxj7qaCt4rQY6L2I5fgUlzS6+XH3e6vHNHKK+ky+IGVk0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yRhg3DyY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zGFBYRzP; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1753040282;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/b2Ff3b5Jnu1FwkRfr2uxkI+fy/sZb2g4EiywD1mn6g=;
+	b=yRhg3DyYEbk9dYFbSLC31oAYvNAkyrw0snvS2rRmWjP6s395Uh6CKqSbGHpt/rCj0s/ncm
+	BMAwPMHapFOf577uNGqJ5Qbq3DB8Ec6j/eHf8D3prT1FqNeKS0dzvJNIM1k68gkoIIAYCQ
+	AqrTcZ5Vh/5zv4C9FvkbTed/jCUCy26wDn83iyEBjWTGIH05CaJG3oj5jtm6I7tpvN40bP
+	owTK8fuRZwuqBOfAlypjzAmkQte9zE3jPya2Au/5+1uCP/9SJ6cTT8gRTjI6BMRd1lkLTH
+	NWT0f3plu2+4n6hqZlvK1ziJZgLqaw8uHZmYOJqrkaHqV+lwHyq7Mc1hL9NBEA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1753040282;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/b2Ff3b5Jnu1FwkRfr2uxkI+fy/sZb2g4EiywD1mn6g=;
+	b=zGFBYRzP6DAGEMyoydVoqfmPO4SVZ+78sNG4Fj0r9OwC+ejbb7Sx4deJsMdM8NZmUg6kgA
+	eZEkX2GK2u/NgGBQ==
+To: =?utf-8?B?55m954OB5YaJ?= <baishuoran@hrbeu.edu.cn>, Peter Zijlstra
+ <peterz@infradead.org>
+Cc: Kun Hu <huk23@m.fudan.edu.cn>, Jiaji Qin <jjtan24@m.fudan.edu.cn>,
+ linux-kernel@vger.kernel.org
+Subject: Re: possible deadlock in smp_call_function_many_cond
+In-Reply-To: <758991c1.13f67.197f9cccf9b.Coremail.baishuoran@hrbeu.edu.cn>
+References: <758991c1.13f67.197f9cccf9b.Coremail.baishuoran@hrbeu.edu.cn>
+Date: Sun, 20 Jul 2025 21:38:00 +0200
+Message-ID: <877c02vejr.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re:
-To: ">" <sanjaysuthar661996@gmail.com>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
- netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org
-Cc: ribalda@kernel.org, jic23@kernel.org, nuno.sa@analog.com,
- andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, neil.armstrong@linaro.org,
- khilman@baylibre.com, jbrunet@baylibre.com,
- martin.blumenstingl@googlemail.com
-References: <CADU64hCr7mshqfBRE2Wp8zf4BHBdJoLLH=VJt2MrHeR+zHOV4w@mail.gmail.com>
- <20250720182627.39384-1-sanjaysuthar661996@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250720182627.39384-1-sanjaysuthar661996@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 7/20/25 1:26 PM, > wrote:
-> Changes in v2:
-> - Fixed commit message grammar
-> - Fixed subject line style as per DT convention
-> - Added missing reviewers/maintainers in CC
-> 
+On Fri, Jul 11 2025 at 22:03, =E7=99=BD=E7=83=81=E5=86=89 wrote:
+> When using our customized Syzkaller to fuzz the latest Linux kernel,
+> the following crash (122th)was triggered.
+>
+> HEAD commit: 6537cfb395f352782918d8ee7b7f10ba2cc3cbf2
+> git tree: upstream
 
-By placing this before the headers, our email clients think this
-message doesn't have a subject. It should go after the ---.
+That's not the latest kernel.
 
-> From 5c00524cbb47e30ee04223fe9502af2eb003ddf1 Mon Sep 17 00:00:00 2001
-> From: sanjay suthar <sanjaysuthar661996@gmail.com>
-> Date: Sun, 20 Jul 2025 01:11:00 +0530
-> Subject: [PATCH v2] dt-bindings: cleanup: fix duplicated 'is is' in YAML docs
-> 
-> Fix minor grammatical issues by removing duplicated "is" in two devicetree
-> binding documents:
-> 
-> - net/amlogic,meson-dwmac.yaml
-> - iio/dac/ti,dac7612.yaml
-> 
-> Signed-off-by: sanjay suthar <sanjaysuthar661996@gmail.com>
-> ---
+> Output:https://github.com/pghk13/Kernel-Bug/blob/main/0702_6.14/INFO%3A%2=
+0rcu%20detected%20stall%20in%20sys_select/122report.txt
+> Kernel config:https://github.com/pghk13/Kernel-Bug/blob/main/0305_6.14rc3=
+/config.txt
+> C reproducer:https:https://github.com/pghk13/Kernel-Bug/blob/main/0702_6.=
+14/INFO%3A%20rcu%20detected%20stall%20in%20sys_select/122repro.c
+> Syzlang reproducer: https://github.com/pghk13/Kernel-Bug/blob/main/0702_6=
+.14/INFO%3A%20rcu%20detected%20stall%20in%20sys_select/122repro.txt
+>
+> Our reproducer uses mounts a constructed filesystem image.
+>
+> The error occurred around line 880 of the code, specifically during
+> the call to csd_lock_wait. The status of CPU 1 (RCU GP kthread):
+> executing the perf_event_open system call, needs to update tracepoint
 
-This is where the changelog belongs.
+I can't find a perf_event_open() syscall in the C reproducer. So how is
+that supposed to be reproduced?
 
->  Documentation/devicetree/bindings/iio/dac/ti,dac7612.yaml      | 2 +-
->  Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/dac/ti,dac7612.yaml b/Documentation/devicetree/bindings/iio/dac/ti,dac7612.yaml
-> index 20dd1370660d..624c640be4c8 100644
-> --- a/Documentation/devicetree/bindings/iio/dac/ti,dac7612.yaml
-> +++ b/Documentation/devicetree/bindings/iio/dac/ti,dac7612.yaml
-> @@ -9,7 +9,7 @@ title: Texas Instruments DAC7612 family of DACs
->  description:
->    The DAC7612 is a dual, 12-bit digital-to-analog converter (DAC) with
->    guaranteed 12-bit monotonicity performance over the industrial temperature
-> -  range. Is is programmable through an SPI interface.
-> +  range. It is programmable through an SPI interface.
->  
->  maintainers:
->    - Ricardo Ribalda Delgado <ricardo@ribalda.com>
-> diff --git a/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml b/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml
-> index 0cd78d71768c..5c91716d1f21 100644
-> --- a/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml
-> +++ b/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml
-> @@ -149,7 +149,7 @@ properties:
->        - description:
->            The first register range should be the one of the DWMAC controller
->        - description:
-> -          The second range is is for the Amlogic specific configuration
-> +          The second range is for the Amlogic specific configuration
->            (for example the PRG_ETHERNET register range on Meson8b and newer)
->  
->    interrupts:
+> calls on all CPUs, and smp_call_function_many_cond is stuck waiting
+> for CPU 2 to respond to the IPI.  We have reproduced this issue
+> several times on 6.14 again.
 
-I would be tempted to split this into two patches. It's a bit odd to have
-a single patch touching two unrelated bindings.
+Again not the latest kernel. Please run it against Linus latest tree and
+if it still triggers, provide proper information how to reproduce. If
+not you should be able to bisect the fix.
+
+> rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+> rcu: 	2-...!: (3 GPs behind) idle=3Db834/1/0x4000000000000000 softirq=3D2=
+3574/23574 fqs=3D5
+> rcu: 	(detected by 1, t=3D10502 jiffies, g=3D19957, q=3D594 ncpus=3D4)
+
+So CPU 1 detects an RCU stall on CPU2
+
+> Sending NMI from CPU 1 to CPUs 2:
+> NMI backtrace for cpu 2
+> CPU: 2 UID: 0 PID: 9461 Comm: sshd Not tainted 6.14.0 #1
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubunt=
+u1.1 04/01/2014
+> RIP: 0010:__lock_acquire+0x106/0x46b0
+> Code: ff df 4c 89 ea 48 c1 ea 03 80 3c 02 00 0f 85 ec 35 00 00 49 8b 45 0=
+0 48 3d a0 c7 8a 93 0f 84 29 0f 00 00 44 8b 05 2a dc 74 0c <45> 85 c0 0f 84=
+ ad 06 00 00 48 3d e0 c7 8a 93 0f 84 a1 06 00 00 41
+> RSP: 0018:ffffc90000568ac8 EFLAGS: 00000002
+> RAX: ffffffff9aab9a20 RBX: 0000000000000000 RCX: 1ffff920000ad16c
+> RDX: 1ffffffff35692cf RSI: 0000000000000000 RDI: ffffffff9ab49678
+> RBP: ffff8880201aa480 R08: 0000000000000001 R09: 0000000000000001
+> R10: 0000000000000001 R11: ffffffff90617d17 R12: 0000000000000000
+> R13: ffffffff9ab49678 R14: 0000000000000000 R15: 0000000000000000
+> FS:  00007fa644657900(0000) GS:ffff88802b900000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f0fa92178a9 CR3: 0000000000e90000 CR4: 0000000000750ef0
+> PKRU: 55555554
+> Call Trace:
+>  <NMI>
+>  </NMI>
+>  <IRQ>
+>  lock_acquire+0x1b6/0x570
+>  _raw_spin_lock_irqsave+0x3d/0x60
+>  debug_object_deactivate+0x139/0x390
+>  __hrtimer_run_queues+0x416/0xc30
+>  hrtimer_interrupt+0x398/0x890
+>  __sysvec_apic_timer_interrupt+0x114/0x400
+>  sysvec_apic_timer_interrupt+0xa3/0xc0
+
+which handles the timer interrupt. What you cut off in your report is:
+
+[  321.491987][    C2] hrtimer: interrupt took 31336677795 ns
+
+That means the hrtimer interrupt got stuck for 32 seconds (!!!). That
+warning is only emitted once, so I assume there is something weird going
+on with hrtimers and one of their callbacks. But there is no indication
+where this comes from.
+
+Can you enable the hrtimer_expire_entry/exit tracepoints on the kernel
+command line and add 'ftrace_dump_on_oops' as well, so that the trace
+gets dumped with the rcu stall splat?
+
+Thanks,
+
+        tglx
+
+
 
