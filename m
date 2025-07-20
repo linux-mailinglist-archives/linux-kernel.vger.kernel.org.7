@@ -1,145 +1,120 @@
-Return-Path: <linux-kernel+bounces-738308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 423A9B0B6F8
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 18:36:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2CEBB0B6FB
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 18:37:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7043E16CE2B
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 16:36:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9F107AA9C8
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 16:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E76A221273;
-	Sun, 20 Jul 2025 16:36:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45C02221267;
+	Sun, 20 Jul 2025 16:37:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jLm3QLX0"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="k8Bz38xd"
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01EAD18FDBD;
-	Sun, 20 Jul 2025 16:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B261B423D;
+	Sun, 20 Jul 2025 16:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753029376; cv=none; b=W7+G7rSWoKOqA24Yp/A4sZtWxCGILwlCjhN2pOIMdoJE+OvmxtolSUM8M8dtQiMHHRcRNBVkn64x5XJ96AJBRht0xNbKvb3K2wHoekg3mqb5z+DVNgYPkcNhFNbhis+QgeYP+2dzg9Y2p1O+rDNtI51R/MhHbIGKJ4RMWFTO4S8=
+	t=1753029429; cv=none; b=RXZ4/JeJmW1ggA8cPrGrHEk2q9jfuerk5Kadj1zVGlDFyuFwcfXOLY8z784FPMexe7rKQZN62hBE5DzidvqtNEcO8NlHHJEloOIOmCj9c+5lKrlWi3mpvw1mJj4sNpg0Bz4vqQGuGiandLH+XHYKbrt8ufhku1V6o7bKLN8aSMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753029376; c=relaxed/simple;
-	bh=bvrkXmR36adZ41cNSDTbguwL1Foz+xHv842/MR+nR2s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NW5moLfww4qXvlS86lWxLp5ocvoPsRK5fBb+uZ50sxkRbFQLeIl39PprB8P2FBKYw7mgFuZmqgMAZagcSK3mia1rUdLRYHFbuF7FiVOZKqzKaCiQBkJnGkHjABrAnD8ywvyacQFmml9ZOqtdNWovTbY8a1ppXL7rQcSuSJHUH5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jLm3QLX0; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b34dde96cbfso171407a12.2;
-        Sun, 20 Jul 2025 09:36:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753029374; x=1753634174; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+kfkCmoQKEDkofij+kUTFNmulT0YX5tsOABpETlCkRo=;
-        b=jLm3QLX0I1W466YLQHkZZeyccqoWdCQECwSukqoxvMiNClkHz2z6IAic0D3Kjy2qqG
-         GOTV7Rxs3+sM+F7Ec5Rq1s7J6ehw0VbMaKu3sG2fCBTphJEAJJjMTjshP+3Xsy37tl3m
-         ZqB88aHFBivuW7pIT7Y7e3Mc/jSeyBlR83NKQHo0ILGPdqv2MzUNBVpbXoQE2nCFutRm
-         SnccFezp9s/8kimXWo1qqSfg36+na6Z9rE+roJSesglOO4cH0AY8AsyuO9OU2kGsvE9M
-         cwTkkmaLJxUsjZayGizKflejyebrSO/rtSyb5n4/JAAXUlptrnSGirUvLS/N6zl1PXg7
-         xw6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753029374; x=1753634174;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+kfkCmoQKEDkofij+kUTFNmulT0YX5tsOABpETlCkRo=;
-        b=czYyAcTHiyYNo94Ghn6X1EaFuLx+K+mELZWzw+ekFMirKPHVe6ZOXoy0hG4SQ9JCb1
-         twxq3I6riYzy27Gw1Jewr5Fb1uoBvY3BIiH8sZZcNGoZSH7B5ZF3bxGjlgfviGT9ABVb
-         WKgmV7m2EzjMxmLcaclquu1gJisccgHL+n4WbP4cLX8qbK+nuwn8VSPlwC45bMPYRQ+A
-         3SCeJenSziIkW92UPX4cbsVPgCt7HH3x9rVBGmCEFuXfdwOVJO4EtZtbR0yN45NY0syM
-         nWUwfG/k5VB93qH9eh5y6Go7pl6gMfOwRilAYDO8qC008gM3Kv00vp0p5+EuSsl5Wu2E
-         tF9A==
-X-Forwarded-Encrypted: i=1; AJvYcCU6lAVacWyNNinZuO17Z6tL+rqUopUpA5jeIAYoTRST28fB4q4RC5d3vPoUgnZ4RxQJEMEeSDRQkEywYi58sg==@vger.kernel.org, AJvYcCVUHCY551Ebn44KYZ1WuLmyilUPGBzMT/BiMpr+qfyWHOwZ6tlmURn/nlgUg0ObFaoWU//OmX33c/BhK0xU@vger.kernel.org, AJvYcCVd/scAxIXflggE4/TWGcG7//6n1rNol3zfZXXy51cxKokW3gl+HGodJiSQBgIJ7JMWnh8=@vger.kernel.org, AJvYcCX03hCeYS5eSYwxUejuz6tkyp9+P3TnZUeL1mQkMyciIwt7piMhIw5x7DjFG9RyjBDpZHA4O0aMXrYHeVxk@vger.kernel.org, AJvYcCXaSZGll6YjLOnk8FzdvT5u3cP/zgYOpioYoJFRSeoPbOTE1IFgrI9EOqTzCz5A6JmzwJfDzVsMfBAI3e9Gf5m6@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsIXfxHN49ug7Ga2QloFn7o8w8PhYT1wP0laKEtyHe7FnhR7UP
-	KcAoYqsBw+sV8PxQ755pvjUXlavLZOgkwsJuPHFA0xPnzF9olPsgZA3n295X1W2XwZk9Z61Se5l
-	sF2lisbnp60vK14wxwwjz4u5cd8ZjWCo=
-X-Gm-Gg: ASbGncs0D9u5kKISP12OsU+mu/+ghPj4KzXazgogv0tmIKZ0Hqis0EGtHODy1Vg/lQn
-	FAdVapgbtOw8I91sfq0L4YiWg0bL8ieRRXmCfdYBAABzAuR747bZJOPqXNRFiPfIMkHVOcrETMt
-	sOXifVZBJ42ULqWyGb6jDTkzRmswoPJIuJiggrztzxmTb6+hf6vLleh6vZU1sCak+QsfweAn4HD
-	HVsw5i/
-X-Google-Smtp-Source: AGHT+IH50oSkAuvxv6uZUvE/Ve2TuI3Fxok9m8jWgL04NiDIsbgPX9U+P5yFyAh5qDxK3l4vBipk9lXgFQKQQ9R90bI=
-X-Received: by 2002:a17:90a:e18c:b0:311:a314:c2dd with SMTP id
- 98e67ed59e1d1-31c9e77394emr9950764a91.4.1753029374267; Sun, 20 Jul 2025
- 09:36:14 -0700 (PDT)
+	s=arc-20240116; t=1753029429; c=relaxed/simple;
+	bh=qTtuyUqSLRCyOJYOisYZDpKsrNhWdTwJSyxTfg1qlHY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PqCxRf3cjvs7sdDMTbnc8/NO0jhSbkKJ8THB6LqmXRF64o0PyxSpV3BhQAlPlIcfF3ftmhL9OhgAMXx6q59JF9+pKNgn6rVEBR8eCGeacePDfX0sPHTyy3TUeh3GeNScLLrxB0ktmPngW60BclW6dK1BnFK/w1vQd8jCG1rfQDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=k8Bz38xd; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56KGBZPK016012;
+	Sun, 20 Jul 2025 09:36:46 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=ndP80q4rdPUOCMPfCTkgzo7
+	PXQ7AuDgzzhEFUN9/BFQ=; b=k8Bz38xdDguUoOM4w8kLTTnM8D6TiFJnGqoUsHf
+	dsN3LiznHVWNt+85+wx6GdMjxd1Mw6UKP6pNsz39I+JRmR7NngKmY1Yvvmc/aQcs
+	ulXVIbb2MYyx4Asj48ZmMXE0M/5OPPRr7+heXtA81QE6IhBgiHxdiwYACJwoZuhz
+	AsKo6SDYO2KyfU+jJRMsF5Xmy0lwgtvLXJ4JeNsG1K8ACb6aN5FzgNdgl9k9YMNL
+	hXNU4wArjVnGHOGFPVCO6mgNLv+eI7gzg9pMPWbsHVvsMDwYuYqNyfsr+zJ3eFkU
+	K1gYq1xbSjdGbD6MViAxR1SSpeSTevPYqzQhE7VnXouZ6nA==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 480ymbg8p6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 20 Jul 2025 09:36:45 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Sun, 20 Jul 2025 09:36:44 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Sun, 20 Jul 2025 09:36:44 -0700
+Received: from test-OptiPlex-Tower-Plus-7010.marvell.com (unknown [10.29.37.157])
+	by maili.marvell.com (Postfix) with ESMTP id D1C893F7057;
+	Sun, 20 Jul 2025 09:36:39 -0700 (PDT)
+From: Hariprasad Kelam <hkelam@marvell.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <kuba@kernel.org>, <davem@davemloft.net>, <sgoutham@marvell.com>,
+        <gakula@marvell.com>, <jerinj@marvell.com>, <lcherian@marvell.com>,
+        <sbhatta@marvell.com>, <hkelam@marvell.com>, <naveenm@marvell.com>,
+        <edumazet@google.com>, <pabeni@redhat.com>, <andrew+netdev@lunn.ch>,
+        <bbhushan2@marvell.com>
+Subject: [net-next PatchV2 0/4] Octeontx2-af: RPM: misc feaures
+Date: Sun, 20 Jul 2025 22:06:34 +0530
+Message-ID: <20250720163638.1560323-1-hkelam@marvell.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250720065045.2859105-1-hpa@zytor.com> <20250720065045.2859105-2-hpa@zytor.com>
-In-Reply-To: <20250720065045.2859105-2-hpa@zytor.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sun, 20 Jul 2025 18:36:01 +0200
-X-Gm-Features: Ac12FXzsFbO3wDRf2U_8K-azeesJPixu1ntYI5bLlTM6iCxpMmbGfGJVOtGHyH0
-Message-ID: <CANiq72kE5AznnA81sb5S-KVx3VCef20zcMBfbRUO41g3uAtQ+Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/7] compiler_types.h: add "auto" as a macro for "__auto_type"
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Alexei Starovoitov <ast@kernel.org>, Alexey Dobriyan <adobriyan@gmail.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andrii Nakryiko <andrii@kernel.org>, 
-	Arnd Bergmann <arnd@kernel.org>, Borislav Petkov <bp@alien8.de>, Dan Williams <dan.j.williams@intel.com>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	David Laight <David.Laight@aculab.com>, David Lechner <dlechner@baylibre.com>, 
-	Dinh Nguyen <dinguyen@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, 
-	Gatlin Newhouse <gatlin.newhouse@gmail.com>, Hao Luo <haoluo@google.com>, 
-	Ingo Molnar <mingo@redhat.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Jakub Sitnicki <jakub@cloudflare.com>, Jan Hendrik Farr <kernel@jfarr.cc>, Jason Wang <jasowang@redhat.com>, 
-	Jiri Olsa <jolsa@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	KP Singh <kpsingh@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, Marc Herbert <Marc.Herbert@linux.intel.com>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Mateusz Guzik <mjguzik@gmail.com>, Michal Luczaj <mhal@rbox.co>, 
-	Miguel Ojeda <ojeda@kernel.org>, Mykola Lysenko <mykolal@fb.com>, NeilBrown <neil@brown.name>, 
-	Peter Zijlstra <peterz@infradead.org>, Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Shuah Khan <shuah@kernel.org>, Song Liu <song@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Thomas Gleixner <tglx@linutronix.de>, 
-	Thorsten Blum <thorsten.blum@linux.dev>, Uros Bizjak <ubizjak@gmail.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Yafang Shao <laoar.shao@gmail.com>, 
-	Ye Bin <yebin10@huawei.com>, Yonghong Song <yonghong.song@linux.dev>, 
-	Yufeng Wang <wangyufeng@kylinos.cn>, bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-sparse@vger.kernel.org, virtualization@lists.linux.dev, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=VtgjA/2n c=1 sm=1 tr=0 ts=687d1b1d cx=c_pps a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17 a=Wb1JkmetP80A:10 a=rTa-d_mVba20Wz9wDAAA:9
+X-Proofpoint-ORIG-GUID: cZBOi1dBX5SkxLzjSSxap834h9Ir7myG
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIwMDE2MCBTYWx0ZWRfXzILNIiy6ySOQ tc1J6wUpPt+cr59XPWgOxd6jsbnY5JE5OeCQF28ZmYdfbTvudMRLGA2PNadbSCweJ3BfK9Y7Lai Cvs9i/wvvDLYekgpbK/Ep45unGe8Y8mbFXiGDqt7I2o7kNxRMmHAeRdE3px/9JW2QqQq4eOoNGR
+ zHbNtvWowMW7Vi5SbnHnHxxa7O2vusmbQbt5F+N6EWl2uoaPWDk+CW7shg9T2qdRLBWnk4Ekb2E hazn0/biZu4i2TFb0Bp22Ye3WEcXs+XxDVnAIsH/A+fEKS/IY+G+tBnr5DKZxy9ZP99mOKx6hZu Zq16i4e39xS8uiBrqy0rS5ssc5h2dRXhJJe2xC18me7PEk/drTR4S56Cz3pMOYJfQtdNXqTJYwq
+ 8IVspfbeo4moq8TzqAgdZkqtHlyOWgyRFSO9ykR7SABpXehLXrY/4MAvtj2YStT3St9mh/Nh
+X-Proofpoint-GUID: cZBOi1dBX5SkxLzjSSxap834h9Ir7myG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-20_01,2025-07-17_02,2025-03-28_01
 
-On Sun, Jul 20, 2025 at 8:52=E2=80=AFAM H. Peter Anvin <hpa@zytor.com> wrot=
-e:
->
-> gcc and clang provide the "__auto_type" alias keyword as an extension
-> for pre-C23, however, there is no reason to pollute the bulk of the
-> source base with this temporary keyword; instead define "auto" as a
-> macro unless the compiler is running in C23+ mode.
->
-> This macro is added in <linux/compiler_types.h> because that header is
-> included in some of the tools headers, wheres <linux/compiler.h> is
-> not as it has a bunch of very kernel-specific things in it.
+This series patches adds different features like debugfs
+support for shared firmware structure and DMAC filter
+related enhancements.
 
-Sounds good. I guess we could need a workaround if someone happened to
-invent an attribute which requires using "auto" in it, since it is not
-reserved there in C23 AFAIU. So FWIW:
+Patch1: Saves interface MAC address configured from DMAC filters.
 
-Acked-by: Miguel Ojeda <ojeda@kernel.org>
+Patch2: Disables the stale DMAC filters in driver initialization 
 
-> + * so it has always been "namespace reserved."
+Patch3: Configure dma mask for CGX/RPM drivers
 
-Not sure what this means (could we just say reserved?).
+Patch4: Debugfs support for shared firmware data.
+---
+V2:
+   1. Use  ether_addr_copy instead of memcpy
+   2. fix max line length warnings and typo 
 
-Thanks!
+Hariprasad Kelam (3):
+  Octeontx2-af: Add programmed macaddr to RVU pfvf
+  Octeontx2-af: RPM: Update DMA mask
+  Octeontx2-af: Debugfs support for firmware data
 
-Relatedly, there are some proposed, further changes to `auto` for C2y:
+Subbaraya Sundeep (1):
+  Octeontx2-af: Disable stale DMAC filters
 
-    https://www.open-std.org/jtc1/sc22/WG14/www/docs/n3579.htm
+ .../net/ethernet/marvell/octeontx2/af/cgx.c   |  19 ++
+ .../net/ethernet/marvell/octeontx2/af/mbox.h  |   7 +-
+ .../ethernet/marvell/octeontx2/af/rvu_cgx.c   |  23 +--
+ .../marvell/octeontx2/af/rvu_debugfs.c        | 162 ++++++++++++++++++
+ 4 files changed, 196 insertions(+), 15 deletions(-)
 
-Cheers,
-Miguel
+-- 
+2.34.1
+
 
