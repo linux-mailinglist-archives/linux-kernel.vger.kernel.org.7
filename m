@@ -1,120 +1,104 @@
-Return-Path: <linux-kernel+bounces-738109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EAA1B0B45B
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 10:51:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D64B1B0B463
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 10:56:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6863F3A581A
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 08:51:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D4243A21B5
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 08:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859251E5207;
-	Sun, 20 Jul 2025 08:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A37A1E520E;
+	Sun, 20 Jul 2025 08:56:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tUDhlUF8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BptGVRfK"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80831E1A33
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 08:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78C6717741
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 08:56:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753001503; cv=none; b=qIy6BjiFeTgM7AlZqk8lVVrs6X3tOPnqiEYhdLL0XTGTrqpYbhBMOIEUUO0FptTuNnSHqOb4ifUOHG39OAa4iCINqvshAqZpskBP4FS1PBBJ7Td830XG41OMME1UhOSdnfzGL8+0OH1ExM9k9AEnxmHSHwQKZHxsuFRTr2w1Km4=
+	t=1753001796; cv=none; b=I2n/fEnGlv6PUOtjXsaLbkWS90jQoNXL7LBxTrUoibnO8okl9glJCrvRwXbO5HJ6uOHYMKyDe1NuyLxl9QzSDtaw/2dLu4o+fUlrwh6rtxkMMRLW10Unop5Gekf9tgUSFtfJX7dNaOItE/hN0s3J+Dvu9tReqeOQwuucSjJSGvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753001503; c=relaxed/simple;
-	bh=lp/52Ew8c83U99BdL7DDPH1gWntTrpLUrRWFOWIb3Go=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ex5jpAgxLGer1QN4w5T1RjgHu//3Sez4z85lcd5MzzMwYRVZn0leMzPElNqZ72x5IBNlNw1a0BoeuEZ1NWFbJPoqCqPoUAQy4V2fhmMd71R+9RsGvHClIvMoFx8MmyzBtlCdN95E17rJRI4tmpvc6Y15giEznAuAOjOUvMK83vE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tUDhlUF8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF04FC4CEF7
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 08:51:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753001502;
-	bh=lp/52Ew8c83U99BdL7DDPH1gWntTrpLUrRWFOWIb3Go=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=tUDhlUF85e2PkPaMO3vy1r6Kzt1Ww9krVw9hOdFnwHmP9mszG70IxaXTYV5a/WGSu
-	 Hr1Dcsg+9XWYRkM3UvIKkTFtzAOqKsU1fHQB8OVRKLfjk2YiDCUlBNhF5EvqZtFnyJ
-	 Jwa1C7Ow90NaCdqdA88cWQnroqUkm0U+7uMSgEAyYiFsGschlKgoFoZCfI3p3Z5lxZ
-	 XH0HeNqOrkDIcY5DNEt0dshfzpkkP/X2SGLrpmtygczxVut4X64VjUCI7fAID3PDVL
-	 ZcHfz3opJzaOdePf47zlAyejl6flh+MtDgRyTyCQHI3y2/dHjJRFgY/yOtnTFCcoLR
-	 Z6gq3Hh27R+2w==
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-60768f080d8so6396952a12.1
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 01:51:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXDTTVe6NznBruKHuMwWmrwykUG67+9AiyRsuyAAABN+WMmTGcfkAoCBvQm2USL1gu1s/bAd7aFjEu6SPQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqdLhxADyBGuQXs6QyOV4LvBN4tVDe46Xl4nsEzg12UFhhH8j+
-	8LgwnxuGmql73jAFiqWL+lX9z6CXuRSfE0fI9atQbyJYWGiaSxd0xreEi/h3Davxww1Bz0VS9o4
-	BpV+cQwS3B4worhy+VwMjzt1217xMnWY=
-X-Google-Smtp-Source: AGHT+IG1iiYqOAYrelKBoHGblbNVG2qM2JF//hk3yGTkCqYIpuU6INM6nbhTSEPaHn7kLfBi+a8UbP+JDKFma/D59p0=
-X-Received: by 2002:a05:6402:2789:b0:612:c846:cb67 with SMTP id
- 4fb4d7f45d1cf-612c846d264mr7414925a12.6.1753001501336; Sun, 20 Jul 2025
- 01:51:41 -0700 (PDT)
+	s=arc-20240116; t=1753001796; c=relaxed/simple;
+	bh=Wq3qfkFjnnPBi+LkFUS9iBSulokfDrAkTnxAGm2dDBI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K/4LFlGpAApkAQGpqUBhgBXmgjjuJqgzwkPrLg2DxVHLsUM/xBSCRNI9qkzq/wFHp7XZIw9VvnRpxS0YUz57zd1hrh6+lpUbNGQBshE1SHJLn6MVYs0cVKfSdesMYTSfyvazcVx3/HcEL9H8KdNenCIdB6o+ZjY5iw4d3TG6XCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BptGVRfK; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-700c7e4c048so57256366d6.3
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 01:56:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753001793; x=1753606593; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aaBLw4cxN79dHE/geNbV3aXF5eBOGZgGTlBqCuMR8ko=;
+        b=BptGVRfKNdpGokl7Lj7ZLKM3UAXxewufCHyNTqaosYLtMtykXXSkko1rQcGOE0dYcn
+         IbSJrHnsAoY+T42k4d3AXxT+mOeh0f7V8HZMSQOOiB30zt38k9By1OWgDhXKb8xfw3ev
+         aVXhY9pZ3TVBW5XkaCLbAHzlolEQxi4kQY4/T+Km9GqsA2cAqdPQ98tvxfiJLBrJIE9i
+         k2Va7DhKOiy0KFaBy/HqRtiaLGMc8Iqo+rG5DtSV+P6ZGI0Zbg0pYp67TAvdNiFwOK63
+         uyAFxmIAIjvrjAWj80NE94GMHOFFj1NI1BPLmNMUUEdg7+qbV6dR8LZPM3uiIofrE8vP
+         cp4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753001793; x=1753606593;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aaBLw4cxN79dHE/geNbV3aXF5eBOGZgGTlBqCuMR8ko=;
+        b=NBb+zw62zZ1UMYW4YfflmBGnUqteYPERp1K9Pg3YbQzlhhypopCahS8Olof1Wwk6jK
+         cgwDxlsiaAUNGpwEVzAjo8LVsx5xr1Ke4QXdCb2HdH42FsyU9VyPld6TBxhLcr6UNSQp
+         GrOEdWqEFf75kmUgZYHjhBrCfs7zMTIQCWMLJJVUIHBLwfFkL/ZLyn/C+QxNI6rLSIGf
+         hwhgLkdPn9T568tI+gPTIOCsbqmXrAK9TPFDHxR67XEoj5CDIcKG4r6nfGQSMC92aD7z
+         COTEdXqOOr2eNtlegROUNP8R3Fa3nzDK0DPMZ7n2u4Li01ZRaB2RDAmzZGhJfdU7ziU6
+         5ENA==
+X-Forwarded-Encrypted: i=1; AJvYcCVmOduB5iYar0sX2AMPVTYk1NTZXRe4rQpUeCQLSB5jLyFdJlGjyQo8pf3ju/QweAK54EzHOz/k4mNF0VI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGJMM2mRIuAyK8m2UmKNxLpUvKNE0+m5iNxepIV+sCdoSSLEon
+	y46mne1v+wLWGn0hCuAgQLJT1amXGaN9V6kIzcXN5UgdblpYsY4mf9YLai32KQ==
+X-Gm-Gg: ASbGncvHJ4nFXCJUdYQVpWO22Ow8TsP32QfiSGyXRpEfUYClq0QR4umFSPC5YJaphks
+	krUjsRsLxa/+YOI3V22ZkQOyoqFSCMooLMTw98CzvEZz8KyrgiNsFlKWQBcN8AHifLaHk0Am1UC
+	eT6jUfPTW6BGFsK0naHvbO3gE0LJbzIzeYQHdEyxYkCgMI/LWRRh1QjtKbaFyPVmtihPhPe24W3
+	r2+BNSHJQFinUD3xMys44NWqXDUom3CobsXSOutURdJRL/rihMopPTFlcrVFORkVZ1gD8NE3BB4
+	H2k1VpGXj+mJkCLPvhfVHYhA9ZxZsEYCvFOwh/OJU/6TN0aTHx5RTx56shgAptNqyosAYU+FzG2
+	vsjgOHuo5lgGe
+X-Google-Smtp-Source: AGHT+IGaDRzUzyRYiTB1TwqXeOom+POlmHqVcbb5nhd0aVvrfcE+cnApjZGvqybNZWRCqhau1torqQ==
+X-Received: by 2002:ad4:4ea3:0:b0:6fd:3a4d:363a with SMTP id 6a1803df08f44-7051a114011mr133354666d6.25.1753001793236;
+        Sun, 20 Jul 2025 01:56:33 -0700 (PDT)
+Received: from pc ([196.235.236.92])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7051b907ac8sm27045996d6.37.2025.07.20.01.56.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Jul 2025 01:56:32 -0700 (PDT)
+Date: Sun, 20 Jul 2025 09:56:29 +0100
+From: Salah Triki <salah.triki@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Eli Billauer <eli.billauer@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] char: xillybus: Replace deprecated MSI API
+Message-ID: <aHyvPWeN_4JmPAzc@pc>
+References: <8d3513e3-6294-b6df-189a-cc3bee76f0a3@outbound.gmail.com>
+ <aHskWESzZdyBFj4x@pc>
+ <2025072004-karaoke-stilt-ef20@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250718-restricted-pointers-loongarch-v1-1-1462e779375f@linutronix.de>
-In-Reply-To: <20250718-restricted-pointers-loongarch-v1-1-1462e779375f@linutronix.de>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Sun, 20 Jul 2025 16:51:29 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H47h9H-22GQJ=bi7zthduTWA2_rLoVhS1xXe=Adk95B-Q@mail.gmail.com>
-X-Gm-Features: Ac12FXxN6PKc8UZpJ_AiicsjcrSRH9aG7MxaKRGuTbQOE2FIKrSHe0tTyMnoLj0
-Message-ID: <CAAhV-H47h9H-22GQJ=bi7zthduTWA2_rLoVhS1xXe=Adk95B-Q@mail.gmail.com>
-Subject: Re: [PATCH] LoongArch/orc: Don't use %pK through printk
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: WANG Xuerui <kernel@xen0n.name>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025072004-karaoke-stilt-ef20@gregkh>
 
-Applied, thanks.
+On Sun, Jul 20, 2025 at 10:33:47AM +0200, Greg Kroah-Hartman wrote:
+> 
+> This says what you are doing, but not _WHY_ you are doing it.
+> 
 
-Huacai
+I did the replacement because pci_enable_msi() is deprecated, isn't that
+enough ?
 
-On Fri, Jul 18, 2025 at 9:36=E2=80=AFPM Thomas Wei=C3=9Fschuh
-<thomas.weissschuh@linutronix.de> wrote:
->
-> In the past %pK was preferable to %p as it would not leak raw pointer
-> values into the kernel log.
-> Since commit ad67b74d2469 ("printk: hash addresses printed with %p")
-> the regular %p has been improved to avoid this issue.
-> Furthermore, restricted pointers ("%pK") were never meant to be used
-> through printk(). They can still unintentionally leak raw pointers or
-> acquire sleeping locks in atomic contexts.
->
-> Switch to the regular pointer formatting which is safer and
-> easier to reason about.
->
-> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-> ---
->  arch/loongarch/kernel/unwind_orc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/loongarch/kernel/unwind_orc.c b/arch/loongarch/kernel/u=
-nwind_orc.c
-> index 0005be49b0569f28e0ee4a4f926f77562b14301b..0d5fa64a222522897df7f7c4b=
-fbad8d2262a207e 100644
-> --- a/arch/loongarch/kernel/unwind_orc.c
-> +++ b/arch/loongarch/kernel/unwind_orc.c
-> @@ -508,7 +508,7 @@ bool unwind_next_frame(struct unwind_state *state)
->
->         state->pc =3D bt_address(pc);
->         if (!state->pc) {
-> -               pr_err("cannot find unwind pc at %pK\n", (void *)pc);
-> +               pr_err("cannot find unwind pc at %p\n", (void *)pc);
->                 goto err;
->         }
->
->
-> ---
-> base-commit: d086c886ceb9f59dea6c3a9dae7eb89e780a20c9
-> change-id: 20250718-restricted-pointers-loongarch-ecaa19f4d71c
->
-> Best regards,
-> --
-> Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
->
+Best regards,
+Salah Triki
 
