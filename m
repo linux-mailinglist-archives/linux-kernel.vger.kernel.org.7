@@ -1,85 +1,130 @@
-Return-Path: <linux-kernel+bounces-738368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 722D3B0B795
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 20:10:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CFEAB0B797
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 20:11:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A237189614F
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 18:11:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68F17189622D
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 18:11:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB792222D7;
-	Sun, 20 Jul 2025 18:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2344B1B4141;
+	Sun, 20 Jul 2025 18:10:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nakgIs+7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k0wwwGmG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001BC1F4622;
-	Sun, 20 Jul 2025 18:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7179D221DAC;
+	Sun, 20 Jul 2025 18:10:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753035035; cv=none; b=OkxZfSDNUBiwCthqeEFBLbHk7sAwWzpHWybDiByJjBHxHNi9eK7FifIAKJvdtpUqbSU5SSOmF+toU9aJh7Lenf8Mk93yyDIhlI7hfrAU7N+xRzR1em36Qc3rBju6BM9SGQBDW8/4IEJ495fpYdDa/FW84kC8ai9l2kroEKMgclw=
+	t=1753035043; cv=none; b=HJplEpQd4BGA2RnxVntH/zpot/rMBuwf+cFWMyH6NKaXrockB82c4joKqmRB4Y6huC/84jwH53l8XpM7Bvh3dmjsfvpdl7NBshSJ8OH5bO/0WLCEJ0t9OUnBNpMpRbrW/dXiPrem97tfisw3KMsrsgAddPFR/D6WGqY9e9JeQro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753035035; c=relaxed/simple;
-	bh=PGUb1ZK7qBD5Fjetq5T2619HhLGe9Yczo89Xz4gWD0E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a9bS6q14Xk3issb8WChDXlU7na7ewt0KseDc7QVe1T8I7Tnmq7INFBqg7cvTW4Y5Nju0spOkx1DIuHg5NpfdKpNvOf1Cv0iTWJgvv8mniN0IFqBZ5ig7qCFiHY3BbcvirmlUebrRnMnXkrmETOV1FfgNMhOsbkdeQ/PVztoTuCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nakgIs+7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D034EC4CEE7;
-	Sun, 20 Jul 2025 18:10:31 +0000 (UTC)
+	s=arc-20240116; t=1753035043; c=relaxed/simple;
+	bh=P+luYzC2dcfctjyQIlw5xneVeK/BoyN1PEwtW+8VHzg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=INTJvXFo3CNhyJqmWy34XUM94yre3PmFdVD5Mg1lKk1qb6LNBQEZI2ZuR6KivuNNXusc43++Wy1dhgNKdtecneE1jJqtggM1ihWf07KztnImYO90JVdrdu3gZXxvhxlHC+jpX8z3IYT/al9vc07rW4v6Bm05RDpHDCGu9K6C2IU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k0wwwGmG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A406C4CEE7;
+	Sun, 20 Jul 2025 18:10:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753035034;
-	bh=PGUb1ZK7qBD5Fjetq5T2619HhLGe9Yczo89Xz4gWD0E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nakgIs+7sEf/9w5mmZwkamBa2VPyvy7EQhB0lDiXvvJAcS7ygRuWE3ddyJj57p5ce
-	 wAFK2zyJieZ5uYjhJ5klL83r3138S1jOKj2JyOC1TtdZcIuY7azLwQjgcQFLTth5Bp
-	 t4d1gtmoVFIF4EKwRZA7DyuIto5AaQvi7ubvhsih+wrYHCd5Bhn26eS8XIf7Vklm8w
-	 uQcN5O1DIq3q6JqgZcZbUFHSJQTJcAurL/nW6itrvR0ORJukdePRFDLGA7nLDiDaNS
-	 Ws+QM+m5HO491pWAY+0CkHJJ3B23cnL7IuscSylZhZXGBE+Eohg3L4KiwJpfcvU5N6
-	 PH3+kUyRBnVLQ==
-Date: Sun, 20 Jul 2025 19:10:29 +0100
-From: Simon Horman <horms@kernel.org>
-To: Hariprasad Kelam <hkelam@marvell.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuba@kernel.org,
-	davem@davemloft.net, sgoutham@marvell.com, gakula@marvell.com,
-	jerinj@marvell.com, lcherian@marvell.com, sbhatta@marvell.com,
-	naveenm@marvell.com, edumazet@google.com, pabeni@redhat.com,
-	andrew+netdev@lunn.ch, bbhushan2@marvell.com
-Subject: Re: [net-next PatchV2 1/4] Octeontx2-af: Add programmed macaddr to
- RVU pfvf
-Message-ID: <20250720181029.GY2459@horms.kernel.org>
-References: <20250720163638.1560323-1-hkelam@marvell.com>
- <20250720163638.1560323-2-hkelam@marvell.com>
+	s=k20201202; t=1753035043;
+	bh=P+luYzC2dcfctjyQIlw5xneVeK/BoyN1PEwtW+8VHzg=;
+	h=Date:From:To:Cc:Subject:From;
+	b=k0wwwGmGWxMeDcIc4UXX8W8coODGSFf/+LKCBAaJnBIlAmreQFDHvzumDvGT8V341
+	 mDmZrFpY/xoAygh56JCeyPAcFG0lU2Ao6goCnGZb8n9vUGRHIv7x+lt9+rY0M0ZjNb
+	 fRimT9HTJgk8q5kYw2BH0gdzZ2P/6qKTGAzrh77a5zU7HvdPtOEsV9PpIfE8gUhKXx
+	 eb/PhAa14K6Z85dSEEnSf9wufX++hnLknaPdUcYhblp4pkunWONVmjxHRuPpY4+DtV
+	 pZtbG/EVtzPgucLl1n31M7DIbODZ0Y8On/P1ZUDwiqxA9GSyBQHhO8kD++p6mxKaS0
+	 oqUXc2/WcrkDg==
+Date: Sun, 20 Jul 2025 20:10:39 +0200
+From: Wolfram Sang <wsa@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
+Subject: [PULL REQUEST] i2c-for-6.16-rc7
+Message-ID: <aH0xH_gZRIVQurDP@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="GCx5R8UtXrHlobKT"
 Content-Disposition: inline
-In-Reply-To: <20250720163638.1560323-2-hkelam@marvell.com>
 
-On Sun, Jul 20, 2025 at 10:06:35PM +0530, Hariprasad Kelam wrote:
-> Octeontx2/CN10k MAC block supports DMAC filters. DMAC filters
-> can be installed on the interface through ethtool.
-> 
-> When a user installs a DMAC filter, the interface's MAC address
-> is implicitly added to the filter list. To ensure consistency,
-> this MAC address must be kept in sync with the pfvf->mac_addr field,
-> which is used to install MAC-based NPC rules.
-> 
-> This patch updates the pfvf->mac_addr field with the programmed MAC
-> address and also enables VF interfaces to install DMAC filters.
-> 
-> Signed-off-by: Hariprasad Kelam <hkelam@marvell.com>
-> ---
-> v2 * Use  ether_addr_copy instead of memcpy
 
-Thanks for the update.
+--GCx5R8UtXrHlobKT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+The following changes since commit d7b8f8e20813f0179d8ef519541a3527e7661d3a:
+
+  Linux 6.16-rc5 (2025-07-06 14:10:26 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-=
+6.16-rc7
+
+for you to fetch changes up to a8780906ca2604c9d5128507e34285043b943410:
+
+  Merge tag 'i2c-host-fixes-6.16-rc6' of git://git.kernel.org/pub/scm/linux=
+/kernel/git/andi.shyti/linux into i2c/for-current (2025-07-14 09:02:25 +020=
+0)
+
+----------------------------------------------------------------
+i2c-for-6.16-rc7
+
+omap: add missing error check and fix PM disable in probe error
+path.
+
+stm32: unmap DMA buffer on transfer failure and use correct
+device when mapping and unmapping during transfers.
+
+----------------------------------------------------------------
+Christophe JAILLET (2):
+      i2c: omap: Handle omap_i2c_init() errors in omap_i2c_probe()
+      i2c: omap: Fix an error handling path in omap_i2c_probe()
+
+Cl=C3=A9ment Le Goffic (2):
+      i2c: stm32: fix the device used for the DMA map
+      i2c: stm32f7: unmap DMA mapped buffer
+
+Wolfram Sang (1):
+      Merge tag 'i2c-host-fixes-6.16-rc6' of git://git.kernel.org/pub/scm/l=
+inux/kernel/git/andi.shyti/linux into i2c/for-current
+
+ drivers/i2c/busses/i2c-omap.c    |  7 +++++--
+ drivers/i2c/busses/i2c-stm32.c   |  8 +++-----
+ drivers/i2c/busses/i2c-stm32f7.c | 24 +++++++++---------------
+ 3 files changed, 17 insertions(+), 22 deletions(-)
+
+--GCx5R8UtXrHlobKT
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmh9MR8ACgkQFA3kzBSg
+KbYSuxAAozrdjF/cO1gpltJ00fcncHGSi4WDiEnxmaBcF9S/rajRWIKdhI26nnyS
+ermHqDEEjelQChBkHcgnkpwjF/Hn5SB8qrc2dWwS54Rtf+d8XUtXNb6aFaZzPSio
+NA4RDCtuzdJup8tEN0wSpLrN2sDYawP+EKo6txFmID4idoY7NJYPksIRyG7pdgsQ
+4CpoJzQ4Wx+j8wRb1UJjZkIbRHHMF0kgOSf2wxmoofehd30xGEm/GkiYnR1n5nmY
+Yzk2thgFNUSbk6IqrqHBd7m8tQdchmX2TpdZwoxfoZe6gXrSoqIJVsGi019A0Ytl
+i9Pi6yjlnKz6ISm/xuuvueyJ3Ryxm9rDs6erpYR5m+hsvpBoAOBN+DKYMUQhFbNC
+AI0CcG/jLWfT0MFQq3dyNmHRDtUPdQt7UNEu/La43kMkGVsc1PEp71QAoXGtEIi2
+ZdcLLgX4KJ7Mi0gk7eCvpLNcjygUl3JlexT5++RdinimaMjqes8MkOPbT2uYK6cY
+MYPYIIHVNtKnGeIm3PWTCuJQSPRNWpV6nhwgUiSOvsJUfmmGTV0DwLTPzahoWXCP
+LNuqkTMlJc6cF9Yqa1IiyDhVvdwY9j6q5XM0Xq2cp4dNolgDjLVoMEQI2jq2NBFb
+A//6wkkorCEMFHP2VN4g9/Arxp9EcTVfyoJWWp1V/eLGgxEELjk=
+=b+g/
+-----END PGP SIGNATURE-----
+
+--GCx5R8UtXrHlobKT--
 
