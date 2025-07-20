@@ -1,118 +1,129 @@
-Return-Path: <linux-kernel+bounces-738196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 363CDB0B5A8
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 13:56:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF92CB0B5AE
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 14:02:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C25C17AFBD
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 11:56:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93922189391B
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 12:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CACB1F5423;
-	Sun, 20 Jul 2025 11:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36FBB1F4C84;
+	Sun, 20 Jul 2025 12:02:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=philpotter-co-uk.20230601.gappssmtp.com header.i=@philpotter-co-uk.20230601.gappssmtp.com header.b="EznbldHq"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="KBOyZuH4"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE192BA36
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 11:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04CD817741;
+	Sun, 20 Jul 2025 12:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753012558; cv=none; b=mBnOZ+0GmTW8GJAkqgoCkbuMoo9cY11OEFne99C4AkNIitKXbZpI9bGlyL0nPPxU3y9x6zgEuQc5oFel3J95xymVhCuzafC3wGWkgJyUdTV0RoI/m1ixRExy+1xAG37tAeQxFqhNQSJWnKoKAhEWeECtsn5boP5wl7Y/Bss7cPw=
+	t=1753012942; cv=none; b=INU2t0ow+VnPOnJ/QqZolHIVxf9nLzp5ENfya0F+4b8SsdosjjVWbfvGNvsrDjmAGl5gl42rX5VjSHRpK+RDnhM+gPa80TvSnHwsOQco8mZU1J6USIY6DYI0guF3v0p8xcmSTE+EimvKIBNhHXeFlWU6KV4+0SxxAmOTJOTy6Jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753012558; c=relaxed/simple;
-	bh=bqtLagOldK/7/rLLesSOOYtHy7Mg9Lw7Y7rhG6Cqw+g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LyjO2cQaHrG69TWaedxemhWu+7Goptdd5cNI5bGxM+BUmPlpWelRrkskOH6kxJtY/uGhqFV7YgkOeWUH4Vzk0/aFJOS20yD2/Her0ZEPFsb2Gujrrp5FL25vuWQ89dYNNwuKJB7J32RQJb2xrUB9HcXSCwDCSr+i1V3x40MtAT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=philpotter.co.uk; spf=pass smtp.mailfrom=philpotter.co.uk; dkim=pass (2048-bit key) header.d=philpotter-co-uk.20230601.gappssmtp.com header.i=@philpotter-co-uk.20230601.gappssmtp.com header.b=EznbldHq; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=philpotter.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=philpotter.co.uk
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-455fdfb5d04so19214635e9.2
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 04:55:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=philpotter-co-uk.20230601.gappssmtp.com; s=20230601; t=1753012555; x=1753617355; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ekTGTFM7E4ZDOmzsJ2i/EMbwRasN0mNK3easuArwKgE=;
-        b=EznbldHqYP5HWQbczWTXmBLbLJ61Ug8h1S10Ur+MfEC78ldGlwQCg0yprf7TMox8i7
-         IFqqcXSTSpmtL1XX6YSC9HSdYBwMGKqIQ3doNJePVO0uwm+5KTZk/jQLd8Y/7zkUTFSy
-         i/E7+5a+ufMd6EQ5c58bVZTg4Mmin9LjZSODz16wlxNs287fkAOoOMpoB/9owl/0mJUa
-         PXGKyFHvctyGZ8RwqCRaVadawcVWwbNZ4P1TAmBehaMU5kjZzECDVLVGspAsfVkyQc4c
-         mVIjSRPirpd3ruhdOD7zghkWPuS00Lp+EGnI82r9BUtoJeDVStaaAd9KweVadUKo8aOh
-         Q/ZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753012555; x=1753617355;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ekTGTFM7E4ZDOmzsJ2i/EMbwRasN0mNK3easuArwKgE=;
-        b=d40uh1avc9RC3dS1MpP+WSE/PF+EPBa7zaD1WABr4EJupYJl13HQu5QkyVcvY4UlT1
-         qOvHmgjVm2duvJ7jsEvOn0xT0LL5D/SE9qECK53SO7Y5Zue6ArkZbIUSvcR2jExF67gX
-         FbWnxt6qq1cyW+yDlTmW9fzNkpYRSK5Ip6PrDLQ8n8lqDTcMVHWH5fZXuBcvFidvwh8X
-         JB9EcW+LmcEJoU3kNNMyXzi9lL5ji2mO85wVyXJGF/M0qBtBq2U1sl/+CueXrnSu9iG6
-         eOQm+E2dGWuMm18GC+pYIOdJdWRd4mAq24qP58MgNfgtua3T6+N8xjyL0Jb0eyrzGIAF
-         wGTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0dcfn82IFmHKCj/dWXae+GkousrEK9E03lHpdyI80McVy3u9LscPCdfWOniCH8VWuY5kMhqThGJaikXE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQC1MCvgCXO2hDF59g2QgkdLSHjE/rPDP2ua6xfXmHKjI/bpvA
-	MOceIO2JckyjxMuYC7a6PNGoRRiVXAU1kuHM5+zh5A0TXSpV8EVdk0ByU5OTqevOmxA=
-X-Gm-Gg: ASbGncs6A+Yl9rs31MtO75jMALL85jaWZVmzEbS7YIC6PyG4HEy/0bRciIckhd94vu2
-	vyucFGHHsQmY+WuHzQqFjNS6dPBe2DeDNHXqAHFO0//I1Rm/y3+KZg9qNpIA2Fl47RI1ynsO9N7
-	YY7ug3+eI5rg6OH1I4UyiJ0ZeZiTyg/31q364a2DWhgCnu66rHFzq+TBwK0g0lxZOaI9ZX3zVPW
-	mv1JK+NPlyIwui2RvS8cOEgVZ4HbV5GwyNm0q7sdq4XIT7DdzJyBEoOL75PNXQ/rH2YKgDnD1vv
-	XoxOi9K3XjnHWj265B3+TwOspYHrVn5qllIMRa1NJ61wDY8MxRzhR+TynTTEoltOL/2uwGBUInk
-	s8jyYham9xu5Nuti910g4FE43HJ0wqYZQB0LtzxawecPnBcAu0vvZAVRTq7pbqpBQ00Q7VIN7sL
-	DfDCgJ
-X-Google-Smtp-Source: AGHT+IGGUFEr+7C/4OxnMXUzeaPEVFQDSDorVA0J5gtJQJrY0CrSSiN5h/kxV+Hu3G8D2M+DmNs7Dg==
-X-Received: by 2002:a05:6000:40e1:b0:3a1:f5c4:b81b with SMTP id ffacd0b85a97d-3b613e7763cmr10718325f8f.23.1753012555023;
-        Sun, 20 Jul 2025 04:55:55 -0700 (PDT)
-Received: from equinox (2.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.6.1.f.d.0.b.8.0.1.0.0.2.ip6.arpa. [2001:8b0:df16::2])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca2bb96sm7396721f8f.30.2025.07.20.04.55.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Jul 2025 04:55:54 -0700 (PDT)
-Date: Sun, 20 Jul 2025 12:55:52 +0100
-From: Phillip Potter <phil@philpotter.co.uk>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Phillip Potter <phil@philpotter.co.uk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Christoph Hellwig <hch@infradead.org>,
-	Chris Rankin <rankincj@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Subject: Re: cdrom: cdrom_mrw_exit() NULL ptr deref
-Message-ID: <aHzZSKqAJR9Wk7SX@equinox>
-References: <uxgzea5ibqxygv3x7i4ojbpvcpv2wziorvb3ns5cdtyvobyn7h@y4g4l5ezv2ec>
- <aHF4GRvXhM6TnROz@equinox>
- <6686fe78-a050-4a1d-aa27-b7bf7ca6e912@kernel.dk>
- <z64pki236n2mertom6jmgznj4t3dkxeosr56fhpmykjdrnzs2l@5xlhh7htcaw4>
+	s=arc-20240116; t=1753012942; c=relaxed/simple;
+	bh=z7UInY2V+5A/AzQtYe31EauuP8QWRTvlpkfW8x62dEQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QinpoGNNVEDFu8dDjkIQGwf2GmaYIQfKkLf9WIODDTL6DCwAsmyIbhQ7HrQN9w/gnnie6kdL542NWPU0nWXfNbfiYcMBLpdQUQgpBmDAoxgZkPU0K8cuS4zJtZGk5K1KewPMbYVwfGbVF4xITtMAee7NAzRt8hwWabfcDygWnOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=KBOyZuH4; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 640D325DA1;
+	Sun, 20 Jul 2025 14:02:12 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id iwt8Xl3-yt6y; Sun, 20 Jul 2025 14:02:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1753012931; bh=z7UInY2V+5A/AzQtYe31EauuP8QWRTvlpkfW8x62dEQ=;
+	h=From:Subject:Date:To:Cc;
+	b=KBOyZuH4Ecm7kqnX0sWekVAqNY0FyqQUW4taiOQE4oMyYvIaH4xFtUSqp+ek1qJR7
+	 zerS1pzUw9BOXAZ7Jp+DCzsk+02ScTJpBdSS8VtTlgw1I2qlvW5gZV34UcYVGIrWu7
+	 8B62MZEKOPJ8N7bysML0txUqLajcGfxuZAVyNTTXwRUQn0UtEuRuaXR+AFZwroH9Z8
+	 F+/NapKFyhucBX3M5lOdZTGSWd8mLbTKD9zTAuqHKyTw7cj9lYdTV/YflzAY7egD4H
+	 W92uNkiv2+RqRjJQg2sz+KC5gvw/Ez+TXvKedGaM3VBrNZWCXi13/P3EYV2GHEq14g
+	 4DiLipCptdt8Q==
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+Subject: [PATCH v3 0/2] Support for Synaptics TDDI series panels
+Date: Sun, 20 Jul 2025 17:31:53 +0530
+Message-Id: <20250720-panel-synaptics-tddi-v3-0-43a5957f4b24@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <z64pki236n2mertom6jmgznj4t3dkxeosr56fhpmykjdrnzs2l@5xlhh7htcaw4>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALHafGgC/3XNTQqDMBCG4atI1k1JJsZIV71H6SK/OlCMJCIV8
+ e6NdtNCu3w/mGdWkn1Cn8mlWknyM2aMQwlxqojt9dB5iq40AQaSSRB01IN/0LwMepzQZjo5h5Q
+ ZZkRgKrS8JuV0TD7g82Bv99I95imm5fgy8319gw2H3+DMKaMumFbXIINq7NVhTjFO55g6spMzf
+ DAg/zBQGKUb0IY7Lqz6ZrZtewFjhD9kAQEAAA==
+X-Change-ID: 20250523-panel-synaptics-tddi-0b0b3f07f814
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753012923; l=1952;
+ i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
+ bh=z7UInY2V+5A/AzQtYe31EauuP8QWRTvlpkfW8x62dEQ=;
+ b=g1zKgQ1Y+6w3mlITGjx3sHpmfGU82CJFK8NEX2y40l0Q//jEZpCURnKYU5h7da5MOQcFpGaES
+ I7EzK91pmTmAy+jCDj0IJ5tdUBh4ZtQ7LDhtjvxi50ITvIN1CpgGW3M
+X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
+ pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-On Tue, Jul 15, 2025 at 12:32:22PM +0900, Sergey Senozhatsky wrote:
-> On (25/07/14 08:22), Jens Axboe wrote:
-> > This just looks totally broken, the cdrom layer trying to issue block
-> > layer commands at exit time. Perhaps something like the below (utterly
-> > untested) patch would be an improvement. Also gets rid of the silly
-> > ->exit() hook which exists just for mrw.
-> 
-> I don't have a CD/DVD drive to test this, but from what I can tell
-> the patch looks good to me.  Thanks for taking a look!
+Synaptics' Touch and Display Driver Integration (TDDI) technology [1]
+employs a single chip for both touchscreen and display capabilities.
+Such designs reportedly help reducing costs and power consumption.
 
-Hi Sergey,
+Although the touchscreens, which are powered by Synaptics'
+Register-Mapped Interface 4 (RMI4) touch protocol via I2C or SPI have
+driver support in the kernel, the MIPI DSI display panels don't.
 
-Just to say, I haven't forgotten this :-) Have run a few tests with the
-patch and so far looks all good. Still been unable to replicate the
-specific issue though. Assuming my testing uncovers nothing else, I will
-revert to Jens with fully crafted patch submission in next day or two.
+This series introduces a rudimentary driver for controlling said display
+panels, which supports TD4101 and TD4300 panels.
 
-Regards,
-Phil
+[1] https://www.synaptics.com/technology/display-integration
+
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+---
+Changes in v3:
+- fixed various dt_binding_check errors (robh's bot)
+- adjusted commit description of [v2 1/2] (robh)
+- utilized devm_drm_panel_alloc() and devm_regulator_bulk_get_const()
+- Link to v2: https://lore.kernel.org/r/20250625-panel-synaptics-tddi-v2-0-7a62ab1d13c7@disroot.org
+
+Changes in v2:
+- fixed various dt_binding_check errors (conor)
+- did s/tddi_update_brightness/tddi_update_status
+- added check for panel enable in tddi_update_status()
+- used backlight_get_brightness() in appropriate places
+- Link to v1: https://lore.kernel.org/r/20250612-panel-synaptics-tddi-v1-0-dfb8a425f76c@disroot.org
+
+---
+Kaustabh Chakraborty (2):
+      dt-bindings: display: panel: document Synaptics TDDI panel
+      drm: panel: add support for Synaptics TDDI series DSI panels
+
+ .../display/panel/synaptics,td4300-panel.yaml      |  89 +++++++
+ drivers/gpu/drm/panel/Kconfig                      |  11 +
+ drivers/gpu/drm/panel/Makefile                     |   1 +
+ drivers/gpu/drm/panel/panel-synaptics-tddi.c       | 289 +++++++++++++++++++++
+ 4 files changed, 390 insertions(+)
+---
+base-commit: d086c886ceb9f59dea6c3a9dae7eb89e780a20c9
+change-id: 20250523-panel-synaptics-tddi-0b0b3f07f814
+
+Best regards,
+-- 
+Kaustabh Chakraborty <kauschluss@disroot.org>
+
 
