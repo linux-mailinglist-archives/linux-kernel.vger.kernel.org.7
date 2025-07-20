@@ -1,82 +1,54 @@
-Return-Path: <linux-kernel+bounces-738193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F3E4B0B59E
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 13:39:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12DACB0B5A1
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 13:40:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B43517A35C
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 11:39:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C5013BC6FC
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 11:40:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC221DF987;
-	Sun, 20 Jul 2025 11:39:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738E61F4E4F;
+	Sun, 20 Jul 2025 11:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cNDhpEiT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="D6GotjCl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B1012E7F
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 11:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B04A512E7F;
+	Sun, 20 Jul 2025 11:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753011584; cv=none; b=MKWrpkfxOIe2I3i3bbAwLlZ1zlhwaUMt27p1qSm0PpfC9kN7mT/QYYn/6HksVvfXwQQpKxaUhcvn7HSDmDhb8K777V+hS7FKos2AaNj4YWaQW8WfFGidbMHuWgWIshwp7Wn4CAuJlm7KHXhTME/OtlYsTjDRRlGq3XQiqauZPJA=
+	t=1753011622; cv=none; b=fn0qbEKzA1Ja1XWxbvSuNS6NnpbmD/VZVonpLjkAMnY6b7gl7psFA/OTlDqK38YiZY92kJYOzxA/qZG4+qgMeZ4mlapiaDWWqFAjKKWsgOJvC2cavN9XLtys2MDnXOfKJmaQuyvtwlu/qbLS6m2LRgRNRtdqX+obGDo/OgcfUY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753011584; c=relaxed/simple;
-	bh=Iu6H7igpd/ZsMaAM411NjFixrXtxN56J3mN+7gbg90c=;
+	s=arc-20240116; t=1753011622; c=relaxed/simple;
+	bh=pjDOmPsSd1VdBpRg5iH+lfVFwZTEL+/aUFCOxBbqhlY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mbv9fG+cpBycHiI+pLv4L79dI/eScQQmH7AlOD2pybz6h5nlAXYofrn4j1pcvLYHjJ/yNGfCZOrVD77tkRSB9azRLKg9tLhx3/c6c1upw+EV6krKcvyCH1/+rDF9eVzVVos+aReMPKR+CvK2y3ZdbrPObAChHRflZt5sQTaCa3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cNDhpEiT; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753011582;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Iu6H7igpd/ZsMaAM411NjFixrXtxN56J3mN+7gbg90c=;
-	b=cNDhpEiTma0B66UQysvaDHQw0ir279vtEHao5YQopd2fnvcrD0xBDWy+G7BeM+qwGo89g0
-	/ytyaemWPPGwwf9augpu3KMA3XiR1nBiKi3VuLatZADF9EoQRmVdbfqgE/Rs5/iHbmoUkG
-	vPxK05Hks2uC21QOytPew2RSCwVr+jU=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-561-MRzKWyJ3MKuUez4dgd4jOg-1; Sun,
- 20 Jul 2025 07:39:29 -0400
-X-MC-Unique: MRzKWyJ3MKuUez4dgd4jOg-1
-X-Mimecast-MFC-AGG-ID: MRzKWyJ3MKuUez4dgd4jOg_1753011558
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 458A11800447;
-	Sun, 20 Jul 2025 11:39:17 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.32.30])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 5711E1800D82;
-	Sun, 20 Jul 2025 11:39:11 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sun, 20 Jul 2025 13:38:24 +0200 (CEST)
-Date: Sun, 20 Jul 2025 13:38:17 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	x86@kernel.org, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	David Laight <David.Laight@ACULAB.COM>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCHv6 perf/core 09/22] uprobes/x86: Add uprobe syscall to
- speed up uprobe
-Message-ID: <20250720113816.GA23012@redhat.com>
-References: <20250720112133.244369-1-jolsa@kernel.org>
- <20250720112133.244369-10-jolsa@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xcaxn5Yq2vGpjOBIDWS4aJ1zDHhO59JOxZ+F4pXrw3FoG8x75oHYCKNavzlvNIWHHH38W3aTF2RX0niusK6/nypmLoIiGI4sCCI1FIRevgu5XKiLuFkc3i/D6KInaNqDXlj88pDQhTlKbWIXeypqFSbBc63vJ44UzciOYMnEfqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=D6GotjCl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D14E3C4CEE7;
+	Sun, 20 Jul 2025 11:40:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1753011622;
+	bh=pjDOmPsSd1VdBpRg5iH+lfVFwZTEL+/aUFCOxBbqhlY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=D6GotjClbic3B7RU4bx20XE+wSwsAeu2MatiBFaVGQxLFqXNI9a5/dTD301MgvYIB
+	 +8WWVx39xipiXmUzQJnRlk3mNNmBUjhFbdkqoOos8U9VgEXnNfqh0cAR0f7t5U2iHl
+	 w29cjdF47ZE3Jo7nH6eLNsF931xixkrMVjCSH5/M=
+Date: Sun, 20 Jul 2025 13:40:19 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] usb: dwc3: qcom: Remove extcon functionality from glue
+Message-ID: <2025072021-rounding-oversized-5b4b@gregkh>
+References: <20250718053856.2859946-1-krishna.kurapati@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,38 +57,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250720112133.244369-10-jolsa@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+In-Reply-To: <20250718053856.2859946-1-krishna.kurapati@oss.qualcomm.com>
 
-On 07/20, Jiri Olsa wrote:
->
-> Adding new uprobe syscall that calls uprobe handlers for given
-> 'breakpoint' address.
->
-> The idea is that the 'breakpoint' address calls the user space
-> trampoline which executes the uprobe syscall.
->
-> The syscall handler reads the return address of the initial call
-> to retrieve the original 'breakpoint' address. With this address
-> we find the related uprobe object and call its consumers.
->
-> Adding the arch_uprobe_trampoline_mapping function that provides
-> uprobe trampoline mapping. This mapping is backed with one global
-> page initialized at __init time and shared by the all the mapping
-> instances.
->
-> We do not allow to execute uprobe syscall if the caller is not
-> from uprobe trampoline mapping.
->
-> The uprobe syscall ensures the consumer (bpf program) sees registers
-> values in the state before the trampoline was called.
->
-> Acked-by: Andrii Nakryiko <andrii@kernel.org>
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+On Fri, Jul 18, 2025 at 11:08:56AM +0530, Krishna Kurapati wrote:
+> Deprecate usage of extcon functionality from the glue driver.
 
-My ack still stands,
+It's not "deprecate", it is "delete".  "deprecate" means that you don't
+want future users of this, you are flat out deleting it entirely.
 
-Acked-by: Oleg Nesterov <oleg@redhat.com>
+> Now
+> that the glue driver is a flattened implementation, all existing
+> DTs would eventually move to new bindings.
 
+When is this happening?
+
+> While doing so let them
+> make use of role-switch/ typec frameworks to provide role data
+> rather than using extcon. None of the existing in-kernel extcon users
+> have moved to using new bindings yet, so this change doesn't affect
+> any existing users.
+
+I don't understand, who does this affect?
+
+> On upstream, summary of targets/platforms using extcon is as follows:
+
+What is "upstream" here?  In-tree?  We only have one development place :)
+
+> 1. MSM8916 and MSM8939 use Chipidea controller, hence the changes have no
+> effect on them.
+> 
+> 2. Of the other extcon users, most of them use "linux,extcon-usb-gpio"
+> driver which relies on id/vbus gpios to inform role changes. This can be
+> transitioned to role switch based driver (usb-conn-gpio) while flattening
+> those platforms to move away from extcon and rely on role switching.
+
+"most" do, but not all.
+
+> 3. The one target that uses dwc3 controller and extcon and is not based
+> on reading gpios is "arch/arm64/boot/dts/qcom/msm8996-xiaomi-common.dtsi".
+> This platform uses TI's Type-C Port controller chip to provide extcon. If
+> usb on this platform is being flattened, then effort should be put in to
+> define a usb-c-connector device in DT and make use of role switch in
+> TUSB320L driver.
+
+I really still do not understand what is happening here.
+
+Does this break existing in-tree users?  If yes, we can't do that.  If
+no, they this is just unused code?  That's all that we should be
+concerned about here.
+
+> ---
+> Changes in v4:
+> Updated commit text to reflect the patch doesn't affect in-kernel users.
+> Removed RB tags from v3 since commit text is changed.
+> 
+> Link to v3:
+> https://lore.kernel.org/all/20250714044703.2091075-1-krishna.kurapati@oss.qualcomm.com/
+
+What changed in v3?  v2?  v1?
+
+Please properly document this.
+
+thanks,
+
+greg k-h
 
