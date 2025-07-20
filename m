@@ -1,54 +1,108 @@
-Return-Path: <linux-kernel+bounces-738375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B19B4B0B7A4
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 20:27:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77E7EB0B7A3
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 20:26:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AE7D1897A59
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 18:27:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1103B18979E0
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 18:27:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A8B222585;
-	Sun, 20 Jul 2025 18:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 502652236FA;
+	Sun, 20 Jul 2025 18:26:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HRQHuVxZ"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NsRIpAty"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F2D382
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 18:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B739382;
+	Sun, 20 Jul 2025 18:26:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753036046; cv=none; b=T1xev6hD0iAHrCLEF56eVyoq5oswb3foO7DTFLIhfXtsqnJ7+J5C+GfIZAzifzOIoJaskUbUD5QpdnYZyt4D0JgYvFbBxz4IsxmmvKqpJul7jumTsLGQeVWxC95zMbq93iMEoPurFOdxVVggDzOGdsC22bjzqm6kyJM2rY6MP2M=
+	t=1753036003; cv=none; b=d0xUuWYU2z2hp6SGzl9N5MqKbiue3C5c4yEebgr4LnOgIdCUWNdgxPTGUZBW5soI76IV3oN9JiVcdKMRRC/HrF1BPSGWRpkF92IUyM1htswKbjU7NTEcrIW27dVLojBTBK9tJzCezfb18G903Cx51pRwk8G41X/fPQnO0vPmVNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753036046; c=relaxed/simple;
-	bh=X5xqs1ZP4P2RhnBgNzZid0V1n/QQZPwqie8VhCKeGfg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DEn1JIfY6dYMGNGHc72JFgB1djnyd5C73i6dVI90M/3yqZ1V8LiJMi7OYYp359zFnB8GgH6LFNMfr1saVrt2URYeH9VE/aRX+QM4aByozCT9w5BW1BaaGfJVTwQs0pPyjumkXUCOYx1d2193nrifa8WYUlv9tRz3SqWYe1WavZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HRQHuVxZ; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1753036040;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=KEkcY99JjeRt6Kj8QpuGyp3e5YKfE6FffJwx4zakCNE=;
-	b=HRQHuVxZJ56WcWGTQDyJKlDbffAoZe9YzaqooFMdD2Z/BI309pI8IDSWt33iIYpuG+ZWap
-	zS5rbkQFryiv0uXYPmVlXVl5/o2n8xqGNYK53AHwIqkivygZRoWOe1AmXdBlUSqSPEoFbz
-	ABQkYNbItNiko+dhI7z38xmnZjpF8sE=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Daniele Alessandrelli <daniele.alessandrelli@intel.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] crypto: keembay - Use min() to simplify ocs_create_linked_list_from_sg()
-Date: Sun, 20 Jul 2025 20:26:05 +0200
-Message-ID: <20250720182605.427375-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1753036003; c=relaxed/simple;
+	bh=CO3t+aMRXC7TDnBUj622dh5JiJ7sh0cr37a/whpbhqE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=j7DB1Nvz/gxi5p8TgCy87YO+het2Clue+Tlb/B5pxvTRdod0Ub8+Cs2nASu271vepbbLZZR4UyclmsB9H/bShkLAutVaLGLQwit9UQBZa9ahE0LSZqj/LUXhZUay3hVHdiwgLORk/RZvH+AyxIwUhyXNi04N3GIZhRUmloxNqmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NsRIpAty; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b34a78bb6e7so2687703a12.3;
+        Sun, 20 Jul 2025 11:26:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753036001; x=1753640801; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sHZe9EgIX5bHoOn1lRHIIocbOcsSd7x7FE0vB7xjsvo=;
+        b=NsRIpAtysxZ+CnQmXAUmRUq0cjOQ4FHpgiqasbnD6bBzw0ppXcJGIgD8oK6BCya6ml
+         ye2+G4/YI/8w1GxAL6cnyS3+RIN8+bFA5ZkLIDDmdJPSb4euXe93AW5vE6ocaqDHX/1c
+         1CK8Y+aqdq/wGAYUBblM2mg/3Csowff7j9GowMqoelaKpyNFb8Bbybi3TjS09mqAEepI
+         qPSjhzzzR5B7OvbJEGXsUgUlV7bgSYAiLFeVv7RoCJhZDfkD3sFMp6pL9/YGAC6r8O2o
+         o7Jtrm3BZPdeVTH/RPkQXXxSuqV9ps8E8gVge6z+eDYUpzY3jpWHEcZYsFPC/MUk/SxQ
+         yNDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753036001; x=1753640801;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sHZe9EgIX5bHoOn1lRHIIocbOcsSd7x7FE0vB7xjsvo=;
+        b=ZJpadqZSXPPEtvfhjkQGmrfku5KD5+pWUVRNsl1j5THzZA3xu//upvZGs3txI+TSVq
+         f2j1qc4BrGesy8RfU7iec5baySVgJnrUpqvpvBU046skWAf4PLE3GiL4tC9jBrY3kHZa
+         pVAAmDZL1HV96uA3NcdvRkmc6gIK+JVXJzhpA1l7oSSdCV58/RaTnhPZB4jmqtbRZd+e
+         bsyxZMJbo32ZXmhZeDAXDObQN8LwKeWdAtHq55haTYXJw/u6UbdFPaxWv8Q5X+q2yvid
+         ctsAK2Dc/qd9Biqks7nTcz6c+MFP5+gnqg6AzIyH1xCGJZ3R2hq9m8CAExZtIPKKo6i5
+         3qtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUzUUMtVJbGVTfmnHnQWRttWQOqEUQFfqr6Z1DoGGIsoUmSmLnAmf5r4HWRIm3jOfL5403mS+DpSZLo@vger.kernel.org, AJvYcCVqVGnYCR5B0f8ZAuhw5KLEWU7WOBGsKDgrdS/kAakAkLisT8ky606Q/+IS5KbRKuJ/nL5FNEgA@vger.kernel.org, AJvYcCWe56ew7cJ6GsMfPehI1TP6XdpLUi5rhWeHY26tS45JF2RH+x7GZDcG3X7bTr0IbV9ZtMhKqIUhhNuC@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoAmiHKit08htGSSAWG7XbTCOVAE+NVqrDtaIHEdSesY90fD7J
+	ApWBSxqKn61MlpiCuvxbpzxuqds6MB/K14CLcEpY9L2H62bXbxrqEzvFe90G+9xxH9U=
+X-Gm-Gg: ASbGncvq1LJvaKKWIF0QseBFV2nMgKEA6NWK7fYxYeBAQpT956aZUxa7DhpDNVG4urI
+	ywrI2iG6UKIy7Zm5x3TmqXuPkbSjWCVVMvWyaH03EJ7SFO08WwA6tznAFRoGKGiB2vw3hbEmUvb
+	L2iUDGr4rrBetzIUnoavPjNSukI/JDAlv20NE4SiyugFGViSmzKwLPzR/QqedSUKfaJqki0G8gi
+	D/mNzbUZsYeAcogizgS86ERd/AEoc7yblkVKlH9fnHGpEua3o0krmjrM7fVUyabc81VPIClCZgR
+	aAbzT/fVdXRHkOZRdue16mLF0by4pDB6BJKWkeczaVjGWmK2uzvGdlFDFdPD+CvlpVHytg==
+X-Google-Smtp-Source: AGHT+IGoGfPH4SczPPgpunZElQl0pQIPgpNF56UBU7IRRaCJpTzKmfW9fc9yllKz3BFHUR8wc4vQBw==
+X-Received: by 2002:a17:90b:4b4d:b0:312:e445:fdd9 with SMTP id 98e67ed59e1d1-31c9f3df4d6mr27338628a91.10.1753036001293;
+        Sun, 20 Jul 2025 11:26:41 -0700 (PDT)
+Received: from km-host.. ([49.207.192.227])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b6d2a82sm44634475ad.156.2025.07.20.11.26.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Jul 2025 11:26:41 -0700 (PDT)
+From: ">" <sanjaysuthar661996@gmail.com>
+X-Google-Original-From: Sanjay Suthar sanjaysuthar661996@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org
+Cc: ribalda@kernel.org,
+	jic23@kernel.org,
+	dlechner@baylibre.com,
+	nuno.sa@analog.com,
+	andy@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	neil.armstrong@linaro.org,
+	khilman@baylibre.com,
+	jbrunet@baylibre.com,
+	martin.blumenstingl@googlemail.com,
+	sanjay suthar <sanjaysuthar661996@gmail.com>
+Subject: 
+Date: Sun, 20 Jul 2025 23:56:27 +0530
+Message-Id: <20250720182627.39384-1-sanjaysuthar661996@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <CADU64hCr7mshqfBRE2Wp8zf4BHBdJoLLH=VJt2MrHeR+zHOV4w@mail.gmail.com>
+References: <CADU64hCr7mshqfBRE2Wp8zf4BHBdJoLLH=VJt2MrHeR+zHOV4w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,39 +110,56 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Use min() to simplify ocs_create_linked_list_from_sg() and improve its
-readability.
+Changes in v2:
+- Fixed commit message grammar
+- Fixed subject line style as per DT convention
+- Added missing reviewers/maintainers in CC
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+From 5c00524cbb47e30ee04223fe9502af2eb003ddf1 Mon Sep 17 00:00:00 2001
+From: sanjay suthar <sanjaysuthar661996@gmail.com>
+Date: Sun, 20 Jul 2025 01:11:00 +0530
+Subject: [PATCH v2] dt-bindings: cleanup: fix duplicated 'is is' in YAML docs
+
+Fix minor grammatical issues by removing duplicated "is" in two devicetree
+binding documents:
+
+- net/amlogic,meson-dwmac.yaml
+- iio/dac/ti,dac7612.yaml
+
+Signed-off-by: sanjay suthar <sanjaysuthar661996@gmail.com>
 ---
- drivers/crypto/intel/keembay/ocs-aes.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/iio/dac/ti,dac7612.yaml      | 2 +-
+ Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/crypto/intel/keembay/ocs-aes.c b/drivers/crypto/intel/keembay/ocs-aes.c
-index be9f32fc8f42..b69e7bfce9cc 100644
---- a/drivers/crypto/intel/keembay/ocs-aes.c
-+++ b/drivers/crypto/intel/keembay/ocs-aes.c
-@@ -7,6 +7,7 @@
+diff --git a/Documentation/devicetree/bindings/iio/dac/ti,dac7612.yaml b/Documentation/devicetree/bindings/iio/dac/ti,dac7612.yaml
+index 20dd1370660d..624c640be4c8 100644
+--- a/Documentation/devicetree/bindings/iio/dac/ti,dac7612.yaml
++++ b/Documentation/devicetree/bindings/iio/dac/ti,dac7612.yaml
+@@ -9,7 +9,7 @@ title: Texas Instruments DAC7612 family of DACs
+ description:
+   The DAC7612 is a dual, 12-bit digital-to-analog converter (DAC) with
+   guaranteed 12-bit monotonicity performance over the industrial temperature
+-  range. Is is programmable through an SPI interface.
++  range. It is programmable through an SPI interface.
  
- #include <linux/dma-mapping.h>
- #include <linux/interrupt.h>
-+#include <linux/minmax.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
- #include <linux/swab.h>
-@@ -1473,8 +1474,7 @@ int ocs_create_linked_list_from_sg(const struct ocs_aes_dev *aes_dev,
- 	ll = dll_desc->vaddr;
- 	for (i = 0; i < dma_nents; i++, sg = sg_next(sg)) {
- 		ll[i].src_addr = sg_dma_address(sg) + data_offset;
--		ll[i].src_len = (sg_dma_len(sg) - data_offset) < data_size ?
--				(sg_dma_len(sg) - data_offset) : data_size;
-+		ll[i].src_len = min(sg_dma_len(sg) - data_offset, data_size);
- 		data_offset = 0;
- 		data_size -= ll[i].src_len;
- 		/* Current element points to the DMA address of the next one. */
+ maintainers:
+   - Ricardo Ribalda Delgado <ricardo@ribalda.com>
+diff --git a/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml b/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml
+index 0cd78d71768c..5c91716d1f21 100644
+--- a/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml
++++ b/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml
+@@ -149,7 +149,7 @@ properties:
+       - description:
+           The first register range should be the one of the DWMAC controller
+       - description:
+-          The second range is is for the Amlogic specific configuration
++          The second range is for the Amlogic specific configuration
+           (for example the PRG_ETHERNET register range on Meson8b and newer)
+ 
+   interrupts:
 -- 
-2.50.1
+2.34.1
 
 
