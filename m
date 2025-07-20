@@ -1,178 +1,133 @@
-Return-Path: <linux-kernel+bounces-737993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D1ACB0B2F2
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 02:08:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33288B0B2F5
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 02:15:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1305C1895B5E
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 00:09:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F5DA2C041B
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 00:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE834C85;
-	Sun, 20 Jul 2025 00:08:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7F296FC5;
+	Sun, 20 Jul 2025 00:14:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="caMW7XII"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jtfyz1L3"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F99E3208;
-	Sun, 20 Jul 2025 00:08:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8261738B;
+	Sun, 20 Jul 2025 00:14:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752970116; cv=none; b=jdDte9VdlOx8zb3FHv2SdJuatQXFO5KfU6r6zjQz5ADGmW8EMRDQV2tb+RlzXlNyZy8Sp/DOzSyS/dEwYLxwoBbRkLTRJbl8Ai3VUti5exrOJ+CV43IOXFz9cdwB/W8BCXTYAuAcnVr6/HT9Z+WnzB1iNJE1hdl9tBchL+H7rFI=
+	t=1752970498; cv=none; b=JacthW5KlH/VaPPKLedrC0XIuXMiTQmp+vKdl8lu8Hg8RSwkX4mSyR5+qbPL+n8eH9l5m8+q+HRxuuSPP4mrX4tqXa67WQdsiUuH/v2RxXtInhX4FXjItIg2NpZRa6x5OVmtIJIGdXS+tJd/xjrkszmnoTHFlV3Jyyf/3tPNyKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752970116; c=relaxed/simple;
-	bh=dvhlfnC8KYcCSUF8hYDM1WkNpNiTwJjeJomK3LH2drQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NNphhkp5o2ZY/qip9MMP/XBbRHbhqugxTPMyrmKF1x/OwD9tevfY7QbgJzpYuQej7dmkPA1SejAnyw2A06skRrX31lq5po2RMD7Rniv/MFsK/50iPZ13k9X6aJzLxyHOvazkcQuvXsc+YzAZ1wi2+QzejSnuvopFBTmh8NUYqko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=caMW7XII; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-23694cec0feso29654865ad.2;
-        Sat, 19 Jul 2025 17:08:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752970114; x=1753574914; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kl5dOLRGZSE3XxSQd2+oJTQaOnXruucC4cwYHuCuPzY=;
-        b=caMW7XIImW/I1wendvYrJSzN2RsA2buEynN8r0HyDKTeU6ag3c8vjYzlL0lFIIdMU3
-         74JMPEH2cuGpiSjGY7PoPMOqd3ZLAKsRdiHBwrXsJrbX/RsLksE2LAEQ/z/hDcg9YxAy
-         AenPMcm10TvpsRsmDBTd2OogUBQGc5Xrow9LIect2aOZqBqzrmzYnClKFV/6hovsz6xS
-         HvzkXmL0TS6cGaXwx4ME0DKlFxx93HNpKqYvm3/jRnK/j6i3jzCEAQFsKSOpZrqud8ji
-         s/7CiCuKjGwjc0ItdLftRsXrmc10qgFoFIBL8tkue25uxPhBqv8VaJQKYc5DUfDCO7ko
-         gItA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752970114; x=1753574914;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Kl5dOLRGZSE3XxSQd2+oJTQaOnXruucC4cwYHuCuPzY=;
-        b=u6ok4q2igh1NtlBuiF+rscFvM+TkoTZcnkpXwCfKCfRTZAEnAO4BvCaMs8RgGsXHpq
-         K3A2MR3tUymHHKvrFWxYqnU2S9QS9AMx6CFT27cE8Zsl0MwM5urmqqAVRc5cawHefTPN
-         9LwRwYIDC+TAQ7ygvKIb8A8fyQV1UkpWO2QQqTh/+mH8DOIX9Vc65yz/pv737g1gggXg
-         3Uz7U+KnzWDTMQrx+BtDSaxy2mP6vB+NgwtiTtbUVM4UWXQze1JTLS76cMrx8W4V1Bb8
-         ICrYD1F2pkzI5iZhp0G8+qsseQJU4JWD0mGYT4OJJIzNs5CMw6lK1tX0z2n1LAPo5YKe
-         whMw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1++rw0+k8GIKC7SybNqpdaafgby2dY1gmS71yiDbJb+Hbj5NchqB1k1gl9b8vYZmzvOdSefZ+DSBPKeVb@vger.kernel.org, AJvYcCVj8PIV9O0I+bj0l5qXOUC4GTexJcc6nO2KRnJ9+Xea3RfdGdL4fuxM0WNqRe8lHrzaZfE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhARDxnAgN3/EZTYsSv5CivgqlJOINjN7WRijXK5vxGkTKIDtI
-	ZFckLUQ4MIRAGwPU0KH4L5SbHvymn5/YeW2hJ6l05WPB/Gf+ZzK2L5YU
-X-Gm-Gg: ASbGncu95rDP9gsegc5Hi0XwjIExhHKG0IpPcnWReh1yBuUmukh1bWHb33SesNn+UMl
-	MmJSNeEKUBzWOtiFu38SACH0iUw58pyc1/rBGo3/dUvQBGdmJeM9PFLCsCXe2lnaWA0kVUhZqqO
-	1A/CwTh29VpOcNVDmRDF/0HT9Nf6pRtt1F2BE6kHknsqpnSyBj6y4GcCcybIWIiH/o2OH72Fdur
-	ObRAR5wWv0DKHVdAnIopBkDgeQiS0MFThv9og4IoRCEAq7QhFavk2CYHo8Yxmxhto2Qi/RLUUeV
-	8d937iHn0YCKlZIfRh+C+X75ZGQCIYGUxKqxCMj9+g9iIyHw4PcKOQ9uiUadrMBHqO3GBgxq9GL
-	vsNtWNhKk0Yd2cEBmCPu1Wg==
-X-Google-Smtp-Source: AGHT+IE8XY+dnJCyO+fxfVPZjk61YisG840KHkxyISTYR3V12PFOL8A/LUQwYZFMMwVeIkosxKL8zw==
-X-Received: by 2002:a17:903:198d:b0:23a:cba1:6662 with SMTP id d9443c01a7336-23e24f94702mr281107665ad.46.1752970114388;
-        Sat, 19 Jul 2025 17:08:34 -0700 (PDT)
-Received: from localhost ([154.21.93.22])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-23e3b6b4a9esm34086575ad.93.2025.07.19.17.08.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Jul 2025 17:08:33 -0700 (PDT)
-Date: Sun, 20 Jul 2025 08:08:30 +0800
-From: Yao Yuan <yaoyuan0329os@gmail.com>
-To: Keir Fraser <keirf@google.com>
-Cc: Sean Christopherson <seanjc@google.com>, 
-	Yao Yuan <yaoyuan@linux.alibaba.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, Eric Auger <eric.auger@redhat.com>, 
-	Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [PATCH v2 2/4] KVM: arm64: vgic: Explicitly implement
- vgic_dist::ready ordering
-Message-ID: <4i65mgp4rtfox2ttchamijofcmwjtd6sefmuhdkfdrjwaznhoc@2uhcfv2ziegj>
-References: <20250716110737.2513665-1-keirf@google.com>
- <20250716110737.2513665-3-keirf@google.com>
- <kb7nwrco6s7e6catcareyic72pxvx52jbqbfc5gbqb5zu434kg@w3rrzbut3h34>
- <aHphgd0fOjHXjPCI@google.com>
- <5zpxxmymnyzncdnewdonnglvmvbtggjyxyqvkf6yars2bbyr4b@gottasrtoq2s>
- <aHtQG_k_1q3862s3@google.com>
+	s=arc-20240116; t=1752970498; c=relaxed/simple;
+	bh=G1/dZaBRpiQ/tjTY64phmm65jrLyhGkdKDScgV1y56s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nMuWteEyjlzNHOjmuoypDoLdPKtrXEAnGEypW0jnZBvKDGLkpktYKsGpgjnUeh1RtuybPqZtsp+T9gWYIMbI91BY4QX/R+EstxCOtErLlt68TXAAghO2HctwrgHRTNoObk5jyTGbD0oACqrAekf3Fxz5D/TwlCyitwaF1j/Z9hY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jtfyz1L3; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=6GeynWdjF5Sj3dCcnbubxxl6buoqVFvG9eDMBikw2HY=; b=jtfyz1L3XTwI6DH7qsGFdp67vD
+	wOznjn5rjOcx7PuUebW7TzI4gs1f3qoVkOeEzwI7DmR0dKokYzWRhF8mvAYizQiO40di2nYHmkCF9
+	XSWIQie8Vq3sBJs1Ao4trv+9wuVzNOGjo+gsBUANRy72xdbawa7muqMZ7oIXP1Y6kN+muZkpTnWpC
+	fQnOSEcnGLOWQWc/eehCL2/CP34y/aCaA4fy4H3GcI+GjR3hXuMNY8aKfglZAJfM8iURn9UxvEFli
+	gEUkwQBoJONnsohOBcM2dyuzYruqgEpdPeLfw7o9N4KHkQal+E1hRL/8karAge2lvx0epvRdvI+4R
+	p5LmhvWw==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1udHhY-0000000ElJu-3xLj;
+	Sun, 20 Jul 2025 00:14:48 +0000
+Message-ID: <d73bc572-5895-4b90-8b5c-72ae9c949559@infradead.org>
+Date: Sat, 19 Jul 2025 17:14:48 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aHtQG_k_1q3862s3@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] docs: Fix kernel-doc indentation errors in multiple
+ drivers
+To: Felipe Hernandez <luis.hernandez093@gmail.com>,
+ Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: Pavel Pisa <pisa@fel.cvut.cz>, corbet@lwn.net,
+ alexandre.belloni@bootlin.com, ondrej.ille@gmail.com, mkl@pengutronix.de,
+ James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ =?UTF-8?Q?Martin_Je=C5=99=C3=A1bek?= <martin.jerabek01@gmail.com>,
+ =?UTF-8?B?SmnFmcOtIE5vdsOhaw==?= <jnovak@fel.cvut.cz>
+References: <20250703023511.82768-1-luis.hernandez093@gmail.com>
+ <202507052123.55236.pisa@fel.cvut.cz>
+ <b56b9602-d715-4de8-903e-7c97423bf5bb@infradead.org>
+ <aGsW36iFMyp4ojdf@archie.me>
+ <CAGRSKZgTwHRvjZaA-HzHHiA3qhN6i-v=tLR8OsBgiJMe=F6aig@mail.gmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <CAGRSKZgTwHRvjZaA-HzHHiA3qhN6i-v=tLR8OsBgiJMe=F6aig@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jul 19, 2025 at 07:58:19AM +0000, Keir Fraser wrote:
-> On Sat, Jul 19, 2025 at 10:15:56AM +0800, Yao Yuan wrote:
-> > On Fri, Jul 18, 2025 at 08:00:17AM -0700, Sean Christopherson wrote:
-> > > On Thu, Jul 17, 2025, Yao Yuan wrote:
-> > > > On Wed, Jul 16, 2025 at 11:07:35AM +0800, Keir Fraser wrote:
-> > > > > In preparation to remove synchronize_srcu() from MMIO registration,
-> > > > > remove the distributor's dependency on this implicit barrier by
-> > > > > direct acquire-release synchronization on the flag write and its
-> > > > > lock-free check.
-> > > > >
-> > > > > Signed-off-by: Keir Fraser <keirf@google.com>
-> > > > > ---
-> > > > >  arch/arm64/kvm/vgic/vgic-init.c | 11 ++---------
-> > > > >  1 file changed, 2 insertions(+), 9 deletions(-)
-> > > > >
-> > > > > diff --git a/arch/arm64/kvm/vgic/vgic-init.c b/arch/arm64/kvm/vgic/vgic-init.c
-> > > > > index 502b65049703..bc83672e461b 100644
-> > > > > --- a/arch/arm64/kvm/vgic/vgic-init.c
-> > > > > +++ b/arch/arm64/kvm/vgic/vgic-init.c
-> > > > > @@ -567,7 +567,7 @@ int kvm_vgic_map_resources(struct kvm *kvm)
-> > > > >  	gpa_t dist_base;
-> > > > >  	int ret = 0;
-> > > > >
-> > > > > -	if (likely(dist->ready))
-> > > > > +	if (likely(smp_load_acquire(&dist->ready)))
-> > > > >  		return 0;
-> > > > >
-> > > > >  	mutex_lock(&kvm->slots_lock);
-> > > > > @@ -598,14 +598,7 @@ int kvm_vgic_map_resources(struct kvm *kvm)
-> > > > >  		goto out_slots;
-> > > > >  	}
-> > > > >
-> > > > > -	/*
-> > > > > -	 * kvm_io_bus_register_dev() guarantees all readers see the new MMIO
-> > > > > -	 * registration before returning through synchronize_srcu(), which also
-> > > > > -	 * implies a full memory barrier. As such, marking the distributor as
-> > > > > -	 * 'ready' here is guaranteed to be ordered after all vCPUs having seen
-> > > > > -	 * a completely configured distributor.
-> > > > > -	 */
-> > > > > -	dist->ready = true;
-> > > > > +	smp_store_release(&dist->ready, true);
-> > > >
-> > > > No need the store-release and load-acquire for replacing
-> > > > synchronize_srcu_expedited() w/ call_srcu() IIUC:
-> > >
-> > > This isn't about using call_srcu(), because it's not actually about kvm->buses.
-> > > This code is concerned with ensuring that all stores to kvm->arch.vgic are ordered
-> > > before the store to set kvm->arch.vgic.ready, so that vCPUs never see "ready==true"
-> > > with a half-baked distributor.
-> > >
-> > > In the current code, kvm_vgic_map_resources() relies on the synchronize_srcu() in
-> > > kvm_io_bus_register_dev() to provide the ordering guarantees.  Switching to
-> > > smp_store_release() + smp_load_acquire() removes the dependency on the
-> > > synchronize_srcu() so that the synchronize_srcu() call can be safely removed.
-> >
-> > Yes, I understand this and agree with your point.
-> >
-> > Just for discusstion: I thought it should also work even w/o
-> > introduce the load acqure + store release after switch to
-> > call_srcu(): The smp_mb() in call_srcu() order the all store
-> > to kvm->arch.vgic before store kvm->arch.vgic.ready in
-> > current implementation.
->
-> The load-acquire would still be required, to ensure that accesses to
-> kvm->arch.vgic do not get reordered earlier than the lock-free check
-> of kvm->arch.vgic.ready. Otherwise that CPU could see that the vgic is
-> initialised, but then use speculated reads of uninitialised vgic state.
->
+Hi Felipe,
 
-Thanks for your explanation.
+On 7/7/25 6:43 AM, Felipe Hernandez wrote:
+> On Sun, Jul 6, 2025 at 8:37 PM Bagas Sanjaya <bagasdotme@gmail.com> wrote:
+>>
+>> On Sat, Jul 05, 2025 at 02:36:45PM -0700, Randy Dunlap wrote:
+>>> It needs something to turn True and False into a bullet list
+>>> (non-numbered), as documented in Documentation/doc-guide/kernel-doc.rst:
+>>>
+>>>      So, in order to produce the desired line breaks, you need to use a
+>>>      ReST list, e. g.::
+>>>
+>>>       * Return:
+>>>       * * %0          - OK to runtime suspend the device
+>>>       * * %-EBUSY     - Device should not be runtime suspended
+>>>
+>>>
+>>>
+>>> I don't see any of these kernel-doc warnings. I would guess that
+>>> either Pavel or I am using some older/newer version of whatever
+>>> software is causing this.
+>>>
+>>
+>> I think Sphinx reported these warnings on docs-next tree.
 
-I see. But there's "mutex_lock(&kvm->slot_lock);" before later
-acccessing to the kvm->arch.vgic, so I think the order can be
-guaranteed. Of cause as you said a explicitly acquire-load +
-store-release is better than before implicitly implementation.
+They are actually docutils warnings. and I do see them now,
+I had just overlooked them.
 
-> > >
+> 
+> Hi,
+> 
+> I just wanted to follow up with the thread. I had inadvertently done a
+> reply not reply all after the first series of feedback from Pavel and
+> Randy. I agree with Randy in that the nested lists be updated to use
+> ReST list syntax. I'm working on a v2 and spot checking the output.
+> 
+> For reference:
+> I am running docutils (Docutils 0.21.2, Python 3.13.5, on linux)
+> My branch was based on commit 50c8770a42faf8b1c7abe93e7c114337f580a97d
+> (linux-next/master).
+> The specific error(s):
+> /home/linux/Documentation/networking/device_drivers/can/ctu/ctucanfd-driver:526:
+> ./drivers/net/can/ctucanfd/ctucanfd_base.c:511: ERROR: Unexpected
+> indentation. [docutils]
+> 
+> I apologize if I should've started this work using the docs-next tree.
+> I wasn't aware of it at the moment and was utilizing linux-next.
+
+The linux-next tree has these warnings in it. I often use it for patches.
+
+Have you made a new version of the patch? I haven't seen it.
+
+Thanks.
+-- 
+~Randy
+
 
