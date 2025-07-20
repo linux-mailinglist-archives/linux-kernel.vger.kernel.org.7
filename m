@@ -1,215 +1,116 @@
-Return-Path: <linux-kernel+bounces-738439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 863A8B0B84F
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 23:12:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87EF1B0B851
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 23:13:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B297D17621B
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 21:12:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4F6B17470A
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 21:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A0022422E;
-	Sun, 20 Jul 2025 21:12:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549DB2236EE;
+	Sun, 20 Jul 2025 21:13:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gPINocQd"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TFFwD7EG"
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83952382;
-	Sun, 20 Jul 2025 21:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FAA98F40;
+	Sun, 20 Jul 2025 21:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753045920; cv=none; b=BvZjE5JKCO6EOup5JvviHBmQS6OSyFmYX6SuQ37UfRVJ9T95W1Sf52WrmKVNAF+n7RkPdQTiQXdItJ1HNE8tLdyGFYV2C0d0q4WqqaijQ54IoueVvjH0vj6i/WWXcSLo2WWeePm3n3MvICFUiVItm8L53uC9X62hTAaRjasMJxo=
+	t=1753046002; cv=none; b=iB9/GBNjPFfB8UXnJXNyZCgAxcCSKIafe9DlDQPnFunDizsHmAT/vrGzMxUnrzN9dgk1DJk2bC7FVT36UXnyknTU+RKMO+8Ycd/iG2Cc37PtAdAeqp6gyWr5gFBVRgpeK1C9KmNQCTkFeCCPb8reh7dDOZnYwoscwOgLxJ+CMSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753045920; c=relaxed/simple;
-	bh=+RYJ0uwX/zw8nqvpp0fJDSFLWYQQ70j0FHtcEbEAAQQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=anhYmkl/BGqnhV/i16i8ocNcbmQ7a+H9z/DdJ66TT+BwOvKWqPPxsYCFLL0ePRSioJ0Ro04LyijZKK1QGRatdl4VaXP8myXTcyrWGKPh6jpk3MMWXL4S6ypFz7rDvOBxCj/zIC15K8e82oUcZKidVpB6QiTzwtr15gIPAbt29Z8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gPINocQd; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56KJbbx8010184;
-	Sun, 20 Jul 2025 21:11:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=P3zOlRzIaZNMSPHi9ly3Guwl7F068VzL0s3I/dzFF
-	Dc=; b=gPINocQdX6mad3SLpCo4UVyli5u6ZL9RBcZPe1j7JLK1jG2hNzbXQ9mGC
-	9GSi2VPBPE9jDsep/sdGGcIUqbzxsZ+v7auGq2wwRw/mWB8OGrEO9G/VL6xMuKVL
-	ec3dyhUpjTGUu5fa1zQpQCpH7CxIzc+1ANuZcQusvttM7kpKBJMDkCgHShgiDyVB
-	d6kCpU+vz2oXzKAxA2r0ZOiDcz3nNyC7kyS+kwe4878UQL//IJC0uec87atxnAhm
-	qtYnWokt1/EUlP3iQxhymLkssC0Rk+VTpYHijFA2ysVrOOicfQxolGjxbLhMeNWQ
-	7cjSTvzZKTu7npozzMqSBlRceDVbw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4805hfnjkt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 20 Jul 2025 21:11:49 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 56KLBmmj012353;
-	Sun, 20 Jul 2025 21:11:48 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4805hfnjkr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 20 Jul 2025 21:11:48 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56KGQNrv025138;
-	Sun, 20 Jul 2025 21:11:47 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 480nptbeta-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 20 Jul 2025 21:11:47 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56KLBf6D34472334
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 20 Jul 2025 21:11:41 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0954C20043;
-	Sun, 20 Jul 2025 21:11:41 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BB74F20040;
-	Sun, 20 Jul 2025 21:11:40 +0000 (GMT)
-Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Sun, 20 Jul 2025 21:11:40 +0000 (GMT)
-From: Halil Pasic <pasic@linux.ibm.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Alexandra Winter <wintera@linux.ibm.com>,
-        Thorsten Winkler <twinkler@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Sebastian Ott <sebott@linux.ibm.com>,
-        Ursula Braun <ubraun@linux.ibm.com>, netdev@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Halil Pasic <pasic@linux.ibm.com>,
-        Aliaksei Makarau <Aliaksei.Makarau@ibm.com>,
-        Mahanta Jambigi <mjambigi@linux.ibm.com>
-Subject: [PATCH 1/1] s390/ism: fix concurrency management in ism_cmd()
-Date: Sun, 20 Jul 2025 23:11:09 +0200
-Message-ID: <20250720211110.1962169-1-pasic@linux.ibm.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1753046002; c=relaxed/simple;
+	bh=NMeW2BcUoS5p1vkk48JdBAcgFbjbmXnE8eXA/e+eiDQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l5PYpNJSKda9ouACiuh1EUw5zfNT66Ru96McOFx2yNu+WAE8q3MPHV8IkA94os4iY7kB6tgxSMj7FMc+lmDKrFQU8Ftplm6ZKk+oIraQdf9U8zcsM/WAMNv71VydwW8zv4hou/+NM0tXwh0ZmACimriT2OfuFjsVdYshL7KJgUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TFFwD7EG; arc=none smtp.client-ip=209.85.167.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-41baecbdd33so2143031b6e.1;
+        Sun, 20 Jul 2025 14:13:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753046000; x=1753650800; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o6gErZMJt76V1eqKZ0fc9t2jYBpWpuemhCSqXUz2On8=;
+        b=TFFwD7EGeRt+h9AJJPWjbV1uKa2gKH3vS/z9rxSxoUHBGmEXAS7a0h1r6Xs3Xy6li/
+         OhFAm1p/YZ7nTp3ycyyrh4J7khfJF/llMwAwIAn+x62R2XSkPNjttPCxmGD8ZQO0zRxQ
+         yyDUIVMIDuLOHbPptc+gsmkO5b4Oxj2EZ27rz4r1XQnNmEqLjZUHWa72ij/uIwd8yGIm
+         V0ZzpFSqa8zBn38m1Xe8w+q6BTpgGBaeVreDkHoXXxnI46KtoosiVmAh4pksyM1QDF1+
+         6NAYDv5Pj0hXY2BEoovwatezwn9+JbIZlEEIcApvc/GfSBKRHJpxuVV1B2Gs8LkulgOi
+         RsYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753046000; x=1753650800;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o6gErZMJt76V1eqKZ0fc9t2jYBpWpuemhCSqXUz2On8=;
+        b=wEwConHD+Tb6WxDL9tIpkvBP25hDDnBV+CercWaD6traiQn1rHuvTCEiCFETt0vMh7
+         V8XnlYj1YVnvkFUdmbHsvENo9NgVrhjHwHykLFgtBmRUeQGV0Y04gmbftgLdiTDt0+O2
+         4oiimqkLjwGvX1rc+cOn9W3hM7NGMgxtEOZE4gXj/+3YAKt5bQOafxb2Ln/pSyKCZf7M
+         VS0oS1Oh470wbJO8rALXcdw5MErxSwKXUbjZ+x2bpvQrNtx0KPI9rPD5+m6ohXrBr4/6
+         e1P482S3WiFzSeVnyUXbxdFO/kaF/85F7axQJ4uy9WCpIpgTmpv6eRYaEMSOlfh+A20p
+         ijeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUIqRTYVk5DYU47Vtl0BVlM+j5m8FCTAvv/bbWeYafgWJ8vbNgxpINfVmp9r3Gmsuwd3vvoeWadLJN/2NQ=@vger.kernel.org, AJvYcCV+cDgLTOR7OFFUgRvrYh3E0RkOINWlRAwkK26rULp0BJlx0pS52imLKkgbJFOK9Pdis3xB9QH4zJ+06Lk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqloNSmKdXylwyi/FcOh4+xZJs2xOT7o1Jk0AL6G0InvJWm4Xd
+	oL1WCth7dZV/vnuEHHSY/vPDxYtKA5hRlaQNnVkacFit5tQuKctOyVMxkY1RN0yec4pCZSHCF2l
+	C4rP65/hYBUhNF7psPey9i1bmxCfKpYM=
+X-Gm-Gg: ASbGncsOZshUrwHwD1EBaqV6YDYpT13TvMxXalipJgouXw1wUTtvrItcHOI+B5cb76O
+	E45apbK+Il8vixR39xAccGfQ3cJv6a0ulWhbGIH6Q9AjUmNAvUpV6zWxDrotD2w2Mclc3iw0CJq
+	gLc3RTDcZrw7KmQZczGqMUD5UBsluWhM5f7p3yhSo/jkCdDHI907P+XhEgtPw3YjxlTaBLqHlGF
+	7c+s9lp
+X-Google-Smtp-Source: AGHT+IGQBjCiAD9vIQwxV0rJzEKHpmjX4gL4eliT0pjfkXkTEmtGeAlanzndulSYj+eEPQNmRrUoqpol2Hvsi+3CglM=
+X-Received: by 2002:a05:6808:81c7:b0:41f:79f9:1b6b with SMTP id
+ 5614622812f47-41f79f9201emr6057246b6e.34.1753046000383; Sun, 20 Jul 2025
+ 14:13:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIwMDIwMyBTYWx0ZWRfX6s5dvxnjZSqi
- +MkDIPLKEK0Wn5nxJxuVPXQyS/QtN4dCbc4ZmFezxHfm3FBVOhPc+slASebCGykmIeoMS6L+d88
- /yVLQURwu463r0GvFL6LGNjyxrNhs2lhQ/WsCsrUtdVNB9cidIt8Fg7dLrwWjrawo/hjFTrR5l/
- c3OYCVvtRFSw/YQy1/MISDOYQ3RlErzzCD9c5hqUSQrUMqqijo3chYo6jvyRTRlT7lfNKLISyWv
- 3IRO5ezD/8hYG/qqfyjoysIvgVd1rEig39RxjyS5O5noP90W2U3eonOyf05PZuwD9xoyZV0de9n
- ZKGrhZF12V7v98ySuBPEWAcspm42zW/wWq4Fi2ZVfNRgPkuusrZOesrqrzBhPm64kgOmEmAGxPy
- fwH2Io8YoN+nI75n8x5onFwTcpbhGJlX7zPbmdnQXqPCvP2UvjAl1GkvpDw8ASJD0sxvHOVQ
-X-Proofpoint-GUID: NmpMoyYLtCPmimDwCl2_27Nx-io7ZIRY
-X-Proofpoint-ORIG-GUID: L4y0NCyNFhSvVCMg5pD5FXsPwnD-N3Z7
-X-Authority-Analysis: v=2.4 cv=X9RSKHTe c=1 sm=1 tr=0 ts=687d5b95 cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=qzj1OK7t_Lbxma-giU4A:9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-20_01,2025-07-17_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 priorityscore=1501 adultscore=0 lowpriorityscore=0
- phishscore=0 malwarescore=0 clxscore=1015 mlxscore=0 spamscore=0
- suspectscore=0 mlxlogscore=999 bulkscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507200203
+References: <20250618080339.969173-1-joonwonkang@google.com>
+In-Reply-To: <20250618080339.969173-1-joonwonkang@google.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Sun, 20 Jul 2025 16:13:09 -0500
+X-Gm-Features: Ac12FXz9vOtA1Fg51kXnXqCTNXVof0pWwc5qQoUQiAq93e2W0_AVQrge6SyFrZM
+Message-ID: <CABb+yY3CBiLpZ1KrD8RFypRgkP9MOzBf1FB+gL2E-qEuSbrj6A@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mailbox: Use per-thread completion to fix wrong
+ completion order
+To: Joonwon Kang <joonwonkang@google.com>
+Cc: thierry.reding@gmail.com, alexey.klimov@arm.com, sudeep.holla@arm.com, 
+	jonathanh@nvidia.com, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The s390x ISM device data sheet clearly states that only one
-request-response sequence is allowable per ISM function at any point in
-time.  Unfortunately as of today the s390/ism driver in Linux does not
-honor that requirement. This patch aims to rectify that.
+On Wed, Jun 18, 2025 at 3:04=E2=80=AFAM Joonwon Kang <joonwonkang@google.co=
+m> wrote:
+>
+> Previously, a sender thread in mbox_send_message() could be woken up at
+> a wrong time in blocking mode. It is because there was only a single
+> completion for a channel whereas messages from multiple threads could be
+> sent in any order; since the shared completion could be signalled in any
+> order, it could wake up a wrong sender thread.
+>
+> This commit resolves the false wake-up issue with the following changes:
+> - Completions are created as many as the number of concurrent sender
+>   threads
+> - A completion is created in a sender thread's stack
+> - Each slot of the message queue, i.e. `msg_data`, contains a pointer to
+>   its target completion
+> - tx_tick() signals the completion of the currently active slot of the
+>   message queue
+>
+> Link: https://lore.kernel.org/all/1490809381-28869-1-git-send-email-jaswi=
+nder.singh@linaro.org
 
-This problem was discovered based on Aliaksei's bug report which states
-that for certain workloads the ISM functions end up entering error state
-(with PEC 2 as seen from the logs) after a while and as a consequence
-connections handled by the respective function break, and for future
-connection requests the ISM device is not considered -- given it is in a
-dysfunctional state. During further debugging PEC 31 was observed as
-well.
+Is your issue different from what is described in the Link?
 
-The kernel message
-zpci: XXXX:00:00.0: Event 0x2 reports an error for PCI function XXXX
-is a reliable indicator of the stated function entering error state
-with PEC 2. Let me also point out that the kernel message
-zpci: XXXX:00:00.0: The ism driver bound to the device does not support error recovery
-is a reliable indicator that the ISM function won't be auto-recovered
-because the ISM driver currently lacks support for it.
-
-On a technical level, without this synchronization, commands (inputs to
-the FW) may be partially or fully overwritten (corrupted) by another CPU
-trying to issue commands on the same function. There is hard evidence that
-this can lead to DMB token values being used as DMB IOVAs, leading to
-PEC 2 PCI events indicating invalid DMA. But this is only one of the
-failure modes imaginable. In theory even completely losing one command
-and executing another one twice and then trying to interpret the outputs
-as if the command we intended to execute was actually executed and not
-the other one is also possible.  Frankly I don't feel confident about
-providing an exhaustive list of possible consequences.
-
-Fixes: 684b89bc39ce ("s390/ism: add device driver for internal shared memory")
-Reported-by: Aliaksei Makarau <Aliaksei.Makarau@ibm.com>
-Tested-by: Mahanta Jambigi <mjambigi@linux.ibm.com>
-Tested-by: Aliaksei Makarau <Aliaksei.Makarau@ibm.com>
-Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
----
- drivers/s390/net/ism_drv.c | 4 ++++
- include/linux/ism.h        | 1 +
- 2 files changed, 5 insertions(+)
-
-diff --git a/drivers/s390/net/ism_drv.c b/drivers/s390/net/ism_drv.c
-index b7f15f303ea2..c3b79e22044c 100644
---- a/drivers/s390/net/ism_drv.c
-+++ b/drivers/s390/net/ism_drv.c
-@@ -129,7 +129,9 @@ static int ism_cmd(struct ism_dev *ism, void *cmd)
- {
- 	struct ism_req_hdr *req = cmd;
- 	struct ism_resp_hdr *resp = cmd;
-+	unsigned long flags;
- 
-+	spin_lock_irqsave(&ism->cmd_lock, flags);
- 	__ism_write_cmd(ism, req + 1, sizeof(*req), req->len - sizeof(*req));
- 	__ism_write_cmd(ism, req, 0, sizeof(*req));
- 
-@@ -143,6 +145,7 @@ static int ism_cmd(struct ism_dev *ism, void *cmd)
- 	}
- 	__ism_read_cmd(ism, resp + 1, sizeof(*resp), resp->len - sizeof(*resp));
- out:
-+	spin_unlock_irqrestore(&ism->cmd_lock, flags);
- 	return resp->ret;
- }
- 
-@@ -606,6 +609,7 @@ static int ism_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 		return -ENOMEM;
- 
- 	spin_lock_init(&ism->lock);
-+	spin_lock_init(&ism->cmd_lock);
- 	dev_set_drvdata(&pdev->dev, ism);
- 	ism->pdev = pdev;
- 	ism->dev.parent = &pdev->dev;
-diff --git a/include/linux/ism.h b/include/linux/ism.h
-index 5428edd90982..8358b4cd7ba6 100644
---- a/include/linux/ism.h
-+++ b/include/linux/ism.h
-@@ -28,6 +28,7 @@ struct ism_dmb {
- 
- struct ism_dev {
- 	spinlock_t lock; /* protects the ism device */
-+	spinlock_t cmd_lock; /* serializes cmds */
- 	struct list_head list;
- 	struct pci_dev *pdev;
- 
-
-base-commit: 07fa9cad54609df3eea00cd5b167df6088ce01a6
--- 
-2.48.1
-
+thanks
 
