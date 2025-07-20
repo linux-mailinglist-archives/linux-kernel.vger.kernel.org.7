@@ -1,88 +1,123 @@
-Return-Path: <linux-kernel+bounces-738402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AE1AB0B7E8
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 21:19:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F188B0B7ED
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 21:24:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE9F7188631B
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 19:19:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8B683B456E
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 19:23:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 883A31B043E;
-	Sun, 20 Jul 2025 19:19:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C19B61DB154;
+	Sun, 20 Jul 2025 19:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="Bh3bXIo2"
+Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C258F17AE11
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 19:19:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753039145; cv=none; b=keivvioR3H5BzA2dG0pqUenrduCBYpvJxEuRXFOjtv8h0ey9Gvs5qYtdJRcTJIBd3G8a0UhKaP4u8XurjnjUF6Mvq2Upc+eXIlFRUaKcBR/QNF0W4VHAKOY2NRpJB2+iGFzhGzB/U7REa19SmKYCheGVYI1HpGue6vEwGz5GrLc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753039145; c=relaxed/simple;
-	bh=VtKbQ9+qN6GIwu4xdclsdbcCWXd5POtHOdGN/lRTarY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=T24au2OUd7UhUgPqjmtuOGAznD5hw91mZkTYFVKOM4hXYxs+FN8hr0DFmsWaHKFOySCxFShPL731WaVGC+gGWJ6wqZNt4+THF1vQk2D7QF5lum8SstJhfSIbrLxy308C3VKx2re8jMGOBFzWfqqdG2I0FrxMqdTRInOSRNtbb9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3ddbfe1fc8fso84400005ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 12:19:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753039143; x=1753643943;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=m8SLuQddmzuP2cZ8NG8v4gcEdsMfVVRurSpgt90oFhs=;
-        b=NIgXAo/RLxac8SGBqyuosw2u4C9ObsCsCuzDjPT2AxzAzFWYCIHxFZmnZenxG6rgRH
-         Eeo4woopp+W+lQRQIX+W/lm1sFsWEe2vdNLQ9hDLU3I5JocQ/fbM+3BSWKVptUgal89k
-         QJE0ydg0N10g7UYTvaVlEZ4CAzSoDTFULnShjosYGNZFdZMxu4LInv1MxsP7cQ/I3t4W
-         MwLgF5A5KVo4VMIkPPtoxfUgPYafcn7PKf+LJjTxJhOCQ9BwYXYMulz40toBBath4EyM
-         f/RKUNonJETQYKvUgvVQY4MHu6EP5DwmXMKTkVuh55vTDkPymQQ1zGIYUhFELN+uII6D
-         YO6g==
-X-Forwarded-Encrypted: i=1; AJvYcCXl0GI1GbWlSWPs+Zui5c7q2Qtao0TWXWvvxjOGwVEpOD80EZiXW1cmppiBIP/PEP+fpiGuCzowxwWQ9Jw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywtv+XbiG3mzS0QBmD+1dZFUyOIk4qREghegDYQ8DUoKE+Wg+BI
-	r9nHWSwRfXuO7LPYUFPIc+dt1ADPKvImw+NwecJMD1uqh1buNO3yEI77oUgAwLxx7G2o0Sf3Sww
-	oaxU3QVFKSM9Miz2+ADcAH3OYRd2gwThscYM4si7rxnlB+vKhSA1iBwEaDrQ=
-X-Google-Smtp-Source: AGHT+IHUEHGbb1K9tPl/x0VXd051QPTbaul9g8Q9CEbZnpqU49syP8s07upj66fYqx72+o1caTSr8ZqheeYbvUoDj1cHpAnDxFwq
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E0641BD035;
+	Sun, 20 Jul 2025 19:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753039453; cv=pass; b=RdHa8Aa4QiQjnjDoAnzGjUWsGyUDFvMHWt8+5+zJo12S/U/oZjhWeYHbzbSXFNNWZsTiqbA2R/sNtBB9Vpo5wngCLMZyLSc/yNVtJvOdxJnQdCu3iz5cWwVgrn2seJZY4OgqZQLkA7C9EjFU6EFSbemKqRdM/RfXphkFKT1Kpls=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753039453; c=relaxed/simple;
+	bh=CZGdbasRhJL67LATDHinA/RimvDg9Yh/y9BCU62exf4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tTzelKtPGWDJl6kViSJVwuusZLRHG3ibDbnQp+5+aJ9P97LKazY1XcNTelgPALkBBMIL3KV889Y/yAxoLRU51vD1/2Hd9nPREeSFwK/nbcBvMlwGKzAr83ECy0/dnf0dJleBqrsIX8KgMVsvULg5x2r85bIgv75uoekI/9rtUfw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=Bh3bXIo2; arc=pass smtp.client-ip=136.143.188.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753039427; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=LRsNXqT2DGwqohe0V3n1Y5vnsbcPuxmL33DXmTm56IvT8IeUo9WLCKwOjdmUNMNrvyQ/EmyXzJzSC12J76YV44bb615E1lhcYpXGc9OsP628ekeFuE2yTggF1eBAhDq1mkU5aZw6tZAFVJVzy/Onmot+BY8MIOf5PbNWnooGlps=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753039427; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=CZGdbasRhJL67LATDHinA/RimvDg9Yh/y9BCU62exf4=; 
+	b=A+9rJcw18enEU/pd2rsIzZE3I3cwpXklSU46/TecBtXyLNA6YVuxtO+U1+CYQoUScwlZztJNGH7qeu+nQM2cVKYOnYEmUuhzotabBMRr6BMw7Hf/akydV/oVYjlql4Lx0/+sW1pvNU75KmlJ14ZVQtMsiIj/hHnQqPwUJvMLdMI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
+	dmarc=pass header.from=<safinaskar@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753039427;
+	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=CZGdbasRhJL67LATDHinA/RimvDg9Yh/y9BCU62exf4=;
+	b=Bh3bXIo21jsDoTcdSOPo7xHRNjAd+unVPYmZutBzN2osHtuDOzu6Q4lY4sFB9xzI
+	FgS0ffhFppzXqyuCo9D7U+5YBJYyUXgTpduRlIXPw95e+LIO7HD17DUzbtF7U8+vrfO
+	CowUU1/+tPsgzToOFgo7N2E9qxPoT/d2/gJaJlSY=
+Received: by mx.zohomail.com with SMTPS id 17530394239991010.919391982878;
+	Sun, 20 Jul 2025 12:23:43 -0700 (PDT)
+From: Askar Safin <safinaskar@zohomail.com>
+To: brauner@kernel.org
+Cc: James.Bottomley@hansenpartnership.com,
+	ardb@kernel.org,
+	boqun.feng@gmail.com,
+	david@fromorbit.com,
+	djwong@kernel.org,
+	hch@infradead.org,
+	jack@suse.cz,
+	linux-efi@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mcgrof@kernel.org,
+	mingo@redhat.com,
+	pavel@kernel.org,
+	peterz@infradead.org,
+	rafael@kernel.org,
+	will@kernel.org
+Subject: Re: [PATCH v2 0/4] power: wire-up filesystem freeze/thaw with suspend/resume
+Date: Sun, 20 Jul 2025 22:23:36 +0300
+Message-ID: <20250720192336.4778-1-safinaskar@zohomail.com>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250402-work-freeze-v2-0-6719a97b52ac@kernel.org>
+References: <20250402-work-freeze-v2-0-6719a97b52ac@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12cb:b0:3dd:be49:9278 with SMTP id
- e9e14a558f8ab-3e2821ddae3mr182023245ab.0.1753039143001; Sun, 20 Jul 2025
- 12:19:03 -0700 (PDT)
-Date: Sun, 20 Jul 2025 12:19:02 -0700
-In-Reply-To: <d407c9f1-e625-4153-930f-6e44d82b32b5@kernel.dk>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <687d4126.a70a0220.693ce.00d4.GAE@google.com>
-Subject: Re: [syzbot] [kernel] KASAN: slab-use-after-free Read in io_poll_remove_entries
-From: syzbot <syzbot+01523a0ae5600aef5895@syzkaller.appspotmail.com>
-To: abbotti@mev.co.uk, axboe@kernel.dk, gregkh@linuxfoundation.org, 
-	hsweeten@visionengravers.com, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Feedback-ID: rr080112270d6f3bb5e67c5eccbba77053000079a79adbb197c855785062672b8dce23e5fd72ce979343ebb6:zu08011227851b2ce9d96276e118686f9c000059dcc54766978b253b11fb66b5116824aa7c1fe7b6313b3400:rf0801122c92f547bda1f7f44d931768570000e490db12c233cac804c865502819ef4bf2bdd31e4e53901ce02f4363fa04:ZohoMail
+X-ZohoMailClient: External
 
-Hello,
+Hi, Christian Brauner, Jan Kara and other contributors of this patchset.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+I did experiments on my laptop, and these experiments show that this patchset does not solve various longstanding problems related to suspend and filesystems. (Even if I enable /sys/power/freeze_filesystems )
 
-Reported-by: syzbot+01523a0ae5600aef5895@syzkaller.appspotmail.com
-Tested-by: syzbot+01523a0ae5600aef5895@syzkaller.appspotmail.com
+Now let me describe problems I had in the past (and still have!) and then experiments I did and their results.
 
-Tested on:
+So, I had these 3 problems:
 
-commit:         07fa9cad Merge tag 'x86-urgent-2025-07-20' of git://gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1086638c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fa738a4418f051ee
-dashboard link: https://syzkaller.appspot.com/bug?extid=01523a0ae5600aef5895
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16a8cb82580000
+- Suspend doesn't work if fstrim in progress (note that I use btrfs as root file system)
 
-Note: testing is done by a robot and is best-effort only.
+- Suspend doesn't work if scrub in progress
+
+- Suspend doesn't work if we try to read from fuse-sshfs filesystem while network is down
+
+Let me describe third problem in more detail. To reproduce you need to do this:
+
+- Mount remote filesystem using sshfs (it is based on ssh and fuse)
+
+- Disable internet
+
+- Run command "ls" in that sshfs filesystem (this command will, of course, hang, because network is down)
+
+- Then suspend
+
+Suspend will not work.
+
+Does your patchset supposed to fix these problems?
+
+Okay, so just now I was able to reproduce all 3 problems on latest mainline ( f4a40a4282f467ec99745c6ba62cb84346e42139 ), which (as well as I understand) has this patchset applied.
+
+I reproduced them with /sys/power/freeze_filesystems set to both 0 and 1 (thus I did 3 * 2 = 6 experiments).
+
+I'm available for further testing.
+
+--
+Askar Safin
 
