@@ -1,172 +1,125 @@
-Return-Path: <linux-kernel+bounces-738397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7E4CB0B7DD
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 21:03:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE53EB0B7E3
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 21:08:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 498941789EC
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 19:03:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FF363AF651
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 19:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D721E1DF990;
-	Sun, 20 Jul 2025 19:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="s2k/9quH"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DA9C2101AE;
+	Sun, 20 Jul 2025 19:08:28 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6F87208A7;
-	Sun, 20 Jul 2025 19:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A44B1C700C;
+	Sun, 20 Jul 2025 19:08:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753038212; cv=none; b=KNBhF9M6uFa/PKIKgGa0WHo75wBZsOBRrBcV+4JXfr0JuzCHXzWyZcVqZWCaQcdi5EOkkHAslTwB4R1bL8m2KYIGfwKQc0O8pPCT8XRnMRwqchvEcveCv236g7yjT9stAbVjTYgTPaIReRZr4Z4CuevN9AUyGsJo7uPbSqoysbo=
+	t=1753038507; cv=none; b=a7SavvCBOVvY+f7hoIEUV9A/RorNxfPAV6UJ1hYFT2NIkGsSURUQd2Y6Jxs/YsWo3oj1+p7HbFwjSIOea9c3UQdqM0ZoJ68/eAM4x4CjGuVejdXY5L1Kfb+0khhmGWGhppXxCIvdDYIm9Vkxz8koKN31pC5LLLQNvE+Di0Spciw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753038212; c=relaxed/simple;
-	bh=iE6TtE5Ov0di9V8wbzKMMqbyjyUWNwN+I6m+o5M6yLE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=XmUWxuhvVrh01ol4PAjLiShvuYcqqWqQjjxpNKiZC9AeJCGTPewoMsRPUK/zkYtk02PT/uaW5f5VJ/wHi8U6HGwsJCHcnzlrQL/vfd3XNJS9O3TLimdklytwGViViN3tsMe/ubCZnUaBS2++7LTWZNmdPePT84M/1XSKBkTJFpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=s2k/9quH; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:References:Cc:To:Subject:From:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=xkzdKJ3lk4I4vs26NXktpSOwrbAH72NKvcb1q5Ihx3s=; b=s2k/9quHKBVGrcpd5NfGq9lO9/
-	PS21NQTpMIdc4qUREbvuGtpZm7958eAJuWRIFqEpfK5y7uZnddiDybWbOoydTe69v39l7xk7fIe9Y
-	ny4Ea3zDvKXu7AUFFdAtknI7MbiyMZ5hGbyugnVpOkeqn3BIxcn4BAfjScpKNm872wNqBira778WD
-	MYnIx70SJemr7jOvy2/p4r9d/2VTAYlz5vuGbcrgzlicSMqsots1ncDIcSQf+dj3bwTEXLTP6NeA4
-	TCZ10lXc8Mf7/XohVt3vF7wxmbHhBDKY2eDGNgyOKUURMFgllv+pw6syp6A2SLKKQArXFIoGnQ6PL
-	g7po11Cg==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1udZJh-0000000Fe6h-42Cp;
-	Sun, 20 Jul 2025 19:03:22 +0000
-Message-ID: <1b00e570-f51e-4768-a882-d03252d84534@infradead.org>
-Date: Sun, 20 Jul 2025 12:03:19 -0700
+	s=arc-20240116; t=1753038507; c=relaxed/simple;
+	bh=o098JcNwqE9EQXxJ9VBHFsqHFPQ0jjzfsmYIL2+lOaw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=im2eZ58PzUBRRFyGleu7HgQKU9Grk/crQhJdxteEgGKE6dh8taAnb6poBCNENRIstuiTmk6QuuQk75u2GrB3nam6Sx7EzM2VVBrELpXsBeJfN1YHm5arenZ97TjIP0Mr8pyMvcW6smb4HDLmCxvbda0/PbVfcm/udYNC6I3Z6u0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from [192.168.0.1] (c144-156.icpnet.pl [85.221.144.156])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: mgorny)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 22675340C53;
+	Sun, 20 Jul 2025 19:08:23 +0000 (UTC)
+Message-ID: <5cd7b14179531cec3cdc8fe3c40a639ccf0be5c1.camel@gentoo.org>
+Subject: Re: [PATCH v3] kheaders: make it possible to override TAR
+From: =?UTF-8?Q?Micha=C5=82_G=C3=B3rny?= <mgorny@gentoo.org>
+To: Nathan Chancellor <nathan@kernel.org>, Sam James <sam@gentoo.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nicolas Schier
+	 <nicolas.schier@linux.dev>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Sun, 20 Jul 2025 21:08:20 +0200
+In-Reply-To: <20250719201002.GA3285766@ax162>
+References: <20230412082743.350699-1-mgorny@gentoo.org>
+	 <277557da458c5fa07eba7d785b4f527cc37a023f.1752938644.git.sam@gentoo.org>
+	 <20250719201002.GA3285766@ax162>
+Organization: Gentoo
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-BLMLXisr0T9GZG1v6FDQ"
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH v2 1/1] docs: Fix kernel-doc indentation errors
-To: Luis Felipe Hernandez <luis.hernandez093@gmail.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Marc Kleine-Budde <mkl@pengutronix.de>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: Pavel Pisa <pisa@cmp.felk.cvut.cz>, Ondrej Ille <ondrej.ille@gmail.com>,
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Frank Li <Frank.Li@nxp.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-i3c@lists.infradead.org,
- linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250720152401.70720-1-luis.hernandez093@gmail.com>
- <20250720152401.70720-2-luis.hernandez093@gmail.com>
-Content-Language: en-US
-In-Reply-To: <20250720152401.70720-2-luis.hernandez093@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-+ Bagas
-
-On 7/20/25 8:24 AM, Luis Felipe Hernandez wrote:
-> Fix kernel-doc issues that reported Unexpected indentation errors
-> durring documentation build (make htmldocs) in CAN, I3C and GPU drivers.
-> 
-> Convert formatting to proper ReST list syntax to resolve warning.
-> 
-> Changes since v1:
-> - Convert return value descriptions to proper ReST format
-> - Fix code block introduction with :: syntax  
-> - Add GPU driver fixes
-> - Remove SCSI driver (already fixed)
-> 
-> Link: https://lore.kernel.org/all/20250703023511.82768-1-luis.hernandez093@gmail.com/
-> 
-> Signed-off-by: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
-> ---
->  drivers/gpu/drm/drm_gpuvm.c              | 16 ++++++++--------
-
-drm_gpuvm.c fixed by Bagas:
-
-  https://lore.kernel.org/linux-doc/20250709024501.9105-1-bagasdotme@gmail.com/
-
-Otherwise LGTM.
-
->  drivers/i3c/device.c                     | 13 ++++++++-----
-
-i3c is also fixed by Bagas:
-  https://lore.kernel.org/linux-i3c/20250702040424.18577-1-bagasdotme@gmail.com/
-
-Otherwise LGTM.
-
->  drivers/net/can/ctucanfd/ctucanfd_base.c | 12 +++++++-----
->  3 files changed, 23 insertions(+), 18 deletions(-)
-> 
-
-> diff --git a/drivers/net/can/ctucanfd/ctucanfd_base.c b/drivers/net/can/ctucanfd/ctucanfd_base.c
-> index bf6398772960..f910422188c3 100644
-> --- a/drivers/net/can/ctucanfd/ctucanfd_base.c
-> +++ b/drivers/net/can/ctucanfd/ctucanfd_base.c
-> @@ -506,11 +506,13 @@ static bool ctucan_is_txt_buf_writable(struct ctucan_priv *priv, u8 buf)
->   * @buf:	TXT Buffer index to which frame is inserted (0-based)
->   * @isfdf:	True - CAN FD Frame, False - CAN 2.0 Frame
->   *
-> - * Return: True - Frame inserted successfully
-> - *	   False - Frame was not inserted due to one of:
-> - *			1. TXT Buffer is not writable (it is in wrong state)
-> - *			2. Invalid TXT buffer index
-> - *			3. Invalid frame length
-> + * Return:
-> + * * True - Frame inserted successfully
-> + * * False - Frame was not inserted due to one of:
-> + *
-> + *   * TXT Buffer is not writable (it is in wrong state)
-> + *   * Invalid TXT buffer index
-> + *   * Invalid frame length
->   */
->  static bool ctucan_insert_frame(struct ctucan_priv *priv, const struct canfd_frame *cf, u8 buf,
->  				bool isfdf)
-
-The numbered list is not a problem AFAIK. Did you see an issue with it?
-And having the blank line just before the "False" list causing undesirable
-html output:
-
-Return
-
- * True - Frame inserted successfully
-
- * False - Frame was not inserted due to one of:
-
-Description
-
- * TXT Buffer is not writable (it is in wrong state)
-
- * Invalid TXT buffer index
-
- * Invalid frame length
-
-The "Description" line should not be there.
-
-IMO all we want to do is convert the True and False lines into
-a bulleted list and then the html output will look like this:
-
-Return
-
- * True - Frame inserted successfully
-
- * False - Frame was not inserted due to one of:
-	1. TXT Buffer is not writable (it is in wrong state)
-	2. Invalid TXT buffer index
-	3. Invalid frame length
 
 
--- 
-~Randy
+--=-BLMLXisr0T9GZG1v6FDQ
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Sat, 2025-07-19 at 16:10 -0400, Nathan Chancellor wrote:
+> On Sat, Jul 19, 2025 at 04:24:05PM +0100, Sam James wrote:
+> > From: Micha=C5=82 G=C3=B3rny <mgorny@gentoo.org>
+> >=20
+> > Commit 86cdd2fdc4e39c388d39c7ba2396d1a9dfd66226 ("kheaders: make header=
+s
+> > archive reproducible") introduced a number of options specific to GNU
+> > tar to the `tar` invocation in `gen_kheaders.sh` script.  This causes
+> > the script to fail to work on systems where `tar` is not GNU tar.  This
+> > can occur e.g. on recent Gentoo Linux installations that support using
+> > bsdtar from libarchive instead.
+> >=20
+> > Add a `TAR` make variable to make it possible to override the tar
+> > executable used, e.g. by specifying:
+> >=20
+> >   make TAR=3Dgtar
+> >=20
+> > Link: https://bugs.gentoo.org/884061
+> > Reported-by: Sam James <sam@gentoo.org>
+> > Tested-by: Sam James <sam@gentoo.org>
+> > Co-developed-by: Masahiro Yamada <masahiroy@kernel.org>
+> > Signed-off-by: Micha=C5=82 G=C3=B3rny <mgorny@gentoo.org>
+> > Signed-off-by: Sam James <sam@gentoo.org>
+> > ---
+>=20
+> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+>=20
+> I assume that other places that call tar within the build process are
+> not problematic because they do not use GNU specific options, such as
+> scripts/Makefile.package and scripts/package/install-extmod-build, or
+> maybe that people just have not tried building those packages with
+> bsdtar?
+
+Precisely.  We focused on the one place which actually breaks our build,
+to avoid touching too many subsystems simultaneously.  If this is
+desirable, I can look into replacing the other instances.
+
+
+--=20
+Best regards,
+Micha=C5=82 G=C3=B3rny
+
+--=-BLMLXisr0T9GZG1v6FDQ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQFGBAABCgAwFiEEx2qEUJQJjSjMiybFY5ra4jKeJA4FAmh9PqQSHG1nb3JueUBn
+ZW50b28ub3JnAAoJEGOa2uIyniQO+RUH/jqKvDvlMnVbO4eD/1oms2I1Y8MhQYMG
+O8Oj3vgS7EGCyO+oTnP98p8XXye9BgBZRm5uRVSLY/dU7dY520A8em58JPQ5B6RT
+cy9pwIi4x2qCFG3+XpVhW3+Um8lYWr+CWNP3IEHIbM6ECiukyDOLeOgJwXkRpLph
+QbBbZ8ojl1DeDNoG4E8mzKekMYe0O9XCk99Q6Lvr9GCFIVCVtIOu4IYiFd5tfCsv
+/ZDUlD9EDXstpAuzhDzMbTE52tQKNr3W7PHkYVuxe6GwWtEj2XCPQOIsLvlRoeAz
+qyrwDndTDhp9nYt39rNlrzUBGn4wIyYuB7V8tw9KkAGFSrIokF+mpD4=
+=axnc
+-----END PGP SIGNATURE-----
+
+--=-BLMLXisr0T9GZG1v6FDQ--
 
