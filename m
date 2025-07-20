@@ -1,135 +1,102 @@
-Return-Path: <linux-kernel+bounces-738239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06BCBB0B63F
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 15:30:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CAA3B0B640
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 15:33:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C26521898DE8
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 13:31:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49A5E17AE34
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 13:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A67F20485B;
-	Sun, 20 Jul 2025 13:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="akmDlGAT"
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28CA41F4180;
+	Sun, 20 Jul 2025 13:33:06 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99B7A4A0A;
-	Sun, 20 Jul 2025 13:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FDDF149C41
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 13:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753018250; cv=none; b=I3satmbodt/7ZDsK31zCB6G8ZxKc9XvEgSSb+CNw+G8+DMdivLoIAGRZf9uEI6Y6PEhxtMi5h5czoJeCSbkCkQvkEn3Bql0Dj1Yyh4pRFaDk2TJkG6WijmOx80F+d42JFWTiXvtEguNmBo3wHHzwAD5sQZJBfBn3iS07dwTghrg=
+	t=1753018385; cv=none; b=b4lY3dX1b3IsEZOMVnzUwHRO1K3Ep1jq068L1NbX5jAzH6lVm7ga2YK1hVZDbD8uywQIlyk0ZtamG4h1/J2uFzvVCtmOQ/W0WxNxAODzNgzdzSig6LxW4VoSuyM1p9dgMLfD1ARzo9W3UuV2eBmiF01lmbWqmQwpk4nQZbtQRoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753018250; c=relaxed/simple;
-	bh=wxyJE/T5XPj12UbvZUUUuHdRwA5XH/tgWQV5cN6qGXc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=twoJtSak101Xu/g3xF4LoznhOGiNJVToM8A5VyhuNDr4odXFB6UH1PqdBDCnsbe5gEjBTm/YE2IBnoNSB+M853KGeeduP8TGBWjxwO/2rXjefp2n3P5VO3yyPN9kWct36EIFUsug2LTq0dPClUoQXulLU2hsgUPyITpH9QnQhsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=akmDlGAT; arc=none smtp.client-ip=209.85.222.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-87f74a28a86so4801944241.2;
-        Sun, 20 Jul 2025 06:30:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753018247; x=1753623047; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=9Dnw8Cv2YtZ1jbKupBbfaDX1MD5TLMG8atQd2GFrhr8=;
-        b=akmDlGATiAlP6DTijq0ebJ89DvYAWBtSHoSPcZIVSF8aUPJm4qLr+nvRz3GcJlliOc
-         49JQd6avXw80XQCmzOQ7qdjVLwTnPynAb5cEfK50t7XzBPhkjOb6mEPemjh/LL+JxVt+
-         oK2rBzmQGjA7+QDKXbMEZVZ1NVut+Yhh/SID5LddDJomoWyHTlh+LWVr8UBevNxTbLiz
-         GuZLGb24Gj2YyiGzt8NGdVm0d9SE6ZK2KzR/M7+f6q7FnsEIyuUnMRsg2mjYMeKO20Dd
-         PaPzoEDhzzphqYYxX00rMJeVt81l478KSswEzvWkgVVrAiszqlT8gB2eDFQqYsWo1fVp
-         LTiw==
+	s=arc-20240116; t=1753018385; c=relaxed/simple;
+	bh=hiadyt6JiRHKKPeaNbaz5kGv0eXF2X4V7RwiBqCUDKE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=adP2RIHM2k5ZKGgMbGv/ROlSqVM/W8Qp65ZGztfj44E4SctdlWFV6+Or5rRe5Yw6Msgt3i/gE7VoBMLQYiK3Rj1Vs/TFiPfkZrODSnDcS3csbFdxSWXGGdwtB4yH3p/Yh89j8Q51g275V1unyGYhLQyRLbzbj8Delhe5OcCiWdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3ddcc7e8266so44824625ab.0
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 06:33:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753018247; x=1753623047;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9Dnw8Cv2YtZ1jbKupBbfaDX1MD5TLMG8atQd2GFrhr8=;
-        b=GnYevqsrBUlw0q9TglVeYGXZiwu1oz+F8/WdOWxWjPRXWwbKETuYlzmPyJx9/ZNBFS
-         dlZIcV07HFyLxBukowPdCUP93KKWH8Jat1s0xYBwGmICPpSZDTpz4U0TpT6DB+uoSXIT
-         C1lXdTZ8MKScC2zXKUDEdBzvY2uBQWIVX3vWLDr2JEba/cDLX7xZSVmN3fpwW0j21VmC
-         3BjlcgAeS35PljqtCrEDXtTS8BQ8mZdceSytx2rIn+teAFlFxMPi6S3VtZSW2FUepTTs
-         VBZZ1xrcVZ3kdJkO2hggrfBYG8i3Jcgt5Gd3s1xhYn2JTtY72FAOh+d8Hh0JT5xf7OfB
-         w1mA==
-X-Forwarded-Encrypted: i=1; AJvYcCV++IbHewuTB0C/JclqquV/j5qYjnVgKAsCUC11eE2QLsKwClwGWnXy4f+32WNQnZE1flHY1vbjgvq75uJc@vger.kernel.org, AJvYcCV0J/m4CKOEeXuVHVN02XHOuMy0K+dW7LKicXgs33CxPTSQW3dHCz2aR4TAoVNlHq/PxinIgx4aDLY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxq1ln3axqlb1a5g2DC1bk4Hkxm+ffUMNtlUtenP4mLIOt9+dfO
-	VGjgMqT8VNU6ZbpXaDEgQ02P5aO9YJ0PyLL7LedsAWLsAucGr98TjGk0llrHofSX
-X-Gm-Gg: ASbGnct9twjz637HQ1mbvdn/Lrfdvx9RxOgMbZODR+gJ/w4+Uaa41CJD2S+/5HPuyRF
-	J+5Cb355prL3Ils1x8HxMkTKBnaVzm4Mt/w4sgTLBC50raRvvq9W+S613l0GB8WD7PcBgWmtcpL
-	rcXEaN2dvq2oMkv24BxZHctqq8uXs8tOH+L8SUTuurJFKhSyusqgeuPszLXpkAzeW6HgyMGPqia
-	obJ2h/eCq5PCoVNKDSLmETBUQdSvR+JR0VcdskJxDTMG1rDSqe2PnrhOjjixmIa3MLkYf1yQ1sV
-	whGjDveQ1W1I3UfOOJF/6nzoAgThfTGG8byXoFRpMowcNTOjdAcGJz5im/89NXS3S/4zkn4rvQD
-	19VubzZGOjaAKTweaviHyS9bDTSTvwtfa9ISoWI2M
-X-Google-Smtp-Source: AGHT+IGzWsJGTtWdEs0gGYgK7YJfX1LZKmOaErCiD97bfwGzxbGrsywa2HH4SXeJxnii5CgmR357vQ==
-X-Received: by 2002:a05:6122:3190:b0:531:2f9f:8021 with SMTP id 71dfb90a1353d-5373e29d407mr9035354e0c.5.1753018247321;
-        Sun, 20 Jul 2025 06:30:47 -0700 (PDT)
-Received: from localhost ([2804:30c:b15:b200:425a:de22:1d7f:2d4b])
-        by smtp.gmail.com with UTF8SMTPSA id 71dfb90a1353d-53765061c55sm2111987e0c.20.2025.07.20.06.30.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Jul 2025 06:30:45 -0700 (PDT)
-Date: Sun, 20 Jul 2025 10:33:00 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Michael Hennerich <michael.hennerich@analog.com>
-Subject: Re: [PATCH] iio: adc: ad4170-4: Correctly update filter_fs after
- filter type change
-Message-ID: <aHzwDHcmU23Er-35@debian-BULLSEYE-live-builder-AMD64>
-References: <7b2fec30e9c6a80630a5fc08fb061d17417eb350.1752956751.git.marcelo.schmitt@analog.com>
- <43ed8918-0116-4e8b-943c-2e62906b1fdb@web.de>
+        d=1e100.net; s=20230601; t=1753018383; x=1753623183;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sEPLNc+uW1L8mXsEcE+3SJcG8i3IDrc7XAfrgDWHR3E=;
+        b=D0UrvXeXqGb6pLMJ48js02SxVkVSJ3Qt+Pb64WLFGdDMdj+8QRRbFtjA2lcnkqAr4m
+         6LJVfXMX38lH4Q/Km6n9kRLOiVI5GzdPgILZ3NTSuRvWxXPlziVxinIVcROXdMp01MJ3
+         NWipaFVM8qlgZzuUBDRW5mJpTF5N5hJ2Jhgbm4K1dCxafYniPq7edQ88mGGeDzLqE4XI
+         cQ/ONlsy5wlqAECST+sRnGijNpYlffj1KTYYhwk9vjVqpbUE6JXh4xr6/NmWjfyxn+mk
+         GbK4vnr2PZP+ohnwPqsGcy+4Wr4xcez04yXoOoDxd38GbeCqxKgxZuVXD05o8lhc5VwK
+         7xzw==
+X-Forwarded-Encrypted: i=1; AJvYcCWWbBwVi6pgn2t0LZA+hm57YBZDqlhovqvyy2aroJiCCPstYSDnGLkZNm49gmMpY92f6ZutxguVbO1Sv64=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzycPvbJ1XHjAgeu4GdHyRxn1fCq5V1vzuvsXpzUJvIZr9YAJtB
+	HL0v4QDF52YyQ8KrgQfD+ieFOqrNr0NXWlret84OAoTHQYdOSmBGaXh53pHZciZ07ECxCuxUghw
+	wgKSFJUPF3+M9isZrhHqfjWWx5/mYSGChS3PNu0a3FD2mLAAmSiIV1SGbTxg=
+X-Google-Smtp-Source: AGHT+IFN/a7rk4RMZ5ezNaybTM0CicPgG3FdrMd19t169LMXbn9w3qAsF0VojC38rPQzMkgAtcagQu8xCrh/IrjBseGWVwFOpX4X
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <43ed8918-0116-4e8b-943c-2e62906b1fdb@web.de>
+X-Received: by 2002:a05:6e02:2196:b0:3e2:9f30:c05f with SMTP id
+ e9e14a558f8ab-3e29f30c214mr46710155ab.5.1753018383423; Sun, 20 Jul 2025
+ 06:33:03 -0700 (PDT)
+Date: Sun, 20 Jul 2025 06:33:03 -0700
+In-Reply-To: <67eba499.050a0220.297a31.0009.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <687cf00f.a70a0220.693ce.00c1.GAE@google.com>
+Subject: Re: [syzbot] [kernfs?] possible deadlock in kernfs_iop_getattr
+From: syzbot <syzbot+4bb2305559463e8f6a2a@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	ming.lei@redhat.com, syzkaller-bugs@googlegroups.com, 
+	thomas.hellstrom@linux.intel.com, tj@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 07/20, Markus Elfring wrote:
-> …
-> > +++ b/drivers/iio/adc/ad4170-4.c
-> > @@ -880,10 +880,12 @@ static int ad4170_set_filter_type(struct iio_dev *indio_dev,
-> >  			return -EBUSY;
-> >  
-> >  		if (val == AD4170_SINC5_AVG || val == AD4170_SINC3)
-> > -			setup->filter_fs = clamp(val, AD4170_SINC3_MIN_FS,
-> > +			setup->filter_fs = clamp(setup->filter_fs,
-> > +						 AD4170_SINC3_MIN_FS,
-> >  						 AD4170_SINC3_MAX_FS);
-> >  		else
-> > -			setup->filter_fs = clamp(val, AD4170_SINC5_MIN_FS,
-> > +			setup->filter_fs = clamp(setup->filter_fs,
-> > +						 AD4170_SINC5_MIN_FS,
-> >  						 AD4170_SINC5_MAX_FS);
-> >  
-> >  		setup->filter &= ~AD4170_FILTER_FILTER_TYPE_MSK;
-> 
-> How do you think about to use the following code variant?
-> 
-> 		setup->filter_fs = (val == AD4170_SINC5_AVG || val == AD4170_SINC3)
-> 				   ? clamp(setup->filter_fs,
-> 					   AD4170_SINC3_MIN_FS, AD4170_SINC3_MAX_FS)
-> 				   : clamp(setup->filter_fs,
-> 					   AD4170_SINC5_MIN_FS, AD4170_SINC5_MAX_FS);
-> 
-Looks good to me.
-I'll send v2 with that.
+syzbot has bisected this issue to:
 
-Thanks,
-Marcelo
+commit ffa1e7ada456087c2402b37cd6b2863ced29aff0
+Author: Thomas Hellstr=C3=B6m <thomas.hellstrom@linux.intel.com>
+Date:   Tue Mar 18 09:55:48 2025 +0000
+
+    block: Make request_queue lockdep splats show up earlier
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D12d9a38c5800=
+00
+start commit:   bf61759db409 Merge tag 'sched_ext-for-6.16-rc6-fixes' of g.=
+.
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D11d9a38c5800=
+00
+console output: https://syzkaller.appspot.com/x/log.txt?x=3D16d9a38c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3D415e83411fefd73=
+f
+dashboard link: https://syzkaller.appspot.com/bug?extid=3D4bb2305559463e8f6=
+a2a
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D1242b7d458000=
+0
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D12b6238c580000
+
+Reported-by: syzbot+4bb2305559463e8f6a2a@syzkaller.appspotmail.com
+Fixes: ffa1e7ada456 ("block: Make request_queue lockdep splats show up earl=
+ier")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisectio=
+n
 
