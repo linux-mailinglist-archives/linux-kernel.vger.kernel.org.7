@@ -1,243 +1,144 @@
-Return-Path: <linux-kernel+bounces-738004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9089B0B30D
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 03:05:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E98F5B0B30E
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 03:06:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 361E83B7CF8
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 01:05:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 640083B92F2
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 01:05:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711E841AAC;
-	Sun, 20 Jul 2025 01:05:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B90402AE7E;
+	Sun, 20 Jul 2025 01:05:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="laNYqIxM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F4rCtDtc"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC68195;
-	Sun, 20 Jul 2025 01:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95D2D72616
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 01:05:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752973539; cv=none; b=NOPYVWIzVlQkQaiuimazDhc4ZJHp4x5rdJLQGgAYZKiS03vgklsNLxlyNPDLZ1U2RbspbqG8Jipa2WZqM79jywyhidAVhfnJwJ9fc+/svw52nMRLlGPyn6bPJav0a4qXdXojOQUwrKXLtfOj5ADhZAnEm+aTEt1MdGTIkSRNeRg=
+	t=1752973558; cv=none; b=KhjGc7+4m9JSeUYmGKfFVaCfK9Nh5RepfTfhqucnVG90cfl5xuUY552QtTYe06zrZ0jurdXIw2jrm4bxFrb02uLAciYOH/nC3OFjLGgls5YV3UXx9b8bEpq4KcgTcxAzmT/H0qveBWsv+GvedmpPe6rwOGgE9vRB+M9nE6uhnSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752973539; c=relaxed/simple;
-	bh=Wy9HvyjMJcyUHBXYT+6hVFplod28t8tELh5gG/virg0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=euUW3xIxlDE9OeFmx2lRYSUkbz2rTMz3m2CPfv6Mi6K3067DRY3E8M2GNfYfVBBSkZW023QoroFRQ6jzvCsFZfEeWNQcL1kJQ8Q8Ty2RhGvZWq5tVC0TdBR0RvgZhIKgbO3p3+7Tv2GRCgB81kgGfSQeM2PU5w6YD0KXb6HwEto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=laNYqIxM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27613C4CEF7;
-	Sun, 20 Jul 2025 01:05:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752973538;
-	bh=Wy9HvyjMJcyUHBXYT+6hVFplod28t8tELh5gG/virg0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=laNYqIxMUIk/CS0ctv5qm4hOATPNtM+oT1fWYrvd0Sv4KzxzDD408YV7yaA4KlR0O
-	 VsDCA6nCNTG3dQPZos32HpypexbWG/lyd1Hx6miwxekMQ0ULuFKJ6z1+814M0qJL4Z
-	 fhr3o74m+4V5q59bCXTv+sSR4PJrOPDnHnf/2DrqFf7LOH/qeY355Zo9n47CzCvvNq
-	 5TPEOvGjDr57yBcHvFffVq0J8RYLeW0xI8JTa78mbpZBE1tfcWLi1G/oilUoAwtQY3
-	 N9a/l1VwJJxpxNEV1YU8NIamNurrH1b3w06WiIrzrqfGkp0Th1U4o7nO9kWnuy6GYQ
-	 M62bH31bIGpYQ==
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-60c01f70092so5632605a12.3;
-        Sat, 19 Jul 2025 18:05:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUHKhVOzmHyeowWIPOG4AaJwB7jpMdfyqpns07llLmREIoS7Fe1cYbpeqA2Q5W5vQohGT4byS2j2WzfqHMs@vger.kernel.org, AJvYcCUxgYtuCoGORDP2weBcJlK6kFbTrZjrYSjzYT2LyihjQESM/cMuyKpR2OxVrYKcG0+jl34YDeUtpl0+x+I=@vger.kernel.org, AJvYcCXQmaA8ccHVNSI7pieA39316CD2Wk6nNr/pd2zRQaLWKJdXK19QwFL5avc7dTWopn97VYHBY6fXHhcjvnn2MIj5@vger.kernel.org
-X-Gm-Message-State: AOJu0YytJHE3sNNEoUVJ3Evl9xvQHXDvGKEfJ5uSdt0EBx2o1Ha+8RwM
-	PKY+lQObL8vV9i9Odke2Q/S/62Lvcqa0c5Jm8c/ODGNPrjqDkHymzQqbj+t0EDtKbn7oo23V9+y
-	bNSbKfnm6r5opGx2y2JYoRPgOQ81CsMw=
-X-Google-Smtp-Source: AGHT+IHk2PDp/9RmO2oo5L5BlV0YU4G/MBjwLeBhRCBEXyekkN4nrhj/X2Qev3Fn+qiq8dTMwSJCxqz2UBE51GvfA70=
-X-Received: by 2002:a05:6402:2749:b0:5f6:fab2:9128 with SMTP id
- 4fb4d7f45d1cf-612a4ed19e0mr9835314a12.19.1752973536619; Sat, 19 Jul 2025
- 18:05:36 -0700 (PDT)
+	s=arc-20240116; t=1752973558; c=relaxed/simple;
+	bh=pOnFUeeeYOHQSRHS96lKUNGMW3ufK8H2FroLCFuWao0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=f5W/tjW0GkAld7fnkf2ChfBpIwfrO5WWX/VCiQUtLTylaIfWEPysFE8U2NORUs7NjgXRyJuC3PPpP3+kfXVb3sPBz0LEEpDDR2U3KvYM+STy444vhbd38kqHAzjzRESX9zACNiI6/P1NxxbIjAQ7W/BCoHDXdNQwEoBaSAfTyu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F4rCtDtc; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e8bd3fbd9f7so2849613276.3
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 18:05:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752973555; x=1753578355; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mQmf+c5bZ9rMmpqmhX1dMY+jiaKOV1/OjtVkovYw+zM=;
+        b=F4rCtDtcN4ROLJXNNN2GwFXIromt9+lXHwq3ipizt2A0rjxpY7WYjNKISrqySLxXRH
+         0SAHbk20xaH3uC/5YpUfoGmOn4qh22QjjibLJrOrMSX27/szZ+5iulkVnQGFOdZwXsCK
+         RNravEGppP4U1GKqvovd1A7WtqUxMMhBQ87ufkW00Abm/EPTVDbSI8fNemI74EGd+VNg
+         7z/qyzY32E+KIn1zh8gCurfqlDh0sRB5G5+dhgZmQW55ugcGbS5T22dDjNr00HA7ILHF
+         IZfg4RGgTIhcZrhpIMYzz1/zg1XohAwjaj259X4Y2Wc3EnNa9mqVzmr2f/13sHCntQMW
+         +mVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752973555; x=1753578355;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mQmf+c5bZ9rMmpqmhX1dMY+jiaKOV1/OjtVkovYw+zM=;
+        b=EwVV48t78QLd0jdlSwh0mgeNAMXyRyyqkjS9GBli2nY6qorHUUJtUYpxXwcQlMYaG6
+         nMs5ks5JSB+tKrjI49RFLUJamKT7kdV54mfPenPmb7Uho+2vZykuqiTSJhWMpOv6rGqd
+         KPuRHLX+SqeFa+OuPNkI3z+Oh4fgJCcaCInTmdiBsD11eR+ch3Cv3txEFwNw4vPf3Zr0
+         MDOQOdonIzbPm18sfI/zLpI/ioHDpWYH9Th4jNgTg7W4VxiKv1hd1AXV0yCLEng1oLaX
+         jKAwvmY0FFbiNFQaXWPw1Oufgd0suZUzVhrz1Ckp+OFvv6QzkAtUEqlPRqvfBCT00aaB
+         Tlsw==
+X-Forwarded-Encrypted: i=1; AJvYcCVDUfBLKpgcFgEefJ85hVimLHG0ONCMaVKHS5jrdIYxGuZcdGXeJlztiYLpjB3I8N5Ihm19dtwfUqlKOrA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/U1kyYy8vwmW/tVQqfM6/v2g2V9cbEvC6Acgienb5+aH4P2U4
+	NuHWOHVJi8puWKdAOjF30CjSzwTKxYGSq3p50vTzAw64//Ns64RW15Kt
+X-Gm-Gg: ASbGncu9qL1c7mozRJ+qCzdJNiiEOxw3MkkxQSaRMx3GnLdFTvII7s1cQwiVybS/ELh
+	hZab2O737tEvfzGK6ue7PT0YsZ4B9iyW2MReFbQQbpqum/M0gLIgKCC7Tb3m+OtYvTa1zNIBJ9Y
+	bpC+3sy1d0kEH2mDMMQ2kzlBjGVPAAquPsJZ+byDfcHwR2ouzm0aLilRObxdZfuG7eCKX6W02uB
+	oY47iE8Up7hFGLEmHTx1gVQazbpe+uSkbkfg35DEj5e67slLYBaheLk13mLtbRINjEO4FS1u30e
+	BVuZPNroC5bz57veKt7MhDPxA4MRjd00Ax6T9LQ1w1QGVyNRhxaKza53AS8NSMB9LtdsStxjLgZ
+	bXqpx/k4Y0yv/Q7mUCFZr4P60QZSNeoni2jYAGp2/RIEUDXEnMo9wLZKRKQ==
+X-Google-Smtp-Source: AGHT+IGu+G5AiJkiYySFy9R0/aF0YP+PLBPO+QptaRa6ym2gOBhSNYj4CwHNuN/M/zM8S9U7NAIPMA==
+X-Received: by 2002:a05:6902:c09:b0:e81:7e60:c158 with SMTP id 3f1490d57ef6-e8bc261fe8fmr17241942276.24.1752973555357;
+        Sat, 19 Jul 2025 18:05:55 -0700 (PDT)
+Received: from localhost (c-73-224-175-84.hsd1.fl.comcast.net. [73.224.175.84])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e8d7ce4a667sm1495227276.37.2025.07.19.18.05.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 19 Jul 2025 18:05:54 -0700 (PDT)
+From: Yury Norov <yury.norov@gmail.com>
+To: Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+	Frederic Barrat <fbarrat@linux.ibm.com>,
+	Andrew Donnellan <ajd@linux.ibm.com>,
+	Yury Norov <yury.norov@gmail.com>,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] powerpc: pci-ioda: Optimize pnv_ioda_pick_m64_pe()
+Date: Sat, 19 Jul 2025 21:05:50 -0400
+Message-ID: <20250720010552.427903-1-yury.norov@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250705072045.1067-1-zhaoqunqin@loongson.cn> <20250705072045.1067-4-zhaoqunqin@loongson.cn>
- <aHuK_pY2Ap4B7JWZ@kernel.org>
-In-Reply-To: <aHuK_pY2Ap4B7JWZ@kernel.org>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Sun, 20 Jul 2025 09:05:24 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H5QKBunqL0qnW8t+LJ+SJRHd5nUrPo1_fvKMvmw_oUosQ@mail.gmail.com>
-X-Gm-Features: Ac12FXwPTh_AWmjx_VYa-G3YFiNCHCAsuwAzvh2TsFofH01f_AUGA7am5vgSG8I
-Message-ID: <CAAhV-H5QKBunqL0qnW8t+LJ+SJRHd5nUrPo1_fvKMvmw_oUosQ@mail.gmail.com>
-Subject: Re: [PATCH v12 3/4] tpm: Add a driver for Loongson TPM device
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Qunqin Zhao <zhaoqunqin@loongson.cn>, lee@kernel.org, herbert@gondor.apana.org.au, 
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, davem@davemloft.net, 
-	linux-crypto@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca, 
-	linux-integrity@vger.kernel.org, Yinggang Gu <guyinggang@loongson.cn>, 
-	Huacai Chen <chenhuacai@loongson.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi, Jarkko,
+bitmap_empty() in pnv_ioda_pick_m64_pe() is O(N) and useless, because
+the following find_next_bit() does the same work.
 
-On Sat, Jul 19, 2025 at 8:09=E2=80=AFPM Jarkko Sakkinen <jarkko@kernel.org>=
- wrote:
->
-> On Sat, Jul 05, 2025 at 03:20:44PM +0800, Qunqin Zhao wrote:
-> > Loongson Security Engine supports random number generation, hash,
-> > symmetric encryption and asymmetric encryption. Based on these
-> > encryption functions, TPM2 have been implemented in the Loongson
-> > Security Engine firmware. This driver is responsible for copying data
-> > into the memory visible to the firmware and receiving data from the
-> > firmware.
-> >
-> > Co-developed-by: Yinggang Gu <guyinggang@loongson.cn>
-> > Signed-off-by: Yinggang Gu <guyinggang@loongson.cn>
-> > Signed-off-by: Qunqin Zhao <zhaoqunqin@loongson.cn>
-> > Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
-> > ---
-> >  drivers/char/tpm/Kconfig        |  9 ++++
-> >  drivers/char/tpm/Makefile       |  1 +
-> >  drivers/char/tpm/tpm_loongson.c | 84 +++++++++++++++++++++++++++++++++
-> >  3 files changed, 94 insertions(+)
-> >  create mode 100644 drivers/char/tpm/tpm_loongson.c
-> >
-> > diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
-> > index dddd702b2..ba3924eb1 100644
-> > --- a/drivers/char/tpm/Kconfig
-> > +++ b/drivers/char/tpm/Kconfig
-> > @@ -189,6 +189,15 @@ config TCG_IBMVTPM
-> >         will be accessible from within Linux.  To compile this driver
-> >         as a module, choose M here; the module will be called tpm_ibmvt=
-pm.
-> >
-> > +config TCG_LOONGSON
-> > +     tristate "Loongson TPM Interface"
-> > +     depends on MFD_LOONGSON_SE
-> > +     help
-> > +       If you want to make Loongson TPM support available, say Yes and
-> > +       it will be accessible from within Linux. To compile this
-> > +       driver as a module, choose M here; the module will be called
-> > +       tpm_loongson.
-> > +
-> >  config TCG_XEN
-> >       tristate "XEN TPM Interface"
-> >       depends on TCG_TPM && XEN
-> > diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
-> > index 9de1b3ea3..5b5cdc0d3 100644
-> > --- a/drivers/char/tpm/Makefile
-> > +++ b/drivers/char/tpm/Makefile
-> > @@ -46,3 +46,4 @@ obj-$(CONFIG_TCG_ARM_CRB_FFA) +=3D tpm_crb_ffa.o
-> >  obj-$(CONFIG_TCG_VTPM_PROXY) +=3D tpm_vtpm_proxy.o
-> >  obj-$(CONFIG_TCG_FTPM_TEE) +=3D tpm_ftpm_tee.o
-> >  obj-$(CONFIG_TCG_SVSM) +=3D tpm_svsm.o
-> > +obj-$(CONFIG_TCG_LOONGSON) +=3D tpm_loongson.o
-> > diff --git a/drivers/char/tpm/tpm_loongson.c b/drivers/char/tpm/tpm_loo=
-ngson.c
-> > new file mode 100644
-> > index 000000000..a4ec23639
-> > --- /dev/null
-> > +++ b/drivers/char/tpm/tpm_loongson.c
-> > @@ -0,0 +1,84 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/* Copyright (c) 2025 Loongson Technology Corporation Limited. */
-> > +
-> > +#include <linux/device.h>
-> > +#include <linux/mfd/loongson-se.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/wait.h>
-> > +
-> > +#include "tpm.h"
-> > +
-> > +struct tpm_loongson_cmd {
-> > +     u32 cmd_id;
-> > +     u32 data_off;
-> > +     u32 data_len;
-> > +     u32 pad[5];
-> > +};
-> > +
-> > +static int tpm_loongson_recv(struct tpm_chip *chip, u8 *buf, size_t co=
-unt)
-> > +{
-> > +     struct loongson_se_engine *tpm_engine =3D dev_get_drvdata(&chip->=
-dev);
-> > +     struct tpm_loongson_cmd *cmd_ret =3D tpm_engine->command_ret;
-> > +
-> > +     if (cmd_ret->data_len > count)
-> > +             return -EIO;
-> > +
-> > +     memcpy(buf, tpm_engine->data_buffer, cmd_ret->data_len);
-> > +
-> > +     return cmd_ret->data_len;
-> > +}
-> > +
-> > +static int tpm_loongson_send(struct tpm_chip *chip, u8 *buf, size_t co=
-unt)
-> > +{
-> > +     struct loongson_se_engine *tpm_engine =3D dev_get_drvdata(&chip->=
-dev);
-> > +     struct tpm_loongson_cmd *cmd =3D tpm_engine->command;
-> > +
-> > +     if (count > tpm_engine->buffer_size)
-> > +             return -E2BIG;
-> > +
-> > +     cmd->data_len =3D count;
-> > +     memcpy(tpm_engine->data_buffer, buf, count);
-> > +
-> > +     return loongson_se_send_engine_cmd(tpm_engine);
-> > +}
-> > +
-> > +static const struct tpm_class_ops tpm_loongson_ops =3D {
-> > +     .flags =3D TPM_OPS_AUTO_STARTUP,
-> > +     .recv =3D tpm_loongson_recv,
-> > +     .send =3D tpm_loongson_send,
-> > +};
-> > +
-> > +static int tpm_loongson_probe(struct platform_device *pdev)
-> > +{
-> > +     struct loongson_se_engine *tpm_engine;
-> > +     struct device *dev =3D &pdev->dev;
-> > +     struct tpm_loongson_cmd *cmd;
-> > +     struct tpm_chip *chip;
-> > +
-> > +     tpm_engine =3D loongson_se_init_engine(dev->parent, SE_ENGINE_TPM=
-);
-> > +     if (!tpm_engine)
-> > +             return -ENODEV;
-> > +     cmd =3D tpm_engine->command;
-> > +     cmd->cmd_id =3D SE_CMD_TPM;
-> > +     cmd->data_off =3D tpm_engine->buffer_off;
-> > +
-> > +     chip =3D tpmm_chip_alloc(dev, &tpm_loongson_ops);
-> > +     if (IS_ERR(chip))
-> > +             return PTR_ERR(chip);
-> > +     chip->flags =3D TPM_CHIP_FLAG_TPM2 | TPM_CHIP_FLAG_IRQ;
-> > +     dev_set_drvdata(&chip->dev, tpm_engine);
-> > +
-> > +     return tpm_chip_register(chip);
-> > +}
-> > +
-> > +static struct platform_driver tpm_loongson =3D {
-> > +     .probe   =3D tpm_loongson_probe,
-> > +     .driver  =3D {
-> > +             .name  =3D "tpm_loongson",
-> > +     },
-> > +};
-> > +module_platform_driver(tpm_loongson);
-> > +
-> > +MODULE_ALIAS("platform:tpm_loongson");
-> > +MODULE_LICENSE("GPL");
-> > +MODULE_DESCRIPTION("Loongson TPM driver");
-> > --
-> > 2.45.2
-> >
->
-> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
->
-> Can you take this through loongson tree? It's highly unlikely to
-> conflict with anything.
-It is better to get upstream through the tpmdd tree, and Stefano's
-suggestions should be addressed first.
+Drop it, and while there replace a while() loop with the dedicated
+for_each_set_bit().
 
-Huacai
+Signed-off-by: Yury Norov <yury.norov@gmail.com>
+---
+ arch/powerpc/platforms/powernv/pci-ioda.c | 18 +++++-------------
+ 1 file changed, 5 insertions(+), 13 deletions(-)
 
->
-> BR, Jarkko
->
+diff --git a/arch/powerpc/platforms/powernv/pci-ioda.c b/arch/powerpc/platforms/powernv/pci-ioda.c
+index d8ccf2c9b98a..c7a421ead992 100644
+--- a/arch/powerpc/platforms/powernv/pci-ioda.c
++++ b/arch/powerpc/platforms/powernv/pci-ioda.c
+@@ -313,24 +313,16 @@ static struct pnv_ioda_pe *pnv_ioda_pick_m64_pe(struct pci_bus *bus, bool all)
+ 	/* Figure out reserved PE numbers by the PE */
+ 	pnv_ioda_reserve_m64_pe(bus, pe_alloc, all);
+ 
+-	/*
+-	 * the current bus might not own M64 window and that's all
+-	 * contributed by its child buses. For the case, we needn't
+-	 * pick M64 dependent PE#.
+-	 */
+-	if (bitmap_empty(pe_alloc, phb->ioda.total_pe_num)) {
+-		kfree(pe_alloc);
+-		return NULL;
+-	}
+-
+ 	/*
+ 	 * Figure out the master PE and put all slave PEs to master
+ 	 * PE's list to form compound PE.
++	 *
++	 * The current bus might not own M64 window and that's all
++	 * contributed by its child buses. For the case, we needn't
++	 * pick M64 dependent PE#.
+ 	 */
+ 	master_pe = NULL;
+-	i = -1;
+-	while ((i = find_next_bit(pe_alloc, phb->ioda.total_pe_num, i + 1)) <
+-		phb->ioda.total_pe_num) {
++	for_each_set_bit(i, pe_alloc, phb->ioda.total_pe_num) {
+ 		pe = &phb->ioda.pe_array[i];
+ 
+ 		phb->ioda.m64_segmap[pe->pe_number] = pe->pe_number;
+-- 
+2.43.0
+
 
