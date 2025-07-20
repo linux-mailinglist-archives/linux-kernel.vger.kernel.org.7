@@ -1,236 +1,178 @@
-Return-Path: <linux-kernel+bounces-737992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FF92B0B2F1
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 02:07:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D1ACB0B2F2
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 02:08:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B6841899230
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 00:07:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1305C1895B5E
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 00:09:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E9BC8F0;
-	Sun, 20 Jul 2025 00:06:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE834C85;
+	Sun, 20 Jul 2025 00:08:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pEtxp9jq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="caMW7XII"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C627F522A;
-	Sun, 20 Jul 2025 00:06:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F99E3208;
+	Sun, 20 Jul 2025 00:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752970010; cv=none; b=jOgetxCvha1SlLkr4MB3AncLBHbJ5NwC17p/LRiVFmv0SF2CjfImI/WDvhCJ2s0pz46V0dZtIkWuSKnVjiolExbt3Z220qhuI6/fCmcm8OVC7uBxTVthk3v+u6IvU+2Pa7F1NSAR3+Y0tN2dDPeIssF2j1a/JPVMMUe8iRJaf3Q=
+	t=1752970116; cv=none; b=jdDte9VdlOx8zb3FHv2SdJuatQXFO5KfU6r6zjQz5ADGmW8EMRDQV2tb+RlzXlNyZy8Sp/DOzSyS/dEwYLxwoBbRkLTRJbl8Ai3VUti5exrOJ+CV43IOXFz9cdwB/W8BCXTYAuAcnVr6/HT9Z+WnzB1iNJE1hdl9tBchL+H7rFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752970010; c=relaxed/simple;
-	bh=EApa/B3qVNDfcExaLR6bhySD8ifVqpdKzBSj8T1Yzv8=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=GiDtAbEWZ8aSIkIPh6NfnkApsHTjrc1WP9+0Krb2/qHhXAq2UMYodN6gVbiJ0ZWs9eE7bHG53mEU1013GnGLMNpvwvbjEpoo5d+gtQFK2pKnERI4d5Bx59L9ntcae+Nr9GVCzvl4WyUg3DidYJWwwZKCUQmQXwUZYa4pjKPgQxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pEtxp9jq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13700C4CEF7;
-	Sun, 20 Jul 2025 00:06:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752970010;
-	bh=EApa/B3qVNDfcExaLR6bhySD8ifVqpdKzBSj8T1Yzv8=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=pEtxp9jqGZO/EZuUwwHs96LA4wrnlAkGCZ4Pg0R4zbUB4294vQFYHYJTV1LBCw2H1
-	 04kSoJNYJMhAtTEUS7WcSFj0U3uh7AAnoun76XMx8phL4VcGr0ejm4qGizm0MnRhwi
-	 bsAhIocqOL2gdDrJk1yPAkxQmmD8KfytwnDGJkt26gwL29NcHKv7tZa+1kZPF56Ty8
-	 D3q5im5bsSV5jcEnWvJo9ek5gcWPf3KOzh3Oh8RP7MRnoCAZ9uCAQO8GaLyLCNoxld
-	 ZDb5f/yRhPsNzBzlGohtFYDLYlaVe+kNf4a+KhbJLutSbLx0FZ96kG2jMVDoyCLjjz
-	 34Q0P2ptEK31Q==
-Date: Sat, 19 Jul 2025 19:06:49 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1752970116; c=relaxed/simple;
+	bh=dvhlfnC8KYcCSUF8hYDM1WkNpNiTwJjeJomK3LH2drQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NNphhkp5o2ZY/qip9MMP/XBbRHbhqugxTPMyrmKF1x/OwD9tevfY7QbgJzpYuQej7dmkPA1SejAnyw2A06skRrX31lq5po2RMD7Rniv/MFsK/50iPZ13k9X6aJzLxyHOvazkcQuvXsc+YzAZ1wi2+QzejSnuvopFBTmh8NUYqko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=caMW7XII; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-23694cec0feso29654865ad.2;
+        Sat, 19 Jul 2025 17:08:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752970114; x=1753574914; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Kl5dOLRGZSE3XxSQd2+oJTQaOnXruucC4cwYHuCuPzY=;
+        b=caMW7XIImW/I1wendvYrJSzN2RsA2buEynN8r0HyDKTeU6ag3c8vjYzlL0lFIIdMU3
+         74JMPEH2cuGpiSjGY7PoPMOqd3ZLAKsRdiHBwrXsJrbX/RsLksE2LAEQ/z/hDcg9YxAy
+         AenPMcm10TvpsRsmDBTd2OogUBQGc5Xrow9LIect2aOZqBqzrmzYnClKFV/6hovsz6xS
+         HvzkXmL0TS6cGaXwx4ME0DKlFxx93HNpKqYvm3/jRnK/j6i3jzCEAQFsKSOpZrqud8ji
+         s/7CiCuKjGwjc0ItdLftRsXrmc10qgFoFIBL8tkue25uxPhBqv8VaJQKYc5DUfDCO7ko
+         gItA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752970114; x=1753574914;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Kl5dOLRGZSE3XxSQd2+oJTQaOnXruucC4cwYHuCuPzY=;
+        b=u6ok4q2igh1NtlBuiF+rscFvM+TkoTZcnkpXwCfKCfRTZAEnAO4BvCaMs8RgGsXHpq
+         K3A2MR3tUymHHKvrFWxYqnU2S9QS9AMx6CFT27cE8Zsl0MwM5urmqqAVRc5cawHefTPN
+         9LwRwYIDC+TAQ7ygvKIb8A8fyQV1UkpWO2QQqTh/+mH8DOIX9Vc65yz/pv737g1gggXg
+         3Uz7U+KnzWDTMQrx+BtDSaxy2mP6vB+NgwtiTtbUVM4UWXQze1JTLS76cMrx8W4V1Bb8
+         ICrYD1F2pkzI5iZhp0G8+qsseQJU4JWD0mGYT4OJJIzNs5CMw6lK1tX0z2n1LAPo5YKe
+         whMw==
+X-Forwarded-Encrypted: i=1; AJvYcCV1++rw0+k8GIKC7SybNqpdaafgby2dY1gmS71yiDbJb+Hbj5NchqB1k1gl9b8vYZmzvOdSefZ+DSBPKeVb@vger.kernel.org, AJvYcCVj8PIV9O0I+bj0l5qXOUC4GTexJcc6nO2KRnJ9+Xea3RfdGdL4fuxM0WNqRe8lHrzaZfE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhARDxnAgN3/EZTYsSv5CivgqlJOINjN7WRijXK5vxGkTKIDtI
+	ZFckLUQ4MIRAGwPU0KH4L5SbHvymn5/YeW2hJ6l05WPB/Gf+ZzK2L5YU
+X-Gm-Gg: ASbGncu95rDP9gsegc5Hi0XwjIExhHKG0IpPcnWReh1yBuUmukh1bWHb33SesNn+UMl
+	MmJSNeEKUBzWOtiFu38SACH0iUw58pyc1/rBGo3/dUvQBGdmJeM9PFLCsCXe2lnaWA0kVUhZqqO
+	1A/CwTh29VpOcNVDmRDF/0HT9Nf6pRtt1F2BE6kHknsqpnSyBj6y4GcCcybIWIiH/o2OH72Fdur
+	ObRAR5wWv0DKHVdAnIopBkDgeQiS0MFThv9og4IoRCEAq7QhFavk2CYHo8Yxmxhto2Qi/RLUUeV
+	8d937iHn0YCKlZIfRh+C+X75ZGQCIYGUxKqxCMj9+g9iIyHw4PcKOQ9uiUadrMBHqO3GBgxq9GL
+	vsNtWNhKk0Yd2cEBmCPu1Wg==
+X-Google-Smtp-Source: AGHT+IE8XY+dnJCyO+fxfVPZjk61YisG840KHkxyISTYR3V12PFOL8A/LUQwYZFMMwVeIkosxKL8zw==
+X-Received: by 2002:a17:903:198d:b0:23a:cba1:6662 with SMTP id d9443c01a7336-23e24f94702mr281107665ad.46.1752970114388;
+        Sat, 19 Jul 2025 17:08:34 -0700 (PDT)
+Received: from localhost ([154.21.93.22])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-23e3b6b4a9esm34086575ad.93.2025.07.19.17.08.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 19 Jul 2025 17:08:33 -0700 (PDT)
+Date: Sun, 20 Jul 2025 08:08:30 +0800
+From: Yao Yuan <yaoyuan0329os@gmail.com>
+To: Keir Fraser <keirf@google.com>
+Cc: Sean Christopherson <seanjc@google.com>, 
+	Yao Yuan <yaoyuan@linux.alibaba.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, Eric Auger <eric.auger@redhat.com>, 
+	Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH v2 2/4] KVM: arm64: vgic: Explicitly implement
+ vgic_dist::ready ordering
+Message-ID: <4i65mgp4rtfox2ttchamijofcmwjtd6sefmuhdkfdrjwaznhoc@2uhcfv2ziegj>
+References: <20250716110737.2513665-1-keirf@google.com>
+ <20250716110737.2513665-3-keirf@google.com>
+ <kb7nwrco6s7e6catcareyic72pxvx52jbqbfc5gbqb5zu434kg@w3rrzbut3h34>
+ <aHphgd0fOjHXjPCI@google.com>
+ <5zpxxmymnyzncdnewdonnglvmvbtggjyxyqvkf6yars2bbyr4b@gottasrtoq2s>
+ <aHtQG_k_1q3862s3@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Abhinav Kumar <abhinav.kumar@linux.dev>, 
- cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org, 
- Bjorn Andersson <andersson@kernel.org>, Sean Paul <sean@poorly.run>, 
- freedreno@lists.freedesktop.org, 
- Krishna Manikandan <quic_mkrishn@quicinc.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, Abel Vesa <abel.vesa@linaro.org>, 
- Yongxing Mou <quic_yongmou@quicinc.com>, 
- Danila Tikhonov <danila@jiaxyga.com>, 
- Kuogee Hsieh <quic_khsieh@quicinc.com>, Maxime Ripard <mripard@kernel.org>, 
- David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Stephen Boyd <sboyd@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Abhinav Kumar <abhinav.kumar@oss.qualcomm.com>, 
- linux-kernel@vger.kernel.org, 
- Marijn Suijten <marijn.suijten@somainline.org>, linux-clk@vger.kernel.org, 
- Rob Clark <robin.clark@oss.qualcomm.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Thomas Zimmermann <tzimmermann@suse.de>, Mahadevan <quic_mahap@quicinc.com>, 
- Simona Vetter <simona@ffwll.ch>, Konrad Dybcio <konradybcio@kernel.org>, 
- devicetree@vger.kernel.org
-To: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
-In-Reply-To: <20250717-dp_mst_bindings-v3-0-72ce08285703@oss.qualcomm.com>
-References: <20250717-dp_mst_bindings-v3-0-72ce08285703@oss.qualcomm.com>
-Message-Id: <175296991792.777248.14434286781609695390.robh@kernel.org>
-Subject: Re: [PATCH v3 0/5] dt-bindings: msm/dp: Add support for 4 pixel
- streams
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aHtQG_k_1q3862s3@google.com>
 
+On Sat, Jul 19, 2025 at 07:58:19AM +0000, Keir Fraser wrote:
+> On Sat, Jul 19, 2025 at 10:15:56AM +0800, Yao Yuan wrote:
+> > On Fri, Jul 18, 2025 at 08:00:17AM -0700, Sean Christopherson wrote:
+> > > On Thu, Jul 17, 2025, Yao Yuan wrote:
+> > > > On Wed, Jul 16, 2025 at 11:07:35AM +0800, Keir Fraser wrote:
+> > > > > In preparation to remove synchronize_srcu() from MMIO registration,
+> > > > > remove the distributor's dependency on this implicit barrier by
+> > > > > direct acquire-release synchronization on the flag write and its
+> > > > > lock-free check.
+> > > > >
+> > > > > Signed-off-by: Keir Fraser <keirf@google.com>
+> > > > > ---
+> > > > >  arch/arm64/kvm/vgic/vgic-init.c | 11 ++---------
+> > > > >  1 file changed, 2 insertions(+), 9 deletions(-)
+> > > > >
+> > > > > diff --git a/arch/arm64/kvm/vgic/vgic-init.c b/arch/arm64/kvm/vgic/vgic-init.c
+> > > > > index 502b65049703..bc83672e461b 100644
+> > > > > --- a/arch/arm64/kvm/vgic/vgic-init.c
+> > > > > +++ b/arch/arm64/kvm/vgic/vgic-init.c
+> > > > > @@ -567,7 +567,7 @@ int kvm_vgic_map_resources(struct kvm *kvm)
+> > > > >  	gpa_t dist_base;
+> > > > >  	int ret = 0;
+> > > > >
+> > > > > -	if (likely(dist->ready))
+> > > > > +	if (likely(smp_load_acquire(&dist->ready)))
+> > > > >  		return 0;
+> > > > >
+> > > > >  	mutex_lock(&kvm->slots_lock);
+> > > > > @@ -598,14 +598,7 @@ int kvm_vgic_map_resources(struct kvm *kvm)
+> > > > >  		goto out_slots;
+> > > > >  	}
+> > > > >
+> > > > > -	/*
+> > > > > -	 * kvm_io_bus_register_dev() guarantees all readers see the new MMIO
+> > > > > -	 * registration before returning through synchronize_srcu(), which also
+> > > > > -	 * implies a full memory barrier. As such, marking the distributor as
+> > > > > -	 * 'ready' here is guaranteed to be ordered after all vCPUs having seen
+> > > > > -	 * a completely configured distributor.
+> > > > > -	 */
+> > > > > -	dist->ready = true;
+> > > > > +	smp_store_release(&dist->ready, true);
+> > > >
+> > > > No need the store-release and load-acquire for replacing
+> > > > synchronize_srcu_expedited() w/ call_srcu() IIUC:
+> > >
+> > > This isn't about using call_srcu(), because it's not actually about kvm->buses.
+> > > This code is concerned with ensuring that all stores to kvm->arch.vgic are ordered
+> > > before the store to set kvm->arch.vgic.ready, so that vCPUs never see "ready==true"
+> > > with a half-baked distributor.
+> > >
+> > > In the current code, kvm_vgic_map_resources() relies on the synchronize_srcu() in
+> > > kvm_io_bus_register_dev() to provide the ordering guarantees.  Switching to
+> > > smp_store_release() + smp_load_acquire() removes the dependency on the
+> > > synchronize_srcu() so that the synchronize_srcu() call can be safely removed.
+> >
+> > Yes, I understand this and agree with your point.
+> >
+> > Just for discusstion: I thought it should also work even w/o
+> > introduce the load acqure + store release after switch to
+> > call_srcu(): The smp_mb() in call_srcu() order the all store
+> > to kvm->arch.vgic before store kvm->arch.vgic.ready in
+> > current implementation.
+>
+> The load-acquire would still be required, to ensure that accesses to
+> kvm->arch.vgic do not get reordered earlier than the lock-free check
+> of kvm->arch.vgic.ready. Otherwise that CPU could see that the vgic is
+> initialised, but then use speculated reads of uninitialised vgic state.
+>
 
-On Thu, 17 Jul 2025 16:28:42 -0700, Jessica Zhang wrote:
-> On some MSM chipsets, the display port controller is capable of supporting
-> up to 4 streams.
-> 
-> To drive these additional streams, the pixel clocks for the corresponding
-> stream needs to be enabled.
-> 
-> Fixup the documentation of some of the bindings to clarify exactly which
-> stream they correspond to, then add the new bindings and device tree
-> changes.
-> 
-> ---
-> Changes in v3:
-> - Fixed dtschema errors (Rob Herring)
-> - Documented all pixel stream clocks (Dmitry)
-> - Ordered compatibility list alphabetically (Dmitry)
-> - Dropped assigned-clocks too (Dmitry)
-> - Link to v2: https://lore.kernel.org/r/20250530-dp_mst_bindings-v2-0-f925464d32a8@oss.qualcomm.com
-> 
-> Changes in v2:
-> - Rebased on top of next-20250523
-> - Dropped merged maintainer patch
-> - Added a patch to make the corresponding dts change to add pixel 1
->   stream
-> - Squashed pixel 0 and pixel 1 stream binding patches (Krzysztof)
-> - Drop assigned-clock-parents bindings for dp-controller (Krzysztof)
-> - Updated dp-controller.yaml to include all chipsets that support stream
->   1 pixel clock (Krzysztof)
-> - Added missing minItems and if statement (Krzysztof)
-> - Link to v1: https://lore.kernel.org/r/20241202-dp_mst_bindings-v1-0-9a9a43b0624a@quicinc.com
-> 
-> ---
-> Abhinav Kumar (4):
->       dt-bindings: Fixup x1e80100 to add DP MST support
->       dt-bindings: clock: Add SC7280 DISPCC DP pixel 1 clock binding
->       dt-bindings: display/msm: drop assigned-clock-parents for dp controller
->       dt-bindings: display/msm: add stream pixel clock bindings for MST
-> 
-> Jessica Zhang (1):
->       arm64: dts: qcom: Add MST pixel streams for displayport
-> 
->  .../bindings/display/msm/dp-controller.yaml        | 53 +++++++++++-----
->  .../bindings/display/msm/qcom,sa8775p-mdss.yaml    | 14 +++--
->  .../bindings/display/msm/qcom,sar2130p-mdss.yaml   | 11 ++--
->  .../bindings/display/msm/qcom,sc7180-mdss.yaml     |  3 -
->  .../bindings/display/msm/qcom,sc7280-mdss.yaml     | 12 ++--
->  .../bindings/display/msm/qcom,sm7150-mdss.yaml     |  5 --
->  .../bindings/display/msm/qcom,sm8750-mdss.yaml     | 11 ++--
->  .../bindings/display/msm/qcom,x1e80100-mdss.yaml   | 21 +++----
->  arch/arm64/boot/dts/qcom/sa8775p.dtsi              | 34 +++++++---
->  arch/arm64/boot/dts/qcom/sar2130p.dtsi             | 10 ++-
->  arch/arm64/boot/dts/qcom/sc7280.dtsi               | 10 ++-
->  arch/arm64/boot/dts/qcom/sc8180x.dtsi              | 20 ++++--
->  arch/arm64/boot/dts/qcom/sc8280xp.dtsi             | 72 +++++++++++++++-------
->  arch/arm64/boot/dts/qcom/sm8150.dtsi               | 10 ++-
->  arch/arm64/boot/dts/qcom/sm8250.dtsi               | 10 ++-
->  arch/arm64/boot/dts/qcom/sm8350.dtsi               | 10 ++-
->  arch/arm64/boot/dts/qcom/sm8450.dtsi               | 10 ++-
->  arch/arm64/boot/dts/qcom/sm8550.dtsi               | 10 ++-
->  arch/arm64/boot/dts/qcom/sm8650.dtsi               | 10 ++-
->  arch/arm64/boot/dts/qcom/x1e80100.dtsi             | 30 ++++++---
->  include/dt-bindings/clock/qcom,dispcc-sc7280.h     |  2 +
->  21 files changed, 235 insertions(+), 133 deletions(-)
-> ---
-> base-commit: 7a88d609b069b7d2f4d10113b18fea02921bedb1
-> change-id: 20241202-dp_mst_bindings-7536ffc9ae2f
-> 
-> Best regards,
-> --
-> Jessica Zhang <jessica.zhang@oss.qualcomm.com>
-> 
-> 
-> 
+Thanks for your explanation.
 
+I see. But there's "mutex_lock(&kvm->slot_lock);" before later
+acccessing to the kvm->arch.vgic, so I think the order can be
+guaranteed. Of cause as you said a explicitly acquire-load +
+store-release is better than before implicitly implementation.
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: base-commit 7a88d609b069b7d2f4d10113b18fea02921bedb1 not known, ignoring
- Base: attempting to guess base-commit...
- Base: tags/v6.16-rc2-698-g6b93840116df (exact match)
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250717-dp_mst_bindings-v3-0-72ce08285703@oss.qualcomm.com:
-
-arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dtb: displayport-controller@aea0000 (qcom,x1e80100-dp): aux-bus: False schema does not allow {'panel': {'compatible': ['edp-panel'], 'enable-gpios': [[71, 74, 0]], 'power-supply': [[258]], 'pinctrl-0': [[259]], 'pinctrl-names': ['default'], 'port': {'endpoint': {'remote-endpoint': [[260]], 'phandle': 257}}}}
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dtb: displayport-controller@aea0000 (qcom,x1e80100-dp): '#sound-dai-cells' is a required property
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dtb: displayport-controller@aea0000 (qcom,x1e80100-dp): aux-bus: False schema does not allow {'panel': {'compatible': ['edp-panel'], 'power-supply': [[276]], 'phandle': 597, 'port': {'endpoint': {'remote-endpoint': [[277]], 'phandle': 275}}}}
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dtb: displayport-controller@aea0000 (qcom,x1e80100-dp): '#sound-dai-cells' is a required property
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dtb: displayport-controller@aea0000 (qcom,x1e80100-dp): aux-bus: False schema does not allow {'panel': {'compatible': ['samsung,atna45dc02', 'samsung,atna33xc20'], 'enable-gpios': [[275, 4, 0]], 'power-supply': [[276]], 'pinctrl-0': [[277]], 'pinctrl-names': ['default'], 'port': {'endpoint': {'remote-endpoint': [[278]], 'phandle': 274}}}}
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dtb: displayport-controller@aea0000 (qcom,x1e80100-dp): '#sound-dai-cells' is a required property
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-arch/arm64/boot/dts/qcom/x1p42100-crd.dtb: displayport-controller@aea0000 (qcom,x1e80100-dp): aux-bus: False schema does not allow {'panel': {'compatible': ['samsung,atna45af01', 'samsung,atna33xc20'], 'enable-gpios': [[268, 4, 0]], 'power-supply': [[269]], 'pinctrl-0': [[270]], 'pinctrl-names': ['default'], 'port': {'endpoint': {'remote-endpoint': [[271]], 'phandle': 267}}}}
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-arch/arm64/boot/dts/qcom/x1p42100-crd.dtb: displayport-controller@aea0000 (qcom,x1e80100-dp): '#sound-dai-cells' is a required property
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dtb: displayport-controller@aea0000 (qcom,x1e80100-dp): aux-bus: False schema does not allow {'panel': {'compatible': ['edp-panel'], 'power-supply': [[272]], 'backlight': [[273]], 'port': {'endpoint': {'remote-endpoint': [[274]], 'phandle': 271}}}}
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dtb: displayport-controller@aea0000 (qcom,x1e80100-dp): '#sound-dai-cells' is a required property
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: displayport-controller@aea0000 (qcom,x1e80100-dp): aux-bus: False schema does not allow {'panel': {'compatible': ['edp-panel'], 'power-supply': [[268]], 'port': {'endpoint': {'remote-endpoint': [[269]], 'phandle': 267}}}}
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: displayport-controller@aea0000 (qcom,x1e80100-dp): '#sound-dai-cells' is a required property
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dtb: displayport-controller@aea0000 (qcom,x1e80100-dp): aux-bus: False schema does not allow {'panel': {'compatible': ['samsung,atna56ac03', 'samsung,atna33xc20'], 'enable-gpios': [[261, 4, 0]], 'power-supply': [[262]], 'pinctrl-0': [[263]], 'pinctrl-names': ['default'], 'port': {'endpoint': {'remote-endpoint': [[264]], 'phandle': 260}}}}
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dtb: displayport-controller@aea0000 (qcom,x1e80100-dp): '#sound-dai-cells' is a required property
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtb: displayport-controller@aea0000 (qcom,x1e80100-dp): aux-bus: False schema does not allow {'panel': {'compatible': ['edp-panel'], 'power-supply': [[276]], 'backlight': [[277]], 'phandle': 603, 'port': {'endpoint': {'remote-endpoint': [[278]], 'phandle': 275}}}}
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtb: displayport-controller@aea0000 (qcom,x1e80100-dp): '#sound-dai-cells' is a required property
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-hp-elitebook-ultra-g1q.dtb: displayport-controller@aea0000 (qcom,x1e80100-dp): aux-bus: False schema does not allow {'panel': {'compatible': ['edp-panel'], 'power-supply': [[272]], 'backlight': [[273]], 'port': {'endpoint': {'remote-endpoint': [[274]], 'phandle': 271}}}}
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-hp-elitebook-ultra-g1q.dtb: displayport-controller@aea0000 (qcom,x1e80100-dp): '#sound-dai-cells' is a required property
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus15.dtb: displayport-controller@aea0000 (qcom,x1e80100-dp): aux-bus: False schema does not allow {'panel': {'compatible': ['edp-panel'], 'backlight': [[266]], 'power-supply': [[267]], 'port': {'endpoint': {'remote-endpoint': [[268]], 'phandle': 265}}}}
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus15.dtb: displayport-controller@aea0000 (qcom,x1e80100-dp): '#sound-dai-cells' is a required property
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: displayport-controller@aea0000 (qcom,x1e80100-dp): aux-bus: False schema does not allow {'panel': {'compatible': ['samsung,atna45af01', 'samsung,atna33xc20'], 'enable-gpios': [[278, 4, 0]], 'power-supply': [[279]], 'pinctrl-0': [[280]], 'pinctrl-names': ['default'], 'port': {'endpoint': {'remote-endpoint': [[281]], 'phandle': 277}}}}
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: displayport-controller@aea0000 (qcom,x1e80100-dp): '#sound-dai-cells' is a required property
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus13.dtb: displayport-controller@aea0000 (qcom,x1e80100-dp): aux-bus: False schema does not allow {'panel': {'compatible': ['edp-panel'], 'backlight': [[266]], 'power-supply': [[267]], 'port': {'endpoint': {'remote-endpoint': [[268]], 'phandle': 265}}}}
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus13.dtb: displayport-controller@aea0000 (qcom,x1e80100-dp): '#sound-dai-cells' is a required property
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-
-
-
-
-
+> > >
 
