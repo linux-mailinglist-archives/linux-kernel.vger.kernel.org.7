@@ -1,253 +1,111 @@
-Return-Path: <linux-kernel+bounces-738471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52FD7B0B8D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 00:32:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 886D2B0B8D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 00:32:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9BA317A25F
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 22:32:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E53FA17AA05
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 22:32:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2CC522B8D9;
-	Sun, 20 Jul 2025 22:29:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9189D1EE019;
+	Sun, 20 Jul 2025 22:30:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="XZsSXIHU"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SgGCmdd5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A57A233158;
-	Sun, 20 Jul 2025 22:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24F622FF59;
+	Sun, 20 Jul 2025 22:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753050590; cv=none; b=FLLOhFQQGKddS7h8CUN0bmyJ+ghpolGSDFlA+Kllr59QaRJ9CITTuzUcnoxF2qZs3xbT5LxwgnDNi45c9hWsqXcJyWTfPpZDvrWvdOFN12l+fhYBURhVaBpTKwe+SdOZR84uIbJe//WZ/Z59ShHrQSVq+raL3KDHRBfYpBEprqo=
+	t=1753050621; cv=none; b=MJCHynYMn6VcbY3L8rVdYZgJX/L76L+27BFwf7uywQ/+xHKpgNmdzbmxsbm1S8EdVQy2paad/TqPiF1A7WRqGusLC7FI4JXD8tED52qPSUrkdlO2M7rDbfksoEd5CUf6S5uZOrl0AVuGVXVmEpwGmLPGGJwV/2p+PlRK5/j4uEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753050590; c=relaxed/simple;
-	bh=lau9/1bDhmmn4B8u/HnoyAc46s4O1ASNdkgGHMOfCpA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=o132Em+5AtjshnDgBoUM6F4sboIFV8nEjfx7KFXm8QYlkjfPxPNm+PoQgVHPQoCmGZY/Xmpxyy7wf6vwlcDhCDh6ahV5xc+C8UjFVGvqotkDYAc76GzrLODW08ewYrhZCpSMPFpyuX0clsnw54oAQ3D2YCrNAdPkuaaNsxpopdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=XZsSXIHU; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Cc:To:In-Reply-To:References:Message-Id:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=UjsEi17Vzy/uuGq39N0gY8Z50grTSP0MgMBvOF1fEAY=; b=XZsSXIHUKayeSxH+QMtXtrpSwr
-	9j/ks852y43yDKxVrP1MDlIXp4wLj4/6rYqqREn0709iJpEFTd/P0zj1L9+1/4zsnNpqER+0ApUBP
-	+9/1eXDP59n7R7SZbXGKY/4IgbIRvxF2RXiHw3gbGKE8kuX6h+7BjFKYtMY6mE+ubnk4ex9DP9UaG
-	SO2mdTuQzvxQeTZG6uO0TKU3Me3bAmlTJjL/7oWyyH2oXdKhIB+PwGOk2qzj/JtPnpzmrAC38tYgI
-	yr+eQhv1een/92MAaalTrqN45J0gUaPty7XMlkdc1ycuPFLo6H2oTQx7AxF25jQA7/J+jvZTqCfPv
-	h23yR95w==;
-Received: from [187.57.76.50] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1udcXS-001Sqt-Bf; Mon, 21 Jul 2025 00:29:46 +0200
-From: =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Date: Sun, 20 Jul 2025 19:29:13 -0300
-Subject: [PATCH v2 15/15] selftests/futex: Remove logging.h file
+	s=arc-20240116; t=1753050621; c=relaxed/simple;
+	bh=qEgD4I5cBb5OU+UR2RFNbERDweiq78XewGziHT97wpo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AupLp1rRhM8m3+VlnKpf2UtYem+R+xmCiFmblWrOJRnKx/vYCXRda4eFRF/vRpS97CBvZYebafG27qkeEUN+Wmv50B7A6WJEZeLb3G1rBxeAv/61LzBro4TvHHN09vUtuZfK8+ugzSo2FB2lTgm7urWUdupEKWmkGca68NJRvBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SgGCmdd5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 295C6C4CEE7;
+	Sun, 20 Jul 2025 22:30:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753050618;
+	bh=qEgD4I5cBb5OU+UR2RFNbERDweiq78XewGziHT97wpo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SgGCmdd5phGtW64MqYleOa4hyq5Tde/Sy8A4/tJxII4stWb7IxX/Zk+23Nw5Kdxo0
+	 1N0xqc2ZdUk3wdZe5GrQ+FmRSYHjjmLmfOd/w2p5qEO5cfFZrsz+uhzLoenJB5EZYr
+	 pLRlsrm78TjlclZUMn/b75sRM4dUK0qhJ90ElYoA6d+5ubDKnWQPar44BQ3eDzItVW
+	 h8lsAsxacvc0MDcewnKDnh05MNji8iZe3DEVLiMf3vmg7AT5iP82jzmOpmM4lKLJcj
+	 3rj3/Zd8Gsj0Vy44tlAJEDQ4ifbaAgU75K2xIBrtml2Lo+mQzS3N5b5jAydAVpJ1P9
+	 2gQzqtWM+ZAvw==
+Date: Sun, 20 Jul 2025 17:30:17 -0500
+From: Rob Herring <robh@kernel.org>
+To: Aaron Kling <webgeek1234@gmail.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nagarjuna Kristam <nkristam@nvidia.com>, JC Kuo <jckuo@nvidia.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Mathias Nyman <mathias.nyman@intel.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>, devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org, linux-usb@vger.kernel.org,
+	Thierry Reding <treding@nvidia.com>, linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 08/17] dt-bindings: tegra: Document Shield TV 2019
+Message-ID: <20250720223017.GA2895524-robh@kernel.org>
+References: <20250714-t210b01-v1-0-e3f5f7de5dce@gmail.com>
+ <20250714-t210b01-v1-8-e3f5f7de5dce@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250720-tonyk-robust_test_cleanup-v2-15-1f9bcb5b7294@igalia.com>
-References: <20250720-tonyk-robust_test_cleanup-v2-0-1f9bcb5b7294@igalia.com>
-In-Reply-To: <20250720-tonyk-robust_test_cleanup-v2-0-1f9bcb5b7294@igalia.com>
-To: Shuah Khan <shuah@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
- Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, 
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-dev@igalia.com, 
- =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250714-t210b01-v1-8-e3f5f7de5dce@gmail.com>
 
-Every futex selftest uses the kselftest_harness.h helper and don't need
-the logging.h file. Delete it.
+On Mon, Jul 14, 2025 at 11:02:51PM -0500, Aaron Kling wrote:
+> Add the device tree binding documentation for NVIDIA Shield TV 2019
+> 
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/arm/tegra.yaml | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/tegra.yaml b/Documentation/devicetree/bindings/arm/tegra.yaml
+> index 9cae3268a8274fd3a38580939c79a6f21de48a3f..806190233b9859ad573fe43ac5104887fbadf428 100644
+> --- a/Documentation/devicetree/bindings/arm/tegra.yaml
+> +++ b/Documentation/devicetree/bindings/arm/tegra.yaml
+> @@ -174,6 +174,11 @@ properties:
+>                - nvidia,p2571
+>                - nvidia,p2894-0050-a08
+>            - const: nvidia,tegra210
+> +      - items:
+> +          - const: nvidia,p2894-0050-a08
+> +          - const: nvidia,darcy
+> +          - const: nvidia,tegra210b01
+> +          - const: nvidia,tegra210
 
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
----
- tools/testing/selftests/futex/functional/Makefile |   3 +-
- tools/testing/selftests/futex/include/logging.h   | 148 ----------------------
- 2 files changed, 1 insertion(+), 150 deletions(-)
+Description? Because nothing here says Shield TV...
 
-diff --git a/tools/testing/selftests/futex/functional/Makefile b/tools/testing/selftests/futex/functional/Makefile
-index 8cfb87f7f7c5059c82f1e6290c076d3f13f5ea41..6bd6f9b972f1bf113b84f72386c21e2fb43436d5 100644
---- a/tools/testing/selftests/futex/functional/Makefile
-+++ b/tools/testing/selftests/futex/functional/Makefile
-@@ -5,8 +5,7 @@ LDLIBS := -lpthread -lrt -lnuma
- 
- LOCAL_HDRS := \
- 	../include/futextest.h \
--	../include/atomic.h \
--	../include/logging.h
-+	../include/atomic.h
- TEST_GEN_PROGS := \
- 	futex_wait_timeout \
- 	futex_wait_wouldblock \
-diff --git a/tools/testing/selftests/futex/include/logging.h b/tools/testing/selftests/futex/include/logging.h
-deleted file mode 100644
-index 874c69ce5cce9efa3a9d6de246f5972a75437dbf..0000000000000000000000000000000000000000
---- a/tools/testing/selftests/futex/include/logging.h
-+++ /dev/null
-@@ -1,148 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-or-later */
--/******************************************************************************
-- *
-- *   Copyright © International Business Machines  Corp., 2009
-- *
-- * DESCRIPTION
-- *      Glibc independent futex library for testing kernel functionality.
-- *
-- * AUTHOR
-- *      Darren Hart <dvhart@linux.intel.com>
-- *
-- * HISTORY
-- *      2009-Nov-6: Initial version by Darren Hart <dvhart@linux.intel.com>
-- *
-- *****************************************************************************/
--
--#ifndef _LOGGING_H
--#define _LOGGING_H
--
--#include <stdio.h>
--#include <string.h>
--#include <unistd.h>
--#include <linux/futex.h>
--#include "kselftest.h"
--
--/*
-- * Define PASS, ERROR, and FAIL strings with and without color escape
-- * sequences, default to no color.
-- */
--#define ESC 0x1B, '['
--#define BRIGHT '1'
--#define GREEN '3', '2'
--#define YELLOW '3', '3'
--#define RED '3', '1'
--#define ESCEND 'm'
--#define BRIGHT_GREEN ESC, BRIGHT, ';', GREEN, ESCEND
--#define BRIGHT_YELLOW ESC, BRIGHT, ';', YELLOW, ESCEND
--#define BRIGHT_RED ESC, BRIGHT, ';', RED, ESCEND
--#define RESET_COLOR ESC, '0', 'm'
--static const char PASS_COLOR[] = {BRIGHT_GREEN, ' ', 'P', 'A', 'S', 'S',
--				  RESET_COLOR, 0};
--static const char ERROR_COLOR[] = {BRIGHT_YELLOW, 'E', 'R', 'R', 'O', 'R',
--				   RESET_COLOR, 0};
--static const char FAIL_COLOR[] = {BRIGHT_RED, ' ', 'F', 'A', 'I', 'L',
--				  RESET_COLOR, 0};
--static const char INFO_NORMAL[] = " INFO";
--static const char PASS_NORMAL[] = " PASS";
--static const char ERROR_NORMAL[] = "ERROR";
--static const char FAIL_NORMAL[] = " FAIL";
--const char *INFO = INFO_NORMAL;
--const char *PASS = PASS_NORMAL;
--const char *ERROR = ERROR_NORMAL;
--const char *FAIL = FAIL_NORMAL;
--
--/* Verbosity setting for INFO messages */
--#define VQUIET    0
--#define VCRITICAL 1
--#define VINFO     2
--#define VMAX      VINFO
--int _verbose = VCRITICAL;
--
--/* Functional test return codes */
--#define RET_PASS   0
--#define RET_ERROR -1
--#define RET_FAIL  -2
--
--/**
-- * log_color() - Use colored output for PASS, ERROR, and FAIL strings
-- * @use_color:	use color (1) or not (0)
-- */
--void log_color(int use_color)
--{
--	if (use_color) {
--		PASS = PASS_COLOR;
--		ERROR = ERROR_COLOR;
--		FAIL = FAIL_COLOR;
--	} else {
--		PASS = PASS_NORMAL;
--		ERROR = ERROR_NORMAL;
--		FAIL = FAIL_NORMAL;
--	}
--}
--
--/**
-- * log_verbosity() - Set verbosity of test output
-- * @verbose:	Enable (1) verbose output or not (0)
-- *
-- * Currently setting verbose=1 will enable INFO messages and 0 will disable
-- * them. FAIL and ERROR messages are always displayed.
-- */
--void log_verbosity(int level)
--{
--	if (level > VMAX)
--		level = VMAX;
--	else if (level < 0)
--		level = 0;
--	_verbose = level;
--}
--
--/**
-- * print_result() - Print standard PASS | ERROR | FAIL results
-- * @ret:	the return value to be considered: 0 | RET_ERROR | RET_FAIL
-- *
-- * print_result() is primarily intended for functional tests.
-- */
--void print_result(const char *test_name, int ret)
--{
--	switch (ret) {
--	case RET_PASS:
--		ksft_test_result_pass("%s\n", test_name);
--		ksft_print_cnts();
--		return;
--	case RET_ERROR:
--		ksft_test_result_error("%s\n", test_name);
--		ksft_print_cnts();
--		return;
--	case RET_FAIL:
--		ksft_test_result_fail("%s\n", test_name);
--		ksft_print_cnts();
--		return;
--	}
--}
--
--/* log level macros */
--#define info(message, vargs...) \
--do { \
--	if (_verbose >= VINFO) \
--		fprintf(stderr, "\t%s: "message, INFO, ##vargs); \
--} while (0)
--
--#define error(message, err, args...) \
--do { \
--	if (_verbose >= VCRITICAL) {\
--		if (err) \
--			fprintf(stderr, "\t%s: %s: "message, \
--				ERROR, strerror(err), ##args); \
--		else \
--			fprintf(stderr, "\t%s: "message, ERROR, ##args); \
--	} \
--} while (0)
--
--#define fail(message, args...) \
--do { \
--	if (_verbose >= VCRITICAL) \
--		fprintf(stderr, "\t%s: "message, FAIL, ##args); \
--} while (0)
--
--#endif
-
--- 
-2.50.1
-
+>        - description: Jetson TX2 Developer Kit
+>          items:
+>            - const: nvidia,p2771-0000
+> 
+> -- 
+> 2.50.0
+> 
 
