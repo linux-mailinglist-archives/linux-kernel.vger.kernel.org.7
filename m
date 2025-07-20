@@ -1,140 +1,74 @@
-Return-Path: <linux-kernel+bounces-738031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FA17B0B370
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 06:00:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8DDCB0B371
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 06:00:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C60816E20E
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 04:00:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5738B3C14B0
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 04:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2307B1A3177;
-	Sun, 20 Jul 2025 04:00:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="okUHDHoJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EEDD1A2390;
+	Sun, 20 Jul 2025 04:00:41 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA1919D8BC;
-	Sun, 20 Jul 2025 04:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4612319FA8D
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 04:00:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752984018; cv=none; b=j26vD9WM+iIHW04d46lTBuHSkzyvaZ7kYEI2xcNMwqR68Zz6lmmh+lCChh69Vfum5CLePGcICM+xaIexMeTMVWbyYJ6ZjFlZxlRXgX2oiQlq4okVqTNLOetYQNGMAZrvkTRAwHTIxyFwpkScqpMpycf7JD9oe4SsIbVreL5iqS0=
+	t=1752984040; cv=none; b=Hu+oGF2UdyuNGCllppU+/tX5/HD/uA/cbeDPyqq0d8h14QamZzhM9bB+Yh0OcQi4GUbmGvlSFS4Bb/lYFpTUq8ZGvFVbxo1TjcIeDrdbNmqoxgIc9cqOi8jQoy+UPPTTGXIUhwJWjRP8zEnlLDk6sZgHJqJKHa2uT4biGAvzPEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752984018; c=relaxed/simple;
-	bh=ziyzl1iKDzn54nDT2rJwJDy0fHbEJYNGZjk1hqdBE/U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=thgXb97n004Z3Ml/fPxALcoikTTD1iJs/ku3NRXXPL2F4w4jW8r/JcAmx5RCyFYpl9P3v6229xt2Q80J/2wDsgPfv4JNvbFtv+4U5BNwt++oFBBMYqESHgGpdVKIxhmfEL5qyDwhW58X7JJzkdf60zvAquRNbOm+k13r7N1vPao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=okUHDHoJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECCA7C4CEEB;
-	Sun, 20 Jul 2025 04:00:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752984017;
-	bh=ziyzl1iKDzn54nDT2rJwJDy0fHbEJYNGZjk1hqdBE/U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=okUHDHoJVCRYuKMyEsK9fbZEu2BkI09ePTg2xGG9/fhGk/w0olmEjndPqHwdjYQTT
-	 1BEZ/dQ/Uhc12B9n51DlbVfy4Cyg1wJfa48EJvFeALRiGV6nBBuaj+Qh9ktXo+q2ze
-	 rtdG1BKgj6f2XsC6efs909Hfcj3ue4PJmfAU6PmTODjmNKhc1ztKBktlKvNF+112/7
-	 UflbGAhqnezdhXOEsRnWrKFBL98UlkjL4b2EsmINewexnJKvcQJNE3H5UwsQ/+ie3Z
-	 aa9UbpFNjmqcx2ICId7Yi3vFvZwQhu7ri8r6E2IyiOsbQdoOLpdSlKw4H1oZUaAfuf
-	 cJOoXHPdDWjVw==
-Date: Sat, 19 Jul 2025 23:00:14 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
-	Abel Vesa <abel.vesa@linaro.org>, Pankaj Patil <pankaj.patil@oss.qualcomm.com>, sboyd@kernel.org, 
-	mturquette@baylibre.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	quic_rjendra@quicinc.com, linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 7/7] clk: qcom: gcc: Add support for Global Clock
- Controller
-Message-ID: <52ytt5ag5l65hdjjmvjft2l7ofvt4rgdn6r3bytcpjvyqia7ry@uzajn7qjng4a>
-References: <20250716152017.4070029-1-pankaj.patil@oss.qualcomm.com>
- <20250716152017.4070029-8-pankaj.patil@oss.qualcomm.com>
- <aHjJG2nrJJZvqxSu@linaro.org>
- <40534488-24f6-4958-b032-d45a177dfd80@kernel.org>
- <2f5b5e6e-5041-453e-b3f7-b10b40bc6f57@oss.qualcomm.com>
+	s=arc-20240116; t=1752984040; c=relaxed/simple;
+	bh=HdI5BXXjYUP8fiKBBvDn6K+MhzOKHTTLNL+KHCkvScA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=WfT4YlTd82KXTOi0v6MVacbFlb69ubG1lqla0okFrslt2cRLrQzrX0OgtxRYQo6iyyeCAvV/J0Ryn9jqG2nzk6iPph4VGK+juYVZHEsx9vAWEL4Zl742usCuFK6ag2Y1eLZQw6ShLKuPtxXQATknesBwTxQhGBSX+sktosOZPoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-8649be94fa1so710911539f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 21:00:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752984038; x=1753588838;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HdI5BXXjYUP8fiKBBvDn6K+MhzOKHTTLNL+KHCkvScA=;
+        b=mVyo+r5C6cZkB1oX5exnSG7HrTrLAt6BXi7YQBKT578ghK4RDpK/AA85nZrUV8Zc+f
+         VEctneQWbHHqr24eSejTuB48YyUaQ8EQFTjCOCjggqp8svD4jJ8D2QCUKOI8vYnRPExs
+         odh1lufzFz0OphXTxI633d5n7iLuoc4PG9mrD/M2xOkWPh6eOx15KLiZopp5KwpsM6xr
+         YogZFNVPO3HKCSva/1K411bFKpBGsdbbD+hd1avoXvfT+3SO2UDchnJonK7PFLEYwxYm
+         ZO/dXWlE7NkRfLyzXl10mU09PMhosdtgBpG+XHaHlZhFyDSvXl0MPgaxQl4+k1NqxguF
+         CMVg==
+X-Forwarded-Encrypted: i=1; AJvYcCUxSxVtdpTAii3d0VnMtFDrt64Aw7aOqqBR1rlAf3/2pnR+cZVktx6xGRZg7Wf+7SY9sESQpn1puuODPdk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXvUbY1glVeUUmQ0QMOyq8cyBnKMusJVjdEzZovtgb7E25NjQ0
+	Xs4cpVDX/foLGjSbJ2BLrCJO0vFIjwy653uwnfNeGTz81UGpJKf6EIeOnEaDZfzrSZixgmred5N
+	VdU9sKyFdvLAMq7Kj5oLiflAgDzTCOXTCapQzlp9JOiA88p2Tb77roPIxtSU=
+X-Google-Smtp-Source: AGHT+IErCJcCmnagu1fZRqNtXzK3OlWf6hbWAUJF/H8gO/f5c49RTChMz5G4wOP6BzFltztpq19giII2cKwrw35IV8fap2705mIs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2f5b5e6e-5041-453e-b3f7-b10b40bc6f57@oss.qualcomm.com>
+X-Received: by 2002:a05:6602:3f0b:b0:873:47d1:2259 with SMTP id
+ ca18e2360f4ac-879c08c4c8bmr1794835839f.7.1752984038339; Sat, 19 Jul 2025
+ 21:00:38 -0700 (PDT)
+Date: Sat, 19 Jul 2025 21:00:38 -0700
+In-Reply-To: <drpsv4a7vnjfdtgok6vzixaft6oksx5kyorwn4ynwazx32ctrx@clquygauwsul>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <687c69e6.a70a0220.693ce.00a6.GAE@google.com>
+Subject: Re: 
+From: syzbot <syzbot+3201be560ebfa39bc6bd@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev
+Cc: kent.overstreet@linux.dev, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Jul 18, 2025 at 11:07:23PM +0530, Taniya Das wrote:
-> 
-> 
-> On 7/17/2025 3:38 PM, Krzysztof Kozlowski wrote:
-> > On 17/07/2025 11:57, Abel Vesa wrote:
-> >> On 25-07-16 20:50:17, Pankaj Patil wrote:
-> >>> From: Taniya Das <taniya.das@oss.qualcomm.com>
-> >>>
-> >>> Add support for Global clock controller for Glymur platform.
-> >>>
-> >>> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
-> >>> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-> >>> ---
-> >>>  drivers/clk/qcom/Kconfig      |   10 +
-> >>>  drivers/clk/qcom/Makefile     |    1 +
-> >>>  drivers/clk/qcom/gcc-glymur.c | 8623 +++++++++++++++++++++++++++++++++
-> >>>  3 files changed, 8634 insertions(+)
-> >>>  create mode 100644 drivers/clk/qcom/gcc-glymur.c
-> >>>
-> >>> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> >>> index 051301007aa6..1d9e8c6aeaed 100644
-> >>> --- a/drivers/clk/qcom/Kconfig
-> >>> +++ b/drivers/clk/qcom/Kconfig
-> >>> @@ -645,6 +645,16 @@ config SAR_GPUCC_2130P
-> >>>  	  Say Y if you want to support graphics controller devices and
-> >>>  	  functionality such as 3D graphics.
-> >>>  
-> >>> +config SC_GCC_GLYMUR
-> >>
-> >> Wait, are we going back to this now?
-> >>
-> >> X Elite had CLK_X1E80100_GCC, so maybe this should be CLK_GLYMUR_GCC
-> >> then.
-> > 
-> > 
-> > Yeah, the SC is meaningless here, unless you call it CLK_SC8480XP_GCC,
-> > so the authors need to decide on one naming. Not mixtures..
-> > 
-> > 
-> Glymur follows the "SC" naming convention, and historically we've
-> adhered to the format: "SC/SM/SDX/SA_<Clock Controller>_<Target Name or
-> Chipset>". This structure has helped maintain consistency and clarity
-> across platforms.
-> 
+> #syz set-subsystem: net
 
-The platform isn't named SCGLYMUR - which is where the SC prefix would
-come from.
+unknown command "set-subsystem:"
 
-I'm not sure there's a benefit to quickly be able to know if a clock
-controller is for a SC, SM, SA, MSM, etc platform. Please let me know if
-I'm missing something.
-
-> The case of X1E80100 appears to be an exception—likely influenced by its
-> unique naming convention at the time.
-> 
-> That said, I’d prefer to stay aligned with the established convention
-> used for earlier chipsets to preserve continuity. I’d appreciate hearing
-> your thoughts on this as well.
-> 
-
-We're changing the naming model completely, so there is no continuity.
-In fact the Hamoa "exception" would suite us very well for Glymur.
-
-And look how nicely the CLK_X1E80100_* entries are grouped together in
-the Kconfig.
-
-Change to CLK_GLYMUR_* please.
-
-Regards,
-Bjorn
 
