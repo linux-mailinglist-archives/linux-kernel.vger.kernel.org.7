@@ -1,268 +1,234 @@
-Return-Path: <linux-kernel+bounces-738437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ACA5B0B84A
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 23:04:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEFC0B0B84C
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 23:09:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E65903B8D93
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 21:03:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07D377A2852
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 21:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0E231D7E54;
-	Sun, 20 Jul 2025 21:04:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CE04221F1C;
+	Sun, 20 Jul 2025 21:09:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="M2AkHZ9n"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2040.outbound.protection.outlook.com [40.107.96.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fOj0nVoU"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7A212E7F;
-	Sun, 20 Jul 2025 21:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753045445; cv=fail; b=f+elFfEwwVc3NQZk9VaE6xiQZZ8pSu6YpyJwH0Cs1tQmq0U23wFH4WLaobttHiHkumwKb4F9VlDU0HNVAwTkDuta922WbKPLIXF5LwKVOj58n6/Q0N4CrWnptKcBkxQw5llSv+SjaDlybh+EMfRTIzBllN1xidNPAQKrbCLvMWw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753045445; c=relaxed/simple;
-	bh=u0OJDvqj/XcP7f88ly5V31GkEDI595LaNftC1IFEvIs=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=EGpPhTQYSeXyo9/lR3i6jvjlyM5Ri/KbotjouoRDx5JvGrkXyPhJN2NBCajv8d27BQ7R+RxoYX0OEhw6o0741xUOUwRWx3D/PjeiNHAGGiIInXX6i790t5S8d+ZI4igsftS+C9naLAGKN1rpQH1jSHi7gaZoWzmoP+EeofjRKjs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=M2AkHZ9n; arc=fail smtp.client-ip=40.107.96.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IOF6W1mykU5/AWgD4gMtp1RhWOLvbxTVILGzElnOh7kV7mvUvVTuwKci8wvarzuHxHcKIglLJziMVJ/0PvwboKqI5AvOnB8+ng8111S/yIb7UVB07C+KbtNpqUwpLA+Ur59dUj23/rOGXAYQcBlZSqc0QgDV26sZje45HBxNvJUIctZVfIBGOdf38SxFVp25lsCmpE59501EYF3KQYpVs8LseCmoa1RHvQoySts7eze3DvQ8Q45ANUDiTAspBPnuHFxlazBIclsMDVgcuJA4H6y530fXYT7QM1xcxqMQMINQivcCX7j53X04LlbnLQJh+t1igFjbz3Af3k7bx58pvw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=r86huXWr/+T0tGJbjUSpr+06GtjcZvEtQucS1auTzYI=;
- b=BFYPsyfGtlpLDbbLTqicgNtnezJ1rxCe/RVvT+R5AzK4rXtURpyWHgO/B7Fly2vTJQtbGiPTEGfyOcOygRCbEtk8/w/6I5gm5olANhf04/SLbV99jufXjpdQquFIfx6qGkaExRvDUDTLzrbdH8pGrG41YroU979T2iBN1j0A3oqwNhFKaFMZZfbUxuqlGSARuLxxiB6IfWDGkEHCbDeMfYtN8drkCrKY50s33cH4cNZ65ceXns/Y/NHT7bBKibdMrYqVg2E5FuGwkDxSNQhcZ6dbDb7CKd4AWaOvGgnK4MIV95DGt6q//Up+ErrOc+76HaMoZM+u6cMWkjHTJzrtQQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=r86huXWr/+T0tGJbjUSpr+06GtjcZvEtQucS1auTzYI=;
- b=M2AkHZ9nNingdieCfHbrtxTTRECCbuDcd7FhIiIxCLOmK/voV7tjr1Q0I0AIzQv76dFqXEla+kvknEf6iio7oCxMUgBjLPWIH5n9g6dmKgo58fxSFzqQaDY/31CaEah36tpPo7UNtWJ4/EcRFFnLz8KVKMptl6m53EZc23gLSqcBD+nEWDd2vBeRgqTmsyGWg+nWbyWzv3ER403IivTrITW+EknQtPCq+WTTt4wSTXKKpEo2hWeS6bcSNZkqZMVnpCGmPHFDBuWKyNGxi1sBfBJnpnnyD+P3omw2bwqEcFPEGb+khh6goZJGMr/a00IkYV3qVWLfsKJ802QwNXbyZw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BL1PR12MB5851.namprd12.prod.outlook.com (2603:10b6:208:396::13)
- by PH8PR12MB7136.namprd12.prod.outlook.com (2603:10b6:510:22b::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.29; Sun, 20 Jul
- 2025 21:03:59 +0000
-Received: from BL1PR12MB5851.namprd12.prod.outlook.com
- ([fe80::d4a:9ce3:c92e:e938]) by BL1PR12MB5851.namprd12.prod.outlook.com
- ([fe80::d4a:9ce3:c92e:e938%4]) with mapi id 15.20.8922.037; Sun, 20 Jul 2025
- 21:03:57 +0000
-Message-ID: <35ff6080-9cb8-43cf-b77a-9ef3afd2ae59@nvidia.com>
-Date: Mon, 21 Jul 2025 00:03:51 +0300
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] *** GPU Direct RDMA (P2P DMA) for Device Private
- Pages ***
-To: Leon Romanovsky <leon@kernel.org>
-Cc: =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>, Jason Gunthorpe <jgg@ziepe.ca>,
- Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Alistair Popple <apopple@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
- Michael Guralnik <michaelgur@nvidia.com>, Or Har-Toov <ohartoov@nvidia.com>,
- Daisuke Matsuda <dskmtsd@gmail.com>, Shay Drory <shayd@nvidia.com>,
- linux-mm@kvack.org, linux-rdma@vger.kernel.org,
- dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250718115112.3881129-1-ymaman@nvidia.com>
- <20250720103003.GH402218@unreal>
-Content-Language: en-US
-From: Yonatan Maman <ymaman@nvidia.com>
-In-Reply-To: <20250720103003.GH402218@unreal>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TL2P290CA0030.ISRP290.PROD.OUTLOOK.COM
- (2603:1096:950:3::16) To BL1PR12MB5851.namprd12.prod.outlook.com
- (2603:10b6:208:396::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37963595E;
+	Sun, 20 Jul 2025 21:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753045741; cv=none; b=je2fOENv3ME57FaP3Cn16Hivl0F5aFFNHrMguwstyLrOCuUW4O254N4w1N1/MeBPv4u9S+LyqlqzAuwcZkRJCtBsRZvBSc9+lYD/dS4HcwwXMJgZ/by5WwISdgGotP/YhIWlNMHvjaY7Vav12IYuFDIQVguVPssW8fafhJuvStc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753045741; c=relaxed/simple;
+	bh=3YyaHadaYQ9QGWQ/6YQpAZlT1JPPS49UsN1VwPYG6Fg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SMbJK/5bwg4r/Mg2RbBrtCDqjLyVuKbo/Gdfsrw3+7D13ZUYYoCwFFOF03SyCfKxKvK3XCQncZM8e8Jj9dBcmfYQ3/U8cM3BalpuAFgMaj7KL+d+UyM4F84Qzj/07v48HWiDrwmNbG1/uc3+SsLwLRGslehcfpXhpKJrYZnCQsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fOj0nVoU; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-60780d74c8cso6587771a12.2;
+        Sun, 20 Jul 2025 14:08:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753045738; x=1753650538; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0TOoMF8RbvR0T32mWJ/zIZV4e9ontZrGLG4u2/MjTOY=;
+        b=fOj0nVoU3c0D8Jz9mh6xS3L50hfGJDUykKz7FMkFBnVJXqfDTrB4xK4ZxhjxNHvnag
+         iH9yttb8RXkB7uPlnYPtrnSO0Zx8q1mhNWASrSXRU2CrZkGyikFNQte5YPbiofuXeCgQ
+         x/llWG6tT3AXCqlk1J+5wbqD5xbj7R23GI5aAz1yeedFSxbTXuL63GSUKScORAvSB/Rm
+         lrN49Tv3Ch3yiFdoFTts7H+C8KpU8crGRPl0uNEeRYKfurtTjTnWUwQwJLDebOfWAT1i
+         JdH9BDWrqi3YbI2anfqDFQQ3S7JkT2SF4vYunEWLNgwxwiJCK6l/eeGaD3HTAHu2OhLf
+         h9rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753045738; x=1753650538;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0TOoMF8RbvR0T32mWJ/zIZV4e9ontZrGLG4u2/MjTOY=;
+        b=cPlf6kxi1vP7bmiqAwhlkO2NbdrVRUQWtzpCz6BUju1osDzqvHlcITVx1KIPnisOxo
+         DGWVDKAhNsbm235wVhCPIXeUjoLvfSgrKDcvKk++oa6rX25pZ+r0MClRk4suWTO4xg12
+         ov2ntEG52ApZJrxylJp/vvc54/FFdErEy3tBHf8+5v88WMqfdfDQRERdeSWJyvkB1rzQ
+         UAgvb6gJlZItA8qlsbk5dTd8FgadXk+NfN+7E1+tF6z6beawmd2JdbZCH1/QROWKcN63
+         Vc1/4ymLbdL5vH47fPge6ep9ThYm9bkY2QF7rs9MAt4r/UYufUE+XcSanrl39Q4Mc2hP
+         kuvw==
+X-Forwarded-Encrypted: i=1; AJvYcCWAi9l2Zp1XgL91J2FW6c6Y3GJzrvoR2M/dMAwtNgXz6vSEJ8K84U3DmUjyTATQIbx0p2GKLso8VFvnrGk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEwqfCZ6RHWxm6Dua3PXLIaVOKi3pp3NBvy3nPvnLTyLG+GyEg
+	hmCDDCz+z4UGt8kooYGbuna3A3mxIXp96NkiG3CjaiVS9ahnTe1a6Lwo1TRfRZXA
+X-Gm-Gg: ASbGncvjMQzK/igMU5mBTKDgOFD1ZKzBXXCJPegzMFSOdphlUtOvMYJsAWjekeEy55X
+	GWtmA+Jj3z+KIHXx+/u1QwDFpFk9FqGpgHMcXqPd1JZ9NmqxHFsgixlWOejsCsgMaqK4MbuVCLy
+	p/UsVCu+Jlx763BEpqOBgOOs1i9Z1auM0deQnqJc1lwsvpdGMN6Jgd8InIXDkQ6Vu6vOXIEnUWv
+	tNu/BIvmF2tjSf8uxzVWr91IpPsf8q1FpdMWxDD4eK+38x+YWAV1g551Q03J4ckcqzHEyRAwAFr
+	LcY3HOJB6FjLLelm+PE1OQ5JmGGDK1ZEbHLmoFcgik9OSk8fzQdAc+A6hGB2Oluko58zx6JIH06
+	41tB+6BsOWYJHXxnbJALrInBQPIa6xNlmtgFmfkHScoxDTIxsxR4fZFr39CcSECvtQsmEF/XBYa
+	T3
+X-Google-Smtp-Source: AGHT+IHtbETpKbsgLT5W1SF5UsP85+81MzUA6+deNrynboG7g6Cvqc0eivuSVjRihU5CPPVCOi9iDg==
+X-Received: by 2002:a05:6402:2341:b0:607:e3ec:f8ea with SMTP id 4fb4d7f45d1cf-6128591955amr16371634a12.6.1753045737723;
+        Sun, 20 Jul 2025 14:08:57 -0700 (PDT)
+Received: from asterix.home (host-80-116-76-192.pool80116.interbusiness.it. [80.116.76.192])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-612c903fd6esm4413441a12.45.2025.07.20.14.08.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Jul 2025 14:08:57 -0700 (PDT)
+From: Marco Tormento <mtormento80@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Marco Tormento <mtormento80@gmail.com>
+Subject: [PATCH] USB: hub: Move typec deattach before children disconnections in usb_disconnect()
+Date: Sun, 20 Jul 2025 23:08:47 +0200
+Message-ID: <20250720210847.30998-1-mtormento80@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5851:EE_|PH8PR12MB7136:EE_
-X-MS-Office365-Filtering-Correlation-Id: e9bb4e34-c1c4-4097-5c17-08ddc7d0f190
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|10070799003|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bHpBdCtEeTdRZTBESjQxSzhpeVlYNUFOWStTTktBWEk5TGVZQmRENnBKTXZZ?=
- =?utf-8?B?TmpCOW1udUtzSHNSUEF5dk9JQVk1ZklMZEVnNU8vVlNvMk5LMjUreGk3bWxk?=
- =?utf-8?B?cW0wY0k1bmZsM0c5cVdKQWQxZ2tWNTlMcDFwTHRJSmJMZUswTlBaMWR1ZWwy?=
- =?utf-8?B?c1lCL20xOTd2WlBWdFd0cTkzSXp0eEthYXJZWkdHSFFNaDlpVDc0Zkt3QW5m?=
- =?utf-8?B?U2EyMHoyejg5ZEdtazVaby9mbzhwZEEyWDFJMmZCeDJtUWhjdldVMEdLYXdB?=
- =?utf-8?B?RmF4Sy9XSHNWZUtiTFgxNFBaUzZ4K3FueEhmcnc2SzdVdXUxQk1FRHU4VjNi?=
- =?utf-8?B?OTZiYWJCdGhZNTRDOVlnbng1TXhIUDVldXRvVWtjZC9yUXd5QzhnSGliZkZP?=
- =?utf-8?B?aFlwbkNnNG9jS2xNR0wyamFTZHl6M0VBSGtoYjNSMFhRb2JrRHJIZ0Q4NkpZ?=
- =?utf-8?B?UzU5cUd4bVkrK2pJOXd0L0pTUnZpMUxsWVU2cFJqZDBuRHo4bGpmdGdKaXZ2?=
- =?utf-8?B?UVQ0SUlPVy82VUlwblNHSmNqVkQvby9zdEZOc1pWNTk1N3czTW5paVh5R2Vw?=
- =?utf-8?B?NUdzMk9icmZqVDJjUmJhdGltc1hBUXFTbkE0bmZ0SFdjNGNqTHRMQUora1lH?=
- =?utf-8?B?TDc4NEVQRVh2aHNMM3pDYWV5QzZscnQ4QnVUYlFmYVcrQ0EvK0haQitXM1J4?=
- =?utf-8?B?WDRPei9HNTJOckoxWllBVlY2SEY0VCtyV0ZsU0ZaZ0ZDUG12OWx5eG1nUUZD?=
- =?utf-8?B?U2pFdSswZVM4V1VOTUtwQ25SNWREQ0hhM3Mrd2RSMXZteUZTaitYQjBLK3pM?=
- =?utf-8?B?WFY2bEE3VWEwWWttWklaY2FzU2Vkc2d5VkFYZnQ3UTZCeWtRL2NXVzBCSlQz?=
- =?utf-8?B?Z2llZzVoZHBMb3dteDl6QTRLMGFiSUpiVjBhcmQyMkRCb1RRcTdKN29Yc3c5?=
- =?utf-8?B?RG42UTVBdVp5dE8rUmwycWNVUk5xZDMzQ3lybU91NmV3U094TGZ0MUYydWNT?=
- =?utf-8?B?NXBKL1lVZ0JTNTMzbjcreXRhMWJiTDY2K2FRQXBVZ2tTRWpNdDZTS05Fdms1?=
- =?utf-8?B?S3VCQk1Wd1BFbUV3c3d2VUZVK0RtS3BKay9IQ3RKQXQzcGczL1ROOHR3N29t?=
- =?utf-8?B?eVJmNjViemJNS3ZZN200RHJWS2lBeUp6R0Q0NG9CRkRab1JqdXVab3lidWFw?=
- =?utf-8?B?UWZlTHNwOGJJd3ZKa2RiYk5USUhlRTY4SmNyeUR2Y1lWNXpqNU5pbDdTbzR6?=
- =?utf-8?B?MUlaclpPdTd5VWIwMjJ0NmJQbzIyQm0zUmQ4RERsYzkwaWtlK0ppTnozdU9i?=
- =?utf-8?B?NElGeDVTb1pMMUMreFQxSlp6alNreW9uZnZhbGJNSUZrbWQ1aGpmQ1h1OEQy?=
- =?utf-8?B?MDhqRGFhWWZCV3Vvc3RJQ3IxR2RPeEJsSHRHaUU4SmRDT3lLMG5rM3Y2dkpH?=
- =?utf-8?B?R2VCMWVwT0JJM0RFK2xjTGdTRUQxMGgyYkYvT1JaQlhlOGxBYkFOL2V1YU13?=
- =?utf-8?B?bWRWaE5pS2VCelQvUjYrcGFFNXpuRnNWVXRkUzQvbkJaQ0hoZFlMdVVHTDU4?=
- =?utf-8?B?MEE2MVorUHg1QjQxZFkwMjdBYURYQVA4ZFhxQmwvMEFKK0hucjRHZWZOR3d4?=
- =?utf-8?B?RlRyRWNkZDcwT3VOOUwyTFpaK3p4eHF5YWV6Mno0OWpwOFZYblFtQjMvUGhP?=
- =?utf-8?B?di95a01Dcjd0TnJXRk1vWGllS1RBT0Z2djkxcmsyNXB4d2dHcE56QjA0QTJa?=
- =?utf-8?B?T1p6UzR0YlpGMGxhQVpUTHFqN2xqbVRaZGRaTzZMSG8wZHNmTzRMVU1uSHg2?=
- =?utf-8?B?czJJbTJUdncwak0xMXlwcXNjL3NUcFBWU1QxVXI1SVdYNmlrVTBxa1lzVnJ3?=
- =?utf-8?B?SGl0cHdYMGZZaFRoa1JVOU5lZjhrWmRpOUJoR0o2b3crV2NoZW92eXFobUZV?=
- =?utf-8?Q?dCtssmufkwM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5851.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(10070799003)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bFZXZXRHVGYzdmdLSnpZdDhjVTk5eXlFSU5MWHFsWHdxUFlDbnFMU1lEcVd1?=
- =?utf-8?B?UTdIVkVSWUZpUStucnpZZGN3VUVTa3F2SWlQSjRGQzFscXpNbzM2dmw5Sndt?=
- =?utf-8?B?eHFKbE12YnhEMmVVUm5yRzE5YkMzWXBPVWhaMVdER2xiN1p2ZFdDZkw2SzJM?=
- =?utf-8?B?MXh3MGZ6M3dNc0VvRzA4SkRmRTh5dTFWb1FlemFjTGUyVW1mVWNPaXduQ1FR?=
- =?utf-8?B?VUJmeGxSMFluMGthY2RJaHphM1FYT1pZK3ZvcWc4c3E1Yk1xZjRMQ3pYME1D?=
- =?utf-8?B?Ukh0TGRvc2tWdmtJMWRFaytSUHZXWjM0aXBISFA4YnQ2eTM4NWFWTnRsZEhv?=
- =?utf-8?B?U3l0akVyeTF6WjliV1ozMVVLbFJlMGdxQjBhbUdhZDMyYTVwQ0lZMEZUMUF5?=
- =?utf-8?B?QzJVTzYxUUlpTU9RcHB2Qk5lYlJzcEs3NkpDc1RLUFhlUHhvTzZxajNMOU9i?=
- =?utf-8?B?SDZUeVNxekJxbG1zMFdnOGRvSWVnQXk1U1ZGWmlPWXk3TVc1MkUyZ29wT1Rs?=
- =?utf-8?B?TEtReUJCNUp3ejNtdFJHb0VSdGlsc2E0Qk1GNW92cVlOTzRFbHFkS1NsUGZk?=
- =?utf-8?B?UFQxSzk5Uy8wOU54WUo4TDNYVnV3MzA1bUZiZVJyTmtVU0Roamw3dDlHUmdV?=
- =?utf-8?B?aWd2SVpnQmJxWjBRQkxBekljQ0JnMkp3ZFJnVTQ1ak16QjlENWcvUG8zUlhB?=
- =?utf-8?B?R21nRkRLT0YzSlo2QmJlVXdhZVdRMVNIK2xKeXd4U042WGQ0WThyUUxQbkE2?=
- =?utf-8?B?ZmtBNW1yU2wrdmhsSU5aVUtJbnY1cGx2QlRnY1RiM1FrL1JEUEUrelZnUStU?=
- =?utf-8?B?YTNyOHI2KzJ2bDZtSXBWeHA3K1lvK1g0OE5sZ3VrUmptM0h6dGNxR1VLY09x?=
- =?utf-8?B?RXBYUXc2VEtsR2pmam01emR4SXJhZ1g3a0h5S0dWL1RvMUFGczBpTU9RNUsr?=
- =?utf-8?B?R2NRZzRMY2gwLzhLcVRPcHA3eHVwY0pTalROSTRRNXB6V0Q3NldkWHI5VHhJ?=
- =?utf-8?B?cms2c2pVdVJPbktteXdWNm9qSnlia3dQdHJjRXZ3c3I0YlhldlVUSjhaZnBi?=
- =?utf-8?B?elFINUIwdzllb2gxRG16N2FzMk5VNjRiclNvTG1VYUlhVHprQWhsTHFHWFhR?=
- =?utf-8?B?Q2FZaDZmTTFyRFplYnYvTGFySUpQYmdKTExWVVl3MitqMGxReFl4dmsxOGpw?=
- =?utf-8?B?d3RwODlqRXhudmY2dW9wTUU3ZWNoTzhoZ0FraXEwVGNhM1lsY1hENTJ6cHg0?=
- =?utf-8?B?YkFUOURRdGZ3OVNzYmY4L01nTllsdnNRRnBTZ3M2eVJXUVg4WXhoZ3VZL1J5?=
- =?utf-8?B?RGduLzVSaWpBTW5FckVacTdqZ3o3UHVKRWd3YWtySytxVXJPUCtvQXNheThW?=
- =?utf-8?B?QlorU0wwUnJHRmNncEFMdnVQbHNJdWxBazY3NnhjL3FXNEtORU9RMkJhbUNI?=
- =?utf-8?B?TklkWDQ0M0h6dHJpUGhzcXpHay80UDBvbElqaWZrbm1GZnBVeloxcWI0R1RR?=
- =?utf-8?B?Ym5vYTFpUnhDWTRQdmpXeTlxZHF2dHc4di9UaWFBL09BdWpLYXh6WEtvN3Jt?=
- =?utf-8?B?T082ckc1R1ZDQWJlMXQ3NDc1ZVlUTDJkR09aY1NGcWIvSVM3eXRBMU9RdEJp?=
- =?utf-8?B?Qzg5b2t2MEt6anYwUmUwUjhZM3JsQzlIdnN2aXhBVmVVaXdId3ZSVVE3cVI3?=
- =?utf-8?B?TEZaLzBIMkdJWjduZ3BWMzVGQWVsRVhOODg2UmgyTEtPb3VyRlZnYXJTK0NO?=
- =?utf-8?B?SFMvZFhRNGhUQUhLUTNIN1pkS0NrWi9zeE9qVU9DSHJGSVBuUUU2T2QrS2ln?=
- =?utf-8?B?cFNESFZpdk1XWWRrY1YvRDByNDhvd2xpK2U5TUF1bzNxU3lkTmczRnNGRzdK?=
- =?utf-8?B?emp6WkR1R2Jtayt5ajNkcXd6aGhrSWlreTA4V3BlenJzRjU3aVI1RVgrV1Vl?=
- =?utf-8?B?ZUhUVHJ3TEFML0ZKaWc0UW5DVmNXMFpQTUNLMGY1TlMwbHJta1hWSVVaaC9m?=
- =?utf-8?B?bWc5TVBValZsRTRKR0VTcUQyMkF3RFVpakZPN25jbHc3d21UTkVtakpFL1Vu?=
- =?utf-8?B?aXBFSU9HUUdXWGZ4WkR3aXVIMDhxK1E5THhmbytzMUlOeTVWejI4UTdBOG1P?=
- =?utf-8?B?M2duWlpWVUJ3U1M2T2FmaU9CVmpUMjBUNHlXL0FQbFkxNmJZTjB5aW9vVEhV?=
- =?utf-8?Q?YClcGJcdZRY4Oj+ycC8H75MRQz0VJOmAonPuuHSDZdMD?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e9bb4e34-c1c4-4097-5c17-08ddc7d0f190
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5851.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jul 2025 21:03:57.8758
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: n4bNIUVAWR6nEFgCbO7vgmzjcM5pgJDAQNQ59+wl+C3nl7Zchnb2JzcoublqPHxQgdM/izMdc/+tJVrLSLAPmQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7136
+Content-Transfer-Encoding: 8bit
 
+I have a Thinkpad T480s, it has 2 USB typec ports one of which is part of
+the thunderbolt connector. On the thunderbolt typec port I plug a BenQ
+EX3501R external monitor that has an integrated USB hub with a couple of
+HID devices connected to it. On the other typec port I plug an Apple
+Macbook USB-C power brick.
 
+Steps to reproduce the issue this patch is supposed to fix:
+- plug the power brick into typec port
+- plug the monitor into the other typec port (thunderbolt)
+- unplug the monitor
+- unplug the power brick: get a warning stack trace saying "kernfs: can not
+  remove 'typec', no directory" in typec_unregister_partner()
+- plug the power brick again
+- plug the monitor again
+- unplug the monitor
+- plug the monitor again: get a warning stack trace saying "sysfs: cannot
+  create duplicate filename
+  '/devices/platform/USBC000:00/typec/port0/port0-partner/3-1'" in
+  typec_partner_link_device() called by typec_partner_attach()
 
-On 20/07/2025 13:30, Leon Romanovsky wrote:
-> External email: Use caution opening links or attachments
-> 
-> 
-> On Fri, Jul 18, 2025 at 02:51:07PM +0300, Yonatan Maman wrote:
->> From: Yonatan Maman <Ymaman@Nvidia.com>
->>
->> This patch series aims to enable Peer-to-Peer (P2P) DMA access in
->> GPU-centric applications that utilize RDMA and private device pages. This
->> enhancement reduces data transfer overhead by allowing the GPU to directly
->> expose device private page data to devices such as NICs, eliminating the
->> need to traverse system RAM, which is the native method for exposing
->> device private page data.
->>
->> To fully support Peer-to-Peer for device private pages, the following
->> changes are proposed:
->>
->> `Memory Management (MM)`
->>   * Leverage struct pagemap_ops to support P2P page operations: This
->> modification ensures that the GPU can directly map device private pages
->> for P2P DMA.
->>   * Utilize hmm_range_fault to support P2P connections for device private
->> pages (instead of Page fault)
->>
->> `IB Drivers`
->> Add TRY_P2P_REQ flag for the hmm_range_fault call: This flag indicates the
->> need for P2P mapping, enabling IB drivers to efficiently handle P2P DMA
->> requests.
->>
->> `Nouveau driver`
->> Add support for the Nouveau p2p_page callback function: This update
->> integrates P2P DMA support into the Nouveau driver, allowing it to handle
->> P2P page operations seamlessly.
->>
->> `MLX5 Driver`
->> Utilize NIC Address Translation Service (ATS) for ODP memory, to optimize
->> DMA P2P for private device pages. Also, when P2P DMA mapping fails due to
->> inaccessible bridges, the system falls back to standard DMA, which uses host
->> memory, for the affected PFNs
-> 
-> I'm probably missing something very important, but why can't you always
-> perform p2p if two devices support it? It is strange that IB and not HMM
-> has a fallback mode.
-> 
-> Thanks
->
+From that point on if you do the following steps a couple of times you get
+a kernel oops with a general protection fault in
+typec_unregister_partner(), system becomes unstable and a restart is
+required:
+- unplug the monitor
+- unplug the power brick
+- plug the power brick
+- plug the monitor
+- unplug the monitor
+- unplug the power brick
 
-P2P mapping can fail even when both devices support it, due to PCIe 
-bridge limitations or IOMMU restrictions that block direct P2P access. 
-The fallback is in IB rather than HMM because HMM only manages memory 
-pages - it doesn't do DMA mapping. The IB driver does the actual DMA 
-operations, so it knows when P2P mapping fails and can fall back to 
-copying through system memory.
-In fact, hmm_range_fault doesn't have information about the destination 
-device that will perform the DMA mapping.
->>
->> Previous version:
->> https://lore.kernel.org/linux-mm/20241201103659.420677-1-ymaman@nvidia.com/
->> https://lore.kernel.org/linux-mm/20241015152348.3055360-1-ymaman@nvidia.com/
->>
->> Yonatan Maman (5):
->>    mm/hmm: HMM API to enable P2P DMA for device private pages
->>    nouveau/dmem: HMM P2P DMA for private dev pages
->>    IB/core: P2P DMA for device private pages
->>    RDMA/mlx5: Enable P2P DMA with fallback mechanism
->>    RDMA/mlx5: Enabling ATS for ODP memory
->>
->>   drivers/gpu/drm/nouveau/nouveau_dmem.c | 110 +++++++++++++++++++++++++
->>   drivers/infiniband/core/umem_odp.c     |   4 +
->>   drivers/infiniband/hw/mlx5/mlx5_ib.h   |   6 +-
->>   drivers/infiniband/hw/mlx5/odp.c       |  24 +++++-
->>   include/linux/hmm.h                    |   3 +-
->>   include/linux/memremap.h               |   8 ++
->>   mm/hmm.c                               |  57 ++++++++++---
->>   7 files changed, 195 insertions(+), 17 deletions(-)
->>
->> --
->> 2.34.1
->>
+If I plug the power brick to thunderbolt and the monitor to the other typec
+port none of the above happens.
 
+I tracked down the issue to the following logic:
+- power brick is plugged in
+- monitor is plugged in
+- when I unplug the monitor in usb_disconnect() hub_disconnect_children()
+  calls usb_disconnect() recursively, and this results in
+  connector_unbind() invoked on all connectors, which resets
+  port_dev->connector to NULL on the ports
+- typec_deattach() is called for each device that has a parent, which in
+  turn should fire typec_partner_deattach()
+- port_dev->connector is NULL though, so typec_partner_deattach() is not
+  called and port->usb2_dev is not set to NULL even though the hub device
+  is actually gone
+
+Now if I plug the monitor again:
+- since the type_partner_deattach() was not invoked before, some links are
+  still there and typec_partner_link_device() complains
+
+If I unplug the power brick instead:
+- ucsi_handle_connector_change() is invoked and typec_unregister_partner()
+  is executed, port->usb2_dev is not NULL so we try to unlink the device
+  from the partner with typec_partner_unlink_device(), but 'typec'
+  directory doesn't exist anymore so it fails in the sysfs_remove_link()
+  call
+
+The reason why at some point kernel oops when I unplug the power brick a
+final time is this: in typec_unregister_partner() when
+typec_partner_unlink_device() is called port->usb2_dev->kobj ref count is
+zero (the device is gone already), so when accessing usb_dev->kobj fields
+it's just a matter of time and memory will be overwritten with something
+else, which will cause access to protected memory and an oops.
+
+In order to fix the above I tried moving the code that handles typec
+deattachment from the parent before all the disconnections, this way
+typec_partner_deattach() is invoked for the partner, port->usb2_dev is
+cleared and typec_unregister_partner() is happy.
+
+Note
+It's still not clear to me why the hub device of the monitor is linked with
+the typec port partner of the power brick in /sys/class/typec. The
+thunderbolt controller surely has something to do with it, since it doesn't
+happen if the monitor is plugged into the standard typec port instead, but
+I haven't fully understood why it happens yet: maybe this is the actual
+bug?
+e.g.
+Plug the power brick:
+- /sys/class/typec/port0-partner appears
+Plug the monitor:
+- /sys/class/typec/port1-partner appears
+- /sys/class/typec/port0-partner/3-1 appears, which is the monitor hub
+If I plug the monitor first and then the power brick
+/sys/class/typec/port0-partner/3-1 doesn't show up.
+
+Disclaimer
+I just started looking at kernel code for the first time a week ago, so all
+of the above might be spectacularly wrong or a better way to fix the issue
+might exist. Initially I did a quick fix that was just checking
+port->usb2_dev->kobj ref count in typec_partner_unlink_device() and bailing
+out if it was zero, but then I decided to dig deeper just for fun.
+This patch has solved my problem, I'm running it on laptop since last week
+without any issue, but it might have side-effects I'm not aware of.
+I really hope I'm not wasting your time, thanks for all the great work you
+do on the Linux kernel!
+
+Signed-off-by: Marco Tormento <mtormento80@gmail.com>
+---
+ drivers/usb/core/hub.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+index 256fe8c86828..dfe4ba192faf 100644
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -2334,16 +2334,6 @@ void usb_disconnect(struct usb_device **pdev)
+ 
+ 	usb_lock_device(udev);
+ 
+-	hub_disconnect_children(udev);
+-
+-	/* deallocate hcd/hardware state ... nuking all pending urbs and
+-	 * cleaning up all state associated with the current configuration
+-	 * so that the hardware is now fully quiesced.
+-	 */
+-	dev_dbg(&udev->dev, "unregistering device\n");
+-	usb_disable_device(udev, 0);
+-	usb_hcd_synchronize_unlinks(udev);
+-
+ 	if (udev->parent) {
+ 		port1 = udev->portnum;
+ 		hub = usb_hub_to_struct_hub(udev->parent);
+@@ -2362,6 +2352,16 @@ void usb_disconnect(struct usb_device **pdev)
+ 		typec_deattach(port_dev->connector, &udev->dev);
+ 	}
+ 
++	hub_disconnect_children(udev);
++
++	/* deallocate hcd/hardware state ... nuking all pending urbs and
++	 * cleaning up all state associated with the current configuration
++	 * so that the hardware is now fully quiesced.
++	 */
++	dev_dbg(&udev->dev, "unregistering device\n");
++	usb_disable_device(udev, 0);
++	usb_hcd_synchronize_unlinks(udev);
++
+ 	usb_remove_ep_devs(&udev->ep0);
+ 	usb_unlock_device(udev);
+ 
+-- 
+2.50.1
 
 
