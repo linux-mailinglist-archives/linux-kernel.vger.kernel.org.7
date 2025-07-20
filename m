@@ -1,107 +1,135 @@
-Return-Path: <linux-kernel+bounces-744232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC0CDB109DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:02:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DFDA9B10A73
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:41:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50FB21CE3C7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:03:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C18251CE00EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A91EC2C1586;
-	Thu, 24 Jul 2025 12:02:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF052D3A60;
+	Thu, 24 Jul 2025 12:41:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T1NHubdb"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7BB26A1B8;
-	Thu, 24 Jul 2025 12:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="jWn51Vc2"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE50C2D372F;
+	Thu, 24 Jul 2025 12:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753358566; cv=none; b=UuSc2ov7PiBiIBsyOJiMEpefQJ1Bo7/ohXGkDKCQ8pvUVCLgs8Cv0TaB5b654Vt3azvlW6Xmqefz8J7XgAbLbNobTRM/JMVtIFWPwGmC1Rtn3GPwRnJhxdKxOx34j4u0Bx4XxvH3Gq0wrpFya1JI+1mrcL9nbbsXsbJzhD8sGns=
+	t=1753360878; cv=none; b=nSb0fUDfjUNPsufQUVw5WuRhi9xyJCV5/1k0Ha9jDPUMIieZCedUbeZHooC5oXVkb6M0WSxrL4C/jSDeHt20OIzRhEVq8JeaIp+avwj62fv0P+Rb8IslpF6/N2yaMtBhmdepDNQY6iQx/lakn05cg9vhrezcW+nDgT3npyvbgRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753358566; c=relaxed/simple;
-	bh=gC7/IIv94UYiIF+2wRA2qk2JP6efc/iZNut4/NBExbU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JFIHTAqZd4CQd+MXQaSsc9DopI0WOxAeYJlN5AXFEq4u3UGYgmxkrz9j2L8eieLbJcBXDV9Yh3G5CARn0vPxTlSscW5X/42eX/1U3GFcBcKj8XscJaHUj+Gq0R6lKRFG+7AgT+QgKJjmDc10uBNNkVZWBRFSO21hHJg80eXe7N8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T1NHubdb; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753358565; x=1784894565;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=gC7/IIv94UYiIF+2wRA2qk2JP6efc/iZNut4/NBExbU=;
-  b=T1NHubdblyl/DBkHq9Q0bAzt/oPgpn6wZW9QYbrOAjHJ+p32GYaX3Kow
-   fIHs172hd1U81n/xpiXM98jL6ylTS0z+AG0CLv0X/jQzsnLiwc+UX8z7d
-   ooa/SZn/7L+Nu5nWjnuubwSFedOV0jL7ixMn80iHMSfdit6cOmQM2Ma6K
-   o/wduRJ7X3TQZ7/PqlUUtP6ssZGWsa+3ZyFz7cx3b5qaamLmkQHrM72lA
-   ZlYYzmMIe9xyPgi7E0+CGfcCFlthLYSMaWq76lCy/6b3uZosqTi7XAhiU
-   PgpL8bpAUqRHyeFDQH0IkrF/U7XJl5anTeLt4b198Ya8xmNwAyAxAE5Pc
-   A==;
-X-CSE-ConnectionGUID: Sma6i95aQ+GpjxwU4GBq/A==
-X-CSE-MsgGUID: 06ut4kYcQh+NTBUMfUEA+g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="55518791"
-X-IronPort-AV: E=Sophos;i="6.16,337,1744095600"; 
-   d="scan'208";a="55518791"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 05:02:44 -0700
-X-CSE-ConnectionGUID: LXkrErb3R5W2QB9gcKSz0Q==
-X-CSE-MsgGUID: 0dMvp4U9QTqt8cdLwKHtFw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,337,1744095600"; 
-   d="scan'208";a="197330820"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 05:02:42 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1ueuek-00000000Ysk-3Zaa;
-	Thu, 24 Jul 2025 15:02:38 +0300
-Date: Thu, 24 Jul 2025 15:02:38 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Salah Triki <salah.triki@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: ad7280a: Remove unused macros
-Message-ID: <aIIg3m1eXC3dNfeM@smile.fi.intel.com>
-References: <aIIQ3xxCNfpTouxQ@pc>
+	s=arc-20240116; t=1753360878; c=relaxed/simple;
+	bh=1wVxn+mTLzWPG3baEb7/Dr1ogBzjVZqcLlpZam049Ms=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lOI8bynt8DiYww7P98cMkAPBP/8E38B1LIE5Z4HByePUL+GPfOwjc6VEOHChnCtpQCIPZsATiUzpuZU/2KmDb5oq6RbKqmaeWxmmytYiyfD1kprowhu3eJ1LDMtm3Zmeb50gasPAynnmNouPXJFBzRGd6ge42kPOIHeEOtLLVlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=jWn51Vc2; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Zl
+	c6/SAN3mXOw2kV24g78sQnlu6LMHoK+teDO96CRyU=; b=jWn51Vc2imLtJ0sFIr
+	fFTLh9m6az99d3HBETM/Sk2LMJEHZJBkYAnxX9liWQPXcU5PUqM/cEiet0EpEW+V
+	CQuqcbF/fDqEolMjA+k1wZATTf8GGSVWPL2R/ev58NrMq97ncUf8GNvPvp42/tLy
+	5GzYOaEtK2aDpgO4PhtHTkkgI=
+Received: from vbox.. (unknown [])
+	by gzsmtp4 (Coremail) with SMTP id PygvCgCX9u_PKYJoBIO7Ag--.46530S2;
+	Thu, 24 Jul 2025 20:40:48 +0800 (CST)
+From: Li kunyu <likunyu10@163.com>
+To: jpoimboe@kernel.org,
+	jikos@kernel.org,
+	mbenes@suse.cz,
+	pmladek@suse.com,
+	joe.lawrence@redhat.com
+Cc: live-patching@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Li kunyu <likunyu10@163.com>
+Subject: [PATCH] kernel/livepatch/core: Fixed the issue of parsing failure caused by symbols carrying '-' generated by the kpatch software
+Date: Mon, 21 Jul 2025 04:50:59 +0800
+Message-ID: <20250720205059.138877-1-likunyu10@163.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aIIQ3xxCNfpTouxQ@pc>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PygvCgCX9u_PKYJoBIO7Ag--.46530S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxJr43uw4xKr4xGF4kCw1UGFg_yoW8tF1xpr
+	WrA345Zw4xJ342gF4fJr45Cr15Jwn7Xa18Ka9rJr1kAw43Z34rAr4kWFWY9as8JryfGayY
+	qF4SyFWFk34kJ37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Uq1vhUUUUU=
+X-CM-SenderInfo: poln30d1xriqqrwthudrp/xtbBzwyUpGiCJfk-7wAAsV
 
-On Thu, Jul 24, 2025 at 11:54:23AM +0100, Salah Triki wrote:
-> This is to fix the following warnings when compiling the ad7280a driver using
-> LLVM=1 and W=2:
+A possible issue with the kpatch software was discovered during testing
+in the 6.6 and above kernel:
+livepatch: symbol .klp.sym.vmlinux-bringup_idt_table,5438511 has an
+incorrectly formatted name.
 
-W=2 ?! No, please don't do that. W=2 is for informative purposes. Better spend
-your efforts against W=1 which are still plenty in the kernel.
+The "-" between ".vmlinux-bringup_idt_table" cannot be parsed in the
+current kernel. Of course, this is a problem generated by the kpatch
+software.
 
+Perhaps, we could adopt the approach in the patch to skip the error
+symbols compiled by kpatch.
 
-On top of that, often the definitions is a (arguable not the best) piece of
-documentation of the HW, we don't drop them because they are unused (today).
+Signed-off-by: Li kunyu <likunyu10@163.com>
+---
+ kernel/livepatch/core.c | 29 +++++++++++++++++++++++++----
+ 1 file changed, 25 insertions(+), 4 deletions(-)
 
-NAK.
-
+diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
+index 0e73fac55f8e..74b07a1b6c1f 100644
+--- a/kernel/livepatch/core.c
++++ b/kernel/livepatch/core.c
+@@ -199,6 +199,7 @@ static int klp_resolve_symbols(Elf_Shdr *sechdrs, const char *strtab,
+ 	unsigned long sympos, addr;
+ 	bool sym_vmlinux;
+ 	bool sec_vmlinux = !strcmp(sec_objname, "vmlinux");
++	bool reload = false;
+ 
+ 	/*
+ 	 * Since the field widths for sym_objname and sym_name in the sscanf()
+@@ -227,12 +228,32 @@ static int klp_resolve_symbols(Elf_Shdr *sechdrs, const char *strtab,
+ 			     ".klp.sym.%55[^.].%511[^,],%lu",
+ 			     sym_objname, sym_name, &sympos);
+ 		if (cnt != 3) {
+-			pr_err("symbol %s has an incorrectly formatted name\n",
+-			       strtab + sym->st_name);
+-			return -EINVAL;
++			if (strchr(strtab + sym->st_name, '-')) {
++				memset(sym_objname, 0, strlen(sym_objname));
++				memset(sym_name, 0, strlen(sym_name));
++				cnt = sscanf(strtab + sym->st_name,
++					     ".klp.sym.%55[^-]-%511[^,],%lu",
++					     sym_objname, sym_name, &sympos);
++				if (cnt != 3) {
++					pr_err("symbol %s has an incorrectly formatted name, " \
++						"cnt=%d, sym_objname:%s, sym_name:%s\n",
++						strtab + sym->st_name, cnt, sym_objname, sym_name);
++					return -EINVAL;
++				}
++				reload = true;
++				sympos = 1;
++			} else {
++
++				pr_err("symbol %s has an incorrectly formatted name\n",
++					strtab + sym->st_name);
++				return -EINVAL;
++			}
+ 		}
+ 
+-		sym_vmlinux = !strcmp(sym_objname, "vmlinux");
++		if (!reload)
++			sym_vmlinux = !strcmp(sym_objname, "vmlinux");
++		else
++			sym_vmlinux = sec_vmlinux;
+ 
+ 		/*
+ 		 * Prevent module-specific KLP rela sections from referencing
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.47.3
 
 
