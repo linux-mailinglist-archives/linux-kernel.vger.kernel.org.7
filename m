@@ -1,109 +1,99 @@
-Return-Path: <linux-kernel+bounces-737999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8967DB0B301
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 02:37:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1129AB0B303
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 02:41:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1066178B3A
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 00:37:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D788178C03
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 00:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25DE61E502;
-	Sun, 20 Jul 2025 00:37:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E3624B28;
+	Sun, 20 Jul 2025 00:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="Q9RFh8dR"
-Received: from r3-18.sinamail.sina.com.cn (r3-18.sinamail.sina.com.cn [202.108.3.18])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="f7g4d8kG"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21178746E
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 00:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752971827; cv=none; b=doibifyW8cNXUbQsl+XrdbsEfWtNIZ8BPJIIRDSfwkRGO50sElBvlCbgpiDyOhjoiZMli1Ik1PtD2yG2Tri9iarNgHjTmuOwVm/6eQQg4yYueGcpL89pnKqfoEalAIOinGsq7WOIwok75LD/LoGfbfXtE/jf6c+Vm3cMrJZs6q0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752971827; c=relaxed/simple;
-	bh=6qtrxPSjW9+vbUHBiMG+mLCpT57f2dPKkzB+oCglAHo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EaOm3Zkv9vr6hzsskI5sywN5s2SkUpfY3NHLOhSwzrXCkamsbYqh/7UPfVJfFXu9wEZm7bdfO4vdbyEXkfjzd4P6jaEnxSXyu1otlSwpVxM8X96JTLkCzOocbeb8wpsPisobTeP0MCp2xvM/riEdswc0R7XEC5FKBBrEUYmKZxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=Q9RFh8dR; arc=none smtp.client-ip=202.108.3.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1752971823;
-	bh=gjPgjkO3MuXX+Ei7xYhvDfxh/tU/7TdFZmzj7UpwMT8=;
-	h=From:Subject:Date:Message-ID;
-	b=Q9RFh8dR9Aq7ASq3wLGhz9uprLnrNYdZk8fNALpNoq/HLv5NgqVYMU0oyyRrpQYz7
-	 sUywKOmY8zcFRIka3N9WRqxb9kk4Nuh0bJnGvaDY4Wt3RbsOnIeBp2dE7dDKoxQc7s
-	 76mFKSna5Ux/mYQzhdJt+eVji21Ldnm/8Qr76A1U=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.32) with ESMTP
-	id 687C3A0200000D29; Sun, 20 Jul 2025 08:36:19 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 7588014456948
-X-SMAIL-UIID: 47463F883626433296F0ADDF9B64B419-20250720-083619-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+01523a0ae5600aef5895@syzkaller.appspotmail.com>
-Cc: axboe@kernel.dk,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [io-uring?] KASAN: slab-use-after-free Read in io_poll_remove_entries
-Date: Sun, 20 Jul 2025 08:36:06 +0800
-Message-ID: <20250720003607.2491-1-hdanton@sina.com>
-In-Reply-To: <687bd5fe.a70a0220.693ce.0091.GAE@google.com>
-References: 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 950151E502
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 00:41:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752972100; cv=pass; b=jSOW58EM+JWkFi5o6k1HuZXWSIaYY/yK0V0pko24tpCEcvMq8ZXlu/eNplN1wyppzZDTb/TWko0umjzr36M/Oh81Yc91PMq7li7D8Vx4N+gp+F5wI3/tMP29V+jUkX1TeRAKke93ltKhdXJJaY2QZVJuqX3ObJDkhN9DONMq0s0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752972100; c=relaxed/simple;
+	bh=0MzLUwc2AwbEQIEJCqyun7kRB8Z38oulGqcv7JkkXDI=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=CH6dmsjPhfDpStUmMGAmRP1dhgNdZoOE3UqA7tTVfeBEXfvEdYvFHDSL8jlGinrkOceE9PMqKTYUUZU3bc0s5s/flhXF6QCxLxm0UFxzfVVLQGQcTcXLAdIwM7y7HNVq9hP1FpHPK7SLBE0Z0N4XOoKE4JH4lx+q+GRbGZeXLqA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=f7g4d8kG; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1752972085; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=cAkYgHtv37ehENtfCSx/MN+lq9+Ylrb6iKdrxUJuM+5FMG77INAPMgkMLsAVBXlTbFjr4sZtJZ4Oux0or0jQWEUadg1/VVEhwN7sNJfOM/mkaSH1YfYI5tEPnjKc+QgMSrRNxHeTdBz3SS34pjhgPiuCMOiQuEV1au+rg+gMfvc=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1752972085; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=vvJnn10fiOWDfWVPGX6ZaeZ4E5cJTo1UUcUc8Cx/ki0=; 
+	b=XXn+iv0PVSPCUzkeF1MYUf5E9ztSheUr0IT78Nxxycd9xLidbQ/k3C6ldh/OItWVl9CK5cGoszb5AXDBzk8z8ESaQpA+Na4RkFVDN1sb8/xUHN5aAd7h13kvtX0JSdwe8tXMmil8g7Ffh+NdDukHJqCw5puELzEDz1silqeq0vQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752972085;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=vvJnn10fiOWDfWVPGX6ZaeZ4E5cJTo1UUcUc8Cx/ki0=;
+	b=f7g4d8kGb7hGMsNPPrvaYEyiryugGXPXgWXoE9wrp6MUzjdJltKbYMiPmIfRkB2H
+	iyaVJktaUc9rRZ3URyilTvisasCFRiJypDZtFziiav5Ext0k64mb/Ra/TPEHPtbQVs0
+	6tKQEWRilNwNBGhtaKdcwatHqcW/F3Ketrtq1s3o=
+Received: by mx.zohomail.com with SMTPS id 1752972082801374.456597010289;
+	Sat, 19 Jul 2025 17:41:22 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH 0/9] drm/panthor: add devcoredump support
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250720000146.1405060-1-olvaffe@gmail.com>
+Date: Sat, 19 Jul 2025 21:41:06 -0300
+Cc: Boris Brezillon <boris.brezillon@collabora.com>,
+ Steven Price <steven.price@arm.com>,
+ Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <0198AAC0-2F53-4A20-A869-9D720A086818@collabora.com>
+References: <20250720000146.1405060-1-olvaffe@gmail.com>
+To: Chia-I Wu <olvaffe@gmail.com>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-> Date: Sat, 19 Jul 2025 10:29:34 -0700	[thread overview]
-> Hello,
+Hi Chia-I Wu :)
+
+> On 19 Jul 2025, at 21:01, Chia-I Wu <olvaffe@gmail.com> wrote:
 > 
-> syzbot found the following issue on:
+> This series adds devcoredump support to panthor.
 > 
-> HEAD commit:    4871b7cb27f4 Merge tag 'v6.16-rc6-smb3-client-fixes' of gi..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1288c38c580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=fa738a4418f051ee
-> dashboard link: https://syzkaller.appspot.com/bug?extid=01523a0ae5600aef5895
-> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1688c38c580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=166ed7d4580000
+> This is written from scratch and is not based on the prior work[1]. The
+> main differences are
 
-What is difficult to understand is why rcu failed to prevent the uaf.
+I wonder why this was started from scratch? IIRC, that work stopped, among
+other things, because we were not sure about what exactly to include in the
+dump. I don't think it warranted a completely new implementation, IMHO.
 
-#syz test
+Do you plan to work on the userspace part as well?
 
---- x/io_uring/poll.c
-+++ y/io_uring/poll.c
-@@ -143,6 +143,8 @@ static inline void io_poll_remove_entry(
- 	struct wait_queue_head *head = smp_load_acquire(&poll->head);
- 
- 	if (head) {
-+		if (list_empty(&poll->wait.entry))
-+			return;
- 		spin_lock_irq(&head->lock);
- 		list_del_init(&poll->wait.entry);
- 		poll->head = NULL;
-@@ -416,7 +418,7 @@ static int io_poll_wake(struct wait_queu
- 		/* optional, saves extra locking for removal in tw handler */
- 		if (mask && poll->events & EPOLLONESHOT) {
- 			list_del_init(&poll->wait.entry);
--			poll->head = NULL;
-+			smp_store_release(&poll->head, NULL);
- 			if (wqe_is_double(wait))
- 				req->flags &= ~REQ_F_DOUBLE_POLL;
- 			else
---
+-- Daniel
+
 
