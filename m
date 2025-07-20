@@ -1,115 +1,187 @@
-Return-Path: <linux-kernel+bounces-738427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B01AB0B82A
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 22:38:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E6B2B0B831
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 22:58:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76F543B8460
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 20:37:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43461189853D
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 20:58:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BB6E1D619F;
-	Sun, 20 Jul 2025 20:38:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF1C2264AD;
+	Sun, 20 Jul 2025 20:58:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GZFVmnC3"
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qyk3beSc"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A95C1DF96F;
-	Sun, 20 Jul 2025 20:38:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D8C1EB5F8;
+	Sun, 20 Jul 2025 20:57:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753043898; cv=none; b=FHTGN23sGMv3nbBG/LEVj+HS6BX4UKvYmiNcMdBkNM5W7eamEDd6X8aZo+hlKkwHbErx/IcJKoIYRxwbQ99QHHpWNbMmQm3XGEKkchqrYPtlDp+2tZLu6afn2LI0MWyXeMKMQkJVAFPPkN97Ruk8xHESnIAOePmj6hnT79nDiMU=
+	t=1753045080; cv=none; b=mncatETmWZJFHFMqfPcDJR52K0yiMxD+baQF1FS20X14o+KdIqKa8BnLUSns51JwKLAOm31c4SquxhMliz6tO3ZyXGsVzj+fDTGSGD0LacrBHmuh2abz/T/ok56g8df2wBq06RbNR4ADqeod8yaXcbwAIGBCM1mXn37ou+uT3jU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753043898; c=relaxed/simple;
-	bh=pzq+r9yMIm0uTkpbSqWC8pZkfh6urePDYePki9/XTlo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Bdrsb6S3uvmODoB3dgz/zpeOo6IF5FpxomXmF0hZKRqW101jbiwQHwX8L/BWpshoGzMW2QOV/QMJbcOtyhw0wHiDxAjG4G/gxwdW35ejfBQYnRL4i5pWpFvN3/XdBtdKg/k21BZ+yqg711axgiaTUUxI9qzo/cbbazt3ooI+dhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GZFVmnC3; arc=none smtp.client-ip=209.85.167.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-41b6561d3c6so591500b6e.2;
-        Sun, 20 Jul 2025 13:38:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753043896; x=1753648696; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pzq+r9yMIm0uTkpbSqWC8pZkfh6urePDYePki9/XTlo=;
-        b=GZFVmnC3wKYnl/cJkf0+N48gMBpw4jVqds8haEWFGIsaU+X+hLwh7fD0wBAwaVIOBO
-         RV4e6OoDkIYCR+ymqVib4f3/EKKNVndLOzl2vOMRHFb4wWQXjn+iLKCDrolgo0Qc37Zx
-         AN2tsxU/Dq7pKUnuD++yr/9fNfslWGeAxHnheP5YVnfHQ5VUrAnImFihiZopu+t+mOh2
-         wUO2e/gOymc3bXlqESEqaC7n1S96wGAikO9R+me1TkhMWdFISgZr3dqNC3DdMGRBuW9m
-         Xar1rv+vIH9QE0Yi711+nQMMUFCE6PGFYA3wnt3NYO501AxOF6MwyvkiRFSBZtgj8CQR
-         EISA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753043896; x=1753648696;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pzq+r9yMIm0uTkpbSqWC8pZkfh6urePDYePki9/XTlo=;
-        b=nkOKdZmax2MsQ8eqO5/TH3b26mFSPwYfCdbC6JxKKAguXDucA9hrMLpNaNXSWXW3kg
-         7XqdHWSI2AMfrz0tnxvOF0giWf0WF5SI1KPDCtdN+WPKSCGfAYLaOGDCQGJznTxvMNIg
-         V/Yg3A/SCdUUEGOAmCKrVcArNUC0Qj6PhVYq11Le1dgMBWxR4dUwlWxWfmndV+ljD9so
-         97ZDueWYD0ct2s3/+oLmbakmi3LhuVOfsRJlTLREWhyr0tSgFOowKdXZLKd7wKSM6WSb
-         h5VdxpiU/XkXU9omb+J8nFBcLZB/zdtEbjYo6cfnm88GvzDTeoXFY8Yp3KF2nbBYkrgF
-         4fBw==
-X-Forwarded-Encrypted: i=1; AJvYcCWjXeQKte712lVz3SVYCDM5DHOqOg5uQji7piqplOSkCvKMvIeiJSRhE6t9yEFPdbiPYBtsYQbBtHpxbMHz@vger.kernel.org, AJvYcCXHfTyhciDPr1UEL1QD9AJANySJRDlPNx3nLK35HVwCmMtaRDp91Iegn04YX2/h7gcJVHMzSMcrtxBj@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5t5OrNmijdR4vYPREeUZIP56UK2dSDD83vx1G8f88c5Yo/JAn
-	VuF3CwAadYlqF1bXMS4xXD9y/y3IpNR3RitbQ2+Q2C7aI2hEW40xQ6v3y4VMDeZ+mPtsGE/spB4
-	Gc6uQnwrTWPK9Goy3ries4McvyRULUJs=
-X-Gm-Gg: ASbGnctyObtPWyj2q9wv8PLriKCr9VDVCYwvFLNaDAtoj6P21Lu9NcYnJaZ9p4PiEJJ
-	tnuN7ORE2nzcj7ftpxJu2cU/BBliIU0WPY5AdTIzVjCbvjLNFVJbcihTAmeYTIn7d6XJjPxY+jE
-	mrKU06g86YIV2BE6SJ0qWqyiwo/0rDbxRlhNj7MF9XJrnY1in+kEA/khR24vfMoQ4wvq5IfgK9r
-	NrT6pdZ
-X-Google-Smtp-Source: AGHT+IFqM5NWjeucoA8iIWZcczbHnSPghvrG/jBV6uyfAA3kNLOPfjqdTo8q+7Q/oChHK5krN/lZwLiMN7UUnVF4/1s=
-X-Received: by 2002:a05:6808:3010:b0:41c:cbbc:8abe with SMTP id
- 5614622812f47-41cf04d9d0amr12433440b6e.31.1753043896177; Sun, 20 Jul 2025
- 13:38:16 -0700 (PDT)
+	s=arc-20240116; t=1753045080; c=relaxed/simple;
+	bh=cglrMTNOlymVdsRgClIXmkOFe9RyxcrirA8koj9oolY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=loUb/Jdsk8jNcbMD3/n0+tQPml73XlldqHx53rwxSsaAUO1Cgmijl0QuW4qaWhMjXFjQvdMV4Q461HXWcORwZTrlgIOPaKvy4ZzE3LfpdjkjOV2px3KVUez09e9DGxDUYXqaLlqR0CScUqew2F73tS5DK1puWhIUSLu8Q0AQ0qM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qyk3beSc; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56KHe8gl015475;
+	Sun, 20 Jul 2025 20:57:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=2sWADe1dXy0hBSs6QJsMutuT038sEmKP64tXiwMPX
+	Ro=; b=qyk3beScbCapiqGtxTCwbyHXczP1ZqfZRDOIutVjWISo0ZXfE1tw5RQ9U
+	GMDFYffNCh1DtSjlG/0FNJs4zAUx1sBvPSM1o3X8a+F8SG8DLbKkz3GlCF+QEILc
+	9FdBN3nchUJo3HKglP0AQq4MISB2XXJalKRqVbeQbkQhlxkG5XcI/WawmMOe2835
+	GjZTBz78+puHqK6Bs8wblA5ZrDsykMhT3CAr8KmynmWtLRxZuDDzYks9YzpCPL4p
+	hAWdKy89ZmBN939z8RXE2W4YLaeXtmwI/5GCRU2LYgRboqGPIQZpM7CYjgUw1mao
+	rAPC2bz6Kx9kdb+HIg5ktXOS97/Rw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4805uqngmh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 20 Jul 2025 20:57:40 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 56KKvd8h004450;
+	Sun, 20 Jul 2025 20:57:39 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4805uqngmf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 20 Jul 2025 20:57:39 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56KGpapa005445;
+	Sun, 20 Jul 2025 20:57:38 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 480tvqjeju-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 20 Jul 2025 20:57:38 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56KKvbb938994204
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 20 Jul 2025 20:57:37 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 292D520043;
+	Sun, 20 Jul 2025 20:57:37 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D84F020040;
+	Sun, 20 Jul 2025 20:57:34 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.16.241])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Sun, 20 Jul 2025 20:57:34 +0000 (GMT)
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>
+Cc: Jan Kara <jack@suse.cz>, Baokun Li <libaokun1@huawei.com>,
+        Ritesh Harjani <ritesh.list@gmail.com>, Zhang Yi <yi.zhang@huawei.com>,
+        linux-kernel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: [RFC v4 0/7] ext4: Add extsize support
+Date: Mon, 21 Jul 2025 02:27:26 +0530
+Message-ID: <cover.1753044253.git.ojaswin@linux.ibm.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250717072209.176807-1-peter.chen@cixtech.com> <20250717072209.176807-6-peter.chen@cixtech.com>
-In-Reply-To: <20250717072209.176807-6-peter.chen@cixtech.com>
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Date: Sun, 20 Jul 2025 15:38:05 -0500
-X-Gm-Features: Ac12FXypnws4z96JaG_5CTTaH26H_l_f9V-btMxxJmE2pbuUWr7F44HPoNjyEoI
-Message-ID: <CABb+yY0toMbsRkzBO4fpR=r2KsTfT9ms=ZYQ9r=yhsB_YY88AQ@mail.gmail.com>
-Subject: Re: [PATCH v10 5/9] mailbox: add CIX mailbox driver
-To: Peter Chen <peter.chen@cixtech.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, cix-kernel-upstream@cixtech.com, maz@kernel.org, 
-	sudeep.holla@arm.com, kajetan.puchalski@arm.com, eballetb@redhat.com, 
-	Guomin Chen <Guomin.Chen@cixtech.com>, Gary Yang <gary.yang@cixtech.com>, 
-	Lihua Liu <Lihua.Liu@cixtech.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: cnUZ-b88tUJELTxcqGwO3-RMQXp5erO7
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIwMDE5OCBTYWx0ZWRfXxU8/qxKcsHvB
+ ZxyxfUOqkQ/KkxG5+HZy/vXi+3Uen42+GSEYfPUAPHGzHRm7Skl4uNPrEodyDEeEStZdEHaU1WH
+ jlsN5ysHZrIiisUQVEvcJx37ut8CcGR3xJconzpgkwvsuNCEnzFReAuCC4XNNOv/Wq3RfWR/ZYH
+ Vxcqqn4gFrzwd03SEznh02/07c1rLyTsoK8FNzHsMRDCnZ3bfV2HVkXNVoA0u60bLfhyt4UhqC5
+ QAo/LHOB7zbhm/wnWfvIVQ3LuE6zKfg0gCaww+ARqcZE2yAg+4nIAjFi3YGgeo+YyrMQ11DE19k
+ +1x5fk2mCmt9GauqYYmaiTx6XCCpXwT6Cx940Ns2JEEq5ReIlC/efaldKgYTSdVD2GeHVmlcEeO
+ AR1r+5Nu7JODRunvGAwKJD5by7nJgX6hhWN3S0T4hLeN7DxUPAi8i8F9ssGsDPWNhUTkxrv3
+X-Authority-Analysis: v=2.4 cv=dpnbC0g4 c=1 sm=1 tr=0 ts=687d5844 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=qLmxhxPPVih0f9aMkoIA:9
+X-Proofpoint-GUID: Zk5eZjwC0kt3Y6sJhqSGHRZakc3pB02x
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-20_01,2025-07-17_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 impostorscore=0 suspectscore=0 adultscore=0 phishscore=0
+ lowpriorityscore=0 priorityscore=1501 bulkscore=0 mlxscore=0 malwarescore=0
+ mlxlogscore=999 clxscore=1011 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507200198
 
-On Thu, Jul 17, 2025 at 2:22=E2=80=AFAM Peter Chen <peter.chen@cixtech.com>=
- wrote:
->
-> From: Guomin Chen <Guomin.Chen@cixtech.com>
->
-> The CIX mailbox controller, used in the Cix SoCs, like sky1.
-> facilitates message transmission between multiple processors
-> within the SoC, such as the AP, PM, audio DSP, SensorHub MCU,
-> and others.
->
-> Reviewed-by: Peter Chen <peter.chen@cixtech.com>
-> Signed-off-by: Guomin Chen <Guomin.Chen@cixtech.com>
-> Signed-off-by: Gary Yang <gary.yang@cixtech.com>
-> Signed-off-by: Lihua Liu <Lihua.Liu@cixtech.com>
-> Signed-off-by: Peter Chen <peter.chen@cixtech.com>
+This is the v4 for adding extsize support in ext4. extsize is primarily
+being implemented as a building block to eventually support multiblock
+atomic writes in ext4 without having to reformat the filesystem with
+bigalloc. The long term goal behind implementing extsize is two fold:
 
-Acked-by: Jassi Brar <jassisinghbrar@gmail.com>
+1. We eventually want to give users a way to perform atomic writes
+without needing a FS reformat to bigalloc.
+  - this can be achieved via configurations like extsize + software
+    fallback or extsize + forcealign. (More about forcealign can be
+    found in previous RFC [1])
 
-Thanks
-Jassi
+2. We want to implement a software atomic write fallback for ext4 (just
+like XFS) and at the same time we want to give users the choice of
+whether they want only HW accelerated (fast) atomic writes or are they
+okay with falling back to software emulation (slow). Wanting to opt out
+of SW fallback was also a point raised by some attendees in LSFMM.
+  a) For users wanting guaranteed HW atomic writes, we want to implement
+  extsize + forcealign. This ensures atomic writes are always HW
+  accelerated however the write is bound to fail if the allocator can't
+  guarantee HW acceleration for any reason (eg no aligned blocks
+  available).
+
+  b) For users which prefer software fallback rather than failing the
+  write, we want to implement extsize + software fallback. extsize
+  ensures we try to get aligned blocks for HW accelerated atomic writes
+  on best effort basis, and SW fallback ensures we don't fail the write
+  in case HW atomic writes are not possible. This is inline with how XFS
+  has implemented multi block atomic writes.
+
+The above approach helps ext4 provide more choice to the user about how
+they want to perform the write based on what is more suitable for their
+workload.
+
+Both the approaches need extsize as a building block for the solutions
+hence we are pushing the extsize changes separately and once community
+is happy with these we can work on the next steps.
+
+changes in v4 :
+- removed forcealign patches so we can independently review extsize and
+  then build on that later
+- refactored previous implementation of ext4_map_query/create_blocks to
+  use EXT4_EX_QUERY_FILTER
+- removed some extra warn ons that were expected to hit in certain cases
+
+[1] RFC v3: https://lore.kernel.org/linux-ext4/cover.1742800203.git.ojaswin@linux.ibm.com/
+
+Testing: I've tested with xfstests auto and don't see any regressions.
+Also tested with internal extsize related tests that I plan to upstream
+soon.
+
+Ojaswin Mujoo (7):
+  ext4: add aligned allocation hint in mballoc
+  ext4: allow inode preallocation for aligned alloc
+  ext4: support for extsize hint using FS_IOC_FS(GET/SET)XATTR
+  ext4: pass lblk and len explicitly to ext4_split_extent*()
+  ext4: add extsize hint support
+  ext4: make extsize work with EOF allocations
+  ext4: add ext4_map_blocks_extsize() wrapper to handle overwrites
+
+ fs/ext4/ext4.h              |  15 +-
+ fs/ext4/ext4_jbd2.h         |  15 ++
+ fs/ext4/extents.c           | 229 ++++++++++++++---
+ fs/ext4/inode.c             | 485 ++++++++++++++++++++++++++++++++----
+ fs/ext4/ioctl.c             | 122 +++++++++
+ fs/ext4/mballoc.c           | 123 +++++++--
+ fs/ext4/super.c             |   1 +
+ include/trace/events/ext4.h |   1 +
+ 8 files changed, 881 insertions(+), 110 deletions(-)
+
+-- 
+2.49.0
+
 
