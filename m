@@ -1,114 +1,77 @@
-Return-Path: <linux-kernel+bounces-738050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D7A9B0B3A5
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 07:50:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEB23B0B3AA
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 08:04:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DC9B3C171D
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 05:49:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D2943B255F
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 06:04:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42F501A841A;
-	Sun, 20 Jul 2025 05:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D24419E7D0;
+	Sun, 20 Jul 2025 06:04:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b+eME1NM"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AEzqdiX6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646DC18FC91;
-	Sun, 20 Jul 2025 05:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D19876034;
+	Sun, 20 Jul 2025 06:04:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752990611; cv=none; b=cBLZsfd068VFxj9e4xmEXAFltLrTAaI9vjqwgBqp8uC8cx4NKD9WxvrvX9kJcr8O7EcCwIPK+OMHIZAf0lnVu7x6DVnhWAY1qyHe0NCMgs0HUH23TA/2xNLdf0q6ydpx/ajeF9V0R9y+nbOTGm373nMsBs62zc68MsKvMrqv6+4=
+	t=1752991475; cv=none; b=rE+Wu+U4dqffL3VqW1j7QA8+Egtu36WQmebNPlBv8dcl+AfwaaAq3WziqhWIx/8v42PQMQNauRcDZt/YrDupmC+NgvkPMUZMvrn5qxay3xPzE9O3frlvMLgcNA6y8jL+Kx5gsX9EPZ9+iDZWETGahaaIGfVXcJ0ZWtlOYeyTIgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752990611; c=relaxed/simple;
-	bh=3U6UxsWky3dahjtmkmt2ApoQswLk4/FsImCKSI7EuI8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yl3YnzYwb+03XbaTDEX5e2mY9JSxDsRrqIhhXYYB84WYw+PB/LvSlnj8z7vDjZ60vdTD+/85nLZl9zp2Obl8ADtzhcHBbsLb0NzQSMonn0mtM7Xwdo8vdqN8bKCxJZXNynmlOuZl1G1lNrpnnj9Y/woEN1Q1vCvUe9VHpGbd7L4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b+eME1NM; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-3139027b825so2625974a91.0;
-        Sat, 19 Jul 2025 22:50:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752990609; x=1753595409; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RItHMLVgJL1j/S3znZFuA/rLavbPRS5U0ohgaBq2gAo=;
-        b=b+eME1NMbKiCTS7aFy8IzMLZ7E7sDNubLlnU/jUNZ4MWXCCgFVfughgKmT0iW8tCrF
-         AtLAgYh0ODPM7jWHBhK2Zn1NsU94VqtqU3u2Abn9j1DFyGAY0dqTlFC0cminWzE16oXH
-         8NJ+JJ0CuhHhU5MGrKzR7sJbkwKDLZc/O1yBsuJA6n9IQDhntJNt5saiFY8JI5tcYGmU
-         8h8JEK5b/SlsDFoc/gXYf6McXCuhcnX1ValiQFFPM6/wEup626BwfkxK/sfmJ1aAuQ1E
-         C8zAylKKPoL85nmN7wUtUZi3bJ7mVAqDOoG2MZc1x36lS2cxRz54JnEh5DQWG0GELNJL
-         IlxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752990609; x=1753595409;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RItHMLVgJL1j/S3znZFuA/rLavbPRS5U0ohgaBq2gAo=;
-        b=bx8UcByC6ICX+KC6njtyPaa5MArDkfPko1TzhbCVg9nNYs1J3XrdoPIjaeG6L8JSp3
-         JYNbzaQLw21e1W37e1pdokAa+dXX3Hv3iSVcgP8qK5kDWB450+JUqYrJG1w51Fh1Rtkh
-         Wt5Ev+j9ZR9XzxJJTt7AlzltEkPhASgRDVaeD+zyYXz4gcJhryGk8TzrwWVb0YBnYrL4
-         kK2l9xRcCb6Vnhg17LorY4QvGrt/lqXHHydIUQWGk3oR49uLXgjEXjl22BV2DrszkA38
-         bvCLL6A3Ov1EdiokgRESRNQtsRbkKJOHy/0DVPqE329zcTICzBnvk2qNjEJvzpHxa/E7
-         KLDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXSMjvZ2Q1ChlgluCEz3mya+ER0JWfm0EK0P1w+/aIEkWamjXpEPBuT4CvJziBa0TOVf+Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGjuoyZdegzn0hu0ReIjxgdBxQZ1cFhNsTUFsy+kwB7HOUTjQ1
-	FVS4JRskxrtaJnlVoYk/ECmkvavH8z1d7OI7twFVCySMHF0QhE/2SEYqC4Svl8YAWpz3P/D/K6T
-	tASb3LYIeXqS/aRZKeK2vNQz2f5yQtdU=
-X-Gm-Gg: ASbGncuvXGhuuHmGMRuXgTktQ1Sy7uHFHPNnTL0QcMZXi+lCHWwZExmi5n2qnSycxaS
-	G3QtbVtSoDUNpou25SDNnldDSOwWqTPcZUPifT1LTHPU8yw6BS36XruwoXet85QPJHFKLlCLUYc
-	iLEl/TFJZ0GiDJRZP34RxQM3KBCFPHRTDC2zRuvpfBZXx0r55R1V7mb0mCt+YZPU/3PRvXL8U2a
-	qwr
-X-Google-Smtp-Source: AGHT+IHcjGGV4gYhksR5wBuYn6dSEtWgaAiKy1vlemWMF+3fAuzDMa/U6eALrEVWhdV8ChQjwDa9ez+dAEVRQCt3308=
-X-Received: by 2002:a17:90b:1e07:b0:311:9c9a:58d7 with SMTP id
- 98e67ed59e1d1-31c9f42e8a1mr22952797a91.19.1752990609559; Sat, 19 Jul 2025
- 22:50:09 -0700 (PDT)
+	s=arc-20240116; t=1752991475; c=relaxed/simple;
+	bh=An5k17U29r42lEnUbQ1RUElgiWJiY418MpStyGNPHHs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZWM9vtpkxb6SncuVZfboucHheEBjh97ldVEQiA4bxfjTqfhc1W4ntCCWICYkNYx/njX0QQD+ddJ6EiYg411b8Hq9xBxI3u7z/8WPrsooKjLMrUePAMmDes8105wace1QdtBh83v6C3LHYSziztfqjzL5QIQ3AdV8fvM/F1x+hjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AEzqdiX6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F10BBC4CEE7;
+	Sun, 20 Jul 2025 06:04:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752991475;
+	bh=An5k17U29r42lEnUbQ1RUElgiWJiY418MpStyGNPHHs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AEzqdiX6gdkruyVUJVxRX3yMN9q8VsmeQ4dhsFv2814b5GsxZNIZ/AJ9wgDhJ1x6Z
+	 Ag6s5Q2Hk1ldVgDTYWSICQiisgjYulKcjG6lMSxJkKxdYinCyQ/NygGMuGLkqXibZm
+	 /n8BGdzOPFLZKizfJD2Ln2TbblcfYrxi9ugf0GTdACYWxbutDcOd+JntJWo0/2Wgiy
+	 H/9JhooRySRyid1k2L4pI5DidOIYXdVOHGkt6q8rlaQmcy4lk+2dCvOFRBazFwiSIy
+	 p/aOkngwVNrXakLUDw3xlyNSYLRqIVZx10RzA3wsTZEf05iT8k3A5MQX9dpC241/ZJ
+	 GY/2Ct0dqWGzA==
+Date: Sat, 19 Jul 2025 23:04:34 -0700
+From: Kees Cook <kees@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the kspp tree
+Message-ID: <202507192304.01CC58A0F@keescook>
+References: <20250718204039.5a3c3bfa@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709033242.267892-1-Neeraj.Upadhyay@amd.com> <20250709033242.267892-36-Neeraj.Upadhyay@amd.com>
-In-Reply-To: <20250709033242.267892-36-Neeraj.Upadhyay@amd.com>
-From: Tianyu Lan <ltykernel@gmail.com>
-Date: Sun, 20 Jul 2025 13:49:33 +0800
-X-Gm-Features: Ac12FXyLuwSwZuxmIf6tMACoKGRhsl_cIyPsVf5-zrvZOqW8lxaUoPJzMndgeXA
-Message-ID: <CAMvTesBRE2oWxByrj6eztstOBF1t2MjukAfU3+Js1bJH-JRtxw@mail.gmail.com>
-Subject: Re: [RFC PATCH v8 35/35] x86/sev: Indicate SEV-SNP guest supports
- Secure AVIC
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Cc: linux-kernel@vger.kernel.org, bp@alien8.de, tglx@linutronix.de, 
-	mingo@redhat.com, dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com, 
-	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com, 
-	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org, 
-	hpa@zytor.com, peterz@infradead.org, seanjc@google.com, pbonzini@redhat.com, 
-	kvm@vger.kernel.org, kirill.shutemov@linux.intel.com, huibo.wang@amd.com, 
-	naveen.rao@amd.com, kai.huang@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250718204039.5a3c3bfa@canb.auug.org.au>
 
-On Wed, Jul 9, 2025 at 11:45=E2=80=AFAM Neeraj Upadhyay <Neeraj.Upadhyay@am=
-d.com> wrote:
->
-> Now that Secure AVIC support is added in the guest, indicate SEV-SNP
-> guest supports Secure AVIC feature if AMD_SECURE_AVIC config is
-> enabled.
->
-> Co-developed-by: Kishon Vijay Abraham I <kvijayab@amd.com>
-> Signed-off-by: Kishon Vijay Abraham I <kvijayab@amd.com>
-> Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-> ---
-> Changes since v7:
->  - No change.
+On Fri, Jul 18, 2025 at 08:40:39PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the kspp tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> ERROR: modpost: missing MODULE_LICENSE() in lib/tests/seq_buf_kunit.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/tests/seq_buf_kunit.o
 
-Reviewed-by: Tianyu Lan <tiala@microsoft.com>
---=20
-Thanks
-Tianyu Lan
+Thanks for noticing this! I'm not sure why my local builds missed it.
+Now fixed.
+
+-Kees
+
+-- 
+Kees Cook
 
