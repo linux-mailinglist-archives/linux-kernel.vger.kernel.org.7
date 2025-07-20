@@ -1,86 +1,88 @@
-Return-Path: <linux-kernel+bounces-738406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABD4DB0B7F5
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 21:38:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD9F1B0B7F6
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 21:38:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78C201897320
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 19:39:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC7443BD151
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 19:38:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171E21D8E01;
-	Sun, 20 Jul 2025 19:38:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E031223DD1;
+	Sun, 20 Jul 2025 19:38:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mMu/NQuR"
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xURukzX9"
+Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB4C51F5F6
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 19:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72A52236EF
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 19:38:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753040320; cv=none; b=UXC8xFUQ1zyJZzsTcwa9JKTTMfcmICoW6kCbU6uPZpFA8yXlYrD636+6xylkOl7OkqOFmGaUtHbqbk+FSZCIdWcrHbfdverKz3Zdp7E+2M/nqaGJSnTc77Qky7ddFx14Dae0XVBtLYDVJfjaCxsjFuxDCXG1ocqNL19ut3wHa/s=
+	t=1753040324; cv=none; b=fFbVzVlHrFrFlX6R+t+Tky+sD6VXtrLLC5EYD2Grz1eps5/Q4FAGwLUgvmj/OmqZ9bFbA1J66leF5lVhaCxKBp8/1QLF6tN46OJ7xxKaJd5YVtZzSoKtPUxozQ0R63AMqTzyLpwb5f+zyHnf5JAyRj/82pED9u6KPWFZdFQOCxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753040320; c=relaxed/simple;
-	bh=cPk3QUDJyicVsrvKeLaXhnNw3hfUKvYreFrFy6p94ao=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=c7o7Kx20lpKlCmCzIkRecKg+QZLgHjgrbH4ZtT31SLV6WyBqovkWlvk91r4g7qLTxvLMEZFo3rQTB9S4A82/mKqTaazbpUFZqbw0pE0UyiHTvfkaT0ztI1suie8lgJ5atz2mcVSvlp4Plr/Zf6zUkzffJ96QFevOBPcF3MXfk14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mMu/NQuR; arc=none smtp.client-ip=209.85.210.47
+	s=arc-20240116; t=1753040324; c=relaxed/simple;
+	bh=NGvVaxHT6GAmFiO4/MidCvEywAVxDk7Jl939F55Z0dI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m9HjtBKWh7wSvYm9C1qhrn9hIEWEk2NuW0lYXcaP13JViivi3+8WCzpwnXr9ufvaHKZ1NKnpINfX45IPNMbxIH9rPcDkf9WvIGXRdZRJXhIotwpGyQcLMHk9gcoRGbg3AjHBy1F050PWY/g3MuJmeGzdMh/O7PMPiq89sGCk35M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xURukzX9; arc=none smtp.client-ip=209.85.161.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-73e65c09828so2078126a34.3
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 12:38:38 -0700 (PDT)
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-615d75ee53dso115086eaf.0
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 12:38:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753040318; x=1753645118; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=STF4EnqDyXKLMLeHRmPBDx0M84uZz7Y9ipuUY9uInvk=;
-        b=mMu/NQuR0B6rRCqOBvW0hhQAicVcTUTSi2MHh7PVP6x5Tfbj4lTjx0O8KU6vXuW9NL
-         P558OLDpFxDj7Lqsypv1AeOBL6LLx5idg2C+RSZKCxAllx0iXzsw/wKdl/N5R1tGBhaI
-         7SX55Xid74pMpn6IqnRhqxeQXqdaxPYiTCdbrRG8pN3JacNGDMw+qxKS/EDwI0pHxynY
-         OQIXfrbV54iLzaqtLeAgUELgfjYXd10kgmH1MmalvA56PRonLmMO85M8yVda0ZIFGqHr
-         GIr6/9hBic3NbeYWNU3iqOhpkQPYG7lVYL4UhcSt5Q0LbtvQI/MSqCKaxnm00IFEL6/l
-         +Axw==
+        d=linaro.org; s=google; t=1753040322; x=1753645122; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=X8e0Rkt8jdkgvftQKNoZRYfHGuTcfUv00gpyykQyZ5M=;
+        b=xURukzX9xG/OwgS474fODizN51RwJT7HiKxjhoaHkXB/BmQt4vJX2WX0s7Ql2g1ALs
+         gWqsX1pVFv11bd5CMefY9iaJt3OchcllDfqr5gHjXP1wRVhUqMhvYkqMLc8xTAKKXU6N
+         QU25j5dQlsSnQxrFBgUusVgRrgq4krWXgE5rgSlRDJpZQ3aJEjqGNs346RrRxL/dmNXV
+         dVyzZ6d+FYNme9iLEsrNA24WE7OdhBeJ/VEB58xD0yQCCWKmtwMBc7RbzOoyNqj17pA8
+         jr4O50JEBOuTGKo5t7+O4NKck+uS2rlm5lUt7i0NfFa9FY8wzcrGcSCUNvDY2zEx2/pu
+         QYBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753040318; x=1753645118;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=STF4EnqDyXKLMLeHRmPBDx0M84uZz7Y9ipuUY9uInvk=;
-        b=PnuYhY2EHaMP7gNsjNDBx0qeKfzOliEPngSFVNQYdkW4+mwEQRiWXKWRx1TVy4vYUz
-         QXIefsa/2AX8xh9ekeNOHPXz1k/cMqbOA5f8vNM5WP/hWeaSi4bg6KmPymfPfOnGandZ
-         iWWwEYJ3mkmu2cOvtJKOf9GMCZDqwgac4BKbpqYI8TJ3m1De3QNU9FGWrQ68+xWOKbR5
-         aPl+WEp9jkpV4aYyAr2T8e1j+c0Hy6sv8m3vWLajZAf+dy/RldCSfJ7gUPV64onSmp9R
-         DltquCOSa3UFfcC8rytQSF60im+Wd+tbYnghSp2oAHWazKE1CBkiXAdX4BybVRF81Q/7
-         PHVw==
-X-Forwarded-Encrypted: i=1; AJvYcCWJyNO+zdaIhmd0YlEIjBr3J1YP8d/3oP73PrpN4ZvPpSVX41auqh3VUly59teqJgITBoAvYsrsgA7XvM8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZeoBpiu77dz/TCVzFsBIYVK+LTpqtKtuECWRqu7duttCxB2zN
-	4nOfeWSe4YIYsIjN+pX4fB5FnqCpr4blP7ogCQ7Jm7lsurAmyD3msA/eDROhkbKMooM=
-X-Gm-Gg: ASbGncvreTNKwoQHbsuRNt6WzFFLRI69wIP6Yfs7k0y1FyCaNUCgrp6XJKey8HBT0P1
-	jOysQMaChkq4VNuCXGuPrk16ylvpQL0MEoLzq8671/g/4RtEGGS3xYbu4mN84vMSRjnc0LBjl/F
-	3TXa0NTnYqwzLiFk3CMsY4T+ts9G4mZ2aJC5AtjJ2XfFjWcdAkkcTXwXv3HVWSLlOHg4fmrWXUd
-	JXeqCpJRCwuT/8jA9MScU3P/SRJDAFRFxhrKCFPd4vWxFGzFlVUJvH0BPyC5Kg5KlTUZ9D5o1Fl
-	uolFd5yI7CQ9BftmBO4a8/FAWJPRhzQs8fGSURfyENWPidM9zaHdroU/uVoSq10Uco67cddTQEf
-	a90dtzyTDn4VOtdNtMP3gQw==
-X-Google-Smtp-Source: AGHT+IFkKgtB3ObGVLZWp4E0IcFIPQvja+e9izOMOGhmXfiPr6edCos/deJ042mUxYWb2yIkng7kUw==
-X-Received: by 2002:a05:6830:8313:b0:72b:9316:d596 with SMTP id 46e09a7af769-73e751b5161mr8602757a34.3.1753040317899;
-        Sun, 20 Jul 2025 12:38:37 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753040322; x=1753645122;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X8e0Rkt8jdkgvftQKNoZRYfHGuTcfUv00gpyykQyZ5M=;
+        b=XUREINU6NtmNF37IAhJlYSA/BnXvz2nwhciuqMjLHLwUJzJsDE4gL5F7mW5PDnb9Wi
+         KKOi4e1DRGBZBx347g9pIZHcDqWsLrpjviDbgydUOy6tDnqbpuVAUwpeB8K872Phf9TH
+         1EHMZ/cflsiavoiNqeGJZvrwewjPQCPi/UVLs8uwPM+4aC1VDpEvQhVWEGaoh10HFr2s
+         QPPiOB/dcs+o0kPi/XFrol+W6Qn65ImHExg7dfxiyJV+mcUTSZw9qWmB/Nlnwh4isat8
+         SBT4l+TtDIPrNQ9VsKPYmjM1S+ZTeyEjjn8eSFxEL/8+nYdcQrdCTtxn6kVSBM+XcfgC
+         imLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZtmJGXrhAuBL1HHJR0vBmv6ywAb4GF1tvNRPZCGcubswy79nTPXRJboeIadviSN3igMISbjLe96v+WcQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwANxm2L+Tu+zrL3qXHGXVy/Yc+KktCI2qKW6O2Z/XHOGRjcJvD
+	TcGbxsRhbEDm17ZYrQfXoyY09jBZX83Bv4a/+UffCtznTpA2x5H6TCAUJxibJt3rBF9Pg5Ffla8
+	cCPuBIh0=
+X-Gm-Gg: ASbGncvgAiBkFM/GIjRl8e0p95dWVVZHOGxjbE8CbUHPn7S2R3dw7eCGZUhvUFANsTh
+	rT9cukgpIpmjqgkRY2hgyKZ15HOj6SLtnw8xMtBssq4WHzFoJHdG9Wtv0HXno6A66CRmWuPR6H0
+	dxsmLLrLEKeDjJ+afOrtif2/MtXE0qfrHlYG5feaAG7KVKGiC5pUtJfm+85q88b4ueSrHC63hEG
+	ZThbCfLFQ+Cucc0tZsQBWvBFhJs3ZD/YA1i5EOgBbny48o9B5gcdYXgaxfCUrjox5oW/s3WfHLv
+	tJigOArvqY+RbBEP5omH11ndvYDGjb16bhdO7hJ3QyBf1QgLFx4BfZJ+u/hAIotHtHotMowz1MM
+	+qXdURvni8JE=
+X-Google-Smtp-Source: AGHT+IGeTlhYB9KS9TF9xSDd7VU5hXZEme07PjGtrxZBrvFLIeMvThRyC/+06//IuEU+tzOyCgkyAA==
+X-Received: by 2002:a05:6808:3c4b:b0:41c:d19f:27a7 with SMTP id 5614622812f47-41d031f1b44mr15123791b6e.8.1753040321954;
+        Sun, 20 Jul 2025 12:38:41 -0700 (PDT)
 Received: from localhost ([2603:8080:b800:f700::1fec])
-        by smtp.gmail.com with UTF8SMTPSA id 006d021491bc7-615bcc8c2dbsm1341831eaf.20.2025.07.20.12.38.35
+        by smtp.gmail.com with UTF8SMTPSA id 5614622812f47-41fd10c2058sm1777647b6e.2.2025.07.20.12.38.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Jul 2025 12:38:36 -0700 (PDT)
-Date: Sun, 20 Jul 2025 14:38:28 -0500
+        Sun, 20 Jul 2025 12:38:40 -0700 (PDT)
+Date: Sun, 20 Jul 2025 14:38:35 -0500
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>,
+To: Sudeep Holla <sudeep.holla@arm.com>,
 	AKASHI Takahiro <takahiro.akashi@linaro.org>,
 	Michal Simek <michal.simek@amd.com>
-Cc: arm-scmi@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>
-Subject: [PATCH RFC v2 0/7] pinctrl-scmi: Add GPIO support
-Message-ID: <cover.1753039612.git.dan.carpenter@linaro.org>
+Cc: Cristian Marussi <cristian.marussi@arm.com>, arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH RFC v2 1/7] firmware: arm_scmi: move boiler plate code into
+ the get info functions
+Message-ID: <7a47cf3d-05e1-4702-87ef-cb7f36f03149@sabinyo.mountain>
+References: <cover.1753039612.git.dan.carpenter@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,37 +91,224 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <cover.1753039612.git.dan.carpenter@linaro.org>
 
-This is version 2 of the RFC.  The main reason I'm sending this is because
-there was a bug in the first version where it didn't calculate the offset
-correctly so pins and groups weren't linked correctly.
+This code to check whether the selector is valid and if the item has
+already been recorded in the array can be moved to the
+scmi_pinctrl_get_function_info() type functions.  That way it's in
+one place instead of duplicated in each of the callers.
 
-I've also fixed a few style issues that people pointed out.
+I removed the check for if "pi->nr_groups == 0" because if that were the
+case then "selector >= pi->nr_groups" would already be true.  It already
+was not checked for pins so this makes things a bit more uniform.
 
-These patches are basically as ready as they can be.  The remaining thing
-is to figure out the format to describe it in the device tree.  Actually
-that's probably already done, somewhat because people are already using
-SCMI pinctrl?
+I also removed the check for if (!pin) since pin is an offset into the
+middle of an array and can't be NULL.
 
-AKASHI Takahiro (1):
-  pinctrl: introduce pinctrl_gpio_get_config()
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/firmware/arm_scmi/pinctrl.c | 108 +++++++++++++---------------
+ 1 file changed, 48 insertions(+), 60 deletions(-)
 
-Dan Carpenter (6):
-  firmware: arm_scmi: move boiler plate code into the get info functions
-  firmware: arm_scmi: add is_gpio() function
-  pinctrl-scmi: add PIN_CONFIG_INPUT_VALUE
-  pinctrl: Delete PIN_CONFIG_OUTPUT_IMPEDANCE_OHMS support
-  pinctrl-scmi: Add GPIO support
-  pinctrl-scmi: remove unused struct member
-
- drivers/firmware/arm_scmi/pinctrl.c     | 142 +++++++++-------
- drivers/pinctrl/core.c                  |  31 ++++
- drivers/pinctrl/pinctrl-scmi.c          | 213 +++++++++++++++++++++++-
- include/linux/pinctrl/consumer.h        |   9 +
- include/linux/pinctrl/pinconf-generic.h |   3 +
- include/linux/scmi_protocol.h           |   2 +
- 6 files changed, 331 insertions(+), 69 deletions(-)
-
+diff --git a/drivers/firmware/arm_scmi/pinctrl.c b/drivers/firmware/arm_scmi/pinctrl.c
+index 3855c98caf06..d18c2d248f04 100644
+--- a/drivers/firmware/arm_scmi/pinctrl.c
++++ b/drivers/firmware/arm_scmi/pinctrl.c
+@@ -596,11 +596,19 @@ static int scmi_pinctrl_pin_free(const struct scmi_protocol_handle *ph, u32 pin)
+ }
+ 
+ static int scmi_pinctrl_get_group_info(const struct scmi_protocol_handle *ph,
+-				       u32 selector,
+-				       struct scmi_group_info *group)
++				       u32 selector)
+ {
++	struct scmi_pinctrl_info *pi = ph->get_priv(ph);
++	struct scmi_group_info *group;
+ 	int ret;
+ 
++	if (selector >= pi->nr_groups)
++		return -EINVAL;
++
++	group = &pi->groups[selector];
++	if (group->present)
++		return 0;
++
+ 	ret = scmi_pinctrl_attributes(ph, GROUP_TYPE, selector, group->name,
+ 				      &group->nr_pins);
+ 	if (ret)
+@@ -632,21 +640,14 @@ static int scmi_pinctrl_get_group_name(const struct scmi_protocol_handle *ph,
+ 				       u32 selector, const char **name)
+ {
+ 	struct scmi_pinctrl_info *pi = ph->get_priv(ph);
++	int ret;
+ 
+ 	if (!name)
+ 		return -EINVAL;
+ 
+-	if (selector >= pi->nr_groups || pi->nr_groups == 0)
+-		return -EINVAL;
+-
+-	if (!pi->groups[selector].present) {
+-		int ret;
+-
+-		ret = scmi_pinctrl_get_group_info(ph, selector,
+-						  &pi->groups[selector]);
+-		if (ret)
+-			return ret;
+-	}
++	ret = scmi_pinctrl_get_group_info(ph, selector);
++	if (ret)
++		return ret;
+ 
+ 	*name = pi->groups[selector].name;
+ 
+@@ -658,21 +659,14 @@ static int scmi_pinctrl_group_pins_get(const struct scmi_protocol_handle *ph,
+ 				       u32 *nr_pins)
+ {
+ 	struct scmi_pinctrl_info *pi = ph->get_priv(ph);
++	int ret;
+ 
+ 	if (!pins || !nr_pins)
+ 		return -EINVAL;
+ 
+-	if (selector >= pi->nr_groups || pi->nr_groups == 0)
+-		return -EINVAL;
+-
+-	if (!pi->groups[selector].present) {
+-		int ret;
+-
+-		ret = scmi_pinctrl_get_group_info(ph, selector,
+-						  &pi->groups[selector]);
+-		if (ret)
+-			return ret;
+-	}
++	ret = scmi_pinctrl_get_group_info(ph, selector);
++	if (ret)
++		return ret;
+ 
+ 	*pins = pi->groups[selector].group_pins;
+ 	*nr_pins = pi->groups[selector].nr_pins;
+@@ -681,11 +675,19 @@ static int scmi_pinctrl_group_pins_get(const struct scmi_protocol_handle *ph,
+ }
+ 
+ static int scmi_pinctrl_get_function_info(const struct scmi_protocol_handle *ph,
+-					  u32 selector,
+-					  struct scmi_function_info *func)
++					  u32 selector)
+ {
++	struct scmi_pinctrl_info *pi = ph->get_priv(ph);
++	struct scmi_function_info *func;
+ 	int ret;
+ 
++	if (selector >= pi->nr_functions)
++		return -EINVAL;
++
++	func = &pi->functions[selector];
++	if (func->present)
++		return 0;
++
+ 	ret = scmi_pinctrl_attributes(ph, FUNCTION_TYPE, selector, func->name,
+ 				      &func->nr_groups);
+ 	if (ret)
+@@ -716,21 +718,14 @@ static int scmi_pinctrl_get_function_name(const struct scmi_protocol_handle *ph,
+ 					  u32 selector, const char **name)
+ {
+ 	struct scmi_pinctrl_info *pi = ph->get_priv(ph);
++	int ret;
+ 
+ 	if (!name)
+ 		return -EINVAL;
+ 
+-	if (selector >= pi->nr_functions || pi->nr_functions == 0)
+-		return -EINVAL;
+-
+-	if (!pi->functions[selector].present) {
+-		int ret;
+-
+-		ret = scmi_pinctrl_get_function_info(ph, selector,
+-						     &pi->functions[selector]);
+-		if (ret)
+-			return ret;
+-	}
++	ret = scmi_pinctrl_get_function_info(ph, selector);
++	if (ret)
++		return ret;
+ 
+ 	*name = pi->functions[selector].name;
+ 	return 0;
+@@ -742,21 +737,14 @@ scmi_pinctrl_function_groups_get(const struct scmi_protocol_handle *ph,
+ 				 const u32 **groups)
+ {
+ 	struct scmi_pinctrl_info *pi = ph->get_priv(ph);
++	int ret;
+ 
+ 	if (!groups || !nr_groups)
+ 		return -EINVAL;
+ 
+-	if (selector >= pi->nr_functions || pi->nr_functions == 0)
+-		return -EINVAL;
+-
+-	if (!pi->functions[selector].present) {
+-		int ret;
+-
+-		ret = scmi_pinctrl_get_function_info(ph, selector,
+-						     &pi->functions[selector]);
+-		if (ret)
+-			return ret;
+-	}
++	ret = scmi_pinctrl_get_function_info(ph, selector);
++	if (ret)
++		return ret;
+ 
+ 	*groups = pi->functions[selector].groups;
+ 	*nr_groups = pi->functions[selector].nr_groups;
+@@ -771,13 +759,19 @@ static int scmi_pinctrl_mux_set(const struct scmi_protocol_handle *ph,
+ }
+ 
+ static int scmi_pinctrl_get_pin_info(const struct scmi_protocol_handle *ph,
+-				     u32 selector, struct scmi_pin_info *pin)
++				     u32 selector)
+ {
++	struct scmi_pinctrl_info *pi = ph->get_priv(ph);
++	struct scmi_pin_info *pin;
+ 	int ret;
+ 
+-	if (!pin)
++	if (selector >= pi->nr_pins)
+ 		return -EINVAL;
+ 
++	pin = &pi->pins[selector];
++	if (pin->present)
++		return 0;
++
+ 	ret = scmi_pinctrl_attributes(ph, PIN_TYPE, selector, pin->name, NULL);
+ 	if (ret)
+ 		return ret;
+@@ -790,20 +784,14 @@ static int scmi_pinctrl_get_pin_name(const struct scmi_protocol_handle *ph,
+ 				     u32 selector, const char **name)
+ {
+ 	struct scmi_pinctrl_info *pi = ph->get_priv(ph);
++	int ret;
+ 
+ 	if (!name)
+ 		return -EINVAL;
+ 
+-	if (selector >= pi->nr_pins)
+-		return -EINVAL;
+-
+-	if (!pi->pins[selector].present) {
+-		int ret;
+-
+-		ret = scmi_pinctrl_get_pin_info(ph, selector, &pi->pins[selector]);
+-		if (ret)
+-			return ret;
+-	}
++	ret = scmi_pinctrl_get_pin_info(ph, selector);
++	if (ret)
++		return ret;
+ 
+ 	*name = pi->pins[selector].name;
+ 
 -- 
 2.47.2
 
