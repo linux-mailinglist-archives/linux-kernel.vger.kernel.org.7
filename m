@@ -1,130 +1,144 @@
-Return-Path: <linux-kernel+bounces-737998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87183B0B2FF
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 02:35:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EBB2B0B2FD
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 02:35:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB9F8178ABE
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 00:35:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D24017894E
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 00:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8AED33993;
-	Sun, 20 Jul 2025 00:35:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD981DFF7;
+	Sun, 20 Jul 2025 00:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="HhUbH1e+"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="iuLOYmCl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 622612770B;
-	Sun, 20 Jul 2025 00:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752971711; cv=pass; b=rLGcZh1Sloz0J4sejCbrQmeeJXX1CnqHAxMZTf2bI/+xoG68n+SjrQ/X9/Bi8AUdMl/9rb7Wu6I7fn93gS2Sy6baik1CMwERMN8QkDrRpyeotybjZokEf/h0aAlwp41Rr1NOpGro0i3EHtupx/N9RrR9yI33HH0/H1XglICfcyc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752971711; c=relaxed/simple;
-	bh=HDIoeqn9e+rYQnfJ067hljH9zFzxB0jCy8mHESmaUm0=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=JFToNO7DqekLNrfSwp7FNo6zsJHlcyu7GfR3RGS/8NZdmW5Z45BGfNOF19tHOJjJjHQt/wrCLZV6IBNZUAJqVg6UDYB1DuUdn6Vj/d40LKMFOoqHoCR1hB1+o6YaWQ3Xszp3BfRIKb1PUmgbEFQRDVyymtRjYyIndAkMlYxKBx4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=HhUbH1e+; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1752971688; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=DuQeVYCmDEKoan5ifO2S8SAfqvau9PZUj8NogYxheUnCA/GDaxag6taN6lyeANTLALMz00+HBxvpjU2j0cA1h9O9L9AvxTOK4JfG//VR//ZxUHLVLgAAjmCAihQVNggdGteL2nvWI0mW/YH5KWZmRFdDuGQ4+DwJDmFW0UP9154=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1752971688; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=+oh6ARwng4DpdAfGJjaWcONvM1A731eJcDO1LFA43h0=; 
-	b=VJ06SxOm0A/O0iWq4nZIGeKWlS4BEQNtclq3VL0OTEoV6zna58upv/jxLtMfSUk7xBt+N2aPVSCa9//oH47zDWHOtMrBEzAmsKiDx/mW3HIMEHE/63RedAPrd6dAX4Z4jbP9Fqxpjm1unRn5OBUXHC6yY40ecYyBGQkpNR22+0I=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752971688;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=+oh6ARwng4DpdAfGJjaWcONvM1A731eJcDO1LFA43h0=;
-	b=HhUbH1e+zVA8AiIZ6nY0R6/WjRnknEG+rdUe3hCbsIjXia6iMg42XoBbwb3CQArg
-	IVtAYukxJ2DUAc+XA1xid5iD0zKLeahQqxc1Adei8+0Tiniifb87et/jMqQu75lgNSh
-	O2XYiewgkkvfp0ZQ2jrtx2Ock/UrCE2JgtFv7RiI=
-Received: by mx.zohomail.com with SMTPS id 1752971686447615.9635102011046;
-	Sat, 19 Jul 2025 17:34:46 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28EF9476
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 00:34:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752971696; cv=none; b=sEl1dM/5Dd025adtnSce3eWxhz8DqVx2UnheKQfJ/D1/2Q0ENE6CZDzTDTP0CTgv0JA1D7gUKxQH+xlWqh0GswlJxbw8C+aCmWl/Q2cPq/BMGtYzqVlZPqiWp50qMvsLJZR6Uv8iUT0J0eIihkTNdHBV1Qt5Z4hobUH8URSX1JI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752971696; c=relaxed/simple;
+	bh=yqcqSxRJPaa5WcY/AqX5FTjR6HbQANKo217deEzj74w=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=SiUOBFuxQ9KeAGqlty1ztvMfURWY/UysovP2zXiRG0QJH7G7aKmFjD2ekyycMkYSgWQD7i43P2Cx3+gRvYtvHZttif1P1jaoe4wrQIP7M/wcGJ4yHtPblOUP+MTlakxedmDstreeQqFXVwQAVbENg9DQ8nzGFavuoTMFccj3ofM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=iuLOYmCl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4CB0C4CEE3;
+	Sun, 20 Jul 2025 00:34:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1752971696;
+	bh=yqcqSxRJPaa5WcY/AqX5FTjR6HbQANKo217deEzj74w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=iuLOYmCl+d0Ogn4XM2NMCpdwaj6QHPz1+1O3DXx1N+HYNHRvoO3cAzgHMY+mX2xY5
+	 GCRjBDBHGZPdKLh1tLweUTME4SIrySHhhCPDdikvWj9DpVkLsWwse2OeDMS1DN4MSz
+	 MixC2cFSntKv10Vetalopb5UtLWYRrJvw89eAWMI=
+Date: Sat, 19 Jul 2025 17:34:55 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Kemeng Shi <shikemeng@huaweicloud.com>
+Cc: kasong@tencent.com, nphamcs@gmail.com, bhe@redhat.com,
+ baohua@kernel.org, chrisl@kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: swap: correctly use maxpages in swapon syscall to
+ avoid potential deadloop
+Message-Id: <20250719173455.35f8082916a76a416764d32d@linux-foundation.org>
+In-Reply-To: <20250718065139.61989-1-shikemeng@huaweicloud.com>
+References: <20250718065139.61989-1-shikemeng@huaweicloud.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH v15 0/3] rust: platform: add Io support
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <2025071913-coach-prior-d71e@gregkh>
-Date: Sat, 19 Jul 2025 21:34:29 -0300
-Cc: Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- Fiona Behrens <me@kloenk.dev>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <7C1E7AC4-67A0-4CD5-8B22-490F53BDBF1E@collabora.com>
-References: <20250717-topics-tyr-platform_iomem-v15-0-beca780b77e3@collabora.com>
- <2025071913-coach-prior-d71e@gregkh>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Greg,
+On Fri, 18 Jul 2025 14:51:39 +0800 Kemeng Shi <shikemeng@huaweicloud.com> wrote:
 
-> On 19 Jul 2025, at 05:01, Greg Kroah-Hartman =
-<gregkh@linuxfoundation.org> wrote:
->=20
-> On Thu, Jul 17, 2025 at 12:55:21PM -0300, Daniel Almeida wrote:
->> ---
->> Daniel Almeida (3):
->>      rust: io: add resource abstraction
->>      rust: io: mem: add a generic iomem abstraction
->>      rust: platform: add resource accessors
->>=20
->> rust/bindings/bindings_helper.h |   1 +
->> rust/helpers/io.c               |  41 ++++++
->> rust/kernel/io.rs               |   5 +
->> rust/kernel/io/mem.rs           | 283 =
-++++++++++++++++++++++++++++++++++++++++
->> rust/kernel/io/resource.rs      | 229 =
-++++++++++++++++++++++++++++++++
->> rust/kernel/platform.rs         |  60 ++++++++-
->> 6 files changed, 618 insertions(+), 1 deletion(-)
->=20
-> Who is going to be responsible for the new files you have added?
+> We use maxpages from read_swap_header() to initialize swap_info_struct,
+> however the maxpages might be reduced in setup_swap_extents() and the
+> si->max is assigned with the reduced maxpages from the
+> setup_swap_extents().
+> 
+> Obviously, this could lead to memory waste as we allocated memory based on
+> larger maxpages, besides, this could lead to a potential deadloop as
+> following:
+> 
+> 1) When calling setup_clusters() with larger maxpages, unavailable
+>    pages within range [si->max, larger maxpages) are not accounted with
+>    inc_cluster_info_page().  As a result, these pages are assumed
+>    available but can not be allocated.  The cluster contains these pages
+>    can be moved to frag_clusters list after it's all available pages were
+>    allocated.
+> 
+> 2) When the cluster mentioned in 1) is the only cluster in
+>    frag_clusters list, cluster_alloc_swap_entry() assume order 0
+>    allocation will never failed and will enter a deadloop by keep trying
+>    to allocate page from the only cluster in frag_clusters which contains
+>    no actually available page.
+> 
+> Call setup_swap_extents() to get the final maxpages before
+> swap_info_struct initialization to fix the issue.
+> 
+> After this change, span will include badblocks and will become large
+> value which I think is correct value:
+> In summary, there are two kinds of swapfile_activate operations.
+> 1. Filesystem style: Treat all blocks logical continuity and find
+> usable physical extents in logical range. In this way, si->pages
+> will be actual usable physical blocks and span will be "1 +
+> highest_block - lowest_block".
+> 2. Block device style: Treat all blocks physically continue and
+> only one single extent is added. In this way, si->pages will be
+> si->max and span will be "si->pages - 1".
+> Actually, si->pages and si->max is only used in block device style
+> and span value is set with si->pages. As a result, span value in
+> block device style will become a larger value as you mentioned.
+> 
+> I think larger value is correct based on:
+> 1. Span value in filesystem style is "1 + highest_block -
+> lowest_block" which is the range cover all possible phisical blocks
+> including the badblocks.
+> 2. For block device style, si->pages is the actual usable block
+> number and is already in pr_info. The original span value before
+> this patch is also refer to usable block number which is redundant
+> in pr_info.
+>
+> Link: https://lkml.kernel.org/r/20250522122554.12209-3-shikemeng@huaweicloud.com
+> Fixes: 661383c6111a ("mm: swap: relaim the cached parts that got scanned")
+> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+> Reviewed-by: Baoquan He <bhe@redhat.com>
+> ---
+> v1->v2:
+> -Fix typo
+> -Add description of behavior change of "span" in git log
 
-As Danilo said, there will be a separate entry for the Rust I/O code, =
-which
-I=E2=80=99ve agreed to share the responsibility for.
+I queued this change:
 
->=20
-> And no real objection, but no copyright info was added to them either,
-> was that intentional?  I know some companies frown on that as it goes
-> against their corporate policy (but some don't care, it's hard to keep
-> track of who likes what at times...)
->=20
-> thanks,
->=20
-> greg k-h
->=20
+> -Ensure si->pages == si->max - 1 after setup_swap_extents()
 
-Good catch. It wasn't intentional, but I don't think it will be a =
-problem.
+as a -fix against the v1 patch and updated the base patch's changelog,
+thanks.
 
--- Daniel=
+--- a/mm/swapfile.c~mm-swap-correctly-use-maxpages-in-swapon-syscall-to-avoid-potensial-deadloop-fix
++++ a/mm/swapfile.c
+@@ -3357,6 +3357,12 @@ SYSCALL_DEFINE2(swapon, const char __use
+ 		error = nr_extents;
+ 		goto bad_swap_unlock_inode;
+ 	}
++	if (si->pages != si->max - 1) {
++		pr_err("swap:%u != (max:%u - 1)\n", si->pages, si->max);
++		error = -EINVAL;
++		goto bad_swap_unlock_inode;
++	}
++
+ 	maxpages = si->max;
+ 
+ 	/* OK, set up the swap map and apply the bad block list */
+_
+
 
