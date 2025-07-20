@@ -1,50 +1,50 @@
-Return-Path: <linux-kernel+bounces-738064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9762B0B3CE
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 08:42:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C542CB0B3CF
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 08:47:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6685C189ABD7
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 06:42:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ED9D189B017
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 06:47:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446591B87C9;
-	Sun, 20 Jul 2025 06:42:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2F4D192598;
+	Sun, 20 Jul 2025 06:46:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OVFRIY/V"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="z+4sxQuc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E2BC19007D;
-	Sun, 20 Jul 2025 06:42:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B001EA65;
+	Sun, 20 Jul 2025 06:46:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752993752; cv=none; b=GKTUpBr9wIcyifEw5qoWExaq/2VacJLR0O4oT+Ohsj7tgzjCrzO2RzyMrmOa4VDPAZUwmfRn/kZEiFwV6/SjtRLmev6tRzgTrBdYL3vSwyeEMdTS6M+H0ywgjIjNDFLxiRcFTeVRextB2LNw4aOfdmi1iPLoqkQftfZAovS8ecw=
+	t=1752994014; cv=none; b=uMjJVM0s+rK7WUkqK+CJZCw/j+ifzHJS0r5j8ozTeZzJvnp7LMZNEM7jQqRCBv4BCySVmKj6hc46sMKeBA3CaeaO7WWJeilM1cvh3CvC97mMbwGOMImZIgSxSr+g+KlqiRBulHCat+FafpXdD0eem2GWdwbfS5eb7ZLgq+ZJ+ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752993752; c=relaxed/simple;
-	bh=fo0zS2ysVs4kd7RLHEALyxNgmeMSxxvJT+Gz2h0K8gs=;
+	s=arc-20240116; t=1752994014; c=relaxed/simple;
+	bh=4G77iiVz0cnG6W7mqdiFXyEcR7JkSteEAIvXb68rA4I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AQeWzHgfEOWkGt3IxRlpbyKic3p/1uvOZs46+51VHH6RqpqwSCY++8PGiEV0YL03EttBWDDkejg0cO9T4P4yIo3Y72YUq+Ttrwtph9WCSmq8Ic4lerht6x5f+L65+83OpNbiNxKax5y9qX4b4BVWyDERDwUz0c4EfThMS6w60pA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OVFRIY/V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94A8CC4CEE7;
-	Sun, 20 Jul 2025 06:42:31 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=BFFLZIqtk8ZwNlBYLia6PwDmo7/yxXBNl1mmGqb9O8d1euwVQxrm7MMezpzjba9WWIsIcicVtB5woM5kz2z+1zhNQOp+LnehFK4AqvoDMr60Uw+7VMCUD3JNH/Lt7DYBASoXsPm5U6CBIxrT0KWVnLlhvPcsfHJPyDbrU+DfDL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=z+4sxQuc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A09EC4CEE7;
+	Sun, 20 Jul 2025 06:46:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752993752;
-	bh=fo0zS2ysVs4kd7RLHEALyxNgmeMSxxvJT+Gz2h0K8gs=;
+	s=korg; t=1752994013;
+	bh=4G77iiVz0cnG6W7mqdiFXyEcR7JkSteEAIvXb68rA4I=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OVFRIY/VqJissrMNvgsVztBjHR4KK6EdoNb8YOmeXpZnwcntMCrf+bBxivjTKXEl0
-	 dU63hoDybxwtk8cEJRGOV9kmCfdgZ6IcpwFlcRXC6wS9j/maocnT8f78cIWRpHVIdi
-	 CH5EHVFRb2pFfi2pTOe8b7JUvkt15n05PIJSfGY4=
-Date: Sun, 20 Jul 2025 08:42:27 +0200
+	b=z+4sxQucVpWJv54bzVM/oAehhIJtjYUv5eeuQycvclFs6e+sGyeJMojAJOJAPSOuc
+	 hNZtq0gnZPMvJFQ0Kabi/sgwQfWB9RFNsNToRmeQMmF36dPdBc5RnO3K777tsBae0a
+	 azJu7wm7Ge65WW1CmiISKBe628pUECQ6s3NLNXdI=
+Date: Sun, 20 Jul 2025 08:46:49 +0200
 From: Greg KH <gregkh@linuxfoundation.org>
-To: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: rtl8723bs: Improve indentation consistency in
- rtw_mlme.c
-Message-ID: <2025072044-program-certified-8112@gregkh>
-References: <20250719230707.238377-1-vivek.balachandhar@gmail.com>
+To: Ali Nasrolahi <a.nasrolahi01@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
+Subject: Re: [PATCH] staging: rtl8723bs: fix coding style issues and improve
+ readability
+Message-ID: <2025072034-universal-tanned-3d03@gregkh>
+References: <20250719172346.23573-1-A.Nasrolahi01@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,37 +53,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250719230707.238377-1-vivek.balachandhar@gmail.com>
+In-Reply-To: <20250719172346.23573-1-A.Nasrolahi01@gmail.com>
 
-On Sat, Jul 19, 2025 at 11:07:07PM +0000, Vivek BalachandharTN wrote:
-> This patch cleans up inconsistent indentation in rtw_mlme.c to improve code
-> readability and align with kernel coding style.
+On Sat, Jul 19, 2025 at 08:53:46PM +0330, Ali Nasrolahi wrote:
+> This patch fixes several coding style issues reported by checkpatch.pl,
+> including:
+> 
+> 1. Comment formatting and alignment
+> 2. Clarifying parameter names for better readability
+> 3. Removing excess spaces and unnecessary semicolons
+> 
+> These changes are cosmetic and do not alter functionality.
+> 
+> Signed-off-by: Ali Nasrolahi <A.Nasrolahi01@gmail.com>
+> ---
+>  drivers/staging/rtl8723bs/include/basic_types.h  | 15 +++++++--------
+>  drivers/staging/rtl8723bs/include/hal_btcoex.h   |  8 ++++----
+>  drivers/staging/rtl8723bs/os_dep/osdep_service.c | 11 ++++++-----
+>  3 files changed, 17 insertions(+), 17 deletions(-)
 
-Ok, but:
+Hi,
 
-> @@ -119,7 +123,7 @@ struct	wlan_network *rtw_alloc_network(struct	mlme_priv *pmlmepriv)
->  		pnetwork = NULL;
->  		goto exit;
->  	}
-> -	plist = get_next(&(free_queue->queue));
-> +	plist = get_next(&free_queue->queue);
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-That is not an indentation issue.
+You are receiving this message because of the following common error(s)
+as indicated below:
 
-> @@ -141,7 +145,7 @@ void _rtw_free_network(struct	mlme_priv *pmlmepriv, struct wlan_network *pnetwor
->  {
->  	unsigned int delta_time;
->  	u32 lifetime = SCANQUEUE_LIFETIME;
-> -	struct __queue *free_queue = &(pmlmepriv->free_bss_pool);
-> +	struct __queue *free_queue = &pmlmepriv->free_bss_pool;
+- Your patch did many different things all at once, making it difficult
+  to review.  All Linux kernel patches need to only do one thing at a
+  time.  If you need to do multiple things (such as clean up all coding
+  style issues in a file/driver), do it in a sequence of patches, each
+  one doing only one thing.  This will make it easier to review the
+  patches to ensure that they are correct, and to help alleviate any
+  merge issues that larger patches can cause.
 
-Nor was that.
-
-I stopped reviewing here, sorry.
-
-Please only do one type of thing per patch.
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
 
 thanks,
 
-greg k-h
+greg k-h's patch email bot
 
