@@ -1,124 +1,114 @@
-Return-Path: <linux-kernel+bounces-738419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8002BB0B816
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 21:57:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85220B0B817
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 21:59:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B05ED1785FE
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 19:57:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB6973A8640
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 19:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16FAB22127A;
-	Sun, 20 Jul 2025 19:56:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29875221F0F;
+	Sun, 20 Jul 2025 19:59:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Y/WJKk4I";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="J0VCTLTo"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="s3GcqEp8"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B860D374EA
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 19:56:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955C51EA73
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 19:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753041414; cv=none; b=rqiEMkDfazEQcDCjwLUH1D1huIWS/P3O3RkwTffbxcysn2jxvtekf4CWWrn0RzsPGQiodMUJ/zhovPVuYQkJKOvYPV0KWNYaEO+6OTxBd4pKWv3U4Su02LZxxIlYXJ8EXgkREbjiKBw24Kjxg0jM/iOJi4sDssFS0y0RPwEyVJM=
+	t=1753041581; cv=none; b=mEjlZAwUJjJdQ7LzjtBoz46DwfN5PsBm2RwAVukJ4AdiwzQeCebpRryPNRL6mVoqn8WUtfKWch6tUjXKlMkQxkOP2/Cm9pOmC+TkxK/0t3Su0UkfX0I3NiTxobU/XkHfPd6ct9tN/sDnH9dpO+KHSvt+RhKenmbwvYtQHvqS8MY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753041414; c=relaxed/simple;
-	bh=0hAxktsI6HKh/I8PikjvqrfFM3YzFfIfAe3N2vxrl5c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sCJ77dGtKbrpXY7piLhN66O3+wYgms4kctwVI+FWdc+ZOv1enw6AXPvFbE2/b4JTvH4OynhJgQ68S9jo4Tw1RiZ7PMlt0xOR18RhjLmePrePqk6KXlf69ZHz8UYfYlo2RvamExI+GGPJg12XaDvvOUHmSyBO15GfvtAuaHOLSK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Y/WJKk4I; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=J0VCTLTo; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4blZ6h4g9Cz9tK6;
-	Sun, 20 Jul 2025 21:56:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1753041404;
+	s=arc-20240116; t=1753041581; c=relaxed/simple;
+	bh=Rr7gWtce0jtuqnCuffbrCSk5hpX8haog7UdUMZtr/XU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dLlDv1cIZ/T7D/ZGYNcLp+G82e6L4Ug9OOgGx+4+yPe0OjXQFwe++inRGompWd/Iybd6f24iWVZZIKuWYDHTPNjVfAPCgciF/KEoDZhMrQELMaLgmyibo80Qz3tu/QMA26u3aQWwhxkSmBCUkjdaxvXN6axrKoBuSSNph79aq4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=s3GcqEp8; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sun, 20 Jul 2025 21:59:02 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753041576;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=uGyE9d/XNI2XDNofnNseSp7f9u/AgFNDjaO+1oT6Aps=;
-	b=Y/WJKk4IELJeIUbeBZ2ccObyM9qNZFDWzHxgHNAUxmXjh2SBQD8HZEsQp5wcBW4XDqCbYO
-	DsqjGYAS37pJ7MViClgMzG/SWyZelGfZazmkVqKrD8M06vjC/C2NPfjnHxydIoCTh0prme
-	fhdbDBMQa4Dt5oWNEP03udW29iBVISYmKiFp5sw54JWeG1kQ82cCVBrjC18jjtoBXJWS0D
-	xLvucGRhVo93BiKIYiEDilCf6sovBTcCTP15G0zh7T1tjH0JwCLLIC4gdZNeyJztIW1U5+
-	UaXxVOqPYbKTTNlCH043Vk6R1ys+lwQqODnV9rrlNxple0WSv8t8l5JF7KuHJQ==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=J0VCTLTo;
-	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1753041402;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=uGyE9d/XNI2XDNofnNseSp7f9u/AgFNDjaO+1oT6Aps=;
-	b=J0VCTLToANOQ/5IWnFbV9PaJPySPMy5ANbH0GDIJtL993IPv9FxZkoMsOmXRlg32D0YrL5
-	OHjaHLWRA05Xc4Yfwf2AyzM5MRlhC9+U8VTA8Biro0ZXh4E30+dQA7IEx4tickTzjRP5Rc
-	kTMdAduwG2Z/gcEx1wzxTvD2P6ODGK0392uAN35WX3d6STkAkdDbjAFsPzxBjmm/UkQ3xN
-	lvty5FFRMOH4MBpkFzQ0bAQFaRGi3sM2PXrVHwejuzhABh0DjbDh8Jzf/Axfkv+kZEwLIm
-	JT7sGar8NzJJ4cwRRaujeIhSbdy2bGC0bLy6t6Fp625JqGzxOmHESLH8JNR7EQ==
-To: linux-mtd@lists.infradead.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Michael Walle <mwalle@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	Richard Weinberger <richard@nod.at>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] mtd: spi-nor: winbond: Add support for W77Q51NW
-Date: Sun, 20 Jul 2025 21:55:52 +0200
-Message-ID: <20250720195625.413715-1-marek.vasut+renesas@mailbox.org>
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uTf7XST6BPozeS8E/BgyA7kC1BPVHLRfFuzJKUVb9Dc=;
+	b=s3GcqEp8QlJ6ba4MD2podCyvja2NH6/Sy78vPxRc/CCbikqHotzN0JlR0MRKaPMSl022Yk
+	EIb4WzMO4UU+WnIwnxdTLfWTk5lDw3x37dOGLhh6SuFXhesPWcnZWLYLUz7ZJ++1ZLkEuS
+	4NvTaEGfkq7QmXHFWe0LEIyNM+52sV0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Nicolas Schier <nicolas.schier@linux.dev>
+To: =?utf-8?B?TWljaGHFgiBHw7Nybnk=?= <mgorny@gentoo.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, Sam James <sam@gentoo.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] kheaders: make it possible to override TAR
+Message-ID: <aH1KhpnXl0aRt8HB@fjasle.eu>
+References: <20230412082743.350699-1-mgorny@gentoo.org>
+ <277557da458c5fa07eba7d785b4f527cc37a023f.1752938644.git.sam@gentoo.org>
+ <20250719201002.GA3285766@ax162>
+ <5cd7b14179531cec3cdc8fe3c40a639ccf0be5c1.camel@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: ue7ubufmhhkpb9wob9yomuc6gty1oxhf
-X-MBO-RS-ID: 8f9629195e8d8e87a2c
-X-Rspamd-Queue-Id: 4blZ6h4g9Cz9tK6
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ylsw9MWxpNHiJNYm"
+Content-Disposition: inline
+In-Reply-To: <5cd7b14179531cec3cdc8fe3c40a639ccf0be5c1.camel@gentoo.org>
+X-Migadu-Flow: FLOW_OUT
 
-Add IDs for Winbond W77Q51NW, 512M-bit Secure Serial Flash Memory
-with Post-Quantum Cryptography, Dual/Quad SPI, QPI and DTR . The
-flash part is similar to W25Q512NWM .
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: Michael Walle <mwalle@kernel.org>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Pratyush Yadav <pratyush@kernel.org>
-Cc: Richard Weinberger <richard@nod.at>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-mtd@lists.infradead.org
----
- drivers/mtd/spi-nor/winbond.c | 4 ++++
- 1 file changed, 4 insertions(+)
+--ylsw9MWxpNHiJNYm
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/mtd/spi-nor/winbond.c b/drivers/mtd/spi-nor/winbond.c
-index 63a93c9eb917..dcb6c9ec862a 100644
---- a/drivers/mtd/spi-nor/winbond.c
-+++ b/drivers/mtd/spi-nor/winbond.c
-@@ -343,6 +343,10 @@ static const struct flash_info winbond_nor_parts[] = {
- 		.id = SNOR_ID(0xef, 0x80, 0x20),
- 		.name = "w25q512nwm",
- 		.otp = SNOR_OTP(256, 3, 0x1000, 0x1000),
-+	}, {
-+		.id = SNOR_ID(0xef, 0x8a, 0x1a),
-+		.name = "w77q51nw",
-+		.otp = SNOR_OTP(256, 3, 0x1000, 0x1000),
- 	},
- };
- 
--- 
-2.47.2
+On Sun, Jul 20, 2025 at 09:08:20PM +0200 Micha=C5=82 G=C3=B3rny wrote:
+> On Sat, 2025-07-19 at 16:10 -0400, Nathan Chancellor wrote:
+[...]
+> > I assume that other places that call tar within the build process are
+> > not problematic because they do not use GNU specific options, such as
+> > scripts/Makefile.package and scripts/package/install-extmod-build, or
+> > maybe that people just have not tried building those packages with
+> > bsdtar?
+>=20
+> Precisely.  We focused on the one place which actually breaks our build,
+> to avoid touching too many subsystems simultaneously.  If this is
+> desirable, I can look into replacing the other instances.
 
+Without further investigation, I think it makes sense to use the same
+tar-instance for all tar calls.  Thus, I'd appreciate if you could replace
+those as well.
+
+Kind regards,
+Nicolas
+
+--ylsw9MWxpNHiJNYm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEh0E3p4c3JKeBvsLGB1IKcBYmEmkFAmh9SoUACgkQB1IKcBYm
+EmlXOQ//dKzInhTyJq5gXFuLkVNDcn3DhkY+vwZj94k0Mr1t3chfuWPeYWHBRBQq
+Ctdkip6eSCgKuaVd6t53uDPP0HrhcFpCIqRpIvI1ZGynsqRV8fRLh+sHUJ6k0ywc
+CIOCJLyNaMzXZTiskQDsKL1HszO36xjln8JIR7yPm3AcT5eeDFf08LaXmpFzlmA1
+/zlmAbk/DraavjF0yIArd2HKLGDqW0vHOKuig7KV+1zAmEGMhEVbM93ygHgas9r3
+bybypnQrZNUPt1o/faBZn1b7vRgQcBKtjSSaLOiUXNAWR+qKNbiyo+khDJA78gUD
+hEpL/hEvM/SlukrKW5E+cPzCw8uzKaxDqGKJBFnKBp6vfCR65T8Z5KowN1g+a2rd
+h552zIXdzuHcUHFSk12IocILwBHQE3k6DcnZq8qQzi0E0Mb8BbHAQHPYcuBQq0pB
+fQf1yA+81BdIMaLYNIK22RzFXUWbSkPQ4Bc/n7PRBAIAAKYcx/QmlwcsHCdmr7K8
+D6rXGmNI+3v1WrQOFzoUdiKojTbWfPDPfum6+TssVpKJmvHWLYFrzejQYzw/vc0M
+Qu37ylfRK5CZ/OtyIbihAc4YVLEKakXhzfLDfjPw/8uVSvoQy+C3XW6cOUB4SOQH
+MRBT5Gnm8YDk5IHKoQ/yR0hN622N5EYkBEqgz3+xB16gZIoNLgE=
+=Dx5P
+-----END PGP SIGNATURE-----
+
+--ylsw9MWxpNHiJNYm--
 
