@@ -1,76 +1,114 @@
-Return-Path: <linux-kernel+bounces-738266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96334B0B683
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 16:54:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5CCBB0B685
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 16:56:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0342D3B8C7F
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 14:54:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EC4318989C1
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 14:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB8A1EC006;
-	Sun, 20 Jul 2025 14:54:30 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43BBA42AAF;
+	Sun, 20 Jul 2025 14:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FBGyZrMI"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F631758B
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 14:54:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F005419644B
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 14:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753023270; cv=none; b=gGw6+f0R8m/eCofXCVIkgVTxoyMwnrKhufdfzx7exZgjoCXyH88AYGAd9t01b8QwHNyxNmZe2sKwGDxxc1iMVBp5DE990Asfvu7PQvHhLg7amnThvBkr/GPbDby7lgk/b1LWb/xdGTZylrWNt9Hyma6e2BY1ZAYquTB8gJsMO/Q=
+	t=1753023374; cv=none; b=tB1MlK/eF659siAywTmIWr2V7577Z7B6yg7nqZCHVj9AMl/epEduU+qzb2fBvze/mJKym/TQ+iNEOjvknbOYJIPQVvtSnWolA7TIvxQKGqI4l/lGQwriew6UOoWM+mQYL4FHEpxoOoNw0hrG093TJt1zs14fCcJp/09c8Xt1L7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753023270; c=relaxed/simple;
-	bh=5w+enorSqrTUVe5hlglaL1pX8RaC0uSKgm+fpFGl0iM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=TMF/rwQFpzcwICWcjKzN5ibxTaChvz1wxAVVKjcerqr9sON+HhcNVFC0poNFKkJwi8QCSWzxZrzGYyW9JBvdYt8BeAI/wWZoqIX+glx7CKy80HBtUchozNune58Zm1JAEqyluzCg2m+M+mdvWqWq2dQoFqVCePd/JMPuoAEa0YM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3e2a7bb1d9cso3741115ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 07:54:28 -0700 (PDT)
+	s=arc-20240116; t=1753023374; c=relaxed/simple;
+	bh=G+MNuq9MZRvu3gCgglTsVavY8jyd+fGZCbRr7TlzQOY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RQjOFE9ld2+cBSUnt5ernXojBwK3TtBrBkXVHXkwxtTXzhPPnT+bnwRIryzzyWrmCSftuSJxOeVsyXIu4Gn2g0EkbT1cggdUf/hnuVlO9sofkqTkl6AF+s+i9q1uTWUMIWL86UHDs15jIn1DtSfUdsBPyyRL9Y3us8Q6u6SZ1ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FBGyZrMI; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a507e88b0aso2498215f8f.1
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 07:56:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753023371; x=1753628171; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mbJ5TjcSbDKdfe9l3K80tY1zpRj3zD23GT0I7h+8cJM=;
+        b=FBGyZrMInkgENLhh+V1CVln5jfcbDmYotMZPUCQ4//VgqdrsJSbldrE/K+W+LgTtVb
+         3yDDMUowklo/jNBDpkl5QLK5hyy8+XNHYv4r42kd4c31tiIJ68TefaJ5AdRot46/Fd4x
+         meKZy10v01TeU8KOHYDdT2UVYVBMWd4C8PUZ25ZfLrlASMXPw+wjuZiq0Sl64/NalYIR
+         J7wPpwkbF4DbttSaXfUFwhhBimt+n0RQ6P26jmEmdrFVHOOPxJAPwWpm9Y3tz+WZimNI
+         lDWzdbsLRogqAMHC001sfORBmyytLu/p6Vk3Wc2vP8MmYRRmmVczWifqSF968ut7K3va
+         RR7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753023268; x=1753628068;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4nFvvvLMTDjjCyIfgcu9w4PSjyqxVRP1u0VfJtfkPsk=;
-        b=stXjvD5t/Q9ut4NWQcKDLXgqDNhEoUp5ZfmTFOgX+ixfd39UmgQP+jBh0JL3Mr/Q9T
-         4WI66eQ3epZzCqX4z4KP4pOzktpy/LMwWAHMkYRAWEa2/IZG2Pk1rSRc55VxCxAXOjh4
-         ei9YUqX3m7A/FF+L20tRxGUXLjQTQhG+B/mDPKhjLOPsMeHnuWEEaFx1YFMT+mnt/rmk
-         ZoReRIeR3utJdMTkr8anQUia1CiN4wpNgAxsRParAJYub6/1AGYovllw7m2syDlxQ8IG
-         ynsCaqfIS/od4nGQbnIIZAAkTKujkJjNG9P0qXH6ukO/JqMyn4W8SDh0iM93osbFNdVL
-         jYpg==
-X-Gm-Message-State: AOJu0Yz98uAnjF3mPU4EeJQIU3X+JiOGEZIXuItxKZA1ryKcbr1iEVt3
-	jIA+NxfsSWxGvt6UBaYUalpKOkkmYlJ+ySe7akffNsUIYvp3ARaPsWaRA++YXPr7ch9dOEhKCWP
-	ZmXwSGKhccIhYGQo7gGiZ/q5iiVoR+1G1qbzdpd1TiQEc3oYT8pRa9sE3eJU=
-X-Google-Smtp-Source: AGHT+IFMaIZPOa1RmikbMBEy1rZKftScewf+7yMerS94FDWSoCUrti0nS0TgTsXYZoZ2NLzN0JUSFwQZ7JhXe/k2JztSvI+2FR6M
+        d=1e100.net; s=20230601; t=1753023371; x=1753628171;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mbJ5TjcSbDKdfe9l3K80tY1zpRj3zD23GT0I7h+8cJM=;
+        b=HNydG9WW320RrzR3NrVQb9ktvU6QH/GSnzIv6xuHFKCSpzKpErsCPE/ykeGX+drsyU
+         AAjyEzIeM4aItPyr5MVe5XQpGmtZ+G3DY5rs+QhoWZByUL7rHVWWi4tnPNxSeX2RkSHA
+         epaJRux3hXxrB8/VM/jge9Gkg0oydI8uwarHAmix6Rkd95a336cduyl828MMVSbmaL5K
+         T6VkNDk1J3sp1n7VHc5buNd5PKqUhvtK/afqLxtwzbjWINK9YTxSDb/5ERa1l2IH22uI
+         CU7yAUbM4/4e7bsjCK9FJF2BWCaBFUdqm9JPJ5qOqIYUbAOjRzpFlLihDqIvNP8+tU5F
+         DE9Q==
+X-Gm-Message-State: AOJu0YwpWxW2He+sT8qIDZEAFvp/GFBP/Qz/YpKNU5yLQxdXMvHdyCj8
+	quTytU4NQv+FrVsPdexF7ek0WuwEisJKINHnkZD/oWaVEBtOSfPUdHTw
+X-Gm-Gg: ASbGncsyfvtMWjrTHuwYKB9FkqUMvNJUDlmWC0vb4XFZGSRqpXq9puPJTPyoTvtL1y1
+	fEDXBC/0jLGr09k6a5zNl7RAj9zxX8W/UOfh/a+xTO8XiLbzTzSeaiz4ahYakyVdcRPUI7JwErf
+	T9HUE82ELx4c+RH5U3LFQG5nzAb92OhnV5K9ZxmuNNURT71v7QkZyATjQwHS+Mi4C85BehO9Jx9
+	L6EQVbWckK4+8VLprO2voXKs1RoAhyMaBOsTW58KDA7lymGXjq+dxj8aVFefD8EJLoJ1D5VZsxq
+	6nbf5WO39f0uIakda/valVNFuL/g6DVIGmXbgyVPXtKXF10dGKoZIgJHjyqXuwdT2hBr4gTSQg/
+	I0CExdXlbSCM9zf8QY3Of
+X-Google-Smtp-Source: AGHT+IFERGOKdmgdS1XU20IWgwlPKV5vQwIRfES4HzOVvHS8mTpjdvUmtH7oHUWXtakj/7l7ZePEOw==
+X-Received: by 2002:a05:6000:3c5:b0:3b5:f177:30a7 with SMTP id ffacd0b85a97d-3b60e4c8fe2mr12137113f8f.16.1753023371052;
+        Sun, 20 Jul 2025 07:56:11 -0700 (PDT)
+Received: from zephyr ([77.237.185.246])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b61ca4c754sm7770550f8f.59.2025.07.20.07.56.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Jul 2025 07:56:10 -0700 (PDT)
+From: Ali Nasrolahi <a.nasrolahi01@gmail.com>
+X-Google-Original-From: Ali Nasrolahi <A.Nasrolahi01@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	Ali Nasrolahi <A.Nasrolahi01@gmail.com>
+Subject: [PATCH v2 0/3] staging: rtl8723bs: fix coding style issues and improve readability
+Date: Sun, 20 Jul 2025 18:25:21 +0330
+Message-ID: <20250720145524.9733-1-A.Nasrolahi01@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:5e0a:b0:3e2:9835:3896 with SMTP id
- e9e14a558f8ab-3e298353c6bmr57059575ab.6.1753023268117; Sun, 20 Jul 2025
- 07:54:28 -0700 (PDT)
-Date: Sun, 20 Jul 2025 07:54:28 -0700
-In-Reply-To: <67447b3c.050a0220.1cc393.0084.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <687d0324.a70a0220.693ce.00ca.GAE@google.com>
-Subject: Forwarded: 
-From: syzbot <syzbot+92e65e9b7a42d379f92e@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+This patch series addresses several coding style and comment formatting issues
+in the rtl8723bs staging driver as reported by checkpatch.pl.
 
-***
+Changes include:
+- Fixing block comment markers and alignment
+- Improving function declaration readability
+- Replacing unnamed parameters with named ones
+- Removing redundant semicolons and excess spacing
 
-Subject: 
-Author: kent.overstreet@linux.dev
+No functional changes are introduced in this series.
 
-#syz fix: bcachefs: Move bset size check before csum check
+Ali Nasrolahi (3):
+  staging: rtl8723bs: fix comment style and formatting in osdep_service.c
+  staging: rtl8723bs: fix comment formatting in basic_types.h
+  staging: rtl8723bs: replace unnamed parameters in hal_btcoex.h for consistency
+
+ drivers/staging/rtl8723bs/include/basic_types.h  | 15 +++++++--------
+ drivers/staging/rtl8723bs/include/hal_btcoex.h   |  8 ++++----
+ drivers/staging/rtl8723bs/os_dep/osdep_service.c | 11 ++++++-----
+ 3 files changed, 17 insertions(+), 17 deletions(-)
+
+--
+2.50.1
+
 
