@@ -1,125 +1,97 @@
-Return-Path: <linux-kernel+bounces-738242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6959BB0B646
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 15:36:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B163BB0B648
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 15:40:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EF9D18992DC
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 13:36:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 424577A3170
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 13:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAADB21128D;
-	Sun, 20 Jul 2025 13:35:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iwYeYZ+z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6E5214210;
+	Sun, 20 Jul 2025 13:40:24 +0000 (UTC)
+Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236E319644B;
-	Sun, 20 Jul 2025 13:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548593FE4;
+	Sun, 20 Jul 2025 13:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753018556; cv=none; b=I3+iGJhxaNiv10r4zauv0qURkqLJ10dHV2puopq7eHk1X990dyKrP37s0LLaD+fMEOXWO9RIMFoIUuDuQXvGtaU9WqPh2+IxHjCW4hcsc1Yasn8e/NszcZSWDOw2POy0U+uYpO6Bf/G9LpddeNJkWSqi6P6ratiYDIZSe4z/NfU=
+	t=1753018824; cv=none; b=NCWZHjUaApPmKAcNrwyBvI2uVxDIEtb+oHYWLNM6P4McxNZXZby65J9sghcbPigzw2JvSqbqwKDzNnHmaKT/TkwSZDoQzcvmkwlJziZbsiv4+xeMKM9TvIqAQza2IweFF+twWYPfff9JDqxmf/ilALVP3odq2mHyxpQaj79Wofs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753018556; c=relaxed/simple;
-	bh=j/e8+rtNdccrGcHxCK1KM8g0kQ7PgJe6mnaf+/nIyJw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=no3zxjbKHXP5sE1FsNcKQQAYhDcBszKuZI0MyGfK/lcCGC74nso0Vte46f/ODtYb4CZIE0di+eY8EbBkc6C1IAGiBBJ+uNZQwx+O9T9rAUJwFw9rhIaSYjGVdrmIKZ5vLZXifp5oJcKIUHK4o7ZLFDsbzC8cTWqoIqKWT4SE5LU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iwYeYZ+z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E94D2C4CEE7;
-	Sun, 20 Jul 2025 13:35:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753018555;
-	bh=j/e8+rtNdccrGcHxCK1KM8g0kQ7PgJe6mnaf+/nIyJw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iwYeYZ+zzJ3ibw4rviTl2t2JHuMiJsf7xz9vZmrvXAAMBd37unvEpPwHhrPAs5pGz
-	 Gd3k5F3zfNZBB2fra7HGe6i/OvVrog5PITalMjaOnx91PpBhm56wUVtXNaJyZAxLWm
-	 nH6GNeuKVGwFRD6DQzpxJr8//kA8ty6OGxavaf8FZYyIrDkNo++Z0BMoRryqAI1PZt
-	 38rR7Hb4jrHiIoGOVue6o5GQUEJAMYtBIJkB8Z6ylSqxHX//CAlAmwp7hvQGZQW6Z/
-	 sy+L1Zk7aJY9+0IUZRSLLvgKEYYXYqaB5RM+ElBeTXQkRBtumqlMJ2i5t99nfCYT4B
-	 nmzfC64rQst3A==
-Date: Sun, 20 Jul 2025 15:35:50 +0200
-From: Carlos Maiolino <cem@kernel.org>
-To: Marcelo Moreira <marcelomoreira1905@gmail.com>
-Cc: Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH] xfs: Replace strncpy with strscpy
-Message-ID: <w5zac6jzwncscbhnihlfonbp7ac4jsf7d4ge7uo4fpsqcloeil@ylxill2zypfn>
-References: <20250716182220.203631-1-marcelomoreira1905@gmail.com>
- <aHg7JOY5UrOck9ck@dread.disaster.area>
- <CAPZ3m_gL-K1d2r1YSZhFXmy4v3xHs5uigGOmC2TdsAAoZx+Tyg@mail.gmail.com>
- <aHos-A3d0T6qcL0o@dread.disaster.area>
- <trCbtX-saKueJEbdl8AzWARJReyojMKsRC0LGW1Wb72CJsztLYdHNDFrGndVe0KMtU82iSTw2zcsZi4OZhZOlA==@protonmail.internalid>
- <CAPZ3m_iwS6EOogN0gN51JcweYH0zuHmrgVvD7yTXTi1AoDA7hQ@mail.gmail.com>
+	s=arc-20240116; t=1753018824; c=relaxed/simple;
+	bh=iZMhGgIDrQ02xKRUkImYAQm6hntiPC8Er4ijnCLQwuE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=TBKF53zx+zM9be6BC8fIVjO6fotT+pQc7SI0SyR72/zpiayL9jjn3dkg6XzzIFyPXXAdgAlYPsBH9e1fDInzqkkDM5h2TvelqRuCfykt/Fr/o9WZZCTn6N12KXYQgFIeFqiuHm6QoEYZ/7L4aeZ5oMzmFKq+4gu4wb2RE5NMnbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from amadeus-Vostro-3710.lan (unknown [119.122.214.181])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1c9e8d011;
+	Sun, 20 Jul 2025 21:40:08 +0800 (GMT+08:00)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: knaerzche@gmail.com
+Cc: amadeus@jmu.edu.cn,
+	devicetree@vger.kernel.org,
+	heiko@sntech.de,
+	jonas@kwiboo.se,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	ziyao@disroot.org
+Subject: Re: [PATCH v3 0/6] arm64: dts: rockchip: Add ROCK 2A/2F, Sige1 and NanoPi Zero2
+Date: Sun, 20 Jul 2025 21:40:05 +0800
+Message-Id: <20250720134005.215346-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <86814bf6-5d1b-47f3-ad1d-962cae4a543f@gmail.com>
+References: <86814bf6-5d1b-47f3-ad1d-962cae4a543f@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPZ3m_iwS6EOogN0gN51JcweYH0zuHmrgVvD7yTXTi1AoDA7hQ@mail.gmail.com>
+X-HM-Tid: 0a98281039f603a2kunm228903c7f858a
+X-HM-MType: 10
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDHkgaVkpNGU1KQ0pCTBlJTlYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlKSkJVSklJVUlKT1VKQ0pZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSEJVSktLVU
+	pCS0tZBg++
 
-On Fri, Jul 18, 2025 at 04:10:39PM -0300, Marcelo Moreira wrote:
-> Em sex., 18 de jul. de 2025 às 08:16, Dave Chinner
-> <david@fromorbit.com> escreveu:
-> >
-> > On Thu, Jul 17, 2025 at 02:34:25PM -0300, Marcelo Moreira wrote:
-> > > Given that the original `strncpy()` is safe and correctly implemented
-> > > for this context, and understanding that `memcpy()` would be the
-> > > correct replacement if a change were deemed necessary for
-> > > non-NUL-terminated raw data, I have a question:
-> > >
-> > > Do you still think a replacement is necessary here, or would you
-> > > prefer to keep the existing `strncpy()` given its correct and safe
-> > > usage in this context? If a replacement is preferred, I will resubmit
-> > > a V2 using `memcpy()` instead.
-> >
-> > IMO: if it isn't broken, don't try to fix it. Hence I -personally-
-> > wouldn't change it.
-> >
-> > However, modernisation and cleaning up of the code base to be
-> > consistent is a useful endeavour. So from this perspective replacing
-> > strncpy with memcpy() would be something I'd consider an acceptible
-> > change.
-> >
-> > Largely it is up to the maintainer to decide.....
-> 
-> Hmm ok, thanks for the teaching :)
-> 
-> So, I'll prepare v2 replacing `strncpy` with `memcpy` aiming for that
-> modernization and cleanup you mentioned, but it's clear that the
-> intention is to focus on changes that cause real bugs.
-> Thanks!
-> 
+Hi,
 
-I'm ok with cleanups, code refactoring, etc, when they are
-aiming to improve something.
+> Just for the record: There actually is a non-A version of the
+> RK3528, which I actually own (but forgot about - perhaps my subconscious
+> made me reply to this thread). It's on the Mango Pi M28K board [0][1][2] -
+> which, to my knowledge, is one of the first RK3528-based SBCs.
 
-I'm not against the strncpy -> memcpy change itself, but my biggest
-concern is that I'm almost sure you are not testing it. I really do
-wish to be wrong here though, so...
-Did you test this patch before sending?
+Thanks for sharing this. M28S is an engineering test board, and the official
+version was later renamed M28K. The MangoPi M28K board uses the RK3528A SoC.
+As for the M28S board, the silkscreen of SoC is indeed RK3528. [1]
+But then the interesting thing comes, uboot reports it is RK3528A:
 
-I'm not talking about build and boot. Even for a 'small' change like
-this, you should at least be running xfstests and ensure no tests are
-failing because of this change, otherwise you are essentially sending
-to the list an untested patch.
+U-Boot 2025.07-rc1-OpenWrt-r30114-9b777547be (Jun 18 2025 - 18:35:23 +0000)
 
-Even experienced developers falls into the "I'm sure this patch is
-correct", just to get caught by some testing system - just to emphasize
-how important it's to test the patches you craft.
+Model: Generic RK3528
+SoC:   RK3528A
+DRAM:  2 GiB
+Core:  130 devices, 20 uclasses, devicetree: separate
+MMC:   mmc@ffbf0000: 0, mmc@ffc30000: 1
+Loading Environment from nowhere... OK
+In:    serial@ff9f0000
+Out:   serial@ff9f0000
+Err:   serial@ff9f0000
+Hit any key to stop autoboot:  0
 
-Carlos.
+[1] https://imgur.com/a/ddLsnmt
 
+Thanks,
+Chukun
 
-> --
-> Cheers,
-> Marcelo Moreira
-> 
+--
+2.25.1
+
 
