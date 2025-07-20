@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-738209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51A7DB0B5D2
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 14:17:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ECD4B0B5DB
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 14:17:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DE8D17437B
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 12:17:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C1621896E72
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 12:17:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664D160B8A;
-	Sun, 20 Jul 2025 12:16:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 721911B0414;
+	Sun, 20 Jul 2025 12:16:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VYwh4Us7"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MVvYvTWT"
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2771A4A0A
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 12:16:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 030B5204C07
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 12:16:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753013813; cv=none; b=il+h4sc+6mIWG2c8l5czkOvgCtl8YCaaLvvzHhQqLmY+bvzMAQ0qmNdJjCQ0xMggY8WqOnO1WLeapCMep82RrKvIHvBNDkcuq8rbdjyQYYsEM0WlLedcBoHcXCyR+WZP7sC6wmoT5rr2PCnaxdSK03P0VPBQzZg9HNQ5xIA3PSE=
+	t=1753013818; cv=none; b=rUqu9jzeVB0VMTm7hZB/KeCKlIF8fTKPARRjfodXDiFp/Kkl9a7tC/NPtbRDCX+tuBbIiUyfFYknASrd824hjPGt05iZ3sUerwgdZdeuO/OM6YVKHmYxhc1IxyWTUlAyemABLL/7hjwzE8wqTOi5sP74weQeJozi72/a2dXjVMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753013813; c=relaxed/simple;
-	bh=6N5DisMgqH4uXAYM8uU6vWHlCUFyS+1n+wdiyhygzmo=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=n3tHwjOZKMy9o8xsATsKgfhqGpBLBYy3jKAQ/RyQI8fAdowvsN4hX2Wf4BbFu18XsBdijQJQaPHlNqApw3OOwywvsXFi9MiZnMefnNrri7DRUsCLupLFu0k83lhkWtlYAKZFYV0E6hRjBAtVu7ZOox245QwEf6/j3q9SyoK891I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VYwh4Us7; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1753013818; c=relaxed/simple;
+	bh=ji+f74TQTXhSJNywxVcexEvz4zhxi/UIu3IXlExTfoA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=B3McKHNPeNLpBJZHkn5ewG5gTiECqDQNYXW6OsXL3bbavQwmjWudCNHpKo7/1ltfDyRfMyuvxUC/m4JxpIya3TFsJ4lHtExsHz/TQBcWjhorCmiIeNkGPUku+F7YIEFwh39t0hGJF0Hs0wln9qSx0jk5iISngo1Ww25Pu3B4NIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MVvYvTWT; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56K9t3EQ014955
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 12:16:51 GMT
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56KAPHbJ006942
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 12:16:55 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=BRz9CJxIoiVkkfsVZqEaKY
-	nvwgqhcwu3BeWnZwXeIbQ=; b=VYwh4Us7Ib85j5BDn63GK+QC83fFkGWMHBODFr
-	fH5fX2Q0KzX6f2S/dizemfTw+vC6DY66WulV989dQJJvUqRNuNQ4se76Gsom2Sk6
-	Wy8HKPP0b7azT5lDubg+Z1HMG0i8Tg2Vjbv5zDl62WtjQlcqhFj52wv6A3TaqmyW
-	RkGsZVaNuIyHfZvu52CH04E5ee8dTdHDd1AhyH/putmzxL/bPDLa0PfmuejQal+P
-	XcPgjHIw1VB9o76hBA/nqObeqy/hF3Oha6XaDkvhHsfyZRpxUanSYi4pQsArTnQM
-	wXDlKLLQ8BJs1z8F2ahGQUavNFpm2MnG0llNpJRAapKlHH/Q==
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	RghYj3as/mFUON2I1wz5/fAj1x0bQSOJ2EkHGXZdsjY=; b=MVvYvTWT9/RfiFAT
+	mRu0Jvbz2/SOQ/CrUd1Mu1oI0E+n2YTXKicJ2IkAFeIwuVOoaQdV19qqpE3sk6mT
+	FrfaEr5UdLhTAlrdCpGFF8IyEUshtjAL0Vt9zkLgoq20I/TKv0FSNxN1OeZZxPpL
+	pm6t8qP5RVtz9aYEZLSFMvqdiThbKTcrTaGvZl7rT0M3ZEPzdJbBtdN4qFzG9Guv
+	m/yfhQHYi+Um0DquLTB2hQs23iOlvWFsOEfp0gIFv8Qsoa9YnBxmTrU/rDgbOcpi
+	tSmpkvGSQGFYP4RGikOok6ahRlS35RMdK9VhaoLjzqR9fuxnfevXNBhQgx2I52TK
+	/VtpMw==
 Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 480459j5rk-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48044fa72w-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 12:16:51 +0000 (GMT)
-Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-748fd21468cso3237000b3a.1
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 05:16:50 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 12:16:55 +0000 (GMT)
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-748f13ef248so3327923b3a.3
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 05:16:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753013810; x=1753618610;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BRz9CJxIoiVkkfsVZqEaKYnvwgqhcwu3BeWnZwXeIbQ=;
-        b=fnV5KxmYJDR2mA6uDqh2ryHlZte8yYCK/R80dQzIqy4iwtJVPArgyBhBRR0wXi+Nsw
-         vMSVr1l3BMDs2G/Sa6L3V8GYEXdakc/5MwU9vwz4xlwvoWA+ifEzkB/huqe5qgxUig3X
-         1aAoqzPU9nWrB6hKfgjM4r6G0GygUXIEB+a/D3JMySg9v58gtZEsBmSsXvg3e1AUaGtn
-         s98DJemi82PCTa+hqmmDsrhSWuV6uzeBxQsYcFAn9ZbeN7dh7HLNHJ4IPjh+tDVig/gx
-         6eWFRlZMuLjO2niDWgogtU3JqzQL6Vz5yVmti+N93RPYL6JbDDvqCC6T69cmkGuk5zfa
-         mYSg==
-X-Forwarded-Encrypted: i=1; AJvYcCWgDxVBAbkiJGiy+QyIo6qVDd2wLtYegWbVTGMnbIj6ryZ3vl0breUdB1TYSn7oQJ0gKQ+kwNDPBuuf+WI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIPvSbvmPrlzVDwfeU4EzObGQvMBCJiTSLRwVw0btkiICROZdH
-	2Q27faUjTjnqhRYrXpZm15vEVKrVGixAeiPIUfmFC3TIZa1Un4oF8MQPI/3FduihlMGN7/bB2nm
-	v3x0+qK2hjWUvIVRdIJrMd+sPYj9/LhgXms9akGm3ndzenrrEXIWpm6LIPZA5uO8GWCQ=
-X-Gm-Gg: ASbGnctgM3/pRiC9AGVnSz2nHj4RavTL8Y28o/rOn+thMPNv3x3fIWJ17FlClZos4yG
-	OJ8kIb/kNSmLRuyM3bAz22J3gWT/g4hB16jbjTMdadQoITNMEF40iZX9WukI5jpGa523lqRRF2o
-	Jmdg5VscZjErmduSVitdh1yT1O8d2K/oluK30Cicps+c9GadlGOYuWx4Ugv3IwJ6cXacbZ562Tz
-	8UCzPD0/hoiRficexd0Xt+NLtzc/z5HbAupphd5B6HeXoZJZl11OHKfTBRKVmX85Yjokf/p5QnE
-	wmcFN1v858lspC/MjNeTnPGAPbM3CfwuGpicNuUvcCkH135zWUBkd2TN7gJ8elPz
-X-Received: by 2002:a05:6a00:3e0a:b0:742:aecc:c46b with SMTP id d2e1a72fcca58-756e99fc423mr22709769b3a.15.1753013810110;
-        Sun, 20 Jul 2025 05:16:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH3WQE6VxrcFzUyVHmjvH0Xv5hyM5tVlmf+2X2yTpgqZpQXqs1GYjTUCMAjIgH0EvUJaGNagw==
-X-Received: by 2002:a05:6a00:3e0a:b0:742:aecc:c46b with SMTP id d2e1a72fcca58-756e99fc423mr22709737b3a.15.1753013809577;
-        Sun, 20 Jul 2025 05:16:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753013814; x=1753618614;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RghYj3as/mFUON2I1wz5/fAj1x0bQSOJ2EkHGXZdsjY=;
+        b=rYjH8y89QCg7OkeCu9+2wJKx1u4jQ9dcTZ1xMC9jE4BrMxa81iRgEjQVn7s3+d/KBh
+         HOnfHI2KMA2x/oFBlCIlzPGPrE/yyJBN96QKJlMHbnsdbhcLtAAPK9XY6ZRQ2CiUu7PT
+         8nzmDPfaMa1s0Dlmdzr5Yu1fzQ1pbyKdJOmqK4N5EDnvjGZOg3gJYC0ERYBHV2mT5WxB
+         NRYV21lDln/klNZWigajN4sCd2Quewv46kOwf72OK7V9wDor/EKitMvVQziOBMaAqDq5
+         EeyzeAV3F7pei9tIoUxERbgbavN01JBwzJZOyrWW7RixGWSGUfXqBpUHio66CWI+NTJP
+         SdiA==
+X-Forwarded-Encrypted: i=1; AJvYcCWrnc22VtNdjEEzxxvJuefsk+lVc7y3URZ5qLwr54KnVK8xWt/fYkUG8HO7BvZvlwiCuFbFcEkAWEkS3yE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdHrM/4BqB5WPzoV/s0qLsQ8T8mONpqSsG7PPjrQ8j5nrTmM8f
+	GSMkQTNV6zAYqmVmJvyIhtOnid7Awt7OwEDbVgg10ZkTvFKuzCHu4FG0i312fwRYItdhparynQq
+	l4/nfqYcjSYthL6J71vB+0vPC+dQA+urH5L1zJgjobwkMOaiw7bOvQB7MY+3Wv31dNeA=
+X-Gm-Gg: ASbGncvNf3UEcqcLr0xy4cOot51P7YC7ZF6TgOx+lbO8NQtBGTlRiCkG5esrpTSD4P5
+	evI2JDx67f4YZ4t6XgqV8Q8WHoYk1wMSABMExj6IbQZ40mvbjP2NySC+vQvUbpabiyEf/RFGkwV
+	3ku+VbfvFytUwU3g2rYvQjCQN4sJHB0nXX0sOaO0l55snZViUlCvWk5CoRxOsaxs3dEOcb89wvO
+	V265XK4Mg90QP8uvbtgHN1I0lc1XtVoCGBdEWwIAhcOU4noO8N/Cszi5/rEe0XijIQapTpxP97i
+	bq4uw4cQB0Ez2A9TNtbSCj84d599ZW4DfMz5FjkGVyrvndzYa6cqxI/CL91aZKI0
+X-Received: by 2002:a05:6a00:2e27:b0:748:3a1a:ba72 with SMTP id d2e1a72fcca58-7572427e405mr21973331b3a.20.1753013814141;
+        Sun, 20 Jul 2025 05:16:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHm+33dVG/fds/ip7b4Ih0P+9rPGCwWYA2APgeQY1skgsNIAhOHZiM8LTIZzxoKQic2JN+5Ew==
+X-Received: by 2002:a05:6a00:2e27:b0:748:3a1a:ba72 with SMTP id d2e1a72fcca58-7572427e405mr21973302b3a.20.1753013813630;
+        Sun, 20 Jul 2025 05:16:53 -0700 (PDT)
 Received: from hu-akhilpo-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759cb154755sm4097933b3a.69.2025.07.20.05.16.45
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759cb154755sm4097933b3a.69.2025.07.20.05.16.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Jul 2025 05:16:49 -0700 (PDT)
+        Sun, 20 Jul 2025 05:16:53 -0700 (PDT)
 From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-Subject: [PATCH 00/17] drm/msm: Support for Inter Frame Power Collapse
- (IFPC) feature
-Date: Sun, 20 Jul 2025 17:46:01 +0530
-Message-Id: <20250720-ifpc-support-v1-0-9347aa5bcbd6@oss.qualcomm.com>
+Date: Sun, 20 Jul 2025 17:46:02 +0530
+Subject: [PATCH 01/17] drm/msm: Update GMU register xml
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,10 +90,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAALefGgC/yXMQQ6CMBCF4as0s7aGtlgNVyEsaB10FtA6U4gJ4
- e42svxf8r4dBJlQoFM7MG4klJYa5qIgvsflhZqetcE2tjXWeE1TjlrWnBMX7cKjMf4e3M1ZqJf
- MONH3z/XD2YyftarlHCGMgjqmeabSqc1fq8ixheE4fr10bSiLAAAA
-X-Change-ID: 20241216-ifpc-support-3b80167b3532
+Message-Id: <20250720-ifpc-support-v1-1-9347aa5bcbd6@oss.qualcomm.com>
+References: <20250720-ifpc-support-v1-0-9347aa5bcbd6@oss.qualcomm.com>
+In-Reply-To: <20250720-ifpc-support-v1-0-9347aa5bcbd6@oss.qualcomm.com>
 To: Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
         Konrad Dybcio <konradybcio@kernel.org>,
         Dmitry Baryshkov <lumag@kernel.org>,
@@ -105,111 +104,82 @@ Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
         freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         Akhil P Oommen <akhilpo@oss.qualcomm.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1753013805; l=3475;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753013805; l=2416;
  i=akhilpo@oss.qualcomm.com; s=20240726; h=from:subject:message-id;
- bh=6N5DisMgqH4uXAYM8uU6vWHlCUFyS+1n+wdiyhygzmo=;
- b=kRgDa+BqEIipkBf58lQ1Dd4n/f/NyyTp16tEOWBOPKbXKvSR/UnLPJgy27i/Or6gVCKfR+qeO
- Gze2zfEDKolCFYsATLkHgb0pS3r27Rvy36i70J6jC0C4Ql1hV1X+BA5
+ bh=ji+f74TQTXhSJNywxVcexEvz4zhxi/UIu3IXlExTfoA=;
+ b=DzsW7cZ/8jSLmGH8hgbMy+4u7Cb41SK7Sn6nWDaSM7JFVA89fFUVKAqxE9i28wKmCfy1N64KW
+ xs8lQx1uahLCy34eKdSSDxVvUFlIXiaM0Kf1ehSyEE7hj7qDtvNcXvD
 X-Developer-Key: i=akhilpo@oss.qualcomm.com; a=ed25519;
  pk=lmVtttSHmAUYFnJsQHX80IIRmYmXA4+CzpGcWOOsfKA=
-X-Proofpoint-ORIG-GUID: 8sOh22DKg0sZcW4Mq8OVRttxvTcd2n2e
-X-Authority-Analysis: v=2.4 cv=fdyty1QF c=1 sm=1 tr=0 ts=687cde33 cx=c_pps
+X-Proofpoint-ORIG-GUID: cC1ANHTixNkqfO45qf7AL0sjB2bJMGJ9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIwMDExNyBTYWx0ZWRfX4YPGhfabvszx
+ PzM+W1Q2yY2r8fFmWc5c5UwZ8/pyGLuBGFjWGfA4G0Ye8yyI8r4V+s9ZuViAZH5alIep66lAyhs
+ geiIjgD3iqWwXbLJ/ggqVkJZ9KhoI9H3zKXnqbRY2thJlnBSSoQX5bKztF8yRC10VpJWHuJlauW
+ rONIIi+cZPF8wl12pDMjlpanjTee71BYBz034LFy71T7RuQlxm+Nhe6xD4Ku1+wewZh414u1FB3
+ wx0psyG2Xvhaej4jbjJTT85IGFPlDe864UfNvEn+hi7Kyd+ZsLOsaLFc8odnoLN7NWmm73cLu+x
+ LTcmQXHcZmddAqLAfSVDEDKgJH/ksst/9GnU2JBTtJ0RML3gl0vSjiyp284lv5jCAFW69wYNimH
+ mgR0DlHyzppY0mHKm0krIG8z7T33LG1Ywe9f9qnk9CTnqOt6QGncWxDcA9D+96cHk8gcHK0R
+X-Proofpoint-GUID: cC1ANHTixNkqfO45qf7AL0sjB2bJMGJ9
+X-Authority-Analysis: v=2.4 cv=YtcPR5YX c=1 sm=1 tr=0 ts=687cde37 cx=c_pps
  a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=VwQbUJbxAAAA:8
- a=tVI0ZWmoAAAA:8 a=pGLkceISAAAA:8 a=e5mUnYsNAAAA:8 a=sLhxGqmu1eV7p1u-_mQA:9
- a=QEXdDO2ut3YA:10 a=IoOABgeZipijB_acs4fv:22 a=-BPWgnxRz2uhmvdm1NTO:22
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=e5mUnYsNAAAA:8 a=EUspDBNiAAAA:8
+ a=FORX3M3cBL6yUa9eRaQA:9 a=QEXdDO2ut3YA:10 a=IoOABgeZipijB_acs4fv:22
  a=Vxmtnl_E_bksehYqCbjh:22
-X-Proofpoint-GUID: 8sOh22DKg0sZcW4Mq8OVRttxvTcd2n2e
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIwMDExNyBTYWx0ZWRfX+U2rcxwB6X/V
- MoM/y0hFesyPPwBYQMs+qUu32Fw5R/dLUU4utTJrDjonoIFL4XkBh+7mxRwqi4f3rFZTSM9x8Kc
- P3889RyIiWnQpg6IW434pZyfTYUDzcaHKoSGdwVKYgOMo+4iTa/bb0Uu5wS/nMxuC6mI/JlnFnX
- EOV5tZC99SfePoMpm+WyEemsssGXL6GPlAK/5KUZry5sX2skEdXaDh0HFo8mgEJ8YzdqebzOe1z
- PSJ0R5gSAizkgyEOAcdMepUM/IxVncuxf/ru7vVeQSTy3jVH5MFDxW3o9EWL7M4uz/l6YbjTFno
- z3khJ1j4tGFGIioSv/wdjyinQ4PmxwGiKOH30+QJmWHqCFG6U00pHJVuOSxSOOdejUuN8OaxWOX
- B0Ud5V25sxjnevNNO1eo/FzlF2HRrjn/FR+8qJbrwn9J2Vfi8UR9z0vYcIkgoZAmqmlndeUu
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-07-19_03,2025-07-17_02,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 priorityscore=1501 phishscore=0 impostorscore=0
- mlxlogscore=999 mlxscore=0 spamscore=0 bulkscore=0 malwarescore=0
- lowpriorityscore=0 adultscore=0 clxscore=1015 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ mlxscore=0 priorityscore=1501 malwarescore=0 lowpriorityscore=0
+ impostorscore=0 mlxlogscore=891 suspectscore=0 clxscore=1015 spamscore=0
+ phishscore=0 adultscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
  engine=8.19.0-2505280000 definitions=main-2507200117
 
-This patch series introduces the IFPC feature to the DRM-MSM driver for
-Adreno GPUs. IFPC enables GMU to quickly transition GPU into a low power
-state when idle and quickly resume gpu to active state upon workload
-submission, hence the name 'Inter Frame Power Collapse'. Since the KMD is
-unaware of these transitions, it must perform a handshake with the
-hardware (eg: fenced_write, OOB signaling etc) before accessing registers
-in the GX power domain.
-
-Initial patches address a few existing issues that were not exposed in the
-absence of IFPC. With IFPC, msm_devfreq_idle becomes redundant and
-therefore it is disabled for GPUs that support this feature. Additionally,
-the DCVS tunings have been relaxed for GPUs with IFPC support to further
-improve power savings.
-
-This series also adds the necessary restore register list for X1-85 GPU
-and enables IFPC support for it.
-
-To: Rob Clark <robin.clark@oss.qualcomm.com>
-To: Sean Paul <sean@poorly.run>
-To: Konrad Dybcio <konradybcio@kernel.org>
-To: Dmitry Baryshkov <lumag@kernel.org>
-To: Abhinav Kumar <abhinav.kumar@linux.dev>
-To: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
-To: Marijn Suijten <marijn.suijten@somainline.org>
-To: David Airlie <airlied@gmail.com>
-To: Simona Vetter <simona@ffwll.ch>
-Cc: linux-arm-msm@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org
-Cc: freedreno@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org
+Update GMU register xml with additional definitions for a7x family.
 
 Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
 ---
-Akhil P Oommen (17):
-      drm/msm: Update GMU register xml
-      drm/msm: a6xx: Refactor a6xx_sptprac_enable()
-      drm/msm: a6xx: Fix gx_is_on check for a7x family
-      drm/msm/a6xx: Poll additional DRV status
-      drm/msm/a6xx: Fix PDC sleep sequence
-      drm/msm: Add an ftrace for gpu register access
-      drm/msm/adreno: Add fenced regwrite support
-      drm/msm/a6xx: Set Keep-alive votes to block IFPC
-      drm/msm/a6xx: Switch to GMU AO counter
-      drm/msm/a6xx: Poll AHB fence status in GPU IRQ handler
-      drm/msm: Add support for IFPC
-      drm/msm: Skip devfreq IDLE when possible
-      drm/msm/a6xx: Fix hangcheck for IFPC
-      drm/msm/adreno: Disable IFPC when sysprof is active
-      drm/msm/a6xx: Make crashstate capture IFPC safe
-      drm/msm/a6xx: Enable IFPC on Adreno X1-85
-      drm/msm/adreno: Relax devfreq tunings
+ drivers/gpu/drm/msm/registers/adreno/a6xx_gmu.xml | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
- drivers/gpu/drm/msm/adreno/a6xx_catalog.c         |  67 ++++++-
- drivers/gpu/drm/msm/adreno/a6xx_gmu.c             | 107 ++++++++++--
- drivers/gpu/drm/msm/adreno/a6xx_gmu.h             |  11 ++
- drivers/gpu/drm/msm/adreno/a6xx_gpu.c             | 203 ++++++++++++++++++----
- drivers/gpu/drm/msm/adreno/a6xx_gpu.h             |   3 +
- drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c       |  10 +-
- drivers/gpu/drm/msm/adreno/a6xx_hfi.c             |  33 +++-
- drivers/gpu/drm/msm/adreno/a6xx_preempt.c         |  40 +++--
- drivers/gpu/drm/msm/adreno/adreno_gpu.h           |   1 +
- drivers/gpu/drm/msm/msm_gpu.h                     |   9 +
- drivers/gpu/drm/msm/msm_gpu_devfreq.c             |  13 ++
- drivers/gpu/drm/msm/msm_gpu_trace.h               |  12 ++
- drivers/gpu/drm/msm/msm_submitqueue.c             |   4 +
- drivers/gpu/drm/msm/registers/adreno/a6xx_gmu.xml |  11 ++
- 14 files changed, 449 insertions(+), 75 deletions(-)
----
-base-commit: 88bf743cabe5793d24f831ef8240a0bf90e5fd44
-change-id: 20241216-ifpc-support-3b80167b3532
+diff --git a/drivers/gpu/drm/msm/registers/adreno/a6xx_gmu.xml b/drivers/gpu/drm/msm/registers/adreno/a6xx_gmu.xml
+index 3d2cc339b8f19c8d24b2c9144569b2364afc5ebc..b15a242d974d6b42133171c8484d3b0413f2d3a4 100644
+--- a/drivers/gpu/drm/msm/registers/adreno/a6xx_gmu.xml
++++ b/drivers/gpu/drm/msm/registers/adreno/a6xx_gmu.xml
+@@ -99,6 +99,10 @@ xsi:schemaLocation="https://gitlab.freedesktop.org/freedreno/ rules-fd.xsd">
+ 		<bitfield name="GX_HM_GDSC_POWER_OFF" pos="6" type="boolean"/>
+ 		<bitfield name="GX_HM_CLK_OFF" pos="7" type="boolean"/>
+ 	</reg32>
++	<reg32 offset="0x50d0" name="GMU_SPTPRAC_PWR_CLK_STATUS" variants="A7XX">
++		<bitfield name="GX_HM_GDSC_POWER_OFF" pos="0" type="boolean"/>
++		<bitfield name="GX_HM_CLK_OFF" pos="1" type="boolean"/>
++	</reg32>
+ 	<reg32 offset="0x50e4" name="GMU_GPU_NAP_CTRL">
+ 		<bitfield name="HW_NAP_ENABLE" pos="0"/>
+ 		<bitfield name="SID" low="4" high="8"/>
+@@ -127,6 +131,7 @@ xsi:schemaLocation="https://gitlab.freedesktop.org/freedreno/ rules-fd.xsd">
+ 	<reg32 offset="0x5088" name="GMU_ALWAYS_ON_COUNTER_L"/>
+ 	<reg32 offset="0x5089" name="GMU_ALWAYS_ON_COUNTER_H"/>
+ 	<reg32 offset="0x50c3" name="GMU_GMU_PWR_COL_KEEPALIVE"/>
++	<reg32 offset="0x50c4" name="GMU_PWR_COL_PREEMPT_KEEPALIVE"/>
+ 	<reg32 offset="0x5180" name="GMU_HFI_CTRL_STATUS"/>
+ 	<reg32 offset="0x5181" name="GMU_HFI_VERSION_INFO"/>
+ 	<reg32 offset="0x5182" name="GMU_HFI_SFR_ADDR"/>
+@@ -228,6 +233,12 @@ xsi:schemaLocation="https://gitlab.freedesktop.org/freedreno/ rules-fd.xsd">
+ 	<reg32 offset="0x03ee" name="RSCC_TCS1_DRV0_STATUS"/>
+ 	<reg32 offset="0x0496" name="RSCC_TCS2_DRV0_STATUS"/>
+ 	<reg32 offset="0x053e" name="RSCC_TCS3_DRV0_STATUS"/>
++	<reg32 offset="0x05e6" name="RSCC_TCS4_DRV0_STATUS" variants="A7XX"/>
++	<reg32 offset="0x068e" name="RSCC_TCS5_DRV0_STATUS" variants="A7XX"/>
++	<reg32 offset="0x0736" name="RSCC_TCS6_DRV0_STATUS" variants="A7XX"/>
++	<reg32 offset="0x07de" name="RSCC_TCS7_DRV0_STATUS" variants="A7XX"/>
++	<reg32 offset="0x0886" name="RSCC_TCS8_DRV0_STATUS" variants="A7XX"/>
++	<reg32 offset="0x092e" name="RSCC_TCS9_DRV0_STATUS" variants="A7XX"/>
+ </domain>
+ 
+ </database>
 
-Best regards,
 -- 
-Akhil P Oommen <akhilpo@oss.qualcomm.com>
+2.50.1
 
 
