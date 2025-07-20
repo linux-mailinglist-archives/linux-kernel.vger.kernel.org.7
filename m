@@ -1,118 +1,318 @@
-Return-Path: <linux-kernel+bounces-738393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5B2BB0B7D4
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 20:58:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDAA6B0B7D6
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 21:01:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9F2E178A1B
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 18:58:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57FB1189969F
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 19:01:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49188221F0F;
-	Sun, 20 Jul 2025 18:58:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE7721D63EE;
+	Sun, 20 Jul 2025 19:01:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UWJyWLpy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="n6JSzOiL"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E043382;
-	Sun, 20 Jul 2025 18:58:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3FDD208A7
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 19:01:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753037907; cv=none; b=IrenaqEHHZ8FO56GrtOOqaOMzOEJuDVvl8VQcqbfywP1aI9dIsxKribFwtNE7y4+a14qR2Vj0D4vioePRy0ljZORdYfFJJHcHAwY28Rej5Lslw83PdWSg5rf2w87ytiVBkC1Y1c1HgVGHblGW6TFwp4FpgL9vxv+HhfdWNi7XeU=
+	t=1753038064; cv=none; b=JIMAdUoFmF0JTmVsTu79gogxherrfUSPo3Atw6TRCuNZywxL75Kkdqsfa2de//ENYGkhsao5oNoK4aAFxMAbgIb6Gp1Nc6lwUEiGur+XIqI4AZJ+LUWziynWERNfWl0U95WVVKSHoGjfavEVVZLKXmPHDzl5C8sj2EOo0iA2HQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753037907; c=relaxed/simple;
-	bh=Z4K/L8iVI8412mIfKRLloP1W+n/XlOZFFt9DKKoURFg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BNmpT9CxMEf69sXiW8KwNeonTVLoiIRvV4Ew7xqyL1rqdklI0tFWWKR/Ei5Ag7a6MKCi2szbIFbSMUPQjeK76njTuzau9UFZnwWy9gsg/8nT76oIPfvhyf1p6m31PdYzZ70FtkWukVi/2cGT9+e5lD5G5pYPChD14rOcAxN1+hE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UWJyWLpy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0169AC4CEE7;
-	Sun, 20 Jul 2025 18:58:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753037907;
-	bh=Z4K/L8iVI8412mIfKRLloP1W+n/XlOZFFt9DKKoURFg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=UWJyWLpyXtMe4KYH3Ztyry35J19Ro8R2rER8oyZh6JGgNMnlVXYl+OE2S7ggDWLg2
-	 z6ZmJjf2j4FW2J2mv83Lgll2m8yB4EcoxaQLyDclqT8HZtboSXYoLbTCd6tz6w/Ioa
-	 1qTLh0Fw9iRuYgVUlvCIEhW/U9IZy0cfWHgWCLCaXNLZa1gqS1nHd4qp0F2G9/2QJJ
-	 wm7xmqpzIkKQsxfCczGpGdcYYiMdfuRD+nt+3ND8bAbzwNjE61tj6PUkZ0U6Z1YWND
-	 4C7UYd5U5CE5qk1Jl0N/UkOA/bQnxhs+Tf7zr+R1Kst8YTKxP9QmACHFRER4PqR5cX
-	 zy9aRfDiA+7+Q==
-From: SeongJae Park <sj@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	Honggyu Kim <honggyu.kim@sk.com>,
-	Hyeongtak Ji <hyeongtak.ji@sk.com>,
-	damon@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	stable@vger.kernel.org
-Subject: [PATCH] mm/damon/ops-common: ignore migration request to invalid nodes
-Date: Sun, 20 Jul 2025 11:58:22 -0700
-Message-Id: <20250720185822.1451-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1753038064; c=relaxed/simple;
+	bh=0mS1ug5jO2aEKMpln36VCoQHVyMHlzbrwP4CqPz5fvY=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=ipRW75uWTSB5RT8gkjv4U5OXZzNmheZ4+Sthb3NQzR55aiyAKdSroRJNC4k7xP09pdA7eBW7UoYhjxQZkmcxTA9BijROKES5PrqH7k2smvrG/amVItanZ8XreFPwKquNIPQjTU18350aRPN0xq0sH8xv8i9ZDSivgC5uA+raXfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=n6JSzOiL; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-23694cec0feso32772125ad.2
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 12:01:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1753038061; x=1753642861; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:from:subject:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=f0VcuzHsVpFd1pJThnmo8ltGCjgRYM30zloF0h6AJhY=;
+        b=n6JSzOiLPG698coINUodV6PcoXCnKh70uWaDe2Lbiee/d5sgEPLHfbNX7UYJeYcbVd
+         Us1XwZM8RmAvv5KtXB0mfbkzK6zrO3ln1e7MSW9KHsAToJLZIwej39M2oBwmVHiQtdR8
+         xAXlLrlFElqhUxR5tzHgBkeQyuSyjmGK24Nshcx5MQRDrYHV7Q2abpWa7Xb69aaG60Tx
+         SxFCeIzri+4bMNzD5CelWq3X73ALNu3FRxJ8ichvIW0RKibnRzgNk/PIi90L0qVXln04
+         ZSQzFJtkGBYfvD3fXQ+z+CMTtrtbXMxd7mN1XblYhb4oEUmlCXdcNNKRup0vnWybzoYb
+         OphA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753038061; x=1753642861;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=f0VcuzHsVpFd1pJThnmo8ltGCjgRYM30zloF0h6AJhY=;
+        b=VxutpCBpwVAXOB7CMQTrcsZPJR4XN1/Hku22LfJ/Rizc6Sf7FtB+1YFWUQ5rPNPYN3
+         heSnO1MKDKr4045x8kz0cwEaCZ5asNdBqUTsj+4tjAQRpDQ2s47hVXV3wFJlPru0CZE/
+         TqJAi3kw5WDN8ecCYV4Wk0YmvZvRRptDMjGwfi3OMW/wUrfcrogSENmNxdLrc40WCFuy
+         3uCXKnR6HEzMBzXblDrr4J2Pop52PLV0gnAGSkKaPdkSXHJHBEK3ez/4V0oABPMKMxMH
+         S/xZtU9nKpezJMh+Yb1261ht3ikyu/X35WH/2FlA992kw/RICHU5GJYULrKMzhsuH62L
+         mzHA==
+X-Forwarded-Encrypted: i=1; AJvYcCVVSlp1MlSNTxcf60ELiHAdR9MuklihVoxxwrPQvRxpjUdm75Lvf+K/u9YscT6iFtXtI75V8n4hQbsvrFs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzriQCMN98kojKS4HIlctXMai4i6LWcfifG1ytHCyMZOKseU37n
+	dW9963uz3yBtfEs01SWfo5/w9eEoErMKiV6aMQx0PZFJEaFGf270TQcfwgjLTc72XY4=
+X-Gm-Gg: ASbGncusY+KOhXCA4gUF9i62n9n00GqNQq56RfWVP7DwDI6FbwKRoRGU3KRUEZjViXB
+	BblvHBm3EkKTPJExsNMO+JSYp223DSsUR34mqyuMSd3wfhd0fTgSSumfb8fYbFE2Igsu53pkcnz
+	xD9WmzdDaD/cZJjUqw4DVYc6sd4xO8YgUYcxe8eIUJ+xgjoWCC6OD++/DX0nDh1veCeRvxOLzso
+	3oG55yG8t8BTo0SKtGJDQtvAK3rJ6nff8sX5HayqRS1csO39Yc1Ggueg59oXZXKdtpTCidDa+5A
+	tVoJtaZrHGqiDJIMzELSNuYIvRYnM0oy1ty7E0i7a2UK4lFkBeYPMtc/LnKIkg50E/0mE48GfKP
+	skdk7PcK7vGC13r1EGjKKbSYl1DeSyYdH0w==
+X-Google-Smtp-Source: AGHT+IFzOKspwboXoOK4V7ADha2ZoUMC2ec10BhIvkdPzxROexeZUZSKH006rrchLbTfOu8wpRi+aQ==
+X-Received: by 2002:a17:903:1a84:b0:234:8a4a:ada5 with SMTP id d9443c01a7336-23e24f59832mr243164615ad.37.1753038061000;
+        Sun, 20 Jul 2025 12:01:01 -0700 (PDT)
+Received: from [100.74.100.100] ([12.129.159.196])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b60f2b7sm44665445ad.79.2025.07.20.12.00.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 20 Jul 2025 12:00:59 -0700 (PDT)
+Message-ID: <d407c9f1-e625-4153-930f-6e44d82b32b5@kernel.dk>
+Date: Sun, 20 Jul 2025 13:00:59 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [io-uring?] KASAN: slab-use-after-free Read in
+ io_poll_remove_entries
+From: Jens Axboe <axboe@kernel.dk>
+To: syzbot <syzbot+01523a0ae5600aef5895@syzkaller.appspotmail.com>,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com, abbotti@mev.co.uk,
+ hsweeten@visionengravers.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <687bd5fe.a70a0220.693ce.0091.GAE@google.com>
+ <9385a1a6-8c10-4eb5-9ab9-87aaeb6a7766@kernel.dk>
+ <ede52bb4-c418-45c0-b133-4b5fb6682b04@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <ede52bb4-c418-45c0-b133-4b5fb6682b04@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-damon_migrate_pages() try migration even if the target node is invalid.
-If users mistakenly make such invalid requests via
-DAMOS_MIGRATE_{HOT,COLD} action, below kernel BUG can happen.
+On 7/20/25 12:49 PM, Jens Axboe wrote:
+> On 7/20/25 12:24 PM, Jens Axboe wrote:
+>> On 7/19/25 11:29 AM, syzbot wrote:
+>>> Hello,
+>>>
+>>> syzbot found the following issue on:
+>>>
+>>> HEAD commit:    4871b7cb27f4 Merge tag 'v6.16-rc6-smb3-client-fixes' of gi..
+>>> git tree:       upstream
+>>> console output: https://syzkaller.appspot.com/x/log.txt?x=1288c38c580000
+>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=fa738a4418f051ee
+>>> dashboard link: https://syzkaller.appspot.com/bug?extid=01523a0ae5600aef5895
+>>> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1688c38c580000
+>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=166ed7d4580000
+>>>
+>>> Downloadable assets:
+>>> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-4871b7cb.raw.xz
+>>> vmlinux: https://storage.googleapis.com/syzbot-assets/4a9dea51d821/vmlinux-4871b7cb.xz
+>>> kernel image: https://storage.googleapis.com/syzbot-assets/f96c723cdfe6/bzImage-4871b7cb.xz
+>>>
+>>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+>>> Reported-by: syzbot+01523a0ae5600aef5895@syzkaller.appspotmail.com
+>>>
+>>> ==================================================================
+>>> BUG: KASAN: slab-use-after-free in __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
+>>> BUG: KASAN: slab-use-after-free in _raw_spin_lock_irq+0x36/0x50 kernel/locking/spinlock.c:170
+>>> Read of size 1 at addr ffff88803c6f42b0 by task kworker/2:2/1339
+>>>
+>>> CPU: 2 UID: 0 PID: 1339 Comm: kworker/2:2 Not tainted 6.16.0-rc6-syzkaller-00253-g4871b7cb27f4 #0 PREEMPT(full) 
+>>> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+>>> Workqueue: events io_fallback_req_func
+>>> Call Trace:
+>>>  <TASK>
+>>>  __dump_stack lib/dump_stack.c:94 [inline]
+>>>  dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+>>>  print_address_description mm/kasan/report.c:378 [inline]
+>>>  print_report+0xcd/0x610 mm/kasan/report.c:480
+>>>  kasan_report+0xe0/0x110 mm/kasan/report.c:593
+>>>  __kasan_check_byte+0x36/0x50 mm/kasan/common.c:557
+>>>  kasan_check_byte include/linux/kasan.h:399 [inline]
+>>>  lock_acquire kernel/locking/lockdep.c:5845 [inline]
+>>>  lock_acquire+0xfc/0x350 kernel/locking/lockdep.c:5828
+>>>  __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
+>>>  _raw_spin_lock_irq+0x36/0x50 kernel/locking/spinlock.c:170
+>>>  spin_lock_irq include/linux/spinlock.h:376 [inline]
+>>>  io_poll_remove_entry io_uring/poll.c:146 [inline]
+>>>  io_poll_remove_entries.part.0+0x14e/0x7e0 io_uring/poll.c:179
+>>>  io_poll_remove_entries io_uring/poll.c:159 [inline]
+>>>  io_poll_task_func+0x4cd/0x1130 io_uring/poll.c:326
+>>>  io_fallback_req_func+0x1c7/0x6d0 io_uring/io_uring.c:259
+>>>  process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3238
+>>>  process_scheduled_works kernel/workqueue.c:3321 [inline]
+>>>  worker_thread+0x6c8/0xf10 kernel/workqueue.c:3402
+>>>  kthread+0x3c5/0x780 kernel/kthread.c:464
+>>>  ret_from_fork+0x5d4/0x6f0 arch/x86/kernel/process.c:148
+>>>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+>>>  </TASK>
+>>>
+>>> Allocated by task 6154:
+>>>  kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+>>>  kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+>>>  poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+>>>  __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
+>>>  kmalloc_noprof include/linux/slab.h:905 [inline]
+>>>  kzalloc_noprof include/linux/slab.h:1039 [inline]
+>>>  __comedi_device_postconfig_async drivers/comedi/drivers.c:664 [inline]
+>>>  __comedi_device_postconfig drivers/comedi/drivers.c:721 [inline]
+>>>  comedi_device_postconfig+0x2cb/0xc80 drivers/comedi/drivers.c:756
+>>>  comedi_device_attach+0x3cf/0x900 drivers/comedi/drivers.c:998
+>>>  do_devconfig_ioctl+0x1a7/0x580 drivers/comedi/comedi_fops.c:855
+>>>  comedi_unlocked_ioctl+0x15bb/0x2e90 drivers/comedi/comedi_fops.c:2136
+>>>  vfs_ioctl fs/ioctl.c:51 [inline]
+>>>  __do_sys_ioctl fs/ioctl.c:907 [inline]
+>>>  __se_sys_ioctl fs/ioctl.c:893 [inline]
+>>>  __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:893
+>>>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>>>  do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
+>>>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>>>
+>>> Freed by task 6156:
+>>>  kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+>>>  kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+>>>  kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:576
+>>>  poison_slab_object mm/kasan/common.c:247 [inline]
+>>>  __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
+>>>  kasan_slab_free include/linux/kasan.h:233 [inline]
+>>>  slab_free_hook mm/slub.c:2381 [inline]
+>>>  slab_free mm/slub.c:4643 [inline]
+>>>  kfree+0x2b4/0x4d0 mm/slub.c:4842
+>>>  comedi_device_detach_cleanup drivers/comedi/drivers.c:171 [inline]
+>>>  comedi_device_detach+0x2a4/0x9e0 drivers/comedi/drivers.c:208
+>>>  do_devconfig_ioctl+0x46c/0x580 drivers/comedi/comedi_fops.c:833
+>>>  comedi_unlocked_ioctl+0x15bb/0x2e90 drivers/comedi/comedi_fops.c:2136
+>>>  vfs_ioctl fs/ioctl.c:51 [inline]
+>>>  __do_sys_ioctl fs/ioctl.c:907 [inline]
+>>>  __se_sys_ioctl fs/ioctl.c:893 [inline]
+>>>  __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:893
+>>>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>>>  do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
+>>>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>>
+>> I took a quick look at this, and surely looks like a comedi bug. If you
+>> call the ioctl part (do_devconfig_ioctl()) with a NULL arg, it just does
+>> a detach and frees the device, regardless of whether anyone has it
+>> opened or not?! It's got some odd notion of checking whether it's busy
+>> or not. For this case, someone has a poll active on the device, yet it
+>> still happily frees it.
+>>
+>> CC'ing some folks, as this looks utterly broken.
+> 
+> Case in point, I added:
+> 
+> diff --git a/drivers/comedi/drivers.c b/drivers/comedi/drivers.c
+> index 376130bfba8a..4d5fde012558 100644
+> --- a/drivers/comedi/drivers.c
+> +++ b/drivers/comedi/drivers.c
+> @@ -167,6 +167,7 @@ static void comedi_device_detach_cleanup(struct comedi_device *dev)
+>  				kfree(s->private);
+>  			comedi_free_subdevice_minor(s);
+>  			if (s->async) {
+> +				WARN_ON_ONCE(waitqueue_active(&s->async->wait_head));
+>  				comedi_buf_alloc(dev, s, 0);
+>  				kfree(s->async);
+>  			}
+> 
+> and this is the first thing that triggers:
+> 
+> WARNING: CPU: 1 PID: 807 at drivers/comedi/drivers.c:170 comedi_device_detach+0x510/0x720
+> Modules linked in:
+> CPU: 1 UID: 0 PID: 807 Comm: comedi Not tainted 6.16.0-rc6-00281-gf4a40a4282f4-dirty #1438 NONE 
+> Hardware name: linux,dummy-virt (DT)
+> pstate: 21400005 (nzCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+> pc : comedi_device_detach+0x510/0x720
+> lr : comedi_device_detach+0x1dc/0x720
+> sp : ffff80008aeb7880
+> x29: ffff80008aeb7880 x28: 1fffe00020251205 x27: ffff000101289028
+> x26: ffff00010578a000 x25: ffff000101289000 x24: 0000000000000007
+> x23: 1fffe00020af1437 x22: 1fffe00020af1438 x21: 0000000000000000
+> x20: 0000000000000000 x19: dfff800000000000 x18: ffff0000db102ec0
+> x17: ffff80008208e6dc x16: ffff80008362e120 x15: ffff800080a47c1c
+> x14: ffff8000826f5aec x13: ffff8000836a0cc4 x12: ffff700010adcd15
+> x11: 1ffff00010adcd14 x10: ffff700010adcd14 x9 : ffff8000836a105c
+> x8 : ffff800085bc0cc0 x7 : ffff00000b035b50 x6 : 0000000000000000
+> x5 : 0000000000000000 x4 : ffff800080960e08 x3 : 0000000000000001
+> x2 : ffff00000b4bf930 x1 : 0000000000000000 x0 : ffff0000d7e2b0d8
+> Call trace:
+>  comedi_device_detach+0x510/0x720 (P)
+>  do_devconfig_ioctl+0x37c/0x4b8
+>  comedi_unlocked_ioctl+0x33c/0x2bd8
+>  __arm64_sys_ioctl+0x124/0x1a0
+>  invoke_syscall.constprop.0+0x60/0x2a0
+>  el0_svc_common.constprop.0+0x148/0x240
+>  do_el0_svc+0x40/0x60
+>  el0_svc+0x44/0xe0
+>  el0t_64_sync_handler+0x104/0x130
+>  el0t_64_sync+0x170/0x178
+> 
+> Not sure what the right fix for comedi is here, it'd probably be at
+> least somewhat saner if it only allowed removal of the device when the
+> ref count would be 1 (for the ioctl itself). Just ignoring the file ref
+> and allowing blanket removal seems highly suspicious / broken.
+> 
+> As there's no comedi subsystem in syzbot, moving it to kernel:
+> 
+> #syz set subsystems: kernel
 
-    [ 7831.883495] BUG: unable to handle page fault for address: 0000000000001f48
-    [ 7831.884160] #PF: supervisor read access in kernel mode
-    [ 7831.884681] #PF: error_code(0x0000) - not-present page
-    [ 7831.885203] PGD 0 P4D 0
-    [ 7831.885468] Oops: Oops: 0000 [#1] SMP PTI
-    [ 7831.885852] CPU: 31 UID: 0 PID: 94202 Comm: kdamond.0 Not tainted 6.16.0-rc5-mm-new-damon+ #93 PREEMPT(voluntary)
-    [ 7831.886913] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-4.el9 04/01/2014
-    [ 7831.887777] RIP: 0010:__alloc_frozen_pages_noprof (include/linux/mmzone.h:1724 include/linux/mmzone.h:1750 mm/page_alloc.c:4936 mm/page_alloc.c:5137)
-    [...]
-    [ 7831.895953] Call Trace:
-    [ 7831.896195]  <TASK>
-    [ 7831.896397] __folio_alloc_noprof (mm/page_alloc.c:5183 mm/page_alloc.c:5192)
-    [ 7831.896787] migrate_pages_batch (mm/migrate.c:1189 mm/migrate.c:1851)
-    [ 7831.897228] ? __pfx_alloc_migration_target (mm/migrate.c:2137)
-    [ 7831.897735] migrate_pages (mm/migrate.c:2078)
-    [ 7831.898141] ? __pfx_alloc_migration_target (mm/migrate.c:2137)
-    [ 7831.898664] damon_migrate_folio_list (mm/damon/ops-common.c:321 mm/damon/ops-common.c:354)
-    [ 7831.899140] damon_migrate_pages (mm/damon/ops-common.c:405)
-    [...]
+Something like the below may help, at least it'll tell us the device is
+busy if there's a poll active on it.
 
-Add a target node validity check in damon_migrate_pages().  The validity
-check is stolen from that of do_pages_move(), which is being used for
-move_pages() system call.
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
 
-Fixes: b51820ebea65 ("mm/damon/paddr: introduce DAMOS_MIGRATE_COLD action for demotion") # 6.11.x
-Cc: stable@vger.kernel.org
-Cc: Honggyu Kim <honggyu.kim@sk.com>
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- mm/damon/ops-common.c | 4 ++++
- 1 file changed, 4 insertions(+)
 
-diff --git a/mm/damon/ops-common.c b/mm/damon/ops-common.c
-index 6a9797d1d7ff..99321ff5cb92 100644
---- a/mm/damon/ops-common.c
-+++ b/mm/damon/ops-common.c
-@@ -383,6 +383,10 @@ unsigned long damon_migrate_pages(struct list_head *folio_list, int target_nid)
- 	if (list_empty(folio_list))
- 		return nr_migrated;
+diff --git a/drivers/comedi/comedi_fops.c b/drivers/comedi/comedi_fops.c
+index 3383a7ce27ff..ea96bc4b818e 100644
+--- a/drivers/comedi/comedi_fops.c
++++ b/drivers/comedi/comedi_fops.c
+@@ -785,21 +785,31 @@ void comedi_device_cancel_all(struct comedi_device *dev)
+ static int is_device_busy(struct comedi_device *dev)
+ {
+ 	struct comedi_subdevice *s;
+-	int i;
++	int i, is_busy = 0;
  
-+	if (target_nid < 0 || target_nid >= MAX_NUMNODES ||
-+			!node_state(target_nid, N_MEMORY))
-+		return nr_migrated;
+ 	lockdep_assert_held(&dev->mutex);
+ 	if (!dev->attached)
+ 		return 0;
+ 
++	/* prevent new polls */
++	down_write(&dev->attach_lock);
 +
- 	noreclaim_flag = memalloc_noreclaim_save();
+ 	for (i = 0; i < dev->n_subdevices; i++) {
+ 		s = &dev->subdevices[i];
+-		if (s->busy)
+-			return 1;
+-		if (s->async && comedi_buf_is_mmapped(s))
+-			return 1;
++		if (s->busy) {
++			is_busy = 1;
++			break;
++		}
++		if (!s->async)
++			continue;
++		if (comedi_buf_is_mmapped(s) ||
++		    waitqueue_active(&s->async->wait_head)) {
++			is_busy = 1;
++			break;
++		}
+ 	}
+-
+-	return 0;
++	up_write(&dev->attach_lock);
++	return is_busy;
+ }
  
- 	nid = folio_nid(lru_to_folio(folio_list));
+ /*
 
-base-commit: e2c90d41402c324ea81fa3d9c2c1d0f61906c161
 -- 
-2.39.5
+Jens Axboe
 
