@@ -1,97 +1,148 @@
-Return-Path: <linux-kernel+bounces-738504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83D84B0B94E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 01:43:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 24411B0B960
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 01:44:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7C843AED89
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 23:42:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CADA3BB5F4
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 23:44:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC35230BEF;
-	Sun, 20 Jul 2025 23:43:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1302522FF39;
+	Sun, 20 Jul 2025 23:44:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ABLkidrE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LLOzNG3x"
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E189984D02;
-	Sun, 20 Jul 2025 23:43:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE19D22DFB6
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 23:44:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753054985; cv=none; b=hFIHe/yx8gaKgCKJygp9jJvmsBQ3x3WfM88KV+iDhhWxKfFJT/G5ktlBoyJOsgI9cNF2V4B4XxDTtHrR3uvftTr39LWHuwf3bOQnEyv2ELD2FKpYYqNB0mex9NZU5gaNYtLb3gx3qPxDlYsZOJ6NzjfIZZn3shPMJ6G0hIQqK5U=
+	t=1753055093; cv=none; b=r/v4oYUNYx2UeB/2WfUY6UAedD/pJ8+0mAYzsQHTXn5CZpeDYbChYtM7kH9vHq09UcqD7U3y87cCys7XmodkMiOIAAMwgN29so68ZTVqtQntPZSiOV6KWvRLds58opCwU1/U6OaGOTQLY3iythUZhcdCgQ2bVaHTrErJFJdwAwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753054985; c=relaxed/simple;
-	bh=hi1P1Md3lx0mFctv/IZEeLMfN66v8OwqSqJnjru2AKs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g9XHC58MZk2yGrOuKGsPBJYejfMc42nkwcYT0kNjEA9HvHnqkPGkcn6/vK9MEh87eik47+LCfwnNIWOiuj80e+fQTCjovXdT0iya9BuvW9hEeqTmI4UgEQwqIeg4oZ431TKih2fuq+8eUuf/Kd+JVKuDr7CZK841KUXBNG2Xj7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ABLkidrE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30910C4CEF1;
-	Sun, 20 Jul 2025 23:43:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753054984;
-	bh=hi1P1Md3lx0mFctv/IZEeLMfN66v8OwqSqJnjru2AKs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ABLkidrEM2saNjFzmOPHi29nSFhi1ImiUstYIa9yWmskrhoktNS5WuZjis65jTXRz
-	 EKhBUHbQbM7wE+228YJdxf53icCDaPhE6RyY7JHHEWJ9u+BS1lwFX86/0myp3zyBqu
-	 Mt4GYUjy4msPoJe2Z9JFKjXlB3lSfPnG6CZOj8lIApsV9xKadTvLKiVtuo+wUfMXnx
-	 aWFRM71T9t7WhjFLb1Q4/RVPP9stBFqHPL4jiR69gVan7MbPsdz9THwJUtT995xlHB
-	 aff7lL8tlUBv0Xx4k8QZPGMSbwLtIkj2nRavbC14DeD4vBniYJfOL3yMCAeJOAhjsT
-	 EgYnWx+7oM20w==
-Date: Sun, 20 Jul 2025 18:43:03 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
-Cc: conor+dt@kernel.org, quic_krichai@quicinc.com, vkoul@kernel.org,
-	bhelgaas@google.com, lpieralisi@kernel.org, krzk+dt@kernel.org,
-	jingoohan1@gmail.com, qiang.yu@oss.qualcomm.com,
-	abel.vesa@linaro.org, linux-arm-msm@vger.kernel.org, kw@linux.com,
-	neil.armstrong@linaro.org, mani@kernel.org,
-	devicetree@vger.kernel.org, johan+linaro@kernel.org,
-	andersson@kernel.org, linux-pci@vger.kernel.org,
-	kwilczynski@kernel.org, linux-kernel@vger.kernel.org,
-	quic_vbadigan@quicinc.com, kishon@kernel.org,
-	konradybcio@kernel.org, linux-phy@lists.infradead.org
-Subject: Re: [PATCH v5 2/4] dt-bindings: PCI: qcom,pcie-sa8775p: document
- link_down reset
-Message-ID: <175305498292.3083407.12105009386525845667.robh@kernel.org>
-References: <20250718081718.390790-1-ziyue.zhang@oss.qualcomm.com>
- <20250718081718.390790-3-ziyue.zhang@oss.qualcomm.com>
+	s=arc-20240116; t=1753055093; c=relaxed/simple;
+	bh=haICpv4Afyf85vccFf6Ukv9WsiT2YS4eV/97AVxjxEQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lPQhTa8urWbwUAwGfBHfOf2wr3WTF+CRNIyJ+sEJMyxXxFmn9m/kijL2vhmOolDSndtUIJo29vU++ja5CgFOra/fQchP4HllhGhH6Visrgi7DnYzqKp0a+8E116JIblmyXcLJyc/rnfgJglZfDNqasBrW++wRZvWTPtli7fXYec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LLOzNG3x; arc=none smtp.client-ip=209.85.222.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-87f1b3a3e7bso1957742241.1
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 16:44:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753055090; x=1753659890; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+LBnzd3v/hpHhCUNhojeHVoFejEzEwc/Hd5UG60oSVY=;
+        b=LLOzNG3x1p843Z9Gx7VVToi+gFMwYniU0lC0lhJ1a79HRuwF7YE/l+pEXV3n8tAivm
+         sl8qbLNn85cibshgikMSn4jmzdTaMBymYRFnPDK06Qcm4c1kUzfcUWmw45NHb/guNomS
+         JFudo/Hoe3QCjOFh63edPVJSBBlanjhyH+SRoh5xhjGF8czZvgTRbBbLI6q1FkaOlkYS
+         9NBWrT/InGRMJJ0XU3TcLbhAx5NWW40ZC0kfACPQQXOqTqIrKuReM0kXdWZnS/iyr79C
+         grsHu94eG4OSWvtfteaDA5MJPovvuUX9PgAlXb7lP3brYf9C9BWCcyXTxQAsIxf5FbFG
+         FqrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753055090; x=1753659890;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+LBnzd3v/hpHhCUNhojeHVoFejEzEwc/Hd5UG60oSVY=;
+        b=C8btvqHO94Y+kYtiekVhxbRVuiKMlwHtdEtzU6KhzmduCMlGjosxSRbiijHKcr2leq
+         mGpROPYbYQMZP+80IIC99cyNilNcZBW42GrdQg3+vBQ7UcYN+gMHszwsLgM8qihYfFr2
+         4oIly9HaQNxdMmpxDfRG/9IN0yrBPkL1Bnw9l2HtozpduxaXGTdVkzx2zyAQ4W2iknq8
+         iNslHHQke9Q9T2P3B0pmg1kJdkUd9bAdOPfXMKX9iigkMQTBkAfHpQb8yZx+ZtkY4DYO
+         w+40+VIjWaUggHU4npNp7MRUdeV4/09P0A8u40ZyQ/7HJ460c16b8tM/1ddlSxnkQ6GI
+         eStw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/MKmatGVDw1O2YORkJDH7lCNAuB1c0uHxbP/KtX/QlMZCgc2qhBDCqXGBCYRHH+vdxzMpxN1CzUDp+OE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNzoGWS7r31Y+UuITl3isG2ky79/3kqns0PwDi3dWljIMN8f6e
+	KYhB6Lm033P9F3qoaOaiqkF7OomabwU3U8p98LQPe+ks1dV9/0Q/MaC2mN9PHC0aufTXmbIIr1A
+	mSytbyPxesFKxjyU/CIqNJSp1IPJzVJo=
+X-Gm-Gg: ASbGncuEsTC//4y1fpGoYAMcDJAZ2q0cSn6UUfy4yyqs8L3fzGR7QL65jVIRbFtiMul
+	PpSZJLu22xYZVnSA6Am2o3vVtOO4/bFAjVqujox6UYnH67PYhZt1onfCC7RnG/TbzKVMxXq4WRu
+	X57CpP31IjmmwTgyBpMUuq/26BHfiSEy/tInhN0Z9BoR8+2rcgxBllq3R4gSXv8o1PDWT3RdJhU
+	y6ZXT0=
+X-Google-Smtp-Source: AGHT+IE5Iww1i00Pt12bS4PeAauPkTugTt4uJE2TsnwTnY38yNwpFQjV6A6pNGslKMdLzsjoyJUdyCljvCrlxmmznjI=
+X-Received: by 2002:a05:6102:3f0c:b0:4cb:5d6c:9946 with SMTP id
+ ada2fe7eead31-4f95f30463emr10103615137.10.1753055090526; Sun, 20 Jul 2025
+ 16:44:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250718081718.390790-3-ziyue.zhang@oss.qualcomm.com>
+References: <20250718090244.21092-1-dev.jain@arm.com> <20250718090244.21092-2-dev.jain@arm.com>
+In-Reply-To: <20250718090244.21092-2-dev.jain@arm.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Mon, 21 Jul 2025 07:44:39 +0800
+X-Gm-Features: Ac12FXzBjmVqmon0-2uZp6WT1U6OMbiYJHYosmIwhhkMAqnhdJDT2LExr2m1S2w
+Message-ID: <CAGsJ_4y1rJ7Omv-8ADk-cZdkAA37bxOxaeM3-vpz1MMaT_G04A@mail.gmail.com>
+Subject: Re: [PATCH v5 1/7] mm: Refactor MM_CP_PROT_NUMA skipping case into
+ new function
+To: Dev Jain <dev.jain@arm.com>
+Cc: akpm@linux-foundation.org, ryan.roberts@arm.com, david@redhat.com, 
+	willy@infradead.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	catalin.marinas@arm.com, will@kernel.org, Liam.Howlett@oracle.com, 
+	lorenzo.stoakes@oracle.com, vbabka@suse.cz, jannh@google.com, 
+	anshuman.khandual@arm.com, peterx@redhat.com, joey.gouly@arm.com, 
+	ioworker0@gmail.com, kevin.brodsky@arm.com, quic_zhenhuah@quicinc.com, 
+	christophe.leroy@csgroup.eu, yangyicong@hisilicon.com, 
+	linux-arm-kernel@lists.infradead.org, hughd@google.com, 
+	yang@os.amperecomputing.com, ziy@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Jul 18, 2025 at 5:03=E2=80=AFPM Dev Jain <dev.jain@arm.com> wrote:
+>
+> Reduce indentation by refactoring the prot_numa case into a new function.
+> No functional change intended.
+>
+> Signed-off-by: Dev Jain <dev.jain@arm.com>
 
-On Fri, 18 Jul 2025 16:17:16 +0800, Ziyue Zhang wrote:
-> Each PCIe controller on SA8775P includes a 'link_down' reset line in
-> hardware. This patch documents the reset in the device tree binding.
-> 
-> The 'link_down' reset is used to forcefully bring down the PCIe link
-> layer, which is useful in scenarios such as link recovery after errors,
-> power management transitions, and hotplug events. Including this reset
-> line improves robustness and provides finer control over PCIe controller
-> behavior.
-> 
-> As the 'link_down' reset was omitted in the initial submission, it is now
-> being documented. While this reset is not required for most of the block's
-> basic functionality, and device trees lacking it will continue to function
-> correctly in most cases, it is necessary to ensure maximum robustness when
-> shutting down or recovering the PCIe core. Therefore, its inclusion is
-> justified despite the minor ABI change.
-> 
-> Signed-off-by: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+Reviewed-by: Barry Song <baohua@kernel.org>
+
 > ---
->  .../devicetree/bindings/pci/qcom,pcie-sa8775p.yaml    | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
-> 
+>  mm/mprotect.c | 101 +++++++++++++++++++++++++++-----------------------
+>  1 file changed, 55 insertions(+), 46 deletions(-)
+>
+> diff --git a/mm/mprotect.c b/mm/mprotect.c
+> index 88709c01177b..2a9c73bd0778 100644
+> --- a/mm/mprotect.c
+> +++ b/mm/mprotect.c
+> @@ -83,6 +83,59 @@ bool can_change_pte_writable(struct vm_area_struct *vm=
+a, unsigned long addr,
+>         return pte_dirty(pte);
+>  }
+>
+> +static bool prot_numa_skip(struct vm_area_struct *vma, unsigned long add=
+r,
+> +                          pte_t oldpte, pte_t *pte, int target_node)
+> +{
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+[...]
 
+> +       /*
+> +        * Skip scanning top tier node if normal numa
+> +        * balancing is disabled
+> +        */
+> +       if (!(sysctl_numa_balancing_mode & NUMA_BALANCING_NORMAL) && topt=
+ier)
+> +               return true;
+> +
+> +       if (folio_use_access_time(folio))
+> +               folio_xchg_access_time(folio, jiffies_to_msecs(jiffies));
+
+Nit: I wonder if this should be moved elsewhere, since this isn't
+actually about 'skipping', even though the function is named
+`prot_numa_skip()`.
+
+> +       return false;
+> +}
+> +
+
+Thanks
+Barry
 
