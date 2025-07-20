@@ -1,78 +1,109 @@
-Return-Path: <linux-kernel+bounces-738444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 949C6B0B879
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 00:20:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 848B6B0B87B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 00:20:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9AFE189848D
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 22:20:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E14918983BB
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 22:21:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BBA4226CF9;
-	Sun, 20 Jul 2025 22:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CAF922425E;
+	Sun, 20 Jul 2025 22:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LN8nkzVa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EdE7sah4"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3A5185E7F
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 22:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B62551DE8A4;
+	Sun, 20 Jul 2025 22:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753049994; cv=none; b=gK1wPQwODXE+kVXlJ2BQ7BJKjOcowi23HxquJ+dePJr5B2vZnbjOElO23SJ03/fV3k0TW32Z3FZgQgBb8wiOeHIyxJEd3GyY0E15DIHI9sRNPvz9ZLFvngayptUfat/VekD4HH3dRhJz3KXmBYOJEAbLtRW1gYWAQfeZcrlbvbI=
+	t=1753050042; cv=none; b=soC1y6u7++itk3hkTZe1Iya05eZc/s9ZGomGEf/+mLvSqEoHV5xY/UUlZk3nzCwn5iJxB7LXyt4YlDeUbGQvqOvIYoSoTnFL006C2RrQ1rq15/hYXT3veL7JdYGY1NhzVMi8XMjQq3PoKlq1lL7w4Cy7+no8L1Xc5QVc9YJ7qnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753049994; c=relaxed/simple;
-	bh=RMARtj35StJxsi7TzDbKrTXq19pUxpsWtwASScAN8rE=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=UNSG67Wa13g5Z9n4KEMPUKFmZXE6PtfLfQM9iCoe4LbnYewu7W/xkfKKrvH2fLod7tlxC0my3HVU6eMRDgr+s5Jp8BmV2hvvsLwMVjmGq1axTJWybB6IrR8g0h1KIGhUuBpMU21vd7Q0OgbdSPNs5DB/1an3zceHrzNG5cIj46A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LN8nkzVa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E407AC4CEE7;
-	Sun, 20 Jul 2025 22:19:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753049993;
-	bh=RMARtj35StJxsi7TzDbKrTXq19pUxpsWtwASScAN8rE=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=LN8nkzVa7udl6xDP5Kzf3+GkR5GEUE6OPsx5CLJ5Gtp5FDAZ2lu+qq9YdB0OytsBi
-	 re+rvv61zw4lQsrU7JMmG5mipWRn4UrwjgsRNikmCTcZIh2q5FOwYT3XrZftVgMhxa
-	 0HeiwjmW+/RYRmT24P63zSJnXlFTFfphoH446xJPEPfa3Atjc4U1JfleeiW7d5xMRh
-	 PsjkvLJFHcfET9SyLI9WGi8CR68epzAqSMTt+8pdihBEqUVx9gMzKso9Hv/T6WS7IA
-	 04akieDFueLumP2nn3tky/pN0k8TrAb7mUTkYESKmszpm2n4psnZE72lS6L9ApzD+O
-	 AVpVdY0CABilQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33E57383BF51;
-	Sun, 20 Jul 2025 22:20:14 +0000 (UTC)
-Subject: Re: [GIT PULL] tracing: Fixes for 6.16
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250720145339.5f09ac0f@gandalf.local.home>
-References: <20250720145339.5f09ac0f@gandalf.local.home>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250720145339.5f09ac0f@gandalf.local.home>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git trace-v6.16-rc5
-X-PR-Tracked-Commit-Id: b5e8acc14dcb314a9b61ff19dcd9fdd0d88f70df
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 2013e8c2e6fd3a4bdf4ccc658ad20a4469360eff
-Message-Id: <175305001270.3302306.16529776327124387095.pr-tracker-bot@kernel.org>
-Date: Sun, 20 Jul 2025 22:20:12 +0000
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Tomas Glozar <tglozar@redhat.com>
+	s=arc-20240116; t=1753050042; c=relaxed/simple;
+	bh=mpgqK+O0m6zO53aSXcw4x5Rvxxj3q7jMk1YJQoBS47Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jVnKWSOlvh+zWF7JMcI1ZzQsbatQRyLWw5lX0iJzr1/qsAeQpAu2KPQwy2EsgYfXy5kg6wUToVUcMvsn+MpGBjxEibNdePBn01K78+5RQNVEKydVjaA+H7BDRwsPusZHiT41bWQhm4yEQmKkPMVXHqCttzvxtcGX0OuYn/ofatI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EdE7sah4; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-3138e64fc73so1022079a91.2;
+        Sun, 20 Jul 2025 15:20:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753050040; x=1753654840; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T2IA3sMXL8MfYHWrx6ejWU6QjqsZ3Jj7kffCWQM2MQg=;
+        b=EdE7sah4XaX1iBn4bNP4kBs7EXDLnTBbg3J9uibh1GMjOnpwqlMWAZNYWhNKpjZ6FZ
+         rtqa9x1NTS5AO6SwI2EiTvP4bWpxQc/jwYMXAfu+NzxMsc4orGh/LK0CB8YRBcO2KL/b
+         kdZScn7ekAONqvkspCRpxfVgDVg9ORJBm9HOM9LyK1YL2qKuNWAHvtqPqhvJqq6KOix7
+         lu04rh+iaSqlCLnph0LpINPmx049EQAIUM6KewTX0ggRtoH1rSk1HZsnYe+fCet2v/jI
+         68wNdTvxfgui/3f02Kz7OHF+ks1ycX87T9icArmSI8y0JqX0YKpg5SDCSjVmbZBYVTnR
+         DcGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753050040; x=1753654840;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T2IA3sMXL8MfYHWrx6ejWU6QjqsZ3Jj7kffCWQM2MQg=;
+        b=LyNE1jD+5HE1iRhOg8To69MLvOXSOs7CazQZOaerpd5jn18Gf1l3zAisfK47Jj9tbv
+         6y3j5/J/AF/nJfZR6z3PJVbIKOT7ihi2rtnxXR2VxUUlTLXYBfzQymEtBeaIrYfna5go
+         xs0uI8ilPEmpxtTqZWLNqCt+ODJnpIxUgxqzrCMuIG/pO6O0PM/mknNZ7hj3lETZDU1W
+         R3vbOKKSidR02CKElfjkJyEsrKtRRj4mPHb54o11IunrtwlmtAtJB10KsstZan8URVKh
+         ynSAbvsPQ7NYJ2aM1/S80vzSMmtr6d80Peo0MkIxiplCODGWXKzW0vpOKFYNxGhr0SEE
+         jJmA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+2tUsw9jpxl2A9c58+990ID6eh2w0Bm4ApaJOoHrsEfH7g6ocQg/DpKF622efYuGjumydJWQJgg+TAZQ=@vger.kernel.org, AJvYcCUq7FtUzNBTTEJndUeSr/iMIXQL0VgjeSe482Zc7L0EHTsS91WWVerWJya4nBTxEpf8OrLz7QJBIRwy3xGp016r@vger.kernel.org, AJvYcCXMiKoh7ydekB/i2QovnZujnH/OAUeFtT7eqaL7+PiSy/kXAbKMSqo7gtvTztpofIrCJL41Y/iGZ78XKZjRaKs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVKOB4Lh6qQLjfMoJVEhgej2BgAmi06ml4Md45mXPu2QAik65a
+	U5DKiz9OaN8TSki6Tty1yzbNEIozxHU1wonq9i7cakJ7AvGbUsfyTFhA9EUP6xN6s5gbO4wrQ3Z
+	pXwuMLSUgAFWFYW3sdXSSQiDDyahHTeg=
+X-Gm-Gg: ASbGnctS6ORvGarfMIS3SjpSSbLfJ+Q8uC5I8txHTycXGtBI3qzbUOuTJzGaxJWCHTd
+	ee3ih8FpN2vlaUppPqcYbcxMUCYhEyS8Ev3XR6bLv0mPP1OWvhnlNHBkXtLGdR5nCpjZxfm1BTY
+	/GlKhbdohUuuceIYlyRzIdNwGIsKWNXCiAMIsPyb+DLuidNRluIXG1jwvIiE1Us43eW7oE4fdaz
+	Jxm8QSS
+X-Google-Smtp-Source: AGHT+IHDtz6azWEF/xGmb9dqZOj2H3tX8J7UDfAhEpXoe7djUPf2x1euDZPU4WxseqamxBJUAo9cNkVVoajiO78BgtM=
+X-Received: by 2002:a17:90b:55cb:b0:312:e9d:4001 with SMTP id
+ 98e67ed59e1d1-31c9e7a4b17mr10406175a91.8.1753050039987; Sun, 20 Jul 2025
+ 15:20:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20250529-idiomatic-match-slice-v2-0-4925ca2f1550@gmail.com> <20250529-idiomatic-match-slice-v2-2-4925ca2f1550@gmail.com>
+In-Reply-To: <20250529-idiomatic-match-slice-v2-2-4925ca2f1550@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 21 Jul 2025 00:20:27 +0200
+X-Gm-Features: Ac12FXyLsz1bmwVkFG-DrTCV5JzIvjpyMKUulmGV4UeLKeC-0LFpqJp96ApQGpI
+Message-ID: <CANiq72nb4LuwkZVjEseMubSX4VOMNTX-8wUV7LtS5FN80cMjyQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] rust: emit path candidates in panic message
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, 
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The pull request you sent on Sun, 20 Jul 2025 14:53:39 -0400:
+On Thu, May 29, 2025 at 3:15=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
+ wrote:
+>
+> +                write!(&mut candidates, "    {path:?}").unwrap();
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git trace-v6.16-rc5
+I assume this was supposed to be `writeln!`; otherwise, we lose the
+newlines and the indent does not make much sense.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/2013e8c2e6fd3a4bdf4ccc658ad20a4469360eff
+I will fix it when applying.
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Cheers,
+Miguel
 
