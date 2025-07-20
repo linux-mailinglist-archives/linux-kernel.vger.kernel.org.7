@@ -1,100 +1,197 @@
-Return-Path: <linux-kernel+bounces-738080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50306B0B40E
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 09:12:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3002B0B413
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 09:18:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E5AA17C3C6
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 07:12:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81B35188D5FA
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 07:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D10E1D619F;
-	Sun, 20 Jul 2025 07:12:05 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F60D1B2186;
+	Sun, 20 Jul 2025 07:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MIAtlwqt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3BCBAD23
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 07:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88272F50;
+	Sun, 20 Jul 2025 07:18:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752995525; cv=none; b=n/4/TseW9B6NRXP6hsJDY/W2kZsQbgqlc/X8nXElHW9GnH70a+borQn71MhyNhu2Pu7amULZ9LIv6ahSubv3M17GR410eXunat1uFKbRwxOJcHftVwZ3OUjv5TqD2NK7Bvr3IWC426PvGUFTwGL1UNvPQ2sTvtlIl7dWXGSTrkc=
+	t=1752995905; cv=none; b=DUUP9vOhbByEs8Pg+ovObcFkx0NGVC12RYYdMj/h1PPrPnOvjHX+KoTcLKm+WfLqnIjIH6hrNgTti55QUjMqLC2SN9yZbr6oNbtJ7bbTHHZ/glJ6adOtYl8G/4QyBrTLkb73bMdCa58vEiivWkVR53aDjO72lXJ2g8tISLPdcts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752995525; c=relaxed/simple;
-	bh=B7vcwDw15jm5v/OBk2RY7LtYnWARRBjhGh8wSvG/k7s=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=CcvhhzK/NX6Jy8b3P0Gvl32BIohbD+7/lIy5uRQV95cztPCSs7kJf8fgWk7QOOPqA+txk3nXAnmHBs9xtgaU69lxsxvXkPzZ1AtBUUtmQDUF3ulBikyPjQZISfmr/QLrZSLEVYh62sNP5D6LgJydS+GfNb3GrfY/US1kO/Pk/rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3e29b48525bso18047685ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 00:12:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752995523; x=1753600323;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r4uz7h9D8eWExTu3SquXQFAKVJC8Vi5HYalQ2f3+Rsg=;
-        b=mUfpUjkeMz9+ZvvzJrKTC/jrFflm/2yz/MFUDZ9n5MzgVLLIoM0jMpydzg1MIAT2nL
-         PxURaUWNNGHh+o0Lh6IkpXmurVQiG/LZWvNx5uo5CYW4u0RFtOvo4SmYg4uaj3plQjQM
-         yLPbX81K+QSOWr6fiPINRGDWjSiTaNVrDQehIXUR2EhJVed6Hxt+QFgygYA7D6TucC36
-         7/whbeYLIF87tkTnEYEmo1N2Fawo+UOoaHthwuKvgfImPQiUnvmYwUn1CPNOvPNhVNPz
-         6aOqtRdPY3O/i+JVRRstvszROIcu5Lcx7FFmhVcLP01KfwKUN+Tb4WIR7Jx0rKYjlY1p
-         4d9w==
-X-Gm-Message-State: AOJu0YwI6Mth6l6RATJs/GMxnN9fENOb0tUsCIVUxO2QIcOX5Nca4+SU
-	3xkdtn7nG2V1MEbWdK7ebYOtHKuoLNtOUqw9DHmGDIKGUawgty5MjA32BNGhamxy1+WAc+It5za
-	jgvJw+v+7npdGl77H0/fh1L4PVonziyz4GS47feqQyxcsv5gKzcvOqTJXNd0=
-X-Google-Smtp-Source: AGHT+IGePIJjLtUSxKV+eFWOgFd6q/fbWiu+UtsujVV0sWLb9PszSK4QUsLduKB5FhfWwdYtQe2HtRW+PZY7D1bGXrF1xV3ikdfn
+	s=arc-20240116; t=1752995905; c=relaxed/simple;
+	bh=UE01BYiDfTSkU90M2y71VUbbgQt5iPxl3tihD9JAOjc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FIDi1d1PE6CBZjaRRUUUpMBEomlw59qoWC04elZq1HaK/8hLZSulLl1EsMdpTKeCEjuo2rldk0SW+bg4biWqO0yL0Ny7DY/RAt2ohpkPKNtJawf6N5YTnZAWEZK85V3s3NhT4TXH5xkn59BVwsHedm7GrKrp7n6mf0qg3R56MLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MIAtlwqt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C14B8C4CEE7;
+	Sun, 20 Jul 2025 07:18:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752995905;
+	bh=UE01BYiDfTSkU90M2y71VUbbgQt5iPxl3tihD9JAOjc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MIAtlwqt903Ua7eVmSoJNpnKmY46n3LpXbAjQp7mC1KMK1X2sDIqkAviL38hwXjY4
+	 JDbrub8ENkkGwLe9dHhBzsMAK1haY68PqeuAN6e+fWKG/424uve8PyD+QV20PFZAoC
+	 YV40RTxcjm+7EY9YDqQb9dZPVg+j6ovzZzpML9rnWQxBy+jsjJYqMI/DvULIBZWQj8
+	 2yRY1xQ1wPYo3rzs/nRLNzgFq1Q09YgiKqW9r4Nkrr8EN2qqLC3rZamiSdeB/C9bLS
+	 61/58FZyFv6TS1DcaA2o6kcf4kKQhnSF2bvsoBnFn766u1iRQtzUVN4QnGXV6Q+LRt
+	 2Cnnd5TFJ1xqQ==
+Date: Sun, 20 Jul 2025 10:18:21 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: "Colin King (gmail)" <colin.i.king@gmail.com>
+Cc: Edward Srouji <edwards@nvidia.com>,
+	Michael Guralnik <michaelgur@nvidia.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: RDMA/mlx5: issue with error checking
+Message-ID: <20250720071821.GD402218@unreal>
+References: <79166fb1-3b73-4d37-af02-a17b22eb8e64@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:160d:b0:3df:3926:88b7 with SMTP id
- e9e14a558f8ab-3e282d590f6mr176553805ab.5.1752995522799; Sun, 20 Jul 2025
- 00:12:02 -0700 (PDT)
-Date: Sun, 20 Jul 2025 00:12:02 -0700
-In-Reply-To: <CAMp3bLXKFqL5nkRkTVBNOKv968bK61yAT=b1wkoz+SZqtk0yiQ@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <687c96c2.a70a0220.693ce.00b4.GAE@google.com>
-Subject: Re: [syzbot] [fs?] KASAN: use-after-free Read in hpfs_get_ea
-From: syzbot <syzbot+fa88eb476e42878f2844@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, purvayeshi550@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <79166fb1-3b73-4d37-af02-a17b22eb8e64@gmail.com>
 
-Hello,
+On Thu, Jul 17, 2025 at 12:36:06PM +0100, Colin King (gmail) wrote:
+> Hi
+> 
+> Static analysis detected an issue with the following commit:
+> 
+> commit e73242aa14d2ec7f4a1a13688366bb36dc0fe5b7
+> Author: Edward Srouji <edwards@nvidia.com>
+> Date:   Wed Jul 9 09:42:11 2025 +0300
+> 
+>     RDMA/mlx5: Optimize DMABUF mkey page size
+> 
+> 
+> The issue is as follows:
+> 
+> int mlx5r_umr_dmabuf_update_pgsz(struct mlx5_ib_mr *mr, u32 xlt_flags,
+>                                  unsigned int page_shift)
+> {
+>         unsigned int old_page_shift = mr->page_shift;
+>         size_t zapped_blocks;
+>         size_t total_blocks;
+>         int err;
+> 
+>         zapped_blocks = _mlx5r_umr_zap_mkey(mr, xlt_flags, page_shift,
+>                                             mr->data_direct);
+>         if (zapped_blocks < 0)
+>                 return zapped_blocks;
+> 
+> The variable zapped_blocks is a size_t type and is being assigned a int
+> return value from the call to _mlx5r_umr_zap_mkey. Since zapped_blocks is an
+> unsigned type, the error check for zapped_blocks < 0 will never be true.  I
+> suspect total_blocks should be a ssize_t type, but that probably also means
+> total_blocks should be ssize_t too, but don't have the hardware to test this
+> fix and I'm concerned that this change may break the code. Hence I'm
+> reporting this issue.
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Thanks for the report, this will probably fix it.
 
-fs/hpfs/ea.c:139:54: error: no member named 'ea_off' in 'struct fnode'
-fs/hpfs/ea.c:139:70: error: no member named 'ea_size' in 'struct fnode'
-fs/hpfs/ea.c:140:41: error: no member named 'name_len' in 'struct extended_attribute'; did you mean 'namelen'?
-fs/hpfs/ea.c:143:57: error: no member named 'ea_off' in 'struct fnode'
-fs/hpfs/ea.c:143:73: error: no member named 'ea_size' in 'struct fnode'
-fs/hpfs/ea.c:146:17: error: no member named 'name_len' in 'struct extended_attribute'; did you mean 'namelen'?
-fs/hpfs/ea.c:149:56: error: no member named 'ea_off' in 'struct fnode'
-fs/hpfs/ea.c:149:72: error: no member named 'ea_size' in 'struct fnode'
-fs/hpfs/ea.c:152:11: error: no member named 'name_len' in 'struct extended_attribute'
-fs/hpfs/ea.c:152:23: error: use of undeclared identifier 'aname'
-fs/hpfs/ea.c:152:55: error: use of undeclared identifier 'aname'
-fs/hpfs/ea.c:153:12: error: no member named 'type' in 'struct extended_attribute'
-fs/hpfs/ea.c:154:27: error: no member named 'size' in 'struct extended_attribute'
-fs/hpfs/ea.c:154:6: error: use of undeclared identifier 'buffer'
-fs/hpfs/ea.c:155:11: error: use of undeclared identifier 'buffer'
-fs/hpfs/ea.c:156:13: error: incompatible integer to pointer conversion returning 'int' from a function with result type 'char *' [-Wint-conversion]
-fs/hpfs/ea.c:157:50: error: no member named 'size' in 'struct extended_attribute'
+diff --git a/drivers/infiniband/hw/mlx5/umr.c b/drivers/infiniband/hw/mlx5/umr.c
+index 993d24f35ccbe..a27bee9a38138 100644
+--- a/drivers/infiniband/hw/mlx5/umr.c
++++ b/drivers/infiniband/hw/mlx5/umr.c
+@@ -996,6 +996,7 @@ _mlx5r_dmabuf_umr_update_pas(struct mlx5_ib_mr *mr, unsigned int flags,
+ static int _mlx5r_umr_zap_mkey(struct mlx5_ib_mr *mr,
+ 			       unsigned int flags,
+ 			       unsigned int page_shift,
++			       size_t *nblocks,
+ 			       bool dd)
+ {
+ 	unsigned int old_page_shift = mr->page_shift;
+@@ -1004,7 +1005,6 @@ static int _mlx5r_umr_zap_mkey(struct mlx5_ib_mr *mr,
+ 	size_t page_shift_nblocks;
+ 	unsigned int max_log_size;
+ 	int access_mode;
+-	size_t nblocks;
+ 	int err;
+ 
+ 	access_mode = dd ? MLX5_MKC_ACCESS_MODE_KSM : MLX5_MKC_ACCESS_MODE_MTT;
+@@ -1018,26 +1018,26 @@ static int _mlx5r_umr_zap_mkey(struct mlx5_ib_mr *mr,
+ 	 * Block size must be aligned to MLX5_UMR_FLEX_ALIGNMENT since it may
+ 	 * be used as offset into the XLT later on.
+ 	 */
+-	nblocks = ib_umem_num_dma_blocks(mr->umem, 1UL << max_page_shift);
++	*nblocks = ib_umem_num_dma_blocks(mr->umem, 1UL << max_page_shift);
+ 	if (dd)
+-		nblocks = ALIGN(nblocks, MLX5_UMR_KSM_NUM_ENTRIES_ALIGNMENT);
++		*nblocks = ALIGN(*nblocks, MLX5_UMR_KSM_NUM_ENTRIES_ALIGNMENT);
+ 	else
+-		nblocks = ALIGN(nblocks, MLX5_UMR_MTT_NUM_ENTRIES_ALIGNMENT);
++		*nblocks = ALIGN(*nblocks, MLX5_UMR_MTT_NUM_ENTRIES_ALIGNMENT);
+ 	page_shift_nblocks = ib_umem_num_dma_blocks(mr->umem,
+ 						    1UL << page_shift);
+ 	/* If the number of blocks at max possible page shift is greater than
+ 	 * the number of blocks at the new page size, we should just go over the
+ 	 * whole mkey entries.
+ 	 */
+-	if (nblocks >= page_shift_nblocks)
+-		nblocks = 0;
++	if (*nblocks >= page_shift_nblocks)
++		*nblocks = 0;
+ 
+ 	/* Make the first nblocks entries non-present without changing
+ 	 * page size yet.
+ 	 */
+-	if (nblocks)
++	if (*nblocks)
+ 		mr->page_shift = max_page_shift;
+-	err = _mlx5r_dmabuf_umr_update_pas(mr, flags, 0, nblocks, dd);
++	err = _mlx5r_dmabuf_umr_update_pas(mr, flags, 0, *nblocks, dd);
+ 	if (err) {
+ 		mr->page_shift = old_page_shift;
+ 		return err;
+@@ -1046,7 +1046,7 @@ static int _mlx5r_umr_zap_mkey(struct mlx5_ib_mr *mr,
+ 	/* Change page size to the max page size now that the MR is completely
+ 	 * non-present.
+ 	 */
+-	if (nblocks) {
++	if (*nblocks) {
+ 		err = mlx5r_umr_update_mr_page_shift(mr, max_page_shift, dd);
+ 		if (err) {
+ 			mr->page_shift = old_page_shift;
+@@ -1054,7 +1054,7 @@ static int _mlx5r_umr_zap_mkey(struct mlx5_ib_mr *mr,
+ 		}
+ 	}
+ 
+-	return err ? err : nblocks;
++	return 0;
+ }
+ 
+ /**
+@@ -1089,10 +1089,10 @@ int mlx5r_umr_dmabuf_update_pgsz(struct mlx5_ib_mr *mr, u32 xlt_flags,
+ 	size_t total_blocks;
+ 	int err;
+ 
+-	zapped_blocks = _mlx5r_umr_zap_mkey(mr, xlt_flags, page_shift,
+-					    mr->data_direct);
+-	if (zapped_blocks < 0)
+-		return zapped_blocks;
++	err = _mlx5r_umr_zap_mkey(mr, xlt_flags, page_shift, &zapped_blocks,
++				  mr->data_direct);
++	if (err)
++		return err;
+ 
+ 	/* _mlx5r_umr_zap_mkey already enables the mkey */
+ 	xlt_flags &= ~MLX5_IB_UPD_XLT_ENABLE;
+
+> 
+> Colin
+> 
+> 
 
 
-Tested on:
 
-commit:         f4a40a42 Merge tag 'efi-fixes-for-v6.16-2' of git://gi..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f09d04131ef56b22
-dashboard link: https://syzkaller.appspot.com/bug?extid=fa88eb476e42878f2844
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=13b084f0580000
+
 
 
