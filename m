@@ -1,134 +1,186 @@
-Return-Path: <linux-kernel+bounces-738421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64B25B0B81B
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 22:01:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 254E0B0B81F
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 22:08:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25BAE1899B11
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 20:01:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C472B1785CC
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 20:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5280C213E77;
-	Sun, 20 Jul 2025 20:01:28 +0000 (UTC)
-Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1662236FD;
+	Sun, 20 Jul 2025 20:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="OsMS6MzU"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C62D382;
-	Sun, 20 Jul 2025 20:01:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDDA1FF7D7
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 20:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753041688; cv=none; b=pLl0VhZvOQlsCd7lc5YyFfLhEkFOMYJtUn9MP49LyXOUJaGk1VfHb4Qx9Anwr2tgLl+0RgMtQx6KtOL6vrO9SuqVIVLFVuccpYdJdaSYM6OrhniTSfZuAdld+GttbFqpZGrIUJioutiJT6rsRx6VtQBH6EdrgWWfK+kCU8xkKW8=
+	t=1753042113; cv=none; b=bgAs4sFToPca8uTuzawDlcHsQDkbb7xp4CmRzqEC4zrDtvjXRoT8ui2WzdJ0hNLtw3qFZgFLbmm2p9X4Ze3FTU0ZKY+qIIWI8mNiNpObDxMzRuEHyl2fOFayL34upbIwyIPDQ9Q+AEMP7jgEBXI095wQH78yoAFYKWQObxTrhp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753041688; c=relaxed/simple;
-	bh=ko5XodbQbQ51da4c10eyXzC2IwBB+CP+8acn5vUuC4o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Dx/5sCbkU8GZhQDa9Np9siW/8K0x50vOG20Tt8dB1rVetnfsKJjoil3MKw007dsW2KQuBiQ0kEB6S8QDO88RKcWGGysfYJNeY9nGyupW1FG5JQ29/o+3dp8/Gft/uUtN0Uq9cLNH8bmgtY2kCp4taGILZdC1+z4Rcr7vgf0mSks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
-Received: from arnaudlcm-X570-UD.. (unknown [IPv6:2a02:8084:255b:aa00:2685:4e7b:cbf0:7870])
-	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id C684840484;
-	Sun, 20 Jul 2025 20:01:22 +0000 (UTC)
-Authentication-Results: Plesk;
-	spf=pass (sender IP is 2a02:8084:255b:aa00:2685:4e7b:cbf0:7870) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=arnaudlcm-X570-UD..
-Received-SPF: pass (Plesk: connection is authenticated)
-From: Arnaud Lecomte <contact@arnaud-lcm.com>
-To: gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	viro@zeniv.linux.org.uk,
-	snovitoll@gmail.com,
-	syzbot+86b6d7c8bcc66747c505@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com,
-	contact@arnaud-lcm.com
-Subject: [PATCH] usb: mon: Fix slab-out-of-bounds in mon_bin_event due to
- unsafe URB transfer_buffer access
-Date: Sun, 20 Jul 2025 21:00:57 +0100
-Message-ID: <20250720200057.19720-1-contact@arnaud-lcm.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1753042113; c=relaxed/simple;
+	bh=J/7Fc/QpzUgpXO7zmJ/OT95lQ2BAuYRUnREhDO+LsAE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bxYssBAlIIri89VF6HEq20jXY6WZ7Upkl6ErGx6mPjLYU4QjuWGikpNiCHqaL7AuOAXAHVkLw+EQxBqRKEq/RTSM5dZgfJIF1nCijwqdbYJMervjkyjtB5M81GPpMyo3MMApUQhEZ2+1h307NdcZsFCwZqPycBQhZOVOjVsL3QY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=OsMS6MzU; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-31308f52248so558482a91.2
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 13:08:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1753042111; x=1753646911; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FaUug9j/ES4fbNfuO+z+Ul6c6g1fwo4/5ELhjBw/6Z0=;
+        b=OsMS6MzUFDSSxJm217x2QswfdO+bkE4ISZnkYYeTg9/V6X7knd4O6NAbLl296/yXQY
+         BqXVHM0wi/PMqcb2SWCzgJvdhg9wfQoUCUBBq5tbcmKi+uS8ZXR7x7Eae7WF9nLQJMSg
+         u5Zk8HWJU/OgiRq1BEgpdaSNQ5AGY4DYMZ5TJXATsJ/A6yash1aKLGenkht6Ifgjh9Y6
+         1Xe7eOOfUtPZFclowhV5ydZFcvhi4nj7iwJnbpNJiPE8BD77cdmk2rJ7fgY/z3VyJpgB
+         ug9wC18tkbQF5jXRa5dSzo02xZ4jfAbbjRkMhL5St9J5OYg6nrtNqRLog8tCs4ZzBCTs
+         uSmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753042111; x=1753646911;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FaUug9j/ES4fbNfuO+z+Ul6c6g1fwo4/5ELhjBw/6Z0=;
+        b=e3USA+mTSdVK+5Ita1MfJPmGGzM1df1R9K63h5J3yRW24AHL7RnQcvN+7kkhagmFIJ
+         5gGtEb7EVqbNx4brIZwhzFD3FTfHDyTkoXormTiMVu+mtgAxEu1GSqyDceO/OCHmMg3g
+         x/K9yCseqIVT/U8Kz5IFujr6E8DA19+ssrr2+ANdINctNEGNJQ0zk1L1g7J+HRb+cWwf
+         uEbYbzmyCeIXew7uAKKd8IxnYFGEds2yFFvRHiZpwylrlPwf2Rbd5glPDBNdc8S9X00K
+         fT53TQaLftLCd8GMkqGBOQ5fUgg2g4c+VsFtdmEYqbjp2zzrZJVXw8fJbDZqfi1v8mwh
+         wgIg==
+X-Forwarded-Encrypted: i=1; AJvYcCW8gZTqyKoOKiNVByYsjQ6jGQOm3HIHbu9AFLCsIjiIcv63eTVq2KIMiKxVHgL9ZWpDrYp6NudJhIbc67E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMD6bgpA3y91wHZT7M+HDdbBJjos9ofk6YazSZAG46x4i69QtX
+	bd+yr2ECOhDCfj4Dk1S+CcKiODA4Mzq8RUdUPX0u+fSpZtlGKvumpb2S8LZmezJa9QUIO/qPLTn
+	7qOUTWneqY99v3MUeE4lx7Gina0+LoV4sSKkt9BTXDg==
+X-Gm-Gg: ASbGncvIDiUSFbEHMbS7YXUWMRjdwi1c610b4yShn/H4kMOyKcvjejmisvEe28VPk1V
+	ZGUKJvNenlgSD+6SrnNsQcL8jINJx0achHyqbNOOGNoGwpG2swuc/dy1wzMmWQbHUoqcg/MJroo
+	uKXEtEL10NBPdGc6mgDduqzsoMy/2You/zg2PWkIaJwuXnip+MCNjHONmlB+LNX4HRzp/2WZbde
+	t/IVQ==
+X-Google-Smtp-Source: AGHT+IEzTmgD8p4pr9Tfl5/Taoe4sD4F6Nle8HtVc5uEQ8POQMmqP9OC6lKvh4Ws583yP1jesyveQ6kid0S8/J/BHAg=
+X-Received: by 2002:a17:90b:2b50:b0:314:2d38:3e4d with SMTP id
+ 98e67ed59e1d1-31c9e77383cmr9996215a91.3.1753042110780; Sun, 20 Jul 2025
+ 13:08:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: <175304168340.17734.15413668970472850681@Plesk>
-X-PPP-Vhost: arnaud-lcm.com
+References: <20250719143358.22363-1-sidong.yang@furiosa.ai> <20250719143358.22363-4-sidong.yang@furiosa.ai>
+In-Reply-To: <20250719143358.22363-4-sidong.yang@furiosa.ai>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Sun, 20 Jul 2025 16:08:19 -0400
+X-Gm-Features: Ac12FXxOPo-pFYT0-B55olhKbNgyH3no8Zup6CAghCTc0O_WDe6kK1cfGWsTteo
+Message-ID: <CADUfDZpmD-WfVsrzNOt6T6132M+EHCGtRcnQH7p0z2f3f6dBvw@mail.gmail.com>
+Subject: Re: [PATCH 3/4] rust: miscdevice: add uring_cmd() for MiscDevice trait
+To: Sidong Yang <sidong.yang@furiosa.ai>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The syzkaller fuzzer uncovered a kernel slab-out-of-bounds
- write in the USB monitoring subsystem (mon_bin) when handling
- a malformed URB (USB Request Block) with the following properties:
- - transfer_buffer_length = 0xffff
- - actual_length = 0x0 (no data transferred)
- - number_of_packets = 0x0 (non-isochronous transfer)
+On Sat, Jul 19, 2025 at 10:35=E2=80=AFAM Sidong Yang <sidong.yang@furiosa.a=
+i> wrote:
+>
+> This patch adds uring_cmd() function for MiscDevice trait and its
+> callback implementation. It uses IoUringCmd that io_uring_cmd rust
+> abstraction.
+>
+> Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
+> ---
+>  rust/kernel/miscdevice.rs | 34 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 34 insertions(+)
+>
+> diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
+> index 288f40e79906..5255faf27934 100644
+> --- a/rust/kernel/miscdevice.rs
+> +++ b/rust/kernel/miscdevice.rs
+> @@ -14,6 +14,7 @@
+>      error::{to_result, Error, Result, VTABLE_DEFAULT_ERROR},
+>      ffi::{c_int, c_long, c_uint, c_ulong},
+>      fs::File,
+> +    io_uring::IoUringCmd,
+>      mm::virt::VmaNew,
+>      prelude::*,
+>      seq_file::SeqFile,
+> @@ -175,6 +176,15 @@ fn show_fdinfo(
+>      ) {
+>          build_error!(VTABLE_DEFAULT_ERROR)
+>      }
+> +
+> +    fn uring_cmd(
+> +        _device: <Self::Ptr as ForeignOwnable>::Borrowed<'_>,
+> +        _file: &File,
+> +        _io_uring_cmd: &IoUringCmd,
+> +        issue_flags: u32,
+> +    ) -> Result<isize> {
 
-When reaching the mon_copy_to_buff function,
- we will try to copy into the mon rp bin with the following parameters:
-off=0xcc0, from=0xffff8880246df5e1 "", length=0xf000
+Would i32 make more sense as the return value, since that's what
+io_uring_cqe actually stores?
 
-At the first iteration, the step_len is 0x340 and it is during the mem_cpy
-that the slab-out-of-bounds happens.
-As step_len < transfer_buffer_length, we can deduce that it is related
- to an issue with the transfer_buffer being invalid.
-The patch proposes a safe access to the kernel
- kernel buffer urb->transfer_buffer with `copy_from_kernel_nofault`.
+> +        build_error!(VTABLE_DEFAULT_ERROR)
+> +    }
+>  }
+>
+>  /// A vtable for the file operations of a Rust miscdevice.
+> @@ -332,6 +342,25 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
+>          T::show_fdinfo(device, m, file);
+>      }
+>
+> +    unsafe extern "C" fn uring_cmd(
+> +        ioucmd: *mut bindings::io_uring_cmd,
+> +        issue_flags: ffi::c_uint,
+> +    ) -> ffi::c_int {
+> +        // SAFETY: The file is valid for the duration of this call.
+> +        let ioucmd =3D unsafe { IoUringCmd::from_raw(ioucmd) };
+> +        let file =3D ioucmd.file();
+> +
+> +        // SAFETY: The file is valid for the duration of this call.
+> +        let private =3D unsafe { (*file.as_ptr()).private_data }.cast();
+> +        // SAFETY: Ioctl calls can borrow the private data of the file.
 
-Reported-by: syzbot+86b6d7c8bcc66747c505@syzkaller.appspotmail.com
-Fixes: 6f23ee1fefdc1 ("USB: add binary API to usbmon")
-Closes: https://syzkaller.appspot.com/bug?extid=86b6d7c8bcc66747c505
-Tested-by: syzbot+86b6d7c8bcc66747c505@syzkaller.appspotmail.com
-Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
----
- drivers/usb/mon/mon_bin.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+"Ioctl" -> "uring cmd"?
 
-diff --git a/drivers/usb/mon/mon_bin.c b/drivers/usb/mon/mon_bin.c
-index c93b43f5bc46..d3bef2a37eb0 100644
---- a/drivers/usb/mon/mon_bin.c
-+++ b/drivers/usb/mon/mon_bin.c
-@@ -249,7 +249,11 @@ static unsigned int mon_copy_to_buff(const struct mon_reader_bin *this,
- 		 * Copy data and advance pointers.
- 		 */
- 		buf = this->b_vec[off / CHUNK_SIZE].ptr + off % CHUNK_SIZE;
--		memcpy(buf, from, step_len);
-+
-+		if (copy_from_kernel_nofault(buf, from, step_len)) {
-+			pr_warn("Failed to copy URB transfer buffer content into mon bin.");
-+			return -EFAULT;
-+		}
- 		if ((off += step_len) >= this->b_size) off = 0;
- 		from += step_len;
- 		length -= step_len;
-@@ -413,11 +417,13 @@ static unsigned int mon_bin_get_data(const struct mon_reader_bin *rp,
- 
- 	*flag = 0;
- 	if (urb->num_sgs == 0) {
--		if (urb->transfer_buffer == NULL) {
-+		if (
-+			urb->transfer_buffer == NULL ||
-+			mon_copy_to_buff(rp, offset, urb->transfer_buffer, length) < 0
-+		) {
- 			*flag = 'Z';
- 			return length;
- 		}
--		mon_copy_to_buff(rp, offset, urb->transfer_buffer, length);
- 		length = 0;
- 
- 	} else {
-@@ -434,6 +440,10 @@ static unsigned int mon_bin_get_data(const struct mon_reader_bin *rp,
- 			this_len = min_t(unsigned int, sg->length, length);
- 			offset = mon_copy_to_buff(rp, offset, sg_virt(sg),
- 					this_len);
-+			if (offset < 0) {
-+				*flag = 'Z';
-+				return length;
-+			}
- 			length -= this_len;
- 		}
- 		if (i == 0)
--- 
-2.43.0
+Best,
+Caleb
 
+> +        let device =3D unsafe { <T::Ptr as ForeignOwnable>::borrow(priva=
+te) };
+> +
+> +        match T::uring_cmd(device, file, ioucmd, issue_flags) {
+> +            Ok(ret) =3D> ret as ffi::c_int,
+> +            Err(err) =3D> err.to_errno() as ffi::c_int,
+> +        }
+> +    }
+> +
+>      const VTABLE: bindings::file_operations =3D bindings::file_operation=
+s {
+>          open: Some(Self::open),
+>          release: Some(Self::release),
+> @@ -354,6 +383,11 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
+>          } else {
+>              None
+>          },
+> +        uring_cmd: if T::HAS_URING_CMD {
+> +            Some(Self::uring_cmd)
+> +        } else {
+> +            None
+> +        },
+>          // SAFETY: All zeros is a valid value for `bindings::file_operat=
+ions`.
+>          ..unsafe { MaybeUninit::zeroed().assume_init() }
+>      };
+> --
+> 2.43.0
+>
+>
 
