@@ -1,124 +1,189 @@
-Return-Path: <linux-kernel+bounces-738021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70C2BB0B346
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 05:18:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B428B0B349
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 05:25:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 201C7189C6D3
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 03:18:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C22F33C2351
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 03:24:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767CA189BB0;
-	Sun, 20 Jul 2025 03:18:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294AB195811;
+	Sun, 20 Jul 2025 03:25:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KMya0OaE"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kZtaiJmg"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D155F22EF5
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 03:18:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE6E189BB0;
+	Sun, 20 Jul 2025 03:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752981514; cv=none; b=BMtW8MeX7nm0tvEN7yd0xospzZ7PJu+Hua+cwBzs5agHfRwHIz2JEJKPug3dq/cJ8tu8DiFfCYIcpXNVfreF0e8hkWnH3AxtR44xw4VUIMjhV9VbFAtwDYikY1mwKi1bSHosOpwhLeU1Ot6UOqoW9q2xVJ50953/e/2p3Tfq2Yk=
+	t=1752981911; cv=none; b=dJT0JRyAQ2e1bFbVQ7wiA0ABpGnHChbX0HlSZfWtTJkXHQNmW11eaxFxGq0vfkO/cJW7189BGj1s4RgkazOZqXWpaf5itjD82CiC4EtDyDpNCZi4d7tL6itCXqEVFWroG6EyuxqIGcPIZKidqc4hZjrsUg3GZh1Xm7P4QGxKiSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752981514; c=relaxed/simple;
-	bh=TUvZuE8bTZNxpG+iqKbzshW25PKJjhnIz0SY9mthZZk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F9Rlsg5AeiNNAAOJCpjJMgabM75qkkjmAdkgCR/m1MGX0F6oT8RNm5a0k8vwRlmqBeJ3QJ7wiSAoDTLagPnKsz5m9wUsdthrUYOhRDBRQiMEFw4kcfbdpRd/YLdzrK9G2/omNYeZEw1dn4SDISXtk8FsOM7IwhqDcGWAV7rm0jY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KMya0OaE; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752981512; x=1784517512;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=TUvZuE8bTZNxpG+iqKbzshW25PKJjhnIz0SY9mthZZk=;
-  b=KMya0OaEKQLhqZLjRjLOg6VNR+Zgv8c/zNmhjrgelgQV/rpmG54P56YA
-   Wu4q7ILtX8wo43BMvG6MTuXRCvqiF38cI0cU9+PVmJiREXIcAzYLY5YbL
-   KDfx/Hh9aV1LkrM6L1zWKMmb/FlxthN3uELINXXPWuPNcRdeiLQb/imsr
-   TWCe+3BMflF4hMhv6eApyIuzDgxuGad+voTCjT9I+g4BmakuiLUXA/tvz
-   t0Efk8DOJqXp6BBr8oIA/6WBZrrCAEwkKtB3ge4CpI6BKBpgPAt0OO0yo
-   o+lEglsKSCx833/wcwKdMzZnCMYEeN6ag9nUfZS4KhPrQC73G9rlDycPJ
-   w==;
-X-CSE-ConnectionGUID: S7OUgykeSemqyYls8P3aGw==
-X-CSE-MsgGUID: mjhtWz19TzSm7o5/AVLxrw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11497"; a="55082553"
-X-IronPort-AV: E=Sophos;i="6.16,325,1744095600"; 
-   d="scan'208";a="55082553"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2025 20:18:31 -0700
-X-CSE-ConnectionGUID: Bt5LR81QTSefsOMuWfqlAw==
-X-CSE-MsgGUID: 2Hvx8RZzRvSJfkzRt797DQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,325,1744095600"; 
-   d="scan'208";a="163087321"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 19 Jul 2025 20:18:28 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1udKZG-000FuL-17;
-	Sun, 20 Jul 2025 03:18:26 +0000
-Date: Sun, 20 Jul 2025 11:17:33 +0800
-From: kernel test robot <lkp@intel.com>
-To: Chia-I Wu <olvaffe@gmail.com>, Boris Brezillon <bbrezillon@kernel.org>,
-	Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH 1/9] drm/panthor: add devcoredump support
-Message-ID: <202507201010.Tou41l73-lkp@intel.com>
-References: <20250720000146.1405060-2-olvaffe@gmail.com>
+	s=arc-20240116; t=1752981911; c=relaxed/simple;
+	bh=CeQwnlZaJeJrVxDPgd4TrQH74wzcQw4oXR9oNKXwlcA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EK7N9f2qZB7GIzGpMk880J37nG2E557QM0cWZ0MdXgR3J3fHF+u2xmCCNYIp4GIY7IA7+027r9vGzjFU8ir7w653XzAuUURpjVXLBi9BTtGcmC0imVfWTx0jNdCfMJPBsT9al8oYls21IvRb3kqmSZcQGV0bEJdjTiMARvaqOAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kZtaiJmg; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2350b1b9129so22286145ad.0;
+        Sat, 19 Jul 2025 20:25:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752981909; x=1753586709; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=/UCEY4wxrS/NpA0nt1HOc0dP763s7JlyvgbRa5hrlcE=;
+        b=kZtaiJmgUCGBufsGwAgdvcquvxPmWKRhakbARUWVsgOaAKkAUAIDQVCWX5ZrPq3ONj
+         Kg0EDwZlU0Xhyg9PMm956qiFEa86iCEgggXJn8hZCbtfwnAaW65+F/gA2PiSK1OvXv8l
+         LdPZr5jev2+tPGFXFyVD2NG0a2DWHiT1/SwBrINoS7Q4QGUOJ7fehAY21DHSZySb9Qmj
+         Ma1YY2TAaMvw7S3RTfUXCeK1REtpuYjOrGSazph3E5zw0S/L1kG/W1wmiGQpNYrEhJbr
+         Ya3sGoqoW2MmNg91wP6t7EeFn4m8JzXqVteI7vc9UltYXNLIkTxhzWFwdZejdsq/Oahh
+         ekyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752981909; x=1753586709;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/UCEY4wxrS/NpA0nt1HOc0dP763s7JlyvgbRa5hrlcE=;
+        b=qzJtnfdz2HjSBE1xf1pCCZ+yBqS03qtbFXwteth1P0wB2ImwNv4aJTVzIN0Id+/u5g
+         ky3w9uY47s7Oj/SPASIB2EiamPUaLeGA0tmrYdDCJdMqILFoGU95IVdyBfa6F6bv9rdS
+         n5ef+zqV40poDOkREB4SxXTx0tuIE+ufAGF9eedLCzsU11niIar75hdkVYT9PbMh9T1b
+         mfVvQUsAqkbiNPo+kUSf9ehNJ9kYIC3Ia4JrRTzwIQOXBOFw2wklXi2hrOMNVdLAl9E6
+         ZgneyGmTmhOAXceY5afo7P6d58Z8D8VYU3RY+vqsJVWB8f1MepUzosx+skfvOIhtHKbr
+         X+Ig==
+X-Forwarded-Encrypted: i=1; AJvYcCUpDsdOepdfu0dxEf2+OCXOsjazzY8wXhyH7RN/io1DloQ2ZnOsbWDZ4MYvrrmvfjKNSC1iyMwJoP00J1l9@vger.kernel.org, AJvYcCW2JFrB217XQ8aIr9nDqiWViVlym0uZ/yK9a4djHSBTlDybHDvZ7ELosgTtwdslPoDaSQg1Q9pMBPAD@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDLdKyNamD2HOj7t4tulaOPixJ7vkzdR8bWQJEA2adY50PJ55+
+	szOdSpX6YYR51Ck4/LAhR6pRrDgvVrVFPRgwQmQvRgBy/KJzkBRBKG/y
+X-Gm-Gg: ASbGnctjDZEN0b/DQ2LyF7y0FHhvMYzUTLwQNAZ1zl9/uDJtAQxjErsvZSNYiFeWFC5
+	aXwjAbYBVqwABT3eaSJfDK1y+ksh+5Z1tUzoJUjpokZH1TrYKq3T5CF8MfpFLrzz4uDtx329tE9
+	gLyfFToRyWfTdlWawqOCg3uCA1asZpMuL3zrP59XUS8EDWPyrg3V1CkByGt3ym/Op4grqVho36C
+	TATWhrU6qgxYLi2Ye/lNtp47fozO5UoIIS4JrHcETZ3Qia67zIj99/kEM+7nG9VZw76zwo/KA+3
+	U8FBTgKfqNV15C6pILlkxJ4JZMLrU4VWatgsUzGa7HcHPWMi4CPJBkiIn4QgdOrG2cQqaOr4eKP
+	qAw8/V3FDhLgaL/FO7/3PRz/Cs1P5yyvKIqbZZ14BsNtWBYeQJUUtOOKUUgRbo6LU8efN0K4=
+X-Google-Smtp-Source: AGHT+IG8wJXRYieGimKQKhGTkevXaLtmeXilYhBC+8Z1j4PjscSVa78Sx5Ke62E/cR0MUub13w3vwg==
+X-Received: by 2002:a17:903:2f85:b0:235:1962:1c13 with SMTP id d9443c01a7336-23e256aeee5mr217586595ad.14.1752981908613;
+        Sat, 19 Jul 2025 20:25:08 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c9f2b4a40sm7727337a91.45.2025.07.19.20.25.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 19 Jul 2025 20:25:07 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <c972dcba-ec99-47e4-ad19-18ebe97dfdd0@roeck-us.net>
+Date: Sat, 19 Jul 2025 20:25:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250720000146.1405060-2-olvaffe@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/3] dt-bindings: trivial-devices: Document ABB sensors
+To: Rob Herring <robh@kernel.org>, Heiko Schocher <hs@denx.de>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Andrei Lalaev <andrey.lalaev@gmail.com>,
+ Chanh Nguyen <chanh@os.amperecomputing.com>,
+ Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>,
+ Grant Peltier <grantpeltier93@gmail.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Michal Simek <michal.simek@amd.com>,
+ Naresh Solanki <naresh.solanki@9elements.com>,
+ Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>, devicetree@vger.kernel.org
+References: <20250719063355.73111-1-hs@denx.de>
+ <20250719063355.73111-2-hs@denx.de> <20250720021151.GA931647-robh@kernel.org>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ xsFNBE6H1WcBEACu6jIcw5kZ5dGeJ7E7B2uweQR/4FGxH10/H1O1+ApmcQ9i87XdZQiB9cpN
+ RYHA7RCEK2dh6dDccykQk3bC90xXMPg+O3R+C/SkwcnUak1UZaeK/SwQbq/t0tkMzYDRxfJ7
+ nyFiKxUehbNF3r9qlJgPqONwX5vJy4/GvDHdddSCxV41P/ejsZ8PykxyJs98UWhF54tGRWFl
+ 7i1xvaDB9lN5WTLRKSO7wICuLiSz5WZHXMkyF4d+/O5ll7yz/o/JxK5vO/sduYDIlFTvBZDh
+ gzaEtNf5tQjsjG4io8E0Yq0ViobLkS2RTNZT8ICq/Jmvl0SpbHRvYwa2DhNsK0YjHFQBB0FX
+ IdhdUEzNefcNcYvqigJpdICoP2e4yJSyflHFO4dr0OrdnGLe1Zi/8Xo/2+M1dSSEt196rXaC
+ kwu2KgIgmkRBb3cp2vIBBIIowU8W3qC1+w+RdMUrZxKGWJ3juwcgveJlzMpMZNyM1jobSXZ0
+ VHGMNJ3MwXlrEFPXaYJgibcg6brM6wGfX/LBvc/haWw4yO24lT5eitm4UBdIy9pKkKmHHh7s
+ jfZJkB5fWKVdoCv/omy6UyH6ykLOPFugl+hVL2Prf8xrXuZe1CMS7ID9Lc8FaL1ROIN/W8Vk
+ BIsJMaWOhks//7d92Uf3EArDlDShwR2+D+AMon8NULuLBHiEUQARAQABzTJHdWVudGVyIFJv
+ ZWNrIChMaW51eCBhY2NvdW50KSA8bGludXhAcm9lY2stdXMubmV0PsLBgQQTAQIAKwIbAwYL
+ CQgHAwIGFQgCCQoLBBYCAwECHgECF4ACGQEFAmgrMyQFCSbODQkACgkQyx8mb86fmYGcWRAA
+ oRwrk7V8fULqnGGpBIjp7pvR187Yzx+lhMGUHuM5H56TFEqeVwCMLWB2x1YRolYbY4MEFlQg
+ VUFcfeW0OknSr1s6wtrtQm0gdkolM8OcCL9ptTHOg1mmXa4YpW8QJiL0AVtbpE9BroeWGl9v
+ 2TGILPm9mVp+GmMQgkNeCS7Jonq5f5pDUGumAMguWzMFEg+Imt9wr2YA7aGen7KPSqJeQPpj
+ onPKhu7O/KJKkuC50ylxizHzmGx+IUSmOZxN950pZUFvVZH9CwhAAl+NYUtcF5ry/uSYG2U7
+ DCvpzqOryJRemKN63qt1bjF6cltsXwxjKOw6CvdjJYA3n6xCWLuJ6yk6CAy1Ukh545NhgBAs
+ rGGVkl6TUBi0ixL3EF3RWLa9IMDcHN32r7OBhw6vbul8HqyTFZWY2ksTvlTl+qG3zV6AJuzT
+ WdXmbcKN+TdhO5XlxVlbZoCm7ViBj1+PvIFQZCnLAhqSd/DJlhaq8fFXx1dCUPgQDcD+wo65
+ qulV/NijfU8bzFfEPgYP/3LP+BSAyFs33y/mdP8kbMxSCjnLEhimQMrSSo/To1Gxp5C97fw5
+ 3m1CaMILGKCmfI1B8iA8zd8ib7t1Rg0qCwcAnvsM36SkrID32GfFbv873bNskJCHAISK3Xkz
+ qo7IYZmjk/IJGbsiGzxUhvicwkgKE9r7a1rOwU0ETofVZwEQALlLbQeBDTDbwQYrj0gbx3bq
+ 7kpKABxN2MqeuqGr02DpS9883d/t7ontxasXoEz2GTioevvRmllJlPQERVxM8gQoNg22twF7
+ pB/zsrIjxkE9heE4wYfN1AyzT+AxgYN6f8hVQ7Nrc9XgZZe+8IkuW/Nf64KzNJXnSH4u6nJM
+ J2+Dt274YoFcXR1nG76Q259mKwzbCukKbd6piL+VsT/qBrLhZe9Ivbjq5WMdkQKnP7gYKCAi
+ pNVJC4enWfivZsYupMd9qn7Uv/oCZDYoBTdMSBUblaLMwlcjnPpOYK5rfHvC4opxl+P/Vzyz
+ 6WC2TLkPtKvYvXmdsI6rnEI4Uucg0Au/Ulg7aqqKhzGPIbVaL+U0Wk82nz6hz+WP2ggTrY1w
+ ZlPlRt8WM9w6WfLf2j+PuGklj37m+KvaOEfLsF1v464dSpy1tQVHhhp8LFTxh/6RWkRIR2uF
+ I4v3Xu/k5D0LhaZHpQ4C+xKsQxpTGuYh2tnRaRL14YMW1dlI3HfeB2gj7Yc8XdHh9vkpPyuT
+ nY/ZsFbnvBtiw7GchKKri2gDhRb2QNNDyBnQn5mRFw7CyuFclAksOdV/sdpQnYlYcRQWOUGY
+ HhQ5eqTRZjm9z+qQe/T0HQpmiPTqQcIaG/edgKVTUjITfA7AJMKLQHgp04Vylb+G6jocnQQX
+ JqvvP09whbqrABEBAAHCwWUEGAECAA8CGwwFAmgrMyQFCSbODQkACgkQyx8mb86fmYHlgg/9
+ H5JeDmB4jsreE9Bn621wZk7NMzxy9STxiVKSh8Mq4pb+IDu1RU2iLyetCY1TiJlcxnE362kj
+ njrfAdqyPteHM+LU59NtEbGwrfcXdQoh4XdMuPA5ADetPLma3YiRa3VsVkLwpnR7ilgwQw6u
+ dycEaOxQ7LUXCs0JaGVVP25Z2hMkHBwx6BlW6EZLNgzGI2rswSZ7SKcsBd1IRHVf0miwIFYy
+ j/UEfAFNW+tbtKPNn3xZTLs3quQN7GdYLh+J0XxITpBZaFOpwEKV+VS36pSLnNl0T5wm0E/y
+ scPJ0OVY7ly5Vm1nnoH4licaU5Y1nSkFR/j2douI5P7Cj687WuNMC6CcFd6j72kRfxklOqXw
+ zvy+2NEcXyziiLXp84130yxAKXfluax9sZhhrhKT6VrD45S6N3HxJpXQ/RY/EX35neH2/F7B
+ RgSloce2+zWfpELyS1qRkCUTt1tlGV2p+y2BPfXzrHn2vxvbhEn1QpQ6t+85FKN8YEhJEygJ
+ F0WaMvQMNrk9UAUziVcUkLU52NS9SXqpVg8vgrO0JKx97IXFPcNh0DWsSj/0Y8HO/RDkGXYn
+ FDMj7fZSPKyPQPmEHg+W/KzxSSfdgWIHF2QaQ0b2q1wOSec4Rti52ohmNSY+KNIW/zODhugJ
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <20250720021151.GA931647-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Chia-I,
+On 7/19/25 19:11, Rob Herring wrote:
+> On Sat, Jul 19, 2025 at 08:33:52AM +0200, Heiko Schocher wrote:
+>> Add documentation for spi based ABB sensors, which are
+>> currently operated from userspace.
+> 
+> What is userspace? That has nothing to do with bindings.
+> 
 
-kernel test robot noticed the following build warnings:
+Taking one step further back ... what are "spi based ABB sensors" ?
 
-[auto build test WARNING on drm-misc/drm-misc-next]
-[also build test WARNING on v6.16-rc6 next-20250718]
-[cannot apply to linus/master]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Guenter
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Chia-I-Wu/drm-panthor-add-devcoredump-support/20250720-080312
-base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
-patch link:    https://lore.kernel.org/r/20250720000146.1405060-2-olvaffe%40gmail.com
-patch subject: [PATCH 1/9] drm/panthor: add devcoredump support
-config: x86_64-buildonly-randconfig-004-20250720 (https://download.01.org/0day-ci/archive/20250720/202507201010.Tou41l73-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250720/202507201010.Tou41l73-lkp@intel.com/reproduce)
+> Please provide some details about this h/w and convince me it is
+> trivial.
+> 
+>>
+>> Signed-off-by: Heiko Schocher <hs@denx.de>
+>> ---
+>>
+>>   Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
+>> index 27930708ccd5..25260c2b81df 100644
+>> --- a/Documentation/devicetree/bindings/trivial-devices.yaml
+>> +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+>> @@ -30,6 +30,8 @@ properties:
+>>       items:
+>>         # Entries are sorted alphanumerically by the compatible
+>>         - enum:
+>> +            # ABB register based spi sensors
+>> +          - abb,spi-sensor
+>>               # Acbel fsg032 power supply
+>>             - acbel,fsg032
+>>               # SMBus/I2C Digital Temperature Sensor in 6-Pin SOT with SMBus Alert and Over Temperature Pin
+>> -- 
+>> 2.20.1
+>>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507201010.Tou41l73-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> Warning: drivers/gpu/drm/panthor/panthor_coredump.c:21 Enum value 'PANTHOR_COREDUMP_GROUP' not described in enum 'panthor_coredump_mask'
->> Warning: drivers/gpu/drm/panthor/panthor_coredump.c:29 struct member 'reason' not described in 'panthor_coredump_header'
->> Warning: drivers/gpu/drm/panthor/panthor_coredump.c:29 struct member 'timestamp' not described in 'panthor_coredump_header'
->> Warning: drivers/gpu/drm/panthor/panthor_coredump.c:54 struct member 'group' not described in 'panthor_coredump'
->> Warning: drivers/gpu/drm/panthor/panthor_coredump.c:54 struct member 'data' not described in 'panthor_coredump'
->> Warning: drivers/gpu/drm/panthor/panthor_coredump.c:54 struct member 'size' not described in 'panthor_coredump'
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
