@@ -1,138 +1,124 @@
-Return-Path: <linux-kernel+bounces-738087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AD8AB0B426
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 09:50:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 911EFB0B429
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 10:05:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 520543B9EAE
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 07:50:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D8AF189CEF7
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 08:06:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B621DE89A;
-	Sun, 20 Jul 2025 07:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA461DC9A3;
+	Sun, 20 Jul 2025 08:05:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b="IzjdQdo7"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fdeVuf0j"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C4F78F4A
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 07:50:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896B617A30F;
+	Sun, 20 Jul 2025 08:05:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752997848; cv=none; b=BvCN6WgVC3JH7TPucREpY5LoGDz7pZk+3lVXqXr4OINySPNCTLQLD5gAt7OxrCYmyaLdFjOECCypAhKhCwbbLgZ2OTSn91b8uqSWqsfBH6hB4BQYVuXi4InU+gWS8BuqcWg+6VaRpiySj1qPro4D7UONuvQPAPVwu4yZAlS2L18=
+	t=1752998750; cv=none; b=iXnHeyugSaywTsYoge6G2tSU8EC75+qGC9bZTqUo94Y6HQmGueeKNmTOOnkt2duHwyiiIhXq1lp6RTDe5/n8R7N7WXsbQqoU5lvjN8T0oODbJK7Ntvcnw/ACOozDQ7xRE2EvceAGBW+9AUA3BMsEgeoNlnMoXiyEjgM2UBxUlIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752997848; c=relaxed/simple;
-	bh=1EIzLiEKFNKNhapurV5TiPfyoyMNTU5jV2wejXKsOv0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=ncGSYVAPjGCF4sXYAJQ3l6r0J01oqrG8+IevcIh1Bm1ssK7UFZoVfYrouPpuI8quqwcbC+4oZEWM6ME0/YnF0lLESEPTPtpqJpolfIyAW1TC55wMzbwjcrXj2Yu2IclbliTVPXELVd96tf5EfsKrVPMZuZb4bpt7uushfjI0mJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com; spf=pass smtp.mailfrom=brighamcampbell.com; dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b=IzjdQdo7; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brighamcampbell.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b26f7d2c1f1so3218409a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 00:50:46 -0700 (PDT)
+	s=arc-20240116; t=1752998750; c=relaxed/simple;
+	bh=nBfUxGaO6llmDH/VJU09CFKoRpwqxviaZJVge2tryvU=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=mjzcWkD4jOkggJpRoKjVy74/M1wfm1eb39N9iZXih6JXrUqF+gmkH7it4AiMtEUJk1WM5Yz9KeDvXzHTYAfJaSXlV9MndQqnC1v8aQ/S7xqokPmb8YEwmM+ox3TpJvtRJn+67VUY75MWR937wIpLhjJdUjcXtAzy911UpSbDvD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fdeVuf0j; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-553b16a0e38so3034447e87.1;
+        Sun, 20 Jul 2025 01:05:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brighamcampbell.com; s=google; t=1752997846; x=1753602646; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1EIzLiEKFNKNhapurV5TiPfyoyMNTU5jV2wejXKsOv0=;
-        b=IzjdQdo7wGaKuhNOGzIiwkYWcxkVGYcbdbgGLQXo2rqvvlIAIkQ85QFjVx5rmqKkL/
-         UTy3KIWie02KA41hqh6z901fuLsW9CpW8Ef8QKZshcSkonyCz8Zo4Z+6pDY1TnUm5pYc
-         EYjgyiTVLEB2WUJ+94v44rpmgOPKksBJdpGbzV99neONL1vjJ54YlsH50gXibNG2iLks
-         ZEwCb2Ad2cL0fxOjr20nW2MyskLxHPTyz4TQcYw7iz5CVZwndUfell82A7uhUUT6ibz4
-         cyqpgZ5RzAAq6gn6lBqig3iDjvB+CFW85IzlwEKuq1FVUc0NyBERdJsUd2zONtbNDcvw
-         G/nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752997846; x=1753602646;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+        d=gmail.com; s=20230601; t=1752998747; x=1753603547; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=1EIzLiEKFNKNhapurV5TiPfyoyMNTU5jV2wejXKsOv0=;
-        b=OhaGZLY/ESQh2g1TiSW89f+kpj69NlhPpxd81qAnL+9dLvVZeBGhM0CwCQqZeE6TVC
-         2TkNUFprzd/QwMRWArVbW1AS5oQbFt8Q4AxU+jncWhjfxAM26OpktIf3c3zZl18SBBUy
-         Ltsq8P5dtQiws3NkH1zTnHBs06Xrpqo6h34tL/fc4jgSrHV7fxAmPPqbXDXzHETIW3Se
-         VUbPema+tyLoomFCsnf6E/fZlvmK+kweEU1nOmevVQynVKcKcLuss+M5aQUacf/GRdLv
-         a2D3gik5MXuyANBSkcyWtDciv++iAsE1HbkKMgsNmiPTU43Nx81B8SNSvC6Z0SA5HCsU
-         WxeA==
-X-Forwarded-Encrypted: i=1; AJvYcCWm23FztWnBD6/WvNBuIyUJl+Ryms3BHY7EZ/IqjJSNgRkCB7sIt4swQnFBbNVkysWZ4doVo3UdnsVq4Vs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtaulDcHp4SbMUIaBsP+r6E+na5VvltXGpkxz+PqW0K6vvwJLy
-	jk4hSFfNMEu6Gp0N0xpKFe7wk4GBJrI+gmqysWl8eM3M3FccnFi8ybLSJqg9gQ9Ce6g=
-X-Gm-Gg: ASbGncv6JnkWnV/+72phM3LtXFSdwEk6+AnwjjH9yUi+PYyJ4GQ8hSlrf4rB88hJOAc
-	2EdCp/qklxuFeQWQPblOWZwM6rfh/Gnsu4Etafpg2M59k0xynSG2cnyOIS0rxjw91UJx+VyAwT6
-	oeKgG22P+gANEoAAqWWEw+9lg9YJt69SzAPDYRud01PXdvVOr8+nolyX2uOMHhV/TsvooVh7mM4
-	KvizocvVdkBmw7+62Zv2nwSE9HJlYeaKWXi81sS8Zea76CfVWuKRauiDbps5syY3KPv2lXBZaOO
-	LwuYsiT2p7APEn8YgTnxMFIM76Ak4fhm+DOxQ0NgJGit7xXgN9b3uxyxSzAoQYL7XTKyzxYTpVD
-	XOQ7oJYiGfUvOf7enPD0=
-X-Google-Smtp-Source: AGHT+IHLtegd1iyRVDLN/vP8oO8twGnp2iC58ZPKXolFVDdIfrLW6ekD318QbzbDW8XkVDBKOe/oyA==
-X-Received: by 2002:a17:902:ef44:b0:234:a139:120b with SMTP id d9443c01a7336-23e2566ae6fmr224043965ad.11.1752997846197;
-        Sun, 20 Jul 2025 00:50:46 -0700 (PDT)
-Received: from localhost ([64.71.154.6])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b60ec88sm38530095ad.65.2025.07.20.00.50.43
+        bh=W6POjTCMc5vFHm17LQlJiIP5lnqBte4hoCPNHHXBAMQ=;
+        b=fdeVuf0jUl0uArYT6HuSntBucebWJ1sTb5sezAMiUxYLkNxp96hJ2qSJwK9jBmbotU
+         s6ldeGFwgHc/viFpopX17BEDPakUs51hMqqwxpH+3GcknjQwfQW8o7vzHYl7daBL3air
+         piFAkknOaijnWpmIn7ss+Yu90ibzkhlv3Fu/uXH5lNF5eH3q/PmyoMkvMbE0MQWcoT59
+         +OSzbi9zzUq1yngOvrcRps/mImNb5f75BD+QkeKgq2wUYXi80UwmKtUtkeJqaeGYQivF
+         rSVnFJq91HSk0cL/boDqdZWRVVlluLr7SIf3BEvolzdNo3obmajeZLISJYqRh7Dz2KtA
+         PGJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752998747; x=1753603547;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=W6POjTCMc5vFHm17LQlJiIP5lnqBte4hoCPNHHXBAMQ=;
+        b=LC5OFGaKtFjABOkfLFizqCvj6J5xgjUTrsKEhsLOUQcFv5NPi40ypucEWlXYoW0QZp
+         8dstx3jJ7lIBbiSFQ3IklnFr8jT0nr95J6RVPlWoPSmi2eRscOhRGNWLyUShFblKyUX4
+         cwFhRsUD+LvP4cgWR5ttd+G8TFGQlzlOr45C6ELzzYI0yu5aXylYigv+uHYXa7u1A3Ll
+         NWSuBKXc3UsrrfKzGyNVEYzUlUGlKXzjsTqZ2v78/oHh27Ao3a5Ha3uh3UMiKYKKK6jB
+         L+kferqx94t7KMV3JwNpof28L2jBTxMwqKCzYLH4Gs9tolNfAZdjt4P6K9LcL9ZGGw1z
+         5tow==
+X-Forwarded-Encrypted: i=1; AJvYcCXWGi6yd7L2slVr2bF71Rs9YH/jjV0fBYU9IQk7OL2mq1JDfdKX6TJ1x21ylYUplnBYNy2ndVI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaTbHaHZoXSKSecja2cUWUMhGaBiJBv1PkMK4FwCj4zJFaxxGs
+	Pj7+6WzcsPT/DcR65JwHpgsaNUD4s8mPw5hR2xBoZKgzVAG1kJtrafgm
+X-Gm-Gg: ASbGnctNZ5S0A+ZkQ9OWflInQsrIQRa6bEQeMsGzRwD7nqFQCfBU1gMjcjfpKtUnmVH
+	HJ6qv7jwDOFzI8tAcZJrsW1I6CTUNU/4V5AY/+s5CsEx2qfOzgn7GeBiYlUiNOD9aZ+Io9PwLyS
+	fFc3jkaIfOSX5YuwM4bI36gYKGF73RSe+WO38Z6n6uMpxMi8S6Gq1TOOHYNAfic8hKhcsm78aX3
+	84uApf3poS00B+1FJ7gwRmr8jVbIrudC/zR8szmJe29ZFJXY8Jljd3DShkPXk4qy08+Wa5fkCwk
+	53bCxqLVp5kazz8DIygTIXlxlW9x/1lEH3HKX4++casygxZ9fJJmpDWWt81Ao0iTM3ZzMqSvddw
+	gtLkxTrOpBsQsWIIR3TU2JXWe32rt8Lj3+JyzttXpnZ2ddmorF4XE0oSz1A==
+X-Google-Smtp-Source: AGHT+IGc0DYxlnSyWcPXw+OO/pa2EPi8q0f7cbZXWr/l+AOdrxjGZ9PIUWhQyNBIyqeAqE4HYGtOGg==
+X-Received: by 2002:ac2:545b:0:b0:553:2868:6364 with SMTP id 2adb3069b0e04-55a3188e3admr1522359e87.33.1752998746133;
+        Sun, 20 Jul 2025 01:05:46 -0700 (PDT)
+Received: from [192.168.1.89] (c-85-228-54-30.bbcust.telenor.se. [85.228.54.30])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55a31a9bf3bsm1024636e87.40.2025.07.20.01.05.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 20 Jul 2025 00:50:45 -0700 (PDT)
+        Sun, 20 Jul 2025 01:05:45 -0700 (PDT)
+Message-ID: <7a86086f-5b3b-104c-f06d-4194464d84e3@outbound.gmail.com>
+Date: Sun, 20 Jul 2025 10:05:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 20 Jul 2025 01:50:43 -0600
-Message-Id: <DBGPVFN5DTGU.5UTP35ALYS2Q@brighamcampbell.com>
-Cc: <tejasvipin76@gmail.com>, <skhan@linuxfoundation.org>,
- <linux-kernel-mentees@lists.linux.dev>, <dri-devel@lists.freedesktop.org>,
- <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Neil
- Armstrong" <neil.armstrong@linaro.org>, "Jessica Zhang"
- <jessica.zhang@oss.qualcomm.com>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>
-Subject: Re: [PATCH v4 2/4] drm/panel: jdi-lpm102a188a: Fix bug and clean up
- driver
-From: "Brigham Campbell" <me@brighamcampbell.com>
-To: "Diogo Ivo" <diogo.ivo@tecnico.ulisboa.pt>, "Doug Anderson"
- <dianders@chromium.org>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250717164053.284969-1-me@brighamcampbell.com>
- <20250717164053.284969-3-me@brighamcampbell.com>
- <CAD=FV=Vrp9MM_5de10sV-TC_mp-D7en9gjU8DBoD6mBrRvF2eg@mail.gmail.com>
- <f0d300fc-0141-4eab-a888-d1d32778f5de@tecnico.ulisboa.pt>
-In-Reply-To: <f0d300fc-0141-4eab-a888-d1d32778f5de@tecnico.ulisboa.pt>
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+From: Eli Billauer <eli.billauer@gmail.com>
+Subject: Re: [PATCH v4] char: xillybus: Fix error handling in
+ xillybus_init_chrdev()
+To: Ma Ke <make24@iscas.ac.cn>, arnd@arndb.de, gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+ stable@vger.kernel.org
+References: <20250719131758.3458238-1-make24@iscas.ac.cn>
+Content-Language: en-US
+In-Reply-To: <20250719131758.3458238-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat Jul 19, 2025 at 11:10 AM MDT, Diogo Ivo wrote:
->> nit: can just be this:
->>=20
->> struct mipi_dsi_multi_context dsi_ctx =3D {};
->
-> I am not an expert here but I was under the impression that this is only
-> valid with C23 while the kernel is written in C11. Is there something I
-> am missing?
->
-> Diogo
+Hello,
 
-You're right, C23 was the first standard to bless the usage of the empty
-initializer, ` =3D {};`, but if I'm right, it's been a GNU extension long
-before C11. At risk of being pedantic, I'll draw attention to line 580
-of the kernel's root Makefile:
+On 19/07/2025 15:17, Ma Ke wrote:
+> Use cdev_del() instead of direct kobject_put() when cdev_add() fails.
+> This aligns with standard kernel practice and maintains consistency
+> within the driver's own error paths.
+> 
+Sorry, to the extent it matters, I'm not acknowledging this.
 
-KBUILD_CFLAGS +=3D -std=3Dgnu11
+This is merely a code styling issue, and as far as I know, there is no 
+"standard kernel practice" on this matter. If such standard practice 
+exists, the correct way is to prepare a patchset of *all* occurrences of 
+kobject_put() used this way, and replace them all (e.g. fs/char_dev.c, 
+uio/uio.c and tty/tty_io.c). Should xillybus_class be included in this 
+patchset, I will of course ack it, not that it would matter much.
 
-The kernel is technically written in the GNU variant of C11, extensions
-and all. In fact, the first patch of this series uses optional variadic
-macro arguments, which aren't a part of any official C standard as far
-as I'm aware.
+In my opinion, using cdev_del() is incorrect, as you can't delete 
+something that failed to be added. Practically this causes no problem, 
+but as a question of style, the kobject_put() call acts as the reversal 
+of cdev_alloc(). This is formally more accurate, and this is the reason 
+I chose to do it this way.
 
-In any case, a simple grep for some forms of the empty initializer shows
-usages all over the drm subsystem.
+But more than anything, I find this patch pointless, unless someone 
+explains why it has any use. I'm open to new insights.
 
-That said, I don't know if GNU extensions are formally documented or
-where one would look for that information. Importantly, I am by far the
-junior as far as kernel coding is concerned. I yield to your experience
-and I'm happy to change this initialization in v6 if that's best.
-
-Cheers,
-Brigham
+Regards,
+    Eli
 
