@@ -1,563 +1,305 @@
-Return-Path: <linux-kernel+bounces-738116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E280FB0B48F
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 11:21:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FEAEB0B492
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 11:24:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 232223A4FD4
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 09:21:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0A3217BD98
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 09:24:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52DE41DF75A;
-	Sun, 20 Jul 2025 09:21:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437CB1E1DE5;
+	Sun, 20 Jul 2025 09:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iWM4R+JR"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="csfGbOws";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="QMlqT+38"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BDC31C7013
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 09:21:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753003301; cv=none; b=gH2Z1MDlnlRvMuGhpVAXzopJudcoj9Ygn7GfY4WNlc7WlHEX0UKs/fmpEwGdw6XvYxXpiNeHPigulYGqL/tYlHRGxtYZzHTbMeekasVW5OkroyOWkpllnhUQpNLHMmaacZwHq+Q8029TwEh3PItG58u5gzvm7SHwmJS6gLNpNsY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753003301; c=relaxed/simple;
-	bh=Dg6YvpZOBmX+gAuO97pzxwjEVkky8LMOxzQvl7Q2nYQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qmQYZbyJAii0ZuXJ69ExNW8s/BHjJz0faGa/cUrlW+W1VL2VbsPElQyJfSvgTf8z8LJVTCMy9O8SQrzL4iDbSn8RtoXjZMMrprqVLWnopuib1fm9On/7GYNcQPkYxqn4W+IXbpx2qo02xk65hMh1mhwDe/5i9CgazMM72d/byHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iWM4R+JR; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4abd3627e7eso3833601cf.0
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 02:21:38 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88CFC1B424F
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 09:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753003445; cv=fail; b=p+DTR19dkwlD0LgseKHNs9V8VW/6sTdVn2+xMCvjxQidTZpxFNtYI8DQsB6iyzs7qoOzA0QiKS0A/cTaG5Nx0g9JfPHyoLQedbs4lrnaupFVgoJbC4/uKaybDbTtZiR3rPzsMOcjCLX1XPc6tBKmG7Ioqc6yJqC4LBLgDuQcYwk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753003445; c=relaxed/simple;
+	bh=81GCBab3D+6a0WiMO9fEvAQfagRj3hzcUO5evSB0dHU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=AOzqdYVudRvyHNYwFyPosp1F5G2j4j6qqPaAma8kwJN0kkZZF+2KlFIHc5dXVPdhaJPTR336J50l+t28XJDFEPIQbUSuN21L92zACIfRGi8yNiS4yN6kzaOjfrz79lTBecilEvVvpHTO6NNma0nSH/EGk6vmNspRg1FwJ1tI8S4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=csfGbOws; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=QMlqT+38; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56K3u6qC005478;
+	Sun, 20 Jul 2025 09:23:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=sRrlKIxvxXe3a8BImc
+	+sNy+WzHj9/Z96JIh9MYxwUYc=; b=csfGbOwscwlxRCagSURKeoyd3XDJdrVQRa
+	bidwzGP5gkpTzMmrkf37xlUEZjh2XMFk8nq/ar9AGwyhfYAS2BJHBZwt0XbJLIw0
+	qOHOwHojSvgavnYvoMHRizf/j0RJ9h7dSqR+aL1Z7o+JlkheHHpLt6TTKhyr4/TX
+	ix6xbKkXPqI3xJ2lBKHQ7lngoM2wZdaVib+ToRL/jF2G+A9mC89tMDxtDZdSdHgp
+	C2DN1ez8txvIglLRHMps2r2Vdovd1osUSNfP9/Opim+/N1rG4c5wMC7JinhXQCz3
+	PHKConTJt5Odmi+2JvUpF17ls4GETzOvDtMyl7d0+hehlmDb/PZw==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48057qs5jr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 20 Jul 2025 09:23:35 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56K8bQFt005769;
+	Sun, 20 Jul 2025 09:23:34 GMT
+Received: from nam04-dm6-obe.outbound.protection.outlook.com (mail-dm6nam04on2054.outbound.protection.outlook.com [40.107.102.54])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4801t73ke6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 20 Jul 2025 09:23:34 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WivMxPk5cGW9cVJ6yKXbeDWLsoMfJtLuE9WldP282jZPD7WRZWQMUaxl+OSIJ3hmlia3t1zt30lpsGcaqcfR8p3+AJv7ecjIaEkniAJ3Jvo+zGDtm07iVYJdPmFuf6nKpw0p4QqV62lbUGtyzOHl2Ue+LJAgJb4ajUk7AiYS5WSjoyic/x97MrspXhNMR069fZ8s4DmQW9bRnDGI2kmlx6ZUJY0IE1dcLDi/mymMDmtJpWE+M5L60RlulAQkfqC4hyDZ9UP2Syti4cfmX3ofdBEm9NAWXSsVVGTvoKdU3BB99FJXRoPVkTSMnCazz22aGFxNRS77j8u+fwqr8yDX8A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=sRrlKIxvxXe3a8BImc+sNy+WzHj9/Z96JIh9MYxwUYc=;
+ b=rdyeMC1rG4SyAF2w1HtZKJoDLWpgYwwpjnNY9MsbIbE7Jf9udLe7nXZUo59UoDdo5yijGafi3PvvR5i3CAb2+hRgXpebUjmMgB99POClzKmhUKqoPUAEQ5Gsc5rqxAv2KDSgir+sypdLPjERmaXpzxtu4Cs/xBb1tz112/8785C79LGyyn85D5qXVtOgKuxPd2J0WZ4BK35S9a0TzWk8t4HKMOI0J0uU5ZgCp0h9jB5DlNVzCLjVLwKDHoXbwP3PNY75G87dPp8oezoXlsYcaVYONqFQpW4NQPRVfzx/IAKdClOs9NURVMcCU2WeTeSOyKhoUVI4NXpEKe8zInH9JQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753003298; x=1753608098; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=87nxXvys/RrNyU56e5lSusNevycvMdTPE63phLoHvtY=;
-        b=iWM4R+JRsdYTlpfyiS4bl8cNgvvIzaQ3hWz961AI5APh12Y7Zqeg2hBuGtrseFsGtL
-         W6tQiDPPPnTco/nMBmtnbOtfsZ/FnjA6s40xr/OyHZYdYuWmJWm323S7Oit3xDx6KjPs
-         5eLze2Mg4aoYYG9F+qpy3ZvcTgOTnkHJ+8B2KkCIlYTh9r0VPo7wtmQchvceMy/xJNUI
-         KLUDH0GfLqnsWXX421rjI0Fr9NvRG6utx8+NvsjQJHRNLTSCUbLjspVG/lLLKlGI1WPC
-         mJwKMRoVslJ8onJsgRktZDuGBEhmXRPXJfsC51bs3VzCL343CxBRzDrMcWtyL53MtVtk
-         S70w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753003298; x=1753608098;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=87nxXvys/RrNyU56e5lSusNevycvMdTPE63phLoHvtY=;
-        b=loyaAGJA1xCEZqRa3KG9C8mgRZ8rLn2PpQXYTisPfrIqNSGVMsEKehpH6nL4zNIavs
-         dXORiVYANxVId/OIhneTOe03GtWYkfz1EqB0ijUu7vggQWxddTtdiQL5fzyYu8UycmWd
-         TZUJjIVT96+kQ0VaBsmnl2nMp0bc/PbOnRgWFJdAA/kV2iGsftz2eDNnLrtZ+8GUK3b6
-         25qBgd27AJiZS2tNjYBF0iRXW4slzkX2mXIJwAqwaVDAbcl2mIQBoa5sxIg4HArxKTtL
-         qA1f/SiV5etHuELy1y0Tq0IjEYIF0woV1iy+/taz6DqTfZrsjI2vKsMdqzBgtmZhRjqP
-         ISlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXvTVxkqctFixJacziC6MtDQV/gZfXN25FFFM1xRZGPMt4PqOQqKNo/a/cQah24IK56GrX+GADyOlOGdpE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxh1F94sasK2DWmUXL0LQHorTU5XKyXfS2q52VMMQ0ZT9hKKzGQ
-	5dvnQ/W+wq6bpJqce94ozLC4Zx8837tEN8A/uEtWOiUcGcDGQvDXeNo2tHZyoOLT
-X-Gm-Gg: ASbGncvFu4+cWAJhn5KL8LDQ79PBWQrFMxurOveui7SvWGcDCUOEv0ojeshwBAl3ekH
-	mgQ/w8g96jbQdwsomfGpopRi4SXUVpPn+9NpgSyVlFNkRM//XXyNNnuw+TuKPdr9ZFb3/pO8Qht
-	FxUxUHfRAHo3Hk0yRdV3hvRO1bG+wOKg90/A5kuL2doTn1OOvutmWvqkiVeZjvvxPfIaWaE2tfd
-	4W2e75b3BG7Nkcg7C83rJtvOEKEUi2Y45kW1IV0fJ4jwnkRs8mTP2fQErdEVbp1XBagD26LdF2G
-	E3R1abAC8p8dNn2DRw2yF2xjZ8USASvek7cJsHk/YZjoN7mZaMFG8Xdgx0GAWzKXHsMFdumZ+wh
-	IBuRdzLpwFd1meYqBrfcmIflcsRov6CAtqGgOvV5JV+jxYWeCj54=
-X-Google-Smtp-Source: AGHT+IEmVvqTrdgZyRMdMjEIq+2gdKXzmpgAg+AMSNdNMM5frpC/lbXkJjM8m4Nn0lwf+pn+pzofYA==
-X-Received: by 2002:a05:622a:4cb:b0:4ab:6ef8:876 with SMTP id d75a77b69052e-4ab93c7f74dmr244212501cf.15.1753003297668;
-        Sun, 20 Jul 2025 02:21:37 -0700 (PDT)
-Received: from linux-kernel-dev-start.. ([159.203.26.228])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4abb4980305sm28445591cf.6.2025.07.20.02.21.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Jul 2025 02:21:37 -0700 (PDT)
-From: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	vivek.balachandhar@gmail.com
-Subject: [PATCH v2] staging: rtl8723bs: clean up redundant & parentheses
-Date: Sun, 20 Jul 2025 09:21:25 +0000
-Message-Id: <20250720092125.246844-1-vivek.balachandhar@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250720083332.246512-1-vivek.balachandhar@gmail.com>
-References: <20250720083332.246512-1-vivek.balachandhar@gmail.com>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sRrlKIxvxXe3a8BImc+sNy+WzHj9/Z96JIh9MYxwUYc=;
+ b=QMlqT+38yYk3540Nfv+qaAEQA3DopW/kAIMZ2roEKQCEAb6X12Cs8Y/zIPwPhfsIn8+DkGrwx/o35hQI3jmxxGO0Kju1XwZ1yuAOXXxkCdRMjYgL72YSw4kjHmud33gwD2MHuwpVF2eMTP2JlUWuT9RmGXg77YjUYV6LE5fRHnE=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by SJ0PR10MB4590.namprd10.prod.outlook.com (2603:10b6:a03:2d1::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.29; Sun, 20 Jul
+ 2025 09:23:23 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%4]) with mapi id 15.20.8943.028; Sun, 20 Jul 2025
+ 09:23:22 +0000
+Date: Sun, 20 Jul 2025 10:23:20 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: David Hildenbrand <david@redhat.com>, wang lian <lianux.mm@gmail.com>,
+        akpm@linux-foundation.org, Liam.Howlett@oracle.com, brauner@kernel.org,
+        gkwang@linx-info.com, jannh@google.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, ludovico.zy.wu@gmail.com, p1ucky0923@gmail.com,
+        ryncsn@gmail.com, sj@kernel.org, vbabka@suse.cz,
+        zijing.zhang@proton.me, ziy@nvidia.com, shuah@kernel.org,
+        broonie@kernel.org
+Subject: Re: [PATCH] selftests/mm: reuse FORCE_READ to replace "asm
+ volatile("" : "+r" (XXX));"
+Message-ID: <f0503a61-f605-468e-ae15-c4934faea632@lucifer.local>
+References: <20250716151543.998b121a58064011e9ce68cb@linux-foundation.org>
+ <20250717104811.3773-1-lianux.mm@gmail.com>
+ <d27e9451-8807-4c86-b2aa-063639f7801d@redhat.com>
+ <20250719102738.06b91a8b@pumpkin>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250719102738.06b91a8b@pumpkin>
+X-ClientProxiedBy: LO6P123CA0014.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:338::17) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|SJ0PR10MB4590:EE_
+X-MS-Office365-Filtering-Correlation-Id: b20a1db3-5776-495f-1663-08ddc76f12db
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?6huTacPY3+LQqbS5XKdL09a5SrAXJ2ab+D52TwMfXOuoVcJo7L1O+yS76HFT?=
+ =?us-ascii?Q?RoOXjEhHfR6isoQpHcsOtG0G33SW9vzCoBqMn4QxKSpZI/RiCEJa82nQjCDv?=
+ =?us-ascii?Q?NElCwixQmgdZcLDrMV53BH/JwM3czfzurOO/YJk2NrVPTaVQK5P5k5DA52Ny?=
+ =?us-ascii?Q?9cv7Bz+b6hARcrYsw9Ja88s9VXElcuWE66BIf5LeAJwrsr0Xrta+Z3/yoKZ5?=
+ =?us-ascii?Q?5VPiNhyemaB8qZLeboAwewqltAb+jid0A2jrzmlyljUQU/gp0Y+79l7RTsK0?=
+ =?us-ascii?Q?tR1Vw2RGn8b/aj4tMT4serimft3/sSvKEg+jj1GtE85BNpgURMasAHYYLZCP?=
+ =?us-ascii?Q?AbaWzLLcBuq+IV6PKRQAVqjA13vwmgJ6xbHNYgxqLkear8yYNsosoPnCMiRb?=
+ =?us-ascii?Q?7QvSa2NEAuPz4y3Ank7wXFnzrbH9sYbZqpSqek7rwmLEzpbOrpcYmnj497bh?=
+ =?us-ascii?Q?fxpILacL88dN8iv0y0uJFt9Xj5laEtBc4gkDgQqpW7FRy3edbvqKa6kzOu5H?=
+ =?us-ascii?Q?1ArZ3FQoNu4JO8IvKJkGUeC8lN1vOe1bNPKVbB1OP2jEv5SuHpMP+b9Cg+D/?=
+ =?us-ascii?Q?bzP0Zs5hWNZQF7O92BrHlmeetcpYKx58SiNlUlcVR9jsJuxjRa1O0o7n3r4Y?=
+ =?us-ascii?Q?vnT77JGIZ6S94XyDKW929cTuMv5N2B3c/b0DF8WQrefR7OMgD3Y2fGC3K0E5?=
+ =?us-ascii?Q?/idKrttRCci0+sZvCxj5xFkUaAYEkXDR+y9nvQGNdid46cV/wHFeqvjU3ce+?=
+ =?us-ascii?Q?DRUdYiuwOuiTCVUNosGTqiuzM1+wv4Lr+Z752j76y4NAYXhmTf+Efm+7M1E7?=
+ =?us-ascii?Q?PZW7iTO8JiAuzmwG+vW4Ol0IsTSmwf72/ELJ46OYJJkRapTPd2JlVw9cHiAR?=
+ =?us-ascii?Q?PCDrPrdg9he6hrIxCdcqUVjO5orhv9k0I6rXOgzuJyMmmYR8US20e0etAeDJ?=
+ =?us-ascii?Q?1K0K5g1GJD2iBpRmBgboFG9BpJyHy4bTVOGANo8FIyRJq5IMyf5eOYQy31Nx?=
+ =?us-ascii?Q?JJ4N8nD2HJ+cTmgHCZ4uWZ10cGTVU3jwl4E5qpYhbQ2EyphxQjTcldJFWFAk?=
+ =?us-ascii?Q?2xGoF27KrtncYQVoJzS06/mTIxtDoIln/zClyQP7A6RwV8zxhGyQo1teJqq/?=
+ =?us-ascii?Q?P2CBMk/JgsJwkM9KK8SSC69j/iubziXq1ant+4FhtSuWXRZK4q2tbvwj8fVW?=
+ =?us-ascii?Q?TXJ1JOmavm8Lbs40xSZDdqudYRqJ7n1S2zIr6JrlXH31kGu4SPCvCan5ffCz?=
+ =?us-ascii?Q?zCAuF9NWAQK9/xCAcGZWfsskOhJ24c6IkdyTDFzRVwzN8fKROXr7pGZIaPfb?=
+ =?us-ascii?Q?z0okhG6l9pxkiYNtkrFN/I25Eo7stF5pwDtNlCXkbzxS+t0hOw9u/G2q24FQ?=
+ =?us-ascii?Q?w6WojJhcGIsYKa2P5qq0Q0UQ0txcwfJ0R5tv76FpGIIYq4OTf8CVW3XEiI0p?=
+ =?us-ascii?Q?kCZTMelAXuc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?fxZlx+lNZ2dfbgufE5xwqG3tcY3mTQVAkZWRg1WefU3Yn75F6jLvoebzOrTK?=
+ =?us-ascii?Q?sfn8z3XDWUPRIR6VTMGmL631pchxYSWTAAGIlGOlGS1xH6ezhPtjfOd1MMhS?=
+ =?us-ascii?Q?uB1ucF1KUA7lLe/8CiRBiv+83oSK0aHz/vrhHFGo5Dg8SRyUN5IxoAdmYwI1?=
+ =?us-ascii?Q?C7FgJVOIiD9dwmiTmcytYfJTEn534ksBOkArPSaIFXNFMAPwgy5h/sqrpK+7?=
+ =?us-ascii?Q?TeCgEjC9O7SLXWQYKO2kXOZAULkP6E7qJ3eaK3s1SccPyx9f7i8N3E6351NC?=
+ =?us-ascii?Q?ymVmmDfg5QTpc3vZ95KhYZGkaswm/3odL2hlQBy2Gpl993mLhQHEAReuzaEx?=
+ =?us-ascii?Q?JuaLM0Aa5oVCZ1kA4kWk6iQWLhNuYXjMDqelxbIuKWuTWVJu6DkiHw5glLEO?=
+ =?us-ascii?Q?Bmatnw5dzG4mei2cCLiX8SDCOw1nqscaVtQQoPlIz5WLj2T4GozaSF5Gx9/9?=
+ =?us-ascii?Q?140dDwAz0l/37iG7yzVZDPOQ5+m9YriZsh6hwxOsqvjf1VE7FtedROdc/hwd?=
+ =?us-ascii?Q?qy/EArri1gCn0NY9J32piYfSVMNRCL+4S0WJAPJvc3dQAeNrXy+F9xXwAlQn?=
+ =?us-ascii?Q?WVOh9s7ezoDUHaiJ0jFlKlacLnH4Z4WqAcoLJgaWktZri2o62pdmXDAGTfnP?=
+ =?us-ascii?Q?JmmJX3hcoC2HwIu8D6AdEEa/N5S/xlZ31Av/7V9wWH4du2VcTTSLsnDZK1WY?=
+ =?us-ascii?Q?yCZbsAddkIsSYYNHrEeZSvFqg3CaJv27kPGJe6ORA4eYxoaJ+3PflkwKfuNk?=
+ =?us-ascii?Q?fRVCgai3fcTgp2ZvdCHFjF0qdwxx5QNUJF1Y4b7BGrvIUdzJ8RzD3CBMz936?=
+ =?us-ascii?Q?/NUCgw3g5nkNjOhwQIHEXxd7k98h3e5Do/ESBOaMm5zn/KEnArRs2NTFSIOb?=
+ =?us-ascii?Q?k7sV8wQAWjiZ7nAdNrUUA2BIkcnJdVjW34EyGsZx01WxnXitMcBFSQs2bw88?=
+ =?us-ascii?Q?1KU4LCnFGb8BnD9bT5nSud5ztnM4DBzO17CvtHb32wO7/xEFzXLHVumBHlas?=
+ =?us-ascii?Q?lgrXH3R9XSZZY2B+VZJa7Dn14JPA/B+wKsrNAD+0rc77iaGzUqzt40oTqo+f?=
+ =?us-ascii?Q?joJ4as4FA/NcmjAkINn9qDHRN7bIn/ggODli24YZCOvXOHILUmPsjT5sW0DA?=
+ =?us-ascii?Q?RfHszkgd7V7ryHj7AJvHcgvsFKDjRJoZeipsm/lQvX9Ym1pnohgvyKSBgeyw?=
+ =?us-ascii?Q?+MrWU/yf8T5SWUsSi/AocALtFytjK97lPvx4sdk6fDDoznunVbbqvGOVTuZD?=
+ =?us-ascii?Q?XAwcPmGRxmYht72OVofM+zI07rQSz4dlrHks68bL2tH1YdfnlciI+XElKe5W?=
+ =?us-ascii?Q?JtrINmtEdusdYTuKaWJDAMgEtjtXl9RV8XEQMC5DdXXuBW4F1BUxzi2CNqWp?=
+ =?us-ascii?Q?Nv0RjemoBXYLCwIUIblubQpMglwKWrTrEdZnZ98YBxseNc9JwsLv7oPmOsjZ?=
+ =?us-ascii?Q?B7+UaeNUxAjt1idJHF5I2TB7SPvAR+n41vHDeCijmoccx9sTXMZXvpv4+A1F?=
+ =?us-ascii?Q?fvhijKR6IQyqOXmjgT6wcGWFUfn6m2GoJ0SOlBQyHRZnHR7MIZuNi74D27SS?=
+ =?us-ascii?Q?G1tTRB8m3TLL81g6Y5QyE7F9KG8XtTWHuuLo1pBnCu1agPETlsPFYZlmib+R?=
+ =?us-ascii?Q?xw=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	r9qw22IxpZAWKRwZ4zJkJAGI4IwFX2H0J7ITqqhWstFW2ddGMKXC6CslnAE5D8ciypL9BxFPmpimUw03/EdcAGVEzsnZqs/o/El31dx+q/EBThdiLq7qJqVvTpYhcPte0c8PfIs0MbT8LX/pFFG7NFzmy5/nrKVxk/mrV0uKnzIMnoeB6M1TK4ubAAfn1B86/HKEW/W77tuiD70arf2QA5C9KukBs/k3akwSjQA+Mo5a4sARZq6tHwACgpsqw471yGVSizfjW63OFm5ztTpzARO8+btaN/QDTP2PL6g7/TfZOzjVWhNhTKtmjlODov96PIh5TTg3L77/DrTfvuCG2Xls+24XCeftXTPAzEWa/ejGOGcV9td86Tdv9XdBA5wK5tUv1XYr1fDLU3Vo4Yorpnt4T+q02cl3kTbYAXp+EopjbVAE13bPf4xKFQkGqTSVCZqH0ydkrSf5ENxAPNb8AP9n072/POA+u0X7PudfbFVrF7T/Ly9WlqckuN7hd4rIft48sCYmFkxytlhEpYNm5NsdbtWx1i81+xO+YlGQcJaEpajNDMoeHpmzoeQQ6kVtNEX4T2QBZy94J+Jpx/zBDFm9EiIr9iHvZWAQKQeA/JA=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b20a1db3-5776-495f-1663-08ddc76f12db
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jul 2025 09:23:22.8886
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: t/aDzXbB5lHZ5aQYi6e8QceBZ0SKLJUi7/XxPDXMvvD5EZoNlt3y07RqIXZlWbQpfOxJLjgoynZdfQ0IiVnLMlffv0Mw2ReZxxVE4Swfglc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4590
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-19_03,2025-07-17_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=999
+ bulkscore=0 phishscore=0 adultscore=0 suspectscore=0 spamscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2505160000 definitions=main-2507200089
+X-Authority-Analysis: v=2.4 cv=MNRgmNZl c=1 sm=1 tr=0 ts=687cb597 cx=c_pps
+ a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10
+ a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=20KFwNOVAAAA:8 a=IL8r6mLcNWiA0mF2rEQA:9
+ a=CjuIK1q_8ugA:10
+X-Proofpoint-ORIG-GUID: rBjEJZbu1p3CMYDf9eO9v82f9TvxnAb6
+X-Proofpoint-GUID: rBjEJZbu1p3CMYDf9eO9v82f9TvxnAb6
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIwMDA4OSBTYWx0ZWRfX+Bl+KVZ+Qrri
+ ktQ8DUaabB8WeEeMyt86QB0K6UGftRsAuaPlQqiuQhwM/Dw+DHcChQ+eveQeRGPygE3GwCfjt8k
+ 6xbEh2kDo6hKMX872WsNJMrF0E26JGISJjyC+oWD4bZqBP1GbwS66tBDYR2T8bYTgzsunrLN8oH
+ ijAJpIY0qzeYRm75fajkTt4DWMv0tghiG/jQqlOTGmy2gwPeMc3ISSPCwNWW1Yz5umEehIaF9P5
+ lNcaDNkDGay5+tzESVHDF/pWVTDwq10U90BozSrHfN+0XLlzCk1vjDx71kV463Mrc/KEqvYkMhY
+ mTl232kgl+ACFXX9oULRyf8EwsgQFoAZHRn1WTZW3ZrlLsPAxzHR60OSUOaExaTD9OAjMXuaZlZ
+ B2dL6J8zttdn0Yml34ECLHYjNgi4tjHIq/O2MWwU6la2KLAjyyejY68kSvb6V0FeHc6G5IeW
 
-Cleaned up redundant parentheses around the '&' (address-of)
-operator in various expressions to improve code readability
-and comply with kernel coding style guidelines.
+On Sat, Jul 19, 2025 at 10:27:38AM +0100, David Laight wrote:
+> On Thu, 17 Jul 2025 13:43:45 +0200
+> David Hildenbrand <david@redhat.com> wrote:
+>
+> > On 17.07.25 12:48, wang lian wrote:
+> > >> On Wed, 16 Jul 2025 20:31:26 +0800 wang lian <lianux.mm@gmail.com> wrote:
+> > >
+> > >>> Several mm selftests use the `asm volatile("" : "+r" (variable));`
+> > >>> construct to force a read of a variable, preventing the compiler from
+> > >>> optimizing away the memory access. This idiom is cryptic and duplicated
+> > >>> across multiple test files.
+> > >>>
+> > >>> Following a suggestion from David[1], this patch refactors this
+> > >>> common pattern into a FORCE_READ() macro
+> > >>>
+> > >>>   tools/testing/selftests/mm/cow.c              | 30 +++++++++----------
+> > >>>   tools/testing/selftests/mm/hugetlb-madvise.c  |  5 +---
+> > >>>   tools/testing/selftests/mm/migration.c        | 13 ++++----
+> > >>>   tools/testing/selftests/mm/pagemap_ioctl.c    |  4 +--
+> > >>>   .../selftests/mm/split_huge_page_test.c       |  4 +--
+> > >>>   5 files changed, 24 insertions(+), 32 deletions(-)
+> > >
+> > >> The patch forgot to move the FORCE_READ definition into a header?
+> > >
+> > > Hi Andrew,
+> > > You are absolutely right. My apologies for the inconvenience.
+> > > This patch was sent standalone based on a suggestion from David during
+> > > the discussion of a previous, larger patch series. In that original series,
+> > > I had already moved the FORCE_READ() macro definition into vm_util.h.
+> > >
+> > > You can find the original patch series and discussion at this link:
+> > > https://lore.kernel.org/lkml/20250714130009.14581-1-lianux.mm@gmail.com/
+> > > It should also be in your mailing list archive.
+> > >
+> > > To make this easier to review and apply, I can send a new, small patch series
+> > > that first introduces the FORCE_READ() macro in vm_util.h and then applies this refactoring.
+> >
+> > Please simply perform the move of FORCE_READ() in this very patch where
+> > you also use it elswehere.
+>
+> Why not use READ_ONCE() instead (or even just make all the variables 'volatile char *').
+> I had to look up the definition to find the hidden indirection in FORCE_READ().
 
-Signed-off-by: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
----
-Changes in v2:
-- Wrapped changelog text at 72 columns per review feedback.
-- No code changes.
----
- drivers/staging/rtl8723bs/core/rtw_mlme.c | 128 +++++++++++-----------
- 1 file changed, 64 insertions(+), 64 deletions(-)
+Honestly this is an incredible level of nitpicking for a _self test_
+patch.
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-index 6301dbbcc472..bb5ade8e306a 100644
---- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-@@ -119,7 +119,7 @@ struct	wlan_network *rtw_alloc_network(struct	mlme_priv *pmlmepriv)
- 		pnetwork = NULL;
- 		goto exit;
- 	}
--	plist = get_next(&(free_queue->queue));
-+	plist = get_next(&free_queue->queue);
- 
- 	pnetwork = container_of(plist, struct wlan_network, list);
- 
-@@ -141,7 +141,7 @@ void _rtw_free_network(struct	mlme_priv *pmlmepriv, struct wlan_network *pnetwor
- {
- 	unsigned int delta_time;
- 	u32 lifetime = SCANQUEUE_LIFETIME;
--	struct __queue *free_queue = &(pmlmepriv->free_bss_pool);
-+	struct __queue *free_queue = &pmlmepriv->free_bss_pool;
- 
- 	if (!pnetwork)
- 		return;
-@@ -161,9 +161,9 @@ void _rtw_free_network(struct	mlme_priv *pmlmepriv, struct wlan_network *pnetwor
- 
- 	spin_lock_bh(&free_queue->lock);
- 
--	list_del_init(&(pnetwork->list));
-+	list_del_init(&pnetwork->list);
- 
--	list_add_tail(&(pnetwork->list), &(free_queue->queue));
-+	list_add_tail(&pnetwork->list, &free_queue->queue);
- 
- 	spin_unlock_bh(&free_queue->lock);
- }
-@@ -171,7 +171,7 @@ void _rtw_free_network(struct	mlme_priv *pmlmepriv, struct wlan_network *pnetwor
- void _rtw_free_network_nolock(struct	mlme_priv *pmlmepriv, struct wlan_network *pnetwork)
- {
- 
--	struct __queue *free_queue = &(pmlmepriv->free_bss_pool);
-+	struct __queue *free_queue = &pmlmepriv->free_bss_pool;
- 
- 	if (!pnetwork)
- 		return;
-@@ -179,9 +179,9 @@ void _rtw_free_network_nolock(struct	mlme_priv *pmlmepriv, struct wlan_network *
- 	if (pnetwork->fixed)
- 		return;
- 
--	list_del_init(&(pnetwork->list));
-+	list_del_init(&pnetwork->list);
- 
--	list_add_tail(&(pnetwork->list), get_list_head(free_queue));
-+	list_add_tail(&pnetwork->list, get_list_head(free_queue));
- }
- 
- /*
-@@ -287,7 +287,7 @@ void rtw_free_mlme_priv(struct mlme_priv *pmlmepriv)
- void rtw_free_network_nolock(struct adapter *padapter, struct wlan_network *pnetwork);
- void rtw_free_network_nolock(struct adapter *padapter, struct wlan_network *pnetwork)
- {
--	_rtw_free_network_nolock(&(padapter->mlmepriv), pnetwork);
-+	_rtw_free_network_nolock(&padapter->mlmepriv, pnetwork);
- 	rtw_cfg80211_unlink_bss(padapter, pnetwork);
- }
- 
-@@ -404,7 +404,7 @@ void update_network(struct wlan_bssid_ex *dst, struct wlan_bssid_ex *src,
- 	long rssi_final;
- 
- 	/* The rule below is 1/5 for sample value, 4/5 for history value */
--	if (check_fwstate(&padapter->mlmepriv, _FW_LINKED) && is_same_network(&(padapter->mlmepriv.cur_network.network), src, 0)) {
-+	if (check_fwstate(&padapter->mlmepriv, _FW_LINKED) && is_same_network(&padapter->mlmepriv.cur_network.network, src, 0)) {
- 		/* Take the recvpriv's value for the connected AP*/
- 		ss_final = padapter->recvpriv.signal_strength;
- 		sq_final = padapter->recvpriv.signal_qual;
-@@ -440,15 +440,15 @@ void update_network(struct wlan_bssid_ex *dst, struct wlan_bssid_ex *src,
- 
- static void update_current_network(struct adapter *adapter, struct wlan_bssid_ex *pnetwork)
- {
--	struct	mlme_priv *pmlmepriv = &(adapter->mlmepriv);
-+	struct	mlme_priv *pmlmepriv = &adapter->mlmepriv;
- 
--	rtw_bug_check(&(pmlmepriv->cur_network.network),
--		&(pmlmepriv->cur_network.network),
--		&(pmlmepriv->cur_network.network),
--		&(pmlmepriv->cur_network.network));
-+	rtw_bug_check(&pmlmepriv->cur_network.network,
-+		&pmlmepriv->cur_network.network,
-+		&pmlmepriv->cur_network.network,
-+		&pmlmepriv->cur_network.network);
- 
--	if ((check_fwstate(pmlmepriv, _FW_LINKED) == true) && (is_same_network(&(pmlmepriv->cur_network.network), pnetwork, 0))) {
--		update_network(&(pmlmepriv->cur_network.network), pnetwork, adapter, true);
-+	if ((check_fwstate(pmlmepriv, _FW_LINKED) == true) && (is_same_network(&pmlmepriv->cur_network.network, pnetwork, 0))) {
-+		update_network(&pmlmepriv->cur_network.network, pnetwork, adapter, true);
- 		rtw_update_protection(adapter, (pmlmepriv->cur_network.network.ies) + sizeof(struct ndis_802_11_fix_ie),
- 								pmlmepriv->cur_network.network.ie_length);
- 	}
-@@ -461,8 +461,8 @@ void rtw_update_scanned_network(struct adapter *adapter, struct wlan_bssid_ex *t
- {
- 	struct list_head	*plist, *phead;
- 	u32 bssid_ex_sz;
--	struct mlme_priv *pmlmepriv = &(adapter->mlmepriv);
--	struct __queue	*queue	= &(pmlmepriv->scanned_queue);
-+	struct mlme_priv *pmlmepriv = &adapter->mlmepriv;
-+	struct __queue	*queue	= &pmlmepriv->scanned_queue;
- 	struct wlan_network	*pnetwork = NULL;
- 	struct wlan_network	*oldest = NULL;
- 	int target_find = 0;
-@@ -475,7 +475,7 @@ void rtw_update_scanned_network(struct adapter *adapter, struct wlan_bssid_ex *t
- 
- 		rtw_bug_check(pnetwork, pnetwork, pnetwork, pnetwork);
- 
--		if (is_same_network(&(pnetwork->network), target, feature)) {
-+		if (is_same_network(&pnetwork->network, target, feature)) {
- 			target_find = 1;
- 			break;
- 		}
-@@ -499,7 +499,7 @@ void rtw_update_scanned_network(struct adapter *adapter, struct wlan_bssid_ex *t
- 			if (!pnetwork)
- 				goto exit;
- 
--			memcpy(&(pnetwork->network), target,  get_wlan_bssid_ex_sz(target));
-+			memcpy(&pnetwork->network, target,  get_wlan_bssid_ex_sz(target));
- 			/*  variable initialize */
- 			pnetwork->fixed = false;
- 			pnetwork->last_scanned = jiffies;
-@@ -521,7 +521,7 @@ void rtw_update_scanned_network(struct adapter *adapter, struct wlan_bssid_ex *t
- 
- 			bssid_ex_sz = get_wlan_bssid_ex_sz(target);
- 			target->length = bssid_ex_sz;
--			memcpy(&(pnetwork->network), target, bssid_ex_sz);
-+			memcpy(&pnetwork->network, target, bssid_ex_sz);
- 
- 			pnetwork->last_scanned = jiffies;
- 
-@@ -529,7 +529,7 @@ void rtw_update_scanned_network(struct adapter *adapter, struct wlan_bssid_ex *t
- 			if (pnetwork->network.phy_info.signal_quality == 101)
- 				pnetwork->network.phy_info.signal_quality = 0;
- 
--			list_add_tail(&(pnetwork->list), &(queue->queue));
-+			list_add_tail(&pnetwork->list, &queue->queue);
- 
- 		}
- 	} else {
-@@ -553,7 +553,7 @@ void rtw_update_scanned_network(struct adapter *adapter, struct wlan_bssid_ex *t
- 			update_ie = false;
- 		}
- 
--		update_network(&(pnetwork->network), target, adapter, update_ie);
-+		update_network(&pnetwork->network, target, adapter, update_ie);
- 	}
- 
- exit:
-@@ -629,7 +629,7 @@ void rtw_survey_event_callback(struct adapter	*adapter, u8 *pbuf)
- {
- 	u32 len;
- 	struct wlan_bssid_ex *pnetwork;
--	struct	mlme_priv *pmlmepriv = &(adapter->mlmepriv);
-+	struct	mlme_priv *pmlmepriv = &adapter->mlmepriv;
- 
- 	pnetwork = (struct wlan_bssid_ex *)pbuf;
- 
-@@ -641,18 +641,18 @@ void rtw_survey_event_callback(struct adapter	*adapter, u8 *pbuf)
- 
- 	/*  update IBSS_network 's timestamp */
- 	if ((check_fwstate(pmlmepriv, WIFI_ADHOC_MASTER_STATE)) == true) {
--		if (!memcmp(&(pmlmepriv->cur_network.network.mac_address), pnetwork->mac_address, ETH_ALEN)) {
-+		if (!memcmp(&pmlmepriv->cur_network.network.mac_address, pnetwork->mac_address, ETH_ALEN)) {
- 			struct wlan_network *ibss_wlan = NULL;
- 
- 			memcpy(pmlmepriv->cur_network.network.ies, pnetwork->ies, 8);
--			spin_lock_bh(&(pmlmepriv->scanned_queue.lock));
-+			spin_lock_bh(&pmlmepriv->scanned_queue.lock);
- 			ibss_wlan = rtw_find_network(&pmlmepriv->scanned_queue,  pnetwork->mac_address);
- 			if (ibss_wlan) {
- 				memcpy(ibss_wlan->network.ies, pnetwork->ies, 8);
--				spin_unlock_bh(&(pmlmepriv->scanned_queue.lock));
-+				spin_unlock_bh(&pmlmepriv->scanned_queue.lock);
- 				goto exit;
- 			}
--			spin_unlock_bh(&(pmlmepriv->scanned_queue.lock));
-+			spin_unlock_bh(&pmlmepriv->scanned_queue.lock);
- 		}
- 	}
- 
-@@ -670,7 +670,7 @@ void rtw_survey_event_callback(struct adapter	*adapter, u8 *pbuf)
- 
- void rtw_surveydone_event_callback(struct adapter	*adapter, u8 *pbuf)
- {
--	struct	mlme_priv *pmlmepriv = &(adapter->mlmepriv);
-+	struct	mlme_priv *pmlmepriv = &adapter->mlmepriv;
- 
- 	spin_lock_bh(&pmlmepriv->lock);
- 	if (pmlmepriv->wps_probe_req_ie) {
-@@ -697,7 +697,7 @@ void rtw_surveydone_event_callback(struct adapter	*adapter, u8 *pbuf)
- 					_set_timer(&pmlmepriv->assoc_timer, MAX_JOIN_TIMEOUT);
- 				} else {
- 					u8 ret = _SUCCESS;
--					struct wlan_bssid_ex    *pdev_network = &(adapter->registrypriv.dev_network);
-+					struct wlan_bssid_ex    *pdev_network = &adapter->registrypriv.dev_network;
- 					u8 *pibss = adapter->registrypriv.dev_network.mac_address;
- 
- 					/* pmlmepriv->fw_state ^= _FW_UNDER_SURVEY;because don't set assoc_timer */
-@@ -922,8 +922,8 @@ inline void rtw_indicate_scan_done(struct adapter *padapter, bool aborted)
- void rtw_scan_abort(struct adapter *adapter)
- {
- 	unsigned long start;
--	struct mlme_priv *pmlmepriv = &(adapter->mlmepriv);
--	struct mlme_ext_priv *pmlmeext = &(adapter->mlmeextpriv);
-+	struct mlme_priv *pmlmepriv = &adapter->mlmepriv;
-+	struct mlme_ext_priv *pmlmeext = &adapter->mlmeextpriv;
- 
- 	start = jiffies;
- 	pmlmeext->scan_abort = true;
-@@ -1029,8 +1029,8 @@ static struct sta_info *rtw_joinbss_update_stainfo(struct adapter *padapter, str
- /* ptarget_wlan: found from scanned_queue */
- static void rtw_joinbss_update_network(struct adapter *padapter, struct wlan_network *ptarget_wlan, struct wlan_network  *pnetwork)
- {
--	struct mlme_priv *pmlmepriv = &(padapter->mlmepriv);
--	struct wlan_network  *cur_network = &(pmlmepriv->cur_network);
-+	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
-+	struct wlan_network  *cur_network = &pmlmepriv->cur_network;
- 
- 	/*  why not use ptarget_wlan?? */
- 	memcpy(&cur_network->network, &pnetwork->network, pnetwork->network.length);
-@@ -1086,9 +1086,9 @@ void rtw_joinbss_event_prehandle(struct adapter *adapter, u8 *pbuf)
- 	static u8 __maybe_unused retry;
- 	struct sta_info *ptarget_sta = NULL, *pcur_sta = NULL;
- 	struct	sta_priv *pstapriv = &adapter->stapriv;
--	struct	mlme_priv *pmlmepriv = &(adapter->mlmepriv);
-+	struct	mlme_priv *pmlmepriv = &adapter->mlmepriv;
- 	struct wlan_network	*pnetwork	= (struct wlan_network *)pbuf;
--	struct wlan_network	*cur_network = &(pmlmepriv->cur_network);
-+	struct wlan_network	*cur_network = &pmlmepriv->cur_network;
- 	struct wlan_network	*pcur_wlan = NULL, *ptarget_wlan = NULL;
- 	unsigned int		the_same_macaddr = false;
- 
-@@ -1106,7 +1106,7 @@ void rtw_joinbss_event_prehandle(struct adapter *adapter, u8 *pbuf)
- 	pmlmepriv->LinkDetectInfo.LowPowerTransitionCount = 0;
- 
- 	if (pnetwork->join_res > 0) {
--		spin_lock_bh(&(pmlmepriv->scanned_queue.lock));
-+		spin_lock_bh(&pmlmepriv->scanned_queue.lock);
- 		retry = 0;
- 		if (check_fwstate(pmlmepriv, _FW_UNDER_LINKING)) {
- 			/* s1. find ptarget_wlan */
-@@ -1143,7 +1143,7 @@ void rtw_joinbss_event_prehandle(struct adapter *adapter, u8 *pbuf)
- 			} else {
- 				netdev_dbg(adapter->pnetdev,
- 					   "Can't find ptarget_wlan when joinbss_event callback\n");
--				spin_unlock_bh(&(pmlmepriv->scanned_queue.lock));
-+				spin_unlock_bh(&pmlmepriv->scanned_queue.lock);
- 				goto ignore_joinbss_callback;
- 			}
- 
-@@ -1151,7 +1151,7 @@ void rtw_joinbss_event_prehandle(struct adapter *adapter, u8 *pbuf)
- 			if (check_fwstate(pmlmepriv, WIFI_STATION_STATE) == true) {
- 				ptarget_sta = rtw_joinbss_update_stainfo(adapter, pnetwork);
- 				if (!ptarget_sta) {
--					spin_unlock_bh(&(pmlmepriv->scanned_queue.lock));
-+					spin_unlock_bh(&pmlmepriv->scanned_queue.lock);
- 					goto ignore_joinbss_callback;
- 				}
- 			}
-@@ -1169,7 +1169,7 @@ void rtw_joinbss_event_prehandle(struct adapter *adapter, u8 *pbuf)
- 			timer_delete_sync(&pmlmepriv->assoc_timer);
- 			spin_lock_bh(&pmlmepriv->lock);
- 		} else {
--			spin_unlock_bh(&(pmlmepriv->scanned_queue.lock));
-+			spin_unlock_bh(&pmlmepriv->scanned_queue.lock);
- 		}
- 	} else if (pnetwork->join_res == -4) {
- 		rtw_reset_securitypriv(adapter);
-@@ -1233,9 +1233,9 @@ void rtw_sta_media_status_rpt(struct adapter *adapter, struct sta_info *psta, u3
- void rtw_stassoc_event_callback(struct adapter *adapter, u8 *pbuf)
- {
- 	struct sta_info *psta;
--	struct mlme_priv *pmlmepriv = &(adapter->mlmepriv);
-+	struct mlme_priv *pmlmepriv = &adapter->mlmepriv;
- 	struct stassoc_event	*pstassoc	= (struct stassoc_event *)pbuf;
--	struct wlan_network	*cur_network = &(pmlmepriv->cur_network);
-+	struct wlan_network	*cur_network = &pmlmepriv->cur_network;
- 	struct wlan_network	*ptarget_wlan = NULL;
- 
- 	if (rtw_access_ctrl(adapter, pstassoc->macaddr) == false)
-@@ -1306,12 +1306,12 @@ void rtw_stassoc_event_callback(struct adapter *adapter, u8 *pbuf)
- 	if ((check_fwstate(pmlmepriv, WIFI_ADHOC_MASTER_STATE) == true) ||
- 		(check_fwstate(pmlmepriv, WIFI_ADHOC_STATE) == true)) {
- 		if (adapter->stapriv.asoc_sta_count == 2) {
--			spin_lock_bh(&(pmlmepriv->scanned_queue.lock));
-+			spin_lock_bh(&pmlmepriv->scanned_queue.lock);
- 			ptarget_wlan = rtw_find_network(&pmlmepriv->scanned_queue, cur_network->network.mac_address);
- 			pmlmepriv->cur_network_scanned = ptarget_wlan;
- 			if (ptarget_wlan)
- 				ptarget_wlan->fixed = true;
--			spin_unlock_bh(&(pmlmepriv->scanned_queue.lock));
-+			spin_unlock_bh(&pmlmepriv->scanned_queue.lock);
- 			/*  a sta + bc/mc_stainfo (not Ibss_stainfo) */
- 			rtw_indicate_connect(adapter);
- 		}
-@@ -1329,11 +1329,11 @@ void rtw_stadel_event_callback(struct adapter *adapter, u8 *pbuf)
- 	struct wlan_network *pwlan = NULL;
- 	struct wlan_bssid_ex    *pdev_network = NULL;
- 	u8 *pibss = NULL;
--	struct	mlme_priv *pmlmepriv = &(adapter->mlmepriv);
-+	struct	mlme_priv *pmlmepriv = &adapter->mlmepriv;
- 	struct	stadel_event *pstadel	= (struct stadel_event *)pbuf;
--	struct wlan_network *tgt_network = &(pmlmepriv->cur_network);
-+	struct wlan_network *tgt_network = &pmlmepriv->cur_network;
- 	struct mlme_ext_priv *pmlmeext = &adapter->mlmeextpriv;
--	struct mlme_ext_info *pmlmeinfo = &(pmlmeext->mlmext_info);
-+	struct mlme_ext_info *pmlmeinfo = &pmlmeext->mlmext_info;
- 
- 	psta = rtw_get_stainfo(&adapter->stapriv, pstadel->macaddr);
- 	if (psta)
-@@ -1385,14 +1385,14 @@ void rtw_stadel_event_callback(struct adapter *adapter, u8 *pbuf)
- 		rtw_free_assoc_resources(adapter, 1);
- 		rtw_indicate_disconnect(adapter);
- 
--		spin_lock_bh(&(pmlmepriv->scanned_queue.lock));
-+		spin_lock_bh(&pmlmepriv->scanned_queue.lock);
- 		/*  remove the network entry in scanned_queue */
- 		pwlan = rtw_find_network(&pmlmepriv->scanned_queue, tgt_network->network.mac_address);
- 		if (pwlan) {
- 			pwlan->fixed = false;
- 			rtw_free_network_nolock(adapter, pwlan);
- 		}
--		spin_unlock_bh(&(pmlmepriv->scanned_queue.lock));
-+		spin_unlock_bh(&pmlmepriv->scanned_queue.lock);
- 
- 		_rtw_roaming(adapter, roam_target);
- 	}
-@@ -1404,16 +1404,16 @@ void rtw_stadel_event_callback(struct adapter *adapter, u8 *pbuf)
- 
- 		if (adapter->stapriv.asoc_sta_count == 1) {/* a sta + bc/mc_stainfo (not Ibss_stainfo) */
- 			u8 ret = _SUCCESS;
--			spin_lock_bh(&(pmlmepriv->scanned_queue.lock));
-+			spin_lock_bh(&pmlmepriv->scanned_queue.lock);
- 			/* free old ibss network */
- 			pwlan = rtw_find_network(&pmlmepriv->scanned_queue, tgt_network->network.mac_address);
- 			if (pwlan) {
- 				pwlan->fixed = false;
- 				rtw_free_network_nolock(adapter, pwlan);
- 			}
--			spin_unlock_bh(&(pmlmepriv->scanned_queue.lock));
-+			spin_unlock_bh(&pmlmepriv->scanned_queue.lock);
- 			/* re-create ibss */
--			pdev_network = &(adapter->registrypriv.dev_network);
-+			pdev_network = &adapter->registrypriv.dev_network;
- 			pibss = adapter->registrypriv.dev_network.mac_address;
- 
- 			memcpy(pdev_network, &tgt_network->network, get_wlan_bssid_ex_sz(&tgt_network->network));
-@@ -1521,7 +1521,7 @@ void rtw_mlme_reset_auto_scan_int(struct adapter *adapter)
- {
- 	struct mlme_priv *mlme = &adapter->mlmepriv;
- 	struct mlme_ext_priv *pmlmeext = &adapter->mlmeextpriv;
--	struct mlme_ext_info *pmlmeinfo = &(pmlmeext->mlmext_info);
-+	struct mlme_ext_info *pmlmeinfo = &pmlmeext->mlmext_info;
- 
- 	if (pmlmeinfo->VHT_enable) /* disable auto scan when connect to 11AC AP */
- 		mlme->auto_scan_int_ms = 0;
-@@ -1662,7 +1662,7 @@ int rtw_select_roaming_candidate(struct mlme_priv *mlme)
- {
- 	int ret = _FAIL;
- 	struct list_head	*phead;
--	struct __queue	*queue	= &(mlme->scanned_queue);
-+	struct __queue	*queue	= &mlme->scanned_queue;
- 	struct	wlan_network	*pnetwork = NULL;
- 	struct	wlan_network	*candidate = NULL;
- 
-@@ -1671,7 +1671,7 @@ int rtw_select_roaming_candidate(struct mlme_priv *mlme)
- 		return ret;
- 	}
- 
--	spin_lock_bh(&(mlme->scanned_queue.lock));
-+	spin_lock_bh(&mlme->scanned_queue.lock);
- 	phead = get_list_head(queue);
- 
- 	list_for_each(mlme->pscanned, phead) {
-@@ -1695,7 +1695,7 @@ int rtw_select_roaming_candidate(struct mlme_priv *mlme)
- 
- 	ret = _SUCCESS;
- exit:
--	spin_unlock_bh(&(mlme->scanned_queue.lock));
-+	spin_unlock_bh(&mlme->scanned_queue.lock);
- 
- 	return ret;
- }
-@@ -1756,13 +1756,13 @@ int rtw_select_and_join_from_scanned_queue(struct mlme_priv *pmlmepriv)
- 	int ret;
- 	struct list_head	*phead;
- 	struct adapter *adapter;
--	struct __queue	*queue	= &(pmlmepriv->scanned_queue);
-+	struct __queue	*queue	= &pmlmepriv->scanned_queue;
- 	struct	wlan_network	*pnetwork = NULL;
- 	struct	wlan_network	*candidate = NULL;
- 
- 	adapter = (struct adapter *)pmlmepriv->nic_hdl;
- 
--	spin_lock_bh(&(pmlmepriv->scanned_queue.lock));
-+	spin_lock_bh(&pmlmepriv->scanned_queue.lock);
- 
- 	if (pmlmepriv->roam_network) {
- 		candidate = pmlmepriv->roam_network;
-@@ -1800,7 +1800,7 @@ int rtw_select_and_join_from_scanned_queue(struct mlme_priv *pmlmepriv)
- 	ret = rtw_joinbss_cmd(adapter, candidate);
- 
- exit:
--	spin_unlock_bh(&(pmlmepriv->scanned_queue.lock));
-+	spin_unlock_bh(&pmlmepriv->scanned_queue.lock);
- 	return ret;
- }
- 
-@@ -1808,7 +1808,7 @@ signed int rtw_set_auth(struct adapter *adapter, struct security_priv *psecurity
- {
- 	struct	cmd_obj *pcmd;
- 	struct	setauth_parm *psetauthparm;
--	struct	cmd_priv *pcmdpriv = &(adapter->cmdpriv);
-+	struct	cmd_priv *pcmdpriv = &adapter->cmdpriv;
- 	signed int		res = _SUCCESS;
- 
- 	pcmd = rtw_zmalloc(sizeof(struct cmd_obj));
-@@ -1845,7 +1845,7 @@ signed int rtw_set_key(struct adapter *adapter, struct security_priv *psecurityp
- 	u8 keylen;
- 	struct cmd_obj		*pcmd;
- 	struct setkey_parm	*psetkeyparm;
--	struct cmd_priv 	*pcmdpriv = &(adapter->cmdpriv);
-+	struct cmd_priv 	*pcmdpriv = &adapter->cmdpriv;
- 	signed int	res = _SUCCESS;
- 
- 	psetkeyparm = rtw_zmalloc(sizeof(struct setkey_parm));
-@@ -1868,11 +1868,11 @@ signed int rtw_set_key(struct adapter *adapter, struct security_priv *psecurityp
- 
- 	case _WEP40_:
- 		keylen = 5;
--		memcpy(&(psetkeyparm->key[0]), &(psecuritypriv->dot11DefKey[keyid].skey[0]), keylen);
-+		memcpy(&psetkeyparm->key[0], &psecuritypriv->dot11DefKey[keyid].skey[0], keylen);
- 		break;
- 	case _WEP104_:
- 		keylen = 13;
--		memcpy(&(psetkeyparm->key[0]), &(psecuritypriv->dot11DefKey[keyid].skey[0]), keylen);
-+		memcpy(&psetkeyparm->key[0], &psecuritypriv->dot11DefKey[keyid].skey[0], keylen);
- 		break;
- 	case _TKIP_:
- 		keylen = 16;
-@@ -2335,7 +2335,7 @@ void rtw_update_ht_cap(struct adapter *padapter, u8 *pie, uint ie_len, u8 channe
- 	struct ht_priv 	*phtpriv = &pmlmepriv->htpriv;
- 	struct registry_priv *pregistrypriv = &padapter->registrypriv;
- 	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
--	struct mlme_ext_info *pmlmeinfo = &(pmlmeext->mlmext_info);
-+	struct mlme_ext_info *pmlmeinfo = &pmlmeext->mlmext_info;
- 	u8 cbw40_enable = 0;
- 
- 	if (!phtpriv->ht_option)
--- 
-2.39.5
+I don't think you need to look up definitions to understand that volatile
+prevents the compiler from optimising out a read like this. And what
+exactly is hidden? We cast to the volatile type of the pointer, then deref
+it in a fashion that cannot be optimised out?
 
+But I mean, maybe I'm missing some complexity here? I am always happy to be
+corrected :)
+
+The point is to read fault a page for testing purposes.
+
+This is fine, works, and it's _test code_.
+
+Overall though, this discussion is not helpful and this is a moot point,
+sorry.
+
+>
+> It has to be said that now writes to variables that are READ_ONCE() have to be
+> WRITE_ONCE() why not just make the variables 'volatile'.
+> That will stop things bleating about missing READ/WRITE_ONCE() wrappers.
+> There was a rational for not using volatile, but it is getting to be moot.
+
+I'm struggling to understand what on earth you're talking about here, what
+would bleat about self test code missing READ/WRITE_ONCE() wrappers?
+
+And you're suggesting going through and changing all pointers to be
+volatile... because why? What? That'd be awful and very very silly.
+
+Note that checkpatch.pl _will_ bleat about this.
+
+TL;DR: No, absolutely not.
+
+Wang - do not do anything like this, please!
+
+>
+> 	David
+>
+>
+> >
+> > I missed that when skimming over this patch.
+> >
+>
+
+Let's all have some empathy for this being one of Wang's first patches. I
+appreciate this patch and it's a strict improvement on the past situation
+AFAIC.
+
+Cheers, Lorenzo
 
