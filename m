@@ -1,82 +1,84 @@
-Return-Path: <linux-kernel+bounces-738501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8589B0B93A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 01:31:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 111FAB0B93F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 01:33:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B70E3B78F7
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 23:30:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0011A7A3C2B
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 23:31:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04FD71F4190;
-	Sun, 20 Jul 2025 23:31:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC69922CBE6;
+	Sun, 20 Jul 2025 23:32:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="UfRzgzfy"
-Received: from r3-19.sinamail.sina.com.cn (r3-19.sinamail.sina.com.cn [202.108.3.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hPshk5gB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517D8AD24
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 23:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4698E8BF8;
+	Sun, 20 Jul 2025 23:32:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753054262; cv=none; b=bRFa371SGYAHsuTRNvTQPGiXuTasZJe2uwH4qHbW0reTtVd8d5p8b6ZWjSIu51zuJwogp1k1xSIgtGrztJJ+zvsopPpH0RTT5HcmvbkdI52ZErjpBWlwSgOhi7CrLUotEZmbVsPzMTko+vLrFKjIILTRPU96H0ROT6hz6RaKta8=
+	t=1753054378; cv=none; b=SydkofWvk8B1hmSMIMLmeYZqo0gUH0LgIfEr0MM2HHPU9MNCHtl5p6eZ00eslTPnjjbqQyKRkYF+KmdrMBc3z03sqApTMvqNhFX+l8fK8GrNWoTx5usgpuUEVeopvT8gnOlxj1TaT7PFYaCxt0Cmvo6gu4NdRynnJXky3xcuIfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753054262; c=relaxed/simple;
-	bh=hdnlqTd445D9ouB6hRA4qaXvBNoPe1c9oETR+gF9Bog=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TTWRpM2sM24JlQgH0P4V029UI7cn7zsBjlUMIPrYycTO8gvjtRAPh8/HlRjLoVdPJx1dEB6XlwVokfwNyXVFNvX+HTw7tLrEHC/TJ1RvYEqvk9AZFCaT2q6vfg1Gv9ztidcHSp+2dg9EsiUfqaf7oDaiVnObMYsnBaxgftfbt5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=UfRzgzfy; arc=none smtp.client-ip=202.108.3.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1753054258;
-	bh=l0jDcMiN9DSncCGaXXBVq6ob/ExH1QCf6rJAh1uc610=;
-	h=From:Subject:Date:Message-ID;
-	b=UfRzgzfyjHNoUlpW0aH9Pf0Dnps2fxy2vGmoMMXTBh4Cg3xNwN1P68taXQ2U2tQdg
-	 nZkUCC0f8iXZzXE5r7elshiFvnr72OO1/Q5Ft+lmQjCcQs7/t+1rsJSceGLIpukoV2
-	 m8nDyO6Q6lhCnLMlTACcvrO9/kXS9DHRrJYho5NY=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.32) with ESMTP
-	id 687D7C270000030D; Sun, 21 Jul 2025 07:30:48 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 9683984457040
-X-SMAIL-UIID: 33A8750B876D4A7BBBFDF6F55F2D808F-20250721-073048-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+4bb2305559463e8f6a2a@syzkaller.appspotmail.com>
-Cc: =?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [kernfs?] possible deadlock in kernfs_iop_getattr
-Date: Mon, 21 Jul 2025 07:30:34 +0800
-Message-ID: <20250720233037.2567-1-hdanton@sina.com>
-In-Reply-To: <67f82b19.050a0220.355867.000f.GAE@google.com>
-References: 
+	s=arc-20240116; t=1753054378; c=relaxed/simple;
+	bh=RWzw0XSPmQWo0yyYpdgifZLEFyFQUyfb+2mlWFliVck=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uCoEFW4g7+cSoP2KyboZwqD+eR5bZXPI9QuRK8ncYFWzXdWBGG0LISF4KVM79vEDrAZFxYZBi2nBUJryoybRHhBm8g877g3Gq62q0xvHNzTsZq1iFp3b6DItlJR3uc4phYa7DKWerz64b5bNCITL7d1wQIy8vXKZxStp9FU+vlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hPshk5gB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1DB9C4CEE7;
+	Sun, 20 Jul 2025 23:32:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753054377;
+	bh=RWzw0XSPmQWo0yyYpdgifZLEFyFQUyfb+2mlWFliVck=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hPshk5gB24uJbZXtW3soM7eQk8qsqUoAKCAQ6/KkBG9aTsQkfP5NP0/e1VcE58pq7
+	 3l+nb777W4YUxChIdTz4usAK5jiOexBieszc2fiuNHY0S0aRgHoZmEhga+NsvOyv67
+	 DO2XmvzyOCoaUrqZpZeyZNCyd0tOBlSUzLm32jtT1kTdPe+KoIbRuf1fbvi8kHSh0F
+	 aQw8IJOiiqOcXhIhx0Q9PffxfDHxiqe6BsnoGgSn6xuwXHdKYl65y/h4UfUMd7JhRw
+	 cU8XzrxnTZCBpwGpy6Di2dOApHVqMo2bPaKxcoADzd3vmTFIv/AefqWa5xDf4o2lHm
+	 qzU77vlo30lFg==
+Date: Sun, 20 Jul 2025 18:32:57 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Simona Vetter <simona@ffwll.ch>, Conor Dooley <conor+dt@kernel.org>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Maxime Ripard <mripard@kernel.org>, dri-devel@lists.freedesktop.org,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v1 1/2] dt-bindings: display: panel: Document Hydis
+ HV101HD1 DSI panel
+Message-ID: <175305437636.3071163.14273228535635494887.robh@kernel.org>
+References: <20250717135752.55958-1-clamor95@gmail.com>
+ <20250717135752.55958-2-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250717135752.55958-2-clamor95@gmail.com>
 
-> Date: Thu, 10 Apr 2025 13:33:29 -0700	[thread overview]
-> syzbot has found a reproducer for the following issue on:
+
+On Thu, 17 Jul 2025 16:57:51 +0300, Svyatoslav Ryhel wrote:
+> Hydis HV101HD1 is a 2-lane 1366x768 MIPI DSI panel found in ASUS VivoTab RT
+> TF600T tablet.
 > 
-> HEAD commit:    2eb959eeecc6 Merge tag 'for-linus-6.15a-rc2-tag' of git://..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16fdf23f980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=4c918722cb7e3d7
-> dashboard link: https://syzkaller.appspot.com/bug?extid=4bb2305559463e8f6a2a
-> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1352b7e4580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17499d78580000
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  .../display/panel/hydis,hv101hd1.yaml         | 60 +++++++++++++++++++
+>  1 file changed, 60 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/panel/hydis,hv101hd1.yaml
+> 
 
-#syz test  upstream  master
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
 
