@@ -1,56 +1,80 @@
-Return-Path: <linux-kernel+bounces-738042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 721F5B0B386
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 06:25:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D6C6B0B389
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 06:29:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06069189BDC4
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 04:25:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52ABC3BF3BE
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 04:29:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED4D1A3177;
-	Sun, 20 Jul 2025 04:24:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4618D1A23B6;
+	Sun, 20 Jul 2025 04:29:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hues/3N8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hSQVM8bu"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A687260A;
-	Sun, 20 Jul 2025 04:24:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF9419C540
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 04:29:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752985494; cv=none; b=R36AQKxs+EW/bzPxSU2lP39rVhvCuqJq85eSfsEXupBjPbenaEOe4PYE5oCvHok8/4JxxxfpZWJQOfzBKpqHeD7w3taLDcwEII7Pg1I7I7GYklEb7EddptGiaeHMBRge23U3Jhe8HXde1wh1Xl6/HNaxS6Mk0iwcPFJCKZBQV/Q=
+	t=1752985779; cv=none; b=T9feUVWQZsNwz6GpniwuPYvRcEpHJKT0N1nsVL5cQmI1PSpCI3kziRBbulRz8gg3kHhTgAGfYZRkuUTjilHwlBg1qlh/+UE8/URAXgP1qw1nXyY/mieZYrOJki1/Yq1Zy+KtVJdULjrADj1Ixkxd+Kuk9d0liqkKP8g+O1O7S1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752985494; c=relaxed/simple;
-	bh=BAiS+5L1aoOna4clIV4XORs7TOaMn2H/5GNlaa5gSKw=;
+	s=arc-20240116; t=1752985779; c=relaxed/simple;
+	bh=3I9gdZQ5iPvFTpSVb266soPkOnEt+lW7WCaPEwb0acU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VfUMI7pXrsXXv03RqpHacURVaWTHbc0agQ49LlHvFi2X5If+YxOeZUr83Xm4jIPxjyZiknqjQ5uCkGLW8tRq3sU6bp2srYNh0VFypvZfGTbOlZTIMYtOvMVd51bh8QEEep9Uifi8Mg9qzzeqDuqd/YYUQ+6Xekjmhnqo5ek5DDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hues/3N8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E3D1C4CEEB;
-	Sun, 20 Jul 2025 04:24:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752985493;
-	bh=BAiS+5L1aoOna4clIV4XORs7TOaMn2H/5GNlaa5gSKw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Hues/3N8LDK8NbIKKerIvu2ZL5XDm9nJMyJygi1KB2NFouDNZMVQGEIkYRkNrQzAV
-	 OuPrtbiL7wm6lO3OxkfUsONFQLpXGvxLkhDW3SpCiufumcGmFORUzqsRiqNFLiRd48
-	 kf1FvrBfAT1uD1eIPlg04rzyqsjsI5Kymv+VFbvj8advrAvTrdfJla/vVtHrBCIDrD
-	 ORlpjWAhQ6dtW2flVHfGiiPCFI8Dj/Z7DAWyCJPEy//6NY7OtOd3d8LVaFbJ0E10Ol
-	 vyYpm7EaqfjebHSdu3Xv+ZuAFt5/o1Av2LeEiW6WYPLKaDG0RU0a5PJa1nlFByj4qB
-	 y6euF3y2iX0WQ==
-Date: Sat, 19 Jul 2025 23:24:51 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Cc: Alexander Wilhelm <alexander.wilhelm@westermo.com>, 
-	Jeff Johnson <jjohnson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-wireless@vger.kernel.org, ath12k@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 00/11] wifi: ath12k: Fix endianness handling in QMI
-Message-ID: <a2sjvescdtdo75lpt6e7tnf7c46sj6g3mlakva5nzsa2p643w2@ie4scpc5vhv7>
-References: <20250716075100.1447352-1-alexander.wilhelm@westermo.com>
- <833ce5f1-51b2-4d4c-a839-38989ea10344@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fl4l4nsQphra06BkrMCsTrNTamvGWlPKHu5Wf4b05JOZ4xCLq9+02pLCLHxq0lovZDSMPkS209XcbDy3cbzkmq0mMJKlio/5HY0uLa4vqBU54TIW1u28/jyslrqdDy6vzmBSC0pCCgLeOT6ne9PVLDn+DCoz9f8c2y2NtcalC8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hSQVM8bu; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752985777; x=1784521777;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3I9gdZQ5iPvFTpSVb266soPkOnEt+lW7WCaPEwb0acU=;
+  b=hSQVM8bubFFISVQ/Wa1FXNm2vaZh3QJ4vxIxRVBQnN1EvISjQrPx9C/X
+   kiGwPeWeeNcoxCwuT4s44y3NzbvvJxBnKHIXgKJo32hIxNQN5QFzOd2QA
+   vAvTxQFyEMMZCRKo4kNbs3/7Fy44jkjhpL8+8O1/LTmgUYTTJBYBkv5Pi
+   s132UJygfBRvi4pt3Xu72H3WQEIMzKyGdOFNnxZfj3v9e/fUmYAQykOJT
+   S/arl8pMErVodQswopSGpYWC/pJ9BFX5htxcENK3PVBGooascQ90TH3yT
+   EbZQ+n3KFs7C1iAZS5e6yKrVhHlZtsIqF6OXbncM4J/4tOHb+zU3A1zN7
+   g==;
+X-CSE-ConnectionGUID: 9xhsOTN0QFyRahlAix5IVw==
+X-CSE-MsgGUID: ME4hL6mxSMK8D66vWESxAQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11497"; a="54335862"
+X-IronPort-AV: E=Sophos;i="6.16,326,1744095600"; 
+   d="scan'208";a="54335862"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2025 21:29:37 -0700
+X-CSE-ConnectionGUID: Lir+THrUS0ikhY65CpnbCg==
+X-CSE-MsgGUID: Ng+Y7oqpQgawuPrkWjMnMQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,326,1744095600"; 
+   d="scan'208";a="162841663"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 19 Jul 2025 21:29:33 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1udLg3-000Fvl-1b;
+	Sun, 20 Jul 2025 04:29:31 +0000
+Date: Sun, 20 Jul 2025 12:29:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: Chia-I Wu <olvaffe@gmail.com>, Boris Brezillon <bbrezillon@kernel.org>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH 2/9] drm/panthor: capture GPU state for devcoredump
+Message-ID: <202507201259.fG0O42j1-lkp@intel.com>
+References: <20250720000146.1405060-3-olvaffe@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,104 +83,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <833ce5f1-51b2-4d4c-a839-38989ea10344@oss.qualcomm.com>
+In-Reply-To: <20250720000146.1405060-3-olvaffe@gmail.com>
 
-On Wed, Jul 16, 2025 at 08:13:20AM -0700, Jeff Johnson wrote:
-> On 7/16/2025 12:50 AM, Alexander Wilhelm wrote:
-> > Fix endianness handling in QMI firmware transfer on big-endian
-> > platforms. Without this fix, the firmware download fails due to
-> > misinterpreted data structures exchanged between the host and the
-> > wireless module.
-> > 
-> > The issue occurs during early bring-up on big endian systems, where QMI
-> > messages are not correctly parsed by the driver, leading to failed
-> > initialization sequences. Ensure all relevant fields are properly
-> > converted between CPU and little-endian format in request and response
-> > messages, as expected by the firmware. Attached logs showing the failure
-> > before the fix:
-> > 
-> >     ath12k_pci 0001:01:00.0: BAR 0: assigned [mem 0xc00000000-0xc001fffff 64bit]
-> >     ath12k_pci 0001:01:00.0: boot pci_mem 0xcd4148e9
-> >     ath12k_pci 0001:01:00.0: pci probe 17cb:1109 17cb:1109
-> >     ath12k_pci 0001:01:00.0: pci tcsr_soc_hw_version major 2 minor 0
-> >     ath12k_pci 0001:01:00.0: request MSI one vector
-> >     ath12k_pci 0001:01:00.0: MSI vectors: 1
-> >     ath12k_pci 0001:01:00.0: msi base data is 0
-> >     ath12k_pci 0001:01:00.0: Hardware name: qcn9274 hw2.0
-> >     ath12k_pci 0001:01:00.0: boot firmware request ath12k/QCN9274/hw2.0/firmware-2.bin size 15134776
-> >     ath12k_pci 0001:01:00.0: found fw timestamp 1722934582
-> >     ath12k_pci 0001:01:00.0: found m3 image ie (421880 B)
-> >     ath12k_pci 0001:01:00.0: found fw image ie (7229440 B)
-> >     ath12k_pci 0001:01:00.0: found dualmac fw image ie (7483392 B)
-> >     ath12k_pci 0001:01:00.0: found firmware features ie (1 B)
-> >     ath12k_pci 0001:01:00.0: features
-> >     ath12k_pci 0001:01:00.0: using fw api 2
-> >     ath12k_pci 0001:01:00.0: dualmac fw selected for board id: 1005
-> >     ath12k_pci 0001:01:00.0: Assign MSI to user: MHI, num_vectors: 3, user_base_data: 0, base_vector: 0
-> >     ath12k_pci 0001:01:00.0: Number of assigned MSI for MHI is 3, base vector is 0
-> >     ath12k_pci 0001:01:00.0: Assign MSI to user: CE, num_vectors: 1, user_base_data: 0, base_vector: 0
-> >     ath12k_pci 0001:01:00.0: Assign MSI to user: DP, num_vectors: 1, user_base_data: 0, base_vector: 0
-> >     ath12k_pci 0001:01:00.0: irq:18 group:0
-> >     ath12k_pci 0001:01:00.0: irq:18 group:1
-> >     ath12k_pci 0001:01:00.0: irq:18 group:2
-> >     ath12k_pci 0001:01:00.0: irq:18 group:3
-> >     ath12k_pci 0001:01:00.0: irq:18 group:4
-> >     ath12k_pci 0001:01:00.0: irq:18 group:5
-> >     ath12k_pci 0001:01:00.0: irq:18 group:6
-> >     ath12k_pci 0001:01:00.0: irq:18 group:7
-> >     ath12k_pci 0001:01:00.0: pci after request_irq msi_ep_base_data 0
-> >     ath12k_pci 0001:01:00.0: cookie:0x0
-> >     ath12k_pci 0001:01:00.0: WLAON_WARM_SW_ENTRY 0x2
-> >     ath12k_pci 0001:01:00.0: WLAON_WARM_SW_ENTRY 0x2
-> >     ath12k_pci 0001:01:00.0: soc reset cause:0
-> >     ath12k_pci 0001:01:00.0: MHISTATUS 0xff04
-> >     ath12k_pci 0001:01:00.0: pci link_ctl 0x0000 L0s 0 L1 0
-> >     ath12k_pci 0001:01:00.0: pci reg 0x3164 instance 0x11 read val 0x11
-> >     ath12k_pci 0001:01:00.0: setting mhi state: INIT(0)
-> >     ath12k_pci 0001:01:00.0: setting mhi state: POWER_ON(2)
-> >     ath12k_pci 0001:01:00.0: mhi notify status reason UNKNOWN
-> >     ath12k_pci 0001:01:00.0: mhi notify status reason MHI_CB_EE_MISSION_MODE
-> >     ath12k_pci 0001:01:00.0: qmi wifi fw qmi service connected
-> >     ath12k_pci 0001:01:00.0: phy capability resp valid 1 num_phy 2 valid 1 board_id 84934656 valid 1 single_chip_mlo_support 0
-> >     ath12k_pci 0001:01:00.0: intra device MLO is disabled hence skip QMI MLO cap
-> > 
-> > Alexander Wilhelm (11):
-> >   wifi: ath12k: fix endianness handling in QMI host capability request
-> >   wifi: ath12k: fix endianness handling in QMI phy capability response
-> >   wifi: ath12k: fix endianness handling in QMI firmware indication
-> >   wifi: ath12k: fix endianness handling in QMI firmware memory indication
-> >   wifi: ath12k: fix endianness handling in QMI respond firmware memory
-> >   wifi: ath12k: fix endianness handling in QMI firmware capabilities
-> >   wifi: ath12k: fix endianness handling in QMI bdf download
-> >   wifi: ath12k: fix endianness handling in QMI firmware m3 info
-> >   wifi: ath12k: fix endianness handling in QMI firmware wlan mode
-> >   wifi: ath12k: fix endianness handling in QMI wlan configuration
-> >   wifi: ath12k: fix endianness handling in QMI response
-> > 
-> >  drivers/net/wireless/ath/ath12k/qmi.c | 149 ++++++++++++++------------
-> >  drivers/net/wireless/ath/ath12k/qmi.h | 106 +++++++++---------
-> >  include/linux/soc/qcom/qmi.h          |   4 +-
-> >  3 files changed, 136 insertions(+), 123 deletions(-)
-> > 
-> 
-> Frankly I'm shocked that the low-level QMI encode/decode is not doing the
-> endian conversion. Since the Qualcomm internal tool that generates the data
-> structures has always generated structs with cpu endianess (i.e. u8, u16, u32,
-> etc) I just assumed that endian conversion was handled at a low level.
-> 
+Hi Chia-I,
 
-I'm suspecting that those tools, just like this implementation, is
-exclusively tested on little endian machines...
+kernel test robot noticed the following build warnings:
 
-> So should this issue be pushed down to the QMI encode/decode rather than foist
-> it upon every client's read & write?
-> 
+[auto build test WARNING on drm-misc/drm-misc-next]
+[also build test WARNING on next-20250718]
+[cannot apply to linus/master v6.16-rc6]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-It's been a while since I looked at the implementation, but conceptually
-I'm in favor of this.
+url:    https://github.com/intel-lab-lkp/linux/commits/Chia-I-Wu/drm-panthor-add-devcoredump-support/20250720-080312
+base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
+patch link:    https://lore.kernel.org/r/20250720000146.1405060-3-olvaffe%40gmail.com
+patch subject: [PATCH 2/9] drm/panthor: capture GPU state for devcoredump
+config: x86_64-buildonly-randconfig-004-20250720 (https://download.01.org/0day-ci/archive/20250720/202507201259.fG0O42j1-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250720/202507201259.fG0O42j1-lkp@intel.com/reproduce)
 
-Regards,
-Bjorn
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507201259.fG0O42j1-lkp@intel.com/
 
-> /jeff
+All warnings (new ones prefixed by >>):
+
+   Warning: drivers/gpu/drm/panthor/panthor_coredump.c:24 Enum value 'PANTHOR_COREDUMP_GROUP' not described in enum 'panthor_coredump_mask'
+>> Warning: drivers/gpu/drm/panthor/panthor_coredump.c:24 Enum value 'PANTHOR_COREDUMP_GPU' not described in enum 'panthor_coredump_mask'
+   Warning: drivers/gpu/drm/panthor/panthor_coredump.c:32 struct member 'reason' not described in 'panthor_coredump_header'
+   Warning: drivers/gpu/drm/panthor/panthor_coredump.c:32 struct member 'timestamp' not described in 'panthor_coredump_header'
+   Warning: drivers/gpu/drm/panthor/panthor_coredump.c:58 struct member 'group' not described in 'panthor_coredump'
+>> Warning: drivers/gpu/drm/panthor/panthor_coredump.c:58 struct member 'gpu' not described in 'panthor_coredump'
+   Warning: drivers/gpu/drm/panthor/panthor_coredump.c:58 struct member 'data' not described in 'panthor_coredump'
+   Warning: drivers/gpu/drm/panthor/panthor_coredump.c:58 struct member 'size' not described in 'panthor_coredump'
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
