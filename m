@@ -1,123 +1,163 @@
-Return-Path: <linux-kernel+bounces-738403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F188B0B7ED
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 21:24:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C2C3B0B7F2
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 21:30:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8B683B456E
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 19:23:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 399C43BA666
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 19:30:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C19B61DB154;
-	Sun, 20 Jul 2025 19:24:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402BF22172C;
+	Sun, 20 Jul 2025 19:30:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="Bh3bXIo2"
-Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="XQxvSgoj"
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E0641BD035;
-	Sun, 20 Jul 2025 19:24:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753039453; cv=pass; b=RdHa8Aa4QiQjnjDoAnzGjUWsGyUDFvMHWt8+5+zJo12S/U/oZjhWeYHbzbSXFNNWZsTiqbA2R/sNtBB9Vpo5wngCLMZyLSc/yNVtJvOdxJnQdCu3iz5cWwVgrn2seJZY4OgqZQLkA7C9EjFU6EFSbemKqRdM/RfXphkFKT1Kpls=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753039453; c=relaxed/simple;
-	bh=CZGdbasRhJL67LATDHinA/RimvDg9Yh/y9BCU62exf4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tTzelKtPGWDJl6kViSJVwuusZLRHG3ibDbnQp+5+aJ9P97LKazY1XcNTelgPALkBBMIL3KV889Y/yAxoLRU51vD1/2Hd9nPREeSFwK/nbcBvMlwGKzAr83ECy0/dnf0dJleBqrsIX8KgMVsvULg5x2r85bIgv75uoekI/9rtUfw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=Bh3bXIo2; arc=pass smtp.client-ip=136.143.188.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1753039427; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=LRsNXqT2DGwqohe0V3n1Y5vnsbcPuxmL33DXmTm56IvT8IeUo9WLCKwOjdmUNMNrvyQ/EmyXzJzSC12J76YV44bb615E1lhcYpXGc9OsP628ekeFuE2yTggF1eBAhDq1mkU5aZw6tZAFVJVzy/Onmot+BY8MIOf5PbNWnooGlps=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753039427; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=CZGdbasRhJL67LATDHinA/RimvDg9Yh/y9BCU62exf4=; 
-	b=A+9rJcw18enEU/pd2rsIzZE3I3cwpXklSU46/TecBtXyLNA6YVuxtO+U1+CYQoUScwlZztJNGH7qeu+nQM2cVKYOnYEmUuhzotabBMRr6BMw7Hf/akydV/oVYjlql4Lx0/+sW1pvNU75KmlJ14ZVQtMsiIj/hHnQqPwUJvMLdMI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
-	dmarc=pass header.from=<safinaskar@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753039427;
-	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=CZGdbasRhJL67LATDHinA/RimvDg9Yh/y9BCU62exf4=;
-	b=Bh3bXIo21jsDoTcdSOPo7xHRNjAd+unVPYmZutBzN2osHtuDOzu6Q4lY4sFB9xzI
-	FgS0ffhFppzXqyuCo9D7U+5YBJYyUXgTpduRlIXPw95e+LIO7HD17DUzbtF7U8+vrfO
-	CowUU1/+tPsgzToOFgo7N2E9qxPoT/d2/gJaJlSY=
-Received: by mx.zohomail.com with SMTPS id 17530394239991010.919391982878;
-	Sun, 20 Jul 2025 12:23:43 -0700 (PDT)
-From: Askar Safin <safinaskar@zohomail.com>
-To: brauner@kernel.org
-Cc: James.Bottomley@hansenpartnership.com,
-	ardb@kernel.org,
-	boqun.feng@gmail.com,
-	david@fromorbit.com,
-	djwong@kernel.org,
-	hch@infradead.org,
-	jack@suse.cz,
-	linux-efi@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mcgrof@kernel.org,
-	mingo@redhat.com,
-	pavel@kernel.org,
-	peterz@infradead.org,
-	rafael@kernel.org,
-	will@kernel.org
-Subject: Re: [PATCH v2 0/4] power: wire-up filesystem freeze/thaw with suspend/resume
-Date: Sun, 20 Jul 2025 22:23:36 +0300
-Message-ID: <20250720192336.4778-1-safinaskar@zohomail.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250402-work-freeze-v2-0-6719a97b52ac@kernel.org>
-References: <20250402-work-freeze-v2-0-6719a97b52ac@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D4BB221D80
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 19:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753039821; cv=none; b=LLBKaiZy2ffwiSfyzwDQ8gIz+ZWfXsuKC1j0Tzh9Nwci14pIjEKHT1kJuQeAYkE6bvD2e4kdm6oVNdZoqxmA7xZWqLe+L5qic3tKOT/qHVdyeZYq+3JlD00D4ezvo+/6XmDRau6P3dNjyKNhbzfTRrRolMlK3YKAqaXD85sSWd4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753039821; c=relaxed/simple;
+	bh=ghqmh3TE//hyt6GyPI3uOU0dAX4yL2Qg3jl94n9vAgM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gMy1TnZW37WB36T95//O0sDcBXsS3ZqrDaef7O0X8zsEUpnfHnFKbS//3m3AcliPu1IZ0hNezotQ9KkVuheQY4/c4LDOz9qvRm02uwtkIovnDd9Nb1EIQS/UZhgcuIR6uc8LemkZiSVc6VJH9+0lwzvBOY62wlEhpJGoz6PTzbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=XQxvSgoj; arc=none smtp.client-ip=209.85.161.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-615d75ee53dso114143eaf.0
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 12:30:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1753039817; x=1753644617; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mgCpQGFdNKfFxGlOj3n44UsvhM4SmScTq7fqsGjnsnI=;
+        b=XQxvSgojdrlJ21QWdBTOuapCEdefjUdjFVmdcooUGxYYoVvl+jd5P1/Gh9cUw1F76A
+         T0VgutCbLTiCFHY9EXtJA6Qfyz8MIZ+uJGf8OyMVFhz25wWATipL3LFwww4WLersOdIL
+         k6PhbyusX6enIWkJnngy9c6lJATV+Nz656vrWDrJQKe6FICsMtZ+F+T04HNqIoMCmGvv
+         yTkH4q//MrXAZhl1fxHo/g+Rl9xuHVqUfx4E1kP8qN9iukC21kg0+bHt2zBIsdSnB3uh
+         yI9qEmE9AII3rSaeukC/mot907rJA6jM47MvwTmwh14pZW7GcMt5sfHS/03R3UpzI7lx
+         FgOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753039817; x=1753644617;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mgCpQGFdNKfFxGlOj3n44UsvhM4SmScTq7fqsGjnsnI=;
+        b=FwHC23/Vt4rjdOeciwXgkIjJ07n8hdZmcSavi+dZzvt1wkS5wv5Fig19231vqql1+O
+         5dKH736tfwF9W087g3rkkXQH0FkeRIdfQhd+e24jVoapnZzLgCRIdKSE6/R+xpsurD8+
+         3/O+r2lpvL9ThP/yhy4QisrU5Ub2tpF1JAXOPnBfGP2W7jqwbYnRItaw6F2OtdY8+Tmi
+         1V2CSB0Ij1F4QvRN9BoM5OV0UCd5YDjW0ewzF7mCNumuJqR4Y2aTE7pBenZYEuMVjbRN
+         yzpXj1oG/yqI2uXZ1+jL8tyevpwaxQPGIFblSMwNSwLBjFVj5KNFO2J7TguTPEpxEZ9c
+         35DA==
+X-Forwarded-Encrypted: i=1; AJvYcCVYK1dp9A6YuMhjbzCayKgy6IPfv5qUks4Lujx6xPZ2Vxrw5VfB/RHsBR/+gIVgMW0LNUopZrxb+CiUays=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4MYsu2P9K1Er2WPoyYEWuG3uLSkAeOGGx8NqKsSXMvTildEPt
+	KxdzB9CWiuffE9fMBJ1w8RaETY0VXK4WMsETEwpQioLY8NEfK8VuNuLJPktI5N/EDto=
+X-Gm-Gg: ASbGncveDvV+c3foqsV15GbjdXAfNxocOP2YA6/UD661DYvQ1C0VIl88Mdbh3F1dklX
+	CwZN4koY63Gvg1CFIVjzMn34X7+R0UTiFBtvesd8mXck8hFt4thJ3ZtFTIxXUDW3dyElFvfgtLj
+	x9qsIQIWi+n6Vd7xuHkPMY1y1srIg/0cqG0Rl7v8szpA5xz4n3oxjgmTuUXTcwULBEXj4og8QdZ
+	GXXmvGr+E80iX9UOJgjE/j6iHq4WMLROfgAKwT4EpQiQSTXS4aEeHzs53z16iRBzr4jyd43L25E
+	gqcxlaSHWJdUYxMo6YUTBU+q0PZBzF2oaEJDp2UpZUNicFsbx53TMHAbfe1HVEDLO6YeNmtNKe5
+	maVQ0CoqbpOn3Cr0KKTzP8Ok1RJlc5aewtrLg8JROpxrvAAU6F/R6cMig7l17c6oNNnkcQrcgIs
+	4=
+X-Google-Smtp-Source: AGHT+IHYlwxJWcEbEzE218c+xTVkYKK8Z8wtqJxL+cWGCmY4FshNpm6DDdkY0i7NRft8/tk1CqodKQ==
+X-Received: by 2002:a05:6830:2aac:b0:727:423c:95d5 with SMTP id 46e09a7af769-73e66114315mr14839191a34.3.1753039816972;
+        Sun, 20 Jul 2025 12:30:16 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:6b9c:951d:3d17:9e9d? ([2600:8803:e7e4:1d00:6b9c:951d:3d17:9e9d])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73e83be07c4sm2291733a34.61.2025.07.20.12.30.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 20 Jul 2025 12:30:16 -0700 (PDT)
+Message-ID: <84ad0f66-311e-4560-870d-851852c6f902@baylibre.com>
+Date: Sun, 20 Jul 2025 14:30:15 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Feedback-ID: rr080112270d6f3bb5e67c5eccbba77053000079a79adbb197c855785062672b8dce23e5fd72ce979343ebb6:zu08011227851b2ce9d96276e118686f9c000059dcc54766978b253b11fb66b5116824aa7c1fe7b6313b3400:rf0801122c92f547bda1f7f44d931768570000e490db12c233cac804c865502819ef4bf2bdd31e4e53901ce02f4363fa04:ZohoMail
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Subject: Re:
+To: ">" <sanjaysuthar661996@gmail.com>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+ netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-amlogic@lists.infradead.org
+Cc: ribalda@kernel.org, jic23@kernel.org, nuno.sa@analog.com,
+ andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, neil.armstrong@linaro.org,
+ khilman@baylibre.com, jbrunet@baylibre.com,
+ martin.blumenstingl@googlemail.com
+References: <CADU64hCr7mshqfBRE2Wp8zf4BHBdJoLLH=VJt2MrHeR+zHOV4w@mail.gmail.com>
+ <20250720182627.39384-1-sanjaysuthar661996@gmail.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20250720182627.39384-1-sanjaysuthar661996@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi, Christian Brauner, Jan Kara and other contributors of this patchset.
+On 7/20/25 1:26 PM, > wrote:
+> Changes in v2:
+> - Fixed commit message grammar
+> - Fixed subject line style as per DT convention
+> - Added missing reviewers/maintainers in CC
+> 
 
-I did experiments on my laptop, and these experiments show that this patchset does not solve various longstanding problems related to suspend and filesystems. (Even if I enable /sys/power/freeze_filesystems )
+By placing this before the headers, our email clients think this
+message doesn't have a subject. It should go after the ---.
 
-Now let me describe problems I had in the past (and still have!) and then experiments I did and their results.
+> From 5c00524cbb47e30ee04223fe9502af2eb003ddf1 Mon Sep 17 00:00:00 2001
+> From: sanjay suthar <sanjaysuthar661996@gmail.com>
+> Date: Sun, 20 Jul 2025 01:11:00 +0530
+> Subject: [PATCH v2] dt-bindings: cleanup: fix duplicated 'is is' in YAML docs
+> 
+> Fix minor grammatical issues by removing duplicated "is" in two devicetree
+> binding documents:
+> 
+> - net/amlogic,meson-dwmac.yaml
+> - iio/dac/ti,dac7612.yaml
+> 
+> Signed-off-by: sanjay suthar <sanjaysuthar661996@gmail.com>
+> ---
 
-So, I had these 3 problems:
+This is where the changelog belongs.
 
-- Suspend doesn't work if fstrim in progress (note that I use btrfs as root file system)
+>  Documentation/devicetree/bindings/iio/dac/ti,dac7612.yaml      | 2 +-
+>  Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/dac/ti,dac7612.yaml b/Documentation/devicetree/bindings/iio/dac/ti,dac7612.yaml
+> index 20dd1370660d..624c640be4c8 100644
+> --- a/Documentation/devicetree/bindings/iio/dac/ti,dac7612.yaml
+> +++ b/Documentation/devicetree/bindings/iio/dac/ti,dac7612.yaml
+> @@ -9,7 +9,7 @@ title: Texas Instruments DAC7612 family of DACs
+>  description:
+>    The DAC7612 is a dual, 12-bit digital-to-analog converter (DAC) with
+>    guaranteed 12-bit monotonicity performance over the industrial temperature
+> -  range. Is is programmable through an SPI interface.
+> +  range. It is programmable through an SPI interface.
+>  
+>  maintainers:
+>    - Ricardo Ribalda Delgado <ricardo@ribalda.com>
+> diff --git a/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml b/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml
+> index 0cd78d71768c..5c91716d1f21 100644
+> --- a/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml
+> +++ b/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml
+> @@ -149,7 +149,7 @@ properties:
+>        - description:
+>            The first register range should be the one of the DWMAC controller
+>        - description:
+> -          The second range is is for the Amlogic specific configuration
+> +          The second range is for the Amlogic specific configuration
+>            (for example the PRG_ETHERNET register range on Meson8b and newer)
+>  
+>    interrupts:
 
-- Suspend doesn't work if scrub in progress
-
-- Suspend doesn't work if we try to read from fuse-sshfs filesystem while network is down
-
-Let me describe third problem in more detail. To reproduce you need to do this:
-
-- Mount remote filesystem using sshfs (it is based on ssh and fuse)
-
-- Disable internet
-
-- Run command "ls" in that sshfs filesystem (this command will, of course, hang, because network is down)
-
-- Then suspend
-
-Suspend will not work.
-
-Does your patchset supposed to fix these problems?
-
-Okay, so just now I was able to reproduce all 3 problems on latest mainline ( f4a40a4282f467ec99745c6ba62cb84346e42139 ), which (as well as I understand) has this patchset applied.
-
-I reproduced them with /sys/power/freeze_filesystems set to both 0 and 1 (thus I did 3 * 2 = 6 experiments).
-
-I'm available for further testing.
-
---
-Askar Safin
+I would be tempted to split this into two patches. It's a bit odd to have
+a single patch touching two unrelated bindings.
 
