@@ -1,176 +1,169 @@
-Return-Path: <linux-kernel+bounces-738008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56A91B0B315
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 03:26:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28E5CB0B316
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 03:29:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38FD917FEA4
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 01:26:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89E401897AAC
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 01:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38AD751022;
-	Sun, 20 Jul 2025 01:26:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A0551022;
+	Sun, 20 Jul 2025 01:29:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hioqQX6j"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nH1s7huP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FDBC1DDD1;
-	Sun, 20 Jul 2025 01:26:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F933288DA
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 01:29:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752974769; cv=none; b=JQ+b55+nPHXPSBfsv8GErq3nQuRyjdqrWNOMdRX56lfJw/yfQKRQu0knkJSha7gwWQrm7sR7gOXWptXxyUgHbPADMX2ldsm2TYsn1tgNn7/wzpIQE+DoVhZcIX9vpso4i7WOUH00+D45U77J7s+rw9uY+mTERa8VKwqRsl26xPk=
+	t=1752974965; cv=none; b=jETs1TtbW+VqO32+923UYrUY29sNAxktu1LgPizN9wXXzYEhxSiAensiPTvnr7BOB9nfDpZtrJHvdEVUU+QAwFJoi2PJuudWsGbPsWipGBJhN69wqCOCb0OxUr8ZYyZfyLQ1B9Ai4Xl9tDKiUCB6nIGd3rps2owbYA6eFl4NaVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752974769; c=relaxed/simple;
-	bh=M5v8j/MbUJSw56NDaZKEqyXgTiM8XeO6qX4gT3RlSPs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kr4cSwionyxmPBOrkcEXyMCi/iWJj0ukZNQrewSR6wro9WsLuPoWE8I9IDigOMIk3RWfh1PeeVoZAC37xNqulT0G93Tm+qRN3bZxGbULhTqFI8FbKVaibqG8ovsDqjXHYm/0sJ/pdTRcGF2G1K76/KaekiFIxWx/wJV5DP16LoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hioqQX6j; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4aaaf1a63c1so24124951cf.3;
-        Sat, 19 Jul 2025 18:26:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752974767; x=1753579567; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=H4YkocWtLM+MV9VqVW9r5H/qPxJMGyUCFlNySJ25hYk=;
-        b=hioqQX6jhz8yTho/iOzR2HrCiQFehHfMM8nOGWV4FvFsdiabbUEnFoHavG9GE/yflG
-         mVvMNITfsl4ZZ2BaG4ikX2IvIS8zUEEnAI06eyduBqbP5FeoJrOk/QQs0Lvw+HJDu+qI
-         ReKqvapARTnSjJAO+7Gx+QERVS+96aXhChIB24LH1CrKzlm6g6oLK0wxDQVsqczeI5IT
-         zzuuvOKWKUwcWvN7KsIHQO6n7N4g8itBkmiqIrYJ6p/RRW4s+oJu1Qn2AW8ru6tQQWnE
-         4e48aQyREh2292ieXIlIrINbcxpsizw9H4ervCZPka8/NfiEBCtRF+kUTfct5100Kdot
-         CZqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752974767; x=1753579567;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=H4YkocWtLM+MV9VqVW9r5H/qPxJMGyUCFlNySJ25hYk=;
-        b=S19FAIzoLWC6L4XGx7jrnZgZ9sEDAqFyb+Ycy1/3GJKT5LQeHNNaqUFmCdFnYnl3V3
-         mpjM47mrgAP4PaL9yZm7DAj3ewb8F4EwrKTfSMkfgOeyFF66jLeDy7ro0/YWZhW/71uP
-         qAP8FKJ67ITpSIQkj49RFK/XxFS7w/ClBWWCFnL/WJZkbXsqcQPIV3spLa21RyxlDg/T
-         /r4kEv5QMqsf+eF4QECs+Y0er4/R/Fb2+fE3V5e6XD/WcRzPI3nVrgYckMUHNQkMpuV/
-         BGS6L++QajHV4R9TKDpOkbvq5YY+RnRxIh1NuFloDdgM1+Wga9f70zjIufjFsTIb75Rl
-         5z9A==
-X-Forwarded-Encrypted: i=1; AJvYcCVdWjMIdjaUGAr92cBVyFKXw0SFAbrn69rb9TkiO+jEW0KNWXNrxJzdwaj4Mgd8b6lPp7nrZZVNoZM/U8vHny0=@vger.kernel.org, AJvYcCVg2XgvmP99iLMllLQB9CtdQrOuISUprl06uWNh7c0c5+i8u8qvN2r4wAgQCStT0hEdvbRT00SEthaPGY0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoHHQPqJz7ulOKx/w6Zqyh974IKLfzmwH3PsJvNWxQnLeclR2M
-	jGnGPABWR5pOqlMkGcFyk71LQiK74iV02qukOusl+455ATDF8g/mjP+2
-X-Gm-Gg: ASbGncu/JdJvqE7C8x4CH7KmL1+lAHCAX33Y+mMvX0KKnub9hU+BOmvKfLUMp3z51Go
-	idB1evKThyKFksGbjqDsID1ZucUQOlshQQ/GKlnZH3FXwB6TpvBKGUGOyPeADQLEas6qDUd8/CN
-	/bANA3a4UeVvARgSIl7MuPGN9ehCdTTDTqpH1Bk/52q7gJ1fVBH8I0k/VribLk8/9bcPsTpHuFe
-	e3wJuO9XnFIjhf4elKlLlOOOAFz/AvBcWzhgin76176+KVeYYTzwtBBRij6qxkKGWfTTZtzMCb7
-	4WAo/3ERSK1szTVBxNiXu8CqTdeK7RG/A1HXvGxskwcfwba962O0jtsXTgd8gcJPzUkb9F1eznC
-	VZqUzpm2HLLzH1xy6wdzf/81B3EfDwcjzUS1Sir6U9f3G27IrlFmA1UE+27F1SQ3x0prwUAW6sE
-	1w7QZgyWkdIAhSe5RaInFaJTg=
-X-Google-Smtp-Source: AGHT+IEWeJHBnozEVYV+zCWV/y44rQfzmFwYBgyuanGFP4F26GarMSuN2OTUeRI3QpjoEguzfIT7cw==
-X-Received: by 2002:a05:622a:13d2:b0:4a7:2f49:37d6 with SMTP id d75a77b69052e-4ab93c509a8mr229433761cf.5.1752974766930;
-        Sat, 19 Jul 2025 18:26:06 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4abb4b2643dsm24368211cf.53.2025.07.19.18.26.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Jul 2025 18:26:06 -0700 (PDT)
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfauth.phl.internal (Postfix) with ESMTP id DB245F40068;
-	Sat, 19 Jul 2025 21:26:05 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Sat, 19 Jul 2025 21:26:05 -0400
-X-ME-Sender: <xms:rUV8aGtL_yI2duiIFRu3swL3rqMPKft3UOSRuXO2aayCLbl8RjcFbQ>
-    <xme:rUV8aGJExnP5Ar97sZVwfXJcLcY9JBuHOCK_N-OTGYyWJ4QEgTFMDTY4KPuEFeCFI
-    425fWlDRa6Wk0xFAA>
-X-ME-Received: <xmr:rUV8aKfztCBxfwfIgCebLBldkKVVwJRG6DXdFBe8PYNeX5a_K_MJ8Cu_pQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeijeeklecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeenucfhrhhomhepuehoqhhunhcu
-    hfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtth
-    gvrhhnpeejhfeikeekffejgeegueevffdtgeefudetleegjeelvdffteeihfelfeehvdeg
-    keenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgv
-    rhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfh
-    gvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthho
-    pedujedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhhighhuvghlrdhojhgvug
-    grrdhsrghnughonhhishesghhmrghilhdrtghomhdprhgtphhtthhopehtrghmihhruges
-    ghhmrghilhdrtghomhdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprh
-    gtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohep
-    ghgrrhihsehgrghrhihguhhordhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhesph
-    hrohhtohhnmhgrihhlrdgtohhmpdhrtghpthhtoheplhhoshhsihhnsehkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopegrrdhhihhnuggsohhrgheskhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhm
-X-ME-Proxy: <xmx:rUV8aIVq3amHiwemn9ps7odTlSGCPiMOM_Bj247joP-p5M7gHC5f_Q>
-    <xmx:rUV8aIiX2hJYNu82rcdkrXJWUm5J5g-C4b7AiGkO-dRUFUsSyHTe1Q>
-    <xmx:rUV8aChReM-azl9rVPaXidEE8faUNNo2-_Pz8MvwohobH8ROzcDR7w>
-    <xmx:rUV8aNtWqhJYl4Z0xulD53gOaqci6Z0yOJBrULjOBJt1op-Qt8FNYQ>
-    <xmx:rUV8aAtwMwVwsXGfVnYHvV_e48zci7d-d9FdTnZF9s-nfgLlGcBbng-K>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 19 Jul 2025 21:26:05 -0400 (EDT)
-Date: Sat, 19 Jul 2025 18:26:04 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Tamir Duberstein <tamird@gmail.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	I Hsin Cheng <richard120310@gmail.com>,
-	Albin Babu Varghese <albinbabuvarghese20@gmail.com>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: Re: [PATCH] rust: list: Add an example for `ListLinksSelfPtr` usage
-Message-ID: <aHxFrK39YKEpKV9x@Mac.home>
-References: <20250719183649.596051-1-ojeda@kernel.org>
- <20250719203646.84350-1-boqun.feng@gmail.com>
- <CANiq72niUM8YAiVWooxAPCy3c3Yqt6_1fjW2HN7TVLnmL_GQMQ@mail.gmail.com>
+	s=arc-20240116; t=1752974965; c=relaxed/simple;
+	bh=Ccq+GcEqunnxHaGts2WxpD6wDDanpa6jzm6BmCclnDw=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=eKD16j47Xk0FjAFN5uER3IDDWbM/D8hfBF9jwLFlXBs68fH6RvNdaQ4o9/6UXpclvlYaQ3AjAfIo/e+Zvk8f/flMn0SA7vqt36Tf1YBPTWulnKHBJTywRqSO+mvzp/FRyhAcne42EvCIXGEiW0A+R8jweHFayePMADSwgdyu438=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nH1s7huP; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752974963; x=1784510963;
+  h=date:from:to:cc:subject:message-id;
+  bh=Ccq+GcEqunnxHaGts2WxpD6wDDanpa6jzm6BmCclnDw=;
+  b=nH1s7huPldpqGQJzSIhPJEaDHH7d+8PRLT4GzN9XjsESXmbOCwVngHTX
+   r6iD5X2uBDwy8Ks2mSgFYO9vugLZGlurGms450PgyM3fmMQFDbBoM7TQI
+   YLCOmhSzsmwXAty4moth8u6yJMy6A2hn1gTwrDshiVSQN2Ge8z7RHX6y0
+   tPUNlv2ERnshnnKO0BOa9pJ2HdkD2M6fiU7MtkH1Mmltcn4I+zra9VeJX
+   FXQoj7dLw59+BRrHr+2vuH9aaDK+gAyWpNJQ7ok/zjwP+8KIFc02ikBBo
+   oh8vvnK2g5Tciw/3s0A9fD92WwT+jQFGqrO0djbt9k676mwmecEl6cvgX
+   Q==;
+X-CSE-ConnectionGUID: GSvxiin1Q8u8lMoZfdcR/g==
+X-CSE-MsgGUID: 6swSBvaHTeKX3LXCTG40ng==
+X-IronPort-AV: E=McAfee;i="6800,10657,11497"; a="80671340"
+X-IronPort-AV: E=Sophos;i="6.16,325,1744095600"; 
+   d="scan'208";a="80671340"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2025 18:29:23 -0700
+X-CSE-ConnectionGUID: mUaU9kN1SBiqsaeQSpiulA==
+X-CSE-MsgGUID: h0Wawq30TFGLw8KwGwmnhg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,325,1744095600"; 
+   d="scan'208";a="158575289"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 19 Jul 2025 18:29:22 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1udIrf-000FsZ-1b;
+	Sun, 20 Jul 2025 01:29:19 +0000
+Date: Sun, 20 Jul 2025 09:29:18 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [paulmck-rcu:dev] BUILD SUCCESS
+ 3de60a9e1494218f076cfe06b09294092f2398d9
+Message-ID: <202507200906.BEHwoTjx-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72niUM8YAiVWooxAPCy3c3Yqt6_1fjW2HN7TVLnmL_GQMQ@mail.gmail.com>
 
-On Sat, Jul 19, 2025 at 10:54:45PM +0200, Miguel Ojeda wrote:
-> On Sat, Jul 19, 2025 at 10:36 PM Boqun Feng <boqun.feng@gmail.com> wrote:
-> >
-> > It appears that the support for `ListLinksSelfPtr` is dead code at the
-> > moment [1]. Hence add an example similar to `ListLinks` usage to help
-> > catching bugs and demonstrating the usage.
-> >
-> > The example is mostly based on Alice's usage in binder driver[2].
-> >
-> > Link: https://lore.kernel.org/rust-for-linux/20250719183649.596051-1-ojeda@kernel.org/ [1]
-> > Link: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-4-08ba9197f637@google.com/ [2]
-> > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> 
-> I sent that one because I am applying Tamir's series, which triggered
-> the error -- maybe you can put it on top of those?
-> 
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git dev
+branch HEAD: 3de60a9e1494218f076cfe06b09294092f2398d9  EXP arm64: enable PREEMPT_LAZY
 
-Sure. I overlooked Tamir's series.
+elapsed time: 1445m
 
-> If you do, please note that you need a couple changes -- I will push
-> them to `rust-next` so that you have them.
-> 
+configs tested: 77
+configs skipped: 3
 
-Will do, thank you. ;-)
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Regards,
-Boqun
+tested configs:
+alpha                             allnoconfig    gcc-15.1.0
+arc                               allnoconfig    gcc-15.1.0
+arc                   randconfig-001-20250719    gcc-14.3.0
+arc                   randconfig-002-20250719    gcc-15.1.0
+arm                               allnoconfig    clang-21
+arm                   randconfig-001-20250719    gcc-14.3.0
+arm                   randconfig-002-20250719    clang-21
+arm                   randconfig-003-20250719    clang-21
+arm                   randconfig-004-20250719    clang-16
+arm64                             allnoconfig    gcc-15.1.0
+arm64                 randconfig-001-20250719    clang-20
+arm64                 randconfig-002-20250719    clang-18
+arm64                 randconfig-003-20250719    gcc-15.1.0
+arm64                 randconfig-004-20250719    clang-20
+csky                              allnoconfig    gcc-15.1.0
+csky                  randconfig-001-20250720    gcc-15.1.0
+csky                  randconfig-002-20250720    gcc-13.4.0
+hexagon                           allnoconfig    clang-21
+hexagon               randconfig-001-20250720    clang-21
+hexagon               randconfig-002-20250720    clang-21
+i386        buildonly-randconfig-001-20250719    clang-20
+i386        buildonly-randconfig-002-20250719    gcc-12
+i386        buildonly-randconfig-003-20250719    gcc-12
+i386        buildonly-randconfig-004-20250719    clang-20
+i386        buildonly-randconfig-005-20250719    clang-20
+i386        buildonly-randconfig-006-20250719    clang-20
+loongarch                         allnoconfig    clang-21
+loongarch             randconfig-001-20250720    clang-18
+loongarch             randconfig-002-20250720    clang-18
+m68k                              allnoconfig    gcc-15.1.0
+microblaze                        allnoconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+nios2                             allnoconfig    gcc-11.5.0
+nios2                 randconfig-001-20250720    gcc-9.5.0
+nios2                 randconfig-002-20250720    gcc-8.5.0
+openrisc                          allnoconfig    gcc-15.1.0
+parisc                            allnoconfig    gcc-15.1.0
+parisc                randconfig-001-20250720    gcc-8.5.0
+parisc                randconfig-002-20250720    gcc-8.5.0
+powerpc                           allnoconfig    gcc-15.1.0
+powerpc               randconfig-001-20250720    gcc-10.5.0
+powerpc               randconfig-002-20250720    gcc-8.5.0
+powerpc               randconfig-003-20250720    gcc-11.5.0
+powerpc64             randconfig-001-20250720    gcc-10.5.0
+powerpc64             randconfig-002-20250720    gcc-8.5.0
+powerpc64             randconfig-003-20250720    clang-21
+riscv                             allnoconfig    gcc-15.1.0
+riscv                 randconfig-001-20250719    clang-21
+riscv                 randconfig-002-20250719    clang-21
+s390                             allmodconfig    clang-18
+s390                              allnoconfig    clang-21
+s390                             allyesconfig    gcc-15.1.0
+s390                  randconfig-001-20250719    gcc-9.5.0
+s390                  randconfig-002-20250719    gcc-9.5.0
+sh                               allmodconfig    gcc-15.1.0
+sh                                allnoconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sh                    randconfig-001-20250719    gcc-13.4.0
+sh                    randconfig-002-20250719    gcc-15.1.0
+sparc                            allmodconfig    gcc-15.1.0
+sparc                             allnoconfig    gcc-15.1.0
+sparc                 randconfig-001-20250719    gcc-15.1.0
+sparc                 randconfig-002-20250719    gcc-15.1.0
+sparc64               randconfig-001-20250719    gcc-9.5.0
+sparc64               randconfig-002-20250719    gcc-9.5.0
+um                                allnoconfig    clang-21
+um                    randconfig-001-20250719    clang-16
+um                    randconfig-002-20250719    clang-21
+x86_64      buildonly-randconfig-001-20250719    clang-20
+x86_64      buildonly-randconfig-002-20250719    clang-20
+x86_64      buildonly-randconfig-003-20250719    clang-20
+x86_64      buildonly-randconfig-004-20250719    gcc-12
+x86_64      buildonly-randconfig-005-20250719    clang-20
+x86_64      buildonly-randconfig-006-20250719    gcc-12
+xtensa                            allnoconfig    gcc-15.1.0
+xtensa                randconfig-001-20250719    gcc-14.3.0
+xtensa                randconfig-002-20250719    gcc-8.5.0
 
->     https://lore.kernel.org/rust-for-linux/20250709-list-no-offset-v4-5-a429e75840a9@gmail.com/
-> 
-> Thanks!
-> 
-> Cheers,
-> Miguel
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
