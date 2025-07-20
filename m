@@ -1,116 +1,92 @@
-Return-Path: <linux-kernel+bounces-738046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 738E6B0B39B
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 07:21:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 564B6B0B39D
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 07:40:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFB6A7A78B4
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 05:19:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74E123BECA1
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 05:39:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52DD2195811;
-	Sun, 20 Jul 2025 05:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kr3nUwDh"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1565E1A3160;
+	Sun, 20 Jul 2025 05:40:05 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BAA52AD0F;
-	Sun, 20 Jul 2025 05:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5106215573A
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 05:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752988876; cv=none; b=pTsk3IjCdvHjg9vR2pyjQmrx2aKG3Caf1ooN2QiEYnFZzRYqHWmsmtzGxsn5E151hSJHoXd5Wspw7Of7+3ppq/JYm+BkYh/Fi1pdia3faYRjA1zVBbYsScw1TzxNtxz60wZM64+9DbQqEff6JnLC2f/XWlxig5BIRHGT0B/xVaw=
+	t=1752990004; cv=none; b=O3S4fHXqgKheqFmdpc3G1/+446YW6JAI9KqEsRFMMRmHumPuO9GxuvufZF9XmXYXeIPIYm2KiNBZT7BRZr9MEVCimYeTM4L9TbvO8fyM1MLfILUVkCxQDwSNfggpfFfCMqM5yOT58P4JdkjT+8N7LMYEzjE95Kd7shMQ+JQPmPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752988876; c=relaxed/simple;
-	bh=HGzzqhttBuHy7jJVC4/evAuQvPoyJdxCIS+/zXqhvao=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=C+a44PRJKSq7GknWPfczBmlLEslU/anDOzbv46q9ouXE5/fUBtPwnskFw9ru+sFZvm2qHstPRou6Sih0pIPm+hGduhNA4QkZ2ftIfGuwXQ8oIWEXkP3Id10M2wCHmuLCU15Z81AEdsZojPyJ9/dz7OgKzknSLw39k6wLp7YRI38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kr3nUwDh; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-236470b2dceso26527195ad.0;
-        Sat, 19 Jul 2025 22:21:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752988874; x=1753593674; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uMGg4AkLKGPMTVfGVG5ofzNDTT615iQz+U6mvq38VhI=;
-        b=kr3nUwDh6TU9mOe2p6MNf35yo9vnxwUyg8wrNPMVVfRiBdqBjDxm2tYKt8Qch7sFcL
-         yu8vWcpkWPo4WmQZICRzBy3gcUR6ToqTh+aMKaUUirXNL6ui0rUzmdpxlzxZWv5SzzlL
-         mBZ4OuakOTTMg1I6IiVlNl02PWU5phnpkLoqyfHt9wU+FNhT1NRrDiEPnRsn5deIAdkC
-         BhwlDKzAO4M4YecVJBGACu990DlxWtjbv5SeRNjLL4Ci5xr6GncV64wGSqafFXw5isKg
-         DeKCwr4lNqwiCH7wLWnmhKnRfo1cn3ITxCGsQluyW6XB+XK6MW8jHhgEa6SMPPR9euOw
-         vjcg==
+	s=arc-20240116; t=1752990004; c=relaxed/simple;
+	bh=muXBiYw4vQbbPyc/36SGZ+vL1gjm+ANl+nfMqvCY8P8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ANN91VgSCKXxBPf0G2mVCv28wpajd3Dzu6LB2yrjTjcX6lw6K+VJrFhGML+dnxcNufnSBTfE9Yv2XyZVbfgzAUUfskdMF4VEAQIYbsx3v1auUrSoJ64NzGjPbdiLss9BwK3u3IYScfgHs7q9FQ0d3DkTpMnrcNqrawxOrvF3Xxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-87c30329a56so71426539f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 22:40:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752988874; x=1753593674;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1752990002; x=1753594802;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uMGg4AkLKGPMTVfGVG5ofzNDTT615iQz+U6mvq38VhI=;
-        b=kkjgOQ/IB0ZZah/o3EHWADHMTmjk5EY6PzIwitogIoP/lXuDNJaoRG9QhowiSRgYXw
-         SH0YsYuYzRZjhCsDxrcAGNnACeEGcJMTNSXatLyGx6HSn757voqlxoXBcBGQrmA/1chf
-         YlcIJ+YOrViyWNlslTIcKcRddgUZLuTU0YOtRPuUmMUMuT+5KwjS4mQWJqxHG+TLwxj/
-         dlacSiEbZhCWSy1j7Ea67v0/H/con0kSsGABFIK8mDJOeg0wJRnvIkHp8XpryWN/SqGp
-         w0FeCDFDYmZQmnQnBRaKrOsyq8Le4nbwPx8lwdwZPComQ83J8CHrU303H2Fvg0lKRDtH
-         WwyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXYxIaBU5zMeEXn6nqvTfYGB3kd3ZXLLwrBrZm1sc2Ruvzc5EqJJoRDLRmqgeSvY6BGG/I0AjusDwheFQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuedbzjATkqJ9DMP+AjwP5dz97XTm+488pa1VwQbtTIm4POjTh
-	3mz5+3gDeTkPTBMJ2IYKxLDLrR04gbYwGbMGrnQm3NLDhFpJ3x200055
-X-Gm-Gg: ASbGncthkMHswcH7Bqel8eMdlr9yRDVoS5pQNWT91wI6Z4saM0OZjQURIxrgePC1NwG
-	WxY+rIhD7dv4b3RA2cvXtt2/Vaiyxkzg+JtS29Udhfo3hpLXy1dk5oDgFVCgUdHrhCQ+311kdEf
-	n6AQrjSuX5cZQJBk9vY4/ZCvLLMxanaqFsDfVkFtGZx7Ee35l67wzpcL1kV6Z9uD3D/lQ1ETfIr
-	o3kz1+7y7pw4VaeC0QMHlgJH4EglDd+rDDOXf/8oGnhSl7AYbnU6jiztY7UCkBgWeklHzNwKJfn
-	B6ec2g+5qydtfuPE/h3HQ59juithUFzHjOd0IVBlYbHCMhRQCasZwVXljsNz85K5Tk2ENBIuevc
-	6AbjoJ1qd4QoVlCKR/migWQs=
-X-Google-Smtp-Source: AGHT+IEZbsdsJh8xom2c5btG/8m8lKMILb5pMA+Zy2UmMVWydyrlP4lJq9lp77cFtr/zo3/NFeEolw==
-X-Received: by 2002:a17:902:f644:b0:235:f298:cbbd with SMTP id d9443c01a7336-23e256b84a3mr226821995ad.21.1752988873531;
-        Sat, 19 Jul 2025 22:21:13 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:3232:5bb8:d0ff:5d3c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c9f1b8f89sm7883204a91.9.2025.07.19.22.21.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Jul 2025 22:21:12 -0700 (PDT)
-Date: Sat, 19 Jul 2025 22:21:09 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Subject: [git pull] Input updates for v6.16-rc6
-Message-ID: <uruhwvbzi2umwaqurp4scxx5ekqng66as7ffxatvckhcoxnafj@qizaztn42o4e>
+        bh=it+EqzfuWYsMFq9XdCLdSOJ8tBw2jdd27CQqoYT+xug=;
+        b=eZh44Tujsa67/KiMPUSUInEUVAEYNwQI3rbDpPfBHPSYCJkR1DKxmi9suU4wP4pTR9
+         eYvh59FCz2zD1ToelfUohnsWt4WoHLerdmdbI9Gecz5i5Q7G3Wm3kg3OkI+e36bwPb9H
+         1Apa2JzYIQSClY07UrCtUSIb6jq2dOEeS+5YyfM8G7UIaYt8JCcsKnAqthxf1+xV2ToN
+         DtZdUrXthAPIxNG8gy3ylzSZD8gDp5sN/cj1snhq8kxR6JxhtG0VOCkKJCES2Dd1ebHd
+         NK6raCKVDXzoQ7GT5zsm7WUC0kyLbG5/0pHS5uCnOY6mFHkT6/1jJaA6ibm/yA6BzynT
+         7Qrw==
+X-Forwarded-Encrypted: i=1; AJvYcCUEW4zJBrhNKFHFOOupp/hu3xlebqaHl48Yu+0VNjR309lDuHefLZXxSoeYi7va6kt8dRhUzWU5p8CtBy4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNKz84oUw7acryxkrAjwvtTX3B/UOibT9STs2Bu8pczt/uFeSD
+	iWZ9uXSdM/kHBscFKB0UWOKTJyVn8p6irds4rx3Dajjagd+kDAwY88LSZ81GpPCVrqqM3s4DPoO
+	4mJI8C7i6B5pMiLeFvmU8i5fFrEe5Unfk8iX3Qr6C+3BffnDOfO12EuONCng=
+X-Google-Smtp-Source: AGHT+IGgN2BB6GRD8N6VUWX1hRZtZHmzIvTSk+1awGdOIcIz4cAxue9x3wPqECEvpT1K14rS+tyNyhRgjxk/z3OhYfIQrNAzHECl
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-Received: by 2002:a05:6602:298d:b0:876:a91a:9098 with SMTP id
+ ca18e2360f4ac-879c28f9ac0mr1843494239f.2.1752990002418; Sat, 19 Jul 2025
+ 22:40:02 -0700 (PDT)
+Date: Sat, 19 Jul 2025 22:40:02 -0700
+In-Reply-To: <684392eb.a00a0220.29ac89.004f.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <687c8132.a70a0220.693ce.00ae.GAE@google.com>
+Subject: Re: [syzbot] [usb?] stack segment fault in __usb_hcd_giveback_urb
+From: syzbot <syzbot+9a4aec827829942045ff@syzkaller.appspotmail.com>
+To: chunkeey@gmail.com, dmantipov@yandex.ru, gregkh@linuxfoundation.org, 
+	hdanton@sina.com, jeff.johnson@oss.qualcomm.com, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, marcello.bauer@9elements.com, 
+	stern@rowland.harvard.edu, sylv@sylv.io, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Linus,
+syzbot suspects this issue was fixed by commit:
 
-Please pull from:
+commit 15d25307692312cec4b57052da73387f91a2e870
+Author: Dmitry Antipov <dmantipov@yandex.ru>
+Date:   Mon Jun 16 18:12:05 2025 +0000
 
-	git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git tags/input-for-v6.16-rc6
+    wifi: carl9170: do not ping device which has failed to load firmware
 
-to receive updates for the input subsystem. You will get:
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=129c938c580000
+start commit:   7f9039c524a3 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6acfdd5e5c8ef3d0
+dashboard link: https://syzkaller.appspot.com/bug?extid=9a4aec827829942045ff
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13fd0570580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17c7c1d4580000
 
-- just a small fixup to xpad driver correcting recent addition of Acer
-  NGR200 controller
+If the result looks correct, please mark the issue as fixed by replying with:
 
-Changelog:
----------
+#syz fix: wifi: carl9170: do not ping device which has failed to load firmware
 
-Nilton Perim Neto (1):
-      Input: xpad - set correct controller type for Acer NGR200
-
-Diffstat:
---------
-
- drivers/input/joystick/xpad.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-Thanks.
-
-
--- 
-Dmitry
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
