@@ -1,180 +1,121 @@
-Return-Path: <linux-kernel+bounces-738498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28BCEB0B932
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 01:27:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C216B0B936
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 01:30:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68E2D1772B7
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 23:27:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3413F7A408B
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 23:28:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A358B22F765;
-	Sun, 20 Jul 2025 23:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1C622FF59;
+	Sun, 20 Jul 2025 23:29:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tqxzyVls"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r8V/zCiy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078BA12CDA5;
-	Sun, 20 Jul 2025 23:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB1212CDA5;
+	Sun, 20 Jul 2025 23:29:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753054048; cv=none; b=WKd8Ezdz2aX9fxXADwzwL1LCAnCZXfsMZQeXMN2VwhkArPjnMCEM7xfjko1p1scPDb92Uhlv96srmq7nzH68MtPE3np7tlpSZKTrS8btqg/0tkvsqHphRrXZTQdidHpLKo9GEfbe15s767u1fDA69h+dIKN9vyP5BdB+zRdZxXU=
+	t=1753054193; cv=none; b=CGYVq/8qLSOSCF0qYU0kE6nucQzGCJOpt1Qb2Kadi2PaxTnNuUillVAPtf3KB62B/4whCX0UJcOv5xiKfDgo7oYbEhlZtzdUpqmiqAvs0r/4oP6o9We5ZeJgTGJIV5QyYFEwM1FQHWzrV3UQYu0m5KvOVfZxqMMf2zv6S1Rr2CY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753054048; c=relaxed/simple;
-	bh=Kp8wb7K590ryA6q3+0fGUzS4UK4ZiBYQOTjHZtSIW6k=;
+	s=arc-20240116; t=1753054193; c=relaxed/simple;
+	bh=9vRFi57eCNNn/RDG1UsnpLJA0b2NK9C+iSXFxF1Bsu4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fcaBqbiiyLmgagGTSKC/0TBU/4HTFpZbkYDebhpK1oX2O6mpIQzzB9axdoQO38IjM1r2rSjuFNSQnfWqEWRioi5c6R34L9Aovc/0RShfD6rBRDdUm6LjLDTkKHnuhg4U2cQxaIJ0XNmLQqH8Epp/wg8at6KqbKHwOBLBZNjw1hM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tqxzyVls; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 851D2C4CEE7;
-	Sun, 20 Jul 2025 23:27:27 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=V1FrqveAG5O50zY4x126Ffp40SI63pGNJ+hLMKuGbD5Dk+gsYNCN2IUVuIIhg/3UmGPh1R/uuvKPqoenjfwlAF3/kGc8uKvQWcKZ3SeLoHgCSHmO/oAH/JJHNdNkxS8q0I0n7JzlPa8YUo/CCQs6BCDCzSKgWtrHQmbLKPteDuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r8V/zCiy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9C0CC4CEE7;
+	Sun, 20 Jul 2025 23:29:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753054047;
-	bh=Kp8wb7K590ryA6q3+0fGUzS4UK4ZiBYQOTjHZtSIW6k=;
+	s=k20201202; t=1753054193;
+	bh=9vRFi57eCNNn/RDG1UsnpLJA0b2NK9C+iSXFxF1Bsu4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tqxzyVls72ujIUH0TfZiBBXI9npEj3OTs4/nKAEFWnp1JgrC1B42pKi/1ZoVTCr8a
-	 3faW3aTsf2/RbbqBd/IQstTYFBWT8nrxTdfoYFsc0f3fY/Uu3BGXJtMk0Ig5EhExdb
-	 TJhoMXiKQrkjdVg4IjL64T9bmZqJdGD1JtRVmtJOT+zzJuvWOAqC6OSURMt86Um5IK
-	 aLv/wGwywC2qm02YXNt806xjgeAhlPk8GQqHeIJQxDNv+iJg9z5EZ2YsL0Dv90E909
-	 0odZB/oWaQRRxOlG+eN81tSVgryN6cX1a9GXfM4yq3d4QCJNmObop6rmveWw6BNTJp
-	 +vHouUaK09HvQ==
-Date: Sun, 20 Jul 2025 18:27:26 -0500
-From: Rob Herring <robh@kernel.org>
-To: Jorge Marques <jorge.marques@analog.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Frank Li <Frank.Li@nxp.com>,
+	b=r8V/zCiyA4u/5PyfBrhpwGiPbXUwMo0HTAx+K7zSRwdmp+PKBPT2vii+6hPfcbAjy
+	 2E+uTWZ8QZjdX4Z8defLdoE1RtHOnwdeMWfjGsGtRSXdWPp+pMDXXBmabMPFi0t7X5
+	 MTeg9th7oSkxf7MG4+Gj/EC+h26qOlzDV9EYcDUzPD1z6ls4lI+4MwTFzBqICzXShD
+	 7BLvUbAPGD84WrSLNxuwEP9AFhXNN7/0qmkEwJX5EABaJ2MSfEeTWET8LKrSJZcXeQ
+	 5uKxFu29ob4YwEuI5dYLikVQDIyrjpBvw2WgVNlD1qxkp1PFkSuYTK8vxJhWkGC+Yv
+	 UE+r0AgmhZ79w==
+Date: Sun, 20 Jul 2025 18:29:52 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: =?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
+	thomas.petazzoni@bootlin.com, Jakub Kicinski <kuba@kernel.org>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	davem@davemloft.net, Conor Dooley <conor+dt@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	=?iso-8859-1?Q?Nicol=F2?= Veronese <nicveronese@gmail.com>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	Simon Horman <horms@kernel.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Antoine Tenart <atenart@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Dimitri Fedrau <dimitri.fedrau@liebherr.com>,
+	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+	Daniel Golle <daniel@makrotopia.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-i3c@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	gastmaier@gmail.com
-Subject: Re: [PATCH v6 1/2] dt-bindings: i3c: Add adi-i3c-master
-Message-ID: <20250720232726.GA3055763-robh@kernel.org>
-References: <20250717-adi-i3c-master-v6-0-6c687ed71bed@analog.com>
- <20250717-adi-i3c-master-v6-1-6c687ed71bed@analog.com>
+	linux-arm-msm@vger.kernel.org,
+	Romain Gantois <romain.gantois@bootlin.com>, mwojtas@chromium.org,
+	Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: [PATCH net-next v9 01/15] dt-bindings: net: Introduce the
+ ethernet-connector description
+Message-ID: <175305419142.3067276.17489545129976520306.robh@kernel.org>
+References: <20250717073020.154010-1-maxime.chevallier@bootlin.com>
+ <20250717073020.154010-2-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250717-adi-i3c-master-v6-1-6c687ed71bed@analog.com>
+In-Reply-To: <20250717073020.154010-2-maxime.chevallier@bootlin.com>
 
-On Thu, Jul 17, 2025 at 09:09:20AM +0200, Jorge Marques wrote:
-> Add bindings doc for ADI I3C Controller IP core, a FPGA synthesizable IP
-> core that implements the MIPI I3C Basic controller specification.
+
+On Thu, 17 Jul 2025 09:30:05 +0200, Maxime Chevallier wrote:
+> The ability to describe the physical ports of Ethernet devices is useful
+> to describe multi-port devices, as well as to remove any ambiguity with
+> regard to the nature of the port.
 > 
-> Signed-off-by: Jorge Marques <jorge.marques@analog.com>
+> Moreover, describing ports allows for a better description of features
+> that are tied to connectors, such as PoE through the PSE-PD devices.
+> 
+> Introduce a binding to allow describing the ports, for now with 2
+> attributes :
+> 
+>  - The number of lanes, which is a quite generic property that allows
+>    differentating between multiple similar technologies such as BaseT1
+>    and "regular" BaseT (which usually means BaseT4).
+> 
+>  - The media that can be used on that port, such as BaseT for Twisted
+>    Copper, BaseC for coax copper, BaseS/L for Fiber, BaseK for backplane
+>    ethernet, etc. This allows defining the nature of the port, and
+>    therefore avoids the need for vendor-specific properties such as
+>    "micrel,fiber-mode" or "ti,fiber-mode".
+> 
+> The port description lives in its own file, as it is intended in the
+> future to allow describing the ports for phy-less devices.
+> 
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 > ---
->  .../devicetree/bindings/i3c/adi,i3c-master.yaml    | 67 ++++++++++++++++++++++
->  MAINTAINERS                                        |  5 ++
->  2 files changed, 72 insertions(+)
+>  .../bindings/net/ethernet-connector.yaml      | 45 +++++++++++++++++++
+>  .../devicetree/bindings/net/ethernet-phy.yaml | 18 ++++++++
+>  MAINTAINERS                                   |  1 +
+>  3 files changed, 64 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/ethernet-connector.yaml
 > 
-> diff --git a/Documentation/devicetree/bindings/i3c/adi,i3c-master.yaml b/Documentation/devicetree/bindings/i3c/adi,i3c-master.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..8f532386de2c05d3d514d41ff4d6a37ec840674c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/i3c/adi,i3c-master.yaml
-> @@ -0,0 +1,67 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/i3c/adi,i3c-master.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Analog Devices I3C Controller
-> +
-> +description: |
-> +  FPGA-based I3C controller designed to interface with I3C and I2C peripherals,
-> +  implementing a subset of the I3C-basic specification. The IP core is tested
-> +  on arm, microblaze, and arm64 architectures.
-> +
-> +  https://analogdevicesinc.github.io/hdl/library/i3c_controller
-> +
-> +maintainers:
-> +  - Jorge Marques <jorge.marques@analog.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: adi,i3c-master-v1
 
-If you want to use version numbers, they need to correlate to something 
-and you need to document what that is. I don't see anything in the above 
-link about a version 1. Kind of feels like you just made it up.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    minItems: 1
-> +    items:
-> +      - description: The AXI interconnect clock, drives the register map.
-> +      - description: The I3C controller clock. AXI clock drives all logic if not provided.
-
-Is that a description of how the h/w works? The controller clock input 
-can literally be left disconnected? If 1 clock source drives both 
-inputs, then the binding should reflect that.
-
-> +
-> +  clock-names:
-> +    minItems: 1
-> +    items:
-> +      - const: axi
-> +      - const: i3c
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - interrupts
-> +
-> +allOf:
-> +  - $ref: i3c.yaml#
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    i3c@44a00000 {
-> +        compatible = "adi,i3c-master-v1";
-> +        reg = <0x44a00000 0x1000>;
-> +        interrupts = <3 IRQ_TYPE_LEVEL_HIGH>;
-> +        clocks = <&clkc 15>, <&clkc 15>;
-> +        clock-names = "axi", "i3c";
-> +        #address-cells = <3>;
-> +        #size-cells = <0>;
-> +
-> +        /* I3C and I2C devices */
-> +    };
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index d5a173e987c06d75848d112339e39966f2b71cea..1f212529276f4ab28f4b7d16b4105a8cf9ff5e2e 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -11452,6 +11452,11 @@ S:	Maintained
->  F:	Documentation/devicetree/bindings/i3c/aspeed,ast2600-i3c.yaml
->  F:	drivers/i3c/master/ast2600-i3c-master.c
->  
-> +I3C DRIVER FOR ANALOG DEVICES I3C CONTROLLER IP
-> +M:	Jorge Marques <jorge.marques@analog.com>
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/i3c/adi,i3c-master.yaml
-> +
->  I3C DRIVER FOR CADENCE I3C MASTER IP
->  M:	Przemysław Gaj <pgaj@cadence.com>
->  S:	Maintained
-> 
-> -- 
-> 2.49.0
-> 
 
