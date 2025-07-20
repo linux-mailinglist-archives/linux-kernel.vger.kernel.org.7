@@ -1,72 +1,73 @@
-Return-Path: <linux-kernel+bounces-738259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E50FCB0B677
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 16:33:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC221B0B679
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 16:34:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61ED37A183A
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 14:32:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3CD13B2A41
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 14:33:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 260DF21A458;
-	Sun, 20 Jul 2025 14:33:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E9721A43B;
+	Sun, 20 Jul 2025 14:34:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P1x2dGra"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OGoYsNWP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E92A3FFD;
-	Sun, 20 Jul 2025 14:33:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B3AC1F1905;
+	Sun, 20 Jul 2025 14:34:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753022026; cv=none; b=OTr8QPpcIyxwnJeNPVjSWsSZfyiFGpZKO0+GAMkPlqp5z5NB0wkB28m3IlTDgjXzm6R96C/6gE7r6h1deu+NQTq6MS667+CHfsVHD5/VJURQy/wD+7rXmYyzvaI5CNQOTxlDjtTwpzrd2OIEDmZzA3M5RH62xue/Q/cjbj803ls=
+	t=1753022057; cv=none; b=IAL7E8YH3K13nH0RFBvkiGS18S2mzsSKzwvGiTUOkj5x0Nc+Uimrk1EWF89OcCOrSeEU0XuvGQZNBJprP40L0yeq7r9/C67QL0MPzGpYjcgB0X6i0flA+KB7qvB8z2I4aUlipBxcgwnOOleY0SJPYfEnpF2Jc3wjOFSMkGX+u5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753022026; c=relaxed/simple;
-	bh=GD1u2qOgXW62+IQa9PaK4pPCvAbLxB7NgCQp0EbBPtI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=D5PawR8m73ARU/qZH8NAnWYhtQ10TxKm7HcUx5Cs294Y/K4jhyrr+SZbF2g46olrzKRMYC1QVTrEdeCW3b9aH3UC/AiHbVGJFqhlKfu2vkiySroS5bQpJlX0jftZUCgQeJ8k22PHyl3dIB4DkEUoIJKKKxWIl6wFm5ZZxo/nmvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P1x2dGra; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F8B3C4CEE7;
-	Sun, 20 Jul 2025 14:33:41 +0000 (UTC)
+	s=arc-20240116; t=1753022057; c=relaxed/simple;
+	bh=233+4YFYU5Z87c51IPyrDVdldtXMXBDkU9EDcJFNeGs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VF+HYPnKEFAhCEXc2s/FiCfeEO1S8xb7Ur8xT6VlW3NSZ3Ef1KNBUIlnIJ3aXGFYqWYtDiK60yDiRpdLDQfdz02/b4M+gKPJNQUspR2pLcWIYsTph113PSNtcfW9n3xDhB5ROxcSkPySvi7C983hKMyLqlgvkcZ5fVcTK4lewGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OGoYsNWP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 112EEC4CEE7;
+	Sun, 20 Jul 2025 14:34:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753022025;
-	bh=GD1u2qOgXW62+IQa9PaK4pPCvAbLxB7NgCQp0EbBPtI=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=P1x2dGra8tMOdCRyDNlGy3Obec3yywmwHWcPYj0tBgc8mPU9ID/DtcxE/uxadiB7u
-	 87LZdIjm3EYxST9y/FlAmXicHEf+zXwcoYlevqQlzvraF0x6BfvaeGbU9B91QDSncE
-	 6NXfl1MkHFPcT5ahWnaZHDZEShfQdSZ0JkI6gk60Uks6+BK//HIU6ANduw4YRXLvt2
-	 ZNmuqRqvYJW7Tpq7bf7rG5FTbECtmFOPe3Tjasnt3vskMxiAb5b8qTUXTlKyb1MfsF
-	 9vEyJtI8E+YBsyIkFkM1J+3+g6shY7E1bl/ydBNN4b0sueA9jOR0cvTLSjNU/NPTux
-	 MADrOa/swk4+Q==
+	s=k20201202; t=1753022056;
+	bh=233+4YFYU5Z87c51IPyrDVdldtXMXBDkU9EDcJFNeGs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OGoYsNWPqHg1lx/A35D4JYuyEcCdOdd/TtZbOIMxAgAxOZfGSbhvsqnWcP3dCP4wQ
+	 wY6Oi3ebiklbnO9YzzC84j9ZgNjEOyVbwDCAQOHcrKQfrjhMN5hH47H16viYfoOERW
+	 egIYHusySI0p0swwt4zpkqpE9Whu0KJ1aFitnSp11BIvfDS/L6fr6ERkgPam5O6qQ5
+	 hnzL+S7k+L0PI78LXVCbX5H+ksYqfOGJ1v12V2iy/YPE0sXGVyySyRSIgJai+7ovOC
+	 W0bGwV/uZwLAPDctM+/lEQuwtXuhVotscSB7sFs49C0tNIZJzgpzS3dR0jOGja4VrB
+	 PxQeucF8i6Fjg==
+Date: Sun, 20 Jul 2025 15:34:12 +0100
+From: Simon Horman <horms@kernel.org>
+To: Yue Haibing <yuehaibing@huawei.com>
+Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] ip6_gre: Factor out common ip6gre tunnel match
+ into helper
+Message-ID: <20250720143412.GW2459@horms.kernel.org>
+References: <20250719081551.963670-1-yuehaibing@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 20 Jul 2025 16:33:39 +0200
-Message-Id: <DBGYFY5IFQ24.57509R84DUS7@kernel.org>
-Subject: Re: [PATCH v2 0/5] dma::Device trait and DMA mask
-Cc: <rust-for-linux@vger.kernel.org>, <linux-pci@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-To: <abdiel.janulgue@gmail.com>, <daniel.almeida@collabora.com>,
- <robin.murphy@arm.com>, <a.hindborg@kernel.org>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <aliceryhl@google.com>,
- <tmgross@umich.edu>, <bhelgaas@google.com>, <kwilczynski@kernel.org>,
- <gregkh@linuxfoundation.org>, <rafael@kernel.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250716150354.51081-1-dakr@kernel.org>
-In-Reply-To: <20250716150354.51081-1-dakr@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250719081551.963670-1-yuehaibing@huawei.com>
 
-On Wed Jul 16, 2025 at 5:02 PM CEST, Danilo Krummrich wrote:
-> This patch series adds the dma::Device trait to be implemented by bus dev=
-ices on
-> DMA capable busses.
+On Sat, Jul 19, 2025 at 04:15:51PM +0800, Yue Haibing wrote:
+> Extract common ip6gre tunnel match from ip6gre_tunnel_lookup() into new
+> helper function ip6gre_tunnel_match() to reduces code duplication.
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
 
-Applied to driver-core-testing, thanks!
+Reviewed-by: Simon Horman <horms@kernel.org>
+
 
