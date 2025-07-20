@@ -1,320 +1,119 @@
-Return-Path: <linux-kernel+bounces-738313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9F65B0B702
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 18:38:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8061FB0B704
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 18:41:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F01C41663C3
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 16:38:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 697433B0011
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 16:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47FDE222566;
-	Sun, 20 Jul 2025 16:37:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FBD722126B;
+	Sun, 20 Jul 2025 16:41:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="UoGaOjAQ"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZX2a0jGu"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6418224B10;
-	Sun, 20 Jul 2025 16:37:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A55C1B423D;
+	Sun, 20 Jul 2025 16:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753029435; cv=none; b=eYD27ejKSw0hvbywE7S0m6QN0V6SmX74OtG2OidJcUDv3jQ8s0qb4eEzvxY9NvrsRF9mEqPcgkzKQBLPcFdhPC4tTZar62UiXvXU8RGmugWg2e+o88EOot/7ShzrYQdLSYY1IZGPgVgVkGsTFpTRuzAdAV1k9YewvaIPxD9r4n0=
+	t=1753029681; cv=none; b=qzITAFuWIfzF1PBFI1sR/lTjd9GpHMaj5LP0Oqq3E5VxktLYmuJ2BuaMfokpBUflVIfBMrVyLdkOnV2cq/9/QXM5TpSM3DdOwf99bgzDXxBgUNTEKLDtuxZ6hOMgFAPWbG3oQYRgSfxmcUo5qebTl3wZeHPKoo6/+QshcXnJVqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753029435; c=relaxed/simple;
-	bh=3O4Fwlhz8F4JjXJ7fCBXpshu8iMQZ25ENjPKuI8n8Nk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Pke9vQFVo1u++WwQzok7NzlOOYlBagbmpWduKyfWgAPRI7h2D1KuVxmav74O92lldbuzdy/HgoWrcQEmRY8axspdqEolFY4L3Lcd+i+nA6/PwpSj83swNbktxaa3l0mL7SCQyV9sCYICV0wbEN8AfQHN5lcA2MpTSp0F+iq5IYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=UoGaOjAQ; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56KGWUsh017741;
-	Sun, 20 Jul 2025 09:37:06 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=5
-	hLm0FpB6xUX7EtQLxPHb4wkAHivgPGR1ZeIG2NHiQc=; b=UoGaOjAQdLc14FfF/
-	YmduMp8pvWxgaO9ZkmoumXV40sljJw8oumP43fEC7dIeIo391qC/6S4EC0ve2+0V
-	U0K69A6cCphWdcFCsuyhu2X2y9mon7wtck7+GDPIUBtYLiCbnne9lLl1hn2etgrD
-	olsdbiLQIAO1Nk81LtKZHNYBWTUj4Xo/wlG+WF/EE7YVYZFYS77KZ51NMYnjba1k
-	pf735nEzxNNXv9ZuLN8HafkQLFuQxW3vpsQKrsd8c/Gb5TuDzNXr+MwGJ/valolo
-	7lbZ3R3L5h3r+tOBRvMNZuUtVDEXiFZZoclLmOmMUlsy0Aj5jksP1iEa1j2b1O23
-	Co/pg==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4808qq1tk9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 20 Jul 2025 09:37:05 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Sun, 20 Jul 2025 09:37:04 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Sun, 20 Jul 2025 09:37:04 -0700
-Received: from test-OptiPlex-Tower-Plus-7010.marvell.com (unknown [10.29.37.157])
-	by maili.marvell.com (Postfix) with ESMTP id A93393F7057;
-	Sun, 20 Jul 2025 09:36:59 -0700 (PDT)
-From: Hariprasad Kelam <hkelam@marvell.com>
-To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <kuba@kernel.org>, <davem@davemloft.net>, <sgoutham@marvell.com>,
-        <gakula@marvell.com>, <jerinj@marvell.com>, <lcherian@marvell.com>,
-        <sbhatta@marvell.com>, <hkelam@marvell.com>, <naveenm@marvell.com>,
-        <edumazet@google.com>, <pabeni@redhat.com>, <andrew+netdev@lunn.ch>,
-        <bbhushan2@marvell.com>
-Subject: [net-next PatchV2 4/4] Octeontx2-af: Debugfs support for firmware data
-Date: Sun, 20 Jul 2025 22:06:38 +0530
-Message-ID: <20250720163638.1560323-5-hkelam@marvell.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250720163638.1560323-1-hkelam@marvell.com>
-References: <20250720163638.1560323-1-hkelam@marvell.com>
+	s=arc-20240116; t=1753029681; c=relaxed/simple;
+	bh=xEjlwgbQbOHqNZfDliNEW2Zpgg3sSwA/kbqHZJZ8p2s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qsvxV38SbgNWl8TyLUkTA49Ds7w41p4LnLZ56S1PZq16AGZx7DKYPg3sPpdoC0o0kdkoMEy37UNnqEc2WruWrEVlZ1uZwkiD6A0H2LqAMTKs3pZzzQHNaHujObPFAwDMfBcL8/mZ6704saobtB8KRVX2bYbL1YpivkehTlNyp5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZX2a0jGu; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-313067339e9so750643a91.2;
+        Sun, 20 Jul 2025 09:41:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753029679; x=1753634479; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u2R08B0M6B/bO5Z84OsszAkv0QNGB70mRleYsQvtc0U=;
+        b=ZX2a0jGu2A5CjbwH/G08qu2Uup6Th76wRJiLnD+npHoN94DaNrP35uEfDGgkXp5ASm
+         w45+WXeEeMuxS447Llfafu4ioO4WxmBlRD06StY0sGsDesoZqLAzzg+Y+BWwv4ZYnOYF
+         3cW4QCCmqZ6UBFh3othBXy2FkFC25QhEFRru813mSh/lCJquXpcTezYfsW2gC7otlz+b
+         rXsCsbr5jYeFCGdPb69uwm9WV/hr+YiIR+hKb05QWhkrnJgU9Ta/lasjPyv4PEIUYAJq
+         zKcBqLL+EU6oDnj2uUwqU58i1HzEu5p5R4Y7jOKd1X/xR0HO8C5S4wlv2bUM/3MA+SGC
+         4fOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753029679; x=1753634479;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u2R08B0M6B/bO5Z84OsszAkv0QNGB70mRleYsQvtc0U=;
+        b=DVLNV4onzwEHZfM4BP6zPu9iQmk9dk4LaPDnN1lr/KK34OKSo9GVsy96TOmqummCJy
+         vI5r/qhD20WYjmmJYUHkwDPXBgzz60ZrExnuhSL9N3Gj8Po+lBLcfIIkiMmDH7eNOPb7
+         IjV+71W4JHRa9lvl2ZT79+MFZOy3ekhOvl5XBE3BwfMNzfMvppzFFm2pTj+3I98RlaOV
+         UvRM2AUUrwQVx4f+t2f1N2/+8jZzBNdqkm9eJXD1exGQ/eVJz/cRgCdj4yJ2+IGMNC0D
+         13kg98poLGVixlxUCFnsDZtejK6lMF55i5fkBB+/LVFyBsIomfwW2Im3KxEaagdrQVpU
+         SqOg==
+X-Forwarded-Encrypted: i=1; AJvYcCUJUY1T3f0AtR5L7q6pYZf6G8qkUnd4hpGHwaZmPOf+eS+O2hr2DxFODOCSzk3vFr0b1uWF4dqg6g==@vger.kernel.org, AJvYcCUUjOlcxh4Rw12zh2/uHyh9q1YSpiJokqQ8VjvRNxljHYfHxinanJX7ntBsDiT6qPX2OSBIKv/0ONHiDaGg@vger.kernel.org, AJvYcCVGdokTqI2NVkbkrjhFeDs8yswkkW16FpLx8O07iIxRFi/CYz0RXvGMU1K5XqNj933mkdOVEo2AC6/ynome7+8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy68/uA663tSaQ0voXxpGGYNJUd9lAE0oDPbL6xvNZPHVE8fNc7
+	cpccIGSOLw83qeR5w+KnsxpXfAR+Xy2uSDF6GB/BUbOLhWK/RosP0G3RPP9tOEuYEdC5xuZg2hu
+	b47F5teMrCv+YbJ6mci8WRLPxLZojI3sOtAR52oD0wg==
+X-Gm-Gg: ASbGnctylrxDcyMB8LekAuwz6JU77ENjrc3K6wcHD63WWnVojspw+7qLPPW8xi8KNCv
+	sJtQxZxaqAIrGU5eHzrZAUGlocLqwK3eHMcsMPZGH4VwXIEEHCdA3A5sy2WP+/22OYIBRYu75rT
+	T7qioGd3VZMuGhHiyf7vZrx65/pdWAL87gxMUaZHmCPLqzx5DzyYWlqyqrzjkBjcLTkP3XSGewR
+	LilhaYH
+X-Google-Smtp-Source: AGHT+IFQqLKqY9GWASRnB+Q22pehsjordJutcnwFOx7nY7UOk4Lymr/qJvDFeYgIvx02ePKyDN8dAq7decQUqdMgnAY=
+X-Received: by 2002:a17:90b:4b8b:b0:311:9c9a:58e2 with SMTP id
+ 98e67ed59e1d1-31c9e798695mr9601871a91.7.1753029678698; Sun, 20 Jul 2025
+ 09:41:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIwMDE2MCBTYWx0ZWRfX0+LW7gKpC3M6 kqSOwTZyEcMQP/1EAaec0iz/tOHIXKTuZ3D8hc/wwfJpRaaXbwnv2FoxwlHBYDb389Upw5fW1ni m1UH82JiOagybjIWZ10w1PYxGv+4uKckUx20asytkhShx6FMNBGa12/qyBTR3pot3Io7yjUDlD1
- /e1L6EhzFLo8wZ9GMdJWSadVBunMsen2Zuq5pY/z/jccVMWRWlxBdBhEgqgcqziY3FeiuaPGpw6 QMVFlpdD1de37roRNsQKxrvfR5YE7LXvIKuTn9jnjXyJHbLHH+Gt9ecvxc+/nrCT5ZNi0Kfs3rQ bKTqRkOSD3dvshaZn8TyLpsEDkaDz3U9OkbCrMNHioxN0v07dsmVCx0+SunjwexycxOx6pHGxN/
- 8epxJd6SSm9QmgfDnSIcDGZIfehkhREH9npDG5pwtSK2gj877ZN3qQPKsWy9aIDf3V450Kb1
-X-Proofpoint-GUID: d1iY6S-8PNSHb3HaIx8lKroL09iTNE3W
-X-Proofpoint-ORIG-GUID: d1iY6S-8PNSHb3HaIx8lKroL09iTNE3W
-X-Authority-Analysis: v=2.4 cv=TuLmhCXh c=1 sm=1 tr=0 ts=687d1b31 cx=c_pps a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17 a=Wb1JkmetP80A:10 a=M5GUcnROAAAA:8 a=hMOJt8txAAAA:8 a=IzogfuMDhfRa5p4SXY4A:9 a=OBjm3rFKGHvpk9ecZwUJ:22
- a=VB-UQLohyrnngkzD1eWn:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-20_01,2025-07-17_02,2025-03-28_01
+References: <20250719143358.22363-1-sidong.yang@furiosa.ai>
+ <CANiq72nWFW-5DFJA31ugMY7v0nRNk6Uyb1KuyJfp0RtxJh3ynQ@mail.gmail.com> <aH0UOiu4M3RjrPaO@sidongui-MacBookPro.local>
+In-Reply-To: <aH0UOiu4M3RjrPaO@sidongui-MacBookPro.local>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sun, 20 Jul 2025 18:41:06 +0200
+X-Gm-Features: Ac12FXwdnXKdBtzyvJWb4t5_hzaLDwi_JJmL7-sgXMwqrJlQA-Fr-Cu7Jce5-Do
+Message-ID: <CANiq72kRQ5OF9oUvfbnj+cbXk+tPTmYpVxYofTuCY1a2bcJr3w@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/4] rust: miscdevice: abstraction for uring-cmd
+To: Sidong Yang <sidong.yang@furiosa.ai>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	io-uring@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-MAC address, Link modes (supported and advertised) and eeprom data
-for the Netdev interface are read from the shared firmware data.
-This patch adds debugfs support for the same.
+On Sun, Jul 20, 2025 at 6:07=E2=80=AFPM Sidong Yang <sidong.yang@furiosa.ai=
+> wrote:
+>
+> Although some existing kernel modules already use uring_cmd, they aren=E2=
+=80=99t
+> implemented in Rust. Currently, no Rust code leverages this abstraction,
+> but it will enable anyone who wants to write kernel drivers in Rust using
+> uring_cmd.
 
-Signed-off-by: Hariprasad Kelam <hkelam@marvell.com>
----
-V2 *
-    fix max line length warnings and typo
+Do you have a concrete user in mind?
 
- .../net/ethernet/marvell/octeontx2/af/mbox.h  |   7 +-
- .../marvell/octeontx2/af/rvu_debugfs.c        | 162 ++++++++++++++++++
- 2 files changed, 168 insertions(+), 1 deletion(-)
+i.e. I am asking because the kernel, in general, requires a user (in
+mainline) for code to be merged. So maintainers normally don't merge
+code unless it is clear who will use a feature upstream -- please see
+the last bullet of:
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/mbox.h b/drivers/net/ethernet/marvell/octeontx2/af/mbox.h
-index 0bc0dc79868b..933073cd2280 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/mbox.h
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/mbox.h
-@@ -664,7 +664,12 @@ struct cgx_lmac_fwdata_s {
- 	/* Only applicable if SFP/QSFP slot is present */
- 	struct sfp_eeprom_s sfp_eeprom;
- 	struct phy_s phy;
--#define LMAC_FWDATA_RESERVED_MEM 1021
-+	u32 lmac_type;
-+	u32 portm_idx;
-+	u64 mgmt_port:1;
-+	u64 advertised_an:1;
-+	u64 port;
-+#define LMAC_FWDATA_RESERVED_MEM 1018
- 	u64 reserved[LMAC_FWDATA_RESERVED_MEM];
- };
- 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
-index 0c20642f81b9..8375f18c8e07 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
-@@ -867,6 +867,71 @@ static int rvu_dbg_rvu_pf_cgx_map_display(struct seq_file *filp, void *unused)
- 
- RVU_DEBUG_SEQ_FOPS(rvu_pf_cgx_map, rvu_pf_cgx_map_display, NULL);
- 
-+static int rvu_dbg_rvu_fwdata_display(struct seq_file *s, void *unused)
-+{
-+	struct rvu *rvu = s->private;
-+	struct rvu_fwdata *fwdata;
-+	u8 mac[ETH_ALEN];
-+	int count = 0, i;
-+
-+	if (!rvu->fwdata)
-+		return -EAGAIN;
-+
-+	fwdata = rvu->fwdata;
-+	seq_puts(s, "\nRVU Firmware Data:\n");
-+	seq_puts(s, "\n\t\tPTP INFORMATION\n");
-+	seq_puts(s, "\t\t===============\n");
-+	seq_printf(s, "\t\texternal clockrate \t :%x\n",
-+		   fwdata->ptp_ext_clk_rate);
-+	seq_printf(s, "\t\texternal timestamp \t :%x\n",
-+		   fwdata->ptp_ext_tstamp);
-+	seq_puts(s, "\n");
-+
-+	seq_puts(s, "\n\t\tSDP CHANNEL INFORMATION\n");
-+	seq_puts(s, "\t\t=======================\n");
-+	seq_printf(s, "\t\tValid \t\t\t :%x\n", fwdata->channel_data.valid);
-+	seq_printf(s, "\t\tNode ID \t\t :%x\n",
-+		   fwdata->channel_data.info.node_id);
-+	seq_printf(s, "\t\tNumber of VFs  \t\t :%x\n",
-+		   fwdata->channel_data.info.max_vfs);
-+	seq_printf(s, "\t\tNumber of PF-Rings \t :%x\n",
-+		   fwdata->channel_data.info.num_pf_rings);
-+	seq_printf(s, "\t\tPF SRN \t\t\t :%x\n",
-+		   fwdata->channel_data.info.pf_srn);
-+	seq_puts(s, "\n");
-+
-+	seq_puts(s, "\n\t\tPF-INDEX  MACADDRESS\n");
-+	seq_puts(s, "\t\t====================\n");
-+	for (i = 0; i < PF_MACNUM_MAX; i++) {
-+		u64_to_ether_addr(fwdata->pf_macs[i], mac);
-+		if (!is_zero_ether_addr(mac)) {
-+			seq_printf(s, "\t\t  %d       %pM\n", i, mac);
-+			count++;
-+		}
-+	}
-+
-+	if (!count)
-+		seq_puts(s, "\t\tNo valid address found\n");
-+
-+	seq_puts(s, "\n\t\tVF-INDEX  MACADDRESS\n");
-+	seq_puts(s, "\t\t====================\n");
-+	count = 0;
-+	for (i = 0; i < VF_MACNUM_MAX; i++) {
-+		u64_to_ether_addr(fwdata->vf_macs[i], mac);
-+		if (!is_zero_ether_addr(mac)) {
-+			seq_printf(s, "\t\t  %d       %pM\n", i, mac);
-+			count++;
-+		}
-+	}
-+
-+	if (!count)
-+		seq_puts(s, "\t\tNo valid address found\n");
-+
-+	return 0;
-+}
-+
-+RVU_DEBUG_SEQ_FOPS(rvu_fwdata, rvu_fwdata_display, NULL);
-+
- static bool rvu_dbg_is_valid_lf(struct rvu *rvu, int blkaddr, int lf,
- 				u16 *pcifunc)
- {
-@@ -2923,6 +2988,97 @@ static int rvu_dbg_cgx_dmac_flt_display(struct seq_file *s, void *unused)
- 
- RVU_DEBUG_SEQ_FOPS(cgx_dmac_flt, cgx_dmac_flt_display, NULL);
- 
-+static int cgx_print_fwdata(struct seq_file *s, int lmac_id)
-+{
-+	struct cgx_lmac_fwdata_s *fwdata;
-+	void *cgxd = s->private;
-+	struct phy_s *phy;
-+	struct rvu *rvu;
-+	int cgx_id, i;
-+
-+	rvu = pci_get_drvdata(pci_get_device(PCI_VENDOR_ID_CAVIUM,
-+					     PCI_DEVID_OCTEONTX2_RVU_AF, NULL));
-+	if (!rvu)
-+		return -ENODEV;
-+
-+	if (!rvu->fwdata)
-+		return -EAGAIN;
-+
-+	cgx_id = cgx_get_cgxid(cgxd);
-+
-+	if (rvu->hw->lmac_per_cgx == CGX_LMACS_USX)
-+		fwdata =  &rvu->fwdata->cgx_fw_data_usx[cgx_id][lmac_id];
-+	else
-+		fwdata =  &rvu->fwdata->cgx_fw_data[cgx_id][lmac_id];
-+
-+	seq_puts(s, "\nFIRMWARE SHARED:\n");
-+	seq_puts(s, "\t\tSUPPORTED LINK INFORMATION\t\t\n");
-+	seq_puts(s, "\t\t==========================\n");
-+	seq_printf(s, "\t\t Link modes \t\t :%llx\n",
-+		   fwdata->supported_link_modes);
-+	seq_printf(s, "\t\t Autoneg \t\t :%llx\n", fwdata->supported_an);
-+	seq_printf(s, "\t\t FEC \t\t\t :%llx\n", fwdata->supported_fec);
-+	seq_puts(s, "\n");
-+
-+	seq_puts(s, "\t\tADVERTISED LINK INFORMATION\t\t\n");
-+	seq_puts(s, "\t\t==========================\n");
-+	seq_printf(s, "\t\t Link modes \t\t :%llx\n",
-+		   (u64)fwdata->advertised_link_modes);
-+	seq_printf(s, "\t\t Autoneg \t\t :%x\n", fwdata->advertised_an);
-+	seq_printf(s, "\t\t FEC \t\t\t :%llx\n", fwdata->advertised_fec);
-+	seq_puts(s, "\n");
-+
-+	seq_puts(s, "\t\tLMAC CONFIG\t\t\n");
-+	seq_puts(s, "\t\t============\n");
-+	seq_printf(s, "\t\t rw_valid  \t\t :%x\n",  fwdata->rw_valid);
-+	seq_printf(s, "\t\t lmac_type \t\t :%x\n", fwdata->lmac_type);
-+	seq_printf(s, "\t\t portm_idx \t\t :%x\n", fwdata->portm_idx);
-+	seq_printf(s, "\t\t mgmt_port \t\t :%x\n", fwdata->mgmt_port);
-+	seq_printf(s, "\t\t Link modes own \t :%llx\n",
-+		   (u64)fwdata->advertised_link_modes_own);
-+	seq_puts(s, "\n");
-+
-+	seq_puts(s, "\n\t\tEEPROM DATA\n");
-+	seq_puts(s, "\t\t===========\n");
-+	seq_printf(s, "\t\t sff_id \t\t :%x\n", fwdata->sfp_eeprom.sff_id);
-+	seq_puts(s, "\t\t data \t\t\t :\n");
-+	seq_puts(s, "\t\t");
-+	for (i = 0; i < SFP_EEPROM_SIZE; i++) {
-+		seq_printf(s, "%x", fwdata->sfp_eeprom.buf[i]);
-+		if ((i + 1) % 16 == 0) {
-+			seq_puts(s, "\n");
-+			seq_puts(s, "\t\t");
-+		}
-+	}
-+	seq_puts(s, "\n");
-+
-+	phy = &fwdata->phy;
-+	seq_puts(s, "\n\t\tPHY INFORMATION\n");
-+	seq_puts(s, "\t\t===============\n");
-+	seq_printf(s, "\t\t Mod type configurable \t\t :%x\n",
-+		   phy->misc.can_change_mod_type);
-+	seq_printf(s, "\t\t Mod type \t\t\t :%x\n", phy->misc.mod_type);
-+	seq_printf(s, "\t\t Support FEC \t\t\t :%x\n", phy->misc.has_fec_stats);
-+	seq_printf(s, "\t\t RSFEC corrected words \t\t :%x\n",
-+		   phy->fec_stats.rsfec_corr_cws);
-+	seq_printf(s, "\t\t RSFEC uncorrected words \t :%x\n",
-+		   phy->fec_stats.rsfec_uncorr_cws);
-+	seq_printf(s, "\t\t BRFEC corrected words \t\t :%x\n",
-+		   phy->fec_stats.brfec_corr_blks);
-+	seq_printf(s, "\t\t BRFEC uncorrected words \t :%x\n",
-+		   phy->fec_stats.brfec_uncorr_blks);
-+	seq_puts(s, "\n");
-+
-+	return 0;
-+}
-+
-+static int rvu_dbg_cgx_fwdata_display(struct seq_file *s, void *unused)
-+{
-+	return cgx_print_fwdata(s, rvu_dbg_derive_lmacid(s));
-+}
-+
-+RVU_DEBUG_SEQ_FOPS(cgx_fwdata, cgx_fwdata_display, NULL);
-+
- static void rvu_dbg_cgx_init(struct rvu *rvu)
- {
- 	struct mac_ops *mac_ops;
-@@ -2962,6 +3118,9 @@ static void rvu_dbg_cgx_init(struct rvu *rvu)
- 			debugfs_create_file_aux_num("mac_filter", 0600,
- 					    rvu->rvu_dbg.lmac, cgx, lmac_id,
- 					    &rvu_dbg_cgx_dmac_flt_fops);
-+			debugfs_create_file("fwdata", 0600,
-+					    rvu->rvu_dbg.lmac, cgx,
-+					    &rvu_dbg_cgx_fwdata_fops);
- 		}
- 	}
- }
-@@ -3808,6 +3967,9 @@ void rvu_dbg_init(struct rvu *rvu)
- 		debugfs_create_file("lmtst_map_table", 0444, rvu->rvu_dbg.root,
- 				    rvu, &rvu_dbg_lmtst_map_table_fops);
- 
-+	debugfs_create_file("rvu_fwdata", 0444, rvu->rvu_dbg.root, rvu,
-+			    &rvu_dbg_rvu_fwdata_fops);
-+
- 	if (!cgx_get_cgxcnt_max())
- 		goto create;
- 
--- 
-2.34.1
+    https://rust-for-linux.com/contributing#submitting-new-abstractions-and=
+-modules
 
+Thanks!
+
+Cheers,
+Miguel
 
