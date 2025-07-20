@@ -1,163 +1,124 @@
-Return-Path: <linux-kernel+bounces-738418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C574B0B815
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 21:51:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8002BB0B816
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 21:57:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21AFD1898838
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 19:51:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B05ED1785FE
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 19:57:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34F782236EE;
-	Sun, 20 Jul 2025 19:51:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16FAB22127A;
+	Sun, 20 Jul 2025 19:56:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RA6Sy04t"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Y/WJKk4I";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="J0VCTLTo"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D22204866;
-	Sun, 20 Jul 2025 19:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B860D374EA
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 19:56:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753041090; cv=none; b=kqfCVM/vR1rS/ijfCPCjmNaflwcE2E20xkX2t3OwvJ/jlSJUQXlFxgxxv8JlpgBdsFeAC47+4XZVSCDYROfsLPjqLHBZnw3nToftjju7EdeP2e9EdjrBY02daEuiE1kF/GecNFiFxlasOzAOkFmgBkNF5tuU4oVMT1iZ4KhgasI=
+	t=1753041414; cv=none; b=rqiEMkDfazEQcDCjwLUH1D1huIWS/P3O3RkwTffbxcysn2jxvtekf4CWWrn0RzsPGQiodMUJ/zhovPVuYQkJKOvYPV0KWNYaEO+6OTxBd4pKWv3U4Su02LZxxIlYXJ8EXgkREbjiKBw24Kjxg0jM/iOJi4sDssFS0y0RPwEyVJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753041090; c=relaxed/simple;
-	bh=qOsIxA97IITUd+yl9dvmO+aUvms8OxRzYVHcfojfXdg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XecEa4O9YRWmZJY6yLPydzYxOSoxwqtDPmBczfx0gbFrTSdcHlNzV/ivIQwzIP8Pktq163JG8gMT9hnSmB5IpjNPj6KE/YAcyuTf3eIjKLT1Akc1pXhX4vBIiZvgDQLdxDQizQUREkWFIFHIGJi7nO9Ox5yGIJWNWGaK80MyN+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RA6Sy04t; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4561514c7f0so38153925e9.0;
-        Sun, 20 Jul 2025 12:51:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753041087; x=1753645887; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ORKaYSW+0DS70Ut8rRvu8xLUy32VpcjZ83O5mq3akq0=;
-        b=RA6Sy04t2V1nIA+WWuMVwXfGQa04zXZuWCxEdFn9dVc85BGennGzQfVv312IYb/HBw
-         6ytCPUak2wFw1dfNxlxAaoy2pHPz//o/vp53aXi5LWp8UW7PkauHaZuVcfSMmn4NA3By
-         /1czBjq/wSx1kMZl/4D9cWX7o0ADf+mlEwkGJlSF8G0n3BWtwemLx0w4RYojBZ2pAsgj
-         VhwUs74IX+N5BLN3/25CSBlyHf7pC0vBMbLYw1TPuMaVxX+dsEwPfDpyZfCdzXJR/BWM
-         t2XTRnQHdTptzS93XHHln2+7mMA+9+NZWGFIJcCEu+qjBTSYLMLObcI9fqHQ1FSywyFO
-         edLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753041087; x=1753645887;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ORKaYSW+0DS70Ut8rRvu8xLUy32VpcjZ83O5mq3akq0=;
-        b=sh7sn4GyPdCS4CJg/8rrTXvIj6uTWc0nLCIokSOmby64e0KiZPmNV50UY5/jZ6UMcC
-         s/4WsS0pIJBEOk6s9+zEuxM7R9Z+W6uyOLp1oyDTJVx+vkmYqi+6JEQLa78X1uQkzm0Y
-         pq8FCtGKgzyAK0s/NkglYgSW1+BCWqzdRtIqMAEO/BrB7b/ip9j4lAYb0jtkff02fmhZ
-         3rzgXsUQ5UhogRF9hXcEBA84hsxMx9plKa4UbTrbeIAjNsJcnri/zngb7t2OO4zFlPtd
-         0K31h2OSEf9CEDA7Tzv9+bUBQ5kxdf9ufdsOj4CNcaqc4RqmpLzG86w3z0JF9/Y8h/2d
-         BOWg==
-X-Forwarded-Encrypted: i=1; AJvYcCUyH2X5zfZuYTPMcKzgtlsz/gfxAI4n1gtHLLhwJKj/P0yYFJCDvqfA5bTBl6/mSAQKax+0UvGHhxav@vger.kernel.org, AJvYcCWkcSmCgJ1WwbjOb8fEBtr68pLzLFG2yX35OWKl4ZyTSkCD7F49WzRmHxFsnZrhzXHvaY9J/HezQKQ6G3T/@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRYnYtDhAYiH/pSEfty0WAfIwuu9q2/mmO3tUbNbsKfniQthy2
-	FgYtCq691DTozDjApfuNTO+coKVBYn/73av5PMnGdhODGHUDDN/eSkRsdcWgdQ==
-X-Gm-Gg: ASbGncsfQVAKwqYhEG5hZJDcgq61bQgPtjZzi9vg3CWHHqZg0hFNcYqzwaVn+LHKUlI
-	dSbceotwd/ZoZoi8PQpn8M3FbYIeNNHpnA1TiIxdD5FRj01Exms+L9JrPcysPgxlH9WWigVJ/1t
-	iHq7/5FsPek0YrWnYfxfw3C+2Y9XUvoPtj8yFLS1IRIgf2o+WzjXh3INicQpY+ByvS/8UnXmRfw
-	iG/Oy1Uz5kR6jztVM0LFHb6pb1AtmLKVBTs/MKbaeH2PKlhauYH5DUmJKyXG5n5DSYQ4wCNS0/5
-	UAB849Nwoq4VpOGowj8kICjKbSTkwugOkRtfGWNdYcTgwve2DJt7443Xx/yiWl3c5tYBTuQl5Yv
-	CMSt04o3XOiKg0o1lrQaNXP7NiNKcrs56pvAFRAfDuj8m+jY9Pl/BcRha5NAnZK3y5Uc77fcHO3
-	MqEK/iAQGIoe7LRk+8
-X-Google-Smtp-Source: AGHT+IHbROicXgIbFXt4H2trn3TgwRdZgCpt1/XSB+sTWjHrdlpcqHOi+10wzwuYUbnTNKUUz76ycQ==
-X-Received: by 2002:a05:6000:4211:b0:3b5:e714:9770 with SMTP id ffacd0b85a97d-3b60e4c8eb5mr13096381f8f.14.1753041086716;
-        Sun, 20 Jul 2025 12:51:26 -0700 (PDT)
-Received: from ?IPV6:2001:9e8:f12d:7332:185c:3e5:d93f:669? ([2001:9e8:f12d:7332:185c:3e5:d93f:669])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e7f2d4fsm143228585e9.4.2025.07.20.12.51.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 20 Jul 2025 12:51:26 -0700 (PDT)
-Message-ID: <0a2a0fa6-ee82-40be-b62d-847a4ef04626@gmail.com>
-Date: Sun, 20 Jul 2025 21:51:25 +0200
+	s=arc-20240116; t=1753041414; c=relaxed/simple;
+	bh=0hAxktsI6HKh/I8PikjvqrfFM3YzFfIfAe3N2vxrl5c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sCJ77dGtKbrpXY7piLhN66O3+wYgms4kctwVI+FWdc+ZOv1enw6AXPvFbE2/b4JTvH4OynhJgQ68S9jo4Tw1RiZ7PMlt0xOR18RhjLmePrePqk6KXlf69ZHz8UYfYlo2RvamExI+GGPJg12XaDvvOUHmSyBO15GfvtAuaHOLSK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Y/WJKk4I; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=J0VCTLTo; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4blZ6h4g9Cz9tK6;
+	Sun, 20 Jul 2025 21:56:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1753041404;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=uGyE9d/XNI2XDNofnNseSp7f9u/AgFNDjaO+1oT6Aps=;
+	b=Y/WJKk4IELJeIUbeBZ2ccObyM9qNZFDWzHxgHNAUxmXjh2SBQD8HZEsQp5wcBW4XDqCbYO
+	DsqjGYAS37pJ7MViClgMzG/SWyZelGfZazmkVqKrD8M06vjC/C2NPfjnHxydIoCTh0prme
+	fhdbDBMQa4Dt5oWNEP03udW29iBVISYmKiFp5sw54JWeG1kQ82cCVBrjC18jjtoBXJWS0D
+	xLvucGRhVo93BiKIYiEDilCf6sovBTcCTP15G0zh7T1tjH0JwCLLIC4gdZNeyJztIW1U5+
+	UaXxVOqPYbKTTNlCH043Vk6R1ys+lwQqODnV9rrlNxple0WSv8t8l5JF7KuHJQ==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=J0VCTLTo;
+	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
+From: Marek Vasut <marek.vasut+renesas@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1753041402;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=uGyE9d/XNI2XDNofnNseSp7f9u/AgFNDjaO+1oT6Aps=;
+	b=J0VCTLToANOQ/5IWnFbV9PaJPySPMy5ANbH0GDIJtL993IPv9FxZkoMsOmXRlg32D0YrL5
+	OHjaHLWRA05Xc4Yfwf2AyzM5MRlhC9+U8VTA8Biro0ZXh4E30+dQA7IEx4tickTzjRP5Rc
+	kTMdAduwG2Z/gcEx1wzxTvD2P6ODGK0392uAN35WX3d6STkAkdDbjAFsPzxBjmm/UkQ3xN
+	lvty5FFRMOH4MBpkFzQ0bAQFaRGi3sM2PXrVHwejuzhABh0DjbDh8Jzf/Axfkv+kZEwLIm
+	JT7sGar8NzJJ4cwRRaujeIhSbdy2bGC0bLy6t6Fp625JqGzxOmHESLH8JNR7EQ==
+To: linux-mtd@lists.infradead.org
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	Michael Walle <mwalle@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Pratyush Yadav <pratyush@kernel.org>,
+	Richard Weinberger <richard@nod.at>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] mtd: spi-nor: winbond: Add support for W77Q51NW
+Date: Sun, 20 Jul 2025 21:55:52 +0200
+Message-ID: <20250720195625.413715-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] dt-bindings: i2c: realtek,rtl9301-i2c: extend for
- RTL9310 support
-Content-Language: en-GB
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-i2c@vger.kernel.org,
- Chris Packham <chris.packham@alliedtelesis.co.nz>,
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Markus Stockhausen <markus.stockhausen@gmx.de>
-References: <20250712194255.7022-1-jelonek.jonas@gmail.com>
- <20250712194255.7022-3-jelonek.jonas@gmail.com>
- <20250714-magnificent-powerful-nuthatch-afcc01@krzk-bin>
-From: Jonas Jelonek <jelonek.jonas@gmail.com>
-In-Reply-To: <20250714-magnificent-powerful-nuthatch-afcc01@krzk-bin>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-META: ue7ubufmhhkpb9wob9yomuc6gty1oxhf
+X-MBO-RS-ID: 8f9629195e8d8e87a2c
+X-Rspamd-Queue-Id: 4blZ6h4g9Cz9tK6
 
-Hi Krzysztof,
+Add IDs for Winbond W77Q51NW, 512M-bit Secure Serial Flash Memory
+with Post-Quantum Cryptography, Dual/Quad SPI, QPI and DTR . The
+flash part is similar to W25Q512NWM .
 
+Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+---
+Cc: Michael Walle <mwalle@kernel.org>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Pratyush Yadav <pratyush@kernel.org>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Vignesh Raghavendra <vigneshr@ti.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-mtd@lists.infradead.org
+---
+ drivers/mtd/spi-nor/winbond.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-On 14.07.2025 08:00, Krzysztof Kozlowski wrote:
-> On Sat, Jul 12, 2025 at 07:42:54PM +0000, Jonas Jelonek wrote:
->>  properties:
->>    compatible:
->> @@ -23,7 +25,14 @@ properties:
->>                - realtek,rtl9302c-i2c
->>                - realtek,rtl9303-i2c
->>            - const: realtek,rtl9301-i2c
->> +      - items:
->> +          - enum:
->> +              - realtek,rtl9311-i2c
->> +              - realtek,rtl9312-i2c
->> +              - realtek,rtl9313-i2c
->> +          - const: realtek,rtl9310-i2c
->>        - const: realtek,rtl9301-i2c
->> +      - const: realtek,rtl9310-i2c
-> So these two are just enum.
-
-Could you be more precise on that please? Sadly, I don't get what you're trying
-to tell me.
->> +    minimum: 1
->> +    maximum: 2
->> +
->>  patternProperties:
->> -  '^i2c@[0-7]$':
->> +  '^i2c@([0-9]|1[0-1])$':
->>      $ref: /schemas/i2c/i2c-controller.yaml
->>      unevaluatedProperties: false
->>  
-> As mentioned last time, missing constraints.
->
-> How did you solve this:
->
-> "you should clearly narrow this per variant"?
->
-> See example schema. It has EXACTLY this case.
->
-> https://elixir.bootlin.com/linux/v5.19/source/Documentation/devicetree/bindings/example-schema.yaml#L212
->
-> You also need to narrow the number of children.
-
-I missed that from your previous review by mistake, sorry for that.
-
-I managed to narrow it per variant whether 'realtek,mst-id' is required or not.
-But I'm not really able to do the same for the different regex patterns or the
-number of children. Although I'm trying to follow various examples,
-dt_binding_check just fails not taking the regex patterns into account.
-
-Since you have a lot of expertise on that and I obviously fail to find
-documentation that helps me to do that properly, could you give me some hints
-on how that has to look? I'd really appreciate this.
-
->
-> Best regards,
-> Krzysztof
->
+diff --git a/drivers/mtd/spi-nor/winbond.c b/drivers/mtd/spi-nor/winbond.c
+index 63a93c9eb917..dcb6c9ec862a 100644
+--- a/drivers/mtd/spi-nor/winbond.c
++++ b/drivers/mtd/spi-nor/winbond.c
+@@ -343,6 +343,10 @@ static const struct flash_info winbond_nor_parts[] = {
+ 		.id = SNOR_ID(0xef, 0x80, 0x20),
+ 		.name = "w25q512nwm",
+ 		.otp = SNOR_OTP(256, 3, 0x1000, 0x1000),
++	}, {
++		.id = SNOR_ID(0xef, 0x8a, 0x1a),
++		.name = "w77q51nw",
++		.otp = SNOR_OTP(256, 3, 0x1000, 0x1000),
+ 	},
+ };
+ 
+-- 
+2.47.2
 
 
