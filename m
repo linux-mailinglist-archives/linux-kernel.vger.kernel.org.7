@@ -1,125 +1,126 @@
-Return-Path: <linux-kernel+bounces-738371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6BC6B0B79B
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 20:21:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B999BB0B79D
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 20:22:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BEFB7A43F2
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 18:19:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81EBF18974D2
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 18:22:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71DB222156D;
-	Sun, 20 Jul 2025 18:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704C4221FBE;
+	Sun, 20 Jul 2025 18:22:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="M9Wt28zg"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HzhPoVlE"
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D0916419
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 18:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3EB16419;
+	Sun, 20 Jul 2025 18:22:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753035653; cv=none; b=NlG7bhFboevd9q1XyNdawPrX7ot+sOv4dvYIY3GqkzixlBcjBSrunuSf9KwDZAFArkUJ4DHSj8qXKoepmKVAc6h8DJ+88Lw6wsUxUVnwVjgOGOdDFzBuEepi069lOKYaYgl1ykCHl0F4+8rC3yJ8uFXqy5/i31WCB1F/gqkRR14=
+	t=1753035723; cv=none; b=q7oRAiNpXKEL+knI3tMIZWMqy/qZ8d0fllG486rVO0G58rrJuaHS5RsQabhfmU4cGbH8l0Zwirg5wwb3ekDjIFVydq7ZO2cmlzRnA30zTHPlXcmOFTtM3dNKfAWliNIofvZTJdlAM3hNevwyNsvHT5JOe2RjK7M6Z9xLfhowQ9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753035653; c=relaxed/simple;
-	bh=X2xcmctAXQqxWARflhHJ2oCAxDl6tzw9z3RaPPPIj4s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YSnsLdWLRjuYUAqmUysOaKvxWTu9OLV4JVjhsxOgocuNYcdAjl5cT/I8tTRvYyml6SEUh9w9BPOw2tk94H6TxtsJJw9Hv/FAZoq2EubndhnddczQpLLvnHdQBnzUcOEeUa/szsw/NGpcpfSQV08cKSm2Yrrnu2vRddJC5f14AVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=M9Wt28zg; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-60cc11b34f6so8328311a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 11:20:51 -0700 (PDT)
+	s=arc-20240116; t=1753035723; c=relaxed/simple;
+	bh=ltmmTux2NilVGFzUFT13M4dUh2xC9hu/9GSfoDzCZeo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZDr2QlTE861mrpdkcqpP3P72cwb0qAbW1bVxgo98ew2YpyTKhdSyG519XkH5ZCGF/8Hc6AdpdeikB2SkKUwQDCYSImMIkXTsO5f+62kqfW0W+5B5PDLqQx3haCQq6L3fkWFVF/EpQvfW8jzVG5e6umUKKqh7xv/nQ6EYxCwk/M8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HzhPoVlE; arc=none smtp.client-ip=209.85.166.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-87c04c907eeso162515539f.0;
+        Sun, 20 Jul 2025 11:22:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1753035649; x=1753640449; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=7E+cPiM4vfA8KruN+aIJH8LD3OIG3HmIredUxndbjvU=;
-        b=M9Wt28zgLG3Ikir+Sx7jlr167cCUdq2bk5nS9xn5dbeX6MzoGeJCTJy2fPcz0Bt78C
-         GzLs/lpDroklSlXmZJkFDEIGTS3+w6RYwa04o/MJZ53ZmbiDMs2g/pUeyXdxYtzlBEp9
-         TtKRyEV+oCWkEsf2zztM7qRCQ6F2mV/sR7ISo=
+        d=gmail.com; s=20230601; t=1753035721; x=1753640521; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bPYpBPG9Qb1AtXh+0ItStgqrppMKXfwOcPuWkilEesA=;
+        b=HzhPoVlE7s0pGUh3HkbJ8xI2EHfI1h0RP++JKKPwa+KWxta2a/0USbJWDD9jmR646T
+         U8GT/kjibASorY5J/Q2kvqTFqmvOMAslE14oenWGYmBsrU08LA1YGlBXyY+6VpCrXgNp
+         m6Vh86msSRc4V6cdIqly7AZnezUn2n+R1ZiB6/TeI7BC3e3Fzi6h4w57OqeAp1fKrvIT
+         hWSvmcNszQqavufP5rebraS12JnJBjJER0NVZKE0Rjhq56WS1kIrnJwHkP/Zgurj3mSx
+         VUYJrSKT5I0DMReASYhJ0DJxahblPxZiB/m8FMP51wbx0MDb7w2V3xkh+JiISwn1Lhj/
+         jzWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753035649; x=1753640449;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7E+cPiM4vfA8KruN+aIJH8LD3OIG3HmIredUxndbjvU=;
-        b=Qr53MAQQfNP+U8QlujoQmHUcKt7Bj6BXiSuK2ftpfCGalsausOGQRAMULZUQm+J5H/
-         wHKjPkotqz0OsVU3iWixiRNfdxb9KPU4Dtj3OHo4unYdwb+xlCcI2bItpy0PapVMD4UT
-         uFhYNaJi4tJmT57PQEPl8Soa9qUfpuRvyLdEZj6hfzSc8f8h9Ohaf6DTBvpaour8/aFX
-         eoWnYEb8R3ojszo8zQEViwEkC9omIkraXrusXCV30H7yhQ2jLfYHDh44chM3nzyGAvGv
-         AhPl5jqO/h0nHkUMdesrXySd3DsPJ51bDke4M/zQ3RgyvYyX4Kb6ejAlefwrCN9zhgRL
-         dW9g==
-X-Gm-Message-State: AOJu0YzJcyT6vDXNd7M3llbHdU3SeMcVEr19NrqgvNtCFfGJjIEP97GC
-	DY4oXlSkj9naCgBWFgseVsxtuIOc9bhYoGn+kMK6n4DeM4L+I1jxsDjo8/rX/Y8q5iDGhYiAnWf
-	WGISW+Gs=
-X-Gm-Gg: ASbGncuPadpDgIQ17vDg07Wb9XKQNXP+YTLOrEKrR64ImoYiC11Ft36xJ3WSRX9pidJ
-	qMYCG58FDvf1+e9CbBXC3pm32KZjhVgvAqdIirZxlA8oF6qpIzlv9YJOVN/QLb7u8+djITK4jwr
-	Tx1sTHdGyrN6sYoNx+VSGdZQEfXmGYiHoa4hl4eu2IcjMk99HQpJ+RGGqai9khLtOfZKUFUYeif
-	BU2liyDNQSjzXo+8P8V6jCnkZl7Yod/LaOeTzqQbtdg73ASAtB+MGC5ELNUF6YJoP5cR544C+l7
-	8wN2fzd7ee58IMNnDmaw77nBd6jYCo08O+XJ1Sr1SACbBnVd4CwPJSS7B4yuK2Zyp20OVFdBHxY
-	DckX6KJ7bZEBlIQsU7XbMGw3At6ZZ5jPQNfgxeXsLB9U8bhliQ6BxPREPuOoJWMFYHLA3SCWR
-X-Google-Smtp-Source: AGHT+IFtI6EZNCSukf5dtEqi3E328zc0UYtuAITsV4xnRmoN8eLCOOBx6jocYOKil9kmkzBniGKtPw==
-X-Received: by 2002:a17:907:72c7:b0:ae0:a7a1:593c with SMTP id a640c23a62f3a-aec6606bdebmr938450966b.25.1753035649364;
-        Sun, 20 Jul 2025 11:20:49 -0700 (PDT)
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6c7d7778sm529621266b.44.2025.07.20.11.20.48
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 20 Jul 2025 11:20:48 -0700 (PDT)
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6097d144923so7892242a12.1
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 11:20:48 -0700 (PDT)
-X-Received: by 2002:a05:6402:3590:b0:612:e841:5630 with SMTP id
- 4fb4d7f45d1cf-612e8415853mr5213040a12.6.1753035648161; Sun, 20 Jul 2025
- 11:20:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753035721; x=1753640521;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bPYpBPG9Qb1AtXh+0ItStgqrppMKXfwOcPuWkilEesA=;
+        b=vPFjEOZhA65uV71mfZHSSWmxuydQxbzEpngndDJKW8YcUogflO2Lvlno1NpALLjipm
+         LzfcC9IORWp4Lm0iCu6KAXspJHxqmHwH0ourQK8eO4Zyyn1VLSEOUJa95fZiBZ6xh5rc
+         1RIiTrBkkq4QiTQgvLli89gjicQB8g0YO3KV2FGOtKjO/2++xpmnqGRJbllTsm27fn4T
+         4Ji7pp3KJFxut9+LghvRz5FLXsqyacUwJG3QNefSi/QSu1r4mEolMdwgik/49kHQxvBG
+         uGJ1HqaJdJMqe9wt2lNpytXreOP3qbqewHf5Oz8yDNmF6Ec5ZauhBHZ+pXzJ/2ktgPKI
+         pnuA==
+X-Forwarded-Encrypted: i=1; AJvYcCUqq1Z/3xmAlzUMBT+oYTc7GS/LlgXKqiCflzxZdK9ODZWPzCxiXFvA63bId5aUtqXaGSn31H2bwM9qyZw=@vger.kernel.org, AJvYcCXlgZ9ZZ9MWoGrHtiTXVOL8a87H/3zOWwwvkvBEFzcx1SG5XFxYmaXCMNRc+3SkmYSPSGjCze94JICLyzu58zKe@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDxLavbo9Yr+PPHrWngOGVT6C6g5jskH5I6nnzpqLDMDM1V9Vm
+	WNNmsTJNJNma5mpQpk1ueRCGuR6/+xI+w8WrQ6V8H4elxwDp4CkUJakO
+X-Gm-Gg: ASbGncvbJA5Cuiz1KJwpKF33ARF7cLjRouTUnGA7cLPeSbfvaDO/rI5eOrvi1EfAaVa
+	LDBUa6RnW0jmZlhNqvT8Rdc8HRmrW+mfg73vHPre54y9c/a3SswwaMlBTmA9+Xr7pnw4jswYh7b
+	MIqTMk5KJEKfoUedsqczgUhJeGO+Z/5NM4tAYgFw2v+ogS3S7GPDqnV5DMRNxHORbEUNq/Rbizd
+	9g2O+x3DhDhXmDJvC0KgBNOoHe1ZrN3QlcYMa8+38YiA2ronAFxlfl/M+fm5MhIfJkOTBKPP+VI
+	hE4zCN24nXlmJFedldKaa+TOpNN3O5oTqYXNHipjWozr7hzpDckpRCMyptJwWKnW49QGkdDXedC
+	qh8vMgEnlYkzl6tJTP6iLPz4=
+X-Google-Smtp-Source: AGHT+IFJ7FuxrZW3SRuCNiWZXW68IyTRjwhtFxBNgTGeNBIS1dC95giMClSGddvXe8EzMHgEMN7k/A==
+X-Received: by 2002:a05:6602:4802:b0:86d:9ec7:267e with SMTP id ca18e2360f4ac-879c28846dfmr2342066239f.4.1753035721327;
+        Sun, 20 Jul 2025 11:22:01 -0700 (PDT)
+Received: from harshPC ([2601:280:5001:e810:5a5f:50dc:a4e2:586a])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5084c801ff8sm1406342173.55.2025.07.20.11.22.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Jul 2025 11:22:00 -0700 (PDT)
+Date: Sun, 20 Jul 2025 23:51:59 +0530
+From: Harshal Wadhwa <embedkari167@gmail.com>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: shuah@kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] selftests: firmware: Add details in error logging
+Message-ID: <aH0zxwC8eJ2GhcXu@harshPC>
+References: <20250714212650.17935-1-embedkari167@gmail.com>
+ <934dae5f-88af-41a3-9a0e-3aa5311b8f11@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <175301303546.263023.1426155806374119244.tglx@xen13> <175301303716.263023.8607719725649129120.tglx@xen13>
-In-Reply-To: <175301303716.263023.8607719725649129120.tglx@xen13>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 20 Jul 2025 11:20:31 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiMNdBYJcDo47riSP5=_Re4A-itmBwBfsnDxZqvfn5tHQ@mail.gmail.com>
-X-Gm-Features: Ac12FXwbWTBHRxWbWfHTIyyqB9UtzEhniY05n2kH6iIcaQ0gyCIJyg3cfGKOQ4o
-Message-ID: <CAHk-=wiMNdBYJcDo47riSP5=_Re4A-itmBwBfsnDxZqvfn5tHQ@mail.gmail.com>
-Subject: Re: [GIT pull] sched/urgent for v6.16-rc7
-To: Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <934dae5f-88af-41a3-9a0e-3aa5311b8f11@linuxfoundation.org>
 
-On Sun, 20 Jul 2025 at 05:05, Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> A single fix for the scheduler. A recent commit changed the runqueue
-> counter nr_uninterruptible to an unsigned int. Due to the fact that the
-> counters are not updated on migration of a uninterruptble task to a
-> different CPU, these counters can exceed INT_MAX. The counter is cast to
-> long in the load average calculation, which means that the cast expands
-> into negative space resulting in bogus load average values. Convert it back
-> to unsigned long to fix this.
+On Mon, Jul 14, 2025 at 03:39:47PM -0600, Shuah Khan wrote:
+> On 7/14/25 15:26, Harshal wrote:
+> > Specify details in logs of failed cases
+> 
+> How about changing the above to:
+> 
+> Improve error messages adding details on failuires
+Will change this in next patch
 
-I've obviously pulled this, but considering that the thing isn't
-actually really an unsigned value in the first place, and all users
-seem to cast it to 'long' anyway, there's an obvious question... Why
-is it unsigned in the first place, rather than just make it be the
-more natural signed type?
+> >   	fd = open(sys_path, O_WRONLY);
+> >   	if (fd < 0)
+> > -		die("open failed: %s\n",
+> > +		die("open of sys_path failed: %s\n",
+> 
+> Why not just use sys_path as a input parameter to die()?
+Sure, that's great. Is there a way to test these changes ?
 
-At that point, the _size_ of the type wouldn't even have mattered
-(outside of actual overflows, of course).
+> > @@ -129,8 +129,8 @@ int main(int argc, char **argv)
+> >   		die("error: failed to build full fw_path\n");
+> >   	setup_fw(fw_path);
+> > -
+> 
+> Why did you remove this line?
+> 
+Will remove this change.
+> >   	setvbuf(stdout, NULL, _IONBF, 0);
+> > +
+> 
+> Why is this line added
+This too.
 
-Of course, regardless of all this, if it does negative due to
-migration, it looks like the calc_load_fold_active() calculations end
-up being a bit nonsensical. Not that it looks like that matters
-either, but it did make me go "Hmm - people seem to _assume_ it's
-always positive, it has a _type_ that is always positive, but then we
-have those odd hacks for the fact that it can actually be negative".
-
-So none of this seems to _matter_ (outside of the "unsigned int got
-*really* mangled" issue that this pull fixes), but it's all a bit odd.
-
-             Linus
+Thanks,
+Harshal
 
