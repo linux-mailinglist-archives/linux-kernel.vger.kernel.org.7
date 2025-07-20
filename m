@@ -1,107 +1,127 @@
-Return-Path: <linux-kernel+bounces-738281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 708C7B0B6AD
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 17:25:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56134B0B6A4
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 17:24:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C43B23BB074
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 15:25:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC263188A99F
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 15:24:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF24C21B9E5;
-	Sun, 20 Jul 2025 15:25:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E963321C19D;
+	Sun, 20 Jul 2025 15:24:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="B5lqnyDC"
-Received: from forward502b.mail.yandex.net (forward502b.mail.yandex.net [178.154.239.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SZxZFjP0"
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA4B19049B;
-	Sun, 20 Jul 2025 15:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FA51C6FFD;
+	Sun, 20 Jul 2025 15:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753025145; cv=none; b=IDOR6jR6z1/6su1Q/jCUtjYa1SV2DwmgXz4Bks+ats7ug7SPmWsvirs67Map/G42PkbkmpoJ3U0WgyAXI35W2mB2iI/pDUcRJv4tuvPDaqmgMJnZ+iaOHlV9RmupOkMlXcU4kzWTiIuXBLTmhjCUMuLF8EFtvlsuBJzXKx/Bmiw=
+	t=1753025053; cv=none; b=Rfj6Rp7VkX2vSjY0d7hdxYrIrsehQceS+1+uXbvgF3+3K+qqaoayP6f9ftXxFSzY0WplYn3qb2jDPgBnp7fjxLe0j8ndiWANaqQADWSe5p1I/ThODcPmJUa521DXeLNlrG8SoO9MbGkZ6mVNSJOaB6OCFlOs2im9YETa0W/Wvdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753025145; c=relaxed/simple;
-	bh=uklG1HH6Nla92HVa7baSiFuu87JGy5bL2PCwTZplo3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dcLbMjtbnZ97GVhZz/zp8T+/8lWEIYUdSLngksScBDAGOnA9Ep5Tu1GjQSPzYzxlQkXKN++WMZ6UwVHg4Sb9mj5JLXWK99tnYAQoAVqWh1aoiaDDWtwLlnskssqh0/QEu8rf86/FYeT84jdTDDuXvkoHQMYtAVPq26ZtSMOBAcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=B5lqnyDC; arc=none smtp.client-ip=178.154.239.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
-Received: from mail-nwsmtp-smtp-production-main-85.iva.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-85.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:1baa:0:640:41d2:0])
-	by forward502b.mail.yandex.net (Yandex) with ESMTPS id D584880CAB;
-	Sun, 20 Jul 2025 18:17:27 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-85.iva.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id NHSJgBjMZa60-PKKBOdlr;
-	Sun, 20 Jul 2025 18:17:26 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
-	s=mail; t=1753024647;
-	bh=Hj7V4Z7PBdVEu39SNeu0UOxNfchWsPyzVJHxT+Qdctc=;
-	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
-	b=B5lqnyDCzrXD9KG8vgTMKl/8o5Q4t0zQs4DXJu3h2PTqBWhCSdUnCEIMNJcgN7O7p
-	 XW3PP9QL62AStUYmIddVKCoWzZDmNJhXkPuPIYOiZym41LJd8MQbt4FcICzX7LvPQk
-	 XIjt9OcmS8gss0jbcoAPKdW3V+IKdIuQ3xGYcG2U=
-Authentication-Results: mail-nwsmtp-smtp-production-main-85.iva.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
-Date: Sun, 20 Jul 2025 18:17:21 +0300
-From: Onur =?UTF-8?B?w5Z6a2Fu?= <work@onurozkan.dev>
-To: "Benno Lossin" <lossin@kernel.org>
-Cc: <rust-for-linux@vger.kernel.org>, <dakr@kernel.org>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, <a.hindborg@kernel.org>,
- <aliceryhl@google.com>, <tmgross@umich.edu>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 0/3] rust: make various `alloc` functions `const fn`
-Message-ID: <20250720181721.54ab9faf@nimda.home>
-In-Reply-To: <DBGYNQJJ0JI6.P280ZLVZUSO6@kernel.org>
-References: <20250720094838.29530-1-work@onurozkan.dev>
-	<DBGYNQJJ0JI6.P280ZLVZUSO6@kernel.org>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-unknown-linux-gnu)
+	s=arc-20240116; t=1753025053; c=relaxed/simple;
+	bh=ejLPH1uyFcaefJAlprHO4BVLW8FCx6dpRTX9z1JmQcI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SAn+6diIqJPW1GRmk2sGj6hUsD+5nawhwTmkTZeIMOgEjr6yrw/7svP7HiBx3qjMrIAV6xI8rtPnOd+DDo1iGr4k2UwhCL65/h5TcQ1nq6OgAS+KzPkkh9hVyuxqiZSxPs3GNWcS+tYduzMT+Puj/m7nDIeZ94AyOQ+r6jKWc+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SZxZFjP0; arc=none smtp.client-ip=209.85.222.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-884f7d29b85so1889000241.1;
+        Sun, 20 Jul 2025 08:24:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753025050; x=1753629850; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NVp2kMB/w6wTX2T2u1oRumzIS3t/oXG521zmpwRXomY=;
+        b=SZxZFjP0rVV1pjEH3UpUMt+bxP3Vqst3j6B+DJQtCoaQjhQwMqsdzYcyEXe2m06j2R
+         I6aUjJynA9pA62VTInJiHFpmUCcsZFOc0OF+O8CCcSMerjsx1Mnpk1TeW7Qk4+dzy5u7
+         zogTEixcPQwYCuNKOZPXMdPIkeVlX+pJkorz2zBRy+3exMuFyiEj9uMjVLXrdlcSCg9e
+         alx5H/VubnCZ+BvH2wEUvr0t+0oqXiI0Mbh8A1ze3Iz1cVusKrISVGO5VSigvjNAPMHj
+         afoEG/c337E0rO46uCDckY9GcXrmIbsKdT80dbY09xIR+ZLPereyh2NwY0AJDlMuf8OQ
+         ygIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753025050; x=1753629850;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NVp2kMB/w6wTX2T2u1oRumzIS3t/oXG521zmpwRXomY=;
+        b=JoqaQ5Fot6myp2LTz/AISbQTcyqkfYWmOaUQ5qTP/jU+PWx2a+9yAAu7GoPMCx5p02
+         Il2twVLYCJE7qUNBx2pCbaHoD9yvShLhsD9Ma0T1ivqi/hVzDJweDVYztMhS6X9QuFov
+         cvVZIDVNFv454F8MXu0w4fvaIIYftUzXYwsmba/QlAs+r6dMWx3zfobA2/wAEijR/yNI
+         O34JYsQRmBcsWNDPSn09zqydkBoTTkCRKXLrTpbq8ICzBrrUGFQWOJlWjwyS9LfTLkjJ
+         0N9RhuGfKH2C4TXc6kCW45ZQfhIDWvJ/Ur7yca+AZ0b7a/4U/1k0AmfA4QCzUAzQWzmW
+         fU6g==
+X-Forwarded-Encrypted: i=1; AJvYcCUPWjk3cez5/+ZCX3H/sv+84alKC4S/mmxgq5h6F/JE4EUiu3XILT2sdQIPQOm6Q1ZCDIfoEFaxmGs=@vger.kernel.org, AJvYcCXzXbDl9imxDdh54F+B/v6zil/rKrhd1q+p2L1MbHn8BqrHmtH/o3LrY4BfVEjkz7x7ABtY0m/+PRH/ssYS@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywiba4/zICHYwtj5qBQKNCBCKurpGOpNo7rMIPQ70JDYse4tO70
+	GBDr/qN0nJNJnTTNf9taLgBonC+PErh5fo8dzvAhmET9VzstcBtXw5G6
+X-Gm-Gg: ASbGnct23soKdOh3G0PR6bJl1h1iH385OvrZMKnWW8iFWpj/Zt6RCoAaDkccoX6Keu8
+	tSdTQrVN9bEwU3a987C0gas00M6ES4ALn06Akv9C5E080q0wS9CP8/ZD24bvSvd/a+dC/woWZrM
+	duoTQnTtzUz/eLcVeKTWYQt2HvE+Bp7+kao8m9n2oTieZzEkLgPK1VszIh2xUZ5qpyRKl/m8kCc
+	Lx8l69tZrJMhdw/ZKxxy+caa6aYC5B9Wcs2BSMZF0rGxpYrnK0y2BnwzswUkhl14DsBHvIHZFnc
+	D5LY/vBsJIbQdNuLdsxxbKX4+XJSkuhulNl957CbvCg1XZ9xZBfYosmB2V737K1Bt8QHDaJ6Hnr
+	PCRCcbHNWZ+RMsorjXR+WJ4SwJYe+SN6Dx4jWUvfNe/zXx0vyfUdOV1Z0l0n0YJXFwycRyzaSR0
+	ibTDdjMA==
+X-Google-Smtp-Source: AGHT+IHRMhGcnZqIbnc4e1wX2YKxqCMc99MYrRIYYOQDLTChJMGHa152DiivvQgHsQw0yB1RXnRfOQ==
+X-Received: by 2002:a05:6122:238c:b0:531:2d55:7f54 with SMTP id 71dfb90a1353d-5374f55bb40mr6219747e0c.3.1753025049669;
+        Sun, 20 Jul 2025 08:24:09 -0700 (PDT)
+Received: from 9950X.localdomain (syn-142-197-132-170.res.spectrum.com. [142.197.132.170])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53764eedd3bsm2157582e0c.5.2025.07.20.08.24.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Jul 2025 08:24:09 -0700 (PDT)
+From: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	Pavel Pisa <pisa@cmp.felk.cvut.cz>,
+	Ondrej Ille <ondrej.ille@gmail.com>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	Frank Li <Frank.Li@nxp.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-i3c@lists.infradead.org,
+	linux-can@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Luis Felipe Hernandez <luis.hernandez093@gmail.com>
+Subject: [PATCH v2] docs: Fix kernel-doc indentation errors
+Date: Sun, 20 Jul 2025 11:24:00 -0400
+Message-ID: <20250720152401.70720-1-luis.hernandez093@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, 20 Jul 2025 16:43:49 +0200
-"Benno Lossin" <lossin@kernel.org> wrote:
+This is v2 of the patch to fix kernel-doc formatting issues.
 
-> On Sun Jul 20, 2025 at 11:48 AM CEST, Onur =C3=96zkan wrote:
-> > This patch series makes various functions in the
-> > `alloc` crate const fn.
-> >
-> > Each patch corresponds to a different module within
-> > the same `alloc` crate.
-> >
-> > Onur =C3=96zkan (3):
-> >   rust: make `allocator::aligned_size` a `const fn`
-> >   rust: make `ArrayLayout::new_unchecked` a `const fn`
-> >   rust: make `kvec::Vec` functions `const fn`
-> >
-> >  rust/kernel/alloc/allocator.rs |  2 +-
-> >  rust/kernel/alloc/kvec.rs      | 10 +++++-----
-> >  rust/kernel/alloc/layout.rs    |  2 +-
-> >  3 files changed, 7 insertions(+), 7 deletions(-)
->=20
-> This looks sensible, any particular reason for why you need them
-> const?
->=20
-> For the entire series:
->=20
-> Reviewed-by: Benno Lossin <lossin@kernel.org>
->=20
-> ---
-> Cheers,
-> Benno
+Changes since v1:
+- Convert problematic sections to proper ReST list format instead of 
+  just fixing indentation (feedback from Randy Dunlap)
+- Add GPU driver fixes (additional files with same issue found on latest
+  build in linux-next)
+- Remove SCSI driver (already fixed in current tree)
 
-Personally, I don't have a specific reason. I thought the change is
-harmless and might extend functionality for other people in the future.
-It could also (although less likely) help the compiler optimize things
-further.
+---
+v1: https://lore.kernel.org/all/20250703023511.82768-1-luis.hernandez093@gmail.com/
 
-Regards,
-Onur
+Luis Felipe Hernandez (1):
+  docs: Fix kernel-doc indentation errors
+
+ drivers/gpu/drm/drm_gpuvm.c              | 16 ++++++++--------
+ drivers/i3c/device.c                     | 13 ++++++++-----
+ drivers/net/can/ctucanfd/ctucanfd_base.c | 12 +++++++-----
+ 3 files changed, 23 insertions(+), 18 deletions(-)
+
+-- 
+2.43.0
+
 
