@@ -1,85 +1,98 @@
-Return-Path: <linux-kernel+bounces-738438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEFC0B0B84C
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 23:09:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 863A8B0B84F
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 23:12:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07D377A2852
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 21:07:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B297D17621B
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 21:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CE04221F1C;
-	Sun, 20 Jul 2025 21:09:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A0022422E;
+	Sun, 20 Jul 2025 21:12:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fOj0nVoU"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gPINocQd"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37963595E;
-	Sun, 20 Jul 2025 21:08:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83952382;
+	Sun, 20 Jul 2025 21:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753045741; cv=none; b=je2fOENv3ME57FaP3Cn16Hivl0F5aFFNHrMguwstyLrOCuUW4O254N4w1N1/MeBPv4u9S+LyqlqzAuwcZkRJCtBsRZvBSc9+lYD/dS4HcwwXMJgZ/by5WwISdgGotP/YhIWlNMHvjaY7Vav12IYuFDIQVguVPssW8fafhJuvStc=
+	t=1753045920; cv=none; b=BvZjE5JKCO6EOup5JvviHBmQS6OSyFmYX6SuQ37UfRVJ9T95W1Sf52WrmKVNAF+n7RkPdQTiQXdItJ1HNE8tLdyGFYV2C0d0q4WqqaijQ54IoueVvjH0vj6i/WWXcSLo2WWeePm3n3MvICFUiVItm8L53uC9X62hTAaRjasMJxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753045741; c=relaxed/simple;
-	bh=3YyaHadaYQ9QGWQ/6YQpAZlT1JPPS49UsN1VwPYG6Fg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SMbJK/5bwg4r/Mg2RbBrtCDqjLyVuKbo/Gdfsrw3+7D13ZUYYoCwFFOF03SyCfKxKvK3XCQncZM8e8Jj9dBcmfYQ3/U8cM3BalpuAFgMaj7KL+d+UyM4F84Qzj/07v48HWiDrwmNbG1/uc3+SsLwLRGslehcfpXhpKJrYZnCQsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fOj0nVoU; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-60780d74c8cso6587771a12.2;
-        Sun, 20 Jul 2025 14:08:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753045738; x=1753650538; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0TOoMF8RbvR0T32mWJ/zIZV4e9ontZrGLG4u2/MjTOY=;
-        b=fOj0nVoU3c0D8Jz9mh6xS3L50hfGJDUykKz7FMkFBnVJXqfDTrB4xK4ZxhjxNHvnag
-         iH9yttb8RXkB7uPlnYPtrnSO0Zx8q1mhNWASrSXRU2CrZkGyikFNQte5YPbiofuXeCgQ
-         x/llWG6tT3AXCqlk1J+5wbqD5xbj7R23GI5aAz1yeedFSxbTXuL63GSUKScORAvSB/Rm
-         lrN49Tv3Ch3yiFdoFTts7H+C8KpU8crGRPl0uNEeRYKfurtTjTnWUwQwJLDebOfWAT1i
-         JdH9BDWrqi3YbI2anfqDFQQ3S7JkT2SF4vYunEWLNgwxwiJCK6l/eeGaD3HTAHu2OhLf
-         h9rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753045738; x=1753650538;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0TOoMF8RbvR0T32mWJ/zIZV4e9ontZrGLG4u2/MjTOY=;
-        b=cPlf6kxi1vP7bmiqAwhlkO2NbdrVRUQWtzpCz6BUju1osDzqvHlcITVx1KIPnisOxo
-         DGWVDKAhNsbm235wVhCPIXeUjoLvfSgrKDcvKk++oa6rX25pZ+r0MClRk4suWTO4xg12
-         ov2ntEG52ApZJrxylJp/vvc54/FFdErEy3tBHf8+5v88WMqfdfDQRERdeSWJyvkB1rzQ
-         UAgvb6gJlZItA8qlsbk5dTd8FgadXk+NfN+7E1+tF6z6beawmd2JdbZCH1/QROWKcN63
-         Vc1/4ymLbdL5vH47fPge6ep9ThYm9bkY2QF7rs9MAt4r/UYufUE+XcSanrl39Q4Mc2hP
-         kuvw==
-X-Forwarded-Encrypted: i=1; AJvYcCWAi9l2Zp1XgL91J2FW6c6Y3GJzrvoR2M/dMAwtNgXz6vSEJ8K84U3DmUjyTATQIbx0p2GKLso8VFvnrGk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEwqfCZ6RHWxm6Dua3PXLIaVOKi3pp3NBvy3nPvnLTyLG+GyEg
-	hmCDDCz+z4UGt8kooYGbuna3A3mxIXp96NkiG3CjaiVS9ahnTe1a6Lwo1TRfRZXA
-X-Gm-Gg: ASbGncvjMQzK/igMU5mBTKDgOFD1ZKzBXXCJPegzMFSOdphlUtOvMYJsAWjekeEy55X
-	GWtmA+Jj3z+KIHXx+/u1QwDFpFk9FqGpgHMcXqPd1JZ9NmqxHFsgixlWOejsCsgMaqK4MbuVCLy
-	p/UsVCu+Jlx763BEpqOBgOOs1i9Z1auM0deQnqJc1lwsvpdGMN6Jgd8InIXDkQ6Vu6vOXIEnUWv
-	tNu/BIvmF2tjSf8uxzVWr91IpPsf8q1FpdMWxDD4eK+38x+YWAV1g551Q03J4ckcqzHEyRAwAFr
-	LcY3HOJB6FjLLelm+PE1OQ5JmGGDK1ZEbHLmoFcgik9OSk8fzQdAc+A6hGB2Oluko58zx6JIH06
-	41tB+6BsOWYJHXxnbJALrInBQPIa6xNlmtgFmfkHScoxDTIxsxR4fZFr39CcSECvtQsmEF/XBYa
-	T3
-X-Google-Smtp-Source: AGHT+IHtbETpKbsgLT5W1SF5UsP85+81MzUA6+deNrynboG7g6Cvqc0eivuSVjRihU5CPPVCOi9iDg==
-X-Received: by 2002:a05:6402:2341:b0:607:e3ec:f8ea with SMTP id 4fb4d7f45d1cf-6128591955amr16371634a12.6.1753045737723;
-        Sun, 20 Jul 2025 14:08:57 -0700 (PDT)
-Received: from asterix.home (host-80-116-76-192.pool80116.interbusiness.it. [80.116.76.192])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-612c903fd6esm4413441a12.45.2025.07.20.14.08.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Jul 2025 14:08:57 -0700 (PDT)
-From: Marco Tormento <mtormento80@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Marco Tormento <mtormento80@gmail.com>
-Subject: [PATCH] USB: hub: Move typec deattach before children disconnections in usb_disconnect()
-Date: Sun, 20 Jul 2025 23:08:47 +0200
-Message-ID: <20250720210847.30998-1-mtormento80@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1753045920; c=relaxed/simple;
+	bh=+RYJ0uwX/zw8nqvpp0fJDSFLWYQQ70j0FHtcEbEAAQQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=anhYmkl/BGqnhV/i16i8ocNcbmQ7a+H9z/DdJ66TT+BwOvKWqPPxsYCFLL0ePRSioJ0Ro04LyijZKK1QGRatdl4VaXP8myXTcyrWGKPh6jpk3MMWXL4S6ypFz7rDvOBxCj/zIC15K8e82oUcZKidVpB6QiTzwtr15gIPAbt29Z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gPINocQd; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56KJbbx8010184;
+	Sun, 20 Jul 2025 21:11:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=P3zOlRzIaZNMSPHi9ly3Guwl7F068VzL0s3I/dzFF
+	Dc=; b=gPINocQdX6mad3SLpCo4UVyli5u6ZL9RBcZPe1j7JLK1jG2hNzbXQ9mGC
+	9GSi2VPBPE9jDsep/sdGGcIUqbzxsZ+v7auGq2wwRw/mWB8OGrEO9G/VL6xMuKVL
+	ec3dyhUpjTGUu5fa1zQpQCpH7CxIzc+1ANuZcQusvttM7kpKBJMDkCgHShgiDyVB
+	d6kCpU+vz2oXzKAxA2r0ZOiDcz3nNyC7kyS+kwe4878UQL//IJC0uec87atxnAhm
+	qtYnWokt1/EUlP3iQxhymLkssC0Rk+VTpYHijFA2ysVrOOicfQxolGjxbLhMeNWQ
+	7cjSTvzZKTu7npozzMqSBlRceDVbw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4805hfnjkt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 20 Jul 2025 21:11:49 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 56KLBmmj012353;
+	Sun, 20 Jul 2025 21:11:48 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4805hfnjkr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 20 Jul 2025 21:11:48 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56KGQNrv025138;
+	Sun, 20 Jul 2025 21:11:47 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 480nptbeta-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 20 Jul 2025 21:11:47 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56KLBf6D34472334
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 20 Jul 2025 21:11:41 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0954C20043;
+	Sun, 20 Jul 2025 21:11:41 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BB74F20040;
+	Sun, 20 Jul 2025 21:11:40 +0000 (GMT)
+Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Sun, 20 Jul 2025 21:11:40 +0000 (GMT)
+From: Halil Pasic <pasic@linux.ibm.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Alexandra Winter <wintera@linux.ibm.com>,
+        Thorsten Winkler <twinkler@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Sebastian Ott <sebott@linux.ibm.com>,
+        Ursula Braun <ubraun@linux.ibm.com>, netdev@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Halil Pasic <pasic@linux.ibm.com>,
+        Aliaksei Makarau <Aliaksei.Makarau@ibm.com>,
+        Mahanta Jambigi <mjambigi@linux.ibm.com>
+Subject: [PATCH 1/1] s390/ism: fix concurrency management in ism_cmd()
+Date: Sun, 20 Jul 2025 23:11:09 +0200
+Message-ID: <20250720211110.1962169-1-pasic@linux.ibm.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,148 +100,116 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIwMDIwMyBTYWx0ZWRfX6s5dvxnjZSqi
+ +MkDIPLKEK0Wn5nxJxuVPXQyS/QtN4dCbc4ZmFezxHfm3FBVOhPc+slASebCGykmIeoMS6L+d88
+ /yVLQURwu463r0GvFL6LGNjyxrNhs2lhQ/WsCsrUtdVNB9cidIt8Fg7dLrwWjrawo/hjFTrR5l/
+ c3OYCVvtRFSw/YQy1/MISDOYQ3RlErzzCD9c5hqUSQrUMqqijo3chYo6jvyRTRlT7lfNKLISyWv
+ 3IRO5ezD/8hYG/qqfyjoysIvgVd1rEig39RxjyS5O5noP90W2U3eonOyf05PZuwD9xoyZV0de9n
+ ZKGrhZF12V7v98ySuBPEWAcspm42zW/wWq4Fi2ZVfNRgPkuusrZOesrqrzBhPm64kgOmEmAGxPy
+ fwH2Io8YoN+nI75n8x5onFwTcpbhGJlX7zPbmdnQXqPCvP2UvjAl1GkvpDw8ASJD0sxvHOVQ
+X-Proofpoint-GUID: NmpMoyYLtCPmimDwCl2_27Nx-io7ZIRY
+X-Proofpoint-ORIG-GUID: L4y0NCyNFhSvVCMg5pD5FXsPwnD-N3Z7
+X-Authority-Analysis: v=2.4 cv=X9RSKHTe c=1 sm=1 tr=0 ts=687d5b95 cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=qzj1OK7t_Lbxma-giU4A:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-20_01,2025-07-17_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 priorityscore=1501 adultscore=0 lowpriorityscore=0
+ phishscore=0 malwarescore=0 clxscore=1015 mlxscore=0 spamscore=0
+ suspectscore=0 mlxlogscore=999 bulkscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507200203
 
-I have a Thinkpad T480s, it has 2 USB typec ports one of which is part of
-the thunderbolt connector. On the thunderbolt typec port I plug a BenQ
-EX3501R external monitor that has an integrated USB hub with a couple of
-HID devices connected to it. On the other typec port I plug an Apple
-Macbook USB-C power brick.
+The s390x ISM device data sheet clearly states that only one
+request-response sequence is allowable per ISM function at any point in
+time.  Unfortunately as of today the s390/ism driver in Linux does not
+honor that requirement. This patch aims to rectify that.
 
-Steps to reproduce the issue this patch is supposed to fix:
-- plug the power brick into typec port
-- plug the monitor into the other typec port (thunderbolt)
-- unplug the monitor
-- unplug the power brick: get a warning stack trace saying "kernfs: can not
-  remove 'typec', no directory" in typec_unregister_partner()
-- plug the power brick again
-- plug the monitor again
-- unplug the monitor
-- plug the monitor again: get a warning stack trace saying "sysfs: cannot
-  create duplicate filename
-  '/devices/platform/USBC000:00/typec/port0/port0-partner/3-1'" in
-  typec_partner_link_device() called by typec_partner_attach()
+This problem was discovered based on Aliaksei's bug report which states
+that for certain workloads the ISM functions end up entering error state
+(with PEC 2 as seen from the logs) after a while and as a consequence
+connections handled by the respective function break, and for future
+connection requests the ISM device is not considered -- given it is in a
+dysfunctional state. During further debugging PEC 31 was observed as
+well.
 
-From that point on if you do the following steps a couple of times you get
-a kernel oops with a general protection fault in
-typec_unregister_partner(), system becomes unstable and a restart is
-required:
-- unplug the monitor
-- unplug the power brick
-- plug the power brick
-- plug the monitor
-- unplug the monitor
-- unplug the power brick
+The kernel message
+zpci: XXXX:00:00.0: Event 0x2 reports an error for PCI function XXXX
+is a reliable indicator of the stated function entering error state
+with PEC 2. Let me also point out that the kernel message
+zpci: XXXX:00:00.0: The ism driver bound to the device does not support error recovery
+is a reliable indicator that the ISM function won't be auto-recovered
+because the ISM driver currently lacks support for it.
 
-If I plug the power brick to thunderbolt and the monitor to the other typec
-port none of the above happens.
+On a technical level, without this synchronization, commands (inputs to
+the FW) may be partially or fully overwritten (corrupted) by another CPU
+trying to issue commands on the same function. There is hard evidence that
+this can lead to DMB token values being used as DMB IOVAs, leading to
+PEC 2 PCI events indicating invalid DMA. But this is only one of the
+failure modes imaginable. In theory even completely losing one command
+and executing another one twice and then trying to interpret the outputs
+as if the command we intended to execute was actually executed and not
+the other one is also possible.  Frankly I don't feel confident about
+providing an exhaustive list of possible consequences.
 
-I tracked down the issue to the following logic:
-- power brick is plugged in
-- monitor is plugged in
-- when I unplug the monitor in usb_disconnect() hub_disconnect_children()
-  calls usb_disconnect() recursively, and this results in
-  connector_unbind() invoked on all connectors, which resets
-  port_dev->connector to NULL on the ports
-- typec_deattach() is called for each device that has a parent, which in
-  turn should fire typec_partner_deattach()
-- port_dev->connector is NULL though, so typec_partner_deattach() is not
-  called and port->usb2_dev is not set to NULL even though the hub device
-  is actually gone
-
-Now if I plug the monitor again:
-- since the type_partner_deattach() was not invoked before, some links are
-  still there and typec_partner_link_device() complains
-
-If I unplug the power brick instead:
-- ucsi_handle_connector_change() is invoked and typec_unregister_partner()
-  is executed, port->usb2_dev is not NULL so we try to unlink the device
-  from the partner with typec_partner_unlink_device(), but 'typec'
-  directory doesn't exist anymore so it fails in the sysfs_remove_link()
-  call
-
-The reason why at some point kernel oops when I unplug the power brick a
-final time is this: in typec_unregister_partner() when
-typec_partner_unlink_device() is called port->usb2_dev->kobj ref count is
-zero (the device is gone already), so when accessing usb_dev->kobj fields
-it's just a matter of time and memory will be overwritten with something
-else, which will cause access to protected memory and an oops.
-
-In order to fix the above I tried moving the code that handles typec
-deattachment from the parent before all the disconnections, this way
-typec_partner_deattach() is invoked for the partner, port->usb2_dev is
-cleared and typec_unregister_partner() is happy.
-
-Note
-It's still not clear to me why the hub device of the monitor is linked with
-the typec port partner of the power brick in /sys/class/typec. The
-thunderbolt controller surely has something to do with it, since it doesn't
-happen if the monitor is plugged into the standard typec port instead, but
-I haven't fully understood why it happens yet: maybe this is the actual
-bug?
-e.g.
-Plug the power brick:
-- /sys/class/typec/port0-partner appears
-Plug the monitor:
-- /sys/class/typec/port1-partner appears
-- /sys/class/typec/port0-partner/3-1 appears, which is the monitor hub
-If I plug the monitor first and then the power brick
-/sys/class/typec/port0-partner/3-1 doesn't show up.
-
-Disclaimer
-I just started looking at kernel code for the first time a week ago, so all
-of the above might be spectacularly wrong or a better way to fix the issue
-might exist. Initially I did a quick fix that was just checking
-port->usb2_dev->kobj ref count in typec_partner_unlink_device() and bailing
-out if it was zero, but then I decided to dig deeper just for fun.
-This patch has solved my problem, I'm running it on laptop since last week
-without any issue, but it might have side-effects I'm not aware of.
-I really hope I'm not wasting your time, thanks for all the great work you
-do on the Linux kernel!
-
-Signed-off-by: Marco Tormento <mtormento80@gmail.com>
+Fixes: 684b89bc39ce ("s390/ism: add device driver for internal shared memory")
+Reported-by: Aliaksei Makarau <Aliaksei.Makarau@ibm.com>
+Tested-by: Mahanta Jambigi <mjambigi@linux.ibm.com>
+Tested-by: Aliaksei Makarau <Aliaksei.Makarau@ibm.com>
+Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
 ---
- drivers/usb/core/hub.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ drivers/s390/net/ism_drv.c | 4 ++++
+ include/linux/ism.h        | 1 +
+ 2 files changed, 5 insertions(+)
 
-diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index 256fe8c86828..dfe4ba192faf 100644
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -2334,16 +2334,6 @@ void usb_disconnect(struct usb_device **pdev)
+diff --git a/drivers/s390/net/ism_drv.c b/drivers/s390/net/ism_drv.c
+index b7f15f303ea2..c3b79e22044c 100644
+--- a/drivers/s390/net/ism_drv.c
++++ b/drivers/s390/net/ism_drv.c
+@@ -129,7 +129,9 @@ static int ism_cmd(struct ism_dev *ism, void *cmd)
+ {
+ 	struct ism_req_hdr *req = cmd;
+ 	struct ism_resp_hdr *resp = cmd;
++	unsigned long flags;
  
- 	usb_lock_device(udev);
++	spin_lock_irqsave(&ism->cmd_lock, flags);
+ 	__ism_write_cmd(ism, req + 1, sizeof(*req), req->len - sizeof(*req));
+ 	__ism_write_cmd(ism, req, 0, sizeof(*req));
  
--	hub_disconnect_children(udev);
--
--	/* deallocate hcd/hardware state ... nuking all pending urbs and
--	 * cleaning up all state associated with the current configuration
--	 * so that the hardware is now fully quiesced.
--	 */
--	dev_dbg(&udev->dev, "unregistering device\n");
--	usb_disable_device(udev, 0);
--	usb_hcd_synchronize_unlinks(udev);
--
- 	if (udev->parent) {
- 		port1 = udev->portnum;
- 		hub = usb_hub_to_struct_hub(udev->parent);
-@@ -2362,6 +2352,16 @@ void usb_disconnect(struct usb_device **pdev)
- 		typec_deattach(port_dev->connector, &udev->dev);
+@@ -143,6 +145,7 @@ static int ism_cmd(struct ism_dev *ism, void *cmd)
  	}
+ 	__ism_read_cmd(ism, resp + 1, sizeof(*resp), resp->len - sizeof(*resp));
+ out:
++	spin_unlock_irqrestore(&ism->cmd_lock, flags);
+ 	return resp->ret;
+ }
  
-+	hub_disconnect_children(udev);
-+
-+	/* deallocate hcd/hardware state ... nuking all pending urbs and
-+	 * cleaning up all state associated with the current configuration
-+	 * so that the hardware is now fully quiesced.
-+	 */
-+	dev_dbg(&udev->dev, "unregistering device\n");
-+	usb_disable_device(udev, 0);
-+	usb_hcd_synchronize_unlinks(udev);
-+
- 	usb_remove_ep_devs(&udev->ep0);
- 	usb_unlock_device(udev);
+@@ -606,6 +609,7 @@ static int ism_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 		return -ENOMEM;
  
+ 	spin_lock_init(&ism->lock);
++	spin_lock_init(&ism->cmd_lock);
+ 	dev_set_drvdata(&pdev->dev, ism);
+ 	ism->pdev = pdev;
+ 	ism->dev.parent = &pdev->dev;
+diff --git a/include/linux/ism.h b/include/linux/ism.h
+index 5428edd90982..8358b4cd7ba6 100644
+--- a/include/linux/ism.h
++++ b/include/linux/ism.h
+@@ -28,6 +28,7 @@ struct ism_dmb {
+ 
+ struct ism_dev {
+ 	spinlock_t lock; /* protects the ism device */
++	spinlock_t cmd_lock; /* serializes cmds */
+ 	struct list_head list;
+ 	struct pci_dev *pdev;
+ 
+
+base-commit: 07fa9cad54609df3eea00cd5b167df6088ce01a6
 -- 
-2.50.1
+2.48.1
 
 
