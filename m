@@ -1,124 +1,84 @@
-Return-Path: <linux-kernel+bounces-738194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12DACB0B5A1
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 13:40:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69444B0B5A3
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 13:41:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C5013BC6FC
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 11:40:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25A5B189B842
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 11:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738E61F4E4F;
-	Sun, 20 Jul 2025 11:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3414F35971;
+	Sun, 20 Jul 2025 11:41:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="D6GotjCl"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="aTTxpLoy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B04A512E7F;
-	Sun, 20 Jul 2025 11:40:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90DD012E7F;
+	Sun, 20 Jul 2025 11:41:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753011622; cv=none; b=fn0qbEKzA1Ja1XWxbvSuNS6NnpbmD/VZVonpLjkAMnY6b7gl7psFA/OTlDqK38YiZY92kJYOzxA/qZG4+qgMeZ4mlapiaDWWqFAjKKWsgOJvC2cavN9XLtys2MDnXOfKJmaQuyvtwlu/qbLS6m2LRgRNRtdqX+obGDo/OgcfUY4=
+	t=1753011681; cv=none; b=N7bv7IF67qdVBHEQtgM7eE8bAjbRE8/diWDmPYtiVfW3SrkeCKRdHL7JtnECJ113tMMaaFhOKn95Ta/1qj2klM/2RZ+E25zMNmEG2FnGftGeIgszclTdeGI0cFsqedxzYoh0E/UuK7O4nLqOby/spT+60I2BUTUAnqvOlsygsr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753011622; c=relaxed/simple;
-	bh=pjDOmPsSd1VdBpRg5iH+lfVFwZTEL+/aUFCOxBbqhlY=;
+	s=arc-20240116; t=1753011681; c=relaxed/simple;
+	bh=lp4Ece+r5hwTtn/N3SicUHRHhvRljeq25Od4JUfak1Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xcaxn5Yq2vGpjOBIDWS4aJ1zDHhO59JOxZ+F4pXrw3FoG8x75oHYCKNavzlvNIWHHH38W3aTF2RX0niusK6/nypmLoIiGI4sCCI1FIRevgu5XKiLuFkc3i/D6KInaNqDXlj88pDQhTlKbWIXeypqFSbBc63vJ44UzciOYMnEfqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=D6GotjCl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D14E3C4CEE7;
-	Sun, 20 Jul 2025 11:40:21 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=O3LTtocckSoeEJML2AsPTx+e5GZEYj5KPXcxjFS7U5QMID2Hrt0DWp5d/gnwhmx5XoCF2qWfOP1i3hrtVYS2ssHpA9tC5+SruLSLkwBnrIMfxsVkpeZekxGaHmgoMN82FWis1ylZqBFhwrKxUZzBWo8Y6VSKqRSUn3FDMT7MMGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=aTTxpLoy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7655DC4CEF6;
+	Sun, 20 Jul 2025 11:41:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1753011622;
-	bh=pjDOmPsSd1VdBpRg5iH+lfVFwZTEL+/aUFCOxBbqhlY=;
+	s=korg; t=1753011681;
+	bh=lp4Ece+r5hwTtn/N3SicUHRHhvRljeq25Od4JUfak1Q=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D6GotjClbic3B7RU4bx20XE+wSwsAeu2MatiBFaVGQxLFqXNI9a5/dTD301MgvYIB
-	 +8WWVx39xipiXmUzQJnRlk3mNNmBUjhFbdkqoOos8U9VgEXnNfqh0cAR0f7t5U2iHl
-	 w29cjdF47ZE3Jo7nH6eLNsF931xixkrMVjCSH5/M=
-Date: Sun, 20 Jul 2025 13:40:19 +0200
+	b=aTTxpLoycImH6+psteRy67djkOVccKtRcP0+dzKhPq/d3o39rAt5SATJGo64vsfdp
+	 n7ab4PlSESYUdyK09ySx7MwZoWeQb8QzHvDXpa2MaAbwA3u0GUkbtl8nLyUmGYQ0tT
+	 /ECXMXy5TiI3I4RNYfyS6GE5yEeoxqUEREzQHPJ0=
+Date: Sun, 20 Jul 2025 13:41:18 +0200
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] usb: dwc3: qcom: Remove extcon functionality from glue
-Message-ID: <2025072021-rounding-oversized-5b4b@gregkh>
-References: <20250718053856.2859946-1-krishna.kurapati@oss.qualcomm.com>
+To: oushixiong <oushixiong1025@163.com>
+Cc: Michael Grzeschik <m.grzeschik@pengutronix.de>,
+	Sabyrzhan Tasbolatov <snovitoll@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Xu Yang <xu.yang_2@nxp.com>, Al Viro <viro@zeniv.linux.org.uk>,
+	Shixiong Ou <oushixiong@kylinos.cn>
+Subject: Re: [PATCH] usb: gadget: uvc: destroy worker when function is unbound
+Message-ID: <2025072007-undoing-tingle-3b35@gregkh>
+References: <20250711083550.425714-1-oushixiong1025@163.com>
+ <2025071112-angriness-cornflake-e751@gregkh>
+ <d430ec08-70c0-4d2a-81aa-234e8f759cfc@163.com>
+ <2025071129-subarctic-uniformly-8ae3@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250718053856.2859946-1-krishna.kurapati@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2025071129-subarctic-uniformly-8ae3@gregkh>
 
-On Fri, Jul 18, 2025 at 11:08:56AM +0530, Krishna Kurapati wrote:
-> Deprecate usage of extcon functionality from the glue driver.
-
-It's not "deprecate", it is "delete".  "deprecate" means that you don't
-want future users of this, you are flat out deleting it entirely.
-
-> Now
-> that the glue driver is a flattened implementation, all existing
-> DTs would eventually move to new bindings.
-
-When is this happening?
-
-> While doing so let them
-> make use of role-switch/ typec frameworks to provide role data
-> rather than using extcon. None of the existing in-kernel extcon users
-> have moved to using new bindings yet, so this change doesn't affect
-> any existing users.
-
-I don't understand, who does this affect?
-
-> On upstream, summary of targets/platforms using extcon is as follows:
-
-What is "upstream" here?  In-tree?  We only have one development place :)
-
-> 1. MSM8916 and MSM8939 use Chipidea controller, hence the changes have no
-> effect on them.
+On Fri, Jul 11, 2025 at 05:30:52PM +0200, Greg Kroah-Hartman wrote:
+> On Fri, Jul 11, 2025 at 11:29:36PM +0800, oushixiong wrote:
+> > 
+> > 在 2025/7/11 19:04, Greg Kroah-Hartman 写道:
+> > > On Fri, Jul 11, 2025 at 04:35:50PM +0800,oushixiong1025@163.com wrote:
+> > > > From: Shixiong Ou<oushixiong@kylinos.cn>
+> > > > 
+> > > > Destroy worker when function is unbound.
+> > > This says what you did, but not why.
+> > > 
+> > > Why is this needed?  What happens without this change applied?
+> > 
+> > I think the kthread_worker created in uvcg_video_init() is not being
+> > properly destroyed during the unbind phase.
 > 
-> 2. Of the other extcon users, most of them use "linux,extcon-usb-gpio"
-> driver which relies on id/vbus gpios to inform role changes. This can be
-> transitioned to role switch based driver (usb-conn-gpio) while flattening
-> those platforms to move away from extcon and rely on role switching.
+> Is this actually happening?  How was this noticed?  How was this tested?
 
-"most" do, but not all.
-
-> 3. The one target that uses dwc3 controller and extcon and is not based
-> on reading gpios is "arch/arm64/boot/dts/qcom/msm8996-xiaomi-common.dtsi".
-> This platform uses TI's Type-C Port controller chip to provide extcon. If
-> usb on this platform is being flattened, then effort should be put in to
-> define a usb-c-connector device in DT and make use of role switch in
-> TUSB320L driver.
-
-I really still do not understand what is happening here.
-
-Does this break existing in-tree users?  If yes, we can't do that.  If
-no, they this is just unused code?  That's all that we should be
-concerned about here.
-
-> ---
-> Changes in v4:
-> Updated commit text to reflect the patch doesn't affect in-kernel users.
-> Removed RB tags from v3 since commit text is changed.
-> 
-> Link to v3:
-> https://lore.kernel.org/all/20250714044703.2091075-1-krishna.kurapati@oss.qualcomm.com/
-
-What changed in v3?  v2?  v1?
-
-Please properly document this.
-
-thanks,
-
-greg k-h
+Dropping from my review queue due to lack of response :(
 
