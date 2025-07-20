@@ -1,63 +1,66 @@
-Return-Path: <linux-kernel+bounces-738015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42994B0B322
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 04:07:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BF5DB0B327
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 04:12:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6ACD317BA8B
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 02:07:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AE2417CE95
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 02:12:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D0DA1624E1;
-	Sun, 20 Jul 2025 02:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97375185955;
+	Sun, 20 Jul 2025 02:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gj4EYbdL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d8tEhYXJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF381F92E;
-	Sun, 20 Jul 2025 02:07:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED91E15CD74;
+	Sun, 20 Jul 2025 02:11:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752977232; cv=none; b=qjtjWIrwJ5wglv6znR3OBHW+IWbaEs+ZmZAj+Ho52h1/LAhRzFhzfRmeGeqxDvfAjRitl+xGBsfWvzVAjyrfl5Km1P9DIWI5EyPmT/2GMP+J2f92pTSxtcXm8GgDSAmi5rydSskVia4JFufDI7n6mND26sWwjjBcJ82skKiuoGg=
+	t=1752977513; cv=none; b=QJPR5s1bG0ExYCr9+r87h/ERn7kR4jvausv5Vxl3YeGcdSAuGG/teo9LzXwjXIX1E6U+fl7l+hnIgeAsAGdfkiKB6ouE8I8MTqExhMJhROFORbsrAvHMJlUvMo6/06300a+tK9LGRJFte7VI9NntWAihOFSdegI8eSb3eSqgvbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752977232; c=relaxed/simple;
-	bh=duEgnSqN7VZ25CtEj1NJ+N/NS03iMSFE94CX4KQIj90=;
+	s=arc-20240116; t=1752977513; c=relaxed/simple;
+	bh=2Vi1uU+0bdsQ/W9FjTj69Nz0jBqNK395nfLAmfvn9X8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DrNkforNtBA/gODs3uXGNY1iFlUUnq+RgKahKihechlVtmzxb20d4KRQZCMjg7aAhDWwXIQ5ImxAN9T5QeGdtWvs3XMUB/g4K/FW3hmv2UTZeofqQQr5wp+xrEwroLD960+LCgQ2KqUEgfEq9IWy0u3buUBvalLs8Z/KD2cnbzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gj4EYbdL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D64EEC4CEE3;
-	Sun, 20 Jul 2025 02:07:11 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=AGT2iAUalzTe3+n6y8zz4sJXfVy6VOebk8i/do9WrZYNt5skyFIzT+0k5WmzE/wScyQg8Ej4HttR+5zcML2+tNQ2mnRy7bZ1xc7sCdxT8iOs1EgXZHBvU/ZpU/upLqVLWUURzGLXTuq6DdUWuodup5wittdL4KkTzpb+zfrFFmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d8tEhYXJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 851EDC4CEE3;
+	Sun, 20 Jul 2025 02:11:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752977232;
-	bh=duEgnSqN7VZ25CtEj1NJ+N/NS03iMSFE94CX4KQIj90=;
+	s=k20201202; t=1752977512;
+	bh=2Vi1uU+0bdsQ/W9FjTj69Nz0jBqNK395nfLAmfvn9X8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gj4EYbdLYW+0r+owZYcELTUhXlaUjLr6Z+7bF3/8LIkSXQHLgGU86NwXD8JxhvHjF
-	 iyEhoMfCa1PRRXRY3VkvEwZaVk7Q8UXalKZQGaQdQwQc8r2AFfOwyduSTA7rpU3zl7
-	 qkI8Mju7wlzV46xYJTMA5gSYgo+GFCzZcIVaiZ/hxuzl/r3F3Dw9nMycQGRt5to/Gw
-	 bYsvIsY9wRnNpqoxYTu7slDPax6L21oPIfMgZslKdhRJoSw0w5D3mtv0DCcwQRGJgz
-	 FNjm0kuUgeUswCmHXRnUCvfTnsB9zoUJgfnclaJwEGsoIwut/2Ld3kjbSA3J+YsCvb
-	 SyaEvYjC0bhFA==
-Date: Sat, 19 Jul 2025 21:07:11 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
-Cc: linux-phy@lists.infradead.org, jingoohan1@gmail.com,
-	qiang.yu@oss.qualcomm.com, johan+linaro@kernel.org,
-	quic_vbadigan@quicinc.com, krzk+dt@kernel.org, bhelgaas@google.com,
-	linux-arm-msm@vger.kernel.org, quic_krichai@quicinc.com,
-	kishon@kernel.org, andersson@kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	kwilczynski@kernel.org, lpieralisi@kernel.org, mani@kernel.org,
-	neil.armstrong@linaro.org, conor+dt@kernel.org, kw@linux.com,
-	konradybcio@kernel.org, vkoul@kernel.org,
-	devicetree@vger.kernel.org, abel.vesa@linaro.org
-Subject: Re: [PATCH v5 1/4] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy:
- Update pcie phy bindings
-Message-ID: <175297718511.927073.3298628726286160154.robh@kernel.org>
-References: <20250718081718.390790-1-ziyue.zhang@oss.qualcomm.com>
- <20250718081718.390790-2-ziyue.zhang@oss.qualcomm.com>
+	b=d8tEhYXJq4CLqp02HKUhUwEpxI7pFBUqC37mc/wPo63A+6HY7hlRNftOqhEZFpx5u
+	 XW7cUoqXCl76PmtjDZQaoWu8xF55oVgTP+Bk/EUOWyuV7yLwhNpqLDSJRUUrvR3ljd
+	 k4/Es0rhytK0O9FEPA+P9833hoxh/hcV0HSsBcH7m3UHU2mB72iAR0lUoczKUnJABK
+	 TB0ReqIeRx0gNyFWS38tMOtUoKqmO7YQOPacNvyPGdmDTkNqa/biLMv/k3cGMp2tf3
+	 pMg6nha3sGCqjEN6WCeyBIBY6gqHObxXjwsUTEZXh5b+Du5Rj9slHGHoyn9bSjs9ed
+	 aSk7kIqhMIpWw==
+Date: Sat, 19 Jul 2025 21:11:51 -0500
+From: Rob Herring <robh@kernel.org>
+To: Heiko Schocher <hs@denx.de>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andrei Lalaev <andrey.lalaev@gmail.com>,
+	Chanh Nguyen <chanh@os.amperecomputing.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Grant Peltier <grantpeltier93@gmail.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Naresh Solanki <naresh.solanki@9elements.com>,
+	Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v1 1/3] dt-bindings: trivial-devices: Document ABB sensors
+Message-ID: <20250720021151.GA931647-robh@kernel.org>
+References: <20250719063355.73111-1-hs@denx.de>
+ <20250719063355.73111-2-hs@denx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,36 +69,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250718081718.390790-2-ziyue.zhang@oss.qualcomm.com>
+In-Reply-To: <20250719063355.73111-2-hs@denx.de>
 
+On Sat, Jul 19, 2025 at 08:33:52AM +0200, Heiko Schocher wrote:
+> Add documentation for spi based ABB sensors, which are
+> currently operated from userspace.
 
-On Fri, 18 Jul 2025 16:17:15 +0800, Ziyue Zhang wrote:
-> The gcc_aux_clk is required by the PCIe controller but not by the PCIe
-> PHY. In PCIe PHY, the source of aux_clk used in low-power mode should
-> be gcc_phy_aux_clk. Hence, remove gcc_aux_clk and replace it with
-> gcc_phy_aux_clk.
+What is userspace? That has nothing to do with bindings.
+
+Please provide some details about this h/w and convince me it is 
+trivial.
+
 > 
-> Removed the phy_aux clock from the PCIe PHY binding as it is no longer
-> used by any instance.
-> 
-> Fixes: fd2d4e4c1986 ("dt-bindings: phy: qcom,qmp: Add sa8775p QMP PCIe PHY")
-> Signed-off-by: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+> Signed-off-by: Heiko Schocher <hs@denx.de>
 > ---
->  .../devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml   | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-
-
-Please add Acked-by/Reviewed-by tags when posting new versions. However,
-there's no need to repost patches *only* to add the tags. The upstream
-maintainer will do that for acks received on the version they apply.
-
-If a tag was not added on purpose, please state why and what changed.
-
-Missing tags:
-
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
-
-
-
+>  Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
+> index 27930708ccd5..25260c2b81df 100644
+> --- a/Documentation/devicetree/bindings/trivial-devices.yaml
+> +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+> @@ -30,6 +30,8 @@ properties:
+>      items:
+>        # Entries are sorted alphanumerically by the compatible
+>        - enum:
+> +            # ABB register based spi sensors
+> +          - abb,spi-sensor
+>              # Acbel fsg032 power supply
+>            - acbel,fsg032
+>              # SMBus/I2C Digital Temperature Sensor in 6-Pin SOT with SMBus Alert and Over Temperature Pin
+> -- 
+> 2.20.1
+> 
 
