@@ -1,110 +1,133 @@
-Return-Path: <linux-kernel+bounces-738486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36758B0B907
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 01:04:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B224B0B90A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 01:04:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04D041895A85
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 23:04:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 154777A604D
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 23:03:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D561F4616;
-	Sun, 20 Jul 2025 23:03:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4730A22ACF3;
+	Sun, 20 Jul 2025 23:04:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="WupPGB1Y"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fEEbA7qZ"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9281DDA31;
-	Sun, 20 Jul 2025 23:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F008C74C08;
+	Sun, 20 Jul 2025 23:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753052630; cv=none; b=Jm/YkaBspO+c4vXoEgIipB1zlgg+woCY0vXOShTvPh4tsM5qNTpkLakENydNfJhHxJssc0Xv8rFHztNn7nhurzRqLtCtQvUw9LO8kaHq/HsJDxUG/yweSqDqn2YCz8xXdbkYuyg0jxKOLbTTCE2RcYfRLj7zkM3ITJhqSyyWsS4=
+	t=1753052680; cv=none; b=p611KJjarUNSqDq/OiY2ua67t4pmcdHGW25ovdP6Jxix0yoWnNfmdSK1g5j8J514wPLQzZCpYx0L5PzTVqcONbHmNDpDHXgImDPNBCzXKwTD391pWTlJZq94o7fKS7c4bfnUUWhYwG5eaBfg0ejP+RO7LjE81j4PAnzX7Iwt7cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753052630; c=relaxed/simple;
-	bh=2azgmJQyi/V/5oJVXLyqKt6Ve/u0q6DRMwL7n3b7PU8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=vBijKhWNcgNWdJBuLfQgHNUZ7opojYImQA93XSzMduchjTE/Lr6cKDMevDOH4M7mwmsPaZxuUkWo+HCRFtB0NcN5mtZN4g02VNkvsXyC8nTsvg5g87q7cNq861nWoTZE8yKAuVa6GZ2hzRP49oO7GiM6XBwm5qJ2QRm7eHuH59I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=WupPGB1Y; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1753052476;
-	bh=EftNmhGRydtw2SiPltoJ9YuRJYgyVXJjGOFZFaBayi0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=WupPGB1Y04Ed5vL2RyGtYJUWUTX6W2ktT3OsX2k8l9Tfr6yXmnBLkD4Mqm3K/vHFV
-	 w9r0vkVlNGNvZFcbFe1SRtCo/9G7KELyC+tt0odnk3FAowCAbMu16KfGlG6tdW4QGU
-	 dD694DbJ9QYh+3+wZmLCkQgTlKIPd/DT/R1L86yeEfLLyLs3TViRWiV1D/b5NF4LPE
-	 t9xY6bk7nSFBxEmisjyYSyJiiesbKEAueGg88xgMZ92y69tn2aAcAJeLklbD01Hf+J
-	 YvgiaeN9DEp5iYoyLgdICrPb3JH8Ujw9VJa5GnpR70bMq2WkcsO5nP5XJSjtdYbQmS
-	 O1/140mgW5Vwg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4blfCb6k7mz4wbn;
-	Mon, 21 Jul 2025 09:01:15 +1000 (AEST)
-Date: Mon, 21 Jul 2025 09:03:43 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the i2c-host-fixes tree
-Message-ID: <20250721090343.5cd192eb@canb.auug.org.au>
+	s=arc-20240116; t=1753052680; c=relaxed/simple;
+	bh=DqzhcMKuF4YJhM8qX6ANTGfJdeWxmY6ujyFF/XUbNew=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dYJU13gp1B2EHpPxLqbffgGnIzbLK8drteStKKrvIBRk06LBjKNtjeSSQkA8spxo1F8Y0hzyJqZLDKbm5WvHeKV+Wv1FCwivsPY9Kjfo8qKMm7iUU0bg2i9/WRIX3LbHOm5zUXHI+yAxELfEAmfvwsvhush+w31gutdqD7j48k4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fEEbA7qZ; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-32b2f5d91c8so28172281fa.0;
+        Sun, 20 Jul 2025 16:04:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753052675; x=1753657475; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7Xkw3NwxWxg5J2ji88ScO8XA3YV0z1vRakGJn9oB0XE=;
+        b=fEEbA7qZeaPKmbSGc0LpfkgCNPpcE1/aFE4WJCoVqvmDM15Ww2TFq+jr3yJtGV9EGJ
+         5zM9u58hJobhjXsajqOarwNyfhhS1Frux9teDdv4ysDGX3MZhiKc+TTyOpbkp9sqYhCE
+         oRW7piJaJM80B3Eo5pCbJD6USc0mdZjpNnPrE6Dn28x2qKcPNvdctVhAU8VuzCYkRg3e
+         m2g+s8uRJoq3EoPozbMMVQU2cQv3CQcu8owZH9TuxUo9/Wdpq33Pb6+t8N2b9wlhHC5X
+         iev6YvHXabzE8q8IZGo8yymG08he/MKxsIMzK3+xiFRUHO0Uwp3EjoFURGKFedrqFPiP
+         GoQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753052675; x=1753657475;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7Xkw3NwxWxg5J2ji88ScO8XA3YV0z1vRakGJn9oB0XE=;
+        b=imTAg288hzkPG3KQYl1vuOXH2NoGPZuevBKbbBya4LE5tLRX5pku93SjuHPBXF5ewG
+         Ucb31tSR4Tc4R4wMm4zO6aaovl3o+hV0tSUf47OEDhQm0/KLiUhYXshz1lUdEsRUY0uD
+         SbNGi8bxsut4CB0MjneEvgllIHQDWuLQoFpMGG8a1Khu18JeK7Ld23hEAe6pax4gRuxs
+         z80KWlrgPP5moNQUXsS/UprTH/CSzQAn6ZL1aRx/OXkT+Uxq06obQwJuE9AXe1pID/Ng
+         xrdG1c0gzq6xWgsd9YFGZ3TvxH3UXvZSkb0j+w+gk9v3Ghss5p+Gw2KI+O1qs8tBfnil
+         yi9w==
+X-Forwarded-Encrypted: i=1; AJvYcCUxt5Uip54nFm5RW4ghnUHoajYKL6h+RDFtmIELdPd+H10SaraTpWHOBJbhVtDojtL6O+dVvXK3gh7CLzY=@vger.kernel.org, AJvYcCXKId7rhchD3iQOWNLk5MLYTVpeZSj9/um7fR4GXpWbW0FIjlKGGCosZKDTqn0NAPtEd71FJk2HuR5QJzxhfUg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwC735Uv96s7pK10PFzWzFtCf+zuOHx9/NAWF0X0Cw26crWcgFq
+	8gClesC+7IGHGI9lIzTkQfVGqbNnkepcpfcBXfX2qVJKw2gPg5KH4wWozTSQaA0D5nEDeWSnI65
+	6z3jDX4yg0LHVn43cMfPUWwNJFuNPDeY=
+X-Gm-Gg: ASbGncuViHeh4MkXXx66vWzUlIDT5SA32leQ8rRfLXZhzcZ5EPRo2nGTcqaa0tc/p0Z
+	XXovd11zym8vEMsj9mTRSvG+3Dmu4K9KdKOVSUOcPfUSzE9I1CoMU788W/VLxYMf8gjZ4OBRR+I
+	TtMbKPnlT0ypasc2EijKsoBX+BOrm0WCStO1+CXIP78h1SO8cOnCtDNzPxJDTGBqHSTggeRnrya
+	5fHW1FqKSTcjnu/lY1GhXo+2Q3ollpbbNQmxH7RWw==
+X-Google-Smtp-Source: AGHT+IHU8gAlgJi0gfSerHmpP+XVcJCFlizdHXk2oE9KNpuvqKE3vWLus6ifQ6OwXOlfO0aS5Oo9wOl6ZRFYMwgCbm0=
+X-Received: by 2002:a05:651c:41d5:b0:32a:6aa0:2173 with SMTP id
+ 38308e7fff4ca-3308f5b6b0emr51195791fa.20.1753052674651; Sun, 20 Jul 2025
+ 16:04:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/9RYw+hyJ+._.P7t6.YcoToF";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/9RYw+hyJ+._.P7t6.YcoToF
-Content-Type: text/plain; charset=US-ASCII
+References: <20250704-core-cstr-prepare-v1-0-a91524037783@gmail.com> <20250704-core-cstr-prepare-v1-1-a91524037783@gmail.com>
+In-Reply-To: <20250704-core-cstr-prepare-v1-1-a91524037783@gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Sun, 20 Jul 2025 19:03:58 -0400
+X-Gm-Features: Ac12FXyBZv6-1-SR-r4N9df7hS6FD2nQrghFQr18iPYH2j0BNLVFQznx1RbMWtg
+Message-ID: <CAJ-ks9nBrT4C5xYk4eWUFX_nX5XXBYHEGo+fLtLWJE-D9Y5hKQ@mail.gmail.com>
+Subject: Re: [PATCH 1/6] rust: kernel: remove `fmt!`, fix clippy::uninlined-format-args
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Fri, Jul 4, 2025 at 4:16=E2=80=AFPM Tamir Duberstein <tamird@gmail.com> =
+wrote:
+>
+> Rather than export a macro that delegates to `core::format_args`, simply
+> re-export `core::format_args` as `fmt` from the prelude. This exposes
+> clippy warnings which were previously obscured by this macro, such as:
+>
+>     warning: variables can be used directly in the `format!` string
+>       --> ../drivers/cpufreq/rcpufreq_dt.rs:21:43
+>        |
+>     21 |     let prop_name =3D CString::try_from_fmt(fmt!("{}-supply", na=
+me)).ok()?;
+>        |                                           ^^^^^^^^^^^^^^^^^^^^^^=
+^
+>        |
+>        =3D help: for further information visit https://rust-lang.github.i=
+o/rust-clippy/master/index.html#uninlined_format_args
+>        =3D note: `-W clippy::uninlined-format-args` implied by `-W clippy=
+::all`
+>        =3D help: to override `-W clippy::all` add `#[allow(clippy::uninli=
+ned_format_args)]`
+>     help: change this to
+>        |
+>     21 -     let prop_name =3D CString::try_from_fmt(fmt!("{}-supply", na=
+me)).ok()?;
+>     21 +     let prop_name =3D CString::try_from_fmt(fmt!("{name}-supply"=
+)).ok()?;
+>        |
+>
+> Thus fix them in the same commit. This could possibly be fixed in two
+> stages, but the diff is small enough (outside of kernel/str.rs) that I
+> hope it can taken in a single commit.
 
-The following commits are also in Linus Torvalds' tree as different
-commits (but the same patches):
+Just noticed a tiny typo here: it should say "can *be* taken".
 
-  975b02f641ed ("i2c: stm32f7: unmap DMA mapped buffer")
-  36ae42978569 ("i2c: stm32: fix the device used for the DMA map")
-  cfba2fe76b2b ("i2c: omap: Fix an error handling path in omap_i2c_probe()")
-  7c18e08f4c3a ("i2c: omap: Handle omap_i2c_init() errors in omap_i2c_probe=
-()")
-
-These are commits
-
-  6aae87fe7f18 ("i2c: stm32f7: unmap DMA mapped buffer")
-  c870cbbd71fc ("i2c: stm32: fix the device used for the DMA map")
-  60c016afccac ("i2c: omap: Fix an error handling path in omap_i2c_probe()")
-  a9503a2ecd95 ("i2c: omap: Handle omap_i2c_init() errors in omap_i2c_probe=
-()")
-
-in Linus' tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/9RYw+hyJ+._.P7t6.YcoToF
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh9dc8ACgkQAVBC80lX
-0GwCIwf8DPG1kL5kkasd8/BQVvMAkRsQgAhdE01Xw6/gbYbuX2Qj89SpIcoVNHrX
-HUji4xJ3/Ygr8lZsQ4E4qjnTH80BPIewAb5M6WkjW6ROrtgUzP0SQGtyKzKyQBl1
-kl4knpLo7iIKHWWuz1sALufTh2Ss/voHsxsolhbwEFz+pAb339MouWXSngLDlEgq
-KnTxhA4zs97XlCyhGz6Nydo1gC6mddbKOSgTnWHi5B+C2COBrlmlIOgh50wmjm5C
-txDkfPRTqgOyT+VacRxVVcLPz53eiuHai6Axil1jh9jThNFArjqg/RrGn2M2srbE
-mVh6qGTsKjjwaqtuyVyL/+QPhI/Pyg==
-=yIgX
------END PGP SIGNATURE-----
-
---Sig_/9RYw+hyJ+._.P7t6.YcoToF--
+Miguel, if you can fix that on apply, please do - but if not, no worries.
 
