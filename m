@@ -1,127 +1,130 @@
-Return-Path: <linux-kernel+bounces-737996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-737998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3447B0B2FC
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 02:28:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87183B0B2FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 02:35:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CFD118999B9
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 00:28:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB9F8178ABE
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 00:35:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34854EEBD;
-	Sun, 20 Jul 2025 00:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8AED33993;
+	Sun, 20 Jul 2025 00:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cejv1MkS"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="HhUbH1e+"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58522DF42
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 00:28:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752971294; cv=none; b=sfK6fKkt/PVHF2S2treXO0TUsR2DH8YYhEAde7FGTuIIShdSM5LuR5LMPMD0F+v9pHlBG99+JgXiRCC6fBtaVq/F3cfZ5HCo97d5roII3Rgth3O0273qE7Ng0k08fq/lL/l72bfaDaPY/zuB+1WUsQEsMOQYngK/f27YR6GzxGo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752971294; c=relaxed/simple;
-	bh=DQWsBehlONP6wVsYoUiHHQ10kb1JINS2OTEPaTlRP+s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YBbO5A+nFLlmYKjSHrh05KFC+R11NLxf08Hf3j1fLeI4e67pK1iIq4/cSeasS+XXiUo2+zHY4Eu89kIqshqab3oBcKkvvnxYmclHZSGQldm39YPEG+AGDSWYyUd+PR9PcE4Ek8b8lupxSrB/CfFb/Aknx/VouJZccC5tulEc32s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cejv1MkS; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=MX/QwCBUNVIe2aGeCkNCWD9Jg6+wUGIOO89wmP1cch0=; b=cejv1MkSlbeJTjZEgwGM57sW1/
-	ys92MSrn/6nPSnVi1kIVLitWkoBAKbbz/GAJPIZpfYx0UNupJTYteyeiX8zEaI1xUmwjCQlSOyXtN
-	j6sK3i4LJZBmib1Ot0AfkWc+76D15K195PcZG7z8T0sAGOdVRaaHNC8CWGBasvB9pHgQW14Q+hasI
-	os/FP644LiNQM+2KYCp+BkXPdw89FI7/6eBOvYqaux6MXT+C56URRf7znsm1ExKA3MGi09h/d3Buc
-	ORySfQk7OMyPKCt1Qv/d7UN5clIF1FLzpoOeuEwXTYdU1osua+Ax8EAaexdw8fJav4jDf4IXIz0u1
-	O220XLxA==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1udHuV-0000000ElmW-3YAZ;
-	Sun, 20 Jul 2025 00:28:11 +0000
-Message-ID: <b429bfdd-a66d-46db-b13d-73e81d36ac8d@infradead.org>
-Date: Sat, 19 Jul 2025 17:28:11 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 622612770B;
+	Sun, 20 Jul 2025 00:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752971711; cv=pass; b=rLGcZh1Sloz0J4sejCbrQmeeJXX1CnqHAxMZTf2bI/+xoG68n+SjrQ/X9/Bi8AUdMl/9rb7Wu6I7fn93gS2Sy6baik1CMwERMN8QkDrRpyeotybjZokEf/h0aAlwp41Rr1NOpGro0i3EHtupx/N9RrR9yI33HH0/H1XglICfcyc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752971711; c=relaxed/simple;
+	bh=HDIoeqn9e+rYQnfJ067hljH9zFzxB0jCy8mHESmaUm0=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=JFToNO7DqekLNrfSwp7FNo6zsJHlcyu7GfR3RGS/8NZdmW5Z45BGfNOF19tHOJjJjHQt/wrCLZV6IBNZUAJqVg6UDYB1DuUdn6Vj/d40LKMFOoqHoCR1hB1+o6YaWQ3Xszp3BfRIKb1PUmgbEFQRDVyymtRjYyIndAkMlYxKBx4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=HhUbH1e+; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1752971688; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=DuQeVYCmDEKoan5ifO2S8SAfqvau9PZUj8NogYxheUnCA/GDaxag6taN6lyeANTLALMz00+HBxvpjU2j0cA1h9O9L9AvxTOK4JfG//VR//ZxUHLVLgAAjmCAihQVNggdGteL2nvWI0mW/YH5KWZmRFdDuGQ4+DwJDmFW0UP9154=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1752971688; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=+oh6ARwng4DpdAfGJjaWcONvM1A731eJcDO1LFA43h0=; 
+	b=VJ06SxOm0A/O0iWq4nZIGeKWlS4BEQNtclq3VL0OTEoV6zna58upv/jxLtMfSUk7xBt+N2aPVSCa9//oH47zDWHOtMrBEzAmsKiDx/mW3HIMEHE/63RedAPrd6dAX4Z4jbP9Fqxpjm1unRn5OBUXHC6yY40ecYyBGQkpNR22+0I=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752971688;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=+oh6ARwng4DpdAfGJjaWcONvM1A731eJcDO1LFA43h0=;
+	b=HhUbH1e+zVA8AiIZ6nY0R6/WjRnknEG+rdUe3hCbsIjXia6iMg42XoBbwb3CQArg
+	IVtAYukxJ2DUAc+XA1xid5iD0zKLeahQqxc1Adei8+0Tiniifb87et/jMqQu75lgNSh
+	O2XYiewgkkvfp0ZQ2jrtx2Ock/UrCE2JgtFv7RiI=
+Received: by mx.zohomail.com with SMTPS id 1752971686447615.9635102011046;
+	Sat, 19 Jul 2025 17:34:46 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] i3c: Fix i3c_device_do_priv_xfers() kernel-doc
- indentation
-To: Bagas Sanjaya <bagasdotme@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux i3c <linux-i3c@lists.infradead.org>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Frank Li <Frank.Li@nxp.com>, Miquel Raynal <miquel.raynal@bootlin.com>
-References: <20250702040424.18577-1-bagasdotme@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250702040424.18577-1-bagasdotme@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v15 0/3] rust: platform: add Io support
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <2025071913-coach-prior-d71e@gregkh>
+Date: Sat, 19 Jul 2025 21:34:29 -0300
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ Fiona Behrens <me@kloenk.dev>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <7C1E7AC4-67A0-4CD5-8B22-490F53BDBF1E@collabora.com>
+References: <20250717-topics-tyr-platform_iomem-v15-0-beca780b77e3@collabora.com>
+ <2025071913-coach-prior-d71e@gregkh>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
+Hi Greg,
 
+> On 19 Jul 2025, at 05:01, Greg Kroah-Hartman =
+<gregkh@linuxfoundation.org> wrote:
+>=20
+> On Thu, Jul 17, 2025 at 12:55:21PM -0300, Daniel Almeida wrote:
+>> ---
+>> Daniel Almeida (3):
+>>      rust: io: add resource abstraction
+>>      rust: io: mem: add a generic iomem abstraction
+>>      rust: platform: add resource accessors
+>>=20
+>> rust/bindings/bindings_helper.h |   1 +
+>> rust/helpers/io.c               |  41 ++++++
+>> rust/kernel/io.rs               |   5 +
+>> rust/kernel/io/mem.rs           | 283 =
+++++++++++++++++++++++++++++++++++++++++
+>> rust/kernel/io/resource.rs      | 229 =
+++++++++++++++++++++++++++++++++
+>> rust/kernel/platform.rs         |  60 ++++++++-
+>> 6 files changed, 618 insertions(+), 1 deletion(-)
+>=20
+> Who is going to be responsible for the new files you have added?
 
-On 7/1/25 9:04 PM, Bagas Sanjaya wrote:
-> Sphinx reports indentation warning on i3c_device_do_priv_xfers() return
-> value list:
-> 
-> Documentation/driver-api/i3c/device-driver-api:9: ./drivers/i3c/device.c:31: ERROR: Unexpected indentation. [docutils]
-> 
-> Format the list as bullet list to fix the warning.
-> 
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+As Danilo said, there will be a separate entry for the Rust I/O code, =
+which
+I=E2=80=99ve agreed to share the responsibility for.
 
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
+>=20
+> And no real objection, but no copyright info was added to them either,
+> was that intentional?  I know some companies frown on that as it goes
+> against their corporate policy (but some don't care, it's hard to keep
+> track of who likes what at times...)
+>=20
+> thanks,
+>=20
+> greg k-h
+>=20
 
-Thanks.
+Good catch. It wasn't intentional, but I don't think it will be a =
+problem.
 
-> ---
-> Changes since v1 [1]:
-> 
->   * Follow kernel-doc style on return list
->   * Patch subject massage (Frank)
->   * Drop Fixes: tag (Frank)
-> 
-> [1]: https://lore.kernel.org/r/20250626042201.44594-1-bagasdotme@gmail.com/
-> 
->  drivers/i3c/device.c | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/i3c/device.c b/drivers/i3c/device.c
-> index e80e4875691467..2396545763ff85 100644
-> --- a/drivers/i3c/device.c
-> +++ b/drivers/i3c/device.c
-> @@ -26,11 +26,12 @@
->   *
->   * This function can sleep and thus cannot be called in atomic context.
->   *
-> - * Return: 0 in case of success, a negative error core otherwise.
-> - *	   -EAGAIN: controller lost address arbitration. Target
-> - *		    (IBI, HJ or controller role request) win the bus. Client
-> - *		    driver needs to resend the 'xfers' some time later.
-> - *		    See I3C spec ver 1.1.1 09-Jun-2021. Section: 5.1.2.2.3.
-> + * Return:
-> + * * 0 in case of success, a negative error core otherwise.
-> + * * -EAGAIN: controller lost address arbitration. Target (IBI, HJ or
-> + *   controller role request) win the bus. Client driver needs to resend the
-> + *   'xfers' some time later. See I3C spec ver 1.1.1 09-Jun-2021. Section:
-> + *   5.1.2.2.3.
-
-I would use %0 and %-EAGAIN here but that's just for pretty printing. :)
-
->   */
->  int i3c_device_do_priv_xfers(struct i3c_device *dev,
->  			     struct i3c_priv_xfer *xfers,
-
--- 
-~Randy
+-- Daniel=
 
