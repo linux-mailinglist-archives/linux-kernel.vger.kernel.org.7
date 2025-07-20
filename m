@@ -1,200 +1,107 @@
-Return-Path: <linux-kernel+bounces-738141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A2A3B0B4F7
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 12:47:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D49DB0B4F8
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 12:47:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 180673B5C2B
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 10:46:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D2657A837B
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 10:46:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A31517A31C;
-	Sun, 20 Jul 2025 10:47:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C6860B8A;
+	Sun, 20 Jul 2025 10:47:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="K6Ew+LW5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="w7Wu5ruZ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="e+TrRVpZ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6BC1DE3BE
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 10:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 107034A23
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 10:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753008423; cv=none; b=HP4VVmRLYuSyvLDypUgZe4jHrP3PRQ+O2JRx4hjCGBoSZ+JUg1pw76KlQ5ejeAuUd9XSHLSj/rM17cz4n6v/5zPAPQL36UIlLyU9NR836AXnFCoRN/mY3Gey24H85FcK4FLZf6AzN3h5CJ5ONSEWifG9MdOsZmduJwr7I/H4SE4=
+	t=1753008448; cv=none; b=GxBr5+2K6vGJ7DwxIP90UWl6yTwV4i3L6QIb8vk5IorZUfscKT8jFe4qYFatHgjjuyE7OieQfHSk6MB1PDnk8bqdddEoFt2D0WauNTckpYwsp3Zmf8epnPOBZY3IY5xD6tko92/1SxJS2k9yPLpL7Y/6bLsQYlDMAhUH78Zt6vQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753008423; c=relaxed/simple;
-	bh=8mOe/TlbLx5++XUj6fIjftNUzTmsgfKYbff4HS8ZHi4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=R05OcvarFtnYUBFz9yc3+Rxm11Rxx98dOi3yzSVxFNJA/i0WU6dl8ySratKVG2of2G9hdOJyaz48Yj1RzBxP+oa+BD9WBYpcopho55PQXQmewWPSSwdQP7Xda+zvN0P8RxcLz0sFRuxtdU3xz7hglJonBhatwpDJFFOMYn4Ra9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=K6Ew+LW5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CDEBC4CEEB;
-	Sun, 20 Jul 2025 10:47:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1753008423;
-	bh=8mOe/TlbLx5++XUj6fIjftNUzTmsgfKYbff4HS8ZHi4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=K6Ew+LW5mox0MHciCW7LQswJXARt0szS6ct/kocMRWUIZdwARqppLfjesYl128bRC
-	 PoRpDMnKchBHnP8q0Ap5jtaXkKpMVtQFxl58nPCYnHt3+WK8/N97x2DgPayC4hqErc
-	 YLhtzIurM5g+IKZyuOZwt4x8BjeNPor4C+P3t/sk=
-Date: Sun, 20 Jul 2025 12:46:59 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Char/Misc/IIO driver changes for 6.16-rc7
-Message-ID: <aHzJIwjrpLJmol5d@kroah.com>
+	s=arc-20240116; t=1753008448; c=relaxed/simple;
+	bh=7T4UmPxWF3hSWenvaR7LWVE1ExSGnC3YDZZYQPXcU8w=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=D4XimjRmandeIuBWQoD5GlgVIszIKM7qF25TIuCEc9g0TPhGvxi6lsyWKfHIBrEFa4El1D3kpC8vG5ApIX+nvrUYZ5IFTqrP/UcBvnMkzLecESgQhVV32+F1XrbXUMgbFUi8ja65nNHJDodLDLequEjVWHrVcjuMRZUbd1X0uvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=w7Wu5ruZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=e+TrRVpZ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1753008445;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ANWoogU7kBBZFJXWHTAlyNcWlCwd/ZfUPzBFIAyZehI=;
+	b=w7Wu5ruZFGwOqp7it3tXXteBEKIWBOprt2uL9Hcl6oPOWrZxZdil4/iAQxHmWBldpzAU3O
+	ZQsMpXlddStAxyQ9coVQUam3X2ep1utRzfk1TdWFDkD0lbFb9o4tVkkmx23/GAkFerPOi4
+	PgzQxgP+hRMYB10tKvInolgWAfaoe24FFL0TZBjZIG8xRs9wL6PC26GNJefcXlvFR9IyYr
+	6O6apjbemjTcR0uzerDrGmqZOWI5c4vwYgn/NVi5FiMiYAAEKU0YATGGiFNEdgWbxlhGh0
+	w4PVLiJdLzzuduICJmOebSe19ZS922t8l8quLfzjfucyHniEJQmddXuicOcYPQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1753008445;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ANWoogU7kBBZFJXWHTAlyNcWlCwd/ZfUPzBFIAyZehI=;
+	b=e+TrRVpZ4Aw3Y0AoXDbJCmp1H6ianIJdnWhcFJHGcPgqnyFhOZ8JxVuyzQrDF+4/WfGCbW
+	0icJxHeyKrA9VsAQ==
+To: Phil Auld <pauld@redhat.com>
+Cc: Jan Kiszka <jan.kiszka@siemens.com>, Henning Schild
+ <henning.schild@siemens.com>, Peter Zijlstra <peterz@infradead.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org, Ingo Molnar
+ <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Guenter Roeck
+ <linux@roeck-us.net>, xenomai@xenomai.org, guocai.he.cn@windriver.com,
+ pauld@redhat.com
+Subject: Re: sched: Unexpected reschedule of offline CPU#2!
+In-Reply-To: <87frervq1o.ffs@tglx>
+References: <20190729101349.GX31381@hirez.programming.kicks-ass.net>
+ <alpine.DEB.2.21.1907291235580.1791@nanos.tec.linutronix.de>
+ <20190729104745.GA31398@hirez.programming.kicks-ass.net>
+ <20190729205059.GA1127@roeck-us.net>
+ <alpine.DEB.2.21.1908161217380.1873@nanos.tec.linutronix.de>
+ <20190816193208.GA29478@roeck-us.net>
+ <alpine.DEB.2.21.1908172219470.1923@nanos.tec.linutronix.de>
+ <20210727100018.19d61165@md1za8fc.ad001.siemens.net>
+ <745f219e-1593-4fbd-fa7f-1719ef6f444d@siemens.com> <8734mg92pt.ffs@tglx>
+ <20250709134401.GA675435@lorien.usersys.redhat.com> <87frervq1o.ffs@tglx>
+Date: Sun, 20 Jul 2025 12:47:24 +0200
+Message-ID: <87a54zuojn.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-The following changes since commit 86731a2a651e58953fc949573895f2fa6d456841:
+On Sat, Jul 19 2025 at 23:17, Thomas Gleixner wrote:
+> On Wed, Jul 09 2025 at 09:44, Phil Auld wrote:
+>> Hi Thomas,
+>>
+>> On Tue, Sep 03, 2024 at 05:27:58PM +0200 Thomas Gleixner wrote:
+>>> On Tue, Jul 27 2021 at 10:46, Jan Kiszka wrote:
+>>> 
+>>> Picking up this dead thread again.
+>>
+>> Necro-ing this again...
+>>
+>> I keep getting occasional reports of this case. Unfortunately
+>> though, I've never been able to reproduce it myself.
+>>
+>> Did the below patch ever go anywhere?
+>
+> Nope. Guocai said it does not work and I have no reproducer either to
+> actually look at it deeper and there was further debug data provided.
 
-  Linux 6.16-rc3 (2025-06-22 13:30:08 -0700)
+Obviously:
 
-are available in the Git repository at:
+        no further debug data was provided, so I can only tap in the
+        dark.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git tags/char-misc-6.16-rc7
-
-for you to fetch changes up to 2d7521aa26ec2dc8b877bb2d1f2611a2df49a3cf:
-
-  nvmem: layouts: u-boot-env: remove crc32 endianness conversion (2025-07-16 16:51:04 +0200)
-
-----------------------------------------------------------------
-Char/Misc/IIO fixes for 6.16-rc7
-
-Here are some char/misc/iio and other driver fixes for 6.16-rc7.
-Included in here are:
-  - IIO driver fixes for reported problems
-  - Interconnect driver fixes for reported problems
-  - nvmem driver fixes
-  - bunch of comedi driver fixes for long-term bugs
-  - Kconfig dependancy fixes for mux drivers
-  - other small driver fixes for reported problems.
-
-All of these have been in linux-next for a while with no reported
-problems.
-
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-----------------------------------------------------------------
-Akshay Gupta (3):
-      misc: amd-sbi: Address potential integer overflow issue reported in smatch
-      misc: amd-sbi: Address copy_to/from_user() warning reported in smatch
-      misc: amd-sbi: Explicitly clear in/out arg "mb_in_out"
-
-Angelo Dureghello (1):
-      dt-bindings: iio: adc: adi,ad7606: fix dt_schema validation warning
-
-Chen Ni (1):
-      iio: adc: stm32-adc: Fix race in installing chained IRQ handler
-
-Chen-Yu Tsai (1):
-      iio: adc: axp20x_adc: Add missing sentinel to AXP717 ADC channel maps
-
-David Lechner (3):
-      iio: adc: adi-axi-adc: fix ad7606_bus_reg_read()
-      iio: adc: ad7949: use spi_is_bpw_supported()
-      iio: adc: ad7380: fix adi,gain-milli property parsing
-
-Fabio Estevam (2):
-      iio: adc: max1363: Fix MAX1363_4X_CHANS/MAX1363_8X_CHANS[]
-      iio: adc: max1363: Reorder mode_list[] entries
-
-Gabor Juhos (3):
-      interconnect: increase ICC_DYN_ID_START
-      interconnect: icc-clk: destroy nodes in case of memory allocation failures
-      interconnect: avoid memory allocation when 'icc_bw_lock' is held
-
-Greg Kroah-Hartman (2):
-      Merge tag 'iio-fixes-for-6.16a' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/jic23/iio into char-misc-linus
-      Merge tag 'icc-6.16-rc5' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/djakov/icc into char-misc-linus
-
-Ian Abbott (9):
-      comedi: Fail COMEDI_INSNLIST ioctl if n_insns is too large
-      comedi: Fix some signed shift left operations
-      comedi: das16m1: Fix bit shift out of bounds
-      comedi: pcl812: Fix bit shift out of bounds
-      comedi: aio_iiro_16: Fix bit shift out of bounds
-      comedi: das6402: Fix bit shift out of bounds
-      comedi: Fix use of uninitialized data in insn_rw_emulate_bits()
-      comedi: Fix initialization of data for instructions that write to subdevice
-      comedi: comedi_test: Fix possible deletion of uninitialized timers
-
-Johan Hovold (1):
-      interconnect: exynos: handle node name allocation failure
-
-Kim Seer Paller (1):
-      iio: dac: ad3530r: Fix incorrect masking for channels 4-7 in powerdown mode
-
-Krzysztof Kozlowski (1):
-      mux: mmio: Fix missing CONFIG_REGMAP_MMIO
-
-Markus Burri (2):
-      iio: backend: fix out-of-bound write
-      iio: fix potential out-of-bound write
-
-Maud Spierings (1):
-      iio: common: st_sensors: Fix use of uninitialize device structs
-
-Michael C. Pratt (1):
-      nvmem: layouts: u-boot-env: remove crc32 endianness conversion
-
-Rodrigo Gobbi (1):
-      dt-bindings: iio: gyro: invensense,mpu3050: change irq maxItems
-
-Sean Nyekjaer (1):
-      iio: accel: fxls8962af: Fix use after free in fxls8962af_fifo_flush
-
-Steffen Bätz (1):
-      nvmem: imx-ocotp: fix MAC address byte length
-
-Tamir Duberstein (1):
-      MAINTAINERS: add miscdevice Rust abstractions
-
-Xilin Wu (1):
-      interconnect: qcom: sc7280: Add missing num_links to xm_pcie3_1 node
-
- .../devicetree/bindings/iio/adc/adi,ad7606.yaml    |  6 ---
- .../bindings/iio/gyroscope/invensense,mpu3050.yaml |  2 +-
- MAINTAINERS                                        |  1 +
- drivers/comedi/comedi_fops.c                       | 30 ++++++++++++++-
- drivers/comedi/drivers.c                           | 17 +++++----
- drivers/comedi/drivers/aio_iiro_16.c               |  3 +-
- drivers/comedi/drivers/comedi_test.c               |  2 +-
- drivers/comedi/drivers/das16m1.c                   |  3 +-
- drivers/comedi/drivers/das6402.c                   |  3 +-
- drivers/comedi/drivers/pcl812.c                    |  3 +-
- drivers/iio/accel/fxls8962af-core.c                |  2 +
- drivers/iio/accel/st_accel_core.c                  | 10 ++---
- drivers/iio/adc/ad7380.c                           |  5 ++-
- drivers/iio/adc/ad7949.c                           |  7 ++--
- drivers/iio/adc/adi-axi-adc.c                      |  6 ++-
- drivers/iio/adc/axp20x_adc.c                       |  1 +
- drivers/iio/adc/max1363.c                          | 43 +++++++++++-----------
- drivers/iio/adc/stm32-adc-core.c                   |  7 ++--
- drivers/iio/common/st_sensors/st_sensors_core.c    | 36 +++++++++---------
- drivers/iio/common/st_sensors/st_sensors_trigger.c | 20 +++++-----
- drivers/iio/dac/ad3530r.c                          |  4 +-
- drivers/iio/industrialio-backend.c                 |  5 ++-
- drivers/iio/industrialio-core.c                    |  5 ++-
- drivers/interconnect/core.c                        | 34 ++++++++++++++---
- drivers/interconnect/icc-clk.c                     |  2 +
- drivers/interconnect/qcom/icc-rpmh.c               |  7 +++-
- drivers/interconnect/qcom/osm-l3.c                 |  7 +++-
- drivers/interconnect/qcom/sc7280.c                 |  1 +
- drivers/interconnect/samsung/exynos.c              |  5 +++
- drivers/misc/amd-sbi/rmi-core.c                    | 24 ++++++++----
- drivers/mux/Kconfig                                |  1 +
- drivers/nvmem/imx-ocotp-ele.c                      |  5 ++-
- drivers/nvmem/imx-ocotp.c                          |  5 ++-
- drivers/nvmem/layouts/u-boot-env.c                 |  6 +--
- include/linux/interconnect-provider.h              |  7 ++++
- 35 files changed, 213 insertions(+), 112 deletions(-)
 
